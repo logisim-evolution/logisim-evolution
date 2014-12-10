@@ -36,13 +36,13 @@ java -jar logisim-evolution.jar
 ## Editing logisim-evolution in Eclipse
 To import directly logisim-evolution in Eclipse, you can use Eclipse's import wizard:
 
-Import -> git project -> [put the connection details] -> New project -> Java project from Ant
+*Import -> git project -> [put the connection details] -> New project -> Java project from Ant*
 
-You will, however, encounter a problem when you will try to execute the code. In particular, an exception *ExceptionInInitializerError* will be thrown. To solve this, execute the *eclipse_fix.sh* script in the program's directory, or go in the bin/ subdirectory and create links to the following directories available in the program's directory
-* boards_model
-* javax
-* libs
-* resources
+You will, however, encounter a problem when you will try to execute the code. In particular, an exception *ExceptionInInitializerError* will be thrown. To solve this, execute the *eclipse_fix.sh* script in the program's directory, or go in the *bin/* subdirectory and create links to the following directories available in the program's directory
+* *boards_model*
+* *javax*
+* *libs*
+* *resources*
 
 ## How to get support for logisim-evolution
 Unfortunately, we do not have enough resources to provide direct support for logisim-evolution.
