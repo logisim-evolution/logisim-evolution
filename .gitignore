@@ -1,12 +1,28 @@
+# Java Files
+com/bfh
+com/cburch
+com/hepia
+*.jar
 *.class
 
-# Mobile Tools for Java (J2ME)
-.mtj.tmp/
+# Generated files
+javadoc/
+bin/
+test/com/cburch/logisim/gui
 
-# Package Files #
-*.jar
-*.war
-*.ear
+# additional libraries
+!libs/*.jar
 
-# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
-hs_err_pid*
+# IDE files
+.metadata/
+.settings/
+.project
+.classpath
+
+
+# Simulation files and folders
+resources/logisim/sim/comp.tcl
+resources/logisim/sim/transcript
+
+resources/logisim/sim/comp/
+resources/logisim/sim/src/
