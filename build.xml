@@ -1,0 +1,51 @@
+<!--
+    logisim-evolution : Ant build configuration file
+
+    Original code by Adrien Lescourt - 10.2011
+-->
+
+<project name="logisim-evolution">
+
+    <target name="cleanall" depends="clean">
+        <delete dir="bin/com/bfh/"/>
+        <delete dir="bin/com/cburch/"/>
+        <delete dir="bin/com/hepia/"/>
+    </target>
+
+    <target name="clean">
+        <delete file="logisim-evolution.jar"/>
+        <delete file="logisim-evolution_src.jar"/>
+    </target>
+
+    <target name="compile" depends="clean">
+        <javac srcdir="src" includeantruntime="false" destdir="bin" source="1.7" target="1.7" classpath="libs/colorpicker.jar:libs/fontchooser.jar:libs/jh.jar:libs/MRJAdapter.jar:libs/nimrodlf.jar:libs/rsyntaxtextarea.jar" />
+    </target>
+
+    <target name="jar" depends="compile">
+        <jar destfile="logisim-evolution.jar">
+            <fileset dir="bin" />
+            <fileset dir="." includes="doc/ resources/" excludes="doc/**/html/guide/analyze/" />
+			<zipgroupfileset dir="libs" includes="*.jar"/>
+            <manifest>
+                <attribute name="Main-Class" value="com.cburch.logisim.Main"/>
+            </manifest>
+        </jar>
+    </target>
+
+    <target name="jarsrc" depends="jar">
+        <jar destfile="Logisim_src.jar">
+            <fileset dir="bin" />
+            <fileset dir="." includes="doc/ src/ build.xml publi/" />
+			<zipgroupfileset dir="libs" includes="*.jar"/>
+            <manifest>
+                <attribute name="Main-Class" value="com.cburch.logisim.Main"/>
+            </manifest>
+        </jar>
+    </target>
+
+    <target name="run" depends="jar">
+        <java jar="logisim-evolution.jar" fork="true"/>
+    </target>
+
+</project>
+

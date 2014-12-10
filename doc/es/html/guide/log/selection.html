@@ -1,0 +1,64 @@
+<html>
+<head>
+	<title>The Selection tab</title>
+</head>
+<body bgcolor="FFFFFF">
+
+<h1>The Selection tab</h1>
+
+<p>The Selection tab allows you to select which values
+should be included in the log. The window below corresponds to the
+following circuit.
+<center><img src="../../../../en/img-guide/log-counter.png" width="232" height="129"><br><br>
+<img src="../../../../en/img-guide/log-selection.png" width="466" height="387"></center>
+
+<p>The tab is divided into three vertical areas. The first (leftmost) is
+a list of all components in the circuit whose values can be logged.
+Among the built-in libraries, the following types of components support
+logging.
+<blockquote>
+Wiring library: Pin, Probe, and Clock components<br>
+I/O library: Button and LED components<br>
+Memory library: All components except ROM
+</blockquote>
+For components which have labels associated with them, their names correspond
+to the labels; other components' names specify their type and their
+location within the circuit.
+Any subcircuits will also appear in the list; they cannot be selected
+for logging, but eligible components within them can be.
+Note that the RAM component requires you to choose which memory
+address(es) should be logged; it allows logging only for the first 256
+addresses.</p>
+
+<p>The last (rightmost) vertical area lists those components that have
+been selected. Also, it indicates the radix (base) in which the
+component's multi-bit values
+will be logged; the radix does not have a significant effect on one-bit
+values.</p>
+
+<p>The middle column of buttons allows the manipulation of the items
+within the selection.
+<ul>
+
+<li><strong>Add</strong> adds the currently selected item(s) on the left
+side into the selection.
+
+<li><strong>Change Radix</strong> cycles the radix for the currently
+selected component in the selection between 2 (binary), 10 (decimal),
+and 16 (hexadecimal).
+
+<li><strong>Move Up</strong> moves the currently selected component in
+the selection forward one spot.
+
+<li><strong>Move Down</strong> moves the currently selected component in
+the selection back one spot.
+
+<li><strong>Remove</strong> removes the currently selected component in
+the selection.
+
+</ul></p>
+
+<p><strong>Next:</strong> <a href="table.html">The Table tab</a>.</p>
+
+</body>
+</html>

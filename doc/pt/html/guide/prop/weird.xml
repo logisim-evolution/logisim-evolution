@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="1.0">
+  <lib name="0" desc="#Base">
+    <tool name="Text Tool">
+      <a name="text" val="" />
+      <a name="font" val="SansSerif plain 12" />
+      <a name="halign" val="center" />
+      <a name="valign" val="base" />
+    </tool>
+    <tool name="Splitter">
+      <a name="facing" val="east" />
+      <a name="fanout" val="2" />
+      <a name="incoming" val="2" />
+      <a name="bit0" val="0" />
+      <a name="bit1" val="1" />
+    </tool>
+    <tool name="Pin">
+      <a name="facing" val="east" />
+      <a name="width" val="1" />
+      <a name="tristate" val="true" />
+      <a name="output" val="false" />
+      <a name="label" val="" />
+      <a name="labelloc" val="west" />
+      <a name="labelfont" val="SansSerif plain 12" />
+    </tool>
+    <tool name="Text">
+      <a name="text" val="" />
+      <a name="font" val="Serif plain 12" />
+      <a name="halign" val="center" />
+      <a name="valign" val="base" />
+    </tool>
+  </lib>
+  <lib name="1" desc="#Gates">
+    <tool name="Constant">
+      <a name="facing" val="east" />
+      <a name="width" val="1" />
+      <a name="value" val="0x0" />
+    </tool>
+    <tool name="NOT Gate">
+      <a name="width" val="1" />
+    </tool>
+    <tool name="Buffer">
+      <a name="width" val="1" />
+    </tool>
+    <tool name="AND Gate">
+      <a name="width" val="1" />
+      <a name="size" val="50" />
+      <a name="inputs" val="5" />
+    </tool>
+    <tool name="OR Gate">
+      <a name="width" val="1" />
+      <a name="size" val="50" />
+      <a name="inputs" val="5" />
+    </tool>
+    <tool name="NAND Gate">
+      <a name="width" val="1" />
+      <a name="size" val="50" />
+      <a name="inputs" val="5" />
+    </tool>
+    <tool name="NOR Gate">
+      <a name="width" val="1" />
+      <a name="size" val="50" />
+      <a name="inputs" val="5" />
+    </tool>
+    <tool name="XOR Gate">
+      <a name="width" val="1" />
+      <a name="size" val="50" />
+      <a name="inputs" val="5" />
+    </tool>
+    <tool name="XNOR Gate">
+      <a name="width" val="1" />
+      <a name="size" val="50" />
+      <a name="inputs" val="5" />
+    </tool>
+    <tool name="Odd Parity">
+      <a name="width" val="1" />
+      <a name="size" val="50" />
+      <a name="inputs" val="5" />
+    </tool>
+    <tool name="Even Parity">
+      <a name="width" val="1" />
+      <a name="size" val="50" />
+      <a name="inputs" val="5" />
+    </tool>
+    <tool name="Controlled Buffer">
+      <a name="width" val="1" />
+    </tool>
+    <tool name="Controlled Inverter">
+      <a name="width" val="1" />
+    </tool>
+  </lib>
+  <lib name="2" desc="#Memory">
+    <tool name="D Flip-Flop" />
+    <tool name="T Flip-Flop" />
+    <tool name="J-K Flip-Flop" />
+    <tool name="S-R Flip-Flop" />
+    <tool name="Register">
+      <a name="width" val="8" />
+    </tool>
+    <tool name="RAM">
+      <a name="addrWidth" val="8" />
+    </tool>
+  </lib>
+  <main name="Const0" />
+  <options>
+    <a name="showgrid" val="true" />
+    <a name="preview" val="false" />
+    <a name="simulate" val="true" />
+    <a name="showghosts" val="true" />
+    <a name="zoom" val="1.0" />
+    <a name="gateshape" val="shaped" />
+  </options>
+  <mappings>
+    <tool lib="0" name="Menu Tool" map="Button3" />
+    <tool lib="0" name="Menu Tool" map="Button2" />
+  </mappings>
+  <toolbar>
+    <tool lib="0" name="Poke Tool" />
+    <tool lib="0" name="Select Tool" />
+    <tool lib="0" name="Wiring Tool" />
+    <tool lib="0" name="Text Tool">
+      <a name="text" val="" />
+      <a name="font" val="SansSerif plain 12" />
+      <a name="halign" val="center" />
+      <a name="valign" val="base" />
+    </tool>
+    <sep />
+    <tool lib="0" name="Pin">
+      <a name="facing" val="north" />
+      <a name="width" val="1" />
+      <a name="tristate" val="false" />
+      <a name="output" val="false" />
+      <a name="label" val="" />
+      <a name="labelloc" val="west" />
+      <a name="labelfont" val="SansSerif plain 12" />
+    </tool>
+    <tool lib="0" name="Pin">
+      <a name="facing" val="west" />
+      <a name="width" val="1" />
+      <a name="tristate" val="true" />
+      <a name="output" val="true" />
+      <a name="label" val="" />
+      <a name="labelloc" val="east" />
+      <a name="labelfont" val="SansSerif plain 12" />
+    </tool>
+    <tool lib="1" name="NOT Gate">
+      <a name="width" val="1" />
+    </tool>
+    <tool lib="1" name="AND Gate">
+      <a name="width" val="1" />
+      <a name="size" val="30" />
+      <a name="inputs" val="3" />
+    </tool>
+    <tool lib="1" name="OR Gate">
+      <a name="width" val="1" />
+      <a name="size" val="50" />
+      <a name="inputs" val="5" />
+    </tool>
+  </toolbar>
+  <circuit name="Const0">
+    <wire from="(30,30)" to="(40,30)" />
+    <wire from="(40,40)" to="(90,40)" />
+    <wire from="(40,20)" to="(50,20)" />
+    <wire from="(80,20)" to="(90,20)" />
+    <wire from="(120,30)" to="(130,30)" />
+    <wire from="(40,20)" to="(40,30)" />
+    <wire from="(40,30)" to="(40,40)" />
+    <comp lib="0" name="Pin" loc="(30,30)">
+      <a name="facing" val="east" />
+      <a name="width" val="1" />
+      <a name="tristate" val="false" />
+      <a name="output" val="false" />
+      <a name="label" val="" />
+      <a name="labelloc" val="west" />
+      <a name="labelfont" val="SansSerif plain 12" />
+    </comp>
+    <comp lib="1" name="AND Gate" loc="(120,30)">
+      <a name="width" val="1" />
+      <a name="size" val="30" />
+      <a name="inputs" val="3" />
+    </comp>
+    <comp lib="1" name="NOT Gate" loc="(80,20)">
+      <a name="width" val="1" />
+    </comp>
+    <comp lib="0" name="Pin" loc="(130,30)">
+      <a name="facing" val="west" />
+      <a name="width" val="1" />
+      <a name="tristate" val="true" />
+      <a name="output" val="true" />
+      <a name="label" val="" />
+      <a name="labelloc" val="east" />
+      <a name="labelfont" val="SansSerif plain 12" />
+    </comp>
+  </circuit>
+  <circuit name="Using Const0">
+    <wire from="(30,80)" to="(80,80)" />
+    <wire from="(80,60)" to="(90,60)" />
+    <wire from="(130,40)" to="(150,40)" />
+    <wire from="(80,60)" to="(80,80)" />
+    <wire from="(70,40)" to="(90,40)" />
+    <wire from="(30,40)" to="(40,40)" />
+    <comp lib="0" name="Pin" loc="(30,40)">
+      <a name="facing" val="east" />
+      <a name="width" val="1" />
+      <a name="tristate" val="false" />
+      <a name="output" val="false" />
+      <a name="label" val="" />
+      <a name="labelloc" val="west" />
+      <a name="labelfont" val="SansSerif plain 12" />
+    </comp>
+    <comp lib="0" name="Pin" loc="(30,80)">
+      <a name="facing" val="east" />
+      <a name="width" val="1" />
+      <a name="tristate" val="false" />
+      <a name="output" val="false" />
+      <a name="label" val="" />
+      <a name="labelloc" val="west" />
+      <a name="labelfont" val="SansSerif plain 12" />
+    </comp>
+    <comp lib="0" name="Text" loc="(55,18)">
+      <a name="text" val="Const0" />
+      <a name="font" val="SansSerif plain 12" />
+      <a name="halign" val="center" />
+      <a name="valign" val="base" />
+    </comp>
+    <comp lib="0" name="Pin" loc="(150,40)">
+      <a name="facing" val="west" />
+      <a name="width" val="1" />
+      <a name="tristate" val="true" />
+      <a name="output" val="true" />
+      <a name="label" val="" />
+      <a name="labelloc" val="east" />
+      <a name="labelfont" val="SansSerif plain 12" />
+    </comp>
+    <comp lib="2" name="D Flip-Flop" loc="(130,40)" />
+    <comp name="Const0" loc="(70,40)">
+      <a name="circuit" val="Const0" />
+    </comp>
+  </circuit>
+</project>
+

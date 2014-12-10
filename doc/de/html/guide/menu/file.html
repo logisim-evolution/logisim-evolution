@@ -1,0 +1,84 @@
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+	<title>Das Dateimenü</title>
+</head>
+<body bgcolor="FFFFFF">
+
+<h1>Das Dateimenü</h1>
+
+<dl>
+
+<dt><strong>Neu</strong></dt>
+<dd><p>Öffnet ein neues Projekt in einem neuen Fenster. Das neue Projekt ist zunächst eine Kopie <a href="../prefs/template.html">der gerade ausgewählten Vorlage</a>.</p></dd>
+
+<dt><strong>Öffnen...</strong></dt>
+<dd><p>Öffnet eine existierende Datei als Projekt in einem neuen Fenster.</p></dd>
+
+<dt><strong>Zuletzt geöffnet</strong></dt>
+<dd><p>Öffnet ein kürzlich bearbeitetes Projekt in einem neuen Fenster, ohne, daß der Benutzer durch einen Dateidialog navigieren muß.</p></dd>
+
+<dt><strong>Schließen</strong></dt>
+<dd><p>Schließt alle Fenster des aktuell angezeigten Projekts.</p></dd>
+
+<dt><strong>Speichern</strong></dt>
+<dd><p>Speichert das aktuell angezeigte Projekt, und überschreibt dabei eine eventuell vorhandene Datei.</p></dd>
+
+<dt><strong>Speichern unter...</strong></dt>
+<dd><p>Speichert das aktuell angezeigte Projekt, und fragt den Benutzer nach einem neuen Dateinamen.</p></dd>
+
+<dt><strong>Bild exportieren...</strong></dt>
+<dd><p>Erzeugt eine Bilddatei, die die Schaltung darstellt. Der zugehörige Konfigurationsdialog ist weiter unten beschrieben.</p></dd>
+
+<dt><strong>Drucken...</strong></dt>
+<dd><p>Sendet die Schaltung an einen Drucker. Der zugehörige Konfigurationsdialog ist weiter unten beschrieben.</p></dd>
+
+<dt><strong>Voreinstellungen...</strong></dt>
+<dd><p>Öffnet den Dialog der  <a href="../prefs/index.html">programmbezogenen Einstellungen</a>. (Auf Mac OS-Systemen wird dies im Logisim-Menü angezeigt.)</p></dd>
+
+<dt><strong>Beenden</strong></dt>
+<dd><p>Schließt alle derzeit geöffneten Projekte und beendet Logisim. (Auf Mac OS-Systemen wird dies als Beenden im Logisim-Menü angezeigt.)</p></dd>
+
+</dl>
+
+<h2>Export konfigurieren</h2>
+
+<p>Wenn Sie den Punkt "Bild exportieren..." aufrufen, öffnet Logisim ein Dialogfenster mit vier Optionen.</P>
+<ul>
+
+<li><b>Schaltungen:</b> Eine Liste, aus der Sie eine oder mehrere Schaltungen auswählen können, deren Bild exportiert werden soll. (Leere Schaltungen erscheinen nicht in dieser Liste.)</li>
+
+<li><b>Bildformat:</b> Hier können Sie zwischen PNG-, GIF- und JPEG-Dateien wählen. Das empfohlene Format sind PNG-Dateien: Das GIF-Dateiformat ist schon ziemlich betagt, und das JPEG-Format führt zu Komprimierungs-Artefakten, weil JPEG-Dateien eigentlich für fotografische Abbildungen entwickelt wurden.</li>
+
+<li><b>Skalierung:</b> Sie können das Bild mit diesem Schieberegler skalieren, bevor es gespeichert wird.</li>
+
+<li><b>Druckeransicht:</b> Wählt aus, ob die "<a href="../prefs/layout.html">Druckeransicht</a>" beim Export verwendet werden soll.</li>
+
+</ul>
+<p>Nach dem Anklicken der Schaltfläche OK wird Logisim einen Dateidialog anzeigen. Wenn Sie eine einzelne Schaltung ausgewählt haben, dann wählen Sie hier aus, in welcher Datei Das Bild gespeichert werden soll. Wenn Sie mehrere Schaltungen ausgewählt haben, dann wählen Sie nur das Verzeichnis aus, in das die Bilddateien gespeichert werden sollen. Logisim wird die einzelnen Bilddateien nach den Namen der Schaltungen benennen (zum Beispiel <tt>main.png</tt>).</p>
+
+<h2>Drucken konfigurieren</h2>
+
+<p>Wenn Sie den Punkt "Drucken..." aufrufen, öffnet Logisim ein Dialogfenster zur Konfiguration des Ausdrucks.</p>
+<ul>
+
+<li><b>Schaltungen:</b> Eine Liste, aus der Sie eine oder mehrere Schaltungen auswählen können, deren Bild gedruckt werden soll. (Leere Schaltungen erscheinen nicht in dieser Liste.) Logisim druckt eine Schaltung pro Druckseite. Wenn die Schaltung zu groß für die Seite ist, wird das Bild passend verkleinert werden.</li>
+
+<li><b>Titel:</b> Der Text, der zentriert oben auf jeder einzelnen Seite erscheinen soll. Die folgenden Substitutionen werden im Text vorgenommen.<center><table>
+<tr><td><tt>%n</tt></td><td>Name der Schaltung auf der Seite</td></tr>
+<tr><td><tt>%p</tt></td><td>Seitennummer</td></tr>
+<tr><td><tt>%P</tt></td><td>Gesamtseitenzahl</td></tr>
+<tr><td><tt>%%</tt></td><td>Ein einzelnes Prozentzeichen ('%')</td></tr>
+</table></center></li>
+
+<li><b>Drehen zum Anpassen:</b> Wenn angekreuzt wird Logisim das Druckbild um 90 Grad drehen, wenn dies eine bessere Ausnutzung der Druckseite erlaubt.</li>
+
+<li><b>Druckeransicht:</b> Wählt aus, ob die "<a href="../prefs/layout.html">Druckeransicht</a>" beim Drucken verwendet werden soll.</li>
+
+</ul>
+<p>Nach dem Anklicken der Schaltfläche OK wird Logisim den Standard-Dialog zum Einrichten der Seite vor dem Druck der Schaltungen anzeigen.</p>
+
+<p><strong>Weiter:</strong> <a href="edit.html">Das Bearbeitungsmenü</a>.</p>
+
+</body>
+</html>

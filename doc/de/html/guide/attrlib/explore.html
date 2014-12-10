@@ -1,0 +1,51 @@
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+	<title>Das Übersichtsfenster</title>
+</head>
+<body bgcolor="FFFFFF">
+
+<h1>Das Übersichtsfenster</h1>
+
+<p>Logisim verwaltet seine Werkzeuge in <strong>Bibliotheken</strong>. Diese werden als Verzeichnisse im Übersichtsfenster angezeigt. Um auf die Bauelemente einer Bibliothek zuzugreifen, brauchen Sie lediglich auf das entsprechende Verzeichnis doppelzuklicken. Hier sehen Sie die geöffnete Gatter-Bibliothek mit dem ausgewählten NAND-Gatter. Logisim ist jetzt dazu bereit NAND-Gatter zur Schaltung hinzuzufügen.</p>
+<center><img src="../../../img-guide/attrlib-nand-select.png" width="477" height="231"></center>
+<p>Wenn Sie sich jetzt die Auswahl in der Gatter-Bibliothek ansehen, so werden Sie bemerken, daß wir eigentlich gar keine XOR-Schaltung hätten entwickeln müssen: ein solches Gatter ist bereits Bestandteil von Logisim.</p>
+
+<p>Wenn Sie ein neues Projekt anlegen, so enthält dieses automatisch bereits die folgenden Bibliotheken:</p>
+<ul>
+
+<li>Basis: Werkzeuge, die fester Bestandteil von Logisim sind.</li>
+
+<li>Gatter: Bauelemente, die einfache logische Funktionen durchführen.</li>
+
+<li>Auswahlschaltungen: komplexere kombinatorische Bauelemente, wie Multiplexer und Dekoder.</li>
+
+<li>Arithmetik: Bauelemente, die arithmetische Funktionen ausführen.</li>
+
+<li>Speicher: Bauelemente, die Daten speichern können, wie Flip-Flops, Register und RAM.</li>
+
+<li>Eingabe/Ausgabe: Bauelemente zur Interaktion mit dem Anwender.</li>
+
+</ul>
+
+<p>Über das Untermenü "Bibliothek laden" aus dem Projektmenü können Sie weitere Bibliotheken hinzufügen. Logisim besitzt drei Gruppen von Bibliotheken.</p>
+<ul>
+
+<li><strong>Eingebaute Bibliotheken</strong> sind Bibliotheken, die fester Bestandteil von Logisim sind. Diese sind in der <em><a href="../../libs/index.html">Bibliotheksreferenz</a></em> dokumentiert.</p>
+
+</li><li><strong>Logisim-Bibliotheken</strong> sind in Logisim entwickelte Projekte, die als Logisim-Projekte gespeichert wurden. Sie können eine Reihe von Schaltungen in einem einzelnen Projekt aufbauen (wie im Abschnitt <a href="../subcirc/index.html">Teilschaltungen</a> dieses Leitfadens beschrieben), und diese dann später als Bibliothek für andere Projekte benutzen.</p>
+
+</li><li><strong>JAR-Bibliotheken</strong> sind Bibliotheken, die in Java erstellt werden, aber nicht fester Bestandteil von Logisim sind. Sie können fertige JAR-Bibliotheken von anderen Autoren herunterladen, oder Ihre eigenen erstellen, wie im Abschnitt <a href="../jar/index.html">JAR-Bibliotheken</a> dieses Leitfadens beschrieben. Die Entwicklung einer JAR-Bibliothek ist aufwendiger, als die Erstellung einer Logisim-Bibliothek, aber die damit erstellten Bauelemente sind flexibler und erlauben sowohl die Vergabe von Attributen, als auch die Interaktion mit dem Anwender. Die eingebauten Bibliotheken (mit Ausnahme der Basis-Bibliothek) sind mit demselben API entwickelt worden, das auch die JAR-Bibliotheken benutzen können. Hieran können Sie den Umfang der Funktionen erkennen, die mit JAR-Bibliotheken verwirklicht werden können.</p>
+
+<p>Einige JAR-Bibliotheken enthalten keinen Hinweis darauf, welche Java-Klasse der Bibliothek gestartet werden soll. Wenn Sie eine solche JAR-Bibliothek laden, wird Logisim Sie zur Eingabe des Namens der entsprechenden Klasse auffrodern. Der Name dieser Klasse sollte Ihnen vom Ersteller der JAR-Bibliothek mitgeteilt werden.</p>
+
+</li></ul>
+
+<p>Um eine Bibliothek wieder zu entfernen, wählen Sie den Punkt "Bibliotheken entfernen..." aus dem Projektmenü. Logisim erlaubt es Ihnen nicht, Bibliotheken zu entfernen, deren Bauelemente in einer Schaltung verwendet werden, die auf der Werkzeugleiste angezeigt wird, oder einer Maustaste zugeordnet ist.</p>
+
+<p>Streng genommen enthält eine Bibliothek übrigens Werkzeuge, keine Bauelemente. So finden Sie in der Basis-Bibliothek das Schaltwerkzeug (<img src="../../../../en/icons/poke.gif" width="16" height="16">), das Bearbeitungswerkzeug (<img src="../../../../en/icons/select.gif" width="16" height="16">) und andere Werkzeuge, die keinen direkten Bezug zu einem spezifischen Bauelement aufweisen. Die meisten Bibliotheken enthalten aber Werkzeuge zum Hinzufügen individueller Bauelemente. Alle eingebauten Bibliotheken mit Ausnahme der Basis-Bibliothek sind auf diese Weise aufgebaut.</p>
+
+<p><strong>Weiter:</strong> <a href="attr.html">Die Attribut-Tabelle</a>.</p>
+
+</body>
+</html>

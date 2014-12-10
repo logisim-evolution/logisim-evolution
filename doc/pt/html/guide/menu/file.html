@@ -1,0 +1,135 @@
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>O menu Arquivo (File)</title>
+</head>
+<body bgcolor="FFFFFF">
+
+<h1>O menu Arquivo (File)</h1>
+
+<dl>
+
+<dt> <strong> Novo </strong> </dt>
+<dd> <p> Abrir um novo projeto em uma nova janela. O projeto irá
+inicialmente ser uma cópia do <a href="../prefs/template.html">
+gabarito atualmente selecionado</a>.
+</p> </dd>
+
+<dt> <strong> Abrir ...</strong> </dt>
+<dd> <p> Abrir um arquivo existente como um projeto em uma nova janela.
+</p> </dd>
+
+<dt> <strong> Fechar </strong> </dt>
+<dd> <p> Fechar todas as janelas associadas atualmente com o projeto em foco.
+</p> </dd>
+
+<dt> <strong> Salvar </strong> </dt>
+<dd> <p> Salvar o projeto atualmente em foco, substituindo o que estiver
+anteriormente no arquivo. 
+</p> </dd>
+
+<dt> <strong> Salvar como ... </strong> </dt>
+<dd> <p> Salvar o projeto atualmente em foco, solicitando que o usuário
+salve em um arquivo diferente do anterior. 
+</p> </dd>
+
+<dt> <strong> Exportar imagem ... </strong> </dt>
+<dd> <p> Criar arquivo de imagem (ou imagens) correspondente(s) aos circuitos.
+A caixa de diálogo de configuração será descrita abaixo.
+</p> </dd>
+
+<dt> <strong> Imprimir ... </strong> </dt>
+<dd> <p> Enviar circuito(s) para uma impressora. A caixa de diálogo de configuração
+será descrita abaixo. 
+</p> </dd>
+
+<dt> <strong> Preferências ... </strong> </dt>
+<dd> <p> Exibir a janela <a href="../prefs/index.html"> preferências da aplicação </a> 
+(Em sistemas Mac OS, isso irá aparecer no menu do Logisim.)
+</p> </dd>
+
+<dt> Sair <strong> </strong> </dt>
+<dd> <p> Fechar todos os projetos atualmente abertos e terminar o Logisim.
+(Em sistemas Mac OS, isso irá aparecer como Quit no menu do Logisim.)
+</p> </dd>
+
+</dl>
+
+<h2> Configurar exportação </h2>
+
+<p> Ao selecionar Exportar imagem ..., o Logisim exibirá uma caixa de diálogo
+com quatro opções:
+</p>
+<ul>
+
+<li> <b> Circuitos: </b> Uma lista onde você poderá selecionar um ou mais circuitos
+que deverão ser exportados em arquivos de imagem. (Circuitos em branco não serão
+exibidos como opções.) 
+</li>
+
+<li> <b> Formato da Imagem: </b> Você poderá criar PNG, GIF e JPEG. Recomendamos os 
+arquivos PNG. O formato GIF é bem antigo, e no formato JPEG poderão ser
+introduzidos outros elementos na imagem, uma vez que esse formato é realmente mais
+significativo para imagens fotográficas. 
+</li>
+
+<li> <b> Fator de escala: </b> Você poderá dimensionar as imagens que serão 
+transferidas para os arquivos de imagem usando esse controle.
+</li>
+
+<li> <b> Prévia da impressão: </b> Se quiser usar
+"<a href="../opts/canvas.html"> prévia da impressão </a>" ao exportar circuitos.
+</li>
+
+</ul>
+<p> Após clicar em OK, o Logisim irá mostrar uma janela de seleção de arquivos
+em caixa de diálogo. Se você já tiver selecionado um circuito, indicar então
+o arquivo no qual a imagem deverá ser colocada. Se você tiver selecionado vários 
+circuitos, escolher uma pasta (diretório) onde os arquivos deverão  ser colocados; 
+o Logisim providenciará os nomes das imagens com base nos nomes dos circuitos
+(<tt> main.png </tt>, por exemplo).
+</p>
+
+<h2> Configurar impressão </h2>
+
+<p> Quando você escolher Imprimir ..., o Logisim exibirá uma caixa de diálogo para
+configurar o que será impresso. 
+</p>
+
+<ul>
+
+<li> <b> Circuitos: </b> Exibirá uma lista onde você poderá selecionar um ou mais 
+circuitos para serem impressos. (Circuitos em branco não serão exibidos como opções). 
+O Logisim irá imprimir um circuito por página. Se o circuito for muito
+grande para a página, a imagem será redimensionada convenientemente.
+</li>
+
+<li> <b> Cabeçalho: </b> Mostrará o texto que deverá aparecer centrado na parte 
+superior de cada página. As seguintes substituições serão feitas no texto.
+<center> <table>
+<tr> <td> <tt> n% </tt> </td> Nome <td> do circuito na página </td> </tr>
+<tr> <td> <tt>% p </tt> </td> Número de página </td> </tr>
+<tr> <td>% <tt> P </tt> </td> Total de páginas </td> </tr>
+<tr> <td> <tt>%% </tt> </td> Um único sinal ('%')</td> </tr>
+</table> </center> </li>
+
+<li> <b> Girar para ajustar: </b> Se estiver assinalada, irá o Logisim rotacionar
+cada circuito em 90 graus, quando o circuito for  muito grande para
+caber a página, e não precisar ser escalado para menor, se puder ser girado em 
+90 graus.
+</li>
+
+<li> <b> Prévia da impressão: </b> Se quiser usar
+"<a href="../opts/layout.html"> prévia da impressão </a>" antes de imprimir 
+os circuitos. 
+</li>
+
+</ul>
+<p> Após clicar em OK, o Logisim irá mostrar a configuração da página padrão
+em uma caixa de diálogo antes de imprimir os circuitos. 
+</p>
+
+<p><strong>Próximo:</strong> <a href="edit.html">O menu Editar</a>.</p>
+
+</body>
+</html>

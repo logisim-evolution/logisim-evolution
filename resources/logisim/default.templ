@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="1.0">
+
+ <lib name="0" desc="#Wiring" />
+ <lib name="1" desc="#Gates" />
+ <lib name="2" desc="#Plexers" />
+ <lib name="3" desc="#Arithmetic" />
+ <lib name="4" desc="#Memory" />
+ <lib name="5" desc="#I/O" />
+ <lib name="6" desc="#HDL-IP" />
+ <lib name="7" desc="#TCL" />
+ <lib name="8" desc="#Base" />
+
+ <options>
+  <a name="showgrid" val="true" />
+  <a name="simulate" val="true" />
+  <a name="showghosts" val="true" />
+  <a name="zoom" val="1.0" />
+ </options>
+
+ <mappings>
+  <tool lib="8" name="Menu Tool" map="Button2" />
+  <tool lib="8" name="Menu Tool" map="Button3" />
+  <tool lib="8" name="Menu Tool" map="Ctrl Button1" />
+ </mappings>
+
+ <toolbar>
+  <tool lib="8" name="Poke Tool" />
+  <tool lib="8" name="Edit Tool" />
+  <tool lib="8" name="Text Tool">
+    <a name="font" val="SansSerif plain 12" />
+  </tool>
+  <sep />
+  <tool lib="0" name="Pin">
+   <a name="tristate" val="false" />
+  </tool>
+  <tool lib="0" name="Pin">
+   <a name="facing" val="west" />
+   <a name="labelloc" val="east" />
+   <a name="output" val="true" />
+  </tool>
+  <tool lib="1" name="NOT Gate" />
+  <tool lib="1" name="AND Gate" />
+  <tool lib="1" name="OR Gate" />
+ </toolbar>
+
+ <circuit name="main" />
+</project>

@@ -1,0 +1,54 @@
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>Подстановка библиотек</title>
+</head>
+
+<body bgcolor="FFFFFF">
+
+<h1>Подстановка библиотек</h1>
+
+<p>Теперь предположим, что у нас есть две схемы Logisim, которые должны делать одно и то же. Как у преподавателя, у вас могут быть работы, выполненные учащимися: у вас есть один файл с вашим решением и несколько файлов учащихся, содержащих их работы. Например, задание было построить двухбитный сумматор.</p>
+
+<p>Я представлю, что у нас есть два файла с именами <tt>adder-master.circ</tt> и <tt>adder-query.circ</tt>. Каждый файл содержит схему с названием <q>2-bit adder</q> (важно, чтобы схема для проверки имела точно такое же название), эти схемы выглядят следующим образом.</p>
+
+<blockquote><table><tbody>
+<tr><td><tt>adder-master.circ</tt></td>
+    <td><tt>adder-query.circ</tt></td></tr>
+<tr><td><img src="../../../../en/img-guide/verify-adder-master.png" width="184" height="63"></td>
+    <td><img src="../../../../en/img-guide/verify-adder-query.png" width="171" height="112"></td></tr>
+</tbody></table></blockquote>
+
+<p>Как вы видите, эталонная схема использует встроенный в Logisim сумматор, а проверяемая схема использует две подсхемы, представляющие собой полусумматор и полный сумматор (которые в свою очередь построены из простых логических элементов). Для целей нашего примера проверяемая схема имеет глупую ошибку: бит переноса из полусумматора не соединён с полным сумматором.</p>
+
+<p>Мы сохраняем нашу проверяющую схему в отдельный файл. Затем мы загружаем <tt>adder-master.circ</tt> как библиотеку Logisim (Проект &gt; Загрузить библиотеку &gt; Библиотека Logisim…), и добавляем двухбитный сумматор оттуда как подсхему. Мы могли бы выполнить эту схему непосредственно, чтобы получить желаемый результат для идеального решения.</p>
+
+<blockquote><tt>java&nbsp;-jar&nbsp;logisim-filename.jar&nbsp;adder-test.circ&nbsp;-tty&nbsp;table</tt></blockquote>
+
+<p>Но мы хотим выполнить схему, используя как загруженную библиотеку <tt>adder-query.circ</tt> вместо <tt>adder-master.circ</tt>. Наивным подходом будет открыть Logisim и загрузить эту библиотеку; или вы можете просто удалить файл <tt>adder-master.circ</tt> и переименовать <tt>adder-query.circ</tt> в <tt>adder-master.circ</tt> вместо него. Но Logisim включает удобный параметр <q><tt>-sub</tt></q>, который временно заменяет один файл другим в ходе этой сессии - без каких-либо изменений на диске.</p>
+
+<blockquote><tt>java&nbsp;-jar&nbsp;logisim-filename.jar&nbsp;adder-test.circ&nbsp;-tty&nbsp;table&nbsp;-sub&nbsp;adder-master.circ&nbsp;adder-query.circ</tt></blockquote>
+
+<p>Вывод, который вы увидите, показан ниже; он конечно отличается от того, что мы видели в <a href="index.html">предыдущем разделе</a>, поскольку сейчас выполняется неправильный <tt>adder-query.circ</tt>.</p>
+
+<blockquote><pre>00      00      0E0
+01      00      0E1
+10      00      EE0
+11      00      EE1
+00      01      0E1
+01      01      0E0
+10      01      EE1
+11      01      EE0
+00      10      EE0
+01      10      EE1
+10      10      1E0
+11      10      1E1
+00      11      EE1
+01      11      EE0
+10      11      1E1
+11      11      1E0</pre></blockquote>
+
+<p><strong>Далее:</strong>&nbsp;<a href="other.html">Другие параметры проверки</a>.</p>
+
+</body>
+</html>

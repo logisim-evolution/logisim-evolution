@@ -1,0 +1,42 @@
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>Fehlersuche in Teilschaltungen</title>
+</head>
+
+<body bgcolor="FFFFFF">
+
+<h1>Fehlersuche in Teilschaltungen</h1>
+
+<p>As you test larger circuits, you will likely find bugs. To nail down
+what's going wrong, exploring what's going on in the subcircuits while
+running the overall circuit can help. You can view the state of the subcircuit
+in two ways: First, you can bring up the subcircuit's popup menu by
+right-clicking or control-clicking it, choosing the View option.</p>
+<center><img src="../../../../en/img-guide/subcirc-4-delve.png" width="393" height="285"></center>
+<p>Or if you have the Poke tool selected, you can click the circuit,
+and a magnifying glass will appear over its center;
+double-clicking where the magnifying glass appears will also enter
+the subcircuit's state.</p>
+<center><img src="../../../../en/img-guide/subcirc-2-delve.png" width="393" height="285"></center>
+<p>Notice that the pins' values in the subcircuit match the values
+being sent to them in its containing circuit.</p>
+
+<p>While in the subcircuit, you are allowed to alter the circuit. If the
+changes affect any of the subcircuit's outputs, they are propagated into the
+containing circuit. One exception: The subcircuit inputs are determined based on
+the values coming into the circuit from the supercircuit, so it doesn't make
+sense to toggle those values. If you attempt to poke a subcircuit's input,
+a dialog will pop up asking, <q>The pin is tied to the supercircuit state.
+Create a new circuit state?</q> Clicking No will cancel the toggle request,
+while clicking Yes will create a copy of the viewed state,
+divorced from the outer circuit, with the input pin toggled.</p>
+
+<p>Once you have completed viewing and/or editing, you can return to the parent circuit
+either by double-clicking the parent circuit in the explorer pane, or via the Go Out
+To State submenu of the Simulate menu.</p>
+
+<p><strong>Next:</strong> <a href="library.html">Logisim libraries</a>.</p>
+
+</body>
+</html>

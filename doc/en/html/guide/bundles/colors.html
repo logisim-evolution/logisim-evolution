@@ -1,0 +1,55 @@
+<html>
+<head>
+	<title>Wire colors</title>
+</head>
+<body bgcolor="FFFFFF">
+
+<h1>Wire colors</h1>
+
+<p>We are now in a position to summarize the full rainbow of
+colors that Logisim wires can take on. The following
+little circuit illustrates all of them at once.</p>
+<center><img src="../../../img-guide/bundles-colors.png" width="131" height="195"></center>
+
+<ul>
+
+<li><p><strong>Gray:</strong> The wire's bit width is unknown. This
+occurs because the wire is not attached to any components' inputs
+and outputs. (All inputs and outputs have a defined bit width.)</p></li>
+
+<li><p><strong>Blue:</strong> The wire carries a one-bit
+value, but nothing is driving a specific value onto the wire.
+We call this a <em>floating</em> bit; some people call it a
+<em>high-impedance</em> value.
+In this example, the component placing a value onto the wire is a three-state
+pin, so it can emit this floating value.</p>
+
+<li><p><strong>Dark green:</strong> The wire is carrying a one-bit 0
+value.</p></li>
+
+<li><p><strong>Bright green:</strong> The wire is carrying a one-bit 1
+value.</p></li>
+
+<li><p><strong>Black:</strong> The wire is carrying a multi-bit value.
+Some or all of the bits may not be specified.</p></li>
+
+<li><p><strong>Red:</strong> The wire is carrying an error value.
+This often arises because a gate cannot determine the proper output,
+perhaps because it has no inputs. It could also arise because two components
+are trying to send different values onto the wire;
+this is what happens in the above example,
+where one input pin places 0 onto the wire
+while another places 1 onto the same wire, causing a conflict.
+Multi-bit wires will turn red when any of the bits carried are error values.</p></li>
+
+<li><p><strong>Orange:</strong> The components attached to the wire do
+not agree in bit width. An orange wire is effectively "broken": It does
+not carry values between components. Here, we've attached a two-bit
+component to a one-bit component, so they are incompatible.</p></li>
+
+</ul>
+
+<p><strong>Next:</strong> <em><a href="../index.html">User's Guide</a></em>.</p>
+
+</body>
+</html>

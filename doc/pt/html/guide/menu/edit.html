@@ -1,0 +1,127 @@
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>O menu Editar</title>
+</head>
+<body bgcolor="FFFFFF">
+
+<h1>O menu Editar</h1>
+
+<dl>
+
+<dt> <strong> Desfazer <em> XX </em> </strong> </dt>
+<dd> <p> Desfazer a ação executada mais recentemente que afetará a forma como o
+circuito será salvo em arquivo. Notar que isso não incluirá mudanças no estado
+do circuito (como acontece com as manipulações executadas pela ferramenta Testar (Poke).
+</p> </dd>
+
+<dt> <strong> Recortar </strong> </dt>
+<dd> <p> Remover os componentes atualmente selecionados a partir do circuito para a
+área de transferência do Logisim.
+</p>
+
+<strong> Nota: </strong> A área da transferência do Logisim é mantida em separado
+da área que serve o sistema global; como resultado, recortar, copiar e
+colar não irão funcionar em diferentes aplicações, incluindo até mesmo outras
+que estejam executando cópias do Logisim. Se, no entanto, você tiver outros
+projetos abertos no âmbito do mesmo processo Logisim, então você será
+capaz de copiar, recortar e colar entre eles.
+</p> </dd>
+
+<dt> <strong> Copiar </strong> </dt>
+<dd> <p> Copiar os componentes selecionados atualmente no circuito para
+área de transferência do Logisim. 
+<br>(Ver nota do menu Recortar acima.)
+</p> </dd>
+
+<dt> <strong> Colar </strong> </dt>
+<dd> <p> Colar os componentes da área de transferência do Logisim segundo
+a seleção atual.
+<br>(Ver nota no item do menu Recortar).
+</p>
+
+<p> Quando você colar os componentes, isso não será imediatamente realizado,
+em vez disso, eles serão desenhados em cinza claro. Eles, na verdade,
+não serão "efetivados" no circuito até que você mova a seleção, ou
+a altere para que os componentes não estejam mais nela.
+</p>
+
+<p> A razão para esse comportamento estranho é o seguinte: para ser coerente com
+seu próprio comportamento, o Logisim deverá imediatamente mesclar quaisquer conexões
+tão logo sejam inseridas em um circuito; isso mudaria processo de fusão das
+conexões já existentes. Quando você colar as conexões transferidas, no entanto,
+você poderá colocá-las em um local diferente, e evitar a mudança inerente ao processo 
+de fusão que for contra a sua vontade.
+</p> </dd>
+
+<dt> <strong> Excluir </strong> </dt>
+<dd> <p> Remover todos os componentes da seleção atual do circuito, 
+sem modificar a área de transferência. 
+</p> </dd>
+
+<dt> <strong> Duplicar </strong> </dt>
+<dd> <p> Criar uma cópia de todos os componentes na seleção atual. Isso é como
+selecionar, copiar e colar, exceto que a duplicação não irá modificar ou usar
+a área de transferência. 
+</p> </dd>
+
+<dt> <strong> Selecionar tudo </strong> </dt>
+<dd> <p> Selecionar todos os componentes do circuito. 
+</p> </dd>
+
+<dt> <strong> Elevar a seleção </strong> </dt>
+<p> <dd> Disponível somente durante a edição como deve ser a aparência de um circuito,
+esse item de menu elevará o(s) objeto(s) selecionado(s) a ser(em) desenhado(s)
+sobre outro quando houver sobreposições. Se o objeto selecionado for sobreposto por
+outros, ele será elevado apenas sobre o que estiver mais por baixo;
+selecionar o item de menu repetidamente até ficar na ordem que desejar.
+</p>
+
+<p> (Determinar se dois objetos arbitrários se sobrepõem é difícil. O Logisim usa
+um algoritmo de seleção de vários pontos aleatórios em cada um dos dois objetos,
+e verifica se algum ponto pertence também ao outro objeto. Às vezes, ele poderá
+deixar de detectar alguma sobreposição se essa for pequena - digamos, menos de 5% de
+um dos objetos.)
+</p> </dd>
+
+<dt> <strong> Baixar a seleção </strong> </dt>
+<p> <dd> Disponível apenas ao editar a aparência de um circuito, esse item de menu
+baixará o(s) objeto(s) selecionado(s) a ser(em) desenhado(s) sob outro, quando houver
+sobreposições. Se houver várias sobreposições, ela só abaixará em relação ao mais
+elevado; selecionar o item de menu várias vezes até ficar na ordem que desejar.
+</p> </dd>
+
+<dt> <strong> Elevar ao topo </strong> </dt>
+<p> <dd> Disponível apenas ao editar a aparência de um circuito, esse item de menu
+elevará o(s) objeto(s) selecionado(s) a ser(em) desenhados acima de todos os outros
+(A âncora e as portas são exceções. - Elas estarão sempre no topo.)
+</p> </dd>
+
+<dt> <strong> Baixar ao fundo </strong> </dt>
+<p> <dd> Disponível apenas ao editar a aparência de um circuito, esse item de menu
+abaixará o(s) objeto(s) selecionado(s) para que todos os outros objetos sejam desenhados
+por cima dele(s).
+</p> </dd>
+
+<dt> <strong> Adicionar vértice </strong> </dt>
+<p> <dd> Disponível apenas na edição aparência de um circuito, e um ponto tenha sido
+selecionado em uma linha, poligonal ou polígono, esse item de menu inserirá um novo
+vértice para a forma. Anterior à inserção, o ponto selecionado será desenhado como um
+losango.
+</p> </dd>
+
+<dt> <strong> Remover vértice </strong> </dt>
+<p> <dd> Disponível apenas na edição aparência de um circuito, e um vértice já 
+existente tenha sido selecionado em uma poligonal ou polígono, esse item de menu 
+removerá o vértice selecionado. Anterior à exclusão, o vértice selecionado será 
+desenhado como um losango dentro do quadrado que o representar. O Logisim não 
+permitirá remoção de um vértice de um polígono com apenas três vértices, ou em 
+uma poligonal com apenas dois vértices.
+</p> </dd>
+
+</dl>
+
+<p><strong>Próximo:</strong> <a href="project.html">O menu Projeto</a>.</p>
+
+</body>
+</html>

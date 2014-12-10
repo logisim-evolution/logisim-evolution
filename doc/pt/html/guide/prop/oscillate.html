@@ -1,0 +1,56 @@
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>Erros de oscilação</title>
+</head>
+
+<body bgcolor="FFFFFF">
+
+<h1>Erros de oscilação</h1>
+
+<p> O algoritmo de propagação, que normalmente trabalha silenciosamente, sem qualquer
+problemas, vai se tornar mair visível quando você criar um circuito que oscile. 
+</p>
+
+<center><img src="../../../../en/img-guide/prop-oscillate-before.png" width="335" height="223"></center>
+
+<p> Esse circuito está em condição estável. Mas se você mudar a entrada para 1,
+o circuito irá efetivamente entrar em um <i>loop</i> infinito. 
+Depois um tempo, o Logisim simplesmente desistirá e mostrará a mensagem 
+"oscilação aparente" dizendo que ele acredita que o circuito esteja oscilando. 
+</p>
+
+<center><img src="../../../../en/img-guide/prop-oscillate-error.png" width="335" height="223"></center>
+
+<p> Ele irá exibir os valores que tiver no momento em que desistir. Esses valores
+parecerão errados - nessa tela, a porta AND estará emitindo 1
+apesar de uma de suas entradas serem 0, mas poderia ser porque a porta NOT
+tem uma entrada em 1 e uma saída em um 1.
+</p>
+
+<p> O Logisim prestativamente exibirá círculos em vermelho em cada local que
+possa estar envolvido na oscilação. Se um ponto envolvido estiver em um
+subcircuito, o Logisim irá colocar todo o contorno do subcircuito em vermelho.
+</p>
+
+<p> Quando Logisim detectar oscilação, ele desligará todas as simulações.
+Você poderá reativar a simulação usando o menu Simulação e a opção Simulação Ativada.
+</p>
+
+<p> O Logisim detecta oscilações usando uma técnica bastante simples: se a
+simulação dos circuitos aparecer em muitas iterações, então ele irá simplesmente
+desistir e reportará oscilação. (Os pontos que identificar como envolvidos serão
+aqueles que forem afetados nos últimos 25% do total das iterações.)
+Assim, ele poderia erroneamente relatar oscilação, especialmente se você estiver
+trabalhando com um circuito excepcionalmente grande, mas isso seria um bem maior 
+do que qualquer outro que eu já tenha construído com o Logisim.
+Em qualquer caso, se você estiver confiante de que a mensagem seja um erro, você
+poderá configurar o número de iterações concluídas antes da oscilação ocorra através
+da janela <a href="../opts/index.html"> Opções de projeto </a> em
+<a href="../opts/simulate.html"> Guia da simulação</a>.
+</p>
+
+<p><strong>Próximo:</strong> <a href="shortcome.html">Deficiências</a>.</p>
+
+</body>
+</html>

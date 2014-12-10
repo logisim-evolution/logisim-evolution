@@ -1,0 +1,69 @@
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>Testar múltiplos arquivos</title>
+</head>
+
+<body bgcolor="FFFFFF">
+
+<h1>Testar múltiplos arquivos</h1>
+
+<p> Em um exemplo de sala de aula, você poderá ter vários arquivos que deseje testar
+a equivalência, e você pode não querer ler as saídas para cada uma das soluções do aluno.
+</p>
+
+<h2> Construir comparações de circuito </h2>
+
+<p> Uma abordagem é a construir um circuito para testes que fará a comparação direta.
+Criaremos um circuito adicional no arquivo para testes que conterá
+nosso circuito com a solução. Nosso circuito de teste global, incluirá o
+subcircuito <tt> adder-master.circ </tt> e o subcircuio com solução
+acoplados em um mesmo circuito. Conexões serão feitas para que haja
+apenas uma saída, que será 1, quando os dois subcircuitos concordarem. 
+</p>
+
+<blockquote><img src="../../../../en/img-guide/verify-adder-test2.png" width="274" height="92"></blockquote>
+
+<p> Agora podemos simplesmente executar o Logisim substituindo cada arquivo de consulta. 
+Para qualquer solução correta, haverá uma única saída igual a <q> 1 </q>. 
+</p>
+
+<h2> Usar redirecionamento e "shell scripts" </h2>
+
+<p> Se você estiver completamente confortável com a linha de comando,
+você poderá construir seu próprio <i>shell script</i> para fazer isso.
+Aqui, vamos usar o redirecionamento (o operador>) para salvar a saída de cada
+circuito em um arquivo.
+Por exemplo, poderíamos emitir os seguintes comandos para coletar a saída
+do circuito principal e do circuito de consulta.
+
+<blockquote><tt>java&nbsp;-jar&nbsp;logisim-filename.jar&nbsp;adder-test.circ&nbsp;-tty&nbsp;table&nbsp;&gt;&nbsp;output-master.txt
+<br>java&nbsp;-jar&nbsp;logisim-filename.jar&nbsp;adder-test.circ&nbsp;-tty&nbsp;table&nbsp;-sub&nbsp;adder-master.circ&nbsp;adder-query.circ&nbsp;&gt;&nbsp;output-query.txt</tt></blockquote>
+
+<p> Agora teremos criado dois arquivos diferentes.
+Poderemos então comparar os dois arquivos de saída usando um programa construído para esse fim.
+Em Linux ou MacOS X, você poderá usar o <em> cmp </em> ou  <em> diff </em>
+utilitários de linha de comando. No Windows, você poderá usar o WinMerge. 
+</p>
+
+<p> Para processar vários arquivos de consulta, você poderá construir um programa simples
+como um <i> script shell</i> para percorrer cada um e comparar o resultado.
+Aqui está como eu faria isso no Linux com <em> bash </em>
+</p>
+
+<blockquote><tt>RUN_TEST="java&nbsp;-jar&nbsp;logisim-filename.jar&nbsp;adder-test.circ&nbsp;-tty&nbsp;table"<br>
+${RUN_TEST}&nbsp;&gt;&nbsp;output-master.txt<br>
+for&nbsp;QUERY_FILE&nbsp;in&nbsp;adder-query*.circ<br>
+do<br>
+&nbsp;&nbsp;if&nbsp;${RUN_TEST}&nbsp;-sub&nbsp;adder-master.circ&nbsp;${QUERY_FILE}&nbsp;|&nbsp;cmp&nbsp;-s&nbsp;output-master.txt<br>
+&nbsp;&nbsp;then<br>
+&nbsp;&nbsp;&nbsp;&nbsp;echo&nbsp;"${QUERY_FILE}&nbsp;OK"<br>
+&nbsp;&nbsp;else<br>
+&nbsp;&nbsp;&nbsp;&nbsp;echo&nbsp;"${QUERY_FILE}&nbsp;different"<br>
+&nbsp;&nbsp;fi<br>
+done</tt></blockquote>
+
+<p><strong>Próximo:</strong> <em><a href="../index.html"><em>Guia do usuário</em></a></em>.</p>
+
+</body>
+</html>

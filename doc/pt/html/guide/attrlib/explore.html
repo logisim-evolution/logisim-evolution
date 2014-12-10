@@ -1,0 +1,106 @@
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>O painel Explorador (Explorer)</title>
+</head>
+<body bgcolor="FFFFFF">
+
+<h1>O painel Explorador (Explorer)</h1>
+
+<p> O Logisim organiza ferramentas em <strong>bibliotecas</strong>. Elas são
+exibidas como pastas no painel Explorador. Para acessar os componentes de uma
+biblioteca, você só terá que dar um duplo clique na pasta correspondente. Abaixo, 
+a biblioteca Portas (Gates) foi aberta e selecionada a ferramenta NAND. Você 
+poderá ver que o Logisim agora estará pronto para adicionar portas NAND ao
+circuito. 
+</p>
+
+<center><img src="../../../../en/img-guide/attrlib-nand-select.png" width="505" height="355"></center>
+<h5>(Figura do original em inglês)</h5></center>
+
+<p> Se você consultar as opções na biblioteca Gates, você notará que
+não há necessidade em desenvolver um circuito XOR: ele já existe no Logisim. 
+</p>
+
+<p> Quando você criar um projeto, ele automaticamente incluirá várias bibliotecas:
+</p>
+
+<ul>
+
+<li> Conexão (Wiring): Componentes que interagem diretamente com os fios.</li>
+
+<li> Portas (Gates): Componentes que executam funções lógicas simples. </li>
+
+<li> Plexers: Combinações mais complexas de componentes, como
+multiplexadores e decodificadores. </li>
+
+<li> Aritmética: componentes que executam operações aritméticas. </li>
+
+<li> Memória: Componentes que guardam dados, como flip-flops, registradores e
+RAM. </li>
+
+<li> Entrada/Saída: Componentes que têm a finalidade de interagir com o usuário. </li>
+
+<li> Base: As ferramentas que são essenciais para se usar o Logisim
+embora seja muito provável que você não irá trabalhar com ela frequentemente. </li>
+
+</ul>
+
+<p> O Logisim permite adicionar mais bibliotecas, usando o submenu 
+Carregar Biblioteca (Load Library) do menu Projeto. Você poderá ver que o 
+Logisim tem três categorias de bibliotecas:
+</p>
+
+<ul>
+
+<li> <strong> Bibliotecas predefinidas </strong> são aquelas distribuídas 
+com Logisim. Elas estão documentadas em
+<em> <a href="../../libs/index.html"> Referências para Bibliotecas. </a> </em>
+</p>
+
+<li> <strong> Bibliotecas do Logisim </strong> são projetos construídos
+dentro Logisim e salvos em disco. Você poderá desenvolver um
+conjunto de circuitos como um único projeto (como descrito em
+<a href="../subcirc/index.html"> subcircuitos </a> deste guia)
+e usá-lo como uma biblioteca para outros projetos.
+</p>
+
+<li> <strong> Bibliotecas JAR </strong> são bibliotecas desenvolvidas
+em Java, mas não distribuídas com o Logisim. Você poderá baixar as
+bibliotecas JAR feitas por outros, ou poderá até mesmo escrever a sua 
+própria como descrito na seção <a href="../jar/index.html"> Bibliotecas JAR </a>
+deste guia. Desenvolver uma biblioteca JAR é muito mais difícil do que
+desenvolvimento de uma biblioteca Logisim, mas os componentes poderão ser 
+muito interessantes, incluir coisas como atributos e interação com o usuário.
+As bibliotecas predefinidas (exceto Base) foram escritas usando a mesma
+API que as bibliotecas JAR podem usar, e demonstram apropriadamente
+a gama de funcionalidades que as bibliotecas JAR poderão oferecer.
+</p>
+
+<p> Algumas bibliotecas JAR são distribuídas sem qualquer informação sobre
+qual a classe Java deverão iniciar. Ao carregar tal tipo, o Logisim
+solicitará que você digite um nome da classe. Esse nome de classe deverá 
+ser previsto por quem distribuir o arquivo JAR.
+</p>
+
+</ul>
+
+<p> Para remover uma biblioteca, escolha Descarregar Biblioteca ... no menu
+Projeto. O Logisim irá impedi-lo de descarregar bibliotecas que contenham
+componentes utilizados em um circuito, que apareçam na barra de ferramentas, 
+ou que estejam mapeados para um botão do mouse. 
+</p>
+
+<p> Aliás, uma biblioteca tecnicamente contém ferramentas, não componentes. 
+Assim, na biblioteca Base poderão ser encontrados a ferramenta Testar (Poke)
+(<img src="../../../../en/icons/poke.gif" width="16" height="16">), a ferramenta Editar
+(<img src="../../../../en/icons/select.gif" width="16" height="16">), e outras ferramentas 
+que não correspondam diretamente a componentes individuais. A maioria das
+bibliotecas, no entanto, contém apenas ferramentas para adicionar componentes 
+individuais, todas as outras bibliotecas são assim, exceto a Base. 
+</p>
+
+<p><strong>Próximo:</strong> <a href="attr.html">A tabela de atributos</a>.</p>
+
+</body>
+</html>

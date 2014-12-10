@@ -11,15 +11,16 @@ The project is currently maintained by the [REDS Institute](http://reds.heig-vd.
 We have decided to release this new Logisim version under the name logisim-evolution, to highlight the large number of changes that occurred in these years, and **we actively seek the contribution of the community**.
 
 ## What's new in logisim-evolution
-* Chronogram -- to see the evolution of signals in your circuit
-* Electronic board integration -- schematics can now be simulated on real hardware!
-* Board editor -- to add new electronic boards
+* chronogram -- to see the evolution of signals in your circuit
+* electronic board integration -- schematics can now be simulated on real hardware!
+* board editor -- to add new electronic boards
 * VHDL component -- a new component type whose behavior is specified in VHDL
 * TCL/TK console -- interfaces between the circuit and the user
 * DIP switches
 * RGB LEDs
 * large number of bug-fixes
 * GUI improvements
+* automatic updates
 * code refactoring
 * ...
 
@@ -32,6 +33,19 @@ This also creates locally a .jar file, that you can distribute and use on other 
 ```bash
 java -jar logisim-evolution.jar
 ```
+
+## Editing logisim-evolution in Eclipse
+To import directly logisim-evolution in Eclipse, you can use Eclipse's import wizard:
+
+*Import -> git project -> [put the connection details] -> New project -> Java project from Ant*
+
+You will, however, encounter a problem when you will try to execute the code. In particular, an exception *ExceptionInInitializerError* will be thrown. To solve this, execute the *eclipse_fix.sh* script in the program's directory, or go in the *bin/* subdirectory and create links to the following directories available in the program's directory
+* *boards_model*
+* *javax*
+* *libs*
+* *resources*
+* *doc*
+
 ## How to get support for logisim-evolution
 Unfortunately, we do not have enough resources to provide direct support for logisim-evolution.
 We will, however, try to deal with the raised issues in a *best-effort* way.
@@ -44,3 +58,4 @@ The code is licensed under the GNU GENERAL PUBLIC LICENSE, version 3.
 ## Other Logisim forks available on the net
 * Logisim by Joseph Lawrance et al. [(link)](https://github.com/lawrancej/logisim) - they have started from Burch's original code and integrated it in several open-source development frameworks, cleaning up the code. We have taken a few code cleanups and the redo functionality from their code.
 * logisim-iitd [(link)](https://code.google.com/p/logisim-iitd) - IIT Delhi version of Logisim, it integrates the Floating-Point Components within the Arithmetic Unit.
+

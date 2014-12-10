@@ -1,0 +1,86 @@
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>O menu Simular (Simulate)</title>
+</head>
+<body bgcolor="FFFFFF">
+
+<h1>O menu Simular (Simulate)</h1>
+
+<dl>
+
+<dt> <strong> Simulação ativada </strong> </dt>
+<p> <dd> Se marcada, os circuitos serão vistos "ao vivo". Isso é, os
+valores de propagação através do circuito serão atualizado a cada
+teste ou alteração no circuito.
+</p>
+
+<p> A opção será automaticamente desmarcada se
+<a href="../prop/oscillate.html"> oscilação no circuito </a> for
+detectada. 
+</p> </dd>
+
+<dt> <strong> Reiniciar simulação (Reset Simulation) </strong> </dt>
+<dd> <p> Limpar tudo sobre o estado atual do circuito, de modo que
+será como se você tivesse acabado de abrir o arquivo novamente. Se você estiver vendo
+o estado de um subcircuito, a hierarquia inteira será eliminada. 
+</p> </dd>
+
+<dt> <strong> Simulação passo-a-passo (Step Simulation) </strong> </dt>
+<dd> <p> Avançar a simulação um passo à frente. Por exemplo, um sinal pode acabar
+entrando em uma porta durante uma etapa, mas a porta não irá mostrar um sinal diferente
+até o próximo passo da simulação. Para ajudar a identificar quais pontos mudaram no
+circuito em geral, todos os pontos cujos valores forem modificados serão
+indicados por um círculo azul; se um subcircuito contiver todos os seus pontos
+alterados (ou em seus subcircuitos, recursivamente), então ele será desenhado
+com um contorno azul.
+</p> </dd>
+
+<dt> <strong> Ir para estado (Go Out To State) </strong> </dt>
+<dd> <p> Quando você <a href="../subcirc/debug.html"> desviar para um estado de um
+subcircuito </a>, através do menu <i>pop-up</i>, a opção <q> Ir para estado </q>
+listará os circuitos acima daquele em foco. Se selecionar um deles,
+o circuito correspondente será mostrado.
+</p> </dd>
+
+<dt> <strong> Seguir a partir do Estado (Go In To State) </strong> </dt>
+<dd> <p> Se você já entrou em um estado de subcircuito e depois desviou-se
+para fora, esse submenu listará os subcircuitos subjacentes aos atuais.
+Se selecionar um deles, o circuito correspondente será mostrado.
+</p> </dd>
+
+<dt> <strong> Pulso unitário (Tick Once) </strong> </dt>
+<dd> <p> Executar um passo na simulação. Isso pode ser útil
+quando você acionar o <i>clock</i> manualmente, em especial quando ele estiver
+em circuito diferente daquele que estiver sendo visto.
+</p> </dd>
+
+<dt> <strong> Pulsos ativados (Ticks Enabled) </strong> </dt>
+<dd> <p> Iniciar automaticamente alternâncias do <i>clock</i>. Isso terá efeito 
+somente se o circuito contiver dispositivos do tipo <i>clock</i> (na biblioteca Base).
+A opção é desabilitada por padrão.
+</p> </dd>
+
+<dt><strong> Frequência de pulso (Tick Frequency) </strong></dt>
+<dd> <p> Selecionar com que frequência ocorreráo as alternâncias do <i>clock</i>.
+Por exemplo, 8 Hz significa que as variações ocorrerão oito vezes por segundo.
+Um pulso (<i>tick</i>) é a unidade básica de medida para a velocidade do <i>clock</i>.
+</p>
+
+<p> Notar que a velocidade do <i>clock</i> será menor do que a dos ciclos:
+a variação mais rápida do <i>clock</i> deverá passar por um ciclo em nível alto
+e outro em nível baixo; esse <i>clock</i> teria um período de 4 Hz enquanto a
+alternância de ciclos ocorrer ocorrem em 8 Hz. </p> </dd>
+
+<dt> <strong> Registro ... </strong> </dt
+<dd> <p> Entrar no <a href="../log/index.html"> módulo Registro</a>, o que
+facilitará o anotar e guardar valores automaticamente em um circuito a medida
+em que a simulação avançar.
+</p> </dd>
+
+</dl>
+
+<p><strong>Próximo:</strong> <a href="winhelp.html">Menus Janela e Ajuda</a>.</p>
+
+</body>
+</html>

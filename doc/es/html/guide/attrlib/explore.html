@@ -1,0 +1,93 @@
+<html>
+<head>
+	<title>The explorer pane</title>
+</head>
+<body bgcolor="FFFFFF">
+
+<h1>The explorer pane</h1>
+
+<p>Logisim organizes tools into <strong>libraries</strong>. They are displayed
+as folders in the explorer pane; to access a library's components, you have only
+to double-click the corresponding folder.
+Below, I have opened the Gates library and selected the NAND tool from
+it. You can see that Logisim now stands ready to add NAND gates into the
+circuit.</p>
+<center><img src="../../../../en/img-guide/attrlib-nand-select.png" width="505" height="355"></center>
+<p>If you look through the choices in the Gates library, you'll notice that
+there was no need for us to develop a XOR circuit earlier: It's built
+into Logisim.</p>
+
+<p>When you create a project, it automatically includes several libraries:</p>
+<ul>
+
+<li>Wiring: Components that interact directly with wires.</li>
+
+<li>Gates: Components that perform simple logic functions.</li>
+
+<li>Plexers: More complex combinational components, like multiplexers and
+decoders.</li>
+
+<li>Arithmetic: Components that perform arithmetic.</li>
+
+<li>Memory: Components that remember data, like flip-flops, registers, and
+RAM.</li>
+
+<li>I/O: Components that exist for the purpose of interacting with the
+user.</li>
+
+<li>Base: Tools that are integral to using Logisim, though you probably won't
+need to dig into this library very often.</li>
+
+</ul>
+
+<p>Logisim allows you to add more libraries, too, using the Load Library submenu
+of the Project menu.
+You can see that Logisim has three categories of libraries.</p>
+<ul>
+
+<li><strong>Built-in libraries</strong> are libraries that are
+distributed with Logisim. These are documented in the
+<em><a href="../../libs/index.html">Library Reference</a></em>.</p>
+
+<li><strong>Logisim libraries</strong> are projects built
+within Logisim and saved to the disk as a Logisim project. You can develop a
+set of circuits in a single project (as described in the
+<a href="../subcirc/index.html">Subcircuits</a> section of this guide)
+and then use that set of circuits as a library for other projects.</p>
+
+<li><strong>JAR libraries</strong> are libraries that are developed
+in Java but not distributed with Logisim.  You can download JAR
+libraries that others have written, or you can write your own as
+described in the <a href="../jar/index.html">JAR Libraries</a> section
+of this guide.  Developing a JAR library is much more difficult than
+developing a Logisim library, but the components can be much fancier,
+including things like attributes and interaction with the user.
+The built-in libraries (other than Base) were written using the same
+API as JAR libraries can use, so they aptly demonstrate the range of
+functionality that the JAR libraries can support.</p>
+
+<p>Some JAR libraries are distributed without any information about
+which Java class to start with. When loading such a JAR, Logisim
+will prompt you to type a class name. This class name should be provided
+by whoever distributed the JAR file to you.</p>
+
+</ul>
+
+<p>To remove a library, choose Unload Library... from the Project
+menu. Logisim will prevent you from unloading libraries that contain
+components used in a circuit, that appear in the toolbar, or that
+are mapped to a mouse button.</p>
+
+<p>Incidentally, a library technically contains tools, not
+components. Thus, in the Base library you'll find the Poke Tool
+(<img src="../../../../en/icons/poke.gif" width="16" height="16">), the Edit Tool
+(<img src="../../../../en/icons/select.gif" width="16" height="16">), and other tools that don't
+correspond directly to individual components.
+Most libraries, though, contain only tools for adding individual
+components; all built-in libraries other than the Base library
+are like this.</p>
+
+<p><strong>Next:</strong> <a href="attr.html">The attribute table</a>.</p>
+
+</body>
+</html>

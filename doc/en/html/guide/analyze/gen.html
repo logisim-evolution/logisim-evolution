@@ -1,0 +1,45 @@
+<html>
+<head>
+	<title>Generating a circuit</title>
+</head>
+<body bgcolor="FFFFFF">
+
+<h1>Generating a circuit</h1>
+
+<p>The Build Circuit button will construct a circuit whose gates
+correspond to the currently chosen expressions for each output. The
+circuit's inputs and outputs will be displayed in top-down order
+corresponding to how they appear under the Inputs and Outputs
+tabs. Generally speaking, the constructed circuit will be attractive;
+and, indeed, one application of Logisim's Combinational Analysis
+module is to beautify poorly drawn circuits. Still, as with any
+automatic formatting, it will not express the structural details that
+a human-drawn circuit would.</p>
+
+<center><img src="../../../img-guide/analyze-circuit.png" width="315" height="398"></center>
+
+<p>When you click the Build Circuit button, a dialog box will appear
+prompting you to choose which project where you want the circuit and
+the name you wish to give it.</p>
+
+<center><img src="../../../img-guide/analyze-build.png" width="321" height="168"></center>
+
+<p>If you type the name of an existing
+circuit, then that circuit will be replaced (after Logisim prompts
+you to confirm that you really want to do this).</p>
+
+<p>The Build Circuit dialog includes two options. The Use Two-Input
+Gates Only option specifies that you want all gates constructed to have
+two inputs.  (NOT gates, of course, constitute an exception to this
+rule.)  The Use NAND Gates Only option specifies that you would like
+it to translate the circuit into one using only NAND gates. You can
+select both options if you want to use only two-input NAND gates.</p>
+
+<p>Logisim cannot construct a NAND-only circuit for an expression
+containing any XOR operators. This option will therefore be disabled
+if any outputs' expressions contain XORs.</p>
+
+<p><strong>Next:</strong> <em><a href="../index.html">User's Guide</a></em>.</p>
+
+</body>
+</html>

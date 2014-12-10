@@ -1,0 +1,63 @@
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>Atrasos em porta (Gate delays)</title>
+</head>
+
+<body bgcolor="FFFFFF">
+
+<h1>Atrasos em porta (Gate delays)</h1>
+
+<p> Como um exemplo do nível de sofisticação do algoritmo do Logisim,
+considere o circuito a seguir. 
+</p>
+
+<center><img src="../../../../en/img-guide/prop-const0.png" width="171" height="55"></center>
+
+<p> "Obviamente" sempre terá saídas em 0. Mas, na verdade, as portas não
+reagem instantaneamente às suas entradas, e nem tampouco o Logisim.
+Como resultado, quando as entradas nesse circuito variam de 0 para 1, a
+porta AND brevemente verá duas entradas iguais a 1, e irá emitir um breve 1.
+Você não vai vê-lo na tela. Mas esse efeito é perceptível quando se
+utilizar a saída da porta AND como entrada de <i>clock</i> de um <i>flip-flop</i> 
+tipo D. 
+</p>
+
+<center><img src="../../../../en/img-guide/prop-using-const0.png" width="231" height="68"></center>
+
+<p> Se testar a entrada, variando de 0 para 1, isso levará a um valor instantâneo
+igual a 1 que irá para o <i>flip-flop</i> tipo D e, portanto, 
+o valor do <i>flip-flop</i> irá alternar cada vez que o circuito de entrada 
+for de 0 para 1.
+</p>
+
+<p> Cada componente tem um atraso associado a ele. Componentes mais sofisticados
+construídos em Logisim tendem a ter atrasos maiores, mas esses atrasos são um tanto
+arbitrários e podem não refletir a realidade.
+</p>
+
+<p> Do ponto de vista técnico, é relativamente fácil lidar com
+esse nível de sofisticação em um único circuito. Lidar com atrasos de porta
+em subcircuitos, porém, é um pouco mais complexo; o Logisim tem a pretensão de
+abordar isso corretamente, colocando todos os valores primitivos de propagação
+do componente em uma programação única, independentemente do subcircuito em que o 
+componente se encontrar. 
+</p>
+
+<p> (Via a opção <a href="../opts/index.html"> Opções de projeto </a> na janela
+<a guia href="../opts/simulate.html"> Simulação</a>, você poderá configurar o Logisim
+para adicionar um atraso aleatório, ocasional, para a propagação de um componente.
+Isso tem o objetivo de simular a desigualdade de circuitos reais. Em particular, um 
+<i>latch</i> SR construído com duas portas NOR irá oscilar sem essa aleatoriedade, 
+já que ambas as portas irão processar suas entradas em sincronia. Essa aleatoriedade é
+desabilitada por padrão.)
+</p>
+
+<p> Notar que pararei de dizer o Logisim sempre tratará bem atrasos de porta.
+Mas pelo menos ele tentará.
+</p>
+
+<p><strong>Próximo:</strong> <a href="oscillate.html">Erros de oscilação</a>.</p>
+
+</body>
+</html>

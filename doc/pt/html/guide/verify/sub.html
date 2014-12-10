@@ -1,0 +1,84 @@
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>Substituir bibliotecas</title>
+</head>
+
+<body bgcolor="FFFFFF">
+
+<h1>Substituir bibliotecas</h1>
+
+<p> Agora suponha que tenhamos dois circuitos do Logisim que deveriam fazer a mesma coisa.
+Como instrutor, você poderia ter pedido aos seus alunos concluírem uma tarefa.
+Você tem um arquivo que contém sua solução, mas também vários arquivos de alunos
+contendo seus trabalhos. Talvez a tarefa tenha sido construir um somador de dois bits. 
+</p>
+
+<p> Imaginarei dois arquivos, chamados <tt> adder-master.circ </tt>
+e <tt> adder-query.circ</tt>. Cada arquivo conterá um circuito chamado
+<q> 2-bit adder </q> (é importante que o circuito para teste seja chamado
+exatamente igual), cuja aparência poderá ser a seguinte.
+</p>
+
+<blockquote><table><tbody>
+<tr><td><tt>adder-master.circ</tt></td>
+    <td><tt>adder-query.circ</tt></td></tr>
+<tr><td><img src="../../../../en/img-guide/verify-adder-master.png" width="184" height="63"></td>
+    <td><img src="../../../../en/img-guide/verify-adder-query.png" width="171" height="112"></td></tr>
+</tbody></table></blockquote>
+
+<p> Como você poderá ver, o circuito principal usará o somador predefinido no Logisim,
+enquanto o circuito para teste usará dois subcircuitos representando uma meia-soma e
+uma soma-completa (os quais serão constituídos apenas por portas simples).
+Para os fins do nosso exemplo, o circuito para teste terá um erro estúpido:
+O <i>carry</i> da meia-soma não estará conectado à soma completa.
+</p>
+
+<p> Nós construíremos o nosso circuito de teste em um arquivo diferente.
+Lá, carregaremos <tt> adder-master.circ </tt> como uma biblioteca do Logisim
+(Projeto > Carregar Biblioteca > Biblioteca do Logisim ...), e inserir seu
+somador de 2 bits como um subcircuito. Nós poderíamos executar esse circuito 
+diretamente para obter a saída desejada para uma solução perfeita. 
+</p>
+
+<blockquote><tt>java&nbsp;-jar&nbsp;logisim-filename.jar&nbsp;adder-test.circ&nbsp;-tty&nbsp;table</tt></blockquote>
+
+<p> Mas queremos executar o circuito usando <tt> adder-query.circ </tt>
+ao invés de <tt> adder-master.circ </tt> como o da biblioteca carregada.
+A abordagem ingênua seria abrir Logisim e carregar essa biblioteca de uma vez;
+ou você poderá simplesmente remover o <tt> adder-master.circ </tt> e renomear
+<tt> adder-query.circ </tt> para ser chamado de <tt> adder-master.circ </tt> em vez disso.
+Mas Logisim inclui uma prática opção <q> <tt> sub </tt> </q> que substituirá 
+temporariamente um arquivo por outro durante a sessão - sem fazer quaisquer 
+alterações em disco.
+</p>
+<blockquote><tt>java&nbsp;-jar&nbsp;logisim-filename.jar&nbsp;adder-test.circ&nbsp;-tty&nbsp;table&nbsp;-sub&nbsp;adder-master.circ&nbsp;adder-query.circ</tt></blockquote>
+<p> A saída que você iria ver a partir disso é mostrada abaixo, naturalmente é diferente
+daquela vista na <a href="index.html"> seção anterior</a> já que agora será a
+execução usando o <tt> adder-query.circ </tt> errado. 
+</p>
+
+<blockquote>
+<pre>
+00      00      0E0
+01      00      0E1
+10      00      EE0
+11      00      EE1
+00      01      0E1
+01      01      0E0
+10      01      EE1
+11      01      EE0
+00      10      EE0
+01      10      EE1
+10      10      1E0
+11      10      1E1
+00      11      EE1
+01      11      EE0
+10      11      1E1
+11      11      1E0
+</pre></blockquote>
+
+<p><strong>Próximo:</strong>&nbsp;<a href="other.html">Outras opções para verificações</a>.</p>
+
+</body>
+</html>

@@ -1,0 +1,185 @@
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>Счётчик кода Грея</title>
+</head>
+<body bgcolor="FFFFFF">
+
+<h1>Счётчик кода Грея</h1>
+
+<p>Этот курс по библиотекам Logisim завершается довольно сложным счётчиком кода Грея, который позволяет пользователю менять его текущее значение, используя Инструмент Нажатие и размещать на компоненте метку, используя Инструмент Текст. Он также настраивает значок в проводнике, связанный с этим инструментом.</p>
+
+<h2>GrayCounter</h2>
+
+<pre>
+package com.cburch.gray;
+
+import java.net.URL;
+
+import javax.swing.ImageIcon;
+
+import com.cburch.logisim.data.Attribute;
+import com.cburch.logisim.data.BitWidth;
+import com.cburch.logisim.data.Bounds;
+import com.cburch.logisim.data.Direction;
+import com.cburch.logisim.instance.Instance;
+import com.cburch.logisim.instance.InstanceFactory;
+import com.cburch.logisim.instance.InstancePainter;
+import com.cburch.logisim.instance.InstanceState;
+import com.cburch.logisim.instance.Port;
+import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.util.GraphicsUtil;
+import com.cburch.logisim.util.StringUtil;
+
+/** Создаёт счётчик, который пробегает по очереди коды Грея. Он демонстрирует
+ * некоторые дополнительные возможности по сравнению с классом SimpleGrayCounter. */
+class GrayCounter extends InstanceFactory {
+    public GrayCounter() {
+        super("Gray Counter");
+        setOffsetBounds(Bounds.create(-30, -15, 30, 30));
+        setPorts(new Port[] {
+                new Port(-30, 0, Port.INPUT, 1),
+                new Port(  0, 0, Port.OUTPUT, StdAttr.WIDTH),
+        });
+        
+        // У нас будут атрибуты ширина, метка и шрифт метки. Последние два
+        // атрибута позволяют нам связать метку с компонентом (однако,
+        // нам также нужен configureNewInstance для настройки расположения
+        // метки).
+        setAttributes(
+                new Attribute[] { StdAttr.WIDTH, StdAttr.LABEL, StdAttr.LABEL_FONT },
+                new Object[] { BitWidth.create(4), "", StdAttr.DEFAULT_LABEL_FONT });
+        
+        // Следующее обращение к методу устанавливает всё так, чтобы состоянием
+        // экземпляра можно было управлять с помощью Инструмента Нажатие.
+        setInstancePoker(CounterPoker.class);
+        
+        // Следующие две строчки настраивают его так, чтобы окно проводника показывало
+        // определённый значок, представляющий тип компонента. Это должно быть
+        // изображение 16x16.
+        URL url = getClass().getClassLoader().getResource("com/cburch/gray/counter.gif");
+        if(url != null) setIcon(new ImageIcon(url));
+    }
+    
+    /** Метод configureNewInstance вызывается каждый раз, когда создаётся
+     * новый экземпляр. В суперклассе метод ничего не делает, поскольку
+     * новый экземпляр уже довольно хорошо настроен по умолчанию. Но
+     * иногда вам нужно делать что-то специфическое с каждым экземпляром, так что вам
+     * придётся переопределить метод. В этом случае мы должны задать расположение
+     * для его метки. */
+    protected void configureNewInstance(Instance instance) {
+        Bounds bds = instance.getBounds();
+        instance.setTextField(StdAttr.LABEL, StdAttr.LABEL_FONT,
+                bds.getX() + bds.getWidth() / 2, bds.getY() - 3,
+                GraphicsUtil.H_CENTER, GraphicsUtil.V_BASELINE);
+    }
+
+    public void propagate(InstanceState state) {
+        // Это так же, как и с SimpleGrayCounter, кроме того, что мы используем
+        // атрибут StdAttr.WIDTH чтобы задать разрядность.
+        BitWidth width = state.getAttributeValue(StdAttr.WIDTH);
+        CounterData cur = CounterData.get(state, width);
+        boolean trigger = cur.updateClock(state.getPort(0));
+        if(trigger) cur.setValue(GrayIncrementer.nextGray(cur.getValue()));
+        state.setPort(1, cur.getValue(), 9);
+    }
+
+    public void paintInstance(InstancePainter painter) {
+        // Это по существу так же, как и с SimpleGrayCounter, за исключением
+        // вызова painter.drawLabel чтобы сделать метку отрисованной.
+        painter.drawBounds();
+        painter.drawClock(0, Direction.EAST);
+        painter.drawPort(1);
+        painter.drawLabel();
+        
+        if(painter.getShowState()) {
+            BitWidth width = painter.getAttributeValue(StdAttr.WIDTH);
+            CounterData state = CounterData.get(painter, width);
+            Bounds bds = painter.getBounds();
+            GraphicsUtil.drawCenteredText(painter.getGraphics(),
+                    StringUtil.toHexString(width.getWidth(), state.getValue().toIntValue()),
+                    bds.getX() + bds.getWidth() / 2,
+                    bds.getY() + bds.getHeight() / 2);
+        }
+    }
+}
+</pre>
+
+<h2>CounterPoker</h2>
+
+<pre>
+package com.cburch.gray;
+
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+
+import com.cburch.logisim.data.BitWidth;
+import com.cburch.logisim.data.Bounds;
+import com.cburch.logisim.data.Value;
+import com.cburch.logisim.instance.InstancePainter;
+import com.cburch.logisim.instance.InstancePoker;
+import com.cburch.logisim.instance.InstanceState;
+import com.cburch.logisim.instance.StdAttr;
+
+/** Когда пользователь щёлкает на счётчике, используя Инструмент Нажатие, объект CounterPoker
+ * создан, и этот объект будет обрабатывать все события пользователя. Обратите внимание, что
+ * CounterPoker - это класс, специфичный для GrayCounter, и что он должен быть
+ * подклассом InstancePoker из пакета com.cburch.logisim.instance. */
+public class CounterPoker extends InstancePoker {
+    public CounterPoker() { }
+
+    /** Определяет, должно ли положение, в котором нажата мышь,
+     * инициировать нажатие. 
+     */
+    public boolean init(InstanceState state, MouseEvent e) {
+        return state.getInstance().getBounds().contains(e.getX(), e.getY());
+            // В любом месте главного прямоугольника инициирует нажатие. Пользователь может
+            // нажать на метке, но это будет за пределами границ.
+    }
+
+    /** Рисует индикатор того, что указатель был выбран. Здесь мы будем рисовать
+     * красный прямоугольник вокруг значения. */
+    public void paint(InstancePainter painter) {
+        Bounds bds = painter.getBounds();
+        BitWidth width = painter.getAttributeValue(StdAttr.WIDTH);
+        int len = (width.getWidth() + 3) / 4;
+
+        Graphics g = painter.getGraphics();
+        g.setColor(Color.RED);
+        int wid = 7 * len + 2; // width of caret rectangle
+        int ht = 16; // height of caret rectangle
+        g.drawRect(bds.getX() + (bds.getWidth() - wid) / 2,
+                bds.getY() + (bds.getHeight() - ht) / 2, wid, ht);
+        g.setColor(Color.BLACK);
+    }
+
+    /**Обрабатывает клавишу, просто добавив её в конец текущего значения. */
+    public void keyTyped(InstanceState state, KeyEvent e) {
+        // преобразовать её в шестнадцатеричное число; если она - не шестнадцатеричное число, то отменить.
+        int val = Character.digit(e.getKeyChar(), 16);
+        BitWidth width = state.getAttributeValue(StdAttr.WIDTH);
+        if(val &lt; 0 || (val &amp; width.getMask()) != val) return;
+
+        // вычислить следующее значение
+        CounterData cur = CounterData.get(state, width);
+        int newVal = (cur.getValue().toIntValue() * 16 + val) &amp; width.getMask();
+        Value newValue = Value.createKnown(width, newVal);
+        cur.setValue(newValue);
+        state.fireInvalidated();
+        
+        // Вы, возможно, подумываете о том, чтобы просчитать значение здесь сразу, используя
+        // state.setPort. Однако, схема может просчитываться в данный момент в
+        // другом потоке, и непосредственный вызов setPort может помешать
+        // этому. Использование fireInvalidated уведомляет поток просчёта о том,
+        // чтобы вызвать просчёт для счётчика при первой же возможности.
+    }
+}
+</pre>
+
+
+<p><strong>Далее:</strong> <a href="guide.html">Указания</a>.</p>
+
+</body>
+</html>

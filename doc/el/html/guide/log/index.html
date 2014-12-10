@@ -1,0 +1,41 @@
+<html>
+<head>
+	<title>Logging</title>
+</head>
+<body bgcolor="FFFFFF">
+
+<h1>Logging</h1>
+
+<p>In testing a large circuit, and for documenting a circuit's
+behavior, a log of past circuit behavior can be useful. This is the purpose for
+Logisim's logging module, which allows you to select components whose
+values should be logged; optionally, you can specify a file into which
+the log should be placed.</p>
+
+<p>You can enter the logging module via the Logging...
+option from the Simulate menu. It brings up a window with three tabs.</p>
+<center><img src="../../../../en/img-guide/log-selection.png" width="466" height="387"></center>
+<p>We will discuss each of these tabs separately.</p>
+<blockquote>
+	<a href="selection.html">The Selection tab</a>
+	<br><a href="table.html">The Table tab</a>
+	<br><a href="file.html">The File tab</a>
+</blockquote></p>
+
+<p>Each project has only one logging window; when you switch to viewing
+another circuit within the project, the logging window switches
+automatically to logging the other circuit instead. That is, it does
+this unless you are <a href="../subcirc/debug.html">moving up or down
+within the same simulation</a>, in which case the logging module does
+not change.</p>
+
+<p>Note that when the logging module switches to logging another
+simulation, it will cease any logging into a file. Should you switch
+back to the simulation again, it will remember the configuration for
+that simulation, but you will need to re-enable the file logging
+manually.</p>
+
+<p><strong>Next:</strong> <a href="selection.html">The Selection tab</a>.</p>
+
+</body>
+</html>

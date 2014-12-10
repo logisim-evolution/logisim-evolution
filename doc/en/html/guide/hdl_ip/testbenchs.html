@@ -1,0 +1,37 @@
+<html>
+    <head>
+        <title>Simulating test benchs</title>
+    </head>
+
+    <body bgcolor="FFFFFF">
+        <h1>Simulating test benchs</h1>
+        
+        <p>You can add a test bench to your circuit to test it, but you have to 
+           consider the following restrictions due to the simulation 
+           architecture.
+        </p>
+    
+        <center><img src="../../../img-guide/hdl-ip-tb.png" /></center>
+    
+        <h2>Simulation must be driven by Logisim</h2>
+        
+        <p>You cannot add event generating elements to your test bench, for
+            example, you cannot add a clock generator process. Your test bench
+            must take an external clock from Logisim as input.
+        </p>
+    
+        <h2>Don't use time based conditions</h2>
+        
+        <p>The time representation does not exist in Logisim, no you cannot have
+           event based on time, for example <i>wait for 5 ns</i>. If you want to
+           make asynchronous verification, you must add a <i>sysclk</i> who has 
+           at least twice the frequency of the mainclk. This way, you will be 
+           able to check the signals not only on the main clock rising edges but
+           at any time you need.
+        </p>
+    
+        <p><strong>Next:</strong> <em><a href="../index.html">User's Guide
+           </a></em>.
+        </p>
+    </body>
+</html>

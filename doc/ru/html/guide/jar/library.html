@@ -1,0 +1,59 @@
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>Класс Library</title>
+</head>
+<body bgcolor="FFFFFF">
+
+<h1>Класс Library</h1>
+
+<p>Точка доступа для JAR библиотеки - это класс, расширяющий класс <code>Library</code>. Основная задача библиотеки - перечислить инструменты, доступные через библиотеку; чаще всего, все инструменты - это инструменты для добавления различных объявленных компонентов, то есть экземпляры класса <code>AddTool</code>, работающие с разными фабриками компонентов.</p>
+
+<h2>Components</h2>
+
+<pre>
+package com.cburch.gray;
+
+import java.util.Arrays;
+import java.util.List;
+
+import com.cburch.logisim.tools.AddTool;
+import com.cburch.logisim.tools.Library;
+
+/** The library of components that the user can access. */
+public class Components extends Library {
+    /** Список всех инструментов, содержащихся в этой библиотеке. Технически,
+     * библиотеки содержат инструменты, являющиеся несколько более общим понятием,
+     * чем компоненты; с практической точки зрения, однако, вы чаще захотите
+     * создать AddTools для новых компонентов, которые могут быть добавлены в схему.
+     */
+    private List&lt;AddTool&gt; tools;
+    
+    /** Создаёт экземпляр этой библиотеки. Этот конструктор - это то, к чему
+     * Logisim получает доступ в первую очередь, когда открывает JAR файл: он ищет
+     * метод-конструктор без аргументов объявленного пользователем класса.
+     */
+    public Components() {
+        tools = Arrays.asList(new AddTool[] {
+                new AddTool(new GrayIncrementer()),
+                new AddTool(new SimpleGrayCounter()),
+                new AddTool(new GrayCounter()),
+        });
+    }
+    
+    /** Возвращает имя библиотеки, которое будет видеть пользователь. */ 
+    public String getDisplayName() {
+        return "Gray Tools";
+    }
+    
+    /** Возвращает список всех инструментов, доступных в этой библиотеке. */
+    public List&lt;AddTool&gt; getTools() {
+        return tools;
+    }
+}
+</pre>
+
+<p><strong>Далее:</strong> <a href="simpctr.html">Простой счётчик кода Грея</a>.</p>
+
+</body>
+</html>

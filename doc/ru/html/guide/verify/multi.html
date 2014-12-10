@@ -1,0 +1,47 @@
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>Проверка нескольких файлов</title>
+</head>
+
+<body bgcolor="FFFFFF">
+
+<h1>Проверка нескольких файлов</h1>
+
+<p>В случае проведения занятий в классе у вас будет много файлов, которые вам нужно проверить на эквивалентность, и вам не захочется читать вывод для решения каждого учащегося.</p>
+
+<h2>Встраивание сравнения в схему</h2>
+
+<p>Один из подходов заключается в создании проверяющей схемы, которая непосредственно выполняет сравнение. В таком случае мы создаём дополнительную схему в проверяющем файле, содержащем схему с решением. Во всю нашу проверяющую схему мы включаем и подсхему из <tt>adder-master.circ</tt>, и подсхему из схемы с решением. Мы соединяем их так, что получается только один выход, на котором 1, пока две подсхемы дают на выходе согласованные значения.</p>
+
+<blockquote><img src="../../../../en/img-guide/verify-adder-test2.png" width="274" height="92"></blockquote>
+
+<p>Теперь мы можем просто запускать Logisim, подставляя каждый проверяемый файл. Для каждого правильного решения вывод будет состоять только из <q>1</q>.</p>
+
+<h2>Использование перенаправления и сценариев оболочки</h2>
+
+<p>Если вы ладите с командной строкой, вы можете создать свой собственный скрипт для решения этой задачи. Здесь мы будем использовать перенаправление (оператор &gt;), чтобы сохранять вывод каждой схемы в файл. Например, мы могли бы ввести следующие две команды чтобы получить вывод эталонной схемы и проверяемой схемы. 
+
+<blockquote><tt>java&nbsp;-jar&nbsp;logisim-filename.jar&nbsp;adder-test.circ&nbsp;-tty&nbsp;table&nbsp;&gt;&nbsp;output-master.txt
+<br>java&nbsp;-jar&nbsp;logisim-filename.jar&nbsp;adder-test.circ&nbsp;-tty&nbsp;table&nbsp;-sub&nbsp;adder-master.circ&nbsp;adder-query.circ&nbsp;&gt;&nbsp;output-query.txt</tt></blockquote>
+
+<p>Теперь мы создали два разных файла. Мы можем сравнить два файла с помощью программы, написанной для таких целей. Под Linux или MacOS X вы можете использовать утилиты командной строки <em>cmp</em> или <em>diff</em>. Под Windows вы можете использовать WinMerge.</p>
+
+<p>Для обработки нескольких проверяемых файлов вы можете написать простую программу типа сценария оболочки для поочерёдного прохода по файлам и их сравнения. Вот как бы я сделал это под Linux в <em>bash</em>:</p>
+
+<blockquote><tt>RUN_TEST="java&nbsp;-jar&nbsp;logisim-filename.jar&nbsp;adder-test.circ&nbsp;-tty&nbsp;table"<br>
+${RUN_TEST}&nbsp;&gt;&nbsp;output-master.txt<br>
+for&nbsp;QUERY_FILE&nbsp;in&nbsp;adder-query*.circ<br>
+do<br>
+&nbsp;&nbsp;if&nbsp;${RUN_TEST}&nbsp;-sub&nbsp;adder-master.circ&nbsp;${QUERY_FILE}&nbsp;|&nbsp;cmp&nbsp;-s&nbsp;output-master.txt<br>
+&nbsp;&nbsp;then<br>
+&nbsp;&nbsp;&nbsp;&nbsp;echo&nbsp;"${QUERY_FILE}&nbsp;OK"<br>
+&nbsp;&nbsp;else<br>
+&nbsp;&nbsp;&nbsp;&nbsp;echo&nbsp;"${QUERY_FILE}&nbsp;different"<br>
+&nbsp;&nbsp;fi<br>
+done</tt></blockquote>
+
+<p><strong>Далее:</strong> <em><a href="../index.html"><em>Руководство пользователя</em></a></em>.</p>
+
+</body>
+</html>

@@ -1,0 +1,86 @@
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>Usar subcircuitos</title>
+</head>
+
+<body bgcolor="FFFFFF">
+
+<h1>Usar subcircuitos</h1>
+
+<p> Agora, suponha que queiramos construir um multiplexador 4:1, utilizando
+instâncias de nosso multiplexador 2:1. É claro que gostaríamos de criar, primeiro,
+um novo circuito, que chamaremos de "MUX 4:1". Para adicionar multiplexadores 2:1
+em nosso circuito, clicar no circuito <em> MUX 2:1 </em> uma vez no painel do
+Explorador para selecioná-lo como uma ferramenta, e depois poderemos juntar cópias
+disso, representadas como caixas, clicando na área de desenho.
+</p>
+
+<center><img src="../../../../en/img-guide/subcirc-4-add.png" width="393" height="285"></center>
+
+<p> Se você clicar duas vezes no circuito MUX 2:1 no painel do explorador,
+então a janela mudará para a edição do circuito MUX 2:01.
+</p>
+
+<p> Depois de construir o circuito, obteremos o seguinte. </p>
+
+<center><img src="../../../../en/img-guide/subcirc-4-done.png" width="393" height="285"></center>
+
+<p> Nosso circuito multiplexador 4:1 usará três cópias do
+multiplexador 2:1, cada uma desenhada como uma caixa com conexões em suas bordas.
+Os pinos nessa caixa corresponderão aos pinos de entrada e saída no
+circuito MUX 2:1. Os dois pinos no lado oeste da caixa corresponderão
+aos dois pinos direcionados para leste no circuito MUX 2:1; o pino do
+lado leste da caixa corresponderá ao pino a oeste no MUX 2:1
+(que passa a ser um pino de saída) e os pinos no sul da caixa
+corresponderão aos pinos ao norte do MUX 2:1. A ordem dos dois pinos no 
+lado oeste da caixa corresponderão aos mesmos de cima para baixo,
+de acordo com a concepção do subcircuito. (Se houvesse vários pinos
+no norte da caixa ou do lado sul, eles corresponderiam à mesma
+ordem da esquerda para a direita no subcircuito.) 
+</p>
+
+<p> Se os pinos no <i>layout</i> do subcircuito tiverem rótulos associados
+eles, então Logisim irá mostrar a etiqueta como uma <strong> dica </strong>
+(isto é, uma caixa de texto temporária) quando o usuário passar o mouse sobre o
+localização correspondente do componente no subcircuito. (Se você encontrar essas
+dicas irritantes, poderá desativá-las através da <a href="../prefs/layout.html">
+aba Preferências da Janela de Layout .)
+</p>
+
+<center><img src="../../../../en/img-guide/subcirc-4-tip.png" width="393" height="285"></center>
+
+<p> Vários outros componentes irão mostrar essas dicas também: para alguns dos
+pinos de um <a href="../../libs/mem/flipflops.html"> <i>flip-flop</i> </a> predefinido,
+por exemplo, ao passar sobre ele explicará a função do que faz o pino. 
+</p>
+
+<p> Aliás, todos os pinos de um circuito deverão ser uma entrada ou
+uma saída. Muitos <i>chips</i> fabricados têm pinos que se comportam como uma entrada
+em algumas situações e como uma saída em outras, você não poderá construir
+esses tipos de <i>chips</i> dentro Logisim (pelo menos na versão atual).
+</p>
+
+<p> O Logisim irá manter informações de estado diferentes para todos os subcircuitos
+que aparecerem. Por exemplo, se um circuito contiver um <i>flip-flop</i>,
+e se for usado diversas vezes como subcircuito, então cada um deles
+terá o seu próprio valor quando for simular o circuito maior.
+</p>
+
+<p> Um vez que tenhamos o multiplexador 4:1 definido, poderemos usá-lo
+em outros circuitos. O Logisim não tem limites em quão profundo os circuitos
+possam ser aninhados - embora ele irá opor-se à colocação desses dentro de si próprios! 
+</p>
+
+<strong> Nota: </strong> Não há nada de errado com a edição de um
+circuito que estiver sendo usado como um subcircuito, na verdade, isso é muito
+comum. Esteja ciente, no entanto, que quaisquer alterações nos pinos de um circuito 
+(adicionando, excluindo ou movendo-os) irá reorganizá-los também naquele que o contiver. 
+Assim, se você alterar os pinos em um circuito, você também terá necessidade 
+de editar qualquer circuito que usá-lo como um subcircuito. 
+</p>
+
+<p><strong>Próximo:</strong> <a href="appear.html">Editar a forma do subcircuito</a>.</p>
+
+</body>
+</html>

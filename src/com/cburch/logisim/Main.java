@@ -1,0 +1,83 @@
+/*******************************************************************************
+ * This file is part of logisim-evolution.
+ *
+ *   logisim-evolution is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   logisim-evolution is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with logisim-evolution.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *   Original code by Carl Burch (http://www.cburch.com), 2011.
+ *   Subsequent modifications by :
+ *     + Haute École Spécialisée Bernoise
+ *       http://www.bfh.ch
+ *     + Haute École du paysage, d'ingénierie et d'architecture de Genève
+ *       http://hepia.hesge.ch/
+ *     + Haute École d'Ingénierie et de Gestion du Canton de Vaud
+ *       http://www.heig-vd.ch/
+ *   The project is currently maintained by :
+ *     + REDS Institute - HEIG-VD
+ *       Yverdon-les-Bains, Switzerland
+ *       http://reds.heig-vd.ch
+ *******************************************************************************/
+
+package com.cburch.logisim;
+
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.io.Writer;
+
+import javax.swing.JOptionPane;
+
+import com.cburch.logisim.gui.start.Startup;
+
+public class Main {
+
+	public static void main(String[] args) throws Exception {
+		Startup startup = Startup.parseArgs(args);
+		if (startup == null) {
+			System.exit(0);
+		} else {
+			// If the auto-updater actually performed an update, then quit the
+			// program, otherwise continue with the execution
+			if (!startup.autoUpdate()) {
+				try {
+					startup.run();
+				} catch (Throwable e) {
+					Writer result = new StringWriter();
+					PrintWriter printWriter = new PrintWriter(result);
+					e.printStackTrace(printWriter);
+					JOptionPane.showMessageDialog(null, result.toString());
+					System.exit(-1);
+				}
+			}
+		}
+	}
+
+	public static final LogisimVersion VERSION = LogisimVersion.get(2, 13, 5,
+			LogisimVersion.FINAL_REVISION);
+	public static final String VERSION_NAME = VERSION.toString();
+	public static final int COPYRIGHT_YEAR = 2014;
+
+	public static boolean ANALYZE = false;
+	/**
+	 * This flag enables auto-updates. It is true by default, so that users
+	 * normally check for updates at startup. On the other hand, this might be
+	 * annoying for developers, therefore we let them disable it from the
+	 * command line with the '-noupdates' option.
+	 */
+	public static boolean UPDATE = true;
+
+	/**
+	 * URL for the automatic updater
+	 */
+	public static final String UPDATE_URL = "http://eigit.heig-vd.ch/public/logisim/logisim_version.xml";
+
+}

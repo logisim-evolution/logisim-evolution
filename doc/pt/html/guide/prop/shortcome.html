@@ -1,0 +1,58 @@
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>Limitações</title>
+</head>
+
+<body bgcolor="FFFFFF">
+
+<h1>Limitações</h1>
+
+<p> O algoritmo de propagação do Logisim é sofisticado o suficiente
+para quase todos os fins educativos, mas não é sofisticado o bastante
+para o projeto de um circuito industrial. Em ordem das mais para as menos 
+contundentes, as deficiências da técnica de propagação do Logisim
+incluem:
+
+<ul>
+<li> Exceto para os problemas de atrasos em portas, o Logisim não trata de forma 
+particular questões de temporização. É muito idealizada, de modo que um par de portas NOR
+configuradas em um <i>latch</i> SR irá mudar em sincronia infinitamente, melhor
+que, eventualmente, o circuito chegue a um estado permanente.
+</p> </li>
+
+<li> O Logisim não pode simular subcircuitos cujos pinos, às vezes, se comportem
+como entradas e às vezes como saídas. Componentes criados usando Java poderão ter
+tais pinos, como é o caso nas bibliotecas predefinidas, do circuito de memória da
+biblioteca RAM que contém um pino D, que pode atuar tanto como entrada e como saída.
+</p> </li>
+
+<li> O Logisim suspenderá sua simulação após um número fixo de iterações
+supondo haver um erro de oscilação.
+É concebível, que em um grande circuito isso não se trate de problema que possa levar
+à oscilação. 
+</p> </li>
+
+<li> O Logisim não faz nada com relação à discriminação entre níveis de tensão: 
+Um bit poderá estar apenas ligado, desligado, não especificado, e em erro.
+</p> </li>
+
+<li> Há outras lacunas, também, que eu tenha omitido porque elas podem ser tão 
+obscuras que se estivesse ciente delas, seria óbvio que o Logisim nem perto 
+chegaria a esse nível. Como um exemplo extremo, tenho um amigo que trabalha para 
+um grande fabricante de <i>chips</i>, e seu trabalho é de se preocupar com "bolhas" em
+fios de <i>chips</i> com largura crescente em nanômetros e que possam levar a desconexão
+aleatória. 
+</p> </li>
+
+<p> <li> Mesmo fora isso, não sou um especialista em projeto de circuito, assim,
+poderão existir erros na técnica de propagação da qual não tenha conhecimento.
+Congratularei-me com as correções de especialistas. 
+</p> </li>
+
+</ul>
+
+<p><strong>Próximo:</strong> <em><a href="../index.html">Guia do usuário</a></em>.</p>
+
+</body>
+</html>
