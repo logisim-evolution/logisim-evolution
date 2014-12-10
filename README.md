@@ -38,6 +38,9 @@ We will, however, try to deal with the raised issues in a *best-effort* way.
 
 If you find a bug or have an idea for an interesting feature, please do not hesitate to open a ticket!
 
+## License
+The code is licensed under the GNU GENERAL PUBLIC LICENSE, version 3.
+
 ## Other Logisim forks available on the net
 * Logisim by Joseph Lawrance et al. [(link)](https://github.com/lawrancej/logisim) - they have started from Burch's original code and integrated it in several open-source development frameworks, cleaning up the code. We have taken a few code cleanups and the redo functionality from their code.
 * logisim-iitd [(link)](https://code.google.com/p/logisim-iitd) - IIT Delhi version of Logisim, it integrates the Floating-Point Components within the Arithmetic Unit.
