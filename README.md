@@ -11,9 +11,9 @@ The project is currently maintained by the [REDS Institute](http://reds.heig-vd.
 We have decided to release this new Logisim version under the name logisim-evolution, to highlight the large number of changes that occurred in these years, and **we actively seek the contribution of the community**.
 
 ## What's new in logisim-evolution
-* Chronogram -- to see the evolution of signals in your circuit
-* Electronic board integration -- schematics can now be simulated on real hardware!
-* Board editor -- to add new electronic boards
+* chronogram -- to see the evolution of signals in your circuit
+* electronic board integration -- schematics can now be simulated on real hardware!
+* board editor -- to add new electronic boards
 * VHDL component -- a new component type whose behavior is specified in VHDL
 * TCL/TK console -- interfaces between the circuit and the user
 * DIP switches
