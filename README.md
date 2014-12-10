@@ -20,6 +20,7 @@ We have decided to release this new Logisim version under the name logisim-evolu
 * RGB LEDs
 * large number of bug-fixes
 * GUI improvements
+* automatic updates
 * code refactoring
 * ...
 
