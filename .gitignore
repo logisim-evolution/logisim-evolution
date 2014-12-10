@@ -19,8 +19,10 @@ test/com/cburch/logisim/gui
 .project
 .classpath
 
+
 # Simulation files and folders
 resources/logisim/sim/comp.tcl
 resources/logisim/sim/transcript
+
 resources/logisim/sim/comp/
 resources/logisim/sim/src/
