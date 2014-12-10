@@ -43,6 +43,7 @@ You will, however, encounter a problem when you will try to execute the code. In
 * *javax*
 * *libs*
 * *resources*
+* *doc*
 
 ## How to get support for logisim-evolution
 Unfortunately, we do not have enough resources to provide direct support for logisim-evolution.
