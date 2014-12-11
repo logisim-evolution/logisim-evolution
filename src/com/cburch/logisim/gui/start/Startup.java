@@ -413,7 +413,7 @@ public class Startup {
 			System.err.println("-- AUTO-UPDATE ABORTED --");
 			return (false);
 		}
-		ArgonXML logisimData = new ArgonXML(in, "logisim");
+		ArgonXML logisimData = new ArgonXML(in, "logisim-evolution");
 
 		// Get the appropriate remote version number
 		LogisimVersion remoteVersion = LogisimVersion.parse(Main.VERSION

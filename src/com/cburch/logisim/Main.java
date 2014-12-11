@@ -78,6 +78,6 @@ public class Main {
 	/**
 	 * URL for the automatic updater
 	 */
-	public static final String UPDATE_URL = "http://eigit.heig-vd.ch/public/logisim/logisim_version.xml";
+	public static final String UPDATE_URL = "https://reds.heig-vd.ch/share/logisim-evolution/logisim_evolution_version.xml";
 
 }
