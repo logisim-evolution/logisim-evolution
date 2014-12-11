@@ -25,14 +25,17 @@ We have decided to release this new Logisim version under the name logisim-evolu
 * ...
 
 ## How to install logisim-evolution
-To use logisim-evolution you simply need to clone the repository on your local machine. Once this is done, enter the directory and execute
-```bash
-ant run
-```
-This also creates locally a .jar file, that you can distribute and use on other machines, executing it directly with
+You can find an already compiled version of the code [here](http://eigit.heig-vd.ch/public/logisim/logisim-evolution.jar).
+To execute it, click on the downloaded file or type in a console
 ```bash
 java -jar logisim-evolution.jar
 ```
+
+You can also compile it by yourself by cloning the repository on your local machine. Once this is done, enter the directory and execute
+```bash
+ant run
+```
+This also creates locally a .jar file, that you can distribute and use on other machines.
 
 ## Editing logisim-evolution in Eclipse
 To import directly logisim-evolution in Eclipse, you can use Eclipse's import wizard:
