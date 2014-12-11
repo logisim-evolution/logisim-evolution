@@ -80,7 +80,7 @@ public class Multiplexer extends InstanceFactory {
 				Plexers.ATTR_DISABLED, Plexers.ATTR_ENABLE }, new Object[] {
 				Direction.EAST, Plexers.SELECT_BOTTOM_LEFT,
 				Plexers.DEFAULT_SELECT, BitWidth.ONE, Plexers.DISABLED_ZERO,
-				Boolean.TRUE });
+				Plexers.DEFAULT_ENABLE });
 		setKeyConfigurator(JoinedConfigurator.create(new BitWidthConfigurator(
 				Plexers.ATTR_SELECT, 1, 5, 0), new BitWidthConfigurator(
 				StdAttr.WIDTH)));

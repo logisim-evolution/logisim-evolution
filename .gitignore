@@ -8,6 +8,7 @@ com/hepia
 # Generated files
 javadoc/
 test/com/cburch/logisim/gui
+bin/
 
 # additional libraries
 !libs/*.jar

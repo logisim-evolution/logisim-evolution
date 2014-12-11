@@ -125,6 +125,7 @@ public class Plexers extends Library {
 					new AttributeOption[] { DISABLED_FLOATING, DISABLED_ZERO });
 	public static final Attribute<Boolean> ATTR_ENABLE = Attributes.forBoolean(
 			"enable", Strings.getter("plexerEnableAttr"));
+	public static final Object DEFAULT_ENABLE = Boolean.FALSE;
 	static final AttributeOption SELECT_BOTTOM_LEFT = new AttributeOption("bl",
 			Strings.getter("plexerSelectBottomLeftOption"));
 
