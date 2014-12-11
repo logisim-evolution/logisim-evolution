@@ -25,7 +25,7 @@ We have decided to release this new Logisim version under the name logisim-evolu
 * ...
 
 ## How to install logisim-evolution
-You can find an already compiled **stable** version of the code [here](http://eigit.heig-vd.ch/public/logisim/logisim-evolution.jar).
+You can find an already compiled **stable** version of the code [here](http://sourceforge.net/projects/logisimevolution/files/logisim-evolution-2.13.5.jar/download).
 To execute it, click on the downloaded file or type in a console
 ```bash
 java -jar logisim-evolution.jar
