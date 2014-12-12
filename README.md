@@ -49,6 +49,14 @@ You will, however, encounter a problem when you will try to execute the code. In
 * *resources*
 * *doc*
 
+## Wish-list
+Logisim-evolution is a continuously-growing software, and we have several ideas we would like to implement. Among them, we would love to have
+* unit tests for the code
+* extensive documentation
+* test circuits
+* ...
+If you would like to contribute with any of these, please feel free to contact us!
+
 ## How to get support for logisim-evolution
 Unfortunately, we do not have enough resources to provide direct support for logisim-evolution.
 We will, however, try to deal with the raised issues in a *best-effort* way.
