@@ -1,10 +1,5 @@
 logisim-evolution
 =================
-## Table of contents
-* [Introduction](#Introduction)
-* [What's new in logisim-evolution](#new)
-
-## Introduction
 Logisim is an educational tool for designing and simulating digital logic circuits.
 It has been originally created by [Dr. Carl Burch](http://www.cburch.com/logisim/) and actively developed until 2011.
 After this date the author focused on other projects, and recently the development has been officially stopped  [(see his message here)](http://www.cburch.com/logisim/retire-note.html).
