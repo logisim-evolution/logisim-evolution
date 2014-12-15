@@ -96,12 +96,12 @@ public class TickComponentHDLGeneratorFactory extends
 		Contents.addAll(MakeRemarkBlock("Here the update logic is defined", 3,
 				HDLType));
 		if (HDLType.equals(Settings.VHDL)) {
-			Contents.add("   s_tick_next   <= '1' WHEN s_count_reg = conv_std_logic_vector(0,"
-					+ NrOfCounterBitsStr + ") ELSE '0';");
+			Contents.add("   s_tick_next   <= '1' WHEN s_count_reg = std_logic_vector(to_unsigned(0,"
+					+ NrOfCounterBitsStr + ")) ELSE '0';");
 			Contents.add("   s_count_next  <= (OTHERS => '0') WHEN s_tick_reg /= '0' AND s_tick_reg /= '1' ELSE -- For simulation only!");
-			Contents.add("                    conv_std_logic_vector((ReloadValue-1),"
-					+ NrOfCounterBitsStr + ") WHEN s_tick_next = '1' ELSE");
-			Contents.add("                    unsigned(s_count_reg)-1;");
+			Contents.add("                    std_logic_vector(to_unsigned((ReloadValue-1),"
+					+ NrOfCounterBitsStr + ")) WHEN s_tick_next = '1' ELSE");
+			Contents.add("                    std_logic_vector(unsigned(s_count_reg)-1);");
 			Contents.add("");
 		} else {
 			Contents.add("   assign s_tick_next  = (s_count_reg == 0) ? 1'b1 : 1'b0;");

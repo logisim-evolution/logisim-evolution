@@ -75,7 +75,7 @@ public class AdderHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 			Contents.add("   s_extended_dataB <= \"0\"&DataB;");
 			Contents.add("   s_sum_result     <= std_logic_vector(unsigned(s_extended_dataA)+");
 			Contents.add("                                        unsigned(s_extended_dataB)+");
-			Contents.add("                                        CarryIn);");
+			Contents.add("                                        (\"\"&CarryIn));");
 			Contents.add("");
 			if (nrOfBits == 1) {
 				Contents.add("   Result <= s_sum_result(0);");

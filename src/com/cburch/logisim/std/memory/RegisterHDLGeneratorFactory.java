@@ -77,11 +77,11 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 			Contents.add("   BEGIN");
 			Contents.add("      IF (Reset = '1') THEN s_state_reg <= (OTHERS => '0');");
 			if (IsFlipFlop(attrs)) {
-				Contents.add("      ELSIF (Clock'event AND (Clock = conv_std_logic_vector("
-						+ ActiveLevelStr + ",1)(0) )) THEN");
+				Contents.add("      ELSIF (Clock'event AND (Clock = std_logic_vector(to_unsigned("
+						+ ActiveLevelStr + ",1))(0) )) THEN");
 			} else {
-				Contents.add("      ELSIF (Clock = conv_std_logic_vector("
-						+ ActiveLevelStr + ",1)(0) ) THEN");
+				Contents.add("      ELSIF (Clock = std_logic_vector(to_unsigned("
+						+ ActiveLevelStr + ",1))(0) ) THEN");
 			}
 			Contents.add("         IF (ClockEnable = '1' AND Tick = '1') THEN");
 			Contents.add("            s_state_reg <= D;");

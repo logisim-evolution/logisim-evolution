@@ -82,7 +82,7 @@ public class FileWriter {
 		Lines.add("");
 		Lines.add("LIBRARY ieee;");
 		Lines.add("USE ieee.std_logic_1164.all;");
-		Lines.add("USE ieee.std_logic_arith.all;");
+		Lines.add("USE ieee.numeric_std.all;");
 		Lines.add("");
 		return Lines;
 	}

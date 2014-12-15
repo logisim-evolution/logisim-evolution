@@ -75,9 +75,9 @@ public class SubtractorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 			Contents.add("   s_extended_dataA <= \"0\"&DataA;");
 			Contents.add("   s_extended_dataB <= \"0\"&s_inverted_dataB;");
 			Contents.add("   s_carry          <= NOT(BorrowIn);");
-			Contents.add("   s_sum_result     <= unsigned(s_extended_dataA)+");
+			Contents.add("   s_sum_result     <= std_logic_vector(unsigned(s_extended_dataA)+");
 			Contents.add("                       unsigned(s_extended_dataB)+");
-			Contents.add("                       s_carry;");
+			Contents.add("                       (\"\"&s_carry));");
 			Contents.add("");
 			if (nrOfBits == 1) {
 				Contents.add("   Result <= s_sum_result(0);");

@@ -77,8 +77,8 @@ public class RandomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 			Contents.add("   Q            <= s_output_reg;");
 			Contents.add("   s_InitSeed   <= X\"0005DEECE66D\" WHEN " + SeedStr
 					+ " = 0 ELSE");
-			Contents.add("                   X\"0000\"&conv_std_logic_vector("
-					+ SeedStr + ",32);");
+			Contents.add("                   X\"0000\"&std_logic_vector(to_unsigned("
+					+ SeedStr + ",32));");
 			Contents.add("   s_reset      <= '1' WHEN s_reset_reg /= \"010\" ELSE '0';");
 			Contents.add("   s_reset_next <= \"010\" WHEN (s_reset_reg = \"101\" OR");
 			Contents.add("                               s_reset_reg = \"010\") AND");
@@ -127,10 +127,10 @@ public class RandomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 			Contents.add("      IF (GlobalClock'event AND (GlobalClock = '1')) THEN");
 			Contents.add("         s_mult_shift_reg <= s_mult_shift_next;");
 			Contents.add("         s_seed_shift_reg <= s_seed_shift_next;");
-			Contents.add("         s_mac_lo_reg     <= unsigned(s_mac_lo_in_1)+unsigned(s_mac_lo_in_2);");
+			Contents.add("         s_mac_lo_reg     <= std_logic_vector(unsigned(s_mac_lo_in_1)+unsigned(s_mac_lo_in_2));");
 			Contents.add("         s_mac_hi_1_reg   <= s_mac_hi_1_next;");
-			Contents.add("         s_mac_hi_reg     <= unsigned(s_mac_hi_1_reg)+unsigned(s_mac_hi_in_2)+");
-			Contents.add("                             s_mac_lo_reg(24);");
+			Contents.add("         s_mac_hi_reg     <= std_logic_vector(unsigned(s_mac_hi_1_reg)+unsigned(s_mac_hi_in_2)+");
+			Contents.add("                             unsigned(s_mac_lo_reg(24 DOWNTO 24)));");
 			Contents.add("         s_busy_pipe_reg  <= s_busy_pipe_next;");
 			Contents.add("      END IF;");
 			Contents.add("   END PROCESS make_shift_regs;");

@@ -116,15 +116,15 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 		Contents.addAll(MakeRemarkBlock("Here the control signals are defined",
 				3, HDLType));
 		if (HDLType.equals(Settings.VHDL)) {
-			Contents.add("   s_counter_is_zero <= '1' WHEN s_counter_reg = conv_std_logic_vector(0,"
-					+ NrOfBitsStr + ") ELSE '0';");
-			Contents.add("   s_counter_next    <= unsigned(s_counter_reg) - 1");
+			Contents.add("   s_counter_is_zero <= '1' WHEN s_counter_reg = std_logic_vector(to_unsigned(0,"
+					+ NrOfBitsStr + ")) ELSE '0';");
+			Contents.add("   s_counter_next    <= std_logic_vector(unsigned(s_counter_reg) - 1)");
 			Contents.add("                           WHEN s_counter_is_zero = '0' ELSE");
-			Contents.add("                        conv_std_logic_vector(("
-					+ LowTickStr + "-1)," + NrOfBitsStr + ")");
+			Contents.add("                        std_logic_vector(to_unsigned(("
+					+ LowTickStr + "-1)," + NrOfBitsStr + "))");
 			Contents.add("                           WHEN s_derived_clock_reg = '1' ELSE");
-			Contents.add("                        conv_std_logic_vector(("
-					+ HighTickStr + "-1)," + NrOfBitsStr + ");");
+			Contents.add("                        std_logic_vector(to_unsigned(("
+					+ HighTickStr + "-1)," + NrOfBitsStr + "));");
 		} else {
 			Contents.add("   assign s_counter_is_zero = (s_counter_reg == 0) ? 1'b1 : 1'b0;");
 			Contents.add("   assign s_counter_next = (s_counter_is_zero == 1'b0) ? s_counter_reg - 1 :");

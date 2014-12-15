@@ -66,12 +66,12 @@ public class MultiplierHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 			AttributeSet attrs, FPGAReport Reporter, String HDLType) {
 		ArrayList<String> Contents = new ArrayList<String>();
 		if (HDLType.equals(Settings.VHDL)) {
-			Contents.add("   s_mult_result <= unsigned(INP_A)*unsigned(INP_B);");
+			Contents.add("   s_mult_result <= std_logic_vector(unsigned(INP_A)*unsigned(INP_B));");
 			Contents.add("   s_extended_Cin(" + CalcBitsStr + "-1 DOWNTO "
 					+ NrOfBitsStr + ") <= (OTHERS => '0');");
 			Contents.add("   s_extended_Cin(" + NrOfBitsStr
 					+ "-1 DOWNTO 0) <= Cin;");
-			Contents.add("   s_new_result  <= unsigned(s_mult_result) + unsigned(s_extended_Cin);");
+			Contents.add("   s_new_result  <= std_logic_vector(unsigned(s_mult_result) + unsigned(s_extended_Cin));");
 			Contents.add("   Mult_hi       <= s_new_result(" + CalcBitsStr
 					+ "-1 DOWNTO " + NrOfBitsStr + ");");
 			Contents.add("   Mult_lo       <= s_new_result(" + NrOfBitsStr

@@ -70,7 +70,7 @@ public class NegatorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 			if (nrOfBits == 1)
 				Contents.add("   MinDataX <= DataX;");
 			else
-				Contents.add("   MinDataX <= unsigned(NOT(DataX)) + 1;");
+				Contents.add("   MinDataX <= std_logic_vector(unsigned(NOT(DataX)) + 1);");
 		} else {
 			Contents.add("   assign   MinDataX = -DataX;");
 		}

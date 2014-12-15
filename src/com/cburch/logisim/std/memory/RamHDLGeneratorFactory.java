@@ -198,12 +198,12 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 							: "s_byte_mem_" + Integer.toString(i) + "_contents";
 					Contents.add("               "
 							+ Memname
-							+ "(conv_integer(unsigned(s_Address_reg))) <= s_DataInReg("
+							+ "(to_integer(unsigned(s_Address_reg))) <= s_DataInReg("
 							+ endIndex + " DOWNTO " + startIndex + ");");
 					Contents.add("            END IF;");
 					Contents.add("            s_ram_data_out(" + endIndex
 							+ " DOWNTO " + startIndex + ") <= " + Memname
-							+ "(conv_integer(unsigned(s_Address_reg)));");
+							+ "(to_integer(unsigned(s_Address_reg)));");
 					Contents.add("         END IF;");
 					Contents.add("      END IF;");
 					Contents.add("   END PROCESS Mem" + Integer.toString(i)
@@ -216,9 +216,9 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 				Contents.add("      IF (Clock'event AND (Clock = '1')) THEN");
 				Contents.add("         IF (s_RAM_enable = '1') THEN");
 				Contents.add("            IF (s_we = '1') THEN");
-				Contents.add("               s_mem_contents(conv_integer(unsigned(s_Address_reg))) <= s_DataInReg;");
+				Contents.add("               s_mem_contents(to_integer(unsigned(s_Address_reg))) <= s_DataInReg;");
 				Contents.add("            END IF;");
-				Contents.add("            s_ram_data_out <= s_mem_contents(conv_integer(unsigned(s_Address_reg)));");
+				Contents.add("            s_ram_data_out <= s_mem_contents(to_integer(unsigned(s_Address_reg)));");
 				Contents.add("         END IF;");
 				Contents.add("      END IF;");
 				Contents.add("   END PROCESS Mem;");
