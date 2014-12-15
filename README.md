@@ -25,7 +25,7 @@ We have decided to release this new Logisim version under the name logisim-evolu
 * ...
 
 ## How to install logisim-evolution
-You can find an already compiled **stable** version of the code [here](https://reds.heig-vd.ch/share/logisim-evolution/).
+You can find an already compiled **stable** version of the code [here](https://reds.heig-vd.ch/share/logisim-evolution/logisim-evolution-2.13.5.jar).
 To execute it, click on the downloaded file or type in a console
 ```bash
 java -jar logisim-evolution.jar
@@ -48,6 +48,14 @@ You will, however, encounter a problem when you will try to execute the code. In
 * *libs*
 * *resources*
 * *doc*
+
+## Wish-list
+Logisim-evolution is a continuously-growing software, and we have several ideas we would like to implement. In particular, we would like to have
+* unit tests for the code
+* extensive documentation
+* test circuits
+* ...
+If you are willing to contribute with any of these, please feel free to contact us!
 
 ## How to get support for logisim-evolution
 Unfortunately, we do not have enough resources to provide direct support for logisim-evolution.
