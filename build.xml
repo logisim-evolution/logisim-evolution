@@ -18,9 +18,9 @@
     </target>
 
     <target name="compile" depends="clean">
-        <javac srcdir="src" includeantruntime="false" destdir="bin" source="1.7" target="1.7" classpath="libs/colorpicker.jar:libs/fontchooser.jar:libs/jh.jar:libs/MRJAdapter.jar:libs/nimrodlf.jar:libs/rsyntaxtextarea.jar" />
+        <javac srcdir="src" includeantruntime="false" destdir="bin" source="1.7" target="1.7" classpath="libs/colorpicker.jar:libs/fontchooser.jar:libs/jh.jar:libs/MRJAdapter.jar:libs/nimrodlf.jar:libs/rsyntaxtextarea.jar:libs/logback-classic-1.1.2.jar:libs/logback-core-1.1.2.jar:libs/slf4j-api-1.7.8.jar" />
     </target>
-
+	
     <target name="jar" depends="compile">
         <jar destfile="logisim-evolution.jar">
             <fileset dir="bin" />
@@ -48,4 +48,3 @@
     </target>
 
 </project>
-

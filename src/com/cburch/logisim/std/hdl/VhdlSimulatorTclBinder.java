@@ -40,6 +40,9 @@ import java.util.Scanner;
 
 import javax.swing.JOptionPane;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.cburch.logisim.std.hdl.VhdlSimulator.State;
 import com.cburch.logisim.tools.MessageBox;
 import com.cburch.logisim.util.FileUtil;
@@ -63,6 +66,8 @@ import com.cburch.logisim.util.Softwares;
  */
 class VhdlSimulatorTclBinder {
 
+	final static Logger logger = LoggerFactory.getLogger(VhdlSimulatorTclBinder.class);
+	
 	private ProcessBuilder builder;
 	private Process process;
 	private Boolean running = false;
@@ -105,8 +110,7 @@ class VhdlSimulatorTclBinder {
 			process = builder.start();
 		} catch (IOException e) {
 			e.printStackTrace();
-			System.err.println("Cannot run TCL binder to Questasim : "
-					+ e.getMessage());
+			logger.error("Cannot run TCL binder to Questasim : {}", e.getMessage());
 
 			running = false;
 			return;

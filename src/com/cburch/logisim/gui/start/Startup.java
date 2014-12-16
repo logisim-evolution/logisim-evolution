@@ -49,6 +49,9 @@ import java.util.Map;
 
 import javax.swing.JOptionPane;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.cburch.logisim.LogisimVersion;
 import com.cburch.logisim.Main;
 import com.cburch.logisim.file.LoadFailedException;
@@ -66,6 +69,8 @@ import com.cburch.logisim.util.StringUtil;
 
 public class Startup {
 
+	final static Logger logger = LoggerFactory.getLogger(Startup.class);
+	
 	static void doOpen(File file) {
 		if (startupTemp != null) {
 			startupTemp.doOpenFile(file);
@@ -122,7 +127,7 @@ public class Startup {
 					i++;
 					String[] fmts = args[i].split(",");
 					if (fmts.length == 0) {
-						System.err.println(Strings.get("ttyFormatError")); // OK
+						logger.error("{}", Strings.get("ttyFormatError"));
 					}
 					for (int j = 0; j < fmts.length; j++) {
 						String fmt = fmts[j].trim();
@@ -137,11 +142,11 @@ public class Startup {
 						} else if (fmt.equals("stats")) {
 							ret.ttyFormat |= TtyInterface.FORMAT_STATISTICS;
 						} else {
-							System.err.println(Strings.get("ttyFormatError")); // OK
+							logger.error("{}", Strings.get("ttyFormatError"));
 						}
 					}
 				} else {
-					System.err.println(Strings.get("ttyFormatError")); // OK
+					logger.error("{}", Strings.get("ttyFormatError"));
 					return null;
 				}
 			} else if (arg.equals("-sub")) {
@@ -149,38 +154,37 @@ public class Startup {
 					File a = new File(args[i + 1]);
 					File b = new File(args[i + 2]);
 					if (ret.substitutions.containsKey(a)) {
-						System.err.println(Strings
-								.get("argDuplicateSubstitutionError")); // OK
+						logger.error("{}", Strings.get("argDuplicateSubstitutionError"));
 						return null;
 					} else {
 						ret.substitutions.put(a, b);
 						i += 2;
 					}
 				} else {
-					System.err.println(Strings.get("argTwoSubstitutionError")); // OK
+					logger.error("{}", Strings.get("argTwoSubstitutionError"));
 					return null;
 				}
 			} else if (arg.equals("-load")) {
 				if (i + 1 < args.length) {
 					i++;
 					if (ret.loadFile != null) {
-						System.err.println(Strings.get("loadMultipleError")); // OK
+						logger.error("{}", Strings.get("loadMultipleError"));
 					}
 					File f = new File(args[i]);
 					ret.loadFile = f;
 				} else {
-					System.err.println(Strings.get("loadNeedsFileError")); // OK
+					logger.error("{}", Strings.get("loadNeedsFileError"));
 					return null;
 				}
 			} else if (arg.equals("-empty")) {
 				if (ret.templFile != null || ret.templEmpty || ret.templPlain) {
-					System.err.println(Strings.get("argOneTemplateError")); // OK
+					logger.error("{}", Strings.get("argOneTemplateError"));
 					return null;
 				}
 				ret.templEmpty = true;
 			} else if (arg.equals("-plain")) {
 				if (ret.templFile != null || ret.templEmpty || ret.templPlain) {
-					System.err.println(Strings.get("argOneTemplateError")); // OK
+					logger.error("{}", Strings.get("argOneTemplateError"));
 					return null;
 				}
 				ret.templPlain = true;
@@ -199,7 +203,7 @@ public class Startup {
 					AppPreferences.GATE_SHAPE
 							.set(AppPreferences.SHAPE_RECTANGULAR);
 				} else {
-					System.err.println(Strings.get("argGatesOptionError")); // OK
+					logger.error("{}", Strings.get("argGatesOptionError"));
 					System.exit(-1);
 				}
 			} else if (arg.equals("-locale")) {
@@ -219,12 +223,12 @@ public class Startup {
 				} else if (a.equals("no")) {
 					AppPreferences.ACCENTS_REPLACE.setBoolean(true);
 				} else {
-					System.err.println(Strings.get("argAccentsOptionError")); // OK
+					logger.error("{}", Strings.get("argAccentsOptionError"));
 					System.exit(-1);
 				}
 			} else if (arg.equals("-template")) {
 				if (ret.templFile != null || ret.templEmpty || ret.templPlain) {
-					System.err.println(Strings.get("argOneTemplateError")); // OK
+					logger.error("{}", Strings.get("argOneTemplateError"));
 					return null;
 				}
 				i++;
@@ -233,11 +237,9 @@ public class Startup {
 				}
 				ret.templFile = new File(args[i]);
 				if (!ret.templFile.exists()) {
-					System.err.println(StringUtil.format( // OK
-							Strings.get("templateMissingError"), args[i]));
+					logger.error("{}", StringUtil.format(Strings.get("templateMissingError"), args[i]));
 				} else if (!ret.templFile.canRead()) {
-					System.err.println(StringUtil.format( // OK
-							Strings.get("templateCannotReadError"), args[i]));
+					logger.error("{}", StringUtil.format(Strings.get("templateCannotReadError"), args[i]));
 				}
 			} else if (arg.equals("-nosplash")) {
 				ret.showSplash = false;
@@ -258,7 +260,7 @@ public class Startup {
 				} else if (a.equals("no")) {
 					AppPreferences.QUESTA_VALIDATION.setBoolean(false);
 				} else {
-					System.err.println(Strings.get("argQuestaOptionError")); // OK
+					logger.error("{}", Strings.get("argQuestaOptionError"));
 					System.exit(-1);
 				}
 			} else if (arg.charAt(0) == '-') {
@@ -269,11 +271,11 @@ public class Startup {
 			}
 		}
 		if (ret.isTty && ret.filesToOpen.isEmpty()) {
-			System.err.println(Strings.get("ttyNeedsFileError")); // OK
+			logger.error("{}", Strings.get("ttyNeedsFileError"));
 			return null;
 		}
 		if (ret.loadFile != null && !ret.isTty) {
-			System.err.println(Strings.get("loadNeedsTtyError")); // OK
+			logger.error("{}", Strings.get("loadNeedsTtyError"));
 			return null;
 		}
 		return ret;
@@ -332,10 +334,11 @@ public class Startup {
 				return;
 			}
 		}
-		System.err.println(Strings.get("invalidLocaleError")); // OK
-		System.err.println(Strings.get("invalidLocaleOptionsHeader")); // OK
+		logger.warn("{}", Strings.get("invalidLocaleError"));
+		logger.warn("{}", Strings.get("invalidLocaleOptionsHeader"));
+
 		for (int i = 0; i < opts.length; i++) {
-			System.err.println("   " + opts[i].toString()); // OK
+			logger.warn("   {}", opts[i].toString());
 		}
 		System.exit(-1);
 	}
@@ -384,33 +387,21 @@ public class Startup {
 		try {
 			xmlURL = new URL(Main.UPDATE_URL);
 		} catch (MalformedURLException e) {
-			System.err
-					.println("The URL of the XML file for the auto-updater is malformed.");
-			System.err
-					.println("Please report this error to the software maintainer");
-			System.err.println("-- AUTO-UPDATE ABORTED --");
+			logger.error("The URL of the XML file for the auto-updater is malformed.\nPlease report this error to the software maintainer\n-- AUTO-UPDATE ABORTED --");
 			return (false);
 		}
 		URLConnection conn;
 		try {
 			conn = xmlURL.openConnection();
 		} catch (IOException e) {
-			System.err
-					.println("Although an Internet connection should be available, the system couldn't connect to the URL requested by the auto-updater");
-			System.err
-					.println("If the error persist, please contact the software maintainer");
-			System.err.println("-- AUTO-UPDATE ABORTED --");
+			logger.error("Although an Internet connection should be available, the system couldn't connect to the URL requested by the auto-updater\nIf the error persist, please contact the software maintainer\n-- AUTO-UPDATE ABORTED --");
 			return (false);
 		}
 		InputStream in;
 		try {
 			in = conn.getInputStream();
 		} catch (IOException e) {
-			System.err
-					.println("Although an Internet connection should be available, the system couldn't retrieve the data requested by the auto-updater.");
-			System.err
-					.println("If the error persist, please contact the software maintainer");
-			System.err.println("-- AUTO-UPDATE ABORTED --");
+			logger.error("Although an Internet connection should be available, the system couldn't retrieve the data requested by the auto-updater.\nIf the error persist, please contact the software maintainer\n-- AUTO-UPDATE ABORTED --");
 			return (false);
 		}
 		ArgonXML logisimData = new ArgonXML(in, "logisim-evolution");
@@ -441,8 +432,7 @@ public class Startup {
 			try {
 				jarFile = new File(codeSource.getLocation().toURI().getPath());
 			} catch (URISyntaxException e) {
-				System.err
-						.println("Error in the syntax of the URI for the path of the executed Logisim-evolution JAR file!");
+				logger.error("Error in the syntax of the URI for the path of the executed Logisim-evolution JAR file!");
 				e.printStackTrace();
 				JOptionPane
 						.showMessageDialog(
@@ -522,33 +512,21 @@ public class Startup {
 		try {
 			fileURL = new URL(filePath);
 		} catch (MalformedURLException e) {
-			System.err
-					.println("The URL of the requested update file is malformed.");
-			System.err
-					.println("Please report this error to the software maintainer.");
-			System.err.println("-- AUTO-UPDATE ABORTED --");
+			logger.error("The URL of the requested update file is malformed.\nPlease report this error to the software maintainer.\n-- AUTO-UPDATE ABORTED --");
 			return (false);
 		}
 		URLConnection conn;
 		try {
 			conn = fileURL.openConnection();
 		} catch (IOException e) {
-			System.err
-					.println("Although an Internet connection should be available, the system couldn't connect to the URL of the updated file requested by the auto-updater.");
-			System.err
-					.println("If the error persist, please contact the software maintainer");
-			System.err.println("-- AUTO-UPDATE ABORTED --");
+			logger.error("Although an Internet connection should be available, the system couldn't connect to the URL of the updated file requested by the auto-updater.\nIf the error persist, please contact the software maintainer\n-- AUTO-UPDATE ABORTED --");
 			return (false);
 		}
 
 		// Get remote file size
 		int length = conn.getContentLength();
 		if (length == -1) {
-			System.err
-					.println("Cannot retrieve the file containing the updated version.");
-			System.err
-					.println("If the error persist, please contact the software maintainer");
-			System.err.println("-- AUTO-UPDATE ABORTED --");
+			logger.error("Cannot retrieve the file containing the updated version.\nIf the error persist, please contact the software maintainer\n-- AUTO-UPDATE ABORTED --");
 			return (false);
 		}
 
@@ -557,10 +535,7 @@ public class Startup {
 		try {
 			is = new BufferedInputStream(conn.getInputStream());
 		} catch (IOException e) {
-			System.err.println("Cannot get remote file stream.");
-			System.err
-					.println("If the error persist, please contact the software maintainer");
-			System.err.println("-- AUTO-UPDATE ABORTED --");
+			logger.error("Cannot get remote file stream.\nIf the error persist, please contact the software maintainer\n-- AUTO-UPDATE ABORTED --");
 			return (false);
 		}
 
@@ -585,29 +560,20 @@ public class Startup {
 				deplacement += currentBit;
 			}
 		} catch (IOException e) {
-			System.err
-					.println("An error occured while retrieving remote file (remote peer hung up).");
-			System.err
-					.println("If the error persist, please contact the software maintainer");
-			System.err.println("-- AUTO-UPDATE ABORTED --");
+			logger.error("An error occured while retrieving remote file (remote peer hung up).\nIf the error persist, please contact the software maintainer\n-- AUTO-UPDATE ABORTED --");
 			return (false);
 		}
 		// Close remote stream
 		try {
 			is.close();
 		} catch (IOException e) {
-			System.err
-					.println("Error encountered while closing the remote stream!");
+			logger.error("Error encountered while closing the remote stream!");
 			e.printStackTrace();
 		}
 
 		// If not all the bytes have been retrieved, abort update
 		if (deplacement != length) {
-			System.err
-					.println("An error occured while retrieving remote file (local size != remote size), download corrupted.");
-			System.err
-					.println("If the error persist, please contact the software maintainer");
-			System.err.println("-- AUTO-UPDATE ABORTED --");
+			logger.error("An error occured while retrieving remote file (local size != remote size), download corrupted.\nIf the error persist, please contact the software maintainer\n-- AUTO-UPDATE ABORTED --");
 			return (false);
 		}
 
@@ -616,28 +582,19 @@ public class Startup {
 		try {
 			destinationFile = new FileOutputStream(destination);
 		} catch (FileNotFoundException e) {
-			System.err
-					.println("An error occured while opening the local Jar file.");
-			System.err.println("-- AUTO-UPDATE ABORTED --");
+			logger.error("An error occured while opening the local Jar file.\n-- AUTO-UPDATE ABORTED --");
 			return (false);
 		}
 		try {
 			destinationFile.write(data);
 			destinationFile.flush();
 		} catch (IOException e) {
-			System.err
-					.println("An error occured while writing to the local Jar file.");
-			System.err.println("-- AUTO-UPDATE ABORTED --");
-			System.err
-					.println("The local file might be corrupted. If this is the case, please download a new copy of Logisim.");
+			logger.error("An error occured while writing to the local Jar file.\n-- AUTO-UPDATE ABORTED --\nThe local file might be corrupted. If this is the case, please download a new copy of Logisim.");
 		} finally {
 			try {
 				destinationFile.close();
 			} catch (IOException e) {
-				System.err
-						.println("Error encountered while closing the local destination file!");
-				System.err
-						.println("The local file might be corrupted. If this is the case, please download a new copy of Logisim.");
+				logger.error("Error encountered while closing the local destination file!\nThe local file might be corrupted. If this is the case, please download a new copy of Logisim.");
 				return (false);
 			}
 		}
@@ -693,8 +650,7 @@ public class Startup {
 			uC.connect();
 			return (true);
 		} catch (MalformedURLException e) {
-			System.err
-					.println("The URL used to check the connectivity is malformed -- no Google?");
+			logger.error("The URL used to check the connectivity is malformed -- no Google?");
 			e.printStackTrace();
 		} catch (IOException e) {
 			// If we get here, the connection somehow failed
@@ -740,7 +696,7 @@ public class Startup {
 						.size();
 		if (count < 0) {
 			// this will never happen, but the optimizer doesn't know that...
-			System.err.println("FATAL ERROR - no components"); // OK
+			logger.error("FATAL ERROR - no components"); // OK
 			System.exit(-1);
 		}
 
@@ -779,8 +735,7 @@ public class Startup {
 				try {
 					ProjectActions.doOpen(monitor, fileToOpen, substitutions);
 				} catch (LoadFailedException ex) {
-					System.err.println(fileToOpen.getName() + ": "
-							+ ex.getMessage()); // OK
+					logger.error("{} : {}", fileToOpen.getName(), ex.getMessage());
 					System.exit(-1);
 				}
 				if (first) {

@@ -46,8 +46,13 @@ import java.util.Set;
 
 import javax.imageio.ImageIO;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class ImageXmlFactory {
 
+	final static Logger logger = LoggerFactory.getLogger(ImageXmlFactory.class);
+	
 	private String[] CodeTable;
 	private StringBuffer AsciiStream;
 	private String[] InitialCodeTable = { "a", "b", "c", "d", "e", "f", "g",
@@ -119,7 +124,7 @@ public class ImageXmlFactory {
 			pixelGrabber.grabPixels();
 		} catch (Exception e) {
 			/* TODO: handle exceptions */
-			System.out.println("PixelGrabber exception");
+			logger.error("PixelGrabber exception: {}", e.getMessage());
 		}
 		ColorModel color_model = pixelGrabber.getColorModel();
 		if (pixelGrabber.getPixels() instanceof byte[]) {
@@ -154,7 +159,7 @@ public class ImageXmlFactory {
 			ImageIO.write(result, "jpg", blaat);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			System.out.println("JPEG writer Error!");
+			logger.error("JPEG Writer exception: {}", e.getMessage());
 		}
 		byte data[] = blaat.toByteArray();
 		CodeTable = CreateCodeTable(data);

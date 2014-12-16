@@ -35,6 +35,9 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
@@ -50,6 +53,8 @@ import com.cburch.logisim.util.LocaleManager;
  */
 public class VhdlSimulatorVhdlTop {
 
+	final static Logger logger = LoggerFactory.getLogger(VhdlSimulatorVhdlTop.class);
+	
 	private boolean valid = false;
 	private VhdlSimulator vhdlSimulator;
 
@@ -206,7 +211,7 @@ public class VhdlSimulatorVhdlTop {
 									VhdlSimulator.VHDL_TEMPLATES_PATH
 											+ "top_sim.templ")));
 		} catch (IOException e) {
-			System.out.println("Could not read template : " + e.getMessage());
+			logger.error("Could not read template : {}", e.getMessage());
 			return;
 		}
 
@@ -223,15 +228,11 @@ public class VhdlSimulatorVhdlTop {
 			writer.print(template);
 			writer.close();
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			System.out.println("Could not create top_sim file : "
-					+ e.getMessage());
+			logger.error("Could not create top_sim file : {}", e.getMessage());
 			e.printStackTrace();
 			return;
 		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			System.out.println("Could not create top_sim file : "
-					+ e.getMessage());
+			logger.error("Could not create top_sim file : {}", e.getMessage());
 			e.printStackTrace();
 			return;
 		}

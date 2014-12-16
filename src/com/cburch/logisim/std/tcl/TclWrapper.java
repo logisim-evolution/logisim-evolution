@@ -42,6 +42,9 @@ import java.util.Scanner;
 
 import javax.swing.JOptionPane;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.cburch.logisim.tools.MessageBox;
 
 /**
@@ -53,6 +56,8 @@ import com.cburch.logisim.tools.MessageBox;
  * @author christian.mueller@heig-vd.ch
  */
 public class TclWrapper {
+	
+	final static Logger logger = LoggerFactory.getLogger(TclWrapper.class);
 
 	public enum TclWrapperState {
 		STOPPED, STARTING, RUNNING
@@ -111,8 +116,7 @@ public class TclWrapper {
 						Paths.get(TCL_PATH + "tcl_wrapper.tcl"),
 						StandardCopyOption.REPLACE_EXISTING);
 			} catch (IOException e) {
-				System.out.println("Cannot copy TCL wrapper file : "
-						+ e.getMessage());
+				logger.error("Cannot copy TCL wrapper file : {}", e.getMessage());
 				e.printStackTrace();
 			}
 			fileExists = true;
@@ -143,8 +147,7 @@ public class TclWrapper {
 			process = builder.start();
 		} catch (IOException e) {
 			e.printStackTrace();
-			System.err.println("Cannot run TCL wrapper for TCL console : "
-					+ e.getMessage());
+			logger.error("Cannot run TCL wrapper for TCL console : {}", e.getMessage());
 
 			return;
 		}

@@ -69,6 +69,8 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -84,6 +86,8 @@ import com.bfh.logisim.fpgaboardeditor.Strings;
 
 public class ComponentMapDialog implements ActionListener,
 		ListSelectionListener {
+	
+	final static Logger logger = LoggerFactory.getLogger(ComponentMapDialog.class);
 
 	private class MappedComponentIdContainer {
 
@@ -692,7 +696,7 @@ public class ComponentMapDialog implements ActionListener,
 						BoardPic.getHeight());
 			} catch (Exception e) {
 				/* TODO: handle exceptions */
-				System.out.println("ERROR:" + e.getMessage());
+				logger.error("Exceptions not handled yet in Load(), but got an exception: {}", e.getMessage());
 			}
 		}
 		panel.setVisible(true);
@@ -797,7 +801,7 @@ public class ComponentMapDialog implements ActionListener,
 				aTransformer.transform(src, dest);
 			} catch (Exception e) {
 				/* TODO: handle exceptions */
-				System.out.println(e.getMessage());
+				logger.error("Exceptions not handled yet in Save(), but got an exception: {}", e.getMessage());
 			}
 		}
 		panel.setVisible(true);

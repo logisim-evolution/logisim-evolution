@@ -61,6 +61,9 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileFilter;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.comp.ComponentDrawContext;
@@ -71,6 +74,9 @@ import com.cburch.logisim.util.GifEncoder;
 import com.cburch.logisim.util.StringGetter;
 
 class ExportImage {
+	
+	final static Logger logger = LoggerFactory.getLogger(ExportImage.class);
+	
 	private static class ExportThread extends Thread {
 		Frame frame;
 		Canvas canvas;
@@ -332,7 +338,7 @@ class ExportImage {
 							"jpeg", "jpe", "jfi", "jfif", "jfi" });
 			break;
 		default:
-			System.err.println("unexpected format; aborted"); // OK
+			logger.error("Unexpected image format; aborted!");
 			return;
 		}
 

@@ -47,6 +47,8 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -62,6 +64,9 @@ import com.cburch.logisim.std.io.ReptarLocalBus;
 import com.cburch.logisim.std.io.SevenSegment;
 
 public class FPGAIOInformationContainer {
+	
+	final static Logger logger = LoggerFactory.getLogger(FPGAIOInformationContainer.class);
+	
 	/*
 	 * Bus is just a placeholder for a multi-bit pin. It should not be used for
 	 * mappable components
@@ -299,7 +304,7 @@ public class FPGAIOInformationContainer {
 		boolean PinsComplete = true;
 		for (int i = 0; i < NrOfPins; i++) {
 			if (!MyPinLocations.containsKey(i)) {
-				System.out.println("Bizar missing pin " + i + " of component!");
+				logger.warn("Bizar missing pin {} of component!", i);
 				PinsComplete = false;
 			}
 		}
@@ -412,7 +417,7 @@ public class FPGAIOInformationContainer {
 			return result;
 		} catch (Exception e) {
 			/* TODO: handle exceptions */
-			System.out.println(e.getMessage());
+			logger.error("Exceptions not handled yet in GetDocumentElement(), but got an exception: {}", e.getMessage());
 		}
 		return null;
 	}

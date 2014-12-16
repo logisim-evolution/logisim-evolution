@@ -34,6 +34,9 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.AttributeSet;
@@ -52,6 +55,9 @@ import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.StringUtil;
 
 public class Counter extends InstanceFactory {
+	
+	final static Logger logger = LoggerFactory.getLogger(Counter.class);
+	
 	public static int SymbolWidth(int NrOfBits) {
 		return 150 + ((NrOfBits - 8) / 5) * 10;
 	}
@@ -418,7 +424,7 @@ public class Counter extends InstanceFactory {
 					} else if (onGoal == ON_GOAL_CONT) {
 						newVal = (UpCount) ? oldVal + 1 : oldVal - 1;
 					} else {
-						System.err.println("Invalid goal attribute " + onGoal); // OK
+						logger.error("Invalid goal attribute {}", onGoal);
 						newVal = ld ? max : 0;
 					}
 				} else {

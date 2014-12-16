@@ -37,9 +37,15 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.cburch.logisim.comp.Component;
 
 public class ReplacementMap {
+	
+	final static Logger logger = LoggerFactory.getLogger(ReplacementMap.class);
+	
 	private boolean frozen;
 	private HashMap<Component, HashSet<Component>> map;
 	private HashMap<Component, HashSet<Component>> inverse;
@@ -111,8 +117,7 @@ public class ReplacementMap {
 			if (!inverse.containsKey(c)) {
 				HashSet<Component> bs = e.getValue();
 				if (!bs.isEmpty()) {
-					System.err
-							.println("internal error: component replaced but not represented"); // OK
+					logger.error("Internal error: component replaced but not represented");
 				}
 				inverse.put(c, new HashSet<Component>(3));
 			}

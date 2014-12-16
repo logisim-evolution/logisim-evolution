@@ -39,6 +39,9 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.bfh.logisim.designrulecheck.Netlist;
 import com.bfh.logisim.designrulecheck.NetlistComponent;
 import com.bfh.logisim.fpgaboardeditor.BoardInformation;
@@ -52,6 +55,8 @@ import com.cburch.logisim.std.wiring.Pin;
 
 public class MappableResourcesContainer {
 
+	final static Logger logger = LoggerFactory.getLogger(MappableResourcesContainer.class);
+	
 	private Map<ArrayList<String>, NetlistComponent> myMappableResources;
 	public String currentBoardName;
 	private BoardInformation currentUsedBoard;
@@ -157,7 +162,7 @@ public class MappableResourcesContainer {
 	private String DisplayNametoMapName(String item) {
 		String[] parts = item.split(" ");
 		if (parts.length != 2) {
-			System.out.print("Internal Error!");
+			logger.error("Internal error");
 			return "";
 		}
 		return currentBoardName + ":" + parts[1];
@@ -224,7 +229,7 @@ public class MappableResourcesContainer {
 		for (String Map : fpgaInputsList.keySet()) {
 			int InputId = fpgaInputsList.get(Map);
 			if (!mappedList.containsKey(Map)) {
-				System.out.println("Bizar, no mapping found for " + Map);
+				logger.warn("No mapping found for {}", Map);
 				return Contents;
 			}
 			BoardRectangle rect = mappedList.get(Map);
@@ -235,7 +240,7 @@ public class MappableResourcesContainer {
 		for (String Map : fpgaInOutsList.keySet()) {
 			int InOutId = fpgaInOutsList.get(Map);
 			if (!mappedList.containsKey(Map)) {
-				System.out.println("Bizar, no mapping found for " + Map);
+				logger.warn("No mapping found for {}", Map);
 				return Contents;
 			}
 			BoardRectangle rect = mappedList.get(Map);
@@ -246,7 +251,7 @@ public class MappableResourcesContainer {
 		for (String Map : fpgaOutputsList.keySet()) {
 			int OutputId = fpgaOutputsList.get(Map);
 			if (!mappedList.containsKey(Map)) {
-				System.out.println("Bizar, no mapping found for " + Map);
+				logger.warn("No mapping found for {}", Map);
 				return Contents;
 			}
 			BoardRectangle rect = mappedList.get(Map);
@@ -273,7 +278,7 @@ public class MappableResourcesContainer {
 		ArrayList<String> key = GetHierarchyKey(id);
 		NetlistComponent MapComp = myMappableResources.get(key);
 		if (MapComp == null) {
-			System.out.println("Internal Error!\n");
+			logger.error("Internal error!");
 			return null;
 		}
 		return MapComp.getMap(DisplayNametoMapName(id));
@@ -494,9 +499,7 @@ public class MappableResourcesContainer {
 		ArrayList<String> key = GetHierarchyKey(comp);
 		NetlistComponent MapComp = myMappableResources.get(key);
 		if (MapComp == null) {
-			System.out.println(comp);
-			System.out.println(key);
-			System.out.println("Internal Error!\n");
+			logger.error("Internal error! comp: {}, key: {}", comp, key);
 			return;
 		}
 		MapComp.addMap(DisplayNametoMapName(comp), item, Maptype);
@@ -506,7 +509,7 @@ public class MappableResourcesContainer {
 	private String MapNametoDisplayName(String item) {
 		String[] parts = item.split(":");
 		if (parts.length != 2) {
-			System.out.print("Internal Error!");
+			logger.error("Internal error!");
 			return "";
 		}
 		ArrayList<String> key = GetHierarchyKey(parts[1]);
@@ -641,7 +644,7 @@ public class MappableResourcesContainer {
 		ArrayList<String> key = GetHierarchyKey(comp);
 		NetlistComponent MapComp = myMappableResources.get(key);
 		if (MapComp == null) {
-			System.out.println("Internal Error!\n");
+			logger.error("Internal error!");
 			return;
 		}
 		MapComp.removeMap(DisplayNametoMapName(comp));

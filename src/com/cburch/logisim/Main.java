@@ -36,10 +36,14 @@ import java.io.Writer;
 
 import javax.swing.JOptionPane;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.cburch.logisim.gui.start.Startup;
 
 public class Main {
-
+	final static Logger logger = LoggerFactory.getLogger(Main.class);
+	
 	public static void main(String[] args) throws Exception {
 		Startup startup = Startup.parseArgs(args);
 		if (startup == null) {

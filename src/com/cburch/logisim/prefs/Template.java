@@ -36,9 +36,15 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.cburch.logisim.Main;
 
 public class Template {
+	
+	final static Logger logger = LoggerFactory.getLogger(Template.class);
+	
 	public static Template create(InputStream in) {
 		InputStreamReader reader = new InputStreamReader(in);
 		char[] buf = new char[4096];
@@ -77,7 +83,7 @@ public class Template {
 		try {
 			return new ByteArrayInputStream(contents.getBytes("UTF-8"));
 		} catch (UnsupportedEncodingException e) {
-			System.err.println("warning: UTF-8 is not supported"); // OK
+			logger.warn("UTF-8 is not supported");
 			return new ByteArrayInputStream(contents.getBytes());
 		}
 	}

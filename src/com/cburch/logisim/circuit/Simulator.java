@@ -37,17 +37,6 @@ import com.cburch.logisim.comp.ComponentDrawContext;
 import com.cburch.logisim.prefs.AppPreferences;
 
 public class Simulator {
-	/*
-	 * begin DEBUGGING private static PrintWriter debug_log;
-	 * 
-	 * static { try { debug_log = new PrintWriter(new BufferedWriter(new
-	 * FileWriter("DEBUG"))); } catch (IOException e) {
-	 * System.err.println("Could not open debug log"); //OK } }
-	 * 
-	 * public static void log(String msg) { debug_log.println(msg); }
-	 * 
-	 * public static void flushLog() { debug_log.flush(); } //end DEBUGGING
-	 */
 
 	class PropagationManager extends Thread {
 

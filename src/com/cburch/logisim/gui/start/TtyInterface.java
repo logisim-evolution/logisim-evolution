@@ -37,6 +37,9 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.cburch.logisim.circuit.Analyze;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitState;
@@ -58,6 +61,9 @@ import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.util.StringUtil;
 
 public class TtyInterface {
+	
+	final static Logger logger = LoggerFactory.getLogger(TtyInterface.class);
+	
 	// It's possible to avoid using the separate thread using
 	// System.in.available(),
 	// but this doesn't quite work because on some systems, the keyboard input
@@ -124,8 +130,8 @@ public class TtyInterface {
 			precision = 0.0000001;
 		hertz = (int) (hertz / precision) * precision;
 		String hertzStr = hertz == (int) hertz ? "" + (int) hertz : "" + hertz;
-		System.out.println(StringUtil.format(Strings.get("ttySpeedMsg"), // OK
-				hertzStr, "" + tickCount, "" + elapse));
+		Object[] paramArray = {StringUtil.format(Strings.get("ttySpeedMsg")), hertzStr, tickCount, elapse};
+		logger.info("{}", paramArray);
 	}
 
 	private static void displayStatistics(LogisimFile file) {
@@ -244,8 +250,8 @@ public class TtyInterface {
 		try {
 			file = loader.openLogisimFile(fileToOpen, args.getSubstitutions());
 		} catch (LoadFailedException e) {
-			System.err
-					.println(Strings.get("ttyLoadError", fileToOpen.getName())); // OK
+			logger.error("{}", Strings.get("ttyLoadError", fileToOpen.getName()));
+
 			System.exit(-1);
 			return;
 		}
@@ -283,12 +289,11 @@ public class TtyInterface {
 			try {
 				boolean loaded = loadRam(circState, args.getLoadFile());
 				if (!loaded) {
-					System.err.println(Strings.get("loadNoRamError")); // OK
+					logger.error("{}", Strings.get("loadNoRamError"));
 					System.exit(-1);
 				}
 			} catch (IOException e) {
-				System.err.println(Strings.get("loadIoError") + ": "
-						+ e.toString()); // OK
+				logger.error("{}: {}", Strings.get("loadIoError"), e.toString());
 				System.exit(-1);
 			}
 		}
@@ -310,7 +315,7 @@ public class TtyInterface {
 			keyboardStates = new ArrayList<InstanceState>();
 			boolean ttyFound = prepareForTty(circState, keyboardStates);
 			if (!ttyFound) {
-				System.err.println(Strings.get("ttyNoTtyError")); // OK
+				logger.error("{}", Strings.get("ttyNoTtyError"));
 				System.exit(-1);
 			}
 			if (keyboardStates.isEmpty()) {
@@ -368,9 +373,9 @@ public class TtyInterface {
 			ensureLineTerminated();
 		if (showHalt || retCode != 0) {
 			if (retCode == 0) {
-				System.out.println(Strings.get("ttyHaltReasonPin")); // OK
+				logger.error("{}", Strings.get("ttyHaltReasonPin"));
 			} else if (retCode == 1) {
-				System.out.println(Strings.get("ttyHaltReasonOscillation")); // OK
+				logger.error("{}", Strings.get("ttyHaltReasonOscillation"));
 			}
 		}
 		if (showSpeed) {

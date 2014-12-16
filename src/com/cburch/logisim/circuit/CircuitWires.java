@@ -41,6 +41,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.comp.ComponentDrawContext;
 import com.cburch.logisim.comp.EndData;
@@ -59,6 +62,9 @@ import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.IteratorUtil;
 
 class CircuitWires {
+	
+	final static Logger logger = LoggerFactory.getLogger(CircuitWires.class);
+	
 	static class BundleMap {
 		boolean computed = false;
 		HashMap<Location, WireBundle> pointBundles = new HashMap<Location, WireBundle>();
@@ -609,7 +615,7 @@ class CircuitWires {
 				} catch (Exception t) {
 					if (tries == 0) {
 						t.printStackTrace();
-						System.err.println(t.getLocalizedMessage());
+						logger.error("{}", t.getLocalizedMessage());
 						bundleMap = ret;
 					}
 				}

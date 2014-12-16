@@ -35,6 +35,9 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.util.FileUtil;
@@ -49,6 +52,8 @@ import com.cburch.logisim.util.LocaleManager;
  */
 class VhdlSimulatorTclComp {
 
+	final static Logger logger = LoggerFactory.getLogger(VhdlSimulatorTclComp.class);
+	
 	private boolean valid = false;
 	private VhdlSimulator vhdlSimulator;
 
@@ -101,7 +106,7 @@ class VhdlSimulatorTclComp {
 					comp_files.toString());
 
 		} catch (IOException e) {
-			System.out.println("Could not read template : " + e.getMessage());
+			logger.error("Could not read template : {}", e.getMessage());
 			return;
 		}
 
@@ -112,13 +117,11 @@ class VhdlSimulatorTclComp {
 			writer.print(template);
 			writer.close();
 		} catch (FileNotFoundException e) {
-			System.out.println("Could not create run.tcl file : "
-					+ e.getMessage());
+			logger.error("Could not create run.tcl file : {}", e.getMessage());
 			e.printStackTrace();
 			return;
 		} catch (UnsupportedEncodingException e) {
-			System.out.println("Could not create run.tcl file : "
-					+ e.getMessage());
+			logger.error("Could not create run.tcl file : {}", e.getMessage());
 			e.printStackTrace();
 			return;
 		}

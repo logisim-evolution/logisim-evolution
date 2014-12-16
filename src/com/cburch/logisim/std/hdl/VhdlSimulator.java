@@ -42,6 +42,9 @@ import java.util.List;
 
 import javax.help.UnsupportedOperationException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.cburch.logisim.circuit.CircuitEvent;
 import com.cburch.logisim.circuit.CircuitListener;
 import com.cburch.logisim.circuit.CircuitState;
@@ -60,6 +63,8 @@ import com.cburch.logisim.util.SocketClient;
  */
 public class VhdlSimulator implements CircuitListener {
 
+	final static Logger logger = LoggerFactory.getLogger(VhdlSimulator.class);
+	
 	public enum State {
 		DISABLED, ENABLED, STARTING, RUNNING;
 	}
@@ -232,8 +237,7 @@ public class VhdlSimulator implements CircuitListener {
 					Paths.get(SIM_COMP_PATH + "modelsim.ini"),
 					StandardCopyOption.REPLACE_EXISTING);
 		} catch (IOException e) {
-			System.out.println("Cannot copy simulation files : "
-					+ e.getMessage());
+			logger.error("Cannot copy simulation files: {}", e.getMessage());
 			e.printStackTrace();
 		}
 

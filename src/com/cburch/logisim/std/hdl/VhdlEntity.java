@@ -40,6 +40,9 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.WeakHashMap;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.cburch.hdl.HdlModel;
 import com.cburch.hdl.HdlModelListener;
 import com.cburch.logisim.data.Attribute;
@@ -56,9 +59,10 @@ import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.StringUtil;
-
 public class VhdlEntity extends InstanceFactory {
 
+	final static Logger logger = LoggerFactory.getLogger(VhdlEntity.class);
+	
 	static class ContentAttribute extends Attribute<VhdlContent> {
 
 		public ContentAttribute() {
@@ -346,13 +350,11 @@ public class VhdlEntity extends InstanceFactory {
 			writer.print(content);
 			writer.close();
 		} catch (FileNotFoundException e) {
-			System.out
-					.println("Could not create vhdl file : " + e.getMessage());
+			logger.error("Could not create vhdl file: {}", e.getMessage());
 			e.printStackTrace();
 			return;
 		} catch (UnsupportedEncodingException e) {
-			System.out
-					.println("Could not create vhdl file : " + e.getMessage());
+			logger.error("Could not create vhdl file: {}", e.getMessage());
 			e.printStackTrace();
 			return;
 		}

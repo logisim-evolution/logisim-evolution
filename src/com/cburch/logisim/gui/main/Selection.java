@@ -38,6 +38,9 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.WeakHashMap;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitEvent;
 import com.cburch.logisim.circuit.CircuitListener;
@@ -54,6 +57,9 @@ import com.cburch.logisim.proj.ProjectListener;
 import com.cburch.logisim.tools.CustomHandles;
 
 public class Selection extends SelectionBase {
+	
+	final static Logger logger = LoggerFactory.getLogger(Selection.class);
+	
 	public static class Event {
 		Object source;
 
@@ -293,7 +299,7 @@ public class Selection extends SelectionBase {
 
 	@Override
 	public void print() {
-		System.err.println(" isVisible: " + isVisible); // OK
+		logger.error("isVisible: {}", isVisible);
 		super.print();
 	}
 
