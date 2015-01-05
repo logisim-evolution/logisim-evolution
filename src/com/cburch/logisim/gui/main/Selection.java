@@ -58,8 +58,6 @@ import com.cburch.logisim.tools.CustomHandles;
 
 public class Selection extends SelectionBase {
 	
-	final static Logger logger = LoggerFactory.getLogger(Selection.class);
-	
 	public static class Event {
 		Object source;
 
@@ -71,7 +69,7 @@ public class Selection extends SelectionBase {
 			return source;
 		}
 	}
-
+	
 	public static interface Listener {
 		public void selectionChanged(Selection.Event event);
 	}
@@ -156,6 +154,8 @@ public class Selection extends SelectionBase {
 			}
 		}
 	}
+
+	final static Logger logger = LoggerFactory.getLogger(Selection.class);
 
 	private MyListener myListener;
 	private boolean isVisible = true;

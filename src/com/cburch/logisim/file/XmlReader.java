@@ -37,14 +37,18 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.swing.JOptionPane;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
@@ -67,6 +71,7 @@ import com.cburch.logisim.util.InputEventUtil;
 import com.cburch.logisim.util.StringUtil;
 
 class XmlReader {
+
 	static class CircuitData {
 		Element circuitElement;
 		Circuit circuit;
@@ -269,7 +274,7 @@ class XmlReader {
 						addError(
 								Strings.get("fileAppearanceNotFound",
 										sub.getTagName()),
-								context + "." + sub.getTagName());
+										context + "." + sub.getTagName());
 					} else {
 						shapes.add(m);
 					}
@@ -343,13 +348,29 @@ class XmlReader {
 				sourceVersion = LogisimVersion.parse(versionString);
 			}
 
+			// If we are opening a pre-logisim-evolution file, there might be some components
+			// (such as the RAM or the counters), that have changed their shape and other details.
+			// We have therefore to warn the user that things might be a little strange in their
+			// circuits...
+			if (sourceVersion.compareTo(LogisimVersion.get(2, 7, 2)) < 0) {
+				JOptionPane
+				.showMessageDialog(
+						null,
+						"You are opening a file created with original Logisim code.\n" +
+								"You might encounter some problems in the execution, since some components evolved since then.\n" +
+								"Moreover, labels will be converted to match VHDL limitations for variable names.",
+								"Old file format -- compatibility mode",
+								JOptionPane.WARNING_MESSAGE);
+			}
+
+
 			if (versionString.contains("t") && !Main.VERSION.hasTracker()) {
 				JOptionPane
-						.showMessageDialog(
-								null,
-								"The file you have opened contains tracked components.\nYou might encounter some problems in the execution.",
-								"No tracking system available",
-								JOptionPane.WARNING_MESSAGE);
+				.showMessageDialog(
+						null,
+						"The file you have opened contains tracked components.\nYou might encounter some problems in the execution.",
+						"No tracking system available",
+						JOptionPane.WARNING_MESSAGE);
 			}
 
 			// first, load the sublibraries
@@ -363,6 +384,7 @@ class XmlReader {
 			List<CircuitData> circuitsData = new ArrayList<CircuitData>();
 			for (Element circElt : XmlIterator.forChildElements(elt, "circuit")) {
 				String name = circElt.getAttribute("name");
+
 				if (name == null || name.equals("")) {
 					addError(Strings.get("circNameMissingError"), "C??");
 				}
@@ -380,27 +402,38 @@ class XmlReader {
 			// third, process the other child elements
 			for (Element sub_elt : XmlIterator.forChildElements(elt)) {
 				String name = sub_elt.getTagName();
-				if (name.equals("circuit") || name.equals("lib")) {
-					; // Nothing to do: Done earlier.
-				} else if (name.equals("options")) {
+
+				switch (name) {
+				case "circuit":
+				case "lib":
+					// Nothing to do: Done earlier.
+					break;
+				case "options":
 					try {
 						initAttributeSet(sub_elt, file.getOptions()
 								.getAttributeSet(), null);
 					} catch (XmlReaderException e) {
 						addErrors(e, "options");
 					}
-				} else if (name.equals("mappings")) {
+					break;
+				case "mappings":
 					initMouseMappings(sub_elt);
-				} else if (name.equals("toolbar")) {
+					break;
+				case "toolbar":
 					initToolbarData(sub_elt);
-				} else if (name.equals("main")) {
+					break;
+				case "main":
 					String main = sub_elt.getAttribute("name");
 					Circuit circ = file.getCircuit(main);
 					if (circ != null) {
 						file.setMainCircuit(circ);
 					}
-				} else if (name.equals("message")) {
+					break;
+				case "message":
 					file.addMessage(sub_elt.getAttribute("value"));
+					break;
+				default:
+					throw new IllegalArgumentException("Invalid node in logisim file: " + name);
 				}
 			}
 
@@ -424,6 +457,51 @@ class XmlReader {
 		}
 	}
 
+	/**
+	 * Change label names in an XML tree according to a list of suggested labels
+	 * 
+	 * @param root root element of the XML tree
+	 * @param nodeType type of nodes to consider
+	 * @param attrType type of attributes to consider
+	 * @param validLabels label set of correct label names
+	 */
+	public static void applyValidLabels(Element root,
+			String nodeType, String attrType, Map<String, String> validLabels)
+					throws IllegalArgumentException {
+		assert(root != null);
+		assert(nodeType != null);
+		assert(attrType != null);
+		assert(nodeType.length() > 0);
+		assert(attrType.length() > 0);
+		assert(validLabels != null);
+
+		switch (nodeType) {
+		case "circuit":
+			replaceCircuitNodes(root, attrType, validLabels);
+			break;
+		case "comp":
+			replaceCompNodes(root, validLabels);
+			break;
+		default:
+			throw new IllegalArgumentException("Invalid node type requested: " + nodeType);
+		}
+	}
+
+	public static Element ensureLogisimCompatibility(Element elt) {
+		Map<String, String> validLabels;
+		validLabels = findValidLabels(elt, "circuit", "name");
+		applyValidLabels(elt, "circuit", "name", validLabels);
+		validLabels = findValidLabels(elt, "circuit", "label");
+		applyValidLabels(elt, "circuit", "label", validLabels);
+		validLabels = findValidLabels(elt, "comp", "label");
+		applyValidLabels(elt, "comp", "label", validLabels);
+		// In old, buggy Logisim versions, the Pin component could be present in the
+		// toolbar. In this case, the label is incorrectly set with a name that
+		// has a space -- we have to fix it using the valid labels computed above
+		fixInvalidToolbarLabels(elt, validLabels);
+		return(elt);
+	}
+
 	private static void findLibraryUses(ArrayList<Element> dest, String label,
 			Iterable<Element> candidates) {
 		for (Element elt : candidates) {
@@ -434,8 +512,368 @@ class XmlReader {
 		}
 	}
 
-	private LibraryLoader loader;
+	/**
+	 * Check an XML tree for VHDL-incompatible labels, then propose a
+	 * list of valid ones.
+	 * Here valid means: [a-zA-Z][a-zA-Z0-9_]*
+	 * This applies, in our context, to circuit's names and labels (and
+	 * their corresponding component's names, of course), and to comp's labels.
+	 * 
+	 * @param root root element of the XML tree
+	 * @param nodeType type of nodes to consider
+	 * @param attrType type of attributes to consider 
+	 * @return map containing the original attribute values as keys,
+	 * and the corresponding valid attribute values as the values
+	 */
+	public static Map<String, String> findValidLabels(Element root,
+			String nodeType, String attrType) {
+		assert(root != null);
+		assert(nodeType != null);
+		assert(attrType != null);
+		assert(nodeType.length() > 0);
+		assert(attrType.length() > 0);
+
+		Map<String, String> validLabels = new HashMap<String, String>();
+
+		List<String> initialLabels = getXMLLabels(root, nodeType, attrType);
+
+		Iterator<String> iterator = initialLabels.iterator();
+		while (iterator.hasNext()) {
+			String label = iterator.next();
+			if (!validLabels.containsKey(label)) {
+				// Check if the name is invalid, in which case create
+				// a valid version and put it in the map
+				if (labelVHDLInvalid(label)) {
+					String initialLabel = label;
+					label = generateValidVHDLLabel(label);
+					validLabels.put(initialLabel, label);
+				}
+			}		
+		}
+
+		return validLabels;
+	}
+
+	/**
+	 * In some old version of Logisim, a pin could be present in the toolbar
+	 * with an incorrect label. This function takes the label computed for
+	 * the component and fixes the pin accordingly.
+	 * 
+	 * @param root root element of the XML tree
+	 * @param validLabels label set of correct label names
+	 */
+	public static void fixInvalidToolbarLabels(Element root,
+			Map<String, String> validLabels) {
+		assert(root != null);
+		assert(validLabels != null);
+
+		if (validLabels.isEmpty()) {
+			// Particular case, all the labels were good!
+			return;
+		}
+
+		// Iterate on toolbars -- though there should only one!
+		for (Element toolbarElt : XmlIterator.forChildElements(root, "toolbar")) {
+			// Iterate on tools
+			for (Element toolElt : XmlIterator.forChildElements(toolbarElt, "tool")) {
+				// Iterate on attribute nodes
+				for (Element attrElt : XmlIterator.forChildElements(toolElt, "a")) {
+					// Each attribute node should have a name field
+					if (attrElt.hasAttribute("name")) {
+						String aName = attrElt.getAttribute("name");
+						if (aName.equals("label")) {
+							String label = attrElt.getAttribute("val");
+							if (validLabels.containsKey(label)) {
+								attrElt.setAttribute("val", validLabels.get(label));
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * Given a label, generates a valid VHDL label by removing invalid characters,
+	 * putting a letter at the beginning, and putting a UUID at the end if the name
+	 * has been altered.
+	 * @param initialLabel initial (possibly invalid) label
+	 * @return a valid VHDL label
+	 */
+	public static String generateValidVHDLLabel(String initialLabel) {
+		assert(initialLabel != null);
+
+		String label = initialLabel;
+
+		if(label.isEmpty()) {
+			logger.warn("Empty label is not a valid VHDL label");
+			label = "L_";
+		}
+
+		// Force string to start with a letter
+		if (!label.matches("^[A-Za-z].*$"))
+			label = "L_" + label;
+		// Force the rest to be either letters, or numbers, or underscores
+		label = label.replaceAll("[^A-Za-z0-9_]", "_");
+		// Suppress multiple successive underscores and an underscore at the end
+		label = label.replaceAll("_+", "_");
+		if (label.endsWith("_"))
+			label = label.substring(0, label.length() - 1);
+
+		if (!label.equals(initialLabel)) {
+			// Concatenate a unique ID if the string has been altered
+			label = label + "_" + UUID.randomUUID().toString().substring(0, 8);
+			// Replace the "-" characters in the UUID with underscores
+			label = label.replaceAll("-", "_");
+		}
+
+		return(label);
+	}
+
+	/**
+	 * Traverses an XML tree and gets a list of attribute values for the given
+	 * attribute and node types.
+	 * 
+	 * @param root root element of the XML tree
+	 * @param nodeType type of nodes to consider
+	 * @param attrType type of attributes to consider 
+	 * @return list of names for the considered node/attribute pairs
+	 */
+	public static List<String> getXMLLabels(Element root,
+			String nodeType, String attrType)
+					throws IllegalArgumentException {
+		assert(root != null);
+		assert(nodeType != null);
+		assert(attrType != null);
+		assert(nodeType.length() > 0);
+		assert(attrType.length() > 0);
+
+		List<String> attrValuesList = new ArrayList<String>();
+
+		switch (nodeType) {
+		case "circuit":
+			inspectCircuitNodes(root, attrType, attrValuesList);
+			break;
+		case "comp":
+			inspectCompNodes(root, attrValuesList);
+			break;
+		default:
+			throw new IllegalArgumentException("Invalid node type requested: " + nodeType);
+		}
+
+		return attrValuesList;
+	}
+
+	/**
+	 * Check XML's circuit nodes, and return a list of values corresponding
+	 * to the desired attribute.
+	 * @param root XML's root
+	 * @param attrType attribute type (either name or label)
+	 * @param attrValuesList empty list that will contain the values found
+	 */
+	private static void inspectCircuitNodes(Element root,
+			String attrType, List<String> attrValuesList) 
+					throws IllegalArgumentException {
+		assert(root != null);
+		assert(attrType != null);
+		assert(attrValuesList != null);
+		assert(attrValuesList.isEmpty());
+
+		// Circuits are top-level in the XML file
+		switch (attrType) {
+		case "name":
+			for (Element circElt : XmlIterator.forChildElements(root, "circuit")) {
+				// Circuit's name is directly available as an attribute
+				String name = circElt.getAttribute("name");
+				attrValuesList.add(name);
+			}
+			break;
+		case "label":
+			for (Element circElt : XmlIterator.forChildElements(root, "circuit")) {
+				// label is available through its a child node
+				for (Element attrElt : XmlIterator.forChildElements(circElt, "a")) {
+					if (attrElt.hasAttribute("name")) {
+						String aName = attrElt.getAttribute("name");
+						if (aName.equals("label")) {
+							String label = attrElt.getAttribute("val");
+							if (label.length() > 0) {
+								attrValuesList.add(label);
+							}
+						}
+					}
+				}
+			}
+			break;
+		default:
+			throw new IllegalArgumentException("Invalid attribute type requested: " + 
+					attrType + " for node type: circuit");
+		}
+	}
 	
+	/**
+	 * Check XML's comp nodes, and return a list of values corresponding
+	 * to the desired attribute. The checked comp nodes are NOT those
+	 * referring to circuits -- we can see if this is the case by checking
+	 * whether the lib attribute is present or not.
+	 * @param root XML's root
+	 * @param attrValuesList empty list that will contain the values found
+	 */
+	private static void inspectCompNodes(Element root, List<String> attrValuesList) {
+		assert(root != null);
+		assert(attrValuesList != null);
+		assert(attrValuesList.isEmpty());
+
+		for (Element circElt : XmlIterator.forChildElements(root, "circuit")) {
+			// In circuits, we have to look for components, then take
+			// just those components that do have a lib attribute and look at their
+			// a child nodes
+			for (Element compElt : XmlIterator.forChildElements(circElt, "comp")) {
+				if (compElt.hasAttribute("lib")) {
+					for (Element attrElt : XmlIterator.forChildElements(compElt, "a")) {
+						if (attrElt.hasAttribute("name")) {
+							String aName = attrElt.getAttribute("name");
+							if (aName.equals("label")) {
+								String label = attrElt.getAttribute("val");
+								if (label.length() > 0) {
+									attrValuesList.add(label);
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * Check if a given label could be a valid VHDL variable name
+	 * @param label candidate VHDL variable name
+	 * @return true if the label is NOT a valid name, false otherwise
+	 */
+	public static boolean labelVHDLInvalid(String label) {
+		if (!label.matches("^[A-Za-z][A-Za-z0-9_]*") ||
+				label.endsWith("_")|| 
+				label.matches(".*__.*"))
+			return(true);
+
+		return(false);
+	}
+
+	/**
+	 * Replace invalid labels in circuit nodes.
+	 * @param root XML's root
+	 * @param attrType attribute type (either name or label)
+	 * @param validLabels map containing valid label values
+	 */
+	private static void replaceCircuitNodes(Element root,
+			String attrType, Map<String, String> validLabels) 
+					throws IllegalArgumentException {
+		assert(root != null);
+		assert(attrType != null);
+		assert(validLabels != null);
+
+		if (validLabels.isEmpty()) {
+			// Particular case, all the labels were good!
+			return;
+		}
+
+		// Circuits are top-level in the XML file
+		switch (attrType) {
+		case "name":
+			// We have not only to replace the circuit names in each circuit,
+			// but in the corresponding comps too!
+			for (Element circElt : XmlIterator.forChildElements(root, "circuit")) {
+				// Circuit's name is directly available as an attribute
+				String name = circElt.getAttribute("name");
+				if (validLabels.containsKey(name)) {
+					circElt.setAttribute("name", validLabels.get(name));
+					// Also, it is present as value for the "circuit" attribute
+					for (Element attrElt : XmlIterator.forChildElements(circElt, "a")) {
+						if (attrElt.hasAttribute("name")) {
+							String aName = attrElt.getAttribute("name");
+							if (aName.equals("circuit")) {
+								attrElt.setAttribute("val", validLabels.get(name));
+							}
+						}
+					}
+				}
+				// Now do the comp part
+				for (Element compElt : XmlIterator.forChildElements(circElt, "comp")) {
+					// Circuits are components without lib 
+					if (!compElt.hasAttribute("lib")) {
+						if (compElt.hasAttribute("name")) {
+							String cName = compElt.getAttribute("name");
+							if (validLabels.containsKey(cName)) {
+								compElt.setAttribute("name", validLabels.get(cName));
+							}
+						}
+					}
+				}
+			}
+			break;
+		case "label":
+			for (Element circElt : XmlIterator.forChildElements(root, "circuit")) {
+				// label is available through its a child node
+				for (Element attrElt : XmlIterator.forChildElements(circElt, "a")) {
+					if (attrElt.hasAttribute("name")) {
+						String aName = attrElt.getAttribute("name");
+						if (aName.equals("label")) {
+							String label = attrElt.getAttribute("val");
+							if (validLabels.containsKey(label)) {
+								attrElt.setAttribute("val", validLabels.get(label));
+							}
+						}
+					}
+				}
+			}
+			break;
+		default:
+			throw new IllegalArgumentException("Invalid attribute type requested: " + 
+					attrType + " for node type: circuit");
+		}
+	}
+
+
+	/**
+	 * Replace invalid labels in comp nodes.
+	 * @param root XML's root
+	 * @param validLabels map containing valid label values
+	 */
+	private static void replaceCompNodes(Element root, Map<String, String> validLabels) {
+		assert(root != null);
+		assert(validLabels != null);
+
+		if (validLabels.isEmpty()) {
+			// Particular case, all the labels were good!
+			return;
+		}
+
+		for (Element circElt : XmlIterator.forChildElements(root, "circuit")) {
+			// In circuits, we have to look for components, then take
+			// just those components that do have a lib attribute and look at their
+			// a child nodes
+			for (Element compElt : XmlIterator.forChildElements(circElt, "comp")) {
+				if (compElt.hasAttribute("lib")) {
+					for (Element attrElt : XmlIterator.forChildElements(compElt, "a")) {
+						if (attrElt.hasAttribute("name")) {
+							String aName = attrElt.getAttribute("name");
+							if (aName.equals("label")) {
+								String label = attrElt.getAttribute("val");
+								if (validLabels.containsKey(label)) {
+									attrElt.setAttribute("val", validLabels.get(label));
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	public static final Logger logger = LoggerFactory.getLogger(XmlReader.class);
+
+	private LibraryLoader loader;
+
 	/**
 	 * Path of the source file -- it is used to make the paths of the components stored in
 	 * the file absolute, to prevent the system looking for them in some strange directories.
@@ -507,7 +945,7 @@ class XmlReader {
 	}
 
 	private Document loadXmlFrom(InputStream is) throws SAXException,
-			IOException {
+	IOException {
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		factory.setNamespaceAware(true);
 		DocumentBuilder builder = null;
@@ -521,10 +959,14 @@ class XmlReader {
 	LogisimFile readLibrary(InputStream is) throws IOException, SAXException {
 		Document doc = loadXmlFrom(is);
 		Element elt = doc.getDocumentElement();
+		elt = ensureLogisimCompatibility(elt);
+
 		considerRepairs(doc, elt);
 		LogisimFile file = new LogisimFile((Loader) loader);
 		ReadContext context = new ReadContext(file);
+
 		context.toLogisimFile(elt);
+
 		if (file.getCircuitCount() == 0) {
 			file.addCircuit(new Circuit("main", file));
 		}

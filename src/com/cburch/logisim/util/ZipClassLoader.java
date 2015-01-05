@@ -44,8 +44,6 @@ import org.slf4j.LoggerFactory;
 
 public class ZipClassLoader extends ClassLoader {
 	
-	final static Logger logger = LoggerFactory.getLogger(ZipClassLoader.class);
-	
 	private static class Request {
 		int action;
 		String resource;
@@ -101,7 +99,7 @@ public class ZipClassLoader extends ClassLoader {
 			return act + ":" + resource;
 		}
 	}
-
+	
 	private class WorkThread extends Thread {
 		private LinkedList<Request> requests = new LinkedList<Request>();
 		private ZipFile zipFile = null;
@@ -256,6 +254,8 @@ public class ZipClassLoader extends ClassLoader {
 			}
 		}
 	}
+
+	final static Logger logger = LoggerFactory.getLogger(ZipClassLoader.class);
 
 	// This code was posted on a forum by "leukbr" on March 30, 2001.
 	// http://forums.sun.com/thread.jspa?threadID=360060&forumID=31

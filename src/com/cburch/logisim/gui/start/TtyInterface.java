@@ -62,8 +62,6 @@ import com.cburch.logisim.util.StringUtil;
 
 public class TtyInterface {
 	
-	final static Logger logger = LoggerFactory.getLogger(TtyInterface.class);
-	
 	// It's possible to avoid using the separate thread using
 	// System.in.available(),
 	// but this doesn't quite work because on some systems, the keyboard input
@@ -104,7 +102,7 @@ public class TtyInterface {
 			}
 		}
 	}
-
+	
 	private static int countDigits(int num) {
 		int digits = 1;
 		int lessThan = 10;
@@ -388,6 +386,8 @@ public class TtyInterface {
 		lastIsNewline = c == '\n';
 		System.out.print(c); // OK
 	}
+
+	final static Logger logger = LoggerFactory.getLogger(TtyInterface.class);
 
 	public static final int FORMAT_TABLE = 1;
 

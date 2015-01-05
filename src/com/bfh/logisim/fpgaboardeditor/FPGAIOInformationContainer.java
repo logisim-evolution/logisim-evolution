@@ -65,13 +65,6 @@ import com.cburch.logisim.std.io.SevenSegment;
 
 public class FPGAIOInformationContainer {
 	
-	final static Logger logger = LoggerFactory.getLogger(FPGAIOInformationContainer.class);
-	
-	/*
-	 * Bus is just a placeholder for a multi-bit pin. It should not be used for
-	 * mappable components
-	 */
-
 	public static enum IOComponentTypes {
 
 		LED, Button, Pin, SevenSegment, DIPSwitch, RGBLED, PortIO, LocalBus, Bus, Unknown;
@@ -165,7 +158,12 @@ public class FPGAIOInformationContainer {
 		private void setNbSwitch(int nb) {
 			nbSwitch = nb;
 		}
-	};
+	}
+	
+	/*
+	 * Bus is just a placeholder for a multi-bit pin. It should not be used for
+	 * mappable components
+	 */
 
 	public static LinkedList<String> GetComponentTypes() {
 		LinkedList<String> result = new LinkedList<String>();
@@ -173,7 +171,9 @@ public class FPGAIOInformationContainer {
 			result.add(comp.toString());
 		}
 		return result;
-	}
+	};
+
+	final static Logger logger = LoggerFactory.getLogger(FPGAIOInformationContainer.class);
 
 	private IOComponentTypes MyType;
 	private long MyIdentifier;

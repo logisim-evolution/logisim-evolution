@@ -48,8 +48,6 @@ import org.slf4j.LoggerFactory;
 
 public class SplashScreen extends JWindow implements ActionListener {
 	
-	final static Logger logger = LoggerFactory.getLogger(SplashScreen.class);
-	
 	private static class Marker {
 		int count;
 		String message;
@@ -59,6 +57,8 @@ public class SplashScreen extends JWindow implements ActionListener {
 			this.message = message;
 		}
 	}
+	
+	final static Logger logger = LoggerFactory.getLogger(SplashScreen.class);
 
 	private static final long serialVersionUID = 1L;
 	public static final int LIBRARIES = 0;

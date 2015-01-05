@@ -42,8 +42,6 @@ import org.slf4j.LoggerFactory;
 import com.cburch.logisim.gui.start.Startup;
 
 public class Main {
-	final static Logger logger = LoggerFactory.getLogger(Main.class);
-	
 	public static void main(String[] args) throws Exception {
 		Startup startup = Startup.parseArgs(args);
 		if (startup == null) {
@@ -64,6 +62,8 @@ public class Main {
 			}
 		}
 	}
+	
+	final static Logger logger = LoggerFactory.getLogger(Main.class);
 
 	public static final LogisimVersion VERSION = LogisimVersion.get(2, 13, 5,
 			LogisimVersion.FINAL_REVISION);

@@ -75,8 +75,6 @@ import com.cburch.logisim.util.StringGetter;
 
 class ExportImage {
 	
-	final static Logger logger = LoggerFactory.getLogger(ExportImage.class);
-	
 	private static class ExportThread extends Thread {
 		Frame frame;
 		Canvas canvas;
@@ -165,7 +163,7 @@ class ExportImage {
 			}
 		}
 	}
-
+	
 	private static class ImageFileFilter extends FileFilter {
 		private int type;
 		private String[] extensions;
@@ -397,6 +395,8 @@ class ExportImage {
 				scale, printerView, monitor).start();
 
 	}
+
+	final static Logger logger = LoggerFactory.getLogger(ExportImage.class);
 
 	private static final int SLIDER_DIVISIONS = 6;
 

@@ -61,8 +61,6 @@ import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.StringUtil;
 public class VhdlEntity extends InstanceFactory {
 
-	final static Logger logger = LoggerFactory.getLogger(VhdlEntity.class);
-	
 	static class ContentAttribute extends Attribute<VhdlContent> {
 
 		public ContentAttribute() {
@@ -94,7 +92,7 @@ public class VhdlEntity extends InstanceFactory {
 			return value.getContent();
 		}
 	}
-
+	
 	static class VhdlEntityListener implements HdlModelListener {
 
 		Instance instance;
@@ -111,6 +109,8 @@ public class VhdlEntity extends InstanceFactory {
 			instance.recomputeBounds();
 		}
 	}
+
+	final static Logger logger = LoggerFactory.getLogger(VhdlEntity.class);
 
 	static final Attribute<VhdlContent> CONTENT_ATTR = new ContentAttribute();
 	static final int WIDTH = 140;

@@ -57,11 +57,11 @@ import com.cburch.logisim.tools.MessageBox;
  */
 public class TclWrapper {
 	
-	final static Logger logger = LoggerFactory.getLogger(TclWrapper.class);
-
 	public enum TclWrapperState {
 		STOPPED, STARTING, RUNNING
 	}
+
+	final static Logger logger = LoggerFactory.getLogger(TclWrapper.class);
 
 	final private static String TCL_PATH = System.getProperty("java.io.tmpdir")
 			+ "/logisim/tcl/";

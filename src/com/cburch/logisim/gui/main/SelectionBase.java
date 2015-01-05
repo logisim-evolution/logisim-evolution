@@ -57,8 +57,6 @@ import com.cburch.logisim.util.CollectionUtil;
 
 class SelectionBase {
 	
-	final static Logger logger = LoggerFactory.getLogger(SelectionBase.class);
-	
 	private static Bounds computeBounds(Collection<Component> components) {
 		if (components.isEmpty()) {
 			return Bounds.EMPTY_BOUNDS;
@@ -73,12 +71,14 @@ class SelectionBase {
 			return ret;
 		}
 	}
-
+	
 	private static boolean shouldSnapComponent(Component comp) {
 		Boolean shouldSnapValue = (Boolean) comp.getFactory().getFeature(
 				ComponentFactory.SHOULD_SNAP, comp.getAttributeSet());
 		return shouldSnapValue == null ? true : shouldSnapValue.booleanValue();
 	}
+
+	final static Logger logger = LoggerFactory.getLogger(SelectionBase.class);
 
 	static final Set<Component> NO_COMPONENTS = Collections.emptySet();
 

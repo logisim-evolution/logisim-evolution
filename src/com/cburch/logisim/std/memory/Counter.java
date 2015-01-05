@@ -56,11 +56,11 @@ import com.cburch.logisim.util.StringUtil;
 
 public class Counter extends InstanceFactory {
 	
-	final static Logger logger = LoggerFactory.getLogger(Counter.class);
-	
 	public static int SymbolWidth(int NrOfBits) {
 		return 150 + ((NrOfBits - 8) / 5) * 10;
 	}
+	
+	final static Logger logger = LoggerFactory.getLogger(Counter.class);
 
 	static final AttributeOption ON_GOAL_WRAP = new AttributeOption("wrap",
 			"wrap", Strings.getter("counterGoalWrap"));

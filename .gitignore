@@ -8,6 +8,7 @@ com/hepia
 # Generated files
 javadoc/
 test/com/cburch/logisim/gui
+bin/
 
 # additional libraries
 !libs/*.jar
@@ -25,3 +26,6 @@ resources/logisim/sim/transcript
 
 resources/logisim/sim/comp/
 resources/logisim/sim/src/
+
+# File containing the log level
+logback.xml

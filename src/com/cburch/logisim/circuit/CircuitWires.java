@@ -63,8 +63,6 @@ import com.cburch.logisim.util.IteratorUtil;
 
 class CircuitWires {
 	
-	final static Logger logger = LoggerFactory.getLogger(CircuitWires.class);
-	
 	static class BundleMap {
 		boolean computed = false;
 		HashMap<Location, WireBundle> pointBundles = new HashMap<Location, WireBundle>();
@@ -134,7 +132,7 @@ class CircuitWires {
 			}
 		}
 	}
-
+	
 	static class SplitterData {
 		WireBundle[] end_bundle; // PointData associated with each end
 
@@ -198,6 +196,8 @@ class CircuitWires {
 			return Value.create(ret);
 		}
 	}
+
+	final static Logger logger = LoggerFactory.getLogger(CircuitWires.class);
 
 	// user-given data
 	private HashSet<Wire> wires = new HashSet<Wire>();

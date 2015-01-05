@@ -43,8 +43,6 @@ import com.cburch.logisim.Main;
 
 public class Template {
 	
-	final static Logger logger = LoggerFactory.getLogger(Template.class);
-	
 	public static Template create(InputStream in) {
 		InputStreamReader reader = new InputStreamReader(in);
 		char[] buf = new char[4096];
@@ -61,7 +59,7 @@ public class Template {
 		}
 		return new Template(dest.toString());
 	}
-
+	
 	public static Template createEmpty() {
 		String circName = Strings.get("newCircuitName");
 		StringBuilder buf = new StringBuilder();
@@ -72,6 +70,8 @@ public class Template {
 		buf.append("</project>");
 		return new Template(buf.toString());
 	}
+
+	final static Logger logger = LoggerFactory.getLogger(Template.class);
 
 	private String contents;
 

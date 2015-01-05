@@ -69,14 +69,12 @@ import com.cburch.logisim.util.StringUtil;
 
 public class Startup {
 
-	final static Logger logger = LoggerFactory.getLogger(Startup.class);
-	
 	static void doOpen(File file) {
 		if (startupTemp != null) {
 			startupTemp.doOpenFile(file);
 		}
 	}
-
+	
 	static void doPrint(File file) {
 		if (startupTemp != null) {
 			startupTemp.doPrintFile(file);
@@ -342,6 +340,8 @@ public class Startup {
 		}
 		System.exit(-1);
 	}
+
+	final static Logger logger = LoggerFactory.getLogger(Startup.class);
 
 	private static Startup startupTemp = null;
 	// based on command line

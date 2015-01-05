@@ -63,12 +63,10 @@ import com.cburch.logisim.util.SocketClient;
  */
 public class VhdlSimulator implements CircuitListener {
 
-	final static Logger logger = LoggerFactory.getLogger(VhdlSimulator.class);
-	
 	public enum State {
 		DISABLED, ENABLED, STARTING, RUNNING;
 	}
-
+	
 	public static List<Component> getVhdlComponents(CircuitState s) {
 
 		LinkedList<Component> vhdlComp = new LinkedList<Component>();
@@ -87,6 +85,8 @@ public class VhdlSimulator implements CircuitListener {
 
 		return vhdlComp;
 	}
+
+	final static Logger logger = LoggerFactory.getLogger(VhdlSimulator.class);
 
 	final static Charset ENCODING = StandardCharsets.UTF_8;
 	final static String VHDL_TEMPLATES_PATH = "/resources/logisim/hdl/";

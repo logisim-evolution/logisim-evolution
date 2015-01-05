@@ -87,8 +87,6 @@ import com.bfh.logisim.fpgaboardeditor.Strings;
 public class ComponentMapDialog implements ActionListener,
 		ListSelectionListener {
 	
-	final static Logger logger = LoggerFactory.getLogger(ComponentMapDialog.class);
-
 	private class MappedComponentIdContainer {
 
 		private String key;
@@ -298,6 +296,8 @@ public class ComponentMapDialog implements ActionListener,
 			return Strings.get("XMLFileFilter"); // TODO: language adaptation
 		}
 	}
+
+	final static Logger logger = LoggerFactory.getLogger(ComponentMapDialog.class);
 
 	private JDialog panel;
 	private boolean doneAssignment = false;
