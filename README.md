@@ -54,6 +54,13 @@ You will, however, encounter a problem when you will try to execute the code. In
 * *resources*
 * *doc*
 
+## Retro-compatibility
+We cannot assure retro-compatibility of logisim-evolution with files created with the original Logisim.
+We have incorporated a parser that alters the name of the components to satisfy VHDL requirements for variable names,
+but components evolved in shape since then (think, for instance, to RAM and counters).
+You might need to rework a bit your circuits when opening them with logisim-evolution -- but the changes will be stored
+in the new format, therefore you have to do your work only once.
+
 ## Wish-list
 Logisim-evolution is a continuously-growing software, and we have several ideas we would like to implement. In particular, we would like to have
 * unit tests for the code
