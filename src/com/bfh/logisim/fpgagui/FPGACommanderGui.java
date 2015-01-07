@@ -890,13 +890,14 @@ public class FPGACommanderGui implements ActionListener {
 		clearAllMessages();
 		String CircuitName = circuitsList.getSelectedItem().toString();
 		Circuit root = MyProject.getLogisimFile().getCircuit(CircuitName);
+		ArrayList<String> SheetNames = new ArrayList<String>();
 		int DRCResult;
 		if (root == null) {
 			DRCResult = Netlist.DRC_ERROR;
 		} else {
 			DRCResult = root.getNetList().DesignRuleCheckResult(MyReporter,
 					HDLType.getText(), true,
-					MyBoardInformation.fpga.getVendor());
+					MyBoardInformation.fpga.getVendor(),SheetNames);
 		}
 		return (DRCResult == Netlist.DRC_PASSED);
 	}

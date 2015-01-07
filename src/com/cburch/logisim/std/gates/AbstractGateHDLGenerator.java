@@ -95,11 +95,11 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
 					AllignmentSpaces = "  ";
 				else
 					AllignmentSpaces = "   ";
-				Contents.add("   s_signal_invert_mask <= conv_std_logic_vector("
+				Contents.add("   s_signal_invert_mask <= std_logic_vector(to_unsigned("
 						+ BubblesString
 						+ ","
 						+ Integer.toString(NrOfInputs)
-						+ ");");
+						+ "));");
 				String WhenLineBegin = "";
 				for (int i = 0; i < 21 + AllignmentSpaces.length(); i++)
 					WhenLineBegin += " ";

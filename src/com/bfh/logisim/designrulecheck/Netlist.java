@@ -240,9 +240,16 @@ public class Netlist {
 	}
 
 	public int DesignRuleCheckResult(FPGAReport Reporter, String HDLIdentifier,
-			boolean IsTopLevel, char Vendor) {
+			boolean IsTopLevel, char Vendor, ArrayList<String> Sheetnames) {
 		ArrayList<String> CompName = new ArrayList<String>();
 		ArrayList<Set<String>> AnnotationNames = new ArrayList<Set<String>>();
+		/* Check for duplicated sheet names, this is bad as we will have multiple "different" components with the same name */
+		if (Sheetnames.contains(MyCircuit.getName())) {
+			Reporter.AddFatalError("Found more than one sheet in your design with the name :\""+MyCircuit.getName()+"\". This is not allowed, please make sure that all sheets have a unique name!");
+			return DRC_ERROR;
+		} else {
+			Sheetnames.add(MyCircuit.getName());
+		}
 		/* Check if we are okay */
 		if (DRCStatus == DRC_PASSED) {
 			/* we have to go through our sub-circuits */
@@ -254,7 +261,7 @@ public class Netlist {
 						.getSubcircuit()
 						.getNetList()
 						.DesignRuleCheckResult(Reporter, HDLIdentifier, false,
-								Vendor);
+								Vendor,Sheetnames);
 				if (DRCStatus != DRC_PASSED) {
 					return DRCStatus;
 				}
@@ -374,7 +381,7 @@ public class Netlist {
 							.getSubcircuit()
 							.getNetList()
 							.DesignRuleCheckResult(Reporter, HDLIdentifier,
-									false, Vendor);
+									false, Vendor,Sheetnames);
 					if (DRCStatus != DRC_PASSED) {
 						return DRCStatus;
 					}
