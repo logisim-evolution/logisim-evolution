@@ -27,6 +27,7 @@
  *       Yverdon-les-Bains, Switzerland
  *       http://reds.heig-vd.ch
  *******************************************************************************/
+
 package com.cburch.logisim.instance;
 
 import java.awt.Color;
