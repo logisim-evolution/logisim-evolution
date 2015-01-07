@@ -85,7 +85,7 @@ The following institutions/people actively contributed to Logisim-evolution:
 * [Haute École du paysage, d'ingénierie et d'architecture de Genève](http://hepia.hesge.ch) - Switzerland
 * [Haute École d'Ingénierie et de Gestion du Canton de Vaud](http://www.heig-vd.ch) - Switzerland
 * Theldo Cruz Franqueira - Pontifícia Universidade Católica de Minas Gerais - Brasil
-* 
+
 If you feel that your name should be in this list, please feel free to send us a [mail](mailto:roberto.rigamonti@heig-vd.ch)!
 
 ## Other Logisim forks available on the net
