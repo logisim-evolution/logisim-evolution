@@ -30,10 +30,16 @@
 
 package com.cburch.logisim.tools.move;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Location;
 
 class SearchNode implements Comparable<SearchNode> {
+	
+	final static Logger logger = LoggerFactory.getLogger(SearchNode.class);
+	
 	private static final int CROSSING_PENALTY = 20;
 	private static final int TURN_PENALTY = 50;
 
@@ -77,9 +83,18 @@ class SearchNode implements Comparable<SearchNode> {
 	public boolean equals(Object other) {
 		if (other instanceof SearchNode) {
 			SearchNode o = (SearchNode) other;
-			return this.loc.equals(o.loc)
-					&& (this.dir == null ? o.dir == null : this.dir
-							.equals(o.dir)) && this.dest.equals(o.dest);
+
+			return (this.loc.equals(o.loc)
+					&& (this.dir == null ? o.dir == null : (o.dir == null ? false : this.dir.equals(o.dir)))
+					&& this.dest.equals(o.dest));
+
+			/*
+			 // This code causes a null pointer exception whenever this.dir is not
+			 // null but o.dir is null!
+			return (this.loc.equals(o.loc)
+					&& (this.dir == null ? o.dir == null : this.dir.equals(o.dir))
+					&& this.dest.equals(o.dest));
+			*/
 		} else {
 			return false;
 		}
