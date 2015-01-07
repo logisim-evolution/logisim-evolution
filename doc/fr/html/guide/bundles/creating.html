@@ -1,0 +1,49 @@
+<html>
+<meta charset="UTF-8">
+<head>
+	<title>Créer des Nappes de câbles</title>
+</head>
+<body bgcolor="FFFFFF">
+
+<h1>Créer des Nappes de câbles</h1>
+
+<p>Chaque entrée/sortie de chaque composant dans un circuit a une largeur de bit
+	associée. Souvent la largeur est de 1, et il n'y a pas moyen de changer 
+	cela, mais plusieurs composants de la librairie de Logisim incluent des 
+	attributs qui vous permettent de changer la largeur de bit des entrées et sorties.</p>
+
+<p>La saisie d'écran ci-dessous illustre un circuit simple pour trouver la combinaison AND 
+	d'entrées à trois bit. Noter comment la sortie à trois bit est la combinaison AND des
+	deux entrées. Tous les composants ont été modifiés pour gérer avec des données trois bits
+	via l'attribut Data Bit; l'écran montre les attributs de la porte logique AND, y compris 
+	le Data Bits de 3.</p>
+<center><img src="../../../img-guide/bundles-create.png"></center>
+
+<p>Tous les composants dans Logisim définissent une largeur en bit
+	pour chaque entrée et sortie. Par contraste, la largeur d'un câble est
+	non-définie: par contre, la largeur du câble s'adapte aux composants
+	auxquels il est attaché.
+	Si un câble relie deux composants avec des largeurs en bits différentes,
+	Logisim se plaint d'une "Largeur incompatible" et indique l'endroit du 
+	conflit avec de l'orange.
+	Dans l'exemple ci-dessous, les Bits Data du pin de sortie ont été changés
+	à une largeur de 1, et Logisim se plaint que le câble est  connecté à une
+	valeur à trois bits et une valeur à un bit.</p>
+<center><img src="../../../img-guide/bundles-error.png"></center>
+<p>Les câbles qui relient des points incompatibles (représenté en orange) ne
+	transporte aucune valeur.</p>
+
+<p>Pour les câbles à un seul bit, vous pouvez voir d'un seul coup d'oeil quelle
+	valeur est transportée par le câble pare que Logisim les colorise avec du vert
+	clair ou foncé en fonction de la valeur.
+	Ce n'est pas le cas pour des câbles multi-bits: ils sont simplement noirs.
+	Vous pouvez malgré tout sonder le câble en cliquant dessus avec l'outil
+	pousser. (<img src="../../../icons/poke.gif">).</p>
+<center><img src="../../../img-guide/bundles-probe.png"></center>
+<p>Cette valeur de sonde est utile pour déboguer les circuits utilisant des nappes
+	de câbles.</p>
+
+<p><strong>Suivant:</strong> <a href="splitting.html">Séparateurs</a>.</p>
+
+</body>
+</html>

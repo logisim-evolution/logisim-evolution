@@ -1,0 +1,161 @@
+<meta charset="UTF-8">
+<toc version="2.0" categoryclosedimage="chapter" topicimage="topic">
+
+<h1><a image="toplevelfolder" id="top">Logisim Références</a></h1>
+
+<h2><a id="guide">Guide pour débuter avec Logisim</a></h2>
+
+<ul>
+  <li><a id="tutorial">Guide du débutant</a><ul>
+  	<li><a id="tutorial_orient">Etape 0: S'orienter'</a></li>
+  	<li><a id="tutorial_gates">Etape 1: Ajouter des portes logiques</a></li>
+  	<li><a id="tutorial_wires">Etape 2: Câblers</a></li>
+  	<li><a id="tutorial_text">Etape 3: Ajouter du texte</a></li>
+  	<li><a id="tutorial_test">Etape 4: Tester votre circuit</a></li>
+  </ul></li>
+  <li><a id="attrlib">Librairies et attributs</a><ul>
+  	<li><a id="attrlib_explore">Le panneau de navigation</a></li>
+  	<li><a id="attrlib_attr">Le tableau des attributs</a></li>
+  	<li><a id="attrlib_tool">Attributs des outils et des composants</a></li>
+  </ul></li>
+  <li><a id="subcirc">Sous-circuits</a><ul>
+  	<li><a id="subcirc_creating">Créer des circuits</a></li>
+  	<li><a id="subcirc_using">Utiliser des sous-circuits</a></li>
+  	<li><a id="subcirc_appear">Editer l'apparence d'un sous-circuit</a></li>
+  	<li><a id="subcirc_debug">Déboguer un sous-circuit</a></li>
+  	<li><a id="subcirc_library">Librairies Logisim</a></li>
+  </ul></li>
+  <li><a id="bundles">Nappe de câbles</a><ul>
+  	<li><a id="bundles_creating">Créer une nappe</a></li>
+  	<li><a id="bundles_splitting">Eclaté</a></li>
+  	<li><a id="bundles_colors">Couleur des câbles</a></li>
+  </ul></li>
+  <li><a id="analyze">Analyse combinatoire</a><ul>
+  	<li><a id="analyze_open">Ouvrir l'analyse combinatoire</a></li>
+  	<li><a id="analyze_table">Editer la table de vérité</a></li>
+  	<li><a id="analyze_expr">Créer des expressions</a></li>
+  	<li><a id="analyze_gen">Générer un circuit</a></li>
+  </ul></li>
+  <li><a id="menu">Manuel des menus</a><ul>
+  	<li><a id="menu_file">Menu fichier</a></li>
+  	<li><a id="menu_edit">Menu éditer</a></li>
+  	<li><a id="menu_project">Menu projet</a></li>
+  	<li><a id="menu_simulate">Menu simulation</a></li>
+  	<li><a id="menu_winhelp">Menus fenêtre et aide</a></li>
+  </ul></li>
+  <li><a id="mem_guide">Composant mémoire</a><ul>
+  	<li><a id="mem_poke">Pousser la mémoire</a></li>
+  	<li><a id="mem_menu">Menus Pop-up et fichiers</a></li>
+  	<li><a id="mem_hex">Editeur Hex</a></li>
+  </ul></li>
+  <li><a id="log">Journalisation</a><ul>
+  	<li><a id="log_selection">Onglet de sélection</a></li>
+  	<li><a id="log_table">Onglet table</a></li>
+  	<li><a id="log_file">Onglet fichier</a></li>
+  </ul></li>
+  <li><a id="verify">Vérifications en ligne de commande/a><ul>
+  	<li><a id="verify_sub">Echanges de librairies</a></li>
+  	<li><a id="verify_other">Autres options de vérification</a></li>
+  	<li><a id="verify_multi">Tester plusieurs fichiers</a></li>
+  </ul></li>
+  <li><a id="prefs">Préférences de l'application</a><ul>
+  	<li><a id="prefs_template">L'onglet modèle</a></li>
+  	<li><a id="prefs_intl">L'onglet international</a></li>
+  	<li><a id="prefs_window">L'onglet fenêtre</a></li>
+  	<li><a id="prefs_layout">L'onglet de présentation</a></li>
+  	<li><a id="prefs_exp">L'onglet expérimental</a></li>
+  	<li><a id="prefs_cmdline">La ligne de commande</a></li>
+  </ul></li>
+  <li><a id="opts">Options de projet</a>
+  	<li><a id="opts_simulate">Onglet simulation</a></li>
+  	<li><a id="opts_toolbar">Onglet de la boîte à outils</a></li>
+  	<li><a id="opts_mouse">Onglet du pointeur</a></li>
+  </ul></li>
+  <li><a id="prop">Propagation des valeurs</a><ul>
+  	<li><a id="prop_delays">Délais sur les portes logiques</a></li>
+  	<li><a id="prop_oscillate">Erreurs oscillatoire</a></li>
+  	<li><a id="prop_shortcome">Limitations</a></li>
+  </ul></li>
+  <li><a id="jar">Librairies JAR</a><ul>
+  	<li><a id="jar_incr">Ajout en codage de Gray</a></li>
+  	<li><a id="jar_library">Classe librairie</a></li>
+  	<li><a id="jar_simpctr">Conteur simple en codage de Gray</a></li>
+  	<li><a id="jar_counter">Conteur en codage de Gray</a></li>
+  	<li><a id="jar_guide">Recommandations</a></li>
+  </ul></li>
+  <li><a id="about">A propos du programme</a><ul>
+  	<li><a id="about_gpl">GNU General Public License</a></li>
+  </ul></li>
+</ul>
+
+
+<h2><a id="libs">Library Reference</a></h2>
+
+<ul>
+  <li><a id="wiring">Wiring library</a><ul>
+	<li><a id="wiring_splitter">Splitter</a></li>
+	<li><a id="wiring_pin">Pin</a></li>
+	<li><a id="wiring_probe">Probe</a></li>
+	<li><a id="wiring_tunnel">Tunnel</a></li>
+	<li><a id="wiring_pull">Pull Resistor</a></li>
+	<li><a id="wiring_clock">Clock</a></li>
+	<li><a id="wiring_constant">Constant</a></li>
+	<li><a id="wiring_const01">Power/Ground</a></li>
+	<li><a id="wiring_transist">Transistor</a></li>
+	<li><a id="wiring_transmis">Transmission Gate</a></li>
+	<li><a id="wiring_extender">Bit Extender</a></li>
+  </ul></li>
+  <li><a id="gates">Gates library</a><ul>
+	<li><a id="gates_not">NOT Gate</a></li>
+	<li><a id="gates_buffer">Buffer</a></li>
+	<li><a id="gates_basic">AND/OR/NAND/NOR Gate</a></li>
+	<li><a id="gates_xor">XOR/XNOR/Even/Odd Gate</a></li>
+	<li><a id="gates_controlled">Controlled Buffer/Inverter</a></li>
+  </ul></li>
+  <li><a id="plexers">Plexers library</a><ul>
+	<li><a id="plexers_mux">Multiplexer</a></li>
+	<li><a id="plexers_demux">Demultiplexer</a></li>
+	<li><a id="plexers_decoder">Decoder</a></li>
+	<li><a id="plexers_priencod">Priority Encoder</a></li>
+	<li><a id="plexers_selector">Bit Selector</a></li>
+  </ul></li>
+  <li><a id="arith">Arithmetic library</a><ul>
+	<li><a id="arith_adder">Adder</a></li>
+	<li><a id="arith_subtractor">Subtractor</a></li>
+	<li><a id="arith_multiplier">Multiplier</a></li>
+	<li><a id="arith_divider">Divider</a></li>
+	<li><a id="arith_negator">Negator</a></li>
+	<li><a id="arith_comparator">Comparator</a></li>
+	<li><a id="arith_shifter">Shifter</a></li>
+	<li><a id="arith_bitadder">Bit Adder</a></li>
+	<li><a id="arith_bitfinder">Bit Finder</a></li>
+  </ul></li>
+  <li><a id="mem">Memory library</a><ul>
+	<li><a id="mem_flipflops">D/T/J-K/S-R Flip-Flop</a></li>
+	<li><a id="mem_register">Register</a></li>
+	<li><a id="mem_counter">Counter</a></li>
+	<li><a id="mem_shiftreg">Shift Register</a></li>
+	<li><a id="mem_random">Random</a></li>
+	<li><a id="mem_ram">RAM</a></li>
+	<li><a id="mem_rom">ROM</a></li>
+  </ul></li>
+  <li><a id="io">Input/Output library</a><ul>
+	<li><a id="io_button">Button</a></li>
+	<li><a id="io_joystick">Joystick</a></li>
+	<li><a id="io_keyboard">Keyboard</a></li>
+	<li><a id="io_led">LED</a></li>
+	<li><a id="io_7seg">7-Segment Display</a></li>
+	<li><a id="io_hexdig">Hex Digit Display</a></li>
+	<li><a id="io_dotmat">LED Matrix</a></li>
+	<li><a id="io_tty">TTY</a></li>
+  </ul></li>
+  <li><a id="base">Base library</a><ul>
+	<li><a id="base_poke">Poke Tool</a></li>
+	<li><a id="base_edit">Edit Tool</a></li>
+	<li><a id="base_select">Select Tool</a></li>
+	<li><a id="base_wiring">Wiring Tool</a></li>
+	<li><a id="base_text">Text Tool</a></li>
+	<li><a id="base_menu">Menu Tool</a></li>
+	<li><a id="base_label">Text</a></li>
+  </ul></li>
+</ul>

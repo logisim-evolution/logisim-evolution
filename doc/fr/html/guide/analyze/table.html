@@ -1,0 +1,67 @@
+<html>
+<meta charset="UTF-8">
+<head>
+	<title>Editer la table de vérité</title>
+</head>
+<body bgcolor="FFFFFF">
+
+<h1>Editer la table de vérité</h1>
+
+<p>En ouvrant la fenêtre d'analyse combinatoire, vous verrez cinq onglets.
+<center><img src="../../../img-guide/analyze-var.png"></center>
+Ce document vous apporte de l'aide pour les trois premiers onglets:
+Entrées, Sorties et Table.
+Dans la suite du guide vous trouverez une description des deux onglets: 
+Expression et Karnaugh.</p>
+
+<h2>Les onglets entrées et sorties</h2>
+
+<p>L'onglet Entrées vous permet d'afficher et éditer la liste des entrées.
+	Pour ajouter des entrées, il suffit de les entrer dans le champ prévu en
+	bas et de cliquer Ajouter. Si vous voulez renommer une entrée existante,
+	sélectionnez la dans la partie du haut à gauche, tapez le nom
+	et cliquez Renommer.</p>
+
+<p>Pour supprimer une entrée, il suffit de la sélectionner dans
+	la liste et cliquer supprimer. Vous pouvez aussi réorganiser les 
+	entrées (ce qui impact sur l'ordre des colonnes dans la table de 
+	vérité et la génération du circuit) en utilisant les boutons
+	monter ou descendre sur une entrée.</p>
+
+<p>Toutes les actions impactent directement sur la table de vérité.</p>
+
+<p>L'onglet Sorties fonctionne exactement de la même manière que l'onglet
+	des Entrées, sauf qu'il s'agit de la liste des sorties.</p>
+
+<h2>L'onglet Table </h2>
+
+<p>Le seul élément dans l'onglet Table et la table de vérité courante,
+	représentée dans un ordre conventionnel, avec les entrées en colonnes
+	à gauche et les orties en colonnes à droite.</p>
+
+<p>Vous pouvez éditer les valeurs qui apparaissent dans les colonnes
+	de sortie en cliquant sur la valeur choisie. Les valeur changent
+	de manière cyclique de 0 à 1 et <em>x</em> (représentant une valeur
+	sans importance). Comme nous le verrons à la page suivante, une valeur
+	sans importance permet l'élaboration des expressions minimales avec une 
+	certaine flexibilité.</p>
+
+<p>Vous pouvez également naviguer et éditer la table de vérité avec le clavier.
+	Et vous pouvez copier-coller des valeurs en utilisant le presse-papier.
+	Le presse-papier peut être transféré vers n'importe quelle application qui
+	supporte du texte avec des tabulation comme séparateurs (comme un tableur).</p>
+
+<p>Si la table de vérité est basée sur un circuit existant, vous pourriez voir des 
+	carrés rose dans les colonnes des sorties avec des "!!" à l'intérieur.
+	Ceci correspond à des erreurs durant le calcul des valeurs pour cette ligne.
+	Soit le circuit semblait osciller, ou la sortie était une erreur elle-même (ce qui 
+	devrait être représenté par un câble rouge dans le circuit Logisim). 
+	En passant la souris sur l'entrée vous verrez apparaître une astuce avec une
+	description du type d'erreur. Si vous cliquer sur une entrée erronée, vous 
+	vous retrouverez dans le cycle 0-1-<em>x</em>; Il n'y a pas moyen de 
+	revenir en arrière.</p>
+
+<p><strong>Suivant:</strong> <a href="expr.html">Créer des expressions</a>.</p>
+
+</body>
+</html>

@@ -1,0 +1,55 @@
+<html>
+<meta charset="UTF-8">
+<head>
+	<title>Couleurs du câblage</title>
+</head>
+<body bgcolor="FFFFFF">
+
+<h1>Couleurs du câblage</h1>
+
+<p>Nous sommes maintenant en mesure de résumer l'ensemble
+	de l'arc-en-ciel des couleurs que Logisim peut utiliser pour les câbles.
+	Le circuit suivant les illustre toutes.</p>
+<center><img src="../../../img-guide/bundles-colors.png"></center>
+
+<ul>
+
+<li><p><strong>Gris:</strong> La largeur en bit du cablâge est
+	inconnue. Ceci arrive parce que le câble n'est attaché à 
+	aucune entrée ni sortie de composant. (Toutes les entrées et sorties ont
+	une largeur de bit définie.)</p></li>
+
+<li><p><strong>Bleu:</strong> Le câble transporte une valeur à un bit, mais rien
+	ne force une valeur spécifique sur le câble. Nous appelons ceci une un bit
+	<em>flotant</em>; certains l'appel une valeur de <em>haute impédence</em>.
+	Dans cet exemple, le composant qui envoie une valeur sur le câble est
+	un bit à trois états, il peut donc émettre cette valeur flottante.</p>
+
+<li><p><strong>Vert foncé:</strong> Le câble transporte une valeur à un bit de 0.</p></li>
+
+<li><p><strong>Vert clair:</strong> Le câble transporte une valeur à un bit de 1.</p></li>
+
+<li><p><strong>Noir:</strong> Le câble transporte une valeur de plusieurs bits.
+Certains ou tous les bits peuvent être indéterminés.</p></li>
+
+<li><p><strong>Rouge:</strong> Le câble transporte une valeur d'erreur. Ceci arrive souvent
+	parce qu'une porte logique ne peut pas déterminer correctement sa sortie,
+	peut-être parce qu'elle ne reçoit aucune entrée. Ceci peut aussi arriver parce que deux
+	composants essayent d'envoyer deux valeurs différentes sur le câble.
+	The wire is carrying an error value; Ceci arrive dans l'exemple ci-dessus parce que l'un des
+	bits de sortie envoie 0 sur le câble et l'autre envoie 1 sur le même câble, ce qui
+	cause un conflit.
+	Les câbles multi-bit deviennent rouge quand l'un des bits transporte une valeur d'erreur.
+</p></li>
+
+<li><p><strong>Orange:</strong> Les composants reliés au câble n'ont pas la 
+	même largeur de bits. Un câble orange est effectivement "cassé": il ne
+	transporte aucune valeur entre les composants. Ici nous avons relié un composant
+	à deux bits à un composant à un bit, ils sont donc incompatibles.</p></li>
+
+</ul>
+
+<p><strong>Suivant:</strong> <em><a href="../index.html">Guide Utilisateur</a></em>.</p>
+
+</body>
+</html>

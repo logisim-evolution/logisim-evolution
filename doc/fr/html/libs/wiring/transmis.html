@@ -1,0 +1,133 @@
+<html>
+<head>
+<title>Porta de Transmissão</title>
+</head>
+
+<body bgcolor="FFFFFF">
+
+<h1><img align="center" height="32" width="32" src="../../icons/transmis.gif">
+<em>Porta de Transmissão</em></h1>
+
+<p><table>
+<tr><td><strong>Biblioteca:</strong></td>
+	<td><a href="index.html">Conectar (Wiring)</a></td></tr>
+<tr><td><strong>Introdução:</strong></td>
+	<td>2.7.0</td></tr>
+<tr><td valign="top"><strong>Aparência:</strong></td>
+	<td valign="top"><img src="../images/transmis.png"></td></tr>
+</table></p>
+
+<h2> Comportamento </h2>
+
+<p> Uma porta de transmissão possui três entradas, chamadas de
+<em>fonte ("source")</em>, <em>porta-N ("n-gate")</em>, 
+e <em>porta-P ("p-gate")</em>; e uma saída, chamada <em>dreno ("drain")</em>. 
+Quando diagramadas, a entrada <em>fonte</em> e a saída <em>dreno</em> serão 
+conectadas por duas placas; o Logisim desenhará uma seta para indicar a direção 
+do fluxo da entrada para a saída. As duas entradas do tipo <em>porta</em> 
+serão desenhadas conectadas às placas paralelas para conexão entre 
+a <em>fonte</em> e o <em>dreno</em>. 
+A linha da entrada <em>porta-P</em> terá um círculo; enquanto a 
+linha da entrada <em>porta-N</em>, não. 
+
+<center><table>
+<tr><td></td><td align="center"><em>porta-P</em></td><td></td></tr>
+<tr><td valign="middle"><em>fonte</em></td>
+  <td align="center" valign="middle"><img src="../images/transmis.png"></td>
+  <td valign="middle"><em>dreno</em></td>
+<tr><td></td><td align="center"><em>porta-N</em></td><td></td></tr>
+</table></center>
+
+<p> A porta de transmissão é simplesmente a combinação de dois transistores
+complementares. De fato, o mesmo comportamento poderá ser obtido no Logisim
+mediante o uso de apenas um transitor. Contudo, os projetistas certas vezes
+preferem usar esse par de transistores devido às questões de natureza elétrica
+com relação ao consumo de tensão, o que é mais complexo do que aquilo que o 
+Logisim tenta simular.
+</p>
+
+<p> É esperado que os valores na <em>porta-N</em> e na <em>porta-P</em> sejam
+opostos. Se a <em>porta-P</em> estiver em 0, enquanto a <em>porta-N</em> estiver em 1,
+então valor encontrado à <em>fonte</em> será transmitido ao <em>dreno</em>.
+Se a <em>porta-P</em> estiver em 1, enquanto a <em>porta-N</em> is 0, 
+então a conexão estará interrompida, e o valor no <em>dreno</em> será flutuante.
+Em todos os outros casos, o <em>dreno</em> receberá o valor de erro na saída &mdash;
+a menos que a <em>fonte</em> seja flutuante, caso em que o <em>dreno</em> 
+também será flutuante. Esse comportamento está resumido na tabela abaixo.
+
+<center><table>
+<tr><th><em>porta-P</em></th><th><em>porta-N</em></th><th><em>dreno</em></th></tr>
+<tr><td align="center">0</td><td align="center">0</td><td align="center">X*</td></tr>
+<tr><td align="center">0</td><td align="center">1</td><td align="center"><em>fonte</em></td></tr>
+<tr><td align="center">1</td><td align="center">0</td><td align="center">Z</td></tr>
+<tr><td align="center">1</td><td align="center">1</td><td align="center">X*</td></tr>
+<tr><td align="center">X/Z</td><td align="center"><em>qualquer</em></td><td align="center">X*</td></tr>
+<tr><td align="center"><em>qualquer</em></td><td align="center">X/Z</td><td align="center">X*</td></tr>
+</tbody></table>
+<p>*Se a <em>fonte</em> estiver em Z, o <em>dreno</em> estará em Z; 
+do contrário o <em>dreno</em> será X.</p>
+</center>
+
+<p> Se o atributo Bits de Dados for maior do que 1, a <em>porta</em> ainda
+assim será de um bit apenas, mas esse valor será aplicado simultaneamente
+a cada um dos bits da <em>fonte</em>.
+</p> 
+
+<h2>Pinos (supondo o componente voltado para leste, e porta Em cima/À esquerda)</h2>
+
+<dl>
+
+<dt> Face oeste (entrada, largura em bits de acordo com o atributo Bits de Dados)</dt>
+<dd> A entrada <em>fonte</em> do componente irá transmitir para a saída, conforme
+os sinais nas entradas <em>porta-P</em> e <em>porta-N</em>.
+</dd>
+
+<dt> Face Norte (entrada, largura em bits igual a 1)</dt>
+<dd> A entrada <em>porta-P</em> do componente. 
+</dd>
+
+<dt> Face Sul (entrada, largura em bits igual a 1)</dt>
+<dd> A entrada <em>porta-N</em> do componente. 
+</dd>
+
+<dt> Face Leste (saída, largura em bits de acordo com o atributo Bits de Dados)</dd>
+<dd> A saída do componente, cujo valor dependerá da entrada <em>fonte</em> 
+se a <em>porta-P</em> estiver em 0, e se a <em>porta-N</em> estiver em 1, 
+ou ficará flutuante, se os sinais forem 1 na <em>porta-P</em> e 0 na <em>porta-N</em>.
+Para todos os outros valores na <em>porta-P</em>, a saída será um valor de erro.
+</dd>
+
+</dl>
+
+<h2> Atributos </h2>
+
+<p> Quando o componente for selecionado ou estiver sendo acrescentado,
+Alt-0 até Alt-9 alterarão o seu atributo Bits de Dados <q>(Data Bits)</q>, e 
+as setas alterarão o seu atributo de posição <q>(Facing)</q>.
+</p>
+
+<dl>
+
+<dt> Posição </dt>
+<dd> A direção do componente (sua saída em relação à entrada).</dd>
+
+<dt> Posição da Porta</dt>
+<dd> A posição da entrada da porta.</dd>
+
+<dt> Bits de Dados</dt>
+<dd> A largura em bits das entradas e saída do componente.</dd>
+
+</dl>
+
+<h2> Comportamento da Ferramentar Testar </h2>
+
+<p> Nenhum. </p>
+
+<h2> Comportamento da Ferramenta Texto </h2>
+
+<p> Nenhum. </p>
+
+<p><a href="../index.html">Retornar à <em> Biblioteca de Referências </em></a></p>
+
+</body>
+</html>

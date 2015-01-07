@@ -1,0 +1,84 @@
+<html>
+<head>
+<title> Fonte/Terra </title>
+</head>
+
+<body bgcolor="FFFFFF">
+
+<h1><img align="center" height="32" width="32" src="../../icons/power.gif"> 
+    <img align="center" height="32" width="32" src="../../icons/ground.gif"> 
+	<em>Fonte ("Power")/Terra("Ground")</em></h1>
+
+<p><table>
+<tr><td><strong> Biblioteca: </strong></td>
+	<td><a href="index.html">Conectar (Wiring)</a></td></tr>
+<tr><td><strong> Introdução: </strong></td>
+	<td>2.7.0</td></tr>
+<tr><td valign="top"><strong> Aparência: </strong></td>
+	<td valign="top"><img src="../images/power.png">
+	<img src="../images/ground.png"></td></tr>
+</table></p>
+
+<h2> Comportamento </h2>
+
+<p> Emitirá um único valor pela conexão.
+Para um elemento do tipo Fonte, indicado por um triângulo, esse valor 
+será igual a 1 (ou, se o atributo de Bits de Dados for maior do que 1,
+todos os valores iguais a 1).
+Para um elemento do tipo Terra, indicado por uma seta com três linhas
+paralelas de tamanho decrescente, esse valor será 0 (ou, se o atributo
+de Bits de Dados for maior do que 1, todos os valores iguais a zero).
+</p>
+
+<p> Essa mesma funcionalidade pode ser alcançada usando o componente
+<a href="constant.html">Constante</a> que é mais versátil. A única razão
+em preferir esses itens é que eles se referem a símbolos eletrônicos 
+padronizados.</p>
+
+<h2> Pinos </h2>
+
+<p> Há apenas um pino, uma saída cuja largura de bits será especificada 
+por seu atributo Bits de Dados (Data Bits). O componente emitirá sempre o 
+mesmo valor por esse pino: para um elemento do tipo Terra, a saída terá 
+todos os bits iguais a 0; e para um elemento do tipo Fonte, a saída terá 
+todos os bits iguais a 1.
+</p>
+
+</dl>
+
+<h2> Atributos </h2>
+
+<p> Quando o componente for selecionado ou estiver sendo acrescentado,
+Alt-0 até Alt-9 alterarão seu atributo Bits de Dados <q>(Data Bits)</q>, 
+e as setas alterarão seu atributo de posição <q>(Facing)</q>.
+</p>
+
+<dl>
+
+<dt> Posição (Facing) </dt>
+<dd> A direção preferencial da seta relativa à localização do pino.
+</dd>
+
+<dt> Bits de Dados (Data Bits) </dt>
+<dd> A largura de bits do valor a ser colocado na conexão.</dd>
+
+<dt> Valor </dt>
+<dd> O valor, em hexadecimal, que será emitido pelo componente.
+O número de bits usados para especificar o valor não poderá exceder
+a largura em bits do componente.
+</dd>
+
+</dl>
+
+<h2> Comportamento da Ferramentar Testar </h2>
+
+<p> Nenhum. </p>
+
+<h2> Comportamento da Ferramenta Texto </h2>
+
+<p> Nenhum. </p>
+
+<p><a href="../index.html">Retornar à <em> Biblioteca de Referências </em></a></p>
+
+</body>
+</html>

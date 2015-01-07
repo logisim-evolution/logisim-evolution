@@ -1,0 +1,60 @@
+<html>
+<meta charset="UTF-8">
+<head>
+	<title>Séparateurs</title>
+</head>
+<body bgcolor="FFFFFF">
+
+<h1>Séparateurs</h1>
+
+<p>Quand vous travailler avec des valeurs à plusieurs bits, vous voudrez souvent
+	rediriger différents bits dans différentes directions. L'outil de la librairie
+	Splitter (<img src="../../../icons/splitter.gif">) vous permet de réaliser cela.</p>
+
+<p>Supposons par exemple que vous vouliez un circuit qui combine avec une porte AND les
+	deux quartets de son entrée à huit bits (les quatre bits de poids fort et les quatre bit
+	de poids faible). Nous aurons une valeur à huit bit venant du pin (bus) d'entrée et nous
+	voulons séparer ceci en deux valeur à quatre bits. Dans le circuit ci-dessous, nous avons
+	utilisé un séparateur pour réaliser cela; l'entrée 8 bits est connecté à l'entrée
+	du séparateur, qui la divise en deux quartets, qui sont entrés dans la porte logique AND
+	et ensuite le résultat est en sortie.</p>
+<center><img src="../../../img-guide/bundles-splitter-circ.png"></center>
+<p>Dans cet exemple, le séparateur <q>sépare</q> une valeur en entrée en plusieurs
+	valeurs en sortie. Mais les séparateurs peuvent aussi travailler d'une autre façon: il peut
+	<q>combiner</q> plusieurs valeurs en une seule. En fait, ils n'ont pas de direction: ils
+	peuvent envoyer une valeur dans une direction à un moment et dans une autre plus tard, et
+	ils peuvent même faire les deux en même temps, comme dans l'exemple ci-dessous ou une valeur
+	voyage vers l'Est à travers les deux séparateurs, ensuite elle est re-dirigée vers l'Ouest à
+	travers les séparateurs à nouveau, et ensuite de nouveau vers l'Est ou elle atteint sa sortie.</p>
+<center><img src="../../../img-guide/bundles-splitter-2way.png"></center>
+
+<p>La clé pour comprendre les séparateurs tient dans leurs attributs.
+	Dans ce qui suit, le terme <em>terminaison séparée</em> fait référence à l'un 
+	des multiples câbles d'un côté, tandis que <em>terminaison combinée</em> fait référence
+	à la seule sortie de l'autre côté.</p>
+<ul>
+
+<li> L'attribut <strong>présentation</strong> définit ou la terminaison séparée devrait être
+	positionnée par rapport à la terminaison combinée.</li>
+
+<li> L'attribut <strong>Sortie ventilée</strong> défini combien de terminaisons séparées il doit
+	y avoir.</li>
+
+<li> L'attribut <strong>Largeur de bit en entrée</strong> spécifie la largeur en bit de la terminaison
+	combinée.</li>
+
+<li> L'attribut <strong>Bit <var>x</var></strong> défini quel terminaison séparée correspond 
+	à quel bit <em>x</em> de la terminaison combinée. Si plusieurs bits correspondent à la même
+	terminaison séparée, alors l'ordre relatif sera le même que dans la terminaison combinée.
+	Les séparateurs Logisim ne peuvent pas avoir un bit de la sortie combinée qui corresponde 
+	à plusieurs terminaisons séparées.</li>
+
+</ul>
+<p>Notez que chaque changement à la sortie ventilée ou à la largeur en bit dans les attributs va
+	remettre à zéro les attributs de tous les bits <var>x</var> de façon à distribuer les
+	bits de la valeur combinée aussi régulièrement que possible selon les terminaisons séparées.</p>
+
+<p><strong>Suivant:</strong> <a href="colors.html">Couleurs des câbles</a>.</p>
+
+</body>
+</html>

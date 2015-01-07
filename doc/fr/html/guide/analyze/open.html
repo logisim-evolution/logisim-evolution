@@ -1,0 +1,90 @@
+<html>
+<meta charset="UTF-8">
+<head>
+	<title>Ouvrir l'Analyse Combinatoire</title>
+</head>
+<body bgcolor="FFFFFF">
+
+<h1>Ouvrir l'Analyse Combinatoire</h1>
+
+<p>L'essentiel du module d'Analyse Combinatoire est accessible par une seule
+	fenêtre du même nom qui vous permet de voir la table de vérité et les
+	expressions booléennes. Cette fenêtre s'ouvre de deux manières.</p>
+
+<h2>Via le menu Window</h2>
+
+<p>Sélectionnez l'analyse combinatoire et la fenêtre "Analyse Combinatoire"
+	apparaîtra. Si vous n'avez encore jamais vu cette fenêtre, cette dernière
+	ne représente aucun circuit.</p>
+
+<p>Il ne peut y avoir qu'une seule fenêtre "Analyse Combinatoire"
+	dans Logisim, quel que soit le nombre de projets ouverts. Il n'y a
+	aucun moyen d'ouvrir deux fenêtre "Analyse Combinatoire" en même temps.</p>
+
+<h2>Via le menu Projet</h2>
+
+<p>Depuis une fenêtre d'édition de circuit, il est aussi possible de 
+	demander à Logisim l'analyse du circuit courant en sélectionnant
+	l'option "Analyser le circuit" depuis le menu Projet.
+	Avant que Logisim ouvre la fenêtre, il va élaborer les expression 
+	booléennes et la table de vérité correspondante au circuit et les
+	afficher pour la visualisation.</p>
+
+<p>Pour qu'une analyse soir couronnée de succès, chaque entrée doit être
+	liée à un pin d'entrée et chaque sortie à un pin de sortie.
+	Logisim n'analysera que les circuits avec au plus huit entrées ou huit
+	sorties, et toutes devront être des pin simples. Dans le cas contraire,
+	vous verrez un message d'erreur et la fenêtre n'apparaîtra pas.</p>
+
+<p>Dans l'élaboration d'expressions booléennes correspondant à un circuit,
+	Logisim essayera d'abord de construire une expression booléenne
+	correspondant exactement aux portes logiques du circuit. Mais si le circuit
+	utilise des composants qui ne sont pas des portes logiques (comme par exemple
+	un multiplexeur), ou si le circuit a plus de 100 niveaux de profondeur
+	(imporbable), alors il affichera une boîte de dialogue pour vous avertir
+	qu'il n'est pas possible de dériver des expressions booléennes et 
+	Logisim va à la place dériver des expressions basées sur la table de vérité qui sera
+	elle-même dérivée en testant (silencieusement) chaque combinaison
+	en entrée et en lisant le résultat en sortie (méthode brute-force).</p>
+
+<p>Après l'analyse du circuit, il n'y pas de liaison entre le circuit et 
+	l'analyse combinatoire. Ce qui veut dire que des changements dans le circuit
+	ne vont pas être reflétés dans la fenêtre et des changements dans les
+	expressions booléennes et/ou la table de vérité n'auront pas d'impact
+	sur le circuit.
+	Vous pouvez bien sûr toujours ré-analyser le circuit; et comme nous le verrons
+	plus tard, vous pouvez remplacer le circuit par un circuit correspondant 
+	à ce qui apparaît dans la fenêtre d'analyse combinatoire.</p>
+
+<h2>Limitations</h2>
+
+<p>Logisim n'essayera pas de détecter des circuits séquentiels: si vous
+	demandez l'analyse d'un circuit séquentiel, il créera une table de
+	vérité et les expressions booléennes correspondantes, bien que cela
+	ne reflétera pas correctement le comportement du circuit. (En fait la 
+	détection de circuits séquentiels peut être <em>prouvée comme impossible</em>),
+	comme cela reviendrait à résoudre le problème de l'arrêt.
+	Vous pouvez bien sûr espérer que Logisim fera quelques essais - mais ce
+	n'est pas le cas.) En conséquence, le système d'analyse combinatoire ne
+	devrait pas être utilisé sans discernement: ne l'utilisez que si vous
+	être sûrs que le circuit à analyser est vraiment combinatoire!</p>
+
+<p>Logisim effectuera peut-être des changements inattendus au circuit original:
+	le système d'analyse combinatoire exige que chaque entrée et sortie ait un
+	nom unique qui soit conforme aux règles des identifiants Java. (En gros, chaque 
+	caractère doit être soir une lettre, soir un chiffre and le premier caractère
+	doit être une lettre. Les espaces ne sont pas autorisés!)
+	Il essaye d'utiliser les labels existants des pins and d'utiliser une
+	liste de valeurs par défaut si les labels n'existent pas. Si un seul label
+	ne respecte pas les règles des identifiants Java, alors Logisim essayera 
+	si possible d'inférer un label valide.</p>
+
+<p>Incidemment, l'ordre des entrées dans la table de vérité
+	correspondra à l'ordre descendant dans le circuit original, avec des 
+	liens découpés dans l'ordre gauche-droite. (Le même ordre s'applique
+	pour les </p>
+
+<p><strong>Suivant:</strong> <a href="table.html">Editer la table de vérité</a>.</p>
+
+</body>
+</html>

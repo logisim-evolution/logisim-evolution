@@ -1,0 +1,53 @@
+<html>
+<meta charset="UTF-8">
+<head>
+	<title>Attributs des outils</title>
+</head>
+<body bgcolor="FFFFFF">
+
+<h1>Attributs des outils</h1>
+
+<p>Chaque outil pour ajouter des composants dans un circuit a aussi un ensemble
+	d'attributs, qui sont attribués aux composants créés par l'outils, bien 
+	que par la suite les attributs d'un composant puissent être modifiés indépendamment
+	des attributs de l'outil. Quand vous sélectionnez un outil, Logisim
+	va mettre à jour la table des attributs pour afficher les attributs de l'outil.</p>
+
+<p>Supposons par exemple que nous voulions créer de plus petites portes AND.
+	Pour le moment, chaque fois que nous sélectionnions l'outil AND, il crée
+	une grande porte AND. Mais si nous éditons les attributs juste après
+	avoir sélectionné l'outil (avant de placer une porte AND dans le circuit), alors
+	nous allons changer les attributs pour l'outil, de cette façon les porte AND que nous
+	ajouterons dans le futur en utilisant cet outil seront plus petites.</p>
+<center><img src="../../../img-guide/attrlib-and-narrow.png"></center>
+<p>Maintenant, nous pouvons effacer les deux portes AND existantes et en 
+	ajouter de nouvelles à la place. Cette fois, elles seront plus petites.
+	(si vous choisissez de réduire le nombre d'entrées à 3, la porte logique
+	AND aura alors des extensions verticales à gauche. Mais vous devrez également
+	recâbler le circuit de façon à ce que les câbles atteignent le flanc gauche
+	de la porte AND.)</p>
+<center><img src="../../../img-guide/attrlib-and-replace.png"></center>
+<p>Avec certains outils, l'icône de l'outil reflète certaines valeurs des
+	attributs. Un exemple de cela et l'outil Pin, dont l'icône s'affiche
+	selon ce que l'attribut affichage dit.</p>
+
+<p>Les outils dans la barre d'outils ont tous un ensemble d'attributs séparé 
+	de l'outil correspondant dans le panneau d'exploration. C'est pourquoi, 
+	même si nous changeons l'outil AND de la barre d'outils pour créer une
+	petite porte logique AND, la porte logique AND de la librairie restera
+	plus grande, sauf si nous changeons ses attributs </p>
+
+<p>En fait, les outils pin dans la barre d'outil par défaut sont deux instance
+	des pins de la librairie de cablage, mais les ensembles d'attributs sont
+	différents. L'icône pour l'outil pin est représenté par un circle
+	dans un caré suivant la valeur de son attribut "Sortie ?"</p>
+
+<p>Logisim fourni des raccourci pratiques pour changer l'attribut d'apparence
+	qui contrôle la direction dans laquelle se trouve la représentation du composant:
+	presser la touche flèche gauche quand l'outil est sélectionné va automatiquement
+	changer l'orientation du composant.</p>
+
+<p><strong>Suivant:</strong> <em><a href="../index.html">Guide Utilisateur</a>.</em></p>
+
+</body>
+</html>

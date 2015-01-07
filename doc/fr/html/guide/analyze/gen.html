@@ -1,0 +1,48 @@
+<html>
+<meta charset="UTF-8">
+<head>
+	<title>Générer un circuit</title>
+</head>
+<body bgcolor="FFFFFF">
+
+<h1>Générer un circuit</h1>
+
+<p>Le bouton "Construire le circuit" va générer un circuit dont les porte logiques
+	correspondent à l'expression choisie pour chaque sortie.
+	Les entrées et sorties du circuits seront affichée dans l'ordre
+	décroissant correspondant à l'apparition dans les onglets Entrées et
+	Sorties.
+	En général, le circuit généré sera bien conçu et en fait l'un des intérêts
+	de l'analyse combinatoire de Logisim est d'améliorer des circuits
+	mal conçus. Malgré tout, comme avec tout formatage automatique, le système
+	ne va pas expliciter certains détails comme un circuit dessiné à la main.</p>
+
+<center><img src="../../../img-guide/analyze-circuit.png"></center>
+
+<p>Quand vous cliquez sur le bouton "Construire le circuit", une boîte de 
+	dialogue apparaît pour vous demander de choisir dans quel projet vous voulez
+	placer le circuit et quel nom lui donner.</p>
+
+<center><img src="../../../img-guide/analyze-build.png"></center>
+
+<p>Si vous donnez le même nom qu'un circuit existant, il sera remplacé
+	(après que Logisim vous a demandé de confirmer que vous voulez
+	vraiment le faire).</p>
+
+<p>Le dialogue "Contruire un circuit" inclut deux options.
+	L'option de n'utiliser que des portes logiques à deux entrées spécifie que
+	toutes les portes logiques utilisées n'auront que deux entrées. (Sauf
+	évidemment les portes logiques NOT.) L'option de n'utiliser que des portes
+	NAND spécifie que le circuit traduit ne comportera que des portes NAND. Vous pouvez
+	sélectionner les deux options si vous ne voulez utiliser que des portes NAND à
+	deux entrées.</p>
+
+<p>Logisim ne peut pas générer un circuit avec uniquement des portes NAND pour une
+	expression qui contiendrait des opérateurs XOR. Par conséquent cette dernière
+	option sera désactivée sur une quelconque expression en sortie contient un ou 
+	plusieurs XOR.</p>
+
+<p><strong>Suivant:</strong> <em><a href="../index.html">Guide de l'utilisateur</a></em>.</p>
+
+</body>
+</html>

@@ -1,0 +1,168 @@
+<html>
+<head>
+<title>Transistor</title>
+</head>
+
+<body bgcolor="FFFFFF">
+
+<h1><img align="center" height="32" width="32" src="../../icons/trans0.gif">
+<img align="center" height="32" width="32" src="../../icons/trans1.gif">
+<em>Transistor</em></h1>
+
+<p><table>
+<tr><td><strong>Biblioteca:</strong></td>
+	<td><a href="index.html">Conectar (Wiring)</a></td></tr>
+<tr><td><strong>Introdução:</strong></td>
+	<td>2.7.0</td></tr>
+<tr><td valign="top"><strong>Aparência:</strong></td>
+	<td valign="top"><img src="../images/trans0.png">
+	<img src="../images/trans1.png"></td></tr>
+</table></p>
+
+<h2>Comportamento</h2>
+
+<p> Um transistor possui duas entradas, chamadas <em>porta ("gate")</em> e 
+<em>fonte ("source")</em>, e uma saída, chamada <em>dreno ("drain")</em>. 
+Quando diagramadas, a entrada <em>fonte</em> e a saída <em>dreno</em> serão
+conectadas por uma placa; o Logisim desenhará uma seta para indicar a direção
+do fluxo da entrada para a saída. A entrada <em>porta</em> é desenhada conectada
+à placa paralela para conexão entre a <em>fonte</em> e o <em>dreno</em>. O Logisim
+oferece suporte a dois tipos de transistores, com comportamentos ligeiramente
+diferentes como se descreverá abaixo: o do tipo-P, marcado por um círculo 
+conectando a <em>porta</em> à placa; e do tipo-N, onde não há esse círculo.
+</p>
+
+<p> Conforme o valor presente na <em>porta</em>, o valor na <em>fonte</em> 
+poderá ser transmitido para o <em>dreno</em>; ou pode não haver conexão entre
+eles se o sinal for flutuante. A determinação se haverá transmissão ou desconexão
+dependerá do tipo de transistor: o do tipo-P (indicado pelo círculo) transmitirá
+se o sinal na <em>porta</em> for 0, enquanto o do tipo-N (sem o círculo) 
+transmitirá quando o sinal na <em>porta</em> for 1. Esse comportamento encontra-se
+resumido nas seguintes tabelas.
+</p>
+
+<center><table>
+<tr><td><table><thead>
+<tr><td></td><th colspan="4" align="center"><b>Tipo-P</b></th></tr>
+<tr><td></td><td colspan="4" align="center"><img src="../images/trans0.png"></td></tr>
+</thead><tbody>
+<tr><td colspan="2"></td><th colspan="3"><em>porta</em></th></tr>
+<tr><td colspan="2"></td><th align="center">0</th><th align="center">1</th><th align="center">X/Z</th></tr>
+<tr><td></td><th align="center">0</th>
+      <td align="center">0</td><td align="center">Z</td><td align="center">X</td></tr>
+<tr><th><em>source</em></th><th align="center">1</th>
+      <td align="center">1</td><td align="center">Z</td><td align="center">X</td></tr>
+<tr><td></td><th align="center">Z</th>
+      <td align="center">Z</td><td align="center">Z</td><td align="center">Z</td></tr>
+<tr><td></td><th align="center">X</th>
+      <td align="center">X</td><td align="center">Z</td><td align="center">X</td></tr>
+</tbody></table></td><td>&nbsp;&nbsp;&nbsp;</td><td><table><thead>
+<tr><td></td><th colspan="4" align="center"><b>Tipo-N</b></th></tr>
+<tr><td></td><td colspan="4" align="center"><img src="../images/trans1.png"></td></tr>
+</thead><tbody>
+<tr><td colspan="2"></td><th colspan="3"><em>porta</em></th></tr>
+<tr><td colspan="2"></td><th align="center">0</th><th align="center">1</th><th align="center">X/Z</th></tr>
+<tr><td></td><th align="center">0</th>
+      <td align="center">Z</td><td align="center">0</td><td align="center">X</td></tr>
+<tr><th><em>fonte</em></th><th align="center">1</th>
+      <td align="center">Z</td><td align="center">1</td><td align="center">X</td></tr>
+<tr><td></td><th align="center">Z</th>
+      <td align="center">Z</td><td align="center">Z</td><td align="center">Z</td></tr>
+<tr><td></td><th align="center">X</th>
+      <td align="center">Z</td><td align="center">X</td><td align="center">X</td></tr>
+</table></td></tr></table></center>
+
+<p>Ou de forma resumida:</p>
+
+<center><table>
+<tr><td><table><thead>
+<tr><th colspan="2" align="center"><b>Tipo-P</b></th></tr>
+<tr><td colspan="2" align="center"><img src="../images/trans0.png"></td></tr>
+</thead><tbody>
+<tr><th><em>porta</em></th><th><em>dreno</em></th></tr>
+<tr><td align="center">0</td><td align="center"><em>fonte</em></td></tr>
+<tr><td align="center">1</td><td align="center">Z</td></tr>
+<tr><td align="center">X/Z</td><td align="center">X*</td></tr>
+</tbody></table></td><td>&nbsp;&nbsp;&nbsp;</td><td><table><thead>
+<tr><th colspan="2" align="center"><b>Tipo-N</b></th></tr>
+<tr><td colspan="2" align="center"><img src="../images/trans1.png"></td></tr>
+</thead><tbody>
+<tr><th><em>porta</em></th><th><em>dreno</em></th></tr>
+<tr><td align="center">0</td><td align="center">Z</td></tr>
+<tr><td align="center">1</td><td align="center"><em>fonte</em></td></tr>
+<tr><td align="center">X/Z</td><td align="center">X*</td></tr>
+</table></td></tr></table>
+<p>*Se a <em>fonte</em> estiver em Z, o <em>dreno</em> será Z; 
+do contrário o <em>dreno</em> será X.</p>
+</center>
+
+<p> Se o atributo Bits de Dados for maior do que 1, a <em>porta</em> ainda
+assim será de um bit apenas, mas esse valor será aplicado simultaneamente
+a cada um dos bits da <em>fonte</em>.
+</p> 
+
+<p> Um transistor do tipo-N se comportará de forma semelhante a de um 
+<a href="../gates/controlled.html">Buffer Controlado</a>. A principal
+diferença é que um transistor é melhor empregado em projetos de circuitos
+mais básicos.
+</p>
+
+<h2>Pinos (supondo o componente voltado para leste, e porta Em cima/À esquerda)</h2>
+
+<dl>
+
+<dt> Face oeste (entrada, largura em bits de acordo com o atributo Bits de Dados)</dt>
+<dd> A entrada <em>fonte</em> do componente irá transmitir para a saída, conforme
+o sinal na entrada <em>porta</em>.
+</dd>
+
+<dt> Face Norte (entrada, largura em bits igual a 1)</dt>
+<dd> A entrada <em>porta</em> do componente. Para transistores do tipo-P, 
+haverá transmissão se o valor na <em>porta</em> for igual a 0; para transistores
+do tipo-N, haverá transmissão se o valor na <em>porta</em> for igual a 1.
+</dd>
+
+<dt> Face Leste (saída, largura em bits de acordo com o atributo Bits de Dados)</dd>
+<dd> A saída do componente, cujo valor dependerá da entrada <em>fonte</em> 
+de acordo com o indicado pela <em>porta</em>, ou ficará flutuante, se o sinal
+for o contrário do especificado. Se o valor da <em>porta</em> for um valor
+flutuante ou de erro, a saída também será um valor de erro.
+</dd>
+
+</dl>
+
+<h2> Atributos </h2>
+
+<p> Quando o componente for selecionado ou estiver sendo acrescentado,
+Alt-0 até Alt-9 alterarão seu atributo Bits de Dados <q>(Data Bits)</q>, e 
+as setas alterarão seu atributo de posição <q>(Facing)</q>.
+</p>
+
+<dl>
+
+<dt> Tipo </dt>
+<dd> Determinará se o transistor será do tipo-P ou do tipo-N.</dd>
+
+<dt> Posição </dt>
+<dd> A direção do componente (sua saída em relação à entrada).</dd>
+
+<dt> Posição da Porta</dt>
+<dd> A posição da entrada <em>porta</em>.</dd>
+
+<dt> Bits de Dados</dt>
+<dd> A largura em bits das entradas e saída do componente.</dd>
+
+</dl>
+
+<h2> Comportamento da Ferramentar Testar </h2>
+
+<p> Nenhum. </p>
+
+<h2> Comportamento da Ferramenta Texto </h2>
+
+<p> Nenhum. </p>
+
+<p><a href="../index.html">Retornar à <em> Biblioteca de Referências </em></a></p>
+
+</body>
+</html>

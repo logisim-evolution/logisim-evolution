@@ -1,0 +1,67 @@
+<html>
+<meta charset="UTF-8">
+<head>
+	<title>Tutoriel: Ajouter des portes logiques</title>
+</head>
+<body bgcolor="FFFFFF">
+
+<p><b>Suivant:</b> <a href="tutor-wires.html">Etape 2: Ajouter des câbles</a></p>
+
+<h2>Etape 1: Ajouter des portes logiques</h2>
+
+<p>Rappelez-vous que nous essayons de construire le circuit suivant dans Logisim.</p>
+<center><img src="../../../img-guide/tutorial-xor-circ.png"></center>
+
+<p>Je suggère de construire le circuit en insérant d'abord les portes logiques
+	comme sorte de charpente et de les connecter ensuite avec des câbles.
+	La première chose que nous allons faire c'est d'ajouter deux portes AND (portes ET).
+	Cliquez sur l'outil AND dans la barre d'outils
+(<img src="../../../icons/andGate.gif">, l'avant dernier outil listé).
+Ensuite cliquez sur l'aire d'édition ou vous voulez placer la première porte logique AND.
+Faites attention à laisser suffisamment de place à gauche. Ensuite cliquez à nouveau sur 
+l'outil et placez la deuxième porte AND juste en dessous.</p>
+<center><img src="../../../img-guide/tutorial-shot-ands.png"></center>
+<p>Prenez note des cinq point sur la partie gauche de la porte logique AND. Ce sont les
+	emplacements ou les câbles peuvent être connectés. Il se trouve que nous n'en 
+	utiliserons que deux pour notre circuit XOR; mais pour d'autres circuits, vous 
+	pourriez trouver utile d'avoir plus de deux câbles arrivant à une porte logique AND.</p>
+
+<p>Maintenant ajoutez les autres portes. D'abord cliquez sur l'outil OR
+(<img src="../../../icons/orGate.gif">);
+ensuite cliquez à l'endroit ou vous voulez placer votre porte. Placez ainsi
+les deux portes NOT sur la surface en utilisant l'outil NOT
+(<img src="../../../icons/notGate.gif">).</p>
+<center><img src="../../../img-guide/tutorial-shot-gates.png"></center>
+<p>J'ai laissé un petit peu de place entre les portes NOT et les portes AND; si
+	vous le souhaitez, vous pouvez cependant les placer l'une contre l'autre et économiser
+	la peine d'avoir à les inter-connecter avec un câble plus tard.</p>
+
+<p>¨Maintenant nous voulons ajouter les deux entrées<var>x</var> et <var>y</var> dans notre
+	diagramme. Sélectionnez l'outil Entrée
+(<img src="../../../icons/pinInput.gif">),
+et déposer les pins (point d'entrée ou connecteur).
+Vous devez également placer un pin de sortie à côté de la sortie de la 
+porte logique OR en utilisant l'outil sortie.
+(<img src="../../../icons/pinOutputReversed.gif">).
+(De nouveau, je laisse un petit peu d'espace entre la porte OR et le pin
+de sortie, mais vous pouvez choisir de les coller l'un à l'autre.)</p>
+<center><img src="../../../img-guide/tutorial-shot-comps.png"></center>
+
+<p>Si vous n'êtes pas satisfait avec l'emplacement de quelque chose, vous pouvez
+	le sélectionner avec l'outil d'édition
+(<img src="../../../icons/select.gif">)
+et le déplacer à l'endroit souhaité. Ou vous pouvez le supprimer complètement en 
+sélectionnant l'outil effacer dans le menu Editer ou en pressant la touche effacer.</p>
+
+<p>Alors que vous disposez chaque composant du circuit, vous remarquerez qu'aussitôt que
+	le composant est placé, Logisim revient à l'outil d'édition de telle façon que vous 
+	puissiez déplacer le composant qui vient d'être placé ou (comme nous le verrons) connecter
+	le composant à d'autres en créant des câbles. Si vous voulez ajouter une copie du composant
+	nouvellement placé, il suffit de presser Control-D pour dupliquer la sélection.
+	(Certains systèmes utilisent d'autres touches, comme la touche commande sur les 
+	systèmes OSX. Il faut alors adapter).</p>
+
+<p><b>Suivant:</b> <a href="tutor-wires.html">Etape 2: Ajouter des câbles</a></p>
+
+</body>
+</html>
