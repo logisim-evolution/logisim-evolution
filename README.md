@@ -78,6 +78,16 @@ If you find a bug or have an idea for an interesting feature, please do not hesi
 ## License
 The code is licensed under the GNU GENERAL PUBLIC LICENSE, version 3.
 
+## Credits
+The following institutions/people actively contributed to Logisim-evolution:
+* Carl Burch - Hendrix College - USA
+* [Haute École Spécialisée Bernoise](http://www.bfh.ch) - Switzerland
+* [Haute École du paysage, d'ingénierie et d'architecture de Genève](http://hepia.hesge.ch) - Switzerland
+* [Haute École d'Ingénierie et de Gestion du Canton de Vaud](http://www.heig-vd.ch) - Switzerland
+* Theldo Cruz Franqueira - Pontifícia Universidade Católica de Minas Gerais - Brasil
+* 
+If you feel that your name should be in this list, please feel free to send us a [mail](mailto:roberto.rigamonti@heig-vd.ch)!
+
 ## Other Logisim forks available on the net
 * Logisim by Joseph Lawrance et al. [(link)](https://github.com/lawrancej/logisim) - they have started from Burch's original code and integrated it in several open-source development frameworks, cleaning up the code. We have taken a few code cleanups and the redo functionality from their code.
 * logisim-iitd [(link)](https://code.google.com/p/logisim-iitd) - IIT Delhi version of Logisim, it integrates the Floating-Point Components within the Arithmetic Unit.
