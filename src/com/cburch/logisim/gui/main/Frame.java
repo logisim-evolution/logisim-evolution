@@ -27,6 +27,7 @@
  *       Yverdon-les-Bains, Switzerland
  *       http://reds.heig-vd.ch
  *******************************************************************************/
+
 package com.cburch.logisim.gui.main;
 
 import java.awt.BorderLayout;
@@ -187,9 +188,6 @@ public class Frame extends LFrame implements LocaleListener {
 
 	private class VhdlSimState extends JPanel implements VhdlSimulatorListener {
 
-		/**
-		 * 
-		 */
 		private static final long serialVersionUID = 1L;
 		Ellipse2D.Double circle;
 		Color color;
@@ -223,15 +221,12 @@ public class Frame extends LFrame implements LocaleListener {
 			case DISABLED:
 				color = Color.GRAY;
 				break;
-
 			case ENABLED:
 				color = Color.RED;
 				break;
-
 			case STARTING:
 				color = Color.ORANGE;
 				break;
-
 			case RUNNING:
 				color = new Color(40, 180, 40);
 				break;

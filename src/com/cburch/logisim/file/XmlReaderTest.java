@@ -37,6 +37,42 @@ import org.junit.Test;
 public class XmlReaderTest {
 
 	/**
+	 * Test method for {@link com.cburch.logisim.file.XmlReader#generateValidVHDLLabel(java.lang.String)}.
+	 * We use here the version with a suffix in order to have a predictable suffix.
+	 */
+	@Test
+	public final void testGenerateValidVHDLLabel() {
+		// Valid labels should be left untouched
+		assertEquals("aaa", XmlReader.generateValidVHDLLabel("aaa", "A"));
+		assertEquals("aa_a", XmlReader.generateValidVHDLLabel("aa_a", "A"));
+		assertEquals("a1_2", XmlReader.generateValidVHDLLabel("a1_2", "A"));
+		assertEquals("a1_2_3_aa", XmlReader.generateValidVHDLLabel("a1_2_3_aa", "A"));
+		// Invalid labels should be fixed and the suffix has to be appended
+		// A "L_" has to be prepended if the initial character is invalid,
+		// except if it is ! or ~, in which case it becomes "NOT_"
+		assertEquals("L_1a1_2_3_aa_A", XmlReader.generateValidVHDLLabel("1a1_2_3_aa", "A"));
+		assertEquals("NOT_1a1_2_3_aa_A", XmlReader.generateValidVHDLLabel("!1a1_2_3_aa", "A"));
+		assertEquals("NOT_1a1_2_3_aa_A", XmlReader.generateValidVHDLLabel("~1a1_2_3_aa", "A"));
+		assertEquals("NOT_1a1_2_3_aa_A", XmlReader.generateValidVHDLLabel("! 1a1_2_3_aa", "A"));
+		assertEquals("NOT_1a1_2_3_aa_A", XmlReader.generateValidVHDLLabel("~ 1a1_2_3_aa", "A"));
+		assertEquals("a1_2_3_aa_A", XmlReader.generateValidVHDLLabel("a1_____2___3___aa", "A"));
+		assertEquals("a1_2_3_aa_A", XmlReader.generateValidVHDLLabel("a1_____2___3___aa_", "A"));
+		// ! and ~ characters have to be replaced in the middle of a
+		// label too
+		assertEquals("L_1a1_NOT_2_3_aa_A", XmlReader.generateValidVHDLLabel("1a1_~2_3_aa", "A"));
+		assertEquals("L_1a1_NOT_2_3_aa_A", XmlReader.generateValidVHDLLabel("1a1_!2_3_aa", "A"));
+		assertEquals("NOT_NOT_NOT_aa_A", XmlReader.generateValidVHDLLabel("!~!aa", "A"));
+		assertEquals("NOT_NOT_NOT_aa_A", XmlReader.generateValidVHDLLabel("!~!__aa", "A"));
+		// Remove useless whitespaces at the beginning-end
+		assertEquals("aaa", XmlReader.generateValidVHDLLabel("aaa     ", "A"));
+		assertEquals("aaa", XmlReader.generateValidVHDLLabel("     aaa", "A"));
+		assertEquals("aaa", XmlReader.generateValidVHDLLabel("     aaa      ", "A"));
+		assertEquals("L_1a1_2_3_aa_A", XmlReader.generateValidVHDLLabel(" 1a1_2_3_aa", "A"));
+		assertEquals("L_1a1_2_3_aa_A", XmlReader.generateValidVHDLLabel("1a1_2_3_aa ", "A"));
+		assertEquals("L_1a1_2_3_aa_A", XmlReader.generateValidVHDLLabel(" 1a1_2_3_aa ", "A"));
+	}
+	
+	/**
 	 * Test method for {@link com.cburch.logisim.file.XmlReader#labelVHDLInvalid(java.lang.String)}.
 	 */
 	@Test

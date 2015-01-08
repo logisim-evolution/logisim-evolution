@@ -595,14 +595,35 @@ class XmlReader {
 
 	/**
 	 * Given a label, generates a valid VHDL label by removing invalid characters,
-	 * putting a letter at the beginning, and putting a UUID at the end if the name
-	 * has been altered.
-	 * @param initialLabel initial (possibly invalid) label
+	 * putting a letter at the beginning, and putting a shortened (8 characters)
+	 * UUID at the end if the name has been altered.
+	 * Whitespaces at the beginning and at the end of the string are trimmed by
+	 * default (if this is the only change, then no suffix is appended).
+	 * @param initialLabel initial (possibly invalid) label 
 	 * @return a valid VHDL label
 	 */
 	public static String generateValidVHDLLabel(String initialLabel) {
+		return(generateValidVHDLLabel(initialLabel, UUID.randomUUID().toString().substring(0, 8)));
+	}
+	
+	/**
+	 * Given a label, generates a valid VHDL label by removing invalid characters,
+	 * putting a letter at the beginning, and putting the requested suffix at the end
+	 * if the name has been altered.
+	 * Whitespaces at the beginning and at the end of the string are trimmed by
+	 * default (if this is the only change, then no suffix is appended).
+	 * @param initialLabel initial (possibly invalid) label
+	 * @param suffix string that has to be appended to a modified label 
+	 * @return a valid VHDL label
+	 */
+	public static String generateValidVHDLLabel(String initialLabel, String suffix) {
 		assert(initialLabel != null);
 
+		// As a default, trim whitespaces at the beginning and at the end
+		// of a label (no risks with that potentially, therefore avoid
+		// to append the suffix if that was the only change)
+		initialLabel = initialLabel.trim();
+		
 		String label = initialLabel;
 
 		if(label.isEmpty()) {
@@ -610,9 +631,13 @@ class XmlReader {
 			label = "L_";
 		}
 
+		// If the string has a ! or ~ symbol, then replace it with "NOT"
+		label = label.replaceAll("[\\!~]", "NOT_");
+		
 		// Force string to start with a letter
 		if (!label.matches("^[A-Za-z].*$"))
 			label = "L_" + label;
+
 		// Force the rest to be either letters, or numbers, or underscores
 		label = label.replaceAll("[^A-Za-z0-9_]", "_");
 		// Suppress multiple successive underscores and an underscore at the end
@@ -622,7 +647,7 @@ class XmlReader {
 
 		if (!label.equals(initialLabel)) {
 			// Concatenate a unique ID if the string has been altered
-			label = label + "_" + UUID.randomUUID().toString().substring(0, 8);
+			label = label + "_" + suffix;
 			// Replace the "-" characters in the UUID with underscores
 			label = label.replaceAll("-", "_");
 		}
