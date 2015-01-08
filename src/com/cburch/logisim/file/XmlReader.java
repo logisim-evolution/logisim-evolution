@@ -192,7 +192,8 @@ class XmlReader {
 			}
 		}
 
-		private void initMouseMappings(Element elt) {
+		private void initMouseMappings(Element elt)
+		{
 			MouseMappings map = file.getOptions().getMouseMappings();
 			for (Element sub_elt : XmlIterator.forChildElements(elt, "tool")) {
 				Tool tool;
@@ -228,7 +229,8 @@ class XmlReader {
 			}
 		}
 
-		private void initToolbarData(Element elt) {
+		private void initToolbarData(Element elt)
+		{
 			ToolbarData toolbar = file.getOptions().getToolbarData();
 			for (Element sub_elt : XmlIterator.forChildElements(elt)) {
 				if (sub_elt.getTagName().equals("sep")) {
@@ -256,7 +258,8 @@ class XmlReader {
 		}
 
 		private void loadAppearance(Element appearElt, CircuitData circData,
-				String context) {
+				String context)
+		{
 			Map<Location, Instance> pins = new HashMap<Location, Instance>();
 			for (Component comp : circData.knownComponents.values()) {
 				if (comp.getFactory() == Pin.FACTORY) {
@@ -292,7 +295,8 @@ class XmlReader {
 			}
 		}
 
-		private Map<Element, Component> loadKnownComponents(Element elt) {
+		private Map<Element, Component> loadKnownComponents(Element elt)
+		{
 			Map<Element, Component> known = new HashMap<Element, Component>();
 			for (Element sub : XmlIterator.forChildElements(elt, "comp")) {
 				try {
@@ -305,7 +309,8 @@ class XmlReader {
 			return known;
 		}
 
-		private Library toLibrary(Element elt) {
+		private Library toLibrary(Element elt)
+		{
 			if (!elt.hasAttribute("name")) {
 				loader.showError(Strings.get("libNameMissingError"));
 				return null;
@@ -339,7 +344,8 @@ class XmlReader {
 			return ret;
 		}
 
-		private void toLogisimFile(Element elt) {
+		private void toLogisimFile(Element elt)
+		{
 			// determine the version producing this file
 			String versionString = elt.getAttribute("source");
 			if (versionString.equals("")) {
@@ -467,7 +473,8 @@ class XmlReader {
 	 */
 	public static void applyValidLabels(Element root,
 			String nodeType, String attrType, Map<String, String> validLabels)
-					throws IllegalArgumentException {
+					throws IllegalArgumentException
+	{
 		assert(root != null);
 		assert(nodeType != null);
 		assert(attrType != null);
@@ -487,7 +494,8 @@ class XmlReader {
 		}
 	}
 
-	public static Element ensureLogisimCompatibility(Element elt) {
+	public static Element ensureLogisimCompatibility(Element elt)
+	{
 		Map<String, String> validLabels;
 		validLabels = findValidLabels(elt, "circuit", "name");
 		applyValidLabels(elt, "circuit", "name", validLabels);
@@ -495,15 +503,16 @@ class XmlReader {
 		applyValidLabels(elt, "circuit", "label", validLabels);
 		validLabels = findValidLabels(elt, "comp", "label");
 		applyValidLabels(elt, "comp", "label", validLabels);
-		// In old, buggy Logisim versions, the Pin component could be present in the
-		// toolbar. In this case, the label is incorrectly set with a name that
-		// has a space -- we have to fix it using the valid labels computed above
-		fixInvalidToolbarLabels(elt, validLabels);
+		// In old, buggy Logisim versions, labels where incorrectly
+		// stored also in toolbar and lib components. If this is the
+		// case, clean them up.
+		fixInvalidToolbarLib(elt);
 		return(elt);
 	}
 
 	private static void findLibraryUses(ArrayList<Element> dest, String label,
-			Iterable<Element> candidates) {
+			Iterable<Element> candidates)
+	{
 		for (Element elt : candidates) {
 			String lib = elt.getAttribute("lib");
 			if (lib.equals(label)) {
@@ -526,7 +535,8 @@ class XmlReader {
 	 * and the corresponding valid attribute values as the values
 	 */
 	public static Map<String, String> findValidLabels(Element root,
-			String nodeType, String attrType) {
+			String nodeType, String attrType)
+	{
 		assert(root != null);
 		assert(nodeType != null);
 		assert(attrType != null);
@@ -555,41 +565,50 @@ class XmlReader {
 	}
 
 	/**
-	 * In some old version of Logisim, a pin could be present in the toolbar
-	 * with an incorrect label. This function takes the label computed for
-	 * the component and fixes the pin accordingly.
+	 * Sets to the empty string any label attribute in tool nodes derived from elt.
 	 * 
-	 * @param root root element of the XML tree
-	 * @param validLabels label set of correct label names
+	 * @param root root node
 	 */
-	public static void fixInvalidToolbarLabels(Element root,
-			Map<String, String> validLabels) {
+	private static void cleanupToolsLabel(Element root)
+	{
 		assert(root != null);
-		assert(validLabels != null);
-
-		if (validLabels.isEmpty()) {
-			// Particular case, all the labels were good!
-			return;
-		}
-
-		// Iterate on toolbars -- though there should only one!
-		for (Element toolbarElt : XmlIterator.forChildElements(root, "toolbar")) {
-			// Iterate on tools
-			for (Element toolElt : XmlIterator.forChildElements(toolbarElt, "tool")) {
-				// Iterate on attribute nodes
-				for (Element attrElt : XmlIterator.forChildElements(toolElt, "a")) {
-					// Each attribute node should have a name field
-					if (attrElt.hasAttribute("name")) {
-						String aName = attrElt.getAttribute("name");
-						if (aName.equals("label")) {
-							String label = attrElt.getAttribute("val");
-							if (validLabels.containsKey(label)) {
-								attrElt.setAttribute("val", validLabels.get(label));
-							}
-						}
+		
+		// Iterate on tools
+		for (Element toolElt : XmlIterator.forChildElements(root, "tool")) {
+			// Iterate on attribute nodes
+			for (Element attrElt : XmlIterator.forChildElements(toolElt, "a")) {
+				// Each attribute node should have a name field
+				if (attrElt.hasAttribute("name")) {
+					String aName = attrElt.getAttribute("name");
+					if (aName.equals("label")) {
+						// Found a label node in a tool, clean it up!
+						attrElt.setAttribute("val", "");
 					}
 				}
 			}
+		}
+
+	}
+	
+	/**
+	 * In some old version of Logisim, buggy Logisim versions, labels
+	 * where incorrectly stored also in toolbar and lib components. If this is the
+	 * case, clean them up..
+	 * 
+	 * @param root root element of the XML tree
+	 */
+	private static void fixInvalidToolbarLib(Element root)
+	{
+		assert(root != null);
+
+		// Iterate on toolbars -- though there should be only one!
+		for (Element toolbarElt : XmlIterator.forChildElements(root, "toolbar")) {
+			cleanupToolsLabel(toolbarElt);
+		}
+		
+		// Iterate on libs
+		for (Element libsElt : XmlIterator.forChildElements(root, "lib")) {
+			cleanupToolsLabel(libsElt);
 		}
 	}
 
@@ -602,7 +621,8 @@ class XmlReader {
 	 * @param initialLabel initial (possibly invalid) label 
 	 * @return a valid VHDL label
 	 */
-	public static String generateValidVHDLLabel(String initialLabel) {
+	public static String generateValidVHDLLabel(String initialLabel)
+	{
 		return(generateValidVHDLLabel(initialLabel, UUID.randomUUID().toString().substring(0, 8)));
 	}
 	
@@ -616,7 +636,8 @@ class XmlReader {
 	 * @param suffix string that has to be appended to a modified label 
 	 * @return a valid VHDL label
 	 */
-	public static String generateValidVHDLLabel(String initialLabel, String suffix) {
+	public static String generateValidVHDLLabel(String initialLabel, String suffix)
+	{
 		assert(initialLabel != null);
 
 		// As a default, trim whitespaces at the beginning and at the end
@@ -666,7 +687,8 @@ class XmlReader {
 	 */
 	public static List<String> getXMLLabels(Element root,
 			String nodeType, String attrType)
-					throws IllegalArgumentException {
+					throws IllegalArgumentException
+	{
 		assert(root != null);
 		assert(nodeType != null);
 		assert(attrType != null);
@@ -775,7 +797,8 @@ class XmlReader {
 	 * @param label candidate VHDL variable name
 	 * @return true if the label is NOT a valid name, false otherwise
 	 */
-	public static boolean labelVHDLInvalid(String label) {
+	public static boolean labelVHDLInvalid(String label)
+	{
 		if (!label.matches("^[A-Za-z][A-Za-z0-9_]*") ||
 				label.endsWith("_")|| 
 				label.matches(".*__.*"))
