@@ -112,6 +112,24 @@ public class Poly extends FillableCanvasObject {
 		return true;
 	}
 
+	/**
+	 * Clone function taken from Cornell's version of Logisim:
+	 * http://www.cs.cornell.edu/courses/cs3410/2015sp/
+	 */
+	public Poly clone()
+	{
+		Poly ret = (Poly) super.clone();
+		Handle[] hs = this.handles.clone();
+		
+		for (int i = 0, n = hs.length; i < n; ++i) {
+			Handle oldHandle = hs[i];
+			hs[i] = new Handle(ret, oldHandle.getX(), oldHandle.getY());
+		}
+		ret.handles = hs;
+		
+		return(ret);
+	}
+	
 	@Override
 	public final boolean contains(Location loc, boolean assumeFilled) {
 		Object type = getPaintType();

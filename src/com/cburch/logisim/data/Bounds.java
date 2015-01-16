@@ -221,6 +221,16 @@ public class Bounds {
 		return wid;
 	}
 
+	public int getCenterX()
+	{
+		return (x + wid / 2);
+	}
+
+	public int getCenterY()
+	{
+		return (y + ht / 2);
+	}
+
 	public int getX() {
 		return x;
 	}

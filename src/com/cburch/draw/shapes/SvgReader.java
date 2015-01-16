@@ -88,18 +88,18 @@ public class SvgReader {
 					else
 						type = -1;
 					break;
-				/*
-				 * not supported case 'L': case 'l': case 'H': case 'h': case
-				 * 'V': case 'v': if (type == 0 || type == 2) type = 2; else
-				 * type = -1; break;
-				 */
+					/*
+					 * not supported case 'L': case 'l': case 'H': case 'h': case
+					 * 'V': case 'v': if (type == 0 || type == 2) type = 2; else
+					 * type = -1; break;
+					 */
 				default:
 					type = -1;
 				}
 				if (type == -1) {
 					throw new NumberFormatException(
 							"Unrecognized path command '" + token.charAt(0)
-									+ "'");
+							+ "'");
 				}
 			}
 		}
@@ -261,7 +261,28 @@ public class SvgReader {
 		if (opacity == null || opacity.equals("")) {
 			a = 255;
 		} else {
-			a = (int) Math.round(Double.parseDouble(opacity) * 255);
+			/*
+			 * Patch taken from Cornell's version of Logisim:
+			 * http://www.cs.cornell.edu/courses/cs3410/2015sp/
+			 */
+			double x;
+			try {
+				x = Double.parseDouble(opacity);
+			} catch (NumberFormatException e) {
+				// some localizations use commas for decimal points
+				int comma = opacity.lastIndexOf(',');
+				if (comma >= 0) {
+					try {
+						String repl = opacity.substring(0, comma) + "." + opacity.substring(comma + 1);
+						x = Double.parseDouble(repl);
+					} catch (Throwable t) {
+						throw e;
+					}
+				} else {
+					throw e;
+				}
+			}
+			a = (int) Math.round(x * 255);
 		}
 		return new Color(r, g, b, a);
 	}

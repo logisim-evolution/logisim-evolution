@@ -68,7 +68,7 @@ import com.cburch.logisim.util.StringUtil;
 
 public class SubcircuitFactory extends InstanceFactory {
 	private class CircuitFeature implements StringGetter, MenuExtender,
-			ActionListener {
+	ActionListener {
 		private Instance instance;
 		private Project proj;
 
@@ -179,6 +179,30 @@ public class SubcircuitFactory extends InstanceFactory {
 		instance.addAttributeListener();
 		computePorts(instance);
 		// configureLabel(instance); already done in computePorts
+	}
+
+	/**
+	 * Code taken from Cornell's version of Logisim:
+	 * http://www.cs.cornell.edu/courses/cs3410/2015sp/
+	 */
+	@Override
+	public boolean contains(Location loc, AttributeSet attrs)
+	{
+		if (super.contains(loc, attrs)) {
+			Direction facing = attrs.getValue(StdAttr.FACING);
+			Direction defaultFacing = source.getAppearance().getFacing();
+			Location query;
+
+			if (facing.equals(defaultFacing)) {
+				query = loc;
+			} else {
+				query = loc.rotate(facing, defaultFacing, 0, 0);
+			}
+
+			return source.getAppearance().contains(query);
+		} else {
+			return false;
+		}
 	}
 
 	@Override
