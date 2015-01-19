@@ -136,7 +136,7 @@ public abstract class InstanceFactory extends AbstractComponentFactory {
 				((InstanceComponent) comp).getInstance());
 	}
 
-	public InstanceState createInstanceState(CircuitState state,
+	public final InstanceState createInstanceState(CircuitState state,
 			Instance instance) {
 		return new InstanceStateImpl(state, instance.getComponent());
 	}

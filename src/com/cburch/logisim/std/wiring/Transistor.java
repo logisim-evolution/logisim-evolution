@@ -55,6 +55,8 @@ import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.tools.WireRepair;
+import com.cburch.logisim.tools.WireRepairData;
 import com.cburch.logisim.tools.key.BitWidthConfigurator;
 import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.Icons;
@@ -247,6 +249,19 @@ public class Transistor extends InstanceFactory {
 		state.setPort(OUTPUT, computeOutput(state), 1);
 	}
 
+	@Override
+	public Object getInstanceFeature(final Instance instance, Object key)
+	{
+		if (key == WireRepair.class) {
+			return new WireRepair() {
+				public boolean shouldRepairWire(WireRepairData data) {
+					return true;
+				}
+			};
+		}
+		return super.getInstanceFeature(instance, key);
+	}
+	
 	private void updatePorts(Instance instance) {
 		Direction facing = instance.getAttributeValue(StdAttr.FACING);
 		int dx = 0;

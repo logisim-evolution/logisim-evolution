@@ -557,7 +557,6 @@ public class Probe extends InstanceFactory {
 				state.getInstance().recomputeBounds();
 				configureLabel(state.getInstance());
 			}
-			state.fireInvalidated();
 		}
 	}
 }

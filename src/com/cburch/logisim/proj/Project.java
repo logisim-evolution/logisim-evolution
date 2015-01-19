@@ -37,7 +37,6 @@ import javax.swing.JFileChooser;
 
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitListener;
-import com.cburch.logisim.circuit.CircuitMutation;
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.circuit.Simulator;
 import com.cburch.logisim.circuit.SubcircuitFactory;
@@ -52,6 +51,8 @@ import com.cburch.logisim.gui.main.Frame;
 import com.cburch.logisim.gui.main.Selection;
 import com.cburch.logisim.gui.main.SelectionActions;
 import com.cburch.logisim.gui.opts.OptionsFrame;
+import com.cburch.logisim.gui.test.TestFrame;
+import com.cburch.logisim.gui.test.TestThread;
 import com.cburch.logisim.std.hdl.VhdlSimulator;
 import com.cburch.logisim.tools.AddTool;
 import com.cburch.logisim.tools.Library;
@@ -109,6 +110,7 @@ public class Project {
 	private Frame frame = null;
 	private OptionsFrame optionsFrame = null;
 	private LogFrame logFrame = null;
+	private TestFrame testFrame = null;
 	private ChronoFrame chronoFrame = null;
 	private Tool tool = null;
 	private LinkedList<ActionData> undoLog = new LinkedList<ActionData>();
@@ -167,6 +169,7 @@ public class Project {
 		}
 		Action toAdd = act;
 		startupScreen = false;
+		redoLog.clear();
 
 		if (!undoLog.isEmpty() && act.shouldAppendTo(getLastAction())) {
 			ActionData firstData = undoLog.removeLast();
@@ -287,6 +290,15 @@ public class Project {
 			return null;
 		else
 			return redoLog.getLast().action;
+	}
+
+	public TestFrame getTestFrame(boolean create)
+	{
+		if(testFrame == null) {
+			if(create)
+				testFrame = new TestFrame(this);
+		}
+		return testFrame;
 	}
 
 	public LogFrame getLogFrame(boolean create) {
@@ -491,7 +503,7 @@ public class Project {
 			}
 		}
 		file.setDirty(true); // toggle it so that everybody hears the file is
-								// fresh
+		// fresh
 		file.setDirty(false);
 	}
 
@@ -511,6 +523,9 @@ public class Project {
 			old.deselect(canvas);
 		Selection selection = canvas.getSelection();
 		if (selection != null && !selection.isEmpty()) {
+			if (value == null || !getOptions().getMouseMappings().containsSelectTool()) {
+				Action act = SelectionActions.anchorAll(selection);
+				/*
 			Circuit circuit = canvas.getCircuit();
 			CircuitMutation xn = new CircuitMutation(circuit);
 			if (value == null) {
@@ -520,18 +535,32 @@ public class Project {
 				}
 			} else if (!getOptions().getMouseMappings().containsSelectTool()) {
 				Action act = SelectionActions.dropAll(selection);
+				 */
 				if (act != null) {
 					doAction(act);
 				}
 			}
-			if (!xn.isEmpty())
-				doAction(xn.toAction(null));
+			/*
+			 if (!xn.isEmpty())
+			 doAction(xn.toAction(null));
+			 */
 		}
 		startupScreen = false;
 		tool = value;
 		if (tool != null)
 			tool.select(frame.getCanvas());
 		fireEvent(ProjectEvent.ACTION_SET_TOOL, old, tool);
+	}
+
+	public int doTestVector(String vectorname, String name)
+	{
+		Circuit circuit = (name == null ? file.getMainCircuit() : file.getCircuit(name));
+		if (circuit == null) {
+			System.err.println("Circuit '"+name+"' not found.");
+			return -1;
+		}
+		setCurrentCircuit(circuit);
+		return TestThread.doTestVector(this, circuit, vectorname);
 	}
 
 	public void undoAction() {

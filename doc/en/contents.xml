@@ -60,6 +60,7 @@
 			<tocitem target="verify_other" text="Other verification options" />
 			<tocitem target="verify_multi" text="Testing multiple files" />
 		</tocitem>
+		<tocitem target="log_test" text="Test Vectors" />
 		<tocitem target="prefs" text="Application preferences">
 			<tocitem target="prefs_template" text="The Template tab" />
 			<tocitem target="prefs_intl" text="The International tab" />

@@ -36,7 +36,9 @@ import java.util.Arrays;
 import com.cburch.logisim.util.Cache;
 
 public class Value {
-	private static Value create(int width, int error, int unknown, int value) {
+
+	private static Value create(int width, int error, int unknown, int value)
+	{
 		if (width == 0) {
 			return Value.NIL;
 		} else if (width == 1) {
@@ -67,6 +69,113 @@ public class Value {
 			return ret;
 		}
 	}
+
+	/**
+	 * Code taken from Cornell's version of Logisim:
+	 * http://www.cs.cornell.edu/courses/cs3410/2015sp/
+	 */
+	public static int radixOfLogString(BitWidth width, String t)
+	{
+		if (t.startsWith("0x"))
+			return 16;
+		if (t.startsWith("0o"))
+			return 8;
+		if (t.length() == width.getWidth())
+			return 2;
+
+		return 10;
+	}
+
+	/**
+	 * Code taken from Cornell's version of Logisim:
+	 * http://www.cs.cornell.edu/courses/cs3410/2015sp/
+	 */
+	public static Value fromLogString(BitWidth width, String t) throws Exception
+	{
+		int radix = radixOfLogString(width, t);
+		int offset;
+
+		if (radix == 16 || radix == 8)
+			offset = 2;
+		else if (radix == 10 && t.startsWith("-"))
+			offset = 1;
+		else
+			offset = 0;
+
+		int n = t.length();
+
+		if (n <= offset)
+			throw new Exception("expected digits");
+
+		int w = width.getWidth();
+		long value = 0, unknown = 0;
+
+		for (int i = offset; i < n; i++) {
+			char c = t.charAt(i);
+			int d;
+
+			if (c == 'x' && radix != 10)
+				d = -1;
+			else if ('0' <= c && c <= '9')
+				d = c - '0';
+			else if ('a' <= c && c <= 'f')
+				d = 0xa + (c - 'a');
+			else if ('A' <= c && c <= 'F')
+				d = 0xA + (c - 'A');
+			else
+				throw new Exception("unexpected character '" + t.substring(i, i+1)+"' in \"" + t + "\"");
+
+			if (d >= radix)
+				throw new Exception("unexpected character '" + t.substring(i, i+1)+"' in \"" + t + "\"");
+
+			value *= radix;
+			unknown *= radix;
+			if ((value >> (radix == 10 ? 33 : w)) != 0 || (unknown >> 36) != 0)
+				throw new Exception("too many bits in \"" + t + "\"");
+
+			if (radix != 10) {
+				if (d == -1)
+					unknown |= (radix-1);
+				else
+					value |= d;
+			} else {
+				if (d == -1)
+					unknown += (radix - 1);
+				else
+					value += d;
+			}
+
+		}
+		if (radix == 10 && t.charAt(0) == '-')
+			value = -value;
+
+		if (w == 32) {
+			if (((value & 0x7FFFFFFF) >> (w - 1)) != 0)
+				throw new Exception("too many bits in \"" + t + "\"");
+		} else {
+			if ((value >> w) != 0)
+				throw new Exception("too many bits in \"" + t + "\"");
+		}
+
+		unknown &= ((1L << w) - 1);
+		int v = (int)(value & 0x00000000ffffffff);
+		int u = (int)(unknown & 0x00000000ffffffff); 
+		return create(w, 0, u, v);
+	}
+
+	/**
+	 * Code taken from Cornell's version of Logisim:
+	 * http://www.cs.cornell.edu/courses/cs3410/2015sp/
+	 */
+	public boolean compatible(Value other) {
+		// where this has a value, other must have same value
+		// where this has unknown, other can have unknown or any value
+		// where this has error, other must have error
+		return (this.width == other.width &&
+				this.error == other.error &&
+				this.value == (other.value & ~this.unknown) &&
+				this.unknown == (other.unknown | this.unknown));
+	}   
 
 	public static Value create(Value[] values) {
 		if (values.length == 0)
@@ -201,7 +310,7 @@ public class Value {
 			return Value.create(Math.max(this.width, other.width), this.error
 					| other.error | disagree, this.unknown & other.unknown,
 					(this.value & ~this.unknown)
-							| (other.value & ~other.unknown));
+					| (other.value & ~other.unknown));
 		}
 	}
 

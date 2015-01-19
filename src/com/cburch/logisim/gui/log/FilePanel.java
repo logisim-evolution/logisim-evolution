@@ -47,6 +47,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import com.cburch.logisim.data.TestVector;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.util.JFileChoosers;
 import com.cburch.logisim.util.StringUtil;
@@ -142,6 +143,10 @@ class FilePanel extends LogPanel {
 	public FilePanel(LogFrame frame) {
 		super(frame);
 
+		chooser.addChoosableFileFilter(chooser.getAcceptAllFileFilter());
+		chooser.addChoosableFileFilter(TestVector.FILE_FILTER);
+		chooser.setFileFilter(TestVector.FILE_FILTER);
+		
 		JPanel filePanel = new JPanel(new GridBagLayout());
 		GridBagLayout gb = (GridBagLayout) filePanel.getLayout();
 		GridBagConstraints gc = new GridBagConstraints();

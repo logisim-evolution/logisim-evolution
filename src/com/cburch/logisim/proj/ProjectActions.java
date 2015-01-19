@@ -111,6 +111,14 @@ public class ProjectActions {
 		return ret;
 	}
 
+	public static Project doOpenNoWindow(SplashScreen monitor, File source)
+			throws LoadFailedException
+	{
+		Loader loader = new Loader(monitor);
+		LogisimFile file = loader.openLogisimFile(source);
+		return new Project(file);
+	}
+
 	private static LogisimFile createEmptyFile(Loader loader) {
 		InputStream templReader = AppPreferences.getEmptyTemplate()
 				.createStream();
@@ -287,8 +295,8 @@ public class ProjectActions {
 						parent,
 						StringUtil.format(Strings.get("fileOpenError"),
 								ex.toString()),
-						Strings.get("fileOpenErrorTitle"),
-						JOptionPane.ERROR_MESSAGE);
+								Strings.get("fileOpenErrorTitle"),
+								JOptionPane.ERROR_MESSAGE);
 			}
 			return null;
 		}
@@ -376,9 +384,9 @@ public class ProjectActions {
 					.getName());
 			if (!validFilename) {
 				JOptionPane
-						.showMessageDialog(
-								chooser,
-								"The file name contains invalid characters. Only alphanumeric characters and underscores are accepted.");
+				.showMessageDialog(
+						chooser,
+						"The file name contains invalid characters. Only alphanumeric characters and underscores are accepted.");
 			}
 		} while (!validFilename);
 

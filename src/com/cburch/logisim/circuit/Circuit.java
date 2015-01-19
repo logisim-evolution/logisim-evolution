@@ -42,6 +42,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.bfh.logisim.designrulecheck.CorrectLabel;
 import com.bfh.logisim.designrulecheck.Netlist;
 import com.bfh.logisim.fpgagui.FPGAReport;
@@ -55,9 +58,15 @@ import com.cburch.logisim.comp.EndData;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
+import com.cburch.logisim.data.FailException;
 import com.cburch.logisim.data.Location;
+import com.cburch.logisim.data.TestException;
+import com.cburch.logisim.data.Value;
 import com.cburch.logisim.file.LogisimFile;
+import com.cburch.logisim.instance.Instance;
+import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.std.wiring.Clock;
 import com.cburch.logisim.std.wiring.Pin;
 import com.cburch.logisim.util.CollectionUtil;
@@ -147,13 +156,13 @@ public class Circuit {
 	private AttributeSet staticAttrs;
 	private SubcircuitFactory subcircuitFactory;
 	private EventSourceWeakSupport<CircuitListener> listeners = new EventSourceWeakSupport<CircuitListener>();
-	private HashSet<Component> comps = new HashSet<Component>(); // doesn't
-																	// include
-																	// wires
+	private HashSet<Component> comps = new HashSet<Component>(); // doesn't include wires
 	CircuitWires wires = new CircuitWires();
 	// wires is package-protected for CircuitState and Analyze only.
 	private ArrayList<Component> clocks = new ArrayList<Component>();
 	private CircuitLocker locker;
+
+	final static Logger logger = LoggerFactory.getLogger(Circuit.class);
 
 	private WeakHashMap<Component, Circuit> circuitsUsingThis;
 	private Netlist MyNetList;
@@ -583,6 +592,8 @@ public class Circuit {
 	}
 
 	void mutatorAdd(Component c) {
+		logger.debug("mutatorAdd: {}", c);
+
 		locker.checkForWritePermission("add");
 
 		Annotated = false;
@@ -632,7 +643,58 @@ public class Circuit {
 		fireEvent(CircuitEvent.ACTION_CLEAR, oldComps);
 	}
 
+	/**
+	 * Code taken from Cornell's version of Logisim:
+	 * http://www.cs.cornell.edu/courses/cs3410/2015sp/
+	 */
+	public void doTestVector(Project project, Instance pin[], Value[] val)
+			throws TestException
+	{
+		CircuitState state = project.getCircuitState();
+		state.reset();
+
+		for (int i = 0; i < pin.length; ++i) {
+			if (Pin.FACTORY.isInputPin(pin[i])){
+				InstanceState pinState = state.getInstanceState(pin[i]);
+				Pin.FACTORY.setValue(pinState, val[i]);
+			}
+		}
+
+		Propagator prop = state.getPropagator();
+
+		try {
+			prop.propagate();
+		} catch(Throwable thr) {
+			thr.printStackTrace();	
+		}
+
+		if (prop.isOscillating()) 
+			throw new TestException("oscilation detected");
+
+		FailException err = null;
+
+		for (int i = 0; i < pin.length; i++) {
+			InstanceState pinState = state.getInstanceState(pin[i]);
+			if (Pin.FACTORY.isInputPin(pin[i]))
+				continue;
+
+			Value v = Pin.FACTORY.getValue(pinState);
+			if (!val[i].compatible(v)) {
+				if (err == null)
+					err = new FailException(i, pinState.getAttributeValue(StdAttr.LABEL), val[i], v);
+				else
+					err.add(new FailException(i, pinState.getAttributeValue(StdAttr.LABEL), val[i], v));
+			}
+		}
+
+		if (err != null) {
+			throw err;
+		}
+	}
+
 	void mutatorRemove(Component c) {
+		logger.debug("mutatorRemove: {}", c);
+
 		locker.checkForWritePermission("remove");
 
 		Annotated = false;

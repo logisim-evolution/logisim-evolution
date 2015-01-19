@@ -27,7 +27,7 @@
  *       Yverdon-les-Bains, Switzerland
  *       http://reds.heig-vd.ch
  *******************************************************************************/
-
+/*
 package com.cburch.logisim.gui.main;
 
 import java.awt.Color;
@@ -687,3 +687,4 @@ public class ProjectExplorer extends JTree implements LocaleListener {
 		listener = value;
 	}
 }
+*/

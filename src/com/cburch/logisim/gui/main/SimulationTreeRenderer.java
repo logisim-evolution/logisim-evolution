@@ -41,6 +41,7 @@ import javax.swing.tree.DefaultTreeCellRenderer;
 
 import com.cburch.logisim.comp.ComponentDrawContext;
 import com.cburch.logisim.comp.ComponentFactory;
+import com.cburch.logisim.gui.generic.ProjectExplorer;
 
 public class SimulationTreeRenderer extends DefaultTreeCellRenderer {
 	private static class RendererIcon implements Icon {

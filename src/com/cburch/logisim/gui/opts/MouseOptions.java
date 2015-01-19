@@ -60,8 +60,10 @@ import com.cburch.logisim.file.MouseMappings;
 import com.cburch.logisim.gui.generic.AttrTable;
 import com.cburch.logisim.gui.generic.AttrTableModel;
 import com.cburch.logisim.gui.main.AttrTableToolModel;
-import com.cburch.logisim.gui.main.ProjectExplorer;
-import com.cburch.logisim.gui.main.ProjectExplorer.Event;
+import com.cburch.logisim.gui.generic.ProjectExplorer;
+import com.cburch.logisim.gui.generic.ProjectExplorerEvent;
+import com.cburch.logisim.gui.generic.ProjectExplorerListener;
+import com.cburch.logisim.gui.generic.ProjectExplorerToolNode;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.tools.AddTool;
 import com.cburch.logisim.tools.Tool;
@@ -172,7 +174,7 @@ class MouseOptions extends OptionsPanel {
 
 	private class MyListener implements ActionListener, MouseListener,
 			ListSelectionListener, MouseMappings.MouseMappingsListener,
-			ProjectExplorer.Listener {
+			ProjectExplorerListener {
 		//
 		// ActionListener method
 		//
@@ -189,13 +191,13 @@ class MouseOptions extends OptionsPanel {
 			}
 		}
 
-		public void deleteRequested(Event event) {
+		public void deleteRequested(ProjectExplorerEvent event) {
 		}
 
-		public void doubleClicked(Event event) {
+		public void doubleClicked(ProjectExplorerEvent event) {
 		}
 
-		public JPopupMenu menuRequested(Event event) {
+		public JPopupMenu menuRequested(ProjectExplorerEvent event) {
 			return null;
 		}
 
@@ -232,16 +234,17 @@ class MouseOptions extends OptionsPanel {
 		public void mouseReleased(MouseEvent e) {
 		}
 
-		public void moveRequested(Event event, AddTool dragged, AddTool target) {
+		public void moveRequested(ProjectExplorerEvent event, AddTool dragged, AddTool target) {
 		}
 
 		//
 		// Explorer.Listener methods
 		//
-		public void selectionChanged(Event event) {
+		public void selectionChanged(ProjectExplorerEvent event) {
 			Object target = event.getTarget();
-			if (target instanceof Tool) {
-				setCurrentTool((Tool) event.getTarget());
+			if (target instanceof ProjectExplorerToolNode) {
+				Tool tool = ((ProjectExplorerToolNode) target).getValue();
+				setCurrentTool(tool);
 			} else {
 				setCurrentTool(null);
 			}

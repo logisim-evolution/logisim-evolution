@@ -51,6 +51,7 @@ import com.cburch.logisim.circuit.SimulatorEvent;
 import com.cburch.logisim.circuit.SimulatorListener;
 import com.cburch.logisim.file.Options;
 import com.cburch.logisim.gui.log.LogFrame;
+import com.cburch.logisim.gui.test.TestFrame;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.std.wiring.Clock;
@@ -191,6 +192,9 @@ public class MenuSimulate extends Menu {
 				} else {
 					assWin.toFront();
 				}
+			} else if(src == test) {
+				TestFrame frame = menubar.getProject().getTestFrame(true);
+				frame.setVisible(true);
 			}
 		}
 
@@ -318,6 +322,7 @@ public class MenuSimulate extends Menu {
 	private JMenu upStateMenu = new JMenu();
 	private ArrayList<CircuitStateMenuItem> upStateItems = new ArrayList<CircuitStateMenuItem>();
 	private JMenuItem log = new JMenuItem();
+	private JMenuItem test = new JMenuItem();
 	private JMenuItem assemblyWindow = new JMenuItem();
 
 	AssemblyWindow assWin = null;
@@ -376,6 +381,7 @@ public class MenuSimulate extends Menu {
 		add(tickFreq);
 		addSeparator();
 		add(log);
+		add(test);
 		addSeparator();
 		add(assemblyWindow);
 
@@ -408,6 +414,7 @@ public class MenuSimulate extends Menu {
 		// tickOnce.addActionListener(myListener);
 		// ticksEnabled.addActionListener(myListener);
 		log.addActionListener(myListener);
+		test.addActionListener(myListener);
 		assemblyWindow.addActionListener(myListener);
 
 		computeEnabled();
@@ -457,6 +464,7 @@ public class MenuSimulate extends Menu {
 		downStateMenu.setText(Strings.get("simulateDownStateMenu"));
 		upStateMenu.setText(Strings.get("simulateUpStateMenu"));
 		log.setText(Strings.get("simulateLogItem"));
+		test.setText(Strings.get("simulateTestItem"));
 		assemblyWindow.setText("Assembly viewer");
 	}
 

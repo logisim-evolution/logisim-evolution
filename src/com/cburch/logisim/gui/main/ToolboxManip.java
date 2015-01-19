@@ -44,6 +44,11 @@ import com.cburch.logisim.file.LibraryListener;
 import com.cburch.logisim.file.LogisimFile;
 import com.cburch.logisim.file.LogisimFileActions;
 import com.cburch.logisim.gui.generic.AttrTableModel;
+import com.cburch.logisim.gui.generic.ProjectExplorer;
+import com.cburch.logisim.gui.generic.ProjectExplorerEvent;
+import com.cburch.logisim.gui.generic.ProjectExplorerLibraryNode;
+import com.cburch.logisim.gui.generic.ProjectExplorerListener;
+import com.cburch.logisim.gui.generic.ProjectExplorerToolNode;
 import com.cburch.logisim.gui.menu.Popups;
 import com.cburch.logisim.gui.menu.ProjectCircuitActions;
 import com.cburch.logisim.gui.menu.ProjectLibraryActions;
@@ -54,9 +59,9 @@ import com.cburch.logisim.tools.AddTool;
 import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.tools.Tool;
 
-class ToolboxManip implements ProjectExplorer.Listener {
+class ToolboxManip implements ProjectExplorerListener {
 	private class MyListener implements ProjectListener, LibraryListener,
-			AttributeListener {
+	AttributeListener {
 		private LogisimFile curFile = null;
 
 		private void addLibrary(Library lib) {
@@ -144,67 +149,84 @@ class ToolboxManip implements ProjectExplorer.Listener {
 	private MyListener myListener = new MyListener();
 	private Tool lastSelected = null;
 
-	ToolboxManip(Project proj, ProjectExplorer explorer) {
+	ToolboxManip(Project proj, ProjectExplorer explorer)
+	{
 		this.proj = proj;
 		this.explorer = explorer;
 		proj.addProjectListener(myListener);
 		myListener.setFile(null, proj.getLogisimFile());
 	}
 
-	public void deleteRequested(ProjectExplorer.Event event) {
+	public void deleteRequested(ProjectExplorerEvent event)
+	{
 		Object request = event.getTarget();
-		if (request instanceof Library) {
-			ProjectLibraryActions.doUnloadLibrary(proj, (Library) request);
-		} else if (request instanceof AddTool) {
-			ComponentFactory factory = ((AddTool) request).getFactory();
-			if (factory instanceof SubcircuitFactory) {
-				SubcircuitFactory circFact = (SubcircuitFactory) factory;
-				ProjectCircuitActions.doRemoveCircuit(proj,
-						circFact.getSubcircuit());
+		if (request instanceof ProjectExplorerLibraryNode) {
+			Library lib = ((ProjectExplorerLibraryNode) request).getValue();
+			ProjectLibraryActions.doUnloadLibrary(proj, lib);
+		} else if (request instanceof ProjectExplorerToolNode) {
+			Tool tool = ((ProjectExplorerToolNode) request).getValue();
+			if (tool instanceof AddTool) {
+				ComponentFactory factory = ((AddTool) tool).getFactory();
+				if (factory instanceof SubcircuitFactory) {
+					SubcircuitFactory circFact = (SubcircuitFactory) factory;
+					ProjectCircuitActions.doRemoveCircuit(proj, circFact.getSubcircuit());
+				}
 			}
 		}
 	}
 
-	public void doubleClicked(ProjectExplorer.Event event) {
+	public void doubleClicked(ProjectExplorerEvent event)
+	{
 		Object clicked = event.getTarget();
-		if (clicked instanceof AddTool) {
-			AddTool tool = (AddTool) clicked;
-			ComponentFactory source = tool.getFactory();
-			if (source instanceof SubcircuitFactory) {
-				SubcircuitFactory circFact = (SubcircuitFactory) source;
-				proj.setCurrentCircuit(circFact.getSubcircuit());
-				proj.getFrame().setEditorView(Frame.EDIT_LAYOUT);
-				if (lastSelected != null)
-					proj.setTool(lastSelected);
+		if (clicked instanceof ProjectExplorerToolNode) {
+			Tool baseTool = ((ProjectExplorerToolNode) clicked).getValue();
+			if (baseTool instanceof AddTool) {
+				AddTool tool = (AddTool) baseTool;
+				ComponentFactory source = tool.getFactory();
+				if (source instanceof SubcircuitFactory) {
+					SubcircuitFactory circFact = (SubcircuitFactory) source;
+					proj.setCurrentCircuit(circFact.getSubcircuit());
+					proj.getFrame().setEditorView(Frame.EDIT_LAYOUT);
+					if (lastSelected != null)
+						proj.setTool(lastSelected);
+				}
 			}
 		}
 	}
 
-	public JPopupMenu menuRequested(ProjectExplorer.Event event) {
+	public JPopupMenu menuRequested(ProjectExplorerEvent event)
+	{
 		Object clicked = event.getTarget();
-		if (clicked instanceof AddTool) {
-			AddTool tool = (AddTool) clicked;
-			ComponentFactory source = tool.getFactory();
-			if (source instanceof SubcircuitFactory) {
-				Circuit circ = ((SubcircuitFactory) source).getSubcircuit();
-				return Popups.forCircuit(proj, tool, circ);
+		if (clicked instanceof ProjectExplorerToolNode) {
+			Tool baseTool = ((ProjectExplorerToolNode) clicked).getValue();
+			if (baseTool instanceof AddTool) {
+				AddTool tool = (AddTool) baseTool;
+				ComponentFactory source = tool.getFactory();
+				if (source instanceof SubcircuitFactory) {
+					Circuit circ = ((SubcircuitFactory) source).getSubcircuit();
+					return Popups.forCircuit(proj, tool, circ);
+				} else {
+					return null;
+				}
 			} else {
 				return null;
 			}
-		} else if (clicked instanceof Tool) {
-			return null;
-		} else if (clicked == proj.getLogisimFile()) {
-			return Popups.forProject(proj);
-		} else if (clicked instanceof Library) {
-			boolean is_top = event.getTreePath().getPathCount() <= 2;
-			return Popups.forLibrary(proj, (Library) clicked, is_top);
+		} else if (clicked instanceof ProjectExplorerLibraryNode) {
+			Library lib = ((ProjectExplorerLibraryNode) clicked).getValue();
+			if (lib == proj.getLogisimFile()) {
+				return Popups.forProject(proj);
+			} else {
+				boolean is_top = event.getTreePath().getPathCount() <= 2;
+				return Popups.forLibrary(proj, lib, is_top);
+			}
 		} else {
 			return null;
 		}
 	}
 
-	public void moveRequested(ProjectExplorer.Event event, AddTool dragged,
-			AddTool target) {
+	public void moveRequested(ProjectExplorerEvent event, AddTool dragged,
+			AddTool target)
+	{
 		LogisimFile file = proj.getLogisimFile();
 		int draggedIndex = file.getTools().indexOf(dragged);
 		int targetIndex = file.getTools().indexOf(target);
@@ -213,11 +235,13 @@ class ToolboxManip implements ProjectExplorer.Listener {
 		proj.doAction(LogisimFileActions.moveCircuit(dragged, targetIndex));
 	}
 
-	public void selectionChanged(ProjectExplorer.Event event) {
+	public void selectionChanged(ProjectExplorerEvent event)
+	{
 		Object selected = event.getTarget();
-		if (selected instanceof Tool) {
+		if (selected instanceof ProjectExplorerToolNode) {
+			Tool tool = ((ProjectExplorerToolNode) selected).getValue();
 			if (selected instanceof AddTool) {
-				AddTool addTool = (AddTool) selected;
+				AddTool addTool = (AddTool) tool;
 				ComponentFactory source = addTool.getFactory();
 				if (source instanceof SubcircuitFactory) {
 					SubcircuitFactory circFact = (SubcircuitFactory) source;
@@ -233,7 +257,6 @@ class ToolboxManip implements ProjectExplorer.Listener {
 			// This was causing the selection to lag behind double-clicks,
 			// commented-out
 			// lastSelected = proj.getTool();
-			Tool tool = (Tool) selected;
 			proj.setTool(tool);
 			proj.getFrame().viewAttributes(tool);
 		}

@@ -71,8 +71,10 @@ public class InstanceStateImpl implements InstanceState {
 		return circuitState;
 	}
 
-	public InstanceData getData() {
-		return (InstanceData) circuitState.getData(component);
+	public InstanceData getData()
+	{
+		InstanceData ret = (InstanceData) circuitState.getData(component);
+		return (ret);
 	}
 
 	public InstanceFactory getFactory() {

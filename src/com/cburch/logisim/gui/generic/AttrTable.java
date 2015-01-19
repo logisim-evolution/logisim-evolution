@@ -77,6 +77,7 @@ public class AttrTable extends JPanel implements LocaleListener {
 			ActionListener {
 
 		LinkedList<CellEditorListener> listeners = new LinkedList<CellEditorListener>();
+		AttrTableModelRow currentRow;
 		Component currentEditor;
 
 		//
@@ -214,6 +215,8 @@ public class AttrTable extends JPanel implements LocaleListener {
 				} else {
 					editor.addFocusListener(this);
 				}
+				
+				currentRow = row;
 				currentEditor = editor;
 				return editor;
 			}
@@ -341,6 +344,10 @@ public class AttrTable extends JPanel implements LocaleListener {
 				attrModel.removeAttrTableModelListener(this);
 				return;
 			}
+			TableCellEditor ed = table.getCellEditor();
+			if (ed != null) {
+				ed.cancelCellEditing();
+			}
 			fireTableChanged();
 		}
 
@@ -362,6 +369,14 @@ public class AttrTable extends JPanel implements LocaleListener {
 				attrModel.removeAttrTableModelListener(this);
 				return;
 			}
+			int row = e.getRowIndex();
+			
+			TableCellEditor ed = table.getCellEditor();
+			if (row >= 0 && ed instanceof CellEditor
+					&& attrModel.getRow(row) == ((CellEditor) ed).currentRow) {
+				ed.cancelCellEditing();
+			}
+			
 			fireTableChanged();
 		}
 

@@ -27,6 +27,7 @@
  *       Yverdon-les-Bains, Switzerland
  *       http://reds.heig-vd.ch
  *******************************************************************************/
+
 package com.cburch.logisim.gui.start;
 
 import java.io.BufferedInputStream;
@@ -74,7 +75,7 @@ public class Startup {
 			startupTemp.doOpenFile(file);
 		}
 	}
-	
+
 	static void doPrint(File file) {
 		if (startupTemp != null) {
 			startupTemp.doPrintFile(file);
@@ -199,7 +200,7 @@ public class Startup {
 					AppPreferences.GATE_SHAPE.set(AppPreferences.SHAPE_SHAPED);
 				} else if (a.equals("rectangular")) {
 					AppPreferences.GATE_SHAPE
-							.set(AppPreferences.SHAPE_RECTANGULAR);
+					.set(AppPreferences.SHAPE_RECTANGULAR);
 				} else {
 					logger.error("{}", Strings.get("argGatesOptionError"));
 					System.exit(-1);
@@ -241,6 +242,17 @@ public class Startup {
 				}
 			} else if (arg.equals("-nosplash")) {
 				ret.showSplash = false;
+			} else if(arg.equals("-test")) {
+				i++;
+				if(i >= args.length)
+					printUsage();
+				ret.circuitToTest = args[i];
+				i++;
+				if(i >= args.length)
+					printUsage();
+				ret.testVector = args[i];
+				ret.showSplash = false;
+				ret.exitAfterStartup = true;
 			} else if (arg.equals("-clearprefs")) {
 				// already handled above
 			} else if (arg.equals("-analyze")) {
@@ -268,6 +280,10 @@ public class Startup {
 				ret.filesToOpen.add(new File(arg));
 			}
 		}
+
+		if (ret.exitAfterStartup && ret.filesToOpen.isEmpty()) {
+			printUsage();
+		}
 		if (ret.isTty && ret.filesToOpen.isEmpty()) {
 			logger.error("{}", Strings.get("ttyNeedsFileError"));
 			return null;
@@ -276,6 +292,7 @@ public class Startup {
 			logger.error("{}", Strings.get("loadNeedsTtyError"));
 			return null;
 		}
+
 		return ret;
 	}
 
@@ -287,6 +304,7 @@ public class Startup {
 		System.err.println("   " + Strings.get("argAccentsOption")); // OK
 		System.err.println("   " + Strings.get("argClearOption")); // OK
 		System.err.println("   " + Strings.get("argEmptyOption")); // OK
+		System.err.println("   " + Strings.get("argTestOption")); //OK
 		System.err.println("   " + Strings.get("argGatesOption")); // OK
 		System.err.println("   " + Strings.get("argHelpOption")); // OK
 		System.err.println("   " + Strings.get("argLoadOption")); // OK
@@ -350,6 +368,9 @@ public class Startup {
 	private boolean templEmpty = false;
 	private boolean templPlain = false;
 	private ArrayList<File> filesToOpen = new ArrayList<File>();
+	private String testVector = null;
+	private String circuitToTest = null;
+	private boolean exitAfterStartup = false;
 	private boolean showSplash;
 	private File loadFile;
 	private HashMap<File, File> substitutions = new HashMap<File, File>();
@@ -409,13 +430,13 @@ public class Startup {
 		// Get the appropriate remote version number
 		LogisimVersion remoteVersion = LogisimVersion.parse(Main.VERSION
 				.hasTracker() ? logisimData.child("tracked_version").content()
-				: logisimData.child("untracked_version").content());
+						: logisimData.child("untracked_version").content());
 
 		// If the remote version is newer, perform the update
 		if (remoteVersion.compareTo(Main.VERSION) > 0) {
 			int answer = JOptionPane.showConfirmDialog(null,
 					"A new Logisim-evolution version (" + remoteVersion
-							+ ") is available!\nWould you like to update?",
+					+ ") is available!\nWould you like to update?",
 					"Update", JOptionPane.YES_NO_OPTION,
 					JOptionPane.INFORMATION_MESSAGE);
 
@@ -435,39 +456,39 @@ public class Startup {
 				logger.error("Error in the syntax of the URI for the path of the executed Logisim-evolution JAR file!");
 				e.printStackTrace();
 				JOptionPane
-						.showMessageDialog(
-								null,
-								"An error occurred while updating to the new Logisim-evolution version.\nPlease check the console for log information.",
-								"Update failed", JOptionPane.ERROR_MESSAGE);
+				.showMessageDialog(
+						null,
+						"An error occurred while updating to the new Logisim-evolution version.\nPlease check the console for log information.",
+						"Update failed", JOptionPane.ERROR_MESSAGE);
 				return (false);
 			}
 
 			// Get the appropriate remote filename to download
 			String remoteJar = Main.VERSION.hasTracker() ? logisimData.child(
 					"tracked_file").content() : logisimData.child(
-					"untracked_file").content();
+							"untracked_file").content();
 
-			boolean updateOk = downloadInstallUpdatedVersion(remoteJar,
-					jarFile.getAbsolutePath());
+					boolean updateOk = downloadInstallUpdatedVersion(remoteJar,
+							jarFile.getAbsolutePath());
 
-			if (updateOk) {
-				JOptionPane
+					if (updateOk) {
+						JOptionPane
 						.showMessageDialog(
 								null,
 								"The new Logisim-evolution version ("
 										+ remoteVersion
 										+ ") has been correctly installed.\nPlease restart Logisim-evolution for the changes to take effect.",
-								"Update succeeded",
-								JOptionPane.INFORMATION_MESSAGE);
-				return (true);
-			} else {
-				JOptionPane
+										"Update succeeded",
+										JOptionPane.INFORMATION_MESSAGE);
+						return (true);
+					} else {
+						JOptionPane
 						.showMessageDialog(
 								null,
 								"An error occurred while updating to the new Logisim-evolution version.\nPlease check the console for log information.",
 								"Update failed", JOptionPane.ERROR_MESSAGE);
-				return (false);
-			}
+						return (false);
+					}
 		}
 		return (false);
 	}
@@ -693,7 +714,7 @@ public class Startup {
 		int count = templLoader.getBuiltin().getLibrary("Base").getTools()
 				.size()
 				+ templLoader.getBuiltin().getLibrary("Gates").getTools()
-						.size();
+				.size();
 		if (count < 0) {
 			// this will never happen, but the optimizer doesn't know that...
 			logger.error("FATAL ERROR - no components"); // OK
@@ -711,7 +732,7 @@ public class Startup {
 		WindowManagers.initialize();
 		if (MacCompatibility.isSwingUsingScreenMenuBar()) {
 			MacCompatibility
-					.setFramelessJMenuBar(new LogisimMenuBar(null, null));
+			.setFramelessJMenuBar(new LogisimMenuBar(null, null));
 		} else {
 			new LogisimMenuBar(null, null);
 			// most of the time occupied here will be in loading menus, which
@@ -725,18 +746,25 @@ public class Startup {
 
 		// load file
 		if (filesToOpen.isEmpty()) {
-			ProjectActions.doNew(monitor, true);
+			Project proj = ProjectActions.doNew(monitor);
+			proj.setStartupScreen(true);
 			if (showSplash) {
 				monitor.close();
 			}
 		} else {
+			int numOpened = 0;
 			boolean first = true;
 			for (File fileToOpen : filesToOpen) {
 				try {
-					ProjectActions.doOpen(monitor, fileToOpen, substitutions);
+					if (testVector != null) {
+						Project proj = ProjectActions.doOpenNoWindow(monitor, fileToOpen);
+						proj.doTestVector(testVector, circuitToTest);
+					} else {
+						ProjectActions.doOpen(monitor, fileToOpen, substitutions);
+					}
+					numOpened++;
 				} catch (LoadFailedException ex) {
 					logger.error("{} : {}", fileToOpen.getName(), ex.getMessage());
-					System.exit(-1);
 				}
 				if (first) {
 					first = false;
@@ -746,10 +774,16 @@ public class Startup {
 					monitor = null;
 				}
 			}
+			if (numOpened == 0)
+				System.exit(-1);
 		}
 
 		for (File fileToPrint : filesToPrint) {
 			doPrintFile(fileToPrint);
+		}
+
+		if (exitAfterStartup) {
+			System.exit(0);
 		}
 	}
 }

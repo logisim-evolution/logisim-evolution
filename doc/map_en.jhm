@@ -43,6 +43,7 @@
 	<mapID target="log_selection" url="en/html/guide/log/selection.html" />
 	<mapID target="log_table" url="en/html/guide/log/table.html" />
 	<mapID target="log_file" url="en/html/guide/log/file.html" />
+	<mapID target="log_test" url="en/html/guide/log/test.html" />
 	<mapID target="verify" url="en/html/guide/verify/index.html" />
 	<mapID target="verify_sub" url="en/html/guide/verify/sub.html" />
 	<mapID target="verify_other" url="en/html/guide/verify/other.html" />
