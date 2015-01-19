@@ -106,6 +106,7 @@ public class XmlReaderTest {
 		assertTrue(XmlReader.labelVHDLInvalid("1A"));
 		assertTrue(XmlReader.labelVHDLInvalid("aaaèaa"));
 		assertTrue(XmlReader.labelVHDLInvalid("1 A"));
+		assertTrue(XmlReader.labelVHDLInvalid("Control Sequencer"));
 		assertTrue(XmlReader.labelVHDLInvalid("A 1"));
 		assertTrue(XmlReader.labelVHDLInvalid("AAA "));
 		assertTrue(XmlReader.labelVHDLInvalid("AA A"));
