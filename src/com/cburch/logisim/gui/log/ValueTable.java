@@ -34,6 +34,7 @@ package com.cburch.logisim.gui.log;
  * Code taken from Cornell's version of Logisim:
  * http://www.cs.cornell.edu/courses/cs3410/2015sp/
  */
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -41,36 +42,29 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
-import java.awt.BorderLayout;
 
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JScrollBar;
+import javax.swing.JScrollPane;
+import javax.swing.ToolTipManager;
+import javax.swing.border.Border;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import javax.swing.border.Border;
-import javax.swing.ToolTipManager;
 
-import com.cburch.logisim.data.Value;
 import com.cburch.logisim.data.BitWidth;
+import com.cburch.logisim.data.Value;
 import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.StringUtil;
 
 public class ValueTable extends JPanel {
-
-	private static final long serialVersionUID = 1L;
-	private static final Font HEAD_FONT = new Font("Serif", Font.BOLD, 14);
-	private static final Font BODY_FONT = new Font("Monospaced", Font.PLAIN, 14);
-	private static final int COLUMN_SEP = 8;
-	private static final int HEADER_SEP = 4;
 
 	public static class Cell {
 
 		public Object value;
 		public Color bg, fg;
 		public String tip;
-		public Cell(Object v, Color b, Color f, String t)
-		{ 
+
+		public Cell(Object v, Color b, Color f, String t) {
 			value = v;
 			bg = b;
 			fg = f;
@@ -78,100 +72,49 @@ public class ValueTable extends JPanel {
 		}
 
 	}
-
 	public static interface Model {
 
-		int getColumnCount();
-		String getColumnName(int i);
-		BitWidth getColumnValueWidth(int i);
-		int getColumnValueRadix(int i);
 		void changeColumnValueRadix(int i);
+
+		int getColumnCount();
+
+		String getColumnName(int i);
+
+		int getColumnValueRadix(int i);
+
+		BitWidth getColumnValueWidth(int i);
+
 		int getRowCount();
+
 		void getRowData(int firstRow, int rowCount, Cell[][] rowData);
 
 	}
-
-	private class TableHeader extends JPanel {
-
-		private static final long serialVersionUID = 1L;
-
-		class MyListener extends java.awt.event.MouseAdapter {
-
-			public void mouseClicked(MouseEvent e)
-			{
-				int col = model == null ? -1 : findColumn(e.getX(), getSize().width);
-
-				if (col >= 0)
-					model.changeColumnValueRadix(col);
-			}
-
-		}
-
-		TableHeader()
-		{
-			addMouseListener(new MyListener());
-		}
-
-		public void paintComponent(Graphics g)
-		{
-			super.paintComponent(g);
-
-			Dimension sz = getSize();
-			g.setColor(Color.GRAY);
-
-			int columns = model == null ? 0 : model.getColumnCount();
-			if(columns == 0) {
-				g.drawLine(0, cellHeight + HEADER_SEP/2, sz.width, cellHeight + HEADER_SEP/2);
-				return;
-			}
-
-			g.setFont(HEAD_FONT);
-			FontMetrics headerMetric = g.getFontMetrics();
-			int top = 0;
-			int left = Math.max(0, (sz.width - tableWidth) / 2);
-
-			g.drawLine(left, cellHeight + HEADER_SEP/2, left + tableWidth, cellHeight + HEADER_SEP/2);
-
-			int x = left + COLUMN_SEP;
-			int y = top + headerMetric.getAscent() + 1;
-
-			for (int i = 0; i < columns; i++) {
-				g.setColor(Color.GRAY);
-				g.drawLine(x - COLUMN_SEP/2, 0, x - COLUMN_SEP/2, cellHeight);
-				g.setColor(Color.BLACK);
-				String label = model.getColumnName(i);
-				int cellWidth = columnWidth[i];
-				int width = headerMetric.stringWidth(label);
-				g.drawString(label, x + (cellWidth - width) / 2, y);
-				x += cellWidth + COLUMN_SEP;
-			}
-
-			g.setColor(Color.GRAY);
-			g.drawLine(x - COLUMN_SEP/2, 0, x - COLUMN_SEP/2, cellHeight);
-		}
-
-		public String getToolTipText(MouseEvent event)
-		{
-			int col = model == null ? -1 : findColumn(event.getX(), getSize().width);
-			if (col < 0)
-				return null;
-
-			int radix = model.getColumnValueRadix(col);
-
-			if (radix == 0)
-				return null;
-
-			return StringUtil.format(Strings.get("tableHeaderHelp"), Integer.toString(radix));
-		}
-
-	}
-
 	private class TableBody extends JPanel {
 
 		private static final long serialVersionUID = 1L;
 
-		public void paintComponent(Graphics g)
-		{
+		public String getToolTipText(MouseEvent event) {
+			int col = model == null ? -1 : findColumn(event.getX(),
+					getSize().width);
+
+			if (col < 0)
+				return null;
+
+			int row = rowData == null ? -1 : findRow(event.getY(),
+					getSize().height);
+
+			if (!(rowStart <= row && row < rowStart + rowCount))
+				return null;
+
+			Cell cell = rowData[row - rowStart][col];
+
+			if (cell == null)
+				return null;
+
+			return cell.tip;
+		}
+
+		public void paintComponent(Graphics g) {
 			super.paintComponent(g);
 
 			Dimension sz = getSize();
@@ -181,9 +124,11 @@ public class ValueTable extends JPanel {
 
 			int columns = model == null ? 0 : model.getColumnCount();
 
-			if(columns == 0) {
+			if (columns == 0) {
 				rowCount = 0;
-				GraphicsUtil.drawCenteredText(g, Strings.get("tableEmptyMessage"), sz.width / 2, sz.height / 2);
+				GraphicsUtil.drawCenteredText(g,
+						Strings.get("tableEmptyMessage"), sz.width / 2,
+						sz.height / 2);
 				return;
 			}
 
@@ -195,7 +140,8 @@ public class ValueTable extends JPanel {
 				return;
 
 			int firstRow = Math.max(0, clip.y / cellHeight);
-			int lastRow = Math.min(model.getRowCount()-1, (clip.y + clip.height) / cellHeight);
+			int lastRow = Math.min(model.getRowCount() - 1,
+					(clip.y + clip.height) / cellHeight);
 
 			int top = 0;
 			int left = Math.max(0, (sz.width - tableWidth) / 2);
@@ -206,7 +152,8 @@ public class ValueTable extends JPanel {
 			for (int col = 0; col < columns; col++) {
 				int y = top + firstRow * cellHeight;
 				g.setColor(Color.GRAY);
-				g.drawLine(x - COLUMN_SEP/2, clip.y, x - COLUMN_SEP/2, clip.y + clip.height);
+				g.drawLine(x - COLUMN_SEP / 2, clip.y, x - COLUMN_SEP / 2,
+						clip.y + clip.height);
 				g.setColor(Color.BLACK);
 				int cellWidth = columnWidth[col];
 				int radix = model.getColumnValueRadix(col);
@@ -214,23 +161,26 @@ public class ValueTable extends JPanel {
 				for (int row = firstRow; row <= lastRow; row++) {
 					if (!(rowStart <= row && row < rowStart + rowCount))
 						continue;
-					Cell cell = rowData[row-rowStart][col];
+					Cell cell = rowData[row - rowStart][col];
 
 					if (cell == null)
 						continue;
 
 					g.setColor(cell.bg == null ? bg : cell.bg);
-					g.fillRect(x-COLUMN_SEP/2+1, y, cellWidth+COLUMN_SEP-1, cellHeight);
+					g.fillRect(x - COLUMN_SEP / 2 + 1, y, cellWidth
+							+ COLUMN_SEP - 1, cellHeight);
 					g.setColor(Color.BLACK);
 
 					if (cell.value != null) {
-						String label = (cell.value instanceof Value ? ((Value)cell.value).toDisplayString(radix) : (String)cell.value);
+						String label = (cell.value instanceof Value ? ((Value) cell.value)
+								.toDisplayString(radix) : (String) cell.value);
 						int width = bodyMetric.stringWidth(label);
 
 						if (cell.fg != null)
 							g.setColor(cell.fg);
 
-						g.drawString(label, x + (cellWidth - width) / 2, y + bodyMetric.getAscent());
+						g.drawString(label, x + (cellWidth - width) / 2, y
+								+ bodyMetric.getAscent());
 
 						if (cell.fg != null)
 							g.setColor(Color.BLACK);
@@ -240,66 +190,117 @@ public class ValueTable extends JPanel {
 				x += cellWidth + COLUMN_SEP;
 			}
 			g.setColor(Color.GRAY);
-			g.drawLine(x - COLUMN_SEP/2, clip.y, x - COLUMN_SEP/2, clip.y + clip.height);
-		}
-
-		public String getToolTipText(MouseEvent event)
-		{
-			int col = model == null ? -1 : findColumn(event.getX(), getSize().width);
-
-			if (col < 0)
-				return null;
-
-			int row = rowData == null ? -1 : findRow(event.getY(), getSize().height);
-
-			if (!(rowStart <= row && row < rowStart + rowCount))
-				return null;
-
-			Cell cell = rowData[row-rowStart][col];
-
-			if (cell == null)
-				return null;
-
-			return cell.tip;
+			g.drawLine(x - COLUMN_SEP / 2, clip.y, x - COLUMN_SEP / 2, clip.y
+					+ clip.height);
 		}
 
 	}
+	private class TableHeader extends JPanel {
 
-	private class VerticalScrollBar extends JScrollBar implements ChangeListener {
+		class MyListener extends java.awt.event.MouseAdapter {
+
+			public void mouseClicked(MouseEvent e) {
+				int col = model == null ? -1 : findColumn(e.getX(),
+						getSize().width);
+
+				if (col >= 0)
+					model.changeColumnValueRadix(col);
+			}
+
+		}
+
+		private static final long serialVersionUID = 1L;
+
+		TableHeader() {
+			addMouseListener(new MyListener());
+		}
+
+		public String getToolTipText(MouseEvent event) {
+			int col = model == null ? -1 : findColumn(event.getX(),
+					getSize().width);
+			if (col < 0)
+				return null;
+
+			int radix = model.getColumnValueRadix(col);
+
+			if (radix == 0)
+				return null;
+
+			return StringUtil.format(Strings.get("tableHeaderHelp"),
+					Integer.toString(radix));
+		}
+
+		public void paintComponent(Graphics g) {
+			super.paintComponent(g);
+
+			Dimension sz = getSize();
+			g.setColor(Color.GRAY);
+
+			int columns = model == null ? 0 : model.getColumnCount();
+			if (columns == 0) {
+				g.drawLine(0, cellHeight + HEADER_SEP / 2, sz.width, cellHeight
+						+ HEADER_SEP / 2);
+				return;
+			}
+
+			g.setFont(HEAD_FONT);
+			FontMetrics headerMetric = g.getFontMetrics();
+			int top = 0;
+			int left = Math.max(0, (sz.width - tableWidth) / 2);
+
+			g.drawLine(left, cellHeight + HEADER_SEP / 2, left + tableWidth,
+					cellHeight + HEADER_SEP / 2);
+
+			int x = left + COLUMN_SEP;
+			int y = top + headerMetric.getAscent() + 1;
+
+			for (int i = 0; i < columns; i++) {
+				g.setColor(Color.GRAY);
+				g.drawLine(x - COLUMN_SEP / 2, 0, x - COLUMN_SEP / 2,
+						cellHeight);
+				g.setColor(Color.BLACK);
+				String label = model.getColumnName(i);
+				int cellWidth = columnWidth[i];
+				int width = headerMetric.stringWidth(label);
+				g.drawString(label, x + (cellWidth - width) / 2, y);
+				x += cellWidth + COLUMN_SEP;
+			}
+
+			g.setColor(Color.GRAY);
+			g.drawLine(x - COLUMN_SEP / 2, 0, x - COLUMN_SEP / 2, cellHeight);
+		}
+
+	}
+	private class VerticalScrollBar extends JScrollBar implements
+			ChangeListener {
 
 		private static final long serialVersionUID = 1L;
 		private int oldMaximum = -1;
 		private int oldExtent = -1;
 
-		public VerticalScrollBar()
-		{
+		public VerticalScrollBar() {
 			getModel().addChangeListener(this);
 		}
 
-		public int getUnitIncrement(int direction)
-		{
-			return cellHeight;
-		}
-
-		public int getBlockIncrement(int direction)
-		{
+		public int getBlockIncrement(int direction) {
 			int curHeight = getVisibleAmount();
 			int numCells = curHeight / cellHeight - 1;
 
-			if(numCells <= 0)
+			if (numCells <= 0)
 				numCells = 1;
 
 			return numCells * cellHeight;
 		}
 
-		public void stateChanged(ChangeEvent event)
-		{
+		public int getUnitIncrement(int direction) {
+			return cellHeight;
+		}
+
+		public void stateChanged(ChangeEvent event) {
 			int newMaximum = getMaximum();
 			int newExtent = getVisibleAmount();
-			if(oldMaximum != newMaximum || oldExtent != newExtent)
-			{
-				if(getValue() + oldExtent >= oldMaximum)
-				{
+			if (oldMaximum != newMaximum || oldExtent != newExtent) {
+				if (getValue() + oldExtent >= oldMaximum) {
 					setValue(newMaximum - newExtent);
 				}
 				oldMaximum = newMaximum;
@@ -308,96 +309,35 @@ public class ValueTable extends JPanel {
 		}
 	}
 
-	int findColumn(int x, int width)
-	{
-		int left = Math.max(0, (width - tableWidth) / 2);
-		if (x < left + COLUMN_SEP || x >= left + tableWidth)
-			return -1;
-		left += COLUMN_SEP;
-		int columns = model.getColumnCount();
+	private static final long serialVersionUID = 1L;
 
-		for (int i = 0; i < columns; i++) {
-			int cellWidth = columnWidth[i];
+	private static final Font HEAD_FONT = new Font("Serif", Font.BOLD, 14);
 
-			if (x >= left && x < left + cellWidth)
-				return i;
-			left += cellWidth + COLUMN_SEP;
-		}
-		return -1;
-	}
+	private static final Font BODY_FONT = new Font("Monospaced", Font.PLAIN, 14);
 
-	int findRow(int y, int height)
-	{
-		if (y < 0)
-			return -1;
+	private static final int COLUMN_SEP = 8;
 
-		int row = y / cellHeight;
-		if (row >= rowCount)
-			return -1;
-
-		return row;
-	}
-
-	void refreshData(int top, int bottom)
-	{
-		int columns = model == null ? 0 : model.getColumnCount();
-
-		if (columns == 0) {
-			rowCount = 0;
-			return;
-		}
-		int rows = model.getRowCount();
-		if (rows == 0) {
-			rowCount = 0;
-			return;
-		}
-
-		int toprow = Math.min(rows-1, Math.max(0, top / cellHeight));
-		int bottomrow = Math.min(rows-1, Math.max(0, bottom / cellHeight));
-
-		if (rowData != null &&
-				rowStart <= toprow && toprow < rowStart + rowCount &&
-				rowStart <= bottomrow && bottomrow < rowStart + rowCount)
-			return;
-
-		// we pre-fetch a bit more than strictly visible
-		Rectangle rect = scrollPane.getViewport().getViewRect();
-		top = rect.y - rect.height / 2;
-		bottom = rect.y + rect.height*2;
-		toprow = Math.min(rows-1, Math.max(0, top / cellHeight - 10));
-		bottomrow = Math.min(rows-1, Math.max(0, bottom / cellHeight + 10));
-
-		rowStart = Math.min(toprow, bottomrow);
-		rowCount = Math.max(toprow, bottomrow) - rowStart + 1;
-
-		if (rowCount == 0)
-			return;
-
-		if (rowData == null || rowData.length < rowCount || rowData[0].length != columns)
-			rowData = new Cell[rowCount+1][columns];
-
-		model.getRowData(rowStart, rowCount, rowData);
-	}
-
+	private static final int HEADER_SEP = 4;
 
 	// cached copy of rows that are visible
 	private Cell[][] rowData;
+
 	private int rowStart;
+
 	private int rowCount;
 
 	private int columnWidth[];
 	private int cellHeight;
 	private int tableWidth;
-	private int tableHeight;
 
+	private int tableHeight;
 	private TableHeader header;
 	private TableBody body;
 	private VerticalScrollBar vsb;
+
 	private JScrollPane scrollPane;
 	private Model model;
-
-	public ValueTable(Model model)
-	{
+	public ValueTable(Model model) {
 		header = new TableHeader();
 		body = new TableBody();
 		vsb = new VerticalScrollBar();
@@ -419,27 +359,7 @@ public class ValueTable extends JPanel {
 
 		setModel(model);
 	}
-
-	public void setModel(Model model)
-	{
-		this.model = model;
-		modelChanged();
-	}
-
-	public void modelChanged()
-	{
-		computePreferredSize();
-		dataChanged();
-	}
-
-	public void dataChanged()
-	{
-		rowCount = 0;
-		repaint();
-	}
-
-	private void computePreferredSize()
-	{
+	private void computePreferredSize() {
 		int oldCellHeight = cellHeight;
 		int oldTableWidth = tableWidth;
 		int oldTableHeight = tableHeight;
@@ -462,20 +382,25 @@ public class ValueTable extends JPanel {
 			} else {
 				FontMetrics headerMetric = g.getFontMetrics(HEAD_FONT);
 				FontMetrics bodyMetric = g.getFontMetrics(BODY_FONT);
-				cellHeight = Math.max(headerMetric.getHeight(), bodyMetric.getHeight());
+				cellHeight = Math.max(headerMetric.getHeight(),
+						bodyMetric.getHeight());
 				for (int i = 0; i < columns; i++) {
 					int radix = model.getColumnValueRadix(i);
-					// column should be at least as wide as 24, as header, and as formatted value
+					// column should be at least as wide as 24, as header, and
+					// as formatted value
 					String header = model.getColumnName(i);
-					int cellWidth = Math.max(24, headerMetric.stringWidth(header));
+					int cellWidth = Math.max(24,
+							headerMetric.stringWidth(header));
 					BitWidth w = model.getColumnValueWidth(i);
 
 					if (w != null) {
-						Value val = Value.createKnown(w,
-								(radix == 2 ? 0 :
-									(radix == 10 ? (1 << (w.getWidth()-1)) : w.getMask())));
+						Value val = Value.createKnown(
+								w,
+								(radix == 2 ? 0 : (radix == 10 ? (1 << (w
+										.getWidth() - 1)) : w.getMask())));
 						String label = val.toDisplayString(radix);
-						cellWidth = Math.max(cellWidth, bodyMetric.stringWidth(label));
+						cellWidth = Math.max(cellWidth,
+								bodyMetric.stringWidth(label));
 					}
 
 					columnWidth[i] = cellWidth;
@@ -487,10 +412,10 @@ public class ValueTable extends JPanel {
 			tableHeight = cellHeight * model.getRowCount();
 		}
 
-		if (cellHeight != oldCellHeight ||
-				tableWidth != oldTableWidth ||
-				tableHeight != oldTableHeight) {
-			Dimension headSize = new Dimension(tableWidth, cellHeight + HEADER_SEP);
+		if (cellHeight != oldCellHeight || tableWidth != oldTableWidth
+				|| tableHeight != oldTableHeight) {
+			Dimension headSize = new Dimension(tableWidth, cellHeight
+					+ HEADER_SEP);
 			Dimension bodySize = new Dimension(tableWidth, tableHeight);
 			body.setPreferredSize(bodySize);
 			header.setPreferredSize(headSize);
@@ -498,6 +423,88 @@ public class ValueTable extends JPanel {
 			header.revalidate();
 		}
 	}
+	public void dataChanged() {
+		rowCount = 0;
+		repaint();
+	}
+
+	int findColumn(int x, int width) {
+		int left = Math.max(0, (width - tableWidth) / 2);
+		if (x < left + COLUMN_SEP || x >= left + tableWidth)
+			return -1;
+		left += COLUMN_SEP;
+		int columns = model.getColumnCount();
+
+		for (int i = 0; i < columns; i++) {
+			int cellWidth = columnWidth[i];
+
+			if (x >= left && x < left + cellWidth)
+				return i;
+			left += cellWidth + COLUMN_SEP;
+		}
+		return -1;
+	}
+
+	int findRow(int y, int height) {
+		if (y < 0)
+			return -1;
+
+		int row = y / cellHeight;
+		if (row >= rowCount)
+			return -1;
+
+		return row;
+	}
+
+	public void modelChanged() {
+		computePreferredSize();
+		dataChanged();
+	}
+
+	void refreshData(int top, int bottom) {
+		int columns = model == null ? 0 : model.getColumnCount();
+
+		if (columns == 0) {
+			rowCount = 0;
+			return;
+		}
+		int rows = model.getRowCount();
+		if (rows == 0) {
+			rowCount = 0;
+			return;
+		}
+
+		int toprow = Math.min(rows - 1, Math.max(0, top / cellHeight));
+		int bottomrow = Math.min(rows - 1, Math.max(0, bottom / cellHeight));
+
+		if (rowData != null && rowStart <= toprow
+				&& toprow < rowStart + rowCount && rowStart <= bottomrow
+				&& bottomrow < rowStart + rowCount)
+			return;
+
+		// we pre-fetch a bit more than strictly visible
+		Rectangle rect = scrollPane.getViewport().getViewRect();
+		top = rect.y - rect.height / 2;
+		bottom = rect.y + rect.height * 2;
+		toprow = Math.min(rows - 1, Math.max(0, top / cellHeight - 10));
+		bottomrow = Math.min(rows - 1, Math.max(0, bottom / cellHeight + 10));
+
+		rowStart = Math.min(toprow, bottomrow);
+		rowCount = Math.max(toprow, bottomrow) - rowStart + 1;
+
+		if (rowCount == 0)
+			return;
+
+		if (rowData == null || rowData.length < rowCount
+				|| rowData[0].length != columns)
+			rowData = new Cell[rowCount + 1][columns];
+
+		model.getRowData(rowStart, rowCount, rowData);
+	}
+
+	public void setModel(Model model) {
+		this.model = model;
+		modelChanged();
+	}
 
 }
-

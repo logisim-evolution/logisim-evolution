@@ -39,11 +39,16 @@ import javax.swing.JPopupMenu;
 import com.cburch.logisim.tools.AddTool;
 
 public interface ProjectExplorerListener {
-	
-	public void selectionChanged(ProjectExplorerEvent event);
-	public void doubleClicked(ProjectExplorerEvent event);
-	public void moveRequested(ProjectExplorerEvent event, AddTool dragged, AddTool target);
+
 	public void deleteRequested(ProjectExplorerEvent event);
+
+	public void doubleClicked(ProjectExplorerEvent event);
+
 	public JPopupMenu menuRequested(ProjectExplorerEvent event);
-	
+
+	public void moveRequested(ProjectExplorerEvent event, AddTool dragged,
+			AddTool target);
+
+	public void selectionChanged(ProjectExplorerEvent event);
+
 }

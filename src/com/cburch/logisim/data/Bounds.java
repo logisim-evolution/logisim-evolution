@@ -213,22 +213,20 @@ public class Bounds {
 		return create(x - d, y - d, wid + 2 * d, ht + 2 * d);
 	}
 
+	public int getCenterX() {
+		return (x + wid / 2);
+	}
+
+	public int getCenterY() {
+		return (y + ht / 2);
+	}
+
 	public int getHeight() {
 		return ht;
 	}
 
 	public int getWidth() {
 		return wid;
-	}
-
-	public int getCenterX()
-	{
-		return (x + wid / 2);
-	}
-
-	public int getCenterY()
-	{
-		return (y + ht / 2);
 	}
 
 	public int getX() {

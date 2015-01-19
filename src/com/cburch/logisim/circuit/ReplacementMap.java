@@ -43,9 +43,9 @@ import org.slf4j.LoggerFactory;
 import com.cburch.logisim.comp.Component;
 
 public class ReplacementMap {
-	
+
 	final static Logger logger = LoggerFactory.getLogger(ReplacementMap.class);
-	
+
 	private boolean frozen;
 	private HashMap<Component, HashSet<Component>> map;
 	private HashMap<Component, HashSet<Component>> inverse;

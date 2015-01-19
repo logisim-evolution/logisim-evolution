@@ -52,7 +52,8 @@ import com.cburch.logisim.util.StringGetter;
 import com.cburch.logisim.util.StringUtil;
 
 /**
- * This is the component one should extend to implement the different TCL components.
+ * This is the component one should extend to implement the different TCL
+ * components.
  *
  * @author christian.mueller@heig-vd.ch
  */
@@ -225,8 +226,8 @@ public abstract class TclComponent extends InstanceFactory {
 
 		/*
 		 * Here we may miss the first clock if the TCL process is not soon fast
-		 * enought You may change this behavior, but blocking here seemed bad
-		 * to me
+		 * enought You may change this behavior, but blocking here seemed bad to
+		 * me
 		 */
 		if (tclComponentData.isConnected()) {
 
@@ -264,14 +265,14 @@ public abstract class TclComponent extends InstanceFactory {
 				// Expected response width
 				int width = state.getFactory().getPorts().get(portId)
 						.getFixedBitWidth().getWidth();
-				
+
 				/*
-				 * If the received string is too long, cut the leftmost part to match
-				 * the expected length
+				 * If the received string is too long, cut the leftmost part to
+				 * match the expected length
 				 */
 				if (busValue.length() > width)
 					busValue = busValue.substring(busValue.length() - width);
-				
+
 				/*
 				 * If the received value is not wide enough, complete with X on
 				 * the MSB

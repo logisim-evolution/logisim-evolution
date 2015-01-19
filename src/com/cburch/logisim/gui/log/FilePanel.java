@@ -146,7 +146,7 @@ class FilePanel extends LogPanel {
 		chooser.addChoosableFileFilter(chooser.getAcceptAllFileFilter());
 		chooser.addChoosableFileFilter(TestVector.FILE_FILTER);
 		chooser.setFileFilter(TestVector.FILE_FILTER);
-		
+
 		JPanel filePanel = new JPanel(new GridBagLayout());
 		GridBagLayout gb = (GridBagLayout) filePanel.getLayout();
 		GridBagConstraints gc = new GridBagConstraints();

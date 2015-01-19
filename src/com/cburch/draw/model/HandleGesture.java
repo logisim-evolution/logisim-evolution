@@ -81,10 +81,11 @@ public class HandleGesture {
 	public void setResultingHandle(Handle value) {
 		resultingHandle = value;
 	}
-	
+
 	@Override
-	public String toString()
-	{
-		return("HandleGesture() [" + dx + ", " + dy + " : " + handle.getObject() + "/" + handle.getX() + ", " + handle.getY() + "]");
+	public String toString() {
+		return ("HandleGesture() [" + dx + ", " + dy + " : "
+				+ handle.getObject() + "/" + handle.getX() + ", "
+				+ handle.getY() + "]");
 	}
 }

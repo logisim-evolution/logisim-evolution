@@ -49,7 +49,7 @@ import org.slf4j.LoggerFactory;
 public class SocketClient {
 
 	final static Logger logger = LoggerFactory.getLogger(SocketClient.class);
-	
+
 	private static ServerSocket server = null;
 
 	private boolean connected = false;
@@ -103,7 +103,8 @@ public class SocketClient {
 		try {
 			socket_writer.println(message);
 		} catch (Exception e) {
-			logger.error("Cannot write {} to socket {}", message, e.getMessage());
+			logger.error("Cannot write {} to socket {}", message,
+					e.getMessage());
 		}
 	}
 

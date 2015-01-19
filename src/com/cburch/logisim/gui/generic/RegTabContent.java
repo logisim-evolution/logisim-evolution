@@ -109,13 +109,13 @@ public class RegTabContent extends JScrollPane implements LocaleListener,
 		fillArray();
 	}
 
-        /**
-         * This function will clear and fill the registers tab and refresh their
-         * value. It will start by iterate over all circuits of the current
-         * project to register all the "Register" components (providing their
-         * attributes are correctly set). It will then fill the panel with each
-         * register found, including their current value.
-         */
+	/**
+	 * This function will clear and fill the registers tab and refresh their
+	 * value. It will start by iterate over all circuits of the current project
+	 * to register all the "Register" components (providing their attributes are
+	 * correctly set). It will then fill the panel with each register found,
+	 * including their current value.
+	 */
 	private void fillArray() {
 		int y = 0;
 		MyLabel col1 = new MyLabel("Circuit", Font.ITALIC | Font.BOLD);
@@ -164,18 +164,20 @@ public class RegTabContent extends JScrollPane implements LocaleListener,
 			for (Object name : objArr) {
 				c.gridy = y;
 				c.gridx = 0;
-                                String circuitName = name.toString().split("/")[0];
+				String circuitName = name.toString().split("/")[0];
 				panel.add(new MyLabel(circuitName, Font.ITALIC, true), c);
 				c.gridx++;
-                                String registerName = name.toString().split("/")[1];
+				String registerName = name.toString().split("/")[1];
 				panel.add(new MyLabel(registerName), c);
 				c.gridx++;
 				Component selReg = registers.get(name.toString());
 				CircuitState mainCircState = proj.getCircuitState();
-				while (mainCircState.getParentState() != null) { //Get the main circuit
+				while (mainCircState.getParentState() != null) { // Get the main
+																	// circuit
 					mainCircState = mainCircState.getParentState();
 				}
-				Value val = findVal(mainCircState, circuitName, selReg.getEnd(0).getLocation()); // Get Q port location
+				Value val = findVal(mainCircState, circuitName, selReg
+						.getEnd(0).getLocation()); // Get Q port location
 
 				if (val != null) {
 					panel.add(new MyLabel(val.toHexString()), c);
@@ -193,16 +195,20 @@ public class RegTabContent extends JScrollPane implements LocaleListener,
 		panel.validate();
 	}
 
-        /**
-         * This function will search for the value at a given location in a
-         * circuit with the given name. The function will search iteratively in
-         * all sub-circuits of the given circuit if it cannot be found directly,
-         * and will return null if the value cannot be found.
-         * @param cs The state of the circuit in which the value is searched.
-         * @param cn The name of the circuit in which the value must be found.
-         * @param loc The location of the value in the circuit.
-         * @return The value, or null if it cannot be found.
-         */
+	/**
+	 * This function will search for the value at a given location in a circuit
+	 * with the given name. The function will search iteratively in all
+	 * sub-circuits of the given circuit if it cannot be found directly, and
+	 * will return null if the value cannot be found.
+	 * 
+	 * @param cs
+	 *            The state of the circuit in which the value is searched.
+	 * @param cn
+	 *            The name of the circuit in which the value must be found.
+	 * @param loc
+	 *            The location of the value in the circuit.
+	 * @return The value, or null if it cannot be found.
+	 */
 	private synchronized Value findVal(CircuitState cs, String cn, Location loc) {
 		if (cs.containsKey(loc) && cs.getCircuit().getName().equals(cn)) {
 			return cs.getValue(loc);
@@ -219,13 +225,14 @@ public class RegTabContent extends JScrollPane implements LocaleListener,
 		}
 	}
 
-        /**
-         * This function will register all the components of type "Register"
-         * contain in the given circuit. The registers will only be registered
-         * if their ATTR_SHOW_IN_TAB is set to true, and if their label is not
-         * empty.
-         * @param circuit The circuit in which the registers are searched.
-         */
+	/**
+	 * This function will register all the components of type "Register" contain
+	 * in the given circuit. The registers will only be registered if their
+	 * ATTR_SHOW_IN_TAB is set to true, and if their label is not empty.
+	 * 
+	 * @param circuit
+	 *            The circuit in which the registers are searched.
+	 */
 	private synchronized void getAllRegisters(Circuit circuit) {
 		for (Component comp : circuit.getNonWires()) {
 			if (comp.getFactory().getName().equals("Register")) {

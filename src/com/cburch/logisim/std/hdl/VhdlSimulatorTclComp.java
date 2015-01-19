@@ -52,8 +52,9 @@ import com.cburch.logisim.util.LocaleManager;
  */
 class VhdlSimulatorTclComp {
 
-	final static Logger logger = LoggerFactory.getLogger(VhdlSimulatorTclComp.class);
-	
+	final static Logger logger = LoggerFactory
+			.getLogger(VhdlSimulatorTclComp.class);
+
 	private boolean valid = false;
 	private VhdlSimulator vhdlSimulator;
 

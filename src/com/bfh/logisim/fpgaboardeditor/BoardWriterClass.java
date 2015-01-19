@@ -52,9 +52,10 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 class BoardWriterClass {
-	
-	final static Logger logger = LoggerFactory.getLogger(BoardWriterClass.class);
-	
+
+	final static Logger logger = LoggerFactory
+			.getLogger(BoardWriterClass.class);
+
 	public static String BoardInformationSectionString = "BoardInformation";
 	public static String ClockInformationSectionString = "ClockInformation";
 	public static String[] ClockSectionStrings = { "Frequency", "FPGApin",
@@ -169,7 +170,9 @@ class BoardWriterClass {
 			PixelData.setAttribute("PixelRGB", writer.GetCompressedString());
 		} catch (Exception e) {
 			/* TODO: handle exceptions */
-			logger.error("Exceptions not handled yet in BoardWriterClass(), but got an exception: {}", e.getMessage());
+			logger.error(
+					"Exceptions not handled yet in BoardWriterClass(), but got an exception: {}",
+					e.getMessage());
 		}
 	}
 
@@ -184,7 +187,9 @@ class BoardWriterClass {
 			logger.info(dest.getWriter().toString());
 		} catch (Exception e) {
 			/* TODO: handle exceptions */
-			logger.error("Exceptions not handled yet in PrintXml(), but got an exception: {}", e.getMessage());
+			logger.error(
+					"Exceptions not handled yet in PrintXml(), but got an exception: {}",
+					e.getMessage());
 		}
 	}
 
@@ -199,7 +204,9 @@ class BoardWriterClass {
 			Result dest = new StreamResult(file);
 			aTransformer.transform(src, dest);
 		} catch (Exception e) {
-			logger.error("Exceptions not handled yet in PrintXml(), but got an exception: {}", e.getMessage());
+			logger.error(
+					"Exceptions not handled yet in PrintXml(), but got an exception: {}",
+					e.getMessage());
 		}
 	}
 

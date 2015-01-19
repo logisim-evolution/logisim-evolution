@@ -63,7 +63,7 @@ import com.cburch.logisim.util.ListUtil;
 import com.cburch.logisim.util.StringUtil;
 
 public class LogisimFile extends Library implements LibraryEventSource {
-	
+
 	private static class WritingThread extends Thread {
 		OutputStream out;
 		LogisimFile file;
@@ -162,9 +162,9 @@ public class LogisimFile extends Library implements LibraryEventSource {
 
 	public static LogisimFile loadSub(InputStream in, Loader loader)
 			throws IOException, SAXException {
-		return(loadSub(in, loader, null));
+		return (loadSub(in, loader, null));
 	}
-		
+
 	public static LogisimFile loadSub(InputStream in, Loader loader, File file)
 			throws IOException, SAXException {
 		// fetch first line and then reset
@@ -482,7 +482,9 @@ public class LogisimFile extends Library implements LibraryEventSource {
 	void write(OutputStream out, LibraryLoader loader) throws IOException {
 		write(out, loader, null);
 	}
-	void write(OutputStream out, LibraryLoader loader, File dest) throws IOException {
+
+	void write(OutputStream out, LibraryLoader loader, File dest)
+			throws IOException {
 		try {
 			XmlWriter.write(this, out, loader, dest);
 		} catch (TransformerConfigurationException e) {

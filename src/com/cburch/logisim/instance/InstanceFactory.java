@@ -68,7 +68,7 @@ import com.cburch.logisim.util.UnmodifiableList;
 public abstract class InstanceFactory extends AbstractComponentFactory {
 
 	final static Logger logger = LoggerFactory.getLogger(InstanceFactory.class);
-	
+
 	private String name;
 	private StringGetter displayName;
 	private StringGetter defaultToolTip;
@@ -249,16 +249,19 @@ public abstract class InstanceFactory extends AbstractComponentFactory {
 	private boolean isClassOk(Class<?> sub, Class<?> sup) {
 		boolean isSub = sup.isAssignableFrom(sub);
 		if (!isSub) {
-			logger.error("{}  must be a subclass of {}", sub.getName(), sup.getName());
+			logger.error("{}  must be a subclass of {}", sub.getName(),
+					sup.getName());
 			return false;
 		}
 		try {
 			sub.getConstructor(new Class[0]);
 			return true;
 		} catch (SecurityException e) {
-			logger.error("{} needs its no-args constructor to be public", sub.getName());
+			logger.error("{} needs its no-args constructor to be public",
+					sub.getName());
 		} catch (NoSuchMethodException e) {
-			logger.error("{} is missing a no-arguments constructor", sub.getName());
+			logger.error("{} is missing a no-arguments constructor",
+					sub.getName());
 		}
 		return true;
 	}

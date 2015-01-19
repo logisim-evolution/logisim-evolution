@@ -70,8 +70,8 @@ public class LogisimVersion {
 
 	/**
 	 * Parse a string containing a version number and returns the corresponding
-	 * LogisimVersion object. No exception is thrown if the version string contains
-	 * non-integers, because literal values are allowed.
+	 * LogisimVersion object. No exception is thrown if the version string
+	 * contains non-integers, because literal values are allowed.
 	 *
 	 * @return LogisimVersion built from the string passed as parameter
 	 */
@@ -87,7 +87,7 @@ public class LogisimVersion {
 			// Return the default values for an empty version string
 			return (new LogisimVersion(major, minor, release, revision, variant));
 		}
-		
+
 		try {
 			if (parts.length >= 1)
 				major = Integer.parseInt(parts[0]);
@@ -99,7 +99,8 @@ public class LogisimVersion {
 				revision = Integer.parseInt(parts[3]);
 			if (parts.length >= 5)
 				variant = parts[4];
-		} catch (NumberFormatException e) { }
+		} catch (NumberFormatException e) {
+		}
 		return (new LogisimVersion(major, minor, release, revision, variant));
 	}
 

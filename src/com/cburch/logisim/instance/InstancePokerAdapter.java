@@ -47,9 +47,10 @@ import com.cburch.logisim.tools.Caret;
 import com.cburch.logisim.tools.Pokable;
 
 class InstancePokerAdapter extends AbstractCaret implements Pokable {
-	
-	final static Logger logger = LoggerFactory.getLogger(InstancePokerAdapter.class);
-	
+
+	final static Logger logger = LoggerFactory
+			.getLogger(InstancePokerAdapter.class);
+
 	private InstanceComponent comp;
 	private Canvas canvas;
 	private InstancePoker poker;
@@ -124,7 +125,8 @@ class InstancePokerAdapter extends AbstractCaret implements Pokable {
 	private void handleError(Throwable t,
 			Class<? extends InstancePoker> pokerClass) {
 		String className = pokerClass.getName();
-		logger.error("Error while instantiating poker {}: {}", className, t.getClass().getName());
+		logger.error("Error while instantiating poker {}: {}", className, t
+				.getClass().getName());
 		String msg = t.getMessage();
 		if (msg != null)
 			logger.error("  ({})", msg); // OK

@@ -41,23 +41,33 @@ public class FailException extends TestException {
 	private Value expected, computed;
 	private FailException more;
 
-	public FailException(int column, String columnName, Value expected, Value computed)
-	{
-		super(columnName + " = " + computed.toDisplayString(2)
-				+ " (expected " + expected.toDisplayString(2) + ")");
+	public FailException(int column, String columnName, Value expected,
+			Value computed) {
+		super(columnName + " = " + computed.toDisplayString(2) + " (expected "
+				+ expected.toDisplayString(2) + ")");
 		this.column = column;
 		this.expected = expected;
 		this.computed = computed;
 	}
 
-	public void add(FailException another)
-	{
+	public void add(FailException another) {
 		more = another;
 	}
 
-	public int getColumn() { return column; }
-	public Value getExpected() { return expected; }
-	public Value getComputed() { return computed; }
-	public FailException getMore() { return more; }
+	public int getColumn() {
+		return column;
+	}
+
+	public Value getComputed() {
+		return computed;
+	}
+
+	public Value getExpected() {
+		return expected;
+	}
+
+	public FailException getMore() {
+		return more;
+	}
 
 }

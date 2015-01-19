@@ -68,7 +68,7 @@ import com.cburch.logisim.util.StringUtil;
 
 public class SubcircuitFactory extends InstanceFactory {
 	private class CircuitFeature implements StringGetter, MenuExtender,
-	ActionListener {
+			ActionListener {
 		private Instance instance;
 		private Project proj;
 
@@ -186,8 +186,7 @@ public class SubcircuitFactory extends InstanceFactory {
 	 * http://www.cs.cornell.edu/courses/cs3410/2015sp/
 	 */
 	@Override
-	public boolean contains(Location loc, AttributeSet attrs)
-	{
+	public boolean contains(Location loc, AttributeSet attrs) {
 		if (super.contains(loc, attrs)) {
 			Direction facing = attrs.getValue(StdAttr.FACING);
 			Direction defaultFacing = source.getAppearance().getFacing();

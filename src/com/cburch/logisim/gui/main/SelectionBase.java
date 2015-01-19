@@ -56,7 +56,7 @@ import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.util.CollectionUtil;
 
 class SelectionBase {
-	
+
 	private static Bounds computeBounds(Collection<Component> components) {
 		if (components.isEmpty()) {
 			return Bounds.EMPTY_BOUNDS;
@@ -71,7 +71,7 @@ class SelectionBase {
 			return ret;
 		}
 	}
-	
+
 	private static boolean shouldSnapComponent(Component comp) {
 		Boolean shouldSnapValue = (Boolean) comp.getFactory().getFeature(
 				ComponentFactory.SHOULD_SNAP, comp.getAttributeSet());

@@ -512,7 +512,8 @@ public class Frame extends LFrame implements LocaleListener {
 			// Get the list of open projects
 			List<Project> pl = Projects.getOpenProjects();
 			if (pl.size() == 1) {
-				// Since we have a single window open, before closing the current
+				// Since we have a single window open, before closing the
+				// current
 				// project open a new empty one
 				ProjectActions.doNew(proj);
 			}

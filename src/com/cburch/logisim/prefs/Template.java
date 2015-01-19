@@ -42,7 +42,7 @@ import org.slf4j.LoggerFactory;
 import com.cburch.logisim.Main;
 
 public class Template {
-	
+
 	public static Template create(InputStream in) {
 		InputStreamReader reader = new InputStreamReader(in);
 		char[] buf = new char[4096];
@@ -59,7 +59,7 @@ public class Template {
 		}
 		return new Template(dest.toString());
 	}
-	
+
 	public static Template createEmpty() {
 		String circName = Strings.get("newCircuitName");
 		StringBuilder buf = new StringBuilder();

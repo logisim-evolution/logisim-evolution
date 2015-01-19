@@ -88,18 +88,18 @@ public class SvgReader {
 					else
 						type = -1;
 					break;
-					/*
-					 * not supported case 'L': case 'l': case 'H': case 'h': case
-					 * 'V': case 'v': if (type == 0 || type == 2) type = 2; else
-					 * type = -1; break;
-					 */
+				/*
+				 * not supported case 'L': case 'l': case 'H': case 'h': case
+				 * 'V': case 'v': if (type == 0 || type == 2) type = 2; else
+				 * type = -1; break;
+				 */
 				default:
 					type = -1;
 				}
 				if (type == -1) {
 					throw new NumberFormatException(
 							"Unrecognized path command '" + token.charAt(0)
-							+ "'");
+									+ "'");
 				}
 			}
 		}
@@ -273,7 +273,8 @@ public class SvgReader {
 				int comma = opacity.lastIndexOf(',');
 				if (comma >= 0) {
 					try {
-						String repl = opacity.substring(0, comma) + "." + opacity.substring(comma + 1);
+						String repl = opacity.substring(0, comma) + "."
+								+ opacity.substring(comma + 1);
 						x = Double.parseDouble(repl);
 					} catch (Throwable t) {
 						throw e;

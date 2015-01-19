@@ -62,7 +62,7 @@ import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.IteratorUtil;
 
 class CircuitWires {
-	
+
 	static class BundleMap {
 		boolean computed = false;
 		HashMap<Location, WireBundle> pointBundles = new HashMap<Location, WireBundle>();
@@ -132,7 +132,7 @@ class CircuitWires {
 			}
 		}
 	}
-	
+
 	static class SplitterData {
 		WireBundle[] end_bundle; // PointData associated with each end
 

@@ -62,6 +62,62 @@ import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.tools.Tool;
 
 public class SelectionActions {
+	/**
+	 * Code taken from Cornell's version of Logisim:
+	 * http://www.cs.cornell.edu/courses/cs3410/2015sp/
+	 */
+	private static class Anchor extends Action {
+
+		private Selection sel;
+		private int numAnchor;
+		private SelectionSave before;
+		private CircuitTransaction xnReverse;
+
+		Anchor(Selection sel, int numAnchor) {
+			this.sel = sel;
+			this.before = SelectionSave.create(sel);
+			this.numAnchor = numAnchor;
+		}
+
+		@Override
+		public void doIt(Project proj) {
+			Circuit circuit = proj.getCurrentCircuit();
+			CircuitMutation xn = new CircuitMutation(circuit);
+			sel.dropAll(xn);
+			CircuitTransactionResult result = xn.execute();
+			xnReverse = result.getReverseTransaction();
+		}
+
+		@Override
+		public String getName() {
+			return numAnchor == 1 ? Strings.get("dropComponentAction")
+					: Strings.get("dropComponentsAction");
+		}
+
+		@Override
+		public boolean shouldAppendTo(Action other) {
+			Action last;
+			if (other instanceof JoinedAction)
+				last = ((JoinedAction) other).getLastAction();
+			else
+				last = other;
+
+			SelectionSave otherAfter = null;
+			if (last instanceof Paste) {
+				otherAfter = ((Paste) last).after;
+			} else if (last instanceof Duplicate) {
+				otherAfter = ((Duplicate) last).after;
+			}
+			return otherAfter != null && otherAfter.equals(this.before);
+		}
+
+		@Override
+		public void undo(Project proj) {
+			xnReverse.execute();
+		}
+
+	}
+
 	private static class Copy extends Action {
 		private Selection sel;
 		private Clipboard oldClip;
@@ -152,15 +208,14 @@ public class SelectionActions {
 	 * http://www.cs.cornell.edu/courses/cs3410/2015sp/
 	 */
 	private static class Drop extends Action {
-		
+
 		private Selection sel;
 		private Component[] drops;
 		private int numDrops;
 		private SelectionSave before;
 		private CircuitTransaction xnReverse;
-		
-		Drop(Selection sel, Collection<Component> toDrop, int numDrops)
-		{
+
+		Drop(Selection sel, Collection<Component> toDrop, int numDrops) {
 			this.sel = sel;
 			this.drops = new Component[toDrop.size()];
 			toDrop.toArray(this.drops);
@@ -169,115 +224,50 @@ public class SelectionActions {
 		}
 
 		@Override
-		public String getName()
-		{
-			return numDrops == 1 ? Strings.get("dropComponentAction")
-					: Strings.get("dropComponentsAction");
-		}
-
-		@Override
-		public void doIt(Project proj)
-		{
+		public void doIt(Project proj) {
 			Circuit circuit = proj.getCurrentCircuit();
 			CircuitMutation xn = new CircuitMutation(circuit);
-			
+
 			for (Component comp : drops) {
 				sel.remove(xn, comp);
 			}
-			
+
 			CircuitTransactionResult result = xn.execute();
 			xnReverse = result.getReverseTransaction();
 		}
 
 		@Override
-		public void undo(Project proj)
-		{
-			xnReverse.execute();
+		public String getName() {
+			return numDrops == 1 ? Strings.get("dropComponentAction") : Strings
+					.get("dropComponentsAction");
 		}
 
 		@Override
-		public boolean shouldAppendTo(Action other)
-		{
+		public boolean shouldAppendTo(Action other) {
 			Action last;
 			if (other instanceof JoinedAction)
 				last = ((JoinedAction) other).getLastAction();
 			else
 				last = other;
-			
+
 			SelectionSave otherAfter = null;
-			
+
 			if (last instanceof Paste) {
 				otherAfter = ((Paste) last).after;
 			} else if (last instanceof Duplicate) {
 				otherAfter = ((Duplicate) last).after;
 			}
-			
+
 			return otherAfter != null && otherAfter.equals(this.before);
 		}
-		
-	}
-	
-	/**
-	 * Code taken from Cornell's version of Logisim:
-	 * http://www.cs.cornell.edu/courses/cs3410/2015sp/
-	 */
-	private static class Anchor extends Action {
-	
-		private Selection sel;
-		private int numAnchor;
-		private SelectionSave before;
-		private CircuitTransaction xnReverse;
-		
-		Anchor(Selection sel, int numAnchor)
-		{
-			this.sel = sel;
-			this.before = SelectionSave.create(sel);
-			this.numAnchor = numAnchor;
-		}
 
 		@Override
-		public String getName()
-		{
-			return numAnchor == 1 ? Strings.get("dropComponentAction")
-					: Strings.get("dropComponentsAction");
-		}
-
-		@Override
-		public void doIt(Project proj)
-		{
-			Circuit circuit = proj.getCurrentCircuit();
-			CircuitMutation xn = new CircuitMutation(circuit);
-			sel.dropAll(xn);
-			CircuitTransactionResult result = xn.execute();
-			xnReverse = result.getReverseTransaction();
-		}
-
-		@Override
-		public void undo(Project proj)
-		{
+		public void undo(Project proj) {
 			xnReverse.execute();
 		}
 
-		@Override
-		public boolean shouldAppendTo(Action other)
-		{
-			Action last;
-			if (other instanceof JoinedAction)
-				last = ((JoinedAction) other).getLastAction();
-			else
-				last = other;
-			
-			SelectionSave otherAfter = null;
-			if (last instanceof Paste) {
-				otherAfter = ((Paste) last).after;
-			} else if (last instanceof Duplicate) {
-				otherAfter = ((Duplicate) last).after;
-			}
-			return otherAfter != null && otherAfter.equals(this.before);
-		}
-		
 	}
-	
+
 	private static class Duplicate extends Action {
 		private Selection sel;
 		private CircuitTransaction xnReverse;
@@ -442,6 +432,20 @@ public class SelectionActions {
 		@Override
 		public void undo(Project proj) {
 			xnReverse.execute();
+		}
+	}
+
+	/**
+	 * Code taken from Cornell's version of Logisim:
+	 * http://www.cs.cornell.edu/courses/cs3410/2015sp/
+	 */
+	// anchors all floating elements, keeping elements in selection
+	public static Action anchorAll(Selection sel) {
+		int numAnchor = sel.getFloatingComponents().size();
+		if (numAnchor == 0) {
+			return null;
+		} else {
+			return new Anchor(sel, numAnchor);
 		}
 	}
 
@@ -627,21 +631,6 @@ public class SelectionActions {
 		return new Translate(sel, dx, dy, repl);
 	}
 
-	/**
-	 * Code taken from Cornell's version of Logisim:
-	 * http://www.cs.cornell.edu/courses/cs3410/2015sp/
-	 */
-	// anchors all floating elements, keeping elements in selection
-	public static Action anchorAll(Selection sel)
-	{
-		int numAnchor = sel.getFloatingComponents().size();
-		if (numAnchor == 0) {
-			return null;
-		} else {
-			return new Anchor(sel, numAnchor);
-		}
-	}
-	
 	private SelectionActions() {
 	}
 }

@@ -119,7 +119,8 @@ class ToolbarOptions extends OptionsPanel {
 			return null;
 		}
 
-		public void moveRequested(ProjectExplorerEvent event, AddTool dragged, AddTool target) {
+		public void moveRequested(ProjectExplorerEvent event, AddTool dragged,
+				AddTool target) {
 		}
 
 		public void selectionChanged(ProjectExplorerEvent event) {

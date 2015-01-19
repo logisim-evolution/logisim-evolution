@@ -53,8 +53,9 @@ import com.cburch.logisim.util.LocaleManager;
  */
 public class VhdlSimulatorVhdlTop {
 
-	final static Logger logger = LoggerFactory.getLogger(VhdlSimulatorVhdlTop.class);
-	
+	final static Logger logger = LoggerFactory
+			.getLogger(VhdlSimulatorVhdlTop.class);
+
 	private boolean valid = false;
 	private VhdlSimulator vhdlSimulator;
 

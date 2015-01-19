@@ -156,7 +156,9 @@ public class Circuit {
 	private AttributeSet staticAttrs;
 	private SubcircuitFactory subcircuitFactory;
 	private EventSourceWeakSupport<CircuitListener> listeners = new EventSourceWeakSupport<CircuitListener>();
-	private HashSet<Component> comps = new HashSet<Component>(); // doesn't include wires
+	private HashSet<Component> comps = new HashSet<Component>(); // doesn't
+																	// include
+																	// wires
 	CircuitWires wires = new CircuitWires();
 	// wires is package-protected for CircuitState and Analyze only.
 	private ArrayList<Component> clocks = new ArrayList<Component>();
@@ -330,6 +332,57 @@ public class Circuit {
 
 	public boolean contains(Component c) {
 		return comps.contains(c) || wires.getWires().contains(c);
+	}
+
+	/**
+	 * Code taken from Cornell's version of Logisim:
+	 * http://www.cs.cornell.edu/courses/cs3410/2015sp/
+	 */
+	public void doTestVector(Project project, Instance pin[], Value[] val)
+			throws TestException {
+		CircuitState state = project.getCircuitState();
+		state.reset();
+
+		for (int i = 0; i < pin.length; ++i) {
+			if (Pin.FACTORY.isInputPin(pin[i])) {
+				InstanceState pinState = state.getInstanceState(pin[i]);
+				Pin.FACTORY.setValue(pinState, val[i]);
+			}
+		}
+
+		Propagator prop = state.getPropagator();
+
+		try {
+			prop.propagate();
+		} catch (Throwable thr) {
+			thr.printStackTrace();
+		}
+
+		if (prop.isOscillating())
+			throw new TestException("oscilation detected");
+
+		FailException err = null;
+
+		for (int i = 0; i < pin.length; i++) {
+			InstanceState pinState = state.getInstanceState(pin[i]);
+			if (Pin.FACTORY.isInputPin(pin[i]))
+				continue;
+
+			Value v = Pin.FACTORY.getValue(pinState);
+			if (!val[i].compatible(v)) {
+				if (err == null)
+					err = new FailException(i,
+							pinState.getAttributeValue(StdAttr.LABEL), val[i],
+							v);
+				else
+					err.add(new FailException(i, pinState
+							.getAttributeValue(StdAttr.LABEL), val[i], v));
+			}
+		}
+
+		if (err != null) {
+			throw err;
+		}
 	}
 
 	//
@@ -641,55 +694,6 @@ public class Circuit {
 			}
 		}
 		fireEvent(CircuitEvent.ACTION_CLEAR, oldComps);
-	}
-
-	/**
-	 * Code taken from Cornell's version of Logisim:
-	 * http://www.cs.cornell.edu/courses/cs3410/2015sp/
-	 */
-	public void doTestVector(Project project, Instance pin[], Value[] val)
-			throws TestException
-	{
-		CircuitState state = project.getCircuitState();
-		state.reset();
-
-		for (int i = 0; i < pin.length; ++i) {
-			if (Pin.FACTORY.isInputPin(pin[i])){
-				InstanceState pinState = state.getInstanceState(pin[i]);
-				Pin.FACTORY.setValue(pinState, val[i]);
-			}
-		}
-
-		Propagator prop = state.getPropagator();
-
-		try {
-			prop.propagate();
-		} catch(Throwable thr) {
-			thr.printStackTrace();	
-		}
-
-		if (prop.isOscillating()) 
-			throw new TestException("oscilation detected");
-
-		FailException err = null;
-
-		for (int i = 0; i < pin.length; i++) {
-			InstanceState pinState = state.getInstanceState(pin[i]);
-			if (Pin.FACTORY.isInputPin(pin[i]))
-				continue;
-
-			Value v = Pin.FACTORY.getValue(pinState);
-			if (!val[i].compatible(v)) {
-				if (err == null)
-					err = new FailException(i, pinState.getAttributeValue(StdAttr.LABEL), val[i], v);
-				else
-					err.add(new FailException(i, pinState.getAttributeValue(StdAttr.LABEL), val[i], v));
-			}
-		}
-
-		if (err != null) {
-			throw err;
-		}
 	}
 
 	void mutatorRemove(Component c) {

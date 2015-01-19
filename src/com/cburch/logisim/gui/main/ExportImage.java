@@ -74,7 +74,7 @@ import com.cburch.logisim.util.GifEncoder;
 import com.cburch.logisim.util.StringGetter;
 
 class ExportImage {
-	
+
 	private static class ExportThread extends Thread {
 		Frame frame;
 		Canvas canvas;
@@ -163,7 +163,7 @@ class ExportImage {
 			}
 		}
 	}
-	
+
 	private static class ImageFileFilter extends FileFilter {
 		private int type;
 		private String[] extensions;

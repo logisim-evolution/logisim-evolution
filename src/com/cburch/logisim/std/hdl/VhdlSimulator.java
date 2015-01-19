@@ -66,7 +66,7 @@ public class VhdlSimulator implements CircuitListener {
 	public enum State {
 		DISABLED, ENABLED, STARTING, RUNNING;
 	}
-	
+
 	public static List<Component> getVhdlComponents(CircuitState s) {
 
 		LinkedList<Component> vhdlComp = new LinkedList<Component>();

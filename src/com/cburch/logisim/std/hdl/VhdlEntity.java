@@ -59,6 +59,7 @@ import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.StringUtil;
+
 public class VhdlEntity extends InstanceFactory {
 
 	static class ContentAttribute extends Attribute<VhdlContent> {
@@ -92,7 +93,7 @@ public class VhdlEntity extends InstanceFactory {
 			return value.getContent();
 		}
 	}
-	
+
 	static class VhdlEntityListener implements HdlModelListener {
 
 		Instance instance;

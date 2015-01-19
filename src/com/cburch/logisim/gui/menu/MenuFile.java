@@ -125,12 +125,13 @@ class MenuFile extends Menu implements ActionListener {
 					.getCanvas(), proj);
 		} else if (src == close) {
 			Frame frame = proj.getFrame();
-			
+
 			if (frame.confirmClose()) {
 				// Get the list of open projects
 				List<Project> pl = Projects.getOpenProjects();
 				if (pl.size() == 1) {
-					// Since we have a single window open, before closing the current
+					// Since we have a single window open, before closing the
+					// current
 					// project open a new empty one
 					ProjectActions.doNew(proj);
 				}

@@ -57,7 +57,7 @@ import com.cburch.logisim.proj.ProjectListener;
 import com.cburch.logisim.tools.CustomHandles;
 
 public class Selection extends SelectionBase {
-	
+
 	public static class Event {
 		Object source;
 
@@ -69,7 +69,7 @@ public class Selection extends SelectionBase {
 			return source;
 		}
 	}
-	
+
 	public static interface Listener {
 		public void selectionChanged(Selection.Event event);
 	}

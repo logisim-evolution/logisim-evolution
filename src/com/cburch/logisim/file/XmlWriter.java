@@ -69,8 +69,8 @@ import com.cburch.logisim.util.InputEventUtil;
 import com.cburch.logisim.util.StringUtil;
 
 class XmlWriter {
-	static void write(LogisimFile file, OutputStream out, LibraryLoader loader, File destFile)
-			throws ParserConfigurationException,
+	static void write(LogisimFile file, OutputStream out, LibraryLoader loader,
+			File destFile) throws ParserConfigurationException,
 			TransformerConfigurationException, TransformerException {
 
 		DocumentBuilderFactory docFactory = DocumentBuilderFactory
@@ -81,10 +81,10 @@ class XmlWriter {
 		XmlWriter context;
 		if (destFile != null) {
 			String dstFilePath = destFile.getAbsolutePath();
-			dstFilePath = dstFilePath.substring(0, dstFilePath.lastIndexOf(File.separator));
+			dstFilePath = dstFilePath.substring(0,
+					dstFilePath.lastIndexOf(File.separator));
 			context = new XmlWriter(file, doc, loader, dstFilePath);
-		}
-		else
+		} else
 			context = new XmlWriter(file, doc, loader);
 
 		context.fromLogisimFile();
@@ -111,7 +111,8 @@ class XmlWriter {
 	private LogisimFile file;
 	private Document doc;
 	/**
-	 * Path of the file which is being written on disk -- used to relativize components stored in it
+	 * Path of the file which is being written on disk -- used to relativize
+	 * components stored in it
 	 */
 	private String outFilepath;
 	private LibraryLoader loader;
@@ -121,7 +122,8 @@ class XmlWriter {
 		this(file, doc, loader, null);
 	}
 
-	private XmlWriter(LogisimFile file, Document doc, LibraryLoader loader, String outFilepath) {
+	private XmlWriter(LogisimFile file, Document doc, LibraryLoader loader,
+			String outFilepath) {
 		this.file = file;
 		this.doc = doc;
 		this.loader = loader;
@@ -146,7 +148,8 @@ class XmlWriter {
 					Element a = doc.createElement("a");
 					a.setAttribute("name", attr.getName());
 					String value = attr.toStandardString(val);
-					if (attr.getName().equals("filePath") && outFilepath != null) {
+					if (attr.getName().equals("filePath")
+							&& outFilepath != null) {
 						Path outFP = Paths.get(outFilepath);
 						Path attrValP = Paths.get(value);
 						value = (outFP.relativize(attrValP)).toString();
@@ -269,8 +272,9 @@ class XmlWriter {
 	Element fromLogisimFile() {
 		Element ret = doc.createElement("project");
 		doc.appendChild(ret);
-		ret.appendChild(doc.createTextNode("\nThis file is intended to be "
-				+ "loaded by Logisim-evolution (https://github.com/reds-heig/logisim-evolution).\n"));
+		ret.appendChild(doc
+				.createTextNode("\nThis file is intended to be "
+						+ "loaded by Logisim-evolution (https://github.com/reds-heig/logisim-evolution).\n"));
 		ret.setAttribute("version", "1.0");
 		ret.setAttribute("source", Main.VERSION_NAME);
 

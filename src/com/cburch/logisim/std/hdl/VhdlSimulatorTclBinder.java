@@ -66,8 +66,9 @@ import com.cburch.logisim.util.Softwares;
  */
 class VhdlSimulatorTclBinder {
 
-	final static Logger logger = LoggerFactory.getLogger(VhdlSimulatorTclBinder.class);
-	
+	final static Logger logger = LoggerFactory
+			.getLogger(VhdlSimulatorTclBinder.class);
+
 	private ProcessBuilder builder;
 	private Process process;
 	private Boolean running = false;
@@ -110,7 +111,8 @@ class VhdlSimulatorTclBinder {
 			process = builder.start();
 		} catch (IOException e) {
 			e.printStackTrace();
-			logger.error("Cannot run TCL binder to Questasim : {}", e.getMessage());
+			logger.error("Cannot run TCL binder to Questasim : {}",
+					e.getMessage());
 
 			running = false;
 			return;

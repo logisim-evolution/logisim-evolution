@@ -204,6 +204,17 @@ public class Project {
 		fireEvent(new ProjectEvent(ProjectEvent.ACTION_COMPLETE, this, act));
 	}
 
+	public int doTestVector(String vectorname, String name) {
+		Circuit circuit = (name == null ? file.getMainCircuit() : file
+				.getCircuit(name));
+		if (circuit == null) {
+			System.err.println("Circuit '" + name + "' not found.");
+			return -1;
+		}
+		setCurrentCircuit(circuit);
+		return TestThread.doTestVector(this, circuit, vectorname);
+	}
+
 	private void fireEvent(int action, Object data) {
 		fireEvent(new ProjectEvent(action, this, data));
 	}
@@ -292,15 +303,6 @@ public class Project {
 			return redoLog.getLast().action;
 	}
 
-	public TestFrame getTestFrame(boolean create)
-	{
-		if(testFrame == null) {
-			if(create)
-				testFrame = new TestFrame(this);
-		}
-		return testFrame;
-	}
-
 	public LogFrame getLogFrame(boolean create) {
 		if (logFrame == null) {
 			if (create)
@@ -341,6 +343,14 @@ public class Project {
 
 	public Simulator getSimulator() {
 		return simulator;
+	}
+
+	public TestFrame getTestFrame(boolean create) {
+		if (testFrame == null) {
+			if (create)
+				testFrame = new TestFrame(this);
+		}
+		return testFrame;
 	}
 
 	public Tool getTool() {
@@ -523,26 +533,23 @@ public class Project {
 			old.deselect(canvas);
 		Selection selection = canvas.getSelection();
 		if (selection != null && !selection.isEmpty()) {
-			if (value == null || !getOptions().getMouseMappings().containsSelectTool()) {
+			if (value == null
+					|| !getOptions().getMouseMappings().containsSelectTool()) {
 				Action act = SelectionActions.anchorAll(selection);
 				/*
-			Circuit circuit = canvas.getCircuit();
-			CircuitMutation xn = new CircuitMutation(circuit);
-			if (value == null) {
-				Action act = SelectionActions.dropAll(selection);
-				if (act != null) {
-					doAction(act);
-				}
-			} else if (!getOptions().getMouseMappings().containsSelectTool()) {
-				Action act = SelectionActions.dropAll(selection);
+				 * Circuit circuit = canvas.getCircuit(); CircuitMutation xn =
+				 * new CircuitMutation(circuit); if (value == null) { Action act
+				 * = SelectionActions.dropAll(selection); if (act != null) {
+				 * doAction(act); } } else if
+				 * (!getOptions().getMouseMappings().containsSelectTool()) {
+				 * Action act = SelectionActions.dropAll(selection);
 				 */
 				if (act != null) {
 					doAction(act);
 				}
 			}
 			/*
-			 if (!xn.isEmpty())
-			 doAction(xn.toAction(null));
+			 * if (!xn.isEmpty()) doAction(xn.toAction(null));
 			 */
 		}
 		startupScreen = false;
@@ -550,17 +557,6 @@ public class Project {
 		if (tool != null)
 			tool.select(frame.getCanvas());
 		fireEvent(ProjectEvent.ACTION_SET_TOOL, old, tool);
-	}
-
-	public int doTestVector(String vectorname, String name)
-	{
-		Circuit circuit = (name == null ? file.getMainCircuit() : file.getCircuit(name));
-		if (circuit == null) {
-			System.err.println("Circuit '"+name+"' not found.");
-			return -1;
-		}
-		setCurrentCircuit(circuit);
-		return TestThread.doTestVector(this, circuit, vectorname);
 	}
 
 	public void undoAction() {

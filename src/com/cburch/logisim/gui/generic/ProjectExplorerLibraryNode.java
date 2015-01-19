@@ -40,19 +40,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.cburch.logisim.file.LogisimFile;
 import com.cburch.logisim.file.LibraryEvent;
 import com.cburch.logisim.file.LibraryListener;
+import com.cburch.logisim.file.LogisimFile;
 import com.cburch.logisim.tools.Library;
 
-public class ProjectExplorerLibraryNode extends ProjectExplorerModel.Node<Library>
-implements LibraryListener {
+public class ProjectExplorerLibraryNode extends
+		ProjectExplorerModel.Node<Library> implements LibraryListener {
 
 	private static final long serialVersionUID = 1L;
 	private LogisimFile file;
 
-	ProjectExplorerLibraryNode(ProjectExplorerModel model, Library lib)
-	{
+	ProjectExplorerLibraryNode(ProjectExplorerModel model, Library lib) {
 		super(model, lib);
 		if (lib instanceof LogisimFile) {
 			file = (LogisimFile) lib;
@@ -61,42 +60,24 @@ implements LibraryListener {
 		buildChildren();
 	}
 
-	@Override ProjectExplorerLibraryNode create(Library userObject)
-	{
-		return new ProjectExplorerLibraryNode(getModel(), userObject);
-	}
-
-	@Override void decommission()
-	{
-		if (file != null) {
-			file.removeLibraryListener(this);
-		}
-		for (Enumeration<?> en = children(); en.hasMoreElements(); ) {
-			Object n = en.nextElement();
-			if (n instanceof ProjectExplorerModel.Node<?>) {
-				((ProjectExplorerModel.Node<?>) n).decommission();
-			}
-		}
-	}
-
-	private void buildChildren()
-	{
+	private void buildChildren() {
 		Library lib = getValue();
 		if (lib != null) {
-			buildChildren(new ProjectExplorerToolNode(getModel(), null), lib.getTools(), 0);
-			buildChildren(new ProjectExplorerLibraryNode(getModel(), null), lib.getLibraries(), lib.getTools().size());
+			buildChildren(new ProjectExplorerToolNode(getModel(), null),
+					lib.getTools(), 0);
+			buildChildren(new ProjectExplorerLibraryNode(getModel(), null),
+					lib.getLibraries(), lib.getTools().size());
 		}
 	}
 
-	private <T> void buildChildren(ProjectExplorerModel.Node<T> factory, List<? extends T> items,
-			int startIndex)
-	{
+	private <T> void buildChildren(ProjectExplorerModel.Node<T> factory,
+			List<? extends T> items, int startIndex) {
 		// go through previously built children
 		Map<T, ProjectExplorerModel.Node<T>> nodeMap = new HashMap<T, ProjectExplorerModel.Node<T>>();
 		List<ProjectExplorerModel.Node<T>> nodeList = new ArrayList<ProjectExplorerModel.Node<T>>();
 		int oldPos = startIndex;
 
-		for (Enumeration<?> en = children(); en.hasMoreElements(); ) {
+		for (Enumeration<?> en = children(); en.hasMoreElements();) {
 			Object baseNode = en.nextElement();
 			if (baseNode.getClass() == factory.getClass()) {
 				@SuppressWarnings("unchecked")
@@ -202,6 +183,24 @@ implements LibraryListener {
 				}
 			}
 			this.fireNodesInserted(insIndex, insNodes);
+		}
+	}
+
+	@Override
+	ProjectExplorerLibraryNode create(Library userObject) {
+		return new ProjectExplorerLibraryNode(getModel(), userObject);
+	}
+
+	@Override
+	void decommission() {
+		if (file != null) {
+			file.removeLibraryListener(this);
+		}
+		for (Enumeration<?> en = children(); en.hasMoreElements();) {
+			Object n = en.nextElement();
+			if (n instanceof ProjectExplorerModel.Node<?>) {
+				((ProjectExplorerModel.Node<?>) n).decommission();
+			}
 		}
 	}
 

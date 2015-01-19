@@ -43,39 +43,25 @@ import com.cburch.logisim.tools.Tool;
 
 public class ProjectExplorerToolNode extends ProjectExplorerModel.Node<Tool>
 		implements CircuitListener {
-	
+
 	private static final long serialVersionUID = 1L;
 	private Circuit circuit;
-	
-	public ProjectExplorerToolNode(ProjectExplorerModel model, Tool tool)
-	{
+
+	public ProjectExplorerToolNode(ProjectExplorerModel model, Tool tool) {
 		super(model, tool);
 		if (tool instanceof AddTool) {
 			Object factory = ((AddTool) tool).getFactory();
-			
+
 			if (factory instanceof SubcircuitFactory) {
 				circuit = ((SubcircuitFactory) factory).getSubcircuit();
 				circuit.addCircuitListener(this);
 			}
 		}
 	}
-	
-	@Override ProjectExplorerToolNode create(Tool userObject)
-	{
-		return new ProjectExplorerToolNode(getModel(), userObject);
-	}
-	
-	@Override void decommission()
-	{
-		if (circuit != null) {
-			circuit.removeCircuitListener(this);
-		}
-	}
 
-	public void circuitChanged(CircuitEvent event)
-	{
+	public void circuitChanged(CircuitEvent event) {
 		int act = event.getAction();
-		
+
 		if (act == CircuitEvent.ACTION_SET_NAME) {
 			fireStructureChanged();
 			// The following almost works - but the labels aren't made
@@ -83,5 +69,17 @@ public class ProjectExplorerToolNode extends ProjectExplorerModel.Node<Tool>
 			// fireNodesChanged(findPath(this));
 		}
 	}
-	
+
+	@Override
+	ProjectExplorerToolNode create(Tool userObject) {
+		return new ProjectExplorerToolNode(getModel(), userObject);
+	}
+
+	@Override
+	void decommission() {
+		if (circuit != null) {
+			circuit.removeCircuitListener(this);
+		}
+	}
+
 }

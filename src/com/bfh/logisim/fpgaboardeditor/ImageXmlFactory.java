@@ -52,7 +52,7 @@ import org.slf4j.LoggerFactory;
 public class ImageXmlFactory {
 
 	final static Logger logger = LoggerFactory.getLogger(ImageXmlFactory.class);
-	
+
 	private String[] CodeTable;
 	private StringBuffer AsciiStream;
 	private String[] InitialCodeTable = { "a", "b", "c", "d", "e", "f", "g",

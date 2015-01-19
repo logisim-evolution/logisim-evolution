@@ -86,7 +86,7 @@ import com.bfh.logisim.fpgaboardeditor.Strings;
 
 public class ComponentMapDialog implements ActionListener,
 		ListSelectionListener {
-	
+
 	private class MappedComponentIdContainer {
 
 		private String key;
@@ -297,7 +297,8 @@ public class ComponentMapDialog implements ActionListener,
 		}
 	}
 
-	final static Logger logger = LoggerFactory.getLogger(ComponentMapDialog.class);
+	final static Logger logger = LoggerFactory
+			.getLogger(ComponentMapDialog.class);
 
 	private JDialog panel;
 	private boolean doneAssignment = false;
@@ -696,7 +697,9 @@ public class ComponentMapDialog implements ActionListener,
 						BoardPic.getHeight());
 			} catch (Exception e) {
 				/* TODO: handle exceptions */
-				logger.error("Exceptions not handled yet in Load(), but got an exception: {}", e.getMessage());
+				logger.error(
+						"Exceptions not handled yet in Load(), but got an exception: {}",
+						e.getMessage());
 			}
 		}
 		panel.setVisible(true);
@@ -801,7 +804,9 @@ public class ComponentMapDialog implements ActionListener,
 				aTransformer.transform(src, dest);
 			} catch (Exception e) {
 				/* TODO: handle exceptions */
-				logger.error("Exceptions not handled yet in Save(), but got an exception: {}", e.getMessage());
+				logger.error(
+						"Exceptions not handled yet in Save(), but got an exception: {}",
+						e.getMessage());
 			}
 		}
 		panel.setVisible(true);

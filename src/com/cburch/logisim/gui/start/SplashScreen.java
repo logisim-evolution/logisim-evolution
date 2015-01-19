@@ -47,7 +47,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class SplashScreen extends JWindow implements ActionListener {
-	
+
 	private static class Marker {
 		int count;
 		String message;
@@ -57,7 +57,7 @@ public class SplashScreen extends JWindow implements ActionListener {
 			this.message = message;
 		}
 	}
-	
+
 	final static Logger logger = LoggerFactory.getLogger(SplashScreen.class);
 
 	private static final long serialVersionUID = 1L;
@@ -149,7 +149,8 @@ public class SplashScreen extends JWindow implements ActionListener {
 				}
 			});
 			if (PRINT_TIMES) {
-				logger.info("{} {}", System.currentTimeMillis() - startTime, marker.message);
+				logger.info("{} {}", System.currentTimeMillis() - startTime,
+						marker.message);
 			}
 		} else {
 			if (PRINT_TIMES) {

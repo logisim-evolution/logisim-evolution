@@ -61,7 +61,7 @@ import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.util.StringUtil;
 
 public class TtyInterface {
-	
+
 	// It's possible to avoid using the separate thread using
 	// System.in.available(),
 	// but this doesn't quite work because on some systems, the keyboard input
@@ -102,7 +102,7 @@ public class TtyInterface {
 			}
 		}
 	}
-	
+
 	private static int countDigits(int num) {
 		int digits = 1;
 		int lessThan = 10;
@@ -128,7 +128,8 @@ public class TtyInterface {
 			precision = 0.0000001;
 		hertz = (int) (hertz / precision) * precision;
 		String hertzStr = hertz == (int) hertz ? "" + (int) hertz : "" + hertz;
-		Object[] paramArray = {StringUtil.format(Strings.get("ttySpeedMsg")), hertzStr, tickCount, elapse};
+		Object[] paramArray = { StringUtil.format(Strings.get("ttySpeedMsg")),
+				hertzStr, tickCount, elapse };
 		logger.info("{}", paramArray);
 	}
 
@@ -248,7 +249,8 @@ public class TtyInterface {
 		try {
 			file = loader.openLogisimFile(fileToOpen, args.getSubstitutions());
 		} catch (LoadFailedException e) {
-			logger.error("{}", Strings.get("ttyLoadError", fileToOpen.getName()));
+			logger.error("{}",
+					Strings.get("ttyLoadError", fileToOpen.getName()));
 
 			System.exit(-1);
 			return;

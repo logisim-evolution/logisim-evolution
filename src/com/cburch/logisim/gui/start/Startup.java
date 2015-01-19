@@ -153,7 +153,8 @@ public class Startup {
 					File a = new File(args[i + 1]);
 					File b = new File(args[i + 2]);
 					if (ret.substitutions.containsKey(a)) {
-						logger.error("{}", Strings.get("argDuplicateSubstitutionError"));
+						logger.error("{}",
+								Strings.get("argDuplicateSubstitutionError"));
 						return null;
 					} else {
 						ret.substitutions.put(a, b);
@@ -200,7 +201,7 @@ public class Startup {
 					AppPreferences.GATE_SHAPE.set(AppPreferences.SHAPE_SHAPED);
 				} else if (a.equals("rectangular")) {
 					AppPreferences.GATE_SHAPE
-					.set(AppPreferences.SHAPE_RECTANGULAR);
+							.set(AppPreferences.SHAPE_RECTANGULAR);
 				} else {
 					logger.error("{}", Strings.get("argGatesOptionError"));
 					System.exit(-1);
@@ -236,19 +237,21 @@ public class Startup {
 				}
 				ret.templFile = new File(args[i]);
 				if (!ret.templFile.exists()) {
-					logger.error("{}", StringUtil.format(Strings.get("templateMissingError"), args[i]));
+					logger.error("{}", StringUtil.format(
+							Strings.get("templateMissingError"), args[i]));
 				} else if (!ret.templFile.canRead()) {
-					logger.error("{}", StringUtil.format(Strings.get("templateCannotReadError"), args[i]));
+					logger.error("{}", StringUtil.format(
+							Strings.get("templateCannotReadError"), args[i]));
 				}
 			} else if (arg.equals("-nosplash")) {
 				ret.showSplash = false;
-			} else if(arg.equals("-test")) {
+			} else if (arg.equals("-test")) {
 				i++;
-				if(i >= args.length)
+				if (i >= args.length)
 					printUsage();
 				ret.circuitToTest = args[i];
 				i++;
-				if(i >= args.length)
+				if (i >= args.length)
 					printUsage();
 				ret.testVector = args[i];
 				ret.showSplash = false;
@@ -304,7 +307,7 @@ public class Startup {
 		System.err.println("   " + Strings.get("argAccentsOption")); // OK
 		System.err.println("   " + Strings.get("argClearOption")); // OK
 		System.err.println("   " + Strings.get("argEmptyOption")); // OK
-		System.err.println("   " + Strings.get("argTestOption")); //OK
+		System.err.println("   " + Strings.get("argTestOption")); // OK
 		System.err.println("   " + Strings.get("argGatesOption")); // OK
 		System.err.println("   " + Strings.get("argHelpOption")); // OK
 		System.err.println("   " + Strings.get("argLoadOption")); // OK
@@ -430,13 +433,13 @@ public class Startup {
 		// Get the appropriate remote version number
 		LogisimVersion remoteVersion = LogisimVersion.parse(Main.VERSION
 				.hasTracker() ? logisimData.child("tracked_version").content()
-						: logisimData.child("untracked_version").content());
+				: logisimData.child("untracked_version").content());
 
 		// If the remote version is newer, perform the update
 		if (remoteVersion.compareTo(Main.VERSION) > 0) {
 			int answer = JOptionPane.showConfirmDialog(null,
 					"A new Logisim-evolution version (" + remoteVersion
-					+ ") is available!\nWould you like to update?",
+							+ ") is available!\nWould you like to update?",
 					"Update", JOptionPane.YES_NO_OPTION,
 					JOptionPane.INFORMATION_MESSAGE);
 
@@ -456,39 +459,39 @@ public class Startup {
 				logger.error("Error in the syntax of the URI for the path of the executed Logisim-evolution JAR file!");
 				e.printStackTrace();
 				JOptionPane
-				.showMessageDialog(
-						null,
-						"An error occurred while updating to the new Logisim-evolution version.\nPlease check the console for log information.",
-						"Update failed", JOptionPane.ERROR_MESSAGE);
+						.showMessageDialog(
+								null,
+								"An error occurred while updating to the new Logisim-evolution version.\nPlease check the console for log information.",
+								"Update failed", JOptionPane.ERROR_MESSAGE);
 				return (false);
 			}
 
 			// Get the appropriate remote filename to download
 			String remoteJar = Main.VERSION.hasTracker() ? logisimData.child(
 					"tracked_file").content() : logisimData.child(
-							"untracked_file").content();
+					"untracked_file").content();
 
-					boolean updateOk = downloadInstallUpdatedVersion(remoteJar,
-							jarFile.getAbsolutePath());
+			boolean updateOk = downloadInstallUpdatedVersion(remoteJar,
+					jarFile.getAbsolutePath());
 
-					if (updateOk) {
-						JOptionPane
+			if (updateOk) {
+				JOptionPane
 						.showMessageDialog(
 								null,
 								"The new Logisim-evolution version ("
 										+ remoteVersion
 										+ ") has been correctly installed.\nPlease restart Logisim-evolution for the changes to take effect.",
-										"Update succeeded",
-										JOptionPane.INFORMATION_MESSAGE);
-						return (true);
-					} else {
-						JOptionPane
+								"Update succeeded",
+								JOptionPane.INFORMATION_MESSAGE);
+				return (true);
+			} else {
+				JOptionPane
 						.showMessageDialog(
 								null,
 								"An error occurred while updating to the new Logisim-evolution version.\nPlease check the console for log information.",
 								"Update failed", JOptionPane.ERROR_MESSAGE);
-						return (false);
-					}
+				return (false);
+			}
 		}
 		return (false);
 	}
@@ -714,7 +717,7 @@ public class Startup {
 		int count = templLoader.getBuiltin().getLibrary("Base").getTools()
 				.size()
 				+ templLoader.getBuiltin().getLibrary("Gates").getTools()
-				.size();
+						.size();
 		if (count < 0) {
 			// this will never happen, but the optimizer doesn't know that...
 			logger.error("FATAL ERROR - no components"); // OK
@@ -732,7 +735,7 @@ public class Startup {
 		WindowManagers.initialize();
 		if (MacCompatibility.isSwingUsingScreenMenuBar()) {
 			MacCompatibility
-			.setFramelessJMenuBar(new LogisimMenuBar(null, null));
+					.setFramelessJMenuBar(new LogisimMenuBar(null, null));
 		} else {
 			new LogisimMenuBar(null, null);
 			// most of the time occupied here will be in loading menus, which
@@ -757,14 +760,17 @@ public class Startup {
 			for (File fileToOpen : filesToOpen) {
 				try {
 					if (testVector != null) {
-						Project proj = ProjectActions.doOpenNoWindow(monitor, fileToOpen);
+						Project proj = ProjectActions.doOpenNoWindow(monitor,
+								fileToOpen);
 						proj.doTestVector(testVector, circuitToTest);
 					} else {
-						ProjectActions.doOpen(monitor, fileToOpen, substitutions);
+						ProjectActions.doOpen(monitor, fileToOpen,
+								substitutions);
 					}
 					numOpened++;
 				} catch (LoadFailedException ex) {
-					logger.error("{} : {}", fileToOpen.getName(), ex.getMessage());
+					logger.error("{} : {}", fileToOpen.getName(),
+							ex.getMessage());
 				}
 				if (first) {
 					first = false;

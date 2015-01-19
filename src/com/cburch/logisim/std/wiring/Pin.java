@@ -218,7 +218,7 @@ public class Pin extends InstanceFactory {
 			if (ret == null || ret.equals("")) {
 				String type = attrs.type == EndData.INPUT_ONLY ? Strings
 						.get("pinInputName") : Strings.get("pinOutputName");
-						return type + state.getInstance().getLocation();
+				return type + state.getInstance().getLocation();
 			} else {
 				return ret;
 			}
@@ -258,8 +258,7 @@ public class Pin extends InstanceFactory {
 			}
 		}
 
-		private void handleBitPress(InstanceState state, int bit, MouseEvent e)
-		{
+		private void handleBitPress(InstanceState state, int bit, MouseEvent e) {
 			PinAttributes attrs = (PinAttributes) state.getAttributeSet();
 			if (!attrs.isInput()) {
 				return;
@@ -289,7 +288,8 @@ public class Pin extends InstanceFactory {
 			if (val == Value.FALSE) {
 				val = Value.TRUE;
 			} else if (val == Value.TRUE) {
-				val = attrs.threeState && attrs.pull == PULL_NONE ? Value.UNKNOWN : Value.FALSE;
+				val = attrs.threeState && attrs.pull == PULL_NONE ? Value.UNKNOWN
+						: Value.FALSE;
 			} else {
 				val = Value.FALSE;
 			}
@@ -363,7 +363,8 @@ public class Pin extends InstanceFactory {
 					attrs.threeState ? Value.UNKNOWN : Value.FALSE);
 		}
 		if (ret.foundValue.getWidth() != width.getWidth()) {
-			ret.foundValue = ret.foundValue.extendWidth(width.getWidth(), Value.UNKNOWN);
+			ret.foundValue = ret.foundValue.extendWidth(width.getWidth(),
+					Value.UNKNOWN);
 		}
 		return ret;
 	}
@@ -416,7 +417,7 @@ public class Pin extends InstanceFactory {
 		setFacingAttribute(StdAttr.FACING);
 		setKeyConfigurator(JoinedConfigurator.create(new BitWidthConfigurator(
 				StdAttr.WIDTH), new DirectionConfigurator(ATTR_LABEL_LOC,
-						KeyEvent.ALT_DOWN_MASK)));
+				KeyEvent.ALT_DOWN_MASK)));
 		setInstanceLogger(PinLogger.class);
 		setInstancePoker(PinPoker.class);
 	}
@@ -495,8 +496,7 @@ public class Pin extends InstanceFactory {
 	}
 
 	@Override
-	protected void instanceAttributeChanged(Instance instance, Attribute<?> attr)
-	{
+	protected void instanceAttributeChanged(Instance instance, Attribute<?> attr) {
 		if (attr == ATTR_TYPE) {
 			configurePorts(instance);
 		} else if (attr == StdAttr.WIDTH || attr == StdAttr.FACING
@@ -638,7 +638,8 @@ public class Pin extends InstanceFactory {
 				if (attrs.width.getWidth() == 1) {
 					g.setColor(Color.WHITE);
 					GraphicsUtil.drawCenteredText(g,
-							state.intendedValue.toDisplayString(), x + 11, y + 9);
+							state.intendedValue.toDisplayString(), x + 11,
+							y + 9);
 				}
 			} else {
 				Probe.paintValue(painter, state.intendedValue);
@@ -705,11 +706,13 @@ public class Pin extends InstanceFactory {
 				Value[] bits = value.getAll();
 				if (pull == PULL_UP) {
 					for (int i = 0; i < bits.length; i++) {
-						if (bits[i] != Value.FALSE) bits[i] = Value.TRUE;
+						if (bits[i] != Value.FALSE)
+							bits[i] = Value.TRUE;
 					}
 				} else if (pull == PULL_DOWN) {
 					for (int i = 0; i < bits.length; i++) {
-						if (bits[i] != Value.TRUE) bits[i] = Value.FALSE;
+						if (bits[i] != Value.TRUE)
+							bits[i] = Value.FALSE;
 					}
 				}
 				sendValue = Value.create(bits);

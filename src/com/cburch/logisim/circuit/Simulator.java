@@ -124,9 +124,9 @@ public class Simulator {
 								try {
 									exceptionEncountered = false;
 									propagator.propagate();
-								} catch (UnsupportedOperationException thr){
+								} catch (UnsupportedOperationException thr) {
 									exceptionEncountered = true;
-									setIsRunning(false);									
+									setIsRunning(false);
 								} catch (Exception thr) {
 									thr.printStackTrace();
 									exceptionEncountered = true;

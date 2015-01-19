@@ -199,6 +199,18 @@ public class Transistor extends InstanceFactory {
 	}
 
 	@Override
+	public Object getInstanceFeature(final Instance instance, Object key) {
+		if (key == WireRepair.class) {
+			return new WireRepair() {
+				public boolean shouldRepairWire(WireRepairData data) {
+					return true;
+				}
+			};
+		}
+		return super.getInstanceFeature(instance, key);
+	}
+
+	@Override
 	public Bounds getOffsetBounds(AttributeSet attrs) {
 		Direction facing = attrs.getValue(StdAttr.FACING);
 		Object gateLoc = attrs.getValue(Wiring.ATTR_GATE);
@@ -249,19 +261,6 @@ public class Transistor extends InstanceFactory {
 		state.setPort(OUTPUT, computeOutput(state), 1);
 	}
 
-	@Override
-	public Object getInstanceFeature(final Instance instance, Object key)
-	{
-		if (key == WireRepair.class) {
-			return new WireRepair() {
-				public boolean shouldRepairWire(WireRepairData data) {
-					return true;
-				}
-			};
-		}
-		return super.getInstanceFeature(instance, key);
-	}
-	
 	private void updatePorts(Instance instance) {
 		Direction facing = instance.getAttributeValue(StdAttr.FACING);
 		int dx = 0;

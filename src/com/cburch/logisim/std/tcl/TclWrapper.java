@@ -56,7 +56,7 @@ import com.cburch.logisim.tools.MessageBox;
  * @author christian.mueller@heig-vd.ch
  */
 public class TclWrapper {
-	
+
 	public enum TclWrapperState {
 		STOPPED, STARTING, RUNNING
 	}
@@ -116,7 +116,8 @@ public class TclWrapper {
 						Paths.get(TCL_PATH + "tcl_wrapper.tcl"),
 						StandardCopyOption.REPLACE_EXISTING);
 			} catch (IOException e) {
-				logger.error("Cannot copy TCL wrapper file : {}", e.getMessage());
+				logger.error("Cannot copy TCL wrapper file : {}",
+						e.getMessage());
 				e.printStackTrace();
 			}
 			fileExists = true;
@@ -147,7 +148,8 @@ public class TclWrapper {
 			process = builder.start();
 		} catch (IOException e) {
 			e.printStackTrace();
-			logger.error("Cannot run TCL wrapper for TCL console : {}", e.getMessage());
+			logger.error("Cannot run TCL wrapper for TCL console : {}",
+					e.getMessage());
 
 			return;
 		}
@@ -175,19 +177,22 @@ public class TclWrapper {
 									Scanner sc = new Scanner(
 											new InputStreamReader(
 													process.getInputStream()));
-									// Commented out because it shouldn't be visible to the user
+									// Commented out because it shouldn't be
+									// visible to the user
 									// Debug only??
-/*									String nextLine;
-									while (sc.hasNextLine()) {
-										nextLine = sc.nextLine();
-										if (nextLine.length() > 0)
-											System.out.println(nextLine);
-										
-										
-										// vhdlSimulator.getCircuitState().getProject().getFrame().getVhdlSimulatorConsole().append(nextLine
-										// + "\n");
-									}
-*/
+									/*
+									 * String nextLine; while (sc.hasNextLine())
+									 * { nextLine = sc.nextLine(); if
+									 * (nextLine.length() > 0)
+									 * System.out.println(nextLine);
+									 * 
+									 * 
+									 * //
+									 * vhdlSimulator.getCircuitState().getProject
+									 * (
+									 * ).getFrame().getVhdlSimulatorConsole().append
+									 * (nextLine // + "\n"); }
+									 */
 									sc.close();
 									stop();
 								}

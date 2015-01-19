@@ -43,7 +43,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ZipClassLoader extends ClassLoader {
-	
+
 	private static class Request {
 		int action;
 		String resource;
@@ -99,7 +99,7 @@ public class ZipClassLoader extends ClassLoader {
 			return act + ":" + resource;
 		}
 	}
-	
+
 	private class WorkThread extends Thread {
 		private LinkedList<Request> requests = new LinkedList<Request>();
 		private ZipFile zipFile = null;
@@ -213,8 +213,7 @@ public class ZipClassLoader extends ClassLoader {
 						request.ensureDone();
 					}
 					if (DEBUG >= 2)
-						logger.debug("processed: "
-								+ request.getResponse()); // OK
+						logger.debug("processed: " + request.getResponse()); // OK
 				}
 			} catch (Exception t) {
 				if (DEBUG >= 3) {

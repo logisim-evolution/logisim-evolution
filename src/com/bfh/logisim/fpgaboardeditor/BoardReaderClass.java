@@ -55,9 +55,10 @@ import org.w3c.dom.NodeList;
 import com.cburch.logisim.proj.Projects;
 
 public class BoardReaderClass {
-	
-	final static Logger logger = LoggerFactory.getLogger(BoardReaderClass.class);
-	
+
+	final static Logger logger = LoggerFactory
+			.getLogger(BoardReaderClass.class);
+
 	private String myfilename;
 	private DocumentBuilderFactory factory;
 	private DocumentBuilder parser;
@@ -187,7 +188,9 @@ public class BoardReaderClass {
 			ProcessComponentList(CompList, result);
 			return result;
 		} catch (Exception e) {
-			logger.error("Exceptions not handled yet in GetBoardInformation(), but got an exception: {}", e.getMessage());
+			logger.error(
+					"Exceptions not handled yet in GetBoardInformation(), but got an exception: {}",
+					e.getMessage());
 			/* TODO: handle exceptions */
 			return null;
 		}

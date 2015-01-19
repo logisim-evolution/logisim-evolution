@@ -55,8 +55,9 @@ import com.cburch.logisim.std.wiring.Pin;
 
 public class MappableResourcesContainer {
 
-	final static Logger logger = LoggerFactory.getLogger(MappableResourcesContainer.class);
-	
+	final static Logger logger = LoggerFactory
+			.getLogger(MappableResourcesContainer.class);
+
 	private Map<ArrayList<String>, NetlistComponent> myMappableResources;
 	public String currentBoardName;
 	private BoardInformation currentUsedBoard;

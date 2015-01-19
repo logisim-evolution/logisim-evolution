@@ -215,7 +215,7 @@ public class AttrTable extends JPanel implements LocaleListener {
 				} else {
 					editor.addFocusListener(this);
 				}
-				
+
 				currentRow = row;
 				currentEditor = editor;
 				return editor;
@@ -277,7 +277,7 @@ public class AttrTable extends JPanel implements LocaleListener {
 			// Hide the JFileChooser buttons, since we already have the
 			// MyDialog ones
 			if (input instanceof JFileChooser)
-				((JFileChooser)input).setControlButtonsAreShown(false);
+				((JFileChooser) input).setControlButtonsAreShown(false);
 			p.add((JComponent) input, BorderLayout.CENTER);
 			getContentPane().add(p, BorderLayout.CENTER);
 
@@ -370,13 +370,13 @@ public class AttrTable extends JPanel implements LocaleListener {
 				return;
 			}
 			int row = e.getRowIndex();
-			
+
 			TableCellEditor ed = table.getCellEditor();
 			if (row >= 0 && ed instanceof CellEditor
 					&& attrModel.getRow(row) == ((CellEditor) ed).currentRow) {
 				ed.cancelCellEditing();
 			}
-			
+
 			fireTableChanged();
 		}
 

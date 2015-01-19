@@ -52,7 +52,7 @@ import com.cburch.logisim.util.StringGetter;
  * no-arguments constructor.
  */
 public class FactoryDescription {
-	
+
 	public static List<Tool> getTools(Class<? extends Library> base,
 			FactoryDescription[] descriptions) {
 		Tool[] tools = new Tool[descriptions.length];
@@ -61,8 +61,9 @@ public class FactoryDescription {
 		}
 		return Arrays.asList(tools);
 	}
-	
-	final static Logger logger = LoggerFactory.getLogger(FactoryDescription.class);
+
+	final static Logger logger = LoggerFactory
+			.getLogger(FactoryDescription.class);
 
 	private String name;
 	private StringGetter displayName;

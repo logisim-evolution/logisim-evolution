@@ -40,7 +40,7 @@ import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.instance.StdAttr;
 
 class CounterAttributes extends AbstractAttributeSet {
-	
+
 	private AttributeSet base;
 
 	public CounterAttributes() {

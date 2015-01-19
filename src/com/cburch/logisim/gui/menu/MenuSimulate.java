@@ -192,7 +192,7 @@ public class MenuSimulate extends Menu {
 				} else {
 					assWin.toFront();
 				}
-			} else if(src == test) {
+			} else if (src == test) {
 				TestFrame frame = menubar.getProject().getTestFrame(true);
 				frame.setVisible(true);
 			}

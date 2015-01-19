@@ -43,39 +43,27 @@ public class ConcurrentHashQueue<E> {
 
 	private static final int DONE_MARKER = Integer.MIN_VALUE / 2;
 
-	private ConcurrentHashMap<E,Boolean> members;
+	private ConcurrentHashMap<E, Boolean> members;
 	private ConcurrentLinkedQueue<E> queue;
 	private AtomicInteger removeCount;
 
-	public ConcurrentHashQueue()
-	{
-		members = new ConcurrentHashMap<E,Boolean>();
+	public ConcurrentHashQueue() {
+		members = new ConcurrentHashMap<E, Boolean>();
 		queue = new ConcurrentLinkedQueue<E>();
 		removeCount = new AtomicInteger(0);
 	}
 
-	public void setDone()
-	{
-		int num = removeCount.getAndSet(DONE_MARKER);
-		if (num >= 0) {
-			for (int i = 0; i < num; i++) {
-				queue.add(null);
-			}
-		}
-	}
-
-	public void add(E value)
-	{
+	public void add(E value) {
 		if (value == null) {
-			throw new IllegalArgumentException("Cannot add null into ConcurrentHashQueue");
+			throw new IllegalArgumentException(
+					"Cannot add null into ConcurrentHashQueue");
 		}
 		if (members.putIfAbsent(value, Boolean.TRUE) == null) {
 			queue.add(value);
 		}
 	}
 
-	public E remove()
-	{
+	public E remove() {
 		int val = removeCount.getAndIncrement();
 		if (val < 0) {
 			removeCount.set(DONE_MARKER);
@@ -88,6 +76,15 @@ public class ConcurrentHashQueue<E> {
 				removeCount.getAndDecrement();
 				members.remove(ret);
 				return ret;
+			}
+		}
+	}
+
+	public void setDone() {
+		int num = removeCount.getAndSet(DONE_MARKER);
+		if (num >= 0) {
+			for (int i = 0; i < num; i++) {
+				queue.add(null);
 			}
 		}
 	}

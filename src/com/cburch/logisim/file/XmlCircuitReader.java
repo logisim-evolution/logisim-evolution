@@ -52,20 +52,23 @@ import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.tools.Tool;
 
 public class XmlCircuitReader extends CircuitTransaction {
-	
+
 	/**
-	 * Get a circuit's component from a read XML file. If the component has a non-null
-	 * "trackercomp" field, it means that it is tracked, therefore it is skipped in the
-	 * non-tracked version to avoid errors.
-	 * @param elt XML element to parse
-	 * @param reader XML file reader
+	 * Get a circuit's component from a read XML file. If the component has a
+	 * non-null "trackercomp" field, it means that it is tracked, therefore it
+	 * is skipped in the non-tracked version to avoid errors.
+	 * 
+	 * @param elt
+	 *            XML element to parse
+	 * @param reader
+	 *            XML file reader
 	 * @return the component built from its XML description
 	 * @throws XmlReaderException
 	 */
 	static Component getComponent(Element elt, XmlReader.ReadContext reader)
 			throws XmlReaderException {
 		if (elt.getAttribute("trackercomp") != "" && !Main.VERSION.hasTracker()) {
-			return(null);
+			return (null);
 		}
 
 		// Determine the factory that creates this element
@@ -81,12 +84,11 @@ public class XmlCircuitReader extends CircuitTransaction {
 					"no-lib"));
 		}
 
-
 		Tool tool = lib.getTool(name);
 		if (tool == null || !(tool instanceof AddTool)) {
 			if (libName == null || libName.equals("")) {
-				throw new XmlReaderException(Strings.get(
-						"compUnknownError", name));
+				throw new XmlReaderException(Strings.get("compUnknownError",
+						name));
 			} else {
 				throw new XmlReaderException(Strings.get("compAbsentError",
 						name, libName));
@@ -108,8 +110,8 @@ public class XmlCircuitReader extends CircuitTransaction {
 				Location loc = Location.parse(loc_str);
 				return source.createComponent(loc, attrs);
 			} catch (NumberFormatException e) {
-				throw new XmlReaderException(Strings.get(
-						"compLocInvalidError", source.getName(), loc_str));
+				throw new XmlReaderException(Strings.get("compLocInvalidError",
+						source.getName(), loc_str));
 			}
 		}
 	}

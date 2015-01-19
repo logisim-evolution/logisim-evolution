@@ -38,9 +38,10 @@ import com.cburch.logisim.data.Value;
 import com.cburch.logisim.gui.log.Loggable;
 
 class InstanceLoggerAdapter implements Loggable {
-	
-	final static Logger loggerS = LoggerFactory.getLogger(InstanceLoggerAdapter.class);
-	
+
+	final static Logger loggerS = LoggerFactory
+			.getLogger(InstanceLoggerAdapter.class);
+
 	private InstanceComponent comp;
 	private InstanceLogger logger;
 	private InstanceStateImpl state;
@@ -86,9 +87,10 @@ class InstanceLoggerAdapter implements Loggable {
 	private void handleError(Throwable t,
 			Class<? extends InstanceLogger> loggerClass) {
 		String className = loggerClass.getName();
-		loggerS.error("Error while instantiating logger {}: {}", className, t.getClass().getName());
+		loggerS.error("Error while instantiating logger {}: {}", className, t
+				.getClass().getName());
 		String msg = t.getMessage();
-		if (msg != null)			
+		if (msg != null)
 			loggerS.error("  ({})", msg); // OK
 	}
 

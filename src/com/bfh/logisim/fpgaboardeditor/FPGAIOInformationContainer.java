@@ -64,7 +64,7 @@ import com.cburch.logisim.std.io.ReptarLocalBus;
 import com.cburch.logisim.std.io.SevenSegment;
 
 public class FPGAIOInformationContainer {
-	
+
 	public static enum IOComponentTypes {
 
 		LED, Button, Pin, SevenSegment, DIPSwitch, RGBLED, PortIO, LocalBus, Bus, Unknown;
@@ -159,7 +159,7 @@ public class FPGAIOInformationContainer {
 			nbSwitch = nb;
 		}
 	}
-	
+
 	/*
 	 * Bus is just a placeholder for a multi-bit pin. It should not be used for
 	 * mappable components
@@ -173,7 +173,8 @@ public class FPGAIOInformationContainer {
 		return result;
 	};
 
-	final static Logger logger = LoggerFactory.getLogger(FPGAIOInformationContainer.class);
+	final static Logger logger = LoggerFactory
+			.getLogger(FPGAIOInformationContainer.class);
 
 	private IOComponentTypes MyType;
 	private long MyIdentifier;
@@ -417,7 +418,9 @@ public class FPGAIOInformationContainer {
 			return result;
 		} catch (Exception e) {
 			/* TODO: handle exceptions */
-			logger.error("Exceptions not handled yet in GetDocumentElement(), but got an exception: {}", e.getMessage());
+			logger.error(
+					"Exceptions not handled yet in GetDocumentElement(), but got an exception: {}",
+					e.getMessage());
 		}
 		return null;
 	}

@@ -41,42 +41,19 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 public class UnionFind<E extends UnionFindElement<E>> implements Iterable<E> {
-	
-	private HashMap<E,Integer> sizes;
-	
-	public UnionFind(Collection<E> values)
-	{
-		this.sizes = new HashMap<E,Integer>();
+
+	private HashMap<E, Integer> sizes;
+
+	public UnionFind(Collection<E> values) {
+		this.sizes = new HashMap<E, Integer>();
 		Integer one = Integer.valueOf(1);
 		for (E elt : values) {
 			elt.setUnionFindParent(elt);
 			sizes.put(elt, one);
 		}
 	}
-	
-	public int getRepresentativeCount()
-	{
-		return sizes.size();
-	}
-	
-	public int getSetSize(E value)
-	{
-		E repr = findRepresentative(value);
-		return sizes.get(repr);
-	}
-	
-	public Iterator<E> iterator()
-	{
-		return sizes.keySet().iterator();
-	}
-	
-	public Collection<E> getRepresentatives()
-	{
-		return Collections.unmodifiableSet(sizes.keySet());
-	}
-	
-	public E findRepresentative(E value)
-	{
+
+	public E findRepresentative(E value) {
 		E parent = value.getUnionFindParent();
 		if (parent == value) {
 			return value;
@@ -86,9 +63,25 @@ public class UnionFind<E extends UnionFindElement<E>> implements Iterable<E> {
 			return parent;
 		}
 	}
-	
-	public void union(E value0, E value1)
-	{
+
+	public int getRepresentativeCount() {
+		return sizes.size();
+	}
+
+	public Collection<E> getRepresentatives() {
+		return Collections.unmodifiableSet(sizes.keySet());
+	}
+
+	public int getSetSize(E value) {
+		E repr = findRepresentative(value);
+		return sizes.get(repr);
+	}
+
+	public Iterator<E> iterator() {
+		return sizes.keySet().iterator();
+	}
+
+	public void union(E value0, E value1) {
 		E repr0 = findRepresentative(value0);
 		E repr1 = findRepresentative(value1);
 		if (repr0 != repr1) {
@@ -107,5 +100,5 @@ public class UnionFind<E extends UnionFindElement<E>> implements Iterable<E> {
 			}
 		}
 	}
-	
+
 }

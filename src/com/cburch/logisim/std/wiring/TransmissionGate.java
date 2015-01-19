@@ -116,19 +116,6 @@ public class TransmissionGate extends InstanceFactory {
 		}
 	}
 
-	@Override
-	public Object getInstanceFeature(final Instance instance, Object key)
-	{
-		if (key == WireRepair.class) {
-			return new WireRepair() {
-				public boolean shouldRepairWire(WireRepairData data) {
-					return true;
-				}
-			};
-		}
-		return super.getInstanceFeature(instance, key);
-	}
-
 	private void drawInstance(InstancePainter painter, boolean isGhost) {
 		Bounds bds = painter.getBounds();
 		Object powerLoc = painter.getAttributeValue(Wiring.ATTR_GATE);
@@ -190,6 +177,18 @@ public class TransmissionGate extends InstanceFactory {
 		}
 
 		g.dispose();
+	}
+
+	@Override
+	public Object getInstanceFeature(final Instance instance, Object key) {
+		if (key == WireRepair.class) {
+			return new WireRepair() {
+				public boolean shouldRepairWire(WireRepairData data) {
+					return true;
+				}
+			};
+		}
+		return super.getInstanceFeature(instance, key);
 	}
 
 	@Override

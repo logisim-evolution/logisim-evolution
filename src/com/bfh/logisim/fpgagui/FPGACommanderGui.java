@@ -897,7 +897,7 @@ public class FPGACommanderGui implements ActionListener {
 		} else {
 			DRCResult = root.getNetList().DesignRuleCheckResult(MyReporter,
 					HDLType.getText(), true,
-					MyBoardInformation.fpga.getVendor(),SheetNames);
+					MyBoardInformation.fpga.getVendor(), SheetNames);
 		}
 		return (DRCResult == Netlist.DRC_PASSED);
 	}

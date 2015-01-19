@@ -129,12 +129,17 @@ class AboutCredits extends JComponent {
 
 		lines = new ArrayList<CreditsLine>();
 		linesHeight = 0; // computed in paintComponent
-/*		lines.add(new CreditsLine(1, "github.com/reds-heig/logisim-evolution"));
-		initialLines = lines.size();*/
+		/*
+		 * lines.add(new CreditsLine(1,
+		 * "github.com/reds-heig/logisim-evolution")); initialLines =
+		 * lines.size();
+		 */
 		lines.add(new CreditsLine(0, Strings.get("creditsRoleFork")));
-		lines.add(new CreditsLine(1, "Haute \u00C9cole Sp\u00E9cialis\u00E9e Bernoise"));
+		lines.add(new CreditsLine(1,
+				"Haute \u00C9cole Sp\u00E9cialis\u00E9e Bernoise"));
 		lines.add(new CreditsLine(2, "http://www.bfh.ch"));
-		lines.add(new CreditsLine(1, "Haute \u00C9cole du paysage, d'ing\u00E9nierie"));
+		lines.add(new CreditsLine(1,
+				"Haute \u00C9cole du paysage, d'ing\u00E9nierie"));
 		lines.add(new CreditsLine(1, "et d'architecture de Gen\u00E8ve"));
 		lines.add(new CreditsLine(2, "http://hepia.hesge.ch"));
 		lines.add(new CreditsLine(1, "Haute \u00C9cole d'Ing\u00E9nierie"));
@@ -145,8 +150,10 @@ class AboutCredits extends JComponent {
 		lines.add(new CreditsLine(1, "et de Gestion du Canton de Vaud"));
 		lines.add(new CreditsLine(2, "http://www.heig-vd.ch"));
 
-		/* If you fork Logisim, feel free to change the above lines, but
-		 * please do not change these last four lines! */
+		/*
+		 * If you fork Logisim, feel free to change the above lines, but please
+		 * do not change these last four lines!
+		 */
 		lines.add(new CreditsLine(0, Strings.get("creditsRoleOriginal"),
 				hendrixLogo, HENDRIX_WIDTH));
 		lines.add(new CreditsLine(1, "Carl Burch"));

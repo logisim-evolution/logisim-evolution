@@ -59,11 +59,11 @@ import javax.swing.table.AbstractTableModel;
 import com.cburch.logisim.file.MouseMappings;
 import com.cburch.logisim.gui.generic.AttrTable;
 import com.cburch.logisim.gui.generic.AttrTableModel;
-import com.cburch.logisim.gui.main.AttrTableToolModel;
 import com.cburch.logisim.gui.generic.ProjectExplorer;
 import com.cburch.logisim.gui.generic.ProjectExplorerEvent;
 import com.cburch.logisim.gui.generic.ProjectExplorerListener;
 import com.cburch.logisim.gui.generic.ProjectExplorerToolNode;
+import com.cburch.logisim.gui.main.AttrTableToolModel;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.tools.AddTool;
 import com.cburch.logisim.tools.Tool;
@@ -234,7 +234,8 @@ class MouseOptions extends OptionsPanel {
 		public void mouseReleased(MouseEvent e) {
 		}
 
-		public void moveRequested(ProjectExplorerEvent event, AddTool dragged, AddTool target) {
+		public void moveRequested(ProjectExplorerEvent event, AddTool dragged,
+				AddTool target) {
 		}
 
 		//

@@ -43,8 +43,6 @@ import com.cburch.logisim.proj.ProjectEvent;
 import com.cburch.logisim.proj.ProjectListener;
 
 class ProjectExplorerModel extends DefaultTreeModel implements ProjectListener {
-	
-	private static final long serialVersionUID = 1L;
 
 	static abstract class Node<T> extends DefaultMutableTreeNode {
 
@@ -52,122 +50,115 @@ class ProjectExplorerModel extends DefaultTreeModel implements ProjectListener {
 		ProjectExplorerModel model;
 		int oldIndex;
 		int newIndex;
-		
-		Node(ProjectExplorerModel model, T userObject)
-		{
+
+		Node(ProjectExplorerModel model, T userObject) {
 			super(userObject);
 			this.model = model;
 		}
-		
-		ProjectExplorerModel getModel()
-		{
-			return model;
-		}
-		
+
 		abstract Node<T> create(T userObject);
-		
-		public T getValue()
-		{
-			@SuppressWarnings("unchecked") T val = (T) getUserObject();
-			return val;
-		}
-		
+
 		abstract void decommission();
-		
-		void fireNodeChanged()
-		{
+
+		void fireNodeChanged() {
 			Node<?> parent = (Node<?>) this.getParent();
-			
+
 			if (parent == null) {
 				model.fireTreeStructureChanged(this, this.getPath(), null, null);
 			} else {
 				int[] indices = new int[] { parent.getIndex(this) };
 				Object[] items = new Object[] { this.getUserObject() };
-				model.fireTreeNodesChanged(this, parent.getPath(), indices, items);
+				model.fireTreeNodesChanged(this, parent.getPath(), indices,
+						items);
 			}
 		}
-		
-		void fireNodesChanged(int[] indices, Node<?>[] children)
-		{
+
+		void fireNodesChanged(int[] indices, Node<?>[] children) {
 			model.fireTreeNodesChanged(model, this.getPath(), indices, children);
 		}
-		
-		void fireNodesInserted(int[] indices, Node<?>[] children)
-		{
-			model.fireTreeNodesInserted(model, this.getPath(), indices, children);
+
+		void fireNodesInserted(int[] indices, Node<?>[] children) {
+			model.fireTreeNodesInserted(model, this.getPath(), indices,
+					children);
 		}
-		
-		void fireNodesRemoved(int[] indices, Node<?>[] children)
-		{
+
+		void fireNodesRemoved(int[] indices, Node<?>[] children) {
 			model.fireTreeNodesRemoved(model, this.getPath(), indices, children);
 		}
 
-		void fireStructureChanged()
-		{
+		void fireStructureChanged() {
 			model.fireStructureChanged();
 		}
-		
+
+		ProjectExplorerModel getModel() {
+			return model;
+		}
+
+		public T getValue() {
+			@SuppressWarnings("unchecked")
+			T val = (T) getUserObject();
+			return val;
+		}
+
 	}
-	
+
+	private static final long serialVersionUID = 1L;
+
 	private Project proj;
-	
-	ProjectExplorerModel(Project proj)
-	{
+
+	ProjectExplorerModel(Project proj) {
 		super(null);
 		this.proj = proj;
 		setRoot(new ProjectExplorerLibraryNode(this, proj.getLogisimFile()));
 		proj.addProjectListener(this);
 	}
-	
-	public void setProject(Project value)
-	{
-		Project old = proj;
-		
-		if (old != null) {
-			old.removeProjectListener(this);
-		}
-		
-		setLogisimFile(null);
-		proj = value;
-		
-		if (value != null) {
-			value.addProjectListener(this);
-			setLogisimFile(value.getLogisimFile());
-		}
-	}
-	
-	private void setLogisimFile(LogisimFile file)
-	{
-		Node<?> oldRoot = (Node<?>) getRoot();
-		oldRoot.decommission();
-		
-		if (file == null) {
-			setRoot(null);
-		} else {
-			setRoot(new ProjectExplorerLibraryNode(this, file));
-		}
-		
-		fireStructureChanged();
-	}
-	
-	void fireStructureChanged()
-	{
+
+	void fireStructureChanged() {
 		Node<?> root = (Node<?>) getRoot();
 		if (root != null) {
-			this.fireTreeStructureChanged(this, root.getUserObjectPath(), null, null);
+			this.fireTreeStructureChanged(this, root.getUserObjectPath(), null,
+					null);
 		} else {
 			this.fireTreeStructureChanged(this, null, null, null);
 		}
 	}
 
 	// ProjectListener methods
-	public void projectChanged(ProjectEvent event)
-	{
+	public void projectChanged(ProjectEvent event) {
 		int act = event.getAction();
-		
+
 		if (act == ProjectEvent.ACTION_SET_FILE) {
 			setLogisimFile(proj.getLogisimFile());
 		}
 	}
-	
+
+	private void setLogisimFile(LogisimFile file) {
+		Node<?> oldRoot = (Node<?>) getRoot();
+		oldRoot.decommission();
+
+		if (file == null) {
+			setRoot(null);
+		} else {
+			setRoot(new ProjectExplorerLibraryNode(this, file));
+		}
+
+		fireStructureChanged();
+	}
+
+	public void setProject(Project value) {
+		Project old = proj;
+
+		if (old != null) {
+			old.removeProjectListener(this);
+		}
+
+		setLogisimFile(null);
+		proj = value;
+
+		if (value != null) {
+			value.addProjectListener(this);
+			setLogisimFile(value.getLogisimFile());
+		}
+	}
+
 }
