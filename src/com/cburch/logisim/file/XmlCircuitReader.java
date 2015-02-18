@@ -35,8 +35,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
 import com.cburch.draw.model.AbstractCanvasObject;
@@ -54,9 +52,6 @@ import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.tools.Tool;
 
 public class XmlCircuitReader extends CircuitTransaction {
-	
-	public static final Logger logger = LoggerFactory
-			.getLogger(XmlCircuitReader.class);
 
 	/**
 	 * Get a circuit's component from a read XML file. If the component has a
@@ -75,13 +70,13 @@ public class XmlCircuitReader extends CircuitTransaction {
 		if (elt.getAttribute("trackercomp") != "" && !Main.VERSION.hasTracker()) {
 			return (null);
 		}
-		
+
 		// Determine the factory that creates this element
 		String name = elt.getAttribute("name");
 		if (name == null || name.equals("")) {
 			throw new XmlReaderException(Strings.get("compNameMissingError"));
 		}
-		
+
 		String libName = elt.getAttribute("lib");
 		Library lib = reader.findLibrary(libName);
 		if (lib == null) {
@@ -99,13 +94,13 @@ public class XmlCircuitReader extends CircuitTransaction {
 						name, libName));
 			}
 		}
-		
 		ComponentFactory source = ((AddTool) tool).getFactory();
 
 		// Determine attributes
-		String loc_str = elt.getAttribute("loc");		
+		String loc_str = elt.getAttribute("loc");
 		AttributeSet attrs = source.createAttributeSet();
-		reader.initAttributeSet(elt, attrs, source);		
+		reader.initAttributeSet(elt, attrs, source);
+
 		// Create component if location known
 		if (loc_str == null || loc_str.equals("")) {
 			throw new XmlReaderException(Strings.get("compLocMissingError",
@@ -178,13 +173,12 @@ public class XmlCircuitReader extends CircuitTransaction {
 			if (sub_elt_name.equals("comp")) {
 				try {
 					Component comp = knownComponents.get(sub_elt);
-					if (comp == null) {						
+					if (comp == null) {
 						comp = getComponent(sub_elt, reader);
 					}
-					if (comp != null) {						
+					if (comp != null) {
 						mutator.add(dest, comp);
 					}
-					
 				} catch (XmlReaderException e) {
 					reader.addErrors(e, circData.circuit.getName() + "."
 							+ toComponentString(sub_elt));

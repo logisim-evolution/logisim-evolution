@@ -193,6 +193,13 @@ public class RightPanel extends ChronoPanelTemplate {
 		return mChronoFrame.getVisibleSignalsWidth();
 	}
 
+    public int getTotalWidth() {
+        return (mChronoFrame.getNbrOfTick() * tickWidth);
+    }
+
+    public int getTotalHeight() {
+        return globalHeight;
+    }
 	/**
 	 * Highlight a signal in bold
 	 */
@@ -201,6 +208,10 @@ public class RightPanel extends ChronoPanelTemplate {
 			sDraw.highlight(sDraw.getSignalData() == signalToHighlight);
 		}
 	}
+
+    public ArrayList<SignalDraw> getAllSdraws() {
+        return allSignalDraw;
+    }
 
 	/**
 	 * Repaint the cursor and all signalDraw

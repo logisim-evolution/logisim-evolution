@@ -71,12 +71,13 @@ import com.hepia.logisim.chronodata.ChronoModelEventHandler;
 import com.hepia.logisim.chronodata.NoSysclkException;
 import com.hepia.logisim.chronodata.SignalDataBus;
 import com.hepia.logisim.chronodata.TimelineParam;
-
+import java.io.File;
 /**
  * Main chronogram JFrame Creates the chronogram
  */
 public class ChronoFrame extends LFrame implements KeyListener, ActionListener,
 		WindowListener {
+ 		JFileChooser fc;
 
 	/**
 	 * Listener to the button, the scrollbars, splitPane divider
@@ -105,12 +106,26 @@ public class ChronoFrame extends LFrame implements KeyListener, ActionListener,
 
 				// export a chronogram to a file
 			} else if ("export".equals(e.getActionCommand())) {
-				final JFileChooser fc = new JFileChooser();
-				int returnVal = fc.showSaveDialog(chronoFrame);
-				if (returnVal == JFileChooser.APPROVE_OPTION) {
-					chronoFrame.exportFile(fc.getSelectedFile()
-							.getAbsolutePath());
+                final JFileChooser fc = new JFileChooser();
+                int returnVal = fc.showSaveDialog(chronoFrame);
+                if (returnVal == JFileChooser.APPROVE_OPTION) {
+                    chronoFrame.exportFile(fc.getSelectedFile().getAbsolutePath());
+                }
+
+            }
+            else if ("exportImg".equals(e.getActionCommand())) {
+                fc = new JFileChooser();
+                int returnVal = fc.showSaveDialog(ChronoFrame.this);
+                if (returnVal == JFileChooser.APPROVE_OPTION) {
+                    File file = fc.getSelectedFile();
+
+                    //add .png to the filename if the user forgot
+                    if (!fc.getSelectedFile().getAbsolutePath().endsWith(".png")) {
+                        file = new File(fc.getSelectedFile() + ".png");
+                    }
+                    exportImage(file);
 				}
+
 			} else if ("play".equals(e.getActionCommand())) {
 				if (simulator.isRunning()) {
 					((JButton) e.getSource()).setIcon(Icons
@@ -137,6 +152,7 @@ public class ChronoFrame extends LFrame implements KeyListener, ActionListener,
 				tickMain();
 			}
 		}
+	
 
 		/**
 		 * rightScroll horizontal movement
@@ -160,6 +176,7 @@ public class ChronoFrame extends LFrame implements KeyListener, ActionListener,
 	private JPanel topBar;
 	private JButton chooseFileButton;
 	private JButton exportDataInFile;
+    private JButton exportDataToImage;
 	private JLabel statusLabel;
 	// split pane
 	private RightPanel rightPanel;
@@ -262,7 +279,7 @@ public class ChronoFrame extends LFrame implements KeyListener, ActionListener,
 		winMenuBar.add(windowMenu);
 		winMenuBar.setFocusable(false);
 		setJMenuBar(winMenuBar);
-		setAlwaysOnTop(true);
+		//setAlwaysOnTop(true);
 
 		// top bar
 		Dimension buttonSize = new Dimension(150, 25);
@@ -282,6 +299,12 @@ public class ChronoFrame extends LFrame implements KeyListener, ActionListener,
 		exportDataInFile.addActionListener(myListener);
 		exportDataInFile.setPreferredSize(buttonSize);
 		exportDataInFile.setFocusable(false);
+
+        exportDataToImage = new JButton(Strings.get("Export as image"));
+        exportDataToImage.setActionCommand("exportImg");
+        exportDataToImage.addActionListener(myListener);
+        exportDataToImage.setPreferredSize(buttonSize);
+        exportDataToImage.setFocusable(false);
 
 		// Toolbar
 		JToolBar bar = new JToolBar();
@@ -337,6 +360,7 @@ public class ChronoFrame extends LFrame implements KeyListener, ActionListener,
 		statusLabel = new JLabel();
 		topBar.add(chooseFileButton);
 		topBar.add(exportDataInFile);
+		topBar.add(exportDataToImage);
 		topBar.add(new JLabel(Strings.get("SimStatusName")));
 		topBar.add(statusLabel);
 		mainPanel.add(BorderLayout.SOUTH, topBar);
@@ -377,6 +401,10 @@ public class ChronoFrame extends LFrame implements KeyListener, ActionListener,
 	public void exportFile(String file) {
 		ChronoDataWriter.export(file, timelineParam, chronogramData);
 	}
+    public void exportImage(File file) {
+        ImageExporter ie = new ImageExporter(this, chronogramData, this.getCommonPanelParam().getHeaderHeight());
+        ie.createImage(file);
+    }
 
 	/**
 	 * Fill the splitPane with the two panels (SignalName and SignalDraw)

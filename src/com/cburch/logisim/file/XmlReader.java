@@ -139,8 +139,8 @@ class XmlReader {
 							String dirPath = "";
 							if (srcFilePath != null)
 								dirPath = srcFilePath
-								.substring(0, srcFilePath
-										.lastIndexOf(File.separator));
+										.substring(0, srcFilePath
+												.lastIndexOf(File.separator));
 							Path tmp = Paths.get(dirPath, attrVal);
 							attrVal = tmp.toString();
 						}
@@ -168,7 +168,6 @@ class XmlReader {
 				Attribute<Object> attr = (Attribute<Object>) attrList.get(i);
 				String attrName = attr.getName();
 				String attrVal = attrsDefined.get(attrName);
-
 				if (attrVal == null) {
 					if (setDefaults) {
 						Object val = defaults.getDefaultAttributeValue(attr,
@@ -277,7 +276,7 @@ class XmlReader {
 						addError(
 								Strings.get("fileAppearanceNotFound",
 										sub.getTagName()),
-										context + "." + sub.getTagName());
+								context + "." + sub.getTagName());
 					} else {
 						shapes.add(m);
 					}
@@ -360,22 +359,22 @@ class XmlReader {
 			// circuits...
 			if (sourceVersion.compareTo(LogisimVersion.get(2, 7, 2)) < 0) {
 				JOptionPane
-				.showMessageDialog(
-						null,
-						"You are opening a file created with original Logisim code.\n"
-								+ "You might encounter some problems in the execution, since some components evolved since then.\n"
-								+ "Moreover, labels will be converted to match VHDL limitations for variable names.",
+						.showMessageDialog(
+								null,
+								"You are opening a file created with original Logisim code.\n"
+										+ "You might encounter some problems in the execution, since some components evolved since then.\n"
+										+ "Moreover, labels will be converted to match VHDL limitations for variable names.",
 								"Old file format -- compatibility mode",
 								JOptionPane.WARNING_MESSAGE);
 			}
 
 			if (versionString.contains("t") && !Main.VERSION.hasTracker()) {
 				JOptionPane
-				.showMessageDialog(
-						null,
-						"The file you have opened contains tracked components.\nYou might encounter some problems in the execution.",
-						"No tracking system available",
-						JOptionPane.WARNING_MESSAGE);
+						.showMessageDialog(
+								null,
+								"The file you have opened contains tracked components.\nYou might encounter some problems in the execution.",
+								"No tracking system available",
+								JOptionPane.WARNING_MESSAGE);
 			}
 
 			// first, load the sublibraries
@@ -476,8 +475,8 @@ class XmlReader {
 	 *            label set of correct label names
 	 */
 	public static void applyValidLabels(Element root, String nodeType,
-			String attrType, Map<String, String> validLabels, Document doc)
-					throws IllegalArgumentException {
+			String attrType, Map<String, String> validLabels)
+			throws IllegalArgumentException {
 		assert (root != null);
 		assert (nodeType != null);
 		assert (attrType != null);
@@ -487,7 +486,7 @@ class XmlReader {
 
 		switch (nodeType) {
 		case "circuit":
-			replaceCircuitNodes(root, attrType, validLabels, doc);
+			replaceCircuitNodes(root, attrType, validLabels);
 			break;
 		case "comp":
 			replaceCompNodes(root, validLabels);
@@ -525,14 +524,14 @@ class XmlReader {
 
 	}
 
-	public static Element ensureLogisimCompatibility(Element elt, Document doc) {
+	public static Element ensureLogisimCompatibility(Element elt) {
 		Map<String, String> validLabels;
 		validLabels = findValidLabels(elt, "circuit", "name");
-		applyValidLabels(elt, "circuit", "name", validLabels, doc);
+		applyValidLabels(elt, "circuit", "name", validLabels);
 		validLabels = findValidLabels(elt, "circuit", "label");
-		applyValidLabels(elt, "circuit", "label", validLabels, doc);
+		applyValidLabels(elt, "circuit", "label", validLabels);
 		validLabels = findValidLabels(elt, "comp", "label");
-		applyValidLabels(elt, "comp", "label", validLabels, doc);
+		applyValidLabels(elt, "comp", "label", validLabels);
 		// In old, buggy Logisim versions, labels where incorrectly
 		// stored also in toolbar and lib components. If this is the
 		// case, clean them up.
@@ -566,8 +565,7 @@ class XmlReader {
 	 *         corresponding valid attribute values as the values
 	 */
 	public static Map<String, String> findValidLabels(Element root,
-			String nodeType, String attrType)
-			{
+			String nodeType, String attrType) {
 		assert (root != null);
 		assert (nodeType != null);
 		assert (attrType != null);
@@ -581,7 +579,6 @@ class XmlReader {
 		Iterator<String> iterator = initialLabels.iterator();
 		while (iterator.hasNext()) {
 			String label = iterator.next();
-
 			if (!validLabels.containsKey(label)) {
 				// Check if the name is invalid, in which case create
 				// a valid version and put it in the map
@@ -594,7 +591,7 @@ class XmlReader {
 		}
 
 		return validLabels;
-			}
+	}
 
 	/**
 	 * In some old version of Logisim, buggy Logisim versions, labels where
@@ -700,8 +697,7 @@ class XmlReader {
 	 * @return list of names for the considered node/attribute pairs
 	 */
 	public static List<String> getXMLLabels(Element root, String nodeType,
-			String attrType) throws IllegalArgumentException
-			{
+			String attrType) throws IllegalArgumentException {
 		assert (root != null);
 		assert (nodeType != null);
 		assert (attrType != null);
@@ -723,7 +719,7 @@ class XmlReader {
 		}
 
 		return attrValuesList;
-			}
+	}
 
 	/**
 	 * Check XML's circuit nodes, and return a list of values corresponding to
@@ -774,7 +770,7 @@ class XmlReader {
 		default:
 			throw new IllegalArgumentException(
 					"Invalid attribute type requested: " + attrType
-					+ " for node type: circuit");
+							+ " for node type: circuit");
 		}
 	}
 
@@ -846,9 +842,7 @@ class XmlReader {
 	 *            map containing valid label values
 	 */
 	private static void replaceCircuitNodes(Element root, String attrType,
-			Map<String, String> validLabels, Document doc)
-					throws IllegalArgumentException
-	{
+			Map<String, String> validLabels) throws IllegalArgumentException {
 		assert (root != null);
 		assert (attrType != null);
 		assert (validLabels != null);
@@ -863,14 +857,12 @@ class XmlReader {
 		case "name":
 			// We have not only to replace the circuit names in each circuit,
 			// but in the corresponding comps too!
-			for (Element circElt : XmlIterator.forChildElements(root, "circuit")) {
+			for (Element circElt : XmlIterator
+					.forChildElements(root, "circuit")) {
 				// Circuit's name is directly available as an attribute
 				String name = circElt.getAttribute("name");
-
 				if (validLabels.containsKey(name)) {
 					circElt.setAttribute("name", validLabels.get(name));
-
-					int replaceCount = 0;
 					// Also, it is present as value for the "circuit" attribute
 					for (Element attrElt : XmlIterator.forChildElements(
 							circElt, "a")) {
@@ -879,19 +871,8 @@ class XmlReader {
 							if (aName.equals("circuit")) {
 								attrElt.setAttribute("val",
 										validLabels.get(name));
-								replaceCount++;
 							}
 						}
-					}
-
-					if (replaceCount == 0) {
-						// No component replacement has been performed, which means
-						// that the original XML file is a semi-broken one and we
-						// have to add the corresponding attribute
-						Element toAdd = doc.createElement("a");
-						toAdd.setAttribute("name", "circuit");
-						toAdd.setAttribute("val", validLabels.get(name));
-						circElt.appendChild(toAdd);
 					}
 				}
 				// Now do the comp part
@@ -901,20 +882,9 @@ class XmlReader {
 					if (!compElt.hasAttribute("lib")) {
 						if (compElt.hasAttribute("name")) {
 							String cName = compElt.getAttribute("name");
-
 							if (validLabels.containsKey(cName)) {
 								compElt.setAttribute("name",
 										validLabels.get(cName));
-								// If present, set the "circuit" attribute too
-								for (Element attrElt : XmlIterator.forChildElements(compElt, "a")) {
-									if (attrElt.hasAttribute("name")) {
-										String aName = attrElt.getAttribute("name");
-										if (aName.equals("circuit")) {
-											attrElt.setAttribute("val",
-													validLabels.get(name));
-										}
-									}
-								}
 							}
 						}
 					}
@@ -943,7 +913,7 @@ class XmlReader {
 		default:
 			throw new IllegalArgumentException(
 					"Invalid attribute type requested: " + attrType
-					+ " for node type: circuit");
+							+ " for node type: circuit");
 		}
 	}
 
@@ -1068,7 +1038,7 @@ class XmlReader {
 	}
 
 	private Document loadXmlFrom(InputStream is) throws SAXException,
-	IOException {
+			IOException {
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		factory.setNamespaceAware(true);
 		DocumentBuilder builder = null;
@@ -1082,7 +1052,7 @@ class XmlReader {
 	LogisimFile readLibrary(InputStream is) throws IOException, SAXException {
 		Document doc = loadXmlFrom(is);
 		Element elt = doc.getDocumentElement();
-		elt = ensureLogisimCompatibility(elt, doc);
+		elt = ensureLogisimCompatibility(elt);
 
 		considerRepairs(doc, elt);
 		LogisimFile file = new LogisimFile((Loader) loader);

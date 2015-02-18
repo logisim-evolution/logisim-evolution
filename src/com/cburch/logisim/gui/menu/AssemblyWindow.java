@@ -69,6 +69,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.filechooser.FileFilter;
+import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 
 import com.cburch.logisim.circuit.Circuit;
@@ -83,6 +84,8 @@ import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.std.memory.Register;
 import com.cburch.logisim.std.wiring.Clock;
+import java.awt.Color;
+import javax.swing.text.DefaultHighlighter;
 
 public class AssemblyWindow implements ActionListener, WindowListener,
 		SimulatorListener, KeyListener {
@@ -374,6 +377,14 @@ public class AssemblyWindow implements ActionListener, WindowListener,
 				if (m.find()) {
 					document.setCaretPosition(m.start());
 					status.setText("");
+					try { //bug fix, highligh active line
+                        document.getHighlighter().removeAllHighlights();
+                        DefaultHighlighter.DefaultHighlightPainter highlightPainter =
+                                new DefaultHighlighter.DefaultHighlightPainter(Color.LIGHT_GRAY);
+                        document.getHighlighter().addHighlight(m.start(), m.end(), highlightPainter);
+                    } catch (BadLocationException ex) {
+                        ex.printStackTrace();
+                    }
 				} else {
 					status.setText("Line (" + where + ") not found!");
 				}
