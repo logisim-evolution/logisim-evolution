@@ -113,8 +113,8 @@ public class TclWrapper {
 				Files.copy(
 						this.getClass().getResourceAsStream(
 								TCL_RESOURCES_PATH + "tcl_wrapper.tcl"),
-						Paths.get(TCL_PATH + "tcl_wrapper.tcl"),
-						StandardCopyOption.REPLACE_EXISTING);
+								Paths.get(TCL_PATH + "tcl_wrapper.tcl"),
+								StandardCopyOption.REPLACE_EXISTING);
 			} catch (IOException e) {
 				logger.error("Cannot copy TCL wrapper file : {}",
 						e.getMessage());
@@ -180,19 +180,13 @@ public class TclWrapper {
 									// Commented out because it shouldn't be
 									// visible to the user
 									// Debug only??
-									/*
-									 * String nextLine; while (sc.hasNextLine())
-									 * { nextLine = sc.nextLine(); if
-									 * (nextLine.length() > 0)
-									 * System.out.println(nextLine);
-									 * 
-									 * 
-									 * //
-									 * vhdlSimulator.getCircuitState().getProject
-									 * (
-									 * ).getFrame().getVhdlSimulatorConsole().append
-									 * (nextLine // + "\n"); }
-									 */
+									String nextLine;
+									while (sc.hasNextLine()) {
+										nextLine = sc.nextLine();
+										if (nextLine.length() > 0)
+											System.out.println(nextLine);
+									}
+
 									sc.close();
 									stop();
 								}

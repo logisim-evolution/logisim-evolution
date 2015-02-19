@@ -645,7 +645,7 @@ public class Circuit {
 	}
 
 	void mutatorAdd(Component c) {
-		logger.debug("mutatorAdd: {}", c);
+		// logger.debug("mutatorAdd: {}", c);
 
 		locker.checkForWritePermission("add");
 
@@ -697,7 +697,7 @@ public class Circuit {
 	}
 
 	void mutatorRemove(Component c) {
-		logger.debug("mutatorRemove: {}", c);
+		//logger.debug("mutatorRemove: {}", c);
 
 		locker.checkForWritePermission("remove");
 
