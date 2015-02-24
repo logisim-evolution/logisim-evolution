@@ -75,8 +75,8 @@ public class PriorityEncoderHDLGeneratorFactory extends
 					+ "-1 DOWNTO 0);");
 			Contents.add("");
 			Contents.add("   -- Control Signals ");
-			Contents.add("   s_in_is_zero  <= '1' WHEN input_vector = conv_std_logic_vector(0,"
-					+ NrOfInputBitsStr + ") ELSE '0';");
+			Contents.add("   s_in_is_zero  <= '1' WHEN input_vector = std_logic_vector(to_unsigned(0,"
+					+ NrOfInputBitsStr + ")) ELSE '0';");
 			Contents.add("");
 			Contents.add("   -- Processes");
 			Contents.add("   make_addr : PROCESS( input_vector , v_select_1_vector , v_select_2_vector , v_select_3_vector , v_select_4_vector )");

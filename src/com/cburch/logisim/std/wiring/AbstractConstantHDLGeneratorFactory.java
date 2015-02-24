@@ -48,10 +48,10 @@ public class AbstractConstantHDLGeneratorFactory extends
 	private String GetConvertOperator(int value, int nr_of_bits, String HDLType) {
 		if (HDLType.equals(Settings.VHDL)) {
 			if (nr_of_bits == 1)
-				return "conv_std_logic_vector(" + Integer.toString(value) + ","
-						+ Integer.toString(nr_of_bits) + ")(0)";
-			return "conv_std_logic_vector(" + Integer.toString(value) + ","
-					+ Integer.toString(nr_of_bits) + ")";
+				return "std_logic_vector(to_unsigned(" + Integer.toString(value) + ","
+						+ Integer.toString(nr_of_bits) + "))";
+			return "std_logic_vector(to_unsigned(" + Integer.toString(value) + ","
+					+ Integer.toString(nr_of_bits) + "))";
 		} else {
 			return Integer.toString(nr_of_bits) + "'d"
 					+ Integer.toString(value);

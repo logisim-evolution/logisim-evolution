@@ -80,8 +80,8 @@ public class ShiftRegisterHDLGeneratorFactory extends
 			Contents.add("   make_state : PROCESS(Clock, ShiftEnable, Tick, Reset, s_state_next, ParLoad)");
 			Contents.add("   BEGIN");
 			Contents.add("      IF (Reset = '1') THEN s_state_reg <= (OTHERS => '0');");
-			Contents.add("      ELSIF (Clock'event AND (Clock = conv_std_logic_vector("
-					+ ActiveLevelStr + ",1)(0) )) THEN");
+			Contents.add("      ELSIF (Clock'event AND (Clock = std_logic_vector(to_unsigned("
+					+ ActiveLevelStr + ",1))(0) )) THEN");
 			Contents.add("         IF (((ShiftEnable = '1') OR (ParLoad = '1')) AND (Tick = '1')) THEN");
 			Contents.add("            s_state_reg <= s_state_next;");
 			Contents.add("         END IF;");

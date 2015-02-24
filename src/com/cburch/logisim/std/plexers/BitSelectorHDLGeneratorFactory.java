@@ -76,12 +76,12 @@ public class BitSelectorHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
 			Contents.add("   s_extended_vector((" + InputBitsStr
 					+ "-1) DOWNTO 0) <= DataIn;");
 			if (output_bits > 1)
-				Contents.add("   DataOut <= s_extended_vector(((conv_integer(unsigned(Sel))+1)*"
+				Contents.add("   DataOut <= s_extended_vector(((to_integer(unsigned(Sel))+1)*"
 						+ OutputsBitsStr
-						+ ")-1 DOWNTO conv_integer(unsigned(Sel))*"
+						+ ")-1 DOWNTO to_integer(unsigned(Sel))*"
 						+ OutputsBitsStr + ");");
 			else
-				Contents.add("   DataOut <= s_extended_vector(conv_integer(unsigned(Sel)));");
+				Contents.add("   DataOut <= s_extended_vector(to_integer(unsigned(Sel)));");
 		} else {
 			Contents.add("   assign s_extended_vector[" + ExtendedBitsStr
 					+ "-1:" + InputBitsStr + "] = 0;");

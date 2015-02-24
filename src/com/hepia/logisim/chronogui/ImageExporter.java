@@ -41,7 +41,8 @@ import javax.swing.table.JTableHeader;
  */
 public class ImageExporter extends javax.swing.JFrame implements ActionListener {
 
-    private File fileToSave;
+	private static final long serialVersionUID = 1L;
+	private File fileToSave;
     private ChronoData chronoData;
     private final int tickWidth = 20;
     //Dimensions
