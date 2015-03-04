@@ -77,15 +77,41 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 			Contents.add("   BEGIN");
 			Contents.add("      IF (Reset = '1') THEN s_state_reg <= (OTHERS => '0');");
 			if (IsFlipFlop(attrs)) {
-				Contents.add("      ELSIF (Clock'event AND (Clock = std_logic_vector(to_unsigned("
-						+ ActiveLevelStr + ",1))(0) )) THEN");
+				Contents.add("      ELSIF ("+ActiveLevelStr+" = 1) THEN");
+				Contents.add("         IF (Clock'event AND (Clock = '1')) THEN");
+				Contents.add("            IF (ClockEnable = '1' AND Tick = '1') THEN");
+				Contents.add("               s_state_reg <= D;");
+				Contents.add("            END IF;");
+				Contents.add("         END IF;");
+				Contents.add("      ELSIF ("+ActiveLevelStr+" = 0) THEN"); 
+				Contents.add("         IF (Clock'event AND (Clock = '0')) THEN");
+				Contents.add("         IF (ClockEnable = '1' AND Tick = '1') THEN");
+				Contents.add("               s_state_reg <= D;");
+				Contents.add("            END IF;");
+				Contents.add("         END IF;");
+				
+				/////
+				//Contents.add("      ELSIF (Clock'event AND (Clock = std_logic_vector(to_unsigned("
+				//		+ ActiveLevelStr + ",1)) )) THEN");		
 			} else {
-				Contents.add("      ELSIF (Clock = std_logic_vector(to_unsigned("
-						+ ActiveLevelStr + ",1))(0) ) THEN");
+				Contents.add("      ELSIF ("+ActiveLevelStr+" = 1) THEN");
+				Contents.add("         IF (Clock = '1') THEN");
+				Contents.add("            IF (ClockEnable = '1' AND Tick = '1') THEN");
+				Contents.add("               s_state_reg <= D;");
+				Contents.add("            END IF;");
+				Contents.add("         END IF;");
+				Contents.add("      ELSIF ("+ActiveLevelStr+" = 0) THEN"); 
+				Contents.add("         IF (Clock = '0') THEN");
+				Contents.add("            IF (ClockEnable = '1' AND Tick = '1') THEN");
+				Contents.add("               s_state_reg <= D;");
+				Contents.add("            END IF;");
+				Contents.add("         END IF;");
+				//Contents.add("      ELSIF (Clock = std_logic_vector(to_unsigned("
+				//		+ ActiveLevelStr + ",1)) ) THEN");		
 			}
-			Contents.add("         IF (ClockEnable = '1' AND Tick = '1') THEN");
-			Contents.add("            s_state_reg <= D;");
-			Contents.add("         END IF;");
+			//Contents.add("         IF (ClockEnable = '1' AND Tick = '1') THEN");
+			//Contents.add("            s_state_reg <= D;");
+			//Contents.add("         END IF;");
 			Contents.add("      END IF;");
 			Contents.add("   END PROCESS make_memory;");
 		} else {
