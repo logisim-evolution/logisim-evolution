@@ -121,10 +121,10 @@ public class AbstractFlipFlopHDLGeneratorFactory extends
 			Contents.add("      ELSIF (Preset = '1') THEN s_current_state_reg <= '1';");
 			if (IsFlipFlop(attrs)) {
 				Contents.add("      ELSIF (Clock'event AND (Clock = std_logic_vector(to_unsigned("
-						+ ActivityLevelStr + ",1)))) THEN");
+						+ ActivityLevelStr + ",1))(0))) THEN");
 			} else {
 				Contents.add("      ELSIF (Clock = std_logic_vector(to_unsigned("
-						+ ActivityLevelStr + ",1))) THEN");
+						+ ActivityLevelStr + ",1))(0)) THEN");
 			}
 			Contents.add("         IF (Tick = '1') THEN");
 			Contents.add("            s_current_state_reg <= s_next_state;");

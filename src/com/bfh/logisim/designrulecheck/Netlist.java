@@ -243,18 +243,6 @@ public class Netlist {
 			boolean IsTopLevel, char Vendor, ArrayList<String> Sheetnames) {
 		ArrayList<String> CompName = new ArrayList<String>();
 		ArrayList<Set<String>> AnnotationNames = new ArrayList<Set<String>>();
-		/*
-		 * Check for duplicated sheet names, this is bad as we will have
-		 * multiple "different" components with the same name
-		 */
-		if (Sheetnames.contains(MyCircuit.getName())) {
-			Reporter.AddFatalError("Found more than one sheet in your design with the name :\""
-					+ MyCircuit.getName()
-					+ "\". This is not allowed, please make sure that all sheets have a unique name!");
-			return DRC_ERROR;
-		} else {
-			Sheetnames.add(MyCircuit.getName());
-		}
 		/* Check if we are okay */
 		if (DRCStatus == DRC_PASSED) {
 			/* we have to go through our sub-circuits */
@@ -275,6 +263,18 @@ public class Netlist {
 		} else {
 			/* There are changes, so we clean up the old information */
 			this.clear();
+		}
+		/*
+		 * Check for duplicated sheet names, this is bad as we will have
+		 * multiple "different" components with the same name
+		 */
+		if (Sheetnames.contains(MyCircuit.getName())) {
+			Reporter.AddFatalError("Found more than one sheet in your design with the name :\""
+					+ MyCircuit.getName()
+					+ "\". This is not allowed, please make sure that all sheets have a unique name!");
+			return DRC_ERROR;
+		} else {
+			Sheetnames.add(MyCircuit.getName());
 		}
 		for (Component comp : MyCircuit.getNonWires()) {
 			String ComponentName = comp.getFactory().getHDLName(

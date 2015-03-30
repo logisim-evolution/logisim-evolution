@@ -408,6 +408,8 @@ public class AlteraDownload {
 		}
 		result.add(Assignment + "FMAX_REQUIREMENT \""
 				+ GetClockFrequencyString(CurrentBoard) + "\"");
+		result.add(Assignment + "RESERVE_NCEO_AFTER_CONFIGURATION \"USE AS REGULAR IO\"");
+		result.add(Assignment + "CYCLONEII_RESERVE_NCEO_AFTER_CONFIGURATION \"USE AS REGULAR IO\"");
 		return result;
 	}
 

@@ -353,6 +353,9 @@ public class FPGAIOInformationContainer {
 			// Integer.toString(StartId + i);
 			Contents.add("    set_location_assignment " + MyPinLocations.get(i)
 					+ " -to " + NetName);
+			if (MyPullBehavior == PullBehaviors.PullUp) {
+				Contents.add("    set_instance_assignment -name WEAK_PULL_UP_RESISTOR ON -to " + NetName);
+			}
 		}
 		return Contents;
 	}

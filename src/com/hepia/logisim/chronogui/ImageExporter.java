@@ -90,10 +90,9 @@ public class ImageExporter extends javax.swing.JFrame implements ActionListener 
     public void createImage(File file) {
         if (chronoData.size() > 0) {
             this.fileToSave = file;
-            CreateRightPanel();
-            CreateLeftPanel();
-              cropImage();
-            //createAndShowGUI();
+            createRightPanel();
+            createLeftPanel();
+            cropImage();
         } else {  //error message 
             JOptionPane.showMessageDialog(null, "The chronogram is empty. Can't save it as an image.");
         }
@@ -111,6 +110,7 @@ public class ImageExporter extends javax.swing.JFrame implements ActionListener 
         frame.setVisible(true);
     }
 
+	// Actually not in use. For a further development with more parameters to export the image
     public void addComponentsToPane(Container pane) {
         pane.setLayout(new BoxLayout(pane, BoxLayout.Y_AXIS));
         JPanel morphPanel = new JPanel();
@@ -148,7 +148,7 @@ public class ImageExporter extends javax.swing.JFrame implements ActionListener 
         pane.add(jBtnDone);
     }
 
-    
+    // Actually not in use. For a further development with more parameters to export the image
     private void doNotCropImage() { 
         JPanel pan = new JPanel();
         pan.setLayout(new BorderLayout());
@@ -157,6 +157,7 @@ public class ImageExporter extends javax.swing.JFrame implements ActionListener 
         SaveImage(pan);
     }
 
+	// Cut the image if larger than PAGE_MAX_WIDTH.
     private void cropImage() {  //create another image with multiple lines 
         JPanel pan = new JPanel();
         pan.setLayout(new BoxLayout(pan, BoxLayout.Y_AXIS));
@@ -200,7 +201,8 @@ public class ImageExporter extends javax.swing.JFrame implements ActionListener 
         SaveImage(pan);
     }
 
-    private void CreateRightPanel() {
+	// Create the signals panel
+    private void createRightPanel() {
         rightBox = new JPanel();
         rightBox.setLayout(new BoxLayout(rightBox, BoxLayout.Y_AXIS));
         BufferedImage bi = null;
@@ -221,7 +223,8 @@ public class ImageExporter extends javax.swing.JFrame implements ActionListener 
         rightBox.setSize(bi.getWidth(), bi.getHeight() * nbElem);
     }
 
-    private void CreateLeftPanel() {
+	//Create the names panel
+    private void createLeftPanel() {
         leftPanel = new JPanel();
         leftPanel.setLayout(new BorderLayout());
         leftPanel.setBackground(Color.white);
@@ -397,6 +400,7 @@ public class ImageExporter extends javax.swing.JFrame implements ActionListener 
         }
     }
 
+	// Actually not in use. For a further development with more parameters to export the image
     @Override
     public void actionPerformed(ActionEvent ae) {
         if (ae.getActionCommand() == "Single line") {
