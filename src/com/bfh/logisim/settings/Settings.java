@@ -103,28 +103,9 @@ public class Settings {
 
 	/* big TODO: add language support */
 	public Settings() {
-
-		// Detect if OS is Windows and if domain is hepia
-		// if yes: The students can't write in homedirectory
-		// so we redirect config file to homedrive (Z:\)
-		if (System.getProperty("os.name").toLowerCase().contains("windows")
-				&& System.getenv("USERDNSDOMAIN") != null
-				&& System.getenv("USERDNSDOMAIN").equals("HEPIANET.ETAT-GE.CH")) {
-			HomePath = System.getenv("HOMEDRIVE") + "\\";
-			// check if we can write in this path
-			File testCanWrite = new File(HomePath + "testpermission.tmp");
-			try {
-				testCanWrite.createNewFile();
-				testCanWrite.delete();
-			} catch (Exception e) {
-				// if we can not: redirect to C:\TEMP
-				HomePath = "C:\\TEMP\\";
-			}
-		} else {
-			HomePath = System.getProperty("user.home");
-			if (!HomePath.endsWith(File.separator))
-				HomePath += File.separator;
-		}
+		HomePath = System.getProperty("user.home");
+		if (!HomePath.endsWith(File.separator))
+			HomePath += File.separator;
 
 		File SettingsFile = new File(HomePath + SettingsFileName + ".xml");
 		if (SettingsFile.exists()) {
