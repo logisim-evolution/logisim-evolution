@@ -116,15 +116,15 @@ public class AbstractFlipFlopHDLGeneratorFactory extends
 				"Here the actual state register is defined", 3, HDLType));
 		if (HDLType.equals(Settings.VHDL)) {
 			Contents.add("   make_memory : PROCESS( clock , Reset , Preset , Tick , s_next_state )");
+			Contents.add("      VARIABLE temp : std_logic_vector(0 DOWNTO 0);");
 			Contents.add("   BEGIN");
+			Contents.add("      temp := std_logic_vector(to_unsigned("+ActivityLevelStr+",1));");
 			Contents.add("      IF (Reset = '1') THEN s_current_state_reg <= '0';");
 			Contents.add("      ELSIF (Preset = '1') THEN s_current_state_reg <= '1';");
 			if (IsFlipFlop(attrs)) {
-				Contents.add("      ELSIF (Clock'event AND (Clock = std_logic_vector(to_unsigned("
-						+ ActivityLevelStr + ",1))(0))) THEN");
+				Contents.add("      ELSIF (Clock'event AND (Clock = temp(0))) THEN");
 			} else {
-				Contents.add("      ELSIF (Clock = std_logic_vector(to_unsigned("
-						+ ActivityLevelStr + ",1))(0)) THEN");
+				Contents.add("      ELSIF (Clock = temp(0)) THEN");
 			}
 			Contents.add("         IF (Tick = '1') THEN");
 			Contents.add("            s_current_state_reg <= s_next_state;");

@@ -78,10 +78,11 @@ public class ShiftRegisterHDLGeneratorFactory extends
 					+ NrOfStagesStr + "-2) DOWNTO 0)&ShiftIn;");
 			Contents.add("");
 			Contents.add("   make_state : PROCESS(Clock, ShiftEnable, Tick, Reset, s_state_next, ParLoad)");
+			Contents.add("      VARIABLE temp : std_logic_vector( 0 DOWNTO 0 );");
 			Contents.add("   BEGIN");
+			Contents.add("      temp := std_logic_vector(to_unsigned("+ActiveLevelStr+ ",1))");
 			Contents.add("      IF (Reset = '1') THEN s_state_reg <= (OTHERS => '0');");
-			Contents.add("      ELSIF (Clock'event AND (Clock = std_logic_vector(to_unsigned("
-					+ ActiveLevelStr + ",1))(0) )) THEN");
+			Contents.add("      ELSIF (Clock'event AND (Clock = temp(0) )) THEN");
 			Contents.add("         IF (((ShiftEnable = '1') OR (ParLoad = '1')) AND (Tick = '1')) THEN");
 			Contents.add("            s_state_reg <= s_state_next;");
 			Contents.add("         END IF;");
