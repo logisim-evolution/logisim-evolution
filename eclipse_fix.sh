@@ -10,3 +10,4 @@ ln -s ../javax .
 ln -s ../libs .
 ln -s ../resources .
 ln -s ../doc .
+cd ..
