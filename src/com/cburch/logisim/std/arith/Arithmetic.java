@@ -63,7 +63,7 @@ public class Arithmetic extends Library {
 					"BitAdder"),
 			new FactoryDescription("BitFinder",
 					Strings.getter("bitFinderComponent"), "bitfindr.gif",
-					"BitFinder"), };
+					"BitFinder"),};
 
 	private List<Tool> tools = null;
 
