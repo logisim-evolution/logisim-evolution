@@ -124,19 +124,19 @@ public class Settings {
 								+ SettingsFile.getPath());
 				System.exit(-1);
 			}
-		}
-		NodeList SettingsList = SettingsDocument
-				.getElementsByTagName(Boards);
-		if (SettingsList.getLength() != 1) {
-			return;
-		}
-		Node ThisWorkspace = SettingsList.item(0);
-		NamedNodeMap WorkspaceParameters = ThisWorkspace.getAttributes();
-		for (int i = 0; i < WorkspaceParameters.getLength(); i++) {
-			if (WorkspaceParameters.item(i).getNodeName().contains(ExternalBoard)) {
-				File TestFile = new File(WorkspaceParameters.item(i).getNodeValue());
-				if (TestFile.exists())
-				   KnownBoards.AddExternalBoard(WorkspaceParameters.item(i).getNodeValue());
+			NodeList SettingsList = SettingsDocument
+					.getElementsByTagName(Boards);
+			if (SettingsList.getLength() != 1) {
+				return;
+			}
+			Node ThisWorkspace = SettingsList.item(0);
+			NamedNodeMap WorkspaceParameters = ThisWorkspace.getAttributes();
+			for (int i = 0; i < WorkspaceParameters.getLength(); i++) {
+				if (WorkspaceParameters.item(i).getNodeName().contains(ExternalBoard)) {
+					File TestFile = new File(WorkspaceParameters.item(i).getNodeValue());
+					if (TestFile.exists())
+					   KnownBoards.AddExternalBoard(WorkspaceParameters.item(i).getNodeValue());
+				}
 			}
 		}
 		if (!SettingsComplete()) {
