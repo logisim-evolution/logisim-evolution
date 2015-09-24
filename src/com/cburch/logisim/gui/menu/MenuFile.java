@@ -37,6 +37,7 @@ import java.awt.event.KeyEvent;
 import java.util.List;
 
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
 import com.cburch.logisim.gui.main.Frame;
@@ -124,9 +125,22 @@ class MenuFile extends Menu implements ActionListener {
 			ProjectActions.doOpen(proj == null ? null : proj.getFrame()
 					.getCanvas(), proj);
 		} else if (src == close) {
+			int result = 0;
 			Frame frame = proj.getFrame();
+			if (proj.isFileDirty()) {
+				/* Must use hardcoded strings here, because the string management is rotten */
+				String message = "What should happen to your unsaved changes to " + proj.getLogisimFile().getName();
+				String[] options = { "Save", "Discard", "Cancel" };
+				result = JOptionPane.showOptionDialog(JOptionPane.getFrameForComponent(this), message, "Confirm Close", 0,
+						JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
 
-			if (frame.confirmClose()) {
+				if (result == 0) {
+					ProjectActions.doSave(proj);
+				}
+			}
+			
+			/* If "cancel" pressed do nothing, otherwise dispose the window, opening one if this was the last opened window */
+			if (result != 2) {
 				// Get the list of open projects
 				List<Project> pl = Projects.getOpenProjects();
 				if (pl.size() == 1) {

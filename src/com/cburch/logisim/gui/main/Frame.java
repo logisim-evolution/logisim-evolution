@@ -47,8 +47,6 @@ import java.awt.event.WindowEvent;
 import java.awt.geom.Ellipse2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.List;
-
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -504,23 +502,13 @@ public class Frame extends LFrame implements LocaleListener {
 		if (result == 0) {
 			ret = ProjectActions.doSave(proj);
 		} else if (result == 1) {
+			// Close the current project
+			dispose();
 			ret = true;
 		} else {
 			ret = false;
 		}
-		if (ret) {
-			// Get the list of open projects
-			List<Project> pl = Projects.getOpenProjects();
-			if (pl.size() == 1) {
-				// Since we have a single window open, before closing the
-				// current
-				// project open a new empty one
-				ProjectActions.doNew(proj);
-			}
-
-			// Close the current project
-			dispose();
-		}
+		
 		return ret;
 	}
 
