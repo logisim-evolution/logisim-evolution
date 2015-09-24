@@ -43,6 +43,7 @@ import java.util.List;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
+import com.cburch.logisim.gui.main.Frame;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.proj.ProjectActions;
@@ -63,6 +64,11 @@ class OpenRecent extends JMenu implements PropertyChangeListener {
 			Project proj = menubar.getProject();
 			Component par = proj == null ? null : proj.getFrame().getCanvas();
 			ProjectActions.doOpen(par, proj, file);
+			/* This trick allows to open a single window, if the current project hasn't been touched */
+			if (!proj.isFileDirty()) {
+				Frame frame = proj.getFrame();
+				frame.dispose();
+			}
 		}
 	}
 
