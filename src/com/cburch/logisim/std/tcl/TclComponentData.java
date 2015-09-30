@@ -32,11 +32,13 @@ package com.cburch.logisim.std.tcl;
 import com.cburch.logisim.instance.InstanceData;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.InstanceStateImpl;
+import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.util.SocketClient;
+import com.cburch.logisim.data.Value;
 
 /**
  * The TCL components needs some activity for each instance of component. Here
- * we extend the InstanceComponent fot the Tcl components to create those
+ * we extend the InstanceComponent for the Tcl components to create those
  * activities
  */
 public class TclComponentData implements InstanceData {
@@ -64,6 +66,8 @@ public class TclComponentData implements InstanceData {
 	private TclWrapper tclWrapper;
 
 	private InstanceState instanceState;
+
+        private Value prevClockValue = Value.UNKNOWN;
 
 	TclComponentData(InstanceState state) {
 
@@ -93,6 +97,29 @@ public class TclComponentData implements InstanceData {
 	public boolean isConnected() {
 		return tclClient.isConnected();
 	}
+        
+        public boolean isNewTick() {
+                boolean newTick = false;
+                boolean found   = false;
+
+                for (Port p : instanceState.getInstance().getPorts()) {
+                    if (p.getToolTip().equals("sysclk_i")) {
+                        Value val = instanceState.getPortValue(instanceState.getPortIndex(p));
+                        newTick = (val != prevClockValue);
+                        if (newTick) {
+                            prevClockValue = val;
+                        }
+                        found = true;
+                        break;
+                    }
+                }
+                
+                if (!found) {
+                    throw new UnsupportedOperationException("Could not find the 'sysclock' in the TCL component");
+                }
+
+                return newTick;
+        }
 
 	public String receive() {
 		return tclWrapperListenerThread.receive();

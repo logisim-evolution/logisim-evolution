@@ -94,12 +94,11 @@ public abstract class TclComponent extends InstanceFactory {
 	static final int HEIGHT = 40;
 
 	static final int PORT_GAP = 10;
-
 	static final int X_PADDING = 5;
+        
 	private Port[] inputs;
-
 	private Port[] outputs;
-
+        
 	private WeakHashMap<Instance, TclComponentListener> contentListeners;
 
 	public TclComponent(String name, StringGetter displayName) {
@@ -215,103 +214,114 @@ public abstract class TclComponent extends InstanceFactory {
 	@Override
 	public void propagate(InstanceState state) {
 
-		/*
-		 * The ComponentData is the persistent thing through logisim usage. It
-		 * doesn't change when you move the component when InstanceComponent
-		 * does.
-		 */
-		TclComponentData tclComponentData = TclComponentData.get(state);
+            /*
+             * The ComponentData is the persistent thing through logisim usage. It
+             * doesn't change when you move the component when InstanceComponent
+             * does.
+             */
+            TclComponentData tclComponentData = TclComponentData.get(state);
 
-		tclComponentData.getTclWrapper().start();
+            tclComponentData.getTclWrapper().start();
 
-		/*
-		 * Here we may miss the first clock if the TCL process is not soon fast
-		 * enought You may change this behavior, but blocking here seemed bad to
-		 * me
-		 */
-		if (tclComponentData.isConnected()) {
+            /*
+             * Here we may miss the first clock if the TCL process is not soon fast
+             * enought You may change this behavior, but blocking here seemed bad to
+             * me
+             */
+            if (tclComponentData.isConnected()) {
 
-			/* Send port values */
-			for (Port p : state.getInstance().getPorts()) {
-				int index = state.getPortIndex(p);
-				Value val = state.getPortValue(index);
-				String message = p.getType() + ":" + p.getToolTip() + ":"
-						+ val.toBinaryString() + ":" + index;
+                /* Send port values to the TCL wrapper */
+                for (Port p : state.getInstance().getPorts()) {
+                    int index = state.getPortIndex(p);
+                    Value val = state.getPortValue(index);
+                    String message = p.getType() + ":" + p.getToolTip() + ":"
+                                    + val.toBinaryString() + ":" + index;
 
-				tclComponentData.send(message);
-			}
+                    tclComponentData.send(message);
+                }
 
-			/*
-			 * Send sync so the TCL process makes something (like output
-			 * calculation)
-			 */
-			tclComponentData.send("sync");
-
-			/* Get response from TCL process */
-			String server_response;
-			while ((server_response = tclComponentData.receive()) != null
-					&& server_response.length() > 0
-					&& !server_response.equals("sync")) {
-
-				String[] parameters = server_response.split("\\:");
-
-				/* Skip if we receive crap, still better than an out of range */
-				if (parameters.length < 2)
-					continue;
-
-				String busValue = parameters[1];
-				int portId = Integer.parseInt(parameters[2]);
-
-				// Expected response width
-				int width = state.getFactory().getPorts().get(portId)
-						.getFixedBitWidth().getWidth();
-
-				/*
-				 * If the received string is too long, cut the leftmost part to
-				 * match the expected length
-				 */
-				if (busValue.length() > width)
-					busValue = busValue.substring(busValue.length() - width);
-
-				/*
-				 * If the received value is not wide enough, complete with X on
-				 * the MSB
-				 */
-				Value vector_values[] = new Value[width];
-				for (int i = width - 1; i >= busValue.length(); i--) {
-					vector_values[i] = Value.UNKNOWN;
-				}
-
-				/* Transform char to Logisim Value */
-				int k = busValue.length() - 1;
-				for (char bit : busValue.toCharArray()) {
-
-					try {
-						switch (Character.getNumericValue(bit)) {
-						case 0:
-							vector_values[k] = Value.FALSE;
-							break;
-						case 1:
-							vector_values[k] = Value.TRUE;
-							break;
-						default:
-							vector_values[k] = Value.UNKNOWN;
-							break;
-						}
-					} catch (NumberFormatException e) {
-						vector_values[k] = Value.ERROR;
-					}
-					k--;
-				}
-
-				/* Affect the value to the port */
-				state.setPort(portId, Value.create(vector_values), 1);
-			}
-
-		}
-
+                /* 
+                 * If it is a new tick, ask the console to force the sti in the
+                 * console and set them in Logisim in return. If it is not a new
+                 * tick, simply send the updated obs to the console.
+                 */
+                if (tclComponentData.isNewTick()) {
+                    tclComponentData.send("sync_force");
+                    getPortsFromServer(state, tclComponentData);
+                } else {
+                    tclComponentData.send("sync_examine");
+                    String server_response;
+                    
+                    /* Ignore all messages until "sync" is recieved */
+                    while ((server_response = tclComponentData.receive()) != null 
+                            && server_response.length() > 0
+                            && !server_response.equals("sync"));
+                }
+            }
 	}
 
+        void getPortsFromServer(InstanceState state, TclComponentData tclComponentData) {
+            String server_response;
+            while ((server_response = tclComponentData.receive()) != null
+                            && server_response.length() > 0
+                            && !server_response.equals("sync")) {
+
+                    String[] parameters = server_response.split("\\:");
+
+                    /* Skip if we receive crap, still better than an out of range */
+                    if (parameters.length < 2)
+                            continue;
+
+                    String busValue = parameters[1];
+                    int portId = Integer.parseInt(parameters[2]);
+
+                    // Expected response width
+                    int width = state.getFactory().getPorts().get(portId)
+                                    .getFixedBitWidth().getWidth();
+
+                    /*
+                     * If the received string is too long, cut the leftmost part to
+                     * match the expected length
+                     */
+                    if (busValue.length() > width)
+                            busValue = busValue.substring(busValue.length() - width);
+
+                    /*
+                     * If the received value is not wide enough, complete with X on
+                     * the MSB
+                     */
+                    Value vector_values[] = new Value[width];
+                    for (int i = width - 1; i >= busValue.length(); i--) {
+                            vector_values[i] = Value.UNKNOWN;
+                    }
+
+                    /* Transform char to Logisim Value */
+                    int k = busValue.length() - 1;
+                    for (char bit : busValue.toCharArray()) {
+
+                            try {
+                                    switch (Character.getNumericValue(bit)) {
+                                    case 0:
+                                            vector_values[k] = Value.FALSE;
+                                            break;
+                                    case 1:
+                                            vector_values[k] = Value.TRUE;
+                                            break;
+                                    default:
+                                            vector_values[k] = Value.UNKNOWN;
+                                            break;
+                                    }
+                            } catch (NumberFormatException e) {
+                                    vector_values[k] = Value.ERROR;
+                            }
+                            k--;
+                    }
+
+                    /* Affect the value to the port */
+                    state.setPort(portId, Value.create(vector_values), 1);
+            }
+        }
+        
 	/**
 	 * When setting ports we also set some local attributes so we can manage
 	 * inputs and outputs separately

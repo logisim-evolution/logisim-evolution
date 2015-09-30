@@ -16,9 +16,10 @@
 #
 #--| Modifications |------------------------------------------------------------
 # Version   Author Date               Description
-#	v1.0			CMR			20.08.2014					- Original, copied from questasim_binder
+# v1.0      CMR 20.08.2014  Original, copied from questasim_binder
+# v1.1      YSR 26.06.2015  Modifications to support and fix issues with sequential systems
 #-------------------------------------------------------------------------------
-set Version 1.0
+set Version 1.1
 
 set channel 0
 set msgs {}
@@ -145,8 +146,9 @@ proc MessageReceived {channel} {
 			# Sim end procedure
 			end_binder $channel
 
-		# When a sync is received
-		} elseif {$msg == "sync"} {
+		# When a sync_force is received
+		} elseif {$msg == "sync_force"} {
+                        #echo "Recieved sync_force!"
 
 			# Drive input signals in simulation
 			foreach msg $msgs {
@@ -168,7 +170,7 @@ proc MessageReceived {channel} {
 				}
 			}
 
-			refresh
+			logisimForce
 
 			# Read output signals from simulation
 			foreach msg $msgs {
@@ -195,6 +197,38 @@ proc MessageReceived {channel} {
 
 			set msgs {}
 
+		# When a sync_examine is received
+		} elseif {$msg == "sync_examine"} {
+                        #echo "Recieved sync_examine!"
+
+			# Drive input signals in simulation
+			foreach msg $msgs {
+
+				# Get parameters from message
+				set signal [split $msg :]
+				set type [lindex $signal 0]
+				set name [lindex $signal 1]
+				set value [lindex $signal 2]
+				set id [lindex $signal 3]
+
+				global $name
+				# If signal is "in" or "inout"
+				if {$type == 1 || $type == 3} {
+					#echo "Received from Logsim : $name:$value"
+					set $name $value
+				} else {
+					set $name X
+				}
+			}
+
+			logisimExamine
+
+			# Send sync to alert logisim of end of step
+			#echo "Send : sync"
+			send_socket $channel "sync"
+
+			set msgs {}
+
 		# If it's a signal, add to list
 		} else {
 			lappend msgs $msg ;
@@ -214,6 +248,8 @@ proc init_wrapper {} {
 	global msgs
 	global argv
 	global channel
+
+        enableLogisim TRUE
 
 	set server localhost
 	set port [lindex $argv 0]
