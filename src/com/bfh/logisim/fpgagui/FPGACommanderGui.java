@@ -57,6 +57,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import com.bfh.logisim.designrulecheck.CorrectLabel;
 import com.bfh.logisim.designrulecheck.Netlist;
@@ -505,6 +506,58 @@ public class FPGACommanderGui implements ActionListener {
 				} else {
 					HDLOnly.setText(HDLandDownloadMessage);
 				}
+			} else {
+				String NewBoardFileName = GetBoardFile();
+				MyBoardInformation = new BoardReaderClass(NewBoardFileName).GetBoardInformation();
+				if (MyBoardInformation == null) {
+					for (int index = 0 ; index < boardsList.getItemCount() ; index ++)
+						if (boardsList.getItemAt(index).equals(MySettings.GetSelectedBoard()))
+							boardsList.setSelectedIndex(index);
+					this.AddErrors("\""+NewBoardFileName+"\" does not has the proper format for a board file!\n");
+				} else {
+					String[] Parts = NewBoardFileName.split(File.separator);
+					String BoardInfo = Parts[Parts.length-1].replace(".xml", "");
+					Boolean CanAdd = true;
+					for (int index = 0 ; index < boardsList.getItemCount() ; index ++)
+						if (boardsList.getItemAt(index).equals(BoardInfo)) {
+							this.AddErrors("A board with the name \""+BoardInfo+"\" already exisits, cannot add new board descriptor\n");
+							CanAdd = false;
+						}
+					if (CanAdd) {
+						MySettings.AddExternalBoard(NewBoardFileName);
+						MySettings.SetSelectedBoard(BoardInfo);
+						MySettings.UpdateSettingsFile();
+						boardsList.addItem(BoardInfo);
+						for (int index = 0 ; index < boardsList.getItemCount() ; index ++)
+							if (boardsList.getItemAt(index).equals(BoardInfo))
+								boardsList.setSelectedIndex(index);
+						MyBoardInformation.setBoardName(BoardInfo);
+						MapPannel.SetBoardInformation(MyBoardInformation);
+						boardIcon = new BoardIcon(MyBoardInformation.GetImage());
+						boardPic.setIcon(boardIcon);
+						boardPic.repaint();
+						if ((MyBoardInformation.fpga.getVendor() == FPGAClass.VendorAltera && MySettings
+								.GetAlteraToolPath().equals(Settings.Unknown))
+								|| (MyBoardInformation.fpga.getVendor() == FPGAClass.VendorXilinx && MySettings
+								.GetXilixToolPath().equals(Settings.Unknown))) {
+							if (!MySettings.GetHDLOnly()) {
+								MySettings.SetHdlOnly(true);
+								MySettings.UpdateSettingsFile();
+							}
+							HDLOnly.setText(OnlyHDLMessage);
+							HDLOnly.setEnabled(false);
+						} else if (MySettings.GetHDLOnly()) {
+							HDLOnly.setText(OnlyHDLMessage);
+						} else {
+							HDLOnly.setText(HDLandDownloadMessage);
+						}
+					} else {
+						for (int index = 0 ; index < boardsList.getItemCount() ; index ++)
+							if (boardsList.getItemAt(index).equals(MySettings.GetSelectedBoard()))
+								boardsList.setSelectedIndex(index);
+					}
+				}
+				
 			}
 		}
 	}
@@ -969,6 +1022,23 @@ public class FPGACommanderGui implements ActionListener {
 				}
 			}
 		}
+	}
+	
+	private String GetBoardFile() {
+		JFileChooser fc = new JFileChooser(MySettings.GetWorkspacePath());
+		FileNameExtensionFilter filter = new FileNameExtensionFilter("Board files", "xml", "xml");
+		fc.setFileFilter(filter);
+		fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+		File test = new File(MySettings.GetWorkspacePath());
+		if (test.exists()) {
+			fc.setSelectedFile(test);
+		}
+		fc.setDialogTitle("Board description selection");
+		int retval = fc.showOpenDialog(null);
+		if (retval == JFileChooser.APPROVE_OPTION) {
+			File file = fc.getSelectedFile();
+			return file.getPath();
+		} else return "";
 	}
 
 	private void selectWorkSpace() {

@@ -26,6 +26,7 @@ resources/logisim/sim/transcript
 
 resources/logisim/sim/comp/
 resources/logisim/sim/src/
+publi/
 
 # File containing the log level
 logback.xml

@@ -33,7 +33,7 @@ package com.cburch.logisim.std.arith;
 import com.cburch.logisim.util.LocaleManager;
 import com.cburch.logisim.util.StringGetter;
 
-class Strings {
+public class Strings {
 	public static String get(String key) {
 		return source.get(key);
 	}

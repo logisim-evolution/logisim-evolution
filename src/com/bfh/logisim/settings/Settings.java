@@ -91,6 +91,7 @@ public class Settings {
 	public static String VERILOG = "Verilog";
 	private static String Boards = "FPGABoards";
 	private static String SelectedBoard = "SelectedBoard";
+	private static String ExternalBoard = "ExternalBoardFile";
 	private String HomePath;
 	private String SettingsFileName = ".LogisimFPGASettings";
 	private Document SettingsDocument;
@@ -122,6 +123,20 @@ public class Settings {
 						"Fatal Error: Cannot read FPGA settings file: "
 								+ SettingsFile.getPath());
 				System.exit(-1);
+			}
+			NodeList SettingsList = SettingsDocument
+					.getElementsByTagName(Boards);
+			if (SettingsList.getLength() != 1) {
+				return;
+			}
+			Node ThisWorkspace = SettingsList.item(0);
+			NamedNodeMap WorkspaceParameters = ThisWorkspace.getAttributes();
+			for (int i = 0; i < WorkspaceParameters.getLength(); i++) {
+				if (WorkspaceParameters.item(i).getNodeName().contains(ExternalBoard)) {
+					File TestFile = new File(WorkspaceParameters.item(i).getNodeValue());
+					if (TestFile.exists())
+					   KnownBoards.AddExternalBoard(WorkspaceParameters.item(i).getNodeValue());
+				}
 			}
 		}
 		if (!SettingsComplete()) {
@@ -463,6 +478,35 @@ public class Settings {
 
 		result &= !modified;
 		return result;
+	}
+	
+	public boolean AddExternalBoard(String CompleteFileName) {
+		NodeList SettingsList = SettingsDocument
+				.getElementsByTagName(Boards);
+		if (SettingsList.getLength() != 1) {
+			return false;
+		}
+		Node ThisWorkspace = SettingsList.item(0);
+		int NrOfBoards = 0;
+		NamedNodeMap WorkspaceParameters = ThisWorkspace.getAttributes();
+		for (int j = 0; j < WorkspaceParameters.getLength();j++) {
+			if (WorkspaceParameters.item(j).getNodeName().contains(ExternalBoard)) {
+				String[] Items = WorkspaceParameters.item(j).getNodeName().split("_");
+				if (Items.length == 2) {
+					if (Integer.parseInt(Items[1])>NrOfBoards)
+						NrOfBoards = Integer.parseInt(Items[1]);
+				}
+			}
+		}
+		NrOfBoards += 1;
+		/* The attribute does not exists so add it */
+		Attr extBoard = SettingsDocument.createAttribute(ExternalBoard+"_"+Integer.toString(NrOfBoards));
+		extBoard.setNodeValue(CompleteFileName);
+		Element workspace = (Element) SettingsList.item(0);
+		workspace.setAttributeNode(extBoard);
+		KnownBoards.AddExternalBoard(CompleteFileName);
+		modified = true;
+		return true;
 	}
 
 	public boolean SetWorkspacePath(String path) {

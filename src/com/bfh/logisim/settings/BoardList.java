@@ -34,6 +34,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
@@ -131,6 +132,10 @@ public class BoardList {
 			DefinedBoards.addAll(getBoards(p, BoardResourcePath, element));
 		}
 	}
+	
+	public void AddExternalBoard(String Filename) {
+		DefinedBoards.add(Filename);
+	}
 
 	public boolean BoardInCollection(String BoardName) {
 		for (String board : DefinedBoards) {
@@ -160,11 +165,23 @@ public class BoardList {
 		}
 		return null;
 	}
+	
+	@SuppressWarnings("serial")
+	private class SortedArrayList<T> extends ArrayList<T> {
 
-	public Collection<String> GetBoardNames() {
-		ArrayList<String> ret = new ArrayList<String>();
+	    @SuppressWarnings("unchecked")
+	    public void insertSorted(T value) {
+	        add(value);
+	        Comparable<T> cmp = (Comparable<T>) value;
+	        for (int i = size()-1; i > 0 && cmp.compareTo(get(i-1)) < 0; i--)
+	            Collections.swap(this, i, i-1);
+	    }
+	}
+
+	public ArrayList<String> GetBoardNames() {
+		SortedArrayList<String> ret = new SortedArrayList<String>();
 		for (String board : DefinedBoards) {
-			ret.add(getBoardName(board));
+			ret.insertSorted(getBoardName(board));
 		}
 		return ret;
 	}
