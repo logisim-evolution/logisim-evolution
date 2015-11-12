@@ -299,6 +299,7 @@ public class EditableLabel implements Cloneable {
 		FontMetrics fm = g.getFontMetrics(font);
 		int width = fm.stringWidth(text);
 		frame.setVisible(false);
+		frame.dispose();
 		return width;
 	}
 	
@@ -315,6 +316,7 @@ public class EditableLabel implements Cloneable {
 		FontMetrics fm = g.getFontMetrics(font);
 		int height = fm.getAscent()+fm.getDescent();
 		frame.setVisible(false);
+		frame.dispose();
 		return height;
 	}
 	
@@ -331,6 +333,7 @@ public class EditableLabel implements Cloneable {
 		FontMetrics fm = g.getFontMetrics(font);
 		int height = fm.getAscent();
 		frame.setVisible(false);
+		frame.dispose();
 		return height;
 	}
 	
