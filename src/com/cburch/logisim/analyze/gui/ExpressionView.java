@@ -33,6 +33,8 @@ package com.cburch.logisim.analyze.gui;
 import java.awt.Dimension;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.util.ArrayList;
@@ -403,8 +405,17 @@ class ExpressionView extends JPanel {
 
 	@Override
 	public void paintComponent(Graphics g) {
+		/* Anti-aliasing changes from https://github.com/hausen/logisim-evolution */
+		Graphics2D g2 = (Graphics2D)g;
+		g2.setRenderingHint(
+				RenderingHints.KEY_TEXT_ANTIALIASING,
+				RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+		g2.setRenderingHint(
+				RenderingHints.KEY_ANTIALIASING,
+				RenderingHints.VALUE_ANTIALIAS_ON);
+		
 		super.paintComponent(g);
-
+		
 		if (renderData != null) {
 			int x = Math.max(0, (getWidth() - renderData.prefWidth) / 2);
 			int y = Math.max(0, (getHeight() - renderData.height) / 2);

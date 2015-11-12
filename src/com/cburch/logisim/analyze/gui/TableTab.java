@@ -36,6 +36,8 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Rectangle;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.event.MouseEvent;
 
 import javax.swing.JPanel;
@@ -270,6 +272,15 @@ class TableTab extends JPanel implements TruthTablePanel, TabInterface {
 
 	@Override
 	public void paintComponent(Graphics g) {
+		/* Anti-aliasing changes from https://github.com/hausen/logisim-evolution */
+		Graphics2D g2 = (Graphics2D)g;
+		g2.setRenderingHint(
+				RenderingHints.KEY_TEXT_ANTIALIASING,
+				RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+		g2.setRenderingHint(
+				RenderingHints.KEY_ANTIALIASING,
+				RenderingHints.VALUE_ANTIALIAS_ON);
+		
 		super.paintComponent(g);
 
 		caret.paintBackground(g);

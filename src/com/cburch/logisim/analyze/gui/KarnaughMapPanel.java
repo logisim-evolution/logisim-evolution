@@ -36,6 +36,7 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.event.MouseEvent;
 import java.util.List;
 
@@ -263,8 +264,17 @@ class KarnaughMapPanel extends JPanel implements TruthTablePanel {
 
 	@Override
 	public void paintComponent(Graphics g) {
+		/* Anti-aliasing changes from https://github.com/hausen/logisim-evolution */
+		Graphics2D g2d = (Graphics2D)g;
+		g2d.setRenderingHint(
+				RenderingHints.KEY_TEXT_ANTIALIASING,
+				RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+		g2d.setRenderingHint(
+				RenderingHints.KEY_ANTIALIASING,
+				RenderingHints.VALUE_ANTIALIAS_ON);
+		
 		super.paintComponent(g);
-
+		
 		TruthTable table = model.getTruthTable();
 		int inputCount = table.getInputColumnCount();
 		Dimension sz = getSize();
