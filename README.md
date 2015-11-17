@@ -25,7 +25,7 @@ We have decided to release this new Logisim version under the name logisim-evolu
 * ...
 
 ## How to install logisim-evolution
-You can find an already compiled **stable** version of the code [here](https://reds.heig-vd.ch/share/logisim-evolution/logisim-evolution.jar).
+You can find an already compiled **stable** version of the code [here](https://reds-data.heig-vd.ch/logisim-evolution/logisim-evolution.jar).
 To execute it, click on the downloaded file or type in a console
 ```bash
 java -jar logisim-evolution.jar
@@ -38,7 +38,7 @@ ant run
 This also creates locally a .jar file, that you can distribute and use on other machines.
 
 ## Documentation
-[Here](https://reds.heig-vd.ch/share/logisim-evolution/IntroToLogisimEnglish.pdf)  you can find a tutorial (French version [here](https://reds.heig-vd.ch/share/logisim-evolution/tutoLogisim.pdf)) that explains some basic usage of Logisim. The electronic card referenced in the tutorial is a small card we use in our laboratories -- you won't be able to buy it in a store -- but the descriptions should be good enough to be used for another generic board.
+[Here](https://reds-data.heig-vd.ch/logisim-evolution/IntroToLogisimEnglish.pdf)  you can find a tutorial (French version [here](https://reds-data.heig-vd.ch/logisim-evolution/tutoLogisim.pdf)) that explains some basic usage of Logisim. The electronic card referenced in the tutorial is a small card we use in our laboratories -- you won't be able to buy it in a store -- but the descriptions should be good enough to be used for another generic board.
 
 Another good reference is [this book](http://www.lulu.com/shop/george-self/exploring-digital-logic-with-logisim-ebook/ebook/product-21118223.html), where basic electronics is explained with the help of Logisim.
 
