@@ -38,7 +38,7 @@ ant run
 This also creates locally a .jar file, that you can distribute and use on other machines.
 
 ## Documentation
-[Here](https://reds.heig-vd.ch/share/logisim-evolution/tutoLogisim.pdf) you can find a tutorial (French only for the moment!) that explains some basic usage of Logisim. The electronic card referenced in the tutorial is a small card we use in our laboratories -- you won't be able to buy it in a store -- but the descriptions should be good enough to be used for another generic board.
+[Here](https://reds.heig-vd.ch/share/logisim-evolution/IntroToLogisimEnglish.pdf)  you can find a tutorial (French version [here](https://reds.heig-vd.ch/share/logisim-evolution/tutoLogisim.pdf)) that explains some basic usage of Logisim. The electronic card referenced in the tutorial is a small card we use in our laboratories -- you won't be able to buy it in a store -- but the descriptions should be good enough to be used for another generic board.
 
 Another good reference is [this book](http://www.lulu.com/shop/george-self/exploring-digital-logic-with-logisim-ebook/ebook/product-21118223.html), where basic electronics is explained with the help of Logisim.
 
@@ -85,6 +85,7 @@ The following institutions/people actively contributed to Logisim-evolution:
 * [Haute École du paysage, d'ingénierie et d'architecture de Genève](http://hepia.hesge.ch) - Switzerland
 * [Haute École d'Ingénierie et de Gestion du Canton de Vaud](http://www.heig-vd.ch) - Switzerland
 * Theldo Cruz Franqueira - Pontifícia Universidade Católica de Minas Gerais - Brasil
+* Moshe Berman - Brooklyn College
 
 If you feel that your name should be in this list, please feel free to send us a [mail](mailto:roberto.rigamonti@heig-vd.ch)!
 
