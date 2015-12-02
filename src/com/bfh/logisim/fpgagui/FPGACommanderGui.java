@@ -136,6 +136,7 @@ public class FPGACommanderGui implements ActionListener {
 	private BoardIcon boardIcon = null;
 	private JButton annotateButton = new JButton();
 	private JButton validateButton = new JButton();
+	private JCheckBox writeToFlash = new JCheckBox("Write to flash?");
 	private JComboBox<String> boardsList = new JComboBox<>();
 	private JComboBox<String> circuitsList = new JComboBox<>();
 	private JComboBox<String> frequenciesList = new JComboBox<>();
@@ -302,9 +303,17 @@ public class FPGACommanderGui implements ActionListener {
 		validateButton.setActionCommand("Download");
 		validateButton.setText("Download");
 		validateButton.addActionListener(this);
+		c.gridwidth = 1;
 		c.gridx = 1;
 		c.gridy = 6;
 		panel.add(validateButton, c);
+
+		// write to flash
+		writeToFlash.setVisible(MyBoardInformation.fpga.isFlashDefined());
+		writeToFlash.setSelected(false);
+		c.gridx = 2;
+		c.gridy = 6;
+		panel.add(writeToFlash, c);
 
 		// annotate button
 		annotateButton.setActionCommand("annotate");
@@ -506,6 +515,8 @@ public class FPGACommanderGui implements ActionListener {
 				} else {
 					HDLOnly.setText(HDLandDownloadMessage);
 				}
+				writeToFlash.setSelected(false);
+				writeToFlash.setVisible(MyBoardInformation.fpga.isFlashDefined());
 			} else {
 				String NewBoardFileName = GetBoardFile();
 				MyBoardInformation = new BoardReaderClass(NewBoardFileName).GetBoardInformation();
@@ -551,6 +562,8 @@ public class FPGACommanderGui implements ActionListener {
 						} else {
 							HDLOnly.setText(HDLandDownloadMessage);
 						}
+						writeToFlash.setSelected(false);
+						writeToFlash.setVisible(MyBoardInformation.fpga.isFlashDefined());
 					} else {
 						for (int index = 0 ; index < boardsList.getItemCount() ; index ++)
 							if (boardsList.getItemAt(index).equals(MySettings.GetSelectedBoard()))
@@ -798,7 +811,8 @@ public class FPGACommanderGui implements ActionListener {
 					ProjectDir + HDLPaths[UCFPath] + File.separator,
 					RootSheet.getNetList(), MyMappableResources,
 					MyBoardInformation, Entities, Behaviors,
-					MySettings.GetHDLType())
+					MySettings.GetHDLType(),
+					writeToFlash.isSelected())
 					&& !generateOnly) {
 				XilinxDownload.Download(MySettings, MyBoardInformation,
 						ProjectDir + HDLPaths[ScriptPath] + File.separator,

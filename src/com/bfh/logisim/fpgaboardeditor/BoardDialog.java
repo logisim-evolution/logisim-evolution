@@ -668,6 +668,28 @@ public class BoardDialog implements ActionListener, ComponentListener {
 		c.fill = GridBagConstraints.HORIZONTAL;
 		FPGAPanel.add(SpeedInput, c);
 
+		JLabel FlashName = new JLabel("Specify flash name:");
+		c.gridx = 0;
+		c.gridy = 10;
+		c.fill = GridBagConstraints.HORIZONTAL;
+		FPGAPanel.add(FlashName,c);
+		JTextField FlashNameInput = new JTextField("");
+		c.gridx = 0;
+		c.gridy = 11;
+		c.fill = GridBagConstraints.HORIZONTAL;
+		FPGAPanel.add(FlashNameInput,c);
+
+		JLabel FlashPosText = new JLabel("Specify flash location in JTAG chain:");
+		c.gridx = 0;
+		c.gridy = 12;
+		c.fill = GridBagConstraints.HORIZONTAL;
+		FPGAPanel.add(FlashPosText,c);
+		JTextField FlashPosInput = new JTextField("2");
+		c.gridx = 0;
+		c.gridy = 13;
+		c.fill = GridBagConstraints.HORIZONTAL;
+		FPGAPanel.add(FlashPosInput,c);
+
 		c.gridx = 1;
 		c.gridy = 0;
 		c.fill = GridBagConstraints.NORTH;
@@ -768,7 +790,8 @@ public class BoardDialog implements ActionListener, ComponentListener {
 									.getText(), VendorInput.getSelectedItem()
 									.toString(), UnusedPinsInput
 									.getSelectedItem().toString(), UsbTmc
-									.isSelected(), PosInput.getText());
+									.isSelected(), PosInput.getText(),
+									FlashNameInput.getText(), FlashPosInput.getText());
 				}
 			}
 		}

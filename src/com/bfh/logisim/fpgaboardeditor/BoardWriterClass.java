@@ -62,7 +62,7 @@ class BoardWriterClass {
 			"PullBehavior", "IOStandard" };
 	public static String FPGAInformationSectionString = "FPGAInformation";
 	public static String[] FPGASectionStrings = { "Vendor", "Part", "Family",
-			"Package", "Speedgrade", "USBTMC", "JTAGPos" };
+			"Package", "Speedgrade", "USBTMC", "JTAGPos", "FlashName", "FlashPos"};
 	public static String UnusedPinsString = "UnusedPins";
 	public static String ComponentsSectionString = "IOComponents";
 	public static String LocationXString = "LocationX";
@@ -130,8 +130,14 @@ class BoardWriterClass {
 			usbtmc.setValue(BoardInfo.fpga.USBTMCDownloadRequired().toString());
 			FPGA.setAttributeNode(usbtmc);
 			Attr jtagPos = boardInfo.createAttribute(FPGASectionStrings[6]);
-			jtagPos.setValue(String.valueOf(BoardInfo.fpga.JTAGChainPosition()));
+			jtagPos.setValue(String.valueOf(BoardInfo.fpga.getFpgaJTAGChainPosition()));
 			FPGA.setAttributeNode(jtagPos);
+			Attr flashName = boardInfo.createAttribute(FPGASectionStrings[7]);
+			flashName.setValue(String.valueOf(BoardInfo.fpga.getFlashName()));
+			FPGA.setAttributeNode(flashName);
+			Attr flashJtagPos = boardInfo.createAttribute(FPGASectionStrings[8]);
+			flashJtagPos.setValue(String.valueOf(BoardInfo.fpga.getFlashJTAGChainPosition()));
+			FPGA.setAttributeNode(flashJtagPos);
 			Element UnusedPins = boardInfo.createElement(UnusedPinsString);
 			fpgainfo.appendChild(FPGA);
 			UnusedPins.setAttribute("PullBehavior",

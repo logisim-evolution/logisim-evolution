@@ -76,6 +76,10 @@ public class FPGAClass {
 
 	private int JTAGPos;
 
+	private String FlashName;
+	private int FlashPos;
+	private boolean FlashDefined;
+
 	public FPGAClass() {
 		ClockFrequency = 0;
 		ClockPinLocation = null;
@@ -90,6 +94,9 @@ public class FPGAClass {
 		UnusedPinsBehavior = 0;
 		USBTMCDownload = false;
 		JTAGPos = 1;
+		FlashName = null;
+		FlashPos = 2;
+		FlashDefined = false;
 	}
 
 	public void clear() {
@@ -106,6 +113,9 @@ public class FPGAClass {
 		UnusedPinsBehavior = 0;
 		USBTMCDownload = false;
 		JTAGPos = 1;
+		FlashName = null;
+		FlashPos = 2;
+		FlashDefined = false;
 	}
 
 	public boolean FpgaInfoPresent() {
@@ -152,13 +162,14 @@ public class FPGAClass {
 		return Vendor;
 	}
 
-	public int JTAGChainPosition() {
+	public int getFpgaJTAGChainPosition() {
 		return JTAGPos;
 	}
 
 	public void Set(long frequency, String pin, String pull, String standard,
 			String tech, String device, String box, String speed, String vend,
-			String unused, boolean UsbTmc, String JTAGPos) {
+			String unused, boolean UsbTmc, String JTAGPos, String flashName,
+			String flashPos) {
 		ClockFrequency = frequency;
 		ClockPinLocation = pin;
 		ClockPullBehavior = PullBehaviors.getId(pull);
@@ -172,9 +183,24 @@ public class FPGAClass {
 		UnusedPinsBehavior = PullBehaviors.getId(unused);
 		USBTMCDownload = UsbTmc;
 		this.JTAGPos = Integer.valueOf(JTAGPos);
+		this.FlashName = flashName;
+		this.FlashPos = Integer.valueOf(flashPos);
+		this.FlashDefined = (flashName != null) && (!flashName.isEmpty()) && (this.FlashPos != 0);
 	}
 
 	public Boolean USBTMCDownloadRequired() {
 		return USBTMCDownload;
+	}
+
+	public String getFlashName() {
+		return FlashName;
+	}
+
+	public int getFlashJTAGChainPosition() {
+		return FlashPos;
+	}
+
+	public boolean isFlashDefined() {
+		return FlashDefined;
 	}
 }

@@ -211,6 +211,8 @@ public class BoardReaderClass {
 		String Speed = null;
 		String UsbTmc = null;
 		String JTAGPos = null;
+		String FlashName = null;
+		String FlashPos = null;
 		if (FPGAList.getLength() != 1)
 			return null;
 		Node ThisFPGA = FPGAList.item(0);
@@ -270,6 +272,12 @@ public class BoardReaderClass {
 					if (FPGAAttrs.item(j).getNodeName()
 							.equals(BoardWriterClass.FPGASectionStrings[6]))
 						JTAGPos = FPGAAttrs.item(j).getNodeValue();
+					if (FPGAAttrs.item(j).getNodeName()
+							.equals(BoardWriterClass.FPGASectionStrings[7]))
+						FlashName = FPGAAttrs.item(j).getNodeValue();
+					if (FPGAAttrs.item(j).getNodeName()
+							.equals(BoardWriterClass.FPGASectionStrings[8]))
+						FlashPos = FPGAAttrs.item(j).getNodeValue();
 				}
 			}
 		}
@@ -285,10 +293,12 @@ public class BoardReaderClass {
 			UsbTmc = Boolean.toString(false);
 		if (JTAGPos == null)
 			JTAGPos = "1";
+		if (FlashPos == null)
+			FlashPos = "2";
 		FPGAClass result = new FPGAClass();
 		result.Set(frequency, clockpin, clockpull, clockstand, family, Part,
 				Package, Speed, vendor, Unusedpull,
-				UsbTmc.equals(Boolean.toString(true)), JTAGPos);
+				UsbTmc.equals(Boolean.toString(true)), JTAGPos, FlashName, FlashPos);
 		return result;
 	}
 

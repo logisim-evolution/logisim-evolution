@@ -501,14 +501,15 @@ public class XilinxDownload {
 			String ProjectPath, String ScriptPath, String UcfPath,
 			Netlist RootNetlist, MappableResourcesContainer MapInfo,
 			BoardInformation BoardInfo, ArrayList<String> Entities,
-			ArrayList<String> Architectures, String HDLType) {
+			ArrayList<String> Architectures, String HDLType,
+			boolean writeToFlash) {
 		boolean IsCPLD = BoardInfo.fpga.getPart().toUpperCase()
 				.startsWith("XC2C")
 				|| BoardInfo.fpga.getPart().toUpperCase().startsWith("XA2C")
 				|| BoardInfo.fpga.getPart().toUpperCase().startsWith("XCR3")
 				|| BoardInfo.fpga.getPart().toUpperCase().startsWith("XC9500")
 				|| BoardInfo.fpga.getPart().toUpperCase().startsWith("XA9500");
-		String JTAGPos = String.valueOf(BoardInfo.fpga.JTAGChainPosition());
+		String JTAGPos = String.valueOf(BoardInfo.fpga.getFpgaJTAGChainPosition());
 		String BitfileExt = (IsCPLD) ? "jed" : "bit";
 		File ScriptFile = FileWriter.GetFilePointer(ScriptPath, script_file,
 				MyReporter);
@@ -546,17 +547,37 @@ public class XilinxDownload {
 			return false;
 		Contents.clear();
 		Contents.add("setmode -bscan");
-		Contents.add("setcable -p auto");
-		Contents.add("identify");
-		if (!IsCPLD) {
-			Contents.add("assignFile -p " + JTAGPos + " -file "
-					+ ToplevelHDLGeneratorFactory.FPGAToplevelName + "."
-					+ BitfileExt);
-			Contents.add("program -p " + JTAGPos + " -onlyFpga");
+		if (writeToFlash && BoardInfo.fpga.isFlashDefined()) {
+			if (BoardInfo.fpga.getFlashName() == null) {
+				MyReporter.AddFatalError("Unable to find the flash on " + BoardInfo.getBoardName());
+			}
+			String FlashPos = String.valueOf(BoardInfo.fpga.getFlashJTAGChainPosition());
+			String McsFile = ScriptPath + File.separator + mcs_file;
+			Contents.add("setmode -pff");
+			Contents.add("setSubMode -pffserial");
+			Contents.add("addPromDevice -p " + JTAGPos + " -size 0 -name " + BoardInfo.fpga.getFlashName());
+			Contents.add("addDesign -version 0 -name \"0\"");
+			Contents.add("addDeviceChain -index 0");
+			Contents.add("addDevice -p " + JTAGPos + " -file " + ToplevelHDLGeneratorFactory.FPGAToplevelName + "." + BitfileExt);
+			Contents.add("generate -format mcs -fillvalue FF -output " + McsFile);
+			Contents.add("setMode -bs");
+			Contents.add("setCable -port auto");
+			Contents.add("identify");
+			Contents.add("assignFile -p " + FlashPos + " -file " + McsFile);
+			Contents.add("program -p " + FlashPos + " -e -v");
 		} else {
-			Contents.add("assignFile -p " + JTAGPos + " -file logisim."
-					+ BitfileExt);
-			Contents.add("program -p " + JTAGPos + " -e");
+			Contents.add("setcable -p auto");
+			Contents.add("identify");
+			if (!IsCPLD) {
+				Contents.add("assignFile -p " + JTAGPos + " -file "
+						+ ToplevelHDLGeneratorFactory.FPGAToplevelName + "."
+						+ BitfileExt);
+				Contents.add("program -p " + JTAGPos + " -onlyFpga");
+			} else {
+				Contents.add("assignFile -p " + JTAGPos + " -file logisim."
+						+ BitfileExt);
+				Contents.add("program -p " + JTAGPos + " -e");
+			}
 		}
 		Contents.add("quit");
 		if (!FileWriter.WriteContents(DownloadFile, Contents, MyReporter))
@@ -627,6 +648,8 @@ public class XilinxDownload {
 	private final static String ucf_file = "XilinxConstraints.ucf";
 
 	private final static String download_file = "XilinxDownload";
+
+	private final static String mcs_file = "XilinxProm.mcs";
 
 	private final static Integer BUFFER_SIZE = 16 * 1024;
 
