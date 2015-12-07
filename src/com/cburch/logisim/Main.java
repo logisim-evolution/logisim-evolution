@@ -65,7 +65,7 @@ public class Main {
 
 	final static Logger logger = LoggerFactory.getLogger(Main.class);
 
-	public static final LogisimVersion VERSION = LogisimVersion.get(2, 13, 13,
+	public static final LogisimVersion VERSION = LogisimVersion.get(2, 13, 14,
 			LogisimVersion.FINAL_REVISION);
 	public static final String VERSION_NAME = VERSION.toString();
 	public static final int COPYRIGHT_YEAR = 2014;
