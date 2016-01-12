@@ -56,7 +56,10 @@ class LayoutOptions extends OptionsPanel {
 				new PrefBoolean(AppPreferences.MOVE_KEEP_CONNECT,
 						Strings.getter("layoutMoveKeepConnect")),
 				new PrefBoolean(AppPreferences.ADD_SHOW_GHOSTS,
-						Strings.getter("layoutAddShowGhosts")), };
+						Strings.getter("layoutAddShowGhosts")), 
+				new PrefBoolean(AppPreferences.NAMED_CIRCUIT_BOXES,
+						Strings.getter("layoutNamedCircuitBoxes")), 
+				};
 
 		for (int i = 0; i < 2; i++) {
 			RadixOption[] opts = RadixOption.OPTIONS;

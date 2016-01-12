@@ -66,6 +66,7 @@ import com.cburch.logisim.file.LogisimFile;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.std.wiring.Clock;
 import com.cburch.logisim.std.wiring.Pin;
@@ -173,14 +174,15 @@ public class Circuit {
 	private LogisimFile logiFile;
 
 	public Circuit(String name, LogisimFile file) {
-		appearance = new CircuitAppearance(this);
 		staticAttrs = CircuitAttributes.createBaseAttrs(this, name);
+		appearance = new CircuitAppearance(this);
 		subcircuitFactory = new SubcircuitFactory(this);
 		locker = new CircuitLocker();
 		circuitsUsingThis = new WeakHashMap<Component, Circuit>();
 		MyNetList = new Netlist(this);
 		Annotated = false;
 		logiFile = file;
+		staticAttrs.setValue(CircuitAttributes.NAMED_CIRCUIT_BOX, AppPreferences.NAMED_CIRCUIT_BOXES.getBoolean());
 	}
 
 	//
@@ -188,6 +190,12 @@ public class Circuit {
 	//
 	public void addCircuitListener(CircuitListener what) {
 		listeners.add(what);
+	}
+	
+	public void RecalcDefaultShape() {
+		if (appearance.isDefaultAppearance()) {
+			appearance.recomputeDefaultAppearance();
+		}
 	}
 
 	public void Annotate(boolean ClearExistingLabels, FPGAReport reporter) {

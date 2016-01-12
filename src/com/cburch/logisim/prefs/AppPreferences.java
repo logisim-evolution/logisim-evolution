@@ -428,6 +428,8 @@ public class AppPreferences {
 			"keepConnected", true));
 	public static final PrefMonitor<Boolean> ADD_SHOW_GHOSTS = create(new PrefMonitorBoolean(
 			"showGhosts", true));
+	public static final PrefMonitor<Boolean> NAMED_CIRCUIT_BOXES = create(new PrefMonitorBoolean(
+			"namedBoxes", true));
 	public static final PrefMonitor<String> ADD_AFTER = create(new PrefMonitorStringOpts(
 			"afterAdd", new String[] { ADD_AFTER_EDIT, ADD_AFTER_UNCHANGED },
 			ADD_AFTER_EDIT));

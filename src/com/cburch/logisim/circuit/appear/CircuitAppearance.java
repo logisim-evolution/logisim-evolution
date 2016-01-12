@@ -44,6 +44,7 @@ import com.cburch.draw.model.CanvasModelListener;
 import com.cburch.draw.model.CanvasObject;
 import com.cburch.draw.model.Drawing;
 import com.cburch.logisim.circuit.Circuit;
+import com.cburch.logisim.circuit.CircuitAttributes;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Location;
@@ -266,11 +267,15 @@ public class CircuitAppearance extends Drawing {
 			((Graphics2D) g).rotate(-rotate);
 		}
 	}
+	
+	public boolean IsNamedBoxShaped() {
+		return circuit.getStaticAttributes().getValue(CircuitAttributes.NAMED_CIRCUIT_BOX);
+	}
 
-	private void recomputeDefaultAppearance() {
+	public void recomputeDefaultAppearance() {
 		if (isDefault) {
 			List<CanvasObject> shapes;
-			shapes = DefaultAppearance.build(circuitPins.getPins());
+			shapes = DefaultAppearance.build(circuitPins.getPins(),this.IsNamedBoxShaped());
 			setObjectsForce(shapes);
 		}
 	}

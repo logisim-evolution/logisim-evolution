@@ -83,6 +83,9 @@ public class CircuitAttributes extends AbstractAttributeSet {
 		}
 
 		public void attributeValueChanged(AttributeEvent e) {
+			if (e.getAttribute() == NAMED_CIRCUIT_BOX) {
+				source.RecalcDefaultShape();
+			}
 			if (e.getAttribute() == NAME_ATTR) {
 				source.fireEvent(CircuitEvent.ACTION_SET_NAME, e.getValue());
 			}
@@ -115,19 +118,24 @@ public class CircuitAttributes extends AbstractAttributeSet {
 			.forBoolean("circuitvhdl", Strings.getter("circuitIsVhdl"));
 	public static final Attribute<String> CIRCUIT_VHDL_PATH = Attributes
 			.forString("circuitvhdlpath", Strings.getter("circuitVhdlPath"));
+	public static final Attribute<Boolean> NAMED_CIRCUIT_BOX = Attributes
+			.forBoolean("circuitnamedbox",Strings.getter("circuitNamedBox"));
 
 	private static final Attribute<?>[] STATIC_ATTRS = { NAME_ATTR,
 			CIRCUIT_LABEL_ATTR, CIRCUIT_LABEL_FACING_ATTR,
-			CIRCUIT_LABEL_FONT_ATTR, CIRCUIT_IS_VHDL_BOX, CIRCUIT_VHDL_PATH, };
+			CIRCUIT_LABEL_FONT_ATTR,NAMED_CIRCUIT_BOX, 
+			CIRCUIT_IS_VHDL_BOX, CIRCUIT_VHDL_PATH, };
 
 	private static final Object[] STATIC_DEFAULTS = { "", "", Direction.EAST,
-			StdAttr.DEFAULT_LABEL_FONT, false, "", };
+			StdAttr.DEFAULT_LABEL_FONT, 
+			false,false, "", };
 
 	private static final List<Attribute<?>> INSTANCE_ATTRS = Arrays
 			.asList(new Attribute<?>[] { StdAttr.FACING, StdAttr.LABEL,
 					LABEL_LOCATION_ATTR, StdAttr.LABEL_FONT,
 					CircuitAttributes.NAME_ATTR, CIRCUIT_LABEL_ATTR,
 					CIRCUIT_LABEL_FACING_ATTR, CIRCUIT_LABEL_FONT_ATTR,
+					NAMED_CIRCUIT_BOX,
 					CIRCUIT_IS_VHDL_BOX, CIRCUIT_VHDL_PATH, });
 
 	private Circuit source;

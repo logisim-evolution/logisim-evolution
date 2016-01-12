@@ -732,7 +732,7 @@ public class Startup {
 		if (showSplash) {
 			monitor.setProgress(SplashScreen.GUI_INIT);
 		}
-		WindowManagers.initialize();
+		WindowManagers.initialize();		
 		if (MacCompatibility.isSwingUsingScreenMenuBar()) {
 			MacCompatibility
 					.setFramelessJMenuBar(new LogisimMenuBar(null, null));

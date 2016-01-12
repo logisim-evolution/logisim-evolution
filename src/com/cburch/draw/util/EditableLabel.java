@@ -42,8 +42,6 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.util.Arrays;
 
-import javax.swing.JFrame;
-import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import com.cburch.logisim.data.Bounds;
@@ -284,57 +282,6 @@ public class EditableLabel implements Cloneable {
 
 	public int getY() {
 		return y;
-	}
-	
-	public int getWidth() {
-		// a bit of a workaround to get the size of a label
-		if (dimsKnown)
-			return this.width;
-		JPanel panel = new JPanel();
-		JFrame frame = new JFrame();
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.add(panel);
-		frame.setVisible(true);
-		Graphics g = panel.getGraphics();
-		FontMetrics fm = g.getFontMetrics(font);
-		int width = fm.stringWidth(text);
-		frame.setVisible(false);
-		frame.dispose();
-		return width;
-	}
-	
-	public int getHeight() {
-		// a bit of a workaround to get the size of a label
-		if (dimsKnown)
-			return ascent + descent;
-		JPanel panel = new JPanel();
-		JFrame frame = new JFrame();
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.add(panel);
-		frame.setVisible(true);
-		Graphics g = panel.getGraphics();
-		FontMetrics fm = g.getFontMetrics(font);
-		int height = fm.getAscent()+fm.getDescent();
-		frame.setVisible(false);
-		frame.dispose();
-		return height;
-	}
-	
-	public int getAscent() {
-		// a bit of a workaround to get the size of a label
-		if (dimsKnown)
-			return ascent;
-		JPanel panel = new JPanel();
-		JFrame frame = new JFrame();
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.add(panel);
-		frame.setVisible(true);
-		Graphics g = panel.getGraphics();
-		FontMetrics fm = g.getFontMetrics(font);
-		int height = fm.getAscent();
-		frame.setVisible(false);
-		frame.dispose();
-		return height;
 	}
 	
 	@Override
