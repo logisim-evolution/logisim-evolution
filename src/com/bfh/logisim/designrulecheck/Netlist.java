@@ -238,6 +238,16 @@ public class Netlist {
 			}
 		}
 	}
+	
+	public void ClearNetlist() {
+		for (Component comp : MyCircuit.getNonWires()) {
+			if (comp.getFactory() instanceof SubcircuitFactory) {
+				SubcircuitFactory fac = (SubcircuitFactory) comp.getFactory();
+				fac.getSubcircuit().getNetList().ClearNetlist();
+			}
+		}
+		this.clear();
+	}
 
 	public int DesignRuleCheckResult(FPGAReport Reporter, String HDLIdentifier,
 			boolean IsTopLevel, char Vendor, ArrayList<String> Sheetnames) {
