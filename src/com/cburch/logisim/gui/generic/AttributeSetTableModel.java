@@ -36,6 +36,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import com.bfh.logisim.hdlgenerator.HDLColorRenderer;
+import com.bfh.logisim.settings.Settings;
+import com.cburch.logisim.comp.ComponentFactory;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeEvent;
 import com.cburch.logisim.data.AttributeListener;
@@ -102,18 +105,66 @@ public abstract class AttributeSetTableModel implements AttrTableModel,
 			}
 		}
 	}
+	
+	private class HDLrow extends AttrRow {
+		
+		private AttributeSet attrs = null;
+		private ComponentFactory CompInst = null;
+		
+		HDLrow(Attribute<?> attr,
+			   AttributeSet attrs) {
+			super(attr);
+			this.attrs = attrs;
+		}
+		
+		@Override
+		public String getLabel() {
+			if (CompInst == null)
+				return HDLColorRenderer.UnKnownString;
+			if (CompInst.HDLSupportedComponent(Settings.VHDL, attrs))
+				return HDLColorRenderer.VHDLSupportString;
+			return HDLColorRenderer.NoSupportString;
+		}
+		
+		@Override
+		public String getValue() {
+			if (CompInst == null)
+				return HDLColorRenderer.UnKnownString;
+			if (CompInst.HDLSupportedComponent(Settings.VERILOG, attrs))
+				return HDLColorRenderer.VHDLSupportString;
+			return HDLColorRenderer.NoSupportString;
+		}
+		
+		@Override
+		public boolean isValueEditable() {
+			return false;
+		}
+		
+		@Override
+		public void setValue(Object value) {
+			// Do Nothing
+		}
+		
+		public void setInstance(ComponentFactory comp) {
+			CompInst = comp;
+		}
+	}
 
 	private ArrayList<AttrTableModelListener> listeners;
 	private AttributeSet attrs;
 	private HashMap<Attribute<?>, AttrRow> rowMap;
 	private ArrayList<AttrRow> rows;
-
+	
 	public AttributeSetTableModel(AttributeSet attrs) {
 		this.attrs = attrs;
 		this.listeners = new ArrayList<AttrTableModelListener>();
 		this.rowMap = new HashMap<Attribute<?>, AttrRow>();
 		this.rows = new ArrayList<AttrRow>();
 		if (attrs != null) {
+			/* Add dummy VHDL/Verilog row */
+			HDLrow rowd = new HDLrow(null,this.attrs);
+			rowMap.put(null, rowd);
+			rows.add(rowd);
 			for (Attribute<?> attr : attrs.getAttributes()) {
 				AttrRow row = new AttrRow(attr);
 				rowMap.put(attr, row);
@@ -121,7 +172,14 @@ public abstract class AttributeSetTableModel implements AttrTableModel,
 			}
 		}
 	}
-
+	
+	public void SetInstance(ComponentFactory comp) {
+		if (rows.get(0) instanceof HDLrow) {
+			HDLrow hdl = (HDLrow)rows.get(0);
+			hdl.setInstance(comp);
+		}
+	}
+	
 	public void addAttrTableModelListener(AttrTableModelListener listener) {
 		if (listeners.isEmpty() && attrs != null) {
 			attrs.addAttributeListener(this);
@@ -151,6 +209,9 @@ public abstract class AttributeSetTableModel implements AttrTableModel,
 		ArrayList<AttrRow> newRows = new ArrayList<AttrRow>();
 		HashSet<Attribute<?>> missing = new HashSet<Attribute<?>>(
 				rowMap.keySet());
+		/* put the vhdl/verilog row */
+		HDLrow rowd = new HDLrow(null,this.attrs);
+		newRows.add(rowd);
 		for (Attribute<?> attr : attrs.getAttributes()) {
 			AttrRow row = rowMap.get(attr);
 			if (row == null) {

@@ -142,10 +142,10 @@ public class Led extends InstanceFactory {
 
 	@Override
 	public boolean HDLSupportedComponent(String HDLIdentifier,
-			AttributeSet attrs, char Vendor) {
+			AttributeSet attrs) {
 		if (MyHDLGenerator == null)
 			MyHDLGenerator = new AbstractLedHDLGeneratorFactory();
-		return MyHDLGenerator.HDLTargetSupported(HDLIdentifier, attrs, Vendor);
+		return MyHDLGenerator.HDLTargetSupported(HDLIdentifier, attrs);
 	}
 
 	@Override

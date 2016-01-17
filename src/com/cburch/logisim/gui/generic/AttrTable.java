@@ -64,6 +64,7 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableModel;
 
+import com.bfh.logisim.hdlgenerator.HDLColorRenderer;
 import com.cburch.logisim.util.JDialogOk;
 import com.cburch.logisim.util.JInputComponent;
 import com.cburch.logisim.util.JInputDialog;
@@ -170,7 +171,7 @@ public class AttrTable extends JPanel implements LocaleListener {
 			AttrTableModel attrModel = tableModel.attrModel;
 			AttrTableModelRow row = attrModel.getRow(rowIndex);
 
-			if (columnIndex == 0) {
+			if ((columnIndex == 0)||(rowIndex==0)) {
 				return new JLabel(row.getLabel());
 			} else {
 				if (currentEditor != null) {
@@ -424,7 +425,8 @@ public class AttrTable extends JPanel implements LocaleListener {
 		@Override
 		public boolean isCellEditable(int rowIndex, int columnIndex) {
 			return columnIndex > 0
-					&& attrModel.getRow(rowIndex).isValueEditable();
+					&& attrModel.getRow(rowIndex).isValueEditable()
+					&& rowIndex > 0;
 		}
 
 		@Override
@@ -463,7 +465,7 @@ public class AttrTable extends JPanel implements LocaleListener {
 			return new Dimension(1, ret.height);
 		}
 	}
-
+	
 	private static final AttrTableModel NULL_ATTR_MODEL = new NullAttrModel();
 	private Window parent;
 	private boolean titleEnabled;
@@ -487,6 +489,7 @@ public class AttrTable extends JPanel implements LocaleListener {
 		table.setTableHeader(null);
 		table.setRowHeight(20);
 
+
 		Font baseFont = title.getFont();
 		int titleSize = Math.round(baseFont.getSize() * 1.2f);
 		Font titleFont = baseFont.deriveFont((float) titleSize).deriveFont(
@@ -495,10 +498,11 @@ public class AttrTable extends JPanel implements LocaleListener {
 		Color bgColor = new Color(240, 240, 240);
 		setBackground(bgColor);
 		table.setBackground(bgColor);
-		Object renderer = table.getDefaultRenderer(String.class);
-		if (renderer instanceof JComponent) {
-			((JComponent) renderer).setBackground(Color.WHITE);
-		}
+//		Object renderer = table.getDefaultRenderer(String.class);
+//		if (renderer instanceof JComponent) {
+//			((JComponent) renderer).setBackground(Color.WHITE);
+//		}
+		table.setDefaultRenderer(String.class, new HDLColorRenderer());
 
 		tabPane = new JTabbedPane();
 		JPanel propPanel = new JPanel(new BorderLayout(0, 0));

@@ -44,6 +44,8 @@ class AttrTableToolModel extends AttributeSetTableModel {
 		super(defaults.createSubset(tool));
 		this.defaults = defaults;
 		this.currentTool = tool;
+		
+		
 	}
 
 	@Override

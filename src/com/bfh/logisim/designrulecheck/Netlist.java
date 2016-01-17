@@ -45,7 +45,6 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JProgressBar;
 
-import com.bfh.logisim.fpgaboardeditor.FPGAClass;
 import com.bfh.logisim.fpgagui.FPGAReport;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitAttributes;
@@ -250,7 +249,7 @@ public class Netlist {
 	}
 
 	public int DesignRuleCheckResult(FPGAReport Reporter, String HDLIdentifier,
-			boolean IsTopLevel, char Vendor, ArrayList<String> Sheetnames) {
+			boolean IsTopLevel, ArrayList<String> Sheetnames) {
 		ArrayList<String> CompName = new ArrayList<String>();
 		ArrayList<Set<String>> AnnotationNames = new ArrayList<Set<String>>();
 		/* Check if we are okay */
@@ -263,8 +262,7 @@ public class Netlist {
 				DRCStatus = sub
 						.getSubcircuit()
 						.getNetList()
-						.DesignRuleCheckResult(Reporter, HDLIdentifier, false,
-								Vendor, Sheetnames);
+						.DesignRuleCheckResult(Reporter, HDLIdentifier, false,Sheetnames);
 				if (DRCStatus != DRC_PASSED) {
 					return DRCStatus;
 				}
@@ -294,7 +292,7 @@ public class Netlist {
 			 * generation
 			 */
 			if (!comp.getFactory().HDLSupportedComponent(HDLIdentifier,
-					comp.getAttributeSet(), Vendor)) {
+					comp.getAttributeSet())) {
 				Reporter.AddFatalError("Found unsupported component: \""
 						+ comp.getFactory().getName() + "\" for "
 						+ HDLIdentifier.toString()
@@ -396,7 +394,7 @@ public class Netlist {
 							.getSubcircuit()
 							.getNetList()
 							.DesignRuleCheckResult(Reporter, HDLIdentifier,
-									false, Vendor, Sheetnames);
+									false, Sheetnames);
 					if (DRCStatus != DRC_PASSED) {
 						return DRCStatus;
 					}
@@ -901,7 +899,7 @@ public class Netlist {
 			} else if ((comp.getFactory() instanceof Pin)
 					|| (comp.getFactory().getIOInformation() != null)
 					|| (comp.getFactory().getHDLGenerator(HDLIdentifier,
-							comp.getAttributeSet(), FPGAClass.VendorUnknown) != null)) {
+							comp.getAttributeSet()) != null)) {
 				if (!ProcessNormalComponent(comp, Reporter)) {
 					this.clear();
 					panel.dispose();

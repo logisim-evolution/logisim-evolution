@@ -140,10 +140,10 @@ public class Adder extends InstanceFactory {
 
 	@Override
 	public boolean HDLSupportedComponent(String HDLIdentifier,
-			AttributeSet attrs, char Vendor) {
+			AttributeSet attrs) {
 		if (MyHDLGenerator == null)
 			MyHDLGenerator = new AdderHDLGeneratorFactory();
-		return MyHDLGenerator.HDLTargetSupported(HDLIdentifier, attrs, Vendor);
+		return MyHDLGenerator.HDLTargetSupported(HDLIdentifier, attrs);
 	}
 
 	@Override

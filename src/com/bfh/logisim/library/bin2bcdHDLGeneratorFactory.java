@@ -56,8 +56,7 @@ public class bin2bcdHDLGeneratorFactory  extends AbstractHDLGeneratorFactory{
 	
 	@Override
 	public boolean HDLTargetSupported( String HDLType,
-			                           AttributeSet attrs,
-			                           char Vendor) {
+			                           AttributeSet attrs) {
 		return HDLType.equals(Settings.VHDL);
 	}
 	

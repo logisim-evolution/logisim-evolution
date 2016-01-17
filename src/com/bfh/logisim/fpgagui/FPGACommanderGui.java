@@ -964,8 +964,7 @@ public class FPGACommanderGui implements ActionListener {
 		} else {
 			root.getNetList().ClearNetlist();
 			DRCResult = root.getNetList().DesignRuleCheckResult(MyReporter,
-					HDLType.getText(), true,
-					MyBoardInformation.fpga.getVendor(), SheetNames);
+					HDLType.getText(), true, SheetNames);
 		}
 		return (DRCResult == Netlist.DRC_PASSED);
 	}
@@ -1138,8 +1137,7 @@ public class FPGACommanderGui implements ActionListener {
 		Set<String> GeneratedHDLComponents = new HashSet<String>();
 		HDLGeneratorFactory Worker = RootSheet.getSubcircuitFactory()
 				.getHDLGenerator(MySettings.GetHDLType(),
-						RootSheet.getStaticAttributes(),
-						MyBoardInformation.fpga.getVendor());
+						RootSheet.getStaticAttributes());
 		if (Worker == null) {
 			MyReporter
 					.AddFatalError("Internal error on HDL generation, null pointer exception");
@@ -1183,8 +1181,7 @@ public class FPGACommanderGui implements ActionListener {
 					.getHDLGenerator(
 							MySettings.GetHDLType(),
 							RootSheet.getNetList().GetAllClockSources().get(0)
-									.getAttributeSet(),
-							MyBoardInformation.fpga.getVendor());
+									.getAttributeSet());
 			String CompName = RootSheet.getNetList().GetAllClockSources()
 					.get(0).getFactory().getHDLName(null);
 			if (!AbstractHDLGeneratorFactory.WriteEntity(

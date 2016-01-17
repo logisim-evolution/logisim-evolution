@@ -1435,8 +1435,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
 		return Contents.toString();
 	}
 
-	public boolean HDLTargetSupported(String HDLType, AttributeSet attrs,
-			char Vendor) {
+	public boolean HDLTargetSupported(String HDLType, AttributeSet attrs) {
 		return false;
 	}
 

@@ -164,8 +164,7 @@ public class DemultiplexerHDLGeneratorFactory extends
 	}
 
 	@Override
-	public boolean HDLTargetSupported(String HDLType, AttributeSet attrs,
-			char Vendor) {
+	public boolean HDLTargetSupported(String HDLType, AttributeSet attrs) {
 		return true;
 	}
 

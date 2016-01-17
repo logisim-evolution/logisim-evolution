@@ -33,6 +33,7 @@ package com.cburch.logisim.gui.main;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.gui.generic.AttributeSetTableModel;
 import com.cburch.logisim.proj.Project;
+import com.cburch.logisim.tools.AddTool;
 import com.cburch.logisim.tools.Tool;
 
 public class AttrTableToolModel extends AttributeSetTableModel {
@@ -41,6 +42,10 @@ public class AttrTableToolModel extends AttributeSetTableModel {
 
 	public AttrTableToolModel(Project proj, Tool tool) {
 		super(tool.getAttributeSet());
+		if (tool instanceof AddTool) {
+			AddTool mytool = (AddTool) tool;
+			SetInstance(mytool.getFactory());
+		}
 		this.proj = proj;
 		this.tool = tool;
 	}
