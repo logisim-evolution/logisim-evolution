@@ -45,6 +45,7 @@ public class AttrTableToolModel extends AttributeSetTableModel {
 		if (tool instanceof AddTool) {
 			AddTool mytool = (AddTool) tool;
 			SetInstance(mytool.getFactory());
+			SetIsTool();
 		}
 		this.proj = proj;
 		this.tool = tool;

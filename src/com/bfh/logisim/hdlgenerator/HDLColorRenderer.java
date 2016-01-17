@@ -19,6 +19,7 @@ public class HDLColorRenderer extends JLabel
     public final static String VERILOGSupportString = "VERILOG_SUPPORTED";
     public final static String NoSupportString = "HDL_NOT_SUPPORTED";
     public final static String UnKnownString = "HDL_UNKNOWN";
+    public final static String RequiredFieldString = ">_HDL_REQUIRED_FIELD_<";
     private final static ArrayList<String> CorrectStrings = new ArrayList<String>();
 	
 	Border border = null;
@@ -52,13 +53,22 @@ public class HDLColorRenderer extends JLabel
 						table.getGridColor());
 			setBorder(border);
 		} else {
-			Color newColor = isSelected ? Color.lightGray :
-				                          Color.white;
-			setBackground(newColor);
-			setForeground(Color.black);
-			setText((String)Info);
-			setHorizontalAlignment(JLabel.LEFT);
-			setBorder(null);
+			String myInfo = (String) Info;
+			if (myInfo.equals(RequiredFieldString)) {
+				setBackground(Color.YELLOW);
+				setForeground(Color.BLUE);
+				setText("HDL Required");
+				setHorizontalAlignment(JLabel.CENTER);
+				setBorder(null);
+			} else {
+				Color newColor = isSelected ? Color.lightGray :
+											  Color.white;
+				setBackground(newColor);
+				setForeground(Color.black);
+				setText((String)Info);
+				setHorizontalAlignment(JLabel.LEFT);
+				setBorder(null);
+			}
 		}
 		return this;
 	}

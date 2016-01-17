@@ -48,7 +48,7 @@ public abstract class AttributeSetTableModel implements AttrTableModel,
 		AttributeListener {
 	private class AttrRow implements AttrTableModelRow {
 		private Attribute<Object> attr;
-
+		
 		AttrRow(Attribute<?> attr) {
 			@SuppressWarnings("unchecked")
 			Attribute<Object> objAttr = (Attribute<Object>) attr;
@@ -70,7 +70,10 @@ public abstract class AttributeSetTableModel implements AttrTableModel,
 				return "";
 			} else {
 				try {
-					return attr.toDisplayString(value);
+					String Str = attr.toDisplayString(value);
+                    if (Str.isEmpty()&&attr.getName().equals("label")&&CompInst!=null&&CompInst.RequiresNonZeroLabel())
+                    	return HDLColorRenderer.RequiredFieldString;
+					return Str;
 				} catch (Exception e) {
 					return "???";
 				}
@@ -108,13 +111,8 @@ public abstract class AttributeSetTableModel implements AttrTableModel,
 	
 	private class HDLrow extends AttrRow {
 		
-		private AttributeSet attrs = null;
-		private ComponentFactory CompInst = null;
-		
-		HDLrow(Attribute<?> attr,
-			   AttributeSet attrs) {
+		HDLrow(Attribute<?> attr) {
 			super(attr);
-			this.attrs = attrs;
 		}
 		
 		@Override
@@ -145,15 +143,13 @@ public abstract class AttributeSetTableModel implements AttrTableModel,
 			// Do Nothing
 		}
 		
-		public void setInstance(ComponentFactory comp) {
-			CompInst = comp;
-		}
 	}
 
 	private ArrayList<AttrTableModelListener> listeners;
 	private AttributeSet attrs;
 	private HashMap<Attribute<?>, AttrRow> rowMap;
 	private ArrayList<AttrRow> rows;
+	private ComponentFactory CompInst = null;
 	
 	public AttributeSetTableModel(AttributeSet attrs) {
 		this.attrs = attrs;
@@ -161,9 +157,8 @@ public abstract class AttributeSetTableModel implements AttrTableModel,
 		this.rowMap = new HashMap<Attribute<?>, AttrRow>();
 		this.rows = new ArrayList<AttrRow>();
 		if (attrs != null) {
-			/* Add dummy VHDL/Verilog row */
-			HDLrow rowd = new HDLrow(null,this.attrs);
-			rowMap.put(null, rowd);
+			/* put the vhdl/verilog row */
+			HDLrow rowd = new HDLrow(null);
 			rows.add(rowd);
 			for (Attribute<?> attr : attrs.getAttributes()) {
 				AttrRow row = new AttrRow(attr);
@@ -174,9 +169,17 @@ public abstract class AttributeSetTableModel implements AttrTableModel,
 	}
 	
 	public void SetInstance(ComponentFactory comp) {
-		if (rows.get(0) instanceof HDLrow) {
-			HDLrow hdl = (HDLrow)rows.get(0);
-			hdl.setInstance(comp);
+		CompInst = comp;
+	}
+	
+	public void SetIsTool() {
+		/* We remove the label attribute for a tool */
+		for (Attribute<?> attr : attrs.getAttributes()) {
+			if (attr.getName().equals("label")) {
+				AttrRow row = rowMap.get(attr);
+				rowMap.remove(attr);
+				rows.remove(row);
+			}
 		}
 	}
 	
@@ -210,7 +213,7 @@ public abstract class AttributeSetTableModel implements AttrTableModel,
 		HashSet<Attribute<?>> missing = new HashSet<Attribute<?>>(
 				rowMap.keySet());
 		/* put the vhdl/verilog row */
-		HDLrow rowd = new HDLrow(null,this.attrs);
+		HDLrow rowd = new HDLrow(null);
 		newRows.add(rowd);
 		for (Attribute<?> attr : attrs.getAttributes()) {
 			AttrRow row = rowMap.get(attr);

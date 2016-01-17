@@ -36,6 +36,7 @@ import java.util.HashSet;
 
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.data.AttributeSet;
+import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.PropertyChangeWeakSupport;
 
 class Clipboard {
@@ -75,8 +76,8 @@ class Clipboard {
 		propertySupport.firePropertyChange(contentsProperty, old, current);
 	}
 
-	public static void set(Selection value, AttributeSet oldAttrs) {
-		set(new Clipboard(value, oldAttrs));
+	public static void set(Selection value, AttributeSet oldAttrs, boolean ClearLabels) {
+		set(new Clipboard(value, oldAttrs, ClearLabels));
 	}
 
 	public static final String contentsProperty = "contents";
@@ -91,13 +92,16 @@ class Clipboard {
 	private AttributeSet oldAttrs;
 	private AttributeSet newAttrs;
 
-	private Clipboard(Selection sel, AttributeSet viewAttrs) {
+	private Clipboard(Selection sel, AttributeSet viewAttrs , boolean ClearLabels) {
 		components = new HashSet<Component>();
 		oldAttrs = null;
 		newAttrs = null;
 		for (Component base : sel.getComponents()) {
 			AttributeSet baseAttrs = base.getAttributeSet();
 			AttributeSet copyAttrs = (AttributeSet) baseAttrs.clone();
+			/* We clear all labels on the Clipboard */
+			if (copyAttrs.containsAttribute(StdAttr.LABEL)&&ClearLabels)
+				copyAttrs.setValue(StdAttr.LABEL, "");
 			Component copy = base.getFactory().createComponent(
 					base.getLocation(), copyAttrs);
 			components.add(copy);
@@ -105,6 +109,14 @@ class Clipboard {
 				oldAttrs = baseAttrs;
 				newAttrs = copyAttrs;
 			}
+		}
+	}
+	
+	public void ClearLabels() {
+		for (Component comp : components) {
+			AttributeSet attrs = comp.getAttributeSet();
+			if (attrs.containsAttribute(StdAttr.LABEL))
+				attrs.setValue(StdAttr.LABEL, "");
 		}
 	}
 
