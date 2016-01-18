@@ -76,9 +76,9 @@ public abstract class AbstractAttributeSet implements Cloneable, AttributeSet {
 	}
 
 	protected <V> void fireAttributeValueChanged(Attribute<? super V> attr,
-			V value) {
+			V value , V oldvalue) {
 		if (listeners != null) {
-			AttributeEvent event = new AttributeEvent(this, attr, value);
+			AttributeEvent event = new AttributeEvent(this, attr, value, oldvalue);
 			List<AttributeListener> ls = new ArrayList<AttributeListener>(
 					listeners);
 			for (AttributeListener l : ls) {

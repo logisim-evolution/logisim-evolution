@@ -100,27 +100,29 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
 		return null;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public <V> void setValue(Attribute<V> attr, V value) {
 		if (attr == VhdlEntity.CONTENT_ATTR) {
 			VhdlContent newContent = (VhdlContent) value;
 			if (!content.equals(newContent))
 				content = newContent;
-			fireAttributeValueChanged(attr, value);
+			fireAttributeValueChanged(attr, value,null);
 		}
 		if (attr == StdAttr.LABEL && value instanceof String) {
 			String newLabel = (String) value;
+			String oldlabel = label;
 			if (label.equals(newLabel))
 				return;
 			label = newLabel;
-			fireAttributeValueChanged(attr, value);
+			fireAttributeValueChanged(attr, value, (V) oldlabel);
 		}
 		if (attr == StdAttr.LABEL_FONT && value instanceof Font) {
 			Font newFont = (Font) value;
 			if (labelFont.equals(newFont))
 				return;
 			labelFont = newFont;
-			fireAttributeValueChanged(attr, value);
+			fireAttributeValueChanged(attr, value,null);
 		}
 	}
 

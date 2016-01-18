@@ -126,32 +126,33 @@ class RomAttributes extends AbstractAttributeSet {
 				return;
 			addrBits = newAddr;
 			contents.setDimensions(addrBits.getWidth(), dataBits.getWidth());
-			fireAttributeValueChanged(attr, value);
+			fireAttributeValueChanged(attr, value,null);
 		} else if (attr == Mem.DATA_ATTR) {
 			BitWidth newData = (BitWidth) value;
 			if (newData == dataBits)
 				return;
 			dataBits = newData;
 			contents.setDimensions(addrBits.getWidth(), dataBits.getWidth());
-			fireAttributeValueChanged(attr, value);
+			fireAttributeValueChanged(attr, value,null);
 		} else if (attr == Rom.CONTENTS_ATTR) {
 			MemContents newContents = (MemContents) value;
 			if (contents.equals(newContents))
 				return;
 			contents = newContents;
-			fireAttributeValueChanged(attr, value);
+			fireAttributeValueChanged(attr, value,null);
 		} else if (attr == StdAttr.LABEL) {
 			String NewLabel = (String) value;
 			if (Label.equals(NewLabel))
 				return;
+			V Oldlabel = (V) Label;
 			Label = NewLabel;
-			fireAttributeValueChanged(attr, value);
+			fireAttributeValueChanged(attr, value,Oldlabel);
 		} else if (attr == StdAttr.LABEL_FONT) {
 			Font NewFont = (Font) value;
 			if (LabelFont.equals(NewFont))
 				return;
 			LabelFont = NewFont;
-			fireAttributeValueChanged(attr, value);
+			fireAttributeValueChanged(attr, value,null);
 		}
 	}
 }

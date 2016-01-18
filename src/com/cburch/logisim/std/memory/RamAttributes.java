@@ -172,7 +172,7 @@ public class RamAttributes extends AbstractAttributeSet {
 			}
 			addrBits = newAddr;
 			contents.setDimensions(addrBits.getWidth(), dataBits.getWidth());
-			fireAttributeValueChanged(attr, value);
+			fireAttributeValueChanged(attr, value,null);
 		} else if (attr == Mem.DATA_ATTR) {
 			BitWidth newData = (BitWidth) value;
 			if (dataBits == newData) {
@@ -180,7 +180,7 @@ public class RamAttributes extends AbstractAttributeSet {
 			}
 			dataBits = newData;
 			contents.setDimensions(addrBits.getWidth(), dataBits.getWidth());
-			fireAttributeValueChanged(attr, value);
+			fireAttributeValueChanged(attr, value,null);
 		} else if (attr == Ram.CONTENTS_ATTR) {
 			MemContents newContents = (MemContents) value;
 			if (contents.equals(newContents)) {
@@ -192,35 +192,36 @@ public class RamAttributes extends AbstractAttributeSet {
 						dataBits.getWidth());
 			}
 			contents = newContents;
-			fireAttributeValueChanged(attr, value);
+			fireAttributeValueChanged(attr, value,null);
 		} else if (attr == StdAttr.LABEL) {
 			String NewLabel = (String) value;
 			if (Label.equals(NewLabel)) {
 				return;
 			}
+			V Oldlabel = (V) Label;
 			Label = NewLabel;
-			fireAttributeValueChanged(attr, value);
+			fireAttributeValueChanged(attr, value,Oldlabel);
 		} else if (attr == StdAttr.TRIGGER) {
 			AttributeOption newTrigger = (AttributeOption) value;
 			if (Trigger.equals(newTrigger)) {
 				return;
 			}
 			Trigger = newTrigger;
-			fireAttributeValueChanged(attr, value);
+			fireAttributeValueChanged(attr, value,null);
 		} else if (attr == ATTR_DBUS) {
 			AttributeOption NewStyle = (AttributeOption) value;
 			if (BusStyle.equals(NewStyle)) {
 				return;
 			}
 			BusStyle = NewStyle;
-			fireAttributeValueChanged(attr, value);
+			fireAttributeValueChanged(attr, value,null);
 		} else if (attr == StdAttr.LABEL_FONT) {
 			Font NewFont = (Font) value;
 			if (LabelFont.equals(NewFont)) {
 				return;
 			}
 			LabelFont = NewFont;
-			fireAttributeValueChanged(attr, value);
+			fireAttributeValueChanged(attr, value,null);
 		} else if (attr == ATTR_ByteEnables) {
 			AttributeOption NewBE = (AttributeOption) value;
 			if (ByteEnables.equals(NewBE)) {
@@ -230,7 +231,7 @@ public class RamAttributes extends AbstractAttributeSet {
 				NewBE = BUS_WITHOUT_BYTEENABLES;
 			}
 			ByteEnables = NewBE;
-			fireAttributeValueChanged(attr, value);
+			fireAttributeValueChanged(attr, value,null);
 		}
 	}
 }

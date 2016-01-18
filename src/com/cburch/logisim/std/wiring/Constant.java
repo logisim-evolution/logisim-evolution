@@ -103,7 +103,7 @@ public class Constant extends InstanceFactory {
 			} else {
 				throw new IllegalArgumentException("unknown attribute " + attr);
 			}
-			fireAttributeValueChanged(attr, value);
+			fireAttributeValueChanged(attr, value,null);
 		}
 	}
 

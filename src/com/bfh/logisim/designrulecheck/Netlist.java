@@ -276,6 +276,10 @@ public class Netlist {
 		 * Check for duplicated sheet names, this is bad as we will have
 		 * multiple "different" components with the same name
 		 */
+		if (MyCircuit.getName().isEmpty()) {
+			Reporter.AddFatalError("Found a sheet in your design with an empty name. This is not allowed, please specify a name!");
+			return DRC_ERROR;
+		}
 		if (Sheetnames.contains(MyCircuit.getName())) {
 			Reporter.AddFatalError("Found more than one sheet in your design with the name :\""
 					+ MyCircuit.getName()

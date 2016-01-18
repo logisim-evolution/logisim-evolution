@@ -148,21 +148,22 @@ public class TclComponentAttributes extends AbstractAttributeSet {
 			File newFile = (File) value;
 			if (!contentFile.equals(newFile))
 				contentFile = newFile;
-			fireAttributeValueChanged(attr, value);
+			fireAttributeValueChanged(attr, value,null);
 		}
 		if (attr == StdAttr.LABEL) {
 			String newLabel = (String) value;
 			if (label.equals(newLabel))
 				return;
+			V Oldlabel = (V) label;
 			label = newLabel;
-			fireAttributeValueChanged(attr, value);
+			fireAttributeValueChanged(attr, value,Oldlabel);
 		}
 		if (attr == StdAttr.LABEL_FONT) {
 			Font newFont = (Font) value;
 			if (labelFont.equals(newFont))
 				return;
 			labelFont = newFont;
-			fireAttributeValueChanged(attr, value);
+			fireAttributeValueChanged(attr, value, null);
 		}
 	}
 

@@ -87,6 +87,7 @@ class CounterAttributes extends AbstractAttributeSet {
 		base.setReadOnly(attr, value);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public <V> void setValue(Attribute<V> attr, V value) {
 		Object oldValue = base.getValue(attr);
@@ -109,10 +110,10 @@ class CounterAttributes extends AbstractAttributeSet {
 				if (v != oldVal) {
 					Integer newValObj = Integer.valueOf(v);
 					base.setValue(Counter.ATTR_MAX, newValObj);
-					fireAttributeValueChanged(Counter.ATTR_MAX, newValObj);
+					fireAttributeValueChanged(Counter.ATTR_MAX, newValObj,null);
 				}
 			}
-			fireAttributeValueChanged(StdAttr.WIDTH, newWidth);
+			fireAttributeValueChanged(StdAttr.WIDTH, newWidth,null);
 		} else if (attr == Counter.ATTR_MAX) {
 			int oldVal = base.getValue(Counter.ATTR_MAX).intValue();
 			BitWidth width = base.getValue(StdAttr.WIDTH);
@@ -124,10 +125,10 @@ class CounterAttributes extends AbstractAttributeSet {
 			}
 		}
 		base.setValue(attr, value);
-		fireAttributeValueChanged(attr, value);
+		fireAttributeValueChanged(attr, value,(V)oldValue);
 		if (newMax != null) {
 			base.setValue(Counter.ATTR_MAX, newMax);
-			fireAttributeValueChanged(Counter.ATTR_MAX, newMax);
+			fireAttributeValueChanged(Counter.ATTR_MAX, newMax,null);
 		}
 	}
 }

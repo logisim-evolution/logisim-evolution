@@ -270,8 +270,10 @@ public class AttributeSetImpl extends AbstractAttributeSet {
 		if (value.equals(n.value)) {
 			; // do nothing - why change what's already there?
 		} else {
+			@SuppressWarnings("unchecked")
+			V oldvalue = (V) n.value;
 			n.value = value;
-			fireAttributeValueChanged(attr, value);
+			fireAttributeValueChanged(attr, value, oldvalue);
 		}
 	}
 }

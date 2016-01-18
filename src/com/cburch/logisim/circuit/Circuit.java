@@ -42,6 +42,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
 
+import javax.swing.JOptionPane;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,6 +57,8 @@ import com.cburch.logisim.comp.ComponentEvent;
 import com.cburch.logisim.comp.ComponentFactory;
 import com.cburch.logisim.comp.ComponentListener;
 import com.cburch.logisim.comp.EndData;
+import com.cburch.logisim.data.Attribute;
+import com.cburch.logisim.data.AttributeEvent;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
@@ -143,6 +147,40 @@ public class Circuit {
 			}
 			return map;
 		}
+		
+		public void LabelChanged(ComponentEvent e) {
+			AttributeEvent attre = (AttributeEvent) e.getData();
+			if (attre.getSource()==null&&
+				attre.getValue()==null&&
+				attre.getOldValue()!=null) {
+				/* Special event from below indicating a wrongly entered name */
+				String oldLabel = (String) attre.getOldValue();
+				if (UsedLabels.contains(oldLabel.toUpperCase()))
+					UsedLabels.remove(oldLabel.toUpperCase());
+				return;
+			}
+			String newLabel = (String) attre.getValue();
+			String oldLabel = attre.getOldValue() != null ? (String) attre.getOldValue() : "";
+			@SuppressWarnings("unchecked")
+			Attribute<String> lattr = (Attribute<String>) attre.getAttribute();
+			if (UsedLabels.contains(newLabel.toUpperCase())) {
+				JOptionPane.showMessageDialog(null, "\""+newLabel+"\" : "+Strings.get("UsedLabelNameError"));
+				if (UsedLabels.contains(oldLabel.toUpperCase()))
+					UsedLabels.remove(oldLabel.toUpperCase());
+				attre.getSource().setValue(lattr, oldLabel);
+			} else 
+			if (UsedComponentNames.contains(newLabel.toUpperCase())) {
+				JOptionPane.showMessageDialog(null, "\""+newLabel+"\" : "+Strings.get("ComponentLabelNameError"));
+				if (UsedLabels.contains(oldLabel.toUpperCase()))
+					UsedLabels.remove(oldLabel.toUpperCase());
+				attre.getSource().setValue(lattr, oldLabel);
+			} else {
+				if (UsedLabels.contains(oldLabel.toUpperCase()))
+					UsedLabels.remove(oldLabel.toUpperCase());
+				if (!newLabel.isEmpty())
+				   UsedLabels.add(newLabel.toUpperCase());
+			}
+		}
 	}
 
 	//
@@ -160,6 +198,8 @@ public class Circuit {
 	private HashSet<Component> comps = new HashSet<Component>(); // doesn't
 																	// include
 																	// wires
+    private HashSet<String> UsedLabels = new HashSet<String>();
+    private HashSet<String> UsedComponentNames = new HashSet<String>();
 	CircuitWires wires = new CircuitWires();
 	// wires is package-protected for CircuitState and Analyze only.
 	private ArrayList<Component> clocks = new ArrayList<Component>();
@@ -310,6 +350,12 @@ public class Circuit {
 				id++;
 			}
 			CompCount.set(index, id + 1);
+			if (CorrectComponentName.isEmpty()) {
+				/* This should never happen, but let's catch is anyways */
+				reporter.AddFatalError("Found a component with empty name, cannot annotate! Aborting.");
+				ClearAnnotationLevel();
+				return;
+			}
 			String NewLabel = CorrectComponentName + "_" + id.toString();
 			/*
 			 * TODO: Dirty hack; I do not know how to change the label in such a
@@ -654,7 +700,6 @@ public class Circuit {
 
 	void mutatorAdd(Component c) {
 		// logger.debug("mutatorAdd: {}", c);
-
 		locker.checkForWritePermission("add");
 
 		Annotated = false;
@@ -681,7 +726,17 @@ public class Circuit {
 				subcirc.getSubcircuit().circuitsUsingThis.put(c, this);
 			}
 			c.addComponentListener(myComponentListener);
-			// c.addComponentListener(this.);
+		}
+		String ComponentName = c.getFactory().getName().toUpperCase();
+		if (!UsedComponentNames.contains(ComponentName))
+			UsedComponentNames.add(ComponentName);
+		if (c.getAttributeSet().containsAttribute(StdAttr.LABEL)) {
+			String Label = c.getAttributeSet().getValue(StdAttr.LABEL);
+            if (!UsedLabels.contains(Label.toUpperCase())&&!Label.isEmpty())
+            	UsedLabels.add(Label.toUpperCase());
+		}
+		if (UsedLabels.contains(ComponentName)) {
+			RemoveWrongLabels(ComponentName);
 		}
 		fireEvent(CircuitEvent.ACTION_ADD, c);
 	}
@@ -701,6 +756,8 @@ public class Circuit {
 				sub.getSubcircuit().circuitsUsingThis.remove(comp);
 			}
 		}
+		UsedComponentNames.clear();
+		UsedLabels.clear();
 		fireEvent(CircuitEvent.ACTION_CLEAR, oldComps);
 	}
 
@@ -725,7 +782,52 @@ public class Circuit {
 			}
 			c.removeComponentListener(myComponentListener);
 		}
+		if (c.getAttributeSet().containsAttribute(StdAttr.LABEL)) {
+			String Label = c.getAttributeSet().getValue(StdAttr.LABEL);
+			if (!Label.isEmpty()&&UsedLabels.contains(Label.toUpperCase())) {
+				UsedLabels.remove(Label.toUpperCase());
+			}
+		}
+		RebuildComponentNames();
 		fireEvent(CircuitEvent.ACTION_REMOVE, c);
+	}
+	
+	private void RemoveWrongLabels(String Label) {
+		for (Component comp : comps) {
+			AttributeSet attrs = comp.getAttributeSet();
+			if (attrs.containsAttribute(StdAttr.LABEL)) {
+				String CompLabel = attrs.getValue(StdAttr.LABEL);
+				if (Label.equals(CompLabel.toUpperCase())) {
+					attrs.setValue(StdAttr.LABEL, "");
+				}
+			}
+		}
+		Iterator<? extends Component> wire = wires.getComponents();
+		while (wire.hasNext()) {
+			Component comp = wire.next();
+			AttributeSet attrs = comp.getAttributeSet();
+			if (attrs.containsAttribute(StdAttr.LABEL)) {
+				String CompLabel = attrs.getValue(StdAttr.LABEL);
+				if (Label.equals(CompLabel.toUpperCase())) {
+					attrs.setValue(StdAttr.LABEL, "");
+				}
+			}
+		}
+		UsedLabels.remove(Label);
+		JOptionPane.showMessageDialog(null, "\""+Label+"\" : "+Strings.get("ComponentLabelCollisionError"));
+	}
+	
+	private void RebuildComponentNames() {
+		UsedComponentNames.clear();
+		for (Component comp : comps)
+			UsedComponentNames.add(comp.getFactory().getName().toUpperCase());
+		Iterator<? extends Component> wire = wires.getComponents();
+		while (wire.hasNext()) {
+			Component comp = wire.next();
+			if (!UsedComponentNames.contains(comp.getFactory().getName().toUpperCase())) {
+				UsedComponentNames.add(comp.getFactory().getName().toUpperCase());
+			}
+		}
 	}
 
 	public void removeCircuitListener(CircuitListener what) {

@@ -73,6 +73,8 @@ import com.bfh.logisim.hdlgenerator.TickComponentHDLGeneratorFactory;
 import com.bfh.logisim.hdlgenerator.ToplevelHDLGeneratorFactory;
 import com.bfh.logisim.settings.Settings;
 import com.cburch.logisim.circuit.Circuit;
+import com.cburch.logisim.circuit.CircuitEvent;
+import com.cburch.logisim.circuit.CircuitListener;
 import com.cburch.logisim.circuit.SimulatorEvent;
 import com.cburch.logisim.circuit.SimulatorListener;
 import com.cburch.logisim.file.LibraryEvent;
@@ -83,47 +85,41 @@ import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.proj.ProjectEvent;
 import com.cburch.logisim.proj.ProjectListener;
 
-public class FPGACommanderGui implements ActionListener {
+public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectListener,SimulatorListener,CircuitListener {
 
-	private class MyLibraryListener implements LibraryListener {
-
-		@Override
-		public void libraryChanged(LibraryEvent event) {
-			if (event.getAction() == LibraryEvent.ADD_TOOL
-					|| event.getAction() == LibraryEvent.REMOVE_TOOL) {
-				RebuildCircuitSelection();
-			}
+	public void libraryChanged(LibraryEvent event) {
+		if (event.getAction() == LibraryEvent.ADD_TOOL
+			|| event.getAction() == LibraryEvent.REMOVE_TOOL) {
+			RebuildCircuitSelection();
 		}
 	}
 
-	private class MyProjListener implements ProjectListener {
-
-		@Override
-		public void projectChanged(ProjectEvent event) {
-			if (event.getAction() == ProjectEvent.ACTION_SET_CURRENT) {
-				SetCurrentSheet(event.getCircuit().getName());
-			} else if (event.getAction() == ProjectEvent.ACTION_SET_FILE) {
-				RebuildCircuitSelection();
-			}
+	public void projectChanged(ProjectEvent event) {
+		if (event.getAction() == ProjectEvent.ACTION_SET_CURRENT) {
+			SetCurrentSheet(event.getCircuit().getName());
+		} else if (event.getAction() == ProjectEvent.ACTION_SET_FILE) {
+			RebuildCircuitSelection();
 		}
 	}
+	
+	public void propagationCompleted(SimulatorEvent e) {
+	}
 
-	private class MySimulatorListener implements SimulatorListener {
+	public void simulatorStateChanged(SimulatorEvent e) {
+		ChangeTickFrequency();
+	}
 
-		public void propagationCompleted(SimulatorEvent e) {
-		}
+	public void tickCompleted(SimulatorEvent e) {
+	}
+	
+	public void circuitChanged(CircuitEvent event) {
+		int act = event.getAction();
 
-		;
-
-		public void simulatorStateChanged(SimulatorEvent e) {
-			ChangeTickFrequency();
-		}
-
-		;
-
-		public void tickCompleted(SimulatorEvent e) {
+		if (act == CircuitEvent.ACTION_SET_NAME) {
+			RebuildCircuitSelection();
 		}
 	}
+	
 
 	public static final int FONT_SIZE = 12;
 	private JFrame panel;
@@ -164,9 +160,6 @@ public class FPGACommanderGui implements ActionListener {
 	private Project MyProject;
 	private Settings MySettings = new Settings();
 	private BoardInformation MyBoardInformation = null;
-	private MyProjListener myprojList = new MyProjListener();
-	private MyLibraryListener myliblistener = new MyLibraryListener();
-	private MySimulatorListener mysimlistener = new MySimulatorListener();
 	private MappableResourcesContainer MyMappableResources;
 	private String[] HDLPaths = { Settings.VERILOG.toLowerCase(),
 			Settings.VHDL.toLowerCase(), "scripts", "sandbox", "ucf" };
@@ -206,16 +199,9 @@ public class FPGACommanderGui implements ActionListener {
 		// circuitsList.addActionListener(this);
 		circuitsList.setActionCommand("mainCircuit");
 		int i = 0;
-		for (Circuit thisCircuit : MyProject.getLogisimFile().getCircuits()) {
-			circuitsList.addItem(thisCircuit.getName());
-			if (thisCircuit.getName().equals(
-					MyProject.getCurrentCircuit().getName())) {
-				circuitsList.setSelectedIndex(i);
-			}
-			i++;
-		}
-		MyProject.addProjectListener(myprojList);
-		MyProject.getLogisimFile().addLibraryListener(myliblistener);
+		RebuildCircuitSelection();
+		MyProject.addProjectListener(this);
+		MyProject.getLogisimFile().addLibraryListener(this);
 		circuitsList.setActionCommand("Circuit");
 		circuitsList.addActionListener(this);
 		panel.add(circuitsList, c);
@@ -264,7 +250,7 @@ public class FPGACommanderGui implements ActionListener {
 		frequenciesList.addActionListener(this);
 		c.gridx = 1;
 		panel.add(frequenciesList, c);
-		MyProject.getSimulator().addSimulatorListener(mysimlistener);
+		MyProject.getSimulator().addSimulatorListener(this);
 
 		c.gridx = 2;
 		skipHDL.setVisible(true);
@@ -976,6 +962,8 @@ public class FPGACommanderGui implements ActionListener {
 		int i = 0;
 		for (Circuit thisone : MyProject.getLogisimFile().getCircuits()) {
 			circuitsList.addItem(thisone.getName());
+			thisone.removeCircuitListener(this);
+			thisone.addCircuitListener(this);
 			if (thisone.getName().equals(
 					MyProject.getCurrentCircuit().getName())) {
 				circuitsList.setSelectedIndex(i);

@@ -87,6 +87,7 @@ class ProbeAttributes extends AbstractAttributeSet {
 
 	@Override
 	public <V> void setValue(Attribute<V> attr, V value) {
+		V Oldvalue = null;
 		if (attr == StdAttr.FACING) {
 			Direction newValue = (Direction) value;
 			if (facing.equals(newValue))
@@ -94,12 +95,13 @@ class ProbeAttributes extends AbstractAttributeSet {
 			facing = (Direction) value;
 		} else if (attr == StdAttr.LABEL) {
 			String val = (String) value;
-			if (!SyntaxChecker.isVariableNameAcceptable(val) && !val.equals("")) {
-				SyntaxChecker.showNonAcceptableNameMessage();
-				val = "";
-			}
+//			if (!SyntaxChecker.isVariableNameAcceptable(val) && !val.equals("")) {
+//				SyntaxChecker.showNonAcceptableNameMessage();
+//				val = "";
+//			}
 			if (label.equals(val))
 				return;
+			Oldvalue = (V) label;
 			label = val;
 		} else if (attr == Pin.ATTR_LABEL_LOC) {
 			Direction newValue = (Direction) value;
@@ -119,6 +121,6 @@ class ProbeAttributes extends AbstractAttributeSet {
 		} else {
 			throw new IllegalArgumentException("unknown attribute");
 		}
-		fireAttributeValueChanged(attr, value);
+		fireAttributeValueChanged(attr, value,Oldvalue);
 	}
 }

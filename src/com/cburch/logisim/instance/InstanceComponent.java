@@ -37,6 +37,9 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.swing.JOptionPane;
+
+import com.bfh.logisim.designrulecheck.CorrectLabel;
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.comp.ComponentDrawContext;
@@ -56,6 +59,7 @@ import com.cburch.logisim.tools.TextEditable;
 import com.cburch.logisim.tools.ToolTipMaker;
 import com.cburch.logisim.util.EventSourceWeakSupport;
 import com.cburch.logisim.util.StringGetter;
+import com.cburch.logisim.util.SyntaxChecker;
 import com.cburch.logisim.util.UnmodifiableList;
 
 public class InstanceComponent implements Component, AttributeListener,
@@ -123,6 +127,34 @@ public class InstanceComponent implements Component, AttributeListener,
 
 	public void attributeValueChanged(AttributeEvent e) {
 		Attribute<?> attr = e.getAttribute();
+		if (e.getAttribute().equals(StdAttr.LABEL)) {
+			@SuppressWarnings("unchecked")
+			Attribute<String> lattr = (Attribute<String>) e.getAttribute();
+			String value = (String) e.getSource().getValue(e.getAttribute());
+			String Oldvalue = e.getOldValue() != null ? (String) e.getOldValue() : "";
+			if (!Oldvalue.equals(value)) {
+				if (!SyntaxChecker.isVariableNameAcceptable(value)) {
+					SyntaxChecker.showNonAcceptableNameMessage();
+					/* Indicate to the listener that I will rename the label with the same name */
+					fireLabelChanged(new AttributeEvent(null,null,null,Oldvalue));
+					e.getSource().setValue(lattr, Oldvalue);
+				} else
+				if (getFactory().getName().toUpperCase().equals(value.toUpperCase())) {
+					JOptionPane.showMessageDialog(null, Strings.get("MatchedLabelNameError"));
+					/* Indicate to the listener that I will rename the label with the same name */
+					fireLabelChanged(new AttributeEvent(null,null,null,Oldvalue));
+					e.getSource().setValue(lattr, Oldvalue);
+				} else 
+				if (CorrectLabel.IsKeyword(value)) {
+					JOptionPane.showMessageDialog(null, "\""+value+"\": "+Strings.get("KeywordNameError"));
+					/* Indicate to the listener that I will rename the label with the same name */
+					fireLabelChanged(new AttributeEvent(null,null,null,Oldvalue));
+					e.getSource().setValue(lattr, Oldvalue);
+				} else {
+					fireLabelChanged(e);
+				}
+			}
+		}
 		if (widthAttrs != null && widthAttrs.contains(attr))
 			computeEnds();
 		if (attrListenRequested) {
@@ -240,7 +272,19 @@ public class InstanceComponent implements Component, AttributeListener,
 		context.getDestination().repaint(b.getX(), b.getY(), b.getWidth(),
 				b.getHeight());
 	}
-
+	
+	private void fireLabelChanged(AttributeEvent attre) {
+		EventSourceWeakSupport<ComponentListener> ls = listeners;
+		if (ls != null) {
+			ComponentEvent e = null;
+			for (ComponentListener l : ls) {
+				if (e == null)
+					e = new ComponentEvent(this, null, attre);
+				l.LabelChanged(e);
+			}
+		}
+	}
+	
 	private void fireEndsChanged(ArrayList<EndData> oldEnds,
 			ArrayList<EndData> newEnds) {
 		EventSourceWeakSupport<ComponentListener> ls = listeners;

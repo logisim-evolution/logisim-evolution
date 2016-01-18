@@ -244,7 +244,7 @@ class SplitterAttributes extends AbstractAttributeSet {
 			if (bit_end[i] != dflt[i]) {
 				BitOutAttribute attr = (BitOutAttribute) attrs.get(offs + i);
 				bit_end[i] = dflt[i];
-				fireAttributeValueChanged(attr, Integer.valueOf(bit_end[i]));
+				fireAttributeValueChanged(attr, Integer.valueOf(bit_end[i]),null);
 			}
 		}
 
@@ -384,6 +384,6 @@ class SplitterAttributes extends AbstractAttributeSet {
 		} else {
 			throw new IllegalArgumentException("unknown attribute " + attr);
 		}
-		fireAttributeValueChanged(attr, value);
+		fireAttributeValueChanged(attr, value,null);
 	}
 }

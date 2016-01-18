@@ -259,7 +259,7 @@ public abstract class AttributeSetTableModel implements AttrTableModel,
 
 	protected void fireValueChanged(int index) {
 		AttrTableModelEvent event = new AttrTableModelEvent(this, index);
-		for (AttrTableModelListener l : listeners) {
+		for (AttrTableModelListener l : listeners) {			
 			l.attrValueChanged(event);
 		}
 	}

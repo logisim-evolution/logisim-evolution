@@ -40,7 +40,6 @@ import com.cburch.logisim.data.Attributes;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.instance.StdAttr;
-import com.cburch.logisim.util.SyntaxChecker;
 
 class GateAttributes extends AbstractAttributeSet {
 	static final int MAX_INPUTS = 32;
@@ -131,8 +130,10 @@ class GateAttributes extends AbstractAttributeSet {
 		return null;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public <V> void setValue(Attribute<V> attr, V value) {
+		String oldvalue = "";
 		if (attr == StdAttr.WIDTH) {
 			width = (BitWidth) value;
 			int bits = width.getWidth();
@@ -142,12 +143,13 @@ class GateAttributes extends AbstractAttributeSet {
 			facing = (Direction) value;
 		} else if (attr == StdAttr.LABEL) {
 			String val = (String) value;
-			if (!SyntaxChecker.isVariableNameAcceptable(val)) {
-				SyntaxChecker.showNonAcceptableNameMessage();
-				label = "";
-			} else {
+//			if (!SyntaxChecker.isVariableNameAcceptable(val)) {
+//				SyntaxChecker.showNonAcceptableNameMessage();
+//				label = "";
+//			} else {
+			    oldvalue = label;
 				label = val;
-			}
+//			}
 		} else if (attr == StdAttr.LABEL_FONT) {
 			labelFont = (Font) value;
 		} else if (attr == ATTR_SIZE) {
@@ -169,6 +171,6 @@ class GateAttributes extends AbstractAttributeSet {
 		} else {
 			throw new IllegalArgumentException("unrecognized argument");
 		}
-		fireAttributeValueChanged(attr, value);
+		fireAttributeValueChanged(attr, value, attr == StdAttr.LABEL ? (V) oldvalue : null);
 	}
 }
