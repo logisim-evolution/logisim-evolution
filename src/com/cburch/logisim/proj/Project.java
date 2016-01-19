@@ -482,6 +482,10 @@ public class Project {
 		undoMods = 0;
 		file.setDirty(isFileDirty());
 	}
+	
+	public void setFileAsDirty() {
+		file.setDirty(true);
+	}
 
 	public void setFrame(Frame value) {
 		if (frame == value)

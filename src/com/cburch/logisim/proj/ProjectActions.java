@@ -38,6 +38,8 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -53,6 +55,8 @@ import com.cburch.logisim.file.LogisimFile;
 import com.cburch.logisim.gui.main.Frame;
 import com.cburch.logisim.gui.start.SplashScreen;
 import com.cburch.logisim.prefs.AppPreferences;
+import com.cburch.logisim.tools.Library;
+import com.cburch.logisim.tools.LibraryTools;
 import com.cburch.logisim.tools.Tool;
 import com.cburch.logisim.util.JFileChoosers;
 import com.cburch.logisim.util.StringUtil;
@@ -209,8 +213,75 @@ public class ProjectActions {
 			file = createEmptyFile(loader);
 		return completeProject(monitor, loader, file, isStartupScreen);
 	}
+	
+	public static void doMerge(Component parent, Project baseProject) {
+		JFileChooser chooser;
+		LogisimFile mergelib;
+		Loader loader = null;
+		if (baseProject != null) {
+			Loader oldLoader = baseProject.getLogisimFile().getLoader();
+			chooser = oldLoader.createChooser();
+			if (oldLoader.getMainFile() != null) {
+				chooser.setSelectedFile(oldLoader.getMainFile());
+			}
+		} else {
+			chooser = JFileChoosers.create();
+		}
+		chooser.setFileFilter(Loader.LOGISIM_FILTER);
+		chooser.setDialogTitle(Strings.get("FileMergeItem"));
 
-	public static void doOpen(Component parent, Project baseProject) {
+		int returnVal = chooser.showOpenDialog(parent);
+		if (returnVal != JFileChooser.APPROVE_OPTION)
+			return;
+		File selected = chooser.getSelectedFile();
+		loader = new Loader(baseProject == null ? parent
+				: baseProject.getFrame());
+		try {
+			mergelib = loader.openLogisimFile(selected);
+			if (mergelib == null)
+				return;
+		} catch (LoadFailedException ex) {
+			if (!ex.isShown()) {
+				JOptionPane.showMessageDialog(
+						parent,
+						StringUtil.format(Strings.get("fileMergeError"),
+								ex.toString()),
+						Strings.get("FileMergeErrorItem"),
+						JOptionPane.ERROR_MESSAGE);
+			}
+			return;
+		}
+		HashSet<String> LibNames = new HashSet<String>();
+		HashSet<String> ToolList = new HashSet<String>();
+		HashMap<String,String> Error = new HashMap<String,String>();
+		for (Library lib : baseProject.getLogisimFile().getLibraries()) {
+			LibraryTools.BuildLibraryList(lib,LibNames);
+		}
+		LibraryTools.BuildToolList(baseProject.getLogisimFile(),ToolList);
+		LibraryTools.RemovePresentLibraries(mergelib,LibNames);
+		if (LibraryTools.LibraryIsConform(mergelib,new HashSet<String> (),new HashSet<String>(),Error)) {
+			boolean Merged = false;
+			/* Okay the library is now ready for merge */
+			for (Library lib : mergelib.getLibraries()) {
+				baseProject.getLogisimFile().addLibrary(lib);
+			}
+			/* Okay merged the missing libraries, now add the circuits */
+			for (Circuit circ : mergelib.getCircuits()) {
+				if (ToolList.contains(circ.getName().toUpperCase())) {
+					Error.put(circ.getName(), Strings.get("CircNotImportedWarning"));
+				} else {
+					Merged = true;
+					baseProject.getLogisimFile().addCircuit(circ);
+				}
+			}
+			if (Merged)
+				baseProject.setFileAsDirty();
+			if (!Error.isEmpty())
+				LibraryTools.ShowWarnings(selected.getAbsolutePath(),Error);
+		} else LibraryTools.ShowErrors(mergelib.getName(),Error);
+	}
+
+	public static boolean doOpen(Component parent, Project baseProject) {
 		JFileChooser chooser;
 		if (baseProject != null) {
 			Loader oldLoader = baseProject.getLogisimFile().getLoader();
@@ -222,14 +293,18 @@ public class ProjectActions {
 			chooser = JFileChoosers.create();
 		}
 		chooser.setFileFilter(Loader.LOGISIM_FILTER);
+		chooser.setDialogTitle(Strings.get("FileOpenItem"));
 
 		int returnVal = chooser.showOpenDialog(parent);
 		if (returnVal != JFileChooser.APPROVE_OPTION)
-			return;
+			return false;
 		File selected = chooser.getSelectedFile();
 		if (selected != null) {
+			if (selected.getAbsolutePath().contains(" "))
+            	JOptionPane.showMessageDialog(parent, "\""+selected.getAbsolutePath()+"\":\n"+Strings.get("DirFileHasSpaces"),Strings.get("FileOpenItem"), JOptionPane.WARNING_MESSAGE);
 			doOpen(parent, baseProject, selected);
 		}
+		return true;
 	}
 
 	public static Project doOpen(Component parent, Project baseProject, File f) {

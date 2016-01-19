@@ -52,6 +52,7 @@ class MenuFile extends Menu implements ActionListener {
 	private static final long serialVersionUID = 1L;
 	private LogisimMenuBar menubar;
 	private JMenuItem newi = new JMenuItem();
+	private JMenuItem merge = new JMenuItem();
 	private JMenuItem open = new JMenuItem();
 	private OpenRecent openRecent;
 	private JMenuItem close = new JMenuItem();
@@ -70,6 +71,7 @@ class MenuFile extends Menu implements ActionListener {
 		int menuMask = getToolkit().getMenuShortcutKeyMask();
 
 		newi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, menuMask));
+		merge.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, menuMask));
 		open.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, menuMask));
 		close.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, menuMask
 				| InputEvent.SHIFT_MASK));
@@ -80,6 +82,7 @@ class MenuFile extends Menu implements ActionListener {
 		quit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, menuMask));
 
 		add(newi);
+		add(merge);
 		add(open);
 		add(openRecent);
 		addSeparator();
@@ -102,10 +105,12 @@ class MenuFile extends Menu implements ActionListener {
 		newi.addActionListener(this);
 		open.addActionListener(this);
 		if (proj == null) {
+			merge.setEnabled(false);
 			close.setEnabled(false);
 			save.setEnabled(false);
 			saveAs.setEnabled(false);
 		} else {
+			merge.addActionListener(this);
 			close.addActionListener(this);
 			save.addActionListener(this);
 			saveAs.addActionListener(this);
@@ -121,7 +126,9 @@ class MenuFile extends Menu implements ActionListener {
 		Project proj = menubar.getProject();
 		if (src == newi) {
 			ProjectActions.doNew(proj);
-		} else if (src == open) {
+		} else if (src == merge) { 
+		    ProjectActions.doMerge(proj == null ? null : proj.getFrame().getCanvas(),proj);
+		}else if (src == open) {
 			ProjectActions.doOpen(proj == null ? null : proj.getFrame()
 					.getCanvas(), proj);
 			/* This trick allows to open a single window, if the current project hasn't been touched */
@@ -181,6 +188,7 @@ class MenuFile extends Menu implements ActionListener {
 	public void localeChanged() {
 		this.setText(Strings.get("fileMenu"));
 		newi.setText(Strings.get("fileNewItem"));
+		merge.setText(Strings.get("fileMergeItem"));
 		open.setText(Strings.get("fileOpenItem"));
 		openRecent.localeChanged();
 		close.setText(Strings.get("fileCloseItem"));
