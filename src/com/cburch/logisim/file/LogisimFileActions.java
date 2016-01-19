@@ -31,6 +31,11 @@
 package com.cburch.logisim.file;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+
+import javax.swing.JOptionPane;
 
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.data.Attribute;
@@ -75,9 +80,99 @@ public class LogisimFileActions {
 
 		@Override
 		public void doIt(Project proj) {
-			for (int i = 0; i < libs.length; i++) {
-				proj.getLogisimFile().addLibrary(libs[i]);
+			HashSet<String> LibNames = new HashSet<String>();
+			HashSet<String> ToolList = new HashSet<String>();
+			HashMap<String,String> Error = new HashMap<String,String>();
+			for (Library lib : proj.getLogisimFile().getLibraries()) {
+				BuildLibraryList(lib,LibNames);
 			}
+			BuildToolList(proj.getLogisimFile(),ToolList);
+			for (int i = 0; i < libs.length; i++) {
+				if (LibNames.contains(libs[i].getName().toUpperCase())) {
+                	JOptionPane.showMessageDialog(null, "\""+libs[i].getName()+"\": "+Strings.get("LibraryAlreadyLoaded"));
+				} else {
+					RemovePresentLibraries(libs[i],LibNames);
+					if (LibraryIsConform(libs[i],new HashSet<String> (),new HashSet<String>(),Error)) {
+						HashSet<String> AddedToolList = new HashSet<String>();
+						BuildToolList(libs[i],AddedToolList);
+						for (String tool : AddedToolList)
+							if (ToolList.contains(tool))
+								Error.put(tool, "LibraryMultipleToolError");
+						if (Error.keySet().isEmpty()) {
+							BuildLibraryList(libs[i],LibNames);
+							ToolList.addAll(AddedToolList);
+							proj.getLogisimFile().addLibrary(libs[i]);
+						} else
+							ShowErrors(libs[i].getName(),Error);
+					} else
+						ShowErrors(libs[i].getName(),Error);
+				}
+			}
+		}
+		
+		private static void ShowErrors(String LibName,HashMap<String,String> Error) {
+			String ErrorMessage = Strings.get("LibLoadErrors")+" \""+LibName+"\":\n\n";
+			int item = 0;
+			for (String myerror : Error.keySet()) {
+				item++;
+				ErrorMessage = ErrorMessage.concat( item+") "+Strings.get(Error.get(myerror))+" \""+myerror+"\".\n");
+			}
+			JOptionPane.showMessageDialog(null, ErrorMessage.toString());
+		}
+		
+		private static void BuildToolList(Library lib, HashSet<String> Tools) {
+			Iterator<? extends Tool> tooliter = lib.getTools().iterator();
+			while (tooliter.hasNext()) {
+				Tool tool = tooliter.next();
+				Tools.add(tool.getName().toUpperCase());
+			}
+			for (Library sublib : lib.getLibraries())
+				BuildToolList(sublib,Tools);
+		}
+		
+		private static boolean LibraryIsConform(Library lib, HashSet<String> Names, HashSet<String> Tools, HashMap<String,String> Error) {
+			Iterator<? extends Tool> tooliter=lib.getTools().iterator();
+			boolean HasErrors = false;
+			while (tooliter.hasNext()) {
+				Tool tool = tooliter.next();
+				if (Tools.contains(tool.getName().toUpperCase())) {
+					HasErrors = true;
+					if (!Error.containsKey(tool.getName())) {
+						Error.put(tool.getName(), "LibraryHasDuplicatedTools");
+					}
+				}
+				Tools.add(tool.getName().toUpperCase());
+			}
+			for (Library sublib : lib.getLibraries()) {
+				if (Names.contains(sublib.getName().toUpperCase())) {
+					HasErrors = true;
+					if (!Error.containsKey(sublib.getName())) {
+						Error.put(sublib.getName(), "LibraryHasDuplicatedSublibraries");
+					}
+				}
+				Names.add(sublib.getName().toUpperCase());
+				HasErrors |= !LibraryIsConform(sublib,Names,Tools,Error); 
+			}
+			return !HasErrors;
+		}
+		
+		private static void BuildLibraryList(Library lib, HashSet<String> Names) {
+			Names.add(lib.getName().toUpperCase());
+			for (Library sublib : lib.getLibraries()) {
+				BuildLibraryList(sublib,Names);
+			}
+		}
+		
+		private static void RemovePresentLibraries(Library lib, HashSet<String> KnownLibs) {
+			HashSet<String> ToBeRemoved = new HashSet<String>();
+			for (Library sublib : lib.getLibraries()) {
+				RemovePresentLibraries(sublib,KnownLibs);
+				if (KnownLibs.contains(sublib.getName().toUpperCase())) {
+					ToBeRemoved.add(sublib.getName());
+				}
+			}
+			for (String remove : ToBeRemoved)
+				lib.removeLibrary(remove);
 		}
 
 		@Override

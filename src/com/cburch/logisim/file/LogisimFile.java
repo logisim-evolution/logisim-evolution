@@ -400,6 +400,17 @@ public class LogisimFile extends Library implements LibraryEventSource,CircuitLi
 		return libraries;
 	}
 
+	public boolean removeLibrary(String Name) {
+		int index = -1;
+		for (Library lib : libraries)
+			if (lib.getName().equals(Name))
+				index = libraries.indexOf(lib);
+		if (index < 0)
+			return false;
+		libraries.remove(index);
+		return true;
+	}
+
 	public Loader getLoader() {
 		return loader;
 	}
