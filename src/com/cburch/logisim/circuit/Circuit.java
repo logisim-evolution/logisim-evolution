@@ -150,37 +150,49 @@ public class Circuit {
 		
 		public void LabelChanged(ComponentEvent e) {
 			AttributeEvent attre = (AttributeEvent) e.getData();
-			if (attre.getSource()==null&&
-				attre.getValue()==null&&
-				attre.getOldValue()!=null) {
-				/* Special event from below indicating a wrongly entered name */
-				String oldLabel = (String) attre.getOldValue();
-				if (UsedLabels.contains(oldLabel.toUpperCase()))
-					UsedLabels.remove(oldLabel.toUpperCase());
+			if (attre.getSource()==null||
+				attre.getValue()==null) {
 				return;
 			}
 			String newLabel = (String) attre.getValue();
 			String oldLabel = attre.getOldValue() != null ? (String) attre.getOldValue() : "";
 			@SuppressWarnings("unchecked")
 			Attribute<String> lattr = (Attribute<String>) attre.getAttribute();
-			if (UsedLabels.contains(newLabel.toUpperCase())) {
+			if (IsExistingLabel(newLabel,attre.getSource())) {
 				JOptionPane.showMessageDialog(null, "\""+newLabel+"\" : "+Strings.get("UsedLabelNameError"));
-				if (UsedLabels.contains(oldLabel.toUpperCase()))
-					UsedLabels.remove(oldLabel.toUpperCase());
 				attre.getSource().setValue(lattr, oldLabel);
 			} else 
-			if (UsedComponentNames.contains(newLabel.toUpperCase())) {
+			if (IsComponentName(newLabel)) {
 				JOptionPane.showMessageDialog(null, "\""+newLabel+"\" : "+Strings.get("ComponentLabelNameError"));
-				if (UsedLabels.contains(oldLabel.toUpperCase()))
-					UsedLabels.remove(oldLabel.toUpperCase());
 				attre.getSource().setValue(lattr, oldLabel);
-			} else {
-				if (UsedLabels.contains(oldLabel.toUpperCase()))
-					UsedLabels.remove(oldLabel.toUpperCase());
-				if (!newLabel.isEmpty())
-				   UsedLabels.add(newLabel.toUpperCase());
 			}
 		}
+	}
+	
+	private boolean IsComponentName(String Name) {
+		if (Name.isEmpty())
+			return false;
+		for (Component comp : comps) {
+			if (comp.getFactory().getName().toUpperCase().equals(Name.toUpperCase()))
+				return true;
+		}
+		/* we do not have to check the wires as (1) Wire is a reserved keyword, and (2) they cannot have a label */
+		return false;
+	}
+	
+	private boolean IsExistingLabel(String Name, AttributeSet me) {
+		if (Name.isEmpty())
+			return false;
+		for (Component comp : comps) {
+			if (!comp.getAttributeSet().equals(me)) {
+				String Label = (comp.getAttributeSet().containsAttribute(StdAttr.LABEL)) ?
+						comp.getAttributeSet().getValue(StdAttr.LABEL) : "";
+				if (Label.toUpperCase().equals(Name.toUpperCase()))
+					return true;
+			}
+		}
+		/* we do not have to check the wires as (1) Wire is a reserved keyword, and (2) they cannot have a label */
+		return false;
 	}
 
 	//
@@ -198,8 +210,8 @@ public class Circuit {
 	private HashSet<Component> comps = new HashSet<Component>(); // doesn't
 																	// include
 																	// wires
-    private HashSet<String> UsedLabels = new HashSet<String>();
-    private HashSet<String> UsedComponentNames = new HashSet<String>();
+//    private HashSet<String> UsedLabels = new HashSet<String>();
+//    private HashSet<String> UsedComponentNames = new HashSet<String>();
 	CircuitWires wires = new CircuitWires();
 	// wires is package-protected for CircuitState and Analyze only.
 	private ArrayList<Component> clocks = new ArrayList<Component>();
@@ -727,17 +739,7 @@ public class Circuit {
 			}
 			c.addComponentListener(myComponentListener);
 		}
-		String ComponentName = c.getFactory().getName().toUpperCase();
-		if (!UsedComponentNames.contains(ComponentName))
-			UsedComponentNames.add(ComponentName);
-		if (c.getAttributeSet().containsAttribute(StdAttr.LABEL)) {
-			String Label = c.getAttributeSet().getValue(StdAttr.LABEL);
-            if (!UsedLabels.contains(Label.toUpperCase())&&!Label.isEmpty())
-            	UsedLabels.add(Label.toUpperCase());
-		}
-		if (UsedLabels.contains(ComponentName)) {
-			RemoveWrongLabels(ComponentName);
-		}
+		RemoveWrongLabels(c.getFactory().getName());
 		fireEvent(CircuitEvent.ACTION_ADD, c);
 	}
 
@@ -756,8 +758,6 @@ public class Circuit {
 				sub.getSubcircuit().circuitsUsingThis.remove(comp);
 			}
 		}
-		UsedComponentNames.clear();
-		UsedLabels.clear();
 		fireEvent(CircuitEvent.ACTION_CLEAR, oldComps);
 	}
 
@@ -782,54 +782,26 @@ public class Circuit {
 			}
 			c.removeComponentListener(myComponentListener);
 		}
-		if (c.getAttributeSet().containsAttribute(StdAttr.LABEL)) {
-			String Label = c.getAttributeSet().getValue(StdAttr.LABEL);
-			if (!Label.isEmpty()&&UsedLabels.contains(Label.toUpperCase())) {
-				UsedLabels.remove(Label.toUpperCase());
-			}
-		}
-		RebuildComponentNames();
 		fireEvent(CircuitEvent.ACTION_REMOVE, c);
 	}
 	
 	private void RemoveWrongLabels(String Label) {
+		boolean HaveAChange = false;
 		for (Component comp : comps) {
 			AttributeSet attrs = comp.getAttributeSet();
 			if (attrs.containsAttribute(StdAttr.LABEL)) {
 				String CompLabel = attrs.getValue(StdAttr.LABEL);
-				if (Label.equals(CompLabel.toUpperCase())) {
+				if (Label.toUpperCase().equals(CompLabel.toUpperCase())) {
 					attrs.setValue(StdAttr.LABEL, "");
+					HaveAChange = true;
 				}
 			}
 		}
-		Iterator<? extends Component> wire = wires.getComponents();
-		while (wire.hasNext()) {
-			Component comp = wire.next();
-			AttributeSet attrs = comp.getAttributeSet();
-			if (attrs.containsAttribute(StdAttr.LABEL)) {
-				String CompLabel = attrs.getValue(StdAttr.LABEL);
-				if (Label.equals(CompLabel.toUpperCase())) {
-					attrs.setValue(StdAttr.LABEL, "");
-				}
-			}
-		}
-		UsedLabels.remove(Label);
-		JOptionPane.showMessageDialog(null, "\""+Label+"\" : "+Strings.get("ComponentLabelCollisionError"));
+		/* we do not have to check the wires as (1) Wire is a reserved keyword, and (2) they cannot have a label */
+		if (HaveAChange)
+			JOptionPane.showMessageDialog(null, "\""+Label+"\" : "+Strings.get("ComponentLabelCollisionError"));
 	}
 	
-	private void RebuildComponentNames() {
-		UsedComponentNames.clear();
-		for (Component comp : comps)
-			UsedComponentNames.add(comp.getFactory().getName().toUpperCase());
-		Iterator<? extends Component> wire = wires.getComponents();
-		while (wire.hasNext()) {
-			Component comp = wire.next();
-			if (!UsedComponentNames.contains(comp.getFactory().getName().toUpperCase())) {
-				UsedComponentNames.add(comp.getFactory().getName().toUpperCase());
-			}
-		}
-	}
-
 	public void removeCircuitListener(CircuitListener what) {
 		listeners.remove(what);
 	}

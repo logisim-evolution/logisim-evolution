@@ -82,6 +82,8 @@ public class LogisimFile extends Library implements LibraryEventSource,CircuitLi
 	
 	// Name check Methods
 	private boolean NameIsInUse(String Name,Circuit changed) {
+		if (Name.isEmpty())
+			return false;
 		for (Library mylib : getLibraries()) {
 			if (NameIsInLibraries(mylib,Name))
 				return true;
@@ -95,6 +97,8 @@ public class LogisimFile extends Library implements LibraryEventSource,CircuitLi
 	}
 	
 	private boolean NameIsInLibraries(Library lib, String Name) {
+		if (Name.isEmpty())
+			return false;
 		for (Library mylib : lib.getLibraries()) {
 			if (NameIsInLibraries(mylib,Name))
 				return true;
