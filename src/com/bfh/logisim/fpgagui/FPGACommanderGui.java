@@ -53,6 +53,7 @@ import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
@@ -1051,19 +1052,27 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 			fc.setSelectedFile(test);
 		}
 		fc.setDialogTitle("Workspace Directory Selection");
-		int retval = fc.showOpenDialog(null);
-		if (retval == JFileChooser.APPROVE_OPTION) {
-			File file = fc.getSelectedFile();
-			if (file.getPath().endsWith(File.separator)) {
-				MySettings.SetWorkspacePath(file.getPath());
+		boolean ValidWorkpath = false;
+		while (!ValidWorkpath) {
+			int retval = fc.showOpenDialog(null);
+			if (retval != JFileChooser.APPROVE_OPTION)
+				return;
+			if (fc.getSelectedFile().getAbsolutePath().contains(" ")) {
+				JOptionPane.showMessageDialog(null,"Workspace directory may not contain spaces!","Workspace Directory Selection",JOptionPane.ERROR_MESSAGE);
 			} else {
-				MySettings.SetWorkspacePath(file.getPath() + File.separator);
+				ValidWorkpath = true;
 			}
-			if (!MySettings.UpdateSettingsFile()) {
-				AddErrors("***SEVERE*** Could not update the FPGACommander settings file");
-			} else {
-				AddInfo("Updated the FPGACommander settings file");
-			}
+		}
+		File file = fc.getSelectedFile();
+		if (file.getPath().endsWith(File.separator)) {
+			MySettings.SetWorkspacePath(file.getPath());
+		} else {
+			MySettings.SetWorkspacePath(file.getPath() + File.separator);
+		}
+		if (!MySettings.UpdateSettingsFile()) {
+			AddErrors("***SEVERE*** Could not update the FPGACommander settings file");
+		} else {
+			AddInfo("Updated the FPGACommander settings file");
 		}
 	}
 

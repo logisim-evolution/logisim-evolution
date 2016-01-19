@@ -62,6 +62,9 @@ import com.cburch.logisim.util.JFileChoosers;
 import com.cburch.logisim.util.StringUtil;
 
 public class ProjectActions {
+	private static String FILE_NAME_FORMAT_ERROR = "FileNameError";
+	private static String FILE_NAME_KEYWORD_ERROR = "ExistingToolName";
+
 	private static class CreateFrame implements Runnable {
 		private Loader loader;
 		private Project proj;
@@ -97,10 +100,24 @@ public class ProjectActions {
 	 * Returns true if the filename contains valid characters only, that is,
 	 * alphanumeric characters and underscores.
 	 */
-	private static boolean checkValidFilename(String filename) {
+	private static boolean checkValidFilename(String filename, Project proj, HashMap<String,String> Errors) {
+		boolean IsOk = true;
+		HashSet<String> TempSet = new HashSet<String>();
+		HashSet<String> ForbiddenNames = new HashSet<String>();
+		LibraryTools.BuildLibraryList(proj.getLogisimFile(), TempSet);
+		LibraryTools.BuildToolList(proj.getLogisimFile(), ForbiddenNames);
+		ForbiddenNames.addAll(TempSet);
 		Pattern p = Pattern.compile("[^a-z0-9_.]", Pattern.CASE_INSENSITIVE);
 		Matcher m = p.matcher(filename);
-		return (!m.find());
+		if (m.find()) {
+			IsOk = false;
+			Errors.put(FILE_NAME_FORMAT_ERROR, "InvalidFileFormatError");
+		}
+		if (ForbiddenNames.contains(filename.toUpperCase())) {
+			IsOk = false;
+			Errors.put(FILE_NAME_KEYWORD_ERROR, "UsedLibraryToolnameError");
+		}
+		return IsOk;
 	}
 
 	private static Project completeProject(SplashScreen monitor, Loader loader,
@@ -300,8 +317,6 @@ public class ProjectActions {
 			return false;
 		File selected = chooser.getSelectedFile();
 		if (selected != null) {
-			if (selected.getAbsolutePath().contains(" "))
-            	JOptionPane.showMessageDialog(parent, "\""+selected.getAbsolutePath()+"\":\n"+Strings.get("DirFileHasSpaces"),Strings.get("FileOpenItem"), JOptionPane.WARNING_MESSAGE);
 			doOpen(parent, baseProject, selected);
 		}
 		return true;
@@ -449,18 +464,19 @@ public class ProjectActions {
 
 		int returnVal;
 		boolean validFilename = false;
+		HashMap<String,String> Error = new HashMap<String,String> ();
 		do {
+			Error.clear();
 			returnVal = chooser.showSaveDialog(proj.getFrame());
 			if (returnVal != JFileChooser.APPROVE_OPTION) {
 				return false;
 			}
-			validFilename = checkValidFilename(chooser.getSelectedFile()
-					.getName());
+			validFilename = checkValidFilename(chooser.getSelectedFile() .getName(),proj,Error);
 			if (!validFilename) {
-				JOptionPane
-						.showMessageDialog(
-								chooser,
-								"The file name contains invalid characters. Only alphanumeric characters and underscores are accepted.");
+				String Message = "\""+chooser.getSelectedFile()+"\":\n";
+				for (String key : Error.keySet())
+					Message = Message.concat("=> "+Strings.get(Error.get(key))+"\n");
+				JOptionPane.showMessageDialog(chooser,Message,Strings.get("FileSaveAsItem"),JOptionPane.ERROR_MESSAGE);
 			}
 		} while (!validFilename);
 
