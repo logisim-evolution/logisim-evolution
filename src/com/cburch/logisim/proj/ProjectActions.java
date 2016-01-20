@@ -52,10 +52,10 @@ import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.file.LoadFailedException;
 import com.cburch.logisim.file.Loader;
 import com.cburch.logisim.file.LogisimFile;
+import com.cburch.logisim.file.LogisimFileActions;
 import com.cburch.logisim.gui.main.Frame;
 import com.cburch.logisim.gui.start.SplashScreen;
 import com.cburch.logisim.prefs.AppPreferences;
-import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.tools.LibraryTools;
 import com.cburch.logisim.tools.Tool;
 import com.cburch.logisim.util.JFileChoosers;
@@ -268,34 +268,7 @@ public class ProjectActions {
 			}
 			return;
 		}
-		HashSet<String> LibNames = new HashSet<String>();
-		HashSet<String> ToolList = new HashSet<String>();
-		HashMap<String,String> Error = new HashMap<String,String>();
-		for (Library lib : baseProject.getLogisimFile().getLibraries()) {
-			LibraryTools.BuildLibraryList(lib,LibNames);
-		}
-		LibraryTools.BuildToolList(baseProject.getLogisimFile(),ToolList);
-		LibraryTools.RemovePresentLibraries(mergelib,LibNames);
-		if (LibraryTools.LibraryIsConform(mergelib,new HashSet<String> (),new HashSet<String>(),Error)) {
-			boolean Merged = false;
-			/* Okay the library is now ready for merge */
-			for (Library lib : mergelib.getLibraries()) {
-				baseProject.getLogisimFile().addLibrary(lib);
-			}
-			/* Okay merged the missing libraries, now add the circuits */
-			for (Circuit circ : mergelib.getCircuits()) {
-				if (ToolList.contains(circ.getName().toUpperCase())) {
-					Error.put(circ.getName(), Strings.get("CircNotImportedWarning"));
-				} else {
-					Merged = true;
-					baseProject.getLogisimFile().addCircuit(circ);
-				}
-			}
-			if (Merged)
-				baseProject.setFileAsDirty();
-			if (!Error.isEmpty())
-				LibraryTools.ShowWarnings(selected.getAbsolutePath(),Error);
-		} else LibraryTools.ShowErrors(mergelib.getName(),Error);
+		baseProject.doAction(LogisimFileActions.MergeFile(mergelib, baseProject.getLogisimFile()));
 	}
 
 	public static boolean doOpen(Component parent, Project baseProject) {

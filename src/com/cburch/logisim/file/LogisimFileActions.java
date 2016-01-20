@@ -70,6 +70,60 @@ public class LogisimFileActions {
 			proj.getLogisimFile().removeCircuit(circuit);
 		}
 	}
+	
+	private static class MergeFile extends Action {
+		private ArrayList<Library> MergedLibraries = new ArrayList<Library>();
+		private ArrayList<Circuit> MergedCircuits = new ArrayList<Circuit>();
+		
+		MergeFile(LogisimFile mergelib,
+				  LogisimFile source) {
+			HashSet<String> LibNames = new HashSet<String>();
+			HashSet<String> ToolList = new HashSet<String>();
+			HashMap<String,String> Error = new HashMap<String,String>();
+			for (Library lib : source.getLibraries()) {
+				LibraryTools.BuildLibraryList(lib,LibNames);
+			}
+			LibraryTools.BuildToolList(source,ToolList);
+			LibraryTools.RemovePresentLibraries(mergelib,LibNames);
+			if (LibraryTools.LibraryIsConform(mergelib,new HashSet<String> (),new HashSet<String>(),Error)) {
+				/* Okay the library is now ready for merge */
+				for (Library lib : mergelib.getLibraries()) {
+					MergedLibraries.add(lib);
+				}
+				/* Okay merged the missing libraries, now add the circuits */
+				for (Circuit circ : mergelib.getCircuits()) {
+					if (ToolList.contains(circ.getName().toUpperCase())) {
+						Error.put(circ.getName(), Strings.get("CircNotImportedWarning"));
+					} else {
+						MergedCircuits.add(circ);
+					}
+				}
+				if (!Error.isEmpty())
+					LibraryTools.ShowWarnings(mergelib.getName(),Error);
+			} else LibraryTools.ShowErrors(mergelib.getName(),Error);
+		}
+
+		@Override
+		public void doIt(Project proj) {
+			for (Library lib : MergedLibraries)
+				proj.getLogisimFile().addLibrary(lib);
+			for (Circuit circ : MergedCircuits)
+				proj.getLogisimFile().addCircuit(circ);
+		}
+
+		@Override
+		public String getName() {
+			return Strings.get("mergeFileAction");
+		}
+
+		@Override
+		public void undo(Project proj) {
+			for (Library lib : MergedLibraries)
+				proj.getLogisimFile().removeLibrary(lib);
+			for (Circuit circ : MergedCircuits)
+				proj.getLogisimFile().removeCircuit(circ);
+		}
+	}
 
 	private static class LoadLibraries extends Action {
 		private Library[] libs;
@@ -342,6 +396,10 @@ public class LogisimFileActions {
 
 	public static Action addCircuit(Circuit circuit) {
 		return new AddCircuit(circuit);
+	}
+	
+	public static Action MergeFile(LogisimFile mergelib, LogisimFile source) {
+		return new MergeFile(mergelib,source);
 	}
 
 	public static Action loadLibraries(Library[] libs) {
