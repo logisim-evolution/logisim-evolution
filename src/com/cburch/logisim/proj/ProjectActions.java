@@ -125,22 +125,22 @@ public class ProjectActions {
 		if (monitor != null)
 			monitor.setProgress(SplashScreen.PROJECT_CREATE);
 		Project ret = new Project(file);
-
 		if (monitor != null)
 			monitor.setProgress(SplashScreen.FRAME_CREATE);
 		SwingUtilities.invokeLater(new CreateFrame(loader, ret, isStartup));
+		updatecircs(ret.getLogisimFile(),ret);
 		return ret;
 	}
 
-	private static LogisimFile createEmptyFile(Loader loader) {
+	private static LogisimFile createEmptyFile(Loader loader,Project proj) {
 		InputStream templReader = AppPreferences.getEmptyTemplate()
 				.createStream();
 		LogisimFile file;
 		try {
 			file = loader.openLogisimFile(templReader);
 		} catch (Exception t) {
-			file = LogisimFile.createNew(loader);
-			file.addCircuit(new Circuit("main", file));
+			file = LogisimFile.createNew(loader,proj);
+			file.addCircuit(new Circuit("main", file,proj));
 		} finally {
 			try {
 				templReader.close();
@@ -171,12 +171,12 @@ public class ProjectActions {
 			file = loader.openLogisimFile(templReader);
 		} catch (IOException ex) {
 			displayException(baseProject.getFrame(), ex);
-			file = createEmptyFile(loader);
+			file = createEmptyFile(loader,baseProject);
 		} catch (LoadFailedException ex) {
 			if (!ex.isShown()) {
 				displayException(baseProject.getFrame(), ex);
 			}
-			file = createEmptyFile(loader);
+			file = createEmptyFile(loader,baseProject);
 		} finally {
 			try {
 				templReader.close();
@@ -227,7 +227,7 @@ public class ProjectActions {
 			}
 		}
 		if (file == null)
-			file = createEmptyFile(loader);
+			file = createEmptyFile(loader,null);
 		return completeProject(monitor, loader, file, isStartupScreen);
 	}
 	
@@ -268,7 +268,14 @@ public class ProjectActions {
 			}
 			return;
 		}
+		updatecircs(mergelib,baseProject);
 		baseProject.doAction(LogisimFileActions.MergeFile(mergelib, baseProject.getLogisimFile()));
+	}
+	
+	private static void updatecircs(LogisimFile lib, Project proj) {
+		for (Circuit circ:lib.getCircuits()) {
+			circ.SetProject(proj);
+		}
 	}
 
 	public static boolean doOpen(Component parent, Project baseProject) {
@@ -364,6 +371,7 @@ public class ProjectActions {
 		frame.toFront();
 		frame.getCanvas().requestFocus();
 		proj.getLogisimFile().getLoader().setParent(frame);
+		updatecircs(proj.getLogisimFile(),proj);
 		return proj;
 	}
 
@@ -382,7 +390,9 @@ public class ProjectActions {
 			throws LoadFailedException {
 		Loader loader = new Loader(monitor);
 		LogisimFile file = loader.openLogisimFile(source);
-		return new Project(file);
+		Project ret = new Project(file);
+		updatecircs(file,ret);
+		return ret;
 	}
 
 	public static void doQuit() {

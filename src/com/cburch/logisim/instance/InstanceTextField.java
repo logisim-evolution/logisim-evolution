@@ -30,6 +30,7 @@
 
 package com.cburch.logisim.instance;
 
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 
@@ -73,7 +74,7 @@ public class InstanceTextField implements AttributeListener, TextFieldListener,
 
 	public void attributeListChanged(AttributeEvent e) {
 	}
-
+	
 	public void attributeValueChanged(AttributeEvent e) {
 		Attribute<?> attr = e.getAttribute();
 		if (attr == labelAttr) {
@@ -94,6 +95,7 @@ public class InstanceTextField implements AttributeListener, TextFieldListener,
 	void draw(Component comp, ComponentDrawContext context) {
 		if (field != null) {
 			Graphics g = context.getGraphics().create();
+			g.setColor(Color.BLUE);
 			field.draw(g);
 			g.dispose();
 		}

@@ -125,7 +125,7 @@ public class ProjectCircuitActions {
 				JOptionPane.showMessageDialog(proj.getFrame(), error,
 				Strings.get("circuitCreateTitle"), JOptionPane.ERROR_MESSAGE);
 			} else {
-				Circuit circuit = new Circuit(name, proj.getLogisimFile());
+				Circuit circuit = new Circuit(name, proj.getLogisimFile(),proj);
 				proj.doAction(LogisimFileActions.addCircuit(circuit));
 				proj.setCurrentCircuit(circuit);
 			}

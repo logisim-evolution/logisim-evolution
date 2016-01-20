@@ -222,10 +222,11 @@ public class Circuit {
 	private WeakHashMap<Component, Circuit> circuitsUsingThis;
 	private Netlist MyNetList;
 	private boolean Annotated;
+	private Project proj;
 
 	private LogisimFile logiFile;
 
-	public Circuit(String name, LogisimFile file) {
+	public Circuit(String name, LogisimFile file, Project proj) {
 		staticAttrs = CircuitAttributes.createBaseAttrs(this, name);
 		appearance = new CircuitAppearance(this);
 		subcircuitFactory = new SubcircuitFactory(this);
@@ -235,6 +236,15 @@ public class Circuit {
 		Annotated = false;
 		logiFile = file;
 		staticAttrs.setValue(CircuitAttributes.NAMED_CIRCUIT_BOX, AppPreferences.NAMED_CIRCUIT_BOXES.getBoolean());
+		this.proj = proj;
+	}
+	
+	public void SetProject(Project proj) {
+		this.proj = proj;
+	}
+	
+	public Graphics GetGraphics() {
+		return (proj==null) ? null : proj.getFrame().getGraphics();
 	}
 
 	//

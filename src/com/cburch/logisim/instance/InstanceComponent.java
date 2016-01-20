@@ -124,7 +124,7 @@ public class InstanceComponent implements Component, AttributeListener,
 	//
 	public void attributeListChanged(AttributeEvent e) {
 	}
-
+	
 	public void attributeValueChanged(AttributeEvent e) {
 		Attribute<?> attr = e.getAttribute();
 		if (e.getAttribute().equals(StdAttr.LABEL)) {

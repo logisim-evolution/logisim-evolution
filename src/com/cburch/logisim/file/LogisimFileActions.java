@@ -117,6 +117,12 @@ public class LogisimFileActions {
 		}
 
 		@Override
+		public boolean isModification() {
+			return (MergedLibraries.size() > 0) ||
+				   (MergedCircuits.size() > 0);
+		}
+		
+		@Override
 		public void undo(Project proj) {
 			for (Library lib : MergedLibraries)
 				proj.getLogisimFile().removeLibrary(lib);
@@ -165,6 +171,11 @@ public class LogisimFileActions {
 			for (Library lib : MergedLibs)
 				proj.getLogisimFile().addLibrary(lib);
 			
+		}
+		
+		@Override
+		public boolean isModification() {
+			return MergedLibs.size() > 0;
 		}
 		
 		@Override
