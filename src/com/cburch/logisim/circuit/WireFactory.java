@@ -105,4 +105,9 @@ class WireFactory extends AbstractComponentFactory {
 			return Bounds.create(-2, 0, 5, len);
 		}
 	}
+	
+	@Override
+	public boolean HDLSupportedComponent(String HDLIdentifier, AttributeSet attrs) {
+		return true;
+	}
 }

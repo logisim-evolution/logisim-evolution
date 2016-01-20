@@ -34,6 +34,9 @@ import java.awt.Font;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.swing.JOptionPane;
+
+import com.bfh.logisim.designrulecheck.CorrectLabel;
 import com.cburch.logisim.circuit.appear.CircuitAppearanceEvent;
 import com.cburch.logisim.circuit.appear.CircuitAppearanceListener;
 import com.cburch.logisim.data.AbstractAttributeSet;
@@ -46,6 +49,7 @@ import com.cburch.logisim.data.Attributes;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.util.SyntaxChecker;
 
 public class CircuitAttributes extends AbstractAttributeSet {
 	private class MyListener implements AttributeListener,
@@ -56,7 +60,7 @@ public class CircuitAttributes extends AbstractAttributeSet {
 		public void attributeValueChanged(AttributeEvent e) {
 			@SuppressWarnings("unchecked")
 			Attribute<Object> a = (Attribute<Object>) e.getAttribute();
-			fireAttributeValueChanged(a, e.getValue());
+			fireAttributeValueChanged(a, e.getValue(),e.getOldValue());
 		}
 
 		public void circuitAppearanceChanged(CircuitAppearanceEvent e) {
@@ -83,8 +87,35 @@ public class CircuitAttributes extends AbstractAttributeSet {
 		}
 
 		public void attributeValueChanged(AttributeEvent e) {
+			if (e.getAttribute() == NAMED_CIRCUIT_BOX) {
+				source.RecalcDefaultShape();
+			}
 			if (e.getAttribute() == NAME_ATTR) {
-				source.fireEvent(CircuitEvent.ACTION_SET_NAME, e.getValue());
+				String NewName = (String) e.getValue();
+				String OldName = e.getOldValue() == null ? "ThisShouldNotHappen" : (String) e.getOldValue();
+				if (!NewName.equals(OldName)) {
+					if (NewName.isEmpty()) {
+						JOptionPane.showMessageDialog(null, Strings.get("EmptyNameError"));
+						e.getSource().setValue(NAME_ATTR, OldName);
+						source.fireEvent(CircuitEvent.ACTION_SET_NAME, OldName);
+						return;
+					} else 
+				    if (!SyntaxChecker.isVariableNameAcceptable(NewName)) {
+				    	SyntaxChecker.showNonAcceptableNameMessage();
+						e.getSource().setValue(NAME_ATTR, OldName);
+						source.fireEvent(CircuitEvent.ACTION_SET_NAME, OldName);
+						return;
+					} else
+					if (CorrectLabel.IsKeyword(NewName)) {
+						JOptionPane.showMessageDialog(null, Strings.get("KeywordNameError"));
+						e.getSource().setValue(NAME_ATTR, OldName);
+						source.fireEvent(CircuitEvent.ACTION_SET_NAME, OldName);
+						return;
+					} else {
+						source.fireEvent(CircuitEvent.ACTION_CHECK_NAME, OldName);
+						source.fireEvent(CircuitEvent.ACTION_SET_NAME, NewName);
+					}
+				}
 			}
 		}
 	}
@@ -115,19 +146,24 @@ public class CircuitAttributes extends AbstractAttributeSet {
 			.forBoolean("circuitvhdl", Strings.getter("circuitIsVhdl"));
 	public static final Attribute<String> CIRCUIT_VHDL_PATH = Attributes
 			.forString("circuitvhdlpath", Strings.getter("circuitVhdlPath"));
+	public static final Attribute<Boolean> NAMED_CIRCUIT_BOX = Attributes
+			.forBoolean("circuitnamedbox",Strings.getter("circuitNamedBox"));
 
 	private static final Attribute<?>[] STATIC_ATTRS = { NAME_ATTR,
 			CIRCUIT_LABEL_ATTR, CIRCUIT_LABEL_FACING_ATTR,
-			CIRCUIT_LABEL_FONT_ATTR, CIRCUIT_IS_VHDL_BOX, CIRCUIT_VHDL_PATH, };
+			CIRCUIT_LABEL_FONT_ATTR,NAMED_CIRCUIT_BOX, 
+			CIRCUIT_IS_VHDL_BOX, CIRCUIT_VHDL_PATH, };
 
 	private static final Object[] STATIC_DEFAULTS = { "", "", Direction.EAST,
-			StdAttr.DEFAULT_LABEL_FONT, false, "", };
+			StdAttr.DEFAULT_LABEL_FONT, 
+			false,false, "", };
 
 	private static final List<Attribute<?>> INSTANCE_ATTRS = Arrays
 			.asList(new Attribute<?>[] { StdAttr.FACING, StdAttr.LABEL,
 					LABEL_LOCATION_ATTR, StdAttr.LABEL_FONT,
 					CircuitAttributes.NAME_ATTR, CIRCUIT_LABEL_ATTR,
 					CIRCUIT_LABEL_FACING_ATTR, CIRCUIT_LABEL_FONT_ATTR,
+					NAMED_CIRCUIT_BOX,
 					CIRCUIT_IS_VHDL_BOX, CIRCUIT_VHDL_PATH, });
 
 	private Circuit source;
@@ -214,27 +250,28 @@ public class CircuitAttributes extends AbstractAttributeSet {
 			if (facing.equals(val))
 				return;
 			facing = val;
-			fireAttributeValueChanged(StdAttr.FACING, val);
+			fireAttributeValueChanged(StdAttr.FACING, val,null);
 			if (subcircInstance != null)
 				subcircInstance.recomputeBounds();
 		} else if (attr == StdAttr.LABEL) {
 			String val = (String) value;
+			String oldval = label;
 			if (label.equals(val))
 				return;
 			label = val;
-			fireAttributeValueChanged(StdAttr.LABEL, val);
+			fireAttributeValueChanged(StdAttr.LABEL, val, oldval);
 		} else if (attr == StdAttr.LABEL_FONT) {
 			Font val = (Font) value;
 			if (labelFont.equals(val))
 				return;
 			labelFont = val;
-			fireAttributeValueChanged(StdAttr.LABEL_FONT, val);
+			fireAttributeValueChanged(StdAttr.LABEL_FONT, val,null);
 		} else if (attr == LABEL_LOCATION_ATTR) {
 			Direction val = (Direction) value;
 			if (labelLocation.equals(val))
 				return;
 			labelLocation = val;
-			fireAttributeValueChanged(LABEL_LOCATION_ATTR, val);
+			fireAttributeValueChanged(LABEL_LOCATION_ATTR, val,null);
 		} else {
 			source.getStaticAttributes().setValue(attr, value);
 			if (attr == NAME_ATTR) {

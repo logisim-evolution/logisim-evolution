@@ -129,7 +129,7 @@ public class SelectionActions {
 		@Override
 		public void doIt(Project proj) {
 			oldClip = Clipboard.get();
-			Clipboard.set(sel, sel.getAttributeSet());
+			Clipboard.set(sel, sel.getAttributeSet(),true);
 		}
 
 		@Override
@@ -149,17 +149,19 @@ public class SelectionActions {
 	}
 
 	private static class Cut extends Action {
-		private Action first;
+		private Selection sel;
+		private Clipboard oldClip;
 		private Action second;
 
 		Cut(Selection sel) {
-			first = new Copy(sel);
+			this.sel = sel;
 			second = new Delete(sel);
 		}
 
 		@Override
 		public void doIt(Project proj) {
-			first.doIt(proj);
+			oldClip = Clipboard.get();
+			Clipboard.set(sel, sel.getAttributeSet(),false);
 			second.doIt(proj);
 		}
 
@@ -171,7 +173,7 @@ public class SelectionActions {
 		@Override
 		public void undo(Project proj) {
 			second.undo(proj);
-			first.undo(proj);
+			Clipboard.set(oldClip);
 		}
 	}
 
@@ -362,6 +364,7 @@ public class SelectionActions {
 			} else {
 				xnReverse = null;
 			}
+			clip.ClearLabels();
 		}
 
 		@Override

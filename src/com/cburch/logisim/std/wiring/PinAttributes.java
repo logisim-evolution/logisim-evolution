@@ -85,6 +85,7 @@ class PinAttributes extends ProbeAttributes {
 
 	@Override
 	public <V> void setValue(Attribute<V> attr, V value) {
+		V oldvalue = null;
 		if (attr == StdAttr.WIDTH) {
 			BitWidth NewWidth = (BitWidth) value;
 			if (width == NewWidth)
@@ -107,9 +108,10 @@ class PinAttributes extends ProbeAttributes {
 				return;
 			pull = newPull;
 		} else {
+			oldvalue = (V) super.getValue(attr);
 			super.setValue(attr, value);
 			return;
 		}
-		fireAttributeValueChanged(attr, value);
+		fireAttributeValueChanged(attr, value, oldvalue);
 	}
 }

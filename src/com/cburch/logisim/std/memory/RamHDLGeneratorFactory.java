@@ -458,8 +458,9 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 	}
 
 	@Override
-	public boolean HDLTargetSupported(String HDLType, AttributeSet attrs,
-			char Vendor) {
+	public boolean HDLTargetSupported(String HDLType, AttributeSet attrs) {
+		if (attrs == null)
+			return false;
 		Object busVal = attrs.getValue(RamAttributes.ATTR_DBUS);
 		boolean separate = busVal == null ? false : busVal
 				.equals(RamAttributes.BUS_SEP);

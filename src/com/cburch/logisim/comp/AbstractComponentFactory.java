@@ -59,6 +59,7 @@ public abstract class AbstractComponentFactory implements ComponentFactory {
 
 	protected AbstractComponentFactory() {
 		defaultSet = null;
+		MyHDLGenerator = null;
 		MyIOInformation = null;
 	}
 
@@ -107,8 +108,8 @@ public abstract class AbstractComponentFactory implements ComponentFactory {
 	}
 
 	public HDLGeneratorFactory getHDLGenerator(String HDLIdentifier,
-			AttributeSet attrs, char Vendor) {
-		if (HDLSupportedComponent(HDLIdentifier, attrs, Vendor))
+			AttributeSet attrs) {
+		if (HDLSupportedComponent(HDLIdentifier, attrs))
 			return MyHDLGenerator;
 		else
 			return null;
@@ -135,7 +136,7 @@ public abstract class AbstractComponentFactory implements ComponentFactory {
 	}
 
 	public boolean HDLSupportedComponent(String HDLIdentifier,
-			AttributeSet attrs, char Vendor) {
+			AttributeSet attrs) {
 		return false;
 	}
 

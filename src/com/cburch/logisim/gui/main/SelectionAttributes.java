@@ -379,7 +379,7 @@ class SelectionAttributes extends AbstractAttributeSet {
 					if (!sameVals) {
 						@SuppressWarnings("unchecked")
 						Attribute<Object> attr = (Attribute<Object>) oldAttrs[i];
-						fireAttributeValueChanged(attr, newVal);
+						fireAttributeValueChanged(attr, newVal,oldVal);
 					}
 				}
 			} else {

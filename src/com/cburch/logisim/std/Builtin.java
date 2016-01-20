@@ -75,4 +75,8 @@ public class Builtin extends Library {
 	public List<Tool> getTools() {
 		return Collections.emptyList();
 	}
+	
+	public boolean removeLibrary(String Name) {
+		return false;
+	}
 }

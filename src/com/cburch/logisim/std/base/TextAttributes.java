@@ -126,7 +126,7 @@ class TextAttributes extends AbstractAttributeSet {
 			throw new IllegalArgumentException("unknown attribute");
 		}
 		offsetBounds = null;
-		fireAttributeValueChanged(attr, value);
+		fireAttributeValueChanged(attr, value,null);
 	}
 
 }

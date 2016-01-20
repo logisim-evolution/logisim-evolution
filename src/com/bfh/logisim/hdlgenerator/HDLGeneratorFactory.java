@@ -92,8 +92,7 @@ public interface HDLGeneratorFactory {
 
 	public String GetRelativeDirectory(String HDLType);
 
-	public boolean HDLTargetSupported(String HDLType, AttributeSet attrs,
-			char Vendor);
+	public boolean HDLTargetSupported(String HDLType, AttributeSet attrs);
 
 	public boolean IsOnlyInlined(String HDLType);
 

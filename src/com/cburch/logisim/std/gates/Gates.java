@@ -66,4 +66,8 @@ public class Gates extends Library {
 	public List<Tool> getTools() {
 		return tools;
 	}
+
+	public boolean removeLibrary(String Name) {
+		return false;
+	}
 }

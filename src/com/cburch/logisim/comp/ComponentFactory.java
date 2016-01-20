@@ -56,7 +56,7 @@ public interface ComponentFactory extends AttributeDefaultProvider {
 	public boolean ActiveOnHigh(AttributeSet attrs);
 
 	public AttributeSet createAttributeSet();
-
+	
 	public Component createComponent(Location loc, AttributeSet attrs);
 
 	public void drawGhost(ComponentDrawContext context, Color color, int x,
@@ -91,7 +91,7 @@ public interface ComponentFactory extends AttributeDefaultProvider {
 	public Object getFeature(Object key, AttributeSet attrs);
 
 	public HDLGeneratorFactory getHDLGenerator(String HDLIdentifier,
-			AttributeSet attrs, char Vendor);
+			AttributeSet attrs);
 
 	public String getHDLName(AttributeSet attrs);
 
@@ -106,7 +106,7 @@ public interface ComponentFactory extends AttributeDefaultProvider {
 	public boolean HasThreeStateDrivers(AttributeSet attrs);
 
 	public boolean HDLSupportedComponent(String HDLIdentifier,
-			AttributeSet attrs, char Vendor);
+			AttributeSet attrs);
 
 	public boolean isAllDefaultValues(AttributeSet attrs, LogisimVersion ver);
 

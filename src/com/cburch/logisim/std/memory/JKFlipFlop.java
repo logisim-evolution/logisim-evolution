@@ -112,10 +112,10 @@ public class JKFlipFlop extends AbstractFlipFlop {
 
 	@Override
 	public boolean HDLSupportedComponent(String HDLIdentifier,
-			AttributeSet attrs, char Vendor) {
+			AttributeSet attrs) {
 		if (MyHDLGenerator == null)
 			MyHDLGenerator = new JKFFHDLGeneratorFactory();
-		return MyHDLGenerator.HDLTargetSupported(HDLIdentifier, attrs, Vendor);
+		return MyHDLGenerator.HDLTargetSupported(HDLIdentifier, attrs);
 	}
 
 }

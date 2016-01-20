@@ -157,8 +157,7 @@ public class AdderHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 	}
 
 	@Override
-	public boolean HDLTargetSupported(String HDLType, AttributeSet attrs,
-			char Vendor) {
+	public boolean HDLTargetSupported(String HDLType, AttributeSet attrs) {
 		return true;
 	}
 

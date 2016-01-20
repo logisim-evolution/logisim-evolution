@@ -37,7 +37,6 @@ import java.util.TreeMap;
 import com.bfh.logisim.designrulecheck.CorrectLabel;
 import com.bfh.logisim.designrulecheck.Netlist;
 import com.bfh.logisim.designrulecheck.NetlistComponent;
-import com.bfh.logisim.fpgaboardeditor.FPGAClass;
 import com.bfh.logisim.fpgagui.FPGAReport;
 import com.bfh.logisim.fpgagui.MappableResourcesContainer;
 import com.bfh.logisim.settings.Settings;
@@ -87,8 +86,7 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 					.getFactory()
 					.getHDLGenerator(
 							Settings.VHDL,
-							TheNetlist.GetAllClockSources().get(0)
-									.getAttributeSet(), FPGAClass.VendorUnknown);
+							TheNetlist.GetAllClockSources().get(0).getAttributeSet());
 			Components.addAll(ClockWorker
 					.GetComponentInstantiation(
 							TheNetlist,
@@ -251,8 +249,7 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 						.getHDLGenerator(
 								HDLType,
 								MyIOComponents.GetComponent(CompId)
-										.GetComponent().getAttributeSet(),
-								FPGAClass.VendorUnknown);
+										.GetComponent().getAttributeSet());
 				if (Generator == null) {
 					Reporter.AddError("No generator for component "
 							+ CompId.toString());
@@ -284,8 +281,7 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 				Contents.addAll(Clockgen
 						.getFactory()
 						.getHDLGenerator(HDLType,
-								ThisClock.GetComponent().getAttributeSet(),
-								FPGAClass.VendorUnknown)
+								ThisClock.GetComponent().getAttributeSet())
 						.GetComponentMap(TheNetlist, index++, ThisClock,
 								Reporter, "Bla", HDLType));
 			}
@@ -412,8 +408,7 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 	}
 
 	@Override
-	public boolean HDLTargetSupported(String HDLType, AttributeSet attrs,
-			char Vendor) {
+	public boolean HDLTargetSupported(String HDLType, AttributeSet attrs) {
 		return true;
 	}
 }

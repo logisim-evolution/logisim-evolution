@@ -116,7 +116,7 @@ public class TclGenericAttributes extends TclComponentAttributes {
 			VhdlContent newContent = (VhdlContent) value;
 			if (!vhdlEntitiy.equals(newContent))
 				vhdlEntitiy = newContent;
-			fireAttributeValueChanged(attr, value);
+			fireAttributeValueChanged(attr, value,null);
 		} else {
 			super.setValue(attr, value);
 		}

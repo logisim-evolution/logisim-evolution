@@ -36,6 +36,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import com.bfh.logisim.hdlgenerator.HDLColorRenderer;
+import com.bfh.logisim.settings.Settings;
+import com.cburch.logisim.comp.ComponentFactory;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeEvent;
 import com.cburch.logisim.data.AttributeListener;
@@ -45,7 +48,7 @@ public abstract class AttributeSetTableModel implements AttrTableModel,
 		AttributeListener {
 	private class AttrRow implements AttrTableModelRow {
 		private Attribute<Object> attr;
-
+		
 		AttrRow(Attribute<?> attr) {
 			@SuppressWarnings("unchecked")
 			Attribute<Object> objAttr = (Attribute<Object>) attr;
@@ -67,7 +70,10 @@ public abstract class AttributeSetTableModel implements AttrTableModel,
 				return "";
 			} else {
 				try {
-					return attr.toDisplayString(value);
+					String Str = attr.toDisplayString(value);
+                    if (Str.isEmpty()&&attr.getName().equals("label")&&CompInst!=null&&CompInst.RequiresNonZeroLabel())
+                    	return HDLColorRenderer.RequiredFieldString;
+					return Str;
 				} catch (Exception e) {
 					return "???";
 				}
@@ -102,18 +108,58 @@ public abstract class AttributeSetTableModel implements AttrTableModel,
 			}
 		}
 	}
+	
+	private class HDLrow extends AttrRow {
+		
+		HDLrow(Attribute<?> attr) {
+			super(attr);
+		}
+		
+		@Override
+		public String getLabel() {
+			if (CompInst == null)
+				return HDLColorRenderer.UnKnownString;
+			if (CompInst.HDLSupportedComponent(Settings.VHDL, attrs))
+				return HDLColorRenderer.VHDLSupportString;
+			return HDLColorRenderer.NoSupportString;
+		}
+		
+		@Override
+		public String getValue() {
+			if (CompInst == null)
+				return HDLColorRenderer.UnKnownString;
+			if (CompInst.HDLSupportedComponent(Settings.VERILOG, attrs))
+				return HDLColorRenderer.VHDLSupportString;
+			return HDLColorRenderer.NoSupportString;
+		}
+		
+		@Override
+		public boolean isValueEditable() {
+			return false;
+		}
+		
+		@Override
+		public void setValue(Object value) {
+			// Do Nothing
+		}
+		
+	}
 
 	private ArrayList<AttrTableModelListener> listeners;
 	private AttributeSet attrs;
 	private HashMap<Attribute<?>, AttrRow> rowMap;
 	private ArrayList<AttrRow> rows;
-
+	private ComponentFactory CompInst = null;
+	
 	public AttributeSetTableModel(AttributeSet attrs) {
 		this.attrs = attrs;
 		this.listeners = new ArrayList<AttrTableModelListener>();
 		this.rowMap = new HashMap<Attribute<?>, AttrRow>();
 		this.rows = new ArrayList<AttrRow>();
 		if (attrs != null) {
+			/* put the vhdl/verilog row */
+			HDLrow rowd = new HDLrow(null);
+			rows.add(rowd);
 			for (Attribute<?> attr : attrs.getAttributes()) {
 				AttrRow row = new AttrRow(attr);
 				rowMap.put(attr, row);
@@ -121,7 +167,22 @@ public abstract class AttributeSetTableModel implements AttrTableModel,
 			}
 		}
 	}
-
+	
+	public void SetInstance(ComponentFactory comp) {
+		CompInst = comp;
+	}
+	
+	public void SetIsTool() {
+		/* We remove the label attribute for a tool */
+		for (Attribute<?> attr : attrs.getAttributes()) {
+			if (attr.getName().equals("label")) {
+				AttrRow row = rowMap.get(attr);
+				rowMap.remove(attr);
+				rows.remove(row);
+			}
+		}
+	}
+	
 	public void addAttrTableModelListener(AttrTableModelListener listener) {
 		if (listeners.isEmpty() && attrs != null) {
 			attrs.addAttributeListener(this);
@@ -151,6 +212,9 @@ public abstract class AttributeSetTableModel implements AttrTableModel,
 		ArrayList<AttrRow> newRows = new ArrayList<AttrRow>();
 		HashSet<Attribute<?>> missing = new HashSet<Attribute<?>>(
 				rowMap.keySet());
+		/* put the vhdl/verilog row */
+		HDLrow rowd = new HDLrow(null);
+		newRows.add(rowd);
 		for (Attribute<?> attr : attrs.getAttributes()) {
 			AttrRow row = rowMap.get(attr);
 			if (row == null) {
@@ -195,7 +259,7 @@ public abstract class AttributeSetTableModel implements AttrTableModel,
 
 	protected void fireValueChanged(int index) {
 		AttrTableModelEvent event = new AttrTableModelEvent(this, index);
-		for (AttrTableModelListener l : listeners) {
+		for (AttrTableModelListener l : listeners) {			
 			l.attrValueChanged(event);
 		}
 	}

@@ -70,6 +70,8 @@ public abstract class Library {
 		}
 		return null;
 	}
+	
+	public abstract boolean removeLibrary(String name);
 
 	public String getName() {
 		return getClass().getName();

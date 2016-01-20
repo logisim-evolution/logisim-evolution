@@ -37,7 +37,6 @@ import java.util.List;
 
 import com.cburch.logisim.circuit.CircuitAttributes;
 import com.cburch.logisim.instance.StdAttr;
-import com.cburch.logisim.util.SyntaxChecker;
 
 public class AttributeSets {
 	private static class FixedSet extends AbstractAttributeSet {
@@ -116,18 +115,20 @@ public class AttributeSets {
 						+ attr.getName() + " absent");
 			if (isReadOnly(index))
 				throw new IllegalArgumentException("read only");
-			if (isAttrLabel(attr)) {
-				String val = (String) value;
-				if (!SyntaxChecker.isVariableNameAcceptable(val)) {
-					SyntaxChecker.showNonAcceptableNameMessage();
-					values[index] = "";
-				} else {
-					values[index] = val;
-				}
-			} else {
+//			if (isAttrLabel(attr)) {
+//				String val = (String) value;
+//				if (!SyntaxChecker.isVariableNameAcceptable(val)) {
+//					SyntaxChecker.showNonAcceptableNameMessage();
+//					values[index] = "";
+//				} else {
+//					values[index] = val;
+//				}
+//			} else {
+			    @SuppressWarnings("unchecked")
+				V oldvalue = (V) values[index];
 				values[index] = value;
-			}
-			fireAttributeValueChanged(attr, value);
+//			}
+			fireAttributeValueChanged(attr, value, oldvalue);
 		}
 	}
 
@@ -185,18 +186,20 @@ public class AttributeSets {
 						+ attr.getName() + " absent");
 			if (readOnly)
 				throw new IllegalArgumentException("read only");
-			if (isAttrLabel(attr)) {
-				String val = (String) value;
-				if (!SyntaxChecker.isVariableNameAcceptable(val)) {
-					SyntaxChecker.showNonAcceptableNameMessage();
-					this.value = "";
-				} else {
-					this.value = val;
-				}
-			} else {
+//			if (isAttrLabel(attr)) {
+//				String val = (String) value;
+//				if (!SyntaxChecker.isVariableNameAcceptable(val)) {
+//					SyntaxChecker.showNonAcceptableNameMessage();
+//					this.value = "";
+//				} else {
+//					this.value = val;
+//				}
+//			} else {
+			    @SuppressWarnings("unchecked")
+				V oldvalue = (V) this.value;
 				this.value = value;
-			}
-			fireAttributeValueChanged(attr, value);
+//			}
+			fireAttributeValueChanged(attr, value, oldvalue);
 		}
 	}
 

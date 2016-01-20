@@ -45,7 +45,6 @@ import com.bfh.logisim.designrulecheck.CorrectLabel;
 import com.bfh.logisim.designrulecheck.Net;
 import com.bfh.logisim.designrulecheck.Netlist;
 import com.bfh.logisim.designrulecheck.NetlistComponent;
-import com.bfh.logisim.fpgaboardeditor.FPGAClass;
 import com.bfh.logisim.fpgagui.FPGAReport;
 import com.bfh.logisim.fpgagui.MappableResourcesContainer;
 import com.bfh.logisim.settings.Settings;
@@ -94,8 +93,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 						.GetComponent()
 						.getFactory()
 						.getHDLGenerator(HDLType,
-								ThisComponent.GetComponent().getAttributeSet(),
-								FPGAClass.VendorUnknown);
+								ThisComponent.GetComponent().getAttributeSet());
 				if (Worker == null) {
 					Reporter.AddFatalError("INTERNAL ERROR: Cannot find the VHDL generator factory for component "
 							+ ComponentName);
@@ -128,8 +126,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 					.GetComponent()
 					.getFactory()
 					.getHDLGenerator(HDLType,
-							ThisCircuit.GetComponent().getAttributeSet(),
-							FPGAClass.VendorUnknown);
+							ThisCircuit.GetComponent().getAttributeSet());
 			if (Worker == null) {
 				Reporter.AddFatalError("INTERNAL ERROR: Unable to get a subcircuit VHDL generator for '"
 						+ ThisCircuit.GetComponent().getFactory().getName()
@@ -215,8 +212,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 						.GetComponent()
 						.getFactory()
 						.getHDLGenerator(Settings.VHDL,
-								Gate.GetComponent().getAttributeSet(),
-								FPGAClass.VendorUnknown);
+								Gate.GetComponent().getAttributeSet());
 				if (Worker != null) {
 					if (!Worker.IsOnlyInlined(Settings.VHDL)) {
 						Components.addAll(Worker.GetComponentInstantiation(
@@ -237,8 +233,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 						.GetComponent()
 						.getFactory()
 						.getHDLGenerator(Settings.VHDL,
-								Gate.GetComponent().getAttributeSet(),
-								FPGAClass.VendorUnknown);
+								Gate.GetComponent().getAttributeSet());
 				SubcircuitFactory sub = (SubcircuitFactory) Gate.GetComponent()
 						.getFactory();
 				if (Worker != null) {
@@ -552,8 +547,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 					.GetComponent()
 					.getFactory()
 					.getHDLGenerator(HDLType,
-							comp.GetComponent().getAttributeSet(),
-							FPGAClass.VendorUnknown);
+							comp.GetComponent().getAttributeSet());
 			if (Worker != null) {
 				if (Worker.IsOnlyInlined(HDLType)) {
 					String InlinedName = comp.GetComponent().getFactory()
@@ -588,8 +582,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 					.GetComponent()
 					.getFactory()
 					.getHDLGenerator(HDLType,
-							comp.GetComponent().getAttributeSet(),
-							FPGAClass.VendorUnknown);
+							comp.GetComponent().getAttributeSet());
 			if (Worker != null) {
 				if (!Worker.IsOnlyInlined(HDLType)) {
 					String CompName = comp.GetComponent().getFactory()
@@ -624,8 +617,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 					.GetComponent()
 					.getFactory()
 					.getHDLGenerator(HDLType,
-							comp.GetComponent().getAttributeSet(),
-							FPGAClass.VendorUnknown);
+							comp.GetComponent().getAttributeSet());
 			if (Worker != null) {
 				String CompName = comp.GetComponent().getFactory()
 						.getHDLName(comp.GetComponent().getAttributeSet());
@@ -1133,8 +1125,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 	}
 
 	@Override
-	public boolean HDLTargetSupported(String HDLType, AttributeSet attrs,
-			char Vendor) {
+	public boolean HDLTargetSupported(String HDLType, AttributeSet attrs) {
 		return true;
 	}
 }

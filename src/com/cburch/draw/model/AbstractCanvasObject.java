@@ -252,7 +252,7 @@ public abstract class AbstractCanvasObject implements AttributeSet,
 		boolean same = old == null ? value == null : old.equals(value);
 		if (!same) {
 			updateValue(attr, value);
-			AttributeEvent e = new AttributeEvent(this, attr, value);
+			AttributeEvent e = new AttributeEvent(this, attr, value,old);
 			for (AttributeListener listener : listeners) {
 				listener.attributeValueChanged(e);
 			}

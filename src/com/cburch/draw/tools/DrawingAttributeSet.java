@@ -72,7 +72,7 @@ public class DrawingAttributeSet implements AttributeSet, Cloneable {
 			if (selectedAttrs.contains(e.getAttribute())) {
 				@SuppressWarnings("unchecked")
 				Attribute<Object> attr = (Attribute<Object>) e.getAttribute();
-				fireAttributeValueChanged(attr, e.getValue());
+				fireAttributeValueChanged(attr, e.getValue(),e.getOldValue());
 			}
 			updateAttributes();
 		}
@@ -227,7 +227,7 @@ public class DrawingAttributeSet implements AttributeSet, Cloneable {
 			vit.next();
 			if (a.equals(attr)) {
 				vit.set(value);
-				AttributeEvent e = new AttributeEvent(this, attr, value);
+				AttributeEvent e = new AttributeEvent(this, attr, value,null);
 				for (AttributeListener listener : listeners) {
 					listener.attributeValueChanged(e);
 				}

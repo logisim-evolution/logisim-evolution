@@ -38,6 +38,8 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -50,14 +52,19 @@ import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.file.LoadFailedException;
 import com.cburch.logisim.file.Loader;
 import com.cburch.logisim.file.LogisimFile;
+import com.cburch.logisim.file.LogisimFileActions;
 import com.cburch.logisim.gui.main.Frame;
 import com.cburch.logisim.gui.start.SplashScreen;
 import com.cburch.logisim.prefs.AppPreferences;
+import com.cburch.logisim.tools.LibraryTools;
 import com.cburch.logisim.tools.Tool;
 import com.cburch.logisim.util.JFileChoosers;
 import com.cburch.logisim.util.StringUtil;
 
 public class ProjectActions {
+	private static String FILE_NAME_FORMAT_ERROR = "FileNameError";
+	private static String FILE_NAME_KEYWORD_ERROR = "ExistingToolName";
+
 	private static class CreateFrame implements Runnable {
 		private Loader loader;
 		private Project proj;
@@ -93,10 +100,24 @@ public class ProjectActions {
 	 * Returns true if the filename contains valid characters only, that is,
 	 * alphanumeric characters and underscores.
 	 */
-	private static boolean checkValidFilename(String filename) {
+	private static boolean checkValidFilename(String filename, Project proj, HashMap<String,String> Errors) {
+		boolean IsOk = true;
+		HashSet<String> TempSet = new HashSet<String>();
+		HashSet<String> ForbiddenNames = new HashSet<String>();
+		LibraryTools.BuildLibraryList(proj.getLogisimFile(), TempSet);
+		LibraryTools.BuildToolList(proj.getLogisimFile(), ForbiddenNames);
+		ForbiddenNames.addAll(TempSet);
 		Pattern p = Pattern.compile("[^a-z0-9_.]", Pattern.CASE_INSENSITIVE);
 		Matcher m = p.matcher(filename);
-		return (!m.find());
+		if (m.find()) {
+			IsOk = false;
+			Errors.put(FILE_NAME_FORMAT_ERROR, "InvalidFileFormatError");
+		}
+		if (ForbiddenNames.contains(filename.toUpperCase())) {
+			IsOk = false;
+			Errors.put(FILE_NAME_KEYWORD_ERROR, "UsedLibraryToolnameError");
+		}
+		return IsOk;
 	}
 
 	private static Project completeProject(SplashScreen monitor, Loader loader,
@@ -209,8 +230,48 @@ public class ProjectActions {
 			file = createEmptyFile(loader);
 		return completeProject(monitor, loader, file, isStartupScreen);
 	}
+	
+	public static void doMerge(Component parent, Project baseProject) {
+		JFileChooser chooser;
+		LogisimFile mergelib;
+		Loader loader = null;
+		if (baseProject != null) {
+			Loader oldLoader = baseProject.getLogisimFile().getLoader();
+			chooser = oldLoader.createChooser();
+			if (oldLoader.getMainFile() != null) {
+				chooser.setSelectedFile(oldLoader.getMainFile());
+			}
+		} else {
+			chooser = JFileChoosers.create();
+		}
+		chooser.setFileFilter(Loader.LOGISIM_FILTER);
+		chooser.setDialogTitle(Strings.get("FileMergeItem"));
 
-	public static void doOpen(Component parent, Project baseProject) {
+		int returnVal = chooser.showOpenDialog(parent);
+		if (returnVal != JFileChooser.APPROVE_OPTION)
+			return;
+		File selected = chooser.getSelectedFile();
+		loader = new Loader(baseProject == null ? parent
+				: baseProject.getFrame());
+		try {
+			mergelib = loader.openLogisimFile(selected);
+			if (mergelib == null)
+				return;
+		} catch (LoadFailedException ex) {
+			if (!ex.isShown()) {
+				JOptionPane.showMessageDialog(
+						parent,
+						StringUtil.format(Strings.get("fileMergeError"),
+								ex.toString()),
+						Strings.get("FileMergeErrorItem"),
+						JOptionPane.ERROR_MESSAGE);
+			}
+			return;
+		}
+		baseProject.doAction(LogisimFileActions.MergeFile(mergelib, baseProject.getLogisimFile()));
+	}
+
+	public static boolean doOpen(Component parent, Project baseProject) {
 		JFileChooser chooser;
 		if (baseProject != null) {
 			Loader oldLoader = baseProject.getLogisimFile().getLoader();
@@ -222,14 +283,16 @@ public class ProjectActions {
 			chooser = JFileChoosers.create();
 		}
 		chooser.setFileFilter(Loader.LOGISIM_FILTER);
+		chooser.setDialogTitle(Strings.get("FileOpenItem"));
 
 		int returnVal = chooser.showOpenDialog(parent);
 		if (returnVal != JFileChooser.APPROVE_OPTION)
-			return;
+			return false;
 		File selected = chooser.getSelectedFile();
 		if (selected != null) {
 			doOpen(parent, baseProject, selected);
 		}
+		return true;
 	}
 
 	public static Project doOpen(Component parent, Project baseProject, File f) {
@@ -374,18 +437,19 @@ public class ProjectActions {
 
 		int returnVal;
 		boolean validFilename = false;
+		HashMap<String,String> Error = new HashMap<String,String> ();
 		do {
+			Error.clear();
 			returnVal = chooser.showSaveDialog(proj.getFrame());
 			if (returnVal != JFileChooser.APPROVE_OPTION) {
 				return false;
 			}
-			validFilename = checkValidFilename(chooser.getSelectedFile()
-					.getName());
+			validFilename = checkValidFilename(chooser.getSelectedFile() .getName(),proj,Error);
 			if (!validFilename) {
-				JOptionPane
-						.showMessageDialog(
-								chooser,
-								"The file name contains invalid characters. Only alphanumeric characters and underscores are accepted.");
+				String Message = "\""+chooser.getSelectedFile()+"\":\n";
+				for (String key : Error.keySet())
+					Message = Message.concat("=> "+Strings.get(Error.get(key))+"\n");
+				JOptionPane.showMessageDialog(chooser,Message,Strings.get("FileSaveAsItem"),JOptionPane.ERROR_MESSAGE);
 			}
 		} while (!validFilename);
 

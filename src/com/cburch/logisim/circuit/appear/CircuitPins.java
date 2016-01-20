@@ -65,6 +65,10 @@ public class CircuitPins {
 		public void componentInvalidated(ComponentEvent e) {
 		}
 
+		public void LabelChanged(ComponentEvent e) {
+		}
+
+
 		public void endChanged(ComponentEvent e) {
 			appearanceManager.updatePorts();
 		}

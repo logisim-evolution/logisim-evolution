@@ -40,6 +40,7 @@ import org.w3c.dom.Element;
 import com.cburch.draw.model.AbstractCanvasObject;
 import com.cburch.logisim.Main;
 import com.cburch.logisim.circuit.Circuit;
+import com.cburch.logisim.circuit.CircuitAttributes;
 import com.cburch.logisim.circuit.CircuitMutator;
 import com.cburch.logisim.circuit.CircuitTransaction;
 import com.cburch.logisim.circuit.Wire;
@@ -162,8 +163,21 @@ public class XmlCircuitReader extends CircuitTransaction {
 		if (knownComponents == null)
 			knownComponents = Collections.emptyMap();
 		try {
+			/* Here we check the attribute circuitnamedbox for backwards compatibility */
+			boolean HasNamedBox = false;
+			for (Element attrElt : XmlIterator.forChildElements(circData.circuitElement, "a")) {
+				if (attrElt.hasAttribute("name")) {
+					String Name = attrElt.getAttribute("name");
+					if (Name.equals("circuitnamedbox")) {
+						HasNamedBox = true;
+					}
+				}
+			}
 			reader.initAttributeSet(circData.circuitElement,
 					dest.getStaticAttributes(), null);
+			if ((!HasNamedBox)&&circData.circuitElement.hasChildNodes()) {
+				dest.getStaticAttributes().setValue(CircuitAttributes.NAMED_CIRCUIT_BOX, false);
+			}
 		} catch (XmlReaderException e) {
 			reader.addErrors(e, circData.circuit.getName() + ".static");
 		}

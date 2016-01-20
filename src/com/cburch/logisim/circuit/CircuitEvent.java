@@ -39,6 +39,8 @@ public class CircuitEvent {
 													// types changed)
 	public final static int ACTION_CLEAR = 5; // entire circuit cleared
 	public final static int TRANSACTION_DONE = 6;
+	public final static int CHANGE_DEFAULT_BOX_APPEARANCE = 7;
+	public final static int ACTION_CHECK_NAME = 8;
 
 	private int action;
 	private Circuit circuit;

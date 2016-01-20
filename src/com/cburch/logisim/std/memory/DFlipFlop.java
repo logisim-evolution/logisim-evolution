@@ -93,10 +93,10 @@ public class DFlipFlop extends AbstractFlipFlop {
 
 	@Override
 	public boolean HDLSupportedComponent(String HDLIdentifier,
-			AttributeSet attrs, char Vendor) {
+			AttributeSet attrs) {
 		if (MyHDLGenerator == null)
 			MyHDLGenerator = new DFFHDLGeneratorFactory();
-		return MyHDLGenerator.HDLTargetSupported(HDLIdentifier, attrs, Vendor);
+		return MyHDLGenerator.HDLTargetSupported(HDLIdentifier, attrs);
 	}
 
 }

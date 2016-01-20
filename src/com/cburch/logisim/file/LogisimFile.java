@@ -44,6 +44,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.swing.JOptionPane;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
@@ -51,6 +52,9 @@ import javax.xml.transform.TransformerException;
 import org.xml.sax.SAXException;
 
 import com.cburch.logisim.circuit.Circuit;
+import com.cburch.logisim.circuit.CircuitAttributes;
+import com.cburch.logisim.circuit.CircuitEvent;
+import com.cburch.logisim.circuit.CircuitListener;
 import com.cburch.logisim.circuit.SubcircuitFactory;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.comp.ComponentFactory;
@@ -62,7 +66,53 @@ import com.cburch.logisim.util.EventSourceWeakSupport;
 import com.cburch.logisim.util.ListUtil;
 import com.cburch.logisim.util.StringUtil;
 
-public class LogisimFile extends Library implements LibraryEventSource {
+public class LogisimFile extends Library implements LibraryEventSource,CircuitListener {
+
+	public void circuitChanged(CircuitEvent event) {
+		int act = event.getAction();
+		if (act == CircuitEvent.ACTION_CHECK_NAME) {
+			String oldname = (String) event.getData();
+			String newname = event.getCircuit().getName();
+			if (NameIsInUse(newname,event.getCircuit())) {
+				JOptionPane.showMessageDialog(null, "\""+newname+"\": "+Strings.get("circuitNameExists"));
+				event.getCircuit().getStaticAttributes().setValue(CircuitAttributes.NAME_ATTR, (String) oldname);;
+			}
+		}
+	}
+	
+	// Name check Methods
+	private boolean NameIsInUse(String Name,Circuit changed) {
+		if (Name.isEmpty())
+			return false;
+		for (Library mylib : getLibraries()) {
+			if (NameIsInLibraries(mylib,Name))
+				return true;
+		}
+		for (Circuit mytool : this.getCircuits()) {
+			if (Name.toUpperCase().equals(mytool.getName().toUpperCase())&&
+					!mytool.equals(changed))
+				return true;
+		}
+		return false;
+	}
+	
+	private boolean NameIsInLibraries(Library lib, String Name) {
+		if (Name.isEmpty())
+			return false;
+		for (Library mylib : lib.getLibraries()) {
+			if (NameIsInLibraries(mylib,Name))
+				return true;
+		}
+		for (Tool mytool : lib.getTools()) {
+			if (Name.toUpperCase().equals(mytool.getName().toUpperCase()))
+				return true;
+			
+			
+		}
+		return false;
+	}
+
+	
 
 	private static class WritingThread extends Thread {
 		OutputStream out;
@@ -221,6 +271,7 @@ public class LogisimFile extends Library implements LibraryEventSource {
 	}
 
 	public void addCircuit(Circuit circuit, int index) {
+		circuit.addCircuitListener(this);
 		AddTool tool = new AddTool(circuit.getSubcircuitFactory());
 		tools.add(index, tool);
 		if (tools.size() == 1)
@@ -347,6 +398,17 @@ public class LogisimFile extends Library implements LibraryEventSource {
 	@Override
 	public List<Library> getLibraries() {
 		return libraries;
+	}
+
+	public boolean removeLibrary(String Name) {
+		int index = -1;
+		for (Library lib : libraries)
+			if (lib.getName().equals(Name))
+				index = libraries.indexOf(lib);
+		if (index < 0)
+			return false;
+		libraries.remove(index);
+		return true;
 	}
 
 	public Loader getLoader() {

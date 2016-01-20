@@ -45,7 +45,6 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JProgressBar;
 
-import com.bfh.logisim.fpgaboardeditor.FPGAClass;
 import com.bfh.logisim.fpgagui.FPGAReport;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitAttributes;
@@ -238,9 +237,19 @@ public class Netlist {
 			}
 		}
 	}
+	
+	public void ClearNetlist() {
+		for (Component comp : MyCircuit.getNonWires()) {
+			if (comp.getFactory() instanceof SubcircuitFactory) {
+				SubcircuitFactory fac = (SubcircuitFactory) comp.getFactory();
+				fac.getSubcircuit().getNetList().ClearNetlist();
+			}
+		}
+		this.clear();
+	}
 
 	public int DesignRuleCheckResult(FPGAReport Reporter, String HDLIdentifier,
-			boolean IsTopLevel, char Vendor, ArrayList<String> Sheetnames) {
+			boolean IsTopLevel, ArrayList<String> Sheetnames) {
 		ArrayList<String> CompName = new ArrayList<String>();
 		ArrayList<Set<String>> AnnotationNames = new ArrayList<Set<String>>();
 		/* Check if we are okay */
@@ -253,8 +262,7 @@ public class Netlist {
 				DRCStatus = sub
 						.getSubcircuit()
 						.getNetList()
-						.DesignRuleCheckResult(Reporter, HDLIdentifier, false,
-								Vendor, Sheetnames);
+						.DesignRuleCheckResult(Reporter, HDLIdentifier, false,Sheetnames);
 				if (DRCStatus != DRC_PASSED) {
 					return DRCStatus;
 				}
@@ -268,6 +276,10 @@ public class Netlist {
 		 * Check for duplicated sheet names, this is bad as we will have
 		 * multiple "different" components with the same name
 		 */
+		if (MyCircuit.getName().isEmpty()) {
+			Reporter.AddFatalError("Found a sheet in your design with an empty name. This is not allowed, please specify a name!");
+			return DRC_ERROR;
+		}
 		if (Sheetnames.contains(MyCircuit.getName())) {
 			Reporter.AddFatalError("Found more than one sheet in your design with the name :\""
 					+ MyCircuit.getName()
@@ -284,7 +296,7 @@ public class Netlist {
 			 * generation
 			 */
 			if (!comp.getFactory().HDLSupportedComponent(HDLIdentifier,
-					comp.getAttributeSet(), Vendor)) {
+					comp.getAttributeSet())) {
 				Reporter.AddFatalError("Found unsupported component: \""
 						+ comp.getFactory().getName() + "\" for "
 						+ HDLIdentifier.toString()
@@ -386,7 +398,7 @@ public class Netlist {
 							.getSubcircuit()
 							.getNetList()
 							.DesignRuleCheckResult(Reporter, HDLIdentifier,
-									false, Vendor, Sheetnames);
+									false, Sheetnames);
 					if (DRCStatus != DRC_PASSED) {
 						return DRCStatus;
 					}
@@ -891,7 +903,7 @@ public class Netlist {
 			} else if ((comp.getFactory() instanceof Pin)
 					|| (comp.getFactory().getIOInformation() != null)
 					|| (comp.getFactory().getHDLGenerator(HDLIdentifier,
-							comp.getAttributeSet(), FPGAClass.VendorUnknown) != null)) {
+							comp.getAttributeSet()) != null)) {
 				if (!ProcessNormalComponent(comp, Reporter)) {
 					this.clear();
 					panel.dispose();

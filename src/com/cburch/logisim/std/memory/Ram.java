@@ -668,11 +668,11 @@ public class Ram extends Mem {
 
 	@Override
 	public boolean HDLSupportedComponent(String HDLIdentifier,
-			AttributeSet attrs, char Vendor) {
+			AttributeSet attrs) {
 		if (MyHDLGenerator == null) {
 			MyHDLGenerator = new RamHDLGeneratorFactory();
 		}
-		return MyHDLGenerator.HDLTargetSupported(HDLIdentifier, attrs, Vendor);
+		return MyHDLGenerator.HDLTargetSupported(HDLIdentifier, attrs);
 	}
 
 	@Override

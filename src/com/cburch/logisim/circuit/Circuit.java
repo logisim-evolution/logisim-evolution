@@ -42,6 +42,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
 
+import javax.swing.JOptionPane;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,6 +57,8 @@ import com.cburch.logisim.comp.ComponentEvent;
 import com.cburch.logisim.comp.ComponentFactory;
 import com.cburch.logisim.comp.ComponentListener;
 import com.cburch.logisim.comp.EndData;
+import com.cburch.logisim.data.Attribute;
+import com.cburch.logisim.data.AttributeEvent;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
@@ -66,6 +70,7 @@ import com.cburch.logisim.file.LogisimFile;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.std.wiring.Clock;
 import com.cburch.logisim.std.wiring.Pin;
@@ -142,6 +147,52 @@ public class Circuit {
 			}
 			return map;
 		}
+		
+		public void LabelChanged(ComponentEvent e) {
+			AttributeEvent attre = (AttributeEvent) e.getData();
+			if (attre.getSource()==null||
+				attre.getValue()==null) {
+				return;
+			}
+			String newLabel = (String) attre.getValue();
+			String oldLabel = attre.getOldValue() != null ? (String) attre.getOldValue() : "";
+			@SuppressWarnings("unchecked")
+			Attribute<String> lattr = (Attribute<String>) attre.getAttribute();
+			if (IsExistingLabel(newLabel,attre.getSource())) {
+				JOptionPane.showMessageDialog(null, "\""+newLabel+"\" : "+Strings.get("UsedLabelNameError"));
+				attre.getSource().setValue(lattr, oldLabel);
+			} else 
+			if (IsComponentName(newLabel)) {
+				JOptionPane.showMessageDialog(null, "\""+newLabel+"\" : "+Strings.get("ComponentLabelNameError"));
+				attre.getSource().setValue(lattr, oldLabel);
+			}
+		}
+	}
+	
+	private boolean IsComponentName(String Name) {
+		if (Name.isEmpty())
+			return false;
+		for (Component comp : comps) {
+			if (comp.getFactory().getName().toUpperCase().equals(Name.toUpperCase()))
+				return true;
+		}
+		/* we do not have to check the wires as (1) Wire is a reserved keyword, and (2) they cannot have a label */
+		return false;
+	}
+	
+	private boolean IsExistingLabel(String Name, AttributeSet me) {
+		if (Name.isEmpty())
+			return false;
+		for (Component comp : comps) {
+			if (!comp.getAttributeSet().equals(me)) {
+				String Label = (comp.getAttributeSet().containsAttribute(StdAttr.LABEL)) ?
+						comp.getAttributeSet().getValue(StdAttr.LABEL) : "";
+				if (Label.toUpperCase().equals(Name.toUpperCase()))
+					return true;
+			}
+		}
+		/* we do not have to check the wires as (1) Wire is a reserved keyword, and (2) they cannot have a label */
+		return false;
 	}
 
 	//
@@ -159,6 +210,8 @@ public class Circuit {
 	private HashSet<Component> comps = new HashSet<Component>(); // doesn't
 																	// include
 																	// wires
+//    private HashSet<String> UsedLabels = new HashSet<String>();
+//    private HashSet<String> UsedComponentNames = new HashSet<String>();
 	CircuitWires wires = new CircuitWires();
 	// wires is package-protected for CircuitState and Analyze only.
 	private ArrayList<Component> clocks = new ArrayList<Component>();
@@ -173,14 +226,15 @@ public class Circuit {
 	private LogisimFile logiFile;
 
 	public Circuit(String name, LogisimFile file) {
-		appearance = new CircuitAppearance(this);
 		staticAttrs = CircuitAttributes.createBaseAttrs(this, name);
+		appearance = new CircuitAppearance(this);
 		subcircuitFactory = new SubcircuitFactory(this);
 		locker = new CircuitLocker();
 		circuitsUsingThis = new WeakHashMap<Component, Circuit>();
 		MyNetList = new Netlist(this);
 		Annotated = false;
 		logiFile = file;
+		staticAttrs.setValue(CircuitAttributes.NAMED_CIRCUIT_BOX, AppPreferences.NAMED_CIRCUIT_BOXES.getBoolean());
 	}
 
 	//
@@ -188,6 +242,12 @@ public class Circuit {
 	//
 	public void addCircuitListener(CircuitListener what) {
 		listeners.add(what);
+	}
+	
+	public void RecalcDefaultShape() {
+		if (appearance.isDefaultAppearance()) {
+			appearance.recomputeDefaultAppearance();
+		}
 	}
 
 	public void Annotate(boolean ClearExistingLabels, FPGAReport reporter) {
@@ -302,6 +362,12 @@ public class Circuit {
 				id++;
 			}
 			CompCount.set(index, id + 1);
+			if (CorrectComponentName.isEmpty()) {
+				/* This should never happen, but let's catch is anyways */
+				reporter.AddFatalError("Found a component with empty name, cannot annotate! Aborting.");
+				ClearAnnotationLevel();
+				return;
+			}
 			String NewLabel = CorrectComponentName + "_" + id.toString();
 			/*
 			 * TODO: Dirty hack; I do not know how to change the label in such a
@@ -646,7 +712,6 @@ public class Circuit {
 
 	void mutatorAdd(Component c) {
 		// logger.debug("mutatorAdd: {}", c);
-
 		locker.checkForWritePermission("add");
 
 		Annotated = false;
@@ -673,8 +738,8 @@ public class Circuit {
 				subcirc.getSubcircuit().circuitsUsingThis.put(c, this);
 			}
 			c.addComponentListener(myComponentListener);
-			// c.addComponentListener(this.);
 		}
+		RemoveWrongLabels(c.getFactory().getName());
 		fireEvent(CircuitEvent.ACTION_ADD, c);
 	}
 
@@ -719,7 +784,24 @@ public class Circuit {
 		}
 		fireEvent(CircuitEvent.ACTION_REMOVE, c);
 	}
-
+	
+	private void RemoveWrongLabels(String Label) {
+		boolean HaveAChange = false;
+		for (Component comp : comps) {
+			AttributeSet attrs = comp.getAttributeSet();
+			if (attrs.containsAttribute(StdAttr.LABEL)) {
+				String CompLabel = attrs.getValue(StdAttr.LABEL);
+				if (Label.toUpperCase().equals(CompLabel.toUpperCase())) {
+					attrs.setValue(StdAttr.LABEL, "");
+					HaveAChange = true;
+				}
+			}
+		}
+		/* we do not have to check the wires as (1) Wire is a reserved keyword, and (2) they cannot have a label */
+		if (HaveAChange)
+			JOptionPane.showMessageDialog(null, "\""+Label+"\" : "+Strings.get("ComponentLabelCollisionError"));
+	}
+	
 	public void removeCircuitListener(CircuitListener what) {
 		listeners.remove(what);
 	}

@@ -45,6 +45,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import com.bfh.logisim.designrulecheck.CorrectLabel;
 import com.cburch.logisim.analyze.gui.Analyzer;
 import com.cburch.logisim.analyze.gui.AnalyzerManager;
 import com.cburch.logisim.analyze.model.AnalyzerModel;
@@ -58,6 +59,7 @@ import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.std.wiring.Pin;
 import com.cburch.logisim.tools.AddTool;
 import com.cburch.logisim.tools.Library;
+import com.cburch.logisim.tools.Tool;
 import com.cburch.logisim.util.StringUtil;
 import com.cburch.logisim.util.SyntaxChecker;
 
@@ -105,10 +107,53 @@ public class ProjectCircuitActions {
 		String name = promptForCircuitName(proj.getFrame(),
 				proj.getLogisimFile(), "");
 		if (name != null) {
-			Circuit circuit = new Circuit(name, proj.getLogisimFile());
-			proj.doAction(LogisimFileActions.addCircuit(circuit));
-			proj.setCurrentCircuit(circuit);
+			JLabel error = null;
+			/* Checking for valid names */
+			if (name.isEmpty()) {
+				error = new JLabel(Strings.get("circuitNameMissingError"));
+			} else
+			if (!SyntaxChecker.isVariableNameAcceptable(name)) {
+				error = new JLabel("\""+name+"\": "+Strings.get("circuitNameInvalidName"));
+			} else
+			if (CorrectLabel.IsKeyword(name)) {
+				error = new JLabel("\""+name+"\": "+Strings.get("circuitNameKeyword"));
+			} else
+			if (NameIsInUse(proj,name)) {
+				error = new JLabel("\""+name+"\": "+Strings.get("circuitNameExists"));
+			}
+			if (error != null) {
+				JOptionPane.showMessageDialog(proj.getFrame(), error,
+				Strings.get("circuitCreateTitle"), JOptionPane.ERROR_MESSAGE);
+			} else {
+				Circuit circuit = new Circuit(name, proj.getLogisimFile());
+				proj.doAction(LogisimFileActions.addCircuit(circuit));
+				proj.setCurrentCircuit(circuit);
+			}
 		}
+	}
+	
+	private static boolean NameIsInUse(Project proj, String Name) {
+		for (Library mylib : proj.getLogisimFile().getLibraries()) {
+			if (NameIsInLibraries(mylib,Name))
+				return true;
+		}
+		for (AddTool mytool : proj.getLogisimFile().getTools()) {
+			if (Name.toUpperCase().equals(mytool.getName().toUpperCase()))
+				return true;
+		}
+		return false;
+	}
+	
+	private static boolean NameIsInLibraries(Library lib, String Name) {
+		for (Library mylib : lib.getLibraries()) {
+			if (NameIsInLibraries(mylib,Name))
+				return true;
+		}
+		for (Tool mytool : lib.getTools()) {
+			if (Name.toUpperCase().equals(mytool.getName().toUpperCase()))
+				return true;
+		}
+		return false;
 	}
 
 	public static void doAnalyze(Project proj, Circuit circuit) {
@@ -246,25 +291,8 @@ public class ProjectCircuitActions {
 				|| ((Integer) action).intValue() != JOptionPane.OK_OPTION) {
 			return null;
 		}
-
-		String name = field.getText().trim();
-		if (name.equals("")) {
-			error.setText(Strings.get("circuitNameMissingError"));
-		} else if (!SyntaxChecker.isVariableNameAcceptable(name)) {
-			error.setText(Strings.get("circuitNameInvalidName"));
-		} else {
-			if (lib.getTool(name) == null) {
-				return name;
-			} else {
-				error.setText(Strings.get("circuitNameDuplicateError"));
-			}
-		}
-
-		/* If the name is invalid, display the error message */
-		JOptionPane.showMessageDialog(frame, error,
-				Strings.get("analyzeErrorTitle"), JOptionPane.ERROR_MESSAGE);
-
-		return null;
+		
+		return field.getText().trim();
 	}
 
 	private ProjectCircuitActions() {

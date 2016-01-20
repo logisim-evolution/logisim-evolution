@@ -87,13 +87,17 @@ class AttrTableSelectionModel extends AttributeSetTableModel implements
 		}
 
 		if (variousFound) {
+			SetInstance(factory);
 			return Strings.get("selectionVarious", "" + totalCount);
 		} else if (factoryCount == 0) {
 			String circName = frame.getCanvas().getCircuit().getName();
+			SetInstance(frame.getCanvas().getCircuit().getSubcircuitFactory());
 			return Strings.get("circuitAttrTitle", circName);
 		} else if (factoryCount == 1) {
+			SetInstance(factory);
 			return Strings.get("selectionOne", factory.getDisplayName());
 		} else {
+			SetInstance(factory);
 			return Strings.get("selectionMultiple", factory.getDisplayName(),
 					"" + factoryCount);
 		}

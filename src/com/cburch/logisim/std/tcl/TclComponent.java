@@ -146,7 +146,7 @@ public abstract class TclComponent extends InstanceFactory {
 	 */
 	@Override
 	public boolean HDLSupportedComponent(String HDLIdentifier,
-			AttributeSet attrs, char Vendor) {
+			AttributeSet attrs) {
 		return false;
 	}
 

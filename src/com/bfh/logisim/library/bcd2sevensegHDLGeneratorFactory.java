@@ -133,8 +133,7 @@ public class bcd2sevensegHDLGeneratorFactory extends AbstractHDLGeneratorFactory
 	
 	@Override
 	public boolean HDLTargetSupported( String HDLType,
-			                           AttributeSet attrs,
-			                           char Vendor) {
+			                           AttributeSet attrs) {
 		return HDLType.equals(Settings.VHDL);
 	}
 	

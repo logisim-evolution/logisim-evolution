@@ -34,15 +34,17 @@ public class AttributeEvent {
 	private AttributeSet source;
 	private Attribute<?> attr;
 	private Object value;
+	private Object oldvalue;
 
 	public AttributeEvent(AttributeSet source) {
-		this(source, null, null);
+		this(source, null, null, null);
 	}
 
-	public AttributeEvent(AttributeSet source, Attribute<?> attr, Object value) {
+	public AttributeEvent(AttributeSet source, Attribute<?> attr, Object value, Object oldvalue) {
 		this.source = source;
 		this.attr = attr;
 		this.value = value;
+		this.oldvalue = oldvalue;
 	}
 
 	public Attribute<?> getAttribute() {
@@ -55,5 +57,9 @@ public class AttributeEvent {
 
 	public Object getValue() {
 		return value;
+	}
+	
+	public Object getOldValue() {
+		return oldvalue;
 	}
 }
