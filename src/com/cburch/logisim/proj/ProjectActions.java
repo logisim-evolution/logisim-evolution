@@ -50,12 +50,14 @@ import javax.swing.SwingUtilities;
 
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.file.LoadFailedException;
+import com.cburch.logisim.file.LoadedLibrary;
 import com.cburch.logisim.file.Loader;
 import com.cburch.logisim.file.LogisimFile;
 import com.cburch.logisim.file.LogisimFileActions;
 import com.cburch.logisim.gui.main.Frame;
 import com.cburch.logisim.gui.start.SplashScreen;
 import com.cburch.logisim.prefs.AppPreferences;
+import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.tools.LibraryTools;
 import com.cburch.logisim.tools.Tool;
 import com.cburch.logisim.util.JFileChoosers;
@@ -128,7 +130,7 @@ public class ProjectActions {
 		if (monitor != null)
 			monitor.setProgress(SplashScreen.FRAME_CREATE);
 		SwingUtilities.invokeLater(new CreateFrame(loader, ret, isStartup));
-		updatecircs(ret.getLogisimFile(),ret);
+		updatecircs(file,ret);
 		return ret;
 	}
 
@@ -201,6 +203,7 @@ public class ProjectActions {
 		frame.setVisible(true);
 		frame.getCanvas().requestFocus();
 		newProj.getLogisimFile().getLoader().setParent(frame);
+		updatecircs(file,newProj);
 		return newProj;
 	}
 
@@ -276,6 +279,14 @@ public class ProjectActions {
 		for (Circuit circ:lib.getCircuits()) {
 			circ.SetProject(proj);
 		}
+		for (Library libs : lib.getLibraries()) {
+			if (libs instanceof LoadedLibrary) {
+				LoadedLibrary test = (LoadedLibrary) libs;
+				if (test.getBase() instanceof LogisimFile) {
+					updatecircs((LogisimFile)test.getBase(),proj);
+				}
+			}
+		}
 	}
 
 	public static boolean doOpen(Component parent, Project baseProject) {
@@ -346,9 +357,12 @@ public class ProjectActions {
 			AppPreferences.updateRecentFile(f);
 			if (lib == null)
 				return null;
+			LibraryTools.RemovePresentLibraries(lib,new HashSet<String>(),true);
 			if (proj == null) {
 				proj = new Project(lib);
+				updatecircs(lib,proj);
 			} else {
+				updatecircs(lib,proj);
 				proj.setLogisimFile(lib);
 			}
 		} catch (LoadFailedException ex) {
@@ -371,7 +385,6 @@ public class ProjectActions {
 		frame.toFront();
 		frame.getCanvas().requestFocus();
 		proj.getLogisimFile().getLoader().setParent(frame);
-		updatecircs(proj.getLogisimFile(),proj);
 		return proj;
 	}
 

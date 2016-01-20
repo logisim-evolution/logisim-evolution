@@ -84,7 +84,7 @@ public class LogisimFileActions {
 				LibraryTools.BuildLibraryList(lib,LibNames);
 			}
 			LibraryTools.BuildToolList(source,ToolList);
-			LibraryTools.RemovePresentLibraries(mergelib,LibNames);
+			LibraryTools.RemovePresentLibraries(mergelib,LibNames,false);
 			if (LibraryTools.LibraryIsConform(mergelib,new HashSet<String> (),new HashSet<String>(),Error)) {
 				/* Okay the library is now ready for merge */
 				for (Library lib : mergelib.getLibraries()) {
@@ -147,7 +147,7 @@ public class LogisimFileActions {
                 	JOptionPane.showMessageDialog(null, "\""+libs[i].getName()+"\": "+Strings.get("LibraryAlreadyLoaded"),
                 			Strings.get("LibLoadErrors")+" "+libs[i].getName()+" !", JOptionPane.WARNING_MESSAGE);
 				} else {
-					LibraryTools.RemovePresentLibraries(libs[i],LibNames);
+					LibraryTools.RemovePresentLibraries(libs[i],LibNames,false);
 					if (LibraryTools.LibraryIsConform(libs[i],new HashSet<String> (),new HashSet<String>(),Error)) {
 						HashSet<String> AddedToolList = new HashSet<String>();
 						LibraryTools.BuildToolList(libs[i],AddedToolList);

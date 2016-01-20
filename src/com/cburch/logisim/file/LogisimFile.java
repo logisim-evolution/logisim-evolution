@@ -231,7 +231,7 @@ public class LogisimFile extends Library implements LibraryEventSource,CircuitLi
 		}
 
 		XmlReader xmlReader = new XmlReader(loader, file);
-/*TODO: Maybe the null does not matter, maybe it does */
+		/* Can set the project pointer to zero as it is fixed later */
 		LogisimFile ret = xmlReader.readLibrary(inBuffered,null);
 		ret.loader = loader;
 		return ret;

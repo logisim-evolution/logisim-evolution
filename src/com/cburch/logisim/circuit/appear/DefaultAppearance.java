@@ -191,7 +191,6 @@ class DefaultAppearance {
 			JPanel panel;
 			JFrame frame=null;
 			if (g==null) {
-System.out.print("DEBUG 55 :**** Circuit has no reference to the project!\n");
 			    /* Hack to be able to calculate label heights and widths */
 				hasgraph = false;
 				panel = new JPanel();
