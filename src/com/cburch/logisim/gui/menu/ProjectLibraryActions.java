@@ -109,7 +109,7 @@ public class ProjectLibraryActions {
 		if (action == JOptionPane.OK_OPTION) {
 			Library[] libs = list.getSelectedLibraries();
 			if (libs != null)
-				proj.doAction(LogisimFileActions.loadLibraries(libs));
+				proj.doAction(LogisimFileActions.loadLibraries(libs,proj.getLogisimFile()));
 		}
 	}
 
@@ -156,7 +156,7 @@ public class ProjectLibraryActions {
 
 			Library lib = loader.loadJarLibrary(f, className);
 			if (lib != null) {
-				proj.doAction(LogisimFileActions.loadLibrary(lib));
+				proj.doAction(LogisimFileActions.loadLibrary(lib,proj.getLogisimFile()));
 			}
 		}
 	}
@@ -171,7 +171,7 @@ public class ProjectLibraryActions {
 			File f = chooser.getSelectedFile();
 			Library lib = loader.loadLogisimLibrary(f);
 			if (lib != null) {
-				proj.doAction(LogisimFileActions.loadLibrary(lib));
+				proj.doAction(LogisimFileActions.loadLibrary(lib,proj.getLogisimFile()));
 			}
 		}
 	}

@@ -126,21 +126,16 @@ public class LogisimFileActions {
 	}
 
 	private static class LoadLibraries extends Action {
-		private Library[] libs;
+		private ArrayList<Library> MergedLibs = new ArrayList<Library>();
 
-		LoadLibraries(Library[] libs) {
-			this.libs = libs;
-		}
-
-		@Override
-		public void doIt(Project proj) {
+		LoadLibraries(Library[] libs, LogisimFile source) {
 			HashSet<String> LibNames = new HashSet<String>();
 			HashSet<String> ToolList = new HashSet<String>();
 			HashMap<String,String> Error = new HashMap<String,String>();
-			for (Library lib : proj.getLogisimFile().getLibraries()) {
+			for (Library lib : source.getLibraries()) {
 				LibraryTools.BuildLibraryList(lib,LibNames);
 			}
-			LibraryTools.BuildToolList(proj.getLogisimFile(),ToolList);
+			LibraryTools.BuildToolList(source,ToolList);
 			for (int i = 0; i < libs.length; i++) {
 				if (LibNames.contains(libs[i].getName().toUpperCase())) {
                 	JOptionPane.showMessageDialog(null, "\""+libs[i].getName()+"\": "+Strings.get("LibraryAlreadyLoaded"),
@@ -152,11 +147,11 @@ public class LogisimFileActions {
 						LibraryTools.BuildToolList(libs[i],AddedToolList);
 						for (String tool : AddedToolList)
 							if (ToolList.contains(tool))
-								Error.put(tool, "LibraryMultipleToolError");
+								Error.put(tool, Strings.get("LibraryMultipleToolError"));
 						if (Error.keySet().isEmpty()) {
 							LibraryTools.BuildLibraryList(libs[i],LibNames);
 							ToolList.addAll(AddedToolList);
-							proj.getLogisimFile().addLibrary(libs[i]);
+							MergedLibs.add(libs[i]);
 						} else
 							LibraryTools.ShowErrors(libs[i].getName(),Error);
 					} else
@@ -164,10 +159,17 @@ public class LogisimFileActions {
 				}
 			}
 		}
+
+		@Override
+		public void doIt(Project proj) {
+			for (Library lib : MergedLibs)
+				proj.getLogisimFile().addLibrary(lib);
+			
+		}
 		
 		@Override
 		public String getName() {
-			if (libs.length == 1) {
+			if (MergedLibs.size() <= 1) {
 				return Strings.get("loadLibraryAction");
 			} else {
 				return Strings.get("loadLibrariesAction");
@@ -176,9 +178,8 @@ public class LogisimFileActions {
 
 		@Override
 		public void undo(Project proj) {
-			for (int i = libs.length - 1; i >= 0; i--) {
-				proj.getLogisimFile().removeLibrary(libs[i]);
-			}
+			for (Library lib : MergedLibs)
+				proj.getLogisimFile().removeLibrary(lib);
 		}
 	}
 
@@ -402,12 +403,12 @@ public class LogisimFileActions {
 		return new MergeFile(mergelib,source);
 	}
 
-	public static Action loadLibraries(Library[] libs) {
-		return new LoadLibraries(libs);
+	public static Action loadLibraries(Library[] libs, LogisimFile source) {
+		return new LoadLibraries(libs,source);
 	}
 
-	public static Action loadLibrary(Library lib) {
-		return new LoadLibraries(new Library[] { lib });
+	public static Action loadLibrary(Library lib, LogisimFile source) {
+		return new LoadLibraries(new Library[] { lib }, source);
 	}
 
 	public static Action moveCircuit(AddTool tool, int toIndex) {
