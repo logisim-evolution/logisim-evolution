@@ -64,7 +64,6 @@ public interface StdAttr {
 
 	public static final Attribute<String> LABEL = Attributes.forString("label",
 			Strings.getter("stdLabelAttr"));
-
 	public static final Attribute<Font> LABEL_FONT = Attributes.forFont(
 			"labelfont", Strings.getter("stdLabelFontAttr"));
 	public static final Font DEFAULT_LABEL_FONT = new Font("SansSerif",
@@ -72,4 +71,6 @@ public interface StdAttr {
 	static final Attribute<Color> LABEL_COLOR = Attributes.forColor(
 			"labelcolor", Strings.getter("ioLabelColorAttr"));
 	public static final Color DEFAULT_LABEL_COLOR = Color.BLUE;
+	
+	public static final Attribute<String> DUMMY = Attributes.forHidden();
 }

@@ -161,9 +161,11 @@ public abstract class AttributeSetTableModel implements AttrTableModel,
 			HDLrow rowd = new HDLrow(null);
 			rows.add(rowd);
 			for (Attribute<?> attr : attrs.getAttributes()) {
-				AttrRow row = new AttrRow(attr);
-				rowMap.put(attr, row);
-				rows.add(row);
+				if (!attr.isHidden()) {
+					AttrRow row = new AttrRow(attr);
+					rowMap.put(attr, row);
+					rows.add(row);
+				}
 			}
 		}
 	}
@@ -199,11 +201,13 @@ public abstract class AttributeSetTableModel implements AttrTableModel,
 		boolean match = true;
 		int rowsSize = rows.size();
 		for (Attribute<?> attr : attrs.getAttributes()) {
-			if (index >= rowsSize || rows.get(index).attr != attr) {
-				match = false;
-				break;
+			if (!attr.isHidden()) {
+				if (index >= rowsSize || rows.get(index).attr != attr) {
+					match = false;
+					break;
+				}
+				index++;
 			}
-			index++;
 		}
 		if (match && index == rows.size())
 			return;
@@ -216,14 +220,16 @@ public abstract class AttributeSetTableModel implements AttrTableModel,
 		HDLrow rowd = new HDLrow(null);
 		newRows.add(rowd);
 		for (Attribute<?> attr : attrs.getAttributes()) {
-			AttrRow row = rowMap.get(attr);
-			if (row == null) {
-				row = new AttrRow(attr);
-				rowMap.put(attr, row);
-			} else {
-				missing.remove(attr);
+			if (!attr.isHidden()) {
+				AttrRow row = rowMap.get(attr);
+				if (row == null) {
+					row = new AttrRow(attr);
+					rowMap.put(attr, row);
+				} else {
+					missing.remove(attr);
+				}
+				newRows.add(row);
 			}
-			newRows.add(row);
 		}
 		rows = newRows;
 		for (Attribute<?> attr : missing) {

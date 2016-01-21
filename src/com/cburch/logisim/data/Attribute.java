@@ -39,6 +39,12 @@ import com.cburch.logisim.util.StringGetter;
 public abstract class Attribute<V> {
 	private String name;
 	private StringGetter disp;
+	private boolean hidden = false;
+	
+	public Attribute() {
+		hidden = true;
+		name = "Dummy";
+	}
 
 	public Attribute(String name, StringGetter disp) {
 		this.name = name;
@@ -54,7 +60,7 @@ public abstract class Attribute<V> {
 	}
 
 	public String getDisplayName() {
-		return disp.toString();
+		return (disp != null) ? disp.toString() : name;
 	}
 
 	public String getName() {
@@ -69,6 +75,10 @@ public abstract class Attribute<V> {
 
 	public String toStandardString(V value) {
 		return value.toString();
+	}
+	
+	public boolean isHidden() {
+		return hidden;
 	}
 
 	@Override

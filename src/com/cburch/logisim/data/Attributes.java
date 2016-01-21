@@ -408,6 +408,21 @@ public class Attributes {
 			return value;
 		}
 	}
+	
+	private static class HiddenAttribute extends Attribute<String> {
+		private HiddenAttribute() {
+			super();
+		}
+		
+		@Override
+		public String parse(String value) {
+			return value;
+		}
+	}
+	
+	public static Attribute<String> forHidden() {
+		return new HiddenAttribute();
+	}
 
 	public static Attribute<BitWidth> forBitWidth(String name) {
 		return forBitWidth(name, getter(name));
