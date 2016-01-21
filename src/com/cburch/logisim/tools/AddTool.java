@@ -39,6 +39,7 @@ import java.awt.event.MouseEvent;
 import javax.swing.Icon;
 import javax.swing.JOptionPane;
 
+import com.bfh.logisim.designrulecheck.CorrectLabel;
 import com.cburch.logisim.LogisimVersion;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitException;
@@ -57,6 +58,7 @@ import com.cburch.logisim.data.Location;
 import com.cburch.logisim.gui.main.Canvas;
 import com.cburch.logisim.gui.main.SelectionActions;
 import com.cburch.logisim.gui.main.ToolAttributeAction;
+import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Action;
 import com.cburch.logisim.proj.Dependencies;
@@ -65,6 +67,7 @@ import com.cburch.logisim.tools.key.KeyConfigurationEvent;
 import com.cburch.logisim.tools.key.KeyConfigurationResult;
 import com.cburch.logisim.tools.key.KeyConfigurator;
 import com.cburch.logisim.util.StringUtil;
+import com.cburch.logisim.util.SyntaxChecker;
 
 public class AddTool extends Tool {
 	private class MyAttributeListener implements AttributeListener {
@@ -349,6 +352,34 @@ public class AddTool extends Tool {
 						proj.doAction(act);
 					}
 				}
+				/* Prevent duplicated labels */
+				if (attrs.containsAttribute(StdAttr.LABEL))
+					attrs.setValue(StdAttr.LABEL, "");
+				break;
+			case KeyEvent.VK_L:
+				if (attrs.containsAttribute(StdAttr.LABEL)) {
+					String OldLabel = attrs.getValue(StdAttr.LABEL);
+					String Component = (getFactory()==null) ? "Unknown" : getFactory().getDisplayName();
+					boolean correct = false;
+					while (!correct) {
+						String NewLabel = (String) JOptionPane.showInputDialog(null, 
+								Strings.get("editLabelQuestion")+" "+Component,
+								Strings.get("editLabelDialog"),
+								JOptionPane.QUESTION_MESSAGE,null,null,
+								OldLabel);
+						if (NewLabel!=null) {
+							if (Circuit.IsCorrectLabel(NewLabel, canvas.getCircuit().getNonWires(), attrs)&&
+								SyntaxChecker.isVariableNameAcceptable(NewLabel)&&
+								!CorrectLabel.IsKeyword(NewLabel)) {
+								attrs.setValue(StdAttr.LABEL, NewLabel);
+								correct = true;
+								canvas.repaint();
+							}
+						}
+						else
+							correct = true;
+					}
+				}
 				break;
 			case KeyEvent.VK_BACK_SPACE:
 				if (lastAddition != null
@@ -470,6 +501,9 @@ public class AddTool extends Tool {
 				canvas.getProject().doAction(action);
 				lastAddition = action;
 				added = c;
+				/* Prevent duplicated labels */
+				if (attrs.containsAttribute(StdAttr.LABEL))
+					attrs.setValue(StdAttr.LABEL, "");
 			} catch (CircuitException ex) {
 				JOptionPane.showMessageDialog(canvas.getProject().getFrame(),
 						ex.getMessage());
@@ -482,6 +516,9 @@ public class AddTool extends Tool {
 		Project proj = canvas.getProject();
 		Tool next = determineNext(proj);
 		if (next != null) {
+			/* Prevent duplicated labels */
+			if (attrs.containsAttribute(StdAttr.LABEL))
+				attrs.setValue(StdAttr.LABEL, "");
 			proj.setTool(next);
 			Action act = SelectionActions.dropAll(canvas.getSelection());
 			if (act != null) {

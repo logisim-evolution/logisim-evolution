@@ -44,7 +44,9 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.swing.Icon;
+import javax.swing.JOptionPane;
 
+import com.bfh.logisim.designrulecheck.CorrectLabel;
 import com.cburch.logisim.LogisimVersion;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.ReplacementMap;
@@ -60,6 +62,7 @@ import com.cburch.logisim.gui.main.Canvas;
 import com.cburch.logisim.gui.main.Selection;
 import com.cburch.logisim.gui.main.Selection.Event;
 import com.cburch.logisim.gui.main.SelectionActions;
+import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Action;
 import com.cburch.logisim.proj.Project;
@@ -72,6 +75,7 @@ import com.cburch.logisim.tools.move.MoveResult;
 import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.Icons;
 import com.cburch.logisim.util.StringGetter;
+import com.cburch.logisim.util.SyntaxChecker;
 
 public class SelectTool extends Tool {
 	private static class ComputingMessage implements StringGetter {
@@ -520,6 +524,34 @@ public class SelectTool extends Tool {
 			}
 			setState(proj, IDLE);
 			proj.repaintCanvas();
+		}
+		if (e.getClickCount()>=2) {
+			Set<Component> comps = canvas.getProject().getSelection().getComponents();
+			if (comps.size()==1) {
+				for (Component comp : comps) {
+					if (comp.getAttributeSet().containsAttribute(StdAttr.LABEL)) {
+                        String OldLabel = comp.getAttributeSet().getValue(StdAttr.LABEL); 
+    					boolean correct = false;
+    					while (!correct) {
+    						String NewLabel = (String) JOptionPane.showInputDialog(null, 
+    								Strings.get("editLabelQuestion")+" "+comp.getFactory().getDisplayName(),
+    								Strings.get("editLabelDialog"),
+    								JOptionPane.QUESTION_MESSAGE,null,null,
+    								OldLabel);
+    						if (NewLabel!=null) {
+    							if (Circuit.IsCorrectLabel(NewLabel, canvas.getCircuit().getNonWires(), comp.getAttributeSet())&&
+    								SyntaxChecker.isVariableNameAcceptable(NewLabel)&&
+    								!CorrectLabel.IsKeyword(NewLabel)) {
+    								comp.getAttributeSet().setValue(StdAttr.LABEL, NewLabel);;
+    								correct = true;
+    							}
+    						}
+    						else
+    							correct = true;
+    					}
+					}
+				}
+			}
 		}
 	}
 

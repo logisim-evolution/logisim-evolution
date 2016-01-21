@@ -158,37 +158,41 @@ public class Circuit {
 			String oldLabel = attre.getOldValue() != null ? (String) attre.getOldValue() : "";
 			@SuppressWarnings("unchecked")
 			Attribute<String> lattr = (Attribute<String>) attre.getAttribute();
-			if (IsExistingLabel(newLabel,attre.getSource())) {
-				JOptionPane.showMessageDialog(null, "\""+newLabel+"\" : "+Strings.get("UsedLabelNameError"));
+			if (!IsCorrectLabel(newLabel,comps,attre.getSource()))
 				attre.getSource().setValue(lattr, oldLabel);
-			} else 
-			if (IsComponentName(newLabel)) {
-				JOptionPane.showMessageDialog(null, "\""+newLabel+"\" : "+Strings.get("ComponentLabelNameError"));
-				attre.getSource().setValue(lattr, oldLabel);
-			}
 		}
 	}
 	
-	private boolean IsComponentName(String Name) {
+	public static boolean IsCorrectLabel(String Name,
+			                             Set<Component> components,
+			                             AttributeSet me) {
+		return !(IsExistingLabel(Name,me,components)||IsComponentName(Name,components));
+	}
+	
+	private static boolean IsComponentName(String Name, Set<Component> comps) {
 		if (Name.isEmpty())
 			return false;
 		for (Component comp : comps) {
-			if (comp.getFactory().getName().toUpperCase().equals(Name.toUpperCase()))
+			if (comp.getFactory().getName().toUpperCase().equals(Name.toUpperCase())) {
+				JOptionPane.showMessageDialog(null, "\""+Name+"\" : "+Strings.get("ComponentLabelNameError"));
 				return true;
+			}
 		}
 		/* we do not have to check the wires as (1) Wire is a reserved keyword, and (2) they cannot have a label */
 		return false;
 	}
 	
-	private boolean IsExistingLabel(String Name, AttributeSet me) {
+	private static boolean IsExistingLabel(String Name, AttributeSet me, Set<Component> comps) {
 		if (Name.isEmpty())
 			return false;
 		for (Component comp : comps) {
 			if (!comp.getAttributeSet().equals(me)) {
 				String Label = (comp.getAttributeSet().containsAttribute(StdAttr.LABEL)) ?
 						comp.getAttributeSet().getValue(StdAttr.LABEL) : "";
-				if (Label.toUpperCase().equals(Name.toUpperCase()))
+				if (Label.toUpperCase().equals(Name.toUpperCase())) {
+					JOptionPane.showMessageDialog(null, "\""+Name+"\" : "+Strings.get("UsedLabelNameError"));
 					return true;
+				}
 			}
 		}
 		/* we do not have to check the wires as (1) Wire is a reserved keyword, and (2) they cannot have a label */
