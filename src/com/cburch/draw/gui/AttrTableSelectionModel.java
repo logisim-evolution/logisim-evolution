@@ -110,5 +110,6 @@ class AttrTableSelectionModel extends AttributeSetTableModel implements
 		}
 		CanvasModel model = canvas.getModel();
 		canvas.doAction(new ModelChangeAttributeAction(model, oldVals, newVals));
+		fireTitleChanged();
 	}
 }

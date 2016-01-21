@@ -89,7 +89,7 @@ public class RGBLed extends InstanceFactory {
 		setAttributes(new Attribute[] { Io.ATTR_ACTIVE, StdAttr.LABEL,
 				Io.ATTR_LABEL_LOC, StdAttr.LABEL_FONT, StdAttr.LABEL_COLOR },
 				new Object[] { Boolean.TRUE, "", Io.LABEL_CENTER,
-						StdAttr.DEFAULT_LABEL_FONT, Io.ATTR_COLOR });
+						StdAttr.DEFAULT_LABEL_FONT, StdAttr.DEFAULT_LABEL_COLOR });
 		setFacingAttribute(StdAttr.FACING);
 		setIconName("rgbled.gif");
 		Port[] ps = new Port[3];

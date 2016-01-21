@@ -75,7 +75,7 @@ public class Attributes {
 
 		@Override
 		public java.awt.Component getCellEditor(Color value) {
-			Color init = value == null ? Color.BLACK : value;
+			Color init = value == null ? Color.WHITE : value;
 			return new ColorChooser(init);
 		}
 
