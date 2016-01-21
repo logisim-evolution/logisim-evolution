@@ -45,7 +45,6 @@ import com.cburch.logisim.instance.InstanceFactory;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
-import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.std.arith.Strings;
 import com.cburch.logisim.tools.key.BitWidthConfigurator;
 
@@ -60,8 +59,8 @@ public class bin2bcd extends InstanceFactory{
 
 	public bin2bcd() {
 		super("Binairy_to_BCD_converter", Strings.getter("Bin2BCD"));
-		setAttributes(new Attribute[] { StdAttr.LABEL , bin2bcd.ATTR_BinBits },
-				new Object[] { "" , BitWidth.create(9) });
+		setAttributes(new Attribute[] { bin2bcd.ATTR_BinBits },
+				new Object[] { BitWidth.create(9) });
 		setKeyConfigurator(new BitWidthConfigurator(bin2bcd.ATTR_BinBits,4,13,0));
 	}
 	

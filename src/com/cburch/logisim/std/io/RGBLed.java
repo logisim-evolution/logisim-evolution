@@ -87,9 +87,9 @@ public class RGBLed extends InstanceFactory {
 	public RGBLed() {
 		super("RGBLED", Strings.getter("RGBledComponent"));
 		setAttributes(new Attribute[] { Io.ATTR_ACTIVE, StdAttr.LABEL,
-				Io.ATTR_LABEL_LOC, StdAttr.LABEL_FONT, Io.ATTR_LABEL_COLOR },
+				Io.ATTR_LABEL_LOC, StdAttr.LABEL_FONT, StdAttr.LABEL_COLOR },
 				new Object[] { Boolean.TRUE, "", Io.LABEL_CENTER,
-						StdAttr.DEFAULT_LABEL_FONT, Color.BLACK });
+						StdAttr.DEFAULT_LABEL_FONT, Io.ATTR_COLOR });
 		setFacingAttribute(StdAttr.FACING);
 		setIconName("rgbled.gif");
 		Port[] ps = new Port[3];
@@ -209,7 +209,6 @@ public class RGBLed extends InstanceFactory {
 		GraphicsUtil.switchToWidth(g, 2);
 		g.drawOval(bds.getX(), bds.getY(), bds.getWidth(), bds.getHeight());
 		GraphicsUtil.switchToWidth(g, 1);
-		g.setColor(painter.getAttributeValue(Io.ATTR_LABEL_COLOR));
 		painter.drawLabel();
 		painter.drawPorts();
 	}

@@ -42,7 +42,6 @@ import com.cburch.logisim.instance.InstanceFactory;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
-import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.std.arith.Strings;
 
 public class bcd2sevenseg extends InstanceFactory{
@@ -59,7 +58,7 @@ public class bcd2sevenseg extends InstanceFactory{
 
 	public bcd2sevenseg() {
 		super("BCD_to_7_Segment_decoder", Strings.getter("BCD2SevenSegment"));
-		setAttributes(new Attribute[] {StdAttr.LABEL},new Object[] { "" });
+		setAttributes(new Attribute[] {},new Object[] {});
 		setOffsetBounds(Bounds.create(-10, -20, 50, 100));
 		Port[] ps = new Port[8];
 		ps[Segment_A] = new Port(20, 0, Port.OUTPUT, 1);

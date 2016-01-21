@@ -98,9 +98,9 @@ public class Button extends InstanceFactory {
 		super("Button", Strings.getter("buttonComponent"));
 		setAttributes(new Attribute[] { StdAttr.FACING, Io.ATTR_COLOR,
 				StdAttr.LABEL, Io.ATTR_LABEL_LOC, StdAttr.LABEL_FONT,
-				Io.ATTR_LABEL_COLOR }, new Object[] { Direction.EAST,
+				StdAttr.LABEL_COLOR }, new Object[] { Direction.EAST,
 				Color.WHITE, "", Io.LABEL_CENTER, StdAttr.DEFAULT_LABEL_FONT,
-				Color.BLACK });
+				StdAttr.DEFAULT_LABEL_COLOR });
 		setFacingAttribute(StdAttr.FACING);
 		setIconName("button.gif");
 		setPorts(new Port[] { new Port(0, 0, Port.OUTPUT, 1) });
@@ -251,7 +251,6 @@ public class Button extends InstanceFactory {
 		}
 
 		g.translate(depress, depress);
-		g.setColor(painter.getAttributeValue(Io.ATTR_LABEL_COLOR));
 		painter.drawLabel();
 		g.translate(-depress, -depress);
 		painter.drawPorts();

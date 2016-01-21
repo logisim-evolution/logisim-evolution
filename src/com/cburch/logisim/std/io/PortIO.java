@@ -82,9 +82,9 @@ public class PortIO extends InstanceFactory {
 		super("PortIO", Strings.getter("pioComponent"));
 		int portSize = 8;
 		setAttributes(new Attribute[] { StdAttr.LABEL, Io.ATTR_LABEL_LOC,
-				StdAttr.LABEL_FONT, Io.ATTR_LABEL_COLOR, ATTR_SIZE, ATTR_BUS },
+				StdAttr.LABEL_FONT, StdAttr.LABEL_COLOR, ATTR_SIZE, ATTR_BUS },
 				new Object[] { "", Direction.EAST, StdAttr.DEFAULT_LABEL_FONT,
-						Color.BLACK, portSize, BUSES });
+						StdAttr.DEFAULT_LABEL_COLOR, portSize, BUSES });
 		setFacingAttribute(StdAttr.FACING);
 		setIconName("pio.gif");
 		// setInstancePoker(Poker.class);
@@ -279,7 +279,6 @@ public class PortIO extends InstanceFactory {
 			g.drawChars(text.toCharArray(), 0, text.toCharArray().length,
 					bds.getX() + 6, bds.getY() + 12);
 		}
-		g.setColor(painter.getAttributeValue(Io.ATTR_LABEL_COLOR));
 		painter.drawLabel();
 		painter.drawPorts();
 

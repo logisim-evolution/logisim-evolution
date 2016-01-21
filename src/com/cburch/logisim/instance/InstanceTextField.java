@@ -60,6 +60,7 @@ public class InstanceTextField implements AttributeListener, TextFieldListener,
 	private TextField field;
 	private Attribute<String> labelAttr;
 	private Attribute<Font> fontAttr;
+	private Color fontColor;
 	private int fieldX;
 	private int fieldY;
 	private int halign;
@@ -70,6 +71,7 @@ public class InstanceTextField implements AttributeListener, TextFieldListener,
 		this.field = null;
 		this.labelAttr = null;
 		this.fontAttr = null;
+		fontColor = StdAttr.DEFAULT_LABEL_COLOR;
 	}
 
 	public void attributeListChanged(AttributeEvent e) {
@@ -82,6 +84,8 @@ public class InstanceTextField implements AttributeListener, TextFieldListener,
 		} else if (attr == fontAttr) {
 			if (field != null)
 				field.setFont((Font) e.getValue());
+		} else if (attr.getName().equals("labelcolor")) {
+			fontColor = (Color) e.getValue(); 
 		}
 	}
 
@@ -95,8 +99,10 @@ public class InstanceTextField implements AttributeListener, TextFieldListener,
 	void draw(Component comp, ComponentDrawContext context) {
 		if (field != null) {
 			Graphics g = context.getGraphics().create();
-			g.setColor(Color.BLUE);
+			Color currentColor = g.getColor();
+			g.setColor(fontColor);
 			field.draw(g);
+			g.setColor(currentColor);
 			g.dispose();
 		}
 	}
