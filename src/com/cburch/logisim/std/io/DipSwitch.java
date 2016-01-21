@@ -36,6 +36,7 @@ import java.util.ArrayList;
 
 import com.bfh.logisim.fpgaboardeditor.FPGAIOInformationContainer;
 import com.bfh.logisim.hdlgenerator.IOComponentInformationContainer;
+import com.cburch.draw.shapes.DrawAttr;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Attributes;
@@ -238,7 +239,7 @@ public class DipSwitch extends InstanceFactory {
 		g.fillRect(bds.getX(), bds.getY(), bds.getWidth(), bds.getHeight());
 		GraphicsUtil.switchToWidth(g, 1);
 		g.setColor(Color.white);
-		g.setFont(StdAttr.DEFAULT_LABEL_FONT);
+		g.setFont(DrawAttr.DEFAULT_FONT);
 		int offset = 0;
 		for (int i = 0; i < painter.getAttributeValue(ATTR_SIZE); i++) {
 			if (i == 9) {

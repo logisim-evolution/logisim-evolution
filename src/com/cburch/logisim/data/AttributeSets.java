@@ -35,9 +35,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import com.cburch.logisim.circuit.CircuitAttributes;
-import com.cburch.logisim.instance.StdAttr;
-
 public class AttributeSets {
 	private static class FixedSet extends AbstractAttributeSet {
 		private List<Attribute<?>> attrs;
@@ -186,19 +183,9 @@ public class AttributeSets {
 						+ attr.getName() + " absent");
 			if (readOnly)
 				throw new IllegalArgumentException("read only");
-//			if (isAttrLabel(attr)) {
-//				String val = (String) value;
-//				if (!SyntaxChecker.isVariableNameAcceptable(val)) {
-//					SyntaxChecker.showNonAcceptableNameMessage();
-//					this.value = "";
-//				} else {
-//					this.value = val;
-//				}
-//			} else {
 			    @SuppressWarnings("unchecked")
 				V oldvalue = (V) this.value;
 				this.value = value;
-//			}
 			fireAttributeValueChanged(attr, value, oldvalue);
 		}
 	}
@@ -227,12 +214,6 @@ public class AttributeSets {
 
 	public static <V> AttributeSet fixedSet(Attribute<V> attr, V initValue) {
 		return new SingletonSet(attr, initValue);
-	}
-
-	private static <V> boolean isAttrLabel(Attribute<V> attr) {
-		return (attr.equals(StdAttr.LABEL))
-				|| (attr.equals(CircuitAttributes.CIRCUIT_LABEL_ATTR))
-				|| (attr.equals(CircuitAttributes.NAME_ATTR));
 	}
 
 	public static final AttributeSet EMPTY = new AttributeSet() {

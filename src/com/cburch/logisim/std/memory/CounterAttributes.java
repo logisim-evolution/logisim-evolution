@@ -119,7 +119,6 @@ class CounterAttributes extends AbstractAttributeSet {
 			BitWidth width = base.getValue(StdAttr.WIDTH);
 			int newVal = ((Integer) value).intValue() & width.getMask();
 			if (newVal != oldVal) {
-				@SuppressWarnings("unchecked")
 				V val = (V) Integer.valueOf(newVal);
 				value = val;
 			}

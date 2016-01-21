@@ -144,6 +144,7 @@ class RomAttributes extends AbstractAttributeSet {
 			String NewLabel = (String) value;
 			if (Label.equals(NewLabel))
 				return;
+			@SuppressWarnings("unchecked")
 			V Oldlabel = (V) Label;
 			Label = NewLabel;
 			fireAttributeValueChanged(attr, value,Oldlabel);

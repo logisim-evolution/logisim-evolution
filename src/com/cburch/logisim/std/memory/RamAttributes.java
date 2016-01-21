@@ -198,6 +198,7 @@ public class RamAttributes extends AbstractAttributeSet {
 			if (Label.equals(NewLabel)) {
 				return;
 			}
+			@SuppressWarnings("unchecked")
 			V Oldlabel = (V) Label;
 			Label = NewLabel;
 			fireAttributeValueChanged(attr, value,Oldlabel);

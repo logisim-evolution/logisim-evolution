@@ -154,6 +154,7 @@ public class TclComponentAttributes extends AbstractAttributeSet {
 			String newLabel = (String) value;
 			if (label.equals(newLabel))
 				return;
+			@SuppressWarnings("unchecked")
 			V Oldlabel = (V) label;
 			label = newLabel;
 			fireAttributeValueChanged(attr, value,Oldlabel);
