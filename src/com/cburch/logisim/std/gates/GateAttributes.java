@@ -41,15 +41,15 @@ import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.instance.StdAttr;
 
-class GateAttributes extends AbstractAttributeSet {
-	static final int MAX_INPUTS = 32;
+public class GateAttributes extends AbstractAttributeSet {
+	public static final int MAX_INPUTS = 32;
 	static final int DELAY = 1;
 
-	static final AttributeOption SIZE_NARROW = new AttributeOption(
+	public static final AttributeOption SIZE_NARROW = new AttributeOption(
 			Integer.valueOf(30), Strings.getter("gateSizeNarrowOpt"));
-	static final AttributeOption SIZE_MEDIUM = new AttributeOption(
+	public static final AttributeOption SIZE_MEDIUM = new AttributeOption(
 			Integer.valueOf(50), Strings.getter("gateSizeNormalOpt"));
-	static final AttributeOption SIZE_WIDE = new AttributeOption(
+	public static final AttributeOption SIZE_WIDE = new AttributeOption(
 			Integer.valueOf(70), Strings.getter("gateSizeWideOpt"));
 	public static final Attribute<AttributeOption> ATTR_SIZE = Attributes
 			.forOption(

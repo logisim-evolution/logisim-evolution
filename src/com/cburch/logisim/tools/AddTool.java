@@ -63,6 +63,7 @@ import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Action;
 import com.cburch.logisim.proj.Dependencies;
 import com.cburch.logisim.proj.Project;
+import com.cburch.logisim.std.gates.GateAttributes;
 import com.cburch.logisim.tools.key.KeyConfigurationEvent;
 import com.cburch.logisim.tools.key.KeyConfigurationResult;
 import com.cburch.logisim.tools.key.KeyConfigurator;
@@ -378,6 +379,45 @@ public class AddTool extends Tool {
 						}
 						else
 							correct = true;
+					}
+				}
+				break;
+			case KeyEvent.VK_N:
+				if (attrs.containsAttribute(GateAttributes.ATTR_SIZE)) {
+					attrs.setValue(GateAttributes.ATTR_SIZE, GateAttributes.SIZE_NARROW);
+					canvas.repaint();
+				}
+				break;
+			case KeyEvent.VK_M:
+				if (attrs.containsAttribute(GateAttributes.ATTR_SIZE)) {
+					attrs.setValue(GateAttributes.ATTR_SIZE, GateAttributes.SIZE_MEDIUM);
+					canvas.repaint();
+				}
+				break;
+			case KeyEvent.VK_W:
+				if (attrs.containsAttribute(GateAttributes.ATTR_SIZE)) {
+					attrs.setValue(GateAttributes.ATTR_SIZE, GateAttributes.SIZE_WIDE);
+					canvas.repaint();
+				}
+				break;
+			case KeyEvent.VK_EQUALS:
+			case KeyEvent.VK_PLUS:
+			case KeyEvent.VK_ADD:
+				if (attrs.containsAttribute(GateAttributes.ATTR_INPUTS)) {
+					int NrOfInputs = attrs.getValue(GateAttributes.ATTR_INPUTS);
+					if (NrOfInputs < GateAttributes.MAX_INPUTS) {
+						attrs.setValue(GateAttributes.ATTR_INPUTS, NrOfInputs+1);
+						canvas.repaint();
+					}
+				}
+				break;
+			case KeyEvent.VK_MINUS:
+			case KeyEvent.VK_SUBTRACT:
+				if (attrs.containsAttribute(GateAttributes.ATTR_INPUTS)) {
+					int NrOfInputs = attrs.getValue(GateAttributes.ATTR_INPUTS);
+					if (NrOfInputs > 2) {
+						attrs.setValue(GateAttributes.ATTR_INPUTS, NrOfInputs-1);
+						canvas.repaint();
 					}
 				}
 				break;
