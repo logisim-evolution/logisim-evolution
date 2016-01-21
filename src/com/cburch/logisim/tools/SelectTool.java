@@ -44,9 +44,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.swing.Icon;
-import javax.swing.JOptionPane;
 
-import com.bfh.logisim.designrulecheck.CorrectLabel;
 import com.cburch.logisim.LogisimVersion;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.ReplacementMap;
@@ -66,6 +64,7 @@ import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Action;
 import com.cburch.logisim.proj.Project;
+import com.cburch.logisim.std.gates.GateKeyboardModifier;
 import com.cburch.logisim.tools.key.KeyConfigurationEvent;
 import com.cburch.logisim.tools.key.KeyConfigurationResult;
 import com.cburch.logisim.tools.key.KeyConfigurator;
@@ -75,7 +74,6 @@ import com.cburch.logisim.tools.move.MoveResult;
 import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.Icons;
 import com.cburch.logisim.util.StringGetter;
-import com.cburch.logisim.util.SyntaxChecker;
 
 public class SelectTool extends Tool {
 	private static class ComputingMessage implements StringGetter {
@@ -362,7 +360,32 @@ public class SelectTool extends Tool {
 		if (state == MOVING && e.getKeyCode() == KeyEvent.VK_SHIFT) {
 			handleMoveDrag(canvas, curDx, curDy, e.getModifiersEx());
 		} else {
-			switch (e.getKeyCode()) {
+			Set<Component> comps = canvas.getProject().getSelection().getComponents(); 
+			int KeybEvent = e.getKeyCode();
+			boolean KeyTaken=false;
+			if (comps.size()==1) {
+				for (Component comp : comps) {
+					SetAttributeAction act = new SetAttributeAction(
+							canvas.getCircuit(),
+							Strings.getter("changeComponentAttributesAction"));
+					KeyTaken |= GateKeyboardModifier.TookKeyboardStrokes(KeybEvent, comp , comp.getAttributeSet(), canvas,act,true);
+					if (!act.isEmpty())
+						canvas.getProject().doAction(act);
+				}
+			}
+			if (!KeyTaken) switch (KeybEvent) {
+			case KeyEvent.VK_L:
+				if (comps.size()==1) {
+					for (Component comp : comps) {
+						AttributeSet attrs = comp.getAttributeSet();
+						if (attrs.containsAttribute(StdAttr.LABEL)) {
+							String OldLabel = attrs.getValue(StdAttr.LABEL);
+							String Component = (comp.getFactory()==null) ? "Unknown" : comp.getFactory().getDisplayName();
+							AddTool.AskLabel(Component,OldLabel,canvas,attrs);
+						}
+					}
+				}
+				break;
 			case KeyEvent.VK_BACK_SPACE:
 			case KeyEvent.VK_DELETE:
 				if (!canvas.getSelection().isEmpty()) {
@@ -531,24 +554,7 @@ public class SelectTool extends Tool {
 				for (Component comp : comps) {
 					if (comp.getAttributeSet().containsAttribute(StdAttr.LABEL)) {
                         String OldLabel = comp.getAttributeSet().getValue(StdAttr.LABEL); 
-    					boolean correct = false;
-    					while (!correct) {
-    						String NewLabel = (String) JOptionPane.showInputDialog(null, 
-    								Strings.get("editLabelQuestion")+" "+comp.getFactory().getDisplayName(),
-    								Strings.get("editLabelDialog"),
-    								JOptionPane.QUESTION_MESSAGE,null,null,
-    								OldLabel);
-    						if (NewLabel!=null) {
-    							if (Circuit.IsCorrectLabel(NewLabel, canvas.getCircuit().getNonWires(), comp.getAttributeSet())&&
-    								SyntaxChecker.isVariableNameAcceptable(NewLabel)&&
-    								!CorrectLabel.IsKeyword(NewLabel)) {
-    								comp.getAttributeSet().setValue(StdAttr.LABEL, NewLabel);;
-    								correct = true;
-    							}
-    						}
-    						else
-    							correct = true;
-    					}
+						AddTool.AskLabel(comp.getFactory().getDisplayName(),OldLabel,canvas,comp.getAttributeSet());
 					}
 				}
 			}
