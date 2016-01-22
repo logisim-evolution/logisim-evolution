@@ -50,7 +50,6 @@ import javax.swing.JOptionPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.bfh.logisim.designrulecheck.CorrectLabel;
 import com.bfh.logisim.designrulecheck.Netlist;
 import com.bfh.logisim.fpgagui.FPGAReport;
 import com.cburch.logisim.circuit.appear.CircuitAppearance;
@@ -77,6 +76,7 @@ import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.std.wiring.Clock;
 import com.cburch.logisim.std.wiring.Pin;
+import com.cburch.logisim.util.AutoLabel;
 import com.cburch.logisim.util.CollectionUtil;
 import com.cburch.logisim.util.EventSourceWeakSupport;
 
@@ -218,10 +218,7 @@ public class Circuit {
 	private HashSet<Component> comps = new HashSet<Component>(); // doesn't
 																	// include
 																	// wires
-//    private HashSet<String> UsedLabels = new HashSet<String>();
-//    private HashSet<String> UsedComponentNames = new HashSet<String>();
 	CircuitWires wires = new CircuitWires();
-	// wires is package-protected for CircuitState and Analyze only.
 	private ArrayList<Component> clocks = new ArrayList<Component>();
 	private CircuitLocker locker;
 
@@ -284,17 +281,39 @@ public class Circuit {
 		}
 		
 	}
+	
+	private static String GetAnnotationName(Component comp) {
+		String ComponentName;
+		/* Pins are treated specially */
+		if (comp.getFactory() instanceof Pin) {
+			if (comp.getEnd(0).isOutput()) {
+				if (comp.getEnd(0).getWidth().getWidth() > 1) {
+					ComponentName = "Input_bus";
+				} else {
+					ComponentName = "Input";
+				}
+			} else {
+				if (comp.getEnd(0).getWidth().getWidth() > 1) {
+					ComponentName = "Output_bus";
+				} else {
+					ComponentName = "Output";
+				}
+			}
+		} else {
+			ComponentName = comp.getFactory().getHDLName(
+					comp.getAttributeSet());
+		}
+		return ComponentName;
+	}
 
 	public void Annotate(boolean ClearExistingLabels, FPGAReport reporter) {
-		ArrayList<Integer> CompCount = new ArrayList<Integer>();
-		ArrayList<String> CompName = new ArrayList<String>();
-		ArrayList<Set<String>> AnnotationNames = new ArrayList<Set<String>>();
 		/* If I am already completely annotated, return */
 		if (Annotated) {
 			reporter.AddInfo("Nothing to do !");
 			return;
 		}
 		SortedSet<Component> comps = new TreeSet<Component>(new AnnotateComparator());
+		HashMap<String,AutoLabel> lablers = new HashMap<String,AutoLabel>();
 		for (Component comp:getNonWires()) {
 			if (comp.getFactory().RequiresNonZeroLabel()) {
 				if (ClearExistingLabels) {
@@ -303,47 +322,13 @@ public class Circuit {
 							+ comp.getAttributeSet().getValue(StdAttr.LABEL));
 					comp.getAttributeSet().setValue(StdAttr.LABEL, "");
 				}
-				if (comp.getAttributeSet().getValue(StdAttr.LABEL).isEmpty())
+				if (comp.getAttributeSet().getValue(StdAttr.LABEL).isEmpty()) {
 					comps.add(comp);
-			}
-		}
-		/* now comps has only the elements to be labeled */
-		for (Component comp : comps) {
-			/*
-			 * Add the component to the set of components if it is not already
-			 * added
-			 */
-			String ComponentName;
-			/* Pins are treated specially */
-			if (comp.getFactory() instanceof Pin) {
-				if (comp.getEnd(0).isOutput()) {
-					if (comp.getEnd(0).getWidth().getWidth() > 1) {
-						ComponentName = "Input_bus";
-					} else {
-						ComponentName = "Input";
-					}
-				} else {
-					if (comp.getEnd(0).getWidth().getWidth() > 1) {
-						ComponentName = "Output_bus";
-					} else {
-						ComponentName = "Output";
+					String ComponentName = GetAnnotationName(comp);
+					if (!lablers.containsKey(ComponentName)) {
+						lablers.put(ComponentName, new AutoLabel(ComponentName+"_1",this));
 					}
 				}
-			} else {
-				ComponentName = comp.getFactory().getHDLName(
-						comp.getAttributeSet());
-			}
-			if (!CompName.contains(ComponentName)) {
-				CompCount.add(1);
-				CompName.add(ComponentName);
-				AnnotationNames.add(new HashSet<String>());
-			}
-			/* If the label is non-zero add them to the list of AnnotationNames */
-			String Label = CorrectLabel.getCorrectLabel(comp.getAttributeSet()
-					.getValue(StdAttr.LABEL).toString());
-			if (!Label.isEmpty()) {
-				int compindex = CompName.indexOf(ComponentName);
-				AnnotationNames.get(compindex).add(Label);
 			}
 			/* if the current component is a sub-circuit, recurse into it */
 			if (comp.getFactory() instanceof SubcircuitFactory) {
@@ -351,61 +336,19 @@ public class Circuit {
 				sub.getSubcircuit().Annotate(ClearExistingLabels, reporter);
 			}
 		}
-		/* Here the annotation process takes place */
+		/* Now Annotate */
 		for (Component comp : comps) {
-			String CorrectComponentName;
-			/* Pins are treated specially */
-			if (comp.getFactory() instanceof Pin) {
-				if (comp.getEnd(0).isOutput()) {
-					if (comp.getEnd(0).getWidth().getWidth() > 1) {
-						CorrectComponentName = "Input_bus";
-					} else {
-						CorrectComponentName = "Input";
-					}
-				} else {
-					if (comp.getEnd(0).getWidth().getWidth() > 1) {
-						CorrectComponentName = "Output_bus";
-					} else {
-						CorrectComponentName = "Output";
-					}
-				}
-				if (!CompName.contains(CorrectComponentName)) {
-					CompName.add(CorrectComponentName);
-					CompCount.add(1);
-					AnnotationNames.add(new HashSet<String>());
-				}
-			} else {
-				CorrectComponentName = comp.getFactory().getHDLName(
-						comp.getAttributeSet());
-				if (!CompName.contains(CorrectComponentName)) {
-					/* This should never happen */
-					continue;
-				}
-			}
-			int index = CompName.indexOf(CorrectComponentName);
-			/* first we find a non-existing label */
-			Integer id = CompCount.get(index);
-			while (AnnotationNames.get(index).contains(
-					CorrectComponentName + "_" + id.toString())) {
-				id++;
-			}
-			CompCount.set(index, id + 1);
-			if (CorrectComponentName.isEmpty()) {
-				/* This should never happen, but let's catch is anyways */
-				reporter.AddFatalError("Found a component with empty name, cannot annotate! Aborting.");
-				ClearAnnotationLevel();
+			String ComponentName = GetAnnotationName(comp);
+			if (!lablers.containsKey(ComponentName)||
+				!lablers.get(ComponentName).hasNext()) {
+				/* This should never happen! */
+				reporter.AddFatalError("Annotate internal Error: Either there exists duplicate labels or the label syntax is incorrect!\nPlease try annotation on labeled components also\n");
 				return;
+			} else {
+				String NewLabel = lablers.get(ComponentName).GetNext();
+				comp.getAttributeSet().setValue(StdAttr.LABEL, NewLabel);
+				reporter.AddInfo("Labeled " + this.getName() + "/" + NewLabel);
 			}
-			String NewLabel = CorrectComponentName + "_" + id.toString();
-			/*
-			 * TODO: Dirty hack; I do not know how to change the label in such a
-			 * way that the whole project is correctly notified so I just change
-			 * the label here and do some dirty updates in
-			 * "FPGACommanderGUI.java"
-			 */
-			reporter.AddInfo("Labeled " + this.getName() + "/" + NewLabel);
-			comp.getAttributeSet().setValue(StdAttr.LABEL, NewLabel);
-			AnnotationNames.get(index).add(NewLabel);
 		}
 		Annotated = true;
 	}

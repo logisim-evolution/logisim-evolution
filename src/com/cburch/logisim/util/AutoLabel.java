@@ -200,12 +200,7 @@ public class AutoLabel {
 							update(NewLabel,true);
 							active = true;
 						} else  {
-							active = (JOptionPane.showConfirmDialog(null, "Do you want to use the Autolabler?", "Autolabler", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION);
-							
-							if (active) {
-								this.circ = circ;
-								update(NewLabel,false);
-							}
+							active = false;
 						}
 					}
 				}
