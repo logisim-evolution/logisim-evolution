@@ -235,7 +235,7 @@ public class AutoLabel {
 							LabelEndsWithNumber(NewLabel)) {
 							Activate(circ);
 						} else  {
-							Stop(circ);
+							active.put(circ, false);
 						}
 					}
 				}
