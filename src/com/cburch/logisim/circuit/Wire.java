@@ -73,9 +73,9 @@ public final class Wire implements Component, AttributeSet, CustomHandles,
 
 	/** Stroke width when drawing wires. */
 	public static final int WIDTH = 3;
-	public static final int WIDTH_BUS = 5;
-	public static final int HIGHLIGHTED_WIDTH = 5;
-	public static final int HIGHLIGHTED_WIDTH_BUS = 8;
+	public static final int WIDTH_BUS = 4;
+	public static final int HIGHLIGHTED_WIDTH = 4;
+	public static final int HIGHLIGHTED_WIDTH_BUS = 5;
 	public static final AttributeOption VALUE_HORZ = new AttributeOption(
 			"horz", Strings.getter("wireDirectionHorzOption"));
 	public static final AttributeOption VALUE_VERT = new AttributeOption(

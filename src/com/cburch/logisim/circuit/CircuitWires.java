@@ -524,21 +524,13 @@ class CircuitWires {
 						} else {
 							g.setColor(Color.BLACK);
 						}
+						int radius;
 						if (highlighted.containsLocation(loc)) {
-							int diameter;
-							if (wb.isBus())
-								diameter = Wire.WIDTH_BUS*4;
-							else
-								diameter = Wire.WIDTH*4;
-							g.fillOval(loc.getX() - diameter/2, loc.getY() - diameter/2, diameter, diameter);
+							radius = wb.isBus() ? Wire.HIGHLIGHTED_WIDTH_BUS : Wire.HIGHLIGHTED_WIDTH;
 						} else {
-							int diameter;
-							if (wb.isBus())
-								diameter = Wire.WIDTH_BUS*3;
-							else
-								diameter = Wire.WIDTH*3;
-							g.fillOval(loc.getX() - diameter/2, loc.getY() - diameter/2, diameter, diameter);
+							radius = wb.isBus() ? Wire.WIDTH_BUS : Wire.WIDTH;
 						}
+						g.fillOval(loc.getX() - radius, loc.getY() - radius, radius*2, radius*2);
 					}
 				}
 			}
@@ -595,12 +587,13 @@ class CircuitWires {
 							} else {
 								g.setColor(Color.BLACK);
 							}
+							int radius;
 							if (highlighted.containsLocation(loc)) {
-								g.fillOval(loc.getX() - 5, loc.getY() - 5, 10,
-										10);
+								radius = wb.isBus() ? Wire.HIGHLIGHTED_WIDTH_BUS : Wire.HIGHLIGHTED_WIDTH;
 							} else {
-								g.fillOval(loc.getX() - 4, loc.getY() - 4, 8, 8);
+								radius = wb.isBus() ? Wire.WIDTH_BUS : Wire.WIDTH;
 							}
+							g.fillOval(loc.getX() - radius, loc.getY() - radius, radius*2, radius*2);
 						}
 					}
 				}
