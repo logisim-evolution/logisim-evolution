@@ -267,7 +267,7 @@ public class Circuit {
 		}
 	}
 	
-	private class MyComparator implements Comparator<Component> {
+	private class AnnotateComparator implements Comparator<Component> {
 
 		@Override
 		public int compare(Component o1, Component o2) {
@@ -289,22 +289,21 @@ public class Circuit {
 			reporter.AddInfo("Nothing to do !");
 			return;
 		}
-		SortedSet<Component> comps = new TreeSet<Component>(new MyComparator());
-		comps.addAll(this.getNonWires());
-		/* in case of label cleaning, we clear first all old labels */
-		if (ClearExistingLabels) {
-			for (Component comp : comps) {
-				if (!comp.getFactory().RequiresNonZeroLabel())
-					continue;
-				reporter.AddInfo("Cleared " + this.getName() + "/"
-						+ comp.getAttributeSet().getValue(StdAttr.LABEL));
-				comp.getAttributeSet().setValue(StdAttr.LABEL, "");
+		SortedSet<Component> comps = new TreeSet<Component>(new AnnotateComparator());
+		for (Component comp:getNonWires()) {
+			if (comp.getFactory().RequiresNonZeroLabel()) {
+				if (ClearExistingLabels) {
+					/* in case of label cleaning, we clear first the old label */
+					reporter.AddInfo("Cleared " + this.getName() + "/"
+							+ comp.getAttributeSet().getValue(StdAttr.LABEL));
+					comp.getAttributeSet().setValue(StdAttr.LABEL, "");
+				}
+				if (comp.getAttributeSet().getValue(StdAttr.LABEL).isEmpty())
+					comps.add(comp);
 			}
 		}
+		/* now comps has only the elements to be labeled */
 		for (Component comp : comps) {
-			/* Ignore all components that do not require a label */
-			if (!comp.getFactory().RequiresNonZeroLabel())
-				continue;
 			/*
 			 * Add the component to the set of components if it is not already
 			 * added
@@ -349,14 +348,6 @@ public class Circuit {
 		}
 		/* Here the annotation process takes place */
 		for (Component comp : comps) {
-			/* Ignore all components that do not require a label */
-			if (!comp.getFactory().RequiresNonZeroLabel())
-				continue;
-			/* Ignore all components that already have a label */
-			String Label = CorrectLabel.getCorrectLabel(comp.getAttributeSet()
-					.getValue(StdAttr.LABEL).toString());
-			if (!Label.isEmpty())
-				continue;
 			String CorrectComponentName;
 			/* Pins are treated specially */
 			if (comp.getFactory() instanceof Pin) {
