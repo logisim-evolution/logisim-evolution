@@ -76,6 +76,7 @@ import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.std.wiring.Clock;
 import com.cburch.logisim.std.wiring.Pin;
+import com.cburch.logisim.std.wiring.Tunnel;
 import com.cburch.logisim.util.AutoLabel;
 import com.cburch.logisim.util.CollectionUtil;
 import com.cburch.logisim.util.EventSourceWeakSupport;
@@ -161,7 +162,7 @@ public class Circuit {
 			String oldLabel = attre.getOldValue() != null ? (String) attre.getOldValue() : "";
 			@SuppressWarnings("unchecked")
 			Attribute<String> lattr = (Attribute<String>) attre.getAttribute();
-			if (!IsCorrectLabel(newLabel,comps,attre.getSource(),true))
+			if (!IsCorrectLabel(newLabel,comps,attre.getSource(),e.getSource().getFactory(),true))
 				attre.getSource().setValue(lattr, oldLabel);
 		}
 	}
@@ -169,7 +170,10 @@ public class Circuit {
 	public static boolean IsCorrectLabel(String Name,
 			                             Set<Component> components,
 			                             AttributeSet me,
+			                             ComponentFactory myFactory,
 			                             Boolean ShowDialog) {
+		if (myFactory instanceof Tunnel)
+			return true;
 		return !(IsExistingLabel(Name,me,components,ShowDialog)||IsComponentName(Name,components,ShowDialog));
 	}
 	
@@ -190,7 +194,7 @@ public class Circuit {
 		if (Name.isEmpty())
 			return false;
 		for (Component comp : comps) {
-			if (!comp.getAttributeSet().equals(me)) {
+			if (!comp.getAttributeSet().equals(me)&&!(comp.getFactory() instanceof Tunnel)) {
 				String Label = (comp.getAttributeSet().containsAttribute(StdAttr.LABEL)) ?
 						comp.getAttributeSet().getValue(StdAttr.LABEL) : "";
 				if (Label.toUpperCase().equals(Name.toUpperCase())) {
@@ -316,6 +320,8 @@ public class Circuit {
 		HashMap<String,AutoLabel> lablers = new HashMap<String,AutoLabel>();
 		Set<String> LabelNames = new HashSet<String>();
 		for (Component comp:getNonWires()) {
+			if (comp.getFactory() instanceof Tunnel)
+				continue;
 			/* we are directly going to remove duplicated labels */
 			AttributeSet attrs = comp.getAttributeSet();
 			if (attrs.containsAttribute(StdAttr.LABEL)) {
@@ -360,7 +366,7 @@ public class Circuit {
 				reporter.AddFatalError("Annotate internal Error: Either there exists duplicate labels or the label syntax is incorrect!\nPlease try annotation on labeled components also\n");
 				return;
 			} else {
-				String NewLabel = lablers.get(ComponentName).GetNext(this);
+				String NewLabel = lablers.get(ComponentName).GetNext(this,comp.getFactory());
 				comp.getAttributeSet().setValue(StdAttr.LABEL, NewLabel);
 				reporter.AddInfo("Labeled " + this.getName() + "/" + NewLabel);
 			}

@@ -318,9 +318,9 @@ public class AddTool extends Tool {
 
 		if (!event.isConsumed() && event.getModifiersEx() == 0) {
 			int KeybEvent = event.getKeyCode();
-			String Component = (getFactory()==null) ? "Unknown" : getFactory().getDisplayName();
+			String Component = getFactory().getDisplayName();
 			if (!GateKeyboardModifier.TookKeyboardStrokes(KeybEvent, null,attrs, canvas,null,false))
-				if (AutoLabler.LabelKeyboardHandler(KeybEvent, getAttributeSet(), Component, null, canvas.getCircuit(),null,false)) {
+				if (AutoLabler.LabelKeyboardHandler(KeybEvent, getAttributeSet(), Component, null,getFactory(), canvas.getCircuit(),null,false)) {
 					canvas.repaint();
 				} else
 			switch (KeybEvent) {
@@ -456,15 +456,15 @@ public class AddTool extends Tool {
 			moveTo(canvas, g, e.getX(), e.getY());
 
 			Location loc = Location.create(e.getX(), e.getY());
+			ComponentFactory source = getFactory();
 			AttributeSet attrsCopy = (AttributeSet) attrs.clone();
-			attrsCopy.setValue(StdAttr.LABEL, AutoLabler.GetCurrent(canvas.getCircuit()));
+			attrsCopy.setValue(StdAttr.LABEL, AutoLabler.GetCurrent(canvas.getCircuit(),source));
 			if (AutoLabler.IsActive(canvas.getCircuit())) {
 				if (AutoLabler.hasNext(canvas.getCircuit()))
-					AutoLabler.GetNext(canvas.getCircuit());
+					AutoLabler.GetNext(canvas.getCircuit(),source);
 				else
 					AutoLabler.Stop(canvas.getCircuit());
-			} else AutoLabler.SetLabel("", canvas.getCircuit());
-			ComponentFactory source = getFactory();
+			} else AutoLabler.SetLabel("", canvas.getCircuit(),source);
 			if (source == null)
 				return;
 			Component c = source.createComponent(loc, attrsCopy);

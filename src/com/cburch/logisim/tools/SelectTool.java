@@ -379,7 +379,7 @@ public class SelectTool extends Tool {
 					SetAttributeAction act = new SetAttributeAction(
 							canvas.getCircuit(),
 							Strings.getter("changeComponentAttributesAction"));
-					KeyTaken |= AutoLabler.LabelKeyboardHandler(KeybEvent, comp.getAttributeSet(), comp.getFactory().getDisplayName(), comp,canvas.getCircuit(),act,true);
+					KeyTaken |= AutoLabler.LabelKeyboardHandler(KeybEvent, comp.getAttributeSet(), comp.getFactory().getDisplayName(), comp,comp.getFactory(),canvas.getCircuit(),act,true);
 					if (!act.isEmpty())
 						canvas.getProject().doAction(act);
 				}
@@ -556,7 +556,7 @@ public class SelectTool extends Tool {
     					SetAttributeAction act = new SetAttributeAction(
     							canvas.getCircuit(),
     							Strings.getter("changeComponentAttributesAction"));
-    					AutoLabler.AskAndSetLabel(comp.getFactory().getDisplayName(),OldLabel,canvas.getCircuit(),comp,comp.getAttributeSet(),act,true);
+    					AutoLabler.AskAndSetLabel(comp.getFactory().getDisplayName(),OldLabel,canvas.getCircuit(),comp,comp.getFactory(),comp.getAttributeSet(),act,true);
     					if (!act.isEmpty())
     						canvas.getProject().doAction(act);
 					}

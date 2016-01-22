@@ -14,6 +14,7 @@ import javax.swing.JOptionPane;
 import com.bfh.logisim.designrulecheck.CorrectLabel;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.comp.Component;
+import com.cburch.logisim.comp.ComponentFactory;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.instance.StdAttr;
@@ -43,7 +44,7 @@ public class AutoLabel {
 	public AutoLabel(String Label,
     		 		 Circuit circ,
     		 		 boolean UseFirstLabel) {
-		update(circ,Label,UseFirstLabel);
+		update(circ,Label,UseFirstLabel,null);
 		Activate(circ);
 	}
 	
@@ -53,20 +54,20 @@ public class AutoLabel {
 		return active.get(circ);
 	}
 	
-	public String GetCurrent(Circuit circ) {
+	public String GetCurrent(Circuit circ,ComponentFactory me) {
 		if (circ == null||!CurrentLabel.containsKey(circ)||CurrentLabel.get(circ).isEmpty())
 		   return "";
-		if (Circuit.IsCorrectLabel(CurrentLabel.get(circ), circ.getNonWires(), null,false))
+		if (Circuit.IsCorrectLabel(CurrentLabel.get(circ), circ.getNonWires(),null,me,false))
 			return CurrentLabel.get(circ);
 		else if (hasNext(circ)) {
-			return GetNext(circ);
+			return GetNext(circ,me);
 		} else {
-			SetLabel("",circ);
+			SetLabel("",circ,me);
 		}
 		return "";
 	}
 	
-	public String GetNext(Circuit circ) {
+	public String GetNext(Circuit circ,ComponentFactory me) {
 		if (circ==null)
 			return "";
 		if (UseLabelBaseOnly.get(circ)) {
@@ -82,7 +83,7 @@ public class AutoLabel {
 			if (Undescore)
 				NewLabel = NewLabel.concat("_");
 			NewLabel = NewLabel.concat(Integer.toString(CurIdx));
-		} while (!Circuit.IsCorrectLabel(NewLabel, circ.getNonWires(), null,false));
+		} while (!Circuit.IsCorrectLabel(NewLabel, circ.getNonWires(), null,me,false));
 		CurrentIndex.put(circ, CurIdx);
 		CurrentLabel.put(circ, NewLabel);
 	    return NewLabel;
@@ -96,10 +97,10 @@ public class AutoLabel {
 		return active.get(circ);
 	}
 	
-	public void SetLabel(String Label,Circuit circ) {
+	public void SetLabel(String Label,Circuit circ,ComponentFactory me) {
 		if (circ==null)
 			return;
-		update(circ,Label,true);
+		update(circ,Label,true,me);
 	}
 	
 	public void Activate(Circuit circ) {
@@ -115,7 +116,7 @@ public class AutoLabel {
 	public void Stop(Circuit circ) {
 		if (circ == null)
 			return;
-		SetLabel("",circ);
+		SetLabel("",circ,null);
 		active.put(circ, false);
 	}
 	
@@ -131,7 +132,7 @@ public class AutoLabel {
 		return (index-1);
 	}
 	
-	private void update(Circuit circ,String Label , boolean UseFirstLabel) {
+	private void update(Circuit circ,String Label , boolean UseFirstLabel, ComponentFactory me) {
 		if (circ == null)
 			return;
 		if (Label.isEmpty()||
@@ -157,7 +158,7 @@ public class AutoLabel {
 		if (UseFirstLabel)
 			CurrentLabel.put(circ, Label);
 		else
-			CurrentLabel.put(circ, GetNext(circ));
+			CurrentLabel.put(circ, GetNext(circ,me));
 	}
 
 
@@ -188,6 +189,7 @@ public class AutoLabel {
             					        String OldLabel,
             					        Circuit circ,
             					        Component comp,
+            					        ComponentFactory compfac,
             					        AttributeSet attrs,
             					        SetAttributeAction act,
 	                                    boolean CreateAction) {
@@ -200,13 +202,13 @@ public class AutoLabel {
 					JOptionPane.QUESTION_MESSAGE,null,null,
 					OldLabel);
 			if (NewLabel!=null) {
-				if (Circuit.IsCorrectLabel(NewLabel, circ.getNonWires(), attrs,true)&&
+				if (Circuit.IsCorrectLabel(NewLabel, circ.getNonWires(), attrs,compfac,true)&&
 					SyntaxChecker.isVariableNameAcceptable(NewLabel,true)&&
 					!CorrectLabel.IsKeyword(NewLabel,true)) {
 					if (CreateAction)
 						act.set(comp, StdAttr.LABEL, NewLabel);
 					else
-						SetLabel(NewLabel,circ);
+						SetLabel(NewLabel,circ,compfac);
 					correct = true;
 				}
 			}
@@ -222,6 +224,7 @@ public class AutoLabel {
 			                            AttributeSet attrs,
 			                            String ComponentName,
 			                            Component comp,
+			                            ComponentFactory compfac,
 			                            Circuit circ,
 			                            SetAttributeAction act,
 				                        boolean CreateAction) {
@@ -229,7 +232,7 @@ public class AutoLabel {
 			case KeyEvent.VK_L:
 				if (attrs.containsAttribute(StdAttr.LABEL)) {
 					String OldLabel = attrs.getValue(StdAttr.LABEL);
-					String NewLabel = AskAndSetLabel(ComponentName,OldLabel,circ,comp,attrs,act,CreateAction);
+					String NewLabel = AskAndSetLabel(ComponentName,OldLabel,circ,comp,compfac,attrs,act,CreateAction);
 					if (!NewLabel.equals(OldLabel)) {
 						if (!NewLabel.isEmpty()&&
 							LabelEndsWithNumber(NewLabel)) {
