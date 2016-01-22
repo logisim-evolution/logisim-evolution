@@ -149,6 +149,7 @@ public class SelectTool extends Tool {
 	private HashMap<Component, KeyConfigurator> keyHandlers;
 
 	private HashSet<Selection> selectionsAdded;
+	private AutoLabel AutoLabler = new AutoLabel();
 
 	private Listener selListener;
 
@@ -378,7 +379,7 @@ public class SelectTool extends Tool {
 					SetAttributeAction act = new SetAttributeAction(
 							canvas.getCircuit(),
 							Strings.getter("changeComponentAttributesAction"));
-					KeyTaken |= AutoLabel.LabelKeyboardHandler(KeybEvent, comp.getAttributeSet(), comp.getFactory().getDisplayName(), comp,canvas.getCircuit(),act,true);
+					KeyTaken |= AutoLabler.LabelKeyboardHandler(KeybEvent, comp.getAttributeSet(), comp.getFactory().getDisplayName(), comp,canvas.getCircuit(),act,true);
 					if (!act.isEmpty())
 						canvas.getProject().doAction(act);
 				}
@@ -551,7 +552,7 @@ public class SelectTool extends Tool {
 			if (comps.size()==1) {
 				for (Component comp : comps) {
 					if (comp.getAttributeSet().containsAttribute(StdAttr.LABEL)) {
-                        String OldLabel = comp.getAttributeSet().getValue(StdAttr.LABEL); 
+                        String OldLabel = comp.getAttributeSet().getValue(StdAttr.LABEL);
     					SetAttributeAction act = new SetAttributeAction(
     							canvas.getCircuit(),
     							Strings.getter("changeComponentAttributesAction"));

@@ -103,6 +103,7 @@ public class AddTool extends Tool {
 	private Action lastAddition;
 	private boolean keyHandlerTried;
 	private KeyConfigurator keyHandler;
+	private AutoLabel AutoLabler = new AutoLabel();
 
 	private AddTool(AddTool base) {
 		this.descriptionBase = base.descriptionBase;
@@ -318,7 +319,7 @@ public class AddTool extends Tool {
 			int KeybEvent = event.getKeyCode();
 			String Component = (getFactory()==null) ? "Unknown" : getFactory().getDisplayName();
 			if (!GateKeyboardModifier.TookKeyboardStrokes(KeybEvent, null,attrs, canvas,null,false))
-				if (AutoLabel.LabelKeyboardHandler(KeybEvent, getAttributeSet(), Component, null, canvas.getCircuit(),null,false)) {
+				if (AutoLabler.LabelKeyboardHandler(KeybEvent, getAttributeSet(), Component, null, canvas.getCircuit(),null,false)) {
 					canvas.repaint();
 				} else
 			switch (KeybEvent) {
@@ -351,6 +352,10 @@ public class AddTool extends Tool {
 				Project proj = canvas.getProject();
 				Library base = proj.getLogisimFile().getLibrary("Base");
 				Tool next = (base==null) ? null : base.getTool("Edit Tool");
+				/* Prevent duplicated labels */
+				if (attrs.containsAttribute(StdAttr.LABEL))
+					attrs.setValue(StdAttr.LABEL, "");
+				AutoLabler.Stop();
 				if (next != null) {
 					proj.setTool(next);
 					Action act = SelectionActions.dropAll(canvas.getSelection());
@@ -358,9 +363,6 @@ public class AddTool extends Tool {
 						proj.doAction(act);
 					}
 				}
-				/* Prevent duplicated labels */
-				if (attrs.containsAttribute(StdAttr.LABEL))
-					attrs.setValue(StdAttr.LABEL, "");
 				break;
 			case KeyEvent.VK_BACK_SPACE:
 				if (lastAddition != null
@@ -483,8 +485,12 @@ public class AddTool extends Tool {
 				lastAddition = action;
 				added = c;
 				/* Prevent duplicated labels */
-				if (attrs.containsAttribute(StdAttr.LABEL))
-					attrs.setValue(StdAttr.LABEL, "");
+				if (attrs.containsAttribute(StdAttr.LABEL)) {
+					if (AutoLabler.hasNext())
+						attrs.setValue(StdAttr.LABEL, AutoLabler.GetNext());
+					else
+						attrs.setValue(StdAttr.LABEL, "");
+				}
 			} catch (CircuitException ex) {
 				JOptionPane.showMessageDialog(canvas.getProject().getFrame(),
 						ex.getMessage());
@@ -500,6 +506,7 @@ public class AddTool extends Tool {
 			/* Prevent duplicated labels */
 			if (attrs.containsAttribute(StdAttr.LABEL))
 				attrs.setValue(StdAttr.LABEL, "");
+			AutoLabler.Stop();
 			proj.setTool(next);
 			Action act = SelectionActions.dropAll(canvas.getSelection());
 			if (act != null) {

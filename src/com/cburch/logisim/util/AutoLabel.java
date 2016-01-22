@@ -22,6 +22,108 @@ public class AutoLabel {
 	
 	static final Integer[] UsedKeyStrokes = new Integer[] {KeyEvent.VK_L,KeyEvent.VK_T,KeyEvent.VK_V,KeyEvent.VK_H};
 	public static Set<Integer> KeyStrokes = new HashSet<Integer>(Arrays.asList(UsedKeyStrokes));
+	
+	private String LabelBase;
+	private Integer CurrentIndex;
+	private Circuit circ;
+	private boolean UseLabelBaseOnly;
+	private boolean UseUnderscore;
+	private boolean active;
+	
+	public AutoLabel() {
+		this("",null,false);
+	}
+	
+	public AutoLabel(String Label,
+			         Circuit circ) {
+		this(Label,circ,true);
+	}
+	
+
+	public AutoLabel(String Label,
+    		 		 Circuit circ,
+    		 		 boolean UseFirstLabel) {
+		this.circ = circ;
+		update(Label,UseFirstLabel);
+		active = !LabelBase.isEmpty()&&!(circ==null);
+	}
+	
+	public boolean hasNext() {
+		return !LabelBase.isEmpty()&&circ!=null&&active;
+	}
+	
+	public String GetNext() {
+		if (UseLabelBaseOnly) {
+			UseLabelBaseOnly = false;
+			return LabelBase;
+		}
+		if (circ==null)
+			return "";
+		String NewLabel="";
+		do {
+			CurrentIndex++;
+			NewLabel = LabelBase;
+			if (UseUnderscore)
+				NewLabel = NewLabel.concat("_");
+			NewLabel = NewLabel.concat(Integer.toString(CurrentIndex));
+		} while (!Circuit.IsCorrectLabel(NewLabel, circ.getNonWires(), null,false));
+	    return NewLabel;
+	}
+	
+	public void SetLabel(String Label) {
+		update(Label,true);
+		active = !LabelBase.isEmpty()&&!(circ==null);
+	}
+	
+	public void SetCircuit(Circuit circ) {
+		this.circ = circ;
+		active = !LabelBase.isEmpty()&&!(circ==null);
+	}
+	
+	public void Activate() {
+		active = !LabelBase.isEmpty()&&!(circ==null);
+	}
+	
+	public void Stop() {
+		active = false;
+	}
+	
+	public static boolean LabelEndsWithNumber(String Label) {
+		return CorrectLabel.Numbers.contains(Label.substring(Label.length()-1));
+	}
+	
+	private int GetLabelBaseEndIndex(String Label) {
+		int index = Label.length();
+		while ((index >1)&&
+			   CorrectLabel.Numbers.contains(Label.substring(index-1,index))) 
+			index--;
+		return (index-1);
+	}
+	
+	private void update(String Label , boolean UseFirstLabel) {
+		if (Label.isEmpty()||
+				!SyntaxChecker.isVariableNameAcceptable(Label,false)) {
+				LabelBase = "";
+				CurrentIndex = 0;
+				UseLabelBaseOnly = false;
+				return;
+			}
+			UseLabelBaseOnly = UseFirstLabel;
+			if (LabelEndsWithNumber(Label)) {
+				int Index = GetLabelBaseEndIndex(Label);
+				CurrentIndex = Integer.valueOf(Label.substring(Index+1,Label.length()));
+				LabelBase = Label.substring(0,Index+1);
+				UseUnderscore = false;
+				if (UseFirstLabel) 
+					CurrentIndex--;
+				UseLabelBaseOnly = false;
+			} else {
+				LabelBase = Label;
+				CurrentIndex = 0;
+				UseUnderscore = !Label.substring(Label.length()-1).equals("_");
+			}
+	}
+
 
 	private static class ComponentSorter implements Comparator<Component> {
 
@@ -46,16 +148,17 @@ public class AutoLabel {
 		return sorted;
 	}
 
-	public static void AskAndSetLabel(String ComponentName,
-            					      String OldLabel,
-            					      Circuit circ,
-            					      Component comp,
-            					      AttributeSet attrs,
-            					      SetAttributeAction act,
-	                                  boolean CreateAction) {
+	public static String AskAndSetLabel(String ComponentName,
+            					        String OldLabel,
+            					        Circuit circ,
+            					        Component comp,
+            					        AttributeSet attrs,
+            					        SetAttributeAction act,
+	                                    boolean CreateAction) {
 		boolean correct = false;
+		String NewLabel = OldLabel;
 		while (!correct) {
-			String NewLabel = (String) JOptionPane.showInputDialog(null, 
+			NewLabel = (String) JOptionPane.showInputDialog(null, 
 					Strings.get("editLabelQuestion")+" "+ComponentName,
 					Strings.get("editLabelDialog"),
 					JOptionPane.QUESTION_MESSAGE,null,null,
@@ -71,23 +174,40 @@ public class AutoLabel {
 					correct = true;
 				}
 			}
-			else
+			else {
 				correct = true;
+				NewLabel = OldLabel;
+			}
 		}
+		return NewLabel;
 	}
 	
-	public static boolean LabelKeyboardHandler(int KeyCode,
-			                                   AttributeSet attrs,
-			                                   String ComponentName,
-			                                   Component comp,
-			                                   Circuit circ,
-			                                   SetAttributeAction act,
-				                               boolean CreateAction) {
+	public boolean LabelKeyboardHandler(int KeyCode,
+			                            AttributeSet attrs,
+			                            String ComponentName,
+			                            Component comp,
+			                            Circuit circ,
+			                            SetAttributeAction act,
+				                        boolean CreateAction) {
 		switch (KeyCode) {
 			case KeyEvent.VK_L:
 				if (attrs.containsAttribute(StdAttr.LABEL)) {
 					String OldLabel = attrs.getValue(StdAttr.LABEL);
-					AskAndSetLabel(ComponentName,OldLabel,circ,comp,attrs,act,CreateAction);
+					String NewLabel = AskAndSetLabel(ComponentName,OldLabel,circ,comp,attrs,act,CreateAction);
+					if (!NewLabel.equals(OldLabel)) {
+						if (LabelEndsWithNumber(NewLabel)) {
+							this.circ = circ;
+							update(NewLabel,true);
+							active = true;
+						} else  {
+							active = (JOptionPane.showConfirmDialog(null, "Do you want to use the Autolabler?", "Autolabler", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION);
+							
+							if (active) {
+								this.circ = circ;
+								update(NewLabel,false);
+							}
+						}
+					}
 				}
 				return true;
 			case KeyEvent.VK_T:
