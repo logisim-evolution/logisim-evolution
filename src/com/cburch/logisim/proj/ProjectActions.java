@@ -50,12 +50,14 @@ import javax.swing.SwingUtilities;
 
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.file.LoadFailedException;
+import com.cburch.logisim.file.LoadedLibrary;
 import com.cburch.logisim.file.Loader;
 import com.cburch.logisim.file.LogisimFile;
 import com.cburch.logisim.file.LogisimFileActions;
 import com.cburch.logisim.gui.main.Frame;
 import com.cburch.logisim.gui.start.SplashScreen;
 import com.cburch.logisim.prefs.AppPreferences;
+import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.tools.LibraryTools;
 import com.cburch.logisim.tools.Tool;
 import com.cburch.logisim.util.JFileChoosers;
@@ -125,22 +127,22 @@ public class ProjectActions {
 		if (monitor != null)
 			monitor.setProgress(SplashScreen.PROJECT_CREATE);
 		Project ret = new Project(file);
-
 		if (monitor != null)
 			monitor.setProgress(SplashScreen.FRAME_CREATE);
 		SwingUtilities.invokeLater(new CreateFrame(loader, ret, isStartup));
+		updatecircs(file,ret);
 		return ret;
 	}
 
-	private static LogisimFile createEmptyFile(Loader loader) {
+	private static LogisimFile createEmptyFile(Loader loader,Project proj) {
 		InputStream templReader = AppPreferences.getEmptyTemplate()
 				.createStream();
 		LogisimFile file;
 		try {
 			file = loader.openLogisimFile(templReader);
 		} catch (Exception t) {
-			file = LogisimFile.createNew(loader);
-			file.addCircuit(new Circuit("main", file));
+			file = LogisimFile.createNew(loader,proj);
+			file.addCircuit(new Circuit("main", file,proj));
 		} finally {
 			try {
 				templReader.close();
@@ -171,12 +173,12 @@ public class ProjectActions {
 			file = loader.openLogisimFile(templReader);
 		} catch (IOException ex) {
 			displayException(baseProject.getFrame(), ex);
-			file = createEmptyFile(loader);
+			file = createEmptyFile(loader,baseProject);
 		} catch (LoadFailedException ex) {
 			if (!ex.isShown()) {
 				displayException(baseProject.getFrame(), ex);
 			}
-			file = createEmptyFile(loader);
+			file = createEmptyFile(loader,baseProject);
 		} finally {
 			try {
 				templReader.close();
@@ -201,6 +203,7 @@ public class ProjectActions {
 		frame.setVisible(true);
 		frame.getCanvas().requestFocus();
 		newProj.getLogisimFile().getLoader().setParent(frame);
+		updatecircs(file,newProj);
 		return newProj;
 	}
 
@@ -227,7 +230,7 @@ public class ProjectActions {
 			}
 		}
 		if (file == null)
-			file = createEmptyFile(loader);
+			file = createEmptyFile(loader,null);
 		return completeProject(monitor, loader, file, isStartupScreen);
 	}
 	
@@ -268,7 +271,22 @@ public class ProjectActions {
 			}
 			return;
 		}
+		updatecircs(mergelib,baseProject);
 		baseProject.doAction(LogisimFileActions.MergeFile(mergelib, baseProject.getLogisimFile()));
+	}
+	
+	private static void updatecircs(LogisimFile lib, Project proj) {
+		for (Circuit circ:lib.getCircuits()) {
+			circ.SetProject(proj);
+		}
+		for (Library libs : lib.getLibraries()) {
+			if (libs instanceof LoadedLibrary) {
+				LoadedLibrary test = (LoadedLibrary) libs;
+				if (test.getBase() instanceof LogisimFile) {
+					updatecircs((LogisimFile)test.getBase(),proj);
+				}
+			}
+		}
 	}
 
 	public static boolean doOpen(Component parent, Project baseProject) {
@@ -339,9 +357,12 @@ public class ProjectActions {
 			AppPreferences.updateRecentFile(f);
 			if (lib == null)
 				return null;
+			LibraryTools.RemovePresentLibraries(lib,new HashSet<String>(),true);
 			if (proj == null) {
 				proj = new Project(lib);
+				updatecircs(lib,proj);
 			} else {
+				updatecircs(lib,proj);
 				proj.setLogisimFile(lib);
 			}
 		} catch (LoadFailedException ex) {
@@ -382,7 +403,9 @@ public class ProjectActions {
 			throws LoadFailedException {
 		Loader loader = new Loader(monitor);
 		LogisimFile file = loader.openLogisimFile(source);
-		return new Project(file);
+		Project ret = new Project(file);
+		updatecircs(file,ret);
+		return ret;
 	}
 
 	public static void doQuit() {

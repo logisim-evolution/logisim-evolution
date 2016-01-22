@@ -30,6 +30,7 @@
 
 package com.cburch.logisim.instance;
 
+import java.awt.Color;
 import java.awt.Font;
 
 import com.cburch.logisim.data.Attribute;
@@ -63,10 +64,15 @@ public interface StdAttr {
 
 	public static final Attribute<String> LABEL = Attributes.forString("label",
 			Strings.getter("stdLabelAttr"));
-
 	public static final Attribute<Font> LABEL_FONT = Attributes.forFont(
 			"labelfont", Strings.getter("stdLabelFontAttr"));
 	public static final Font DEFAULT_LABEL_FONT = new Font("SansSerif",
-			Font.PLAIN, 12);
-
+			Font.BOLD, 16);
+	public static final Attribute<Color> LABEL_COLOR = Attributes.forColor(
+			"labelcolor", Strings.getter("ioLabelColorAttr"));
+	public static final Color DEFAULT_LABEL_COLOR = Color.BLUE;
+	public static final Attribute<Boolean> LABEL_VISABILITY = Attributes.forBoolean(
+			"labelvisable", Strings.getter("stdLabelVisability")); 
+	
+	public static final Attribute<String> DUMMY = Attributes.forHidden();
 }

@@ -76,7 +76,7 @@ public class RamAttributes extends AbstractAttributeSet {
 	private static List<Attribute<?>> ATTRIBUTES = Arrays
 			.asList(new Attribute<?>[] { Mem.ADDR_ATTR, Mem.DATA_ATTR,
 					StdAttr.TRIGGER, ATTR_DBUS, ATTR_ByteEnables,
-					Ram.CONTENTS_ATTR, StdAttr.LABEL, StdAttr.LABEL_FONT });
+					Ram.CONTENTS_ATTR, StdAttr.LABEL, StdAttr.LABEL_FONT, StdAttr.LABEL_VISABILITY });
 
 	private static WeakHashMap<MemContents, HexFrame> windowRegistry = new WeakHashMap<MemContents, HexFrame>();
 	private BitWidth addrBits = BitWidth.create(8);
@@ -86,6 +86,7 @@ public class RamAttributes extends AbstractAttributeSet {
 	private AttributeOption Trigger = StdAttr.TRIG_RISING;
 	private AttributeOption BusStyle = BUS_BIDIR;
 	private Font LabelFont = StdAttr.DEFAULT_LABEL_FONT;
+	private Boolean LabelVisable = false;
 	private AttributeOption ByteEnables = BUS_WITHOUT_BYTEENABLES;
 	private boolean SupportsByteEnables = false;
 
@@ -134,6 +135,9 @@ public class RamAttributes extends AbstractAttributeSet {
 		}
 		if (attr == StdAttr.LABEL_FONT) {
 			return (V) LabelFont;
+		}
+		if (attr == StdAttr.LABEL_VISABILITY) {
+			return (V) LabelVisable;
 		}
 		if (attr == ATTR_ByteEnables) {
 			return (V) ByteEnables;
@@ -198,6 +202,7 @@ public class RamAttributes extends AbstractAttributeSet {
 			if (Label.equals(NewLabel)) {
 				return;
 			}
+			@SuppressWarnings("unchecked")
 			V Oldlabel = (V) Label;
 			Label = NewLabel;
 			fireAttributeValueChanged(attr, value,Oldlabel);
@@ -221,6 +226,12 @@ public class RamAttributes extends AbstractAttributeSet {
 				return;
 			}
 			LabelFont = NewFont;
+			fireAttributeValueChanged(attr, value,null);
+		} else if (attr == StdAttr.LABEL_VISABILITY) {
+			Boolean newVis = (Boolean) value;
+			if (LabelVisable.equals(newVis))
+				return;
+			LabelVisable = newVis;
 			fireAttributeValueChanged(attr, value,null);
 		} else if (attr == ATTR_ByteEnables) {
 			AttributeOption NewBE = (AttributeOption) value;

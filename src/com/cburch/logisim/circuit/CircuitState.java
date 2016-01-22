@@ -425,7 +425,8 @@ public class CircuitState implements InstanceData {
 
 		CircuitState[] subs = new CircuitState[substates.size()];
 		for (CircuitState substate : substates.toArray(subs)) {
-			substate.processDirtyPoints();
+/* TODO: Analyze why this bug happens, e.g. a substate that is null! */
+			if (substate != null) substate.processDirtyPoints();
 		}
 	}
 

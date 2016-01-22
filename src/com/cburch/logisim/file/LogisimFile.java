@@ -58,6 +58,7 @@ import com.cburch.logisim.circuit.CircuitListener;
 import com.cburch.logisim.circuit.SubcircuitFactory;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.comp.ComponentFactory;
+import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.proj.Projects;
 import com.cburch.logisim.tools.AddTool;
 import com.cburch.logisim.tools.Library;
@@ -143,9 +144,9 @@ public class LogisimFile extends Library implements LibraryEventSource,CircuitLi
 	//
 	// creation methods
 	//
-	public static LogisimFile createNew(Loader loader) {
+	public static LogisimFile createNew(Loader loader, Project proj) {
 		LogisimFile ret = new LogisimFile(loader);
-		ret.main = new Circuit("main", ret);
+		ret.main = new Circuit("main", ret,proj);
 		// The name will be changed in LogisimPreferences
 		ret.tools.add(new AddTool(ret.main.getSubcircuitFactory()));
 		return ret;
@@ -230,7 +231,8 @@ public class LogisimFile extends Library implements LibraryEventSource,CircuitLi
 		}
 
 		XmlReader xmlReader = new XmlReader(loader, file);
-		LogisimFile ret = xmlReader.readLibrary(inBuffered);
+		/* Can set the project pointer to zero as it is fixed later */
+		LogisimFile ret = xmlReader.readLibrary(inBuffered,null);
 		ret.loader = loader;
 		return ret;
 	}

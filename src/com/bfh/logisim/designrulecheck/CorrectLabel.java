@@ -33,6 +33,8 @@ package com.bfh.logisim.designrulecheck;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.swing.JOptionPane;
+
 import com.bfh.logisim.fpgagui.FPGAReport;
 import com.bfh.logisim.settings.Settings;
 
@@ -78,9 +80,16 @@ public class CorrectLabel {
 		return true;
 	}
 	
-	public static boolean IsKeyword(String Label) {
-		return VHDLKeywords.contains(Label.toLowerCase())||
-				VerilogKeywords.contains(Label.toLowerCase());
+	public static boolean IsKeyword(String Label,Boolean ShowDialog) {
+		boolean ret = false;
+		if (VHDLKeywords.contains(Label.toLowerCase())) {
+			ret = true;
+			if (ShowDialog) JOptionPane.showMessageDialog(null, Strings.get("VHDLKeywordNameError"));
+		} else if (VerilogKeywords.contains(Label.toLowerCase())) {
+			if (ShowDialog) JOptionPane.showMessageDialog(null, Strings.get("VerilogKeywordNameError"));
+			ret = true;
+		}
+		return ret;
 	}
 
 	private static final String[] NumbersStr = { "0", "1", "2", "3", "4", "5",

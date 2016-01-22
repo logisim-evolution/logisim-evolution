@@ -79,6 +79,10 @@ public class CircuitAppearance extends Drawing {
 		addCanvasModelListener(myListener);
 		setDefaultAppearance(true);
 	}
+	
+	public Graphics GetGraphics() {
+		return circuit.GetGraphics();
+	}
 
 	public void addCircuitAppearanceListener(CircuitAppearanceListener l) {
 		listeners.add(l);
@@ -275,7 +279,7 @@ public class CircuitAppearance extends Drawing {
 	public void recomputeDefaultAppearance() {
 		if (isDefault) {
 			List<CanvasObject> shapes;
-			shapes = DefaultAppearance.build(circuitPins.getPins(),this.IsNamedBoxShaped());
+			shapes = DefaultAppearance.build(circuitPins.getPins(),this.IsNamedBoxShaped(),circuit.GetGraphics());
 			setObjectsForce(shapes);
 		}
 	}

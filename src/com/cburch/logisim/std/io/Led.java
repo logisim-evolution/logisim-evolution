@@ -72,10 +72,10 @@ public class Led extends InstanceFactory {
 		super("LED", Strings.getter("ledComponent"));
 		setAttributes(new Attribute[] { StdAttr.FACING, Io.ATTR_ON_COLOR,
 				Io.ATTR_OFF_COLOR, Io.ATTR_ACTIVE, StdAttr.LABEL,
-				Io.ATTR_LABEL_LOC, StdAttr.LABEL_FONT, Io.ATTR_LABEL_COLOR },
+				Io.ATTR_LABEL_LOC, StdAttr.LABEL_FONT, StdAttr.LABEL_COLOR, StdAttr.LABEL_VISABILITY },
 				new Object[] { Direction.WEST, new Color(240, 0, 0),
 						Color.DARK_GRAY, Boolean.TRUE, "", Io.LABEL_CENTER,
-						StdAttr.DEFAULT_LABEL_FONT, Color.BLACK });
+						StdAttr.DEFAULT_LABEL_FONT, StdAttr.DEFAULT_LABEL_COLOR, false });
 		setFacingAttribute(StdAttr.FACING);
 		setIconName("led.gif");
 		setPorts(new Port[] { new Port(0, 0, Port.INPUT, 1) });
@@ -186,7 +186,6 @@ public class Led extends InstanceFactory {
 		GraphicsUtil.switchToWidth(g, 2);
 		g.drawOval(bds.getX(), bds.getY(), bds.getWidth(), bds.getHeight());
 		GraphicsUtil.switchToWidth(g, 1);
-		g.setColor(painter.getAttributeValue(Io.ATTR_LABEL_COLOR));
 		painter.drawLabel();
 		painter.drawPorts();
 	}

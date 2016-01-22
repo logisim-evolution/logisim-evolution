@@ -57,8 +57,6 @@ public class Io extends Library {
 			"labelloc", Strings.getter("ioLabelLocAttr"), new Object[] {
 					LABEL_CENTER, Direction.NORTH, Direction.SOUTH,
 					Direction.EAST, Direction.WEST });
-	static final Attribute<Color> ATTR_LABEL_COLOR = Attributes.forColor(
-			"labelcolor", Strings.getter("ioLabelColorAttr"));
 	static final Attribute<Boolean> ATTR_ACTIVE = Attributes.forBoolean(
 			"active", Strings.getter("ioActiveAttr"));
 

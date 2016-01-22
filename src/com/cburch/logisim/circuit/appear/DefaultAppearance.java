@@ -85,9 +85,10 @@ class DefaultAppearance {
 	}
 
 	public static List<CanvasObject> build(Collection<Instance> pins,
-			                               boolean NamedBox) {
+			                               boolean NamedBox,
+			                               Graphics g) {
 		if (NamedBox) {
-			return new_build(pins);
+			return new_build(pins,g);
 		} else {
 			return old_build(pins);
 		}
@@ -174,44 +175,57 @@ class DefaultAppearance {
         return ret;
     }
 
-    private static List<CanvasObject> new_build(Collection<Instance> pins) {
+    private static List<CanvasObject> new_build(Collection<Instance> pins, Graphics g) {
 		Map<Direction, List<Instance>> edge;
 		edge = new HashMap<Direction, List<Instance>>();
 		edge.put(Direction.EAST, new ArrayList<Instance>());
 		edge.put(Direction.WEST, new ArrayList<Instance>());
 		int MaxLeftLabelLength = 0;
 		int MaxRightLabelLength = 0;
+		int TextHeight=0;
+		int TextAscent=0;
+		int TextDescend=0;
 
-		/* Hack to calculate label heights and widths */
-		JPanel panel = new JPanel();
-		JFrame frame = new JFrame();
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.add(panel);
-		frame.setVisible(true);
-		Graphics g = panel.getGraphics();
-		FontMetrics fm = g.getFontMetrics(DrawAttr.DEFAULT_FONT);
-		int TextHeight = fm.getHeight();
-		int TextAscent = fm.getAscent();
-		int TextDescend = fm.getDescent();
-		for (Instance pin : pins) {
-			Direction pinEdge;
-			Text label = new Text(0,0,pin.getAttributeValue(StdAttr.LABEL));
-			int LabelWidth = fm.stringWidth(label.getText());
-			if (pin.getAttributeValue(Pin.ATTR_TYPE)) {
-				pinEdge=Direction.EAST;
-				if (LabelWidth>MaxRightLabelLength)
-					MaxRightLabelLength = LabelWidth;
+		if (!pins.isEmpty()) {
+			boolean hasgraph = true;
+			JPanel panel;
+			JFrame frame=null;
+			if (g==null) {
+			    /* Hack to be able to calculate label heights and widths */
+				hasgraph = false;
+				panel = new JPanel();
+				frame = new JFrame();
+				frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+				frame.add(panel);
+				frame.setVisible(true);
+				g = panel.getGraphics();
 			}
-			else {
-				pinEdge=Direction.WEST;
-				if (LabelWidth>MaxLeftLabelLength)
-					MaxLeftLabelLength = LabelWidth;
+			FontMetrics fm = g.getFontMetrics(DrawAttr.DEFAULT_FONT);
+			TextHeight=fm.getHeight();
+			TextAscent=fm.getAscent();
+			TextDescend=fm.getDescent();
+			for (Instance pin : pins) {
+				Direction pinEdge;
+				Text label = new Text(0,0,pin.getAttributeValue(StdAttr.LABEL));
+				int LabelWidth = fm.stringWidth(label.getText());
+				if (pin.getAttributeValue(Pin.ATTR_TYPE)) {
+					pinEdge=Direction.EAST;
+					if (LabelWidth>MaxRightLabelLength)
+						MaxRightLabelLength = LabelWidth;
+				}
+				else {
+					pinEdge=Direction.WEST;
+					if (LabelWidth>MaxLeftLabelLength)
+						MaxLeftLabelLength = LabelWidth;
+				}
+				List<Instance> e = edge.get(pinEdge);
+				e.add(pin);
 			}
-			List<Instance> e = edge.get(pinEdge);
-			e.add(pin);
+			if (!hasgraph) {
+				frame.setVisible(false);
+				frame.dispose();
+			}
 		}
-		frame.setVisible(false);
-		frame.dispose();
 
 		
 		for (Map.Entry<Direction, List<Instance>> entry : edge.entrySet()) {

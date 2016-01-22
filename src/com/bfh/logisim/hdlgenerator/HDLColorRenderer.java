@@ -60,6 +60,16 @@ public class HDLColorRenderer extends JLabel
 				setText("HDL Required");
 				setHorizontalAlignment(JLabel.CENTER);
 				setBorder(null);
+			} else if (myInfo.contains("#")&& myInfo.indexOf('#')==0&&
+					   (myInfo.length() == 7 || myInfo.length() == 9)) {
+				int red,green,blue,alpha;				
+				red = Integer.valueOf(myInfo.substring(1, 3), 16);
+				green = Integer.valueOf(myInfo.substring(3, 5), 16);
+				blue = Integer.valueOf(myInfo.substring(5, 7), 16);
+				alpha = myInfo.length() == 7 ? 255 : Integer.valueOf(myInfo.substring(7, 9), 16);
+				setBackground(new Color(red,green,blue,alpha));
+				setText("");
+				setBorder(null);
 			} else {
 				Color newColor = isSelected ? Color.lightGray :
 											  Color.white;

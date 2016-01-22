@@ -100,13 +100,12 @@ public class CircuitAttributes extends AbstractAttributeSet {
 						source.fireEvent(CircuitEvent.ACTION_SET_NAME, OldName);
 						return;
 					} else 
-				    if (!SyntaxChecker.isVariableNameAcceptable(NewName)) {
-				    	SyntaxChecker.showNonAcceptableNameMessage();
+				    if (!SyntaxChecker.isVariableNameAcceptable(NewName,true)) {
 						e.getSource().setValue(NAME_ATTR, OldName);
 						source.fireEvent(CircuitEvent.ACTION_SET_NAME, OldName);
 						return;
 					} else
-					if (CorrectLabel.IsKeyword(NewName)) {
+					if (CorrectLabel.IsKeyword(NewName,false)) {
 						JOptionPane.showMessageDialog(null, Strings.get("KeywordNameError"));
 						e.getSource().setValue(NAME_ATTR, OldName);
 						source.fireEvent(CircuitEvent.ACTION_SET_NAME, OldName);
@@ -160,7 +159,7 @@ public class CircuitAttributes extends AbstractAttributeSet {
 
 	private static final List<Attribute<?>> INSTANCE_ATTRS = Arrays
 			.asList(new Attribute<?>[] { StdAttr.FACING, StdAttr.LABEL,
-					LABEL_LOCATION_ATTR, StdAttr.LABEL_FONT,
+					LABEL_LOCATION_ATTR, StdAttr.LABEL_FONT,StdAttr.LABEL_VISABILITY,
 					CircuitAttributes.NAME_ATTR, CIRCUIT_LABEL_ATTR,
 					CIRCUIT_LABEL_FACING_ATTR, CIRCUIT_LABEL_FONT_ATTR,
 					NAMED_CIRCUIT_BOX,
@@ -172,6 +171,7 @@ public class CircuitAttributes extends AbstractAttributeSet {
 	private String label;
 	private Direction labelLocation;
 	private Font labelFont;
+	private Boolean LabelVisable;
 	private MyListener listener;
 	private Instance[] pinInstances;
 
@@ -182,6 +182,7 @@ public class CircuitAttributes extends AbstractAttributeSet {
 		label = "";
 		labelLocation = Direction.NORTH;
 		labelFont = StdAttr.DEFAULT_LABEL_FONT;
+		LabelVisable = false;
 		pinInstances = new Instance[0];
 	}
 
@@ -214,6 +215,8 @@ public class CircuitAttributes extends AbstractAttributeSet {
 			return (E) label;
 		if (attr == StdAttr.LABEL_FONT)
 			return (E) labelFont;
+		if (attr == StdAttr.LABEL_VISABILITY)
+			return (E) LabelVisable;
 		if (attr == LABEL_LOCATION_ATTR)
 			return (E) labelLocation;
 		else
@@ -266,6 +269,12 @@ public class CircuitAttributes extends AbstractAttributeSet {
 				return;
 			labelFont = val;
 			fireAttributeValueChanged(StdAttr.LABEL_FONT, val,null);
+		} else if (attr == StdAttr.LABEL_VISABILITY) {
+			Boolean val = (Boolean) value;
+			if (LabelVisable == value)
+				return;
+			LabelVisable = val;
+			fireAttributeValueChanged(StdAttr.LABEL_VISABILITY, val,null);
 		} else if (attr == LABEL_LOCATION_ATTR) {
 			Direction val = (Direction) value;
 			if (labelLocation.equals(val))

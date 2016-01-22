@@ -64,6 +64,7 @@ import com.cburch.logisim.data.AttributeDefaultProvider;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.instance.Instance;
+import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.std.wiring.Pin;
 import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.tools.Tool;
@@ -341,7 +342,7 @@ class XmlReader {
 			return ret;
 		}
 
-		private void toLogisimFile(Element elt) {
+		private void toLogisimFile(Element elt,Project proj) {
 			// determine the version producing this file
 			String versionString = elt.getAttribute("source");
 			if (versionString.equals("")) {
@@ -393,7 +394,7 @@ class XmlReader {
 					addError(Strings.get("circNameMissingError"), "C??");
 				}
 				CircuitData circData = new CircuitData(circElt, new Circuit(
-						name, file));
+						name, file,proj));
 				file.addCircuit(circData.circuit);
 				circData.knownComponents = loadKnownComponents(circElt);
 				for (Element appearElt : XmlIterator.forChildElements(circElt,
@@ -1049,7 +1050,7 @@ class XmlReader {
 		return builder.parse(is);
 	}
 
-	LogisimFile readLibrary(InputStream is) throws IOException, SAXException {
+	LogisimFile readLibrary(InputStream is,Project proj) throws IOException, SAXException {
 		Document doc = loadXmlFrom(is);
 		Element elt = doc.getDocumentElement();
 		elt = ensureLogisimCompatibility(elt);
@@ -1058,10 +1059,10 @@ class XmlReader {
 		LogisimFile file = new LogisimFile((Loader) loader);
 		ReadContext context = new ReadContext(file);
 
-		context.toLogisimFile(elt);
+		context.toLogisimFile(elt,proj);
 
 		if (file.getCircuitCount() == 0) {
-			file.addCircuit(new Circuit("main", file));
+			file.addCircuit(new Circuit("main", file,proj));
 		}
 		if (context.messages.size() > 0) {
 			StringBuilder all = new StringBuilder();

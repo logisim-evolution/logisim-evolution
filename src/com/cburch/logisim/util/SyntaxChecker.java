@@ -36,21 +36,21 @@ import javax.swing.JOptionPane;
 
 public class SyntaxChecker {
 
-	public static boolean isVariableNameAcceptable(String val) {
+	public static boolean isVariableNameAcceptable(String val, Boolean ShowDialog) {
 		if (val.length() == 0)
 			return true;
 		if (val.length() > 0) {
 			variableMatcher = variablePattern.matcher(val);
 			forbiddenMatcher = forbiddenPattern.matcher(val);
-			return (variableMatcher.matches() && !forbiddenMatcher.find());
+			boolean ret = variableMatcher.matches() && !forbiddenMatcher.find();
+			if (!ret&&ShowDialog)
+				JOptionPane.showMessageDialog(null,
+						Strings.get("variableNameNotAcceptable"));
+			return ret;
 		}
 		return false;
 	}
 
-	public static void showNonAcceptableNameMessage() {
-		JOptionPane.showMessageDialog(null,
-				Strings.get("variableNameNotAcceptable"));
-	}
 
 	private static Pattern variablePattern = Pattern
 			.compile("^([a-zA-Z]+\\w*)");

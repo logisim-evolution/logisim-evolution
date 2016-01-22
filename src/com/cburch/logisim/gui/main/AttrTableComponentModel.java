@@ -48,6 +48,7 @@ class AttrTableComponentModel extends AttributeSetTableModel {
 		this.proj = proj;
 		this.circ = circ;
 		this.comp = comp;
+		SetInstance(comp.getFactory());
 	}
 
 	public Circuit getCircuit() {

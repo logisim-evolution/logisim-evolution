@@ -42,6 +42,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedSet;
 
 import javax.swing.Icon;
 
@@ -60,15 +61,18 @@ import com.cburch.logisim.gui.main.Canvas;
 import com.cburch.logisim.gui.main.Selection;
 import com.cburch.logisim.gui.main.Selection.Event;
 import com.cburch.logisim.gui.main.SelectionActions;
+import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Action;
 import com.cburch.logisim.proj.Project;
+import com.cburch.logisim.std.gates.GateKeyboardModifier;
 import com.cburch.logisim.tools.key.KeyConfigurationEvent;
 import com.cburch.logisim.tools.key.KeyConfigurationResult;
 import com.cburch.logisim.tools.key.KeyConfigurator;
 import com.cburch.logisim.tools.move.MoveGesture;
 import com.cburch.logisim.tools.move.MoveRequestListener;
 import com.cburch.logisim.tools.move.MoveResult;
+import com.cburch.logisim.util.AutoLabel;
 import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.Icons;
 import com.cburch.logisim.util.StringGetter;
@@ -358,7 +362,28 @@ public class SelectTool extends Tool {
 		if (state == MOVING && e.getKeyCode() == KeyEvent.VK_SHIFT) {
 			handleMoveDrag(canvas, curDx, curDy, e.getModifiersEx());
 		} else {
-			switch (e.getKeyCode()) {
+			SortedSet<Component> comps = AutoLabel.Sort(canvas.getProject().getSelection().getComponents()); 
+			int KeybEvent = e.getKeyCode();
+			boolean KeyTaken=false;
+			for (Component comp : comps) {
+				SetAttributeAction act = new SetAttributeAction(
+						canvas.getCircuit(),
+						Strings.getter("changeComponentAttributesAction"));
+				KeyTaken |= GateKeyboardModifier.TookKeyboardStrokes(KeybEvent, comp , comp.getAttributeSet(), canvas,act,true);
+				if (!act.isEmpty())
+					canvas.getProject().doAction(act);
+			}
+			if (!KeyTaken) {
+				for (Component comp : comps) {
+					SetAttributeAction act = new SetAttributeAction(
+							canvas.getCircuit(),
+							Strings.getter("changeComponentAttributesAction"));
+					KeyTaken |= AutoLabel.LabelKeyboardHandler(KeybEvent, comp.getAttributeSet(), comp.getFactory().getDisplayName(), comp,canvas.getCircuit(),act,true);
+					if (!act.isEmpty())
+						canvas.getProject().doAction(act);
+				}
+			}
+			if (!KeyTaken) switch (KeybEvent) {
 			case KeyEvent.VK_BACK_SPACE:
 			case KeyEvent.VK_DELETE:
 				if (!canvas.getSelection().isEmpty()) {
@@ -520,6 +545,22 @@ public class SelectTool extends Tool {
 			}
 			setState(proj, IDLE);
 			proj.repaintCanvas();
+		}
+		if (e.getClickCount()>=2) {
+			Set<Component> comps = canvas.getProject().getSelection().getComponents();
+			if (comps.size()==1) {
+				for (Component comp : comps) {
+					if (comp.getAttributeSet().containsAttribute(StdAttr.LABEL)) {
+                        String OldLabel = comp.getAttributeSet().getValue(StdAttr.LABEL); 
+    					SetAttributeAction act = new SetAttributeAction(
+    							canvas.getCircuit(),
+    							Strings.getter("changeComponentAttributesAction"));
+                        AutoLabel.AskAndSetLabel(comp.getFactory().getDisplayName(),OldLabel,canvas.getCircuit(),comp,comp.getAttributeSet(),act,true);
+    					if (!act.isEmpty())
+    						canvas.getProject().doAction(act);
+					}
+				}
+			}
 		}
 	}
 

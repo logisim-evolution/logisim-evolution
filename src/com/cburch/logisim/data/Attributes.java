@@ -75,7 +75,7 @@ public class Attributes {
 
 		@Override
 		public java.awt.Component getCellEditor(Color value) {
-			Color init = value == null ? Color.BLACK : value;
+			Color init = value == null ? Color.WHITE : value;
 			return new ColorChooser(init);
 		}
 
@@ -407,6 +407,21 @@ public class Attributes {
 		public String parse(String value) {
 			return value;
 		}
+	}
+	
+	private static class HiddenAttribute extends Attribute<String> {
+		private HiddenAttribute() {
+			super();
+		}
+		
+		@Override
+		public String parse(String value) {
+			return value;
+		}
+	}
+	
+	public static Attribute<String> forHidden() {
+		return new HiddenAttribute();
 	}
 
 	public static Attribute<BitWidth> forBitWidth(String name) {

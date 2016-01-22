@@ -30,6 +30,7 @@
 
 package com.cburch.logisim.instance;
 
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 
@@ -59,6 +60,8 @@ public class InstanceTextField implements AttributeListener, TextFieldListener,
 	private TextField field;
 	private Attribute<String> labelAttr;
 	private Attribute<Font> fontAttr;
+	private boolean LabelIsVisable = true;
+	private Color fontColor;
 	private int fieldX;
 	private int fieldY;
 	private int halign;
@@ -69,11 +72,12 @@ public class InstanceTextField implements AttributeListener, TextFieldListener,
 		this.field = null;
 		this.labelAttr = null;
 		this.fontAttr = null;
+		fontColor = StdAttr.DEFAULT_LABEL_COLOR;
 	}
 
 	public void attributeListChanged(AttributeEvent e) {
 	}
-
+	
 	public void attributeValueChanged(AttributeEvent e) {
 		Attribute<?> attr = e.getAttribute();
 		if (attr == labelAttr) {
@@ -81,6 +85,10 @@ public class InstanceTextField implements AttributeListener, TextFieldListener,
 		} else if (attr == fontAttr) {
 			if (field != null)
 				field.setFont((Font) e.getValue());
+		} else if (attr == StdAttr.LABEL_COLOR) {
+			fontColor = (Color) e.getValue(); 
+		} else if (attr == StdAttr.LABEL_VISABILITY) {
+			LabelIsVisable = (Boolean) e.getValue();
 		}
 	}
 
@@ -92,15 +100,18 @@ public class InstanceTextField implements AttributeListener, TextFieldListener,
 	}
 
 	void draw(Component comp, ComponentDrawContext context) {
-		if (field != null) {
+		if (field != null&&LabelIsVisable) {
 			Graphics g = context.getGraphics().create();
+			Color currentColor = g.getColor();
+			g.setColor(fontColor);
 			field.draw(g);
+			g.setColor(currentColor);
 			g.dispose();
 		}
 	}
 
 	Bounds getBounds(Graphics g) {
-		return field == null ? Bounds.EMPTY_BOUNDS : field.getBounds(g);
+		return field == null || !LabelIsVisable ? Bounds.EMPTY_BOUNDS : field.getBounds(g);
 	}
 
 	public Action getCommitAction(Circuit circuit, String oldText,
@@ -160,6 +171,8 @@ public class InstanceTextField implements AttributeListener, TextFieldListener,
 		this.valign = valign;
 		boolean shouldReg = shouldRegister();
 		AttributeSet attrs = comp.getAttributeSet();
+		if (attrs.containsAttribute(StdAttr.LABEL_VISABILITY))
+			LabelIsVisable = attrs.getValue(StdAttr.LABEL_VISABILITY);
 		if (!wasReg && shouldReg)
 			attrs.addAttributeListener(this);
 		if (wasReg && !shouldReg)

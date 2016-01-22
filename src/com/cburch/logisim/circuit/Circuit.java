@@ -34,12 +34,15 @@ import java.awt.Graphics;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.WeakHashMap;
 
 import javax.swing.JOptionPane;
@@ -158,37 +161,42 @@ public class Circuit {
 			String oldLabel = attre.getOldValue() != null ? (String) attre.getOldValue() : "";
 			@SuppressWarnings("unchecked")
 			Attribute<String> lattr = (Attribute<String>) attre.getAttribute();
-			if (IsExistingLabel(newLabel,attre.getSource())) {
-				JOptionPane.showMessageDialog(null, "\""+newLabel+"\" : "+Strings.get("UsedLabelNameError"));
+			if (!IsCorrectLabel(newLabel,comps,attre.getSource(),true))
 				attre.getSource().setValue(lattr, oldLabel);
-			} else 
-			if (IsComponentName(newLabel)) {
-				JOptionPane.showMessageDialog(null, "\""+newLabel+"\" : "+Strings.get("ComponentLabelNameError"));
-				attre.getSource().setValue(lattr, oldLabel);
-			}
 		}
 	}
 	
-	private boolean IsComponentName(String Name) {
+	public static boolean IsCorrectLabel(String Name,
+			                             Set<Component> components,
+			                             AttributeSet me,
+			                             Boolean ShowDialog) {
+		return !(IsExistingLabel(Name,me,components,ShowDialog)||IsComponentName(Name,components,ShowDialog));
+	}
+	
+	private static boolean IsComponentName(String Name, Set<Component> comps, Boolean ShowDialog) {
 		if (Name.isEmpty())
 			return false;
 		for (Component comp : comps) {
-			if (comp.getFactory().getName().toUpperCase().equals(Name.toUpperCase()))
+			if (comp.getFactory().getName().toUpperCase().equals(Name.toUpperCase())) {
+				if (ShowDialog) JOptionPane.showMessageDialog(null, "\""+Name+"\" : "+Strings.get("ComponentLabelNameError"));
 				return true;
+			}
 		}
 		/* we do not have to check the wires as (1) Wire is a reserved keyword, and (2) they cannot have a label */
 		return false;
 	}
 	
-	private boolean IsExistingLabel(String Name, AttributeSet me) {
+	private static boolean IsExistingLabel(String Name, AttributeSet me, Set<Component> comps, Boolean ShowDialog) {
 		if (Name.isEmpty())
 			return false;
 		for (Component comp : comps) {
 			if (!comp.getAttributeSet().equals(me)) {
 				String Label = (comp.getAttributeSet().containsAttribute(StdAttr.LABEL)) ?
 						comp.getAttributeSet().getValue(StdAttr.LABEL) : "";
-				if (Label.toUpperCase().equals(Name.toUpperCase()))
+				if (Label.toUpperCase().equals(Name.toUpperCase())) {
+					if (ShowDialog) JOptionPane.showMessageDialog(null, "\""+Name+"\" : "+Strings.get("UsedLabelNameError"));
 					return true;
+				}
 			}
 		}
 		/* we do not have to check the wires as (1) Wire is a reserved keyword, and (2) they cannot have a label */
@@ -222,10 +230,11 @@ public class Circuit {
 	private WeakHashMap<Component, Circuit> circuitsUsingThis;
 	private Netlist MyNetList;
 	private boolean Annotated;
+	private Project proj;
 
 	private LogisimFile logiFile;
 
-	public Circuit(String name, LogisimFile file) {
+	public Circuit(String name, LogisimFile file, Project proj) {
 		staticAttrs = CircuitAttributes.createBaseAttrs(this, name);
 		appearance = new CircuitAppearance(this);
 		subcircuitFactory = new SubcircuitFactory(this);
@@ -235,6 +244,15 @@ public class Circuit {
 		Annotated = false;
 		logiFile = file;
 		staticAttrs.setValue(CircuitAttributes.NAMED_CIRCUIT_BOX, AppPreferences.NAMED_CIRCUIT_BOXES.getBoolean());
+		this.proj = proj;
+	}
+	
+	public void SetProject(Project proj) {
+		this.proj = proj;
+	}
+	
+	public Graphics GetGraphics() {
+		return (proj==null) ? null : proj.getFrame().getGraphics();
 	}
 
 	//
@@ -249,6 +267,23 @@ public class Circuit {
 			appearance.recomputeDefaultAppearance();
 		}
 	}
+	
+	private class AnnotateComparator implements Comparator<Component> {
+
+		@Override
+		public int compare(Component o1, Component o2) {
+			if (o1==o2)
+				return 0;
+			Location l1 = o1.getLocation();
+			Location l2 = o2.getLocation();
+			if (l2.getY() != l1.getY())
+				return l1.getY()-l2.getY();
+			if (l2.getX() != l1.getX())
+			    return l1.getX()-l2.getX();
+			return -1;
+		}
+		
+	}
 
 	public void Annotate(boolean ClearExistingLabels, FPGAReport reporter) {
 		ArrayList<Integer> CompCount = new ArrayList<Integer>();
@@ -259,20 +294,21 @@ public class Circuit {
 			reporter.AddInfo("Nothing to do !");
 			return;
 		}
-		/* in case of label cleaning, we clear first all old labels */
-		if (ClearExistingLabels) {
-			for (Component comp : this.getNonWires()) {
-				if (!comp.getFactory().RequiresNonZeroLabel())
-					continue;
-				reporter.AddInfo("Cleared " + this.getName() + "/"
-						+ comp.getAttributeSet().getValue(StdAttr.LABEL));
-				comp.getAttributeSet().setValue(StdAttr.LABEL, "");
+		SortedSet<Component> comps = new TreeSet<Component>(new AnnotateComparator());
+		for (Component comp:getNonWires()) {
+			if (comp.getFactory().RequiresNonZeroLabel()) {
+				if (ClearExistingLabels) {
+					/* in case of label cleaning, we clear first the old label */
+					reporter.AddInfo("Cleared " + this.getName() + "/"
+							+ comp.getAttributeSet().getValue(StdAttr.LABEL));
+					comp.getAttributeSet().setValue(StdAttr.LABEL, "");
+				}
+				if (comp.getAttributeSet().getValue(StdAttr.LABEL).isEmpty())
+					comps.add(comp);
 			}
 		}
-		for (Component comp : this.getNonWires()) {
-			/* Ignore all components that do not require a label */
-			if (!comp.getFactory().RequiresNonZeroLabel())
-				continue;
+		/* now comps has only the elements to be labeled */
+		for (Component comp : comps) {
 			/*
 			 * Add the component to the set of components if it is not already
 			 * added
@@ -316,15 +352,7 @@ public class Circuit {
 			}
 		}
 		/* Here the annotation process takes place */
-		for (Component comp : this.getNonWires()) {
-			/* Ignore all components that do not require a label */
-			if (!comp.getFactory().RequiresNonZeroLabel())
-				continue;
-			/* Ignore all components that already have a label */
-			String Label = CorrectLabel.getCorrectLabel(comp.getAttributeSet()
-					.getValue(StdAttr.LABEL).toString());
-			if (!Label.isEmpty())
-				continue;
+		for (Component comp : comps) {
 			String CorrectComponentName;
 			/* Pins are treated specially */
 			if (comp.getFactory() instanceof Pin) {

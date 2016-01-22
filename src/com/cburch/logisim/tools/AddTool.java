@@ -57,13 +57,16 @@ import com.cburch.logisim.data.Location;
 import com.cburch.logisim.gui.main.Canvas;
 import com.cburch.logisim.gui.main.SelectionActions;
 import com.cburch.logisim.gui.main.ToolAttributeAction;
+import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Action;
 import com.cburch.logisim.proj.Dependencies;
 import com.cburch.logisim.proj.Project;
+import com.cburch.logisim.std.gates.GateKeyboardModifier;
 import com.cburch.logisim.tools.key.KeyConfigurationEvent;
 import com.cburch.logisim.tools.key.KeyConfigurationResult;
 import com.cburch.logisim.tools.key.KeyConfigurator;
+import com.cburch.logisim.util.AutoLabel;
 import com.cburch.logisim.util.StringUtil;
 
 public class AddTool extends Tool {
@@ -312,7 +315,13 @@ public class AddTool extends Tool {
 		processKeyEvent(canvas, event, KeyConfigurationEvent.KEY_PRESSED);
 
 		if (!event.isConsumed() && event.getModifiersEx() == 0) {
-			switch (event.getKeyCode()) {
+			int KeybEvent = event.getKeyCode();
+			String Component = (getFactory()==null) ? "Unknown" : getFactory().getDisplayName();
+			if (!GateKeyboardModifier.TookKeyboardStrokes(KeybEvent, null,attrs, canvas,null,false))
+				if (AutoLabel.LabelKeyboardHandler(KeybEvent, getAttributeSet(), Component, null, canvas.getCircuit(),null,false)) {
+					canvas.repaint();
+				} else
+			switch (KeybEvent) {
 			case KeyEvent.VK_UP:
 				setFacing(canvas, Direction.NORTH);
 				break;
@@ -325,6 +334,34 @@ public class AddTool extends Tool {
 			case KeyEvent.VK_RIGHT:
 				setFacing(canvas, Direction.EAST);
 				break;
+			case KeyEvent.VK_R:
+				Direction current = getFacing();
+				if (current == Direction.NORTH)
+					setFacing(canvas, Direction.EAST);
+				else
+				if (current == Direction.EAST)
+					setFacing(canvas, Direction.SOUTH);
+				else
+				if (current == Direction.SOUTH)
+					setFacing(canvas, Direction.WEST);
+				else
+				   setFacing(canvas, Direction.NORTH);
+				break;
+			case KeyEvent.VK_ESCAPE:
+				Project proj = canvas.getProject();
+				Library base = proj.getLogisimFile().getLibrary("Base");
+				Tool next = (base==null) ? null : base.getTool("Edit Tool");
+				if (next != null) {
+					proj.setTool(next);
+					Action act = SelectionActions.dropAll(canvas.getSelection());
+					if (act != null) {
+						proj.doAction(act);
+					}
+				}
+				/* Prevent duplicated labels */
+				if (attrs.containsAttribute(StdAttr.LABEL))
+					attrs.setValue(StdAttr.LABEL, "");
+				break;
 			case KeyEvent.VK_BACK_SPACE:
 				if (lastAddition != null
 						&& canvas.getProject().getLastAction() == lastAddition) {
@@ -334,7 +371,7 @@ public class AddTool extends Tool {
 			}
 		}
 	}
-
+	
 	@Override
 	public void keyReleased(Canvas canvas, KeyEvent event) {
 		processKeyEvent(canvas, event, KeyConfigurationEvent.KEY_RELEASED);
@@ -445,6 +482,9 @@ public class AddTool extends Tool {
 				canvas.getProject().doAction(action);
 				lastAddition = action;
 				added = c;
+				/* Prevent duplicated labels */
+				if (attrs.containsAttribute(StdAttr.LABEL))
+					attrs.setValue(StdAttr.LABEL, "");
 			} catch (CircuitException ex) {
 				JOptionPane.showMessageDialog(canvas.getProject().getFrame(),
 						ex.getMessage());
@@ -457,6 +497,9 @@ public class AddTool extends Tool {
 		Project proj = canvas.getProject();
 		Tool next = determineNext(proj);
 		if (next != null) {
+			/* Prevent duplicated labels */
+			if (attrs.containsAttribute(StdAttr.LABEL))
+				attrs.setValue(StdAttr.LABEL, "");
 			proj.setTool(next);
 			Action act = SelectionActions.dropAll(canvas.getSelection());
 			if (act != null) {
@@ -537,6 +580,20 @@ public class AddTool extends Tool {
 			Action act = ToolAttributeAction.create(this, attr, facing);
 			canvas.getProject().doAction(act);
 		}
+	}
+	
+	private Direction getFacing() {
+		ComponentFactory source = getFactory();
+		if (source == null)
+			return Direction.NORTH;
+		AttributeSet base = getBaseAttributes();
+		Object feature = source.getFeature(ComponentFactory.FACING_ATTRIBUTE_KEY, base);
+		@SuppressWarnings("unchecked")
+		Attribute<Direction> attr = (Attribute<Direction>) feature;
+		if (attr != null)
+			return base.getValue(attr);
+		else
+			return Direction.NORTH;
 	}
 
 	private void setState(Canvas canvas, int value) {

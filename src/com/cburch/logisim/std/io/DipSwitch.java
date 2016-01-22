@@ -36,6 +36,7 @@ import java.util.ArrayList;
 
 import com.bfh.logisim.fpgaboardeditor.FPGAIOInformationContainer;
 import com.bfh.logisim.hdlgenerator.IOComponentInformationContainer;
+import com.cburch.draw.shapes.DrawAttr;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Attributes;
@@ -124,9 +125,9 @@ public class DipSwitch extends InstanceFactory {
 		super("DipSwitch", Strings.getter("DipSwitchComponent"));
 		int dipSize = 8;
 		setAttributes(new Attribute[] { StdAttr.LABEL, Io.ATTR_LABEL_LOC,
-				StdAttr.LABEL_FONT, Io.ATTR_LABEL_COLOR, ATTR_SIZE },
+				StdAttr.LABEL_FONT, StdAttr.LABEL_COLOR, StdAttr.LABEL_VISABILITY, ATTR_SIZE },
 				new Object[] { "", Direction.EAST, StdAttr.DEFAULT_LABEL_FONT,
-						Color.BLACK, dipSize });
+						StdAttr.DEFAULT_LABEL_COLOR, false, dipSize });
 		setFacingAttribute(StdAttr.FACING);
 		setIconName("dipswitch.gif");
 		setInstancePoker(Poker.class);
@@ -238,7 +239,7 @@ public class DipSwitch extends InstanceFactory {
 		g.fillRect(bds.getX(), bds.getY(), bds.getWidth(), bds.getHeight());
 		GraphicsUtil.switchToWidth(g, 1);
 		g.setColor(Color.white);
-		g.setFont(StdAttr.DEFAULT_LABEL_FONT);
+		g.setFont(DrawAttr.DEFAULT_FONT);
 		int offset = 0;
 		for (int i = 0; i < painter.getAttributeValue(ATTR_SIZE); i++) {
 			if (i == 9) {
@@ -256,7 +257,6 @@ public class DipSwitch extends InstanceFactory {
 			int ypos = (state.BitSet(i)) ? bds.getY() + 16 : bds.getY() + 25;
 			g.fillRect(bds.getX() + 7 + (i * 10), ypos, 4, 9);
 		}
-		g.setColor(painter.getAttributeValue(Io.ATTR_LABEL_COLOR));
 		painter.drawLabel();
 		painter.drawPorts();
 

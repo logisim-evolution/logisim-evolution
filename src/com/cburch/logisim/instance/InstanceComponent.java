@@ -124,7 +124,7 @@ public class InstanceComponent implements Component, AttributeListener,
 	//
 	public void attributeListChanged(AttributeEvent e) {
 	}
-
+	
 	public void attributeValueChanged(AttributeEvent e) {
 		Attribute<?> attr = e.getAttribute();
 		if (e.getAttribute().equals(StdAttr.LABEL)) {
@@ -133,22 +133,15 @@ public class InstanceComponent implements Component, AttributeListener,
 			String value = (String) e.getSource().getValue(e.getAttribute());
 			String Oldvalue = e.getOldValue() != null ? (String) e.getOldValue() : "";
 			if (!Oldvalue.equals(value)) {
-				if (!SyntaxChecker.isVariableNameAcceptable(value)) {
-					SyntaxChecker.showNonAcceptableNameMessage();
-					/* Indicate to the listener that I will rename the label with the same name */
-					fireLabelChanged(new AttributeEvent(null,null,null,Oldvalue));
+				if (!SyntaxChecker.isVariableNameAcceptable(value,true)) {
 					e.getSource().setValue(lattr, Oldvalue);
 				} else
 				if (getFactory().getName().toUpperCase().equals(value.toUpperCase())) {
 					JOptionPane.showMessageDialog(null, Strings.get("MatchedLabelNameError"));
-					/* Indicate to the listener that I will rename the label with the same name */
-					fireLabelChanged(new AttributeEvent(null,null,null,Oldvalue));
 					e.getSource().setValue(lattr, Oldvalue);
 				} else 
-				if (CorrectLabel.IsKeyword(value)) {
+				if (CorrectLabel.IsKeyword(value,false)) {
 					JOptionPane.showMessageDialog(null, "\""+value+"\": "+Strings.get("KeywordNameError"));
-					/* Indicate to the listener that I will rename the label with the same name */
-					fireLabelChanged(new AttributeEvent(null,null,null,Oldvalue));
 					e.getSource().setValue(lattr, Oldvalue);
 				} else {
 					fireLabelChanged(e);

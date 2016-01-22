@@ -180,6 +180,7 @@ public class Selection extends SelectionBase {
 	public void draw(ComponentDrawContext context, Set<Component> hidden) {
 		Graphics g = context.getGraphics();
 
+
 		for (Component c : lifted) {
 			if (!hidden.contains(c)) {
 				Location loc = c.getLocation();

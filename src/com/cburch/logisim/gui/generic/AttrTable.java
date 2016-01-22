@@ -193,7 +193,7 @@ public class AttrTable extends JPanel implements LocaleListener {
 								Strings.get("attributeChangeInvalidTitle"),
 								JOptionPane.WARNING_MESSAGE);
 					}
-					editor = new JLabel(row.getValue());
+					editor = null; //new JLabel(row.getValue());
 				} else if (editor instanceof JInputComponent) {
 					JInputComponent input = (JInputComponent) editor;
 					MyDialog dlog;
@@ -212,7 +212,7 @@ public class AttrTable extends JPanel implements LocaleListener {
 								Strings.get("attributeChangeInvalidTitle"),
 								JOptionPane.WARNING_MESSAGE);
 					}
-					editor = new JLabel(row.getValue());
+					editor = null; //new JLabel(row.getValue());
 				} else {
 					editor.addFocusListener(this);
 				}
@@ -498,10 +498,6 @@ public class AttrTable extends JPanel implements LocaleListener {
 		Color bgColor = new Color(240, 240, 240);
 		setBackground(bgColor);
 		table.setBackground(bgColor);
-//		Object renderer = table.getDefaultRenderer(String.class);
-//		if (renderer instanceof JComponent) {
-//			((JComponent) renderer).setBackground(Color.WHITE);
-//		}
 		table.setDefaultRenderer(String.class, new HDLColorRenderer());
 
 		tabPane = new JTabbedPane();

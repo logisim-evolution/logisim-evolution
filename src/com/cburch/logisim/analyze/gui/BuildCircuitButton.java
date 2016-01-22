@@ -243,7 +243,7 @@ class BuildCircuitButton extends JButton {
 			dest.doAction(xn.toAction(Strings.getter("replaceCircuitAction")));
 		} else {
 			// add the circuit
-			Circuit circuit = new Circuit(name, dest.getLogisimFile());
+			Circuit circuit = new Circuit(name, dest.getLogisimFile(),dest);
 			CircuitMutation xn = CircuitBuilder.build(circuit, model,
 					twoInputs, useNands);
 			xn.execute();

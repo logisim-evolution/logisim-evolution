@@ -40,7 +40,6 @@ import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.instance.StdAttr;
-import com.cburch.logisim.util.SyntaxChecker;
 
 class ProbeAttributes extends AbstractAttributeSet {
 	public static ProbeAttributes instance = new ProbeAttributes();
@@ -85,6 +84,7 @@ class ProbeAttributes extends AbstractAttributeSet {
 		return null;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public <V> void setValue(Attribute<V> attr, V value) {
 		V Oldvalue = null;
