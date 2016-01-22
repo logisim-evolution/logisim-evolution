@@ -65,7 +65,7 @@ class RomAttributes extends AbstractAttributeSet {
 
 	private static List<Attribute<?>> ATTRIBUTES = Arrays
 			.asList(new Attribute<?>[] { Mem.ADDR_ATTR, Mem.DATA_ATTR,
-					Rom.CONTENTS_ATTR, StdAttr.LABEL, StdAttr.LABEL_FONT });
+					Rom.CONTENTS_ATTR, StdAttr.LABEL, StdAttr.LABEL_FONT, StdAttr.LABEL_VISABILITY });
 
 	private static WeakHashMap<MemContents, RomContentsListener> listenerRegistry = new WeakHashMap<MemContents, RomContentsListener>();
 
@@ -75,6 +75,7 @@ class RomAttributes extends AbstractAttributeSet {
 	private MemContents contents;
 	private String Label = "";
 	private Font LabelFont = StdAttr.DEFAULT_LABEL_FONT;
+	private Boolean LabelVisable = false;
 
 	RomAttributes() {
 		contents = MemContents.create(addrBits.getWidth(), dataBits.getWidth());
@@ -110,6 +111,9 @@ class RomAttributes extends AbstractAttributeSet {
 		}
 		if (attr == StdAttr.LABEL_FONT) {
 			return (V) LabelFont;
+		}
+		if (attr == StdAttr.LABEL_VISABILITY) {
+			return (V) LabelVisable;
 		}
 		return null;
 	}
@@ -153,6 +157,12 @@ class RomAttributes extends AbstractAttributeSet {
 			if (LabelFont.equals(NewFont))
 				return;
 			LabelFont = NewFont;
+			fireAttributeValueChanged(attr, value,null);
+		} else if (attr == StdAttr.LABEL_VISABILITY) {
+			Boolean newVis = (Boolean) value;
+			if (LabelVisable.equals(newVis))
+				return;
+			LabelVisable = newVis;
 			fireAttributeValueChanged(attr, value,null);
 		}
 	}

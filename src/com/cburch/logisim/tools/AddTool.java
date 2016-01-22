@@ -39,7 +39,6 @@ import java.awt.event.MouseEvent;
 import javax.swing.Icon;
 import javax.swing.JOptionPane;
 
-import com.bfh.logisim.designrulecheck.CorrectLabel;
 import com.cburch.logisim.LogisimVersion;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitException;
@@ -67,8 +66,8 @@ import com.cburch.logisim.std.gates.GateKeyboardModifier;
 import com.cburch.logisim.tools.key.KeyConfigurationEvent;
 import com.cburch.logisim.tools.key.KeyConfigurationResult;
 import com.cburch.logisim.tools.key.KeyConfigurator;
+import com.cburch.logisim.util.AutoLabel;
 import com.cburch.logisim.util.StringUtil;
-import com.cburch.logisim.util.SyntaxChecker;
 
 public class AddTool extends Tool {
 	private class MyAttributeListener implements AttributeListener {
@@ -317,7 +316,11 @@ public class AddTool extends Tool {
 
 		if (!event.isConsumed() && event.getModifiersEx() == 0) {
 			int KeybEvent = event.getKeyCode();
+			String Component = (getFactory()==null) ? "Unknown" : getFactory().getDisplayName();
 			if (!GateKeyboardModifier.TookKeyboardStrokes(KeybEvent, null,attrs, canvas,null,false))
+				if (AutoLabel.LabelKeyboardHandler(KeybEvent, getAttributeSet(), Component, null, canvas.getCircuit(),null,false)) {
+					canvas.repaint();
+				} else
 			switch (KeybEvent) {
 			case KeyEvent.VK_UP:
 				setFacing(canvas, Direction.NORTH);
@@ -359,13 +362,6 @@ public class AddTool extends Tool {
 				if (attrs.containsAttribute(StdAttr.LABEL))
 					attrs.setValue(StdAttr.LABEL, "");
 				break;
-			case KeyEvent.VK_L:
-				if (attrs.containsAttribute(StdAttr.LABEL)) {
-					String OldLabel = attrs.getValue(StdAttr.LABEL);
-					String Component = (getFactory()==null) ? "Unknown" : getFactory().getDisplayName();
-					AskLabel(Component,OldLabel,canvas,attrs);
-				}
-				break;
 			case KeyEvent.VK_BACK_SPACE:
 				if (lastAddition != null
 						&& canvas.getProject().getLastAction() == lastAddition) {
@@ -376,31 +372,6 @@ public class AddTool extends Tool {
 		}
 	}
 	
-	public static void AskLabel(String ComponentName,
-			                    String OldLabel,
-			                    Canvas canvas,
-			                    AttributeSet attrs) {
-		boolean correct = false;
-		while (!correct) {
-			String NewLabel = (String) JOptionPane.showInputDialog(null, 
-					Strings.get("editLabelQuestion")+" "+ComponentName,
-					Strings.get("editLabelDialog"),
-					JOptionPane.QUESTION_MESSAGE,null,null,
-					OldLabel);
-			if (NewLabel!=null) {
-				if (Circuit.IsCorrectLabel(NewLabel, canvas.getCircuit().getNonWires(), attrs)&&
-					SyntaxChecker.isVariableNameAcceptable(NewLabel)&&
-					!CorrectLabel.IsKeyword(NewLabel)) {
-					attrs.setValue(StdAttr.LABEL, NewLabel);
-					correct = true;
-					canvas.repaint();
-				}
-			}
-			else
-				correct = true;
-		}
-	}
-
 	@Override
 	public void keyReleased(Canvas canvas, KeyEvent event) {
 		processKeyEvent(canvas, event, KeyConfigurationEvent.KEY_RELEASED);

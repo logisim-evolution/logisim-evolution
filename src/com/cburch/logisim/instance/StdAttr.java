@@ -68,9 +68,11 @@ public interface StdAttr {
 			"labelfont", Strings.getter("stdLabelFontAttr"));
 	public static final Font DEFAULT_LABEL_FONT = new Font("SansSerif",
 			Font.BOLD, 16);
-	static final Attribute<Color> LABEL_COLOR = Attributes.forColor(
+	public static final Attribute<Color> LABEL_COLOR = Attributes.forColor(
 			"labelcolor", Strings.getter("ioLabelColorAttr"));
 	public static final Color DEFAULT_LABEL_COLOR = Color.BLUE;
+	public static final Attribute<Boolean> LABEL_VISABILITY = Attributes.forBoolean(
+			"labelvisable", Strings.getter("stdLabelVisability")); 
 	
 	public static final Attribute<String> DUMMY = Attributes.forHidden();
 }

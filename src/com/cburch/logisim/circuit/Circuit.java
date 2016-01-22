@@ -161,23 +161,24 @@ public class Circuit {
 			String oldLabel = attre.getOldValue() != null ? (String) attre.getOldValue() : "";
 			@SuppressWarnings("unchecked")
 			Attribute<String> lattr = (Attribute<String>) attre.getAttribute();
-			if (!IsCorrectLabel(newLabel,comps,attre.getSource()))
+			if (!IsCorrectLabel(newLabel,comps,attre.getSource(),true))
 				attre.getSource().setValue(lattr, oldLabel);
 		}
 	}
 	
 	public static boolean IsCorrectLabel(String Name,
 			                             Set<Component> components,
-			                             AttributeSet me) {
-		return !(IsExistingLabel(Name,me,components)||IsComponentName(Name,components));
+			                             AttributeSet me,
+			                             Boolean ShowDialog) {
+		return !(IsExistingLabel(Name,me,components,ShowDialog)||IsComponentName(Name,components,ShowDialog));
 	}
 	
-	private static boolean IsComponentName(String Name, Set<Component> comps) {
+	private static boolean IsComponentName(String Name, Set<Component> comps, Boolean ShowDialog) {
 		if (Name.isEmpty())
 			return false;
 		for (Component comp : comps) {
 			if (comp.getFactory().getName().toUpperCase().equals(Name.toUpperCase())) {
-				JOptionPane.showMessageDialog(null, "\""+Name+"\" : "+Strings.get("ComponentLabelNameError"));
+				if (ShowDialog) JOptionPane.showMessageDialog(null, "\""+Name+"\" : "+Strings.get("ComponentLabelNameError"));
 				return true;
 			}
 		}
@@ -185,7 +186,7 @@ public class Circuit {
 		return false;
 	}
 	
-	private static boolean IsExistingLabel(String Name, AttributeSet me, Set<Component> comps) {
+	private static boolean IsExistingLabel(String Name, AttributeSet me, Set<Component> comps, Boolean ShowDialog) {
 		if (Name.isEmpty())
 			return false;
 		for (Component comp : comps) {
@@ -193,7 +194,7 @@ public class Circuit {
 				String Label = (comp.getAttributeSet().containsAttribute(StdAttr.LABEL)) ?
 						comp.getAttributeSet().getValue(StdAttr.LABEL) : "";
 				if (Label.toUpperCase().equals(Name.toUpperCase())) {
-					JOptionPane.showMessageDialog(null, "\""+Name+"\" : "+Strings.get("UsedLabelNameError"));
+					if (ShowDialog) JOptionPane.showMessageDialog(null, "\""+Name+"\" : "+Strings.get("UsedLabelNameError"));
 					return true;
 				}
 			}
@@ -271,11 +272,15 @@ public class Circuit {
 
 		@Override
 		public int compare(Component o1, Component o2) {
+			if (o1==o2)
+				return 0;
 			Location l1 = o1.getLocation();
 			Location l2 = o2.getLocation();
 			if (l2.getY() != l1.getY())
 				return l1.getY()-l2.getY();
-			return l1.getX()-l2.getX();
+			if (l2.getX() != l1.getX())
+			    return l1.getX()-l2.getX();
+			return -1;
 		}
 		
 	}

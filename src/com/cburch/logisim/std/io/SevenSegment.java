@@ -133,9 +133,9 @@ public class SevenSegment extends InstanceFactory {
 		super("7-Segment Display", Strings.getter("sevenSegmentComponent"));
 		setAttributes(new Attribute[] { Io.ATTR_ON_COLOR, Io.ATTR_OFF_COLOR,
 				Io.ATTR_BACKGROUND, Io.ATTR_ACTIVE, StdAttr.LABEL,
-				Io.ATTR_LABEL_LOC, StdAttr.LABEL_FONT }, new Object[] {
+				Io.ATTR_LABEL_LOC, StdAttr.LABEL_FONT, StdAttr.LABEL_VISABILITY }, new Object[] {
 				new Color(240, 0, 0), DEFAULT_OFF, Io.DEFAULT_BACKGROUND,
-				Boolean.TRUE, "", Direction.EAST, StdAttr.DEFAULT_LABEL_FONT });
+				Boolean.TRUE, "", Direction.EAST, StdAttr.DEFAULT_LABEL_FONT, false });
 		setOffsetBounds(Bounds.create(-5, 0, 40, 60));
 		setIconName("7seg.gif");
 		Port[] ps = new Port[8];

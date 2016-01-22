@@ -125,9 +125,9 @@ public class DipSwitch extends InstanceFactory {
 		super("DipSwitch", Strings.getter("DipSwitchComponent"));
 		int dipSize = 8;
 		setAttributes(new Attribute[] { StdAttr.LABEL, Io.ATTR_LABEL_LOC,
-				StdAttr.LABEL_FONT, StdAttr.LABEL_COLOR, ATTR_SIZE },
+				StdAttr.LABEL_FONT, StdAttr.LABEL_COLOR, StdAttr.LABEL_VISABILITY, ATTR_SIZE },
 				new Object[] { "", Direction.EAST, StdAttr.DEFAULT_LABEL_FONT,
-						StdAttr.DEFAULT_LABEL_COLOR, dipSize });
+						StdAttr.DEFAULT_LABEL_COLOR, false, dipSize });
 		setFacingAttribute(StdAttr.FACING);
 		setIconName("dipswitch.gif");
 		setInstancePoker(Poker.class);
