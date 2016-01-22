@@ -34,12 +34,15 @@ import java.awt.Graphics;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.WeakHashMap;
 
 import javax.swing.JOptionPane;
@@ -263,6 +266,19 @@ public class Circuit {
 			appearance.recomputeDefaultAppearance();
 		}
 	}
+	
+	private class MyComparator implements Comparator<Component> {
+
+		@Override
+		public int compare(Component o1, Component o2) {
+			Location l1 = o1.getLocation();
+			Location l2 = o2.getLocation();
+			if (l2.getY() != l1.getY())
+				return l1.getY()-l2.getY();
+			return l1.getX()-l2.getX();
+		}
+		
+	}
 
 	public void Annotate(boolean ClearExistingLabels, FPGAReport reporter) {
 		ArrayList<Integer> CompCount = new ArrayList<Integer>();
@@ -273,9 +289,11 @@ public class Circuit {
 			reporter.AddInfo("Nothing to do !");
 			return;
 		}
+		SortedSet<Component> comps = new TreeSet<Component>(new MyComparator());
+		comps.addAll(this.getNonWires());
 		/* in case of label cleaning, we clear first all old labels */
 		if (ClearExistingLabels) {
-			for (Component comp : this.getNonWires()) {
+			for (Component comp : comps) {
 				if (!comp.getFactory().RequiresNonZeroLabel())
 					continue;
 				reporter.AddInfo("Cleared " + this.getName() + "/"
@@ -283,7 +301,7 @@ public class Circuit {
 				comp.getAttributeSet().setValue(StdAttr.LABEL, "");
 			}
 		}
-		for (Component comp : this.getNonWires()) {
+		for (Component comp : comps) {
 			/* Ignore all components that do not require a label */
 			if (!comp.getFactory().RequiresNonZeroLabel())
 				continue;
@@ -330,7 +348,7 @@ public class Circuit {
 			}
 		}
 		/* Here the annotation process takes place */
-		for (Component comp : this.getNonWires()) {
+		for (Component comp : comps) {
 			/* Ignore all components that do not require a label */
 			if (!comp.getFactory().RequiresNonZeroLabel())
 				continue;
