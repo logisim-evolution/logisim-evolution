@@ -179,6 +179,7 @@ public class AddTool extends Tool {
 		ComponentFactory source = getFactory();
 		if (source == null)
 			return;
+		/* take care of coloring the components differently that require a label */
 		if (state == SHOW_GHOST) {
 			source.drawGhost(context, Color.GRAY, x, y, getBaseAttributes());
 		} else if (state == SHOW_ADD) {
@@ -352,10 +353,6 @@ public class AddTool extends Tool {
 				Project proj = canvas.getProject();
 				Library base = proj.getLogisimFile().getLibrary("Base");
 				Tool next = (base==null) ? null : base.getTool("Edit Tool");
-				/* Prevent duplicated labels */
-				if (attrs.containsAttribute(StdAttr.LABEL))
-					attrs.setValue(StdAttr.LABEL, "");
-				AutoLabler.Stop();
 				if (next != null) {
 					proj.setTool(next);
 					Action act = SelectionActions.dropAll(canvas.getSelection());
@@ -460,6 +457,13 @@ public class AddTool extends Tool {
 
 			Location loc = Location.create(e.getX(), e.getY());
 			AttributeSet attrsCopy = (AttributeSet) attrs.clone();
+			attrsCopy.setValue(StdAttr.LABEL, AutoLabler.GetCurrent(canvas.getCircuit()));
+			if (AutoLabler.IsActive(canvas.getCircuit())) {
+				if (AutoLabler.hasNext(canvas.getCircuit()))
+					AutoLabler.GetNext(canvas.getCircuit());
+				else
+					AutoLabler.Stop(canvas.getCircuit());
+			} else AutoLabler.SetLabel("", canvas.getCircuit());
 			ComponentFactory source = getFactory();
 			if (source == null)
 				return;
@@ -484,13 +488,7 @@ public class AddTool extends Tool {
 				canvas.getProject().doAction(action);
 				lastAddition = action;
 				added = c;
-				/* Prevent duplicated labels */
-				if (attrs.containsAttribute(StdAttr.LABEL)) {
-					if (AutoLabler.hasNext())
-						attrs.setValue(StdAttr.LABEL, AutoLabler.GetNext());
-					else
-						attrs.setValue(StdAttr.LABEL, "");
-				}
+				canvas.repaint();
 			} catch (CircuitException ex) {
 				JOptionPane.showMessageDialog(canvas.getProject().getFrame(),
 						ex.getMessage());
@@ -503,10 +501,6 @@ public class AddTool extends Tool {
 		Project proj = canvas.getProject();
 		Tool next = determineNext(proj);
 		if (next != null) {
-			/* Prevent duplicated labels */
-			if (attrs.containsAttribute(StdAttr.LABEL))
-				attrs.setValue(StdAttr.LABEL, "");
-			AutoLabler.Stop();
 			proj.setTool(next);
 			Action act = SelectionActions.dropAll(canvas.getSelection());
 			if (act != null) {

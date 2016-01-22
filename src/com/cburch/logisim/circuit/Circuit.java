@@ -314,7 +314,22 @@ public class Circuit {
 		}
 		SortedSet<Component> comps = new TreeSet<Component>(new AnnotateComparator());
 		HashMap<String,AutoLabel> lablers = new HashMap<String,AutoLabel>();
+		Set<String> LabelNames = new HashSet<String>();
 		for (Component comp:getNonWires()) {
+			/* we are directly going to remove duplicated labels */
+			AttributeSet attrs = comp.getAttributeSet();
+			if (attrs.containsAttribute(StdAttr.LABEL)) {
+				String label = attrs.getValue(StdAttr.LABEL);
+				if (!label.isEmpty()) {
+					if (LabelNames.contains(label.toUpperCase())) {
+						attrs.setValue(StdAttr.LABEL, "");
+						reporter.AddSevereWarning("Removed duplicated label "+this.getName()+"/"+label);
+					} else {
+						LabelNames.add(label.toUpperCase());
+					}
+				}
+			}
+			/* now we only process those that require a label */
 			if (comp.getFactory().RequiresNonZeroLabel()) {
 				if (ClearExistingLabels) {
 					/* in case of label cleaning, we clear first the old label */
@@ -340,12 +355,12 @@ public class Circuit {
 		for (Component comp : comps) {
 			String ComponentName = GetAnnotationName(comp);
 			if (!lablers.containsKey(ComponentName)||
-				!lablers.get(ComponentName).hasNext()) {
+				!lablers.get(ComponentName).hasNext(this)) {
 				/* This should never happen! */
 				reporter.AddFatalError("Annotate internal Error: Either there exists duplicate labels or the label syntax is incorrect!\nPlease try annotation on labeled components also\n");
 				return;
 			} else {
-				String NewLabel = lablers.get(ComponentName).GetNext();
+				String NewLabel = lablers.get(ComponentName).GetNext(this);
 				comp.getAttributeSet().setValue(StdAttr.LABEL, NewLabel);
 				reporter.AddInfo("Labeled " + this.getName() + "/" + NewLabel);
 			}

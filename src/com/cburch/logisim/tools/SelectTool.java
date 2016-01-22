@@ -556,7 +556,7 @@ public class SelectTool extends Tool {
     					SetAttributeAction act = new SetAttributeAction(
     							canvas.getCircuit(),
     							Strings.getter("changeComponentAttributesAction"));
-                        AutoLabel.AskAndSetLabel(comp.getFactory().getDisplayName(),OldLabel,canvas.getCircuit(),comp,comp.getAttributeSet(),act,true);
+    					AutoLabler.AskAndSetLabel(comp.getFactory().getDisplayName(),OldLabel,canvas.getCircuit(),comp,comp.getAttributeSet(),act,true);
     					if (!act.isEmpty())
     						canvas.getProject().doAction(act);
 					}

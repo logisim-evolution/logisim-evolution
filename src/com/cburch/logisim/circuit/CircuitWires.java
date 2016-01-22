@@ -526,9 +526,11 @@ class CircuitWires {
 						}
 						int radius;
 						if (highlighted.containsLocation(loc)) {
-							radius = wb.isBus() ? Wire.HIGHLIGHTED_WIDTH_BUS : Wire.HIGHLIGHTED_WIDTH;
+							radius = wb.isBus() ? (int)(Wire.HIGHLIGHTED_WIDTH_BUS*Wire.DOT_MULTIPLY_FACTOR) :
+								                  (int)(Wire.HIGHLIGHTED_WIDTH*Wire.DOT_MULTIPLY_FACTOR);
 						} else {
-							radius = wb.isBus() ? Wire.WIDTH_BUS : Wire.WIDTH;
+							radius = wb.isBus() ? (int)(Wire.WIDTH_BUS*Wire.DOT_MULTIPLY_FACTOR) : 
+								                  (int)(Wire.WIDTH*Wire.DOT_MULTIPLY_FACTOR);
 						}
 						g.fillOval(loc.getX() - radius, loc.getY() - radius, radius*2, radius*2);
 					}
