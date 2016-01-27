@@ -604,10 +604,14 @@ public class Netlist {
 			 * We do not process the splitter and tunnel, they are processed
 			 * later on
 			 */
-			if (!(com.getFactory() instanceof SplitterFactory)
-					&& !(com.getFactory() instanceof Tunnel)
-					&& !(com.getFactory() instanceof PortIO)
-					&& !(com.getFactory() instanceof ReptarLocalBus)) {
+			if (com.getFactory() instanceof PortIO||
+				com.getFactory() instanceof ReptarLocalBus)
+				continue;
+			else if (com.getFactory() instanceof SplitterFactory)
+				SplitterList.add(com);
+			else if (com.getFactory() instanceof Tunnel)
+				TunnelList.add(com);
+			else {
 				List<EndData> ends = com.getEnds();
 				for (EndData end : ends) {
 					if (end.isInput() && end.isOutput()) {
@@ -625,12 +629,6 @@ public class Netlist {
 					} else {
 						InputsList.add(end.getLocation());
 					}
-				}
-			} else {
-				if (com.getFactory() instanceof SplitterFactory) {
-					SplitterList.add(com);
-				} else if (com.getFactory() instanceof Tunnel) {
-					TunnelList.add(com);
 				}
 			}
 		}

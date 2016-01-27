@@ -458,13 +458,15 @@ public class AddTool extends Tool {
 			Location loc = Location.create(e.getX(), e.getY());
 			ComponentFactory source = getFactory();
 			AttributeSet attrsCopy = (AttributeSet) attrs.clone();
-			attrsCopy.setValue(StdAttr.LABEL, AutoLabler.GetCurrent(canvas.getCircuit(),source));
-			if (AutoLabler.IsActive(canvas.getCircuit())) {
-				if (AutoLabler.hasNext(canvas.getCircuit()))
-					AutoLabler.GetNext(canvas.getCircuit(),source);
-				else
-					AutoLabler.Stop(canvas.getCircuit());
-			} else AutoLabler.SetLabel("", canvas.getCircuit(),source);
+			if (attrsCopy.containsAttribute(StdAttr.LABEL)) {
+				attrsCopy.setValue(StdAttr.LABEL, AutoLabler.GetCurrent(canvas.getCircuit(),source));
+				if (AutoLabler.IsActive(canvas.getCircuit())) {
+					if (AutoLabler.hasNext(canvas.getCircuit()))
+						AutoLabler.GetNext(canvas.getCircuit(),source);
+					else
+						AutoLabler.Stop(canvas.getCircuit());
+				} else AutoLabler.SetLabel("", canvas.getCircuit(),source);
+			}
 			if (source == null)
 				return;
 			Component c = source.createComponent(loc, attrsCopy);

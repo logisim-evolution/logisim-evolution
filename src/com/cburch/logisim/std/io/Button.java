@@ -99,7 +99,7 @@ public class Button extends InstanceFactory {
 		setAttributes(new Attribute[] { StdAttr.FACING, Io.ATTR_COLOR,
 				StdAttr.LABEL, Io.ATTR_LABEL_LOC, StdAttr.LABEL_FONT,
 				StdAttr.LABEL_COLOR, StdAttr.LABEL_VISABILITY }, new Object[] { Direction.EAST,
-				Color.WHITE, "", Io.LABEL_CENTER, StdAttr.DEFAULT_LABEL_FONT,
+				Color.WHITE, "", Direction.WEST, StdAttr.DEFAULT_LABEL_FONT,
 				StdAttr.DEFAULT_LABEL_COLOR,true });
 		setFacingAttribute(StdAttr.FACING);
 		setIconName("button.gif");

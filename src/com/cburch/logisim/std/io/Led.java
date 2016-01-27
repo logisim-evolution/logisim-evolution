@@ -74,8 +74,8 @@ public class Led extends InstanceFactory {
 				Io.ATTR_OFF_COLOR, Io.ATTR_ACTIVE, StdAttr.LABEL,
 				Io.ATTR_LABEL_LOC, StdAttr.LABEL_FONT, StdAttr.LABEL_COLOR, StdAttr.LABEL_VISABILITY },
 				new Object[] { Direction.WEST, new Color(240, 0, 0),
-						Color.DARK_GRAY, Boolean.TRUE, "", Io.LABEL_CENTER,
-						StdAttr.DEFAULT_LABEL_FONT, StdAttr.DEFAULT_LABEL_COLOR, false });
+						Color.DARK_GRAY, Boolean.TRUE, "", Direction.EAST,
+						StdAttr.DEFAULT_LABEL_FONT, StdAttr.DEFAULT_LABEL_COLOR, true });
 		setFacingAttribute(StdAttr.FACING);
 		setIconName("led.gif");
 		setPorts(new Port[] { new Port(0, 0, Port.INPUT, 1) });
