@@ -86,9 +86,10 @@ class DefaultAppearance {
 
 	public static List<CanvasObject> build(Collection<Instance> pins,
 			                               boolean NamedBox,
+			                               String CircuitName,
 			                               Graphics g) {
 		if (NamedBox) {
-			return new_build(pins,g);
+			return new_build(pins,CircuitName,g);
 		} else {
 			return old_build(pins);
 		}
@@ -175,39 +176,20 @@ class DefaultAppearance {
         return ret;
     }
 
-    private static List<CanvasObject> new_build(Collection<Instance> pins, Graphics g) {
+    private static List<CanvasObject> new_build(Collection<Instance> pins, String CircuitName, Graphics g) {
 		Map<Direction, List<Instance>> edge;
 		edge = new HashMap<Direction, List<Instance>>();
 		edge.put(Direction.EAST, new ArrayList<Instance>());
 		edge.put(Direction.WEST, new ArrayList<Instance>());
 		int MaxLeftLabelLength = 0;
 		int MaxRightLabelLength = 0;
-		int TextHeight=0;
-		int TextAscent=0;
-		int TextDescend=0;
+		int TitleWidth = CircuitName.length()*DrawAttr.FixedFontCharWidth;
 
 		if (!pins.isEmpty()) {
-			boolean hasgraph = true;
-			JPanel panel;
-			JFrame frame=null;
-			if (g==null) {
-			    /* Hack to be able to calculate label heights and widths */
-				hasgraph = false;
-				panel = new JPanel();
-				frame = new JFrame();
-				frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-				frame.add(panel);
-				frame.setVisible(true);
-				g = panel.getGraphics();
-			}
-			FontMetrics fm = g.getFontMetrics(DrawAttr.DEFAULT_FONT);
-			TextHeight=fm.getHeight();
-			TextAscent=fm.getAscent();
-			TextDescend=fm.getDescent();
 			for (Instance pin : pins) {
 				Direction pinEdge;
 				Text label = new Text(0,0,pin.getAttributeValue(StdAttr.LABEL));
-				int LabelWidth = fm.stringWidth(label.getText());
+				int LabelWidth = label.getText().length()*DrawAttr.FixedFontCharWidth;
 				if (pin.getAttributeValue(Pin.ATTR_TYPE)) {
 					pinEdge=Direction.EAST;
 					if (LabelWidth>MaxRightLabelLength)
@@ -221,10 +203,6 @@ class DefaultAppearance {
 				List<Instance> e = edge.get(pinEdge);
 				e.add(pin);
 			}
-			if (!hasgraph) {
-				frame.setVisible(false);
-				frame.dispose();
-			}
 		}
 
 		
@@ -236,10 +214,13 @@ class DefaultAppearance {
 		int numWest = edge.get(Direction.WEST).size();
 		int maxVert = Math.max(numEast, numWest);
 
-		int dy = ((TextHeight+(TextHeight>>2)+5)/10)*10;
-		int width = ((MaxLeftLabelLength+MaxRightLabelLength+35)/10)*10;
-		int height = (maxVert > 0) ? maxVert*dy : 20;
-		int sdy = (TextAscent-TextDescend)>>1;
+		int dy = ((DrawAttr.FixedFontHeight+(DrawAttr.FixedFontHeight>>2)+5)/10)*10;
+		int textWidth = (MaxLeftLabelLength+MaxRightLabelLength+35) < (TitleWidth+15) ? TitleWidth+15 :
+			(MaxLeftLabelLength+MaxRightLabelLength+35);
+		int Thight = ((DrawAttr.FixedFontHeight+10)/10)*10;
+		int width = (textWidth/10)*10;
+		int height = (maxVert > 0) ? maxVert*dy+Thight : 10+Thight;
+		int sdy = (DrawAttr.FixedFontAscent-DrawAttr.FixedFontDescent)>>1;
 
 		// compute position of anchor relative to top left corner of box
 		int ax;
@@ -259,14 +240,24 @@ class DefaultAppearance {
 		int rx = OFFS + (9 - (ax + 9) % 10);
 		int ry = OFFS + (9 - (ay + 9) % 10);
 
-		Rectangle rect = new Rectangle(rx, ry, width, height);
-		rect.setValue(DrawAttr.STROKE_WIDTH, Integer.valueOf(2));
 		List<CanvasObject> ret = new ArrayList<CanvasObject>();
+		Rectangle rect = new Rectangle(rx,ry+height-Thight,width,Thight);
+		rect.setValue(DrawAttr.STROKE_WIDTH, Integer.valueOf(1));
+		rect.setValue(DrawAttr.PAINT_TYPE, DrawAttr.PAINT_FILL);
+		rect.setValue(DrawAttr.FILL_COLOR, Color.black);
+		ret.add(rect);
+		rect = new Rectangle(rx, ry, width, height);
+		rect.setValue(DrawAttr.STROKE_WIDTH, Integer.valueOf(2));
 		ret.add(rect);
 		placePins(ret, edge.get(Direction.WEST), rx, ry + 10, 0, dy,true,
 				sdy);
 		placePins(ret, edge.get(Direction.EAST), rx + width, ry + 10, 0,
 				dy,false,sdy);
+		Text label = new Text(rx+(width>>1),ry+(height-DrawAttr.FixedFontDescent-5),CircuitName);
+		label.getLabel().setHorizontalAlignment(EditableLabel.CENTER);
+		label.getLabel().setColor(Color.white);
+		label.getLabel().setFont(DrawAttr.DEFAULT_NAME_FONT);
+		ret.add(label);
 		ret.add(new AppearanceAnchor(Location.create(rx + ax, ry + ay)));
 		return ret;
     }
@@ -325,6 +316,7 @@ class DefaultAppearance {
 				Text label = new Text(x+ldx,y+ldy,pin.getAttributeValue(StdAttr.LABEL));
 				label.getLabel().setHorizontalAlignment(halign);
 				label.getLabel().setColor(color);
+				label.getLabel().setFont(DrawAttr.DEFAULT_FIXED_PICH_FONT);
 				dest.add(label);
 			}
 			x += dx;

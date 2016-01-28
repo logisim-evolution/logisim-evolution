@@ -68,6 +68,12 @@ public class DrawAttr {
 
 	public static final Font DEFAULT_FONT = new Font("SansSerif", Font.PLAIN,
 			12);
+	public static final Font DEFAULT_FIXED_PICH_FONT = new Font("Courier 10 Pitch", Font.PLAIN,12);
+	public static final Font DEFAULT_NAME_FONT = new Font("Courier 10 Pitch", Font.BOLD,14);
+	public static final int FixedFontHeight = 12;
+	public static final int FixedFontCharWidth = 8;
+	public static final int FixedFontAscent = 9;
+	public static final int FixedFontDescent = 1;
 
 	public static final AttributeOption ALIGN_LEFT = new AttributeOption(
 			Integer.valueOf(EditableLabel.LEFT), Strings.getter("alignStart"));

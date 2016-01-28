@@ -80,6 +80,10 @@ public class CircuitAppearance extends Drawing {
 		setDefaultAppearance(true);
 	}
 	
+	public String getName() {
+		return circuit.getName();
+	}
+	
 	public Graphics GetGraphics() {
 		return circuit.GetGraphics();
 	}
@@ -279,7 +283,7 @@ public class CircuitAppearance extends Drawing {
 	public void recomputeDefaultAppearance() {
 		if (isDefault) {
 			List<CanvasObject> shapes;
-			shapes = DefaultAppearance.build(circuitPins.getPins(),this.IsNamedBoxShaped(),circuit.GetGraphics());
+			shapes = DefaultAppearance.build(circuitPins.getPins(),this.IsNamedBoxShaped(),this.getName(),circuit.GetGraphics());
 			setObjectsForce(shapes);
 		}
 	}
