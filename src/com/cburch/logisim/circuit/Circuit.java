@@ -77,6 +77,8 @@ import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.std.wiring.Clock;
 import com.cburch.logisim.std.wiring.Pin;
 import com.cburch.logisim.std.wiring.Tunnel;
+import com.cburch.logisim.tools.SetAttributeAction;
+import com.cburch.logisim.tools.Strings;
 import com.cburch.logisim.util.AutoLabel;
 import com.cburch.logisim.util.CollectionUtil;
 import com.cburch.logisim.util.EventSourceWeakSupport;
@@ -328,7 +330,9 @@ public class Circuit {
 				String label = attrs.getValue(StdAttr.LABEL);
 				if (!label.isEmpty()) {
 					if (LabelNames.contains(label.toUpperCase())) {
-						attrs.setValue(StdAttr.LABEL, "");
+						SetAttributeAction act = new SetAttributeAction(this,Strings.getter("changeComponentAttributesAction"));
+						act.set(comp, StdAttr.LABEL, "");
+						proj.doAction(act);
 						reporter.AddSevereWarning("Removed duplicated label "+this.getName()+"/"+label);
 					} else {
 						LabelNames.add(label.toUpperCase());
@@ -347,7 +351,7 @@ public class Circuit {
 					comps.add(comp);
 					String ComponentName = GetAnnotationName(comp);
 					if (!lablers.containsKey(ComponentName)) {
-						lablers.put(ComponentName, new AutoLabel(ComponentName+"_1",this));
+						lablers.put(ComponentName, new AutoLabel(ComponentName+"_0",this));
 					}
 				}
 			}
@@ -367,7 +371,10 @@ public class Circuit {
 				return;
 			} else {
 				String NewLabel = lablers.get(ComponentName).GetNext(this,comp.getFactory());
-				comp.getAttributeSet().setValue(StdAttr.LABEL, NewLabel);
+				SetAttributeAction act = new SetAttributeAction(this,Strings.getter("changeComponentAttributesAction"));
+				act.set(comp, StdAttr.LABEL, NewLabel);
+				proj.doAction(act);
+//				comp.getAttributeSet().setValue(StdAttr.LABEL, NewLabel);
 				reporter.AddInfo("Labeled " + this.getName() + "/" + NewLabel);
 			}
 		}
