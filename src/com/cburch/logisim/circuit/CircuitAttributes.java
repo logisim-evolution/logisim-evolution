@@ -113,6 +113,7 @@ public class CircuitAttributes extends AbstractAttributeSet {
 					} else {
 						source.fireEvent(CircuitEvent.ACTION_CHECK_NAME, OldName);
 						source.fireEvent(CircuitEvent.ACTION_SET_NAME, NewName);
+						source.RecalcDefaultShape();
 					}
 				}
 			}

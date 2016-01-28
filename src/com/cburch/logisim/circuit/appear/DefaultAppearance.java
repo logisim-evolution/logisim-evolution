@@ -31,7 +31,6 @@
 package com.cburch.logisim.circuit.appear;
 
 import java.awt.Color;
-import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -40,9 +39,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.swing.JFrame;
-import javax.swing.JPanel;
 
 import com.cburch.draw.shapes.Curve;
 import com.cburch.draw.model.CanvasObject;

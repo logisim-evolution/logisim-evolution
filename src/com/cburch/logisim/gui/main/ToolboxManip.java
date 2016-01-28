@@ -185,8 +185,13 @@ class ToolboxManip implements ProjectExplorerListener {
 					SubcircuitFactory circFact = (SubcircuitFactory) source;
 					proj.setCurrentCircuit(circFact.getSubcircuit());
 					proj.getFrame().setEditorView(Frame.EDIT_LAYOUT);
-					if (lastSelected != null)
+					if (lastSelected != null){
 						proj.setTool(lastSelected);
+					} else {
+						Library base = proj.getLogisimFile().getLibrary("Base");
+						if (base != null)
+							proj.setTool(base.getTool("Edit Tool"));
+					}
 				}
 			}
 		}
