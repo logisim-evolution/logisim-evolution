@@ -30,7 +30,13 @@
 
 package com.cburch.logisim.gui.main;
 
+import javax.swing.JOptionPane;
+
 import com.cburch.logisim.circuit.Circuit;
+import com.cburch.logisim.circuit.CircuitAttributes;
+import com.cburch.logisim.circuit.CircuitException;
+import com.cburch.logisim.circuit.CircuitMutation;
+import com.cburch.logisim.circuit.SubcircuitFactory;
 import com.cburch.logisim.circuit.Wire;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.comp.ComponentFactory;
@@ -38,6 +44,7 @@ import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.gui.generic.AttrTableSetException;
 import com.cburch.logisim.gui.generic.AttributeSetTableModel;
 import com.cburch.logisim.gui.main.Selection.Event;
+import com.cburch.logisim.proj.Action;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.tools.SetAttributeAction;
 
@@ -126,8 +133,24 @@ class AttrTableSelectionModel extends AttributeSetTableModel implements
 					Strings.getter("selectionAttributeAction"));
 			for (Component comp : selection.getComponents()) {
 				if (!(comp instanceof Wire)) {
+					if (comp.getFactory() instanceof SubcircuitFactory) {
+						SubcircuitFactory fac = (SubcircuitFactory) comp.getFactory();
+						if (attr.equals(CircuitAttributes.NAMED_CIRCUIT_BOX)||
+							attr.equals(CircuitAttributes.NAME_ATTR)) {
+							try {
+								CircuitMutation mutation = new CircuitMutation(fac.getSubcircuit());
+								mutation.setForCircuit(attr, value);
+								Action action = mutation.toAction(null);
+								project.doAction(action);
+							} catch (CircuitException ex) {
+								JOptionPane.showMessageDialog(project.getFrame(),
+										ex.getMessage());
+							}
+							return;
+						}
+					}
 					act.set(comp, attr, value);
-				}
+				} 
 			}
 			project.doAction(act);
 		}

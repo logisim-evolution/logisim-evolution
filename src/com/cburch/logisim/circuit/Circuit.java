@@ -265,12 +265,6 @@ public class Circuit {
 		listeners.add(what);
 	}
 	
-	public void RecalcDefaultShape() {
-		if (appearance.isDefaultAppearance()) {
-			appearance.recomputeDefaultAppearance();
-		}
-	}
-	
 	private class AnnotateComparator implements Comparator<Component> {
 
 		@Override
@@ -374,7 +368,6 @@ public class Circuit {
 				SetAttributeAction act = new SetAttributeAction(this,Strings.getter("changeComponentAttributesAction"));
 				act.set(comp, StdAttr.LABEL, NewLabel);
 				proj.doAction(act);
-//				comp.getAttributeSet().setValue(StdAttr.LABEL, NewLabel);
 				reporter.AddInfo("Labeled " + this.getName() + "/" + NewLabel);
 			}
 		}

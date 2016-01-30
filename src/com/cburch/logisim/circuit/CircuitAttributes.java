@@ -87,9 +87,6 @@ public class CircuitAttributes extends AbstractAttributeSet {
 		}
 
 		public void attributeValueChanged(AttributeEvent e) {
-			if (e.getAttribute() == NAMED_CIRCUIT_BOX) {
-				source.RecalcDefaultShape();
-			}
 			if (e.getAttribute() == NAME_ATTR) {
 				String NewName = (String) e.getValue();
 				String OldName = e.getOldValue() == null ? "ThisShouldNotHappen" : (String) e.getOldValue();
@@ -113,7 +110,6 @@ public class CircuitAttributes extends AbstractAttributeSet {
 					} else {
 						source.fireEvent(CircuitEvent.ACTION_CHECK_NAME, OldName);
 						source.fireEvent(CircuitEvent.ACTION_SET_NAME, NewName);
-						source.RecalcDefaultShape();
 					}
 				}
 			}

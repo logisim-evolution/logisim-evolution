@@ -170,8 +170,8 @@ public abstract class AttributeSetTableModel implements AttrTableModel,
 		}
 	}
 	
-	public void SetInstance(ComponentFactory comp) {
-		CompInst = comp;
+	public void SetInstance(ComponentFactory fact) {
+		CompInst = fact;
 	}
 	
 	public void SetIsTool() {
