@@ -76,6 +76,7 @@ public class BoardPanel extends JPanel implements MouseListener,
 	private Boolean EditMode;
 	public static final String PNG_EXTENSION = ".png";
 	public static final FileFilter PNG_FILTER = new PNGFileFilter();
+	private int scale = 1;
 
 	private BoardDialog edit_parent;
 
@@ -84,8 +85,8 @@ public class BoardPanel extends JPanel implements MouseListener,
 		image = null;
 		EditMode = true;
 		Dimension thedim = new Dimension();
-		thedim.width = this.getWidth();
-		thedim.height = this.getHeight();
+		thedim.width = getWidth();
+		thedim.height = getHeight();
 		edit_parent = parent;
 		super.setPreferredSize(thedim);
 		this.addMouseListener(this);
@@ -101,19 +102,35 @@ public class BoardPanel extends JPanel implements MouseListener,
 		}
 		EditMode = false;
 		Dimension thedim = new Dimension();
-		thedim.width = this.getWidth();
-		thedim.height = this.getHeight();
+		thedim.width = getWidth();
+		thedim.height = getHeight();
 		super.setPreferredSize(thedim);
 		this.addMouseListener(this);
 		this.addMouseMotionListener(this);
+	}
+	
+	public void setScale(int scale) {
+		this.scale = scale;
+		Dimension thedim = new Dimension();
+		thedim.width = getWidth();
+		thedim.height = getHeight();
+		super.setPreferredSize(thedim);
 	}
 
 	public void clear() {
 		image = null;
 	}
+	
+	public int getImageWidth() {
+		return (image.getWidth()<3*image_width) ? image.getWidth() : 3*image_width;
+	}
+	
+	public int getImageHeight() {
+		return (image.getHeight()<3*image_height) ? image.getHeight() : 3*image_height;
+	}
 
 	public int getHeight() {
-		return image_height;
+		return image_height*scale;
 	}
 
 	public Image getScaledImage(int width, int height) {
@@ -121,7 +138,7 @@ public class BoardPanel extends JPanel implements MouseListener,
 	}
 
 	public int getWidth() {
-		return image_width;
+		return image_width*scale;
 	}
 
 	public Boolean ImageLoaded() {
@@ -151,7 +168,7 @@ public class BoardPanel extends JPanel implements MouseListener,
 
 	public void mouseDragged(MouseEvent e) {
 		if (EditMode && this.ImageLoaded()) {
-			this.set_drag(e.getX(), e.getY());
+			this.set_drag(e.getX()/scale, e.getY()/scale);
 			this.repaint();
 		}
 	}
@@ -167,7 +184,7 @@ public class BoardPanel extends JPanel implements MouseListener,
 	}
 
 	public void mousePressed(MouseEvent e) {
-		this.set_start(e.getX(), e.getY());
+		this.set_start(e.getX()/scale, e.getY()/scale);
 	}
 
 	public void mouseReleased(MouseEvent e) {
@@ -190,7 +207,7 @@ public class BoardPanel extends JPanel implements MouseListener,
 				yr = (h < 0) ? ys + h : ys;
 				wr = (w < 0) ? -w : w;
 				hr = (h < 0) ? -h : h;
-				g.drawRect(xr, yr, wr, hr);
+				g.drawRect(xr*scale, yr*scale, wr*scale, hr*scale);
 			}
 			if (EditMode && (edit_parent.defined_components != null)) {
 				LinkedList<BoardRectangle> comps = edit_parent.defined_components;
@@ -198,18 +215,18 @@ public class BoardPanel extends JPanel implements MouseListener,
 				g.setColor(Color.red);
 				while (iter.hasNext()) {
 					BoardRectangle thisone = iter.next();
-					g.fillRect(thisone.getXpos(), thisone.getYpos(),
-							thisone.getWidth(), thisone.getHeight());
+					g.fillRect(thisone.getXpos()*scale, thisone.getYpos()*scale,
+							thisone.getWidth()*scale, thisone.getHeight()*scale);
 				}
 			}
 		} else {
 			g.setColor(Color.gray);
-			g.fillRect(0, 0, this.getWidth(), this.getHeight());
+			g.fillRect(0, 0, getWidth(), getHeight());
 			if (EditMode) {
 				String message;
 				int xpos;
 				Font curfont = new Font(g.getFont().getFontName(), Font.BOLD,
-						20);
+						20*scale);
 				g.setColor(Color.black);
 				g.setFont(curfont);
 				FontMetrics fm = g.getFontMetrics();
@@ -219,16 +236,21 @@ public class BoardPanel extends JPanel implements MouseListener,
 				message = "The board picture should have at least a resolution of";
 				xpos = (this.getWidth() - fm.stringWidth(message)) / 2;
 				g.drawString(message, xpos, 200);
-				message = this.getWidth() + "x" + this.getHeight()
+				message = image_width + "x" + image_height
 						+ " pixels (width x height)";
 				xpos = (this.getWidth() - fm.stringWidth(message)) / 2;
-				g.drawString(message, xpos, 200 + (int) (1.5 * fm.getAscent()));
+				g.drawString(message, xpos, (200 + (int) (1.5 * fm.getAscent())) );
 				message = "for best graphical display.";
 				xpos = (this.getWidth() - fm.stringWidth(message)) / 2;
-				g.drawString(message, xpos, 200 + (int) (3 * fm.getAscent()));
+				g.drawString(message, xpos, (200 + (int) (3 * fm.getAscent())) );
 				message = "The board picture formate must be PNG";
 				xpos = (this.getWidth() - fm.stringWidth(message)) / 2;
-				g.drawString(message, xpos, 200 + (int) (4.5 * fm.getAscent()));
+				g.drawString(message, xpos, (200 + (int) (4.5 * fm.getAscent())) );
+				if (scale > 1) {
+					message = "Current resolution: "+getWidth()+"x"+getHeight();
+					xpos = (this.getWidth() - fm.stringWidth(message)) / 2;
+					g.drawString(message, xpos, (200 + (int) (6 * fm.getAscent())) );
+				}
 			}
 		}
 	}

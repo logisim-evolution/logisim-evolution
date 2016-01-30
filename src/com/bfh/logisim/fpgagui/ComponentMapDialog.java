@@ -108,20 +108,20 @@ public class ComponentMapDialog implements ActionListener,
 			Color Blue = new Color(0, 0, 250, 180);
 			int hgt = metrics.getHeight();
 			int adv = metrics.stringWidth(key);
-			int real_xpos = rect.getXpos() - adv / 2 - 2;
+			int real_xpos = rect.getXpos()*scale - adv / 2 - 2;
 			if (real_xpos < 0) {
 				real_xpos = 0;
-			} else if (real_xpos + adv + 4 > image_width) {
-				real_xpos = image_width - adv - 4;
+			} else if (real_xpos + adv + 4 > image_width*scale) {
+				real_xpos = image_width*scale - adv - 4;
 			}
-			int real_ypos = rect.getYpos();
+			int real_ypos = rect.getYpos()*scale;
 			if (real_ypos - hgt - 4 < 0) {
 				real_ypos = hgt + 4;
 			}
 			g.setColor(Yellow);
 			g.fillRect(real_xpos, real_ypos - hgt - 4, adv + 4, hgt + 4);
-			g.drawRect(rect.getXpos() + 1, rect.getYpos(), rect.getWidth() - 2,
-					rect.getHeight() - 1);
+			g.drawRect(rect.getXpos()*scale + 1, rect.getYpos()*scale, rect.getWidth()*scale - 2,
+					rect.getHeight()*scale - 1);
 			g.setColor(Blue);
 			g.drawString(key, real_xpos + 2,
 					real_ypos - 2 - metrics.getMaxDescent());
@@ -138,24 +138,24 @@ public class ComponentMapDialog implements ActionListener,
 		}
 
 		public int getHeight() {
-			return image_height;
+			return image_height*scale;
 		}
 
 		public int getWidth() {
-			return image_width;
+			return image_width*scale;
 		}
 
 		private void HandleSelect(MouseEvent e) {
 			if (!SelectableItems.isEmpty()) {
 				if (HighlightItem != null) {
-					if (HighlightItem.PointInside(e.getX(), e.getY())) {
+					if (HighlightItem.PointInside(e.getX()/scale, e.getY()/scale)) {
 						return;
 					}
 				}
 				BoardRectangle NewItem = null;
 				/* TODO: Optimize, SLOW! */
 				for (BoardRectangle Item : SelectableItems) {
-					if (Item.PointInside(e.getX(), e.getY())) {
+					if (Item.PointInside(e.getX()/scale, e.getY()/scale)) {
 						NewItem = Item;
 						break;
 					}
@@ -187,7 +187,7 @@ public class ComponentMapDialog implements ActionListener,
 			HandleSelect(e);
 			if (MappableComponents.hasMappedComponents()) {
 				if (Note != null) {
-					if (Note.getRectangle().PointInside(e.getX(), e.getY())) {
+					if (Note.getRectangle().PointInside(e.getX()/scale, e.getY()/scale)) {
 						return;
 					}
 				}
@@ -196,7 +196,7 @@ public class ComponentMapDialog implements ActionListener,
 				/* TODO: This makes the things very slow optimize! */
 				for (BoardRectangle ThisItem : MappableComponents
 						.GetMappedRectangles()) {
-					if (ThisItem.PointInside(e.getX(), e.getY())) {
+					if (ThisItem.PointInside(e.getX()/scale, e.getY()/scale)) {
 						NewItem = ThisItem;
 						newKey = MappableComponents.GetDisplayName(ThisItem);
 						break;
@@ -237,8 +237,8 @@ public class ComponentMapDialog implements ActionListener,
 		public void paint(Graphics g) {
 			super.paint(g);
 			Color Black = new Color(0, 0, 0, 150);
-			Image image = BoardInfo.GetImage().getScaledInstance(image_width,
-					image_height, Image.SCALE_SMOOTH);
+			Image image = BoardInfo.GetImage().getScaledInstance(image_width*scale,
+					image_height*scale, Image.SCALE_SMOOTH);
 			if (image != null) {
 				g.drawImage(image, 0, 0, null);
 			}
@@ -254,28 +254,28 @@ public class ComponentMapDialog implements ActionListener,
 				} else {
 					g.setColor(Black);
 				}
-				g.fillRect(rect.getXpos(), rect.getYpos(), rect.getWidth(),
-						rect.getHeight());
+				g.fillRect(rect.getXpos()*scale, rect.getYpos()*scale, rect.getWidth()*scale,
+						rect.getHeight()*scale);
 				if (cadre) {
 					g.setColor(Black);
-					g.drawRect(rect.getXpos(), rect.getYpos(), rect.getWidth(),
-							rect.getHeight());
+					g.drawRect(rect.getXpos()*scale, rect.getYpos()*scale, rect.getWidth()*scale,
+							rect.getHeight()*scale);
 					if ((rect.getWidth() >= 4) && (rect.getHeight() >= 4)) {
-						g.drawRect(rect.getXpos() + 1, rect.getYpos() + 1,
-								rect.getWidth() - 2, rect.getHeight() - 2);
+						g.drawRect(rect.getXpos()*scale + 1, rect.getYpos()*scale + 1,
+								rect.getWidth()*scale - 2, rect.getHeight()*scale - 2);
 					}
 				}
 			}
 			Color test = new Color(255, 0, 0, 100);
 			for (BoardRectangle rect : SelectableItems) {
 				g.setColor(test);
-				g.fillRect(rect.getXpos(), rect.getYpos(), rect.getWidth(),
-						rect.getHeight());
+				g.fillRect(rect.getXpos()*scale, rect.getYpos()*scale, rect.getWidth()*scale,
+						rect.getHeight()*scale);
 			}
 			if (HighlightItem != null && ComponentSelectionMode) {
 				g.setColor(Color.RED);
-				g.fillRect(HighlightItem.getXpos(), HighlightItem.getYpos(),
-						HighlightItem.getWidth(), HighlightItem.getHeight());
+				g.fillRect(HighlightItem.getXpos()*scale, HighlightItem.getYpos()*scale,
+						HighlightItem.getWidth()*scale, HighlightItem.getHeight()*scale);
 			}
 			if (Note != null) {
 				Note.Paint(g);
@@ -308,7 +308,10 @@ public class ComponentMapDialog implements ActionListener,
 	private JButton SaveButton = new JButton();
 	private JButton CancelButton = new JButton();
 	private JButton LoadButton = new JButton();
+	private JButton ScaleButton = new JButton();
 	private JLabel MessageLine = new JLabel();
+	private JScrollPane UnMappedPane;
+	private JScrollPane MappedPane;
 	@SuppressWarnings("rawtypes")
 	private JList UnmappedList;
 	@SuppressWarnings("rawtypes")
@@ -319,6 +322,7 @@ public class ComponentMapDialog implements ActionListener,
 	private BoardRectangle MappedHighlightItem = null;
 	private int image_width = 740;
 	private int image_height = 400;
+	private int scale = 1;
 	private BoardInformation BoardInfo;
 	private ArrayList<BoardRectangle> SelectableItems = new ArrayList<BoardRectangle>();
 	private String OldDirectory = "";
@@ -417,13 +421,21 @@ public class ComponentMapDialog implements ActionListener,
 		c.gridx = 2;
 		panel.add(CommandText, c);
 
-		/* Add the UnMap button */
+		/* Add the Zoom button */
+		ScaleButton.setText("Scale : 1x");
+		ScaleButton.setActionCommand("Scale");
+		ScaleButton.addActionListener(this);
+		ScaleButton.setEnabled(true);
+		c.gridx = 2;
+		c.gridy = 3;
+		panel.add(ScaleButton, c);
+
 		UnMapButton.setText("Release component");
 		UnMapButton.setActionCommand("UnMap");
 		UnMapButton.addActionListener(this);
 		UnMapButton.setEnabled(false);
 		c.gridx = 2;
-		c.gridy = 3;
+		c.gridy = 4;
 		panel.add(UnMapButton, c);
 
 		/* Add the UnMapAll button */
@@ -471,9 +483,9 @@ public class ComponentMapDialog implements ActionListener,
 		UnmappedList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		UnmappedList.addListSelectionListener(this);
 		UnmappedList.addMouseListener(mouseListener);
-		JScrollPane UnMappedPane = new JScrollPane(UnmappedList);
+		UnMappedPane = new JScrollPane(UnmappedList);
 		UnMappedPane.setPreferredSize(new Dimension(
-				(BoardPic.getWidth() * 2) / 5, 150));
+				(BoardPic.getWidth() * 2) / 5, 175));
 		c.gridx = 0;
 		c.gridy = 2;
 		c.gridheight = 9;
@@ -484,9 +496,9 @@ public class ComponentMapDialog implements ActionListener,
 		MappedList = new JList();
 		MappedList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		MappedList.addListSelectionListener(this);
-		JScrollPane MappedPane = new JScrollPane(MappedList);
+		MappedPane = new JScrollPane(MappedList);
 		MappedPane.setPreferredSize(new Dimension(
-				(BoardPic.getWidth() * 2) / 5, 150));
+				(BoardPic.getWidth() * 2) / 5, 175));
 		c.gridx = 1;
 		c.gridy = 2;
 		c.gridheight = 9;
@@ -514,6 +526,24 @@ public class ComponentMapDialog implements ActionListener,
 		if (e.getActionCommand().equals("Done")) {
 			doneAssignment = true;
 			panel.setVisible(false);
+		} else if (e.getActionCommand().equals("Scale")) {
+			if (ScaleButton.getText().equals("Scale : 1x")) {
+				scale = 2;
+				ScaleButton.setText("Scale : 2x");
+			} else if (ScaleButton.getText().equals("Scale : 2x")) {
+				scale = 3;
+				ScaleButton.setText("Scale : 3x");
+			} else {
+				scale = 1;
+				ScaleButton.setText("Scale : 1x");
+			}
+			BoardPic.setPreferredSize(new Dimension(BoardPic.getWidth(), BoardPic
+					.getHeight()));
+			UnMappedPane.setPreferredSize(new Dimension(
+					(BoardPic.getWidth() * 2) / 5, 175));
+			MappedPane.setPreferredSize(new Dimension(
+					(BoardPic.getWidth() * 2) / 5, 175));
+			panel.pack();
 		} else if (e.getActionCommand().equals("UnMapAll")) {
 			doneAssignment = false;
 			UnMapAll();
