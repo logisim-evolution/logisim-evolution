@@ -30,6 +30,10 @@
 
 package com.cburch.logisim.gui.main;
 
+import java.util.Comparator;
+import java.util.SortedSet;
+import java.util.TreeSet;
+
 import javax.swing.JOptionPane;
 
 import com.cburch.logisim.circuit.Circuit;
@@ -41,12 +45,15 @@ import com.cburch.logisim.circuit.Wire;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.comp.ComponentFactory;
 import com.cburch.logisim.data.Attribute;
+import com.cburch.logisim.data.Location;
 import com.cburch.logisim.gui.generic.AttrTableSetException;
 import com.cburch.logisim.gui.generic.AttributeSetTableModel;
 import com.cburch.logisim.gui.main.Selection.Event;
+import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.proj.Action;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.tools.SetAttributeAction;
+import com.cburch.logisim.util.AutoLabel;
 
 class AttrTableSelectionModel extends AttributeSetTableModel implements
 		Selection.Listener {
@@ -119,6 +126,24 @@ class AttrTableSelectionModel extends AttributeSetTableModel implements
 		}
 	}
 
+	private class PositionComparator implements Comparator<Component> {
+
+		@Override
+		public int compare(Component o1, Component o2) {
+			if (o1==o2)
+				return 0;
+			Location l1 = o1.getLocation();
+			Location l2 = o2.getLocation();
+			if (l2.getY() != l1.getY())
+				return l1.getY()-l2.getY();
+			if (l2.getX() != l1.getX())
+			    return l1.getX()-l2.getX();
+			return -1;
+		}
+		
+	}
+	
+
 	@Override
 	public void setValueRequested(Attribute<Object> attr, Object value)
 			throws AttrTableSetException {
@@ -131,7 +156,13 @@ class AttrTableSelectionModel extends AttributeSetTableModel implements
 		} else {
 			SetAttributeAction act = new SetAttributeAction(circuit,
 					Strings.getter("selectionAttributeAction"));
-			for (Component comp : selection.getComponents()) {
+			AutoLabel labler = null;
+			if (attr.equals(StdAttr.LABEL)) {
+				labler = new AutoLabel((String)value,circuit);
+			}
+			SortedSet<Component> comps = new TreeSet<Component>(new PositionComparator());
+			comps.addAll(selection.getComponents());
+			for (Component comp : comps) {
 				if (!(comp instanceof Wire)) {
 					if (comp.getFactory() instanceof SubcircuitFactory) {
 						SubcircuitFactory fac = (SubcircuitFactory) comp.getFactory();
@@ -149,8 +180,13 @@ class AttrTableSelectionModel extends AttributeSetTableModel implements
 							return;
 						}
 					}
-					act.set(comp, attr, value);
-				} 
+					if (attr.equals(StdAttr.LABEL)) {
+						if (labler.hasNext(circuit)) {
+							act.set(comp, attr , labler.GetNext(circuit, comp.getFactory()));
+						} else act.set(comp, attr, "");
+					} else
+						act.set(comp, attr, value);
+				}
 			}
 			project.doAction(act);
 		}

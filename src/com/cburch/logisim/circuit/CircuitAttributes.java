@@ -179,7 +179,7 @@ public class CircuitAttributes extends AbstractAttributeSet {
 		label = "";
 		labelLocation = Direction.NORTH;
 		labelFont = StdAttr.DEFAULT_LABEL_FONT;
-		LabelVisable = false;
+		LabelVisable = true;
 		pinInstances = new Instance[0];
 	}
 
