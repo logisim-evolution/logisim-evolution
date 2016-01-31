@@ -577,15 +577,17 @@ public class MappableResourcesContainer {
 	 */
 	private ArrayList<BoardRectangle> RemoveUsedItems(
 			ArrayList<BoardRectangle> List, int pinNeeded) {
+		int used = pinNeeded;
 		Iterator<BoardRectangle> ListIterator = List.iterator();
 		while (ListIterator.hasNext()) {
 			BoardRectangle current = ListIterator.next();
 			if (mappedList.containsValue(current)) {
 				ListIterator.remove();
+				used--;
 			}
 		}
 		/* We dont want to list Pin if they are not enough */
-		if (List.size() < pinNeeded) {
+		if (List.size() < used) {
 			List.clear();
 		}
 		return List;
