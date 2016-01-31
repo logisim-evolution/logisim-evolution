@@ -319,6 +319,16 @@ public class FPGAIOInformationContainer {
 		}
 		MyRectangle = new BoardRectangle(x, y, width, height);
 	}
+	
+	public void edit(BoardDialog parent) {
+		if (!defined())
+			return;
+		if (MyType.equals(IOComponentTypes.DIPSwitch)
+				|| MyType.equals(IOComponentTypes.PortIO)) {
+			GetSizeInformationDialog(parent);
+		}
+		GetSimpleInformationDialog(parent);
+	}
 
 	public Boolean defined() {
 		return MyIdentifier != -1;
@@ -529,6 +539,9 @@ public class FPGAIOInformationContainer {
 			c.gridy++;
 			selWindow.add(LocText, c);
 			JTextField txt = new JTextField(6);
+			if (defined()) {
+				txt.setText(MyPinLocations.get(i));
+			}
 			LocInputs.add(txt);
 			c.gridx = 1 + offset;
 			selWindow.add(LocInputs.get(i), c);
@@ -542,7 +555,10 @@ public class FPGAIOInformationContainer {
 		selWindow.add(StandardText, c);
 		JComboBox<String> StandardInput = new JComboBox<>(
 				IoStandards.Behavior_strings);
-		StandardInput.setSelectedIndex(parent.GetDefaultStandard());
+		if (defined())
+			StandardInput.setSelectedIndex(MyIOStandard);
+		else
+			StandardInput.setSelectedIndex(parent.GetDefaultStandard());
 		c.gridx = 1;
 		selWindow.add(StandardInput, c);
 
@@ -551,7 +567,10 @@ public class FPGAIOInformationContainer {
 			c.gridy++;
 			c.gridx = 0;
 			selWindow.add(DriveText, c);
-			DriveInput.setSelectedIndex(parent.GetDefaultDriveStrength());
+			if (defined())
+				DriveInput.setSelectedIndex(MyDriveStrength);
+			else
+				DriveInput.setSelectedIndex(parent.GetDefaultDriveStrength());
 			c.gridx = 1;
 			selWindow.add(DriveInput, c);
 		}
@@ -561,7 +580,10 @@ public class FPGAIOInformationContainer {
 			c.gridy++;
 			c.gridx = 0;
 			selWindow.add(PullText, c);
-			PullInput.setSelectedIndex(parent.GetDefaultPullSelection());
+			if (defined())
+				PullInput.setSelectedIndex(MyPullBehavior);
+			else
+				PullInput.setSelectedIndex(parent.GetDefaultPullSelection());
 			c.gridx = 1;
 			selWindow.add(PullInput, c);
 		}
@@ -571,7 +593,10 @@ public class FPGAIOInformationContainer {
 			c.gridy++;
 			c.gridx = 0;
 			selWindow.add(ActiveText, c);
-			ActiveInput.setSelectedIndex(parent.GetDefaultActivity());
+			if (defined())
+				ActiveInput.setSelectedIndex(MyActivityLevel);
+			else
+				ActiveInput.setSelectedIndex(parent.GetDefaultActivity());
 			c.gridx = 1;
 			selWindow.add(ActiveInput, c);
 		}

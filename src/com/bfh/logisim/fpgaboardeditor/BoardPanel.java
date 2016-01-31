@@ -184,7 +184,11 @@ public class BoardPanel extends JPanel implements MouseListener,
 	}
 
 	public void mousePressed(MouseEvent e) {
-		this.set_start(e.getX()/scale, e.getY()/scale);
+		if (e.getClickCount() > 1) {
+			this.set_start(0, 0);
+			edit_parent.EditDialog(e.getX()/scale, e.getY()/scale);
+		} else
+			this.set_start(e.getX()/scale, e.getY()/scale);
 	}
 
 	public void mouseReleased(MouseEvent e) {

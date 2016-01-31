@@ -326,6 +326,8 @@ public class BoardDialog implements ActionListener, ComponentListener {
 		c.gridx = 0;
 		c.gridy = 0;
 		c.fill = GridBagConstraints.HORIZONTAL;
+		if (TheBoard.fpga.FpgaInfoPresent())
+			FreqInput.setText(Integer.toString(getFrequencyValue(TheBoard.fpga.getClockFrequency())));
 		FreqPanel.add(FreqInput, c);
 
 		String[] freqStrs = { "Hz", "kHz", "MHz" };
@@ -334,6 +336,8 @@ public class BoardDialog implements ActionListener, ComponentListener {
 		c.gridx = 1;
 		c.gridy = 0;
 		c.fill = GridBagConstraints.HORIZONTAL;
+		if (TheBoard.fpga.FpgaInfoPresent())
+			StandardInput.setSelectedIndex(getFrequencyIndex(TheBoard.fpga.getClockFrequency()));
 		FreqPanel.add(StandardInput, c);
 
 		c.gridx = 0;
@@ -348,6 +352,8 @@ public class BoardDialog implements ActionListener, ComponentListener {
 		ClockPanel.add(LocText, c);
 
 		JTextField LocInput = new JTextField();
+		if (TheBoard.fpga.FpgaInfoPresent())
+			LocInput.setText(TheBoard.fpga.getClockPinLocation());
 		c.gridx = 0;
 		c.gridy = 3;
 		c.fill = GridBagConstraints.HORIZONTAL;
@@ -361,7 +367,9 @@ public class BoardDialog implements ActionListener, ComponentListener {
 
 		JComboBox<String> PullInput = new JComboBox<>(
 				PullBehaviors.Behavior_strings);
-		PullInput.setSelectedIndex(0);
+		if (TheBoard.fpga.FpgaInfoPresent()) {
+			PullInput.setSelectedIndex(TheBoard.fpga.getClockPull());
+		} else PullInput.setSelectedIndex(0); 
 		c.gridx = 0;
 		c.gridy = 5;
 		c.fill = GridBagConstraints.HORIZONTAL;
@@ -375,7 +383,9 @@ public class BoardDialog implements ActionListener, ComponentListener {
 
 		JComboBox<String> StdInput = new JComboBox<>(
 				IoStandards.Behavior_strings);
-		StdInput.setSelectedIndex(0);
+		if (TheBoard.fpga.FpgaInfoPresent()) {
+			StdInput.setSelectedIndex(TheBoard.fpga.getClockStandard());
+		} else StdInput.setSelectedIndex(0);
 		c.gridx = 0;
 		c.gridy = 7;
 		c.fill = GridBagConstraints.HORIZONTAL;
@@ -389,7 +399,9 @@ public class BoardDialog implements ActionListener, ComponentListener {
 
 		JComboBox<String> UnusedPinsInput = new JComboBox<>(
 				PullBehaviors.Behavior_strings);
-		UnusedPinsInput.setSelectedIndex(0);
+		if (TheBoard.fpga.FpgaInfoPresent()) {
+			UnusedPinsInput.setSelectedIndex(TheBoard.fpga.getUnusedPinsBehavior());
+		} else UnusedPinsInput.setSelectedIndex(0);
 		c.gridx = 0;
 		c.gridy = 9;
 		c.fill = GridBagConstraints.HORIZONTAL;
@@ -401,6 +413,8 @@ public class BoardDialog implements ActionListener, ComponentListener {
 		c.fill = GridBagConstraints.HORIZONTAL;
 		ClockPanel.add(PosText, c);
 		JTextField PosInput = new JTextField("1");
+		if (TheBoard.fpga.FpgaInfoPresent())
+			PosInput.setText(Integer.toString(TheBoard.fpga.getFpgaJTAGChainPosition()));
 		c.gridx = 0;
 		c.gridy = 11;
 		c.fill = GridBagConstraints.HORIZONTAL;
@@ -422,7 +436,9 @@ public class BoardDialog implements ActionListener, ComponentListener {
 		FPGAPanel.add(VendorText, c);
 
 		JComboBox<String> VendorInput = new JComboBox<>(FPGAClass.Vendors);
-		VendorInput.setSelectedIndex(0);
+		if (TheBoard.fpga.FpgaInfoPresent()) {
+			VendorInput.setSelectedIndex(TheBoard.fpga.getVendor());
+		} else VendorInput.setSelectedIndex(0);
 		c.gridx = 0;
 		c.gridy = 1;
 		c.fill = GridBagConstraints.HORIZONTAL;
@@ -435,6 +451,8 @@ public class BoardDialog implements ActionListener, ComponentListener {
 		FPGAPanel.add(FamilyText, c);
 
 		JTextField FamilyInput = new JTextField();
+		if (TheBoard.fpga.FpgaInfoPresent())
+			FamilyInput.setText(TheBoard.fpga.getTechnology());
 		c.gridx = 0;
 		c.gridy = 3;
 		c.fill = GridBagConstraints.HORIZONTAL;
@@ -447,6 +465,8 @@ public class BoardDialog implements ActionListener, ComponentListener {
 		FPGAPanel.add(PartText, c);
 
 		JTextField PartInput = new JTextField();
+		if (TheBoard.fpga.FpgaInfoPresent())
+			PartInput.setText(TheBoard.fpga.getPart());
 		c.gridx = 0;
 		c.gridy = 5;
 		c.fill = GridBagConstraints.HORIZONTAL;
@@ -459,6 +479,8 @@ public class BoardDialog implements ActionListener, ComponentListener {
 		FPGAPanel.add(BoxText, c);
 
 		JTextField BoxInput = new JTextField();
+		if (TheBoard.fpga.FpgaInfoPresent())
+			BoxInput.setText(TheBoard.fpga.getPackage());
 		c.gridx = 0;
 		c.gridy = 7;
 		c.fill = GridBagConstraints.HORIZONTAL;
@@ -471,6 +493,8 @@ public class BoardDialog implements ActionListener, ComponentListener {
 		FPGAPanel.add(SpeedText, c);
 
 		JTextField SpeedInput = new JTextField();
+		if (TheBoard.fpga.FpgaInfoPresent())
+			SpeedInput.setText(TheBoard.fpga.getSpeedGrade());
 		c.gridx = 0;
 		c.gridy = 9;
 		c.fill = GridBagConstraints.HORIZONTAL;
@@ -482,6 +506,8 @@ public class BoardDialog implements ActionListener, ComponentListener {
 		c.fill = GridBagConstraints.HORIZONTAL;
 		FPGAPanel.add(FlashName,c);
 		JTextField FlashNameInput = new JTextField("");
+		if (TheBoard.fpga.FpgaInfoPresent())
+			FlashNameInput.setText(TheBoard.fpga.getFlashName());
 		c.gridx = 0;
 		c.gridy = 11;
 		c.fill = GridBagConstraints.HORIZONTAL;
@@ -493,6 +519,8 @@ public class BoardDialog implements ActionListener, ComponentListener {
 		c.fill = GridBagConstraints.HORIZONTAL;
 		FPGAPanel.add(FlashPosText,c);
 		JTextField FlashPosInput = new JTextField("2");
+		if (TheBoard.fpga.FpgaInfoPresent())
+			FlashPosInput.setText(Integer.toString(TheBoard.fpga.getFlashJTAGChainPosition()));
 		c.gridx = 0;
 		c.gridy = 13;
 		c.fill = GridBagConstraints.HORIZONTAL;
@@ -505,6 +533,8 @@ public class BoardDialog implements ActionListener, ComponentListener {
 
 		JCheckBox UsbTmc = new JCheckBox("USBTMC Download");
 		UsbTmc.setSelected(false);
+		if (TheBoard.fpga.FpgaInfoPresent())
+			UsbTmc.setSelected(TheBoard.fpga.USBTMCDownloadRequired());
 		c.gridx = 0;
 		c.gridy = 1;
 		c.fill = GridBagConstraints.HORIZONTAL;
@@ -536,8 +566,8 @@ public class BoardDialog implements ActionListener, ComponentListener {
 		selWindow.setResizable(false);
 		selWindow.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
 		selWindow.setAlwaysOnTop(true);
-		boolean save_settings;
-		while ((!abort) && (!TheBoard.fpga.FpgaInfoPresent())) {
+		boolean save_settings = false;
+		while ((!abort) && (!save_settings)) {
 			selWindow.setVisible(true);
 			if (!abort) {
 				save_settings = true;
@@ -605,6 +635,22 @@ public class BoardDialog implements ActionListener, ComponentListener {
 		}
 		selWindow.dispose();
 	}
+	
+	private int getFrequencyValue(long freq) {
+		if ((freq%1000)!=0)
+			return (int)freq;
+		if ((freq%1000000)!=0)
+			return (int)freq/1000;
+		return (int)freq/1000000;
+	}
+	
+	private int getFrequencyIndex(long freq) {
+		if ((freq%1000)!=0)
+			return 0;
+		if ((freq%1000000)!=0)
+			return 1;
+		return 2;
+	}
 
 	private long getFrequency(String chars, String speed) {
 		long result = 0;
@@ -644,6 +690,25 @@ public class BoardDialog implements ActionListener, ComponentListener {
 
 	public boolean isActive() {
 		return panel.isVisible();
+	}
+	
+	public void EditDialog(int xpos, int ypos) {
+		Iterator<BoardRectangle> iter = defined_components.iterator();
+		boolean found = false;
+		while (iter.hasNext()) {
+			BoardRectangle rect = iter.next();
+			if (rect.PointInside(xpos, ypos)) {
+				/* TODO: Edit pin/led/etc. */
+				TheBoard.GetComponent(rect).edit(this);
+				found = true;
+			}
+		}
+		if (!found) {
+			getFpgaInformation();
+			if ((TheBoard.GetNrOfDefinedComponents() > 0)
+					&& TheBoard.fpga.FpgaInfoPresent())
+				saveButton.setEnabled(true);
+		}
 	}
 
 	public void SelectDialog(BoardRectangle rect) {
