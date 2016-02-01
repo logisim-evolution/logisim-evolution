@@ -48,6 +48,8 @@ import javax.swing.JProgressBar;
 import com.bfh.logisim.fpgagui.FPGAReport;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitAttributes;
+import com.cburch.logisim.circuit.CircuitEvent;
+import com.cburch.logisim.circuit.CircuitListener;
 import com.cburch.logisim.circuit.Splitter;
 import com.cburch.logisim.circuit.SplitterFactory;
 import com.cburch.logisim.circuit.SubcircuitFactory;
@@ -56,6 +58,7 @@ import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.comp.EndData;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.instance.Instance;
+import com.cburch.logisim.instance.InstanceComponent;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.proj.Projects;
 import com.cburch.logisim.std.io.DipSwitch;
@@ -65,7 +68,52 @@ import com.cburch.logisim.std.wiring.Clock;
 import com.cburch.logisim.std.wiring.Pin;
 import com.cburch.logisim.std.wiring.Tunnel;
 
-public class Netlist {
+public class Netlist implements CircuitListener {
+
+	@Override
+	public void circuitChanged(CircuitEvent event) {
+		int ev = event.getAction();
+		if (event.getData() instanceof InstanceComponent) {
+			InstanceComponent inst = (InstanceComponent)event.getData();
+			if (event.getCircuit().equals(MyCircuit)) {
+				if (inst.getFactory() instanceof SubcircuitFactory) {
+					SubcircuitFactory fac = (SubcircuitFactory)inst.getFactory();
+					Circuit sub = fac.getSubcircuit();
+					switch (ev) {
+					case CircuitEvent.ACTION_ADD : 
+						DRCStatus = DRC_REQUIRED;
+						if (MySubCircuitMap.containsKey(sub)) {
+							MySubCircuitMap.put(sub, MySubCircuitMap.get(sub)+1);
+						} else {
+							MySubCircuitMap.put(sub, 1 );
+							sub.addCircuitListener(this);
+						}
+						break;
+					case CircuitEvent.ACTION_REMOVE :
+						DRCStatus = DRC_REQUIRED;
+						if (MySubCircuitMap.containsKey(sub)) {
+							if (MySubCircuitMap.get(sub)==1) {
+								MySubCircuitMap.remove(sub);
+								sub.removeCircuitListener(this);
+							} else {
+								MySubCircuitMap.put(sub, MySubCircuitMap.get(sub)-1);
+							}
+						}
+						break;
+					case CircuitEvent.ACTION_CHANGE:
+					case CircuitEvent.ACTION_CLEAR:
+					case CircuitEvent.ACTION_INVALIDATE:
+						DRCStatus = DRC_REQUIRED;
+						break;
+					}
+				}
+			} else {
+				if (inst.getFactory() instanceof Pin) {
+					DRCStatus = DRC_REQUIRED;
+				}
+			}
+		}
+	}
 
 	public class NetInfo {
 
@@ -88,6 +136,7 @@ public class Netlist {
 
 	private String CircuitName;
 	private ArrayList<Net> MyNets = new ArrayList<Net>();
+	private Map<Circuit,Integer> MySubCircuitMap = new HashMap<Circuit,Integer>();
 	private ArrayList<NetlistComponent> MySubCircuits = new ArrayList<NetlistComponent>();
 	private ArrayList<NetlistComponent> MyComponents = new ArrayList<NetlistComponent>();
 	private ArrayList<NetlistComponent> MyClockGenerators = new ArrayList<NetlistComponent>();
@@ -105,7 +154,6 @@ public class Netlist {
 	public static final int DRC_REQUIRED = -1;
 	public static final int DRC_PASSED = 0;
 	public static final int ANNOTATE_REQUIRED = 1;
-
 	public static final int DRC_ERROR = 2;
 
 	public Netlist(Circuit ThisCircuit) {
@@ -238,16 +286,6 @@ public class Netlist {
 		}
 	}
 	
-	public void ClearNetlist() {
-		for (Component comp : MyCircuit.getNonWires()) {
-			if (comp.getFactory() instanceof SubcircuitFactory) {
-				SubcircuitFactory fac = (SubcircuitFactory) comp.getFactory();
-				fac.getSubcircuit().getNetList().ClearNetlist();
-			}
-		}
-		this.clear();
-	}
-
 	public int DesignRuleCheckResult(FPGAReport Reporter, String HDLIdentifier,
 			boolean IsTopLevel, ArrayList<String> Sheetnames) {
 		ArrayList<String> CompName = new ArrayList<String>();
@@ -270,7 +308,7 @@ public class Netlist {
 			return DRC_PASSED;
 		} else {
 			/* There are changes, so we clean up the old information */
-			this.clear();
+			clear();
 		}
 		/*
 		 * Check for duplicated sheet names, this is bad as we will have
@@ -545,7 +583,7 @@ public class Netlist {
 		}
 		return null;
 	}
-
+	
 	private boolean GenerateNetlist(FPGAReport Reporter, String HDLIdentifier) {
 		GridBagConstraints gbc = new GridBagConstraints();
 		JFrame panel = new JFrame("Netlist: " + MyCircuit.getName());
@@ -764,7 +802,7 @@ public class Netlist {
 						for (String name : ThisNet.TunnelNames()) {
 							if (SearchNet.ContainsTunnel(name) && !merged) {
 								merged = true;
-								SearchNet.merge(ThisNet);
+								SearchNet.merge(ThisNet,"");
 							}
 						}
 					}
@@ -1263,9 +1301,8 @@ public class Netlist {
 				MyIterator.remove();
 			}
 		}
-		for (int i = 0; i < MatchedWires.size(); i++) {
-			GetNet(MatchedWires.get(i), ThisNet);
-		}
+		for (Wire matched : MatchedWires)
+			GetNet(matched,ThisNet);
 		MatchedWires.clear();
 	}
 
@@ -1935,4 +1972,5 @@ public class Netlist {
 		}
 		return true;
 	}
+
 }

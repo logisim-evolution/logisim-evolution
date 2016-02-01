@@ -40,6 +40,7 @@ import com.cburch.logisim.data.Location;
 public class Net {
 	private Set<Location> MyPoints = new HashSet<Location>();
 	private Set<String> TunnelNames = new HashSet<String>();
+	private Set<Wire> Segments = new HashSet<Wire>();
 	private int nr_of_bits;
 	private Net MyParent;
 	private Boolean Requires_to_be_root;
@@ -57,10 +58,21 @@ public class Net {
 		cleanup();
 		MyPoints.add(loc);
 	}
+	
+	public Net(Location loc, int width) {
+		cleanup();
+		MyPoints.add(loc);
+		nr_of_bits = width;
+	}
 
 	public void add(Wire segment) {
 		MyPoints.add(segment.getEnd0());
 		MyPoints.add(segment.getEnd1());
+		Segments.add(segment);
+	}
+	
+	public Set<Wire> getWires() {
+		return Segments;
 	}
 
 	public boolean AddParrentBit(byte BitID) {
@@ -108,6 +120,7 @@ public class Net {
 
 	private void cleanup() {
 		MyPoints.clear();
+		Segments.clear();
 		TunnelNames.clear();
 		nr_of_bits = 1;
 		MyParent = null;
@@ -230,10 +243,17 @@ public class Net {
 	public boolean IsRootNet() {
 		return (MyParent == null) || Requires_to_be_root;
 	}
+	
 
-	public void merge(Net TheNet) {
-		MyPoints.addAll(TheNet.getPoints());
-		TunnelNames.addAll(TheNet.TunnelNames());
+	public boolean merge(Net TheNet,String Error) {
+		if (TheNet.BitWidth()==nr_of_bits) {
+			MyPoints.addAll(TheNet.getPoints());
+			Segments.addAll(TheNet.getWires());
+			TunnelNames.addAll(TheNet.TunnelNames());
+			return true;
+		}
+		Error = Error.concat(Strings.get("NetMerge_BitWidthError"));
+		return false;
 	}
 
 	public void setBus(int Width) {

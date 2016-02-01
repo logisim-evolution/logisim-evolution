@@ -949,7 +949,6 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 		if (root == null) {
 			DRCResult = Netlist.DRC_ERROR;
 		} else {
-			root.getNetList().ClearNetlist();
 			DRCResult = root.getNetList().DesignRuleCheckResult(MyReporter,
 					HDLType.getText(), true, SheetNames);
 		}

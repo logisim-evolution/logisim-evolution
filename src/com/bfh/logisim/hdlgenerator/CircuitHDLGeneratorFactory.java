@@ -281,23 +281,27 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 							OneLine.append(" ");
 						}
 						if (HDLType.equals(Settings.VHDL)) {
-							Contents.add("   "
+							String line = "   "
 									+ OneLine.toString()
 									+ "<= "
 									+ BusName
 									+ Integer.toString(TheNets.GetNetId(Source
 											.GetParrentNet())) + BracketOpen
 									+ Source.GetParrentNetBitIndex()
-									+ BracketClose + ";");
+									+ BracketClose + ";";
+							if (!Contents.contains(line))
+								Contents.add(line);
 						} else {
-							Contents.add("   assign "
+							String line = "   assign "
 									+ OneLine.toString()
 									+ "= "
 									+ BusName
 									+ Integer.toString(TheNets.GetNetId(Source
 											.GetParrentNet())) + BracketOpen
 									+ Source.GetParrentNetBitIndex()
-									+ BracketClose + ";");
+									+ BracketClose + ";";
+							if (!Contents.contains(line))
+								Contents.add(line);
 						}
 					}
 					/* Next we perform all sink connections */
@@ -326,10 +330,13 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 											.GetNetId(ThisNet)));
 						}
 						if (HDLType.equals(Settings.VHDL)) {
-							Contents.add("   " + OneLine.toString() + ";");
+							String line = "   " + OneLine.toString() + ";";
+							if (!Contents.contains(line))
+								Contents.add(line);
 						} else {
-							Contents.add("   assign " + OneLine.toString()
-									+ ";");
+							String line = "   assign " + OneLine.toString() + ";"; 
+							if (!Contents.contains(line))
+								Contents.add(line);
 						}
 					}
 				}

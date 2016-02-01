@@ -244,6 +244,7 @@ public class Circuit {
 		locker = new CircuitLocker();
 		circuitsUsingThis = new WeakHashMap<Component, Circuit>();
 		MyNetList = new Netlist(this);
+		addCircuitListener(MyNetList);
 		Annotated = false;
 		logiFile = file;
 		staticAttrs.setValue(CircuitAttributes.NAMED_CIRCUIT_BOX, AppPreferences.NAMED_CIRCUIT_BOXES.getBoolean());

@@ -491,6 +491,8 @@ class CircuitWires {
 				} else {
 					g.setColor(Color.BLACK);
 				}
+				if (w.IsSetAsMarked())
+					g.setColor(w.GetMarkColor());
 				if (highlighted.containsWire(w)) {
 					int width;
 					if (wb.isBus())
