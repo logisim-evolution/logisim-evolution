@@ -87,7 +87,7 @@ public class InstanceTextField implements AttributeListener, TextFieldListener,
 				field.setFont((Font) e.getValue());
 		} else if (attr == StdAttr.LABEL_COLOR) {
 			fontColor = (Color) e.getValue(); 
-		} else if (attr == StdAttr.LABEL_VISABILITY) {
+		} else if (attr == StdAttr.LABEL_VISIBILITY) {
 			LabelIsVisable = (Boolean) e.getValue();
 		}
 	}
@@ -171,8 +171,8 @@ public class InstanceTextField implements AttributeListener, TextFieldListener,
 		this.valign = valign;
 		boolean shouldReg = shouldRegister();
 		AttributeSet attrs = comp.getAttributeSet();
-		if (attrs.containsAttribute(StdAttr.LABEL_VISABILITY))
-			LabelIsVisable = attrs.getValue(StdAttr.LABEL_VISABILITY);
+		if (attrs.containsAttribute(StdAttr.LABEL_VISIBILITY))
+			LabelIsVisable = attrs.getValue(StdAttr.LABEL_VISIBILITY);
 		if (!wasReg && shouldReg)
 			attrs.addAttributeListener(this);
 		if (wasReg && !shouldReg)

@@ -274,27 +274,27 @@ public class AutoLabel {
 				}
 				return true;
 			case KeyEvent.VK_T:
-				if (attrs.containsAttribute(StdAttr.LABEL_VISABILITY)) {
+				if (attrs.containsAttribute(StdAttr.LABEL_VISIBILITY)) {
 					if (CreateAction)
-						act.set(comp, StdAttr.LABEL_VISABILITY, !attrs.getValue(StdAttr.LABEL_VISABILITY));
+						act.set(comp, StdAttr.LABEL_VISIBILITY, !attrs.getValue(StdAttr.LABEL_VISIBILITY));
 					else
-					  attrs.setValue(StdAttr.LABEL_VISABILITY, !attrs.getValue(StdAttr.LABEL_VISABILITY));
+					  attrs.setValue(StdAttr.LABEL_VISIBILITY, !attrs.getValue(StdAttr.LABEL_VISIBILITY));
 				}
 				return true;
 			case KeyEvent.VK_V:
-				if (attrs.containsAttribute(StdAttr.LABEL_VISABILITY)&&!attrs.getValue(StdAttr.LABEL_VISABILITY)) {
+				if (attrs.containsAttribute(StdAttr.LABEL_VISIBILITY)&&!attrs.getValue(StdAttr.LABEL_VISIBILITY)) {
 					if (CreateAction)
-						act.set(comp, StdAttr.LABEL_VISABILITY, true);
+						act.set(comp, StdAttr.LABEL_VISIBILITY, true);
 					else
-					  attrs.setValue(StdAttr.LABEL_VISABILITY, true);
+					  attrs.setValue(StdAttr.LABEL_VISIBILITY, true);
 				}
 				return true;
 			case KeyEvent.VK_H:
-				if (attrs.containsAttribute(StdAttr.LABEL_VISABILITY)&&attrs.getValue(StdAttr.LABEL_VISABILITY)) {
+				if (attrs.containsAttribute(StdAttr.LABEL_VISIBILITY)&&attrs.getValue(StdAttr.LABEL_VISIBILITY)) {
 					if (CreateAction)
-						act.set(comp, StdAttr.LABEL_VISABILITY, false);
+						act.set(comp, StdAttr.LABEL_VISIBILITY, false);
 					else
-					  attrs.setValue(StdAttr.LABEL_VISABILITY, false);
+					  attrs.setValue(StdAttr.LABEL_VISIBILITY, false);
 				}
 				return true;
 			case KeyEvent.VK_A:

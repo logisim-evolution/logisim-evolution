@@ -61,7 +61,7 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
 	}
 
 	private static List<Attribute<?>> attributes = Arrays.asList(
-			VhdlEntity.CONTENT_ATTR, StdAttr.LABEL, StdAttr.LABEL_FONT, StdAttr.LABEL_VISABILITY);
+			VhdlEntity.CONTENT_ATTR, StdAttr.LABEL, StdAttr.LABEL_FONT, StdAttr.LABEL_VISIBILITY);
 
 	private final static WeakHashMap<HdlContent, HdlContentEditor> windowRegistry = new WeakHashMap<HdlContent, HdlContentEditor>();
 
@@ -98,7 +98,7 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
 		if (attr == StdAttr.LABEL_FONT) {
 			return (V) labelFont;
 		}
-		if (attr == StdAttr.LABEL_VISABILITY) {
+		if (attr == StdAttr.LABEL_VISIBILITY) {
 			return (V) labelVisable;
 		}
 		return null;
@@ -128,7 +128,7 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
 			labelFont = newFont;
 			fireAttributeValueChanged(attr, value,null);
 		}
-		if (attr == StdAttr.LABEL_VISABILITY) {
+		if (attr == StdAttr.LABEL_VISIBILITY) {
 			Boolean newvis = (Boolean) value;
 			if (labelVisable.equals(newvis))
 				return;

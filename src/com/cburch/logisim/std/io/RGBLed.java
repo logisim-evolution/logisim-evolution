@@ -87,7 +87,7 @@ public class RGBLed extends InstanceFactory {
 	public RGBLed() {
 		super("RGBLED", Strings.getter("RGBledComponent"));
 		setAttributes(new Attribute[] { Io.ATTR_ACTIVE, StdAttr.LABEL,
-				Io.ATTR_LABEL_LOC, StdAttr.LABEL_FONT, StdAttr.LABEL_COLOR, StdAttr.LABEL_VISABILITY },
+				Io.ATTR_LABEL_LOC, StdAttr.LABEL_FONT, StdAttr.LABEL_COLOR, StdAttr.LABEL_VISIBILITY },
 				new Object[] { Boolean.TRUE, "", Direction.EAST,
 						StdAttr.DEFAULT_LABEL_FONT, StdAttr.DEFAULT_LABEL_COLOR, true });
 		setFacingAttribute(StdAttr.FACING);

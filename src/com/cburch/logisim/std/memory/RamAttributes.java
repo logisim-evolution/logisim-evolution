@@ -76,7 +76,7 @@ public class RamAttributes extends AbstractAttributeSet {
 	private static List<Attribute<?>> ATTRIBUTES = Arrays
 			.asList(new Attribute<?>[] { Mem.ADDR_ATTR, Mem.DATA_ATTR,
 					StdAttr.TRIGGER, ATTR_DBUS, ATTR_ByteEnables,
-					Ram.CONTENTS_ATTR, StdAttr.LABEL, StdAttr.LABEL_FONT, StdAttr.LABEL_VISABILITY });
+					Ram.CONTENTS_ATTR, StdAttr.LABEL, StdAttr.LABEL_FONT, StdAttr.LABEL_VISIBILITY });
 
 	private static WeakHashMap<MemContents, HexFrame> windowRegistry = new WeakHashMap<MemContents, HexFrame>();
 	private BitWidth addrBits = BitWidth.create(8);
@@ -136,7 +136,7 @@ public class RamAttributes extends AbstractAttributeSet {
 		if (attr == StdAttr.LABEL_FONT) {
 			return (V) LabelFont;
 		}
-		if (attr == StdAttr.LABEL_VISABILITY) {
+		if (attr == StdAttr.LABEL_VISIBILITY) {
 			return (V) LabelVisable;
 		}
 		if (attr == ATTR_ByteEnables) {
@@ -227,7 +227,7 @@ public class RamAttributes extends AbstractAttributeSet {
 			}
 			LabelFont = NewFont;
 			fireAttributeValueChanged(attr, value,null);
-		} else if (attr == StdAttr.LABEL_VISABILITY) {
+		} else if (attr == StdAttr.LABEL_VISIBILITY) {
 			Boolean newVis = (Boolean) value;
 			if (LabelVisable.equals(newVis))
 				return;

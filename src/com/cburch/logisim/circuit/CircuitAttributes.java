@@ -156,7 +156,7 @@ public class CircuitAttributes extends AbstractAttributeSet {
 
 	private static final List<Attribute<?>> INSTANCE_ATTRS = Arrays
 			.asList(new Attribute<?>[] { StdAttr.FACING, StdAttr.LABEL,
-					LABEL_LOCATION_ATTR, StdAttr.LABEL_FONT,StdAttr.LABEL_VISABILITY,
+					LABEL_LOCATION_ATTR, StdAttr.LABEL_FONT,StdAttr.LABEL_VISIBILITY,
 					CircuitAttributes.NAME_ATTR, CIRCUIT_LABEL_ATTR,
 					CIRCUIT_LABEL_FACING_ATTR, CIRCUIT_LABEL_FONT_ATTR,
 					NAMED_CIRCUIT_BOX,
@@ -212,7 +212,7 @@ public class CircuitAttributes extends AbstractAttributeSet {
 			return (E) label;
 		if (attr == StdAttr.LABEL_FONT)
 			return (E) labelFont;
-		if (attr == StdAttr.LABEL_VISABILITY)
+		if (attr == StdAttr.LABEL_VISIBILITY)
 			return (E) LabelVisable;
 		if (attr == LABEL_LOCATION_ATTR)
 			return (E) labelLocation;
@@ -266,12 +266,12 @@ public class CircuitAttributes extends AbstractAttributeSet {
 				return;
 			labelFont = val;
 			fireAttributeValueChanged(StdAttr.LABEL_FONT, val,null);
-		} else if (attr == StdAttr.LABEL_VISABILITY) {
+		} else if (attr == StdAttr.LABEL_VISIBILITY) {
 			Boolean val = (Boolean) value;
 			if (LabelVisable == value)
 				return;
 			LabelVisable = val;
-			fireAttributeValueChanged(StdAttr.LABEL_VISABILITY, val,null);
+			fireAttributeValueChanged(StdAttr.LABEL_VISIBILITY, val,null);
 		} else if (attr == LABEL_LOCATION_ATTR) {
 			Direction val = (Direction) value;
 			if (labelLocation.equals(val))
