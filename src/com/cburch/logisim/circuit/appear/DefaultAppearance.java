@@ -46,6 +46,7 @@ import com.cburch.draw.shapes.DrawAttr;
 import com.cburch.draw.shapes.Rectangle;
 import com.cburch.draw.shapes.Text;
 import com.cburch.draw.util.EditableLabel;
+import com.cburch.logisim.circuit.Wire;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.instance.Instance;
@@ -214,7 +215,7 @@ class DefaultAppearance {
 		int textWidth = (MaxLeftLabelLength+MaxRightLabelLength+35) < (TitleWidth+15) ? TitleWidth+15 :
 			(MaxLeftLabelLength+MaxRightLabelLength+35);
 		int Thight = ((DrawAttr.FixedFontHeight+10)/10)*10;
-		int width = (textWidth/10)*10;
+		int width = (textWidth/10)*10+20;
 		int height = (maxVert > 0) ? maxVert*dy+Thight : 10+Thight;
 		int sdy = (DrawAttr.FixedFontAscent-DrawAttr.FixedFontDescent)>>1;
 
@@ -237,18 +238,18 @@ class DefaultAppearance {
 		int ry = OFFS + (9 - (ay + 9) % 10);
 
 		List<CanvasObject> ret = new ArrayList<CanvasObject>();
-		Rectangle rect = new Rectangle(rx,ry+height-Thight,width,Thight);
-		rect.setValue(DrawAttr.STROKE_WIDTH, Integer.valueOf(1));
-		rect.setValue(DrawAttr.PAINT_TYPE, DrawAttr.PAINT_FILL);
-		rect.setValue(DrawAttr.FILL_COLOR, Color.black);
-		ret.add(rect);
-		rect = new Rectangle(rx, ry, width, height);
-		rect.setValue(DrawAttr.STROKE_WIDTH, Integer.valueOf(2));
-		ret.add(rect);
 		placePins(ret, edge.get(Direction.WEST), rx, ry + 10, 0, dy,true,
 				sdy);
 		placePins(ret, edge.get(Direction.EAST), rx + width, ry + 10, 0,
 				dy,false,sdy);
+		Rectangle rect = new Rectangle(rx+10,ry+height-Thight,width-20,Thight);
+		rect.setValue(DrawAttr.STROKE_WIDTH, Integer.valueOf(1));
+		rect.setValue(DrawAttr.PAINT_TYPE, DrawAttr.PAINT_FILL);
+		rect.setValue(DrawAttr.FILL_COLOR, Color.black);
+		ret.add(rect);
+		rect = new Rectangle(rx+10, ry, width-20, height);
+		rect.setValue(DrawAttr.STROKE_WIDTH, Integer.valueOf(2));
+		ret.add(rect);
 		Text label = new Text(rx+(width>>1),ry+(height-DrawAttr.FixedFontDescent-5),CircuitName);
 		label.getLabel().setHorizontalAlignment(EditableLabel.CENTER);
 		label.getLabel().setColor(Color.white);
@@ -300,14 +301,23 @@ class DefaultAppearance {
 		Color color = Color.DARK_GRAY;
 		int ldx;
 		for (Instance pin : pins) {
-			dest.add(new AppearancePort(Location.create(x, y), pin));
+			int offset = (pin.getAttributeValue(StdAttr.WIDTH).getWidth() > 1) ? Wire.WIDTH_BUS>>1:Wire.WIDTH>>1;
+			int height = (pin.getAttributeValue(StdAttr.WIDTH).getWidth() > 1) ? Wire.WIDTH_BUS:Wire.WIDTH;
+			Rectangle rect;
 			if (LeftSide) {
-				ldx=5;
+				ldx=15;
 				halign=EditableLabel.LEFT;
+				rect = new Rectangle(x,y-offset,10,height);
 			} else {
-				ldx=-5;
+				ldx=-15;
 				halign=EditableLabel.RIGHT;
+				rect = new Rectangle(x-10,y-offset,10,height);
 			}
+			rect.setValue(DrawAttr.STROKE_WIDTH, Integer.valueOf(1));
+			rect.setValue(DrawAttr.PAINT_TYPE, DrawAttr.PAINT_FILL);
+			rect.setValue(DrawAttr.FILL_COLOR, Color.BLACK);
+			dest.add(rect);
+			dest.add(new AppearancePort(Location.create(x, y), pin));
 			if (pin.getAttributeSet().containsAttribute(StdAttr.LABEL)) {
 				Text label = new Text(x+ldx,y+ldy,pin.getAttributeValue(StdAttr.LABEL));
 				label.getLabel().setHorizontalAlignment(halign);
