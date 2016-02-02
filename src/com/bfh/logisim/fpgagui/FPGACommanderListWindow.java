@@ -30,7 +30,6 @@
 
 package com.bfh.logisim.fpgagui;
 
-
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Rectangle;
@@ -40,20 +39,23 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
 import javax.swing.JFrame;
+import javax.swing.JList;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
+import javax.swing.ListSelectionModel;
+import javax.swing.event.ListDataEvent;
+import javax.swing.event.ListDataListener;
 
 @SuppressWarnings("serial")
-public class FPGACommanderTextWindow extends JFrame implements KeyListener,WindowListener {
+public class FPGACommanderListWindow  extends JFrame implements KeyListener,WindowListener,ListDataListener {
 
 	private int FontSize = 14;
 	private String Title;
-	private int LineCount;
-	private JTextArea textArea = new JTextArea(50, 80);
+	private JList<Object> textArea = new JList<Object>();
 	private boolean IsActive = false;
 	private boolean count;
+	private FPGACommanderListModel model;
 	
-	public FPGACommanderTextWindow(String Title,Color fg, boolean count) {
+	public FPGACommanderListWindow(String Title,Color fg, boolean count, FPGACommanderListModel model) {
 		super((count)?Title+" (0)":Title);
 		this.Title = Title;
 		setResizable(true);
@@ -61,11 +63,15 @@ public class FPGACommanderTextWindow extends JFrame implements KeyListener,Windo
 		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		Color bg = Color.black;
 
-		textArea.setForeground(fg);
 		textArea.setBackground(bg);
+		textArea.setForeground(fg);
+		textArea.setSelectionBackground(fg);
+		textArea.setSelectionForeground(bg);
 		textArea.setFont(new Font("monospaced", Font.PLAIN, FontSize));
-		textArea.setEditable(false);
-		clear();
+		textArea.setModel(model);
+		textArea.setCellRenderer(model.getMyRenderer(count));
+		textArea.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		model.addListDataListener(this);
 
 		JScrollPane textMessages = new JScrollPane(textArea);
 		textMessages
@@ -77,32 +83,14 @@ public class FPGACommanderTextWindow extends JFrame implements KeyListener,Windo
 		textArea.addKeyListener(this);
 		pack();
 		addWindowListener(this);
-		LineCount = 0;
 		this.count = count;
+		this.model = model;
 	}
 	
 	public boolean IsActivated() {
 		return IsActive;
 	}
 	
-	public void clear() {
-		textArea.setText(null);
-		LineCount = 0;
-		if (count)
-			setTitle(Title+" (0)");
-	}
-	
-	public void add(String line) {
-		LineCount++;
-		textArea.setText(line);
-		if (count)
-			setTitle(Title+" ("+LineCount+")");
-		Rectangle rect = textArea.getBounds();
-		rect.x = 0;
-		rect.y = 0;
-		textArea.paintImmediately(rect);
-	}
-
 	@Override
 	public void keyTyped(KeyEvent e) {
 	}
@@ -168,5 +156,18 @@ public class FPGACommanderTextWindow extends JFrame implements KeyListener,Windo
 
 	@Override
 	public void windowDeactivated(WindowEvent e) {
+	}
+
+	@Override
+	public void intervalAdded(ListDataEvent e) {
+	}
+
+	@Override
+	public void intervalRemoved(ListDataEvent e) {
+	}
+
+	@Override
+	public void contentsChanged(ListDataEvent e) {
+		setTitle((count)?Title+" ("+model.getSize()+")":Title);
 	}
 }

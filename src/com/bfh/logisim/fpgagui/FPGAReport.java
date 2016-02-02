@@ -37,7 +37,7 @@ public class FPGAReport {
 		myCommander = parrent;
 	}
 
-	public void AddError(String Message) {
+	public void AddError(Object Message) {
 		myCommander.AddErrors(Message);
 	}
 
@@ -45,7 +45,7 @@ public class FPGAReport {
 		myCommander.AddErrors("***FATAL*** " + Message);
 	}
 
-	public void AddInfo(String Message) {
+	public void AddInfo(Object Message) {
 		myCommander.AddInfo(Message);
 	}
 
@@ -57,7 +57,7 @@ public class FPGAReport {
 		myCommander.AddWarning("**SEVERE** " + Message);
 	}
 
-	public void AddWarning(String Message) {
+	public void AddWarning(Object Message) {
 		myCommander.AddWarning(Message);
 	}
 

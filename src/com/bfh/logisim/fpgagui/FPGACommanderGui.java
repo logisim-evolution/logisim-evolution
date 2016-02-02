@@ -59,11 +59,13 @@ import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
+import javax.swing.ListSelectionModel;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import com.bfh.logisim.designrulecheck.CorrectLabel;
@@ -102,24 +104,34 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 	@Override
 	public void mousePressed(MouseEvent e) {
 		if (e.getClickCount()>1) {
-			if (tabbedPane.getComponentCount()>0) {
-				if (tabbedPane.getSelectedComponent().equals(panelInfos)) {
-					InfoWindow.setVisible(true);
-					tabbedPane.remove(tabbedPane.getSelectedIndex());
-				} else
-				if (tabbedPane.getSelectedComponent().equals(panelWarnings)) {
-					WarningWindow.setVisible(true);
-					tabbedPane.remove(tabbedPane.getSelectedIndex());
-				} else
-				if (tabbedPane.getSelectedComponent().equals(panelErrors)) {
-					ErrorWindow.setVisible(true);
-					tabbedPane.remove(tabbedPane.getSelectedIndex());
-				} else
-				if (tabbedPane.getSelectedComponent().equals(panelConsole)) {
-					ConsoleWindow.setVisible(true);
-					tabbedPane.remove(tabbedPane.getSelectedIndex());
+			
+			if (e.getSource().equals(tabbedPane)) {
+				if (tabbedPane.getComponentCount()>0) {
+					if (tabbedPane.getSelectedComponent().equals(panelInfos)) {
+						InfoWindow.setVisible(true);
+						tabbedPane.remove(tabbedPane.getSelectedIndex());
+					} else
+					if (tabbedPane.getSelectedComponent().equals(panelWarnings)) {
+						WarningWindow.setVisible(true);
+						tabbedPane.remove(tabbedPane.getSelectedIndex());
+					} else
+					if (tabbedPane.getSelectedComponent().equals(panelErrors)) {
+						ErrorWindow.setVisible(true);
+						tabbedPane.remove(tabbedPane.getSelectedIndex());
+					} else
+					if (tabbedPane.getSelectedComponent().equals(panelConsole)) {
+						ConsoleWindow.setVisible(true);
+						tabbedPane.remove(tabbedPane.getSelectedIndex());
+					}
 				}
 			}
+			
+//			if (e.getSource().equals(InfoWindow.getTextArea())) {
+//				JTextArea area = InfoWindow.getTextArea();
+//				int position = area.viewToModel(area.getMousePosition());
+//System.out.print(position+"\n");
+//			}
+			
 		}
 	}
 
@@ -160,7 +172,7 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 			if (comps.contains(panelErrors))
 				idx = tabbedPane.indexOfComponent(panelErrors);
 			tabbedPane.add(panelWarnings, idx);
-			tabbedPane.setTitleAt(idx, "Warnings (" + consoleWarnings.size() + ")");
+			tabbedPane.setTitleAt(idx, "Warnings (" + WarningsList.getSize() + ")");
 		}
 		if (e.getSource().equals(ErrorWindow)) {
 			int idx = tabbedPane.getComponentCount();
@@ -168,7 +180,7 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 			if (comps.contains(panelConsole))
 				idx = tabbedPane.indexOfComponent(panelConsole);
 			tabbedPane.add(panelErrors, idx);
-			tabbedPane.setTitleAt(idx, "Errors (" + consoleErrors.size() + ")");
+			tabbedPane.setTitleAt(idx, "Errors (" + ErrorsList.getSize() + ")");
 		}
 		if (e.getSource().equals(ConsoleWindow)) {
 			tabbedPane.add(panelConsole, tabbedPane.getComponentCount());
@@ -264,8 +276,6 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 	private JButton Workspace = new JButton();
 	private JCheckBox skipHDL = new JCheckBox("Skip VHDL generation?");
 	private JTextArea textAreaInfo = new JTextArea(10, 50);
-	private JTextArea textAreaWarnings = new JTextArea(10, 50);
-	private JTextArea textAreaErrors = new JTextArea(10, 50);
 	private JTextArea textAreaConsole = new JTextArea(10, 50);
 	private JComponent panelInfos = new JPanel();
 	private JComponent panelWarnings = new JPanel();
@@ -275,8 +285,6 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 	private static final String HDLandDownloadMessage = "Download to board";
 	private JTabbedPane tabbedPane = new JTabbedPane();
 	private LinkedList<String> consoleInfos = new LinkedList<String>();
-	private LinkedList<String> consoleWarnings = new LinkedList<String>();
-	private LinkedList<String> consoleErrors = new LinkedList<String>();
 	private LinkedList<String> consoleConsole = new LinkedList<String>();
 	private Project MyProject;
 	private Settings MySettings = new Settings();
@@ -293,16 +301,21 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 	private static final Integer UCFPath = 4;
 	private FPGAReport MyReporter = new FPGAReport(this);
 	
+	private FPGACommanderListModel WarningsList = new FPGACommanderListModel();
+	private JList<Object> Warnings = new JList<Object>();
+	private FPGACommanderListWindow WarningWindow = new FPGACommanderListWindow("FPGACommander: Warnings",Color.ORANGE,true,WarningsList);
+
+	private FPGACommanderListModel ErrorsList = new FPGACommanderListModel();
+	private JList<Object> Errors = new JList<Object>();
+	private FPGACommanderListWindow ErrorWindow = new FPGACommanderListWindow("FPGACommander: Errors",Color.RED,true,ErrorsList);
+
+
 	private FPGACommanderTextWindow InfoWindow;
-	private FPGACommanderTextWindow WarningWindow;
-	private FPGACommanderTextWindow ErrorWindow;
 	private FPGACommanderTextWindow ConsoleWindow;
 
 	public FPGACommanderGui(Project Main) {
 		MyProject = Main;
 		InfoWindow = new FPGACommanderTextWindow("FPGACommander: Infos",Color.GRAY,true);
-		WarningWindow = new FPGACommanderTextWindow("FPGACommander: Warnings",Color.ORANGE,true);
-		ErrorWindow =  new FPGACommanderTextWindow("FPGACommander: Errors",Color.RED,true);
 		ConsoleWindow = new FPGACommanderTextWindow("FPGACommander: Console",Color.LIGHT_GRAY,false);
 		panel = new JFrame("FPGA Commander : "
 				+ MyProject.getLogisimFile().getName());
@@ -501,18 +514,29 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 		textAreaInfo.setForeground(fg);
 		textAreaInfo.setBackground(bg);
 		textAreaInfo.setFont(new Font("monospaced", Font.PLAIN, FONT_SIZE));
-		textAreaWarnings.setForeground(Color.ORANGE);
-		textAreaWarnings.setBackground(bg);
-		textAreaWarnings.setFont(new Font("monospaced", Font.PLAIN, FONT_SIZE));
-		textAreaErrors.setForeground(Color.RED);
-		textAreaErrors.setBackground(bg);
-		textAreaErrors.setFont(new Font("monospaced", Font.PLAIN, FONT_SIZE));
+		Warnings.setBackground(bg);
+		Warnings.setForeground(Color.ORANGE);
+		Warnings.setSelectionBackground(Color.ORANGE);
+		Warnings.setSelectionForeground(bg);
+		Warnings.setFont(new Font("monospaced", Font.PLAIN, FONT_SIZE));
+		Warnings.setModel(WarningsList);
+		Warnings.setCellRenderer(WarningsList.getMyRenderer(true));
+		Warnings.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		Errors.setBackground(bg);
+		Errors.setForeground(Color.RED);
+		Errors.setSelectionBackground(Color.RED);
+		Errors.setSelectionForeground(bg);
+		Errors.setFont(new Font("monospaced", Font.PLAIN, FONT_SIZE));
+		Errors.setModel(ErrorsList);
+		Errors.setCellRenderer(ErrorsList.getMyRenderer(true));
+		Errors.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		
 		textAreaConsole.setForeground(Color.LIGHT_GRAY);
 		textAreaConsole.setBackground(bg);
 		textAreaConsole.setFont(new Font("monospaced", Font.PLAIN, FONT_SIZE));
 		JScrollPane textMessages = new JScrollPane(textAreaInfo);
-		JScrollPane textWarnings = new JScrollPane(textAreaWarnings);
-		JScrollPane textErrors = new JScrollPane(textAreaErrors);
+		JScrollPane textWarnings = new JScrollPane(Warnings);
+		JScrollPane textErrors = new JScrollPane(Errors);
 		JScrollPane textConsole = new JScrollPane(textAreaConsole);
 		textMessages
 				.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
@@ -554,18 +578,12 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 		tabbedPane.addMouseListener(this);
 
 		textAreaInfo.setEditable(false);
-		textAreaWarnings.setEditable(false);
-		textAreaErrors.setEditable(false);
 		textAreaConsole.setEditable(false);
 
 		consoleInfos.clear();
-		consoleWarnings.clear();
-		consoleErrors.clear();
 		consoleConsole.clear();
 
 		textAreaInfo.setText(null);
-		textAreaWarnings.setText(null);
-		textAreaErrors.setText(null);
 		textAreaConsole.setText(null);
 
 		c.gridx = 0;
@@ -714,30 +732,12 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 		}
 	}
 
-	public void AddErrors(String Message) {
-		StringBuffer Line = new StringBuffer();
-		if (consoleErrors.size() < 9) {
-			Line.append("    ");
-		} else if (consoleErrors.size() < 99) {
-			Line.append("   ");
-		} else if (consoleErrors.size() < 999) {
-			Line.append("  ");
-		} else if (consoleErrors.size() < 9999) {
-			Line.append(" ");
-		}
-		Line.append(Integer.toString(consoleErrors.size() + 1) + "> " + Message
-				+ "\n");
-		consoleErrors.add(Line.toString());
-		Line.setLength(0);
-		for (String mes : consoleErrors) {
-			Line.append(mes);
-		}
-		textAreaErrors.setText(Line.toString());
-		ErrorWindow.add(Line.toString());
+	public void AddErrors(Object Message) {
+		ErrorsList.add(Message);
 		int idx = tabbedPane.indexOfComponent(panelErrors);
 		if (idx >= 0) {
 			tabbedPane.setSelectedIndex(idx);
-			tabbedPane.setTitleAt(idx, "Errors (" + consoleErrors.size() + ")");
+			tabbedPane.setTitleAt(idx, "Errors (" + ErrorsList.getSize() + ")");
 			Rectangle rect = tabbedPane.getBounds();
 			rect.x = 0;
 			rect.y = 0;
@@ -745,7 +745,7 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 		}
 	}
 
-	public void AddInfo(String Message) {
+	public void AddInfo(Object Message) {
 		StringBuffer Line = new StringBuffer();
 		if (consoleInfos.size() < 9) {
 			Line.append("    ");
@@ -756,7 +756,7 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 		} else if (consoleInfos.size() < 9999) {
 			Line.append(" ");
 		}
-		Line.append(Integer.toString(consoleInfos.size() + 1) + "> " + Message
+		Line.append(Integer.toString(consoleInfos.size() + 1) + "> " + Message.toString()
 				+ "\n");
 		consoleInfos.add(Line.toString());
 		Line.setLength(0);
@@ -776,30 +776,12 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 		}
 	}
 
-	public void AddWarning(String Message) {
-		StringBuffer Line = new StringBuffer();
-		if (consoleWarnings.size() < 9) {
-			Line.append("    ");
-		} else if (consoleWarnings.size() < 99) {
-			Line.append("   ");
-		} else if (consoleWarnings.size() < 999) {
-			Line.append("  ");
-		} else if (consoleWarnings.size() < 9999) {
-			Line.append(" ");
-		}
-		Line.append(Integer.toString(consoleWarnings.size() + 1) + "> "
-				+ Message + "\n");
-		consoleWarnings.add(Line.toString());
-		WarningWindow.add(Line.toString());
-		Line.setLength(0);
-		for (String mes : consoleWarnings) {
-			Line.append(mes);
-		}
-		textAreaWarnings.setText(Line.toString());
+	public void AddWarning(Object Message) {
+		WarningsList.add(Message);
 		int idx = tabbedPane.indexOfComponent(panelWarnings);
 		if (idx >= 0) {
 			tabbedPane.setSelectedIndex(idx);
-			tabbedPane.setTitleAt(idx, "Warnings (" + consoleWarnings.size() + ")");
+			tabbedPane.setTitleAt(idx, "Warnings (" + WarningsList.getSize() + ")");
 			Rectangle rect = tabbedPane.getBounds();
 			rect.x = 0;
 			rect.y = 0;
@@ -871,19 +853,15 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 			tabbedPane.setTitleAt(idx, "Infos (" + consoleInfos.size() + ")");
 			tabbedPane.setSelectedIndex(idx);
 		}
-		textAreaWarnings.setText(null);
-		consoleWarnings.clear();
+		WarningsList.clear();
 		idx = tabbedPane.indexOfComponent(panelWarnings);
 		if (idx >= 0)
-			tabbedPane.setTitleAt(idx, "Warnings (" + consoleWarnings.size() + ")");
-		textAreaErrors.setText(null);
-		consoleErrors.clear();
+			tabbedPane.setTitleAt(idx, "Warnings (" + WarningsList.getSize() + ")");
+		ErrorsList.clear();
 		idx = tabbedPane.indexOfComponent(panelErrors);
 		if (idx >= 0)
-			tabbedPane.setTitleAt(idx, "Errors (" + consoleErrors.size() + ")");
+			tabbedPane.setTitleAt(idx, "Errors (" + ErrorsList.getSize() + ")");
 		InfoWindow.clear();
-		WarningWindow.clear();
-		ErrorWindow.clear();
 		ConsoleWindow.clear();
 		Rectangle rect = tabbedPane.getBounds();
 		rect.x = 0;
@@ -1238,7 +1216,7 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 
 	private void SetCurrentSheet(String Name) {
 		for (int i = 0; i < circuitsList.getItemCount(); i++) {
-			if (((String) circuitsList.getItemAt(i)).equals(Name)) {
+			if (circuitsList.getItemAt(i).equals(Name)) {
 				circuitsList.setSelectedIndex(i);
 				circuitsList.repaint();
 				return;
