@@ -76,21 +76,26 @@ public class Netlist implements CircuitListener {
 		if (event.getData() instanceof InstanceComponent) {
 			InstanceComponent inst = (InstanceComponent)event.getData();
 			if (event.getCircuit().equals(MyCircuit)) {
-				if (inst.getFactory() instanceof SubcircuitFactory) {
-					SubcircuitFactory fac = (SubcircuitFactory)inst.getFactory();
-					Circuit sub = fac.getSubcircuit();
-					switch (ev) {
-					case CircuitEvent.ACTION_ADD : 
-						DRCStatus = DRC_REQUIRED;
+				switch (ev) {
+				case CircuitEvent.ACTION_ADD : 
+					DRCStatus = DRC_REQUIRED;
+					if (inst.getFactory() instanceof SubcircuitFactory) {
+						SubcircuitFactory fac = (SubcircuitFactory)inst.getFactory();
+						Circuit sub = fac.getSubcircuit();
+					
 						if (MySubCircuitMap.containsKey(sub)) {
 							MySubCircuitMap.put(sub, MySubCircuitMap.get(sub)+1);
 						} else {
 							MySubCircuitMap.put(sub, 1 );
 							sub.addCircuitListener(this);
 						}
-						break;
-					case CircuitEvent.ACTION_REMOVE :
-						DRCStatus = DRC_REQUIRED;
+					}
+					break;
+				case CircuitEvent.ACTION_REMOVE :
+					DRCStatus = DRC_REQUIRED;
+					if (inst.getFactory() instanceof SubcircuitFactory) {
+						SubcircuitFactory fac = (SubcircuitFactory)inst.getFactory();
+						Circuit sub = fac.getSubcircuit();
 						if (MySubCircuitMap.containsKey(sub)) {
 							if (MySubCircuitMap.get(sub)==1) {
 								MySubCircuitMap.remove(sub);
@@ -99,13 +104,13 @@ public class Netlist implements CircuitListener {
 								MySubCircuitMap.put(sub, MySubCircuitMap.get(sub)-1);
 							}
 						}
-						break;
-					case CircuitEvent.ACTION_CHANGE:
-					case CircuitEvent.ACTION_CLEAR:
-					case CircuitEvent.ACTION_INVALIDATE:
-						DRCStatus = DRC_REQUIRED;
-						break;
 					}
+					break;
+				case CircuitEvent.ACTION_CHANGE:
+				case CircuitEvent.ACTION_CLEAR:
+				case CircuitEvent.ACTION_INVALIDATE:
+					DRCStatus = DRC_REQUIRED;
+					break;
 				}
 			} else {
 				if (inst.getFactory() instanceof Pin) {
