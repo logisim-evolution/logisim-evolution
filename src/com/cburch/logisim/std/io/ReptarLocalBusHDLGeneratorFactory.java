@@ -333,6 +333,6 @@ public class ReptarLocalBusHDLGeneratorFactory extends
 
 	@Override
 	public boolean HDLTargetSupported(String HDLType, AttributeSet attrs) {
-		return true;
+		return HDLType.equals(Settings.VHDL);
 	}
 }
