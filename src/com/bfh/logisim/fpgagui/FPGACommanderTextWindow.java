@@ -49,7 +49,7 @@ public class FPGACommanderTextWindow extends JFrame implements KeyListener,Windo
 	private int FontSize = 14;
 	private String Title;
 	private int LineCount;
-	private JTextArea textArea = new JTextArea(50, 80);
+	private JTextArea textArea = new JTextArea(25, 80);
 	private boolean IsActive = false;
 	private boolean count;
 	

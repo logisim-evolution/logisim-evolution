@@ -30,6 +30,7 @@
 
 package com.cburch.logisim.instance;
 
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.util.ArrayList;
@@ -39,6 +40,7 @@ import java.util.List;
 
 import javax.swing.JOptionPane;
 
+import com.bfh.logisim.designrulecheck.CircuitNetlist;
 import com.bfh.logisim.designrulecheck.CorrectLabel;
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.comp.Component;
@@ -58,6 +60,7 @@ import com.cburch.logisim.data.Location;
 import com.cburch.logisim.tools.TextEditable;
 import com.cburch.logisim.tools.ToolTipMaker;
 import com.cburch.logisim.util.EventSourceWeakSupport;
+import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.StringGetter;
 import com.cburch.logisim.util.SyntaxChecker;
 import com.cburch.logisim.util.UnmodifiableList;
@@ -78,6 +81,8 @@ public class InstanceComponent implements Component, AttributeListener,
 	private boolean attrListenRequested;
 	private InstanceTextField textField;
 	private InstanceStateImpl instanceState;
+	private boolean MarkInstance;
+	private boolean MarkLabel;
 
 	public InstanceComponent(InstanceFactory factory, Location loc,
 			AttributeSet attrs) {
@@ -93,6 +98,8 @@ public class InstanceComponent implements Component, AttributeListener,
 		this.attrs = attrs;
 		this.attrListenRequested = false;
 		this.textField = null;
+		MarkInstance = false;
+		MarkLabel = false;
 
 		computeEnds();
 	}
@@ -103,6 +110,26 @@ public class InstanceComponent implements Component, AttributeListener,
 			if (widthAttrs == null)
 				getAttributeSet().addAttributeListener(this);
 		}
+	}
+	
+	//
+	// DRC mark functions
+	//
+	public boolean isMarked() {
+		return MarkInstance || MarkLabel;
+	}
+	
+	public void clearMarks() {
+		MarkInstance = false;
+		MarkLabel = false;
+	}
+	
+	public void MarkInstance() {
+		MarkInstance = true;
+	}
+	
+	public void MarkLabel() {
+		MarkLabel = true;
 	}
 
 	//
@@ -240,6 +267,16 @@ public class InstanceComponent implements Component, AttributeListener,
 		InstancePainter painter = context.getInstancePainter();
 		painter.setInstance(this);
 		factory.paintInstance(painter);
+		if (MarkInstance) {
+			Graphics g = painter.getGraphics();
+			Bounds bds = painter.getBounds();
+			Color current = g.getColor();
+			g.setColor(CircuitNetlist.DRC_INSTANCE_MARK_COLOR);
+			GraphicsUtil.switchToWidth(g, 2);
+			g.drawRoundRect(bds.getX()-10, bds.getY()-10, bds.getWidth()+20, bds.getHeight()+20, 40, 40);
+			GraphicsUtil.switchToWidth(g, 1);
+			g.setColor(current);
+		}
 	}
 
 	//
@@ -247,8 +284,19 @@ public class InstanceComponent implements Component, AttributeListener,
 	//
 	void drawLabel(ComponentDrawContext context) {
 		InstanceTextField field = textField;
-		if (field != null)
+		if (field != null) {
 			field.draw(this, context);
+			if (MarkLabel) {
+				Graphics g = context.getGraphics();
+				Bounds bds = field.getBounds(g);
+				Color current = g.getColor();
+				g.setColor(CircuitNetlist.DRC_LABEL_MARK_COLOR);
+				GraphicsUtil.switchToWidth(g, 2);
+				g.drawRoundRect(bds.getX()-10, bds.getY()-10, bds.getWidth()+20, bds.getHeight()+20, 40, 40);
+				GraphicsUtil.switchToWidth(g, 1);
+				g.setColor(current);
+			}
+		}
 	}
 
 	public boolean endsAt(Location pt) {

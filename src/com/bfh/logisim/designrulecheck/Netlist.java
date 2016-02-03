@@ -156,7 +156,7 @@ public class Netlist implements CircuitListener {
 	private int DRCStatus;
 	private Set<Wire> wires = new HashSet<Wire>();
 	private ArrayList<String> CurrentHierarchyLevel;
-	public static final int DRC_REQUIRED = -1;
+	public static final int DRC_REQUIRED = 4;
 	public static final int DRC_PASSED = 0;
 	public static final int ANNOTATE_REQUIRED = 1;
 	public static final int DRC_ERROR = 2;
@@ -294,78 +294,64 @@ public class Netlist implements CircuitListener {
 	public int DesignRuleCheckResult(FPGAReport Reporter, String HDLIdentifier,
 			boolean IsTopLevel, ArrayList<String> Sheetnames) {
 		ArrayList<String> CompName = new ArrayList<String>();
-		ArrayList<Set<String>> AnnotationNames = new ArrayList<Set<String>>();
+		Map<String,Component> Labels = new HashMap<String,Component>();
+		ArrayList<SimpleDRCContainer> drc = new ArrayList<SimpleDRCContainer>();
+		int CommonDRCStatus = DRC_PASSED;
+		/* First we go down the tree and get the DRC status of all sub-circuits */
+		for (Circuit circ:MySubCircuitMap.keySet()) {
+			CommonDRCStatus |= circ.getNetList().DesignRuleCheckResult(Reporter, HDLIdentifier, false, Sheetnames);
+		}
 		/* Check if we are okay */
 		if (DRCStatus == DRC_PASSED) {
-			/* we have to go through our sub-circuits */
-			for (NetlistComponent comp : MySubCircuits) {
-				SubcircuitFactory sub = (SubcircuitFactory) comp.GetComponent()
-						.getFactory();
-				/* Here we recurse into the sub-circuits */
-				DRCStatus = sub
-						.getSubcircuit()
-						.getNetList()
-						.DesignRuleCheckResult(Reporter, HDLIdentifier, false,Sheetnames);
-				if (DRCStatus != DRC_PASSED) {
-					return DRCStatus;
-				}
-			}
-			return DRC_PASSED;
+			return CommonDRCStatus;
 		} else {
 			/* There are changes, so we clean up the old information */
 			clear();
+			DRCStatus = DRC_PASSED; /* we mark already passed, if an error occurs the status is changed */
 		}
 		/*
 		 * Check for duplicated sheet names, this is bad as we will have
 		 * multiple "different" components with the same name
 		 */
 		if (MyCircuit.getName().isEmpty()) {
+			/* in the current implementation of logisim this should never happen, but we leave it in */
 			Reporter.AddFatalError("Found a sheet in your design with an empty name. This is not allowed, please specify a name!");
-			return DRC_ERROR;
+			DRCStatus |= DRC_ERROR;
 		}
 		if (Sheetnames.contains(MyCircuit.getName())) {
+			/* in the current implementation of logisim this should never happen, but we leave it in */
 			Reporter.AddFatalError("Found more than one sheet in your design with the name :\""
 					+ MyCircuit.getName()
 					+ "\". This is not allowed, please make sure that all sheets have a unique name!");
-			return DRC_ERROR;
+			DRCStatus |= DRC_ERROR;
 		} else {
 			Sheetnames.add(MyCircuit.getName());
 		}
+		/* Preparing stage */
 		for (Component comp : MyCircuit.getNonWires()) {
 			String ComponentName = comp.getFactory().getHDLName(
 					comp.getAttributeSet());
+			if (!CompName.contains(ComponentName)) {
+				CompName.add(ComponentName);
+			}
+		}
+		drc.clear();
+		drc.add(new SimpleDRCContainer(MyCircuit,Strings.get("HDL_noLabel"),SimpleDRCContainer.LEVEL_FATAL,SimpleDRCContainer.MARK_INSTANCE));
+		drc.add(new SimpleDRCContainer(MyCircuit,Strings.get("HDL_CompNameIsLabel"),SimpleDRCContainer.LEVEL_FATAL,SimpleDRCContainer.MARK_INSTANCE|SimpleDRCContainer.MARK_LABEL));
+		drc.add(new SimpleDRCContainer(MyCircuit,Strings.get("HDL_LabelInvalid"),SimpleDRCContainer.LEVEL_FATAL,SimpleDRCContainer.MARK_INSTANCE|SimpleDRCContainer.MARK_LABEL));
+		drc.add(new SimpleDRCContainer(MyCircuit,Strings.get("HDL_DuplicatedLabels"),SimpleDRCContainer.LEVEL_FATAL,SimpleDRCContainer.MARK_INSTANCE|SimpleDRCContainer.MARK_LABEL));
+		drc.add(new SimpleDRCContainer(MyCircuit,Strings.get("HDL_Tristate"),SimpleDRCContainer.LEVEL_FATAL,SimpleDRCContainer.MARK_INSTANCE));
+		drc.add(new SimpleDRCContainer(MyCircuit,Strings.get("HDL_unsupported"),SimpleDRCContainer.LEVEL_FATAL,SimpleDRCContainer.MARK_INSTANCE));
+		for (Component comp : MyCircuit.getNonWires()) {
 			/*
 			 * Here we check if the components are supported for the HDL
 			 * generation
 			 */
 			if (!comp.getFactory().HDLSupportedComponent(HDLIdentifier,
 					comp.getAttributeSet())) {
-				Reporter.AddFatalError("Found unsupported component: \""
-						+ comp.getFactory().getName() + "\" for "
-						+ HDLIdentifier.toString()
-						+ " generation in circuit : \"" + MyCircuit.getName()
-						+ "\"");
-				DRCStatus = DRC_ERROR;
-				return DRCStatus;
+				drc.get(5).AddMarkComponent(comp);
+				DRCStatus |= DRC_ERROR;
 			}
-			if (comp.getFactory() instanceof SubcircuitFactory) {
-				/* Special care has to be taken for sub-circuits */
-				if (!CorrectLabel.IsCorrectLabel(comp.getFactory().getName(),
-						HDLIdentifier, "Found that the component \""
-								+ comp.getFactory().getName()
-								+ "\" in circuit \"" + MyCircuit.getName(),
-						Reporter)) {
-					DRCStatus = DRC_ERROR;
-					return DRCStatus;
-				}
-			}
-			/* Now we add the name to the set if it is not already in */
-			if (!CompName.contains(ComponentName)) {
-				CompName.add(ComponentName);
-				AnnotationNames.add(new HashSet<String>());
-			}
-		}
-		for (Component comp : MyCircuit.getNonWires()) {
 			/*
 			 * we check that all components that require a non zero label
 			 * (annotation) have a label set
@@ -377,74 +363,41 @@ public class Netlist implements CircuitListener {
 				String ComponentName = comp.getFactory().getHDLName(
 						comp.getAttributeSet());
 				if (Label.isEmpty()) {
-					Reporter.AddError("Component \""
-							+ comp.getFactory().getName()
-							+ "\" in sheet "
-							+ MyCircuit.getName()
-							+ " does not have a label! Run annotate or add labels");
-					DRCStatus = ANNOTATE_REQUIRED;
-					return DRCStatus;
-				}
-				if (CompName.contains(Label)) {
-					Reporter.AddSevereError("Sheet \""
-							+ MyCircuit.getName()
-							+ "\" has one or more components with the name \""
-							+ Label
-							+ "\" and also components with a label of the same name. This is not supported!");
-					DRCStatus = DRC_ERROR;
-					return DRCStatus;
-				}
-				if (!CorrectLabel
-						.IsCorrectLabel(Label, HDLIdentifier, "Component \""
-								+ comp.getFactory().getName() + "\" in sheet "
-								+ MyCircuit.getName() + " with label \""
-								+ Label.toString(), Reporter)) {
-					DRCStatus = DRC_ERROR;
-					return DRCStatus;
-				}
-				if (AnnotationNames.get(CompName.indexOf(ComponentName))
-						.contains(Label)) {
-					Reporter.AddSevereError("Duplicated label \""
-							+ comp.getAttributeSet().getValue(StdAttr.LABEL)
-									.toString() + "\" found for component "
-							+ comp.getFactory().getName() + " in sheet "
-							+ MyCircuit.getName());
-					DRCStatus = DRC_ERROR;
-					return DRCStatus;
+					drc.get(0).AddMarkComponent(comp);
+					DRCStatus |= ANNOTATE_REQUIRED;
 				} else {
-					AnnotationNames.get(CompName.indexOf(ComponentName)).add(
-							Label);
+					if (CompName.contains(Label)) {
+						drc.get(1).AddMarkComponent(comp);
+						DRCStatus |= DRC_ERROR;
+					}
+					if (!CorrectLabel.IsCorrectLabel(Label, HDLIdentifier)) {
+						/* this should not happen anymore */
+						drc.get(2).AddMarkComponent(comp);
+						DRCStatus |= DRC_ERROR;
+					}
+					if (Labels.containsKey(Label)) {
+						drc.get(3).AddMarkComponent(comp);
+						drc.get(3).AddMarkComponent(Labels.get(Label));
+						DRCStatus |= DRC_ERROR;
+					} else {
+						Labels.put(Label, comp);
+					}
 				}
 				if (comp.getFactory() instanceof SubcircuitFactory) {
 					/* Special care has to be taken for sub-circuits */
 					if (Label.equals(ComponentName.toUpperCase())) {
-						Reporter.AddError("Found that the component \""
-								+ comp.getFactory().getName() + "\" in sheet "
-								+ MyCircuit.getName() + " has a label that"
-								+ " corresponds to the component name!");
-						Reporter.AddError("Labels must be unique and may not correspond to the component name!");
-						DRCStatus = DRC_ERROR;
-						return DRCStatus;
+						drc.get(1).AddMarkComponent(comp);
+						DRCStatus |= DRC_ERROR;
 					}
-					if (CompName.contains(Label)) {
-						Reporter.AddError("Subcircuit name "
-								+ comp.getFactory().getName() + " in sheet "
-								+ MyCircuit.getName()
-								+ " is a reserved name; please rename!");
-						DRCStatus = DRC_ERROR;
-						return DRCStatus;
+					if (!CorrectLabel.IsCorrectLabel(comp.getFactory().getName(),
+							HDLIdentifier, "Found that the component \""
+									+ comp.getFactory().getName()
+									+ "\" in circuit \"" + MyCircuit.getName(),
+							Reporter)) {
+						DRCStatus |= DRC_ERROR;
 					}
 					SubcircuitFactory sub = (SubcircuitFactory) comp
 							.getFactory();
-					/* Here we recurse into the sub-circuits */
-					DRCStatus = sub
-							.getSubcircuit()
-							.getNetList()
-							.DesignRuleCheckResult(Reporter, HDLIdentifier,
-									false, Sheetnames);
-					if (DRCStatus != DRC_PASSED) {
-						return DRCStatus;
-					}
 					LocalNrOfInportBubles = LocalNrOfInportBubles
 							+ sub.getSubcircuit().getNetList()
 									.NumberOfInputBubbles();
@@ -458,27 +411,17 @@ public class Netlist implements CircuitListener {
 			}
 			/* Now we check that no tri-state are present */
 			if (comp.getFactory().HasThreeStateDrivers(comp.getAttributeSet())) {
-				String Label = comp.getAttributeSet().getValue(StdAttr.LABEL)
-						.toString();
-				if (Label.isEmpty()) {
-					Reporter.AddSevereError("Found a tri-state driver or floating output for component \""
-							+ comp.getFactory().getName()
-							+ "\" in sheet \""
-							+ MyCircuit.getName()
-							+ "\". Float and tri-states are not supported!");
-				} else {
-					Reporter.AddSevereError("Found a tri-state driver or floating output for component \""
-							+ comp.getFactory().getName()
-							+ "\" with label \""
-							+ Label
-							+ "\" in sheet \""
-							+ MyCircuit.getName()
-							+ "\". Float and tri-states are not supported!");
-
-				}
-				DRCStatus = DRC_ERROR;
-				return DRCStatus;
+				drc.get(4).AddMarkComponent(comp);
+				DRCStatus |= DRC_ERROR;
 			}
+		}
+		for (int i = 0 ; i < drc.size(); i++)
+			if (drc.get(i).DRCInfoPresent())
+				Reporter.AddError(drc.get(i));
+		drc.clear();
+		/* Here we have to quit as the netlist generation needs a clean tree */
+		if ((DRCStatus|CommonDRCStatus) != DRC_PASSED) {
+			return DRCStatus|CommonDRCStatus;
 		}
 		/*
 		 * Okay we now know for sure that all elements are supported, lets build
@@ -489,14 +432,15 @@ public class Netlist implements CircuitListener {
 		if (!this.GenerateNetlist(Reporter, HDLIdentifier)) {
 			this.clear();
 			DRCStatus = DRC_ERROR;
-			return DRCStatus;
+			/* here we have to quit, as all the following steps depend on a proper netlist */
+			return DRCStatus|CommonDRCStatus;
 		}
 		if (this.NetlistHasShortCircuits()) {
 			Reporter.AddFatalError("Circuit \"" + MyCircuit.getName()
 					+ "\" has short-circuits!");
 			this.clear();
 			DRCStatus = DRC_ERROR;
-			return DRCStatus;
+			return DRCStatus|CommonDRCStatus;
 		}
 		Reporter.AddInfo("Circuit \"" + MyCircuit.getName() + "\" has "
 				+ this.NumberOfNets() + " nets and " + this.NumberOfBusses()
@@ -507,7 +451,7 @@ public class Netlist implements CircuitListener {
 		if (IsTopLevel) {
 			if (!DetectClockTree(Reporter)) {
 				DRCStatus = DRC_ERROR;
-				return DRCStatus;
+				return DRCStatus|CommonDRCStatus;
 			}
 			ConstructHierarchyTree(null, new ArrayList<String>(),
 					new Integer(0), new Integer(0), new Integer(0));
@@ -518,11 +462,11 @@ public class Netlist implements CircuitListener {
 				Reporter.AddFatalError("Toplevel \"" + MyCircuit.getName()
 						+ "\" has no input(s) and/or no output(s)!");
 				DRCStatus = DRC_ERROR;
-				return DRCStatus;
+				return DRCStatus|CommonDRCStatus;
 			}
 		}
 		DRCStatus = DRC_PASSED;
-		return DRCStatus;
+		return DRCStatus|CommonDRCStatus;
 	}
 
 	private boolean DetectClockTree(FPGAReport Reporter) {

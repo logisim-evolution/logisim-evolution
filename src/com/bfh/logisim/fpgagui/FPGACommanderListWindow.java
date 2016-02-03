@@ -91,6 +91,10 @@ public class FPGACommanderListWindow  extends JFrame implements KeyListener,Wind
 		return IsActive;
 	}
 	
+	public JList<Object>getListObject() {
+		return textArea;
+	}
+	
 	@Override
 	public void keyTyped(KeyEvent e) {
 	}

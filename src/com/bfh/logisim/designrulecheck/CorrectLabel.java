@@ -80,6 +80,29 @@ public class CorrectLabel {
 		return true;
 	}
 	
+	public static boolean IsCorrectLabel(String Label, String HDLIdentifier) {
+		if (Label.isEmpty())
+			return true;
+		for (int i = 0; i < Label.length(); i++) {
+			if (!Chars.contains(Label.toLowerCase().substring(i, i + 1))
+					&& !Numbers.contains(Label.substring(i, i + 1))) {
+				return false;
+			}
+		}
+		if (HDLIdentifier.equals(Settings.VHDL)) {
+			if (VHDLKeywords.contains(Label.toLowerCase())) {
+				return false;
+			}
+		} else {
+			if (HDLIdentifier.equals(Settings.VERILOG)) {
+				if (VerilogKeywords.contains(Label)) {
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+	
 	public static boolean IsKeyword(String Label,Boolean ShowDialog) {
 		boolean ret = false;
 		if (VHDLKeywords.contains(Label.toLowerCase())) {

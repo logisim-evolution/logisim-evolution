@@ -184,7 +184,10 @@ public class Circuit {
 			return false;
 		for (Component comp : comps) {
 			if (comp.getFactory().getName().toUpperCase().equals(Name.toUpperCase())) {
-				if (ShowDialog) JOptionPane.showMessageDialog(null, "\""+Name+"\" : "+Strings.get("ComponentLabelNameError"));
+				if (ShowDialog) {
+					String msg = com.cburch.logisim.circuit.Strings.get("ComponentLabelNameError");
+					JOptionPane.showMessageDialog(null, "\""+Name+"\" : "+msg);
+				}
 				return true;
 			}
 		}
@@ -200,7 +203,10 @@ public class Circuit {
 				String Label = (comp.getAttributeSet().containsAttribute(StdAttr.LABEL)) ?
 						comp.getAttributeSet().getValue(StdAttr.LABEL) : "";
 				if (Label.toUpperCase().equals(Name.toUpperCase())) {
-					if (ShowDialog) JOptionPane.showMessageDialog(null, "\""+Name+"\" : "+Strings.get("UsedLabelNameError"));
+					if (ShowDialog) {
+						String msg = com.cburch.logisim.circuit.Strings.get("UsedLabelNameError");
+						JOptionPane.showMessageDialog(null, "\""+Name+"\" : "+msg);
+					}
 					return true;
 				}
 			}

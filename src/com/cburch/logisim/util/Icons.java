@@ -40,7 +40,7 @@ import javax.swing.ImageIcon;
 import com.cburch.logisim.data.Direction;
 
 public class Icons {
-	public static Icon getIcon(String name) {
+	public static ImageIcon getIcon(String name) {
 		java.net.URL url = Icons.class.getClassLoader().getResource(
 				path + "/" + name);
 		if (url == null)

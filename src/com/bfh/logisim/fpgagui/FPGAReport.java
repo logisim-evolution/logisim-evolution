@@ -30,6 +30,8 @@
 
 package com.bfh.logisim.fpgagui;
 
+import com.bfh.logisim.designrulecheck.SimpleDRCContainer;
+
 public class FPGAReport {
 	private FPGACommanderGui myCommander;
 
@@ -38,27 +40,33 @@ public class FPGAReport {
 	}
 
 	public void AddError(Object Message) {
-		myCommander.AddErrors(Message);
+		if (Message instanceof String)
+			myCommander.AddErrors(new SimpleDRCContainer(Message,SimpleDRCContainer.LEVEL_NORMAL));
+		else
+			myCommander.AddErrors(Message);
 	}
 
 	public void AddFatalError(String Message) {
-		myCommander.AddErrors("***FATAL*** " + Message);
-	}
-
-	public void AddInfo(Object Message) {
-		myCommander.AddInfo(Message);
+			myCommander.AddErrors(new SimpleDRCContainer(Message,SimpleDRCContainer.LEVEL_FATAL));
 	}
 
 	public void AddSevereError(String Message) {
-		myCommander.AddErrors("**SEVERE** " + Message);
+			myCommander.AddErrors(new SimpleDRCContainer(Message,SimpleDRCContainer.LEVEL_SEVERE));
+	}
+
+	public void AddInfo(String Message) {
+		myCommander.AddInfo(Message);
 	}
 
 	public void AddSevereWarning(String Message) {
-		myCommander.AddWarning("**SEVERE** " + Message);
+		myCommander.AddWarning(new SimpleDRCContainer(Message,SimpleDRCContainer.LEVEL_SEVERE));
 	}
 
 	public void AddWarning(Object Message) {
-		myCommander.AddWarning(Message);
+		if (Message instanceof String)
+			myCommander.AddWarning(new SimpleDRCContainer(Message,SimpleDRCContainer.LEVEL_NORMAL));
+		else
+			myCommander.AddWarning(Message);
 	}
 
 	public void ClsScr() {

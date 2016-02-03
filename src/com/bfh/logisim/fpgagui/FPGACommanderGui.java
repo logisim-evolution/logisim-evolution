@@ -68,8 +68,10 @@ import javax.swing.JTextArea;
 import javax.swing.ListSelectionModel;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import com.bfh.logisim.designrulecheck.CircuitNetlist;
 import com.bfh.logisim.designrulecheck.CorrectLabel;
 import com.bfh.logisim.designrulecheck.Netlist;
+import com.bfh.logisim.designrulecheck.SimpleDRCContainer;
 import com.bfh.logisim.download.AlteraDownload;
 import com.bfh.logisim.download.XilinxDownload;
 import com.bfh.logisim.fpgaboardeditor.BoardInformation;
@@ -117,6 +119,7 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 					} else
 					if (tabbedPane.getSelectedComponent().equals(panelErrors)) {
 						ErrorWindow.setVisible(true);
+						clearDRCTrace();
 						tabbedPane.remove(tabbedPane.getSelectedIndex());
 					} else
 					if (tabbedPane.getSelectedComponent().equals(panelConsole)) {
@@ -125,18 +128,25 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 					}
 				}
 			}
-			
-//			if (e.getSource().equals(InfoWindow.getTextArea())) {
-//				JTextArea area = InfoWindow.getTextArea();
-//				int position = area.viewToModel(area.getMousePosition());
-//System.out.print(position+"\n");
-//			}
-			
 		}
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
+		if (e.getSource().equals(Errors)||
+			e.getSource().equals(ErrorWindow.getListObject())) {
+			clearDRCTrace();
+			int idx = -1;
+			if (e.getSource().equals(Errors)) 
+				idx = Errors.getSelectedIndex();
+			else
+				idx = ErrorWindow.getListObject().getSelectedIndex();
+			if (idx >= 0) {
+				if (ErrorsList.getElementAt(idx) instanceof SimpleDRCContainer) {
+					GenerateDRCTrace((SimpleDRCContainer)ErrorsList.getElementAt(idx));
+				}
+			}
+		}
 	}
 
 	@Override
@@ -181,6 +191,7 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 				idx = tabbedPane.indexOfComponent(panelConsole);
 			tabbedPane.add(panelErrors, idx);
 			tabbedPane.setTitleAt(idx, "Errors (" + ErrorsList.getSize() + ")");
+			clearDRCTrace();
 		}
 		if (e.getSource().equals(ConsoleWindow)) {
 			tabbedPane.add(panelConsole, tabbedPane.getComponentCount());
@@ -190,6 +201,7 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 			WarningWindow.setVisible(false);
 			ErrorWindow.setVisible(false);
 			ConsoleWindow.setVisible(false);
+			clearDRCTrace();
 		}
 	}
 
@@ -312,6 +324,8 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 
 	private FPGACommanderTextWindow InfoWindow;
 	private FPGACommanderTextWindow ConsoleWindow;
+	private boolean DRCTraceActive = false;
+	private SimpleDRCContainer ActiveDRCContainer;
 
 	public FPGACommanderGui(Project Main) {
 		MyProject = Main;
@@ -325,7 +339,10 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 		panel.addWindowListener(this);
 		InfoWindow.addWindowListener(this);
 		WarningWindow.addWindowListener(this);
+		WarningWindow.setSize(new Dimension(740,400));
 		ErrorWindow.addWindowListener(this);
+		ErrorWindow.setSize(new Dimension(740,400));
+		ErrorWindow.getListObject().addMouseListener(this);
 		ConsoleWindow.addWindowListener(this);
 		
 		GridBagLayout thisLayout = new GridBagLayout();
@@ -530,6 +547,7 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 		Errors.setModel(ErrorsList);
 		Errors.setCellRenderer(ErrorsList.getMyRenderer(true));
 		Errors.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		Errors.addMouseListener(this);
 		
 		textAreaConsole.setForeground(Color.LIGHT_GRAY);
 		textAreaConsole.setBackground(bg);
@@ -846,6 +864,7 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 	}
 
 	private void clearAllMessages() {
+		clearDRCTrace();
 		textAreaInfo.setText(null);
 		consoleInfos.clear();
 		int idx = tabbedPane.indexOfComponent(panelInfos);
@@ -1084,11 +1103,11 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 		String CircuitName = circuitsList.getSelectedItem().toString();
 		Circuit root = MyProject.getLogisimFile().getCircuit(CircuitName);
 		ArrayList<String> SheetNames = new ArrayList<String>();
-		int DRCResult;
+		int DRCResult = CircuitNetlist.DRC_PASSED;
 		if (root == null) {
-			DRCResult = Netlist.DRC_ERROR;
+			DRCResult |= CircuitNetlist.DRC_ERROR;
 		} else {
-			DRCResult = root.getNetList().DesignRuleCheckResult(MyReporter,
+			DRCResult |= root.getNetList().DesignRuleCheckResult(MyReporter,
 					HDLType.getText(), true, SheetNames);
 		}
 		return (DRCResult == Netlist.DRC_PASSED);
@@ -1365,4 +1384,21 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 		return true;
 	}
 
+	private void clearDRCTrace() {
+		if (DRCTraceActive) {
+			ActiveDRCContainer.ClearMarks();
+			DRCTraceActive = false;
+			MyProject.repaintCanvas();
+		}
+	}
+	
+	private void GenerateDRCTrace(SimpleDRCContainer dc) {
+		DRCTraceActive = true;
+		ActiveDRCContainer = dc;
+		dc.MarkComponents();
+		if (dc.HasCircuit()) 
+			if (!MyProject.getCurrentCircuit().equals(dc.GetCircuit()))
+				MyProject.setCurrentCircuit(dc.GetCircuit());
+		MyProject.repaintCanvas();
+	}
 }

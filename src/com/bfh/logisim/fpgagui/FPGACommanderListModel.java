@@ -42,6 +42,9 @@ import javax.swing.ListCellRenderer;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 
+import com.bfh.logisim.designrulecheck.SimpleDRCContainer;
+import com.cburch.logisim.util.Icons;
+
 @SuppressWarnings("serial")
 public class FPGACommanderListModel extends  AbstractListModel<Object> {
 	
@@ -60,14 +63,19 @@ public class FPGACommanderListModel extends  AbstractListModel<Object> {
 				int index,
 				boolean isSelected, 
 				boolean cellHasFocus) {
-			if (isSelected) {
-				setBackground(list.getSelectionBackground());
-				setForeground(list.getSelectionForeground());
-			} else {
-				setBackground(list.getBackground());
-				setForeground(list.getForeground());
-			}
+			SimpleDRCContainer msg = null;
+			setBackground(list.getBackground());
+			setForeground(list.getForeground());
 			StringBuffer Line = new StringBuffer();
+			setIcon(Icons.getIcon("empty.png")); /* place holder too make space for the trace icon */
+			if (value instanceof SimpleDRCContainer) {
+				msg = (SimpleDRCContainer) value;
+			}
+			if (msg != null) {
+				if (msg.DRCInfoPresent()) {
+		        	setIcon(Icons.getIcon("drc_trace.png"));
+				} 
+			}
 			if (CountLines) {
 				if (index < 9) {
 					Line.append("    ");
@@ -80,6 +88,19 @@ public class FPGACommanderListModel extends  AbstractListModel<Object> {
 				}
 				Line.append(Integer.toString(index + 1) + "> ");
 			}
+			if (msg != null) {
+				switch (msg.Severity()) {
+					case SimpleDRCContainer.LEVEL_SEVERE :
+						Line.append(Strings.get("SEVERE_MSG")+" ");
+						break;
+					case SimpleDRCContainer.LEVEL_FATAL :
+						Line.append(Strings.get("FATAL_MSG")+" ");
+						break;
+				}
+				if (msg.HasCircuit()) {
+					Line.append(msg.GetCircuit().getName()+": ");
+				}
+			}
 			Line.append(value.toString());
 			setText(Line.toString());
 			setEnabled(list.isEnabled());
@@ -87,7 +108,6 @@ public class FPGACommanderListModel extends  AbstractListModel<Object> {
 			setOpaque(true);
 			return this;
 		}
-		
 	}
 
 	private ArrayList<Object> myData;
