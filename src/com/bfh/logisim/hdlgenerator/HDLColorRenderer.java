@@ -54,13 +54,13 @@ public class HDLColorRenderer extends JLabel
 			setBorder(border);
 		} else {
 			String myInfo = (String) Info;
-			if (myInfo.equals(RequiredFieldString)) {
+			if (myInfo != null && myInfo.equals(RequiredFieldString)) {
 				setBackground(Color.YELLOW);
 				setForeground(Color.BLUE);
 				setText("HDL Required");
 				setHorizontalAlignment(JLabel.CENTER);
 				setBorder(null);
-			} else if (myInfo.contains("#")&& myInfo.indexOf('#')==0&&
+			} else if (myInfo != null && myInfo.contains("#")&& myInfo.indexOf('#')==0&&
 					   (myInfo.length() == 7 || myInfo.length() == 9)) {
 				int red,green,blue,alpha;				
 				red = Integer.valueOf(myInfo.substring(1, 3), 16);
