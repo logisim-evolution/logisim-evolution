@@ -78,7 +78,7 @@ public final class Wire implements Component, AttributeSet, CustomHandles,
 	public static final int WIDTH_BUS = 4;
 	public static final int HIGHLIGHTED_WIDTH = 4;
 	public static final int HIGHLIGHTED_WIDTH_BUS = 5;
-	public static final double DOT_MULTIPLY_FACTOR = 1.5; /* multiply factor for the intersection points */
+	public static final double DOT_MULTIPLY_FACTOR = 1.35; /* multiply factor for the intersection points */
 	public static final AttributeOption VALUE_HORZ = new AttributeOption(
 			"horz", Strings.getter("wireDirectionHorzOption"));
 	public static final AttributeOption VALUE_VERT = new AttributeOption(
