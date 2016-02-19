@@ -317,6 +317,8 @@ public class FPGAIOInformationContainer {
 				|| MyType.equals(IOComponentTypes.PortIO)) {
 			MyType.setNbSwitch(NrOfPins);
 		}
+		if (MyType.equals(IOComponentTypes.Pin))
+			MyActivityLevel = PinActivity.ActiveHigh;
 		MyRectangle = new BoardRectangle(x, y, width, height);
 	}
 	
