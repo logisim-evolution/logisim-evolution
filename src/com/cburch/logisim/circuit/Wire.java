@@ -30,14 +30,12 @@
 
 package com.cburch.logisim.circuit;
 
-import java.awt.Color;
 import java.awt.Graphics;
 import java.util.AbstractList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import com.bfh.logisim.designrulecheck.Netlist;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.comp.ComponentDrawContext;
 import com.cburch.logisim.comp.ComponentFactory;
@@ -78,7 +76,7 @@ public final class Wire implements Component, AttributeSet, CustomHandles,
 	public static final int WIDTH_BUS = 4;
 	public static final int HIGHLIGHTED_WIDTH = 4;
 	public static final int HIGHLIGHTED_WIDTH_BUS = 5;
-	public static final double DOT_MULTIPLY_FACTOR = 1.35; /* multiply factor for the intersection points */
+        public static final double DOT_MULTIPLY_FACTOR = 1.35; /* multiply factor for the intersection points */
 	public static final AttributeOption VALUE_HORZ = new AttributeOption(
 			"horz", Strings.getter("wireDirectionHorzOption"));
 	public static final AttributeOption VALUE_VERT = new AttributeOption(
@@ -98,8 +96,6 @@ public final class Wire implements Component, AttributeSet, CustomHandles,
 	final Location e0;
 	final Location e1;
 	final boolean is_x_equal;
-	private boolean ShowAsMarked = false;
-	private Color MarkColor = Netlist.DRC_WIRE_MARK_COLOR;
 
 	private Wire(Location e0, Location e1) {
 		this.is_x_equal = e0.getX() == e1.getX();
@@ -120,22 +116,6 @@ public final class Wire implements Component, AttributeSet, CustomHandles,
 				this.e1 = e1;
 			}
 		}
-	}
-	
-	public void SetMarked(boolean Mark) {
-		ShowAsMarked = Mark;
-	}
-	
-	public boolean IsSetAsMarked() {
-		return ShowAsMarked;
-	}
-	
-	public void SetMarkColor(Color col) {
-		MarkColor = col;
-	}
-	
-	public Color GetMarkColor() {
-		return MarkColor;
 	}
 
 	public void addAttributeListener(AttributeListener l) {
