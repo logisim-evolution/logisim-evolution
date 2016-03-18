@@ -34,6 +34,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.cburch.logisim.circuit.Circuit;
+import com.cburch.logisim.circuit.Splitter;
 import com.cburch.logisim.circuit.Wire;
 import com.cburch.logisim.instance.InstanceComponent;
 
@@ -102,6 +103,12 @@ public class SimpleDRCContainer {
 		DRCComponents.add(comp);
 	}
 	
+	public void AddMarkComponents(Set<?> set) {
+		if (DRCComponents==null) 
+			DRCComponents = new HashSet<Object>();
+		DRCComponents.addAll(set);
+	}
+	
 	public void MarkComponents() {
 		if (!DRCInfoPresent())
 			return;
@@ -112,12 +119,19 @@ public class SimpleDRCContainer {
 					wire.SetMarked(true);
 				}
 			} else
+			if (obj instanceof Splitter) {
+				Splitter split = (Splitter)obj;
+				if ((MarkType&MARK_INSTANCE)!=0) {
+					split.SetMarked(true);
+				}
+			} else
 			if (obj instanceof InstanceComponent) {
 				InstanceComponent comp = (InstanceComponent)obj;
 				if ((MarkType&MARK_INSTANCE)!=0)
 					comp.MarkInstance();
 				if ((MarkType&MARK_LABEL)!=0)
 					comp.MarkLabel();
+			} else {
 			}
 		}
 	}
@@ -130,6 +144,12 @@ public class SimpleDRCContainer {
 				Wire wire = (Wire)obj;
 				if ((MarkType&MARK_WIRE)!=0) {
 					wire.SetMarked(false);
+				}
+			} else
+			if (obj instanceof Splitter) {
+				Splitter split = (Splitter)obj;
+				if ((MarkType&MARK_INSTANCE)!=0) {
+					split.SetMarked(false);
 				}
 			} else
 			if (obj instanceof InstanceComponent) {

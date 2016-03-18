@@ -50,6 +50,7 @@ import com.bfh.logisim.fpgagui.FPGAReport;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitEvent;
 import com.cburch.logisim.circuit.CircuitListener;
+import com.cburch.logisim.circuit.SplitterFactory;
 import com.cburch.logisim.circuit.SubcircuitFactory;
 import com.cburch.logisim.circuit.Wire;
 import com.cburch.logisim.comp.Component;
@@ -58,6 +59,7 @@ import com.cburch.logisim.data.Location;
 import com.cburch.logisim.instance.InstanceComponent;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.proj.Projects;
+import com.cburch.logisim.std.wiring.Clock;
 import com.cburch.logisim.std.wiring.Pin;
 import com.cburch.logisim.std.wiring.Tunnel;
 
@@ -119,12 +121,19 @@ public class CircuitNetlist implements CircuitListener {
 	public static final int DRC_ERROR = 2;
 	public static final Color DRC_INSTANCE_MARK_COLOR = Color.RED;
 	public static final Color DRC_LABEL_MARK_COLOR = Color.MAGENTA;
-	public static final Color DRC_WIRE_MARK_COLOR = Color.ORANGE;
+	public static final Color DRC_WIRE_MARK_COLOR = Color.RED;
 
 	private Map<Circuit,Integer> MySubCircuitMap; /* This is an important information as it contains all my subcircuits; it is handled by the CircuitListener */
 	private Circuit MyCircuit;
 	private String CircuitName;
 	private Set<CircuitNet> MyNets;
+	private Set<Component> MyUsedInputPins;
+	private Set<Component> MyUsedOutputPins;
+	private Set<Component> MyUsedSplitters;
+	private Set<Component> MyUsedClockGenerators;
+	private Set<Component> MyUsedBubbleComponents;
+	private Set<Component> MyUsedSubCircuits;
+	private Set<Component> MyUsedNormalComponents;
 	private int DRCStatus;
 
 	public CircuitNetlist(Circuit ThisCircuit) {
@@ -142,7 +151,7 @@ public class CircuitNetlist implements CircuitListener {
 		int CommonDRCStatus = DRC_PASSED;
 		/* First we go down the tree and get the DRC status of all sub-circuits */
 		for (Circuit circ:MySubCircuitMap.keySet()) {
-			CommonDRCStatus |= circ.getNetList().DesignRuleCheckResult(Reporter, HDLIdentifier, false, Sheetnames);
+			CommonDRCStatus |= circ.getCircuitNetList().DesignRuleCheckResult(Reporter, HDLIdentifier, false, Sheetnames);
 		}
 		/* Check if we are okay */
 		if (DRCStatus == DRC_PASSED) {
@@ -282,6 +291,7 @@ public class CircuitNetlist implements CircuitListener {
 	}
 	
 	private boolean GenerateNetlist(FPGAReport Reporter, String HDLIdentifier) {
+		ArrayList<SimpleDRCContainer> drc = new ArrayList<SimpleDRCContainer>();
 		GridBagConstraints gbc = new GridBagConstraints();
 		JFrame panel = new JFrame("Netlist: " + MyCircuit.getName());
 		panel.setResizable(false);
@@ -324,6 +334,7 @@ public class CircuitNetlist implements CircuitListener {
 			}
 		}
 		/* SECOND PASS: Detect all zero length wires; e.g. all components that are connected directly together */
+		drc.add(new SimpleDRCContainer(MyCircuit,Strings.get("NetAdd_ComponentWidthMismatch"),SimpleDRCContainer.LEVEL_FATAL,SimpleDRCContainer.MARK_INSTANCE));
 		Map<Location,Integer> Points = new HashMap<Location,Integer>();
 		for (Component comp : comps) {
 			for (EndData end : comp.getEnds()) {
@@ -340,13 +351,17 @@ public class CircuitNetlist implements CircuitListener {
 						if (BitWidth == end.getWidth().getWidth()) {
 							MyNets.add(new CircuitNet(loc));
 						} else {
-							Reporter.AddFatalError(CircuitName+": "+Strings.get("NetAdd_ComponentWidthMismatch"));
-							return false;
+							drc.get(0).AddMarkComponent(comp);
 						}
 					}
 				} else
 					Points.put(loc,end.getWidth().getWidth());
 			}
+		}
+		if (drc.get(0).DRCInfoPresent()) {
+			Reporter.AddError(drc.get(0));
+			panel.dispose();
+			return false;
 		}
 		
 		/* THIRD PASS: Now we process all tunnels and merge the tunneled nets */
@@ -391,6 +406,7 @@ public class CircuitNetlist implements CircuitListener {
 						/* First we merge IterItem with CompItem */
 						if (!CompItem.merge(IterItem, Error, true)) {
 							Reporter.AddFatalError(CircuitName+": "+Error);
+							panel.dispose();
 							return false;
 						}
 						/* Now we update the set of CompItem's tunnel names */
@@ -416,16 +432,424 @@ public class CircuitNetlist implements CircuitListener {
 		/* FOURTH PASS: Here the "wire widths" are determined, the connection to the components, and source/sink 
 		 * 
 		 */
+		drc.clear();
+		drc.add(new SimpleDRCContainer(MyCircuit,Strings.get("NetList_IOError"),SimpleDRCContainer.LEVEL_FATAL,SimpleDRCContainer.MARK_INSTANCE));
+		drc.add(new SimpleDRCContainer(MyCircuit,Strings.get("NetList_ShortCircuit"),SimpleDRCContainer.LEVEL_FATAL,SimpleDRCContainer.MARK_WIRE));
+		drc.add(new SimpleDRCContainer(MyCircuit,Strings.get("NetList_BitwidthError"),SimpleDRCContainer.LEVEL_FATAL,SimpleDRCContainer.MARK_WIRE|SimpleDRCContainer.MARK_INSTANCE));
+		CompIterator = comps.iterator();
+		boolean errors = false;
+		while (CompIterator.hasNext()) {
+			Component comp = CompIterator.next();
+			/* first check: do we have an identified source/sink behavior, meaning the connections of the
+			 *              component may not be of type inpunt and output.
+			 */
+			if (comp.getFactory() instanceof SplitterFactory) {
+				/* The splitters are special and will be processed later on, at this stage we only mark the
+				 * bitwidths on the connected nets and put them in a set
+				 */
+				if (!ProcessSplitter(comp,drc,Reporter))
+					errors = true;
+			} else {
+				boolean found_io = false;
+				for (EndData end : comp.getEnds()) {
+					if (end.isInput()&end.isOutput()) {
+						drc.get(0).AddMarkComponent(comp);
+						found_io = true;
+					}
+				}
+				if (!found_io) {
+					if (comp.getFactory() instanceof Pin) {
+						if (!ProcessPin(comp,drc,Reporter))
+							errors = true;
+					} else if (comp.getFactory() instanceof Clock) {
+						/* A clock component has only a single connection and a single bit 
+						 * at this stage we are only going to mark the connection, the processing of clock-nets is
+						 * done at the root circuit at the end */
+						if (!ProcessClock(comp,drc,Reporter))
+							errors = true;
+					} else {
+						/* here all other components are handled */
+						if (!ProcessComponent(comp,drc,Reporter))
+							errors = true;
+					}
+				}
+			}
+		}
+		for (int i = 0 ; i < drc.size(); i++) {
+			if (drc.get(i).DRCInfoPresent()) {
+				errors = true;
+				Reporter.AddError(drc.get(i));
+			}
+		}
+		if (errors) {
+			panel.dispose();
+			return false;
+		}
+		/* at this moment:
+		 * 1) all connections have been marked. 
+		 * 2) The connected nets have their bitwidths set.
+		 * 3) All splitter connections have been marked.
+		 * 4) All source and sink locations have been marked.
+		 * 5) All components have been sorted by type.
+		 */
+		progres.setValue(2);
+		ProgRect = progres.getBounds();
+		ProgRect.x = 0;
+		ProgRect.y = 0;
+		progres.paintImmediately(ProgRect);
+		/* FIFTH PASS: here we are going to remove unused nets and process splitters */
+		drc.clear();
+		drc.add(new SimpleDRCContainer(MyCircuit,Strings.get("NetList_emptynets"),SimpleDRCContainer.LEVEL_NORMAL,SimpleDRCContainer.MARK_WIRE));
+		Set<CircuitNet> SplitterNets = new HashSet<CircuitNet>();
+		Iterator<CircuitNet> NetIterator = MyNets.iterator();
+		while (NetIterator.hasNext()) {
+			CircuitNet net = NetIterator.next();
+			if (!net.BitWidthDefined()) {
+				drc.get(0).AddMarkComponents(net.getSegments());
+				NetIterator.remove();
+			} else if (net.IsSplitterConnected()) {
+				SplitterNets.add(net);
+			}
+		}
+		if (drc.get(0).DRCInfoPresent())
+			Reporter.AddWarning(drc.get(0));
+		/* Here we prepare the splitter information */
+		Map<Component,ArrayList<CircuitNet>> SplitterTree = new HashMap<Component,ArrayList<CircuitNet>>();
+		for (Component mySplitter : MyUsedSplitters) {
+			SplitterTree.put(mySplitter, new ArrayList<CircuitNet>());
+			List<EndData> myEnds = mySplitter.getEnds();
+			for (int i = 0 ; i < myEnds.size() ; i++)
+				SplitterTree.get(mySplitter).add(null);
+			for (EndData end : myEnds) {
+				Location loc = end.getLocation();
+				for (CircuitNet net : SplitterNets) {
+					if (net.contains(loc)) {
+						int idx = myEnds.indexOf(end);
+						SplitterTree.get(mySplitter).set(idx,net);
+					}
+				}
+			}
+		}
+		/* now we can interpret the splitter information */
+		drc.clear();
+		drc.add(new SimpleDRCContainer(MyCircuit,Strings.get("NetList_ShortCircuit"),SimpleDRCContainer.LEVEL_FATAL,SimpleDRCContainer.MARK_WIRE));
+		errors = false;
+		Iterator<Component> MySplitIterator = MyUsedSplitters.iterator();
+		while (MySplitIterator.hasNext()) {
+		    Component mySplitter = MySplitIterator.next();
+			int BusWidth = mySplitter.getEnd(0).getWidth().getWidth();
+			List<EndData> myEnds = mySplitter.getEnds();
+			int MaxFanoutWidth = 0;
+			int index = -1;
+			for (int i = 1 ; i < myEnds.size() ; i++) {
+				int width = mySplitter.getEnd(i).getWidth().getWidth();
+				if (width > MaxFanoutWidth) {
+					MaxFanoutWidth = width;
+					index = i;
+				}
+			}
+			/* stupid situation first: the splitters bus connection is a single fanout */
+			if (BusWidth == MaxFanoutWidth) {
+				CircuitNet busnet = SplitterTree.get(mySplitter).get(0);
+				CircuitNet connectedNet = SplitterTree.get(mySplitter).get(index);
+				if (connectedNet != null) {
+					/* we can merge both nets */
+					String Message = "";
+					if (busnet.hasSource()&&connectedNet.hasSource()) {
+						drc.get(0).AddMarkComponents(busnet.getSegments());
+						drc.get(0).AddMarkComponents(connectedNet.getSegments());
+					} else {
+						if (!busnet.merge(connectedNet,Message,false)) {
+							Reporter.AddFatalError("BUG: "+Message+" :"+
+									this.getClass().getName().replaceAll("\\.","/")+"\n");
+							panel.dispose();
+							return false;
+						} else {
+							/* At this stage only nets connected to input pins have a name, we have to
+							 * preserve the name.
+							 */
+							if (connectedNet.hasName()) {
+								if (!busnet.SetName(connectedNet.getName())) {
+									Reporter.AddFatalError("BUG: Error Setting netname :"+
+											this.getClass().getName().replaceAll("\\.","/")+"\n");
+									panel.dispose();
+									return false;
+								}
+							}
+							MyNets.remove(connectedNet);
+							for (Component comp : SplitterTree.keySet()) {
+								for (int i = 0 ; i < comp.getEnds().size(); i++)
+									if (SplitterTree.get(comp).get(i) != null &&
+										SplitterTree.get(comp).get(i).equals(connectedNet))
+										SplitterTree.get(comp).set(i, busnet);
+							}
+						}
+					}
+				} else {
+					SimpleDRCContainer warn = new SimpleDRCContainer(MyCircuit,
+							                                         Strings.get("NetList_NoSplitterConnection"),
+							                                         SimpleDRCContainer.LEVEL_SEVERE,
+							                                         SimpleDRCContainer.MARK_INSTANCE);
+					warn.AddMarkComponent(mySplitter);
+					Reporter.AddWarning(warn);
+				}
+				MySplitIterator.remove(); /* Does not exist anymore */
+				continue;
+			}
+		}
+		for (int i = 0 ; i < drc.size(); i++) {
+			if (drc.get(i).DRCInfoPresent()) {
+				errors = true;
+				Reporter.AddError(drc.get(i));
+			}
+		}
+		if (errors) {
+			panel.dispose();
+			return false;
+		}
+		/* At this stage all trivial merges have been done and the nets are "clean" it's time to
+		 * build the connection tree as source and sink connections are still "simple" meaning for the
+		 * busses all bit-indexes have the same source/sink. Going to optimize further at this stage would
+		 * break this "simplicity" 
+		 */
+		progres.setValue(3);
+		ProgRect = progres.getBounds();
+		ProgRect.x = 0;
+		ProgRect.y = 0;
+		progres.paintImmediately(ProgRect);
+		
+		
+		
 		
 		panel.dispose();
+		Reporter.AddInfo("DONE for "+MyCircuit.getName()+" nr of nets : "+MyNets.size());
+
+		drc.clear(); /* cleanup */
 		return false; /* for the moment being, until I finished the complete netlist generator */
 	}
+	
+	private boolean ProcessPin(Component comp,
+			ArrayList<SimpleDRCContainer> drc,
+			FPGAReport Reporter) {
+		/* A pin has only one connection to process */
+		boolean IsSource = comp.getEnd(0).isOutput();
+		Location loc = comp.getEnd(0).getLocation();
+		int bits = comp.getEnd(0).getWidth().getWidth();
+		/* search the connected net */
+		int connectioncount = 0;
+		for (CircuitNet net : MyNets) {
+			if (net.contains(loc)) {
+				/* found the net */
+				connectioncount++;
+				if (net.hasSource()&&
+						IsSource) {
+					drc.get(1).AddMarkComponents(net.getSegments());
+				} else {
+					if (net.BitWidthDefined()&&
+						(net.BitWidth()!=bits)) {
+						drc.get(2).AddMarkComponent(comp);
+						drc.get(2).AddMarkComponents(net.getSegments());
+					} else {
+						if (!net.SetPinConnection(comp, IsSource, bits, loc)) {
+							Reporter.AddFatalError("BUG: adding pin :"+
+									this.getClass().getName().replaceAll("\\.","/")+"\n");
+							return false;
+						}
+						if (IsSource) {
+							/* the sources set the name on the net only in case of pins */
+							String Label = comp.getAttributeSet().getValue(StdAttr.LABEL);
+							if (Label.isEmpty()) {
+								Reporter.AddFatalError("BUG: empty label :"+
+										this.getClass().getName().replaceAll("\\.","/")+"\n");
+								return false;
+							}
+							net.SetName(Label);
+							MyUsedInputPins.add(comp);
+						} else {
+							MyUsedOutputPins.add(comp);
+						}
+					}
+				}
+			}
+		}
+		if (connectioncount > 1) {
+			Reporter.AddFatalError("BUG: multiple net connections on pin component in :"+
+					this.getClass().getName().replaceAll("\\.","/")+"\n");
+			return false;
+		}
+		return true;
+	}
+	
+	private boolean ProcessSplitter(Component comp,
+			ArrayList<SimpleDRCContainer> drc,
+			FPGAReport Reporter) {
+		boolean BusEndConnection = false;
+		boolean SplitEndConnection = false;
+		Set<CircuitNet> MyMarkedNets = new HashSet<CircuitNet>();
+		Map<CircuitNet,Location> MyConnectedNets = new HashMap<CircuitNet,Location>();
+		for (EndData end : comp.getEnds()) {
+			Location loc = end.getLocation();
+			int BitWidth = end.getWidth().getWidth();
+			int nr_of_connections = 0;
+			for (CircuitNet net : MyNets) {
+				if (net.contains(loc)) {
+					nr_of_connections++;
+					MyConnectedNets.put(net, loc);
+					if (comp.getEnds().indexOf(end)==0) 
+						BusEndConnection = true;
+					else
+						SplitEndConnection = true;
+					if (net.BitWidthDefined()) {
+						if (net.BitWidth()!=BitWidth) {
+							drc.get(2).AddMarkComponents(net.getSegments());
+							drc.get(2).AddMarkComponent(comp);
+						}
+					} else {
+						if (!net.setBitWidth(BitWidth)) {
+							Reporter.AddFatalError("BUG: setting bitwidth :"+
+									this.getClass().getName().replaceAll("\\.","/")+"\n");
+							return false;
+						} else {
+							MyMarkedNets.add(net);
+						}
+					}
+				}
+			}
+			if (nr_of_connections > 1) {
+				Reporter.AddFatalError("BUG: multiple splitter connections :"+
+						this.getClass().getName().replaceAll("\\.","/")+"\n");
+				return false;
+			}
+		}
+		if (BusEndConnection&&SplitEndConnection) {
+			MyUsedSplitters.add(comp); /* it is connected in a proper way */
+			for (CircuitNet net : MyConnectedNets.keySet()) {
+				net.SetSplitterConnection(MyConnectedNets.get(net));
+			}
+		} else {
+			/* improper connected splitter, we remove the marks */
+			for (CircuitNet net : MyMarkedNets) {
+				net.clearBitWidth();
+			}
+		}
+		MyMarkedNets.clear(); /* cleanup */
+		MyConnectedNets.clear();
+		return true;
+	}
+	
+	private boolean ProcessClock(Component comp,
+			ArrayList<SimpleDRCContainer> drc,
+			FPGAReport Reporter) {
+		Location loc = comp.getEnd(0).getLocation();
+		int nr_of_connections = 0;
+		for (CircuitNet net : MyNets) {
+			if (net.contains(loc)) {
+				if (net.BitWidthDefined()&&net.BitWidth()!= 1) {
+					drc.get(2).AddMarkComponents(net.getSegments());
+					drc.get(2).AddMarkComponent(comp);
+				} else
+				if (net.hasSource()) {
+					drc.get(1).AddMarkComponents(net.getSegments());
+				} else {
+					nr_of_connections++;
+					if (!net.SetComponentConnection(comp, true, 1, loc)) {
+						Reporter.AddFatalError("BUG: adding clock :"+
+								this.getClass().getName().replaceAll("\\.","/")+"\n");
+						return false;
+					}
+				}
+			}
+		}
+		if (nr_of_connections > 1) {
+			Reporter.AddFatalError("BUG: multiple clock connections :"+
+					this.getClass().getName().replaceAll("\\.","/")+"\n");
+			return false;
+		}
+		if (nr_of_connections==1)
+			MyUsedClockGenerators.add(comp);
+		return true;
+	}
+	
+	private boolean ProcessComponent(Component comp,
+			ArrayList<SimpleDRCContainer> drc,
+			FPGAReport Reporter) {
+		boolean hasconnection = false;
+		for (EndData end : comp.getEnds()) {
+			Location loc = end.getLocation();
+			boolean IsSource = end.isOutput();
+			int Bitwidth = end.getWidth().getWidth();
+			int nr_of_connections = 0;
+			for (CircuitNet net : MyNets) {
+				if (net.contains(loc)) {
+					nr_of_connections++;
+					if (IsSource&&net.hasSource()) {
+						drc.get(1).AddMarkComponents(net.getSegments());
+					} else {
+						if (net.BitWidthDefined()&&net.BitWidth()!=Bitwidth) {
+							drc.get(2).AddMarkComponent(comp);
+							drc.get(2).AddMarkComponents(net.getSegments());
+						} else {
+							if (!net.SetComponentConnection(comp, IsSource, Bitwidth, loc)) {
+								Reporter.AddFatalError("BUG: adding "+comp.getFactory().getName()+" :"+
+										this.getClass().getName().replaceAll("\\.","/")+"\n");
+								return false;
+							}
+							hasconnection = true;
+						}
+					}
+				}
+			}
+			if (nr_of_connections > 1) {
+				Reporter.AddFatalError("BUG: multiple net connections on "+comp.getFactory().getName()+" component in :"+
+						this.getClass().getName().replaceAll("\\.","/")+"\n");
+				return false;
+			}
+		}
+		if (hasconnection) {
+			if (comp.getFactory() instanceof SubcircuitFactory) {
+				MyUsedSubCircuits.add(comp);
+			} else if (comp.getFactory().getIOInformation()!=null) {
+				MyUsedBubbleComponents.add(comp);
+			} else {
+				MyUsedNormalComponents.add(comp);
+			}
+		}
+		return true;
+	}
 
-	private void clear() {
+	public void clear() {
 		if (MyNets == null)
 			MyNets = new HashSet<CircuitNet>();
 		else
 			MyNets.clear();
+		if (MyUsedInputPins == null)
+			MyUsedInputPins = new HashSet<Component>();
+		else
+			MyUsedInputPins.clear();
+		if (MyUsedOutputPins == null)
+			MyUsedOutputPins = new HashSet<Component>();
+		else
+			MyUsedOutputPins.clear();
+		if (MyUsedSplitters == null)
+			MyUsedSplitters = new HashSet<Component>();
+		else
+			MyUsedSplitters.clear();
+		if (MyUsedClockGenerators == null)
+			MyUsedClockGenerators = new HashSet<Component>();
+		else
+			MyUsedClockGenerators.clear();
+		if (MyUsedBubbleComponents == null)
+			MyUsedBubbleComponents = new HashSet<Component>();
+		else
+			MyUsedBubbleComponents.clear();
+		if (MyUsedSubCircuits == null)
+			MyUsedSubCircuits = new HashSet<Component>();
+		else
+			MyUsedSubCircuits.clear();
+		if (MyUsedNormalComponents == null)
+			MyUsedNormalComponents = new HashSet<Component>();
+		else
+			MyUsedNormalComponents.clear();
 		DRCStatus = DRC_REQUIRED;
 	}
 

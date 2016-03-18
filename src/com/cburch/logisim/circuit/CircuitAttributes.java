@@ -138,8 +138,6 @@ public class CircuitAttributes extends AbstractAttributeSet {
 
 	public static final Attribute<Font> CIRCUIT_LABEL_FONT_ATTR = Attributes
 			.forFont("clabelfont", Strings.getter("circuitLabelFontAttr"));
-	public static final Attribute<Boolean> CIRCUIT_IS_VHDL_BOX = Attributes
-			.forBoolean("circuitvhdl", Strings.getter("circuitIsVhdl"));
 	public static final Attribute<String> CIRCUIT_VHDL_PATH = Attributes
 			.forString("circuitvhdlpath", Strings.getter("circuitVhdlPath"));
 	public static final Attribute<Boolean> NAMED_CIRCUIT_BOX = Attributes
@@ -148,11 +146,11 @@ public class CircuitAttributes extends AbstractAttributeSet {
 	private static final Attribute<?>[] STATIC_ATTRS = { NAME_ATTR,
 			CIRCUIT_LABEL_ATTR, CIRCUIT_LABEL_FACING_ATTR,
 			CIRCUIT_LABEL_FONT_ATTR,NAMED_CIRCUIT_BOX, 
-			CIRCUIT_IS_VHDL_BOX, CIRCUIT_VHDL_PATH, };
+			CIRCUIT_VHDL_PATH, };
 
 	private static final Object[] STATIC_DEFAULTS = { "", "", Direction.EAST,
 			StdAttr.DEFAULT_LABEL_FONT, 
-			false,false, "", };
+			false, "", };
 
 	private static final List<Attribute<?>> INSTANCE_ATTRS = Arrays
 			.asList(new Attribute<?>[] { StdAttr.FACING, StdAttr.LABEL,
@@ -160,7 +158,7 @@ public class CircuitAttributes extends AbstractAttributeSet {
 					CircuitAttributes.NAME_ATTR, CIRCUIT_LABEL_ATTR,
 					CIRCUIT_LABEL_FACING_ATTR, CIRCUIT_LABEL_FONT_ATTR,
 					NAMED_CIRCUIT_BOX,
-					CIRCUIT_IS_VHDL_BOX, CIRCUIT_VHDL_PATH, });
+					CIRCUIT_VHDL_PATH, });
 
 	private Circuit source;
 	private Instance subcircInstance;

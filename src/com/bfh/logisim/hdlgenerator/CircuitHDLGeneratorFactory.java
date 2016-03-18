@@ -153,11 +153,11 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 			}
 
 			// is the current circuit an 'empty vhdl box' ?
-			if (MyCircuit.getStaticAttributes().getValue(
-					CircuitAttributes.CIRCUIT_IS_VHDL_BOX)) {
-				if (!FileWriter.CopyArchitecture(
-						MyCircuit.getStaticAttributes().getValue(
-								CircuitAttributes.CIRCUIT_VHDL_PATH), WorkPath
+			String ArchName = MyCircuit.getStaticAttributes().getValue(
+					CircuitAttributes.CIRCUIT_VHDL_PATH);
+			
+			if (!ArchName.isEmpty()) {
+				if (!FileWriter.CopyArchitecture(ArchName, WorkPath
 								+ GetRelativeDirectory(HDLType), ComponentName,
 						Reporter, HDLType)) {
 					return false;

@@ -481,6 +481,7 @@ class CircuitWires {
 				Location s = w.e0;
 				Location t = w.e1;
 				WireBundle wb = bmap.getBundleAt(s);
+				int width=5;
 				if (!wb.isValid()) {
 					g.setColor(Value.WIDTH_ERROR_COLOR);
 				} else if (showState) {
@@ -491,10 +492,7 @@ class CircuitWires {
 				} else {
 					g.setColor(Color.BLACK);
 				}
-				if (w.IsSetAsMarked())
-					g.setColor(w.GetMarkColor());
 				if (highlighted.containsWire(w)) {
-					int width;
 					if (wb.isBus())
 						width = Wire.HIGHLIGHTED_WIDTH_BUS;
 					else
@@ -502,13 +500,24 @@ class CircuitWires {
 					GraphicsUtil.switchToWidth(g, width);
 					g.drawLine(s.getX(), s.getY(), t.getX(), t.getY());
 				} else {
-					int width;
 					if (wb.isBus())
 						width = Wire.WIDTH_BUS;
 					else
 						width = Wire.WIDTH;
 					GraphicsUtil.switchToWidth(g, width);
 					g.drawLine(s.getX(), s.getY(), t.getX(), t.getY());
+				}
+				if (w.IsSetAsMarked()) {
+					width+=2;
+					g.setColor(w.GetMarkColor());
+					GraphicsUtil.switchToWidth(g, 2);
+					if (w.isVertical()) {
+						g.drawLine(s.getX()-width, s.getY(), t.getX()-width, t.getY());
+						g.drawLine(s.getX()+width, s.getY(), t.getX()+width, t.getY());
+					} else {
+						g.drawLine(s.getX(), s.getY()-width, t.getX(), t.getY()-width);
+						g.drawLine(s.getX(), s.getY()+width, t.getX(), t.getY()+width);
+					}
 				}
 			}
 

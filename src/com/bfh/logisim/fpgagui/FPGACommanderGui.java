@@ -146,6 +146,18 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 					GenerateDRCTrace((SimpleDRCContainer)ErrorsList.getElementAt(idx));
 				}
 			}
+		} else 
+		if (e.getSource().equals(Warnings)||
+			e.getSource().equals(WarningWindow.getListObject())) {
+			clearDRCTrace();
+			int idx = -1;
+			if (e.getSource().equals(Warnings))
+				idx = Warnings.getSelectedIndex();
+			else
+				idx = WarningWindow.getListObject().getSelectedIndex();
+			if (idx >= 0)
+				if (WarningsList.getElementAt(idx) instanceof SimpleDRCContainer)
+					GenerateDRCTrace((SimpleDRCContainer)WarningsList.getElementAt(idx));
 		}
 	}
 
@@ -263,6 +275,7 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 		if (act == CircuitEvent.ACTION_SET_NAME) {
 			RebuildCircuitSelection();
 		}
+		clearDRCTrace();
 	}
 	
 
@@ -340,6 +353,7 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 		InfoWindow.addWindowListener(this);
 		WarningWindow.addWindowListener(this);
 		WarningWindow.setSize(new Dimension(740,400));
+		WarningWindow.getListObject().addMouseListener(this);
 		ErrorWindow.addWindowListener(this);
 		ErrorWindow.setSize(new Dimension(740,400));
 		ErrorWindow.getListObject().addMouseListener(this);
@@ -539,6 +553,7 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 		Warnings.setModel(WarningsList);
 		Warnings.setCellRenderer(WarningsList.getMyRenderer(true));
 		Warnings.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		Warnings.addMouseListener(this);
 		Errors.setBackground(bg);
 		Errors.setForeground(Color.RED);
 		Errors.setSelectionBackground(Color.RED);
@@ -1107,7 +1122,12 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 		if (root == null) {
 			DRCResult |= CircuitNetlist.DRC_ERROR;
 		} else {
-			DRCResult |= root.getNetList().DesignRuleCheckResult(MyReporter,
+			/* for testing purposes */
+//			DRCResult |= root.getCircuitNetList().DesignRuleCheckResult(MyReporter,
+//					HDLType.getText(), true, SheetNames);
+			/* the real thing */
+//			SheetNames.clear();
+			DRCResult = root.getNetList().DesignRuleCheckResult(MyReporter,
 					HDLType.getText(), true, SheetNames);
 		}
 		return (DRCResult == Netlist.DRC_PASSED);
