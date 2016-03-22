@@ -50,7 +50,6 @@ import com.cburch.logisim.circuit.CircuitListener;
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.proj.Project;
-import com.cburch.logisim.util.SocketClient;
 
 /**
  * VHDL simulator allows Logisim to simulate the behavior of VHDL architectures.
@@ -98,11 +97,11 @@ public class VhdlSimulator implements CircuitListener {
 	final static String SIM_COMP_PATH = SIM_PATH + "comp/";
 
 	final static String SIM_TOP_FILENAME = "top_sim.vhdl";
+	final static String SIM_TESTBENCH_FILENAME = "testbench.vhdl";
 
 	private VhdlSimulatorVhdlTop vhdlTop = new VhdlSimulatorVhdlTop(this);
-	private VhdlSimulatorTclComp tclRun = new VhdlSimulatorTclComp(this);
-	private VhdlSimulatorTclBinder tclBinder;
-	private SocketClient socketClient = new SocketClient();
+	public VhdlSimulatorVhdlTestbench vhdlTestbench = new VhdlSimulatorVhdlTestbench(this);
+	private VhdlSimulatorGhdlBinder ghdlBinder;
 
 	private Project project;
 
@@ -169,8 +168,8 @@ public class VhdlSimulator implements CircuitListener {
 		 * Init binder with qsim, test qsim path and ask for a valid one if it
 		 * fails
 		 */
-		if (tclBinder == null) {
-			tclBinder = new VhdlSimulatorTclBinder(this);
+		if (ghdlBinder == null) {
+			ghdlBinder = new VhdlSimulatorGhdlBinder(this);
 		}
 
 		switch (state) {
@@ -214,7 +213,7 @@ public class VhdlSimulator implements CircuitListener {
 	public void generateFiles() {
 
 		vhdlTop.fireInvalidated();
-		tclRun.fireInvalidated();
+		vhdlTestbench.fireInvalidated();
 
 		new File(SIM_PATH).mkdirs();
 		new File(SIM_SRC_PATH).mkdirs();
@@ -236,13 +235,18 @@ public class VhdlSimulator implements CircuitListener {
 							SIM_RESOURCES_PATH + "modelsim.ini"),
 					Paths.get(SIM_COMP_PATH + "modelsim.ini"),
 					StandardCopyOption.REPLACE_EXISTING);
+			Files.copy(
+					this.getClass().getResourceAsStream(
+							SIM_RESOURCES_PATH + "!txt_util.vhdl"),
+					Paths.get(SIM_SRC_PATH + "!txt_util.vhdl"),
+					StandardCopyOption.REPLACE_EXISTING);
 		} catch (IOException e) {
 			logger.error("Cannot copy simulation files: {}", e.getMessage());
 			e.printStackTrace();
 		}
 
 		vhdlTop.generate();
-		tclRun.generate();
+		vhdlTestbench.generate();
 
 		/* Generate each component's file */
 		for (Component comp : getVhdlComponents(project.getCircuitState())) {
@@ -254,9 +258,6 @@ public class VhdlSimulator implements CircuitListener {
 		return project;
 	}
 
-	public SocketClient getSocketClient() {
-		return socketClient;
-	}
 
 	public State getState() {
 		return state;
@@ -306,8 +307,7 @@ public class VhdlSimulator implements CircuitListener {
 	public String receive() {
 		if (!isRunning())
 			throw new UnsupportedOperationException();
-
-		return socketClient.receive();
+		return ghdlBinder.receive();
 	}
 
 	public void removeVhdlSimStateListener(VhdlSimulatorListener l) {
@@ -316,7 +316,7 @@ public class VhdlSimulator implements CircuitListener {
 
 	public void reset() {
 		if (isEnabled())
-			socketClient.send("restart");
+			ghdlBinder.restart();
 	}
 
 	/**
@@ -350,7 +350,7 @@ public class VhdlSimulator implements CircuitListener {
 		if (!isRunning())
 			throw new UnsupportedOperationException();
 
-		socketClient.send(message);
+		ghdlBinder.send(message);
 	}
 
 	public void setEnabled(Boolean enable) {
@@ -383,7 +383,7 @@ public class VhdlSimulator implements CircuitListener {
 			setState(State.STARTING);
 
 			generateFiles();
-			tclBinder.start();
+			ghdlBinder.start();
 			break;
 
 		default:
@@ -415,15 +415,8 @@ public class VhdlSimulator implements CircuitListener {
 					"Cannot stop VHDL simulator from " + state + " state");
 		}
 
-		tclBinder.stop();
-		socketClient.stop();
+		ghdlBinder.stop();
 
 		setState(State.ENABLED);
 	}
-
-	public void tclStartCallback() {
-		socketClient.start();
-		setState(State.RUNNING);
-	}
-
 }

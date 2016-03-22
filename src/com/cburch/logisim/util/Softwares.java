@@ -53,13 +53,17 @@ public final class Softwares {
 		BufferedReader reader = null;
 
 		if (new File(FileUtil.correctPath(tmpDir.getCanonicalPath()) + "work")
-				.exists())
+		.exists())
 			return true;
 
 		try {
 			List<String> command = new ArrayList<String>();
 			command.add(FileUtil.correctPath(questaPath) + QUESTA_BIN[VLIB]);
 			command.add("work");
+
+			if(Softwares.getQuestaPath().contains("Ghdl")){
+				return true;
+			}
 
 			ProcessBuilder vlibBuilder = new ProcessBuilder(command);
 			vlibBuilder.directory(tmpDir);
@@ -158,6 +162,8 @@ public final class Softwares {
 	}
 
 	private static boolean validatePath(String path, String software) {
+		if ((new File(FileUtil.correctPath(path) + "bin/ghdl.exe")).exists())	return true;		
+
 		String[] programs;
 
 		if (software.equals(QUESTA))
@@ -201,34 +207,58 @@ public final class Softwares {
 			}
 
 			List<String> command = new ArrayList<String>();
-			command.add(FileUtil.correctPath(questaPath) + QUESTA_BIN[VCOM]);
-			command.add("-reportprogress");
-			command.add("300");
-			command.add("-93");
-			command.add("-work");
-			command.add("work");
-			command.add(tmp.getName());
+			if(questaPath.contains("Ghdl")){
+				command.add(FileUtil.correctPath(questaPath) + "bin/ghdl.exe");
+				command.add("-a");
+				command.add("\""+tmp.getName()+"\"");
+				ProcessBuilder questa = new ProcessBuilder(command);
+				questa.directory(tmpDir);
+				questa.redirectErrorStream(true);				
+				Process vcom = questa.start();
 
-			ProcessBuilder questa = new ProcessBuilder(command);
-			questa.directory(tmpDir);
-			Process vcom = questa.start();
+				String line;
+				InputStream is = vcom.getInputStream();
+				InputStreamReader isr = new InputStreamReader(is);
+				reader = new BufferedReader(isr);
 
-			InputStream is = vcom.getInputStream();
-			InputStreamReader isr = new InputStreamReader(is);
-			reader = new BufferedReader(isr);
+				while ((line = reader.readLine()) != null) {
+					result.append(line);
+					result.append(System.getProperty("line.separator"));
+				}
+				result.append("Exit Value: "+vcom.exitValue());
+				if(vcom.exitValue()!=0) 
+					return ERROR;
+			}else{
+				command.add(FileUtil.correctPath(questaPath) + QUESTA_BIN[VCOM]);
+				command.add("-reportprogress");
+				command.add("300");
+				command.add("-93");
+				command.add("-work");
+				command.add("work");
+				command.add(tmp.getName());		
+				ProcessBuilder questa = new ProcessBuilder(command);
+				questa.directory(tmpDir);
+				Process vcom = questa.start();
 
-			String line;
-			while ((line = reader.readLine()) != null) {
-				result.append(line);
-				result.append(System.getProperty("line.separator"));
+				InputStream is = vcom.getInputStream();
+				InputStreamReader isr = new InputStreamReader(is);
+				reader = new BufferedReader(isr);
+
+				String line;
+				while ((line = reader.readLine()) != null) {
+					result.append(line);
+					result.append(System.getProperty("line.separator"));
+				}
+
+				if (vcom.waitFor() != 0) {
+					title.insert(0, Strings.get("questaValidationFailedTitle"));
+					result.insert(0, System.getProperty("line.separator"));
+					result.insert(0, Strings.get("questaValidationFailedMessage"));
+					return ERROR;
+				}
+
 			}
 
-			if (vcom.waitFor() != 0) {
-				title.insert(0, Strings.get("questaValidationFailedTitle"));
-				result.insert(0, System.getProperty("line.separator"));
-				result.insert(0, Strings.get("questaValidationFailedMessage"));
-				return ERROR;
-			}
 		} catch (IOException e) {
 			title.insert(0, Strings.get("questaValidationFailedTitle"));
 			result.replace(0, result.length(), e.getMessage());

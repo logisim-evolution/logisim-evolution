@@ -86,7 +86,7 @@ class VhdlSimulatorTclBinder {
 
 		command.add("-c");
 		command.add("-do");
-		command.add("do ../run.tcl " + vs.getSocketClient().getServerPort());
+//		command.add("do ../run.tcl " + vs.getSocketClient().getServerPort());
 		command.add("-errorfile");
 		command.add("../questasim_errors.log");
 
@@ -158,7 +158,7 @@ class VhdlSimulatorTclBinder {
 								}
 							}).start();
 
-							vhdlSimulator.tclStartCallback();
+//							vhdlSimulator.tclStartCallback();
 							return;
 						}
 					}
@@ -181,7 +181,7 @@ class VhdlSimulatorTclBinder {
 			return;
 
 		/* We ask the binder to end itself */
-		vhdlSimulator.getSocketClient().send("end");
+//		vhdlSimulator.getSocketClient().send("end");
 
 		/* Wait for the process to end */
 		/*

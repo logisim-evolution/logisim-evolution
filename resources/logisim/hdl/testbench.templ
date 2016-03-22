@@ -1,0 +1,72 @@
+library IEEE;
+use IEEE.std_logic_1164.all;
+use std.textio.all;
+use work.txt_util.all; 
+ 
+
+entity testbench is end;
+		
+architecture top_sim_a of testbench is
+	component top_sim
+	  port (
+		-- %ports%
+	  );
+	end component;
+
+	--for top_sim_a: top_sim use entity work.top_sim;
+	
+	signal i0, i1, ci, s, co : bit;
+	
+	--%signal%
+	
+	signal In1 : std_logic_vector(%incount% downto 0);
+	signal Out1 : std_logic_vector(%outcount% downto 0);
+	
+	begin
+	top_sim_0: top_sim port map (
+		-- %map%		
+	);
+
+	-- %inputMapping%%outputMapping%
+	
+	process
+		variable l: string(1 to %maxcount%);
+		variable ll: line;
+
+		begin
+			write(ll, string'(""));			
+			while (ll.all /= "End")  loop
+				deallocate(ll);
+				readline(input, ll);
+				
+				for i in ll'range loop
+					l(i+1):=ll(i);
+					case ll(i) is
+						when '0' => -- Drive 0
+						In1(i-1) <= '0';
+						when '1' => -- Drive 1
+						In1(i-1) <= '1';
+						when 'H' => -- Test for 1
+						In1(i-1) <= '1';
+						when 'L' => -- Test for 0
+						In1(i-1) <= '0';
+						when ' ' => -- Skip white space
+						next;
+						when others =>
+						next;
+						--assert false
+						--report "Illegal char in vector file: " & l(i);
+						--exit;
+					end case;
+				end loop;
+				report "Report Write: " & string'(str(Out1)) & "Read: " & l;
+								 
+				wait for 1 ns;
+				deallocate(ll);
+				write(ll, "Data:" & string'(str(Out1)));
+				writeline(output, ll);
+			 end loop;
+			assert false report "Test complete";
+			wait;
+	end process;
+end;

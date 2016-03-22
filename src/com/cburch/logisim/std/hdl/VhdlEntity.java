@@ -269,17 +269,17 @@ public class VhdlEntity extends InstanceFactory {
 
 			/* Get response from tcl server */
 			String server_response;
-			while ((server_response = vhdlSimulator.receive()) != null
+			while  ((server_response = vhdlSimulator.receive()) != null
 					&& server_response.length() > 0
 					&& !server_response.equals("sync")) {
-
+				
 				String[] parameters = server_response.split("\\:");
 
 				String busValue = parameters[1];
 
 				Value vector_values[] = new Value[busValue.length()];
 
-				int k = busValue.length() - 1;
+				int k = busValue.length() -1;
 				for (char bit : busValue.toCharArray()) {
 
 					try {
