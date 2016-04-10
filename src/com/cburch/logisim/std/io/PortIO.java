@@ -216,14 +216,14 @@ public class PortIO extends InstanceFactory {
 	 * (CloneNotSupportedException e) { return null; } } }
 	 */
 
-	@Override
-	public boolean HDLSupportedComponent(String HDLIdentifier,
-			AttributeSet attrs) {
-		if (MyHDLGenerator == null) {
-			MyHDLGenerator = new PortHDLGeneratorFactory();
-		}
-		return MyHDLGenerator.HDLTargetSupported(HDLIdentifier, attrs);
-	}
+//	@Override
+//	public boolean HDLSupportedComponent(String HDLIdentifier,
+//			AttributeSet attrs) {
+//		if (MyHDLGenerator == null) {
+//			MyHDLGenerator = new PortHDLGeneratorFactory();
+//		}
+//		return MyHDLGenerator.HDLTargetSupported(HDLIdentifier, attrs);
+//	}
 
 	@Override
 	protected void instanceAttributeChanged(Instance instance, Attribute<?> attr) {

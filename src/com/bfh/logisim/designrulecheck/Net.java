@@ -122,7 +122,7 @@ public class Net {
 		MyPoints.clear();
 		Segments.clear();
 		TunnelNames.clear();
-		nr_of_bits = 1;
+		nr_of_bits = 0;
 		MyParent = null;
 		Requires_to_be_root = false;
 		InheritedBits.clear();
@@ -245,19 +245,21 @@ public class Net {
 	}
 	
 
-	public boolean merge(Net TheNet,String Error) {
+	public boolean merge(Net TheNet) {
 		if (TheNet.BitWidth()==nr_of_bits) {
 			MyPoints.addAll(TheNet.getPoints());
 			Segments.addAll(TheNet.getWires());
 			TunnelNames.addAll(TheNet.TunnelNames());
 			return true;
 		}
-		Error = Error.concat(Strings.get("NetMerge_BitWidthError"));
 		return false;
 	}
 
-	public void setBus(int Width) {
+	public boolean setWidth(int Width) {
+		if ((nr_of_bits > 0)&&(Width != nr_of_bits))
+			return false;
 		nr_of_bits = Width;
+		return true;
 	}
 
 	public boolean setParent(Net Parrent) {
@@ -265,7 +267,7 @@ public class Net {
 			return false;
 		if (Parrent == null)
 			return false;
-		if (!IsRootNet())
+		if (MyParent!=null)
 			return false;
 		MyParent = Parrent;
 		return true;

@@ -74,34 +74,38 @@ public class Netlist implements CircuitListener {
 	public void circuitChanged(CircuitEvent event) {
 		int ev = event.getAction();
 		if (event.getData() instanceof InstanceComponent) {
-			InstanceComponent inst = (InstanceComponent)event.getData();
+			InstanceComponent inst = (InstanceComponent) event.getData();
 			if (event.getCircuit().equals(MyCircuit)) {
 				switch (ev) {
-				case CircuitEvent.ACTION_ADD : 
+				case CircuitEvent.ACTION_ADD:
 					DRCStatus = DRC_REQUIRED;
 					if (inst.getFactory() instanceof SubcircuitFactory) {
-						SubcircuitFactory fac = (SubcircuitFactory)inst.getFactory();
+						SubcircuitFactory fac = (SubcircuitFactory) inst
+								.getFactory();
 						Circuit sub = fac.getSubcircuit();
-					
+
 						if (MySubCircuitMap.containsKey(sub)) {
-							MySubCircuitMap.put(sub, MySubCircuitMap.get(sub)+1);
+							MySubCircuitMap.put(sub,
+									MySubCircuitMap.get(sub) + 1);
 						} else {
-							MySubCircuitMap.put(sub, 1 );
+							MySubCircuitMap.put(sub, 1);
 							sub.addCircuitListener(this);
 						}
 					}
 					break;
-				case CircuitEvent.ACTION_REMOVE :
+				case CircuitEvent.ACTION_REMOVE:
 					DRCStatus = DRC_REQUIRED;
 					if (inst.getFactory() instanceof SubcircuitFactory) {
-						SubcircuitFactory fac = (SubcircuitFactory)inst.getFactory();
+						SubcircuitFactory fac = (SubcircuitFactory) inst
+								.getFactory();
 						Circuit sub = fac.getSubcircuit();
 						if (MySubCircuitMap.containsKey(sub)) {
-							if (MySubCircuitMap.get(sub)==1) {
+							if (MySubCircuitMap.get(sub) == 1) {
 								MySubCircuitMap.remove(sub);
 								sub.removeCircuitListener(this);
 							} else {
-								MySubCircuitMap.put(sub, MySubCircuitMap.get(sub)-1);
+								MySubCircuitMap.put(sub,
+										MySubCircuitMap.get(sub) - 1);
 							}
 						}
 					}
@@ -141,7 +145,7 @@ public class Netlist implements CircuitListener {
 
 	private String CircuitName;
 	private ArrayList<Net> MyNets = new ArrayList<Net>();
-	private Map<Circuit,Integer> MySubCircuitMap = new HashMap<Circuit,Integer>();
+	private Map<Circuit, Integer> MySubCircuitMap = new HashMap<Circuit, Integer>();
 	private ArrayList<NetlistComponent> MySubCircuits = new ArrayList<NetlistComponent>();
 	private ArrayList<NetlistComponent> MyComponents = new ArrayList<NetlistComponent>();
 	private ArrayList<NetlistComponent> MyClockGenerators = new ArrayList<NetlistComponent>();
@@ -290,16 +294,17 @@ public class Netlist implements CircuitListener {
 			}
 		}
 	}
-	
+
 	public int DesignRuleCheckResult(FPGAReport Reporter, String HDLIdentifier,
 			boolean IsTopLevel, ArrayList<String> Sheetnames) {
 		ArrayList<String> CompName = new ArrayList<String>();
-		Map<String,Component> Labels = new HashMap<String,Component>();
+		Map<String, Component> Labels = new HashMap<String, Component>();
 		ArrayList<SimpleDRCContainer> drc = new ArrayList<SimpleDRCContainer>();
 		int CommonDRCStatus = DRC_PASSED;
 		/* First we go down the tree and get the DRC status of all sub-circuits */
-		for (Circuit circ:MySubCircuitMap.keySet()) {
-			CommonDRCStatus |= circ.getNetList().DesignRuleCheckResult(Reporter, HDLIdentifier, false, Sheetnames);
+		for (Circuit circ : MySubCircuitMap.keySet()) {
+			CommonDRCStatus |= circ.getNetList().DesignRuleCheckResult(
+					Reporter, HDLIdentifier, false, Sheetnames);
 		}
 		/* Check if we are okay */
 		if (DRCStatus == DRC_PASSED) {
@@ -307,19 +312,28 @@ public class Netlist implements CircuitListener {
 		} else {
 			/* There are changes, so we clean up the old information */
 			clear();
-			DRCStatus = DRC_PASSED; /* we mark already passed, if an error occurs the status is changed */
+			DRCStatus = DRC_PASSED; /*
+									 * we mark already passed, if an error
+									 * occurs the status is changed
+									 */
 		}
 		/*
 		 * Check for duplicated sheet names, this is bad as we will have
 		 * multiple "different" components with the same name
 		 */
 		if (MyCircuit.getName().isEmpty()) {
-			/* in the current implementation of logisim this should never happen, but we leave it in */
+			/*
+			 * in the current implementation of logisim this should never
+			 * happen, but we leave it in
+			 */
 			Reporter.AddFatalError("Found a sheet in your design with an empty name. This is not allowed, please specify a name!");
 			DRCStatus |= DRC_ERROR;
 		}
 		if (Sheetnames.contains(MyCircuit.getName())) {
-			/* in the current implementation of logisim this should never happen, but we leave it in */
+			/*
+			 * in the current implementation of logisim this should never
+			 * happen, but we leave it in
+			 */
 			Reporter.AddFatalError("Found more than one sheet in your design with the name :\""
 					+ MyCircuit.getName()
 					+ "\". This is not allowed, please make sure that all sheets have a unique name!");
@@ -336,12 +350,27 @@ public class Netlist implements CircuitListener {
 			}
 		}
 		drc.clear();
-		drc.add(new SimpleDRCContainer(MyCircuit,Strings.get("HDL_noLabel"),SimpleDRCContainer.LEVEL_FATAL,SimpleDRCContainer.MARK_INSTANCE));
-		drc.add(new SimpleDRCContainer(MyCircuit,Strings.get("HDL_CompNameIsLabel"),SimpleDRCContainer.LEVEL_FATAL,SimpleDRCContainer.MARK_INSTANCE|SimpleDRCContainer.MARK_LABEL));
-		drc.add(new SimpleDRCContainer(MyCircuit,Strings.get("HDL_LabelInvalid"),SimpleDRCContainer.LEVEL_FATAL,SimpleDRCContainer.MARK_INSTANCE|SimpleDRCContainer.MARK_LABEL));
-		drc.add(new SimpleDRCContainer(MyCircuit,Strings.get("HDL_DuplicatedLabels"),SimpleDRCContainer.LEVEL_FATAL,SimpleDRCContainer.MARK_INSTANCE|SimpleDRCContainer.MARK_LABEL));
-		drc.add(new SimpleDRCContainer(MyCircuit,Strings.get("HDL_Tristate"),SimpleDRCContainer.LEVEL_FATAL,SimpleDRCContainer.MARK_INSTANCE));
-		drc.add(new SimpleDRCContainer(MyCircuit,Strings.get("HDL_unsupported"),SimpleDRCContainer.LEVEL_FATAL,SimpleDRCContainer.MARK_INSTANCE));
+		drc.add(new SimpleDRCContainer(MyCircuit, Strings.get("HDL_noLabel"),
+				SimpleDRCContainer.LEVEL_FATAL,
+				SimpleDRCContainer.MARK_INSTANCE));
+		drc.add(new SimpleDRCContainer(MyCircuit, Strings
+				.get("HDL_CompNameIsLabel"), SimpleDRCContainer.LEVEL_FATAL,
+				SimpleDRCContainer.MARK_INSTANCE
+						| SimpleDRCContainer.MARK_LABEL));
+		drc.add(new SimpleDRCContainer(MyCircuit, Strings
+				.get("HDL_LabelInvalid"), SimpleDRCContainer.LEVEL_FATAL,
+				SimpleDRCContainer.MARK_INSTANCE
+						| SimpleDRCContainer.MARK_LABEL));
+		drc.add(new SimpleDRCContainer(MyCircuit, Strings
+				.get("HDL_DuplicatedLabels"), SimpleDRCContainer.LEVEL_FATAL,
+				SimpleDRCContainer.MARK_INSTANCE
+						| SimpleDRCContainer.MARK_LABEL));
+		drc.add(new SimpleDRCContainer(MyCircuit, Strings.get("HDL_Tristate"),
+				SimpleDRCContainer.LEVEL_FATAL,
+				SimpleDRCContainer.MARK_INSTANCE));
+		drc.add(new SimpleDRCContainer(MyCircuit, Strings
+				.get("HDL_unsupported"), SimpleDRCContainer.LEVEL_FATAL,
+				SimpleDRCContainer.MARK_INSTANCE));
 		for (Component comp : MyCircuit.getNonWires()) {
 			/*
 			 * Here we check if the components are supported for the HDL
@@ -389,8 +418,9 @@ public class Netlist implements CircuitListener {
 						drc.get(1).AddMarkComponent(comp);
 						DRCStatus |= DRC_ERROR;
 					}
-					if (!CorrectLabel.IsCorrectLabel(comp.getFactory().getName(),
-							HDLIdentifier, "Found that the component \""
+					if (!CorrectLabel.IsCorrectLabel(comp.getFactory()
+							.getName(), HDLIdentifier,
+							"Found that the component \""
 									+ comp.getFactory().getName()
 									+ "\" in circuit \"" + MyCircuit.getName(),
 							Reporter)) {
@@ -415,13 +445,13 @@ public class Netlist implements CircuitListener {
 				DRCStatus |= DRC_ERROR;
 			}
 		}
-		for (int i = 0 ; i < drc.size(); i++)
+		for (int i = 0; i < drc.size(); i++)
 			if (drc.get(i).DRCInfoPresent())
 				Reporter.AddError(drc.get(i));
 		drc.clear();
 		/* Here we have to quit as the netlist generation needs a clean tree */
-		if ((DRCStatus|CommonDRCStatus) != DRC_PASSED) {
-			return DRCStatus|CommonDRCStatus;
+		if ((DRCStatus | CommonDRCStatus) != DRC_PASSED) {
+			return DRCStatus | CommonDRCStatus;
 		}
 		/*
 		 * Okay we now know for sure that all elements are supported, lets build
@@ -432,15 +462,18 @@ public class Netlist implements CircuitListener {
 		if (!this.GenerateNetlist(Reporter, HDLIdentifier)) {
 			this.clear();
 			DRCStatus = DRC_ERROR;
-			/* here we have to quit, as all the following steps depend on a proper netlist */
-			return DRCStatus|CommonDRCStatus;
+			/*
+			 * here we have to quit, as all the following steps depend on a
+			 * proper netlist
+			 */
+			return DRCStatus | CommonDRCStatus;
 		}
 		if (this.NetlistHasShortCircuits()) {
 			Reporter.AddFatalError("Circuit \"" + MyCircuit.getName()
 					+ "\" has short-circuits!");
 			this.clear();
 			DRCStatus = DRC_ERROR;
-			return DRCStatus|CommonDRCStatus;
+			return DRCStatus | CommonDRCStatus;
 		}
 		Reporter.AddInfo("Circuit \"" + MyCircuit.getName() + "\" has "
 				+ this.NumberOfNets() + " nets and " + this.NumberOfBusses()
@@ -451,7 +484,7 @@ public class Netlist implements CircuitListener {
 		if (IsTopLevel) {
 			if (!DetectClockTree(Reporter)) {
 				DRCStatus = DRC_ERROR;
-				return DRCStatus|CommonDRCStatus;
+				return DRCStatus | CommonDRCStatus;
 			}
 			ConstructHierarchyTree(null, new ArrayList<String>(),
 					new Integer(0), new Integer(0), new Integer(0));
@@ -462,11 +495,11 @@ public class Netlist implements CircuitListener {
 				Reporter.AddFatalError("Toplevel \"" + MyCircuit.getName()
 						+ "\" has no input(s) and/or no output(s)!");
 				DRCStatus = DRC_ERROR;
-				return DRCStatus|CommonDRCStatus;
+				return DRCStatus | CommonDRCStatus;
 			}
 		}
 		DRCStatus = DRC_PASSED;
-		return DRCStatus|CommonDRCStatus;
+		return DRCStatus | CommonDRCStatus;
 	}
 
 	private boolean DetectClockTree(FPGAReport Reporter) {
@@ -532,17 +565,16 @@ public class Netlist implements CircuitListener {
 		}
 		return null;
 	}
-	
+
 	private boolean GenerateNetlist(FPGAReport Reporter, String HDLIdentifier) {
+		ArrayList<SimpleDRCContainer> drc = new ArrayList<SimpleDRCContainer>();
+		boolean errors = false;
 		GridBagConstraints gbc = new GridBagConstraints();
 		JFrame panel = new JFrame("Netlist: " + MyCircuit.getName());
 		panel.setResizable(false);
 		panel.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		GridBagLayout thisLayout = new GridBagLayout();
 		panel.setLayout(thisLayout);
-		// PointerInfo mouseloc = MouseInfo.getPointerInfo();
-		// Point mlocation = mouseloc.getLocation();
-		// panel.setLocation(mlocation.x, mlocation.y);
 		JLabel LocText = new JLabel("Generating Netlist for Circuit: "
 				+ MyCircuit.getName());
 		gbc.gridx = 0;
@@ -585,31 +617,31 @@ public class Netlist implements CircuitListener {
 		Set<Location> OutputsList = new HashSet<Location>();
 		Set<Location> InputsList = new HashSet<Location>();
 		Set<Component> TunnelList = new HashSet<Component>();
-		Set<Component> SplitterList = new HashSet<Component>();
+		List<Component> SplitterList = new ArrayList<Component>();
+		drc.clear();
+		drc.add(new SimpleDRCContainer(MyCircuit, Strings
+				.get("NetList_IOError"), SimpleDRCContainer.LEVEL_FATAL,
+				SimpleDRCContainer.MARK_INSTANCE));
+		drc.add(new SimpleDRCContainer(MyCircuit, Strings.get("NetList_BitwidthError"),SimpleDRCContainer.LEVEL_FATAL,SimpleDRCContainer.MARK_WIRE));
 		for (Component com : components) {
 			/*
 			 * We do not process the splitter and tunnel, they are processed
 			 * later on
 			 */
-			if (com.getFactory() instanceof PortIO||
-				com.getFactory() instanceof ReptarLocalBus)
-				continue;
-			else if (com.getFactory() instanceof SplitterFactory)
+			boolean Ignore = false;
+			if (com.getFactory() instanceof SplitterFactory) {
 				SplitterList.add(com);
-			else if (com.getFactory() instanceof Tunnel)
+				Ignore = true;
+			}
+			if (com.getFactory() instanceof Tunnel) {
 				TunnelList.add(com);
-			else {
-				List<EndData> ends = com.getEnds();
-				for (EndData end : ends) {
+				Ignore = true;
+			}
+			List<EndData> ends = com.getEnds();
+			for (EndData end : ends) {
+				if (!Ignore) {
 					if (end.isInput() && end.isOutput()) {
-						Reporter.AddFatalError("Detected INOUT pin on component \""
-								+ com.getFactory().getName()
-								+ "\" in circuit \""
-								+ MyCircuit.getName()
-								+ "\"!");
-						this.clear();
-						panel.dispose();
-						return false;
+						drc.get(0).AddMarkComponent(com);
 					}
 					if (end.isOutput()) {
 						OutputsList.add(end.getLocation());
@@ -617,7 +649,27 @@ public class Netlist implements CircuitListener {
 						InputsList.add(end.getLocation());
 					}
 				}
+				/* Here we are going to mark the bitwidths on the nets */
+				int width = end.getWidth().getWidth();
+				Location loc = end.getLocation();
+				for (Net ThisNet : MyNets) {
+					if (ThisNet.contains(loc)) {
+						if (!ThisNet.setWidth(width)){
+							drc.get(1).AddMarkComponents(ThisNet.getWires());
+						}
+					}
+				}
 			}
+		}
+		for (int i = 0; i < drc.size(); i++) {
+			if (drc.get(i).DRCInfoPresent()) {
+				errors = true;
+				Reporter.AddError(drc.get(i));
+			}
+		}
+		if (errors) {
+			panel.dispose();
+			return false;
 		}
 		progres.setValue(1);
 		Rectangle ProgRect = progres.getBounds();
@@ -628,93 +680,39 @@ public class Netlist implements CircuitListener {
 		 * Now we check if an input pin is connected to an output and in case of
 		 * a Splitter if it is connected to either of them
 		 */
-		Set<Location> ZeroLengthNets = new HashSet<Location>();
-		for (Component com : components) {
-			if ((com.getFactory() instanceof SplitterFactory)
-					|| (com.getFactory() instanceof Tunnel)) {
-				List<EndData> ends = com.getEnds();
-				for (EndData end : ends) {
-					/* first we check for "normal" components */
-					if (InputsList.contains(end.getLocation())
-							|| OutputsList.contains(end.getLocation())) {
-						/*
-						 * We found a hidden Net. Let's check that it is not
-						 * already contained in an existing net before adding it
-						 * to the ZeroLengthNets Set
-						 */
-						boolean connected = false;
-						for (Net net : MyNets) {
-							connected |= net.contains(end.getLocation());
-						}
-						if (!connected) {
-							ZeroLengthNets.add(end.getLocation());
+		drc.add(new SimpleDRCContainer(MyCircuit, Strings
+				.get("NetAdd_ComponentWidthMismatch"),
+				SimpleDRCContainer.LEVEL_FATAL,
+				SimpleDRCContainer.MARK_INSTANCE));
+		Map<Location, Integer> Points = new HashMap<Location, Integer>();
+		for (Component comp : components) {
+			for (EndData end : comp.getEnds()) {
+				Location loc = end.getLocation();
+				if (Points.containsKey(loc)) {
+					/* Found a connection already used */
+					boolean newNet = true;
+					for (Net net : MyNets) {
+						if (net.contains(loc))
+							newNet = false;
+					}
+					if (newNet) {
+						int BitWidth = Points.get(loc);
+						if (BitWidth == end.getWidth().getWidth()) {
+							MyNets.add(new Net(loc, BitWidth));
+						} else {
+							drc.get(0).AddMarkComponent(comp);
 						}
 					}
-					/* Now we have to detect inter Splitter/Tunnel connections */
-					for (Component tun : TunnelList) {
-						if (!tun.equals(com)) {
-							List<EndData> tends = tun.getEnds();
-							for (EndData thisend : tends) {
-								if (thisend.getLocation().equals(
-										end.getLocation())) {
-									boolean connected = false;
-									for (Net net : MyNets) {
-										connected |= net.contains(end
-												.getLocation());
-									}
-									if (!connected) {
-										ZeroLengthNets.add(end.getLocation());
-									}
-								}
-							}
-						}
-					}
-					for (Component tun : SplitterList) {
-						if (!tun.equals(com)) {
-							List<EndData> tends = tun.getEnds();
-							for (EndData thisend : tends) {
-								if (thisend.getLocation().equals(
-										end.getLocation())) {
-									boolean connected = false;
-									for (Net net : MyNets) {
-										connected |= net.contains(end
-												.getLocation());
-									}
-									if (!connected) {
-										ZeroLengthNets.add(end.getLocation());
-									}
-								}
-							}
-						}
-					}
-				}
-			} else {
-				List<EndData> ends = com.getEnds();
-				for (EndData end : ends) {
-					if (end.isInput()
-							&& OutputsList.contains(end.getLocation())) {
-						/*
-						 * We found a hidden Net. Let's check that it is not
-						 * already contained in an existing net before adding it
-						 * to the ZeroLengthNets Set
-						 */
-						boolean connected = false;
-						for (Net net : MyNets) {
-							connected |= net.contains(end.getLocation());
-						}
-						if (!connected) {
-							ZeroLengthNets.add(end.getLocation());
-						}
-					}
-				}
+				} else
+					Points.put(loc, end.getWidth().getWidth());
 			}
 		}
-		InputsList.clear();
-		OutputsList.clear();
-		for (Location Loc : ZeroLengthNets) {
-			Net NewNet = new Net(Loc);
-			MyNets.add(NewNet);
+		if (drc.get(0).DRCInfoPresent()) {
+			Reporter.AddError(drc.get(0));
+			panel.dispose();
+			return false;
 		}
+
 		progres.setValue(2);
 		ProgRect = progres.getBounds();
 		ProgRect.x = 0;
@@ -737,6 +735,8 @@ public class Netlist implements CircuitListener {
 				}
 			}
 		}
+		drc.clear();
+		drc.add(new SimpleDRCContainer(MyCircuit, Strings.get("NetMerge_BitWidthError"),SimpleDRCContainer.LEVEL_FATAL,SimpleDRCContainer.MARK_WIRE));
 		if (TunnelsPresent) {
 			Iterator<Net> NetIterator = MyNets.listIterator();
 			while (NetIterator.hasNext()) {
@@ -751,7 +751,10 @@ public class Netlist implements CircuitListener {
 						for (String name : ThisNet.TunnelNames()) {
 							if (SearchNet.ContainsTunnel(name) && !merged) {
 								merged = true;
-								SearchNet.merge(ThisNet,"");
+								if (!SearchNet.merge(ThisNet)) {
+									drc.get(0).AddMarkComponents(SearchNet.getWires());
+									drc.get(0).AddMarkComponents(ThisNet.getWires());
+								}
 							}
 						}
 					}
@@ -761,31 +764,144 @@ public class Netlist implements CircuitListener {
 				}
 			}
 		}
+		if (drc.get(0).DRCInfoPresent()) {
+			Reporter.AddError(drc.get(0));
+			panel.dispose();
+			return false;
+		}
 		progres.setValue(3);
 		ProgRect = progres.getBounds();
 		ProgRect.x = 0;
 		ProgRect.y = 0;
 		progres.paintImmediately(ProgRect);
-		/*
-		 * Now all nets (connections) in the circuit are visible. Lets check for
-		 * busses
+
+		/* At this point all net segments are build. All tunnels have been removed. There is still the processing of
+		 * the splitters and the determination of the direction of the nets.
 		 */
-		for (Component com : components) {
-			List<EndData> ends = com.getEnds();
-			for (EndData end : ends) {
-				if (end.getWidth().getWidth() > 1) {
-					/*
-					 * We found a bus, let's check if this pin is connected to a
-					 * net
-					 */
-					for (Net ThisNet : MyNets) {
-						if (ThisNet.contains(end.getLocation())) {
-							ThisNet.setBus(end.getWidth().getWidth());
+		
+		/* First we are going to check on duplicated splitters and remove them */
+		Iterator<Component> MySplitIterator = SplitterList.listIterator();
+		while (MySplitIterator.hasNext()) {
+			Component ThisSplitter = MySplitIterator.next();
+			if (SplitterList.indexOf(ThisSplitter)<(SplitterList.size()-1)) {
+				boolean FoundDuplicate = false;
+				Iterator<Component> SearchIterator = SplitterList.listIterator(SplitterList.indexOf(ThisSplitter)+1);
+				while (SearchIterator.hasNext()&&!FoundDuplicate) {
+					Component SearchSplitter = SearchIterator.next();
+					if (SearchSplitter.getLocation().equals(ThisSplitter.getLocation())) {
+						FoundDuplicate = true;
+						for (int i = 0 ; i < SearchSplitter.getEnds().size();i++) {
+							if (!SearchSplitter.getEnd(i).getLocation().equals(ThisSplitter.getEnd(i).getLocation()))
+								FoundDuplicate = false;
 						}
 					}
 				}
+				if (FoundDuplicate) {
+					SimpleDRCContainer warn = new SimpleDRCContainer(MyCircuit,
+                            Strings.get("NetList_duplicatedSplitter"),
+                            SimpleDRCContainer.LEVEL_SEVERE,
+                            SimpleDRCContainer.MARK_INSTANCE);
+					warn.AddMarkComponent(ThisSplitter);
+					Reporter.AddWarning(warn);
+					MySplitIterator.remove();
+				}
 			}
 		}
+		
+		/* In this round we are going to detect the unconnected nets meaning those having a width of 0 and remove them */
+		drc.clear();
+		Iterator<Net> NetIterator = MyNets.listIterator();
+		drc.add(new SimpleDRCContainer(MyCircuit,Strings.get("NetList_emptynets"),SimpleDRCContainer.LEVEL_NORMAL,SimpleDRCContainer.MARK_WIRE));
+		while (NetIterator.hasNext()) {
+			Net wire = NetIterator.next();
+			if (wire.BitWidth()==0) {
+				drc.get(0).AddMarkComponents(wire.getWires());
+				NetIterator.remove();
+			}
+		}
+		if (drc.get(0).DRCInfoPresent()) {
+			Reporter.AddWarning(drc.get(0));
+		}
+		MySplitIterator = SplitterList.iterator();
+		/* We also check quickly the splitters and remove the ones where input-bus is output-bus. We mark those who are not
+		 * correctly connected and remove both versions from the set.
+		 */
+		drc.clear();
+		drc.add(new SimpleDRCContainer(MyCircuit,Strings.get("NetList_ShortCircuit"),SimpleDRCContainer.LEVEL_FATAL,SimpleDRCContainer.MARK_WIRE));
+		errors = false;
+		while (MySplitIterator.hasNext()) {
+		    Component mySplitter = MySplitIterator.next();
+			int BusWidth = mySplitter.getEnd(0).getWidth().getWidth();
+			List<EndData> myEnds = mySplitter.getEnds();
+			int MaxFanoutWidth = 0;
+			int index = -1;
+			for (int i = 1 ; i < myEnds.size() ; i++) {
+				int width = mySplitter.getEnd(i).getWidth().getWidth();
+				if (width > MaxFanoutWidth) {
+					MaxFanoutWidth = width;
+					index = i;
+				}
+			}
+			/* stupid situation first: the splitters bus connection is a single fanout */
+			if (BusWidth == MaxFanoutWidth) {
+				Net busnet = null;
+				Net connectedNet = null;
+				Location BusLoc = mySplitter.getEnd(0).getLocation();
+				Location ConnectedLoc = mySplitter.getEnd(index).getLocation();
+				boolean issueWarning = false;
+				/* here we search for the nets */
+				for (Net CurrentNet : MyNets) {
+					if (CurrentNet.contains(BusLoc)) {
+						if (busnet != null) {
+							Reporter.AddFatalError("BUG: Multiple bus nets found for a single splitter :"+
+									this.getClass().getName().replaceAll("\\.","/")+"\n");
+							panel.dispose();
+							return false;
+						} else {
+							busnet = CurrentNet;
+						}
+					}
+					if (CurrentNet.contains(ConnectedLoc)) {
+						if (connectedNet != null) {
+							Reporter.AddFatalError("BUG: Multiple nets found for a single splitter split connection :"+
+									this.getClass().getName().replaceAll("\\.","/")+"\n");
+							panel.dispose();
+							return false;
+						} else {
+							connectedNet = CurrentNet;
+						}
+					}
+				}
+				if (connectedNet != null) {
+					if (busnet != null) {
+						/* we can merge both nets */
+						if (!busnet.merge(connectedNet)) {
+							Reporter.AddFatalError("BUG: Splitter bus merge error :"+
+									this.getClass().getName().replaceAll("\\.","/")+"\n");
+							panel.dispose();
+							return false;
+						} else {
+							MyNets.remove(MyNets.indexOf(connectedNet));
+						}
+					} else {
+						issueWarning = true;
+					}
+				} else {
+					issueWarning = true;
+				}
+				if (issueWarning) {
+					SimpleDRCContainer warn = new SimpleDRCContainer(MyCircuit,
+                            Strings.get("NetList_NoSplitterConnection"),
+                            SimpleDRCContainer.LEVEL_SEVERE,
+                            SimpleDRCContainer.MARK_INSTANCE);
+					warn.AddMarkComponent(mySplitter);
+					Reporter.AddWarning(warn);
+				}
+				MySplitIterator.remove(); /* Does not exist anymore */
+			}
+		}
+
+
 		progres.setValue(4);
 		ProgRect = progres.getBounds();
 		ProgRect.x = 0;
@@ -816,8 +932,8 @@ public class Netlist implements CircuitListener {
 				}
 			}
 			if (RootNet < 0) {
-				Reporter.AddFatalError("Could not find the rootnet of a Splitter in circuit \""
-						+ MyCircuit.getName() + "\"!");
+				Reporter.AddFatalError("BUG: Splitter without a bus connection :"+
+						this.getClass().getName().replaceAll("\\.","/")+"\n");
 				this.clear();
 				panel.dispose();
 				return false;
@@ -838,6 +954,7 @@ public class Netlist implements CircuitListener {
 				}
 				Connections.add(ConnectedNet);
 			}
+			boolean unconnectedEnds = false;
 			for (int i = 1; i < ends.size(); i++) {
 				int ConnectedNet = Connections.get(i - 1);
 				if (ConnectedNet >= 0) {
@@ -853,7 +970,17 @@ public class Netlist implements CircuitListener {
 							MyNets.get(ConnectedNet).AddParrentBit(b);
 						}
 					}
+				} else {
+					unconnectedEnds = true;
 				}
+			}
+			if (unconnectedEnds) {
+				SimpleDRCContainer warn = new SimpleDRCContainer(MyCircuit,
+                        Strings.get("NetList_NoSplitterEndConnections"),
+                        SimpleDRCContainer.LEVEL_NORMAL,
+                        SimpleDRCContainer.MARK_INSTANCE);
+				warn.AddMarkComponent(com);
+				Reporter.AddWarning(warn);
 			}
 		}
 		progres.setValue(5);
@@ -878,6 +1005,9 @@ public class Netlist implements CircuitListener {
 		 * present a source or sink. We omit the splitter and tunnel as we
 		 * already processed those
 		 */
+
+/* Done upto here */
+
 		for (Component comp : components) {
 			if (comp.getFactory() instanceof SubcircuitFactory) {
 				if (!ProcessSubcircuit(comp, Reporter)) {
@@ -1251,7 +1381,7 @@ public class Netlist implements CircuitListener {
 			}
 		}
 		for (Wire matched : MatchedWires)
-			GetNet(matched,ThisNet);
+			GetNet(matched, ThisNet);
 		MatchedWires.clear();
 	}
 
@@ -1369,7 +1499,7 @@ public class Netlist implements CircuitListener {
 	}
 
 	private boolean HasHiddenSource(Net thisNet, Byte bitIndex,
-			Set<Component> SplitterList, Component ActiveSplitter,
+			List<Component> SplitterList, Component ActiveSplitter,
 			Set<String> HandledNets) {
 		/*
 		 * to prevent deadlock situations we check if we already looked at this
