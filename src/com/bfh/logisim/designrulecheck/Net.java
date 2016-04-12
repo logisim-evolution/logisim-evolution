@@ -140,12 +140,6 @@ public class Net {
 		return TunnelNames.contains(TunnelName);
 	}
 
-	public void FinalCleanup() {
-		MyPoints.clear();
-		TunnelNames.clear();
-		InheritedBits.clear();
-	}
-
 	public void ForceRootNet() {
 		MyParent = null;
 		Requires_to_be_root = true;

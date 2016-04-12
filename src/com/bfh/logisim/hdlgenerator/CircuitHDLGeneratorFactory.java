@@ -1114,14 +1114,14 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
 		/* First we define the nets */
 		for (Net ThisNet : Nets.GetAllNets()) {
-			if (!ThisNet.isBus()) {
+			if (!ThisNet.isBus()&&ThisNet.IsRootNet()) {
 				SignalMap.put(
 						NetName + Integer.toString(Nets.GetNetId(ThisNet)), 1);
 			}
 		}
 		/* now we define the busses */
 		for (Net ThisNet : Nets.GetAllNets()) {
-			if (ThisNet.isBus()) {
+			if (ThisNet.isBus()&&ThisNet.IsRootNet()) {
 				int NrOfBits = ThisNet.BitWidth();
 				SignalMap.put(
 						BusName + Integer.toString(Nets.GetNetId(ThisNet)),
