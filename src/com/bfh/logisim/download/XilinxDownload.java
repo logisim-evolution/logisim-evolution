@@ -415,14 +415,13 @@ public class XilinxDownload {
 			ProgRect.x = 0;
 			ProgRect.y = 0;
 			progres.paintImmediately(ProgRect);
-			Object[] options = { "Yes, download" };
+			Object[] options = { "Yes, download","No, abort" };
 			if (JOptionPane
 					.showOptionDialog(
 							progres,
 							"Verify that your board is connected and you are ready to download.",
-							"Ready to download ?", JOptionPane.YES_OPTION,
-							JOptionPane.WARNING_MESSAGE, null, options,
-							options[0]) == JOptionPane.CLOSED_OPTION) {
+							"Ready to download ?", JOptionPane.YES_NO_OPTION,
+							JOptionPane.WARNING_MESSAGE, null, options, options[0]) != JOptionPane.YES_OPTION) {
 				MyReporter.AddSevereWarning("Download aborted.");
 				panel.dispose();
 				return false;

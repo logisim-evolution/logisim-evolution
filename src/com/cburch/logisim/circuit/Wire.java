@@ -37,7 +37,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import com.bfh.logisim.designrulecheck.CircuitNetlist;
+import com.bfh.logisim.designrulecheck.Netlist;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.comp.ComponentDrawContext;
 import com.cburch.logisim.comp.ComponentFactory;
@@ -99,7 +99,7 @@ public final class Wire implements Component, AttributeSet, CustomHandles,
 	final Location e1;
 	final boolean is_x_equal;
 	private boolean ShowAsMarked = false;
-	private Color MarkColor = CircuitNetlist.DRC_WIRE_MARK_COLOR;
+	private Color MarkColor = Netlist.DRC_WIRE_MARK_COLOR;
 
 	private Wire(Location e0, Location e1) {
 		this.is_x_equal = e0.getX() == e1.getX();

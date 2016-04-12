@@ -30,6 +30,7 @@
 
 package com.bfh.logisim.designrulecheck;
 
+import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Rectangle;
@@ -62,14 +63,13 @@ import com.cburch.logisim.instance.InstanceComponent;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.proj.Projects;
 import com.cburch.logisim.std.io.DipSwitch;
-import com.cburch.logisim.std.io.PortIO;
 import com.cburch.logisim.std.io.ReptarLocalBus;
 import com.cburch.logisim.std.wiring.Clock;
 import com.cburch.logisim.std.wiring.Pin;
 import com.cburch.logisim.std.wiring.Tunnel;
 
 public class Netlist implements CircuitListener {
-
+	
 	@Override
 	public void circuitChanged(CircuitEvent event) {
 		int ev = event.getAction();
@@ -164,7 +164,11 @@ public class Netlist implements CircuitListener {
 	public static final int DRC_PASSED = 0;
 	public static final int ANNOTATE_REQUIRED = 1;
 	public static final int DRC_ERROR = 2;
-
+	
+	public static final Color DRC_INSTANCE_MARK_COLOR = Color.RED;
+	public static final Color DRC_LABEL_MARK_COLOR = Color.MAGENTA;
+	public static final Color DRC_WIRE_MARK_COLOR = Color.RED;
+	
 	public Netlist(Circuit ThisCircuit) {
 		MyCircuit = ThisCircuit;
 		this.clear();
@@ -468,15 +472,14 @@ public class Netlist implements CircuitListener {
 			 */
 			return DRCStatus | CommonDRCStatus;
 		}
-		if (this.NetlistHasShortCircuits()) {
-			Reporter.AddFatalError("Circuit \"" + MyCircuit.getName()
-					+ "\" has short-circuits!");
-			this.clear();
+		if (NetlistHasShortCircuits(Reporter)) {
+			clear();
 			DRCStatus = DRC_ERROR;
 			return DRCStatus | CommonDRCStatus;
 		}
+		
 		Reporter.AddInfo("Circuit \"" + MyCircuit.getName() + "\" has "
-				+ this.NumberOfNets() + " nets and " + this.NumberOfBusses()
+				+ NumberOfNets() + " nets and " + NumberOfBusses()
 				+ " busses.");
 		Reporter.AddInfo("Circuit \"" + MyCircuit.getName()
 				+ "\" passed DRC check");
@@ -854,7 +857,7 @@ public class Netlist implements CircuitListener {
 					if (CurrentNet.contains(BusLoc)) {
 						if (busnet != null) {
 							Reporter.AddFatalError("BUG: Multiple bus nets found for a single splitter :"+
-									this.getClass().getName().replaceAll("\\.","/")+"\n");
+									this.getClass().getName().replaceAll("\\.","/")+":"+Thread.currentThread().getStackTrace()[2].getLineNumber()+"\n");
 							panel.dispose();
 							return false;
 						} else {
@@ -864,7 +867,7 @@ public class Netlist implements CircuitListener {
 					if (CurrentNet.contains(ConnectedLoc)) {
 						if (connectedNet != null) {
 							Reporter.AddFatalError("BUG: Multiple nets found for a single splitter split connection :"+
-									this.getClass().getName().replaceAll("\\.","/")+"\n");
+									this.getClass().getName().replaceAll("\\.","/")+":"+Thread.currentThread().getStackTrace()[2].getLineNumber()+"\n");
 							panel.dispose();
 							return false;
 						} else {
@@ -877,7 +880,7 @@ public class Netlist implements CircuitListener {
 						/* we can merge both nets */
 						if (!busnet.merge(connectedNet)) {
 							Reporter.AddFatalError("BUG: Splitter bus merge error :"+
-									this.getClass().getName().replaceAll("\\.","/")+"\n");
+									this.getClass().getName().replaceAll("\\.","/")+":"+Thread.currentThread().getStackTrace()[2].getLineNumber()+"\n");
 							panel.dispose();
 							return false;
 						} else {
@@ -933,7 +936,7 @@ public class Netlist implements CircuitListener {
 			}
 			if (RootNet < 0) {
 				Reporter.AddFatalError("BUG: Splitter without a bus connection :"+
-						this.getClass().getName().replaceAll("\\.","/")+"\n");
+						this.getClass().getName().replaceAll("\\.","/")+":"+Thread.currentThread().getStackTrace()[2].getLineNumber()+"\n");
 				this.clear();
 				panel.dispose();
 				return false;
@@ -1006,8 +1009,6 @@ public class Netlist implements CircuitListener {
 		 * already processed those
 		 */
 
-/* Done upto here */
-
 		for (Component comp : components) {
 			if (comp.getFactory() instanceof SubcircuitFactory) {
 				if (!ProcessSubcircuit(comp, Reporter)) {
@@ -1031,6 +1032,7 @@ public class Netlist implements CircuitListener {
 		ProgRect.x = 0;
 		ProgRect.y = 0;
 		progres.paintImmediately(ProgRect);
+
 		/*
 		 * Here we are going to process the complex splitters, note that in the
 		 * previous handling of the splitters we marked all nets connected to a
@@ -1061,7 +1063,8 @@ public class Netlist implements CircuitListener {
 							 * This should never happen as we already checked in
 							 * the first pass
 							 */
-							Reporter.AddFatalError("Internal error!");
+							Reporter.AddFatalError("BUG: This is embarasing as this should never happen :"+
+									this.getClass().getName().replaceAll("\\.","/")+":"+Thread.currentThread().getStackTrace()[2].getLineNumber()+"\n");
 							this.clear();
 							panel.dispose();
 							return false;
@@ -1735,11 +1738,16 @@ public class Netlist implements CircuitListener {
 		return true;
 	}
 
-	public boolean NetlistHasShortCircuits() {
+	public boolean NetlistHasShortCircuits(FPGAReport Reporter) {
 		boolean ret = false;
 		for (Net net : MyNets) {
 			if (net.IsRootNet()) {
-				ret |= net.hasShortCircuit();
+				if (net.hasShortCircuit()) {
+					SimpleDRCContainer error = new SimpleDRCContainer(MyCircuit,Strings.get("NetList_ShortCircuit"),SimpleDRCContainer.LEVEL_FATAL,SimpleDRCContainer.MARK_WIRE);
+					error.AddMarkComponents(net.getWires());
+					Reporter.AddError(error);
+					ret = true;
+				}
 			}
 		}
 		return ret;
@@ -1820,15 +1828,6 @@ public class Netlist implements CircuitListener {
 	private boolean ProcessNormalComponent(Component comp, FPGAReport Reporter) {
 		NetlistComponent NormalComponent = new NetlistComponent(comp);
 		for (EndData ThisPin : comp.getEnds()) {
-			if (ThisPin.isInput()
-					&& ThisPin.isOutput()
-					&& !(comp.getFactory() instanceof PortIO || comp
-							.getFactory() instanceof ReptarLocalBus)) {
-				Reporter.AddFatalError("Found IO pin on component \""
-						+ comp.getFactory().getName() + "\" in circuit \""
-						+ MyCircuit.getName() + "\"!");
-				return false;
-			}
 			Net Connection = FindConnectedNet(ThisPin.getLocation());
 			if (Connection != null) {
 				int PinId = comp.getEnds().indexOf(ThisPin);
@@ -1836,17 +1835,18 @@ public class Netlist implements CircuitListener {
 				ConnectionEnd ThisEnd = NormalComponent.getEnd(PinId);
 				Net RootNet = GetRootNet(Connection);
 				if (RootNet == null) {
-					Reporter.AddFatalError("INTERNAL ERROR: Unable to find a root net!");
+					Reporter.AddFatalError("BUG: Unable to find a root net for a normal component :"+
+							this.getClass().getName().replaceAll("\\.","/")+":"+Thread.currentThread().getStackTrace()[2].getLineNumber()+"\n");
 					return false;
 				}
 				for (byte bitid = 0; bitid < ThisPin.getWidth().getWidth(); bitid++) {
 					Byte RootNetBitIndex = GetRootNetIndex(Connection, bitid);
 					if (RootNetBitIndex < 0) {
-						Reporter.AddFatalError("INTERNAL ERROR: Unable to find a root-net bit-index!");
+						Reporter.AddFatalError("BUG:  Unable to find a root-net bit-index for a normal component :"+
+								this.getClass().getName().replaceAll("\\.","/")+":"+Thread.currentThread().getStackTrace()[2].getLineNumber()+"\n");
 						return false;
 					}
-					ConnectionPoint ThisSolderPoint = ThisEnd
-							.GetConnection(bitid);
+					ConnectionPoint ThisSolderPoint = ThisEnd.GetConnection(bitid);
 					ThisSolderPoint.SetParrentNet(RootNet, RootNetBitIndex);
 					if (PinIsSink) {
 						RootNet.addSink(RootNetBitIndex, ThisSolderPoint);
@@ -1864,9 +1864,6 @@ public class Netlist implements CircuitListener {
 			} else {
 				MyInputPorts.add(NormalComponent);
 			}
-		} else if (comp.getFactory() instanceof PortIO) {
-			MyInOutPorts.add(NormalComponent);
-			MyComponents.add(NormalComponent);
 		} else if (comp.getFactory() instanceof ReptarLocalBus) {
 			MyInOutPorts.add(NormalComponent);
 			MyInputPorts.add(NormalComponent);
@@ -1885,31 +1882,28 @@ public class Netlist implements CircuitListener {
 				.getPinInstances();
 		Netlist subNetlist = sub.getSubcircuit().getNetList();
 		for (EndData ThisPin : comp.getEnds()) {
-			if (ThisPin.isInput() && ThisPin.isOutput()) {
-				Reporter.AddFatalError("Found IO pin on component \""
-						+ comp.getFactory().getName() + "\" in circuit \""
-						+ MyCircuit.getName() + "\"! (subCirc)");
-				return false;
-			}
 			Net Connection = FindConnectedNet(ThisPin.getLocation());
 			int PinId = comp.getEnds().indexOf(ThisPin);
 			int SubPortIndex = subNetlist.GetPortInfo(subPins[PinId]
 					.getAttributeValue(StdAttr.LABEL));
 			if (SubPortIndex < 0) {
-				Reporter.AddFatalError("INTERNAL ERROR: Unable to find pin in sub-circuit!");
+				Reporter.AddFatalError("BUG:  Unable to find pin in sub-circuit :"+
+						this.getClass().getName().replaceAll("\\.","/")+":"+Thread.currentThread().getStackTrace()[2].getLineNumber()+"\n");
 				return false;
 			}
 			if (Connection != null) {
 				boolean PinIsSink = ThisPin.isInput();
 				Net RootNet = GetRootNet(Connection);
 				if (RootNet == null) {
-					Reporter.AddFatalError("INTERNAL ERROR: Unable to find a root net!");
+					Reporter.AddFatalError("BUG:  Unable to find a root net for sub-circuit :"+
+							this.getClass().getName().replaceAll("\\.","/")+":"+Thread.currentThread().getStackTrace()[2].getLineNumber()+"\n");
 					return false;
 				}
 				for (byte bitid = 0; bitid < ThisPin.getWidth().getWidth(); bitid++) {
 					Byte RootNetBitIndex = GetRootNetIndex(Connection, bitid);
 					if (RootNetBitIndex < 0) {
-						Reporter.AddFatalError("INTERNAL ERROR: Unable to find a root-net bit-index!");
+						Reporter.AddFatalError("BUG:  Unable to find a root-net bit-index for sub-circuit :"+
+								this.getClass().getName().replaceAll("\\.","/")+":"+Thread.currentThread().getStackTrace()[2].getLineNumber()+"\n");
 						return false;
 					}
 					Subcircuit.getEnd(PinId).GetConnection(bitid)

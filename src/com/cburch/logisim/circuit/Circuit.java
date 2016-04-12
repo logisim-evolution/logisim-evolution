@@ -50,7 +50,6 @@ import javax.swing.JOptionPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.bfh.logisim.designrulecheck.CircuitNetlist;
 import com.bfh.logisim.designrulecheck.Netlist;
 import com.bfh.logisim.fpgagui.FPGAReport;
 import com.cburch.logisim.circuit.appear.CircuitAppearance;
@@ -128,7 +127,6 @@ public class Circuit {
 		public void endChanged(ComponentEvent e) {
 			locker.checkForWritePermission("ends changed");
 			Annotated = false;
-			MyCircuitNetlist.clear();
 			MyNetList.clear();
 			Component comp = e.getSource();
 			HashMap<Location, EndData> toRemove = toMap(e.getOldData());
@@ -240,7 +238,6 @@ public class Circuit {
 
 	private WeakHashMap<Component, Circuit> circuitsUsingThis;
 	private Netlist MyNetList;
-	private CircuitNetlist MyCircuitNetlist;
 	private boolean Annotated;
 	private Project proj;
 
@@ -254,8 +251,6 @@ public class Circuit {
 		circuitsUsingThis = new WeakHashMap<Component, Circuit>();
 		MyNetList = new Netlist(this);
 		addCircuitListener(MyNetList);
-		MyCircuitNetlist = new CircuitNetlist(this);
-		addCircuitListener(MyCircuitNetlist);
 		Annotated = false;
 		logiFile = file;
 		staticAttrs.setValue(CircuitAttributes.NAMED_CIRCUIT_BOX, AppPreferences.NAMED_CIRCUIT_BOXES.getBoolean());
@@ -391,7 +386,6 @@ public class Circuit {
 	public void ClearAnnotationLevel() {
 		Annotated = false;
 		MyNetList.clear();
-		MyCircuitNetlist.clear();
 		for (Component comp : this.getNonWires()) {
 			if (comp.getFactory() instanceof SubcircuitFactory) {
 				SubcircuitFactory sub = (SubcircuitFactory) comp.getFactory();
@@ -651,10 +645,6 @@ public class Circuit {
 		return MyNetList;
 	}
 	
-	public CircuitNetlist getCircuitNetList() {
-		return MyCircuitNetlist;
-	}
-
 	public Set<Component> getNonWires() {
 		return comps;
 	}
@@ -725,7 +715,6 @@ public class Circuit {
 
 		Annotated = false;
 		MyNetList.clear();
-		MyCircuitNetlist.clear();
 		if (c instanceof Wire) {
 			Wire w = (Wire) c;
 			if (w.getEnd0().equals(w.getEnd1()))
@@ -761,7 +750,6 @@ public class Circuit {
 		wires = new CircuitWires();
 		clocks.clear();
 		MyNetList.clear();
-		MyCircuitNetlist.clear();
 		Annotated = false;
 		for (Component comp : oldComps) {
 			if (comp.getFactory() instanceof SubcircuitFactory) {
@@ -779,7 +767,6 @@ public class Circuit {
 
 		Annotated = false;
 		MyNetList.clear();
-		MyCircuitNetlist.clear();
 		if (c instanceof Wire) {
 			wires.remove(c);
 		} else {

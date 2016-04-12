@@ -40,8 +40,8 @@ import java.util.List;
 
 import javax.swing.JOptionPane;
 
-import com.bfh.logisim.designrulecheck.CircuitNetlist;
 import com.bfh.logisim.designrulecheck.CorrectLabel;
+import com.bfh.logisim.designrulecheck.Netlist;
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.comp.ComponentDrawContext;
@@ -271,7 +271,7 @@ public class InstanceComponent implements Component, AttributeListener,
 			Graphics g = painter.getGraphics();
 			Bounds bds = painter.getBounds();
 			Color current = g.getColor();
-			g.setColor(CircuitNetlist.DRC_INSTANCE_MARK_COLOR);
+			g.setColor(Netlist.DRC_INSTANCE_MARK_COLOR);
 			GraphicsUtil.switchToWidth(g, 2);
 			g.drawRoundRect(bds.getX()-10, bds.getY()-10, bds.getWidth()+20, bds.getHeight()+20, 40, 40);
 			GraphicsUtil.switchToWidth(g, 1);
@@ -290,7 +290,7 @@ public class InstanceComponent implements Component, AttributeListener,
 				Graphics g = context.getGraphics();
 				Bounds bds = field.getBounds(g);
 				Color current = g.getColor();
-				g.setColor(CircuitNetlist.DRC_LABEL_MARK_COLOR);
+				g.setColor(Netlist.DRC_LABEL_MARK_COLOR);
 				GraphicsUtil.switchToWidth(g, 2);
 				g.drawRoundRect(bds.getX()-10, bds.getY()-10, bds.getWidth()+20, bds.getHeight()+20, 40, 40);
 				GraphicsUtil.switchToWidth(g, 1);

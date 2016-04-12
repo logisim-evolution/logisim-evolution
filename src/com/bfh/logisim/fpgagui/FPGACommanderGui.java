@@ -68,7 +68,6 @@ import javax.swing.JTextArea;
 import javax.swing.ListSelectionModel;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import com.bfh.logisim.designrulecheck.CircuitNetlist;
 import com.bfh.logisim.designrulecheck.CorrectLabel;
 import com.bfh.logisim.designrulecheck.Netlist;
 import com.bfh.logisim.designrulecheck.SimpleDRCContainer;
@@ -1118,9 +1117,9 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 		String CircuitName = circuitsList.getSelectedItem().toString();
 		Circuit root = MyProject.getLogisimFile().getCircuit(CircuitName);
 		ArrayList<String> SheetNames = new ArrayList<String>();
-		int DRCResult = CircuitNetlist.DRC_PASSED;
+		int DRCResult = Netlist.DRC_PASSED;
 		if (root == null) {
-			DRCResult |= CircuitNetlist.DRC_ERROR;
+			DRCResult |= Netlist.DRC_ERROR;
 		} else {
 			DRCResult = root.getNetList().DesignRuleCheckResult(MyReporter,
 					HDLType.getText(), true, SheetNames);

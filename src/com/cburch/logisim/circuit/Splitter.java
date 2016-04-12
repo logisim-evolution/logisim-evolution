@@ -34,7 +34,7 @@ import java.awt.Graphics;
 
 import javax.swing.JPopupMenu;
 
-import com.bfh.logisim.designrulecheck.CircuitNetlist;
+import com.bfh.logisim.designrulecheck.Netlist;
 import com.cburch.logisim.comp.ComponentDrawContext;
 import com.cburch.logisim.comp.ComponentEvent;
 import com.cburch.logisim.comp.ComponentFactory;
@@ -182,7 +182,7 @@ public class Splitter extends ManagedComponent implements WireRepair,
 		if (isMarked) {
 			Graphics g = context.getGraphics();
 			Bounds bds = this.getBounds();
-			g.setColor(CircuitNetlist.DRC_INSTANCE_MARK_COLOR);
+			g.setColor(Netlist.DRC_INSTANCE_MARK_COLOR);
 			GraphicsUtil.switchToWidth(g, 2);
 			g.drawRoundRect(bds.getX()-10, bds.getY()-10, bds.getWidth()+20, bds.getHeight()+20, 20, 20);
 		}
