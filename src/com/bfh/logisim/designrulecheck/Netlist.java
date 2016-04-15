@@ -486,6 +486,42 @@ public class Netlist implements CircuitListener {
 			DRCStatus = DRC_ERROR;
 			return DRCStatus | CommonDRCStatus;
 		}
+		/* Check for connections without a source */
+		if (NetlistHasSinksWithoutSource(Reporter)) {
+			/* Do nothing Special */
+		}
+		/* Check for unconnected input pins on components and generate warnings */
+		for (NetlistComponent comp : MyComponents) {
+			boolean openInputs = false;
+			for (int j = 0 ; j < comp.NrOfEnds() ; j++) {
+				if (comp.EndIsInput(j)&&!comp.EndIsConnected(j))
+					openInputs = true;
+			}
+			if (openInputs) {
+				SimpleDRCContainer warn = new SimpleDRCContainer(MyCircuit,
+                        Strings.get("NetList_UnconnectedInputs"),
+                        SimpleDRCContainer.LEVEL_NORMAL,
+                        SimpleDRCContainer.MARK_INSTANCE);
+				warn.AddMarkComponent(comp.GetComponent());
+				Reporter.AddWarning(warn);
+			}
+		}
+		/* Check for unconnected input pins on subcircuits and generate warnings */
+		for (NetlistComponent comp : MySubCircuits) {
+			boolean openInputs = false;
+			for (int j = 0 ; j < comp.NrOfEnds() ; j++) {
+				if (comp.EndIsInput(j)&&!comp.EndIsConnected(j))
+					openInputs = true;
+			}
+			if (openInputs) {
+				SimpleDRCContainer warn = new SimpleDRCContainer(MyCircuit,
+                        Strings.get("NetList_UnconnectedInputs"),
+                        SimpleDRCContainer.LEVEL_SEVERE,
+                        SimpleDRCContainer.MARK_INSTANCE);
+				warn.AddMarkComponent(comp.GetComponent());
+				Reporter.AddWarning(warn);
+			}
+		}
 		
 		Reporter.AddInfo("Circuit \"" + MyCircuit.getName() + "\" has "
 				+ NumberOfNets() + " nets and " + NumberOfBusses()
@@ -509,6 +545,8 @@ public class Netlist implements CircuitListener {
 				DRCStatus = DRC_ERROR;
 				return DRCStatus | CommonDRCStatus;
 			}
+			/* Check for gated clocks */
+			
 		}
 		DRCStatus = DRC_PASSED;
 		return DRCStatus | CommonDRCStatus;
@@ -1108,7 +1146,7 @@ public class Netlist implements CircuitListener {
 											.getBit(ConnectedBusIndex);
 									Rootbus = Rootbus.getParent();
 								}
-								ConnectionPoint SolderPoint = new ConnectionPoint();
+								ConnectionPoint SolderPoint = new ConnectionPoint(comp);
 								SolderPoint.SetParrentNet(Rootbus,
 										ConnectedBusIndex);
 								Boolean IsSink = true;
@@ -1191,6 +1229,107 @@ public class Netlist implements CircuitListener {
 		return -1;
 	}
 
+	private ArrayList<ConnectionPoint> GetHiddenSinkNets(Net thisNet,
+			Byte bitIndex, ArrayList<Component> SplitterList,
+			Component ActiveSplitter, Set<String> HandledNets,
+			Boolean isSourceNet) {
+		ArrayList<ConnectionPoint> result = new ArrayList<ConnectionPoint>();
+		/*
+		 * to prevent deadlock situations we check if we already looked at this
+		 * net
+		 */
+		String NetId = Integer.toString(MyNets.indexOf(thisNet)) + "-"
+				+ Byte.toString(bitIndex);
+		if (HandledNets.contains(NetId)) {
+			return result;
+		} else {
+			HandledNets.add(NetId);
+		}
+		if (thisNet.hasBitSinks(bitIndex) && !isSourceNet) {
+			ConnectionPoint SolderPoint = new ConnectionPoint(null);
+			SolderPoint.SetParrentNet(thisNet, bitIndex);
+			result.add(SolderPoint);
+		}
+		/* Check if we have a connection to another splitter */
+		for (Component currentSplitter : SplitterList) {
+			if (ActiveSplitter != null) {
+				if (currentSplitter.equals(ActiveSplitter)) {
+					continue;
+				}
+			}
+			List<EndData> ends = currentSplitter.getEnds();
+			for (byte end = 0; end < ends.size(); end++) {
+				if (thisNet.contains(ends.get(end).getLocation())) {
+					/* Here we have to process the inherited bits of the parent */
+					byte[] BusBitConnection = ((Splitter) currentSplitter)
+							.GetEndpoints();
+					if (end == 0) {
+						/* this is a main net, find the connected end */
+						Byte SplitterEnd = BusBitConnection[bitIndex];
+						/* Find the corresponding Net index */
+						Byte Netindex = 0;
+						for (int index = 0; index < bitIndex; index++) {
+							if (BusBitConnection[index] == SplitterEnd) {
+								Netindex++;
+							}
+						}
+						/* Find the connected Net */
+						Net SlaveNet = null;
+						for (Net thisnet : MyNets) {
+							if (thisnet.contains(ends.get(SplitterEnd)
+									.getLocation())) {
+								SlaveNet = thisnet;
+							}
+						}
+						if (SlaveNet != null) {
+							if (SlaveNet.IsRootNet()) {
+								/* Trace down the slavenet */
+								result.addAll(GetHiddenSinkNets(SlaveNet,
+										Netindex, SplitterList,
+										currentSplitter, HandledNets, false));
+							} else {
+								result.addAll(GetHiddenSinkNets(
+										SlaveNet.getParent(),
+										SlaveNet.getBit(Netindex),
+										SplitterList, currentSplitter,
+										HandledNets, false));
+							}
+						}
+					} else {
+						ArrayList<Byte> Rootindices = new ArrayList<Byte>();
+						for (byte b = 0; b < BusBitConnection.length; b++) {
+							if (BusBitConnection[b] == end) {
+								Rootindices.add(b);
+							}
+						}
+						Net RootNet = null;
+						for (Net thisnet : MyNets) {
+							if (thisnet.contains(currentSplitter.getEnd(0)
+									.getLocation())) {
+								RootNet = thisnet;
+							}
+						}
+						if (RootNet != null) {
+							if (RootNet.IsRootNet()) {
+								result.addAll(GetHiddenSinkNets(RootNet,
+										Rootindices.get(bitIndex),
+										SplitterList, currentSplitter,
+										HandledNets, false));
+							} else {
+								result.addAll(GetHiddenSinkNets(RootNet
+										.getParent(), RootNet
+										.getBit(Rootindices.get(bitIndex)),
+										SplitterList, currentSplitter,
+										HandledNets, false));
+							}
+						}
+					}
+				}
+			}
+		}
+		return result;
+	}
+
 	private ArrayList<ConnectionPoint> GetHiddenSinks(Net thisNet,
 			Byte bitIndex, ArrayList<Component> SplitterList,
 			Component ActiveSplitter, Set<String> HandledNets,
@@ -1208,9 +1347,7 @@ public class Netlist implements CircuitListener {
 			HandledNets.add(NetId);
 		}
 		if (thisNet.hasBitSinks(bitIndex) && !isSourceNet) {
-			ConnectionPoint SolderPoint = new ConnectionPoint();
-			SolderPoint.SetParrentNet(thisNet, bitIndex);
-			result.add(SolderPoint);
+			result.addAll(thisNet.GetBitSinks(bitIndex));
 		}
 		/* Check if we have a connection to another splitter */
 		for (Component currentSplitter : SplitterList) {
@@ -1717,7 +1854,7 @@ public class Netlist implements CircuitListener {
 				 * therefore we have also to trace through our own netlist to
 				 * find the clock connections
 				 */
-				ArrayList<ConnectionPoint> HiddenSinks = GetHiddenSinks(
+				ArrayList<ConnectionPoint> HiddenSinks = GetHiddenSinkNets(
 						SolderPoint.GetParrentNet(),
 						SolderPoint.GetParrentNetBitIndex(), MyComplexSplitters,
 						null, new HashSet<String>(), true);
@@ -1731,18 +1868,6 @@ public class Netlist implements CircuitListener {
 				}
 			}
 		}
-/* blabla */
-		/* Now we remove all non-root nets */
-		/* Note that all clock sources have been marked */
-//		Iterator<Net> MyIterator = MyNets.iterator();
-//		while (MyIterator.hasNext()) {
-//			Net thisnet = MyIterator.next();
-//			if (!thisnet.IsRootNet()) {
-//				MyIterator.remove();
-//			} else {
-//				thisnet.FinalCleanup();
-//			}
-//		}
 		return true;
 	}
 
@@ -1759,6 +1884,45 @@ public class Netlist implements CircuitListener {
 			}
 		}
 		return ret;
+	}
+	
+	public boolean NetlistHasSinksWithoutSource(FPGAReport Reporter) {
+		/* First pass: we make a set with all sinks */
+		Set<ConnectionPoint> MySinks = new HashSet<ConnectionPoint>();
+		for (Net ThisNet : MyNets) {
+			if (ThisNet.IsRootNet()) {
+				MySinks.addAll(ThisNet.GetSinks());
+			}
+		}
+		/* Second pass: we iterate along all the sources */
+		for (Net ThisNet : MyNets) {
+			if (ThisNet.IsRootNet()) {
+				for (int i = 0 ; i < ThisNet.BitWidth() ; i++) {
+					if (ThisNet.hasBitSource(i)) {
+						ArrayList<ConnectionPoint> Sinks = ThisNet.GetBitSinks(i);
+						MySinks.removeAll(Sinks);
+						ArrayList<ConnectionPoint> HiddenSinkNets = GetHiddenSinks(
+								ThisNet, (byte) i, MyComplexSplitters,
+								null, new HashSet<String>(), true);
+						MySinks.removeAll(HiddenSinkNets);
+					}
+				}
+			}
+		}
+		if (MySinks.size()!= 0) {
+			for (ConnectionPoint Sink : MySinks) {
+				SimpleDRCContainer warn = new SimpleDRCContainer(MyCircuit,
+                        Strings.get("NetList_UnsourcedSink"),
+                        SimpleDRCContainer.LEVEL_SEVERE,
+                        SimpleDRCContainer.MARK_INSTANCE|SimpleDRCContainer.MARK_WIRE);
+				warn.AddMarkComponents(Sink.GetParrentNet().getWires());
+				if (Sink.GetComp()!=null) {
+					warn.AddMarkComponent(Sink.GetComp());
+				}
+				Reporter.AddWarning(warn);
+			}
+		}
+		return false;
 	}
 
 	public int NumberOfBusses() {

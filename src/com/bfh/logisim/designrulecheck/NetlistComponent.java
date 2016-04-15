@@ -62,7 +62,7 @@ public class NetlistComponent {
 		Ends = new ArrayList<ConnectionEnd>();
 		for (int i = 0; i < Ref.getEnds().size(); i++) {
 			Ends.add(new ConnectionEnd(Ref.getEnd(i).isOutput(), (byte) Ref
-					.getEnd(i).getWidth().getWidth()));
+					.getEnd(i).getWidth().getWidth(),Ref));
 		}
 		if (Ref.getFactory().getIOInformation() != null) {
 			MyIOInformation = Ref.getFactory().getIOInformation().clone();
@@ -176,6 +176,13 @@ public class NetlistComponent {
 			isConnected |= (ThisEnd.GetConnection((byte) i).GetParrentNet() != null);
 		}
 		return isConnected;
+	}
+	
+	public boolean EndIsInput(int index) {
+		if ((index < 0) || (index >= nr_of_ends)) {
+			return false;
+		}
+		return CompReference.getEnd(index).isInput();
 	}
 
 	public Component GetComponent() {

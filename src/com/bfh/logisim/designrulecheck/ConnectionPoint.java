@@ -30,16 +30,24 @@
 
 package com.bfh.logisim.designrulecheck;
 
+import com.cburch.logisim.comp.Component;
+
 public class ConnectionPoint {
 
 	private Net MyOwnNet;
 	private Byte MyOwnNetBitIndex;
 	private int MyChildsPortIndex;
+	private Component MyComp;
 
-	public ConnectionPoint() {
+	public ConnectionPoint(Component comp) {
 		MyOwnNet = null;
 		MyOwnNetBitIndex = -1;
 		MyChildsPortIndex = -1;
+		MyComp = comp;
+	}
+	
+	public Component GetComp() {
+		return MyComp;
 	}
 
 	public int getChildsPortIndex() {

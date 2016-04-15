@@ -177,6 +177,15 @@ public class Net {
 			return false;
 		return SinkList.get(bitid).NrOfConnections() > 0;
 	}
+	
+	public ArrayList<ConnectionPoint> GetBitSinks(int bitIndex) {
+		ArrayList<ConnectionPoint> sinks = new ArrayList<ConnectionPoint>();
+		if ((bitIndex < 0) || (bitIndex >= SourceNetsList.size()))
+			return new ArrayList<ConnectionPoint>();
+		sinks.addAll(SinkList.get(bitIndex).GetConnections());
+		return sinks;
+	}
+ 
 
 	public boolean hasBitSource(int bitid) {
 		if (bitid < 0 || bitid >= SourceList.size())
@@ -196,6 +205,14 @@ public class Net {
 		for (int i = 0; i < nr_of_bits; i++)
 			ret |= SinkList.get(i).NrOfConnections() > 0;
 		return ret;
+	}
+	
+	public Set<ConnectionPoint> GetSinks() {
+		Set<ConnectionPoint> sinks = new HashSet<ConnectionPoint>();
+		for (int i = 0; i < nr_of_bits; i++) {
+			sinks.addAll(SinkList.get(i).GetConnections());
+		}
+		return sinks;
 	}
 
 	public boolean hasSource() {

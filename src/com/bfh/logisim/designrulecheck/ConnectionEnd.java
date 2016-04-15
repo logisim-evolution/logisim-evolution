@@ -32,18 +32,20 @@ package com.bfh.logisim.designrulecheck;
 
 import java.util.ArrayList;
 
+import com.cburch.logisim.comp.Component;
+
 public class ConnectionEnd {
 
 	private boolean IsOutput;
 	private Byte nr_of_bits;
 	private ArrayList<ConnectionPoint> MyConnections;
 
-	public ConnectionEnd(boolean OutputEnd, Byte nr_of_bits) {
+	public ConnectionEnd(boolean OutputEnd, Byte nr_of_bits, Component comp) {
 		IsOutput = OutputEnd;
 		this.nr_of_bits = nr_of_bits;
 		MyConnections = new ArrayList<ConnectionPoint>();
 		for (byte i = 0; i < nr_of_bits; i++)
-			MyConnections.add(new ConnectionPoint());
+			MyConnections.add(new ConnectionPoint(comp));
 	}
 
 	public ConnectionPoint GetConnection(Byte BitIndex) {
