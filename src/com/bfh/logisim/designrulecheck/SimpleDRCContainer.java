@@ -53,17 +53,39 @@ public class SimpleDRCContainer {
 	private Set<Object> DRCComponents;
 	private Circuit MyCircuit;
 	private int MarkType;
+	private int ListNumber;
+	private boolean SuppressCount;
 	
 	public SimpleDRCContainer(String Message, int level) {
 		this.Message = Message;
 		this.SeverityLevel = level;
 		MarkType = MARK_NONE;
+		ListNumber = 0;
+		SuppressCount = false;
+	}
+
+	public SimpleDRCContainer(String Message, int level, boolean SupressCount) {
+		this.Message = Message;
+		this.SeverityLevel = level;
+		MarkType = MARK_NONE;
+		ListNumber = 0;
+		this.SuppressCount = SupressCount;
 	}
 
 	public SimpleDRCContainer(Object Message, int level) {
 		this.Message = Message.toString();
 		this.SeverityLevel = level;
 		MarkType = MARK_NONE;
+		ListNumber = 0;
+		SuppressCount = false;
+	}
+
+	public SimpleDRCContainer(Object Message, int level, boolean SupressCount) {
+		this.Message = Message.toString();
+		this.SeverityLevel = level;
+		MarkType = MARK_NONE;
+		ListNumber = 0;
+		this.SuppressCount = SupressCount;
 	}
 
 	public SimpleDRCContainer(Circuit circ, Object Message, int level, int MarkMask) {
@@ -71,6 +93,17 @@ public class SimpleDRCContainer {
 		this.SeverityLevel = level;
 		MyCircuit=circ;
 		MarkType = MarkMask;
+		ListNumber = 0;
+		SuppressCount = false;
+	}
+
+	public SimpleDRCContainer(Circuit circ, Object Message, int level, int MarkMask, boolean SupressCount) {
+		this.Message = Message.toString();
+		this.SeverityLevel = level;
+		MyCircuit=circ;
+		MarkType = MarkMask;
+		ListNumber = 0;
+		this.SuppressCount = SupressCount;
 	}
 
 	@Override
@@ -107,6 +140,18 @@ public class SimpleDRCContainer {
 		if (DRCComponents==null) 
 			DRCComponents = new HashSet<Object>();
 		DRCComponents.addAll(set);
+	}
+	
+	public void SetListNumber(int number) {
+		ListNumber = number;
+	}
+	
+	public boolean SupressCount() {
+		return this.SuppressCount;
+	}
+	
+	public int GetListNumber() {
+		return ListNumber;
 	}
 	
 	public void MarkComponents() {

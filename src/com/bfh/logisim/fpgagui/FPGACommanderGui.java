@@ -193,7 +193,7 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 			if (comps.contains(panelErrors))
 				idx = tabbedPane.indexOfComponent(panelErrors);
 			tabbedPane.add(panelWarnings, idx);
-			tabbedPane.setTitleAt(idx, "Warnings (" + WarningsList.getSize() + ")");
+			tabbedPane.setTitleAt(idx, "Warnings (" + WarningsList.getCountNr() + ")");
 		}
 		if (e.getSource().equals(ErrorWindow)) {
 			int idx = tabbedPane.getComponentCount();
@@ -201,7 +201,7 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 			if (comps.contains(panelConsole))
 				idx = tabbedPane.indexOfComponent(panelConsole);
 			tabbedPane.add(panelErrors, idx);
-			tabbedPane.setTitleAt(idx, "Errors (" + ErrorsList.getSize() + ")");
+			tabbedPane.setTitleAt(idx, "Errors (" + ErrorsList.getCountNr() + ")");
 			clearDRCTrace();
 		}
 		if (e.getSource().equals(ConsoleWindow)) {
@@ -769,7 +769,7 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 		int idx = tabbedPane.indexOfComponent(panelErrors);
 		if (idx >= 0) {
 			tabbedPane.setSelectedIndex(idx);
-			tabbedPane.setTitleAt(idx, "Errors (" + ErrorsList.getSize() + ")");
+			tabbedPane.setTitleAt(idx, "Errors (" + ErrorsList.getCountNr() + ")");
 			Rectangle rect = tabbedPane.getBounds();
 			rect.x = 0;
 			rect.y = 0;
@@ -813,7 +813,7 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 		int idx = tabbedPane.indexOfComponent(panelWarnings);
 		if (idx >= 0) {
 			tabbedPane.setSelectedIndex(idx);
-			tabbedPane.setTitleAt(idx, "Warnings (" + WarningsList.getSize() + ")");
+			tabbedPane.setTitleAt(idx, "Warnings (" + WarningsList.getCountNr() + ")");
 			Rectangle rect = tabbedPane.getBounds();
 			rect.x = 0;
 			rect.y = 0;
@@ -889,11 +889,11 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 		WarningsList.clear();
 		idx = tabbedPane.indexOfComponent(panelWarnings);
 		if (idx >= 0)
-			tabbedPane.setTitleAt(idx, "Warnings (" + WarningsList.getSize() + ")");
+			tabbedPane.setTitleAt(idx, "Warnings (" + WarningsList.getCountNr() + ")");
 		ErrorsList.clear();
 		idx = tabbedPane.indexOfComponent(panelErrors);
 		if (idx >= 0)
-			tabbedPane.setTitleAt(idx, "Errors (" + ErrorsList.getSize() + ")");
+			tabbedPane.setTitleAt(idx, "Errors (" + ErrorsList.getCountNr() + ")");
 		InfoWindow.clear();
 		ConsoleWindow.clear();
 		Rectangle rect = tabbedPane.getBounds();

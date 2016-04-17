@@ -2354,12 +2354,13 @@ public class Netlist implements CircuitListener {
 				/* big Problem, we have a component that is used with and without gated clocks */
 				error = true;
 				Reporter.AddFatalError(Strings.get("NetList_CircuitGatedNotGated"));
+				Reporter.AddErrorIncrement(Strings.get("NetList_TraceListBegin"));
 				Map<NetlistComponent,Circuit> instances = NotGatedSet.get(key);
 				for (NetlistComponent comp : instances.keySet()) {
 					SimpleDRCContainer warn = new SimpleDRCContainer(instances.get(comp),
 	                        Strings.get("NetList_CircuitNotGated"),
-	                        SimpleDRCContainer.LEVEL_FATAL,
-	                        SimpleDRCContainer.MARK_INSTANCE);
+	                        SimpleDRCContainer.LEVEL_NORMAL,
+	                        SimpleDRCContainer.MARK_INSTANCE,true);
 					warn.AddMarkComponent(comp.GetComponent());
 					Reporter.AddError(warn);
 				}
@@ -2367,15 +2368,14 @@ public class Netlist implements CircuitListener {
 				for (NetlistComponent comp : instances.keySet()) {
 					SimpleDRCContainer warn = new SimpleDRCContainer(instances.get(comp),
 	                        Strings.get("NetList_CircuitGated"),
-	                        SimpleDRCContainer.LEVEL_FATAL,
-	                        SimpleDRCContainer.MARK_INSTANCE);
+	                        SimpleDRCContainer.LEVEL_NORMAL,
+	                        SimpleDRCContainer.MARK_INSTANCE,true);
 					warn.AddMarkComponent(comp.GetComponent());
 					Reporter.AddError(warn);
 				}
-				Reporter.AddFatalError(Strings.get("NetList_CircuitGatedNotGatedEnd"));
+				Reporter.AddErrorIncrement(Strings.get("NetList_TraceListEnd"));
 			}
 		}
-		/* TODO: Trace gated clocks where the clock is a pin from a circuit */
 		return !error;
 	}
 	
@@ -2520,6 +2520,23 @@ public class Netlist implements CircuitListener {
 			WarningForGatedClock(NonPinSources,NonPinGatedComponents,NonPinWires,WarnedComponents,Reporter,Strings.get("NetList_GatedClock"));
 		}
 		
+		if (GatedClock&&!PinSources.isEmpty()) {
+			for (int i = 0 ; i < PinSources.size() ; i++) {
+				Reporter.AddSevereWarning(Strings.get("NetList_GatedClock"));
+				Reporter.AddWarningIncrement(Strings.get("NetList_TraceListBegin"));
+				SimpleDRCContainer warn = new SimpleDRCContainer(MyCircuit,
+						Strings.get("NetList_GatedClockSink"),
+						SimpleDRCContainer.LEVEL_NORMAL,
+						SimpleDRCContainer.MARK_INSTANCE|SimpleDRCContainer.MARK_WIRE,true);
+				warn.AddMarkComponents(PinWires.get(i));
+				for (NetlistComponent comp : PinGatedComponents.get(i))
+					warn.AddMarkComponent(comp.GetComponent());
+				Reporter.AddWarning(warn);
+				/* TODO: Trace gated clocks where the clock is a pin from a circuit */
+				Reporter.AddWarningIncrement(Strings.get("NetList_TraceListEnd"));
+			}
+		}
+		
 		
 		String MyName = CorrectLabel.getCorrectLabel(CircuitName);
 		if (HierarchyNetlists.size()>1) {
@@ -2549,24 +2566,29 @@ public class Netlist implements CircuitListener {
 	}
 	
 	private void WarningForGatedClock(List<ConnectionPoint> Sources,
-			List<Set<NetlistComponent>> Components,
-			List<Set<Wire>> Wires,
-			Set<NetlistComponent> WarnedComponents,
-            FPGAReport Reporter,
-            String Warning) {
+			                          List<Set<NetlistComponent>> Components,
+			                          List<Set<Wire>> Wires,
+			                          Set<NetlistComponent> WarnedComponents,
+                                      FPGAReport Reporter,
+                                      String Warning) {
 		for (int i = 0 ; i < Sources.size() ; i++) {
 			boolean AlreadyWarned = false;
 			for (NetlistComponent comp : Components.get(i)) 
 				AlreadyWarned |= WarnedComponents.contains(comp);
 			if (!AlreadyWarned) {
-				SimpleDRCContainer warn = new SimpleDRCContainer(MyCircuit,
-						Warning,
-						SimpleDRCContainer.LEVEL_SEVERE,
-						SimpleDRCContainer.MARK_INSTANCE|SimpleDRCContainer.MARK_WIRE);
-				for (NetlistComponent comp : Components.get(i))
-					warn.AddMarkComponent(comp.GetComponent());
-				warn.AddMarkComponents(Wires.get(i));
-				Reporter.AddWarning(warn);
+				if (Sources.get(i).GetComp().getFactory() instanceof SubcircuitFactory) {
+System.out.print("Have to trace\n");
+					/* TODO: if the source is a sub-circuit trace all the way to the source that is not a sub-circuit */
+				} else {
+					SimpleDRCContainer warn = new SimpleDRCContainer(MyCircuit,
+							Warning,
+							SimpleDRCContainer.LEVEL_SEVERE,
+							SimpleDRCContainer.MARK_INSTANCE|SimpleDRCContainer.MARK_WIRE);
+					for (NetlistComponent comp : Components.get(i))
+						warn.AddMarkComponent(comp.GetComponent());
+					warn.AddMarkComponents(Wires.get(i));
+					Reporter.AddWarning(warn);
+				}
 				WarnedComponents.addAll(Components.get(i));
 			}
 		}
