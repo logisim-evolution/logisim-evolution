@@ -185,6 +185,12 @@ public class Net {
 		sinks.addAll(SinkList.get(bitIndex).GetConnections());
 		return sinks;
 	}
+	
+	public ArrayList<ConnectionPoint> GetBitSources(int bitIndex) {
+		if ((bitIndex < 0) || (bitIndex >= SourceNetsList.size()))
+			return null;
+		return SourceList.get(bitIndex).GetConnections();
+	}
  
 
 	public boolean hasBitSource(int bitid) {

@@ -47,6 +47,7 @@ import javax.swing.JLabel;
 import javax.swing.JProgressBar;
 
 import com.bfh.logisim.fpgagui.FPGAReport;
+import com.bfh.logisim.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitAttributes;
 import com.cburch.logisim.circuit.CircuitEvent;
@@ -56,7 +57,9 @@ import com.cburch.logisim.circuit.SplitterFactory;
 import com.cburch.logisim.circuit.SubcircuitFactory;
 import com.cburch.logisim.circuit.Wire;
 import com.cburch.logisim.comp.Component;
+import com.cburch.logisim.comp.ComponentFactory;
 import com.cburch.logisim.comp.EndData;
+import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceComponent;
@@ -64,6 +67,10 @@ import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.proj.Projects;
 import com.cburch.logisim.std.io.DipSwitch;
 import com.cburch.logisim.std.io.ReptarLocalBus;
+import com.cburch.logisim.std.memory.DFlipFlop;
+import com.cburch.logisim.std.memory.JKFlipFlop;
+import com.cburch.logisim.std.memory.SRFlipFlop;
+import com.cburch.logisim.std.memory.TFlipFlop;
 import com.cburch.logisim.std.wiring.Clock;
 import com.cburch.logisim.std.wiring.Pin;
 import com.cburch.logisim.std.wiring.Tunnel;
@@ -188,6 +195,10 @@ public class Netlist implements CircuitListener {
 	}
 
 	public void clear() {
+		for (NetlistComponent subcirc : MySubCircuits) {
+			SubcircuitFactory SubFact = (SubcircuitFactory) subcirc.GetComponent().getFactory();
+			SubFact.getSubcircuit().getNetList().clear();
+		}
 		DRCStatus = DRC_REQUIRED;
 		MyNets.clear();
 		MySubCircuits.clear();
@@ -487,9 +498,7 @@ public class Netlist implements CircuitListener {
 			return DRCStatus | CommonDRCStatus;
 		}
 		/* Check for connections without a source */
-		if (NetlistHasSinksWithoutSource(Reporter)) {
-			/* Do nothing Special */
-		}
+		NetlistHasSinksWithoutSource(Reporter);
 		/* Check for unconnected input pins on components and generate warnings */
 		for (NetlistComponent comp : MyComponents) {
 			boolean openInputs = false;
@@ -523,11 +532,6 @@ public class Netlist implements CircuitListener {
 			}
 		}
 		
-		Reporter.AddInfo("Circuit \"" + MyCircuit.getName() + "\" has "
-				+ NumberOfNets() + " nets and " + NumberOfBusses()
-				+ " busses.");
-		Reporter.AddInfo("Circuit \"" + MyCircuit.getName()
-				+ "\" passed DRC check");
 		/* Only if we are on the top-level we are going to build the clock-tree */
 		if (IsTopLevel) {
 			if (!DetectClockTree(Reporter)) {
@@ -546,8 +550,17 @@ public class Netlist implements CircuitListener {
 				return DRCStatus | CommonDRCStatus;
 			}
 			/* Check for gated clocks */
-			
+			if (!DetectGatedClocks(Reporter)) {
+				DRCStatus = DRC_ERROR;
+				return DRCStatus | CommonDRCStatus;
+			}
 		}
+		
+		Reporter.AddInfo("Circuit \"" + MyCircuit.getName() + "\" has "
+				+ NumberOfNets() + " nets and " + NumberOfBusses()
+				+ " busses.");
+		Reporter.AddInfo("Circuit \"" + MyCircuit.getName()
+				+ "\" passed DRC check");
 		DRCStatus = DRC_PASSED;
 		return DRCStatus | CommonDRCStatus;
 	}
@@ -1647,6 +1660,102 @@ public class Netlist implements CircuitListener {
 	public ArrayList<NetlistComponent> GetSubCircuits() {
 		return MySubCircuits;
 	}
+	
+	private List<ConnectionPoint> GetHiddenSource(Net thisNet, Byte bitIndex,
+			List<Component> SplitterList, Component ActiveSplitter,
+			Set<String> HandledNets, Set<Wire> Segments) {
+		/*
+		 * to prevent deadlock situations we check if we already looked at this
+		 * net
+		 */
+		String NetId = Integer.toString(MyNets.indexOf(thisNet)) + "-"
+				+ Byte.toString(bitIndex);
+		List<ConnectionPoint> result = new ArrayList<ConnectionPoint>();
+		if (HandledNets.contains(NetId)) {
+			return result;
+		} else {
+			HandledNets.add(NetId);
+			Segments.addAll(thisNet.getWires());
+		}
+		if (thisNet.hasBitSource(bitIndex)) {
+			result.addAll(thisNet.GetBitSources(bitIndex));
+			return result;
+		}
+		/* Check if we have a connection to another splitter */
+		for (Component currentSplitter : SplitterList) {
+			if (currentSplitter.equals(ActiveSplitter)) {
+				continue;
+			}
+			List<EndData> ends = currentSplitter.getEnds();
+			for (byte end = 0; end < ends.size(); end++) {
+				if (thisNet.contains(ends.get(end).getLocation())) {
+					/* Here we have to process the inherited bits of the parent */
+					byte[] BusBitConnection = ((Splitter) currentSplitter)
+							.GetEndpoints();
+					if (end == 0) {
+						/* this is a main net, find the connected end */
+						Byte SplitterEnd = BusBitConnection[bitIndex];
+						/* Find the corresponding Net index */
+						Byte Netindex = 0;
+						for (int index = 0; index < bitIndex; index++) {
+							if (BusBitConnection[index] == SplitterEnd) {
+								Netindex++;
+							}
+						}
+						/* Find the connected Net */
+						Net SlaveNet = null;
+						for (Net thisnet : MyNets) {
+							if (thisnet.contains(ends.get(SplitterEnd)
+									.getLocation())) {
+								SlaveNet = thisnet;
+							}
+						}
+						if (SlaveNet != null) {
+							if (SlaveNet.IsRootNet()) {
+								/* Trace down the slavenet */
+								result.addAll(GetHiddenSource(SlaveNet, Netindex,
+										SplitterList, currentSplitter,
+										HandledNets,Segments));
+							} else {
+								result.addAll(GetHiddenSource(SlaveNet.getParent(),
+										SlaveNet.getBit(Netindex),
+										SplitterList, currentSplitter,
+										HandledNets,Segments)); 
+							}
+						}
+					} else {
+						ArrayList<Byte> Rootindices = new ArrayList<Byte>();
+						for (byte b = 0; b < BusBitConnection.length; b++) {
+							if (BusBitConnection[b] == end) {
+								Rootindices.add(b);
+							}
+						}
+						Net RootNet = null;
+						for (Net thisnet : MyNets) {
+							if (thisnet.contains(currentSplitter.getEnd(0)
+									.getLocation())) {
+								RootNet = thisnet;
+							}
+						}
+						if (RootNet != null) {
+							if (RootNet.IsRootNet()) {
+								result.addAll(GetHiddenSource(RootNet,
+										Rootindices.get(bitIndex),
+										SplitterList, currentSplitter,
+										HandledNets,Segments));
+							} else {
+								result.addAll(GetHiddenSource(RootNet.getParent(),
+												RootNet.getBit(Rootindices
+												.get(bitIndex)), SplitterList,
+										currentSplitter, HandledNets,Segments));
+							}
+						}
+					}
+				}
+			}
+		}
+		return result;
+	}
 
 	private boolean HasHiddenSource(Net thisNet, Byte bitIndex,
 			List<Component> SplitterList, Component ActiveSplitter,
@@ -1899,12 +2008,23 @@ public class Netlist implements CircuitListener {
 			if (ThisNet.IsRootNet()) {
 				for (int i = 0 ; i < ThisNet.BitWidth() ; i++) {
 					if (ThisNet.hasBitSource(i)) {
+						boolean HasSink = false;
 						ArrayList<ConnectionPoint> Sinks = ThisNet.GetBitSinks(i);
+						HasSink |= !Sinks.isEmpty();
 						MySinks.removeAll(Sinks);
 						ArrayList<ConnectionPoint> HiddenSinkNets = GetHiddenSinks(
 								ThisNet, (byte) i, MyComplexSplitters,
 								null, new HashSet<String>(), true);
+						HasSink |= !HiddenSinkNets.isEmpty();
 						MySinks.removeAll(HiddenSinkNets);
+						if (!HasSink) {
+							SimpleDRCContainer warn = new SimpleDRCContainer(MyCircuit,
+			                        Strings.get("NetList_SourceWithoutSink"),
+			                        SimpleDRCContainer.LEVEL_NORMAL,
+			                        SimpleDRCContainer.MARK_WIRE);
+							warn.AddMarkComponents(ThisNet.getWires());
+							Reporter.AddWarning(warn);
+						}
 					}
 				}
 			}
@@ -2217,5 +2337,248 @@ public class Netlist implements CircuitListener {
 			}
 		}
 		return true;
+	}
+	
+	private boolean DetectGatedClocks(FPGAReport Reporter) {
+		/* First Pass: We gather a complete information tree about components with clock inputs and their connected nets in 
+		 * case it is not a clock net. The moment we call this function the clock tree has been marked already !*/
+		ArrayList<Netlist> root = new ArrayList<Netlist>();
+		root.add(this);
+		Map<String,Map<NetlistComponent,Circuit>> NotGatedSet = new HashMap<String,Map<NetlistComponent,Circuit>>();
+		Map<String,Map<NetlistComponent,Circuit>> GatedSet = new HashMap<String,Map<NetlistComponent,Circuit>>();
+		SetCurrentHierarchyLevel(new ArrayList<String>());
+		GetGatedClockComponents(root,null,NotGatedSet,GatedSet,new HashSet<NetlistComponent>(),Reporter);
+		boolean error = false;
+		for (String key : NotGatedSet.keySet()) {
+			if (GatedSet.keySet().contains(key)) {
+				/* big Problem, we have a component that is used with and without gated clocks */
+				error = true;
+				Reporter.AddFatalError(Strings.get("NetList_CircuitGatedNotGated"));
+				Map<NetlistComponent,Circuit> instances = NotGatedSet.get(key);
+				for (NetlistComponent comp : instances.keySet()) {
+					SimpleDRCContainer warn = new SimpleDRCContainer(instances.get(comp),
+	                        Strings.get("NetList_CircuitNotGated"),
+	                        SimpleDRCContainer.LEVEL_FATAL,
+	                        SimpleDRCContainer.MARK_INSTANCE);
+					warn.AddMarkComponent(comp.GetComponent());
+					Reporter.AddError(warn);
+				}
+				instances = GatedSet.get(key);
+				for (NetlistComponent comp : instances.keySet()) {
+					SimpleDRCContainer warn = new SimpleDRCContainer(instances.get(comp),
+	                        Strings.get("NetList_CircuitGated"),
+	                        SimpleDRCContainer.LEVEL_FATAL,
+	                        SimpleDRCContainer.MARK_INSTANCE);
+					warn.AddMarkComponent(comp.GetComponent());
+					Reporter.AddError(warn);
+				}
+				Reporter.AddFatalError(Strings.get("NetList_CircuitGatedNotGatedEnd"));
+			}
+		}
+		/* TODO: Trace gated clocks where the clock is a pin from a circuit */
+		return !error;
+	}
+	
+	public void GetGatedClockComponents(ArrayList<Netlist> HierarchyNetlists,
+			                            NetlistComponent SubCircuit,
+			                            Map<String,Map<NetlistComponent,Circuit>> NotGatedSet,
+			                            Map<String,Map<NetlistComponent,Circuit>> GatedSet,
+			                            Set<NetlistComponent> WarnedComponents,
+			                            FPGAReport Reporter) {
+		/* First pass: we go down the tree */
+		for (NetlistComponent SubCirc : MySubCircuits) {
+			SubcircuitFactory sub = (SubcircuitFactory) SubCirc.GetComponent().getFactory();
+			ArrayList<String> NewHierarchyNames = new ArrayList<String>();
+			ArrayList<Netlist> NewHierarchyNetlists = new ArrayList<Netlist>();
+			NewHierarchyNames.addAll(GetCurrentHierarchyLevel());
+			NewHierarchyNames.add(CorrectLabel.getCorrectLabel(SubCirc
+				.GetComponent().getAttributeSet()
+				.getValue(StdAttr.LABEL)));
+			NewHierarchyNetlists.addAll(HierarchyNetlists);
+			NewHierarchyNetlists.add(sub.getSubcircuit().getNetList());
+			sub.getSubcircuit().getNetList().SetCurrentHierarchyLevel(NewHierarchyNames);
+			sub.getSubcircuit().getNetList().GetGatedClockComponents(NewHierarchyNetlists,SubCirc,NotGatedSet,GatedSet,WarnedComponents,Reporter);
+		}
+		/* Second pass: we find all components with a clock input and see if they are connected to a clock */
+		boolean GatedClock = false;
+		List<ConnectionPoint> PinSources = new ArrayList<ConnectionPoint>();
+		List<Set<Wire>> PinWires = new ArrayList<Set<Wire>>();
+		List<Set<NetlistComponent>> PinGatedComponents = new ArrayList<Set<NetlistComponent>>();
+		List<ConnectionPoint> NonPinSources = new ArrayList<ConnectionPoint>();
+		List<Set<Wire>> NonPinWires = new ArrayList<Set<Wire>>();
+		List<Set<NetlistComponent>> NonPinGatedComponents = new ArrayList<Set<NetlistComponent>>();
+		for (NetlistComponent comp : MyComponents) {
+			ComponentFactory fact = comp.GetComponent().getFactory();
+			if (fact instanceof DFlipFlop ||
+				fact instanceof JKFlipFlop ||
+				fact instanceof SRFlipFlop ||
+				fact instanceof TFlipFlop) {
+				AttributeSet attrs = comp.GetComponent().getAttributeSet();
+				if (IsFlipFlop(attrs)) {
+					String ClockNetName = AbstractHDLGeneratorFactory.GetClockNetName(comp,
+							comp.NrOfEnds() - 5, this);
+					if (ClockNetName.isEmpty()) {
+						/* we search for the source in case it is connected otherwise we ignore */
+						ConnectionPoint connection = comp.getEnd(comp.NrOfEnds()-5).GetConnection((byte) 0); 
+						Net connectedNet = connection.GetParrentNet();
+						byte connectedNetindex = connection.GetParrentNetBitIndex();
+						if (connectedNet != null) {
+							GatedClock = true;
+							if (connectedNet.IsForcedRootNet()) {
+								Set<Wire> Segments = new HashSet<Wire>();
+								Location loc = comp.GetComponent().getEnd(comp.NrOfEnds()-5).getLocation();
+								for (Net thisOne : MyNets)
+									if (thisOne.contains(loc)) {
+										if (!thisOne.IsRootNet())
+											Segments.addAll(thisOne.getWires());
+									}
+								List<ConnectionPoint> SourceList = GetHiddenSource(connectedNet, connectedNetindex,
+										MyComplexSplitters, null,new HashSet<String>(),Segments);
+								if (SourceList.size()!= 1) {
+									Reporter.AddFatalError("BUG: Found multiple sources\n ==> "+
+											this.getClass().getName().replaceAll("\\.","/")+":"+Thread.currentThread().getStackTrace()[2].getLineNumber()+"\n");
+									return;
+								}
+								ConnectionPoint source = SourceList.get(0); 
+								if (source.GetComp().getFactory() instanceof Pin) {
+									if (!PinSources.contains(source)) {
+										PinSources.add(source);
+										PinWires.add(Segments);
+										Set<NetlistComponent> comps = new HashSet<NetlistComponent>();
+										comps.add(comp);
+										comps.add(new NetlistComponent(source.GetComp()));
+										PinGatedComponents.add(comps);
+									} else {
+										PinGatedComponents.get(PinSources.indexOf(source)).add(comp);
+									}
+								} else {
+									if (!NonPinSources.contains(source)) {
+										NonPinSources.add(source);
+										NonPinWires.add(Segments);
+										Set<NetlistComponent> comps = new HashSet<NetlistComponent>();
+										comps.add(comp);
+										NonPinGatedComponents.add(comps);
+									} else {
+										NonPinGatedComponents.get(NonPinSources.indexOf(source)).add(comp);
+									}
+								}
+								System.out.print(CircuitName+": Forced root net connection \n");
+							} else {
+								ArrayList<ConnectionPoint> SourceList = connectedNet.GetBitSources(connectedNetindex); 
+								if (SourceList.size()!= 1) {
+									Reporter.AddFatalError("BUG: Found multiple sources\n ==> "+
+											this.getClass().getName().replaceAll("\\.","/")+":"+Thread.currentThread().getStackTrace()[2].getLineNumber()+"\n");
+									return;
+								}
+								ConnectionPoint source = SourceList.get(0); 
+								if (source.GetComp().getFactory() instanceof Pin) {
+									if (!PinSources.contains(source)) {
+										PinSources.add(source);
+										PinWires.add(connectedNet.getWires());
+										Set<NetlistComponent> comps = new HashSet<NetlistComponent>();
+										comps.add(comp);
+										PinGatedComponents.add(comps);
+									} else {
+										PinGatedComponents.get(PinSources.indexOf(source)).add(comp);
+									}
+								} else {
+									if (!NonPinSources.contains(source)) {
+										NonPinSources.add(source);
+										NonPinWires.add(connectedNet.getWires());
+										Set<NetlistComponent> comps = new HashSet<NetlistComponent>();
+										comps.add(comp);
+										NonPinGatedComponents.add(comps);
+									} else {
+										NonPinGatedComponents.get(NonPinSources.indexOf(source)).add(comp);
+									}
+								}
+							}
+						} else {
+							/* Add severe warning, we found a memory with an unconnected clock input */
+							if (!WarnedComponents.contains(comp)) {
+								SimpleDRCContainer warn = new SimpleDRCContainer(MyCircuit,
+										Strings.get("NetList_NoClockConnection"),
+										SimpleDRCContainer.LEVEL_SEVERE,
+										SimpleDRCContainer.MARK_INSTANCE);
+								warn.AddMarkComponent(comp.GetComponent());
+								Reporter.AddWarning(warn);
+								WarnedComponents.add(comp);
+							}
+						}
+					}
+				}
+			}
+		}
+		/* We have two situations:
+		 * 1) The gated clock net is generated locally, in this case we can mark them and add the current system to the non-gated set as
+		 *    each instance will be equal at higher/lower levels.
+		 * 2) The gated clock nets are connected to a pin, in this case each instance of this circuit could be either gated or non-gated,
+		 *    we have to do something on the level higher and we mark this in the sets to be processed later. 
+		 */
+		if (GatedClock&&PinSources.isEmpty()) {
+			GatedClock = false; /* we have only non-pin driven gated clocks */
+			WarningForGatedClock(NonPinSources,NonPinGatedComponents,NonPinWires,WarnedComponents,Reporter,Strings.get("NetList_GatedClock"));
+		}
+		
+		
+		String MyName = CorrectLabel.getCorrectLabel(CircuitName);
+		if (HierarchyNetlists.size()>1) {
+			/* we only mark if we are not at top-level */
+			if (GatedClock) {
+				if (GatedSet.containsKey(MyName))
+					GatedSet.get(MyName).put(SubCircuit,HierarchyNetlists.get(HierarchyNetlists.size()-2).getCircuit());
+				else {
+					Map<NetlistComponent,Circuit> newList = new HashMap<NetlistComponent,Circuit>();
+					newList.put(SubCircuit,HierarchyNetlists.get(HierarchyNetlists.size()-2).getCircuit());
+					GatedSet.put(MyName,newList);
+				}
+			} else {
+				if (NotGatedSet.containsKey(MyName))
+					NotGatedSet.get(MyName).put(SubCircuit,HierarchyNetlists.get(HierarchyNetlists.size()-2).getCircuit());
+				else {
+					Map<NetlistComponent,Circuit> newList = new HashMap<NetlistComponent,Circuit>();
+					newList.put(SubCircuit,HierarchyNetlists.get(HierarchyNetlists.size()-2).getCircuit());
+					NotGatedSet.put(MyName,newList);
+				}
+			}
+		} else {
+			/* At toplevel we warn for all all possible gated clocks */
+			WarningForGatedClock(NonPinSources,NonPinGatedComponents,NonPinWires,WarnedComponents,Reporter,Strings.get("NetList_GatedClock"));
+			WarningForGatedClock(PinSources,PinGatedComponents,PinWires,WarnedComponents,Reporter,Strings.get("NetList_PossibleGatedClock"));
+		}
+	}
+	
+	private void WarningForGatedClock(List<ConnectionPoint> Sources,
+			List<Set<NetlistComponent>> Components,
+			List<Set<Wire>> Wires,
+			Set<NetlistComponent> WarnedComponents,
+            FPGAReport Reporter,
+            String Warning) {
+		for (int i = 0 ; i < Sources.size() ; i++) {
+			boolean AlreadyWarned = false;
+			for (NetlistComponent comp : Components.get(i)) 
+				AlreadyWarned |= WarnedComponents.contains(comp);
+			if (!AlreadyWarned) {
+				SimpleDRCContainer warn = new SimpleDRCContainer(MyCircuit,
+						Warning,
+						SimpleDRCContainer.LEVEL_SEVERE,
+						SimpleDRCContainer.MARK_INSTANCE|SimpleDRCContainer.MARK_WIRE);
+				for (NetlistComponent comp : Components.get(i))
+					warn.AddMarkComponent(comp.GetComponent());
+				warn.AddMarkComponents(Wires.get(i));
+				Reporter.AddWarning(warn);
+				WarnedComponents.addAll(Components.get(i));
+			}
+		}
+	}
+
+	static public boolean IsFlipFlop(AttributeSet attrs) {
+		if (attrs.containsAttribute(StdAttr.EDGE_TRIGGER))
+			return true;
+		if (attrs.containsAttribute(StdAttr.TRIGGER)) {
+			return ((attrs.getValue(StdAttr.TRIGGER) == StdAttr.TRIG_FALLING) || (attrs
+					.getValue(StdAttr.TRIGGER) == StdAttr.TRIG_RISING));
+		}
+		return false;
 	}
 }
