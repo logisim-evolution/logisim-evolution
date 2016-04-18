@@ -94,6 +94,10 @@ public class FPGACommanderListModel extends  AbstractListModel<Object> {
 						setForeground(NORMAL);
 				}
 			}
+			if (value.toString().contains("BUG")) {
+				setBackground(Color.MAGENTA);
+				setForeground(Color.black);
+			}
 			if (CountLines) {
 				if (msg != null) {
 					if (msg.SupressCount()) {
