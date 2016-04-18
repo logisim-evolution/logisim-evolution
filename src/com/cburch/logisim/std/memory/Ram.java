@@ -234,7 +234,7 @@ public class Ram extends Mem {
 	public static Attribute<MemContents> CONTENTS_ATTR = new ContentsAttribute();
 	static final int OE = MEM_INPUTS + 0;
 	static final int WE = MEM_INPUTS + 1;
-	static final int CLK = MEM_INPUTS + 2;
+	public static final int CLK = MEM_INPUTS + 2;
 	static final int SDIN = MEM_INPUTS + 3;
 	static final int ADIN = MEM_INPUTS + 2;
 

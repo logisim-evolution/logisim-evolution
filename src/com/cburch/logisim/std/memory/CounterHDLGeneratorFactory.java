@@ -281,10 +281,6 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 			String ClockNetName = GetClockNetName(ComponentInfo, Counter.CK,
 					Nets);
 			if (ClockNetName.isEmpty()) {
-				Reporter.AddSevereWarning("Component \"Counter\" in circuit \""
-						+ Nets.getCircuitName()
-						+ "\" has a none-clock-component forced clock!\n"
-						+ "        Functional differences between Logisim simulation and hardware can be expected!");
 				PortMap.putAll(GetNetMap("GlobalClock", true, ComponentInfo,
 						Counter.CK, Reporter, HDLType, Nets));
 				PortMap.put("ClockEnable", SetBit);

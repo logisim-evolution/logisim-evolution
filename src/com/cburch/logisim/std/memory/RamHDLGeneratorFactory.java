@@ -315,10 +315,6 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 				String ClockNetName = GetClockNetName(ComponentInfo, Ram.CLK,
 						Nets);
 				if (ClockNetName.isEmpty()) {
-					Reporter.AddSevereWarning("Component \"RAM\" in circuit \""
-							+ Nets.getCircuitName()
-							+ "\" has a none-clock-component forced clock!\n"
-							+ "        Functional differences between Logisim simulation and hardware can be expected!");
 					PortMap.putAll(GetNetMap("Clock", true, ComponentInfo,
 							Ram.CLK, Reporter, HDLType, Nets));
 					PortMap.put("Tick", SetBit);

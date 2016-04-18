@@ -59,7 +59,7 @@ public class ShiftRegister extends InstanceFactory {
 
 	static final int IN = 0;
 	static final int SH = 1;
-	static final int CK = 2;
+	public static final int CK = 2;
 	static final int CLR = 3;
 	static final int OUT = 4;
 	static final int LD = 5;

@@ -67,9 +67,14 @@ import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.proj.Projects;
 import com.cburch.logisim.std.io.DipSwitch;
 import com.cburch.logisim.std.io.ReptarLocalBus;
+import com.cburch.logisim.std.memory.Counter;
 import com.cburch.logisim.std.memory.DFlipFlop;
 import com.cburch.logisim.std.memory.JKFlipFlop;
+import com.cburch.logisim.std.memory.Ram;
+import com.cburch.logisim.std.memory.Random;
+import com.cburch.logisim.std.memory.Register;
 import com.cburch.logisim.std.memory.SRFlipFlop;
+import com.cburch.logisim.std.memory.ShiftRegister;
 import com.cburch.logisim.std.memory.TFlipFlop;
 import com.cburch.logisim.std.wiring.Clock;
 import com.cburch.logisim.std.wiring.Pin;
@@ -2468,11 +2473,42 @@ public class Netlist implements CircuitListener {
 				fact instanceof TFlipFlop) {
 				AttributeSet attrs = comp.GetComponent().getAttributeSet();
 				if (IsFlipFlop(attrs)) {
-					GatedClock |= HasGatesClock(comp,comp.NrOfEnds()-5,
+					GatedClock |= HasGatedClock(comp,comp.NrOfEnds()-5,
 							PinSources,PinWires,PinGatedComponents,
 							NonPinSources,NonPinWires,NonPinGatedComponents,
 							WarnedComponents,Reporter);
 				}
+			} else
+			if (fact instanceof Counter) {
+				GatedClock |= HasGatedClock(comp,Counter.CK,
+						PinSources,PinWires,PinGatedComponents,
+						NonPinSources,NonPinWires,NonPinGatedComponents,
+						WarnedComponents,Reporter);
+			} else
+			if (fact instanceof Ram) {
+				GatedClock |= HasGatedClock(comp,Ram.CLK,
+						PinSources,PinWires,PinGatedComponents,
+						NonPinSources,NonPinWires,NonPinGatedComponents,
+						WarnedComponents,Reporter);
+			} else
+			if (fact instanceof Random) {
+				GatedClock |= HasGatedClock(comp,Random.CK,
+						PinSources,PinWires,PinGatedComponents,
+						NonPinSources,NonPinWires,NonPinGatedComponents,
+						WarnedComponents,Reporter);
+			} else
+			if (fact instanceof Register) {
+				if (IsFlipFlop(comp.GetComponent().getAttributeSet()))
+					GatedClock |= HasGatedClock(comp,Register.CK,
+						PinSources,PinWires,PinGatedComponents,
+						NonPinSources,NonPinWires,NonPinGatedComponents,
+						WarnedComponents,Reporter);
+			} else
+			if (fact instanceof ShiftRegister) {
+				GatedClock |= HasGatedClock(comp,ShiftRegister.CK,
+						PinSources,PinWires,PinGatedComponents,
+						NonPinSources,NonPinWires,NonPinGatedComponents,
+						WarnedComponents,Reporter);
 			}
 		}
 		/* We have two situations:
@@ -2531,7 +2567,7 @@ public class Netlist implements CircuitListener {
 		}
 	}
 	
-	private boolean HasGatesClock(NetlistComponent comp,
+	private boolean HasGatedClock(NetlistComponent comp,
 			                      int ClockPinIndex,
 			              		  List<SourceInfo> PinSources,
 			              		  List<Set<Wire>> PinWires,
