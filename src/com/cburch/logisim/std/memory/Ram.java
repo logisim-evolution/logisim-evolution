@@ -758,7 +758,7 @@ public class Ram extends Mem {
 		Object trigger = state.getAttributeValue(StdAttr.TRIGGER);
 		Object bus = state.getAttributeValue(RamAttributes.ATTR_DBUS);
 		boolean asynch = trigger.equals(StdAttr.TRIG_HIGH)
-				| trigger.equals(StdAttr.TRIG_LOW);
+				|| trigger.equals(StdAttr.TRIG_LOW);
 		boolean edge = false;
 		if (!asynch) {
 			edge = myState.setClock(state.getPortValue(CLK), trigger);
@@ -768,7 +768,7 @@ public class Ram extends Mem {
 				.equals(RamAttributes.BUS_SEP);
 		boolean outputEnabled = (!asynch || trigger.equals(StdAttr.TRIG_HIGH)) ? state
 				.getPortValue(OE) != Value.FALSE
-				: state.getPortValue(OE) != Value.FALSE;
+				: state.getPortValue(OE) == Value.FALSE;
 		BitWidth dataBits = state.getAttributeValue(DATA_ATTR);
 		/* Set the outputs in tri-state in case of combined bus */
 		if ((!separate && !outputEnabled)
@@ -788,7 +788,7 @@ public class Ram extends Mem {
 			int ByteEnableIndex = ByteEnableIndex(state.getAttributeSet());
 			boolean shouldStore = (!asynch || trigger.equals(StdAttr.TRIG_HIGH)) ? state
 					.getPortValue(WE) != Value.FALSE
-					: state.getPortValue(WE) != Value.FALSE;
+					: state.getPortValue(WE) == Value.FALSE;
 			Value addrValue = state.getPortValue(ADDR);
 			int addr = addrValue.toIntValue();
 			if (!addrValue.isFullyDefined() || addr < 0) {
