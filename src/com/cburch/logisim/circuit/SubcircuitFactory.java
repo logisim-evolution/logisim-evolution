@@ -302,6 +302,10 @@ public class SubcircuitFactory extends InstanceFactory {
 	public Circuit getSubcircuit() {
 		return source;
 	}
+	
+	public void setSubcircuit(Circuit sub) {
+		source = sub;
+	}
 
 	public CircuitState getSubstate(CircuitState superState, Component comp) {
 		return getSubstate(createInstanceState(superState, comp));

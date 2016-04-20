@@ -2486,7 +2486,8 @@ public class Netlist implements CircuitListener {
 						WarnedComponents,Reporter);
 			} else
 			if (fact instanceof Ram) {
-				GatedClock |= HasGatedClock(comp,Ram.CLK,
+				if (IsFlipFlop(comp.GetComponent().getAttributeSet()))
+					GatedClock |= HasGatedClock(comp,Ram.CLK,
 						PinSources,PinWires,PinGatedComponents,
 						NonPinSources,NonPinWires,NonPinGatedComponents,
 						WarnedComponents,Reporter);
@@ -2561,7 +2562,7 @@ public class Netlist implements CircuitListener {
 				}
 			}
 		} else {
-			/* At toplevel we warn for all all possible gated clocks */
+			/* At toplevel we warn for all possible gated clocks */
 			WarningForGatedClock(NonPinSources,NonPinGatedComponents,NonPinWires,WarnedComponents,HierarchyNetlists,Reporter,Strings.get("NetList_GatedClock"));
 			WarningForGatedClock(PinSources,PinGatedComponents,PinWires,WarnedComponents,HierarchyNetlists,Reporter,Strings.get("NetList_PossibleGatedClock"));
 		}
