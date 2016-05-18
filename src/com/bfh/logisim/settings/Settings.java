@@ -518,7 +518,7 @@ public class Settings {
 		Node ThisWorkspace = SettingsList.item(0);
 		NamedNodeMap WorkspaceParameters = ThisWorkspace.getAttributes();
 		for (int i = 0; i < WorkspaceParameters.getLength(); i++) {
-			if (WorkspaceParameters.item(i).getNodeName().equals(XilinxName)) {
+			if (WorkspaceParameters.item(i).getNodeName().equals(designTools.get(vendor).name)) {
 				WorkspaceParameters.item(i).setNodeValue(path);
 				modified = true;
 				return true;
