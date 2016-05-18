@@ -104,7 +104,7 @@ public class AlteraDownload {
 				labelRect.y = 0;
 				LocText.paintImmediately(labelRect);
 				command.add(MySettings.GetAlteraToolPath() + File.separator
-						+ Settings.AlteraPrograms[0]);
+						+ Settings.designTools.get(FPGAClass.VendorAltera).bin[0]);
 				command.add("-t");
 				command.add(scriptPath.replace(ProjectPath, ".."
 						+ File.separator)
@@ -153,7 +153,7 @@ public class AlteraDownload {
 				labelRect.y = 0;
 				LocText.paintImmediately(labelRect);
 				command.add(MySettings.GetAlteraToolPath() + File.separator
-						+ Settings.AlteraPrograms[2]);
+						+ Settings.designTools.get(FPGAClass.VendorAltera).bin[2]);
 				command.add(ToplevelHDLGeneratorFactory.FPGAToplevelName);
 				command.add("--optimize=area");
 				ProcessBuilder Altera1 = new ProcessBuilder(command);
@@ -200,7 +200,7 @@ public class AlteraDownload {
 			try {
 				command.clear();
 				command.add(MySettings.GetAlteraToolPath() + File.separator
-						+ Settings.AlteraPrograms[0]);
+						+ Settings.designTools.get(FPGAClass.VendorAltera).bin[0]);
 				command.add("--flow");
 				command.add("compile");
 				command.add(ToplevelHDLGeneratorFactory.FPGAToplevelName);
@@ -259,7 +259,7 @@ public class AlteraDownload {
 		try {
 			command.clear();
 			command.add(MySettings.GetAlteraToolPath() + File.separator
-					+ Settings.AlteraPrograms[1]);
+					+ Settings.designTools.get(FPGAClass.VendorAltera).bin[1]);
 			command.add("-c");
 			command.add("usb-blaster");
 			command.add("-m");

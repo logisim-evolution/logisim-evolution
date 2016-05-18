@@ -72,6 +72,7 @@ import com.bfh.logisim.designrulecheck.CorrectLabel;
 import com.bfh.logisim.designrulecheck.Netlist;
 import com.bfh.logisim.designrulecheck.SimpleDRCContainer;
 import com.bfh.logisim.download.AlteraDownload;
+import com.bfh.logisim.download.VivadoDownload;
 import com.bfh.logisim.download.XilinxDownload;
 import com.bfh.logisim.fpgaboardeditor.BoardInformation;
 import com.bfh.logisim.fpgaboardeditor.BoardReaderClass;
@@ -964,7 +965,7 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 						ProjectDir + HDLPaths[SandboxPath] + File.separator,
 						MyReporter);
 			}
-		} else {
+		} else if (MyBoardInformation.fpga.getVendor() == FPGAClass.VendorXilinx) {
 			if (XilinxDownload.GenerateISEScripts(MyReporter, ProjectDir,
 					ProjectDir + HDLPaths[ScriptPath] + File.separator,
 					ProjectDir + HDLPaths[UCFPath] + File.separator,
@@ -979,6 +980,15 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 						ProjectDir, ProjectDir + HDLPaths[SandboxPath]
 								+ File.separator, MyReporter);
 			}
+		} else if (MyBoardInformation.fpga.getVendor() == FPGAClass.VendorVivado) {
+			if (VivadoDownload.GenerateScripts(MyReporter, ProjectDir,
+					ProjectDir + HDLPaths[ScriptPath] + File.separator,
+					ProjectDir + HDLPaths[UCFPath] + File.separator,
+					RootSheet.getNetList(), MyMappableResources,
+					MyBoardInformation, Entities, Behaviors,
+					MySettings.GetHDLType(),
+					writeToFlash.isSelected())
+					&& !generateOnly) { }
 		}
 	}
 

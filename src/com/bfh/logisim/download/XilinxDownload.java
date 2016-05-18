@@ -93,7 +93,7 @@ public class XilinxDownload {
 		gbc.fill = GridBagConstraints.HORIZONTAL;
 		panel.add(LocText, gbc);
 		JProgressBar progres = new JProgressBar(0,
-				Settings.XilinxPrograms.length);
+				Settings.designTools.get(FPGAClass.VendorXilinx).bin.length);
 		progres.setValue(0);
 		progres.setStringPainted(true);
 		gbc.gridx = 0;
@@ -122,7 +122,7 @@ public class XilinxDownload {
 				progres.paintImmediately(ProgRect);
 				command.clear();
 				command.add(MySettings.GetXilixToolPath() + File.separator
-						+ Settings.XilinxPrograms[0]);
+						+ Settings.designTools.get(FPGAClass.VendorXilinx).bin[0]);
 				command.add("-ifn");
 				command.add(scriptPath.replace(ProjectPath, "../")
 						+ File.separator + script_file);
@@ -172,7 +172,7 @@ public class XilinxDownload {
 				progres.paintImmediately(ProgRect);
 				command.clear();
 				command.add(MySettings.GetXilixToolPath() + File.separator
-						+ Settings.XilinxPrograms[1]);
+                    + Settings.designTools.get(FPGAClass.VendorXilinx).bin[1]);
 				command.add("-intstyle");
 				command.add("ise");
 				command.add("-uc");
@@ -224,7 +224,7 @@ public class XilinxDownload {
 				progres.paintImmediately(ProgRect);
 				command.clear();
 				command.add(MySettings.GetXilixToolPath() + File.separator
-						+ Settings.XilinxPrograms[2]);
+                        + Settings.designTools.get(FPGAClass.VendorXilinx).bin[2]);
 				command.add("-intstyle");
 				command.add("ise");
 				command.add("-o");
@@ -275,7 +275,7 @@ public class XilinxDownload {
 				command.clear();
 				if (!IsCPLD) {
 					command.add(MySettings.GetXilixToolPath() + File.separator
-							+ Settings.XilinxPrograms[3]);
+							+ Settings.designTools.get(FPGAClass.VendorXilinx).bin[3]);
 					command.add("-w");
 					command.add("-intstyle");
 					command.add("ise");
@@ -286,7 +286,7 @@ public class XilinxDownload {
 					command.add("logisim_map.pcf");
 				} else {
 					command.add(MySettings.GetXilixToolPath() + File.separator
-							+ Settings.XilinxPrograms[6]);
+							+ Settings.designTools.get(FPGAClass.VendorXilinx).bin[6]);
 					command.add("-p");
 					command.add(BoardInfo.fpga.getPart().toUpperCase() + "-"
 							+ BoardInfo.fpga.getSpeedGrade() + "-"
@@ -353,7 +353,7 @@ public class XilinxDownload {
 				command.clear();
 				if (!IsCPLD) {
 					command.add(MySettings.GetXilixToolPath() + File.separator
-							+ Settings.XilinxPrograms[4]);
+							+ Settings.designTools.get(FPGAClass.VendorXilinx).bin[4]);
 					command.add("-w");
 					if (BoardInfo.fpga.getUnusedPinsBehavior() == PullBehaviors.PullUp) {
 						command.add("-g");
@@ -370,7 +370,7 @@ public class XilinxDownload {
 							+ ".bit");
 				} else {
 					command.add(MySettings.GetXilixToolPath() + File.separator
-							+ Settings.XilinxPrograms[7]);
+							+ Settings.designTools.get(FPGAClass.VendorXilinx).bin[7]);
 					command.add("-i");
 					command.add("logisim.vm6");
 				}
@@ -430,7 +430,7 @@ public class XilinxDownload {
 			if (!BoardInfo.fpga.USBTMCDownloadRequired()) {
 				command.clear();
 				command.add(MySettings.GetXilixToolPath() + File.separator
-						+ Settings.XilinxPrograms[5]);
+						+ Settings.designTools.get(FPGAClass.VendorXilinx).bin[5]);
 				command.add("-batch");
 				command.add(scriptPath.replace(ProjectPath, "../")
 						+ File.separator + download_file);
