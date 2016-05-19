@@ -52,6 +52,7 @@ public class FPGAClass {
 
 		result.add(Vendors[0]);
 		result.add(Vendors[1]);
+		result.add(Vendors[2]);
 
 		return result;
 	}
