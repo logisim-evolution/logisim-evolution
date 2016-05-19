@@ -29,15 +29,19 @@ public class VivadoDownload {
         // create project files
         File tclCreateProjectFile = FileWriter.GetFilePointer(scriptPath, CREATE_PROJECT_TCL, myReporter);
         File xdcFile = FileWriter.GetFilePointer(xdcPath, XDC_FILE, myReporter);
-        if (tclCreateProjectFile == null || xdcFile == null) {
+        File tclCreateBitStreamFile = FileWriter.GetFilePointer(scriptPath, CREATE_BITSTEAM_TCL, myReporter);
+        if (tclCreateProjectFile == null || xdcFile == null || tclCreateBitStreamFile == null) {
             tclCreateProjectFile = new File(scriptPath + CREATE_PROJECT_TCL);
             xdcFile = new File(xdcPath, XDC_FILE);
-            return tclCreateProjectFile.exists() && xdcFile.exists();
+            tclCreateBitStreamFile = new File(scriptPath, CREATE_BITSTEAM_TCL);
+            return tclCreateProjectFile.exists() && xdcFile.exists() && tclCreateBitStreamFile.exists();
         }
+
+        String vivadoProjectPath = scriptPath + File.separator + VIVADO_PROJECT_NAME;
 
         // fill create project TCL script
         ArrayList<String> contents = new ArrayList<String>();
-        contents.add("create_project vivadoproject \"" + scriptPath + File.separator + "vivadoproject\"");
+        contents.add("create_project " + VIVADO_PROJECT_NAME + " \"" + vivadoProjectPath + "\"");
         contents.add("set_property part " +
                 boardInfo.fpga.getPart() +
                 boardInfo.fpga.getPackage() +
@@ -62,9 +66,26 @@ public class VivadoDownload {
 
         // fill the UCF file
         contents.addAll(mapInfo.GetFPGAPinLocs(FPGAClass.VendorVivado));
-        return FileWriter.WriteContents(xdcFile, contents, myReporter);
+        if (!FileWriter.WriteContents(xdcFile, contents, myReporter))
+            return false;
+        contents.clear();
+
+        // generate bitstream
+        contents.add("open_project -verbose " + vivadoProjectPath + File.separator + VIVADO_PROJECT_NAME + ".xpr");
+        contents.add("update_compile_order -fileset sources_1");
+        contents.add("launch_runs synth_1");
+        contents.add("wait_on_run synth_1");
+        contents.add("launch_runs impl_1 -to_step write_bitstream -jobs 8");
+        contents.add("wait_on_run impl_1");
+        if (!FileWriter.WriteContents(tclCreateBitStreamFile, contents, myReporter))
+            return false;
+        contents.clear();
+
+        return false;
     }
 
     private final static String CREATE_PROJECT_TCL = "vivadoCreateProject.tcl";
+    private final static String CREATE_BITSTEAM_TCL = "vivadoCreateBitStream.tcl";
     private final static String XDC_FILE = "vivadoConstraints.xdc";
+    private final static String VIVADO_PROJECT_NAME = "vivadoproject";
 }
