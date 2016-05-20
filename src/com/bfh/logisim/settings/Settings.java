@@ -148,7 +148,9 @@ public class Settings {
 			progs.add("cpldfit");
 			progs.add("hprep6");
 		}
-		else if (vendor == FPGAClass.VendorVivado) { }
+		else if (vendor == FPGAClass.VendorVivado) {
+			progs.add("vivado");
+		}
 
 		String[] progsArray = progs.toArray(new String[0]);
 		String osname = System.getProperty("os.name");
