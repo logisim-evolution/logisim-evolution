@@ -344,8 +344,7 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 		MyProject = Main;
 		InfoWindow = new FPGACommanderTextWindow("FPGACommander: Infos",Color.GRAY,true);
 		ConsoleWindow = new FPGACommanderTextWindow("FPGACommander: Console",Color.LIGHT_GRAY,false);
-		panel = new JFrame("FPGA Commander : "
-				+ MyProject.getLogisimFile().getName());
+		panel = new JFrame("FPGA Commander : " + MyProject.getLogisimFile().getName());
 		panel.setResizable(false);
 		panel.setAlwaysOnTop(false);
 		panel.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
@@ -499,10 +498,7 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 		panel.add(HDLType, c);
 
 		// HDL Only Radio
-		if ((MyBoardInformation.fpga.getVendor() == FPGAClass.VendorAltera && MySettings
-				.GetAlteraToolPath().equals(Settings.Unknown))
-				|| (MyBoardInformation.fpga.getVendor() == FPGAClass.VendorXilinx && MySettings
-						.GetXilixToolPath().equals(Settings.Unknown))) {
+		if (Settings.vendors.get(MyBoardInformation.fpga.getVendor()).getToolPath().equals(Settings.Unknown)) {
 			if (!MySettings.GetHDLOnly()) {
 				MySettings.SetHdlOnly(true);
 				MySettings.UpdateSettingsFile();
@@ -672,10 +668,7 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 				boardIcon = new BoardIcon(MyBoardInformation.GetImage());
 				boardPic.setIcon(boardIcon);
 				boardPic.repaint();
-				if ((MyBoardInformation.fpga.getVendor() == FPGAClass.VendorAltera && MySettings
-						.GetAlteraToolPath().equals(Settings.Unknown))
-						|| (MyBoardInformation.fpga.getVendor() == FPGAClass.VendorXilinx && MySettings
-								.GetXilixToolPath().equals(Settings.Unknown))) {
+				if (Settings.vendors.get(MyBoardInformation.fpga.getVendor()).getToolPath().equals(Settings.Unknown)) {
 					if (!MySettings.GetHDLOnly()) {
 						MySettings.SetHdlOnly(true);
 						MySettings.UpdateSettingsFile();
@@ -719,10 +712,7 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 						boardIcon = new BoardIcon(MyBoardInformation.GetImage());
 						boardPic.setIcon(boardIcon);
 						boardPic.repaint();
-						if ((MyBoardInformation.fpga.getVendor() == FPGAClass.VendorAltera && MySettings
-								.GetAlteraToolPath().equals(Settings.Unknown))
-								|| (MyBoardInformation.fpga.getVendor() == FPGAClass.VendorXilinx && MySettings
-								.GetXilixToolPath().equals(Settings.Unknown))) {
+						if (Settings.vendors.get(MyBoardInformation.fpga.getVendor()).getToolPath().equals(Settings.Unknown)) {
 							if (!MySettings.GetHDLOnly()) {
 								MySettings.SetHdlOnly(true);
 								MySettings.UpdateSettingsFile();
@@ -1156,12 +1146,7 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 	}
 
 	private void selectToolPath() {
-		String ToolPath;
-		if (MyBoardInformation.fpga.getVendor() == FPGAClass.VendorAltera) {
-			ToolPath = MySettings.GetAlteraToolPath();
-		} else {
-			ToolPath = MySettings.GetXilixToolPath();
-		}
+		String ToolPath = Settings.vendors.get(MyBoardInformation.fpga.getVendor()).getToolPath();
 		JFileChooser fc = new JFileChooser(ToolPath);
 		fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		File test = new File(ToolPath);
@@ -1177,34 +1162,20 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 			if (!ToolPath.endsWith(File.separator)) {
 				ToolPath += File.separator;
 			}
-			if (MyBoardInformation.fpga.getVendor() == FPGAClass.VendorAltera) {
-				if (MySettings.SetAlteraToolPath(ToolPath)) {
-					HDLOnly.setEnabled(true);
-					MySettings.SetHdlOnly(false);
-					HDLOnly.setText(HDLandDownloadMessage);
-					if (!MySettings.UpdateSettingsFile()) {
-						AddErrors("***SEVERE*** Could not update the FPGACommander settings file");
-					} else {
-						AddInfo("Updated the FPGACommander settings file");
-					}
-
+			if (MySettings.setToolPath(MyBoardInformation.fpga.getVendor(), ToolPath)) {
+				HDLOnly.setEnabled(true);
+				MySettings.SetHdlOnly(false);
+				HDLOnly.setText(HDLandDownloadMessage);
+				if (!MySettings.UpdateSettingsFile()) {
+					AddErrors("***SEVERE*** Could not update the FPGACommander settings file");
 				} else {
-					AddErrors("***FATAL*** Required programs of the Altera toolsuite not found! Ignoring update.");
+					AddInfo("Updated the FPGACommander settings file");
 				}
+
 			} else {
-				if (MySettings.SetXilinxToolPath(ToolPath)) {
-					HDLOnly.setEnabled(true);
-					MySettings.SetHdlOnly(false);
-					HDLOnly.setText(HDLandDownloadMessage);
-					if (!MySettings.UpdateSettingsFile()) {
-						AddErrors("***SEVERE*** Could not update the FPGACommander settings file");
-					} else {
-						AddInfo("Updated the FPGACommander settings file");
-					}
-
-				} else {
-					AddErrors("***FATAL*** Required programs of the Xilinx toolsuite not found! Ignoring update.");
-				}
+				AddErrors("***FATAL*** Required programs of the " +
+						Settings.vendors.get(MyBoardInformation.fpga.getVendor()).getName()
+						+ " toolsuite not found! Ignoring update.");
 			}
 		}
 	}

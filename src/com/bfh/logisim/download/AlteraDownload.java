@@ -56,12 +56,14 @@ import com.bfh.logisim.hdlgenerator.FileWriter;
 import com.bfh.logisim.hdlgenerator.TickComponentHDLGeneratorFactory;
 import com.bfh.logisim.hdlgenerator.ToplevelHDLGeneratorFactory;
 import com.bfh.logisim.settings.Settings;
+import com.bfh.logisim.settings.VendorSoftware;
 import com.cburch.logisim.proj.Projects;
 
 public class AlteraDownload {
 
 	public static boolean Download(Settings MySettings, String scriptPath,
 			String ProjectPath, String SandboxPath, FPGAReport MyReporter) {
+		VendorSoftware alteraVendor = Settings.vendors.get(FPGAClass.VendorAltera);
 		boolean SofFileExists = new File(SandboxPath
 				+ ToplevelHDLGeneratorFactory.FPGAToplevelName + ".sof")
 				.exists();
@@ -103,8 +105,7 @@ public class AlteraDownload {
 				labelRect.x = 0;
 				labelRect.y = 0;
 				LocText.paintImmediately(labelRect);
-				command.add(MySettings.GetAlteraToolPath() + File.separator
-						+ Settings.designTools.get(FPGAClass.VendorAltera).bin[0]);
+				command.add(alteraVendor.getBinaryPath(0));
 				command.add("-t");
 				command.add(scriptPath.replace(ProjectPath, ".."
 						+ File.separator)
@@ -152,8 +153,7 @@ public class AlteraDownload {
 				labelRect.x = 0;
 				labelRect.y = 0;
 				LocText.paintImmediately(labelRect);
-				command.add(MySettings.GetAlteraToolPath() + File.separator
-						+ Settings.designTools.get(FPGAClass.VendorAltera).bin[2]);
+				command.add(alteraVendor.getBinaryPath(2));
 				command.add(ToplevelHDLGeneratorFactory.FPGAToplevelName);
 				command.add("--optimize=area");
 				ProcessBuilder Altera1 = new ProcessBuilder(command);
@@ -199,8 +199,7 @@ public class AlteraDownload {
 		if (!SofFileExists) {
 			try {
 				command.clear();
-				command.add(MySettings.GetAlteraToolPath() + File.separator
-						+ Settings.designTools.get(FPGAClass.VendorAltera).bin[0]);
+				command.add(alteraVendor.getBinaryPath(0));
 				command.add("--flow");
 				command.add("compile");
 				command.add(ToplevelHDLGeneratorFactory.FPGAToplevelName);
@@ -258,8 +257,7 @@ public class AlteraDownload {
 		progres.paintImmediately(ProgRect);
 		try {
 			command.clear();
-			command.add(MySettings.GetAlteraToolPath() + File.separator
-					+ Settings.designTools.get(FPGAClass.VendorAltera).bin[1]);
+			command.add(alteraVendor.getBinaryPath(1));
 			command.add("-c");
 			command.add("usb-blaster");
 			command.add("-m");

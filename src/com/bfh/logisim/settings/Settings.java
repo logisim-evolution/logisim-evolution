@@ -34,6 +34,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.JOptionPane;
 import javax.xml.parsers.DocumentBuilder;
@@ -75,23 +76,19 @@ public class Settings {
 	boolean modified = false;
 	private BoardList KnownBoards = new BoardList();
 
-	public static final HashMap<Character, VendorSoftware> designTools = new HashMap<>();
+	public static final Map<Character, VendorSoftware> vendors = new HashMap<>();
 
 	/* big TODO: add language support */
 	public Settings() {
-
 		String[] alteraBin = load(FPGAClass.VendorAltera);
-        VendorSoftware altera = new VendorSoftware(FPGAClass.VendorAltera, AlteraName, alteraBin);
-		designTools.put(FPGAClass.VendorAltera, altera);
-
+		VendorSoftware altera = new VendorSoftware(FPGAClass.VendorAltera, AlteraName, alteraBin);
+		vendors.put(FPGAClass.VendorAltera, altera);
 		String[] iseBin = load(FPGAClass.VendorXilinx);
 		VendorSoftware ise = new VendorSoftware(FPGAClass.VendorXilinx, XilinxName, iseBin);
-		designTools.put(FPGAClass.VendorXilinx, ise);
-
+		vendors.put(FPGAClass.VendorXilinx, ise);
 		String[] vivadoBin = load(FPGAClass.VendorVivado);
 		VendorSoftware vivado = new VendorSoftware(FPGAClass.VendorVivado, VivadoName, vivadoBin);
-		designTools.put(FPGAClass.VendorVivado, vivado);
-
+		vendors.put(FPGAClass.VendorVivado, vivado);
 
 		HomePath = System.getProperty("user.home");
 		if (!HomePath.endsWith(File.separator))
@@ -167,9 +164,9 @@ public class Settings {
 		return progsArray;
 	}
 
-	private boolean toolFound(char vendor, String path) {
-		for (int i = 0; i < designTools.get(vendor).bin.length; i++) {
-			File test = new File(CorrectPath(path) + designTools.get(vendor).bin[i]);
+	private boolean toolFound(VendorSoftware vendor, String path) {
+		for (int i = 0; i < vendor.getBinaries().length; i++) {
+			File test = new File(CorrectPath(path) + vendor.getBinaries()[i]);
 			if (!test.exists())
 				return false;
 		}
@@ -181,10 +178,6 @@ public class Settings {
 			return path;
 		else
 			return path + File.separator;
-	}
-
-	public String GetAlteraToolPath() {
-		return getToolPath(FPGAClass.VendorAltera);
 	}
 
 	public Collection<String> GetBoardNames() {
@@ -292,39 +285,33 @@ public class Settings {
 		return HomePath;
 	}
 
-	private String getToolPath(char vendor) {
+	private void loadToolPath(VendorSoftware vendor) {
 		NodeList SettingsList = SettingsDocument.getElementsByTagName(WorkSpace);
 		if (SettingsList.getLength() != 1) {
-			return Unknown;
+			return;
 		}
 		Node ThisWorkspace = SettingsList.item(0);
 		NamedNodeMap WorkspaceParameters = ThisWorkspace.getAttributes();
 		for (int i = 0; i < WorkspaceParameters.getLength(); i++) {
-			if (WorkspaceParameters.item(i).getNodeName().equals(designTools.get(vendor).name)) {
-				if (toolFound(vendor, WorkspaceParameters.item(i).getNodeValue()))
-					return WorkspaceParameters.item(i).getNodeValue();
+			if (WorkspaceParameters.item(i).getNodeName().equals(vendor.getName())) {
+				if (toolFound(vendor, WorkspaceParameters.item(i).getNodeValue())) {
+					vendor.setToolPath(WorkspaceParameters.item(i).getNodeValue());
+					return;
+				}
 				else {
 					WorkspaceParameters.item(i).setNodeValue("Unknown");
+					vendor.setToolPath("Unknown");
 					modified = true;
-					return Unknown;
+					return;
 				}
 			}
 		}
 		/* The attribute does not exists so add it */
-		Attr attr = SettingsDocument.createAttribute(designTools.get(vendor).name);
+		Attr attr = SettingsDocument.createAttribute(vendor.getName());
 		attr.setNodeValue(Unknown);
 		Element workspace = (Element) SettingsList.item(0);
 		workspace.setAttributeNode(attr);
 		modified = true;
-		return Unknown;
-	}
-
-	public String GetXilixToolPath() {
-		return getToolPath(FPGAClass.VendorXilinx);
-	}
-
-	public boolean SetAlteraToolPath(String path) {
-		return setToolPath(FPGAClass.VendorAltera, path);
 	}
 
 	public boolean SetHdlOnly(boolean only) {
@@ -393,20 +380,17 @@ public class Settings {
 			result = false;
 			try {
 				// Create instance of DocumentBuilderFactory
-				DocumentBuilderFactory factory = DocumentBuilderFactory
-						.newInstance();
+				DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 				// Get the DocumentBuilder
 				DocumentBuilder parser;
 				parser = factory.newDocumentBuilder();
 				// Create blank DOM Document
 				SettingsDocument = parser.newDocument();
 			} catch (ParserConfigurationException e) {
-				JOptionPane.showMessageDialog(null,
-						"Fatal Error: Cannot create settings Document!");
+				JOptionPane.showMessageDialog(null, "Fatal Error: Cannot create settings Document!");
 				System.exit(-4);
 			}
-			Element root = SettingsDocument.createElement(SettingsFileName
-					.replace('.', '_'));
+			Element root = SettingsDocument.createElement(SettingsFileName.replace('.', '_'));
 			SettingsDocument.appendChild(root);
 		}
 
@@ -435,8 +419,9 @@ public class Settings {
 			SettingsList = SettingsDocument.getElementsByTagName(WorkSpace);
 			result = false;
 		}
-		GetXilixToolPath();
-		GetAlteraToolPath();
+		loadToolPath(vendors.get(FPGAClass.VendorXilinx));
+		loadToolPath(vendors.get(FPGAClass.VendorAltera));
+		loadToolPath(vendors.get(FPGAClass.VendorVivado));
 		GetHDLOnly();
 		GetHDLType();
 
@@ -508,8 +493,9 @@ public class Settings {
 		return false;
 	}
 
-	private boolean setToolPath(char vendor, String path) {
-		if (!toolFound(vendor, path))
+	public boolean setToolPath(char vendor, String path) {
+		VendorSoftware vendorSoftware = vendors.get(vendor);
+		if (!toolFound(vendorSoftware, path))
 			return false;
 		NodeList SettingsList = SettingsDocument.getElementsByTagName(WorkSpace);
 		if (SettingsList.getLength() != 1) {
@@ -518,17 +504,14 @@ public class Settings {
 		Node ThisWorkspace = SettingsList.item(0);
 		NamedNodeMap WorkspaceParameters = ThisWorkspace.getAttributes();
 		for (int i = 0; i < WorkspaceParameters.getLength(); i++) {
-			if (WorkspaceParameters.item(i).getNodeName().equals(designTools.get(vendor).name)) {
+			if (WorkspaceParameters.item(i).getNodeName().equals(vendorSoftware.getName())) {
 				WorkspaceParameters.item(i).setNodeValue(path);
+				vendorSoftware.setToolPath(path);
 				modified = true;
 				return true;
 			}
 		}
 		return false;
-	}
-
-	public boolean SetXilinxToolPath(String path) {
-		return setToolPath(FPGAClass.VendorXilinx, path);
 	}
 
 	public boolean UpdateSettingsFile() {
