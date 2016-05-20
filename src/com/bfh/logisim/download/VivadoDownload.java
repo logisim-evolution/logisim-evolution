@@ -22,7 +22,7 @@ public class VivadoDownload {
 
     public static boolean GenerateScripts(FPGAReport myReporter,
                                              String projectPath, String scriptPath, String xdcPath,
-                                             Netlist rootNetlist, MappableResourcesContainer mapInfo,
+                                             String sandBoxPath, Netlist rootNetlist, MappableResourcesContainer mapInfo,
                                              BoardInformation boardInfo, ArrayList<String> entities,
                                              ArrayList<String> architectures, String HDLType,
                                              boolean writeToFlash) {
@@ -40,7 +40,7 @@ public class VivadoDownload {
             return createProjectFile.exists() && xdcFile.exists() && generateBitstreamFile.exists() && loadBitstreamFile.exists();
         }
 
-        String vivadoProjectPath = scriptPath + File.separator + VIVADO_PROJECT_NAME;
+        String vivadoProjectPath = sandBoxPath + File.separator + VIVADO_PROJECT_NAME;
 
         // fill create project TCL script
         ArrayList<String> contents = new ArrayList<String>();

@@ -316,7 +316,7 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 	private BoardInformation MyBoardInformation = null;
 	private MappableResourcesContainer MyMappableResources;
 	private String[] HDLPaths = { Settings.VERILOG.toLowerCase(),
-			Settings.VHDL.toLowerCase(), "scripts", "sandbox", "ucf" };
+			Settings.VHDL.toLowerCase(), "scripts", "sandbox", "ucf", "xdc"};
 	@SuppressWarnings("unused")
 	private static final Integer VerilogSourcePath = 0;
 	@SuppressWarnings("unused")
@@ -324,6 +324,7 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 	private static final Integer ScriptPath = 2;
 	private static final Integer SandboxPath = 3;
 	private static final Integer UCFPath = 4;
+	private static final Integer XDCPath = 5;
 	private FPGAReport MyReporter = new FPGAReport(this);
 	
 	private FPGACommanderListModel WarningsList = new FPGACommanderListModel();
@@ -973,7 +974,8 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 		} else if (MyBoardInformation.fpga.getVendor() == FPGAClass.VendorVivado) {
 			if (VivadoDownload.GenerateScripts(MyReporter, ProjectDir,
 					ProjectDir + HDLPaths[ScriptPath] + File.separator,
-					ProjectDir + HDLPaths[UCFPath] + File.separator,
+					ProjectDir + HDLPaths[XDCPath] + File.separator,
+					ProjectDir + HDLPaths[SandboxPath] + File.separator,
 					RootSheet.getNetList(), MyMappableResources,
 					MyBoardInformation, Entities, Behaviors,
 					MySettings.GetHDLType(),
