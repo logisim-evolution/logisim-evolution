@@ -149,7 +149,9 @@ public class Settings {
 			progs.add("hprep6");
 		}
 		else if (vendor == FPGAClass.VendorVivado) {
+			//TODO: for now Vivado is supported only on linux
 			progs.add("vivado");
+			return progs.toArray(new String[0]);  //vivado on windows does not end with .exe
 		}
 
 		String[] progsArray = progs.toArray(new String[0]);
