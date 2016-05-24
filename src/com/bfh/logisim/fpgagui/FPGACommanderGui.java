@@ -980,7 +980,12 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 					MyBoardInformation, Entities, Behaviors,
 					MySettings.GetHDLType(),
 					writeToFlash.isSelected())
-					&& !generateOnly) { }
+					&& !generateOnly) {
+				VivadoDownload.Download(
+						ProjectDir + HDLPaths[ScriptPath] + File.separator,
+						ProjectDir + HDLPaths[SandboxPath] + File.separator,
+						MyReporter);
+			}
 		}
 	}
 

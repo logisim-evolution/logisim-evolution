@@ -8,16 +8,144 @@ import com.bfh.logisim.fpgagui.MappableResourcesContainer;
 import com.bfh.logisim.hdlgenerator.FileWriter;
 import com.bfh.logisim.hdlgenerator.ToplevelHDLGeneratorFactory;
 import com.bfh.logisim.settings.Settings;
+import com.bfh.logisim.settings.VendorSoftware;
+import com.cburch.logisim.proj.Projects;
 
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JProgressBar;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Rectangle;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.List;
 
 public class VivadoDownload {
 
-    public static boolean Download(Settings MySettings,
-                                   BoardInformation BoardInfo, String scriptPath, String xdcPath,
-                                   String ProjectPath, String SandboxPath, FPGAReport MyReporter) {
-        return false;
+    public static boolean Download(String scriptPath, String sandboxPath, FPGAReport myReporter) {
+        GridBagConstraints gbc = new GridBagConstraints();
+        JFrame panel = new JFrame("Vivado Downloading");
+        panel.setResizable(false);
+        panel.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        GridBagLayout thisLayout = new GridBagLayout();
+        panel.setLayout(thisLayout);
+        // PointerInfo mouseloc = MouseInfo.getPointerInfo();
+        // Point mlocation = mouseloc.getLocation();
+        // panel.setLocation(mlocation.x, mlocation.y);
+        JLabel locText = new JLabel("Generating FPGA files and performing download; this may take a while");
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        panel.add(locText, gbc);
+        JProgressBar progres = new JProgressBar(0, 3);
+        progresVal = 0;
+        progres.setValue(progresVal);
+        progres.setStringPainted(true);
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        panel.add(progres, gbc);
+        panel.pack();
+        panel.setLocation(Projects.getCenteredLoc(panel.getWidth(), panel.getHeight() * 4));
+        panel.setVisible(true);
+        Rectangle labelRect = locText.getBounds();
+        labelRect.x = 0;
+        labelRect.y = 0;
+        locText.paintImmediately(labelRect);
+
+        VendorSoftware vivadoVendor = Settings.vendors.get(FPGAClass.VendorVivado);
+
+        // Create Vivado project
+        boolean status = executeTclScript(vivadoVendor.getBinaryPath(0),
+                scriptPath + File.separator + CREATE_PROJECT_TCL,
+                "Create Vivado project",
+                sandboxPath, myReporter, locText, progres);
+        if (!status) {
+            panel.dispose();
+            return false;
+        }
+
+        // Generate bitstream
+        status = executeTclScript(vivadoVendor.getBinaryPath(0),
+                scriptPath + File.separator + GENERATE_BITSTREAM_FILE,
+                "Generate bitstream",
+                sandboxPath, myReporter, locText, progres);
+        if (!status) {
+            panel.dispose();
+            return false;
+        }
+
+        // Download to board
+        Object[] options = { "Yes, download","No, abort" };
+        if (JOptionPane
+                .showOptionDialog(
+                        progres,
+                        "Verify that your board is connected and you are ready to download.",
+                        "Ready to download ?", JOptionPane.YES_NO_OPTION,
+                        JOptionPane.WARNING_MESSAGE, null, options, options[0]) != JOptionPane.YES_OPTION) {
+            myReporter.AddWarning("Download aborted.");
+            panel.dispose();
+            return false;
+        }
+        status = executeTclScript(vivadoVendor.getBinaryPath(0),
+                scriptPath + File.separator + LOAD_BITSTEAM_FILE,
+                "Downloading bitfile",
+                sandboxPath, myReporter, locText, progres);
+
+        panel.dispose();
+        return status;
+    }
+
+    private static int progresVal = 0;
+    private static boolean executeTclScript(String binary, String tclScript, String message, String sandboxPath,
+                                            FPGAReport myReporter, JLabel locText, JProgressBar progres) {
+        try {
+            locText.setText(message);
+            Rectangle labelRect = locText.getBounds();
+            labelRect.x = 0;
+            labelRect.y = 0;
+            locText.paintImmediately(labelRect);
+            progres.setValue(progresVal++);
+            Rectangle progRect = progres.getBounds();
+            progRect.x = 0;
+            progRect.y = 0;
+            progres.paintImmediately(progRect);
+            List<String> command = new ArrayList<String>();
+            command.add(binary);
+            command.add("-mode");
+            command.add("tcl");
+            command.add("-source");
+            command.add(tclScript);
+            ProcessBuilder vivado1 = new ProcessBuilder(command);
+            vivado1.directory(new File(sandboxPath));
+            final Process createProject = vivado1.start();
+            InputStream is = createProject.getInputStream();
+            InputStreamReader isr = new InputStreamReader(is);
+            BufferedReader br = new BufferedReader(isr);
+            String line;
+            myReporter.ClsScr();
+            while ((line = br.readLine()) != null) {
+                myReporter.print(line);
+            }
+            createProject.waitFor();
+            if (createProject.exitValue() != 0) {
+                myReporter.AddFatalError("Failed to Create a Vivado Project, cannot download");
+                return false;
+            }
+        } catch (IOException e) {
+            myReporter.AddFatalError("Internal Error during Vivado download");
+            return false;
+        } catch (InterruptedException e) {
+            myReporter.AddFatalError("Internal Error during Vivado download");
+            return false;
+        }
+        return true;
     }
 
     public static boolean GenerateScripts(FPGAReport myReporter,
