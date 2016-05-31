@@ -133,6 +133,7 @@ public class Settings {
 
 	private static String[] load(char vendor) {
 		ArrayList<String> progs = new ArrayList<>();
+		String windowsExtension = "exe";
 		if (vendor == FPGAClass.VendorAltera) {
 			progs.add("quartus_sh");
 			progs.add("quartus_pgm");
@@ -149,9 +150,8 @@ public class Settings {
 			progs.add("hprep6");
 		}
 		else if (vendor == FPGAClass.VendorVivado) {
-			//TODO: for now Vivado is supported only on linux
 			progs.add("vivado");
-			return progs.toArray(new String[0]);  //vivado on windows does not end with .exe
+            windowsExtension = ".bat";
 		}
 
 		String[] progsArray = progs.toArray(new String[0]);
@@ -161,7 +161,7 @@ public class Settings {
 		else {
 			if (osname.toLowerCase().contains("windows")) {
 				for (int i=0; i<progsArray.length; i++) {
-					progsArray[i] += ".exe";
+					progsArray[i] += windowsExtension;
 				}
 			}
 		}

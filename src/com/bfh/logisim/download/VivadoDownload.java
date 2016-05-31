@@ -149,11 +149,11 @@ public class VivadoDownload {
     }
 
     public static boolean GenerateScripts(FPGAReport myReporter,
-                                             String projectPath, String scriptPath, String xdcPath,
-                                             String sandBoxPath, Netlist rootNetlist, MappableResourcesContainer mapInfo,
-                                             BoardInformation boardInfo, ArrayList<String> entities,
-                                             ArrayList<String> architectures, String HDLType,
-                                             boolean writeToFlash) {
+                                          String projectPath, String scriptPath, String xdcPath,
+                                          String sandBoxPath, Netlist rootNetlist, MappableResourcesContainer mapInfo,
+                                          BoardInformation boardInfo, ArrayList<String> entities,
+                                          ArrayList<String> architectures, String HDLType,
+                                          boolean writeToFlash) {
 
         // create project files
         File createProjectFile = FileWriter.GetFilePointer(scriptPath, CREATE_PROJECT_TCL, myReporter);
@@ -172,7 +172,7 @@ public class VivadoDownload {
 
         // fill create project TCL script
         ArrayList<String> contents = new ArrayList<String>();
-        contents.add("create_project " + VIVADO_PROJECT_NAME + " \"" + vivadoProjectPath + "\"");
+        contents.add("create_project " + VIVADO_PROJECT_NAME + " \"" + vivadoProjectPath.replace("\\", "/") + "\"");
         contents.add("set_property part " +
                 boardInfo.fpga.getPart() +
                 boardInfo.fpga.getPackage() +
@@ -187,7 +187,7 @@ public class VivadoDownload {
             contents.add("add_files \"" + architecture + "\"");
         }
         // add xdc constraints
-        contents.add("add_files -fileset constrs_1 \"" + xdcFile.getAbsolutePath() + "\"");
+        contents.add("add_files -fileset constrs_1 \"" + xdcFile.getAbsolutePath().replace("\\", "/") + "\"");
         contents.add("exit");
         if (!FileWriter.WriteContents(createProjectFile, contents, myReporter))
             return false;
@@ -200,7 +200,9 @@ public class VivadoDownload {
         contents.clear();
 
         // generate bitstream
-        contents.add("open_project -verbose " + vivadoProjectPath + File.separator + VIVADO_PROJECT_NAME + ".xpr");
+        String openProjectPath = vivadoProjectPath + File.separator + VIVADO_PROJECT_NAME + ".xpr";
+        openProjectPath = openProjectPath.replace("\\", "/");
+        contents.add("open_project -verbose " + openProjectPath);
         contents.add("update_compile_order -fileset sources_1");
         contents.add("launch_runs synth_1");
         contents.add("wait_on_run synth_1");
@@ -216,8 +218,10 @@ public class VivadoDownload {
         contents.add("open_hw");
         contents.add("connect_hw_server");
         contents.add("open_hw_target");
-        contents.add("set_property PROGRAM.FILE {" + vivadoProjectPath + File.separator + VIVADO_PROJECT_NAME + ".runs"
-                + File.separator + "impl_1" + File.separator + ToplevelHDLGeneratorFactory.FPGAToplevelName + ".bit} " + lindex);
+        String bitStreamPath = vivadoProjectPath + File.separator + VIVADO_PROJECT_NAME + ".runs"
+                + File.separator + "impl_1" + File.separator + ToplevelHDLGeneratorFactory.FPGAToplevelName + ".bit";
+        bitStreamPath = bitStreamPath.replace("\\", "/");
+        contents.add("set_property PROGRAM.FILE {" + bitStreamPath + "} " + lindex);
         contents.add("current_hw_device " + lindex);
         contents.add("refresh_hw_device -update_hw_probes false " + lindex);
         contents.add("program_hw_device " + lindex);
@@ -229,5 +233,5 @@ public class VivadoDownload {
     private final static String GENERATE_BITSTREAM_FILE = "vivadoGenerateBitStream.tcl";
     private final static String LOAD_BITSTEAM_FILE = "vivadoLoadBitStream.tcl";
     private final static String XDC_FILE = "vivadoConstraints.xdc";
-    private final static String VIVADO_PROJECT_NAME = "vivadoproject";
+    private final static String VIVADO_PROJECT_NAME = "vp";
 }
