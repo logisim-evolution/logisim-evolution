@@ -133,7 +133,7 @@ public class Settings {
 
 	private static String[] load(char vendor) {
 		ArrayList<String> progs = new ArrayList<>();
-		String windowsExtension = "exe";
+		String windowsExtension = ".exe";
 		if (vendor == FPGAClass.VendorAltera) {
 			progs.add("quartus_sh");
 			progs.add("quartus_pgm");
