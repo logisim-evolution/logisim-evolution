@@ -138,6 +138,8 @@ public class CircuitAttributes extends AbstractAttributeSet {
 
 	public static final Attribute<Font> CIRCUIT_LABEL_FONT_ATTR = Attributes
 			.forFont("clabelfont", Strings.getter("circuitLabelFontAttr"));
+	public static final Attribute<Boolean> CIRCUIT_IS_VHDL_BOX = Attributes
+			.forBoolean("circuitvhdl", Strings.getter("circuitIsVhdl"));
 	public static final Attribute<String> CIRCUIT_VHDL_PATH = Attributes
 			.forString("circuitvhdlpath", Strings.getter("circuitVhdlPath"));
 	public static final Attribute<Boolean> NAMED_CIRCUIT_BOX = Attributes
@@ -157,7 +159,7 @@ public class CircuitAttributes extends AbstractAttributeSet {
 					LABEL_LOCATION_ATTR, StdAttr.LABEL_FONT,StdAttr.LABEL_VISIBILITY,
 					CircuitAttributes.NAME_ATTR, CIRCUIT_LABEL_ATTR,
 					CIRCUIT_LABEL_FACING_ATTR, CIRCUIT_LABEL_FONT_ATTR,
-					NAMED_CIRCUIT_BOX,
+					NAMED_CIRCUIT_BOX, 
 					CIRCUIT_VHDL_PATH, });
 
 	private Circuit source;
