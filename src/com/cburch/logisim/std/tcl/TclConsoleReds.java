@@ -71,6 +71,7 @@ public class TclConsoleReds extends TclComponent {
 		outputsDesc.add(new PortDescription("S15_sti", "output", 1));
 		outputsDesc.add(new PortDescription("Val_A_sti", "output", 16));
 		outputsDesc.add(new PortDescription("Val_B_sti", "output", 16));
+		outputsDesc.add(new PortDescription("rst", "output", 1));
 
 		inputsDesc.add(new PortDescription("Hex0_obs", "input", 4));
 		inputsDesc.add(new PortDescription("Hex1_obs", "input", 4));
