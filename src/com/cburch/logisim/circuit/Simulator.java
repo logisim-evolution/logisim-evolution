@@ -86,6 +86,7 @@ public class Simulator {
 		@Override
 		public void run() {
 			while (!complete) {
+				try {
 				synchronized (this) {
 					while (!complete && !propagateRequested && !resetRequested
 							&& ticksRequested == 0 && stepsRequested == 0) {
@@ -164,6 +165,16 @@ public class Simulator {
 					}
 					firePropagationCompleted();
 				}
+					} catch (Throwable e) {
+						e.printStackTrace();
+						exceptionEncountered = true;
+						setIsRunning(false);
+						javax.swing.SwingUtilities.invokeLater(new Runnable() {
+							public void run() {
+								javax.swing.JOptionPane.showMessageDialog(null, "The simulator has crashed. Save your work and restart Logisim.");
+							}
+						});
+					}
 			}
 		}
 
