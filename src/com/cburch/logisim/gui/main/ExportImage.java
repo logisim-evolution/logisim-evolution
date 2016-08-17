@@ -72,10 +72,11 @@ import com.cburch.logisim.file.Loader;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.util.GifEncoder;
 import com.cburch.logisim.util.StringGetter;
+import com.cburch.logisim.util.UniquelyNamedThread;
 
 class ExportImage {
 
-	private static class ExportThread extends Thread {
+	private static class ExportThread extends UniquelyNamedThread {
 		Frame frame;
 		Canvas canvas;
 		File dest;
@@ -88,6 +89,7 @@ class ExportImage {
 		ExportThread(Frame frame, Canvas canvas, File dest, ImageFileFilter f,
 				List<Circuit> circuits, double scale, boolean printerView,
 				ProgressMonitor monitor) {
+			super("ExportThread");
 			this.frame = frame;
 			this.canvas = canvas;
 			this.dest = dest;

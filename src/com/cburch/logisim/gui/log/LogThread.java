@@ -33,10 +33,11 @@ package com.cburch.logisim.gui.log;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import com.cburch.logisim.util.UniquelyNamedThread;
 
 import com.cburch.logisim.data.Value;
 
-class LogThread extends Thread implements ModelListener {
+class LogThread extends UniquelyNamedThread implements ModelListener {
 	// file will be flushed with at least this frequency
 	private static final int FLUSH_FREQUENCY = 500;
 
@@ -51,6 +52,7 @@ class LogThread extends Thread implements ModelListener {
 	private long lastWrite = 0;
 
 	public LogThread(Model model) {
+		super("LogThread");
 		this.model = model;
 		model.addModelListener(this);
 	}

@@ -59,6 +59,7 @@ import com.cburch.logisim.std.memory.Ram;
 import com.cburch.logisim.std.wiring.Pin;
 import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.util.StringUtil;
+import com.cburch.logisim.util.UniquelyNamedThread;
 
 public class TtyInterface {
 
@@ -66,10 +67,11 @@ public class TtyInterface {
 	// System.in.available(),
 	// but this doesn't quite work because on some systems, the keyboard input
 	// is not interactively echoed until System.in.read() is invoked.
-	private static class StdinThread extends Thread {
+	private static class StdinThread extends UniquelyNamedThread {
 		private LinkedList<char[]> queue; // of char[]
 
 		public StdinThread() {
+			super("TtyInterface-StdInThread");
 			queue = new LinkedList<char[]>();
 		}
 

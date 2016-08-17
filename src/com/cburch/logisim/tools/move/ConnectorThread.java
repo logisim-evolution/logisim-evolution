@@ -31,8 +31,9 @@
 package com.cburch.logisim.tools.move;
 
 import com.cburch.logisim.circuit.ReplacementMap;
+import com.cburch.logisim.util.UniquelyNamedThread;
 
-class ConnectorThread extends Thread {
+class ConnectorThread extends UniquelyNamedThread {
 	public static void enqueueRequest(MoveRequest req, boolean priority) {
 		synchronized (INSTANCE.lock) {
 			if (!req.equals(INSTANCE.processingRequest)) {
@@ -59,6 +60,7 @@ class ConnectorThread extends Thread {
 	private MoveRequest processingRequest;
 
 	private ConnectorThread() {
+		super("tools-move-ConnectorThread");
 		lock = new Object();
 		overrideRequest = false;
 		nextRequest = null;

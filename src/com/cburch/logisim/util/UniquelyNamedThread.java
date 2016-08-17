@@ -27,67 +27,36 @@
  *       Yverdon-les-Bains, Switzerland
  *       http://reds.heig-vd.ch
  *******************************************************************************/
-package com.cburch.logisim.std.tcl;
 
-import java.util.LinkedList;
+package com.cburch.logisim.util;
 
-import com.cburch.logisim.circuit.Simulator;
-import com.cburch.logisim.util.SocketClient;
-import com.cburch.logisim.util.UniquelyNamedThread;
+import java.util.*;
 
-public class TclWrapperListenerThread extends UniquelyNamedThread {
+public class UniquelyNamedThread extends Thread {
 
-	SocketClient socket;
-	LinkedList<String> messages;
-	Simulator sim;
+	private static Object lock = new Object();
+	private static HashMap<String,Integer> lastID = new HashMap<String,Integer>();
 
-	Boolean socket_open = true;
-
-	TclWrapperListenerThread(SocketClient socket, Simulator simulator) {
-		super("TclWrapperListenerThread");
-		this.socket = socket;
-		this.messages = new LinkedList<String>();
-		this.sim = simulator;
+	private static String nextName(String prefix) {
+		int id = 0;
+		synchronized(lock) {
+			Integer i = lastID.get(prefix);
+			if (i != null)
+				id = i.intValue() + 1;
+			lastID.put(prefix, id);
+		}
+		return prefix + "-" + id;
 	}
 
-	/**
-	 * Get message from TCL wrapper Messages ar in the lister buffer Read is
-	 * blocking, unblocks if socket closes
-	 *
-	 * @return The next message
-	 */
-	public String receive() {
+	// private UniquelyNamedThread() { }
+	// private UniquelyNamedThread(Runnable runnable) { }
 
-		while (socket_open && messages.size() < 1) {
-			try {
-				sleep(100, 0);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
-
-		if (messages.size() > 0)
-			return messages.pop();
-		else
-			return null;
+	public UniquelyNamedThread(String prefix) {
+		super(nextName(prefix));
 	}
 
-	@Override
-	public void run() {
-		String line;
-
-		/* Continuously receive TCL wrapper messages */
-		while ((line = socket.receive()) != null) {
-
-			/* Stock the messages in temp buffer or tick simulation if asked */
-			if (line.equals("run")) {
-				sim.tick();
-			} else {
-				messages.add(line);
-			}
-		}
-
-		socket_open = false;
+	public UniquelyNamedThread(Runnable runnable, String prefix) {
+		super(runnable, nextName(prefix));
 	}
 
 }

@@ -459,7 +459,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
 							Contents.append("'bz");
 						}
 					} else {
-						Contents.append(GetZeroVector(ThisEnd.NrOfBits(),
+						Contents.append(GetZeroVector(1, // kwalsh: was ThisEnd.NrOfBits(),
 								FloatingNetTiedToGround, HDLType));
 					}
 				} else {

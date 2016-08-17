@@ -49,8 +49,9 @@ import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.std.wiring.Pin;
 import com.cburch.logisim.util.StringUtil;
+import com.cburch.logisim.util.UniquelyNamedThread;
 
-public class TestThread extends Thread implements CircuitListener {
+public class TestThread extends UniquelyNamedThread implements CircuitListener {
 
 	// used only for automated testing via command line arguments
 	public static int doTestVector(Project proj, Circuit circuit,
@@ -115,6 +116,7 @@ public class TestThread extends Thread implements CircuitListener {
 	private boolean canceled = false, paused = false;
 
 	public TestThread(Model model) throws TestException {
+		super("TestThread-Model");
 		this.model = model;
 
 		this.project = model.getProject();
@@ -129,6 +131,7 @@ public class TestThread extends Thread implements CircuitListener {
 	// used only for automated testing via command line arguments
 	private TestThread(Project proj, Circuit circuit, TestVector vec)
 			throws TestException {
+		super("TestThread-Project");
 		this.project = proj;
 		this.circuit = circuit;
 		this.vector = vec;

@@ -29,8 +29,9 @@
  *******************************************************************************/
 
 package com.cburch.logisim.circuit;
+import com.cburch.logisim.util.UniquelyNamedThread;
 
-class SimulatorTicker extends Thread {
+class SimulatorTicker extends UniquelyNamedThread {
 	private Simulator.PropagationManager manager;
 	private int ticksPerTickPhase;
 	private int millisPerTickPhase;
@@ -40,6 +41,7 @@ class SimulatorTicker extends Thread {
 	private boolean complete;
 
 	public SimulatorTicker(Simulator.PropagationManager manager) {
+		super("SimulationTicker");
 		this.manager = manager;
 		ticksPerTickPhase = 1;
 		millisPerTickPhase = 1000;
