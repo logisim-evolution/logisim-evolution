@@ -35,10 +35,11 @@ import java.util.logging.Logger;
 
 import com.cburch.logisim.comp.ComponentDrawContext;
 import com.cburch.logisim.prefs.AppPreferences;
+import com.cburch.logisim.util.UniquelyNamedThread;
 
 public class Simulator {
 
-	class PropagationManager extends Thread {
+	class PropagationManager extends UniquelyNamedThread {
 
 		private Propagator propagator = null;
 		private PropagationPoints stepPoints = new PropagationPoints();
@@ -56,6 +57,10 @@ public class Simulator {
 				ticksRequested--;
 			}
 			propagator.tick();
+		}
+
+		public PropagationManager() {
+			super("PropagationManager");
 		}
 
 		public Propagator getPropagator() {

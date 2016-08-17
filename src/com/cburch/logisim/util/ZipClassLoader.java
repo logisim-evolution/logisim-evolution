@@ -41,6 +41,7 @@ import java.util.zip.ZipFile;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.cburch.logisim.util.UniquelyNamedThread;
 
 public class ZipClassLoader extends ClassLoader {
 
@@ -100,9 +101,13 @@ public class ZipClassLoader extends ClassLoader {
 		}
 	}
 
-	private class WorkThread extends Thread {
+	private class WorkThread extends UniquelyNamedThread {
 		private LinkedList<Request> requests = new LinkedList<Request>();
 		private ZipFile zipFile = null;
+
+		WorkThread() {
+			super("ZipClassLoader-WorkThread");
+		}
 
 		@SuppressWarnings("unused")
 		private void ensureZipOpen() {

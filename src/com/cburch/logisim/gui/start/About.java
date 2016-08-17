@@ -49,6 +49,7 @@ import javax.swing.event.AncestorListener;
 import com.cburch.logisim.Main;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.util.GraphicsUtil;
+import com.cburch.logisim.util.UniquelyNamedThread;
 
 public class About {
 	private static class MyPanel extends JPanel implements AncestorListener {
@@ -261,11 +262,12 @@ public class About {
 		}
 	}
 
-	private static class PanelThread extends Thread {
+	private static class PanelThread extends UniquelyNamedThread {
 		private MyPanel panel;
 		private boolean running = true;
 
 		PanelThread(MyPanel panel) {
+			super("About-PanelThread");
 			this.panel = panel;
 		}
 
