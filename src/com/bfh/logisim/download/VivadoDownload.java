@@ -29,6 +29,9 @@ import java.util.List;
 public class VivadoDownload {
 
     public static boolean Download(String scriptPath, String sandboxPath, FPGAReport myReporter) {
+        String vivadoProjectPath = sandboxPath + File.separator + VIVADO_PROJECT_NAME;
+        boolean bitFileExists = new File(vivadoProjectPath + File.separator + VIVADO_PROJECT_NAME + ".runs"
+                + File.separator + "impl_1" + File.separator + ToplevelHDLGeneratorFactory.FPGAToplevelName + ".bit").exists();
         GridBagConstraints gbc = new GridBagConstraints();
         JFrame panel = new JFrame("Vivado Downloading");
         panel.setResizable(false);
@@ -62,23 +65,27 @@ public class VivadoDownload {
         VendorSoftware vivadoVendor = Settings.vendors.get(FPGAClass.VendorVivado);
 
         // Create Vivado project
-        boolean status = executeTclScript(vivadoVendor.getBinaryPath(0),
-                scriptPath + File.separator + CREATE_PROJECT_TCL,
-                "Create Vivado project",
-                sandboxPath, myReporter, locText, progres);
-        if (!status) {
-            panel.dispose();
-            return false;
+        if (!bitFileExists) {
+            boolean status = executeTclScript(vivadoVendor.getBinaryPath(0),
+                    scriptPath + File.separator + CREATE_PROJECT_TCL,
+                    "Create Vivado project",
+                    sandboxPath, myReporter, locText, progres);
+            if (!status) {
+                panel.dispose();
+                return false;
+            }
         }
 
         // Generate bitstream
-        status = executeTclScript(vivadoVendor.getBinaryPath(0),
-                scriptPath + File.separator + GENERATE_BITSTREAM_FILE,
-                "Generate bitstream",
-                sandboxPath, myReporter, locText, progres);
-        if (!status) {
-            panel.dispose();
-            return false;
+        if (!bitFileExists) {
+            boolean status = executeTclScript(vivadoVendor.getBinaryPath(0),
+                    scriptPath + File.separator + GENERATE_BITSTREAM_FILE,
+                    "Generate bitstream",
+                    sandboxPath, myReporter, locText, progres);
+            if (!status) {
+                panel.dispose();
+                return false;
+            }
         }
 
         // Download to board
@@ -93,7 +100,7 @@ public class VivadoDownload {
             panel.dispose();
             return false;
         }
-        status = executeTclScript(vivadoVendor.getBinaryPath(0),
+        boolean status = executeTclScript(vivadoVendor.getBinaryPath(0),
                 scriptPath + File.separator + LOAD_BITSTEAM_FILE,
                 "Downloading bitfile",
                 sandboxPath, myReporter, locText, progres);
