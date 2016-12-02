@@ -36,6 +36,8 @@ import java.util.List;
 import com.cburch.logisim.tools.AddTool;
 import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.tools.Tool;
+import com.cburch.logisim.tools.FactoryDescription;
+
 
 public class Gates extends Library {
 	private List<Tool> tools = null;
@@ -49,7 +51,9 @@ public class Gates extends Library {
 				new AddTool(OddParityGate.FACTORY),
 				new AddTool(EvenParityGate.FACTORY),
 				new AddTool(ControlledBuffer.FACTORY_BUFFER),
-				new AddTool(ControlledBuffer.FACTORY_INVERTER), });
+				new AddTool(ControlledBuffer.FACTORY_INVERTER),
+				new AddTool(Gates.class, new FactoryDescription("Relais", Strings.getter("relaisComponent"),"", "Relais")),
+				});
 	}
 
 	@Override
