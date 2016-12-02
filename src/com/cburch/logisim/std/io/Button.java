@@ -38,12 +38,15 @@ import com.bfh.logisim.fpgaboardeditor.FPGAIOInformationContainer;
 import com.bfh.logisim.hdlgenerator.IOComponentInformationContainer;
 import com.cburch.logisim.circuit.Wire;
 import com.cburch.logisim.data.Attribute;
+import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.AttributeSet;
+import com.cburch.logisim.data.Attributes;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.instance.Instance;
+import com.cburch.logisim.instance.InstanceData;
 import com.cburch.logisim.instance.InstanceDataSingleton;
 import com.cburch.logisim.instance.InstanceFactory;
 import com.cburch.logisim.instance.InstanceLogger;
@@ -55,6 +58,24 @@ import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.GraphicsUtil;
 
 public class Button extends InstanceFactory {
+	
+    static final AttributeOption OUTPUT_01
+	= new AttributeOption("01", Strings.getter("gateOutput01"));
+static final AttributeOption OUTPUT_0Z
+	= new AttributeOption("0Z", Strings.getter("gateOutput0Z"));
+static final AttributeOption OUTPUT_Z1
+	= new AttributeOption("Z1", Strings.getter("gateOutputZ1"));
+static final AttributeOption OUTPUT_Z0
+	= new AttributeOption("Z0", Strings.getter("gateOutputZ0"));
+static final AttributeOption OUTPUT_10
+	= new AttributeOption("10", Strings.getter("gateOutput10"));
+static final AttributeOption OUTPUT_1Z
+	= new AttributeOption("1Z", Strings.getter("gateOutput1Z"));
+public static final Attribute<AttributeOption> ATTR_OUTPUT
+	= Attributes.forOption("out", Strings.getter("gateOutputAttr"),
+			new AttributeOption[] { OUTPUT_01, OUTPUT_10, OUTPUT_0Z, OUTPUT_Z1, OUTPUT_Z0, OUTPUT_1Z  });
+	
+	
 	public static class Logger extends InstanceLogger {
 		@Override
 		public String getLogName(InstanceState state, Object option) {
@@ -65,29 +86,29 @@ public class Button extends InstanceFactory {
 		public Value getLogValue(InstanceState state, Object option) {
 			InstanceDataSingleton data = (InstanceDataSingleton) state
 					.getData();
-			return data == null ? Value.FALSE : (Value) data.getValue();
-		}
+			return data == null ? Value.FALSE : ((ButtonData)data.getValue()).getOutValue();
+			}
 	}
 
 	public static class Poker extends InstancePoker {
 		@Override
 		public void mousePressed(InstanceState state, MouseEvent e) {
-			setValue(state, Value.TRUE);
+			setValue(state,true);
 		}
 
 		@Override
 		public void mouseReleased(InstanceState state, MouseEvent e) {
-			setValue(state, Value.FALSE);
+			setValue(state, false);
 		}
 
-		private void setValue(InstanceState state, Value val) {
+		private void setValue(InstanceState state, boolean buttonState) {
 			InstanceDataSingleton data = (InstanceDataSingleton) state
 					.getData();
-			if (data == null) {
-				state.setData(new InstanceDataSingleton(val));
-			} else {
-				data.setValue(val);
-			}
+            if (data == null) {
+                state.setData(new InstanceDataSingleton(new ButtonData(buttonState,ButtonStateToValue(buttonState,state.getAttributeValue(Button.ATTR_OUTPUT)))));
+            } else {
+                data.setValue(new ButtonData(buttonState,ButtonStateToValue(buttonState,state.getAttributeValue(Button.ATTR_OUTPUT))));
+            }
 			state.getInstance().fireInvalidated();
 		}
 	}
@@ -98,9 +119,9 @@ public class Button extends InstanceFactory {
 		super("Button", Strings.getter("buttonComponent"));
 		setAttributes(new Attribute[] { StdAttr.FACING, Io.ATTR_COLOR,
 				StdAttr.LABEL, Io.ATTR_LABEL_LOC, StdAttr.LABEL_FONT,
-				StdAttr.LABEL_COLOR, StdAttr.LABEL_VISIBILITY }, new Object[] { Direction.EAST,
+				StdAttr.LABEL_COLOR, StdAttr.LABEL_VISIBILITY,Button.ATTR_OUTPUT }, new Object[] { Direction.EAST,
 				Color.WHITE, "", Direction.WEST, StdAttr.DEFAULT_LABEL_FONT,
-				StdAttr.DEFAULT_LABEL_COLOR,true });
+				StdAttr.DEFAULT_LABEL_COLOR,true,Button.OUTPUT_01 });
 		setFacingAttribute(StdAttr.FACING);
 		setIconName("button.gif");
 		setPorts(new Port[] { new Port(0, 0, Port.OUTPUT, 1) });
@@ -151,6 +172,31 @@ public class Button extends InstanceFactory {
 				valign);
 	}
 
+    private static Value ButtonStateToValue(Boolean pressed, AttributeOption a){
+    	if(pressed==true){
+        	if((a==Button.OUTPUT_01) | (a==Button.OUTPUT_Z1)){
+        		return Value.TRUE;
+        	}
+        	else if((a==Button.OUTPUT_10) | (a==Button.OUTPUT_Z0)){
+        		return Value.FALSE;
+        	}
+        	else{
+        		return Value.NIL;
+        	}
+    	}
+    	else{
+        	if((a==Button.OUTPUT_10) | (a==Button.OUTPUT_1Z)){
+        		return Value.TRUE;
+        	}
+        	else if((a==Button.OUTPUT_01) | (a==Button.OUTPUT_0Z)){
+        		return Value.FALSE;
+        	}
+        	else{
+        		return Value.NIL;
+        	}    		
+    	}
+    }	
+	
 	@Override
 	protected void configureNewInstance(Instance instance) {
 		instance.addAttributeListener();
@@ -179,7 +225,9 @@ public class Button extends InstanceFactory {
 			computeTextField(instance);
 		} else if (attr == Io.ATTR_LABEL_LOC) {
 			computeTextField(instance);
-		}
+		} else if (attr == Button.ATTR_OUTPUT) {
+	       	instance.fireInvalidated();       
+        }
 	}
 
 	@Override
@@ -190,14 +238,14 @@ public class Button extends InstanceFactory {
 		int w = bds.getWidth();
 		int h = bds.getHeight();
 
-		Value val;
+		boolean val;
 		if (painter.getShowState()) {
 			InstanceDataSingleton data = (InstanceDataSingleton) painter
 					.getData();
-			val = data == null ? Value.FALSE : (Value) data.getValue();
-		} else {
-			val = Value.FALSE;
-		}
+            val = data == null ? false : ((ButtonData)data.getValue()).getButtonState();
+        } else {
+            val =false;
+        }
 
 		Color color = painter.getAttributeValue(Io.ATTR_COLOR);
 		if (!painter.shouldDrawColor()) {
@@ -207,7 +255,7 @@ public class Button extends InstanceFactory {
 
 		Graphics g = painter.getGraphics();
 		int depress;
-		if (val == Value.TRUE) {
+		if (val) {
 			x += DEPTH;
 			y += DEPTH;
 			Object labelLoc = painter.getAttributeValue(Io.ATTR_LABEL_LOC);
@@ -258,14 +306,42 @@ public class Button extends InstanceFactory {
 
 	@Override
 	public void propagate(InstanceState state) {
-		InstanceDataSingleton data = (InstanceDataSingleton) state.getData();
-		Value val = data == null ? Value.FALSE : (Value) data.getValue();
-		state.setPort(0, val, 1);
+		InstanceDataSingleton data = (InstanceDataSingleton) state.getData();		
+        boolean pressed = data == null ? false : ((ButtonData)data.getValue()).getButtonState();
+        Object vvvv=state.getAttributeValue(Button.ATTR_OUTPUT);
+        Value val =ButtonStateToValue(pressed,state.getAttributeValue(Button.ATTR_OUTPUT));
+        state.setPort(0, val, 1);		
 	}
 
 	@Override
 	public boolean RequiresNonZeroLabel() {
 		return true;
+	}
+
+}
+
+//################ Added Class to transfer Value[] ###########################
+class ButtonData implements InstanceData, Cloneable {
+	boolean buttonState;
+	Value outValue;
+
+	@Override
+	public ButtonData clone() {
+		return clone();
+
+	}
+
+	public ButtonData(boolean buttonState,Value outValue) {
+		this.buttonState = buttonState;
+		this.outValue = outValue;
+	}
+
+	public Value getOutValue() {
+		return outValue;
+	}
+
+	public boolean getButtonState() {
+		return buttonState;
 	}
 
 }
