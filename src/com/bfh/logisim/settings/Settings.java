@@ -31,7 +31,10 @@
 package com.bfh.logisim.settings;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.JOptionPane;
 import javax.xml.parsers.DocumentBuilder;
@@ -45,6 +48,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import com.bfh.logisim.fpgaboardeditor.FPGAClass;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -53,37 +57,11 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 public class Settings {
-	private static String[] loadAltera() {
-		String[] alteraProgs = { "quartus_sh", "quartus_pgm", "quartus_map" };
-		String osname = System.getProperty("os.name");
-		if (osname == null)
-			throw new IllegalArgumentException("no os.name");
-		else {
-			if (osname.toLowerCase().indexOf("windows") != -1)
-				for (int i = 0; i < alteraProgs.length; i++)
-					alteraProgs[i] += ".exe";
-		}
-		return alteraProgs;
-	}
-
-	private static String[] loadXilinx() {
-		String[] xilinxProgs = { "xst", "ngdbuild", "map", "par", "bitgen",
-				"impact", "cpldfit", "hprep6" };
-		String osname = System.getProperty("os.name");
-		if (osname == null)
-			throw new IllegalArgumentException("no os.name");
-		else {
-			if (osname.toLowerCase().indexOf("windows") != -1)
-				for (int i = 0; i < xilinxProgs.length; i++)
-					xilinxProgs[i] += ".exe";
-		}
-		return xilinxProgs;
-	}
-
 	private static String WorkSpace = "WorkSpace";
 	private static String DirectoryName = "WorkPath";
 	private static String XilinxName = "XilinxToolsPath";
 	private static String AlteraName = "AlteraToolsPath";
+	private static String VivadoName = "VivadoToolsPath";
 	private static String HdlName = "GenerateHDLOnly";
 	private static String HdlTypeName = "HDLTypeToGenerate";
 	public static String Unknown = "Unknown";
@@ -98,12 +76,20 @@ public class Settings {
 	boolean modified = false;
 	private BoardList KnownBoards = new BoardList();
 
-	public static final String[] AlteraPrograms = loadAltera();
-
-	public static final String[] XilinxPrograms = loadXilinx();
+	public static final Map<Character, VendorSoftware> vendors = new HashMap<>();
 
 	/* big TODO: add language support */
 	public Settings() {
+		String[] alteraBin = load(FPGAClass.VendorAltera);
+		VendorSoftware altera = new VendorSoftware(FPGAClass.VendorAltera, AlteraName, alteraBin);
+		vendors.put(FPGAClass.VendorAltera, altera);
+		String[] iseBin = load(FPGAClass.VendorXilinx);
+		VendorSoftware ise = new VendorSoftware(FPGAClass.VendorXilinx, XilinxName, iseBin);
+		vendors.put(FPGAClass.VendorXilinx, ise);
+		String[] vivadoBin = load(FPGAClass.VendorVivado);
+		VendorSoftware vivado = new VendorSoftware(FPGAClass.VendorVivado, VivadoName, vivadoBin);
+		vendors.put(FPGAClass.VendorVivado, vivado);
+
 		HomePath = System.getProperty("user.home");
 		if (!HomePath.endsWith(File.separator))
 			HomePath += File.separator;
@@ -112,20 +98,17 @@ public class Settings {
 		if (SettingsFile.exists()) {
 			try {
 				// Create instance of DocumentBuilderFactory
-				DocumentBuilderFactory factory = DocumentBuilderFactory
-						.newInstance();
+				DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 				// Get the DocumentBuilder
 				DocumentBuilder parser = factory.newDocumentBuilder();
 				// Create blank DOM Document
 				SettingsDocument = parser.parse(SettingsFile);
 			} catch (Exception e) {
-				JOptionPane.showMessageDialog(null,
-						"Fatal Error: Cannot read FPGA settings file: "
-								+ SettingsFile.getPath());
+				JOptionPane.showMessageDialog(null, "Fatal Error: Cannot read FPGA settings file: "
+						+ SettingsFile.getPath());
 				System.exit(-1);
 			}
-			NodeList SettingsList = SettingsDocument
-					.getElementsByTagName(Boards);
+			NodeList SettingsList = SettingsDocument.getElementsByTagName(Boards);
 			if (SettingsList.getLength() != 1) {
 				return;
 			}
@@ -141,17 +124,53 @@ public class Settings {
 		}
 		if (!SettingsComplete()) {
 			if (!WriteXml(SettingsFile)) {
-				JOptionPane.showMessageDialog(null,
-						"Fatal Error: Cannot write FPGA settings file: "
-								+ SettingsFile.getPath());
+				JOptionPane.showMessageDialog(null, "Fatal Error: Cannot write FPGA settings file: "
+						+ SettingsFile.getPath());
 				System.exit(-1);
 			}
 		}
 	}
 
-	private boolean AlteraToolsFound(String path) {
-		for (int i = 0; i < AlteraPrograms.length; i++) {
-			File test = new File(CorrectPath(path) + AlteraPrograms[i]);
+	private static String[] load(char vendor) {
+		ArrayList<String> progs = new ArrayList<>();
+		String windowsExtension = ".exe";
+		if (vendor == FPGAClass.VendorAltera) {
+			progs.add("quartus_sh");
+			progs.add("quartus_pgm");
+			progs.add("quartus_map");
+		}
+		else if (vendor == FPGAClass.VendorXilinx) {
+			progs.add("xst");
+			progs.add("ngdbuild");
+			progs.add("map");
+			progs.add("par");
+			progs.add("bitgen");
+			progs.add("impact");
+			progs.add("cpldfit");
+			progs.add("hprep6");
+		}
+		else if (vendor == FPGAClass.VendorVivado) {
+			progs.add("vivado");
+            windowsExtension = ".bat";
+		}
+
+		String[] progsArray = progs.toArray(new String[0]);
+		String osname = System.getProperty("os.name");
+		if (osname == null)
+			throw new IllegalArgumentException("no os.name");
+		else {
+			if (osname.toLowerCase().contains("windows")) {
+				for (int i=0; i<progsArray.length; i++) {
+					progsArray[i] += windowsExtension;
+				}
+			}
+		}
+		return progsArray;
+	}
+
+	private boolean toolFound(VendorSoftware vendor, String path) {
+		for (int i = 0; i < vendor.getBinaries().length; i++) {
+			File test = new File(CorrectPath(path) + vendor.getBinaries()[i]);
 			if (!test.exists())
 				return false;
 		}
@@ -163,34 +182,6 @@ public class Settings {
 			return path;
 		else
 			return path + File.separator;
-	}
-
-	public String GetAlteraToolPath() {
-		NodeList SettingsList = SettingsDocument
-				.getElementsByTagName(WorkSpace);
-		if (SettingsList.getLength() != 1) {
-			return Unknown;
-		}
-		Node ThisWorkspace = SettingsList.item(0);
-		NamedNodeMap WorkspaceParameters = ThisWorkspace.getAttributes();
-		for (int i = 0; i < WorkspaceParameters.getLength(); i++) {
-			if (WorkspaceParameters.item(i).getNodeName().equals(AlteraName)) {
-				if (AlteraToolsFound(WorkspaceParameters.item(i).getNodeValue()))
-					return WorkspaceParameters.item(i).getNodeValue();
-				else {
-					WorkspaceParameters.item(i).setNodeValue("Unknown");
-					modified = true;
-					return Unknown;
-				}
-			}
-		}
-		/* The attribute does not exists so add it */
-		Attr altera = SettingsDocument.createAttribute(AlteraName);
-		altera.setNodeValue(Unknown);
-		Element workspace = (Element) SettingsList.item(0);
-		workspace.setAttributeNode(altera);
-		modified = true;
-		return Unknown;
 	}
 
 	public Collection<String> GetBoardNames() {
@@ -298,52 +289,33 @@ public class Settings {
 		return HomePath;
 	}
 
-	public String GetXilixToolPath() {
-		NodeList SettingsList = SettingsDocument
-				.getElementsByTagName(WorkSpace);
+	private void loadToolPath(VendorSoftware vendor) {
+		NodeList SettingsList = SettingsDocument.getElementsByTagName(WorkSpace);
 		if (SettingsList.getLength() != 1) {
-			return Unknown;
+			return;
 		}
 		Node ThisWorkspace = SettingsList.item(0);
 		NamedNodeMap WorkspaceParameters = ThisWorkspace.getAttributes();
 		for (int i = 0; i < WorkspaceParameters.getLength(); i++) {
-			if (WorkspaceParameters.item(i).getNodeName().equals(XilinxName)) {
-				if (XilinxToolsFound(WorkspaceParameters.item(i).getNodeValue()))
-					return WorkspaceParameters.item(i).getNodeValue();
+			if (WorkspaceParameters.item(i).getNodeName().equals(vendor.getName())) {
+				if (toolFound(vendor, WorkspaceParameters.item(i).getNodeValue())) {
+					vendor.setToolPath(WorkspaceParameters.item(i).getNodeValue());
+					return;
+				}
 				else {
 					WorkspaceParameters.item(i).setNodeValue("Unknown");
+					vendor.setToolPath("Unknown");
 					modified = true;
-					return Unknown;
+					return;
 				}
 			}
 		}
 		/* The attribute does not exists so add it */
-		Attr xilinx = SettingsDocument.createAttribute(XilinxName);
-		xilinx.setNodeValue(Unknown);
+		Attr attr = SettingsDocument.createAttribute(vendor.getName());
+		attr.setNodeValue(Unknown);
 		Element workspace = (Element) SettingsList.item(0);
-		workspace.setAttributeNode(xilinx);
+		workspace.setAttributeNode(attr);
 		modified = true;
-		return Unknown;
-	}
-
-	public boolean SetAlteraToolPath(String path) {
-		if (!AlteraToolsFound(path))
-			return false;
-		NodeList SettingsList = SettingsDocument
-				.getElementsByTagName(WorkSpace);
-		if (SettingsList.getLength() != 1) {
-			return false;
-		}
-		Node ThisWorkspace = SettingsList.item(0);
-		NamedNodeMap WorkspaceParameters = ThisWorkspace.getAttributes();
-		for (int i = 0; i < WorkspaceParameters.getLength(); i++) {
-			if (WorkspaceParameters.item(i).getNodeName().equals(AlteraName)) {
-				WorkspaceParameters.item(i).setNodeValue(path);
-				modified = true;
-				return true;
-			}
-		}
-		return false;
 	}
 
 	public boolean SetHdlOnly(boolean only) {
@@ -412,20 +384,17 @@ public class Settings {
 			result = false;
 			try {
 				// Create instance of DocumentBuilderFactory
-				DocumentBuilderFactory factory = DocumentBuilderFactory
-						.newInstance();
+				DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 				// Get the DocumentBuilder
 				DocumentBuilder parser;
 				parser = factory.newDocumentBuilder();
 				// Create blank DOM Document
 				SettingsDocument = parser.newDocument();
 			} catch (ParserConfigurationException e) {
-				JOptionPane.showMessageDialog(null,
-						"Fatal Error: Cannot create settings Document!");
+				JOptionPane.showMessageDialog(null, "Fatal Error: Cannot create settings Document!");
 				System.exit(-4);
 			}
-			Element root = SettingsDocument.createElement(SettingsFileName
-					.replace('.', '_'));
+			Element root = SettingsDocument.createElement(SettingsFileName.replace('.', '_'));
 			SettingsDocument.appendChild(root);
 		}
 
@@ -454,8 +423,9 @@ public class Settings {
 			SettingsList = SettingsDocument.getElementsByTagName(WorkSpace);
 			result = false;
 		}
-		GetXilixToolPath();
-		GetAlteraToolPath();
+		loadToolPath(vendors.get(FPGAClass.VendorXilinx));
+		loadToolPath(vendors.get(FPGAClass.VendorAltera));
+		loadToolPath(vendors.get(FPGAClass.VendorVivado));
 		GetHDLOnly();
 		GetHDLType();
 
@@ -527,19 +497,20 @@ public class Settings {
 		return false;
 	}
 
-	public boolean SetXilinxToolPath(String path) {
-		if (!XilinxToolsFound(path))
+	public boolean setToolPath(char vendor, String path) {
+		VendorSoftware vendorSoftware = vendors.get(vendor);
+		if (!toolFound(vendorSoftware, path))
 			return false;
-		NodeList SettingsList = SettingsDocument
-				.getElementsByTagName(WorkSpace);
+		NodeList SettingsList = SettingsDocument.getElementsByTagName(WorkSpace);
 		if (SettingsList.getLength() != 1) {
 			return false;
 		}
 		Node ThisWorkspace = SettingsList.item(0);
 		NamedNodeMap WorkspaceParameters = ThisWorkspace.getAttributes();
 		for (int i = 0; i < WorkspaceParameters.getLength(); i++) {
-			if (WorkspaceParameters.item(i).getNodeName().equals(XilinxName)) {
+			if (WorkspaceParameters.item(i).getNodeName().equals(vendorSoftware.getName())) {
 				WorkspaceParameters.item(i).setNodeValue(path);
+				vendorSoftware.setToolPath(path);
 				modified = true;
 				return true;
 			}
@@ -569,14 +540,5 @@ public class Settings {
 			JOptionPane.showMessageDialog(null, e.getMessage());
 			return false;
 		}
-	}
-
-	private boolean XilinxToolsFound(String path) {
-		for (int i = 0; i < XilinxPrograms.length; i++) {
-			File test = new File(CorrectPath(path) + XilinxPrograms[i]);
-			if (!test.exists())
-				return false;
-		}
-		return true;
 	}
 }

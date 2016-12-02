@@ -121,7 +121,7 @@ public class AbstractFlipFlopHDLGeneratorFactory extends
 			Contents.add("      temp := std_logic_vector(to_unsigned("+ActivityLevelStr+",1));");
 			Contents.add("      IF (Reset = '1') THEN s_current_state_reg <= '0';");
 			Contents.add("      ELSIF (Preset = '1') THEN s_current_state_reg <= '1';");
-			if (IsFlipFlop(attrs)) {
+			if (Netlist.IsFlipFlop(attrs)) {
 				Contents.add("      ELSIF (Clock'event AND (Clock = temp(0))) THEN");
 			} else {
 				Contents.add("      ELSIF (Clock = temp(0)) THEN");
@@ -132,7 +132,7 @@ public class AbstractFlipFlopHDLGeneratorFactory extends
 			Contents.add("      END IF;");
 			Contents.add("   END PROCESS make_memory;");
 		} else {
-			if (IsFlipFlop(attrs)) {
+			if (Netlist.IsFlipFlop(attrs)) {
 				Contents.add("   always @(posedge Reset or posedge Preset or negedge Clock)");
 				Contents.add("   begin");
 				Contents.add("      if (Reset) s_current_state_reg[0] <= 1'b0;");
@@ -189,10 +189,11 @@ public class AbstractFlipFlopHDLGeneratorFactory extends
 				ComponentInfo.NrOfEnds() - 5, Nets);
 		if (ClockNetName.isEmpty()) {
 			GatedClock = true;
-			if (IsFlipFlop(attrs))
-				Reporter.AddWarning("Found a gated clock for component \""
-						+ ComponentName() + "\" in circuit \""
-						+ Nets.getCircuitName() + "\"");
+// The gated clock detection is now done during DRC
+//			if (Netlist.IsFlipFlop(attrs))
+//				Reporter.AddWarning("Found a gated clock for component \""
+//						+ ComponentName() + "\" in circuit \""
+//						+ Nets.getCircuitName() + "\"");
 		}
 		if (attrs.containsAttribute(StdAttr.EDGE_TRIGGER)) {
 			if (attrs.getValue(StdAttr.EDGE_TRIGGER) == StdAttr.TRIG_FALLING)
@@ -249,7 +250,7 @@ public class AbstractFlipFlopHDLGeneratorFactory extends
 				Reporter, HDLType, Nets));
 		PortMap.putAll(GetNetMap("Preset", true, ComponentInfo, nr_of_pins - 1,
 				Reporter, HDLType, Nets));
-		if (HasClock && !GatedClock && IsFlipFlop(attrs)) {
+		if (HasClock && !GatedClock && Netlist.IsFlipFlop(attrs)) {
 			if (Nets.RequiresGlobalClockConnection()) {
 				PortMap.put(
 						"Tick",
@@ -351,14 +352,5 @@ public class AbstractFlipFlopHDLGeneratorFactory extends
 		return true;
 	}
 
-	public boolean IsFlipFlop(AttributeSet attrs) {
-		if (attrs.containsAttribute(StdAttr.EDGE_TRIGGER))
-			return true;
-		if (attrs.containsAttribute(StdAttr.TRIGGER)) {
-			return ((attrs.getValue(StdAttr.TRIGGER) == StdAttr.TRIG_FALLING) || (attrs
-					.getValue(StdAttr.TRIGGER) == StdAttr.TRIG_RISING));
-		}
-		return false;
-	}
 
 }

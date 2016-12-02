@@ -61,12 +61,14 @@ import com.bfh.logisim.hdlgenerator.FileWriter;
 import com.bfh.logisim.hdlgenerator.TickComponentHDLGeneratorFactory;
 import com.bfh.logisim.hdlgenerator.ToplevelHDLGeneratorFactory;
 import com.bfh.logisim.settings.Settings;
+import com.bfh.logisim.settings.VendorSoftware;
 import com.cburch.logisim.proj.Projects;
 
 public class XilinxDownload {
 	public static boolean Download(Settings MySettings,
 			BoardInformation BoardInfo, String scriptPath, String UcfPath,
 			String ProjectPath, String SandboxPath, FPGAReport MyReporter) {
+		VendorSoftware xilinxVendor = Settings.vendors.get(FPGAClass.VendorXilinx);
 		boolean IsCPLD = BoardInfo.fpga.getPart().toUpperCase()
 				.startsWith("XC2C")
 				|| BoardInfo.fpga.getPart().toUpperCase().startsWith("XA2C")
@@ -92,8 +94,7 @@ public class XilinxDownload {
 		gbc.gridy = 0;
 		gbc.fill = GridBagConstraints.HORIZONTAL;
 		panel.add(LocText, gbc);
-		JProgressBar progres = new JProgressBar(0,
-				Settings.XilinxPrograms.length);
+		JProgressBar progres = new JProgressBar(0, xilinxVendor.getBinaries().length);
 		progres.setValue(0);
 		progres.setStringPainted(true);
 		gbc.gridx = 0;
@@ -121,8 +122,7 @@ public class XilinxDownload {
 				ProgRect.y = 0;
 				progres.paintImmediately(ProgRect);
 				command.clear();
-				command.add(MySettings.GetXilixToolPath() + File.separator
-						+ Settings.XilinxPrograms[0]);
+				command.add(xilinxVendor.getBinaryPath(0));
 				command.add("-ifn");
 				command.add(scriptPath.replace(ProjectPath, "../")
 						+ File.separator + script_file);
@@ -171,8 +171,7 @@ public class XilinxDownload {
 				ProgRect.y = 0;
 				progres.paintImmediately(ProgRect);
 				command.clear();
-				command.add(MySettings.GetXilixToolPath() + File.separator
-						+ Settings.XilinxPrograms[1]);
+				command.add(xilinxVendor.getBinaryPath(1));
 				command.add("-intstyle");
 				command.add("ise");
 				command.add("-uc");
@@ -223,8 +222,7 @@ public class XilinxDownload {
 				ProgRect.y = 0;
 				progres.paintImmediately(ProgRect);
 				command.clear();
-				command.add(MySettings.GetXilixToolPath() + File.separator
-						+ Settings.XilinxPrograms[2]);
+				command.add(xilinxVendor.getBinaryPath(2));
 				command.add("-intstyle");
 				command.add("ise");
 				command.add("-o");
@@ -274,8 +272,7 @@ public class XilinxDownload {
 				progres.paintImmediately(ProgRect);
 				command.clear();
 				if (!IsCPLD) {
-					command.add(MySettings.GetXilixToolPath() + File.separator
-							+ Settings.XilinxPrograms[3]);
+					command.add(xilinxVendor.getBinaryPath(3));
 					command.add("-w");
 					command.add("-intstyle");
 					command.add("ise");
@@ -285,8 +282,7 @@ public class XilinxDownload {
 					command.add("logisim_par");
 					command.add("logisim_map.pcf");
 				} else {
-					command.add(MySettings.GetXilixToolPath() + File.separator
-							+ Settings.XilinxPrograms[6]);
+					command.add(xilinxVendor.getBinaryPath(6));
 					command.add("-p");
 					command.add(BoardInfo.fpga.getPart().toUpperCase() + "-"
 							+ BoardInfo.fpga.getSpeedGrade() + "-"
@@ -352,8 +348,7 @@ public class XilinxDownload {
 				progres.paintImmediately(ProgRect);
 				command.clear();
 				if (!IsCPLD) {
-					command.add(MySettings.GetXilixToolPath() + File.separator
-							+ Settings.XilinxPrograms[4]);
+					command.add(xilinxVendor.getBinaryPath(4));
 					command.add("-w");
 					if (BoardInfo.fpga.getUnusedPinsBehavior() == PullBehaviors.PullUp) {
 						command.add("-g");
@@ -369,8 +364,7 @@ public class XilinxDownload {
 					command.add(ToplevelHDLGeneratorFactory.FPGAToplevelName
 							+ ".bit");
 				} else {
-					command.add(MySettings.GetXilixToolPath() + File.separator
-							+ Settings.XilinxPrograms[7]);
+					command.add(xilinxVendor.getBinaryPath(7));
 					command.add("-i");
 					command.add("logisim.vm6");
 				}
@@ -415,23 +409,21 @@ public class XilinxDownload {
 			ProgRect.x = 0;
 			ProgRect.y = 0;
 			progres.paintImmediately(ProgRect);
-			Object[] options = { "Yes, download" };
+			Object[] options = { "Yes, download","No, abort" };
 			if (JOptionPane
 					.showOptionDialog(
 							progres,
 							"Verify that your board is connected and you are ready to download.",
-							"Ready to download ?", JOptionPane.YES_OPTION,
-							JOptionPane.WARNING_MESSAGE, null, options,
-							options[0]) == JOptionPane.CLOSED_OPTION) {
-				MyReporter.AddSevereWarning("Download aborted.");
+							"Ready to download ?", JOptionPane.YES_NO_OPTION,
+							JOptionPane.WARNING_MESSAGE, null, options, options[0]) != JOptionPane.YES_OPTION) {
+				MyReporter.AddWarning("Download aborted.");
 				panel.dispose();
 				return false;
 			}
 			/* Until here update of status window */
 			if (!BoardInfo.fpga.USBTMCDownloadRequired()) {
 				command.clear();
-				command.add(MySettings.GetXilixToolPath() + File.separator
-						+ Settings.XilinxPrograms[5]);
+				command.add(xilinxVendor.getBinaryPath(5));
 				command.add("-batch");
 				command.add(scriptPath.replace(ProjectPath, "../")
 						+ File.separator + download_file);

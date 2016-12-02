@@ -172,6 +172,6 @@ public class FPGACommanderListWindow  extends JFrame implements KeyListener,Wind
 
 	@Override
 	public void contentsChanged(ListDataEvent e) {
-		setTitle((count)?Title+" ("+model.getSize()+")":Title);
+		setTitle((count)?Title+" ("+model.getCountNr()+")":Title);
 	}
 }

@@ -38,6 +38,10 @@ public class FPGAReport {
 	public FPGAReport(FPGACommanderGui parrent) {
 		myCommander = parrent;
 	}
+	
+	public void AddErrorIncrement(String Message) {
+		myCommander.AddErrors(new SimpleDRCContainer(Message,SimpleDRCContainer.LEVEL_NORMAL,true));
+	}
 
 	public void AddError(Object Message) {
 		if (Message instanceof String)
@@ -60,6 +64,10 @@ public class FPGAReport {
 
 	public void AddSevereWarning(String Message) {
 		myCommander.AddWarning(new SimpleDRCContainer(Message,SimpleDRCContainer.LEVEL_SEVERE));
+	}
+	
+	public void AddWarningIncrement(String Message) {
+		myCommander.AddWarning(new SimpleDRCContainer(Message,SimpleDRCContainer.LEVEL_NORMAL,true));
 	}
 
 	public void AddWarning(Object Message) {

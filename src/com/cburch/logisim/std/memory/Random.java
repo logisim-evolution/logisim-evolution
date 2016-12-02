@@ -111,7 +111,7 @@ public class Random extends InstanceFactory {
 	static final Attribute<Integer> ATTR_SEED = Attributes.forInteger("seed",
 			Strings.getter("randomSeedAttr"));
 	static final int OUT = 0;
-	static final int CK = 1;
+	public static final int CK = 1;
 
 	static final int NXT = 2;
 

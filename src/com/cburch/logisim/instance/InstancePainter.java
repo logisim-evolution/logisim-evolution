@@ -138,12 +138,17 @@ public class InstancePainter implements InstanceState {
 		return context.getCircuit();
 	}
 
+	/**
+	 *  @brief this function will return the instance data information
+	 *  @pre	it assumes that your circuit was instantiate before.
+	 */
 	public InstanceData getData() {
 		CircuitState circState = context.getCircuitState();
 		if (circState == null || comp == null) {
 			throw new UnsupportedOperationException(
 					"setData on InstancePainter");
 		} else {
+			
 			return (InstanceData) circState.getData(comp);
 		}
 	}

@@ -30,6 +30,7 @@
 
 package com.bfh.logisim.fpgagui;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -48,9 +49,15 @@ import com.cburch.logisim.util.Icons;
 @SuppressWarnings("serial")
 public class FPGACommanderListModel extends  AbstractListModel<Object> {
 	
+	private static Color FATAL = Color.RED;
+	private static Color SEVERE = Color.yellow;
+	private static Color NORMAL = Color.LIGHT_GRAY;
+	private static Color ADDENDUM = Color.GRAY;
+
 	public class ListModelCellRenderer extends JLabel implements ListCellRenderer<Object> {
 		
 		private boolean CountLines;
+		
         
 		public ListModelCellRenderer(boolean countLines) {
 			CountLines = countLines;
@@ -75,18 +82,52 @@ public class FPGACommanderListModel extends  AbstractListModel<Object> {
 				if (msg.DRCInfoPresent()) {
 		        	setIcon(Icons.getIcon("drc_trace.png"));
 				} 
+				switch (msg.Severity()) {
+					case SimpleDRCContainer.LEVEL_SEVERE :
+						setForeground(SEVERE);
+						break;
+					case SimpleDRCContainer.LEVEL_FATAL :
+						setBackground(FATAL);
+						setForeground(list.getBackground());
+						break;
+					default : 
+						setForeground(NORMAL);
+				}
+			}
+			if (value.toString().contains("BUG")) {
+				setBackground(Color.MAGENTA);
+				setForeground(Color.black);
 			}
 			if (CountLines) {
-				if (index < 9) {
-					Line.append("    ");
-				} else if (index < 99) {
-					Line.append("   ");
-				} else if (index < 999) {
-					Line.append("  ");
-				} else if (index < 9999) {
-					Line.append(" ");
+				if (msg != null) {
+					if (msg.SupressCount()) {
+						setForeground(ADDENDUM);
+						Line.append("       ");
+					} else {
+						int line = msg.GetListNumber();
+						if (line < 10) {
+							Line.append("    ");
+						} else if (line < 100) {
+							Line.append("   ");
+						} else if (line < 1000) {
+							Line.append("  ");
+						} else if (line < 10000) {
+							Line.append(" ");
+						}
+						Line.append(Integer.toString(line) + "> ");
+					}
+				} else {
+					if (index < 9) {
+						Line.append("    ");
+					} else if (index < 99) {
+						Line.append("   ");
+					} else if (index < 999) {
+						Line.append("  ");
+					} else if (index < 9999) {
+						Line.append(" ");
+					}
+					Line.append(Integer.toString(index + 1) + "> ");
 				}
-				Line.append(Integer.toString(index + 1) + "> ");
 			}
 			if (msg != null) {
 				switch (msg.Severity()) {
@@ -112,6 +153,7 @@ public class FPGACommanderListModel extends  AbstractListModel<Object> {
 
 	private ArrayList<Object> myData;
 	private Set<ListDataListener> myListeners;
+	private int count = 0;
 	
 	public FPGACommanderListModel() {
 		myData = new ArrayList<Object>();
@@ -124,12 +166,25 @@ public class FPGACommanderListModel extends  AbstractListModel<Object> {
 	
 	public void clear() {
 		myData.clear();
+		count = 0;
 		FireEvent(null);
 	}
 	
 	public void add(Object toAdd) {
+		count++;
+		if (toAdd instanceof SimpleDRCContainer) {
+			SimpleDRCContainer add = (SimpleDRCContainer) toAdd;
+			if (add.SupressCount())
+				count--;
+			else
+				add.SetListNumber(count);
+		}
 		myData.add(toAdd);
 		FireEvent(null);
+	}
+	
+	public int getCountNr() {
+		return count;
 	}
 	
 	@Override

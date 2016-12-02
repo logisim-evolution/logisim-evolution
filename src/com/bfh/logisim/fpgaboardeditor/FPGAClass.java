@@ -52,14 +52,16 @@ public class FPGAClass {
 
 		result.add(Vendors[0]);
 		result.add(Vendors[1]);
+		result.add(Vendors[2]);
 
 		return result;
 	}
 
 	public static char VendorAltera = 0;
 	public static char VendorXilinx = 1;
+	public static char VendorVivado = 2;
 	public static char VendorUnknown = 255;
-	public static String[] Vendors = { "Altera", "Xilinx" };
+	public static String[] Vendors = { "Altera", "Xilinx", "Vivado" };
 	private long ClockFrequency;
 	private String ClockPinLocation;
 	private char ClockPullBehavior;

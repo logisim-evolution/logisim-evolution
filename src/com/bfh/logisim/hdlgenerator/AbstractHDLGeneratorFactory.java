@@ -517,7 +517,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
 		return Result;
 	}
 
-	public String GetClockNetName(NetlistComponent comp, int EndIndex,
+	static public String GetClockNetName(NetlistComponent comp, int EndIndex,
 			Netlist TheNets) {
 		StringBuffer Contents = new StringBuffer();
 		if ((TheNets.GetCurrentHierarchyLevel() != null) && (EndIndex >= 0)

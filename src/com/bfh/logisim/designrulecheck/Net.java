@@ -122,7 +122,7 @@ public class Net {
 		MyPoints.clear();
 		Segments.clear();
 		TunnelNames.clear();
-		nr_of_bits = 1;
+		nr_of_bits = 0;
 		MyParent = null;
 		Requires_to_be_root = false;
 		InheritedBits.clear();
@@ -138,12 +138,6 @@ public class Net {
 
 	public boolean ContainsTunnel(String TunnelName) {
 		return TunnelNames.contains(TunnelName);
-	}
-
-	public void FinalCleanup() {
-		MyPoints.clear();
-		TunnelNames.clear();
-		InheritedBits.clear();
 	}
 
 	public void ForceRootNet() {
@@ -183,6 +177,21 @@ public class Net {
 			return false;
 		return SinkList.get(bitid).NrOfConnections() > 0;
 	}
+	
+	public ArrayList<ConnectionPoint> GetBitSinks(int bitIndex) {
+		ArrayList<ConnectionPoint> sinks = new ArrayList<ConnectionPoint>();
+		if ((bitIndex < 0) || (bitIndex >= SourceNetsList.size()))
+			return new ArrayList<ConnectionPoint>();
+		sinks.addAll(SinkList.get(bitIndex).GetConnections());
+		return sinks;
+	}
+	
+	public ArrayList<ConnectionPoint> GetBitSources(int bitIndex) {
+		if ((bitIndex < 0) || (bitIndex >= SourceNetsList.size()))
+			return null;
+		return SourceList.get(bitIndex).GetConnections();
+	}
+ 
 
 	public boolean hasBitSource(int bitid) {
 		if (bitid < 0 || bitid >= SourceList.size())
@@ -202,6 +211,14 @@ public class Net {
 		for (int i = 0; i < nr_of_bits; i++)
 			ret |= SinkList.get(i).NrOfConnections() > 0;
 		return ret;
+	}
+	
+	public Set<ConnectionPoint> GetSinks() {
+		Set<ConnectionPoint> sinks = new HashSet<ConnectionPoint>();
+		for (int i = 0; i < nr_of_bits; i++) {
+			sinks.addAll(SinkList.get(i).GetConnections());
+		}
+		return sinks;
 	}
 
 	public boolean hasSource() {
@@ -245,19 +262,21 @@ public class Net {
 	}
 	
 
-	public boolean merge(Net TheNet,String Error) {
+	public boolean merge(Net TheNet) {
 		if (TheNet.BitWidth()==nr_of_bits) {
 			MyPoints.addAll(TheNet.getPoints());
 			Segments.addAll(TheNet.getWires());
 			TunnelNames.addAll(TheNet.TunnelNames());
 			return true;
 		}
-		Error = Error.concat(Strings.get("NetMerge_BitWidthError"));
 		return false;
 	}
 
-	public void setBus(int Width) {
+	public boolean setWidth(int Width) {
+		if ((nr_of_bits > 0)&&(Width != nr_of_bits))
+			return false;
 		nr_of_bits = Width;
+		return true;
 	}
 
 	public boolean setParent(Net Parrent) {
@@ -265,7 +284,7 @@ public class Net {
 			return false;
 		if (Parrent == null)
 			return false;
-		if (!IsRootNet())
+		if (MyParent!=null)
 			return false;
 		MyParent = Parrent;
 		return true;

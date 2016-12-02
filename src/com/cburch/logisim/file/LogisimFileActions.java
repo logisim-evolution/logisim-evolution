@@ -37,6 +37,8 @@ import java.util.HashSet;
 import javax.swing.JOptionPane;
 
 import com.cburch.logisim.circuit.Circuit;
+import com.cburch.logisim.circuit.SubcircuitFactory;
+import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.proj.Action;
@@ -79,6 +81,7 @@ public class LogisimFileActions {
 				  LogisimFile source) {
 			HashSet<String> LibNames = new HashSet<String>();
 			HashSet<String> ToolList = new HashSet<String>();
+			HashSet<Circuit> NotImportedList = new HashSet<Circuit>();
 			HashMap<String,String> Error = new HashMap<String,String>();
 			for (Library lib : source.getLibraries()) {
 				LibraryTools.BuildLibraryList(lib,LibNames);
@@ -94,12 +97,36 @@ public class LogisimFileActions {
 				for (Circuit circ : mergelib.getCircuits()) {
 					if (ToolList.contains(circ.getName().toUpperCase())) {
 						Error.put(circ.getName(), Strings.get("CircNotImportedWarning"));
+						NotImportedList.add(circ);
 					} else {
 						MergedCircuits.add(circ);
 					}
 				}
 				if (!Error.isEmpty())
 					LibraryTools.ShowWarnings(mergelib.getName(),Error);
+				if (!NotImportedList.isEmpty()) {
+					HashMap<String,Circuit> Replacements = new HashMap<String,Circuit>();
+					/* Some circuits have not been imported, we have to update the circuits */
+					/* first stage, make a map of circuits in the current set */
+					for (Circuit nicirc : NotImportedList) {
+						for (Circuit curcirc : source.getCircuits()) {
+							if (curcirc.getName().toUpperCase().equals(nicirc.getName().toUpperCase())) {
+								Replacements.put(curcirc.getName().toUpperCase(), curcirc);
+							}
+						}
+					}
+					/* Second stage, iterate over all subcircuits and replace them when required */
+					for (Circuit importedCirc : MergedCircuits) {
+						for (Component comp : importedCirc.getNonWires()) {
+							if (comp instanceof SubcircuitFactory) {
+								SubcircuitFactory fact = (SubcircuitFactory) comp;
+								if (Replacements.containsKey(fact.getName().toUpperCase())) {
+									fact.setSubcircuit(Replacements.get(fact.getName().toUpperCase()));
+								}
+							}
+						}
+					}
+				}
 			} else LibraryTools.ShowErrors(mergelib.getName(),Error);
 		}
 

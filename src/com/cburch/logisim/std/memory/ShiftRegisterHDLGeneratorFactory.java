@@ -309,8 +309,6 @@ public class ShiftRegisterHDLGeneratorFactory extends
 				Nets);
 		if (ClockNetName.isEmpty()) {
 			GatedClock = true;
-			Reporter.AddWarning("Found a gated clock for component \"Shift Register\" in circuit \""
-					+ Nets.getCircuitName() + "\"");
 		}
 		ActiveLow = attrs.getValue(StdAttr.EDGE_TRIGGER) == StdAttr.TRIG_FALLING;
 		if (GatedClock && ActiveLow) {

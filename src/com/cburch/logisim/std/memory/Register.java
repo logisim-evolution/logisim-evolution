@@ -122,7 +122,7 @@ public class Register extends InstanceFactory {
 	static final int DELAY = 8;
 	public static final int OUT = 0;
 	static final int IN = 1;
-	static final int CK = 2;
+	public static final int CK = 2;
 	static final int CLR = 3;
 	static final int EN = 4;
 	static final int Xsize = 60;

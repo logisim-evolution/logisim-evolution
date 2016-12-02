@@ -76,7 +76,7 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 			Contents.add("   make_memory : PROCESS( clock , Reset , ClockEnable , Tick , D )");
 			Contents.add("   BEGIN");
 			Contents.add("      IF (Reset = '1') THEN s_state_reg <= (OTHERS => '0');");
-			if (IsFlipFlop(attrs)) {
+			if (Netlist.IsFlipFlop(attrs)) {
 				Contents.add("      ELSIF ("+ActiveLevelStr+" = 1) THEN");
 				Contents.add("         IF (Clock'event AND (Clock = '1')) THEN");
 				Contents.add("            IF (ClockEnable = '1' AND Tick = '1') THEN");
@@ -115,7 +115,7 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 			Contents.add("      END IF;");
 			Contents.add("   END PROCESS make_memory;");
 		} else {
-			if (!IsFlipFlop(attrs)) {
+			if (!Netlist.IsFlipFlop(attrs)) {
 				Contents.add("   assign Q = s_state_reg;");
 				Contents.add("");
 				Contents.add("   always @(*)");
@@ -171,7 +171,7 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 		String ClockNetName = GetClockNetName(ComponentInfo, Register.CK, Nets);
 		if (ClockNetName.isEmpty()) {
 			GatedClock = true;
-			if (IsFlipFlop(attrs))
+			if (Netlist.IsFlipFlop(attrs))
 				Reporter.AddWarning("Found a gated clock for component \"Register\" in circuit \""
 						+ Nets.getCircuitName() + "\"");
 		}
@@ -218,7 +218,7 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 		PortMap.putAll(GetNetMap("ClockEnable", false, ComponentInfo,
 				Register.EN, Reporter, HDLType, Nets));
 
-		if (HasClock && !GatedClock && IsFlipFlop(attrs)) {
+		if (HasClock && !GatedClock && Netlist.IsFlipFlop(attrs)) {
 			if (Nets.RequiresGlobalClockConnection()) {
 				PortMap.put("Tick", SetBit);
 			} else {
@@ -295,7 +295,7 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 			String HDLType) {
 		SortedMap<String, Integer> Regs = new TreeMap<String, Integer>();
 		Regs.put("s_state_reg", NrOfBitsId);
-		if (HDLType.equals(Settings.VERILOG) & IsFlipFlop(attrs))
+		if (HDLType.equals(Settings.VERILOG) & Netlist.IsFlipFlop(attrs))
 			Regs.put("s_state_reg_neg_edge", NrOfBitsId);
 		return Regs;
 	}
@@ -308,11 +308,6 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 	@Override
 	public boolean HDLTargetSupported(String HDLType, AttributeSet attrs) {
 		return true;
-	}
-
-	private boolean IsFlipFlop(AttributeSet attrs) {
-		return ((attrs.getValue(StdAttr.TRIGGER) == StdAttr.TRIG_FALLING) || (attrs
-				.getValue(StdAttr.TRIGGER) == StdAttr.TRIG_RISING));
 	}
 
 }
