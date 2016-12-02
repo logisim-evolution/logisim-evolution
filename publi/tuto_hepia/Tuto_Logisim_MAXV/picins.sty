@@ -1,0 +1,578 @@
+%       PICINS.STY --- Style File zum Einbinden von Bildern
+%       Autor:  J. Bleser, E. Lang
+%       Hochschulrechenzentrum
+%       Technische Hochschule Darmstadt
+%       !!!  Dieses Style-File ist urheberrechtlich geschuetzt  !!!
+%       !!!  Aenderungen nur mit Zustimmung der Autoren         !!!
+\message{Option `picins' Version 3.0  Sep. 1992, TH Darmstadt/HRZ}
+\newbox\@BILD%
+\newbox\@TEXT%
+\newdimen\d@breite%
+\newdimen\d@hoehe%
+\newdimen\d@xoff%
+\newdimen\d@yoff%
+\newdimen\d@shad%
+\newdimen\d@dash%
+\newdimen\d@boxl%
+\newdimen\d@pichskip%
+\newdimen\d@tmp
+\newdimen\d@tmpa
+\newdimen\d@bskip
+\newdimen\hsiz@%
+\newdimen\p@getot@l%
+\newcount\c@breite
+\newcount\c@hoehe
+\newcount\c@xoff
+\newcount\c@yoff
+\newcount\c@pos
+\newcount\c@shad
+\newcount\c@dash
+\newcount\c@boxl
+\newcount\c@zeilen%
+\newcount\@changemode%
+\newcount\c@piccaption%
+\newcount\c@piccaptionpos%
+\newcount\c@picpos
+\newcount\c@whole%
+\newcount\c@half%
+\newcount\c@tmp
+\newcount\c@tmpa
+\newcount\c@tmpb
+\newcount\c@tmpc
+\newcount\c@tmpd
+\newskip\d@leftskip
+\newif\if@list \@listfalse%
+\newif\if@offset%
+
+
+\c@piccaptionpos=1%
+\c@picpos=0
+\d@shad=4pt%
+\d@dash=4pt%
+\d@boxl=10pt%
+\d@pichskip=1em%
+\@changemode=0%
+\def\@captype{figure}%
+\let\old@par=\par%
+
+\def\pichskip#1{\d@pichskip #1\relax}
+
+
+\def\shadowthickness#1{\d@shad #1\relax}
+
+
+\def\dashlength#1{\d@dash #1\relax}
+
+
+\def\boxlength#1{\d@boxl #1\relax}
+
+
+\def\picchangemode{\@changemode=1}%
+\def\nopicchangemode{\@changemode=0}%
+
+
+\def\piccaptionoutside{\c@piccaptionpos=1}%
+\def\piccaptioninside{\c@piccaptionpos=2}%
+\def\piccaptionside{\c@piccaptionpos=3}%
+\def\piccaptiontopside{\c@piccaptionpos=4}%
+
+\def\piccaption{\@ifnextchar [{\@piccaption}{\@piccaption[]}}
+\def\@piccaption[#1]#2{\c@piccaption=1\def\sh@rtf@rm{#1}\def\capti@nt@xt{#2}}
+\def\make@piccaption{%
+ \hsiz@\d@breite%
+ \ifnum\c@piccaptionpos=2%
+   \advance\hsiz@ -2\fboxsep%
+ \fi%
+ \ifnum\c@piccaptionpos>2%
+   \hsiz@\hsize\advance\hsiz@-\d@breite\advance\hsiz@-\d@pichskip%
+ \fi%
+ \setbox\@TEXT=\vbox{\hsize\hsiz@\caption[\sh@rtf@rm]{\capti@nt@xt}}%
+}
+
+
+
+\def\newcaption{\refstepcounter\@captype\@dblarg{\@newcaption\@captype}}
+\long\def\@newcaption#1[#2]#3{%
+  \old@par%
+  \addcontentsline{\csname ext@#1\endcsname }{#1}%
+    {\protect\numberline{\csname the#1\endcsname}{\ignorespaces #2}}
+  \begingroup\@parboxrestore\normalsize%
+    \@newmakecaption{\csname fnum@#1\endcsname}{\ignorespaces #3}\old@par%
+  \endgroup%
+}
+\long\def\@newmakecaption#1#2{%
+  \vskip 10pt%
+  \setbox\@tempboxa \hbox {#1: #2}%
+  \ifdim \wd\@tempboxa >\hsize%
+    \setbox0=\hbox{#1: }\dimen0=\hsize\advance\dimen0 by-\wd0
+    \setbox1=\vtop{\hsize=\dimen0 #2}
+    \hbox{\box0 \box1}
+    \par
+  \else \hbox to\hsize {\hfil \box \@tempboxa \hfil}
+  \fi
+}
+
+
+
+
+
+\def\parpic{%
+  \@ifnextchar ({\iparpic}{\iparpic(0pt,0pt)}
+}
+\def\iparpic(#1,#2){%
+  \@ifnextchar ({\@offsettrue\iiparpic(#1,#2)}%
+                {\@offsetfalse\iiparpic(#1,#2)(0pt,0pt)}
+}
+\def\iiparpic(#1,#2)(#3,#4){%
+  \@ifnextchar [{\iiiparpic(#1,#2)(#3,#4)}{\iiiparpic(#1,#2)(#3,#4)[l]}
+}
+\def\iiiparpic(#1,#2)(#3,#4)[#5]{%
+  \@ifnextchar [{\ivparpic(#1,#2)(#3,#4)[#5]}{\ivparpic(#1,#2)(#3,#4)[#5][]}
+}
+\def\ivparpic(#1,#2)(#3,#4)[#5][#6]#7{%
+ \let\par=\old@par\par%
+ \hangindent0pt\hangafter1%
+ \setbox\@BILD=\hbox{#7}%
+ \d@breite=#1\d@breite=\the\d@breite%
+ \ifdim\d@breite=0pt\d@breite=\wd\@BILD\fi%
+ \c@breite=\d@breite\divide\c@breite by65536%
+ \multiply\c@piccaption\c@piccaptionpos%
+ \d@hoehe=#2\d@hoehe=\the\d@hoehe%
+ \ifdim\d@hoehe=0pt\d@hoehe=\ht\@BILD\advance\d@hoehe by\dp\@BILD\fi%
+ \c@hoehe=\d@hoehe\divide\c@hoehe by65536%
+ \d@xoff=#3\c@xoff=\d@xoff\divide\c@xoff by65536%
+ \d@yoff=\d@hoehe%
+ \advance\d@yoff by-#4\c@yoff=\d@yoff\divide\c@yoff by65536%
+ \c@pos=1\unitlength1pt%
+ \if@offset%
+   \setbox\@BILD=\hbox{%
+     \begin{picture}(\c@breite,\c@hoehe)%
+       \put(0,0){\makebox(\c@breite,\c@hoehe){}}%
+       \put(\c@xoff,\c@yoff){\box\@BILD}%
+     \end{picture}%
+   }%
+ \else%
+   \setbox\@BILD=\hbox{%
+     \begin{picture}(\c@breite,\c@hoehe)%
+       \put(0,0){\makebox(\c@breite,\c@hoehe)[#6]{\box\@BILD}}%
+     \end{picture}%
+   }%
+ \fi%
+ \ifnum\c@piccaption=2%
+   \make@piccaption%
+   \advance\d@hoehe\ht\@TEXT\advance\d@hoehe\dp\@TEXT%
+   \c@hoehe=\d@hoehe\divide\c@hoehe by65536%
+   \setbox\@BILD=\vbox{\box\@BILD\vspace{-5pt}%
+                       \hbox{\hspace{\fboxsep}\box\@TEXT}%
+                       \vspace{4pt}}%
+ \fi%
+ \@tfor\@tempa := #5\do{%
+   \if\@tempa f\setbox\@BILD=\hbox{\Rahmen(\c@breite,\c@hoehe){\box\@BILD}}\fi%
+   \if\@tempa s\setbox\@BILD=\hbox{\Schatten(\c@breite,\c@hoehe){\box\@BILD}}\fi%
+   \if\@tempa o\setbox\@BILD=\hbox{\Oval(\c@breite,\c@hoehe){\box\@BILD}}\fi%
+   \if\@tempa d\setbox\@BILD=\hbox{\Strich(\c@breite,\c@hoehe){\box\@BILD}}\fi%
+   \if\@tempa x\setbox\@BILD=\hbox{\Kasten(\c@breite,\c@hoehe){\box\@BILD}}\fi%
+   \if\@tempa l\c@pos=1\fi%
+   \if\@tempa r\c@pos=2\fi%
+ }%
+ \ifnum\c@piccaption=1%
+   \make@piccaption%
+   \advance\d@hoehe\ht\@TEXT\advance\d@hoehe\dp\@TEXT%
+   \c@hoehe=\d@hoehe\divide\c@hoehe by65536%
+   \setbox\@BILD=\vbox{\box\@BILD\vspace{-5pt}\hbox{\box\@TEXT}\vspace{4pt}}%
+ \fi%
+ \ifodd\count0\c@picpos=0\else\c@picpos=\@changemode\fi%
+ \pagetotal=\the\pagetotal%
+ \d@tmp=\pagegoal\advance\d@tmp by-\pagetotal\advance\d@tmp by-\baselineskip%
+ \ifdim\d@hoehe>\d@tmp%
+   \vskip 0pt plus\d@hoehe\relax\pagebreak[3]\vskip 0pt plus-\d@hoehe\relax%
+   \ifnum\c@picpos=1\c@picpos=0\else\c@picpos=\@changemode\fi%
+ \fi%
+ \ifnum\c@picpos=1\ifnum\c@pos=1\c@pos=2\else\c@pos=1\fi\fi%
+ \ifnum\@listdepth>0
+   \@listtrue\parshape 0%
+   \advance\hsize -\rightmargin%
+   \d@leftskip \leftskip%
+   \leftskip \@totalleftmargin%
+   \if@inlabel\rule{\linewidth}{0pt}\vskip-\baselineskip\relax\fi%
+ \else\@listfalse\medskip%
+ \fi%
+ \if@list\d@tmpa=\linewidth\else\d@tmpa=\hsize\fi%
+ \ifnum\c@piccaption=3%
+   \make@piccaption%
+   \d@tmp\ht\@TEXT\advance\d@tmp\dp\@TEXT%
+   \ifdim\d@hoehe>\d@tmp%
+     \setbox\@TEXT=\vbox to\d@hoehe{\vfill\box\@TEXT\vspace{.2\baselineskip}\vfill}%
+   \else%
+     \setbox\@BILD=\vbox to\d@tmp{\vfill\box\@BILD\vfill}%
+     \d@hoehe\d@tmp%
+   \fi%
+ \fi%
+ \ifnum\c@piccaption=4%
+   \make@piccaption%
+   \d@tmp\ht\@TEXT\advance\d@tmp\dp\@TEXT%
+   \setbox\@TEXT=\vbox to\d@hoehe{\vspace{-10pt}\box\@TEXT\vfil}%
+   \advance\d@hoehe-\d@tmp%
+ \fi%
+ \ifnum\c@pos=1\d@tmpa=0pt%
+   \ifnum\c@piccaption>2%
+      \setbox\@BILD=\hbox{\box\@BILD\hspace{\d@pichskip}\hbox{\box\@TEXT}}%
+   \fi%
+ \else\advance\d@tmpa by-\wd\@BILD\d@breite=-\d@breite%
+   \ifnum\c@piccaption>2%
+      \d@tmpa=0pt%
+      \setbox\@BILD=\hbox{\hbox{\box\@TEXT}\hspace{\d@pichskip}\box\@BILD}%
+   \fi%
+ \fi%
+ \p@getot@l\the\pagetotal%
+ \d@bskip\d@hoehe\advance\d@bskip by\parskip\advance\d@bskip by.3\baselineskip%
+ {\noindent\hspace*{\d@tmpa}\relax%
+  \box\@BILD\nopagebreak\vskip-\d@bskip\relax\nopagebreak}%
+ \d@tmp=-\d@hoehe\divide\d@tmp by\baselineskip%
+ \c@zeilen=\d@tmp\advance\c@zeilen by-1%
+ \ifdim\d@breite<0pt\advance\d@breite by-\d@pichskip%
+ \else\advance\d@breite by\d@pichskip%
+ \fi%
+ \hangindent=\d@breite%
+ \hangafter=\c@zeilen%
+ \let\par=\x@par%
+ \ifnum\c@piccaption=3%
+    \hangindent0pt\hangafter1\let\par=\old@par%
+    \vskip\d@hoehe\vskip.2\baselineskip%
+ \fi%
+ \c@piccaption=0%
+}
+
+
+
+
+\newdimen\ptoti
+\newdimen\ptotii
+\def\x@par{%
+ \ptoti\pagetotal%
+ \old@par%
+ \ptotii\pagetotal%
+ \ifdim\ptoti=\ptotii%
+   \d@tmp\d@hoehe%
+ \else%
+   \d@tmp\baselineskip%
+   \multiply\d@tmp by\prevgraf%
+   \advance\d@tmp by\parskip%
+   \global\advance\d@hoehe by-\d@tmp\d@tmp=\d@hoehe%
+ \fi%
+ \ifdim\d@hoehe>0pt%
+   \divide\d@tmp by\baselineskip\c@zeilen=-\d@tmp\advance\c@zeilen by-1%
+   \c@zeilen=\the\c@zeilen%
+ \else\c@zeilen=0
+ \fi
+ \ifnum\c@zeilen<0\hangafter=\c@zeilen\hangindent=\d@breite%
+ \else\let\par=\old@par%
+   \hangindent 0pt%
+   \leftskip \d@leftskip%
+   \if@list\parshape \@ne \@totalleftmargin \linewidth%
+     \advance\hsize \rightmargin%
+   \fi%
+ \fi%
+}
+
+
+\def\picskip#1{%
+ \let\par=\old@par%
+ \par%
+ \pagetotal\the\pagetotal%
+ \c@tmp=#1\relax%
+ \ifnum\c@tmp=0%
+   \d@tmp\baselineskip\multiply\d@tmp by\prevgraf\advance\d@tmp\parskip%
+   \ifdim\p@getot@l<\pagetotal
+     \advance\d@hoehe by-\d@tmp\advance\d@hoehe by1ex%
+     \ifdim\d@hoehe>0pt\vspace*{\d@hoehe}\fi%
+   \fi%
+   \ifdim\p@getot@l=\pagetotal%
+     \advance\d@hoehe by-\d@tmp\advance\d@hoehe by1ex%
+     \ifdim\d@hoehe>0pt\vspace*{\d@hoehe}\fi%
+   \fi%
+ \else\hangafter=-\c@tmp\hangindent=\d@breite%
+ \fi%
+ \leftskip \d@leftskip%
+ \if@list\parshape \@ne \@totalleftmargin \linewidth%
+   \advance\hsize \rightmargin%
+ \fi%
+}
+
+
+
+
+
+
+\def\hpic{%
+  \@ifnextchar ({\ihpic}{\ihpic(0pt,0pt)}
+}
+\def\ihpic(#1,#2){%
+  \@ifnextchar ({\@offsettrue\iihpic(#1,#2)}%
+                {\@offsetfalse\iihpic(#1,#2)(0pt,0pt)}
+}
+\def\iihpic(#1,#2)(#3,#4){%
+  \@ifnextchar [{\iiihpic(#1,#2)(#3,#4)}{\iiihpic(#1,#2)(#3,#4)[l]}
+}
+\def\iiihpic(#1,#2)(#3,#4)[#5]{%
+  \@ifnextchar [{\ivhpic(#1,#2)(#3,#4)[#5]}{\ivhpic(#1,#2)(#3,#4)[#5][]}
+}
+\def\ivhpic(#1,#2)(#3,#4)[#5][#6]#7{%
+  \setbox\@BILD=\hbox{#7}%
+  \d@breite=#1\d@breite=\the\d@breite%
+  \ifdim\d@breite=0pt\d@breite=\wd\@BILD\fi%
+  \c@breite=\d@breite\divide\c@breite by65536%
+  \d@hoehe=#2\d@hoehe=\the\d@hoehe%
+  \ifdim\d@hoehe=0pt\d@hoehe=\ht\@BILD\advance\d@hoehe by\dp\@BILD\fi%
+  \c@hoehe=\d@hoehe\divide\c@hoehe by65536%
+  \d@xoff=#3\c@xoff=\d@xoff\divide\c@xoff by65536%
+  \d@yoff=\d@hoehe%
+  \advance\d@yoff by-#4\c@yoff=\d@yoff\divide\c@yoff by65536%
+  \c@pos=0\d@tmpa=\parindent\parindent=0pt\unitlength1pt%
+  \if@offset
+    \setbox\@BILD=\hbox{%
+      \begin{picture}(\c@breite,\c@hoehe)%
+        \put(0,0){\makebox(\c@breite,\c@hoehe){}}%
+        \put(\c@xoff,\c@yoff){\box\@BILD}%
+      \end{picture}%
+    }%
+  \else%
+    \setbox\@BILD=\hbox{%
+      \begin{picture}(\c@breite,\c@hoehe)%
+        \put(0,0){\makebox(\c@breite,\c@hoehe)[#6]{\box\@BILD}}%
+      \end{picture}%
+    }%
+  \fi%
+  \@tfor\@tempa := #5\do{%
+    \if\@tempa f\setbox\@BILD=\hbox{\Rahmen(\c@breite,\c@hoehe){\box\@BILD}}\fi%
+    \if\@tempa s\setbox\@BILD=\hbox{\Schatten(\c@breite,\c@hoehe){\box\@BILD}}\fi%
+    \if\@tempa o\setbox\@BILD=\hbox{\Oval(\c@breite,\c@hoehe){\box\@BILD}}\fi%
+    \if\@tempa d\setbox\@BILD=\hbox{\Strich(\c@breite,\c@hoehe){\box\@BILD}}\fi%
+    \if\@tempa x\setbox\@BILD=\hbox{\Kasten(\c@breite,\c@hoehe){\box\@BILD}}\fi%
+    \if\@tempa t\c@pos=1\fi%
+    \if\@tempa b\c@pos=2\fi%
+  }%
+ \ifnum\c@pos=0\parbox{\d@breite}{\makebox[0cm]{}\\\box\@BILD\smallskip}\fi%
+ \ifnum\c@pos=1\parbox[t]{\d@breite}{\makebox[0cm]{}\\\box\@BILD\smallskip}\fi%
+ \ifnum\c@pos=2\parbox[b]{\d@breite}{\makebox[0cm]{}\\\box\@BILD\smallskip}\fi%
+ \parindent=\d@tmpa%
+}
+
+
+
+
+
+
+\def\Rahmen(#1,#2)#3{%
+  \c@whole=\@wholewidth\divide\c@whole by65536%
+  \c@half=\@halfwidth\divide\c@half by65536%
+  \c@tmpa=#1\advance\c@tmpa by\c@whole\advance\c@tmpa by\c@whole%
+  \c@tmpb=#2\advance\c@tmpb by\c@whole\advance\c@tmpb by\c@whole%
+  \begin{picture}(\c@tmpa,\c@tmpb)%
+    \put(\c@whole,\c@half){\framebox(#1,#2){#3}}%
+  \end{picture}%
+  \global\advance\d@breite by2\@wholewidth%
+  \global\advance\d@hoehe by2\@wholewidth%
+}
+
+
+\def\Schatten(#1,#2)#3{%
+  \c@whole=\@wholewidth\divide\c@whole by65536%
+  \c@half=\@halfwidth\divide\c@half by65536%
+  \c@shad=\d@shad\divide\c@shad by65536%
+  \c@tmp=\c@whole\advance\c@tmp by\c@whole\c@tmpd=\c@tmp%
+  \advance\c@tmp by\c@shad%
+  \advance\c@tmpd by#1%
+  \advance\c@half by\c@shad%
+  \c@tmpa=#1\advance\c@tmpa by\c@tmp%
+  \c@tmpb=#2\advance\c@tmpb by\c@tmp%
+  \begin{picture}(\c@tmpa,\c@tmpb)%
+    \put(\c@whole,\c@half){\framebox(#1,#2){#3}}%
+    \put(\c@shad,0){\rule{\c@tmpd pt}{\c@shad pt}}%
+    \put(\c@tmpd,0){\rule{\c@shad pt}{#2 pt}}%
+  \end{picture}%
+  \global\advance\d@breite by2\@wholewidth\global\advance\d@breite by\d@shad%
+  \global\advance\d@hoehe by2\@wholewidth\global\advance\d@hoehe by\d@shad%
+}
+
+
+\def\Oval(#1,#2)#3{%
+  \@wholewidth=0.4pt%
+  \c@tmpa=\the#1\divide\c@tmpa by2%
+  \c@tmpb=\the#2\divide\c@tmpb by2%
+  \begin{picture}(#1,#2)%
+    \put(\c@tmpa,\c@tmpb){\oval(#1,#2)}%
+    \put(0.4,0.4){#3}%
+  \end{picture}%
+  \global\advance\d@breite by1pt\global\advance\d@hoehe by1pt%
+}
+
+
+\def\Strich(#1,#2)#3{%
+  \c@whole=\@wholewidth\divide\c@whole by65536%
+  \c@half=\@halfwidth\divide\c@half by65536%
+  \c@dash=\d@dash\divide\c@dash by65536%
+  \c@tmp=\c@whole\advance\c@tmp by\c@whole%
+  \c@tmpa=#1\advance\c@tmpa by\c@tmp%
+  \c@tmpb=#2\advance\c@tmpb by\c@tmp%
+  \c@tmpc=#1\advance\c@tmpc by\c@whole%
+  \c@tmpd=#2\advance\c@tmpd by\c@whole%
+  \begin{picture}(\c@tmpa,\c@tmpb)%
+    \put(\c@half,\c@half){\dashbox{\c@dash}(\c@tmpc,\c@tmpd){#3}}%
+  \end{picture}%
+  \global\advance\d@breite by2\@wholewidth%
+  \global\advance\d@hoehe by2\@wholewidth%
+}
+
+
+\def\Kasten(#1,#2)#3{%
+  \@wholewidth=0.4pt%
+  \c@boxl=\d@boxl\divide\c@boxl by65536\c@boxl=\the\c@boxl%
+  \c@tmpa=#1\advance\c@tmpa by\c@boxl%
+  \c@tmpb=#2\advance\c@tmpb by\c@boxl%
+  \c@tmp=#2%
+  \begin{picture}(\c@tmpa,\c@tmpb)%
+    \put(0,\c@boxl){\framebox(#1,#2){#3}}%
+    \put(\c@boxl,0){\line(-1,1){\c@boxl}}%
+    \put(\c@boxl,0){\line(1,0){#1}\line(-1,1){\c@boxl}}%
+    \put(\c@boxl,0){\put(#1,0){\line(0,1){\c@tmp}%
+         \put(0,\c@tmp){\line(-1,1){\c@boxl}}}}%
+  \end{picture}%
+  \global\advance\d@breite by\d@boxl%
+  \global\advance\d@hoehe by\d@boxl%
+}
+
+
+
+
+
+\newbox\env@box%
+\newdimen\d@envdp
+\newcount\c@hsize
+\newcount\c@envdp
+\newdimen\d@envb
+
+\long\def\frameenv{\@ifnextchar [{\@frameenv}{\@frameenv[\textwidth]}}
+\long\def\@frameenv[#1]{%
+ \hsiz@=\textwidth  \textwidth=#1  \d@envb=#1
+ \advance\textwidth by-2\@wholewidth
+ \advance\textwidth by-2\fboxsep
+ \hsize=\textwidth   \linewidth=\textwidth
+ \setbox\env@box=\vbox\bgroup}%
+\def\endframeenv{%
+ \egroup%
+ \hsize=\hsiz@  \textwidth=\hsiz@  \linewidth=\hsiz@
+ \c@breite=\d@envb   \divide\c@breite by65536
+ \advance\d@envb by-2\@wholewidth
+ \c@hsize=\d@envb  \divide\c@hsize by65536%
+ \d@envdp=\dp\env@box  \advance\d@envdp by\ht\env@box%
+ \advance\d@envdp by2\fboxsep%
+ \d@hoehe=\d@envdp   \advance\d@hoehe by2\@wholewidth
+ \c@hoehe=\d@hoehe   \divide\c@hoehe by65536
+ \c@envdp=\d@envdp   \divide\c@envdp by65536%
+ \c@tmp=\@wholewidth \divide\c@tmp by65536
+ \vskip\@wholewidth%
+ \unitlength 1pt\noindent%
+ \begin{picture}(\c@breite,\c@hoehe)(0,0)
+   \put(\c@tmp,\c@tmp){\framebox(\c@hsize,\c@envdp){\box\env@box}}
+ \end{picture}%
+}
+
+
+
+\long\def\shadowenv{\@ifnextchar [{\@shadowenv}{\@shadowenv[\textwidth]}}
+\long\def\@shadowenv[#1]{%
+ \hsiz@=\textwidth  \textwidth=#1  \d@envb=#1
+ \advance\textwidth by-2\@wholewidth
+ \advance\textwidth by-2\fboxsep
+ \advance\textwidth by-\d@shad%
+ \hsize=\textwidth   \linewidth=\textwidth
+ \setbox\env@box=\vbox\bgroup}%
+\def\endshadowenv{%
+ \egroup
+ \hsize=\hsiz@  \textwidth=\hsiz@  \linewidth=\hsiz@
+ \d@tmpa=\d@envb
+ \c@breite=\d@envb   \divide\c@breite by65536
+ \advance\d@envb by-2\@wholewidth  \advance\d@envb by-\d@shad
+ \c@hsize=\d@envb  \divide\c@hsize by65536%
+ \d@envdp=\dp\env@box  \advance\d@envdp by\ht\env@box%
+ \advance\d@envdp by2\fboxsep%
+ \c@envdp=\d@envdp   \divide\c@envdp by65536%
+ \d@hoehe=\d@envdp
+ \advance\d@hoehe by2\@wholewidth  \advance\d@hoehe by\d@shad
+ \c@hoehe=\d@hoehe    \divide\c@hoehe by65536
+ \c@shad =\d@shad     \divide\c@shad  by65536
+ \c@tmp=\@wholewidth  \divide\c@tmp by65536
+ \advance\d@tmpa by-2\d@shad
+ \c@xoff =\d@tmpa     \divide\c@xoff by65536
+ \advance\c@xoff by\c@shad  \advance\c@xoff by-1
+ \advance\d@envdp by\@wholewidth
+ \vskip\@halfwidth
+ \unitlength 1pt\noindent%
+ \begin{picture}(\c@breite,\c@hoehe)(0,0)
+    \put(\c@tmp,\c@shad){\framebox(\c@hsize,\c@envdp){\box\env@box}}
+    \put(\c@shad,0){\rule{\d@tmpa}{\d@shad}}%
+    \put(\c@xoff,0){\rule{\d@shad}{\d@envdp}}%
+ \end{picture}%
+ \vskip\@halfwidth
+}
+
+
+\long\def\dashenv{\@ifnextchar [{\@dashenv}{\@dashenv[\textwidth]}}
+\long\def\@dashenv[#1]{%
+ \hsiz@=\textwidth  \textwidth=#1  \d@envb=#1
+ \advance\textwidth by-2\@wholewidth  \advance\textwidth by-2\fboxsep
+ \hsize=\textwidth   \linewidth=\textwidth
+ \setbox\env@box=\vbox\bgroup}%
+\long\def\enddashenv{%
+ \egroup
+ \hsize=\hsiz@  \textwidth=\hsiz@  \linewidth=\hsiz@
+ \c@breite=\d@envb   \divide\c@breite by65536
+ \advance\d@envb by-\@wholewidth
+ \c@hsize=\d@envb  \divide\c@hsize by65536%
+ \d@envdp=\dp\env@box  \advance\d@envdp by\ht\env@box%
+ \advance\d@envdp by2\fboxsep%
+ \advance\d@envdp by\@wholewidth
+ \d@hoehe=\d@envdp   \advance\d@hoehe by2\@wholewidth
+ \c@hoehe=\d@hoehe   \divide\c@hoehe by65536
+ \c@envdp=\d@envdp   \divide\c@envdp by65536%
+ \c@dash=\d@dash     \divide\c@dash  by65536%
+ \c@whole=\@wholewidth  \divide\c@whole by65536
+ \c@half=\@halfwidth  \divide\c@half by 65536
+ \noindent\unitlength 1pt
+ \begin{picture}(\c@breite,\c@hoehe)(0,0)
+   \put(\c@half,\c@whole){\dashbox{\c@dash}(\c@hsize,\c@envdp){\box\env@box}}
+ \end{picture}%
+}
+
+
+\long\def\ovalenv{\@ifnextchar [{\@ovalenv}{\@ovalenv[\textwidth]}}%
+\long\def\@ovalenv[#1]{%
+ \hsiz@=\textwidth  \textwidth=#1  \d@envb=#1
+ \advance\textwidth by-4\fboxsep
+ \hsize=\textwidth   \linewidth=\textwidth
+ \setbox\env@box=\vbox\bgroup}%
+\long\def\endovalenv{%
+ \egroup
+ \hsize=\hsiz@  \textwidth=\hsiz@  \linewidth=\hsiz@
+ \@wholewidth=0.4pt
+ \c@breite=\d@envb   \divide\c@breite by65536
+ \advance\d@envb by-2\@wholewidth
+ \c@hsize=\d@envb  \divide\c@hsize by65536%
+ \d@envdp=\dp\env@box  \advance\d@envdp by\ht\env@box%
+ \advance\d@envdp by4\fboxsep%
+ \c@envdp=\d@envdp   \divide\c@envdp by65536%
+ \d@hoehe=\d@envdp   \advance\d@hoehe by2\@wholewidth
+ \c@hoehe=\d@hoehe   \divide\c@hoehe by65536
+ \c@tmpa=\c@hsize   \divide\c@tmpa by2%
+ \c@tmpb=\c@envdp   \divide\c@tmpb by2%
+ \d@tmpa=2\fboxsep   \advance\d@tmpa by\@wholewidth
+ \c@xoff=\d@tmpa     \divide\c@xoff  by65536%
+ \advance\d@tmpa by\dp\env@box
+ \c@yoff=\d@tmpa     \divide\c@yoff  by65536%
+ \unitlength 1pt\noindent
+ \begin{picture}(\c@breite,\c@hoehe)(0,0)
+   \put(\c@tmpa,\c@tmpb){\oval(\c@hsize,\c@envdp)}
+   \put(\c@xoff,\c@yoff){\box\env@box}%
+ \end{picture}%
+}
