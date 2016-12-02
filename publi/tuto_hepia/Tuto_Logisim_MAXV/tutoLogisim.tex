@@ -73,9 +73,9 @@
 \texttt{Logisim} est un logiciel open-source permettant de concevoir et de simuler des circuits
 logiques~\footnote{La dernière version de Logisim peut être téléchargée à l'adresse
   \url{http://reds-data.heig-vd.ch/logisim-evolution/logisim-evolution.t.jar}.
-  Logisim contient un mechanisme d'auto-update: dès que une nouvelle version sorte, vous recevez
-  une notification au démarrage du logiciel et vous avez
-  la possibilité de mettre à jour votre copie.}.
+  Logisim contient un mécanisme d'auto-update: dès qu'une nouvelle version sort, vous recevrez
+  une notification au démarrage du logiciel et vous aurez
+  la possibilité de le mettre à jour.}.
 
 Ce document est un
 tutoriel qui décrit comment établir un système numérique à l'aide de cet éditeur de schéma. Nous expliquerons les
@@ -84,7 +84,7 @@ démarches nécessaires afin de concevoir, simuler et implémenter un projet sur
 Il existe différentes façons de décrire formellement les systèmes numériques : des langages de description du matériel
 (HDL), des tables de vérité, des graphes d'états, ou des schémas. Logisim permet uniquement de travailler sur des
 schémas. Le premier chapitre expliquera comment réaliser un premier schéma.
-En Figure~\ref{fig_logisim_description} vous pouvez voir l'interface de Logisim.
+Vous pouvez voir l'interface de Logisim sur la Figure  \ref{fig_logisim_description}.
 
 \begin{figure}[H]
 \begin{center}
@@ -97,7 +97,7 @@ Une des particularités de \texttt{Logisim} est de pouvoir éditer et simuler un
 Nous expliquerons plus tard dans ce document comment simuler un circuit, puis comment l'implémenter sur la carte du
 laboratoire.
 
-Ouvrir logisim, une fenêtre demande l'introduction du nom d'utilisateur -- voir Figure~\ref{fig_logisim_login}.
+A l'ouverture de \texttt{Logisim}, une fenêtre demande l'introduction du nom d'utilisateur -- voir Figure \ref{fig_logisim_login}.
 Il sera inscrit dans chaque composant créé, afin d'empêcher le plagiat.
 
 \begin{figure}[H]
@@ -308,7 +308,6 @@ Afin de faciliter la lecture des valeurs d'entrée/sortie, il est possible de ch
 
 
 \subsection{Connexion}
-
 La carte \texttt{MAX\_V} et la \texttt{console} doivent être alimentées avec une alimentation 5 volts.
 La programmation de la carte \texttt{MAX\_V} se fait via le module \texttt{USB-Blaster}.
 Les éléments doivent être branchés comme sur la Figure~\ref{fig_connexion}.\\
@@ -324,14 +323,12 @@ Les éléments doivent être branchés comme sur la Figure~\ref{fig_connexion}.\
 
 \begin{figure}[H]
 \begin{center}
-\includegraphics[width=0.95\linewidth]{images/MAXV_branchement.JPG}
+\includegraphics[width=0.85\linewidth]{images/MAXV_branchement.JPG}
 \caption{\label{fig_connexion}Connexion de la carte MAX\_V avec la console}
 \end{center}
 \end{figure}
 
-
 \subsection{Configuration}
-
 \begin{enumerate}
 \item Afin de pouvoir programmer la carte, il est nécessaire de nommer chaque entrée/sortie en leur affectant
 l'attribut \texttt{Label}. On utilisera les termes \texttt{A}, \texttt{B} et \texttt{D} pour respectivement les deux bus
@@ -370,7 +367,7 @@ Figure~\ref{fig_mapping} et la Figure~\ref{fig_mapped}.
 
 \begin{figure}[H]
 \begin{center}
-\includegraphics[width=400pt]{images/logisim_mapping.png}
+\includegraphics[scale=0.42]{images/logisim_mapping.png}
 \caption{\label{fig_mapping}Console Board Mapping}
 \end{center}
 \end{figure}
