@@ -28,10 +28,7 @@ import java.util.List;
 
 public class VivadoDownload {
 
-    public static boolean Download(String scriptPath, String sandboxPath, FPGAReport myReporter) {
-        String vivadoProjectPath = sandboxPath + File.separator + VIVADO_PROJECT_NAME;
-        boolean bitFileExists = new File(vivadoProjectPath + File.separator + VIVADO_PROJECT_NAME + ".runs"
-                + File.separator + "impl_1" + File.separator + ToplevelHDLGeneratorFactory.FPGAToplevelName + ".bit").exists();
+    public static boolean Download(String scriptPath, String sandboxPath, FPGAReport myReporter, boolean downloadOnly) {
         GridBagConstraints gbc = new GridBagConstraints();
         JFrame panel = new JFrame("Vivado Downloading");
         panel.setResizable(false);
@@ -65,7 +62,7 @@ public class VivadoDownload {
         VendorSoftware vivadoVendor = Settings.vendors.get(FPGAClass.VendorVivado);
 
         // Create Vivado project
-        if (!bitFileExists) {
+        if (!downloadOnly) {
             boolean status = executeTclScript(vivadoVendor.getBinaryPath(0),
                     scriptPath + File.separator + CREATE_PROJECT_TCL,
                     "Create Vivado project",
@@ -77,7 +74,7 @@ public class VivadoDownload {
         }
 
         // Generate bitstream
-        if (!bitFileExists) {
+        if (!downloadOnly) {
             boolean status = executeTclScript(vivadoVendor.getBinaryPath(0),
                     scriptPath + File.separator + GENERATE_BITSTREAM_FILE,
                     "Generate bitstream",
@@ -86,27 +83,40 @@ public class VivadoDownload {
                 panel.dispose();
                 return false;
             }
+            boolean bitFileExists = new File(_bitStreamPath).exists();
+            if (!bitFileExists) {
+                myReporter.AddFatalError("Could not generate bitfile! Check Console tab for more details.");
+                panel.dispose();
+                return false;
+            }
         }
 
         // Download to board
-        Object[] options = { "Yes, download","No, abort" };
-        if (JOptionPane
-                .showOptionDialog(
-                        progres,
-                        "Verify that your board is connected and you are ready to download.",
-                        "Ready to download ?", JOptionPane.YES_NO_OPTION,
-                        JOptionPane.WARNING_MESSAGE, null, options, options[0]) != JOptionPane.YES_OPTION) {
-            myReporter.AddWarning("Download aborted.");
+        // only if the bitfile exists
+        boolean bitFileExists = new File(_bitStreamPath).exists();
+        if (bitFileExists) {
+            Object[] options = { "Yes, download","No, abort" };
+            if (JOptionPane.showOptionDialog(
+                    progres,
+                    "Verify that your board is connected and you are ready to download.",
+                    "Ready to download ?", JOptionPane.YES_NO_OPTION,
+                    JOptionPane.WARNING_MESSAGE, null, options, options[0]) != JOptionPane.YES_OPTION) {
+                myReporter.AddWarning("Download aborted.");
+                panel.dispose();
+                return false;
+            }
+
+            boolean status = executeTclScript(vivadoVendor.getBinaryPath(0),
+                    scriptPath + File.separator + LOAD_BITSTEAM_FILE,
+                    "Downloading bitfile",
+                    sandboxPath, myReporter, locText, progres);
+            panel.dispose();
+            return status;
+        } else {
+            myReporter.AddFatalError("No bitfile found!");
             panel.dispose();
             return false;
         }
-        boolean status = executeTclScript(vivadoVendor.getBinaryPath(0),
-                scriptPath + File.separator + LOAD_BITSTEAM_FILE,
-                "Downloading bitfile",
-                sandboxPath, myReporter, locText, progres);
-
-        panel.dispose();
-        return status;
     }
 
     private static int progresVal = 0;
@@ -225,10 +235,10 @@ public class VivadoDownload {
         contents.add("open_hw");
         contents.add("connect_hw_server");
         contents.add("open_hw_target");
-        String bitStreamPath = vivadoProjectPath + File.separator + VIVADO_PROJECT_NAME + ".runs"
+        _bitStreamPath = vivadoProjectPath + File.separator + VIVADO_PROJECT_NAME + ".runs"
                 + File.separator + "impl_1" + File.separator + ToplevelHDLGeneratorFactory.FPGAToplevelName + ".bit";
-        bitStreamPath = bitStreamPath.replace("\\", "/");
-        contents.add("set_property PROGRAM.FILE {" + bitStreamPath + "} " + lindex);
+        _bitStreamPath = _bitStreamPath.replace("\\", "/");
+        contents.add("set_property PROGRAM.FILE {" + _bitStreamPath + "} " + lindex);
         contents.add("current_hw_device " + lindex);
         contents.add("refresh_hw_device -update_hw_probes false " + lindex);
         contents.add("program_hw_device " + lindex);
@@ -236,6 +246,7 @@ public class VivadoDownload {
         return FileWriter.WriteContents(loadBitstreamFile, contents, myReporter);
     }
 
+    private static String _bitStreamPath = "";
     private final static String CREATE_PROJECT_TCL = "vivadoCreateProject.tcl";
     private final static String GENERATE_BITSTREAM_FILE = "vivadoGenerateBitStream.tcl";
     private final static String LOAD_BITSTEAM_FILE = "vivadoLoadBitStream.tcl";

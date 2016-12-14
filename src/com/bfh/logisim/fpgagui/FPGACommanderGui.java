@@ -919,11 +919,15 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 			}
 		}
 		if (!MySettings.GetHDLOnly() || skipHDL.isSelected()) {
-			DownLoadDesign(MySettings.GetHDLOnly());
+			DownLoadDesign(MySettings.GetHDLOnly(), skipHDL.isSelected());
 		}
 	}
 
-	private void DownLoadDesign(boolean generateOnly) {
+	private void DownLoadDesign(boolean generateOnly, boolean downloadOnly) {
+		if (generateOnly && downloadOnly) {
+			MyReporter.AddError("Can not have skip VHDL generation and generate HDL only in the same time...");
+			return;
+		}
 		if (!MapPannel.isDoneAssignment()) {
 			MyReporter.AddError("Download to board canceled");
 			return;
@@ -984,7 +988,7 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 				VivadoDownload.Download(
 						ProjectDir + HDLPaths[ScriptPath] + File.separator,
 						ProjectDir + HDLPaths[SandboxPath] + File.separator,
-						MyReporter);
+						MyReporter, downloadOnly);
 			}
 		}
 	}
@@ -1361,8 +1365,7 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 		Worker = new ToplevelHDLGeneratorFactory(
 				MyBoardInformation.fpga.getClockFrequency(),
 				MenuSimulate.SupportedTickFrequencies[frequenciesList
-						.getSelectedIndex()], RootSheet, MyMappableResources,
-				skipHDL.isSelected());
+						.getSelectedIndex()], RootSheet, MyMappableResources);
 		if (!AbstractHDLGeneratorFactory.WriteEntity(
 				ProjectDir
 						+ Worker.GetRelativeDirectory(MySettings.GetHDLType()),
