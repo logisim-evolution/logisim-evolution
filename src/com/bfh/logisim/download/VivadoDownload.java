@@ -136,7 +136,7 @@ public class VivadoDownload {
             List<String> command = new ArrayList<String>();
             command.add(binary);
             command.add("-mode");
-            command.add("tcl");
+            command.add("batch");
             command.add("-source");
             command.add(tclScript);
             ProcessBuilder vivado1 = new ProcessBuilder(command);
@@ -152,7 +152,7 @@ public class VivadoDownload {
             }
             createProject.waitFor();
             if (createProject.exitValue() != 0) {
-                myReporter.AddFatalError("Failed to Create a Vivado Project, cannot download");
+                myReporter.AddFatalError("Failed to run tcl script, see Console tab for more details");
                 return false;
             }
         } catch (IOException e) {
