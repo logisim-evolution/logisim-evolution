@@ -59,8 +59,7 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 	// private boolean useFPGAClock;
 
 	public ToplevelHDLGeneratorFactory(long FPGAClock, double TickClock,
-			Circuit TopLevel, MappableResourcesContainer IOComponents,
-			boolean useFPGAClock) {
+			Circuit TopLevel, MappableResourcesContainer IOComponents) {
 		FpgaClockFrequency = FPGAClock;
 		TickFrequency = TickClock;
 		MyCircuit = TopLevel;
