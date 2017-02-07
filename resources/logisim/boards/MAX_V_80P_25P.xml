@@ -17,7 +17,7 @@
 <Button ActivityLevel="Active low" FPGAPinIOStandard="Default" FPGAPinName="PIN_F1" FPGAPinPullBehavior="Float" Height="23" LocationX="56" LocationY="313" Width="23"/>
 <Button ActivityLevel="Active low" FPGAPinIOStandard="Default" FPGAPinName="PIN_F2" FPGAPinPullBehavior="Float" Height="23" LocationX="56" LocationY="339" Width="23"/>
 <!--Pin H5: Clock main 1MHz -->
-<Button ActivityLevel="Active low" FPGAPinIOStandard="Default" FPGAPinName="PIN_J5" FPGAPinPullBehavior="Float" Height="23" LocationX="296" LocationY="357" Width="23"/>
+<Button ActivityLevel="Active low" FPGAPinIOStandard="Default" FPGAPinName="PIN_J5" FPGAPinPullBehavior="Float" Height="23" LocationX="400" LocationY="340" Width="23"/>
 <!--Pin M9: nReset -->
 <Button ActivityLevel="Active high" FPGAPinIOStandard="Default" FPGAPinName="PIN_M9" FPGAPinPullBehavior="Float" Height="23" LocationX="131" LocationY="198" Width="23"/>
 <!-- Encoder -->
