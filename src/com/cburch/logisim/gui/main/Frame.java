@@ -47,6 +47,8 @@ import java.awt.event.WindowEvent;
 import java.awt.geom.Ellipse2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+
+import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -77,6 +79,7 @@ import com.cburch.logisim.gui.generic.CardPanel;
 import com.cburch.logisim.gui.generic.LFrame;
 import com.cburch.logisim.gui.generic.RegTabContent;
 import com.cburch.logisim.gui.generic.ZoomControl;
+import com.cburch.logisim.gui.generic.ZoomFontControl;
 import com.cburch.logisim.gui.generic.ZoomModel;
 import com.cburch.logisim.gui.menu.LogisimMenuBar;
 import com.cburch.logisim.prefs.AppPreferences;
@@ -399,8 +402,14 @@ public class Frame extends LFrame implements LocaleListener {
 		vhdlSimState = new VhdlSimState();
 		vhdlSimState.stateChanged();
 		proj.getVhdlSimulator().addVhdlSimStateListener(vhdlSimState);
-
+		
 		zoom = new ZoomControl(layoutZoomModel);
+		ZoomFontControl zoom2 = new ZoomFontControl(this,menubar);
+		JPanel zoomPanel = new JPanel();
+		zoomPanel.setLayout(new BoxLayout(zoomPanel, BoxLayout.LINE_AXIS));
+		zoomPanel.add(zoom2);
+		zoomPanel.add(zoom);
+
 
 		// set up the central area
 		CanvasPane canvasPane = new CanvasPane(layoutCanvas);
@@ -422,7 +431,7 @@ public class Frame extends LFrame implements LocaleListener {
 
 		JPanel attrFooter = new JPanel(new BorderLayout());
 
-		attrFooter.add(zoom, BorderLayout.LINE_END);
+		attrFooter.add(zoomPanel, BorderLayout.LINE_END);
 
 		attrPanel.add(attrFooter, BorderLayout.SOUTH);
 
