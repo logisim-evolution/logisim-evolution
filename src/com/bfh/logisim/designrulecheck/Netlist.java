@@ -46,6 +46,8 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JProgressBar;
 
+import org.hamcrest.core.IsInstanceOf;
+
 import com.bfh.logisim.fpgagui.FPGAReport;
 import com.bfh.logisim.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.circuit.Circuit;
@@ -78,6 +80,7 @@ import com.cburch.logisim.std.memory.ShiftRegister;
 import com.cburch.logisim.std.memory.TFlipFlop;
 import com.cburch.logisim.std.wiring.Clock;
 import com.cburch.logisim.std.wiring.Pin;
+import com.cburch.logisim.std.wiring.Probe;
 import com.cburch.logisim.std.wiring.Tunnel;
 
 public class Netlist implements CircuitListener {
@@ -716,6 +719,20 @@ public class Netlist implements CircuitListener {
 			 * later on
 			 */
 			boolean Ignore = false;
+			
+			/* In this case, the probe should not be synthetised:
+			 * We could set the Probe as non-HDL element. But If we set the Probe
+			 * as non HDL element, logisim will not allow user to download the design. 
+			 * 
+			 * In some case we need to use Logisim Simulation before running the design on the hardware. 
+			 * During simulation, probes are very helpful to see signals values. And when simulation is ok, 
+			 * the user does not want to delete all probes.
+			 * Thus, here we remove it form the netlist so it is transparent.
+			 */
+			if(com.getFactory() instanceof Probe){
+				continue;
+			}
+			
 			if (com.getFactory() instanceof SplitterFactory) {
 				MyComplexSplitters.add(com);
 				Ignore = true;
