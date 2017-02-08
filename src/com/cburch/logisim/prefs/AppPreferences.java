@@ -485,7 +485,10 @@ public class AppPreferences {
 
 	public static final PrefMonitor<Double> LAYOUT_ZOOM = create(new PrefMonitorDouble(
 			"layoutZoom", 1.0));
-
+	
+	public static final PrefMonitor<Integer> LAYOUT_FONT_ZOOM = create(new PrefMonitorInt(
+			"layoutFontZoom", 100));
+	
 	public static final PrefMonitor<Boolean> APPEARANCE_SHOW_GRID = create(new PrefMonitorBoolean(
 			"appearanceGrid", true));
 
