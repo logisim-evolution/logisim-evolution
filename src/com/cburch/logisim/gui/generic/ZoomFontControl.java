@@ -2,7 +2,6 @@ package com.cburch.logisim.gui.generic;
 
 import java.awt.Component;
 import java.awt.Container;
-import java.beans.PropertyChangeSupport;
 import java.util.Map.Entry;
 
 import javax.swing.BorderFactory;
