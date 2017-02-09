@@ -473,6 +473,8 @@ public class Frame extends LFrame implements LocaleListener {
 				.menuEnableChanged(menuListener);
 
 		LocaleManager.addLocaleListener(this);
+		
+		zoom2.UpdateFonts();
 	}
 
 	private void computeTitle() {

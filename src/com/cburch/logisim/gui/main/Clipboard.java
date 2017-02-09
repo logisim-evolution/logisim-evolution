@@ -37,6 +37,7 @@ import java.util.HashSet;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.std.wiring.Tunnel;
 import com.cburch.logisim.util.PropertyChangeWeakSupport;
 
 class Clipboard {
@@ -101,7 +102,10 @@ class Clipboard {
 			AttributeSet copyAttrs = (AttributeSet) baseAttrs.clone();
 			/* We clear all labels on the Clipboard */
 			if (copyAttrs.containsAttribute(StdAttr.LABEL)&&ClearLabels)
-				copyAttrs.setValue(StdAttr.LABEL, "");
+			{
+				if(base.getFactory().getClass()!=Tunnel.class)
+					copyAttrs.setValue(StdAttr.LABEL, "");
+			}
 			Component copy = base.getFactory().createComponent(
 					base.getLocation(), copyAttrs);
 			components.add(copy);
@@ -116,6 +120,7 @@ class Clipboard {
 		for (Component comp : components) {
 			AttributeSet attrs = comp.getAttributeSet();
 			if (attrs.containsAttribute(StdAttr.LABEL))
+				if(comp.getFactory().getClass()!=Tunnel.class)
 				attrs.setValue(StdAttr.LABEL, "");
 		}
 	}

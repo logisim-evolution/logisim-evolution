@@ -2,6 +2,8 @@ package com.cburch.logisim.gui.generic;
 
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.Menu;
+import java.lang.reflect.Array;
 import java.util.Map.Entry;
 
 import javax.swing.BorderFactory;
@@ -9,6 +11,7 @@ import javax.swing.BoxLayout;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
@@ -58,15 +61,14 @@ public class ZoomFontControl extends JPanel implements ChangeListener {
 		UpdateFonts();
 	}
 	
-	public void setLabel(){
+	private void setLabel(){
 		lblValue.setText(String.valueOf((slider.getValue()/100.0)));
 		AppPreferences.LAYOUT_FONT_ZOOM.set(slider.getValue());
 	}
 
 
 	@Override
-	public void stateChanged(ChangeEvent arg0) {
-		
+	public void stateChanged(ChangeEvent arg0) {		
 		UpdateFonts();
 	}
 	
@@ -83,23 +85,26 @@ public class ZoomFontControl extends JPanel implements ChangeListener {
 			}
 		}
 
-		iterateComponents(parent);
-		iterateComponents(mbar);
+		iterateComponents(parent.getComponents());
+		iterateComponents(mbar.getComponents());
 		setLabel();	
 		lblValue.updateUI();		
 	}
 
-	public void iterateComponents(Container c) {
-		Component[] components = c.getComponents();
+	private void iterateComponents(Component[] components) {
 		for(Component com : components) {
 
 			if(com instanceof JComponent){
 				((JComponent)com).updateUI();
 			}
-
+			
+			if(com instanceof JMenu){
+				iterateComponents(((JMenu)com).getMenuComponents());
+			}
+			
 			if(com instanceof Container){
 				if(com!=this)
-					iterateComponents((Container)com);
+					iterateComponents(((Container)com).getComponents());
 			}
 		}
 	}	
