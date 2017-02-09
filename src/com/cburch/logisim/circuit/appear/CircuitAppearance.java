@@ -97,6 +97,10 @@ public class CircuitAppearance extends Drawing {
 	public void addCircuitAppearanceListener(CircuitAppearanceListener l) {
 		listeners.add(l);
 	}
+	
+	public void sortPinsList(List<Instance> pins, Direction facing) {
+		DefaultAppearance.sortPinList(pins, facing);
+	}
 
 	@Override
 	public void addObjects(int index, Collection<? extends CanvasObject> shapes) {
