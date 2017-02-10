@@ -401,7 +401,7 @@ public class AppPreferences {
 
 	public static final PrefMonitor<String> GATE_SHAPE = create(new PrefMonitorStringOpts(
 			"gateShape", new String[] { SHAPE_SHAPED, SHAPE_RECTANGULAR,
-					SHAPE_DIN40700 }, SHAPE_SHAPED));
+					SHAPE_DIN40700 }, SHAPE_RECTANGULAR));
 	public static final PrefMonitor<String> LOCALE = create(new LocalePreference());
 	public static final PrefMonitor<Boolean> ACCENTS_REPLACE = create(new PrefMonitorBoolean(
 			"accentsReplace", false));
