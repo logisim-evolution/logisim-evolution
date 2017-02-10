@@ -68,7 +68,7 @@
 <Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="Default" FPGAPinName="M18" FPGAPinPullBehavior="Float" Height="8" LocationX="657" LocationY="225" Width="8"/>
 <Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="Default" FPGAPinName="N17" FPGAPinPullBehavior="Float" Height="8" LocationX="657" LocationY="237" Width="8"/>
 <Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="Default" FPGAPinName="P18" FPGAPinPullBehavior="Float" Height="8" LocationX="657" LocationY="249" Width="8"/>
-<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="Default" FPGAPinName="L11" FPGAPinPullBehavior="Float" Height="8" LocationX="670" LocationY="212" Width="8"/>
+<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="Default" FPGAPinName="L17" FPGAPinPullBehavior="Float" Height="8" LocationX="670" LocationY="212" Width="8"/>
 <Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="Default" FPGAPinName="M19" FPGAPinPullBehavior="Float" Height="8" LocationX="670" LocationY="225" Width="8"/>
 <Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="Default" FPGAPinName="P17" FPGAPinPullBehavior="Float" Height="8" LocationX="670" LocationY="237" Width="8"/>
 <Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="Default" FPGAPinName="R18" FPGAPinPullBehavior="Float" Height="8" LocationX="670" LocationY="249" Width="8"/>
