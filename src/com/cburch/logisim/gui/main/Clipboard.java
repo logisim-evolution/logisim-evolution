@@ -37,6 +37,7 @@ import java.util.HashSet;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.std.wiring.Tunnel;
 import com.cburch.logisim.util.PropertyChangeWeakSupport;
 
 class Clipboard {
@@ -91,7 +92,10 @@ class Clipboard {
 	private HashSet<Component> components;
 	private AttributeSet oldAttrs;
 	private AttributeSet newAttrs;
-
+	/*
+	 * This function is in charge of copy paste.
+	 * Now the tunnels' labels are not cleared except if it is requested to.
+	 */
 	private Clipboard(Selection sel, AttributeSet viewAttrs , boolean ClearLabels) {
 		components = new HashSet<Component>();
 		oldAttrs = null;
@@ -100,8 +104,12 @@ class Clipboard {
 			AttributeSet baseAttrs = base.getAttributeSet();
 			AttributeSet copyAttrs = (AttributeSet) baseAttrs.clone();
 			/* We clear all labels on the Clipboard */
-			if (copyAttrs.containsAttribute(StdAttr.LABEL)&&ClearLabels)
-				copyAttrs.setValue(StdAttr.LABEL, "");
+			if (copyAttrs.containsAttribute(StdAttr.LABEL)&&ClearLabels) {
+				if (!(base.getFactory() instanceof Tunnel)) {
+					continue;
+				}
+			}
+			
 			Component copy = base.getFactory().createComponent(
 					base.getLocation(), copyAttrs);
 			components.add(copy);
@@ -115,8 +123,13 @@ class Clipboard {
 	public void ClearLabels() {
 		for (Component comp : components) {
 			AttributeSet attrs = comp.getAttributeSet();
-			if (attrs.containsAttribute(StdAttr.LABEL))
+			if (comp.getFactory() instanceof Tunnel) {
+				continue;
+			}
+			
+			if (attrs.containsAttribute(StdAttr.LABEL)) {
 				attrs.setValue(StdAttr.LABEL, "");
+			}
 		}
 	}
 
