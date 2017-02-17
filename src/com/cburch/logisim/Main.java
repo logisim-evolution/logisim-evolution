@@ -78,7 +78,7 @@ public class Main {
 	 * annoying for developers, therefore we let them disable it from the
 	 * command line with the '-noupdates' option.
 	 */
-	public static boolean UPDATE = true;
+	public static boolean UPDATE = false;
 
 	/**
 	 * URL for the automatic updater
