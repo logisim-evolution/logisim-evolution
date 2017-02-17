@@ -52,6 +52,8 @@ import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.util.EventSourceWeakSupport;
 
 public class CircuitAppearance extends Drawing {
+	public static final int PINLENGTH = 10;
+	
 	private class MyListener implements CanvasModelListener {
 		public void modelChanged(CanvasModelEvent event) {
 			if (!suppressRecompute) {
@@ -87,9 +89,17 @@ public class CircuitAppearance extends Drawing {
 	public Graphics GetGraphics() {
 		return circuit.GetGraphics();
 	}
+	
+	public CircuitPins GetCircuitPin() {
+		return circuitPins;
+	}
 
 	public void addCircuitAppearanceListener(CircuitAppearanceListener l) {
 		listeners.add(l);
+	}
+	
+	public void sortPinsList(List<Instance> pins, Direction facing) {
+		DefaultAppearance.sortPinList(pins, facing);
 	}
 
 	@Override

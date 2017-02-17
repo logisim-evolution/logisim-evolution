@@ -31,6 +31,7 @@
 package com.cburch.logisim.util;
 
 import java.awt.BasicStroke;
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
@@ -58,7 +59,26 @@ public class GraphicsUtil {
 	static public void drawCenteredText(Graphics g, String text, int x, int y) {
 		drawText(g, text, x, y, H_CENTER, V_CENTER);
 	}
+	
+	static public void drawCenteredText(Graphics g, Font font, String text, int x, int y, Color fg, Color bg) {
+		drawText(g, text, x, y, H_CENTER, V_CENTER);
+	}
+	
+	static public void drawCenteredColoredText(Graphics g, String text, Color fg, Color bg, int x, int y) {
+		drawText(g, text, x, y, H_CENTER, V_CENTER, fg, bg);
+	}
 
+	static public void drawText(Graphics g, Font font, String text, int x,
+			int y, int halign, int valign, Color fg, Color bg) {
+		Font oldfont = g.getFont();
+		if (font != null)
+			g.setFont(font);
+		drawText(g, text, x, y, halign, valign, fg, bg);
+		if (font != null)
+			g.setFont(oldfont);
+	}
+
+	
 	static public void drawText(Graphics g, Font font, String text, int x,
 			int y, int halign, int valign) {
 		Font oldfont = g.getFont();
@@ -75,6 +95,21 @@ public class GraphicsUtil {
 			return;
 		Rectangle bd = getTextBounds(g, text, x, y, halign, valign);
 		g.drawString(text, bd.x, bd.y + g.getFontMetrics().getAscent());
+	}
+	
+	static public void drawText(Graphics g, String text, int x, int y,
+			int halign, int valign, Color fg, Color bg) {
+		if (text.length() == 0)
+			return;
+		Rectangle bd = getTextBounds(g, text, x, y, halign, valign);
+		if(g instanceof Graphics2D) {
+			((Graphics2D) g).setPaint(bg);
+			g.fillRect(bd.x, bd.y, bd.width, bd.height);
+			((Graphics2D) g).setPaint(fg);
+			((Graphics2D) g).drawString(text, bd.x, bd.y + g.getFontMetrics().getAscent());
+		} else {
+			g.drawString(text, bd.x, bd.y + g.getFontMetrics().getAscent());
+		}
 	}
 
 	static public Rectangle getTextBounds(Graphics g, Font font, String text,
