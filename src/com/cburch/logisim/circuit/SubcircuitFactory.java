@@ -598,14 +598,7 @@ public class SubcircuitFactory extends InstanceFactory {
 		Location loc = painter.getLocation();
 		g.translate(loc.getX(), loc.getY());
 		source.getAppearance().paintSubcircuit(g, facing);
-		
 		drawCircuitLabel(painter, getOffsetBounds(attrs), facing, defaultFacing);
-		
-		/* Check if we can use the new layout */
-		if (source.getAppearance().IsNamedBoxShaped()) {
-			drawCircuitName(painter, getOffsetBounds(attrs), facing, defaultFacing);
-			drawPinsName(painter, getOffsetBounds(attrs), facing, defaultFacing);
-		}
 		g.translate(-loc.getX(), -loc.getY());
 		painter.drawLabel();
 	}
