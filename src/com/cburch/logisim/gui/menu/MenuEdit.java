@@ -37,6 +37,7 @@ import java.awt.event.KeyEvent;
 import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
 
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Action;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.proj.ProjectEvent;
@@ -100,8 +101,8 @@ class MenuEdit extends Menu {
 	private static final long serialVersionUID = 1L;
 
 	private LogisimMenuBar menubar;
-	private JMenuItem undo = new JMenuItem();
-	private JMenuItem redo = new JMenuItem();
+	private JMenuItem undo = new ScaledMenuItem();
+	private JMenuItem redo = new ScaledMenuItem();
 	private MenuItemImpl cut = new MenuItemImpl(this, LogisimMenuBar.CUT);
 	private MenuItemImpl copy = new MenuItemImpl(this, LogisimMenuBar.COPY);
 	private MenuItemImpl paste = new MenuItemImpl(this, LogisimMenuBar.PASTE);
@@ -123,6 +124,7 @@ class MenuEdit extends Menu {
 
 	public MenuEdit(LogisimMenuBar menubar) {
 		this.menubar = menubar;
+		setFont(AppPreferences.getScaledFont(getFont()));
 
 		int menuMask = getToolkit().getMenuShortcutKeyMask();
 		undo.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z, menuMask));

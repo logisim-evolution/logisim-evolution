@@ -38,6 +38,7 @@ import java.awt.Graphics;
 import javax.swing.Icon;
 
 import com.cburch.draw.toolbar.ToolbarItem;
+import com.cburch.logisim.prefs.AppPreferences;
 
 public class ToolbarToolItem implements ToolbarItem {
 	private AbstractTool tool;
@@ -50,10 +51,10 @@ public class ToolbarToolItem implements ToolbarItem {
 
 	public Dimension getDimension(Object orientation) {
 		if (icon == null) {
-			return new Dimension(16, 16);
+			return new Dimension(AppPreferences.getScaled(AppPreferences.IconSize), AppPreferences.getScaled(AppPreferences.IconSize));
 		} else {
-			return new Dimension(icon.getIconWidth() + 8,
-					icon.getIconHeight() + 8);
+			return new Dimension(AppPreferences.getScaled(icon.getIconWidth() + 8),
+					AppPreferences.getScaled(icon.getIconHeight() + 8));
 		}
 	}
 

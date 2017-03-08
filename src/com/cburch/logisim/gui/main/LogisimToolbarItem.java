@@ -42,6 +42,7 @@ import javax.swing.Icon;
 
 import com.cburch.draw.toolbar.ToolbarItem;
 import com.cburch.logisim.gui.menu.LogisimMenuItem;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.Icons;
 import com.cburch.logisim.util.StringGetter;
 
@@ -67,7 +68,8 @@ class LogisimToolbarItem implements ToolbarItem {
 
 	public Dimension getDimension(Object orientation) {
 		if (icon == null) {
-			return new Dimension(16, 16);
+			return new Dimension(AppPreferences.getScaled(AppPreferences.IconSize), 
+					AppPreferences.getScaled(AppPreferences.IconSize));
 		} else {
 			int w = icon.getIconWidth();
 			int h = icon.getIconHeight();
@@ -95,12 +97,13 @@ class LogisimToolbarItem implements ToolbarItem {
 		}
 
 		if (icon == null) {
+			int simple = AppPreferences.getScaled(AppPreferences.IconSize)>>2;
 			g.setColor(new Color(255, 128, 128));
-			g.fillRect(4, 4, 8, 8);
+			g.fillRect(simple, simple, 2*simple, 2*simple);
 			g.setColor(Color.BLACK);
-			g.drawLine(4, 4, 12, 12);
-			g.drawLine(4, 12, 12, 4);
-			g.drawRect(4, 4, 8, 8);
+			g.drawLine(simple, simple, 3*simple, 3*simple);
+			g.drawLine(simple, 3*simple, 3*simple, simple);
+			g.drawRect(simple, simple, 2*simple, 2*simple);
 		} else {
 			icon.paintIcon(destination, g, 0, 1);
 		}

@@ -35,12 +35,15 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JCheckBoxMenuItem;
 
+import com.cburch.logisim.prefs.AppPreferences;
+
 class MenuItemCheckImpl extends JCheckBoxMenuItem implements MenuItem {
 
 	private static final long serialVersionUID = 1L;
 	private MenuItemHelper helper;
 
 	public MenuItemCheckImpl(Menu menu, LogisimMenuItem menuItem) {
+		setFont(AppPreferences.getScaledFont(getFont()));
 		helper = new MenuItemHelper(this, menu, menuItem);
 		super.addActionListener(helper);
 		setEnabled(true);

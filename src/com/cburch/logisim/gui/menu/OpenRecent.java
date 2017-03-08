@@ -54,6 +54,7 @@ class OpenRecent extends JMenu implements PropertyChangeListener {
 
 		RecentItem(File file) {
 			super(getFileText(file));
+			setFont(AppPreferences.getScaledFont(getFont()));
 			this.file = file;
 			setEnabled(file != null);
 			addActionListener(this);
@@ -97,6 +98,7 @@ class OpenRecent extends JMenu implements PropertyChangeListener {
 	private List<RecentItem> recentItems;
 
 	OpenRecent(LogisimMenuBar menubar) {
+		setFont(AppPreferences.getScaledFont(getFont()));
 		this.menubar = menubar;
 		this.recentItems = new ArrayList<RecentItem>();
 		AppPreferences.addPropertyChangeListener(

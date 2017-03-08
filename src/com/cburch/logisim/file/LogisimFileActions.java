@@ -79,7 +79,7 @@ public class LogisimFileActions {
 		
 		MergeFile(LogisimFile mergelib,
 				  LogisimFile source) {
-			HashSet<String> LibNames = new HashSet<String>();
+			HashMap<String,Library> LibNames = new HashMap<String,Library>();
 			HashSet<String> ToolList = new HashSet<String>();
 			HashSet<Circuit> NotImportedList = new HashSet<Circuit>();
 			HashMap<String,String> Error = new HashMap<String,String>();
@@ -105,6 +105,7 @@ public class LogisimFileActions {
 				if (!Error.isEmpty())
 					LibraryTools.ShowWarnings(mergelib.getName(),Error);
 				if (!NotImportedList.isEmpty()) {
+/* BIG TODO: This is a dirty hack as it is not checked if the circuits are identical in the merge-set with those in the original set */
 					HashMap<String,Circuit> Replacements = new HashMap<String,Circuit>();
 					/* Some circuits have not been imported, we have to update the circuits */
 					/* first stage, make a map of circuits in the current set */
@@ -162,7 +163,7 @@ public class LogisimFileActions {
 		private ArrayList<Library> MergedLibs = new ArrayList<Library>();
 
 		LoadLibraries(Library[] libs, LogisimFile source) {
-			HashSet<String> LibNames = new HashSet<String>();
+			HashMap<String,Library> LibNames = new HashMap<String,Library>();
 			HashSet<String> ToolList = new HashSet<String>();
 			HashMap<String,String> Error = new HashMap<String,String>();
 			for (Library lib : source.getLibraries()) {
@@ -170,7 +171,7 @@ public class LogisimFileActions {
 			}
 			LibraryTools.BuildToolList(source,ToolList);
 			for (int i = 0; i < libs.length; i++) {
-				if (LibNames.contains(libs[i].getName().toUpperCase())) {
+				if (LibNames.keySet().contains(libs[i].getName().toUpperCase())) {
                 	JOptionPane.showMessageDialog(null, "\""+libs[i].getName()+"\": "+Strings.get("LibraryAlreadyLoaded"),
                 			Strings.get("LibLoadErrors")+" "+libs[i].getName()+" !", JOptionPane.WARNING_MESSAGE);
 				} else {

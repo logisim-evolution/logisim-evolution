@@ -25,7 +25,7 @@
     <target name="jar" depends="compile">
         <jar destfile="logisim-evolution.jar">
             <fileset dir="bin" />
-            <fileset dir="." includes="doc/ resources/" excludes="doc/**/html/guide/analyze/" />
+            <fileset dir="." includes="doc/" excludes="doc/**/html/guide/analyze/" />
 			<zipgroupfileset dir="libs" includes="*.jar"/>
             <manifest>
                 <attribute name="Main-Class" value="com.cburch.logisim.Main"/>

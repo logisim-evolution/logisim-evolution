@@ -30,7 +30,13 @@
 
 package com.cburch.logisim.gui.prefs;
 
+import java.awt.Font;
+
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JSlider;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.prefs.AppPreferences;
@@ -40,9 +46,26 @@ class WindowOptions extends OptionsPanel {
 	private static final long serialVersionUID = 1L;
 	private PrefBoolean[] checks;
 	private PrefOptionList toolbarPlacement;
+	private ZoomSlider ZoomValue;
+	
+	private class ZoomChange implements ChangeListener {
+
+		@Override
+		public void stateChanged(ChangeEvent e) {
+			JSlider source = (JSlider)e.getSource();
+			if (!source.getValueIsAdjusting()) {
+				int value = (int) source.getValue();
+				AppPreferences.SCALE_FACTOR.set((double)value/100.0);
+				localeChanged();
+			}
+		}
+		
+	}
 
 	public WindowOptions(PreferencesFrame window) {
 		super(window);
+		JLabel ZoomLabel = new JLabel();
+		
 
 		checks = new PrefBoolean[] { new PrefBoolean(
 				AppPreferences.SHOW_TICK_RATE, Strings.getter("windowTickRate")), };
@@ -65,7 +88,25 @@ class WindowOptions extends OptionsPanel {
 		JPanel panel = new JPanel(new TableLayout(2));
 		panel.add(toolbarPlacement.getJLabel());
 		panel.add(toolbarPlacement.getJComboBox());
-
+		
+		ZoomLabel.setFont(AppPreferences.getScaledFont(ZoomLabel.getFont()));
+		ZoomLabel.setText("Zoom factor:");
+		ZoomValue = new ZoomSlider(JSlider.HORIZONTAL,100,300,(int)(AppPreferences.SCALE_FACTOR.get()*100));
+		
+		panel.add(new JLabel(" "));
+		panel.add(new JLabel(" "));
+		panel.add(ZoomLabel);
+		panel.add(ZoomValue);
+		ZoomValue.addChangeListener(new ZoomChange());
+	    JLabel important = new JLabel("Please restart logisim,");
+	    important.setFont(AppPreferences.getScaledFont(important.getFont()));
+	    important.setFont(important.getFont().deriveFont(Font.ITALIC));
+	    panel.add(important);
+	    important = new JLabel(" changing this value may have unpridictable results");
+	    important.setFont(AppPreferences.getScaledFont(important.getFont()));
+	    important.setFont(important.getFont().deriveFont(Font.ITALIC));
+	    panel.add(important);
+	    
 		setLayout(new TableLayout(1));
 		for (int i = 0; i < checks.length; i++) {
 			add(checks[i]);
