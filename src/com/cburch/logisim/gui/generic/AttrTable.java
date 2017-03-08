@@ -220,7 +220,8 @@ public class AttrTable extends JPanel implements LocaleListener {
 
 				currentRow = row;
 				currentEditor = editor;
-				editor.setFont(AppPreferences.getScaledFont(editor.getFont()));
+				if (editor != null)
+					editor.setFont(AppPreferences.getScaledFont(editor.getFont()));
 				return editor;
 			}
 		}

@@ -53,8 +53,8 @@ public class ToolbarToolItem implements ToolbarItem {
 		if (icon == null) {
 			return new Dimension(AppPreferences.getScaled(AppPreferences.IconSize), AppPreferences.getScaled(AppPreferences.IconSize));
 		} else {
-			return new Dimension(AppPreferences.getScaled(icon.getIconWidth() + 8),
-					AppPreferences.getScaled(icon.getIconHeight() + 8));
+			return new Dimension(icon.getIconWidth() + 4*AppPreferences.IconBorder,
+					             icon.getIconHeight() + 4*AppPreferences.IconBorder);
 		}
 	}
 
