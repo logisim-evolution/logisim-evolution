@@ -50,6 +50,7 @@ import com.cburch.logisim.analyze.model.AnalyzerModel;
 import com.cburch.logisim.analyze.model.OutputExpressions;
 import com.cburch.logisim.analyze.model.OutputExpressionsEvent;
 import com.cburch.logisim.analyze.model.OutputExpressionsListener;
+import com.cburch.logisim.prefs.AppPreferences;
 
 class MinimizedTab extends AnalyzerTab {
 	@SuppressWarnings("rawtypes")
@@ -171,8 +172,11 @@ class MinimizedTab extends AnalyzerTab {
 		karnaughMap = new KarnaughMapPanel(model);
 		karnaughMap.addMouseListener(new TruthTableMouseListener());
 		setAsExpr.addActionListener(myListener);
+		setAsExpr.setFont(AppPreferences.getScaledFont(setAsExpr.getFont()));
 		formatChoice.addItemListener(myListener);
-
+		formatChoice.setFont(AppPreferences.getScaledFont(formatChoice.getFont()));
+		formatLabel.setFont(AppPreferences.getScaledFont(formatLabel.getFont()));
+		
 		JPanel buttons = new JPanel(new GridLayout(1, 1));
 		buttons.add(setAsExpr);
 

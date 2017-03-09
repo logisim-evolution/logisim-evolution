@@ -51,6 +51,7 @@ import com.cburch.logisim.analyze.model.TruthTable;
 import com.cburch.logisim.analyze.model.TruthTableEvent;
 import com.cburch.logisim.analyze.model.TruthTableListener;
 import com.cburch.logisim.analyze.model.VariableList;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.GraphicsUtil;
 
 class KarnaughMapPanel extends JPanel implements TruthTablePanel {
@@ -74,8 +75,6 @@ class KarnaughMapPanel extends JPanel implements TruthTablePanel {
 	}
 
 	private static final long serialVersionUID = 1L;
-	private static final Font HEAD_FONT = new Font("Serif", Font.BOLD, 14);
-	private static final Font BODY_FONT = new Font("Serif", Font.PLAIN, 14);
 
 	private static final Color[] IMP_COLORS = new Color[] {
 			new Color(255, 0, 0, 128), new Color(0, 150, 0, 128),
@@ -101,9 +100,13 @@ class KarnaughMapPanel extends JPanel implements TruthTablePanel {
 	private int provisionalX;
 	private int provisionalY;
 	private Entry provisionalValue = null;
+	private Font HeaderFont;
+	private Font EntryFont;
 
 	public KarnaughMapPanel(AnalyzerModel model) {
 		this.model = model;
+		HeaderFont = AppPreferences.getScaledFont(getFont()).deriveFont(Font.BOLD);
+		EntryFont = AppPreferences.getScaledFont(getFont());
 		model.getOutputExpressions().addOutputExpressionsListener(myListener);
 		model.getTruthTable().addTruthTableListener(myListener);
 		setToolTipText(" ");
@@ -126,10 +129,10 @@ class KarnaughMapPanel extends JPanel implements TruthTablePanel {
 		}
 		if (message != null) {
 			if (g == null) {
-				tableHeight = 15;
-				tableWidth = 100;
+				tableHeight = AppPreferences.getScaled(AppPreferences.BoxSize);
+				tableWidth = AppPreferences.getScaled(100);
 			} else {
-				FontMetrics fm = g.getFontMetrics(BODY_FONT);
+				FontMetrics fm = g.getFontMetrics(EntryFont);
 				tableHeight = fm.getHeight();
 				tableWidth = fm.stringWidth(message);
 			}
@@ -143,18 +146,24 @@ class KarnaughMapPanel extends JPanel implements TruthTablePanel {
 			cellHeight = 16;
 			cellWidth = 24;
 		} else {
-			FontMetrics headFm = g.getFontMetrics(HEAD_FONT);
+			FontMetrics headFm = g.getFontMetrics(HeaderFont);
 			headHeight = headFm.getHeight();
 
-			FontMetrics fm = g.getFontMetrics(BODY_FONT);
+			FontMetrics fm = g.getFontMetrics(EntryFont);
 			cellHeight = fm.getAscent() + CELL_VERT_SEP;
 			cellWidth = fm.stringWidth("00") + CELL_HORZ_SEP;
 		}
 
 		int rows = 1 << ROW_VARS[table.getInputColumnCount()];
 		int cols = 1 << COL_VARS[table.getInputColumnCount()];
-		tableWidth = headHeight + cellWidth * (cols + 1);
-		tableHeight = headHeight + cellHeight * (rows + 1);
+		tableWidth = headHeight + cellWidth * cols +15;
+		tableHeight = headHeight + cellHeight * rows+15;
+		if ((cols==4)&&(rows==4)) {
+			tableWidth += headHeight+11;
+		}
+		if (cols==4) {
+			tableHeight += headHeight+11;
+		}
 		setPreferredSize(new Dimension(tableWidth, tableHeight));
 		invalidate();
 		repaint();
@@ -195,8 +204,8 @@ class KarnaughMapPanel extends JPanel implements TruthTablePanel {
 			return -1;
 		int left = computeMargin(getWidth(), tableWidth);
 		int top = computeMargin(getHeight(), tableHeight);
-		int x = event.getX() - left - headHeight - cellWidth;
-		int y = event.getY() - top - headHeight - cellHeight;
+		int x = event.getX() - left - headHeight - 11;
+		int y = event.getY() - top - headHeight - 11;
 		if (x < 0 || y < 0)
 			return -1;
 		int row = y / cellHeight;
@@ -223,38 +232,6 @@ class KarnaughMapPanel extends JPanel implements TruthTablePanel {
 
 	public TruthTable getTruthTable() {
 		return model.getTruthTable();
-	}
-
-	private String header(int start, int stop) {
-		if (start >= stop)
-			return "";
-		VariableList inputs = model.getInputs();
-		StringBuilder ret = new StringBuilder(inputs.get(start));
-		for (int i = start + 1; i < stop; i++) {
-			ret.append(", ");
-			ret.append(inputs.get(i));
-		}
-		return ret.toString();
-	}
-
-	private String label(int row, int rows) {
-		switch (rows) {
-		case 2:
-			return "" + row;
-		case 4:
-			switch (row) {
-			case 0:
-				return "00";
-			case 1:
-				return "01";
-			case 2:
-				return "11";
-			case 3:
-				return "10";
-			}
-		default:
-			return "";
-		}
 	}
 
 	void localeChanged() {
@@ -285,7 +262,7 @@ class KarnaughMapPanel extends JPanel implements TruthTablePanel {
 			message = Strings.get("karnaughTooManyInputsError");
 		}
 		if (message != null) {
-			g.setFont(BODY_FONT);
+			g.setFont(HeaderFont);
 			GraphicsUtil.drawCenteredText(g, message, sz.width / 2,
 					sz.height / 2);
 			return;
@@ -300,52 +277,98 @@ class KarnaughMapPanel extends JPanel implements TruthTablePanel {
 		int rows = 1 << rowVars;
 		int cols = 1 << colVars;
 
-		g.setFont(HEAD_FONT);
-		FontMetrics headFm = g.getFontMetrics();
-		String rowHeader = header(0, rowVars);
-		String colHeader = header(rowVars, rowVars + colVars);
-		int xoffs = (tableWidth + headHeight + cellWidth - headFm
-				.stringWidth(colHeader)) / 2;
-		g.drawString(colHeader, x + xoffs, y + headFm.getAscent());
-		int headerWidth = headFm.stringWidth(rowHeader);
-		if (headerWidth <= headHeight) {
-			int headX = x + (headHeight - headerWidth) / 2;
-			int headY = y
-					+ (tableHeight + headHeight + cellHeight + headFm
-							.getAscent()) / 2;
-			g.drawString(rowHeader, headX, headY);
-		} else if (g instanceof Graphics2D) {
-			Graphics2D g2 = (Graphics2D) g.create();
-			int yoffs = (tableHeight + headHeight + cellHeight + headerWidth) / 2;
-			int headX = x + headFm.getAscent();
-			int headY = y + yoffs;
-			g2.rotate(-Math.PI / 2.0);
-			g2.drawString(rowHeader, -headY, headX);
-			g2.dispose();
+		g.setFont(HeaderFont);
+		FontMetrics headFm = g.getFontMetrics(HeaderFont);
+		for (int i = 0 ; i < inputCount ; i++) {
+			String header = model.getInputs().get(i);
+			Boolean rotated = false;
+			int middleOffset = (headFm.stringWidth(header)>>1);
+			int xoffset = headHeight+11;
+			int yoffset = headHeight+11;
+			switch (i) {
+				case 0 : if (inputCount == 1) {
+					         rotated = false;
+					         xoffset += cellWidth+cellWidth/2;
+					         yoffset = headFm.getAscent();
+				         } else {
+				        	 rotated = true;
+				        	 yoffset += (rows-1)*cellHeight;
+				        	 if (inputCount != 4)
+				        		 yoffset += cellHeight/2;
+				        	 xoffset = headFm.getAscent();
+				         }
+				         break;
+				case 1  : if (inputCount==2) {
+			                 rotated = false;
+			                 xoffset += cellWidth+cellWidth/2;
+			                 yoffset = headFm.getAscent();
+						  } else if (inputCount==3) {
+				                 rotated = false;
+				                 xoffset += 3*cellWidth;
+				                 yoffset = headFm.getAscent();
+						  } else {
+							  rotated=true;
+							  xoffset += 4*cellWidth+11+headFm.getAscent();
+							  yoffset += 2*cellHeight;
+						  }
+				          break;
+				case 2  : if (inputCount==3) {
+					         rotated = false;
+					         xoffset += 2*cellWidth;
+					         yoffset += 11+2*cellHeight+headFm.getAscent();
+				          } else {
+				        	 rotated = false;
+				        	 xoffset += 3*cellWidth;
+				        	 yoffset = headFm.getAscent();
+				          }
+				          break;
+				case 3  : rotated = false;
+		                  xoffset += 2*cellWidth;
+		                  yoffset += 11+4*cellHeight+headFm.getAscent();
+				default : break;
+			}
+			if (g instanceof Graphics2D) {
+				Graphics2D g2 = (Graphics2D) g.create();
+				if (rotated) {
+					g2.translate(xoffset+x, yoffset+y);
+					g2.rotate(-Math.PI / 2.0);
+					g2.drawString(header, -middleOffset, 0 );
+				} else
+				g2.drawString(header, xoffset+x-middleOffset, yoffset+y);
+			}
 		}
 
 		x += headHeight;
 		y += headHeight;
-		g.setFont(BODY_FONT);
+		g.setFont(EntryFont);
 		FontMetrics fm = g.getFontMetrics();
 		int dy = (cellHeight + fm.getAscent()) / 2;
-		for (int i = 0; i < cols; i++) {
-			String label = label(i, cols);
-			g.drawString(
-					label,
-					x + (i + 1) * cellWidth
-							+ (cellWidth - fm.stringWidth(label)) / 2, y + dy);
+		x += 11;
+		y += 11;
+		/* Here the 0/1 labels are placed */
+		if (cols == 2) {
+			g.drawLine(x+cellWidth, y-8, x+2*cellWidth, y-8);
+			g.drawLine(x+cellWidth, y-9, x+2*cellWidth, y-9);
+		} else {
+			g.drawLine(x+2*cellWidth, y-8, x+4*cellWidth, y-8);
+			g.drawLine(x+2*cellWidth, y-9, x+4*cellWidth, y-9);
+			g.drawLine(x+cellWidth, y+8+rows*cellHeight, x+3*cellWidth, y+8+rows*cellHeight);
+			g.drawLine(x+cellWidth, y+9+rows*cellHeight, x+3*cellWidth, y+9+rows*cellHeight);
 		}
-		for (int i = 0; i < rows; i++) {
-			String label = label(i, rows);
-			g.drawString(label, x + (cellWidth - fm.stringWidth(label)) / 2, y
-					+ (i + 1) * cellHeight + dy);
+		switch (rows) {
+			case 2 :
+				g.drawLine(x-8, y+cellHeight, x-8, y+2*cellHeight);
+				g.drawLine(x-9, y+cellHeight, x-9, y+2*cellHeight);
+				break;
+			case 4 :
+				g.drawLine(x-8, y+2*cellHeight, x-8, y+4*cellHeight);
+				g.drawLine(x-9, y+2*cellHeight, x-9, y+4*cellHeight);
+				g.drawLine(x+cols*cellWidth+8, y+cellHeight, x+cols*cellWidth+8, y+3*cellHeight);
+				g.drawLine(x+cols*cellWidth+9, y+cellHeight, x+cols*cellWidth+9, y+3*cellHeight);
+				break;
 		}
 
 		int outputColumn = table.getOutputIndex(output);
-		x += cellWidth;
-		y += cellHeight;
-		g.setColor(ERROR_COLOR);
 		for (int i = 0; i < rows; i++) {
 			for (int j = 0; j < cols; j++) {
 				int row = getTableRow(i, j, rows, cols);
@@ -354,12 +377,20 @@ class KarnaughMapPanel extends JPanel implements TruthTablePanel {
 						&& outputColumn == provisionalX)
 					entry = provisionalValue;
 				if (entry.isError()) {
+					g.setColor(ERROR_COLOR);
 					g.fillRect(x + j * cellWidth, y + i * cellHeight,
 							cellWidth, cellHeight);
+					g.setColor(Color.BLACK);
 				}
+				g.drawRect(x + j * cellWidth, y + i * cellHeight,
+							cellWidth, cellHeight);
+				g.drawRect(x + j * cellWidth+1, y + i * cellHeight+1,
+						cellWidth-2, cellHeight-2);
 			}
 		}
 
+		g.drawRect(x,y,cols*cellWidth,rows*cellHeight);
+		g.drawRect(x-1,y-1,cols*cellWidth+2,rows*cellHeight+2);
 		List<Implicant> implicants = model.getOutputExpressions()
 				.getMinimalImplicants(output);
 		if (implicants != null) {
@@ -371,28 +402,23 @@ class KarnaughMapPanel extends JPanel implements TruthTablePanel {
 			}
 		}
 
-		g.setColor(Color.GRAY);
-		if (cols > 1 || inputCount == 0)
-			g.drawLine(x, y, left + tableWidth, y);
-		if (rows > 1 || inputCount == 0)
-			g.drawLine(x, y, x, top + tableHeight);
 		if (outputColumn < 0)
 			return;
 
-		g.setColor(Color.BLACK);
+		g.setColor(Color.BLUE);
 		for (int i = 0; i < rows; i++) {
 			for (int j = 0; j < cols; j++) {
 				int row = getTableRow(i, j, rows, cols);
 				if (provisionalValue != null && row == provisionalY
 						&& outputColumn == provisionalX) {
 					String text = provisionalValue.getDescription();
-					g.setColor(Color.GREEN);
+					g.setColor(Color.ORANGE);
 					g.drawString(
 							text,
 							x + j * cellWidth
 									+ (cellWidth - fm.stringWidth(text)) / 2, y
 									+ i * cellHeight + dy);
-					g.setColor(Color.BLACK);
+					g.setColor(Color.BLUE);
 				} else {
 					Entry entry = table.getOutputEntry(row, outputColumn);
 					String text = entry.getDescription();

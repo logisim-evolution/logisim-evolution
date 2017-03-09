@@ -55,6 +55,7 @@ import javax.swing.event.ListSelectionListener;
 import com.cburch.logisim.analyze.model.VariableList;
 import com.cburch.logisim.analyze.model.VariableListEvent;
 import com.cburch.logisim.analyze.model.VariableListListener;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.StringUtil;
 
 class VariableTab extends AnalyzerTab implements TabInterface {
@@ -210,12 +211,19 @@ class VariableTab extends AnalyzerTab implements TabInterface {
 		list.setModel(new VariableListModel(data));
 		list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		list.addListSelectionListener(myListener);
+		list.setFont(AppPreferences.getScaledFont(list.getFont()));
 		remove.addActionListener(myListener);
+		remove.setFont(AppPreferences.getScaledFont(remove.getFont()));
 		moveUp.addActionListener(myListener);
+		moveUp.setFont(AppPreferences.getScaledFont(moveUp.getFont()));
 		moveDown.addActionListener(myListener);
+		moveDown.setFont(AppPreferences.getScaledFont(moveDown.getFont()));
 		add.addActionListener(myListener);
+		add.setFont(AppPreferences.getScaledFont(add.getFont()));
 		rename.addActionListener(myListener);
+		rename.setFont(AppPreferences.getScaledFont(rename.getFont()));
 		field.addActionListener(myListener);
+		field.setFont(AppPreferences.getScaledFont(field.getFont()));
 		field.getDocument().addDocumentListener(myListener);
 
 		JScrollPane listPane = new JScrollPane(list,
