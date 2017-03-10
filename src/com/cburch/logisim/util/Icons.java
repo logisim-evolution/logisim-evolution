@@ -33,11 +33,13 @@ package com.cburch.logisim.util;
 import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Image;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
 import com.cburch.logisim.data.Direction;
+import com.cburch.logisim.prefs.AppPreferences;
 
 public class Icons {
 	public static ImageIcon getIcon(String name) {
@@ -45,7 +47,12 @@ public class Icons {
 				path + "/" + name);
 		if (url == null)
 			return null;
-		return new ImageIcon(url);
+		ImageIcon icon = new ImageIcon(url);
+		icon.setImage(icon.getImage().getScaledInstance(
+				         AppPreferences.getScaled(AppPreferences.IconSize), 
+				         AppPreferences.getScaled(AppPreferences.IconSize),
+				         Image.SCALE_SMOOTH));
+		return icon;
 	}
 
 	public static void paintRotated(Graphics g, int x, int y, Direction dir,

@@ -64,6 +64,7 @@ class ExperimentalOptions extends OptionsPanel {
 		accelPanel.add(accel.getJComboBox(), BorderLayout.CENTER);
 		accelPanel.add(accelRestart, BorderLayout.PAGE_END);
 		accelRestart.setFont(accelRestart.getFont().deriveFont(Font.ITALIC));
+		accelRestart.setFont(AppPreferences.getScaledFont(accelRestart.getFont()));
 		JPanel accelPanel2 = new JPanel();
 		accelPanel2.add(accelPanel);
 

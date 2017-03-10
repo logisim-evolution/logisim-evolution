@@ -47,6 +47,7 @@ import com.cburch.logisim.analyze.model.Entry;
 import com.cburch.logisim.analyze.model.TruthTable;
 import com.cburch.logisim.analyze.model.TruthTableEvent;
 import com.cburch.logisim.analyze.model.TruthTableListener;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.GraphicsUtil;
 
 class TableTab extends JPanel implements TruthTablePanel, TabInterface {
@@ -61,16 +62,11 @@ class TableTab extends JPanel implements TruthTablePanel, TabInterface {
 	}
 
 	private static final long serialVersionUID = 1L;
-	private static final Font HEAD_FONT = new Font("Serif", Font.BOLD, 14);
-	private static final Font BODY_FONT = new Font("Serif", Font.PLAIN, 14);
-	private static final int COLUMN_SEP = 8;
-
-	private static final int HEADER_SEP = 4;
 
 	private MyListener myListener = new MyListener();
 	private TruthTable table;
-	private int cellWidth = 25; // reasonable start values
-	private int cellHeight = 15;
+	private int cellWidth;
+	private int cellHeight;
 	private int tableWidth;
 	private int tableHeight;
 	private int provisionalX;
@@ -78,9 +74,19 @@ class TableTab extends JPanel implements TruthTablePanel, TabInterface {
 	private Entry provisionalValue = null;
 	private TableTabCaret caret;
 	private TableTabClip clip;
+	private Font HeaderFont;
+	private Font EntryFont;
+	private int ColSeperate;
+	private int HeadSeperate;
 
 	public TableTab(TruthTable table) {
 		this.table = table;
+		HeaderFont = AppPreferences.getScaledFont(getFont()).deriveFont(Font.BOLD);
+		EntryFont = AppPreferences.getScaledFont(getFont());
+		cellWidth = AppPreferences.getScaled(AppPreferences.IconSize+AppPreferences.IconBorder*2);
+		cellHeight = AppPreferences.getScaled(AppPreferences.IconSize);
+		ColSeperate = AppPreferences.getScaled(AppPreferences.IconSize>>1);
+		HeadSeperate = AppPreferences.getScaled(AppPreferences.IconSize>>2);
 		table.addTruthTableListener(myListener);
 		setToolTipText(" ");
 		caret = new TableTabCaret(this);
@@ -100,7 +106,7 @@ class TableTab extends JPanel implements TruthTablePanel, TabInterface {
 			cellHeight = 16;
 			cellWidth = 24;
 		} else {
-			FontMetrics fm = g.getFontMetrics(HEAD_FONT);
+			FontMetrics fm = g.getFontMetrics(HeaderFont);
 			cellHeight = fm.getHeight();
 			cellWidth = 24;
 			if (inputs == 0 || outputs == 0) {
@@ -118,8 +124,8 @@ class TableTab extends JPanel implements TruthTablePanel, TabInterface {
 			inputs = 1;
 		if (outputs == 0)
 			outputs = 1;
-		tableWidth = (cellWidth + COLUMN_SEP) * (inputs + outputs) - COLUMN_SEP;
-		tableHeight = cellHeight * (1 + table.getRowCount()) + HEADER_SEP;
+		tableWidth = (cellWidth + ColSeperate) * (inputs + outputs) - ColSeperate;
+		tableHeight = cellHeight * (1 + table.getRowCount()) + HeadSeperate;
 		setPreferredSize(new Dimension(tableWidth, tableHeight));
 		revalidate();
 		repaint();
@@ -176,7 +182,7 @@ class TableTab extends JPanel implements TruthTablePanel, TabInterface {
 			return -1;
 		int inputs = table.getInputColumnCount();
 		int cols = inputs + table.getOutputColumnCount();
-		int ret = (x + COLUMN_SEP / 2) / (cellWidth + COLUMN_SEP);
+		int ret = (x + ColSeperate / 2) / (cellWidth + ColSeperate);
 		if (inputs == 0)
 			ret--;
 		return ret >= 0 ? ret < cols ? ret : cols : -1;
@@ -198,9 +204,9 @@ class TableTab extends JPanel implements TruthTablePanel, TabInterface {
 
 	public int getRow(MouseEvent event) {
 		int y = event.getY() - (getHeight() - tableHeight) / 2;
-		if (y < cellHeight + HEADER_SEP)
+		if (y < cellHeight + HeadSeperate)
 			return -1;
-		int ret = (y - cellHeight - HEADER_SEP) / cellHeight;
+		int ret = (y - cellHeight - HeadSeperate) / cellHeight;
 		int rows = table.getRowCount();
 		return ret >= 0 ? ret < rows ? ret : rows : -1;
 	}
@@ -230,10 +236,10 @@ class TableTab extends JPanel implements TruthTablePanel, TabInterface {
 					numCells = 1;
 				if (direction > 0) {
 					return curY > 0 ? numCells * cellHeight : numCells
-							* cellHeight + HEADER_SEP;
+							* cellHeight + HeadSeperate;
 				} else {
-					return curY > cellHeight + HEADER_SEP ? numCells
-							* cellHeight : numCells * cellHeight + HEADER_SEP;
+					return curY > cellHeight + HeadSeperate ? numCells
+							* cellHeight : numCells * cellHeight + HeadSeperate;
 				}
 			}
 
@@ -241,10 +247,10 @@ class TableTab extends JPanel implements TruthTablePanel, TabInterface {
 			public int getUnitIncrement(int direction) {
 				int curY = getValue();
 				if (direction > 0) {
-					return curY > 0 ? cellHeight : cellHeight + HEADER_SEP;
+					return curY > 0 ? cellHeight : cellHeight + HeadSeperate;
 				} else {
-					return curY > cellHeight + HEADER_SEP ? cellHeight
-							: cellHeight + HEADER_SEP;
+					return curY > cellHeight + HeadSeperate ? cellHeight
+							: cellHeight + HeadSeperate;
 				}
 			}
 		};
@@ -255,14 +261,14 @@ class TableTab extends JPanel implements TruthTablePanel, TabInterface {
 		int left = Math.max(0, (sz.width - tableWidth) / 2);
 		int inputs = table.getInputColumnCount();
 		if (inputs == 0)
-			left += cellWidth + COLUMN_SEP;
-		return left + col * (cellWidth + COLUMN_SEP);
+			left += cellWidth + ColSeperate;
+		return left + col * (cellWidth + ColSeperate);
 	}
 
 	int getY(int row) {
 		Dimension sz = getSize();
 		int top = Math.max(0, (sz.height - tableHeight) / 2);
-		return top + cellHeight + HEADER_SEP + row * cellHeight;
+		return top + cellHeight + HeadSeperate + row * cellHeight;
 	}
 
 	void localeChanged() {
@@ -291,22 +297,25 @@ class TableTab extends JPanel implements TruthTablePanel, TabInterface {
 		int inputs = table.getInputColumnCount();
 		int outputs = table.getOutputColumnCount();
 		if (inputs == 0 && outputs == 0) {
-			g.setFont(BODY_FONT);
+			g.setFont(HeaderFont);
 			GraphicsUtil.drawCenteredText(g, Strings.get("tableEmptyMessage"),
 					sz.width / 2, sz.height / 2);
 			return;
 		}
 
 		g.setColor(Color.GRAY);
-		int lineX = left + (cellWidth + COLUMN_SEP) * inputs - COLUMN_SEP / 2;
+		int lineX = left + (cellWidth + ColSeperate) * inputs - ColSeperate / 2;
 		if (inputs == 0)
-			lineX = left + cellWidth + COLUMN_SEP / 2;
-		int lineY = top + cellHeight + HEADER_SEP / 2;
+			lineX = left + cellWidth + ColSeperate / 2;
+		int lineY = top + cellHeight + HeadSeperate / 2;
 		g.drawLine(left, lineY, left + tableWidth, lineY);
+		g.drawLine(left, lineY-1, left + tableWidth, lineY-1);
+		g.drawLine(left, lineY+1, left + tableWidth, lineY+1);
 		g.drawLine(lineX, top, lineX, top + tableHeight);
+		g.drawLine(lineX-1, top, lineX-1, top + tableHeight);
 
 		g.setColor(Color.BLACK);
-		g.setFont(HEAD_FONT);
+		g.setFont(HeaderFont);
 		FontMetrics headerMetric = g.getFontMetrics();
 		int x = left;
 		int y = top + headerMetric.getAscent() + 1;
@@ -327,16 +336,17 @@ class TableTab extends JPanel implements TruthTablePanel, TabInterface {
 			}
 		}
 
-		g.setFont(BODY_FONT);
+		g.setColor(Color.BLUE);
+		g.setFont(EntryFont);
 		FontMetrics bodyMetric = g.getFontMetrics();
-		y = top + cellHeight + HEADER_SEP;
+		y = top + cellHeight + HeadSeperate;
 		Rectangle clip = g.getClipBounds();
 		int firstRow = Math.max(0, (clip.y - y) / cellHeight);
 		int lastRow = Math.min(table.getRowCount(), 2
 				+ (clip.y + clip.height - y) / cellHeight);
 		y += firstRow * cellHeight;
 		if (inputs == 0)
-			left += cellWidth + COLUMN_SEP;
+			left += cellWidth + ColSeperate;
 		boolean provisional = false;
 		for (int i = firstRow; i < lastRow; i++) {
 			x = left;
@@ -351,21 +361,21 @@ class TableTab extends JPanel implements TruthTablePanel, TabInterface {
 				if (entry.isError()) {
 					g.setColor(ERROR_COLOR);
 					g.fillRect(x, y, cellWidth, cellHeight);
-					g.setColor(Color.BLACK);
+					g.setColor(Color.BLUE);
 				}
 				String label = entry.getDescription();
 				int width = bodyMetric.stringWidth(label);
 				if (provisional) {
 					provisional = false;
-					g.setColor(Color.GREEN);
+					g.setColor(Color.ORANGE);
 					g.drawString(label, x + (cellWidth - width) / 2, y
 							+ bodyMetric.getAscent());
-					g.setColor(Color.BLACK);
+					g.setColor(Color.BLUE);
 				} else {
 					g.drawString(label, x + (cellWidth - width) / 2, y
 							+ bodyMetric.getAscent());
 				}
-				x += cellWidth + COLUMN_SEP;
+				x += cellWidth + ColSeperate;
 			}
 			y += cellHeight;
 		}
@@ -377,7 +387,7 @@ class TableTab extends JPanel implements TruthTablePanel, TabInterface {
 			FontMetrics fm) {
 		int width = fm.stringWidth(header);
 		g.drawString(header, x + (cellWidth - width) / 2, y);
-		return x + cellWidth + COLUMN_SEP;
+		return x + cellWidth + ColSeperate;
 	}
 
 	public void paste() {
@@ -394,7 +404,7 @@ class TableTab extends JPanel implements TruthTablePanel, TabInterface {
 		provisionalX = x;
 		provisionalValue = value;
 
-		int top = (getHeight() - tableHeight) / 2 + cellHeight + HEADER_SEP + y
+		int top = (getHeight() - tableHeight) / 2 + cellHeight + HeadSeperate + y
 				* cellHeight;
 		repaint(0, top, getWidth(), cellHeight);
 	}

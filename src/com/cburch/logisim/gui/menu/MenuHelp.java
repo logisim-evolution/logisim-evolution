@@ -43,16 +43,17 @@ import javax.swing.JOptionPane;
 
 import com.cburch.logisim.gui.generic.LFrame;
 import com.cburch.logisim.gui.start.About;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.MacCompatibility;
 
 class MenuHelp extends JMenu implements ActionListener {
 
 	private static final long serialVersionUID = 1L;
 	private LogisimMenuBar menubar;
-	private JMenuItem tutorial = new JMenuItem();
-	private JMenuItem guide = new JMenuItem();
-	private JMenuItem library = new JMenuItem();
-	private JMenuItem about = new JMenuItem();
+	private JMenuItem tutorial = new ScaledMenuItem();
+	private JMenuItem guide = new ScaledMenuItem();
+	private JMenuItem library = new ScaledMenuItem();
+	private JMenuItem about = new ScaledMenuItem();
 	private HelpSet helpSet;
 	private String helpSetUrl = "";
 	private JHelp helpComponent;
@@ -60,6 +61,7 @@ class MenuHelp extends JMenu implements ActionListener {
 
 	public MenuHelp(LogisimMenuBar menubar) {
 		this.menubar = menubar;
+		setFont(AppPreferences.getScaledFont(getFont()));
 
 		tutorial.addActionListener(this);
 		guide.addActionListener(this);

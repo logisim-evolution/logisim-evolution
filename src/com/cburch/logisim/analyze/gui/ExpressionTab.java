@@ -56,6 +56,7 @@ import com.cburch.logisim.analyze.model.OutputExpressionsEvent;
 import com.cburch.logisim.analyze.model.OutputExpressionsListener;
 import com.cburch.logisim.analyze.model.Parser;
 import com.cburch.logisim.analyze.model.ParserException;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.StringGetter;
 
 class ExpressionTab extends AnalyzerTab implements TabInterface {
@@ -167,14 +168,17 @@ class ExpressionTab extends AnalyzerTab implements TabInterface {
 		model.getOutputExpressions().addOutputExpressionsListener(myListener);
 		selector.addItemListener(myListener);
 		clear.addActionListener(myListener);
+		clear.setFont(AppPreferences.getScaledFont(clear.getFont()));
 		revert.addActionListener(myListener);
+		revert.setFont(AppPreferences.getScaledFont(revert.getFont()));
 		enter.addActionListener(myListener);
+		enter.setFont(AppPreferences.getScaledFont(enter.getFont()));
 		field.setLineWrap(true);
 		field.setWrapStyleWord(true);
 		field.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0),
 				myListener);
 		field.getDocument().addDocumentListener(myListener);
-		field.setFont(new Font("Monospaced", Font.PLAIN, 14));
+		field.setFont(AppPreferences.getScaledFont(new Font("Monospaced", Font.PLAIN, 14)));
 
 		JPanel buttons = new JPanel();
 		buttons.add(clear);

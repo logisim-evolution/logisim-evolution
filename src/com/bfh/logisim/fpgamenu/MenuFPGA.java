@@ -41,18 +41,21 @@ import com.bfh.logisim.fpgaboardeditor.BoardDialog;
 import com.bfh.logisim.fpgagui.FPGACommanderGui;
 import com.cburch.logisim.gui.main.Frame;
 import com.cburch.logisim.gui.menu.LogisimMenuBar;
+import com.cburch.logisim.gui.menu.ScaledMenuItem;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
 
 @SuppressWarnings("serial")
 public class MenuFPGA extends JMenu implements ActionListener {
 	private Project ThisCircuit;
-	private JMenuItem BoardEditor = new JMenuItem();
-	private JMenuItem FPGACommander = new JMenuItem();
+	private JMenuItem BoardEditor = new ScaledMenuItem();
+	private JMenuItem FPGACommander = new ScaledMenuItem();
 	private BoardDialog Editor = null;
 	private FPGACommanderGui Commander = null;
 
 	public MenuFPGA(JFrame parent, LogisimMenuBar menubar, Project proj) {
 		ThisCircuit = proj;
+		setFont(AppPreferences.getScaledFont(getFont()));
 
 		BoardEditor.addActionListener(this);
 		FPGACommander.addActionListener(this);

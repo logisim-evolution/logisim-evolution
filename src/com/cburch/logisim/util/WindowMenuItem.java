@@ -36,12 +36,15 @@ import java.awt.event.ActionEvent;
 import javax.swing.JFrame;
 import javax.swing.JRadioButtonMenuItem;
 
+import com.cburch.logisim.prefs.AppPreferences;
+
 class WindowMenuItem extends JRadioButtonMenuItem {
 	private static final long serialVersionUID = 1L;
 	private WindowMenuItemManager manager;
 
 	WindowMenuItem(WindowMenuItemManager manager) {
 		this.manager = manager;
+		setFont(AppPreferences.getScaledFont(getFont()));
 		setText(manager.getText());
 		setSelected(WindowMenuManager.getCurrentManager() == manager);
 	}

@@ -30,6 +30,7 @@
 
 package com.cburch.logisim.gui.prefs;
 
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
@@ -37,6 +38,7 @@ import java.beans.PropertyChangeListener;
 
 import javax.swing.JCheckBox;
 
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.prefs.PrefMonitor;
 import com.cburch.logisim.util.StringGetter;
 
@@ -50,6 +52,8 @@ class PrefBoolean extends JCheckBox implements ActionListener,
 		super(title.toString());
 		this.pref = pref;
 		this.title = title;
+		Font myfont = this.getFont();
+		this.setFont(myfont.deriveFont(AppPreferences.getScaled((float)AppPreferences.BoxSize)));
 
 		addActionListener(this);
 		pref.addPropertyChangeListener(this);
