@@ -38,7 +38,6 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
 import com.cburch.logisim.Main;
-import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
 
 class MenuProject extends Menu {
@@ -68,11 +67,11 @@ class MenuProject extends Menu {
 
 	private MenuItemImpl addCircuit = new MenuItemImpl(this,
 			LogisimMenuBar.ADD_CIRCUIT);
-	private JMenu loadLibrary = new ScaledJMenu();
-	private JMenuItem loadBuiltin = new ScaledMenuItem();
-	private JMenuItem loadLogisim = new ScaledMenuItem();
-	private JMenuItem loadJar = new ScaledMenuItem();
-	private JMenuItem unload = new ScaledMenuItem();
+	private JMenu loadLibrary = new JMenu();
+	private JMenuItem loadBuiltin = new JMenuItem();
+	private JMenuItem loadLogisim = new JMenuItem();
+	private JMenuItem loadJar = new JMenuItem();
+	private JMenuItem unload = new JMenuItem();
 	private MenuItemImpl moveUp = new MenuItemImpl(this,
 			LogisimMenuBar.MOVE_CIRCUIT_UP);
 	private MenuItemImpl moveDown = new MenuItemImpl(this,
@@ -95,11 +94,10 @@ class MenuProject extends Menu {
 			LogisimMenuBar.ANALYZE_CIRCUIT);
 	private MenuItemImpl stats = new MenuItemImpl(this,
 			LogisimMenuBar.CIRCUIT_STATS);
-	private JMenuItem options = new ScaledMenuItem();
+	private JMenuItem options = new JMenuItem();
 
 	MenuProject(LogisimMenuBar menubar) {
 		this.menubar = menubar;
-		setFont(AppPreferences.getScaledFont(getFont()));
 
 		menubar.registerItem(LogisimMenuBar.ADD_CIRCUIT, addCircuit);
 		loadBuiltin.addActionListener(myListener);

@@ -62,29 +62,29 @@ public class LibraryTools {
 		return !HasErrors;
 	}
 	
-	public static void BuildLibraryList(Library lib, HashMap<String,Library> Names) {
-		Names.put(lib.getName().toUpperCase(),lib);
+	public static void BuildLibraryList(Library lib, HashSet<String> Names) {
+		Names.add(lib.getName().toUpperCase());
 		for (Library sublib : lib.getLibraries()) {
 			BuildLibraryList(sublib,Names);
 		}
 	}
 	
-	public static void RemovePresentLibraries(Library lib, HashMap<String,Library> KnownLibs, boolean AddToSet) {
+	public static void RemovePresentLibraries(Library lib, HashSet<String> KnownLibs, boolean AddToSet) {
 		/* we work top -> down */
 		HashSet<String> ToBeRemoved = new HashSet<String>();
 		for (Library sublib : lib.getLibraries()) {
-			if (KnownLibs.keySet().contains(sublib.getName().toUpperCase())) {
+			if (KnownLibs.contains(sublib.getName().toUpperCase())) {
 				ToBeRemoved.add(sublib.getName());
 			} else
 			if (AddToSet) {
-				KnownLibs.put(sublib.getName().toUpperCase(),sublib);
+				KnownLibs.add(sublib.getName().toUpperCase());
 			}
 		}
-		for (String remove : ToBeRemoved) {
+		for (String remove : ToBeRemoved)
 			lib.removeLibrary(remove);
-		}
 		for (Library sublib : lib.getLibraries())
 			RemovePresentLibraries(sublib,KnownLibs,AddToSet);
 	}
+
 
 }

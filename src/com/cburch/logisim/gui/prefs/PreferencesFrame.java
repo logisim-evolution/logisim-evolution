@@ -33,7 +33,6 @@ package com.cburch.logisim.gui.prefs;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
@@ -44,7 +43,7 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
 import com.cburch.logisim.gui.generic.LFrame;
-import com.cburch.logisim.prefs.AppPreferences;
+import com.cburch.logisim.gui.menu.LogisimMenuBar;
 import com.cburch.logisim.util.LocaleListener;
 import com.cburch.logisim.util.LocaleManager;
 import com.cburch.logisim.util.WindowMenuItemManager;
@@ -117,14 +116,13 @@ public class PreferencesFrame extends LFrame {
 
 	private PreferencesFrame() {
 		setDefaultCloseOperation(HIDE_ON_CLOSE);
-		setJMenuBar(null);
+		setJMenuBar(new LogisimMenuBar(this, null));
 
 		panels = new OptionsPanel[] { new TemplateOptions(this),
 				new IntlOptions(this), new WindowOptions(this),
 				new LayoutOptions(this), new ExperimentalOptions(this),
 				new SoftwaresOptions(this), };
 		tabbedPane = new JTabbedPane();
-		tabbedPane.setFont(AppPreferences.getScaledFont(tabbedPane.getFont()));
 		int intlIndex = -1;
 		for (int index = 0; index < panels.length; index++) {
 			OptionsPanel panel = panels[index];
@@ -136,12 +134,10 @@ public class PreferencesFrame extends LFrame {
 
 		JPanel buttonPanel = new JPanel();
 		buttonPanel.add(close);
-		close.setFont(AppPreferences.getScaledFont(close.getFont()));
 		close.addActionListener(myListener);
 
 		Container contents = getContentPane();
-		tabbedPane.setPreferredSize(new Dimension(Toolkit.getDefaultToolkit().getScreenSize().width/2, 
-				Toolkit.getDefaultToolkit().getScreenSize().height/2));
+		tabbedPane.setPreferredSize(new Dimension(450, 300));
 		contents.add(tabbedPane, BorderLayout.CENTER);
 		contents.add(buttonPanel, BorderLayout.SOUTH);
 

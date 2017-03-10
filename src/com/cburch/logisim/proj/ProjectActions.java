@@ -104,11 +104,11 @@ public class ProjectActions {
 	 */
 	private static boolean checkValidFilename(String filename, Project proj, HashMap<String,String> Errors) {
 		boolean IsOk = true;
-		HashMap<String,Library> TempSet = new HashMap<String,Library>();
+		HashSet<String> TempSet = new HashSet<String>();
 		HashSet<String> ForbiddenNames = new HashSet<String>();
 		LibraryTools.BuildLibraryList(proj.getLogisimFile(), TempSet);
 		LibraryTools.BuildToolList(proj.getLogisimFile(), ForbiddenNames);
-		ForbiddenNames.addAll(TempSet.keySet());
+		ForbiddenNames.addAll(TempSet);
 		Pattern p = Pattern.compile("[^a-z0-9_.]", Pattern.CASE_INSENSITIVE);
 		Matcher m = p.matcher(filename);
 		if (m.find()) {
@@ -357,7 +357,7 @@ public class ProjectActions {
 			AppPreferences.updateRecentFile(f);
 			if (lib == null)
 				return null;
-			LibraryTools.RemovePresentLibraries(lib,new HashMap<String,Library>(),true);
+			LibraryTools.RemovePresentLibraries(lib,new HashSet<String>(),true);
 			if (proj == null) {
 				proj = new Project(lib);
 				updatecircs(lib,proj);

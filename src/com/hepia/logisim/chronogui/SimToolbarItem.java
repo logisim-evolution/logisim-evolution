@@ -44,7 +44,6 @@ import java.awt.Graphics2D;
 import javax.swing.Icon;
 
 import com.cburch.draw.toolbar.ToolbarItem;
-import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.Icons;
 import com.cburch.logisim.util.StringGetter;
 
@@ -63,8 +62,7 @@ public class SimToolbarItem implements ToolbarItem {
 
 	public Dimension getDimension(Object orientation) {
 		if (icon == null) {
-			return new Dimension(AppPreferences.getScaled(AppPreferences.IconSize),
-					AppPreferences.getScaled(AppPreferences.IconSize));
+			return new Dimension(16, 16);
 		} else {
 			int w = icon.getIconWidth();
 			int h = icon.getIconHeight();

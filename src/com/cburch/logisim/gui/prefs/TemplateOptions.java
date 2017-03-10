@@ -159,11 +159,6 @@ class TemplateOptions extends OptionsPanel {
 		bgroup.add(plain);
 		bgroup.add(empty);
 		bgroup.add(custom);
-		plain.setFont(AppPreferences.getScaledFont(plain.getFont()));
-		empty.setFont(AppPreferences.getScaledFont(empty.getFont()));
-		custom.setFont(AppPreferences.getScaledFont(custom.getFont()));
-		templateField.setFont(AppPreferences.getScaledFont(templateField.getFont()));
-		templateButton.setFont(AppPreferences.getScaledFont(templateButton.getFont()));
 
 		plain.addActionListener(myListener);
 		empty.addActionListener(myListener);

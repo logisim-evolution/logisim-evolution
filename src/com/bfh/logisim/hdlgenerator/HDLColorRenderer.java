@@ -11,7 +11,6 @@ import javax.swing.border.Border;
 import javax.swing.table.TableCellRenderer;
 
 import com.bfh.logisim.settings.Settings;
-import com.cburch.logisim.prefs.AppPreferences;
 
 @SuppressWarnings("serial")
 public class HDLColorRenderer extends JLabel
@@ -26,7 +25,6 @@ public class HDLColorRenderer extends JLabel
 	Border border = null;
 	
 	public HDLColorRenderer() {
-		setFont(AppPreferences.getScaledFont(getFont()));
 		setOpaque(true);
 		CorrectStrings.clear();
 		CorrectStrings.add(VERILOGSupportString);

@@ -51,7 +51,6 @@ import javax.swing.event.ChangeListener;
 import com.cburch.logisim.analyze.model.AnalyzerModel;
 import com.cburch.logisim.gui.generic.LFrame;
 import com.cburch.logisim.gui.menu.LogisimMenuBar;
-import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.LocaleListener;
 import com.cburch.logisim.util.LocaleManager;
 
@@ -184,7 +183,6 @@ public class Analyzer extends LFrame {
 		truthTablePanel.addMouseListener(new TruthTableMouseListener());
 
 		tabbedPane = new JTabbedPane();
-		tabbedPane.setFont(AppPreferences.getScaledFont(tabbedPane.getFont()));
 		addTab(INPUTS_TAB, inputsPanel);
 		addTab(OUTPUTS_TAB, outputsPanel);
 		addTab(TABLE_TAB, truthTablePanel);

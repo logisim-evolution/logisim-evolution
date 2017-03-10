@@ -53,7 +53,6 @@ import com.cburch.logisim.file.Options;
 import com.cburch.logisim.gui.log.LogFrame;
 import com.cburch.logisim.gui.test.TestFrame;
 import com.cburch.logisim.instance.StdAttr;
-import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.std.wiring.Clock;
 import com.cburch.logisim.util.StringUtil;
@@ -235,7 +234,6 @@ public class MenuSimulate extends Menu {
 		private double freq;
 
 		public TickFrequencyChoice(double value) {
-			setFont(AppPreferences.getScaledFont(getFont()));
 			freq = value;
 			addActionListener(this);
 		}
@@ -310,28 +308,28 @@ public class MenuSimulate extends Menu {
 	private CircuitState bottomState = null;
 	private Simulator currentSim = null;
 	private MenuItemCheckImpl run;
-	private JMenuItem reset = new ScaledMenuItem();
+	private JMenuItem reset = new JMenuItem();
 	private MenuItemImpl step;
 	private MenuItemImpl vhdl_sim_files;
 	private MenuItemCheckImpl simulate_vhdl_enable;
 	private MenuItemCheckImpl ticksEnabled;
 	private MenuItemImpl tickOnce;
 	private MenuItemImpl tickOnceMain;
-	private JMenu tickFreq = new ScaledJMenu();
+	private JMenu tickFreq = new JMenu();
 	private TickFrequencyChoice[] tickFreqs = new TickFrequencyChoice[SupportedTickFrequencies.length];
-	private JMenu downStateMenu = new ScaledJMenu();
+	private JMenu downStateMenu = new JMenu();
 	private ArrayList<CircuitStateMenuItem> downStateItems = new ArrayList<CircuitStateMenuItem>();
-	private JMenu upStateMenu = new ScaledJMenu();
+	private JMenu upStateMenu = new JMenu();
 	private ArrayList<CircuitStateMenuItem> upStateItems = new ArrayList<CircuitStateMenuItem>();
-	private JMenuItem log = new ScaledMenuItem();
-	private JMenuItem test = new ScaledMenuItem();
-	private JMenuItem assemblyWindow = new ScaledMenuItem();
+	private JMenuItem log = new JMenuItem();
+	private JMenuItem test = new JMenuItem();
+	private JMenuItem assemblyWindow = new JMenuItem();
 
 	AssemblyWindow assWin = null;
 
 	public MenuSimulate(LogisimMenuBar menubar) {
 		this.menubar = menubar;
-        setFont(AppPreferences.getScaledFont(getFont()));
+
 		run = new MenuItemCheckImpl(this, LogisimMenuBar.SIMULATE_ENABLE);
 		step = new MenuItemImpl(this, LogisimMenuBar.SIMULATE_STEP);
 		simulate_vhdl_enable = new MenuItemCheckImpl(this,

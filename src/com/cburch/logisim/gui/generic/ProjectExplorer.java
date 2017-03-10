@@ -35,7 +35,6 @@ package com.cburch.logisim.gui.generic;
  * http://www.cs.cornell.edu/courses/cs3410/2015sp/
  */
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -112,7 +111,6 @@ public class ProjectExplorer extends JTree implements LocaleListener {
 				Tool tool = toolNode.getValue();
 				if (ret instanceof JLabel) {
 					((JLabel) ret).setText(tool.getDisplayName());
-					((JLabel) ret).setFont(AppPreferences.getScaledFont(((JLabel) ret).getFont()));
 					((JLabel) ret).setIcon(new ToolIcon(tool));
 					((JLabel) ret).setToolTipText(tool.getDescription());
 				}
@@ -290,11 +288,11 @@ public class ProjectExplorer extends JTree implements LocaleListener {
 		}
 
 		public int getIconHeight() {
-			return AppPreferences.getScaled(AppPreferences.BoxSize);
+			return 20;
 		}
 
 		public int getIconWidth() {
-			return AppPreferences.getScaled(AppPreferences.BoxSize);
+			return 20;
 		}
 
 		public void paintIcon(java.awt.Component c, Graphics g, int x, int y) {
@@ -302,8 +300,7 @@ public class ProjectExplorer extends JTree implements LocaleListener {
 			if (tool == haloedTool
 					&& AppPreferences.ATTRIBUTE_HALO.getBoolean()) {
 				g.setColor(Canvas.HALO_COLOR);
-				g.fillRoundRect(x, y, AppPreferences.getScaled(AppPreferences.BoxSize), AppPreferences.getScaled(AppPreferences.BoxSize), 
-						AppPreferences.getScaled(AppPreferences.BoxSize>>1), AppPreferences.getScaled(AppPreferences.BoxSize>>1));
+				g.fillRoundRect(x, y, 20, 20, 10, 10);
 				g.setColor(Color.BLACK);
 			}
 
@@ -311,28 +308,19 @@ public class ProjectExplorer extends JTree implements LocaleListener {
 			Graphics gIcon = g.create();
 			ComponentDrawContext context = new ComponentDrawContext(
 					ProjectExplorer.this, null, null, g, gIcon);
-			tool.paintIcon(context, x+AppPreferences.getScaled(AppPreferences.IconBorder), 
-					                y+AppPreferences.getScaled(AppPreferences.IconBorder));
+			tool.paintIcon(context, x, y);
 			gIcon.dispose();
 
 			// draw magnifying glass if appropriate
 			if (circ == proj.getCurrentCircuit()) {
-				int tx = x + AppPreferences.getScaled(AppPreferences.BoxSize-7);
-				int ty = y + AppPreferences.getScaled(AppPreferences.BoxSize-7);
-				int[] xp = { tx - 1, x + AppPreferences.getScaled(AppPreferences.BoxSize-2), 
-						             x + AppPreferences.getScaled(AppPreferences.BoxSize), tx + 1 };
-				int[] yp = { ty + 1, y + AppPreferences.getScaled(AppPreferences.BoxSize), 
-						             y + AppPreferences.getScaled(AppPreferences.BoxSize-2), ty - 1 };
+				int tx = x + 13;
+				int ty = y + 13;
+				int[] xp = { tx - 1, x + 18, x + 20, tx + 1 };
+				int[] yp = { ty + 1, y + 20, y + 18, ty - 1 };
 				g.setColor(MAGNIFYING_INTERIOR);
-				g.fillOval(x + AppPreferences.getScaled(AppPreferences.BoxSize>>2), 
-						   y + AppPreferences.getScaled(AppPreferences.BoxSize>>2), 
-						   AppPreferences.getScaled(AppPreferences.BoxSize>>1), 
-						   AppPreferences.getScaled(AppPreferences.BoxSize>>1));
+				g.fillOval(x + 5, y + 5, 10, 10);
 				g.setColor(Color.BLACK);
-				g.drawOval(x + AppPreferences.getScaled(AppPreferences.BoxSize>>2), 
-						   y + AppPreferences.getScaled(AppPreferences.BoxSize>>2), 
-						   AppPreferences.getScaled(AppPreferences.BoxSize>>1), 
-						   AppPreferences.getScaled(AppPreferences.BoxSize>>1));
+				g.drawOval(x + 5, y + 5, 10, 10);
 				g.fillPolygon(xp, yp, xp.length);
 			}
 		}

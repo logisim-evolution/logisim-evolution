@@ -79,7 +79,6 @@ class IntlOptions extends OptionsPanel {
 		localePanel.add(localeLabel);
 		localeLabel.setMaximumSize(localeLabel.getPreferredSize());
 		localeLabel.setAlignmentY(Component.TOP_ALIGNMENT);
-		localeLabel.setFont(AppPreferences.getScaledFont(localeLabel.getFont()));
 		localePanel.add(locale);
 		locale.setAlignmentY(Component.TOP_ALIGNMENT);
 		localePanel.add(Box.createGlue());

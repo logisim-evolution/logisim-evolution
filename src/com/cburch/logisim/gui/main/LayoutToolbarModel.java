@@ -117,8 +117,7 @@ class LayoutToolbarModel extends AbstractToolbarModel {
 		}
 
 		public Dimension getDimension(Object orientation) {
-			return new Dimension(AppPreferences.getScaled(AppPreferences.IconSize+4*AppPreferences.IconBorder), 
-					AppPreferences.getScaled(AppPreferences.IconSize+4*AppPreferences.IconBorder));
+			return new Dimension(24, 24);
 		}
 
 		public String getToolTip() {
@@ -149,9 +148,7 @@ class LayoutToolbarModel extends AbstractToolbarModel {
 			if (tool == haloedTool
 					&& AppPreferences.ATTRIBUTE_HALO.getBoolean()) {
 				g.setColor(Canvas.HALO_COLOR);
-				g.fillRect(AppPreferences.IconBorder, AppPreferences.IconBorder, 
-						   AppPreferences.getScaled(AppPreferences.IconSize+2*AppPreferences.IconBorder), 
-						   AppPreferences.getScaled(AppPreferences.IconSize+2*AppPreferences.IconBorder));
+				g.fillRect(1, 1, 22, 22);
 			}
 
 			// draw tool icon
@@ -159,7 +156,7 @@ class LayoutToolbarModel extends AbstractToolbarModel {
 			Graphics g_copy = g.create();
 			ComponentDrawContext c = new ComponentDrawContext(destination,
 					null, null, g, g_copy);
-			tool.paintIcon(c, AppPreferences.getScaled(AppPreferences.IconBorder), AppPreferences.getScaled(AppPreferences.IconBorder));
+			tool.paintIcon(c, 2, 2);
 			g_copy.dispose();
 		}
 	}

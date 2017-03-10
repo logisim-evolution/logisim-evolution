@@ -65,7 +65,6 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableModel;
 
 import com.bfh.logisim.hdlgenerator.HDLColorRenderer;
-import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.JDialogOk;
 import com.cburch.logisim.util.JInputComponent;
 import com.cburch.logisim.util.JInputDialog;
@@ -220,8 +219,6 @@ public class AttrTable extends JPanel implements LocaleListener {
 
 				currentRow = row;
 				currentEditor = editor;
-				if (editor != null)
-					editor.setFont(AppPreferences.getScaledFont(editor.getFont()));
 				return editor;
 			}
 		}
@@ -490,12 +487,12 @@ public class AttrTable extends JPanel implements LocaleListener {
 		table = new JTable(tableModel);
 		table.setDefaultEditor(Object.class, editor);
 		table.setTableHeader(null);
-		table.setRowHeight(AppPreferences.getScaled(AppPreferences.BoxSize));
+		table.setRowHeight(20);
 
 
 		Font baseFont = title.getFont();
 		int titleSize = Math.round(baseFont.getSize() * 1.2f);
-		Font titleFont = baseFont.deriveFont(AppPreferences.getScaled((float)titleSize)).deriveFont(
+		Font titleFont = baseFont.deriveFont((float) titleSize).deriveFont(
 				Font.BOLD);
 		title.setFont(titleFont);
 		Color bgColor = new Color(240, 240, 240);
@@ -504,7 +501,6 @@ public class AttrTable extends JPanel implements LocaleListener {
 		table.setDefaultRenderer(String.class, new HDLColorRenderer());
 
 		tabPane = new JTabbedPane();
-		tabPane.setFont(AppPreferences.getScaledFont(tabPane.getFont()));
 		JPanel propPanel = new JPanel(new BorderLayout(0, 0));
 		JScrollPane tableScroll = new JScrollPane(table);
 

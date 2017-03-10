@@ -51,7 +51,6 @@ import com.cburch.logisim.analyze.model.VariableList;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitMutation;
 import com.cburch.logisim.file.LogisimFileActions;
-import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.proj.Projects;
 import com.cburch.logisim.std.gates.CircuitBuilder;
@@ -221,7 +220,6 @@ class BuildCircuitButton extends JButton {
 	BuildCircuitButton(JFrame parent, AnalyzerModel model) {
 		this.parent = parent;
 		this.model = model;
-		setFont(AppPreferences.getScaledFont(getFont()));
 		addActionListener(myListener);
 	}
 

@@ -42,7 +42,6 @@ import com.cburch.logisim.analyze.model.AnalyzerModel;
 import com.cburch.logisim.analyze.model.VariableList;
 import com.cburch.logisim.analyze.model.VariableListEvent;
 import com.cburch.logisim.analyze.model.VariableListListener;
-import com.cburch.logisim.prefs.AppPreferences;
 
 class OutputSelector {
 	@SuppressWarnings("rawtypes")
@@ -136,8 +135,6 @@ class OutputSelector {
 
 		Model listModel = new Model();
 		select.setModel(listModel);
-		label.setFont(AppPreferences.getScaledFont(label.getFont()));
-		select.setFont(AppPreferences.getScaledFont(select.getFont()));
 		source.addVariableListListener(listModel);
 	}
 

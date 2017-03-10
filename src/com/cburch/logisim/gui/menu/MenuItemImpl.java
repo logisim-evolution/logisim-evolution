@@ -35,15 +35,12 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JMenuItem;
 
-import com.cburch.logisim.prefs.AppPreferences;
-
 class MenuItemImpl extends JMenuItem implements MenuItem {
 
 	private static final long serialVersionUID = 1L;
 	private MenuItemHelper helper;
 
 	public MenuItemImpl(Menu menu, LogisimMenuItem menuItem) {
-		setFont(AppPreferences.getScaledFont(getFont()));
 		helper = new MenuItemHelper(this, menu, menuItem);
 		super.addActionListener(helper);
 		setEnabled(true);

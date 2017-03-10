@@ -45,9 +45,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.KeyStroke;
 
-import com.cburch.logisim.gui.menu.ScaledMenuItem;
-import com.cburch.logisim.prefs.AppPreferences;
-
 public class WindowMenu extends JMenu {
 	private class MyListener implements LocaleListener, ActionListener {
 		public void actionPerformed(ActionEvent e) {
@@ -95,16 +92,15 @@ public class WindowMenu extends JMenu {
 
 	private JFrame owner;
 	private MyListener myListener = new MyListener();
-	private JMenuItem minimize = new ScaledMenuItem();
-	private JMenuItem zoom = new ScaledMenuItem();
-	private JMenuItem close = new ScaledMenuItem();
+	private JMenuItem minimize = new JMenuItem();
+	private JMenuItem zoom = new JMenuItem();
+	private JMenuItem close = new JMenuItem();
 	private JRadioButtonMenuItem nullItem = new JRadioButtonMenuItem();
 	private ArrayList<WindowMenuItem> persistentItems = new ArrayList<WindowMenuItem>();
 	private ArrayList<WindowMenuItem> transientItems = new ArrayList<WindowMenuItem>();
 
 	public WindowMenu(JFrame owner) {
 		this.owner = owner;
-		setFont(AppPreferences.getScaledFont(getFont()));
 		WindowMenuManager.addMenu(this);
 
 		int menuMask = getToolkit().getMenuShortcutKeyMask();
