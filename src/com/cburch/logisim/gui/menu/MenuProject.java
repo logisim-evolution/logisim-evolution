@@ -38,6 +38,8 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
 import com.cburch.logisim.Main;
+import com.cburch.logisim.gui.scale.ScaledMenu;
+import com.cburch.logisim.gui.scale.ScaledMenuItem;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
 
@@ -68,7 +70,7 @@ class MenuProject extends Menu {
 
 	private MenuItemImpl addCircuit = new MenuItemImpl(this,
 			LogisimMenuBar.ADD_CIRCUIT);
-	private JMenu loadLibrary = new ScaledJMenu();
+	private JMenu loadLibrary = new ScaledMenu();
 	private JMenuItem loadBuiltin = new ScaledMenuItem();
 	private JMenuItem loadLogisim = new ScaledMenuItem();
 	private JMenuItem loadJar = new ScaledMenuItem();
@@ -99,7 +101,7 @@ class MenuProject extends Menu {
 
 	MenuProject(LogisimMenuBar menubar) {
 		this.menubar = menubar;
-		setFont(AppPreferences.getScaledFont(getFont()));
+		Init();
 
 		menubar.registerItem(LogisimMenuBar.ADD_CIRCUIT, addCircuit);
 		loadBuiltin.addActionListener(myListener);
@@ -157,7 +159,12 @@ class MenuProject extends Menu {
 		computeEnabled();
 	}
 
-	@Override
+    private void Init() {
+		AppPreferences.setScaledFonts(getComponents());
+		super.setFont(AppPreferences.getScaledFont(getFont()));
+	}
+
+    @Override
 	void computeEnabled() {
 		setEnabled(menubar.getProject() != null || addCircuit.hasListeners()
 				|| moveUp.hasListeners() || moveDown.hasListeners()

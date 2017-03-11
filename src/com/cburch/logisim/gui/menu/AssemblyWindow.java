@@ -57,8 +57,6 @@ import java.util.prefs.Preferences;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.swing.JButton;
-import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComboBox;
 import javax.swing.JEditorPane;
 import javax.swing.JFileChooser;
@@ -67,7 +65,6 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
@@ -80,6 +77,13 @@ import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.file.Options;
 import com.cburch.logisim.gui.generic.LFrame;
+import com.cburch.logisim.gui.scale.ScaledButton;
+import com.cburch.logisim.gui.scale.ScaledCheckBoxMenuItem;
+import com.cburch.logisim.gui.scale.ScaledComboBox;
+import com.cburch.logisim.gui.scale.ScaledLabel;
+import com.cburch.logisim.gui.scale.ScaledMenu;
+import com.cburch.logisim.gui.scale.ScaledMenuItem;
+import com.cburch.logisim.gui.scale.ScaledScrollPane;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.std.memory.Register;
@@ -93,15 +97,15 @@ public class AssemblyWindow implements ActionListener, WindowListener,
 	private Preferences prefs;
 	private LFrame windows;
 	private JMenuBar winMenuBar;
-	private JCheckBoxMenuItem ontopItem;
+	private ScaledCheckBoxMenuItem ontopItem;
 	private JMenuItem openFileItem;
 	private JMenuItem reloadFileItem;
 	private JMenuItem close;
-	private JButton refresh = new JButton("Get Registers");
-	private JLabel status = new JLabel();
+	private ScaledButton refresh = new ScaledButton("Get Registers");
+	private JLabel status = new ScaledLabel();
 	private final JEditorPane document = new JEditorPane();
 	@SuppressWarnings("rawtypes")
-	private JComboBox combo = new JComboBox<>();
+	private JComboBox combo = new ScaledComboBox<>();
 	private HashMap<String, Component> entry = new HashMap<String, Component>();
 	private Component selReg = null;
 	private Project proj;
@@ -115,8 +119,8 @@ public class AssemblyWindow implements ActionListener, WindowListener,
 		curCircuit = proj.getCurrentCircuit();
 		curCircuitState = proj.getCircuitState();
 		winMenuBar = new JMenuBar();
-		JMenu windowMenu = new JMenu("Window");
-		JMenu fileMenu = new JMenu("File");
+		JMenu windowMenu = new ScaledMenu("Window");
+		JMenu fileMenu = new ScaledMenu("File");
 		JPanel main = new JPanel(new BorderLayout());
 		JPanel north = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 2));
 		/* LinePainter painter = new LinePainter(document); */
@@ -129,13 +133,13 @@ public class AssemblyWindow implements ActionListener, WindowListener,
 		refresh.setFocusable(false);
 		refresh.setToolTipText("Get register list of current displayed circuit.");
 
-		ontopItem = new JCheckBoxMenuItem("Set on top", true);
+		ontopItem = new ScaledCheckBoxMenuItem("Set on top", true);
 		ontopItem.addActionListener(this);
-		openFileItem = new JMenuItem("Open lss file");
+		openFileItem = new ScaledMenuItem("Open lss file");
 		openFileItem.addActionListener(this);
-		reloadFileItem = new JMenuItem("Reload lss file");
+		reloadFileItem = new ScaledMenuItem("Reload lss file");
 		reloadFileItem.addActionListener(this);
-		close = new JMenuItem("Close");
+		close = new ScaledMenuItem("Close");
 		close.addActionListener(this);
 		winMenuBar.add(fileMenu);
 		winMenuBar.add(windowMenu);
@@ -155,7 +159,7 @@ public class AssemblyWindow implements ActionListener, WindowListener,
 		windows.addWindowListener(this);
 		windows.addKeyListener(this);
 
-		north.add(new JLabel("Register: "));
+		north.add(new ScaledLabel("Register: "));
 		north.add(combo);
 		north.add(refresh);
 
@@ -164,7 +168,7 @@ public class AssemblyWindow implements ActionListener, WindowListener,
 		document.setPreferredSize(new Dimension(document.getWidth() * 4 / 5,
 				Math.max(200, document.getHeight() * 2 / 3)));
 		document.addKeyListener(this);
-		main.add(new JScrollPane(document), BorderLayout.CENTER);
+		main.add(new ScaledScrollPane(document), BorderLayout.CENTER);
 		main.add(north, BorderLayout.NORTH);
 		main.add(status, BorderLayout.SOUTH);
 		windows.setContentPane(main);

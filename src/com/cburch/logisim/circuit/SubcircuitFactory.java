@@ -60,6 +60,7 @@ import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
+import com.cburch.logisim.gui.scale.ScaledMenuItem;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceFactory;
 import com.cburch.logisim.instance.InstancePainter;
@@ -98,7 +99,7 @@ public class SubcircuitFactory extends InstanceFactory {
 			this.proj = proj;
 			String name = instance.getFactory().getDisplayName();
 			String text = Strings.get("subcircuitViewItem", name);
-			JMenuItem item = new JMenuItem(text);
+			JMenuItem item = new ScaledMenuItem(text);
 			item.addActionListener(this);
 			menu.add(item);
 		}

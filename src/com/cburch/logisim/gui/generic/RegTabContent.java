@@ -40,9 +40,7 @@ import java.awt.GridBagLayout;
 import java.util.Arrays;
 import java.util.HashMap;
 
-import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitState;
@@ -54,6 +52,8 @@ import com.cburch.logisim.data.Value;
 import com.cburch.logisim.file.LoadedLibrary;
 import com.cburch.logisim.file.LogisimFile;
 import com.cburch.logisim.gui.main.Frame;
+import com.cburch.logisim.gui.scale.ScaledLabel;
+import com.cburch.logisim.gui.scale.ScaledScrollPane;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.std.memory.Register;
@@ -63,9 +63,9 @@ import com.cburch.logisim.util.LocaleListener;
  *
  * @author YSY
  */
-public class RegTabContent extends JScrollPane implements LocaleListener,
+public class RegTabContent extends ScaledScrollPane implements LocaleListener,
 		SimulatorListener {
-	private class MyLabel extends JLabel {
+	private class MyLabel extends ScaledLabel {
 		private static final long serialVersionUID = 1L;
 
 		private MyLabel(String text) {

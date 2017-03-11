@@ -53,7 +53,6 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
-import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.ProgressMonitor;
 import javax.swing.SwingConstants;
@@ -69,6 +68,10 @@ import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.comp.ComponentDrawContext;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.file.Loader;
+import com.cburch.logisim.gui.scale.ScaledCheckBox;
+import com.cburch.logisim.gui.scale.ScaledLabel;
+import com.cburch.logisim.gui.scale.ScaledRadioButton;
+import com.cburch.logisim.gui.scale.ScaledScrollPane;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.util.GifEncoder;
 import com.cburch.logisim.util.StringGetter;
@@ -209,9 +212,9 @@ class ExportImage {
 		@SuppressWarnings("rawtypes")
 		OptionsPanel(JList list) {
 			// set up components
-			formatPng = new JRadioButton("PNG");
-			formatGif = new JRadioButton("GIF");
-			formatJpg = new JRadioButton("JPEG");
+			formatPng = new ScaledRadioButton("PNG");
+			formatGif = new ScaledRadioButton("GIF");
+			formatJpg = new ScaledRadioButton("JPEG");
 			ButtonGroup bgroup = new ButtonGroup();
 			bgroup.add(formatPng);
 			bgroup.add(formatGif);
@@ -222,7 +225,7 @@ class ExportImage {
 					3 * SLIDER_DIVISIONS, 0);
 			slider.setMajorTickSpacing(10);
 			slider.addChangeListener(this);
-			curScale = new JLabel("222%");
+			curScale = new ScaledLabel("222%");
 			curScale.setHorizontalAlignment(SwingConstants.RIGHT);
 			curScale.setVerticalAlignment(SwingConstants.CENTER);
 			curScaleDim = new Dimension(curScale.getPreferredSize());
@@ -230,7 +233,7 @@ class ExportImage {
 					slider.getPreferredSize().height);
 			stateChanged(null);
 
-			printerView = new JCheckBox();
+			printerView = new ScaledCheckBox();
 			printerView.setSelected(true);
 
 			// set up panel
@@ -244,13 +247,13 @@ class ExportImage {
 			gbc.anchor = GridBagConstraints.NORTHWEST;
 			gbc.insets = new Insets(5, 0, 5, 0);
 			gbc.fill = GridBagConstraints.NONE;
-			addGb(new JLabel(Strings.get("labelCircuits") + " "));
+			addGb(new ScaledLabel(Strings.get("labelCircuits") + " "));
 			gbc.fill = GridBagConstraints.HORIZONTAL;
-			addGb(new JScrollPane(list));
+			addGb(new ScaledScrollPane(list));
 			gbc.fill = GridBagConstraints.NONE;
 
 			gbc.gridy++;
-			addGb(new JLabel(Strings.get("labelImageFormat") + " "));
+			addGb(new ScaledLabel(Strings.get("labelImageFormat") + " "));
 			Box formatsPanel = new Box(BoxLayout.Y_AXIS);
 			formatsPanel.add(formatPng);
 			formatsPanel.add(formatGif);
@@ -258,12 +261,12 @@ class ExportImage {
 			addGb(formatsPanel);
 
 			gbc.gridy++;
-			addGb(new JLabel(Strings.get("labelScale") + " "));
+			addGb(new ScaledLabel(Strings.get("labelScale") + " "));
 			addGb(slider);
 			addGb(curScale);
 
 			gbc.gridy++;
-			addGb(new JLabel(Strings.get("labelPrinterView") + " "));
+			addGb(new ScaledLabel(Strings.get("labelPrinterView") + " "));
 			addGb(printerView);
 		}
 

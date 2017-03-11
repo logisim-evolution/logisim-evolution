@@ -32,6 +32,7 @@ package com.bfh.logisim.fpgaboardeditor;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
@@ -41,7 +42,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
@@ -49,10 +49,18 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
+import javax.swing.JSlider;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileFilter;
 
 import com.bfh.logisim.fpgaboardeditor.FPGAIOInformationContainer.IOComponentTypes;
+import com.cburch.logisim.gui.scale.ScaledButton;
+import com.cburch.logisim.gui.scale.ScaledCheckBox;
+import com.cburch.logisim.gui.scale.ScaledComboBox;
+import com.cburch.logisim.gui.scale.ScaledFileChooser;
+import com.cburch.logisim.gui.scale.ScaledLabel;
+import com.cburch.logisim.gui.scale.ScaledTextField;
 import com.cburch.logisim.proj.Projects;
 
 public class BoardDialog implements ActionListener, ComponentListener {
@@ -69,6 +77,24 @@ public class BoardDialog implements ActionListener, ComponentListener {
 		}
 	}
 
+	private class ZoomChange implements ChangeListener {
+		
+		private BoardPanel parent;
+
+		public ZoomChange(BoardPanel parent) {
+			this.parent = parent;
+		}
+		@Override
+		public void stateChanged(ChangeEvent e) {
+			JSlider source = (JSlider)e.getSource();
+			if (!source.getValueIsAdjusting()) {
+				int value = (int) source.getValue();
+				parent.SetScale((float)value/(float)100.0);
+			}
+		}
+		
+	}
+
 	private JFrame panel;
 	public LinkedList<BoardRectangle> defined_components = new LinkedList<BoardRectangle>();
 	public static final String pictureError = "/resources/logisim/error.png";
@@ -76,11 +102,11 @@ public class BoardDialog implements ActionListener, ComponentListener {
 	private String action_id;
 	boolean abort;
 	private BoardInformation TheBoard = new BoardInformation();
-	private JTextField BoardNameInput;
-	private JButton saveButton;
-	private JButton loadButton;
-	private JButton ScaleButton;
+	private ScaledTextField BoardNameInput;
+	private ScaledButton saveButton;
+	private ScaledButton loadButton;
 	private BoardPanel picturepanel;
+	private ZoomSlider zoomslide;
 	public static final String XML_EXTENSION = ".xml";
 	public static final FileFilter XML_FILTER = new XMLFileFilter();
 	private String CancelStr = "cancel";
@@ -102,41 +128,44 @@ public class BoardDialog implements ActionListener, ComponentListener {
 		panel.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		GridBagLayout thisLayout = new GridBagLayout();
 		panel.setLayout(thisLayout);
-		// PointerInfo mouseloc = MouseInfo.getPointerInfo();
-		// Point mlocation = mouseloc.getLocation();
-		// panel.setLocation(mlocation.x,mlocation.y);
 
 		// Set an empty board picture
 		picturepanel = new BoardPanel(this);
-		panel.add(picturepanel);
 
 		JPanel ButtonPanel = new JPanel();
 		GridBagLayout ButtonLayout = new GridBagLayout();
 		ButtonPanel.setLayout(ButtonLayout);
 
-		JLabel LocText = new JLabel("Board Name:  ");
+		JLabel LocText = new ScaledLabel("Board Name:  ");
 		gbc.gridx = 1;
 		gbc.gridy = 0;
 		gbc.fill = GridBagConstraints.HORIZONTAL;
 		ButtonPanel.add(LocText, gbc);
 
-		BoardNameInput = new JTextField(32);
+		BoardNameInput = new ScaledTextField(25);
 		BoardNameInput.setEnabled(false);
 		gbc.gridx = 2;
 		gbc.gridy = 0;
 		gbc.fill = GridBagConstraints.HORIZONTAL;
 		ButtonPanel.add(BoardNameInput, gbc);
 
-		JButton cancelButton = new JButton("Cancel");
-		gbc.gridx = 3;
-		gbc.gridy = 0;
+		ScaledButton cancelButton = new ScaledButton("Cancel");
+		gbc.gridx = 1;
+		gbc.gridy = 1;
 		gbc.fill = GridBagConstraints.HORIZONTAL;
 		cancelButton.setActionCommand(CancelStr);
 		cancelButton.addActionListener(this);
 		ButtonPanel.add(cancelButton, gbc);
+		
+		zoomslide = new ZoomSlider();
+		zoomslide.addChangeListener(new ZoomChange(picturepanel));
+		gbc.gridx = 2;
+		gbc.gridy = 1;
+		gbc.fill = GridBagConstraints.HORIZONTAL;
+		ButtonPanel.add(zoomslide, gbc);
 
-		loadButton = new JButton("Load");
-		gbc.gridx = 4;
+		loadButton = new ScaledButton("Load");
+		gbc.gridx = 3;
 		gbc.gridy = 0;
 		gbc.fill = GridBagConstraints.HORIZONTAL;
 		loadButton.setActionCommand("load");
@@ -144,28 +173,23 @@ public class BoardDialog implements ActionListener, ComponentListener {
 		loadButton.setEnabled(true);
 		ButtonPanel.add(loadButton, gbc);
 
-		saveButton = new JButton("Done and save");
-		gbc.gridx = 5;
-		gbc.gridy = 0;
+		saveButton = new ScaledButton("Done and save");
+		gbc.gridx = 3;
+		gbc.gridy = 1;
 		gbc.fill = GridBagConstraints.HORIZONTAL;
 		saveButton.setActionCommand("save");
 		saveButton.addActionListener(this);
 		saveButton.setEnabled(false);
 		ButtonPanel.add(saveButton, gbc);
 		
-		ScaleButton = new JButton("Scale 1x");
 		gbc.gridx = 0;
 		gbc.gridy = 0;
 		gbc.fill = GridBagConstraints.HORIZONTAL;
-		ScaleButton.setActionCommand("scale");
-		ScaleButton.addActionListener(this);
-		ScaleButton.setEnabled(true);
-		ButtonPanel.add(ScaleButton, gbc);
-
-		gbc.gridx = 0;
-		gbc.gridy = 3;
-		gbc.fill = GridBagConstraints.HORIZONTAL;
 		panel.add(ButtonPanel, gbc);
+		gbc.gridx = 0;
+		gbc.gridy = 1;
+		gbc.fill = GridBagConstraints.HORIZONTAL;
+		panel.add(picturepanel,gbc);
 
 		panel.pack();
 		/*
@@ -180,19 +204,6 @@ public class BoardDialog implements ActionListener, ComponentListener {
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals(CancelStr)) {
 			this.clear();
-		} else if (e.getActionCommand().equals("scale")) {
-			String ScaleStr = ScaleButton.getText();
-			if (ScaleStr.equals("Scale 1x")) {
-				ScaleButton.setText("Scale 2x");
-				picturepanel.setScale(2);
-			} else if (ScaleStr.equals("Scale 2x")) {
-				ScaleButton.setText("Scale 3x");
-				picturepanel.setScale(3);
-			} else {
-				ScaleButton.setText("Scale 1x");
-				picturepanel.setScale(1);
-			}
-			panel.pack();
 		} else if (e.getActionCommand().equals("save")) {
 			panel.setVisible(false);
 			TheBoard.setBoardName(BoardNameInput.getText());
@@ -205,9 +216,8 @@ public class BoardDialog implements ActionListener, ComponentListener {
 			xmlwriter.PrintXml(filename);
 			this.clear();
 		} else if (e.getActionCommand().equals("load")) {
-			JFileChooser fc = new JFileChooser();
+			JFileChooser fc = new ScaledFileChooser("Choose XML board description file to use");
 			fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-			fc.setDialogTitle("Choose XML board description file to use");
 			fc.setFileFilter(XML_FILTER);
 			fc.setAcceptAllFileFilterUsed(false);
 			int retval = fc.showOpenDialog(null);
@@ -281,7 +291,7 @@ public class BoardDialog implements ActionListener, ComponentListener {
 	}
 
 	private String getDirName(String old, String window_name) {
-		JFileChooser fc = new JFileChooser(old);
+		JFileChooser fc = new ScaledFileChooser(old);
 		fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		fc.setDialogTitle(window_name);
 		int retval = fc.showOpenDialog(null);
@@ -312,7 +322,7 @@ public class BoardDialog implements ActionListener, ComponentListener {
 		GridBagLayout ClockLayout = new GridBagLayout();
 		ClockPanel.setLayout(ClockLayout);
 
-		JLabel FreqText = new JLabel("Specify Clock frequency:");
+		JLabel FreqText = new ScaledLabel("Specify Clock frequency:");
 		c.gridx = 0;
 		c.gridy = 0;
 		c.fill = GridBagConstraints.HORIZONTAL;
@@ -322,7 +332,7 @@ public class BoardDialog implements ActionListener, ComponentListener {
 		GridBagLayout FreqLayout = new GridBagLayout();
 		FreqPanel.setLayout(FreqLayout);
 
-		JTextField FreqInput = new JTextField(10);
+		ScaledTextField FreqInput = new ScaledTextField(10);
 		c.gridx = 0;
 		c.gridy = 0;
 		c.fill = GridBagConstraints.HORIZONTAL;
@@ -331,7 +341,7 @@ public class BoardDialog implements ActionListener, ComponentListener {
 		FreqPanel.add(FreqInput, c);
 
 		String[] freqStrs = { "Hz", "kHz", "MHz" };
-		JComboBox<String> StandardInput = new JComboBox<>(freqStrs);
+		JComboBox<String> StandardInput = new ScaledComboBox<>(freqStrs);
 		StandardInput.setSelectedIndex(2);
 		c.gridx = 1;
 		c.gridy = 0;
@@ -345,13 +355,13 @@ public class BoardDialog implements ActionListener, ComponentListener {
 		c.fill = GridBagConstraints.HORIZONTAL;
 		ClockPanel.add(FreqPanel, c);
 
-		JLabel LocText = new JLabel("Specify Clock pin location:");
+		JLabel LocText = new ScaledLabel("Specify Clock pin location:");
 		c.gridx = 0;
 		c.gridy = 2;
 		c.fill = GridBagConstraints.HORIZONTAL;
 		ClockPanel.add(LocText, c);
 
-		JTextField LocInput = new JTextField();
+		ScaledTextField LocInput = new ScaledTextField();
 		if (TheBoard.fpga.FpgaInfoPresent())
 			LocInput.setText(TheBoard.fpga.getClockPinLocation());
 		c.gridx = 0;
@@ -359,13 +369,13 @@ public class BoardDialog implements ActionListener, ComponentListener {
 		c.fill = GridBagConstraints.HORIZONTAL;
 		ClockPanel.add(LocInput, c);
 
-		JLabel PullText = new JLabel("Specify clock pin pull behavior:");
+		JLabel PullText = new ScaledLabel("Specify clock pin pull behavior:");
 		c.gridx = 0;
 		c.gridy = 4;
 		c.fill = GridBagConstraints.HORIZONTAL;
 		ClockPanel.add(PullText, c);
 
-		JComboBox<String> PullInput = new JComboBox<>(
+		JComboBox<String> PullInput = new ScaledComboBox<>(
 				PullBehaviors.Behavior_strings);
 		if (TheBoard.fpga.FpgaInfoPresent()) {
 			PullInput.setSelectedIndex(TheBoard.fpga.getClockPull());
@@ -375,13 +385,13 @@ public class BoardDialog implements ActionListener, ComponentListener {
 		c.fill = GridBagConstraints.HORIZONTAL;
 		ClockPanel.add(PullInput, c);
 
-		JLabel StandardText = new JLabel("Specify clock pin standard:");
+		JLabel StandardText = new ScaledLabel("Specify clock pin standard:");
 		c.gridx = 0;
 		c.gridy = 6;
 		c.fill = GridBagConstraints.HORIZONTAL;
 		ClockPanel.add(StandardText, c);
 
-		JComboBox<String> StdInput = new JComboBox<>(
+		JComboBox<String> StdInput = new ScaledComboBox<>(
 				IoStandards.Behavior_strings);
 		if (TheBoard.fpga.FpgaInfoPresent()) {
 			StdInput.setSelectedIndex(TheBoard.fpga.getClockStandard());
@@ -391,13 +401,13 @@ public class BoardDialog implements ActionListener, ComponentListener {
 		c.fill = GridBagConstraints.HORIZONTAL;
 		ClockPanel.add(StdInput, c);
 
-		JLabel UnusedPinsText = new JLabel("Unused FPGA pin behavior:");
+		JLabel UnusedPinsText = new ScaledLabel("Unused FPGA pin behavior:");
 		c.gridx = 0;
 		c.gridy = 8;
 		c.fill = GridBagConstraints.HORIZONTAL;
 		ClockPanel.add(UnusedPinsText, c);
 
-		JComboBox<String> UnusedPinsInput = new JComboBox<>(
+		JComboBox<String> UnusedPinsInput = new ScaledComboBox<>(
 				PullBehaviors.Behavior_strings);
 		if (TheBoard.fpga.FpgaInfoPresent()) {
 			UnusedPinsInput.setSelectedIndex(TheBoard.fpga.getUnusedPinsBehavior());
@@ -407,12 +417,12 @@ public class BoardDialog implements ActionListener, ComponentListener {
 		c.fill = GridBagConstraints.HORIZONTAL;
 		ClockPanel.add(UnusedPinsInput, c);
 
-		JLabel PosText = new JLabel("Specify FPGA location in JTAG chain:");
+		JLabel PosText = new ScaledLabel("Specify FPGA location in JTAG chain:");
 		c.gridx = 0;
 		c.gridy = 10;
 		c.fill = GridBagConstraints.HORIZONTAL;
 		ClockPanel.add(PosText, c);
-		JTextField PosInput = new JTextField("1");
+		ScaledTextField PosInput = new ScaledTextField("1");
 		if (TheBoard.fpga.FpgaInfoPresent())
 			PosInput.setText(Integer.toString(TheBoard.fpga.getFpgaJTAGChainPosition()));
 		c.gridx = 0;
@@ -429,13 +439,13 @@ public class BoardDialog implements ActionListener, ComponentListener {
 		GridBagLayout FPGALayout = new GridBagLayout();
 		FPGAPanel.setLayout(FPGALayout);
 
-		JLabel VendorText = new JLabel("Specify FPGA vendor:");
+		JLabel VendorText = new ScaledLabel("Specify FPGA vendor:");
 		c.gridx = 0;
 		c.gridy = 0;
 		c.fill = GridBagConstraints.HORIZONTAL;
 		FPGAPanel.add(VendorText, c);
 
-		JComboBox<String> VendorInput = new JComboBox<>(FPGAClass.Vendors);
+		JComboBox<String> VendorInput = new ScaledComboBox<>(FPGAClass.Vendors);
 		if (TheBoard.fpga.FpgaInfoPresent()) {
 			VendorInput.setSelectedIndex(TheBoard.fpga.getVendor());
 		} else VendorInput.setSelectedIndex(0);
@@ -444,13 +454,13 @@ public class BoardDialog implements ActionListener, ComponentListener {
 		c.fill = GridBagConstraints.HORIZONTAL;
 		FPGAPanel.add(VendorInput, c);
 
-		JLabel FamilyText = new JLabel("Specify FPGA family:");
+		JLabel FamilyText = new ScaledLabel("Specify FPGA family:");
 		c.gridx = 0;
 		c.gridy = 2;
 		c.fill = GridBagConstraints.HORIZONTAL;
 		FPGAPanel.add(FamilyText, c);
 
-		JTextField FamilyInput = new JTextField();
+		ScaledTextField FamilyInput = new ScaledTextField();
 		if (TheBoard.fpga.FpgaInfoPresent())
 			FamilyInput.setText(TheBoard.fpga.getTechnology());
 		c.gridx = 0;
@@ -458,13 +468,13 @@ public class BoardDialog implements ActionListener, ComponentListener {
 		c.fill = GridBagConstraints.HORIZONTAL;
 		FPGAPanel.add(FamilyInput, c);
 
-		JLabel PartText = new JLabel("Specify FPGA part:");
+		JLabel PartText = new ScaledLabel("Specify FPGA part:");
 		c.gridx = 0;
 		c.gridy = 4;
 		c.fill = GridBagConstraints.HORIZONTAL;
 		FPGAPanel.add(PartText, c);
 
-		JTextField PartInput = new JTextField();
+		ScaledTextField PartInput = new ScaledTextField();
 		if (TheBoard.fpga.FpgaInfoPresent())
 			PartInput.setText(TheBoard.fpga.getPart());
 		c.gridx = 0;
@@ -472,13 +482,13 @@ public class BoardDialog implements ActionListener, ComponentListener {
 		c.fill = GridBagConstraints.HORIZONTAL;
 		FPGAPanel.add(PartInput, c);
 
-		JLabel BoxText = new JLabel("Specify FPGA package:");
+		JLabel BoxText = new ScaledLabel("Specify FPGA package:");
 		c.gridx = 0;
 		c.gridy = 6;
 		c.fill = GridBagConstraints.HORIZONTAL;
 		FPGAPanel.add(BoxText, c);
 
-		JTextField BoxInput = new JTextField();
+		ScaledTextField BoxInput = new ScaledTextField();
 		if (TheBoard.fpga.FpgaInfoPresent())
 			BoxInput.setText(TheBoard.fpga.getPackage());
 		c.gridx = 0;
@@ -486,13 +496,13 @@ public class BoardDialog implements ActionListener, ComponentListener {
 		c.fill = GridBagConstraints.HORIZONTAL;
 		FPGAPanel.add(BoxInput, c);
 
-		JLabel SpeedText = new JLabel("Specify FPGA speed grade:");
+		JLabel SpeedText = new ScaledLabel("Specify FPGA speed grade:");
 		c.gridx = 0;
 		c.gridy = 8;
 		c.fill = GridBagConstraints.HORIZONTAL;
 		FPGAPanel.add(SpeedText, c);
 
-		JTextField SpeedInput = new JTextField();
+		ScaledTextField SpeedInput = new ScaledTextField();
 		if (TheBoard.fpga.FpgaInfoPresent())
 			SpeedInput.setText(TheBoard.fpga.getSpeedGrade());
 		c.gridx = 0;
@@ -500,12 +510,12 @@ public class BoardDialog implements ActionListener, ComponentListener {
 		c.fill = GridBagConstraints.HORIZONTAL;
 		FPGAPanel.add(SpeedInput, c);
 
-		JLabel FlashName = new JLabel("Specify flash name:");
+		JLabel FlashName = new ScaledLabel("Specify flash name:");
 		c.gridx = 0;
 		c.gridy = 10;
 		c.fill = GridBagConstraints.HORIZONTAL;
 		FPGAPanel.add(FlashName,c);
-		JTextField FlashNameInput = new JTextField("");
+		ScaledTextField FlashNameInput = new ScaledTextField("");
 		if (TheBoard.fpga.FpgaInfoPresent())
 			FlashNameInput.setText(TheBoard.fpga.getFlashName());
 		c.gridx = 0;
@@ -513,12 +523,12 @@ public class BoardDialog implements ActionListener, ComponentListener {
 		c.fill = GridBagConstraints.HORIZONTAL;
 		FPGAPanel.add(FlashNameInput,c);
 
-		JLabel FlashPosText = new JLabel("Specify flash location in JTAG chain:");
+		JLabel FlashPosText = new ScaledLabel("Specify flash location in JTAG chain:");
 		c.gridx = 0;
 		c.gridy = 12;
 		c.fill = GridBagConstraints.HORIZONTAL;
 		FPGAPanel.add(FlashPosText,c);
-		JTextField FlashPosInput = new JTextField("2");
+		ScaledTextField FlashPosInput = new ScaledTextField("2");
 		if (TheBoard.fpga.FpgaInfoPresent())
 			FlashPosInput.setText(Integer.toString(TheBoard.fpga.getFlashJTAGChainPosition()));
 		c.gridx = 0;
@@ -531,7 +541,7 @@ public class BoardDialog implements ActionListener, ComponentListener {
 		c.fill = GridBagConstraints.NORTH;
 		selWindow.add(FPGAPanel, c);
 
-		JCheckBox UsbTmc = new JCheckBox("USBTMC Download");
+		JCheckBox UsbTmc = new ScaledCheckBox("USBTMC Download");
 		UsbTmc.setSelected(false);
 		if (TheBoard.fpga.FpgaInfoPresent())
 			UsbTmc.setSelected(TheBoard.fpga.USBTMCDownloadRequired());
@@ -540,7 +550,7 @@ public class BoardDialog implements ActionListener, ComponentListener {
 		c.fill = GridBagConstraints.HORIZONTAL;
 		selWindow.add(UsbTmc, c);
 
-		JButton CancelButton = new JButton("Cancel");
+		ScaledButton CancelButton = new ScaledButton("Cancel");
 		CancelButton.addActionListener(actionListener);
 		CancelButton.setActionCommand(CancelStr);
 		c.gridx = 0;
@@ -548,7 +558,7 @@ public class BoardDialog implements ActionListener, ComponentListener {
 		c.fill = GridBagConstraints.HORIZONTAL;
 		selWindow.add(CancelButton, c);
 
-		JButton SaveButton = new JButton("Done and Store");
+		ScaledButton SaveButton = new ScaledButton("Done and Store");
 		SaveButton.addActionListener(actionListener);
 		SaveButton.setActionCommand("save");
 		c.gridx = 1;
@@ -724,7 +734,7 @@ public class BoardDialog implements ActionListener, ComponentListener {
 			overlap |= iter.next().Overlap(rect);
 		}
 		if (overlap) {
-			showDialogNotification("Error",
+			showDialogNotification(this,"Error",
 					"<html>Found Overlapping regions!<br>Cannot process!</html>");
 			return;
 		}
@@ -785,7 +795,7 @@ public class BoardDialog implements ActionListener, ComponentListener {
 	private void showDialogNotification(JDialog parent, String type,
 			String string) {
 		final JDialog dialog = new JDialog(parent, type);
-		JLabel pic = new JLabel();
+		JLabel pic = new ScaledLabel();
 		if (type.equals("Warning")) {
 			pic.setIcon(new ImageIcon(getClass().getResource(pictureWarning)));
 		} else {
@@ -794,8 +804,8 @@ public class BoardDialog implements ActionListener, ComponentListener {
 		GridBagLayout dialogLayout = new GridBagLayout();
 		dialog.setLayout(dialogLayout);
 		GridBagConstraints c = new GridBagConstraints();
-		JLabel message = new JLabel(string);
-		JButton close = new JButton("close");
+		JLabel message = new ScaledLabel(string);
+		ScaledButton close = new ScaledButton("close");
 		ActionListener actionListener = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				// panel.setAlwaysOnTop(true);
@@ -823,19 +833,19 @@ public class BoardDialog implements ActionListener, ComponentListener {
 
 	}
 
-	private void showDialogNotification(String type, String string) {
+	public static void showDialogNotification(Object parrent,String type, String string) {
 		final JFrame dialog = new JFrame(type);
-		JLabel pic = new JLabel();
+		JLabel pic = new ScaledLabel();
 		if (type.equals("Warning")) {
-			pic.setIcon(new ImageIcon(getClass().getResource(pictureWarning)));
+			pic.setIcon(new ImageIcon(parrent.getClass().getResource(pictureWarning)));
 		} else {
-			pic.setIcon(new ImageIcon(getClass().getResource(pictureError)));
+			pic.setIcon(new ImageIcon(parrent.getClass().getResource(pictureError)));
 		}
 		GridBagLayout dialogLayout = new GridBagLayout();
 		dialog.setLayout(dialogLayout);
 		GridBagConstraints c = new GridBagConstraints();
-		JLabel message = new JLabel(string);
-		JButton close = new JButton("close");
+		JLabel message = new ScaledLabel(string);
+		ScaledButton close = new ScaledButton("close");
 		ActionListener actionListener = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				// panel.setAlwaysOnTop(true);
@@ -857,7 +867,8 @@ public class BoardDialog implements ActionListener, ComponentListener {
 		c.gridy = 1;
 		dialog.add(close, c);
 		dialog.pack();
-		dialog.setLocationRelativeTo(panel);
+		dialog.setLocation(Toolkit.getDefaultToolkit().getScreenSize().width>>2,
+				           Toolkit.getDefaultToolkit().getScreenSize().height>>2);
 		dialog.setAlwaysOnTop(true);
 		dialog.setVisible(true);
 
@@ -876,7 +887,7 @@ public class BoardDialog implements ActionListener, ComponentListener {
 		GridBagLayout dialogLayout = new GridBagLayout();
 		GridBagConstraints c = new GridBagConstraints();
 		selWindow.setLayout(dialogLayout);
-		JButton fpga = new JButton("Define the FPGA parameters");
+		ScaledButton fpga = new ScaledButton("Define the FPGA parameters");
 		fpga.setActionCommand(FPGAStr);
 		fpga.addActionListener(actionListener);
 		fpga.setEnabled(!TheBoard.fpga.FpgaInfoPresent());
@@ -884,15 +895,15 @@ public class BoardDialog implements ActionListener, ComponentListener {
 		c.gridy = 0;
 		c.fill = GridBagConstraints.HORIZONTAL;
 		selWindow.add(fpga, c);
-		JButton button;
+		ScaledButton button;
 		for (String comp : FPGAIOInformationContainer.GetComponentTypes()) {
-			button = new JButton("Define a " + comp);
+			button = new ScaledButton("Define a " + comp);
 			button.setActionCommand(comp);
 			button.addActionListener(actionListener);
 			c.gridy++;
 			selWindow.add(button, c);
 		}
-		JButton cancel = new JButton("Cancel");
+		ScaledButton cancel = new ScaledButton("Cancel");
 		cancel.setActionCommand(CancelStr);
 		cancel.addActionListener(actionListener);
 		c.gridy++;

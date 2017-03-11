@@ -42,6 +42,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 
 import com.cburch.logisim.gui.generic.LFrame;
+import com.cburch.logisim.gui.scale.ScaledMenuItem;
 import com.cburch.logisim.gui.start.About;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.MacCompatibility;
@@ -60,8 +61,8 @@ class MenuHelp extends JMenu implements ActionListener {
 	private LFrame helpFrame;
 
 	public MenuHelp(LogisimMenuBar menubar) {
+		Init();
 		this.menubar = menubar;
-		setFont(AppPreferences.getScaledFont(getFont()));
 
 		tutorial.addActionListener(this);
 		guide.addActionListener(this);
@@ -77,7 +78,12 @@ class MenuHelp extends JMenu implements ActionListener {
 		}
 	}
 
-	public void actionPerformed(ActionEvent e) {
+    private void Init() {
+		AppPreferences.setScaledFonts(getComponents());
+		super.setFont(AppPreferences.getScaledFont(getFont()));
+	}
+
+    public void actionPerformed(ActionEvent e) {
 		Object src = e.getSource();
 		if (src == guide) {
 			showHelp("guide");

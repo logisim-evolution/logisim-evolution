@@ -38,7 +38,6 @@ import java.awt.event.ActionListener;
 import java.util.Comparator;
 import java.util.List;
 
-import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -50,6 +49,8 @@ import javax.swing.table.TableColumn;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.file.FileStatistics;
 import com.cburch.logisim.file.LogisimFile;
+import com.cburch.logisim.gui.scale.ScaledButton;
+import com.cburch.logisim.gui.scale.ScaledScrollPane;
 import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.util.TableSorter;
 
@@ -198,9 +199,9 @@ public class StatisticsDialog extends JDialog implements ActionListener {
 				Strings.get("statsTotalWithout"), Strings.get("statsTotalWith"));
 		mySorter.setColumnComparator(String.class, comp);
 		table.setModel(mySorter);
-		JScrollPane tablePane = new JScrollPane(table);
+		JScrollPane tablePane = new ScaledScrollPane(table);
 
-		JButton button = new JButton(Strings.get("statsCloseButton"));
+		ScaledButton button = new ScaledButton(Strings.get("statsCloseButton"));
 		button.addActionListener(this);
 		JPanel buttonPanel = new JPanel();
 		buttonPanel.add(button);

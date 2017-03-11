@@ -30,18 +30,10 @@
 
 package com.bfh.logisim.fpgaboardeditor;
 
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.InputStream;
 
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -52,8 +44,6 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import com.cburch.logisim.proj.Projects;
-
 public class BoardReaderClass {
 
 	final static Logger logger = LoggerFactory
@@ -63,8 +53,6 @@ public class BoardReaderClass {
 	private DocumentBuilderFactory factory;
 	private DocumentBuilder parser;
 	private Document BoardDoc;
-	private String pictureError = "/resources/logisim/error.png";
-	private String pictureWarning = "/resources/logisim/warning.png";
 
 	public BoardReaderClass(String filename) {
 		myfilename = new String(filename);
@@ -145,17 +133,17 @@ public class BoardReaderClass {
 				}
 			}
 			if (CodeTable == null) {
-				showDialogNotification("Error",
+				BoardDialog.showDialogNotification(this,"Error",
 						"The selected xml file does not contain a compression code table");
 				return null;
 			}
 			if ((PictureWidth == 0) || (PictureHeight == 0)) {
-				showDialogNotification("Error",
+				BoardDialog.showDialogNotification(this,"Error",
 						"The selected xml file does not contain the picture dimensions");
 				return null;
 			}
 			if (PixelData == null) {
-				showDialogNotification("Error",
+				BoardDialog.showDialogNotification(this,"Error",
 						"The selected xml file does not contain the picture data");
 				return null;
 			}
@@ -285,7 +273,7 @@ public class BoardReaderClass {
 				|| (clockstand == null) || (Unusedpull == null)
 				|| (vendor == null) || (Part == null) || (family == null)
 				|| (Package == null) || (Speed == null)) {
-			showDialogNotification("Error",
+			BoardDialog.showDialogNotification(this,"Error",
 					"The selected xml file does not contain the required FPGA parameters");
 			return null;
 		}
@@ -315,48 +303,6 @@ public class BoardReaderClass {
 				}
 			}
 		}
-	}
-
-	private void showDialogNotification(String type, String string) {
-		final JFrame dialog = new JFrame(type);
-		JLabel pic = new JLabel();
-		if (type.equals("Warning")) {
-			pic.setIcon(new ImageIcon(getClass().getResource(pictureWarning)));
-		} else {
-			pic.setIcon(new ImageIcon(getClass().getResource(pictureError)));
-		}
-		GridBagLayout dialogLayout = new GridBagLayout();
-		dialog.setLayout(dialogLayout);
-		GridBagConstraints c = new GridBagConstraints();
-		JLabel message = new JLabel(string);
-		JButton close = new JButton("close");
-		ActionListener actionListener = new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				// panel.setAlwaysOnTop(true);
-				dialog.dispose();
-			}
-		};
-		close.addActionListener(actionListener);
-
-		c.gridx = 0;
-		c.gridy = 0;
-		c.ipadx = 20;
-		dialog.add(pic, c);
-
-		c.gridx = 1;
-		c.gridy = 0;
-		dialog.add(message, c);
-
-		c.gridx = 1;
-		c.gridy = 1;
-		dialog.add(close, c);
-		dialog.pack();
-		// dialog.setLocation(100, 100);
-		dialog.setLocation(Projects.getCenteredLoc(dialog.getWidth(),
-				dialog.getHeight()));
-		dialog.setAlwaysOnTop(true);
-		dialog.setVisible(true);
-
 	}
 
 }

@@ -41,6 +41,7 @@ import javax.swing.JFileChooser;
 import com.cburch.logisim.data.AbstractAttributeSet;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.file.Loader;
+import com.cburch.logisim.gui.scale.ScaledFileChooser;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.JInputComponent;
 
@@ -84,7 +85,7 @@ public class TclComponentAttributes extends AbstractAttributeSet {
 		}
 	}
 
-	private static class ContentFileCell extends JFileChooser implements
+	private static class ContentFileCell extends ScaledFileChooser implements
 			JInputComponent {
 		private static final long serialVersionUID = 1L;
 

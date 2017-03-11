@@ -47,18 +47,20 @@ import java.util.List;
 
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
-import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
+
 
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.comp.ComponentDrawContext;
 import com.cburch.logisim.data.Bounds;
+import com.cburch.logisim.gui.scale.ScaledCheckBox;
+import com.cburch.logisim.gui.scale.ScaledLabel;
+import com.cburch.logisim.gui.scale.ScaledScrollPane;
+import com.cburch.logisim.gui.scale.ScaledTextField;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.util.StringUtil;
 
@@ -167,18 +169,18 @@ public class Print {
 		private static final long serialVersionUID = 1L;
 		JCheckBox rotateToFit;
 		JCheckBox printerView;
-		JTextField header;
+		ScaledTextField header;
 		GridBagLayout gridbag;
 		GridBagConstraints gbc;
 
 		@SuppressWarnings("rawtypes")
 		ParmsPanel(JList list) {
 			// set up components
-			rotateToFit = new JCheckBox();
+			rotateToFit = new ScaledCheckBox();
 			rotateToFit.setSelected(true);
-			printerView = new JCheckBox();
+			printerView = new ScaledCheckBox();
 			printerView.setSelected(true);
-			header = new JTextField(20);
+			header = new ScaledTextField(20);
 			header.setText("%n (%p of %P)");
 
 			// set up panel
@@ -192,21 +194,21 @@ public class Print {
 			gbc.anchor = GridBagConstraints.NORTHWEST;
 			gbc.insets = new Insets(5, 0, 5, 0);
 			gbc.fill = GridBagConstraints.NONE;
-			addGb(new JLabel(Strings.get("labelCircuits") + " "));
+			addGb(new ScaledLabel(Strings.get("labelCircuits") + " "));
 			gbc.fill = GridBagConstraints.HORIZONTAL;
-			addGb(new JScrollPane(list));
+			addGb(new ScaledScrollPane(list));
 			gbc.fill = GridBagConstraints.NONE;
 
 			gbc.gridy++;
-			addGb(new JLabel(Strings.get("labelHeader") + " "));
+			addGb(new ScaledLabel(Strings.get("labelHeader") + " "));
 			addGb(header);
 
 			gbc.gridy++;
-			addGb(new JLabel(Strings.get("labelRotateToFit") + " "));
+			addGb(new ScaledLabel(Strings.get("labelRotateToFit") + " "));
 			addGb(rotateToFit);
 
 			gbc.gridy++;
-			addGb(new JLabel(Strings.get("labelPrinterView") + " "));
+			addGb(new ScaledLabel(Strings.get("labelPrinterView") + " "));
 			addGb(printerView);
 		}
 

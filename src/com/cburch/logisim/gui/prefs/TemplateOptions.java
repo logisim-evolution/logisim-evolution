@@ -43,16 +43,17 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import javax.swing.ButtonGroup;
-import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
-import javax.swing.JTextField;
 
 import com.cburch.logisim.file.Loader;
 import com.cburch.logisim.file.LoaderException;
 import com.cburch.logisim.file.LogisimFile;
+import com.cburch.logisim.gui.scale.ScaledButton;
+import com.cburch.logisim.gui.scale.ScaledRadioButton;
+import com.cburch.logisim.gui.scale.ScaledTextField;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.prefs.Template;
 import com.cburch.logisim.util.JFileChoosers;
@@ -146,11 +147,11 @@ class TemplateOptions extends OptionsPanel {
 
 	private MyListener myListener = new MyListener();
 
-	private JRadioButton plain = new JRadioButton();
-	private JRadioButton empty = new JRadioButton();
-	private JRadioButton custom = new JRadioButton();
-	private JTextField templateField = new JTextField(40);
-	private JButton templateButton = new JButton();
+	private JRadioButton plain = new ScaledRadioButton();
+	private JRadioButton empty = new ScaledRadioButton();
+	private JRadioButton custom = new ScaledRadioButton();
+	private ScaledTextField templateField = new ScaledTextField(40);
+	private ScaledButton templateButton = new ScaledButton();
 
 	public TemplateOptions(PreferencesFrame window) {
 		super(window);
@@ -159,11 +160,6 @@ class TemplateOptions extends OptionsPanel {
 		bgroup.add(plain);
 		bgroup.add(empty);
 		bgroup.add(custom);
-		plain.setFont(AppPreferences.getScaledFont(plain.getFont()));
-		empty.setFont(AppPreferences.getScaledFont(empty.getFont()));
-		custom.setFont(AppPreferences.getScaledFont(custom.getFont()));
-		templateField.setFont(AppPreferences.getScaledFont(templateField.getFont()));
-		templateButton.setFont(AppPreferences.getScaledFont(templateButton.getFont()));
 
 		plain.addActionListener(myListener);
 		empty.addActionListener(myListener);

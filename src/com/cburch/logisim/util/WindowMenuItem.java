@@ -34,17 +34,16 @@ import java.awt.Frame;
 import java.awt.event.ActionEvent;
 
 import javax.swing.JFrame;
-import javax.swing.JRadioButtonMenuItem;
 
-import com.cburch.logisim.prefs.AppPreferences;
+import com.cburch.logisim.gui.scale.ScaledRadioButtonMenuItem;
 
-class WindowMenuItem extends JRadioButtonMenuItem {
+
+class WindowMenuItem extends ScaledRadioButtonMenuItem {
 	private static final long serialVersionUID = 1L;
 	private WindowMenuItemManager manager;
 
 	WindowMenuItem(WindowMenuItemManager manager) {
 		this.manager = manager;
-		setFont(AppPreferences.getScaledFont(getFont()));
 		setText(manager.getText());
 		setSelected(WindowMenuManager.getCurrentManager() == manager);
 	}

@@ -42,11 +42,8 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.util.prefs.Preferences;
 
-import javax.swing.JButton;
-import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -61,6 +58,13 @@ import com.cburch.logisim.circuit.Simulator;
 import com.cburch.logisim.file.Options;
 import com.cburch.logisim.gui.generic.LFrame;
 import com.cburch.logisim.gui.log.LogFrame;
+import com.cburch.logisim.gui.scale.ScaledButton;
+import com.cburch.logisim.gui.scale.ScaledCheckBoxMenuItem;
+import com.cburch.logisim.gui.scale.ScaledFileChooser;
+import com.cburch.logisim.gui.scale.ScaledLabel;
+import com.cburch.logisim.gui.scale.ScaledMenu;
+import com.cburch.logisim.gui.scale.ScaledMenuItem;
+import com.cburch.logisim.gui.scale.ScaledScrollPane;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.std.wiring.Clock;
@@ -97,7 +101,7 @@ public class ChronoFrame extends LFrame implements KeyListener, ActionListener,
 		public void actionPerformed(ActionEvent e) {
 			// load a chronogram from a file
 			if ("load".equals(e.getActionCommand())) {
-				final JFileChooser fc = new JFileChooser();
+				final JFileChooser fc = new ScaledFileChooser();
 				int returnVal = fc.showOpenDialog(chronoFrame);
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
 					chronoFrame
@@ -106,7 +110,7 @@ public class ChronoFrame extends LFrame implements KeyListener, ActionListener,
 
 				// export a chronogram to a file
 			} else if ("export".equals(e.getActionCommand())) {
-                final JFileChooser fc = new JFileChooser();
+                final JFileChooser fc = new ScaledFileChooser();
                 int returnVal = fc.showSaveDialog(chronoFrame);
                 if (returnVal == JFileChooser.APPROVE_OPTION) {
                     chronoFrame.exportFile(fc.getSelectedFile().getAbsolutePath());
@@ -114,7 +118,7 @@ public class ChronoFrame extends LFrame implements KeyListener, ActionListener,
 
             }
             else if ("exportImg".equals(e.getActionCommand())) {
-                fc = new JFileChooser();
+                fc = new ScaledFileChooser();
                 int returnVal = fc.showSaveDialog(ChronoFrame.this);
                 if (returnVal == JFileChooser.APPROVE_OPTION) {
                     File file = fc.getSelectedFile();
@@ -128,10 +132,10 @@ public class ChronoFrame extends LFrame implements KeyListener, ActionListener,
 
 			} else if ("play".equals(e.getActionCommand())) {
 				if (simulator.isRunning()) {
-					((JButton) e.getSource()).setIcon(Icons
+					((ScaledButton) e.getSource()).setIcon(Icons
 							.getIcon("simplay.png"));
 				} else {
-					((JButton) e.getSource()).setIcon(Icons
+					((ScaledButton) e.getSource()).setIcon(Icons
 							.getIcon("simstop.png"));
 				}
 				simulator.setIsRunning(!simulator.isRunning());
@@ -139,10 +143,10 @@ public class ChronoFrame extends LFrame implements KeyListener, ActionListener,
 				simulator.step();
 			} else if ("tplay".equals(e.getActionCommand())) {
 				if (simulator.isTicking()) {
-					((JButton) e.getSource()).setIcon(Icons
+					((ScaledButton) e.getSource()).setIcon(Icons
 							.getIcon("simtplay.png"));
 				} else {
-					((JButton) e.getSource()).setIcon(Icons
+					((ScaledButton) e.getSource()).setIcon(Icons
 							.getIcon("simtstop.png"));
 				}
 				simulator.setIsTicking(!simulator.isTicking());
@@ -174,10 +178,10 @@ public class ChronoFrame extends LFrame implements KeyListener, ActionListener,
 	private LogFrame logFrame;
 	// top bar
 	private JPanel topBar;
-	private JButton chooseFileButton;
-	private JButton exportDataInFile;
-    private JButton exportDataToImage;
-	private JLabel statusLabel;
+	private ScaledButton chooseFileButton;
+	private ScaledButton exportDataInFile;
+    private ScaledButton exportDataToImage;
+	private ScaledLabel statusLabel;
 	// split pane
 	private RightPanel rightPanel;
 	private LeftPanel leftPanel;
@@ -197,7 +201,7 @@ public class ChronoFrame extends LFrame implements KeyListener, ActionListener,
 	private ChronoModelEventHandler chronoModelEventHandler;
 	// menu
 	private JMenuBar winMenuBar;
-	private JCheckBoxMenuItem ontopItem;
+	private ScaledCheckBoxMenuItem ontopItem;
 
 	private JMenuItem close;
 
@@ -267,11 +271,11 @@ public class ChronoFrame extends LFrame implements KeyListener, ActionListener,
 
 		// menu bar
 		winMenuBar = new JMenuBar();
-		JMenu windowMenu = new JMenu("Window");
+		JMenu windowMenu = new ScaledMenu("Window");
 		windowMenu.setMnemonic('W');
-		ontopItem = new JCheckBoxMenuItem("Set on top", true);
+		ontopItem = new ScaledCheckBoxMenuItem("Set on top", true);
 		ontopItem.addActionListener(this);
-		close = new JMenuItem("Close");
+		close = new ScaledMenuItem("Close");
 		close.addActionListener(this);
 		windowMenu.add(ontopItem);
 		windowMenu.addSeparator();
@@ -287,20 +291,20 @@ public class ChronoFrame extends LFrame implements KeyListener, ActionListener,
 		topBar.setLayout(new FlowLayout(FlowLayout.LEFT));
 
 		// external file
-		chooseFileButton = new JButton(Strings.get("ButtonLoad"));
+		chooseFileButton = new ScaledButton(Strings.get("ButtonLoad"));
 		chooseFileButton.setActionCommand("load");
 		chooseFileButton.addActionListener(myListener);
 		chooseFileButton.setPreferredSize(buttonSize);
 		chooseFileButton.setFocusable(false);
 
 		// export
-		exportDataInFile = new JButton(Strings.get("ButtonExport"));
+		exportDataInFile = new ScaledButton(Strings.get("ButtonExport"));
 		exportDataInFile.setActionCommand("export");
 		exportDataInFile.addActionListener(myListener);
 		exportDataInFile.setPreferredSize(buttonSize);
 		exportDataInFile.setFocusable(false);
 
-        exportDataToImage = new JButton(Strings.get("Export as image"));
+        exportDataToImage = new ScaledButton(Strings.get("Export as image"));
         exportDataToImage.setActionCommand("exportImg");
         exportDataToImage.addActionListener(myListener);
         exportDataToImage.setPreferredSize(buttonSize);
@@ -309,41 +313,41 @@ public class ChronoFrame extends LFrame implements KeyListener, ActionListener,
 		// Toolbar
 		JToolBar bar = new JToolBar();
 		bar.setFocusable(false);
-		JButton playButton;
+		ScaledButton playButton;
 		if (simulator != null && simulator.isRunning()) {
-			playButton = new JButton(Icons.getIcon("simstop.png"));
+			playButton = new ScaledButton(Icons.getIcon("simstop.png"));
 		} else {
-			playButton = new JButton(Icons.getIcon("simplay.png"));
+			playButton = new ScaledButton(Icons.getIcon("simplay.png"));
 		}
 		playButton.setActionCommand("play");
 		playButton.addActionListener(myListener);
 		playButton.setToolTipText("Start/Stop simulation");
 		playButton.setFocusable(false);
 		bar.add(playButton);
-		JButton stepButton = new JButton(Icons.getIcon("simstep.png"));
+		ScaledButton stepButton = new ScaledButton(Icons.getIcon("simstep.png"));
 		stepButton.setActionCommand("step");
 		stepButton.addActionListener(myListener);
 		stepButton.setToolTipText("Simulate one step");
 		stepButton.setFocusable(false);
 		bar.add(stepButton);
-		JButton tplayButton;
+		ScaledButton tplayButton;
 		if (simulator != null && simulator.isTicking()) {
-			tplayButton = new JButton(Icons.getIcon("simtstop.png"));
+			tplayButton = new ScaledButton(Icons.getIcon("simtstop.png"));
 		} else {
-			tplayButton = new JButton(Icons.getIcon("simtplay.png"));
+			tplayButton = new ScaledButton(Icons.getIcon("simtplay.png"));
 		}
 		tplayButton.setActionCommand("tplay");
 		tplayButton.addActionListener(myListener);
 		tplayButton.setToolTipText("Start/Stop 'sysclk' tick");
 		tplayButton.setFocusable(false);
 		bar.add(tplayButton);
-		JButton tstepButton = new JButton(Icons.getIcon("simtstep.png"));
+		ScaledButton tstepButton = new ScaledButton(Icons.getIcon("simtstep.png"));
 		tstepButton.setActionCommand("tstep");
 		tstepButton.addActionListener(myListener);
 		tstepButton.setToolTipText("Step one 'sysclk' tick");
 		tstepButton.setFocusable(false);
 		bar.add(tstepButton);
-		JButton tmainstepButton = new JButton(Icons.getIcon("clock.gif"));
+		ScaledButton tmainstepButton = new ScaledButton(Icons.getIcon("clock.gif"));
 		tmainstepButton.setActionCommand("tmainstep");
 		tmainstepButton.addActionListener(myListener);
 		tmainstepButton.setToolTipText("Step one 'clk' tick");
@@ -357,11 +361,11 @@ public class ChronoFrame extends LFrame implements KeyListener, ActionListener,
 
 		mainPanel.add(BorderLayout.NORTH, bar);
 
-		statusLabel = new JLabel();
+		statusLabel = new ScaledLabel();
 		topBar.add(chooseFileButton);
 		topBar.add(exportDataInFile);
 		topBar.add(exportDataToImage);
-		topBar.add(new JLabel(Strings.get("SimStatusName")));
+		topBar.add(new ScaledLabel(Strings.get("SimStatusName")));
 		topBar.add(statusLabel);
 		mainPanel.add(BorderLayout.SOUTH, topBar);
 
@@ -414,7 +418,7 @@ public class ChronoFrame extends LFrame implements KeyListener, ActionListener,
 
 		// ===Left Side===
 		leftPanel = new LeftPanel(this, mDrawAreaEventManager);
-		leftScroll = new JScrollPane(leftPanel);
+		leftScroll = new ScaledScrollPane(leftPanel);
 
 		// ===Right Side===
 		// keep scroolbar position
@@ -426,7 +430,7 @@ public class ChronoFrame extends LFrame implements KeyListener, ActionListener,
 			rightPanel = new RightPanel(rightPanel);
 		}
 
-		rightScroll = new JScrollPane(rightPanel);
+		rightScroll = new ScaledScrollPane(rightPanel);
 		rightScroll.getHorizontalScrollBar().addAdjustmentListener(myListener);
 
 		// Synchronize the two scrollbars

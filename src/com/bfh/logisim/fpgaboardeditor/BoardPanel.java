@@ -51,6 +51,9 @@ import javax.swing.JFileChooser;
 import javax.swing.JPanel;
 import javax.swing.filechooser.FileFilter;
 
+import com.cburch.logisim.gui.scale.ScaledFileChooser;
+import com.cburch.logisim.prefs.AppPreferences;
+
 @SuppressWarnings("serial")
 public class BoardPanel extends JPanel implements MouseListener,
 		MouseMotionListener {
@@ -76,9 +79,9 @@ public class BoardPanel extends JPanel implements MouseListener,
 	private Boolean EditMode;
 	public static final String PNG_EXTENSION = ".png";
 	public static final FileFilter PNG_FILTER = new PNGFileFilter();
-	private int scale = 1;
 
 	private BoardDialog edit_parent;
+	private float scale = (float) 1.0;
 
 	public BoardPanel(BoardDialog parent) {
 		xs = ys = w = h = 0;
@@ -109,14 +112,15 @@ public class BoardPanel extends JPanel implements MouseListener,
 		this.addMouseMotionListener(this);
 	}
 	
-	public void setScale(int scale) {
-		this.scale = scale;
-		Dimension thedim = new Dimension();
-		thedim.width = getWidth();
-		thedim.height = getHeight();
-		super.setPreferredSize(thedim);
+	public void SetScale(float ScaleFactor) {
+		this.scale = ScaleFactor;
+		Dimension preferredSize = new Dimension();
+		preferredSize.width=AppPreferences.getScaled(image_width,scale);
+		preferredSize.height=AppPreferences.getScaled(image_height, scale);
+		this.setPreferredSize(preferredSize);
+		edit_parent.GetPanel().pack();
 	}
-
+	
 	public void clear() {
 		image = null;
 	}
@@ -130,7 +134,7 @@ public class BoardPanel extends JPanel implements MouseListener,
 	}
 
 	public int getHeight() {
-		return image_height*scale;
+		return AppPreferences.getScaled(image_height,scale);
 	}
 
 	public Image getScaledImage(int width, int height) {
@@ -138,7 +142,7 @@ public class BoardPanel extends JPanel implements MouseListener,
 	}
 
 	public int getWidth() {
-		return image_width*scale;
+		return AppPreferences.getScaled(image_width,scale);
 	}
 
 	public Boolean ImageLoaded() {
@@ -147,7 +151,7 @@ public class BoardPanel extends JPanel implements MouseListener,
 
 	public void mouseClicked(MouseEvent e) {
 		if (EditMode && !this.ImageLoaded()) {
-			JFileChooser fc = new JFileChooser();
+			JFileChooser fc = new ScaledFileChooser();
 			fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 			fc.setDialogTitle("Choose FPGA board picture to use");
 			fc.setFileFilter(PNG_FILTER);
@@ -168,7 +172,8 @@ public class BoardPanel extends JPanel implements MouseListener,
 
 	public void mouseDragged(MouseEvent e) {
 		if (EditMode && this.ImageLoaded()) {
-			this.set_drag(e.getX()/scale, e.getY()/scale);
+			this.set_drag(AppPreferences.getDownScaled(e.getX(),scale), 
+					AppPreferences.getDownScaled(e.getY(),scale));
 			this.repaint();
 		}
 	}
@@ -186,9 +191,11 @@ public class BoardPanel extends JPanel implements MouseListener,
 	public void mousePressed(MouseEvent e) {
 		if (e.getClickCount() > 1) {
 			this.set_start(0, 0);
-			edit_parent.EditDialog(e.getX()/scale, e.getY()/scale);
+			edit_parent.EditDialog(AppPreferences.getDownScaled(e.getX(),scale), 
+					AppPreferences.getDownScaled(e.getY(),scale));
 		} else
-			this.set_start(e.getX()/scale, e.getY()/scale);
+			this.set_start(AppPreferences.getDownScaled(e.getX(),scale), 
+					AppPreferences.getDownScaled(e.getY(),scale));
 	}
 
 	public void mouseReleased(MouseEvent e) {
@@ -211,7 +218,8 @@ public class BoardPanel extends JPanel implements MouseListener,
 				yr = (h < 0) ? ys + h : ys;
 				wr = (w < 0) ? -w : w;
 				hr = (h < 0) ? -h : h;
-				g.drawRect(xr*scale, yr*scale, wr*scale, hr*scale);
+				g.drawRect(AppPreferences.getScaled(xr,scale), AppPreferences.getScaled(yr,scale), 
+						AppPreferences.getScaled(wr,scale), AppPreferences.getScaled(hr,scale));
 			}
 			if (EditMode && (edit_parent.defined_components != null)) {
 				LinkedList<BoardRectangle> comps = edit_parent.defined_components;
@@ -219,8 +227,10 @@ public class BoardPanel extends JPanel implements MouseListener,
 				g.setColor(Color.red);
 				while (iter.hasNext()) {
 					BoardRectangle thisone = iter.next();
-					g.fillRect(thisone.getXpos()*scale, thisone.getYpos()*scale,
-							thisone.getWidth()*scale, thisone.getHeight()*scale);
+					g.fillRect(AppPreferences.getScaled(thisone.getXpos(),scale), 
+							AppPreferences.getScaled(thisone.getYpos(),scale),
+							AppPreferences.getScaled(thisone.getWidth(),scale), 
+							AppPreferences.getScaled(thisone.getHeight(),scale));
 				}
 			}
 		} else {
@@ -229,8 +239,8 @@ public class BoardPanel extends JPanel implements MouseListener,
 			if (EditMode) {
 				String message;
 				int xpos;
-				Font curfont = new Font(g.getFont().getFontName(), Font.BOLD,
-						20*scale);
+				Font curfont = AppPreferences.getScaledFont(new Font(g.getFont().getFontName(), Font.BOLD,
+						20));
 				g.setColor(Color.black);
 				g.setFont(curfont);
 				FontMetrics fm = g.getFontMetrics();
@@ -250,11 +260,9 @@ public class BoardPanel extends JPanel implements MouseListener,
 				message = "The board picture formate must be PNG";
 				xpos = (this.getWidth() - fm.stringWidth(message)) / 2;
 				g.drawString(message, xpos, (200 + (int) (4.5 * fm.getAscent())) );
-				if (scale > 1) {
-					message = "Current resolution: "+getWidth()+"x"+getHeight();
-					xpos = (this.getWidth() - fm.stringWidth(message)) / 2;
-					g.drawString(message, xpos, (200 + (int) (6 * fm.getAscent())) );
-				}
+				message = "Current resolution: "+getWidth()+"x"+getHeight();
+				xpos = (this.getWidth() - fm.stringWidth(message)) / 2;
+				g.drawString(message, xpos, (200 + (int) (6 * fm.getAscent())) );
 			}
 		}
 	}

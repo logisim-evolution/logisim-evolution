@@ -39,6 +39,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import com.cburch.logisim.data.Direction;
+import com.cburch.logisim.gui.scale.ScaledLabel;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.TableLayout;
 
@@ -64,7 +65,7 @@ class WindowOptions extends OptionsPanel {
 
 	public WindowOptions(PreferencesFrame window) {
 		super(window);
-		JLabel ZoomLabel = new JLabel();
+		JLabel ZoomLabel = new ScaledLabel();
 		
 
 		checks = new PrefBoolean[] { new PrefBoolean(
@@ -89,21 +90,18 @@ class WindowOptions extends OptionsPanel {
 		panel.add(toolbarPlacement.getJLabel());
 		panel.add(toolbarPlacement.getJComboBox());
 		
-		ZoomLabel.setFont(AppPreferences.getScaledFont(ZoomLabel.getFont()));
 		ZoomLabel.setText("Zoom factor:");
 		ZoomValue = new ZoomSlider(JSlider.HORIZONTAL,100,300,(int)(AppPreferences.SCALE_FACTOR.get()*100));
 		
-		panel.add(new JLabel(" "));
-		panel.add(new JLabel(" "));
+		panel.add(new ScaledLabel(" "));
+		panel.add(new ScaledLabel(" "));
 		panel.add(ZoomLabel);
 		panel.add(ZoomValue);
 		ZoomValue.addChangeListener(new ZoomChange());
-	    JLabel important = new JLabel("Please restart logisim,");
-	    important.setFont(AppPreferences.getScaledFont(important.getFont()));
+		JLabel important = new ScaledLabel("Please restart logisim,");
 	    important.setFont(important.getFont().deriveFont(Font.ITALIC));
 	    panel.add(important);
-	    important = new JLabel(" changing this value may have unpridictable results");
-	    important.setFont(AppPreferences.getScaledFont(important.getFont()));
+	    important = new ScaledLabel(" changing this value may have unpridictable results");
 	    important.setFont(important.getFont().deriveFont(Font.ITALIC));
 	    panel.add(important);
 	    

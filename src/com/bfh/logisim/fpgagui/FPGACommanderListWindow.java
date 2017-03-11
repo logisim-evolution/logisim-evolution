@@ -45,6 +45,8 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 
+import com.cburch.logisim.gui.scale.ScaledScrollPane;
+
 @SuppressWarnings("serial")
 public class FPGACommanderListWindow  extends JFrame implements KeyListener,WindowListener,ListDataListener {
 
@@ -73,7 +75,7 @@ public class FPGACommanderListWindow  extends JFrame implements KeyListener,Wind
 		textArea.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		model.addListDataListener(this);
 
-		JScrollPane textMessages = new JScrollPane(textArea);
+		JScrollPane textMessages = new ScaledScrollPane(textArea);
 		textMessages
 			.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 		textMessages

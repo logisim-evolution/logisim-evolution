@@ -43,7 +43,6 @@ import javax.swing.JPanel;
 
 import com.cburch.logisim.analyze.model.Expression;
 import com.cburch.logisim.analyze.model.ExpressionVisitor;
-import com.cburch.logisim.prefs.AppPreferences;
 
 class ExpressionView extends JPanel {
 	private static class ExpressionData {
@@ -397,7 +396,6 @@ class ExpressionView extends JPanel {
 	private RenderData renderData;
 
 	public ExpressionView() {
-		setFont(AppPreferences.getScaledFont(getFont()));
 		addComponentListener(myListener);
 		setExpression(null);
 	}

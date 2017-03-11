@@ -4,6 +4,8 @@
  */
 package com.hepia.logisim.chronogui;
 
+import com.cburch.logisim.gui.scale.ScaledButton;
+import com.cburch.logisim.gui.scale.ScaledLabel;
 import com.hepia.logisim.chronodata.ChronoData;
 import com.hepia.logisim.chronodata.SignalData;
 import com.hepia.logisim.chronodata.SignalDataBus;
@@ -70,8 +72,8 @@ public class ImageExporter extends javax.swing.JFrame implements ActionListener 
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JRadioButton jRadioBtn_single;
     private javax.swing.JRadioButton jRadioBtn_multiple;
-    private javax.swing.JButton jBtnDone;
-    private JLabel picture;
+    private ScaledButton jBtnDone;
+    private ScaledLabel picture;
     Image img_single;
     Image img_multiple;
     final int PAGE_MAX_WIDTH = 1000;
@@ -132,7 +134,7 @@ public class ImageExporter extends javax.swing.JFrame implements ActionListener 
         radioBtnMorphPanel.add(jRadioBtn_multiple);
         jRadioBtn_single.addActionListener(this);
         jRadioBtn_multiple.addActionListener(this);
-        jBtnDone = new javax.swing.JButton();
+        jBtnDone = new ScaledButton();
         jBtnDone.setText("Done");
         jBtnDone.setToolTipText("Save the image and close the dialog box");
         jBtnDone.addActionListener(this);
@@ -141,7 +143,7 @@ public class ImageExporter extends javax.swing.JFrame implements ActionListener 
         img_single = Toolkit.getDefaultToolkit().getImage("doc"+File.separator+"imgExport_single.gif");
         img_multiple = Toolkit.getDefaultToolkit().getImage("doc"+File.separator+"imgExport_multiple.gif");
 
-        picture = new JLabel(new ImageIcon(img_multiple));
+        picture = new ScaledLabel(new ImageIcon(img_multiple));
         morphPanel.add(radioBtnMorphPanel);
         morphPanel.add(picture);
         pane.add(morphPanel);
@@ -192,8 +194,8 @@ public class ImageExporter extends javax.swing.JFrame implements ActionListener 
             JPanel panelX = new JPanel();
             panelX.setLayout(new BoxLayout(panelX, BoxLayout.X_AXIS));
             panelX.setAlignmentX(Component.LEFT_ALIGNMENT);
-            JLabel jlabNames = new JLabel(new ImageIcon(imgleft));
-            JLabel jlabSignals = new JLabel(new ImageIcon(img_signals));
+            JLabel jlabNames = new ScaledLabel(new ImageIcon(imgleft));
+            JLabel jlabSignals = new ScaledLabel(new ImageIcon(img_signals));
             panelX.add(jlabNames);
             panelX.add(jlabSignals);
             pan.add(panelX);
@@ -211,11 +213,11 @@ public class ImageExporter extends javax.swing.JFrame implements ActionListener 
             if (!name.equals("sysclk")) {
                 if (nbElem == 0) {
                     bi = CreateUpperBlankLine(chronoData.get(name).getSignalValues());
-                    JLabel jlabl = new JLabel(new ImageIcon(bi));
+                    JLabel jlabl = new ScaledLabel(new ImageIcon(bi));
                     rightBox.add(jlabl);
                 }
                 bi = CreateSignalImage(chronoData.get(name).getSignalValues(), name);
-                JLabel jlab = new JLabel(new ImageIcon(bi));
+                JLabel jlab = new ScaledLabel(new ImageIcon(bi));
                 rightBox.add(jlab);
                 nbElem++;
             }

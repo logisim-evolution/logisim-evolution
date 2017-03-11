@@ -35,6 +35,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
+import com.cburch.logisim.gui.scale.ScaledScrollPane;
+
 public class MessageBox {
 
 	String description;
@@ -76,7 +78,7 @@ public class MessageBox {
 			textArea.setText(description);
 			textArea.setCaretPosition(0);
 
-			JScrollPane scrollPane = new JScrollPane(textArea);
+			JScrollPane scrollPane = new ScaledScrollPane(textArea);
 			scrollPane.setPreferredSize(new Dimension(640, 480));
 			JOptionPane.showMessageDialog(null, scrollPane, title, type);
 		} else {

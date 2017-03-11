@@ -36,6 +36,7 @@ import java.util.ArrayList;
 
 import javax.swing.JMenuItem;
 
+
 class MenuItemHelper implements ActionListener {
 	private JMenuItem source;
 	private LogisimMenuItem menuItem;

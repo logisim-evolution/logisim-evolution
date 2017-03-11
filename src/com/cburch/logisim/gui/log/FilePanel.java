@@ -38,17 +38,19 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 
 import com.cburch.logisim.data.TestVector;
 import com.cburch.logisim.data.Value;
+import com.cburch.logisim.gui.scale.ScaledButton;
+import com.cburch.logisim.gui.scale.ScaledCheckBox;
+import com.cburch.logisim.gui.scale.ScaledLabel;
+import com.cburch.logisim.gui.scale.ScaledTextField;
 import com.cburch.logisim.util.JFileChoosers;
 import com.cburch.logisim.util.StringUtil;
 
@@ -132,12 +134,12 @@ class FilePanel extends LogPanel {
 	private static final long serialVersionUID = 1L;
 
 	private Listener listener = new Listener();
-	private JLabel enableLabel = new JLabel();
-	private JButton enableButton = new JButton();
-	private JLabel fileLabel = new JLabel();
-	private JTextField fileField = new JTextField();
-	private JButton selectButton = new JButton();
-	private JCheckBox headerCheckBox = new JCheckBox();
+	private JLabel enableLabel = new ScaledLabel();
+	private ScaledButton enableButton = new ScaledButton();
+	private JLabel fileLabel = new ScaledLabel();
+	private ScaledTextField fileField = new ScaledTextField();
+	private ScaledButton selectButton = new ScaledButton();
+	private JCheckBox headerCheckBox = new ScaledCheckBox();
 	private JFileChooser chooser = JFileChoosers.create();
 
 	public FilePanel(LogFrame frame) {

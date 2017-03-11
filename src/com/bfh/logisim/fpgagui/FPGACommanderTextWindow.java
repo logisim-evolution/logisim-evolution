@@ -43,6 +43,8 @@ import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
+import com.cburch.logisim.gui.scale.ScaledScrollPane;
+
 @SuppressWarnings("serial")
 public class FPGACommanderTextWindow extends JFrame implements KeyListener,WindowListener {
 
@@ -67,7 +69,7 @@ public class FPGACommanderTextWindow extends JFrame implements KeyListener,Windo
 		textArea.setEditable(false);
 		clear();
 
-		JScrollPane textMessages = new JScrollPane(textArea);
+		JScrollPane textMessages = new ScaledScrollPane(textArea);
 		textMessages
 			.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 		textMessages

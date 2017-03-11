@@ -35,7 +35,6 @@ package com.cburch.logisim.gui.generic;
  * http://www.cs.cornell.edu/courses/cs3410/2015sp/
  */
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -112,7 +111,6 @@ public class ProjectExplorer extends JTree implements LocaleListener {
 				Tool tool = toolNode.getValue();
 				if (ret instanceof JLabel) {
 					((JLabel) ret).setText(tool.getDisplayName());
-					((JLabel) ret).setFont(AppPreferences.getScaledFont(((JLabel) ret).getFont()));
 					((JLabel) ret).setIcon(new ToolIcon(tool));
 					((JLabel) ret).setToolTipText(tool.getDescription());
 				}
@@ -353,6 +351,7 @@ public class ProjectExplorer extends JTree implements LocaleListener {
 
 	public ProjectExplorer(Project proj) {
 		super();
+		Init();
 		this.proj = proj;
 
 		setModel(new ProjectExplorerModel(proj));
@@ -375,6 +374,11 @@ public class ProjectExplorer extends JTree implements LocaleListener {
 		proj.addProjectListener(myListener);
 		AppPreferences.GATE_SHAPE.addPropertyChangeListener(myListener);
 		LocaleManager.addLocaleListener(this);
+	}
+
+	private void Init() {
+		AppPreferences.setScaledFonts(getComponents());
+		super.setFont(AppPreferences.getScaledFont(super.getFont()));
 	}
 
 	public Tool getSelectedTool() {

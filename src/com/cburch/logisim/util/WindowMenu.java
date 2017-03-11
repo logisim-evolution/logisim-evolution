@@ -42,10 +42,10 @@ import javax.swing.ButtonGroup;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
-import javax.swing.JRadioButtonMenuItem;
 import javax.swing.KeyStroke;
 
-import com.cburch.logisim.gui.menu.ScaledMenuItem;
+import com.cburch.logisim.gui.scale.ScaledMenuItem;
+import com.cburch.logisim.gui.scale.ScaledRadioButtonMenuItem;
 import com.cburch.logisim.prefs.AppPreferences;
 
 public class WindowMenu extends JMenu {
@@ -98,13 +98,13 @@ public class WindowMenu extends JMenu {
 	private JMenuItem minimize = new ScaledMenuItem();
 	private JMenuItem zoom = new ScaledMenuItem();
 	private JMenuItem close = new ScaledMenuItem();
-	private JRadioButtonMenuItem nullItem = new JRadioButtonMenuItem();
+	private ScaledRadioButtonMenuItem nullItem = new ScaledRadioButtonMenuItem();
 	private ArrayList<WindowMenuItem> persistentItems = new ArrayList<WindowMenuItem>();
 	private ArrayList<WindowMenuItem> transientItems = new ArrayList<WindowMenuItem>();
 
 	public WindowMenu(JFrame owner) {
 		this.owner = owner;
-		setFont(AppPreferences.getScaledFont(getFont()));
+		Init();
 		WindowMenuManager.addMenu(this);
 
 		int menuMask = getToolkit().getMenuShortcutKeyMask();
@@ -128,7 +128,12 @@ public class WindowMenu extends JMenu {
 		myListener.localeChanged();
 	}
 
-	void addMenuItem(Object source, WindowMenuItem item, boolean persistent) {
+    private void Init() {
+		AppPreferences.setScaledFonts(getComponents());
+		super.setFont(AppPreferences.getScaledFont(getFont()));
+	}
+
+    void addMenuItem(Object source, WindowMenuItem item, boolean persistent) {
 		if (persistent)
 			persistentItems.add(item);
 		else
@@ -148,7 +153,7 @@ public class WindowMenu extends JMenu {
 
 		if (!persistentItems.isEmpty()) {
 			addSeparator();
-			for (JRadioButtonMenuItem item : persistentItems) {
+			for (ScaledRadioButtonMenuItem item : persistentItems) {
 				bgroup.add(item);
 				add(item);
 			}
@@ -156,7 +161,7 @@ public class WindowMenu extends JMenu {
 
 		if (!transientItems.isEmpty()) {
 			addSeparator();
-			for (JRadioButtonMenuItem item : transientItems) {
+			for (ScaledRadioButtonMenuItem item : transientItems) {
 				bgroup.add(item);
 				add(item);
 			}
@@ -165,7 +170,7 @@ public class WindowMenu extends JMenu {
 		WindowMenuItemManager currentManager = WindowMenuManager
 				.getCurrentManager();
 		if (currentManager != null) {
-			JRadioButtonMenuItem item = currentManager.getMenuItem(this);
+			ScaledRadioButtonMenuItem item = currentManager.getMenuItem(this);
 			if (item != null) {
 				item.setSelected(true);
 			}
@@ -235,7 +240,7 @@ public class WindowMenu extends JMenu {
 			owner.setSize(windowSize);
 	}
 
-	void removeMenuItem(Object source, JRadioButtonMenuItem item) {
+	void removeMenuItem(Object source, ScaledRadioButtonMenuItem item) {
 		if (transientItems.remove(item)) {
 			item.removeActionListener(myListener);
 		}

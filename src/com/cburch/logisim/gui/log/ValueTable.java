@@ -53,6 +53,7 @@ import javax.swing.event.ChangeListener;
 
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Value;
+import com.cburch.logisim.gui.scale.ScaledScrollPane;
 import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.StringUtil;
 
@@ -342,7 +343,7 @@ public class ValueTable extends JPanel {
 		body = new TableBody();
 		vsb = new VerticalScrollBar();
 
-		scrollPane = new JScrollPane(body,
+		scrollPane = new ScaledScrollPane(body,
 				JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
 				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		scrollPane.setVerticalScrollBar(vsb);

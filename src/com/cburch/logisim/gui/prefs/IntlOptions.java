@@ -39,11 +39,12 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import com.cburch.logisim.gui.scale.ScaledLabel;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.LocaleManager;
 
 class IntlOptions extends OptionsPanel {
-	private static class RestrictedLabel extends JLabel {
+	private static class RestrictedLabel extends ScaledLabel {
 		private static final long serialVersionUID = 1L;
 
 		@Override
@@ -79,7 +80,6 @@ class IntlOptions extends OptionsPanel {
 		localePanel.add(localeLabel);
 		localeLabel.setMaximumSize(localeLabel.getPreferredSize());
 		localeLabel.setAlignmentY(Component.TOP_ALIGNMENT);
-		localeLabel.setFont(AppPreferences.getScaledFont(localeLabel.getFont()));
 		localePanel.add(locale);
 		locale.setAlignmentY(Component.TOP_ALIGNMENT);
 		localePanel.add(Box.createGlue());

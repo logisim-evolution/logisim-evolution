@@ -38,12 +38,14 @@ import java.awt.event.ActionListener;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
 
-import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JSeparator;
-import javax.swing.JTextField;
 
+import com.cburch.logisim.gui.scale.ScaledButton;
+import com.cburch.logisim.gui.scale.ScaledCheckBox;
+import com.cburch.logisim.gui.scale.ScaledLabel;
+import com.cburch.logisim.gui.scale.ScaledTextField;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.Softwares;
 
@@ -86,18 +88,14 @@ public class SoftwaresOptions extends OptionsPanel {
 
 	private MyListener myListener = new MyListener();
 
-	private JCheckBox questaValidationCheckBox = new JCheckBox();
-	private JLabel questaPathLabel = new JLabel();
-	private JTextField questaPathField = new JTextField(40);
-	private JButton questaPathButton = new JButton();
+	private JCheckBox questaValidationCheckBox = new ScaledCheckBox();
+	private JLabel questaPathLabel = new ScaledLabel();
+	private ScaledTextField questaPathField = new ScaledTextField(40);
+	private ScaledButton questaPathButton = new ScaledButton();
 
 	public SoftwaresOptions(PreferencesFrame window) {
 		super(window);
         
-		questaValidationCheckBox.setFont(AppPreferences.getScaledFont(questaValidationCheckBox.getFont()));
-		questaPathLabel.setFont(AppPreferences.getScaledFont(questaPathLabel.getFont()));
-		questaPathField.setFont(AppPreferences.getScaledFont(questaPathField.getFont()));
-		questaPathButton.setFont(AppPreferences.getScaledFont(questaPathButton.getFont()));
 		questaValidationCheckBox.addActionListener(myListener);
 		questaPathButton.addActionListener(myListener);
 		AppPreferences.getPrefs().addPreferenceChangeListener(myListener);

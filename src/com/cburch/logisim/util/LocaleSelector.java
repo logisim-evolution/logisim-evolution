@@ -81,7 +81,6 @@ class LocaleSelector extends JList implements LocaleListener,
 
 	@SuppressWarnings("unchecked")
 	LocaleSelector(Locale[] locales) {
-		setFont(AppPreferences.getScaledFont(getFont()));
 		setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		DefaultListModel<LocaleOption> model = new DefaultListModel<>();
 		items = new LocaleOption[locales.length];

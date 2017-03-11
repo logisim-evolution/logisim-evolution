@@ -43,6 +43,7 @@ import javax.swing.KeyStroke;
 import com.cburch.logisim.gui.main.Frame;
 import com.cburch.logisim.gui.opts.OptionsFrame;
 import com.cburch.logisim.gui.prefs.PreferencesFrame;
+import com.cburch.logisim.gui.scale.ScaledMenuItem;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.proj.ProjectActions;
@@ -67,7 +68,7 @@ class MenuFile extends Menu implements ActionListener {
 
 	public MenuFile(LogisimMenuBar menubar) {
 		this.menubar = menubar;
-		setFont(AppPreferences.getScaledFont(getFont()));
+		Init();
 		openRecent = new OpenRecent(menubar);
 
 		int menuMask = getToolkit().getMenuShortcutKeyMask();
@@ -123,7 +124,12 @@ class MenuFile extends Menu implements ActionListener {
 		quit.addActionListener(this);
 	}
 
-	public void actionPerformed(ActionEvent e) {
+    private void Init() {
+		AppPreferences.setScaledFonts(getComponents());
+		super.setFont(AppPreferences.getScaledFont(getFont()));
+	}
+
+    public void actionPerformed(ActionEvent e) {
 		Object src = e.getSource();
 		Project proj = menubar.getProject();
 		if (src == newi) {

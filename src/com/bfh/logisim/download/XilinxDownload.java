@@ -62,6 +62,7 @@ import com.bfh.logisim.hdlgenerator.TickComponentHDLGeneratorFactory;
 import com.bfh.logisim.hdlgenerator.ToplevelHDLGeneratorFactory;
 import com.bfh.logisim.settings.Settings;
 import com.bfh.logisim.settings.VendorSoftware;
+import com.cburch.logisim.gui.scale.ScaledLabel;
 import com.cburch.logisim.proj.Projects;
 
 public class XilinxDownload {
@@ -88,7 +89,7 @@ public class XilinxDownload {
 		// PointerInfo mouseloc = MouseInfo.getPointerInfo();
 		// Point mlocation = mouseloc.getLocation();
 		// panel.setLocation(mlocation.x,mlocation.y);
-		JLabel LocText = new JLabel(
+		JLabel LocText = new ScaledLabel(
 				"Generating FPGA files and performing download; this may take a while");
 		gbc.gridx = 0;
 		gbc.gridy = 0;

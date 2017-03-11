@@ -41,11 +41,9 @@ import java.util.LinkedList;
 import java.util.Map;
 
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
-import javax.swing.JTextField;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,6 +54,10 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
 import com.bfh.logisim.hdlgenerator.HDLGeneratorFactory;
+import com.cburch.logisim.gui.scale.ScaledButton;
+import com.cburch.logisim.gui.scale.ScaledComboBox;
+import com.cburch.logisim.gui.scale.ScaledLabel;
+import com.cburch.logisim.gui.scale.ScaledTextField;
 import com.cburch.logisim.proj.Projects;
 import com.cburch.logisim.std.io.DipSwitch;
 import com.cburch.logisim.std.io.PortIO;
@@ -482,11 +484,11 @@ public class FPGAIOInformationContainer {
 		int NrOfDevicePins = IOComponentTypes.GetNrOfFPGAPins(MyType);
 		final JDialog selWindow = new JDialog(parent.GetPanel(), MyType
 				+ " properties");
-		JComboBox<String> DriveInput = new JComboBox<>(
+		JComboBox<String> DriveInput = new ScaledComboBox<>(
 				DriveStrength.Behavior_strings);
-		JComboBox<String> PullInput = new JComboBox<>(
+		JComboBox<String> PullInput = new ScaledComboBox<>(
 				PullBehaviors.Behavior_strings);
-		JComboBox<String> ActiveInput = new JComboBox<>(
+		JComboBox<String> ActiveInput = new ScaledComboBox<>(
 				PinActivity.Behavior_strings);
 		ActionListener actionListener = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -502,7 +504,7 @@ public class FPGAIOInformationContainer {
 		selWindow.setLayout(dialogLayout);
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridy = -1;
-		ArrayList<JTextField> LocInputs = new ArrayList<JTextField>();
+		ArrayList<ScaledTextField> LocInputs = new ArrayList<ScaledTextField>();
 		ArrayList<String> PinLabels;
 		switch (MyType) {
 		case SevenSegment:
@@ -538,12 +540,12 @@ public class FPGAIOInformationContainer {
 				offset = (i / 32) * 2;
 				c.gridy = oldY;
 			}
-			JLabel LocText = new JLabel("Specify " + PinLabels.get(i)
+			JLabel LocText = new ScaledLabel("Specify " + PinLabels.get(i)
 					+ " location:");
 			c.gridx = 0 + offset;
 			c.gridy++;
 			selWindow.add(LocText, c);
-			JTextField txt = new JTextField(6);
+			ScaledTextField txt = new ScaledTextField(6);
 			if (defined()) {
 				txt.setText(MyPinLocations.get(i));
 			}
@@ -554,11 +556,11 @@ public class FPGAIOInformationContainer {
 		}
 		c.gridy = maxY;
 
-		JLabel StandardText = new JLabel("Specify FPGA pin standard:");
+		JLabel StandardText = new ScaledLabel("Specify FPGA pin standard:");
 		c.gridy++;
 		c.gridx = 0;
 		selWindow.add(StandardText, c);
-		JComboBox<String> StandardInput = new JComboBox<>(
+		JComboBox<String> StandardInput = new ScaledComboBox<>(
 				IoStandards.Behavior_strings);
 		if (defined())
 			StandardInput.setSelectedIndex(MyIOStandard);
@@ -568,7 +570,7 @@ public class FPGAIOInformationContainer {
 		selWindow.add(StandardInput, c);
 
 		if (IOComponentTypes.OutputComponentSet.contains(MyType)) {
-			JLabel DriveText = new JLabel("Specify FPGA pin drive strength:");
+			JLabel DriveText = new ScaledLabel("Specify FPGA pin drive strength:");
 			c.gridy++;
 			c.gridx = 0;
 			selWindow.add(DriveText, c);
@@ -581,7 +583,7 @@ public class FPGAIOInformationContainer {
 		}
 
 		if (IOComponentTypes.InputComponentSet.contains(MyType)) {
-			JLabel PullText = new JLabel("Specify FPGA pin pull behavior:");
+			JLabel PullText = new ScaledLabel("Specify FPGA pin pull behavior:");
 			c.gridy++;
 			c.gridx = 0;
 			selWindow.add(PullText, c);
@@ -594,7 +596,7 @@ public class FPGAIOInformationContainer {
 		}
 
 		if (!IOComponentTypes.InOutComponentSet.contains(MyType)) {
-			JLabel ActiveText = new JLabel("Specify " + MyType + " activity:");
+			JLabel ActiveText = new ScaledLabel("Specify " + MyType + " activity:");
 			c.gridy++;
 			c.gridx = 0;
 			selWindow.add(ActiveText, c);
@@ -606,14 +608,14 @@ public class FPGAIOInformationContainer {
 			selWindow.add(ActiveInput, c);
 		}
 
-		JButton OkayButton = new JButton("Done and Store");
+		ScaledButton OkayButton = new ScaledButton("Done and Store");
 		OkayButton.setActionCommand("done");
 		OkayButton.addActionListener(actionListener);
 		c.gridx = 0;
 		c.gridy++;
 		selWindow.add(OkayButton, c);
 
-		JButton CancelButton = new JButton("Cancel");
+		ScaledButton CancelButton = new ScaledButton("Cancel");
 		CancelButton.setActionCommand("cancel");
 		CancelButton.addActionListener(actionListener);
 		c.gridx = 1;
@@ -712,7 +714,7 @@ public class FPGAIOInformationContainer {
 			}
 		};
 
-		JComboBox size = new JComboBox<>();
+		JComboBox size = new ScaledComboBox<>();
 		for (int i = min; i <= max; i++) {
 			size.addItem(i);
 		}
@@ -722,7 +724,7 @@ public class FPGAIOInformationContainer {
 		selWindow.setLayout(dialogLayout);
 		c.fill = GridBagConstraints.HORIZONTAL;
 
-		JLabel sizeText = new JLabel("Specify number of " + text + ": ");
+		JLabel sizeText = new ScaledLabel("Specify number of " + text + ": ");
 		c.gridx = 0;
 		c.gridy = 0;
 		selWindow.add(sizeText, c);
@@ -730,7 +732,7 @@ public class FPGAIOInformationContainer {
 		c.gridx = 1;
 		selWindow.add(size, c);
 
-		JButton nextButton = new JButton("Next");
+		ScaledButton nextButton = new ScaledButton("Next");
 		nextButton.setActionCommand("next");
 		nextButton.addActionListener(actionListener);
 		c.gridy++;
@@ -898,7 +900,7 @@ public class FPGAIOInformationContainer {
 	private void showDialogNotification(JDialog parent, String type,
 			String string) {
 		final JDialog dialog = new JDialog(parent, type);
-		JLabel pic = new JLabel();
+		JLabel pic = new ScaledLabel();
 		if (type.equals("Warning")) {
 			pic.setIcon(new ImageIcon(getClass().getResource(
 					BoardDialog.pictureWarning)));
@@ -909,8 +911,8 @@ public class FPGAIOInformationContainer {
 		GridBagLayout dialogLayout = new GridBagLayout();
 		dialog.setLayout(dialogLayout);
 		GridBagConstraints c = new GridBagConstraints();
-		JLabel message = new JLabel(string);
-		JButton close = new JButton("close");
+		JLabel message = new ScaledLabel(string);
+		ScaledButton close = new ScaledButton("close");
 		ActionListener actionListener = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				// panel.setAlwaysOnTop(true);

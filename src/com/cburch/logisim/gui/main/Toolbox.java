@@ -33,10 +33,10 @@ package com.cburch.logisim.gui.main;
 import java.awt.BorderLayout;
 
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 
 import com.cburch.draw.toolbar.Toolbar;
 import com.cburch.logisim.gui.generic.ProjectExplorer;
+import com.cburch.logisim.gui.scale.ScaledScrollPane;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.tools.Tool;
 
@@ -53,7 +53,7 @@ class Toolbox extends JPanel {
 
 		toolbox = new ProjectExplorer(proj);
 		toolbox.setListener(new ToolboxManip(proj, toolbox));
-		add(new JScrollPane(toolbox), BorderLayout.CENTER);
+		add(new ScaledScrollPane(toolbox), BorderLayout.CENTER);
 	}
 
 	void setHaloedTool(Tool value) {

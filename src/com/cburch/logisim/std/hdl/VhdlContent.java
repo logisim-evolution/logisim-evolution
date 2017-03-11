@@ -45,6 +45,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
 import com.cburch.hdl.HdlModel;
+import com.cburch.logisim.gui.scale.ScaledScrollPane;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.util.Softwares;
 
@@ -239,7 +240,7 @@ public class VhdlContent extends HdlContent {
 			message.setLineWrap(false);
 			message.setMargin(new Insets(5, 5, 5, 5));
 
-			JScrollPane sp = new JScrollPane(message);
+			JScrollPane sp = new ScaledScrollPane(message);
 			sp.setPreferredSize(new Dimension(700, 400));
 
 			JOptionPane.showOptionDialog(null, sp, title.toString(),

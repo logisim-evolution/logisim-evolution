@@ -40,7 +40,6 @@ import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 
 import javax.swing.AbstractAction;
-import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -56,7 +55,9 @@ import com.cburch.logisim.analyze.model.OutputExpressionsEvent;
 import com.cburch.logisim.analyze.model.OutputExpressionsListener;
 import com.cburch.logisim.analyze.model.Parser;
 import com.cburch.logisim.analyze.model.ParserException;
-import com.cburch.logisim.prefs.AppPreferences;
+import com.cburch.logisim.gui.scale.ScaledButton;
+import com.cburch.logisim.gui.scale.ScaledLabel;
+import com.cburch.logisim.gui.scale.ScaledScrollPane;
 import com.cburch.logisim.util.StringGetter;
 
 class ExpressionTab extends AnalyzerTab implements TabInterface {
@@ -151,10 +152,10 @@ class ExpressionTab extends AnalyzerTab implements TabInterface {
 	private OutputSelector selector;
 	private ExpressionView prettyView = new ExpressionView();
 	private JTextArea field = new JTextArea(4, 25);
-	private JButton clear = new JButton();
-	private JButton revert = new JButton();
-	private JButton enter = new JButton();
-	private JLabel error = new JLabel();
+	private ScaledButton clear = new ScaledButton();
+	private ScaledButton revert = new ScaledButton();
+	private ScaledButton enter = new ScaledButton();
+	private JLabel error = new ScaledLabel();
 
 	private MyListener myListener = new MyListener();
 	private AnalyzerModel model;
@@ -168,17 +169,14 @@ class ExpressionTab extends AnalyzerTab implements TabInterface {
 		model.getOutputExpressions().addOutputExpressionsListener(myListener);
 		selector.addItemListener(myListener);
 		clear.addActionListener(myListener);
-		clear.setFont(AppPreferences.getScaledFont(clear.getFont()));
 		revert.addActionListener(myListener);
-		revert.setFont(AppPreferences.getScaledFont(revert.getFont()));
 		enter.addActionListener(myListener);
-		enter.setFont(AppPreferences.getScaledFont(enter.getFont()));
 		field.setLineWrap(true);
 		field.setWrapStyleWord(true);
 		field.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0),
 				myListener);
 		field.getDocument().addDocumentListener(myListener);
-		field.setFont(AppPreferences.getScaledFont(new Font("Monospaced", Font.PLAIN, 14)));
+		field.setFont(new Font("Monospaced", Font.PLAIN, 14));
 
 		JPanel buttons = new JPanel();
 		buttons.add(clear);
@@ -200,7 +198,7 @@ class ExpressionTab extends AnalyzerTab implements TabInterface {
 		add(prettyView);
 		Insets oldInsets = gc.insets;
 		gc.insets = new Insets(10, 10, 0, 10);
-		JScrollPane fieldPane = new JScrollPane(field,
+		JScrollPane fieldPane = new ScaledScrollPane(field,
 				ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
 				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		gb.setConstraints(fieldPane, gc);

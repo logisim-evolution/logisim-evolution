@@ -47,6 +47,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.filechooser.FileFilter;
 
+import com.cburch.logisim.gui.scale.ScaledScrollPane;
 import com.cburch.logisim.std.Builtin;
 import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.util.JFileChoosers;
@@ -454,7 +455,7 @@ public class Loader implements LibraryLoader {
 			textArea.setText(description);
 			textArea.setCaretPosition(0);
 
-			JScrollPane scrollPane = new JScrollPane(textArea);
+			JScrollPane scrollPane = new ScaledScrollPane(textArea);
 			scrollPane.setPreferredSize(new Dimension(350, 150));
 			JOptionPane.showMessageDialog(parent, scrollPane,
 					Strings.get("fileErrorTitle"), JOptionPane.ERROR_MESSAGE);

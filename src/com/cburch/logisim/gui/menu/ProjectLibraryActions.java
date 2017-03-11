@@ -45,6 +45,7 @@ import javax.swing.JScrollPane;
 import com.cburch.logisim.file.Loader;
 import com.cburch.logisim.file.LogisimFile;
 import com.cburch.logisim.file.LogisimFileActions;
+import com.cburch.logisim.gui.scale.ScaledScrollPane;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.tools.Library;
 
@@ -102,7 +103,7 @@ public class ProjectLibraryActions {
 			return;
 		}
 		LibraryJList list = new LibraryJList(builtins);
-		JScrollPane listPane = new JScrollPane(list);
+		JScrollPane listPane = new ScaledScrollPane(list);
 		int action = JOptionPane.showConfirmDialog(proj.getFrame(), listPane,
 				Strings.get("loadBuiltinDialogTitle"),
 				JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
@@ -192,7 +193,7 @@ public class ProjectLibraryActions {
 			return;
 		}
 		LibraryJList list = new LibraryJList(canUnload);
-		JScrollPane listPane = new JScrollPane(list);
+		JScrollPane listPane = new ScaledScrollPane(list);
 		int action = JOptionPane.showConfirmDialog(proj.getFrame(), listPane,
 				Strings.get("unloadLibrariesDialogTitle"),
 				JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);

@@ -43,7 +43,6 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 
 import com.bfh.logisim.designrulecheck.CorrectLabel;
 import com.cburch.logisim.analyze.gui.Analyzer;
@@ -53,6 +52,8 @@ import com.cburch.logisim.circuit.Analyze;
 import com.cburch.logisim.circuit.AnalyzeException;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.file.LogisimFileActions;
+import com.cburch.logisim.gui.scale.ScaledLabel;
+import com.cburch.logisim.gui.scale.ScaledTextField;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.proj.Project;
@@ -110,16 +111,16 @@ public class ProjectCircuitActions {
 			JLabel error = null;
 			/* Checking for valid names */
 			if (name.isEmpty()) {
-				error = new JLabel(Strings.get("circuitNameMissingError"));
+				error = new ScaledLabel(Strings.get("circuitNameMissingError"));
 			} else
 			if (!SyntaxChecker.isVariableNameAcceptable(name,false)) {
-				error = new JLabel("\""+name+"\": "+Strings.get("circuitNameInvalidName"));
+				error = new ScaledLabel("\""+name+"\": "+Strings.get("circuitNameInvalidName"));
 			} else
 			if (CorrectLabel.IsKeyword(name,false)) {
-				error = new JLabel("\""+name+"\": "+Strings.get("circuitNameKeyword"));
+				error = new ScaledLabel("\""+name+"\": "+Strings.get("circuitNameKeyword"));
 			} else
 			if (NameIsInUse(proj,name)) {
-				error = new JLabel("\""+name+"\": "+Strings.get("circuitNameExists"));
+				error = new ScaledLabel("\""+name+"\": "+Strings.get("circuitNameExists"));
 			}
 			if (error != null) {
 				JOptionPane.showMessageDialog(proj.getFrame(), error,
@@ -245,10 +246,10 @@ public class ProjectCircuitActions {
 	 */
 	private static String promptForCircuitName(JFrame frame, Library lib,
 			String initialValue) {
-		JLabel label = new JLabel(Strings.get("circuitNamePrompt"));
-		final JTextField field = new JTextField(15);
+		JLabel label = new ScaledLabel(Strings.get("circuitNamePrompt"));
+		final ScaledTextField field = new ScaledTextField(15);
 		field.setText(initialValue);
-		JLabel error = new JLabel(" ");
+		JLabel error = new ScaledLabel(" ");
 		GridBagLayout gb = new GridBagLayout();
 		GridBagConstraints gc = new GridBagConstraints();
 		JPanel strut = new JPanel(null);
