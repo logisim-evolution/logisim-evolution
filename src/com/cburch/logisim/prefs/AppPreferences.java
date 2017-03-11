@@ -30,7 +30,10 @@
 
 package com.cburch.logisim.prefs;
 
+import java.awt.Component;
+import java.awt.Container;
 import java.awt.Font;
+import java.awt.Image;
 import java.awt.Toolkit;
 import java.beans.PropertyChangeListener;
 import java.io.File;
@@ -44,6 +47,7 @@ import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
 import java.util.prefs.Preferences;
 
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 
 import com.cburch.logisim.Main;
@@ -365,7 +369,35 @@ public class AppPreferences {
 			getPrefs().putInt(TEMPLATE_TYPE, value);
 		}
 	}
+
+	public static void setScaledFonts(Component[] comp) {
+		for (int x = 0 ; x < comp.length; x++) {
+			if (comp[x] instanceof Container)
+				setScaledFonts(((Container) comp[x]).getComponents());
+			try{comp[x].setFont(getScaledFont(comp[x].getFont()));}
+			catch(Exception e){}
+		}
+	}
+	public static int getDownScaled(int value, float ExtScale) {
+		getPrefs();
+		float scale = ((float)((int)(SCALE_FACTOR.get()*10)))/(float)10.0;
+		scale *= ExtScale;
+		return (int)((float)value/scale);
+	}
 	
+	public static int getDownScaled(int value) {
+		getPrefs();
+		float scale = ((float)((int)(SCALE_FACTOR.get()*10)))/(float)10.0;
+		return (int)((float)value/scale);
+	}
+	
+	public static int getScaled(int value, float ExtScale) {
+		getPrefs();
+		float scale = ((float)((int)(SCALE_FACTOR.get()*10)))/(float)10.0;
+		scale *= ExtScale;
+		return (int)((float)value*scale);
+	}
+
 	public static int getScaled(int value) {
 		getPrefs();
 		float scale = ((float)((int)(SCALE_FACTOR.get()*10)))/(float)10.0;
@@ -380,6 +412,11 @@ public class AppPreferences {
 	
 	public static Font getScaledFont(Font myfont) {
 		return myfont.deriveFont(getScaled((float)IconSize));
+	}
+	
+	public static ImageIcon getScaledImageIcon(ImageIcon icon) {
+		Image IcImage = icon.getImage();
+		return new ImageIcon(IcImage.getScaledInstance(getScaled(IconSize), getScaled(IconSize), Image.SCALE_SMOOTH));
 	}
 
 	public static void updateRecentFile(File file) {

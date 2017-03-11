@@ -35,6 +35,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JMenuItem;
 
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.util.StringGetter;
 
@@ -63,6 +64,7 @@ class SplitterDistributeItem extends JMenuItem implements ActionListener {
 		}
 		setEnabled(!same);
 		setText(toGetter().toString());
+		Init();
 	}
 
 	public void actionPerformed(ActionEvent e) {
@@ -89,4 +91,10 @@ class SplitterDistributeItem extends JMenuItem implements ActionListener {
 			return Strings.getter("splitterDistributeDescending");
 		}
 	}
+	
+    private void Init() {
+		AppPreferences.setScaledFonts(getComponents());
+		super.setFont(AppPreferences.getScaledFont(getFont()));
+	}
+	
 }

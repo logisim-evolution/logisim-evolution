@@ -49,7 +49,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Set;
 
-import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -85,6 +84,10 @@ import com.bfh.logisim.fpgaboardeditor.BoardInformation;
 import com.bfh.logisim.fpgaboardeditor.BoardRectangle;
 import com.bfh.logisim.fpgaboardeditor.FPGAIOInformationContainer;
 import com.bfh.logisim.fpgaboardeditor.Strings;
+import com.cburch.logisim.gui.scale.ScaledButton;
+import com.cburch.logisim.gui.scale.ScaledFileChooser;
+import com.cburch.logisim.gui.scale.ScaledLabel;
+import com.cburch.logisim.gui.scale.ScaledScrollPane;
 
 public class ComponentMapDialog implements ActionListener,
 		ListSelectionListener {
@@ -304,14 +307,14 @@ public class ComponentMapDialog implements ActionListener,
 
 	private JDialog panel;
 	private boolean doneAssignment = false;
-	private JButton UnMapButton = new JButton();
-	private JButton UnMapAllButton = new JButton();
-	private JButton DoneButton = new JButton();
-	private JButton SaveButton = new JButton();
-	private JButton CancelButton = new JButton();
-	private JButton LoadButton = new JButton();
-	private JButton ScaleButton = new JButton();
-	private JLabel MessageLine = new JLabel();
+	private ScaledButton UnMapButton = new ScaledButton();
+	private ScaledButton UnMapAllButton = new ScaledButton();
+	private ScaledButton DoneButton = new ScaledButton();
+	private ScaledButton SaveButton = new ScaledButton();
+	private ScaledButton CancelButton = new ScaledButton();
+	private ScaledButton LoadButton = new ScaledButton();
+	private ScaledButton ScaleButton = new ScaledButton();
+	private JLabel MessageLine = new ScaledLabel();
 	private JScrollPane UnMappedPane;
 	private JScrollPane MappedPane;
 	@SuppressWarnings("rawtypes")
@@ -401,9 +404,9 @@ public class ComponentMapDialog implements ActionListener,
 		panel.add(BoardPic, c);
 
 		/* Add some text */
-		JLabel UnmappedText = new JLabel();
+		JLabel UnmappedText = new ScaledLabel();
 		UnmappedText.setText("Unmapped components List:  (?)");
-		UnmappedText.setHorizontalTextPosition(JLabel.CENTER);
+		UnmappedText.setHorizontalTextPosition(ScaledLabel.CENTER);
 		UnmappedText.setPreferredSize(new Dimension(
 				(BoardPic.getWidth() * 2) / 5, 25));
 		UnmappedText
@@ -414,14 +417,14 @@ public class ComponentMapDialog implements ActionListener,
 		c.gridy = 1;
 		c.gridwidth = 1;
 		panel.add(UnmappedText, c);
-		JLabel MappedText = new JLabel();
+		JLabel MappedText = new ScaledLabel();
 		MappedText.setText("Mapped components List:");
 		MappedText.setHorizontalTextPosition(JLabel.CENTER);
 		MappedText.setPreferredSize(new Dimension(
 				(BoardPic.getWidth() * 2) / 5, 25));
 		c.gridx = 1;
 		panel.add(MappedText, c);
-		JLabel CommandText = new JLabel();
+		JLabel CommandText = new ScaledLabel();
 		CommandText.setText("Command buttons:");
 		CommandText.setHorizontalTextPosition(JLabel.CENTER);
 		CommandText.setPreferredSize(new Dimension((BoardPic.getWidth()) / 5,
@@ -491,7 +494,7 @@ public class ComponentMapDialog implements ActionListener,
 		UnmappedList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		UnmappedList.addListSelectionListener(this);
 		UnmappedList.addMouseListener(mouseListener);
-		UnMappedPane = new JScrollPane(UnmappedList);
+		UnMappedPane = new ScaledScrollPane(UnmappedList);
 		UnMappedPane.setPreferredSize(new Dimension(
 				(BoardPic.getWidth() * 2) / 5, 175));
 		c.gridx = 0;
@@ -504,7 +507,7 @@ public class ComponentMapDialog implements ActionListener,
 		MappedList = new JList();
 		MappedList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		MappedList.addListSelectionListener(this);
-		MappedPane = new JScrollPane(MappedList);
+		MappedPane = new ScaledScrollPane(MappedList);
 		MappedPane.setPreferredSize(new Dimension(
 				(BoardPic.getWidth() * 2) / 5, 175));
 		c.gridx = 1;
@@ -581,7 +584,7 @@ public class ComponentMapDialog implements ActionListener,
 	}
 
 	private String getDirName(String window_name) {
-		JFileChooser fc = new JFileChooser(OldDirectory);
+		JFileChooser fc = new ScaledFileChooser(OldDirectory);
 		fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		fc.setDialogTitle(window_name);
 		if (!OldDirectory.isEmpty()) {
@@ -619,7 +622,7 @@ public class ComponentMapDialog implements ActionListener,
 	}
 
 	private void Load() {
-		JFileChooser fc = new JFileChooser(OldDirectory);
+		JFileChooser fc = new ScaledFileChooser(OldDirectory);
 		fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 		fc.setDialogTitle("Choose XML board description file to use");
 		FileFilter XML_FILTER = new XMLFileFilter();

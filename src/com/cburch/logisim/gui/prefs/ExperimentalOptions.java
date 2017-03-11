@@ -38,11 +38,12 @@ import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import com.cburch.logisim.gui.scale.ScaledLabel;
 import com.cburch.logisim.prefs.AppPreferences;
 
 class ExperimentalOptions extends OptionsPanel {
 	private static final long serialVersionUID = 1L;
-	private JLabel accelRestart = new JLabel();
+	private JLabel accelRestart = new ScaledLabel();
 	private PrefOptionList accel;
 
 	public ExperimentalOptions(PreferencesFrame window) {
@@ -64,7 +65,6 @@ class ExperimentalOptions extends OptionsPanel {
 		accelPanel.add(accel.getJComboBox(), BorderLayout.CENTER);
 		accelPanel.add(accelRestart, BorderLayout.PAGE_END);
 		accelRestart.setFont(accelRestart.getFont().deriveFont(Font.ITALIC));
-		accelRestart.setFont(AppPreferences.getScaledFont(accelRestart.getFont()));
 		JPanel accelPanel2 = new JPanel();
 		accelPanel2.add(accelPanel);
 

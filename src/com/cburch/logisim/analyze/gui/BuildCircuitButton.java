@@ -36,14 +36,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 
-import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 
 import com.cburch.logisim.analyze.model.AnalyzerModel;
 import com.cburch.logisim.analyze.model.Expression;
@@ -51,21 +49,25 @@ import com.cburch.logisim.analyze.model.VariableList;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitMutation;
 import com.cburch.logisim.file.LogisimFileActions;
-import com.cburch.logisim.prefs.AppPreferences;
+import com.cburch.logisim.gui.scale.ScaledButton;
+import com.cburch.logisim.gui.scale.ScaledCheckBox;
+import com.cburch.logisim.gui.scale.ScaledComboBox;
+import com.cburch.logisim.gui.scale.ScaledLabel;
+import com.cburch.logisim.gui.scale.ScaledTextField;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.proj.Projects;
 import com.cburch.logisim.std.gates.CircuitBuilder;
 import com.cburch.logisim.util.StringUtil;
 
-class BuildCircuitButton extends JButton {
+class BuildCircuitButton extends ScaledButton {
 	private class DialogPanel extends JPanel {
 		private static final long serialVersionUID = 1L;
-		private JLabel projectLabel = new JLabel();
+		private JLabel projectLabel = new ScaledLabel();
 		private JComboBox<Object> project;
-		private JLabel nameLabel = new JLabel();
-		private JTextField name = new JTextField(10);
-		private JCheckBox twoInputs = new JCheckBox();
-		private JCheckBox nands = new JCheckBox();
+		private JLabel nameLabel = new ScaledLabel();
+		private ScaledTextField name = new ScaledTextField(10);
+		private JCheckBox twoInputs = new ScaledCheckBox();
+		private JCheckBox nands = new ScaledCheckBox();
 
 		DialogPanel() {
 			List<Project> projects = Projects.getOpenProjects();
@@ -78,7 +80,7 @@ class BuildCircuitButton extends JButton {
 					initialSelection = options[i];
 				}
 			}
-			project = new JComboBox<>(options);
+			project = new ScaledComboBox<>(options);
 			if (options.length == 1) {
 				project.setSelectedItem(options[0]);
 				project.setEnabled(false);
@@ -219,9 +221,9 @@ class BuildCircuitButton extends JButton {
 	private AnalyzerModel model;
 
 	BuildCircuitButton(JFrame parent, AnalyzerModel model) {
+		super();
 		this.parent = parent;
 		this.model = model;
-		setFont(AppPreferences.getScaledFont(getFont()));
 		addActionListener(myListener);
 	}
 

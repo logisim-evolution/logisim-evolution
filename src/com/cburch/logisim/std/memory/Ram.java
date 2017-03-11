@@ -40,8 +40,6 @@ import java.io.StringWriter;
 import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
 
-import javax.swing.JLabel;
-
 import com.bfh.logisim.designrulecheck.CorrectLabel;
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.data.Attribute;
@@ -53,6 +51,7 @@ import com.cburch.logisim.data.Value;
 import com.cburch.logisim.gui.hex.HexFile;
 import com.cburch.logisim.gui.hex.HexFrame;
 import com.cburch.logisim.gui.main.Frame;
+import com.cburch.logisim.gui.scale.ScaledLabel;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceLogger;
 import com.cburch.logisim.instance.InstancePainter;
@@ -122,7 +121,7 @@ public class Ram extends Mem {
 	}
 
 	@SuppressWarnings("serial")
-	private static class ContentsCell extends JLabel implements MouseListener {
+	private static class ContentsCell extends ScaledLabel implements MouseListener {
 
 		Window source;
 		MemContents contents;

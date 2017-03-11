@@ -33,15 +33,16 @@ package com.cburch.logisim.analyze.gui;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 
-import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JRootPane;
 
+import com.cburch.logisim.gui.scale.ScaledButton;
+
 class DefaultRegistry {
 	private class MyListener implements FocusListener {
-		JButton defaultButton;
+		ScaledButton defaultButton;
 
-		MyListener(JButton defaultButton) {
+		MyListener(ScaledButton defaultButton) {
 			this.defaultButton = defaultButton;
 		}
 
@@ -50,7 +51,7 @@ class DefaultRegistry {
 		}
 
 		public void focusLost(FocusEvent event) {
-			JButton currentDefault = rootPane.getDefaultButton();
+			ScaledButton currentDefault = (ScaledButton)rootPane.getDefaultButton();
 			if (currentDefault == defaultButton)
 				rootPane.setDefaultButton(null);
 		}
@@ -63,7 +64,7 @@ class DefaultRegistry {
 		rootPane.setDefaultButton(null);
 	}
 
-	public void registerDefaultButton(JComponent comp, JButton button) {
+	public void registerDefaultButton(JComponent comp, ScaledButton button) {
 		comp.addFocusListener(new MyListener(button));
 	}
 }

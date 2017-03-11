@@ -46,8 +46,6 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JProgressBar;
 
-import org.hamcrest.core.IsInstanceOf;
-
 import com.bfh.logisim.fpgagui.FPGAReport;
 import com.bfh.logisim.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.circuit.Circuit;
@@ -63,6 +61,7 @@ import com.cburch.logisim.comp.ComponentFactory;
 import com.cburch.logisim.comp.EndData;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Location;
+import com.cburch.logisim.gui.scale.ScaledLabel;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceComponent;
 import com.cburch.logisim.instance.StdAttr;
@@ -665,7 +664,7 @@ public class Netlist implements CircuitListener {
 		panel.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		GridBagLayout thisLayout = new GridBagLayout();
 		panel.setLayout(thisLayout);
-		JLabel LocText = new JLabel("Generating Netlist for Circuit: "
+		JLabel LocText = new ScaledLabel("Generating Netlist for Circuit: "
 				+ MyCircuit.getName());
 		gbc.gridx = 0;
 		gbc.gridy = 0;

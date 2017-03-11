@@ -38,13 +38,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
 
 import com.cburch.logisim.gui.generic.LFrame;
-import com.cburch.logisim.prefs.AppPreferences;
+import com.cburch.logisim.gui.scale.ScaledButton;
+import com.cburch.logisim.gui.scale.ScaledTabbedPane;
 import com.cburch.logisim.util.LocaleListener;
 import com.cburch.logisim.util.LocaleManager;
 import com.cburch.logisim.util.WindowMenuItemManager;
@@ -111,9 +110,9 @@ public class PreferencesFrame extends LFrame {
 
 	private MyListener myListener = new MyListener();
 	private OptionsPanel[] panels;
-	private JTabbedPane tabbedPane;
+	private ScaledTabbedPane tabbedPane;
 
-	private JButton close = new JButton();
+	private ScaledButton close = new ScaledButton();
 
 	private PreferencesFrame() {
 		setDefaultCloseOperation(HIDE_ON_CLOSE);
@@ -123,8 +122,7 @@ public class PreferencesFrame extends LFrame {
 				new IntlOptions(this), new WindowOptions(this),
 				new LayoutOptions(this), new ExperimentalOptions(this),
 				new SoftwaresOptions(this), };
-		tabbedPane = new JTabbedPane();
-		tabbedPane.setFont(AppPreferences.getScaledFont(tabbedPane.getFont()));
+		tabbedPane = new ScaledTabbedPane();
 		int intlIndex = -1;
 		for (int index = 0; index < panels.length; index++) {
 			OptionsPanel panel = panels[index];
@@ -136,7 +134,6 @@ public class PreferencesFrame extends LFrame {
 
 		JPanel buttonPanel = new JPanel();
 		buttonPanel.add(close);
-		close.setFont(AppPreferences.getScaledFont(close.getFont()));
 		close.addActionListener(myListener);
 
 		Container contents = getContentPane();

@@ -44,6 +44,7 @@ import javax.swing.JPopupMenu;
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.gui.hex.HexFile;
 import com.cburch.logisim.gui.hex.HexFrame;
+import com.cburch.logisim.gui.scale.ScaledMenuItem;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.tools.MenuExtender;
@@ -100,7 +101,7 @@ class MemMenu implements ActionListener, MenuExtender {
 	}
 
 	private JMenuItem createItem(boolean enabled, String label) {
-		JMenuItem ret = new JMenuItem(label);
+		JMenuItem ret = new ScaledMenuItem(label);
 		ret.setEnabled(enabled);
 		ret.addActionListener(this);
 		return ret;

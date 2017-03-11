@@ -42,7 +42,8 @@ import com.cburch.logisim.analyze.model.AnalyzerModel;
 import com.cburch.logisim.analyze.model.VariableList;
 import com.cburch.logisim.analyze.model.VariableListEvent;
 import com.cburch.logisim.analyze.model.VariableListListener;
-import com.cburch.logisim.prefs.AppPreferences;
+import com.cburch.logisim.gui.scale.ScaledComboBox;
+import com.cburch.logisim.gui.scale.ScaledLabel;
 
 class OutputSelector {
 	@SuppressWarnings("rawtypes")
@@ -125,9 +126,9 @@ class OutputSelector {
 	}
 
 	private VariableList source;
-	private JLabel label = new JLabel();
+	private JLabel label = new ScaledLabel();
 	@SuppressWarnings("rawtypes")
-	private JComboBox select = new JComboBox<>();
+	private JComboBox select = new ScaledComboBox<>();
 	private String prototypeValue = null;
 
 	@SuppressWarnings("unchecked")
@@ -136,8 +137,6 @@ class OutputSelector {
 
 		Model listModel = new Model();
 		select.setModel(listModel);
-		label.setFont(AppPreferences.getScaledFont(label.getFont()));
-		select.setFont(AppPreferences.getScaledFont(select.getFont()));
 		source.addVariableListListener(listModel);
 	}
 

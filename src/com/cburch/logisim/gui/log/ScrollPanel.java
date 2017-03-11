@@ -34,6 +34,8 @@ import java.awt.BorderLayout;
 
 import javax.swing.JScrollPane;
 
+import com.cburch.logisim.gui.scale.ScaledScrollPane;
+
 class ScrollPanel extends LogPanel {
 	private static final long serialVersionUID = 1L;
 	private TablePanel table;
@@ -41,7 +43,7 @@ class ScrollPanel extends LogPanel {
 	public ScrollPanel(LogFrame frame) {
 		super(frame);
 		this.table = new TablePanel(frame);
-		JScrollPane pane = new JScrollPane(table,
+		JScrollPane pane = new ScaledScrollPane(table,
 				JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
 				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		pane.setVerticalScrollBar(table.getVerticalScrollBar());

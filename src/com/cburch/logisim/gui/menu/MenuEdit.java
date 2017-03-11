@@ -37,6 +37,7 @@ import java.awt.event.KeyEvent;
 import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
 
+import com.cburch.logisim.gui.scale.ScaledMenuItem;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Action;
 import com.cburch.logisim.proj.Project;
@@ -124,7 +125,7 @@ class MenuEdit extends Menu {
 
 	public MenuEdit(LogisimMenuBar menubar) {
 		this.menubar = menubar;
-		setFont(AppPreferences.getScaledFont(getFont()));
+		Init();
 
 		int menuMask = getToolkit().getMenuShortcutKeyMask();
 		undo.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z, menuMask));
@@ -185,7 +186,12 @@ class MenuEdit extends Menu {
 		computeEnabled();
 	}
 
-	@Override
+    private void Init() {
+		AppPreferences.setScaledFonts(getComponents());
+		super.setFont(AppPreferences.getScaledFont(getFont()));
+	}
+
+    @Override
 	void computeEnabled() {
 		setEnabled(menubar.getProject() != null || cut.hasListeners()
 				|| copy.hasListeners() || paste.hasListeners()

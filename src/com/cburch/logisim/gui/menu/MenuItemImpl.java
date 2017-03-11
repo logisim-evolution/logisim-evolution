@@ -43,10 +43,15 @@ class MenuItemImpl extends JMenuItem implements MenuItem {
 	private MenuItemHelper helper;
 
 	public MenuItemImpl(Menu menu, LogisimMenuItem menuItem) {
-		setFont(AppPreferences.getScaledFont(getFont()));
+		Init();
 		helper = new MenuItemHelper(this, menu, menuItem);
 		super.addActionListener(helper);
 		setEnabled(true);
+	}
+
+	private void Init() {
+		AppPreferences.setScaledFonts(getComponents());
+		super.setFont(AppPreferences.getScaledFont(getFont()));
 	}
 
 	public void actionPerformed(ActionEvent event) {

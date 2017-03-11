@@ -35,7 +35,6 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
@@ -48,6 +47,8 @@ import com.cburch.logisim.gui.generic.ProjectExplorer;
 import com.cburch.logisim.gui.generic.ProjectExplorerEvent;
 import com.cburch.logisim.gui.generic.ProjectExplorerListener;
 import com.cburch.logisim.gui.generic.ProjectExplorerToolNode;
+import com.cburch.logisim.gui.scale.ScaledButton;
+import com.cburch.logisim.gui.scale.ScaledScrollPane;
 import com.cburch.logisim.tools.AddTool;
 import com.cburch.logisim.tools.Tool;
 import com.cburch.logisim.util.TableLayout;
@@ -137,21 +138,21 @@ class ToolbarOptions extends OptionsPanel {
 	private Listener listener = new Listener();
 
 	private ProjectExplorer explorer;
-	private JButton addTool;
-	private JButton addSeparator;
-	private JButton moveUp;
-	private JButton moveDown;
-	private JButton remove;
+	private ScaledButton addTool;
+	private ScaledButton addSeparator;
+	private ScaledButton moveUp;
+	private ScaledButton moveDown;
+	private ScaledButton remove;
 	private ToolbarList list;
 
 	public ToolbarOptions(OptionsFrame window) {
 		super(window);
 		explorer = new ProjectExplorer(getProject());
-		addTool = new JButton();
-		addSeparator = new JButton();
-		moveUp = new JButton();
-		moveDown = new JButton();
-		remove = new JButton();
+		addTool = new ScaledButton();
+		addSeparator = new ScaledButton();
+		moveUp = new ScaledButton();
+		moveDown = new ScaledButton();
+		remove = new ScaledButton();
 
 		list = new ToolbarList(getOptions().getToolbarData());
 
@@ -176,10 +177,10 @@ class ToolbarOptions extends OptionsPanel {
 		GridBagLayout gridbag = new GridBagLayout();
 		GridBagConstraints gbc = new GridBagConstraints();
 		setLayout(gridbag);
-		JScrollPane explorerPane = new JScrollPane(explorer,
+		JScrollPane explorerPane = new ScaledScrollPane(explorer,
 				ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
 				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		JScrollPane listPane = new JScrollPane(list,
+		JScrollPane listPane = new ScaledScrollPane(list,
 				ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
 				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		gbc.fill = GridBagConstraints.BOTH;

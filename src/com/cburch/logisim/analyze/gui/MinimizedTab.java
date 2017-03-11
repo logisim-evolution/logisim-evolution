@@ -41,7 +41,6 @@ import java.awt.event.ItemListener;
 
 import javax.swing.AbstractListModel;
 import javax.swing.ComboBoxModel;
-import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -50,7 +49,9 @@ import com.cburch.logisim.analyze.model.AnalyzerModel;
 import com.cburch.logisim.analyze.model.OutputExpressions;
 import com.cburch.logisim.analyze.model.OutputExpressionsEvent;
 import com.cburch.logisim.analyze.model.OutputExpressionsListener;
-import com.cburch.logisim.prefs.AppPreferences;
+import com.cburch.logisim.gui.scale.ScaledButton;
+import com.cburch.logisim.gui.scale.ScaledComboBox;
+import com.cburch.logisim.gui.scale.ScaledLabel;
 
 class MinimizedTab extends AnalyzerTab {
 	@SuppressWarnings("rawtypes")
@@ -152,11 +153,11 @@ class MinimizedTab extends AnalyzerTab {
 
 	private OutputSelector selector;
 	private KarnaughMapPanel karnaughMap;
-	private JLabel formatLabel = new JLabel();
+	private JLabel formatLabel = new ScaledLabel();
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private JComboBox formatChoice = new JComboBox<>(new FormatModel());
+	private JComboBox formatChoice = new ScaledComboBox<>(new FormatModel());
 	private ExpressionView minimizedExpr = new ExpressionView();
-	private JButton setAsExpr = new JButton();
+	private ScaledButton setAsExpr = new ScaledButton();
 
 	private MyListener myListener = new MyListener();
 	// private AnalyzerModel model;
@@ -172,10 +173,7 @@ class MinimizedTab extends AnalyzerTab {
 		karnaughMap = new KarnaughMapPanel(model);
 		karnaughMap.addMouseListener(new TruthTableMouseListener());
 		setAsExpr.addActionListener(myListener);
-		setAsExpr.setFont(AppPreferences.getScaledFont(setAsExpr.getFont()));
 		formatChoice.addItemListener(myListener);
-		formatChoice.setFont(AppPreferences.getScaledFont(formatChoice.getFont()));
-		formatLabel.setFont(AppPreferences.getScaledFont(formatLabel.getFont()));
 		
 		JPanel buttons = new JPanel(new GridLayout(1, 1));
 		buttons.add(setAsExpr);

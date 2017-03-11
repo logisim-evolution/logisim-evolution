@@ -37,13 +37,13 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.swing.AbstractListModel;
-import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.ListCellRenderer;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 
 import com.bfh.logisim.designrulecheck.SimpleDRCContainer;
+import com.cburch.logisim.gui.scale.ScaledLabel;
 import com.cburch.logisim.util.Icons;
 
 @SuppressWarnings("serial")
@@ -54,7 +54,7 @@ public class FPGACommanderListModel extends  AbstractListModel<Object> {
 	private static Color NORMAL = Color.LIGHT_GRAY;
 	private static Color ADDENDUM = Color.GRAY;
 
-	public class ListModelCellRenderer extends JLabel implements ListCellRenderer<Object> {
+	public class ListModelCellRenderer extends ScaledLabel implements ListCellRenderer<Object> {
 		
 		private boolean CountLines;
 		

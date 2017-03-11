@@ -43,6 +43,7 @@ import javax.swing.event.ChangeListener;
 import com.bfh.logisim.fpgamenu.MenuFPGA;
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.circuit.Simulator;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.util.LocaleListener;
 import com.cburch.logisim.util.LocaleManager;
@@ -143,6 +144,7 @@ public class LogisimMenuBar extends JMenuBar {
 		this.listener = new MyListener();
 		this.proj = proj;
 		this.enableListeners = new ArrayList<ChangeListener>();
+		Init();
 		add(file = new MenuFile(this));
 		add(edit = new MenuEdit(this));
 		add(project = new MenuProject(this));
@@ -153,6 +155,11 @@ public class LogisimMenuBar extends JMenuBar {
 
 		LocaleManager.addLocaleListener(listener);
 		listener.localeChanged();
+	}
+
+	private void Init() {
+		AppPreferences.setScaledFonts(getComponents());
+		super.setFont(AppPreferences.getScaledFont(getFont()));
 	}
 
 	public void addActionListener(LogisimMenuItem which, ActionListener l) {

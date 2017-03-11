@@ -32,8 +32,7 @@ package com.cburch.logisim.data;
 
 import java.awt.Window;
 
-import javax.swing.JTextField;
-
+import com.cburch.logisim.gui.scale.ScaledTextField;
 import com.cburch.logisim.util.StringGetter;
 
 public abstract class Attribute<V> {
@@ -52,7 +51,7 @@ public abstract class Attribute<V> {
 	}
 
 	protected java.awt.Component getCellEditor(V value) {
-		return new JTextField(toDisplayString(value));
+		return new ScaledTextField(toDisplayString(value));
 	}
 
 	public java.awt.Component getCellEditor(Window source, V value) {

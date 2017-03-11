@@ -30,9 +30,8 @@
 
 package com.cburch.logisim.std.wiring;
 
-import javax.swing.JTextField;
-
 import com.cburch.logisim.data.Attribute;
+import com.cburch.logisim.gui.scale.ScaledTextField;
 import com.cburch.logisim.util.StringGetter;
 import com.cburch.logisim.util.StringUtil;
 
@@ -48,7 +47,7 @@ public class DurationAttribute extends Attribute<Integer> {
 
 	@Override
 	public java.awt.Component getCellEditor(Integer value) {
-		JTextField field = new JTextField();
+		ScaledTextField field = new ScaledTextField();
 		field.setText(value.toString());
 		return field;
 	}

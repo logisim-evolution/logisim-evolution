@@ -46,6 +46,8 @@ import com.cburch.logisim.file.Loader;
 import com.cburch.logisim.file.LogisimFile;
 import com.cburch.logisim.gui.main.Frame;
 import com.cburch.logisim.gui.main.StatisticsDialog;
+import com.cburch.logisim.gui.scale.ScaledMenu;
+import com.cburch.logisim.gui.scale.ScaledMenuItem;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.tools.AddTool;
 import com.cburch.logisim.tools.Library;
@@ -58,16 +60,16 @@ public class Popups {
 		Project proj;
 		/* Tool tool; */
 		Circuit circuit;
-		JMenuItem analyze = new JMenuItem(
+		JMenuItem analyze = new ScaledMenuItem(
 				Strings.get("projectAnalyzeCircuitItem"));
-		JMenuItem stats = new JMenuItem(
+		JMenuItem stats = new ScaledMenuItem(
 				Strings.get("projectGetCircuitStatisticsItem"));
-		JMenuItem main = new JMenuItem(Strings.get("projectSetAsMainItem"));
-		JMenuItem remove = new JMenuItem(
+		JMenuItem main = new ScaledMenuItem(Strings.get("projectSetAsMainItem"));
+		JMenuItem remove = new ScaledMenuItem(
 				Strings.get("projectRemoveCircuitItem"));
-		JMenuItem editLayout = new JMenuItem(
+		JMenuItem editLayout = new ScaledMenuItem(
 				Strings.get("projectEditCircuitLayoutItem"));
-		JMenuItem editAppearance = new JMenuItem(
+		JMenuItem editAppearance = new ScaledMenuItem(
 				Strings.get("projectEditCircuitAppearanceItem"));
 
 		CircuitPopup(Project proj, Tool tool, Circuit circuit) {
@@ -133,9 +135,9 @@ public class Popups {
 			ActionListener {
 		Project proj;
 		Library lib;
-		JMenuItem unload = new JMenuItem(
+		JMenuItem unload = new ScaledMenuItem(
 				Strings.get("projectUnloadLibraryItem"));
-		JMenuItem reload = new JMenuItem(
+		JMenuItem reload = new ScaledMenuItem(
 				Strings.get("projectReloadLibraryItem"));
 
 		LibraryPopup(Project proj, Library lib, boolean is_top) {
@@ -166,13 +168,13 @@ public class Popups {
 	private static class ProjectPopup extends JPopupMenu implements
 			ActionListener {
 		Project proj;
-		JMenuItem add = new JMenuItem(Strings.get("projectAddCircuitItem"));
-		JMenu load = new JMenu(Strings.get("projectLoadLibraryItem"));
-		JMenuItem loadBuiltin = new JMenuItem(
+		JMenuItem add = new ScaledMenuItem(Strings.get("projectAddCircuitItem"));
+		JMenu load = new ScaledMenu(Strings.get("projectLoadLibraryItem"));
+		JMenuItem loadBuiltin = new ScaledMenuItem(
 				Strings.get("projectLoadBuiltinItem"));
-		JMenuItem loadLogisim = new JMenuItem(
+		JMenuItem loadLogisim = new ScaledMenuItem(
 				Strings.get("projectLoadLogisimItem"));
-		JMenuItem loadJar = new JMenuItem(Strings.get("projectLoadJarItem"));
+		JMenuItem loadJar = new ScaledMenuItem(Strings.get("projectLoadJarItem"));
 
 		ProjectPopup(Project proj) {
 			super(Strings.get("projMenu"));

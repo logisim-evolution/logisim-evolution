@@ -41,7 +41,7 @@ import com.bfh.logisim.fpgaboardeditor.BoardDialog;
 import com.bfh.logisim.fpgagui.FPGACommanderGui;
 import com.cburch.logisim.gui.main.Frame;
 import com.cburch.logisim.gui.menu.LogisimMenuBar;
-import com.cburch.logisim.gui.menu.ScaledMenuItem;
+import com.cburch.logisim.gui.scale.ScaledMenuItem;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
 
@@ -55,13 +55,13 @@ public class MenuFPGA extends JMenu implements ActionListener {
 
 	public MenuFPGA(JFrame parent, LogisimMenuBar menubar, Project proj) {
 		ThisCircuit = proj;
-		setFont(AppPreferences.getScaledFont(getFont()));
 
 		BoardEditor.addActionListener(this);
 		FPGACommander.addActionListener(this);
 
 		add(BoardEditor);
 		add(FPGACommander);
+		Init();
 		setEnabled(parent instanceof Frame);
 	}
 
@@ -86,5 +86,10 @@ public class MenuFPGA extends JMenu implements ActionListener {
 		this.setText(Strings.get("FPGAMenu"));
 		BoardEditor.setText(Strings.get("BoardEditor"));
 		FPGACommander.setText(Strings.get("FPGA Commander"));
+	}
+
+    private void Init() {
+		AppPreferences.setScaledFonts(getComponents());
+		super.setFont(AppPreferences.getScaledFont(getFont()));
 	}
 }

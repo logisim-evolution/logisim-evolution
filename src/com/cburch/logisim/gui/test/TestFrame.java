@@ -46,7 +46,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -60,6 +59,9 @@ import com.cburch.logisim.circuit.SimulatorListener;
 import com.cburch.logisim.data.TestException;
 import com.cburch.logisim.data.TestVector;
 import com.cburch.logisim.gui.menu.LogisimMenuBar;
+import com.cburch.logisim.gui.scale.ScaledButton;
+import com.cburch.logisim.gui.scale.ScaledFileChooser;
+import com.cburch.logisim.gui.scale.ScaledLabel;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.proj.ProjectEvent;
 import com.cburch.logisim.proj.ProjectListener;
@@ -237,16 +239,16 @@ public class TestFrame extends JFrame {
 	private int finished, count;
 
 	private File curFile;
-	private JFileChooser chooser = new JFileChooser();
+	private JFileChooser chooser = new ScaledFileChooser();
 	private TestPanel panel;
-	private JButton load = new JButton();
-	private JButton run = new JButton();
-	private JButton stop = new JButton();
-	private JButton reset = new JButton();
-	private JButton close = new JButton();
-	private JLabel pass = new JLabel();
+	private ScaledButton load = new ScaledButton();
+	private ScaledButton run = new ScaledButton();
+	private ScaledButton stop = new ScaledButton();
+	private ScaledButton reset = new ScaledButton();
+	private ScaledButton close = new ScaledButton();
+	private JLabel pass = new ScaledLabel();
 
-	private JLabel fail = new JLabel();
+	private JLabel fail = new ScaledLabel();
 
 	public TestFrame(Project project) {
 		this.project = project;

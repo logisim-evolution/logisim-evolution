@@ -5,16 +5,15 @@ import java.awt.Component;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
-import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.border.Border;
 import javax.swing.table.TableCellRenderer;
 
 import com.bfh.logisim.settings.Settings;
-import com.cburch.logisim.prefs.AppPreferences;
+import com.cburch.logisim.gui.scale.ScaledLabel;
 
 @SuppressWarnings("serial")
-public class HDLColorRenderer extends JLabel
+public class HDLColorRenderer extends ScaledLabel
 							  implements TableCellRenderer{
     public final static String VHDLSupportString = "VHDL_SUPPORTED";
     public final static String VERILOGSupportString = "VERILOG_SUPPORTED";
@@ -26,7 +25,6 @@ public class HDLColorRenderer extends JLabel
 	Border border = null;
 	
 	public HDLColorRenderer() {
-		setFont(AppPreferences.getScaledFont(getFont()));
 		setOpaque(true);
 		CorrectStrings.clear();
 		CorrectStrings.add(VERILOGSupportString);
@@ -49,7 +47,7 @@ public class HDLColorRenderer extends JLabel
 			setBackground(newColor);
 			setForeground(Color.black);
 			setText(CorrectStrings.contains(value)?column==0 ? Settings.VHDL : Settings.VERILOG : value);
-			setHorizontalAlignment(JLabel.CENTER);
+			setHorizontalAlignment(ScaledLabel.CENTER);
 			if (border==null)
 				border = BorderFactory.createMatteBorder(2,5,2,5,
 						table.getGridColor());
@@ -60,7 +58,7 @@ public class HDLColorRenderer extends JLabel
 				setBackground(Color.YELLOW);
 				setForeground(Color.BLUE);
 				setText("HDL Required");
-				setHorizontalAlignment(JLabel.CENTER);
+				setHorizontalAlignment(ScaledLabel.CENTER);
 				setBorder(null);
 			} else if (myInfo != null && myInfo.contains("#")&& myInfo.indexOf('#')==0&&
 					   (myInfo.length() == 7 || myInfo.length() == 9)) {
@@ -78,7 +76,7 @@ public class HDLColorRenderer extends JLabel
 				setBackground(newColor);
 				setForeground(Color.black);
 				setText((String)Info);
-				setHorizontalAlignment(JLabel.LEFT);
+				setHorizontalAlignment(ScaledLabel.LEFT);
 				setBorder(null);
 			}
 		}
