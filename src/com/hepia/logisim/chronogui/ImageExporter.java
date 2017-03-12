@@ -6,6 +6,7 @@ package com.hepia.logisim.chronogui;
 
 import com.cburch.logisim.gui.scale.ScaledButton;
 import com.cburch.logisim.gui.scale.ScaledLabel;
+import com.cburch.logisim.gui.scale.ScaledOptionPane;
 import com.hepia.logisim.chronodata.ChronoData;
 import com.hepia.logisim.chronodata.SignalData;
 import com.hepia.logisim.chronodata.SignalDataBus;
@@ -96,7 +97,8 @@ public class ImageExporter extends javax.swing.JFrame implements ActionListener 
             createLeftPanel();
             cropImage();
         } else {  //error message 
-            JOptionPane.showMessageDialog(null, "The chronogram is empty. Can't save it as an image.");
+            ScaledOptionPane.showMessageDialog(leftPanel, "The chronogram is empty. Can't save it as an image.",
+            		JOptionPane.ERROR_MESSAGE);
         }
     }
 

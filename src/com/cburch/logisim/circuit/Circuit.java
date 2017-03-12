@@ -45,8 +45,6 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.WeakHashMap;
 
-import javax.swing.JOptionPane;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,6 +67,7 @@ import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.TestException;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.file.LogisimFile;
+import com.cburch.logisim.gui.scale.ScaledOptionPane;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.StdAttr;
@@ -186,7 +185,7 @@ public class Circuit {
 			if (comp.getFactory().getName().toUpperCase().equals(Name.toUpperCase())) {
 				if (ShowDialog) {
 					String msg = com.cburch.logisim.circuit.Strings.get("ComponentLabelNameError");
-					JOptionPane.showMessageDialog(null, "\""+Name+"\" : "+msg);
+					ScaledOptionPane.showMessageDialog(null, "\""+Name+"\" : "+msg);
 				}
 				return true;
 			}
@@ -205,7 +204,7 @@ public class Circuit {
 				if (Label.toUpperCase().equals(Name.toUpperCase())) {
 					if (ShowDialog) {
 						String msg = com.cburch.logisim.circuit.Strings.get("UsedLabelNameError");
-						JOptionPane.showMessageDialog(null, "\""+Name+"\" : "+msg);
+						ScaledOptionPane.showMessageDialog(null, "\""+Name+"\" : "+msg);
 					}
 					return true;
 				}
@@ -798,7 +797,7 @@ public class Circuit {
 		}
 		/* we do not have to check the wires as (1) Wire is a reserved keyword, and (2) they cannot have a label */
 		if (HaveAChange)
-			JOptionPane.showMessageDialog(null, "\""+Label+"\" : "+Strings.get("ComponentLabelCollisionError"));
+			ScaledOptionPane.showMessageDialog(null, "\""+Label+"\" : "+Strings.get("ComponentLabelCollisionError"));
 	}
 	
 	public void removeCircuitListener(CircuitListener what) {

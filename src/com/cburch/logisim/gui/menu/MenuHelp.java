@@ -29,6 +29,8 @@
  *******************************************************************************/
 package com.cburch.logisim.gui.menu;
 
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.URL;
@@ -43,6 +45,7 @@ import javax.swing.JOptionPane;
 
 import com.cburch.logisim.gui.generic.LFrame;
 import com.cburch.logisim.gui.scale.ScaledMenuItem;
+import com.cburch.logisim.gui.scale.ScaledOptionPane;
 import com.cburch.logisim.gui.start.About;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.MacCompatibility;
@@ -113,19 +116,24 @@ class MenuHelp extends JMenu implements ActionListener {
 				URL hsURL = HelpSet.findHelpSet(loader, helpUrl);
 				if (hsURL == null) {
 					disableHelp();
-					JOptionPane.showMessageDialog(menubar.getParentWindow(),
+					ScaledOptionPane.showMessageDialog(menubar.getParentWindow(),
 							Strings.get("helpNotFoundError"));
 					return;
 				}
 				helpSetUrl = helpUrl;
 				helpSet = new HelpSet(null, hsURL);
 				helpComponent = new JHelp(helpSet);
+				AppPreferences.setScaledFonts(helpComponent.getComponents());
 				if (helpFrame == null) {
 					helpFrame = new LFrame();
 					helpFrame.setTitle(Strings.get("helpWindowTitle"));
 					helpFrame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 					helpFrame.getContentPane().add(helpComponent);
+					helpFrame.setPreferredSize(new Dimension(
+							(int)Toolkit.getDefaultToolkit().getScreenSize().getWidth()>>1,
+							(int)Toolkit.getDefaultToolkit().getScreenSize().getHeight()>>1));
 					helpFrame.pack();
+					AppPreferences.setScaledFonts(helpFrame.getComponents());
 				} else {
 					helpFrame.getContentPane().removeAll();
 					helpFrame.getContentPane().add(helpComponent);
@@ -134,7 +142,7 @@ class MenuHelp extends JMenu implements ActionListener {
 			} catch (Exception e) {
 				disableHelp();
 				e.printStackTrace();
-				JOptionPane.showMessageDialog(menubar.getParentWindow(),
+				ScaledOptionPane.showMessageDialog(menubar.getParentWindow(),
 						Strings.get("helpUnavailableError"));
 				return;
 			}
@@ -165,7 +173,7 @@ class MenuHelp extends JMenu implements ActionListener {
 		} catch (Exception e) {
 			disableHelp();
 			e.printStackTrace();
-			JOptionPane.showMessageDialog(menubar.getParentWindow(),
+			ScaledOptionPane.showMessageDialog(menubar.getParentWindow(),
 					Strings.get("helpDisplayError"));
 		}
 	}

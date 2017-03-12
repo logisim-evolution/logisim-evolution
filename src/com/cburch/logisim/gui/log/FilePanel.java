@@ -50,6 +50,7 @@ import com.cburch.logisim.data.Value;
 import com.cburch.logisim.gui.scale.ScaledButton;
 import com.cburch.logisim.gui.scale.ScaledCheckBox;
 import com.cburch.logisim.gui.scale.ScaledLabel;
+import com.cburch.logisim.gui.scale.ScaledOptionPane;
 import com.cburch.logisim.gui.scale.ScaledTextField;
 import com.cburch.logisim.util.JFileChoosers;
 import com.cburch.logisim.util.StringUtil;
@@ -66,7 +67,7 @@ class FilePanel extends LogPanel {
 					return;
 				File file = chooser.getSelectedFile();
 				if (file.exists() && (!file.canWrite() || file.isDirectory())) {
-					JOptionPane.showMessageDialog(
+					ScaledOptionPane.showMessageDialog(
 							getLogFrame(),
 							StringUtil.format(
 									Strings.get("fileCannotWriteMessage"),

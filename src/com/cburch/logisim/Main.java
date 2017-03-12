@@ -34,11 +34,10 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
 
-import javax.swing.JOptionPane;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.cburch.logisim.gui.scale.ScaledOptionPane;
 import com.cburch.logisim.gui.start.Startup;
 
 public class Main {
@@ -56,7 +55,7 @@ public class Main {
 					Writer result = new StringWriter();
 					PrintWriter printWriter = new PrintWriter(result);
 					e.printStackTrace(printWriter);
-					JOptionPane.showMessageDialog(null, result.toString());
+					ScaledOptionPane.showMessageDialog(null, result.toString());
 					System.exit(-1);
 				}
 			}

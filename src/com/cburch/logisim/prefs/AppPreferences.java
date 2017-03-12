@@ -425,6 +425,11 @@ public class AppPreferences {
 		return new ImageIcon(IcImage.getScaledInstance(getScaled(IconSize), getScaled(IconSize), Image.SCALE_SMOOTH));
 	}
 
+	public static ImageIcon getScaledImageIcon(ImageIcon icon,float scale) {
+		Image IcImage = icon.getImage();
+		return new ImageIcon(IcImage.getScaledInstance(getScaled(IconSize,scale), getScaled(IconSize,scale), Image.SCALE_SMOOTH));
+	}
+
 	public static void updateRecentFile(File file) {
 		recentProjects.updateRecent(file);
 	}

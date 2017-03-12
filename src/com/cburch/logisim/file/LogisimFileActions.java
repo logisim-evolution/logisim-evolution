@@ -41,6 +41,7 @@ import com.cburch.logisim.circuit.SubcircuitFactory;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeSet;
+import com.cburch.logisim.gui.scale.ScaledOptionPane;
 import com.cburch.logisim.proj.Action;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.proj.ProjectActions;
@@ -172,7 +173,7 @@ public class LogisimFileActions {
 			LibraryTools.BuildToolList(source,ToolList);
 			for (int i = 0; i < libs.length; i++) {
 				if (LibNames.keySet().contains(libs[i].getName().toUpperCase())) {
-                	JOptionPane.showMessageDialog(null, "\""+libs[i].getName()+"\": "+Strings.get("LibraryAlreadyLoaded"),
+					ScaledOptionPane.showMessageDialog(null, "\""+libs[i].getName()+"\": "+Strings.get("LibraryAlreadyLoaded"),
                 			Strings.get("LibLoadErrors")+" "+libs[i].getName()+" !", JOptionPane.WARNING_MESSAGE);
 				} else {
 					LibraryTools.RemovePresentLibraries(libs[i],LibNames,false);

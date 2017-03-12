@@ -38,8 +38,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.swing.JOptionPane;
-
 import com.bfh.logisim.designrulecheck.CorrectLabel;
 import com.bfh.logisim.designrulecheck.Netlist;
 import com.cburch.logisim.circuit.CircuitState;
@@ -57,6 +55,7 @@ import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Location;
+import com.cburch.logisim.gui.scale.ScaledOptionPane;
 import com.cburch.logisim.tools.TextEditable;
 import com.cburch.logisim.tools.ToolTipMaker;
 import com.cburch.logisim.util.EventSourceWeakSupport;
@@ -164,11 +163,11 @@ public class InstanceComponent implements Component, AttributeListener,
 					e.getSource().setValue(lattr, Oldvalue);
 				} else
 				if (getFactory().getName().toUpperCase().equals(value.toUpperCase())) {
-					JOptionPane.showMessageDialog(null, Strings.get("MatchedLabelNameError"));
+					ScaledOptionPane.showMessageDialog(null, Strings.get("MatchedLabelNameError"));
 					e.getSource().setValue(lattr, Oldvalue);
 				} else 
 				if (CorrectLabel.IsKeyword(value,false)) {
-					JOptionPane.showMessageDialog(null, "\""+value+"\": "+Strings.get("KeywordNameError"));
+					ScaledOptionPane.showMessageDialog(null, "\""+value+"\": "+Strings.get("KeywordNameError"));
 					e.getSource().setValue(lattr, Oldvalue);
 				} else {
 					fireLabelChanged(e);

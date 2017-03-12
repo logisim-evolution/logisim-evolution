@@ -95,6 +95,7 @@ import com.cburch.logisim.gui.scale.ScaledCheckBox;
 import com.cburch.logisim.gui.scale.ScaledComboBox;
 import com.cburch.logisim.gui.scale.ScaledFileChooser;
 import com.cburch.logisim.gui.scale.ScaledLabel;
+import com.cburch.logisim.gui.scale.ScaledOptionPane;
 import com.cburch.logisim.gui.scale.ScaledScrollPane;
 import com.cburch.logisim.gui.scale.ScaledTabbedPane;
 import com.cburch.logisim.prefs.AppPreferences;
@@ -652,7 +653,7 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 		if (e.getActionCommand().equals("annotate")) {
 			Annotate(annotationList.getSelectedIndex() == 0);
 		} else if (e.getActionCommand().equals("Workspace")) {
-			selectWorkSpace();
+			selectWorkSpace(panel);
 		} else if (e.getActionCommand().equals("HDLType")) {
 			handleHDLType();
 		} else if (e.getActionCommand().equals("ToolPath")) {
@@ -1215,7 +1216,7 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 		} else return "";
 	}
 
-	public static void selectWorkSpace() {
+	public static void selectWorkSpace(Component parentComponent) {
 		JFileChooser fc = new ScaledFileChooser(AppPreferences.FPGA_Workspace.get());
 		fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		File test = new File(AppPreferences.FPGA_Workspace.get());
@@ -1229,7 +1230,7 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 			if (retval != JFileChooser.APPROVE_OPTION)
 				return;
 			if (fc.getSelectedFile().getAbsolutePath().contains(" ")) {
-				JOptionPane.showMessageDialog(null,"Workspace directory may not contain spaces!","Workspace Directory Selection",JOptionPane.ERROR_MESSAGE);
+				ScaledOptionPane.showMessageDialog(parentComponent,"Workspace directory may not contain spaces!","Workspace Directory Selection",JOptionPane.ERROR_MESSAGE);
 			} else {
 				ValidWorkpath = true;
 			}
