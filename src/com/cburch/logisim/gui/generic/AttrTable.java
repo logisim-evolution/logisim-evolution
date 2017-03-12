@@ -65,6 +65,7 @@ import javax.swing.table.TableModel;
 
 import com.bfh.logisim.hdlgenerator.HDLColorRenderer;
 import com.cburch.logisim.gui.scale.ScaledLabel;
+import com.cburch.logisim.gui.scale.ScaledOptionPane;
 import com.cburch.logisim.gui.scale.ScaledScrollPane;
 import com.cburch.logisim.gui.scale.ScaledTabbedPane;
 import com.cburch.logisim.prefs.AppPreferences;
@@ -192,7 +193,7 @@ public class AttrTable extends JPanel implements LocaleListener {
 					try {
 						row.setValue(retval);
 					} catch (AttrTableSetException e) {
-						JOptionPane.showMessageDialog(parent, e.getMessage(),
+						ScaledOptionPane.showMessageDialog(parent, e.getMessage(),
 								Strings.get("attributeChangeInvalidTitle"),
 								JOptionPane.WARNING_MESSAGE);
 					}
@@ -211,7 +212,7 @@ public class AttrTable extends JPanel implements LocaleListener {
 					try {
 						row.setValue(retval);
 					} catch (AttrTableSetException e) {
-						JOptionPane.showMessageDialog(parent, e.getMessage(),
+						ScaledOptionPane.showMessageDialog(parent, e.getMessage(),
 								Strings.get("attributeChangeInvalidTitle"),
 								JOptionPane.WARNING_MESSAGE);
 					}
@@ -452,7 +453,7 @@ public class AttrTable extends JPanel implements LocaleListener {
 				try {
 					attrModel.getRow(rowIndex).setValue(value);
 				} catch (AttrTableSetException e) {
-					JOptionPane.showMessageDialog(parent, e.getMessage(),
+					ScaledOptionPane.showMessageDialog(parent, e.getMessage(),
 							Strings.get("attributeChangeInvalidTitle"),
 							JOptionPane.WARNING_MESSAGE);
 				}

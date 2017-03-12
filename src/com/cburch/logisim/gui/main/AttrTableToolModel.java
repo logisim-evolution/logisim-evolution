@@ -30,7 +30,6 @@
 
 package com.cburch.logisim.gui.main;
 
-import javax.swing.JOptionPane;
 
 import com.cburch.logisim.circuit.CircuitAttributes;
 import com.cburch.logisim.circuit.CircuitException;
@@ -38,6 +37,7 @@ import com.cburch.logisim.circuit.CircuitMutation;
 import com.cburch.logisim.circuit.SubcircuitFactory;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.gui.generic.AttributeSetTableModel;
+import com.cburch.logisim.gui.scale.ScaledOptionPane;
 import com.cburch.logisim.proj.Action;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.tools.AddTool;
@@ -81,7 +81,7 @@ public class AttrTableToolModel extends AttributeSetTableModel {
 						Action action = mutation.toAction(null);
 						proj.doAction(action);
 					} catch (CircuitException ex) {
-						JOptionPane.showMessageDialog(proj.getFrame(),
+						ScaledOptionPane.showMessageDialog(proj.getFrame(),
 								ex.getMessage());
 					}
 					return;

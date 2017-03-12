@@ -52,6 +52,7 @@ import com.cburch.hex.HexModel;
 import com.cburch.logisim.gui.generic.LFrame;
 import com.cburch.logisim.gui.menu.LogisimMenuBar;
 import com.cburch.logisim.gui.scale.ScaledButton;
+import com.cburch.logisim.gui.scale.ScaledOptionPane;
 import com.cburch.logisim.gui.scale.ScaledScrollPane;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.util.JFileChoosers;
@@ -124,7 +125,7 @@ public class HexFrame extends LFrame {
 						HexFile.open(model, f);
 						lastFile = f;
 					} catch (IOException e) {
-						JOptionPane.showMessageDialog(HexFrame.this,
+						ScaledOptionPane.showMessageDialog(HexFrame.this,
 								e.getMessage(),
 								Strings.get("hexOpenErrorTitle"),
 								JOptionPane.ERROR_MESSAGE);
@@ -140,7 +141,7 @@ public class HexFrame extends LFrame {
 						HexFile.save(f, model);
 						lastFile = f;
 					} catch (IOException e) {
-						JOptionPane.showMessageDialog(HexFrame.this,
+						ScaledOptionPane.showMessageDialog(HexFrame.this,
 								e.getMessage(),
 								Strings.get("hexSaveErrorTitle"),
 								JOptionPane.ERROR_MESSAGE);

@@ -45,6 +45,7 @@ import javax.swing.JScrollPane;
 import com.cburch.logisim.file.Loader;
 import com.cburch.logisim.file.LogisimFile;
 import com.cburch.logisim.file.LogisimFileActions;
+import com.cburch.logisim.gui.scale.ScaledOptionPane;
 import com.cburch.logisim.gui.scale.ScaledScrollPane;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.tools.Library;
@@ -96,7 +97,7 @@ public class ProjectLibraryActions {
 		ArrayList<Library> builtins = new ArrayList<Library>(baseBuilt);
 		builtins.removeAll(file.getLibraries());
 		if (builtins.isEmpty()) {
-			JOptionPane.showMessageDialog(proj.getFrame(),
+			ScaledOptionPane.showMessageDialog(proj.getFrame(),
 					Strings.get("loadBuiltinNoneError"),
 					Strings.get("loadBuiltinErrorTitle"),
 					JOptionPane.INFORMATION_MESSAGE);
@@ -186,7 +187,7 @@ public class ProjectLibraryActions {
 				canUnload.add(lib);
 		}
 		if (canUnload.isEmpty()) {
-			JOptionPane.showMessageDialog(proj.getFrame(),
+			ScaledOptionPane.showMessageDialog(proj.getFrame(),
 					Strings.get("unloadNoneError"),
 					Strings.get("unloadErrorTitle"),
 					JOptionPane.INFORMATION_MESSAGE);
@@ -207,7 +208,7 @@ public class ProjectLibraryActions {
 	public static void doUnloadLibrary(Project proj, Library lib) {
 		String message = proj.getLogisimFile().getUnloadLibraryMessage(lib);
 		if (message != null) {
-			JOptionPane.showMessageDialog(proj.getFrame(), message,
+			ScaledOptionPane.showMessageDialog(proj.getFrame(), message,
 					Strings.get("unloadErrorTitle"), JOptionPane.ERROR_MESSAGE);
 		} else {
 			proj.doAction(LogisimFileActions.unloadLibrary(lib));

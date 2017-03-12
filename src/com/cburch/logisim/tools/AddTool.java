@@ -37,7 +37,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 
 import javax.swing.Icon;
-import javax.swing.JOptionPane;
 
 import com.cburch.logisim.LogisimVersion;
 import com.cburch.logisim.circuit.Circuit;
@@ -57,6 +56,7 @@ import com.cburch.logisim.data.Location;
 import com.cburch.logisim.gui.main.Canvas;
 import com.cburch.logisim.gui.main.SelectionActions;
 import com.cburch.logisim.gui.main.ToolAttributeAction;
+import com.cburch.logisim.gui.scale.ScaledOptionPane;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Action;
@@ -492,7 +492,7 @@ public class AddTool extends Tool {
 				added = c;
 				canvas.repaint();
 			} catch (CircuitException ex) {
-				JOptionPane.showMessageDialog(canvas.getProject().getFrame(),
+				ScaledOptionPane.showMessageDialog(canvas.getProject().getFrame(),
 						ex.getMessage());
 			}
 			setState(canvas, SHOW_GHOST);

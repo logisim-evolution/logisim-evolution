@@ -45,6 +45,7 @@ import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.gui.hex.HexFile;
 import com.cburch.logisim.gui.hex.HexFrame;
 import com.cburch.logisim.gui.scale.ScaledMenuItem;
+import com.cburch.logisim.gui.scale.ScaledOptionPane;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.tools.MenuExtender;
@@ -142,7 +143,7 @@ class MemMenu implements ActionListener, MenuExtender {
 			try {
 				factory.loadImage(circState.getInstanceState(instance), f);
 			} catch (IOException e) {
-				JOptionPane.showMessageDialog(frame, e.getMessage(),
+				ScaledOptionPane.showMessageDialog(frame, e.getMessage(),
 						Strings.get("ramLoadErrorTitle"),
 						JOptionPane.ERROR_MESSAGE);
 			}
@@ -164,7 +165,7 @@ class MemMenu implements ActionListener, MenuExtender {
 				HexFile.save(f, s.getContents());
 				factory.setCurrentImage(instance, f);
 			} catch (IOException e) {
-				JOptionPane.showMessageDialog(frame, e.getMessage(),
+				ScaledOptionPane.showMessageDialog(frame, e.getMessage(),
 						Strings.get("ramSaveErrorTitle"),
 						JOptionPane.ERROR_MESSAGE);
 			}

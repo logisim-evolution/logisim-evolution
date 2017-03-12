@@ -55,6 +55,7 @@ import com.cburch.logisim.file.Loader;
 import com.cburch.logisim.file.LogisimFile;
 import com.cburch.logisim.file.LogisimFileActions;
 import com.cburch.logisim.gui.main.Frame;
+import com.cburch.logisim.gui.scale.ScaledOptionPane;
 import com.cburch.logisim.gui.start.SplashScreen;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.tools.Library;
@@ -92,7 +93,7 @@ public class ProjectActions {
 				Writer result = new StringWriter();
 				PrintWriter printWriter = new PrintWriter(result);
 				e.printStackTrace(printWriter);
-				JOptionPane.showMessageDialog(null, result.toString());
+				ScaledOptionPane.showMessageDialog(null, result.toString());
 				System.exit(-1);
 			}
 		}
@@ -192,7 +193,7 @@ public class ProjectActions {
 		String msg = StringUtil.format(Strings.get("templateOpenError"),
 				ex.toString());
 		String ttl = Strings.get("templateOpenErrorTitle");
-		JOptionPane.showMessageDialog(parent, msg, ttl,
+		ScaledOptionPane.showMessageDialog(parent, msg, ttl,
 				JOptionPane.ERROR_MESSAGE);
 	}
 
@@ -262,7 +263,7 @@ public class ProjectActions {
 				return;
 		} catch (LoadFailedException ex) {
 			if (!ex.isShown()) {
-				JOptionPane.showMessageDialog(
+				ScaledOptionPane.showMessageDialog(
 						parent,
 						StringUtil.format(Strings.get("fileMergeError"),
 								ex.toString()),
@@ -367,7 +368,7 @@ public class ProjectActions {
 			}
 		} catch (LoadFailedException ex) {
 			if (!ex.isShown()) {
-				JOptionPane.showMessageDialog(
+				ScaledOptionPane.showMessageDialog(
 						parent,
 						StringUtil.format(Strings.get("fileOpenError"),
 								ex.toString()),
@@ -472,7 +473,7 @@ public class ProjectActions {
 				String Message = "\""+chooser.getSelectedFile()+"\":\n";
 				for (String key : Error.keySet())
 					Message = Message.concat("=> "+Strings.get(Error.get(key))+"\n");
-				JOptionPane.showMessageDialog(chooser,Message,Strings.get("FileSaveAsItem"),JOptionPane.ERROR_MESSAGE);
+				ScaledOptionPane.showMessageDialog(chooser,Message,Strings.get("FileSaveAsItem"),JOptionPane.ERROR_MESSAGE);
 			}
 		} while (!validFilename);
 

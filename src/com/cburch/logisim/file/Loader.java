@@ -47,6 +47,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.filechooser.FileFilter;
 
+import com.cburch.logisim.gui.scale.ScaledOptionPane;
 import com.cburch.logisim.gui.scale.ScaledScrollPane;
 import com.cburch.logisim.std.Builtin;
 import com.cburch.logisim.tools.Library;
@@ -182,7 +183,7 @@ public class Loader implements LibraryLoader {
 		}
 		while (!file.canRead()) {
 			// It doesn't exist. Figure it out from the user.
-			JOptionPane.showMessageDialog(parent, StringUtil.format(
+			ScaledOptionPane.showMessageDialog(parent, StringUtil.format(
 					Strings.get("fileLibraryMissingError"), file.getName()));
 			JFileChooser chooser = createChooser();
 			chooser.setFileFilter(filter);
@@ -352,7 +353,7 @@ public class Loader implements LibraryLoader {
 	public boolean save(LogisimFile file, File dest) {
 		Library reference = LibraryManager.instance.findReference(file, dest);
 		if (reference != null) {
-			JOptionPane.showMessageDialog(parent, StringUtil.format(
+			ScaledOptionPane.showMessageDialog(parent, StringUtil.format(
 					Strings.get("fileCircularError"),
 					reference.getDisplayName()), Strings
 					.get("fileSaveErrorTitle"), JOptionPane.ERROR_MESSAGE);
@@ -380,7 +381,7 @@ public class Loader implements LibraryLoader {
 				recoverBackup(backup, dest);
 			if (dest.exists() && dest.length() == 0)
 				dest.delete();
-			JOptionPane.showMessageDialog(
+			ScaledOptionPane.showMessageDialog(
 					parent,
 					StringUtil.format(Strings.get("fileSaveError"),
 							e.toString()), Strings.get("fileSaveErrorTitle"),
@@ -395,7 +396,7 @@ public class Loader implements LibraryLoader {
 						recoverBackup(backup, dest);
 					if (dest.exists() && dest.length() == 0)
 						dest.delete();
-					JOptionPane.showMessageDialog(parent, StringUtil.format(
+					ScaledOptionPane.showMessageDialog(parent, StringUtil.format(
 							Strings.get("fileSaveCloseError"), e.toString()),
 							Strings.get("fileSaveErrorTitle"),
 							JOptionPane.ERROR_MESSAGE);
@@ -410,7 +411,7 @@ public class Loader implements LibraryLoader {
 			} else {
 				dest.delete();
 			}
-			JOptionPane.showMessageDialog(parent,
+			ScaledOptionPane.showMessageDialog(parent,
 					Strings.get("fileSaveZeroError"),
 					Strings.get("fileSaveErrorTitle"),
 					JOptionPane.ERROR_MESSAGE);
@@ -457,10 +458,10 @@ public class Loader implements LibraryLoader {
 
 			JScrollPane scrollPane = new ScaledScrollPane(textArea);
 			scrollPane.setPreferredSize(new Dimension(350, 150));
-			JOptionPane.showMessageDialog(parent, scrollPane,
+			ScaledOptionPane.showMessageDialog(parent, scrollPane,
 					Strings.get("fileErrorTitle"), JOptionPane.ERROR_MESSAGE);
 		} else {
-			JOptionPane.showMessageDialog(parent, description,
+			ScaledOptionPane.showMessageDialog(parent, description,
 					Strings.get("fileErrorTitle"), JOptionPane.ERROR_MESSAGE);
 		}
 	}
@@ -470,7 +471,7 @@ public class Loader implements LibraryLoader {
 			return;
 		String message = source.getMessage();
 		while (message != null) {
-			JOptionPane.showMessageDialog(parent, message,
+			ScaledOptionPane.showMessageDialog(parent, message,
 					Strings.get("fileMessageTitle"),
 					JOptionPane.INFORMATION_MESSAGE);
 			message = source.getMessage();

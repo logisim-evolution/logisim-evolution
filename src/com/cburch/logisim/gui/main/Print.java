@@ -59,6 +59,7 @@ import com.cburch.logisim.comp.ComponentDrawContext;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.gui.scale.ScaledCheckBox;
 import com.cburch.logisim.gui.scale.ScaledLabel;
+import com.cburch.logisim.gui.scale.ScaledOptionPane;
 import com.cburch.logisim.gui.scale.ScaledScrollPane;
 import com.cburch.logisim.gui.scale.ScaledTextField;
 import com.cburch.logisim.proj.Project;
@@ -234,7 +235,7 @@ public class Print {
 		CircuitJList list = new CircuitJList(proj, true);
 		Frame frame = proj.getFrame();
 		if (list.getModel().getSize() == 0) {
-			JOptionPane.showMessageDialog(proj.getFrame(),
+			ScaledOptionPane.showMessageDialog(proj.getFrame(),
 					Strings.get("printEmptyCircuitsMessage"),
 					Strings.get("printEmptyCircuitsTitle"),
 					JOptionPane.YES_NO_OPTION);
@@ -262,7 +263,7 @@ public class Print {
 		try {
 			job.print();
 		} catch (PrinterException e) {
-			JOptionPane.showMessageDialog(proj.getFrame(),
+			ScaledOptionPane.showMessageDialog(proj.getFrame(),
 					StringUtil.format(Strings.get("printError"), e.toString()),
 					Strings.get("printErrorTitle"), JOptionPane.ERROR_MESSAGE);
 		}

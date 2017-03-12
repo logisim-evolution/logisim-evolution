@@ -33,10 +33,9 @@ package com.bfh.logisim.designrulecheck;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.swing.JOptionPane;
-
 import com.bfh.logisim.fpgagui.FPGAReport;
 import com.bfh.logisim.settings.Settings;
+import com.cburch.logisim.gui.scale.ScaledOptionPane;
 
 public class CorrectLabel {
 	public static String getCorrectLabel(String Label) {
@@ -107,9 +106,9 @@ public class CorrectLabel {
 		boolean ret = false;
 		if (VHDLKeywords.contains(Label.toLowerCase())) {
 			ret = true;
-			if (ShowDialog) JOptionPane.showMessageDialog(null, Strings.get("VHDLKeywordNameError"));
+			if (ShowDialog) ScaledOptionPane.showMessageDialog(null, Strings.get("VHDLKeywordNameError"));
 		} else if (VerilogKeywords.contains(Label.toLowerCase())) {
-			if (ShowDialog) JOptionPane.showMessageDialog(null, Strings.get("VerilogKeywordNameError"));
+			if (ShowDialog) ScaledOptionPane.showMessageDialog(null, Strings.get("VerilogKeywordNameError"));
 			ret = true;
 		}
 		return ret;

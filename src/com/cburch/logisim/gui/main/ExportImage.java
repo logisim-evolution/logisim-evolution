@@ -70,6 +70,7 @@ import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.file.Loader;
 import com.cburch.logisim.gui.scale.ScaledCheckBox;
 import com.cburch.logisim.gui.scale.ScaledLabel;
+import com.cburch.logisim.gui.scale.ScaledOptionPane;
 import com.cburch.logisim.gui.scale.ScaledRadioButton;
 import com.cburch.logisim.gui.scale.ScaledScrollPane;
 import com.cburch.logisim.proj.Project;
@@ -117,7 +118,7 @@ class ExportImage {
 				((Graphics2D) g).scale(scale, scale);
 				((Graphics2D) g).translate(-bds.getX(), -bds.getY());
 			} else {
-				JOptionPane.showMessageDialog(frame,
+				ScaledOptionPane.showMessageDialog(frame,
 						Strings.get("couldNotCreateImage"));
 				monitor.close();
 			}
@@ -150,7 +151,7 @@ class ExportImage {
 					break;
 				}
 			} catch (Exception e) {
-				JOptionPane.showMessageDialog(frame,
+				ScaledOptionPane.showMessageDialog(frame,
 						Strings.get("couldNotCreateFile"));
 				monitor.close();
 				return;
@@ -304,7 +305,7 @@ class ExportImage {
 		Frame frame = proj.getFrame();
 		CircuitJList list = new CircuitJList(proj, true);
 		if (list.getModel().getSize() == 0) {
-			JOptionPane.showMessageDialog(proj.getFrame(),
+			ScaledOptionPane.showMessageDialog(proj.getFrame(),
 					Strings.get("exportEmptyCircuitsMessage"),
 					Strings.get("exportEmptyCircuitsTitle"),
 					JOptionPane.YES_NO_OPTION);
@@ -375,7 +376,7 @@ class ExportImage {
 			if (circuits.size() > 1) {
 				boolean created = dest.mkdir();
 				if (!created) {
-					JOptionPane.showMessageDialog(proj.getFrame(),
+					ScaledOptionPane.showMessageDialog(proj.getFrame(),
 							Strings.get("exportNewDirectoryErrorMessage"),
 							Strings.get("exportNewDirectoryErrorTitle"),
 							JOptionPane.YES_NO_OPTION);

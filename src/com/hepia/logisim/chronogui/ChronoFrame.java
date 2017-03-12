@@ -64,6 +64,7 @@ import com.cburch.logisim.gui.scale.ScaledFileChooser;
 import com.cburch.logisim.gui.scale.ScaledLabel;
 import com.cburch.logisim.gui.scale.ScaledMenu;
 import com.cburch.logisim.gui.scale.ScaledMenuItem;
+import com.cburch.logisim.gui.scale.ScaledOptionPane;
 import com.cburch.logisim.gui.scale.ScaledScrollPane;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.proj.Project;
@@ -396,7 +397,7 @@ public class ChronoFrame extends LFrame implements KeyListener, ActionListener,
 	 *            Error message
 	 */
 	public void errorMessage(String err) {
-		JOptionPane.showMessageDialog(null, err);
+		ScaledOptionPane.showMessageDialog(mainPanel, err,JOptionPane.ERROR_MESSAGE);
 	}
 
 	/**

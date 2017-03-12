@@ -29,7 +29,7 @@ public class FPGAOptions extends OptionsPanel {
 			Object source = ae.getSource();
 			
 			if (source==WorkSpaceButton) {
-				FPGACommanderGui.selectWorkSpace();
+				FPGACommanderGui.selectWorkSpace(frame);
 			}
 		}
 
@@ -48,9 +48,11 @@ public class FPGAOptions extends OptionsPanel {
 	private JLabel WorkspaceLabel;
 	private JTextField WorkSpacePath;
 	private JButton WorkSpaceButton;
+	private PreferencesFrame frame;
 	
 	public FPGAOptions(PreferencesFrame frame) {
 		super(frame);
+		this.frame=frame;
 		AppPreferences.getPrefs().addPreferenceChangeListener(myListener);
 		
 		WorkspaceLabel = new ScaledLabel(Strings.get("FPGAWorkSpace"));

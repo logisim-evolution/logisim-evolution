@@ -53,6 +53,7 @@ import com.cburch.logisim.comp.ComponentFactory;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.file.LogisimFile;
+import com.cburch.logisim.gui.scale.ScaledOptionPane;
 import com.cburch.logisim.gui.scale.ScaledScrollPane;
 import com.cburch.logisim.proj.Action;
 import com.cburch.logisim.proj.Dependencies;
@@ -618,7 +619,7 @@ public class SelectionActions {
 			area.setText(droppedStr.toString());
 			area.setCaretPosition(0);
 			JScrollPane areaPane = new ScaledScrollPane(area);
-			JOptionPane.showMessageDialog(proj.getFrame(), areaPane,
+			ScaledOptionPane.showMessageDialog(proj.getFrame(), areaPane,
 					Strings.get("pasteDropTitle"), JOptionPane.WARNING_MESSAGE);
 		}
 

@@ -53,6 +53,7 @@ import com.cburch.logisim.gui.scale.ScaledButton;
 import com.cburch.logisim.gui.scale.ScaledCheckBox;
 import com.cburch.logisim.gui.scale.ScaledComboBox;
 import com.cburch.logisim.gui.scale.ScaledLabel;
+import com.cburch.logisim.gui.scale.ScaledOptionPane;
 import com.cburch.logisim.gui.scale.ScaledTextField;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.proj.Projects;
@@ -162,7 +163,7 @@ class BuildCircuitButton extends ScaledButton {
 				ProjectItem projectItem = (ProjectItem) dlog.project
 						.getSelectedItem();
 				if (projectItem == null) {
-					JOptionPane.showMessageDialog(parent,
+					ScaledOptionPane.showMessageDialog(parent,
 							Strings.get("buildNeedProjectError"),
 							Strings.get("buildDialogErrorTitle"),
 							JOptionPane.ERROR_MESSAGE);
@@ -172,7 +173,7 @@ class BuildCircuitButton extends ScaledButton {
 
 				name = dlog.name.getText().trim();
 				if (name.equals("")) {
-					JOptionPane.showMessageDialog(parent,
+					ScaledOptionPane.showMessageDialog(parent,
 							Strings.get("buildNeedCircuitError"),
 							Strings.get("buildDialogErrorTitle"),
 							JOptionPane.ERROR_MESSAGE);
@@ -236,7 +237,7 @@ class BuildCircuitButton extends ScaledButton {
 		if (replace) {
 			final Circuit circuit = dest.getLogisimFile().getCircuit(name);
 			if (circuit == null) {
-				JOptionPane.showMessageDialog(parent,
+				ScaledOptionPane.showMessageDialog(parent,
 						"Internal error prevents replacing circuit.",
 						"Internal Error", JOptionPane.ERROR_MESSAGE);
 				return;

@@ -62,6 +62,7 @@ import com.cburch.logisim.gui.menu.LogisimMenuBar;
 import com.cburch.logisim.gui.scale.ScaledButton;
 import com.cburch.logisim.gui.scale.ScaledFileChooser;
 import com.cburch.logisim.gui.scale.ScaledLabel;
+import com.cburch.logisim.gui.scale.ScaledOptionPane;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.proj.ProjectEvent;
 import com.cburch.logisim.proj.ProjectListener;
@@ -87,7 +88,7 @@ public class TestFrame extends JFrame {
 					return;
 				File file = chooser.getSelectedFile();
 				if (!file.exists() || !file.canRead() || file.isDirectory()) {
-					JOptionPane.showMessageDialog(
+					ScaledOptionPane.showMessageDialog(
 							TestFrame.this,
 							StringUtil.format(
 									Strings.get("fileCannotReadMessage"),
@@ -105,7 +106,7 @@ public class TestFrame extends JFrame {
 					getModel().setPaused(true);
 					getModel().start();
 				} catch (IOException e) {
-					JOptionPane.showMessageDialog(
+					ScaledOptionPane.showMessageDialog(
 							TestFrame.this,
 							StringUtil.format(
 									Strings.get("fileCannotParseMessage"),
@@ -113,7 +114,7 @@ public class TestFrame extends JFrame {
 							Strings.get("fileCannotReadTitle"),
 							JOptionPane.OK_OPTION);
 				} catch (TestException e) {
-					JOptionPane.showMessageDialog(
+					ScaledOptionPane.showMessageDialog(
 							TestFrame.this,
 							StringUtil.format(
 									Strings.get("fileWrongPinsMessage"),
@@ -125,7 +126,7 @@ public class TestFrame extends JFrame {
 				try {
 					getModel().start();
 				} catch (TestException e) {
-					JOptionPane.showMessageDialog(TestFrame.this, StringUtil
+					ScaledOptionPane.showMessageDialog(TestFrame.this, StringUtil
 							.format(Strings.get("fileWrongPinsMessage"),
 									curFile.getName(), e.getMessage()), Strings
 							.get("fileWrongPinsTitle"), JOptionPane.OK_OPTION);

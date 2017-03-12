@@ -53,6 +53,7 @@ import com.cburch.logisim.circuit.AnalyzeException;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.file.LogisimFileActions;
 import com.cburch.logisim.gui.scale.ScaledLabel;
+import com.cburch.logisim.gui.scale.ScaledOptionPane;
 import com.cburch.logisim.gui.scale.ScaledTextField;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.StdAttr;
@@ -66,7 +67,7 @@ import com.cburch.logisim.util.SyntaxChecker;
 
 public class ProjectCircuitActions {
 	private static void analyzeError(Project proj, String message) {
-		JOptionPane.showMessageDialog(proj.getFrame(), message,
+		ScaledOptionPane.showMessageDialog(proj.getFrame(), message,
 				Strings.get("analyzeErrorTitle"), JOptionPane.ERROR_MESSAGE);
 		return;
 	}
@@ -94,7 +95,7 @@ public class ProjectCircuitActions {
 			analyzer.setSelectedTab(Analyzer.EXPRESSION_TAB);
 			return;
 		} catch (AnalyzeException ex) {
-			JOptionPane.showMessageDialog(proj.getFrame(), ex.getMessage(),
+			ScaledOptionPane.showMessageDialog(proj.getFrame(), ex.getMessage(),
 					Strings.get("analyzeNoExpressionTitle"),
 					JOptionPane.INFORMATION_MESSAGE);
 		}
@@ -123,7 +124,7 @@ public class ProjectCircuitActions {
 				error = new ScaledLabel("\""+name+"\": "+Strings.get("circuitNameExists"));
 			}
 			if (error != null) {
-				JOptionPane.showMessageDialog(proj.getFrame(), error,
+				ScaledOptionPane.showMessageDialog(proj.getFrame(), error,
 				Strings.get("circuitCreateTitle"), JOptionPane.ERROR_MESSAGE);
 			} else {
 				Circuit circuit = new Circuit(name, proj.getLogisimFile(),proj);
@@ -214,12 +215,12 @@ public class ProjectCircuitActions {
 
 	public static void doRemoveCircuit(Project proj, Circuit circuit) {
 		if (proj.getLogisimFile().getTools().size() == 1) {
-			JOptionPane.showMessageDialog(proj.getFrame(),
+			ScaledOptionPane.showMessageDialog(proj.getFrame(),
 					Strings.get("circuitRemoveLastError"),
 					Strings.get("circuitRemoveErrorTitle"),
 					JOptionPane.ERROR_MESSAGE);
 		} else if (!proj.getDependencies().canRemove(circuit)) {
-			JOptionPane.showMessageDialog(proj.getFrame(),
+			ScaledOptionPane.showMessageDialog(proj.getFrame(),
 					Strings.get("circuitRemoveUsedError"),
 					Strings.get("circuitRemoveErrorTitle"),
 					JOptionPane.ERROR_MESSAGE);
