@@ -33,6 +33,7 @@ package com.cburch.logisim.gui.generic;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.prefs.PrefMonitor;
 
 public class BasicZoomModel implements ZoomModel {

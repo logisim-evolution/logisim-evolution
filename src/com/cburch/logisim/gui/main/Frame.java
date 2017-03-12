@@ -316,8 +316,8 @@ public class Frame extends LFrame implements LocaleListener {
 	public static final String VIEW_TOOLBOX = "toolbox";
 	public static final String VIEW_SIMULATION = "simulation";
 	public static final String VIEW_TRACKER = "tracker";
-	private static final double[] ZOOM_OPTIONS = { 20, 50, 75, 100, 133, 150,
-			200, 250, 300, 400 };
+//	private static final double[] ZOOM_OPTIONS = { 20, 50, 75, 100, 133, 150,
+//			200, 250, 300, 400 };
 	private Project proj;
 	private MyProjectListener myProjectListener = new MyProjectListener();
 	// GUI elements shared between views
@@ -367,8 +367,12 @@ public class Frame extends LFrame implements LocaleListener {
 		// set up elements for the Layout view
 		layoutToolbarModel = new LayoutToolbarModel(this, proj);
 		layoutCanvas = new Canvas(proj);
+		double[] Options = new double[49];
+		for (int i = 0 ; i < 49 ; i++) {
+			Options[i]=(double)((i+1)*20);
+		}
 		layoutZoomModel = new BasicZoomModel(AppPreferences.LAYOUT_SHOW_GRID,
-				AppPreferences.LAYOUT_ZOOM, ZOOM_OPTIONS);
+				AppPreferences.LAYOUT_ZOOM, Options);//ZOOM_OPTIONS);
 
 		layoutCanvas.getGridPainter().setZoomModel(layoutZoomModel);
 		layoutEditHandler = new LayoutEditHandler(this);

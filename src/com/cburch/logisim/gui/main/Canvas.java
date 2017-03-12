@@ -237,7 +237,7 @@ public class Canvas extends JPanel implements LocaleListener,
 				double zoom = zoomModel.getZoomFactor();
 				if (mwe.getWheelRotation() < 0) { // ZOOM IN
 					zoom += 0.1;
-					zoomModel.setZoomFactor(zoom >= 4.0 ? 4.0 : zoom);
+					zoomModel.setZoomFactor(zoom >= 9.9 ? 9.9 : zoom);
 				} else { // ZOOM OUT
 					zoom -= 0.1;
 					zoomModel.setZoomFactor(zoom <= 0.2 ? 0.2 : zoom);
