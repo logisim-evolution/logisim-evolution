@@ -48,7 +48,7 @@ import com.cburch.logisim.gui.scale.ScaledScrollPane;
 @SuppressWarnings("serial")
 public class FPGACommanderTextWindow extends JFrame implements KeyListener,WindowListener {
 
-	private int FontSize = 14;
+	private int FontSize;
 	private String Title;
 	private int LineCount;
 	private JTextArea textArea = new JTextArea(25, 80);
@@ -81,6 +81,7 @@ public class FPGACommanderTextWindow extends JFrame implements KeyListener,Windo
 		addWindowListener(this);
 		LineCount = 0;
 		this.count = count;
+		FontSize = textMessages.getFont().getSize();
 	}
 	
 	public boolean IsActivated() {
@@ -117,7 +118,7 @@ public class FPGACommanderTextWindow extends JFrame implements KeyListener,Windo
 			case KeyEvent.VK_PLUS:
 			case KeyEvent.VK_ADD:
 				FontSize++;
-				textArea.setFont(new Font("monospaced", Font.PLAIN, FontSize));
+				textArea.setFont(textArea.getFont().deriveFont((float)FontSize));
 				rect = textArea.getBounds();
 				rect.x = 0;
 				rect.y = 0;
@@ -127,7 +128,7 @@ public class FPGACommanderTextWindow extends JFrame implements KeyListener,Windo
 			case KeyEvent.VK_SUBTRACT:
 				if (FontSize > 8) {
 					FontSize--;
-					textArea.setFont(new Font("monospaced", Font.PLAIN, FontSize));
+					textArea.setFont(textArea.getFont().deriveFont((float)FontSize));
 					rect = textArea.getBounds();
 					rect.x = 0;
 					rect.y = 0;

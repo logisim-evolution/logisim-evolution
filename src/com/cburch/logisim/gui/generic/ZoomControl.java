@@ -44,6 +44,9 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 
+import com.cburch.logisim.gui.scale.ScaledSpinner;
+import com.cburch.logisim.prefs.AppPreferences;
+
 public class ZoomControl extends JPanel {
 	private class GridIcon extends JComponent implements MouseListener,
 			PropertyChangeListener {
@@ -52,7 +55,7 @@ public class ZoomControl extends JPanel {
 
 		public GridIcon() {
 			addMouseListener(this);
-			setPreferredSize(new Dimension(15, 15));
+			setPreferredSize(new Dimension(AppPreferences.getScaled(AppPreferences.IconSize), AppPreferences.getScaled(AppPreferences.IconSize)));
 			setToolTipText("");
 			setFocusable(true);
 		}
@@ -178,7 +181,7 @@ public class ZoomControl extends JPanel {
 		this.model = model;
 
 		spinnerModel = new SpinnerModel();
-		spinner = new JSpinner();
+		spinner = new ScaledSpinner();
 		spinner.setModel(spinnerModel);
 		this.add(spinner, BorderLayout.CENTER);
 

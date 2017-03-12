@@ -410,6 +410,12 @@ public class AppPreferences {
 		return value*scale;
 	}
 	
+	public static double getScaled(double value) {
+		getPrefs();
+		double scale = ((double)((int)(SCALE_FACTOR.get()*10)))/(double)10.0;
+		return value*scale;
+	}
+	
 	public static Font getScaledFont(Font myfont) {
 		return myfont.deriveFont(getScaled((float)IconSize));
 	}
@@ -463,6 +469,10 @@ public class AppPreferences {
 	public static final PrefMonitor<String> LOCALE = create(new LocalePreference());
 	public static final PrefMonitor<Boolean> ACCENTS_REPLACE = create(new PrefMonitorBoolean(
 			"accentsReplace", false));
+	// FPGA Commander Preferences
+	public static final PrefMonitor<String> FPGA_Workspace=create(new PrefMonitorString(
+			"FPGAWorkspace", System.getProperty("user.home")));
+	
 	// Window preferences
 	public static final String TOOLBAR_HIDDEN = "hidden";
 	public static final String TOOLBAR_DOWN_MIDDLE = "downMiddle";

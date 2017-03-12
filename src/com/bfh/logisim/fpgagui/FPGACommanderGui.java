@@ -97,6 +97,7 @@ import com.cburch.logisim.gui.scale.ScaledFileChooser;
 import com.cburch.logisim.gui.scale.ScaledLabel;
 import com.cburch.logisim.gui.scale.ScaledScrollPane;
 import com.cburch.logisim.gui.scale.ScaledTabbedPane;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.proj.ProjectEvent;
 import com.cburch.logisim.proj.ProjectListener;
@@ -655,7 +656,7 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 		} else if (e.getActionCommand().equals("HDLType")) {
 			handleHDLType();
 		} else if (e.getActionCommand().equals("ToolPath")) {
-			selectToolPath();
+			selectToolPath(MyBoardInformation.fpga.getVendor());
 		} else if (e.getActionCommand().equals("HDLOnly")) {
 			handleHDLOnly();
 		} else if (e.getActionCommand().equals("Download")) {
@@ -939,7 +940,7 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 		}
 
 		String CircuitName = circuitsList.getSelectedItem().toString();
-		String ProjectDir = MySettings.GetWorkspacePath() + File.separator
+		String ProjectDir = AppPreferences.FPGA_Workspace.get() + File.separator
 				+ MyProject.getLogisimFile().getName();
 		if (!ProjectDir.endsWith(File.separator)) {
 			ProjectDir += File.separator;
@@ -1160,16 +1161,17 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 			i++;
 		}
 	}
+	
 
-	private void selectToolPath() {
-		String ToolPath = Settings.vendors.get(MyBoardInformation.fpga.getVendor()).getToolPath();
+	private void selectToolPath(char vendor) {
+		String ToolPath = Settings.vendors.get(vendor).getToolPath();
 		JFileChooser fc = new ScaledFileChooser(ToolPath);
 		fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		File test = new File(ToolPath);
 		if (test.exists()) {
 			fc.setSelectedFile(test);
 		}
-		fc.setDialogTitle(FPGAClass.Vendors[MyBoardInformation.fpga.getVendor()]
+		fc.setDialogTitle(FPGAClass.Vendors[vendor]
 				+ " Design Suite Path Selection");
 		int retval = fc.showOpenDialog(null);
 		if (retval == JFileChooser.APPROVE_OPTION) {
@@ -1178,7 +1180,7 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 			if (!ToolPath.endsWith(File.separator)) {
 				ToolPath += File.separator;
 			}
-			if (MySettings.setToolPath(MyBoardInformation.fpga.getVendor(), ToolPath)) {
+			if (MySettings.setToolPath(vendor, ToolPath)) {
 				HDLOnly.setEnabled(true);
 				MySettings.SetHdlOnly(false);
 				HDLOnly.setText(HDLandDownloadMessage);
@@ -1197,11 +1199,11 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 	}
 	
 	private String GetBoardFile() {
-		JFileChooser fc = new ScaledFileChooser(MySettings.GetWorkspacePath());
+		JFileChooser fc = new ScaledFileChooser(AppPreferences.FPGA_Workspace.get());
 		FileNameExtensionFilter filter = new FileNameExtensionFilter("Board files", "xml", "xml");
 		fc.setFileFilter(filter);
 		fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
-		File test = new File(MySettings.GetWorkspacePath());
+		File test = new File(AppPreferences.FPGA_Workspace.get());
 		if (test.exists()) {
 			fc.setSelectedFile(test);
 		}
@@ -1213,10 +1215,10 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 		} else return "";
 	}
 
-	private void selectWorkSpace() {
-		JFileChooser fc = new ScaledFileChooser(MySettings.GetWorkspacePath());
+	public static void selectWorkSpace() {
+		JFileChooser fc = new ScaledFileChooser(AppPreferences.FPGA_Workspace.get());
 		fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-		File test = new File(MySettings.GetWorkspacePath());
+		File test = new File(AppPreferences.FPGA_Workspace.get());
 		if (test.exists()) {
 			fc.setSelectedFile(test);
 		}
@@ -1234,14 +1236,9 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 		}
 		File file = fc.getSelectedFile();
 		if (file.getPath().endsWith(File.separator)) {
-			MySettings.SetWorkspacePath(file.getPath());
+			AppPreferences.FPGA_Workspace.set(file.getPath());
 		} else {
-			MySettings.SetWorkspacePath(file.getPath() + File.separator);
-		}
-		if (!MySettings.UpdateSettingsFile()) {
-			AddErrors("***SEVERE*** Could not update the FPGACommander settings file");
-		} else {
-			AddInfo("Updated the FPGACommander settings file");
+			AppPreferences.FPGA_Workspace.set(file.getPath() + File.separator);
 		}
 	}
 
@@ -1266,14 +1263,14 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 
 	private boolean writeHDL() {
 		String CircuitName = circuitsList.getSelectedItem().toString();
-		if (!GenDirectory(MySettings.GetWorkspacePath() + File.separator
+		if (!GenDirectory(AppPreferences.FPGA_Workspace.get() + File.separator
 				+ MyProject.getLogisimFile().getName())) {
 			MyReporter.AddFatalError("Unable to create directory: \""
-					+ MySettings.GetWorkspacePath() + File.separator
+					+ AppPreferences.FPGA_Workspace.get() + File.separator
 					+ MyProject.getLogisimFile().getName() + "\"");
 			return false;
 		}
-		String ProjectDir = MySettings.GetWorkspacePath() + File.separator
+		String ProjectDir = AppPreferences.FPGA_Workspace.get() + File.separator
 				+ MyProject.getLogisimFile().getName();
 		if (!ProjectDir.endsWith(File.separator)) {
 			ProjectDir += File.separator;

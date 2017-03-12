@@ -273,22 +273,6 @@ public class Settings {
 		return KnownBoards.GetBoardFilePath(SelectedBoardName);
 	}
 
-	public String GetWorkspacePath() {
-		NodeList SettingsList = SettingsDocument
-				.getElementsByTagName(WorkSpace);
-		if (SettingsList.getLength() != 1) {
-			return HomePath;
-		}
-		Node ThisWorkspace = SettingsList.item(0);
-		NamedNodeMap WorkspaceParameters = ThisWorkspace.getAttributes();
-		for (int i = 0; i < WorkspaceParameters.getLength(); i++) {
-			if (WorkspaceParameters.item(i).getNodeName().equals(DirectoryName))
-				return WorkspaceParameters.item(i).getNodeValue();
-		}
-
-		return HomePath;
-	}
-
 	private void loadToolPath(VendorSoftware vendor) {
 		NodeList SettingsList = SettingsDocument.getElementsByTagName(WorkSpace);
 		if (SettingsList.getLength() != 1) {
@@ -477,24 +461,6 @@ public class Settings {
 		KnownBoards.AddExternalBoard(CompleteFileName);
 		modified = true;
 		return true;
-	}
-
-	public boolean SetWorkspacePath(String path) {
-		NodeList SettingsList = SettingsDocument
-				.getElementsByTagName(WorkSpace);
-		if (SettingsList.getLength() != 1) {
-			return false;
-		}
-		Node ThisWorkspace = SettingsList.item(0);
-		NamedNodeMap WorkspaceParameters = ThisWorkspace.getAttributes();
-		for (int i = 0; i < WorkspaceParameters.getLength(); i++) {
-			if (WorkspaceParameters.item(i).getNodeName().equals(DirectoryName)) {
-				WorkspaceParameters.item(i).setNodeValue(path);
-				modified = true;
-				return true;
-			}
-		}
-		return false;
 	}
 
 	public boolean setToolPath(char vendor, String path) {

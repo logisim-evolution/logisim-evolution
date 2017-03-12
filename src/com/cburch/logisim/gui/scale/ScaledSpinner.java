@@ -28,54 +28,28 @@
  *       http://reds.heig-vd.ch
  *******************************************************************************/
 
-package com.bfh.logisim.fpgagui;
+package com.cburch.logisim.gui.scale;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Graphics;
-import java.awt.Image;
-import java.awt.image.BufferedImage;
-
-import javax.swing.Icon;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerModel;
 
 import com.cburch.logisim.prefs.AppPreferences;
 
-public class BoardIcon implements Icon {
-	private Image image;
-	private int icon_width = 240;
-	private int icon_height = 130;
-
-	public BoardIcon(BufferedImage BoardImage) {
-		if (BoardImage == null)
-			image = null;
-		else
-			image = BoardImage.getScaledInstance(this.getIconWidth(),
-					this.getIconHeight(), BufferedImage.SCALE_SMOOTH);
+@SuppressWarnings("serial")
+public class ScaledSpinner extends JSpinner {
+	
+	public ScaledSpinner() {
+		super();
+		Init();
 	}
 
-	public int getIconHeight() {
-		return AppPreferences.getScaled(icon_height);
+	public ScaledSpinner(SpinnerModel model) {
+		super(model);
+		Init();
 	}
 
-	public int getIconWidth() {
-		return AppPreferences.getScaled(icon_width);
+	private void Init() {
+		AppPreferences.setScaledFonts(getComponents());
+		super.setFont(AppPreferences.getScaledFont(super.getFont()));
 	}
-
-	public void paintIcon(Component c, Graphics g, int x, int y) {
-		if (image != null)
-			g.drawImage(image, x, y, null);
-		else {
-			g.setColor(Color.gray);
-			g.fillRect(0, 0, this.getIconWidth(), this.getIconHeight());
-		}
-	}
-
-	public void SetImage(BufferedImage BoardImage) {
-		if (BoardImage == null)
-			image = null;
-		else
-			image = BoardImage.getScaledInstance(this.getIconWidth(),
-					this.getIconHeight(), BufferedImage.SCALE_SMOOTH);
-	}
-
 }
