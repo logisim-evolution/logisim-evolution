@@ -153,7 +153,7 @@ class BuildCircuitButton extends ScaledButton {
 			boolean ok = false;
 			while (!ok) {
 				DialogPanel dlog = new DialogPanel();
-				int action = JOptionPane.showConfirmDialog(parent, dlog,
+				int action = ScaledOptionPane.showConfirmDialog(parent, dlog,
 						Strings.get("buildDialogTitle"),
 						JOptionPane.OK_CANCEL_OPTION,
 						JOptionPane.QUESTION_MESSAGE);
@@ -181,7 +181,7 @@ class BuildCircuitButton extends ScaledButton {
 				}
 
 				if (dest.getLogisimFile().getCircuit(name) != null) {
-					int choice = JOptionPane.showConfirmDialog(parent,
+					int choice = ScaledOptionPane.showConfirmDialog(parent,
 							StringUtil.format(
 									Strings.get("buildConfirmReplaceMessage"),
 									name), Strings

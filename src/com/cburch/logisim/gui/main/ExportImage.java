@@ -312,7 +312,7 @@ class ExportImage {
 			return;
 		}
 		OptionsPanel options = new OptionsPanel(list);
-		int action = JOptionPane.showConfirmDialog(frame, options,
+		int action = ScaledOptionPane.showConfirmDialog(frame, options,
 				Strings.get("exportImageSelect"), JOptionPane.OK_CANCEL_OPTION,
 				JOptionPane.QUESTION_MESSAGE);
 		if (action != JOptionPane.OK_OPTION)
@@ -365,7 +365,7 @@ class ExportImage {
 				.getParentFile());
 		if (dest.exists()) {
 			if (!dest.isDirectory()) {
-				int confirm = JOptionPane.showConfirmDialog(proj.getFrame(),
+				int confirm = ScaledOptionPane.showConfirmDialog(proj.getFrame(),
 						Strings.get("confirmOverwriteMessage"),
 						Strings.get("confirmOverwriteTitle"),
 						JOptionPane.YES_NO_OPTION);
