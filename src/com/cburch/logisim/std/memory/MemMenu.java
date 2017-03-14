@@ -114,7 +114,7 @@ class MemMenu implements ActionListener, MenuExtender {
 		if (isAllZero)
 			return;
 
-		int choice = JOptionPane.showConfirmDialog(frame,
+		int choice = ScaledOptionPane.showConfirmDialog(frame,
 				Strings.get("ramConfirmClearMsg"),
 				Strings.get("ramConfirmClearTitle"), JOptionPane.YES_NO_OPTION);
 		if (choice == JOptionPane.YES_OPTION) {

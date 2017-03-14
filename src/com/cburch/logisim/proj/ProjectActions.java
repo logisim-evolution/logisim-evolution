@@ -510,7 +510,7 @@ public class ProjectActions {
 		}
 
 		if (f.exists()) {
-			int confirm = JOptionPane.showConfirmDialog(proj.getFrame(),
+			int confirm = ScaledOptionPane.showConfirmDialog(proj.getFrame(),
 					Strings.get("confirmOverwriteMessage"),
 					Strings.get("confirmOverwriteTitle"),
 					JOptionPane.YES_NO_OPTION);

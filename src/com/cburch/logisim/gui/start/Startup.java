@@ -60,6 +60,7 @@ import com.cburch.logisim.file.Loader;
 import com.cburch.logisim.gui.main.Print;
 import com.cburch.logisim.gui.menu.LogisimMenuBar;
 import com.cburch.logisim.gui.menu.WindowManagers;
+import com.cburch.logisim.gui.scale.ScaledOptionPane;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.proj.ProjectActions;
@@ -437,7 +438,7 @@ public class Startup {
 
 		// If the remote version is newer, perform the update
 		if (remoteVersion.compareTo(Main.VERSION) > 0) {
-			int answer = JOptionPane.showConfirmDialog(null,
+			int answer = ScaledOptionPane.showConfirmDialog(null,
 					"A new Logisim-evolution version (" + remoteVersion
 							+ ") is available!\nWould you like to update?",
 					"Update", JOptionPane.YES_NO_OPTION,

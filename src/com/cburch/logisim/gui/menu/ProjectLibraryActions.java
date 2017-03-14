@@ -105,7 +105,7 @@ public class ProjectLibraryActions {
 		}
 		LibraryJList list = new LibraryJList(builtins);
 		JScrollPane listPane = new ScaledScrollPane(list);
-		int action = JOptionPane.showConfirmDialog(proj.getFrame(), listPane,
+		int action = ScaledOptionPane.showConfirmDialog(proj.getFrame(), listPane,
 				Strings.get("loadBuiltinDialogTitle"),
 				JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 		if (action == JOptionPane.OK_OPTION) {
@@ -195,7 +195,7 @@ public class ProjectLibraryActions {
 		}
 		LibraryJList list = new LibraryJList(canUnload);
 		JScrollPane listPane = new ScaledScrollPane(list);
-		int action = JOptionPane.showConfirmDialog(proj.getFrame(), listPane,
+		int action = ScaledOptionPane.showConfirmDialog(proj.getFrame(), listPane,
 				Strings.get("unloadLibrariesDialogTitle"),
 				JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 		if (action == JOptionPane.OK_OPTION) {

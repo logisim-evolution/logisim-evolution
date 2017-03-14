@@ -242,7 +242,7 @@ public class Print {
 			return;
 		}
 		ParmsPanel parmsPanel = new ParmsPanel(list);
-		int action = JOptionPane.showConfirmDialog(frame, parmsPanel,
+		int action = ScaledOptionPane.showConfirmDialog(frame, parmsPanel,
 				Strings.get("printParmsTitle"), JOptionPane.OK_CANCEL_OPTION,
 				JOptionPane.QUESTION_MESSAGE);
 		if (action != JOptionPane.OK_OPTION)

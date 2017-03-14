@@ -65,6 +65,7 @@ import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.gui.main.Canvas;
 import com.cburch.logisim.gui.scale.ScaledLabel;
+import com.cburch.logisim.gui.scale.ScaledOptionPane;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceData;
 import com.cburch.logisim.instance.InstanceFactory;
@@ -270,7 +271,7 @@ public class Pin extends InstanceFactory {
 				Canvas canvas = (Canvas) e.getComponent();
 				CircuitState circState = canvas.getCircuitState();
 				java.awt.Component frame = SwingUtilities.getRoot(canvas);
-				int choice = JOptionPane.showConfirmDialog(frame,
+				int choice = ScaledOptionPane.showConfirmDialog(frame,
 						Strings.get("pinFrozenQuestion"),
 						Strings.get("pinFrozenTitle"),
 						JOptionPane.OK_CANCEL_OPTION,
