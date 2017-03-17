@@ -72,14 +72,16 @@ public class FPGAOptions extends OptionsPanel {
 		
 		c.gridx = 0;
 		c.gridy = 0;
-		c.fill = GridBagConstraints.HORIZONTAL;
+		c.fill = GridBagConstraints.NONE;
 		add(WorkspaceLabel,c);
-		c.gridx = 1;
-		c.gridy = 0;
-		add(WorkSpacePath,c);
 		c.gridx = 2;
 		c.gridy = 0;
+		c.fill = GridBagConstraints.NONE;
 		add(WorkSpaceButton,c);
+		c.gridx = 1;
+		c.gridy = 0;
+		c.fill = GridBagConstraints.HORIZONTAL;
+		add(WorkSpacePath,c);
 	}
 
 	@Override

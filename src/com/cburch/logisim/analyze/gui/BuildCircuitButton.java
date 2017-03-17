@@ -42,6 +42,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 import com.cburch.logisim.analyze.model.AnalyzerModel;
 import com.cburch.logisim.analyze.model.Expression;
@@ -66,7 +67,7 @@ class BuildCircuitButton extends ScaledButton {
 		private JLabel projectLabel = new ScaledLabel();
 		private JComboBox<Object> project;
 		private JLabel nameLabel = new ScaledLabel();
-		private ScaledTextField name = new ScaledTextField(10);
+		private JTextField name = new ScaledTextField(10);
 		private JCheckBox twoInputs = new ScaledCheckBox();
 		private JCheckBox nands = new ScaledCheckBox();
 
