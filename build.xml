@@ -43,8 +43,25 @@
             </manifest>
         </jar>
     </target>
+    
+    <target name="jar_all" depends="compile">
+        <patch patchfile="main.patch" originalfile="src/com/cburch/logisim/Main.java"/>
+       <jar destfile="logisim-evolution.jar">
+            <fileset dir="bin" excludes="resources/ libs/ javax/ doc/ boards_model/"/>
+            <fileset dir="." includes="doc/ resources/" />
+			<zipgroupfileset dir="libs" includes="*.jar"/>
+            <manifest>
+                <attribute name="Main-Class" value="com.cburch.logisim.Main"/>
+            </manifest>
+        </jar>
+    </target>
+
 
     <target name="run" depends="jar">
+        <java jar="logisim-evolution.jar" fork="true"/>
+    </target>
+
+    <target name="run_all" depends="jar">
         <java jar="logisim-evolution.jar" fork="true"/>
     </target>
 
