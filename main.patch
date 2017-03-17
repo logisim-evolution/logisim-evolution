@@ -1,0 +1,8 @@
+73c73
+< 	public static boolean ANALYZE = false;
+---
+> 	public static boolean ANALYZE = true;
+80c80
+< 	public static boolean UPDATE = true;
+---
+> 	public static boolean UPDATE = false;
