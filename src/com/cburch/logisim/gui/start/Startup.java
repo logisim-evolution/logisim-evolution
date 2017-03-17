@@ -68,6 +68,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JRadioButtonMenuItem;
+import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
@@ -79,6 +80,7 @@ import com.cburch.logisim.LogisimVersion;
 import com.cburch.logisim.Main;
 import com.cburch.logisim.file.LoadFailedException;
 import com.cburch.logisim.file.Loader;
+import com.cburch.logisim.gui.generic.CanvasPane;
 import com.cburch.logisim.gui.main.Print;
 import com.cburch.logisim.gui.menu.LogisimMenuBar;
 import com.cburch.logisim.gui.menu.WindowManagers;
@@ -836,7 +838,7 @@ public class Startup implements AWTEventListener {
 		if (event instanceof ContainerEvent) {
 	        ContainerEvent containerEvent = (ContainerEvent)event;
 	        if (containerEvent.getID() == ContainerEvent.COMPONENT_ADDED){
-	        	Component container = containerEvent.getChild(); 
+	        	Component container = containerEvent.getChild();
 	        	if ((container instanceof JButton)||
 	        		(container instanceof JCheckBox)||
 	        		(container instanceof JComboBox)||
@@ -850,6 +852,7 @@ public class Startup implements AWTEventListener {
 	        		(container instanceof JTextField)||
 	        		(container instanceof JHelp)||
 	        		(container instanceof JFileChooser)||
+	        		((container instanceof JScrollPane)&&(!(container instanceof CanvasPane)))||
 	        		(container instanceof JFontChooser)||
 	        		(container instanceof JCheckBoxMenuItem)) {
 	        		AppPreferences.setScaledFonts(((JComponent)container).getComponents());
