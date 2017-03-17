@@ -60,6 +60,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
@@ -88,6 +89,7 @@ import com.cburch.logisim.util.ArgonXML;
 import com.cburch.logisim.util.LocaleManager;
 import com.cburch.logisim.util.MacCompatibility;
 import com.cburch.logisim.util.StringUtil;
+import com.connectina.swing.fontchooser.JFontChooser;
 
 public class Startup implements AWTEventListener {
 
@@ -847,6 +849,8 @@ public class Startup implements AWTEventListener {
 	        		(container instanceof JTabbedPane)||
 	        		(container instanceof JTextField)||
 	        		(container instanceof JHelp)||
+	        		(container instanceof JFileChooser)||
+	        		(container instanceof JFontChooser)||
 	        		(container instanceof JCheckBoxMenuItem)) {
 	        		AppPreferences.setScaledFonts(((JComponent)container).getComponents());
 	        		containerEvent.getChild().setFont(AppPreferences.getScaledFont(containerEvent.getChild().getFont()));
