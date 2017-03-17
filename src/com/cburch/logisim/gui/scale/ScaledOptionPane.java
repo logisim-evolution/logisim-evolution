@@ -95,7 +95,7 @@ public class ScaledOptionPane {
 			gbc.gridy = 3;
 			add(new ScaledLabel(" "),gbc);
 			pack();
-			setPreferredSize(new Dimension(
+			setSize(new Dimension(
 					getWidth()+2*AppPreferences.getScaled(getFont().getSize()),
 					getHeight()));
 			pack();
@@ -230,6 +230,7 @@ public class ScaledOptionPane {
 			gbc.gridwidth=1;
 			gbc.insets=new Insets(0,AppPreferences.getScaled(5),0,AppPreferences.getScaled(5));
 			gbc.fill=GridBagConstraints.HORIZONTAL;
+			gbc.weightx=1.0;
 			YesButton = new ScaledButton(YesText);
 			YesButton.setActionCommand("Yes");
 			YesButton.addActionListener(this);
@@ -258,7 +259,8 @@ public class ScaledOptionPane {
 			gbc.gridy = 3;
 			add(new ScaledLabel(" "),gbc);
 			pack();
-			setPreferredSize(new Dimension(
+			
+			setSize(new Dimension(
 					getWidth()+2*AppPreferences.getScaled(getFont().getSize()),
 					getHeight()));
 			if (parentComponent!=null)
