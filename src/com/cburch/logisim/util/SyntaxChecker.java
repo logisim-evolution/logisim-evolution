@@ -32,7 +32,7 @@ package com.cburch.logisim.util;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.cburch.logisim.gui.scale.ScaledOptionPane;
+import javax.swing.JOptionPane;
 
 public class SyntaxChecker {
 
@@ -44,7 +44,7 @@ public class SyntaxChecker {
 			forbiddenMatcher = forbiddenPattern.matcher(val);
 			boolean ret = variableMatcher.matches() && !forbiddenMatcher.find();
 			if (!ret&&ShowDialog)
-				ScaledOptionPane.showMessageDialog(null,
+				JOptionPane.showMessageDialog(null,
 						Strings.get("variableNameNotAcceptable"));
 			return ret;
 		}

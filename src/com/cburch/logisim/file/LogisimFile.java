@@ -58,7 +58,6 @@ import com.cburch.logisim.circuit.CircuitListener;
 import com.cburch.logisim.circuit.SubcircuitFactory;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.comp.ComponentFactory;
-import com.cburch.logisim.gui.scale.ScaledOptionPane;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.proj.Projects;
 import com.cburch.logisim.tools.AddTool;
@@ -76,8 +75,8 @@ public class LogisimFile extends Library implements LibraryEventSource,CircuitLi
 			String oldname = (String) event.getData();
 			String newname = event.getCircuit().getName();
 			if (NameIsInUse(newname,event.getCircuit())) {
-				ScaledOptionPane.showMessageDialog(null, "\""+newname+"\": "+Strings.get("circuitNameExists"),
-						JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(null, "\""+newname+"\": "+Strings.get("circuitNameExists"),
+						"",JOptionPane.ERROR_MESSAGE);
 				event.getCircuit().getStaticAttributes().setValue(CircuitAttributes.NAME_ATTR, (String) oldname);;
 			}
 		}

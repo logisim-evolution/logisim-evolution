@@ -35,6 +35,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTree;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
@@ -42,8 +43,6 @@ import javax.swing.tree.TreePath;
 import com.cburch.draw.toolbar.Toolbar;
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.circuit.Simulator;
-import com.cburch.logisim.gui.scale.ScaledScrollPane;
-import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.proj.ProjectEvent;
 import com.cburch.logisim.proj.ProjectListener;
@@ -55,13 +54,8 @@ class SimulationExplorer extends JPanel implements ProjectListener,
 	private class ScaledTree extends JTree {
 		public ScaledTree(TreeModel model) {
 			super(model);
-			Init();
 		}
 
-		private void Init() {
-			AppPreferences.setScaledFonts(getComponents());
-			super.setFont(AppPreferences.getScaledFont(super.getFont()));
-		}
 	}
 	
 	private static final long serialVersionUID = 1L;
@@ -84,7 +78,7 @@ class SimulationExplorer extends JPanel implements ProjectListener,
 		tree.setCellRenderer(new SimulationTreeRenderer());
 		tree.addMouseListener(this);
 		tree.setToggleClickCount(3);
-		add(new ScaledScrollPane(tree), BorderLayout.CENTER);
+		add(new JScrollPane(tree), BorderLayout.CENTER);
 		proj.addProjectListener(this);
 	}
 

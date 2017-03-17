@@ -43,6 +43,7 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -50,8 +51,6 @@ import javax.swing.event.ChangeListener;
 import com.cburch.logisim.analyze.model.AnalyzerModel;
 import com.cburch.logisim.gui.generic.LFrame;
 import com.cburch.logisim.gui.menu.LogisimMenuBar;
-import com.cburch.logisim.gui.scale.ScaledScrollPane;
-import com.cburch.logisim.gui.scale.ScaledTabbedPane;
 import com.cburch.logisim.util.LocaleListener;
 import com.cburch.logisim.util.LocaleManager;
 
@@ -164,7 +163,7 @@ public class Analyzer extends LFrame {
 	private EditListener editListener = new EditListener();
 	private AnalyzerModel model = new AnalyzerModel();
 
-	private ScaledTabbedPane tabbedPane = new ScaledTabbedPane();
+	private JTabbedPane tabbedPane = new JTabbedPane();
 	private VariableTab inputsPanel;
 	private VariableTab outputsPanel;
 	private TableTab truthTablePanel;
@@ -183,7 +182,7 @@ public class Analyzer extends LFrame {
 
 		truthTablePanel.addMouseListener(new TruthTableMouseListener());
 
-		tabbedPane = new ScaledTabbedPane();
+		tabbedPane = new JTabbedPane();
 		addTab(INPUTS_TAB, inputsPanel);
 		addTab(OUTPUTS_TAB, outputsPanel);
 		addTab(TABLE_TAB, truthTablePanel);
@@ -216,7 +215,7 @@ public class Analyzer extends LFrame {
 	}
 
 	private void addTab(int index, final JComponent comp) {
-		final JScrollPane pane = new ScaledScrollPane(comp,
+		final JScrollPane pane = new JScrollPane(comp,
 				ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
 				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		if (comp instanceof TableTab) {

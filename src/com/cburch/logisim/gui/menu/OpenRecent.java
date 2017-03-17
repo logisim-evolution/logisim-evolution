@@ -40,14 +40,15 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.cburch.logisim.gui.scale.ScaledMenu;
-import com.cburch.logisim.gui.scale.ScaledMenuItem;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.proj.ProjectActions;
 
-class OpenRecent extends ScaledMenu implements PropertyChangeListener {
-	private class RecentItem extends ScaledMenuItem implements ActionListener {
+class OpenRecent extends JMenu implements PropertyChangeListener {
+	private class RecentItem extends JMenuItem implements ActionListener {
 		private static final long serialVersionUID = 1L;
 		private File file;
 
@@ -98,17 +99,11 @@ class OpenRecent extends ScaledMenu implements PropertyChangeListener {
 	OpenRecent(LogisimMenuBar menubar) {
 		this.menubar = menubar;
 		this.recentItems = new ArrayList<RecentItem>();
-		Init();
 		AppPreferences.addPropertyChangeListener(
 				AppPreferences.RECENT_PROJECTS, this);
 		renewItems();
 	}
 	
-    private void Init() {
-		AppPreferences.setScaledFonts(getComponents());
-		super.setFont(AppPreferences.getScaledFont(getFont()));
-	}
-
 
 	void localeChanged() {
 		setText(Strings.get("fileOpenRecentItem"));

@@ -41,10 +41,9 @@ import java.awt.event.WindowEvent;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
+import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
-
-import com.cburch.logisim.gui.scale.ScaledButton;
 
 public abstract class JDialogOk extends JDialog {
 	private class MyListener extends WindowAdapter implements ActionListener {
@@ -70,8 +69,8 @@ public abstract class JDialogOk extends JDialog {
 	private static final long serialVersionUID = 1L;
 
 	private JPanel contents = new JPanel(new BorderLayout());
-	protected ScaledButton ok = new ScaledButton(Strings.get("dlogOkButton"));
-	protected ScaledButton cancel = new ScaledButton(Strings.get("dlogCancelButton"));
+	protected JButton ok = new JButton(Strings.get("dlogOkButton"));
+	protected JButton cancel = new JButton(Strings.get("dlogCancelButton"));
 
 	public JDialogOk(Dialog parent, String title, boolean model) {
 		super(parent, title, true);

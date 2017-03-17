@@ -52,6 +52,7 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -62,6 +63,7 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.ListSelectionModel;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -90,14 +92,6 @@ import com.cburch.logisim.file.LibraryEvent;
 import com.cburch.logisim.file.LibraryListener;
 import com.cburch.logisim.file.LogisimFile;
 import com.cburch.logisim.gui.menu.MenuSimulate;
-import com.cburch.logisim.gui.scale.ScaledButton;
-import com.cburch.logisim.gui.scale.ScaledCheckBox;
-import com.cburch.logisim.gui.scale.ScaledComboBox;
-import com.cburch.logisim.gui.scale.ScaledFileChooser;
-import com.cburch.logisim.gui.scale.ScaledLabel;
-import com.cburch.logisim.gui.scale.ScaledOptionPane;
-import com.cburch.logisim.gui.scale.ScaledScrollPane;
-import com.cburch.logisim.gui.scale.ScaledTabbedPane;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.proj.ProjectEvent;
@@ -289,24 +283,24 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 	public static final int FONT_SIZE = 12;
 	private JFrame panel;
 	private ComponentMapDialog MapPannel;
-	private JLabel textMainCircuit = new ScaledLabel("Choose main circuit ");
-	private JLabel textTargetBoard = new ScaledLabel("Choose target board ");
-	private JLabel textTargetFreq = new ScaledLabel("Choose tick frequency ");
-	private JLabel textAnnotation = new ScaledLabel("Annotation method");
-	private JLabel boardPic = new ScaledLabel();
+	private JLabel textMainCircuit = new JLabel("Choose main circuit ");
+	private JLabel textTargetBoard = new JLabel("Choose target board ");
+	private JLabel textTargetFreq = new JLabel("Choose tick frequency ");
+	private JLabel textAnnotation = new JLabel("Annotation method");
+	private JLabel boardPic = new JLabel();
 	private BoardIcon boardIcon = null;
-	private ScaledButton annotateButton = new ScaledButton();
-	private ScaledButton validateButton = new ScaledButton();
-	private JCheckBox writeToFlash = new ScaledCheckBox("Write to flash?");
-	private JComboBox<String> boardsList = new ScaledComboBox<>();
-	private JComboBox<String> circuitsList = new ScaledComboBox<>();
-	private JComboBox<String> frequenciesList = new ScaledComboBox<>();
-	private JComboBox<String> annotationList = new ScaledComboBox<>();
-	private ScaledButton HDLType = new ScaledButton();
-	private ScaledButton HDLOnly = new ScaledButton();
-	private ScaledButton ToolPath = new ScaledButton();
-	private ScaledButton Workspace = new ScaledButton();
-	private JCheckBox skipHDL = new ScaledCheckBox("Skip VHDL generation?");
+	private JButton annotateButton = new JButton();
+	private JButton validateButton = new JButton();
+	private JCheckBox writeToFlash = new JCheckBox("Write to flash?");
+	private JComboBox<String> boardsList = new JComboBox<>();
+	private JComboBox<String> circuitsList = new JComboBox<>();
+	private JComboBox<String> frequenciesList = new JComboBox<>();
+	private JComboBox<String> annotationList = new JComboBox<>();
+	private JButton HDLType = new JButton();
+	private JButton HDLOnly = new JButton();
+	private JButton ToolPath = new JButton();
+	private JButton Workspace = new JButton();
+	private JCheckBox skipHDL = new JCheckBox("Skip VHDL generation?");
 	private JTextArea textAreaInfo = new JTextArea(10, 50);
 	private JTextArea textAreaConsole = new JTextArea(10, 50);
 	private JComponent panelInfos = new JPanel();
@@ -315,7 +309,7 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 	private JComponent panelConsole = new JPanel();
 	private static final String OnlyHDLMessage = "Generate HDL only";
 	private static final String HDLandDownloadMessage = "Download to board";
-	private ScaledTabbedPane tabbedPane = new ScaledTabbedPane();
+	private JTabbedPane tabbedPane = new JTabbedPane();
 	private LinkedList<String> consoleInfos = new LinkedList<String>();
 	private LinkedList<String> consoleConsole = new LinkedList<String>();
 	private Project MyProject;
@@ -571,10 +565,10 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 		textAreaConsole.setForeground(Color.LIGHT_GRAY);
 		textAreaConsole.setBackground(bg);
 		textAreaConsole.setFont(new Font("monospaced", Font.PLAIN, FONT_SIZE));
-		JScrollPane textMessages = new ScaledScrollPane(textAreaInfo);
-		JScrollPane textWarnings = new ScaledScrollPane(Warnings);
-		JScrollPane textErrors = new ScaledScrollPane(Errors);
-		JScrollPane textConsole = new ScaledScrollPane(textAreaConsole);
+		JScrollPane textMessages = new JScrollPane(textAreaInfo);
+		JScrollPane textWarnings = new JScrollPane(Warnings);
+		JScrollPane textErrors = new JScrollPane(Errors);
+		JScrollPane textConsole = new JScrollPane(textAreaConsole);
 		textMessages
 				.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 		textMessages
@@ -1166,7 +1160,7 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 
 	private void selectToolPath(char vendor) {
 		String ToolPath = Settings.vendors.get(vendor).getToolPath();
-		JFileChooser fc = new ScaledFileChooser(ToolPath);
+		JFileChooser fc = new JFileChooser(ToolPath);
 		fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		File test = new File(ToolPath);
 		if (test.exists()) {
@@ -1200,7 +1194,7 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 	}
 	
 	private String GetBoardFile() {
-		JFileChooser fc = new ScaledFileChooser(AppPreferences.FPGA_Workspace.get());
+		JFileChooser fc = new JFileChooser(AppPreferences.FPGA_Workspace.get());
 		FileNameExtensionFilter filter = new FileNameExtensionFilter("Board files", "xml", "xml");
 		fc.setFileFilter(filter);
 		fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
@@ -1217,7 +1211,7 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 	}
 
 	public static void selectWorkSpace(Component parentComponent) {
-		JFileChooser fc = new ScaledFileChooser(AppPreferences.FPGA_Workspace.get());
+		JFileChooser fc = new JFileChooser(AppPreferences.FPGA_Workspace.get());
 		fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		File test = new File(AppPreferences.FPGA_Workspace.get());
 		if (test.exists()) {
@@ -1230,7 +1224,7 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 			if (retval != JFileChooser.APPROVE_OPTION)
 				return;
 			if (fc.getSelectedFile().getAbsolutePath().contains(" ")) {
-				ScaledOptionPane.showMessageDialog(parentComponent,"Workspace directory may not contain spaces!","Workspace Directory Selection",JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(parentComponent,"Workspace directory may not contain spaces!","Workspace Directory Selection",JOptionPane.ERROR_MESSAGE);
 			} else {
 				ValidWorkpath = true;
 			}

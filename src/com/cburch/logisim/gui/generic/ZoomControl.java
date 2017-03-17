@@ -44,7 +44,6 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 
-import com.cburch.logisim.gui.scale.ScaledSpinner;
 import com.cburch.logisim.prefs.AppPreferences;
 
 public class ZoomControl extends JPanel {
@@ -181,7 +180,7 @@ public class ZoomControl extends JPanel {
 		this.model = model;
 
 		spinnerModel = new SpinnerModel();
-		spinner = new ScaledSpinner();
+		spinner = new JSpinner();
 		spinner.setModel(spinnerModel);
 		this.add(spinner, BorderLayout.CENTER);
 

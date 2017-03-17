@@ -53,6 +53,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
@@ -64,10 +65,6 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableModel;
 
 import com.bfh.logisim.hdlgenerator.HDLColorRenderer;
-import com.cburch.logisim.gui.scale.ScaledLabel;
-import com.cburch.logisim.gui.scale.ScaledOptionPane;
-import com.cburch.logisim.gui.scale.ScaledScrollPane;
-import com.cburch.logisim.gui.scale.ScaledTabbedPane;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.JDialogOk;
 import com.cburch.logisim.util.JInputComponent;
@@ -176,7 +173,7 @@ public class AttrTable extends JPanel implements LocaleListener {
 			AttrTableModelRow row = attrModel.getRow(rowIndex);
 
 			if ((columnIndex == 0)||(rowIndex==0)) {
-				return new ScaledLabel(row.getLabel());
+				return new JLabel(row.getLabel());
 			} else {
 				if (currentEditor != null) {
 					currentEditor.transferFocus();
@@ -193,7 +190,7 @@ public class AttrTable extends JPanel implements LocaleListener {
 					try {
 						row.setValue(retval);
 					} catch (AttrTableSetException e) {
-						ScaledOptionPane.showMessageDialog(parent, e.getMessage(),
+						JOptionPane.showMessageDialog(parent, e.getMessage(),
 								Strings.get("attributeChangeInvalidTitle"),
 								JOptionPane.WARNING_MESSAGE);
 					}
@@ -212,7 +209,7 @@ public class AttrTable extends JPanel implements LocaleListener {
 					try {
 						row.setValue(retval);
 					} catch (AttrTableSetException e) {
-						ScaledOptionPane.showMessageDialog(parent, e.getMessage(),
+						JOptionPane.showMessageDialog(parent, e.getMessage(),
 								Strings.get("attributeChangeInvalidTitle"),
 								JOptionPane.WARNING_MESSAGE);
 					}
@@ -453,7 +450,7 @@ public class AttrTable extends JPanel implements LocaleListener {
 				try {
 					attrModel.getRow(rowIndex).setValue(value);
 				} catch (AttrTableSetException e) {
-					ScaledOptionPane.showMessageDialog(parent, e.getMessage(),
+					JOptionPane.showMessageDialog(parent, e.getMessage(),
 							Strings.get("attributeChangeInvalidTitle"),
 							JOptionPane.WARNING_MESSAGE);
 				}
@@ -461,7 +458,7 @@ public class AttrTable extends JPanel implements LocaleListener {
 		}
 	}
 
-	private static class TitleLabel extends ScaledLabel {
+	private static class TitleLabel extends JLabel {
 
 		@Override
 		public Dimension getMinimumSize() {
@@ -477,7 +474,7 @@ public class AttrTable extends JPanel implements LocaleListener {
 	private JTable table;
 	private TableModelAdapter tableModel;
 	private CellEditor editor = new CellEditor();
-	private ScaledTabbedPane tabPane;
+	private JTabbedPane tabPane;
 
 	public AttrTable(Window parent) {
 		super(new BorderLayout());
@@ -504,9 +501,9 @@ public class AttrTable extends JPanel implements LocaleListener {
 		table.setBackground(bgColor);
 		table.setDefaultRenderer(String.class, new HDLColorRenderer());
 
-		tabPane = new ScaledTabbedPane();
+		tabPane = new JTabbedPane();
 		JPanel propPanel = new JPanel(new BorderLayout(0, 0));
-		JScrollPane tableScroll = new ScaledScrollPane(table);
+		JScrollPane tableScroll = new JScrollPane(table);
 
 		propPanel.add(title, BorderLayout.PAGE_START);
 		propPanel.add(tableScroll, BorderLayout.CENTER);
@@ -522,7 +519,7 @@ public class AttrTable extends JPanel implements LocaleListener {
 		return tableModel.attrModel;
 	}
 
-	public ScaledTabbedPane getTabPane() {
+	public JTabbedPane getTabPane() {
 		return tabPane;
 	}
 

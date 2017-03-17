@@ -35,11 +35,12 @@ import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
-import com.cburch.logisim.gui.scale.ScaledCheckBox;
+import javax.swing.JCheckBox;
+
 import com.cburch.logisim.prefs.PrefMonitor;
 import com.cburch.logisim.util.StringGetter;
 
-class PrefBoolean extends ScaledCheckBox implements ActionListener,
+class PrefBoolean extends JCheckBox implements ActionListener,
 		PropertyChangeListener {
 	private static final long serialVersionUID = 1L;
 	private PrefMonitor<Boolean> pref;

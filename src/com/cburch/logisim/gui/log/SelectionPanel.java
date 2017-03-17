@@ -44,11 +44,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -56,12 +58,6 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.TreePath;
 
-import com.cburch.logisim.gui.scale.ScaledButton;
-import com.cburch.logisim.gui.scale.ScaledCheckBox;
-import com.cburch.logisim.gui.scale.ScaledComboBox;
-import com.cburch.logisim.gui.scale.ScaledLabel;
-import com.cburch.logisim.gui.scale.ScaledScrollPane;
-import com.cburch.logisim.gui.scale.ScaledTextField;
 import com.hepia.logisim.chronodata.TimelineParam;
 
 class SelectionPanel extends LogPanel {
@@ -175,11 +171,11 @@ class SelectionPanel extends LogPanel {
 	private static final long serialVersionUID = 1L;
 	private Listener listener = new Listener();
 	private ComponentSelector selector;
-	private ScaledButton addTool;
-	private ScaledButton changeBase;
-	private ScaledButton moveUp;
-	private ScaledButton moveDown;
-	private ScaledButton remove;
+	private JButton addTool;
+	private JButton changeBase;
+	private JButton moveUp;
+	private JButton moveDown;
+	private JButton remove;
 	private SelectionList list;
 	private JCheckBox enableChoosePanelCheckBox;
 	private JLabel enableChoosePanelCheckLabel;
@@ -189,7 +185,7 @@ class SelectionPanel extends LogPanel {
 	@SuppressWarnings("rawtypes")
 	private JComboBox chooseClkCombo;
 	private JLabel chooseClkFrequencyLabel;
-	private ScaledTextField chooseClkFrequencyTF;
+	private JTextField chooseClkFrequencyTF;
 	@SuppressWarnings("rawtypes")
 	private JComboBox chooseClkUnitCombo;
 
@@ -197,11 +193,11 @@ class SelectionPanel extends LogPanel {
 	public SelectionPanel(LogFrame window) {
 		super(window);
 		selector = new ComponentSelector(getModel());
-		addTool = new ScaledButton();
-		changeBase = new ScaledButton();
-		moveUp = new ScaledButton();
-		moveDown = new ScaledButton();
-		remove = new ScaledButton();
+		addTool = new JButton();
+		changeBase = new JButton();
+		moveUp = new JButton();
+		moveDown = new JButton();
+		remove = new JButton();
 		list = new SelectionList();
 		list.setSelection(getSelection());
 
@@ -225,21 +221,21 @@ class SelectionPanel extends LogPanel {
 		// === setup clk panel === //
 		// enable area
 		enableChoosePanelCheckPanel = new JPanel(new FlowLayout());
-		enableChoosePanelCheckLabel = new ScaledLabel(
+		enableChoosePanelCheckLabel = new JLabel(
 				Strings.get("timeSelectionEnable"));
-		enableChoosePanelCheckBox = new ScaledCheckBox();
+		enableChoosePanelCheckBox = new JCheckBox();
 		enableChoosePanelCheckBox.setSelected(false);
 		enableChoosePanelCheckBox.addItemListener(listener);
 		enableChoosePanelCheckPanel.add(enableChoosePanelCheckLabel);
 		enableChoosePanelCheckPanel.add(enableChoosePanelCheckBox);
 		// freq area
-		chooseClkLabel = new ScaledLabel();
-		chooseClkCombo = new ScaledComboBox<>();
+		chooseClkLabel = new JLabel();
+		chooseClkCombo = new JComboBox<>();
 		chooseClkPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		chooseClkFrequencyLabel = new ScaledLabel();
-		chooseClkFrequencyTF = new ScaledTextField(5);
+		chooseClkFrequencyLabel = new JLabel();
+		chooseClkFrequencyTF = new JTextField(5);
 		chooseClkFrequencyTF.setText("1");
-		chooseClkUnitCombo = new ScaledComboBox(TimelineParam.units);
+		chooseClkUnitCombo = new JComboBox(TimelineParam.units);
 		chooseClkUnitCombo.setSelectedIndex(0);
 		chooseClkPanel.add(chooseClkLabel);
 		chooseClkPanel.add(chooseClkCombo);
@@ -254,10 +250,10 @@ class SelectionPanel extends LogPanel {
 		GridBagLayout gridbag = new GridBagLayout();
 		GridBagConstraints gbc = new GridBagConstraints();
 		setLayout(gridbag);
-		JScrollPane explorerPane = new ScaledScrollPane(selector,
+		JScrollPane explorerPane = new JScrollPane(selector,
 				ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
 				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		JScrollPane listPane = new ScaledScrollPane(list,
+		JScrollPane listPane = new JScrollPane(list,
 				ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
 				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		gbc.fill = GridBagConstraints.BOTH;

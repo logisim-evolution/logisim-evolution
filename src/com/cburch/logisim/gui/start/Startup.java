@@ -30,6 +30,11 @@
 
 package com.cburch.logisim.gui.start;
 
+import java.awt.AWTEvent;
+import java.awt.Component;
+import java.awt.Toolkit;
+import java.awt.event.AWTEventListener;
+import java.awt.event.ContainerEvent;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -48,7 +53,23 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.help.JHelp;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JRadioButtonMenuItem;
+import javax.swing.JSpinner;
+import javax.swing.JTabbedPane;
+import javax.swing.JTextField;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,7 +81,6 @@ import com.cburch.logisim.file.Loader;
 import com.cburch.logisim.gui.main.Print;
 import com.cburch.logisim.gui.menu.LogisimMenuBar;
 import com.cburch.logisim.gui.menu.WindowManagers;
-import com.cburch.logisim.gui.scale.ScaledOptionPane;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.proj.ProjectActions;
@@ -69,7 +89,7 @@ import com.cburch.logisim.util.LocaleManager;
 import com.cburch.logisim.util.MacCompatibility;
 import com.cburch.logisim.util.StringUtil;
 
-public class Startup {
+public class Startup implements AWTEventListener {
 
 	static void doOpen(File file) {
 		if (startupTemp != null) {
@@ -438,7 +458,7 @@ public class Startup {
 
 		// If the remote version is newer, perform the update
 		if (remoteVersion.compareTo(Main.VERSION) > 0) {
-			int answer = ScaledOptionPane.showConfirmDialog(null,
+			int answer = JOptionPane.showConfirmDialog(null,
 					"A new Logisim-evolution version (" + remoteVersion
 							+ ") is available!\nWould you like to update?",
 					"Update", JOptionPane.YES_NO_OPTION,
@@ -709,6 +729,7 @@ public class Startup {
 			}
 		}
 
+		Toolkit.getDefaultToolkit().addAWTEventListener(this, AWTEvent.COMPONENT_EVENT_MASK | AWTEvent.CONTAINER_EVENT_MASK);
 		// pre-load the two basic component libraries, just so that the time
 		// taken is shown separately in the progress bar.
 		if (showSplash) {
@@ -792,5 +813,76 @@ public class Startup {
 		if (exitAfterStartup) {
 			System.exit(0);
 		}
+	}
+	
+	private boolean HasIcon(Component comp) {
+		boolean result = false;
+		if (comp instanceof JOptionPane) {
+			for (Component comp1 : ((JOptionPane) comp).getComponents())
+				result |= HasIcon(comp1);
+		} else if (comp instanceof JPanel) {
+			for (Component comp1 : ((JPanel) comp).getComponents())
+				result |= HasIcon(comp1);
+		} else if (comp instanceof JLabel) {
+			return ((JLabel) comp).getIcon()!=null;
+		}
+		return result;
+	}
+	
+	@Override
+	public void eventDispatched(AWTEvent event) {
+		if (event instanceof ContainerEvent) {
+	        ContainerEvent containerEvent = (ContainerEvent)event;
+	        if (containerEvent.getID() == ContainerEvent.COMPONENT_ADDED){
+	        	Component container = containerEvent.getChild(); 
+	        	if ((container instanceof JButton)||
+	        		(container instanceof JCheckBox)||
+	        		(container instanceof JComboBox)||
+	        		(container instanceof JLabel)||
+	        		(container instanceof JMenu)||
+	        		(container instanceof JMenuItem)||
+	        		(container instanceof JRadioButton)||
+	        		(container instanceof JRadioButtonMenuItem)||
+	        		(container instanceof JSpinner)||
+	        		(container instanceof JTabbedPane)||
+	        		(container instanceof JTextField)||
+	        		(container instanceof JHelp)||
+	        		(container instanceof JCheckBoxMenuItem)) {
+	        		AppPreferences.setScaledFonts(((JComponent)container).getComponents());
+	        		containerEvent.getChild().setFont(AppPreferences.getScaledFont(containerEvent.getChild().getFont()));
+	        	}
+	        	if (container instanceof JOptionPane) {
+	        		JOptionPane pane = (JOptionPane) container;
+	        		if (HasIcon(pane)) {
+	        			ImageIcon icon;
+	        			switch (pane.getMessageType()) {
+	        				case JOptionPane.ERROR_MESSAGE :
+	        					icon = new ImageIcon(this.getClass().getClassLoader().getResource("resources/logisim/error.png"));
+	        					pane.setIcon(AppPreferences.getScaledImageIcon(icon,(float) 3));
+	        					break;
+	        				case JOptionPane.QUESTION_MESSAGE :
+	        					icon = new ImageIcon(this.getClass().getClassLoader().getResource("resources/logisim/question.png"));
+	        					pane.setIcon(AppPreferences.getScaledImageIcon(icon,(float) 3));
+	        					break;
+	        				case JOptionPane.PLAIN_MESSAGE :
+	        					icon = new ImageIcon(this.getClass().getClassLoader().getResource("resources/logisim/plain.png"));
+	        					pane.setIcon(AppPreferences.getScaledImageIcon(icon,(float) 3));
+	        					break;
+	        				case JOptionPane.INFORMATION_MESSAGE :
+	        					icon = new ImageIcon(this.getClass().getClassLoader().getResource("resources/logisim/info.png"));
+	        					pane.setIcon(AppPreferences.getScaledImageIcon(icon,(float) 3));
+	        					break;
+	        				case JOptionPane.WARNING_MESSAGE :
+	        					icon = new ImageIcon(this.getClass().getClassLoader().getResource("resources/logisim/warning.png"));
+	        					pane.setIcon(AppPreferences.getScaledImageIcon(icon,(float) 3));
+	        					break;
+	        			}
+	        		}
+	        	}
+	        }
+			
+		}
+		// TODO Auto-generated method stub
+		
 	}
 }

@@ -31,11 +31,9 @@ package com.cburch.logisim.tools;
 
 import java.awt.Dimension;
 
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-
-import com.cburch.logisim.gui.scale.ScaledOptionPane;
-import com.cburch.logisim.gui.scale.ScaledScrollPane;
 
 public class MessageBox {
 
@@ -78,11 +76,11 @@ public class MessageBox {
 			textArea.setText(description);
 			textArea.setCaretPosition(0);
 
-			JScrollPane scrollPane = new ScaledScrollPane(textArea);
+			JScrollPane scrollPane = new JScrollPane(textArea);
 			scrollPane.setPreferredSize(new Dimension(640, 480));
-			ScaledOptionPane.showMessageDialog(null, scrollPane, title, type);
+			JOptionPane.showMessageDialog(null, scrollPane, title, type);
 		} else {
-			ScaledOptionPane.showMessageDialog(null, description, title, type);
+			JOptionPane.showMessageDialog(null, description, title, type);
 		}
 	}
 

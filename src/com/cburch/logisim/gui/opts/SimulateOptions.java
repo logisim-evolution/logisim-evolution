@@ -44,9 +44,6 @@ import com.cburch.logisim.data.AttributeEvent;
 import com.cburch.logisim.data.AttributeListener;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.file.Options;
-import com.cburch.logisim.gui.scale.ScaledCheckBox;
-import com.cburch.logisim.gui.scale.ScaledComboBox;
-import com.cburch.logisim.gui.scale.ScaledLabel;
 import com.cburch.logisim.util.TableLayout;
 
 class SimulateOptions extends OptionsPanel {
@@ -131,22 +128,22 @@ class SimulateOptions extends OptionsPanel {
 
 	private MyListener myListener = new MyListener();
 
-	private JLabel simLimitLabel = new ScaledLabel();
+	private JLabel simLimitLabel = new JLabel();
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private JComboBox simLimit = new ScaledComboBox(new Integer[] {
+	private JComboBox simLimit = new JComboBox(new Integer[] {
 			Integer.valueOf(200), Integer.valueOf(500), Integer.valueOf(1000),
 			Integer.valueOf(2000), Integer.valueOf(5000),
 			Integer.valueOf(10000), Integer.valueOf(20000),
 			Integer.valueOf(50000), });
-	private JCheckBox simRandomness = new ScaledCheckBox();
-	private JLabel gateUndefinedLabel = new ScaledLabel();
+	private JCheckBox simRandomness = new JCheckBox();
+	private JLabel gateUndefinedLabel = new JLabel();
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private JComboBox gateUndefined = new ScaledComboBox(new Object[] {
+	private JComboBox gateUndefined = new JComboBox(new Object[] {
 			new ComboOption(Options.GATE_UNDEFINED_IGNORE),
 			new ComboOption(Options.GATE_UNDEFINED_ERROR) });
-	private JLabel tickMainLabel = new ScaledLabel();
+	private JLabel tickMainLabel = new JLabel();
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private JComboBox tickMainStep = new ScaledComboBox(new Object[] {
+	private JComboBox tickMainStep = new JComboBox(new Object[] {
 			new ComboOption(Options.TICK_MAIN_HALF_PERIOD),
 			new ComboOption(Options.TICK_MAIN_PERIOD) });
 

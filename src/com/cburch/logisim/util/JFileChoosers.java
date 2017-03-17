@@ -35,7 +35,6 @@ import java.io.IOException;
 
 import javax.swing.JFileChooser;
 
-import com.cburch.logisim.gui.scale.ScaledFileChooser;
 import com.cburch.logisim.prefs.AppPreferences;
 
 public class JFileChoosers {
@@ -46,7 +45,7 @@ public class JFileChoosers {
 	 * attempt to be a bit more robust about which directory the JFileChooser
 	 * opens up under. (23 Feb 2010)
 	 */
-	private static class LogisimFileChooser extends ScaledFileChooser {
+	private static class LogisimFileChooser extends JFileChooser {
 		private static final long serialVersionUID = 1L;
 
 		LogisimFileChooser() {

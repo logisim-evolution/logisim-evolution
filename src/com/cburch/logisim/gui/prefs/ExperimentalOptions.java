@@ -38,12 +38,11 @@ import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import com.cburch.logisim.gui.scale.ScaledLabel;
 import com.cburch.logisim.prefs.AppPreferences;
 
 class ExperimentalOptions extends OptionsPanel {
 	private static final long serialVersionUID = 1L;
-	private JLabel accelRestart = new ScaledLabel();
+	private JLabel accelRestart = new JLabel();
 	private PrefOptionList accel;
 
 	public ExperimentalOptions(PreferencesFrame window) {

@@ -51,7 +51,6 @@ import javax.swing.JFileChooser;
 import javax.swing.JPanel;
 import javax.swing.filechooser.FileFilter;
 
-import com.cburch.logisim.gui.scale.ScaledFileChooser;
 import com.cburch.logisim.prefs.AppPreferences;
 
 @SuppressWarnings("serial")
@@ -151,7 +150,7 @@ public class BoardPanel extends JPanel implements MouseListener,
 
 	public void mouseClicked(MouseEvent e) {
 		if (EditMode && !this.ImageLoaded()) {
-			JFileChooser fc = new ScaledFileChooser();
+			JFileChooser fc = new JFileChooser();
 			fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 			fc.setDialogTitle("Choose FPGA board picture to use");
 			fc.setFileFilter(PNG_FILTER);

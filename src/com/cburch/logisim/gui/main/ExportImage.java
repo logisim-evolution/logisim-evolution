@@ -53,6 +53,7 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.ProgressMonitor;
 import javax.swing.SwingConstants;
@@ -68,11 +69,6 @@ import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.comp.ComponentDrawContext;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.file.Loader;
-import com.cburch.logisim.gui.scale.ScaledCheckBox;
-import com.cburch.logisim.gui.scale.ScaledLabel;
-import com.cburch.logisim.gui.scale.ScaledOptionPane;
-import com.cburch.logisim.gui.scale.ScaledRadioButton;
-import com.cburch.logisim.gui.scale.ScaledScrollPane;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.util.GifEncoder;
 import com.cburch.logisim.util.StringGetter;
@@ -118,7 +114,7 @@ class ExportImage {
 				((Graphics2D) g).scale(scale, scale);
 				((Graphics2D) g).translate(-bds.getX(), -bds.getY());
 			} else {
-				ScaledOptionPane.showMessageDialog(frame,
+				JOptionPane.showMessageDialog(frame,
 						Strings.get("couldNotCreateImage"));
 				monitor.close();
 			}
@@ -151,7 +147,7 @@ class ExportImage {
 					break;
 				}
 			} catch (Exception e) {
-				ScaledOptionPane.showMessageDialog(frame,
+				JOptionPane.showMessageDialog(frame,
 						Strings.get("couldNotCreateFile"));
 				monitor.close();
 				return;
@@ -208,14 +204,14 @@ class ExportImage {
 		JRadioButton formatJpg;
 		GridBagLayout gridbag;
 		GridBagConstraints gbc;
-		Dimension curScaleDim;
+		Dimension curJim;
 
 		@SuppressWarnings("rawtypes")
 		OptionsPanel(JList list) {
 			// set up components
-			formatPng = new ScaledRadioButton("PNG");
-			formatGif = new ScaledRadioButton("GIF");
-			formatJpg = new ScaledRadioButton("JPEG");
+			formatPng = new JRadioButton("PNG");
+			formatGif = new JRadioButton("GIF");
+			formatJpg = new JRadioButton("JPEG");
 			ButtonGroup bgroup = new ButtonGroup();
 			bgroup.add(formatPng);
 			bgroup.add(formatGif);
@@ -226,15 +222,15 @@ class ExportImage {
 					3 * SLIDER_DIVISIONS, 0);
 			slider.setMajorTickSpacing(10);
 			slider.addChangeListener(this);
-			curScale = new ScaledLabel("222%");
+			curScale = new JLabel("222%");
 			curScale.setHorizontalAlignment(SwingConstants.RIGHT);
 			curScale.setVerticalAlignment(SwingConstants.CENTER);
-			curScaleDim = new Dimension(curScale.getPreferredSize());
-			curScaleDim.height = Math.max(curScaleDim.height,
+			curJim = new Dimension(curScale.getPreferredSize());
+			curJim.height = Math.max(curJim.height,
 					slider.getPreferredSize().height);
 			stateChanged(null);
 
-			printerView = new ScaledCheckBox();
+			printerView = new JCheckBox();
 			printerView.setSelected(true);
 
 			// set up panel
@@ -248,13 +244,13 @@ class ExportImage {
 			gbc.anchor = GridBagConstraints.NORTHWEST;
 			gbc.insets = new Insets(5, 0, 5, 0);
 			gbc.fill = GridBagConstraints.NONE;
-			addGb(new ScaledLabel(Strings.get("labelCircuits") + " "));
+			addGb(new JLabel(Strings.get("labelCircuits") + " "));
 			gbc.fill = GridBagConstraints.HORIZONTAL;
-			addGb(new ScaledScrollPane(list));
+			addGb(new JScrollPane(list));
 			gbc.fill = GridBagConstraints.NONE;
 
 			gbc.gridy++;
-			addGb(new ScaledLabel(Strings.get("labelImageFormat") + " "));
+			addGb(new JLabel(Strings.get("labelImageFormat") + " "));
 			Box formatsPanel = new Box(BoxLayout.Y_AXIS);
 			formatsPanel.add(formatPng);
 			formatsPanel.add(formatGif);
@@ -262,12 +258,12 @@ class ExportImage {
 			addGb(formatsPanel);
 
 			gbc.gridy++;
-			addGb(new ScaledLabel(Strings.get("labelScale") + " "));
+			addGb(new JLabel(Strings.get("labelScale") + " "));
 			addGb(slider);
 			addGb(curScale);
 
 			gbc.gridy++;
-			addGb(new ScaledLabel(Strings.get("labelPrinterView") + " "));
+			addGb(new JLabel(Strings.get("labelPrinterView") + " "));
 			addGb(printerView);
 		}
 
@@ -295,8 +291,8 @@ class ExportImage {
 		public void stateChanged(ChangeEvent e) {
 			double scale = getScale();
 			curScale.setText((int) Math.round(100.0 * scale) + "%");
-			if (curScaleDim != null)
-				curScale.setPreferredSize(curScaleDim);
+			if (curJim != null)
+				curScale.setPreferredSize(curJim);
 		}
 	}
 
@@ -305,14 +301,14 @@ class ExportImage {
 		Frame frame = proj.getFrame();
 		CircuitJList list = new CircuitJList(proj, true);
 		if (list.getModel().getSize() == 0) {
-			ScaledOptionPane.showMessageDialog(proj.getFrame(),
+			JOptionPane.showMessageDialog(proj.getFrame(),
 					Strings.get("exportEmptyCircuitsMessage"),
 					Strings.get("exportEmptyCircuitsTitle"),
 					JOptionPane.YES_NO_OPTION);
 			return;
 		}
 		OptionsPanel options = new OptionsPanel(list);
-		int action = ScaledOptionPane.showConfirmDialog(frame, options,
+		int action = JOptionPane.showConfirmDialog(frame, options,
 				Strings.get("exportImageSelect"), JOptionPane.OK_CANCEL_OPTION,
 				JOptionPane.QUESTION_MESSAGE);
 		if (action != JOptionPane.OK_OPTION)
@@ -365,7 +361,7 @@ class ExportImage {
 				.getParentFile());
 		if (dest.exists()) {
 			if (!dest.isDirectory()) {
-				int confirm = ScaledOptionPane.showConfirmDialog(proj.getFrame(),
+				int confirm = JOptionPane.showConfirmDialog(proj.getFrame(),
 						Strings.get("confirmOverwriteMessage"),
 						Strings.get("confirmOverwriteTitle"),
 						JOptionPane.YES_NO_OPTION);
@@ -376,7 +372,7 @@ class ExportImage {
 			if (circuits.size() > 1) {
 				boolean created = dest.mkdir();
 				if (!created) {
-					ScaledOptionPane.showMessageDialog(proj.getFrame(),
+					JOptionPane.showMessageDialog(proj.getFrame(),
 							Strings.get("exportNewDirectoryErrorMessage"),
 							Strings.get("exportNewDirectoryErrorTitle"),
 							JOptionPane.YES_NO_OPTION);

@@ -39,10 +39,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.AbstractListModel;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.event.DocumentEvent;
@@ -53,10 +55,6 @@ import javax.swing.event.ListSelectionListener;
 import com.cburch.logisim.analyze.model.VariableList;
 import com.cburch.logisim.analyze.model.VariableListEvent;
 import com.cburch.logisim.analyze.model.VariableListListener;
-import com.cburch.logisim.gui.scale.ScaledButton;
-import com.cburch.logisim.gui.scale.ScaledLabel;
-import com.cburch.logisim.gui.scale.ScaledScrollPane;
-import com.cburch.logisim.gui.scale.ScaledTextField;
 import com.cburch.logisim.util.StringUtil;
 
 class VariableTab extends AnalyzerTab implements TabInterface {
@@ -197,13 +195,13 @@ class VariableTab extends AnalyzerTab implements TabInterface {
 
 	@SuppressWarnings("rawtypes")
 	private JList list = new JList();
-	private ScaledTextField field = new ScaledTextField();
-	private ScaledButton remove = new ScaledButton();
-	private ScaledButton moveUp = new ScaledButton();
-	private ScaledButton moveDown = new ScaledButton();
-	private ScaledButton add = new ScaledButton();
-	private ScaledButton rename = new ScaledButton();
-	private JLabel error = new ScaledLabel(" ");
+	private JTextField field = new JTextField();
+	private JButton remove = new JButton();
+	private JButton moveUp = new JButton();
+	private JButton moveDown = new JButton();
+	private JButton add = new JButton();
+	private JButton rename = new JButton();
+	private JLabel error = new JLabel(" ");
 
 	@SuppressWarnings("unchecked")
 	VariableTab(VariableList data) {
@@ -220,7 +218,7 @@ class VariableTab extends AnalyzerTab implements TabInterface {
 		field.addActionListener(myListener);
 		field.getDocument().addDocumentListener(myListener);
 
-		JScrollPane listPane = new ScaledScrollPane(list,
+		JScrollPane listPane = new JScrollPane(list,
 				ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
 				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		listPane.setPreferredSize(new Dimension(100, 100));

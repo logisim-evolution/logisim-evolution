@@ -44,27 +44,23 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 
 import com.cburch.logisim.gui.generic.LFrame;
-import com.cburch.logisim.gui.scale.ScaledMenuItem;
-import com.cburch.logisim.gui.scale.ScaledOptionPane;
 import com.cburch.logisim.gui.start.About;
-import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.MacCompatibility;
 
 class MenuHelp extends JMenu implements ActionListener {
 
 	private static final long serialVersionUID = 1L;
 	private LogisimMenuBar menubar;
-	private JMenuItem tutorial = new ScaledMenuItem();
-	private JMenuItem guide = new ScaledMenuItem();
-	private JMenuItem library = new ScaledMenuItem();
-	private JMenuItem about = new ScaledMenuItem();
+	private JMenuItem tutorial = new JMenuItem();
+	private JMenuItem guide = new JMenuItem();
+	private JMenuItem library = new JMenuItem();
+	private JMenuItem about = new JMenuItem();
 	private HelpSet helpSet;
 	private String helpSetUrl = "";
 	private JHelp helpComponent;
 	private LFrame helpFrame;
 
 	public MenuHelp(LogisimMenuBar menubar) {
-		Init();
 		this.menubar = menubar;
 
 		tutorial.addActionListener(this);
@@ -79,11 +75,6 @@ class MenuHelp extends JMenu implements ActionListener {
 			addSeparator();
 			add(about);
 		}
-	}
-
-    private void Init() {
-		AppPreferences.setScaledFonts(getComponents());
-		super.setFont(AppPreferences.getScaledFont(getFont()));
 	}
 
     public void actionPerformed(ActionEvent e) {
@@ -116,14 +107,13 @@ class MenuHelp extends JMenu implements ActionListener {
 				URL hsURL = HelpSet.findHelpSet(loader, helpUrl);
 				if (hsURL == null) {
 					disableHelp();
-					ScaledOptionPane.showMessageDialog(menubar.getParentWindow(),
+					JOptionPane.showMessageDialog(menubar.getParentWindow(),
 							Strings.get("helpNotFoundError"));
 					return;
 				}
 				helpSetUrl = helpUrl;
 				helpSet = new HelpSet(null, hsURL);
 				helpComponent = new JHelp(helpSet);
-				AppPreferences.setScaledFonts(helpComponent.getComponents());
 				if (helpFrame == null) {
 					helpFrame = new LFrame();
 					helpFrame.setTitle(Strings.get("helpWindowTitle"));
@@ -133,7 +123,6 @@ class MenuHelp extends JMenu implements ActionListener {
 							(int)Toolkit.getDefaultToolkit().getScreenSize().getWidth()>>1,
 							(int)Toolkit.getDefaultToolkit().getScreenSize().getHeight()>>1));
 					helpFrame.pack();
-					AppPreferences.setScaledFonts(helpFrame.getComponents());
 				} else {
 					helpFrame.getContentPane().removeAll();
 					helpFrame.getContentPane().add(helpComponent);
@@ -142,7 +131,7 @@ class MenuHelp extends JMenu implements ActionListener {
 			} catch (Exception e) {
 				disableHelp();
 				e.printStackTrace();
-				ScaledOptionPane.showMessageDialog(menubar.getParentWindow(),
+				JOptionPane.showMessageDialog(menubar.getParentWindow(),
 						Strings.get("helpUnavailableError"));
 				return;
 			}
@@ -173,7 +162,7 @@ class MenuHelp extends JMenu implements ActionListener {
 		} catch (Exception e) {
 			disableHelp();
 			e.printStackTrace();
-			ScaledOptionPane.showMessageDialog(menubar.getParentWindow(),
+			JOptionPane.showMessageDialog(menubar.getParentWindow(),
 					Strings.get("helpDisplayError"));
 		}
 	}

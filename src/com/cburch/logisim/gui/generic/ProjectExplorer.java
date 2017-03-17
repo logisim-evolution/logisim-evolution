@@ -351,7 +351,6 @@ public class ProjectExplorer extends JTree implements LocaleListener {
 
 	public ProjectExplorer(Project proj) {
 		super();
-		Init();
 		this.proj = proj;
 
 		setModel(new ProjectExplorerModel(proj));
@@ -374,11 +373,6 @@ public class ProjectExplorer extends JTree implements LocaleListener {
 		proj.addProjectListener(myListener);
 		AppPreferences.GATE_SHAPE.addPropertyChangeListener(myListener);
 		LocaleManager.addLocaleListener(this);
-	}
-
-	private void Init() {
-		AppPreferences.setScaledFonts(getComponents());
-		super.setFont(AppPreferences.getScaledFont(super.getFont()));
 	}
 
 	public Tool getSelectedTool() {

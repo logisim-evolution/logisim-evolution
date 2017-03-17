@@ -39,8 +39,6 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import com.cburch.logisim.gui.scale.ScaledComboBox;
-import com.cburch.logisim.gui.scale.ScaledLabel;
 import com.cburch.logisim.prefs.PrefMonitor;
 import com.cburch.logisim.util.StringGetter;
 
@@ -56,8 +54,8 @@ class PrefOptionList implements ActionListener, PropertyChangeListener {
 		this.pref = pref;
 		this.labelStr = labelStr;
 
-		label = new ScaledLabel(labelStr.toString() + " ");
-		combo = new ScaledComboBox<>();
+		label = new JLabel(labelStr.toString() + " ");
+		combo = new JComboBox<>();
 		for (PrefOption opt : options) {
 			combo.addItem(opt);
 		}

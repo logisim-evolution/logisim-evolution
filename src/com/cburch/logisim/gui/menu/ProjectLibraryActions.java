@@ -45,8 +45,6 @@ import javax.swing.JScrollPane;
 import com.cburch.logisim.file.Loader;
 import com.cburch.logisim.file.LogisimFile;
 import com.cburch.logisim.file.LogisimFileActions;
-import com.cburch.logisim.gui.scale.ScaledOptionPane;
-import com.cburch.logisim.gui.scale.ScaledScrollPane;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.tools.Library;
 
@@ -97,15 +95,15 @@ public class ProjectLibraryActions {
 		ArrayList<Library> builtins = new ArrayList<Library>(baseBuilt);
 		builtins.removeAll(file.getLibraries());
 		if (builtins.isEmpty()) {
-			ScaledOptionPane.showMessageDialog(proj.getFrame(),
+			JOptionPane.showMessageDialog(proj.getFrame(),
 					Strings.get("loadBuiltinNoneError"),
 					Strings.get("loadBuiltinErrorTitle"),
 					JOptionPane.INFORMATION_MESSAGE);
 			return;
 		}
 		LibraryJList list = new LibraryJList(builtins);
-		JScrollPane listPane = new ScaledScrollPane(list);
-		int action = ScaledOptionPane.showConfirmDialog(proj.getFrame(), listPane,
+		JScrollPane listPane = new JScrollPane(list);
+		int action = JOptionPane.showConfirmDialog(proj.getFrame(), listPane,
 				Strings.get("loadBuiltinDialogTitle"),
 				JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 		if (action == JOptionPane.OK_OPTION) {
@@ -187,15 +185,15 @@ public class ProjectLibraryActions {
 				canUnload.add(lib);
 		}
 		if (canUnload.isEmpty()) {
-			ScaledOptionPane.showMessageDialog(proj.getFrame(),
+			JOptionPane.showMessageDialog(proj.getFrame(),
 					Strings.get("unloadNoneError"),
 					Strings.get("unloadErrorTitle"),
 					JOptionPane.INFORMATION_MESSAGE);
 			return;
 		}
 		LibraryJList list = new LibraryJList(canUnload);
-		JScrollPane listPane = new ScaledScrollPane(list);
-		int action = ScaledOptionPane.showConfirmDialog(proj.getFrame(), listPane,
+		JScrollPane listPane = new JScrollPane(list);
+		int action = JOptionPane.showConfirmDialog(proj.getFrame(), listPane,
 				Strings.get("unloadLibrariesDialogTitle"),
 				JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 		if (action == JOptionPane.OK_OPTION) {
@@ -208,7 +206,7 @@ public class ProjectLibraryActions {
 	public static void doUnloadLibrary(Project proj, Library lib) {
 		String message = proj.getLogisimFile().getUnloadLibraryMessage(lib);
 		if (message != null) {
-			ScaledOptionPane.showMessageDialog(proj.getFrame(), message,
+			JOptionPane.showMessageDialog(proj.getFrame(), message,
 					Strings.get("unloadErrorTitle"), JOptionPane.ERROR_MESSAGE);
 		} else {
 			proj.doAction(LogisimFileActions.unloadLibrary(lib));

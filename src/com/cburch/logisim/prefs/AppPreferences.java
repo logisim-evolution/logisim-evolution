@@ -417,7 +417,10 @@ public class AppPreferences {
 	}
 	
 	public static Font getScaledFont(Font myfont) {
-		return myfont.deriveFont(getScaled((float)IconSize));
+		if (myfont != null)
+			return myfont.deriveFont(getScaled((float)IconSize));
+		else
+			return null;
 	}
 	
 	public static ImageIcon getScaledImageIcon(ImageIcon icon) {

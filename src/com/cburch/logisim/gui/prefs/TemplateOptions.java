@@ -43,18 +43,16 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import javax.swing.ButtonGroup;
+import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JTextField;
 
 import com.cburch.logisim.file.Loader;
 import com.cburch.logisim.file.LoaderException;
 import com.cburch.logisim.file.LogisimFile;
-import com.cburch.logisim.gui.scale.ScaledButton;
-import com.cburch.logisim.gui.scale.ScaledOptionPane;
-import com.cburch.logisim.gui.scale.ScaledRadioButton;
-import com.cburch.logisim.gui.scale.ScaledTextField;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.prefs.Template;
 import com.cburch.logisim.util.JFileChoosers;
@@ -84,7 +82,7 @@ class TemplateOptions extends OptionsPanel {
 								.setTemplateType(AppPreferences.TEMPLATE_CUSTOM);
 					} catch (LoaderException ex) {
 					} catch (IOException ex) {
-						ScaledOptionPane.showMessageDialog(
+						JOptionPane.showMessageDialog(
 								getPreferencesFrame(),
 								StringUtil.format(
 										Strings.get("templateErrorMessage"),
@@ -148,11 +146,11 @@ class TemplateOptions extends OptionsPanel {
 
 	private MyListener myListener = new MyListener();
 
-	private JRadioButton plain = new ScaledRadioButton();
-	private JRadioButton empty = new ScaledRadioButton();
-	private JRadioButton custom = new ScaledRadioButton();
-	private ScaledTextField templateField = new ScaledTextField(40);
-	private ScaledButton templateButton = new ScaledButton();
+	private JRadioButton plain = new JRadioButton();
+	private JRadioButton empty = new JRadioButton();
+	private JRadioButton custom = new JRadioButton();
+	private JTextField templateField = new JTextField(40);
+	private JButton templateButton = new JButton();
 
 	public TemplateOptions(PreferencesFrame window) {
 		super(window);

@@ -43,7 +43,6 @@ import javax.swing.JOptionPane;
 
 import com.cburch.logisim.analyze.model.Entry;
 import com.cburch.logisim.analyze.model.TruthTable;
-import com.cburch.logisim.gui.scale.ScaledOptionPane;
 
 class TableTabClip implements ClipboardOwner {
 	private static class Data implements Transferable, Serializable {
@@ -158,7 +157,7 @@ class TableTabClip implements ClipboardOwner {
 			// I don't know - the above was observed to throw an odd
 			// ArrayIndexOutOfBounds
 			// exception on a Linux computer using Sun's Java 5 JVM
-			ScaledOptionPane.showMessageDialog(table.getRootPane(),
+			JOptionPane.showMessageDialog(table.getRootPane(),
 					Strings.get("clipPasteSupportedError"),
 					Strings.get("clipPasteErrorTitle"),
 					JOptionPane.ERROR_MESSAGE);
@@ -223,7 +222,7 @@ class TableTabClip implements ClipboardOwner {
 				return;
 			}
 		} else {
-			ScaledOptionPane.showMessageDialog(table.getRootPane(),
+			JOptionPane.showMessageDialog(table.getRootPane(),
 					Strings.get("clipPasteSupportedError"),
 					Strings.get("clipPasteErrorTitle"),
 					JOptionPane.ERROR_MESSAGE);
@@ -244,7 +243,7 @@ class TableTabClip implements ClipboardOwner {
 		if (c0 == c1 && r0 == r1) {
 			if (r0 + entries.length > rows
 					|| c0 + entries[0].length > inputs + outputs) {
-				ScaledOptionPane.showMessageDialog(table.getRootPane(),
+				JOptionPane.showMessageDialog(table.getRootPane(),
 						Strings.get("clipPasteEndError"),
 						Strings.get("clipPasteErrorTitle"),
 						JOptionPane.ERROR_MESSAGE);
@@ -264,7 +263,7 @@ class TableTabClip implements ClipboardOwner {
 
 			if (r1 - r0 + 1 != entries.length
 					|| c1 - c0 + 1 != entries[0].length) {
-				ScaledOptionPane.showMessageDialog(table.getRootPane(),
+				JOptionPane.showMessageDialog(table.getRootPane(),
 						Strings.get("clipPasteSizeError"),
 						Strings.get("clipPasteErrorTitle"),
 						JOptionPane.ERROR_MESSAGE);

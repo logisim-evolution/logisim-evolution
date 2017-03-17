@@ -45,8 +45,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
 import com.cburch.hdl.HdlModel;
-import com.cburch.logisim.gui.scale.ScaledOptionPane;
-import com.cburch.logisim.gui.scale.ScaledScrollPane;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.util.Softwares;
 
@@ -193,7 +191,7 @@ public class VhdlContent extends HdlContent {
 		try {
 			parser.parse();
 		} catch (Exception ex) {
-			ScaledOptionPane.showMessageDialog(null, ex.getMessage(),
+			JOptionPane.showMessageDialog(null, ex.getMessage(),
 					Strings.get("validationParseError"),
 					JOptionPane.ERROR_MESSAGE);
 			return false;
@@ -241,7 +239,7 @@ public class VhdlContent extends HdlContent {
 			message.setLineWrap(false);
 			message.setMargin(new Insets(5, 5, 5, 5));
 
-			JScrollPane sp = new ScaledScrollPane(message);
+			JScrollPane sp = new JScrollPane(message);
 			sp.setPreferredSize(new Dimension(700, 400));
 
 			JOptionPane.showOptionDialog(null, sp, title.toString(),
@@ -250,7 +248,7 @@ public class VhdlContent extends HdlContent {
 					Strings.get("validationErrorButton"));
 			return false;
 		case Softwares.ABORD:
-			ScaledOptionPane.showMessageDialog(null, result.toString(),
+			JOptionPane.showMessageDialog(null, result.toString(),
 					title.toString(), JOptionPane.INFORMATION_MESSAGE);
 			return false;
 		case Softwares.SUCCESS:

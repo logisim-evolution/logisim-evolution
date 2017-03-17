@@ -43,6 +43,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 import com.bfh.logisim.designrulecheck.CorrectLabel;
 import com.cburch.logisim.analyze.gui.Analyzer;
@@ -52,9 +53,6 @@ import com.cburch.logisim.circuit.Analyze;
 import com.cburch.logisim.circuit.AnalyzeException;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.file.LogisimFileActions;
-import com.cburch.logisim.gui.scale.ScaledLabel;
-import com.cburch.logisim.gui.scale.ScaledOptionPane;
-import com.cburch.logisim.gui.scale.ScaledTextField;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.proj.Project;
@@ -67,7 +65,7 @@ import com.cburch.logisim.util.SyntaxChecker;
 
 public class ProjectCircuitActions {
 	private static void analyzeError(Project proj, String message) {
-		ScaledOptionPane.showMessageDialog(proj.getFrame(), message,
+		JOptionPane.showMessageDialog(proj.getFrame(), message,
 				Strings.get("analyzeErrorTitle"), JOptionPane.ERROR_MESSAGE);
 		return;
 	}
@@ -95,7 +93,7 @@ public class ProjectCircuitActions {
 			analyzer.setSelectedTab(Analyzer.EXPRESSION_TAB);
 			return;
 		} catch (AnalyzeException ex) {
-			ScaledOptionPane.showMessageDialog(proj.getFrame(), ex.getMessage(),
+			JOptionPane.showMessageDialog(proj.getFrame(), ex.getMessage(),
 					Strings.get("analyzeNoExpressionTitle"),
 					JOptionPane.INFORMATION_MESSAGE);
 		}
@@ -112,19 +110,19 @@ public class ProjectCircuitActions {
 			JLabel error = null;
 			/* Checking for valid names */
 			if (name.isEmpty()) {
-				error = new ScaledLabel(Strings.get("circuitNameMissingError"));
+				error = new JLabel(Strings.get("circuitNameMissingError"));
 			} else
 			if (!SyntaxChecker.isVariableNameAcceptable(name,false)) {
-				error = new ScaledLabel("\""+name+"\": "+Strings.get("circuitNameInvalidName"));
+				error = new JLabel("\""+name+"\": "+Strings.get("circuitNameInvalidName"));
 			} else
 			if (CorrectLabel.IsKeyword(name,false)) {
-				error = new ScaledLabel("\""+name+"\": "+Strings.get("circuitNameKeyword"));
+				error = new JLabel("\""+name+"\": "+Strings.get("circuitNameKeyword"));
 			} else
 			if (NameIsInUse(proj,name)) {
-				error = new ScaledLabel("\""+name+"\": "+Strings.get("circuitNameExists"));
+				error = new JLabel("\""+name+"\": "+Strings.get("circuitNameExists"));
 			}
 			if (error != null) {
-				ScaledOptionPane.showMessageDialog(proj.getFrame(), error,
+				JOptionPane.showMessageDialog(proj.getFrame(), error,
 				Strings.get("circuitCreateTitle"), JOptionPane.ERROR_MESSAGE);
 			} else {
 				Circuit circuit = new Circuit(name, proj.getLogisimFile(),proj);
@@ -215,12 +213,12 @@ public class ProjectCircuitActions {
 
 	public static void doRemoveCircuit(Project proj, Circuit circuit) {
 		if (proj.getLogisimFile().getTools().size() == 1) {
-			ScaledOptionPane.showMessageDialog(proj.getFrame(),
+			JOptionPane.showMessageDialog(proj.getFrame(),
 					Strings.get("circuitRemoveLastError"),
 					Strings.get("circuitRemoveErrorTitle"),
 					JOptionPane.ERROR_MESSAGE);
 		} else if (!proj.getDependencies().canRemove(circuit)) {
-			ScaledOptionPane.showMessageDialog(proj.getFrame(),
+			JOptionPane.showMessageDialog(proj.getFrame(),
 					Strings.get("circuitRemoveUsedError"),
 					Strings.get("circuitRemoveErrorTitle"),
 					JOptionPane.ERROR_MESSAGE);
@@ -247,10 +245,10 @@ public class ProjectCircuitActions {
 	 */
 	private static String promptForCircuitName(JFrame frame, Library lib,
 			String initialValue) {
-		JLabel label = new ScaledLabel(Strings.get("circuitNamePrompt"));
-		final ScaledTextField field = new ScaledTextField(15);
+		JLabel label = new JLabel(Strings.get("circuitNamePrompt"));
+		final JTextField field = new JTextField(15);
 		field.setText(initialValue);
-		JLabel error = new ScaledLabel(" ");
+		JLabel error = new JLabel(" ");
 		GridBagLayout gb = new GridBagLayout();
 		GridBagConstraints gc = new GridBagConstraints();
 		JPanel strut = new JPanel(null);

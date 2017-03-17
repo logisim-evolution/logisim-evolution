@@ -33,9 +33,10 @@ package com.cburch.logisim.gui.menu;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import com.cburch.logisim.gui.scale.ScaledCheckBoxMenuItem;
+import javax.swing.JCheckBoxMenuItem;
 
-class MenuItemCheckImpl extends ScaledCheckBoxMenuItem implements MenuItem {
+
+class MenuItemCheckImpl extends JCheckBoxMenuItem implements MenuItem {
 
 	private static final long serialVersionUID = 1L;
 	private MenuItemHelper helper;

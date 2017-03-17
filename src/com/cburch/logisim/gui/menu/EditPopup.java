@@ -38,8 +38,6 @@ import java.util.Map;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
-import com.cburch.logisim.gui.scale.ScaledMenuItem;
-
 public abstract class EditPopup extends JPopupMenu {
 	private class Listener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
@@ -71,7 +69,7 @@ public abstract class EditPopup extends JPopupMenu {
 
 	private boolean add(LogisimMenuItem item, String display) {
 		if (shouldShow(item)) {
-			JMenuItem menu = new ScaledMenuItem(display);
+			JMenuItem menu = new JMenuItem(display);
 			items.put(item, menu);
 			menu.setEnabled(isEnabled(item));
 			menu.addActionListener(listener);

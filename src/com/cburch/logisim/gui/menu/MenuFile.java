@@ -43,8 +43,6 @@ import javax.swing.KeyStroke;
 import com.cburch.logisim.gui.main.Frame;
 import com.cburch.logisim.gui.opts.OptionsFrame;
 import com.cburch.logisim.gui.prefs.PreferencesFrame;
-import com.cburch.logisim.gui.scale.ScaledMenuItem;
-import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.proj.ProjectActions;
 import com.cburch.logisim.proj.Projects;
@@ -53,22 +51,21 @@ import com.cburch.logisim.util.MacCompatibility;
 class MenuFile extends Menu implements ActionListener {
 	private static final long serialVersionUID = 1L;
 	private LogisimMenuBar menubar;
-	private JMenuItem newi = new ScaledMenuItem();
-	private JMenuItem merge = new ScaledMenuItem();
-	private JMenuItem open = new ScaledMenuItem();
+	private JMenuItem newi = new JMenuItem();
+	private JMenuItem merge = new JMenuItem();
+	private JMenuItem open = new JMenuItem();
 	private OpenRecent openRecent;
-	private JMenuItem close = new ScaledMenuItem();
-	private JMenuItem save = new ScaledMenuItem();
-	private JMenuItem saveAs = new ScaledMenuItem();
+	private JMenuItem close = new JMenuItem();
+	private JMenuItem save = new JMenuItem();
+	private JMenuItem saveAs = new JMenuItem();
 	private MenuItemImpl print = new MenuItemImpl(this, LogisimMenuBar.PRINT);
 	private MenuItemImpl exportImage = new MenuItemImpl(this,
 			LogisimMenuBar.EXPORT_IMAGE);
-	private JMenuItem prefs = new ScaledMenuItem();
-	private JMenuItem quit = new ScaledMenuItem();
+	private JMenuItem prefs = new JMenuItem();
+	private JMenuItem quit = new JMenuItem();
 
 	public MenuFile(LogisimMenuBar menubar) {
 		this.menubar = menubar;
-		Init();
 		openRecent = new OpenRecent(menubar);
 
 		int menuMask = getToolkit().getMenuShortcutKeyMask();
@@ -122,11 +119,6 @@ class MenuFile extends Menu implements ActionListener {
 		menubar.registerItem(LogisimMenuBar.PRINT, print);
 		prefs.addActionListener(this);
 		quit.addActionListener(this);
-	}
-
-    private void Init() {
-		AppPreferences.setScaledFonts(getComponents());
-		super.setFont(AppPreferences.getScaledFont(getFont()));
 	}
 
     public void actionPerformed(ActionEvent e) {

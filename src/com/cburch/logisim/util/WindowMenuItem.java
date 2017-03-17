@@ -34,11 +34,10 @@ import java.awt.Frame;
 import java.awt.event.ActionEvent;
 
 import javax.swing.JFrame;
+import javax.swing.JRadioButtonMenuItem;
 
-import com.cburch.logisim.gui.scale.ScaledRadioButtonMenuItem;
 
-
-class WindowMenuItem extends ScaledRadioButtonMenuItem {
+class WindowMenuItem extends JRadioButtonMenuItem {
 	private static final long serialVersionUID = 1L;
 	private WindowMenuItemManager manager;
 

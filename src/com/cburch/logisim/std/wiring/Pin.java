@@ -64,8 +64,6 @@ import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.gui.main.Canvas;
-import com.cburch.logisim.gui.scale.ScaledLabel;
-import com.cburch.logisim.gui.scale.ScaledOptionPane;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceData;
 import com.cburch.logisim.instance.InstanceFactory;
@@ -98,7 +96,7 @@ public class Pin extends InstanceFactory {
 			GridBagConstraints gbc = new GridBagConstraints();
 			MaskFormatter formatter = new MaskFormatter();
 			DecimalFormat df = new DecimalFormat();
-			JLabel label = new ScaledLabel("");
+			JLabel label = new JLabel("");
 			Color back = new Color(0xff, 0xf0, 0x99);
 
 			setUndecorated(true);
@@ -271,7 +269,7 @@ public class Pin extends InstanceFactory {
 				Canvas canvas = (Canvas) e.getComponent();
 				CircuitState circState = canvas.getCircuitState();
 				java.awt.Component frame = SwingUtilities.getRoot(canvas);
-				int choice = ScaledOptionPane.showConfirmDialog(frame,
+				int choice = JOptionPane.showConfirmDialog(frame,
 						Strings.get("pinFrozenQuestion"),
 						Strings.get("pinFrozenTitle"),
 						JOptionPane.OK_CANCEL_OPTION,

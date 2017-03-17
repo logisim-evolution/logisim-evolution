@@ -39,6 +39,7 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 
+import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -51,9 +52,6 @@ import com.cburch.hex.HexEditor;
 import com.cburch.hex.HexModel;
 import com.cburch.logisim.gui.generic.LFrame;
 import com.cburch.logisim.gui.menu.LogisimMenuBar;
-import com.cburch.logisim.gui.scale.ScaledButton;
-import com.cburch.logisim.gui.scale.ScaledOptionPane;
-import com.cburch.logisim.gui.scale.ScaledScrollPane;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.util.JFileChoosers;
 import com.cburch.logisim.util.LocaleListener;
@@ -125,7 +123,7 @@ public class HexFrame extends LFrame {
 						HexFile.open(model, f);
 						lastFile = f;
 					} catch (IOException e) {
-						ScaledOptionPane.showMessageDialog(HexFrame.this,
+						JOptionPane.showMessageDialog(HexFrame.this,
 								e.getMessage(),
 								Strings.get("hexOpenErrorTitle"),
 								JOptionPane.ERROR_MESSAGE);
@@ -141,7 +139,7 @@ public class HexFrame extends LFrame {
 						HexFile.save(f, model);
 						lastFile = f;
 					} catch (IOException e) {
-						ScaledOptionPane.showMessageDialog(HexFrame.this,
+						JOptionPane.showMessageDialog(HexFrame.this,
 								e.getMessage(),
 								Strings.get("hexSaveErrorTitle"),
 								JOptionPane.ERROR_MESSAGE);
@@ -186,9 +184,9 @@ public class HexFrame extends LFrame {
 	private MyListener myListener = new MyListener();
 	private HexModel model;
 	private HexEditor editor;
-	private ScaledButton open = new ScaledButton();
-	private ScaledButton save = new ScaledButton();
-	private ScaledButton close = new ScaledButton();
+	private JButton open = new JButton();
+	private JButton save = new JButton();
+	private JButton close = new JButton();
 
 	public HexFrame(Project proj, HexModel model) {
 		setDefaultCloseOperation(HIDE_ON_CLOSE);
@@ -208,7 +206,7 @@ public class HexFrame extends LFrame {
 		close.addActionListener(myListener);
 
 		Dimension pref = editor.getPreferredSize();
-		JScrollPane scroll = new ScaledScrollPane(editor,
+		JScrollPane scroll = new JScrollPane(editor,
 				JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
 				JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		pref.height = Math.min(pref.height, pref.width * 3 / 2);
