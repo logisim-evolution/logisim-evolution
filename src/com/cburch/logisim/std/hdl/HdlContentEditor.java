@@ -42,6 +42,7 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 
+import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -56,8 +57,6 @@ import org.fife.ui.rtextarea.RTextScrollPane;
 import com.cburch.hdl.HdlFile;
 import com.cburch.hdl.HdlModel;
 import com.cburch.hdl.HdlModelListener;
-import com.cburch.logisim.gui.scale.ScaledButton;
-import com.cburch.logisim.gui.scale.ScaledOptionPane;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.util.FileUtil;
 import com.cburch.logisim.util.JFileChoosers;
@@ -107,7 +106,7 @@ public class HdlContentEditor extends JDialog implements JInputDialog {
 					try {
 						HdlFile.open(f, HdlContentEditor.this);
 					} catch (IOException e) {
-						ScaledOptionPane.showMessageDialog(HdlContentEditor.this,
+						JOptionPane.showMessageDialog(HdlContentEditor.this,
 								e.getMessage(),
 								Strings.get("hexOpenErrorTitle"),
 								JOptionPane.ERROR_MESSAGE);
@@ -124,7 +123,7 @@ public class HdlContentEditor extends JDialog implements JInputDialog {
 					try {
 						HdlFile.save(f, HdlContentEditor.this);
 					} catch (IOException e) {
-						ScaledOptionPane.showMessageDialog(HdlContentEditor.this,
+						JOptionPane.showMessageDialog(HdlContentEditor.this,
 								e.getMessage(),
 								Strings.get("hexSaveErrorTitle"),
 								JOptionPane.ERROR_MESSAGE);
@@ -187,10 +186,10 @@ public class HdlContentEditor extends JDialog implements JInputDialog {
 	private HdlModel model;
 	private Project project;
 
-	private ScaledButton open = new ScaledButton();
-	private ScaledButton save = new ScaledButton();
-	private ScaledButton validate = new ScaledButton();
-	private ScaledButton close = new ScaledButton();
+	private JButton open = new JButton();
+	private JButton save = new JButton();
+	private JButton validate = new JButton();
+	private JButton close = new JButton();
 
 	public HdlContentEditor(Dialog parent, Project proj, HdlModel model) {
 		super(parent, Strings.get("hdlFrameTitle"), true);

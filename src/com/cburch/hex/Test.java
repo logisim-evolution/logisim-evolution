@@ -34,8 +34,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import javax.swing.JFrame;
+import javax.swing.JScrollPane;
 
-import com.cburch.logisim.gui.scale.ScaledScrollPane;
 
 public class Test {
 	private static class Model implements HexModel {
@@ -101,7 +101,7 @@ public class Test {
 		HexModel model = new Model();
 		HexEditor editor = new HexEditor(model);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.getContentPane().add(new ScaledScrollPane(editor));
+		frame.getContentPane().add(new JScrollPane(editor));
 		frame.pack();
 		frame.setVisible(true);
 	}

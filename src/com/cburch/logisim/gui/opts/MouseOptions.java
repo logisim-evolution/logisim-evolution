@@ -45,6 +45,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import javax.swing.BorderFactory;
+import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
@@ -63,8 +64,6 @@ import com.cburch.logisim.gui.generic.ProjectExplorerEvent;
 import com.cburch.logisim.gui.generic.ProjectExplorerListener;
 import com.cburch.logisim.gui.generic.ProjectExplorerToolNode;
 import com.cburch.logisim.gui.main.AttrTableToolModel;
-import com.cburch.logisim.gui.scale.ScaledButton;
-import com.cburch.logisim.gui.scale.ScaledScrollPane;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.tools.AddTool;
 import com.cburch.logisim.tools.Tool;
@@ -285,7 +284,7 @@ class MouseOptions extends OptionsPanel {
 	private JPanel addArea = new AddArea();
 	private JTable mappings = new JTable();
 	private AttrTable attrTable;
-	private ScaledButton remove = new ScaledButton();
+	private JButton remove = new JButton();
 
 	public MouseOptions(OptionsFrame window) {
 		super(window, new GridLayout(1, 3));
@@ -303,7 +302,7 @@ class MouseOptions extends OptionsPanel {
 		mappings.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		mappings.getSelectionModel().addListSelectionListener(listener);
 		mappings.clearSelection();
-		JScrollPane mapPane = new ScaledScrollPane(mappings);
+		JScrollPane mapPane = new JScrollPane(mappings);
 
 		// Button for removing current mapping
 		JPanel removeArea = new JPanel();
@@ -321,7 +320,7 @@ class MouseOptions extends OptionsPanel {
 		gbc.weighty = 1.0;
 		gbc.gridheight = 4;
 		gbc.fill = GridBagConstraints.BOTH;
-		JScrollPane explorerPane = new ScaledScrollPane(explorer,
+		JScrollPane explorerPane = new JScrollPane(explorer,
 				ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
 				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		gridbag.setConstraints(explorerPane, gbc);

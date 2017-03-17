@@ -36,6 +36,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -50,26 +51,20 @@ import com.cburch.logisim.analyze.model.VariableList;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitMutation;
 import com.cburch.logisim.file.LogisimFileActions;
-import com.cburch.logisim.gui.scale.ScaledButton;
-import com.cburch.logisim.gui.scale.ScaledCheckBox;
-import com.cburch.logisim.gui.scale.ScaledComboBox;
-import com.cburch.logisim.gui.scale.ScaledLabel;
-import com.cburch.logisim.gui.scale.ScaledOptionPane;
-import com.cburch.logisim.gui.scale.ScaledTextField;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.proj.Projects;
 import com.cburch.logisim.std.gates.CircuitBuilder;
 import com.cburch.logisim.util.StringUtil;
 
-class BuildCircuitButton extends ScaledButton {
+class BuildCircuitButton extends JButton {
 	private class DialogPanel extends JPanel {
 		private static final long serialVersionUID = 1L;
-		private JLabel projectLabel = new ScaledLabel();
+		private JLabel projectLabel = new JLabel();
 		private JComboBox<Object> project;
-		private JLabel nameLabel = new ScaledLabel();
-		private JTextField name = new ScaledTextField(10);
-		private JCheckBox twoInputs = new ScaledCheckBox();
-		private JCheckBox nands = new ScaledCheckBox();
+		private JLabel nameLabel = new JLabel();
+		private JTextField name = new JTextField(10);
+		private JCheckBox twoInputs = new JCheckBox();
+		private JCheckBox nands = new JCheckBox();
 
 		DialogPanel() {
 			List<Project> projects = Projects.getOpenProjects();
@@ -82,7 +77,7 @@ class BuildCircuitButton extends ScaledButton {
 					initialSelection = options[i];
 				}
 			}
-			project = new ScaledComboBox<>(options);
+			project = new JComboBox<>(options);
 			if (options.length == 1) {
 				project.setSelectedItem(options[0]);
 				project.setEnabled(false);
@@ -154,7 +149,7 @@ class BuildCircuitButton extends ScaledButton {
 			boolean ok = false;
 			while (!ok) {
 				DialogPanel dlog = new DialogPanel();
-				int action = ScaledOptionPane.showConfirmDialog(parent, dlog,
+				int action = JOptionPane.showConfirmDialog(parent, dlog,
 						Strings.get("buildDialogTitle"),
 						JOptionPane.OK_CANCEL_OPTION,
 						JOptionPane.QUESTION_MESSAGE);
@@ -164,7 +159,7 @@ class BuildCircuitButton extends ScaledButton {
 				ProjectItem projectItem = (ProjectItem) dlog.project
 						.getSelectedItem();
 				if (projectItem == null) {
-					ScaledOptionPane.showMessageDialog(parent,
+					JOptionPane.showMessageDialog(parent,
 							Strings.get("buildNeedProjectError"),
 							Strings.get("buildDialogErrorTitle"),
 							JOptionPane.ERROR_MESSAGE);
@@ -174,7 +169,7 @@ class BuildCircuitButton extends ScaledButton {
 
 				name = dlog.name.getText().trim();
 				if (name.equals("")) {
-					ScaledOptionPane.showMessageDialog(parent,
+					JOptionPane.showMessageDialog(parent,
 							Strings.get("buildNeedCircuitError"),
 							Strings.get("buildDialogErrorTitle"),
 							JOptionPane.ERROR_MESSAGE);
@@ -182,7 +177,7 @@ class BuildCircuitButton extends ScaledButton {
 				}
 
 				if (dest.getLogisimFile().getCircuit(name) != null) {
-					int choice = ScaledOptionPane.showConfirmDialog(parent,
+					int choice = JOptionPane.showConfirmDialog(parent,
 							StringUtil.format(
 									Strings.get("buildConfirmReplaceMessage"),
 									name), Strings
@@ -238,7 +233,7 @@ class BuildCircuitButton extends ScaledButton {
 		if (replace) {
 			final Circuit circuit = dest.getLogisimFile().getCircuit(name);
 			if (circuit == null) {
-				ScaledOptionPane.showMessageDialog(parent,
+				JOptionPane.showMessageDialog(parent,
 						"Internal error prevents replacing circuit.",
 						"Internal Error", JOptionPane.ERROR_MESSAGE);
 				return;

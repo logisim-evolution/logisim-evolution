@@ -43,7 +43,6 @@ import javax.swing.JOptionPane;
 import com.cburch.hex.Caret;
 import com.cburch.hex.HexEditor;
 import com.cburch.hex.HexModel;
-import com.cburch.logisim.gui.scale.ScaledOptionPane;
 
 class Clip implements ClipboardOwner {
 	private static class Data implements Transferable {
@@ -159,7 +158,7 @@ class Clip implements ClipboardOwner {
 			try {
 				data = HexFile.parse(new StringReader(buf));
 			} catch (IOException e) {
-				ScaledOptionPane.showMessageDialog(editor.getRootPane(),
+				JOptionPane.showMessageDialog(editor.getRootPane(),
 						e.getMessage(),
 						// Strings.get("hexPasteSupportedError"),
 						Strings.get("hexPasteErrorTitle"),
@@ -167,7 +166,7 @@ class Clip implements ClipboardOwner {
 				return;
 			}
 		} else {
-			ScaledOptionPane.showMessageDialog(editor.getRootPane(),
+			JOptionPane.showMessageDialog(editor.getRootPane(),
 					Strings.get("hexPasteSupportedError"),
 					Strings.get("hexPasteErrorTitle"),
 					JOptionPane.ERROR_MESSAGE);
@@ -182,7 +181,7 @@ class Clip implements ClipboardOwner {
 			if (p0 + data.length - 1 <= model.getLastOffset()) {
 				model.set(p0, data);
 			} else {
-				ScaledOptionPane.showMessageDialog(editor.getRootPane(),
+				JOptionPane.showMessageDialog(editor.getRootPane(),
 						Strings.get("hexPasteEndError"),
 						Strings.get("hexPasteErrorTitle"),
 						JOptionPane.ERROR_MESSAGE);
@@ -201,7 +200,7 @@ class Clip implements ClipboardOwner {
 			if (p1 - p0 == data.length) {
 				model.set(p0, data);
 			} else {
-				ScaledOptionPane.showMessageDialog(editor.getRootPane(),
+				JOptionPane.showMessageDialog(editor.getRootPane(),
 						Strings.get("hexPasteSizeError"),
 						Strings.get("hexPasteErrorTitle"),
 						JOptionPane.ERROR_MESSAGE);

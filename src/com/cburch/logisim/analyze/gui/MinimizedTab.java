@@ -41,6 +41,7 @@ import java.awt.event.ItemListener;
 
 import javax.swing.AbstractListModel;
 import javax.swing.ComboBoxModel;
+import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -49,9 +50,6 @@ import com.cburch.logisim.analyze.model.AnalyzerModel;
 import com.cburch.logisim.analyze.model.OutputExpressions;
 import com.cburch.logisim.analyze.model.OutputExpressionsEvent;
 import com.cburch.logisim.analyze.model.OutputExpressionsListener;
-import com.cburch.logisim.gui.scale.ScaledButton;
-import com.cburch.logisim.gui.scale.ScaledComboBox;
-import com.cburch.logisim.gui.scale.ScaledLabel;
 
 class MinimizedTab extends AnalyzerTab {
 	@SuppressWarnings("rawtypes")
@@ -153,11 +151,11 @@ class MinimizedTab extends AnalyzerTab {
 
 	private OutputSelector selector;
 	private KarnaughMapPanel karnaughMap;
-	private JLabel formatLabel = new ScaledLabel();
+	private JLabel formatLabel = new JLabel();
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private JComboBox formatChoice = new ScaledComboBox<>(new FormatModel());
+	private JComboBox formatChoice = new JComboBox<>(new FormatModel());
 	private ExpressionView minimizedExpr = new ExpressionView();
-	private ScaledButton setAsExpr = new ScaledButton();
+	private JButton setAsExpr = new JButton();
 
 	private MyListener myListener = new MyListener();
 	// private AnalyzerModel model;

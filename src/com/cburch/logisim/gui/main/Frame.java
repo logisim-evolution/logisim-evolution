@@ -50,6 +50,7 @@ import java.beans.PropertyChangeListener;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
 import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
@@ -78,7 +79,6 @@ import com.cburch.logisim.gui.generic.RegTabContent;
 import com.cburch.logisim.gui.generic.ZoomControl;
 import com.cburch.logisim.gui.generic.ZoomModel;
 import com.cburch.logisim.gui.menu.LogisimMenuBar;
-import com.cburch.logisim.gui.scale.ScaledTabbedPane;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.proj.ProjectActions;
@@ -396,7 +396,7 @@ public class Frame extends LFrame implements LocaleListener {
 		explorerPane.addView(VIEW_SIMULATION, simExplorer);
 		explorerPane.setView(VIEW_TOOLBOX);
 		attrTable = new AttrTable(this);
-		ScaledTabbedPane tabPane = attrTable.getTabPane();
+		JTabbedPane tabPane = attrTable.getTabPane();
 		RegTabContent regPanel = new RegTabContent(this);
 		tabPane.addTab("Registers", regPanel);
 

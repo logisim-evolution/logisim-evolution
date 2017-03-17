@@ -47,9 +47,12 @@ import java.util.List;
 
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 
 
 import com.cburch.logisim.circuit.Circuit;
@@ -57,11 +60,6 @@ import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.comp.ComponentDrawContext;
 import com.cburch.logisim.data.Bounds;
-import com.cburch.logisim.gui.scale.ScaledCheckBox;
-import com.cburch.logisim.gui.scale.ScaledLabel;
-import com.cburch.logisim.gui.scale.ScaledOptionPane;
-import com.cburch.logisim.gui.scale.ScaledScrollPane;
-import com.cburch.logisim.gui.scale.ScaledTextField;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.util.StringUtil;
 
@@ -170,18 +168,18 @@ public class Print {
 		private static final long serialVersionUID = 1L;
 		JCheckBox rotateToFit;
 		JCheckBox printerView;
-		ScaledTextField header;
+		JTextField header;
 		GridBagLayout gridbag;
 		GridBagConstraints gbc;
 
 		@SuppressWarnings("rawtypes")
 		ParmsPanel(JList list) {
 			// set up components
-			rotateToFit = new ScaledCheckBox();
+			rotateToFit = new JCheckBox();
 			rotateToFit.setSelected(true);
-			printerView = new ScaledCheckBox();
+			printerView = new JCheckBox();
 			printerView.setSelected(true);
-			header = new ScaledTextField(20);
+			header = new JTextField(20);
 			header.setText("%n (%p of %P)");
 
 			// set up panel
@@ -195,21 +193,21 @@ public class Print {
 			gbc.anchor = GridBagConstraints.NORTHWEST;
 			gbc.insets = new Insets(5, 0, 5, 0);
 			gbc.fill = GridBagConstraints.NONE;
-			addGb(new ScaledLabel(Strings.get("labelCircuits") + " "));
+			addGb(new JLabel(Strings.get("labelCircuits") + " "));
 			gbc.fill = GridBagConstraints.HORIZONTAL;
-			addGb(new ScaledScrollPane(list));
+			addGb(new JScrollPane(list));
 			gbc.fill = GridBagConstraints.NONE;
 
 			gbc.gridy++;
-			addGb(new ScaledLabel(Strings.get("labelHeader") + " "));
+			addGb(new JLabel(Strings.get("labelHeader") + " "));
 			addGb(header);
 
 			gbc.gridy++;
-			addGb(new ScaledLabel(Strings.get("labelRotateToFit") + " "));
+			addGb(new JLabel(Strings.get("labelRotateToFit") + " "));
 			addGb(rotateToFit);
 
 			gbc.gridy++;
-			addGb(new ScaledLabel(Strings.get("labelPrinterView") + " "));
+			addGb(new JLabel(Strings.get("labelPrinterView") + " "));
 			addGb(printerView);
 		}
 
@@ -235,14 +233,14 @@ public class Print {
 		CircuitJList list = new CircuitJList(proj, true);
 		Frame frame = proj.getFrame();
 		if (list.getModel().getSize() == 0) {
-			ScaledOptionPane.showMessageDialog(proj.getFrame(),
+			JOptionPane.showMessageDialog(proj.getFrame(),
 					Strings.get("printEmptyCircuitsMessage"),
 					Strings.get("printEmptyCircuitsTitle"),
 					JOptionPane.YES_NO_OPTION);
 			return;
 		}
 		ParmsPanel parmsPanel = new ParmsPanel(list);
-		int action = ScaledOptionPane.showConfirmDialog(frame, parmsPanel,
+		int action = JOptionPane.showConfirmDialog(frame, parmsPanel,
 				Strings.get("printParmsTitle"), JOptionPane.OK_CANCEL_OPTION,
 				JOptionPane.QUESTION_MESSAGE);
 		if (action != JOptionPane.OK_OPTION)
@@ -263,7 +261,7 @@ public class Print {
 		try {
 			job.print();
 		} catch (PrinterException e) {
-			ScaledOptionPane.showMessageDialog(proj.getFrame(),
+			JOptionPane.showMessageDialog(proj.getFrame(),
 					StringUtil.format(Strings.get("printError"), e.toString()),
 					Strings.get("printErrorTitle"), JOptionPane.ERROR_MESSAGE);
 		}

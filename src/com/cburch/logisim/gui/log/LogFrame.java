@@ -39,8 +39,10 @@ import java.awt.event.WindowEvent;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
 
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.circuit.Simulator;
@@ -50,8 +52,6 @@ import com.cburch.logisim.file.LibraryEvent;
 import com.cburch.logisim.file.LibraryListener;
 import com.cburch.logisim.gui.generic.LFrame;
 import com.cburch.logisim.gui.menu.LogisimMenuBar;
-import com.cburch.logisim.gui.scale.ScaledButton;
-import com.cburch.logisim.gui.scale.ScaledTabbedPane;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.proj.ProjectEvent;
 import com.cburch.logisim.proj.ProjectListener;
@@ -166,10 +166,10 @@ public class LogFrame extends LFrame {
 
 	private WindowMenuManager windowManager;
 	private LogPanel[] panels;
-	private ScaledTabbedPane tabbedPane;
-	private ScaledButton close = new ScaledButton();
+	private JTabbedPane tabbedPane;
+	private JButton close = new JButton();
 
-	private ScaledButton chronogramButton;
+	private JButton chronogramButton;
 
 	public LogFrame(Project project) {
 		this.project = project;
@@ -184,7 +184,7 @@ public class LogFrame extends LFrame {
 		// new ScrollPanel(this),
 		// new FilePanel(this),
 		};
-		tabbedPane = new ScaledTabbedPane();
+		tabbedPane = new JTabbedPane();
 		for (int index = 0; index < panels.length; index++) {
 			LogPanel panel = panels[index];
 			tabbedPane.addTab(panel.getTitle(), null, panel,
@@ -193,7 +193,7 @@ public class LogFrame extends LFrame {
 
 		JPanel buttonPanel = new JPanel();
 
-		chronogramButton = new ScaledButton(Strings.get("startChronogram"));
+		chronogramButton = new JButton(Strings.get("startChronogram"));
 		chronogramButton.addActionListener(myListener);
 		buttonPanel.add(chronogramButton);
 		buttonPanel.add(close);

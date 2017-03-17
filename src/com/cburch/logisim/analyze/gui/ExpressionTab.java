@@ -40,6 +40,7 @@ import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 
 import javax.swing.AbstractAction;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -55,9 +56,6 @@ import com.cburch.logisim.analyze.model.OutputExpressionsEvent;
 import com.cburch.logisim.analyze.model.OutputExpressionsListener;
 import com.cburch.logisim.analyze.model.Parser;
 import com.cburch.logisim.analyze.model.ParserException;
-import com.cburch.logisim.gui.scale.ScaledButton;
-import com.cburch.logisim.gui.scale.ScaledLabel;
-import com.cburch.logisim.gui.scale.ScaledScrollPane;
 import com.cburch.logisim.util.StringGetter;
 
 class ExpressionTab extends AnalyzerTab implements TabInterface {
@@ -152,10 +150,10 @@ class ExpressionTab extends AnalyzerTab implements TabInterface {
 	private OutputSelector selector;
 	private ExpressionView prettyView = new ExpressionView();
 	private JTextArea field = new JTextArea(4, 25);
-	private ScaledButton clear = new ScaledButton();
-	private ScaledButton revert = new ScaledButton();
-	private ScaledButton enter = new ScaledButton();
-	private JLabel error = new ScaledLabel();
+	private JButton clear = new JButton();
+	private JButton revert = new JButton();
+	private JButton enter = new JButton();
+	private JLabel error = new JLabel();
 
 	private MyListener myListener = new MyListener();
 	private AnalyzerModel model;
@@ -198,7 +196,7 @@ class ExpressionTab extends AnalyzerTab implements TabInterface {
 		add(prettyView);
 		Insets oldInsets = gc.insets;
 		gc.insets = new Insets(10, 10, 0, 10);
-		JScrollPane fieldPane = new ScaledScrollPane(field,
+		JScrollPane fieldPane = new JScrollPane(field,
 				ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
 				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		gb.setConstraints(fieldPane, gc);

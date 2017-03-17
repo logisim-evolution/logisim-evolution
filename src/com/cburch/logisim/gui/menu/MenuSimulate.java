@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import javax.swing.ButtonGroup;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JRadioButtonMenuItem;
 import javax.swing.KeyStroke;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -50,12 +51,8 @@ import com.cburch.logisim.circuit.SimulatorEvent;
 import com.cburch.logisim.circuit.SimulatorListener;
 import com.cburch.logisim.file.Options;
 import com.cburch.logisim.gui.log.LogFrame;
-import com.cburch.logisim.gui.scale.ScaledMenu;
-import com.cburch.logisim.gui.scale.ScaledMenuItem;
-import com.cburch.logisim.gui.scale.ScaledRadioButtonMenuItem;
 import com.cburch.logisim.gui.test.TestFrame;
 import com.cburch.logisim.instance.StdAttr;
-import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.std.wiring.Clock;
 import com.cburch.logisim.util.StringUtil;
@@ -70,17 +67,11 @@ public class MenuSimulate extends Menu {
 
 		public CircuitStateMenuItem(CircuitState circuitState) {
 			this.circuitState = circuitState;
-			Init();
 
 			Circuit circuit = circuitState.getCircuit();
 			circuit.addCircuitListener(this);
 			this.setText(circuit.getName());
 			addActionListener(this);
-		}
-
-	    private void Init() {
-			AppPreferences.setScaledFonts(getComponents());
-			super.setFont(AppPreferences.getScaledFont(getFont()));
 		}
 
 	    @Override
@@ -237,12 +228,7 @@ public class MenuSimulate extends Menu {
 		}
 	}
 
-    private void Init() {
-		AppPreferences.setScaledFonts(getComponents());
-		super.setFont(AppPreferences.getScaledFont(getFont()));
-	}
-
-    private class TickFrequencyChoice extends ScaledRadioButtonMenuItem implements
+    private class TickFrequencyChoice extends JRadioButtonMenuItem implements
 			ActionListener {
 
 		private double freq;
@@ -322,28 +308,27 @@ public class MenuSimulate extends Menu {
 	private CircuitState bottomState = null;
 	private Simulator currentSim = null;
 	private MenuItemCheckImpl run;
-	private JMenuItem reset = new ScaledMenuItem();
+	private JMenuItem reset = new JMenuItem();
 	private MenuItemImpl step;
 	private MenuItemImpl vhdl_sim_files;
 	private MenuItemCheckImpl simulate_vhdl_enable;
 	private MenuItemCheckImpl ticksEnabled;
 	private MenuItemImpl tickOnce;
 	private MenuItemImpl tickOnceMain;
-	private JMenu tickFreq = new ScaledMenu();
+	private JMenu tickFreq = new JMenu();
 	private TickFrequencyChoice[] tickFreqs = new TickFrequencyChoice[SupportedTickFrequencies.length];
-	private JMenu downStateMenu = new ScaledMenu();
+	private JMenu downStateMenu = new JMenu();
 	private ArrayList<CircuitStateMenuItem> downStateItems = new ArrayList<CircuitStateMenuItem>();
-	private JMenu upStateMenu = new ScaledMenu();
+	private JMenu upStateMenu = new JMenu();
 	private ArrayList<CircuitStateMenuItem> upStateItems = new ArrayList<CircuitStateMenuItem>();
-	private JMenuItem log = new ScaledMenuItem();
-	private JMenuItem test = new ScaledMenuItem();
-	private JMenuItem assemblyWindow = new ScaledMenuItem();
+	private JMenuItem log = new JMenuItem();
+	private JMenuItem test = new JMenuItem();
+	private JMenuItem assemblyWindow = new JMenuItem();
 
 	AssemblyWindow assWin = null;
 
 	public MenuSimulate(LogisimMenuBar menubar) {
 		this.menubar = menubar;
-		Init();
 		run = new MenuItemCheckImpl(this, LogisimMenuBar.SIMULATE_ENABLE);
 		step = new MenuItemImpl(this, LogisimMenuBar.SIMULATE_STEP);
 		simulate_vhdl_enable = new MenuItemCheckImpl(this,

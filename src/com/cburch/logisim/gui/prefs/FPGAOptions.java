@@ -13,9 +13,6 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 
 import com.bfh.logisim.fpgagui.FPGACommanderGui;
-import com.cburch.logisim.gui.scale.ScaledButton;
-import com.cburch.logisim.gui.scale.ScaledLabel;
-import com.cburch.logisim.gui.scale.ScaledTextField;
 import com.cburch.logisim.prefs.AppPreferences;
 
 @SuppressWarnings("serial")
@@ -55,11 +52,11 @@ public class FPGAOptions extends OptionsPanel {
 		this.frame=frame;
 		AppPreferences.getPrefs().addPreferenceChangeListener(myListener);
 		
-		WorkspaceLabel = new ScaledLabel(Strings.get("FPGAWorkSpace"));
-		WorkSpacePath = new ScaledTextField(32);
+		WorkspaceLabel = new JLabel(Strings.get("FPGAWorkSpace"));
+		WorkSpacePath = new JTextField(32);
 		WorkSpacePath.setText(AppPreferences.FPGA_Workspace.get());
 		WorkSpacePath.setEditable(false);
-		WorkSpaceButton = new ScaledButton();
+		WorkSpaceButton = new JButton();
 		WorkSpaceButton.addActionListener(myListener);
 		WorkSpaceButton.setText(Strings.get("Browse"));
 		

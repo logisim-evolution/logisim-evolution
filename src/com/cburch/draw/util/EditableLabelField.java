@@ -34,10 +34,10 @@ import java.awt.Color;
 import java.awt.Graphics;
 
 import javax.swing.BorderFactory;
+import javax.swing.JTextField;
 
-import com.cburch.logisim.gui.scale.ScaledTextField;
 
-public class EditableLabelField extends ScaledTextField {
+public class EditableLabelField extends JTextField {
 	private static final long serialVersionUID = 1L;
 	static final int FIELD_BORDER = 2;
 

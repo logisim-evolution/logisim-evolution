@@ -64,7 +64,6 @@ class SplitterDistributeItem extends JMenuItem implements ActionListener {
 		}
 		setEnabled(!same);
 		setText(toGetter().toString());
-		Init();
 	}
 
 	public void actionPerformed(ActionEvent e) {
@@ -90,11 +89,6 @@ class SplitterDistributeItem extends JMenuItem implements ActionListener {
 		} else {
 			return Strings.getter("splitterDistributeDescending");
 		}
-	}
-	
-    private void Init() {
-		AppPreferences.setScaledFonts(getComponents());
-		super.setFont(AppPreferences.getScaledFont(getFont()));
 	}
 	
 }

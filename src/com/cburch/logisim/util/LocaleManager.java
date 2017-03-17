@@ -39,8 +39,7 @@ import java.util.ResourceBundle;
 import java.util.StringTokenizer;
 
 import javax.swing.JComponent;
-
-import com.cburch.logisim.gui.scale.ScaledScrollPane;
+import javax.swing.JScrollPane;
 
 public class LocaleManager {
 	private static class LocaleGetter implements StringGetter {
@@ -229,7 +228,7 @@ public class LocaleManager {
 				cur = new Locale("en");
 			locales = new Locale[] { cur };
 		}
-		return new ScaledScrollPane(new LocaleSelector(locales));
+		return new JScrollPane(new LocaleSelector(locales));
 	}
 
 	public String get(String key) {

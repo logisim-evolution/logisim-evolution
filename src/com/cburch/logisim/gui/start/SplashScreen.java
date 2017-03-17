@@ -37,6 +37,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
+import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JWindow;
@@ -45,7 +46,6 @@ import javax.swing.SwingUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.cburch.logisim.gui.scale.ScaledButton;
 
 public class SplashScreen extends JWindow implements ActionListener {
 
@@ -90,8 +90,8 @@ public class SplashScreen extends JWindow implements ActionListener {
 			new Marker(2519, Strings.get("progressFrameCreate")), };
 	boolean inClose = false; // for avoiding mutual recursion
 	JProgressBar progress = new JProgressBar(0, PROGRESS_MAX);
-	ScaledButton close = new ScaledButton(Strings.get("startupCloseButton"));
-	ScaledButton cancel = new ScaledButton(Strings.get("startupQuitButton"));
+	JButton close = new JButton(Strings.get("startupCloseButton"));
+	JButton cancel = new JButton(Strings.get("startupQuitButton"));
 	long startTime = System.currentTimeMillis();
 
 	public SplashScreen() {

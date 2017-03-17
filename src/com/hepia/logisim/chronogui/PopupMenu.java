@@ -37,9 +37,8 @@ import java.awt.event.MouseEvent;
 import javax.swing.ButtonGroup;
 import javax.swing.JMenu;
 import javax.swing.JPopupMenu;
+import javax.swing.JRadioButtonMenuItem;
 
-import com.cburch.logisim.gui.scale.ScaledMenu;
-import com.cburch.logisim.gui.scale.ScaledRadioButtonMenuItem;
 import com.hepia.logisim.chronodata.SignalData;
 import com.hepia.logisim.chronodata.SignalDataBus;
 
@@ -47,7 +46,7 @@ class PopupContents extends JPopupMenu implements ActionListener {
 	private static final long serialVersionUID = 1L;
 	private DrawAreaEventManager mDrawAreaEventManager;
 	private SignalDataBus signalDataBus;
-	private ScaledRadioButtonMenuItem expandBus;
+	private JRadioButtonMenuItem expandBus;
 
 	public PopupContents(DrawAreaEventManager drawAreaEventManager,
 			SignalData signalData) {
@@ -56,14 +55,14 @@ class PopupContents extends JPopupMenu implements ActionListener {
 		// For buses only:
 		if (signalData instanceof SignalDataBus) {
 			JMenu dataFormat;
-			ScaledRadioButtonMenuItem[] formats;
+			JRadioButtonMenuItem[] formats;
 			signalDataBus = (SignalDataBus) signalData;
 			// format choice
-			dataFormat = new ScaledMenu(Strings.get("BusFormat"));
-			formats = new ScaledRadioButtonMenuItem[5];
+			dataFormat = new JMenu(Strings.get("BusFormat"));
+			formats = new JRadioButtonMenuItem[5];
 			ButtonGroup group = new ButtonGroup();
 			for (int i = 0; i < SignalDataBus.signalFormat.length; ++i) {
-				formats[i] = new ScaledRadioButtonMenuItem(
+				formats[i] = new JRadioButtonMenuItem(
 						SignalDataBus.signalFormat[i]);
 				formats[i].setActionCommand(SignalDataBus.signalFormat[i]);
 				formats[i].addActionListener(this);
@@ -79,7 +78,7 @@ class PopupContents extends JPopupMenu implements ActionListener {
 			add(dataFormat);
 
 			// expand
-			expandBus = new ScaledRadioButtonMenuItem(Strings.get("BusExpand"));
+			expandBus = new JRadioButtonMenuItem(Strings.get("BusExpand"));
 			expandBus.setSelected(signalDataBus.isExpanded());
 			expandBus.addActionListener(this);
 			add(expandBus);

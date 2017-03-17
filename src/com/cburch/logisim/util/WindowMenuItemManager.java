@@ -35,8 +35,7 @@ import java.awt.event.WindowListener;
 import java.util.HashMap;
 
 import javax.swing.JFrame;
-
-import com.cburch.logisim.gui.scale.ScaledRadioButtonMenuItem;
+import javax.swing.JRadioButtonMenuItem;
 
 public abstract class WindowMenuItemManager {
 	private class MyListener implements WindowListener {
@@ -77,7 +76,7 @@ public abstract class WindowMenuItemManager {
 	private boolean persistent;
 	private boolean listenerAdded = false;
 	private boolean inManager = false;
-	private HashMap<WindowMenu, ScaledRadioButtonMenuItem> menuItems = new HashMap<WindowMenu, ScaledRadioButtonMenuItem>();
+	private HashMap<WindowMenu, JRadioButtonMenuItem> menuItems = new HashMap<WindowMenu, JRadioButtonMenuItem>();
 
 	public WindowMenuItemManager(String text, boolean persistent) {
 		this.text = text;
@@ -121,7 +120,7 @@ public abstract class WindowMenuItemManager {
 
 	public abstract JFrame getJFrame(boolean create);
 
-	ScaledRadioButtonMenuItem getMenuItem(WindowMenu key) {
+	JRadioButtonMenuItem getMenuItem(WindowMenu key) {
 		return menuItems.get(key);
 	}
 
@@ -133,7 +132,7 @@ public abstract class WindowMenuItemManager {
 		if (!persistent && inManager) {
 			inManager = false;
 			for (WindowMenu menu : WindowMenuManager.getMenus()) {
-				ScaledRadioButtonMenuItem menuItem = menuItems.get(menu);
+				JRadioButtonMenuItem menuItem = menuItems.get(menu);
 				menu.removeMenuItem(this, menuItem);
 			}
 			WindowMenuManager.removeManager(this);
@@ -141,20 +140,20 @@ public abstract class WindowMenuItemManager {
 	}
 
 	void removeMenuItem(WindowMenu menu) {
-		ScaledRadioButtonMenuItem item = menuItems.remove(menu);
+		JRadioButtonMenuItem item = menuItems.remove(menu);
 		if (item != null)
 			menu.removeMenuItem(this, item);
 	}
 
 	void setSelected(boolean selected) {
-		for (ScaledRadioButtonMenuItem item : menuItems.values()) {
+		for (JRadioButtonMenuItem item : menuItems.values()) {
 			item.setSelected(selected);
 		}
 	}
 
 	public void setText(String value) {
 		text = value;
-		for (ScaledRadioButtonMenuItem menuItem : menuItems.values()) {
+		for (JRadioButtonMenuItem menuItem : menuItems.values()) {
 			menuItem.setText(text);
 		}
 	}

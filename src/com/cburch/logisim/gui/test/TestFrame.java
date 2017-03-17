@@ -46,6 +46,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -59,10 +60,6 @@ import com.cburch.logisim.circuit.SimulatorListener;
 import com.cburch.logisim.data.TestException;
 import com.cburch.logisim.data.TestVector;
 import com.cburch.logisim.gui.menu.LogisimMenuBar;
-import com.cburch.logisim.gui.scale.ScaledButton;
-import com.cburch.logisim.gui.scale.ScaledFileChooser;
-import com.cburch.logisim.gui.scale.ScaledLabel;
-import com.cburch.logisim.gui.scale.ScaledOptionPane;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.proj.ProjectEvent;
 import com.cburch.logisim.proj.ProjectListener;
@@ -88,7 +85,7 @@ public class TestFrame extends JFrame {
 					return;
 				File file = chooser.getSelectedFile();
 				if (!file.exists() || !file.canRead() || file.isDirectory()) {
-					ScaledOptionPane.showMessageDialog(
+					JOptionPane.showMessageDialog(
 							TestFrame.this,
 							StringUtil.format(
 									Strings.get("fileCannotReadMessage"),
@@ -106,7 +103,7 @@ public class TestFrame extends JFrame {
 					getModel().setPaused(true);
 					getModel().start();
 				} catch (IOException e) {
-					ScaledOptionPane.showMessageDialog(
+					JOptionPane.showMessageDialog(
 							TestFrame.this,
 							StringUtil.format(
 									Strings.get("fileCannotParseMessage"),
@@ -114,7 +111,7 @@ public class TestFrame extends JFrame {
 							Strings.get("fileCannotReadTitle"),
 							JOptionPane.OK_OPTION);
 				} catch (TestException e) {
-					ScaledOptionPane.showMessageDialog(
+					JOptionPane.showMessageDialog(
 							TestFrame.this,
 							StringUtil.format(
 									Strings.get("fileWrongPinsMessage"),
@@ -126,7 +123,7 @@ public class TestFrame extends JFrame {
 				try {
 					getModel().start();
 				} catch (TestException e) {
-					ScaledOptionPane.showMessageDialog(TestFrame.this, StringUtil
+					JOptionPane.showMessageDialog(TestFrame.this, StringUtil
 							.format(Strings.get("fileWrongPinsMessage"),
 									curFile.getName(), e.getMessage()), Strings
 							.get("fileWrongPinsTitle"), JOptionPane.OK_OPTION);
@@ -240,16 +237,16 @@ public class TestFrame extends JFrame {
 	private int finished, count;
 
 	private File curFile;
-	private JFileChooser chooser = new ScaledFileChooser();
+	private JFileChooser chooser = new JFileChooser();
 	private TestPanel panel;
-	private ScaledButton load = new ScaledButton();
-	private ScaledButton run = new ScaledButton();
-	private ScaledButton stop = new ScaledButton();
-	private ScaledButton reset = new ScaledButton();
-	private ScaledButton close = new ScaledButton();
-	private JLabel pass = new ScaledLabel();
+	private JButton load = new JButton();
+	private JButton run = new JButton();
+	private JButton stop = new JButton();
+	private JButton reset = new JButton();
+	private JButton close = new JButton();
+	private JLabel pass = new JLabel();
 
-	private JLabel fail = new ScaledLabel();
+	private JLabel fail = new JLabel();
 
 	public TestFrame(Project project) {
 		this.project = project;

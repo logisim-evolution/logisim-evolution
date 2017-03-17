@@ -6,16 +6,14 @@ import java.util.Iterator;
 
 import javax.swing.JOptionPane;
 
-import com.cburch.logisim.gui.scale.ScaledOptionPane;
-
 
 public class LibraryTools {
 	public static void ShowErrors(String LibName,HashMap<String,String> Messages) {
-		ScaledOptionPane.showMessageDialog(null, Message(LibName,Messages), Strings.get("LibLoadErrors")+" "+LibName+" !", JOptionPane.ERROR_MESSAGE);
+		JOptionPane.showMessageDialog(null, Message(LibName,Messages), Strings.get("LibLoadErrors")+" "+LibName+" !", JOptionPane.ERROR_MESSAGE);
 	}
 	
 	public static void ShowWarnings(String LibName,HashMap<String,String> Messages) {
-		ScaledOptionPane.showMessageDialog(null, Message(LibName,Messages), Strings.get("LibLoadWarnings")+" "+LibName+" !", JOptionPane.WARNING_MESSAGE);
+		JOptionPane.showMessageDialog(null, Message(LibName,Messages), Strings.get("LibLoadWarnings")+" "+LibName+" !", JOptionPane.WARNING_MESSAGE);
 	}
 
 	private static String Message(String LibName,HashMap<String,String> Messages) {

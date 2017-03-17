@@ -36,6 +36,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.swing.JOptionPane;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -48,7 +49,6 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import com.bfh.logisim.fpgaboardeditor.FPGAClass;
-import com.cburch.logisim.gui.scale.ScaledOptionPane;
 
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
@@ -105,7 +105,7 @@ public class Settings {
 				// Create blank DOM Document
 				SettingsDocument = parser.parse(SettingsFile);
 			} catch (Exception e) {
-				ScaledOptionPane.showMessageDialog(null, "Fatal Error: Cannot read FPGA settings file: "
+				JOptionPane.showMessageDialog(null, "Fatal Error: Cannot read FPGA settings file: "
 						+ SettingsFile.getPath());
 				System.exit(-1);
 			}
@@ -125,7 +125,7 @@ public class Settings {
 		}
 		if (!SettingsComplete()) {
 			if (!WriteXml(SettingsFile)) {
-				ScaledOptionPane.showMessageDialog(null, "Fatal Error: Cannot write FPGA settings file: "
+				JOptionPane.showMessageDialog(null, "Fatal Error: Cannot write FPGA settings file: "
 						+ SettingsFile.getPath());
 				System.exit(-1);
 			}
@@ -376,7 +376,7 @@ public class Settings {
 				// Create blank DOM Document
 				SettingsDocument = parser.newDocument();
 			} catch (ParserConfigurationException e) {
-				ScaledOptionPane.showMessageDialog(null, "Fatal Error: Cannot create settings Document!");
+				JOptionPane.showMessageDialog(null, "Fatal Error: Cannot create settings Document!");
 				System.exit(-4);
 			}
 			Element root = SettingsDocument.createElement(SettingsFileName.replace('.', '_'));
@@ -386,7 +386,7 @@ public class Settings {
 		NodeList RootList = SettingsDocument.getChildNodes();
 
 		if (RootList.getLength() != 1) {
-			ScaledOptionPane.showMessageDialog(null,
+			JOptionPane.showMessageDialog(null,
 					"Fatal Error: Settings file corrupted; please delete the file:"
 							+ HomePath + SettingsFileName + ".xml");
 			System.exit(-5);
@@ -395,7 +395,7 @@ public class Settings {
 		NodeList SettingsList = SettingsDocument
 				.getElementsByTagName(WorkSpace);
 		if (SettingsList.getLength() > 1) {
-			ScaledOptionPane.showMessageDialog(null,
+			JOptionPane.showMessageDialog(null,
 					"Fatal Error: Settings file corrupted; please delete the file:"
 							+ HomePath + SettingsFileName + ".xml");
 			System.exit(-5);
@@ -416,7 +416,7 @@ public class Settings {
 
 		SettingsList = SettingsDocument.getElementsByTagName(Boards);
 		if (SettingsList.getLength() > 1) {
-			ScaledOptionPane.showMessageDialog(null,
+			JOptionPane.showMessageDialog(null,
 					"Fatal Error: Settings file corrupted; please delete the file:"
 							+ HomePath + SettingsFileName + ".xml");
 			System.exit(-5);
@@ -504,7 +504,7 @@ public class Settings {
 			modified = false;
 			return true;
 		} catch (Exception e) {
-			ScaledOptionPane.showMessageDialog(null, e.getMessage());
+			JOptionPane.showMessageDialog(null, e.getMessage());
 			return false;
 		}
 	}

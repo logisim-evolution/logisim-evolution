@@ -49,7 +49,6 @@ import com.cburch.logisim.data.Location;
 import com.cburch.logisim.gui.main.Canvas;
 import com.cburch.logisim.gui.main.Selection;
 import com.cburch.logisim.gui.main.SelectionActions;
-import com.cburch.logisim.gui.scale.ScaledMenuItem;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.proj.Project;
 
@@ -59,9 +58,9 @@ public class MenuTool extends Tool {
 		Project proj;
 		Circuit circ;
 		Component comp;
-		JMenuItem del = new ScaledMenuItem(Strings.get("compDeleteItem"));
-		JMenuItem attrs = new ScaledMenuItem(Strings.get("compShowAttrItem"));
-		JMenuItem rotate = new ScaledMenuItem(Strings.get("compRotate"));
+		JMenuItem del = new JMenuItem(Strings.get("compDeleteItem"));
+		JMenuItem attrs = new JMenuItem(Strings.get("compShowAttrItem"));
+		JMenuItem rotate = new JMenuItem(Strings.get("compRotate"));
 
 		MenuComponent(Project proj, Circuit circ, Component comp) {
 			this.proj = proj;
@@ -107,9 +106,9 @@ public class MenuTool extends Tool {
 	private class MenuSelection extends JPopupMenu implements ActionListener {
 		private static final long serialVersionUID = 1L;
 		Project proj;
-		JMenuItem del = new ScaledMenuItem(Strings.get("selDeleteItem"));
-		JMenuItem cut = new ScaledMenuItem(Strings.get("selCutItem"));
-		JMenuItem copy = new ScaledMenuItem(Strings.get("selCopyItem"));
+		JMenuItem del = new JMenuItem(Strings.get("selDeleteItem"));
+		JMenuItem cut = new JMenuItem(Strings.get("selCutItem"));
+		JMenuItem copy = new JMenuItem(Strings.get("selCopyItem"));
 
 		MenuSelection(Project proj) {
 			this.proj = proj;

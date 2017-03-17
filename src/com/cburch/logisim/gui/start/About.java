@@ -48,7 +48,6 @@ import javax.swing.event.AncestorListener;
 
 import com.cburch.logisim.Main;
 import com.cburch.logisim.data.Value;
-import com.cburch.logisim.gui.scale.ScaledOptionPane;
 import com.cburch.logisim.util.GraphicsUtil;
 
 public class About {
@@ -300,7 +299,7 @@ public class About {
 		panel.add(imgPanel);
 		panel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
 
-		ScaledOptionPane.showMessageDialog(owner, panel, "Logisim-evolution "
+		JOptionPane.showMessageDialog(owner, panel, "Logisim-evolution "
 				+ Main.VERSION_NAME, JOptionPane.PLAIN_MESSAGE);
 	}
 

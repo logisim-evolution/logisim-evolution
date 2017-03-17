@@ -40,7 +40,6 @@ import javax.swing.JList;
 import javax.swing.plaf.basic.BasicComboBoxRenderer;
 
 import com.bric.swing.ColorPicker;
-import com.cburch.logisim.gui.scale.ScaledComboBox;
 import com.cburch.logisim.util.FontUtil;
 import com.cburch.logisim.util.JInputComponent;
 import com.cburch.logisim.util.StringGetter;
@@ -304,7 +303,7 @@ public class Attributes {
 						options[i - start] = Integer.valueOf(i);
 					}
 				}
-				JComboBox combo = new ScaledComboBox<>(options);
+				JComboBox combo = new JComboBox<>(options);
 				if (value == null)
 					combo.setSelectedIndex(-1);
 				else
@@ -346,7 +345,7 @@ public class Attributes {
 		@SuppressWarnings({ "rawtypes", "unchecked" })
 		@Override
 		public java.awt.Component getCellEditor(Object value) {
-			JComboBox combo = new ScaledComboBox<>(vals);
+			JComboBox combo = new JComboBox<>(vals);
 			combo.setRenderer(new OptionComboRenderer<V>(this));
 			if (value == null)
 				combo.setSelectedIndex(-1);

@@ -43,8 +43,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
 
-import com.cburch.logisim.gui.scale.ScaledLabel;
-import com.cburch.logisim.gui.scale.ScaledScrollPane;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.util.SmartScroller;
 
@@ -104,8 +102,8 @@ public class VhdlSimulatorConsole extends JPanel {
 	}
 
 	private static final long serialVersionUID = 1L;
-	private JLabel label = new ScaledLabel();
-	private JScrollPane log = new ScaledScrollPane();
+	private JLabel label = new JLabel();
+	private JScrollPane log = new JScrollPane();
 	private JTextArea logContent = new JTextArea();
 	private VhdlSimState vhdlSimState;
 

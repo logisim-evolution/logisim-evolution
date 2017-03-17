@@ -44,7 +44,6 @@ import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
-import com.cburch.logisim.gui.scale.ScaledOptionPane;
 import com.cburch.logisim.prefs.AppPreferences;
 
 public final class Softwares {
@@ -137,7 +136,7 @@ public final class Softwares {
 			try {
 				path = file.getCanonicalPath();
 			} catch (IOException ex) {
-				ScaledOptionPane.showMessageDialog(parent,
+				JOptionPane.showMessageDialog(parent,
 						Strings.get("questaIoErrorMessage"),
 						Strings.get("questaErrorTitle"),
 						JOptionPane.ERROR_MESSAGE);
@@ -147,7 +146,7 @@ public final class Softwares {
 			if (validatePath(path, QUESTA)) {
 				AppPreferences.QUESTA_PATH.set(path);
 			} else {
-				ScaledOptionPane.showMessageDialog(parent,
+				JOptionPane.showMessageDialog(parent,
 						Strings.get("questaErrorMessage"),
 						Strings.get("questaErrorTitle"),
 						JOptionPane.ERROR_MESSAGE);
