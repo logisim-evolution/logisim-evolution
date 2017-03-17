@@ -89,6 +89,10 @@ public class BoardDialog implements ActionListener, ComponentListener {
 			JSlider source = (JSlider)e.getSource();
 			if (!source.getValueIsAdjusting()) {
 				int value = (int) source.getValue();
+				if (value > MaxZoom) {
+					source.setValue(MaxZoom);
+					value = MaxZoom;
+				}
 				parent.SetScale((float)value/(float)100.0);
 			}
 		}
@@ -116,6 +120,7 @@ public class BoardDialog implements ActionListener, ComponentListener {
 	private int DefaultPullSelection = 0;
 
 	private int DefaultActivity = 0;
+	private int MaxZoom;
 
 	/* BIg TODO: Add all language strings */
 
@@ -131,6 +136,7 @@ public class BoardDialog implements ActionListener, ComponentListener {
 
 		// Set an empty board picture
 		picturepanel = new BoardPanel(this);
+		picturepanel.addComponentListener(this);
 
 		JPanel ButtonPanel = new JPanel();
 		GridBagLayout ButtonLayout = new GridBagLayout();
@@ -198,6 +204,17 @@ public class BoardDialog implements ActionListener, ComponentListener {
 		 */
 		panel.setLocationRelativeTo(null);
 		panel.setVisible(true);
+		int ScreenWidth = (int)Toolkit.getDefaultToolkit().getScreenSize().getWidth();
+		int ScreenHeight = (int)Toolkit.getDefaultToolkit().getScreenSize().getHeight();
+		int ImageWidth = picturepanel.getWidth();
+		int ImageHeight = picturepanel.getHeight();
+		int ImageXBorder = panel.getWidth()-ImageWidth;
+		int ImageYBorder = panel.getHeight()-ImageHeight;
+		ScreenWidth -= ImageXBorder;
+		ScreenHeight -= (ImageYBorder+(ImageYBorder>>1));
+		int zoomX = (ScreenWidth*100)/ImageWidth;
+		int zoomY = (ScreenHeight*100)/ImageHeight;
+		MaxZoom = (zoomY > zoomX) ? zoomX : zoomY;
 	}
 
 	@Override
@@ -268,6 +285,7 @@ public class BoardDialog implements ActionListener, ComponentListener {
 
 	@Override
 	public void componentResized(ComponentEvent e) {
+		panel.pack();
 	}
 
 	@Override

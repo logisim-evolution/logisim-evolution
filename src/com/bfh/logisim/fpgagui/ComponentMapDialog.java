@@ -38,6 +38,7 @@ import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -339,6 +340,10 @@ public class ComponentMapDialog implements ActionListener,
 			JSlider source = (JSlider)e.getSource();
 			if (!source.getValueIsAdjusting()) {
 				int value = (int) source.getValue();
+				if (value > MaxZoom) {
+					source.setValue(MaxZoom);
+					value = MaxZoom;
+				}
 				parent.SetScale((float)value/(float)100.0);
 			}
 		}
@@ -368,6 +373,7 @@ public class ComponentMapDialog implements ActionListener,
 	private int image_width = 740;
 	private int image_height = 400;
 	private float scale = 1;
+	private int MaxZoom;
 	private BoardInformation BoardInfo;
 	private ArrayList<BoardRectangle> SelectableItems = new ArrayList<BoardRectangle>();
 	private String OldDirectory = "";
@@ -413,6 +419,7 @@ public class ComponentMapDialog implements ActionListener,
 		this.scale = scale;
 		BoardPic.setPreferredSize(new Dimension(BoardPic.getWidth(), BoardPic
 				.getHeight()));
+		BoardPic.setSize(new Dimension(BoardPic.getWidth(), BoardPic.getHeight()));
 		UnMappedPane.setPreferredSize(new Dimension(
 				BoardPic.getWidth()/3, 6*DoneButton.getHeight()+ScaleButton.getHeight()));
 		MappedPane.setPreferredSize(new Dimension(
@@ -577,6 +584,19 @@ public class ComponentMapDialog implements ActionListener,
 		MappedPane.setPreferredSize(new Dimension(
 				BoardPic.getWidth()/3, 6*DoneButton.getHeight()+ScaleButton.getHeight()));
 		panel.pack();
+		int ScreenWidth = (int)Toolkit.getDefaultToolkit().getScreenSize().getWidth();
+		int ScreenHeight = (int)Toolkit.getDefaultToolkit().getScreenSize().getHeight();
+		int ImageWidth = BoardPic.getWidth();
+		int ImageHeight = BoardPic.getHeight();
+		int ImageXBorder = panel.getWidth()-ImageWidth;
+		int ImageYBorder = panel.getHeight()-ImageHeight;
+		ScreenWidth -= ImageXBorder;
+		ScreenHeight -= (ImageYBorder+(ImageYBorder>>2));
+		int zoomX = (ScreenWidth*100)/ImageWidth;
+		int zoomY = (ScreenHeight*100)/ImageHeight;
+		MaxZoom = (zoomY > zoomX) ? zoomX : zoomY;
+		if (MaxZoom < 100)
+			MaxZoom = 100;
 	}
 	
 	public void actionPerformed(ActionEvent e) {

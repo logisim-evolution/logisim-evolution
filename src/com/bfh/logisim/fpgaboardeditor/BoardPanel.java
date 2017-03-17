@@ -115,10 +115,10 @@ public class BoardPanel extends JPanel implements MouseListener,
 	public void SetScale(float ScaleFactor) {
 		this.scale = ScaleFactor;
 		Dimension preferredSize = new Dimension();
-		preferredSize.width=AppPreferences.getScaled(image_width,scale);
-		preferredSize.height=AppPreferences.getScaled(image_height, scale);
-		this.setPreferredSize(preferredSize);
-		edit_parent.GetPanel().pack();
+		preferredSize.width=getWidth();
+		preferredSize.height=getHeight();
+		setPreferredSize(preferredSize);
+		setSize(preferredSize);
 	}
 	
 	public void clear() {
