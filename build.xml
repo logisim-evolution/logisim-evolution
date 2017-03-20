@@ -30,12 +30,12 @@
         <mkdir dir="bin"/>
         <javac srcdir="src" includeantruntime="false" destdir="bin" source="1.7" target="1.7" classpath="libs/colorpicker.jar:libs/fontchooser.jar:libs/jh.jar:libs/MRJAdapter.jar:libs/nimrodlf.jar:libs/rsyntaxtextarea.jar:libs/logback-classic-1.1.2.jar:libs/logback-core-1.1.2.jar:libs/slf4j-api-1.7.8.jar:libs/junit-4.12.jar:libs/hamcrest-core-1.3.jar" />
     </target>
-	
+
     <target name="jar" depends="compile">
         <jar destfile="logisim-evolution.jar">
             <fileset dir="bin" excludes="resources/ libs/ javax/ doc/ boards_model/"/>
             <fileset dir="." includes="doc/ resources/" excludes="doc/**/html/guide/analyze/" />
-			<zipgroupfileset dir="libs" includes="*.jar"/>
+            <zipgroupfileset dir="libs" includes="*.jar"/>
             <manifest>
                 <attribute name="Main-Class" value="com.cburch.logisim.Main"/>
             </manifest>
@@ -46,19 +46,19 @@
         <jar destfile="Logisim_src.jar">
             <fileset dir="bin" />
             <fileset dir="." includes="doc/ src/ build.xml publi/" />
-			<zipgroupfileset dir="libs" includes="*.jar"/>
+            <zipgroupfileset dir="libs" includes="*.jar"/>
             <manifest>
                 <attribute name="Main-Class" value="com.cburch.logisim.Main"/>
             </manifest>
         </jar>
     </target>
-    
+
     <target name="jar_all" depends="compile">
         <patch patchfile="main.patch" originalfile="src/com/cburch/logisim/Main.java"/>
        <jar destfile="logisim-evolution.jar">
             <fileset dir="bin" excludes="resources/ libs/ javax/ doc/ boards_model/"/>
             <fileset dir="." includes="doc/ resources/" />
-			<zipgroupfileset dir="libs" includes="*.jar"/>
+            <zipgroupfileset dir="libs" includes="*.jar"/>
             <manifest>
                 <attribute name="Main-Class" value="com.cburch.logisim.Main"/>
             </manifest>
