@@ -1,0 +1,12 @@
+#!/usr/bin/env xdg-open
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=Logisim-evolution
+Comment=Educational tool for designing and simulating digital logic circuits
+Exec=/opt/Logisim-evolution/Logisim-evolution
+Icon=/opt/Logisim-evolution/Logisim-evolution.png
+Terminal=false
+MimeType=application/prs.cburch.logisim
+Categories=Development;Electronics
+Keywords=CPLD;FPGA
