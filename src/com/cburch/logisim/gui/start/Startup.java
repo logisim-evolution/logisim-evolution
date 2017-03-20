@@ -857,6 +857,8 @@ public class Startup implements AWTEventListener {
 	        		(container instanceof JCheckBoxMenuItem)) {
 	        		AppPreferences.setScaledFonts(((JComponent)container).getComponents());
 	        		containerEvent.getChild().setFont(AppPreferences.getScaledFont(containerEvent.getChild().getFont()));
+	        		containerEvent.getChild().revalidate();
+	        		containerEvent.getChild().repaint();
 	        	}
 	        	if (container instanceof JOptionPane) {
 	        		JOptionPane pane = (JOptionPane) container;

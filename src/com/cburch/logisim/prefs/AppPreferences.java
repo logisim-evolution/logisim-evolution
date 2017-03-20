@@ -374,7 +374,9 @@ public class AppPreferences {
 		for (int x = 0 ; x < comp.length; x++) {
 			if (comp[x] instanceof Container)
 				setScaledFonts(((Container) comp[x]).getComponents());
-			try{comp[x].setFont(getScaledFont(comp[x].getFont()));}
+			try{comp[x].setFont(getScaledFont(comp[x].getFont()));
+			    comp[x].revalidate();
+			    comp[x].repaint();}
 			catch(Exception e){}
 		}
 	}
@@ -418,7 +420,7 @@ public class AppPreferences {
 	
 	public static Font getScaledFont(Font myfont) {
 		if (myfont != null)
-			return myfont.deriveFont(getScaled((float)IconSize));
+			return myfont.deriveFont(getScaled((float)FontSize));
 		else
 			return null;
 	}
@@ -447,6 +449,7 @@ public class AppPreferences {
 
 	// Template preferences
 	public static final int IconSize = 16;
+	public static final int FontSize = 14;
 	public static final int IconBorder = 2;
 	public static final int BoxSize = IconSize+2*IconBorder;
 	public static final int TEMPLATE_UNKNOWN = -1;
@@ -477,6 +480,7 @@ public class AppPreferences {
 	public static final PrefMonitor<String> LOCALE = create(new LocalePreference());
 	public static final PrefMonitor<Boolean> ACCENTS_REPLACE = create(new PrefMonitorBoolean(
 			"accentsReplace", false));
+	
 	// FPGA Commander Preferences
 	public static final PrefMonitor<String> FPGA_Workspace=create(new PrefMonitorString(
 			"FPGAWorkspace", System.getProperty("user.home")));
