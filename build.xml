@@ -4,7 +4,11 @@
     Original code by Adrien Lescourt - 10.2011
 -->
 
-<project name="logisim-evolution">
+<project name="logisim-evolution" default="compile" basedir="."
+	xmlns:fx="javafx:com.sun.javafx.tools.ant">
+
+	<property name="app.name" value="Logisim-evolution"/>
+	<property name="app.version" value="2.13.23"/>
 
     <target name="cleanall" depends="clean">
         <delete dir="bin/com/bfh/"/>
@@ -15,6 +19,11 @@
     <target name="clean">
         <delete file="logisim-evolution.jar"/>
         <delete file="logisim-evolution_src.jar"/>
+        <delete file="package/logisim-evolution.jar"/>
+        <delete file="package/${app.name}.jnlp"/>
+        <delete file="package/${app.name}_browser.jnlp"/>
+        <delete file="package/${app.name}.html"/>
+        <delete dir="package/bundles"/>
     </target>
 
     <target name="compile" depends="clean">
@@ -65,4 +74,45 @@
         <java jar="logisim-evolution.jar" fork="true"/>
     </target>
 
+    <target name="package" depends="jar">
+        <taskdef resource="com/sun/javafx/tools/ant/antlib.xml"
+                 uri="javafx:com.sun.javafx.tools.ant"
+                 classpath=".:${java.home}/../lib/ant-javafx.jar"/>
+        <fx:deploy width="600" height="400"
+                   embeddedWidth="100%" embeddedHeight="100%"
+                   outdir="${basedir}/package" 
+                   outfile="${app.name}"
+                   nativeBundles="all"
+                   verbose="true">
+
+            <fx:application name="${app.name}"
+                            mainClass="com.cburch.logisim.Main"
+                            version="${app.version}"
+                            toolkit="swing"
+            />
+            <!-- Package only application and dependencies but not the JRE -->
+            <fx:platform basedir=""/>
+ 
+            <fx:resources>
+                <fx:fileset dir="." includes="logisim-evolution.jar"/>
+            </fx:resources>
+
+            <fx:info title="${app.name}"
+                     vendor="${app.name} development team"
+                     description="${app.name} for design and simulation of digital logic circuits"
+                     category="Engineering"
+                     copyright="Copyright (C) 2001--2017 Carl Burch, BFH, HEIG-VD, HEPIA, et al."
+                     license="GNU GENERAL PUBLIC LICENSE, version 3"
+            >
+                <fx:association extension="circ" description="${app.name} circuit file"/>
+            </fx:info>
+            <fx:bundleArgument arg="email" value="roberto.rigamonti@heig-vd.ch"/>
+            <fx:bundleArgument arg="linux.bundleName" value="logisim-evolution"/>
+            <!-- See https://developer.apple.com/library/content/documentation/General/Reference/InfoPlistKeyReference/Articles/LaunchServicesKeys.html#//apple_ref/doc/uid/TP40009250-SW8 for list of AppStore categories -->
+            <fx:bundleArgument arg="mac.category" value="public.app-category.education"/>
+            <fx:bundleArgument arg="mac.CFBundleName" value="Logisim"/>
+            <fx:bundleArgument arg="mac.CFBundleIdentifier" value="com.cburch.logisim"/>
+            <fx:bundleArgument arg="win.menuGroup" value="Engineering"/>
+        </fx:deploy>
+    </target>
 </project>
