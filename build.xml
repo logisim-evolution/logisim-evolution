@@ -80,7 +80,7 @@
                  classpath=".:${java.home}/../lib/ant-javafx.jar"/>
         <fx:deploy width="600" height="400"
                    embeddedWidth="100%" embeddedHeight="100%"
-                   outdir="${basedir}/package" 
+                   outdir="${basedir}/package"
                    outfile="${app.name}"
                    nativeBundles="all"
                    verbose="true">
@@ -92,7 +92,7 @@
             />
             <!-- Package only application and dependencies but not the JRE -->
             <fx:platform basedir=""/>
- 
+
             <fx:resources>
                 <fx:fileset dir="." includes="logisim-evolution.jar"/>
             </fx:resources>
@@ -104,7 +104,7 @@
                      copyright="Copyright (C) 2001--2017 Carl Burch, BFH, HEIG-VD, HEPIA, et al."
                      license="GNU GENERAL PUBLIC LICENSE, version 3"
             >
-                <fx:association extension="circ" description="${app.name} circuit file"/>
+                <fx:association extension="circ" mimetype="application-prs.cburch.logisim" description="${app.name} circuit file"/>
             </fx:info>
             <fx:bundleArgument arg="email" value="roberto.rigamonti@heig-vd.ch"/>
             <fx:bundleArgument arg="linux.bundleName" value="logisim-evolution"/>
