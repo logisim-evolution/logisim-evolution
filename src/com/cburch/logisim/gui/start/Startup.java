@@ -856,9 +856,10 @@ public class Startup implements AWTEventListener {
 	        		(container instanceof JFontChooser)||
 	        		(container instanceof JCheckBoxMenuItem)) {
 	        		AppPreferences.setScaledFonts(((JComponent)container).getComponents());
-	        		containerEvent.getChild().setFont(AppPreferences.getScaledFont(containerEvent.getChild().getFont()));
-	        		containerEvent.getChild().revalidate();
-	        		containerEvent.getChild().repaint();
+	        		try{container.setFont(AppPreferences.getScaledFont(containerEvent.getChild().getFont()));
+	        			container.revalidate();
+	        			container.repaint();}
+	        		catch(Exception e){}
 	        	}
 	        	if (container instanceof JOptionPane) {
 	        		JOptionPane pane = (JOptionPane) container;
@@ -866,23 +867,23 @@ public class Startup implements AWTEventListener {
 	        			ImageIcon icon;
 	        			switch (pane.getMessageType()) {
 	        				case JOptionPane.ERROR_MESSAGE :
-	        					icon = new ImageIcon(this.getClass().getClassLoader().getResource("resources/logisim/error.png"));
+	        					icon = new ImageIcon(getClass().getClassLoader().getResource("resources/logisim/error.png"));
 	        					pane.setIcon(AppPreferences.getScaledImageIcon(icon,(float) 3));
 	        					break;
 	        				case JOptionPane.QUESTION_MESSAGE :
-	        					icon = new ImageIcon(this.getClass().getClassLoader().getResource("resources/logisim/question.png"));
+	        					icon = new ImageIcon(getClass().getClassLoader().getResource("resources/logisim/question.png"));
 	        					pane.setIcon(AppPreferences.getScaledImageIcon(icon,(float) 3));
 	        					break;
 	        				case JOptionPane.PLAIN_MESSAGE :
-	        					icon = new ImageIcon(this.getClass().getClassLoader().getResource("resources/logisim/plain.png"));
+	        					icon = new ImageIcon(getClass().getClassLoader().getResource("resources/logisim/plain.png"));
 	        					pane.setIcon(AppPreferences.getScaledImageIcon(icon,(float) 3));
 	        					break;
 	        				case JOptionPane.INFORMATION_MESSAGE :
-	        					icon = new ImageIcon(this.getClass().getClassLoader().getResource("resources/logisim/info.png"));
+	        					icon = new ImageIcon(getClass().getClassLoader().getResource("resources/logisim/info.png"));
 	        					pane.setIcon(AppPreferences.getScaledImageIcon(icon,(float) 3));
 	        					break;
 	        				case JOptionPane.WARNING_MESSAGE :
-	        					icon = new ImageIcon(this.getClass().getClassLoader().getResource("resources/logisim/warning.png"));
+	        					icon = new ImageIcon(getClass().getClassLoader().getResource("resources/logisim/warning.png"));
 	        					pane.setIcon(AppPreferences.getScaledImageIcon(icon,(float) 3));
 	        					break;
 	        			}
