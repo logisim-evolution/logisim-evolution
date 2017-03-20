@@ -19,12 +19,12 @@ set -e
 
 case "$1" in
     configure)
-        echo Adding shortcut to the menu
-
-
+        echo "Adding shortcut to the menu"
         xdg-desktop-menu install --novendor /opt/Logisim-evolution/Logisim-evolution.desktop
         xdg-mime install /opt/Logisim-evolution/Logisim-evolutiondevelopmentteam-Logisim-evolution-MimeInfo.xml
 
+        echo "Installing command line tool logisim-evolution"
+        ln -s /opt/Logisim-evolution/Logisim-evolution /usr/bin/logisim-evolution
 
         if [ "false" = "true" ]; then
             echo Installing daemon
