@@ -52,6 +52,7 @@ import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import com.bfh.logisim.designrulecheck.CorrectLabel;
 import com.cburch.logisim.analyze.model.VariableList;
 import com.cburch.logisim.analyze.model.VariableListEvent;
 import com.cburch.logisim.analyze.model.VariableListListener;
@@ -192,6 +193,8 @@ class VariableTab extends AnalyzerTab implements TabInterface {
 
 	private VariableList data;
 	private MyListener myListener = new MyListener();
+	private VariableTab Othertab = null;
+	private String OtherId;
 
 	@SuppressWarnings("rawtypes")
 	private JList list = new JList();
@@ -271,6 +274,11 @@ class VariableTab extends AnalyzerTab implements TabInterface {
 			list.setSelectedValue(data.get(0), true);
 		computeEnabled();
 	}
+	
+	public void SetCompanion(VariableTab tab , String id) {
+		Othertab = tab;
+		OtherId = id;
+	}
 
 	private void computeEnabled() {
 		int index = list.getSelectedIndex();
@@ -324,6 +332,15 @@ class VariableTab extends AnalyzerTab implements TabInterface {
 		VariableListModel model = (VariableListModel) list.getModel();
 		model.update();
 	}
+	
+	public boolean contains(String label) {
+		for (int i = 0, n = data.size(); i < n; i++) {
+			String other = data.get(i);
+			if (label.toLowerCase().equals(other.toLowerCase()))
+				return true;
+		}
+		return false;
+	}
 
 	private boolean validateInput() {
 		String text = field.getText().trim();
@@ -346,12 +363,26 @@ class VariableTab extends AnalyzerTab implements TabInterface {
 			}
 		}
 		if (ok) {
-			for (int i = 0, n = data.size(); i < n && ok; i++) {
-				String other = data.get(i);
-				if (text.equals(other)) {
-					error.setText(Strings.get("variableDuplicateError"));
-					ok = false;
+			if (!CorrectLabel.IsCorrectLabel(text)) {
+				ok = false;
+				if (CorrectLabel.IsKeyword(text, false)) {
+					error.setText(Strings.get("HdlKeyword"));
+				} else {
+					String wrong = CorrectLabel.FirstInvalidCharacter(text);
+					error.setText(StringUtil.format(Strings.get("InvalidCharacter"),wrong));
 				}
+			}
+		}
+		if (ok) {
+			if (contains(text)) {
+				error.setText(Strings.get("variableDuplicateError"));
+				ok = false;
+			}
+		}
+		if (ok&&(Othertab!=null)) {
+			if (Othertab.contains(text)) {
+				error.setText(StringUtil.format(Strings.get("variableDuplicateError1"), OtherId));
+				ok = false;
 			}
 		}
 		if (ok || !errorShown) {

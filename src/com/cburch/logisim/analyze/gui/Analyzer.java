@@ -175,6 +175,8 @@ public class Analyzer extends LFrame {
 	Analyzer() {
 		inputsPanel = new VariableTab(model.getInputs());
 		outputsPanel = new VariableTab(model.getOutputs());
+		inputsPanel.SetCompanion(outputsPanel, Strings.get("outputsTab"));
+		outputsPanel.SetCompanion(inputsPanel, Strings.get("inputsTab"));
 		truthTablePanel = new TableTab(model.getTruthTable());
 		expressionPanel = new ExpressionTab(model);
 		minimizedPanel = new MinimizedTab(model);
