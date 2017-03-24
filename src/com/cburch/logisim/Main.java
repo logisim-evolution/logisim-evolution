@@ -41,11 +41,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.cburch.logisim.gui.start.Startup;
+import com.cburch.logisim.prefs.AppPreferences;
 
 public class Main {
 	public static void main(String[] args) throws Exception {
 		try {
-			UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+			UIManager.setLookAndFeel(AppPreferences.LookAndFeel.get());
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		} catch (InstantiationException e) {
