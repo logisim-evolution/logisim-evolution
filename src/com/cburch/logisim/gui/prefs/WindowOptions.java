@@ -31,10 +31,15 @@
 package com.cburch.logisim.gui.prefs;
 
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
+import javax.swing.UIManager;
+import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -48,7 +53,7 @@ class WindowOptions extends OptionsPanel {
 	private PrefOptionList toolbarPlacement;
 	private ZoomSlider ZoomValue;
 	
-	private class ZoomChange implements ChangeListener {
+	private class ZoomChange implements ChangeListener,ActionListener {
 
 		@Override
 		public void stateChanged(ChangeEvent e) {
@@ -59,9 +64,24 @@ class WindowOptions extends OptionsPanel {
 				localeChanged();
 			}
 		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if (e.getSource().equals(LookAndFeel)) {
+				if (LookAndFeel.getSelectedIndex()!= Index) {
+					Index = LookAndFeel.getSelectedIndex();
+					AppPreferences.LookAndFeel.set(LFInfos[Index].getClassName());
+				}
+			}
+		}
 		
 	}
 
+    private JComboBox<String> LookAndFeel;
+    private int Index = 0;
+    private LookAndFeelInfo[] LFInfos;
+
+	
 	public WindowOptions(PreferencesFrame window) {
 		super(window);
 		JLabel ZoomLabel = new JLabel();
@@ -94,15 +114,31 @@ class WindowOptions extends OptionsPanel {
 		
 		panel.add(new JLabel(" "));
 		panel.add(new JLabel(" "));
+		JLabel important = new JLabel("Please restart logisim.");
+	    important.setFont(important.getFont().deriveFont(Font.ITALIC));
+	    panel.add(important);
+	    important = new JLabel("Important: changing the below values may have unpridictable results!");
+	    important.setFont(important.getFont().deriveFont(Font.ITALIC));
+	    panel.add(important);
 		panel.add(ZoomLabel);
 		panel.add(ZoomValue);
-		ZoomValue.addChangeListener(new ZoomChange());
-		JLabel important = new JLabel("Please restart logisim,");
-	    important.setFont(important.getFont().deriveFont(Font.ITALIC));
-	    panel.add(important);
-	    important = new JLabel(" changing this value may have unpridictable results");
-	    important.setFont(important.getFont().deriveFont(Font.ITALIC));
-	    panel.add(important);
+		ZoomChange Listener = new ZoomChange();
+		ZoomValue.addChangeListener(Listener);
+	    int index = 0;
+	    LookAndFeel = new JComboBox<String>();
+	    LFInfos = UIManager.getInstalledLookAndFeels();
+		for (LookAndFeelInfo info : LFInfos) {
+			LookAndFeel.insertItemAt(info.getName(), index);
+			if (info.getClassName().equals(AppPreferences.LookAndFeel.get())) {
+				LookAndFeel.setSelectedIndex(index);
+				Index = index;
+			}
+			index++;
+		}
+		panel.add(new JLabel("Look and Feel:"));
+		panel.add(LookAndFeel);
+		LookAndFeel.addActionListener(Listener);
+
 	    
 		setLayout(new TableLayout(1));
 		for (int i = 0; i < checks.length; i++) {
