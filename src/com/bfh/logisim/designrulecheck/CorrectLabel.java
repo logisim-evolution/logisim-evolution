@@ -80,6 +80,34 @@ public class CorrectLabel {
 		return true;
 	}
 	
+	public static boolean IsCorrectLabel(String Label) {
+		if (Label.isEmpty())
+			return true;
+		for (int i = 0; i < Label.length(); i++) {
+			if (!Chars.contains(Label.toLowerCase().substring(i, i + 1))
+					&& !Numbers.contains(Label.substring(i, i + 1))) {
+				return false;
+			}
+		}
+		if (VHDLKeywords.contains(Label.toLowerCase())) 
+			return false;
+		if (VerilogKeywords.contains(Label)) 
+			return false;
+		return true;
+	}
+	
+	public static String FirstInvalidCharacter(String Label) {
+		if (Label.isEmpty())
+			return "";
+		for (int i = 0; i < Label.length(); i++) {
+			if (!Chars.contains(Label.toLowerCase().substring(i, i + 1))
+					&& !Numbers.contains(Label.substring(i, i + 1))) {
+				return Label.toLowerCase().substring(i, i + 1);
+			}
+		}
+		return "";
+	}
+	
 	public static boolean IsCorrectLabel(String Label, String HDLIdentifier) {
 		if (Label.isEmpty())
 			return true;
