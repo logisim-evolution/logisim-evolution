@@ -77,11 +77,14 @@ class KarnaughMapPanel extends JPanel implements TruthTablePanel {
 
 	private static final Color[] IMP_COLORS = new Color[] {
 			new Color(255, 0, 0, 128), new Color(0, 150, 0, 128),
-			new Color(0, 0, 255, 128), new Color(255, 0, 255, 128), };
+			new Color(0, 0, 255, 128), new Color(255, 0, 255, 128),
+			new Color(0, 255, 255, 128), new Color(80, 80, 80, 128),};
 
-	private static final int MAX_VARS = 4;
-	private static final int[] ROW_VARS = { 0, 0, 1, 1, 2 };
-	private static final int[] COL_VARS = { 0, 1, 1, 2, 2 };
+	private static final int MAX_VARS = 5;
+	private static final int[] ROW_VARS = { 0, 0, 1, 1, 2 , 2 };
+	private static final int[] COL_VARS = { 0, 1, 1, 2, 2 , 3 };
+	private static final int[] BigCOL_Index = {0,1,3,2,6,7,5,4};
+	private static final int[] BigCOL_Place = {0,1,3,2,7,6,4,5};
 	private static final int CELL_HORZ_SEP = 10;
 	private static final int CELL_VERT_SEP = 10;
 	private static final int IMP_INSET = 4;
@@ -155,12 +158,15 @@ class KarnaughMapPanel extends JPanel implements TruthTablePanel {
 
 		int rows = 1 << ROW_VARS[table.getInputColumnCount()];
 		int cols = 1 << COL_VARS[table.getInputColumnCount()];
-		tableWidth = headHeight + cellWidth * cols +15;
-		tableHeight = headHeight + cellHeight * rows+15;
-		if ((cols==4)&&(rows==4)) {
+		tableWidth = headHeight + cellWidth * (cols) +15;
+		tableHeight = headHeight + cellHeight * (rows)+15;
+		if ((cols>=4)&&(rows>=4)) {
 			tableWidth += headHeight+11;
 		}
-		if (cols==4) {
+		if (cols>=4) {
+			tableHeight += headHeight+11;
+		}
+		if (cols > 4) {
 			tableHeight += headHeight+11;
 		}
 		setPreferredSize(new Dimension(tableWidth, tableHeight));
@@ -170,6 +176,9 @@ class KarnaughMapPanel extends JPanel implements TruthTablePanel {
 
 	private int getCol(int tableRow, int rows, int cols) {
 		int ret = tableRow % cols;
+		if (cols > 4) {
+			return BigCOL_Place[ret];
+		}
 		switch (ret) {
 		case 2:
 			return 3;
@@ -217,7 +226,7 @@ class KarnaughMapPanel extends JPanel implements TruthTablePanel {
 	}
 
 	private int getTableRow(int row, int col, int rows, int cols) {
-		return toRow(row, rows) * cols + toRow(col, cols);
+		return toRow(row, rows) * cols + toCol(col, cols);
 	}
 
 	@Override
@@ -292,7 +301,7 @@ class KarnaughMapPanel extends JPanel implements TruthTablePanel {
 				         } else {
 				        	 rotated = true;
 				        	 yoffset += (rows-1)*cellHeight;
-				        	 if (inputCount != 4)
+				        	 if (inputCount < 4)
 				        		 yoffset += cellHeight/2;
 				        	 xoffset = headFm.getAscent();
 				         }
@@ -309,21 +318,36 @@ class KarnaughMapPanel extends JPanel implements TruthTablePanel {
 							  rotated=true;
 							  xoffset += 4*cellWidth+11+headFm.getAscent();
 							  yoffset += 2*cellHeight;
+							  if (inputCount > 4) {
+								  xoffset += 4*cellWidth;
+							  }
 						  }
 				          break;
-				case 2  : if (inputCount==3) {
-					         rotated = false;
+				case 2  : rotated = false;
+			      		  if (inputCount==3) {
 					         xoffset += 2*cellWidth;
 					         yoffset += 11+2*cellHeight+headFm.getAscent();
-				          } else {
-				        	 rotated = false;
+				          } else if (inputCount == 4 ){
 				        	 xoffset += 3*cellWidth;
 				        	 yoffset = headFm.getAscent();
+				          } else {
+				        	  xoffset += 6*cellWidth;
+				        	  yoffset += 11+4*cellHeight+headFm.getAscent();
 				          }
 				          break;
 				case 3  : rotated = false;
-		                  xoffset += 2*cellWidth;
-		                  yoffset += 11+4*cellHeight+headFm.getAscent();
+				          if (inputCount == 4) {
+				        	  xoffset += 2*cellWidth;
+				        	  yoffset += 11+4*cellHeight+headFm.getAscent();
+				          } else {
+				        	  xoffset += 4*cellWidth;
+					          yoffset = headFm.getAscent();
+				          }
+				          break;
+				case 4 : rotated = false;
+						 xoffset += 2*cellWidth;
+			        	 yoffset += 11+4*cellHeight+headFm.getAscent()+headHeight;
+			        	 break;
 				default : break;
 			}
 			if (g instanceof Graphics2D) {
@@ -334,6 +358,8 @@ class KarnaughMapPanel extends JPanel implements TruthTablePanel {
 					g2.drawString(header, -middleOffset, 0 );
 				} else
 				g2.drawString(header, xoffset+x-middleOffset, yoffset+y);
+				if (i==4)
+					g2.drawString(header, 4*cellWidth+xoffset+x-middleOffset, yoffset+y);
 			}
 		}
 
@@ -345,14 +371,27 @@ class KarnaughMapPanel extends JPanel implements TruthTablePanel {
 		x += 11;
 		y += 11;
 		/* Here the 0/1 labels are placed */
-		if (cols == 2) {
-			g.drawLine(x+cellWidth, y-8, x+2*cellWidth, y-8);
-			g.drawLine(x+cellWidth, y-9, x+2*cellWidth, y-9);
-		} else {
-			g.drawLine(x+2*cellWidth, y-8, x+4*cellWidth, y-8);
-			g.drawLine(x+2*cellWidth, y-9, x+4*cellWidth, y-9);
-			g.drawLine(x+cellWidth, y+8+rows*cellHeight, x+3*cellWidth, y+8+rows*cellHeight);
-			g.drawLine(x+cellWidth, y+9+rows*cellHeight, x+3*cellWidth, y+9+rows*cellHeight);
+		switch (cols) {
+			case 2 :
+				g.drawLine(x+cellWidth, y-8, x+2*cellWidth, y-8);
+				g.drawLine(x+cellWidth, y-9, x+2*cellWidth, y-9);
+				break;
+			case 4 :
+				g.drawLine(x+2*cellWidth, y-8, x+4*cellWidth, y-8);
+				g.drawLine(x+2*cellWidth, y-9, x+4*cellWidth, y-9);
+				g.drawLine(x+cellWidth, y+8+rows*cellHeight, x+3*cellWidth, y+8+rows*cellHeight);
+				g.drawLine(x+cellWidth, y+9+rows*cellHeight, x+3*cellWidth, y+9+rows*cellHeight);
+				break;
+			case 8 :
+				g.drawLine(x+cellWidth, y+8+rows*cellHeight+headHeight, x+3*cellWidth, y+8+rows*cellHeight+headHeight);
+				g.drawLine(x+cellWidth, y+9+rows*cellHeight+headHeight, x+3*cellWidth, y+9+rows*cellHeight+headHeight);
+				g.drawLine(x+5*cellWidth, y+8+rows*cellHeight+headHeight, x+7*cellWidth, y+8+rows*cellHeight+headHeight);
+				g.drawLine(x+5*cellWidth, y+9+rows*cellHeight+headHeight, x+7*cellWidth, y+9+rows*cellHeight+headHeight);
+				g.drawLine(x+2*cellWidth, y-8, x+6*cellWidth, y-8);
+				g.drawLine(x+2*cellWidth, y-9, x+6*cellWidth, y-9);
+				g.drawLine(x+4*cellWidth, y+8+rows*cellHeight, x+8*cellWidth, y+8+rows*cellHeight);
+				g.drawLine(x+4*cellWidth, y+9+rows*cellHeight, x+8*cellWidth, y+9+rows*cellHeight);
+				break;
 		}
 		switch (rows) {
 			case 2 :
@@ -464,37 +503,49 @@ class KarnaughMapPanel extends JPanel implements TruthTablePanel {
 			g.fillRoundRect(x + colMin * cellWidth + IMP_INSET, y + rowMin
 					* cellHeight + IMP_INSET, numCols * cellWidth - 2
 					* IMP_INSET, numRows * cellHeight - 2 * IMP_INSET, d, d);
+			/*easy case*/
+		} else if (numCols > 4) {
+			/* only for tables bigger than 16 entries */
+			/* TODO: Make the group marking more clear */
+			for (Implicant sq : imp.getTerms()) {
+				int tableRow = sq.getRow();
+				int row = getRow(tableRow, rows, cols);
+				int col = getCol(tableRow, rows, cols);
+				int w = cellWidth-3;
+				int h = cellHeight-3;
+				g.fillRect(2+x+col*cellWidth, 2+y+row*cellHeight, w, h);
+			}
 		} else if (covered == 16) {
 			if (count == 4) {
 				int w = cellWidth - IMP_INSET;
 				int h = cellHeight - IMP_INSET;
 				int x1 = x + 3 * cellWidth + IMP_INSET;
 				int y1 = y + 3 * cellHeight + IMP_INSET;
-				g.fillRoundRect(x, y, w, h, d, d);
-				g.fillRoundRect(x1, y, w, h, d, d);
-				g.fillRoundRect(x, y1, w, h, d, d);
-				g.fillRoundRect(x1, y1, w, h, d, d);
+				g.fillRoundRect(x+colMin*cellWidth, y, w, h, d, d);
+				g.fillRoundRect(x1+colMin*cellWidth, y, w, h, d, d);
+				g.fillRoundRect(x+colMin*cellWidth, y1, w, h, d, d);
+				g.fillRoundRect(x1+colMin*cellWidth, y1, w, h, d, d);
 			} else if (oneRowFound) { // first and last columns
 				int w = cellWidth - IMP_INSET;
 				int h = 4 * cellHeight - 2 * IMP_INSET;
 				int x1 = x + 3 * cellWidth + IMP_INSET;
-				g.fillRoundRect(x, y + IMP_INSET, w, h, d, d);
-				g.fillRoundRect(x1, y + IMP_INSET, w, h, d, d);
+				g.fillRoundRect(x+colMin*cellWidth, y + IMP_INSET, w, h, d, d);
+				g.fillRoundRect(x1+colMin*cellWidth, y + IMP_INSET, w, h, d, d);
 			} else { // first and last rows
 				int w = 4 * cellWidth - 2 * IMP_INSET;
 				int h = cellHeight - IMP_INSET;
 				int y1 = y + 3 * cellHeight + IMP_INSET;
-				g.fillRoundRect(x + IMP_INSET, y, w, h, d, d);
-				g.fillRoundRect(x + IMP_INSET, y1, w, h, d, d);
+				g.fillRoundRect(x+colMin*cellWidth + IMP_INSET, y, w, h, d, d);
+				g.fillRoundRect(x+colMin*cellWidth + IMP_INSET, y1, w, h, d, d);
 			}
 		} else if (numCols == 4) {
 			int top = y + rowMin * cellHeight + IMP_INSET;
 			int w = cellWidth - IMP_INSET;
 			int h = numRows * cellHeight - 2 * IMP_INSET;
 			// handle half going off left edge
-			g.fillRoundRect(x, top, w, h, d, d);
+			g.fillRoundRect(x+colMin*cellWidth, top, w, h, d, d);
 			// handle half going off right edge
-			g.fillRoundRect(x + 3 * cellWidth + IMP_INSET, top, w, h, d, d);
+			g.fillRoundRect(x + 3 * cellWidth+colMin*cellWidth + IMP_INSET, top, w, h, d, d);
 			/*
 			 * This is the proper way, with no rounded rectangles along the
 			 * table's edge; but I found that the different regions were liable
@@ -554,6 +605,24 @@ class KarnaughMapPanel extends JPanel implements TruthTablePanel {
 			}
 		} else {
 			return row;
+		}
+	}
+
+	private int toCol(int col, int cols) {
+		if (cols > 4) {
+			return BigCOL_Index[col];
+		}
+		if (cols == 4) {
+			switch (col) {
+			case 2:
+				return 3;
+			case 3:
+				return 2;
+			default:
+				return col;
+			}
+		} else {
+			return col;
 		}
 	}
 
