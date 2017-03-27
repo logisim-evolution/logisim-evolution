@@ -45,6 +45,7 @@ import com.cburch.draw.model.CanvasObject;
 import com.cburch.draw.shapes.DrawAttr;
 import com.cburch.draw.shapes.Rectangle;
 import com.cburch.draw.shapes.Text;
+import com.cburch.draw.util.EditableLabel;
 import com.cburch.logisim.circuit.Wire;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Location;
@@ -54,8 +55,6 @@ import com.cburch.logisim.std.wiring.Pin;
 
 class DefaultAppearance {
 	private static class CompareLocations implements Comparator<Instance> {
-
-		
 		private boolean byX;
 
 		CompareLocations(boolean byX) {
@@ -243,13 +242,19 @@ class DefaultAppearance {
 				sdy);
 		placePins(ret, edge.get(Direction.EAST), rx + width, ry + 10, 0,
 				dy,false,sdy);
-		
-		/* This is the surrounding of the Rectangle */
 		Rectangle rect = new Rectangle(rx+10,ry+height-Thight,width-20,Thight);
-		rect = new Rectangle(rx+ CircuitAppearance.PINLENGTH, ry, width-2*CircuitAppearance.PINLENGTH, height);
+		rect.setValue(DrawAttr.STROKE_WIDTH, Integer.valueOf(1));
+		rect.setValue(DrawAttr.PAINT_TYPE, DrawAttr.PAINT_FILL);
+		rect.setValue(DrawAttr.FILL_COLOR, Color.black);
+		ret.add(rect);
+		rect = new Rectangle(rx+10, ry, width-20, height);
 		rect.setValue(DrawAttr.STROKE_WIDTH, Integer.valueOf(2));
 		ret.add(rect);
-
+		Text label = new Text(rx+(width>>1),ry+(height-DrawAttr.FixedFontDescent-5),CircuitName);
+		label.getLabel().setHorizontalAlignment(EditableLabel.CENTER);
+		label.getLabel().setColor(Color.white);
+		label.getLabel().setFont(DrawAttr.DEFAULT_NAME_FONT);
+		ret.add(label);
 		ret.add(new AppearanceAnchor(Location.create(rx + ax, ry + ay)));
 		return ret;
     }
@@ -292,13 +297,20 @@ class DefaultAppearance {
     
     private static void placePins(List<CanvasObject> dest, List<Instance> pins,
 			int x, int y, int dx, int dy, boolean LeftSide, int ldy) {
+		int halign;
+		Color color = Color.DARK_GRAY;
+		int ldx;
 		for (Instance pin : pins) {
 			int offset = (pin.getAttributeValue(StdAttr.WIDTH).getWidth() > 1) ? Wire.WIDTH_BUS>>1:Wire.WIDTH>>1;
 			int height = (pin.getAttributeValue(StdAttr.WIDTH).getWidth() > 1) ? Wire.WIDTH_BUS:Wire.WIDTH;
 			Rectangle rect;
 			if (LeftSide) {
+				ldx=15;
+				halign=EditableLabel.LEFT;
 				rect = new Rectangle(x,y-offset,10,height);
 			} else {
+				ldx=-15;
+				halign=EditableLabel.RIGHT;
 				rect = new Rectangle(x-10,y-offset,10,height);
 			}
 			rect.setValue(DrawAttr.STROKE_WIDTH, Integer.valueOf(1));
@@ -306,13 +318,19 @@ class DefaultAppearance {
 			rect.setValue(DrawAttr.FILL_COLOR, Color.BLACK);
 			dest.add(rect);
 			dest.add(new AppearancePort(Location.create(x, y), pin));
-
+			if (pin.getAttributeSet().containsAttribute(StdAttr.LABEL)) {
+				Text label = new Text(x+ldx,y+ldy,pin.getAttributeValue(StdAttr.LABEL));
+				label.getLabel().setHorizontalAlignment(halign);
+				label.getLabel().setColor(color);
+				label.getLabel().setFont(DrawAttr.DEFAULT_FIXED_PICH_FONT);
+				dest.add(label);
+			}
 			x += dx;
 			y += dy;
 		}
 	}
 
-	public static void sortPinList(List<Instance> pins, Direction facing) {
+	static void sortPinList(List<Instance> pins, Direction facing) {
 		if (facing == Direction.NORTH || facing == Direction.SOUTH) {
 			Comparator<Instance> sortHorizontal = new CompareLocations(true);
 			Collections.sort(pins, sortHorizontal);
@@ -321,7 +339,7 @@ class DefaultAppearance {
 			Collections.sort(pins, sortVertical);
 		}
 	}
-	
+
 	private static final int OFFS = 50;
 
 	private DefaultAppearance() {

@@ -106,7 +106,7 @@ class Clipboard {
 			/* We clear all labels on the Clipboard */
 			if (copyAttrs.containsAttribute(StdAttr.LABEL)&&ClearLabels) {
 				if (!(base.getFactory() instanceof Tunnel)) {
-					continue;
+					copyAttrs.setValue(StdAttr.LABEL, "");
 				}
 			}
 			
