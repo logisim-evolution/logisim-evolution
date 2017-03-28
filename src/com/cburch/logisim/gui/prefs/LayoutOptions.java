@@ -59,7 +59,6 @@ class LayoutOptions extends OptionsPanel {
 						Strings.getter("layoutAddShowGhosts")), 
 				new PrefBoolean(AppPreferences.NAMED_CIRCUIT_BOXES,
 						Strings.getter("layoutNamedCircuitBoxes")),
-				
 				};
 
 		for (int i = 0; i < 2; i++) {

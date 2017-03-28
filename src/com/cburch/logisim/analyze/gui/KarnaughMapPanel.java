@@ -107,8 +107,8 @@ class KarnaughMapPanel extends JPanel implements TruthTablePanel {
 
 	public KarnaughMapPanel(AnalyzerModel model) {
 		this.model = model;
-		HeaderFont = AppPreferences.getScaledFont(getFont()).deriveFont(Font.BOLD);
 		EntryFont = AppPreferences.getScaledFont(getFont());
+		HeaderFont = EntryFont.deriveFont(Font.BOLD);
 		model.getOutputExpressions().addOutputExpressionsListener(myListener);
 		model.getTruthTable().addTruthTableListener(myListener);
 		setToolTipText(" ");

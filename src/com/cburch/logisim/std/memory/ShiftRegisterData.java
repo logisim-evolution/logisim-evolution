@@ -35,6 +35,7 @@ import java.util.Arrays;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.instance.InstanceData;
+import com.cburch.logisim.prefs.AppPreferences;
 
 class ShiftRegisterData extends ClockState implements InstanceData {
 	private BitWidth width;
@@ -44,7 +45,8 @@ class ShiftRegisterData extends ClockState implements InstanceData {
 	public ShiftRegisterData(BitWidth width, int len) {
 		this.width = width;
 		this.vs = new Value[len];
-		Arrays.fill(this.vs, Value.createKnown(width, 0));
+		Arrays.fill(this.vs, (AppPreferences.Memory_Startup_Unknown.get())?
+				Value.createUnknown(width):Value.createKnown(width, 0));
 		this.vsPos = 0;
 	}
 

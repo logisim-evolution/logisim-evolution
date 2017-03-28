@@ -54,17 +54,31 @@ import com.cburch.logisim.util.StringUtil;
 public class Register extends InstanceFactory {
 	public static void DrawRegister(InstancePainter painter, int x, int y,
 			int nr_of_bits, boolean isLatch, boolean neg_active,
-			boolean has_we, String value) {
+			boolean has_we, Value value) {
 		int dq_width = (nr_of_bits == 1) ? 3 : 5;
 		int len = (nr_of_bits + 3) / 4;
 		int wid = 7 * len + 2;
 		int xoff = (60 - wid) / 2;
 		Graphics g = painter.getGraphics();
-		if (painter.getShowState()) {
-			g.setColor(Color.LIGHT_GRAY);
+		if (painter.getShowState()&&(value!=null)) {
+			if (value.isFullyDefined())
+				g.setColor(Color.LIGHT_GRAY);
+			else if (value.isErrorValue())
+				g.setColor(Color.RED);
+			else g.setColor(Color.BLUE);
 			g.fillRect(x + xoff, y + 1, wid, 16);
-			g.setColor(Color.black);
-			GraphicsUtil.drawCenteredText(g, value, x + 30, y + 8);
+			if (value.isFullyDefined())
+				g.setColor(Color.DARK_GRAY); 
+			else
+				g.setColor(Color.YELLOW);
+			String str = "";
+			if (value.isFullyDefined())
+				str = StringUtil.toHexString(nr_of_bits, value.toIntValue());
+			else {
+				for (int i = 0 ; i < len ; i++)
+					str = str.concat("?");
+			}
+			GraphicsUtil.drawCenteredText(g, str, x + 30, y + 8);
 			g.setColor(Color.black);
 		}
 		GraphicsUtil.switchToWidth(g, 2);
@@ -199,16 +213,13 @@ public class Register extends InstanceFactory {
 		int y = loc.getY();
 
 		// determine text to draw in label
-		String a;
-		int val = state == null ? 0 : state.value;
-		a = StringUtil.toHexString(width, val);
 		Object Trigger = painter.getAttributeValue(StdAttr.TRIGGER);
 		boolean IsLatch = Trigger.equals(StdAttr.TRIG_HIGH)
 				|| Trigger.equals(StdAttr.TRIG_LOW);
 		boolean NegActive = Trigger.equals(StdAttr.TRIG_FALLING)
 				|| Trigger.equals(StdAttr.TRIG_LOW);
 
-		DrawRegister(painter, x, y, width, IsLatch, NegActive, true, a);
+		DrawRegister(painter, x, y, width, IsLatch, NegActive, true, (state == null) ? null : state.value);
 		painter.drawLabel();
 
 		// draw input and output ports
@@ -222,26 +233,25 @@ public class Register extends InstanceFactory {
 
 	@Override
 	public void propagate(InstanceState state) {
+		BitWidth dataWidth = state.getAttributeValue(StdAttr.WIDTH);
+		Object triggerType = state.getAttributeValue(StdAttr.TRIGGER);
 		RegisterData data = (RegisterData) state.getData();
+
 		if (data == null) {
-			data = new RegisterData();
+			data = new RegisterData(dataWidth);
 			state.setData(data);
 		}
 
-		BitWidth dataWidth = state.getAttributeValue(StdAttr.WIDTH);
-		Object triggerType = state.getAttributeValue(StdAttr.TRIGGER);
 		boolean triggered = data.updateClock(state.getPortValue(CK),
 				triggerType);
 
 		if (state.getPortValue(CLR) == Value.TRUE) {
-			data.value = 0;
+			data.value = Value.createKnown(dataWidth, 0);
 		} else if (triggered && state.getPortValue(EN) != Value.FALSE) {
 			Value in = state.getPortValue(IN);
-			if (in.isFullyDefined()) {
-				data.value = in.toIntValue();
-			}
+			data.value = in;
 		}
 
-		state.setPort(OUT, Value.createKnown(dataWidth, data.value), DELAY);
+		state.setPort(OUT, data.value, DELAY);
 	}
 }

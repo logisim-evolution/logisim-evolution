@@ -537,6 +537,8 @@ public class AppPreferences {
 		POKE_WIRE_RADIX2 = create(new PrefMonitorStringOpts("pokeRadix2",
 				radixStrings, RadixOption.RADIX_10_SIGNED.getSaveString()));
 	}
+	public static final PrefMonitor<Boolean> Memory_Startup_Unknown = create(new PrefMonitorBoolean(
+			"MemStartUnknown", false));
 
 	// Experimental preferences
 	public static final String ACCEL_DEFAULT = "default";

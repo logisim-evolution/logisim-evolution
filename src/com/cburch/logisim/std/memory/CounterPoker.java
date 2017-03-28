@@ -36,6 +36,7 @@ import java.awt.event.MouseEvent;
 
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
+import com.cburch.logisim.data.Value;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstancePoker;
 import com.cburch.logisim.instance.InstanceState;
@@ -49,10 +50,10 @@ public class CounterPoker extends InstancePoker {
 	public boolean init(InstanceState state, MouseEvent e) {
 		RegisterData data = (RegisterData) state.getData();
 		if (data == null) {
-			data = new RegisterData();
+			data = new RegisterData(state.getAttributeValue(StdAttr.WIDTH));
 			state.setData(data);
 		}
-		initValue = data.value;
+		initValue = (data.value.isFullyDefined()) ? data.value.toIntValue() : 0;
 		curValue = initValue;
 		return true;
 	}
@@ -68,7 +69,7 @@ public class CounterPoker extends InstancePoker {
 			dataWidth = BitWidth.create(8);
 		curValue = (curValue * 16 + val) & dataWidth.getMask();
 		RegisterData data = (RegisterData) state.getData();
-		data.value = curValue;
+		data.value = Value.createKnown(dataWidth, curValue);
 
 		state.fireInvalidated();
 	}

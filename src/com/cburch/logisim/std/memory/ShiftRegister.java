@@ -192,7 +192,7 @@ public class ShiftRegister extends InstanceFactory {
 
 	private void DrawDataBlock(InstancePainter painter, int xpos, int ypos,
 			int nr_of_stages, int nr_of_bits, int current_stage,
-			int data_value, boolean has_load) {
+			Value data_value, boolean has_load) {
 		int real_ypos = ypos + 70 + current_stage * 20;
 		if (current_stage > 0)
 			real_ypos += 10;
@@ -274,15 +274,26 @@ public class ShiftRegister extends InstanceFactory {
 			GraphicsUtil.switchToWidth(g, 1);
 		}
 		/* Draw stage value */
-		if (painter.getShowState()) {
-			g.setColor(Color.LIGHT_GRAY);
+		if (painter.getShowState()&&(data_value!=null)) {
+			if (data_value.isFullyDefined())
+				g.setColor(Color.LIGHT_GRAY);
+			else if (data_value.isErrorValue())
+				g.setColor(Color.RED);
+			else
+				g.setColor(Color.BLUE);
 			int yoff = (current_stage == 0) ? 10 : 0;
 			int len = (nr_of_bits + 3) / 4;
 			int boxXpos = ((blockwidth - 30) / 2 + 30) - (len * 4);
 			g.fillRect(real_xpos + boxXpos, real_ypos + yoff + 2, 2 + len * 8,
 					16);
-			g.setColor(Color.DARK_GRAY);
-			String Value = StringUtil.toHexString(nr_of_bits, data_value);
+			String Value;
+			if (data_value.isFullyDefined()) {
+				g.setColor(Color.DARK_GRAY);
+				Value = StringUtil.toHexString(nr_of_bits, data_value.toIntValue());
+			} else {
+				g.setColor(Color.YELLOW);
+				Value = (data_value.isUnknown()) ? "?" : "!";
+			}
 			GraphicsUtil.drawText(g, Value, real_xpos + boxXpos + 1, real_ypos
 					+ yoff + 10, GraphicsUtil.H_LEFT, GraphicsUtil.V_CENTER);
 			g.setColor(Color.BLACK);
@@ -348,13 +359,13 @@ public class ShiftRegister extends InstanceFactory {
 		if (data == null) {
 			for (int stage = 0; stage < len; stage++) {
 			DrawDataBlock(painter, xpos, ypos, len, wid, stage,
-					data.get(len - stage - 1).toIntValue(), parallelObj);
+					null, parallelObj);
 			}
 		}
 		else {
 			for (int stage = 0; stage < len; stage++) {
 			DrawDataBlock(painter, xpos, ypos, len, wid, stage,
-					data.get(len - stage - 1).toIntValue(), parallelObj);
+					data.get(len - stage - 1), parallelObj);
 			}
 		}
 	}
