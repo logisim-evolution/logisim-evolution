@@ -51,6 +51,6 @@ public class RegisterLogger extends InstanceLogger {
 		RegisterData data = (RegisterData) state.getData();
 		if (data == null)
 			return Value.createKnown(dataWidth, 0);
-		return Value.createKnown(dataWidth, data.value);
+		return data.value;
 	}
 }

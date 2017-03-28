@@ -30,20 +30,23 @@
 
 package com.cburch.logisim.std.memory;
 
+import com.cburch.logisim.data.BitWidth;
+import com.cburch.logisim.data.Value;
 import com.cburch.logisim.instance.InstanceData;
+import com.cburch.logisim.prefs.AppPreferences;
 
 class RegisterData extends ClockState implements InstanceData {
-	int value;
+	Value value;
 
-	public RegisterData() {
-		value = 0;
+	public RegisterData(BitWidth width) {
+		value = (AppPreferences.Memory_Startup_Unknown.get()) ? Value.createUnknown(width) : Value.createKnown(width, 0);
 	}
 
-	public int getValue() {
+	public Value getValue() {
 		return value;
 	}
 
-	public void setValue(int value) {
+	public void setValue(Value value) {
 		this.value = value;
 	}
 }

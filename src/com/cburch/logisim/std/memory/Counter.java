@@ -242,17 +242,30 @@ public class Counter extends InstanceFactory {
 		painter.drawPort(CARRY);
 		GraphicsUtil.switchToWidth(g, 1);
 		/* Draw counter Value */
-		if (painter.getShowState()) {
+		RegisterData state = (RegisterData) painter.getData();
+		if (painter.getShowState()&&(state != null)) {
 			int len = (width + 3) / 4;
 			int xcenter = SymbolWidth(width) - 25;
-			RegisterData state = (RegisterData) painter.getData();
-			int val = state == null ? 0 : state.value;
-			String Value = StringUtil.toHexString(width, val).toUpperCase();
-			g.setColor(Color.LIGHT_GRAY);
+			Value val = state.value;
+			if (val.isFullyDefined())
+				g.setColor(Color.LIGHT_GRAY);
+			else if (val.isErrorValue())
+				g.setColor(Color.RED);
+			else
+				g.setColor(Color.BLUE);
 			g.fillRect(xpos + xcenter - len * 4, ypos + 22, len * 8, 16);
-			g.setColor(Color.BLACK);
+			String Value = "";
+			if (val.isFullyDefined()) {
+				g.setColor(Color.DARK_GRAY);
+				Value = StringUtil.toHexString(width, val.toIntValue()).toUpperCase(); 
+			} else {
+				g.setColor(Color.YELLOW);
+				for (int i = 0 ; i < StringUtil.toHexString(width, val.toIntValue()).length() ; i++)
+					Value = (val.isUnknown()) ? Value.concat("?") : Value.concat("!"); 
+			}
 			GraphicsUtil.drawText(g, Value, xpos + xcenter - len * 4 + 1,
 					ypos + 30, GraphicsUtil.H_LEFT, GraphicsUtil.V_CENTER);
+			g.setColor(Color.BLACK);
 		}
 	}
 
@@ -317,20 +330,33 @@ public class Counter extends InstanceFactory {
 					+ SymbolWidth(NrOfBits), RealYpos + 20);
 		}
 		GraphicsUtil.switchToWidth(g, 1);
-		if (painter.getShowState()) {
+		RegisterData state = (RegisterData) painter.getData();
+		if (painter.getShowState()&&(state != null)) {
 			/* Here we draw the bit value */
-			RegisterData state = (RegisterData) painter.getData();
-			int val = state == null ? 0 : state.value;
+			Value val = state.value;
 			BitWidth widthVal = painter.getAttributeValue(StdAttr.WIDTH);
 			int width = widthVal == null ? 8 : widthVal.getWidth();
 			int xcenter = (SymbolWidth(width) / 2) + 10;
-			int value = ((1 << BitNr) & val) != 0 ? 1 : 0;
-			g.setColor(Color.LIGHT_GRAY);
+			String value = "";
+			if (val.isFullyDefined()) {
+				g.setColor(Color.LIGHT_GRAY);
+				value = ((1 << BitNr) & val.toIntValue()) != 0 ? "1" : "0";
+			} else if (val.isUnknown()) {
+				g.setColor(Color.BLUE);
+				value = "?";
+			} else {
+				g.setColor(Color.RED);
+				value = "!";
+			}
 			g.fillRect(xpos + xcenter + 16, RealYpos + 4, 8, 16);
-			g.setColor(Color.BLACK);
-			GraphicsUtil.drawText(g, Integer.toString(value), xpos + xcenter
+			if (val.isFullyDefined())
+				g.setColor(Color.DARK_GRAY);
+			else
+				g.setColor(Color.YELLOW);
+			GraphicsUtil.drawText(g, value, xpos + xcenter
 					+ 20, RealYpos + 10, GraphicsUtil.H_CENTER,
 					GraphicsUtil.V_CENTER);
+			g.setColor(Color.BLACK);
 		}
 	}
 
@@ -380,7 +406,7 @@ public class Counter extends InstanceFactory {
 	public void propagate(InstanceState state) {
 		RegisterData data = (RegisterData) state.getData();
 		if (data == null) {
-			data = new RegisterData();
+			data = new RegisterData(state.getAttributeValue(StdAttr.WIDTH));
 			state.setData(data);
 		}
 
@@ -399,43 +425,44 @@ public class Counter extends InstanceFactory {
 			boolean ld = state.getPortValue(LD) == Value.TRUE;
 			boolean en = state.getPortValue(EN) != Value.FALSE;
 			boolean UpCount = state.getPortValue(UD) != Value.FALSE;
-			int oldVal = data.value;
-			int newVal;
+			Value oldVal = data.value;
+			Value newVal;
 			if (!triggered) {
 				newVal = oldVal;
 			} else if (ld) {
 				Value in = state.getPortValue(IN);
-				newVal = in.isFullyDefined() ? in.toIntValue() : 0;
-				if (newVal > max)
-					newVal &= max;
+				newVal = in;
+				if (newVal.toIntValue() > max)
+					newVal = Value.createKnown(dataWidth, newVal.toIntValue()&max);
+			} else if (!oldVal.isFullyDefined()) {
+				newVal = oldVal;
 			} else if (en) {
 				int goal = (UpCount) ? max : 0;
-				if (oldVal == goal) {
+				if (oldVal.toIntValue() == goal) {
 					Object onGoal = state.getAttributeValue(ATTR_ON_GOAL);
 					if (onGoal == ON_GOAL_WRAP) {
-						newVal = (UpCount) ? 0 : max;
+						newVal = Value.createKnown(dataWidth, (UpCount) ? 0 : max);
 					} else if (onGoal == ON_GOAL_STAY) {
 						newVal = oldVal;
 					} else if (onGoal == ON_GOAL_LOAD) {
 						Value in = state.getPortValue(IN);
-						newVal = in.isFullyDefined() ? in.toIntValue() : 0;
-						if (newVal > max)
-							newVal &= max;
+						newVal = in;
+						if (newVal.toIntValue() > max)
+							newVal = Value.createKnown(dataWidth, newVal.toIntValue()&max);
 					} else if (onGoal == ON_GOAL_CONT) {
-						newVal = (UpCount) ? oldVal + 1 : oldVal - 1;
+						newVal = Value.createKnown(dataWidth, (UpCount) ? oldVal.toIntValue() + 1 : oldVal.toIntValue() - 1);
 					} else {
 						logger.error("Invalid goal attribute {}", onGoal);
-						newVal = ld ? max : 0;
+						newVal = Value.createKnown(dataWidth, ld ? max : 0);
 					}
 				} else {
-					newVal = (UpCount) ? oldVal + 1 : oldVal - 1;
+					newVal = Value.createKnown(dataWidth, (UpCount) ? oldVal.toIntValue() + 1 : oldVal.toIntValue() - 1);
 				}
 			} else {
 				newVal = oldVal;
 			}
-			newValue = Value.createKnown(dataWidth, newVal);
-			newVal = newValue.toIntValue();
-			carry = newVal == (UpCount ? max : 0);
+			newValue = newVal;
+			carry = newVal.toIntValue() == (UpCount ? max : 0);
 			/*
 			 * I would want this if I were worried about the carry signal
 			 * outrunning the clock. But the component's delay should be enough
@@ -445,7 +472,7 @@ public class Counter extends InstanceFactory {
 			 */
 		}
 
-		data.value = newValue.toIntValue();
+		data.value = newValue;
 		state.setPort(OUT, newValue, DELAY);
 		state.setPort(CARRY, carry ? Value.TRUE : Value.FALSE, DELAY);
 	}

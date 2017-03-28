@@ -50,6 +50,7 @@ import com.cburch.logisim.instance.InstancePoker;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.StringGetter;
 
@@ -99,7 +100,7 @@ abstract class AbstractFlipFlop extends InstanceFactory {
 	}
 
 	private static class StateData extends ClockState implements InstanceData {
-		Value curValue = Value.FALSE;
+		Value curValue = (AppPreferences.Memory_Startup_Unknown.get()) ? Value.UNKNOWN : Value.FALSE;
 	}
 
 	private static final int STD_PORTS = 5;
