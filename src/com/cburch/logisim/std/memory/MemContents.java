@@ -396,11 +396,15 @@ class MemContents implements Cloneable, HexModel {
 			for (int i = 0; i < n; i++) {
 				if (oldPages[i] != null) {
 					pages[i] = MemContentsSub.createContents(pageLength, width);
-					int m = Math.max(oldPages[i].getLength(), pageLength);
+					int m = Math.min(oldPages[i].getLength(), pageLength);
 					for (int j = 0; j < m; j++) {
 						pages[i].set(j, oldPages[i].get(j));
 					}
 				}
+			}
+			if (AppPreferences.Memory_Startup_Unknown.get()&&!IsRom) {
+				for (int i = oldPages.length ; i < pages.length ; i++)
+					pages[i] = MemContentsSub.createContents(pageLength, width);
 			}
 		} else if (AppPreferences.Memory_Startup_Unknown.get()&&!IsRom){
 			for (int i = 0 ; i < pageCount ; i++)
