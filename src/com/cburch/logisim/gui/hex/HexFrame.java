@@ -193,6 +193,8 @@ public class HexFrame extends LFrame {
 
 		LogisimMenuBar menubar = new LogisimMenuBar(this, proj);
 		setJMenuBar(menubar);
+		menubar.disableFile();
+		menubar.disableProject();
 
 		this.model = model;
 		this.editor = new HexEditor(model);
