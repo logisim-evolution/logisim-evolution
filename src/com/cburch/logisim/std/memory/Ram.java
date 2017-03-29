@@ -67,7 +67,7 @@ public class Ram extends Mem {
 	static class ContentsAttribute extends Attribute<MemContents> {
 
 		public ContentsAttribute() {
-			super("contents", Strings.getter("romContentsAttr"));
+			super("contents", Strings.getter("ramContentsAttr"));
 		}
 
 		@Override
@@ -622,8 +622,10 @@ public class Ram extends Mem {
 
 	@Override
 	HexFrame getHexFrame(Project proj, Instance instance, CircuitState circState) {
+		RamState ret = (RamState) instance.getData(circState);
 		return RamAttributes.getHexFrame(
-				instance.getAttributeValue(CONTENTS_ATTR), proj);
+				(ret == null) ? instance.getAttributeValue(CONTENTS_ATTR) :
+						ret.getContents(), proj);
 	}
 
 	@Override
@@ -643,7 +645,7 @@ public class Ram extends Mem {
 		if (ret == null) {
 			MemContents contents = instance
 					.getAttributeValue(Ram.CONTENTS_ATTR);
-			ret = new RamState(instance, contents, new MemListener(instance));
+			ret = new RamState(instance, contents.clone(), new MemListener(instance));
 			instance.setData(state, ret);
 		} else {
 			ret.setRam(instance);
@@ -658,7 +660,7 @@ public class Ram extends Mem {
 			MemContents contents = state.getInstance().getAttributeValue(
 					Ram.CONTENTS_ATTR);
 			Instance instance = state.getInstance();
-			ret = new RamState(instance, contents, new MemListener(instance));
+			ret = new RamState(instance, contents.clone(), new MemListener(instance));
 			state.setData(ret);
 		} else {
 			ret.setRam(state.getInstance());
