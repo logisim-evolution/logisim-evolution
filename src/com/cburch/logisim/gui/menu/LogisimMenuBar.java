@@ -154,6 +154,14 @@ public class LogisimMenuBar extends JMenuBar {
 		LocaleManager.addLocaleListener(listener);
 		listener.localeChanged();
 	}
+	
+	public void disableFile() {
+		file.setEnabled(false);
+	}
+	
+	public void disableProject() {
+		project.setEnabled(false);
+	}
 
 	public void addActionListener(LogisimMenuItem which, ActionListener l) {
 		MenuItem item = menuItems.get(which);
