@@ -91,7 +91,7 @@ public class RamAttributes extends AbstractAttributeSet {
 	private boolean SupportsByteEnables = false;
 
 	RamAttributes() {
-		contents = MemContents.create(addrBits.getWidth(), dataBits.getWidth());
+		contents = MemContents.create(addrBits.getWidth(), dataBits.getWidth(),false);
 	}
 
 	@Override
@@ -175,7 +175,7 @@ public class RamAttributes extends AbstractAttributeSet {
 				return;
 			}
 			addrBits = newAddr;
-			contents.setDimensions(addrBits.getWidth(), dataBits.getWidth());
+			contents.setDimensions(addrBits.getWidth(), dataBits.getWidth(),false);
 			fireAttributeValueChanged(attr, value,null);
 		} else if (attr == Mem.DATA_ATTR) {
 			BitWidth newData = (BitWidth) value;
@@ -183,7 +183,7 @@ public class RamAttributes extends AbstractAttributeSet {
 				return;
 			}
 			dataBits = newData;
-			contents.setDimensions(addrBits.getWidth(), dataBits.getWidth());
+			contents.setDimensions(addrBits.getWidth(), dataBits.getWidth(),false);
 			fireAttributeValueChanged(attr, value,null);
 		} else if (attr == Ram.CONTENTS_ATTR) {
 			MemContents newContents = (MemContents) value;
@@ -193,7 +193,7 @@ public class RamAttributes extends AbstractAttributeSet {
 			if ((newContents.getLogLength() != addrBits.getWidth())
 					|| (newContents.getValueWidth() != dataBits.getWidth())) {
 				newContents.setDimensions(addrBits.getWidth(),
-						dataBits.getWidth());
+						dataBits.getWidth(),false);
 			}
 			contents = newContents;
 			fireAttributeValueChanged(attr, value,null);

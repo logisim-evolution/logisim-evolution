@@ -68,7 +68,7 @@ public class RamState extends MemState implements InstanceData,
 		AttributeSet attrs = e.getSource();
 		BitWidth addrBits = attrs.getValue(Mem.ADDR_ATTR);
 		BitWidth dataBits = attrs.getValue(Mem.DATA_ATTR);
-		getContents().setDimensions(addrBits.getWidth(), dataBits.getWidth());
+		getContents().setDimensions(addrBits.getWidth(), dataBits.getWidth(),false);
 	}
 
 	@Override
