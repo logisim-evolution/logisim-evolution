@@ -32,12 +32,20 @@ package com.cburch.logisim.std.memory;
 
 import java.util.Arrays;
 
+import com.cburch.logisim.prefs.AppPreferences;
+
 class MemContentsSub {
 	private static class ByteContents extends ContentsInterface {
 		private byte[] data;
 
-		public ByteContents(int size) {
+		public ByteContents(int size, int mask) {
 			data = new byte[size];
+			if (AppPreferences.Memory_Startup_Unknown.get()) {
+				java.util.Random generator = new java.util.Random();
+				for (int i = 0 ; i < size ; i++) {
+					data[i]= (byte)(generator.nextInt(256)&mask);
+				}
+			}
 		}
 
 		@Override
@@ -132,8 +140,13 @@ class MemContentsSub {
 	private static class IntContents extends ContentsInterface {
 		private int[] data;
 
-		public IntContents(int size) {
+		public IntContents(int size,int mask) {
 			data = new int[size];
+			if (AppPreferences.Memory_Startup_Unknown.get()) {
+				java.util.Random generator = new java.util.Random();
+				for (int i = 0 ; i < size ; i++)
+					data[i]= (int)generator.nextInt()&mask;
+			}
 		}
 
 		@Override
@@ -184,8 +197,13 @@ class MemContentsSub {
 	private static class ShortContents extends ContentsInterface {
 		private short[] data;
 
-		public ShortContents(int size) {
+		public ShortContents(int size, int mask) {
 			data = new short[size];
+			if (AppPreferences.Memory_Startup_Unknown.get()) {
+				java.util.Random generator = new java.util.Random();
+				for (int i = 0 ; i < size ; i++)
+					data[i]= (short)(generator.nextInt(1<<16)&mask);
+			}
 		}
 
 		@Override
@@ -238,12 +256,13 @@ class MemContentsSub {
 	}
 
 	static ContentsInterface createContents(int size, int bits) {
+		int mask = (bits==32) ? 0xffffffff : (1<<bits)-1;
 		if (bits <= 8)
-			return new ByteContents(size);
+			return new ByteContents(size,mask);
 		else if (bits <= 16)
-			return new ShortContents(size);
+			return new ShortContents(size,mask);
 		else
-			return new IntContents(size);
+			return new IntContents(size,mask);
 	}
 
 	private MemContentsSub() {

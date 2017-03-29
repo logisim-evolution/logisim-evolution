@@ -78,7 +78,7 @@ class RomAttributes extends AbstractAttributeSet {
 	private Boolean LabelVisable = false;
 
 	RomAttributes() {
-		contents = MemContents.create(addrBits.getWidth(), dataBits.getWidth());
+		contents = MemContents.create(addrBits.getWidth(), dataBits.getWidth(),true);
 	}
 
 	@Override
@@ -129,14 +129,14 @@ class RomAttributes extends AbstractAttributeSet {
 			if (newAddr == addrBits)
 				return;
 			addrBits = newAddr;
-			contents.setDimensions(addrBits.getWidth(), dataBits.getWidth());
+			contents.setDimensions(addrBits.getWidth(), dataBits.getWidth(),true);
 			fireAttributeValueChanged(attr, value,null);
 		} else if (attr == Mem.DATA_ATTR) {
 			BitWidth newData = (BitWidth) value;
 			if (newData == dataBits)
 				return;
 			dataBits = newData;
-			contents.setDimensions(addrBits.getWidth(), dataBits.getWidth());
+			contents.setDimensions(addrBits.getWidth(), dataBits.getWidth(),true);
 			fireAttributeValueChanged(attr, value,null);
 		} else if (attr == Rom.CONTENTS_ATTR) {
 			MemContents newContents = (MemContents) value;

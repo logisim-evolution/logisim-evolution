@@ -69,16 +69,6 @@ class MemState implements InstanceData, Cloneable, HexModelListener {
 			int[] oldValues) {
 	}
 
-	/*
-	 * public Bounds getBounds(long addr, Bounds bds) { int addrBits =
-	 * getAddrBits(); int boxX = bds.getX() + (addrBits <= 12 ? ENTRY_XOFFS12 :
-	 * ENTRY_XOFFS32); int boxW = addrBits <= 12 ? TABLE_WIDTH12 :
-	 * TABLE_WIDTH32; if (addr < 0) { int addrLen = (contents.getWidth() + 3) /
-	 * 4; int width = ADDR_WIDTH_PER_CHAR * addrLen; return Bounds.create(boxX -
-	 * width, bds.getY() + ENTRY_YOFFS, width, ENTRY_HEIGHT); } else { int bdsX
-	 * = addrToX(bds, addr); int bdsY = addrToY(bds, addr); return
-	 * Bounds.create(bdsX, bdsY, boxW / columns, ENTRY_HEIGHT); } }
-	 */
 	private void CalculateDisplayParameters(Graphics g, boolean HasDataIn) {
 		RecalculateParameters = false;
 		int addrBits = getAddrBits();
@@ -305,9 +295,9 @@ class MemState implements InstanceData, Cloneable, HexModelListener {
 	private void setBits(int addrBits, int dataBits) {
 		RecalculateParameters = true;
 		if (contents == null) {
-			contents = MemContents.create(addrBits, dataBits);
+			contents = MemContents.create(addrBits, dataBits,false);
 		} else {
-			contents.setDimensions(addrBits, dataBits);
+			contents.setDimensions(addrBits, dataBits,false);
 		}
 		cursorLoc = -1;
 		curAddr = -1;

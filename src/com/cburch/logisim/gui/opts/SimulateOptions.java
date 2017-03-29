@@ -39,11 +39,13 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import com.cburch.logisim.circuit.Simulator;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeEvent;
 import com.cburch.logisim.data.AttributeListener;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.file.Options;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.TableLayout;
 
 class SimulateOptions extends OptionsPanel {
@@ -83,6 +85,11 @@ class SimulateOptions extends OptionsPanel {
 							OptionsActions.setAttribute(attrs,
 									Options.ATTR_TICK_MAIN, opt.getValue()));
 				}
+			} else if (source == MemUnknown) {
+				AppPreferences.Memory_Startup_Unknown.set(MemUnknown.isSelected());
+				Simulator sim = getProject().getSimulator();
+				if (sim != null)
+					sim.requestReset();
 			}
 		}
 
@@ -136,6 +143,7 @@ class SimulateOptions extends OptionsPanel {
 			Integer.valueOf(10000), Integer.valueOf(20000),
 			Integer.valueOf(50000), });
 	private JCheckBox simRandomness = new JCheckBox();
+	private JCheckBox MemUnknown = new JCheckBox();
 	private JLabel gateUndefinedLabel = new JLabel();
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private JComboBox gateUndefined = new JComboBox(new Object[] {
@@ -150,6 +158,7 @@ class SimulateOptions extends OptionsPanel {
 	public SimulateOptions(OptionsFrame window) {
 		super(window);
 
+
 		JPanel simLimitPanel = new JPanel();
 		simLimitPanel.add(simLimitLabel);
 		simLimitPanel.add(simLimit);
@@ -161,6 +170,9 @@ class SimulateOptions extends OptionsPanel {
 		gateUndefined.addActionListener(myListener);
 
 		simRandomness.addActionListener(myListener);
+		
+		MemUnknown.addActionListener(myListener);
+		MemUnknown.setSelected(AppPreferences.Memory_Startup_Unknown.get());
 
 		JPanel tickMainPanel = new JPanel();
 		tickMainPanel.add(tickMainLabel);
@@ -168,6 +180,7 @@ class SimulateOptions extends OptionsPanel {
 		tickMainStep.addActionListener(myListener);
 
 		setLayout(new TableLayout(1));
+		add(MemUnknown);
 		add(simLimitPanel);
 		add(gateUndefinedPanel);
 		add(simRandomness);
@@ -198,5 +211,6 @@ class SimulateOptions extends OptionsPanel {
 		gateUndefinedLabel.setText(Strings.get("gateUndefined"));
 		simRandomness.setText(Strings.get("simulateRandomness"));
 		tickMainLabel.setText(Strings.get("mainTick"));
+		MemUnknown.setText(Strings.get("MemoriesStartupUnknown"));
 	}
 }

@@ -34,11 +34,12 @@ import java.util.Arrays;
 
 import com.cburch.hex.HexModel;
 import com.cburch.hex.HexModelListener;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.EventSourceWeakSupport;
 
 class MemContents implements Cloneable, HexModel {
-	static MemContents create(int addrBits, int width) {
-		return new MemContents(addrBits, width);
+	static MemContents create(int addrBits, int width, boolean IsRom) {
+		return new MemContents(addrBits, width,IsRom);
 	}
 
 	private static final int PAGE_SIZE_BITS = 12;
@@ -52,9 +53,9 @@ class MemContents implements Cloneable, HexModel {
 	private int mask;
 	private MemContentsSub.ContentsInterface[] pages;
 
-	private MemContents(int addrBits, int width) {
+	private MemContents(int addrBits, int width, boolean IsRom) {
 		listeners = null;
-		setDimensions(addrBits, width);
+		setDimensions(addrBits, width, IsRom);
 	}
 
 	//
@@ -372,7 +373,7 @@ class MemContents implements Cloneable, HexModel {
 		}
 	}
 
-	public void setDimensions(int addrBits, int width) {
+	public void setDimensions(int addrBits, int width, boolean IsRom) {
 		if (addrBits == this.addrBits && width == this.width)
 			return;
 		this.addrBits = addrBits;
@@ -401,10 +402,14 @@ class MemContents implements Cloneable, HexModel {
 					}
 				}
 			}
+		} else if (AppPreferences.Memory_Startup_Unknown.get()&&!IsRom){
+			for (int i = 0 ; i < pageCount ; i++)
+				pages[i] = MemContentsSub.createContents(pageLength, width);
 		}
 		if (pageCount == 0 && pages[0] == null) {
 			pages[0] = MemContentsSub.createContents(pageLength, width);
 		}
+		
 		fireMetainfoChanged();
 	}
 }

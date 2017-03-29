@@ -90,7 +90,7 @@ public class Ram extends Mem {
 				}
 				int addr = Integer.parseInt(toks.nextToken());
 				int data = Integer.parseInt(toks.nextToken());
-				MemContents ret = MemContents.create(addr, data);
+				MemContents ret = MemContents.create(addr, data,false);
 				HexFile.open(ret, new StringReader(rest));
 				return ret;
 			} catch (IOException e) {

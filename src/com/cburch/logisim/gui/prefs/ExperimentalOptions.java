@@ -69,8 +69,6 @@ class ExperimentalOptions extends OptionsPanel {
 
 		setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
 		add(Box.createGlue());
-		add(new PrefBoolean(AppPreferences.Memory_Startup_Unknown,
-				Strings.getter("MemoriesStartupUnknown")));
 		add(accelPanel2);
 		add(Box.createGlue());
 	}
