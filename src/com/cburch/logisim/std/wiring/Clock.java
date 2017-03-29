@@ -147,10 +147,10 @@ public class Clock extends InstanceFactory {
 
 	public static final Attribute<Integer> ATTR_HIGH = new DurationAttribute(
 			"highDuration", Strings.getter("clockHighAttr"), 1,
-			Integer.MAX_VALUE);
+			Integer.MAX_VALUE,true);
 
 	public static final Attribute<Integer> ATTR_LOW = new DurationAttribute(
-			"lowDuration", Strings.getter("clockLowAttr"), 1, Integer.MAX_VALUE);
+			"lowDuration", Strings.getter("clockLowAttr"), 1, Integer.MAX_VALUE,true);
 
 	public static final Clock FACTORY = new Clock();
 

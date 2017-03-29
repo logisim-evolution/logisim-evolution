@@ -188,7 +188,7 @@ public class DotMatrix extends InstanceFactory {
 
 	static final Attribute<Integer> ATTR_PERSIST = new DurationAttribute(
 			"persist", Strings.getter("ioMatrixPersistenceAttr"), 0,
-			Integer.MAX_VALUE);
+			Integer.MAX_VALUE,true);
 
 	public DotMatrix() {
 		super("DotMatrix", Strings.getter("dotMatrixComponent"));
