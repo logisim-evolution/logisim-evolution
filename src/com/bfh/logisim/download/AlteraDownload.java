@@ -63,7 +63,7 @@ public class AlteraDownload {
 
 	public static boolean Download(Settings MySettings, String scriptPath,
 			String ProjectPath, String SandboxPath, FPGAReport MyReporter) {
-		VendorSoftware alteraVendor = Settings.vendors.get(FPGAClass.VendorAltera);
+		VendorSoftware alteraVendor = Settings.getSoftware(FPGAClass.VendorAltera);
 		boolean SofFileExists = new File(SandboxPath
 				+ ToplevelHDLGeneratorFactory.FPGAToplevelName + ".sof")
 				.exists();

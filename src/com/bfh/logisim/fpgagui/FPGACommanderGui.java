@@ -681,7 +681,6 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 			if (!boardsList.getSelectedItem().equals("Other")) {
 				AppPreferences.SelectedBoard.set(boardsList.getSelectedItem()
 						.toString());
-				MySettings.UpdateSettingsFile();
 				MyBoardInformation = new BoardReaderClass(
 						MySettings.GetSelectedBoardFileName())
 						.GetBoardInformation();
@@ -714,7 +713,6 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 					if (CanAdd) {
 						MySettings.AddExternalBoard(NewBoardFileName);
 						AppPreferences.SelectedBoard.set(BoardInfo);
-						MySettings.UpdateSettingsFile();
 						boardsList.addItem(BoardInfo);
 						for (int index = 0 ; index < boardsList.getItemCount() ; index ++)
 							if (boardsList.getItemAt(index).equals(BoardInfo))

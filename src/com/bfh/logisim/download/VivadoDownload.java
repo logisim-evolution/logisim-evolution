@@ -59,7 +59,7 @@ public class VivadoDownload {
         labelRect.y = 0;
         locText.paintImmediately(labelRect);
 
-        VendorSoftware vivadoVendor = Settings.vendors.get(FPGAClass.VendorVivado);
+        VendorSoftware vivadoVendor = Settings.getSoftware(FPGAClass.VendorVivado);
 
         // Create Vivado project
         if (!downloadOnly) {
