@@ -68,7 +68,7 @@ public class XilinxDownload {
 	public static boolean Download(Settings MySettings,
 			BoardInformation BoardInfo, String scriptPath, String UcfPath,
 			String ProjectPath, String SandboxPath, FPGAReport MyReporter) {
-		VendorSoftware xilinxVendor = Settings.vendors.get(FPGAClass.VendorXilinx);
+		VendorSoftware xilinxVendor = Settings.getSoftware(FPGAClass.VendorXilinx);
 		boolean IsCPLD = BoardInfo.fpga.getPart().toUpperCase()
 				.startsWith("XC2C")
 				|| BoardInfo.fpga.getPart().toUpperCase().startsWith("XA2C")
