@@ -51,6 +51,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.UIManager;
 
+import com.bfh.logisim.settings.Settings;
 import com.cburch.logisim.Main;
 import com.cburch.logisim.circuit.RadixOption;
 import com.cburch.logisim.data.Direction;
@@ -485,6 +486,14 @@ public class AppPreferences {
 	// FPGA Commander Preferences
 	public static final PrefMonitor<String> FPGA_Workspace=create(new PrefMonitorString(
 			"FPGAWorkspace", System.getProperty("user.home")));
+	public static final PrefMonitor<String> HDL_Type = create(new PrefMonitorStringOpts(
+			"afterAdd", new String[] { Settings.VHDL, Settings.VERILOG },
+			Settings.VHDL));
+	public static final PrefMonitor<Boolean> DownloadToBoard=create(new PrefMonitorBoolean(
+			"DownloadToBoard",true));
+	public static final PrefMonitor<String> SelectedBoard=create(new PrefMonitorString(
+			"SelectedBoard",null));
+
 	
 	// Window preferences
 	public static final String TOOLBAR_HIDDEN = "hidden";
@@ -559,6 +568,12 @@ public class AppPreferences {
 
 	public static final PrefMonitor<Boolean> QUESTA_VALIDATION = create(new PrefMonitorBoolean(
 			"questaValidation", false));
+	public static final PrefMonitor<String> QuartusToolPath=create(new PrefMonitorString(
+			"QuartusToolPath",""));
+	public static final PrefMonitor<String> ISEToolPath=create(new PrefMonitorString(
+			"ISEToolPath",""));
+	public static final PrefMonitor<String> VivadoToolPath=create(new PrefMonitorString(
+			"VivadoToolPath",""));
 
 	// hidden window preferences - not part of the preferences dialog, changes
 	// to preference does not affect current windows, and the values are not

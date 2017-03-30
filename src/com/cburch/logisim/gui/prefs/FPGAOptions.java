@@ -13,6 +13,7 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 
 import com.bfh.logisim.fpgagui.FPGACommanderGui;
+import com.bfh.logisim.settings.Settings;
 import com.cburch.logisim.prefs.AppPreferences;
 
 @SuppressWarnings("serial")
@@ -46,6 +47,8 @@ public class FPGAOptions extends OptionsPanel {
 	private JTextField WorkSpacePath;
 	private JButton WorkSpaceButton;
 	private PreferencesFrame frame;
+	private PrefOptionList HDL_Used;
+	private PrefBoolean Download;
 	
 	public FPGAOptions(PreferencesFrame frame) {
 		super(frame);
@@ -59,6 +62,11 @@ public class FPGAOptions extends OptionsPanel {
 		WorkSpaceButton = new JButton();
 		WorkSpaceButton.addActionListener(myListener);
 		WorkSpaceButton.setText(Strings.get("Browse"));
+		HDL_Used = new PrefOptionList(AppPreferences.HDL_Type,
+				Strings.getter("HDLLanguageUsed"),new PrefOption[] {
+			new PrefOption(Settings.VHDL,Strings.getter(Settings.VHDL)),
+			new PrefOption(Settings.VERILOG,Strings.getter(Settings.VERILOG)) });
+		Download = new PrefBoolean(AppPreferences.DownloadToBoard,Strings.getter("FPGADownload"));
 		
 		GridBagLayout layout = new GridBagLayout();
 		GridBagConstraints c = new GridBagConstraints();
@@ -73,13 +81,24 @@ public class FPGAOptions extends OptionsPanel {
 		add(WorkspaceLabel,c);
 		c.gridx = 2;
 		c.gridy = 0;
-		c.fill = GridBagConstraints.NONE;
+		c.fill = GridBagConstraints.HORIZONTAL;
 		add(WorkSpaceButton,c);
 		c.gridx = 1;
 		c.gridy = 0;
 		c.weightx = 1.0;
-		c.fill = GridBagConstraints.HORIZONTAL;
 		add(WorkSpacePath,c);
+		c.gridx = 0;
+		c.gridy = 1;
+		c.gridwidth = 2;
+		add(HDL_Used.getJLabel(),c);
+		c.gridx = 2;
+		c.gridy = 1;
+		c.gridwidth = 1;
+		add(HDL_Used.getJComboBox(),c);
+		c.gridx = 0;
+		c.gridy = 2;
+		c.gridwidth = 3;
+		add(Download,c);
 	}
 
 	@Override

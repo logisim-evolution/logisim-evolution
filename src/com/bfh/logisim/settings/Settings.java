@@ -49,6 +49,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import com.bfh.logisim.fpgaboardeditor.FPGAClass;
+import com.cburch.logisim.prefs.AppPreferences;
 
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
@@ -59,17 +60,13 @@ import org.w3c.dom.NodeList;
 
 public class Settings {
 	private static String WorkSpace = "WorkSpace";
-	private static String DirectoryName = "WorkPath";
 	private static String XilinxName = "XilinxToolsPath";
 	private static String AlteraName = "AlteraToolsPath";
 	private static String VivadoName = "VivadoToolsPath";
-	private static String HdlName = "GenerateHDLOnly";
-	private static String HdlTypeName = "HDLTypeToGenerate";
 	public static String Unknown = "Unknown";
 	public static String VHDL = "VHDL";
 	public static String VERILOG = "Verilog";
 	private static String Boards = "FPGABoards";
-	private static String SelectedBoard = "SelectedBoard";
 	private static String ExternalBoard = "ExternalBoardFile";
 	private String HomePath;
 	private String SettingsFileName = ".LogisimFPGASettings";
@@ -131,6 +128,39 @@ public class Settings {
 			}
 		}
 	}
+	
+	public static String GetToolPath(char vendor) {
+		switch(vendor) {
+			case FPGAClass.VendorAltera : return AppPreferences.QuartusToolPath.get();
+			case FPGAClass.VendorXilinx : return AppPreferences.ISEToolPath.get();
+			case FPGAClass.VendorVivado : return AppPreferences.VivadoToolPath.get();
+			default : return null;
+		}
+	}
+	
+	public static boolean setToolPath(char vendor, String path) {
+		if (!toolsPresent(vendor,path))
+			return false;
+		switch(vendor) {
+			case FPGAClass.VendorAltera : AppPreferences.QuartusToolPath.set(path);
+			                              return true;
+			case FPGAClass.VendorXilinx : AppPreferences.ISEToolPath.set(path);
+			                              return true;
+			case FPGAClass.VendorVivado : AppPreferences.VivadoToolPath.set(path);
+            							  return true;
+			default : return false;
+		}
+	}
+	
+	public static boolean toolsPresent(char vendor, String path) {
+		String[] tools = load(vendor);
+		for (int i = 0 ; i < tools.length ; i++) {
+			File test = new File(CorrectPath(path+tools[i]));
+			if (!test.exists())
+				return false;
+		}
+		return true;
+	}
 
 	private static String[] load(char vendor) {
 		ArrayList<String> progs = new ArrayList<>();
@@ -178,7 +208,7 @@ public class Settings {
 		return true;
 	}
 
-	private String CorrectPath(String path) {
+	private static String CorrectPath(String path) {
 		if (path.endsWith(File.separator))
 			return path;
 		else
@@ -189,88 +219,8 @@ public class Settings {
 		return KnownBoards.GetBoardNames();
 	}
 
-	public boolean GetHDLOnly() {
-		NodeList SettingsList = SettingsDocument
-				.getElementsByTagName(WorkSpace);
-		if (SettingsList.getLength() != 1) {
-			return true;
-		}
-		Node ThisWorkspace = SettingsList.item(0);
-		NamedNodeMap WorkspaceParameters = ThisWorkspace.getAttributes();
-		for (int i = 0; i < WorkspaceParameters.getLength(); i++) {
-			if (WorkspaceParameters.item(i).getNodeName().equals(HdlName))
-				return WorkspaceParameters.item(i).getNodeValue()
-						.equals(Boolean.TRUE.toString());
-		}
-		/* The attribute does not exists so add it */
-		Attr hdl = SettingsDocument.createAttribute(HdlName);
-		hdl.setNodeValue(Boolean.TRUE.toString());
-		Element workspace = (Element) SettingsList.item(0);
-		workspace.setAttributeNode(hdl);
-		modified = true;
-		return true;
-	}
-
-	public String GetHDLType() {
-		NodeList SettingsList = SettingsDocument
-				.getElementsByTagName(WorkSpace);
-		if (SettingsList.getLength() != 1) {
-			return VHDL;
-		}
-		Node ThisWorkspace = SettingsList.item(0);
-		NamedNodeMap WorkspaceParameters = ThisWorkspace.getAttributes();
-		for (int i = 0; i < WorkspaceParameters.getLength(); i++) {
-			if (WorkspaceParameters.item(i).getNodeName().equals(HdlTypeName)) {
-				if (!WorkspaceParameters.item(i).getNodeValue().equals(VHDL)
-						&& !WorkspaceParameters.item(i).getNodeValue()
-								.equals(VERILOG)) {
-					WorkspaceParameters.item(i).setNodeValue(VHDL);
-					modified = true;
-				}
-				return WorkspaceParameters.item(i).getNodeValue();
-			}
-		}
-		/* The attribute does not exists so add it */
-		Attr hdl = SettingsDocument.createAttribute(HdlTypeName);
-		hdl.setNodeValue(VHDL);
-		Element workspace = (Element) SettingsList.item(0);
-		workspace.setAttributeNode(hdl);
-		modified = true;
-		return VHDL;
-	}
-
-	public String GetSelectedBoard() {
-		NodeList SettingsList = SettingsDocument.getElementsByTagName(Boards);
-		if (SettingsList.getLength() != 1) {
-			return null;
-		}
-		Node ThisWorkspace = SettingsList.item(0);
-		NamedNodeMap WorkspaceParameters = ThisWorkspace.getAttributes();
-		for (int i = 0; i < WorkspaceParameters.getLength(); i++) {
-			if (WorkspaceParameters.item(i).getNodeName().equals(SelectedBoard)) {
-				if (!KnownBoards.BoardInCollection(WorkspaceParameters.item(i)
-						.getNodeValue())) {
-					WorkspaceParameters.item(i)
-							.setNodeValue(
-									KnownBoards.GetBoardNames().toArray()[0]
-											.toString());
-					modified = true;
-				}
-				return WorkspaceParameters.item(i).getNodeValue();
-			}
-		}
-		/* The attribute does not exists so add it */
-		Attr selboard = SettingsDocument.createAttribute(SelectedBoard);
-		selboard.setNodeValue(KnownBoards.GetBoardNames().toArray()[0]
-				.toString());
-		Element workspace = (Element) SettingsList.item(0);
-		workspace.setAttributeNode(selboard);
-		modified = true;
-		return KnownBoards.GetBoardNames().toArray()[0].toString();
-	}
-
 	public String GetSelectedBoardFileName() {
-		String SelectedBoardName = GetSelectedBoard();
+		String SelectedBoardName = AppPreferences.SelectedBoard.get();
 		return KnownBoards.GetBoardFilePath(SelectedBoardName);
 	}
 
@@ -301,66 +251,6 @@ public class Settings {
 		Element workspace = (Element) SettingsList.item(0);
 		workspace.setAttributeNode(attr);
 		modified = true;
-	}
-
-	public boolean SetHdlOnly(boolean only) {
-		NodeList SettingsList = SettingsDocument
-				.getElementsByTagName(WorkSpace);
-		if (SettingsList.getLength() != 1) {
-			return false;
-		}
-		Node ThisWorkspace = SettingsList.item(0);
-		NamedNodeMap WorkspaceParameters = ThisWorkspace.getAttributes();
-		for (int i = 0; i < WorkspaceParameters.getLength(); i++) {
-			if (WorkspaceParameters.item(i).getNodeName().equals(HdlName)) {
-				WorkspaceParameters.item(i)
-						.setNodeValue(Boolean.toString(only));
-				modified = true;
-				return true;
-			}
-		}
-		return false;
-	}
-
-	public boolean SetHDLType(String hdl) {
-		NodeList SettingsList = SettingsDocument
-				.getElementsByTagName(WorkSpace);
-		if (SettingsList.getLength() != 1) {
-			return false;
-		}
-		if (!hdl.equals(VHDL) && !hdl.equals(VERILOG))
-			return false;
-		Node ThisWorkspace = SettingsList.item(0);
-		NamedNodeMap WorkspaceParameters = ThisWorkspace.getAttributes();
-		for (int i = 0; i < WorkspaceParameters.getLength(); i++) {
-			if (WorkspaceParameters.item(i).getNodeName().equals(HdlTypeName)) {
-				WorkspaceParameters.item(i).setNodeValue(hdl);
-				modified = true;
-				return true;
-			}
-		}
-		return false;
-	}
-
-	public boolean SetSelectedBoard(String BoardName) {
-		NodeList SettingsList = SettingsDocument.getElementsByTagName(Boards);
-		if (SettingsList.getLength() != 1) {
-			return false;
-		}
-		if (!KnownBoards.BoardInCollection(BoardName))
-			return false;
-		if (GetSelectedBoard().equals(BoardName))
-			return true;
-		Node ThisWorkspace = SettingsList.item(0);
-		NamedNodeMap WorkspaceParameters = ThisWorkspace.getAttributes();
-		for (int i = 0; i < WorkspaceParameters.getLength(); i++) {
-			if (WorkspaceParameters.item(i).getNodeName().equals(SelectedBoard)) {
-				WorkspaceParameters.item(i).setNodeValue(BoardName);
-				modified = true;
-				return true;
-			}
-		}
-		return false;
 	}
 
 	private boolean SettingsComplete() {
@@ -400,19 +290,9 @@ public class Settings {
 							+ HomePath + SettingsFileName + ".xml");
 			System.exit(-5);
 		}
-		if (SettingsList.getLength() == 0) {
-			Element workspace = SettingsDocument.createElement(WorkSpace);
-			workspace.setAttribute(DirectoryName, HomePath
-					+ "logisim_workspace" + File.separator);
-			RootList.item(0).appendChild(workspace);
-			SettingsList = SettingsDocument.getElementsByTagName(WorkSpace);
-			result = false;
-		}
 		loadToolPath(vendors.get(FPGAClass.VendorXilinx));
 		loadToolPath(vendors.get(FPGAClass.VendorAltera));
 		loadToolPath(vendors.get(FPGAClass.VendorVivado));
-		GetHDLOnly();
-		GetHDLType();
 
 		SettingsList = SettingsDocument.getElementsByTagName(Boards);
 		if (SettingsList.getLength() > 1) {
@@ -421,16 +301,6 @@ public class Settings {
 							+ HomePath + SettingsFileName + ".xml");
 			System.exit(-5);
 		}
-		if (SettingsList.getLength() == 0) {
-			Element workspace = SettingsDocument.createElement(Boards);
-			workspace.setAttribute(SelectedBoard, KnownBoards.GetBoardNames()
-					.toArray()[0].toString());
-			RootList.item(0).appendChild(workspace);
-			SettingsList = SettingsDocument.getElementsByTagName(Boards);
-			result = false;
-		}
-		GetSelectedBoard();
-
 		result &= !modified;
 		return result;
 	}
@@ -462,27 +332,6 @@ public class Settings {
 		KnownBoards.AddExternalBoard(CompleteFileName);
 		modified = true;
 		return true;
-	}
-
-	public boolean setToolPath(char vendor, String path) {
-		VendorSoftware vendorSoftware = vendors.get(vendor);
-		if (!toolFound(vendorSoftware, path))
-			return false;
-		NodeList SettingsList = SettingsDocument.getElementsByTagName(WorkSpace);
-		if (SettingsList.getLength() != 1) {
-			return false;
-		}
-		Node ThisWorkspace = SettingsList.item(0);
-		NamedNodeMap WorkspaceParameters = ThisWorkspace.getAttributes();
-		for (int i = 0; i < WorkspaceParameters.getLength(); i++) {
-			if (WorkspaceParameters.item(i).getNodeName().equals(vendorSoftware.getName())) {
-				WorkspaceParameters.item(i).setNodeValue(path);
-				vendorSoftware.setToolPath(path);
-				modified = true;
-				return true;
-			}
-		}
-		return false;
 	}
 
 	public boolean UpdateSettingsFile() {
