@@ -158,6 +158,8 @@ public class BoardList {
 	}
 
 	public String GetBoardFilePath(String BoardName) {
+		if (BoardName == null)
+			return null;
 		for (String board : DefinedBoards) {
 			if (getBoardName(board).equals(BoardName)) {
 				return board;

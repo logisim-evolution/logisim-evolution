@@ -44,6 +44,8 @@ import javax.swing.JLabel;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
 
+import com.bfh.logisim.fpgaboardeditor.FPGAClass;
+import com.bfh.logisim.fpgagui.FPGACommanderGui;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.Softwares;
 
@@ -58,10 +60,16 @@ public class SoftwaresOptions extends OptionsPanel {
 
 			if (source == questaPathButton) {
 				Softwares.setQuestaPath(getPreferencesFrame());
-			}
+			} else
 			if (source == questaValidationCheckBox) {
 				AppPreferences.QUESTA_VALIDATION
 						.setBoolean(questaValidationCheckBox.isSelected());
+			} else if (source == QuartusPathButton) {
+				FPGACommanderGui.selectToolPath(FPGAClass.VendorAltera);
+			} else if (source == ISEPathButton) {
+				FPGACommanderGui.selectToolPath(FPGAClass.VendorXilinx);
+			} else if (source == VivadoPathButton) {
+				FPGACommanderGui.selectToolPath(FPGAClass.VendorVivado);
 			}
 		}
 
@@ -71,12 +79,18 @@ public class SoftwaresOptions extends OptionsPanel {
 
 			if (property.equals(AppPreferences.QUESTA_PATH.getIdentifier())) {
 				questaPathField.setText(AppPreferences.QUESTA_PATH.get());
-			}
+			} else
 			if (property.equals(AppPreferences.QUESTA_VALIDATION
 					.getIdentifier())) {
 				questaValidationCheckBox
 						.setSelected(AppPreferences.QUESTA_VALIDATION
 								.getBoolean());
+			} else if (property.equals(AppPreferences.QuartusToolPath.getIdentifier())) {
+				QuartusPathField.setText(AppPreferences.QuartusToolPath.get());
+			} else if (property.equals(AppPreferences.ISEToolPath.getIdentifier())) {
+				ISEPathField.setText(AppPreferences.ISEToolPath.get());
+			} else if (property.equals(AppPreferences.VivadoToolPath.getIdentifier())) {
+				VivadoPathField.setText(AppPreferences.VivadoToolPath.get());
 			}
 		}
 
@@ -90,12 +104,24 @@ public class SoftwaresOptions extends OptionsPanel {
 	private JLabel questaPathLabel = new JLabel();
 	private JTextField questaPathField = new JTextField(40);
 	private JButton questaPathButton = new JButton();
+	private JLabel QuartusPathLabel = new JLabel();
+	private JTextField QuartusPathField = new JTextField(40);
+	private JButton QuartusPathButton = new JButton();
+	private JLabel ISEPathLabel = new JLabel();
+	private JTextField ISEPathField = new JTextField(40);
+	private JButton ISEPathButton = new JButton();
+	private JLabel VivadoPathLabel = new JLabel();
+	private JTextField VivadoPathField = new JTextField(40);
+	private JButton VivadoPathButton = new JButton();
 
 	public SoftwaresOptions(PreferencesFrame window) {
 		super(window);
         
 		questaValidationCheckBox.addActionListener(myListener);
 		questaPathButton.addActionListener(myListener);
+		QuartusPathButton.addActionListener(myListener);
+		ISEPathButton.addActionListener(myListener);
+		VivadoPathButton.addActionListener(myListener);
 		AppPreferences.getPrefs().addPreferenceChangeListener(myListener);
 
 		JSeparator sep = new JSeparator(JSeparator.HORIZONTAL);
@@ -136,10 +162,89 @@ public class SoftwaresOptions extends OptionsPanel {
 		c.gridy = 3;
 		c.fill = GridBagConstraints.NONE;
 		add(questaPathButton, c);
+		
+		c.gridx = 0;
+		c.gridy = 4;
+		c.gridwidth = 4;
+		c.weightx = 1.0;
+		c.fill = GridBagConstraints.HORIZONTAL;
+		add(new JSeparator(JSeparator.HORIZONTAL), c);
+
+		c.gridx = 0;
+		c.gridy = 5;
+		c.gridwidth = 4;
+		c.weightx = 1.0;
+		c.fill = GridBagConstraints.HORIZONTAL;
+		add(QuartusPathLabel,c);
+		c.gridx = 0;
+		c.gridy = 6;
+		c.gridwidth = 2;
+		c.weightx = 1.0;
+		c.fill = GridBagConstraints.HORIZONTAL;
+		add(QuartusPathField, c);
+		c.gridx = 2;
+		c.gridy = 6;
+		c.fill = GridBagConstraints.NONE;
+		add(QuartusPathButton, c);
+
+		c.gridx = 0;
+		c.gridy = 7;
+		c.gridwidth = 4;
+		c.weightx = 1.0;
+		c.fill = GridBagConstraints.HORIZONTAL;
+		add(new JSeparator(JSeparator.HORIZONTAL), c);
+
+		c.gridx = 0;
+		c.gridy = 8;
+		c.gridwidth = 4;
+		c.weightx = 1.0;
+		c.fill = GridBagConstraints.HORIZONTAL;
+		add(ISEPathLabel,c);
+		c.gridx = 0;
+		c.gridy = 9;
+		c.gridwidth = 2;
+		c.weightx = 1.0;
+		c.fill = GridBagConstraints.HORIZONTAL;
+		add(ISEPathField, c);
+		c.gridx = 2;
+		c.gridy = 9;
+		c.fill = GridBagConstraints.NONE;
+		add(ISEPathButton, c);
+
+		c.gridx = 0;
+		c.gridy = 10;
+		c.gridwidth = 4;
+		c.weightx = 1.0;
+		c.fill = GridBagConstraints.HORIZONTAL;
+		add(new JSeparator(JSeparator.HORIZONTAL), c);
+
+		c.gridx = 0;
+		c.gridy = 11;
+		c.gridwidth = 4;
+		c.weightx = 1.0;
+		c.fill = GridBagConstraints.HORIZONTAL;
+		add(VivadoPathLabel,c);
+		c.gridx = 0;
+		c.gridy = 12;
+		c.gridwidth = 2;
+		c.weightx = 1.0;
+		c.fill = GridBagConstraints.HORIZONTAL;
+		add(VivadoPathField, c);
+		c.gridx = 2;
+		c.gridy = 12;
+		c.fill = GridBagConstraints.NONE;
+		add(VivadoPathButton, c);
+
 
 		questaValidationCheckBox.setSelected(AppPreferences.QUESTA_VALIDATION
 				.getBoolean());
 
+		QuartusPathField.setText(AppPreferences.QuartusToolPath.get());
+		QuartusPathField.setEditable(false);
+		ISEPathField.setText(AppPreferences.ISEToolPath.get());
+		ISEPathField.setEditable(false);
+		VivadoPathField.setText(AppPreferences.VivadoToolPath.get());
+		VivadoPathField.setEditable(false);
 		questaPathField.setText(AppPreferences.QUESTA_PATH.get());
 		questaPathField.setEditable(false);
 	}
@@ -160,6 +265,12 @@ public class SoftwaresOptions extends OptionsPanel {
 				.get("softwaresQuestaValidationLabel"));
 		questaPathButton.setText(Strings.get("softwaresQuestaPathButton"));
 		questaPathLabel.setText(Strings.get("softwaresQuestaPathLabel"));
+		QuartusPathButton.setText(Strings.get("softwaresQuestaPathButton"));
+		QuartusPathLabel.setText(Strings.get("QuartusToolPath"));
+		ISEPathButton.setText(Strings.get("softwaresQuestaPathButton"));
+		ISEPathLabel.setText(Strings.get("ISEToolPath"));
+		VivadoPathButton.setText(Strings.get("softwaresQuestaPathButton"));
+		VivadoPathLabel.setText(Strings.get("VivadoToolPath"));
 	}
 
 }

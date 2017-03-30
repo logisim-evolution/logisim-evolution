@@ -57,10 +57,10 @@ public class FPGAClass {
 		return result;
 	}
 
-	public static char VendorAltera = 0;
-	public static char VendorXilinx = 1;
-	public static char VendorVivado = 2;
-	public static char VendorUnknown = 255;
+	public static final char VendorAltera = 0;
+	public static final char VendorXilinx = 1;
+	public static final char VendorVivado = 2;
+	public static final char VendorUnknown = 255;
 	public static String[] Vendors = { "Altera", "Xilinx", "Vivado" };
 	private long ClockFrequency;
 	private String ClockPinLocation;
