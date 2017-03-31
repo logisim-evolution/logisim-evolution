@@ -493,6 +493,10 @@ public class AppPreferences {
 			"DownloadToBoard",true));
 	public static final PrefMonitor<String> SelectedBoard=create(new PrefMonitorString(
 			"SelectedBoard",null));
+	
+	public static final String External_Boards = "ExternalBoards";
+	public static final FPGABoards Boards = new FPGABoards();
+
 
 	
 	// Window preferences

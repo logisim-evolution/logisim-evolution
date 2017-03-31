@@ -42,7 +42,7 @@ import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
 public class BoardList {
-	private static String getBoardName(String BoardIdentifier) {
+	public static String getBoardName(String BoardIdentifier) {
 		String[] parts;
 		if (BoardIdentifier.contains("url:"))
 			parts = BoardIdentifier.split("/");
@@ -133,28 +133,21 @@ public class BoardList {
 		}
 	}
 	
-	public void AddExternalBoard(String Filename) {
-		DefinedBoards.add(Filename);
-	}
-
-	public boolean BoardInCollection(String BoardName) {
-		for (String board : DefinedBoards) {
-			if (getBoardName(board).equals(BoardName))
-				return true;
+	public boolean AddExternalBoard(String Filename) {
+		if (!DefinedBoards.contains(Filename)) {
+			DefinedBoards.add(Filename);
+			return true;
 		}
 		return false;
 	}
 
-	public boolean BoardIsUrl(String BoardName) {
-		for (String board : DefinedBoards) {
-			if (getBoardName(board).equals(BoardName)) {
-				if (board.contains("url:"))
-					return true;
-				else
-					return false;
-			}
+	public boolean RemoveExternalBoard(String Filename) {
+		if (DefinedBoards.contains(Filename)) {
+			int index = DefinedBoards.indexOf(Filename);
+			DefinedBoards.remove(index);
+			return true;
 		}
-		throw new Error();
+		return false;
 	}
 
 	public String GetBoardFilePath(String BoardName) {
