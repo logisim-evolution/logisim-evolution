@@ -61,7 +61,7 @@ import com.cburch.logisim.proj.Projects;
 
 public class AlteraDownload {
 
-	public static boolean Download(Settings MySettings, String scriptPath,
+	public static boolean Download(String scriptPath,
 			String ProjectPath, String SandboxPath, FPGAReport MyReporter) {
 		VendorSoftware alteraVendor = Settings.getSoftware(FPGAClass.VendorAltera);
 		boolean SofFileExists = new File(SandboxPath

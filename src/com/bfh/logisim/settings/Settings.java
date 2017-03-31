@@ -32,17 +32,9 @@ package com.bfh.logisim.settings;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collection;
 
 import com.bfh.logisim.fpgaboardeditor.FPGAClass;
 import com.cburch.logisim.prefs.AppPreferences;
-
-import org.w3c.dom.Attr;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 public class Settings {
 	private static String XilinxName = "XilinxToolsPath";
@@ -51,11 +43,6 @@ public class Settings {
 	public static String Unknown = "Unknown";
 	public static String VHDL = "VHDL";
 	public static String VERILOG = "Verilog";
-	private static String Boards = "FPGABoards";
-	private static String ExternalBoard = "ExternalBoardFile";
-	private Document SettingsDocument;
-	boolean modified = false;
-	private BoardList KnownBoards = new BoardList();
 
 	/* big TODO: add language support */
 	public Settings() {
@@ -155,44 +142,4 @@ public class Settings {
 		else
 			return path + File.separator;
 	}
-
-	public Collection<String> GetBoardNames() {
-		return KnownBoards.GetBoardNames();
-	}
-
-	public String GetSelectedBoardFileName() {
-		String SelectedBoardName = AppPreferences.SelectedBoard.get();
-		return KnownBoards.GetBoardFilePath(SelectedBoardName);
-	}
-
-	public boolean AddExternalBoard(String CompleteFileName) {
-		/* still to be implemented */
-		NodeList SettingsList = SettingsDocument
-				.getElementsByTagName(Boards);
-		if (SettingsList.getLength() != 1) {
-			return false;
-		}
-		Node ThisWorkspace = SettingsList.item(0);
-		int NrOfBoards = 0;
-		NamedNodeMap WorkspaceParameters = ThisWorkspace.getAttributes();
-		for (int j = 0; j < WorkspaceParameters.getLength();j++) {
-			if (WorkspaceParameters.item(j).getNodeName().contains(ExternalBoard)) {
-				String[] Items = WorkspaceParameters.item(j).getNodeName().split("_");
-				if (Items.length == 2) {
-					if (Integer.parseInt(Items[1])>NrOfBoards)
-						NrOfBoards = Integer.parseInt(Items[1]);
-				}
-			}
-		}
-		NrOfBoards += 1;
-		/* The attribute does not exists so add it */
-		Attr extBoard = SettingsDocument.createAttribute(ExternalBoard+"_"+Integer.toString(NrOfBoards));
-		extBoard.setNodeValue(CompleteFileName);
-		Element workspace = (Element) SettingsList.item(0);
-		workspace.setAttributeNode(extBoard);
-		KnownBoards.AddExternalBoard(CompleteFileName);
-		modified = true;
-		return true;
-	}
-
 }

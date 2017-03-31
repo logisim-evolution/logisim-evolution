@@ -65,7 +65,7 @@ import com.bfh.logisim.settings.VendorSoftware;
 import com.cburch.logisim.proj.Projects;
 
 public class XilinxDownload {
-	public static boolean Download(Settings MySettings,
+	public static boolean Download(
 			BoardInformation BoardInfo, String scriptPath, String UcfPath,
 			String ProjectPath, String SandboxPath, FPGAReport MyReporter) {
 		VendorSoftware xilinxVendor = Settings.getSoftware(FPGAClass.VendorXilinx);

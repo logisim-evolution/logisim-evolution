@@ -69,7 +69,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.ListSelectionModel;
-import javax.swing.filechooser.FileNameExtensionFilter;
 
 import com.bfh.logisim.designrulecheck.CorrectLabel;
 import com.bfh.logisim.designrulecheck.Netlist;
@@ -109,6 +108,19 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 		if (property.equals(AppPreferences.HDL_Type.getIdentifier()))
 				HDLType.setText(AppPreferences.HDL_Type.get());
 		HandleHDLOnly();
+		if (property.equals(AppPreferences.SelectedBoard.getIdentifier())) {
+			MyBoardInformation = new BoardReaderClass(
+					AppPreferences.Boards.GetSelectedBoardFileName())
+					.GetBoardInformation();
+			MyBoardInformation.setBoardName(AppPreferences.SelectedBoard.get());
+			MapPannel.SetBoardInformation(MyBoardInformation);
+			boardIcon = new BoardIcon(MyBoardInformation.GetImage());
+			boardPic.setIcon(boardIcon);
+			boardPic.repaint();
+			HandleHDLOnly();
+			writeToFlash.setSelected(false);
+			writeToFlash.setVisible(MyBoardInformation.fpga.isFlashDefined());
+		}
 	}
 	
 	@Override
@@ -303,7 +315,6 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 	private JButton annotateButton = new JButton();
 	private JButton validateButton = new JButton();
 	private JCheckBox writeToFlash = new JCheckBox("Write to flash?");
-	private JComboBox<String> boardsList = new JComboBox<>();
 	private JComboBox<String> circuitsList = new JComboBox<>();
 	private JComboBox<String> frequenciesList = new JComboBox<>();
 	private JComboBox<String> annotationList = new JComboBox<>();
@@ -325,7 +336,6 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 	private LinkedList<String> consoleInfos = new LinkedList<String>();
 	private LinkedList<String> consoleConsole = new LinkedList<String>();
 	private Project MyProject;
-	private Settings MySettings = new Settings();
 	private BoardInformation MyBoardInformation = null;
 	private MappableResourcesContainer MyMappableResources;
 	private String[] HDLPaths = { Settings.VERILOG.toLowerCase(),
@@ -409,21 +419,7 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 		panel.add(textTargetBoard, c);
 		c.gridx = 1;
 		c.gridwidth = 2;
-		boardsList.addItem("Other");
-		i = 1;
-		if (AppPreferences.SelectedBoard.get()==null)
-			AppPreferences.SelectedBoard.set(MySettings.GetBoardNames().toArray()[0].toString());
-		for (String boardname : MySettings.GetBoardNames()) {
-			boardsList.addItem(boardname);
-			if (boardname.equals(AppPreferences.SelectedBoard.get())) {
-				boardsList.setSelectedIndex(i);
-			}
-			i++;
-		}
-		boardsList.setEnabled(true);
-		boardsList.addActionListener(this);
-		boardsList.setActionCommand("targetBoard");
-		panel.add(boardsList, c);
+		panel.add(AppPreferences.Boards.BoardSelector(), c);
 
 		// select clock frequency
 		c.gridwidth = 1;
@@ -465,9 +461,9 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 
 		/* Read the selected board information to retrieve board picture */
 		MyBoardInformation = new BoardReaderClass(
-				MySettings.GetSelectedBoardFileName()).GetBoardInformation();
+				AppPreferences.Boards.GetSelectedBoardFileName()).GetBoardInformation();
 		MyBoardInformation
-				.setBoardName(boardsList.getSelectedItem().toString());
+				.setBoardName(AppPreferences.SelectedBoard.get());
 		boardIcon = new BoardIcon(MyBoardInformation.GetImage());
 		// set board image on panel creation
 		boardPic.setIcon(boardIcon);
@@ -677,62 +673,6 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 			HandleHDLOnly();
 		} else if (e.getActionCommand().equals("Download")) {
 			DownLoad();
-		} else if (e.getActionCommand().equals("targetBoard")) {
-			if (!boardsList.getSelectedItem().equals("Other")) {
-				AppPreferences.SelectedBoard.set(boardsList.getSelectedItem()
-						.toString());
-				MyBoardInformation = new BoardReaderClass(
-						MySettings.GetSelectedBoardFileName())
-						.GetBoardInformation();
-				MyBoardInformation.setBoardName(boardsList.getSelectedItem()
-						.toString());
-				MapPannel.SetBoardInformation(MyBoardInformation);
-				boardIcon = new BoardIcon(MyBoardInformation.GetImage());
-				boardPic.setIcon(boardIcon);
-				boardPic.repaint();
-				HandleHDLOnly();
-				writeToFlash.setSelected(false);
-				writeToFlash.setVisible(MyBoardInformation.fpga.isFlashDefined());
-			} else {
-				String NewBoardFileName = GetBoardFile();
-				MyBoardInformation = new BoardReaderClass(NewBoardFileName).GetBoardInformation();
-				if (MyBoardInformation == null) {
-					for (int index = 0 ; index < boardsList.getItemCount() ; index ++)
-						if (boardsList.getItemAt(index).equals(AppPreferences.SelectedBoard.get()))
-							boardsList.setSelectedIndex(index);
-					this.AddErrors("\""+NewBoardFileName+"\" does not has the proper format for a board file!\n");
-				} else {
-					String[] Parts = NewBoardFileName.split(File.separator);
-					String BoardInfo = Parts[Parts.length-1].replace(".xml", "");
-					Boolean CanAdd = true;
-					for (int index = 0 ; index < boardsList.getItemCount() ; index ++)
-						if (boardsList.getItemAt(index).equals(BoardInfo)) {
-							this.AddErrors("A board with the name \""+BoardInfo+"\" already exisits, cannot add new board descriptor\n");
-							CanAdd = false;
-						}
-					if (CanAdd) {
-						MySettings.AddExternalBoard(NewBoardFileName);
-						AppPreferences.SelectedBoard.set(BoardInfo);
-						boardsList.addItem(BoardInfo);
-						for (int index = 0 ; index < boardsList.getItemCount() ; index ++)
-							if (boardsList.getItemAt(index).equals(BoardInfo))
-								boardsList.setSelectedIndex(index);
-						MyBoardInformation.setBoardName(BoardInfo);
-						MapPannel.SetBoardInformation(MyBoardInformation);
-						boardIcon = new BoardIcon(MyBoardInformation.GetImage());
-						boardPic.setIcon(boardIcon);
-						boardPic.repaint();
-						HandleHDLOnly();
-						writeToFlash.setSelected(false);
-						writeToFlash.setVisible(MyBoardInformation.fpga.isFlashDefined());
-					} else {
-						for (int index = 0 ; index < boardsList.getItemCount() ; index ++)
-							if (boardsList.getItemAt(index).equals(AppPreferences.SelectedBoard.get()))
-								boardsList.setSelectedIndex(index);
-					}
-				}
-				
-			}
 		}
 	}
 
@@ -953,7 +893,7 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 					RootSheet.getNetList(), MyMappableResources,
 					MyBoardInformation, Entities, Behaviors,
 					AppPreferences.HDL_Type.get())) {
-				AlteraDownload.Download(MySettings, ProjectDir
+				AlteraDownload.Download(ProjectDir
 						+ HDLPaths[ScriptPath] + File.separator, SourcePath,
 						ProjectDir + HDLPaths[SandboxPath] + File.separator,
 						MyReporter);
@@ -967,7 +907,7 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 					AppPreferences.HDL_Type.get(),
 					writeToFlash.isSelected())
 					&& !generateOnly) {
-				XilinxDownload.Download(MySettings, MyBoardInformation,
+				XilinxDownload.Download(MyBoardInformation,
 						ProjectDir + HDLPaths[ScriptPath] + File.separator,
 						ProjectDir + HDLPaths[UCFPath] + File.separator,
 						ProjectDir, ProjectDir + HDLPaths[SandboxPath]
@@ -1158,23 +1098,6 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 		} while (!ok);
 	}
 	
-	private String GetBoardFile() {
-		JFileChooser fc = new JFileChooser(AppPreferences.FPGA_Workspace.get());
-		FileNameExtensionFilter filter = new FileNameExtensionFilter("Board files", "xml", "xml");
-		fc.setFileFilter(filter);
-		fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
-		File test = new File(AppPreferences.FPGA_Workspace.get());
-		if (test.exists()) {
-			fc.setSelectedFile(test);
-		}
-		fc.setDialogTitle("Board description selection");
-		int retval = fc.showOpenDialog(null);
-		if (retval == JFileChooser.APPROVE_OPTION) {
-			File file = fc.getSelectedFile();
-			return file.getPath();
-		} else return "";
-	}
-
 	public static void selectWorkSpace(Component parentComponent) {
 		JFileChooser fc = new JFileChooser(AppPreferences.FPGA_Workspace.get());
 		fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);

@@ -99,6 +99,10 @@ public class FPGAOptions extends OptionsPanel {
 		c.gridy = 2;
 		c.gridwidth = 3;
 		add(Download,c);
+		c.gridx = 0;
+		c.gridy = 3;
+		c.gridwidth = 3;
+		add(AppPreferences.Boards.AddRemovePanel(),c);
 	}
 
 	@Override
