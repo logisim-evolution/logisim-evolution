@@ -23,7 +23,6 @@ case "$1" in
         echo "Uninstalling command line tool logisim-evolution"
         rm /usr/bin/logisim-evolution
         if [ "$1" = "purge" ] ; then
-
             if [ "false" = "true" ]; then
                 echo "Uninstalling daemon"
                 rm -f /etc/init.d/logisim-evolution
