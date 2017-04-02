@@ -322,6 +322,7 @@ public class Circuit {
 		SortedSet<Component> comps = new TreeSet<Component>(new AnnotateComparator());
 		HashMap<String,AutoLabel> lablers = new HashMap<String,AutoLabel>();
 		Set<String> LabelNames = new HashSet<String>();
+		Set<String> Subcircuits = new HashSet<String>();
 		for (Component comp:getNonWires()) {
 			if (comp.getFactory() instanceof Tunnel)
 				continue;
@@ -346,7 +347,9 @@ public class Circuit {
 					/* in case of label cleaning, we clear first the old label */
 					reporter.AddInfo("Cleared " + this.getName() + "/"
 							+ comp.getAttributeSet().getValue(StdAttr.LABEL));
-					comp.getAttributeSet().setValue(StdAttr.LABEL, "");
+					SetAttributeAction act = new SetAttributeAction(this,Strings.getter("changeComponentAttributesAction"));
+					act.set(comp, StdAttr.LABEL, "");
+					proj.doAction(act);
 				}
 				if (comp.getAttributeSet().getValue(StdAttr.LABEL).isEmpty()) {
 					comps.add(comp);
@@ -359,7 +362,8 @@ public class Circuit {
 			/* if the current component is a sub-circuit, recurse into it */
 			if (comp.getFactory() instanceof SubcircuitFactory) {
 				SubcircuitFactory sub = (SubcircuitFactory) comp.getFactory();
-				sub.getSubcircuit().Annotate(ClearExistingLabels, reporter);
+				if (!Subcircuits.contains(sub.getName()))
+					Subcircuits.add(sub.getName());
 			}
 		}
 		/* Now Annotate */
@@ -379,6 +383,11 @@ public class Circuit {
 			}
 		}
 		Annotated = true;
+		/* Now annotate all circuits below me */
+		for (String subs : Subcircuits) {
+			Circuit circ = proj.getLogisimFile().getCircuit(subs);
+			circ.Annotate(ClearExistingLabels, reporter);
+		}
 	}
 
 	//

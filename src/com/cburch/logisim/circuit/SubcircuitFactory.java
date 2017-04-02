@@ -44,6 +44,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.locks.Lock;
 
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
@@ -390,7 +391,6 @@ public class SubcircuitFactory extends InstanceFactory {
 					else if (Direction.WEST == facing) {
 						ldx = width - m.stringWidth(pin_west.getAttributeValue(StdAttr.LABEL)) -20;
 						ldy = - (i* (m.getHeight() + 5) - 2);
-						System.out.println("Size string is : " + ldx  + " x " + ldy );
 					}
 					else if (Direction.EAST == facing) {
 						ldx = -width + 20;
