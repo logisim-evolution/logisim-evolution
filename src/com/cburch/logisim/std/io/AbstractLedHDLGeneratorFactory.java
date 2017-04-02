@@ -36,7 +36,6 @@ import com.bfh.logisim.designrulecheck.NetlistComponent;
 import com.bfh.logisim.fpgagui.FPGAReport;
 import com.bfh.logisim.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.bfh.logisim.hdlgenerator.HDLGeneratorFactory;
-import com.bfh.logisim.settings.Settings;
 import com.cburch.logisim.data.AttributeSet;
 
 public class AbstractLedHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
@@ -46,11 +45,11 @@ public class AbstractLedHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
 			NetlistComponent ComponentInfo, FPGAReport Reporter,
 			String CircuitName, String HDLType) {
 		ArrayList<String> Contents = new ArrayList<String>();
-		String Preamble = (HDLType.equals(Settings.VHDL)) ? "" : "assign ";
-		String AssignOperator = (HDLType.equals(Settings.VHDL)) ? " <= "
+		String Preamble = (HDLType.equals(VHDL)) ? "" : "assign ";
+		String AssignOperator = (HDLType.equals(VHDL)) ? " <= "
 				: " = ";
-		String OpenBracket = (HDLType.equals(Settings.VHDL)) ? "(" : "[";
-		String CloseBracket = (HDLType.equals(Settings.VHDL)) ? ")" : "]";
+		String OpenBracket = (HDLType.equals(VHDL)) ? "(" : "[";
+		String CloseBracket = (HDLType.equals(VHDL)) ? ")" : "]";
 		for (int i = 0; i < ComponentInfo.NrOfEnds(); i++) {
 			Contents.add("   "
 					+ Preamble

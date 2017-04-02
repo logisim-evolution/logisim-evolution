@@ -2,12 +2,10 @@ package com.bfh.logisim.download;
 
 import com.bfh.logisim.designrulecheck.Netlist;
 import com.bfh.logisim.fpgaboardeditor.BoardInformation;
-import com.bfh.logisim.fpgaboardeditor.FPGAClass;
 import com.bfh.logisim.fpgagui.FPGAReport;
 import com.bfh.logisim.fpgagui.MappableResourcesContainer;
 import com.bfh.logisim.hdlgenerator.FileWriter;
 import com.bfh.logisim.hdlgenerator.ToplevelHDLGeneratorFactory;
-import com.bfh.logisim.settings.Settings;
 import com.bfh.logisim.settings.VendorSoftware;
 import com.cburch.logisim.proj.Projects;
 
@@ -59,7 +57,7 @@ public class VivadoDownload {
         labelRect.y = 0;
         locText.paintImmediately(labelRect);
 
-        VendorSoftware vivadoVendor = Settings.getSoftware(FPGAClass.VendorVivado);
+        VendorSoftware vivadoVendor = VendorSoftware.getSoftware(VendorSoftware.VendorVivado);
 
         // Create Vivado project
         if (!downloadOnly) {
@@ -211,7 +209,7 @@ public class VivadoDownload {
         contents.clear();
 
         // fill the UCF file
-        contents.addAll(mapInfo.GetFPGAPinLocs(FPGAClass.VendorVivado));
+        contents.addAll(mapInfo.GetFPGAPinLocs(VendorSoftware.VendorVivado));
         if (!FileWriter.WriteContents(xdcFile, contents, myReporter))
             return false;
         contents.clear();

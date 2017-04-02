@@ -57,6 +57,7 @@ import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileFilter;
 
 import com.bfh.logisim.fpgaboardeditor.FPGAIOInformationContainer.IOComponentTypes;
+import com.bfh.logisim.settings.VendorSoftware;
 import com.cburch.logisim.proj.Projects;
 
 public class BoardDialog implements ActionListener, ComponentListener {
@@ -459,7 +460,7 @@ public class BoardDialog implements ActionListener, ComponentListener {
 		c.fill = GridBagConstraints.HORIZONTAL;
 		FPGAPanel.add(VendorText, c);
 
-		JComboBox<String> VendorInput = new JComboBox<>(FPGAClass.Vendors);
+		JComboBox<String> VendorInput = new JComboBox<>(VendorSoftware.Vendors);
 		if (TheBoard.fpga.FpgaInfoPresent()) {
 			VendorInput.setSelectedIndex(TheBoard.fpga.getVendor());
 		} else VendorInput.setSelectedIndex(0);

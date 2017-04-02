@@ -37,7 +37,6 @@ import com.bfh.logisim.designrulecheck.Netlist;
 import com.bfh.logisim.designrulecheck.NetlistComponent;
 import com.bfh.logisim.fpgagui.FPGAReport;
 import com.bfh.logisim.hdlgenerator.AbstractHDLGeneratorFactory;
-import com.bfh.logisim.settings.Settings;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.std.wiring.ClockHDLGeneratorFactory;
@@ -80,7 +79,7 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 				"Functionality of the counter:\\ __Load_Count_|_mode\\ ____0____0___|_halt\\ "
 						+ "____0____1___|_count_up_(default)\\ ____1____0___|load\\ ____1____1___|_count_down",
 				3, HDLType));
-		if (HDLType.equals(Settings.VHDL)) {
+		if (HDLType.equals(VHDL)) {
 			Contents.add("");
 			Contents.add("   CompareOut   <= s_carry;");
 			Contents.add("   CountValue   <= s_counter_value;");
@@ -267,10 +266,10 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 	public SortedMap<String, String> GetPortMap(Netlist Nets,
 			NetlistComponent ComponentInfo, FPGAReport Reporter, String HDLType) {
 		SortedMap<String, String> PortMap = new TreeMap<String, String>();
-		String ZeroBit = (HDLType.equals(Settings.VHDL)) ? "'0'" : "1'b0";
-		String SetBit = (HDLType.equals(Settings.VHDL)) ? "'1'" : "1'b1";
-		String BracketOpen = (HDLType.equals(Settings.VHDL)) ? "(" : "[";
-		String BracketClose = (HDLType.equals(Settings.VHDL)) ? ")" : "]";
+		String ZeroBit = (HDLType.equals(VHDL)) ? "'0'" : "1'b0";
+		String SetBit = (HDLType.equals(VHDL)) ? "'1'" : "1'b1";
+		String BracketOpen = (HDLType.equals(VHDL)) ? "(" : "[";
+		String BracketClose = (HDLType.equals(VHDL)) ? ")" : "]";
 		AttributeSet attrs = ComponentInfo.GetComponent().getAttributeSet();
 		if (!ComponentInfo.EndIsConnected(Counter.CK)) {
 			Reporter.AddSevereWarning("Component \"Counter\" in circuit \""
@@ -311,7 +310,7 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 			}
 		}
 		String Input = "LoadData";
-		if (HDLType.equals(Settings.VHDL)
+		if (HDLType.equals(VHDL)
 				& (ComponentInfo.GetComponent().getAttributeSet()
 						.getValue(StdAttr.WIDTH).getWidth() == 1))
 			Input += "(0)";
@@ -326,7 +325,7 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 		PortMap.putAll(GetNetMap("Up_n_Down", false, ComponentInfo, Counter.UD,
 				Reporter, HDLType, Nets));
 		String Output = "CountValue";
-		if (HDLType.equals(Settings.VHDL)
+		if (HDLType.equals(VHDL)
 				& (ComponentInfo.GetComponent().getAttributeSet()
 						.getValue(StdAttr.WIDTH).getWidth() == 1))
 			Output += "(0)";
@@ -345,7 +344,7 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 														// in explicite process
 		Regs.put("s_carry", 1); // for verilog generation in explicite process
 		Regs.put("s_counter_value", NrOfBitsId);
-		if (HDLType.equals(Settings.VERILOG))
+		if (HDLType.equals(VERILOG))
 			Regs.put("s_counter_value_neg_edge", NrOfBitsId);
 		return Regs;
 	}

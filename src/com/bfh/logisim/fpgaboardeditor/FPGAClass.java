@@ -33,10 +33,12 @@ package com.bfh.logisim.fpgaboardeditor;
 import java.util.Iterator;
 import java.util.LinkedList;
 
+import com.bfh.logisim.settings.VendorSoftware;
+
 public class FPGAClass {
 	public static char getId(String identifier) {
 		char result = 0;
-		LinkedList<String> thelist = FPGAClass.getStrings();
+		LinkedList<String> thelist = VendorSoftware.getVendorStrings();
 		Iterator<String> iter = thelist.iterator();
 		result = 0;
 		while (iter.hasNext()) {
@@ -44,24 +46,9 @@ public class FPGAClass {
 				return result;
 			result++;
 		}
-		return VendorUnknown;
+		return VendorSoftware.VendorUnknown;
 	}
 
-	public static LinkedList<String> getStrings() {
-		LinkedList<String> result = new LinkedList<String>();
-
-		result.add(Vendors[0]);
-		result.add(Vendors[1]);
-		result.add(Vendors[2]);
-
-		return result;
-	}
-
-	public static final char VendorAltera = 0;
-	public static final char VendorXilinx = 1;
-	public static final char VendorVivado = 2;
-	public static final char VendorUnknown = 255;
-	public static String[] Vendors = { "Altera", "Xilinx", "Vivado" };
 	private long ClockFrequency;
 	private String ClockPinLocation;
 	private char ClockPullBehavior;

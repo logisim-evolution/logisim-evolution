@@ -37,7 +37,6 @@ import com.bfh.logisim.designrulecheck.Netlist;
 import com.bfh.logisim.designrulecheck.NetlistComponent;
 import com.bfh.logisim.fpgagui.FPGAReport;
 import com.bfh.logisim.hdlgenerator.AbstractHDLGeneratorFactory;
-import com.bfh.logisim.settings.Settings;
 import com.cburch.logisim.data.AttributeSet;
 
 public class bcd2sevensegHDLGeneratorFactory extends AbstractHDLGeneratorFactory{
@@ -134,7 +133,7 @@ public class bcd2sevensegHDLGeneratorFactory extends AbstractHDLGeneratorFactory
 	@Override
 	public boolean HDLTargetSupported( String HDLType,
 			                           AttributeSet attrs) {
-		return HDLType.equals(Settings.VHDL);
+		return HDLType.equals(VHDL);
 	}
 	
 }

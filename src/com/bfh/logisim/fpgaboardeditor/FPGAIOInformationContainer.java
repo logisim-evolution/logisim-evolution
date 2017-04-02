@@ -56,6 +56,7 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
 import com.bfh.logisim.hdlgenerator.HDLGeneratorFactory;
+import com.bfh.logisim.settings.VendorSoftware;
 import com.cburch.logisim.proj.Projects;
 import com.cburch.logisim.std.io.DipSwitch;
 import com.cburch.logisim.std.io.PortIO;
@@ -458,13 +459,13 @@ public class FPGAIOInformationContainer {
 
 	public ArrayList<String> GetPinlocStrings(int Vendor, String direction,
 			int StartId) {
-		if (Vendor == FPGAClass.VendorXilinx) {
+		if (Vendor == VendorSoftware.VendorXilinx) {
 			return GetXilinxUCFStrings(direction, StartId);
 		}
-		if (Vendor == FPGAClass.VendorAltera) {
+		if (Vendor == VendorSoftware.VendorAltera) {
 			return GetAlteraPinStrings(direction, StartId);
 		}
-		if (Vendor == FPGAClass.VendorVivado) {
+		if (Vendor == VendorSoftware.VendorVivado) {
 			return GetVivadoXDCStrings(direction, StartId);
 		}
 		return new ArrayList<String>();

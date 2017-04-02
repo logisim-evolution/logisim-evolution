@@ -38,14 +38,13 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 
 import com.bfh.logisim.fpgagui.FPGAReport;
-import com.bfh.logisim.settings.Settings;
 
 public class FileWriter {
 
 	public static boolean CopyArchitecture(String source, String dest,
 			String componentName, FPGAReport reporter, String HDLType) {
 		try {
-			if (HDLType.equals(Settings.VERILOG)) {
+			if (HDLType.equals(HDLGeneratorFactory.VERILOG)) {
 				reporter.AddFatalError("Empty VHDL box not supported in verilog.");
 				return false;
 			}
@@ -103,15 +102,15 @@ public class FileWriter {
 			}
 			FileName += ComponentName;
 			if (IsEntity) {
-				if (HDLType.equals(Settings.VHDL)) {
+				if (HDLType.equals(HDLGeneratorFactory.VHDL)) {
 					FileName += EntityExtension;
 				}
 			} else {
-				if (HDLType.equals(Settings.VHDL)) {
+				if (HDLType.equals(HDLGeneratorFactory.VHDL)) {
 					FileName += ArchitectureExtension;
 				}
 			}
-			if (HDLType.equals(Settings.VHDL)) {
+			if (HDLType.equals(HDLGeneratorFactory.VHDL)) {
 				FileName += ".vhd";
 			} else {
 				FileName += ".v";
@@ -161,7 +160,7 @@ public class FileWriter {
 	public static ArrayList<String> getGenerateRemark(String compName,
 			String HDLIdentifier, String projName) {
 		ArrayList<String> Lines = new ArrayList<String>();
-		if (HDLIdentifier.equals(Settings.VHDL)) {
+		if (HDLIdentifier.equals(HDLGeneratorFactory.VHDL)) {
 			Lines.add("--==============================================================================");
 			Lines.add("--== Logisim goes FPGA automatic generated VHDL code                          ==");
 			Lines.add("--==                                                                          ==");
@@ -186,7 +185,7 @@ public class FileWriter {
 			Lines.add("--==============================================================================");
 			Lines.add("");
 		} else {
-			if (HDLIdentifier.equals(Settings.VERILOG)) {
+			if (HDLIdentifier.equals(HDLGeneratorFactory.VERILOG)) {
 				Lines.add("/******************************************************************************");
 				Lines.add(" ** Logisim goes FPGA automatic generated Verilog code                       **");
 				Lines.add(" **                                                                          **");

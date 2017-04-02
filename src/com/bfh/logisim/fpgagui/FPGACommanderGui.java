@@ -78,13 +78,12 @@ import com.bfh.logisim.download.VivadoDownload;
 import com.bfh.logisim.download.XilinxDownload;
 import com.bfh.logisim.fpgaboardeditor.BoardInformation;
 import com.bfh.logisim.fpgaboardeditor.BoardReaderClass;
-import com.bfh.logisim.fpgaboardeditor.FPGAClass;
 import com.bfh.logisim.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.bfh.logisim.hdlgenerator.FileWriter;
 import com.bfh.logisim.hdlgenerator.HDLGeneratorFactory;
 import com.bfh.logisim.hdlgenerator.TickComponentHDLGeneratorFactory;
 import com.bfh.logisim.hdlgenerator.ToplevelHDLGeneratorFactory;
-import com.bfh.logisim.settings.Settings;
+import com.bfh.logisim.settings.VendorSoftware;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitEvent;
 import com.cburch.logisim.circuit.CircuitListener;
@@ -338,8 +337,8 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 	private Project MyProject;
 	private BoardInformation MyBoardInformation = null;
 	private MappableResourcesContainer MyMappableResources;
-	private String[] HDLPaths = { Settings.VERILOG.toLowerCase(),
-			Settings.VHDL.toLowerCase(), "scripts", "sandbox", "ucf", "xdc"};
+	private String[] HDLPaths = { HDLGeneratorFactory.VERILOG.toLowerCase(),
+			HDLGeneratorFactory.VHDL.toLowerCase(), "scripts", "sandbox", "ucf", "xdc"};
 	@SuppressWarnings("unused")
 	private static final Integer VerilogSourcePath = 0;
 	@SuppressWarnings("unused")
@@ -386,10 +385,6 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 		GridBagConstraints c = new GridBagConstraints();
 		panel.setLayout(thisLayout);
 		
-		// PointerInfo mouseloc = MouseInfo.getPointerInfo();
-		// Point mlocation = mouseloc.getLocation();
-		// panel.setLocation(mlocation.x, mlocation.y);
-
 		// change main circuit
 		circuitsList.setEnabled(true);
 		c.fill = GridBagConstraints.HORIZONTAL;
@@ -409,9 +404,6 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 		circuitsList.addActionListener(this);
 		panel.add(circuitsList, c);
 
-		// Big TODO: add in all classes (Settings and this one) support for
-		// board xmls stored on disc (rather than in the resources directory)
-		// change target board
 		c.gridwidth = 1;
 		c.gridx = 0;
 		c.gridy = 3;
@@ -470,11 +462,9 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 		c.gridx = 3;
 		c.gridy = 2;
 		c.gridheight = 5;
-		// c.gridwidth = 2;
 		panel.add(boardPic, c);
 
 		c.gridheight = 1;
-		// c.gridwidth = 1;
 
 		// validate button
 		validateButton.setActionCommand("Download");
@@ -625,10 +615,6 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 		panel.add(tabbedPane, c);
 
 		panel.pack();
-		/*
-		 * panel.setLocation(Projects.getCenteredLoc(panel.getWidth(),
-		 * panel.getHeight()));
-		 */
 		panel.setLocationRelativeTo(null);
 		panel.setVisible(false);
 		
@@ -645,8 +631,8 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 	}
 	
 	private void HandleHDLOnly() {
-		if (!Settings.toolsPresent(MyBoardInformation.fpga.getVendor(), 
-				Settings.GetToolPath(MyBoardInformation.fpga.getVendor()))) {
+		if (!VendorSoftware.toolsPresent(MyBoardInformation.fpga.getVendor(), 
+				VendorSoftware.GetToolPath(MyBoardInformation.fpga.getVendor()))) {
 			HDLOnly.setText(SelectToolPathMessage);
 		} else if (!AppPreferences.DownloadToBoard.get()) {
 			HDLOnly.setText(OnlyHDLMessage);
@@ -656,8 +642,8 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 	}
 	
 	private boolean canDownload() {
-		if (!Settings.toolsPresent(MyBoardInformation.fpga.getVendor(), 
-				Settings.GetToolPath(MyBoardInformation.fpga.getVendor())))
+		if (!VendorSoftware.toolsPresent(MyBoardInformation.fpga.getVendor(), 
+				VendorSoftware.GetToolPath(MyBoardInformation.fpga.getVendor())))
 			return false;
 		return AppPreferences.DownloadToBoard.get();
 	}
@@ -887,7 +873,7 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 		ArrayList<String> Behaviors = new ArrayList<String>();
 		GetVHDLFiles(ProjectDir, SourcePath, Entities, Behaviors,
 				AppPreferences.HDL_Type.get());
-		if (MyBoardInformation.fpga.getVendor() == FPGAClass.VendorAltera) {
+		if (MyBoardInformation.fpga.getVendor() == VendorSoftware.VendorAltera) {
 			if (AlteraDownload.GenerateQuartusScript(MyReporter, ProjectDir
 					+ HDLPaths[ScriptPath] + File.separator,
 					RootSheet.getNetList(), MyMappableResources,
@@ -898,7 +884,7 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 						ProjectDir + HDLPaths[SandboxPath] + File.separator,
 						MyReporter);
 			}
-		} else if (MyBoardInformation.fpga.getVendor() == FPGAClass.VendorXilinx) {
+		} else if (MyBoardInformation.fpga.getVendor() == VendorSoftware.VendorXilinx) {
 			if (XilinxDownload.GenerateISEScripts(MyReporter, ProjectDir,
 					ProjectDir + HDLPaths[ScriptPath] + File.separator,
 					ProjectDir + HDLPaths[UCFPath] + File.separator,
@@ -913,7 +899,7 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 						ProjectDir, ProjectDir + HDLPaths[SandboxPath]
 								+ File.separator, MyReporter);
 			}
-		} else if (MyBoardInformation.fpga.getVendor() == FPGAClass.VendorVivado) {
+		} else if (MyBoardInformation.fpga.getVendor() == VendorSoftware.VendorVivado) {
 			if (VivadoDownload.GenerateScripts(MyReporter, ProjectDir,
 					ProjectDir + HDLPaths[ScriptPath] + File.separator,
 					ProjectDir + HDLPaths[XDCPath] + File.separator,
@@ -961,22 +947,18 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 							Entities, Behaviors, HDLType);
 				}
 			} else {
-				String EntityMask = (HDLType.equals(Settings.VHDL)) ? FileWriter.EntityExtension
+				String EntityMask = (HDLType.equals(HDLGeneratorFactory.VHDL)) ? FileWriter.EntityExtension
 						+ ".vhd"
 						: ".v";
-				String ArchitecturMask = (HDLType.equals(Settings.VHDL)) ? FileWriter.ArchitectureExtension
+				String ArchitecturMask = (HDLType.equals(HDLGeneratorFactory.VHDL)) ? FileWriter.ArchitectureExtension
 						+ ".vhd"
 						: "#not_searched#";
 				if (thisFile.getName().endsWith(EntityMask)) {
 					Entities.add((Path + File.separator + thisFile.getName())
 							.replace("\\", "/"));
-					// Entities.add((Path+File.separator+thisFile.getName()).replace(SourcePath,
-					// "../"));
 				} else if (thisFile.getName().endsWith(ArchitecturMask)) {
 					Behaviors.add((Path + File.separator + thisFile.getName())
 							.replace("\\", "/"));
-					// Behaviors.add((Path+File.separator+thisFile.getName()).replace(SourcePath,
-					// "../"));
 				}
 			}
 		}
@@ -1067,7 +1049,7 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 	
 
 	public static void selectToolPath(char vendor) {
-		String ToolPath = Settings.GetToolPath(vendor);
+		String ToolPath = VendorSoftware.GetToolPath(vendor);
 		if (ToolPath == null)
 			return;
 		JFileChooser fc = new JFileChooser(ToolPath);
@@ -1076,7 +1058,7 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 		if (test.exists()) {
 			fc.setSelectedFile(test);
 		}
-		fc.setDialogTitle(FPGAClass.Vendors[vendor]
+		fc.setDialogTitle(VendorSoftware.Vendors[vendor]
 				+ " Design Suite Path Selection");
 		int retval;
 		boolean ok = false;
@@ -1088,7 +1070,7 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 			  if (!ToolPath.endsWith(File.separator)) {
 				  ToolPath += File.separator;
 			  }
-			  if (Settings.setToolPath(vendor, ToolPath)) {
+			  if (VendorSoftware.setToolPath(vendor, ToolPath)) {
 				  ok = true;
 			  } else {
 				  JOptionPane.showMessageDialog(null,"Required tools not found in Directory \""+ToolPath+"\"!",

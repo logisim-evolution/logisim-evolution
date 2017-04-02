@@ -47,7 +47,6 @@ import com.bfh.logisim.designrulecheck.Netlist;
 import com.bfh.logisim.designrulecheck.NetlistComponent;
 import com.bfh.logisim.fpgagui.FPGAReport;
 import com.bfh.logisim.fpgagui.MappableResourcesContainer;
-import com.bfh.logisim.settings.Settings;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitAttributes;
 import com.cburch.logisim.circuit.SubcircuitFactory;
@@ -179,9 +178,9 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 	/* here the private handles are defined */
 	private String GetBubbleIndex(NetlistComponent comp, String HDLType,
 			boolean inputBubbles) {
-		String BracketOpen = (HDLType.equals(Settings.VHDL)) ? "( " : "[";
-		String BracketClose = (HDLType.equals(Settings.VHDL)) ? " )" : "]";
-		String RangeKeyword = (HDLType.equals(Settings.VHDL)) ? " DOWNTO "
+		String BracketOpen = (HDLType.equals(VHDL)) ? "( " : "[";
+		String BracketClose = (HDLType.equals(VHDL)) ? " )" : "]";
+		String RangeKeyword = (HDLType.equals(VHDL)) ? " DOWNTO "
 				: ":";
 		if (inputBubbles) {
 			return BracketOpen
@@ -211,14 +210,14 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 				HDLGeneratorFactory Worker = Gate
 						.GetComponent()
 						.getFactory()
-						.getHDLGenerator(Settings.VHDL,
+						.getHDLGenerator(VHDL,
 								Gate.GetComponent().getAttributeSet());
 				if (Worker != null) {
-					if (!Worker.IsOnlyInlined(Settings.VHDL)) {
+					if (!Worker.IsOnlyInlined(VHDL)) {
 						Components.addAll(Worker.GetComponentInstantiation(
 								TheNetlist, Gate.GetComponent()
 										.getAttributeSet(), CompName,
-								Settings.VHDL/* , false */));
+								VHDL/* , false */));
 					}
 				}
 			}
@@ -232,14 +231,14 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 				HDLGeneratorFactory Worker = Gate
 						.GetComponent()
 						.getFactory()
-						.getHDLGenerator(Settings.VHDL,
+						.getHDLGenerator(VHDL,
 								Gate.GetComponent().getAttributeSet());
 				SubcircuitFactory sub = (SubcircuitFactory) Gate.GetComponent()
 						.getFactory();
 				if (Worker != null) {
 					Components.addAll(Worker.GetComponentInstantiation(sub
 							.getSubcircuit().getNetList(), Gate.GetComponent()
-							.getAttributeSet(), CompName, Settings.VHDL/*
+							.getAttributeSet(), CompName, VHDL/*
 																		 * ,
 																		 * false
 																		 */));
@@ -257,8 +256,8 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 	public ArrayList<String> GetHDLWiring(String HDLType, Netlist TheNets) {
 		ArrayList<String> Contents = new ArrayList<String>();
 		StringBuffer OneLine = new StringBuffer();
-		String BracketOpen = (HDLType.equals(Settings.VHDL)) ? "(" : "[";
-		String BracketClose = (HDLType.equals(Settings.VHDL)) ? ")" : "]";
+		String BracketOpen = (HDLType.equals(VHDL)) ? "(" : "[";
+		String BracketClose = (HDLType.equals(VHDL)) ? ")" : "]";
 		/* we cycle through all nets with a forcedrootnet annotation */
 		for (Net ThisNet : TheNets.GetAllNets()) {
 			if (ThisNet.IsForcedRootNet()) {
@@ -280,7 +279,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 						while (OneLine.length() < SallignmentSize) {
 							OneLine.append(" ");
 						}
-						if (HDLType.equals(Settings.VHDL)) {
+						if (HDLType.equals(VHDL)) {
 							String line = "   "
 									+ OneLine.toString()
 									+ "<= "
@@ -314,7 +313,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 						while (OneLine.length() < SallignmentSize) {
 							OneLine.append(" ");
 						}
-						if (HDLType.equals(Settings.VHDL)) {
+						if (HDLType.equals(VHDL)) {
 							OneLine.append("<= ");
 						} else {
 							OneLine.append("= ");
@@ -329,7 +328,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 									+ Integer.toString(TheNets
 											.GetNetId(ThisNet)));
 						}
-						if (HDLType.equals(Settings.VHDL)) {
+						if (HDLType.equals(VHDL)) {
 							String line = "   " + OneLine.toString() + ";";
 							if (!Contents.contains(line))
 								Contents.add(line);
@@ -434,11 +433,11 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 	public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist,
 			AttributeSet attrs, FPGAReport Reporter, String HDLType) {
 		ArrayList<String> Contents = new ArrayList<String>();
-		String Preamble = (HDLType.equals(Settings.VHDL)) ? "" : "assign ";
-		String AssignmentOperator = (HDLType.equals(Settings.VHDL)) ? "<= "
+		String Preamble = (HDLType.equals(VHDL)) ? "" : "assign ";
+		String AssignmentOperator = (HDLType.equals(VHDL)) ? "<= "
 				: "= ";
-		String OpenBracket = (HDLType.equals(Settings.VHDL)) ? "(" : "[";
-		String CloseBracket = (HDLType.equals(Settings.VHDL)) ? ")" : "]";
+		String OpenBracket = (HDLType.equals(VHDL)) ? "(" : "[";
+		String CloseBracket = (HDLType.equals(VHDL)) ? ")" : "]";
 		boolean FirstLine = true;
 		StringBuffer Temp = new StringBuffer();
 		Map<String, Long> CompIds = new HashMap<String, Long>();
@@ -933,10 +932,10 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 		StringBuffer Source = new StringBuffer();
 		StringBuffer Destination = new StringBuffer();
 		StringBuffer Tab = new StringBuffer();
-		String AssignCommand = (HDLType.equals(Settings.VHDL)) ? "" : "assign ";
-		String AssignOperator = (HDLType.equals(Settings.VHDL)) ? "<= " : "= ";
-		String BracketOpen = (HDLType.equals(Settings.VHDL)) ? "(" : "[";
-		String BracketClose = (HDLType.equals(Settings.VHDL)) ? ")" : "]";
+		String AssignCommand = (HDLType.equals(VHDL)) ? "" : "assign ";
+		String AssignOperator = (HDLType.equals(VHDL)) ? "<= " : "= ";
+		String BracketOpen = (HDLType.equals(VHDL)) ? "(" : "[";
+		String BracketClose = (HDLType.equals(VHDL)) ? ")" : "]";
 		if ((EndIndex < 0) || (EndIndex >= comp.NrOfEnds())) {
 			Reporter.AddFatalError("INTERNAL ERROR: Component tried to index non-existing SolderPoint: '"
 					+ comp.GetComponent().getAttributeSet()

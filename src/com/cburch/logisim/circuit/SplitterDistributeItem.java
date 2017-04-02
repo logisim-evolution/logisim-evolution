@@ -35,7 +35,6 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JMenuItem;
 
-import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.util.StringGetter;
 

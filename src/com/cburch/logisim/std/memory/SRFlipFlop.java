@@ -38,7 +38,6 @@ import com.bfh.logisim.designrulecheck.Netlist;
 import com.bfh.logisim.designrulecheck.NetlistComponent;
 import com.bfh.logisim.fpgagui.FPGAReport;
 import com.bfh.logisim.hdlgenerator.HDLGeneratorFactory;
-import com.bfh.logisim.settings.Settings;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Value;
 
@@ -72,7 +71,7 @@ public class SRFlipFlop extends AbstractFlipFlop {
 		@Override
 		public ArrayList<String> GetUpdateLogic(String HDLType) {
 			ArrayList<String> Contents = new ArrayList<String>();
-			if (HDLType.endsWith(Settings.VHDL))
+			if (HDLType.endsWith(VHDL))
 				Contents.add("   s_next_state <= (s_current_state_reg OR S) AND NOT(R);");
 			else
 				Contents.add("   assign s_next_state = (s_current_state_reg|S)&~(R);");

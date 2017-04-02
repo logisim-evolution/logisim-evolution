@@ -41,7 +41,6 @@ import com.bfh.logisim.fpgagui.MappableResourcesContainer;
 import com.bfh.logisim.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.bfh.logisim.hdlgenerator.FileWriter;
 import com.bfh.logisim.hdlgenerator.HDLGeneratorFactory;
-import com.bfh.logisim.settings.Settings;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.instance.StdAttr;
@@ -49,43 +48,18 @@ import com.cburch.logisim.instance.StdAttr;
 public class ReptarLocalBusHDLGeneratorFactory extends
 		AbstractHDLGeneratorFactory {
 
-	// @Override
-	// public ArrayList<String> GetComponentDeclarationSection(Netlist
-	// TheNetlist,
-	// AttributeSet attrs) {
-	// ArrayList<String> Components = new ArrayList<String>();
-	// // Components.add("COMPONENT " + getComponentStringIdentifier());
-	// //
-	// Components.add("   PORT ( Addr_Data_LB_io     : INOUT std_logic_vector(15 downto 0);");
-	// // Components.add("          SP6_LB_nCS3_o       : IN std_logic;");
-	// // Components.add("          SP6_LB_nADV_ALE_o   : IN std_logic;");
-	// // Components.add("          SP6_LB_RE_nOE_o     : IN std_logic;");
-	// // Components.add("          SP6_LB_nWE_o        : IN std_logic;");
-	// // Components.add("          SP6_LB_WAIT3_i      : OUT std_logic;");
-	// //
-	// Components.add("          Addr_Data_LB_o      : IN std_logic_vector(15 downto 0);");
-	// //
-	// Components.add("          Addr_Data_LB_i      : OUT std_logic_vector(15 downto 0);");
-	// // Components.add("          Addr_Data_LB_tris_i : OUT std_logic);");
-	// // Components.add("END COMPONENT;");
-	// return Components;
-	// }
 	@Override
 	public ArrayList<String> GetArchitecture(Netlist TheNetlist,
 			AttributeSet attrs, String ComponentName, FPGAReport Reporter,
 			String HDLType) {
 		ArrayList<String> Contents = new ArrayList<String>();
-		if (HDLType.equals(Settings.VHDL)) {
+		if (HDLType.equals(VHDL)) {
 			Contents.addAll(FileWriter.getGenerateRemark(ComponentName,
 					HDLType, TheNetlist.projName()));
 			Contents.add("");
 			Contents.add("ARCHITECTURE PlatformIndependent OF "
 					+ ComponentName.toString() + " IS ");
 			Contents.add("");
-			// Contents.add("signal Addr_Data_LB_in_s  :  std_logic_vector(15 downto 0);");
-			// Contents.add("signal Addr_Data_LB_out_s  :  std_logic_vector(15 downto 0);");
-			// Contents.add("signal local_bus_tris_s   :  std_logic;");
-			// Contents.add("");
 			Contents.add("BEGIN");
 			Contents.add("");
 			Contents.add("FPGA_out(0) <= NOT SP6_LB_WAIT3_i;");
@@ -113,17 +87,12 @@ public class ReptarLocalBusHDLGeneratorFactory extends
 			Contents.add("");
 			Contents.add("END PlatformIndependent;");
 		}
-		// Contents.addAll(super.GetArchitecture(TheNetlist, attrs,
-		// ComponentName, Reporter, HDLType));
 		return Contents;
 	}
 
 	@Override
 	public ArrayList<String> GetComponentInstantiation(Netlist TheNetlist,
-			AttributeSet attrs, String ComponentName, String HDLType/*
-																	 * , boolean
-																	 * hasLB
-																	 */) {
+			AttributeSet attrs, String ComponentName, String HDLType) {
 		ArrayList<String> Contents = new ArrayList<String>();
 		Contents.add("   COMPONENT LocalBus");
 		Contents.add("      PORT ( SP6_LB_WAIT3_i            : IN  std_logic;");
@@ -140,10 +109,6 @@ public class ReptarLocalBusHDLGeneratorFactory extends
 		Contents.add("            Addr_Data_LB_o      : OUT std_logic_vector(15 downto 0);");
 		Contents.add("            Addr_Data_LB_tris_i : IN std_logic);");
 		Contents.add("   END COMPONENT;");
-		// if (HDLType.equals(Settings.VHDL)) {
-		// Contents.addAll(GetVHDLBlackBox(TheNetlist, attrs, ComponentName,
-		// false, hasLB));
-		// }
 		return Contents;
 	}
 
@@ -157,7 +122,7 @@ public class ReptarLocalBusHDLGeneratorFactory extends
 			String ComponentName, FPGAReport Reporter, String HDLType) {
 		ArrayList<String> Contents = new ArrayList<String>();
 		Contents.addAll(FileWriter.getGenerateRemark(ComponentName,
-				Settings.VHDL, TheNetlist.projName()));
+				VHDL, TheNetlist.projName()));
 		Contents.addAll(FileWriter.getExtendedLibrary());
 		Contents.add("Library UNISIM;");
 		Contents.add("use UNISIM.vcomponents.all;");
@@ -215,25 +180,6 @@ public class ReptarLocalBusHDLGeneratorFactory extends
 		return Outputs;
 	}
 
-	// @Override
-	// public SortedMap<Integer,String> GetParameterList(AttributeSet attrs) {
-	// SortedMap<Integer,String> Parameters = new TreeMap<Integer,String>();
-	// int outputbits = attrs.getValue(StdAttr.WIDTH).getWidth();
-	// if (outputbits > 1)
-	// Parameters.put(NrOfBitsId, NrOfBitsStr);
-	// Parameters.put(ExtendedBitsId, ExtendedBitsStr);
-	// return Parameters;
-	// }
-	// @Override
-	// public SortedMap<String, Integer> GetWireList(AttributeSet attrs,
-	// Netlist Nets) {
-	// SortedMap<String, Integer> Wires = new TreeMap<String, Integer>();
-	// Wires.put("Addr_Data_LB_in_s", 16);
-	// // Wires.put("Addr_LB_in_s", 8);
-	// Wires.put("Addr_Data_LB_out_s", 16);
-	// Wires.put("local_bus_tris_s", 1);
-	// return Wires;
-	// }
 
 	@Override
 	public SortedMap<String, Integer> GetInputList(Netlist TheNetlist,
@@ -241,8 +187,6 @@ public class ReptarLocalBusHDLGeneratorFactory extends
 		SortedMap<String, Integer> Inputs = new TreeMap<String, Integer>();
 		Inputs.put("SP6_LB_WAIT3_i", 1);
 		Inputs.put("IRQ_i", 1);
-		// Outputs.put("Addr_Data_LB_i", 16);
-		// Outputs.put("Addr_Data_LB_tris_i", 1);
 		return Inputs;
 	}
 
@@ -250,7 +194,7 @@ public class ReptarLocalBusHDLGeneratorFactory extends
 	public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist,
 			AttributeSet attrs, FPGAReport Reporter, String HDLType) {
 		ArrayList<String> Contents = new ArrayList<String>();
-		if (HDLType.equals(Settings.VHDL)) {
+		if (HDLType.equals(VHDL)) {
 			Contents.add(" ");
 		} else {
 			throw new UnsupportedOperationException(
@@ -268,29 +212,13 @@ public class ReptarLocalBusHDLGeneratorFactory extends
 		Outputs.put("SP6_LB_RE_nOE_o", 1);
 		Outputs.put("SP6_LB_nWE_o", 1);
 		Outputs.put("Addr_LB_o", 8);
-		// Inputs.put("Addr_Data_LB_o", 16);
 		return Outputs;
 	}
 
-	// @Override
-	// public SortedMap<String,Integer> GetParameterMap(Netlist Nets,
-	// NetlistComponent ComponentInfo,
-	// FPGAReport Reporter) {
-	// SortedMap<String,Integer> ParameterMap = new TreeMap<String,Integer>();
-	// int nrOfBits =
-	// ComponentInfo.GetComponent().getEnd(0).getWidth().getWidth();
-	// ParameterMap.put(ExtendedBitsStr, nrOfBits+1);
-	// if (nrOfBits > 1)
-	// ParameterMap.put(NrOfBitsStr, nrOfBits);
-	// return ParameterMap;
-	// }
 	@Override
 	public SortedMap<String, String> GetPortMap(Netlist Nets,
 			NetlistComponent ComponentInfo, FPGAReport Reporter, String HDLType) {
 		SortedMap<String, String> PortMap = new TreeMap<String, String>();
-		// PortMap.put("Addr_Data_LB_io", LocalInOutBubbleBusname + "(" +
-		// ComponentInfo.GetLocalBubbleInOutEndId() + " DOWNTO " +
-		// ComponentInfo.GetLocalBubbleInOutStartId() + ")");
 		PortMap.put("Addr_Data_LB_io", LocalInOutBubbleBusname
 				+ "(15 DOWNTO 0)");
 		PortMap.put(
@@ -333,6 +261,6 @@ public class ReptarLocalBusHDLGeneratorFactory extends
 
 	@Override
 	public boolean HDLTargetSupported(String HDLType, AttributeSet attrs) {
-		return HDLType.equals(Settings.VHDL);
+		return HDLType.equals(VHDL);
 	}
 }

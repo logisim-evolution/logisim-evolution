@@ -44,8 +44,8 @@ import javax.swing.JLabel;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
 
-import com.bfh.logisim.fpgaboardeditor.FPGAClass;
 import com.bfh.logisim.fpgagui.FPGACommanderGui;
+import com.bfh.logisim.settings.VendorSoftware;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.Softwares;
 
@@ -65,11 +65,11 @@ public class SoftwaresOptions extends OptionsPanel {
 				AppPreferences.QUESTA_VALIDATION
 						.setBoolean(questaValidationCheckBox.isSelected());
 			} else if (source == QuartusPathButton) {
-				FPGACommanderGui.selectToolPath(FPGAClass.VendorAltera);
+				FPGACommanderGui.selectToolPath(VendorSoftware.VendorAltera);
 			} else if (source == ISEPathButton) {
-				FPGACommanderGui.selectToolPath(FPGAClass.VendorXilinx);
+				FPGACommanderGui.selectToolPath(VendorSoftware.VendorXilinx);
 			} else if (source == VivadoPathButton) {
-				FPGACommanderGui.selectToolPath(FPGAClass.VendorVivado);
+				FPGACommanderGui.selectToolPath(VendorSoftware.VendorVivado);
 			}
 		}
 

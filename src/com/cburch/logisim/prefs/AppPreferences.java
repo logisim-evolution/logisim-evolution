@@ -51,7 +51,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.UIManager;
 
-import com.bfh.logisim.settings.Settings;
+import com.bfh.logisim.hdlgenerator.HDLGeneratorFactory;
 import com.cburch.logisim.Main;
 import com.cburch.logisim.circuit.RadixOption;
 import com.cburch.logisim.data.Direction;
@@ -487,8 +487,8 @@ public class AppPreferences {
 	public static final PrefMonitor<String> FPGA_Workspace=create(new PrefMonitorString(
 			"FPGAWorkspace", System.getProperty("user.home")));
 	public static final PrefMonitor<String> HDL_Type = create(new PrefMonitorStringOpts(
-			"afterAdd", new String[] { Settings.VHDL, Settings.VERILOG },
-			Settings.VHDL));
+			"afterAdd", new String[] { HDLGeneratorFactory.VHDL, HDLGeneratorFactory.VERILOG },
+			HDLGeneratorFactory.VHDL));
 	public static final PrefMonitor<Boolean> DownloadToBoard=create(new PrefMonitorBoolean(
 			"DownloadToBoard",true));
 	public static final PrefMonitor<String> SelectedBoard=create(new PrefMonitorString(

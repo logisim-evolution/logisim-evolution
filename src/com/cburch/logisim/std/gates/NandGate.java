@@ -33,7 +33,6 @@ package com.cburch.logisim.std.gates;
 import java.awt.Graphics;
 import java.util.ArrayList;
 
-import com.bfh.logisim.settings.Settings;
 import com.cburch.logisim.analyze.model.Expression;
 import com.cburch.logisim.analyze.model.Expressions;
 import com.cburch.logisim.data.AttributeSet;
@@ -54,12 +53,12 @@ class NandGate extends AbstractGate {
 		public ArrayList<String> GetLogicFunction(int nr_of_inputs,
 				int bitwidth, boolean is_one_hot, String HDLType) {
 			ArrayList<String> Contents = new ArrayList<String>();
-			String Preamble = (HDLType.equals(Settings.VHDL) ? "" : "assign ");
-			String AndOperation = (HDLType.equals(Settings.VHDL) ? " AND"
+			String Preamble = (HDLType.equals(VHDL) ? "" : "assign ");
+			String AndOperation = (HDLType.equals(VHDL) ? " AND"
 					: " &");
-			String AssignOperation = (HDLType.equals(Settings.VHDL) ? " <= "
+			String AssignOperation = (HDLType.equals(VHDL) ? " <= "
 					: " = ");
-			String NotOperation = (HDLType.equals(Settings.VHDL) ? "NOT" : "~");
+			String NotOperation = (HDLType.equals(VHDL) ? "NOT" : "~");
 			StringBuffer OneLine = new StringBuffer();
 			OneLine.append("   " + Preamble + "Result" + AssignOperation
 					+ NotOperation + "(");

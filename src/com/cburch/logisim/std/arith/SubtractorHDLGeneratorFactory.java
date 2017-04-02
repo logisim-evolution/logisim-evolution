@@ -37,7 +37,6 @@ import com.bfh.logisim.designrulecheck.Netlist;
 import com.bfh.logisim.designrulecheck.NetlistComponent;
 import com.bfh.logisim.fpgagui.FPGAReport;
 import com.bfh.logisim.hdlgenerator.AbstractHDLGeneratorFactory;
-import com.bfh.logisim.settings.Settings;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.instance.StdAttr;
 
@@ -70,7 +69,7 @@ public class SubtractorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 			AttributeSet attrs, FPGAReport Reporter, String HDLType) {
 		ArrayList<String> Contents = new ArrayList<String>();
 		int nrOfBits = attrs.getValue(StdAttr.WIDTH).getWidth();
-		if (HDLType.equals(Settings.VHDL)) {
+		if (HDLType.equals(VHDL)) {
 			Contents.add("   s_inverted_dataB <= NOT(DataB);");
 			Contents.add("   s_extended_dataA <= \"0\"&DataA;");
 			Contents.add("   s_extended_dataB <= \"0\"&s_inverted_dataB;");

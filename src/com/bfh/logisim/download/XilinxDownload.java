@@ -52,7 +52,6 @@ import javax.swing.JProgressBar;
 
 import com.bfh.logisim.designrulecheck.Netlist;
 import com.bfh.logisim.fpgaboardeditor.BoardInformation;
-import com.bfh.logisim.fpgaboardeditor.FPGAClass;
 import com.bfh.logisim.fpgaboardeditor.IoStandards;
 import com.bfh.logisim.fpgaboardeditor.PullBehaviors;
 import com.bfh.logisim.fpgagui.FPGAReport;
@@ -60,7 +59,6 @@ import com.bfh.logisim.fpgagui.MappableResourcesContainer;
 import com.bfh.logisim.hdlgenerator.FileWriter;
 import com.bfh.logisim.hdlgenerator.TickComponentHDLGeneratorFactory;
 import com.bfh.logisim.hdlgenerator.ToplevelHDLGeneratorFactory;
-import com.bfh.logisim.settings.Settings;
 import com.bfh.logisim.settings.VendorSoftware;
 import com.cburch.logisim.proj.Projects;
 
@@ -68,7 +66,7 @@ public class XilinxDownload {
 	public static boolean Download(
 			BoardInformation BoardInfo, String scriptPath, String UcfPath,
 			String ProjectPath, String SandboxPath, FPGAReport MyReporter) {
-		VendorSoftware xilinxVendor = Settings.getSoftware(FPGAClass.VendorXilinx);
+		VendorSoftware xilinxVendor = VendorSoftware.getSoftware(VendorSoftware.VendorXilinx);
 		boolean IsCPLD = BoardInfo.fpga.getPart().toUpperCase()
 				.startsWith("XC2C")
 				|| BoardInfo.fpga.getPart().toUpperCase().startsWith("XA2C")
@@ -588,7 +586,7 @@ public class XilinxDownload {
 					+ GetClockFrequencyString(BoardInfo) + " HIGH 50 % ;");
 			Contents.add("");
 		}
-		Contents.addAll(MapInfo.GetFPGAPinLocs(FPGAClass.VendorXilinx));
+		Contents.addAll(MapInfo.GetFPGAPinLocs(VendorSoftware.VendorXilinx));
 		return FileWriter.WriteContents(UcfFile, Contents, MyReporter);
 	}
 

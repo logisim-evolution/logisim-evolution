@@ -39,7 +39,6 @@ import java.util.Map;
 import javax.swing.Icon;
 
 import com.bfh.logisim.designrulecheck.CorrectLabel;
-import com.bfh.logisim.settings.Settings;
 import com.cburch.logisim.analyze.model.Expression;
 import com.cburch.logisim.analyze.model.Expressions;
 import com.cburch.logisim.circuit.ExpressionComputer;
@@ -71,7 +70,7 @@ class NotGate extends InstanceFactory {
 		public ArrayList<String> GetLogicFunction(int nr_of_inputs,
 				int bitwidth, boolean is_one_hot, String HDLType) {
 			ArrayList<String> Contents = new ArrayList<String>();
-			if (HDLType.equals(Settings.VHDL))
+			if (HDLType.equals(VHDL))
 				Contents.add("   Result <= NOT(Input_1);");
 			else
 				Contents.add("   assign Result = ~(Input_1);");

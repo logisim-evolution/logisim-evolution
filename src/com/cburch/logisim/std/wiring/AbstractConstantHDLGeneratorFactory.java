@@ -35,7 +35,6 @@ import com.bfh.logisim.designrulecheck.Netlist;
 import com.bfh.logisim.designrulecheck.NetlistComponent;
 import com.bfh.logisim.fpgagui.FPGAReport;
 import com.bfh.logisim.hdlgenerator.AbstractHDLGeneratorFactory;
-import com.bfh.logisim.settings.Settings;
 import com.cburch.logisim.data.AttributeSet;
 
 public class AbstractConstantHDLGeneratorFactory extends
@@ -46,7 +45,7 @@ public class AbstractConstantHDLGeneratorFactory extends
 	}
 
 	private String GetConvertOperator(int value, int nr_of_bits, String HDLType) {
-		if (HDLType.equals(Settings.VHDL)) {
+		if (HDLType.equals(VHDL)) {
 			if (nr_of_bits == 1)
 				return "'"+Integer.toString(value)+"'";
 			return "std_logic_vector(to_unsigned(" + Integer.toString(value) + ","
@@ -62,8 +61,8 @@ public class AbstractConstantHDLGeneratorFactory extends
 			NetlistComponent ComponentInfo, FPGAReport Reporter,
 			String CircuitName, String HDLType) {
 		ArrayList<String> Contents = new ArrayList<String>();
-		String Preamble = (HDLType.equals(Settings.VHDL)) ? "" : "assign ";
-		String AssignOperator = (HDLType.equals(Settings.VHDL)) ? " <= "
+		String Preamble = (HDLType.equals(VHDL)) ? "" : "assign ";
+		String AssignOperator = (HDLType.equals(VHDL)) ? " <= "
 				: " = ";
 		int NrOfBits = ComponentInfo.GetComponent().getEnd(0).getWidth()
 				.getWidth();
@@ -91,14 +90,14 @@ public class AbstractConstantHDLGeneratorFactory extends
 				} else {
 					/* we have to enumerate all bits */
 					int mask = 1;
-					String ConstValue = (HDLType.equals(Settings.VHDL)) ? "'0'"
+					String ConstValue = (HDLType.equals(VHDL)) ? "'0'"
 							: "1'b0";
 					for (byte bit = 0; bit < NrOfBits; bit++) {
 						if ((mask & ConstantValue) != 0)
-							ConstValue = (HDLType.equals(Settings.VHDL)) ? "'1'"
+							ConstValue = (HDLType.equals(VHDL)) ? "'1'"
 									: "1'b1";
 						else
-							ConstValue = (HDLType.equals(Settings.VHDL)) ? "'0'"
+							ConstValue = (HDLType.equals(VHDL)) ? "'0'"
 									: "1'b0";
 						mask <<= 1;
 						Contents.add("   "
