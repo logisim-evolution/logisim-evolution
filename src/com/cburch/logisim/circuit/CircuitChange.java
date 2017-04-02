@@ -157,7 +157,7 @@ class CircuitChange {
 			return false;
 		case SET:
 			return comp.getFactory() instanceof Pin
-					&& (attr == StdAttr.WIDTH || attr == Pin.ATTR_TYPE);
+					&& (attr == StdAttr.WIDTH || attr == Pin.ATTR_TYPE || attr == StdAttr.LABEL);
 		case SET_FOR_CIRCUIT :
 			return (attr == CircuitAttributes.NAME_ATTR || attr == CircuitAttributes.NAMED_CIRCUIT_BOX);
 		default:
