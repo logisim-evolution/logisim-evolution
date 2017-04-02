@@ -48,14 +48,13 @@ import javax.swing.JProgressBar;
 
 import com.bfh.logisim.designrulecheck.Netlist;
 import com.bfh.logisim.fpgaboardeditor.BoardInformation;
-import com.bfh.logisim.fpgaboardeditor.FPGAClass;
 import com.bfh.logisim.fpgaboardeditor.PullBehaviors;
 import com.bfh.logisim.fpgagui.FPGAReport;
 import com.bfh.logisim.fpgagui.MappableResourcesContainer;
 import com.bfh.logisim.hdlgenerator.FileWriter;
+import com.bfh.logisim.hdlgenerator.HDLGeneratorFactory;
 import com.bfh.logisim.hdlgenerator.TickComponentHDLGeneratorFactory;
 import com.bfh.logisim.hdlgenerator.ToplevelHDLGeneratorFactory;
-import com.bfh.logisim.settings.Settings;
 import com.bfh.logisim.settings.VendorSoftware;
 import com.cburch.logisim.proj.Projects;
 
@@ -63,7 +62,7 @@ public class AlteraDownload {
 
 	public static boolean Download(String scriptPath,
 			String ProjectPath, String SandboxPath, FPGAReport MyReporter) {
-		VendorSoftware alteraVendor = Settings.getSoftware(FPGAClass.VendorAltera);
+		VendorSoftware alteraVendor = VendorSoftware.getSoftware(VendorSoftware.VendorAltera);
 		boolean SofFileExists = new File(SandboxPath
 				+ ToplevelHDLGeneratorFactory.FPGAToplevelName + ".sof")
 				.exists();
@@ -317,7 +316,7 @@ public class AlteraDownload {
 			ScriptFile = new File(ScriptPath + "AlteraDownload.tcl");
 			return ScriptFile.exists();
 		}
-		String FileType = (HDLType.equals(Settings.VHDL)) ? "VHDL_FILE"
+		String FileType = (HDLType.equals(HDLGeneratorFactory.VHDL)) ? "VHDL_FILE"
 				: "VERILOG_FILE";
 		ArrayList<String> Contents = new ArrayList<String>();
 		Contents.add("# Load Quartus II Tcl Project package");
@@ -370,7 +369,7 @@ public class AlteraDownload {
 					+ BoardInfo.fpga.getClockPinLocation() + " -to "
 					+ TickComponentHDLGeneratorFactory.FPGAClock);
 		}
-		Contents.addAll(MapInfo.GetFPGAPinLocs(FPGAClass.VendorAltera));
+		Contents.addAll(MapInfo.GetFPGAPinLocs(VendorSoftware.VendorAltera));
 		Contents.add("    # Commit assignments");
 		Contents.add("    export_assignments");
 		Contents.add("");

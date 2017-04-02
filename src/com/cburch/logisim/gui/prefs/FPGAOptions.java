@@ -13,7 +13,7 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 
 import com.bfh.logisim.fpgagui.FPGACommanderGui;
-import com.bfh.logisim.settings.Settings;
+import com.bfh.logisim.hdlgenerator.HDLGeneratorFactory;
 import com.cburch.logisim.prefs.AppPreferences;
 
 @SuppressWarnings("serial")
@@ -64,8 +64,8 @@ public class FPGAOptions extends OptionsPanel {
 		WorkSpaceButton.setText(Strings.get("Browse"));
 		HDL_Used = new PrefOptionList(AppPreferences.HDL_Type,
 				Strings.getter("HDLLanguageUsed"),new PrefOption[] {
-			new PrefOption(Settings.VHDL,Strings.getter(Settings.VHDL)),
-			new PrefOption(Settings.VERILOG,Strings.getter(Settings.VERILOG)) });
+			new PrefOption(HDLGeneratorFactory.VHDL,Strings.getter(HDLGeneratorFactory.VHDL)),
+			new PrefOption(HDLGeneratorFactory.VERILOG,Strings.getter(HDLGeneratorFactory.VERILOG)) });
 		Download = new PrefBoolean(AppPreferences.DownloadToBoard,Strings.getter("FPGADownload"));
 		
 		GridBagLayout layout = new GridBagLayout();

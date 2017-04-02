@@ -38,7 +38,6 @@ import com.bfh.logisim.designrulecheck.NetlistComponent;
 import com.bfh.logisim.fpgagui.FPGAReport;
 import com.bfh.logisim.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.bfh.logisim.hdlgenerator.FileWriter;
-import com.bfh.logisim.settings.Settings;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.std.wiring.ClockHDLGeneratorFactory;
@@ -62,7 +61,7 @@ public class ShiftRegisterHDLGeneratorFactory extends
 		ArrayList<String> Contents = new ArrayList<String>();
 		Contents.addAll(FileWriter.getGenerateRemark(ComponentName, HDLType,
 				TheNetlist.projName()));
-		if (HDLType.equals(Settings.VHDL)) {
+		if (HDLType.equals(VHDL)) {
 			Contents.add("ARCHITECTURE NoPlatformSpecific OF SingleBitShiftReg IS");
 			Contents.add("");
 			Contents.add("   SIGNAL s_state_reg  : std_logic_vector( ("
@@ -185,9 +184,9 @@ public class ShiftRegisterHDLGeneratorFactory extends
 	public ArrayList<String> GetEntity(Netlist TheNetlist, AttributeSet attrs,
 			String ComponentName, FPGAReport Reporter, String HDLType) {
 		ArrayList<String> Contents = new ArrayList<String>();
-		if (HDLType.equals(Settings.VHDL)) {
+		if (HDLType.equals(VHDL)) {
 			Contents.addAll(FileWriter.getGenerateRemark(ComponentName,
-					Settings.VHDL, TheNetlist.projName()));
+					VHDL, TheNetlist.projName()));
 			Contents.addAll(FileWriter.getExtendedLibrary());
 			Contents.add("ENTITY SingleBitShiftReg IS");
 			Contents.add("   GENERIC ( " + ActiveLevelStr + " : INTEGER;");
@@ -231,7 +230,7 @@ public class ShiftRegisterHDLGeneratorFactory extends
 	public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist,
 			AttributeSet attrs, FPGAReport Reporter, String HDLType) {
 		ArrayList<String> Contents = new ArrayList<String>();
-		if (HDLType.equals(Settings.VHDL)) {
+		if (HDLType.equals(VHDL)) {
 			Contents.add("   GenBits : FOR n IN (" + NrOfBitsStr
 					+ "-1) DOWNTO 0 GENERATE");
 			Contents.add("      OneBit : SingleBitShiftReg");
@@ -330,10 +329,10 @@ public class ShiftRegisterHDLGeneratorFactory extends
 		Boolean GatedClock = false;
 		Boolean HasClock = true;
 		Boolean ActiveLow = false;
-		String ZeroBit = (HDLType.equals(Settings.VHDL)) ? "'0'" : "1'b0";
-		String SetBit = (HDLType.equals(Settings.VHDL)) ? "'1'" : "1'b1";
-		String BracketOpen = (HDLType.equals(Settings.VHDL)) ? "(" : "[";
-		String BracketClose = (HDLType.equals(Settings.VHDL)) ? ")" : "]";
+		String ZeroBit = (HDLType.equals(VHDL)) ? "'0'" : "1'b0";
+		String SetBit = (HDLType.equals(VHDL)) ? "'1'" : "1'b1";
+		String BracketOpen = (HDLType.equals(VHDL)) ? "(" : "[";
+		String BracketClose = (HDLType.equals(VHDL)) ? ")" : "]";
 		AttributeSet attrs = ComponentInfo.GetComponent().getAttributeSet();
 		int NrOfBits = attrs.getValue(StdAttr.WIDTH).getWidth();
 		int NrOfStages = attrs.getValue(ShiftRegister.ATTR_LENGTH);
@@ -422,14 +421,14 @@ public class ShiftRegisterHDLGeneratorFactory extends
 			PortMap.put("ParLoad", ZeroBit);
 		}
 		String ShiftName = "ShiftIn";
-		if (HDLType.equals(Settings.VHDL) & (NrOfBits == 1))
+		if (HDLType.equals(VHDL) & (NrOfBits == 1))
 			ShiftName += "(0)";
 		PortMap.putAll(GetNetMap(ShiftName, true, ComponentInfo,
 				ShiftRegister.IN, Reporter, HDLType, Nets));
 		if (HasParallelLoad) {
 			StringBuffer Vector = new StringBuffer();
 			if (NrOfBits == 1) {
-				if (HDLType.equals(Settings.VHDL)) {
+				if (HDLType.equals(VHDL)) {
 					for (int i = 0; i < NrOfStages; i++) {
 						PortMap.putAll(GetNetMap(
 								"D" + BracketOpen + Integer.toString(i)
@@ -465,7 +464,7 @@ public class ShiftRegisterHDLGeneratorFactory extends
 					PortMap.put("Q", Vector.toString());
 				}
 			} else {
-				if (HDLType.equals(Settings.VHDL)) {
+				if (HDLType.equals(VHDL)) {
 					for (int bit = 0; bit < NrOfBits; bit++) {
 						for (int i = 0; i < NrOfStages; i++) {
 							PortMap.put(
@@ -519,9 +518,9 @@ public class ShiftRegisterHDLGeneratorFactory extends
 				}
 			}
 		} else {
-			PortMap.put("Q", (HDLType.equals(Settings.VHDL)) ? "OPEN" : "");
+			PortMap.put("Q", (HDLType.equals(VHDL)) ? "OPEN" : "");
 			StringBuffer Temp = new StringBuffer();
-			if (HDLType.equals(Settings.VERILOG)) {
+			if (HDLType.equals(VERILOG)) {
 				Temp.append("0");
 			} else {
 				Temp.append("\"");
@@ -532,7 +531,7 @@ public class ShiftRegisterHDLGeneratorFactory extends
 			PortMap.put("D", Temp.toString());
 		}
 		String ShiftOut = "ShiftOut";
-		if (HDLType.equals(Settings.VHDL) & (NrOfBits == 1))
+		if (HDLType.equals(VHDL) & (NrOfBits == 1))
 			ShiftOut += "(0)";
 		PortMap.putAll(GetNetMap(ShiftOut, true, ComponentInfo,
 				ShiftRegister.OUT, Reporter, HDLType, Nets));

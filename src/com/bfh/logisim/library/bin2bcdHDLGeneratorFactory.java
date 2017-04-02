@@ -8,7 +8,6 @@ import com.bfh.logisim.designrulecheck.Netlist;
 import com.bfh.logisim.designrulecheck.NetlistComponent;
 import com.bfh.logisim.fpgagui.FPGAReport;
 import com.bfh.logisim.hdlgenerator.AbstractHDLGeneratorFactory;
-import com.bfh.logisim.settings.Settings;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.BitWidth;
 
@@ -57,7 +56,7 @@ public class bin2bcdHDLGeneratorFactory  extends AbstractHDLGeneratorFactory{
 	@Override
 	public boolean HDLTargetSupported( String HDLType,
 			                           AttributeSet attrs) {
-		return HDLType.equals(Settings.VHDL);
+		return HDLType.equals(VHDL);
 	}
 	
 	@Override
@@ -130,7 +129,7 @@ public class bin2bcdHDLGeneratorFactory  extends AbstractHDLGeneratorFactory{
 		ArrayList<String> Contents = new ArrayList<String>();
 		BitWidth nrofbits=attrs.getValue(bin2bcd.ATTR_BinBits);
 		int NrOfPorts = (int)(Math.log10(1<<nrofbits.getWidth())+1.0);
-		if (HDLType.equals(Settings.VHDL)) {
+		if (HDLType.equals(VHDL)) {
 			switch (NrOfPorts) {
 				case 2 : Contents.add("   s_level_0(6 DOWNTO "+NrOfBitsStr+") <= (OTHERS => '0');");
 				         Contents.add("   s_level_0("+NrOfBitsStr+"-1 DOWNTO 0) <= BinValue;");

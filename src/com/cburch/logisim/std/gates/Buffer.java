@@ -37,7 +37,6 @@ import java.util.ArrayList;
 import java.util.Map;
 
 import com.bfh.logisim.designrulecheck.CorrectLabel;
-import com.bfh.logisim.settings.Settings;
 import com.cburch.logisim.analyze.model.Expression;
 import com.cburch.logisim.circuit.ExpressionComputer;
 import com.cburch.logisim.data.Attribute;
@@ -66,7 +65,7 @@ class Buffer extends InstanceFactory {
 		public ArrayList<String> GetLogicFunction(int nr_of_inputs,
 				int bitwidth, boolean is_one_hot, String HDLType) {
 			ArrayList<String> Contents = new ArrayList<String>();
-			if (HDLType.equals(Settings.VHDL))
+			if (HDLType.equals(VHDL))
 				Contents.add("   Result <= Input_1;");
 			else
 				Contents.add("   assign Result = Input_1;");

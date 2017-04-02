@@ -10,7 +10,6 @@ import javax.swing.JTable;
 import javax.swing.border.Border;
 import javax.swing.table.TableCellRenderer;
 
-import com.bfh.logisim.settings.Settings;
 
 @SuppressWarnings("serial")
 public class HDLColorRenderer extends JLabel
@@ -46,7 +45,7 @@ public class HDLColorRenderer extends JLabel
 				newColor = table.getGridColor();
 			setBackground(newColor);
 			setForeground(Color.black);
-			setText(CorrectStrings.contains(value)?column==0 ? Settings.VHDL : Settings.VERILOG : value);
+			setText(CorrectStrings.contains(value)?column==0 ? HDLGeneratorFactory.VHDL : HDLGeneratorFactory.VERILOG : value);
 			setHorizontalAlignment(JLabel.CENTER);
 			if (border==null)
 				border = BorderFactory.createMatteBorder(2,5,2,5,

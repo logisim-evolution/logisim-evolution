@@ -37,7 +37,6 @@ import com.bfh.logisim.designrulecheck.Netlist;
 import com.bfh.logisim.designrulecheck.NetlistComponent;
 import com.bfh.logisim.fpgagui.FPGAReport;
 import com.bfh.logisim.hdlgenerator.AbstractHDLGeneratorFactory;
-import com.bfh.logisim.settings.Settings;
 import com.cburch.logisim.data.AttributeSet;
 
 public class DecoderHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
@@ -67,7 +66,7 @@ public class DecoderHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 			String binValue = IntToBin(i, nr_of_select_bits, HDLType);
 			if (i == 10)
 				Space = "";
-			if (HDLType.equals(Settings.VHDL)) {
+			if (HDLType.equals(VHDL)) {
 				Contents.add("   DecoderOut_" + i + Space
 						+ "<= '1' WHEN sel = " + binValue + " AND");
 				Contents.add(Space
@@ -113,7 +112,7 @@ public class DecoderHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 			PortMap.putAll(GetNetMap("Enable", false, ComponentInfo,
 					select_input_index + 1, Reporter, HDLType, Nets));
 		} else {
-			String SetBit = (HDLType.equals(Settings.VHDL)) ? "'1'" : "1'b1";
+			String SetBit = (HDLType.equals(VHDL)) ? "'1'" : "1'b1";
 			PortMap.put("Enable", SetBit);
 		}
 		return PortMap;

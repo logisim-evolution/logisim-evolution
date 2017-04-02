@@ -37,7 +37,6 @@ import java.util.TreeMap;
 import com.bfh.logisim.designrulecheck.Netlist;
 import com.bfh.logisim.designrulecheck.NetlistComponent;
 import com.bfh.logisim.fpgagui.FPGAReport;
-import com.bfh.logisim.settings.Settings;
 import com.cburch.logisim.data.AttributeSet;
 
 public class TickComponentHDLGeneratorFactory extends
@@ -80,8 +79,8 @@ public class TickComponentHDLGeneratorFactory extends
 	public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist,
 			AttributeSet attrs, FPGAReport Reporter, String HDLType) {
 		ArrayList<String> Contents = new ArrayList<String>();
-		String Preamble = (HDLType.equals(Settings.VHDL)) ? "" : "assign ";
-		String AssignOperator = (HDLType.equals(Settings.VHDL)) ? "<=" : "=";
+		String Preamble = (HDLType.equals(VHDL)) ? "" : "assign ";
+		String AssignOperator = (HDLType.equals(VHDL)) ? "<=" : "=";
 		Contents.add("");
 		Contents.addAll(MakeRemarkBlock("Here the Output is defined", 3,
 				HDLType));
@@ -95,7 +94,7 @@ public class TickComponentHDLGeneratorFactory extends
 		Contents.add("");
 		Contents.addAll(MakeRemarkBlock("Here the update logic is defined", 3,
 				HDLType));
-		if (HDLType.equals(Settings.VHDL)) {
+		if (HDLType.equals(VHDL)) {
 			Contents.add("   s_tick_next   <= '1' WHEN s_count_reg = std_logic_vector(to_unsigned(0,"
 					+ NrOfCounterBitsStr + ")) ELSE '0';");
 			Contents.add("   s_count_next  <= (OTHERS => '0') WHEN s_tick_reg /= '0' AND s_tick_reg /= '1' ELSE -- For simulation only!");
@@ -118,7 +117,7 @@ public class TickComponentHDLGeneratorFactory extends
 		}
 		Contents.addAll(MakeRemarkBlock("Here the flipflops are defined", 3,
 				HDLType));
-		if (HDLType.equals(Settings.VHDL)) {
+		if (HDLType.equals(VHDL)) {
 			Contents.add("   make_tick : PROCESS( FPGAClock , s_tick_next )");
 			Contents.add("   BEGIN");
 			Contents.add("      IF (FPGAClock'event AND (FPGAClock = '1')) THEN");

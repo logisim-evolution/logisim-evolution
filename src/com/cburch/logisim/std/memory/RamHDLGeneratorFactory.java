@@ -39,7 +39,6 @@ import com.bfh.logisim.designrulecheck.Netlist;
 import com.bfh.logisim.designrulecheck.NetlistComponent;
 import com.bfh.logisim.fpgagui.FPGAReport;
 import com.bfh.logisim.hdlgenerator.AbstractHDLGeneratorFactory;
-import com.bfh.logisim.settings.Settings;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.std.wiring.ClockHDLGeneratorFactory;
@@ -90,7 +89,7 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 	public SortedMap<String, Integer> GetMemList(AttributeSet attrs,
 			String HDLType) {
 		SortedMap<String, Integer> Mems = new TreeMap<String, Integer>();
-		if (HDLType.equals(Settings.VHDL)) {
+		if (HDLType.equals(VHDL)) {
 			Object be = attrs.getValue(RamAttributes.ATTR_ByteEnables);
 			boolean byteEnables = be == null ? false : be
 					.equals(RamAttributes.BUS_WITH_BYTEENABLES);
@@ -120,7 +119,7 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 		Object be = attrs.getValue(RamAttributes.ATTR_ByteEnables);
 		boolean byteEnables = be == null ? false : be
 				.equals(RamAttributes.BUS_WITH_BYTEENABLES);
-		if (HDLType.equals(Settings.VHDL)) {
+		if (HDLType.equals(VHDL)) {
 			Contents.addAll(MakeRemarkBlock(
 					"Here the control signals are defined", 3, HDLType));
 			Contents.add("   s_RAM_enable    <= s_TickDelayLine(0);");
@@ -302,10 +301,10 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 		PortMap.putAll(GetNetMap("OE", true, ComponentInfo, Ram.OE, Reporter,
 				HDLType, Nets));
 		if (!asynch) {
-			String SetBit = (HDLType.equals(Settings.VHDL)) ? "'1'" : "1'b1";
-			String ZeroBit = (HDLType.equals(Settings.VHDL)) ? "'0'" : "1'b0";
-			String BracketOpen = (HDLType.equals(Settings.VHDL)) ? "(" : "[";
-			String BracketClose = (HDLType.equals(Settings.VHDL)) ? ")" : "]";
+			String SetBit = (HDLType.equals(VHDL)) ? "'1'" : "1'b1";
+			String ZeroBit = (HDLType.equals(VHDL)) ? "'0'" : "1'b0";
+			String BracketOpen = (HDLType.equals(VHDL)) ? "(" : "[";
+			String BracketClose = (HDLType.equals(VHDL)) ? ")" : "]";
 			if (!ComponentInfo.EndIsConnected(Ram.CLK)) {
 				Reporter.AddError("Component \"RAM\" in circuit \""
 						+ Nets.getCircuitName() + "\" has no clock connection!");
@@ -403,7 +402,7 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 	public SortedSet<String> GetTypeDefinitions(Netlist TheNetlist,
 			AttributeSet attrs, String HDLType) {
 		SortedSet<String> MyTypes = new TreeSet<String>();
-		if (HDLType.equals(Settings.VHDL)) {
+		if (HDLType.equals(VHDL)) {
 			Object be = attrs.getValue(RamAttributes.ATTR_ByteEnables);
 			boolean byteEnables = be == null ? false : be
 					.equals(RamAttributes.BUS_WITH_BYTEENABLES);
@@ -463,6 +462,6 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 		Object trigger = attrs.getValue(StdAttr.TRIGGER);
 		boolean asynch = trigger.equals(StdAttr.TRIG_HIGH)
 				|| trigger.equals(StdAttr.TRIG_LOW);
-		return HDLType.equals(Settings.VHDL) && separate && !asynch;
+		return HDLType.equals(VHDL) && separate && !asynch;
 	}
 }

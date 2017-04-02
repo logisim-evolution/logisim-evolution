@@ -37,7 +37,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 import com.bfh.logisim.hdlgenerator.HDLColorRenderer;
-import com.bfh.logisim.settings.Settings;
+import com.bfh.logisim.hdlgenerator.HDLGeneratorFactory;
 import com.cburch.logisim.comp.ComponentFactory;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeEvent;
@@ -119,7 +119,7 @@ public abstract class AttributeSetTableModel implements AttrTableModel,
 		public String getLabel() {
 			if (CompInst == null)
 				return HDLColorRenderer.UnKnownString;
-			if (CompInst.HDLSupportedComponent(Settings.VHDL, attrs))
+			if (CompInst.HDLSupportedComponent(HDLGeneratorFactory.VHDL, attrs))
 				return HDLColorRenderer.VHDLSupportString;
 			return HDLColorRenderer.NoSupportString;
 		}
@@ -128,7 +128,7 @@ public abstract class AttributeSetTableModel implements AttrTableModel,
 		public String getValue() {
 			if (CompInst == null)
 				return HDLColorRenderer.UnKnownString;
-			if (CompInst.HDLSupportedComponent(Settings.VERILOG, attrs))
+			if (CompInst.HDLSupportedComponent(HDLGeneratorFactory.VERILOG, attrs))
 				return HDLColorRenderer.VHDLSupportString;
 			return HDLColorRenderer.NoSupportString;
 		}

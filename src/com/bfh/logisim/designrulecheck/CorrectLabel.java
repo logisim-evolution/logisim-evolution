@@ -36,7 +36,7 @@ import java.util.List;
 import javax.swing.JOptionPane;
 
 import com.bfh.logisim.fpgagui.FPGAReport;
-import com.bfh.logisim.settings.Settings;
+import com.bfh.logisim.hdlgenerator.HDLGeneratorFactory;
 
 public class CorrectLabel {
 	public static String getCorrectLabel(String Label) {
@@ -62,14 +62,14 @@ public class CorrectLabel {
 				return false;
 			}
 		}
-		if (HDLIdentifier.equals(Settings.VHDL)) {
+		if (HDLIdentifier.equals(HDLGeneratorFactory.VHDL)) {
 			if (VHDLKeywords.contains(Label.toLowerCase())) {
 				Reporter.AddFatalError(ErrorIdentifierString
 						+ " is a reserved VHDL keyword, please rename.");
 				return false;
 			}
 		} else {
-			if (HDLIdentifier.equals(Settings.VERILOG)) {
+			if (HDLIdentifier.equals(HDLGeneratorFactory.VERILOG)) {
 				if (VerilogKeywords.contains(Label)) {
 					Reporter.AddFatalError(ErrorIdentifierString
 							+ " is a reserved Verilog keyword, please rename.");
@@ -117,12 +117,12 @@ public class CorrectLabel {
 				return false;
 			}
 		}
-		if (HDLIdentifier.equals(Settings.VHDL)) {
+		if (HDLIdentifier.equals(HDLGeneratorFactory.VHDL)) {
 			if (VHDLKeywords.contains(Label.toLowerCase())) {
 				return false;
 			}
 		} else {
-			if (HDLIdentifier.equals(Settings.VERILOG)) {
+			if (HDLIdentifier.equals(HDLGeneratorFactory.VERILOG)) {
 				if (VerilogKeywords.contains(Label)) {
 					return false;
 				}

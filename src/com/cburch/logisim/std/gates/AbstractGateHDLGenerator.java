@@ -37,7 +37,6 @@ import com.bfh.logisim.designrulecheck.Netlist;
 import com.bfh.logisim.designrulecheck.NetlistComponent;
 import com.bfh.logisim.fpgagui.FPGAReport;
 import com.bfh.logisim.hdlgenerator.AbstractHDLGeneratorFactory;
-import com.bfh.logisim.settings.Settings;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.instance.StdAttr;
 
@@ -87,7 +86,7 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
 			Contents.add("");
 			Contents.addAll(MakeRemarkBlock("Here the bubbles are processed",
 					3, HDLType));
-			if (HDLType.equals(Settings.VHDL)) {
+			if (HDLType.equals(VHDL)) {
 				String AllignmentSpaces;
 				if (NrOfInputs < 10)
 					AllignmentSpaces = " ";
@@ -152,14 +151,14 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
 		ArrayList<String> Lines = new ArrayList<String>();
 		String Spaces = "   ";
 		String IndexString = "";
-		String NotOperation = (HDLType.equals(Settings.VHDL)) ? "NOT" : "~";
-		String AndOperation = (HDLType.equals(Settings.VHDL)) ? "AND" : "&";
-		String OrOperation = (HDLType.equals(Settings.VHDL)) ? "OR" : "|";
-		String Preamble = (HDLType.equals(Settings.VHDL)) ? "" : "assign ";
-		String AssignOperation = (HDLType.equals(Settings.VHDL)) ? " <= "
+		String NotOperation = (HDLType.equals(VHDL)) ? "NOT" : "~";
+		String AndOperation = (HDLType.equals(VHDL)) ? "AND" : "&";
+		String OrOperation = (HDLType.equals(VHDL)) ? "OR" : "|";
+		String Preamble = (HDLType.equals(VHDL)) ? "" : "assign ";
+		String AssignOperation = (HDLType.equals(VHDL)) ? " <= "
 				: " = ";
 		if (is_bus) {
-			if (HDLType.equals(Settings.VHDL)) {
+			if (HDLType.equals(VHDL)) {
 				Lines.add(Spaces + "GenBits : FOR n IN (" + BitWidthString
 						+ "-1) DOWNTO 0 GENERATE");
 				Spaces += "   ";
@@ -208,7 +207,7 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
 			OneLine.setLength(0);
 		}
 		if (is_bus) {
-			if (HDLType.equals(Settings.VHDL)) {
+			if (HDLType.equals(VHDL)) {
 				Lines.add("   END GENERATE GenBits;");
 			} else {
 				Lines.add("         end");
@@ -276,13 +275,13 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
 		ArrayList<String> Lines = new ArrayList<String>();
 		String Spaces = "   ";
 		String IndexString = "";
-		String XorOperation = (HDLType.equals(Settings.VHDL)) ? " XOR" : "^";
-		String NotOperation = (HDLType.equals(Settings.VHDL)) ? "NOT" : "~";
-		String Preamble = (HDLType.equals(Settings.VHDL)) ? "" : "assign ";
-		String AssignOperation = (HDLType.equals(Settings.VHDL)) ? " <= "
+		String XorOperation = (HDLType.equals(VHDL)) ? " XOR" : "^";
+		String NotOperation = (HDLType.equals(VHDL)) ? "NOT" : "~";
+		String Preamble = (HDLType.equals(VHDL)) ? "" : "assign ";
+		String AssignOperation = (HDLType.equals(VHDL)) ? " <= "
 				: " = ";
 		if (is_bus) {
-			if (HDLType.equals(Settings.VHDL)) {
+			if (HDLType.equals(VHDL)) {
 				Lines.add(Spaces + "GenBits : FOR n IN (" + BitWidthString
 						+ "-1) DOWNTO 0 GENERATE");
 				Spaces += "   ";
@@ -320,7 +319,7 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
 			OneLine.setLength(0);
 		}
 		if (is_bus) {
-			if (HDLType.equals(Settings.VHDL)) {
+			if (HDLType.equals(VHDL)) {
 				Lines.add("   END GENERATE GenBits;");
 			} else {
 				Lines.add("         end");

@@ -37,7 +37,6 @@ import com.bfh.logisim.designrulecheck.Netlist;
 import com.bfh.logisim.designrulecheck.NetlistComponent;
 import com.bfh.logisim.fpgagui.FPGAReport;
 import com.bfh.logisim.hdlgenerator.AbstractHDLGeneratorFactory;
-import com.bfh.logisim.settings.Settings;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.std.wiring.ClockHDLGeneratorFactory;
@@ -70,7 +69,7 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 	public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist,
 			AttributeSet attrs, FPGAReport Reporter, String HDLType) {
 		ArrayList<String> Contents = new ArrayList<String>();
-		if (HDLType.equals(Settings.VHDL)) {
+		if (HDLType.equals(VHDL)) {
 			Contents.add("   Q <= s_state_reg;");
 			Contents.add("");
 			Contents.add("   make_memory : PROCESS( clock , Reset , ClockEnable , Tick , D )");
@@ -196,10 +195,10 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 		Boolean GatedClock = false;
 		Boolean HasClock = true;
 		Boolean ActiveLow = false;
-		String ZeroBit = (HDLType.equals(Settings.VHDL)) ? "'0'" : "1'b0";
-		String SetBit = (HDLType.equals(Settings.VHDL)) ? "'1'" : "1'b1";
-		String BracketOpen = (HDLType.equals(Settings.VHDL)) ? "(" : "[";
-		String BracketClose = (HDLType.equals(Settings.VHDL)) ? ")" : "]";
+		String ZeroBit = (HDLType.equals(VHDL)) ? "'0'" : "1'b0";
+		String SetBit = (HDLType.equals(VHDL)) ? "'1'" : "1'b1";
+		String BracketOpen = (HDLType.equals(VHDL)) ? "(" : "[";
+		String BracketClose = (HDLType.equals(VHDL)) ? ")" : "]";
 		AttributeSet attrs = ComponentInfo.GetComponent().getAttributeSet();
 		if (!ComponentInfo.EndIsConnected(Register.CK)) {
 			Reporter.AddSevereWarning("Component \"Register\" in circuit \""
@@ -277,7 +276,7 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 		}
 		String Input = "D";
 		String Output = "Q";
-		if (HDLType.equals(Settings.VHDL)
+		if (HDLType.equals(VHDL)
 				& (ComponentInfo.GetComponent().getAttributeSet()
 						.getValue(StdAttr.WIDTH).getWidth() == 1)) {
 			Input += "(0)";
@@ -295,7 +294,7 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 			String HDLType) {
 		SortedMap<String, Integer> Regs = new TreeMap<String, Integer>();
 		Regs.put("s_state_reg", NrOfBitsId);
-		if (HDLType.equals(Settings.VERILOG) & Netlist.IsFlipFlop(attrs))
+		if (HDLType.equals(VERILOG) & Netlist.IsFlipFlop(attrs))
 			Regs.put("s_state_reg_neg_edge", NrOfBitsId);
 		return Regs;
 	}

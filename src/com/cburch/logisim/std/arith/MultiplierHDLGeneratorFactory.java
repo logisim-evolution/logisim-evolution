@@ -37,7 +37,6 @@ import com.bfh.logisim.designrulecheck.Netlist;
 import com.bfh.logisim.designrulecheck.NetlistComponent;
 import com.bfh.logisim.fpgagui.FPGAReport;
 import com.bfh.logisim.hdlgenerator.AbstractHDLGeneratorFactory;
-import com.bfh.logisim.settings.Settings;
 import com.cburch.logisim.data.AttributeSet;
 
 public class MultiplierHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
@@ -65,7 +64,7 @@ public class MultiplierHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 	public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist,
 			AttributeSet attrs, FPGAReport Reporter, String HDLType) {
 		ArrayList<String> Contents = new ArrayList<String>();
-		if (HDLType.equals(Settings.VHDL)) {
+		if (HDLType.equals(VHDL)) {
 			Contents.add("   s_mult_result <= std_logic_vector(unsigned(INP_A)*unsigned(INP_B));");
 			Contents.add("   s_extended_Cin(" + CalcBitsStr + "-1 DOWNTO "
 					+ NrOfBitsStr + ") <= (OTHERS => '0');");
@@ -142,7 +141,7 @@ public class MultiplierHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
 	@Override
 	public boolean HDLTargetSupported(String HDLType, AttributeSet attrs) {
-		return HDLType.equals(Settings.VHDL);
+		return HDLType.equals(VHDL);
 	}
 
 }

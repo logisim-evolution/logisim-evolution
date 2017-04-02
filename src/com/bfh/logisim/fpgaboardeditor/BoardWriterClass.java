@@ -51,6 +51,8 @@ import org.w3c.dom.Comment;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import com.bfh.logisim.settings.VendorSoftware;
+
 class BoardWriterClass {
 
 	final static Logger logger = LoggerFactory
@@ -113,7 +115,7 @@ class BoardWriterClass {
 			Element FPGA = boardInfo
 					.createElement(FPGAInformationSectionString);
 			FPGA.setAttribute(FPGASectionStrings[0],
-					FPGAClass.Vendors[BoardInfo.fpga.getVendor()].toUpperCase());
+					VendorSoftware.Vendors[BoardInfo.fpga.getVendor()].toUpperCase());
 			Attr part = boardInfo.createAttribute(FPGASectionStrings[1]);
 			part.setValue(BoardInfo.fpga.getPart());
 			FPGA.setAttributeNode(part);

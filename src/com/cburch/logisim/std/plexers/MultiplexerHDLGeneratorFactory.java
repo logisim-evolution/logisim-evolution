@@ -37,7 +37,6 @@ import com.bfh.logisim.designrulecheck.Netlist;
 import com.bfh.logisim.designrulecheck.NetlistComponent;
 import com.bfh.logisim.fpgagui.FPGAReport;
 import com.bfh.logisim.hdlgenerator.AbstractHDLGeneratorFactory;
-import com.bfh.logisim.settings.Settings;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.instance.StdAttr;
 
@@ -70,7 +69,7 @@ public class MultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
 			AttributeSet attrs, FPGAReport Reporter, String HDLType) {
 		ArrayList<String> Contents = new ArrayList<String>();
 		int nr_of_select_bits = attrs.getValue(Plexers.ATTR_SELECT).getWidth();
-		if (HDLType.equals(Settings.VHDL)) {
+		if (HDLType.equals(VHDL)) {
 			Contents.add("   make_mux : PROCESS( Enable,");
 			for (int i = 0; i < (1 << nr_of_select_bits); i++)
 				Contents.add("                       MuxIn_"
@@ -165,7 +164,7 @@ public class MultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
 			PortMap.putAll(GetNetMap("Enable", false, ComponentInfo,
 					select_input_index + 1, Reporter, HDLType, Nets));
 		} else {
-			String SetBit = (HDLType.equals(Settings.VHDL)) ? "'1'" : "1'b1";
+			String SetBit = (HDLType.equals(VHDL)) ? "'1'" : "1'b1";
 			PortMap.put("Enable", SetBit);
 			select_input_index--; // decrement pin index because enable doesn't
 									// exist...
@@ -182,7 +181,7 @@ public class MultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
 		SortedMap<String, Integer> Regs = new TreeMap<String, Integer>();
 		int NrOfBits = (attrs.getValue(StdAttr.WIDTH).getWidth() == 1) ? 1
 				: NrOfBitsId;
-		if (HDLType.equals(Settings.VERILOG))
+		if (HDLType.equals(VERILOG))
 			Regs.put("s_selected_vector", NrOfBits);
 		return Regs;
 	}

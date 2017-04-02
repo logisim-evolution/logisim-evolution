@@ -38,7 +38,6 @@ import com.bfh.logisim.designrulecheck.NetlistComponent;
 import com.bfh.logisim.fpgagui.FPGAReport;
 import com.bfh.logisim.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.bfh.logisim.hdlgenerator.TickComponentHDLGeneratorFactory;
-import com.bfh.logisim.settings.Settings;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.data.AttributeSet;
 
@@ -87,7 +86,7 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 		Contents.addAll(MakeRemarkBlock(
 				"Here the output signals are defines; we synchronize them all on the main clock",
 				3, HDLType));
-		if (HDLType.equals(Settings.VHDL)) {
+		if (HDLType.equals(VHDL)) {
 			Contents.add("   ClockBus <= GlobalClock&s_output_regs;");
 			Contents.add("   makeOutputs : PROCESS( GlobalClock )");
 			Contents.add("   BEGIN");
@@ -115,7 +114,7 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 		Contents.add("");
 		Contents.addAll(MakeRemarkBlock("Here the control signals are defined",
 				3, HDLType));
-		if (HDLType.equals(Settings.VHDL)) {
+		if (HDLType.equals(VHDL)) {
 			Contents.add("   s_counter_is_zero <= '1' WHEN s_counter_reg = std_logic_vector(to_unsigned(0,"
 					+ NrOfBitsStr + ")) ELSE '0';");
 			Contents.add("   s_counter_next    <= std_logic_vector(unsigned(s_counter_reg) - 1)");
@@ -146,7 +145,7 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 		Contents.add("");
 		Contents.addAll(MakeRemarkBlock("Here the state registers are defined",
 				3, HDLType));
-		if (HDLType.equals(Settings.VHDL)) {
+		if (HDLType.equals(VHDL)) {
 			Contents.add("   makeDerivedClock : PROCESS( GlobalClock , ClockTick , s_counter_is_zero ,");
 			Contents.add("                               s_derived_clock_reg)");
 			Contents.add("   BEGIN");

@@ -39,7 +39,6 @@ import com.bfh.logisim.designrulecheck.Netlist;
 import com.bfh.logisim.designrulecheck.NetlistComponent;
 import com.bfh.logisim.fpgagui.FPGAReport;
 import com.bfh.logisim.fpgagui.MappableResourcesContainer;
-import com.bfh.logisim.settings.Settings;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.data.AttributeSet;
@@ -78,13 +77,13 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 			Components
 					.addAll(Ticker.GetComponentInstantiation(TheNetlist, null,
 							Ticker.getComponentStringIdentifier(),
-							Settings.VHDL/* , false */));
+							VHDL/* , false */));
 			HDLGeneratorFactory ClockWorker = TheNetlist
 					.GetAllClockSources()
 					.get(0)
 					.getFactory()
 					.getHDLGenerator(
-							Settings.VHDL,
+							VHDL,
 							TheNetlist.GetAllClockSources().get(0).getAttributeSet());
 			Components.addAll(ClockWorker
 					.GetComponentInstantiation(
@@ -98,7 +97,7 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 									.getHDLName(
 											TheNetlist.GetAllClockSources()
 													.get(0).getAttributeSet()),
-							Settings.VHDL/* , false */));
+							VHDL/* , false */));
 		}
 		CircuitHDLGeneratorFactory Worker = new CircuitHDLGeneratorFactory(
 				MyCircuit);
@@ -111,7 +110,7 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 		// }
 		Components.addAll(Worker.GetComponentInstantiation(TheNetlist, null,
 				CorrectLabel.getCorrectLabel(MyCircuit.getName()),
-				Settings.VHDL/* , hasLB */));
+				VHDL/* , hasLB */));
 		return Components;
 	}
 
@@ -156,12 +155,12 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 			AttributeSet attrs, FPGAReport Reporter, String HDLType) {
 		ArrayList<String> Contents = new ArrayList<String>();
 		int NrOfClockTrees = TheNetlist.NumberOfClockTrees();
-		String Preamble = (HDLType.equals(Settings.VHDL)) ? "" : "assign ";
-		String BracketOpen = (HDLType.equals(Settings.VHDL)) ? "(" : "[";
-		String BracketClose = (HDLType.equals(Settings.VHDL)) ? ")" : "]";
-		String AssignOperator = (HDLType.equals(Settings.VHDL)) ? " <= "
+		String Preamble = (HDLType.equals(VHDL)) ? "" : "assign ";
+		String BracketOpen = (HDLType.equals(VHDL)) ? "(" : "[";
+		String BracketClose = (HDLType.equals(VHDL)) ? ")" : "]";
+		String AssignOperator = (HDLType.equals(VHDL)) ? " <= "
 				: " = ";
-		String NotOperator = (HDLType.equals(Settings.VHDL)) ? "NOT " : "~";
+		String NotOperator = (HDLType.equals(VHDL)) ? "NOT " : "~";
 		StringBuffer Temp = new StringBuffer();
 		/* First we process all pins */
 		Contents.addAll(MakeRemarkBlock(

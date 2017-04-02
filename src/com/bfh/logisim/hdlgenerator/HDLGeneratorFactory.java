@@ -42,6 +42,8 @@ import com.cburch.logisim.data.AttributeSet;
 
 public interface HDLGeneratorFactory {
 
+	public static String VHDL = "VHDL";
+	public static String VERILOG = "Verilog";
 	public static final int PallignmentSize = 26;
 	public static final int SallignmentSize = 35;
 	public static final String NetName = "s_LOGISIM_NET_";

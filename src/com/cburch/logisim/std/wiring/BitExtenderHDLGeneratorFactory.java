@@ -35,7 +35,6 @@ import com.bfh.logisim.designrulecheck.Netlist;
 import com.bfh.logisim.designrulecheck.NetlistComponent;
 import com.bfh.logisim.fpgagui.FPGAReport;
 import com.bfh.logisim.hdlgenerator.AbstractHDLGeneratorFactory;
-import com.bfh.logisim.settings.Settings;
 import com.cburch.logisim.data.AttributeSet;
 
 public class BitExtenderHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
@@ -45,11 +44,11 @@ public class BitExtenderHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
 			NetlistComponent ComponentInfo, FPGAReport Reporter,
 			String CircuitName, String HDLType) {
 		ArrayList<String> Contents = new ArrayList<String>();
-		String Preamble = (HDLType.equals(Settings.VHDL)) ? "" : "assign ";
-		String AssignOperator = (HDLType.equals(Settings.VHDL)) ? " <= "
+		String Preamble = (HDLType.equals(VHDL)) ? "" : "assign ";
+		String AssignOperator = (HDLType.equals(VHDL)) ? " <= "
 				: " = ";
-		String ZeroBit = (HDLType.equals(Settings.VHDL)) ? "'0'" : "1'b0";
-		String SetBit = (HDLType.equals(Settings.VHDL)) ? "'1'" : "1'b1";
+		String ZeroBit = (HDLType.equals(VHDL)) ? "'0'" : "1'b0";
+		String SetBit = (HDLType.equals(VHDL)) ? "'1'" : "1'b1";
 		int NrOfPins = ComponentInfo.NrOfEnds();
 		for (int i = 1; i < NrOfPins; i++) {
 			if (!ComponentInfo.EndIsConnected(i)) {

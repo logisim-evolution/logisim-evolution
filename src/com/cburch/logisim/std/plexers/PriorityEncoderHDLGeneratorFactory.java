@@ -37,7 +37,6 @@ import com.bfh.logisim.designrulecheck.Netlist;
 import com.bfh.logisim.designrulecheck.NetlistComponent;
 import com.bfh.logisim.fpgagui.FPGAReport;
 import com.bfh.logisim.hdlgenerator.AbstractHDLGeneratorFactory;
-import com.bfh.logisim.settings.Settings;
 import com.cburch.logisim.data.AttributeSet;
 
 public class PriorityEncoderHDLGeneratorFactory extends
@@ -66,7 +65,7 @@ public class PriorityEncoderHDLGeneratorFactory extends
 	public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist,
 			AttributeSet attrs, FPGAReport Reporter, String HDLType) {
 		ArrayList<String> Contents = new ArrayList<String>();
-		if (HDLType.equals(Settings.VHDL)) {
+		if (HDLType.equals(VHDL)) {
 			Contents.add("   -- Output Signals");
 			Contents.add("   GroupSelect <= NOT(s_in_is_zero) AND enable;");
 			Contents.add("   EnableOut   <= s_in_is_zero AND enable;");
@@ -168,7 +167,7 @@ public class PriorityEncoderHDLGeneratorFactory extends
 				+ PriorityEncoder.EN_IN, Reporter, HDLType, Nets));
 		StringBuffer VectorList = new StringBuffer();
 		for (int i = nr_of_bits - 1; i >= 0; i--) {
-			if (HDLType.equals(Settings.VHDL))
+			if (HDLType.equals(VHDL))
 				PortMap.putAll(GetNetMap("input_vector(" + Integer.toString(i)
 						+ ")", true, ComponentInfo, i, Reporter, HDLType, Nets));
 			else {
@@ -178,7 +177,7 @@ public class PriorityEncoderHDLGeneratorFactory extends
 						Nets));
 			}
 		}
-		if (HDLType.equals(Settings.VERILOG))
+		if (HDLType.equals(VERILOG))
 			PortMap.put("input_vector", VectorList.toString());
 		PortMap.putAll(GetNetMap("GroupSelect", true, ComponentInfo, nr_of_bits
 				+ PriorityEncoder.GS, Reporter, HDLType, Nets));

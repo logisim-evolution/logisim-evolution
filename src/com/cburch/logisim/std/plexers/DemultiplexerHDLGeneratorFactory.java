@@ -37,7 +37,6 @@ import com.bfh.logisim.designrulecheck.Netlist;
 import com.bfh.logisim.designrulecheck.NetlistComponent;
 import com.bfh.logisim.fpgagui.FPGAReport;
 import com.bfh.logisim.hdlgenerator.AbstractHDLGeneratorFactory;
-import com.bfh.logisim.settings.Settings;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.instance.StdAttr;
 
@@ -77,7 +76,7 @@ public class DemultiplexerHDLGeneratorFactory extends
 				Space = " ";
 			}
 			String binValue = IntToBin(i, nr_of_select_bits, HDLType);
-			if (HDLType.equals(Settings.VHDL)) {
+			if (HDLType.equals(VHDL)) {
 				Contents.add("   DemuxOut_" + i + Space
 						+ "<= DemuxIn WHEN sel = " + binValue + " AND");
 				if (attrs.getValue(StdAttr.WIDTH).getWidth() > 1) {
@@ -147,7 +146,7 @@ public class DemultiplexerHDLGeneratorFactory extends
 			PortMap.putAll(GetNetMap("Enable", false, ComponentInfo,
 					select_input_index + 1, Reporter, HDLType, Nets));
 		} else {
-			String SetBit = (HDLType.equals(Settings.VHDL)) ? "'1'" : "1'b1";
+			String SetBit = (HDLType.equals(VHDL)) ? "'1'" : "1'b1";
 			PortMap.put("Enable", SetBit);
 			select_input_index--; // decrement pin index because enable doesn't
 									// exist...

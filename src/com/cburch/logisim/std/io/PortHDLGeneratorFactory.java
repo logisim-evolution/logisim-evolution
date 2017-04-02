@@ -42,7 +42,6 @@ import com.bfh.logisim.designrulecheck.NetlistComponent;
 import com.bfh.logisim.fpgagui.FPGAReport;
 import com.bfh.logisim.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.bfh.logisim.hdlgenerator.FileWriter;
-import com.bfh.logisim.settings.Settings;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.Splitter;
 import com.cburch.logisim.circuit.Wire;
@@ -128,7 +127,7 @@ public class PortHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 			AttributeSet attrs, String ComponentName, FPGAReport Reporter,
 			String HDLType) {
 		ArrayList<String> Contents = new ArrayList<String>();
-		if (HDLType.equals(Settings.VHDL)) {
+		if (HDLType.equals(VHDL)) {
 			Contents.addAll(FileWriter.getGenerateRemark(ComponentName,
 					HDLType, TheNetlist.projName()));
 			Contents.add("");
@@ -301,7 +300,7 @@ public class PortHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
 		ArrayList<String> Contents = new ArrayList<String>();
 		Contents.addAll(FileWriter.getGenerateRemark(ComponentName,
-				Settings.VHDL, TheNetlist.projName()));
+				VHDL, TheNetlist.projName()));
 		Contents.addAll(FileWriter.getExtendedLibrary());
 		Contents.add("ENTITY " + ComponentName + " IS");
 		Contents.add("   PORT ( ");
@@ -458,6 +457,6 @@ public class PortHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
 	@Override
 	public boolean HDLTargetSupported(String HDLType, AttributeSet attrs) {
-		return HDLType.equals(Settings.VHDL);
+		return HDLType.equals(VHDL);
 	}
 }

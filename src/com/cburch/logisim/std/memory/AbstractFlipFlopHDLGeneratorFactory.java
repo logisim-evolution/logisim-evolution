@@ -39,7 +39,6 @@ import com.bfh.logisim.designrulecheck.Netlist;
 import com.bfh.logisim.designrulecheck.NetlistComponent;
 import com.bfh.logisim.fpgagui.FPGAReport;
 import com.bfh.logisim.hdlgenerator.AbstractHDLGeneratorFactory;
-import com.bfh.logisim.settings.Settings;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.std.wiring.ClockHDLGeneratorFactory;
@@ -85,11 +84,11 @@ public class AbstractFlipFlopHDLGeneratorFactory extends
 	public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist,
 			AttributeSet attrs, FPGAReport Reporter, String HDLType) {
 		ArrayList<String> Contents = new ArrayList<String>();
-		String Preamble = (HDLType.equals(Settings.VHDL)) ? "" : "assign ";
-		String AssignmentOperator = (HDLType.equals(Settings.VHDL)) ? " <= "
+		String Preamble = (HDLType.equals(VHDL)) ? "" : "assign ";
+		String AssignmentOperator = (HDLType.equals(VHDL)) ? " <= "
 				: " = ";
-		String NotOperator = (HDLType.equals(Settings.VHDL)) ? "NOT" : "~";
-		String SelectOperator = (HDLType.equals(Settings.VHDL)) ? "" : "["
+		String NotOperator = (HDLType.equals(VHDL)) ? "NOT" : "~";
+		String SelectOperator = (HDLType.equals(VHDL)) ? "" : "["
 				+ ActivityLevelStr + "]";
 		Contents.addAll(MakeRemarkBlock("Here the ouput signals are defined",
 				3, HDLType));
@@ -102,7 +101,7 @@ public class AbstractFlipFlopHDLGeneratorFactory extends
 				HDLType));
 		Contents.addAll(GetUpdateLogic(HDLType));
 		Contents.add("");
-		if (HDLType.equals(Settings.VERILOG)) {
+		if (HDLType.equals(VERILOG)) {
 			Contents.addAll(MakeRemarkBlock(
 					"Here the initial register value is defined; for simulation only",
 					3, HDLType));
@@ -114,7 +113,7 @@ public class AbstractFlipFlopHDLGeneratorFactory extends
 		}
 		Contents.addAll(MakeRemarkBlock(
 				"Here the actual state register is defined", 3, HDLType));
-		if (HDLType.equals(Settings.VHDL)) {
+		if (HDLType.equals(VHDL)) {
 			Contents.add("   make_memory : PROCESS( clock , Reset , Preset , Tick , s_next_state )");
 			Contents.add("      VARIABLE temp : std_logic_vector(0 DOWNTO 0);");
 			Contents.add("   BEGIN");
@@ -189,11 +188,6 @@ public class AbstractFlipFlopHDLGeneratorFactory extends
 				ComponentInfo.NrOfEnds() - 5, Nets);
 		if (ClockNetName.isEmpty()) {
 			GatedClock = true;
-// The gated clock detection is now done during DRC
-//			if (Netlist.IsFlipFlop(attrs))
-//				Reporter.AddWarning("Found a gated clock for component \""
-//						+ ComponentName() + "\" in circuit \""
-//						+ Nets.getCircuitName() + "\"");
 		}
 		if (attrs.containsAttribute(StdAttr.EDGE_TRIGGER)) {
 			if (attrs.getValue(StdAttr.EDGE_TRIGGER) == StdAttr.TRIG_FALLING)
@@ -219,10 +213,10 @@ public class AbstractFlipFlopHDLGeneratorFactory extends
 		Boolean GatedClock = false;
 		Boolean HasClock = true;
 		Boolean ActiveLow = false;
-		String OpenBracket = (HDLType.equals(Settings.VHDL)) ? "(" : "[";
-		String CloseBracket = (HDLType.equals(Settings.VHDL)) ? ")" : "]";
-		String ZeroBit = (HDLType.equals(Settings.VHDL)) ? "'0'" : "1'b0";
-		String SetBit = (HDLType.equals(Settings.VHDL)) ? "'1'" : "1'b1";
+		String OpenBracket = (HDLType.equals(VHDL)) ? "(" : "[";
+		String CloseBracket = (HDLType.equals(VHDL)) ? ")" : "]";
+		String ZeroBit = (HDLType.equals(VHDL)) ? "'0'" : "1'b0";
+		String SetBit = (HDLType.equals(VHDL)) ? "'1'" : "1'b1";
 		int nr_of_pins = ComponentInfo.NrOfEnds();
 		AttributeSet attrs = ComponentInfo.GetComponent().getAttributeSet();
 		if (!ComponentInfo.EndIsConnected(ComponentInfo.NrOfEnds() - 5)) {
@@ -325,7 +319,7 @@ public class AbstractFlipFlopHDLGeneratorFactory extends
 	public SortedMap<String, Integer> GetRegList(AttributeSet attrs,
 			String HDLType) {
 		SortedMap<String, Integer> Regs = new TreeMap<String, Integer>();
-		Regs.put("s_current_state_reg", (HDLType.equals(Settings.VHDL)) ? 1 : 2);
+		Regs.put("s_current_state_reg", (HDLType.equals(VHDL)) ? 1 : 2);
 		return Regs;
 	}
 

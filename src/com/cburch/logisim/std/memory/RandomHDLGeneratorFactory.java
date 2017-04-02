@@ -37,7 +37,6 @@ import com.bfh.logisim.designrulecheck.Netlist;
 import com.bfh.logisim.designrulecheck.NetlistComponent;
 import com.bfh.logisim.fpgagui.FPGAReport;
 import com.bfh.logisim.hdlgenerator.AbstractHDLGeneratorFactory;
-import com.bfh.logisim.settings.Settings;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.std.wiring.ClockHDLGeneratorFactory;
@@ -73,7 +72,7 @@ public class RandomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 				"This is a multicycle implementation of the Random Component",
 				3, HDLType));
 		Contents.add("");
-		if (HDLType.equals(Settings.VHDL)) {
+		if (HDLType.equals(VHDL)) {
 			Contents.add("   Q            <= s_output_reg;");
 			Contents.add("   s_InitSeed   <= X\"0005DEECE66D\" WHEN " + SeedStr
 					+ " = 0 ELSE");
@@ -247,9 +246,9 @@ public class RandomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 		Boolean GatedClock = false;
 		Boolean HasClock = true;
 		Boolean ActiveLow = false;
-		String ZeroBit = (HDLType.equals(Settings.VHDL)) ? "'0'" : "1'b0";
-		String BracketOpen = (HDLType.equals(Settings.VHDL)) ? "(" : "[";
-		String BracketClose = (HDLType.equals(Settings.VHDL)) ? ")" : "]";
+		String ZeroBit = (HDLType.equals(VHDL)) ? "'0'" : "1'b0";
+		String BracketOpen = (HDLType.equals(VHDL)) ? "(" : "[";
+		String BracketClose = (HDLType.equals(VHDL)) ? ")" : "]";
 		if (!ComponentInfo.EndIsConnected(Random.CK)) {
 			Reporter.AddSevereWarning("Component \"Random\" in circuit \""
 					+ Nets.getCircuitName() + "\" has no clock connection");
@@ -310,7 +309,7 @@ public class RandomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 		PortMap.putAll(GetNetMap("enable", false, ComponentInfo, Random.NXT,
 				Reporter, HDLType, Nets));
 		String output = "Q";
-		if (HDLType.equals(Settings.VHDL)
+		if (HDLType.equals(VHDL)
 				& (ComponentInfo.GetComponent().getAttributeSet()
 						.getValue(StdAttr.WIDTH).getWidth() == 1))
 			output += "(0)";
