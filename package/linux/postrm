@@ -20,10 +20,9 @@ set -e
 
 case "$1" in
     purge|remove|upgrade|failed-upgrade|abort-install|abort-upgrade|disappear)
+        echo "Uninstalling command line tool logisim-evolution"
+        rm /usr/bin/logisim-evolution
         if [ "$1" = "purge" ] ; then
-            echo "Uninstalling command line tool logisim-evolution"
-            rm /usr/bin/logisim-evolution
-
             if [ "false" = "true" ]; then
                 echo "Uninstalling daemon"
                 rm -f /etc/init.d/logisim-evolution
