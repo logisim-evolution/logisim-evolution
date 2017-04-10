@@ -43,6 +43,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Set;
@@ -374,10 +376,16 @@ public class ComponentMapDialog implements ActionListener,
 		panel.setResizable(false);
 		panel.setAlwaysOnTop(true);
 		panel.setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
-
 		GridBagLayout thisLayout = new GridBagLayout();
 		GridBagConstraints c = new GridBagConstraints();
 		panel.setLayout(thisLayout);
+		/* This is in case of clickin on X closing window */
+		panel.addWindowListener(new WindowAdapter() {
+			public void windowClosing(WindowEvent e)
+			{
+				ResetScale();
+			}
+		});
 		// PointerInfo mouseloc = MouseInfo.getPointerInfo();
 		// Point mlocation = mouseloc.getLocation();
 		// panel.setLocation(mlocation.x, mlocation.y);
@@ -526,6 +534,7 @@ public class ComponentMapDialog implements ActionListener,
 		if (e.getActionCommand().equals("Done")) {
 			doneAssignment = true;
 			panel.setVisible(false);
+			ResetScale();
 		} else if (e.getActionCommand().equals("Scale")) {
 			if (ScaleButton.getText().equals("Scale : 1x")) {
 				scale = 2;
@@ -556,6 +565,7 @@ public class ComponentMapDialog implements ActionListener,
 			Load();
 		} else if (e.getActionCommand().equals("Cancel")) {
 			doneAssignment = false;
+			ResetScale();
 			panel.dispose();
 		}
 	}
@@ -856,6 +866,18 @@ public class ComponentMapDialog implements ActionListener,
 		MessageLine.setForeground(Color.BLUE);
 		MessageLine.setText("No messages");
 		panel.setVisible(selection);
+	}
+
+	private void ResetScale() {
+		scale = 1;
+		ScaleButton.setText("Scale : 1x");
+		BoardPic.setPreferredSize(new Dimension(BoardPic.getWidth(), BoardPic
+				.getHeight()));
+		UnMappedPane.setPreferredSize(new Dimension(
+				(BoardPic.getWidth() * 2) / 5, 175));
+		MappedPane.setPreferredSize(new Dimension(
+				(BoardPic.getWidth() * 2) / 5, 175));
+		panel.pack();
 	}
 
 	private void UnMapAll() {

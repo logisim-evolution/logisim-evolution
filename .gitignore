@@ -49,6 +49,7 @@ com/hepia
 javadoc/
 test/com/cburch/logisim/gui
 bin/
+out/
 
 # additional libraries
 !libs/*.jar
@@ -58,7 +59,8 @@ bin/
 .settings/
 .project
 .classpath
-
+.idea/
+*.iml
 
 # Simulation files and folders
 resources/logisim/sim/comp.tcl
