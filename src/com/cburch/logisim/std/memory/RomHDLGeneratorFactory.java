@@ -43,7 +43,7 @@ public class RomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
 	private String GetBin(int value, int nr_of_bits) {
 		StringBuffer Bits = new StringBuffer();
-		int mask = (1 << (nr_of_bits - 1));
+		long mask = (1L << (nr_of_bits - 1));
 		int count;
 		if (nr_of_bits == 1)
 			Bits.append("'");
@@ -65,7 +65,7 @@ public class RomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
 	private String GetBin(long value, int nr_of_bits) {
 		StringBuffer Bits = new StringBuffer();
-		long mask = (1 << (nr_of_bits - 1));
+		long mask = (1L << (nr_of_bits - 1));
 		int count;
 		if (nr_of_bits == 1)
 			Bits.append("'");
