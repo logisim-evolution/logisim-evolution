@@ -93,7 +93,11 @@ public class SoftwaresOptions extends OptionsPanel {
 
 	public SoftwaresOptions(PreferencesFrame window) {
 		super(window);
-
+        
+		questaValidationCheckBox.setFont(AppPreferences.getScaledFont(questaValidationCheckBox.getFont()));
+		questaPathLabel.setFont(AppPreferences.getScaledFont(questaPathLabel.getFont()));
+		questaPathField.setFont(AppPreferences.getScaledFont(questaPathField.getFont()));
+		questaPathButton.setFont(AppPreferences.getScaledFont(questaPathButton.getFont()));
 		questaValidationCheckBox.addActionListener(myListener);
 		questaPathButton.addActionListener(myListener);
 		AppPreferences.getPrefs().addPreferenceChangeListener(myListener);

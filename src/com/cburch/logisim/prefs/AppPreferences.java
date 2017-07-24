@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.prefs;
 
+import java.awt.Font;
+import java.awt.Toolkit;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.FileInputStream;
@@ -363,6 +365,22 @@ public class AppPreferences {
 			getPrefs().putInt(TEMPLATE_TYPE, value);
 		}
 	}
+	
+	public static int getScaled(int value) {
+		getPrefs();
+		float scale = ((float)((int)(SCALE_FACTOR.get()*10)))/(float)10.0;
+		return (int)((float)value*scale);
+	}
+
+	public static float getScaled(float value) {
+		getPrefs();
+		float scale = ((float)((int)(SCALE_FACTOR.get()*10)))/(float)10.0;
+		return value*scale;
+	}
+	
+	public static Font getScaledFont(Font myfont) {
+		return myfont.deriveFont(getScaled((float)IconSize));
+	}
 
 	public static void updateRecentFile(File file) {
 		recentProjects.updateRecent(file);
@@ -377,6 +395,9 @@ public class AppPreferences {
 			AppPreferences.class);
 
 	// Template preferences
+	public static final int IconSize = 16;
+	public static final int IconBorder = 2;
+	public static final int BoxSize = IconSize+2*IconBorder;
 	public static final int TEMPLATE_UNKNOWN = -1;
 	public static final int TEMPLATE_EMPTY = 0;
 	public static final int TEMPLATE_PLAIN = 1;
@@ -430,6 +451,10 @@ public class AppPreferences {
 			"showGhosts", true));
 	public static final PrefMonitor<Boolean> NAMED_CIRCUIT_BOXES = create(new PrefMonitorBoolean(
 			"namedBoxes", true));
+	public static final PrefMonitor<Double> SCALE_FACTOR = create(new PrefMonitorDouble(
+			"Scale", (Toolkit.getDefaultToolkit().getScreenSize().getHeight()/1000) < 1.0 ? 1.0 :
+				Toolkit.getDefaultToolkit().getScreenSize().getHeight()/1000));
+	
 	public static final PrefMonitor<String> ADD_AFTER = create(new PrefMonitorStringOpts(
 			"afterAdd", new String[] { ADD_AFTER_EDIT, ADD_AFTER_UNCHANGED },
 			ADD_AFTER_EDIT));
@@ -496,10 +521,10 @@ public class AppPreferences {
 			"windowState", JFrame.NORMAL));
 
 	public static final PrefMonitor<Integer> WINDOW_WIDTH = create(new PrefMonitorInt(
-			"windowWidth", 640));
+			"windowWidth", Toolkit.getDefaultToolkit().getScreenSize().width/2));
 
 	public static final PrefMonitor<Integer> WINDOW_HEIGHT = create(new PrefMonitorInt(
-			"windowHeight", 480));
+			"windowHeight", Toolkit.getDefaultToolkit().getScreenSize().height));
 
 	public static final PrefMonitor<String> WINDOW_LOCATION = create(new PrefMonitorString(
 			"windowLocation", "0,0"));
