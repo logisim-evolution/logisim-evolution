@@ -49,6 +49,7 @@ com/hepia
 javadoc/
 test/com/cburch/logisim/gui
 bin/
+out/
 package/Logisim-evolution.html
 package/Logisim-evolution.jnlp
 package/Logisim-evolution_browser.jnlp

@@ -71,7 +71,7 @@ public class TclConsoleReds extends TclComponent {
 		outputsDesc.add(new PortDescription("S15_sti", "output", 1));
 		outputsDesc.add(new PortDescription("Val_A_sti", "output", 16));
 		outputsDesc.add(new PortDescription("Val_B_sti", "output", 16));
-		outputsDesc.add(new PortDescription("rst", "output", 1));
+		outputsDesc.add(new PortDescription("rst_o", "output", 1));
 
 		inputsDesc.add(new PortDescription("Hex0_obs", "input", 4));
 		inputsDesc.add(new PortDescription("Hex1_obs", "input", 4));
@@ -94,7 +94,9 @@ public class TclConsoleReds extends TclComponent {
 		inputsDesc.add(new PortDescription("Result_A_obs", "input", 16));
 		inputsDesc.add(new PortDescription("Result_B_obs", "input", 16));
 		inputsDesc.add(new PortDescription("seg7_obs", "input", 8));
+
 		inputsDesc.add(new PortDescription("sysclk_i", "input", 1));
+		inputsDesc.add(new PortDescription("rst_in", "input", 1));
 
 		Port[] inputs = new Port[inputsDesc.size()];
 		Port[] outputs = new Port[outputsDesc.size()];
