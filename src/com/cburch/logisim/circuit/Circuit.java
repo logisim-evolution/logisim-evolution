@@ -164,8 +164,12 @@ public class Circuit {
 			String oldLabel = attre.getOldValue() != null ? (String) attre.getOldValue() : "";
 			@SuppressWarnings("unchecked")
 			Attribute<String> lattr = (Attribute<String>) attre.getAttribute();
-			if (!IsCorrectLabel(newLabel,comps,attre.getSource(),e.getSource().getFactory(),true))
-				attre.getSource().setValue(lattr, oldLabel);
+			if (!IsCorrectLabel(newLabel,comps,attre.getSource(),e.getSource().getFactory(),true)) {
+				if (IsCorrectLabel(oldLabel,comps,attre.getSource(),e.getSource().getFactory(),false))
+					attre.getSource().setValue(lattr, oldLabel);
+				else
+					attre.getSource().setValue(lattr, "");
+			}
 		}
 	}
 	
