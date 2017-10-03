@@ -37,7 +37,7 @@ import javax.swing.tree.TreeNode;
 import com.cburch.logisim.comp.ComponentFactory;
 
 public abstract class SimulationTreeNode implements TreeNode {
-	public abstract Enumeration<?> children();
+	public abstract Enumeration<? extends TreeNode> children();
 
 	public abstract boolean getAllowsChildren();
 

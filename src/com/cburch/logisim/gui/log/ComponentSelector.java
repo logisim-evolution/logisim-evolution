@@ -314,8 +314,8 @@ class ComponentSelector extends JTree {
 			this.option = option;
 		}
 
-		public Enumeration<?> children() {
-			return Collections.enumeration(Collections.emptySet());
+		public Enumeration<? extends TreeNode> children() {
+			return Collections.enumeration(Collections.<TreeNode>emptySet());
 		}
 
 		public boolean getAllowsChildren() {
