@@ -96,19 +96,19 @@ public class SubcircuitPoker extends InstancePoker {
 			int cx = bds.getX() + bds.getWidth() / 2;
 			int cy = bds.getY() + bds.getHeight() / 2;
 
-			int tx = cx + 3;
-			int ty = cy + 3;
-			int[] xp = { tx - 1, cx + 8, cx + 10, tx + 1 };
-			int[] yp = { ty + 1, cy + 10, cy + 8, ty - 1 };
+			int tx = cx + 7;
+			int ty = cy + 7;
+			int[] xp = { tx - 2, cx + 13, cx + 15, tx + 2 };
+			int[] yp = { ty + 2, cy + 15, cy + 13, ty - 2 };
 			Graphics g = painter.getGraphics();
 			if (mouseDown) {
 				g.setColor(MAGNIFYING_INTERIOR_DOWN);
 			} else {
 				g.setColor(MAGNIFYING_INTERIOR);
 			}
-			g.fillOval(cx - 5, cy - 5, 10, 10);
+			g.fillOval(cx - 9, cy - 9, 18, 18);
 			g.setColor(Color.BLACK);
-			g.drawOval(cx - 5, cy - 5, 10, 10);
+			g.drawOval(cx - 9, cy - 9, 18, 18);
 			g.fillPolygon(xp, yp, xp.length);
 		}
 	}
