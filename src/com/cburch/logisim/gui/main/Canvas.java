@@ -792,14 +792,7 @@ public class Canvas extends JPanel implements LocaleListener,
 		revalidate();
 	}
 
-	private void computeViewportContents() {
-		Set<WidthIncompatibilityData> exceptions = proj.getCurrentCircuit()
-				.getWidthIncompatibilityData();
-		if (exceptions == null || exceptions.isEmpty()) {
-			viewport.setWidthMessage(null);
-			return;
-		}
-
+	public Rectangle getViewableRect() {
 		Rectangle viewableBase;
 		Rectangle viewable;
 		if (canvasPane != null) {
@@ -817,6 +810,18 @@ public class Canvas extends JPanel implements LocaleListener,
 					(int) (viewableBase.width / zoom),
 					(int) (viewableBase.height / zoom));
 		}
+		return viewable;
+	}
+
+	private void computeViewportContents() {
+		Set<WidthIncompatibilityData> exceptions = proj.getCurrentCircuit()
+				.getWidthIncompatibilityData();
+		if (exceptions == null || exceptions.isEmpty()) {
+			viewport.setWidthMessage(null);
+			return;
+		}
+
+		Rectangle viewable = getViewableRect();
 
 		viewport.setWidthMessage(Strings.get("canvasWidthError")
 				+ (exceptions.size() == 1 ? "" : " (" + exceptions.size() + ")"));
