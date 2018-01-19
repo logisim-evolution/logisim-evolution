@@ -31,7 +31,8 @@
 package com.cburch.logisim.circuit;
 
 import java.awt.Color;
-import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Stroke;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -455,7 +456,7 @@ class CircuitWires {
 	void draw(ComponentDrawContext context, Collection<Component> hidden) {
 		boolean showState = context.getShowState();
 		CircuitState state = context.getCircuitState();
-		Graphics g = context.getGraphics();
+		Graphics2D g = (Graphics2D)context.getGraphics();
 		g.setColor(Color.BLACK);
 		GraphicsUtil.switchToWidth(g, Wire.WIDTH);
 		WireSet highlighted = context.getHighlightedWires();
@@ -485,6 +486,12 @@ class CircuitWires {
 						width = Wire.HIGHLIGHTED_WIDTH;
 					GraphicsUtil.switchToWidth(g, width);
 					g.drawLine(s.getX(), s.getY(), t.getX(), t.getY());
+
+					Stroke oldStroke = g.getStroke();
+					g.setStroke(Wire.HIGHLIGHTED_STROKE);
+					g.setColor(Color.MAGENTA);
+					g.drawLine(s.getX(), s.getY(), t.getX(), t.getY());
+					g.setStroke(oldStroke);
 				} else {
 					if (wb.isBus())
 						width = Wire.WIDTH_BUS;
