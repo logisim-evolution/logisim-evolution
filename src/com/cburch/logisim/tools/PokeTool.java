@@ -32,10 +32,11 @@ package com.cburch.logisim.tools;
 
 import java.awt.Color;
 import java.awt.Cursor;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Rectangle;
 
 import javax.swing.Icon;
 
@@ -101,13 +102,39 @@ public class PokeTool extends Tool {
 
 			FontMetrics fm = g.getFontMetrics();
 			g.setColor(caretColor);
-			g.fillRect(x + 2, y + 2, fm.stringWidth(vStr) + 4, fm.getAscent()
-					+ fm.getDescent() + 4);
-			g.setColor(Color.BLACK);
-			g.drawRect(x + 2, y + 2, fm.stringWidth(vStr) + 4, fm.getAscent()
-					+ fm.getDescent() + 4);
-			g.fillOval(x - 2, y - 2, 5, 5);
-			g.drawString(vStr, x + 4, y + 4 + fm.getAscent());
+
+			int margin = 2;
+			int w = fm.stringWidth(vStr) + 2*margin;
+			int pad = 0;
+			if (w < 45) {
+				pad = (45 - w) / 2;
+				w = 45;
+			}
+			int h = fm.getAscent() + fm.getDescent() + 2*margin;
+
+			Rectangle r = canvas.getViewableRect();
+			int dx = Math.max(0, w - (r.x + r.width - x));
+			int dxx1 = (dx > w/2) ? -30 : 15; // offset of callout stem
+			int dxx2 = (dx > w/2) ? -15 : 30; // offset of callout stem
+			if (y - 15 - h <= r.y) {
+				// callout below cursor
+				int xx = x - dx, yy = y + 15 + h; // bottom left corner of box
+				int[] xp = { xx, xx,   x+dxx1, x, x+dxx2, xx+w, x+w };
+				int[] yp = { yy, yy-h, yy-h,   y, yy-h,   yy-h, yy  };
+				g.fillPolygon(xp, yp, xp.length);
+				g.setColor(Color.BLACK);
+				g.drawPolygon(xp, yp, xp.length);
+				g.drawString(vStr, xx + margin + pad, yy - margin - fm.getDescent());
+			} else {
+				// callout above cursor
+				int xx = x - dx, yy = y - 15; // bottom left corner of box
+				int[] xp = { xx, xx,   xx+w, xx+w, x+dxx2, x, x+dxx1 };
+				int[] yp = { yy, yy-h, yy-h, yy,   yy,    y, yy    };
+				g.fillPolygon(xp, yp, xp.length);
+				g.setColor(Color.BLACK);
+				g.drawPolygon(xp, yp, xp.length);
+				g.drawString(vStr, xx + margin + pad, yy - margin - fm.getDescent());
+			}
 		}
 	}
 
