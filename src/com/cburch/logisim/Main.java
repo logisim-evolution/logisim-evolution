@@ -78,7 +78,7 @@ public class Main {
 
 	final static Logger logger = LoggerFactory.getLogger(Main.class);
 
-	public static final LogisimVersion VERSION = LogisimVersion.get(2, 14, 3,
+	public static final LogisimVersion VERSION = LogisimVersion.get(2, 14, 4,
 			LogisimVersion.FINAL_REVISION);
 
 	public static final String VERSION_NAME = VERSION.toString();
