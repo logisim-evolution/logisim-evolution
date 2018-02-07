@@ -500,18 +500,6 @@ class CircuitWires {
 					GraphicsUtil.switchToWidth(g, width);
 					g.drawLine(s.getX(), s.getY(), t.getX(), t.getY());
 				}
-				if (w.IsSetAsMarked()) {
-					width+=2;
-					g.setColor(w.GetMarkColor());
-					GraphicsUtil.switchToWidth(g, 2);
-					if (w.isVertical()) {
-						g.drawLine(s.getX()-width, s.getY(), t.getX()-width, t.getY());
-						g.drawLine(s.getX()+width, s.getY(), t.getX()+width, t.getY());
-					} else {
-						g.drawLine(s.getX(), s.getY()-width, t.getX(), t.getY()-width);
-						g.drawLine(s.getX(), s.getY()+width, t.getX(), t.getY()+width);
-					}
-				}
 			}
 
 			for (Location loc : points.getSplitLocations()) {
