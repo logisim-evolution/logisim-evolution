@@ -46,6 +46,7 @@ import javax.swing.JOptionPane;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.XMLConstants;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -1042,7 +1043,11 @@ class XmlReader {
 			IOException {
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		factory.setNamespaceAware(true);
-		DocumentBuilder builder = null;
+                try {
+ 			factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+ 		} catch (ParserConfigurationException ex) {
+ 			// All implementations are required to support FEATURE_SECURE_PROCESSING.
+ 		}		DocumentBuilder builder = null;
 		try {
 			builder = factory.newDocumentBuilder();
 		} catch (ParserConfigurationException ex) {
