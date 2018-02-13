@@ -78,6 +78,8 @@ public class FPGAIOInformationContainer {
 			return IOComponentTypes.Unknown;
 		}
 
+		/* AMX: Localbus / Port IO / Pin led buton information about the number of input pins.
+		 * This is the wrong way to do it. It should be taken from the Xml file!! */
 		public static final int GetFPGAInOutRequirement(IOComponentTypes comp) {
 			switch (comp) {
 			case PortIO:
@@ -89,6 +91,8 @@ public class FPGAIOInformationContainer {
 			}
 		}
 
+		/* AMX: Localbus / Port IO / Pin led buton information about the number of input pins.
+		 * This is the wrong way to do it. It should be taken from the Xml file!! */
 		public static final int GetFPGAInputRequirement(IOComponentTypes comp) {
 			switch (comp) {
 			case Button:
@@ -96,12 +100,14 @@ public class FPGAIOInformationContainer {
 			case DIPSwitch:
 				return nbSwitch;
 			case LocalBus:
-				return 12;
+				return 13;
 			default:
 				return 0;
 			}
 		}
 
+		/* AMX: Localbus / Port IO / Pin led buton information about the number of output pins.
+		 * This is the wrong way to do it. It should be taken from the Xml file!! */
 		public static final int GetFPGAOutputRequirement(IOComponentTypes comp) {
 			switch (comp) {
 			case LED:
@@ -117,6 +123,8 @@ public class FPGAIOInformationContainer {
 			}
 		}
 
+		/* AMX: Localbus / Port IO / Pin led buton information about the total of pins pins.
+		 * This is the wrong way to do it. It should be taken from the Xml file!! */
 		public static final int GetNrOfFPGAPins(IOComponentTypes comp) {
 			switch (comp) {
 			case LED:
@@ -131,7 +139,7 @@ public class FPGAIOInformationContainer {
 			case RGBLED:
 				return 3;
 			case LocalBus:
-				return 30;
+				return 31;
 			default:
 				return 0;
 			}
