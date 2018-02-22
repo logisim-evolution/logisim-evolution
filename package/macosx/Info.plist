@@ -47,7 +47,7 @@
       <string>Owner</string>
 
       <key>CFBundleTypeRole</key>
-      4string>Editor</string>
+      <string>Editor</string>
 
       <key>LSIsAppleDefaultForType</key>
       <true/>
