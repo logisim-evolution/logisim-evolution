@@ -100,8 +100,8 @@ public class MultiplierHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 	public SortedMap<String, Integer> GetParameterMap(Netlist Nets,
 			NetlistComponent ComponentInfo, FPGAReport Reporter) {
 		SortedMap<String, Integer> ParameterMap = new TreeMap<String, Integer>();
-		int NrOfBits = ComponentInfo.GetComponent().getAttributeSet()
-				.getValue(Multiplier.WIDTH_ATTR).getWidth();
+		int NrOfBits = ComponentInfo.GetComponent().getEnd(0).getWidth()
+				.getWidth();
 		ParameterMap.put(NrOfBitsStr, NrOfBits);
 		ParameterMap.put(CalcBitsStr, 2 * NrOfBits);
 		return ParameterMap;
