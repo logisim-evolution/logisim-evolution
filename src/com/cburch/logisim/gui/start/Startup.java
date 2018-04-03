@@ -46,12 +46,16 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.security.CodeSource;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Date;
 
 import javax.help.JHelp;
 import javax.swing.ImageIcon;
@@ -270,18 +274,56 @@ public class Startup implements AWTEventListener {
 				}
 			} else if (arg.equals("-nosplash")) {
 				ret.showSplash = false;
-			} else if (arg.equals("-test")) {
+			} else if (arg.equals("-testvector")) {
 				i++;
+
 				if (i >= args.length)
 					printUsage();
+
 				ret.circuitToTest = args[i];
 				i++;
+
 				if (i >= args.length)
 					printUsage();
+
 				ret.testVector = args[i];
 				ret.showSplash = false;
 				ret.exitAfterStartup = true;
-			} else if (arg.equals("-clearprefs")) {
+				/* This is to test a test bench. It will return 0 or 1 depending on if
+				 * the tests pass or not
+				 */
+			} else if (arg.equals("-test-circuit")) {
+				// already handled above
+				i++;
+				if (i >= args.length)
+					printUsage();
+
+				ret.testCircuitPath = args[i];
+				ret.circuitToTest = args[i];
+				ret.showSplash = false;
+				ret.exitAfterStartup = true;
+			} else if (arg.equals("-test-circ-gen")) {
+				/* This is to test the XML consistency over different version of
+				 * the Logisim */
+				i++;
+
+				if (i >= args.length)
+					printUsage();
+
+				/* This is the input path of the file to open */
+				ret.testCircPathInput = args[i];
+				i++;
+				if (i >= args.length)
+					printUsage();
+
+				/* This is the output file's path. The comparaison shall be
+				 * done between the  testCircPathInput and the testCircPathOutput*/
+				ret.testCircPathOutput = args[i];
+				ret.filesToOpen.add(new File(ret.testCircPathInput));
+				ret.showSplash = false;
+				ret.exitAfterStartup = true;
+			}
+			else if (arg.equals("-clearprefs")) {
 				// already handled above
 			} else if (arg.equals("-analyze")) {
 				Main.ANALYZE = true;
@@ -344,6 +386,8 @@ public class Startup implements AWTEventListener {
 		System.err.println("   " + Strings.get("argTtyOption")); // OK
 		System.err.println("   " + Strings.get("argQuestaOption")); // OK
 		System.err.println("   " + Strings.get("argVersionOption")); // OK
+		System.err.println("   " + Strings.get("argTestCircGen")); // OK
+		System.err.println("   " + Strings.get("argTestCircuit")); // OK
 		System.exit(-1);
 	}
 
@@ -406,7 +450,11 @@ public class Startup implements AWTEventListener {
 	// from other sources
 	private boolean initialized = false;
 	private SplashScreen monitor = null;
-
+	/* Testing Circuit Variable */
+	private String testCircuitPath = null;
+	/* Testing Xml (circ file) Variable */
+	private String testCircPathInput = null;
+	private String testCircPathOutput = null;
 	private ArrayList<File> filesToPrint = new ArrayList<File>();
 
 	private Startup(boolean isTty) {
@@ -789,6 +837,14 @@ public class Startup implements AWTEventListener {
 						Project proj = ProjectActions.doOpenNoWindow(monitor,
 								fileToOpen);
 						proj.doTestVector(testVector, circuitToTest);
+					} else if (testCircPathInput != null &&
+									testCircPathOutput != null) {
+						/* This part of the function will create a new circuit file (
+						 * XML) which will be open and saved again using the  */
+						Project proj = ProjectActions.doOpen(monitor,
+								fileToOpen, substitutions);
+
+						ProjectActions.doSave(proj, new File(testCircPathOutput));
 					} else {
 						ProjectActions.doOpen(monitor, fileToOpen,
 								substitutions);
