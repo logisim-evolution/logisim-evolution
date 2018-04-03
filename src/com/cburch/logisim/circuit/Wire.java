@@ -33,11 +33,13 @@ package com.cburch.logisim.circuit;
 import java.awt.Graphics;
 import java.awt.Stroke;
 import java.awt.BasicStroke;
+import java.awt.Color;
 import java.util.AbstractList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+import com.bfh.logisim.designrulecheck.Netlist;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.comp.ComponentDrawContext;
 import com.cburch.logisim.comp.ComponentFactory;
@@ -99,6 +101,8 @@ public final class Wire implements Component, AttributeSet, CustomHandles,
 	final Location e0;
 	final Location e1;
 	final boolean is_x_equal;
+	private boolean DRCHighlighted = false;
+	private Color DRCHighlightColor = Netlist.DRC_WIRE_MARK_COLOR;
 
 	private Wire(Location e0, Location e1) {
 		this.is_x_equal = e0.getX() == e1.getX();
@@ -367,5 +371,21 @@ public final class Wire implements Component, AttributeSet, CustomHandles,
 	@Override
 	public String toString() {
 		return "Wire[" + e0 + "-" + e1 + "]";
+	}
+	
+	public void SetDRCHighlight(boolean Highlight) {
+		DRCHighlighted = Highlight;
+	}
+	
+	public boolean IsDRCHighlighted() {
+		return DRCHighlighted;
+	}
+	
+	public void SetDRCHighlightColor(Color col) {
+		DRCHighlightColor = col;
+	}
+	
+	public Color GetDRCHighlightColor() {
+		return DRCHighlightColor;
 	}
 }
