@@ -36,8 +36,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -231,7 +231,7 @@ public class Circuit {
 	private AttributeSet staticAttrs;
 	private SubcircuitFactory subcircuitFactory;
 	private EventSourceWeakSupport<CircuitListener> listeners = new EventSourceWeakSupport<CircuitListener>();
-	private HashSet<Component> comps = new HashSet<Component>(); // doesn't
+	private LinkedHashSet<Component> comps = new LinkedHashSet<Component>(); // doesn't
 																	// include
 																	// wires
 	CircuitWires wires = new CircuitWires();
@@ -325,8 +325,8 @@ public class Circuit {
 		}
 		SortedSet<Component> comps = new TreeSet<Component>(new AnnotateComparator());
 		HashMap<String,AutoLabel> lablers = new HashMap<String,AutoLabel>();
-		Set<String> LabelNames = new HashSet<String>();
-		Set<String> Subcircuits = new HashSet<String>();
+		Set<String> LabelNames = new LinkedHashSet<String>();
+		Set<String> Subcircuits = new LinkedHashSet<String>();
 		for (Component comp:getNonWires()) {
 			if (comp.getFactory() instanceof Tunnel)
 				continue;
@@ -514,7 +514,7 @@ public class Circuit {
 	}
 
 	public Collection<Component> getAllContaining(Location pt) {
-		HashSet<Component> ret = new HashSet<Component>();
+		LinkedHashSet<Component> ret = new LinkedHashSet<Component>();
 		for (Component comp : getComponents()) {
 			if (comp.contains(pt))
 				ret.add(comp);
@@ -523,7 +523,7 @@ public class Circuit {
 	}
 
 	public Collection<Component> getAllContaining(Location pt, Graphics g) {
-		HashSet<Component> ret = new HashSet<Component>();
+		LinkedHashSet<Component> ret = new LinkedHashSet<Component>();
 		for (Component comp : getComponents()) {
 			if (comp.contains(pt, g))
 				ret.add(comp);
@@ -532,7 +532,7 @@ public class Circuit {
 	}
 
 	public Collection<Component> getAllWithin(Bounds bds) {
-		HashSet<Component> ret = new HashSet<Component>();
+		LinkedHashSet<Component> ret = new LinkedHashSet<Component>();
 		for (Component comp : getComponents()) {
 			if (bds.contains(comp.getBounds()))
 				ret.add(comp);
@@ -541,7 +541,7 @@ public class Circuit {
 	}
 
 	public Collection<Component> getAllWithin(Bounds bds, Graphics g) {
-		HashSet<Component> ret = new HashSet<Component>();
+		LinkedHashSet<Component> ret = new LinkedHashSet<Component>();
 		for (Component comp : getComponents()) {
 			if (bds.contains(comp.getBounds(g)))
 				ret.add(comp);
@@ -759,7 +759,7 @@ public class Circuit {
 		locker.checkForWritePermission("clear");
 
 		Set<Component> oldComps = comps;
-		comps = new HashSet<Component>();
+		comps = new LinkedHashSet<Component>();
 		wires = new CircuitWires();
 		clocks.clear();
 		MyNetList.clear();
