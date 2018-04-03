@@ -428,7 +428,7 @@ public class ProjectActions {
 			return doSave(proj, f);
 	}
 
-	private static boolean doSave(Project proj, File f) {
+	public static boolean doSave(Project proj, File f) {
 		Loader loader = proj.getLogisimFile().getLoader();
 		Tool oldTool = proj.getTool();
 		proj.setTool(null);
