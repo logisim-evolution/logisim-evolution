@@ -21,7 +21,7 @@
   <key>CFBundlePackageType</key>
   <string>APPL</string>
   <key>CFBundleShortVersionString</key>
-  <string>2.14.3</string>
+  <string>2.14.4</string>
   <key>CFBundleSignature</key>
   <string>????</string>
   <!-- See http://developer.apple.com/library/mac/#releasenotes/General/SubmittingToMacAppStore/_index.html
@@ -29,7 +29,7 @@
   <key>LSApplicationCategoryType</key>
   <string>public.app-category.education</string>
   <key>CFBundleVersion</key>
-  <string>2.14.3</string>
+  <string>2.14.4</string>
   <key>NSHumanReadableCopyright</key>
   <string>Copyright (C) 2001--2018 Carl Burch, BFH, HEIG-VD, HEPIA, et al.</string>
   <key>CFBundleDocumentTypes</key>

@@ -45,6 +45,7 @@ import com.cburch.logisim.instance.InstanceFactory;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
+import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.tools.key.BitWidthConfigurator;
 import com.cburch.logisim.util.GraphicsUtil;
 
@@ -54,8 +55,14 @@ public class Multiplier extends InstanceFactory {
 		if (c_in == Value.NIL || c_in.isUnknown())
 			c_in = Value.createKnown(width, 0);
 		if (a.isFullyDefined() && b.isFullyDefined() && c_in.isFullyDefined()) {
-			long sum = (long) a.toIntValue() * (long) b.toIntValue()
+			long sum;
+			if (w >= 32) {
+				sum = (a.toIntValue() & 0xffffffffL) * (b.toIntValue() & 0xffffffffL)
+					+ (c_in.toIntValue() & 0xffffffffL);
+			} else {
+				sum = (long) a.toIntValue() * (long) b.toIntValue()
 					+ (long) c_in.toIntValue();
+			}
 			return new Value[] { Value.createKnown(width, (int) sum),
 					Value.createKnown(width, (int) (sum >> w)) };
 		} else {
@@ -131,23 +138,20 @@ public class Multiplier extends InstanceFactory {
 
 	public static final int C_OUT = 4;
 
-	public static final Attribute<BitWidth> WIDTH_ATTR = Attributes
-			.forBitWidth("width", Strings.getter("stdDataWidthAttr"), 2, 31);
-
 	public Multiplier() {
 		super("Multiplier", Strings.getter("multiplierComponent"));
-		setAttributes(new Attribute[] { WIDTH_ATTR },
+		setAttributes(new Attribute[] { StdAttr.WIDTH },
 				new Object[] { BitWidth.create(8) });
-		setKeyConfigurator(new BitWidthConfigurator(WIDTH_ATTR));
+		setKeyConfigurator(new BitWidthConfigurator(StdAttr.WIDTH));
 		setOffsetBounds(Bounds.create(-40, -20, 40, 40));
 		setIconName("multiplier.gif");
 
 		Port[] ps = new Port[5];
-		ps[IN0] = new Port(-40, -10, Port.INPUT, WIDTH_ATTR);
-		ps[IN1] = new Port(-40, 10, Port.INPUT, WIDTH_ATTR);
-		ps[OUT] = new Port(0, 0, Port.OUTPUT, WIDTH_ATTR);
-		ps[C_IN] = new Port(-20, -20, Port.INPUT, WIDTH_ATTR);
-		ps[C_OUT] = new Port(-20, 20, Port.OUTPUT, WIDTH_ATTR);
+		ps[IN0] = new Port(-40, -10, Port.INPUT, StdAttr.WIDTH);
+		ps[IN1] = new Port(-40, 10, Port.INPUT, StdAttr.WIDTH);
+		ps[OUT] = new Port(0, 0, Port.OUTPUT, StdAttr.WIDTH);
+		ps[C_IN] = new Port(-20, -20, Port.INPUT, StdAttr.WIDTH);
+		ps[C_OUT] = new Port(-20, 20, Port.OUTPUT, StdAttr.WIDTH);
 		ps[IN0].setToolTip(Strings.getter("multiplierInputTip"));
 		ps[IN1].setToolTip(Strings.getter("multiplierInputTip"));
 		ps[OUT].setToolTip(Strings.getter("multiplierOutputTip"));
@@ -189,7 +193,7 @@ public class Multiplier extends InstanceFactory {
 	@Override
 	public void propagate(InstanceState state) {
 		// get attributes
-		BitWidth dataWidth = state.getAttributeValue(WIDTH_ATTR);
+		BitWidth dataWidth = state.getAttributeValue(StdAttr.WIDTH);
 
 		// compute outputs
 		Value a = state.getPortValue(IN0);

@@ -40,6 +40,14 @@ ant run
 ```
 This also creates locally a .jar file, that you can distribute and use on other machines.
 
+## Testing Logisim-evolution
+As Logisim-evolution needs udpates (new features and patches) and that unit tests are not implemented within the code, the *testing* branch was created.
+The goal of this branch is to add new features/patches without affecting the release on branch master.
+Users who are willing test new features should checkout the testing branch. The feedback from users is really appreciated as it makes logisim-evolution better. Feel free to use the issue tab to report bugs/features.
+
+Then every semester, the testing branch will be merged in the master for a new release.
+
+
 ## Documentation
 [Here](http://reds-data.heig-vd.ch/logisim-evolution/IntroToLogisimEnglish.pdf)  you can find a tutorial (French version [here](http://reds-data.heig-vd.ch/logisim-evolution/tutoLogisim.pdf)) that explains some basic usage of Logisim. The electronic card referenced in the tutorial is a small card we use in our laboratories -- you won't be able to buy it in a store -- but the descriptions should be good enough to be used for another generic board.
 
@@ -57,6 +65,7 @@ You will, however, encounter a problem when you will try to execute the code. In
 * *resources*
 * *doc*
 
+
 ## Retro-compatibility
 We cannot assure retro-compatibility of logisim-evolution with files created with the original Logisim.
 We have incorporated a parser that alters the name of the components to satisfy VHDL requirements for variable names,
@@ -71,6 +80,7 @@ Logisim-evolution is a continuously-growing software, and we have several ideas 
 * test circuits
 * ...
 If you are willing to contribute with any of these, please feel free to contact us!
+
 
 ## How to get support for logisim-evolution
 Unfortunately, we do not have enough resources to provide direct support for logisim-evolution.
@@ -99,3 +109,5 @@ If you feel that your name should be in this list, please feel free to send us a
 
 ## Alternatives
 * A complete rewriting of Logisim, called Digital, has been developed by Prof. Helmut Neemann of the Baden-Württemberg Cooperative State University Mosbach. You can find it [(here)](https://github.com/hneemann/Digital).
+
+

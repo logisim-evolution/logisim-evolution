@@ -819,7 +819,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 											+ selected.GetComponent()
 													.getAttributeSet()
 													.getValue(StdAttr.LABEL));
-							for (int j = 0; j < 12; j++) {
+							for (int j = 0; j < 13; j++) {
 								PortMap.put(
 										selected.GetComponent()
 												.getAttributeSet()

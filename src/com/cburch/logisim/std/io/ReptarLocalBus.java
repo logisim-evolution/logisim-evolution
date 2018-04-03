@@ -59,11 +59,11 @@ public class ReptarLocalBus extends InstanceFactory {
 		LabelNames.set(1, "SP6_LB_nADV_ALE_i");
 		LabelNames.set(2, "SP6_LB_RE_nOE_i");
 		LabelNames.set(3, "SP6_LB_nWE_i");
-		for (int i = 0; i < 8; i++) {
+		for (int i = 0; i < 9; i++) {
 			LabelNames.set(4 + i, "Addr_LB_i_" + (i + 16));
 		}
-		LabelNames.set(12, "SP6_LB_WAIT3_o");
-		LabelNames.set(13, "IRQ_o");
+		LabelNames.set(13, "SP6_LB_WAIT3_o");
+		LabelNames.set(14, "IRQ_o");
 		// LabelNames.set(Addr_Data_LB_o , "Addr_Data_LB_i_0" );
 		// LabelNames.set(Addr_Data_LB_i , "Addr_Data_LB_o_0" );
 		// LabelNames.set(5, "Addr_Data_LB_tris_o");
@@ -73,7 +73,7 @@ public class ReptarLocalBus extends InstanceFactory {
 			// LabelNames.set(7+i,"Addr_Data_LB_i_"+i);
 			// LabelNames.set(15+7+i,"Addr_Data_LB_o_"+i);
 			// LabelNames.set(15+15+7+i,"Addr_Data_LB_io_"+i);
-			LabelNames.set(14 + i, "Addr_Data_LB_io_" + i);
+			LabelNames.set(15 + i, "Addr_Data_LB_io_" + i);
 		}
 		return LabelNames;
 	}
@@ -109,7 +109,7 @@ public class ReptarLocalBus extends InstanceFactory {
 		ps[Addr_Data_LB_o] = new Port(0, 50, Port.OUTPUT, 16);
 		ps[Addr_Data_LB_i] = new Port(0, 60, Port.INPUT, 16);
 		ps[Addr_Data_LB_tris_i] = new Port(0, 70, Port.INPUT, 1);
-		ps[Addr_LB_o] = new Port(0, 80, Port.OUTPUT, 8);
+		ps[Addr_LB_o] = new Port(0, 80, Port.OUTPUT, 9);
 		ps[IRQ_i] = new Port(0, 90, Port.INPUT, 1);
 		// ps[Addr_Data_LB_io ] = new Port(0,80, Port.INOUT,16);
 		ps[SP6_LB_nCS3_o].setToolTip(Strings.getter("repLBTip"));
@@ -126,7 +126,7 @@ public class ReptarLocalBus extends InstanceFactory {
 		setPorts(ps);
 
 		// From FPGA pin view
-		MyIOInformation = new IOComponentInformationContainer(12, 2, 16,
+		MyIOInformation = new IOComponentInformationContainer(13, 2, 16,
 				FPGAIOInformationContainer.IOComponentTypes.LocalBus);
 
 	}
