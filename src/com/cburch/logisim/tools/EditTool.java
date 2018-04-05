@@ -343,7 +343,6 @@ public class EditTool extends Tool {
 			/* Check if ctrl was pressed or not */
 			if ((e.getModifiersEx() & KeyEvent.CTRL_DOWN_MASK) == KeyEvent.CTRL_DOWN_MASK) {
 				attemptRotate(canvas, e);
-				ctrlPressLast = false;
 			} else {
 				select.keyPressed(canvas, e);
 			}
