@@ -47,7 +47,10 @@ import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
 
+
 public class ReptarLocalBus extends InstanceFactory {
+
+	private String defaultLocalBusName = "LocalBus";
 
 	public static ArrayList<String> GetLabels() {
 		ArrayList<String> LabelNames = new ArrayList<String>();
@@ -94,8 +97,7 @@ public class ReptarLocalBus extends InstanceFactory {
 
 	public ReptarLocalBus() {
 		super("ReptarLB", Strings.getter("repLBComponent"));
-		setAttributes(new Attribute[] { StdAttr.LABEL },
-				new Object[] { "LocalBus" });
+
 		// setKeyConfigurator(new BitWidthConfigurator(StdAttr.WIDTH));
 		setOffsetBounds(Bounds.create(-110, -10, 110, 110));
 		setIconName("localbus.gif");
@@ -129,11 +131,14 @@ public class ReptarLocalBus extends InstanceFactory {
 		MyIOInformation = new IOComponentInformationContainer(13, 2, 16,
 				FPGAIOInformationContainer.IOComponentTypes.LocalBus);
 
+		setAttributes(new Attribute[] {StdAttr.DUMMY},
+				new Object[] {""});
 	}
 
 	@Override
 	public String getHDLName(AttributeSet attrs) {
-		return attrs.getValue(StdAttr.LABEL);
+		/* Force the name of the localBus*/
+		return defaultLocalBusName;
 	}
 
 	public MappableResourcesContainer getMapInfo() {
