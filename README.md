@@ -3,6 +3,8 @@ logisim-evolution
 [![Codewake](https://www.codewake.com/badges/codewake.svg)](https://www.codewake.com/p/logisim-evolution)
 [![Codewake](https://www.codewake.com/badges/codewake2.svg)](https://www.codewake.com/p/logisim-evolution)
 
+[![Build Status](https://travis-ci.org/reds-heig/logisim-evolution.svg?branch=testing)](https://travis-ci.org/reds-heig/logisim-evolution)
+
 Logisim is an educational tool for designing and simulating digital logic circuits.
 It has been originally created by [Dr. Carl Burch](http://www.cburch.com/logisim/) and actively developed until 2011.
 After this date the author focused on other projects, and recently the development has been officially stopped  [(see his message here)](http://www.cburch.com/logisim/retire-note.html).
