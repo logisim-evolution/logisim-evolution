@@ -301,7 +301,7 @@ public class Value {
 			return Value.create(Math.max(this.width, other.width), this.error
 					| other.error | disagree, this.unknown & other.unknown,
 					(this.value & ~this.unknown)
-							| (other.value & ~other.unknown));
+					| (other.value & ~other.unknown));
 		}
 	}
 
@@ -499,7 +499,7 @@ public class Value {
 			}
 			return "" + value;
 		} else {
-			return "" + ((long) value & 0xFFFFFFFFL);
+			return "" + (value & 0xFFFFFFFFL);
 		}
 	}
 

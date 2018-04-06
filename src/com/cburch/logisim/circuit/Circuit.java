@@ -157,11 +157,12 @@ public class Circuit {
 			}
 			return map;
 		}
-		
+
+		@Override
 		public void LabelChanged(ComponentEvent e) {
 			AttributeEvent attre = (AttributeEvent) e.getData();
 			if (attre.getSource()==null||
-				attre.getValue()==null) {
+					attre.getValue()==null) {
 				return;
 			}
 			String newLabel = (String) attre.getValue();
@@ -176,17 +177,17 @@ public class Circuit {
 			}
 		}
 	}
-	
+
 	public static boolean IsCorrectLabel(String Name,
-			                             Set<Component> components,
-			                             AttributeSet me,
-			                             ComponentFactory myFactory,
-			                             Boolean ShowDialog) {
+			Set<Component> components,
+			AttributeSet me,
+			ComponentFactory myFactory,
+			Boolean ShowDialog) {
 		if (myFactory instanceof Tunnel)
 			return true;
 		return !(IsExistingLabel(Name,me,components,ShowDialog)||IsComponentName(Name,components,ShowDialog));
 	}
-	
+
 	private static boolean IsComponentName(String Name, Set<Component> comps, Boolean ShowDialog) {
 		if (Name.isEmpty())
 			return false;
@@ -202,7 +203,7 @@ public class Circuit {
 		/* we do not have to check the wires as (1) Wire is a reserved keyword, and (2) they cannot have a label */
 		return false;
 	}
-	
+
 	private static boolean IsExistingLabel(String Name, AttributeSet me, Set<Component> comps, Boolean ShowDialog) {
 		if (Name.isEmpty())
 			return false;
@@ -210,13 +211,13 @@ public class Circuit {
 			if (!comp.getAttributeSet().equals(me)&&!(comp.getFactory() instanceof Tunnel)) {
 				String Label = (comp.getAttributeSet().containsAttribute(StdAttr.LABEL)) ?
 						comp.getAttributeSet().getValue(StdAttr.LABEL) : "";
-				if (Label.toUpperCase().equals(Name.toUpperCase())) {
-					if (ShowDialog) {
-						String msg = com.cburch.logisim.circuit.Strings.get("UsedLabelNameError");
-						JOptionPane.showMessageDialog(null, "\""+Name+"\" : "+msg);
-					}
-					return true;
-				}
+						if (Label.toUpperCase().equals(Name.toUpperCase())) {
+							if (ShowDialog) {
+								String msg = com.cburch.logisim.circuit.Strings.get("UsedLabelNameError");
+								JOptionPane.showMessageDialog(null, "\""+Name+"\" : "+msg);
+							}
+							return true;
+						}
 			}
 		}
 		/* we do not have to check the wires as (1) Wire is a reserved keyword, and (2) they cannot have a label */
@@ -237,8 +238,8 @@ public class Circuit {
 	private SubcircuitFactory subcircuitFactory;
 	private EventSourceWeakSupport<CircuitListener> listeners = new EventSourceWeakSupport<CircuitListener>();
 	private LinkedHashSet<Component> comps = new LinkedHashSet<Component>(); // doesn't
-																	// include
-																	// wires
+	// include
+	// wires
 	CircuitWires wires = new CircuitWires();
 	private ArrayList<Component> clocks = new ArrayList<Component>();
 	private CircuitLocker locker;
@@ -265,11 +266,11 @@ public class Circuit {
 		staticAttrs.setValue(CircuitAttributes.NAMED_CIRCUIT_BOX, AppPreferences.NAMED_CIRCUIT_BOXES.getBoolean());
 		this.proj = proj;
 	}
-	
+
 	public void SetProject(Project proj) {
 		this.proj = proj;
 	}
-	
+
 	public Graphics GetGraphics() {
 		return (proj==null) ? null : proj.getFrame().getGraphics();
 	}
@@ -280,7 +281,7 @@ public class Circuit {
 	public void addCircuitListener(CircuitListener what) {
 		listeners.add(what);
 	}
-	
+
 	private class AnnotateComparator implements Comparator<Component> {
 
 		@Override
@@ -292,12 +293,12 @@ public class Circuit {
 			if (l2.getY() != l1.getY())
 				return l1.getY()-l2.getY();
 			if (l2.getX() != l1.getX())
-			    return l1.getX()-l2.getX();
+				return l1.getX()-l2.getX();
 			return -1;
 		}
-		
+
 	}
-	
+
 	private static String GetAnnotationName(Component comp) {
 		String ComponentName;
 		/* Pins are treated specially */
@@ -379,7 +380,7 @@ public class Circuit {
 		for (Component comp : comps) {
 			String ComponentName = GetAnnotationName(comp);
 			if (!lablers.containsKey(ComponentName)||
-				!lablers.get(ComponentName).hasNext(this)) {
+					!lablers.get(ComponentName).hasNext(this)) {
 				/* This should never happen! */
 				reporter.AddFatalError("Annotate internal Error: Either there exists duplicate labels or the label syntax is incorrect!\nPlease try annotation on labeled components also\n");
 				return;
@@ -702,7 +703,7 @@ public class Circuit {
 	public Netlist getNetList() {
 		return MyNetList;
 	}
-	
+
 	public Set<Component> getNonWires() {
 		return comps;
 	}
@@ -841,7 +842,7 @@ public class Circuit {
 		}
 		fireEvent(CircuitEvent.ACTION_REMOVE, c);
 	}
-	
+
 	private void RemoveWrongLabels(String Label) {
 		boolean HaveAChange = false;
 		for (Component comp : comps) {
@@ -858,7 +859,7 @@ public class Circuit {
 		if (HaveAChange)
 			JOptionPane.showMessageDialog(null, "\""+Label+"\" : "+Strings.get("ComponentLabelCollisionError"));
 	}
-	
+
 	public void removeCircuitListener(CircuitListener what) {
 		listeners.remove(what);
 	}
