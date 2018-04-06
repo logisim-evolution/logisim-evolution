@@ -155,8 +155,10 @@ public class VhdlSimulator implements CircuitListener {
 		setState(State.DISABLED);
 
 		/* Hide and empty console log */
-		getProject().getFrame().setVhdlSimulatorConsoleStatus(false);
-		getProject().getFrame().getVhdlSimulatorConsole().clear();
+		if (getProject().getFrame() != null) {
+			getProject().getFrame().setVhdlSimulatorConsoleStatus(false);
+			getProject().getFrame().getVhdlSimulatorConsole().clear();
+		}
 	}
 
 	/**
@@ -189,7 +191,24 @@ public class VhdlSimulator implements CircuitListener {
 					"Cannot enable VHDL simulator from " + state + " state");
 		}
 
-		getProject().getFrame().setVhdlSimulatorConsoleStatus(true);
+		int i = 0;
+		/* Wait in case starting simulation to early*/
+		while(getProject().getFrame() == null) {
+			try {
+				Thread.sleep(100);
+				if (i == 10) {
+					break;
+				}
+				i++;
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+
+		if (i != 10) {
+			getProject().getFrame().setVhdlSimulatorConsoleStatus(true);
+		}
+
 		setState(State.ENABLED);
 
 		start();
@@ -271,7 +290,7 @@ public class VhdlSimulator implements CircuitListener {
 			}
 		}
 
-		/* Test subcircuits */
+		/* Test sub-circuits */
 		for (CircuitState sub : s.getSubstates()) {
 			if (hasVhdlComponent(sub))
 				return true;
