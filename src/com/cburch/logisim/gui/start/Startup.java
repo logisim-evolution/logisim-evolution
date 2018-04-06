@@ -46,16 +46,12 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.security.CodeSource;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Date;
 
 import javax.help.JHelp;
 import javax.swing.ImageIcon;
@@ -88,6 +84,7 @@ import com.cburch.logisim.gui.generic.CanvasPane;
 import com.cburch.logisim.gui.main.Print;
 import com.cburch.logisim.gui.menu.LogisimMenuBar;
 import com.cburch.logisim.gui.menu.WindowManagers;
+import com.cburch.logisim.gui.test.TestBench;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.proj.ProjectActions;
@@ -298,8 +295,8 @@ public class Startup implements AWTEventListener {
 				if (i >= args.length)
 					printUsage();
 
-				ret.testCircuitPath = args[i];
-				ret.circuitToTest = args[i];
+				ret.testCircuitPathInput= args[i];
+				ret.filesToOpen.add(new File(ret.testCircuitPathInput));
 				ret.showSplash = false;
 				ret.exitAfterStartup = true;
 			} else if (arg.equals("-test-circ-gen")) {
@@ -451,7 +448,7 @@ public class Startup implements AWTEventListener {
 	private boolean initialized = false;
 	private SplashScreen monitor = null;
 	/* Testing Circuit Variable */
-	private String testCircuitPath = null;
+	private String testCircuitPathInput = null;
 	/* Testing Xml (circ file) Variable */
 	private String testCircPathInput = null;
 	private String testCircPathOutput = null;
@@ -831,23 +828,34 @@ public class Startup implements AWTEventListener {
 		} else {
 			int numOpened = 0;
 			boolean first = true;
+			Project proj;
 			for (File fileToOpen : filesToOpen) {
 				try {
 					if (testVector != null) {
-						Project proj = ProjectActions.doOpenNoWindow(monitor,
+						proj = ProjectActions.doOpenNoWindow(monitor,
 								fileToOpen);
 						proj.doTestVector(testVector, circuitToTest);
 					} else if (testCircPathInput != null &&
 									testCircPathOutput != null) {
 						/* This part of the function will create a new circuit file (
 						 * XML) which will be open and saved again using the  */
-						Project proj = ProjectActions.doOpen(monitor,
+						proj = ProjectActions.doOpen(monitor,
 								fileToOpen, substitutions);
 
 						ProjectActions.doSave(proj, new File(testCircPathOutput));
+					} else if (testCircuitPathInput != null)  {
+						/* Testing */
+						TestBench testB = new TestBench(testCircuitPathInput, monitor, substitutions);
+
+						if (testB.startTestBench()) {
+							System.exit(0);
+						} else {
+							System.exit(-1);
+						}
+
 					} else {
-						ProjectActions.doOpen(monitor, fileToOpen,
-								substitutions);
+						logger.error("FATAL ERROR - no simulator available");
+						System.exit(-1);
 					}
 					numOpened++;
 				} catch (LoadFailedException ex) {
