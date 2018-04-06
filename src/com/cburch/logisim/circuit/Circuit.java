@@ -42,6 +42,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.TreeSet;
 import java.util.WeakHashMap;
 
@@ -120,10 +122,12 @@ public class Circuit {
 	}
 
 	private class MyComponentListener implements ComponentListener {
+		@Override
 		public void componentInvalidated(ComponentEvent e) {
 			fireEvent(CircuitEvent.ACTION_INVALIDATE, e.getSource());
 		}
 
+		@Override
 		public void endChanged(ComponentEvent e) {
 			locker.checkForWritePermission("ends changed");
 			Annotated = false;
@@ -226,6 +230,7 @@ public class Circuit {
 		return comp.getEnd(0).getType() != EndData.INPUT_ONLY;
 	}
 
+	private int maxTimeoutTestBenchSec = 60000;
 	private MyComponentListener myComponentListener = new MyComponentListener();
 	private CircuitAppearance appearance;
 	private AttributeSet staticAttrs;
@@ -410,6 +415,46 @@ public class Circuit {
 
 	public boolean contains(Component c) {
 		return comps.contains(c) || wires.getWires().contains(c);
+	}
+
+	/* The function will tick. Then once the tick was propagated
+	 * in the circuit, the output value are going to be checked.
+	 * The pin[0] is indicating when the simulation is done.
+	 * Once the Simulation is done (pin[0] to 1) the value of pin[1]
+	 * will be check and if the value of pin[1] is 1 the function return true.
+	 * It will return zero otherwise  */
+	public boolean doTestBench(Project project, Instance pin[], Value[] val) {
+		CircuitState state = project.getCircuitState();
+		/* This is introduced in order to not block in case both the signal never happend*/
+		InstanceState[] pinsState = new InstanceState[pin.length];
+		Value[] vPins = new Value[pin.length];
+		state.reset();
+
+		TimeoutSimulation ts = new TimeoutSimulation();
+		Timer timer = new Timer();
+		timer.schedule(ts, maxTimeoutTestBenchSec);
+
+		while (true) {
+			int i = 0;
+			project.getSimulator().tick();
+			Thread.yield();
+
+			for(Instance pinstatus: pin) {
+				pinsState[i] = state.getInstanceState(pinstatus);
+				vPins[i] = Pin.FACTORY.getValue(pinsState[i]);
+				i++;
+			}
+
+			if (val[0].compatible(vPins[0])) {
+				if (vPins[0].equals(Value.TRUE)) {
+					return (val[1].compatible(vPins[1]) && vPins[1].equals(Value.TRUE));
+				}
+			}
+
+			if (ts.getTimeout()) {
+				return false;
+			}
+		}
 	}
 
 	/**
@@ -828,5 +873,23 @@ public class Circuit {
 	@Override
 	public String toString() {
 		return staticAttrs.getValue(CircuitAttributes.NAME_ATTR);
+	}
+
+	public class TimeoutSimulation extends TimerTask {
+
+		/* Make it atomic */
+		private volatile boolean timedOut;
+		public TimeoutSimulation() {
+			timedOut = false;
+		}
+
+		public boolean getTimeout() {
+			return timedOut;
+		}
+
+		@Override
+		public void run() {
+			timedOut = true;
+		}
 	}
 }
