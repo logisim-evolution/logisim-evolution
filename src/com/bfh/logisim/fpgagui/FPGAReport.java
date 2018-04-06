@@ -30,58 +30,54 @@
 
 package com.bfh.logisim.fpgagui;
 
-import com.bfh.logisim.designrulecheck.SimpleDRCContainer;
+public abstract class FPGAReport {
+	public FPGAReport() {
 
-public class FPGAReport {
-	private FPGACommanderGui myCommander;
-
-	public FPGAReport(FPGACommanderGui parrent) {
-		myCommander = parrent;
 	}
-	
+
 	public void AddErrorIncrement(String Message) {
-		myCommander.AddErrors(new SimpleDRCContainer(Message,SimpleDRCContainer.LEVEL_NORMAL,true));
+		//	myCommander.AddErrors(new SimpleDRCContainer(Message,SimpleDRCContainer.LEVEL_NORMAL,true));
 	}
 
 	public void AddError(Object Message) {
-		if (Message instanceof String)
-			myCommander.AddErrors(new SimpleDRCContainer(Message,SimpleDRCContainer.LEVEL_NORMAL));
-		else
-			myCommander.AddErrors(Message);
+		//	if (Message instanceof String)
+		//		myCommander.AddErrors(new SimpleDRCContainer(Message,SimpleDRCContainer.LEVEL_NORMAL));
+		//	else
+		//		myCommander.AddErrors(Message);
 	}
 
 	public void AddFatalError(String Message) {
-			myCommander.AddErrors(new SimpleDRCContainer(Message,SimpleDRCContainer.LEVEL_FATAL));
+		//	myCommander.AddErrors(new SimpleDRCContainer(Message,SimpleDRCContainer.LEVEL_FATAL));
 	}
 
 	public void AddSevereError(String Message) {
-			myCommander.AddErrors(new SimpleDRCContainer(Message,SimpleDRCContainer.LEVEL_SEVERE));
+		//	myCommander.AddErrors(new SimpleDRCContainer(Message,SimpleDRCContainer.LEVEL_SEVERE));
 	}
 
 	public void AddInfo(String Message) {
-		myCommander.AddInfo(Message);
+		//myCommander.AddInfo(Message);
 	}
 
 	public void AddSevereWarning(String Message) {
-		myCommander.AddWarning(new SimpleDRCContainer(Message,SimpleDRCContainer.LEVEL_SEVERE));
+		//	myCommander.AddWarning(new SimpleDRCContainer(Message,SimpleDRCContainer.LEVEL_SEVERE));
 	}
-	
+
 	public void AddWarningIncrement(String Message) {
-		myCommander.AddWarning(new SimpleDRCContainer(Message,SimpleDRCContainer.LEVEL_NORMAL,true));
+		//myCommander.AddWarning(new SimpleDRCContainer(Message,SimpleDRCContainer.LEVEL_NORMAL,true));
 	}
 
 	public void AddWarning(Object Message) {
-		if (Message instanceof String)
-			myCommander.AddWarning(new SimpleDRCContainer(Message,SimpleDRCContainer.LEVEL_NORMAL));
-		else
-			myCommander.AddWarning(Message);
+		//if (Message instanceof String)
+		//	myCommander.AddWarning(new SimpleDRCContainer(Message,SimpleDRCContainer.LEVEL_NORMAL));
+		//else
+		//	myCommander.AddWarning(Message);
 	}
 
 	public void ClsScr() {
-		myCommander.ClearConsole();
+		//myCommander.ClearConsole();
 	}
 
 	public void print(String Message) {
-		myCommander.AddConsole(Message);
+		//myCommander.AddConsole(Message);
 	}
 }
