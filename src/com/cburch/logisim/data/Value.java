@@ -111,6 +111,11 @@ public class Value {
 		return Value.create(bits.getWidth(), 0, -1, 0);
 	}
 
+	/* Added to test */
+	public static Value createKnown(int bits, int value) {
+		return Value.create(bits,  0, 0, value);
+	}
+
 	/**
 	 * Code taken from Cornell's version of Logisim:
 	 * http://www.cs.cornell.edu/courses/cs3410/2015sp/
