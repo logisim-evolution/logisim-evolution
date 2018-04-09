@@ -677,9 +677,13 @@ public class Netlist implements CircuitListener {
 		gbc.fill = GridBagConstraints.HORIZONTAL;
 		panel.add(progres, gbc);
 		panel.pack();
-		panel.setLocation(Projects.getCenteredLoc(panel.getWidth(),
-				panel.getHeight()));
-		panel.setVisible(true);
+		if (Projects.getTopFrame() != null) {
+			panel.setLocation(Projects.getCenteredLoc(panel.getWidth(),
+					panel.getHeight()));
+			panel.setVisible(true);
+		} else {
+			panel.setVisible(false);
+		}
 
 		CircuitName = MyCircuit.getName();
 		wires.clear();
