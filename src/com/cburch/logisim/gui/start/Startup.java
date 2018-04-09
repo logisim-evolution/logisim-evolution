@@ -76,6 +76,7 @@ import javax.swing.JTextField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.bfh.logisim.fpgagui.FPGACommanderTests;
 import com.cburch.logisim.LogisimVersion;
 import com.cburch.logisim.Main;
 import com.cburch.logisim.file.LoadFailedException;
@@ -84,6 +85,7 @@ import com.cburch.logisim.gui.generic.CanvasPane;
 import com.cburch.logisim.gui.main.Print;
 import com.cburch.logisim.gui.menu.LogisimMenuBar;
 import com.cburch.logisim.gui.menu.WindowManagers;
+import com.cburch.logisim.gui.test.TestBench;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.proj.ProjectActions;
@@ -226,7 +228,7 @@ public class Startup implements AWTEventListener {
 					AppPreferences.GATE_SHAPE.set(AppPreferences.SHAPE_SHAPED);
 				} else if (a.equals("rectangular")) {
 					AppPreferences.GATE_SHAPE
-							.set(AppPreferences.SHAPE_RECTANGULAR);
+					.set(AppPreferences.SHAPE_RECTANGULAR);
 				} else {
 					logger.error("{}", Strings.get("argGatesOptionError"));
 					System.exit(-1);
@@ -270,18 +272,84 @@ public class Startup implements AWTEventListener {
 				}
 			} else if (arg.equals("-nosplash")) {
 				ret.showSplash = false;
-			} else if (arg.equals("-test")) {
+			} else if (arg.equals("-testvector")) {
 				i++;
+
 				if (i >= args.length)
 					printUsage();
+
 				ret.circuitToTest = args[i];
 				i++;
+
 				if (i >= args.length)
 					printUsage();
+
 				ret.testVector = args[i];
 				ret.showSplash = false;
 				ret.exitAfterStartup = true;
-			} else if (arg.equals("-clearprefs")) {
+				/* This is to test a test bench. It will return 0 or 1 depending on if
+				 * the tests pass or not
+				 */
+			} else if (arg.equals("-test-fpga-implementation")) {
+				// already handled above
+				i++;
+				if (i >= args.length)
+					printUsage();
+
+				ret.testCircuitImpPath = args[i];
+				i++;
+				if (i >= args.length)
+					printUsage();
+
+				ret.testCircuitImpMapFile = args[i];
+				i++;
+				if (i >= args.length)
+					printUsage();
+
+				ret.testCircuitImpName = args[i];
+				i++;
+
+				if (i >= args.length)
+					printUsage();
+
+				ret.testCircuitImpBoard = args[i];
+
+
+				ret.filesToOpen.add(new File(ret.testCircuitImpPath));
+				ret.showSplash = false;
+				ret.exitAfterStartup = true;
+			} else if (arg.equals("-test-circuit")) {
+				// already handled above
+				i++;
+				if (i >= args.length)
+					printUsage();
+
+				ret.testCircuitPathInput= args[i];
+				ret.filesToOpen.add(new File(ret.testCircuitPathInput));
+				ret.showSplash = false;
+				ret.exitAfterStartup = true;
+			} else if (arg.equals("-test-circ-gen")) {
+				/* This is to test the XML consistency over different version of
+				 * the Logisim */
+				i++;
+
+				if (i >= args.length)
+					printUsage();
+
+				/* This is the input path of the file to open */
+				ret.testCircPathInput = args[i];
+				i++;
+				if (i >= args.length)
+					printUsage();
+
+				/* This is the output file's path. The comparaison shall be
+				 * done between the  testCircPathInput and the testCircPathOutput*/
+				ret.testCircPathOutput = args[i];
+				ret.filesToOpen.add(new File(ret.testCircPathInput));
+				ret.showSplash = false;
+				ret.exitAfterStartup = true;
+			}
+			else if (arg.equals("-clearprefs")) {
 				// already handled above
 			} else if (arg.equals("-analyze")) {
 				Main.ANALYZE = true;
@@ -344,6 +412,10 @@ public class Startup implements AWTEventListener {
 		System.err.println("   " + Strings.get("argTtyOption")); // OK
 		System.err.println("   " + Strings.get("argQuestaOption")); // OK
 		System.err.println("   " + Strings.get("argVersionOption")); // OK
+		System.err.println("   " + Strings.get("argTestCircGen")); // OK
+		System.err.println("   " + Strings.get("argTestCircuit")); // OK
+		System.err.println("   " + Strings.get("argTestImplement")); // OK
+
 		System.exit(-1);
 	}
 
@@ -406,7 +478,21 @@ public class Startup implements AWTEventListener {
 	// from other sources
 	private boolean initialized = false;
 	private SplashScreen monitor = null;
+	/* Testing Circuit Variable */
+	private String testCircuitPathInput = null;
 
+	/* Test implementation */
+	private String testCircuitImpPath = null;
+	/* Name of the circuit withing logisim */
+	private String testCircuitImpName = null;
+	/* Name of the board to run on i.e Reptar, MAXV ...*/
+	private String testCircuitImpBoard = null;
+	/* Path folder containing Map file */
+	private String testCircuitImpMapFile = null;
+
+	/* Testing Xml (circ file) Variable */
+	private String testCircPathInput = null;
+	private String testCircPathOutput = null;
 	private ArrayList<File> filesToPrint = new ArrayList<File>();
 
 	private Startup(boolean isTty) {
@@ -416,11 +502,11 @@ public class Startup implements AWTEventListener {
 
 	/**
 	 * Auto-update Logisim-evolution if a new version is available
-	 * 
+	 *
 	 * Original idea taken from Jupar:
 	 * http://masterex.github.io/archive/2011/12/25/jupar.html by Periklis
 	 * Master_ex Ntanasis <pntanasis@gmail.com>
-	 * 
+	 *
 	 * @return true if the code has been updated, and therefore the execution
 	 *         has to be stopped, false otherwise
 	 */
@@ -458,13 +544,13 @@ public class Startup implements AWTEventListener {
 		// Get the appropriate remote version number
 		LogisimVersion remoteVersion = LogisimVersion.parse(Main.VERSION
 				.hasTracker() ? logisimData.child("tracked_version").content()
-				: logisimData.child("untracked_version").content());
+						: logisimData.child("untracked_version").content());
 
 		// If the remote version is newer, perform the update
 		if (remoteVersion.compareTo(Main.VERSION) > 0) {
 			int answer = JOptionPane.showConfirmDialog(null,
 					"A new Logisim-evolution version (" + remoteVersion
-							+ ") is available!\nWould you like to update?",
+					+ ") is available!\nWould you like to update?",
 					"Update", JOptionPane.YES_NO_OPTION,
 					JOptionPane.INFORMATION_MESSAGE);
 
@@ -484,39 +570,39 @@ public class Startup implements AWTEventListener {
 				logger.error("Error in the syntax of the URI for the path of the executed Logisim-evolution JAR file!");
 				e.printStackTrace();
 				JOptionPane
-						.showMessageDialog(
-								null,
-								"An error occurred while updating to the new Logisim-evolution version.\nPlease check the console for log information.",
-								"Update failed", JOptionPane.ERROR_MESSAGE);
+				.showMessageDialog(
+						null,
+						"An error occurred while updating to the new Logisim-evolution version.\nPlease check the console for log information.",
+						"Update failed", JOptionPane.ERROR_MESSAGE);
 				return (false);
 			}
 
 			// Get the appropriate remote filename to download
 			String remoteJar = Main.VERSION.hasTracker() ? logisimData.child(
 					"tracked_file").content() : logisimData.child(
-					"untracked_file").content();
+							"untracked_file").content();
 
-			boolean updateOk = downloadInstallUpdatedVersion(remoteJar,
-					jarFile.getAbsolutePath());
+					boolean updateOk = downloadInstallUpdatedVersion(remoteJar,
+							jarFile.getAbsolutePath());
 
-			if (updateOk) {
-				JOptionPane
+					if (updateOk) {
+						JOptionPane
 						.showMessageDialog(
 								null,
 								"The new Logisim-evolution version ("
 										+ remoteVersion
 										+ ") has been correctly installed.\nPlease restart Logisim-evolution for the changes to take effect.",
-								"Update succeeded",
-								JOptionPane.INFORMATION_MESSAGE);
-				return (true);
-			} else {
-				JOptionPane
+										"Update succeeded",
+										JOptionPane.INFORMATION_MESSAGE);
+						return (true);
+					} else {
+						JOptionPane
 						.showMessageDialog(
 								null,
 								"An error occurred while updating to the new Logisim-evolution version.\nPlease check the console for log information.",
 								"Update failed", JOptionPane.ERROR_MESSAGE);
-				return (false);
-			}
+						return (false);
+					}
 		}
 		return (false);
 	}
@@ -542,7 +628,7 @@ public class Startup implements AWTEventListener {
 	/**
 	 * Download a new version of Logisim, according to the instructions received
 	 * from autoUpdate(), and install it at the specified location
-	 * 
+	 *
 	 * Original idea taken from:
 	 * http://baptiste-wicht.developpez.com/tutoriels/java/update/ by Baptiste
 	 * Wicht
@@ -683,13 +769,13 @@ public class Startup implements AWTEventListener {
 
 	/**
 	 * Check if network connection is available.
-	 * 
+	 *
 	 * This function tries to connect to google in order to test the
 	 * availability of a network connection. This step is needed before
 	 * attempting to perform an auto-update. It assumes that google is
 	 * accessible -- usually this is the case, and it should also provide a
 	 * quick reply to the connection attempt, reducing the lag.
-	 * 
+	 *
 	 * @return true if the connection is available, false otherwise
 	 */
 	private boolean networkConnectionAvailable() {
@@ -743,7 +829,7 @@ public class Startup implements AWTEventListener {
 		int count = templLoader.getBuiltin().getLibrary("Base").getTools()
 				.size()
 				+ templLoader.getBuiltin().getLibrary("Gates").getTools()
-						.size();
+				.size();
 		if (count < 0) {
 			// this will never happen, but the optimizer doesn't know that...
 			logger.error("FATAL ERROR - no components"); // OK
@@ -758,10 +844,10 @@ public class Startup implements AWTEventListener {
 		if (showSplash) {
 			monitor.setProgress(SplashScreen.GUI_INIT);
 		}
-		WindowManagers.initialize();		
+		WindowManagers.initialize();
 		if (MacCompatibility.isSwingUsingScreenMenuBar()) {
 			MacCompatibility
-					.setFramelessJMenuBar(new LogisimMenuBar(null, null));
+			.setFramelessJMenuBar(new LogisimMenuBar(null, null));
 		} else {
 			new LogisimMenuBar(null, null);
 			// most of the time occupied here will be in loading menus, which
@@ -783,20 +869,53 @@ public class Startup implements AWTEventListener {
 		} else {
 			int numOpened = 0;
 			boolean first = true;
+			Project proj;
 			for (File fileToOpen : filesToOpen) {
 				try {
 					if (testVector != null) {
-						Project proj = ProjectActions.doOpenNoWindow(monitor,
+						proj = ProjectActions.doOpenNoWindow(monitor,
 								fileToOpen);
 						proj.doTestVector(testVector, circuitToTest);
+					} else if (testCircPathInput != null &&
+							testCircPathOutput != null) {
+						/* This part of the function will create a new circuit file (
+						 * XML) which will be open and saved again using the  */
+						proj = ProjectActions.doOpen(monitor,
+								fileToOpen, substitutions);
+
+						ProjectActions.doSave(proj, new File(testCircPathOutput));
+					} else if (testCircuitPathInput != null)  {
+						/* Testing */
+						TestBench testB = new TestBench(testCircuitPathInput, monitor, substitutions);
+
+						if (testB.startTestBench()) {
+							System.exit(0);
+						} else {
+							System.exit(-1);
+						}
+					} else if (testCircuitImpPath != null) {
+						//						proj = ProjectActions.doOpen(monitor,
+						//								fileToOpen, substitutions);
+						proj = ProjectActions.doOpenNoWindow(monitor, fileToOpen);
+						Thread.sleep(600);
+						FPGACommanderTests testImpFpga = new FPGACommanderTests(proj, testCircuitImpMapFile, testCircuitImpName, testCircuitImpBoard);
+
+						if (testImpFpga.StartTests()) {
+							System.exit(0);
+						} else {
+							System.exit(-1);
+						}
 					} else {
-						ProjectActions.doOpen(monitor, fileToOpen,
-								substitutions);
+						logger.error("FATAL ERROR - no simulator available");
+						System.exit(-1);
 					}
 					numOpened++;
 				} catch (LoadFailedException ex) {
 					logger.error("{} : {}", fileToOpen.getName(),
 							ex.getMessage());
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 				if (first) {
 					first = false;
@@ -818,7 +937,8 @@ public class Startup implements AWTEventListener {
 			System.exit(0);
 		}
 	}
-	
+
+
 	private boolean HasIcon(Component comp) {
 		boolean result = false;
 		if (comp instanceof JOptionPane) {
@@ -832,67 +952,66 @@ public class Startup implements AWTEventListener {
 		}
 		return result;
 	}
-	
+
 	@Override
 	public void eventDispatched(AWTEvent event) {
 		if (event instanceof ContainerEvent) {
-	        ContainerEvent containerEvent = (ContainerEvent)event;
-	        if (containerEvent.getID() == ContainerEvent.COMPONENT_ADDED){
-	        	Component container = containerEvent.getChild();
-	        	if ((container instanceof JButton)||
-	        		(container instanceof JCheckBox)||
-	        		(container instanceof JComboBox)||
-	        		(container instanceof JLabel)||
-	        		(container instanceof JMenu)||
-	        		(container instanceof JMenuItem)||
-	        		(container instanceof JRadioButton)||
-	        		(container instanceof JRadioButtonMenuItem)||
-	        		(container instanceof JSpinner)||
-	        		(container instanceof JTabbedPane)||
-	        		(container instanceof JTextField)||
-	        		(container instanceof JHelp)||
-	        		(container instanceof JFileChooser)||
-	        		((container instanceof JScrollPane)&&(!(container instanceof CanvasPane)))||
-	        		(container instanceof JFontChooser)||
-	        		(container instanceof JCheckBoxMenuItem)) {
-	        		AppPreferences.setScaledFonts(((JComponent)container).getComponents());
-	        		try{container.setFont(AppPreferences.getScaledFont(containerEvent.getChild().getFont()));
-	        			container.revalidate();
-	        			container.repaint();}
-	        		catch(Exception e){}
-	        	}
-	        	if (container instanceof JOptionPane) {
-	        		JOptionPane pane = (JOptionPane) container;
-	        		if (HasIcon(pane)) {
-	        			ImageIcon icon;
-	        			switch (pane.getMessageType()) {
-	        				case JOptionPane.ERROR_MESSAGE :
-	        					icon = new ImageIcon(getClass().getClassLoader().getResource("resources/logisim/error.png"));
-	        					pane.setIcon(AppPreferences.getScaledImageIcon(icon,(float) 3));
-	        					break;
-	        				case JOptionPane.QUESTION_MESSAGE :
-	        					icon = new ImageIcon(getClass().getClassLoader().getResource("resources/logisim/question.png"));
-	        					pane.setIcon(AppPreferences.getScaledImageIcon(icon,(float) 3));
-	        					break;
-	        				case JOptionPane.PLAIN_MESSAGE :
-	        					icon = new ImageIcon(getClass().getClassLoader().getResource("resources/logisim/plain.png"));
-	        					pane.setIcon(AppPreferences.getScaledImageIcon(icon,(float) 3));
-	        					break;
-	        				case JOptionPane.INFORMATION_MESSAGE :
-	        					icon = new ImageIcon(getClass().getClassLoader().getResource("resources/logisim/info.png"));
-	        					pane.setIcon(AppPreferences.getScaledImageIcon(icon,(float) 3));
-	        					break;
-	        				case JOptionPane.WARNING_MESSAGE :
-	        					icon = new ImageIcon(getClass().getClassLoader().getResource("resources/logisim/warning.png"));
-	        					pane.setIcon(AppPreferences.getScaledImageIcon(icon,(float) 3));
-	        					break;
-	        			}
-	        		}
-	        	}
-	        }
-			
+			ContainerEvent containerEvent = (ContainerEvent)event;
+			if (containerEvent.getID() == ContainerEvent.COMPONENT_ADDED){
+				Component container = containerEvent.getChild();
+				if ((container instanceof JButton)||
+						(container instanceof JCheckBox)||
+						(container instanceof JComboBox)||
+						(container instanceof JLabel)||
+						(container instanceof JMenu)||
+						(container instanceof JMenuItem)||
+						(container instanceof JRadioButton)||
+						(container instanceof JRadioButtonMenuItem)||
+						(container instanceof JSpinner)||
+						(container instanceof JTabbedPane)||
+						(container instanceof JTextField)||
+						(container instanceof JHelp)||
+						(container instanceof JFileChooser)||
+						((container instanceof JScrollPane)&&(!(container instanceof CanvasPane)))||
+						(container instanceof JFontChooser)||
+						(container instanceof JCheckBoxMenuItem)) {
+					AppPreferences.setScaledFonts(((JComponent)container).getComponents());
+					try{container.setFont(AppPreferences.getScaledFont(containerEvent.getChild().getFont()));
+					container.revalidate();
+					container.repaint();}
+					catch(Exception e){}
+				}
+				if (container instanceof JOptionPane) {
+					JOptionPane pane = (JOptionPane) container;
+					if (HasIcon(pane)) {
+						ImageIcon icon;
+						switch (pane.getMessageType()) {
+						case JOptionPane.ERROR_MESSAGE :
+							icon = new ImageIcon(getClass().getClassLoader().getResource("resources/logisim/error.png"));
+							pane.setIcon(AppPreferences.getScaledImageIcon(icon,3));
+							break;
+						case JOptionPane.QUESTION_MESSAGE :
+							icon = new ImageIcon(getClass().getClassLoader().getResource("resources/logisim/question.png"));
+							pane.setIcon(AppPreferences.getScaledImageIcon(icon,3));
+							break;
+						case JOptionPane.PLAIN_MESSAGE :
+							icon = new ImageIcon(getClass().getClassLoader().getResource("resources/logisim/plain.png"));
+							pane.setIcon(AppPreferences.getScaledImageIcon(icon,3));
+							break;
+						case JOptionPane.INFORMATION_MESSAGE :
+							icon = new ImageIcon(getClass().getClassLoader().getResource("resources/logisim/info.png"));
+							pane.setIcon(AppPreferences.getScaledImageIcon(icon,3));
+							break;
+						case JOptionPane.WARNING_MESSAGE :
+							icon = new ImageIcon(getClass().getClassLoader().getResource("resources/logisim/warning.png"));
+							pane.setIcon(AppPreferences.getScaledImageIcon(icon,3));
+							break;
+						}
+					}
+				}
+			}
+
 		}
 		// TODO Auto-generated method stub
-		
 	}
 }

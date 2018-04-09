@@ -45,11 +45,9 @@ import java.awt.event.MouseListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.Map;
 import java.util.Set;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
@@ -70,19 +68,8 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.ListSelectionModel;
 
-import com.bfh.logisim.designrulecheck.CorrectLabel;
-import com.bfh.logisim.designrulecheck.Netlist;
 import com.bfh.logisim.designrulecheck.SimpleDRCContainer;
-import com.bfh.logisim.download.AlteraDownload;
-import com.bfh.logisim.download.VivadoDownload;
-import com.bfh.logisim.download.XilinxDownload;
-import com.bfh.logisim.fpgaboardeditor.BoardInformation;
 import com.bfh.logisim.fpgaboardeditor.BoardReaderClass;
-import com.bfh.logisim.hdlgenerator.AbstractHDLGeneratorFactory;
-import com.bfh.logisim.hdlgenerator.FileWriter;
-import com.bfh.logisim.hdlgenerator.HDLGeneratorFactory;
-import com.bfh.logisim.hdlgenerator.TickComponentHDLGeneratorFactory;
-import com.bfh.logisim.hdlgenerator.ToplevelHDLGeneratorFactory;
 import com.bfh.logisim.settings.VendorSoftware;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitEvent;
@@ -91,21 +78,20 @@ import com.cburch.logisim.circuit.SimulatorEvent;
 import com.cburch.logisim.circuit.SimulatorListener;
 import com.cburch.logisim.file.LibraryEvent;
 import com.cburch.logisim.file.LibraryListener;
-import com.cburch.logisim.file.LogisimFile;
 import com.cburch.logisim.gui.menu.MenuSimulate;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.proj.ProjectEvent;
 import com.cburch.logisim.proj.ProjectListener;
 
-public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectListener,SimulatorListener,CircuitListener,WindowListener,
-                                         MouseListener,PreferenceChangeListener{
+public class FPGACommanderGui extends FPGACommanderBase implements ActionListener,LibraryListener,ProjectListener,SimulatorListener,CircuitListener,WindowListener,
+MouseListener,PreferenceChangeListener {
 
 	@Override
 	public void preferenceChange(PreferenceChangeEvent pce) {
 		String property = pce.getKey();
 		if (property.equals(AppPreferences.HDL_Type.getIdentifier()))
-				HDLType.setText(AppPreferences.HDL_Type.get());
+			HDLType.setText(AppPreferences.HDL_Type.get());
 		HandleHDLOnly();
 		if (property.equals(AppPreferences.SelectedBoard.getIdentifier())) {
 			MyBoardInformation = new BoardReaderClass(
@@ -121,7 +107,7 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 			writeToFlash.setVisible(MyBoardInformation.fpga.isFlashDefined());
 		}
 	}
-	
+
 	@Override
 	public void mouseClicked(MouseEvent e) {
 	}
@@ -129,26 +115,26 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 	@Override
 	public void mousePressed(MouseEvent e) {
 		if (e.getClickCount()>1) {
-			
+
 			if (e.getSource().equals(tabbedPane)) {
 				if (tabbedPane.getComponentCount()>0) {
 					if (tabbedPane.getSelectedComponent().equals(panelInfos)) {
 						InfoWindow.setVisible(true);
 						tabbedPane.remove(tabbedPane.getSelectedIndex());
 					} else
-					if (tabbedPane.getSelectedComponent().equals(panelWarnings)) {
-						WarningWindow.setVisible(true);
-						tabbedPane.remove(tabbedPane.getSelectedIndex());
-					} else
-					if (tabbedPane.getSelectedComponent().equals(panelErrors)) {
-						ErrorWindow.setVisible(true);
-						clearDRCTrace();
-						tabbedPane.remove(tabbedPane.getSelectedIndex());
-					} else
-					if (tabbedPane.getSelectedComponent().equals(panelConsole)) {
-						ConsoleWindow.setVisible(true);
-						tabbedPane.remove(tabbedPane.getSelectedIndex());
-					}
+						if (tabbedPane.getSelectedComponent().equals(panelWarnings)) {
+							WarningWindow.setVisible(true);
+							tabbedPane.remove(tabbedPane.getSelectedIndex());
+						} else
+							if (tabbedPane.getSelectedComponent().equals(panelErrors)) {
+								ErrorWindow.setVisible(true);
+								clearDRCTrace();
+								tabbedPane.remove(tabbedPane.getSelectedIndex());
+							} else
+								if (tabbedPane.getSelectedComponent().equals(panelConsole)) {
+									ConsoleWindow.setVisible(true);
+									tabbedPane.remove(tabbedPane.getSelectedIndex());
+								}
 				}
 			}
 		}
@@ -157,10 +143,10 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 	@Override
 	public void mouseReleased(MouseEvent e) {
 		if (e.getSource().equals(Errors)||
-			e.getSource().equals(ErrorWindow.getListObject())) {
+				e.getSource().equals(ErrorWindow.getListObject())) {
 			clearDRCTrace();
 			int idx = -1;
-			if (e.getSource().equals(Errors)) 
+			if (e.getSource().equals(Errors))
 				idx = Errors.getSelectedIndex();
 			else
 				idx = ErrorWindow.getListObject().getSelectedIndex();
@@ -169,19 +155,19 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 					GenerateDRCTrace((SimpleDRCContainer)ErrorsList.getElementAt(idx));
 				}
 			}
-		} else 
-		if (e.getSource().equals(Warnings)||
-			e.getSource().equals(WarningWindow.getListObject())) {
-			clearDRCTrace();
-			int idx = -1;
-			if (e.getSource().equals(Warnings))
-				idx = Warnings.getSelectedIndex();
-			else
-				idx = WarningWindow.getListObject().getSelectedIndex();
-			if (idx >= 0)
-				if (WarningsList.getElementAt(idx) instanceof SimpleDRCContainer)
-					GenerateDRCTrace((SimpleDRCContainer)WarningsList.getElementAt(idx));
-		}
+		} else
+			if (e.getSource().equals(Warnings)||
+					e.getSource().equals(WarningWindow.getListObject())) {
+				clearDRCTrace();
+				int idx = -1;
+				if (e.getSource().equals(Warnings))
+					idx = Warnings.getSelectedIndex();
+				else
+					idx = WarningWindow.getListObject().getSelectedIndex();
+				if (idx >= 0)
+					if (WarningsList.getElementAt(idx) instanceof SimpleDRCContainer)
+						GenerateDRCTrace((SimpleDRCContainer)WarningsList.getElementAt(idx));
+			}
 	}
 
 	@Override
@@ -191,7 +177,7 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 	@Override
 	public void mouseExited(MouseEvent e) {
 	}
-	
+
 	@Override
 	public void windowOpened(WindowEvent e) {
 		if (e.getSource().equals(panel)) {
@@ -265,15 +251,17 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 	@Override
 	public void windowDeactivated(WindowEvent e) {
 	}
-	 
-	
+
+
+	@Override
 	public void libraryChanged(LibraryEvent event) {
 		if (event.getAction() == LibraryEvent.ADD_TOOL
-			|| event.getAction() == LibraryEvent.REMOVE_TOOL) {
+				|| event.getAction() == LibraryEvent.REMOVE_TOOL) {
 			RebuildCircuitSelection();
 		}
 	}
 
+	@Override
 	public void projectChanged(ProjectEvent event) {
 		if (event.getAction() == ProjectEvent.ACTION_SET_CURRENT) {
 			SetCurrentSheet(event.getCircuit().getName());
@@ -281,17 +269,21 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 			RebuildCircuitSelection();
 		}
 	}
-	
+
+	@Override
 	public void propagationCompleted(SimulatorEvent e) {
 	}
 
+	@Override
 	public void simulatorStateChanged(SimulatorEvent e) {
 		ChangeTickFrequency();
 	}
 
+	@Override
 	public void tickCompleted(SimulatorEvent e) {
 	}
-	
+
+	@Override
 	public void circuitChanged(CircuitEvent event) {
 		int act = event.getAction();
 
@@ -300,7 +292,7 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 		}
 		clearDRCTrace();
 	}
-	
+
 
 	public static final int FONT_SIZE = 12;
 	private JFrame panel;
@@ -334,21 +326,10 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 	private JTabbedPane tabbedPane = new JTabbedPane();
 	private LinkedList<String> consoleInfos = new LinkedList<String>();
 	private LinkedList<String> consoleConsole = new LinkedList<String>();
-	private Project MyProject;
-	private BoardInformation MyBoardInformation = null;
-	private MappableResourcesContainer MyMappableResources;
-	private String[] HDLPaths = { HDLGeneratorFactory.VERILOG.toLowerCase(),
-			HDLGeneratorFactory.VHDL.toLowerCase(), "scripts", "sandbox", "ucf", "xdc"};
 	@SuppressWarnings("unused")
 	private static final Integer VerilogSourcePath = 0;
 	@SuppressWarnings("unused")
-	private static final Integer VHDLSourcePath = 1;
-	private static final Integer ScriptPath = 2;
-	private static final Integer SandboxPath = 3;
-	private static final Integer UCFPath = 4;
-	private static final Integer XDCPath = 5;
-	private FPGAReport MyReporter = new FPGAReport(this);
-	
+
 	private FPGACommanderListModel WarningsList = new FPGACommanderListModel();
 	private JList<Object> Warnings = new JList<Object>();
 	private FPGACommanderListWindow WarningWindow = new FPGACommanderListWindow("FPGACommander: Warnings",Color.ORANGE,true,WarningsList);
@@ -364,6 +345,7 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 	private SimpleDRCContainer ActiveDRCContainer;
 
 	public FPGACommanderGui(Project Main) {
+		MyReporter = new FPGAReportGui(this);
 		MyProject = Main;
 		InfoWindow = new FPGACommanderTextWindow("FPGACommander: Infos",Color.GRAY,true);
 		ConsoleWindow = new FPGACommanderTextWindow("FPGACommander: Console",Color.LIGHT_GRAY,false);
@@ -380,11 +362,12 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 		ErrorWindow.setSize(new Dimension(740,400));
 		ErrorWindow.getListObject().addMouseListener(this);
 		ConsoleWindow.addWindowListener(this);
-		
+
 		GridBagLayout thisLayout = new GridBagLayout();
 		GridBagConstraints c = new GridBagConstraints();
 		panel.setLayout(thisLayout);
-		
+
+
 		// change main circuit
 		circuitsList.setEnabled(true);
 		c.fill = GridBagConstraints.HORIZONTAL;
@@ -455,7 +438,7 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 		MyBoardInformation = new BoardReaderClass(
 				AppPreferences.Boards.GetSelectedBoardFileName()).GetBoardInformation();
 		MyBoardInformation
-				.setBoardName(AppPreferences.SelectedBoard.get());
+		.setBoardName(AppPreferences.SelectedBoard.get());
 		boardIcon = new BoardIcon(MyBoardInformation.GetImage());
 		// set board image on panel creation
 		boardPic.setIcon(boardIcon);
@@ -552,7 +535,7 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 		Errors.setCellRenderer(ErrorsList.getMyRenderer(true));
 		Errors.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		Errors.addMouseListener(this);
-		
+
 		textAreaConsole.setForeground(Color.LIGHT_GRAY);
 		textAreaConsole.setBackground(bg);
 		textAreaConsole.setFont(new Font("monospaced", Font.PLAIN, FONT_SIZE));
@@ -561,21 +544,21 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 		JScrollPane textErrors = new JScrollPane(Errors);
 		JScrollPane textConsole = new JScrollPane(textAreaConsole);
 		textMessages
-				.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+		.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 		textMessages
-				.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		textWarnings
-				.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+		.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 		textWarnings
-				.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		textErrors
-				.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+		.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 		textErrors
-				.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		textConsole
-				.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+		.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 		textConsole
-				.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
 		GridLayout consolesLayout = new GridLayout(1, 1);
 
@@ -592,7 +575,7 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 		panelErrors.setName("Errors (0)");
 		panelConsole.add(textConsole);
 		panelConsole.setName("Console");
-		
+
 		tabbedPane.add(panelInfos); // index 0
 		tabbedPane.add(panelWarnings); // index 1
 		tabbedPane.add(panelErrors); // index 2
@@ -617,8 +600,8 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 		panel.pack();
 		panel.setLocationRelativeTo(null);
 		panel.setVisible(false);
-		
-		
+
+
 		if (MyProject.getLogisimFile().getLoader().getMainFile() != null) {
 			MapPannel = new ComponentMapDialog(panel, MyProject
 					.getLogisimFile().getLoader().getMainFile()
@@ -629,9 +612,9 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 		MapPannel.SetBoardInformation(MyBoardInformation);
 		AppPreferences.getPrefs().addPreferenceChangeListener(this);
 	}
-	
+
 	private void HandleHDLOnly() {
-		if (!VendorSoftware.toolsPresent(MyBoardInformation.fpga.getVendor(), 
+		if (!VendorSoftware.toolsPresent(MyBoardInformation.fpga.getVendor(),
 				VendorSoftware.GetToolPath(MyBoardInformation.fpga.getVendor()))) {
 			HDLOnly.setText(SelectToolPathMessage);
 		} else if (!AppPreferences.DownloadToBoard.get()) {
@@ -639,13 +622,6 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 		} else {
 			HDLOnly.setText(HDLandDownloadMessage);
 		}
-	}
-	
-	private boolean canDownload() {
-		if (!VendorSoftware.toolsPresent(MyBoardInformation.fpga.getVendor(), 
-				VendorSoftware.GetToolPath(MyBoardInformation.fpga.getVendor())))
-			return false;
-		return AppPreferences.DownloadToBoard.get();
 	}
 
 	@Override
@@ -658,8 +634,70 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 			selectToolPath(MyBoardInformation.fpga.getVendor());
 			HandleHDLOnly();
 		} else if (e.getActionCommand().equals("Download")) {
-			DownLoad();
+			DownLoad(skipHDL.isSelected(), circuitsList.getSelectedItem().toString());
 		}
+	}
+
+	private boolean guiDRC() {
+		clearAllMessages();
+		String CircuitName = circuitsList.getSelectedItem().toString();
+
+		clearAllMessages();
+		return  performDRC(CircuitName, HDLType.getText());
+	}
+
+	private boolean guiMapDesign(String CircuitName) {
+
+		if (!MapDesign(CircuitName)) {
+			return false;
+		}
+
+		MapPannel.SetBoardInformation(MyBoardInformation);
+		MapPannel.SetMappebleComponents(MyMappableResources);
+		panel.setVisible(false);
+		MapPannel.SetVisible(true);
+		panel.setVisible(true);
+
+		if (MapDesignCheckIOs()) {
+			return true;
+		}
+
+		MyReporter
+		.AddError("Not all IO components have been mapped to the board "
+				+ MyBoardInformation.getBoardName()
+				+ " please map all components to continue!");
+
+		return false;
+	}
+
+	@Override
+	protected boolean DownLoad(boolean skipVHDL, String CircuitName) {
+		if (!canDownload() || !skipVHDL ) {
+			if (!guiDRC()) {
+				return false;
+			}
+			if (!guiMapDesign(CircuitName)) {
+				return false;
+			}
+			if (!writeHDL(circuitsList.getSelectedItem().toString(),
+					MenuSimulate.SupportedTickFrequencies[frequenciesList
+					                                      .getSelectedIndex()])) {
+				return false;
+			}
+
+
+			if (!MapPannel.isDoneAssignment()) {
+				MyReporter.AddError("Download to board canceled");
+				return false;
+			}
+
+			if (canDownload() || skipHDL.isSelected()) {
+				return DownLoadDesign(!canDownload(), skipHDL.isSelected(),
+						circuitsList.getSelectedItem().toString(), writeToFlash.isSelected());
+			}
+		}
+
+		return false;
 	}
 
 	public void AddConsole(String Message) {
@@ -705,7 +743,7 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 			Line.append(" ");
 		}
 		Line.append(Integer.toString(consoleInfos.size() + 1) + "> " + Message.toString()
-				+ "\n");
+		+ "\n");
 		consoleInfos.add(Line.toString());
 		Line.setLength(0);
 		for (String mes : consoleInfos) {
@@ -765,34 +803,6 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 		}
 	}
 
-	private boolean CleanDirectory(String dir) {
-		try {
-			File thisDir = new File(dir);
-			if (!thisDir.exists()) {
-				return true;
-			}
-			for (File theFiles : thisDir.listFiles()) {
-				if (theFiles.isDirectory()) {
-					if (!CleanDirectory(theFiles.getPath())) {
-						return false;
-					}
-				} else {
-					if (!theFiles.delete()) {
-						return false;
-					}
-				}
-			}
-			if (!thisDir.delete()) {
-				return false;
-			} else {
-				return true;
-			}
-		} catch (Exception e) {
-			MyReporter.AddFatalError("Could not remove directory tree :" + dir);
-			return false;
-		}
-	}
-
 	private void clearAllMessages() {
 		clearDRCTrace();
 		textAreaInfo.setText(null);
@@ -830,206 +840,6 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 		tabbedPane.paintImmediately(rect);
 	}
 
-	private void DownLoad() {
-		if (!canDownload() || !skipHDL.isSelected()) {
-			if (!performDRC()) {
-				return;
-			}
-			if (!MapDesign()) {
-				return;
-			}
-			if (!writeHDL()) {
-				return;
-			}
-		}
-		if (canDownload() || skipHDL.isSelected()) {
-			DownLoadDesign(!canDownload(), skipHDL.isSelected());
-		}
-	}
-
-	private void DownLoadDesign(boolean generateOnly, boolean downloadOnly) {
-		if (generateOnly && downloadOnly) {
-			MyReporter.AddError("Can not have skip VHDL generation and generate HDL only in the same time...");
-			return;
-		}
-		if (!MapPannel.isDoneAssignment()) {
-			MyReporter.AddError("Download to board canceled");
-			return;
-		}
-
-		String CircuitName = circuitsList.getSelectedItem().toString();
-		String ProjectDir = AppPreferences.FPGA_Workspace.get() + File.separator
-				+ MyProject.getLogisimFile().getName();
-		if (!ProjectDir.endsWith(File.separator)) {
-			ProjectDir += File.separator;
-		}
-		LogisimFile myfile = MyProject.getLogisimFile();
-		Circuit RootSheet = myfile.getCircuit(CircuitName);
-		ProjectDir += CorrectLabel.getCorrectLabel(RootSheet.getName())
-				+ File.separator;
-		String SourcePath = ProjectDir + AppPreferences.HDL_Type.get().toLowerCase()
-				+ File.separator;
-		ArrayList<String> Entities = new ArrayList<String>();
-		ArrayList<String> Behaviors = new ArrayList<String>();
-		GetVHDLFiles(ProjectDir, SourcePath, Entities, Behaviors,
-				AppPreferences.HDL_Type.get());
-		if (MyBoardInformation.fpga.getVendor() == VendorSoftware.VendorAltera) {
-			if (AlteraDownload.GenerateQuartusScript(MyReporter, ProjectDir
-					+ HDLPaths[ScriptPath] + File.separator,
-					RootSheet.getNetList(), MyMappableResources,
-					MyBoardInformation, Entities, Behaviors,
-					AppPreferences.HDL_Type.get())) {
-				AlteraDownload.Download(ProjectDir
-						+ HDLPaths[ScriptPath] + File.separator, SourcePath,
-						ProjectDir + HDLPaths[SandboxPath] + File.separator,
-						MyReporter);
-			}
-		} else if (MyBoardInformation.fpga.getVendor() == VendorSoftware.VendorXilinx) {
-			if (XilinxDownload.GenerateISEScripts(MyReporter, ProjectDir,
-					ProjectDir + HDLPaths[ScriptPath] + File.separator,
-					ProjectDir + HDLPaths[UCFPath] + File.separator,
-					RootSheet.getNetList(), MyMappableResources,
-					MyBoardInformation, Entities, Behaviors,
-					AppPreferences.HDL_Type.get(),
-					writeToFlash.isSelected())
-					&& !generateOnly) {
-				XilinxDownload.Download(MyBoardInformation,
-						ProjectDir + HDLPaths[ScriptPath] + File.separator,
-						ProjectDir + HDLPaths[UCFPath] + File.separator,
-						ProjectDir, ProjectDir + HDLPaths[SandboxPath]
-								+ File.separator, MyReporter);
-			}
-		} else if (MyBoardInformation.fpga.getVendor() == VendorSoftware.VendorVivado) {
-			if (VivadoDownload.GenerateScripts(MyReporter, ProjectDir,
-					ProjectDir + HDLPaths[ScriptPath] + File.separator,
-					ProjectDir + HDLPaths[XDCPath] + File.separator,
-					ProjectDir + HDLPaths[SandboxPath] + File.separator,
-					RootSheet.getNetList(), MyMappableResources,
-					MyBoardInformation, Entities, Behaviors,
-					AppPreferences.HDL_Type.get(),
-					writeToFlash.isSelected())
-					&& !generateOnly) {
-				VivadoDownload.Download(
-						ProjectDir + HDLPaths[ScriptPath] + File.separator,
-						ProjectDir + HDLPaths[SandboxPath] + File.separator,
-						MyReporter, downloadOnly);
-			}
-		}
-	}
-
-	private boolean GenDirectory(String dir) {
-		try {
-			File Dir = new File(dir);
-			if (Dir.exists()) {
-				return true;
-			}
-			return Dir.mkdirs();
-		} catch (Exception e) {
-			MyReporter
-					.AddFatalError("Could not check/create directory :" + dir);
-			return false;
-		}
-	}
-
-	private void GetVHDLFiles(String SourcePath, String Path,
-			ArrayList<String> Entities, ArrayList<String> Behaviors,
-			String HDLType) {
-		File Dir = new File(Path);
-		File[] Files = Dir.listFiles();
-		for (File thisFile : Files) {
-			if (thisFile.isDirectory()) {
-				if (Path.endsWith(File.separator)) {
-					GetVHDLFiles(SourcePath, Path + thisFile.getName(),
-							Entities, Behaviors, HDLType);
-				} else {
-					GetVHDLFiles(SourcePath,
-							Path + File.separator + thisFile.getName(),
-							Entities, Behaviors, HDLType);
-				}
-			} else {
-				String EntityMask = (HDLType.equals(HDLGeneratorFactory.VHDL)) ? FileWriter.EntityExtension
-						+ ".vhd"
-						: ".v";
-				String ArchitecturMask = (HDLType.equals(HDLGeneratorFactory.VHDL)) ? FileWriter.ArchitectureExtension
-						+ ".vhd"
-						: "#not_searched#";
-				if (thisFile.getName().endsWith(EntityMask)) {
-					Entities.add((Path + File.separator + thisFile.getName())
-							.replace("\\", "/"));
-				} else if (thisFile.getName().endsWith(ArchitecturMask)) {
-					Behaviors.add((Path + File.separator + thisFile.getName())
-							.replace("\\", "/"));
-				}
-			}
-		}
-	}
-
-	private boolean MapDesign() {
-		String CircuitName = circuitsList.getSelectedItem().toString();
-		LogisimFile myfile = MyProject.getLogisimFile();
-		Circuit RootSheet = myfile.getCircuit(CircuitName);
-		Netlist RootNetlist = RootSheet.getNetList();
-		if (MyBoardInformation == null) {
-			MyReporter
-					.AddError("INTERNAL ERROR: No board information available ?!?");
-			return false;
-		}
-
-		Map<String, ArrayList<Integer>> BoardComponents = MyBoardInformation
-				.GetComponents();
-		MyReporter.AddInfo("The Board " + MyBoardInformation.getBoardName()
-				+ " has:");
-		for (String key : BoardComponents.keySet()) {
-			MyReporter.AddInfo(BoardComponents.get(key).size() + " " + key
-					+ "(s)");
-		}
-		/*
-		 * At this point I require 2 sorts of information: 1) A hierarchical
-		 * netlist of all the wires that needs to be bubbled up to the toplevel
-		 * in order to connect the LEDs, Buttons, etc. (hence for the HDL
-		 * generation). 2) A list with all components that are required to be
-		 * mapped to PCB components. Identification can be done by a hierarchy
-		 * name plus component/sub-circuit name
-		 */
-		MyMappableResources = new MappableResourcesContainer(
-				MyBoardInformation, RootNetlist);
-		if (!MyMappableResources.IsMappable(BoardComponents, MyReporter)) {
-			return false;
-		}
-
-		MapPannel.SetBoardInformation(MyBoardInformation);
-		MapPannel.SetMappebleComponents(MyMappableResources);
-		panel.setVisible(false);
-		MapPannel.SetVisible(true);
-		panel.setVisible(true);
-		if (MyMappableResources.UnmappedList().isEmpty()) {
-			MyMappableResources.BuildIOMappingInformation();
-			return true;
-		}
-
-		MyReporter
-				.AddError("Not all IO components have been mapped to the board "
-						+ MyBoardInformation.getBoardName()
-						+ " please map all components to continue!");
-		return false;
-	}
-
-	private boolean performDRC() {
-		clearAllMessages();
-		String CircuitName = circuitsList.getSelectedItem().toString();
-		Circuit root = MyProject.getLogisimFile().getCircuit(CircuitName);
-		ArrayList<String> SheetNames = new ArrayList<String>();
-		int DRCResult = Netlist.DRC_PASSED;
-		if (root == null) {
-			DRCResult |= Netlist.DRC_ERROR;
-		} else {
-			root.getNetList().clear();
-			DRCResult = root.getNetList().DesignRuleCheckResult(MyReporter,
-					HDLType.getText(), true, SheetNames);
-		}
-		return (DRCResult == Netlist.DRC_PASSED);
-	}
-
 	private void RebuildCircuitSelection() {
 		circuitsList.removeAllItems();
 		panel.setTitle("FPGA Commander : "
@@ -1046,7 +856,6 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 			i++;
 		}
 	}
-	
 
 	public static void selectToolPath(char vendor) {
 		String ToolPath = VendorSoftware.GetToolPath(vendor);
@@ -1063,23 +872,23 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 		int retval;
 		boolean ok = false;
 		do {
-		  retval = fc.showOpenDialog(null);
-		  if (retval == JFileChooser.APPROVE_OPTION) {
-			  File file = fc.getSelectedFile();
-			  ToolPath = file.getPath();
-			  if (!ToolPath.endsWith(File.separator)) {
-				  ToolPath += File.separator;
-			  }
-			  if (VendorSoftware.setToolPath(vendor, ToolPath)) {
-				  ok = true;
-			  } else {
-				  JOptionPane.showMessageDialog(null,"Required tools not found in Directory \""+ToolPath+"\"!",
-						                        "Toolpath Selection",JOptionPane.ERROR_MESSAGE);
-			  }
-		  } else ok=true;
+			retval = fc.showOpenDialog(null);
+			if (retval == JFileChooser.APPROVE_OPTION) {
+				File file = fc.getSelectedFile();
+				ToolPath = file.getPath();
+				if (!ToolPath.endsWith(File.separator)) {
+					ToolPath += File.separator;
+				}
+				if (VendorSoftware.setToolPath(vendor, ToolPath)) {
+					ok = true;
+				} else {
+					JOptionPane.showMessageDialog(null,"Required tools not found in Directory \""+ToolPath+"\"!",
+							"Toolpath Selection",JOptionPane.ERROR_MESSAGE);
+				}
+			} else ok=true;
 		} while (!ok);
 	}
-	
+
 	public static void selectWorkSpace(Component parentComponent) {
 		JFileChooser fc = new JFileChooser(AppPreferences.FPGA_Workspace.get());
 		fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
@@ -1126,137 +935,6 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 		}
 	}
 
-	private boolean writeHDL() {
-		String CircuitName = circuitsList.getSelectedItem().toString();
-		if (!GenDirectory(AppPreferences.FPGA_Workspace.get() + File.separator
-				+ MyProject.getLogisimFile().getName())) {
-			MyReporter.AddFatalError("Unable to create directory: \""
-					+ AppPreferences.FPGA_Workspace.get() + File.separator
-					+ MyProject.getLogisimFile().getName() + "\"");
-			return false;
-		}
-		String ProjectDir = AppPreferences.FPGA_Workspace.get() + File.separator
-				+ MyProject.getLogisimFile().getName();
-		if (!ProjectDir.endsWith(File.separator)) {
-			ProjectDir += File.separator;
-		}
-		LogisimFile myfile = MyProject.getLogisimFile();
-		Circuit RootSheet = myfile.getCircuit(CircuitName);
-		ProjectDir += CorrectLabel.getCorrectLabel(RootSheet.getName())
-				+ File.separator;
-		if (!CleanDirectory(ProjectDir)) {
-			MyReporter
-					.AddFatalError("Unable to cleanup old project files in directory: \""
-							+ ProjectDir + "\"");
-			return false;
-		}
-		if (!GenDirectory(ProjectDir)) {
-			MyReporter.AddFatalError("Unable to create directory: \""
-					+ ProjectDir + "\"");
-			return false;
-		}
-		for (int i = 0; i < HDLPaths.length; i++) {
-			if (!GenDirectory(ProjectDir + HDLPaths[i])) {
-				MyReporter.AddFatalError("Unable to create directory: \""
-						+ ProjectDir + HDLPaths[i] + "\"");
-				return false;
-			}
-		}
-		Set<String> GeneratedHDLComponents = new HashSet<String>();
-		HDLGeneratorFactory Worker = RootSheet.getSubcircuitFactory()
-				.getHDLGenerator(AppPreferences.HDL_Type.get(),
-						RootSheet.getStaticAttributes());
-		if (Worker == null) {
-			MyReporter
-					.AddFatalError("Internal error on HDL generation, null pointer exception");
-			return false;
-		}
-		if (!Worker.GenerateAllHDLDescriptions(GeneratedHDLComponents,
-				ProjectDir, null, MyReporter, AppPreferences.HDL_Type.get())) {
-			return false;
-		}
-		/* Here we generate the top-level shell */
-		if (RootSheet.getNetList().NumberOfClockTrees() > 0) {
-			TickComponentHDLGeneratorFactory Ticker = new TickComponentHDLGeneratorFactory(
-					MyBoardInformation.fpga.getClockFrequency(),
-					MenuSimulate.SupportedTickFrequencies[frequenciesList
-							.getSelectedIndex()]/* , boardFreq.isSelected() */);
-			if (!AbstractHDLGeneratorFactory.WriteEntity(
-					ProjectDir
-							+ Ticker.GetRelativeDirectory(AppPreferences.HDL_Type.get()),
-							Ticker.GetEntity(
-							RootSheet.getNetList(), null,
-							Ticker.getComponentStringIdentifier(), MyReporter,
-							AppPreferences.HDL_Type.get()), Ticker
-							.getComponentStringIdentifier(), MyReporter,
-					AppPreferences.HDL_Type.get())) {
-				return false;
-			}
-			if (!AbstractHDLGeneratorFactory.WriteArchitecture(ProjectDir
-					+ Ticker.GetRelativeDirectory(AppPreferences.HDL_Type.get()),
-					Ticker.GetArchitecture(RootSheet.getNetList(), null,
-							Ticker.getComponentStringIdentifier(), MyReporter,
-							AppPreferences.HDL_Type.get()), Ticker
-							.getComponentStringIdentifier(), MyReporter,
-					AppPreferences.HDL_Type.get())) {
-				return false;
-			}
-			HDLGeneratorFactory ClockGen = RootSheet
-					.getNetList()
-					.GetAllClockSources()
-					.get(0)
-					.getFactory()
-					.getHDLGenerator(
-							AppPreferences.HDL_Type.get(),
-							RootSheet.getNetList().GetAllClockSources().get(0)
-									.getAttributeSet());
-			String CompName = RootSheet.getNetList().GetAllClockSources()
-					.get(0).getFactory().getHDLName(null);
-			if (!AbstractHDLGeneratorFactory.WriteEntity(
-					ProjectDir
-							+ ClockGen.GetRelativeDirectory(AppPreferences.HDL_Type.get()), 
-									ClockGen.GetEntity(
-							RootSheet.getNetList(), null, CompName, MyReporter,
-							AppPreferences.HDL_Type.get()), CompName, MyReporter,
-					AppPreferences.HDL_Type.get())) {
-				return false;
-			}
-			if (!AbstractHDLGeneratorFactory.WriteArchitecture(ProjectDir
-					+ ClockGen.GetRelativeDirectory(AppPreferences.HDL_Type.get()),
-					ClockGen.GetArchitecture(RootSheet.getNetList(), null,
-							CompName, MyReporter, AppPreferences.HDL_Type.get()),
-					CompName, MyReporter, AppPreferences.HDL_Type.get())) {
-				return false;
-			}
-		}
-		Worker = new ToplevelHDLGeneratorFactory(
-				MyBoardInformation.fpga.getClockFrequency(),
-				MenuSimulate.SupportedTickFrequencies[frequenciesList
-						.getSelectedIndex()], RootSheet, MyMappableResources);
-		if (!AbstractHDLGeneratorFactory.WriteEntity(
-				ProjectDir
-						+ Worker.GetRelativeDirectory(AppPreferences.HDL_Type.get()),
-				Worker.GetEntity(RootSheet.getNetList(), null,
-						ToplevelHDLGeneratorFactory.FPGAToplevelName,
-						MyReporter, AppPreferences.HDL_Type.get()), Worker
-						.getComponentStringIdentifier(), MyReporter, 
-						AppPreferences.HDL_Type.get())) {
-			return false;
-		}
-		if (!AbstractHDLGeneratorFactory.WriteArchitecture(
-				ProjectDir
-						+ Worker.GetRelativeDirectory(AppPreferences.HDL_Type.get()),
-				Worker.GetArchitecture(RootSheet.getNetList(), null,
-						ToplevelHDLGeneratorFactory.FPGAToplevelName,
-						MyReporter, AppPreferences.HDL_Type.get()), Worker
-						.getComponentStringIdentifier(), MyReporter, 
-						AppPreferences.HDL_Type.get())) {
-			return false;
-		}
-
-		return true;
-	}
-
 	private void clearDRCTrace() {
 		if (DRCTraceActive) {
 			ActiveDRCContainer.ClearMarks();
@@ -1264,15 +942,14 @@ public class FPGACommanderGui implements ActionListener,LibraryListener,ProjectL
 			MyProject.repaintCanvas();
 		}
 	}
-	
+
 	private void GenerateDRCTrace(SimpleDRCContainer dc) {
 		DRCTraceActive = true;
 		ActiveDRCContainer = dc;
 		dc.MarkComponents();
-		if (dc.HasCircuit()) 
+		if (dc.HasCircuit())
 			if (!MyProject.getCurrentCircuit().equals(dc.GetCircuit()))
 				MyProject.setCurrentCircuit(dc.GetCircuit());
 		MyProject.repaintCanvas();
 	}
-
 }

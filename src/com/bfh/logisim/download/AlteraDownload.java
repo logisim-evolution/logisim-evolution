@@ -60,6 +60,9 @@ import com.cburch.logisim.proj.Projects;
 
 public class AlteraDownload {
 
+	/* TODO There are duplicated code lines amongst the 3 file AlteraDownload / Vivado / Xillinx
+	 * it should be sorted by using a base class to all 3 of them
+	 */
 	public static boolean Download(String scriptPath,
 			String ProjectPath, String SandboxPath, FPGAReport MyReporter) {
 		VendorSoftware alteraVendor = VendorSoftware.getSoftware(VendorSoftware.VendorAltera);
@@ -89,9 +92,15 @@ public class AlteraDownload {
 		gbc.fill = GridBagConstraints.HORIZONTAL;
 		panel.add(progres, gbc);
 		panel.pack();
-		panel.setLocation(Projects.getCenteredLoc(panel.getWidth(),
-				panel.getHeight() * 4));
-		panel.setVisible(true);
+
+		if (Projects.getTopFrame() != null) {
+			panel.setLocation(Projects.getCenteredLoc(panel.getWidth(),
+					panel.getHeight() * 4));
+			panel.setVisible(true);
+		} else {
+			panel.setVisible(false);
+		}
+
 		Rectangle labelRect = LocText.getBounds();
 		labelRect.x = 0;
 		labelRect.y = 0;
@@ -123,18 +132,18 @@ public class AlteraDownload {
 				CreateProject.waitFor();
 				if (CreateProject.exitValue() != 0) {
 					MyReporter
-							.AddFatalError("Failed to Create a Quartus Project, cannot download");
+					.AddFatalError("Failed to Create a Quartus Project, cannot download");
 					panel.dispose();
 					return false;
 				}
 			} catch (IOException e) {
 				MyReporter
-						.AddFatalError("Internal Error during Altera download");
+				.AddFatalError("Internal Error during Altera download");
 				panel.dispose();
 				return false;
 			} catch (InterruptedException e) {
 				MyReporter
-						.AddFatalError("Internal Error during Altera download");
+				.AddFatalError("Internal Error during Altera download");
 				panel.dispose();
 				return false;
 			}
@@ -169,18 +178,18 @@ public class AlteraDownload {
 				CreateProject.waitFor();
 				if (CreateProject.exitValue() != 0) {
 					MyReporter
-							.AddFatalError("Failed to optimize (AREA) Project, cannot download");
+					.AddFatalError("Failed to optimize (AREA) Project, cannot download");
 					panel.dispose();
 					return false;
 				}
 			} catch (IOException e) {
 				MyReporter
-						.AddFatalError("Internal Error during Altera download");
+				.AddFatalError("Internal Error during Altera download");
 				panel.dispose();
 				return false;
 			} catch (InterruptedException e) {
 				MyReporter
-						.AddFatalError("Internal Error during Altera download");
+				.AddFatalError("Internal Error during Altera download");
 				panel.dispose();
 				return false;
 			}
@@ -216,18 +225,18 @@ public class AlteraDownload {
 				CreateProject.waitFor();
 				if (CreateProject.exitValue() != 0) {
 					MyReporter
-							.AddFatalError("Failed to synthesize design and to create the configuration files, cannot download");
+					.AddFatalError("Failed to synthesize design and to create the configuration files, cannot download");
 					panel.dispose();
 					return false;
 				}
 			} catch (IOException e) {
 				MyReporter
-						.AddFatalError("Internal Error during Altera download");
+				.AddFatalError("Internal Error during Altera download");
 				panel.dispose();
 				return false;
 			} catch (InterruptedException e) {
 				MyReporter
-						.AddFatalError("Internal Error during Altera download");
+				.AddFatalError("Internal Error during Altera download");
 				panel.dispose();
 				return false;
 			}
@@ -287,7 +296,7 @@ public class AlteraDownload {
 			CreateProject.waitFor();
 			if (CreateProject.exitValue() != 0) {
 				MyReporter
-						.AddFatalError("Failed to Download design; did you connect the board?");
+				.AddFatalError("Failed to Download design; did you connect the board?");
 				panel.dispose();
 				return false;
 			}
@@ -386,7 +395,7 @@ public class AlteraDownload {
 		ArrayList<String> result = new ArrayList<String>();
 		String Assignment = "    set_global_assignment -name ";
 		result.add(Assignment + "FAMILY \"" + CurrentBoard.fpga.getTechnology()
-				+ "\"");
+		+ "\"");
 		result.add(Assignment + "DEVICE " + CurrentBoard.fpga.getPart());
 		String[] Package = CurrentBoard.fpga.getPackage().split(" ");
 		result.add(Assignment + "DEVICE_FILTER_PACKAGE " + Package[0]);

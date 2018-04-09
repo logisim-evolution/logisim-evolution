@@ -91,7 +91,7 @@ import com.bfh.logisim.fpgaboardeditor.ZoomSlider;
 import com.cburch.logisim.prefs.AppPreferences;
 
 public class ComponentMapDialog implements ActionListener,
-		ListSelectionListener {
+ListSelectionListener {
 
 	private class MappedComponentIdContainer {
 
@@ -127,8 +127,8 @@ public class ComponentMapDialog implements ActionListener,
 			}
 			g.setColor(Yellow);
 			g.fillRect(real_xpos, real_ypos - hgt - 4, adv + 4, hgt + 4);
-			g.drawRect(AppPreferences.getScaled(rect.getXpos(),scale) + 1, 
-					AppPreferences.getScaled(rect.getYpos(),scale), 
+			g.drawRect(AppPreferences.getScaled(rect.getXpos(),scale) + 1,
+					AppPreferences.getScaled(rect.getYpos(),scale),
 					AppPreferences.getScaled(rect.getWidth(),scale) - 2,
 					AppPreferences.getScaled(rect.getHeight(),scale) - 1);
 			g.setColor(Blue);
@@ -139,17 +139,19 @@ public class ComponentMapDialog implements ActionListener,
 
 	@SuppressWarnings("serial")
 	private class SelectionWindow extends JPanel implements MouseListener,
-			MouseMotionListener {
+	MouseMotionListener {
 
 		public SelectionWindow() {
 			this.addMouseListener(this);
 			this.addMouseMotionListener(this);
 		}
 
+		@Override
 		public int getHeight() {
 			return AppPreferences.getScaled(image_height,scale);
 		}
 
+		@Override
 		public int getWidth() {
 			return AppPreferences.getScaled(image_width,scale);
 		}
@@ -158,7 +160,7 @@ public class ComponentMapDialog implements ActionListener,
 			if (!SelectableItems.isEmpty()) {
 				if (HighlightItem != null) {
 					if (HighlightItem.PointInside(
-							AppPreferences.getDownScaled(e.getX(),scale), 
+							AppPreferences.getDownScaled(e.getX(),scale),
 							AppPreferences.getDownScaled(e.getY(),scale))) {
 						return;
 					}
@@ -167,7 +169,7 @@ public class ComponentMapDialog implements ActionListener,
 				/* TODO: Optimize, SLOW! */
 				for (BoardRectangle Item : SelectableItems) {
 					if (Item.PointInside(
-							AppPreferences.getDownScaled(e.getX(),scale), 
+							AppPreferences.getDownScaled(e.getX(),scale),
 							AppPreferences.getDownScaled(e.getY(),scale))) {
 						NewItem = Item;
 						break;
@@ -181,26 +183,31 @@ public class ComponentMapDialog implements ActionListener,
 			}
 		}
 
+		@Override
 		public void mouseClicked(MouseEvent e) {
 		}
 
+		@Override
 		public void mouseDragged(MouseEvent e) {
 		}
 
+		@Override
 		public void mouseEntered(MouseEvent e) {
 		}
 
+		@Override
 		public void mouseExited(MouseEvent e) {
 			Note = null;
 			paintImmediately(0,0,this.getWidth(),this.getHeight());
 		}
 
+		@Override
 		public void mouseMoved(MouseEvent e) {
 			HandleSelect(e);
 			if (MappableComponents.hasMappedComponents()) {
 				if (Note != null) {
 					if (Note.getRectangle().PointInside(
-							AppPreferences.getDownScaled(e.getX(),scale), 
+							AppPreferences.getDownScaled(e.getX(),scale),
 							AppPreferences.getDownScaled(e.getY(),scale))) {
 						return;
 					}
@@ -211,7 +218,7 @@ public class ComponentMapDialog implements ActionListener,
 				for (BoardRectangle ThisItem : MappableComponents
 						.GetMappedRectangles()) {
 					if (ThisItem.PointInside(
-							AppPreferences.getDownScaled(e.getX(),scale), 
+							AppPreferences.getDownScaled(e.getX(),scale),
 							AppPreferences.getDownScaled(e.getY(),scale))) {
 						NewItem = ThisItem;
 						newKey = MappableComponents.GetDisplayName(ThisItem);
@@ -238,21 +245,24 @@ public class ComponentMapDialog implements ActionListener,
 			}
 		}
 
+		@Override
 		public void mousePressed(MouseEvent e) {
 		}
 
+		@Override
 		public void mouseReleased(MouseEvent e) {
 			if (HighlightItem != null) {
 				MapOne();
 			}
 		}
 
+		@Override
 		public void paint(Graphics g) {
 			super.paint(g);
 			Color Black = new Color(0, 0, 0, 150);
 			Image image = BoardInfo.GetImage().getScaledInstance(
 					AppPreferences.getScaled(image_width,scale),
-					AppPreferences.getScaled(image_height,scale), 
+					AppPreferences.getScaled(image_height,scale),
 					Image.SCALE_SMOOTH);
 			if (image != null) {
 				g.drawImage(image, 0, 0, null);
@@ -269,20 +279,20 @@ public class ComponentMapDialog implements ActionListener,
 				} else {
 					g.setColor(Black);
 				}
-				g.fillRect(AppPreferences.getScaled(rect.getXpos(),scale), 
-						AppPreferences.getScaled(rect.getYpos(),scale), 
+				g.fillRect(AppPreferences.getScaled(rect.getXpos(),scale),
+						AppPreferences.getScaled(rect.getYpos(),scale),
 						AppPreferences.getScaled(rect.getWidth(),scale),
 						AppPreferences.getScaled(rect.getHeight(),scale));
 				if (cadre) {
 					g.setColor(Black);
-					g.drawRect(AppPreferences.getScaled(rect.getXpos(),scale), 
-							AppPreferences.getScaled(rect.getYpos(),scale), 
+					g.drawRect(AppPreferences.getScaled(rect.getXpos(),scale),
+							AppPreferences.getScaled(rect.getYpos(),scale),
 							AppPreferences.getScaled(rect.getWidth(),scale),
 							AppPreferences.getScaled(rect.getHeight(),scale));
 					if ((rect.getWidth() >= 4) && (rect.getHeight() >= 4)) {
-						g.drawRect(AppPreferences.getScaled(rect.getXpos(),scale) + 1, 
+						g.drawRect(AppPreferences.getScaled(rect.getXpos(),scale) + 1,
 								AppPreferences.getScaled(rect.getYpos(),scale) + 1,
-								AppPreferences.getScaled(rect.getWidth(),scale) - 2, 
+								AppPreferences.getScaled(rect.getWidth(),scale) - 2,
 								AppPreferences.getScaled(rect.getHeight(),scale) - 2);
 					}
 				}
@@ -290,16 +300,16 @@ public class ComponentMapDialog implements ActionListener,
 			Color test = new Color(255, 0, 0, 100);
 			for (BoardRectangle rect : SelectableItems) {
 				g.setColor(test);
-				g.fillRect(AppPreferences.getScaled(rect.getXpos(),scale), 
-						AppPreferences.getScaled(rect.getYpos(),scale), 
+				g.fillRect(AppPreferences.getScaled(rect.getXpos(),scale),
+						AppPreferences.getScaled(rect.getYpos(),scale),
 						AppPreferences.getScaled(rect.getWidth(),scale),
 						AppPreferences.getScaled(rect.getHeight(),scale));
 			}
 			if (HighlightItem != null && ComponentSelectionMode) {
 				g.setColor(Color.RED);
-				g.fillRect(AppPreferences.getScaled(HighlightItem.getXpos(),scale), 
+				g.fillRect(AppPreferences.getScaled(HighlightItem.getXpos(),scale),
 						AppPreferences.getScaled(HighlightItem.getYpos(),scale),
-						AppPreferences.getScaled(HighlightItem.getWidth(),scale), 
+						AppPreferences.getScaled(HighlightItem.getWidth(),scale),
 						AppPreferences.getScaled(HighlightItem.getHeight(),scale));
 			}
 			if (Note != null) {
@@ -326,7 +336,7 @@ public class ComponentMapDialog implements ActionListener,
 			.getLogger(ComponentMapDialog.class);
 
 	private class ZoomChange implements ChangeListener {
-		
+
 		private ComponentMapDialog parent;
 
 		public ZoomChange(ComponentMapDialog parent) {
@@ -336,15 +346,15 @@ public class ComponentMapDialog implements ActionListener,
 		public void stateChanged(ChangeEvent e) {
 			JSlider source = (JSlider)e.getSource();
 			if (!source.getValueIsAdjusting()) {
-				int value = (int) source.getValue();
+				int value = source.getValue();
 				if (value > MaxZoom) {
 					source.setValue(MaxZoom);
 					value = MaxZoom;
 				}
-				parent.SetScale((float)value/(float)100.0);
+				parent.SetScale(value/(float)100.0);
 			}
 		}
-		
+
 	}
 
 	private JDialog panel;
@@ -455,9 +465,9 @@ public class ComponentMapDialog implements ActionListener,
 		UnmappedText.setPreferredSize(new Dimension(
 				BoardPic.getWidth()/3, AppPreferences.getScaled(25)));
 		UnmappedText
-				.setToolTipText("<html>Select component and place it on the board.<br>"
-						+ "To expand component (Port, DIP, ...) or change type (Button<->Pin),<br>"
-						+ "double clic on it.</html>");
+		.setToolTipText("<html>Select component and place it on the board.<br>"
+				+ "To expand component (Port, DIP, ...) or change type (Button<->Pin),<br>"
+				+ "double clic on it.</html>");
 		c.gridx = 0;
 		c.gridy = 0;
 		c.fill = GridBagConstraints.HORIZONTAL;
@@ -595,7 +605,8 @@ public class ComponentMapDialog implements ActionListener,
 		if (MaxZoom < 100)
 			MaxZoom = 100;
 	}
-	
+
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("Done")) {
 			doneAssignment = true;
@@ -703,7 +714,7 @@ public class ComponentMapDialog implements ActionListener,
 										Attrs.item(j).getNodeValue())) {
 									MessageLine.setForeground(Color.RED);
 									MessageLine
-											.setText("LOAD ERROR: The selected Map file is not for the selected target board!");
+									.setText("LOAD ERROR: The selected Map file is not for the selected target board!");
 									panel.setVisible(true);
 									return;
 								}
@@ -713,7 +724,7 @@ public class ComponentMapDialog implements ActionListener,
 										.equals(Attrs.item(j).getNodeValue())) {
 									MessageLine.setForeground(Color.RED);
 									MessageLine
-											.setText("LOAD ERROR: The selected Map file is not for the selected toplevel circuit!");
+									.setText("LOAD ERROR: The selected Map file is not for the selected toplevel circuit!");
 									panel.setVisible(true);
 									return;
 								}
@@ -837,7 +848,7 @@ public class ComponentMapDialog implements ActionListener,
 			String SaveFileName = SelectedDir
 					+ CorrectLabel.getCorrectLabel(MappableComponents
 							.GetToplevelName()) + "-"
-					+ BoardInfo.getBoardName() + "-MAP.xml";
+							+ BoardInfo.getBoardName() + "-MAP.xml";
 			try {
 				// Create instance of DocumentBuilderFactory
 				DocumentBuilderFactory factory = DocumentBuilderFactory

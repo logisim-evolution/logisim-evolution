@@ -58,6 +58,7 @@ import com.cburch.logisim.gui.main.Canvas;
 import com.cburch.logisim.gui.main.Selection;
 import com.cburch.logisim.gui.main.Selection.Event;
 import com.cburch.logisim.gui.main.SelectionActions;
+import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.proj.Action;
 import com.cburch.logisim.util.GraphicsUtil;
 
@@ -108,6 +109,32 @@ public class EditTool extends Tool {
 		this.lastX = -1;
 		this.wireLoc = NULL_LOCATION;
 		this.pressX = -1;
+	}
+
+	/* This function will try to rotate if the componenent allows it
+	 * There is some duplication code here. The function attemptReface
+	 * can be merged with this one */
+	private void attemptRotate(Canvas canvas, KeyEvent e) {
+		final Circuit circuit = canvas.getCircuit();
+		final Selection sel = canvas.getSelection();
+		SetAttributeAction act = new SetAttributeAction(circuit,
+				Strings.getter("selectionRefaceAction"));
+		for (Component comp : sel.getComponents()) {
+			if (!(comp instanceof Wire)) {
+				Attribute<Direction> attr = getFacingAttribute(comp);
+				Direction d = comp.getAttributeSet().getValue(StdAttr.FACING);
+				if (d != null) {
+					d = d.getRight();
+					if (attr != null) {
+						act.set(comp, attr, d);
+					}
+				}
+			}
+		}
+		if (!act.isEmpty()) {
+			canvas.getProject().doAction(act);
+			e.consume();
+		}
 	}
 
 	private void attemptReface(Canvas canvas, final Direction facing, KeyEvent e) {
@@ -262,8 +289,12 @@ public class EditTool extends Tool {
 		return select;
 	}
 
+	
 	@Override
 	public void keyPressed(Canvas canvas, KeyEvent e) {
+		/* Rotate if ctrl is pressed and space also*/
+		
+		//ctrlPressLast = false;
 		switch (e.getKeyCode()) {
 		case KeyEvent.VK_BACK_SPACE:
 		case KeyEvent.VK_DELETE:
@@ -307,6 +338,14 @@ public class EditTool extends Tool {
 		case KeyEvent.VK_ALT:
 			updateLocation(canvas, e);
 			e.consume();
+			break;
+		case KeyEvent.VK_SPACE:
+			/* Check if ctrl was pressed or not */
+			if ((e.getModifiersEx() & KeyEvent.CTRL_DOWN_MASK) == KeyEvent.CTRL_DOWN_MASK) {
+				attemptRotate(canvas, e);
+			} else {
+				select.keyPressed(canvas, e);
+			}
 			break;
 		default:
 			select.keyPressed(canvas, e);

@@ -52,6 +52,7 @@ import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.gui.log.Loggable;
+import com.cburch.logisim.std.io.ReptarLocalBus;
 import com.cburch.logisim.tools.Pokable;
 import com.cburch.logisim.tools.key.KeyConfigurator;
 import com.cburch.logisim.util.Icons;
@@ -125,6 +126,10 @@ public abstract class InstanceFactory extends AbstractComponentFactory {
 
 	@Override
 	public Component createComponent(Location loc, AttributeSet attrs) {
+		if (this instanceof ReptarLocalBus) {
+			attrs.setReadOnly(StdAttr.LABEL, true);
+		}
+
 		InstanceComponent ret = new InstanceComponent(this, loc, attrs);
 		configureNewInstance(ret.getInstance());
 		return ret;

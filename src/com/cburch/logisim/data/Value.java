@@ -111,6 +111,11 @@ public class Value {
 		return Value.create(bits.getWidth(), 0, -1, 0);
 	}
 
+	/* Added to test */
+	public static Value createKnown(int bits, int value) {
+		return Value.create(bits,  0, 0, value);
+	}
+
 	/**
 	 * Code taken from Cornell's version of Logisim:
 	 * http://www.cs.cornell.edu/courses/cs3410/2015sp/
@@ -296,7 +301,7 @@ public class Value {
 			return Value.create(Math.max(this.width, other.width), this.error
 					| other.error | disagree, this.unknown & other.unknown,
 					(this.value & ~this.unknown)
-							| (other.value & ~other.unknown));
+					| (other.value & ~other.unknown));
 		}
 	}
 
@@ -494,7 +499,7 @@ public class Value {
 			}
 			return "" + value;
 		} else {
-			return "" + ((long) value & 0xFFFFFFFFL);
+			return "" + (value & 0xFFFFFFFFL);
 		}
 	}
 

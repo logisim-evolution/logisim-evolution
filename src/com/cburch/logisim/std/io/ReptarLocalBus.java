@@ -47,6 +47,7 @@ import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
 
+
 public class ReptarLocalBus extends InstanceFactory {
 
 	public static ArrayList<String> GetLabels() {
@@ -91,11 +92,15 @@ public class ReptarLocalBus extends InstanceFactory {
 
 	// private static final int Addr_Data_LB_io = 9;
 	private MappableResourcesContainer mapInfo;
+	/* Default Name. Very important for the genration of the VDHL Code */
+	private String defaultLocalBusName = "LocalBus";
 
 	public ReptarLocalBus() {
 		super("ReptarLB", Strings.getter("repLBComponent"));
-		setAttributes(new Attribute[] { StdAttr.LABEL },
-				new Object[] { "LocalBus" });
+
+		setAttributes(new Attribute[] {StdAttr.LABEL},
+				new Object[] {defaultLocalBusName});
+
 		// setKeyConfigurator(new BitWidthConfigurator(StdAttr.WIDTH));
 		setOffsetBounds(Bounds.create(-110, -10, 110, 110));
 		setIconName("localbus.gif");
@@ -133,6 +138,7 @@ public class ReptarLocalBus extends InstanceFactory {
 
 	@Override
 	public String getHDLName(AttributeSet attrs) {
+		/* Force the name of the localBus*/
 		return attrs.getValue(StdAttr.LABEL);
 	}
 
