@@ -30,55 +30,56 @@
 
 package com.bfh.logisim.fpgagui;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /* TODO: Add FPGA-REPORTER to console or log file */
 public abstract class FPGAReport {
+
+	final static Logger logger = LoggerFactory.getLogger(FPGAReport.class);
+
 	public FPGAReport() {
 
 	}
 
 	public void AddErrorIncrement(String Message) {
-		//	myCommander.AddErrors(new SimpleDRCContainer(Message,SimpleDRCContainer.LEVEL_NORMAL,true));
+		logger.error(Message);
 	}
 
 	public void AddError(Object Message) {
-		//	if (Message instanceof String)
-		//		myCommander.AddErrors(new SimpleDRCContainer(Message,SimpleDRCContainer.LEVEL_NORMAL));
-		//	else
-		//		myCommander.AddErrors(Message);
+		if (Message instanceof String)
+			logger.error((String) Message);
 	}
 
 	public void AddFatalError(String Message) {
-		//	myCommander.AddErrors(new SimpleDRCContainer(Message,SimpleDRCContainer.LEVEL_FATAL));
+		logger.error(Message);
 	}
 
 	public void AddSevereError(String Message) {
-		//	myCommander.AddErrors(new SimpleDRCContainer(Message,SimpleDRCContainer.LEVEL_SEVERE));
+		logger.warn(Message);
 	}
 
 	public void AddInfo(String Message) {
-		//myCommander.AddInfo(Message);
+		logger.info(Message);
 	}
 
 	public void AddSevereWarning(String Message) {
-		//	myCommander.AddWarning(new SimpleDRCContainer(Message,SimpleDRCContainer.LEVEL_SEVERE));
+		logger.error(Message);
 	}
 
 	public void AddWarningIncrement(String Message) {
-		//myCommander.AddWarning(new SimpleDRCContainer(Message,SimpleDRCContainer.LEVEL_NORMAL,true));
+		logger.warn(Message);
 	}
 
 	public void AddWarning(Object Message) {
-		//if (Message instanceof String)
-		//	myCommander.AddWarning(new SimpleDRCContainer(Message,SimpleDRCContainer.LEVEL_NORMAL));
-		//else
-		//	myCommander.AddWarning(Message);
+		if (Message instanceof String)
+			logger.warn((String) Message);
 	}
 
 	public void ClsScr() {
-		//myCommander.ClearConsole();
 	}
 
 	public void print(String Message) {
-		//myCommander.AddConsole(Message);
+		logger.info(Message);
 	}
 }
