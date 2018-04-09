@@ -414,6 +414,8 @@ public class Startup implements AWTEventListener {
 		System.err.println("   " + Strings.get("argVersionOption")); // OK
 		System.err.println("   " + Strings.get("argTestCircGen")); // OK
 		System.err.println("   " + Strings.get("argTestCircuit")); // OK
+		System.err.println("   " + Strings.get("argTestImplement")); // OK
+
 		System.exit(-1);
 	}
 
