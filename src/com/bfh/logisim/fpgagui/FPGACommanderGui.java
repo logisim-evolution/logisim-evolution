@@ -85,7 +85,7 @@ import com.cburch.logisim.proj.ProjectEvent;
 import com.cburch.logisim.proj.ProjectListener;
 
 public class FPGACommanderGui extends FPGACommanderBase implements ActionListener,LibraryListener,ProjectListener,SimulatorListener,CircuitListener,WindowListener,
-ouseListener,PreferenceChangeListener {
+MouseListener,PreferenceChangeListener {
 
 	@Override
 	public void preferenceChange(PreferenceChangeEvent pce) {
