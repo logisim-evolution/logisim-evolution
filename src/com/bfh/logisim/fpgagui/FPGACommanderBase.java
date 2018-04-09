@@ -44,7 +44,7 @@ public abstract class FPGACommanderBase {
 		// TODO Auto-generated constructor stub
 	}
 
-	protected abstract void DownLoad(boolean skipVHDL, String CircuitName);
+	protected abstract boolean DownLoad(boolean skipVHDL, String CircuitName);
 
 
 	protected boolean canDownload() {
@@ -148,6 +148,7 @@ public abstract class FPGACommanderBase {
 				return false;
 			}
 		}
+
 		Set<String> GeneratedHDLComponents = new HashSet<String>();
 		HDLGeneratorFactory Worker = RootSheet.getSubcircuitFactory()
 				.getHDLGenerator(AppPreferences.HDL_Type.get(),
@@ -291,11 +292,11 @@ public abstract class FPGACommanderBase {
 	}
 
 
-	protected void DownLoadDesign(boolean generateOnly, boolean downloadOnly, String CircuitName,
+	protected boolean DownLoadDesign(boolean generateOnly, boolean downloadOnly, String CircuitName,
 			boolean writeToFlash) {
 		if (generateOnly && downloadOnly) {
 			MyReporter.AddError("Can not have skip VHDL generation and generate HDL only in the same time...");
-			return;
+			return false;
 		}
 
 		String ProjectDir = AppPreferences.FPGA_Workspace.get() + File.separator
@@ -303,6 +304,7 @@ public abstract class FPGACommanderBase {
 		if (!ProjectDir.endsWith(File.separator)) {
 			ProjectDir += File.separator;
 		}
+
 		LogisimFile myfile = MyProject.getLogisimFile();
 		Circuit RootSheet = myfile.getCircuit(CircuitName);
 		ProjectDir += CorrectLabel.getCorrectLabel(RootSheet.getName())
@@ -319,7 +321,7 @@ public abstract class FPGACommanderBase {
 					RootSheet.getNetList(), MyMappableResources,
 					MyBoardInformation, Entities, Behaviors,
 					AppPreferences.HDL_Type.get())) {
-				AlteraDownload.Download(ProjectDir
+				return AlteraDownload.Download(ProjectDir
 						+ HDLPaths[ScriptPath] + File.separator, SourcePath,
 						ProjectDir + HDLPaths[SandboxPath] + File.separator,
 						MyReporter);
@@ -333,7 +335,7 @@ public abstract class FPGACommanderBase {
 					AppPreferences.HDL_Type.get(),
 					writeToFlash)
 					&& !generateOnly) {
-				XilinxDownload.Download(MyBoardInformation,
+				return XilinxDownload.Download(MyBoardInformation,
 						ProjectDir + HDLPaths[ScriptPath] + File.separator,
 						ProjectDir + HDLPaths[UCFPath] + File.separator,
 						ProjectDir, ProjectDir + HDLPaths[SandboxPath]
@@ -349,12 +351,14 @@ public abstract class FPGACommanderBase {
 					AppPreferences.HDL_Type.get(),
 					writeToFlash)
 					&& !generateOnly) {
-				VivadoDownload.Download(
+				return VivadoDownload.Download(
 						ProjectDir + HDLPaths[ScriptPath] + File.separator,
 						ProjectDir + HDLPaths[SandboxPath] + File.separator,
 						MyReporter, downloadOnly);
 			}
 		}
+
+		return false;
 	}
 
 
