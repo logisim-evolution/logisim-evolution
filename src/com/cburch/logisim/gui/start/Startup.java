@@ -76,6 +76,7 @@ import javax.swing.JTextField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.bfh.logisim.fpgagui.FPGACommanderTests;
 import com.cburch.logisim.LogisimVersion;
 import com.cburch.logisim.Main;
 import com.cburch.logisim.file.LoadFailedException;
@@ -289,6 +290,34 @@ public class Startup implements AWTEventListener {
 				/* This is to test a test bench. It will return 0 or 1 depending on if
 				 * the tests pass or not
 				 */
+			} else if (arg.equals("-test-fpga-implementation")) {
+				// already handled above
+				i++;
+				if (i >= args.length)
+					printUsage();
+
+				ret.testCircuitImpPath = args[i];
+				i++;
+				if (i >= args.length)
+					printUsage();
+
+				ret.testCircuitImpMapFile = args[i];
+				i++;
+				if (i >= args.length)
+					printUsage();
+
+				ret.testCircuitImpName = args[i];
+				i++;
+
+				if (i >= args.length)
+					printUsage();
+
+				ret.testCircuitImpBoard = args[i];
+
+
+				ret.filesToOpen.add(new File(ret.testCircuitImpPath));
+				ret.showSplash = false;
+				ret.exitAfterStartup = true;
 			} else if (arg.equals("-test-circuit")) {
 				// already handled above
 				i++;
@@ -449,6 +478,16 @@ public class Startup implements AWTEventListener {
 	private SplashScreen monitor = null;
 	/* Testing Circuit Variable */
 	private String testCircuitPathInput = null;
+
+	/* Test implementation */
+	private String testCircuitImpPath = null;
+	/* Name of the circuit withing logisim */
+	private String testCircuitImpName = null;
+	/* Name of the board to run on i.e Reptar, MAXV ...*/
+	private String testCircuitImpBoard = null;
+	/* Path folder containing Map file */
+	private String testCircuitImpMapFile = null;
+
 	/* Testing Xml (circ file) Variable */
 	private String testCircPathInput = null;
 	private String testCircPathOutput = null;
@@ -852,7 +891,18 @@ public class Startup implements AWTEventListener {
 						} else {
 							System.exit(-1);
 						}
+					} else if (testCircuitImpPath != null) {
+						//						proj = ProjectActions.doOpen(monitor,
+						//								fileToOpen, substitutions);
+						proj = ProjectActions.doOpenNoWindow(monitor, fileToOpen);
+						Thread.sleep(600);
+						FPGACommanderTests testImpFpga = new FPGACommanderTests(proj, testCircuitImpMapFile, testCircuitImpName, testCircuitImpBoard);
 
+						if (testImpFpga.StartTests()) {
+							System.exit(0);
+						} else {
+							System.exit(-1);
+						}
 					} else {
 						logger.error("FATAL ERROR - no simulator available");
 						System.exit(-1);
@@ -861,6 +911,9 @@ public class Startup implements AWTEventListener {
 				} catch (LoadFailedException ex) {
 					logger.error("{} : {}", fileToOpen.getName(),
 							ex.getMessage());
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 				if (first) {
 					first = false;
