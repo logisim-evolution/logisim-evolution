@@ -100,9 +100,13 @@ public class XilinxDownload {
 		gbc.fill = GridBagConstraints.HORIZONTAL;
 		panel.add(progres, gbc);
 		panel.pack();
-		panel.setLocation(Projects.getCenteredLoc(panel.getWidth(),
-				panel.getHeight() * 4));
-		panel.setVisible(true);
+		if (Projects.getTopFrame() != null) {
+			panel.setLocation(Projects.getCenteredLoc(panel.getWidth(),
+					panel.getHeight() * 4));
+			panel.setVisible(true);
+		} else {
+			panel.setVisible(false);
+		}
 		Rectangle labelRect = LocText.getBounds();
 		labelRect.x = 0;
 		labelRect.y = 0;
