@@ -63,6 +63,9 @@ import com.bfh.logisim.settings.VendorSoftware;
 import com.cburch.logisim.proj.Projects;
 
 public class XilinxDownload {
+	/* TODO There are duplicated code lines amongst the 3 file AlteraDownload / Vivado / Xillinx
+	 * it should be sorted by using a base class to all 3 of them
+	 */
 	public static boolean Download(
 			BoardInformation BoardInfo, String scriptPath, String UcfPath,
 			String ProjectPath, String SandboxPath, FPGAReport MyReporter) {
@@ -144,18 +147,18 @@ public class XilinxDownload {
 				CreateProject.waitFor();
 				if (CreateProject.exitValue() != 0) {
 					MyReporter
-							.AddFatalError("Failed to Synthesize Xilinx project; cannot download");
+					.AddFatalError("Failed to Synthesize Xilinx project; cannot download");
 					panel.dispose();
 					return false;
 				}
 			} catch (IOException e) {
 				MyReporter
-						.AddFatalError("Internal Error during Xilinx download");
+				.AddFatalError("Internal Error during Xilinx download");
 				panel.dispose();
 				return false;
 			} catch (InterruptedException e) {
 				MyReporter
-						.AddFatalError("Internal Error during Xilinx download");
+				.AddFatalError("Internal Error during Xilinx download");
 				panel.dispose();
 				return false;
 			}
@@ -195,18 +198,18 @@ public class XilinxDownload {
 				CreateProject.waitFor();
 				if (CreateProject.exitValue() != 0) {
 					MyReporter
-							.AddFatalError("Failed to add Xilinx constraints; cannot download");
+					.AddFatalError("Failed to add Xilinx constraints; cannot download");
 					panel.dispose();
 					return false;
 				}
 			} catch (IOException e) {
 				MyReporter
-						.AddFatalError("Internal Error during Xilinx download");
+				.AddFatalError("Internal Error during Xilinx download");
 				panel.dispose();
 				return false;
 			} catch (InterruptedException e) {
 				MyReporter
-						.AddFatalError("Internal Error during Xilinx download");
+				.AddFatalError("Internal Error during Xilinx download");
 				panel.dispose();
 				return false;
 			}
@@ -244,18 +247,18 @@ public class XilinxDownload {
 				CreateProject.waitFor();
 				if (CreateProject.exitValue() != 0) {
 					MyReporter
-							.AddFatalError("Failed to map Xilinx design; cannot download");
+					.AddFatalError("Failed to map Xilinx design; cannot download");
 					panel.dispose();
 					return false;
 				}
 			} catch (IOException e) {
 				MyReporter
-						.AddFatalError("Internal Error during Xilinx download");
+				.AddFatalError("Internal Error during Xilinx download");
 				panel.dispose();
 				return false;
 			} catch (InterruptedException e) {
 				MyReporter
-						.AddFatalError("Internal Error during Xilinx download");
+				.AddFatalError("Internal Error during Xilinx download");
 				panel.dispose();
 				return false;
 			}
@@ -320,18 +323,18 @@ public class XilinxDownload {
 				CreateProject.waitFor();
 				if (CreateProject.exitValue() != 0) {
 					MyReporter
-							.AddFatalError("Failed to P&R Xilinx design; cannot download");
+					.AddFatalError("Failed to P&R Xilinx design; cannot download");
 					panel.dispose();
 					return false;
 				}
 			} catch (IOException e) {
 				MyReporter
-						.AddFatalError("Internal Error during Xilinx download");
+				.AddFatalError("Internal Error during Xilinx download");
 				panel.dispose();
 				return false;
 			} catch (InterruptedException e) {
 				MyReporter
-						.AddFatalError("Internal Error during Xilinx download");
+				.AddFatalError("Internal Error during Xilinx download");
 				panel.dispose();
 				return false;
 			}
@@ -384,18 +387,18 @@ public class XilinxDownload {
 				CreateProject.waitFor();
 				if (CreateProject.exitValue() != 0) {
 					MyReporter
-							.AddFatalError("Failed generate bitfile; cannot download");
+					.AddFatalError("Failed generate bitfile; cannot download");
 					panel.dispose();
 					return false;
 				}
 			} catch (IOException e) {
 				MyReporter
-						.AddFatalError("Internal Error during Xilinx download");
+				.AddFatalError("Internal Error during Xilinx download");
 				panel.dispose();
 				return false;
 			} catch (InterruptedException e) {
 				MyReporter
-						.AddFatalError("Internal Error during Xilinx download");
+				.AddFatalError("Internal Error during Xilinx download");
 				panel.dispose();
 				return false;
 			}
@@ -524,7 +527,7 @@ public class XilinxDownload {
 		ArrayList<String> Contents = new ArrayList<String>();
 		for (int i = 0; i < Entities.size(); i++) {
 			Contents.add(HDLType.toUpperCase() + " work \"" + Entities.get(i)
-					+ "\"");
+			+ "\"");
 		}
 		for (int i = 0; i < Architectures.size(); i++) {
 			Contents.add(HDLType.toUpperCase() + " work \""
@@ -619,7 +622,7 @@ public class XilinxDownload {
 	private static String GetXilinxClockPin(BoardInformation CurrentBoard) {
 		StringBuffer result = new StringBuffer();
 		result.append("LOC = \"" + CurrentBoard.fpga.getClockPinLocation()
-				+ "\"");
+		+ "\"");
 		if (CurrentBoard.fpga.getClockPull() == PullBehaviors.PullUp) {
 			result.append(" | PULLUP");
 		}
@@ -630,7 +633,7 @@ public class XilinxDownload {
 				&& CurrentBoard.fpga.getClockStandard() != IoStandards.Unknown) {
 			result.append(" | IOSTANDARD = "
 					+ IoStandards.Behavior_strings[CurrentBoard.fpga
-							.getClockStandard()]);
+					                               .getClockStandard()]);
 		}
 		return result.toString();
 	}
