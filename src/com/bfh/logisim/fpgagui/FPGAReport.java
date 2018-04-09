@@ -30,6 +30,7 @@
 
 package com.bfh.logisim.fpgagui;
 
+/* TODO: Add FPGA-REPORTER to console or log file */
 public abstract class FPGAReport {
 	public FPGAReport() {
 
