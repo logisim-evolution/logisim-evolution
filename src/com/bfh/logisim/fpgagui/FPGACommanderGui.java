@@ -85,7 +85,7 @@ import com.cburch.logisim.proj.ProjectEvent;
 import com.cburch.logisim.proj.ProjectListener;
 
 public class FPGACommanderGui extends FPGACommanderBase implements ActionListener,LibraryListener,ProjectListener,SimulatorListener,CircuitListener,WindowListener,
-MouseListener,PreferenceChangeListener {
+ouseListener,PreferenceChangeListener {
 
 	@Override
 	public void preferenceChange(PreferenceChangeEvent pce) {
@@ -366,6 +366,7 @@ MouseListener,PreferenceChangeListener {
 		GridBagLayout thisLayout = new GridBagLayout();
 		GridBagConstraints c = new GridBagConstraints();
 		panel.setLayout(thisLayout);
+
 
 		// change main circuit
 		circuitsList.setEnabled(true);
@@ -670,32 +671,33 @@ MouseListener,PreferenceChangeListener {
 	}
 
 	@Override
-	protected void DownLoad(boolean skipVHDL, String CircuitName) {
+	protected boolean DownLoad(boolean skipVHDL, String CircuitName) {
 		if (!canDownload() || !skipVHDL ) {
 			if (!guiDRC()) {
-				return;
+				return false;
 			}
 			if (!guiMapDesign(CircuitName)) {
-				return;
+				return false;
 			}
 			if (!writeHDL(circuitsList.getSelectedItem().toString(),
 					MenuSimulate.SupportedTickFrequencies[frequenciesList
 					                                      .getSelectedIndex()])) {
-				return;
+				return false;
 			}
 
 
 			if (!MapPannel.isDoneAssignment()) {
 				MyReporter.AddError("Download to board canceled");
-				return;
+				return false;
 			}
 
 			if (canDownload() || skipHDL.isSelected()) {
-				DownLoadDesign(!canDownload(), skipHDL.isSelected(),
+				return DownLoadDesign(!canDownload(), skipHDL.isSelected(),
 						circuitsList.getSelectedItem().toString(), writeToFlash.isSelected());
 			}
-
 		}
+
+		return false;
 	}
 
 	public void AddConsole(String Message) {
