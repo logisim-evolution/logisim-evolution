@@ -693,7 +693,7 @@ MouseListener,PreferenceChangeListener {
 
 			if (canDownload() || skipHDL.isSelected()) {
 				return DownLoadDesign(!canDownload(), skipHDL.isSelected(),
-						circuitsList.getSelectedItem().toString(), writeToFlash.isSelected());
+						circuitsList.getSelectedItem().toString(), writeToFlash.isSelected(), false);
 			}
 		}
 

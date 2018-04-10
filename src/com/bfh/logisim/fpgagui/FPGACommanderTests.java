@@ -54,7 +54,7 @@ public class FPGACommanderTests extends FPGACommanderBase {
 
 			if (canDownload() || skipVHDL) {
 				return DownLoadDesign(!canDownload(),skipVHDL,
-						CircuitName, writeToFlash);
+						CircuitName, writeToFlash, true);
 			}
 		}
 
