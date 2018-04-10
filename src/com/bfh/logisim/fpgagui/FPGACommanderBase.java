@@ -293,7 +293,7 @@ public abstract class FPGACommanderBase {
 
 
 	protected boolean DownLoadDesign(boolean generateOnly, boolean downloadOnly, String CircuitName,
-			boolean writeToFlash) {
+			boolean writeToFlash, boolean downloadDesign) {
 		if (generateOnly && downloadOnly) {
 			MyReporter.AddError("Can not have skip VHDL generation and generate HDL only in the same time...");
 			return false;
@@ -324,7 +324,7 @@ public abstract class FPGACommanderBase {
 				return AlteraDownload.Download(ProjectDir
 						+ HDLPaths[ScriptPath] + File.separator, SourcePath,
 						ProjectDir + HDLPaths[SandboxPath] + File.separator,
-						MyReporter);
+						MyReporter, downloadDesign);
 			}
 		} else if (MyBoardInformation.fpga.getVendor() == VendorSoftware.VendorXilinx) {
 			if (XilinxDownload.GenerateISEScripts(MyReporter, ProjectDir,
@@ -339,7 +339,7 @@ public abstract class FPGACommanderBase {
 						ProjectDir + HDLPaths[ScriptPath] + File.separator,
 						ProjectDir + HDLPaths[UCFPath] + File.separator,
 						ProjectDir, ProjectDir + HDLPaths[SandboxPath]
-								+ File.separator, MyReporter);
+								+ File.separator, MyReporter, downloadDesign);
 			}
 		} else if (MyBoardInformation.fpga.getVendor() == VendorSoftware.VendorVivado) {
 			if (VivadoDownload.GenerateScripts(MyReporter, ProjectDir,
@@ -354,7 +354,7 @@ public abstract class FPGACommanderBase {
 				return VivadoDownload.Download(
 						ProjectDir + HDLPaths[ScriptPath] + File.separator,
 						ProjectDir + HDLPaths[SandboxPath] + File.separator,
-						MyReporter, downloadOnly);
+						MyReporter, downloadOnly, downloadDesign);
 			}
 		}
 

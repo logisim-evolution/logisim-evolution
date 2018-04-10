@@ -30,7 +30,8 @@ public class VivadoDownload {
 	/* TODO There are duplicated code lines amongst the 3 file AlteraDownload / Vivado / Xillinx
 	 * it should be sorted by using a base class to all 3 of them
 	 */
-	public static boolean Download(String scriptPath, String sandboxPath, FPGAReport myReporter, boolean downloadOnly) {
+	public static boolean Download(String scriptPath, String sandboxPath, FPGAReport myReporter, boolean downloadOnly,
+			boolean DownloadBitstream) {
 		GridBagConstraints gbc = new GridBagConstraints();
 		JFrame panel = new JFrame("Vivado Downloading");
 		panel.setResizable(false);
@@ -104,6 +105,10 @@ public class VivadoDownload {
 		// only if the bitfile exists
 		boolean bitFileExists = new File(_bitStreamPath).exists();
 		if (bitFileExists) {
+			if (!DownloadBitstream) {
+				return true;
+			}
+
 			Object[] options = { "Yes, download","No, abort" };
 			if (JOptionPane.showOptionDialog(
 					progres,

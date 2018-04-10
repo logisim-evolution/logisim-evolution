@@ -68,7 +68,7 @@ public class XilinxDownload {
 	 */
 	public static boolean Download(
 			BoardInformation BoardInfo, String scriptPath, String UcfPath,
-			String ProjectPath, String SandboxPath, FPGAReport MyReporter) {
+			String ProjectPath, String SandboxPath, FPGAReport MyReporter, boolean DownloadBitstream) {
 		VendorSoftware xilinxVendor = VendorSoftware.getSoftware(VendorSoftware.VendorXilinx);
 		boolean IsCPLD = BoardInfo.fpga.getPart().toUpperCase()
 				.startsWith("XC2C")
@@ -340,6 +340,11 @@ public class XilinxDownload {
 			}
 		}
 		if (!BitFileExists) {
+
+			if (!DownloadBitstream) {
+				return true;
+			}
+
 			try {
 				LocText.setText("Generating Bitfile");
 				labelRect = LocText.getBounds();

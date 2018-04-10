@@ -64,7 +64,7 @@ public class AlteraDownload {
 	 * it should be sorted by using a base class to all 3 of them
 	 */
 	public static boolean Download(String scriptPath,
-			String ProjectPath, String SandboxPath, FPGAReport MyReporter) {
+			String ProjectPath, String SandboxPath, FPGAReport MyReporter, boolean DownloadBitstream) {
 		VendorSoftware alteraVendor = VendorSoftware.getSoftware(VendorSoftware.VendorAltera);
 		boolean SofFileExists = new File(SandboxPath
 				+ ToplevelHDLGeneratorFactory.FPGAToplevelName + ".sof")
@@ -241,6 +241,11 @@ public class AlteraDownload {
 				return false;
 			}
 		}
+
+		if (!DownloadBitstream) {
+			return true;
+		}
+
 		LocText.setText("Downloading");
 		Object[] options = { "Yes, download","No, abort" };
 		if (JOptionPane
