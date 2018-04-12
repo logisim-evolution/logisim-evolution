@@ -422,7 +422,7 @@ public class Circuit {
 	 * in the circuit, the output value are going to be checked.
 	 * The pin[0] is indicating when the simulation is done.
 	 * Once the Simulation is done (pin[0] to 1) the value of pin[1]
-	 * will be check and if the value of pin[1] is 1 the function return true.
+	 * will be checked and if the value of pin[1] is 1 the function return true.
 	 * It will return zero otherwise  */
 	public boolean doTestBench(Project project, Instance pin[], Value[] val) {
 		CircuitState state = project.getCircuitState();
