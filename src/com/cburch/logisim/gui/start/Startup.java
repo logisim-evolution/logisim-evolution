@@ -885,7 +885,7 @@ public class Startup implements AWTEventListener {
 
 						ProjectActions.doSave(proj, new File(testCircPathOutput));
 					} else if (testCircuitPathInput != null)  {
-						/* Testing */
+						/* Testing test bench*/
 						TestBench testB = new TestBench(testCircuitPathInput, monitor, substitutions);
 
 						if (testB.startTestBench()) {
@@ -894,11 +894,12 @@ public class Startup implements AWTEventListener {
 							System.exit(-1);
 						}
 					} else if (testCircuitImpPath != null) {
-						//						proj = ProjectActions.doOpen(monitor,
-						//								fileToOpen, substitutions);
+						/* Testing synthesis */
 						proj = ProjectActions.doOpenNoWindow(monitor, fileToOpen);
-						Thread.sleep(600);
-						FPGACommanderTests testImpFpga = new FPGACommanderTests(proj, testCircuitImpMapFile, testCircuitImpName, testCircuitImpBoard);
+						FPGACommanderTests testImpFpga = new FPGACommanderTests(proj, 
+															testCircuitImpMapFile, 
+															testCircuitImpName, 
+															testCircuitImpBoard);
 
 						if (testImpFpga.StartTests()) {
 							System.exit(0);
