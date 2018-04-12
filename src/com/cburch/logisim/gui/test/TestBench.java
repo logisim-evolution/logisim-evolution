@@ -37,7 +37,9 @@ public class TestBench {
 		}
 	}
 
-	/* Check if the label correspond to any of the output signals */
+	/* Check if the label correspond to any of the strings
+	 * located in outputSignals
+	 *  */
 	private boolean checkMatchPinName(String label) {
 
 		for (String outName: outputSignals) {
@@ -60,6 +62,9 @@ public class TestBench {
 				if (!(comp.getFactory() instanceof Pin))
 					continue;
 
+				/* Retrieve instance of component to then retrieve instance of
+				 * pins
+				 */
 				Instance inst = Instance.getInstanceFor(comp);
 				InstanceState pinState = state.getInstanceState(comp);
 				String label = pinState.getAttributeValue(StdAttr.LABEL);
@@ -85,6 +90,7 @@ public class TestBench {
 		return (pinMatched == outputSignals.length);
 	}
 
+	/* Start simulator */
 	private boolean startSimulator() {
 		Simulator sim = proj == null ? null : proj.getSimulator();
 		if (sim == null) {
@@ -104,26 +110,28 @@ public class TestBench {
 
 		return true;
 	}
+
+	/* Main method in charge of launching the test bench */
 	public boolean startTestBench() throws LoadFailedException  {
 		Circuit circuit = proj.getCurrentCircuit();
 		Value[] val = new Value[outputSignals.length];
 
+		/* This is made to make comparison in logisim */
 		for (int i = 0; i < val.length; i++) {
 			val[i] = Value.createKnown(1, 1);
 		}
 
+		/* First launch the Simulator */
 		if (!startSimulator()) {
 			return false;
 		}
 
+		/* Then try to fnid the pin to verify */
 		if(!searchmatchingPins(circuit)) {
 			return false;
 		}
 
-		if (!circuit.doTestBench(proj, pinsOutput, val)) {
-			return false;
-		}
-
-		return true;
+		/* Start the tests  */
+		return circuit.doTestBench(proj, pinsOutput, val);
 	}
 }
