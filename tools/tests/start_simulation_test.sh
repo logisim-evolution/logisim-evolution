@@ -18,6 +18,11 @@ NC="\033[0m" # No Color
 # To be adapted
 PATH_LOGISIM="${SCRIPTPATH}/../../logisim-evolution.t.jar"
 
+function get_list_of_files()
+{
+	CIRC_FILE=$(find $PATH_CIRC -name "*.circ")
+}
+
 function check_files_exits() {
 	TAB=(${@})
 	tLen=${#TAB[@]}
@@ -38,12 +43,27 @@ function start_tests()
 
 	for (( i=0; i<${tLen}; i++ ));
 	do
-		java -jar $PATH_LOGISIM -test-fpga-implementation ${CIRC_FILES[i]} \
-			${MAP_FILES[i]} ${CIRCUIT_TOPLEVEL_NAME[i]} ${BOARDS_NAME[i]} \
+		printf "\nSimulation testing file ${CIRC_FILE[i]}: "
+		java -jar $PATH_LOGISIM -test-circuit ${CIRC_FILES[i]} \
 			> "file_sim_test_$((i + 1))".log 2>&1
+
+		if [ $? -eq 0 ]; then
+			printf "${GREEN}SUCCESS${NC}"
+		else
+			printf "${RED}FAILED${NC}"
+		fi
 	done
 }
 
-get_list_of_files
+if [ $# -ne 1 ]; then
+	print_usage
+fi
+
+if [[ "$1" == "-h" ]]; then
+	print_usage
+fi
+
+
+get_list_of_files $1
 check_files_exits
 start_tests
