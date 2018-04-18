@@ -21,6 +21,9 @@ NC="\033[0m" # No Color
 PATH_LOGISIM="${SCRIPTPATH}/../../logisim-evolution.t.jar"
 
 function print_usage() {
+	echo ""
+	echo ""
+	echo ""
 	echo "Usage:"
 	echo ""
 	echo "This script allow to test synthesis of circuit from logisim design
@@ -56,7 +59,8 @@ function check_files_exits() {
 	for (( i=0; i<${tLen}; i++ ));
 	do
 		if [ ! -f ${TAB[$i]} ]; then
-			printf "${RED}Could not find path ${TAB[$i]} line $((i + 1)) ${NC}\n"
+			printf "${RED}Could not find path ${TAB[$i]} line "
+			printf "$((i + 1)) ${NC}\n"
 			exit -1
 		fi
 	done
@@ -100,7 +104,8 @@ function start_tests()
 
 	for (( i=0; i<${tLen}; i++ ));
 	do
-		printf "\nTesting Configuration $((i + 1)):\n\tFile: ${BOLD}$(basename ${CIRC_FILES[i]})${NC}"
+		printf "\nTesting Configuration $((i + 1)):\n\tFile: ${BOLD}"
+		printf "$(basename ${CIRC_FILES[i]})${NC}"
 		printf "\n\tMapping: ${BOLD}$(basename ${MAP_FILES[i]})${NC}"
 		printf "\n\tCircuit: ${BOLD}${CIRCUIT_TOPLEVEL_NAME[i]}${NC}"
 		printf "\n\tBoard: ${BOLD}${BOARDS_NAME[i]}${NC}"
@@ -113,12 +118,18 @@ function start_tests()
 			printf "${GREEN}Implementation Pass${NC}\n"
 		else
 			printf "${RED}Implementation Failed${NC}\n" 
+			exit -1
 		fi
 	done
 }
 
 # Check if enough param were given
 if [ $# -ne 1]; then
+	print_usage
+fi
+
+
+if [[ "$1" == "-h" ]]; then
 	print_usage
 fi
 
@@ -136,3 +147,5 @@ check_files_exits ${CIRC_FILES[@]}
 check_files_exits ${MAP_FILES[@]}
 
 start_tests
+# SUCCESS
+exit 0
