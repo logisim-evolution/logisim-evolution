@@ -7,7 +7,7 @@ LIST_FILE=
 # This can be located in the enviroment if not the default path
 # will be relative
 PATH_LOGISIM=${PATH_LOGISIM:-/../../logisim-evolution.jar}
-PATH_CIRC_OUTPUT_FOLDER=${PATH_CIRC_OUTPUT_FOLDER:-/tmp/logisim_xml_gen_output/}
+PATH_CIRC_OUTPUT_FOLDER=${PATH_CIRC_OUTPUT_FOLDER:-/tmp/logisim_output/}
 
 RED="\033[0;31m"
 GREEN="\033[0;32m"
@@ -20,8 +20,10 @@ SCRIPT=$(readlink -f "$0")
 SCRIPTPATH=$(dirname "$SCRIPT")
 
 function print_usage() {
-	echo "Usage:"
 	echo ""
+	echo ""
+	echo ""
+	echo "Usage:"
 	echo "This script allow to test circ file generation of logisim"
 	echo "		$0 <path_to_folder_containing_circs>"
 	echo "		or"
@@ -31,7 +33,9 @@ function print_usage() {
 	echo "			Set environement var PATH_LOGISIM=<path_logisim_jar>"
 	echo "		-To change path output circ file are generated:"
 	echo "			Set environement var PATH_CIRC_OUTPUT_FOLDER=<output_folder_path>/logisim_output"
+	exit -1
 }
+
 
 function list_files_and_test() {
 	LIST_FILE=$(find $PATH_CIRC -name "*.circ")
@@ -47,7 +51,6 @@ function list_files_and_test() {
 		printf "${RED} Error: Could not find Logisim, please provide the path\n"
 		printf " using PATH_LOGISIM environment var${NC}\n"
 		print_usage
-		exit 1
 	fi
 
 	if [[ "$PATH_LOGISIM" != /* ]]; then
@@ -79,5 +82,16 @@ function list_files_and_test() {
 	done
 }
 
+# Check if enough param were given
+if [ $# -ne 1 ]; then
+	print_usage
+fi
+
+if [[ "$1" == "-h" ]]; then
+	print_usage
+fi
+
 PATH_CIRC=$1;
 list_files_and_test
+
+exit 0
