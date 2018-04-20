@@ -33,9 +33,9 @@ package com.bfh.logisim.designrulecheck;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.swing.JOptionPane;
-
 import com.bfh.logisim.fpgagui.FPGAReport;
+import com.bfh.logisim.gui.FPGACliGuiFabric;
+import com.bfh.logisim.gui.IFPGAOptionPanel;
 import com.bfh.logisim.hdlgenerator.HDLGeneratorFactory;
 
 public class CorrectLabel {
@@ -79,7 +79,7 @@ public class CorrectLabel {
 		}
 		return true;
 	}
-	
+
 	public static boolean IsCorrectLabel(String Label) {
 		if (Label.isEmpty())
 			return true;
@@ -89,13 +89,13 @@ public class CorrectLabel {
 				return false;
 			}
 		}
-		if (VHDLKeywords.contains(Label.toLowerCase())) 
+		if (VHDLKeywords.contains(Label.toLowerCase()))
 			return false;
-		if (VerilogKeywords.contains(Label)) 
+		if (VerilogKeywords.contains(Label))
 			return false;
 		return true;
 	}
-	
+
 	public static String FirstInvalidCharacter(String Label) {
 		if (Label.isEmpty())
 			return "";
@@ -107,7 +107,7 @@ public class CorrectLabel {
 		}
 		return "";
 	}
-	
+
 	public static boolean IsCorrectLabel(String Label, String HDLIdentifier) {
 		if (Label.isEmpty())
 			return true;
@@ -130,14 +130,16 @@ public class CorrectLabel {
 		}
 		return true;
 	}
-	
+
 	public static boolean IsKeyword(String Label,Boolean ShowDialog) {
 		boolean ret = false;
+
+		IFPGAOptionPanel optionPanel = FPGACliGuiFabric.getFPGAOptionPanel();
 		if (VHDLKeywords.contains(Label.toLowerCase())) {
 			ret = true;
-			if (ShowDialog) JOptionPane.showMessageDialog(null, Strings.get("VHDLKeywordNameError"));
+			if (ShowDialog) optionPanel.doshowMessageDialog(null, Strings.get("VHDLKeywordNameError"));
 		} else if (VerilogKeywords.contains(Label.toLowerCase())) {
-			if (ShowDialog) JOptionPane.showMessageDialog(null, Strings.get("VerilogKeywordNameError"));
+			if (ShowDialog) optionPanel.doshowMessageDialog(null, Strings.get("VerilogKeywordNameError"));
 			ret = true;
 		}
 		return ret;
