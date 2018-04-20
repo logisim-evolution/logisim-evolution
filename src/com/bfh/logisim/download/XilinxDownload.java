@@ -31,7 +31,6 @@
 package com.bfh.logisim.download;
 
 import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.Rectangle;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -46,9 +45,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JProgressBar;
 
 import com.bfh.logisim.designrulecheck.Netlist;
 import com.bfh.logisim.fpgaboardeditor.BoardInformation;
@@ -56,6 +53,12 @@ import com.bfh.logisim.fpgaboardeditor.IoStandards;
 import com.bfh.logisim.fpgaboardeditor.PullBehaviors;
 import com.bfh.logisim.fpgagui.FPGAReport;
 import com.bfh.logisim.fpgagui.MappableResourcesContainer;
+import com.bfh.logisim.gui.FPGACliGuiFabric;
+import com.bfh.logisim.gui.IFPGAFrame;
+import com.bfh.logisim.gui.IFPGAGrid;
+import com.bfh.logisim.gui.IFPGAGridLayout;
+import com.bfh.logisim.gui.IFPGALabel;
+import com.bfh.logisim.gui.IFPGAProgressBar;
 import com.bfh.logisim.hdlgenerator.FileWriter;
 import com.bfh.logisim.hdlgenerator.TickComponentHDLGeneratorFactory;
 import com.bfh.logisim.hdlgenerator.ToplevelHDLGeneratorFactory;
@@ -80,40 +83,39 @@ public class XilinxDownload {
 		boolean BitFileExists = new File(SandboxPath
 				+ ToplevelHDLGeneratorFactory.FPGAToplevelName + "."
 				+ BitfileExt).exists();
-		GridBagConstraints gbc = new GridBagConstraints();
-		JFrame panel = new JFrame("Xilinx Downloading");
+		IFPGAGrid gbc = FPGACliGuiFabric.getFPGAGrid() ;
+		IFPGAFrame panel = FPGACliGuiFabric.getFPGAFrame("Xilinx Downloading");
 		panel.setResizable(false);
 		panel.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-		GridBagLayout thisLayout = new GridBagLayout();
+		IFPGAGridLayout thisLayout = FPGACliGuiFabric.getFPGAGridLayout();
 		panel.setLayout(thisLayout);
 		// PointerInfo mouseloc = MouseInfo.getPointerInfo();
 		// Point mlocation = mouseloc.getLocation();
 		// panel.setLocation(mlocation.x,mlocation.y);
-		JLabel LocText = new JLabel(
-				"Generating FPGA files and performing download; this may take a while");
-		gbc.gridx = 0;
-		gbc.gridy = 0;
-		gbc.fill = GridBagConstraints.HORIZONTAL;
+		IFPGALabel LocText = FPGACliGuiFabric.getFPGALabel("Generating FPGA files and performing download; this may take a while");
+
+		gbc.setGridx(0);
+		gbc.setGridy(1);
+		gbc.setFill(GridBagConstraints.HORIZONTAL);
 		panel.add(LocText, gbc);
-		JProgressBar progres = new JProgressBar(0, xilinxVendor.getBinaries().length);
+		IFPGAProgressBar progres = FPGACliGuiFabric.getFPGAProgressBar(0,  xilinxVendor.getBinaries().length);
 		progres.setValue(0);
 		progres.setStringPainted(true);
-		gbc.gridx = 0;
-		gbc.gridy = 1;
-		gbc.fill = GridBagConstraints.HORIZONTAL;
+		gbc.setGridx(0);
+		gbc.setGridy(2);
+		gbc.setFill(GridBagConstraints.HORIZONTAL);
 		panel.add(progres, gbc);
 		panel.pack();
-		if (Projects.getTopFrame() != null) {
-			panel.setLocation(Projects.getCenteredLoc(panel.getWidth(),
-					panel.getHeight() * 4));
-			panel.setVisible(true);
-		} else {
-			panel.setVisible(false);
-		}
+
+		panel.setLocation(Projects.getCenteredLoc(panel.getWidth(),
+				panel.getHeight() * 4));
+		panel.setVisible(true);
 		Rectangle labelRect = LocText.getBounds();
+
 		labelRect.x = 0;
 		labelRect.y = 0;
 		LocText.paintImmediately(labelRect);
+
 		List<String> command = new ArrayList<String>();
 		if (!BitFileExists) {
 			try {
@@ -163,6 +165,7 @@ public class XilinxDownload {
 				return false;
 			}
 		}
+
 		if (!BitFileExists) {
 			try {
 				LocText.setText("Adding contraints");
@@ -214,6 +217,7 @@ public class XilinxDownload {
 				return false;
 			}
 		}
+
 		if (!BitFileExists && !IsCPLD) {
 			try {
 				LocText.setText("Mapping Design");
@@ -420,8 +424,9 @@ public class XilinxDownload {
 			ProgRect.y = 0;
 			progres.paintImmediately(ProgRect);
 			Object[] options = { "Yes, download","No, abort" };
-			if (JOptionPane
-					.showOptionDialog(
+			/* TODO remove in case of cli mode */
+			if (FPGACliGuiFabric.getFPGAOptionPanel()
+					.doshowOptionDialog(
 							progres,
 							"Verify that your board is connected and you are ready to download.",
 							"Ready to download ?", JOptionPane.YES_NO_OPTION,
