@@ -32,7 +32,6 @@ package com.bfh.logisim.designrulecheck;
 
 import java.awt.Color;
 import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -43,10 +42,14 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JProgressBar;
 
 import com.bfh.logisim.fpgagui.FPGAReport;
+import com.bfh.logisim.gui.FPGACliGuiFabric;
+import com.bfh.logisim.gui.IFPGAFrame;
+import com.bfh.logisim.gui.IFPGAGrid;
+import com.bfh.logisim.gui.IFPGAGridLayout;
+import com.bfh.logisim.gui.IFPGALabel;
+import com.bfh.logisim.gui.IFPGAProgressBar;
 import com.bfh.logisim.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitAttributes;
@@ -657,33 +660,29 @@ public class Netlist implements CircuitListener {
 	private boolean GenerateNetlist(FPGAReport Reporter, String HDLIdentifier) {
 		ArrayList<SimpleDRCContainer> drc = new ArrayList<SimpleDRCContainer>();
 		boolean errors = false;
-		GridBagConstraints gbc = new GridBagConstraints();
-		JFrame panel = new JFrame("Netlist: " + MyCircuit.getName());
+		IFPGAGrid gbc = FPGACliGuiFabric.getFPGAGrid();
+		IFPGAFrame panel = FPGACliGuiFabric.getFPGAFrame("Netlist: " + MyCircuit.getName());
 		panel.setResizable(false);
 		panel.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-		GridBagLayout thisLayout = new GridBagLayout();
+		IFPGAGridLayout thisLayout = FPGACliGuiFabric.getFPGAGridLayout();
 		panel.setLayout(thisLayout);
-		JLabel LocText = new JLabel("Generating Netlist for Circuit: "
+		IFPGALabel LocText =FPGACliGuiFabric.getFPGALabel("Generating Netlist for Circuit: "
 				+ MyCircuit.getName());
-		gbc.gridx = 0;
-		gbc.gridy = 0;
-		gbc.fill = GridBagConstraints.HORIZONTAL;
+		gbc.setGridx(0);
+		gbc.setGridy(1);
+		gbc.setFill(GridBagConstraints.HORIZONTAL);
 		panel.add(LocText, gbc);
-		JProgressBar progres = new JProgressBar(0, 7);
+		IFPGAProgressBar progres = FPGACliGuiFabric.getFPGAProgressBar(0, 7);
 		progres.setValue(0);
 		progres.setStringPainted(true);
-		gbc.gridx = 0;
-		gbc.gridy = 1;
-		gbc.fill = GridBagConstraints.HORIZONTAL;
+		gbc.setGridx(0);
+		gbc.setGridy(2);
+		gbc.setFill(GridBagConstraints.HORIZONTAL);
 		panel.add(progres, gbc);
 		panel.pack();
-		if (Projects.getTopFrame() != null) {
-			panel.setLocation(Projects.getCenteredLoc(panel.getWidth(),
-					panel.getHeight()));
-			panel.setVisible(true);
-		} else {
-			panel.setVisible(false);
-		}
+		panel.setLocation(Projects.getCenteredLoc(panel.getWidth(),
+				panel.getHeight()));
+		panel.setVisible(true);
 
 		CircuitName = MyCircuit.getName();
 		wires.clear();
