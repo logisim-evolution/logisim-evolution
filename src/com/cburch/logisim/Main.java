@@ -30,6 +30,7 @@
 
 package com.cburch.logisim;
 
+import java.awt.GraphicsEnvironment;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
@@ -46,7 +47,9 @@ import com.cburch.logisim.prefs.AppPreferences;
 public class Main {
 	public static void main(String[] args) throws Exception {
 		try {
-			UIManager.setLookAndFeel(AppPreferences.LookAndFeel.get());
+			if (!GraphicsEnvironment.isHeadless())  {
+				UIManager.setLookAndFeel(AppPreferences.LookAndFeel.get());
+			}
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		} catch (InstantiationException e) {
