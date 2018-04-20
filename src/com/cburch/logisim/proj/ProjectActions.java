@@ -48,6 +48,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
+import com.cburch.logisim.LogisimRuntimeSettings;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.file.LoadFailedException;
 import com.cburch.logisim.file.LoadedLibrary;
@@ -78,6 +79,7 @@ public class ProjectActions {
 			this.isStartupScreen = isStartup;
 		}
 
+		@Override
 		public void run() {
 			try {
 				Frame frame = createFrame(null, proj);
@@ -233,7 +235,7 @@ public class ProjectActions {
 			file = createEmptyFile(loader,null);
 		return completeProject(monitor, loader, file, isStartupScreen);
 	}
-	
+
 	public static void doMerge(Component parent, Project baseProject) {
 		JFileChooser chooser;
 		LogisimFile mergelib;
@@ -274,7 +276,7 @@ public class ProjectActions {
 		updatecircs(mergelib,baseProject);
 		baseProject.doAction(LogisimFileActions.MergeFile(mergelib, baseProject.getLogisimFile()));
 	}
-	
+
 	private static void updatecircs(LogisimFile lib, Project proj) {
 		for (Circuit circ:lib.getCircuits()) {
 			circ.SetProject(proj);
@@ -310,12 +312,15 @@ public class ProjectActions {
 		if (selected != null) {
 			doOpen(parent, baseProject, selected);
 		}
+
+		LogisimRuntimeSettings.setIsGui(LogisimRuntimeSettings.GUI);
 		return true;
 	}
 
 	public static Project doOpen(Component parent, Project baseProject, File f) {
 		Project proj = Projects.findProjectFor(f);
 		Loader loader = null;
+		LogisimRuntimeSettings.setIsGui(LogisimRuntimeSettings.GUI);
 		if (proj != null) {
 			proj.getFrame().toFront();
 			loader = proj.getLogisimFile().getLoader();
@@ -396,6 +401,7 @@ public class ProjectActions {
 		LogisimFile file = loader.openLogisimFile(source, substitutions);
 		AppPreferences.updateRecentFile(source);
 
+		LogisimRuntimeSettings.setIsGui(LogisimRuntimeSettings.GUI);
 		return completeProject(monitor, loader, file, false);
 	}
 
@@ -405,6 +411,7 @@ public class ProjectActions {
 		LogisimFile file = loader.openLogisimFile(source);
 		Project ret = new Project(file);
 		updatecircs(file,ret);
+		LogisimRuntimeSettings.setIsGui(LogisimRuntimeSettings.CLI);
 		return ret;
 	}
 
@@ -443,9 +450,9 @@ public class ProjectActions {
 
 	/**
 	 * Saves a Logisim project in a .circ file.
-	 * 
+	 *
 	 * It is the action listener for the File->Save as... menu option.
-	 * 
+	 *
 	 * @param proj
 	 *            project to be saved
 	 * @return true if success, false otherwise
