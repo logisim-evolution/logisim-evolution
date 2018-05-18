@@ -2,9 +2,11 @@ package com.bfh.logisim.download;
 
 import com.bfh.logisim.designrulecheck.Netlist;
 import com.bfh.logisim.fpgaboardeditor.BoardInformation;
+import com.bfh.logisim.fpgaboardeditor.IoStandards;
 import com.bfh.logisim.fpgagui.FPGAReport;
 import com.bfh.logisim.fpgagui.MappableResourcesContainer;
 import com.bfh.logisim.hdlgenerator.FileWriter;
+import com.bfh.logisim.hdlgenerator.TickComponentHDLGeneratorFactory;
 import com.bfh.logisim.hdlgenerator.ToplevelHDLGeneratorFactory;
 import com.bfh.logisim.settings.VendorSoftware;
 import com.cburch.logisim.proj.Projects;
@@ -23,6 +25,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class VivadoDownload {
 
@@ -208,7 +211,25 @@ public class VivadoDownload {
             return false;
         contents.clear();
 
-        // fill the UCF file
+        // fill the xdc file
+		if (rootNetlist.NumberOfClockTrees() > 0) {
+			String clockPin       = boardInfo.fpga.getClockPinLocation();
+			String clockSignal    = TickComponentHDLGeneratorFactory.FPGAClock;
+			String getPortsString = " [get_ports {" + clockSignal + "}]";
+			contents.add("set_property PACKAGE_PIN " + clockPin + getPortsString);
+
+			if (boardInfo.fpga.getClockStandard() != IoStandards.DefaulStandard
+				&& boardInfo.fpga.getClockStandard() != IoStandards.Unknown) {
+			    String clockIoStandard = IoStandards.Behavior_strings[boardInfo.fpga.getClockStandard()];
+				contents.add("    set_property IOSTANDARD " + clockIoStandard + getPortsString);
+			}
+			
+			Long clockFrequency = boardInfo.fpga.getClockFrequency();	
+			double clockPeriod  = 1000000000.0 / clockFrequency;
+			contents.add("    create_clock -add -name sys_clk_pin -period " + String.format(Locale.US, "%.2f", clockPeriod) + " -waveform {0 " + String.format("%1$,.0f", clockPeriod / 2) + "} " + getPortsString);
+			contents.add("");
+		}
+		
         contents.addAll(mapInfo.GetFPGAPinLocs(VendorSoftware.VendorVivado));
         if (!FileWriter.WriteContents(xdcFile, contents, myReporter))
             return false;
@@ -229,7 +250,8 @@ public class VivadoDownload {
         contents.clear();
 
         // load bitstream
-        String lindex = "[lindex [get_hw_devices] 0]";
+		String JTAGPos = String.valueOf(boardInfo.fpga.getFpgaJTAGChainPosition());
+        String lindex = "[lindex [get_hw_devices] " + JTAGPos + "]";
         contents.add("open_hw");
         contents.add("connect_hw_server");
         contents.add("open_hw_target");
@@ -240,6 +262,7 @@ public class VivadoDownload {
         contents.add("current_hw_device " + lindex);
         contents.add("refresh_hw_device -update_hw_probes false " + lindex);
         contents.add("program_hw_device " + lindex);
+        contents.add("close_hw");
         contents.add("exit");
         return FileWriter.WriteContents(loadBitstreamFile, contents, myReporter);
     }
