@@ -30,80 +30,79 @@
 
 package com.cburch.logisim.util;
 
+import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
+// import net.roydesign.mac.MRJAdapter;
 
 import javax.swing.JMenuBar;
 
-import net.roydesign.mac.MRJAdapter;
-
 public class MacCompatibility {
+	
+	private static boolean runningOnMac = System.getProperty("os.name").toLowerCase().indexOf("mac") >= 0;
+	private static boolean usingScreenMenuBar = runningOnMac;
+	
+	public static boolean isRunningOnMac() {
+		return runningOnMac;
+	}
+	
 	public static boolean isAboutAutomaticallyPresent() {
-		try {
-			return MRJAdapter.isAboutAutomaticallyPresent();
-		} catch (Exception t) {
-			return false;
-		}
+		return runningOnMac;
 	}
 
 	public static boolean isPreferencesAutomaticallyPresent() {
-		try {
-			return MRJAdapter.isPreferencesAutomaticallyPresent();
-		} catch (Exception t) {
-			return false;
-		}
+		return runningOnMac;
 	}
 
 	public static boolean isQuitAutomaticallyPresent() {
-		try {
-			return MRJAdapter.isQuitAutomaticallyPresent();
-		} catch (Exception t) {
-			return false;
-		}
+		return runningOnMac;
 	}
 
 	public static boolean isSwingUsingScreenMenuBar() {
-		try {
-			return MRJAdapter.isSwingUsingScreenMenuBar();
-		} catch (Exception t) {
-			return false;
-		}
+		return usingScreenMenuBar;
 	}
+
 
 	public static void setFileCreatorAndType(File dest, String app, String type)
 			throws IOException {
-		IOException ioExcept = null;
-		try {
-			try {
-				MRJAdapter.setFileCreatorAndType(dest, app, type);
-			} catch (IOException e) {
-				ioExcept = e;
-			}
-		} catch (Exception t) {
-		}
-		if (ioExcept != null)
-			throw ioExcept;
+		// DHH File creator and type have never been required on Mac OS X. Mac OS X uses the file extension.
+		// This method is a hold over from Mac OS 9 and Classic. It should be removed.
+		// Note you can then remove the imports for java.io from this file.
 	}
 
 	public static void setFramelessJMenuBar(JMenuBar menubar) {
 		try {
-			MRJAdapter.setFramelessJMenuBar(menubar);
+			//DHH This method allows the app to run without a frame on the Mac. The menu will still show.
+			if (runningOnMac) {
+				Desktop.getDesktop().setDefaultMenuBar(menubar);
+			}
 		} catch (Exception t) {
+			usingScreenMenuBar = false;
 		}
 	}
 
-	public static final double mrjVersion;
+	// DHH I would eliminate this reference. Use isRunningOnMac() if needed.
+	// But the only place I see this used is in CanvasPane. It sets always show scroll bars.
+	// That is not necessary in Mac UI. Just use the default for everybody.
+	public static final double mrjVersion = runningOnMac ? 0.0 : -1.0;
+	
+	public static double javaVersion() {
+		double version = Double.parseDouble(System.getProperty("java.specification.version"));
+		return version;
+	}
 
+	// DHH This shouldn't be necessary
+	/*
 	static {
-		double versionValue;
-		try {
-			versionValue = MRJAdapter.mrjVersion;
-		} catch (Exception t) {
-			versionValue = 0.0;
-		}
-		mrjVersion = versionValue;
-	}
-
+        double versionValue;
+        try {
+                versionValue = MRJAdapter.mrjVersion;
+        } catch (Exception t) {
+                versionValue = 0.0;
+        }
+        mrjVersion = versionValue;
+	}       
+	*/
 	private MacCompatibility() {
 	}
 

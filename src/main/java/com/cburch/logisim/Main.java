@@ -44,9 +44,13 @@ import org.slf4j.LoggerFactory;
 
 import com.cburch.logisim.gui.start.Startup;
 import com.cburch.logisim.prefs.AppPreferences;
+import com.cburch.logisim.util.MacCompatibility;
 
 public class Main {
 	public static void main(String[] args) throws Exception {
+		if (MacCompatibility.isRunningOnMac()) {
+			System.setProperty("apple.awt.application.name", "Logisim-evolution");
+		}
 		try {
 			if (!GraphicsEnvironment.isHeadless())  {
 				UIManager.setLookAndFeel(AppPreferences.LookAndFeel.get());
