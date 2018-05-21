@@ -112,19 +112,5 @@ class MacOsAdapter {
 			}
 		}
 	}
-	
-	/**
-	 * These methods should be removed and the above called from Startup.java. Change Startup.java's registerHandler method to:
-	 * 	private static void registerHandler() {
-	 *		// DHH We just call to add Listeners. It handles all possible exceptions and it either succeeds or not.
-	 *		MacOsAdapter.addListeners();
-	 *	}
-	 */
-	public static void addListeners(boolean added) {
-		MacOsAdapter.addListeners();
-	}
-	
-	public static void register() {
-	}
 
 }
