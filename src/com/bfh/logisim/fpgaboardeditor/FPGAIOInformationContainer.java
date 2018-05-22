@@ -857,7 +857,11 @@ public class FPGAIOInformationContainer {
 			}
 			contents.add("set_property PACKAGE_PIN " + MyPinLocations.get(i) +
 					" [get_ports {" + netName + "}]");
-			contents.add("    set_property IOSTANDARD LVCMOS33 [get_ports {" + netName + "}]");
+					
+			if (MyIOStandard != IoStandards.Unknown	&& MyIOStandard != IoStandards.DefaulStandard) {
+				contents.add("    set_property IOSTANDARD " + 
+				    IoStandards.GetConstraintedIoStandard(MyIOStandard) +" [get_ports {" + netName + "}]");
+			}
 		}
 		return contents;
 	}
