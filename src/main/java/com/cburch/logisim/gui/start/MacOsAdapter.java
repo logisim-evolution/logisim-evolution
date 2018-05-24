@@ -31,7 +31,17 @@
 package com.cburch.logisim.gui.start;
 
 import java.awt.Desktop;
-import java.awt.desktop.*;
+import java.awt.desktop.AboutHandler;
+import java.awt.desktop.AboutEvent;
+import java.awt.desktop.QuitHandler;
+import java.awt.desktop.QuitEvent;
+import java.awt.desktop.QuitResponse;
+import java.awt.desktop.PreferencesHandler;
+import java.awt.desktop.PreferencesEvent;
+import java.awt.desktop.PrintFilesHandler;
+import java.awt.desktop.PrintFilesEvent;
+import java.awt.desktop.OpenFilesHandler;
+import java.awt.desktop.OpenFilesEvent;
 import java.io.File;
 
 import com.cburch.logisim.gui.prefs.PreferencesFrame;
@@ -46,7 +56,7 @@ class MacOsAdapter {
 	 * addListeners adds listeners for external events for the Mac.
 	 * It allows the program to work like a normal Mac application with double-click opening of the .circ documents.
 	 * Note that the .jar file must be wrapped in a .app for this to be meaningful on the Mac.
-	 * This code requires Java 9.
+	 * This code requires Java 9 or higher.
 	 */
 	public static void addListeners() {
 		if (listenersAdded || !MacCompatibility.isRunningOnMac()) {
