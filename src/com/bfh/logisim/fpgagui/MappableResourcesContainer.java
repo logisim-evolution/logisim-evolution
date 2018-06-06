@@ -75,9 +75,9 @@ public class MappableResourcesContainer {
 	 * name: "LED: /LED1". This name can be augmented with alternates, e.g. a
 	 * 7-segment display could either be: "SEVENSEGMENT: /DS1" or
 	 * "SEVENSEGMENT: /DS1#Segment_A",etc.
-	 * 
+	 *
 	 * 2) The map name: "FPGA4U:/LED1" or "FPGA4U:/DS1#Segment_A", etc.
-	 * 
+	 *
 	 * The MappedList keeps track of the display names.
 	 */
 	public MappableResourcesContainer(BoardInformation CurrentBoard,
@@ -205,13 +205,16 @@ public class MappableResourcesContainer {
 	}
 
 	public int GetFPGAInOutPinId(String MapName) {
+
 		if (fpgaInOutsList.containsKey(MapName)) {
 			return fpgaInOutsList.get(MapName);
 		}
+
 		return -1;
 	}
 
 	public int GetFPGAInputPinId(String MapName) {
+
 		if (fpgaInputsList.containsKey(MapName)) {
 			return fpgaInputsList.get(MapName);
 		}
@@ -222,6 +225,7 @@ public class MappableResourcesContainer {
 		if (fpgaOutputsList.containsKey(MapName)) {
 			return fpgaOutputsList.get(MapName);
 		}
+
 		return -1;
 	}
 
@@ -415,9 +419,9 @@ public class MappableResourcesContainer {
 									.GetIOInformationContainer()
 									.GetNrOfInports()
 									+ comp.GetIOInformationContainer()
-											.GetNrOfOutports()
+									.GetNrOfOutports()
 									+ comp.GetIOInformationContainer()
-											.GetNrOfInOutports();
+									.GetNrOfInOutports();
 							int bestComponentIdx = getBestComponent(
 									BoardComponents.get(MainMapType),
 									NrOfBCRequired);
@@ -432,8 +436,8 @@ public class MappableResourcesContainer {
 							 * and decrease
 							 */
 							BoardComponents.get(MainMapType)
-									.remove(BoardComponents.get(MainMapType)
-											.size() - 1);
+							.remove(BoardComponents.get(MainMapType)
+									.size() - 1);
 							continue;
 						}
 					}
@@ -458,9 +462,9 @@ public class MappableResourcesContainer {
 						int NrOfBCRequired = comp.GetIOInformationContainer()
 								.GetNrOfInports()
 								+ comp.GetIOInformationContainer()
-										.GetNrOfOutports()
+								.GetNrOfOutports()
 								+ comp.GetIOInformationContainer()
-										.GetNrOfInOutports();
+								.GetNrOfInOutports();
 						if (NrOfBCRequired <= BoardComponents.get(AltMapType)
 								.size()) {
 							// BoardComponents.put(AltMapType,
@@ -468,8 +472,8 @@ public class MappableResourcesContainer {
 							// NrOfBCRequired);
 							for (int i = 0; i < NrOfBCRequired; i++) {
 								BoardComponents.get(AltMapType)
-										.remove(BoardComponents.get(AltMapType)
-												.size() - 1);
+								.remove(BoardComponents.get(AltMapType)
+										.size() - 1);
 							}
 							found = true;
 							break;
@@ -484,9 +488,9 @@ public class MappableResourcesContainer {
 					comp.ToggleAlternateMapping(key);
 				}
 				MyReporter
-						.AddError("The Target board "
-								+ currentBoardName
-								+ " does not have enough IO resources to map the design!");
+				.AddError("The Target board "
+						+ currentBoardName
+						+ " does not have enough IO resources to map the design!");
 				MyReporter.AddError("The component \""
 						+ MapNametoDisplayName(GetMapNamesList(key, comp)
 								.get(0)) + "\" cannot be placed!");

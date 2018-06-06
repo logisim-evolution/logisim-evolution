@@ -154,10 +154,10 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 			// is the current circuit an 'empty vhdl box' ?
 			String ArchName = MyCircuit.getStaticAttributes().getValue(
 					CircuitAttributes.CIRCUIT_VHDL_PATH);
-			
+
 			if (!ArchName.isEmpty()) {
 				if (!FileWriter.CopyArchitecture(ArchName, WorkPath
-								+ GetRelativeDirectory(HDLType), ComponentName,
+						+ GetRelativeDirectory(HDLType), ComponentName,
 						Reporter, HDLType)) {
 					return false;
 				}
@@ -216,7 +216,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 					if (!Worker.IsOnlyInlined(VHDL)) {
 						Components.addAll(Worker.GetComponentInstantiation(
 								TheNetlist, Gate.GetComponent()
-										.getAttributeSet(), CompName,
+								.getAttributeSet(), CompName,
 								VHDL/* , false */));
 					}
 				}
@@ -239,9 +239,9 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 					Components.addAll(Worker.GetComponentInstantiation(sub
 							.getSubcircuit().getNetList(), Gate.GetComponent()
 							.getAttributeSet(), CompName, VHDL/*
-																		 * ,
-																		 * false
-																		 */));
+							 * ,
+							 * false
+							 */));
 				}
 			}
 		}
@@ -333,7 +333,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 							if (!Contents.contains(line))
 								Contents.add(line);
 						} else {
-							String line = "   assign " + OneLine.toString() + ";"; 
+							String line = "   assign " + OneLine.toString() + ";";
 							if (!Contents.contains(line))
 								Contents.add(line);
 						}
@@ -403,7 +403,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 									.GetComponent().getAttributeSet()
 									.getValue(StdAttr.LABEL)),
 							selected.GetComponent().getAttributeSet()
-									.getValue(StdAttr.WIDTH).getWidth());
+							.getValue(StdAttr.WIDTH).getWidth());
 				} else {
 					Inputs.put(CorrectLabel.getCorrectLabel(selected
 							.GetComponent().getAttributeSet()
@@ -455,11 +455,11 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 						.getValue(StdAttr.LABEL).equals("sysclk")) {
 					Reporter.AddInfo("Clock component found with no connection, skipping: '"
 							+ ClockSource.GetComponent().getAttributeSet()
-									.getValue(StdAttr.LABEL) + "'");
+							.getValue(StdAttr.LABEL) + "'");
 				} else {
 					Reporter.AddWarning("Clock component found with no connection, skipping: '"
 							+ ClockSource.GetComponent().getAttributeSet()
-									.getValue(StdAttr.LABEL) + "'");
+							.getValue(StdAttr.LABEL) + "'");
 				}
 				continue;
 			}
@@ -482,12 +482,12 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 						+ ClockNet
 						+ OpenBracket
 						+ Integer
-								.toString(ClockHDLGeneratorFactory.DerivedClockIndex)
+						.toString(ClockHDLGeneratorFactory.DerivedClockIndex)
 						+ CloseBracket + ";");
 			} else {
 				Contents.add("   " + Preamble + Temp.toString()
-						+ AssignmentOperator
-						+ TickComponentHDLGeneratorFactory.FPGAClock + ";");
+				+ AssignmentOperator
+				+ TickComponentHDLGeneratorFactory.FPGAClock + ";");
 			}
 		}
 		/* Here we define all wiring; hence all complex splitter connections */
@@ -677,7 +677,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 									.GetComponent().getAttributeSet()
 									.getValue(StdAttr.LABEL)),
 							selected.GetComponent().getAttributeSet()
-									.getValue(StdAttr.WIDTH).getWidth());
+							.getValue(StdAttr.WIDTH).getWidth());
 				} else {
 					Outputs.put(CorrectLabel.getCorrectLabel(selected
 							.GetComponent().getAttributeSet()
@@ -716,12 +716,12 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 			if (NrOfInputBubbles > 0) {
 				PortMap.put(HDLGeneratorFactory.LocalInputBubbleBusname,
 						HDLGeneratorFactory.LocalInputBubbleBusname
-								+ GetBubbleIndex(ComponentInfo, HDLType, true));
+						+ GetBubbleIndex(ComponentInfo, HDLType, true));
 			}
 			if (NrOfOutputBubbles > 0) {
 				PortMap.put(HDLGeneratorFactory.LocalOutputBubbleBusname,
 						HDLGeneratorFactory.LocalOutputBubbleBusname
-								+ GetBubbleIndex(ComponentInfo, HDLType, false));
+						+ GetBubbleIndex(ComponentInfo, HDLType, false));
 			}
 			if (NrOfInputPorts > 0) {
 				for (int i = 0; i < NrOfInputPorts; i++) {
@@ -817,14 +817,14 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 									.GetFPGAInputPinId(mapInfo.currentBoardName
 											+ ":/"
 											+ selected.GetComponent()
-													.getAttributeSet()
-													.getValue(StdAttr.LABEL));
+											.getAttributeSet()
+											.getValue(StdAttr.LABEL));
 							for (int j = 0; j < 13; j++) {
 								PortMap.put(
 										selected.GetComponent()
-												.getAttributeSet()
-												.getValue(StdAttr.LABEL)
-												+ "_i(" + j + ")",
+										.getAttributeSet()
+										.getValue(StdAttr.LABEL)
+										+ "_i(" + j + ")",
 										FPGAInputPinName + "_" + (start + j));
 							}
 						} else {
@@ -849,8 +849,8 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 									.GetFPGAInOutPinId(mapInfo.currentBoardName
 											+ ":/"
 											+ selected.GetComponent()
-													.getAttributeSet()
-													.getValue(StdAttr.LABEL));
+											.getAttributeSet()
+											.getValue(StdAttr.LABEL));
 							int k = 0;
 							name.add(selected.GetComponent().getAttributeSet()
 									.getValue(StdAttr.LABEL));
@@ -859,18 +859,28 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 									.GetGlobalBubbleId(name).GetInOutEndIndex(); j++) {
 								PortMap.put(LocalInOutBubbleBusname + "(" + j
 										+ ")", FPGAInOutPinName + "_"
-										+ (start + k));
+												+ (start + k)); /* AMX Bug generation Localbus + PortIO */
 								k++;
 							}
 						} else if (selected.GetComponent().getFactory() instanceof ReptarLocalBus) {
 							ArrayList<String> name = new ArrayList<String>();
+							MappableResourcesContainer mapInfo = ((ReptarLocalBus) selected
+									.GetComponent().getFactory()).getMapInfo();
+							int start = mapInfo
+									.GetFPGAInOutPinId(mapInfo.currentBoardName
+											+ ":/"
+											+ selected.GetComponent()
+											.getAttributeSet()
+											.getValue(StdAttr.LABEL));
 							name.add(selected.GetComponent().getAttributeSet()
 									.getValue(StdAttr.LABEL));
+							int k = 0;
 							for (int j = selected.GetGlobalBubbleId(name)
 									.GetInOutStartIndex(); j <= selected
 									.GetGlobalBubbleId(name).GetInOutEndIndex(); j++) {
 								PortMap.put(LocalInOutBubbleBusname + "(" + j
-										+ ")", FPGAInOutPinName + "_" + j);
+										+ ")", FPGAInOutPinName + "_" + (start + k));
+								k++;
 							}
 						} else {
 							String PinLabel = CorrectLabel
@@ -897,9 +907,9 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 									.GetOutputEndIndex(); j++) {
 								PortMap.put(
 										selected.GetComponent()
-												.getAttributeSet()
-												.getValue(StdAttr.LABEL)
-												+ "_o(" + k + ")",
+										.getAttributeSet()
+										.getValue(StdAttr.LABEL)
+										+ "_o(" + k + ")",
 										"FPGA_LB_OUT_" + k);
 								k++;
 							}
@@ -939,7 +949,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 		if ((EndIndex < 0) || (EndIndex >= comp.NrOfEnds())) {
 			Reporter.AddFatalError("INTERNAL ERROR: Component tried to index non-existing SolderPoint: '"
 					+ comp.GetComponent().getAttributeSet()
-							.getValue(StdAttr.LABEL) + "'");
+					.getValue(StdAttr.LABEL) + "'");
 			return "";
 		}
 		for (int i = 0; i < TabSize; i++) {

@@ -34,6 +34,7 @@ import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.Rectangle;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -742,13 +743,22 @@ public class Netlist implements CircuitListener {
 				TunnelList.add(com);
 				Ignore = true;
 			}
+
+			if (com.getFactory() instanceof PortIO) {
+				//TunnelList.add(com);
+				Ignore = false;
+			}
+
 			List<EndData> ends = com.getEnds();
 			for (EndData end : ends) {
 				if (!Ignore) {
 					if (end.isInput() && end.isOutput()) {
-						drc.get(0).AddMarkComponent(com);
+						/* The IO Port can be either output or input */
+						if (!(com.getFactory() instanceof PortIO)) {
+							drc.get(0).AddMarkComponent(com);
+						}
 					}
-					if (end.isOutput()) {
+					else if (end.isOutput()) {
 						OutputsList.add(end.getLocation());
 					} else {
 						InputsList.add(end.getLocation());
@@ -757,6 +767,7 @@ public class Netlist implements CircuitListener {
 				/* Here we are going to mark the bitwidths on the nets */
 				int width = end.getWidth().getWidth();
 				Location loc = end.getLocation();
+				Collection<Component> component_verify = MyCircuit.getAllContaining(loc);
 				for (Net ThisNet : MyNets) {
 					if (ThisNet.contains(loc)) {
 						if (!ThisNet.setWidth(width)){
@@ -2232,11 +2243,18 @@ public class Netlist implements CircuitListener {
 			} else {
 				MyInputPorts.add(NormalComponent);
 			}
+			/** Merging Warning: In next merge, keep this from here
+			 * 	except if it is explicitly asked to be removed*/
+		} else if (comp.getFactory() instanceof PortIO) {
+			MyInOutPorts.add(NormalComponent);
+			MyComponents.add(NormalComponent);
+
 		} else if (comp.getFactory() instanceof ReptarLocalBus) {
 			MyInOutPorts.add(NormalComponent);
 			MyInputPorts.add(NormalComponent);
 			MyOutputPorts.add(NormalComponent);
 			MyComponents.add(NormalComponent);
+			/** end here */
 		} else {
 			MyComponents.add(NormalComponent);
 		}
