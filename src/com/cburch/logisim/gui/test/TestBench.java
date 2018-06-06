@@ -30,6 +30,7 @@ public class TestBench {
 
 		try {
 			this.proj = ProjectActions.doOpenNoWindow(mon, fileToOpen);
+
 		} catch (LoadFailedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -113,8 +114,15 @@ public class TestBench {
 
 	/* Main method in charge of launching the test bench */
 	public boolean startTestBench() throws LoadFailedException  {
-		Circuit circuit = proj.getCurrentCircuit();
+		Circuit circuit = (proj.getLogisimFile().getCircuit("logisim_test_verif"));
+		proj.setCurrentCircuit(circuit);
+
 		Value[] val = new Value[outputSignals.length];
+
+		if (circuit == null) {
+			System.out.println("Circuit is null");
+			return false;
+		}
 
 		/* This is made to make comparison in logisim */
 		for (int i = 0; i < val.length; i++) {
@@ -123,11 +131,13 @@ public class TestBench {
 
 		/* First launch the Simulator */
 		if (!startSimulator()) {
+			System.out.println("Error starting the simulator");
 			return false;
 		}
 
-		/* Then try to fnid the pin to verify */
+		/* Then try to find the pin to verify */
 		if(!searchmatchingPins(circuit)) {
+			System.out.println("Error finding the pins");
 			return false;
 		}
 
