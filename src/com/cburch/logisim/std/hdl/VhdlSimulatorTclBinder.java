@@ -133,14 +133,18 @@ class VhdlSimulatorTclBinder {
 					/* Here we check that the binder has correctly started */
 					while ((line = reader.readLine()) != null) {
 
-						vhdlSimulator.getProject().getFrame()
-								.getVhdlSimulatorConsole().append(line + "\n");
+						/* Here we make sure it is possible to print something */
+						if (vhdlSimulator.getProject().getFrame() != null) {
+							vhdlSimulator.getProject().getFrame()
+							.getVhdlSimulatorConsole().append(line + "\n");
+						}
 
 						errorMessage += "\n" + line;
 						if (line.contains("TCL_BINDER_RUNNING")) {
 							running = true;
 
 							new Thread(new Runnable() {
+								@Override
 								public void run() {
 									Scanner sc = new Scanner(
 											new InputStreamReader(process
@@ -149,10 +153,12 @@ class VhdlSimulatorTclBinder {
 									while (sc.hasNextLine()) {
 										nextLine = sc.nextLine();
 										if (nextLine.length() > 0)
-											vhdlSimulator.getProject()
-													.getFrame()
-													.getVhdlSimulatorConsole()
-													.append(nextLine + "\n");
+											if (vhdlSimulator.getProject().getFrame() != null) {
+												vhdlSimulator.getProject()
+												.getFrame()
+												.getVhdlSimulatorConsole()
+												.append(nextLine + "\n");
+											}
 									}
 									sc.close();
 								}
