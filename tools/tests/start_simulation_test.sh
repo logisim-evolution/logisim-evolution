@@ -27,7 +27,6 @@ function check_files_exits() {
 	TAB=(${@})
 	tLen=${#TAB[@]}
 
-
 	for (( i=0; i<${tLen}; i++ ));
 	do
 		if [ ! -f ${TAB[$i]} ]; then
@@ -44,13 +43,13 @@ function start_tests()
 	for (( i=0; i<${tLen}; i++ ));
 	do
 		printf "\nSimulation testing file ${CIRC_FILE[i]}: "
-		java -jar $PATH_LOGISIM -test-circuit ${CIRC_FILES[i]} \
+		java -jar $PATH_LOGISIM -test-circuit ${CIRC_FILE[i]}
 			> "file_sim_test_$((i + 1))".log 2>&1
 
 		if [ $? -eq 0 ]; then
-			printf "${GREEN}SUCCESS${NC}"
+			printf "${GREEN}SUCCESS${NC}\n"
 		else
-			printf "${RED}FAILED${NC}"
+			printf "${RED}FAILED${NC}\n"
 		fi
 	done
 }
