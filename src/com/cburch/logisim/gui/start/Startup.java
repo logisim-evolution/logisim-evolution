@@ -889,8 +889,10 @@ public class Startup implements AWTEventListener {
 						TestBench testB = new TestBench(testCircuitPathInput, monitor, substitutions);
 
 						if (testB.startTestBench()) {
+							System.out.println("Test bench pass\n");
 							System.exit(0);
 						} else {
+							System.out.println("Test bench fail\n");
 							System.exit(-1);
 						}
 					} else if (testCircuitImpPath != null) {
