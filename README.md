@@ -40,7 +40,7 @@ ant run
 This also creates locally a .jar file, that you can distribute and use on other machines.
 
 ## Testing Logisim-evolution
-As Logisim-evolution needs updates (new features and patches) and that unit tests are not implemented within the code, the *testing* branch was created.
+As Logisim-evolution needs updates (new features and patches) and currently lacks unit tests, the *testing* branch was created.
 The goal of this branch is to add new features/patches without affecting the release on branch master.
 Users who are willing test new features should checkout the testing branch. The feedback from users is really appreciated as it makes logisim-evolution better. Feel free to use the issue tab to report bugs/features.
 
