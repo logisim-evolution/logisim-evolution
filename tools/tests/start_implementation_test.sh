@@ -124,7 +124,7 @@ function start_tests()
 }
 
 # Check if enough param were given
-if [ $# -ne 1]; then
+if [ $# -ne 1 ]; then
 	print_usage
 fi
 
