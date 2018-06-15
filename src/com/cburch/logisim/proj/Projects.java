@@ -122,6 +122,11 @@ public class Projects {
 
 	public static Point getCenteredLoc(int width, int height) {
 		int x, y;
+
+		if (getTopFrame() == null) {
+			return new Point(0,0);
+		}
+
 		x = getTopFrame().getX() + getTopFrame().getWidth() / 2;
 		x -= width / 2;
 		y = getTopFrame().getY() + getTopFrame().getHeight() / 2;
