@@ -113,6 +113,7 @@ function start_tests()
 		java -jar $PATH_LOGISIM -test-fpga-implementation ${CIRC_FILES[i]} \
 			${MAP_FILES[i]} ${CIRCUIT_TOPLEVEL_NAME[i]} ${BOARDS_NAME[i]} > "file_imp_test_$((i + 1))".log 2>&1
 
+		printf "Value gotten $?\n"
 		# Display results, diff return 0 if everything is ok, 1 or 2 otherwise
 		if [ $? -eq 0 ]; then
 			printf "${GREEN}Implementation Pass${NC}\n"
