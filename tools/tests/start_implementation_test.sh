@@ -141,9 +141,9 @@ read_form_file
 check_number
 # Check if boards exists
 check_boards_exists
-
 # Check path of files
 check_files_exits ${CIRC_FILES[@]}
+# check if map files exits
 check_files_exits ${MAP_FILES[@]}
 
 start_tests
