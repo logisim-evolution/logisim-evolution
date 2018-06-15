@@ -22,8 +22,7 @@ public class FPGAProgressBarCli implements IFPGAProgressBar {
 
 	@Override
 	public void setStringPainted(boolean b) {
-		// TODO Auto-generated method stub
-
+		// Nothing need to be done 
 	}
 
 	@Override
