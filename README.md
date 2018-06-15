@@ -40,7 +40,7 @@ ant run
 This also creates locally a .jar file, that you can distribute and use on other machines.
 
 ## Testing Logisim-evolution
-As Logisim-evolution needs udpates (new features and patches) and that unit tests are not implemented within the code, the *testing* branch was created.
+As Logisim-evolution needs updates (new features and patches) and currently lacks unit tests, the *testing* branch was created.
 The goal of this branch is to add new features/patches without affecting the release on branch master.
 Users who are willing test new features should checkout the testing branch. The feedback from users is really appreciated as it makes logisim-evolution better. Feel free to use the issue tab to report bugs/features.
 
@@ -104,9 +104,7 @@ If you feel that your name should be in this list, please feel free to send us a
 ## Other Logisim forks available on the net
 * Logisim by Joseph Lawrance et al. [(link)](https://github.com/lawrancej/logisim) - they have started from Burch's original code and integrated it in several open-source development frameworks, cleaning up the code. We have taken a few code cleanups and the redo functionality from their code.
 * logisim-iitd [(link)](https://code.google.com/p/logisim-iitd) - IIT Delhi version of Logisim, it integrates the Floating-Point Components within the Arithmetic Unit.
-* Logisim for the CS3410 course, Cornell's University [(link)](http://www.cs.cornell.edu/courses/cs3410/2015sp/) - they have a very interesting test vector feature, that has only recently integrated in logisim-evolution.
+* Logisim for the CS3410 course, Cornell's University [(link)](http://www.cs.cornell.edu/courses/cs3410/2015sp/) - they have a very interesting test vector feature, that was only recently integrated into logisim-evolution.
 
 ## Alternatives
 * A complete rewriting of Logisim, called Digital, has been developed by Prof. Helmut Neemann of the Baden-Württemberg Cooperative State University Mosbach. You can find it [(here)](https://github.com/hneemann/Digital).
-
-
