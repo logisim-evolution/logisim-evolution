@@ -11,7 +11,6 @@ public class FPGAProgressBarCli implements IFPGAProgressBar {
 	}
 	@Override
 	public Rectangle getBounds() {
-		// TODO Auto-generated method stub
 		return new Rectangle();
 	}
 
