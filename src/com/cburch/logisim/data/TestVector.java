@@ -145,7 +145,7 @@ public class TestVector {
 										+ t);
 
 					columnName[i] = t.substring(0, s);
-					int w = new Integer(t.substring(s + 1, e)).intValue();
+					int w = Integer.parseInt(t.substring(s + 1, e));
 
 					if (w < 1 || w > 32)
 						throw new IOException(

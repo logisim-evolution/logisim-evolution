@@ -241,9 +241,9 @@ class Model {
 			return;
 		for (int i = failed.size() + passed.size(); i < numPass + numFail; i++) {
 			if (results[i] == null)
-				passed.add(new Integer(i));
+				passed.add(Integer.valueOf(i));
 			else
-				failed.add(new Integer(i));
+				failed.add(Integer.valueOf(i));
 		}
 		fireTestResultsChanged();
 	}

@@ -568,7 +568,7 @@ public class Netlist implements CircuitListener {
 				return DRCStatus | CommonDRCStatus;
 			}
 			ConstructHierarchyTree(null, new ArrayList<String>(),
-					new Integer(0), new Integer(0), new Integer(0));
+					Integer.valueOf(0), Integer.valueOf(0), Integer.valueOf(0));
 			int ports = NumberOfInputPorts() + NumberOfOutputPorts()
 			+ LocalNrOfInportBubles + LocalNrOfOutportBubles
 			+ LocalNrOfInOutBubles;
