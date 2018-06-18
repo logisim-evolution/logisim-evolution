@@ -70,7 +70,7 @@ import com.cburch.logisim.instance.InstanceComponent;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.proj.Projects;
 import com.cburch.logisim.std.io.DipSwitch;
-import com.cburch.logisim.std.io.PortIO;
+import com.cburch.logisim.std.io.ReptarLocalBus;
 import com.cburch.logisim.std.memory.Counter;
 import com.cburch.logisim.std.memory.DFlipFlop;
 import com.cburch.logisim.std.memory.JKFlipFlop;
@@ -754,9 +754,9 @@ public class Netlist implements CircuitListener {
 				if (!Ignore) {
 					if (end.isInput() && end.isOutput()) {
 						/* The IO Port can be either output or input */
-						if (!(com.getFactory() instanceof PortIO)) {
-							drc.get(0).AddMarkComponent(com);
-						}
+						//		if (!(com.getFactory() instanceof PortIO)) {
+						//			drc.get(0).AddMarkComponent(com);
+						//		}
 					}
 					else if (end.isOutput()) {
 						OutputsList.add(end.getLocation());
@@ -2243,6 +2243,11 @@ public class Netlist implements CircuitListener {
 			} else {
 				MyInputPorts.add(NormalComponent);
 			}
+		} else if (comp.getFactory() instanceof ReptarLocalBus) {
+			MyInOutPorts.add(NormalComponent);
+			MyInputPorts.add(NormalComponent);
+			MyOutputPorts.add(NormalComponent);
+			MyComponents.add(NormalComponent);
 		} else {
 			MyComponents.add(NormalComponent);
 		}
