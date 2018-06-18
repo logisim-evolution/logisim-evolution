@@ -74,10 +74,10 @@ class MenuFile extends Menu implements ActionListener {
 		merge.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, menuMask));
 		open.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, menuMask));
 		close.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, menuMask
-				| InputEvent.SHIFT_MASK));
+				| InputEvent.SHIFT_DOWN_MASK));
 		save.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, menuMask));
 		saveAs.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, menuMask
-				| InputEvent.SHIFT_MASK));
+				| InputEvent.SHIFT_DOWN_MASK));
 		print.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, menuMask));
 		quit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, menuMask));
 

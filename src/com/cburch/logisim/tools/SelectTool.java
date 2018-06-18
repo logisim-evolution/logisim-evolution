@@ -446,7 +446,7 @@ public class SelectTool extends Tool {
 		// selection is being modified
 		Collection<Component> in_sel = sel.getComponentsContaining(start, g);
 		if (!in_sel.isEmpty()) {
-			if ((e.getModifiers() & InputEvent.SHIFT_MASK) == 0) {
+			if ((e.getModifiersEx() & InputEvent.SHIFT_DOWN_MASK) == 0) {
 				setState(proj, MOVING);
 				proj.repaintCanvas();
 				return;
@@ -462,7 +462,7 @@ public class SelectTool extends Tool {
 		// wants to add/reset selection
 		Collection<Component> clicked = circuit.getAllContaining(start, g);
 		if (!clicked.isEmpty()) {
-			if ((e.getModifiers() & InputEvent.SHIFT_MASK) == 0) {
+			if ((e.getModifiersEx() & InputEvent.SHIFT_DOWN_MASK) == 0) {
 				if (sel.getComponentsContaining(start).isEmpty()) {
 					Action act = SelectionActions.dropAll(sel);
 					if (act != null) {
@@ -482,7 +482,7 @@ public class SelectTool extends Tool {
 
 		// The user clicked on the background. This is a rectangular
 		// selection (maybe with the shift key down).
-		if ((e.getModifiers() & InputEvent.SHIFT_MASK) == 0) {
+		if ((e.getModifiersEx() & InputEvent.SHIFT_DOWN_MASK) == 0) {
 			Action act = SelectionActions.dropAll(sel);
 			if (act != null) {
 				proj.doAction(act);

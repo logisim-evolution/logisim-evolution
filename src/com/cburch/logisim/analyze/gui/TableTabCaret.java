@@ -79,7 +79,7 @@ class TableTabCaret {
 			int inputs = model.getInputColumnCount();
 			int outputs = model.getOutputColumnCount();
 			int cols = inputs + outputs;
-			boolean shift = (e.getModifiers() & InputEvent.SHIFT_MASK) != 0;
+			boolean shift = (e.getModifiersEx() & InputEvent.SHIFT_DOWN_MASK) != 0;
 			switch (e.getKeyCode()) {
 			case KeyEvent.VK_UP:
 				setCursor(cursorRow - 1, cursorCol, shift);
@@ -124,8 +124,8 @@ class TableTabCaret {
 		}
 
 		public void keyTyped(KeyEvent e) {
-			int mask = e.getModifiers();
-			if ((mask & ~InputEvent.SHIFT_MASK) != 0)
+			int mask = e.getModifiersEx();
+			if ((mask & ~InputEvent.SHIFT_DOWN_MASK) != 0)
 				return;
 
 			char c = e.getKeyChar();
@@ -160,12 +160,12 @@ class TableTabCaret {
 			case '\n':
 				setCursor(cursorRow + 1, table.getTruthTable()
 						.getInputColumnCount(),
-						(mask & InputEvent.SHIFT_MASK) != 0);
+						(mask & InputEvent.SHIFT_DOWN_MASK) != 0);
 				break;
 			case '\u0008':
 			case '\u007f':
 				setCursor(cursorRow, cursorCol - 1,
-						(mask & InputEvent.SHIFT_MASK) != 0);
+						(mask & InputEvent.SHIFT_DOWN_MASK) != 0);
 				break;
 			default:
 			}
@@ -207,7 +207,7 @@ class TableTabCaret {
 			table.requestFocus();
 			int row = table.getRow(e);
 			int col = table.getColumn(e);
-			setCursor(row, col, (e.getModifiers() & InputEvent.SHIFT_MASK) != 0);
+			setCursor(row, col, (e.getModifiersEx() & InputEvent.SHIFT_DOWN_MASK) != 0);
 		}
 
 		public void mouseReleased(MouseEvent e) {
