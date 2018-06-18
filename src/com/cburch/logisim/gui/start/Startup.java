@@ -896,10 +896,10 @@ public class Startup implements AWTEventListener {
 					} else if (testCircuitImpPath != null) {
 						/* Testing synthesis */
 						proj = ProjectActions.doOpenNoWindow(monitor, fileToOpen);
-						FPGACommanderTests testImpFpga = new FPGACommanderTests(proj, 
-															testCircuitImpMapFile, 
-															testCircuitImpName, 
-															testCircuitImpBoard);
+						FPGACommanderTests testImpFpga = new FPGACommanderTests(proj,
+								testCircuitImpMapFile,
+								testCircuitImpName,
+								testCircuitImpBoard);
 
 						if (testImpFpga.StartTests()) {
 							System.exit(0);
@@ -914,9 +914,6 @@ public class Startup implements AWTEventListener {
 				} catch (LoadFailedException ex) {
 					logger.error("{} : {}", fileToOpen.getName(),
 							ex.getMessage());
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
 				}
 				if (first) {
 					first = false;
