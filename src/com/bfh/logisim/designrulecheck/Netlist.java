@@ -70,7 +70,7 @@ import com.cburch.logisim.instance.InstanceComponent;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.proj.Projects;
 import com.cburch.logisim.std.io.DipSwitch;
-import com.cburch.logisim.std.io.ReptarLocalBus;
+import com.cburch.logisim.std.io.PortIO;
 import com.cburch.logisim.std.memory.Counter;
 import com.cburch.logisim.std.memory.DFlipFlop;
 import com.cburch.logisim.std.memory.JKFlipFlop;
@@ -744,10 +744,10 @@ public class Netlist implements CircuitListener {
 				Ignore = true;
 			}
 
-			if (com.getFactory() instanceof PortIO) {
-				//TunnelList.add(com);
-				Ignore = false;
-			}
+			//	if (com.getFactory() instanceof PortIO) {
+			//		//TunnelList.add(com);
+			//		Ignore = false;
+			//	}
 
 			List<EndData> ends = com.getEnds();
 			for (EndData end : ends) {
@@ -2243,18 +2243,6 @@ public class Netlist implements CircuitListener {
 			} else {
 				MyInputPorts.add(NormalComponent);
 			}
-			/** Merging Warning: In next merge, keep this from here
-			 * 	except if it is explicitly asked to be removed*/
-		} else if (comp.getFactory() instanceof PortIO) {
-			MyInOutPorts.add(NormalComponent);
-			MyComponents.add(NormalComponent);
-
-		} else if (comp.getFactory() instanceof ReptarLocalBus) {
-			MyInOutPorts.add(NormalComponent);
-			MyInputPorts.add(NormalComponent);
-			MyOutputPorts.add(NormalComponent);
-			MyComponents.add(NormalComponent);
-			/** end here */
 		} else {
 			MyComponents.add(NormalComponent);
 		}
