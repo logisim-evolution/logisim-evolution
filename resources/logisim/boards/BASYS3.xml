@@ -2,108 +2,108 @@
 <BASYS3>
 <BoardInformation>
 <!--This section decribes the FPGA and its clock-->
-<ClockInformation FPGApin="W5" Frequency="100000000" IOStandard="Default" PullBehavior="Float"/>
-<FPGAInformation Family="Artix-7" FlashName="" FlashPos="2" JTAGPos="1" Package="cpg236" Part="xc7a35t" Speedgrade="-1" USBTMC="false" Vendor="VIVADO"/>
+<ClockInformation FPGApin="W5" Frequency="100000000" IOStandard="LVCMOS33" PullBehavior="Float"/>
+<FPGAInformation Family="Artix-7" FlashName="" FlashPos="1" JTAGPos="0" Package="cpg236" Part="xc7a35t" Speedgrade="-1" USBTMC="false" Vendor="VIVADO"/>
 <UnusedPins PullBehavior="Float"/>
 </BoardInformation>
 <IOComponents>
 <!--This section describes all Components present on the boards-->
-<Button ActivityLevel="Active high" FPGAPinIOStandard="Default" FPGAPinName="V17" FPGAPinPullBehavior="Float" Height="54" LocationX="647" LocationY="323" Width="30"/>
-<Button ActivityLevel="Active high" FPGAPinIOStandard="Default" FPGAPinName="V16" FPGAPinPullBehavior="Float" Height="54" LocationX="609" LocationY="323" Width="30"/>
-<Button ActivityLevel="Active high" FPGAPinIOStandard="Default" FPGAPinName="W16" FPGAPinPullBehavior="Float" Height="54" LocationX="571" LocationY="323" Width="30"/>
-<Button ActivityLevel="Active high" FPGAPinIOStandard="Default" FPGAPinName="W17" FPGAPinPullBehavior="Float" Height="54" LocationX="535" LocationY="323" Width="30"/>
-<Button ActivityLevel="Active high" FPGAPinIOStandard="Default" FPGAPinName="W15" FPGAPinPullBehavior="Float" Height="54" LocationX="497" LocationY="323" Width="30"/>
-<Button ActivityLevel="Active high" FPGAPinIOStandard="Default" FPGAPinName="V15" FPGAPinPullBehavior="Float" Height="54" LocationX="456" LocationY="323" Width="30"/>
-<Button ActivityLevel="Active high" FPGAPinIOStandard="Default" FPGAPinName="W14" FPGAPinPullBehavior="Float" Height="54" LocationX="417" LocationY="323" Width="30"/>
-<Button ActivityLevel="Active high" FPGAPinIOStandard="Default" FPGAPinName="W13" FPGAPinPullBehavior="Float" Height="54" LocationX="382" LocationY="323" Width="30"/>
-<Button ActivityLevel="Active high" FPGAPinIOStandard="Default" FPGAPinName="V2" FPGAPinPullBehavior="Float" Height="54" LocationX="341" LocationY="323" Width="30"/>
-<Button ActivityLevel="Active high" FPGAPinIOStandard="Default" FPGAPinName="T3" FPGAPinPullBehavior="Float" Height="54" LocationX="305" LocationY="323" Width="30"/>
-<Button ActivityLevel="Active high" FPGAPinIOStandard="Default" FPGAPinName="T2" FPGAPinPullBehavior="Float" Height="54" LocationX="268" LocationY="323" Width="30"/>
-<Button ActivityLevel="Active high" FPGAPinIOStandard="Default" FPGAPinName="R3" FPGAPinPullBehavior="Float" Height="54" LocationX="228" LocationY="323" Width="30"/>
-<Button ActivityLevel="Active high" FPGAPinIOStandard="Default" FPGAPinName="W2" FPGAPinPullBehavior="Float" Height="54" LocationX="192" LocationY="323" Width="30"/>
-<Button ActivityLevel="Active high" FPGAPinIOStandard="Default" FPGAPinName="U1" FPGAPinPullBehavior="Float" Height="54" LocationX="154" LocationY="323" Width="30"/>
-<Button ActivityLevel="Active high" FPGAPinIOStandard="Default" FPGAPinName="T1" FPGAPinPullBehavior="Float" Height="54" LocationX="117" LocationY="323" Width="30"/>
-<Button ActivityLevel="Active high" FPGAPinIOStandard="Default" FPGAPinName="R2" FPGAPinPullBehavior="Float" Height="54" LocationX="78" LocationY="323" Width="30"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="Default" FPGAPinIOStandard="Default" FPGAPinName="U16" Height="14" LocationX="649" LocationY="295" Width="14"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="Default" FPGAPinIOStandard="Default" FPGAPinName="E19" Height="14" LocationX="612" LocationY="295" Width="14"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="Default" FPGAPinIOStandard="Default" FPGAPinName="U19" Height="14" LocationX="577" LocationY="295" Width="14"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="Default" FPGAPinIOStandard="Default" FPGAPinName="V19" Height="14" LocationX="538" LocationY="295" Width="14"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="Default" FPGAPinIOStandard="Default" FPGAPinName="W18" Height="14" LocationX="499" LocationY="295" Width="14"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="Default" FPGAPinIOStandard="Default" FPGAPinName="U15" Height="14" LocationX="465" LocationY="295" Width="14"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="Default" FPGAPinIOStandard="Default" FPGAPinName="U14" Height="14" LocationX="425" LocationY="295" Width="14"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="Default" FPGAPinIOStandard="Default" FPGAPinName="V14" Height="14" LocationX="389" LocationY="295" Width="14"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="Default" FPGAPinIOStandard="Default" FPGAPinName="V13" Height="14" LocationX="353" LocationY="295" Width="14"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="Default" FPGAPinIOStandard="Default" FPGAPinName="V3" Height="14" LocationX="315" LocationY="295" Width="14"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="Default" FPGAPinIOStandard="Default" FPGAPinName="W3" Height="14" LocationX="278" LocationY="295" Width="14"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="Default" FPGAPinIOStandard="Default" FPGAPinName="U3" Height="14" LocationX="241" LocationY="295" Width="14"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="Default" FPGAPinIOStandard="Default" FPGAPinName="P3" Height="14" LocationX="203" LocationY="295" Width="14"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="Default" FPGAPinIOStandard="Default" FPGAPinName="N3" Height="14" LocationX="168" LocationY="295" Width="14"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="Default" FPGAPinIOStandard="Default" FPGAPinName="P1" Height="14" LocationX="131" LocationY="295" Width="14"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="Default" FPGAPinIOStandard="Default" FPGAPinName="L1" Height="14" LocationX="92" LocationY="295" Width="14"/>
-<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="Default" FPGAPinName="J1" FPGAPinPullBehavior="Float" Height="8" LocationX="88" LocationY="162" Width="8"/>
-<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="Default" FPGAPinName="L2" FPGAPinPullBehavior="Float" Height="8" LocationX="88" LocationY="149" Width="8"/>
-<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="Default" FPGAPinName="J2" FPGAPinPullBehavior="Float" Height="8" LocationX="88" LocationY="137" Width="8"/>
-<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="Default" FPGAPinName="G2" FPGAPinPullBehavior="Float" Height="8" LocationX="88" LocationY="126" Width="8"/>
-<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="Default" FPGAPinName="H1" FPGAPinPullBehavior="Float" Height="8" LocationX="76" LocationY="162" Width="8"/>
-<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="Default" FPGAPinName="K2" FPGAPinPullBehavior="Float" Height="8" LocationX="76" LocationY="149" Width="8"/>
-<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="Default" FPGAPinName="H2" FPGAPinPullBehavior="Float" Height="8" LocationX="76" LocationY="137" Width="8"/>
-<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="Default" FPGAPinName="G3" FPGAPinPullBehavior="Float" Height="8" LocationX="76" LocationY="126" Width="8"/>
-<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="Default" FPGAPinName="J3" FPGAPinPullBehavior="Float" Height="8" LocationX="88" LocationY="275" Width="8"/>
-<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="Default" FPGAPinName="L3" FPGAPinPullBehavior="Float" Height="8" LocationX="88" LocationY="262" Width="8"/>
-<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="Default" FPGAPinName="M2" FPGAPinPullBehavior="Float" Height="8" LocationX="88" LocationY="250" Width="8"/>
-<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="Default" FPGAPinName="N2" FPGAPinPullBehavior="Float" Height="8" LocationX="88" LocationY="239" Width="8"/>
-<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="Default" FPGAPinName="K3" FPGAPinPullBehavior="Float" Height="8" LocationX="76" LocationY="275" Width="8"/>
-<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="Default" FPGAPinName="M3" FPGAPinPullBehavior="Float" Height="8" LocationX="76" LocationY="262" Width="8"/>
-<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="Default" FPGAPinName="M1" FPGAPinPullBehavior="Float" Height="8" LocationX="76" LocationY="250" Width="8"/>
-<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="Default" FPGAPinName="N1" FPGAPinPullBehavior="Float" Height="8" LocationX="76" LocationY="239" Width="8"/>
-<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="Default" FPGAPinName="A14" FPGAPinPullBehavior="Float" Height="8" LocationX="657" LocationY="99" Width="8"/>
-<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="Default" FPGAPinName="A16" FPGAPinPullBehavior="Float" Height="8" LocationX="657" LocationY="112" Width="8"/>
-<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="Default" FPGAPinName="B15" FPGAPinPullBehavior="Float" Height="8" LocationX="657" LocationY="124" Width="8"/>
-<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="Default" FPGAPinName="B16" FPGAPinPullBehavior="Float" Height="8" LocationX="657" LocationY="136" Width="8"/>
-<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="Default" FPGAPinName="A15" FPGAPinPullBehavior="Float" Height="8" LocationX="670" LocationY="99" Width="8"/>
-<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="Default" FPGAPinName="A17" FPGAPinPullBehavior="Float" Height="8" LocationX="670" LocationY="112" Width="8"/>
-<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="Default" FPGAPinName="C15" FPGAPinPullBehavior="Float" Height="8" LocationX="670" LocationY="124" Width="8"/>
-<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="Default" FPGAPinName="C16" FPGAPinPullBehavior="Float" Height="8" LocationX="670" LocationY="136" Width="8"/>
-<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="Default" FPGAPinName="K17" FPGAPinPullBehavior="Float" Height="8" LocationX="657" LocationY="212" Width="8"/>
-<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="Default" FPGAPinName="M18" FPGAPinPullBehavior="Float" Height="8" LocationX="657" LocationY="225" Width="8"/>
-<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="Default" FPGAPinName="N17" FPGAPinPullBehavior="Float" Height="8" LocationX="657" LocationY="237" Width="8"/>
-<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="Default" FPGAPinName="P18" FPGAPinPullBehavior="Float" Height="8" LocationX="657" LocationY="249" Width="8"/>
-<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="Default" FPGAPinName="L17" FPGAPinPullBehavior="Float" Height="8" LocationX="670" LocationY="212" Width="8"/>
-<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="Default" FPGAPinName="M19" FPGAPinPullBehavior="Float" Height="8" LocationX="670" LocationY="225" Width="8"/>
-<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="Default" FPGAPinName="P17" FPGAPinPullBehavior="Float" Height="8" LocationX="670" LocationY="237" Width="8"/>
-<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="Default" FPGAPinName="R18" FPGAPinPullBehavior="Float" Height="8" LocationX="670" LocationY="249" Width="8"/>
-<Button ActivityLevel="Active high" FPGAPinIOStandard="Default" FPGAPinName="T18" FPGAPinPullBehavior="Float" Height="14" LocationX="536" LocationY="203" Width="14"/>
-<Button ActivityLevel="Active high" FPGAPinIOStandard="Default" FPGAPinName="T17" FPGAPinPullBehavior="Float" Height="14" LocationX="582" LocationY="238" Width="14"/>
-<Button ActivityLevel="Active high" FPGAPinIOStandard="Default" FPGAPinName="U17" FPGAPinPullBehavior="Float" Height="14" LocationX="536" LocationY="272" Width="14"/>
-<Button ActivityLevel="Active high" FPGAPinIOStandard="Default" FPGAPinName="W19" FPGAPinPullBehavior="Float" Height="14" LocationX="487" LocationY="236" Width="14"/>
-<Button ActivityLevel="Active high" FPGAPinIOStandard="Default" FPGAPinName="U18" FPGAPinPullBehavior="Float" Height="14" LocationX="536" LocationY="235" Width="14"/>
-<LED ActivityLevel="Active low" FPGAPinDriveStrength="Default" FPGAPinIOStandard="Default" FPGAPinName="W7" Height="5" LocationX="136" LocationY="245" Width="17"/>
-<LED ActivityLevel="Active low" FPGAPinDriveStrength="Default" FPGAPinIOStandard="Default" FPGAPinName="W6" Height="12" LocationX="154" LocationY="248" Width="5"/>
-<LED ActivityLevel="Active low" FPGAPinDriveStrength="Default" FPGAPinIOStandard="Default" FPGAPinName="U8" Height="12" LocationX="154" LocationY="262" Width="5"/>
-<LED ActivityLevel="Active low" FPGAPinDriveStrength="Default" FPGAPinIOStandard="Default" FPGAPinName="V8" Height="5" LocationX="136" LocationY="274" Width="17"/>
-<LED ActivityLevel="Active low" FPGAPinDriveStrength="Default" FPGAPinIOStandard="Default" FPGAPinName="U5" Height="12" LocationX="130" LocationY="263" Width="5"/>
-<LED ActivityLevel="Active low" FPGAPinDriveStrength="Default" FPGAPinIOStandard="Default" FPGAPinName="V5" Height="12" LocationX="130" LocationY="249" Width="5"/>
-<LED ActivityLevel="Active low" FPGAPinDriveStrength="Default" FPGAPinIOStandard="Default" FPGAPinName="U7" Height="5" LocationX="138" LocationY="258" Width="14"/>
-<LED ActivityLevel="Active low" FPGAPinDriveStrength="Default" FPGAPinIOStandard="Default" FPGAPinName="V7" Height="6" LocationX="160" LocationY="272" Width="6"/>
-<LED ActivityLevel="Active low" FPGAPinDriveStrength="Default" FPGAPinIOStandard="Default" FPGAPinName="U2" Height="8" LocationX="273" LocationY="234" Width="23"/>
-<LED ActivityLevel="Active low" FPGAPinDriveStrength="Default" FPGAPinIOStandard="Default" FPGAPinName="U4" Height="8" LocationX="225" LocationY="234" Width="23"/>
-<LED ActivityLevel="Active low" FPGAPinDriveStrength="Default" FPGAPinIOStandard="Default" FPGAPinName="V4" Height="8" LocationX="180" LocationY="234" Width="23"/>
-<LED ActivityLevel="Active low" FPGAPinDriveStrength="Default" FPGAPinIOStandard="Default" FPGAPinName="W4" Height="8" LocationX="130" LocationY="234" Width="23"/>
-<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="Default" FPGAPinName="W5" FPGAPinPullBehavior="Float" Height="23" LocationX="321" LocationY="237" Width="133"/>
-<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="Default" FPGAPinName="N18" FPGAPinPullBehavior="Float" Height="8" LocationX="291" LocationY="83" Width="8"/>
-<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="Default" FPGAPinName="L18" FPGAPinPullBehavior="Float" Height="8" LocationX="305" LocationY="83" Width="8"/>
-<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="Default" FPGAPinName="K18" FPGAPinPullBehavior="Float" Height="8" LocationX="318" LocationY="83" Width="8"/>
-<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="Default" FPGAPinName="J18" FPGAPinPullBehavior="Float" Height="8" LocationX="331" LocationY="83" Width="8"/>
-<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="Default" FPGAPinName="J17" FPGAPinPullBehavior="Float" Height="8" LocationX="354" LocationY="83" Width="8"/>
-<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="Default" FPGAPinName="H17" FPGAPinPullBehavior="Float" Height="8" LocationX="368" LocationY="83" Width="8"/>
-<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="Default" FPGAPinName="G17" FPGAPinPullBehavior="Float" Height="8" LocationX="380" LocationY="83" Width="8"/>
-<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="Default" FPGAPinName="D17" FPGAPinPullBehavior="Float" Height="8" LocationX="393" LocationY="83" Width="8"/>
-<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="Default" FPGAPinName="G19" FPGAPinPullBehavior="Float" Height="8" LocationX="420" LocationY="83" Width="8"/>
-<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="Default" FPGAPinName="H19" FPGAPinPullBehavior="Float" Height="8" LocationX="432" LocationY="83" Width="8"/>
-<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="Default" FPGAPinName="J19" FPGAPinPullBehavior="Float" Height="8" LocationX="446" LocationY="83" Width="8"/>
-<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="Default" FPGAPinName="N19" FPGAPinPullBehavior="Float" Height="8" LocationX="459" LocationY="83" Width="8"/>
-<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="Default" FPGAPinName="P19" FPGAPinPullBehavior="Float" Height="8" LocationX="338" LocationY="110" Width="8"/>
-<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="Default" FPGAPinName="R19" FPGAPinPullBehavior="Float" Height="8" LocationX="418" LocationY="110" Width="8"/>
+<Button ActivityLevel="Active high" FPGAPinIOStandard="LVCMOS33" FPGAPinName="V17" FPGAPinPullBehavior="Float" Height="54" LocationX="647" LocationY="323" Width="30"/>
+<Button ActivityLevel="Active high" FPGAPinIOStandard="LVCMOS33" FPGAPinName="V16" FPGAPinPullBehavior="Float" Height="54" LocationX="609" LocationY="323" Width="30"/>
+<Button ActivityLevel="Active high" FPGAPinIOStandard="LVCMOS33" FPGAPinName="W16" FPGAPinPullBehavior="Float" Height="54" LocationX="571" LocationY="323" Width="30"/>
+<Button ActivityLevel="Active high" FPGAPinIOStandard="LVCMOS33" FPGAPinName="W17" FPGAPinPullBehavior="Float" Height="54" LocationX="535" LocationY="323" Width="30"/>
+<Button ActivityLevel="Active high" FPGAPinIOStandard="LVCMOS33" FPGAPinName="W15" FPGAPinPullBehavior="Float" Height="54" LocationX="497" LocationY="323" Width="30"/>
+<Button ActivityLevel="Active high" FPGAPinIOStandard="LVCMOS33" FPGAPinName="V15" FPGAPinPullBehavior="Float" Height="54" LocationX="456" LocationY="323" Width="30"/>
+<Button ActivityLevel="Active high" FPGAPinIOStandard="LVCMOS33" FPGAPinName="W14" FPGAPinPullBehavior="Float" Height="54" LocationX="417" LocationY="323" Width="30"/>
+<Button ActivityLevel="Active high" FPGAPinIOStandard="LVCMOS33" FPGAPinName="W13" FPGAPinPullBehavior="Float" Height="54" LocationX="382" LocationY="323" Width="30"/>
+<Button ActivityLevel="Active high" FPGAPinIOStandard="LVCMOS33" FPGAPinName="V2" FPGAPinPullBehavior="Float" Height="54" LocationX="341" LocationY="323" Width="30"/>
+<Button ActivityLevel="Active high" FPGAPinIOStandard="LVCMOS33" FPGAPinName="T3" FPGAPinPullBehavior="Float" Height="54" LocationX="305" LocationY="323" Width="30"/>
+<Button ActivityLevel="Active high" FPGAPinIOStandard="LVCMOS33" FPGAPinName="T2" FPGAPinPullBehavior="Float" Height="54" LocationX="268" LocationY="323" Width="30"/>
+<Button ActivityLevel="Active high" FPGAPinIOStandard="LVCMOS33" FPGAPinName="R3" FPGAPinPullBehavior="Float" Height="54" LocationX="228" LocationY="323" Width="30"/>
+<Button ActivityLevel="Active high" FPGAPinIOStandard="LVCMOS33" FPGAPinName="W2" FPGAPinPullBehavior="Float" Height="54" LocationX="192" LocationY="323" Width="30"/>
+<Button ActivityLevel="Active high" FPGAPinIOStandard="LVCMOS33" FPGAPinName="U1" FPGAPinPullBehavior="Float" Height="54" LocationX="154" LocationY="323" Width="30"/>
+<Button ActivityLevel="Active high" FPGAPinIOStandard="LVCMOS33" FPGAPinName="T1" FPGAPinPullBehavior="Float" Height="54" LocationX="117" LocationY="323" Width="30"/>
+<Button ActivityLevel="Active high" FPGAPinIOStandard="LVCMOS33" FPGAPinName="R2" FPGAPinPullBehavior="Float" Height="54" LocationX="78" LocationY="323" Width="30"/>
+<LED ActivityLevel="Active high" FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="U16" Height="14" LocationX="649" LocationY="295" Width="14"/>
+<LED ActivityLevel="Active high" FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="E19" Height="14" LocationX="612" LocationY="295" Width="14"/>
+<LED ActivityLevel="Active high" FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="U19" Height="14" LocationX="577" LocationY="295" Width="14"/>
+<LED ActivityLevel="Active high" FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="V19" Height="14" LocationX="538" LocationY="295" Width="14"/>
+<LED ActivityLevel="Active high" FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="W18" Height="14" LocationX="499" LocationY="295" Width="14"/>
+<LED ActivityLevel="Active high" FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="U15" Height="14" LocationX="465" LocationY="295" Width="14"/>
+<LED ActivityLevel="Active high" FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="U14" Height="14" LocationX="425" LocationY="295" Width="14"/>
+<LED ActivityLevel="Active high" FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="V14" Height="14" LocationX="389" LocationY="295" Width="14"/>
+<LED ActivityLevel="Active high" FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="V13" Height="14" LocationX="353" LocationY="295" Width="14"/>
+<LED ActivityLevel="Active high" FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="V3" Height="14" LocationX="315" LocationY="295" Width="14"/>
+<LED ActivityLevel="Active high" FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="W3" Height="14" LocationX="278" LocationY="295" Width="14"/>
+<LED ActivityLevel="Active high" FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="U3" Height="14" LocationX="241" LocationY="295" Width="14"/>
+<LED ActivityLevel="Active high" FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="P3" Height="14" LocationX="203" LocationY="295" Width="14"/>
+<LED ActivityLevel="Active high" FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="N3" Height="14" LocationX="168" LocationY="295" Width="14"/>
+<LED ActivityLevel="Active high" FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="P1" Height="14" LocationX="131" LocationY="295" Width="14"/>
+<LED ActivityLevel="Active high" FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="L1" Height="14" LocationX="92" LocationY="295" Width="14"/>
+<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="J1" FPGAPinPullBehavior="Float" Height="8" LocationX="88" LocationY="162" Width="8"/>
+<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="L2" FPGAPinPullBehavior="Float" Height="8" LocationX="88" LocationY="149" Width="8"/>
+<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="J2" FPGAPinPullBehavior="Float" Height="8" LocationX="88" LocationY="137" Width="8"/>
+<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="G2" FPGAPinPullBehavior="Float" Height="8" LocationX="88" LocationY="126" Width="8"/>
+<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="H1" FPGAPinPullBehavior="Float" Height="8" LocationX="76" LocationY="162" Width="8"/>
+<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="K2" FPGAPinPullBehavior="Float" Height="8" LocationX="76" LocationY="149" Width="8"/>
+<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="H2" FPGAPinPullBehavior="Float" Height="8" LocationX="76" LocationY="137" Width="8"/>
+<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="G3" FPGAPinPullBehavior="Float" Height="8" LocationX="76" LocationY="126" Width="8"/>
+<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="J3" FPGAPinPullBehavior="Float" Height="8" LocationX="88" LocationY="275" Width="8"/>
+<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="L3" FPGAPinPullBehavior="Float" Height="8" LocationX="88" LocationY="262" Width="8"/>
+<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="M2" FPGAPinPullBehavior="Float" Height="8" LocationX="88" LocationY="250" Width="8"/>
+<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="N2" FPGAPinPullBehavior="Float" Height="8" LocationX="88" LocationY="239" Width="8"/>
+<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="K3" FPGAPinPullBehavior="Float" Height="8" LocationX="76" LocationY="275" Width="8"/>
+<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="M3" FPGAPinPullBehavior="Float" Height="8" LocationX="76" LocationY="262" Width="8"/>
+<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="M1" FPGAPinPullBehavior="Float" Height="8" LocationX="76" LocationY="250" Width="8"/>
+<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="N1" FPGAPinPullBehavior="Float" Height="8" LocationX="76" LocationY="239" Width="8"/>
+<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="A14" FPGAPinPullBehavior="Float" Height="8" LocationX="657" LocationY="99" Width="8"/>
+<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="A16" FPGAPinPullBehavior="Float" Height="8" LocationX="657" LocationY="112" Width="8"/>
+<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="B15" FPGAPinPullBehavior="Float" Height="8" LocationX="657" LocationY="124" Width="8"/>
+<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="B16" FPGAPinPullBehavior="Float" Height="8" LocationX="657" LocationY="136" Width="8"/>
+<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="A15" FPGAPinPullBehavior="Float" Height="8" LocationX="670" LocationY="99" Width="8"/>
+<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="A17" FPGAPinPullBehavior="Float" Height="8" LocationX="670" LocationY="112" Width="8"/>
+<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="C15" FPGAPinPullBehavior="Float" Height="8" LocationX="670" LocationY="124" Width="8"/>
+<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="C16" FPGAPinPullBehavior="Float" Height="8" LocationX="670" LocationY="136" Width="8"/>
+<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="K17" FPGAPinPullBehavior="Float" Height="8" LocationX="657" LocationY="212" Width="8"/>
+<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="M18" FPGAPinPullBehavior="Float" Height="8" LocationX="657" LocationY="225" Width="8"/>
+<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="N17" FPGAPinPullBehavior="Float" Height="8" LocationX="657" LocationY="237" Width="8"/>
+<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="P18" FPGAPinPullBehavior="Float" Height="8" LocationX="657" LocationY="249" Width="8"/>
+<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="L17" FPGAPinPullBehavior="Float" Height="8" LocationX="670" LocationY="212" Width="8"/>
+<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="M19" FPGAPinPullBehavior="Float" Height="8" LocationX="670" LocationY="225" Width="8"/>
+<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="P17" FPGAPinPullBehavior="Float" Height="8" LocationX="670" LocationY="237" Width="8"/>
+<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="R18" FPGAPinPullBehavior="Float" Height="8" LocationX="670" LocationY="249" Width="8"/>
+<Button ActivityLevel="Active high" FPGAPinIOStandard="LVCMOS33" FPGAPinName="T18" FPGAPinPullBehavior="Float" Height="14" LocationX="536" LocationY="203" Width="14"/>
+<Button ActivityLevel="Active high" FPGAPinIOStandard="LVCMOS33" FPGAPinName="T17" FPGAPinPullBehavior="Float" Height="14" LocationX="582" LocationY="238" Width="14"/>
+<Button ActivityLevel="Active high" FPGAPinIOStandard="LVCMOS33" FPGAPinName="U17" FPGAPinPullBehavior="Float" Height="14" LocationX="536" LocationY="272" Width="14"/>
+<Button ActivityLevel="Active high" FPGAPinIOStandard="LVCMOS33" FPGAPinName="W19" FPGAPinPullBehavior="Float" Height="14" LocationX="487" LocationY="236" Width="14"/>
+<Button ActivityLevel="Active high" FPGAPinIOStandard="LVCMOS33" FPGAPinName="U18" FPGAPinPullBehavior="Float" Height="14" LocationX="536" LocationY="235" Width="14"/>
+<LED ActivityLevel="Active low" FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="W7" Height="5" LocationX="136" LocationY="245" Width="17"/>
+<LED ActivityLevel="Active low" FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="W6" Height="12" LocationX="154" LocationY="248" Width="5"/>
+<LED ActivityLevel="Active low" FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="U8" Height="12" LocationX="154" LocationY="262" Width="5"/>
+<LED ActivityLevel="Active low" FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="V8" Height="5" LocationX="136" LocationY="274" Width="17"/>
+<LED ActivityLevel="Active low" FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="U5" Height="12" LocationX="130" LocationY="263" Width="5"/>
+<LED ActivityLevel="Active low" FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="V5" Height="12" LocationX="130" LocationY="249" Width="5"/>
+<LED ActivityLevel="Active low" FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="U7" Height="5" LocationX="138" LocationY="258" Width="14"/>
+<LED ActivityLevel="Active low" FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="V7" Height="6" LocationX="160" LocationY="272" Width="6"/>
+<LED ActivityLevel="Active low" FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="U2" Height="8" LocationX="273" LocationY="234" Width="23"/>
+<LED ActivityLevel="Active low" FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="U4" Height="8" LocationX="225" LocationY="234" Width="23"/>
+<LED ActivityLevel="Active low" FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="V4" Height="8" LocationX="180" LocationY="234" Width="23"/>
+<LED ActivityLevel="Active low" FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="W4" Height="8" LocationX="130" LocationY="234" Width="23"/>
+<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="W5" FPGAPinPullBehavior="Float" Height="23" LocationX="321" LocationY="237" Width="133"/>
+<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="N18" FPGAPinPullBehavior="Float" Height="8" LocationX="291" LocationY="83" Width="8"/>
+<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="L18" FPGAPinPullBehavior="Float" Height="8" LocationX="305" LocationY="83" Width="8"/>
+<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="K18" FPGAPinPullBehavior="Float" Height="8" LocationX="318" LocationY="83" Width="8"/>
+<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="J18" FPGAPinPullBehavior="Float" Height="8" LocationX="331" LocationY="83" Width="8"/>
+<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="J17" FPGAPinPullBehavior="Float" Height="8" LocationX="354" LocationY="83" Width="8"/>
+<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="H17" FPGAPinPullBehavior="Float" Height="8" LocationX="368" LocationY="83" Width="8"/>
+<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="G17" FPGAPinPullBehavior="Float" Height="8" LocationX="380" LocationY="83" Width="8"/>
+<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="D17" FPGAPinPullBehavior="Float" Height="8" LocationX="393" LocationY="83" Width="8"/>
+<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="G19" FPGAPinPullBehavior="Float" Height="8" LocationX="420" LocationY="83" Width="8"/>
+<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="H19" FPGAPinPullBehavior="Float" Height="8" LocationX="432" LocationY="83" Width="8"/>
+<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="J19" FPGAPinPullBehavior="Float" Height="8" LocationX="446" LocationY="83" Width="8"/>
+<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="N19" FPGAPinPullBehavior="Float" Height="8" LocationX="459" LocationY="83" Width="8"/>
+<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="P19" FPGAPinPullBehavior="Float" Height="8" LocationX="338" LocationY="110" Width="8"/>
+<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="R19" FPGAPinPullBehavior="Float" Height="8" LocationX="418" LocationY="110" Width="8"/>
 </IOComponents>
 <BoardPicture>
 <!--This section hold the board picture-->
