@@ -91,7 +91,7 @@ public class LocaleManager {
 			if (s != null) {
 				if (ret == null)
 					ret = new HashMap<Character, String>();
-				ret.put(new Character(c), s);
+				ret.put(Character.valueOf(c), s);
 			}
 		}
 		return ret;

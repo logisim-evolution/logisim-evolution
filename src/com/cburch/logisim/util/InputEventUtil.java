@@ -30,7 +30,6 @@
 
 package com.cburch.logisim.util;
 
-import java.awt.Event;
 import java.awt.event.InputEvent;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -117,13 +116,13 @@ public class InputEventUtil {
 
 	public static String toKeyDisplayString(int mods) {
 		ArrayList<String> arr = new ArrayList<String>();
-		if ((mods & Event.META_MASK) != 0)
+		if ((mods & InputEvent.META_DOWN_MASK) != 0)
 			arr.add(Strings.get("metaMod"));
-		if ((mods & Event.CTRL_MASK) != 0)
+		if ((mods & InputEvent.CTRL_DOWN_MASK) != 0)
 			arr.add(Strings.get("ctrlMod"));
-		if ((mods & Event.ALT_MASK) != 0)
+		if ((mods & InputEvent.ALT_DOWN_MASK) != 0)
 			arr.add(Strings.get("altMod"));
-		if ((mods & Event.SHIFT_MASK) != 0)
+		if ((mods & InputEvent.SHIFT_DOWN_MASK) != 0)
 			arr.add(Strings.get("shiftMod"));
 
 		Iterator<String> it = arr.iterator();

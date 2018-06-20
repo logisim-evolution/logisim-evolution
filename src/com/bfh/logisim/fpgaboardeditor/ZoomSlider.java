@@ -27,13 +27,13 @@ public class ZoomSlider extends JSlider {
 		 Hashtable<Integer, JLabel> labelTable = new Hashtable<Integer, JLabel>();
 		 label = new JLabel("1.0x");
 		 label.setFont(AppPreferences.getScaledFont(label.getFont()));
-		 labelTable.put(new Integer(100), label);
+		 labelTable.put(Integer.valueOf(100), label);
 		 label = new JLabel("1.5x");
 		 label.setFont(AppPreferences.getScaledFont(label.getFont()));
-		 labelTable.put(new Integer(150), label);
+		 labelTable.put(Integer.valueOf(150), label);
 		 label = new JLabel("2.0x");
 		 label.setFont(AppPreferences.getScaledFont(label.getFont()));
-		 labelTable.put(new Integer(200), label);
+		 labelTable.put(Integer.valueOf(200), label);
 		 setLabelTable(labelTable);
 		 setPaintLabels(true);
 	 }
