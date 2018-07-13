@@ -73,7 +73,11 @@ public class Main {
 					Writer result = new StringWriter();
 					PrintWriter printWriter = new PrintWriter(result);
 					e.printStackTrace(printWriter);
-					JOptionPane.showMessageDialog(null, result.toString());
+					if (GraphicsEnvironment.isHeadless()) {
+						System.out.println(result.toString());
+					} else {
+						JOptionPane.showMessageDialog(null, result.toString());
+					}
 					System.exit(-1);
 				}
 			}
