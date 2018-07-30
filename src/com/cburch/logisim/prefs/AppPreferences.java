@@ -33,6 +33,7 @@ package com.cburch.logisim.prefs;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Font;
+import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.beans.PropertyChangeListener;
@@ -528,8 +529,8 @@ public class AppPreferences {
 	public static final PrefMonitor<Boolean> NAMED_CIRCUIT_BOXES = create(new PrefMonitorBoolean(
 			"namedBoxes", true));
 	public static final PrefMonitor<Double> SCALE_FACTOR = create(new PrefMonitorDouble(
-			"Scale", (Toolkit.getDefaultToolkit().getScreenSize().getHeight()/1000) < 1.0 ? 1.0 :
-				Toolkit.getDefaultToolkit().getScreenSize().getHeight()/1000));
+			"Scale", (((!GraphicsEnvironment.isHeadless()) ? Toolkit.getDefaultToolkit().getScreenSize().getHeight() : 0)/1000) < 1.0 ? 1.0 :
+				((!GraphicsEnvironment.isHeadless()) ? Toolkit.getDefaultToolkit().getScreenSize().getHeight() : 0)/1000));
 	
 	public static final PrefMonitor<String> ADD_AFTER = create(new PrefMonitorStringOpts(
 			"afterAdd", new String[] { ADD_AFTER_EDIT, ADD_AFTER_UNCHANGED },
@@ -605,10 +606,10 @@ public class AppPreferences {
 			"windowState", JFrame.NORMAL));
 
 	public static final PrefMonitor<Integer> WINDOW_WIDTH = create(new PrefMonitorInt(
-			"windowWidth", Toolkit.getDefaultToolkit().getScreenSize().width/2));
+			"windowWidth", ((!GraphicsEnvironment.isHeadless()) ? Toolkit.getDefaultToolkit().getScreenSize().width : 0)/2));
 
 	public static final PrefMonitor<Integer> WINDOW_HEIGHT = create(new PrefMonitorInt(
-			"windowHeight", Toolkit.getDefaultToolkit().getScreenSize().height));
+			"windowHeight", ((!GraphicsEnvironment.isHeadless()) ? Toolkit.getDefaultToolkit().getScreenSize().height : 0)));
 
 	public static final PrefMonitor<String> WINDOW_LOCATION = create(new PrefMonitorString(
 			"windowLocation", "0,0"));
