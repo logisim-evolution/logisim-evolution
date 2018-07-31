@@ -36,14 +36,18 @@ import java.awt.Container;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Insets;
 import java.awt.LayoutManager;
+import java.awt.RenderingHints;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
 import javax.swing.JComponent;
 import javax.swing.JPanel;
+
+import com.cburch.logisim.prefs.AppPreferences;
 
 public class HorizontalSplitPane extends JPanel {
 	abstract static class Dragbar extends JComponent implements MouseListener,
@@ -99,6 +103,11 @@ public class HorizontalSplitPane extends JPanel {
 
 		@Override
 		public void paintComponent(Graphics g) {
+			if (AppPreferences.AntiAliassing.getBoolean()) {
+				Graphics2D g2 = (Graphics2D) g;
+				g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+				g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+			}
 			if (dragging) {
 				g.setColor(DRAG_COLOR);
 				g.fillRect(0, 0, getWidth(), getHeight());

@@ -566,6 +566,7 @@ public class AppPreferences {
 	public static final PrefMonitor<String> GRAPHICS_ACCELERATION = create(new PrefMonitorStringOpts(
 			"graphicsAcceleration", new String[] { ACCEL_DEFAULT, ACCEL_NONE,
 					ACCEL_OPENGL, ACCEL_D3D }, ACCEL_DEFAULT));
+	public static final PrefMonitor<Boolean> AntiAliassing = create(new PrefMonitorBoolean("AntiAliassing",true));
 
 	// Third party softwares preferences
 	public static final PrefMonitor<String> QUESTA_PATH = create(new PrefMonitorString(

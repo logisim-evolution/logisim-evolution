@@ -249,14 +249,11 @@ class KarnaughMapPanel extends JPanel implements TruthTablePanel {
 
 	@Override
 	public void paintComponent(Graphics g) {
-		/* Anti-aliasing changes from https://github.com/hausen/logisim-evolution */
-		Graphics2D g2d = (Graphics2D)g;
-		g2d.setRenderingHint(
-				RenderingHints.KEY_TEXT_ANTIALIASING,
-				RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-		g2d.setRenderingHint(
-				RenderingHints.KEY_ANTIALIASING,
-				RenderingHints.VALUE_ANTIALIAS_ON);
+		if (AppPreferences.AntiAliassing.getBoolean()) {
+			Graphics2D g2 = (Graphics2D) g;
+			g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		}
 		
 		super.paintComponent(g);
 		

@@ -47,6 +47,8 @@ class LayoutOptions extends OptionsPanel {
 		super(window);
 
 		checks = new PrefBoolean[] {
+				new PrefBoolean(AppPreferences.AntiAliassing,
+						Strings.getter("UseAntiAliassing")),
 				new PrefBoolean(AppPreferences.PRINTER_VIEW,
 						Strings.getter("layoutPrinterView")),
 				new PrefBoolean(AppPreferences.ATTRIBUTE_HALO,

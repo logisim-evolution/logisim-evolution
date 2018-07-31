@@ -42,6 +42,7 @@ import javax.swing.JPopupMenu;
 import com.cburch.draw.model.CanvasModel;
 import com.cburch.draw.model.CanvasObject;
 import com.cburch.draw.undo.Action;
+import com.cburch.logisim.prefs.AppPreferences;
 
 public class Canvas extends JComponent {
 	private static final long serialVersionUID = 1L;
@@ -85,14 +86,15 @@ public class Canvas extends JComponent {
 	}
 
 	protected void paintBackground(Graphics g) {
-		/* Anti-aliasing changes from https://github.com/hausen/logisim-evolution */
-		Graphics2D g2 = (Graphics2D)g;
-		g2.setRenderingHint(
+		if (AppPreferences.AntiAliassing.getBoolean()) {
+			Graphics2D g2 = (Graphics2D)g;
+			g2.setRenderingHint(
 				RenderingHints.KEY_TEXT_ANTIALIASING,
 				RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-		g2.setRenderingHint(
+			g2.setRenderingHint(
 				RenderingHints.KEY_ANTIALIASING,
 				RenderingHints.VALUE_ANTIALIAS_ON);
+		}
 		
 		g.clearRect(0, 0, getWidth(), getHeight());
 	}

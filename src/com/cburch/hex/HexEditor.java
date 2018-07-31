@@ -35,11 +35,15 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.awt.RenderingHints;
 
 import javax.swing.JComponent;
 import javax.swing.Scrollable;
 import javax.swing.SwingConstants;
+
+import com.cburch.logisim.prefs.AppPreferences;
 
 public class HexEditor extends JComponent implements Scrollable {
 	private class Listener implements HexModelListener {
@@ -161,6 +165,11 @@ public class HexEditor extends JComponent implements Scrollable {
 
 	@Override
 	protected void paintComponent(Graphics g) {
+		if (AppPreferences.AntiAliassing.getBoolean()) {
+			Graphics2D g2 = (Graphics2D) g;
+			g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		}
 		measures.ensureComputed(g);
 
 		Rectangle clip = g.getClipBounds();

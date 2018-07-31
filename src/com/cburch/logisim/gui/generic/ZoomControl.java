@@ -34,16 +34,23 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 import javax.swing.AbstractSpinnerModel;
+import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 
+import com.cburch.logisim.data.Bounds;
+import com.cburch.logisim.gui.main.Canvas;
 import com.cburch.logisim.prefs.AppPreferences;
 
 public class ZoomControl extends JPanel {
@@ -82,6 +89,11 @@ public class ZoomControl extends JPanel {
 
 		@Override
 		protected void paintComponent(Graphics g) {
+			if (AppPreferences.AntiAliassing.getBoolean()) {
+				Graphics2D g2 = (Graphics2D) g;
+				g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+				g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+			}
 			int width = getWidth();
 			int height = getHeight();
 			g.setColor(state ? Color.black : getBackground().darker());
@@ -108,7 +120,7 @@ public class ZoomControl extends JPanel {
 		}
 	}
 
-	private class SpinnerModel extends AbstractSpinnerModel implements
+	public class SpinnerModel extends AbstractSpinnerModel implements
 			PropertyChangeListener {
 		private static final long serialVersionUID = 1L;
 
@@ -167,26 +179,115 @@ public class ZoomControl extends JPanel {
 			}
 		}
 	}
+	
+	public class AutoZoomButton extends JButton implements ActionListener {
+        private ZoomModel MyZoom;
+        private Canvas MyCanvas;
+		
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+		
+		public AutoZoomButton(ZoomModel model, Canvas canvas) {
+			MyZoom = model;
+			MyCanvas = canvas;
+			super.setText("Auto");
+			addActionListener(this);
+		}
+		
+		public void SetZoomModel(ZoomModel model) {
+			MyZoom = model;
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if (MyZoom != null) {
+				Graphics g = getGraphics();
+				Bounds bounds;
+				if (g != null)
+					bounds = MyCanvas.getProject().getCurrentCircuit().getBounds(getGraphics());
+				else
+					bounds = MyCanvas.getProject().getCurrentCircuit().getBounds();
+				if (bounds.getHeight() == 0 || bounds.getWidth() == 0) {
+					return;
+				}
+				CanvasPane canvasPane = MyCanvas.getCanvasPane();
+				if (canvasPane == null)
+					return;
+				// the white space around
+				byte padding = 50;
+				// set autozoom
+				double ZoomFactor = MyZoom.getZoomFactor();
+				double height = (bounds.getHeight() + 2 * padding) * ZoomFactor;
+				double width = (bounds.getWidth() + 2 * padding) * ZoomFactor;
+				double autozoom = ZoomFactor;
+				if (canvasPane.getViewport().getSize().getWidth() / width < canvasPane.getViewport().getSize().getHeight()
+						/ height) {
+					autozoom *= canvasPane.getViewport().getSize().getWidth() / width;
+				} else
+					autozoom *= canvasPane.getViewport().getSize().getHeight() / height;
+				if (Math.abs(autozoom - ZoomFactor) >= 0.01)
+					MyZoom.setZoomFactor(autozoom);
+			}
+		}
+		
+	}
+
+	public class ResetZoomButton extends JButton implements ActionListener {
+        private ZoomModel MyZoom;
+		
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+		
+		public ResetZoomButton(ZoomModel model) {
+			MyZoom = model;
+			super.setText("100%");
+			addActionListener(this);
+		}
+		
+		public void SetZoomModel(ZoomModel model) {
+			MyZoom = model;
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if (MyZoom != null) {
+				MyZoom.setZoomFactor(1.0);
+			}
+		}
+		
+	}
 
 	private static final long serialVersionUID = 1L;
 
 	private ZoomModel model;
 	private JSpinner spinner;
-	private SpinnerModel spinnerModel;
+	public SpinnerModel spinnerModel;
+	public AutoZoomButton ZoomButton;
+	public ResetZoomButton ResetButton;
 	private GridIcon grid;
 
-	public ZoomControl(ZoomModel model) {
+	public ZoomControl(ZoomModel model, Canvas canvas) {
 		super(new BorderLayout());
 		this.model = model;
 
 		spinnerModel = new SpinnerModel();
 		spinner = new JSpinner();
 		spinner.setModel(spinnerModel);
-		this.add(spinner, BorderLayout.CENTER);
+		this.add(spinner, BorderLayout.SOUTH);
 
 		grid = new GridIcon();
 		this.add(grid, BorderLayout.EAST);
 		grid.update();
+		
+		ZoomButton = new AutoZoomButton(model,canvas); 
+		this.add(ZoomButton,BorderLayout.WEST);
+		
+		ResetButton = new ResetZoomButton(model);
+		this.add(ResetButton,BorderLayout.CENTER);
 
 		model.addPropertyChangeListener(ZoomModel.SHOW_GRID, grid);
 		model.addPropertyChangeListener(ZoomModel.ZOOM, spinnerModel);
@@ -204,6 +305,8 @@ public class ZoomControl extends JPanel {
 			spinnerModel = new SpinnerModel();
 			spinner.setModel(spinnerModel);
 			grid.update();
+			ZoomButton.SetZoomModel(value);
+			ResetButton.SetZoomModel(value);
 			if (value != null) {
 				value.addPropertyChangeListener(ZoomModel.SHOW_GRID, grid);
 				value.addPropertyChangeListener(ZoomModel.ZOOM, spinnerModel);

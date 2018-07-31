@@ -33,6 +33,8 @@ package com.cburch.draw.gui;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -44,6 +46,7 @@ import com.cburch.draw.canvas.Canvas;
 import com.cburch.draw.canvas.CanvasTool;
 import com.cburch.draw.tools.AbstractTool;
 import com.cburch.draw.tools.DrawingAttributeSet;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.GraphicsUtil;
 
 class Toolbar extends JComponent {
@@ -150,6 +153,11 @@ class Toolbar extends JComponent {
 
 	@Override
 	public void paintComponent(Graphics g) {
+		if (AppPreferences.AntiAliassing.getBoolean()) {
+			Graphics2D g2 = (Graphics2D) g;
+			g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		}
 		g.clearRect(0, 0, getWidth(), getHeight());
 		CanvasTool current = canvas.getTool();
 		for (int i = 0; i < tools.length; i++) {

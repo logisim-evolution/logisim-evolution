@@ -36,6 +36,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
+import java.awt.Point;
 import java.awt.Rectangle;
 
 import javax.swing.Icon;
@@ -144,11 +145,14 @@ public class PokeTool extends Tool {
 
 	private static Cursor cursor = Cursor
 			.getPredefinedCursor(Cursor.HAND_CURSOR);
+	private static final Cursor move = Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR);
+
 
 	private Listener listener;
 	private Circuit pokedCircuit;
 	private Component pokedComponent;
 	private Caret pokeCaret;
+	private Point OldPosition;
 
 	public PokeTool() {
 		this.listener = new Listener();
@@ -225,6 +229,17 @@ public class PokeTool extends Tool {
 		if (pokeCaret != null) {
 			pokeCaret.mouseDragged(e);
 			canvas.getProject().repaintCanvas();
+		} else {
+			// move scrollpane dragging hand
+			Point m = canvas.getMousePosition();
+			if (OldPosition == null || m == null) {
+				OldPosition = m;
+				return;
+			} 
+			int x = (int) (OldPosition.getX()-m.getX());
+			int y = (int) (OldPosition.getY() - m.getY());
+			canvas.setCursor(move);
+			canvas.setScrollBar(canvas.getHorizzontalScrollBar() + x, canvas.getVerticalScrollBar() + y);
 		}
 	}
 
@@ -275,6 +290,7 @@ public class PokeTool extends Tool {
 
 	@Override
 	public void mouseReleased(Canvas canvas, Graphics g, MouseEvent e) {
+		OldPosition = null;
 		if (pokeCaret != null) {
 			pokeCaret.mouseReleased(e);
 			canvas.getProject().repaintCanvas();

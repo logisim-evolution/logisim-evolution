@@ -35,7 +35,9 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.awt.RenderingHints;
 import java.awt.event.MouseEvent;
 
 import javax.swing.JScrollBar;
@@ -43,6 +45,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import com.cburch.logisim.data.Value;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.GraphicsUtil;
 
 class TablePanel extends LogPanel {
@@ -233,6 +236,11 @@ class TablePanel extends LogPanel {
 
 	@Override
 	public void paintComponent(Graphics g) {
+		if (AppPreferences.AntiAliassing.getBoolean()) {
+			Graphics2D g2 = (Graphics2D) g;
+			g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		}
 		super.paintComponent(g);
 
 		Dimension sz = getSize();

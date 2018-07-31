@@ -51,6 +51,19 @@ public class GraphicsUtil {
 		g.drawPolyline(xs, ys, 3);
 	}
 
+	static public void drawArrow2(Graphics g, int x0, int y0, int x1, int y1, int x2, int y2) {
+		int[] xs = { x0, x1, x2 };
+		int[] ys = { y0, y1, y2 };
+		GraphicsUtil.switchToWidth(g, 7);
+		g.drawPolyline(xs, ys, 3);
+		Color oldColor = g.getColor();
+		g.setColor(Color.WHITE);
+		GraphicsUtil.switchToWidth(g, 3);
+		g.drawPolyline(xs, ys, 3);
+		g.setColor(oldColor);
+		GraphicsUtil.switchToWidth(g, 1);
+	}
+
 	static public void drawCenteredArc(Graphics g, int x, int y, int r,
 			int start, int dist) {
 		g.drawArc(x - r, y - r, 2 * r, 2 * r, start, dist);

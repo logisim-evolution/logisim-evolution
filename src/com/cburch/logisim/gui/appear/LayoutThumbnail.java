@@ -34,6 +34,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -46,6 +47,7 @@ import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.comp.ComponentDrawContext;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.instance.Instance;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.std.wiring.Pin;
 import com.cburch.logisim.util.GraphicsUtil;
 
@@ -66,6 +68,11 @@ public class LayoutThumbnail extends JComponent {
 
 	@Override
 	protected void paintComponent(Graphics g) {
+		if (AppPreferences.AntiAliassing.getBoolean()) {
+			Graphics2D g2 = (Graphics2D) g;
+			g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		}
 		if (circuitState != null) {
 			Circuit circuit = circuitState.getCircuit();
 			Bounds bds = circuit.getBounds(g);

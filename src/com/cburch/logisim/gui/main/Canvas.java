@@ -38,12 +38,15 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
+import java.awt.event.AdjustmentEvent;
+import java.awt.event.AdjustmentListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+import java.awt.geom.Point2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.List;
@@ -100,7 +103,7 @@ import com.cburch.logisim.util.LocaleManager;
 import com.cburch.logisim.util.StringGetter;
 
 public class Canvas extends JPanel implements LocaleListener,
-		CanvasPaneContents {
+		CanvasPaneContents,AdjustmentListener {
 
 	private class MyListener implements MouseInputListener, KeyListener,
 			PopupMenuListener, PropertyChangeListener, MouseWheelListener {
@@ -205,29 +208,62 @@ public class Canvas extends JPanel implements LocaleListener,
 		@Override
 		public void mousePressed(MouseEvent e) {
 			viewport.setErrorMessage(null, null);
-			proj.setStartupScreen(false);
-			Canvas.this.requestFocus();
-			drag_tool = getToolFor(e);
-			if (drag_tool != null) {
-				drag_tool.mousePressed(Canvas.this, getGraphics(), e);
+			if (proj.isStartupScreen()) {
+				Graphics g = getGraphics();
+				Bounds bounds;
+				if (g != null)
+					bounds = proj.getCurrentCircuit().getBounds(getGraphics());
+				else
+					bounds = proj.getCurrentCircuit().getBounds();
+				// set the project as dirty only if it contains something
+				if (bounds.getHeight() != 0 || bounds.getWidth() != 0)
+					proj.setStartupScreen(false);
 			}
-
-			completeAction();
+			if (e.getButton() == MouseEvent.BUTTON1 && viewport.zoomButtonVisible
+					&& AutoZoomButtonClicked(viewport.getSize(), e.getX() * getZoomFactor() - getHorizzontalScrollBar(),
+							e.getY() * getZoomFactor() - getVerticalScrollBar())) {
+				viewport.zoomButtonColor = defaultzoomButtonColor.darker();
+				viewport.repaint();
+			} else {
+				Canvas.this.requestFocus();
+				drag_tool = getToolFor(e);
+				if (drag_tool != null) {
+					drag_tool.mousePressed(Canvas.this, getGraphics(), e);
+					if (e.getButton() != MouseEvent.BUTTON1) {
+						temp_tool = proj.getTool();
+						proj.setTool(drag_tool);
+					}
+				}
+				completeAction();
+			}
 		}
 
 		@Override
 		public void mouseReleased(MouseEvent e) {
+			if ((e.getButton() == MouseEvent.BUTTON1 && viewport.zoomButtonVisible
+					&& AutoZoomButtonClicked(viewport.getSize(), e.getX() * getZoomFactor() - getHorizzontalScrollBar(),
+							e.getY() * getZoomFactor() - getVerticalScrollBar())
+					&& viewport.zoomButtonColor != defaultzoomButtonColor)
+					|| e.getButton() == MouseEvent.BUTTON2 && e.getClickCount() == 2) {
+				autoZoomCenter();
+				setCursor(proj.getTool().getCursor());
+			}
 			if (drag_tool != null) {
 				drag_tool.mouseReleased(Canvas.this, getGraphics(), e);
 				drag_tool = null;
 			}
-
-			Tool tool = proj.getTool();
-			if (tool != null) {
-				tool.mouseMoved(Canvas.this, getGraphics(), e);
+			if (temp_tool != null) {
+				proj.setTool(temp_tool);
+				temp_tool = null;
 			}
-
+			Tool tool = proj.getTool();
+			if (tool != null && !(tool instanceof EditTool)) {
+				tool.mouseMoved(Canvas.this, getGraphics(), e);
+				setCursor(tool.getCursor());
+			}
 			completeAction();
+
+			viewport.zoomButtonColor = defaultzoomButtonColor;
 		}
 
 		@Override
@@ -273,7 +309,8 @@ public class Canvas extends JPanel implements LocaleListener,
 		@Override
 		public void propertyChange(PropertyChangeEvent event) {
 			if (AppPreferences.GATE_SHAPE.isSource(event)
-					|| AppPreferences.SHOW_TICK_RATE.isSource(event)) {
+					|| AppPreferences.SHOW_TICK_RATE.isSource(event) 
+					|| AppPreferences.AntiAliassing.isSource(event)) {
 				paintThread.requestRepaint();
 			} else if (AppPreferences.COMPONENT_TIPS.isSource(event)) {
 				boolean showTips = AppPreferences.COMPONENT_TIPS.getBoolean();
@@ -483,8 +520,21 @@ public class Canvas extends JPanel implements LocaleListener,
 		boolean isNorthwest = false;
 		boolean isSoutheast = false;
 		boolean isSouthwest = false;
+		boolean zoomButtonVisible = false;
+		Color zoomButtonColor = defaultzoomButtonColor;
 
 		MyViewport() {
+		}
+
+		void clearArrows() {
+			isNorth = false;
+			isSouth = false;
+			isWest = false;
+			isEast = false;
+			isNortheast = false;
+			isNorthwest = false;
+			isSoutheast = false;
+			isSouthwest = false;
 		}
 
 		@Override
@@ -511,6 +561,11 @@ public class Canvas extends JPanel implements LocaleListener,
 			 * fm = g.getFontMetrics(); g.drawString(speedStr, getWidth() - 10 -
 			 * fm.stringWidth(speedStr), getHeight() - 10);
 			 */
+			if (AppPreferences.AntiAliassing.getBoolean()) {
+				Graphics2D g2 = (Graphics2D) g;
+				g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+				g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+			}
 
 			StringGetter message = errorMessage;
 			if (message != null) {
@@ -533,45 +588,37 @@ public class Canvas extends JPanel implements LocaleListener,
 
 			computeViewportContents();
 			Dimension sz = getSize();
-			g.setColor(Value.WIDTH_ERROR_COLOR);
 
 			if (widthMessage != null) {
+				g.setColor(Value.WIDTH_ERROR_COLOR);
 				paintString(g, widthMessage);
-			}
+			} else
+				g.setColor(TICK_RATE_COLOR);
 
-			GraphicsUtil.switchToWidth(g, 3);
-			if (isNorth) {
-				GraphicsUtil.drawArrow(g, sz.width / 2, 20, sz.width / 2, 2,
-						10, 30);
-			}
-			if (isSouth) {
-				GraphicsUtil.drawArrow(g, sz.width / 2, sz.height - 20,
-						sz.width / 2, sz.height - 2, 10, 30);
-			}
-			if (isEast) {
-				GraphicsUtil.drawArrow(g, sz.width - 20, sz.height / 2,
-						sz.width - 2, sz.height / 2, 10, 30);
-			}
-			if (isWest) {
-				GraphicsUtil.drawArrow(g, 20, sz.height / 2, 2, sz.height / 2,
-						10, 30);
-			}
-			if (isNortheast) {
-				GraphicsUtil.drawArrow(g, sz.width - 14, 14, sz.width - 2, 2,
-						10, 30);
-			}
-			if (isNorthwest) {
-				GraphicsUtil.drawArrow(g, 14, 14, 2, 2, 10, 30);
-			}
-			if (isSoutheast) {
-				GraphicsUtil.drawArrow(g, sz.width - 14, sz.height - 14,
-						sz.width - 2, sz.height - 2, 10, 30);
-			}
-			if (isSouthwest) {
-				GraphicsUtil.drawArrow(g, 14, sz.height - 14, 2, sz.height - 2,
-						10, 30);
-			}
-
+			if (isNorth || isSouth || isEast || isWest || isNortheast || isNorthwest || isSoutheast || isSouthwest) {
+				zoomButtonVisible = true;
+				paintAutoZoomButton(g, getSize(), zoomButtonColor);
+				if (isNorth)
+					GraphicsUtil.drawArrow2(g, sz.width / 2 - 20, 15, sz.width / 2, 5, sz.width / 2 + 20, 15);
+				if (isSouth)
+					GraphicsUtil.drawArrow2(g, sz.width / 2 - 20, sz.height - 15, sz.width / 2, sz.height - 5,
+							sz.width / 2 + 20, sz.height - 15);
+				if (isEast)
+					GraphicsUtil.drawArrow2(g, sz.width - 15, sz.height / 2 + 20, sz.width - 5, sz.height / 2,
+							sz.width - 15, sz.height / 2 - 20);
+				if (isWest)
+					GraphicsUtil.drawArrow2(g, 15, sz.height / 2 + 20, 5, sz.height / 2, 15, sz.height / 2 + -20);
+				if (isNortheast)
+					GraphicsUtil.drawArrow2(g, sz.width - 30, 5, sz.width - 5, 5, sz.width - 5, 30);
+				if (isNorthwest)
+					GraphicsUtil.drawArrow2(g, 30, 5, 5, 5, 5, 30);
+				if (isSoutheast)
+					GraphicsUtil.drawArrow2(g, sz.width - 30, sz.height - 5, sz.width - 5, sz.height - 5, sz.width - 5,
+							sz.height - 30);
+				if (isSouthwest)
+					GraphicsUtil.drawArrow2(g, 30, sz.height - 5, 5, sz.height - 5, 5, sz.height - 30);
+			} else
+				zoomButtonVisible = false;
 			if (AppPreferences.SHOW_TICK_RATE.getBoolean()) {
 				String hz = tickCounter.getTickRate();
 				if (hz != null && !hz.equals("")) {
@@ -584,7 +631,6 @@ public class Canvas extends JPanel implements LocaleListener,
 				}
 			}
 
-			GraphicsUtil.switchToWidth(g, 1);
 			g.setColor(Color.BLACK);
 
 		}
@@ -643,16 +689,36 @@ public class Canvas extends JPanel implements LocaleListener,
 
 		void setWidthMessage(String msg) {
 			widthMessage = msg;
-			isNorth = false;
-			isSouth = false;
-			isWest = false;
-			isEast = false;
-			isNortheast = false;
-			isNorthwest = false;
-			isSoutheast = false;
-			isSouthwest = false;
 		}
 
+	}
+
+	public static final byte zoomButtonSize = 52, zoomButtonMargin = 30;
+	public static Color defaultzoomButtonColor = Color.WHITE;
+
+	public static boolean AutoZoomButtonClicked(Dimension sz, double x, double y) {
+		return Point2D.distance(x, y, sz.width - zoomButtonSize / 2 - zoomButtonMargin,
+				sz.height - zoomButtonMargin - zoomButtonSize / 2) <= zoomButtonSize / 2;
+	}
+
+	public static void paintAutoZoomButton(Graphics g, Dimension sz, Color zoomButtonColor) {
+		Color oldcolor = g.getColor();
+		g.setColor(TICK_RATE_COLOR);
+		g.fillOval(sz.width - zoomButtonSize - 33, sz.height - zoomButtonSize - 33, zoomButtonSize + 6,
+				zoomButtonSize + 6);
+		g.setColor(zoomButtonColor);
+		g.fillOval(sz.width - zoomButtonSize - 30, sz.height - zoomButtonSize - 30, zoomButtonSize, zoomButtonSize);
+		g.setColor(Value.UNKNOWN_COLOR);
+		GraphicsUtil.switchToWidth(g, 3);
+		int width = sz.width - zoomButtonMargin;
+		int height = sz.height - zoomButtonMargin;
+		g.drawOval(width - zoomButtonSize * 3 / 4, height - zoomButtonSize * 3 / 4, zoomButtonSize / 2,
+				zoomButtonSize / 2);
+		g.drawLine(width - zoomButtonSize / 4 + 4, height - zoomButtonSize / 2, width - zoomButtonSize * 3 / 4 - 4,
+				height - zoomButtonSize / 2);
+		g.drawLine(width - zoomButtonSize / 2, height - zoomButtonSize / 4 + 4, width - zoomButtonSize / 2,
+				height - zoomButtonSize * 3 / 4 - 4);
+		g.setColor(oldcolor);
 	}
 
 	public static void snapToGrid(MouseEvent e) {
@@ -686,7 +752,6 @@ public class Canvas extends JPanel implements LocaleListener,
 	public static final Color HALO_COLOR = new Color(255, 0, 255);
 	// don't bother to update the size if it hasn't changed more than this
 	static final double SQRT_2 = Math.sqrt(2.0);
-	private static final int BOUNDS_BUFFER = 70;
 	// pixels shown in canvas beyond outermost boundaries
 	private static final int THRESH_SIZE_UPDATE = 10;
 	private static final int BUTTONS_MASK = InputEvent.BUTTON1_DOWN_MASK
@@ -696,7 +761,7 @@ public class Canvas extends JPanel implements LocaleListener,
 	private static final Font TICK_RATE_FONT = new Font("serif", Font.BOLD, 12);
 	// public static BufferedImage image;
 	private Project proj;
-	private Tool drag_tool;
+	private Tool drag_tool,temp_tool;
 	private Selection selection;
 	private MouseMappings mappings;
 	private CanvasPane canvasPane;
@@ -757,6 +822,29 @@ public class Canvas extends JPanel implements LocaleListener,
 		loadOptions(options);
 		paintThread.start();
 	}
+	
+	public CanvasPane getCanvasPane() {
+		return canvasPane;
+	}
+	
+	public void autoZoomCenter() {
+		Graphics g = getGraphics();
+		Bounds bounds;
+		if (g != null)
+			bounds = proj.getCurrentCircuit().getBounds(getGraphics());
+		else
+			bounds = proj.getCurrentCircuit().getBounds();
+		if (bounds.getHeight() == 0 || bounds.getWidth() == 0) {
+			setScrollBar(0, 0);
+			return;
+		}
+		
+		int xpos = (int) (Math.round(bounds.getX() * getZoomFactor()
+				- (canvasPane.getViewport().getSize().getWidth() - bounds.getWidth() * getZoomFactor()) / 2));
+		int ypos = (int) (Math.round(bounds.getY() * getZoomFactor()
+				- (canvasPane.getViewport().getSize().getHeight() - bounds.getHeight() * getZoomFactor()) / 2));
+		setScrollBar(xpos,ypos);
+	}
 
 	public void closeCanvas() {
 		paintThread.requestStop();
@@ -770,9 +858,17 @@ public class Canvas extends JPanel implements LocaleListener,
 	}
 
 	public void computeSize(boolean immediate) {
-		Bounds bounds = proj.getCurrentCircuit().getBounds();
-		int width = bounds.getX() + bounds.getWidth() + BOUNDS_BUFFER;
-		int height = bounds.getY() + bounds.getHeight() + BOUNDS_BUFFER;
+		Graphics g = getGraphics();
+		Bounds bounds;
+		if (g != null)
+			bounds = proj.getCurrentCircuit().getBounds(getGraphics());
+		else
+			bounds = proj.getCurrentCircuit().getBounds();
+		int height = 0, width = 0;
+		if (bounds != null && viewport != null) {
+			width = bounds.getX() + bounds.getWidth() + viewport.getWidth();
+			height = bounds.getY() + bounds.getHeight() + viewport.getHeight();
+		}
 		Dimension dim;
 		if (canvasPane == null) {
 			dim = new Dimension(width, height);
@@ -781,8 +877,7 @@ public class Canvas extends JPanel implements LocaleListener,
 		}
 		if (!immediate) {
 			Bounds old = oldPreferredSize;
-			if (old != null
-					&& Math.abs(old.getWidth() - dim.width) < THRESH_SIZE_UPDATE
+			if (old != null && Math.abs(old.getWidth() - dim.width) < THRESH_SIZE_UPDATE
 					&& Math.abs(old.getHeight() - dim.height) < THRESH_SIZE_UPDATE) {
 				return;
 			}
@@ -814,65 +909,16 @@ public class Canvas extends JPanel implements LocaleListener,
 	}
 
 	private void computeViewportContents() {
-		Set<WidthIncompatibilityData> exceptions = proj.getCurrentCircuit()
-				.getWidthIncompatibilityData();
-		if (exceptions == null || exceptions.isEmpty()) {
+		Set<WidthIncompatibilityData> exceptions = proj.getCurrentCircuit().getWidthIncompatibilityData();
+		if (exceptions == null || exceptions.size() == 0) {
 			viewport.setWidthMessage(null);
 			return;
 		}
-
-		Rectangle viewable = getViewableRect();
-
-		viewport.setWidthMessage(Strings.get("canvasWidthError")
-				+ (exceptions.size() == 1 ? "" : " (" + exceptions.size() + ")"));
+		viewport.setWidthMessage(
+				Strings.get("canvasWidthError") + (exceptions.size() == 1 ? "" : " (" + exceptions.size() + ")"));
 		for (WidthIncompatibilityData ex : exceptions) {
-			// See whether any of the points are on the canvas.
-			boolean isWithin = false;
-			for (int i = 0; i < ex.size(); i++) {
-				Location p = ex.getPoint(i);
-				int x = p.getX();
-				int y = p.getY();
-				if (x >= viewable.x && x < viewable.x + viewable.width
-						&& y >= viewable.y && y < viewable.y + viewable.height) {
-					isWithin = true;
-					break;
-				}
-			}
-
-			// If none are, insert an arrow.
-			if (!isWithin) {
-				Location p = ex.getPoint(0);
-				int x = p.getX();
-				int y = p.getY();
-				boolean isWest = x < viewable.x;
-				boolean isEast = x >= viewable.x + viewable.width;
-				boolean isNorth = y < viewable.y;
-				boolean isSouth = y >= viewable.y + viewable.height;
-
-				if (isNorth) {
-					if (isEast) {
-						viewport.setNortheast(true);
-					} else if (isWest) {
-						viewport.setNorthwest(true);
-					} else {
-						viewport.setNorth(true);
-					}
-				} else if (isSouth) {
-					if (isEast) {
-						viewport.setSoutheast(true);
-					} else if (isWest) {
-						viewport.setSouthwest(true);
-					} else {
-						viewport.setSouth(true);
-					}
-				} else {
-					if (isEast) {
-						viewport.setEast(true);
-					} else if (isWest) {
-						viewport.setWest(true);
-					}
-				}
-			}
+			Location p = ex.getPoint(0);
+			setArrows(p.getX(), p.getY(), p.getX(), p.getY());
 		}
 	}
 
@@ -901,6 +947,14 @@ public class Canvas extends JPanel implements LocaleListener,
 
 	Component getHaloedComponent() {
 		return painter.getHaloedComponent();
+	}
+
+	public int getHorizzontalScrollBar() {
+		return canvasPane.getHorizontalScrollBar().getValue();
+	}
+	
+	public int getVerticalScrollBar() {
+		return canvasPane.getVerticalScrollBar().getValue();
 	}
 
 	@Override
@@ -1010,9 +1064,11 @@ public class Canvas extends JPanel implements LocaleListener,
 		// this);
 		// }
 		// }
-		Graphics2D g2d = (Graphics2D) g;
-		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-				RenderingHints.VALUE_ANTIALIAS_ON);
+		if (AppPreferences.AntiAliassing.getBoolean()) {
+			Graphics2D g2 = (Graphics2D) g;
+			g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		}
 
 		inPaint = true;
 		try {
@@ -1093,6 +1149,73 @@ public class Canvas extends JPanel implements LocaleListener,
 		}
 	}
 
+	public void updateArrows() {
+		Graphics g = getGraphics();
+		Bounds circBds;
+		if (g != null)
+			circBds = proj.getCurrentCircuit().getBounds(getGraphics());
+		else
+			circBds = proj.getCurrentCircuit().getBounds();
+		// no circuit
+		if (circBds == null || circBds.getHeight() == 0 || circBds.getWidth() == 0)
+			return;
+		int x = circBds.getX();
+		int y = circBds.getY();
+		if (x < 0)
+			x = 0;
+		if (y < 0)
+			y = 0;
+		setArrows(x, y, x + circBds.getWidth(), y + circBds.getHeight());
+	}
+
+	public void setArrows(int x0, int y0, int x1, int y1) {
+		viewport.clearArrows();
+		Rectangle viewableBase, viewable;
+		if (canvasPane != null) {
+			viewableBase = canvasPane.getViewport().getViewRect();
+		} else {
+			Graphics g = getGraphics();
+			Bounds bds;
+			if (g != null)
+				bds = proj.getCurrentCircuit().getBounds(getGraphics());
+			else
+				bds = proj.getCurrentCircuit().getBounds();
+			viewableBase = new Rectangle(0, 0, bds.getWidth(), bds.getHeight());
+		}
+		double zoom = getZoomFactor();
+		if (zoom == 1.0) {
+			viewable = viewableBase;
+		} else {
+			viewable = new Rectangle((int) (viewableBase.x / zoom), (int) (viewableBase.y / zoom),
+					(int) (viewableBase.width / zoom), (int) (viewableBase.height / zoom));
+		}
+		boolean isWest = x0 < viewable.x;
+		boolean isEast = x1 >= viewable.x + viewable.width;
+		boolean isNorth = y0 < viewable.y;
+		boolean isSouth = y1 >= viewable.y + viewable.height;
+
+		if (isNorth) {
+			if (isEast)
+				viewport.setNortheast(true);
+			if (isWest)
+				viewport.setNorthwest(true);
+			if (!isWest && !isEast)
+				viewport.setNorth(true);
+		}
+		if (isSouth) {
+			if (isEast)
+				viewport.setSoutheast(true);
+			if (isWest)
+				viewport.setSouthwest(true);
+			if (!isWest && !isEast)
+				viewport.setSouth(true);
+		}
+		if (isEast && !viewport.isSoutheast && !viewport.isNortheast)
+			viewport.setEast(true);
+		if (isWest && !viewport.isSouthwest && !viewport.isNorthwest)
+			viewport.setWest(true);
+	}
+
 	//
 	// CanvasPaneContents methods
 	//
@@ -1100,6 +1223,8 @@ public class Canvas extends JPanel implements LocaleListener,
 	public void setCanvasPane(CanvasPane value) {
 		canvasPane = value;
 		canvasPane.setViewport(viewport);
+		canvasPane.getHorizontalScrollBar().addAdjustmentListener(this);
+		canvasPane.getVerticalScrollBar().addAdjustmentListener(this);
 		viewport.setView(this);
 		setOpaque(false);
 		computeSize(true);
@@ -1119,6 +1244,19 @@ public class Canvas extends JPanel implements LocaleListener,
 
 	public void setHighlightedWires(WireSet value) {
 		painter.setHighlightedWires(value);
+	}
+
+	public void setHorizontalScrollBar(int X) {
+		canvasPane.getHorizontalScrollBar().setValue(X);
+	}
+
+	public void setScrollBar(int X, int Y) {
+		setHorizontalScrollBar(X);
+		setVerticalScrollBar(Y);
+	}
+
+	public void setVerticalScrollBar(int Y) {
+		canvasPane.getVerticalScrollBar().setValue(Y);
 	}
 
 	public void showPopupMenu(JPopupMenu menu, int x, int y) {
@@ -1157,4 +1295,10 @@ public class Canvas extends JPanel implements LocaleListener,
 		int newy = (int) Math.round(e.getY() / zoom);
 		e.translatePoint(newx - oldx, newy - oldy);
 	}
+
+	@Override
+	public void adjustmentValueChanged(AdjustmentEvent e) {
+		updateArrows();
+	}
+
 }
