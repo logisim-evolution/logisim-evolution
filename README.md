@@ -1,6 +1,6 @@
 logisim-evolution
 =================
-Branch testing : [![Build Status](https://travis-ci.org/reds-heig/logisim-evolution.svg?branch=testing)](https://travis-ci.org/reds-heig/logisim-evolution)
+Branch master : [![Build Status](https://travis-ci.org/reds-heig/logisim-evolution.svg?branch=master)](https://travis-ci.org/reds-heig/logisim-evolution)
 
 Logisim is an educational tool for designing and simulating digital logic circuits.
 It has been originally created by [Dr. Carl Burch](http://www.cburch.com/logisim/) and actively developed until 2011.
