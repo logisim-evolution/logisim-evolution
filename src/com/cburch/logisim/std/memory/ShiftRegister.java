@@ -33,6 +33,7 @@ package com.cburch.logisim.std.memory;
 import java.awt.Color;
 import java.awt.Graphics;
 
+import com.bfh.logisim.designrulecheck.NetlistComponent;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Attributes;
@@ -400,4 +401,13 @@ public class ShiftRegister extends InstanceFactory {
 		}
 	}
 
+	@Override
+	public boolean CheckForGatedClocks(NetlistComponent comp) {
+		return true;
+	}
+	
+	@Override
+	public int ClockPinIndex(NetlistComponent comp) {
+		return CK;
+	}
 }

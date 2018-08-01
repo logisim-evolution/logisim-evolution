@@ -2,12 +2,14 @@ package com.ita.logisim.ttl;
 
 import java.awt.Graphics;
 
+import com.bfh.logisim.designrulecheck.CorrectLabel;
+import com.bfh.logisim.designrulecheck.NetlistComponent;
+import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.instance.InstanceData;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
-import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
 
 public class Ttl74175 extends AbstractTtlGate {
@@ -201,4 +203,28 @@ public class Ttl74175 extends AbstractTtlGate {
 		g.fillOval(x+79, y+18, 2, 2);
 	}
 
+	@Override
+	public boolean CheckForGatedClocks(NetlistComponent comp) {
+		return true;
+	}
+	
+	@Override
+	public int ClockPinIndex(NetlistComponent comp) {
+		return 7;
+	}
+	@Override
+	public String getHDLName(AttributeSet attrs) {
+		StringBuffer CompleteName = new StringBuffer();
+		CompleteName.append(CorrectLabel.getCorrectLabel("TTL"+this.getName())
+				.toUpperCase());
+		return CompleteName.toString();
+	}
+	
+	@Override
+	public boolean HDLSupportedComponent(String HDLIdentifier,
+			AttributeSet attrs) {
+		if (MyHDLGenerator == null)
+			MyHDLGenerator = new Ttl74175HDLGenerator();
+		return MyHDLGenerator.HDLTargetSupported(HDLIdentifier, attrs);
+	}
 }

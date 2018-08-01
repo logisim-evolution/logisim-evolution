@@ -34,6 +34,8 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.MouseEvent;
 
+import com.bfh.logisim.designrulecheck.Netlist;
+import com.bfh.logisim.designrulecheck.NetlistComponent;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.AttributeSet;
@@ -280,5 +282,15 @@ abstract class AbstractFlipFlop extends InstanceFactory {
 
 		state.setPort(n + 1, data.curValue, Memory.DELAY);
 		state.setPort(n + 2, data.curValue.not(), Memory.DELAY);
+	}
+	
+	@Override
+	public boolean CheckForGatedClocks(NetlistComponent comp) {
+		return Netlist.IsFlipFlop(comp.GetComponent().getAttributeSet());
+	}
+	
+	@Override
+	public int ClockPinIndex(NetlistComponent comp) {
+		return getPorts().size() - STD_PORTS;
 	}
 }

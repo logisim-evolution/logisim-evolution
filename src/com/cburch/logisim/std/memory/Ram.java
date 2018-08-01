@@ -43,6 +43,7 @@ import java.util.StringTokenizer;
 import javax.swing.JLabel;
 
 import com.bfh.logisim.designrulecheck.CorrectLabel;
+import com.bfh.logisim.designrulecheck.NetlistComponent;
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeSet;
@@ -846,5 +847,15 @@ public class Ram extends Mem {
 	@Override
 	public boolean RequiresNonZeroLabel() {
 		return true;
+	}
+
+	@Override
+	public boolean CheckForGatedClocks(NetlistComponent comp) {
+		return true;
+	}
+	
+	@Override
+	public int ClockPinIndex(NetlistComponent comp) {
+		return CLK;
 	}
 }

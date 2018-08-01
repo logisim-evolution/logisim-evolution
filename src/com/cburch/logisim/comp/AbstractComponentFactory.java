@@ -36,6 +36,7 @@ import java.awt.Graphics;
 import javax.swing.Icon;
 
 import com.bfh.logisim.designrulecheck.CorrectLabel;
+import com.bfh.logisim.designrulecheck.NetlistComponent;
 import com.bfh.logisim.hdlgenerator.HDLGeneratorFactory;
 import com.bfh.logisim.hdlgenerator.IOComponentInformationContainer;
 import com.cburch.logisim.LogisimVersion;
@@ -121,6 +122,14 @@ public abstract class AbstractComponentFactory implements ComponentFactory {
 
 	public String getHDLTopName(AttributeSet attrs) {
 		return getHDLName(attrs);
+	}
+	
+	public boolean CheckForGatedClocks(NetlistComponent comp) {
+		return false;
+	}
+	
+	public int ClockPinIndex(NetlistComponent comp) {
+		return 0;
 	}
 
 	public IOComponentInformationContainer getIOInformation() {

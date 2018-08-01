@@ -32,6 +32,7 @@ package com.cburch.logisim.comp;
 
 import java.awt.Color;
 
+import com.bfh.logisim.designrulecheck.NetlistComponent;
 import com.bfh.logisim.hdlgenerator.HDLGeneratorFactory;
 import com.bfh.logisim.hdlgenerator.IOComponentInformationContainer;
 import com.cburch.logisim.LogisimVersion;
@@ -109,6 +110,10 @@ public interface ComponentFactory extends AttributeDefaultProvider {
 			AttributeSet attrs);
 
 	public boolean isAllDefaultValues(AttributeSet attrs, LogisimVersion ver);
+	
+	public boolean CheckForGatedClocks(NetlistComponent comp);
+	
+	public int ClockPinIndex(NetlistComponent comp);
 
 	public void paintIcon(ComponentDrawContext context, int x, int y,
 			AttributeSet attrs);

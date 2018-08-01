@@ -34,6 +34,8 @@ import java.awt.Color;
 import java.awt.Graphics;
 
 import com.bfh.logisim.designrulecheck.CorrectLabel;
+import com.bfh.logisim.designrulecheck.Netlist;
+import com.bfh.logisim.designrulecheck.NetlistComponent;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Attributes;
@@ -253,5 +255,15 @@ public class Register extends InstanceFactory {
 		}
 
 		state.setPort(OUT, data.value, DELAY);
+	}
+
+	@Override
+	public boolean CheckForGatedClocks(NetlistComponent comp) {
+		return Netlist.IsFlipFlop(comp.GetComponent().getAttributeSet());
+	}
+	
+	@Override
+	public int ClockPinIndex(NetlistComponent comp) {
+		return CK;
 	}
 }

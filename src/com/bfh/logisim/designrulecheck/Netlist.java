@@ -34,7 +34,6 @@ import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.Rectangle;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -71,15 +70,6 @@ import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.proj.Projects;
 import com.cburch.logisim.std.io.DipSwitch;
 import com.cburch.logisim.std.io.ReptarLocalBus;
-import com.cburch.logisim.std.memory.Counter;
-import com.cburch.logisim.std.memory.DFlipFlop;
-import com.cburch.logisim.std.memory.JKFlipFlop;
-import com.cburch.logisim.std.memory.Ram;
-import com.cburch.logisim.std.memory.Random;
-import com.cburch.logisim.std.memory.Register;
-import com.cburch.logisim.std.memory.SRFlipFlop;
-import com.cburch.logisim.std.memory.ShiftRegister;
-import com.cburch.logisim.std.memory.TFlipFlop;
 import com.cburch.logisim.std.wiring.Clock;
 import com.cburch.logisim.std.wiring.Pin;
 import com.cburch.logisim.std.wiring.Probe;
@@ -767,7 +757,7 @@ public class Netlist implements CircuitListener {
 				/* Here we are going to mark the bitwidths on the nets */
 				int width = end.getWidth().getWidth();
 				Location loc = end.getLocation();
-				Collection<Component> component_verify = MyCircuit.getAllContaining(loc);
+				//Collection<Component> component_verify = MyCircuit.getAllContaining(loc);
 				for (Net ThisNet : MyNets) {
 					if (ThisNet.contains(loc)) {
 						if (!ThisNet.setWidth(width)){
@@ -2496,50 +2486,12 @@ public class Netlist implements CircuitListener {
 		List<Set<NetlistComponent>> NonPinGatedComponents = new ArrayList<Set<NetlistComponent>>();
 		for (NetlistComponent comp : MyComponents) {
 			ComponentFactory fact = comp.GetComponent().getFactory();
-			if (fact instanceof DFlipFlop ||
-					fact instanceof JKFlipFlop ||
-					fact instanceof SRFlipFlop ||
-					fact instanceof TFlipFlop) {
-				AttributeSet attrs = comp.GetComponent().getAttributeSet();
-				if (IsFlipFlop(attrs)) {
-					GatedClock |= HasGatedClock(comp,comp.NrOfEnds()-5,
-							PinSources,PinWires,PinGatedComponents,
-							NonPinSources,NonPinWires,NonPinGatedComponents,
-							WarnedComponents,Reporter);
-				}
-			} else
-				if (fact instanceof Counter) {
-					GatedClock |= HasGatedClock(comp,Counter.CK,
-							PinSources,PinWires,PinGatedComponents,
-							NonPinSources,NonPinWires,NonPinGatedComponents,
-							WarnedComponents,Reporter);
-				} else
-					if (fact instanceof Ram) {
-						if (IsFlipFlop(comp.GetComponent().getAttributeSet()))
-							GatedClock |= HasGatedClock(comp,Ram.CLK,
-									PinSources,PinWires,PinGatedComponents,
-									NonPinSources,NonPinWires,NonPinGatedComponents,
-									WarnedComponents,Reporter);
-					} else
-						if (fact instanceof Random) {
-							GatedClock |= HasGatedClock(comp,Random.CK,
-									PinSources,PinWires,PinGatedComponents,
-									NonPinSources,NonPinWires,NonPinGatedComponents,
-									WarnedComponents,Reporter);
-						} else
-							if (fact instanceof Register) {
-								if (IsFlipFlop(comp.GetComponent().getAttributeSet()))
-									GatedClock |= HasGatedClock(comp,Register.CK,
-											PinSources,PinWires,PinGatedComponents,
-											NonPinSources,NonPinWires,NonPinGatedComponents,
-											WarnedComponents,Reporter);
-							} else
-								if (fact instanceof ShiftRegister) {
-									GatedClock |= HasGatedClock(comp,ShiftRegister.CK,
-											PinSources,PinWires,PinGatedComponents,
-											NonPinSources,NonPinWires,NonPinGatedComponents,
-											WarnedComponents,Reporter);
-								}
+			if (fact.CheckForGatedClocks(comp)) {
+				GatedClock |= HasGatedClock(comp,fact.ClockPinIndex(comp),
+						PinSources,PinWires,PinGatedComponents,
+						NonPinSources,NonPinWires,NonPinGatedComponents,
+						WarnedComponents,Reporter);
+			}
 		}
 		/* We have two situations:
 		 * 1) The gated clock net is generated locally, in this case we can mark them and add the current system to the non-gated set as

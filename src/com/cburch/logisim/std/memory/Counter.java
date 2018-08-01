@@ -37,6 +37,7 @@ import java.awt.Graphics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.bfh.logisim.designrulecheck.NetlistComponent;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.AttributeSet;
@@ -476,4 +477,15 @@ public class Counter extends InstanceFactory {
 		state.setPort(OUT, newValue, DELAY);
 		state.setPort(CARRY, carry ? Value.TRUE : Value.FALSE, DELAY);
 	}
+	
+	@Override
+	public boolean CheckForGatedClocks(NetlistComponent comp) {
+		return true;
+	}
+	
+	@Override
+	public int ClockPinIndex(NetlistComponent comp) {
+		return CK;
+	}
+
 }
