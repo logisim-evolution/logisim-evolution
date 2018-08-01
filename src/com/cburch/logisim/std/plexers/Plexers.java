@@ -137,7 +137,7 @@ public class Plexers extends Library {
 					new AttributeOption[] { SELECT_BOTTOM_LEFT,
 							SELECT_TOP_RIGHT });
 
-	protected static final int DELAY = 3;
+	public static final int DELAY = 3;
 
 	private static FactoryDescription[] DESCRIPTIONS = {
 			new FactoryDescription("Multiplexer",
