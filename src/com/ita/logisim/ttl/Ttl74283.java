@@ -1,5 +1,7 @@
 package com.ita.logisim.ttl;
 
+import com.bfh.logisim.designrulecheck.CorrectLabel;
+import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.instance.InstancePainter;
@@ -36,5 +38,20 @@ public class Ttl74283 extends AbstractTtlGate {
 		state.setPort(11, output.get(2), 1);
 		state.setPort(8, output.get(3), 1);
 		state.setPort(7, output.get(4), 1);
+	}
+	@Override
+	public String getHDLName(AttributeSet attrs) {
+		StringBuffer CompleteName = new StringBuffer();
+		CompleteName.append(CorrectLabel.getCorrectLabel("TTL"+this.getName())
+				.toUpperCase());
+		return CompleteName.toString();
+	}
+	
+	@Override
+	public boolean HDLSupportedComponent(String HDLIdentifier,
+			AttributeSet attrs) {
+		if (MyHDLGenerator == null)
+			MyHDLGenerator = new Ttl74283HDLGenerator();
+		return MyHDLGenerator.HDLTargetSupported(HDLIdentifier, attrs);
 	}
 }
