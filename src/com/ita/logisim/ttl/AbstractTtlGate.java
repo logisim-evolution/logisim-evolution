@@ -146,10 +146,10 @@ public abstract class AbstractTtlGate extends InstanceFactory {
 			y = e.getY()+30-loc.getY();
 		} else if (dir.equals(Direction.WEST)) {
 			x = loc.getX()-e.getX();
-			y = height-(e.getY()+30-loc.getY());
+			y = height-(e.getY()+(height-30)-loc.getY());
 		} else if (dir.equals(Direction.NORTH)) {
 			x = loc.getY()-e.getY();
-			y = width-(loc.getX()+30-e.getX());
+			y = width-(loc.getX()+(width-30)-e.getX());
 		} else {
 			x = e.getY()-loc.getY();
 			y = (loc.getX()+30-e.getX());
