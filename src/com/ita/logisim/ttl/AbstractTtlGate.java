@@ -3,11 +3,14 @@ package com.ita.logisim.ttl;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.event.MouseEvent;
 
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
+import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceFactory;
@@ -19,7 +22,8 @@ import com.cburch.logisim.util.GraphicsUtil;
 
 public abstract class AbstractTtlGate extends InstanceFactory {
 
-	protected static final int pinwidth = 10, pinheight = 7, height = 60;
+	protected static final int pinwidth = 10, pinheight = 7;
+	private int height = 60;
 	protected byte pinnumber;
 	private String name;
 	private byte ngatestodraw = 0;
@@ -83,6 +87,16 @@ public abstract class AbstractTtlGate extends InstanceFactory {
 		this(name, pins, outputports);
 		this.portnames = Ttlportnames;
 	}
+	
+	protected AbstractTtlGate(String name, byte pins, byte[] outputports, String[] Ttlportnames,int height) {
+		// the ttl name, the total number of pins and an array with the indexes of
+		// output ports (indexes are the one you can find on Google), an array of
+		// strings which will be tooltips of the corresponding port in order
+		this(name, pins, outputports);
+		this.height = height;
+		this.portnames = Ttlportnames;
+	}
+	
 
 	private void computeTextField(Instance instance) {
 		Bounds bds = instance.getBounds();
@@ -119,6 +133,28 @@ public abstract class AbstractTtlGate extends InstanceFactory {
 		} else if (attr == TTL.VCC_GND) {
 			updateports(instance);
 		}
+	}
+	
+	static Point GetTranslatedXY(InstanceState state, MouseEvent e) {
+		int x=0,y=0;
+		Location loc = state.getInstance().getLocation();
+		int height = state.getInstance().getBounds().getHeight();
+		int width = state.getInstance().getBounds().getWidth();
+		Direction dir = state.getAttributeValue(StdAttr.FACING);
+		if (dir.equals(Direction.EAST)) {
+			x = e.getX()-loc.getX();
+			y = e.getY()+30-loc.getY();
+		} else if (dir.equals(Direction.WEST)) {
+			x = loc.getX()-e.getX();
+			y = height-(e.getY()+30-loc.getY());
+		} else if (dir.equals(Direction.NORTH)) {
+			x = loc.getY()-e.getY();
+			y = width-(loc.getX()+30-e.getX());
+		} else {
+			x = e.getY()-loc.getY();
+			y = (loc.getX()+30-e.getX());
+		}
+		return new Point(x,y);
 	}
 
 	protected void paintBase(InstancePainter painter, boolean drawname, boolean ghost) {
@@ -380,15 +416,15 @@ public abstract class AbstractTtlGate extends InstanceFactory {
 			if (i < this.pinnumber / 2) {
 				if (dir == Direction.EAST) {
 					dx = i * 20 + 10;
-					dy = 30;
+					dy = height-30;
 				} else if (dir == Direction.WEST) {
 					dx = -10 - 20 * i;
-					dy = -30;
+					dy = 30-height;
 				} else if (dir == Direction.NORTH) {
-					dx = 30;
+					dx = width-30;
 					dy = -10 - 20 * i;
 				} else {// SOUTH
-					dx = -30;
+					dx = 30-width;
 					dy = i * 20 + 10;
 				}
 			} else {

@@ -27,9 +27,12 @@ public class TTL extends Library {
 					"Ttl74175"),
 			new FactoryDescription("74165", Strings.getter("74165: 8-bit parallel-to-serial shift register"), "ttl.gif",
 					"Ttl74165"),
+//			new FactoryDescription("74273", Strings.getter("74273: Octal D-Flipflop with clear"), "ttl.gif", "Ttl74273"),
 			new FactoryDescription("74283", Strings.getter("74283: 4-bit binary full adder"), "ttl.gif", "Ttl74283"),
+//			new FactoryDescription("74377", Strings.getter("74377: Octal D-Flipflop with enable"), "ttl.gif", "Ttl74377"),
 			new FactoryDescription("747266", Strings.getter("747266: quad 2-input XNOR gate"), "ttl.gif",
-					"Ttl747266"), };
+					"Ttl747266"), 
+			};
 
 	static final Attribute<Boolean> VCC_GND = Attributes.forBoolean("VccGndPorts", Strings.getter("VccGndPorts"));
 	static final Attribute<Boolean> DRAW_INTERNAL_STRUCTURE = Attributes.forBoolean("ShowInternalStructure",

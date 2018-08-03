@@ -2,13 +2,13 @@ package com.ita.logisim.ttl;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Point;
 import java.awt.event.MouseEvent;
 
 import com.bfh.logisim.designrulecheck.CorrectLabel;
 import com.bfh.logisim.designrulecheck.NetlistComponent;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.BitWidth;
-import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstancePoker;
@@ -28,23 +28,23 @@ public class Ttl7474 extends AbstractTtlGate {
 		boolean isPressed = true;
 
 		private boolean isInside(InstanceState state, MouseEvent e) {
-			Location loc = state.getInstance().getLocation();
-			int dx = e.getX() - (loc.getX() + 37);
-			int dy = e.getY() - (loc.getY() + 4);
+			Point p = GetTranslatedXY(state, e);
+			int dx = p.x-37;
+			int dy = p.y-35;
 			int d2 = dx * dx + dy * dy;
-			dx = e.getX() - (loc.getX() + 107);
-			dy = e.getY() - (loc.getY() + 1);
+			dx = p.x - 107;
+			dy = p.y - 32;
 			int d3 = dx * dx + dy * dy;
-			return ((d2 < 4 * 4)||(d3 < 4*4));
+			return ((d2 < 5*5)||(d3 < 5*5));
 		}
 		
 		private int getIndex(InstanceState state, MouseEvent e) {
-			Location loc = state.getInstance().getLocation();
-			int dx = e.getX() - (loc.getX() + 107);
-			int dy = e.getY() - (loc.getY() + 1);
+			Point p = GetTranslatedXY(state, e);
+			int dx = p.x-37;
+			int dy = p.y-35;
 			int d2 = dx * dx + dy * dy;
-			if (d2 < 4*4) return 1;
-			return 0;
+			if (d2 < 5*5) return 0;
+			return 1;
 		}
 
 		@Override

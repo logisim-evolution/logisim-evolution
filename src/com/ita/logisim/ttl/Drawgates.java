@@ -35,14 +35,14 @@ public class Drawgates {
 	}
 
 	static void paintDoubleInputgate(Graphics g, int xrightpin, int y, int xinput, int youtput, int portheight,
-			boolean up) {
+			boolean up,int height) {
 		int[] yPoints, xPoints;
 		// rightmost input
 		xPoints = new int[] { xrightpin, xrightpin, xrightpin - 10, xrightpin - 10, xinput };
 		if (!up)
-			yPoints = new int[] { y + AbstractTtlGate.height - AbstractTtlGate.pinheight,
-					y + AbstractTtlGate.height - AbstractTtlGate.pinheight - (10 - AbstractTtlGate.pinheight),
-					y + AbstractTtlGate.height - AbstractTtlGate.pinheight - (10 - AbstractTtlGate.pinheight),
+			yPoints = new int[] { y + height - AbstractTtlGate.pinheight,
+					y + height - AbstractTtlGate.pinheight - (10 - AbstractTtlGate.pinheight),
+					y + height - AbstractTtlGate.pinheight - (10 - AbstractTtlGate.pinheight),
 					youtput + portheight / 3, youtput + portheight / 3 };
 		else
 			yPoints = new int[] { y + AbstractTtlGate.pinheight,
@@ -53,7 +53,7 @@ public class Drawgates {
 		// leftmost input
 		xPoints = new int[] { xrightpin - 20, xrightpin - 20, xinput };
 		if (!up)
-			yPoints = new int[] { y + AbstractTtlGate.height - AbstractTtlGate.pinheight, youtput - portheight / 3,
+			yPoints = new int[] { y + height - AbstractTtlGate.pinheight, youtput - portheight / 3,
 					youtput - portheight / 3 };
 		else
 			yPoints = new int[] { y + AbstractTtlGate.pinheight, youtput + portheight / 3, youtput + portheight / 3 };
@@ -87,11 +87,11 @@ public class Drawgates {
 		GraphicsUtil.drawCenteredArc(g, x - 28, y, 15, -27, 54);
 	}
 
-	static void paintOutputgate(Graphics g, int xpin, int y, int xoutput, int youtput, boolean up) {
+	static void paintOutputgate(Graphics g, int xpin, int y, int xoutput, int youtput, boolean up, int height) {
 		int[] yPoints, xPoints;
 		xPoints = new int[] { xoutput, xpin, xpin };
 		if (!up)
-			yPoints = new int[] { youtput, youtput, y + AbstractTtlGate.height - AbstractTtlGate.pinheight };
+			yPoints = new int[] { youtput, youtput, y + height - AbstractTtlGate.pinheight };
 		else
 			yPoints = new int[] { youtput, youtput, y + AbstractTtlGate.pinheight };
 		g.drawPolyline(xPoints, yPoints, 3);
@@ -110,11 +110,11 @@ public class Drawgates {
 		}
 	}
 
-	static void paintSingleInputgate(Graphics g, int xpin, int y, int xinput, int youtput, boolean up) {
+	static void paintSingleInputgate(Graphics g, int xpin, int y, int xinput, int youtput, boolean up,int height) {
 		int[] yPoints, xPoints;
 		xPoints = new int[] { xpin, xpin, xinput };
 		if (!up)
-			yPoints = new int[] { y + AbstractTtlGate.height - AbstractTtlGate.pinheight, youtput, youtput };
+			yPoints = new int[] { y + height - AbstractTtlGate.pinheight, youtput, youtput };
 		else
 			yPoints = new int[] { y + AbstractTtlGate.pinheight, youtput, youtput };
 		g.drawPolyline(xPoints, yPoints, 3);

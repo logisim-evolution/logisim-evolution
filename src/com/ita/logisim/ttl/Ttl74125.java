@@ -19,16 +19,16 @@ public class Ttl74125 extends AbstractTtlGate {
 		int youtput = y + (up ? 20 : 40);
 		Drawgates.paintBuffer(g, x + 50, youtput, portwidth, portheight);
 		// output line
-		Drawgates.paintOutputgate(g, x + 50, y, x + 45, youtput, up);
+		Drawgates.paintOutputgate(g, x + 50, y, x + 45, youtput, up,height);
 		// input line
-		Drawgates.paintSingleInputgate(g, x + 30, y, x + 35, youtput, up);
+		Drawgates.paintSingleInputgate(g, x + 30, y, x + 35, youtput, up,height);
 		// enable line
 		if (!up) {
-			Drawgates.paintSingleInputgate(g, x + 10, y, x + 41, youtput - 7, up);
+			Drawgates.paintSingleInputgate(g, x + 10, y, x + 41, youtput - 7, up,height);
 			g.drawLine(x + 41, youtput - 5, x + 41, youtput - 7);
 			g.drawOval(x + 40, youtput - 5, 3, 3);
 		} else {
-			Drawgates.paintSingleInputgate(g, x + 10, y, x + 41, youtput + 7, up);
+			Drawgates.paintSingleInputgate(g, x + 10, y, x + 41, youtput + 7, up,height);
 			g.drawLine(x + 41, youtput + 5, x + 41, youtput + 7);
 			g.drawOval(x + 40, youtput + 2, 3, 3);
 		}

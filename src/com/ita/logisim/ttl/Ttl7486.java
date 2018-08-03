@@ -43,9 +43,9 @@ public class Ttl7486 extends AbstractTtlGate {
 		int youtput = y + (up ? 20 : 40);
 		Drawgates.paintXor(g, x + 44, youtput, false);
 		// output line
-		Drawgates.paintOutputgate(g, x + 50, y, x + 44, youtput, up);
+		Drawgates.paintOutputgate(g, x + 50, y, x + 44, youtput, up,height);
 		// input lines
-		Drawgates.paintDoubleInputgate(g, x + 30, y, x + 44 - portwidth, youtput, portheight, up);
+		Drawgates.paintDoubleInputgate(g, x + 30, y, x + 44 - portwidth, youtput, portheight, up,height);
 	}
 
 	@Override
