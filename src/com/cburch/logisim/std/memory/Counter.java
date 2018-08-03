@@ -484,8 +484,8 @@ public class Counter extends InstanceFactory {
 	}
 	
 	@Override
-	public int ClockPinIndex(NetlistComponent comp) {
-		return CK;
+	public int[] ClockPinIndex(NetlistComponent comp) {
+		return new int[] {CK};
 	}
 
 }

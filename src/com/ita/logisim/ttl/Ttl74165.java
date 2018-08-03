@@ -71,8 +71,8 @@ public class Ttl74165 extends AbstractTtlGate {
 	}
 	
 	@Override
-	public int ClockPinIndex(NetlistComponent comp) {
-		return 1;
+	public int[] ClockPinIndex(NetlistComponent comp) {
+		return new int[] {1};
 	}
 	@Override
 	public String getHDLName(AttributeSet attrs) {

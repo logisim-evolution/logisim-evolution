@@ -2487,7 +2487,9 @@ public class Netlist implements CircuitListener {
 		for (NetlistComponent comp : MyComponents) {
 			ComponentFactory fact = comp.GetComponent().getFactory();
 			if (fact.CheckForGatedClocks(comp)) {
-				GatedClock |= HasGatedClock(comp,fact.ClockPinIndex(comp),
+				int[] clockpins = fact.ClockPinIndex(comp);
+				for (int i = 0 ; i < clockpins.length ; i++)
+					GatedClock |= HasGatedClock(comp,clockpins[i],
 						PinSources,PinWires,PinGatedComponents,
 						NonPinSources,NonPinWires,NonPinGatedComponents,
 						WarnedComponents,Reporter);

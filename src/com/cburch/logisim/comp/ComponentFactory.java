@@ -113,7 +113,7 @@ public interface ComponentFactory extends AttributeDefaultProvider {
 	
 	public boolean CheckForGatedClocks(NetlistComponent comp);
 	
-	public int ClockPinIndex(NetlistComponent comp);
+	public int[] ClockPinIndex(NetlistComponent comp);
 
 	public void paintIcon(ComponentDrawContext context, int x, int y,
 			AttributeSet attrs);

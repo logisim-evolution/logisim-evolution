@@ -89,7 +89,7 @@ public class Ttl74175HDLGenerator extends AbstractHDLGeneratorFactory {
 		SortedMap<String, String> PortMap = new TreeMap<String, String>();
 		Boolean GatedClock = false;
 		Boolean HasClock = true;
-		int ClockPinIndex = ComponentInfo.GetComponent().getFactory().ClockPinIndex(null);
+		int ClockPinIndex = ComponentInfo.GetComponent().getFactory().ClockPinIndex(null)[0];
 		if (!ComponentInfo.EndIsConnected(ClockPinIndex)) {
 			Reporter.AddSevereWarning("Component \"TTL74165\" in circuit \""
 					+ Nets.getCircuitName() + "\" has no clock connection");

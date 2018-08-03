@@ -128,8 +128,8 @@ public abstract class AbstractComponentFactory implements ComponentFactory {
 		return false;
 	}
 	
-	public int ClockPinIndex(NetlistComponent comp) {
-		return 0;
+	public int[] ClockPinIndex(NetlistComponent comp) {
+		return new int[] {0};
 	}
 
 	public IOComponentInformationContainer getIOInformation() {

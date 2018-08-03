@@ -7,10 +7,8 @@ import com.bfh.logisim.designrulecheck.NetlistComponent;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Value;
-import com.cburch.logisim.instance.InstanceData;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
-import com.cburch.logisim.prefs.AppPreferences;
 
 public class Ttl74175 extends AbstractTtlGate {
 
@@ -27,46 +25,6 @@ public class Ttl74175 extends AbstractTtlGate {
 		DrawFlops(g,x,y,height);
 	}
 
-	private class ClockState implements Cloneable {
-		private Value lastClock;
-
-		public ClockState() {
-			lastClock = Value.FALSE;
-		}
-
-		@Override
-		public ClockState clone() {
-			try {
-				return (ClockState) super.clone();
-			} catch (CloneNotSupportedException e) {
-				return null;
-			}
-		}
-
-		public boolean updateClock(Value newClock) {
-			Value oldClock = lastClock;
-			lastClock = newClock;
-			return oldClock == Value.FALSE && newClock == Value.TRUE;
-		}
-	}
-
-	private class TTLRegisterData extends ClockState implements InstanceData {
-		private Value value;
-		private BitWidth bits;
-
-		public TTLRegisterData(BitWidth width) {
-			value = (AppPreferences.Memory_Startup_Unknown.get()) ? Value.createUnknown(width) : Value.createKnown(width, 0);
-			bits = width;
-		}
-
-		public void setValue(Value value) {
-			this.value = value;
-		}
-		
-		public BitWidth getWidth() {
-			return bits;
-		}
-	}
 	@Override
 	public void ttlpropagate(InstanceState state) {
 		TTLRegisterData data = (TTLRegisterData) state.getData();
@@ -79,21 +37,21 @@ public class Ttl74175 extends AbstractTtlGate {
 		if (state.getPortValue(0)==Value.TRUE) {
 			data.setValue(Value.createKnown(data.getWidth(), 0));
 		} else if (triggered) {
-			Value[] vals =data.value.getAll();
+			Value[] vals =data.getValue().getAll();
 			vals[0]=state.getPortValue(3);
 			vals[1]=state.getPortValue(4);
 			vals[2]=state.getPortValue(10);
 			vals[3]=state.getPortValue(11);
             data.setValue(Value.create(vals));
 		}
-		state.setPort(1, data.value.get(0), 8);
-		state.setPort(2, data.value.get(0).not(), 8);
-		state.setPort(6, data.value.get(1), 8);
-		state.setPort(5, data.value.get(1).not(), 8);
-		state.setPort(8, data.value.get(2), 8);
-		state.setPort(9, data.value.get(2).not(), 8);
-		state.setPort(13, data.value.get(3), 8);
-		state.setPort(12, data.value.get(3).not(), 8);
+		state.setPort(1, data.getValue().get(0), 8);
+		state.setPort(2, data.getValue().get(0).not(), 8);
+		state.setPort(6, data.getValue().get(1), 8);
+		state.setPort(5, data.getValue().get(1).not(), 8);
+		state.setPort(8, data.getValue().get(2), 8);
+		state.setPort(9, data.getValue().get(2).not(), 8);
+		state.setPort(13, data.getValue().get(3), 8);
+		state.setPort(12, data.getValue().get(3).not(), 8);
 	}
 	
 	private void DrawFlops(Graphics g, int x, int y, int height) {
@@ -209,8 +167,8 @@ public class Ttl74175 extends AbstractTtlGate {
 	}
 	
 	@Override
-	public int ClockPinIndex(NetlistComponent comp) {
-		return 7;
+	public int[] ClockPinIndex(NetlistComponent comp) {
+		return new int[] {7};
 	}
 	@Override
 	public String getHDLName(AttributeSet attrs) {

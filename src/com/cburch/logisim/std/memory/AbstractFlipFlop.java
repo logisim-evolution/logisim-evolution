@@ -290,7 +290,7 @@ abstract class AbstractFlipFlop extends InstanceFactory {
 	}
 	
 	@Override
-	public int ClockPinIndex(NetlistComponent comp) {
-		return getPorts().size() - STD_PORTS;
+	public int[] ClockPinIndex(NetlistComponent comp) {
+		return new int[] {getPorts().size() - STD_PORTS};
 	}
 }

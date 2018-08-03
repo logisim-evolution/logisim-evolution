@@ -855,7 +855,7 @@ public class Ram extends Mem {
 	}
 	
 	@Override
-	public int ClockPinIndex(NetlistComponent comp) {
-		return CLK;
+	public int[] ClockPinIndex(NetlistComponent comp) {
+		return new int[] {CLK};
 	}
 }

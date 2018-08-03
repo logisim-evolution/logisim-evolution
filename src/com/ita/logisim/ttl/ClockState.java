@@ -3,6 +3,7 @@
 
 package com.ita.logisim.ttl;
 
+import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.instance.StdAttr;
 
@@ -36,5 +37,24 @@ class ClockState implements Cloneable {
 		} else {
 			return oldClock == Value.FALSE && newClock == Value.TRUE;
 		}
+	}
+
+	public boolean updateClock(Value newClock) {
+		Value oldClock = lastClock;
+		lastClock = newClock;
+		return oldClock == Value.FALSE && newClock == Value.TRUE;
+	}
+	public boolean updateClock(Value newClock,int which) {
+		Value[] values = lastClock.getAll();
+		if (values.length <= which) {
+			Value[] nvalue = (Value.createKnown(BitWidth.create(which+1), 0)).getAll();
+			for (int i=0; i<values.length;i++)
+				nvalue[i]=values[i];
+			values = nvalue;
+		}
+		Value oldClock = values[which];
+		values[which] = newClock;
+		lastClock = Value.create(values);
+		return oldClock == Value.FALSE && newClock == Value.TRUE;
 	}
 }
