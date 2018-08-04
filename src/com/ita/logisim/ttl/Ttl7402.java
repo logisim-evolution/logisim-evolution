@@ -40,7 +40,7 @@ public class Ttl7402 extends AbstractTtlGate {
 		Graphics g = painter.getGraphics();
 		int portwidth = 18, portheight = 15;
 		int youtput = y + (up ? 20 : 40);
-		Drawgates.paintOr(g, x + 40, youtput, true);
+		Drawgates.paintOr(g, x + 40, youtput,portwidth-4,portheight, true);
 		// output line
 		Drawgates.paintOutputgate(g, x + 50, y, x + 44, youtput, up,height);
 		// input lines

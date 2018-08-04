@@ -3,6 +3,7 @@ package com.ita.logisim.ttl;
 import java.awt.Graphics;
 
 import com.cburch.logisim.instance.InstancePainter;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.GraphicsUtil;
 
 public class Drawgates {
@@ -10,14 +11,20 @@ public class Drawgates {
 	public static void paintAnd(Graphics g, int x, int y, int width, int height, boolean negated) {
 		if (negated)
 			paintNegatedOutput(g, x, y);
-		int[] xp = new int[] { x - width / 2, x - width, x - width, x - width / 2 };
-		int[] yp = new int[] { y - width / 2, y - width / 2, y + width / 2, y + width / 2 };
-		GraphicsUtil.drawCenteredArc(g, x - width / 2, y, width / 2, -90, 180);
+        if (AppPreferences.GATE_SHAPE.get().equals(
+				AppPreferences.SHAPE_RECTANGULAR)) {
+        	g.drawRect(x-width, y-height/2, width, height);
+        	GraphicsUtil.drawCenteredText(g, "&", x-width/2, y);
+        } else {
+        	int[] xp = new int[] { x - width / 2, x - width, x - width, x - width / 2 };
+        	int[] yp = new int[] { y - width / 2, y - width / 2, y + width / 2, y + width / 2 };
+        	GraphicsUtil.drawCenteredArc(g, x - width / 2, y, width / 2, -90, 180);
 
-		g.drawPolyline(xp, yp, 4);
-		if (height > width) {
-			g.drawLine(x - width, y - height / 2, x - width, y + height / 2);
-		}
+        	g.drawPolyline(xp, yp, 4);
+        	if (height > width) {
+        		g.drawLine(x - width, y - height / 2, x - width, y + height / 2);
+        	}
+        }
 	}
 
 	static void paintBuffer(Graphics g, int x, int y, int width, int height) {
@@ -65,26 +72,38 @@ public class Drawgates {
 	}
 
 	static void paintNot(Graphics g, int x, int y, int width, int height) {
-		int[] xp = new int[4];
-		int[] yp = new int[4];
-		xp[0] = x - 4;
-		yp[0] = y;
-		xp[1] = x - width;
-		yp[1] = y - height / 2;
-		xp[2] = x - width;
-		yp[2] = y + height / 2;
-		xp[3] = x - 4;
-		yp[3] = y;
-		g.drawPolyline(xp, yp, 4);
-		g.drawOval(x - 4, y - 2, 4, 4);
+		paintNegatedOutput(g, x - 4, y);
+        if (AppPreferences.GATE_SHAPE.get().equals(
+				AppPreferences.SHAPE_RECTANGULAR)) {
+        	g.drawRect(x-width, y-(width-4)/2, width-4, width-4);
+        	GraphicsUtil.drawCenteredText(g,"1", x-4-(width-4)/2, y);
+        } else {
+        	int[] xp = new int[4];
+        	int[] yp = new int[4];
+        	xp[0] = x - 4;
+        	yp[0] = y;
+        	xp[1] = x - width;
+        	yp[1] = y - height / 2;
+        	xp[2] = x - width;
+        	yp[2] = y + height / 2;
+        	xp[3] = x - 4;
+        	yp[3] = y;
+        	g.drawPolyline(xp, yp, 4);
+        }
 	}
 
-	static void paintOr(Graphics g, int x, int y, boolean negated) {
+	static void paintOr(Graphics g, int x, int y, int width, int height, boolean negated) {
 		if (negated)
 			paintNegatedOutput(g, x, y);
-		GraphicsUtil.drawCenteredArc(g, x - 14, y - 10, 17, -90, 54);
-		GraphicsUtil.drawCenteredArc(g, x - 14, y + 10, 17, 90, -54);
-		GraphicsUtil.drawCenteredArc(g, x - 28, y, 15, -27, 54);
+        if (AppPreferences.GATE_SHAPE.get().equals(
+				AppPreferences.SHAPE_RECTANGULAR)) {
+        	g.drawRect(x-width, y-height/2, width, height);
+        	GraphicsUtil.drawCenteredText(g,"\u2265" + "1", x-width/2, y);
+        } else {
+        	GraphicsUtil.drawCenteredArc(g, x - 14, y - 10, 17, -90, 54);
+        	GraphicsUtil.drawCenteredArc(g, x - 14, y + 10, 17, 90, -54);
+        	GraphicsUtil.drawCenteredArc(g, x - 28, y, 15, -27, 54);
+        }
 	}
 
 	static void paintOutputgate(Graphics g, int xpin, int y, int xoutput, int youtput, boolean up, int height) {
@@ -120,8 +139,16 @@ public class Drawgates {
 		g.drawPolyline(xPoints, yPoints, 3);
 	}
 
-	static void paintXor(Graphics g, int x, int y, boolean negated) {
-		paintOr(g, x, y, negated);
-		GraphicsUtil.drawCenteredArc(g, x - 32, y, 15, -27, 54);
+	static void paintXor(Graphics g, int x, int y, int width, int height, boolean negated) {
+        if (AppPreferences.GATE_SHAPE.get().equals(
+				AppPreferences.SHAPE_RECTANGULAR)) {
+    		if (negated)
+    			paintNegatedOutput(g, x, y);
+    		g.drawRect(x-width, y-height/2, width, height);
+        	GraphicsUtil.drawCenteredText(g,"=1", x-width/2, y);
+        } else {
+        	paintOr(g, x, y, width, height, negated);
+        	GraphicsUtil.drawCenteredArc(g, x - 32, y, 15, -27, 54);
+        }
 	}
 }
