@@ -135,7 +135,7 @@ public abstract class AbstractTtlGate extends InstanceFactory {
 		}
 	}
 	
-	static Point GetTranslatedXY(InstanceState state, MouseEvent e) {
+	static Point TTLGetTranslatedXY(InstanceState state, MouseEvent e) {
 		int x=0,y=0;
 		Location loc = state.getInstance().getLocation();
 		int height = state.getInstance().getBounds().getHeight();

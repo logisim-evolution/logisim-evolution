@@ -6,6 +6,9 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 
+import com.bfh.logisim.designrulecheck.CorrectLabel;
+import com.bfh.logisim.designrulecheck.NetlistComponent;
+import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.instance.InstancePainter;
@@ -26,7 +29,7 @@ public class AbstractOctalFlops extends AbstractTtlGate {
 		boolean isPressed = true;
 
 		private boolean isInside(InstanceState state, MouseEvent e) {
-			Point p = GetTranslatedXY(state, e);
+			Point p = TTLGetTranslatedXY(state, e);
 			boolean inside = false;
 			for (int i = 0 ; i < 8 ; i++) {
 			   int dx = p.x-(95+i*10);
@@ -38,7 +41,7 @@ public class AbstractOctalFlops extends AbstractTtlGate {
 		}
 		
 		private int getIndex(InstanceState state, MouseEvent e) {
-			Point p = GetTranslatedXY(state, e);
+			Point p = TTLGetTranslatedXY(state, e);
 			for (int i = 0 ; i < 8 ; i++) {
 			   int dx = p.x-(95+i*10);
 			   int dy = p.y-40;
@@ -221,6 +224,24 @@ public class AbstractOctalFlops extends AbstractTtlGate {
 			g.setColor(Color.BLACK);
 			
 		}
+	}
+	
+	@Override
+	public boolean CheckForGatedClocks(NetlistComponent comp) {
+		return true;
+	}
+	
+	@Override
+	public int[] ClockPinIndex(NetlistComponent comp) {
+		return new int[] {9};
+	}
+	
+	@Override
+	public String getHDLName(AttributeSet attrs) {
+		StringBuffer CompleteName = new StringBuffer();
+		CompleteName.append(CorrectLabel.getCorrectLabel("TTL"+this.getName())
+				.toUpperCase());
+		return CompleteName.toString();
 	}
 	
 }

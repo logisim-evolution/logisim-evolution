@@ -130,6 +130,8 @@ public class Ttl7447HDLGenerator extends AbstractHDLGeneratorFactory {
 	@Override
 	public boolean HDLTargetSupported(String HDLType, AttributeSet attrs) {
 		/* TODO: Add support for the ones with VCC and Ground Pin */
+		if (attrs==null)
+			return false;
 		return (!attrs.getValue(TTL.VCC_GND)&&(HDLType.equals(HDLGeneratorFactory.VHDL)));
 	}
 

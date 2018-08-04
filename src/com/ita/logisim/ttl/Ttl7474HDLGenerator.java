@@ -88,6 +88,7 @@ public class Ttl7474HDLGenerator extends AbstractHDLGeneratorFactory {
 		return Contents;
 	}
 
+	@Override
 	public SortedMap<String, String> GetPortMap(Netlist Nets,
 			NetlistComponent ComponentInfo, FPGAReport Reporter, String HDLType) {
 		SortedMap<String, String> PortMap = new TreeMap<String, String>();
@@ -147,6 +148,8 @@ public class Ttl7474HDLGenerator extends AbstractHDLGeneratorFactory {
 	@Override
 	public boolean HDLTargetSupported(String HDLType, AttributeSet attrs) {
 		/* TODO: Add support for the ones with VCC and Ground Pin */
+		if (attrs==null)
+			return false;
 		return (!attrs.getValue(TTL.VCC_GND)&&(HDLType.equals(HDLGeneratorFactory.VHDL)));
 	}
 }

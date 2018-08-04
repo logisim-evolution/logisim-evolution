@@ -28,7 +28,7 @@ public class Ttl7474 extends AbstractTtlGate {
 		boolean isPressed = true;
 
 		private boolean isInside(InstanceState state, MouseEvent e) {
-			Point p = GetTranslatedXY(state, e);
+			Point p = TTLGetTranslatedXY(state, e);
 			int dx = p.x-37;
 			int dy = p.y-35;
 			int d2 = dx * dx + dy * dy;
@@ -39,7 +39,7 @@ public class Ttl7474 extends AbstractTtlGate {
 		}
 		
 		private int getIndex(InstanceState state, MouseEvent e) {
-			Point p = GetTranslatedXY(state, e);
+			Point p = TTLGetTranslatedXY(state, e);
 			int dx = p.x-37;
 			int dy = p.y-35;
 			int d2 = dx * dx + dy * dy;
