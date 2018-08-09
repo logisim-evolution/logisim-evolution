@@ -1,6 +1,5 @@
 <html>
-<meta charset="iso-8859-1">
-<!-- La partie aide du programme n'affiche pas encore UTF8 V2.14.6 -->
+<meta charset="UTF-8">
 <head>
 <title>Editer l'apparence d'un sous-circuit</title>
 </head>
@@ -9,85 +8,85 @@
 
 <h1>Editer l'apparence d'un sous-circuit</h1>
 
-<h2>Apparence par défaut</h2>
-<p>Note: Il existe deux présentations des circuits. Nous présentons ici la nouvelle apparence. Une bonne partie des explications convient aussi pour l'autre présentation.
-La version de la présentation est sélectionnable dans les propriétés du circuit (Use new box label).</p> 
-<p>Par défaut quand est sous-circuit est placé sur un schéma il est dessiné dans un rectangle avec le nom du circuit au sud, les entrées a l'est et les sorties a l'ouest. L’ancrage étant au sommet de la pin nord-ouest.</p>
-<blockquote><img src="../../../img-guide/subcirc-default-appear.png"></blockquote>
-<p>Les entrées seront placées à l'est du rectangle et de haut en bas selon l'ordre de leur apparition dans le schéma détaillé de gauche à droite et de haut en bas.
-Les sorties seront placées à l'ouest du rectangle de la même manière.</p>
-<p>Il est possible d'éditer un label sur l'instance du sous-circuit en effectuant un double clic sur le rectangle. Le positionnement la fonte et les attributs de la fonte sont modifiables dans le tableau des propriétés.
-Ce même tableau permet le paramétrage du label partagé (pour toutes les instances).</p>
+<h2>Apparence par dÃ©faut</h2>
+<p>Note: Il existe deux prÃ©sentations des circuits. Nous prÃ©sentons ici la nouvelle apparence. Une bonne partie des explications convient aussi pour l'autre prÃ©sentation.
+La version de la prÃ©sentation est sÃ©lectionnable dans les propriÃ©tÃ©s du circuit (Use new box layout).</p> 
+<p>Par dÃ©faut quand est sous-circuit est placÃ© sur un schÃ©ma il est dessinÃ© dans un rectangle avec le nom du circuit au sud, les entrÃ©es a l'est et les sorties a l'ouest. Lâ€™ancrage Ã©tant au sommet de la pin nord-ouest.</p>
+<center><img src="../../../img-guide/subcirc-default-appear.png"></center>
+<p>Les entrÃ©es seront placÃ©es Ã  l'est du rectangle et de haut en bas selon l'ordre de leur apparition dans le schÃ©ma dÃ©taillÃ© de gauche Ã  droite et de haut en bas.
+Les sorties seront placÃ©es Ã  l'ouest du rectangle de la mÃªme maniÃ¨re.</p>
+<p>Il est possible d'Ã©diter un label sur l'instance du sous-circuit en effectuant un double clic sur le rectangle. Le positionnement la fonte et les attributs de la fonte sont modifiables dans le tableau des propriÃ©tÃ©s.
+Ce mÃªme tableau permet le paramÃ©trage du label partagÃ© (pour toutes les instances).</p>
 
 <h2>Personaliser l'apparance</h2>
 
-<p>L'apparence par défaut est très utilisée et existe dans Logisim depuis de nombreuses années sans autres options. Si, toutefois, vous préférez que le sous-circuit soit dessiné différemment, vous pouvez sélectionner <q>Editer l’apparence du circuit </q> depuis le menu du projet et Logisim passera de l'interface édition du dessin a l'interface édition de l'apparence du circuit.
-(Vous pouvez également cliquer sur l'icône a l'extrême droite (<img src = "../../../icons/projapp.gif">) de la barre d'outils de l'explorateur.)
-Ci-dessous, nous modifions l’aspect du multiplexeur 2:1 pour qu’il soit dessiné avec un trapèze habituel plutôt qu'un rectangle.</p>
+<p>L'apparence par dÃ©faut est trÃ¨s utilisÃ©e et existe dans Logisim depuis de nombreuses annÃ©es sans autres options. Si, toutefois, vous prÃ©fÃ©rez que le sous-circuit soit dessinÃ© diffÃ©remment, vous pouvez sÃ©lectionner <q>Editer lâ€™apparence du circuit </q> depuis le menu du projet et Logisim passera de l'interface Ã©dition du dessin a l'interface Ã©dition de l'apparence du circuit.
+(Vous pouvez Ã©galement cliquer sur l'icÃ´ne a l'extrÃªme droite (<img src = "../../../icons/projapp.gif">) de la barre d'outils de l'explorateur.)
+Ci-dessous, nous modifions lâ€™aspect du multiplexeur 2:1 pour quâ€™il soit dessinÃ© avec un trapÃ¨ze habituel plutÃ´t qu'un rectangle.</p>
 
-<blockquote><img src="../../../img-guide/subcirc-custom-appear.png"></blockquote>
+<center><img src="../../../img-guide/subcirc-custom-appear.png"></center>
 
-<p>Avec l'apparence du multiplexeur 2:1 dessiné ci-dessus,
+<p>Avec l'apparence du multiplexeur 2:1 dessinÃ© ci-dessus,
 la disposition du multiplexeur 4:1 se dessine naturellement comme suit.</p> 
 
-<blockquote><img src="../../../img-guide/subcirc-custom-layout.png"></blockquote>
+<center><img src="../../../img-guide/subcirc-custom-layout.png"></center>
 
-<p>L'éditeur d'apparence se présente comme un programme de dessin traditionnel, mais sont il utilise quelques symboles spéciaux pour indiquer comment le dessin fonctionne lorsqu'il est placé dans le dessin d'un circuit. Ces symboles spéciaux ne peuvent pas être supprimés.</p>
+<p>L'Ã©diteur d'apparence se prÃ©sente comme un programme de dessin traditionnel, mais il utilise quelques symboles spÃ©ciaux pour indiquer comment le symbole du sous-circuit  fonctionne lorsqu'il est placÃ© dans le dessin d'un circuit. Ces symboles spÃ©ciaux ne peuvent pas Ãªtre supprimÃ©s.</p>
 
 <ul>
 
-<li><p>Un cercle vert avec une ligne sortante, que nous appellerons <q>ancre</q>.
+<li><p>Un cercle vert avec une ligne sortante, que nous appellerons <q>ancre</q> (<img src = "../../../img-guide/anchor.png" ALIGN="TOP">).
 Il y a exactement une ancre dans chaque apparence d'un sous-circuit.
 Chaque composant d'un circuit a un seul point pour identifier sa position sur le dessin;
-Un utilisateur observe cela lors de la création d'un nouveau composant: le click de la souris identifie un seul point de l'écran et le composant est placé par rapport à ce point.(généralement avec la première sortie à l'emplacement  de la souris)
-L'ancre sera alignée avec ce point du dessin global lorsque le sous-circuit est créé.</p>
+Un utilisateur observe cela lors de la crÃ©ation d'un nouveau composant: le click de la souris identifie un seul point de l'Ã©cran et le composant est placÃ© par rapport Ã  ce point.
+L'ancre sera alignÃ©e avec ce point du dessin global lorsque le sous-circuit est crÃ©Ã© et dessinÃ©.</p>
 
-<p>L'ancre indique aussi l'orientation du composant quand il est pausé dans le dessin, elle en est le centre de rotation. L'orientation est indiquée par la direction de la ligne qui pointe du cercle.
-Dans le dessin du sous-circuit, il est possible de modifier l'orientation de l'ancre dans les propriétés. Cela indiquera quelle orientation aura le symbole quand on le dépose sur un circuit.
-Dans notre exemple l'ancre du sous-circuit "Mux_2To1" est orientée à l'est et chaque instance du sous-circuit multiplexeur est également face à l'est dans le dessin du sous-circuit "Mux_4To1"</p></li>
+<p>L'ancre indique aussi l'orientation du composant quand il est pausÃ© dans le dessin, elle en est le centre de rotation. L'orientation est indiquÃ©e par la direction de la ligne qui pointe du cercle.
+Dans le dessin du sous-circuit, il est possible de modifier l'orientation de l'ancre dans les propriÃ©tÃ©s. Cela indiquera quelle orientation aura le symbole quand on le dÃ©pose sur un circuit.
+Dans notre exemple l'ancre du sous-circuit "Mux_2To1" est orientÃ©e Ã  l'est et chaque instance du sous-circuit multiplexeur est Ã©galement face Ã  l'est dans le dessin du sous-circuit "Mux_4To1"</p></li>
 
-<li><p>Les cercles bleus et les carrés avec un point sont les <q>ports</q> du sous-circuit. Il y a exactement autant de symboles que de broche d'entrée et de sorties.
-Le port en entrée sont indiquées avec des carrés et les ports en sortie avec de cercles.
-Chaque symbole indique comment un fil se connectant au circuit correspondra à une broche d'entrée ou de sortie dans la mise en page.</p>
+<li><p>Les cercles bleus (<img src = "../../../img-guide/pinout.png" ALIGN="TOP">) et les carrÃ©s avec un point (<img src = "../../../img-guide/pinin.png" ALIGN="TOP">) sont les <q>ports</q> du sous-circuit. Il y a exactement autant de symboles que de broche d'entrÃ©e et de sorties.
+Le port en entrÃ©e sont indiquÃ©es avec des carrÃ©s et les ports en sortie avec de cercles.
+Chaque symbole indique comment un fil se connectant au circuit correspondra Ã  une broche d'entrÃ©e ou de sortie dans la mise en page.</p>
 
-<p>Lorsque vous sélectionnez un port, Logisim indiquera la broche correspondante en faisant apparaitre un diagramme miniature de la disposition dans une fenêtre en bas à droite et la broche correspondante dessinée en bleu.
-Cela ne se fait pas si tous les ports sont sélectionnés.</p></li>
+<p>Lorsque vous sÃ©lectionnez un port, Logisim indiquera la broche correspondante en faisant apparaitre un diagramme miniature de la disposition dans une fenÃªtre en bas Ã  droite et la broche correspondante dessinÃ©e en bleu.
+Cela ne se fait pas si tous les ports sont sÃ©lectionnÃ©s.</p></li>
 </ul>
-<blockquote><img src="../../../img-guide/subcirc-custom-layout2.png"></blockquote>
-<p>La barre d'outils contient des outils pour ajouter des formes supplémentaires, comme indiqué ci-dessous avec des descriptions de la façon dont la touche Alt modifie le comportement de l'outil.
-En outre en faisant glisser la souris avec la touche contrôle enfoncée la position de la souris sera alignée sur le point de la grille le plus proche.
-La touche Maj enfoncée orientera les lignes dans un multiple de 45&deg.</p>
+<center><img src="../../../img-guide/subcirc-custom-layout2.png"></center>
+<p>La barre d'outils contient des outils pour ajouter des formes supplÃ©mentaires, comme indiquÃ© ci-dessous avec des descriptions de la faÃ§on dont la touche Alt modifie le comportement de l'outil.
+En outre en faisant glisser la souris avec la touche contrÃ´le enfoncÃ©e la position de la souris sera alignÃ©e sur le point de la grille le plus proche.
+La touche Maj enfoncÃ©e orientera les lignes dans un multiple de 45&deg.</p>
 
 <table><tbody>
 <tr><td valign="top"><img src="../../../icons/select.gif"></td>
-  <td>Sélectionne, déplace, copie, colle les symboles.</td></tr>
+  <td>SÃ©lectionne, dÃ©place, copie, colle les symboles.</td></tr>
 <tr><td valign="top"><img src="../../../icons/text.gif"></td>
-  <td>Insert ou édite un text.</td></tr>
+  <td>Insert ou Ã©dite un text.</td></tr>
 <tr><td valign="top"><img src="../../../icons/drawline.gif"></td>
-  <td>Crée un segment de ligne. Maj + Glisser : La ligne sera dans un angle multiple de 45&deg.</td></tr>
+  <td>CrÃ©e un segment de ligne. Maj + Glisser : La ligne sera dans un angle multiple de 45&deg.</td></tr>
 <tr><td valign="top"><img src="../../../icons/drawcurv.gif"></td>
-  <td>Crée une courbe de Bezier.
-Le premier click et glisser spécifie le début de la ligne, le second click et glisser termine la ligne et définit la courbure.
-Un click sur la ligne vous montre les points de contrôle.
-Maj et point central de contrôle imposent une courbe symétrique.
-Alt et point central dessine la courbe au travers du point de contrôle (sous la souris).</td></tr>
+  <td>CrÃ©e une courbe de Bezier.
+Le premier click et glisser spÃ©cifie le dÃ©but de la ligne, le second click et glisser termine la ligne et dÃ©finit la courbure.
+Un click sur la ligne vous montre les points de contrÃ´le.
+Maj et point central de contrÃ´le imposent une courbe symÃ©trique.
+Alt et point central dessine la courbe au travers du point de contrÃ´le (sous la souris).</td></tr>
 <tr><td valign="top"><img src="../../../icons/drawplin.gif"></td>
-  <td>Crée une séquence de lignes connectées, chaque clic commence une nouvelle ligne. Un double clic termine la séquence.</td></tr>
+  <td>CrÃ©e une sÃ©quence de lignes connectÃ©es, chaque clic commence une nouvelle ligne. Un double clic termine la sÃ©quence.</td></tr>
 <tr><td valign="top"><img src="../../../icons/drawrect.gif"></td>
-  <td>Crée un rectangle en glissant depuis un angle vers l'angle oposé.
-  Maj+glisser pour crér un carré et Alt+glisser pour commencer au centre.</td></tr>
+  <td>CrÃ©e un rectangle en glissant depuis un angle vers l'angle oposÃ©.
+  Maj+glisser pour crÃ©r un carrÃ© et Alt+glisser pour commencer au centre.</td></tr>
 <tr><td valign="top"><img src="../../../icons/drawrrct.gif"></td>
-  <td>Crée un rectangle avec bord arrondi en glissant depuis un angle vers l'angle opposé.
-  Maj+glisser pour créer un carré et Alt+glisser pour commencer au centre.</td></tr>
+  <td>CrÃ©e un rectangle avec bord arrondi en glissant depuis un angle vers l'angle opposÃ©.
+  Maj+glisser pour crÃ©er un carrÃ© et Alt+glisser pour commencer au centre.</td></tr>
 <tr><td valign="top"><img src="../../../icons/drawoval.gif"></td>
-  <td>Crée un ovale en glissant depuis un angle vers l'angle opposé.
-  Maj+glisser pour créer un cercle et Alt+glisser pour commencer au centre.</td></tr>
+  <td>CrÃ©e un ovale en glissant depuis un angle vers l'angle opposÃ©.
+  Maj+glisser pour crÃ©er un cercle et Alt+glisser pour commencer au centre.</td></tr>
 <tr><td valign="top"><img src="../../../icons/drawpoly.gif"></td>
-  <td>Crée un polygone, chaque clic commence une nouvelle face. Un double clic termine la séquence.</td></tr>
+  <td>CrÃ©e un polygone, chaque clic commence une nouvelle face. Un double clic termine la sÃ©quence.</td></tr>
 </tbody></table>
 
 
-<p><strong>Suivant:</strong> <a href="debug.html">Debugging subcircuits</a>.</p>
+<p><strong>Suivant:</strong> <a href="debug.html">Deboguer un sous-circuit</a>.</p>
 
 </body>
 </html>

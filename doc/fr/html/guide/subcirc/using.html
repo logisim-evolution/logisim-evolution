@@ -1,6 +1,5 @@
 <html>
-<meta charset="iso-8859-1">
-<!-- La partie aide du programme n'affiche pas encore UTF8 V2.14.6 -->
+<meta charset="UTF-8">
 <head>
 <title>Utiliser des sous-circuits</title>
 </head>
@@ -9,35 +8,35 @@
 
 <h1>Utiliser des sous-circuits</h1>
 
-<p>Supposez maintenant que nous voulons construire un multiplexeur 4-to-1 en utilisant des instances de notre multiplexeur 2-to-1. Nous créons d'abord un nouveau circuit que nous nommons "Mux_4to1".
-Pour ajouter les multiplexeurs 2-to-1 nous cliquons une <em>fois</em> sur le circuit "Mux_2To1" dans l'explorateur du projet pour le sélectionner comme un outil. Ensuite, nous pouvons le placer sur le schéma en cliquant sur la page.
+<p>Supposez maintenant que nous voulons construire un multiplexeur 4-to-1 en utilisant des instances de notre multiplexeur 2-to-1. Nous crÃ©ons d'abord un nouveau circuit que nous nommons "Mux_4to1".
+Pour ajouter les multiplexeurs 2-to-1 nous cliquons une <em>fois</em> sur le circuit "Mux_2To1" dans l'explorateur du projet pour le sÃ©lectionner comme un outil. Ensuite, nous pouvons le placer sur le schÃ©ma en cliquant sur la page.
 </p>
 <center><img src="../../../img-guide/subcirc-4-add.png"></center>
-<p>Si vous faites un double-click sur le circuit "Mux_2To1" dans l'explorateur de projet la page bascule sur l'édition de ce circuit "Mux_2To1" et quitte le circuit "Mux_4To1"</p>
+<p>Si vous faites un double-click sur le circuit "Mux_2To1" dans l'explorateur de projet la page bascule sur l'Ã©dition de ce circuit "Mux_2To1" et quitte le circuit "Mux_4To1"</p>
 
-<p>Après avoir dessiné le nouveau circuit, il peut ressembler à ceci.</p>
+<p>AprÃ¨s avoir dessinÃ© le nouveau circuit, il peut ressembler Ã  ceci.</p>
 <center><img src="../../../img-guide/subcirc-4-done.png"></center>
-<p>Notre multiplexeur 4-to-1 utilise trois copies du multiplexeur 2-to-1, chacun est dessiné dans une boite avec des broches sur les côtés à gauche et droite.
-Ces lignes représentent les entrées et les sorties du circuit "Mux_2To1". Les deux broches sur la face est de la boite correspondent aux entrées du circuit et sur la face ouest elles correspondent aux sorties.
-Si les des étiquettes ont été associées a ces broches dans le schéma elles seront incluses dans la boite.
+<p>Notre multiplexeur 4-to-1 utilise trois copies du multiplexeur 2-to-1, chacun est dessinÃ© dans une boite avec des broches sur les cÃ´tÃ©s Ã  gauche et droite.
+Ces lignes reprÃ©sentent les entrÃ©es et les sorties du circuit "Mux_2To1". Les deux broches sur la face est de la boite correspondent aux entrÃ©es du circuit et sur la face ouest elles correspondent aux sorties.
+Si les des Ã©tiquettes ont Ã©tÃ© associÃ©es a ces broches dans le schÃ©ma elles seront incluses dans la boite.
 De plus elles s'affichent aussi quand on survole avec la souris la broche comme une <strong>astuce</strong> dans une petite boite temporaire.
-Vous pouvez désactiver ce fonctionnement via le panneau des préférences <a href="../prefs/layout.html">panneaux des préférences</a>.)</p>
+Vous pouvez dÃ©sactiver ce fonctionnement via le panneau des prÃ©fÃ©rences <a href="../prefs/layout.html">panneaux des prÃ©fÃ©rences</a>.)</p>
 </p>
 <center><img src="../../../img-guide/subcirc-4-tip.png"></center>
-<p>Plusieurs autres composant affiche des astuces, aussi pour des broches incorporées<a href="../../libs/mem/flipflops.html">flip-flop</a>,
-Par exemple, en survolant avec la souris une broche l'usage de la broche sera affiché.</p>
+<p>Plusieurs autres composant affiche des astuces, aussi pour des broches incorporÃ©es, le <a href="../../libs/mem/flipflops.html">flip-flop</a>,
+Par exemple, en survolant avec la souris une broche l'usage de la broche sera affichÃ©.</p>
 
-<p>Chaque broche d'un circuit doit être soit une entrée soit une sortie. Beaucoup de puces fabriquées ont des broches qui se comportent comme une entrée dans quelques situations et comme une sortie dans d'autres; vous ne pouvez pas construire de telles puces dans Logisim (au moins, dans la version actuelle).</p>
+<p>Chaque broche d'un circuit doit Ãªtre soit une entrÃ©e soit une sortie. Beaucoup de puces fabriquÃ©es ont des broches qui se comportent comme une entrÃ©e dans quelques situations et comme une sortie dans d'autres. Vous ne pouvez pas construire de telles puces dans Logisim (au moins, dans la version actuelle).</p>
 
-<p>Logisim maintiendra les différents états de chaque sous-circuit apparaissant dans un circuit.
-Par exemple, si un circuit contient des flip-flops et que ce circuit est utilisé plusieurs fois, chaque flip-flop du sous-circuit aura sa propre valeur dans la simulation du circuit plus grand.</p>
+<p>Logisim maintiendra les diffÃ©rents Ã©tats de chaque sous-circuit apparaissant dans un circuit.
+Par exemple, si un circuit contient des flip-flops et que ce circuit est utilisÃ© plusieurs fois, chaque flip-flop du sous-circuit aura sa propre valeur dans la simulation du circuit plus grand.</p>
 
-<p>Maintenant que le multiplexeur 4-to-1 est défini, nous pouvons l'utiliser dans d'autres circuits.
+<p>Maintenant que le multiplexeur 4-to-1 est dÃ©fini, nous pouvons l'utiliser dans d'autres circuits.
 Logisim n'a pas de limite dans la profondeur d'imbrication des circuits entre eux.
-Bien qu'il n'autorise pas un circuit à s'intégrer dans lui même!</p>
+Bien qu'il n'autorise pas un circuit Ã  s'intÃ©grer dans lui mÃªme!</p>
 
-<p><strong>Note:</strong>Il n'y a rien de mal à éditer un circuit qui est déjà utilisé dans un autre circuit, ceci est tout à fait commun.
-Cependant si vous modifiez une broche (ajout, suppression ou déplacement) les modifications seront aussi portées dans le circuit le contenant. Ainsi si vous modifiez n'importe quelle broche d'un sous-circuit vous devez aussi modifier tous les circuits l'utilisant comme un sous-circuit.
+<p><strong>Note:</strong>Il n'y a rien de mal Ã  Ã©diter un circuit qui est dÃ©jÃ  utilisÃ© dans un autre circuit, ceci est tout Ã  fait commun.
+Cependant si vous modifiez une broche (ajout, suppression ou dÃ©placement) les modifications seront aussi portÃ©es dans le circuit le contenant. Ainsi si vous modifiez n'importe quelle broche d'un sous-circuit vous devez aussi modifier tous les circuits l'utilisant comme un sous-circuit.
 
 
 <p><strong>Suite:</strong> <a href="appear.html">Editer l'apparence d'un sous-circuit</a>.</p>

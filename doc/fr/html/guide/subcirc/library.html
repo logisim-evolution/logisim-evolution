@@ -8,32 +8,15 @@
 
 <h1>Logisim libraries</h1>
 
-<p>Every Logisim project is automatically a library that can be loaded
-into other Logisim projects: Just save it into a file and then load
-the library within another project. All of the circuits defined in the
-first project will then be available as subcircuits for the second.
-This feature allows you to reuse common components across projects
-and to share favorite components with your friends (or students).</p>
+<p>Chaque projet Logisim est une bibliothèque pouvant être chargée dans d'autres projets Logisim. il suffit de l'enregistrer dans un fichier, puis de sélectioner le fichier a l'aide du menu <q>Projet</q> sous menu <q>charger une librairie</q> option <q>Librairie Ligisim-evolution</q> pour le charger. Tous les circuits définis dans le premier projet seront alors disponibles en sous-circuits pour le second.
+Cette fonctionnalité vous permet de réutiliser des composants communs à plusieurs projets et de partager des composants favoris avec vos amis (ou étudiants).
+</p>
+<p>Chaque projet a un "circuit principal" désigné qui peut être modifié pour faire référence au circuit actuel via l'option <q>Définir comme circuit principal</q> du menu Projet. La <em>seule</em> signification de ceci est que le circuit principal sera affiché lors de la première ouverture du projet. Le nom par défaut du circuit principal dans un fichier nouvellement créé ("main") n'a aucune signification et vous pouvez supprimer ou renommer ce circuit.</p>
+<p>Avec une bibliothèque Logisim chargée, vous êtes autorisé à visualiser les circuits et à manipuler leurs états, mais Logisim vous empêchera de modifier la conception des circuits et les autres données stockées dans le fichier.<p>
+<p>
+Si vous souhaitez modifier un circuit dans une bibliothèque Logisim chargée, vous devez l'ouvrir séparément dans Logisim. Dès que vous l'enregistrez, automatiquement et immédiatement l'autre projet devrait charger la version modifiée. Mais si ce n'est pas le cas, vous pouvez cliquer avec le bouton droit sur le dossier de la bibliothèque dans le volet de l'explorateur et sélectionner <q>Rechager une librairie</q>.</p>
 
-<p>Each project has a designated "main circuit," which can be changed
-to refer to the current circuit via the Set As Main Circuit option
-in the Project menu. The <em>only</em> significance of this is that
-the main circuit is the one that is displayed when you first open
-the project.  The default name of the circuit in a newly created file
-("main") has no significance at all, and you can feel free to delete
-or rename that circuit.</p>
-
-<p>With a loaded Logisim library, you are allowed to view circuits and
-manipulate their states, but Logisim will prevent you from altering
-the circuits' design and other data stored within the file.</p>
-
-<p>If you want to alter a circuit in a loaded Logisim library, then
-you need to open it separately within Logisim. As soon as you save
-it, the other project should automatically load the modified version
-immediately; but if it does not, you can right-click the library
-folder in the explorer pane and select Reload Library.</p>
-
-<p><strong>Next:</strong> <em><a href="../index.html">User's Guide</a></em>.</p>
+<p><strong>Suivant:</strong> <em><a href="../index.html">Guide de l'utilisateur</a></em>.</p>
 
 </body>
 </html>
