@@ -1,7 +1,9 @@
 package com.ita.logisim.ttl;
 
-import java.awt.Font;
-import java.awt.Graphics;
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.event.MouseEvent;
 
 import com.bfh.logisim.designrulecheck.CorrectLabel;
 import com.bfh.logisim.designrulecheck.NetlistComponent;
@@ -9,6 +11,7 @@ import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.instance.InstancePainter;
+import com.cburch.logisim.instance.InstancePoker;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.GraphicsUtil;
@@ -18,6 +21,58 @@ public class Ttl74165 extends AbstractTtlGate {
 	public Ttl74165() {
 		super("74165", (byte) 16, new byte[] { 7, 9 }, new String[] { "Shift/Load", "Clock", "P4", "P5", "P6", "P7",
 				"Q7n", "Q7", "Serial Input", "P0", "P1", "P2", "P3", "Clock Inhibit" });
+		super.setInstancePoker(Poker.class);
+	}
+
+	public static class Poker extends InstancePoker {
+		boolean isPressed = true;
+
+		private boolean isInside(InstanceState state, MouseEvent e) {
+			Point p = TTLGetTranslatedXY(state, e);
+			boolean inside = false;
+			for (int i = 0 ; i < 8 ; i++) {
+			   int dx = p.x-(40+i*10);
+			   int dy = p.y-30;
+			   int d2 = dx * dx + dy * dy;
+			   inside |= (d2 <4*4);
+			}
+			return inside;
+		}
+		
+		private int getIndex(InstanceState state, MouseEvent e) {
+			Point p = TTLGetTranslatedXY(state, e);
+			for (int i = 0 ; i < 8 ; i++) {
+			   int dx = p.x-(40+i*10);
+			   int dy = p.y-30;
+			   int d2 = dx * dx + dy * dy;
+			   if (d2 <4*4) return 7-i;
+			}
+			return 0;
+		}
+
+		@Override
+		public void mousePressed(InstanceState state, MouseEvent e) {
+			isPressed = isInside(state, e);
+		}
+
+		@Override
+		public void mouseReleased(InstanceState state, MouseEvent e) {
+			if (!state.getAttributeValue(TTL.DRAW_INTERNAL_STRUCTURE).booleanValue())
+				return;
+			if (isPressed && isInside(state, e)) {
+				int index = getIndex(state, e);
+System.out.println(index);				
+				ShiftRegisterData myState = (ShiftRegisterData) state.getData();
+				if (myState == null)
+					return;
+				if (myState.get(index).isFullyDefined())
+				   myState.set(index, myState.get(index).not());
+				else
+					myState.set(index, Value.createKnown(1, 0));
+				state.fireInvalidated();
+			}
+			isPressed = false;
+		}
 	}
 
 	private ShiftRegisterData getData(InstanceState state) {
@@ -31,17 +86,27 @@ public class Ttl74165 extends AbstractTtlGate {
 
 	@Override
 	public void paintInternal(InstancePainter painter, int x, int y, int height, boolean up) {
-		Graphics g = painter.getGraphics();
+		Graphics2D g = (Graphics2D) painter.getGraphics();
 		super.paintBase(painter, false, false);
 		Drawgates.paintPortNames(painter, x, y, height, new String[] { "ShLd", "CK", "P4", "P5", "P6", "P7", "Q7n",
 				"Q7", "SER", "P0", "P1", "P2", "P3", "CkIh" });
 		ShiftRegisterData data = getData(painter);
-		String s = "";
-		for (byte i = 0; i < 8; i++)
-			s += data.get(7 - i).toHexString();
-		g.setFont(new Font(Font.DIALOG_INPUT, Font.PLAIN, 14));
-		GraphicsUtil.drawCenteredText(g, s, x + 80, y + height / 2 - 3);
+		drawState(g,x,y,height,data);
 	}
+	
+	private void drawState(Graphics2D g,int x , int y , int height , ShiftRegisterData state) {
+		if (state !=null) {
+			for (int i = 0 ; i < 8 ; i++) {
+				g.setColor(state.get(7-i).getColor());
+				g.fillOval(x+36+i*10, y + height / 2 - 4, 8, 8);
+				g.setColor(Color.WHITE);
+				GraphicsUtil.drawCenteredText(g, state.get(7-i).toDisplayString(), x+40+i*10, y + height / 2);
+			}
+			g.setColor(Color.BLACK);
+			
+		}
+	}
+
 
 	@Override
 	public void ttlpropagate(InstanceState state) {
