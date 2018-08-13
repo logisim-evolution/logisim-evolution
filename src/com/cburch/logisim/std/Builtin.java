@@ -46,6 +46,7 @@ import com.cburch.logisim.std.tcl.Tcl;
 import com.cburch.logisim.std.wiring.Wiring;
 import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.tools.Tool;
+import com.ita.logisim.io.ITA_IO;
 import com.ita.logisim.ttl.TTL;
 
 public class Builtin extends Library {
@@ -54,7 +55,7 @@ public class Builtin extends Library {
 	public Builtin() {
 		libraries = Arrays.asList(new Library[] { new Base(), new Gates(),
 				new Wiring(), new Plexers(), new Arithmetic(), new Memory(),
-				new Io(),  new TTL(), new Hdl(), new Tcl(), new BFHPraktika(), });
+				new Io(),  new TTL(), new Hdl(), new Tcl(), new BFHPraktika(), new ITA_IO(),});
 	}
 
 	@Override
