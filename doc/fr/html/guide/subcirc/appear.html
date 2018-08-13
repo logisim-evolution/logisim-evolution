@@ -1,138 +1,96 @@
 <html>
 <meta charset="UTF-8">
 <head>
-<title>Editing subcircuit appearance</title>
+<title>Editer l'apparence d'un sous-circuit</title>
 </head>
 
 <body bgcolor="FFFFFF">
 
-<h1>Editing subcircuit appearance</h1>
+<h1>Editer l'apparence d'un sous-circuit</h1>
 
-<h2>Default appearance</h2>
+<h2>Apparence par défaut</h2>
+<p>Note: Il existe deux présentations des circuits. Nous présentons ici la nouvelle apparence. Une bonne partie des explications convient aussi pour l'autre présentation.
+La version de la présentation est sélectionnable dans les propriétés du circuit (Nouvelle apparence).</p> 
+<p>Par défaut quand est sous-circuit est placé sur un schéma il est dessiné dans un rectangle avec le nom du circuit au sud, les entrées a l'est et les sorties a l'ouest. L’ancrage étant au sommet de la pin nord-ouest.</p>
+<center><img src="../../../img-guide/subcirc-default-appear.png"></center>
+<p>Les entrées seront placées à l'est du rectangle et de haut en bas selon l'ordre de leur apparition dans le schéma détaillé de gauche à droite et de haut en bas.
+Les sorties seront placées à l'ouest du rectangle de la même manière.</p>
+<p>Il est possible d'éditer un label sur l'instance du sous-circuit en effectuant un double clic sur le rectangle. Le positionnement la fonte et les attributs de la fonte sont modifiables dans le tableau des propriétés.
+Ce même tableau permet le paramétrage du label partagé (pour toutes les instances).</p>
 
-<p>By default, when a subcircuit is placed within a larger circuit, it is drawn
-as a rectangle with a notch indicating the north end of the subcircuit's
-layout. Pins will be placed on the rectangle's border based on their facing:
-Pins that face east in the layout (and typically appear on the west side
-of the layout) will be placed on the rectangle's west side,
-according to their top-down ordering in the layout.
-Pins that face south in the layout (typically toward the north side of the layout)
-will be placed on the rectangle's north side, according to the left-to-right
-ordering in the layout.</p>
+<h2>Personaliser l'apparance</h2>
 
-<p>The default rectangle can optionally include some letters that will appear
-in the middle of the rectangle. To specify this, select the selection tool
-(<img src="../../../icons/select.gif">) and click the background of the circuit's
-layout. This will show the circuit attributes in the attribute table, including
-the Shared Label, Shared Label Facing, and Shared Label Font attributes.
-The value of the Shared Label attribute will be drawn in the rectangle's center;
-the Shared Label Facing attribute customizes which direction the text is drawn,
-and of course the Shared Label Font attribute customizes the font used.</p>
+<p>L'apparence par défaut est très utilisée et existe dans Logisim depuis de nombreuses années sans autres options. Si, toutefois, vous préférez que le sous-circuit soit dessiné différemment, vous pouvez sélectionner <q>Editer l’apparence du circuit </q> depuis le menu du projet et Logisim passera de l'interface édition du dessin a l'interface édition de l'apparence du circuit.
+(Vous pouvez également cliquer sur l'icône a l'extrême droite (<img src = "../../../icons/projapp.gif">) de la barre d'outils de l'explorateur.)
+Ci-dessous, nous modifions l’aspect du multiplexeur 2:1 pour qu’il soit dessiné avec un trapèze habituel plutôt qu'un rectangle.</p>
 
-<h2>Customized appearance</h2>
+<center><img src="../../../img-guide/subcirc-custom-appear.png"></center>
 
-<p>The default appearance is very usable, and indeed Logisim existed for many
-years with no other option. If, however, you prefer that the subcircuit be
-drawn differently, you can select <q>Edit Circuit Appearance</q> from the
-Project menu, and Logisim's interface will switch from its regular
-layout-editing interface to an interface for drawing the circuit's
-appearance.
-(You can also click the far-right icon (<img src="../../../icons/projapp.gif">)
-in the explorer pane's upper toolbar.)
-Below, we are editing the 2:1 multiplexer's appearance so that
-it is drawn with the usual trapezoid rather than a rectangle.</p>
+<p>Avec l'apparence du multiplexeur 2:1 dessiné ci-dessus,
+la disposition du multiplexeur 4:1 se présente naturellement comme suit.</p> 
 
-<blockquote><img src="../../../img-guide/subcirc-custom-appear.png"></blockquote>
+<center><img src="../../../img-guide/subcirc-custom-layout.png"></center>
 
-<p>With the appearance for the 2:1 multiplexer drawn as above,
-the layout for the 4:1 multiplexer would then appear as the following.</p> 
-
-<blockquote><img src="../../../img-guide/subcirc-custom-layout.png"></blockquote>
-
-<p>The appearance editor is like a traditional drawing program, but there
-are a few special symbols for indicating how the drawing works when placed
-into a circuit's layout. These special symbols cannot be removed.</p>
+<p>L'éditeur d'apparence se présente comme un programme de dessin traditionnel, mais il utilise quelques symboles spéciaux pour indiquer comment le symbole du sous-circuit  fonctionne lorsqu'il est placé dans le dessin d'un circuit. Ces symboles spéciaux ne peuvent pas être supprimés.</p>
 
 <ul>
 
-<li><p>The green circle with a line coming out of it, which we'll call the <q>anchor.</q>
-There is exactly one anchor in each subcircuit appearance.
-Each component in a circuit has a single point identifying its location;
-a user sees this when creating a new component:
-The mouse click identifies just a single location, and the component is placed
-relative to that (usually with the primary output at the mouse's location)
-The anchor identifies the mouse's location relative to the overall drawing
-when the subcircuit is created.</p>
+<li><p>Un cercle vert avec une ligne sortante, que nous appellerons <q>ancre</q> (<img src = "../../../img-guide/anchor.png" ALIGN="TOP">).
+Il y a exactement une ancre dans chaque apparence d'un sous-circuit.
+Chaque composant d'un circuit a un seul point pour identifier sa position sur le dessin;
+Un utilisateur observe cela lors de la création d'un nouveau composant: le click de la souris identifie un seul point de l'écran et le composant est placé par rapport à ce point.
+L'ancre sera alignée avec ce point du dessin global lorsque le sous-circuit est créé et dessiné.</p>
 
-<p>The anchor also identifies the appearance's facing, as indicated by the
-direction the anchor's line points from its circle. When placing the subcircuit
-into a layout, the user can change the subcircuit's facing; the anchor's facing
-indicates in which direction the appearance is oriented. In our example, the
-anchor is facing east, and each instance of the subcircuit in the 4:1 multiplexer
-is also facing east, so they are all drawn in the same orientation as the 2:1
-multiplexer's appearance.</p></li>
+<p>L'ancre indique aussi l'orientation du composant quand il est pausé dans le dessin, elle en est le centre de rotation. L'orientation est indiquée par la direction de la ligne qui pointe du cercle.
+Dans le dessin du sous-circuit, il est possible de modifier l'orientation de l'ancre dans les propriétés. Cela indiquera quelle orientation aura le symbole quand on le dépose sur un circuit.
+Dans notre exemple l'ancre du sous-circuit "Mux_2To1" est orientée à l'est et chaque instance du sous-circuit multiplexeur est également face à l'est dans le dessin du sous-circuit "Mux_4To1"</p></li>
 
-<li><p>The blue circles and squares with dots in them are the subcircuit's
-<q>ports.</q> There are exactly as many ports as there are input and output
-pins in the circuit.
-Ports corresponding to inputs are drawn as squares, while ports corresponding
-to outputs are drawn as circles.
-Each port indicates how a wire connecting into the
-circuit will correspond to an input or output pin within the layout.</p>
+<li><p>Les cercles bleus (<img src = "../../../img-guide/pinoutput.png">) et les carrés avec un point (<img src = "../../../img-guide/pinInput.png">) sont les <q>ports</q> du sous-circuit. Il y a exactement autant de symboles que de broche d'entrée et de sorties.
+Le port en entrée sont indiquées avec des carrés et les ports en sortie avec de cercles.
+Chaque symbole indique comment un fil se connectant au circuit correspondra à une broche d'entrée ou de sortie dans la mise en page.</p>
 
-<p>When you select a port, Logisim will indicate the corresponding pin
-by popping up a miniature diagram of the layout in the window's bottom right
-corner, with the corresponding pin(s) drawn in blue. This does not happen when
-all ports are selected.</p></li>
-
+<p>Lorsque vous sélectionnez un port, Logisim indiquera la broche correspondante en faisant apparaitre un diagramme miniature de la disposition dans une fenêtre en bas à droite et la broche correspondante dessinée en bleu.
+Cela ne se fait pas si tous les ports sont sélectionnés.</p>
+<p>
+Nous pouvons modifier le zoom de l'image à l'aide du bouton fléché en bas sur la gauche de l'espace de travail. Le taux est affiché.
+</p>
+</li>
 </ul>
-
-<p>The toolbar contains tools for adding additional shapes, as listed below
-with descriptions of how the shift and alt key modifies the tool behavior. In
-addition, clicking or dragging the mouse with the control key pressed regularly
-snaps the mouse position to the nearest grid point.</p>
+<center><img src="../../../img-guide/subcirc-custom-layout2.png"></center>
+<p>La barre d'outils contient des outils pour ajouter des formes supplémentaires, comme indiqué ci-dessous avec des descriptions de la façon dont la touche Alt modifie le comportement de l'outil.
+En outre en faisant glisser la souris avec la touche contrôle enfoncée la position de la souris sera alignée sur le point de la grille le plus proche.
+La touche Maj enfoncée orientera les lignes dans un multiple de 45&deg.</p>
 
 <table><tbody>
 <tr><td valign="top"><img src="../../../icons/select.gif"></td>
-  <td>Select, move, copy, and paste shapes.</td></tr>
+  <td>Sélectionne, déplace, copie, colle les symboles.</td></tr>
 <tr><td valign="top"><img src="../../../icons/text.gif"></td>
-  <td>Add or edit text.</td></tr>
+  <td>Insert ou édite un text.</td></tr>
 <tr><td valign="top"><img src="../../../icons/drawline.gif"></td>
-  <td>Create a line segment. Shift-drag keeps the line's angle at a multiple of 45&deg;.</td></tr>
+  <td>Crée un segment de ligne. Maj + Glisser : La ligne sera dans un angle multiple de 45&deg.</td></tr>
 <tr><td valign="top"><img src="../../../icons/drawcurv.gif"></td>
-  <td>Create a quadratic Bezier curve.
-  For the first drag, where you specify the curve's endpoints,
-  shift-drag keeps the endpoints at an angle that is a multiple of 45&deg;.
-  Then you click to indicate the control point's location;
-  shift-click ensures the curve is symmetric,
-  while alt-click draws the curve through the control point.</td></tr>
+  <td>Crée une courbe de Bezier.
+Le premier click et glisser spécifie le début de la ligne, le second click et glisser termine la ligne et définit la courbure.
+Un click sur la ligne vous montre les points de contrôle.
+Maj et point central de contrôle imposent une courbe symétrique.
+Alt et point central dessine la courbe au travers du point de contrôle (sous la souris).</td></tr>
 <tr><td valign="top"><img src="../../../icons/drawplin.gif"></td>
-  <td>Create a sequence of connected lines, whose vertices are indicated by
-  a succession of clicks. Shift-clicking ensures that the angle between the
-  previous vertex and the current one is a multiple of 45&deg;.
-  Double-click or press the Enter key to complete the
-  shape.</td></tr>
+  <td>Crée une séquence de lignes connectées, chaque clic commence une nouvelle ligne. Un double clic termine la séquence.</td></tr>
 <tr><td valign="top"><img src="../../../icons/drawrect.gif"></td>
-  <td>Create a rectangle through dragging from one corner to the opposite corner.
-  Shift-drag to create a square, and alt-drag to create the rectangle starting
-  from the center.</td></tr>
+  <td>Crée un rectangle en glissant depuis un angle vers l'angle oposé.
+  Maj+glisser pour crér un carré et Alt+glisser pour commencer au centre.</td></tr>
 <tr><td valign="top"><img src="../../../icons/drawrrct.gif"></td>
-  <td>Create a rectangle with rounded corners through dragging from one corner to the opposite corner.
-  Shift-drag to create a square, and alt-drag to create the rectangle starting
-  from the center.</td></tr>
+  <td>Crée un rectangle avec bord arrondi en glissant depuis un angle vers l'angle opposé.
+  Maj+glisser pour créer un carré et Alt+glisser pour commencer au centre.</td></tr>
 <tr><td valign="top"><img src="../../../icons/drawoval.gif"></td>
-  <td>Create an oval through dragging from one corner of its bounding box to the opposite corner.
-  Shift-drag to create a circle, and alt-drag to create the oval starting
-  from the center.</td></tr>
+  <td>Crée un ovale en glissant depuis un angle vers l'angle opposé.
+  Maj+glisser pour créer un cercle et Alt+glisser pour commencer au centre.</td></tr>
 <tr><td valign="top"><img src="../../../icons/drawpoly.gif"></td>
-  <td>Create an arbitrary polygon, whose vertices are indicated by
-  a succession of clicks. Shift-clicking ensures that the vertex is at a 45&deg;
-  angle from the previous one. Double-click, press the Enter key, or click the
-  starting vertex to complete the shape.</td></tr>
+  <td>Crée un polygone, chaque clic commence une nouvelle face. Un double clic termine la séquence.</td></tr>
 </tbody></table>
 
 
-<p><strong>Next:</strong> <a href="debug.html">Debugging subcircuits</a>.</p>
+<p><strong>Suivant:</strong> <a href="debug.html">Deboguer un sous-circuit</a>.</p>
 
 </body>
 </html>
