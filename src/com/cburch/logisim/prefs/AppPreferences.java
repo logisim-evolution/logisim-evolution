@@ -486,7 +486,7 @@ public class AppPreferences {
 	
 	// FPGA Commander Preferences
 	public static final PrefMonitor<String> FPGA_Workspace=create(new PrefMonitorString(
-			"FPGAWorkspace", System.getProperty("user.home")));
+			"FPGAWorkspace", System.getProperty("user.home")+"/logisim_evolution_workspace"));
 	public static final PrefMonitor<String> HDL_Type = create(new PrefMonitorStringOpts(
 			"afterAdd", new String[] { HDLGeneratorFactory.VHDL, HDLGeneratorFactory.VERILOG },
 			HDLGeneratorFactory.VHDL));
