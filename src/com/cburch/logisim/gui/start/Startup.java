@@ -910,8 +910,6 @@ public class Startup implements AWTEventListener {
 						}
 					} else {
 						ProjectActions.doOpen(monitor, fileToOpen, substitutions);
-//						logger.error("FATAL ERROR - no simulator available");
-//						System.exit(-1);
 					}
 					numOpened++;
 				} catch (LoadFailedException ex) {

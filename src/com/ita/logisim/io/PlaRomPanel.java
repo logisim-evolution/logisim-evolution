@@ -35,9 +35,9 @@ public class PlaRomPanel extends JPanel implements MouseListener, MouseMotionLis
 	}
 
 	private boolean drawCircleConnection(MouseEvent e) {
-		int row = getRow(e.getY());
-		int column = getColumn(e.getX());
-		int column2 = getColumn(e.getX() + 10);
+		int row = getRow(AppPreferences.getDownScaled(e.getY()));
+		int column = getColumn(AppPreferences.getDownScaled(e.getX()));
+		int column2 = getColumn(AppPreferences.getDownScaled(e.getX()) + 10);
 		this.hover = true;
 		if (row % 2 == 0 && row > 0 && column > 0) {
 			row = row / 2 - 1;
@@ -88,8 +88,9 @@ public class PlaRomPanel extends JPanel implements MouseListener, MouseMotionLis
 
 	@Override
 	public Dimension getPreferredSize() {
-		return new Dimension((data.getInputs() + data.getOutputs() + 1) * 40 + (2 * IMAGE_BORDER),
-				(data.getAnd() + 2) * 40 + 25 + (2 * IMAGE_BORDER));
+		return new Dimension(
+				AppPreferences.getScaled((data.getInputs() + data.getOutputs() + 1) * 40 + (2 * IMAGE_BORDER)),
+				AppPreferences.getScaled((data.getAnd() + 2) * 40 + 25 + (2 * IMAGE_BORDER)));
 	}
 
 	private int getRow(int y) {
@@ -101,9 +102,9 @@ public class PlaRomPanel extends JPanel implements MouseListener, MouseMotionLis
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		// click area arownd node is 20*20
-		int row = getRow(e.getY());
-		int column = getColumn(e.getX());
-		int column2 = getColumn(e.getX() + 10);
+		int row = getRow(AppPreferences.getDownScaled(e.getY()));
+		int column = getColumn(AppPreferences.getDownScaled(e.getX()));
+		int column2 = getColumn(AppPreferences.getDownScaled(e.getX()) + 10);
 		if (row % 2 == 0 && row > 0 && column > 0) {
 			row = row / 2 - 1;
 			if (row <= data.getAnd() - 1) {
@@ -163,8 +164,9 @@ public class PlaRomPanel extends JPanel implements MouseListener, MouseMotionLis
 
 	@Override
 	public void paintComponent(Graphics g) {
+		Graphics2D g2 = (Graphics2D) g;
+		g2.scale(AppPreferences.getScaled(1.0), AppPreferences.getScaled(1.0));
 		if (AppPreferences.AntiAliassing.getBoolean()) {
-			Graphics2D g2 = (Graphics2D) g;
 			g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		}
@@ -176,12 +178,15 @@ public class PlaRomPanel extends JPanel implements MouseListener, MouseMotionLis
 		g.setColor(Color.DARK_GRAY);
 		g.setFont(new Font("sans serif", Font.BOLD, 14));
 		GraphicsUtil.drawCenteredText(g, "\u2190" + Strings.getter("demultiplexerInTip").toString(),
-				40 * (inputs + 1) - (20 - IMAGE_BORDER) + 5, IMAGE_BORDER);
+				40 * (inputs + 1) - (20 - IMAGE_BORDER) + 5, IMAGE_BORDER-6);
 		GraphicsUtil.drawCenteredText(g, Strings.getter("multiplexerOutTip").toString() + "\u2192",
-				IMAGE_BORDER + 10 + 40 * inputs, IMAGE_BORDER + 100 + 40 * and);
+				IMAGE_BORDER + 10 + 40 * inputs, IMAGE_BORDER + 100 + 40 * and + 6);
 		for (byte i = 1; i <= inputs; i++) {
 			Color inputColor = data.getInputValue((byte) (i - 1)).getColor();
 			Color notColor = data.getInputValue((byte) (i - 1)).not().getColor();
+			g.setColor(Color.BLACK);
+			GraphicsUtil.drawCenteredText(g, Integer.toString(i-1), 40*i - (20 - IMAGE_BORDER), 
+					IMAGE_BORDER-12);
 			g.setColor(inputColor);
 			// draw input value
 			GraphicsUtil.drawCenteredText(g, data.getInputValue((byte) (i - 1)).toString(),
@@ -212,6 +217,9 @@ public class PlaRomPanel extends JPanel implements MouseListener, MouseMotionLis
 		for (byte i = 1; i <= outputs; i++) {
 			g.drawLine(IMAGE_BORDER + 20 + 40 * (inputs + i), IMAGE_BORDER + 70, IMAGE_BORDER + 20 + 40 * (inputs + i),
 					IMAGE_BORDER + 54 + 40 * and);
+			g.setColor(Color.BLACK);
+			GraphicsUtil.drawCenteredText(g,Integer.toString(i-1),IMAGE_BORDER + 20 + 40 * (inputs + i),
+					IMAGE_BORDER + 100 + 40 * and+12);
 			g.setColor(data.getOutputValue((byte) (i - 1)).getColor());
 			g.drawLine(IMAGE_BORDER + 20 + 40 * (inputs + i), IMAGE_BORDER + 82 + 40 * and,
 					IMAGE_BORDER + 20 + 40 * (inputs + i), IMAGE_BORDER + 89 + 40 * and);
