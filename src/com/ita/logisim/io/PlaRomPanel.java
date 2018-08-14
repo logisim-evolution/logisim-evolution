@@ -60,24 +60,34 @@ public class PlaRomPanel extends JPanel implements MouseListener, MouseMotionLis
 	}
 
 	private void drawNot(Graphics g, int x, int y) {
-		int[] xp = new int[4];
-		int[] yp = new int[4];
-		xp[0] = x - 6;
-		yp[0] = y;
-		xp[1] = x;
-		yp[1] = y + 13;
-		xp[2] = x + 6;
-		yp[2] = y;
-		xp[3] = x - 6;
-		yp[3] = y;
-		g.drawPolyline(xp, yp, 4);
+		if (AppPreferences.GATE_SHAPE.get().equals(AppPreferences.SHAPE_RECTANGULAR)) {
+			g.drawRect(x-6, y, 12, 13);
+			GraphicsUtil.drawCenteredText(g, "1", x, y+6);
+		} else {
+			int[] xp = new int[4];
+			int[] yp = new int[4];
+			xp[0] = x - 6;
+			yp[0] = y;
+			xp[1] = x;
+			yp[1] = y + 13;
+			xp[2] = x + 6;
+			yp[2] = y;
+			xp[3] = x - 6;
+			yp[3] = y;
+			g.drawPolyline(xp, yp, 4);
+		}
 		g.drawOval(x - 3, y + 14, 6, 6);
 	}
 
 	private void drawOr(Graphics g, int x, int y) {
-		GraphicsUtil.drawCenteredArc(g, x + 21, y - 1, 36, 180, 53);
-		GraphicsUtil.drawCenteredArc(g, x - 21, y - 1, 36, 0, -53);
-		GraphicsUtil.drawCenteredArc(g, x, y - 28, 30, -120, 60);
+		if (AppPreferences.GATE_SHAPE.get().equals(AppPreferences.SHAPE_RECTANGULAR)) {
+			g.drawRect(x-14, y, 28, 28);
+			GraphicsUtil.drawCenteredText(g,"\u2265" + "1", x, y+12);
+		} else {
+			GraphicsUtil.drawCenteredArc(g, x + 21, y - 1, 36, 180, 53);
+			GraphicsUtil.drawCenteredArc(g, x - 21, y - 1, 36, 0, -53);
+			GraphicsUtil.drawCenteredArc(g, x, y - 28, 30, -120, 60);
+		}
 	}
 
 	private int getColumn(int x) {
@@ -89,7 +99,7 @@ public class PlaRomPanel extends JPanel implements MouseListener, MouseMotionLis
 	@Override
 	public Dimension getPreferredSize() {
 		return new Dimension(
-				AppPreferences.getScaled((data.getInputs() + data.getOutputs() + 1) * 40 + (2 * IMAGE_BORDER)),
+				AppPreferences.getScaled((data.getInputs() + data.getOutputs() + 1) * 40 + (2 * IMAGE_BORDER)-10),
 				AppPreferences.getScaled((data.getAnd() + 2) * 40 + 25 + (2 * IMAGE_BORDER)));
 	}
 
@@ -193,6 +203,7 @@ public class PlaRomPanel extends JPanel implements MouseListener, MouseMotionLis
 					40 * i - (20 - IMAGE_BORDER), IMAGE_BORDER);
 			g.drawLine(40 * i - (20 - IMAGE_BORDER), IMAGE_BORDER + 15, 40 * i - (20 - IMAGE_BORDER),
 					IMAGE_BORDER + 22);
+			g.fillOval(40 * i - (20 - IMAGE_BORDER)-3,IMAGE_BORDER + 19,6,6);
 			g.drawLine(40 * i - (30 - IMAGE_BORDER), IMAGE_BORDER + 22, 40 * i - (10 - IMAGE_BORDER),
 					IMAGE_BORDER + 22);
 			g.drawLine(40 * i - (30 - IMAGE_BORDER), IMAGE_BORDER + 22, 40 * i - (30 - IMAGE_BORDER),
