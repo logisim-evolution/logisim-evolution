@@ -122,19 +122,18 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 		if (HDLType.equals(VHDL)) {
 			Contents.addAll(MakeRemarkBlock(
 					"Here the control signals are defined", 3, HDLType));
-			Contents.add("   s_RAM_enable    <= s_TickDelayLine(0);");
 			if (byteEnables) {
 				for (int i = 0; i < Ram.GetNrOfByteEnables(attrs); i++) {
 					Contents.add("   s_byte_enable_" + Integer.toString(i)
 							+ " <= s_ByteEnableReg(" + Integer.toString(i)
-							+ ") AND s_TickDelayLine(1) AND s_OEReg;");
+							+ ") AND s_TickDelayLine(2) AND s_OEReg;");
 					Contents.add("   s_we_" + Integer.toString(i)
 							+ "          <= s_ByteEnableReg("
 							+ Integer.toString(i)
 							+ ") AND s_TickDelayLine(0) AND s_WEReg;");
 				}
 			} else {
-				Contents.add("   s_oe <= s_TickDelayLine(1) AND s_OEReg;");
+				Contents.add("   s_oe <= s_TickDelayLine(2) AND s_OEReg;");
 				Contents.add("   s_we <= s_TickDelayLine(0) AND s_WEReg;");
 			}
 			Contents.add("");
@@ -159,20 +158,11 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 			Contents.add("      END IF;");
 			Contents.add("   END PROCESS InputRegs;");
 			Contents.add("");
-			Contents.add("   TickPipeReg : PROCESS(Clock , Tick , s_TickDelayLine)");// TODO
-																						// :YSY
-																						// suppress
-																						// s_TickDelayLine
-																						// from
-																						// sensibility
-																						// list
-																						// (written
-																						// in
-																						// process)
+			Contents.add("   TickPipeReg : PROCESS(Clock)");
 			Contents.add("   BEGIN");
 			Contents.add("      IF (Clock'event AND (Clock = '1')) THEN");
-			Contents.add("          s_TickDelayLine(0) <= Tick;");
-			Contents.add("          s_TickDelayLine(1) <= s_TickDelayLine(0);");
+			Contents.add("          s_TickDelayLine(0)          <= Tick;");
+			Contents.add("          s_TickDelayLine(2 DOWNTO 1) <= s_TickDelayLine(1 DOWNTO 0);");
 			Contents.add("      END IF;");
 			Contents.add("   END PROCESS TickPipeReg;");
 			Contents.add("");
@@ -183,10 +173,9 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 				for (int i = 0; i < Ram.GetNrOfByteEnables(attrs); i++) {
 					Contents.add("   Mem" + Integer.toString(i)
 							+ " : PROCESS( Clock , s_we_" + Integer.toString(i)
-							+ ", s_DataInReg, s_Address_reg, s_RAM_enable)");
+							+ ", s_DataInReg, s_Address_reg)");
 					Contents.add("   BEGIN");
 					Contents.add("      IF (Clock'event AND (Clock = '1')) THEN");
-					Contents.add("         IF (s_RAM_enable = '1') THEN");
 					Contents.add("            IF (s_we_" + Integer.toString(i)
 							+ " = '1') THEN");
 					int startIndex = i * 8;
@@ -203,22 +192,19 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 					Contents.add("            s_ram_data_out(" + endIndex
 							+ " DOWNTO " + startIndex + ") <= " + Memname
 							+ "(to_integer(unsigned(s_Address_reg)));");
-					Contents.add("         END IF;");
 					Contents.add("      END IF;");
 					Contents.add("   END PROCESS Mem" + Integer.toString(i)
 							+ ";");
 					Contents.add("");
 				}
 			} else {
-				Contents.add("   Mem : PROCESS( Clock , s_we, s_DataInReg, s_Address_reg, s_RAM_enable)");
+				Contents.add("   Mem : PROCESS( Clock , s_we, s_DataInReg, s_Address_reg)");
 				Contents.add("   BEGIN");
 				Contents.add("      IF (Clock'event AND (Clock = '1')) THEN");
-				Contents.add("         IF (s_RAM_enable = '1') THEN");
 				Contents.add("            IF (s_we = '1') THEN");
 				Contents.add("               s_mem_contents(to_integer(unsigned(s_Address_reg))) <= s_DataInReg;");
 				Contents.add("            END IF;");
 				Contents.add("            s_ram_data_out <= s_mem_contents(to_integer(unsigned(s_Address_reg)));");
-				Contents.add("         END IF;");
 				Contents.add("      END IF;");
 				Contents.add("   END PROCESS Mem;");
 				Contents.add("");
@@ -367,7 +353,7 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 				.equals(RamAttributes.BUS_WITH_BYTEENABLES);
 		int NrOfBits = attrs.getValue(Mem.DATA_ATTR).getWidth();
 		int NrOfAddressLines = attrs.getValue(Mem.ADDR_ATTR).getWidth();
-		Regs.put("s_TickDelayLine", 2);
+		Regs.put("s_TickDelayLine", 3);
 		Regs.put("s_DataInReg", NrOfBits);
 		Regs.put("s_Address_reg", NrOfAddressLines);
 		Regs.put("s_WEReg", 1);
@@ -438,7 +424,6 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 		Object be = attrs.getValue(RamAttributes.ATTR_ByteEnables);
 		boolean byteEnables = be == null ? false : be
 				.equals(RamAttributes.BUS_WITH_BYTEENABLES);
-		Wires.put("s_RAM_enable", 1);
 		Wires.put("s_ram_data_out", NrOfBits);
 		if (byteEnables) {
 			for (int i = 0; i < Ram.GetNrOfByteEnables(attrs); i++) {
