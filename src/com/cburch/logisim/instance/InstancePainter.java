@@ -30,6 +30,7 @@
 
 package com.cburch.logisim.instance;
 
+import java.awt.Color;
 import java.awt.Graphics;
 
 import com.cburch.logisim.circuit.Circuit;
@@ -269,4 +270,13 @@ public class InstancePainter implements InstanceState {
 	public boolean shouldDrawColor() {
 		return context.shouldDrawColor();
 	}
+
+	public void drawRoundBounds(Bounds bds, Color color) {
+		context.drawRoundBounds(comp, bds, color);
+	}
+
+	public void drawRoundBounds(Color color) {
+		context.drawRoundBounds(comp, color);
+	}
+
 }

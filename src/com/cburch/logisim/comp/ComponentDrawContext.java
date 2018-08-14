@@ -41,6 +41,7 @@ import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Location;
+import com.cburch.logisim.instance.InstanceComponent;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.GraphicsUtil;
@@ -320,6 +321,21 @@ public class ComponentDrawContext {
 
 	public boolean shouldDrawColor() {
 		return !printView && showColor;
+	}
+
+	public void drawRoundBounds(Component comp, Bounds bds, Color color) {
+		GraphicsUtil.switchToWidth(g, 2);
+		if (color != null  && !color.equals(Color.WHITE)) {
+			g.setColor(color);
+			g.fillRoundRect(bds.getX(), bds.getY(), bds.getWidth(), bds.getHeight(), 10, 10);
+		}
+		g.setColor(Color.BLACK);
+		g.drawRoundRect(bds.getX(), bds.getY(), bds.getWidth(), bds.getHeight(), 10, 10);
+		GraphicsUtil.switchToWidth(g, 1);
+	}
+
+	public void drawRoundBounds(Component comp, Color color) {
+		drawRoundBounds(comp, comp.getBounds(), color);
 	}
 
 }

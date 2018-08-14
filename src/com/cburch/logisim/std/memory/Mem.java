@@ -40,6 +40,7 @@ import com.cburch.hex.HexModel;
 import com.cburch.hex.HexModelListener;
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.data.Attribute;
+import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Attributes;
 import com.cburch.logisim.data.BitWidth;
@@ -57,7 +58,7 @@ import com.cburch.logisim.tools.key.JoinedConfigurator;
 import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.StringGetter;
 
-abstract class Mem extends InstanceFactory {
+public abstract class Mem extends InstanceFactory {
 	// Note: The code is meant to be able to handle up to 32-bit addresses, but
 	// it
 	// hasn't been debugged thoroughly. There are two definite changes I would
@@ -94,12 +95,18 @@ abstract class Mem extends InstanceFactory {
 
 	public static final Attribute<BitWidth> DATA_ATTR = Attributes.forBitWidth(
 			"dataWidth", Strings.getter("ramDataWidthAttr"));
+	public static final AttributeOption SEL_HIGH = new AttributeOption("high", Strings.getter("stdTriggerHigh"));
+
+	public static final AttributeOption SEL_LOW = new AttributeOption("low", Strings.getter("stdTriggerLow"));
+
+	public static final Attribute<AttributeOption> ATTR_SELECTION = Attributes.forOption("Select",
+			Strings.getter("ramSelAttr"), new AttributeOption[] { SEL_HIGH, SEL_LOW });
 	// port-related constants
 	static final int DATA = 0;
 	static final int ADDR = 1;
 	static final int MEM_INPUTS = 2;
 	// other constants
-	static final int DELAY = 10;
+	public static final int DELAY = 10;
 
 	private WeakHashMap<Instance, File> currentInstanceFiles;
 

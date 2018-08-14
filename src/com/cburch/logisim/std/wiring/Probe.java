@@ -81,7 +81,7 @@ public class Probe extends InstanceFactory {
 		}
 	}
 
-	static void configureLabel(Instance instance, Direction labelLoc,
+	public static void configureLabel(Instance instance, Direction labelLoc,
 			Direction facing) {
 		Bounds bds = instance.getBounds();
 		int x;
@@ -133,7 +133,7 @@ public class Probe extends InstanceFactory {
 	//
 	// static methods
 	//
-	static Bounds getOffsetBounds(Direction dir, BitWidth width,
+	public static Bounds getOffsetBounds(Direction dir, BitWidth width,
 			RadixOption radix) {
 		Bounds ret = null;
 		int len = radix == null || radix == RadixOption.RADIX_2 ? width
