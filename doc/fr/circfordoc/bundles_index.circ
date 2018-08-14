@@ -130,92 +130,34 @@ end TCL_Generic;&#13;
     <a name="clabelfont" val="SansSerif bold 16"/>
     <a name="circuitnamedbox" val="false"/>
     <a name="circuitvhdlpath" val=""/>
-    <wire from="(310,130)" to="(330,130)"/>
-    <wire from="(220,90)" to="(240,90)"/>
-    <wire from="(220,180)" to="(240,180)"/>
-    <wire from="(240,110)" to="(260,110)"/>
-    <wire from="(240,150)" to="(260,150)"/>
-    <wire from="(120,200)" to="(170,200)"/>
-    <wire from="(160,110)" to="(170,110)"/>
-    <wire from="(240,90)" to="(240,110)"/>
-    <wire from="(120,110)" to="(130,110)"/>
-    <wire from="(100,70)" to="(170,70)"/>
-    <wire from="(100,160)" to="(170,160)"/>
-    <wire from="(120,110)" to="(120,200)"/>
-    <wire from="(240,150)" to="(240,180)"/>
-    <wire from="(120,200)" to="(120,230)"/>
-    <comp lib="1" loc="(310,130)" name="OR Gate"/>
-    <comp lib="1" loc="(220,180)" name="AND Gate"/>
-    <comp lib="0" loc="(330,130)" name="Pin">
+    <wire from="(160,170)" to="(190,170)"/>
+    <wire from="(80,150)" to="(110,150)"/>
+    <wire from="(80,190)" to="(110,190)"/>
+    <wire from="(160,80)" to="(200,80)"/>
+    <wire from="(60,60)" to="(110,60)"/>
+    <wire from="(60,100)" to="(110,100)"/>
+    <comp lib="1" loc="(160,80)" name="AND Gate">
+      <a name="width" val="3"/>
+    </comp>
+    <comp lib="0" loc="(60,60)" name="Pin">
+      <a name="width" val="3"/>
+    </comp>
+    <comp lib="0" loc="(60,100)" name="Pin">
+      <a name="width" val="3"/>
+    </comp>
+    <comp lib="0" loc="(200,80)" name="Pin">
       <a name="facing" val="west"/>
       <a name="output" val="true"/>
-      <a name="label" val="Out_0"/>
+      <a name="width" val="3"/>
       <a name="labelloc" val="east"/>
     </comp>
-    <comp lib="1" loc="(220,90)" name="AND Gate"/>
-    <comp lib="1" loc="(160,110)" name="NOT Gate"/>
-    <comp lib="0" loc="(100,160)" name="Pin">
-      <a name="label" val="IN_1"/>
-    </comp>
-    <comp lib="0" loc="(120,230)" name="Pin">
-      <a name="facing" val="north"/>
-      <a name="label" val="Sel"/>
-    </comp>
-    <comp lib="0" loc="(100,70)" name="Pin">
-      <a name="label" val="In_0"/>
-    </comp>
-  </circuit>
-  <circuit name="Mux_2To1">
-    <a name="circuit" val="Mux_2To1"/>
-    <a name="clabel" val=""/>
-    <a name="clabelup" val="east"/>
-    <a name="clabelfont" val="SansSerif bold 16"/>
-    <a name="circuitnamedbox" val="true"/>
-    <a name="circuitvhdlpath" val=""/>
-    <wire from="(270,120)" to="(300,120)"/>
-    <wire from="(200,100)" to="(220,100)"/>
-    <wire from="(200,140)" to="(220,140)"/>
-    <wire from="(90,180)" to="(140,180)"/>
-    <wire from="(90,100)" to="(90,180)"/>
-    <wire from="(190,80)" to="(200,80)"/>
-    <wire from="(190,160)" to="(200,160)"/>
-    <wire from="(130,100)" to="(140,100)"/>
-    <wire from="(200,80)" to="(200,100)"/>
-    <wire from="(200,140)" to="(200,160)"/>
-    <wire from="(90,100)" to="(100,100)"/>
-    <wire from="(70,140)" to="(140,140)"/>
-    <wire from="(70,60)" to="(140,60)"/>
-    <wire from="(90,180)" to="(90,210)"/>
-    <comp lib="1" loc="(190,80)" name="AND Gate"/>
-    <comp lib="1" loc="(190,160)" name="AND Gate"/>
-    <comp lib="1" loc="(130,100)" name="NOT Gate"/>
-    <comp lib="0" loc="(300,120)" name="Pin">
+    <comp lib="1" loc="(160,170)" name="OR Gate"/>
+    <comp lib="0" loc="(80,150)" name="Pin"/>
+    <comp lib="0" loc="(80,190)" name="Pin"/>
+    <comp lib="0" loc="(190,170)" name="Pin">
       <a name="facing" val="west"/>
       <a name="output" val="true"/>
-      <a name="label" val="Out_1"/>
       <a name="labelloc" val="east"/>
     </comp>
-    <comp lib="1" loc="(270,120)" name="OR Gate"/>
-    <comp lib="0" loc="(70,140)" name="Pin">
-      <a name="label" val="In_1"/>
-    </comp>
-    <comp lib="0" loc="(70,60)" name="Pin">
-      <a name="label" val="In_0"/>
-    </comp>
-    <comp lib="0" loc="(90,210)" name="Pin">
-      <a name="facing" val="north"/>
-      <a name="label" val="Sel"/>
-    </comp>
-  </circuit>
-  <circuit name="Mux_4To1">
-    <a name="circuit" val="Mux_4To1"/>
-    <a name="clabel" val=""/>
-    <a name="clabelup" val="east"/>
-    <a name="clabelfont" val="SansSerif bold 16"/>
-    <a name="circuitnamedbox" val="false"/>
-    <a name="circuitvhdlpath" val=""/>
-    <comp loc="(210,40)" name="Mux_2To1"/>
-    <comp loc="(210,180)" name="Mux_2To1"/>
-    <comp loc="(360,100)" name="Mux_2To1"/>
   </circuit>
 </project>
