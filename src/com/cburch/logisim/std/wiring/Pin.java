@@ -33,6 +33,7 @@ package com.cburch.logisim.std.wiring;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.KeyEvent;
@@ -247,8 +248,10 @@ public class Pin extends InstanceFactory {
 				// don't want
 				// label
 				// included
-				int i = (bds.getX() + bds.getWidth() - e.getX()) / 10;
-				int j = (bds.getY() + bds.getHeight() - e.getY()) / 20;
+				Direction dir = state.getAttributeValue(StdAttr.FACING);
+				int yoffset = (dir==Direction.SOUTH) ? 10 : 0;
+				int i = (bds.getX() + bds.getWidth() - e.getX() - 15) / 10;
+				int j = (bds.getY() + bds.getHeight() - e.getY() - yoffset) / 20;
 				int bit = 8 * j + i;
 				if (bit < 0 || bit >= width.getWidth()) {
 					return -1;
@@ -455,7 +458,8 @@ public class Pin extends InstanceFactory {
 		Direction facing = attrs.getValue(StdAttr.FACING);
 		BitWidth width = attrs.getValue(StdAttr.WIDTH);
 		return Probe.getOffsetBounds(facing, width,
-				attrs.getValue(RadixOption.ATTRIBUTE) /* RadixOption.RADIX_2 */);
+				attrs.getValue(RadixOption.ATTRIBUTE) /* RadixOption.RADIX_2 */,
+				!attrs.getValue(ATTR_TYPE),true);
 	}
 
 	public int getType(Instance instance) {
@@ -513,7 +517,39 @@ public class Pin extends InstanceFactory {
 		PinAttributes attrs = (PinAttributes) instance.getAttributeSet();
 		return attrs.type != EndData.OUTPUT_ONLY;
 	}
+	
+	public void DrawInputShape(Graphics g, int x, int y, int width , int height, Direction dir) {
+		if (dir==Direction.EAST) {
+			g.drawLine(x+width-10, y, x+width, y+height/2);
+			g.drawLine(x+width-10, y+height, x+width, y+height/2);
+			g.drawLine(x,y, x, y+height);
+			g.drawLine(x, y, x+width-10, y);
+			g.drawLine(x, y+height, x+width-10, y+height);
+		} else if (dir==Direction.WEST) {
+			g.drawLine(x+10, y, x, y+height/2);
+			g.drawLine(x+10, y+height, x, y+height/2);
+			g.drawLine(x+width,y, x+width, y+height);
+			g.drawLine(x+10, y, x+width, y);
+			g.drawLine(x+10, y+height, x+width, y+height);
+		} else if (dir==Direction.NORTH) {
+			g.drawLine(x, y+10, x+width/2, y);
+			g.drawLine(x+width/2, y, x+width, y+10);
+			g.drawLine(x, y+height, x+width, y+height);
+			g.drawLine(x, y+10, x, y+height);
+			g.drawLine(x+width, y+10, x+width, y+height);
+		} else {
+			g.drawLine(x, y+height-10, x+width/2, y+height);
+			g.drawLine(x+width/2, y+height, x+width, y+height-10);
+			g.drawLine(x, y, x+width, y);
+			g.drawLine(x, y, x, y+height-10);
+			g.drawLine(x+width, y, x+width, y+height-10);
+		}
+	}
 
+	public void DrawOutputShape(Graphics g, int x, int y, int width , int height, Direction dir) {
+		g.drawRoundRect(x, y, width, height, 20, 20);
+	}
+	
 	@Override
 	public void paintGhost(InstancePainter painter) {
 		PinAttributes attrs = (PinAttributes) painter.getAttributeSet();
@@ -525,17 +561,9 @@ public class Pin extends InstanceFactory {
 		GraphicsUtil.switchToWidth(g, 2);
 		boolean output = attrs.isOutput();
 		if (output) {
-			BitWidth width = attrs.getValue(StdAttr.WIDTH);
-			if (width == BitWidth.ONE) {
-				g.drawOval(x + bds.getX() + 1, y + bds.getY() + 1,
-						bds.getWidth() - 1, bds.getHeight() - 1);
-			} else {
-				g.drawRoundRect(x + bds.getX() + 1, y + bds.getY() + 1,
-						bds.getWidth() - 1, bds.getHeight() - 1, 6, 6);
-			}
+			DrawOutputShape(g,x+bds.getX(),y+bds.getY(),bds.getWidth(),bds.getHeight(),attrs.getValue(StdAttr.FACING));
 		} else {
-			g.drawRect(x + bds.getX() + 1, y + bds.getY() + 1,
-					bds.getWidth() - 1, bds.getHeight() - 1);
+			DrawInputShape(g,x+bds.getX(),y+bds.getY(),bds.getWidth(),bds.getHeight(),attrs.getValue(StdAttr.FACING));
 		}
 	}
 
@@ -609,16 +637,11 @@ public class Pin extends InstanceFactory {
 		int y = bds.getY();
 		GraphicsUtil.switchToWidth(g, 2);
 		g.setColor(Color.black);
-		if (attrs.type == EndData.OUTPUT_ONLY) {
-			if (attrs.width.getWidth() == 1) {
-				g.drawOval(x + 1, y + 1, bds.getWidth() - 1,
-						bds.getHeight() - 1);
-			} else {
-				g.drawRoundRect(x + 1, y + 1, bds.getWidth() - 1,
-						bds.getHeight() - 1, 12, 12);
-			}
+		boolean IsOutput = attrs.type == EndData.OUTPUT_ONLY;
+		if (IsOutput) {
+			DrawOutputShape(g,x+1,y+1,bds.getWidth()-1,bds.getHeight()-1,attrs.getValue(StdAttr.FACING));
 		} else {
-			g.drawRect(x + 1, y + 1, bds.getWidth() - 1, bds.getHeight() - 1);
+			DrawInputShape(g,x+1,y+1,bds.getWidth()-1,bds.getHeight()-1,attrs.getValue(StdAttr.FACING));
 		}
 
 		painter.drawLabel();
@@ -631,18 +654,28 @@ public class Pin extends InstanceFactory {
 		} else {
 			PinState state = getState(painter);
 			if (attrs.width.getWidth() <= 1) {
+				Graphics2D g2 = (Graphics2D)g;
+				RadixOption radix = painter.getAttributeValue(RadixOption.ATTRIBUTE);
+				int offset = (attrs.getValue(StdAttr.FACING)==Direction.SOUTH) ?10 : 0;
+				g.setColor(Color.BLUE);
+				g2.scale(0.7, 0.7);
+				g2.drawString(radix.GetIndexChar(), (int)((bds.getX()+bds.getWidth()-13)/0.7), 
+						     (int)((bds.getY()+bds.getHeight()-(2+offset))/0.7));
+				g2.scale(1.0/0.7, 1.0/0.7);
+				g.setColor(Color.BLACK);
 				Value found = state.foundValue;
-				g.setColor(found.getColor());
-				g.fillOval(x + 4, y + 4, 13, 13);
-
+				if (!IsOutput) {
+					g.setColor(found.getColor());
+					g.fillOval(x + 14, y + 4, 13, 13);
+				}
 				if (attrs.width.getWidth() == 1) {
-					g.setColor(Color.WHITE);
+					if (!IsOutput) g.setColor(Color.WHITE);
 					GraphicsUtil.drawCenteredText(g,
-							state.intendedValue.toDisplayString(), x + 11,
+							state.intendedValue.toDisplayString(), x + 21,
 							y + 9);
 				}
 			} else {
-				Probe.paintValue(painter, state.intendedValue);
+				Probe.paintValue(painter, state.intendedValue,!IsOutput,!IsOutput);
 			}
 		}
 

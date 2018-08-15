@@ -196,7 +196,7 @@ public class Clock extends InstanceFactory {
 	@Override
 	public Bounds getOffsetBounds(AttributeSet attrs) {
 		return Probe.getOffsetBounds(attrs.getValue(StdAttr.FACING),
-				BitWidth.ONE, RadixOption.RADIX_2);
+				BitWidth.ONE, RadixOption.RADIX_2,false,false);
 	}
 
 	@Override

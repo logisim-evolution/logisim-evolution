@@ -32,6 +32,7 @@ package com.cburch.logisim.std.wiring;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 
 import com.cburch.logisim.circuit.RadixOption;
 import com.cburch.logisim.comp.TextField;
@@ -134,261 +135,60 @@ public class Probe extends InstanceFactory {
 	// static methods
 	//
 	public static Bounds getOffsetBounds(Direction dir, BitWidth width,
-			RadixOption radix) {
-		Bounds ret = null;
+			RadixOption radix, boolean extendy , boolean extendx) {
 		int len = radix == null || radix == RadixOption.RADIX_2 ? width
 				.getWidth() : radix.getMaxLength(width);
+		int bwidth,bheight,x,y;
+		if (radix == RadixOption.RADIX_2) {
+			bwidth = (len < 2) ? 20 : (len >= 8) ? 80 : len*10;
+			bheight = (len > 24) ? 80 : (len > 16) ? 60 : (len > 8) ? 40 : 20;
+		} else {
+			bwidth = (len<2) ? 20 : len*10;
+			bheight = 20;
+		}
+		if (extendx) bwidth+=20;
 		if (dir == Direction.EAST) {
-			switch (len) {
-			case 0:
-			case 1:
-				ret = Bounds.create(-20, -10, 20, 20);
-				break;
-			case 2:
-				ret = Bounds.create(-20, -10, 20, 20);
-				break;
-			case 3:
-				ret = Bounds.create(-30, -10, 30, 20);
-				break;
-			case 4:
-				ret = Bounds.create(-40, -10, 40, 20);
-				break;
-			case 5:
-				ret = Bounds.create(-50, -10, 50, 20);
-				break;
-			case 6:
-				ret = Bounds.create(-60, -10, 60, 20);
-				break;
-			case 7:
-				ret = Bounds.create(-70, -10, 70, 20);
-				break;
-			case 8:
-				ret = Bounds.create(-80, -10, 80, 20);
-				break;
-			case 9:
-			case 10:
-			case 11:
-			case 12:
-			case 13:
-			case 14:
-			case 15:
-			case 16:
-				ret = Bounds.create(-80, -20, 80, 40);
-				break;
-			case 17:
-			case 18:
-			case 19:
-			case 20:
-			case 21:
-			case 22:
-			case 23:
-			case 24:
-				ret = Bounds.create(-80, -30, 80, 60);
-				break;
-			case 25:
-			case 26:
-			case 27:
-			case 28:
-			case 29:
-			case 30:
-			case 31:
-			case 32:
-				ret = Bounds.create(-80, -40, 80, 80);
-				break;
-			}
+			x = -bwidth;
+			y = -(bheight/2);
 		} else if (dir == Direction.WEST) {
-			switch (len) {
-			case 0:
-			case 1:
-				ret = Bounds.create(0, -10, 20, 20);
-				break;
-			case 2:
-				ret = Bounds.create(0, -10, 20, 20);
-				break;
-			case 3:
-				ret = Bounds.create(0, -10, 30, 20);
-				break;
-			case 4:
-				ret = Bounds.create(0, -10, 40, 20);
-				break;
-			case 5:
-				ret = Bounds.create(0, -10, 50, 20);
-				break;
-			case 6:
-				ret = Bounds.create(0, -10, 60, 20);
-				break;
-			case 7:
-				ret = Bounds.create(0, -10, 70, 20);
-				break;
-			case 8:
-				ret = Bounds.create(0, -10, 80, 20);
-				break;
-			case 9:
-			case 10:
-			case 11:
-			case 12:
-			case 13:
-			case 14:
-			case 15:
-			case 16:
-				ret = Bounds.create(0, -20, 80, 40);
-				break;
-			case 17:
-			case 18:
-			case 19:
-			case 20:
-			case 21:
-			case 22:
-			case 23:
-			case 24:
-				ret = Bounds.create(0, -30, 80, 60);
-				break;
-			case 25:
-			case 26:
-			case 27:
-			case 28:
-			case 29:
-			case 30:
-			case 31:
-			case 32:
-				ret = Bounds.create(0, -40, 80, 80);
-				break;
-			}
+			x = 0;
+			y = -(bheight/2);
 		} else if (dir == Direction.SOUTH) {
-			switch (len) {
-			case 0:
-			case 1:
-				ret = Bounds.create(-10, -20, 20, 20);
-				break;
-			case 2:
-				ret = Bounds.create(-10, -20, 20, 20);
-				break;
-			case 3:
-				ret = Bounds.create(-15, -20, 30, 20);
-				break;
-			case 4:
-				ret = Bounds.create(-20, -20, 40, 20);
-				break;
-			case 5:
-				ret = Bounds.create(-25, -20, 50, 20);
-				break;
-			case 6:
-				ret = Bounds.create(-30, -20, 60, 20);
-				break;
-			case 7:
-				ret = Bounds.create(-35, -20, 70, 20);
-				break;
-			case 8:
-				ret = Bounds.create(-40, -20, 80, 20);
-				break;
-			case 9:
-			case 10:
-			case 11:
-			case 12:
-			case 13:
-			case 14:
-			case 15:
-			case 16:
-				ret = Bounds.create(-40, -40, 80, 40);
-				break;
-			case 17:
-			case 18:
-			case 19:
-			case 20:
-			case 21:
-			case 22:
-			case 23:
-			case 24:
-				ret = Bounds.create(-40, -60, 80, 60);
-				break;
-			case 25:
-			case 26:
-			case 27:
-			case 28:
-			case 29:
-			case 30:
-			case 31:
-			case 32:
-				ret = Bounds.create(-40, -80, 80, 80);
-				break;
-			}
-		} else if (dir == Direction.NORTH) {
-			switch (len) {
-			case 0:
-			case 1:
-				ret = Bounds.create(-10, 0, 20, 20);
-				break;
-			case 2:
-				ret = Bounds.create(-10, 0, 20, 20);
-				break;
-			case 3:
-				ret = Bounds.create(-15, 0, 30, 20);
-				break;
-			case 4:
-				ret = Bounds.create(-20, 0, 40, 20);
-				break;
-			case 5:
-				ret = Bounds.create(-25, 0, 50, 20);
-				break;
-			case 6:
-				ret = Bounds.create(-30, 0, 60, 20);
-				break;
-			case 7:
-				ret = Bounds.create(-35, 0, 70, 20);
-				break;
-			case 8:
-				ret = Bounds.create(-40, 0, 80, 20);
-				break;
-			case 9:
-			case 10:
-			case 11:
-			case 12:
-			case 13:
-			case 14:
-			case 15:
-			case 16:
-				ret = Bounds.create(-40, 0, 80, 40);
-				break;
-			case 17:
-			case 18:
-			case 19:
-			case 20:
-			case 21:
-			case 22:
-			case 23:
-			case 24:
-				ret = Bounds.create(-40, 0, 80, 60);
-				break;
-			case 25:
-			case 26:
-			case 27:
-			case 28:
-			case 29:
-			case 30:
-			case 31:
-			case 32:
-				ret = Bounds.create(-40, 0, 80, 80);
-				break;
-			}
+			if (extendy) bheight += 10;
+			x = -(bwidth/2);
+			y = -bheight;
+		} else {
+			if (extendy) bheight += 10;
+			x = -(bwidth/2);
+			y = 0;
 		}
-		if (ret == null) {
-			ret = Bounds.create(0, -10, 20, 20); // should never happen
-		}
-		return ret;
+		return Bounds.create(x, y, bwidth, bheight);
 	}
 
 	private static Value getValue(InstanceState state) {
 		StateData data = (StateData) state.getData();
 		return data == null ? Value.NIL : data.curValue;
 	}
-
 	static void paintValue(InstancePainter painter, Value value) {
+		paintValue(painter,value,false,false);
+	}
+	
+	static void paintValue(InstancePainter painter, Value value, boolean colored, boolean extend) {
 		Graphics g = painter.getGraphics();
+		Graphics2D g2 = (Graphics2D)g;
 		Bounds bds = painter.getBounds(); // intentionally with no graphics
 											// object - we don't want label
 											// included
 
 		RadixOption radix = painter.getAttributeValue(RadixOption.ATTRIBUTE);
+		Direction dir = painter.getAttributeValue(StdAttr.FACING); 
+		int offset = (dir==Direction.SOUTH&&extend) ? 10 : 0;
+		g.setColor(Color.BLUE);
+		g2.scale(0.7, 0.7);
+		g2.drawString(radix.GetIndexChar(), (int)((bds.getX()+bds.getWidth()-15)/0.7), 
+				     (int)((bds.getY()+bds.getHeight()-(2+offset))/0.7));
+		g2.scale(1.0/0.7, 1.0/0.7);
+		g.setColor(Color.BLACK);
 		if (radix == null || radix == RadixOption.RADIX_2) {
 			int x = bds.getX();
 			int y = bds.getY();
@@ -400,17 +200,21 @@ public class Probe extends InstanceFactory {
 				g.drawLine(x - 4, y, x + 4, y);
 				return;
 			}
-			int x0 = bds.getX() + bds.getWidth() - 5;
-			int compWidth = wid * 10;
-			if (compWidth < bds.getWidth() - 3) {
-				x0 = bds.getX() + (bds.getWidth() + compWidth) / 2 - 5;
-			}
+			int yoffset = (dir==Direction.SOUTH&&extend) ? 22 : 12;
+			int x0 = bds.getX() + bds.getWidth() - 20;
 			int cx = x0;
-			int cy = bds.getY() + bds.getHeight() - 12;
+			int cy = bds.getY() + bds.getHeight() - yoffset;
 			int cur = 0;
 			for (int k = 0; k < wid; k++) {
+				if (colored) {
+					g.setColor(value.get(k).getColor());
+					g.fillOval(cx-4, cy-6, 9, 16);
+					g.setColor(Color.WHITE);
+				}
 				GraphicsUtil.drawCenteredText(g,
 						value.get(k).toDisplayString(), cx, cy);
+				if (colored)
+					g.setColor(Color.BLACK);
 				++cur;
 				if (cur == 8) {
 					cur = 0;
@@ -422,8 +226,11 @@ public class Probe extends InstanceFactory {
 			}
 		} else {
 			String text = radix.toString(value);
-			GraphicsUtil.drawCenteredText(g, text, bds.getX() + bds.getWidth()
-					/ 2, bds.getY() + bds.getHeight() / 2);
+			int ypos = (dir == Direction.NORTH&&extend) ? bds.getY()+10+(bds.getHeight()-10)/2 :
+				       (dir == Direction.SOUTH&&extend) ? bds.getY()+(bds.getHeight()-10)/2 :
+				    	   bds.getY() + bds.getHeight() / 2;
+			GraphicsUtil.drawText(g, text, bds.getX() + bds.getWidth()-15,ypos , 
+					GraphicsUtil.H_RIGHT, GraphicsUtil.H_CENTER);
 		}
 	}
 
@@ -460,7 +267,7 @@ public class Probe extends InstanceFactory {
 	@Override
 	public Bounds getOffsetBounds(AttributeSet attrsBase) {
 		ProbeAttributes attrs = (ProbeAttributes) attrsBase;
-		return getOffsetBounds(attrs.facing, attrs.width, attrs.radix);
+		return getOffsetBounds(attrs.facing, attrs.width, attrs.radix,false,true);
 	}
 
 	@Override

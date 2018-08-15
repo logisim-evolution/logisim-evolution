@@ -96,6 +96,11 @@ public abstract class RadixOption extends AttributeOption {
 		public String toString(Value value) {
 			return value.toDecimalString(true);
 		}
+
+		@Override
+		public String GetIndexChar() {
+			return "s";
+		}
 	}
 
 	private static class Radix10Unsigned extends RadixOption {
@@ -153,6 +158,11 @@ public abstract class RadixOption extends AttributeOption {
 		public String toString(Value value) {
 			return value.toDecimalString(false);
 		}
+
+		@Override
+		public String GetIndexChar() {
+			return "u";
+		}
 	}
 
 	private static class Radix16 extends RadixOption {
@@ -168,6 +178,11 @@ public abstract class RadixOption extends AttributeOption {
 		@Override
 		public String toString(Value value) {
 			return value.toDisplayString(16);
+		}
+
+		@Override
+		public String GetIndexChar() {
+			return "h";
 		}
 	}
 
@@ -193,6 +208,11 @@ public abstract class RadixOption extends AttributeOption {
 		public String toString(Value value) {
 			return value.toDisplayString(2);
 		}
+
+		@Override
+		public String GetIndexChar() {
+			return "b";
+		}
 	}
 
 	private static class Radix8 extends RadixOption {
@@ -213,6 +233,11 @@ public abstract class RadixOption extends AttributeOption {
 		@Override
 		public String toString(Value value) {
 			return value.toDisplayString(8);
+		}
+
+		@Override
+		public String GetIndexChar() {
+			return "o";
 		}
 	}
 
@@ -272,6 +297,10 @@ public abstract class RadixOption extends AttributeOption {
 	@Override
 	public String toString() {
 		return saveName;
+	}
+	
+	public String GetIndexChar() {
+		return "";
 	}
 
 	public abstract String toString(Value value);
