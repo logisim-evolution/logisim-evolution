@@ -29,6 +29,7 @@ public abstract class AbstractTtlGate extends InstanceFactory {
 	private byte ngatestodraw = 0;
 	protected String[] portnames = null;
 	private byte[] outputports;
+	private byte [] unusedpins = null;
 
 	/**
 	 * @param name
@@ -49,6 +50,12 @@ public abstract class AbstractTtlGate extends InstanceFactory {
 		this.name = name;
 		this.pinnumber = pins;
 		this.outputports = outputports;
+	}
+
+	protected AbstractTtlGate(String name, byte pins, byte[] outputports, byte[] NotUsedPins) {
+		this(name, pins, outputports);
+		unusedpins = NotUsedPins;
+		
 	}
 
 	/**
@@ -88,6 +95,12 @@ public abstract class AbstractTtlGate extends InstanceFactory {
 		this.portnames = Ttlportnames;
 	}
 	
+	protected AbstractTtlGate(String name, byte pins, byte[] outputports, byte[] NotUsedPins, String[] Ttlportnames) {
+		this(name, pins, outputports);
+		unusedpins = NotUsedPins;
+		portnames = Ttlportnames;
+	}
+
 	protected AbstractTtlGate(String name, byte pins, byte[] outputports, String[] Ttlportnames,int height) {
 		// the ttl name, the total number of pins and an array with the indexes of
 		// output ports (indexes are the one you can find on Google), an array of
@@ -382,8 +395,9 @@ public abstract class AbstractTtlGate extends InstanceFactory {
 	 **/
 	@Override
 	public void propagate(InstanceState state) {
-		if (state.getAttributeValue(TTL.VCC_GND) && (state.getPortValue(this.pinnumber - 2) != Value.FALSE
-				|| state.getPortValue(this.pinnumber - 1) != Value.TRUE)) {
+		int NrOfUnusedPins = (unusedpins==null) ? 0 : unusedpins.length;
+		if (state.getAttributeValue(TTL.VCC_GND) && (state.getPortValue(this.pinnumber - 2 - NrOfUnusedPins) != Value.FALSE
+				|| state.getPortValue(this.pinnumber - 1 - NrOfUnusedPins) != Value.TRUE)) {
 			int port = 0;
 			for (byte i = 0; i < this.outputports.length; i++) {
 				port = this.outputports[i] - (this.outputports[i] >= this.pinnumber / 2 ? 2 : 1);
@@ -401,16 +415,22 @@ public abstract class AbstractTtlGate extends InstanceFactory {
 		int dx = 0, dy = 0, width = bds.getWidth(), height = bds.getHeight();
 		byte portindex = 0;
 		boolean isoutput = false, hasvccgnd = instance.getAttributeValue(TTL.VCC_GND);
+		int NrOfUnusedPins = (unusedpins==null) ? 0 : unusedpins.length;
 		/*
 		 * array port is composed in this order: lower ports less GND, upper ports less
 		 * Vcc, GND, Vcc
 		 */
-		Port[] ps = new Port[hasvccgnd ? this.pinnumber : this.pinnumber - 2];
+		Port[] ps = new Port[hasvccgnd ? this.pinnumber-NrOfUnusedPins : this.pinnumber - 2-NrOfUnusedPins];
 
 		for (byte i = 0; i < this.pinnumber; i++) {
+			boolean skip = false;
 			for (byte j = 0; j < this.outputports.length; j++) {
 				if (this.outputports[j] == i + 1)
 					isoutput = true;
+			}
+			for (int k = 0 ; k < NrOfUnusedPins ; k++) {
+				if (unusedpins[k] == i+1)
+					skip = true;
 			}
 			// set the position
 			if (i < this.pinnumber / 2) {
@@ -443,7 +463,9 @@ public abstract class AbstractTtlGate extends InstanceFactory {
 				}
 			}
 			// Set the port (output/input)
-			if (isoutput) {// output port
+			if (skip) {
+				portindex--;
+			} else if (isoutput) {// output port
 				ps[portindex] = new Port(dx, dy, Port.OUTPUT, 1);
 				if (this.portnames == null || this.portnames.length <= portindex)
 					ps[portindex].setToolTip(Strings.getter("demultiplexerOutTip", ": " + String.valueOf(i + 1)));
@@ -452,8 +474,8 @@ public abstract class AbstractTtlGate extends InstanceFactory {
 							String.valueOf(i + 1) + ": " + this.portnames[portindex]));
 			} else {// input port
 				if (hasvccgnd && i == this.pinnumber - 1) { // Vcc
-					ps[i] = new Port(dx, dy, Port.INPUT, 1);
-					ps[i].setToolTip(Strings.getter("Vcc: " + this.pinnumber));
+					ps[ps.length - 1] = new Port(dx, dy, Port.INPUT, 1);
+					ps[ps.length - 1].setToolTip(Strings.getter("Vcc: " + this.pinnumber));
 				} else if (i == this.pinnumber / 2 - 1) {// GND
 					if (hasvccgnd) {
 						ps[ps.length - 2] = new Port(dx, dy, Port.INPUT, 1);
