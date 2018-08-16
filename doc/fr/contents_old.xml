@@ -25,6 +25,12 @@
         <tocitem target="bundles_splitting" text="Eclaté"/>
         <tocitem target="bundles_colors" text="Couleur des câbles"/>
       </tocitem>
+#      <tocitem target="analyze" text="Analyse combinatoire">
+#        <tocitem target="analyze_open" text="Ouvrir l'analyse combinatoire"/>
+#        <tocitem target="analyze_table" text="Editer la table de vérité"/>
+#        <tocitem target="analyze_expr" text="Créer des expressions"/>
+#        <tocitem target="analyze_gen" text="Générer un circuit"/>
+#      </tocitem>
       <tocitem target="menu" text="Manuel des menus">
         <tocitem target="menu_file" text="Menu fichier"/>
         <tocitem target="menu_edit" text="Menu éditer"/>
