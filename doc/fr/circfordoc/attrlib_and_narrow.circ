@@ -134,21 +134,23 @@ end TCL_Generic;&#13;
     <a name="circuitvhdlpath" val=""/>
     <wire from="(90,60)" to="(120,60)"/>
     <wire from="(80,170)" to="(110,170)"/>
+    <wire from="(90,60)" to="(90,130)"/>
+    <wire from="(110,100)" to="(110,170)"/>
     <wire from="(300,110)" to="(320,110)"/>
+    <wire from="(230,80)" to="(230,90)"/>
+    <wire from="(110,100)" to="(160,100)"/>
+    <wire from="(210,80)" to="(230,80)"/>
     <wire from="(230,90)" to="(250,90)"/>
     <wire from="(230,130)" to="(250,130)"/>
     <wire from="(210,150)" to="(230,150)"/>
-    <wire from="(110,80)" to="(160,80)"/>
-    <wire from="(210,70)" to="(230,70)"/>
     <wire from="(150,170)" to="(160,170)"/>
     <wire from="(150,60)" to="(160,60)"/>
     <wire from="(80,60)" to="(90,60)"/>
     <wire from="(110,170)" to="(120,170)"/>
     <wire from="(230,130)" to="(230,150)"/>
-    <wire from="(230,70)" to="(230,90)"/>
-    <wire from="(110,80)" to="(110,170)"/>
-    <wire from="(90,60)" to="(90,150)"/>
-    <wire from="(90,150)" to="(160,150)"/>
+    <wire from="(90,130)" to="(160,130)"/>
+    <comp lib="1" loc="(210,80)" name="AND Gate"/>
+    <comp lib="1" loc="(210,150)" name="AND Gate"/>
     <comp lib="1" loc="(300,110)" name="OR Gate"/>
     <comp lib="0" loc="(320,110)" name="Pin">
       <a name="facing" val="west"/>
@@ -176,10 +178,7 @@ end TCL_Generic;&#13;
       <a name="text" val="Logisim-evolution"/>
       <a name="font" val="SansSerif plain 12"/>
     </comp>
-    <comp lib="1" loc="(190,70)" name="AND Gate">
-      <a name="size" val="30"/>
-    </comp>
-    <comp lib="1" loc="(190,160)" name="AND Gate">
+    <comp lib="1" loc="(140,230)" name="AND Gate">
       <a name="size" val="30"/>
     </comp>
   </circuit>
