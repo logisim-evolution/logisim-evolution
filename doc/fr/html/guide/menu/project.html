@@ -36,7 +36,7 @@ Définit le circuit actuellement affiché comme étant le <q>circuit principal <
 <dt><strong>Revenir à l'apparence par defaut</strong></dt>
 <dd><p>Si vous avez modifié l'apparence du circuit, cet élément de menu ramène l'apparence par défaut.
 L'élément de menu est activé uniquement lors de l'édition de l'apparence du circuit.
-L'apparence par défaut peut être modifiée dans les propriétés de la librairie "Nouvelle apparence". 
+L'aspect de l'apparence par défaut peut être modifiée par la propriétée "Nouvelle apparence" de la librairie. 
 </p></dd>
 
 <dt><strong>Aficher la barre d'outils</strong></dt>
@@ -47,7 +47,7 @@ L'apparence par défaut peut être modifiée dans les propriétés de la librair
 <dd><p>Modifie le volet de l'explorateur pour afficher la hiérarchie des sous-circuits dans la simulation en cours.</p></dd>
 
 <dt><strong>Editer le dessins du Circuit</strong></dt>
-<dd><p>Modifie l'espace de travail pour qu'il affiche l'édition du circuit. Cet élément de menu est activé quand l'espace de travail affiche l'éditeur d'apparence.</p></dd>
+<dd><p>Modifie l'espace de travail pour qu'il affiche l'édition du schema du circuit. Cet élément de menu est activé quand l'espace de travail affiche l'éditeur d'apparence.</p></dd>
 
 <dt><strong>Editer l'apparence du circuit</strong>
 <dd><p>
@@ -69,13 +69,11 @@ Le processus d'analyse ne sera valable que pour les circuits combinatoires. Une 
 <li> Simple: nombre de fois où ce composant apparaît directement dans le circuit visualisé. </ li>
 <li> Unique: nombre de fois où ce composant apparaît dans la hiérarchie du circuit, où chaque sous-circuit de la hiérarchie est compté une seule fois. </ li>
 <li> Récursif: nombre de fois où ce composant apparaît dans la hiérarchie du circuit, où nous comptons chaque sous-circuit autant de fois qu'il apparaît dans la hiérarchie. </ li>
-</ ul>
-<p> La distinction entre <q> Unique </ q> et <q> Recursive </ q> est plus facile à expliquer en considérant le multiplexeur 4:1 construit avec trois multiplexeurs 2:1
+</ul>
+<p> La distinction entre <q> Unique </q> et <q> Recursive </q> est plus facile à expliquer en considérant le multiplexeur 4:1 construit avec trois multiplexeurs 2:1
 comme dans la section <q> <a href="../subcirc/using.html"> Utiliser des sous-circuits </a> </q>.
-Le multiplexeur 2:1 contient deux portes ET (et le circuit 4:1 n'en contient aucune), de sorte que le nombre <q> Unique </q> comptant
-de portes ET serait 2; mais si vous deviez construire le multiplexeur 4:1 en utilisant ce diagramme, vous auriez réellement besoin de 2 portes ET pour chacun des trois multiplexeurs 2:1,
-donc le nombre <q> récursif </q> est 6. </ p>
-
+Le multiplexeur 2:1 contient deux portes ET (et le circuit 4:1 n'en contient aucune), de sorte que le nombre <q> Unique</q> dénombrant les portes ET serait 2; mais si vous deviez construire le multiplexeur 4:1 en utilisant ce diagramme, vous auriez réellement besoin de 2 portes ET pour chacun des trois multiplexeurs 2:1,
+donc le nombre <q> récursif </q> est 6. </p>
 
 <p>Si vous utilisez des circuits d'une bibliothèque Logisim chargée, ces composants sont considérés comme des <q>boîtes noires</q>: le contenu des circuits de la bibliothèque n'est pas inclus dans les comptes uniques et récursifs.</p></dd>
 
