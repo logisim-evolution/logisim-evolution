@@ -25,8 +25,6 @@
 <dd><p></p></dd>
 <dt><strong>Restarte simulation VHDL</strong></dt>
 <dd><p></p></dd>
-<dt><strong>Aller dans la vue</strong></dt>
-
 <dt><strong>Sortir de la vue</strong></dt>
 <dd><p>Quand vous avez exploré l'état d'un sous circuit pour <a href="../subcirc/debug.html">le debuger</a> a l'aide de son menu local. Le menu <q>Sortir de la vue</q> permet d'afficher la vue de l'état des circuits supérieur de la hiérarchie. Le nom de ceux ci sont présenté dans des options.</p></dd>
 
@@ -35,23 +33,20 @@
 permet de retourner dans la vue des ciruits inférieur de la hiérarchie. Les circuit sont présenté comme des options.
 </p></dd>
 
-<dt><strong>Un seul tick</strong></dt>
-<dd><p>Étapes à suivre dans la simulation. Cela peut être utile lorsque vous souhaitez faire avancer les horloges manuellement, en particulier lorsque l’horloge ne se trouve pas dans le même circuit que celui que vous consultez actuellement.
-Steps one tick forward into the simulation. This can be useful when you want to step the clocks manually, particularly when the clock is not in the same circuit that you are currently viewing.</p></dd>
+<dt><strong>Un seul tic</strong></dt>
+<dd><p>Avance d'un tic les horloges dans la simulation en mode pas a pas. Cela peut être utile lorsque vous souhaitez faire avancer les horloges manuellement, en particulier lorsque l’horloge ne se trouve pas dans le même circuit que celui que vous consultez actuellement.</p></dd>
 <dt><strong>'Clk' un seul tic</strong></dt>
 <dd><p></p></dd>
 <dt><strong>Tic activé</strong></dt>
-<dd><p>Commence automatiquement à cocher l'horloge. Cela n'aura d'effet que si le circuit contient des appareils d'horloge (dans la bibliothèque de câblage). L'option est désactivée par défaut.
-Starts automatically ticking the clock. This will have an effect only if the circuit contains any clock devices (in the Wiring library). The option is disabled by default.</p></dd>
+<dd><p>Active les horloges. Cela n'aura d'effet que si le circuit contient des composants d'horloge (dans la bibliothèque de câblage). L'option est désactivée par défaut.</p></dd>
 
 <dt><strong>Fréquence des tics</strong></dt>
-<dd><p>Vous permet de sélectionner la fréquence des tics. Par exemple, 8 Hz signifie que les tics se produiront huit fois par seconde. Un tic est l'unité de mesure de base pour la vitesse des horloges.
-Allows you to select how often ticks occur.  For example, 8 Hz means that ticks will occur eight times a second.  A tick is the base unit of measurement for the speed of clocks.</p>
+<dd><p>Vous permet de sélectionner la fréquence des tics. Par exemple, 8 Hz signifie que les tics se produiront huit fois par seconde. Un tic est l'unité de mesure de base pour la vitesse des horloges.</p>
 
-<p>Notez que la vitesse du cycle d'horloge sera plus lente que la vitesse d'activation: l'horloge la plus rapide possible aura un cycle à un tic et un cycle à un tic; une telle horloge aurait un taux de cycle haut / bas de 4 Hz si les graduations se produisent à 8 Hz.
-Note that the clock cycle speed will be slower than the tick speed: The fastest possible clock will have a one-tick up cycle and a one-tick down cycle; such a clock would have up/down cycle rate of 4 Hz if the ticks occur at 8 Hz.</p></dd>
+<p>Notez que la vitesse du cycle d'horloge sera plus lente que la vitesse d'activation: l'horloge la plus rapide possible aura un cycle haut à un tic et un cycle bas à un tic. Une telle horloge aurait une fréquence de 4 Hz (un cycle complet haut/bas) si la fréquence des tic est à 8 Hz.
+</p></dd>
 <dt><strong>Chronogramme...</strong></dt>
-<dd><p>module de journalisation </a>, ce qui facilite l’enregistrement et la sauvegarde automatiques des valeurs dans un circuit au fur et à mesure de la progression de la simulation.</p></dd>
+<dd><p>Module de journalisation </a>, qui facilite l’enregistrement et la sauvegarde automatiques des valeurs d'un circuit au fur et à mesure de la progression de la simulation.</p></dd>
 <dt><strong>Vecteur de test...</strong></dt>
 <dd><p></p></dd>
 <dt><strong>Assembly viewer</strong></dt>
