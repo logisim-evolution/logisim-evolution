@@ -70,9 +70,9 @@ class IntlOptions extends OptionsPanel {
 						new PrefOption(AppPreferences.SHAPE_SHAPED,
 								Strings.getter("shapeShaped")),
 						new PrefOption(AppPreferences.SHAPE_RECTANGULAR,
-								Strings.getter("shapeRectangular")),
-						new PrefOption(AppPreferences.SHAPE_DIN40700,
-								Strings.getter("shapeDIN40700")) });
+								Strings.getter("shapeRectangular")) });
+//						new PrefOption(AppPreferences.SHAPE_DIN40700,
+//								Strings.getter("shapeDIN40700")) 
 
 		Box localePanel = new Box(BoxLayout.X_AXIS);
 		localePanel.add(Box.createGlue());

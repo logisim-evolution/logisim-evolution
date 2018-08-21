@@ -254,10 +254,10 @@ class NotGate extends InstanceFactory {
 		Object shape = painter.getGateShape();
 		if (shape == AppPreferences.SHAPE_RECTANGULAR) {
 			paintRectangularBase(g, painter);
-		} else if (shape == AppPreferences.SHAPE_DIN40700) {
-			int width = painter.getAttributeValue(ATTR_SIZE) == SIZE_NARROW ? 20
-					: 30;
-			PainterDin.paintAnd(painter, width, 18, true);
+//		} else if (shape == AppPreferences.SHAPE_DIN40700) {
+//			int width = painter.getAttributeValue(ATTR_SIZE) == SIZE_NARROW ? 20
+//					: 30;
+//			PainterDin.paintAnd(painter, width, 18, true);
 		} else {
 			PainterShaped.paintNot(painter);
 		}
@@ -288,14 +288,14 @@ class NotGate extends InstanceFactory {
 				GraphicsUtil.drawCenteredText(g, RECT_LABEL, 8, 8);
 				g.drawOval(16, 8, 4, 4);
 			}
-		} else if (painter.getGateShape() == AppPreferences.SHAPE_DIN40700) {
-			if (toolIconDin != null) {
-				toolIconDin.paintIcon(painter.getDestination(), g, 2, 2);
-			} else {
-				g.drawRect(0, 2, 16, 16);
-				GraphicsUtil.drawCenteredText(g, RECT_LABEL, 8, 8);
-				g.drawOval(16, 8, 4, 4);
-			}
+//		} else if (painter.getGateShape() == AppPreferences.SHAPE_DIN40700) {
+//			if (toolIconDin != null) {
+//				toolIconDin.paintIcon(painter.getDestination(), g, 2, 2);
+//			} else {
+//				g.drawRect(0, 2, 16, 16);
+//				GraphicsUtil.drawCenteredText(g, RECT_LABEL, 8, 8);
+//				g.drawOval(16, 8, 4, 4);
+//			}
 		} else {
 			if (toolIcon != null) {
 				toolIcon.paintIcon(painter.getDestination(), g, 2, 2);

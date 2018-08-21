@@ -475,11 +475,10 @@ public class AppPreferences {
 	public static final String SHAPE_SHAPED = "shaped";
 
 	public static final String SHAPE_RECTANGULAR = "rectangular";
-	public static final String SHAPE_DIN40700 = "din40700";
+//	public static final String SHAPE_DIN40700 = "din40700";
 
 	public static final PrefMonitor<String> GATE_SHAPE = create(new PrefMonitorStringOpts(
-			"gateShape", new String[] { SHAPE_SHAPED, SHAPE_RECTANGULAR,
-					SHAPE_DIN40700 }, SHAPE_SHAPED));
+			"gateShape", new String[] { SHAPE_SHAPED, SHAPE_RECTANGULAR }, SHAPE_SHAPED));
 	public static final PrefMonitor<String> LOCALE = create(new LocalePreference());
 	public static final PrefMonitor<Boolean> ACCENTS_REPLACE = create(new PrefMonitorBoolean(
 			"accentsReplace", false));

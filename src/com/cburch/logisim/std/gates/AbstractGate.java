@@ -484,8 +484,8 @@ abstract class AbstractGate extends InstanceFactory {
 
 		if (shape == AppPreferences.SHAPE_RECTANGULAR) {
 			paintRectangular(painter, width, height);
-		} else if (shape == AppPreferences.SHAPE_DIN40700) {
-			paintDinShape(painter, width, height, inputs);
+//		} else if (shape == AppPreferences.SHAPE_DIN40700) {
+//			paintDinShape(painter, width, height, inputs);
 		} else { // SHAPE_SHAPED
 			if (negateOutput) {
 				g.translate(-10, 0);
@@ -527,13 +527,13 @@ abstract class AbstractGate extends InstanceFactory {
 			} else {
 				paintIconRectangular(painter);
 			}
-		} else if (painter.getGateShape() == AppPreferences.SHAPE_DIN40700) {
-			Icon iconDin = getIconDin40700();
-			if (iconDin != null) {
-				iconDin.paintIcon(painter.getDestination(), g, 2, 2);
-			} else {
-				paintIconRectangular(painter);
-			}
+//		} else if (painter.getGateShape() == AppPreferences.SHAPE_DIN40700) {
+//			Icon iconDin = getIconDin40700();
+//			if (iconDin != null) {
+//				iconDin.paintIcon(painter.getDestination(), g, 2, 2);
+//			} else {
+//				paintIconRectangular(painter);
+//			}
 		} else {
 			Icon iconShaped = getIconShaped();
 			if (iconShaped != null) {
