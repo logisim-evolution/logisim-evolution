@@ -102,6 +102,8 @@ MouseListener,PreferenceChangeListener {
 			boardIcon = new BoardIcon(MyBoardInformation.GetImage());
 			boardPic.setIcon(boardIcon);
 			boardPic.repaint();
+			UpdateFrequencies();
+			CustFreqPannel.Reset(MyBoardInformation.fpga.getClockFrequency());
 			HandleHDLOnly();
 			writeToFlash.setSelected(false);
 			writeToFlash.setVisible(MyBoardInformation.fpga.isFlashDefined());
@@ -297,6 +299,7 @@ MouseListener,PreferenceChangeListener {
 	public static final int FONT_SIZE = 12;
 	private JFrame panel;
 	private ComponentMapDialog MapPannel;
+	private CustomFrequencySelDialog CustFreqPannel;
 	private JLabel textMainCircuit = new JLabel("Choose main circuit ");
 	private JLabel textTargetBoard = new JLabel("Choose target board ");
 	private JLabel textTargetFreq = new JLabel("Choose tick frequency ");
@@ -328,7 +331,6 @@ MouseListener,PreferenceChangeListener {
 	private LinkedList<String> consoleConsole = new LinkedList<String>();
 	@SuppressWarnings("unused")
 	private static final Integer VerilogSourcePath = 0;
-	@SuppressWarnings("unused")
 
 	private FPGACommanderListModel WarningsList = new FPGACommanderListModel();
 	private JList<Object> Warnings = new JList<Object>();
@@ -343,6 +345,39 @@ MouseListener,PreferenceChangeListener {
 	private FPGACommanderTextWindow ConsoleWindow;
 	private boolean DRCTraceActive = false;
 	private SimpleDRCContainer ActiveDRCContainer;
+	
+	private void UpdateFrequencies() {
+		long Clockfreq = MyBoardInformation.fpga.getClockFrequency();
+		long Freq = 512000000;
+		int added = 1;
+		frequenciesList.setSelectedIndex(0);
+		for (int i = frequenciesList.getItemCount()-1 ; i > 0 ; i-- )
+			frequenciesList.removeItemAt(i);
+		while (Freq > 4100) {
+			if ((Clockfreq/Freq)>=4) {
+				if (Freq >= 1000000) {
+					frequenciesList.addItem(Integer.toString((int) (Freq/1000000))+" MHz");
+					added++;
+				} else {
+					frequenciesList.addItem(Integer.toString((int) (Freq/1000))+" KHz");
+					added++;
+				}
+			}
+			if (Freq == 1000000)
+				Freq = 512000;
+			else
+				Freq /=2 ;
+		}
+		for (String freq : MenuSimulate.getTickFrequencyStrings()) {
+			frequenciesList.addItem(freq);
+		}
+		for (int i = 0; i < MenuSimulate.SupportedTickFrequencies.length; i++) {
+			if (MenuSimulate.SupportedTickFrequencies[i].equals(MyProject
+					.getSimulator().getTickFrequency())) {
+				frequenciesList.setSelectedIndex(i+added);
+			}
+		}
+	}
 
 	public FPGACommanderGui(Project Main) {
 		MyReporter = new FPGAReportGui(this);
@@ -379,7 +414,6 @@ MouseListener,PreferenceChangeListener {
 		c.gridwidth = 2;
 		// circuitsList.addActionListener(this);
 		circuitsList.setActionCommand("mainCircuit");
-		int i = 0;
 		RebuildCircuitSelection();
 		MyProject.addProjectListener(this);
 		MyProject.getLogisimFile().addLibraryListener(this);
@@ -395,32 +429,6 @@ MouseListener,PreferenceChangeListener {
 		c.gridx = 1;
 		c.gridwidth = 2;
 		panel.add(AppPreferences.Boards.BoardSelector(), c);
-
-		// select clock frequency
-		c.gridwidth = 1;
-		c.gridx = 0;
-		c.gridy = 4;
-		textTargetFreq.setEnabled(true);
-		panel.add(textTargetFreq, c);
-		frequenciesList.setEnabled(true);
-		for (String freq : MenuSimulate.getTickFrequencyStrings()) {
-			frequenciesList.addItem(freq);
-		}
-		for (i = 0; i < MenuSimulate.SupportedTickFrequencies.length; i++) {
-			if (MenuSimulate.SupportedTickFrequencies[i].equals(MyProject
-					.getSimulator().getTickFrequency())) {
-				frequenciesList.setSelectedIndex(i);
-			}
-		}
-		frequenciesList.setActionCommand("Frequency");
-		frequenciesList.addActionListener(this);
-		c.gridx = 1;
-		panel.add(frequenciesList, c);
-		MyProject.getSimulator().addSimulatorListener(this);
-
-		c.gridx = 2;
-		skipHDL.setVisible(true);
-		panel.add(skipHDL, c);
 
 		// select annotation level
 		c.gridx = 0;
@@ -448,6 +456,25 @@ MouseListener,PreferenceChangeListener {
 		panel.add(boardPic, c);
 
 		c.gridheight = 1;
+
+		// select clock frequency
+		c.gridwidth = 1;
+		c.gridx = 0;
+		c.gridy = 4;
+		textTargetFreq.setEnabled(true);
+		panel.add(textTargetFreq, c);
+		frequenciesList.addActionListener(this);
+		frequenciesList.setEnabled(true);
+		frequenciesList.addItem(Strings.get("Custom"));
+		UpdateFrequencies();
+		frequenciesList.setActionCommand("Frequency");
+		c.gridx = 1;
+		panel.add(frequenciesList, c);
+		MyProject.getSimulator().addSimulatorListener(this);
+
+		c.gridx = 2;
+		skipHDL.setVisible(true);
+		panel.add(skipHDL, c);
 
 		// validate button
 		validateButton.setActionCommand("Download");
@@ -610,6 +637,7 @@ MouseListener,PreferenceChangeListener {
 			MapPannel = new ComponentMapDialog(panel, "");
 		}
 		MapPannel.SetBoardInformation(MyBoardInformation);
+		CustFreqPannel = new CustomFrequencySelDialog(panel,MyBoardInformation.fpga.getClockFrequency());
 		AppPreferences.getPrefs().addPreferenceChangeListener(this);
 	}
 
@@ -669,6 +697,43 @@ MouseListener,PreferenceChangeListener {
 
 		return false;
 	}
+	
+	private double GetTickfrequency() {
+		double ret = 0.0;
+		if (frequenciesList.getSelectedIndex()==0) {
+			panel.setVisible(false);
+			CustFreqPannel.setVisible(true);
+//			panel.setVisible(true);
+			// Here a custom index is specified
+			return CustFreqPannel.GetFrequency();
+		} else {
+			String TickIndex = frequenciesList.getSelectedItem().toString();
+			int i = 0;
+			boolean divide = false;
+			while (i<TickIndex.length() && TickIndex.charAt(i) != ' ') {
+				if (TickIndex.charAt(i) == '.') {
+					divide = true;
+				} else {
+					if (!divide)
+						ret *= 10.0;
+					ret += (double) (TickIndex.charAt(i)-'0');
+					if (divide)
+						ret /= 10.0;
+				}
+				i++;
+			}
+			while (i<TickIndex.length() && TickIndex.charAt(i) == ' ') {
+				i++;
+			}
+			if (i==TickIndex.length())
+				return ret;
+			if (TickIndex.charAt(i)=='M')
+				ret *= 1000000.0;
+			if (TickIndex.charAt(i)=='K')
+				ret *= 1000.0;
+		}
+		return ret;
+	}
 
 	@Override
 	protected boolean DownLoad(boolean skipVHDL, String CircuitName) {
@@ -676,12 +741,11 @@ MouseListener,PreferenceChangeListener {
 			if (!guiDRC()) {
 				return false;
 			}
+			double frequency = GetTickfrequency();
 			if (!guiMapDesign(CircuitName)) {
 				return false;
 			}
-			if (!writeHDL(circuitsList.getSelectedItem().toString(),
-					MenuSimulate.SupportedTickFrequencies[frequenciesList
-					                                      .getSelectedIndex()])) {
+			if (!writeHDL(circuitsList.getSelectedItem().toString(),frequency)) {
 				return false;
 			}
 

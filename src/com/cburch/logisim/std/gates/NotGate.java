@@ -118,7 +118,7 @@ class NotGate extends InstanceFactory {
 	private static final Icon toolIcon = Icons.getIcon("notGate.gif");
 	private static final Icon toolIconRect = Icons.getIcon("notGateRect.gif");
 
-	private static final Icon toolIconDin = Icons.getIcon("dinNotGate.gif");
+//	private static final Icon toolIconDin = Icons.getIcon("dinNotGate.gif");
 
 	public static InstanceFactory FACTORY = new NotGate();
 
