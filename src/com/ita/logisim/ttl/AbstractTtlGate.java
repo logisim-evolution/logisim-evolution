@@ -5,6 +5,7 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
+import java.util.HashSet;
 
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeSet;
@@ -28,8 +29,8 @@ public abstract class AbstractTtlGate extends InstanceFactory {
 	private String name;
 	private byte ngatestodraw = 0;
 	protected String[] portnames = null;
-	private byte[] outputports;
-	private byte [] unusedpins = null;
+	private HashSet<Byte> outputports = new HashSet<Byte>();
+	private HashSet<Byte> unusedpins  = new HashSet<Byte>();
 
 	/**
 	 * @param name
@@ -49,13 +50,16 @@ public abstract class AbstractTtlGate extends InstanceFactory {
 		setFacingAttribute(StdAttr.FACING);
 		this.name = name;
 		this.pinnumber = pins;
-		this.outputports = outputports;
+		for (int i = 0 ; i < outputports.length ; i++)
+			this.outputports.add(outputports[i]);
 	}
 
 	protected AbstractTtlGate(String name, byte pins, byte[] outputports, byte[] NotUsedPins) {
 		this(name, pins, outputports);
-		unusedpins = NotUsedPins;
-		
+		if (NotUsedPins == null)
+			return;
+		for (int i = 0; i < NotUsedPins.length ; i++)
+			unusedpins.add(NotUsedPins[i]);
 	}
 
 	/**
@@ -97,8 +101,11 @@ public abstract class AbstractTtlGate extends InstanceFactory {
 	
 	protected AbstractTtlGate(String name, byte pins, byte[] outputports, byte[] NotUsedPins, String[] Ttlportnames) {
 		this(name, pins, outputports);
-		unusedpins = NotUsedPins;
 		portnames = Ttlportnames;
+		if (NotUsedPins == null)
+			return;
+		for (int i = 0; i < NotUsedPins.length ; i++)
+			unusedpins.add(NotUsedPins[i]);
 	}
 
 	protected AbstractTtlGate(String name, byte pins, byte[] outputports, String[] Ttlportnames,int height) {
@@ -395,13 +402,16 @@ public abstract class AbstractTtlGate extends InstanceFactory {
 	 **/
 	@Override
 	public void propagate(InstanceState state) {
-		int NrOfUnusedPins = (unusedpins==null) ? 0 : unusedpins.length;
+		int NrOfUnusedPins = unusedpins.size();
 		if (state.getAttributeValue(TTL.VCC_GND) && (state.getPortValue(this.pinnumber - 2 - NrOfUnusedPins) != Value.FALSE
 				|| state.getPortValue(this.pinnumber - 1 - NrOfUnusedPins) != Value.TRUE)) {
 			int port = 0;
-			for (byte i = 0; i < this.outputports.length; i++) {
-				port = this.outputports[i] - (this.outputports[i] >= this.pinnumber / 2 ? 2 : 1);
-				state.setPort(port, Value.UNKNOWN, 1);
+			for (byte i = 1; i <= pinnumber; i++) {
+				if (!unusedpins.contains(i)&&(i != (pinnumber/2))) {
+					if (outputports.contains(i))
+						state.setPort(port, Value.UNKNOWN, 1);
+					port++;
+				}
 			}
 		} else
 			ttlpropagate(state);
@@ -415,7 +425,8 @@ public abstract class AbstractTtlGate extends InstanceFactory {
 		int dx = 0, dy = 0, width = bds.getWidth(), height = bds.getHeight();
 		byte portindex = 0;
 		boolean isoutput = false, hasvccgnd = instance.getAttributeValue(TTL.VCC_GND);
-		int NrOfUnusedPins = (unusedpins==null) ? 0 : unusedpins.length;
+		boolean skip = false;
+		int NrOfUnusedPins = unusedpins.size();
 		/*
 		 * array port is composed in this order: lower ports less GND, upper ports less
 		 * Vcc, GND, Vcc
@@ -423,15 +434,8 @@ public abstract class AbstractTtlGate extends InstanceFactory {
 		Port[] ps = new Port[hasvccgnd ? this.pinnumber-NrOfUnusedPins : this.pinnumber - 2-NrOfUnusedPins];
 
 		for (byte i = 0; i < this.pinnumber; i++) {
-			boolean skip = false;
-			for (byte j = 0; j < this.outputports.length; j++) {
-				if (this.outputports[j] == i + 1)
-					isoutput = true;
-			}
-			for (int k = 0 ; k < NrOfUnusedPins ; k++) {
-				if (unusedpins[k] == i+1)
-					skip = true;
-			}
+			isoutput = outputports.contains((byte) (i+1));
+			skip = unusedpins.contains((byte) (i+1));
 			// set the position
 			if (i < this.pinnumber / 2) {
 				if (dir == Direction.EAST) {
@@ -491,7 +495,6 @@ public abstract class AbstractTtlGate extends InstanceFactory {
 								String.valueOf(i + 1) + ": " + this.portnames[portindex]));
 				}
 			}
-			isoutput = false;
 			portindex++;
 		}
 		instance.setPorts(ps);
