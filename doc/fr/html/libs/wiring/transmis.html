@@ -1,133 +1,121 @@
 <html>
 <head>
-<title>Porta de Transmissão</title>
+<title>Transmission Gate</title>
 </head>
 
 <body bgcolor="FFFFFF">
 
-<h1><img align="center" height="32" width="32" src="../../icons/transmis.gif">
-<em>Porta de Transmissão</em></h1>
+<h1><img  align="center" src="../../../icons/transmis.gif" width="32" height="32">
+<em>Transmission Gate</em></h1>
 
 <p><table>
-<tr><td><strong>Biblioteca:</strong></td>
-	<td><a href="index.html">Conectar (Wiring)</a></td></tr>
-<tr><td><strong>Introdução:</strong></td>
+<tr><td><strong>Library:</strong></td>
+	<td><a href="index.html">Wiring</a></td></tr>
+<tr><td><strong>Introduced:</strong></td>
 	<td>2.7.0</td></tr>
-<tr><td valign="top"><strong>Aparência:</strong></td>
-	<td valign="top"><img src="../images/transmis.png"></td></tr>
+<tr><td valign="top"><strong>Appearance:</strong></td>
+	<td valign="top"><img src="../../../img-libs/transmis.png" width="44" height="43"></td></tr>
 </table></p>
 
-<h2> Comportamento </h2>
+<h2>Behavior</h2>
 
-<p> Uma porta de transmissão possui três entradas, chamadas de
-<em>fonte ("source")</em>, <em>porta-N ("n-gate")</em>, 
-e <em>porta-P ("p-gate")</em>; e uma saída, chamada <em>dreno ("drain")</em>. 
-Quando diagramadas, a entrada <em>fonte</em> e a saída <em>dreno</em> serão 
-conectadas por duas placas; o Logisim desenhará uma seta para indicar a direção 
-do fluxo da entrada para a saída. As duas entradas do tipo <em>porta</em> 
-serão desenhadas conectadas às placas paralelas para conexão entre 
-a <em>fonte</em> e o <em>dreno</em>. 
-A linha da entrada <em>porta-P</em> terá um círculo; enquanto a 
-linha da entrada <em>porta-N</em>, não. 
+<p>A transmission gate has three inputs,
+called <em>source</em>, <em>n-gate</em>, and <em>p-gate</em>;
+and it has one output, called <em>drain</em>. When diagrammed, the <em>source</em>
+input and <em>drain</em> output are drawn connected by two plates;
+Logisim draws an arrowhead to indicate the direction of flow from input to output.
+The two <em>gate</em> inputs are drawn as lines connected to plates parallel to
+each of the plates connecting <em>source</em> to <em>drain</em>.
+The <em>p-gate</em> input's line has a circle, while the <em>n-gate</em> input's line does not.</p>
 
 <center><table>
-<tr><td></td><td align="center"><em>porta-P</em></td><td></td></tr>
-<tr><td valign="middle"><em>fonte</em></td>
-  <td align="center" valign="middle"><img src="../images/transmis.png"></td>
-  <td valign="middle"><em>dreno</em></td>
-<tr><td></td><td align="center"><em>porta-N</em></td><td></td></tr>
+<tr><td></td><td align="center"><em>p-gate</em></td><td></td></tr>
+<tr><td valign="middle"><em>source</em></td>
+  <td align="center" valign="middle"><img src="../../../img-libs/transmis.png" width="44" height="43"></td>
+  <td valign="middle"><em>drain</em></td>
+<tr><td></td><td align="center"><em>n-gate</em></td><td></td></tr>
 </table></center>
 
-<p> A porta de transmissão é simplesmente a combinação de dois transistores
-complementares. De fato, o mesmo comportamento poderá ser obtido no Logisim
-mediante o uso de apenas um transitor. Contudo, os projetistas certas vezes
-preferem usar esse par de transistores devido às questões de natureza elétrica
-com relação ao consumo de tensão, o que é mais complexo do que aquilo que o 
-Logisim tenta simular.
-</p>
+<p>The transmission gate is simply the combination of two complementary
+transistors. Indeed, the same behavior can be achieved in Logisim by using just
+one transistor. However, designers sometimes prefer to use matched pairs of
+transistors due to electrical issues with draining voltage
+that is more complex than Logisim attempts to simulate.</p>
 
-<p> É esperado que os valores na <em>porta-N</em> e na <em>porta-P</em> sejam
-opostos. Se a <em>porta-P</em> estiver em 0, enquanto a <em>porta-N</em> estiver em 1,
-então valor encontrado à <em>fonte</em> será transmitido ao <em>dreno</em>.
-Se a <em>porta-P</em> estiver em 1, enquanto a <em>porta-N</em> is 0, 
-então a conexão estará interrompida, e o valor no <em>dreno</em> será flutuante.
-Em todos os outros casos, o <em>dreno</em> receberá o valor de erro na saída &mdash;
-a menos que a <em>fonte</em> seja flutuante, caso em que o <em>dreno</em> 
-também será flutuante. Esse comportamento está resumido na tabela abaixo.
+<p>The values at <em>n-gate</em> and <em>p-gate</em> are expected to be
+opposite to each other. If <em>p-gate</em> is 0 while <em>n-gate</em> is 1,
+then the value found at <em>source</em> is transmitted to <em>drain</em>.
+If <em>p-gate</em> is 1 while <em>p-gate</em> is 0, then the connection is broken,
+so the value at <em>drain</em> is left floating. In all other cases, <em>drain</em>
+receives an error output &mdash; unless <em>source</em> is floating,
+in which case <em>drain</em> is floating as well. This behavior is summarized by the following table.</p>
 
 <center><table>
-<tr><th><em>porta-P</em></th><th><em>porta-N</em></th><th><em>dreno</em></th></tr>
+<tr><th><em>p-gate</em></th><th><em>n-gate</em></th><th><em>drain</em></th></tr>
 <tr><td align="center">0</td><td align="center">0</td><td align="center">X*</td></tr>
-<tr><td align="center">0</td><td align="center">1</td><td align="center"><em>fonte</em></td></tr>
+<tr><td align="center">0</td><td align="center">1</td><td align="center"><em>source</em></td></tr>
 <tr><td align="center">1</td><td align="center">0</td><td align="center">Z</td></tr>
 <tr><td align="center">1</td><td align="center">1</td><td align="center">X*</td></tr>
-<tr><td align="center">X/Z</td><td align="center"><em>qualquer</em></td><td align="center">X*</td></tr>
-<tr><td align="center"><em>qualquer</em></td><td align="center">X/Z</td><td align="center">X*</td></tr>
+<tr><td align="center">X/Z</td><td align="center"><em>any</em></td><td align="center">X*</td></tr>
+<tr><td align="center"><em>any</em></td><td align="center">X/Z</td><td align="center">X*</td></tr>
 </tbody></table>
-<p>*Se a <em>fonte</em> estiver em Z, o <em>dreno</em> estará em Z; 
-do contrário o <em>dreno</em> será X.</p>
+<p>* <em>If <em>source</em> is Z, <em>drain</em> is Z; otherwise <em>drain</em> is X.</p>
 </center>
 
-<p> Se o atributo Bits de Dados for maior do que 1, a <em>porta</em> ainda
-assim será de um bit apenas, mas esse valor será aplicado simultaneamente
-a cada um dos bits da <em>fonte</em>.
-</p> 
+<p>If the Data Bits attribute is more than 1, each <em>gate</em> input is still
+a single bit, but the <em>gate</em> values are applied simultaneously to each of the
+<em>source</em> input's bits.</p>
 
-<h2>Pinos (supondo o componente voltado para leste, e porta Em cima/À esquerda)</h2>
-
-<dl>
-
-<dt> Face oeste (entrada, largura em bits de acordo com o atributo Bits de Dados)</dt>
-<dd> A entrada <em>fonte</em> do componente irá transmitir para a saída, conforme
-os sinais nas entradas <em>porta-P</em> e <em>porta-N</em>.
-</dd>
-
-<dt> Face Norte (entrada, largura em bits igual a 1)</dt>
-<dd> A entrada <em>porta-P</em> do componente. 
-</dd>
-
-<dt> Face Sul (entrada, largura em bits igual a 1)</dt>
-<dd> A entrada <em>porta-N</em> do componente. 
-</dd>
-
-<dt> Face Leste (saída, largura em bits de acordo com o atributo Bits de Dados)</dd>
-<dd> A saída do componente, cujo valor dependerá da entrada <em>fonte</em> 
-se a <em>porta-P</em> estiver em 0, e se a <em>porta-N</em> estiver em 1, 
-ou ficará flutuante, se os sinais forem 1 na <em>porta-P</em> e 0 na <em>porta-N</em>.
-Para todos os outros valores na <em>porta-P</em>, a saída será um valor de erro.
-</dd>
-
-</dl>
-
-<h2> Atributos </h2>
-
-<p> Quando o componente for selecionado ou estiver sendo acrescentado,
-Alt-0 até Alt-9 alterarão o seu atributo Bits de Dados <q>(Data Bits)</q>, e 
-as setas alterarão o seu atributo de posição <q>(Facing)</q>.
-</p>
+<h2>Pins (assuming component faces east, gate line top/left)</h2>
 
 <dl>
 
-<dt> Posição </dt>
-<dd> A direção do componente (sua saída em relação à entrada).</dd>
+<dt>West edge (input, bit width matches Data Bits attribute)</dt>
+<dd>The component's <em>source</em> input that will transmit to the output
+if triggered by the <em>p-gate</em> and <em>n-gate</em> inputs.</dd>
 
-<dt> Posição da Porta</dt>
-<dd> A posição da entrada da porta.</dd>
+<dt>North edge (input, bit width 1)</dt>
+<dd>The component's <em>p-gate</em> input.</dd>
 
-<dt> Bits de Dados</dt>
-<dd> A largura em bits das entradas e saída do componente.</dd>
+<dt>South edge (input, bit width 1)</dt>
+<dd>The component's <em>n-gate</em> input.</dd>
+
+<dt>East edge (output, bit width matches Data Bits attribute)</dd>
+<dd>The component's output, which will match the <em>source</em> input
+if <em>p-gate</em> is 0 and <em>n-gate</em> is 1, or it will be floating if
+<em>p-gate</em> is 1 and <em>n-gate</em> is 0. For all other values on <em>p-gate</em> and <em>n-gate</em>,
+the output is an error value.</dd>
 
 </dl>
 
-<h2> Comportamento da Ferramentar Testar </h2>
+<h2>Attributes</h2>
 
-<p> Nenhum. </p>
+<p>When the component is selected or being added,
+Alt-0 through Alt-9 alter its <q>Data Bits</q> attribute
+and the arrow keys alter its <q>Facing</q> attribute.</p>
 
-<h2> Comportamento da Ferramenta Texto </h2>
+<dl>
 
-<p> Nenhum. </p>
+<dt>Facing</dt>
+<dd>The direction of the component (its output relative to its input).</dd>
 
-<p><a href="../index.html">Retornar à <em> Biblioteca de Referências </em></a></p>
+<dt>Gate Location</dt>
+<dd>The location of the gate input.</dd>
+
+<dt>Data Bits</dt>
+<dd>The bit width of the component's inputs and outputs.</dd>
+
+</dl>
+
+<h2>Poke Tool Behavior</h2>
+
+<p>None.</p>
+
+<h2>Text Tool Behavior</h2>
+
+<p>None.</p>
+
+<p><a href="../index.html">Back to <em>Library Reference</em></a></p>
 
 </body>
 </html>

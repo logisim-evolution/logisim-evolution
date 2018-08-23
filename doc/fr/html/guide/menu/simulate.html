@@ -10,31 +10,31 @@
 <dl>
 
 <dt><strong>Simulation Enclanchée</strong></dt>
-<dd><p>Si cette case est cochée, les circuits visualisés seront "en direct", c'est-à-dire que les valeurs se propageant dans le circuit seront mises à jour à chaque utilisation de l'outils pousser ou modification du circuit.</p>
+<dd><p>Si cette case est cochée, les circuits visualisés seront "en direct", c'est-à-dire que les valeurs se propageant dans le circuit seront mises à jour à chaque utilisation de l'outil pousser ou modification du circuit.</p>
 
 <p>L'option de menu sera automatiquement décochée si
  <a href="../prop/oscillate.html">une oscillation</a> est détectée.</p></dd>
 
 <dt><strong>Redémarer la simulation</strong></dt>
-<dd><p>Efface tout ce qui concerne l’état du circuit actuel, comme si vous veniez d’ouvrir à nouveau le fichier. Si vous visualisez l'état d'un sous-circuit, tout les etats de la hiérarchie sont effacés.</p></dd>
+<dd><p>Efface tout ce qui concerne l’état du circuit actuel, comme si vous veniez d’ouvrir à nouveau le fichier. Si vous visualisez l'état d'un sous-circuit, tous les états de la hiérarchie sont effacés.</p></dd>
 
 <dt><strong>Simulation pas à pas</strong></dt>
-<dd><p>Avance la simulation d'une etape. Par exemple, un signal peut entrer dans une porte au cours d'une étape, mais la sortie de la porte n'affichera pas de signal différent avant la prochaine étape de simulation. Pour aider à identifier les points du circuit global qui ont changé, tous les points dont les valeurs changent sont indiqués par un cercle bleu; si un sous-circuit contient des points qui ont été modifiés (ou ses sous-circuits, récursivement), alors il sera antouré avec un ligne bleu.
+<dd><p>Avance la simulation d'une étape. Par exemple,au cours d'une étape, un signal peut entrer dans une porte , mais la sortie de la porte n'affichera pas de changement de signal avant la prochaine étape de simulation. Pour aider à identifier les points du circuit global qui ont changé, tous les points dont les valeurs changent sont indiqués par un cercle bleu; si un sous-circuit contient des points qui ont été modifiés (ou ses sous-circuits, récursivement), alors il sera entouré avec une ligne bleue.
 </p></dd>
 <dt><strong>Simulation VHDL activée</strong></dt>
 <dd><p></p></dd>
 <dt><strong>Restarte simulation VHDL</strong></dt>
 <dd><p></p></dd>
 <dt><strong>Sortir de la vue</strong></dt>
-<dd><p>Quand vous avez exploré l'état d'un sous circuit pour <a href="../subcirc/debug.html">le debuger</a> a l'aide de son menu local. Le menu <q>Sortir de la vue</q> permet d'afficher la vue de l'état des circuits supérieur de la hiérarchie. Le nom de ceux ci sont présenté dans des options.</p></dd>
+<dd><p>Quand vous avez exploré l'état d'un sous circuit pour <a href="../subcirc/debug.html">le debuger</a> a l'aide de son menu local. Le menu <q>Sortir de la vue</q> permet d'afficher la vue de l'état des circuits supérieur de la hiérarchie. Le nom de ceux-ci sont présentés dans des options.</p></dd>
 
 <dt><strong>Aller dans la vue</strong></dt>
-<dd><p>De même, le menus <q>Aller dans la vue</q> 
-permet de retourner dans la vue des ciruits inférieur de la hiérarchie. Les circuit sont présenté comme des options.
+<dd><p>De même, le menu <q>Aller dans la vue</q> 
+permet de retourner dans la vue des circuits inférieurs de la hiérarchie. Les circuits sont présenté comme des options.
 </p></dd>
 
 <dt><strong>Un seul tic</strong></dt>
-<dd><p>Avance d'un tic les horloges dans la simulation en mode pas a pas. Cela peut être utile lorsque vous souhaitez faire avancer les horloges manuellement, en particulier lorsque l’horloge ne se trouve pas dans le même circuit que celui que vous consultez actuellement.</p></dd>
+<dd><p>Avance d'un tic les horloges dans la simulation quand on utilise le mode pas à pas. Cela peut être utile lorsque vous souhaitez faire avancer les horloges manuellement, en particulier lorsque l’horloge ne se trouve pas dans le même circuit que celui que vous consultez actuellement.</p></dd>
 <dt><strong>'Clk' un seul tic</strong></dt>
 <dd><p></p></dd>
 <dt><strong>Tic activé</strong></dt>
@@ -42,7 +42,8 @@ permet de retourner dans la vue des ciruits inférieur de la hiérarchie. Les ci
 
 <dt><strong>Fréquence des tics</strong></dt>
 <dd><p>Vous permet de sélectionner la fréquence des tics. Par exemple, 8 Hz signifie que les tics se produiront huit fois par seconde. Un tic est l'unité de mesure de base pour la vitesse des horloges.</p>
-
+<center><img src="../../../img-guide/clock.png"></center>
+Exemple : Tic haut = 2, Tic bas = 2, Clock = Fréquence tic / ( 2 + 2)
 <p>Notez que la vitesse du cycle d'horloge sera plus lente que la vitesse d'activation: l'horloge la plus rapide possible aura un cycle haut à un tic et un cycle bas à un tic. Une telle horloge aurait une fréquence de 4 Hz (un cycle complet haut/bas) si la fréquence des tic est à 8 Hz.
 </p></dd>
 <dt><strong>Chronogramme...</strong></dt>
@@ -54,8 +55,7 @@ permet de retourner dans la vue des ciruits inférieur de la hiérarchie. Les ci
 
 </dl>
 
-<p><strong>Suivant:</strong> <a href="winhelp.html">The Window
-and Help menus</a>.</p>
+<p><strong>Suivant:</strong> <a href="winhelp.html">les menus fenêtre et aide</a>.</p>
 
 </body>
 </html>

@@ -1,71 +1,66 @@
 <html>
 <head>
-<title> Constante </title>
+<title>Constant</title>
 </head>
 
 <body bgcolor="FFFFFF">
 
-<h1><img align="center" height="32" width="32" src="../../icons/constant.gif"> 
-    <em>Constante</em></h1>
+<h1><img  align="center" src="../../../icons/constant.gif" width="32" height="32"> <em>Constant</em></h1>
 
 <p><table>
-<tr><td><strong> Biblioteca:</strong></td>
-	<td><a href="index.html"> Conectar </a></td></tr>
-<tr><td><strong> Introdução: </strong></td>
-	<td>2.0 Beta 1 (na Biblioteca Portas (Gates), transferida para a Conectar na versão in 2.7.0)</td></tr>
-<tr><td valign="top"><strong> Aparência: </strong></td>
-	<td valign="top"><img src="../images/constant.png"></td></tr>
+<tr><td><strong>Library:</strong></td>
+	<td><a href="index.html">Wiring</a></td></tr>
+<tr><td><strong>Introduced:</strong></td>
+	<td>2.0 Beta 1 (in Gates library, moved to Wiring in 2.7.0)</td></tr>
+<tr><td valign="top"><strong>Appearance:</strong></td>
+	<td valign="top"><img src="../../../img-libs/constant.png" width="18" height="15"></td></tr>
 </table></p>
 
-<h2> Comportamento </h2>
+<h2>Behavior</h2>
 
-<p> Emitirá o valor especificado no seu atributo de valor (Value).</p>
+<p>Emits the value specified in its Value attribute.</p>
 
-<h2> Pinos </h2>
+<h2>Pins</h2>
 
-<p> Há apenas um pino, uma saída cuja largura de bits será especificada
-pelo atributo Bits de Dados. A posição desse pino será especificada pelo 
-atributo Posição. O componente fará por esse pino a saída contínua
-de qualquer valor especificado em seu atributo correspondente.
-</p>
+<p>There is only one pin, an output whose bit width matches the Data Bits
+attribute. The location of this pin is specified in the Facing
+attribute. The component constantly outputs on this pin whatever
+value specified in the Value attribute.</p>
 
 </dl>
 
-<h2> Atributos </h2>
+<h2>Attributes</h2>
 
-<p> Quando o componente for selecionado ou estiver sendo acrescentado,
-os dígitos hexadecimais de '0' a '9' e 
-de 'a' até 'f' alterarão seu atributo de valor <q>(Value)</q>, 
-Alt-0 até Alt-9 alterarão seu atributo Bits de Dados <q>(Data Bits)</q>, e 
-as setas alterarão seu atributo de posição <q>(Facing)</q>.
-</p>
+<p>When the component is selected or being added,
+the hexademical digits '0' through '9' and 'a' through 'f' alter its <q>Value</q> attribute,
+Alt-0 through Alt-9 alter its <q>Data Bits</q> attribute,
+and the arrow keys alter its <q>Facing</q> attribute.</p>
 
 <dl>
 
-<dt> Posição (Facing) </dt>
-<dd> A direção preferencial do pino relativa à sua localização onde
-o valor for desenhado.</dd>
+<dt>Facing</dt>
+<dd>The direction in which the pin is located relative to where the
+value is drawn.</dd>
 
-<dt> Bits de Dados (Data Bits) </dt>
-<dd> A largura em bits do valor a ser colocado na conexão.</dd>
+<dt>Data Bits</dt>
+<dd>The bit width of the value placed onto the wire.</dd>
 
-<dt> Valor </dt>
-<dd> O valor, em hexadecimal, que será emitido pelo componente.
-O número de bits usados para especificar o valor não poderá exceder
-a largura em bits do componente.
-</dd>
+<dt>Value</dt>
+<dd>The value, written in hexademical, that is emitted by the component.
+The number of bits used to specify the value cannot exceed the
+component's bit width.</dd>
 
 </dl>
 
-<h2> Comportamento da Ferramentar Testar </h2>
+<h2>Poke Tool Behavior</h2>
 
-<p> Nenhum. </p>
+<p>None.</p>
 
-<h2> Comportamento da Ferramenta Texto </h2>
+<h2>Text Tool Behavior</h2>
 
-<p> Nenhum. </p>
+<p>None.</p>
 
-<p><a href="../index.html">Retornar à <em> Biblioteca de Referências </em></a></p>
+<p><a href="../index.html">Back to <em>Library Reference</em></a></p>
 
 </body>
 </html>

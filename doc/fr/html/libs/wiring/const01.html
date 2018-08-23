@@ -1,84 +1,69 @@
 <html>
 <head>
-<title> Fonte/Terra </title>
+<title>Power/Ground</title>
 </head>
 
 <body bgcolor="FFFFFF">
 
-<h1><img align="center" height="32" width="32" src="../../icons/power.gif"> 
-    <img align="center" height="32" width="32" src="../../icons/ground.gif"> 
-	<em>Fonte ("Power")/Terra("Ground")</em></h1>
+<h1><img  align="center" src="../../../icons/power.gif" width="32" height="32"> <img  align="center" src="../../../icons/ground.gif" width="32" height="32"> <em>Power/Ground</em></h1>
 
 <p><table>
-<tr><td><strong> Biblioteca: </strong></td>
-	<td><a href="index.html">Conectar (Wiring)</a></td></tr>
-<tr><td><strong> Introdução: </strong></td>
+<tr><td><strong>Library:</strong></td>
+	<td><a href="index.html">Wiring</a></td></tr>
+<tr><td><strong>Introduced:</strong></td>
 	<td>2.7.0</td></tr>
-<tr><td valign="top"><strong> Aparência: </strong></td>
-	<td valign="top"><img src="../images/power.png">
-	<img src="../images/ground.png"></td></tr>
+<tr><td valign="top"><strong>Appearance:</strong></td>
+	<td valign="top"><img src="../../../img-libs/power.png" width="17" height="16">
+	<img src="../../../img-libs/ground.png" width="17" height="14"></td></tr>
 </table></p>
 
-<h2> Comportamento </h2>
+<h2>Behavior</h2>
 
-<p> Emitirá um único valor pela conexão.
-Para um elemento do tipo Fonte, indicado por um triângulo, esse valor 
-será igual a 1 (ou, se o atributo de Bits de Dados for maior do que 1,
-todos os valores iguais a 1).
-Para um elemento do tipo Terra, indicado por uma seta com três linhas
-paralelas de tamanho decrescente, esse valor será 0 (ou, se o atributo
-de Bits de Dados for maior do que 1, todos os valores iguais a zero).
-</p>
+<p>Emits a single value onto a wire.
+For a power element, indicated by a triangle, this value will be one
+(or, if the Data Bits attribute is more than 1, an all-ones value).
+For a ground element, indicated by an arrow
+of three shortening parallel lines, this value will be zero
+(or, if the Data Bits attribute is more than 1, an all-zero value).</p>
 
-<p> Essa mesma funcionalidade pode ser alcançada usando o componente
-<a href="constant.html">Constante</a> que é mais versátil. A única razão
-em preferir esses itens é que eles se referem a símbolos eletrônicos 
-padronizados.</p>
+<p>The same functionality can be achieved using the more versatile
+<a href="constant.html">Constant</a> component. The only reason to prefer
+ground and power is that they are standard electronic symbols.</p>
 
-<h2> Pinos </h2>
+<h2>Pins</h2>
 
-<p> Há apenas um pino, uma saída cuja largura de bits será especificada 
-por seu atributo Bits de Dados (Data Bits). O componente emitirá sempre o 
-mesmo valor por esse pino: para um elemento do tipo Terra, a saída terá 
-todos os bits iguais a 0; e para um elemento do tipo Fonte, a saída terá 
-todos os bits iguais a 1.
-</p>
+<p>There is only one pin, an output whose bit width matches the Data Bits
+attribute. The component constantly outputs the same value on this pin:
+for a ground component, the output is an all-zero value,
+and for a power component, the output is an all-one value.</p>
 
 </dl>
 
-<h2> Atributos </h2>
+<h2>Attributes</h2>
 
-<p> Quando o componente for selecionado ou estiver sendo acrescentado,
-Alt-0 até Alt-9 alterarão seu atributo Bits de Dados <q>(Data Bits)</q>, 
-e as setas alterarão seu atributo de posição <q>(Facing)</q>.
-</p>
+<p>When the component is selected or being added,
+Alt-0 through Alt-9 alter its <q>Data Bits</q> attribute
+and the arrow keys alter its <q>Facing</q> attribute.</p>
 
 <dl>
 
-<dt> Posição (Facing) </dt>
-<dd> A direção preferencial da seta relativa à localização do pino.
-</dd>
+<dt>Facing</dt>
+<dd>The direction in which the arrow will point from the location of its pin.</dd>
 
-<dt> Bits de Dados (Data Bits) </dt>
-<dd> A largura de bits do valor a ser colocado na conexão.</dd>
-
-<dt> Valor </dt>
-<dd> O valor, em hexadecimal, que será emitido pelo componente.
-O número de bits usados para especificar o valor não poderá exceder
-a largura em bits do componente.
-</dd>
+<dt>Data Bits</dt>
+<dd>The bit width of the value placed onto the wire.</dd>
 
 </dl>
 
-<h2> Comportamento da Ferramentar Testar </h2>
+<h2>Poke Tool Behavior</h2>
 
-<p> Nenhum. </p>
+<p>None.</p>
 
-<h2> Comportamento da Ferramenta Texto </h2>
+<h2>Text Tool Behavior</h2>
 
-<p> Nenhum. </p>
+<p>None.</p>
 
-<p><a href="../index.html">Retornar à <em> Biblioteca de Referências </em></a></p>
+<p><a href="../index.html">Back to <em>Library Reference</em></a></p>
 
 </body>
 </html>

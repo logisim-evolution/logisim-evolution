@@ -1,132 +1,124 @@
 <html>
-<head><meta http-equiv="content-type" content="text/html; charset=UTF-8">
-<title>Pino</title>
+<head>
+<title>Pin</title>
 </head>
 
 <body bgcolor="FFFFFF">
 
-<h1><img  align="center" src="../../icons/pinInput.gif" width="32" height="32">
-<img  align="center" src="../../icons/pinOutput.gif" width="32" height="32">
-<em>Pino</em></h1>
+<h1><img  align="center" src="../../../icons/pinInput.gif" width="32" height="32">
+<img  align="center" src="../../../icons/pinOutput.gif" width="32" height="32">
+<em>Pin</em></h1>
 
 <p><table>
-<tr><td><strong>Biblioteca:</strong></td>
-	<td><a href="index.html">Base</a></td></tr>
-<tr><td><strong>Introdução:</strong></td>
-	<td>2.0 Beta 1</td></tr>
-<tr><td valign="top"><strong>Aparência:</strong></td>
-	<td valign="top"><img src="../images/pin.png" width="101" height="51"></td></tr>
+<tr><td><strong>Library:</strong></td>
+	<td><a href="index.html">Wiring</a></td></tr>
+<tr><td><strong>Introduced:</strong></td>
+	<td>2.0 Beta 1 (in Base library, moved to Wiring in 2.7.0)</td></tr>
+<tr><td valign="top"><strong>Appearance:</strong></td>
+	<td valign="top"><img src="../../../img-libs/pin.png" width="101" height="51"></td></tr>
 </table></p>
 
-<h2>Comportamento</h2>
+<h2>Behavior</h2>
 
-<p> Um pino pode ser uma saída ou uma entrada para um circuito,
-dependendo do valor de seu atributo Saída?. Ao desenhar um pino, o Logisim
-representará as saídas por círculos ou retângulos com bordas arredondadas,
-e as entradas serão representadas por quadrados ou retângulos.
-Em ambos os casos, os bits individuais do valor que for recebido ou 
-enviado será mostrada pelo componente (exceto quando for prévia de uma
-impressão, quando o componente apenas informará quantos bits poderá
-comportar).
-</p>
+<p>A pin is an output or an input to a circuit, depending on the value
+of its Output? attribute. In drawing a pin, Logisim represents output
+pins using a circle or rounded rectangle, and input pins are represented
+using squares or rectangles. In either case, the individual bits of the
+value being sent or received is displayed within the component (except
+within printer view, when the component only says how many bits wide the
+pin is).</p>
 
-<p> Um pino é conveniente para se interagir com um circuito, e os usuários
-iniciantes do Logisim não precisarão usá-los necessariamente. Mas um usuário
-que estiver construindo um circuito que use vários subcircuitos (como descrito
-na seção '<a href="../../guide/subcirc/index.html">Subcircuitos</a>' do
-<em>Guia do Usuário</em>) poderá usar pinos para especificar a interface entre
-um circuito e um subcircuito. Em particular, o pino de um <i>layout</i> de circuito
-define como ele aparecerá quando for tomado por subcircuito e seu <i>layout</i> 
-estiver sendo usado por outro. Em tal circuito, os valores enviados ou recebidos
-por essas posições no subcircuito serão vinculados aos pinos internos de seu 
-<i>layout</i>.
-</p>
+<p>A pin is a convenient component for interacting with a circuit, and
+beginning Logisim users need not use them in any other way. But a
+user building a circuit using several subcircuits (as described in the
+`<a href="../../guide/subcirc/index.html">Subcircuits</a>' section of
+the <em>User's Guide</em>) will use pins also
+to specify the interface between a
+circuit and a subcircuit. In particular, a circuit layout's pin
+components define the pins that appear on the subcircuit component when
+the layout is used within another circuit. In such a circuit, the values
+sent and received to those locations on the subcircuit component are
+tied to the pins within the subcircuit layout.</p>
 
-<h2>Pinos</h2>
+<h2>Pins</h2>
 
-<p> O componente tem apenas um ponto de conexão, que poderá ser uma entrada
-para o componente se for um pino de saída, ou uma saída para o componente 
-caso seja um pino de entrada. Em ambos os casos, sua largura em bits
-irá corresponder ao atributo Bits de Dados, e sua posição será especificada
-pelo atributo Direção.
-</p>
+<p>A pin component has only one pin, which will be an input to the
+component if the pin is an output pin, and it will be an output to the
+component if the pin is an input pin.  In either case, its bit width
+matches the Data Bits attribute, and its location is specified by the
+Facing attribute.</p>
 
-<h2>Atributos</h2>
+<h2>Attributes</h2>
 
-<p> Quando o componente for selecionado ou estiver sendo acrescentado,
-os dígitos de '0 'a '9' poderão alterar o atributo <q> Bits de Dados </q>,
-Alt-0 até ALT-9 irá alterar o atributo <q> Direção </q> e
-e Alt mais as teclas com setas poderão alterar o seu atributo 
-<q>Posição do Rótulo</q>.
-</p>
-
+<p>When the component is selected or being added,
+Alt-0 through Alt-9 alter its <q>Data Bits</q> attribute,
+the arrow keys alter its <q>Facing</q> attribute,
+and Alt with an arrow key alters its <q>Label Location</q> attribute.</p>
 
 <dl>
 
-<dt> Direção </dt>
-<dd> A face do componente onde sua entrada/saída deverá estar. </dd>
+<dt>Facing</dt>
+<dd>The side of the component where its input/output pin should be.</dd>
 
-<dt> Saída? </dt>
-<dd> Serve para especificar se o componente irá funcionar com entrada ou saída.
-(Observar que se for um pino de entrada, então o pino irá funcionar como se sua
-interface dentro do circuito fosse uma saída, e vice-versa.) </dd>
+<dt>Output?</dt>
+<dd>Specifies whether the component is an output pin or an input pin.
+(Note that if the pin component is an input pin, then the pin that acts
+as its interface within the circuit will be an output, and vice versa.)</dd>
 
-<dt> Bits de Dados </dt>
-<dd> O número de bits para o valor que o pino pode tratar.</dd>
+<dt>Data Bits</dt>
+<dd>The number of bits for the value that the pin handles.</dd>
 
-<dt> Tri-state? </dt>
-<dd> Para um pino de entrada, serve para configurar se o usuário poderá
-indicar que o pino poderá emitir valores indefinidos (ou seja, flutuantes).
-Esse atributo lida apenas com a interface com o usuário; ele não terá
-qualquer efeito sobre como o pino se comportará quanto o <i>layout</i>
-do circuito for usado como um subcircuito.
-Para um pino de saída, o atributo não terá efeito algum.</dd>
+<dt>Three-state?</dt>
+<dd>For an input pin, this configures whether the user can 
+instruct the pin to emit unspecified (i.e., floating) values.
+The attribute deals with the user interface only; it does not have
+any effect on how the pin behaves when the circuit layout is used as a
+subcircuit.
+For an output pin, the attribute has no effect.</dd>
 
-<dt> Comportamento para Ajuste </dt>
-<dd> Para um pino de entrada, o atributo especificará como um valor flutuante
-deverá ser tratado quando recebido por uma entrada, talvez de um circuito que
-esteja usando o <i>layout</i>, como no caso de um subcircuito. Se "imutável", 
-os valores flutuantes serão enviados como tal; se "<i>pull-up</i>", eles serão 
-convertidos para 1 antes de serem submetidos; e se "<i>pull-down</i>", 
-eles serão convertidos para 0 antes de serem entregues.
-</dd>
+<dt>Pull Behavior</dt>
+<dd>For an input pin, the attribute specifies how floating values should
+be treated when received as an input, perhaps from a circuit using the
+layout as a subcircuit. With "unchanged," the floating values are sent
+into the layout as floating values; with "pull up," they are converted
+into 1 values before being sent into the circuit layout; and with "pull
+down," they are converted into 0 values before being sent into the
+circuit layout.</dd>
 
-<dt> Rótulo </dt>
-<dd> O texto para o rótulo associado ao componente. </dd>
+<dt>Label</dt>
+<dd>The text within the label associated with the component.</dd>
 
-<dt> Posição do Rótulo</dt>
-<dd> A posição do rótulo em relação ao componente.</dd>
+<dt>Label Location</dt>
+<dd>The location of the label relative to the component.</dd>
 
-<dt> Fonte do Rótulo </dt>
-<dd> A fonte com a qual o rótulo será mostrado. </dd>
-
+<dt>Label Font</dt>
+<dd>The font with which to render the label.</dd>
 
 </dl>
 
-<h2> Comportamento da ferramenta Testar </h2>
+<h2>Poke Tool Behavior</h2>
 
-<p> Ao clicar em um pino de saída não terá efeito algum, embora os atributos do 
-pino sejam apresentados.
-</p>
+<p>Clicking an output pin has no effect, although the pin's attributes
+will be displayed.</p>
 
-<p> Ao clicar em um pino de entrada irá alternar bit que for clicado. Se for um
-pino <i>tri-state</i>, em seguida, o bit correspondente irá alternar entre eles.
-</p>
+<p>Clicking an input pin will toggle the bit that is clicked. If it is a
+three-state pin, then the corresponding bit will rotate between the
+three states.</p>
 
-<p> Se, no entanto, o usuário estiver consultando o estado de um subcircuito
-conforme descrito em <a href="../../guide/subcirc/debug.html"> 'Depuração
-de Subcircuitos' </a> do <em>Guia do Usuário</em>, então o valor do pino 
-ficará fixo em qualquer valor que o subcircuito que estiver recebendo do
-circuito que o contiver. O usuário não poderá alterar o valor sem quebrar
-o vínculo entre os estados do subcircuito e o do circuito, e o Logisim pedirá
-ao usuário para verificar se a quebra desse vínculo é realmente desejada.
-</p>
+<p>If, however, the user is viewing the state of a subcircuit
+as described in the `<a href="../../guide/subcirc/debug.html">Debugging
+Subcircuits</a>' of the <em>User's Guide</em>,
+then the pin's value is pinned to whatever value the subcircuit is
+receiving from the containing circuit. The user cannot change the value
+without breaking this link between the subcircuit's state and the 
+containing circuit's state, and Logisim will prompt the user to verify
+that breaking this link is actually desired.</p>
 
-<h2> Comportamento da ferramenta Texto </h2>
+<h2>Text Tool Behavior</h2>
 
-<p> Permite que o rótulo associado ao componente seja editado.</p>
+<p>Allows the label associated with the component to be edited.</p>
 
-<p><a href="../index.html">Voltar à <em>Referência para bibliotecas</em></a></p>
+<p><a href="../index.html">Back to <em>Library Reference</em></a></p>
 
 </body>
 </html>

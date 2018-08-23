@@ -1,111 +1,122 @@
 <html>
-<head><meta http-equiv="content-type" content="text/html; charset=UTF-8">
-<title>Distribuidor</title>
+<head>
+<title>Splitter</title>
 </head>
 
 <body bgcolor="FFFFFF">
 
-<h1><img  align="center" src="../../icons/splitter.gif" width="32" height="32">
-<em>Distribuidor</em></h1>
+<h1><img  align="center" src="../../../icons/splitter.gif" width="32" height="32">
+<em>Splitter</em></h1>
 
 <p><table>
-<tr><td><strong>Biblioteca:</strong></td>
-	<td><a href="index.html">Base</a></td></tr>
-<tr><td><strong>Introdução:</strong></td>
-	<td>2.0 Beta 1</td></tr>
-<tr><td valign="top"><strong>Aparência:</strong></td>
-	<td valign="top"><img src="../images/splitter.png" width="24" height="25"></td></tr>
+<tr><td><strong>Library:</strong></td>
+	<td><a href="index.html">Wiring</a></td></tr>
+<tr><td><strong>Introduced:</strong></td>
+	<td>2.0 Beta 1 (in Base library, moved to Wiring in 2.7.0)</td></tr>
+<tr><td valign="top"><strong>Appearance:</strong></td>
+	<td valign="top"><img src="../../../img-libs/splitter.png" width="24" height="44"></td></tr>
 </table></p>
 
-<h2>Comportamento</h2>
+<h2>Behavior</h2>
 
-<p> O distribuidor cria uma correspondência entre um valor multibit e vários
-subconjuntos separados de bits equivalentes. A despeito do seu nome, ele pode 
-separar tanto um valor multibit em partes, quanto combiná-las em um valor multibit
-- de fato ele poderá fazer ambos de uma vez. Uma descrição mais completa dos
-distribuidores poderá ser encontrada na seção
-'<a href="../../guide/bundles/splitting.html">Distribuidores</a>' do
-<em>Guia do Usuário</em>.
-</p>
+<p>The splitter creates a correspondence between a multi-bit value and several
+separate subsets of those bits. Despite its name, it can either
+split a multi-bit value into component parts, or it can combine
+component parts into a multi-bit value - or indeed it can do both at once.
+A more complete description of splitters is found in the `<a
+href="../../guide/bundles/splitting.html">Splitters</a>' section of the
+<em>User's Guide</em>.</p>
 
-<p> O Logisim trata os distribuidores de forma especial ao propagar sinais
-dentro de um circuito: enquanto todos os outros componentes precisam de um
-atraso calculado para fins do seu comportamento na simulação, os sinais 
-propagados pelos distribuidores (assim como também pelas conexões) serão
-transmitidos instantaneamente.
-</p>
+<p>Logisim treats splitters specially when propagating values within a
+circuit: Whereas all other components have a computed delay for purposes
+of simulating their behavior, values propagate through splitters (as
+well as wires) instantaneously.</p>
 
-<p><strong>Nota:</strong> O termo <em>distribuidor</em> não é um termo 
-padronizado, é único do Logisim até onde eu saiba. Desconheço qualquer
-termo padrão para tal conceito; o único termo que já ví foi <em>"bus ripper"</em>,
-mas esse termo é desnecessariamente violento para o meu gosto.
-</p>
+<p><strong>Note:</strong> The term <em>splitter</em> is a non-standard
+term, which is unique to Logisim as far as I know. I am unaware of any
+standard term for such a concept; the only term I have heard used is
+<em>bus ripper</em>, but this term is unnecessarily violent for my
+tastes.</p>
 
-<h2>Pinos</h2>
+<h2>Pins</h2>
 
-<p> Para distinguir entre os diversos pontos de conexão em um distribuidor,
-irei referir-me à terminação com um ponto de conexão como sua
-<em>extremidade combinada</em>, e aos múltiplos pontos de conexão do outro
-lado como sua <em>extremidade dividida</em>.
-</p>
+<p>To distinguish the several connecting points for a splitter, we refer
+to the single connecting point one side as its <em>combined end</em>,
+and we refer to the multiple connecting points on the other side as its
+<em>split ends</em>.</p>
 
 <dl>
 
-<dt> A extremidade combinada (entrada/saída, com largura em bits de acordo com o
-atributo Bits de Dados) </dt>
-<dd> Representará um valor combinado por todos os bits que forem transmitidos pelo
-distribuidor.
+<dt>Combined end (input/output bit width matches Bit Width In attribute)
+<dd>A value holding all of the bits traveling through the splitter.
 
-<dt> A extremidade dividida (entrada/saída, com largura em bits calculada com base
-nos atributos Bit <var>x</var>)
-<dd> O número de extremidades divididas será especificado pelo atributo Distribuição,
-e cada uma terá um índice que será no mínimo igual a zero e menor que o valor desse
-atributo. Para cada terminação, todos os bits para os quais o Bit <var> x </var>
-referir-se por seu índice, serão transmitidos através da extremidade, e a ordem 
-desses bits será a mesma na extremidade combinada.
+<dt>Split ends (input/output, bit width computed based on Bit <var>x</var> attributes)
+<dd>The number of split ends is specified in the Fan Out attribute, and
+each split end has an index that is at least 0 and less than the Fan Out
+attribute. For each split end, all bits for which Bit <var>x</var>
+refers to its index travels through that split end; the order of these
+bits is the same as their order within the combined end.
 
 </dl>
 
-<h2>Atributos</h2>
+<h2>Attributes</h2>
 
-<p> Quando o componente for selecionado ou estiver sendo acrescentado,
-os dígitos de '0 'a '9' poderão alterar o atributo <q> Distribuição</q>,
-Alt-0 até ALT-9 irão alterar ambos os atributos <q> Distribuição</q> e
-<q> Largura de Bits à Entrada</q>, e as teclas com setas poderão
-alterar o seu atributo <q> Direção</q>.
-</p>
+<p>When the component is selected or being added,
+the digits '0' through '9' alter its <q>Fan Out</q> attribute,
+Alt-0 through Alt-9 alter both the <q>Fan Out</q> and <q>Bit Width In</q> attributes,
+and the arrow keys alter its <q>Facing</q> attribute.</p>
 
 <dl>
 
-<dt> Direção </dt>
-<dd> A posição da extremidade dividida em relação à combinada. </dd>
+<dt>Facing</dt>
+<dd><p>The location of the split ends relative to the combined end.</p></dd>
 
-<dt> Distribuição </dt>
-<dd> O número de terminações em uma extremidade. </dd>
+<dt>Fan Out</dt>
+<dd><p>The number of split ends.</p></dd>
 
-<dt> Largura em Bits à Entrada </dt>
-<dd> A largura em bits da extremidade combinada. </dd>
+<dt>Bit Width In</dt>
+<dd><p>The bit width of the combined end.</p></dd>
 
-<dt> Bit <var>x</var></dt>
-<dd> O índice de uma terminação ao qual o bit <var>x</var> corresponder
-na extremidade combinada. As terminações são indexadas a partir de 0 no
-topo (para um distribuidor voltado para leste ou oeste) e a partir de 0
-da esquerda/oeste (para um distribuidor voltado para norte ou sul). Um 
-bit pode ser especificado para não corresponder a qualquer uma das terminações. 
-Não há qualquer maneira pela qual um bit possa corresponder a múltiplas 
-terminações. </dd>
+<dt>Appearance</dt>
+<dd><p>Supports different ways of depicting the splitter in the circuit.
+The <q>Left-handed</q> option (the default) draws a spine going left from the
+combined end, with a labeled line coming from the spine for each split end.
+The <q>Right-handed</q> option is the same except the spine goes right (if you're
+facing according to the Facing attribute).
+The <q>Centered</q> option centers the spine so it goes in roughly equal directions
+left and right.
+And the <q>Legacy</q> option draws diagonal lines to each split end, without labels;
+this option is primarily for compatibility with versions
+older than 2.7.0, when this was the only option for splitter appearance.</p></dd>
+
+<dt>Bit <var>x</var></dt>
+<dd><p>The index of the split end to which bit <var>x</var> of the combined
+end corresponds. The split ends are indexed starting from 0 at the top
+(for a splitter facing east or west) or from 0 at the left/west (for a
+splitter facing north or south). A bit can be specified to correspond to
+none of the split ends. There is no way for a bit to correspond to
+multiple split ends.</p>
+
+<p>Sometimes you can avoid twiddling each individual Bit <var>x</var> attribute
+by bringing up the pop-up menu for a splitter (usually by right-clicking or
+control-clicking it). The pop-up menu includes options labeled Distribute Ascending
+and Distribute Descending. The Distribute Ascending option distributes the bits
+so that each split end receives the same number of bits, starting from end 0.
+(If the number of split ends doesn't divide exactly into the number of bits,
+then the bits are distributed as evenly as possible.)
+Distribute Descending does the same but starts from the highest-numbered end.</p></dd>
 
 </dl>
 
-<h2> Comportamento da ferramenta Testar </h2>
+<h2>Poke Tool Behavior</h2>
 
-<p> Nenhum. </p>
+<p>None.</p>
 
-<h2> Comportamento da ferramenta Texto </h2>
+<h2>Text Tool Behavior</h2>
 
-<p> Nenhum. </p>
+<p>None.</p>
 
-<p><a href="../index.html">Voltar à <em>Referência para bibliotecas</em></a></p>
+<p><a href="../index.html">Back to <em>Library Reference</em></a></p>
 
 </body>
 </html>

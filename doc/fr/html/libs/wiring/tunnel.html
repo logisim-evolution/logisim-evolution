@@ -1,91 +1,83 @@
 <html>
-<head><meta http-equiv="content-type" content="text/html; charset=UTF-8">
-<title>Túnel</title>
+<head>
+<title>Tunnel</title>
 </head>
 
 <body bgcolor="FFFFFF">
 
-<h1><img  align="center" src="../../icons/tunnel.gif" width="32" height="32">
-<em>Túnel</em></h1>
+<h1><img  align="center" src="../../../icons/tunnel.gif" width="32" height="32">
+<em>Tunnel</em></h1>
 
 <p><table>
-<tr><td><strong>Biblioteca:</strong></td>
-	<td><a href="index.html">Base</a></td></tr>
-<tr><td><strong>Introdução:</strong></td>
-	<td>2.5.0</td></tr>
-<tr><td valign="top"><strong>Aparência:</strong></td>
-	<td valign="top"><img src="../images/tunnel.png" width="220" height="90"></td></tr>
+<tr><td><strong>Library:</strong></td>
+	<td><a href="index.html">Wiring</a></td></tr>
+<tr><td><strong>Introduced:</strong></td>
+	<td>2.5.0 (in Base library, moved to Wiring in 2.7.0)</td></tr>
+<tr><td valign="top"><strong>Appearance:</strong></td>
+	<td valign="top"><img src="../../../img-libs/tunnel.png" width="220" height="90"></td></tr>
 </table></p>
 
-<h2>Comportamento</h2>
+<h2>Behavior</h2>
 
-<p> Um <q>túnel</q> funciona como um fio na medida em que vincula pontos,
-mas ao contrário de um fio, a uma conexão não será traçada explicitamente.
-Isso será útil quando você precisar conectar pontos distantes no circuito
-e uma rede de fios possa tornar o circuito menos legível.
-A ilustração abaixo mostra como isso funciona.
-</p>
+<p>A <q>tunnel</q> acts like a wire in that it binds points together,
+but unlike a wire the connection is not explicitly drawn.
+This is helpful when you need to connect points far apart in the circuit
+and a network of wires would make the circuit much more ugly.
+The below illustration illustrates how this works.</p>
 
-<blockquote> 
-<img src="../images/tunnel-demo.png" width="204" height="86"> 
-</blockquote>
+<blockquote><img src="../../../img-libs/tunnel-demo.png" width="204" height="86"></blockquote>
 
-<p> Aqui, todos os três túneis tem o mesmo rótulo, <em> a</em>,
-e assim todos os três pontos estarão conectados ao mesmo ponto.
-(Se um dos túneis tiver sido rotulado diferentemente, como <em> b</em>,
-então será parte de outro conjunto de túneis).
-O <i>buffer</i> controlado na parte superior emitirá uma saída flutuante
-uma vez que a sua entrada de mais baixa ordem é 0.
-Isso normalmente levará a conexão que venha do <i>buffer</i> controlado a ser azul;
-mas aqui ela está verde-escura, porque a saída flutuante combina-se
-através do túnel com o 0 originário do pino na parte inferior.
-Se a entrada de controle para as alterações do <i>buffer</i> for igual a 1,
-então, esse <i>buffer</i> controlado irá alimentar o túnel com 1,
-que combinado com 0 do pino ao fundo irá resultar em um valor de erro;
-portanto, fios vermelhos serão vistos alimentando todos os três túneis.
-</p>
+<p>Here, all three tunnels have the same label, <em>a</em>, and so
+the three points to which the tunnels point are connected.
+(If one of the tunnels were labeled something else, like <em>b</em>,
+then it would be part of a different set of tunnels.)
+The controlled buffer at top emits a floating output
+since its lower input is 0.
+This normally leads the wire coming from the controlled buffer to be blue;
+but here it is dark green because the floating output combines
+through the tunnel with the 0 from the pin at bottom.
+If the control input into the buffer changes to 1,
+then the controlled buffer would feed 1 into the tunnel,
+which would combine with 0 from the pin at bottom to result in an error value; thus, we would then see red wires feeding through all three tunnels.</p>
 
-<h2>Pinos</h2>
+<h2>Pins</h2>
 
-<p> Um túnel tem apenas um pino, cuja largura em bits será de acordo 
-com o seu atributo Bits de Dados. Esse pino não é uma entrada nem uma saída 
-&mdash; túneis correspondentes estarão conectados de forma transparente.
-</p>
+<p>A tunnel has only one pin, whose bit width matches the tunnel's
+Data Bits attribute. This pin is neither an input nor an output &mdash;
+the matching tunnels are simply connected transparently.</p>
 
-<h2>Atributos</h2>
+<h2>Attributes</h2>
 
-<p> Quando o componente for selecionado ou estiver sendo acrescentado,
-Alt-0 até ALT-9 irão alterar o seu atributo <q> Bits de Dados</q>,
-e as teclas com setas poderão alterar o seu atributo <q> Direção</q>.
-</p>
+<p>When the component is selected or being added,
+Alt-0 through Alt-9 alter its <q>Data Bits</q> attribute
+and the arrow keys alter its <q>Facing</q> attribute.</p>
 
 <dl>
 
-<dt> Direção </dt>
-<dd> A direção na qual o túnel aponta.</dd>
+<dt>Facing</dt>
+<dd>The direction toward which the tunnel points.</dd>
 
-<dt> Bits de Dados </dt>
-<dd> O número de bits para o túnel. </dd>
+<dt>Data Bits</dt>
+<dd>The number of bits for the tunnel.</dd>
 
-<dt> Rótulo </dt>
-<dd> O texto do rótulo associado ao túnel. 
-Esse túnel estará conectado a todos os outros com o mesmo rótulo. </dd>
+<dt>Label</dt>
+<dd>The text within the label associated with the tunnel.
+This tunnel is connected to all other tunnels with exactly the same label.</dd>
 
-<dt> Fonte do Rótulo </dt>
-<dd> A fonte com a qual o rótulo será mostrado. </dd>
-
+<dt>Label Font</dt>
+<dd>The font with which to render the label.</dd>
 
 </dl>
 
-<h2> Comportamento da ferramenta Testar </h2>
+<h2>Poke Tool Behavior</h2>
 
-<p> Nenhum. </p>
+<p>None.</p>
 
-<h2> Comportamento da ferramenta Texto </h2>
+<h2>Text Tool Behavior</h2>
 
-<p> Permite que o rótulo associado ao túnel seja editado.</p>
+<p>Allows the label associated with the tunnel to be edited.</p>
 
-<p><a href="../index.html">Voltar à <em>Referência para bibliotecas</em></a></p>
+<p><a href="../index.html">Back to <em>Library Reference</em></a></p>
 
 </body>
 </html>
