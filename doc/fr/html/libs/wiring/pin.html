@@ -10,15 +10,15 @@
 <em>Pin</em></h1>
 
 <p><table>
-<tr><td><strong>Library:</strong></td>
+<tr><td><strong>Librairie:</strong></td>
 	<td><a href="index.html">Wiring</a></td></tr>
-<tr><td><strong>Introduced:</strong></td>
+<tr><td><strong>Introduction:</strong></td>
 	<td>2.0 Beta 1 (in Base library, moved to Wiring in 2.7.0)</td></tr>
-<tr><td valign="top"><strong>Appearance:</strong></td>
+<tr><td valign="top"><strong>Apparence:</strong></td>
 	<td valign="top"><img src="../../../img-libs/pin.png" width="101" height="51"></td></tr>
 </table></p>
 
-<h2>Behavior</h2>
+<h2>Comportement</h2>
 
 <p>A pin is an output or an input to a circuit, depending on the value
 of its Output? attribute. In drawing a pin, Logisim represents output
@@ -46,18 +46,18 @@ tied to the pins within the subcircuit layout.</p>
 component if the pin is an output pin, and it will be an output to the
 component if the pin is an input pin.  In either case, its bit width
 matches the Data Bits attribute, and its location is specified by the
-Facing attribute.</p>
+Orientation attribute.</p>
 
-<h2>Attributes</h2>
+<h2>Attributs</h2>
 
 <p>When the component is selected or being added,
 Alt-0 through Alt-9 alter its <q>Data Bits</q> attribute,
-the arrow keys alter its <q>Facing</q> attribute,
+the arrow keys alter its <q>Orientation</q> attribute,
 and Alt with an arrow key alters its <q>Label Location</q> attribute.</p>
 
 <dl>
 
-<dt>Facing</dt>
+<dt>Orientation</dt>
 <dd>The side of the component where its input/output pin should be.</dd>
 
 <dt>Output?</dt>
@@ -76,7 +76,7 @@ any effect on how the pin behaves when the circuit layout is used as a
 subcircuit.
 For an output pin, the attribute has no effect.</dd>
 
-<dt>Pull Behavior</dt>
+<dt>Pull Comportement</dt>
 <dd>For an input pin, the attribute specifies how floating values should
 be treated when received as an input, perhaps from a circuit using the
 layout as a subcircuit. With "unchanged," the floating values are sent
@@ -96,9 +96,9 @@ circuit layout.</dd>
 
 </dl>
 
-<h2>Poke Tool Behavior</h2>
+<h2>Action de l'outil pousser</h2>
 
-<p>Clicking an output pin has no effect, although the pin's attributes
+<p>Clicking an output pin has no effect, although the pin's Attributs
 will be displayed.</p>
 
 <p>Clicking an input pin will toggle the bit that is clicked. If it is a
@@ -114,11 +114,11 @@ without breaking this link between the subcircuit's state and the
 containing circuit's state, and Logisim will prompt the user to verify
 that breaking this link is actually desired.</p>
 
-<h2>Text Tool Behavior</h2>
+<h2>Action de l'outil text</h2>
 
 <p>Allows the label associated with the component to be edited.</p>
 
-<p><a href="../index.html">Back to <em>Library Reference</em></a></p>
+<p><a href="../index.html">Retour à<em>Library Reference</em></a></p>
 
 </body>
 </html>
