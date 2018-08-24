@@ -1,4 +1,5 @@
 <html>
+<meta charset="UTF-8">
 <head>
 <title>Pin</title>
 </head>
@@ -11,114 +12,68 @@
 
 <p><table>
 <tr><td><strong>Librairie:</strong></td>
-	<td><a href="index.html">Wiring</a></td></tr>
+	<td><a href="index.html">Câblage</a></td></tr>
 <tr><td><strong>Introduction:</strong></td>
-	<td>2.0 Beta 1 (in Base library, moved to Wiring in 2.7.0)</td></tr>
+	<td>2.0 bêta 1 (dans la bibliothèque de base, déplacé dans le câblage en 2.7.0)</td></tr>
 <tr><td valign="top"><strong>Apparence:</strong></td>
 	<td valign="top"><img src="../../../img-libs/pin.png" width="101" height="51"></td></tr>
 </table></p>
 
 <h2>Comportement</h2>
 
-<p>A pin is an output or an input to a circuit, depending on the value
-of its Output? attribute. In drawing a pin, Logisim represents output
-pins using a circle or rounded rectangle, and input pins are represented
-using squares or rectangles. In either case, the individual bits of the
-value being sent or received is displayed within the component (except
-within printer view, when the component only says how many bits wide the
-pin is).</p>
+<p>Une pin est une sortie ou une entrée d’un circuit, en fonction de la valeur de son attribut <q>sortie?</q>. Logisim représente les broches de sortie à l'aide d'un cercle ou d'un rectangle arrondi, et les broches d'entrée sont représentées à l'aide de carrés ou de rectangles. Dans les deux cas, la valeur des bits individuels de la valeur envoyée ou reçue sont affichés dans le composant (sauf dans la vue de'impression, lorsque le composant indique uniquement sa largeur en bit).</p>
 
-<p>A pin is a convenient component for interacting with a circuit, and
-beginning Logisim users need not use them in any other way. But a
-user building a circuit using several subcircuits (as described in the
-`<a href="../../guide/subcirc/index.html">Subcircuits</a>' section of
-the <em>User's Guide</em>) will use pins also
-to specify the interface between a
-circuit and a subcircuit. In particular, a circuit layout's pin
-components define the pins that appear on the subcircuit component when
-the layout is used within another circuit. In such a circuit, the values
-sent and received to those locations on the subcircuit component are
-tied to the pins within the subcircuit layout.</p>
+<p>Une pin est un composant pratique pour interagir avec un circuit en mode simulation (en cliquant dessus), et les utilisateurs débutants de Logisim n'ont pas besoin de les utiliser d'une autre manière. Mais quand la complexité augemente on construit un circuit en utilisant plusieurs sous-circuits (comme décrit dans la section `<a href="../../guide/subcirc/index.html"> Sous-circuits </a>' du <em>Guide de l'utilisateur</em>) utilisera également des pins pour spécifier les interconnexions entre un circuit et un sous-circuit. En particulier, les composants pin du schéma d'un circuit définissent les broches qui apparaissent sur le symbole du sous-circuit lorsque q'il est utilisée dans un autre circuit. Dans un tel circuit, les valeurs envoyées et reçues à ces emplacements sur le symbole du sous-circuit sont liées aux broches dans la disposition du sous-circuit. </p>
 
 <h2>Pins</h2>
 
-<p>A pin component has only one pin, which will be an input to the
-component if the pin is an output pin, and it will be an output to the
-component if the pin is an input pin.  In either case, its bit width
-matches the Data Bits attribute, and its location is specified by the
-Orientation attribute.</p>
+<p>Un composant pin ne possède qu’une broche, qui sera une entrée pour lui si la pin est une connexion de sortie, et qu’elle sera une sortie du composant si la pin est une connexion d’entrée. Dans les deux cas, sa largeur de bit correspond à l'attribut Data Bits et son emplacement est spécifié par l'attribut Orientation.</p>
 
 <h2>Attributs</h2>
 
-<p>When the component is selected or being added,
-Alt-0 through Alt-9 alter its <q>Data Bits</q> attribute,
-the arrow keys alter its <q>Orientation</q> attribute,
-and Alt with an arrow key alters its <q>Label Location</q> attribute.</p>
+<p>Lorsque le composant est sélectionné ou ajouté, Alt-0 à Alt-9 modifie son attribut <q> Data Bits </q>, les touches fléchées modifient son attribut <q> Orientation </q> et Alt avec une touche fléchée modifie l'attribut <q> Emplacement du libellé</p>
 
 <dl>
 
 <dt>Orientation</dt>
-<dd>The side of the component where its input/output pin should be.</dd>
+<dd>Le côté du composant où doit se trouver sa broche d’entrée / sortie.</dd>
 
-<dt>Output?</dt>
-<dd>Specifies whether the component is an output pin or an input pin.
-(Note that if the pin component is an input pin, then the pin that acts
-as its interface within the circuit will be an output, and vice versa.)</dd>
+<dt>Sortie ?</dt>
+<dd>Spécifie si le composant est une connexion de sortie ou une connexion d’entrée. (Notez que si le composant pin est une broche d’entrée, la connexion qui agit comme interface dans un circuit de hyerachie supérieur sera une sortie, et inversement.)</dd>
 
 <dt>Data Bits</dt>
-<dd>The number of bits for the value that the pin handles.</dd>
+<dd>Le nombre de bits correspondant à la largeur en bit prise en charge par la pin.</dd>
 
-<dt>Three-state?</dt>
-<dd>For an input pin, this configures whether the user can 
-instruct the pin to emit unspecified (i.e., floating) values.
-The attribute deals with the user interface only; it does not have
-any effect on how the pin behaves when the circuit layout is used as a
-subcircuit.
-For an output pin, the attribute has no effect.</dd>
+<dt>Trois états?</dt>
+<dd>Pour une broche d’entrée, cette option détermine si l’utilisateur peut demander à la pin d’émettre des valeurs flottantes (Non spécifiée). L'attribut n'est utile que dans l'interface utilisateur pour la simulation. cela n'a aucun effet sur le comportement de la broche lorsque la disposition du circuit est utilisée comme sous-circuit. Pour une broche de sortie, l'attribut n'a aucun effet.</dd>
 
 <dt>Pull Comportement</dt>
-<dd>For an input pin, the attribute specifies how floating values should
-be treated when received as an input, perhaps from a circuit using the
-layout as a subcircuit. With "unchanged," the floating values are sent
-into the layout as floating values; with "pull up," they are converted
-into 1 values before being sent into the circuit layout; and with "pull
-down," they are converted into 0 values before being sent into the
-circuit layout.</dd>
+<dd>Pour une broche d'entrée, l'attribut spécifie comment les valeurs flottantes doivent être traitées dans la simulation  lorsqu'elles sont reçues en entrée depuis un circuit de hyérachie supérieur. Avec "inchangé", les valeurs flottantes sont reprise dans le shcéma sous forme de valeurs flottantes; avec "pull up", ils sont convertis en 1 et avec "pull down", ils sont convertis en valeurs 0.</dd>
 
 <dt>Label</dt>
-<dd>The text within the label associated with the component.</dd>
+<dd>Le texte dans l'étiquette associée au composant.</dd>
 
-<dt>Label Location</dt>
-<dd>The location of the label relative to the component.</dd>
+<dt>Postion du Label</dt>
+<dd>L'emplacement de l'étiquette par rapport au composant.</dd>
 
-<dt>Label Font</dt>
-<dd>The font with which to render the label.</dd>
+<dt>Police du Label</dt>
+<dd>La police avec laquelle rendre l'étiquette.</dd>
 
 </dl>
 
 <h2>Action de l'outil pousser</h2>
 
-<p>Clicking an output pin has no effect, although the pin's Attributs
-will be displayed.</p>
+<p>Cliquer sur une broche de sortie n’a aucun effet, bien que les attributs de la broche soient affichés.</p>
 
-<p>Clicking an input pin will toggle the bit that is clicked. If it is a
-three-state pin, then the corresponding bit will rotate between the
-three states.</p>
+<p>En cliquant sur une broche d’entrée, vous activez le bit sur lequel vous avez cliqué. S'il s'agit d'une broche à trois états, le bit correspondant va pivoter entre les trois états.</p>
 
-<p>If, however, the user is viewing the state of a subcircuit
-as described in the `<a href="../../guide/subcirc/debug.html">Debugging
-Subcircuits</a>' of the <em>User's Guide</em>,
-then the pin's value is pinned to whatever value the subcircuit is
-receiving from the containing circuit. The user cannot change the value
-without breaking this link between the subcircuit's state and the 
-containing circuit's state, and Logisim will prompt the user to verify
-that breaking this link is actually desired.</p>
+<p>Si, toutefois, l’utilisateur visualise l’état d’un sous-circuit comme décrit dans le <a href="../../guide/subcirc/debug.html"> débogage de Sous-circuits </a> du <em> Guide de l'utilisateur </em>, alors la valeur de la pin est pilotée par la valeur que le sous-circuit reçoit du circuit de hyérachie supérieur. L'utilisateur ne peut pas modifier la valeur sans rompre ce lien entre l'état du sous-circuit et l'état du circuit contenant, et Logisim demandera à l'utilisateur de vérifier que la rupture de ce lien est réellement souhaitée.</p>
 
 <h2>Action de l'outil text</h2>
 
-<p>Allows the label associated with the component to be edited.</p>
+<p>Permet de modifier l’étiquette associée au composant.</p>
 
-<p><a href="../index.html">Retour à<em>Library Reference</em></a></p>
+<p><a href="../index.html">Retour à <em>Référence de la bibliothèque</em></a></p>
 
 </body>
 </html>

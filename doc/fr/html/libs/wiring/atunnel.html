@@ -1,64 +1,65 @@
 <html>
-<tête>
-<title> Tunnel </ title>
-</ head>
+<meta charset="UTF-8">
+<head>
+<title>Tunnel</title>
+</head>
 
 <body bgcolor = "FFFFFF">
 
-<h1> <img align = "center" src = "../../../ icons / tunnel.gif" width = "32" height = "32">
-<em> Tunnel </ em> </ h1>
+<h1> <img align = "center" src = "../../../icons/tunnel.gif" width = "32" height = "32">
+<em>Tunnel</em> </h1>
 
 <p> <table>
-<tr> <td> <strong> Bibliothèque: </ strong> </ td>
-<td> <a href="index.html"> Câblage </a> </ td> </ tr>
-<tr> <td> <strong> Introduit: </ strong> </ td>
-<td> 2.5.0 (dans la bibliothèque de base, déplacé dans le câblage en 2.7.0) </ td> </ tr>
-<tr> <td valign = "top"> <strong> Apparence: </ strong> </ td>
-<td valign = "top"> <img src = "../../../ img-libs / tunnel.png" width = "220" height = "90"> </ td> </ tr>
-</ table> </ p>
+<tr> <td> <strong>Bibliothèque: </strong> </td>
+<td> <a href="index.html">Câblage </a> </td> </tr>
+<tr> <td> <strong>Introduit: </strong> </td>
+<td> 2.5.0 (dans la bibliothèque de base, déplacé dans le câblage en 2.7.0) </td> </tr>
+<tr> <td valign = "top"> <strong> Apparence: </strong> </td>
+<td valign = "top"> <img src = "../../../ img-libs / tunnel.png" width = "220" height = "90"> </td> </tr>
+</table> </p>
 
-<h2> Comportement </ h2>
+<h2>Comportement</h2>
 
-<p> Un tunnel <q> </ q> se comporte comme un câble en ce qu’il lie les points ensemble, mais contrairement à un câble, la connexion n’est pas explicitement établie. Cela est utile lorsque vous devez connecter des points éloignés dans le circuit et qu'un réseau de câbles rendrait le circuit beaucoup plus moche. L'illustration ci-dessous montre comment cela fonctionne. </ P>
+<p> Un tunnel <q> </q> se comporte comme un câble en ce qu’il lie les points ensemble, mais contrairement à un câble, la connexion n’est pas explicitement établie. Cela est utile lorsque vous devez connecter des points éloignés dans le circuit et qu'un réseau de câbles rendrait le circuit beaucoup plus moche. L'illustration ci-dessous montre comment cela fonctionne. </P>
 
-<blockquote> <img src = "../../../ img-libs / tunnel-demo.png" width = "204" height = "86"> </ blockquote>
+<blockquote> <img src = "../../../ img-libs / tunnel-demo.png" width = "204" height = "86"> </blockquote>
 
-<p> Ici, les trois tunnels ont le même label, <em> a </ em>, et donc les trois points auxquels les tunnels sont connectés. (Si l'un des tunnels était étiqueté comme autre chose, comme <em> b </ em>, alors il ferait partie d'un ensemble de tunnels différent.) Le tampon contrôlé émet une sortie flottante puisque son entrée inférieure est 0.
-Cela conduit normalement le fil provenant du tampon contrôlé à être bleu; mais ici, il est vert foncé parce que la sortie flottante combine à travers le tunnel avec le 0 de la broche en bas. Si l'entrée de contrôle dans le tampon passe à 1, le tampon contrôlé alimentera 1 dans le tunnel, ce qui se combinera avec 0 à partir de la broche en bas pour aboutir à une valeur d'erreur; on verrait alors des fils rouges traverser les trois tunnels. </ p>
+<p> Ici, les trois tunnels ont le même label, <em> a </em>, et donc les trois points auxquels les tunnels sont connectés. (Si l'un des tunnels était étiqueté comme autre chose, comme <em> b </em>, alors il ferait partie d'un ensemble de tunnels différent.) Le tampon contrôlé émet une sortie flottante puisque son entrée inférieure est 0.
+Cela conduit normalement le fil provenant du tampon contrôlé à être bleu; mais ici, il est vert foncé parce que la sortie flottante combine à travers le tunnel avec le 0 de la broche en bas. Si l'entrée de contrôle dans le tampon passe à 1, le tampon contrôlé alimentera 1 dans le tunnel, ce qui se combinera avec 0 à partir de la broche en bas pour aboutir à une valeur d'erreur; on verrait alors des fils rouges traverser les trois tunnels. </p>
 
-<h2> Pins </ h2>
+<h2> Pins </h2>
 
-<p> Un tunnel n’a qu’une seule broche dont la largeur de bit correspond à l’attribut Bits de données du tunnel. Cette broche n'est ni une entrée ni une sortie & mdash; les tunnels correspondants sont simplement connectés de manière transparente. </ p>
+<p> Un tunnel n’a qu’une seule broche dont la largeur de bit correspond à l’attribut Bits de données du tunnel. Cette broche n'est ni une entrée ni une sortie & mdash; les tunnels correspondants sont simplement connectés de manière transparente. </p>
 
-<h2> Attributs </ h2>
+<h2> Attributs </h2>
 
-<p> Lorsque le composant est sélectionné ou ajouté, Alt-0 à Alt-9 modifie son attribut <q> Data Bits </ q> et les touches fléchées modifient son attribut <q> Orientation </ q>. </ p >
+<p> Lorsque le composant est sélectionné ou ajouté, Alt-0 à Alt-9 modifie son attribut <q> Data Bits </q> et les touches fléchées modifient son attribut <q> Orientation </q>. </p >
 
 <dl>
 
-<dt> Orientation </ dt>
-<dd> La direction vers laquelle pointe le tunnel. </ dd>
+<dt> Orientation </dt>
+<dd> La direction vers laquelle pointe le tunnel. </dd>
 
-<dt> Bits de données </ dt>
-<dd> Le nombre de bits du tunnel. </ dd>
+<dt> Bits de données </dt>
+<dd> Le nombre de bits du tunnel. </dd>
 
-<dt> Label </ dt>
-<dd> Le texte dans l’étiquette associé au tunnel. Ce tunnel est connecté à tous les autres tunnels avec exactement le même libellé. </ Dd>
+<dt> Label </dt>
+<dd> Le texte dans l’étiquette associé au tunnel. Ce tunnel est connecté à tous les autres tunnels avec exactement le même libellé. </Dd>
 
-<dt> Police de libellé </ dt>
-<dd> La police avec laquelle rendre l'étiquette. </ dd>
+<dt> Police de libellé </dt>
+<dd> La police avec laquelle rendre l'étiquette. </dd>
 
-</ dl>
+</dl>
 
-<h2> Comportement de l'outil Poke </ h2>
+<h2> Comportement de l'outil Poke </h2>
 
-<p> Aucun. </ p>
+<p> Aucun. </p>
 
-<h2> Comportement de l'outil de texte </ h2>
+<h2> Comportement de l'outil de texte </h2>
 
-<p> Permet de modifier l’étiquette associée au tunnel. </ p>
+<p> Permet de modifier l’étiquette associée au tunnel. </p>
 
-<p> <a href="../index.html"> Retour à <em> Référence de la bibliothèque </ em> </a> </ p>
+<p> <a href="../index.html"> Retour à <em> Référence de la bibliothèque </em> </a> </p>
 
-</ body>
-</ html>
+</body>
+</html>

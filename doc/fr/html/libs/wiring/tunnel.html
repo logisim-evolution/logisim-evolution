@@ -1,4 +1,5 @@
 <html>
+<meta charset="UTF-8">
 <head>
 <title>Tunnel</title>
 </head>
@@ -10,74 +11,55 @@
 
 <p><table>
 <tr><td><strong>Librairie:</strong></td>
-	<td><a href="index.html">Wiring</a></td></tr>
+	<td><a href="index.html">Câblage</a></td></tr>
 <tr><td><strong>Introduction:</strong></td>
-	<td>2.5.0 (in Base library, moved to Wiring in 2.7.0)</td></tr>
+	<td>2.5.0 (dans la librairie de base, déplacé dans le la librairie câblage en 2.7.0)</td></tr>
 <tr><td valign="top"><strong>Apparence:</strong></td>
 	<td valign="top"><img src="../../../img-libs/tunnel.png" width="220" height="90"></td></tr>
 </table></p>
 
 <h2>Comportement</h2>
 
-<p>A <q>tunnel</q> acts like a wire in that it binds points together,
-but unlike a wire the connection is not explicitly drawn.
-This is helpful when you need to connect points far apart in the circuit
-and a network of wires would make the circuit much more ugly.
-The below illustration illustrates how this works.</p>
+<p>Un <q>tunnel</q> se comporte comme un câble dans le sens qu’il lie des points d'un circuit ensemble, mais contrairement à un câble, la connexion n’est pas explicitement dessinée. Cela est utile lorsque vous devez connecter des points éloignés dans le circuit et qu'un réseau de câbles surchargerait le schéma de manière exagéré. L'illustration ci-dessous montre comment cela fonctionne. </p>
 
-<blockquote><img src="../../../img-libs/tunnel-demo.png" width="204" height="86"></blockquote>
+<center><img src="../../../img-libs/tunnel-demo.png"></center>
 
-<p>Here, all three tunnels have the same label, <em>a</em>, and so
-the three points to which the tunnels point are connected.
-(If one of the tunnels were labeled something else, like <em>b</em>,
-then it would be part of a different set of tunnels.)
-The controlled buffer at top emits a floating output
-since its lower input is 0.
-This normally leads the wire coming from the controlled buffer to be blue;
-but here it is dark green because the floating output combines
-through the tunnel with the 0 from the pin at bottom.
-If the control input into the buffer changes to 1,
-then the controlled buffer would feed 1 into the tunnel,
-which would combine with 0 from the pin at bottom to result in an error value; thus, we would then see red wires feeding through all three tunnels.</p>
+<p>Ici à gauche, les trois tunnels ont le même label, <em>a</em>, et représente les trois points auxquels les tunnels sont connectés. Si l'un des tunnels porte un label différent, comme <em>b</em>, alors il ferait partie d'un ensemble de tunnels différent.<br>
+Dans l'exemple le buffer contrôlé émet une sortie flottante puisque son entrée inférieure est 0. Cela conduit normalement le fil en provenant du buffer contrôlé à être bleu, mais ici, il est vert foncé. Cela est correct, car il est relié au travers du tunnel à la broche du bas qui est à 0. Si le contrôle du buffer passe à 1, le tunnel transportera cette valeur sur les autres points et elle se combinera avec le zéro de la broche du bas déclenchant une erreur. On verrait alors des fils rouges traverser les trois tunnels comme dans le tunnel <em>b</em> à droite</p>
 
 <h2>Pins</h2>
 
-<p>A tunnel has only one pin, whose bit width matches the tunnel's
-Data Bits attribute. This pin is neither an input nor an output &mdash;
-the matching tunnels are simply connected transparently.</p>
+<p>Un tunnel n’a qu’une seule broche dont la largeur de bit correspond à l’attribut Data Bits du tunnel. Ce composant n'est ni une entrée ni une sortie. Les tunnels de même label sont simplement interconnectés de manière transparente comme des fils. </p>
 
 <h2>Attributs</h2>
 
-<p>When the component is selected or being added,
-Alt-0 through Alt-9 alter its <q>Data Bits</q> attribute
-and the arrow keys alter its <q>Orientation</q> attribute.</p>
+<p>Lorsque le composant est sélectionné ou ajouté, Alt-0 à Alt-9 modifie son attribut <q> Data Bits </q> et les touches fléchées modifient son attribut <q> Orientation </q>.</p>
 
 <dl>
 
 <dt>Orientation</dt>
-<dd>The direction toward which the tunnel points.</dd>
+<dd>La direction vers laquelle pointe le tunnel.</dd>
 
 <dt>Data Bits</dt>
-<dd>The number of bits for the tunnel.</dd>
+<dd>La largeur en bits du tunnel.</dd>
 
 <dt>Label</dt>
-<dd>The text within the label associated with the tunnel.
-This tunnel is connected to all other tunnels with exactly the same label.</dd>
+<dd>Le texte dans l’étiquette associée au tunnel. Ce tunnel est connecté à tous les autres tunnels avec exactement le même libellé.</dd>
 
-<dt>Label Font</dt>
-<dd>The font with which to render the label.</dd>
+<dt>Police du Label</dt>
+<dd>La police avec laquelle rendre l'étiquette.</dd>
 
 </dl>
 
 <h2>Action de l'outil pousser</h2>
 
-<p>None.</p>
+<p>Aucun.</p>
 
 <h2>Action de l'outil text</h2>
 
-<p>Allows the label associated with the tunnel to be edited.</p>
+<p>Permet de modifier l’étiquette associée au tunnel.</p>
 
-<p><a href="../index.html">Retour à<em>Library Reference</em></a></p>
+<p><a href="../index.html">Retour à <em>Référence de la bibliothèque</em></a></p>
 
 </body>
 </html>

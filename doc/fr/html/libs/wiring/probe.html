@@ -1,6 +1,7 @@
 <html>
+<meta charset="UTF-8">
 <head>
-<title>Probe</title>
+<title>Sonde</title>
 </head>
 
 <body bgcolor="FFFFFF">
@@ -10,68 +11,54 @@
 
 <p><table>
 <tr><td><strong>Librairie:</strong></td>
-	<td><a href="index.html">Wiring</a></td></tr>
+	<td><a href="index.html">Câblage</a></td></tr>
 <tr><td><strong>Introduction:</strong></td>
-	<td>2.0.3 (in Base library, moved to Wiring in 2.7.0)</td></tr>
+	<td>2.0.3 (dans la bibliothèque de base, déplacé dans le câblage en 2.7.0)</td></tr>
 <tr><td valign="top"><strong>Apparence:</strong></td>
 	<td valign="top"><img src="../../../img-libs/probe.png" width="39" height="52"></td></tr>
 </table></p>
 
 <h2>Comportement</h2>
 
-<p>A probe is an element that simply displays the value at a given point
-in a circuit. It does not itself interact with other components.</p>
+<p>Une sonde est un élément qui affiche simplement la valeur à un point donné dans un circuit. Il n'interagit pas avec d'autres composants.</p>
 
-<p>In most respects, the probe component duplicates the functionality
-found in a <a href="pin.html">Pin component</a> configured as an output
-pin. The primary difference is that if the circuit is used as a subcircuit
-component, then an output pin will be a part of that interface, whereas
-a probe is not. They also are different in that the probe does not have a Data Bits
-attribute to be configured: The bit width is inferred from whatever value it
-happens to see on its input. Graphically, they are similar but have slightly
-different borders: A pin has a thick, black border, whereas a probe has
-a thin, gray border.</p>
+<p>À bien des égards, le composant de sonde duplique la fonctionnalité trouvée dans un composant <a href="pin.html"> Pin </a> configuré en tant que pin de sortie. La sonde présente cepandant certaines différences : Elle n'est pas considérée comme une sortie par un circuit de hérachie supérieur. n’a pas d’attribut Data Bits à configurer, La largeur de bit est déduite de la valeur qu’elle trouve sur son entrée. Graphiquement la bordure est plus fine et grise.</p>
 
 <h2>Pins</h2>
 
-<p>A probe component has only one pin, which will acts as an input to
-the probe. The width that this pin accepts is adaptive: The probe will
-adapt to inputs of any width.</p>
+<p>Un composant de sonde ne possède qu’une seule broche, qui servira d’entrée à la sonde. La largeur acceptée par cette broche est adaptative: la sonde s'adaptera aux entrées de toute largeur.</p>
 
 <h2>Attributs</h2>
 
-<p>When the component is selected or being added,
-the arrow keys alter its <q>Orientation</q> attribute.</p>
+<p>Lorsque le composant est sélectionné ou ajouté, les touches fléchées modifient son attribut <q>Orientation</q>.</p>
 
 <dl>
 
 <dt>Orientation</dt>
-<dd>The side of the component where its input pin should be.</dd>
+<dd>Le côté du composant où doit se trouver sa broche d’entrée.</dd>
 
 <dt>Label</dt>
-<dd>The text within the label associated with the component.</dd>
+<dd>Le texte dans l'étiquette associée au composant.</dd>
 
-<dt>Label Location</dt>
-<dd>The location of the label relative to the component.</dd>
-
-<dt>Label Font</dt>
-<dd>The font with which to render the label.</dd>
+<dt> Emplacement du libellé </ dt>
+<dd> L'emplacement de l'étiquette par rapport au composant. </ dd>
+<dt> Police de libellé </ dt>
+<dd> La police avec laquelle rendre l'étiquette. </ dd>
 
 <dt>Radix</dt>
-<dd>The base (for example, binary, decimal, or hexadecimal) in which
-a value is displayed.</dd>
+<dd>la base (par exemple, binaire, décimale ou hexadécimale) dans laquelle une valeur est affichée.</dd>
 
 </dl>
 
 <h2>Action de l'outil pousser</h2>
 
-<p>None.</p>
+<p>Aucun.</p>
 
 <h2>Action de l'outil text</h2>
 
-<p>Allows the label associated with the component to be edited.</p>
+<p>Permet de modifier l’étiquette associée au composant.</p>
 
-<p><a href="../index.html">Retour à<em>Library Reference</em></a></p>
+<p><a href="../index.html">Retour à <em>Référence de la bibliothèque</em></a></p>
 
 </body>
 </html>
