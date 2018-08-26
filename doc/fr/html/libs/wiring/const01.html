@@ -1,16 +1,16 @@
 <html>
 <meta charset="UTF-8">
 <head>
-<title>Power/Ground</title>
+<title>Alimentation/Masse</title>
 </head>
 
 <body bgcolor="FFFFFF">
 
-<h1><img  align="center" src="../../../icons/power.gif" width="32" height="32"> <img  align="center" src="../../../icons/ground.gif" width="32" height="32"> <em>Power/Ground</em></h1>
+<h1><img  align="center" src="../../../icons/power.gif" width="32" height="32"> <img  align="center" src="../../../icons/ground.gif" width="32" height="32"> <em>Alimentation/Masse</em></h1>
 
 <p><table>
 <tr><td><strong>Librairie:</strong></td>
-	<td><a href="index.html">Wiring</a></td></tr>
+	<td><a href="index.html">Câblage</a></td></tr>
 <tr><td><strong>Introduction:</strong></td>
 	<td>2.7.0</td></tr>
 <tr><td valign="top"><strong>Apparence:</strong></td>
@@ -20,39 +20,29 @@
 
 <h2>Comportement</h2>
 
-<p>Emits a single value onto a wire.
-For a power element, indicated by a triangle, this value will be one
-(or, if the Data Bits attribute is more than 1, an all-ones value).
-For a ground element, indicated by an arrow
-of three shortening parallel lines, this value will be zero
-(or, if the Data Bits attribute is more than 1, an all-zero value).</p>
+<p>Génère constamment une état spécéfiée par son type.
+<br>Pour un élement Alimentation (<img src="../../../img-libs/power.png">) représenté par un triangle la valeur est haute (1) sur toute la largeur des ses bits.
+<br>Pour un élement Masse (<img src="../../../img-libs/ground.png"> ) représenté par une flèche zèbrée la valeur est basse (0) sur toute la largeur des ses bits.</p>
 
-<p>The same functionality can be achieved using the more versatile
-<a href="constant.html">Constant</a> component. The only reason to prefer
-ground and power is that they are standard electronic symbols.</p>
+<p>Ces composant ont des symboles standard en électroniques est c'est la seule raison de les préférer au composant plus polyvalent <a href="constant.html"> Constante </a> qui peut fournire les mêmes fonctionnalités.</p>
 
 <h2>Pins</h2>
 
-<p>There is only one pin, an output whose bit width matches the Data Bits
-attribute. The component constantly outputs the same value on this pin:
-for a ground component, the output is an all-zero value,
-and for a power component, the output is an all-one value.</p>
+<p>Un composant Alimentation ou Masse ne possède qu’une seule broche de sortie dont la largeur de bit correspond a l'attribut <q>Data Bits<q></p>
 
 </dl>
 
 <h2>Attributs</h2>
 
-<p>When the component is selected or being added,
-Alt-0 through Alt-9 alter its <q>Data Bits</q> attribute
-and the arrow keys alter its <q>Orientation</q> attribute.</p>
+<p>Lorsque le composant est sélectionné ou ajouté,  Alt-0 à Alt-9 modifie l'attribut "Data Bits", et les touches fléchées modifient son attribut "Orientation".
 
 <dl>
 
 <dt>Orientation</dt>
-<dd>The direction in which the arrow will point from the location of its pin.</dd>
+<dd>Le côté du composant dessiné où doit se trouver sa broche de sortie.</dd>
 
 <dt>Data Bits</dt>
-<dd>The bit width of the value placed onto the wire.</dd>
+<dd>La largeur en bit placé sur la connexion.</dd>
 
 </dl>
 

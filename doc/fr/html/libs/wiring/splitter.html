@@ -10,7 +10,7 @@
 <em>Terminaison de Bus (Splitter) </em> </h1>
 
 <p> <table>
-<tr> <td> <strong>Bibliothèque: </strong> </td>
+<tr> <td> <strong>Librairie: </strong> </td>
 <td> <a href="index.html">Câblage </a> </td> </tr>
 <tr> <td> <strong>Introduction: </strong> </td>
 <td> 2.0 bêta 1 (dans la librairie de base, déplacé dans le la librairie câblage en 2.7.0) </td> </tr>
@@ -20,23 +20,23 @@
 
 <h2>Comportement</h2>
 
-<p>La terminaison de Bus (Splitter) crée une correspondance entre une valeur multibits et plusieurs sous-ensembles distincts de ces bits. En dépit de son nom, il peut soit diviser une valeur multibits en composants, soit combiner des composants en une valeur multibits, voire les deux simultanément. Une description plus complète des terminaisons de bus se trouve dans la `<a
-href = "../../guide/bundles/splitting.html">section "Séparateurs </a>" du <em>Guide de l'utilisateur</em>. </p>
+<p>La terminaison de Bus (Splitter) crée une correspondance entre une connexion multibits et plusieurs sous-ensembles distincts de ces bits. En dépit de son nom, il peut soit diviser une connexion multibits en sous ensembles distincts, soit combiner des sous ensembles en une connexion multibits, voire les deux simultanément. Une description plus complète des terminaisons de bus se trouve dans la `<a
+href = "../../guide/bundles/splitting.html">section "Terminaison de Bus </a>" du <em>Guide de l'utilisateur</em>. </p>
 
-<p>Logisim traite les terminaison spécialement lors de la propagation de valeurs dans un circuit: alors que tous les autres composants ont un retard calculé pour simuler leur comportement réel, les valeurs se propagent instantanément à travers les terminaisons de bus (ainsi que dans les fils). </p>
+<p>Logisim traite spécialement les terminaison lors de la propagation de valeurs dans un circuit: alors que tous les autres composants ont un retard calculé pour simuler leur comportement réel, les valeurs se propagent instantanément à travers les terminaisons de bus (ainsi que dans les fils). </p>
 
 <p> <strong>Remarque:</strong> le terme <em>Splitter</em> utilisé en anglais est un terme non standard, à ma connaissance, unique à Logisim. Je ne connais aucun terme standard pour un tel concept. le seul terme que j'ai entendu utiliser est <em>ripper (découdre/défonceuse) de bus</em>, mais ce terme est inutilement violent à mon goût. </p>
 
 <h2>Pin</h2>
 
-<p>Pour distinguer les différents points de connexion d’une terminaison, nous nous référons au point de connexion d'un coté côté qui regroupe en un seul tous les fils : le<em>bus</em>, et nous nous référons aux multiples points de connexion de l’autre côté comme : les <em>terminaisons</em>. (voir figure ci-dessous)
+<p>Pour distinguer les différents points de connexion d’une terminaison, nous nous désignons le point de connexion d'un coté qui regroupe en un seul câble tous les fils : le<em>bus</em>, et nous nous désignons les multiples points de connexion de l’autre côté comme : les <em>terminaisons</em>. (voir figure ci-dessous)
 
 <dl>
 <p><dt>Bus:</dt> 
 <dd>la largeur en bit du bus correspond à l'attribut <q>Largeur de bits</q> et c'est la valeur dénombrant tous les conducteurs transitant par le bus.</dd></p>
 
 <p><dt>Terminaison :</dt>
-<dd>La largeur de bit des terminaisons est calculée par la largeur de bit du bus divisé par le nombre de terminaisons dans les cas d'une division entière. Dans les autres cas, les largeurs seront réparties de manière fractionnaire équilibrée.<br>
+<dd>La largeur de bit des terminaisons est determinée par la largeur de bit du bus divisé par le nombre de terminaisons dans les cas d'une division entière. Dans les autres cas, les largeurs seront réparties de manière fractionnaire équilibrée.<br>
 Par exemple un bus de 10bits avec 4 terminaisons aura deux terminaisons de 3bits et deux terminaisons de deux bits.</dd></p>
 
 </dl>
@@ -46,7 +46,7 @@ Par exemple un bus de 10bits avec 4 terminaisons aura deux terminaisons de 3bits
 
 <dl>
 <p><dt>Orientation</dt>
-<dd>Donne l'orientation des terminaisons</dd></p> 
+<dd>Le côté du composant dessiné où doit se trouver les broches de terminaisons</dd></p> 
 
 <p><dt>Terminaisons</dt>
 <dd>Nombre de terminaisons</dd></p>

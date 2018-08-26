@@ -20,12 +20,13 @@
 
 <h2>Comportement</h2>
 
-<p>Un <q>tunnel</q> se comporte comme un câble dans le sens qu’il lie des points d'un circuit ensemble, mais contrairement à un câble, la connexion n’est pas explicitement dessinée. Cela est utile lorsque vous devez connecter des points éloignés dans le circuit et qu'un réseau de câbles surchargerait le schéma de manière exagéré. L'illustration ci-dessous montre comment cela fonctionne. </p>
+<p>Un <q>tunnel</q> se comporte comme un câble dans le sens qu’il lie des points d'un circuit ensemble, mais contrairement à un câble, la connexion n’est pas explicitement dessinée. l'utilité se démontre  lorsque vous devez connecter des points éloignés dans le circuit et qu'un réseau de câbles surchargerait le schéma de manière exagéré.
+Il ne permet des connexions entre plusieur schémas de circuit.</p>
 
 <center><img src="../../../img-libs/tunnel-demo.png"></center>
 
-<p>Ici à gauche, les trois tunnels ont le même label, <em>a</em>, et représente les trois points auxquels les tunnels sont connectés. Si l'un des tunnels porte un label différent, comme <em>b</em>, alors il ferait partie d'un ensemble de tunnels différent.<br>
-Dans l'exemple le buffer contrôlé émet une sortie flottante puisque son entrée inférieure est 0. Cela conduit normalement le fil en provenant du buffer contrôlé à être bleu, mais ici, il est vert foncé. Cela est correct, car il est relié au travers du tunnel à la broche du bas qui est à 0. Si le contrôle du buffer passe à 1, le tunnel transportera cette valeur sur les autres points et elle se combinera avec le zéro de la broche du bas déclenchant une erreur. On verrait alors des fils rouges traverser les trois tunnels comme dans le tunnel <em>b</em> à droite</p>
+<p>L'illustration ci-dessus montre comment cela fonctionne. Ici à gauche, les trois tunnels ont le même label, <em>a</em>, et représente les trois points auxquels les tunnels sont connectés. Si l'un des tunnels porte un label différent, comme <em>b</em>, alors il ferait partie d'un ensemble de tunnels différent.<br>
+Dans l'exemple le buffer contrôlé émet une sortie flottante puisque son entrée inférieure est 0. Cela conduit normalement le fil en provenant du buffer contrôlé à être bleu, mais ici, il est vert foncé. Ceci est correct, car il est relié au travers du tunnel à la broche du bas qui est à 0. Si le contrôle du buffer passe à 1, le tunnel transportera cette valeur sur les autres points et elle sera en conflit avec le zéro de la broche du bas déclenchant une erreur. On verrait alors des fils rouges traverser les trois tunnels comme dans l'exemple <em>c</em> à droite</p>
 
 <h2>Pins</h2>
 
