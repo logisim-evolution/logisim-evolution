@@ -1,0 +1,40 @@
+<html>
+<meta charset="UTF-8">
+<head>
+	<title>Imprimer</title>
+</head>
+<body bgcolor="FFFFFF">
+
+<h1>Imprimer</h1>
+
+</ul>
+<p>Après avoir cliqué sur OK, Logisim affichera une boîte de dialogue de sélection de fichiers. Si vous avez sélectionné un seul circuit, précisez un nom ou sélectionnez le fichier dans lequel l'image doit être sauvée. Si vous avez sélectionné plusieurs circuits, sélectionnez un répertoire dans lequel les fichiers doivent être placés; Logisim nommera les images en fonction des noms des circuits (<tt> main.png </tt>,
+par exemple).</p>
+
+<h2>Configuration de l'impression</h2>
+
+<p>Lorsque vous choisissez Imprimer ..., Logisim affiche une boîte de dialogue permettant de configurer ce qui est imprimé. </p><center><img src="../../../img-guide/printertab.png"></center>
+<ul>
+
+<li><b>Circuits:</b> Une liste où vous pouvez sélectionner un ou plusieurs circuits à imprimer. (Les circuits vides ne sont pas affichés comme options.) Logisim imprimera un circuit par page. Si le circuit est trop grand pour la page, l'image sera réduite pour s'adapter.</li>
+
+<li><b>Entête:</b> Texte qui devrait apparaître centré en haut de chaque page. Les substitutions suivantes seront apportées au texte.
+<center><table>
+<tr><td><tt>%n</tt></td><td>Nom du circuit sur la page</td></tr>
+<tr><td><tt>%p</tt></td><td>Numéro de page</td></tr>
+<tr><td><tt>%P</tt></td><td>Nombre de page total</td></tr>
+<tr><td><tt>%%</tt></td><td>Un seul signe de pourcentage ('%')</td></tr>
+</table></center></li>
+
+<li><b>Faire pivoter pour s'adapter:</b> Si cette case est cochée, lorsque le circuit est trop grand pour tenir sur la page, Logisim fera pivoter chaque circuit de 90 degrés afin de réduire le besoin de réduction de l'image.</li>
+<li><b>Vue de l'impression:</b> Sytle de l'image produite soit avec les informations d'état ou seulement le schéma.</p>
+<center><img src="../../../img-guide/exportex0.png"></center>
+
+Cette option est aussi disponible dans "<a href="../prefs/layout.html">Vue de l'impression:</a>" dans l'exportation des circuits.</li> Cela modifiera l'affichage dans l'espace de travail. </li>
+
+</ul>
+<p>Après avoir cliqué sur OK, Logisim affichera la boîte de dialogue standard de mise en page avant d’imprimer les circuits.</p>
+
+
+</body>
+</html>

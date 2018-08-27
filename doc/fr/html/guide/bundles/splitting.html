@@ -1,58 +1,33 @@
 <html>
 <meta charset="UTF-8">
 <head>
-	<title>Séparateurs</title>
+	<title>Terminaison de Bus</title>
 </head>
 <body bgcolor="FFFFFF">
 
-<h1>Séparateurs</h1>
+<h1>Terminaison de Bus</h1>
 
-<p>Quand vous travailler avec des valeurs à plusieurs bits, vous voudrez souvent
-	rediriger différents bits dans différentes directions. L'outil de la librairie
-	Splitter (<img src="../../../icons/splitter.gif">) vous permet de réaliser cela.</p>
+<p>Quand vous utilisez des nappes de câbles (bus), vous voudrez souvent rediriger différents câbles dans différentes directions. L'outil Terminaison de Bus (<img src="../../../icons/splitter.gif">) de la librairie Câblage  vous permet de réaliser cela.</p>
 
-<p>Supposons par exemple que vous vouliez un circuit qui combine avec une porte AND les
-	deux quartets de son entrée à huit bits (les quatre bits de poids fort et les quatre bit
-	de poids faible). Nous aurons une valeur à huit bit venant du pin (bus) d'entrée et nous
-	voulons séparer ceci en deux valeur à quatre bits. Dans le circuit ci-dessous, nous avons
-	utilisé un séparateur pour réaliser cela; l'entrée 8 bits est connecté à l'entrée
-	du séparateur, qui la divise en deux quartets, qui sont entrés dans la porte logique AND
-	et ensuite le résultat est en sortie.</p>
+<p>Supposons par exemple que vous vouliez un circuit qui réalise  la fonction AND entre les deux quartets d'un bus de huit bits (les quatre bits de poids fort et les quatre bits de poids faible). Nous aurons une valeur à huit bits venant bus d'entrée et nous voulons séparer ceci en deux bus à quatre bits. Dans le circuit ci-dessous, nous avons utilisé une terminaison de bus pour réaliser cela. L'entrée huit bits est connectée à l'entrée du bus, qui la divise en deux nappes d’un quartet, qui sont connectées à la porte logique AND et le résultat est présenté en sortie dans un quartet.</p>
 <center><img src="../../../img-guide/bundles-splitter-circ.png"></center>
-<p>Dans cet exemple, le séparateur <q>sépare</q> une valeur en entrée en plusieurs
-	valeurs en sortie. Mais les séparateurs peuvent aussi travailler d'une autre façon: il peut
-	<q>combiner</q> plusieurs valeurs en une seule. En fait, ils n'ont pas de direction: ils
-	peuvent envoyer une valeur dans une direction à un moment et dans une autre plus tard, et
-	ils peuvent même faire les deux en même temps, comme dans l'exemple ci-dessous ou une valeur
-	voyage vers l'Est à travers les deux séparateurs, ensuite elle est re-dirigée vers l'Ouest à
-	travers les séparateurs à nouveau, et ensuite de nouveau vers l'Est ou elle atteint sa sortie.</p>
+<p>Dans l'exemple précédent, la terminaison <q>sépare</q> une nappe de plusieurs fils en entrée en deux nappes de plusieurs fils en sortie. Mais les terminaisons de bus peuvent aussi travailler d'une autre façon: elles peuvent <q>regrouper</q> plusieurs valeurs en une seule. Les terminaisons de bus simulent parfaitement une nappe de câble et elles n'ont pas de direction. Elles peuvent envoyer une valeur dans une direction à un moment et dans une autre plus tard. Elles font même faire les deux en même temps, comme dans l'exemple ci-dessous ou une valeur voyage vers l'est à travers les deux terminaisons, ensuite elle est redirigée vers l'ouest à travers les terminaisons à nouveau, et ensuite de nouveau vers l'Est ou elle atteint sa sortie.</p>
 <center><img src="../../../img-guide/bundles-splitter-2way.png"></center>
 
-<p>La clé pour comprendre les séparateurs tient dans leurs attributs.
-	Dans ce qui suit, le terme <em>terminaison séparée</em> fait référence à l'un 
-	des multiples câbles d'un côté, tandis que <em>terminaison combinée</em> fait référence
-	à la seule sortie de l'autre côté.</p>
+<p>La clé pour comprendre les terminaisons de bus tient dans leurs attributs. Dans ce qui suit, le terme <em>terminaison</em> fait référence à l'un des multiples câbles d'un côté, tandis que <em>bus</em> fait référence au regroupement de ces câbles en un seul de l'autre côté. (voir figure ci-dessous)</p>
+
 <ul>
 
-<li> L'attribut <strong>présentation</strong> définit ou la terminaison séparée devrait être
-	positionnée par rapport à la terminaison combinée.</li>
-
-<li> L'attribut <strong>Sortie ventilée</strong> défini combien de terminaisons séparées il doit
-	y avoir.</li>
-
-<li> L'attribut <strong>Largeur de bit en entrée</strong> spécifie la largeur en bit de la terminaison
-	combinée.</li>
-
-<li> L'attribut <strong>Bit <var>x</var></strong> défini quel terminaison séparée correspond 
-	à quel bit <em>x</em> de la terminaison combinée. Si plusieurs bits correspondent à la même
-	terminaison séparée, alors l'ordre relatif sera le même que dans la terminaison combinée.
-	Les séparateurs Logisim ne peuvent pas avoir un bit de la sortie combinée qui corresponde 
-	à plusieurs terminaisons séparées.</li>
-
+<li>L'attribut <strong>Représentation</strong> définit l'orientation des terminaisons.</li>
+<li>L'attribut <strong>Terminaisons</strong> défini combien de terminaisons séparées il doit y avoir.</li>
+<li>L'attribut <strong>Largeur en bits</strong> spécifie la largeur en bit du bus, c'est-à-dire le nombre de conducteurs.</li>
+<li>L'attribut <strong>Apparence</strong> défini la manière dont le composant est dessiné par rapport a son Bus.
+<center><img src="../../../img-guide/bundles-splitter-apprence.png"></center>
+</li>
+<li>L'attribut <strong>Largeur en bits</strong> spécifie la largeur en bit du bus, c'est à dire le nombre de conducteurs.</li>
+<li>L'attribut <strong>Bit <var>x</var></strong> défini quelle terminaison séparée correspond à quel bit <em>x</em> du bus. Il est modifiable et permet d'organiser à la main l'ordre des terminaisons. Si plusieurs bits correspondent à la même terminaison (premier exemple ci-dessus), alors l'ordre relatif sera le même que dans le bus. Les séparateurs Logisim ne peuvent pas avoir un bit du bus relié à plusieurs terminaisons.</li>
 </ul>
-<p>Notez que chaque changement à la sortie ventilée ou à la largeur en bit dans les attributs va
-	remettre à zéro les attributs de tous les bits <var>x</var> de façon à distribuer les
-	bits de la valeur combinée aussi régulièrement que possible selon les terminaisons séparées.</p>
+<p>Notez que chaque changement des attributs <q>Terminaisons</q> ou de la <q>largeur en bit</q> va remettre à zéro les attributs de tous les bits <var>x</var> de façon à distribuer les bits du bus aussi régulièrement que possible selon les terminaisons séparées.</p>
 
 <p><strong>Suivant:</strong> <a href="colors.html">Couleurs des câbles</a>.</p>
 

@@ -1,0 +1,25 @@
+java -jar logisim.jar -analyze
+usage: java com.cburch.logisim.gui.start.Startup [options] [filenames]
+
+options:
+   -accents yes|no   use accented characters or ASCII equivalents
+   -clearprops       clear application preferences at startup
+   -empty            use empty template
+   -gates shaped|rectangular   use specified gate style
+   -help             display this summary and exit
+   -load file        load image file into RAM (works with -tty only)
+   -locale str       use locale given in str
+   -nosplash         hides splash screen at startup
+   -plain            use standard Logisim template
+   -sub file1 file2  load file replacing library file1 with file2
+   -template file    use file as template
+   -tty format       run without graphical interface
+   -version          display version number and exit
+   -testvector
+   -test-fpga-implementation inputpath Circuitimapfile cicuitimpname cicuitimpboard
+   -test-circ-gen testCircPathInput testCircPathOutput 
+   -clearprefs
+   -analyze
+   -noupdates
+   -questa  yes no
+   
