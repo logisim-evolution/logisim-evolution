@@ -2,9 +2,8 @@
 <meta charset="UTF-8">
 <head>
 <title>Editer l'apparence d'un sous-circuit</title>
+<link rel="stylesheet" href="..\styles.css">
 </head>
-
-<body bgcolor="FFFFFF">
 
 <h1>Editer l'apparence d'un sous-circuit</h1>
 
@@ -38,14 +37,14 @@ la disposition du multiplexeur 4:1 se présente naturellement comme suit.</p>
 <li><p>Un cercle vert avec une ligne sortante, que nous appellerons <q>ancre</q> (<img src = "../../../img-guide/anchor.png" ALIGN="TOP">).
 Il y a exactement une ancre dans chaque apparence d'un sous-circuit.
 Chaque composant d'un circuit a un seul point pour identifier sa position sur le dessin;
-Un utilisateur observe cela lors de la création d'un nouveau composant: le click de la souris identifie un seul point de l'écran et le composant est placé par rapport à ce point.
+Un utilisateur observe cela lors de la création d'un nouveau composant: le clic de la souris identifie un seul point de l'écran et le composant est placé par rapport à ce point.
 L'ancre sera alignée avec ce point du dessin global lorsque le sous-circuit est créé et dessiné.</p>
 
 <p>L'ancre indique aussi l'orientation du composant quand il est pausé dans le dessin, elle en est le centre de rotation. L'orientation est indiquée par la direction de la ligne qui pointe du cercle.
 Dans le dessin du sous-circuit, il est possible de modifier l'orientation de l'ancre dans les propriétés. Cela indiquera quelle orientation aura le symbole quand on le dépose sur un circuit.
 Dans notre exemple l'ancre du sous-circuit "Mux_2To1" est orientée à l'est et chaque instance du sous-circuit multiplexeur est également face à l'est dans le dessin du sous-circuit "Mux_4To1"</p></li>
 
-<li><p>Les cercles bleus (<img src = "../../../img-guide/pinoutput.png">) et les carrés avec un point (<img src = "../../../img-guide/pinInput.png">) sont les <q>ports</q> du sous-circuit. Il y a exactement autant de symboles que de broche d'entrée et de sorties.
+<li><p>Les cercles bleus (<img src = "../../../img-guide/pinoutput.png">) et les carrés avec un point (<img src = "../../../img-guide/pininput.png">) sont les <q>ports</q> du sous-circuit. Il y a exactement autant de symboles que de broche d'entrée et de sorties.
 Le port en entrée sont indiquées avec des carrés et les ports en sortie avec de cercles.
 Chaque symbole indique comment un fil se connectant au circuit correspondra à une broche d'entrée ou de sortie dans la mise en page.</p>
 
@@ -70,8 +69,8 @@ La touche Maj enfoncée orientera les lignes dans un multiple de 45&deg.</p>
   <td>Crée un segment de ligne. Maj + Glisser : La ligne sera dans un angle multiple de 45&deg.</td></tr>
 <tr><td valign="top"><img src="../../../icons/drawcurv.gif"></td>
   <td>Crée une courbe de Bezier.
-Le premier click et glisser spécifie le début de la ligne, le second click et glisser termine la ligne et définit la courbure.
-Un click sur la ligne vous montre les points de contrôle.
+Le premier clic et glisser spécifie le début de la ligne, le second clic et glisser termine la ligne et définit la courbure.
+Un clic sur la ligne vous montre les points de contrôle.
 Maj et point central de contrôle imposent une courbe symétrique.
 Alt et point central dessine la courbe au travers du point de contrôle (sous la souris).</td></tr>
 <tr><td valign="top"><img src="../../../icons/drawplin.gif"></td>

@@ -1,111 +1,84 @@
 <html>
-<head><meta http-equiv="content-type" content="text/html; charset=UTF-8">
-<title>Distribuidor</title>
+<meta charset="UTF-8">
+<head>
+<title>Terminaison de Bus</title>
 </head>
 
-<body bgcolor="FFFFFF">
+<body bgcolor = "FFFFFF">
 
-<h1><img  align="center" src="../../icons/splitter.gif" width="32" height="32">
-<em>Distribuidor</em></h1>
+<h1> <img align = "center" src = "../../../icons/splitter.gif" width = "32" height = "32">
+<em>Terminaison de Bus (Splitter) </em> </h1>
 
-<p><table>
-<tr><td><strong>Biblioteca:</strong></td>
-	<td><a href="index.html">Base</a></td></tr>
-<tr><td><strong>Introdução:</strong></td>
-	<td>2.0 Beta 1</td></tr>
-<tr><td valign="top"><strong>Aparência:</strong></td>
-	<td valign="top"><img src="../images/splitter.png" width="24" height="25"></td></tr>
-</table></p>
+<p> <table>
+<tr> <td> <strong>Librairie: </strong> </td>
+<td> <a href="index.html">Câblage </a> </td> </tr>
+<tr> <td> <strong>Introduction: </strong> </td>
+<td> 2.0 bêta 1 (dans la librairie de base, déplacé dans le la librairie câblage en 2.7.0) </td> </tr>
+<tr> <td valign = "top"> <strong>Apparence: </strong> </td>
+<td valign = "top"> <img src = "../../../img-libs/splitter.png" width = "24" height = "44"> </td> </tr>
+</table> </p>
 
-<h2>Comportamento</h2>
+<h2>Comportement</h2>
 
-<p> O distribuidor cria uma correspondência entre um valor multibit e vários
-subconjuntos separados de bits equivalentes. A despeito do seu nome, ele pode 
-separar tanto um valor multibit em partes, quanto combiná-las em um valor multibit
-- de fato ele poderá fazer ambos de uma vez. Uma descrição mais completa dos
-distribuidores poderá ser encontrada na seção
-'<a href="../../guide/bundles/splitting.html">Distribuidores</a>' do
-<em>Guia do Usuário</em>.
-</p>
+<p>La terminaison de Bus (Splitter) crée une correspondance entre une connexion multibits et plusieurs sous-ensembles distincts de ces bits. En dépit de son nom, il peut soit diviser une connexion multibits en sous ensembles distincts, soit combiner des sous ensembles en une connexion multibits, voire les deux simultanément. Une description plus complète des terminaisons de bus se trouve dans la `<a
+href = "../../guide/bundles/splitting.html">section "Terminaison de Bus </a>" du <em>Guide de l'utilisateur</em>. </p>
 
-<p> O Logisim trata os distribuidores de forma especial ao propagar sinais
-dentro de um circuito: enquanto todos os outros componentes precisam de um
-atraso calculado para fins do seu comportamento na simulação, os sinais 
-propagados pelos distribuidores (assim como também pelas conexões) serão
-transmitidos instantaneamente.
-</p>
+<p>Logisim traite spécialement les terminaison lors de la propagation de valeurs dans un circuit: alors que tous les autres composants ont un retard calculé pour simuler leur comportement réel, les valeurs se propagent instantanément à travers les terminaisons de bus (ainsi que dans les fils). </p>
 
-<p><strong>Nota:</strong> O termo <em>distribuidor</em> não é um termo 
-padronizado, é único do Logisim até onde eu saiba. Desconheço qualquer
-termo padrão para tal conceito; o único termo que já ví foi <em>"bus ripper"</em>,
-mas esse termo é desnecessariamente violento para o meu gosto.
-</p>
+<p> <strong>Remarque:</strong> le terme <em>Splitter</em> utilisé en anglais est un terme non standard, à ma connaissance, unique à Logisim. Je ne connais aucun terme standard pour un tel concept. le seul terme que j'ai entendu utiliser est <em>ripper (découdre/défonceuse) de bus</em>, mais ce terme est inutilement violent à mon goût. </p>
 
-<h2>Pinos</h2>
+<h2>Pin</h2>
 
-<p> Para distinguir entre os diversos pontos de conexão em um distribuidor,
-irei referir-me à terminação com um ponto de conexão como sua
-<em>extremidade combinada</em>, e aos múltiplos pontos de conexão do outro
-lado como sua <em>extremidade dividida</em>.
-</p>
+<p>Pour distinguer les différents points de connexion d’une terminaison, nous nous désignons le point de connexion d'un coté qui regroupe en un seul câble tous les fils : le<em>bus</em>, et nous nous désignons les multiples points de connexion de l’autre côté comme : les <em>terminaisons</em>. (voir figure ci-dessous)
 
 <dl>
+<p><dt>Bus:</dt> 
+<dd>la largeur en bit du bus correspond à l'attribut <q>Largeur de bits</q> et c'est la valeur dénombrant tous les conducteurs transitant par le bus.</dd></p>
 
-<dt> A extremidade combinada (entrada/saída, com largura em bits de acordo com o
-atributo Bits de Dados) </dt>
-<dd> Representará um valor combinado por todos os bits que forem transmitidos pelo
-distribuidor.
+<p><dt>Terminaison :</dt>
+<dd>La largeur de bit des terminaisons est determinée par la largeur de bit du bus divisé par le nombre de terminaisons dans les cas d'une division entière. Dans les autres cas, les largeurs seront réparties de manière fractionnaire équilibrée.<br>
+Par exemple un bus de 10bits avec 4 terminaisons aura deux terminaisons de 3bits et deux terminaisons de deux bits.</dd></p>
 
-<dt> A extremidade dividida (entrada/saída, com largura em bits calculada com base
-nos atributos Bit <var>x</var>)
-<dd> O número de extremidades divididas será especificado pelo atributo Distribuição,
-e cada uma terá um índice que será no mínimo igual a zero e menor que o valor desse
-atributo. Para cada terminação, todos os bits para os quais o Bit <var> x </var>
-referir-se por seu índice, serão transmitidos através da extremidade, e a ordem 
-desses bits será a mesma na extremidade combinada.
+</dl>
+<h2> Attributs </h2>
+
+<p>Lorsque le composant est sélectionné ou ajouté, les chiffres '0' à '9' modifient l'attribut <q>Terminaisons</q>, Alt-0 à Alt-9 modifient à la fois les attributs <q>Terminaisons</q> et <q>Largeur de bit</q> et les touches fléchées modifient l'attribut <q>Orientation</q>. </p>
+
+<dl>
+<p><dt>Orientation</dt>
+<dd>Le côté du composant dessiné où doit se trouver les broches de terminaisons</dd></p> 
+
+<p><dt>Terminaisons</dt>
+<dd>Nombre de terminaisons</dd></p>
+
+<p><dt>Largeur en bit</dt>
+<dd>Largeur en bit du bus</dd></p>
+
+<p><dt>Apparence</dt>
+<dd>Prend en charge différentes manières de représenter le séparateur dans le circuit. (Voir figure ci-dessous)
+L'option <q>Gauche</q> (par défaut) dessine une colonne vertébrale à gauche du bus (si on le considère comme une entrée), avec une ligne étiquetée provenant du dos pour chaque terminaison.
+L'option <q>Droite</q> dessine la colonne vertébrale à droite du bus. L'option <q>Centrée</q> centre la colonne vertébrale de manière à ce qu'elle soit à peu près égale à gauche et à droite.
+Et l'option <q>Héritage</q> dessine des lignes diagonales à chaque extrémité, sans étiquettes.
+Cette option est principalement destinée à la compatibilité avec les versions antérieures à la version 2.7.0, qui constituaient la seule option pour l'apparence du séparateur. 
+<center><img src="../../../img-guide/bundles-splitter-apprence.png"></center></dd></p> 
+
+<p><dt> Bit <var>x</var> </dt>
+<dd>Détermine l'index de la terminaison auquel correspond le bit <var> x </var> du bus. Les terminaisons sont indexées à partir de 0 en haut (pour un séparateur orienté est ou ouest) ou de 0 à gauche / ouest (pour un séparateur orienté nord ou sud). Un terminaison peut ne pas être connectée à un bit du bus par contre il n'y a aucun moyen pour q'un bit du bus soit connecté à plusieurs terminaisons.</P>
+
+<p>Parfois, vous pouvez vous éviter de triturer chaque attribut Bit <var> x </var> en faisant apparaître le menu contextuel d’une terminaison de bus (généralement en cliquant dessus avec le bouton droit de la souris). Le menu contextuel comprend des options intitulées <q>Distribuer en ordre croissant</q> et <q>Distribuer en ordre décroissant</q>. L'option Distribuer en ordre croissant (par defaut) distribue les bits afin que chaque extrémité partagée reçoive le même nombre de bits à partir de la fin. L'option Distribuer en ordre decroissant fait de même mais commence par la fin avec le no le plus grand.
+Si le nombre de terminaisons ne divise pas exactement le nombre de bits du bus, les bits sont distribués sur les terminaisons de manière aussi uniforme que possible.</P> </dd >
 
 </dl>
 
-<h2>Atributos</h2>
+<h2> Comportement de l'outil pousser </h2>
 
-<p> Quando o componente for selecionado ou estiver sendo acrescentado,
-os dígitos de '0 'a '9' poderão alterar o atributo <q> Distribuição</q>,
-Alt-0 até ALT-9 irão alterar ambos os atributos <q> Distribuição</q> e
-<q> Largura de Bits à Entrada</q>, e as teclas com setas poderão
-alterar o seu atributo <q> Direção</q>.
-</p>
+<p> Aucun.</p>
 
-<dl>
+<h2> Comportement de l'outil de texte </h2>
 
-<dt> Direção </dt>
-<dd> A posição da extremidade dividida em relação à combinada. </dd>
+<p> Aucun.</p>
 
-<dt> Distribuição </dt>
-<dd> O número de terminações em uma extremidade. </dd>
-
-<dt> Largura em Bits à Entrada </dt>
-<dd> A largura em bits da extremidade combinada. </dd>
-
-<dt> Bit <var>x</var></dt>
-<dd> O índice de uma terminação ao qual o bit <var>x</var> corresponder
-na extremidade combinada. As terminações são indexadas a partir de 0 no
-topo (para um distribuidor voltado para leste ou oeste) e a partir de 0
-da esquerda/oeste (para um distribuidor voltado para norte ou sul). Um 
-bit pode ser especificado para não corresponder a qualquer uma das terminações. 
-Não há qualquer maneira pela qual um bit possa corresponder a múltiplas 
-terminações. </dd>
-
-</dl>
-
-<h2> Comportamento da ferramenta Testar </h2>
-
-<p> Nenhum. </p>
-
-<h2> Comportamento da ferramenta Texto </h2>
-
-<p> Nenhum. </p>
-
-<p><a href="../index.html">Voltar à <em>Referência para bibliotecas</em></a></p>
+<p> <a href="../index.html">Retour à <em> Référence de la bibliothèque </em> </a> </p>
 
 </body>
 </html>
