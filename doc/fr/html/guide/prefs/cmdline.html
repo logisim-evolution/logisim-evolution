@@ -7,71 +7,72 @@
 
 <h1>Command-line options</h1>
 
-<p>Vous pouvez configurer de nombreuses préférences d'application de Logisim via les options de ligne de commande. Cela peut être particulièrement utile dans un laboratoire d'ordinateurs composés d'étudiants célibataires où vous souhaitez que Logisim démarre la même chose pour les étudiants à chaque fois, indépendamment de la configuration du programme par les étudiants précédents.
-You can configure many of Logisim's application preferences via command line options.  This can be particularly useful in a laboratory of single-student computers where you want Logisim to start up the same for students every time, regardless of how previous students may have configured the program.</p>
+<p>Vous pouvez configurer de nombreuses préférences d'application de Logisim via les options de ligne de commande. Cela peut être particulièrement utile dans un laboratoire d'ordinateurs composés poste d'étude où vous souhaitez que Logisim démarre la même chose pour les étudiants à chaque fois, indépendamment de la configuration du programme fait par l'étudiant précédent.</p>
 
-<p>The overall command-line syntax is as follows.</p>
-<blockquote><pre> 
-java -jar <em><b>jarFileName</b></em> <em>[options]</em> <em>[filenames]</em>
+<p>La syntaxe globale de la ligne de commande est la suivante.</p>
+<blockquote><pre>java -jar <em><b>jarFileName</b></em> <em>[options]</em> <em>[filenames]</em>
 </pre></blockquote>
-<p>Les fichiers supplémentaires facultatifs nommés sur la ligne de commande seront ouverts en tant que fenêtres distinctes dans Logisim.
-The optional additional files named on the command line will be opened as separate windows within Logisim.</p>
+<p>Les fichiers supplémentaires facultatifs nommés sur la ligne de commande seront ouverts en tant que fenêtres distinctes dans Logisim.</p>
 
 <p>L'exemple suivant démarre Logisim dans sa configuration de base.
-The following example starts Logisim in its basic configuration.
 <blockquote><pre>
-java -jar <em><b>jarFileName</b></em> -plain -gates shaped -locale en
+java -jar <em><b>jarFileName</b></em> -plain -gates shaped -locale fr
 </pre></blockquote></p>
 
 <p>Les options prises en charge sont les suivantes.
-Supported options include the following.
-<dl>
-
-<dt><tt>-plain</tt></dt>
-<dt><tt>-empty</tt></dt>
-<dt><tt>-template <b><em>templateFile</em></b></tt></dt>
-<dd><p>Configure le modèle à utiliser par Logisim.
-Configures the template for Logisim to use.</p></dd>
+<dl><pre>
+<dt><tt>-plain</tt </dt><dt><tt>-empty</tt></dt><dt><tt>-template <b><em>templateFile</em></b></tt></dt></pre>
+<dd><p>Configure le modèle à utiliser par Logisim.<br>
+Utilise modèle standard, modèle vide,  modèle utilisateur</p></dd>
 
 <dt><tt>-gates <em>[<b>shaped</b>|<b>rectangular</b>]</em></tt></dt>
-<dd><p>Configure le type de porte à utiliser.
-Configures which type of gate to use.</p></dd>
+<dd><p>Configure le style de symbole de porte à utiliser.</p></dd>
 
 <dt><tt>-locale <em><b>localeIdentifier</b></em></tt></dt>
 <dd><p>Configure la traduction à utiliser. Au moment d'écrire ces lignes, les paramètres régionaux pris en charge incluent:
-Configures which translation to use. As of this writing, the supported locales include:</p>
-<center><table>
-<tr><th><tt>de</tt></th><td>German</td></tr>
-<tr><th><tt>el</tt></th><td>Greek</td></tr>
-<tr><th><tt>en</tt></th><td>English</td></tr>
-<tr><th><tt>es</tt></th><td>Spanish</td></tr>
-<tr><th><tt>fr</tt></th><td>French</td></tr>
-<tr><th><tt>ru</tt></th><td>Russian</td></tr>
-<tr><th><tt>ru</tt></th><td>Russian</td></tr>
-</table></center></dd>
+<table>
+<tr><th><tt>de</tt> </th><td>Allemand</td></tr>
+<tr><th><tt>el</tt> </th><td>Grec</td></tr>
+<tr><th><tt>en</tt> </th><td>Anglais</td></tr>
+<tr><th><tt>es</tt> </th><td>Espagnol</td></tr>
+<tr><th><tt>fr</tt> </th><td>Français</td></tr>
+<tr><th><tt>pt</tt> </th><td>Portugais</td></tr>
+<tr><th><tt>ru</tt> </th><td>Russe</td></tr>
+</table></dd></p>
 
 <dt><tt>-accents <em>[<b>yes</b>|<b>no</b>]</em></tt></dt>
-<dd><p>Cela ne concerne que les langues qui utilisent des caractères en dehors du jeu de caractères ASCII 7 bits; cela inclurait les langues utilisant des caractères accentués et n'inclurait pas l'anglais. Si <em> no </ em>, les caractères en dehors du jeu de caractères ASCII 7 bits sont remplacés par des équivalents appropriés au langage; Cela serait utile pour les combinaisons Java / OS où ces caractères ne sont pas bien pris en charge.
-This is only relevant for languages that use characters outside the 7-bit ASCII character set; this would include languages using accented characters, and it would not include English. If <em>no</em>, characters outside the 7-bit ASCII character set are replaced with equivalents appropriate to the language; this would be useful for Java/OS combinations where such characters are not supported well.</p></dd>
+<dd><p>Cela ne concerne que les langues qui utilisent des caractères en dehors du jeu de caractères ASCII 7 bits; cela inclurait les langues utilisant des caractères accentués et n'inclurait pas l'anglais. Si <em> no </em>, les caractères en dehors du jeu de caractères ASCII 7 bits sont remplacés par des équivalents appropriés au langage; Cela serait utile pour les combinaisons Java / OS où ces caractères ne sont pas bien pris en charge.</p></dd>
 
-<dt><tt>-clearprops</tt></dt> <dd><p>Effacer toutes les préférences de l'application au démarrage, Logisim agira comme s'il était exécuté sur le système hôte pour la première fois.
-Clear all application preferences at startup, so Logisim will act as if it were being executed on the host system for the first time.</p></dd>
+<dt><tt>-clearprops</tt></dt> <dd><p>Effacer toutes les préférences de l'application au démarrage, Logisim agira comme s'il était exécuté sur le système hôte pour la première fois.</p></dd>
 
 <dt><tt>-nosplash</tt></dt>
-<dd><p>Masque l'écran de démarrage Logisim initial.
-Hides the initial Logisim splash screen.</p></dd>
+<dd><p>Masque l'écran de démarrage Logisim initial.</p></dd>
 
 <dt><tt>-help</tt></dt>
-<dd><p>Affiche un résumé des options de la ligne de commande.
-Displays a summary of the command line options.</p></dd>
+<dd><p>Affiche un résumé des options de la ligne de commande.</p></dd>
 
 <dt><tt>-version</tt></dt>
-<dd><p>Affiche le numéro de version de Logisim.
-Displays the Logisim version number.</p></dd>
+<dd><p>Affiche le numéro de version de Logisim.</p></dd>
 
+<dt><tt>-noupdates</tt></dt>
+<dd><p>Ne met pas à jour le logiciel.</p></dd>
+
+<dt><tt>-analyze</tt></dt>
+<dd><p>Affiche les menus analyse combinatoire.</p></dd>
+
+<dt><tt>-load file</tt></dt>
+<dd><p>load image file into RAM (works with -tty only)</p></dd>
+<dt><tt>-sub file1 file2</tt></dt><p>charger le fichier en remplaçant le fichier de bibliothèque1 par le fichier2</p></dd>
+<dt><tt>-tty format</tt></dt> <dd><p>exécuter sans interface graphique</p></dd>
+<p>Options non documentée</p>
+<dt><tt>-testvector</tt></dt><dd><p></p></dd>
+<dt><tt>-test-fpga-implementation <b>inputpath</b> <b>Circuitimapfile</b> <b>cicuitimpname</b> <b>cicuitimpboard</b></tt></dt><dd><p></p></dd>
+<dt><tt>-test-circ-gen <b>testCircPathInput</b> <b>testCircPathOutput</b></tt></dt><dd><p></p></dd> 
+<dt><tt>-questa<em>[<b>yes</b>|<b>no</b>]</em></tt></dt><dd><p></p></dd>
+   
 </dl></p>
 
-<p><strong>Next:</strong> <em><a href="../index.html">User's Guide</a></em>.</p>
+<p><strong>Suivant:</strong> <em><a href="../index.html">Guide de l'utilisateur</a></em>.</p>
 
 </body>
 </html>

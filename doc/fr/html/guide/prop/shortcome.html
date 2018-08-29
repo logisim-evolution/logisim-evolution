@@ -8,13 +8,13 @@
 
 <h1>Lacunes</h1>
 
-<p>L'algorithme de propagation de Logisim est plus que suffisamment sophistiqué pour presque tous les objectifs éducatifs; mais ce n'est pas assez sophistiqué pour la conception de circuits industriels.<br> Les défauts de la technique de propagation de Logisim incluent:
+<p>L'algorithme de propagation de Logisim est plus que suffisamment sophistiqué pour presque tous les objectifs éducatifs; mais il ne l'est pas assez pour la conception de circuits industriels.<br> Les défauts de la technique de propagation de Logisim incluent:
 <ul>
 
-<li><p>Mis à part la question des delais des portes, Logisim ne se préoccupe pas particulièrement des problèmes de synchronisation. Il est très idéalisé, de sorte qu'une paire de portes NOR dans une configuration de verrouillage S-R basculera indéfiniment alors que la realité le circuit s'installent finalement dans un état stable.
+<li><p>Mis à part la question des delais des portes, Logisim ne se préoccupe pas particulièrement des problèmes de synchronisation. Il est très idéalisé, de sorte qu'une paire de portes NOR dans une configuration de verrouillage S-R basculera indéfiniment alors que la realité le circuit s'installe finalement dans un état stable.
 </p></li>
 
-<li><p>Logisim ne peut pas simuler des sous-circuits avec des broches bidirectionelles. Les composants construits à l'aide de Java peuvent cependant avoir de telles broches: Dans les bibliothèques intégrées, le circuit RAM de la bibliothèque de mémoire contient une broche D pouvant servir à la fois d'entrée et de sortie.
+<li><p>Logisim ne peut pas simuler des sous-circuits avec des broches bidirectionelles. Les composants construits à l'aide de Java peuvent cependant avoir de telles broches: Dans les bibliothèques intégrées, le circuit RAM de la bibliothèque de mémoire contient des broches D pouvant servir à la fois d'entrée et de sortie.
 </p></li>
 
 <li><p> Logisim coupe sa simulation après un nombre fixe d'itérations en presupposant qu'il y a une erreur d'oscillation. En théorie, un grand circuit qui n'oscille pas et qui necessite un grand nombre d'iteration pourrait causer des problèmes.</p></li>
@@ -22,7 +22,7 @@
 <li><p>Logisim ne fait rien en ce qui concerne la distinction entre les niveaux de tension: un bit peut uniquement être activé, désactivé, non spécifié ou être une erreur.
 </p></li>
 
-<li><p>Il ya aussi des lacunes supplémentaires que j’ai omises car elles sont tellement obscures que si vous en étiez au courant, il serait évident pour vous que Logisim n’arrive pas à ce niveau. Comme exemple extrême, j'ai un ami qui travaille pour un grand fabricant de puces, et son travail consiste à se soucier des «bulles» qui se développent dans les fils des puces nanométriques et entraînent une déconnexion aléatoire.
+<li><p>Il ya aussi des lacunes supplémentaires que j’ai omises car elles sont tellement obscures que si vous en étiez au courant, il serait évident pour vous que Logisim n’arrive pas à ce niveau. Comme exemple extrême, j'ai un ami qui travaille pour un grand fabricant de puces, et son travail consiste à se soucier des «bulles» qui se développent dans les fils nanométriques des puces et entraînent une déconnexion aléatoire.
 </p></li>
 
 <li><p>Même au-delà, je ne suis pas un spécialiste de la conception de circuits; il se peut donc qu'il y ait des erreurs dans la technique de propagation dont je ne suis pas au courant. Je salue les corrections des experts.
