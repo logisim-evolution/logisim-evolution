@@ -1,39 +1,28 @@
 <html>
 <meta charset="UTF-8">
 <head>
-	<title>The Window tab</title>
+	<title>L'onglet Window</title>
 </head>
 <body bgcolor="FFFFFF">
 
-<h1>The Window tab</h1>
+<h1>L'onglet Window</h1>
 
 <center><img src="../../../img-guide/prefs-window.png"></center>
 
-<p>This tab includes preferences affecting the appearance of the main window used
-for Logisim.</p>
+<p>Cet onglet inclut les préférences affectant l'apparence de la fenêtre principale utilisée pour Logisim.</p>
 <ul>
+<li> <p> <b> Afficher la fréquence des tics: </b> Si cette case est cochée et lorsque les tics sont activés, Logisim affiche en haut à droite de la zone d'édition une mesure de la fréquence à la quelle les tics ont put être executés.
+Le taux de ticks est mesuré en faisant la moyenne sur les 1 000 tics précédentes. (La désactivation des tics ou la modification du taux de tick maximum efface son historique.) </P>
 
-<li><p><b>Show tick rate:</b> If checked, then when ticks are enabled, Logisim
-displays a measurement of the rate at which it has been able to complete ticks.
-The tick rate is measured by averaging over the previous 1,000 ticks.
-(Disabling ticks or changing the maximum tick rate will clear its history.)</p>
+<p>La fréquence des tics réel peut être très inférieur a la fréquence  de tics sélectionnés, car Logisim ne peut pas simuler des circuits importants à un rythme très rapide. Par exemple,
+La vitesse maximale de Logisim pour un circuit raisonnablement grand pourrait être de 16 Hz, vous pouvez sélectionner une fréquence de tic plus rapide, mais la vitesse réelle ne dépassera pas 16 Hz.
+</p></li>
 
-<p>This actual tick rate may be much less than the selected tick rate, because
-Logisim cannot simulate larger circuits at a very fast rate. For example,
-Logisim's maximum speed for a
-reasonably large circuit might be 16 Hz; you can select a faster tick rate,
-but the actual speed will not exceed 16 Hz.</p></li>
-
-<li><p><b>Toolbar location:</b> This drop-down menu configures the location of
-the toolbar within the overall window. The toolbar may be placed
-on any of the window's four borders, described as north, south,
-east, and west. It may also be hidden, or it can be placed "down the
-middle" - that is, to the left of the canvas but to the right of
-the explorer pane and attribute table.</p></li>
+<li><p><b>Position de la barre d'outils:</b> Ce menu déroulant configure l'emplacement de la barre d'outils dans la fenêtre globale. La barre d'outils peut être placée sur l'une des quatre bordures de la fenêtre, décrites comme étant le nord, le sud, l'est et l'ouest. Il peut également être masqué ou placé "au milieu", c'est-à-dire à gauche de la zome de dessins, mais à droite du volet de l'explorateur et de la table attributaire.</p></li>
 
 </ul>
 
-<p><strong>Next:</strong> <em><a href="layout.html">The Layout tab</a></em>.</p>
+<p><strong>Suivant:</strong> <em><a href="layout.html">Onglet Disposition</a></em>.</p>
 
 </body>
 </html>

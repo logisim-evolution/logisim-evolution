@@ -7,38 +7,39 @@
 
 <h1>Command-line options</h1>
 
-<p>You can configure many of Logisim's application preferences via command
-line options.  This can be particularly useful in a laboratory of
-single-student computers where you want Logisim to start up the same
-for students every time, regardless of how previous students may have
-configured the program.</p>
+<p>Vous pouvez configurer de nombreuses préférences d'application de Logisim via les options de ligne de commande. Cela peut être particulièrement utile dans un laboratoire d'ordinateurs composés d'étudiants célibataires où vous souhaitez que Logisim démarre la même chose pour les étudiants à chaque fois, indépendamment de la configuration du programme par les étudiants précédents.
+You can configure many of Logisim's application preferences via command line options.  This can be particularly useful in a laboratory of single-student computers where you want Logisim to start up the same for students every time, regardless of how previous students may have configured the program.</p>
 
 <p>The overall command-line syntax is as follows.</p>
-<blockquote><pre>
+<blockquote><pre> 
 java -jar <em><b>jarFileName</b></em> <em>[options]</em> <em>[filenames]</em>
 </pre></blockquote>
-<p>The optional additional files named on the command line will be
-opened as separate windows within Logisim.</p>
+<p>Les fichiers supplémentaires facultatifs nommés sur la ligne de commande seront ouverts en tant que fenêtres distinctes dans Logisim.
+The optional additional files named on the command line will be opened as separate windows within Logisim.</p>
 
-<p>The following example starts Logisim in its basic configuration.
+<p>L'exemple suivant démarre Logisim dans sa configuration de base.
+The following example starts Logisim in its basic configuration.
 <blockquote><pre>
 java -jar <em><b>jarFileName</b></em> -plain -gates shaped -locale en
 </pre></blockquote></p>
 
-<p>Supported options include the following.
+<p>Les options prises en charge sont les suivantes.
+Supported options include the following.
 <dl>
 
 <dt><tt>-plain</tt></dt>
 <dt><tt>-empty</tt></dt>
 <dt><tt>-template <b><em>templateFile</em></b></tt></dt>
-<dd><p>Configures the template for Logisim to use.</p></dd>
+<dd><p>Configure le modèle à utiliser par Logisim.
+Configures the template for Logisim to use.</p></dd>
 
 <dt><tt>-gates <em>[<b>shaped</b>|<b>rectangular</b>]</em></tt></dt>
-<dd><p>Configures which type of gate to use.</p></dd>
+<dd><p>Configure le type de porte à utiliser.
+Configures which type of gate to use.</p></dd>
 
 <dt><tt>-locale <em><b>localeIdentifier</b></em></tt></dt>
-<dd><p>Configures which translation to use. As of this writing, the
-supported locales include:</p>
+<dd><p>Configure la traduction à utiliser. Au moment d'écrire ces lignes, les paramètres régionaux pris en charge incluent:
+Configures which translation to use. As of this writing, the supported locales include:</p>
 <center><table>
 <tr><th><tt>de</tt></th><td>German</td></tr>
 <tr><th><tt>el</tt></th><td>Greek</td></tr>
@@ -50,27 +51,23 @@ supported locales include:</p>
 </table></center></dd>
 
 <dt><tt>-accents <em>[<b>yes</b>|<b>no</b>]</em></tt></dt>
-<dd><p>This is only relevant for languages that use characters
-outside the 7-bit ASCII character set; this would include
-languages using accented characters, and it would not
-include English.
-If <em>no</em>, characters outside the 7-bit ASCII character
-set are replaced with equivalents appropriate to the language;
-this would be useful for Java/OS combinations where such characters
-are not supported well.</p></dd>
+<dd><p>Cela ne concerne que les langues qui utilisent des caractères en dehors du jeu de caractères ASCII 7 bits; cela inclurait les langues utilisant des caractères accentués et n'inclurait pas l'anglais. Si <em> no </ em>, les caractères en dehors du jeu de caractères ASCII 7 bits sont remplacés par des équivalents appropriés au langage; Cela serait utile pour les combinaisons Java / OS où ces caractères ne sont pas bien pris en charge.
+This is only relevant for languages that use characters outside the 7-bit ASCII character set; this would include languages using accented characters, and it would not include English. If <em>no</em>, characters outside the 7-bit ASCII character set are replaced with equivalents appropriate to the language; this would be useful for Java/OS combinations where such characters are not supported well.</p></dd>
 
-<dt><tt>-clearprops</tt></dt>
-<dd><p>Clear all application preferences at startup, so Logisim will act as
-if it were being executed on the host system for the first time.</p></dd>
+<dt><tt>-clearprops</tt></dt> <dd><p>Effacer toutes les préférences de l'application au démarrage, Logisim agira comme s'il était exécuté sur le système hôte pour la première fois.
+Clear all application preferences at startup, so Logisim will act as if it were being executed on the host system for the first time.</p></dd>
 
 <dt><tt>-nosplash</tt></dt>
-<dd><p>Hides the initial Logisim splash screen.</p></dd>
+<dd><p>Masque l'écran de démarrage Logisim initial.
+Hides the initial Logisim splash screen.</p></dd>
 
 <dt><tt>-help</tt></dt>
-<dd><p>Displays a summary of the command line options.</p></dd>
+<dd><p>Affiche un résumé des options de la ligne de commande.
+Displays a summary of the command line options.</p></dd>
 
 <dt><tt>-version</tt></dt>
-<dd><p>Displays the Logisim version number.</p></dd>
+<dd><p>Affiche le numéro de version de Logisim.
+Displays the Logisim version number.</p></dd>
 
 </dl></p>
 

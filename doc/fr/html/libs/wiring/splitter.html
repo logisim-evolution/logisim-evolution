@@ -1,13 +1,13 @@
 <html>
 <meta charset="UTF-8">
 <head>
-<title>Terminaison de Bus</title>
+<title>Répartiteur</title>
 </head>
 
 <body bgcolor = "FFFFFF">
 
 <h1> <img align = "center" src = "../../../icons/splitter.gif" width = "32" height = "32">
-<em>Terminaison de Bus (Splitter) </em> </h1>
+<em>Répartiteur (Splitter) </em> </h1>
 
 <p> <table>
 <tr> <td> <strong>Librairie: </strong> </td>
@@ -20,8 +20,8 @@
 
 <h2>Comportement</h2>
 
-<p>La terminaison de Bus (Splitter) crée une correspondance entre une connexion multibits et plusieurs sous-ensembles distincts de ces bits. En dépit de son nom, il peut soit diviser une connexion multibits en sous ensembles distincts, soit combiner des sous ensembles en une connexion multibits, voire les deux simultanément. Une description plus complète des terminaisons de bus se trouve dans la `<a
-href = "../../guide/bundles/splitting.html">section "Terminaison de Bus </a>" du <em>Guide de l'utilisateur</em>. </p>
+<p>Le répartiteur (Splitter) crée une correspondance entre une connexion multibits et plusieurs sous-ensembles distincts de ces bits. En dépit de son nom, il peut soit diviser une connexion multibits en sous ensembles distincts, soit combiner des sous ensembles en une connexion multibits, voire les deux simultanément. Une description plus complète des terminaisons de bus se trouve dans la `<a
+href = "../../guide/bundles/splitting.html">section "Répartiteur </a>" du <em>Guide de l'utilisateur</em>. </p>
 
 <p>Logisim traite spécialement les terminaison lors de la propagation de valeurs dans un circuit: alors que tous les autres composants ont un retard calculé pour simuler leur comportement réel, les valeurs se propagent instantanément à travers les terminaisons de bus (ainsi que dans les fils). </p>
 
@@ -65,7 +65,7 @@ Cette option est principalement destinée à la compatibilité avec les versions
 <p><dt> Bit <var>x</var> </dt>
 <dd>Détermine l'index de la terminaison auquel correspond le bit <var> x </var> du bus. Les terminaisons sont indexées à partir de 0 en haut (pour un séparateur orienté est ou ouest) ou de 0 à gauche / ouest (pour un séparateur orienté nord ou sud). Un terminaison peut ne pas être connectée à un bit du bus par contre il n'y a aucun moyen pour q'un bit du bus soit connecté à plusieurs terminaisons.</P>
 
-<p>Parfois, vous pouvez vous éviter de triturer chaque attribut Bit <var> x </var> en faisant apparaître le menu contextuel d’une terminaison de bus (généralement en cliquant dessus avec le bouton droit de la souris). Le menu contextuel comprend des options intitulées <q>Distribuer en ordre croissant</q> et <q>Distribuer en ordre décroissant</q>. L'option Distribuer en ordre croissant (par defaut) distribue les bits afin que chaque extrémité partagée reçoive le même nombre de bits à partir de la fin. L'option Distribuer en ordre decroissant fait de même mais commence par la fin avec le no le plus grand.
+<p>Parfois, vous pouvez vous éviter de triturer chaque attribut Bit <var> x </var> en faisant apparaître le menu contextuel d’une Répartiteur (généralement en cliquant dessus avec le bouton droit de la souris). Le menu contextuel comprend des options intitulées <q>Distribuer en ordre croissant</q> et <q>Distribuer en ordre décroissant</q>. L'option Distribuer en ordre croissant (par defaut) distribue les bits afin que chaque extrémité partagée reçoive le même nombre de bits à partir de la fin. L'option Distribuer en ordre decroissant fait de même mais commence par la fin avec le no le plus grand.
 Si le nombre de terminaisons ne divise pas exactement le nombre de bits du bus, les bits sont distribués sur les terminaisons de manière aussi uniforme que possible.</P> </dd >
 
 </dl>

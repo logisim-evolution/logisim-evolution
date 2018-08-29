@@ -8,40 +8,23 @@
 
 <h1>Oscillation errors</h1>
 
-<p>The propagation algorithm, which normally works silently without any
-problems, will become very visible
-when you create a circuit that oscillates.</p>
+<p>L'algorithme de propagation, qui fonctionne normalement sans aucun problème, deviendra très visible lorsque vous créerez un circuit qui oscille.
+The propagation algorithm, which normally works silently without any problems, will become very visible when you create a circuit that oscillates.</p>
 <center><img src="../../../img-guide/prop-oscillate-before.png"></center>
-<p>This circuit is currently in a stable condition. But if you change the
-input to 1, the circuit will effectively enter an infinite loop. After
-a while, Logisim will simply give up and show an "Oscillation apparent" message
-telling you that it believes that the circuit is oscillating.</p>
+<p>Ce circuit est actuellement dans un état stable. Mais si vous changez l'entrée sur 1, le circuit entrera effectivement dans une boucle infinie. Au bout d'un moment, Logisim abandonnera simplement et affichera un message "Oscillation apparente" vous indiquant qu'il croit que le circuit oscille.
+This circuit is currently in a stable condition. But if you change the input to 1, the circuit will effectively enter an infinite loop. After a while, Logisim will simply give up and show an "Oscillation apparent" message telling you that it believes that the circuit is oscillating.</p>
 <center><img src="../../../img-guide/prop-oscillate-error.png"></center>
-<p>It will display the values it has at the time it gives up. These values
-will look wrong - in this screen shot, the AND gate is emitting 1
-although one of its inputs is 0, but it could be that the NOT gate
-has a 1 input and a 1 output.</p>
+<p>Il affichera les valeurs dont il dispose au moment où il abandonne. Ces valeurs seront fausses - dans cette capture d'écran, la porte ET émet 1 bien que l'une de ses entrées soit 0, mais il se peut que la porte NOT ait une entrée et une sortie.
+It will display the values it has at the time it gives up. These values will look wrong - in this screen shot, the AND gate is emitting 1 although one of its inputs is 0, but it could be that the NOT gate has a 1 input and a 1 output.</p>
 
-<p>Logisim helpfully circles in red each location that seems to be
-involved in the oscillation. If an involved point lies within a
-subcircuit, Logisim will draw that subcircuit's outline in red.</p>
+<p>Logisim entoure en rouge chaque endroit qui semble être impliqué dans l'oscillation. Si un point impliqué se trouve dans un sous-circuit, Logisim dessinera le contour de ce sous-circuit en rouge.
+Logisim helpfully circles in red each location that seems to be involved in the oscillation. If an involved point lies within a subcircuit, Logisim will draw that subcircuit's outline in red.</p>
 
-<p>When Logisim detects oscillation, it shuts down all
-further simulation. You can re-enable simulation using the
-Simulate menu's Simulation Enabled option.</p>
+<p>Lorsque Logisim détecte une oscillation, il arrête toute autre simulation. Vous pouvez réactiver la simulation à l'aide de l'option Simulation activée du menu Simuler.
+When Logisim detects oscillation, it shuts down all further simulation. You can re-enable simulation using the Simulate menu's Simulation Enabled option.</p>
 
-<p>Logisim detects oscillation using a fairly simple technique: If the
-circuit simulation seems to many iterations, then it will simply give up
-and report oscillation. (The points it identifies as being involved are
-those that were touched in the last 25% of the iterations.)
-Thus, it could erroneously report oscillation,
-particularly if you are working with an exceptionally large circuit; but
-it would be one that is larger than any I have built using Logisim.
-In any case, if you are confident that the reporting is in error, you
-can configure the number of iterations
-completed before oscillation occurs via the
-<a href="../opts/index.html">Project Options</a> window's
-<a href="../opts/simulate.html">Simulation tab</a>.</p>
+<p>Logisim détecte les oscillations en utilisant une technique assez simple: si la simulation de circuit semble avoir beaucoup d'itérations, elle va simplement abandonner et signaler les oscillations. (Les points qu'il identifie comme étant impliqués sont ceux qui ont été touchés dans les derniers 25% des itérations.) Ainsi, il pourrait signaler à tort des oscillations, en particulier si vous travaillez avec un circuit exceptionnellement grand; mais ce serait plus grand que tout ce que j'ai construit avec Logisim. Dans tous les cas, si vous êtes certain que le rapport est erroné, vous pouvez configurer le nombre d’itérations effectuées avant que
+Logisim detects oscillation using a fairly simple technique: If the circuit simulation seems to many iterations, then it will simply give up and report oscillation. (The points it identifies as being involved are those that were touched in the last 25% of the iterations.) Thus, it could erroneously report oscillation, particularly if you are working with an exceptionally large circuit; but it would be one that is larger than any I have built using Logisim. In any case, if you are confident that the reporting is in error, you can configure the number of iterations completed before oscillation occurs via the <a href="../opts/index.html">Project Options</a> window's <a href="../opts/simulate.html">Simulation tab</a>.</p>
 
 <p><strong>Next:</strong> <a href="shortcome.html">Shortcomings</a>.</p>
 

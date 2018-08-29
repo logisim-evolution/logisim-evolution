@@ -1,56 +1,36 @@
 <html>
 <meta charset="UTF-8">
 <head>
-	<title>The Simulation tab</title>
+	<title>L'onglet Simulation</title>
 </head>
 <body bgcolor="FFFFFF">
 
-<h1>The Simulation tab</h1>
+<h1>L'onglet Simulation</h1>
 
-<p>The Simulation tab allows configuration of the algorithm used for
-simulating circuits. These parameters apply to all circuits being
-simulated in the same window, even for circuits that exist in other
-libraries loaded within the project.</p>
+<p>L'onglet Simulation permet de configurer l'algorithme utilisé pour simuler des circuits. Ces paramètres s'appliquent à tous les circuits simulés dans la même fenêtre, y compris pour les circuits existant dans d'autres bibliothèques chargées dans le projet.
+</p>
 
 <center><img src="../../../img-guide/opts-simulate.png"></center>
 
 <ul>
+<li><p>La case à cocher <strong>Les mémoires sont initialisés dans un état aléatoire</strong> permet de déterminer comment sont initialisé les mémoires RAM, les régistres (D,T,J-K) et  les compteurs. Si la case est décochée tous les composants seront initialisés avec un 0.<br> Dans l'autre cas, lorsque l'on ouvre le projet, que l'on dépose un composant ou que l'on réinitialise la simulation; les composants de type régistre seront initialisés avec une valeur indéfinie et les mémoires RAM seront initialisés avec une série aléatoire. 
+</li>
+<li><p>Le menu déroulant <strong> Itérations jusqu'à l'oscillation </strong> indique la durée pendant laquelle un circuit doit être simulé avant de décider qu'il oscille. Cette valeur représente le nombre de clics de l'horloge interne cachée (une simple porte ne prend qu'un clic). La valeur par défaut de 1000 est suffisante pour pratiquement tous les usages, ceci même pour les grand circuits.<br> 
 
-<li><p>The <strong>Iterations Until Oscillation</strong> drop-down menu
-specifies how long to simulate a circuit before deciding that it is
-oscillating. The number represents the number of clicks of the internal
-hidden clock (a simple gate takes just one click). The default of 1,000
-is good enough for almost all purposes, even for large circuits. But you
-may want to increase the number of iterations if you are working with a
-circuit where Logisim reports false oscillations. This is unlikely to be a
-problem in practice, but one such a circumstance is a circuit that incorporates
-many of the below latch circuits with random noise enabled. You may want to
-decrease the number of iterations if you are working with a circuit that is
-prone to oscillating and you are using an unusually slow processor.</p></li>
+Mais vous voudrez peut-être augmenter le nombre d'itérations si vous travaillez avec un circuit où Logisim signale de fausses oscillations. Il est peu probable que cela pose problème dans la pratique, cependant il est possible que cela arrive dans un circuit qui incorpore un grand nombre bascule avec le bruit aléatoire activé. A l'inverse vous souhaiterez peut-être réduire le nombre d'itérations si vous travaillez avec un circuit qui a tendance à osciller et que vous utilisez un processeur inhabituellement lent.</p></li>
 
-<li><p>The <strong>Gate Output When Undefined</strong> drop-down menu configures
-how the built-in logic gates behave when some inputs are unconnected or are
-floating. By default, Logisim ignores such inputs, allowing a gate to work over
-fewer inputs than it was designed for. However, in real life, a gate will behave
-unpredictably in such a situation, and so this drop-down menu allows one to
-change the gates so that they treat such disconnected inputs as errors.</p></li>
+<li><p>Le menu déroulant <strong> Sortie de porte logique quand indéfinie</strong> configure le comportement des portes logiques intégrées lorsque certaines entrées sont déconnectées ou flottantes. Par défaut, Logisim ignore de telles entrées, permettant à une porte de travailler sur un nombre d'entrées inférieur à celui pour lequel elle a été conçue. Cependant, dans la réalité, une porte se comportera de manière imprévisible dans une telle situation. Ce menu déroulant permet donc de modifier les portes de manière à ce que les entrées déconnectées soient traitées comme des erreurs.
+</p></li>
+<li><p>La case à cocher <strong> Ajouter du bruit aux délais des composants </strong> vous permet d'activer ou de désactiver le bruit aléatoire ajouté aux délais de transmission des composants. La simulation interne utilise une horloge cachée pour sa simulation, et pour fournir une simulation quelque peu réaliste, chaque composant (à l'exclusion des câbles et des répartiteurs) a un délai entre le moment où il reçoit une entrée et le moment où il émet une sortie. Si cette option est activée, Logisim effectuera occasionnellement (environ une fois tous les 16 composants) un clic sur un composant plus longtemps que la normale.
+</p>
 
-<li><p>The <strong>Add Noise To Component Delays</strong> checkbox
-allows you to enable or disable the random noise that is added to the
-delays of components. The internal simulation uses a hidden clock for
-its simulation, and to provide a somewhat realistic simulation, each
-component (excluding wires and splitters) has a delay between when it
-receives an input and when it emits an output. If this option is
-enabled, Logisim will occassionally (about once every 16
-component reactions) make a component take one click longer than
-normal.</p>
-
-<p>I recommend keeping this option off, as this technique does introduce rare
-errors with normal circuits.</p></li>
-
+<p>Je recommande de garder cette option désactivée, car cette technique introduit des erreurs rares avec les circuits normaux.</p></li>
+<p>
+<li><strong>Le menu déroulant Duré de l'horloge principale</strong> <em>A compléter, non documenté</em></li>
+</p>
 </ul>
 
-<p><strong>Next:</strong> <a href="toolbar.html">The Toolbar tab</a>.</p>
+<p><strong>Suivant:</strong> <a href="toolbar.html">L'onglet Barre d'outils</a>.</p>
 
 </body>
 </html>

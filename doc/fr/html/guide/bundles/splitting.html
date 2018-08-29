@@ -1,15 +1,15 @@
 <html>
 <meta charset="UTF-8">
 <head>
-	<title>Terminaison de Bus</title>
+	<title>Répartiteur</title>
 </head>
 <body bgcolor="FFFFFF">
 
-<h1>Terminaison de Bus</h1>
+<h1>Répartiteur</h1>
 
-<p>Quand vous utilisez des nappes de câbles (bus), vous voudrez souvent rediriger différents câbles dans différentes directions. L'outil Terminaison de Bus (<img src="../../../icons/splitter.gif">) de la librairie Câblage  vous permet de réaliser cela.</p>
+<p>Quand vous utilisez des nappes de câbles (bus), vous voudrez souvent rediriger différents câbles dans différentes directions. L'outil Répartiteur (<img src="../../../icons/splitter.gif">) de la librairie Câblage  vous permet de réaliser cela.</p>
 
-<p>Supposons par exemple que vous vouliez un circuit qui réalise  la fonction AND entre les deux quartets d'un bus de huit bits (les quatre bits de poids fort et les quatre bits de poids faible). Nous aurons une valeur à huit bits venant bus d'entrée et nous voulons séparer ceci en deux bus à quatre bits. Dans le circuit ci-dessous, nous avons utilisé une terminaison de bus pour réaliser cela. L'entrée huit bits est connectée à l'entrée du bus, qui la divise en deux nappes d’un quartet, qui sont connectées à la porte logique AND et le résultat est présenté en sortie dans un quartet.</p>
+<p>Supposons par exemple que vous vouliez un circuit qui réalise  la fonction AND entre les deux quartets d'un bus de huit bits (les quatre bits de poids fort et les quatre bits de poids faible). Nous aurons une valeur à huit bits venant bus d'entrée et nous voulons séparer ceci en deux bus à quatre bits. Dans le circuit ci-dessous, nous avons utilisé un répartiteur pour réaliser cela. L'entrée huit bits est connectée à l'entrée du bus, qui la divise en deux nappes d’un quartet, qui sont connectées à la porte logique AND et le résultat est présenté en sortie dans un quartet.</p>
 <center><img src="../../../img-guide/bundles-splitter-circ.png"></center>
 <p>Dans l'exemple précédent, la terminaison <q>sépare</q> une nappe de plusieurs fils en entrée en deux nappes de plusieurs fils en sortie. Mais les terminaisons de bus peuvent aussi travailler d'une autre façon: elles peuvent <q>regrouper</q> plusieurs valeurs en une seule. Les terminaisons de bus simulent parfaitement une nappe de câble et elles n'ont pas de direction. Elles peuvent envoyer une valeur dans une direction à un moment et dans une autre plus tard. Elles font même faire les deux en même temps, comme dans l'exemple ci-dessous ou une valeur voyage vers l'est à travers les deux terminaisons, ensuite elle est redirigée vers l'ouest à travers les terminaisons à nouveau, et ensuite de nouveau vers l'Est ou elle atteint sa sortie.</p>
 <center><img src="../../../img-guide/bundles-splitter-2way.png"></center>

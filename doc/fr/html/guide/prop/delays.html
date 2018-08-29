@@ -8,40 +8,26 @@
 
 <h1>Gate delays</h1>
 
-<p>As an example of the level of sophistication of Logisim's algorithm,
-consider the following circuit.</p>
+<p>À titre d’exemple du niveau de sophistication de l’algorithme de Logisim, considérons le circuit suivant.
+As an example of the level of sophistication of Logisim's algorithm, consider the following circuit.</p>
 <center><img src="../../../img-guide/prop-const0.png"></center>
-<p>This "obviously" always outputs 0. But NOT gates don't react
-instantaneously to their inputs in reality, and neither do they in
-Logisim. As a result, when this circuit's input changes from 0 to 1, the
-AND gate will briefly see two 1 inputs, and it will emit a 1 briefly.
-You won't see it on the screen. But the effect is observable when we
-use the AND gate's output as an input into the clock of a D flip-flop.</p>
+<p>Ce "évidemment" génère toujours 0. Mais les portes ne réagissent pas instantanément à leurs entrées dans la réalité, et ils ne le font pas non plus dans Logisim. Par conséquent, lorsque l'entrée de ce circuit passe de 0 à 1, la porte ET verra brièvement deux entrées 1 et émettra brièvement 1. Vous ne le verrez pas à l'écran. Mais l'effet est observable lorsque nous utilisons la sortie de la porte AND comme entrée dans l'horloge d'une bascule D.
+This "obviously" always outputs 0. But NOT gates don't react instantaneously to their inputs in reality, and neither do they in Logisim. As a result, when this circuit's input changes from 0 to 1, the AND gate will briefly see two 1 inputs, and it will emit a 1 briefly. You won't see it on the screen. But the effect is observable when we use the AND gate's output as an input into the clock of a D flip-flop.</p>
 <center><img src="../../../img-guide/prop-using-const0.png"></center>
-<p>Poking the 0 input to become 1 leads to an instantaneous 1 going
-into the D flip-flop, and thus the flip-flop's value will toggle
-every time the circuit input goes from 0 to 1.</p>
+<p>Piquer l'entrée 0 pour qu'elle devienne 1 conduit à un instant 1 entrant dans la bascule D, et la valeur de la bascule bascule donc à chaque fois que l'entrée du circuit passe de 0 à 1.
+Poking the 0 input to become 1 leads to an instantaneous 1 going into the D flip-flop, and thus the flip-flop's value will toggle every time the circuit input goes from 0 to 1.</p>
 
-<p>Every component has a delay associated with it. More sophisticated
-components built into Logisim tend to have larger delays, but
-these delays are somewhat arbitrary and may not reflect reality.</p>
+<p>Chaque composant est associé à un délai. Les composants plus sophistiqués intégrés dans Logisim ont tendance à avoir des retards plus importants, mais ces retards sont quelque peu arbitraires et peuvent ne pas refléter la réalité.
+Every component has a delay associated with it. More sophisticated components built into Logisim tend to have larger delays, but these delays are somewhat arbitrary and may not reflect reality.</p>
 
-<p>From a technical point of view, it is relatively easy to deal with
-this level of sophistication in a single circuit.  Dealing with gate
-delays well across subcircuits, though, is a bit more complex;
-Logisim does attempt to address this correctly by placing all primitive
-component's propagation values into a single schedule regardless of the
-subcircuit in which the component lies.</p>
+<p>D'un point de vue technique, il est relativement facile de gérer ce niveau de sophistication dans un seul circuit. Traiter les retards de porte entre les sous-circuits est cependant un peu plus complexe. Logisim tente de résoudre ce problème correctement en plaçant toutes les valeurs de propagation des composants primitifs dans un seul planning, quel que soit le sous-circuit dans lequel se trouve le composant.
+From a technical point of view, it is relatively easy to deal with this level of sophistication in a single circuit.  Dealing with gate delays well across subcircuits, though, is a bit more complex; Logisim does attempt to address this correctly by placing all primitive component's propagation values into a single schedule regardless of the subcircuit in which the component lies.</p>
 
-<p>(Via the <a href="../opts/index.html">Project Options</a> window's
-<a href="../opts/simulate.html">Simulation tab</a>, you can configure Logisim
-to add a random, occasional delay to a component's propagation. This is intended
-to simulate the unevenness of real circuits. In particular, an R-S latch built
-using two NOR gates will oscillate without this randomness, as both gates will
-process their inputs in lockstep. This randomness is disabled by default.)</p>
+<p>(Via the <a href="../opts/index.html">Project Options</a> window's <a href="../opts/simulate.html">Simulation tab</a>, Vous pouvez configurer Logisim pour ajouter un délai aléatoire occasionnel à la propagation d'un composant. Ceci est destiné à simuler les inégalités des circuits réels. En particulier, un verrou R-S utilisant deux portes NOR va osciller sans ce caractère aléatoire, car les deux portes traiteront leurs entrées en séquence. Ce caractère aléatoire est désactivé par défaut.)
+you can configure Logisim to add a random, occasional delay to a component's propagation. This is intended to simulate the unevenness of real circuits. In particular, an R-S latch built using two NOR gates will oscillate without this randomness, as both gates will process their inputs in lockstep. This randomness is disabled by default.)</p>
 
-<p>Note that I'm stopping short of saying that Logisim
-always addresses gate delays well.  But at least it tries.</p>
+<p>Notez que je m'empêche de dire que Logisim traite toujours correctement les délais de la porte. Mais au moins, il essaye.
+Note that I'm stopping short of saying that Logisim always addresses gate delays well.  But at least it tries.</p>
 
 <p><strong>Next:</strong> <a href="oscillate.html">Oscillation errors</a>.</p>
 
