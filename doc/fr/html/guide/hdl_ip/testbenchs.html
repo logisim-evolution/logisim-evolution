@@ -1,37 +1,25 @@
 <html>
-    <head>
-        <title>Simulating test benchs</title>
-    </head>
+<meta charset="UTF-8">
+<head>
+<title>Simuler en bancs d'essai</title>
+</head>
 
-    <body bgcolor="FFFFFF">
-        <h1>Simulating test benchs</h1>
-        
-        <p>You can add a test bench to your circuit to test it, but you have to 
-           consider the following restrictions due to the simulation 
-           architecture.
-        </p>
-    
-        <center><img src="../../../img-guide/hdl-ip-tb.png" /></center>
-    
-        <h2>Simulation must be driven by Logisim</h2>
-        
-        <p>You cannot add event generating elements to your test bench, for
-            example, you cannot add a clock generator process. Your test bench
-            must take an external clock from Logisim as input.
-        </p>
-    
-        <h2>Don't use time based conditions</h2>
-        
-        <p>The time representation does not exist in Logisim, no you cannot have
-           event based on time, for example <i>wait for 5 ns</i>. If you want to
-           make asynchronous verification, you must add a <i>sysclk</i> who has 
-           at least twice the frequency of the mainclk. This way, you will be 
-           able to check the signals not only on the main clock rising edges but
-           at any time you need.
-        </p>
-    
-        <p><strong>Next:</strong> <em><a href="../index.html">User's Guide
-           </a></em>.
-        </p>
-    </body>
+<body bgcolor="FFFFFF">
+<h1>Simuler en bancs d'essai</h1>
+
+<p>Vous pouvez ajouter un banc de test à votre circuit pour le tester, mais vous devez tenir compte des restrictions suivantes en raison de l'architecture de simulation.</p>
+
+<center><img src="../../../img-guide/hdl-ip-tb.png" /></center>
+
+<h2>La simulation doit être pilotée par Logisim</h2>
+
+<p>Vous ne pouvez pas ajouter d'éléments générateurs d'événements à votre banc d'essai, par exemple, vous ne pouvez pas ajouter un processus générateur d'horloge. Votre banc d'essai doit recevoir une horloge externe de Logisim.</p>
+
+<h2>N'utilisez pas de conditions temporelles</h2>
+
+<p>La représentation du temps n'existe pas dans Logisim, vous ne pouvez pas avoir d'événement basé sur le temps, par exemple <i> attendre 5 ns </i>. Si vous voulez effectuer une vérification asynchrone, vous devez ajouter une horloge <i> sysclk </i> qui a au moins deux fois la fréquence de mainclk. De cette façon, vous pourrez vérifier les signaux non seulement sur les fronts montants de l’horloge principale, mais à tout moment.</p>
+
+<p><strong>Suivant:</strong> <em><a href="../index.html">Guide de l'utilisateur</a></em>.
+</p>
+</body>
 </html>

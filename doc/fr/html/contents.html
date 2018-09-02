@@ -7,7 +7,7 @@
 
 <ul>
   <li><a id="tutorial">Guide du débutant</a><ul>
-  	<li><a id="tutorial_orient">Etape 0: S'orienter'</a></li>
+  	<li><a id="tutorial_orient">Etape 0: S'orienter</a></li>
   	<li><a id="tutorial_gates">Etape 1: Ajouter des portes logiques</a></li>
   	<li><a id="tutorial_wires">Etape 2: Câblers</a></li>
   	<li><a id="tutorial_text">Etape 3: Ajouter du texte</a></li>
@@ -18,7 +18,7 @@
   	<li><a id="attrlib_attr">Le tableau des attributs</a></li>
   	<li><a id="attrlib_tool">Attributs des outils et des composants</a></li>
   </ul></li>
-  <li><a id="subcirc">Sous-circuits</a><ul>
+  <li><a id="subcirc">Design hiérarchique</a><ul>
   	<li><a id="subcirc_creating">Créer des circuits</a></li>
   	<li><a id="subcirc_using">Utiliser des sous-circuits</a></li>
   	<li><a id="subcirc_appear">Editer l'apparence d'un sous-circuit</a></li>
@@ -27,7 +27,7 @@
   </ul></li>
   <li><a id="bundles">Nappe de câbles</a><ul>
   	<li><a id="bundles_creating">Créer une nappe</a></li>
-  	<li><a id="bundles_splitting">Eclaté</a></li>
+  	<li><a id="bundles_splitting">Répartiteur</a></li>
   	<li><a id="bundles_colors">Couleur des câbles</a></li>
   </ul></li>
   <li><a id="analyze">Analyse combinatoire</a><ul>
@@ -36,24 +36,24 @@
   	<li><a id="analyze_expr">Créer des expressions</a></li>
   	<li><a id="analyze_gen">Générer un circuit</a></li>
   </ul></li>
-  <li><a id="menu">Manuel des menus</a><ul>
+  <li><a id="menu">Référence des menus</a><ul>
   	<li><a id="menu_file">Menu fichier</a></li>
   	<li><a id="menu_edit">Menu éditer</a></li>
   	<li><a id="menu_project">Menu projet</a></li>
   	<li><a id="menu_simulate">Menu simulation</a></li>
   	<li><a id="menu_winhelp">Menus fenêtre et aide</a></li>
   </ul></li>
-  <li><a id="mem_guide">Composant mémoire</a><ul>
-  	<li><a id="mem_poke">Pousser la mémoire</a></li>
-  	<li><a id="mem_menu">Menus Pop-up et fichiers</a></li>
-  	<li><a id="mem_hex">Editeur Hex</a></li>
+  <li><a id="mem_guide">Memory components / Composant mémoire</a><ul>
+  	<li><a id="mem_poke">Poking memory /Pousser la mémoire</a></li>
+  	<li><a id="mem_menu">Pop-up menus and files /Menus Pop-up et fichiers</a></li>
+  	<li><a id="mem_hex">Logisim's integrated hex editor / Editeur Hex</a></li>
   </ul></li>
   <li><a id="log">Journalisation</a><ul>
   	<li><a id="log_selection">Onglet de sélection</a></li>
   	<li><a id="log_table">Onglet table</a></li>
   	<li><a id="log_file">Onglet fichier</a></li>
   </ul></li>
-  <li><a id="verify">Vérifications en ligne de commande/a><ul>
+  <li><a id="verify">Vérifications en ligne de commande</a><ul>
   	<li><a id="verify_sub">Echanges de librairies</a></li>
   	<li><a id="verify_other">Autres options de vérification</a></li>
   	<li><a id="verify_multi">Tester plusieurs fichiers</a></li>
@@ -77,11 +77,11 @@
   	<li><a id="prop_shortcome">Limitations</a></li>
   </ul></li>
   <li><a id="jar">Librairies JAR</a><ul>
-  	<li><a id="jar_incr">Ajout en codage de Gray</a></li>
-  	<li><a id="jar_library">Classe librairie</a></li>
-  	<li><a id="jar_simpctr">Conteur simple en codage de Gray</a></li>
-  	<li><a id="jar_counter">Conteur en codage de Gray</a></li>
-  	<li><a id="jar_guide">Recommandations</a></li>
+  	<li><a id="jar_incr">Gray Code Incrementer</a></li>
+  	<li><a id="jar_library">Library Class</a></li>
+  	<li><a id="jar_simpctr">Simple Gray Code Counter</a></li>
+  	<li><a id="jar_counter">Gray Code Counter</a></li>
+  	<li><a id="jar_guide">Guidelines</a></li>
   </ul></li>
   <li><a id="about">A propos du programme</a><ul>
   <li><a id="about_gpl">GNU General Public License</a></li>
@@ -89,21 +89,22 @@
 </ul>
 
 
-<h2><a id="libs">Library Reference</a></h2>
+<h2><a id="libs">Référence de la bibliothèque</a></h2>
 
 <ul>
-  <li><a id="wiring">Wiring library</a><ul>
-	<li><a id="wiring_splitter">Splitter</a></li>
+  <li><a id="wiring">Librairies câblage</a><ul>
+	<li><a id="wiring_splitter">Répartiteur</a></li>
 	<li><a id="wiring_pin">Pin</a></li>
-	<li><a id="wiring_probe">Probe</a></li>
+	<li><a id="wiring_probe">Sonde</a></li>
 	<li><a id="wiring_tunnel">Tunnel</a></li>
-	<li><a id="wiring_pull">Pull Resistor</a></li>
-	<li><a id="wiring_clock">Clock</a></li>
-	<li><a id="wiring_constant">Constant</a></li>
-	<li><a id="wiring_const01">Power/Ground</a></li>
+	<li><a id="wiring_pull">Résistance de charge</a></li>
+	<li><a id="wiring_clock">Horloge</a></li>
+	<li><a id="wiring_clock">Reset au démarage</a></li>
+	<li><a id="wiring_constant">Constantes</a></li>
+	<li><a id="wiring_const01">Alimentation/Masse</a></li>
 	<li><a id="wiring_transist">Transistor</a></li>
-	<li><a id="wiring_transmis">Transmission Gate</a></li>
-	<li><a id="wiring_extender">Bit Extender</a></li>
+	<li><a id="wiring_transmis">Porte de passage</a></li>
+	<li><a id="wiring_extender">Convertisseur de bits</a></li>
   </ul></li>
   <li><a id="gates">Gates library</a><ul>
 	<li><a id="gates_not">NOT Gate</a></li>

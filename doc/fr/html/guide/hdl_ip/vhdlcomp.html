@@ -1,97 +1,49 @@
 <html>
-    <head>
-        <title>VHDL Entity</title>
+<meta charset="UTF-8">
+<head>
+        <title>Entités VHDL</title>
     </head>
 
     <body bgcolor="FFFFFF">
-        <h1>VHDL Entity</h1>
+        <h1>Entités VHDL</h1>
 
-        <p>A VHDL entity is a component that can be described using VHDL. It
-           comes with an editor which can be used to edit the entity and to
-           validate it, providing you have Questa Advanced Simulator installed
-           on your system.
-        </p>
+<p>Une entité VHDL est un composant pouvant être décrit à l'aide du langage VHDL. Il est accompagné d'un éditeur qui peut être utilisé pour éditer l'entité et la valider, à condition que Questa Advanced Simulator soit installé sur votre système.</p>
 
-        <h2>Creating a VHDL entity</h2>
+<h2>Créer une entité VHDL</h2>
         
-        <p>To create a new VHDL entity, simply open the <i>HDL IP</i> library in
-           the <i>explorer panel</i> and click on the <i>VHDL Entity</i>
-           component. If the library is not available, you will need to load it:
-           go to the <i>Project</i> menu, <i>Load Library</i> then <i>Build-in
-           Library</i> and select <i>HDL IP</i> from the menu.
-        </p>
+<p>Pour créer une nouvelle entité VHDL, ouvrez simplement la bibliothèque <i> HDL IP </i> du panneau <i> explorer </i> et cliquez sur le composant <i> Entité VHDL </i>. Si la bibliothèque n'est pas disponible, vous devrez la charger: accédez au menu <i> Projet </i>, <i> Charger la bibliothèque </i>, puis <i> Bibliothèque intégrée </i> et sélectionnez <i> HDL IP </i> dans le menu.</p>
 
-        <center><img src="../../../img-guide/hdl-ip-library.png" /></center>
+<center><img src="../../../img-guide/hdl-ip-library.png" /></center>
         
-        <h2>Editing a VHDL entity</h2>
+<h2>Modification d'une entité VHDL</h2>
         
-        <center><img src="../../../img-guide/hdl-ip-symbol.png" /></center>
+<center><img src="../../../img-guide/hdl-ip-symbol.png" /></center>
         
-        <p>A new VHDL entity comes with a default template which contains two
-           inputs and two outputs. The entity can be edited by clicking on the
-           content attribute, as shown below.
-        </p>
+<p>Une nouvelle entité VHDL est fournie avec un modèle par défaut qui contient deux entrées et deux sorties. L'entité peut être modifiée en cliquant sur l'attribut de contenu, comme indiqué ci-dessous.</p>
         
-        <center><img src="../../../img-guide/hdl-ip-properties.png" /></center>
+<center><img src="../../../img-guide/hdl-ip-properties.png" /></center>
         
-        <p>The integrated HDL editor can then be used to modify the entity using
-           VHDL directly. You can also import the content of a VHDL file by
-           clicking the <i>Import...</i> button, or export your own code by
-           clicking the <i>Export...</i> button.
-        </p>
+<p>L'éditeur HDL intégré peut être ensuite utilisé pour modifier l'entité en utilisant VHDL. Vous pouvez également importer le contenu d'un fichier VHDL en cliquant sur le bouton <i> Importer ... </i> ou exporter votre propre code en cliquant sur le bouton <i> Exporter ... </i>.</p>
 
-        <center><img src="../../../img-guide/hdl-ip-editor.png" /></center>
+<center><img src="../../../img-guide/hdl-ip-editor.png" /></center>
         
-        <p>As you edit your component, the <i>Validate Content</i> button will
-           light up. It can be used to check if your code is valid, as long as
-           you have Questa Advanced Simulator installed and configured (see
-           <a href="questa.html">Configuring Questa Advanced Simulator</a> for
-           more information). If it is the case, clicking the <i>Validate</i>
-           button will compile the VHDL code, check for errors and display a
-           window with more information if any is found. If your code is valid,
-           the button will simply be deactivated until you make further
-           modifications.
-        </p>
+<p>Lorsque vous éditez votre composant, le bouton <i> Valider le contenu </i> est activé. Il peut être utilisé pour vérifier le code pour déterminé si il est valide, à condition que Questa Advanced Simulator soit installé et configuré (voir <a href="questa.html"> Configuration de Questa Advanced Simulator </a> pour plus d'informations). Si c'est le cas, cliquer sur le bouton <i> Valider </i> compilera le code VHDL, vérifiera les erreurs et le cas échéant, affichera une fenêtre avec plus d'informations.
+Si votre code est valide, le bouton sera simplement désactivé jusqu'à ce que vous apportiez d'autres modifications.</p>
         
-        <p><strong>Note:</strong> If you don't have Questa Advanced Simulator,
-           or if it is disabled, Logisim will nonetheless make a few checks,
-           mostly on the ports description.
-        </p>
-        
-        <p>When you are done editing your entity, you can click the <i>Close
-           Window</i> button. The code will be validated by Questa Advanced
-           Simulator if it is installed and enabled, and Logisim will
-           automatically regenerate your entity's symbol, adding, removing or
-           updating any port you might have added, removed or changed in your
-           code. If an error occurs during the validation process, a window
-           containing more information will be displayed, and you will be given
-           three choices:
-        </p>
-        
-        <ol>
-            <li>Close anyway and <strong>discard all modifications</strong>.
-                This is achieved by clicking <i>Yes</i>. Please note any changes
-                done to your entity will be <strong>permanently lost</strong>.
-            </li>
-            <li>Go back to the editor and correct the error(s). This is achieved
-                by clicking <i>No</i>.
-            </li>
-            <li>Create a backup of your VHDL code and close the editor. This is
-                achieved by clicking the <i>Create backup</i> button, and then
-                by selecting a folder and a name for your backup file.
-            </li>
-        </ol>
+<p><strong> Note: </strong> Si vous ne disposez pas de Questa Advanced Simulator ou s’il est désactivé, Logisim effectuera néanmoins quelques vérifications, principalement sur la description des ports.</p>
 
-        <h2>Using a VHDL entity</h2>
-        
-        <p>A VHDL entity is used like any other component. The only notable
-           difference is how the entities are handled in the simulation. Please
-           see <a href="simulation.html">VHDL simulator</a> for a detailed
-           explanation.
-        </p>
+<p>Lorsque vous avez terminé de modifier votre entité, vous pouvez cliquer sur le bouton <i> Fermer la fenêtre </i>. Le code sera validé par Questa Advanced Simulator et Logisim régénérera automatiquement le symbole de votre entité, en ajoutant, supprimant ou mettant à jour tout port que vous auriez ajouté, supprimé ou modifié dans votre code. Si une erreur survient pendant le processus de validation, une fenêtre contenant plus d'informations sera affichée et vous aurez trois choix:</p>
 
-        <p><strong>Next:</strong> <a href="questa.html">Configuring Questa
-           Advanced Simulator</a>.
-        </p>
-    </body>
+<ol>
+<li>Fermez quand même et <strong> ignorez toutes les modifications </strong>. Pour ce faire, cliquez sur <i> Oui </i>. Veuillez noter que toute modification apportée à votre entité sera <strong> définitivement perdue </strong>.</li>
+<li>Retournez dans l'éditeur et corrigez les erreurs. Ceci est réalisé en cliquant sur <i> Non </i></li>
+<li>Créez une sauvegarde de votre code VHDL et fermez l'éditeur. Pour cela, cliquez sur le bouton <i> Créer une sauvegarde </i>, puis en sélectionnant un dossier et un nom pour votre fichier de sauvegarde.</li>
+</ol>
+
+<h2>Utiliser une entité VHDL</h2>
+        
+<p>Une entité VHDL est utilisée comme tout autre composant. La seule différence notable se trouve dans la manière dont les entités sont traitées dans la simulation. Veuillez consulter <a href="simulation.html"> Simulateur VHDL </a> pour une explication détaillée.</p>
+
+<p><strong>Suivant:</strong> <a href="questa.html">Configurer Questa Advanced Simulator</a>.</p>
+</body>
 </html>
