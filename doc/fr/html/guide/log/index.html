@@ -1,61 +1,33 @@
 <html>
+<meta charset="UTF-8">
 <head>
-	<title>Logging</title>
+	<title>Chronogramme</title>
 </head>
 <body bgcolor="FFFFFF">
 
-<h1>Logging</h1>
+<h1>Chronogramme</h1>
 
-<p>In testing a large circuit, and for documenting a circuit's
-behavior, a log of past circuit behavior can be useful. This is the purpose for
-Logisim's logging module, which allows you to select components whose
-values should be logged; optionally, you can specify a file into which
-the log should be placed.</p>
-
-<p>Another way to test a circuit is using a <strong>test vector</strong>.
-Logisim's test vector module allows you to load a file specifying
-circuit inputs and the values that should be output by the circuit.
-Logisim will run the simulation and compare the actual outputs against
-the desired outputs. Currently, test vectors are only designed to work
-for combinational circuits.</p>
-
-<p><strong>Note:</strong> The logging and test vector modules are in
-alpha phase; they may be buggy, and they are subject to significant
-changes in the future. While bug reports and suggestions are welcome
-for all of Logisim, they are particularly welcome concerning these
-relatively new features. If you do not send comments, then they will
-likely not change.</p>
-
-<p>You can enter the test vector module via the Test Vector... option
-from the Simulate menu. See <a href="test.html">Test Vectors</a> for
-documentation on how to use this module.</p>
-
-<p>You can enter the logging module via the Logging...
-option from the Simulate menu. It brings up a window with three tabs.</p>
+<p>Pour comprendre ou debuger un circuit il souvent très utile de pouvoir observer les différents signaux de manière visuels.
+C'est le but du chronogramme.
+Ce module permet l'enregistrement des signaux sous forme graphique ou dans un tableau de valeur dans un fichier text.</p>
 <center>
-<img src="../../../img-guide/log-selection.png" width="466" height="387">
+<img src="../../../img-guide/log-graph.png">
 </center>
-<p>We will discuss each of these tabs separately.</p>
+<p>Vous pouvez entrer dans le module de journalisation via le menu Simulation &gt Chronogramme. Il fait apparaître la fenêtre de sélection des signaux.</p>
 <blockquote>
-	<a href="selection.html">The Selection tab</a>
-	<br><a href="table.html">The Table tab</a>
-	<br><a href="file.html">The File tab</a>
-</blockquote></p>
+	<a href="selection.html">Sélection des siganux</a>
+	<br><a href="timetable.html">Fenêtre chronogramme</a>
+</blockquote>
+<p>Le circuit ci-dessous est un exemple d'illustration pour le module chronogramme.<br>
+<center>
+<img src="../../../img-guide/log-counter.png">
+</center>
+<p>Ce sont les horloges qui servent de pilote à l'affichage des signaux. La simulation connait deux horloges particulières. Une est impérative et nommée <b>sysclk</b> et une autres optionelle et secondaire nommée <B>clk</b></p>
+<strong>Note:</strong> Il est impératif q'une horloge nommée <strong>sysclk</strong> apparaisse dans votre circuit. Elle sera utilisée comme base de temps par le module chronogramme. Il n'est pas nécessaire qu'elle soit connectée a votre circuit. Elle est en principe la plus rapide et est réglée sur le rapport cyclique 1/1 tic.
+</p>
+<p><strong> Remarque: </strong> les modules de journalisatione est en phase alpha (V2.14). Il peut être buggé et il est sujets à des changements importants dans le futur. Les rapports de bogues et les suggestions sont les bienvenus pour tout Logisim. Ils sont particulièrement bienvenus concernant ces nouvelles fonctionnalités. Si vous n'envoyez pas de commentaires, ils ne changeront probablement pas.</p>
 
-<p>Each project has only one logging window; when you switch to viewing
-another circuit within the project, the logging window switches
-automatically to logging the other circuit instead. That is, it does
-this unless you are <a href="../subcirc/debug.html">moving up or down
-within the same simulation</a>, in which case the logging module does
-not change.</p>
-
-<p>Note that when the logging module switches to logging another
-simulation, it will cease any logging into a file. Should you switch
-back to the simulation again, it will remember the configuration for
-that simulation, but you will need to re-enable the file logging
-manually.</p>
-
-<p><strong>Next:</strong> <a href="selection.html">The Selection tab</a>.</p>
+<p><strong>Suivant:</strong> <a href="selection.html"> Sélection des signaux</a>.</p>
 
 </body>
 </html>

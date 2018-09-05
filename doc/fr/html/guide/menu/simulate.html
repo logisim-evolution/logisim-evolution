@@ -9,22 +9,22 @@
 
 <dl>
 
-<dt><strong>Simulation Enclanchée</strong></dt>
+<dt><strong>Simulation Enclanchée</strong> Ctrl-E</dt>
 <dd><p>Si cette case est cochée, les circuits visualisés seront "en direct", c'est-à-dire que les valeurs se propageant dans le circuit seront mises à jour à chaque utilisation de l'outil pousser ou modification du circuit.</p>
 
 <p>L'option de menu sera automatiquement décochée si
  <a href="../prop/oscillate.html">une oscillation</a> est détectée.</p></dd>
 
-<dt><strong>Redémarer la simulation</strong></dt>
+<dt><strong>Redémarer la simulation</strong> Ctrl-R</dt>
 <dd><p>Efface tout ce qui concerne l’état du circuit actuel, comme si vous veniez d’ouvrir à nouveau le fichier. Si vous visualisez l'état d'un sous-circuit, tous les états de la hiérarchie sont effacés.</p></dd>
 
-<dt><strong>Simulation pas à pas</strong></dt>
-<dd><p>Avance la simulation d'une étape. Par exemple,au cours d'une étape, un signal peut entrer dans une porte , mais la sortie de la porte n'affichera pas de changement de signal avant la prochaine étape de simulation. Pour aider à identifier les points du circuit global qui ont changé, tous les points dont les valeurs changent sont indiqués par un cercle bleu; si un sous-circuit contient des points qui ont été modifiés (ou ses sous-circuits, récursivement), alors il sera entouré avec une ligne bleue.
+<dt><strong>Simulation pas à pas</strong> Ctrl-I</dt>
+<dd><p>Avance la simulation d'une étape. Par exemple,au cours d'une étape, un signal peut entrer dans une porte , mais la sortie de la porte n'affichera pas de changement de signal avant la prochaine étape de simulation. Pour aider à identifier les points du circuit global qui ont changé, tous les points dont les valeurs changent sont indiqués par un cercle bleu. Si un sous-circuit contient des points qui ont été modifiés (ou ses sous-circuits, récursivement), alors il sera entouré avec une ligne bleue.
 </p></dd>
 <dt><strong>Simulation VHDL activée</strong></dt>
-<dd><p></p></dd>
+<dd><p>pas documenté pour l'instant</p></dd>
 <dt><strong>Restarte simulation VHDL</strong></dt>
-<dd><p></p></dd>
+<dd><p>pas documenté pour l'instant</p></dd>
 <dt><strong>Sortir de la vue</strong></dt>
 <dd><p>Quand vous avez exploré l'état d'un sous circuit pour <a href="../subcirc/debug.html">le debuger</a> a l'aide de son menu local. Le menu <q>Sortir de la vue</q> permet d'afficher la vue de l'état des circuits supérieur de la hiérarchie. Le nom de ceux-ci sont présentés dans des options.</p></dd>
 
@@ -33,25 +33,27 @@
 permet de retourner dans la vue des circuits inférieurs de la hiérarchie. Les circuits sont présenté comme des options.
 </p></dd>
 
-<dt><strong>Un seul tic</strong></dt>
+<dt><strong>Un seul tic</strong> Ctrl-T</dt>
 <dd><p>Avance d'un tic les horloges dans la simulation quand on utilise le mode pas à pas. Cela peut être utile lorsque vous souhaitez faire avancer les horloges manuellement, en particulier lorsque l’horloge ne se trouve pas dans le même circuit que celui que vous consultez actuellement.</p></dd>
-<dt><strong>'Clk' un seul tic</strong></dt>
-<dd><p></p></dd>
-<dt><strong>Tic activé</strong></dt>
+
+<dt><strong>'Clk' un pas</strong> F2</dt>
+<dd><p>Même fonction que précédèrent, mais si l'horloge nommée clk existe, avance d'une période ou demi-période selon l'option du projet définie dans la fenêtre <a href="../opts/simulate.html">option</a>. Les autres horloges du projet avancent simultanément proportionnellement à leurs paramètres.</p></dd>
+
+<dt><strong>Tic activé</strong> Ctrl-T</dt>
 <dd><p>Active les horloges. Cela n'aura d'effet que si le circuit contient des composants d'horloge (dans la bibliothèque de câblage). L'option est désactivée par défaut.</p></dd>
 
 <dt><strong>Fréquence des tics</strong></dt>
 <dd><p>Vous permet de sélectionner la fréquence des tics. Par exemple, 8 Hz signifie que les tics se produiront huit fois par seconde. Un tic est l'unité de mesure de base pour la vitesse des horloges.</p>
 <center><img src="../../../img-guide/clock.png"></center>
 Exemple : Tic haut = 2, Tic bas = 2, Clock = Fréquence tic / ( 2 + 2)
-<p>Notez que la vitesse du cycle d'horloge sera plus lente que la vitesse d'activation: l'horloge la plus rapide possible aura un cycle haut à un tic et un cycle bas à un tic. Une telle horloge aurait une fréquence de 4 Hz (un cycle complet haut/bas) si la fréquence des tic est à 8 Hz.
+<p>Notez que la fréquence des périodes d'horloge sera plus lente que la vitesse d'activation (tic): l'horloge la plus rapide possible aura un cycle haut à un tic et un cycle bas à un tic. Une telle horloge aurait une fréquence de 4 Hz (un cycle complet haut/bas) si la fréquence des tics est à 8 Hz.
 </p></dd>
 <dt><strong>Chronogramme...</strong></dt>
 <dd><p>Module de journalisation </a>, qui facilite l’enregistrement et la sauvegarde automatiques des valeurs d'un circuit au fur et à mesure de la progression de la simulation.</p></dd>
 <dt><strong>Vecteur de test...</strong></dt>
-<dd><p></p></dd>
+<dd><p>pas documenté pour l'instant</p></dd>
 <dt><strong>Assembly viewer</strong></dt>
-<dd><p></p></dd>
+<dd><p>pas documenté pour l'instant</p></dd>
 
 </dl>
 
