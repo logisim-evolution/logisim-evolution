@@ -1,13 +1,13 @@
 <html>
 <meta charset="UTF-8">
 <head>
-<title>Deboguer un sous-circuit</title>
+<title>Déboguer un sous-circuit</title>
 <link rel="stylesheet" href="..\styles.css">
 </head>
 
 <h1>Deboguer un sous-circuit</h1>
 
-<p>Lorsque vous testez des circuits complexe, vous trouverez probablement des bogues. Pour déterminer ce qui ne va pas, la possibilité d'explorer ce qui se passe dans les sous-circuits tout en executant le circuit principal est une aide précieuse. Pour entrer dans l'état du sous-circuit, vous pouvez utiliser l'une des trois techniques ci-dessous.</p>
+<p>Lorsque vous testez des circuits complexes, vous trouverez probablement des bogues. Pour déterminer ce qui ne va pas, la possibilité d'explorer ce qui se passe dans les sous-circuits tout en exécutant le circuit principal est une aide précieuse. Pour entrer dans l'état du sous-circuit, vous pouvez utiliser l'une des trois techniques ci-dessous.</p>
 <p> La plus simple est probablement d'afficher la hiérarchie de simulation en cliquant sur la deuxième icône de l'explorateur de la barre d'outils supérieure (<img src="../../../icons/projsim.gif">),ou en sélectionnant
 "Afficher l'arbre de simulation" dans le menu Projet. Cela change le volet de l'explorateur pour afficher la hiérarchie des sous-circuits simulés.</p>
 <center><img src="../../../img-guide/subcirc-hierarchy.png"></center>
@@ -25,12 +25,10 @@ Dans tous les cas, une fois que vous visualisez le sous-circuit, vous observerez
 
 <center><img src="../../../img-guide/subcirc-2-delve.png"></center>
 </p>
-<p>Dans le sous-circuit, vous êtes autorisé à modifier le schema. Si la
-les modifications affectent les sorties du sous-circuit, elles se propagent dans le circuit contenant. Une exception: les entrées du sous-circuit sont déterminées en fonction de les valeurs entrant dans le circuit à partir du supercircuit, donc il n'y a pas sens de basculer ces valeurs.</br> 
+<p>Dans le sous-circuit, vous êtes autorisé à modifier le schéma. Si la les modifications affectent les sorties du sous-circuit, elles se propagent dans le circuit contenant. Une exception: les entrées du sous-circuit sont déterminées en fonction des valeurs entrant dans le circuit à partir du supercircuit, donc il n'y a pas sens de basculer ces valeurs.</br> 
 Si vous tentez de modifier l'état de l'entrée d'un sous-circuit, une boîte de dialogue apparaîtra, demandant <q> La broche est liée à l'état du supercircuit. Créez un nouvel état de circuit? </q> Cliquez sur Non pour annuler la demande de basculement,en cliquant sur Oui, vous créerez une copie de l'état affiché, séparé du circuit externe, avec la broche d'entrée basculée.</p>
 
-<p>Une fois que vous avez terminé la visualisation et/ou l'édition, vous pouvez revenir au circuit parent
-soit en double-cliquant sur le circuit parent dans le volet de l'explorateur, soit via le menu <i>Simulation</i> sous-menu <q>Sortir de la vue nom_circuit</q>.
+<p>Une fois que vous avez terminé la visualisation et/ou l'édition, vous pouvez revenir au circuit parent soit en double-cliquant sur le circuit parent dans le volet de l'explorateur, soit via le menu <i>Simulation</i> sous-menu <q>Sortir de la vue nom_circuit</q>.
 </p>
 
 <p><strong>Suivant:</strong> <a href="library.html">Librairie Logisim</a>.</p>

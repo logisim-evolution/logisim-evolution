@@ -27,26 +27,26 @@
 <dl>
 
 <dt><tt>halt</tt></dt>
-<dd><p>Une fois la simulation terminée, un message d'une ligne s'affiche pour expliquer la fin de la simulation. Les conditions d'erreur - telles qu'une oscillation détectée - sont affichées dans tous les cas.</p></dd>
+<dd><p>Une fois la simulation terminée, un message d'une ligne s'affiche pour expliquer la fin de la simulation. Les conditions d'erreur - qu'une oscillation détectée - sont affichées dans tous les cas.</p></dd>
 
 <dt><tt>speed</tt></dt>
-<dd><p>Après avoir terminé la simulation, Logisim affichera un résumé de mesure de la rapidité de simulation du circuit, tel que:</p>
+<dd><p>Après avoir terminé la simulation, Logisim affichera les mesures résumées de la rapidité de simulation du circuit, telle que:</p>
 
 <blockquote><tt>714 Hz (509 ticks in 712 milliseconds)</tt></blockquote>
 
-<p>Notez que l'affichage des informations pendant la simulation rend la simulation beaucoup plus lente. En une seule comparaison, le même circuit et la même image fonctionnaient à 714 Hz ci-dessus avec juste l'option <tt> speed </tt> mais 490 avec l'option <tt> table </tt> également.</p></dd>
+<p>Notez que l'affichage des informations pendant la simulation ralentis sensiblement la simulation. En une seule comparaison, le même circuit et la même image fonctionnaient à 714 Hz ci-dessus avec juste l'option <tt> speed </tt> mais à 490Hz avec l'option <tt> table </tt> également.</p></dd>
 
 <dt><tt>stats</tt></dt>
 <dd><p>Affiche un tableau délimité par des tabulations contenant des statistiques sur les composants utilisés par le circuit <q> principal </q> de niveau supérieur du projet. Le tableau comprend quatre colonnes:</p>
 <ul>
 <li>Unique: le nombre de fois que ce composant apparaît dans la hiérarchie du circuit,où chaque sous-circuit de la hiérarchie est compté une seule fois.</li>
 <li>Récursif: nombre de fois où ce composant apparaît dans la hiérarchie du circuit, où nous comptons chaque sous-circuit autant de fois qu'il apparaît dans la hiérarchie.</li>
-<li>Component: Le nom du coposant.</li>
+<li>Component: Le nom du composant.</li>
 <li>Library: Le nom de la bibliothèque à partir de laquelle le composant est venu.</li>
 </ul>
 <p>La distinction entre <q> Unique </q> et <q> Recursive </q> est expliquée plus loin dans la section <q> <a href="../menu/project.html"> menu Projet </a> </q>. Si le fichier utilise des circuits provenant d'une bibliothèque Logisim chargée, ces composants sont considérés comme des <q> boîtes noires </q>: le contenu des circuits de la bibliothèque n'est pas inclus dans les comptes uniques et récursifs.</p>
 
-<p>Cette fonctionnalité peut être utile pour les instructeurs qui encourage des étudiants à créer des projets en utilisant un sous-ensemble des bibliothèques de Logisim.</p></dd>
+<p>Cette fonctionnalité peut être utile pour les instructeurs qui encouragent des étudiants à créer des projets en utilisant un sous-ensemble des bibliothèques de Logisim.</p></dd>
 
 <dt><tt>table</tt></dt>
 <dd><p>A deja été présenté</p></dd>
@@ -54,7 +54,7 @@
 <dt><tt>tty</tt></dt>
 <dd><p>Tous les composants TTY envoient leur sortie à l'écran (sortie standard) et toute information saisie au clavier est envoyée à tous les composants de type clavier du circuit. Ces composants sont inclus même s'ils sont imbriqués profondément dans la hiérarchie des sous-circuits.</p></dd>
 
-<p><strong>Suivant:</strong>&nbsp;<a href="multi.html">Tester de multiple fichiers</a>.</p>
+<p><strong>Suivant:</strong>&nbsp;<a href="multi.html">Tester de multiples fichiers</a>.</p>
 
 </body>
 </html>

@@ -21,9 +21,9 @@ Ci-dessous vous voyez ouverte la librairie des portes logiques et le porte NAND 
 
 <li>Plexeurs: Des composants combinatoires plus complexes comme des multiplexeurs et des décodeurs.</li>
 
-<li>Arithmetique: Des composants qui effectuent des opérations arithmétiques.</li>
+<li>Arithmétique: Des composants qui effectuent des opérations arithmétiques.</li>
 
-<li>Mémoire: Des composant qui mémorisent des informations comme des bascules, des registres et de la RAM.</li>
+<li>Mémoire: Des composants qui mémorisent des informations comme des bascules, des registres et de la RAM.</li>
 
 <li>Entrée/Sortie: Des composants qui sont là pour permettre des interactions avec l'utilisateur.</li>
 
@@ -37,17 +37,17 @@ Logisim a trois catégories de librairies.</p>
 
 <li><strong>Les librairies intégrées</strong> sont des librairies qui sont distribuées avec Logisim. Ces dernières sont documentées dans <em><a href="../../libs/index.html">Librairie de référence</a></em>.</p>
 
-<li><strong>Les librairies Logisim</strong> sont des projets construits dans Logisim et sauvegardées comme des projets logisim. Vous pouvez développer 	un ensemble de circuits dans un seul projet (comme décrit dans la section <a href="../subcirc/index.html">Sous-circuit</a> de ce guide) et utiliser cet ensemble de circuit comme une librairie dans d'autres projets.</p>
+<li><strong>Les librairies Logisim</strong> sont des projets construits dans Logisim et sauvegardées comme des projets logisim. Vous pouvez développer 	un ensemble de circuits dans un seul projet (comme décrit dans la section <a href="../subcirc/index.html">Design hiérarchique</a> de ce guide) et utiliser cet ensemble de circuits comme une librairie dans d'autres projets.</p>
 
-<li><strong>Les librairies JAR</strong> sont des librairies développées en Java mais ne sont pas distribuées avec Logisim. Vous pouvez télécharger une librairie écrite par quelqu'un d'autre, ou vous pouvez écrire votre propre librairie comme expliqué dans la section <a href="../jar/index.html">Librairies Jar</a> de ce guide.  
+<li><strong>Les librairies JAR</strong> sont des librairies développées en Java, mais qui ne sont pas distribuées avec Logisim. Vous pouvez télécharger une librairie écrite par quelqu'un d'autre, ou vous pouvez écrire votre propre librairie comme expliqué dans la section <a href="../jar/index.html">Librairies Jar</a> de ce guide.  
 Développer une librairie JAR est bien plus difficile que de développer une librairie Logisim, mais 	le composant peut être bien plus riche en incluant des attributs et des interactions avec l'utilisateur.
-Les librairies intégrées (autres que Base) sont écrites en utilisant les mêmes API que les librairies JAR. Elles démontrent donc les possibilités, en terme de fonctionnalité, qu'une librairie JAR peut supporter.</p>
+Les librairies intégrées (autres que Base) sont écrites en utilisant les mêmes API que les librairies JAR. Elles démontrent donc les possibilités, en matière de fonctionnalité, qu'une librairie JAR peut supporter.</p>
 
-<p>Certaines des librairies JAR sont distribuées sans aucune information au sujet de la calsse java initial. Quand un tel JAR est chargé, Logisim vous demandera alors d'indiquer le nom de cette classe. Ce nom de la classe devrait être fourni par celui qui distribue le fichier JAR.</p>
+<p>Certaines des librairies JAR sont distribuées sans aucune information au sujet de la classe java initial. Quand un tel JAR est chargé, Logisim vous demandera alors d'indiquer le nom de cette classe. Ce nom de la classe devrait être fourni par celui qui distribue le fichier JAR.</p>
 
 </ul>
 
-<p>Pour enlever une librairie, choisissez enlever Librairie ... depuis le 	menu Projet. Logisim vous empêchera d'enlever des librairies qui contiennent des composant actuellement utilisées dans le circuit, qui apparaissent dans la barre d'outils ou qui sont liées au pointeur.</p>
+<p>Pour enlever une librairie, choisissez enlever Librairie ... depuis le 	menu Projet. Logisim vous empêchera d'enlever des librairies qui contiennent des composants actuellement utilisés dans le circuit, qui apparaissent dans la barre d'outils ou qui sont liées au pointeur.</p>
 
 <p>Par ailleurs, une librairie d'un point de vue technique contient des outils, et non des composants. Par conséquent, dans la librairie de base vous trouvez l'outil Pousser
 (<img src="../../../icons/poke.gif">), l'outil éditer

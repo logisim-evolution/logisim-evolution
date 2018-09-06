@@ -29,7 +29,7 @@
 
 <dt><strong>Définir comme circuit principal</strong></dt>
 <dd><p>
-Définis le circuit actuellement affiché comme étant le <q>circuit principal </q> du projet. (Cet élément de menu sera grisé si le circuit actuel est déjà le circuit principal du projet.) Circuit principal signifie simplement qu'il sera affiché en premier l'orsque l'on ouvre le projet.</p></dd>
+Définis le circuit actuellement affiché comme étant le <q>circuit principal </q> du projet. (Cet élément de menu sera grisé si le circuit actuel est déjà le circuit principal du projet.) Circuit principal signifie simplement qu'il sera affiché en premier lorsque l'on ouvre le projet.</p></dd>
 <dt><strong>Supprimer le circuit</strong></dt>
 <dd><p>Supprime le circuit actuellement affiché du projet. Logisim vous empêchera de supprimer des circuits utilisés comme sous-circuits et vous empêchera de supprimer le circuit final d'un projet.</p></dd>
 
@@ -39,7 +39,7 @@ L'élément de menu est activé uniquement lors de l'édition de l'apparence du 
 L'aspect de l'apparence par défaut peut être modifié par la propriété "Nouvelle apparence" de la librairie. 
 </p></dd>
 
-<dt><strong>Aficher la barre d'outils</strong></dt>
+<dt><strong>Afficher la barre d'outils</strong></dt>
 <dd><p>Modifie le volet de l'explorateur pour afficher une liste des circuits du projet et des bibliothèques chargées.
 </p></dd>
 
@@ -52,15 +52,15 @@ L'aspect de l'apparence par défaut peut être modifié par la propriété "Nouv
 <dt><strong>Editer l'apparence du circuit</strong>
 <dd><p>
 Permets de modifier la représentation du circuit lorsqu'il est utilisé comme sous-circuit dans un autre circuit. Par défaut, le circuit est représenté sous la forme d'un rectangle avec son nom sur fond noir en bas. Cette option de menu vous permet de dessiner une apparence différente pour le sous-circuit.
-Modifie l'espace de travail pour qu'il affiche <a href="../subcirc/appear.html">l'éditeur d'apparence</a></p></dd>
+Modifie l'espace de travail pour qu'il affiche <a href="../subcirc/appear.html">l'éditeur d'apparence.</a></p></dd>
 
 <dt><strong>Analyse combinatoire</strong></dt>
-<dd><p><strong>Note:</strong>Ce menu est desactivé par defaut dans la version courante de logisim-evolution. Il peut être réactivé par des options de la ligne de commande.<br><br>
+<dd><p><strong>Note:</strong>Ce menu est désactivé par défaut dans la version courante de logisim-evolution. Il peut être réactivé par des options de la ligne de commande.<br><br>
 Calcule une table de vérité et des expressions booléennes correspondant au circuit en cours, en les affichant dans la fenêtre 
 <a href="../analyze/index.html"> d'analyse combinatoire</a>.
-Le processus d'analyse ne sera valable que pour les circuits combinatoires. Une description complète du processus d’analyse est décrite dans la section <a href="../analyze/open.html">Analyse combinatoires</a>.</p></dd>
+Le processus d'analyse ne sera valable que pour les circuits combinatoires. Une description complète du processus d’analyse est décrite dans la section <a href="../analyze/open.html">Analyse combinatoire</a>.</p></dd>
 
-<dt><strong>Statistique du crcuit</strong></dt>
+<dt><strong>Statistique du circuit</strong></dt>
 <dd><p>Affiche une boîte de dialogue contenant des statistiques sur les composants utilisés par le circuit actuellement affiché. Le dialogue comprend un tableau à cinq colonnes:</p>
 <center><img src="../../../img-guide/project-stat.png"></center>
 <ul>
@@ -70,8 +70,7 @@ Le processus d'analyse ne sera valable que pour les circuits combinatoires. Une 
 <li> Unique: nombre de fois où ce composant apparaît dans la hiérarchie du circuit, où chaque sous-circuit de la hiérarchie est compté une seule fois. </ li>
 <li> Récursif: nombre de fois où ce composant apparaît dans la hiérarchie du circuit, où nous comptons chaque sous-circuit autant de fois qu'il apparaît dans la hiérarchie. </ li>
 </ul>
-<p> La distinction entre <q> Unique </q> et <q> Recursive </q> est plus facile à expliquer en considérant le multiplexeur 4:1 construit avec trois multiplexeurs 2:1
-comme dans la section <q> <a href="../subcirc/using.html"> Utiliser des sous-circuits </a> </q>.
+<p> La distinction entre <q> Unique </q> et <q> Recursive </q> est plus facile à expliquer en considérant le multiplexeur 4:1 construit avec trois multiplexeurs 2:1 comme dans la section <q> <a href="../subcirc/using.html"> Utiliser des sous-circuits </a></q>.
 Le multiplexeur 2:1 contient deux portes ET (et le circuit 4:1 n'en contient aucune), de sorte que le nombre <q> Unique</q> dénombrant les portes ET serait 2; mais si vous deviez construire le multiplexeur 4:1 en utilisant ce diagramme, vous auriez réellement besoin de 2 portes ET pour chacun des trois multiplexeurs 2:1,
 donc le nombre <q> récursif </q> est 6. </p>
 
