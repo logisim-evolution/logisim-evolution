@@ -1,27 +1,29 @@
 <html>
 <meta charset="UTF-8">
 <head>
-	<title>Hex editor</title>
+	<title>Editeur hexadécimal</title>
+	<LINK rel="stylesheet" type="text/css" href="../style.css">
 </head>
 <body bgcolor="FFFFFF">
 
-<h1>Hex editor</h1>
+<h1>Editeur hexadécimal</h1>
 
-<p>Logisim inclut un éditeur hexadécimal intégré pour visualiser et éditer le contenu de la mémoire. Pour y accéder, ouvrez un menu contextuel pour le composant de mémoire et sélectionnez Modifier le contenu .... Pour les composants de la ROM, dont le contenu de la mémoire fait partie de la valeur d'attribut, vous pouvez également accéder à l'éditeur hexadécimal en cliquant sur le bouton correspondant. valeur d'attribut.
-Logisim includes an integrated hex editor for viewing and editing the contents of memory. To access it, bring up a pop-up menu for the memory component and select Edit Contents.... For ROM components, which have the memory contents as part of the attribute value, you can alternatively access the hex editor by clicking the corresponding attribute value.</p>
+<p>Logisim inclut un éditeur hexadécimal intégré pour visualiser et éditer le contenu des mémoires. Pour y accéder, ouvrez un menu contextuel pour le composant de mémoire (clic-doit sur le composant) et sélectionnez Editer le contenu .... ou dans les propriétés sélectionnez "Contenu initial".
+</p>
 
 <center><img src="../../../img-guide/mem-hex.png"></center>
 
-<p>Les chiffres en italique à gauche affichent les adresses mémoire écrites en hexadécimal. Les autres numéros affichent des valeurs à partir de cette adresse mémoire; l'éditeur hexadécimal peut afficher quatre, huit ou seize valeurs par ligne, en fonction de ce qui rentre dans la fenêtre. Pour aider à compter, chaque groupe de quatre valeurs a un espace plus grand entre.
-The numbers in italics at left display memory addresses, written in hexadecimal. The other numbers display values starting from that memory address; the hex editor may display four, eight, or sixteen values per line, depending on what fits in the window. To help with counting, each group of four values has a larger space between.</p>
+<p>Les chiffres en italique dans la colonne de gauche affichent les adresses mémoire en hexadécimal. Les autres nombres affichent la valeur des cellules à partir de cette adresse mémoire. L'éditeur hexadécimal peut afficher quatre, huit ou seize valeurs par ligne, en fonction la largeur de la fenêtre. Pour faciliter la visualisation et la lecture, ils sont regroupés par quatre avec un espace entre les groupes.
+</p>
 
-<p>Vous pouvez naviguer dans la mémoire à l'aide de la barre de défilement ou du clavier (les touches fléchées, accueil, fin, page précédente et page suivante). La saisie de caractères hexadécimaux modifiera la valeur actuellement sélectionnée.
-You can navigate through memory using the scroll bar or using the keyboard (the arrow keys, home, end, page up, and page down). Typing hexadecimal characters will alter the currently selected value.</p>
+<p>Il est possible de naviguer dans la mémoire à l'aide de la barre de défilement ou du clavier (les touches fléchées, accueil, fin, page précédente et page suivante). La saisie de caractères hexadécimaux modifiera la valeur de la cellule sélectionnée.</p>
 
-<p>Vous pouvez sélectionner une plage de valeurs en faisant glisser la souris, en effectuant un clic-droit sur la souris ou en naviguant dans la mémoire avec le clavier tout en appuyant sur la touche Maj. Les valeurs peuvent être copiées et collées à l'aide du menu Edition. le presse-papiers peut également être transféré dans d'autres applications.
-You can select a range of values by dragging the mouse, shift-clicking the mouse, or navigating through memory with the keyboard while depressing the shift key. Values may be copied and pasted using the Edit menu; the clipboard can also be transferred into other applications.</p>
+<p>Vous pouvez sélectionner une plage de valeurs en faisant clik-droit et glisser la souris ou en naviguant dans la mémoire avec le clavier tout en appuyant sur la touche Maj.<br>
+Depuis le menu éditer ou avec la combinaison Ctrl A vous pouvez sélectionner l'ensemble des données de la mémoire.<br> Depuis ce même menu ou avec les fonctions communes: Ctrl-C Ctrl-V... les valeurs peuvent être copiées et collées. Le presse-papiers peut également être transféré vers/depuis d'autres applications.<br>La sélection peut être effacée (mise a zéro) par la commande Ctrl-X ou la touche Del,Delete ou encore le menu éditer/couper.
+</p>
+<p>Deux boutons permettent de sauvegarder ou de charger les données depuis un fichier.</p>
 
-<p><strong>Suivant:</strong> <em><a href="../index.html"><em>User's Guide</em></a></em>.</p>
+<p><b>Suite:</b> <em><a href="../index.html"><em>Guide utilisateur</em></a>.</p>
 
 </body>
 </html>

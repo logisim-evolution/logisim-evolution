@@ -2,18 +2,18 @@
 <meta charset="UTF-8">
 <head>
 <title>Déboguer un sous-circuit</title>
+<LINK rel="stylesheet" type="text/css" href="../style.css">
 <link rel="stylesheet" href="..\styles.css">
 </head>
 
 <h1>Deboguer un sous-circuit</h1>
 
 <p>Lorsque vous testez des circuits complexes, vous trouverez probablement des bogues. Pour déterminer ce qui ne va pas, la possibilité d'explorer ce qui se passe dans les sous-circuits tout en exécutant le circuit principal est une aide précieuse. Pour entrer dans l'état du sous-circuit, vous pouvez utiliser l'une des trois techniques ci-dessous.</p>
-<p> La plus simple est probablement d'afficher la hiérarchie de simulation en cliquant sur la deuxième icône de l'explorateur de la barre d'outils supérieure (<img src="../../../icons/projsim.gif">),ou en sélectionnant
-"Afficher l'arbre de simulation" dans le menu Projet. Cela change le volet de l'explorateur pour afficher la hiérarchie des sous-circuits simulés.</p>
+<p> La plus simple est probablement d'afficher la hiérarchie de simulation en cliquant sur la deuxième icône de l'explorateur de la barre d'outils supérieure (<img src="../../../icons/projsim.gif">),ou en sélectionnant dans le menu <span class=menu>| Projet |</span> &rarr; <span class=menu>| Afficher l'arbre de simulation |</span>. Cela change le volet de l'explorateur pour afficher la hiérarchie des sous-circuits simulés.</p>
 <center><img src="../../../img-guide/subcirc-hierarchy.png"></center>
 <p>Un Double-clic sur un élément de cette hiérarchie affichera ce qui se passe à l'intérieur de ce sous-circuit.</p>
 
-<p>La deuxième façon d'entrer dans un sous-circuit est de faire apparaître son menu contextuel en cliquant dessus avec le bouton droit de la souris, puis en choisissant l'option <q>Vue '....'</q>.</p>
+<p>La deuxième façon d'entrer dans un sous-circuit est de  faire apparaître son menu contextuel en cliquant dessus avec le bouton droit de la souris, puis en choisissant l'option <q>Vue '....'</q>.</p>
 <center><img src="../../../img-guide/subcirc-4-delve.png"></center>
 <p>Et la troisième façon consiste à s’assurer d’abord que l’outil pousser (<img src="../../../icons/poke.gif">) est sélectionné puis cliquez sur le sous-circuit que vous analysez;
 une loupe apparaîtra au centre du sous-circuit et double-cliquer sur la loupe va afficher l'état du sous-circuit.
@@ -28,10 +28,10 @@ Dans tous les cas, une fois que vous visualisez le sous-circuit, vous observerez
 <p>Dans le sous-circuit, vous êtes autorisé à modifier le schéma. Si la les modifications affectent les sorties du sous-circuit, elles se propagent dans le circuit contenant. Une exception: les entrées du sous-circuit sont déterminées en fonction des valeurs entrant dans le circuit à partir du supercircuit, donc il n'y a pas sens de basculer ces valeurs.</br> 
 Si vous tentez de modifier l'état de l'entrée d'un sous-circuit, une boîte de dialogue apparaîtra, demandant <q> La broche est liée à l'état du supercircuit. Créez un nouvel état de circuit? </q> Cliquez sur Non pour annuler la demande de basculement,en cliquant sur Oui, vous créerez une copie de l'état affiché, séparé du circuit externe, avec la broche d'entrée basculée.</p>
 
-<p>Une fois que vous avez terminé la visualisation et/ou l'édition, vous pouvez revenir au circuit parent soit en double-cliquant sur le circuit parent dans le volet de l'explorateur, soit via le menu <i>Simulation</i> sous-menu <q>Sortir de la vue nom_circuit</q>.
+<p>Une fois que vous avez terminé la visualisation et/ou l'édition, vous pouvez revenir au circuit parent soit en double-cliquant sur le circuit parent dans le volet de l'explorateur, soit via le menu  <span class=menu>| Simulation |</span>&rarr; <span class=menu>| Sortir de la vue <i>nom_circuit<i> |</span></q>.
 </p>
 
-<p><strong>Suivant:</strong> <a href="library.html">Librairie Logisim</a>.</p>
+<p><b>Suite:</b> <a href="library.html">Librairie Logisim</a>.</p>
 
 </body>
 </html>
