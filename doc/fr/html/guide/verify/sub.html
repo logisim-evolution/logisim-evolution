@@ -1,57 +1,39 @@
 <html>
 <meta charset="UTF-8">
 <head>
-<title>Substituting libraries</title>
+<title>Substituer des librairies</title>
+<LINK rel="stylesheet" type="text/css" href="../style.css">
 </head>
 
 <body bgcolor="FFFFFF">
 
-<h1>Substituting libraries</h1>
+<h1>Substituer des librairies</h1>
 
-<p>Now suppose we have two Logisim circuits that are supposed to do the same thing.
-As an instructor, you might have had students complete an assignment:
-You have one file containing your solution, but you have several student files
-containing their work. Maybe the assignment was to build a two-bit adder.</p>
+<p>Maintenant, supposons que nous ayons deux circuits Logisim censés faire la même chose. En tant qu'instructeur, vous avez peut-être demandé aux élèves de terminer une tâche: vous avez un fichier contenant votre solution, mais vous avez plusieurs fichiers d'élèves contenant leur travail. La tâche consistait à créer un additionneur à deux bits.</p>
 
-<p>I'll imagine that we have two files, named <tt>adder-master.circ</tt>
-and <tt>adder-query.circ</tt>. Each file contains a circuit named
-<q>2-bit adder</q> (it's important that the circuit to test be named exactly the same),
-whose appearance is the following.</p>
+<p>J'imagine que nous avons deux fichiers, nommés <tt>adder_master.circ</tt>
+and <tt>adder_query.circ</tt>. Chaque fichier contient un circuit nommé <q>Adder2</q> (il est important que le nom du circuit à tester soit exactement le même), dont l'apparence est la suivante.</p>
 
 <blockquote><table><tbody>
-<tr><td><tt>adder-master.circ</tt></td>
-    <td><tt>adder-query.circ</tt></td></tr>
+<tr><td><tt>adder_master.circ</tt></td>
+    <td><tt>adder_query.circ</tt></td></tr>
 <tr><td><img src="../../../img-guide/verify-adder-master.png"></td>
     <td><img src="../../../img-guide/verify-adder-query.png"></td></tr>
 </tbody></table></blockquote>
 
-<p>As you can see, the master circuit uses Logisim's built-in adder, 
-while the query circuit uses two subcircuits representing a half adder and
-a full adder (which themselves are built up of simple gates).
-For the purpose of our example, the query circuit has a stupid error:
-The carry from the half adder is not connected into the full adder.</p>
+<p>Comme vous pouvez le constater, le circuit maître utilise l'additionneur intégré de Logisim, tandis que le circuit de requête utilise un demi-additionneur et un additionneur complet, eux-mêmes composés de portes logiques. Aux fins de notre exemple, le circuit de requête a une erreur stupide: le report du demi-additionneur n'est pas connecté à l'additionneur complet.</p>
 
-<p>We build our testing circuit into a different file. There, we load
-<tt>adder-master.circ</tt> as a Logisim Library
-(Project &gt; Load Library &gt; Logisim Library&hellip;), and we insert its
-2-bit adder as a subcircuit. We could execute this circuit directly to get
-the desired output for a perfect solution.</p>
+<p>Nous construisons notre circuit de test dans un fichier différent. Là, nous chargeons <tt> adder-master.circ </tt> en tant que bibliothèque Logisim
+(Project &gt; Load Library &gt; Bibliothèque Logisim & hellip;), et nous insérons son additionneur 2 bits en tant que sous-circuit. Nous pourrions exécuter ce circuit directement pour vérifier que  le résultat souhaité pour une solution parfaite.</p>
 
 <blockquote><tt>java&nbsp;-jar&nbsp;logisim-filename.jar&nbsp;adder-test.circ&nbsp;-tty&nbsp;table</tt></blockquote>
 
-<p>But we want to execute the circuit using <tt>adder-query.circ</tt>
-rather than <tt>adder-master.circ</tt> as the loaded library.
-The naive approach would be to open Logisim and load that library instead;
-or you might simply remove the <tt>adder-master.circ</tt> file and rename
-<tt>adder-query.circ</tt> to be named <tt>adder-master.circ</tt> instead.
-But Logisim includes a handy <q><tt>-sub</tt></q> option that temporarily replace
-one file by another during that session &mdash; without making any changes on disk.</p>
-
+<p>Mais nous voulons exécuter le circuit en utilisant <tt> adder-query.circ </tt> plutôt que <tt> adder-master.circ </tt> comme bibliothèque chargée. L'approche naïve serait d'ouvrir Logisim et de charger cette bibliothèque à la place ou vous pouvez simplement supprimer le fichier <tt> adder-master.circ </tt> et renommer <tt> adder-query.circ </tt> pour qu'il s'appelle <tt> adder-master.circ </tt> à la place. Mais Logisim inclut une option pratique <q> <tt> -sub </tt> </q> qui remplace temporairement un fichier par un autre pendant cette session &mdash; sans apporter de modifications sur le disque.</p>
+ 
 <blockquote><tt>java&nbsp;-jar&nbsp;logisim-filename.jar&nbsp;adder-test.circ&nbsp;-tty&nbsp;table&nbsp;-sub&nbsp;adder-master.circ&nbsp;adder-query.circ</tt></blockquote>
 
-<p>The output you would see from this is shown below; it is of course different
-from what we saw in <a href="index.html">the previous section</a> since now it is
-executing using the erroneous <tt>adder-query.circ</tt>.</p>
+<p>La sortie qui sera générée de cette façon est présentée ci-dessous. Elle il est bien sûr différent de ce que nous avons vu dans <a href="index.html"> de la section précédente </a>, car la librairie commune aux circuits <tt>adder2</tt> a été remplacée dans le circuit de test par celle de <tt> adder-query.circ </tt> erroné.
+</p>
 
 <blockquote><pre>00      00      0E0
 01      00      0E1
@@ -70,7 +52,7 @@ executing using the erroneous <tt>adder-query.circ</tt>.</p>
 10      11      1E1
 11      11      1E0</pre></blockquote>
 
-<p><strong>Next:</strong>&nbsp;<a href="other.html">Other verification options</a>.</p>
+<p><b>Suite:</b>&nbsp;<a href="other.html">Autres options de vérifications</a>.</p>
 
 </body>
 </html>

@@ -1,90 +1,58 @@
 <html>
+<meta charset="UTF-8">
 <head>
 <title>Wiring Tool</title>
 </head>
 
 <body bgcolor="FFFFFF">
 
-<h1><img align="center" height="32" width="32" src="../../../icons/wiring.gif">
+<h1><img  align="center" src="../../../icons/wiring.gif" width="32" height="32">
 <em>Wiring Tool</em></h1>
 
 <p><table>
-<tr><td><strong>Library:</strong></td>
+<tr><td><strong>Librairie:</strong></td>
 	<td><a href="index.html">Base</a></td></tr>
-<tr><td><strong>Introduced:</strong></td>
+<tr><td><strong>Introduction:</strong></td>
 	<td>2.0 Beta 1</td></tr>
 </table></p>
 
-<h2>Behavior</h2>
+<h2>Comportement</h2>
 
-<p>The wiring tool is the tool for creating wire segments that carry
-values from one endpoint to another.  The bit width of these values can
-be anything; exactly which bit width is automatically inferred from the
-components to which the wires are ultimately attached.  If it is not
-attached to any components, the wire will be drawn gray to indicate that
-its bit width is unknown; if the components at the locations that the
-wire helps to connect disagree on the bit width, then the wire will be
-drawn orange to indicate the conflict, and the wire will in fact refuse
-to carry any values at all until the user resolves the conflict.</p>
+<p>L'outil de câblage est l'outil permettant de créer des segments de fil porteurs de valeurs d'un point d'extrémité à l'autre. La largeur de bit de ces valeurs peut être n'importe quoi; exactement quelle largeur de bit est automatiquement déduite des composants auxquels les fils sont finalement attachés. S'il n'est attaché à aucun composant, le fil sera dessiné en gris pour indiquer que sa largeur de bit est inconnue; Si les composants aux endroits que le fil aide à connecter ne sont pas d'accord sur la largeur du bit, le fil sera dessiné en orange pour indiquer le conflit, et le fil refusera en fait de porter des valeurs jusqu'à ce que l'utilisateur résolve le conflit.</p>
 
-<p>A single drag of the mouse can create multiple wire segments. The
-precise process is a little confusing in its description; but it works
-quite intuitively in practice: If you request a particular wire segment
-using the Wiring Tool, that segment will be split apart wherever it hits
-a pin for an existing component, or wherever it hits the endpoint of an
-existing wire segment. Also, if an endpoint of any of the new wire
-segments hit somewhere in the middle of an existing wire, then that wire
-will be split into multiple segments itself.</p>
+<p>Un simple glissement de la souris peut créer plusieurs segments de fil. Le processus précis est un peu déroutant dans sa description; mais en pratique, cela fonctionne de manière assez intuitive: si vous demandez un segment de câble particulier à l'aide de l'outil de câblage, ce segment sera séparé chaque fois qu'il rencontre une broche pour un composant existant ou lorsqu'il atteint l'extrémité d'un segment de fil existant. De plus, si un point d'extrémité d'un des nouveaux segments de fil se trouve quelque part au milieu d'un fil existant, ce fil sera divisé en plusieurs segments.</p>
 
-<p>For some components that draw short stubs to which wires can connect
-(such as an <a href="../gates/basic.html">OR gate</a> or a <a
-href="../gates/controlled.html">controlled buffer</a>), Logisim will
-silently correct attempts to create wires that slightly overshoot the
-stub's end.</p>
+<p>Pour certains composants qui dessinent des stubs courts auxquels des fils peuvent se connecter (comme une <a href="../gates/basic.html"> porte OR </a> ou une <a href = "../gates/commandated.html"> buffer contrôlé </a>), Logisim corrigera silencieusement les tentatives de création de fils dépassant légèrement l'extrémité du stub.</p>
 
-<p>You can also shorten an existing wire segment using the Wiring Tool,
-using a drag that starts or ends at a terminus of the segment, and that
-overlaps the existing segment.</p>
+<p>Vous pouvez également raccourcir un segment de fil existant à l'aide de l'outil de câblage, en utilisant un glissement qui commence ou se termine à une extrémité du segment, et qui chevauche le segment existant.</p>
 
 <p>All wires in Logisim are either horizontal or vertical.</p>
 
-<p>Wires are also non-directional; that is, they carry values from
-either endpoint to the other. Indeed, a wire can carry values
-in both directions simultaneously; the center wire in the below example
-is doing this.</p>
-<center><img src="../../../img-guide/bundles-splitter-2way.png"></center>
+<p>Les fils sont également non directionnels; c'est-à-dire qu'ils transportent des valeurs de l'une ou l'autre extrémité. En effet, un fil peut porter des valeurs dans les deux sens simultanément; le fil central dans l'exemple ci-dessous le fait.</p>
+<center><img src="../../../img-guide/bundles-splitter-2way.png" width="191" height="44"></center>
 
-<h2>Attributes</h2>
+<h2>Attributs</h2>
 
-<p>The wiring tool does not itself have attributes, but the wires that
-it creates do.</p>
+<p>L'outil de câblage n'a pas lui-même d'attributs, mais les fils qu'il crée créent.</p>
 
 <dl>
 
 <dt>Direction</dt>
-<dd>Indicates whether the wire is horizontal or vertical.
-The value of this attribute cannot be changed.</dd>
+<dd>Indique si le câble est horizontal ou vertical. La valeur de cet attribut ne peut pas être modifiée.</dd>
 
-<dt>Length</dt>
-<dd>Indicates how many pixels long the wire is.
-The value of this attribute cannot be changed.</dd>
+<dt>Longeur</dt>
+<dd>Indique combien de pixels le fil est long. La valeur de cet attribut ne peut pas être modifiée.</dd>
 
 </dl>
 
-<h2>Poke Tool Behavior</h2>
+<h2>Comportement de l'outil Poke.</h2>
 
-<p>When you click an existing wire segment using the Poke Tool, Logisim
-displays the current value traveling through that wire.
-The behavior is particularly useful for multi-bit wires, whose black
-color provide no visual feedback about what value the wire is
-carrying.</p>
+<p>Lorsque vous cliquez sur un segment de fil existant à l'aide de l'outil Poke, Logisim affiche la valeur actuelle passant par ce fil.
+Le comportement est particulièrement utile pour les fils multi-bits, dont la couleur noire ne fournit aucun retour visuel sur la valeur que transporte le fil.</p>
 
-<p>For multi-bit values, you can configure exactly how the value
-is displayed (in binary, decimal, or hexadecimal, for example) using
-the <a href="../../guide/prefs/layout.html">Layout
-pane</a> of the Logisim Preferences dialog box.
+<p>Pour les valeurs multi-bits, vous pouvez configurer exactement l'affichage de la valeur (en binaire, décimal ou hexadécimal, par exemple) à l'aide de la <a href="../../guide/prefs/layout.html"> mise en page volet </a> de la boîte de dialogue Préférences Logisim.
 
-<p><a href="../index.html">Back to <em>Library Reference</em></a></p>
+<p><a href="../index.html">Retour dans <em>Référence de la bibliothèque</em></a></p>
 
 </body>
 </html>

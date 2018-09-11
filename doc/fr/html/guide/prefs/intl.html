@@ -1,27 +1,24 @@
 <html>
 <meta charset="UTF-8">
 <head>
-	<title>The International tab</title>
+	<title>L'onglet International</title>
+<LINK rel="stylesheet" type="text/css" href="../style.css">
 </head>
 <body bgcolor="FFFFFF">
 
-<h1>The International tab</h1>
+<h1>L'onglet International</h1>
 
 <center><img src="../../../img-guide/prefs-intl.png"></center>
 
-<p>This tab allows configuration of Logisim according to
-regional preferences.</p>
+<p>Cet onglet permet de configurer Logisim en fonction des préférences régionales.</p>
 <ul>
 
-<li><p><b>Gate shape:</b> Logisim supports three standards for drawing gates:
-<em>shaped</em> gates, <em>rectangular</em> gates, and <em>DIN 40700</em>
-gates. The following table illustrates the
-distinction.</p>
+<li> <p> <b> Type de symbole des portes: </b> Logisim prend en charge trois normes pour dessiner les portes: <em> shaped </em>, <em> Rectangulaire </em> et <em> DIN 40700 </em> portes. Le tableau suivant illustre la distinction. </P>
 
 <center><table>
 	<tr><th></th>
 		<th width="125">Shaped</th>
-		<th width="125">Rectangular</th>
+		<th width="125">Rectangulaire</th>
 		<th width="125">DIN 40700</th>
 		</tr>
 	<tr><th valign="middle" height="65">AND</th>
@@ -31,65 +28,41 @@ distinction.</p>
 	<tr><th valign="middle" height="65">OR</th></tr>
 </table></center>
 
-<p>Because the shaped style tends to be more popular in the U.S., while the
-rectangular style tends to be more popular in Europe, some people refer to
-these styles according to these regions; but the region-neutral terms
-<em>shaped</em> and <em>rectangular</em> are preferred.
-The DIN 40700 standard was a standard for drafting digital and analog
-electronic components adopted by DIN, a German standards organization. DIN
-adopted the rectangular standard for digital components in 1976, but some
-engineers continue to use the older style; they appear to be increasingly
-rare.</p>
+<p>Selon les continents un style à la préférence. Shaped est plus populaire aux Etats-Unis et Retangulaire est préféré en Europe. Certaines personnes se réfèrent à ces styles selon ces régions nous donnons ici des termes neutres pour la région <em> Shaped </em> et <em> Retangulaire </em>.<br> La norme DIN 40700 était une norme pour la rédaction de composants électroniques numériques et analogiques adoptés par DIN, un organisme de normalisation allemand. DIN a adopté la norme rectangulaire pour les composants numériques en 1976, mais certains ingénieurs continuent à utiliser l'ancien style. Ils semblent être de plus en plus rares.
+</p>
 
-<p>Logisim does not follow any standard exactly; it steers a middle
-ground to allow switching between them. In particular, the shaped gates
-are more square than the dimensions defined by the relevant IEEE
-standard. And, although XOR and XNOR gates really ought to be the same
-width as OR and NOR gates with the rectangular style, they are not
-because of difficulties compressing the shaped-XOR gate.</p></li>
+<p>Logisim ne suit aucune norme exacte, il utilise un compromis pour faciliter le dessin et les interconnexions entre les composants. En particulier, les grilles formées sont plus carrées que les dimensions définies par la norme IEEE correspondante. Et, même si, avec le style rectangulaire, les portes XOR et XNOR doivent avoir la même largeur que les portes OR et NOR, elles seront différentes pour s'accorder avec les formes shaped. Ceci permet la conversion d'un type dans un autre sans devoir revoir les connexions.</p></li>
 
 <li><p><b>Language:</b>
-Change between languages. The current version is supplied with
-English, Spanish, Russian, and German translations.</p>
-
+Permets de sélectionner la langue de l'interface. La version actuelle est fournie avec des traductions en  anglais, allemand, espagnol, français, russe.</p>
 <ul>
 
-<li>The <b>German</b> translation was introduced with Logisim 2.6.1 and remains current.
-It is by Uwe Zimmermann, a faculty member at Uppsala University in Sweden.</li>
+<li>La traduction <b>Allemande</b> a été introduite avec Logisim 2.6.1. Produite par Uwe Zimmermann, membre du corps professoral de l'Université d'Uppsala en Suède.</li>
 
-<li>The <b>Greek</b> translation was introduced with Logisim 2.7.0 and remains current.
-It is by Thanos Kakarountas, a faculty member at Technological Educational Institute of Ionian Islands in Greece.</li>
+<li>La traduction <b>Espagnole</b> a été introduite avec Logisim 2.1.0. Produite par Pablo Leal Ramos, d'Espagne.</li>
+<li>La traduction <b>Française</b> a été introduite partiellement avec Logisim 2.13.22. Produite par Roberto Rigamonti et complétée dans Logisim 2.14.2 par Marc-André Baillifard Université de Lausanne
+</li>
+<li>La traduction <b>Grecque</b> a été introduite avec Logisim 2.7.0. Produite par Thanos Kakarountas, membre du corps professoral de l’Institut d’enseignement technologique des îles Ioniennes en Grèce.
+</li>
 
-<li>The <b>Portuguese</b> translation was introduced with Logisim 2.6.2 and remains current.
-It is by Theldo Cruz Franqueira, a faculty member at Pontifícia Universidade Católica de Minas Gerais in Brazil.</li>
+<li>La traduction <b>Portugaise</b> a été introduite avec Logisim 2.6.2. Produite par Theldo Cruz Franqueira, membre du corps professoral de la Pontifícia Universidade Católica de Minas Gerais au Brésil.</li>
 
-<li>The <b>Russian</b> translation was introduced with Logisim 2.4.0 and remains current.
-It is by Ilia Lilov, from Russia.</li>
-
-<li>The <b>Spanish</b> translation was complete as of Logisim 2.1.0,
-but subsequent Logisim versions have added new options that remain untranslated.
-It was contributed by Pablo Leal Ramos, from Spain.</li>
+<li>La traduction <b>Russe</b> a été introduite avec Logisim 2.4.0. Produite par Ilia Lilov, de Russie.</li>
 
 </ul>
 
-<p>Translations of Logisim into other languages are welcome! If you
-are interested, contact me, Carl Burch. This will not be a commitment:
-I will be happy to hear of your interest, and I will tell
-you whether I know of somebody who is working on it already,
-prepare a version for you to work with, and send you instructions.
-The translation process does not require an understanding of Java.</p></li>
+<p>Compte tenu des évolutions les traductions ne sont pas toutes au même niveaux. Les traductions de Logisim dans d'autres langues sont les bienvenues! Si vous êtes intéressé, contactez <a href="https://github.com/reds-heig/logisim-evolution/blob/master/README.md">github.com/reds-heig/logisim-evolution</a>. Ce ne sera pas un engagement: nous serions heureux d'entendre vos intérêts. Le processus de traduction ne nécessite pas une compréhension de Java.
+</p></li>
 
-<li><p><b>Replace accented characters:</b>
-Some platforms have poor support for characters (such as
-&ntilde; or &ouml;) that do not appear in the 7-bit ASCII character
-set. When this is checked, Logisim will replace all instances of the
-characters with the appropriate equivalent 7-bit ASCII characters.
-The checkbox is disabled when the current language does not have
-any equivalents available (as with English).</p></li>
+<li><p><b>Remplacez les caractères accentués: </b> Certaines plates-formes ne prennent pas en charge les caractères (tels que &ntilde ou &ouml;) qui n'apparaissent pas dans le jeu de caractères ASCII 7 bits. Lorsque cette case est cochée, Logisim remplacera toutes les instances des caractères par les caractères ASCII 7 bits équivalents appropriés.
+La case à cocher est désactivée lorsque la langue actuelle ne dispose d'aucun équivalent (comme pour l'anglais).
+<b>
+
+</p></li>
 
 </ul>
 
-<p><strong>Next:</strong> <em><a href="window.html">The Window tab</a></em>.</p>
+<p><b>Suite:</b> <em><a href="window.html">l'onglet Window</a></em>.</p>
 
 </body>
 </html>

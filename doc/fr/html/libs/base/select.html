@@ -1,97 +1,50 @@
 <html>
+<meta charset="UTF-8">
 <head>
-<title>Select Tool</title>
+<title>Outil Sélection</title>
 </head>
 
 <body bgcolor="FFFFFF">
 
-<h1><img align="center" height="32" width="32" src="../../../icons/select.gif">
-<em>Select Tool</em></h1>
+<h1><img  align="center" src="../../../icons/select.gif" width="32" height="32">
+<em>Outil Sélection</em></h1>
 
 <p><table>
-<tr><td><strong>Library:</strong></td>
+<tr><td><strong>Librairie:</strong></td>
 	<td><a href="index.html">Base</a></td></tr>
-<tr><td><strong>Introduced:</strong></td>
+<tr><td><strong>Introduction:</strong></td>
 	<td>2.0 Beta 1</td></tr>
 </table></p>
 
-<h2>Behavior</h2>
+<h2>Comportement</h2>
 
-<p>Allows individual components to be placed into the current selection.
-There are a number of actions possible with this tool.
-<ul>
+<p>Permet de placer des composants individuels dans la sélection en cours. Il existe un certain nombre d’actions possibles avec cet outil.<ul>
 
-<li>Pressing the mouse button while it is within a currently selected
-component begins a drag moving all components of the selection.</p>
+<li>Le fait d'appuyer sur le bouton de la souris alors qu'il se trouve dans un composant actuellement sélectionné commence un glissement en déplaçant tous les composants de la sélection.</p>
 
-<p>By default, Logisim will compute a way to add new wires
-so that no existing connections are lost during the move.
-(Sometimes it will delete or shorten existing wires.)
-If you're performing a move where you do not want these changes to be made,
-you can press the shift key during the move.
-If you want to disable this behavior entirely,
-go to Project &gt; Options, select the Canvas tab,
-and uncheck the <q>Keep Connections When Moving</q> box;
-in this case, the connections are computed only when the shift key <em>is</em> down.</p>
-<p>Dragging a selection can lead to unexpected behavior from wires: If
-you drag a selection including some wires on top of some other wires,
-all wires are merged, and the merged wires are placed into the
-selection.  As a result, if you drag the selection a second time, the
-wires previously at the location will not be left behind. This behavior
-is necessary to keep with the expected behavior of wires in Logisim. And
-it does not normally constitute a major problem: Logisim will draw the
-full selection in the midst of dropping, and you should not drop it
-until you are sure it is in the correct location.</p>
+<p>Par défaut, Logisim calculera un moyen d’ajouter de nouveaux fils afin qu’aucune connexion existante ne soit perdue pendant le déplacement. (Parfois, cela supprime ou raccourcit les câbles existants.) Si vous effectuez un déplacement où vous ne souhaitez pas que ces modifications soient effectuées, vous pouvez appuyer sur la touche Maj pendant le déplacement. Si vous souhaitez désactiver complètement ce comportement, accédez à Project & gt; Options, sélectionnez l'onglet Canevas et décochez la case <q> Conserver les connexions lors du déplacement </q>; Dans ce cas, les connexions ne sont calculées que lorsque la touche Maj <em> est </em>.</p>
+<p>Le fait de faire glisser une sélection peut entraîner un comportement inattendu des fils: si vous faites glisser une sélection comprenant des fils sur d'autres fils, tous les fils sont fusionnés et les fils fusionnés sont placés dans la sélection. Par conséquent, si vous faites glisser la sélection une seconde fois, les câbles précédemment situés à l'emplacement ne seront pas laissés pour compte. Ce comportement est nécessaire pour conserver le comportement attendu des câbles dans Logisim. Et cela ne constitue généralement pas un problème majeur: Logisim va sélectionner la totalité de la liste en cours de chute, et vous ne devez pas la déposer avant d’être sûr qu’elle se trouve au bon endroit.</p>
 
-<li>Otherwise, clicking the mouse within a component drops all
-components from the current selection and selects instead the
-component(s) containing the clicked location.</p>
+<li>Sinon, cliquer sur la souris dans un composant supprime tous les composants de la sélection actuelle et sélectionne à la place le ou les composants contenant l'emplacement cliqué.</p>
 
-<li>Shift-clicking the mouse within a component toggles that component's
-presence within the selection. If multiple components include the same
-location, all components' presence will be toggled. None of this will
-happen, though, if shift-clicking is mapped to another tool instead (via
-the project options window's <a href="../../guide/opts/mouse.html">Mouse
-tab</a>).</p>
+<li>Tout en maintenant la touche Maj enfoncée dans un composant, vous activez la présence de ce composant dans la sélection. Si plusieurs composants incluent le même emplacement, la présence de tous les composants sera modifiée. Rien de tout cela ne se produira cependant si un clic-clic est associé à un autre outil (via la <a href="../../guide/opts/mouse.html"> onglet Souris </a> de la fenêtre d'options du projet). ).</p>
 
-<li>Dragging the mouse starting at a location not contained within any 
-components drops all components from the current selection and
-initiates a rectangular selection.
-All component(s) contained by the rectangle will be placed into the
-selection.</p>
+<li>Faire glisser la souris en commençant par un emplacement non contenu dans un composant supprime tous les composants de la sélection actuelle et lance une sélection rectangulaire. Tous les composants contenus dans le rectangle seront placés dans la sélection.</p>
 
-<li>Shift-dragging the mouse starting at a location not contained
-within any components initiates a rectangular selection.
-The presence in the selection of all component(s) contained by the
-rectangle will be toggled. This will not happen, though, if
-shift-clicking is mapped to another tool instead.</p>
+<li>Glisser-déplacer la souris en commençant par un emplacement non contenu dans un composant déclenche une sélection rectangulaire. La présence dans la sélection de tous les composants contenus dans le rectangle sera modifiée. Cela ne se produira cependant pas si un clic-clic est associé à un autre outil.</p>
 
 </ul></p>
 
-<p>After selecting the desired items in the selection, you can of course
-cut/copy/paste/delete all the items via the <a
-href="../../guide/menu/edit.html">Edit menu</a>.</p>
+<p>Après avoir sélectionné les éléments souhaités dans la sélection, vous pouvez bien sûr couper / copier / coller / supprimer tous les éléments via le <a href="../../guide/menu/edit.html"> menu Edition </a >.</p>
 
-<p>Logisim's behavior when pasting the clipboard into a circuit is
-somewhat peculiar: It will not immediately place the components into the
-circuit; instead, the selection will be a collection of "ghosts," which
-will be dropped into the circuit as soon as they are either dragged to
-another location or removed from the selection. (This peculiar behavior
-is necessary because pasting will otherwise merge the wires of the
-selection into the current circuit at once, and the wires there
-previously will be dragged with the pasted clipboard if the user wants
-to move the pasted components somewhere else.)</p>
+<p>Le comportement de Logisim lors du collage du presse-papiers dans un circuit est quelque peu particulier: il ne placera pas immédiatement les composants dans le circuit; au lieu de cela, la sélection sera une collection de "fantômes", qui seront déposés dans le circuit dès qu'ils seront déplacés vers un autre emplacement ou retirés de la sélection. (Ce comportement particulier est nécessaire car le collage fusionnera sinon les fils de la sélection dans le circuit en cours, et les câbles y seront déplacés avec le presse-papiers collé si l'utilisateur veut déplacer les composants collés ailleurs.)</p>
 
-<h2>Attributes</h2>
+<h2>Attributs</h2>
 
-<p>None. Selecting a component, though, will display its attributes.
-With multiple components selected, attributes shared by all are shown,
-blank if they have different values and otherwise with the value they
-all have in common. (Wires are ignored if there are any non-wires in
-the selection.) Changes to the attribute value affect all selected
-components.</p>
+<p>Aucun. La sélection d'un composant affichera cependant ses attributs. Avec plusieurs composants sélectionnés, les attributs partagés par tous sont affichés, vides s'ils ont des valeurs différentes et avec la valeur qu'ils ont tous en commun. (Les fils sont ignorés s'il y a des non-fils dans la sélection.) Les modifications apportées à la valeur d'attribut affectent tous les composants sélectionnés.
+None. Selecting a component, though, will display its Attributs. With multiple components selected, Attributs shared by all are shown, blank if they have different values and otherwise with the value they all have in common. (Wires are ignored if there are any non-wires in the selection.) Changes to the attribute value affect all selected components.</p>
 
-<p><a href="../index.html">Back to <em>Library Reference</em></a></p>
+<p><a href="../index.html">Retour dans <em>Référence de la bibliothèque</em></a></p>
 
 </body>
 </html>

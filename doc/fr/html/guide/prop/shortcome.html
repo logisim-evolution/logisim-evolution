@@ -1,53 +1,37 @@
 <html>
 <meta charset="UTF-8">
 <head>
-<title>Shortcomings</title>
+<title>Limitations</title>
+<LINK rel="stylesheet" type="text/css" href="../style.css">
 </head>
 
 <body bgcolor="FFFFFF">
 
-<h1>Shortcomings</h1>
+<h1>Limitations</h1>
 
-<p>Logisim's propagation algorithm is more than sophisticated enough
-for almost all educational purposes; but it is not sophisticated
-enough for industrial circuit design. In order from most damning to
-least damning, the shortcomings of Logisim's propagation technique
-include:
+<p>L'algorithme de propagation de Logisim est plus que suffisamment sophistiqué pour presque tous les objectifs éducatifs; mais il ne l'est pas assez pour la conception de circuits industriels.<br> Les défauts de la technique de propagation de Logisim incluent:
 <ul>
 
-<li><p>Except for the issue of gate delays, Logisim does not particularly
-concern itself with timing issues. It is very idealized, so that a pair of NOR
-gates in an S-R latch configuration will toggle in lockstep infinitely, rather
-than the circuit eventually settle into a stable state.</p></li>
+<li><p>Mis à part la question des délais des portes, Logisim ne se préoccupe pas particulièrement des problèmes de synchronisation. Il est très idéalisé, de sorte qu'une paire de portes NOR dans une configuration de verrouillage S-R basculera indéfiniment alors que dans la réalité le circuit s'installe finalement dans un état stable.
+</p></li>
 
-<li><p>Logisim cannot simulate subcircuits whose pins sometimes behave
-as inputs and sometimes behave as outputs. Components built using
-Java can have such pins, though: Within the built-in libraries,
-the Memory library's RAM circuit contains a D pin that can act both
-as an input and as an output.</p></li>
+<li><p>Logisim ne peut pas simuler des sous-circuits avec des broches bidirectionnelles. Les composants construits à l'aide de Java peuvent cependant avoir de telles broches: dans les bibliothèques intégrées, le circuit RAM de la bibliothèque de mémoire contient des broches D pouvant servir à la fois d'entrée et de sortie.
+</p></li>
 
-<li><p>Logisim cuts off its simulation after a fixed number of iterations
-assuming that there is an oscillation error.
-Conceivably, a large circuit that does not oscillate could lead to
-trouble.</p></li>
+<li><p> Logisim coupe sa simulation après un nombre fixe d'itérations en présupposant qu'il y a une erreur d'oscillation. En théorie, un grand circuit qui n'oscille pas et qui nécessite un grand nombre d'itérations pourrait causer des problèmes.</p></li>
 
-<li><p>Logisim does nothing with respect to discriminating between
-voltage levels: A bit can be only on, off, unspecified, or error.</p></li>
+<li><p>Logisim ne fait rien en ce qui concerne la distinction entre les niveaux de tension: un bit peut uniquement être activé, désactivé, non spécifié ou être une erreur.
+</p></li>
 
-<li><p>There are additional shortcomings, too, that I have omitted because
-they are so obscure that if you were aware of them, it would be obvious
-that Logisim comes nowhere close to that level. As an extreme example,
-I have a friend who works for a major chip manufacturer, and his
-job is to worry about "bubbles" in chips' nanometer-wide wires growing
-and leading to random disconnection.</p></li>
+<li><p>Il ya aussi des lacunes supplémentaires que j’ai omises, car elles sont tellement obscures que si vous en étiez au courant, il serait évident pour vous que Logisim n’arrive pas à ce niveau. Comme exemple extrême, j'ai un ami qui travaille pour un grand fabricant de puces, et son travail consiste à se soucier des «bulles» qui se développent dans les fils nanométriques des puces et entraînent une déconnexion aléatoire.
+</p></li>
 
-<li><p>Even beyond this, I am not a circuit design specialist; thus,
-there may well be errors in the propagation technique of which I am
-not aware. I welcome corrections from experts.</p></li>
+<li><p>Même au-delà, je ne suis pas un spécialiste de la conception de circuits; il se peut donc qu'il y ait des erreurs dans la technique de propagation dont je ne suis pas au courant. Je salue les corrections des experts.
+</p></li>
 
 </ul>
 
-<p><strong>Next:</strong> <em><a href="../index.html">User's Guide</a></em>.</p>
+<p><b>Suite:</b> <em><a href="../index.html">Guide de l'utilisateur</a></em>.</p>
 
 </body>
 </html>

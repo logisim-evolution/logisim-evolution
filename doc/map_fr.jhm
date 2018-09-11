@@ -78,6 +78,7 @@
   <mapID target="wiring_tunnel" url="fr/html/libs/wiring/tunnel.html"/>
   <mapID target="wiring_pull" url="fr/html/libs/wiring/pull.html"/>
   <mapID target="wiring_clock" url="fr/html/libs/wiring/clock.html"/>
+  <mapID target="wiring_por" url="fr/html/libs/wiring/poweronreset.html"/>
   <mapID target="wiring_constant" url="fr/html/libs/wiring/constant.html"/>
   <mapID target="wiring_const01" url="fr/html/libs/wiring/const01.html"/>
   <mapID target="wiring_transist" url="fr/html/libs/wiring/transist.html"/>
@@ -142,6 +143,7 @@
   <mapID target="icon_pull" url="fr/icons/pullshap.gif"/>
   <mapID target="icon_probe" url="fr/icons/probe.gif"/>
   <mapID target="icon_clock" url="fr/icons/clock.gif"/>
+  <mapID target="icon_por" url="fr/icons/por.png"/>
   <mapID target="icon_extender" url="fr/icons/extender.gif"/>
   <mapID target="icon_label" url="fr/icons/text.gif"/>
   <mapID target="icon_constant" url="fr/icons/constant.gif"/>

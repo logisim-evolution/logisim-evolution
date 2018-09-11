@@ -1,81 +1,64 @@
 <html>
-<head><meta http-equiv="content-type" content="text/html; charset=UTF-8">
-<title>Ponta de Prova</title>
+<meta charset="UTF-8">
+<head>
+<title>Sonde</title>
 </head>
 
 <body bgcolor="FFFFFF">
 
-<h1><img  align="center" src="../../icons/probe.gif" width="32" height="32">
-<em>Probe</em></h1>
+<h1><img  align="center" src="../../../icons/probe.gif" width="32" height="32">
+<em>Sonde</em></h1>
 
 <p><table>
-<tr><td><strong>Biblioteca:</strong></td>
-	<td><a href="index.html">Base</a></td></tr>
-<tr><td><strong>Introdução:</strong></td>
-	<td>2.0.3</td></tr>
-<tr><td valign="top"><strong>Aparência:</strong></td>
-	<td valign="top"><img src="../images/probe.png" width="39" height="52"></td></tr>
+<tr><td><strong>Librairie:</strong></td>
+	<td><a href="index.html">Câblage</a></td></tr>
+<tr><td><strong>Introduction:</strong></td>
+	<td>2.0.3 (dans la bibliothèque de base, déplacé dans le câblage en 2.7.0)</td></tr>
+<tr><td valign="top"><strong>Apparence:</strong></td>
+	<td valign="top"><img src="../../../img-libs/probe.png" width="39" height="52"></td></tr>
 </table></p>
 
-<h2>Comportamento</h2>
+<h2>Comportement</h2>
 
-<p> Uma ponta de prova é um elemento que simplesmente exibirá o valor em um dado
-ponto de um circuito. Ela mesma não interage com os outros componentes. 
-</p>
+<p>Une sonde est un élément qui affiche simplement la valeur à un point donné dans un circuit. Il n'interagit pas avec d'autres composants.</p>
 
-<p> Na maioria dos aspectos, o componente ponta de prova é similar em funcionalidade
-ao <a href="pin.html">componente Pino</a> configurado para saída.
-A principal diferença é que se o circuito for usado como um subcircuito, então
-um pino de saída fará parte dessa interface, enquanto a ponta de prova não.
-Outra diferença é que a ponta de prova não possui um atributo Bits de Dados
-para ser configurado: a largura em bits será inferida a partir de qualquer
-valor que seja amostrado por sua entrada. Graficamente, elas são similares, mas
-possuem bordas ligeiramente diferentes: um pino possui a borda em preto, mais
-larga, enquanto a da ponta de prova será mais estreita, em cinza.
-</p>
+<p>À bien des égards, le composant de sonde duplique la fonctionnalité trouvée dans un composant <a href="pin.html"> Pin </a> configuré en tant que pin de sortie. La sonde présente cepandant certaines différences :<br>- Elle n'est pas considérée comme une sortie par un circuit de hérachie supérieur.<br>- Elle n’a pas d’attribut Data Bits à configurer, La largeur de bit est déduite de la valeur qu’elle trouve sur son entrée.<br>- Graphiquement sa bordure est plus fine et grise.</p>
 
-<h2>Pinos</h2>
+<h2>Pins</h2>
 
-<p> O componente ponta de prova tem apenas um pino, o qual servirá como entrada.
-A largura em bits desse pino é adaptativa: a ponta de prova se ajustará a
-entradas de qualquer largura.
-</p>
+<p>Un composant de sonde ne possède qu’une seule broche, qui servira d’entrée à la sonde. La largeur acceptée par cette broche est adaptative: la sonde s'adaptera aux entrées de toute largeur.</p>
 
-<h2>Atributos</h2>
+<h2>Attributs</h2>
 
-<p> Quando o componente for selecionado ou estiver sendo acrescentado,
-as teclas com setas poderão alterar o seu atributo <q> Direção</q>.
-</p>
+<p>Lorsque le composant est sélectionné ou ajouté, les touches fléchées modifient son attribut <q>Orientation</q>.</p>
 
 <dl>
 
-<dt> Direção </dt>
-<dd> A face do componente onde o seu pino de entrada deverá estar. </dd>
+<dt>Orientation</dt>
+<dd>Le côté du composant dessiné où doit se trouver sa broche d'entrée.</dd>
 
-<dt> Rótulo </dt>
-<dd> O texto para o rótulo associado ao componente. </dd>
+<dt>Label</dt>
+<dd>Le texte dans l'étiquette associée au composant.</dd>
 
-<dt> Posição do Rótulo </dt>
-<dd> A posição do rótulo em relação ao componente.</dd>
+<dt> Emplacement du libellé </ dt>
+<dd> L'emplacement de l'étiquette par rapport au composant. </ dd>
+<dt> Police de libellé </ dt>
+<dd> La police avec laquelle rendre l'étiquette. </ dd>
 
-<dt> Fonte do Rótulo </dt>
-<dd> A fonte com a qual o rótulo será mostrado. </dd>
-
-<dt> Base </dt>
-<dd> A base do sistema de numeração (por exemplo, binário, decimal, ou hexadecimal)
-no qual o valor será exibido.</dd>
+<dt>Radix</dt>
+<dd>la base (par exemple, binaire, décimale ou hexadécimale) dans laquelle une valeur est affichée.</dd>
 
 </dl>
 
-<h2> Comportamento da ferramenta Testar </h2>
+<h2>Action de l'outil pousser</h2>
 
-<p> Nenhum. </p>
+<p>Aucun.</p>
 
-<h2> Comportamento da ferramenta Texto </h2>
+<h2>Action de l'outil text</h2>
 
-<p> Permite que o rótulo associado ao componente seja editado.</p>
+<p>Permet de modifier l’étiquette associée au composant.</p>
 
-<p><a href="../index.html">Voltar à <em>Referência para bibliotecas</em></a></p>
+<p><a href="../index.html">Retour à <em>Référence de la bibliothèque</em></a></p>
 
 </body>
 </html>
