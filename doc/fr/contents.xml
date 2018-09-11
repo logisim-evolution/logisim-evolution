@@ -10,6 +10,7 @@
       </tocitem>
       <tocitem target="attrlib" text="Librairies et attributs">
         <tocitem target="attrlib_explore" text="Le panneau de navigation"/>
+		<tocitem target="attrlib_toolsbar" text="les barre d'outils"/>
         <tocitem target="attrlib_attr" text="Le tableau des attributs"/>
         <tocitem target="attrlib_tool" text="Attributs des outils et des composants"/>
       </tocitem>
@@ -39,9 +40,9 @@
         <tocitem target="menu_winhelp" text="Menus fenêtre et aide"/>
       </tocitem>
       <tocitem target="mem_guide" text="Composant mémoire">
-        <tocitem target="mem_poke" text="Pousser la mémoire"/>
+        <tocitem target="mem_poke" text="Editer la mémoire"/>
         <tocitem target="mem_menu" text="Menus Pop-up et fichiers"/>
-        <tocitem target="mem_hex" text="Editeur Hex"/>
+        <tocitem target="mem_hex" text="Editeur Hexadecimal"/>
       </tocitem>
       <tocitem target="log" text="Journalisation">
         <tocitem target="log_selection" text="Onglet de sélection"/>

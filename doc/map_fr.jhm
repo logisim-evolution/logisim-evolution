@@ -12,6 +12,7 @@
   <mapID target="tutorial_test" url="fr/html/guide/tutorial/tutor-test.html"/>
   <mapID target="attrlib" url="fr/html/guide/attrlib/index.html"/>
   <mapID target="attrlib_explore" url="fr/html/guide/attrlib/explore.html"/>
+  <mapID target="attrlib_toolsbar" url="fr/html/guide/attrlib/toolsbar.html"/>
   <mapID target="attrlib_attr" url="fr/html/guide/attrlib/attr.html"/>
   <mapID target="attrlib_tool" url="fr/html/guide/attrlib/tool.html"/>
   <mapID target="subcirc" url="fr/html/guide/subcirc/index.html"/>
