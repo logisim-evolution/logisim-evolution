@@ -8,7 +8,7 @@
 	xmlns:fx="javafx:com.sun.javafx.tools.ant">
 
 	<property name="app.name" value="Logisim-evolution"/>
-	<property name="app.version" value="2.14.3"/>
+	<property name="app.version" value="2.14.7"/>
 
     <target name="cleanall" depends="clean">
         <delete dir="bin/com/bfh/"/>
