@@ -51,7 +51,10 @@ public class CustomFrequencySelDialog implements ActionListener {
         	i++;
         }
         if (ret < 4.0 || !ok) {
-			DividerText.setText(Long.toString((long) (ClockFreq/TickFrequency)));
+        	long value = (long) (ClockFreq/TickFrequency);
+			if (value < 4)
+               value = 4;
+			DividerText.setText(Long.toString(value));
     		return GetDivider();
         }
         return ret;
