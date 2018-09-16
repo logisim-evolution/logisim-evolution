@@ -11,7 +11,7 @@
 #
 # Context   : Logisim advanced simulator run script
 #             You should run this script from comp file if you want the
-#             the path to be correct (and don't mess up your sim folder)
+#             the path to be correct (and don't mess up your sim folder).
 #
 # --| Modifications |------------------------------------------------------------
 # Ver   Date        Engineer     Comments
