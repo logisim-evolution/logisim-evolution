@@ -118,7 +118,7 @@
             <fx:bundleArgument arg="mac.CFBundleName" value="Logisim"/>
             <fx:bundleArgument arg="mac.CFBundleIdentifier" value="com.cburch.logisim"/>
             <fx:bundleArgument arg="win.menuGroup" value="Engineering"/>
-            <fx:bundleArgument arg="signBundle" value="false"/>
+            <!-- <fx:bundleArgument arg="signBundle" value="false"/> -->
             <fx:bundleArgument arg="dropinResourcesRoot" value="${basedir}"/>
 
             <fx:preferences install="true"
@@ -173,7 +173,7 @@
             <fx:bundleArgument arg="mac.CFBundleName" value="Logisim"/>
             <fx:bundleArgument arg="mac.CFBundleIdentifier" value="com.cburch.logisim"/>
             <fx:bundleArgument arg="win.menuGroup" value="Engineering"/>
-            <fx:bundleArgument arg="signBundle" value="false"/>
+            <!-- <fx:bundleArgument arg="signBundle" value="false"/> -->
             <fx:bundleArgument arg="dropinResourcesRoot" value="${basedir}"/>
 
             <fx:preferences install="true"
