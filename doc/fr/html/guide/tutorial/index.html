@@ -5,7 +5,8 @@
 <LINK rel="stylesheet" type="text/css" href="../style.css">
 </head>
 
-<body bgcolor="FFFFFF">
+<body>
+<div class="maindiv">
 
 <h1>Tutoriel pour débuter</h1>
 
@@ -14,9 +15,42 @@
 <p>Logisim vous permet de dessiner et simuler des circuits digitaux. Il est destiné à être utilisé comme un outil d'enseignement, pour 	vous aider à apprendre comment de tels circuits fonctionnent.</p>
 
 <p>Comme premier exercice pratique, construisons un circuit XOR: c'est un circuit qui prend deux entrées (que nous appellerons <var>x</var> et <var>y</var>) et dont la sortie est 0 si les deux entrées sont identiques et 1 si elles sont différentes. La table de vérité suivante illustre ce fonctionnement.</p>
-<center><img src="../../../img-guide/tutorial-xor-table.png"></center>
-<p>Nous pouvons dessiner un tel circuit sur le papier.</p>
-<center><img src="../../../img-guide/tutorial-xor-circ.png"></center>
+
+<table border="0" width="150px" align="center">
+<tbody>
+<tr style="background-color: #ccd1d6;">
+<th>&nbsp x &nbsp</th>
+<th>&nbsp y &nbsp</th>
+<th>x XOR y</th>
+</tr>
+<tr align="center">
+<td>0</td>
+<td>0</td>
+<td>1</td>
+</tr >
+<tr align="center">
+<td>1</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr align="center">
+<td>0</td>
+<td>1</td>
+<td>1</td>
+</tr>
+<tr align="center">
+<td>1</td>
+<td>1</td>
+<td>0</td>
+</tr>
+</tbody>
+</table>
+
+<p align="center">
+<img src="../../../img-guide/tutorial-xor-circ.png"><br>
+Nous pouvons dessiner un tel circuit sur le papier.
+</p>
+
 <p>Mais justement, parce que c'est sur du papier, cela ne signifie pas que c'est fonctionnel. Pour vérifier notre travail, nous allons le dessiner dans Logisim et le tester et comme bonus supplémentaire, nous obtiendrons un circuit qui présentera bien mieux que ce que nous aurions pu dessiner à la main.</p>
 
 <p><a href="tutor-orient.html">Etape 0: S'orienter</a>
@@ -30,5 +64,6 @@
 
 <p><b>Suite:</b> <a href="tutor-orient.html">Etape 0: S'orienter</a></p>
 
+</div>
 </body>
 </html>

@@ -1,15 +1,37 @@
-.menu {
-	 color: black;
-	 background-color :#a3b8cc;
-	 font-family:arial;
-	 font-size:100%;
-	 font-weight:bold;
+div.serif {
+	 font-family:"Palatino Linotype", "Book Antiqua", Palatino, serif;
 }
-.serif {
-	 font-family:serif
+
+div.sans-serif {
+	 font-family:Arial, Helvetica, sans-serif, sans-serif;
 }
-.arial {
-     font-family:arial;
+
+div.monospace {
+	 font-family: "Courier New", Courier, monospace;
+}
+
+div.cursive {
+	 font-family: "Comic Sans MS",cursive;
+}
+div.fantasy {
+	 font-family: fantasy;
+}
+
+body {
+	  background-color: #FFFFFF;
+	  color:#000000;
+      }
+	  
+div.maindiv {
+	max-width:560px;
+	border:solid 1px;
+}
+
+div.leftdiv {
+   position:relative; 
+   float:left; 
+   max-width:160px;
+   border:solid 1px;   
 }
 
 
@@ -48,7 +70,7 @@ tt {
 	font-size:110%;
 }
 b.dblue {
-	color: #0025ff;
+	color: #00008B;
 }
 b.orange {
 	color: #FF6a00;
@@ -56,13 +78,13 @@ b.orange {
 b.red {
 	color: #FF0000;
 }
-B.dgreen {
+b.dgreen {
 	color: #007F0E;
 }
 b.blue {
 	color: #8496ff;
 }
-B.green {
+b.green {
 	color: #00FF21;
 }
 b.grey {
@@ -71,10 +93,17 @@ b.grey {
 b.grey1 {
 	color: #909090;
 }
-b.menu {
+
+span.menu {
 	color: black;
 	background-color :#b0b0b0;
 	font-family:arial;
+	font-weight:bold;
+}
+span.propertie {
+	color:#00008B;
 }
 
-
+span.tkeybd {
+	color:#007F0E;
+}
