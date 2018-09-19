@@ -23,7 +23,7 @@ body {
       }
 	  
 div.maindiv {
-	max-width:560px;
+#	max-width:560px;
 	border:solid 1px;
 }
 
@@ -102,6 +102,7 @@ span.menu {
 }
 span.propertie {
 	color:#00008B;
+	font-weight:bold;
 }
 
 span.tkeybd {
