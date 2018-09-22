@@ -5,15 +5,15 @@
 <LINK rel="stylesheet" type="text/css" href="../style.css">
 </head>
 
-<body bgcolor="FFFFFF">
+<body><div class="maindiv">
 
 <h1>Tester de multiples fichiers</h1>
 
-<p>Dans l'exemple d'une classe, vous aurez beaucoup de fichiers à tester pour leur équivalence et vous ne désirez pas parcourir le résultat de chacune des solutions des étudiants.</p>
+<p>Dans l'exemple d'une classe, vous aurez un certain nombre de fichiers à tester pour leur équivalence et vous ne désirez pas parcourir le résultat de chacune des solutions prposées par les étudiants.</p>
 
 <h2>Construire la comparaison dans le circuit</h2>
 
-<p>Une approche consiste à construire un circuit de test qui effectue directement la comparaison. Ici, nous créons un circuit supplémentaire de test qui englobe le circuit à tester. Dans notre circuit global, nous incluons à la fois le sous-circuit de référence <tt> adder-master.circ </tt> et le sous-circuit à tester situé directement dans le circuit imbriqué. Nous le connectons de manière à ce qu’il n’y ait qu’une sortie, c’est-à-dire 1 tant que les deux sous-circuits concordent.</p>
+<p>Une approche consiste à construire un circuit de test qui effectue directement la comparaison. Ici, nous créons un circuit supplémentaire de test qui englobe le circuit à tester. Dans notre circuit global, nous incluons à la fois le sous-circuit de référence <tt><b> adder-master.circ </b></tt> et le sous-circuit à tester situé directement dans le circuit imbriqué. Nous le connectons de manière à ce qu’il n’y ait qu’une sortie, c’est-à-dire 1 tant que les deux sous-circuits concordent.</p>
 
 <blockquote><img src="../../../img-guide/verify-adder-test2.png"></blockquote
 >
@@ -45,5 +45,5 @@ done</tt></blockquote>
 
 <p><b>Suite:</b> <em><a href="../index.html"><em>Guide utilisateur</em></a></em>.</p>
 
-</body>
+</div></body>
 </html>

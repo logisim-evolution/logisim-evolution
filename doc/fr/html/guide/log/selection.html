@@ -4,7 +4,7 @@
 	<title>Sélection des signaux</title>
 <LINK rel="stylesheet" type="text/css" href="../style.css">
 </head>
-<body bgcolor="FFFFFF">
+<body><div class="maindiv">
 
 <h1>Sélection des signaux</h1>
 
@@ -19,33 +19,33 @@
 <p>L'onglet est divisé en trois zones verticales. Le premier (le plus à  gauche) est une liste de tous les composants du circuit dont les valeurs peuvent être consignées. Parmi les bibliothèques intégrées, les types de composants suivants prennent en charge la journalisation<br>
 <blockquote>Librairie câblage : les broches,sonde et les horloges.<br>Librairie Entrée/Sortie : les boutons,led.<br> Librairie Mémoire : Tous les composants à l'exception des ROM.<br> </blockquote>
 La valeur des étiquettes sera présentée si celle-ci est associée a un composant dans les autres cas c'est le nom et l'emplacement dans le circuit que sera utilisé pour référence.<br>
-Tous les sous-circuits apparaîtront également dans la liste, un double-clic permet la sélection des points de celui-ci. Un composant RAM se comporte un peu de la même manière et les 256 premières adresses seront présentées et seront sélectionnables.
-Seuls les composants éligibles peuvent être sélectionnés. Le bouton ajouter&gt;&gt; sera activé que pour les composants prévus pour l'insertion.</p>
+Tous les sous-circuits apparaîtront également dans la liste, un double-clic sur l'élément permet la sélection des points de celui-ci. Un composant RAM se comporte un peu de la même manière et les 256 premières adresses seront présentées et seront sélectionnables.
+Seuls les composants éligibles peuvent être sélectionnés. Le bouton ajouter&gt;&gt; sera activé seulement pour les composants prévus pour l'insertion.</p>
 <p>La dernière zone verticale (la plus à droite) répertorie les composants sélectionnés. De plus, il indique la base dans laquelle les valeurs multibits du composant seront enregistrées.
-L'horloge <strong>sysclk</strong> doit y figurer, elle ne sera pas affichée dans le graphe.</p><ul>
+L'horloge <var><strong>sysclk</strong></var> doit y figurer, elle ne sera pas affichée dans le graphe.</p><ul>
 
-<li><strong>Ajouter &gt;&gt;</strong> Ajoute les éléments actuellement sélectionnés du côté gauche dans la sélection. Est actif seulement pour les composants éligibles.
+<li><strong>Ajouter &gt;&gt; :</strong> Ajoute les éléments actuellement sélectionnés du côté gauche dans la sélection. Est actif seulement pour les composants éligibles.
 
-</li><li><strong>Change la base</strong> permet la sélection successive d'une des ces bases : 2 (binaire), 10 (décimal) et 16 (hexadécimal).
+</li><li><strong>Change la base:</strong> Permet la sélection successive d'une des ces bases : 2 (binaire), 10 (décimal) et 16 (hexadécimal).
 
-</li><li><strong>Monter</strong> déplace le composant actuellement sélectionné vers le haut de la liste. </li><li><strong>Descendre</strong> Déplace le composant actuellement sélectionné vers le bas de la liste.
+</li><li><strong>Monter :</strong> déplace le composant actuellement sélectionné vers le haut de la liste. </li><li><strong>Descendre :</strong> Déplace le composant actuellement sélectionné vers le bas de la liste.
 
 </li><li><strong>Enlever &lt;&lt; </strong> supprime le composant actuellement sélectionné.
 </li></ul><p></p>
 <p>
-La quatrième partie au-dessous permet de définir si l'on désire un affichage du temps au-dessus du graphe. Pour cela il est nécessaire de cocher la case Référence temporelle et sélectionner le signal qui sera la référence. La fréquence définira l'échelle de temps affichée. Cela ne règle absolument pas la vitesse d'exécution de la simulation du circuit.
+La quatrième partie au-dessous permet de définir si l'on désire un affichage du temps au-dessus du graphe. Pour cela il est nécessaire de cocher la case <i>"Référence temporelle"</i> et sélectionner le signal qui sera la référence. La fréquence définira l'échelle de temps affichée. Cela ne règle absolument pas la vitesse d'exécution de la simulation du circuit.
 Par exemple ci-dessous nous avons sélectionné le signal B0 et une fréquence de 100hz.
 <center>
 <img src="../../../img-guide/log-graph1.png">
 </center>
 </p>
-<!--<p>Chaque projet n'a qu'une seule fenêtre de journalisation. Lorsque vous passez à l'affichage d'un autre circuit dans le projet, la fenêtre de journalisation bascule automatiquement sur l'enregistrement de l'autre circuit. En d'autres termes, vous le faites si vous vous<a href="/subcirc/debug.html"> déplacez dans la même simulation </a>, auquel cas le module de journalisation ne change pas.</p>
+<!--
+a vérifier ==
+<p>Chaque projet n'a qu'une seule fenêtre de journalisation. Lorsque vous passez à l'affichage d'un autre circuit dans le projet, la fenêtre de journalisation bascule automatiquement sur l'enregistrement de l'autre circuit. En d'autres termes, vous le faites si vous vous<a href="/subcirc/debug.html"> déplacez dans la même simulation </a>, auquel cas le module de journalisation ne change pas.</p>
 
 <p>Notez que lorsque le module de journalisation bascule vers l'enregistrement d'une autre simulation, il arrête toute connexion à un fichier. Si vous revenez à la simulation, elle mémorisera la configuration de cette simulation, mais vous devrez réactiver manuellement la journalisation des fichiers.</p>-->
 
 
 <p><b>Suite:</b> <a href="timetable.html">Fenêtre chronogramme</a>.</p>
-
-
-
-</body></html>
+</div></body>
+</html>

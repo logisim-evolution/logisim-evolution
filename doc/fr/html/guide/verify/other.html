@@ -5,7 +5,7 @@
 <LINK rel="stylesheet" type="text/css" href="../style.css">
 </head>
 
-<body bgcolor="FFFFFF">
+<body><div class="maindiv">
 
 <h1>Autres options de vérifications</h1>
 
@@ -13,7 +13,7 @@
 
 <h2>Le paramètre en ligne de commande <tt>-load</tt></h2>
 
-<p>Un circuit plus complexe pourrait inclure un composant RAM qui doit être chargé avec un programme pour que le circuit fonctionne. Vous pouvez spécifier un fichier image mémoire sur la ligne de commande, qui sera chargé dans tout composant RAM du circuit avant que la simulation ne commence. Cela ne fonctionne uniquement pour l'exécution en ligne de commande.</p> 
+<p>Un circuit plus complexe pourrait inclure un composant RAM qui doit être chargé avec un programme pour que le circuit fonctionne. Vous pouvez spécifier un fichier image mémoire sur la ligne de commande, qui sera chargé dans tout composant RAM du circuit avant que la simulation ne commence. Cela fonctionne uniquement avec l'exécution en ligne de commande.</p> 
 
 <blockquote><tt>java -jar logisim-filename.jar cpu.circ -tty table -load mem-image.txt</tt></blockquote>
 
@@ -57,5 +57,5 @@
 
 <p><b>Suite:</b>&nbsp;<a href="multi.html">Tester de multiples fichiers</a>.</p>
 
-</body>
+</div></body>
 </html>
