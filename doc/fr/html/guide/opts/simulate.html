@@ -4,7 +4,7 @@
 	<title>L'onglet Simulation</title>
 <LINK rel="stylesheet" type="text/css" href="../style.css">
 </head>
-<body bgcolor="FFFFFF">
+<body>
 
 <h1>L'onglet Simulation</h1>
 
@@ -16,7 +16,7 @@
 <ul>
 <li><p>La case à cocher <strong>Les mémoires sont initialisés dans un état aléatoire</strong> permet de déterminer comment sont initialisé les mémoires RAM, les registres (D,T,J-K) et  les compteurs. Si la case est décochée, tous les composants seront initialisés avec un 0.<br> Dans l'autre cas, lorsque l'on ouvre le projet, que l'on dépose un composant ou que l'on réinitialise la simulation; les composants de type registre seront initialisés avec une valeur indéfinie et les mémoires RAM seront initialisés avec une série aléatoire. 
 </li>
-<li><p>Le menu déroulant <strong> Itérations jusqu'à l'oscillation </strong> indique la durée pendant laquelle un circuit doit être simulé avant de décider qu'il oscille. Cette valeur représente le nombre de clics de l'horloge interne cachée (une simple porte ne prend qu'un clic). La valeur par défaut de 1000 est suffisante pour pratiquement tous les usages, ceci même pour les grands circuits.<br> 
+<li><p>Le menu déroulant <strong> Itérations jusqu'à l'oscillation </strong> indique la durée pendant laquelle un circuit doit être simulé avant de décider qu'il oscille. Cette valeur représente le nombre de pas de l'horloge interne cachée (une simple porte ne prend qu'un pas). La valeur par défaut de 1000 est suffisante pour pratiquement tous les usages, ceci même pour les grands circuits.<br> 
 
 Mais vous voudrez peut-être augmenter le nombre d'itérations si vous travaillez avec un circuit où Logisim signale de fausses oscillations. Il est peu probable que cela pose problème dans la pratique, cependant il est possible que cela arrive dans un circuit qui incorpore un grand nombre bascule avec le bruit aléatoire activé. A l'inverse vous souhaiterez peut-être réduire le nombre d'itérations si vous travaillez avec un circuit qui a tendance à osciller et que vous utilisez un processeur inhabituellement lent.</p></li>
 
@@ -29,7 +29,7 @@ Mais vous voudrez peut-être augmenter le nombre d'itérations si vous travaille
 <p>
 <li><strong>Durée d'un pas de l'horloge clk</strong> 
 <p>
-Quand on est en mode pas à pas dans la simulation, détermine l'effet du menu simulation > 'clk' un pas (F2) ou du bouton dans la vue chronogramme. Avance d'une période complète ou d'une demi-période de l'horloge. Les autres horloges avancent proportionnellement à leurs paramètres de concert.  
+Quand on est en mode pas à pas dans la simulation, détermine l'effet du menu <span class=menu>|&nbsp Simulation &nbsp|</span> &rarr; <span class=menu>|&nbsp 'clk' un pas &nbsp|</span> ou du bouton dans la vue chronogramme. Avance d'une période complète ou d'une demi-période de l'horloge. Les autres horloges avancent de concert et proportionnellement à leurs paramètres.  
 </p>
 </li>
 </p>
