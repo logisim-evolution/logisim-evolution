@@ -1,12 +1,12 @@
 <html>
 <meta charset="UTF-8">
 <head>
-<title>Erreurs oscillatoires</title>
-<LINK rel="stylesheet" type="text/css" href="../style.css">
+	<title>Erreurs oscillatoires</title>
+	<LINK rel="stylesheet" type="text/css" href="../style.css">
 </head>
 
-<body bgcolor="FFFFFF">
-
+<body>
+<div class="maindiv">
 <h1>Erreurs oscillatoires</h1>
 
 <p>L'algorithme de propagation, qui fonctionne normalement sans aucun problème, deviendra très sensible lorsque vous créerez un circuit qui oscille.</p>
@@ -22,6 +22,6 @@
 <p>Logisim détecte les oscillations en utilisant une technique assez simple: si la simulation de circuit semble avoir beaucoup d'itérations, après un seuil elle va simplement abandonner et signaler les oscillations. (Les points qu'il identifie comme étant impliqués sont ceux qui ont été modifiés dans les dernières itérations 25%.) Ainsi, il pourrait signaler à tort des oscillations, en particulier si vous travaillez avec un circuit exceptionnellement grand; mais ce serait plus grand que tout ce que j'ai construit avec Logisim. Dans tous les cas, si vous êtes certain que le rapport est erroné, vous pouvez configurer le nombre d’itérations à  effectuer pour modifier le seuil de détection des oscillations via <a href="../opts/index.html">Options de projet</a> <a href="../opts/simulate.html">Onglet Simulation</a>.</p>
 
 <p><b>Suite:</b> <a href="shortcome.html">Limitations</a>.</p>
-
+</div>
 </body>
 </html>
