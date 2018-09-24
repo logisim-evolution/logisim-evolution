@@ -8,7 +8,7 @@
 	xmlns:fx="javafx:com.sun.javafx.tools.ant">
 
 	<property name="app.name" value="Logisim-evolution"/>
-	<property name="app.version" value="2.14.3"/>
+	<property name="app.version" value="2.14.7"/>
 
     <target name="cleanall" depends="clean">
         <delete dir="bin/com/bfh/"/>
@@ -118,7 +118,7 @@
             <fx:bundleArgument arg="mac.CFBundleName" value="Logisim"/>
             <fx:bundleArgument arg="mac.CFBundleIdentifier" value="com.cburch.logisim"/>
             <fx:bundleArgument arg="win.menuGroup" value="Engineering"/>
-            <fx:bundleArgument arg="signBundle" value="false"/>
+            <!-- <fx:bundleArgument arg="signBundle" value="false"/> -->
             <fx:bundleArgument arg="dropinResourcesRoot" value="${basedir}"/>
 
             <fx:preferences install="true"
@@ -173,7 +173,7 @@
             <fx:bundleArgument arg="mac.CFBundleName" value="Logisim"/>
             <fx:bundleArgument arg="mac.CFBundleIdentifier" value="com.cburch.logisim"/>
             <fx:bundleArgument arg="win.menuGroup" value="Engineering"/>
-            <fx:bundleArgument arg="signBundle" value="false"/>
+            <!-- <fx:bundleArgument arg="signBundle" value="false"/> -->
             <fx:bundleArgument arg="dropinResourcesRoot" value="${basedir}"/>
 
             <fx:preferences install="true"

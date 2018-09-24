@@ -10,15 +10,15 @@
 # Authors      : christian.mueller@heig-vd.ch (CMR)
 # Date         : 19.05.2014
 #
-# Context      : This socket client is binded to Questsim/Modelsim simulation
-#								 and drive the signals received from Logisim. After a simulation
-#								 step, it returns the output signals to Logisim through the
-#								 socket.
+# Context      : This socket client is bound to Questsim/Modelsim simulation
+#                and drives the signals received from Logisim. After a
+#                simulation step, it returns the output signals to Logisim
+#                through the socket.
 #
 #--| Modifications |------------------------------------------------------------
 # Version   Author Date               Description
-#	v1.1			CMR			25.06.14					- Exit if socket fails
-#	v1.2			CMR			23.07.14					- Better error handling, add reset option
+# v1.1      CMR    25.06.14           - Exit if socket fails
+# v1.2      CMR    23.07.14           - Better error handling, add reset option
 #-------------------------------------------------------------------------------
 set Version 1.2
 
