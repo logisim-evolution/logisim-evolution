@@ -11,53 +11,40 @@
 
 <p>Depuis la fenêtre Vecteur de test vous pouvez charger un vecteur de test à partir d'un fichier et Logisim lancera des tests sur le circuit actuel. Il n'y a qu'une seule fenêtre de vecteur de test pour le projet et la table changera pour refléter le circuit simulé dans la fenêtre du projet. Notez cependant que le module vecteur de test exécute une copie séparée du simulateur de circuit et n'interfère donc pas avec la simulation dans la fenêtre du projet et n'est pas influencée par cette simulation.</p>
 
-<p>Pour l'exemple nous allons tester le circuit ci-dessous. Ce circui donne les résultats de cinque fonctions logiques à partir de deux entrées. Il comporte une erreur la porte NAND du bas devrait être une port AND</p>
+<p>Pour l'exemple nous allons tester le circuit ci-dessous. Ce circuit donne les résultats de cinque fonctions logiques à partir de deux entrées. Il comporte une erreur la porte NAND du bas devrait être une port AND</p>
 <center><img src="../../../img-guide/vector-texta.png"></center>
 <p>Le fichier de test resemble à ceci<br>
 <pre>
-A B O_Nor O_Nand O_Xor O_Or O_And
-0 0 1 1 0 0 0
-0 1 0 1 1 1 0
-1 0 0 1 1 1 0
-1 1 0 0 0 1 1
+A B O_Nor O_Nand O_Xor O_Or O_And O_AB[2]
+0 0 1 1 0 0 0 00
+0 1 0 1 1 1 0 01
+1 0 0 1 1 1 0 10
+1 1 0 0 0 1 1 11
 </pre>
 </p>
-<p> 
+<p>Pour lancer le test sélectionnez le menu <span class=menu>|&nbsp Simulation &nbsp|</span> &rarr; <span class=menu>|&nbsp Vecteur de test &nbsp|</span> puis utilisez le bouton <b>"Chargez vecteur"</b> Sélectionnez le fichier des vecteurs que vous avez construit. La simulation est executée immédiatement et un tableau s'affiche avec le résultat. 
 </p>
+<center><img src="../../../img-guide/vector-result.png"></center>
 
-<p>Toute sortie incorrecte sera signalée en rouge. Passez la souris sur la case rouge pour voir ce que la sortie aurait dû être, en fonction du vecteur de test. Les lignes avec des sorties incorrectes sont triées en haut de la fenêtre.
-Any incorrect outputs will be flagged in red. Hover the mouse over the red box to see what the output should have been, according to the test vector. Rows with incorrect outputs are sorted to the top of the window.</p>
+<p>Toute sortie incorrecte sera signalée en rouge. Les lignes avec des sorties incorrectes sont triées en haut de la fenêtre.</p>
 
-<p>Le format de fichier est simple. Vous pouvez utiliser le module de journalisation (avec "Inclure la ligne d'en-tête" sélectionné dans l'onglet Sortie de fichier) pour commencer, car dans la plupart des cas, le module de journalisation produit le même format que celui utilisé par le module Test Vector.
-The file format is simple. You can use the Logging module (with "Include Header Line" selected in the file output tab) to get started, since in most cases the Logging module outputs the same format as used by the Test Vector module.</p>
-
+<p>Le format de fichier des vecteurs est simple. La première ligne contiens les entêtes de colonnes qui correspondent au nom des signaux. Si la largeur de bit est plus grande que 1 alors il est nécessiare de le sépécifier entre des crochets. Exemple <tt>C[8]</tt>. Les données de chaque situation de test sont dans les lignes suivantes. Les lignes vides sont ignorées. Tout ce qui suit un caractère "#" est un commentaire.</P>
+<P>Les lignes restantes répertorient chaque valeur séparée par un espace ou une tabulation. Les valeurs peuvent être en hexadécimal, octal, binaire ou décimal signé. les valeurs Hexadécimal doivent avoir un préfixe <b><tt"0x"</tt></b>. Les valeurs octales doivent avoir un préfixe <b><tt>"0o"</tt></b>. Les nombres binaires et décimaux se distinguent par le nombre de chiffres: les valeurs binaires doivent toujours avoir exactement autant de chiffres que la largeur de la colonne; les valeurs décimales ne doivent pas avoir de zéros en tête et peuvent avoir un signe négatif.</P>
 <p>Voici un exemple de fichier vectoriel de test:
-Here is an example test vector file:.
 <pre>
-# my test vector for add32
-A[32] B[32] C[32] Cin Cout
-00000000000000000000000000000000        00000000000000000000000000000000        00000000000000000000000000000000        0       0
--2       0x00000005    3       0       0
-0        0o0003        3       0       0
+#test vector for adder 4bit 
+A[4] B[4] O[4] C_in C_out
+0000 0000 0000 0 0
+0000 0000 0001 1 0
+0xf 0xf 0000 1 0
+0xf 0xf 0001 1 1
+
 </pre>
-</p>
+<p>
 
-<p>Les lignes vides sont ignorées. Tout ce qui suit un caractère "#" est un commentaire. La première ligne non vide, sans commentaire, indique le nom de chaque broche d'entrée du circuit et sa largeur (si & gt; 1), séparées par un espace.
-Blank lines are ignored.  Anything following a '#' character is a comment.  The first non-blank, non-comment line lists the name of each circuit input pin and its width (if &gt; 1), separated by whitespace.
-</p>
+<p>Selon que les valeurs sont hexadécimales, octales ou binaires, la lettre minuscule <tt>"x"</tt> permet de spécifier quatre, trois ou un bits «sans importance». Par exemple a valeur 101xx est une valeur binaire de cinq bits, avec les deux derniers bits non spécifiés, et 0x1ax5 est une valeur hexadécimale avec quatre bits non spécifiés. De tels jokers ne peuvent pas être utilisés en notation décimale.</p> 
 
-<p>Les lignes restantes répertorient chaque valeur séparée par un espace. Les valeurs peuvent être en hexadécimal, octal, binaire ou décimal signé. Valeurs Hex
-doit avoir un préfixe '0x'. Les valeurs octales doivent avoir un préfixe «0o». Les nombres binaires et décimaux se distinguent par le nombre de chiffres: les valeurs binaires doivent toujours avoir exactement autant de chiffres que la largeur de la colonne; les valeurs décimales doivent toujours avoir moins, ne doivent pas avoir de zéros en tête et peuvent avoir un signe négatif.
-The remaining lines list each value separated by whitespace. The values can be in hex, octal, binary, or signed decimal. Hex values
-must have a '0x' prefix. Octal values must have a '0o' prefix. Binary and decimal are be distinguished by the number of digits: binary values must always have exactly as many digits as the width of the column; decimal values must always have fewer, should not have leading zeros, and may have a negative sign.</p>
-
-<p>Pour les valeurs hexadécimales, octales et binaires, un chiffre de «x» spécifie quatre, trois ou un bits «sans importance». Donc, la valeur 101xx est une valeur binaire de cinq bits, avec les deux derniers bits non spécifiés, et 0x1ax5 est une valeur hexadécimale avec quatre bits non spécifiés. De tels "ne se soucient pas" ne peuvent pas être utilisés en notation décimale.
-For hex, octal, and binary values, a digit of 'x' specifies four, three, or one "don't care" bits. So the value 101xx is a five bit binary value, with the last two bits unspecified, and 0x1ax5 is a hex value with four unspecified bits.  Such "don't cares" can not be used in decimal notation.</p> 
-
-<p><strong> Ligne de commande: </strong> Pour faciliter les tests automatisés, la fonctionnalité de vecteur de test peut être exécutée à partir de la ligne de commande, comme suit: <br>
-logisim -test &lt; circuitname &gt; &lt; vector.txt &gt; &lt; project.circ &gt;
-<strong>Command line:</strong> To facilitate automated testing, the test vector feature can be run from the command line, as follows:<br>
-logisim -test &lt;circuitname&gt; &lt;vector.txt&gt; &lt;project.circ&gt;</p>
+<p><strong> Ligne de commande: </strong> Pour faciliter les tests automatisés, la fonctionnalité de vecteur de test peut être exécutée à partir de la ligne de commande, comme suit:<tt> java -jar logisim-evolution.jar -test &lt; circuitname &gt; &lt; vector.txt &gt; &lt; project.circ &gt;</tt></p>
 
 <p><b>Suite:</b> <em><a href="../index.html"><em>User's Guide</em></a></em>.</p>
 </div>
