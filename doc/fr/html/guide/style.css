@@ -23,8 +23,8 @@ body {
       }
 	  
 div.maindiv {
-#	max-width:560px;
-	border:solid 1px;
+	max-width:560px;
+	border:solid 0px;
 }
 
 div.leftdiv {

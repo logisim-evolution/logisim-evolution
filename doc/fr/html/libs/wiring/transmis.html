@@ -20,7 +20,7 @@
 
 <h2>Comportement</h2>
 
-<p>Une porte de transmission a trois entrées appelées <em>source</em>, <em>n-gate</em> et <em>p-gate</em> et une sortie appelée <em>drain</em>. Schématisé, l'entrée <em>source</em> et la sortie <em>drain</em> sont reliées par deux plaques, Logisim dessine une pointe de flèche pour indiquer la direction du flux de l'entrée à la sortie.
+<p>Une porte de transmission a trois entrées appelées <em>source</em>, <em>n-gate</em> et <em>p-gate</em> et une sortie appelée <em>drain</em>. Schématisées, l'entrée <em>source</em> et la sortie <em>drain</em> sont reliées par deux plaques, Logisim dessine une pointe de flèche pour indiquer la direction du flux de l'entrée à la sortie.
 Les deux entrées <em>gate</em> sont dessinées sous forme de lignes reliées à des plaques parallèles reliant <em>source</em> à <em>drain</em>.
 La ligne d'entrée <em>p-gate</em> a un cercle, alors que la ligne d'entrée <em>n-gate</em> ne l'a pas.
 </p>
@@ -36,7 +36,7 @@ La ligne d'entrée <em>p-gate</em> a un cercle, alors que la ligne d'entrée <em
 <p>La porte de transmission est simplement la combinaison de deux transistors complémentaires. En effet, le même comportement peut être réalisé dans Logisim en n'utilisant qu'un seul transistor. Cependant, les concepteurs préfèrent parfois utiliser des paires de transistors appariés en raison de problèmes électriques avec la tension de drainage bien plus complexe que les tentatives de simulation de Logisim.
 </p>
 
-<p>Normalement la valeur des commandes de <em> n-gate </em> et <em> p-gate </em> devraient être opposés l'une à l'autres. Si <em> p-gate </em> vaut 0 et <em> n-gate </em> vaut 1, alors la valeur trouvée sur <em> source </em> est transmise au <em> drain </em>.
+<p>Normalement la valeur des commandes de <em> n-gate </em> et <em> p-gate </em> devraient être opposés l'une à l'autre. Si <em> p-gate </em> vaut 0 et <em> n-gate </em> vaut 1, alors la valeur trouvée sur <em> source </em> est transmise au <em> drain </em>.
 Si <em> p-gate </em> vaut 1 et <em> p-gate </em> vaut 0, la connexion est rompue, la valeur du <em> drain </em> reste donc flottante. Dans tous les autres cas, <em> drain </em> reçoit une sortie d'erreur sauf si <em> source </em> est flottant, auquel cas <em> drain </em> est également flottant. Ce Comportement est résumé par le tableau suivant.
 </p>
 
@@ -60,7 +60,7 @@ Si <em> p-gate </em> vaut 1 et <em> p-gate </em> vaut 0, la connexion est rompue
 <dt>Source</dt>
 <dd>l'état sera transmis à la sortie si elle est déclenchée par l'entrée <em> gate </em>. La largeur de bit est définie par l'attribut Data Bits.</dd> 
 <dt>P-gate et N-gate</dt> 
-<dd>Ces entrées commande la transmission. Normalement on applique des valeurs de commande opposée sur ces entrées. La largeur de bite est toujours de 1</dd>
+<dd>Ces entrées commandent la transmission. Normalement on applique des valeurs de commande opposée sur ces entrées. La largeur de bite est toujours de 1</dd>
 <dt>Drain</dd>
 <dd>Cette sortie reprend l'état de l'entrée quand lanporte est activé par les entrées Gate. Sinon elle est dans un état haute impédance (indéfini). Voir les figures ci-dessus pour plus de précisions</dd>
 
@@ -78,7 +78,7 @@ et les touches fléchées modifient son attribut <q>Orientation</q>.</p>
 <dd>Le côté du composant dessiné où doit se trouver sa broche de sortie <em>Drain</em>.</dd>
 
 <dt>Position Gate</dt>
-<dd>Disposition haut/gauche ou Bas/Droite de l'entrée <em>P-gate</em>.</dd>
+<dd>Disposition haut/gauche ou bas/droite de l'entrée <em>P-gate</em>.</dd>
 
 <dt>Data Bits</dt>
 <dd>Largeur en bit de l'entrée <em>Source</em> et de la sortie <em>Drain</em>. Les entrées <em>Gate</em> ont toujours une largeur de 1 bit.</dd>
