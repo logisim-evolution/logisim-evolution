@@ -1,78 +1,55 @@
 <html>
-    <head>
-        <title>VHDL simulator</title>
-    </head>
+<meta charset="UTF-8">
+<head>
+	<title>Simulateur VHDL</title>
+	<LINK rel="stylesheet" type="text/css" href="../style.css">
+</head>
 
-    <body bgcolor="FFFFFF">
-        <h1>VHDL simulator</h1>
+<body>
+<div class="maindiv">
+<h1>Simulateur VHDL</h1>
 
-        <p>Logisim cannot directly perform VHDL content simulation. Instead,
-           QuestaSim is used as a background task.
-        </p>
+<p>Logisim ne peut pas exécuter directement la simulation de contenu VHDL. Au lieu de cela, QuestaSim est utilisé comme tâche d'arrière-plan.
+</p>
         
-        <h2>Enable simulator</h2>
+<h2>Activer le simulateur</h2>
         
-        <p>You can enable the simulator through the <i>Simulate</i> > <i>VHDL 
-           Simulation Enabled</i> menu. When you do this, the simulator console 
-           log appears on the bottom of the drawing pane. At the bottom bar of 
-           the simulator log, you have the simulator status indicator. The 
-           states are :
+<p>Vous pouvez activer le simulateur via le menu <i> Simuler </i> <i> Simulation VHDL activée </i>. Lorsque vous cela effectuez, le journal de la console du simulateur apparaît dans la partie inférieure du volet de dessin. Dans la barre inférieure du journal du simulateur, vous avez l'indicateur d'état du simulateur. Les états sont:
         
-            <center><img src="../../../img-guide/hdl-ip-sim-log.png" /></center>
+<center><img src="../../../img-guide/hdl-ip-sim-log.png" /></center>
             
-            <ul>
-                <li><img src="../../../img-guide/hdl-ip-state-disabled.png" />
-                    Disabled (console disappears)
-                </li>
-                <li><img src="../../../img-guide/hdl-ip-state-enabled.png" />
-                    Enabled (but inactive)
-                </li>
-                <li><img src="../../../img-guide/hdl-ip-state-starting.png" />
-                    Starting
-                </li>
-                <li><img src="../../../img-guide/hdl-ip-state-active.png" />
-                    Active
-                </li>
-            </ul>
-        </p>
+<ul>
+<li><img src="../../../img-guide/hdl-ip-state-disabled.png" />Désactivé (la console disparaît)
+</li>
+<li><img src="../../../img-guide/hdl-ip-state-enabled.png" />
+Activé (mais inactif)
+</li>
+<li><img src="../../../img-guide/hdl-ip-state-starting.png" />Départ
+</li>
+<li><img src="../../../img-guide/hdl-ip-state-active.png" />Actif
+</li>
+</ul>
+</p>
     
-        <p>The simulator starts automatically when it's enabled and the circuit 
-           contains VHDL components. It is not possible to start the simulator 
-           when there aren't any VHDL components in the circuit.
-        </p>
+<p>le simulateur démarre automatiquement lorsqu'il est activé et si le circuit contient des composants VHDL. Il n'est pas possible de démarrer le simulateur quand il n'y a pas de composants VHDL dans le circuit.</p>
     
-        <h2>Restart</h2>
+<h2>Redémarrer</h2>
         
-        <p>The VHDL simulation is restarted when you reset the Logisim
-           simulation. This concerns only the simulation state, it does not
-           reload the simulation (and the source files).
-        </p>
+<p>La simulation VHDL est redémarrée lorsque vous réinitialisez la simulation Logisim. Cela ne concerne que l'état de la simulation, il ne recharge pas la simulation (et les fichiers sources).</p>
         
-        <p>If you have changed the content of some VHDL component you have to 
-           restart the VHDL simulator. This is never done automatically. You can
-           restart the simulator through the <i>Simulate</i> menu.
-        </p>
+<p>Si vous avez modifié le contenu de certains composants VHDL, vous devez redémarrer le simulateur VHDL. Cela ne se fait jamais automatiquement. Vous pouvez redémarrer le simulateur via le menu <i> Simulation </i>.
+</p>
     
-        <h2>Time</h2>
+<h2>Temps</h2>
         
-        <p>The QuestaSim simulation step time has to be considered
-           unpredictable, as it depends on the number of VHDL components in the 
-           circuit. The absolute minimum step is 100ns. Therefore, usage of 
-           time-based simulation events must be avoided (like <i>wait for 
-           10ns</i>). You must only have signal-based events.
-        </p>
+<p>L'étape de simulation de QuestaSim doit être considérée comme imprévisible, car elle dépend du nombre de composants VHDL du circuit. Le minimum absolu est 100ns. Par conséquent, l'utilisation d'événements de simulation basés sur le temps doit être évitée (comme <i> attendre 10ns </i>). Vous ne devez avoir que des événements basés sur le signal.</p>
     
+<h2>Plusieurs instances</h2>
+        
+<p>En fait, vous ne pouvez avoir qu'une seule instance de simulateur VHDL. Cela signifie que vous devez le désactiver sur un premier projet si vous souhaitez qu'il soit activé sur un second. Si vous essayez de l'activer sur deux projets, il échouera et vous affichera un message d'erreur.</p>
 
-        <h2>Multiple instances</h2>
-        
-        <p>Actually, you can only have a single instance of VHDL simulator. 
-            That means that you have to disable it on the first project if you 
-            want to have it enabled on a second one. If you try to enable it on 
-            two projects it will fail and show you an error message.
-        </p>
-
-        <p><strong>Next:</strong> <a href="testbenchs.html">Simulating test
-           benchs</a>.
-        </p>
-    </body>
+<p><b>Suite:</b> <a href="testbenchs.html">Simuler en bancs d'essai</a>.
+</p>
+</div>
+</body>
 </html>

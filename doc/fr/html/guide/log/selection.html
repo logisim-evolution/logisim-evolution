@@ -1,64 +1,52 @@
-<html>
-<head>
-	<title>The Selection tab</title>
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8"><meta charset="UTF-8">
+
+	<title>Sélection des signaux</title>
+	<LINK rel="stylesheet" type="text/css" href="../style.css">
 </head>
-<body bgcolor="FFFFFF">
 
-<h1>The Selection tab</h1>
+<body><div class="maindiv">
 
-<p>The Selection tab allows you to select which values
-should be included in the log. The window below corresponds to the
-following circuit.
-<center><img src="../../../img-guide/log-counter.png" width="232" height="129"><br><br>
-<img src="../../../img-guide/log-selection.png" width="466" height="387"></center>
+<h1>Sélection des signaux</h1>
 
-<p>The tab is divided into three vertical areas. The first (leftmost) is
-a list of all components in the circuit whose values can be logged.
-Among the built-in libraries, the following types of components support
-logging.
-<blockquote>
-Wiring library: Pin, Probe, and Clock components<br>
-I/O library: Button and LED components<br>
-Memory library: All components except ROM
-</blockquote>
-For components which have labels associated with them, their names correspond
-to the labels; other components' names specify their type and their
-location within the circuit.
-Any subcircuits will also appear in the list; they cannot be selected
-for logging, but eligible components within them can be.
-Note that the RAM component requires you to choose which memory
-address(es) should be logged; it allows logging only for the first 256
-addresses.</p>
+<p>Cette fenêtre vous permet de sélectionner les valeurs à inclure dans le journal. La fenêtre ci-dessous correspond au circuit suivant :</p>
+<center>
+<img src="../../../img-guide/log-counter.png">
+</center>
 
-<p>The last (rightmost) vertical area lists those components that have
-been selected. Also, it indicates the radix (base) in which the
-component's multi-bit values
-will be logged; the radix does not have a significant effect on one-bit
-values.</p>
+</p><center>
+<img src="../../../img-guide/log-selection.png">
+</center>
+<p>L'onglet est divisé en trois zones verticales. Le premier (le plus à  gauche) est une liste de tous les composants du circuit dont les valeurs peuvent être consignées. Parmi les bibliothèques intégrées, les types de composants suivants prennent en charge la journalisation<br>
+<blockquote>Librairie câblage : les broches,sonde et les horloges.<br>Librairie Entrée/Sortie : les boutons,led.<br> Librairie Mémoire : Tous les composants à l'exception des ROM.<br> </blockquote>
+La valeur des étiquettes sera présentée si celle-ci est associée a un composant dans les autres cas c'est le nom et l'emplacement dans le circuit que sera utilisé pour référence.<br>
+Tous les sous-circuits apparaîtront également dans la liste, un double-clic sur l'élément permet la sélection des points de celui-ci. Un composant RAM se comporte un peu de la même manière et les 256 premières adresses seront présentées et seront sélectionnables.
+Seuls les composants éligibles peuvent être sélectionnés. Le bouton ajouter&gt;&gt; sera activé seulement pour les composants prévus pour l'insertion.</p>
+<p>La dernière zone verticale (la plus à droite) répertorie les composants sélectionnés. De plus, il indique la base dans laquelle les valeurs multibits du composant seront enregistrées.
+L'horloge <var><strong>sysclk</strong></var> doit y figurer, elle ne sera pas affichée dans le graphe.</p><ul>
 
-<p>The middle column of buttons allows the manipulation of the items
-within the selection.
-<ul>
+<li><strong>Ajouter &gt;&gt; :</strong> Ajoute les éléments actuellement sélectionnés du côté gauche dans la sélection. Est actif seulement pour les composants éligibles.
 
-<li><strong>Add</strong> adds the currently selected item(s) on the left
-side into the selection.
+</li><li><strong>Change la base:</strong> Permet la sélection successive d'une des ces bases : 2 (binaire), 10 (décimal) et 16 (hexadécimal).
 
-<li><strong>Change Radix</strong> cycles the radix for the currently
-selected component in the selection between 2 (binary), 10 (decimal),
-and 16 (hexadecimal).
+</li><li><strong>Monter :</strong> déplace le composant actuellement sélectionné vers le haut de la liste. </li><li><strong>Descendre :</strong> Déplace le composant actuellement sélectionné vers le bas de la liste.
 
-<li><strong>Move Up</strong> moves the currently selected component in
-the selection forward one spot.
+</li><li><strong>Enlever &lt;&lt; </strong> supprime le composant actuellement sélectionné.
+</li></ul><p></p>
+<p>
+La quatrième partie au-dessous permet de définir si l'on désire un affichage du temps au-dessus du graphe. Pour cela il est nécessaire de cocher la case <i>"Référence temporelle"</i> et sélectionner le signal qui sera la référence. La fréquence définira l'échelle de temps affichée. Cela ne règle absolument pas la vitesse d'exécution de la simulation du circuit.
+Par exemple ci-dessous nous avons sélectionné le signal B0 et une fréquence de 100hz.
+<center>
+<img src="../../../img-guide/log-graph1.png">
+</center>
+</p>
+<!--
+a vérifier ==
+<p>Chaque projet n'a qu'une seule fenêtre de journalisation. Lorsque vous passez à l'affichage d'un autre circuit dans le projet, la fenêtre de journalisation bascule automatiquement sur l'enregistrement de l'autre circuit. En d'autres termes, vous le faites si vous vous<a href="/subcirc/debug.html"> déplacez dans la même simulation </a>, auquel cas le module de journalisation ne change pas.</p>
 
-<li><strong>Move Down</strong> moves the currently selected component in
-the selection back one spot.
+<p>Notez que lorsque le module de journalisation bascule vers l'enregistrement d'une autre simulation, il arrête toute connexion à un fichier. Si vous revenez à la simulation, elle mémorisera la configuration de cette simulation, mais vous devrez réactiver manuellement la journalisation des fichiers.</p>-->
 
-<li><strong>Remove</strong> removes the currently selected component in
-the selection.
 
-</ul></p>
-
-<p><strong>Next:</strong> <a href="table.html">The Table tab</a>.</p>
-
-</body>
+<p><b>Suite:</b> <a href="timetable.html">Fenêtre chronogramme</a>.</p>
+</div></body>
 </html>

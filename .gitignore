@@ -2,6 +2,7 @@
 *.DS_Store
 .AppleDouble
 .LSOverride
+desktop.ini
 
 # Icon must end with two \r
 Icon
