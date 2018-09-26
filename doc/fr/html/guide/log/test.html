@@ -1,31 +1,24 @@
 <html>
+<meta charset="UTF-8">
 <head>
-	<title>The Test Vector window</title>
+	<title>Fenêtre Vecteur de test</title>
+	<LINK rel="stylesheet" type="text/css" href="../style.css">
 </head>
-<body bgcolor="FFFFFF">
+<body><div class="maindiv">
 
-<h1>The Test Vector window</h1>
+<h1>Fenêtre Vecteur de tesS</h1>
 
-<p>The Test Vector window is similar to the Table tab of the Logging
-window. You can load a test vector from a file, and Logisim will start
-running tests on the current circuit. Like the logging window, there
-is only one test vector window for the project, and the table will
-change to reflect whichever circuit is being simulated in the project
-window. Note, however, that the Test Vector module runs a separate
-copy of the circuit simulator, and so does not interfere with, and is
-not influenced by, the simulation in the project window.</p>
+<p>La fenêtre Test Vector est similaire à l'onglet Table de la fenêtre Journalisation. Vous pouvez charger un vecteur de test à partir d'un fichier et Logisim lancera des tests sur le circuit actuel. Comme la fenêtre de journalisation, il n'y a qu'une seule fenêtre de vecteur de test pour le projet et la table changera pour refléter le circuit simulé dans la fenêtre du projet. Notez cependant que le module Test Vector exécute une copie séparée du simulateur de circuit et n'interfère donc pas avec la simulation dans la fenêtre du projet et n'est pas influencée par cette simulation.
+The Test Vector window is similar to the Table tab of the Logging window. You can load a test vector from a file, and Logisim will start running tests on the current circuit. Like the logging window, there is only one test vector window for the project, and the table will change to reflect whichever circuit is being simulated in the project window. Note, however, that the Test Vector module runs a separate copy of the circuit simulator, and so does not interfere with, and is not influenced by, the simulation in the project window.</p>
 
-<p>Any incorrect outputs will be flagged in red. Hover the mouse over
-the red box to see what the output should have been, according to the
-test vector. Rows with incorrect outputs are sorted to the top of the
-window.</p>
+<p>Toute sortie incorrecte sera signalée en rouge. Passez la souris sur la case rouge pour voir ce que la sortie aurait dû être, en fonction du vecteur de test. Les lignes avec des sorties incorrectes sont triées en haut de la fenêtre.
+Any incorrect outputs will be flagged in red. Hover the mouse over the red box to see what the output should have been, according to the test vector. Rows with incorrect outputs are sorted to the top of the window.</p>
 
-<p>The file format is simple. You can use the Logging module (with
-"Include Header Line" selected in the file output tab) to get started,
-since in most cases the Logging module outputs the same format as used
-by the Test Vector module.</p>
+<p>Le format de fichier est simple. Vous pouvez utiliser le module de journalisation (avec "Inclure la ligne d'en-tête" sélectionné dans l'onglet Sortie de fichier) pour commencer, car dans la plupart des cas, le module de journalisation produit le même format que celui utilisé par le module Test Vector.
+The file format is simple. You can use the Logging module (with "Include Header Line" selected in the file output tab) to get started, since in most cases the Logging module outputs the same format as used by the Test Vector module.</p>
 
-<p>Here is an example test vector file:.
+<p>Voici un exemple de fichier vectoriel de test:
+Here is an example test vector file:.
 <pre>
 # my test vector for add32
 A[32] B[32] C[32] Cin Cout
@@ -35,31 +28,24 @@ A[32] B[32] C[32] Cin Cout
 </pre>
 </p>
 
-<p>Blank lines are ignored.  Anything following a '#' character is a
-comment.  The first non-blank, non-comment line lists the name of each
-circuit input pin and its width (if &gt; 1), separated by whitespace.
+<p>Les lignes vides sont ignorées. Tout ce qui suit un caractère "#" est un commentaire. La première ligne non vide, sans commentaire, indique le nom de chaque broche d'entrée du circuit et sa largeur (si & gt; 1), séparées par un espace.
+Blank lines are ignored.  Anything following a '#' character is a comment.  The first non-blank, non-comment line lists the name of each circuit input pin and its width (if &gt; 1), separated by whitespace.
 </p>
 
-<p>The remaining lines list each value separated by whitespace. The
-values can be in hex, octal, binary, or signed decimal. Hex values
-must have a '0x' prefix. Octal values must have a '0o' prefix.
-Binary and decimal are be
-distinguished by the number of digits: binary values must always have
-exactly as many digits as the width of the column; decimal values must
-always have fewer, should not have leading zeros, and may have a
-negative sign.</p>
+<p>Les lignes restantes répertorient chaque valeur séparée par un espace. Les valeurs peuvent être en hexadécimal, octal, binaire ou décimal signé. Valeurs Hex
+doit avoir un préfixe '0x'. Les valeurs octales doivent avoir un préfixe «0o». Les nombres binaires et décimaux se distinguent par le nombre de chiffres: les valeurs binaires doivent toujours avoir exactement autant de chiffres que la largeur de la colonne; les valeurs décimales doivent toujours avoir moins, ne doivent pas avoir de zéros en tête et peuvent avoir un signe négatif.
+The remaining lines list each value separated by whitespace. The values can be in hex, octal, binary, or signed decimal. Hex values
+must have a '0x' prefix. Octal values must have a '0o' prefix. Binary and decimal are be distinguished by the number of digits: binary values must always have exactly as many digits as the width of the column; decimal values must always have fewer, should not have leading zeros, and may have a negative sign.</p>
 
-<p>For hex, octal, and binary values, a digit of 'x' specifies four,
-three, or one "don't care" bits. So the value 101xx is a five bit
-binary value, with the last two bits unspecified, and 0x1ax5 is a hex
-value with four unspecified bits.  Such "don't cares" can not be used
-in decimal notation.</p> 
+<p>Pour les valeurs hexadécimales, octales et binaires, un chiffre de «x» spécifie quatre, trois ou un bits «sans importance». Donc, la valeur 101xx est une valeur binaire de cinq bits, avec les deux derniers bits non spécifiés, et 0x1ax5 est une valeur hexadécimale avec quatre bits non spécifiés. De tels "ne se soucient pas" ne peuvent pas être utilisés en notation décimale.
+For hex, octal, and binary values, a digit of 'x' specifies four, three, or one "don't care" bits. So the value 101xx is a five bit binary value, with the last two bits unspecified, and 0x1ax5 is a hex value with four unspecified bits.  Such "don't cares" can not be used in decimal notation.</p> 
 
-<p><strong>Command line:</strong> To facilitate automated testing, the
-test vector feature can be run from the command line, as follows:<br>
+<p><strong> Ligne de commande: </ strong> Pour faciliter les tests automatisés, la fonctionnalité de vecteur de test peut être exécutée à partir de la ligne de commande, comme suit: <br>
+logisim -test &lt; circuitname &gt; &lt; vector.txt &gt; &lt; project.circ &gt;
+<strong>Command line:</strong> To facilitate automated testing, the test vector feature can be run from the command line, as follows:<br>
 logisim -test &lt;circuitname&gt; &lt;vector.txt&gt; &lt;project.circ&gt;</p>
 
-<p><strong>Next:</strong> <em><a href="../index.html"><em>User's Guide</em></a></em>.</p>
+<p><b>Suite:</b> <em><a href="../index.html"><em>User's Guide</em></a></em>.</p>
 
-</body>
+</div></body>
 </html>
