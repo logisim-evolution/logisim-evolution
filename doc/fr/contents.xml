@@ -1,4 +1,4 @@
-﻿<toc version="2.0" categoryclosedimage="chapter" topicimage="topic">
+<toc version="2.0" categoryclosedimage="chapter" topicimage="topic">
   <tocitem image="toplevelfolder" target="top" text="Logisim Références">
     <tocitem target="guide" text="Guide pour débuter avec Logisim">
       <tocitem target="tutorial" text="Guide du débutant">
@@ -8,12 +8,16 @@
         <tocitem target="tutorial_text" text="Etape 3: Ajouter du texte"/>
         <tocitem target="tutorial_test" text="Etape 4: Tester votre circuit"/>
       </tocitem>
-      <tocitem target="attrlib" text="Librairies et attributs">
-        <tocitem target="attrlib_explore" text="Le panneau de navigation"/>
+      <tocitem target="attrlib" text="l'interface graphique">
+       
+       <tocitem target="attrlib_canvas" text="La surface de travail (Canvas)"/>
+	   <tocitem target="attrlib_menu" text="Les menus"/>
+	   <tocitem target="attrlib_explore" text="Le panneau de navigation"/>
+		<tocitem target="attrlib_toolsbar" text="les barre d'outils"/>
         <tocitem target="attrlib_attr" text="Le tableau des attributs"/>
         <tocitem target="attrlib_tool" text="Attributs des outils et des composants"/>
       </tocitem>
-      <tocitem target="subcirc" text="Sous-circuits">
+      <tocitem target="subcirc" text="Design hiérarchique">
         <tocitem target="subcirc_creating" text="Créer des circuits"/>
         <tocitem target="subcirc_using" text="Utiliser des sous-circuits"/>
         <tocitem target="subcirc_appear" text="Editer l'apparence d'un sous-circuit"/>
@@ -22,7 +26,7 @@
       </tocitem>
       <tocitem target="bundles" text="Nappe de câbles">
         <tocitem target="bundles_creating" text="Créer une nappe"/>
-        <tocitem target="bundles_splitting" text="Eclaté"/>
+        <tocitem target="bundles_splitting" text="Répartiteur"/>
         <tocitem target="bundles_colors" text="Couleur des câbles"/>
       </tocitem>
       <tocitem target="analyze" text="Analyse combinatoire">
@@ -31,7 +35,7 @@
         <tocitem target="analyze_expr" text="Créer des expressions"/>
         <tocitem target="analyze_gen" text="Générer un circuit"/>
       </tocitem>
-      <tocitem target="menu" text="Manuel des menus">
+      <tocitem target="menu" text="Référence des menus">
         <tocitem target="menu_file" text="Menu fichier"/>
         <tocitem target="menu_edit" text="Menu éditer"/>
         <tocitem target="menu_project" text="Menu projet"/>
@@ -39,9 +43,9 @@
         <tocitem target="menu_winhelp" text="Menus fenêtre et aide"/>
       </tocitem>
       <tocitem target="mem_guide" text="Composant mémoire">
-        <tocitem target="mem_poke" text="Pousser la mémoire"/>
+        <tocitem target="mem_poke" text="Editer la mémoire"/>
         <tocitem target="mem_menu" text="Menus Pop-up et fichiers"/>
-        <tocitem target="mem_hex" text="Editeur Hex"/>
+        <tocitem target="mem_hex" text="Editeur Hexadecimal"/>
       </tocitem>
       <tocitem target="log" text="Journalisation">
         <tocitem target="log_selection" text="Onglet de sélection"/>
@@ -82,19 +86,20 @@
         <tocitem target="about_gpl" text="GNU General Public License"/>
       </tocitem>
     </tocitem>
-    <tocitem target="libs" text="Library Reference">
-      <tocitem target="wiring" text="Wiring library">
-        <tocitem target="wiring_splitter" image="icon_splitter" text="Splitter"/>
+    <tocitem target="libs" text="Référence de la bibliothèque">
+      <tocitem target="wiring" text="Librairies câblage">
+        <tocitem target="wiring_splitter" image="icon_splitter" text="Répartiteur"/>
         <tocitem target="wiring_pin" image="icon_pin" text="Pin"/>
-        <tocitem target="wiring_probe" image="icon_probe" text="Probe"/>
+        <tocitem target="wiring_probe" image="icon_probe" text="Sonde"/>
         <tocitem target="wiring_tunnel" image="icon_tunnel" text="Tunnel"/>
-        <tocitem target="wiring_pull" image="icon_pull" text="Pull Resistor"/>
-        <tocitem target="wiring_clock" image="icon_clock" text="Clock"/>
-        <tocitem target="wiring_constant" image="icon_constant" text="Constant"/>
-        <tocitem target="wiring_const01" image="icon_const01" text="Power/Ground"/>
+        <tocitem target="wiring_pull" image="icon_pull" text="Résistance de charge"/>
+        <tocitem target="wiring_clock" image="icon_clock" text="Horloge"/>
+		<tocitem target="wiring_por" image="icon_por" text="Reset au démarage"/>
+        <tocitem target="wiring_constant" image="icon_constant" text="Constantes"/>
+        <tocitem target="wiring_const01" image="icon_const01" text="Alimentation/Masse"/>
         <tocitem target="wiring_transist" image="icon_transist" text="Transistor"/>
-        <tocitem target="wiring_transmis" image="icon_transmis" text="Transmission Gate"/>
-        <tocitem target="wiring_extender" image="icon_extender" text="Bit Extender"/>
+        <tocitem target="wiring_transmis" image="icon_transmis" text="Porte de passage"/>
+        <tocitem target="wiring_extender" image="icon_extender" text="Convertisseur de bits"/>
       </tocitem>
       <tocitem target="gates" text="Gates library">
         <tocitem target="gates_not" image="icon_not" text="NOT Gate"/>

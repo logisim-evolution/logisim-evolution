@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='UTF-8' ?>
+<?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
 <!--
 <!DOCTYPE helpset
   PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp HelpSet Version 2.0//EN"
