@@ -28,7 +28,7 @@ div.leftdiv {
    position:relative; 
    float:left; 
    max-width:160px;
-   border:solid 1px;   
+   border:solid 0px;   
 }
 
 .f08 {
