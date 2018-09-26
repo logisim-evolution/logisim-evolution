@@ -18,39 +18,39 @@
 
 <h2>Comportement</h2>
 
-<p>L'outil de câblage est l'outil permettant de créer des segments de fil porteurs de valeurs d'un point d'extrémité à l'autre. La largeur de bit de ces valeurs peut être n'importe quoi; exactement quelle largeur de bit est automatiquement déduite des composants auxquels les fils sont finalement attachés. S'il n'est attaché à aucun composant, le fil sera dessiné en gris pour indiquer que sa largeur de bit est inconnue; Si les composants aux endroits que le fil aide à connecter ne sont pas d'accord sur la largeur du bit, le fil sera dessiné en orange pour indiquer le conflit, et le fil refusera en fait de porter des valeurs jusqu'à ce que l'utilisateur résolve le conflit.</p>
+<p>L'outil de câblage est l'outil permettant de créer des segments de fil porteurs d'une valeur d'un point d'extrémité à l'autre. Les fils adaptent automatiquement leur largeur de bit déduite des composants auxquels ils sont finalement attachés. S'il n'est attaché à aucun composant, le fil sera dessiné en gris pour indiquer que sa largeur de bit est inconnue; S'i il y a un conflit entre les deux extrémités, le fil sera dessiné en orange pour indiquer le conflit, et le fil sera inopérant jusqu'à ce que l'utilisateur résolve le conflit.</p>
 
 <p>Un simple glissement de la souris peut créer plusieurs segments de fil. Le processus précis est un peu déroutant dans sa description; mais en pratique, cela fonctionne de manière assez intuitive: si vous demandez un segment de câble particulier à l'aide de l'outil de câblage, ce segment sera séparé chaque fois qu'il rencontre une broche pour un composant existant ou lorsqu'il atteint l'extrémité d'un segment de fil existant. De plus, si un point d'extrémité d'un des nouveaux segments de fil se trouve quelque part au milieu d'un fil existant, ce fil sera divisé en plusieurs segments.</p>
 
-<p>Pour certains composants qui dessinent des stubs courts auxquels des fils peuvent se connecter (comme une <a href="../gates/basic.html"> porte OR </a> ou une <a href = "../gates/commandated.html"> buffer contrôlé </a>), Logisim corrigera silencieusement les tentatives de création de fils dépassant légèrement l'extrémité du stub.</p>
+<p>Pour certains composants qui dessinent des traits courts auxquels des fils peuvent se connecter (comme une <a href="../gates/basic.html"> porte OR </a> ou un <a href = "../gates/commandated.html"> buffer contrôlé </a>), Logisim corrigera silencieusement les tentatives de création de fils dépassant légèrement l'extrémité du trait.</p>
 
 <p>Vous pouvez également raccourcir un segment de fil existant à l'aide de l'outil de câblage, en utilisant un glissement qui commence ou se termine à une extrémité du segment, et qui chevauche le segment existant.</p>
 
-<p>All wires in Logisim are either horizontal or vertical.</p>
+<p>Les fils sont soit horizontaux soit verticaux.</p>
 
 <p>Les fils sont également non directionnels; c'est-à-dire qu'ils transportent des valeurs de l'une ou l'autre extrémité. En effet, un fil peut porter des valeurs dans les deux sens simultanément; le fil central dans l'exemple ci-dessous le fait.</p>
 <center><img src="../../../img-guide/bundles-splitter-2way.png" width="191" height="44"></center>
 
 <h2>Attributs</h2>
 
-<p>L'outil de câblage n'a pas lui-même d'attributs, mais les fils qu'il crée créent.</p>
+<p>L'outil de câblage n'a pas lui-même d'attributs, mais les fils qu'il crée en ont.</p>
 
 <dl>
 
 <dt>Direction</dt>
 <dd>Indique si le câble est horizontal ou vertical. La valeur de cet attribut ne peut pas être modifiée.</dd>
 
-<dt>Longeur</dt>
+<dt>Longueur</dt>
 <dd>Indique combien de pixels le fil est long. La valeur de cet attribut ne peut pas être modifiée.</dd>
 
 </dl>
 
-<h2>Comportement de l'outil Poke.</h2>
+<h2>Comportement de l'outil Pousser.</h2>
 
-<p>Lorsque vous cliquez sur un segment de fil existant à l'aide de l'outil Poke, Logisim affiche la valeur actuelle passant par ce fil.
-Le comportement est particulièrement utile pour les fils multi-bits, dont la couleur noire ne fournit aucun retour visuel sur la valeur que transporte le fil.</p>
+<p>Lorsque vous cliquez sur un segment de fil existant à l'aide de l'outil pousser, Logisim affiche la valeur actuelle passant par ce fil.
+Le comportement est particulièrement utile pour les fils multibits, dont la couleur noire ne fournit aucun retour visuel sur les valeurs que transporte le fil.</p>
 
-<p>Pour les valeurs multi-bits, vous pouvez configurer exactement l'affichage de la valeur (en binaire, décimal ou hexadécimal, par exemple) à l'aide de la <a href="../../guide/prefs/layout.html"> mise en page volet </a> de la boîte de dialogue Préférences Logisim.
+<p>Pour les valeurs multibits, vous pouvez configurer exactement l'affichage de la valeur (en binaire, décimal ou hexadécimal, par exemple) à l'aide de la <a href="../../guide/prefs/layout.html"> mise en page volet </a> de la boîte de dialogue Préférences Logisim.
 
 <p><a href="../index.html">Retour dans <em>Référence de la bibliothèque</em></a></p>
 
