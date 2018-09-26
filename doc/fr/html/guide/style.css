@@ -13,9 +13,6 @@ div.monospace {
 div.cursive {
 	 font-family: "Comic Sans MS",cursive;
 }
-div.fantasy {
-	 font-family: fantasy;
-}
 
 body {
 	  background-color: #FFFFFF;
@@ -33,7 +30,6 @@ div.leftdiv {
    max-width:160px;
    border:solid 1px;   
 }
-
 
 .f08 {
 	font-size:80%;
@@ -100,6 +96,7 @@ span.menu {
 	font-family:arial;
 	font-weight:bold;
 }
+
 span.propertie {
 	color:#00008B;
 	font-weight:bold;
