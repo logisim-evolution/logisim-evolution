@@ -9,12 +9,12 @@
 
 <h1>Répartiteur</h1>
 
-<p>Quand vous utilisez des nappes de câbles (bus), vous voudrez souvent rediriger différents câbles dans différentes directions. L'outil "Répartiteur" (<img src="../../../icons/splitter.gif">) de la librairie Câblage  vous permet de réaliser cela.</p>
+<p>Quand vous utilisez des nappes de câbles (bus), vous voudrez souvent rediriger différents câbles dans différentes directions. L'outil "Répartiteur" (<img src="../../../../icons/splitter.gif">) de la librairie Câblage  vous permet de réaliser cela.</p>
 
 <p>Supposons par exemple que vous vouliez un circuit qui réalise  la fonction AND entre les deux quartets d'un bus de huit bits (les quatre bits de poids fort et les quatre bits de poids faible). Nous aurons une valeur à huit bits venant bus d'entrée et nous voulons séparer ceci en deux bus à quatre bits. Dans le circuit ci-dessous, nous avons utilisé un répartiteur pour réaliser cela. L'entrée huit bits est connectée à l'entrée du bus, qui la divise en deux nappes d’un quartet, qui sont connectées à la porte logique AND et le résultat est présenté en sortie dans un quartet.</p>
-<center><img src="../../../img-guide/bundles-splitter-circ.png"></center>
+<center><img src="../../../../img-guide/bundles-splitter-circ.png"></center>
 <p>Dans l'exemple précédent, la terminaison <i>divise</i> une nappe de plusieurs fils en entrée en deux nappes de plusieurs fils en sortie. Mais les terminaisons de bus peuvent aussi travailler d'une autre façon: elles peuvent <i>regrouper</i> plusieurs valeurs en une seule. Les terminaisons de bus simulent parfaitement une nappe de câble et elles n'ont pas de direction. Elles peuvent envoyer une valeur dans une direction à un moment et dans une autre plus tard. Elles font même faire les deux en même temps, comme dans l'exemple ci-dessous ou une valeur voyage vers l'est à travers les deux terminaisons, ensuite elle est redirigée vers l'ouest à travers les terminaisons à nouveau, et ensuite de nouveau vers l'Est ou elle atteint sa sortie.</p>
-<center><img src="../../../img-guide/bundles-splitter-2way.png"></center>
+<center><img src="../../../../img-guide/bundles-splitter-2way.png"></center>
 
 <p>La clé pour comprendre les terminaisons de bus tient dans leurs attributs. Dans ce qui suit, le terme <em>terminaison</em> fait référence à l'un des multiples câbles d'un côté, tandis que <em>bus</em> fait référence au regroupement de ces câbles en un seul de l'autre côté. (voir figure ci-dessous)</p>
 
@@ -23,7 +23,7 @@
 <li>L'attribut <span class=propertie>Représentation</span> définit l'orientation des terminaisons.</li>
 <li>L'attribut <span class=propertie>Terminaisons</span> définit combien de terminaisons séparées il doit y avoir.</li>
 <li>L'attribut <span class=propertie>Apparence</span> définit la manière dont le composant est dessiné par rapport à son Bus.
-<center><img src="../../../img-guide/bundles-splitter-apprence.png"></center>
+<center><img src="../../../../img-guide/bundles-splitter-apprence.png"></center>
 </li>
 <li>L'attribut <span class=propertie>Largeur en bits</span> spécifie la largeur en bit du bus, c'est-à-dire le nombre de conducteurs.</li>
 <li>L'attribut <span class=propertie>Bit <var>x</var></span> définit quelle terminaison séparée correspond à quel bit <em>x</em> du bus. Il est modifiable et permet d'organiser à la main l'ordre des terminaisons. Si plusieurs bits correspondent à la même terminaison (premier exemple ci-dessus), alors l'ordre relatif sera le même que dans le bus. Les répartiteur Logisim ne peuvent pas avoir un bit du bus relié à plusieurs terminaisons.</li>

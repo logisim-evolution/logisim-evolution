@@ -9,14 +9,14 @@
 
 <p>As an example of the level of sophistication of Logisim's algorithm,
 consider the following circuit.</p>
-<center><img src="../../../../en/img-guide/prop-const0.png" width="171" height="55"></center>
+<center><img src="../../../../img-guide/prop-const0.png"></center>
 <p>This "obviously" always outputs 0. But NOT gates don't react
 instantaneously to their inputs in reality, and neither do they in
 Logisim. As a result, when this circuit's input changes from 0 to 1, the
 AND gate will briefly see two 1 inputs, and it will emit a 1 briefly.
 You won't see it on the screen. But the effect is observable when we
 use the AND gate's output as an input into the clock of a D flip-flop.</p>
-<center><img src="../../../../en/img-guide/prop-using-const0.png" width="231" height="68"></center>
+<center><img src="../../../../img-guide/prop-using-const0.png"></center>
 <p>Poking the 0 input to become 1 leads to an instantaneous 1 going
 into the D flip-flop, and thus the flip-flop's value will toggle
 every time the circuit input goes from 0 to 1.</p>

@@ -10,10 +10,10 @@
 <h1>Délais sur les portes logiques</h1>
 
 <p>À titre d’exemple du niveau de sophistication de l’algorithme de Logisim, considérons le circuit suivant.</p>
-<center><img src="../../../img-guide/prop-const0.png"></center>
+<center><img src="../../../../img-guide/prop-const0.png"></center>
 <p>Ce circuit "évidemment" génère toujours 0. Mais dans la réalité les sorties des portes ne réagissent pas instantanément à leurs entrées, et elles ne le font pas non plus dans Logisim. Par conséquent, lorsque l'entrée de ce circuit passe de 0 à 1, le retard introduit par la porte NOT fait que la porte  ET verra brièvement deux entrées 1 et émettra brièvement 1. Vous ne le verrez pas à l'écran. Mais l'effet est observable lorsque nous utilisons la sortie de la porte AND comme entrée de l'horloge d'une bascule D.
 </p>
-<center><img src="../../../img-guide/prop-using-const0.png"></center>
+<center><img src="../../../../img-guide/prop-using-const0.png"></center>
 <p>La bascule D changera à chaque impulsion de la sortie de la porte AND soit quand l'entrée du circuit passe de 0 à 1. Le déroulement détaillé peut aussi s'observer grâce au mode pas à pas de la simulation.</p>
 
 <p>Chaque composant est associé à un délai. Les composants plus sophistiqués intégrés dans Logisim ont tendance à avoir des retards plus importants, mais ces retards sont quelque peu arbitraires et peuvent ne pas refléter la réalité.</p>

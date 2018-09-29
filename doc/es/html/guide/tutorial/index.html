@@ -19,10 +19,40 @@ work.</p>
 that is, a circuit that takes two inputs (which we'll call <em>x</em> and
 <em>y</em>) and outputs 0 if the inputs
 are the same and 1 if they are different.
-The following truth table illustrates.
-<center><img src="../../../../en/img-guide/tutorial-xor-table.png" width="163" height="131"></center>
-We might design such a circuit on paper.
-<center><img src="../../../../en/img-guide/tutorial-xor-circ.png" width="323" height="147"></center>
+The following truth table illustrates.</p>
+
+<table border="0" width="150px" align="center">
+<tbody>
+<tr style="background-color: #ccd1d6;">
+<th>&nbsp;x&nbsp;</th>
+<th>&nbsp;y&nbsp;</th>
+<th>x XOR y</th>
+</tr>
+<tr align="center">
+<td>0</td>
+<td>0</td>
+<td>1</td>
+</tr >
+<tr align="center">
+<td>1</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr align="center">
+<td>0</td>
+<td>1</td>
+<td>1</td>
+</tr>
+<tr align="center">
+<td>1</td>
+<td>1</td>
+<td>0</td>
+</tr>
+</tbody>
+</table>
+
+<p>We might design such a circuit on paper.
+<center><img "../../../../img-guide/tutorial-xor-circ.png"></center>
 But just because it's on paper doesn't mean it's right. To verify our
 work, we'll draw it in Logisim and test it. As an added bonus, we'll get
 a circuit that's looks nicer than what you probably would draw by hand.</p>
