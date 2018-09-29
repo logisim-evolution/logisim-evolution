@@ -12,9 +12,29 @@ Logisim's logging module, which allows you to select components whose
 values should be logged; optionally, you can specify a file into which
 the log should be placed.</p>
 
+<p>Another way to test a circuit is using a <strong>test vector</strong>.
+Logisim's test vector module allows you to load a file specifying
+circuit inputs and the values that should be output by the circuit.
+Logisim will run the simulation and compare the actual outputs against
+the desired outputs. Currently, test vectors are only designed to work
+for combinational circuits.</p>
+
+<p><strong>Note:</strong> The logging and test vector modules are in
+alpha phase; they may be buggy, and they are subject to significant
+changes in the future. While bug reports and suggestions are welcome
+for all of Logisim, they are particularly welcome concerning these
+relatively new features. If you do not send comments, then they will
+likely not change.</p>
+
+<p>You can enter the test vector module via the Test Vector... option
+from the Simulate menu. See <a href="test.html">Test Vectors</a> for
+documentation on how to use this module.</p>
+
 <p>You can enter the logging module via the Logging...
 option from the Simulate menu. It brings up a window with three tabs.</p>
-<center><img src="../../../../en/img-guide/log-selection.png"></center>
+<center>
+<img src="../../../img-guide/log-selection.png">
+</center>
 <p>We will discuss each of these tabs separately.</p>
 <blockquote>
 	<a href="selection.html">The Selection tab</a>

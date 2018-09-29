@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <!DOCTYPE toc
-  PUBLIC 
-  "-//Sun Microsystems Inc.//DTD 
+  PUBLIC
+  "-//Sun Microsystems Inc.//DTD
    JavaHelp TOC Version 2.0//EN"
   "http://java.sun.com/products/javahelp/toc_2_0.dtd">
 <toc version="2.0" categoryclosedimage="chapter" topicimage="topic">
@@ -60,6 +60,7 @@
 			<tocitem target="verify_other" text="Other verification options" />
 			<tocitem target="verify_multi" text="Testing multiple files" />
 		</tocitem>
+		<tocitem target="log_test" text="Test Vectors" />
 		<tocitem target="prefs" text="Application preferences">
 			<tocitem target="prefs_template" text="The Template tab" />
 			<tocitem target="prefs_intl" text="The International tab" />
@@ -78,6 +79,13 @@
 			<tocitem target="prop_oscillate" text="Oscillation errors" />
 			<tocitem target="prop_shortcome" text="Shortcomings" />
 		</tocitem>
+		<tocitem target="hdl-ip" text="HDL IP">
+			<tocitem target="hdl-ip_vhdlcomp" text="VHDL Entity" />
+			<tocitem target="hdl-ip_questa" text="Configuring Questa Advanced Simulator" />
+			<tocitem target="hdl-ip_simulation" text="VHDL simulator" />
+			<tocitem target="hdl-ip_testbenchs" text="Simulating test benchs" />
+		</tocitem>
+		<tocitem target="users" text="Users" />
 		<tocitem target="jar" text="JAR libraries">
 			<tocitem target="jar_incr" text="Gray Code Incrementer" />
 			<tocitem target="jar_library" text="Library Class" />
@@ -148,6 +156,9 @@
 		<tocitem target="io_dotmat" text="LED Matrix" image="icon_dotmat" />
 		<tocitem target="io_tty" text="TTY" image="icon_tty" />
 	  </tocitem>
+	  <tocitem target="hdl" text="HDL-IP">
+		<tocitem target="hdl_vhdlentity" text="VHDL Entity" image="icon_vhdl" />
+          </tocitem>
 	  <tocitem target="base" text="Base library">
 		<tocitem target="base_poke" text="Poke Tool" image="icon_poke" />
 		<tocitem target="base_edit" text="Edit Tool" image="icon_edit" />
@@ -157,6 +168,10 @@
 		<tocitem target="base_menu" text="Menu Tool" image="icon_menu" />
 		<tocitem target="base_label" text="Text" image="icon_label" />
 	  </tocitem>
+      <tocitem target="tcl" text="TCL library">
+          <tocitem target="tcl_reds_console" text="REDS console" image="icon_reds_console" />
+          <tocitem target="tcl_generic" text="Generic" image="icon_generic" />
+      </tocitem>
 	</tocitem>
 </tocitem>
 </toc>
