@@ -12,7 +12,7 @@
 <p>Depuis la fenêtre Vecteur de test vous pouvez charger un vecteur de test à partir d'un fichier et Logisim lancera des tests sur le circuit actuel. Il n'y a qu'une seule fenêtre de vecteur de test pour le projet et la table changera pour refléter le circuit simulé dans la fenêtre du projet. Notez cependant que le module vecteur de test exécute une copie séparée du simulateur de circuit et n'interfère donc pas avec la simulation dans la fenêtre du projet et n'est pas influencé par cette simulation.</p>
 
 <p>Pour l'exemple nous allons tester le circuit ci-dessous. Ce circuit donne les résultats de cinq fonctions logiques à partir de deux entrées. Il comporte une erreur la porte NAND du bas devrait être une port AND.</p>
-<center><img src="../../../img-guide/vector-texta.png"></center>
+<center><img src="../../../../img-guide/vector-test.png"></center>
 <p>Le fichier de test ressemble à ceci.<br>
 <pre>
 A B O_Nor O_Nand O_Xor O_Or O_And O_AB[2]
@@ -22,7 +22,7 @@ A B O_Nor O_Nand O_Xor O_Or O_And O_AB[2]
 1 1 0 0 0 1 1 11
 </pre>
 </p>
-<p>Pour lancer le test, sélectionnez le menu <span class=menu>|&nbsp Simulation &nbsp|</span> &rarr; <span class=menu>|&nbsp Vecteur de test &nbsp|</span> puis utilisez le bouton <b>"Chargez vecteur"</b>. Sélectionnez le fichier des vecteurs que vous avez construits. La simulation est exécutée immédiatement et un tableau s'affiche avec le résultat. 
+<p>Pour lancer le test, sélectionnez le menu <span class=menu>|&nbsp; Simulation &nbsp;|</span> &rarr; <span class=menu>|&nbsp; Vecteur de test &nbsp;|</span> puis utilisez le bouton <b>"Chargez vecteur"</b>. Sélectionnez le fichier des vecteurs que vous avez construits. La simulation est exécutée immédiatement et un tableau s'affiche avec le résultat. 
 </p>
 <center><img src="../../../img-guide/vector-result.png"></center>
 
@@ -42,7 +42,7 @@ A[4] B[4] O[4] C_in C_out
 </pre>
 <p>
 
-<p>Selon que les valeurs sont hexadécimales, octales ou binaires, la lettre minuscule <tt>"x"</tt> permet de spécifier quatre, trois ou un bits «sans importance». Par exemple a valeur 101xx est une valeur binaire de cinq bits, avec les deux derniers bits non spécifiés, et 0x1ax5 est une valeur hexadécimale avec quatre bits non spécifiés. De tels jokers ne peuvent pas être utilisés en notation décimale.</p> 
+<p>Selon que les valeurs sont hexadécimales, octales ou binaires, la lettre minuscule <tt>"x"</tt> permet de spécifier quatre, trois ou un bits «sans importance». Par exemple a valeur 101xx est une valeur binaire de cinq bits, avec les deux derniers bits non spécifiés, et 0x1ax5 est une valeur hexadécimale avec deux fois quatre bits non spécifiés. De tels jokers ne peuvent pas être utilisés en notation décimale.</p> 
 
 <p><strong> Ligne de commande: </strong> Pour faciliter les tests automatisés, la fonctionnalité de vecteur de test peut être exécutée à partir de la ligne de commande, comme suit:<tt> java -jar logisim-evolution.jar -test &lt;circuitname&gt; &lt;vector.txt&gt; &lt;project.circ&gt;</tt></p>
 
