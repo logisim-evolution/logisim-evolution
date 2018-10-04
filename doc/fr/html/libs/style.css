@@ -35,7 +35,24 @@ div.leftdiv {
    border:solid 0px;   
 }
 
-
+.f08 {
+	font-size:80%;
+}
+.f09 {
+	font-size:90%;
+}
+.f10{
+	font-size:100%;
+}
+.f11{
+	font-size:110%;
+}
+.f12{
+	font-size:120%;
+}
+.f13{
+	font-size:130%;
+}
 h1 {
 	color: #00137f;
 }
@@ -52,37 +69,52 @@ var {
 tt {
 	font-size:110%;
 }
+b.dblue {
+	color: #00008B;
+}
+b.orange {
+	color: #FF6a00;
+}
+b.red {
+	color: #FF0000;
+}
+b.dgreen {
+	color: #007F0E;
+}
+b.blue {
+	color: #8496ff;
+}
+b.green {
+	color: #00FF21;
+}
+b.grey {
+	color: #505050;
+}
+b.grey1 {
+	color: #909090;
+}
+b.note {
+		color: #FF6a00;
+}
 
-/* Indication pour les référence a des menu */
-b.menu {
+span.menu {
 	color: black;
 	background-color :#b0b0b0;
 	font-family:arial;
 	font-weight:bold;
 }
-/* Indication pour les référence a des propriétés */
-b.propertie {
+
+span.propertie {
 	color:#00008B;
 	font-weight:bold;
 }
-/* Indication pour les référence a des touches clavier */
-b.tkeybd {
+
+span.tkeybd {
 	color:#007F0E;
 }
-
-/* Indication pour les référence note */
-b.note {
-	color:#007F0E;
-}
-
-/* Indication pour les référence a des élement des figures */
-b.note {
-	color:#007F0E;
-}
-
 
 /* 
-Définitions pour les tables de vérités 
+Définition pour les tables de vérités 
 */
 table.tblver {
 	text-align :center;
@@ -116,12 +148,9 @@ span.xvalue {
 span.evalue {
 	color:#FF0000;
 }
-
-/* Définition pour la table présentation de lib
-
-/* Döfinition pour la table des composant de lib
-
 /* Définition pour les listes */
 dt {
 margin-top: 5px;
+}
+}
 }

@@ -14,36 +14,36 @@
 <p>Logisim-evolution vous permet de dessiner et simuler des circuits digitaux. Il est destiné à être utilisé comme un outil d'enseignement, pour 	vous aider à apprendre comment de tels circuits fonctionnent.</p>
 
 <p>Comme premier exercice pratique, construisons un circuit XOR: c'est un circuit qui prend deux entrées (que nous appellerons <var>x</var> et <var>y</var>) et dont la sortie est 0 si les deux entrées sont identiques et à 1 si elles sont différentes. La table de vérité suivante illustre ce fonctionnement.</p>
+<center>
+<table class=tblver>
 
-<table border="0" width="150px" align="center">
-<tbody>
-<tr style="background-color: #ccd1d6;">
-<th>&nbsp;x&nbsp;</th>
-<th>&nbsp;y&nbsp;</th>
-<th>x XOR y</th>
+<tr class=tblvertitl>
+	<th width="20">x</th>
+	<th width="20">y</th>
+	<th width="30">x&nbsp;XOR&nbsp;y</th>
 </tr>
-<tr align="center">
-<td>0</td>
-<td>0</td>
-<td>1</td>
+<tr>
+	<td class=zerov>0</td>
+	<td class=zerov>0</td>
+	<td class=unov>1</td>
 </tr >
-<tr align="center">
-<td>1</td>
-<td>0</td>
-<td>0</td>
+<tr>
+	<td class=unov>1</td>
+	<td class=zerov>0</td>
+	<td class=zerov>0</td>
 </tr>
-<tr align="center">
-<td>0</td>
-<td>1</td>
-<td>1</td>
+<tr>
+	<td class=zerov>0</td>
+	<td class=unov>1</td>
+	<td class=unov>1</td>
 </tr>
-<tr align="center">
-<td>1</td>
-<td>1</td>
-<td>0</td>
+<tr>
+	<td class=unov>1</td>
+	<td class=unov>1</td>
+	<td class=zerov>0</td>
 </tr>
-</tbody>
 </table>
+</center>
 
 <p align="center">
 <img src="../../../../img-guide/tutorial-xor-circ.png"><br>

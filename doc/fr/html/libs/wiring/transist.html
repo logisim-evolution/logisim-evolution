@@ -1,10 +1,12 @@
 <html>
 <meta charset="UTF-8">
 <head>
-<title>Transistor</title>
+	<title>Transistor</title>
+	<LINK rel="stylesheet" type="text/css" href="../style.css">
 </head>
 
-<body bgcolor="FFFFFF">
+<html>>
+<div class="maindiv">
 
 <h1><img  align="center" src="../../../../icons/trans0.gif" width="32" height="32">
 <img  align="center" src="../../../../icons/trans1.gif" width="32" height="32">
@@ -25,7 +27,7 @@
 <p>Un transistor a deux entrées, appelées <em> gate </em> et <em> source </em>, et une sortie, appelée <em> drain </em>. Schématisé, l'entrée <em> source </em> et la sortie <em> drain </em> sont connectées par une plaque, Logisim dessine une pointe de flèche pour indiquer la direction du flux entre l'entrée et la sortie.
 <center><table>
 <tr>
-<td></td><td align="center"><em>gate</em></td><td></td><td>&nbsp &nbsp</td><td></td><td align="center"><em>gate</em></td><td></td>
+<td></td><td align="center"><em>gate</em></td><td></td><td>&nbsp; &nbsp;</td><td></td><td align="center"><em>gate</em></td><td></td>
 </tr>
 <tr>
 <td valign="bottom"><em>source</em></td>
@@ -44,39 +46,78 @@ Logisim prend en charge deux types de transistors, avec des Comportements légè
 
 La détermination de la transmission ou de la déconnexion dépend du type de transistor: Un transistor de type P (indiqué par un cercle sur la ligne <em> gate </em>) transmet lorsque <em> gate </em> est égal à 0, tandis qu'un type transistor N (qui n'a pas de tel cercle) transmet lorsque <em> gate </em> est 1. Le Comportement est résumé par les tableaux suivants.
 Notez la transmission des états Erreur et Haute impédance.</p>
-<center><table>
+<center>
+<table>
 <tr>
-<td></td><td align="center">N-TYPE</td><td> </td><td>&nbsp &nbsp</td><td></td><td align="center"><em>P-TYPE</em></td><td></td>
+	<td></td>
+	<td align="center">N-TYPE</td><td> 
+	</td><td>&nbsp; &nbsp;</td><td>
+	</td><td align="center"><em>P-TYPE</em></td>
+	<td></td>
 </tr>
 <tr>
-<td></td><td align="center" valign="middle"><img src="../../../../img-libs/trans1.png"></td><td> </td><td> </td><td></td><td align="center" valign="middle"><img src="../../../../img-libs/trans0.png"></td><td></td>
+	<td></td>
+	<td align="center" valign="middle"><img src="../../../../img-libs/trans1.png"></td><td>
+	</td><td>
+	</td><td>
+	</td><td align="center" valign="middle"><img src="../../../../img-libs/trans0.png"></td>
+	<td></td>
 </tr>
 <tr>
-<td></td><td align="center">gate</td><td> </td><td> </td><td></td><td align="center">gate</td><td></td>
+	<td></td>
+	<td align="center">gate</td><td>
+	</td><td>
+	</td><td>
+	</td><td align="center">gate</td>
+	<td></td>
 </tr>
 <tr>
-<td>source</td><td align="center" valign="middle" ><img src="../../../../img-libs/transverityptype.png"></td><td> </td><td> </td><td>source</td><td align="center" valign="middle"><img src="../../../../img-libs/transverityntype.png"></td><td></td>
+	<td>source</td>
+	<td align="center" valign="middle" ><img src="../../../../img-libs/transverityptype.png"></td>
+	<td> </td>
+	<td> </td>
+	<td>source</td>
+	<td align="center" valign="middle"><img src="../../../../img-libs/transverityntype.png"></td>
+	<td></td>
 </tr>
 </table></center>
 Qui se résume 
-<center><table>
+<center>
+<table class=tblver>
 <tr>
 
-<tr>
-<th style="border-bottom: 1px solid">gate</th><td> </td><th style="border-bottom: 1px solid">drain</th><td>&nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp </td><td style="border-bottom: 1px solid"> </td><th style="border-bottom: 1px solid">gate</th><td> </td><th style="border-bottom: 1px solid">drain</th>
+<tr class=tblvertitl>
+	<th width="40px">gate</th>
+	<th width="40px">drain</th>
+	<td class=space width="80px"></td>
+	<th width="40px">gate</th>
+	<th width="40px">drain</th>
 </tr>
 <tr>
-<td align="center" style="color:#088A29">0</td><td> </td><td align="center" style="color:#0000FF">X</td><td> </td><td> </td><td align="center" style="color:#088A29">0</td><td> </td><td align="center">source</td>
+	<td class=zerov>0</td>
+	<td class=xvalue>X</td>
+	<td></td>
+	<td class=zerov>0</td>
+	<td align="center">source</td>
 </tr>
 <tr>
-<td align="center" style="color:#00FF00">1</td><td> </td><td align="center">source</td><td></td><td> </td><td align="center" style="color:#00FF00">1</td><td> </td><td align="center" style="color:#0000FF">X</td>
+	<td class=unov>1</td>
+	<td>source</td>
+	<td></td>
+	<td class=unov>1</td>
+	<td class=xvalue>X</td>
 </tr>
-
 <tr>
-<td align="center">X/E</td><td> </td><td align="center">*</td><td></td><td> </td><td align="center">X/E</td><td> </td><td align="center">*</td>
+	<td><span class="evalue">E</span>/<span class="xvalue">X</span></td>
+	<td>*</td>
+	<td></td>
+	<td><span class="evalue">E</span>/<span class="xvalue">X</span></td>
+	<td>*</td>
 </tr>
-</table></center>
-<p>* Si <em>source</em> est Haute impédance, <em>drain</em> est Haute impédance autrement <em>drain</em> est en erreur.</p><p>Note:Etant donné que Logisim utilise les marqueurs X (haute impédance) et E (Erreur) j'ai utilisé les mêmes dans les illustrations plutôt que Z (haute impédance) et X (Erreur) plus communs dans d'autres documents</p>
+</table>
+</center>
+<p>* Si <em>source</em> est Haute impédance (<span class="xvalue">X</span>), <em>drain</em> est Haute impédance <span class="xvalue">X</span> autrement <em>drain</em> est en erreur (<span class="evalue">E</span>).</p>
+<p><b class=note>Note:</b>Etant donné que Logisim utilise les marqueurs X (haute impédance / indéfini) et E (Erreur) j'ai utilisé les mêmes dans les illustrations plutôt que Z (haute impédance) et X (Erreur) plus communs dans d'autres documents</p>
 </center>
 
 <p>Si l'attribut Data Bits est supérieur à 1, l'entrée <em> gate </em> est toujours d'un seul bit, mais sa valeur est appliquée simultanément à chacun des bits de l'entrée <em> source </em>.</p> 
@@ -127,5 +168,6 @@ et les touches fléchées modifient son attribut <q>Orientation</q>.</p>
 
 <p><a href="../index.html">Retour à<em> Référence de la bibliothèque.</em></a></p>
 
-</body>
+</div>
+<html>>
 </html>
