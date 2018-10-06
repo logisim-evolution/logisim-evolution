@@ -1,7 +1,11 @@
 /* 
-This CSS document is suitable for use in java help v2.0
+This CSS documenet is suitable for use in java help v2.0
 It is not suitable for the web and hijacks some CSS rules
 */
+body {
+	 font-family: "Comic Sans MS",cursive;
+
+}
 
 / * For spaces, page background * /
 div.maindiv {
@@ -48,7 +52,7 @@ b.buton {
 	font-family:arial;
 	font-weight:normal; 
 }
-/* for reference to properties /library */
+/* for reference to properties */
 b.propertie {
 	color:#00008B;
 	font-weight:bold;
@@ -66,17 +70,10 @@ b.note {
 
 /* for reference to the elements of the figures */
 b.reffig {
-	color: #00137f;
-	
-}
-a {
-	color:#00137f;
+	color:#007F0E;
 }
 
-/* for référence to the part of guide */
-b.refguide {
-	color:#00137f;
-}
+
 /* For tables of truth tables */
 table.tblver {
 	text-align :center;

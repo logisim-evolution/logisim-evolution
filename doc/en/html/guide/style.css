@@ -1,9 +1,13 @@
+/* 
+Ce documenet CSS est adapté a l'utilisation dans java help v2.0
+Il n'est pas adapté pour le web. 
+*/
 div.serif {
 	 font-family:"Palatino Linotype", "Book Antiqua", Palatino, serif;
 }
 
 div.sans-serif {
-	 font-family:Arial, Helvetica, sans-serif, sans-serif;
+	font-family:Arial, Helvetica, sans-serif, sans-serif;
 }
 
 div.monospace {
@@ -18,7 +22,7 @@ body {
 	  background-color: #FFFFFF;
 	  color:#000000;
       }
-	  
+
 div.maindiv {
 	max-width:560px;
 	border:solid 1px;
@@ -31,24 +35,7 @@ div.leftdiv {
    border:solid 0px;   
 }
 
-.f08 {
-	font-size:80%;
-}
-.f09 {
-	font-size:90%;
-}
-.f10{
-	font-size:100%;
-}
-.f11{
-	font-size:110%;
-}
-.f12{
-	font-size:120%;
-}
-.f13{
-	font-size:130%;
-}
+
 h1 {
 	color: #00137f;
 }
@@ -65,43 +52,76 @@ var {
 tt {
 	font-size:110%;
 }
-b.dblue {
-	color: #00008B;
-}
-b.orange {
-	color: #FF6a00;
-}
-b.red {
-	color: #FF0000;
-}
-b.dgreen {
-	color: #007F0E;
-}
-b.blue {
-	color: #8496ff;
-}
-b.green {
-	color: #00FF21;
-}
-b.grey {
-	color: #505050;
-}
-b.grey1 {
-	color: #909090;
-}
 
-span.menu {
+/* Indication pour les référence a des menu */
+b.menu {
 	color: black;
 	background-color :#b0b0b0;
 	font-family:arial;
 	font-weight:bold;
 }
-
-span.propertie {
+/* Indication pour les référence a des propriétés */
+b.propertie {
 	color:#00008B;
 	font-weight:bold;
 }
-
-span.tkeybd {
+/* Indication pour les référence a des touches clavier */
+b.tkeybd {
 	color:#007F0E;
+}
+
+/* Indication pour les référence note */
+b.note {
+	color:#007F0E;
+}
+
+/* Indication pour les référence a des élement des figures */
+b.note {
+	color:#007F0E;
+}
+
+
+/* 
+Définitions pour les tables de vérités 
+*/
+table.tblver {
+	text-align :center;
+	border-spacing: 2px;
+	border-style: dotted;
+	border-width: 0px;
+}
+
+tr.tblvertitl{
+	background-color:#ccd1d6;
+	width:20;
+}
+td.space {
+	background-color:#ffffff;
+}
+td.zerov {
+	color:#008000;
+}
+td.unov {
+	color:#00FF00;
+}
+td.xvalue {
+	color:#0000FF;
+}
+td.evalue {
+	color:#FF0000;
+}
+span.xvalue {
+	color:#0000FF;
+}
+span.evalue {
+	color:#FF0000;
+}
+
+/* Définition pour la table présentation de lib
+
+/* Döfinition pour la table des composant de lib
+
+/* Définition pour les listes */
+dt {
+margin-top: 5px;
 }
