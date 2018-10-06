@@ -202,6 +202,5 @@
 	<mapID target="icon_dotmat" url="en/icons/dotmat.gif" />
 	<mapID target="icon_tty" url="en/icons/tty.gif" />
 	<mapID target="icon_vhdl" url="en/icons/vhdl.gif" />
-	
-	<mapID target="Test_tml_css" url="en/testhtml/index.html" />
+	<mapID target="test_hml_css" url="en/testhtml/index.html" />
 </map>

@@ -2,10 +2,6 @@
 This CSS documenet is suitable for use in java help v2.0
 It is not suitable for the web and hijacks some CSS rules
 */
-body {
-	 font-family: "Comic Sans MS",cursive;
-
-}
 
 / * For spaces, page background * /
 div.maindiv {
@@ -166,4 +162,53 @@ span.t2 {
 span.t3 {
 	color:#c0c000;
 }
+
+/* for table test */
+table {
+ border-width:1px; 
+ border-style:solid; 
+ border-color:black;
+ width:50%;
+ }
+td { 
+ border-width:1px;
+ border-style:solid; 
+ border-color:red;
+ width:50%;
+ }
+/* for font test */
+font.px8 {
+	font-size: 8px;
+}
+font.px10 {
+	font-size: 10px;
+}
+font.px12 {
+	font-size: 12px;
+}
+font.px14 {
+	font-size: 14px;
+}
+font.px18 {
+	font-size: 18px;
+}
+font.px24 {
+	font-size: 24px;
+}
+font.p60 {
+	font-size: 60%;
+}
+font.p80 {
+	font-size: 80%;
+}
+font.p100 {
+	font-size: 100%;
+}
+font.p120 {
+	font-size: 120%;
+}
+font.p140 {
+	font-size: 140%;
+}
+
 

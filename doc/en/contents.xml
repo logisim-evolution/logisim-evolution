@@ -173,8 +173,8 @@
           <tocitem target="tcl_generic" text="Generic" image="icon_generic" />
       </tocitem>
 	</tocitem>
-	<tocitem target="Test_tml_css" text="Test html & css for java doc">
-		<tocitem target="testhtml" text="Test HTML" image="" />
+	<tocitem target="Tests_for_doc" text="Tests for documentation">
+	    <tocitem target="test_hml_css" text="test_hml_css" />
 	</tocitem>
 </tocitem>
 </toc>
