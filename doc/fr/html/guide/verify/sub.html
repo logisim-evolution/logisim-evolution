@@ -23,7 +23,7 @@
 
 <p>Comme vous pouvez le constater, le circuit maître utilise l'additionneur intégré de Logisim, tandis que le circuit de requête utilise un demi-additionneur et un additionneur complet, eux-mêmes composés de portes logiques. Aux fins de notre exemple, le circuit de requête a une erreur stupide: le report du demi-additionneur n'est pas connecté à l'additionneur complet.</p>
 
-<p>Nous construisons notre circuit de test dans un fichier différent. Là, nous chargeons <tt><b> adder-master.circ </b></tt> en tant que bibliothèque Logisim à l'aide du menu <b class=menu>|&nbsp;Projet&nbsp;|</b> &rarr; <b class=menu>|&nbsp;Load Library&nbsp;|</b>&rarr; <b class=menu>|&nbsp;Bibliothèque Logisim&nbsp;|</b>
+<p>Nous construisons notre circuit de test dans un fichier différent. Là, nous chargeons <tt><b> adder-master.circ </b></tt> en tant que bibliothèque Logisim à l'aide du menu <b class=menu>|&nbsp;Projet&nbsp;|</b>&rarr;<b class=menu>|&nbsp;Load Library&nbsp;|</b>&rarr; <b class=menu>|&nbsp;Bibliothèque Logisim&nbsp;|</b>
 , et nous insérons son additionneur 2 bits en tant que sous-circuit. Nous pourrions exécuter ce circuit directement pour vérifier que le résultat souhaité correspond à solution parfaite.</p>
 
 <blockquote><tt>java -jar logisim-filename.jar adder-test.circ -tty table</tt></blockquote>

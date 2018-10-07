@@ -3,7 +3,7 @@ This CSS document is suitable for use in java help v2.0
 It is not suitable for the web and hijacks some CSS rules
 */
 
-/ * For spaces, page background * /
+/* For spaces, page background */
 div.maindiv {
 	max-width:560px;
 	border:solid 1px;
@@ -40,13 +40,15 @@ b.menu {
 	background-color :#b0b0b0;
 	font-family:arial;
 	font-weight:bold;
+	font-size:15px;
 }
-/* for reference to buton */
-b.buton {
+/* for reference to button, onglets */
+b.button {
 	color: black;
 	background-color :#e0e0e0;
 	font-family:arial;
-	font-weight:normal; 
+	font-weight:normal;
+    font-size:15px;	
 }
 /* for reference to properties /library */
 b.propertie {
@@ -54,7 +56,7 @@ b.propertie {
 	font-weight:bold;
 }
 
-/* for reference to properties keyboard/mouse keys */
+/* for reference to keyboard/mouse keys */
 b.tkeybd {
 	color:#007F0E;
 }
@@ -71,6 +73,9 @@ b.reffig {
 }
 a {
 	color:#00137f;
+}
+a:hover{
+	color:#ff137f;
 }
 
 /* for référence to the part of guide */
@@ -119,54 +124,6 @@ span.evalue {
 dt {
 margin-top: 5px;
 }
-
-/* Pour tester les couleurs */
-span.blue {
-	color:#0000ff;
+li  {
+	margin-top: 5px;
 }
-span.dblue {
-	color:#000090;
-}
-span.green {
-	color:#00ff00;
-}
-span.dgreen {
-	color:#009000;
-}
-span.red {
-	color:#ff0000;
-}
-span.dred {
-	color:#900000;
-}
-span.green {
-	color:#00ff00;
-}
-span.grey {
-	color:#909090;
-}
-span.dgrey {
-	color:#505050;
-}
-span.orange {
-	color:#ff8000;
-}
-span.violet {
-	color:#ff00ff;
-}
-span.manginta {
-	color:#00ffff;
-}
-span.jaune {
-	color:#ffff00;
-}
-span.t1 {
-	color:#006060;
-}
-span.t2 {
-	color:#707000;
-}
-span.t3 {
-	color:#c0c000;
-}
-

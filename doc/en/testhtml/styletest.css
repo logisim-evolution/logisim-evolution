@@ -3,7 +3,7 @@ This CSS documenet is suitable for use in java help v2.0
 It is not suitable for the web and hijacks some CSS rules
 */
 
-/ * For spaces, page background * /
+/* For spaces, page background */
 div.maindiv {
 	max-width:560px;
 	border:solid 1px;
@@ -165,16 +165,14 @@ span.t3 {
 
 /* for table test */
 table {
- border-width:1px; 
+ border-width:0px; 
  border-style:solid; 
  border-color:black;
- width:50%;
  }
 td { 
- border-width:1px;
+ border-width:0px 0px 1px;
  border-style:solid; 
- border-color:red;
- width:50%;
+ border-color:black;
  }
 /* for font test */
 font.px8 {

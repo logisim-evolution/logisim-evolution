@@ -9,20 +9,20 @@
 
 <h1>Ouvrir l'Analyse Combinatoire</h1>
 
-<p>L'essentiel du module d'Analyse Combinatoire est accessible par une seule fenêtre du même nom qui vous permet de voir la table de vérité et les expressions booléennes. Cette fenêtre s'ouvre de deux manières.</p>
+<p>L'essentiel du module <b class=refguide>d'Analyse Combinatoire</b> est accessible par une seule fenêtre du même nom qui vous permet de voir la table de vérité et les expressions booléennes. Cette fenêtre s'ouvre de deux manières.</p>
 
 <h2>Via le menu Window</h2>
 
-<p>Sélectionnez le menu <b class=menu>| Fenêtre |</b> &rarr; <b class=menu>| analyse combinatoire |</b> et la fenêtre "Analyse Combinatoire" apparaîtra. Si vous n'avez encore jamais vu cette fenêtre, cette dernière ne représente aucun circuit.</p>
+<p>Sélectionnez le menu <b class=menu>| Fenêtre |</b>&rarr;<b class=menu>| analyse combinatoire |</b> et la fenêtre "Analyse Combinatoire" apparaîtra. Si vous n'avez encore jamais vu cette fenêtre, cette dernière ne représente aucun circuit.</p>
 
 <p>Il ne peut y avoir qu'une seule fenêtre "Analyse Combinatoire" dans Logisim, quel que soit le nombre de projets ouverts. Il n'y a aucun moyen d'ouvrir deux fenêtres "Analyse Combinatoire" en même temps.</p>
 
 <h2>Via le menu Projet</h2>
 
-<p>Depuis une fenêtre d'édition de circuit, il est aussi possible de  demander à Logisim l'analyse du circuit courant en sélectionnant le menu <b class=menu>| Projet |</b> &rarr; <b class=menu>| Analyser le circuit |</b>. Avant que Logisim ouvre la fenêtre, il va élaborer les expressions booléennes et la table de vérité correspondante au circuit et les afficher pour la visualisation.</p>
+<p>Depuis une fenêtre d'édition de circuit, il est aussi possible de  demander à Logisim l'analyse du circuit courant en sélectionnant le menu <b class=menu>| Projet |</b>&rarr;<b class=menu>| Analyser le circuit |</b>. Avant que Logisim ouvre la fenêtre, il va élaborer les expressions booléennes et la table de vérité correspondante au circuit et les afficher pour la visualisation.</p>
 
 <p>Pour qu'une analyse soit couronnée de succès, chaque entrée doit être liée à un pin d'entrée d'un composant et chaque sortie à un pin de sortie d'un composant.
-Logisim limite les analyses aux circuits avec au plus huit entrées ou huit sorties, et toutes devront être des pins simples. Dans le cas contraire, vous verrez un message d'erreur et la fenêtre ne s'affichera pas.</p>
+Logisim limite les analyses aux circuits avec au plus <b>huit entrées</b> ou <b>huit sorties</b>, et toutes devront être des pins simples. Dans le cas contraire, vous verrez un message d'erreur et la fenêtre ne s'affichera pas.</p>
 
 <p>Dans l'élaboration d'expressions booléennes correspondant à un circuit, Logisim essayera d'abord de construire une expression booléenne correspondant exactement aux portes logiques du circuit. Mais si le circuit utilise des composants qui ne sont pas des portes logiques (par exemple un multiplexeur), ou si le circuit a plus de 100 niveaux de profondeur (improbable), alors il affichera une boîte de dialogue pour vous avertir qu'il n'est pas possible de dériver des expressions booléennes et Logisim va à la place dériver des expressions basées sur la table de vérité qui sera elle-même dérivée en testant silencieusement chaque combinaison en entrée et en lisant le résultat des sorties (méthode force-brute).</p>
 

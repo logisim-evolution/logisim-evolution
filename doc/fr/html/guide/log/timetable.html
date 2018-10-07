@@ -45,14 +45,14 @@ Cette fenêtre permet la visualisation des signaux sélectionnés précédemment
 <p><b>Les zones d'affichage</b> sur la droite, trois colonnes : la première présente le type de signal (bus ou simple) puis nous avons le nom et enfin la valeur du signal sous le curseur (la ligne rouge dans le graphe). Il est possible de déplacer le curseur à l'aide de la souris, il suffit de cliquer et déplacer. Un clic-droit sur la ligne d'un signal de type bus affiche un menu contextuel avec deux options:</p>
 <ul> 
 <li><b>Format</b> ce menu ouvre une sélection de la base d'affichage des signaux (binaire,hexadécimal,octal,signer,non signer) </li>
-<p><li><b>Exploser</b> Affiche le chronogramme de chaque signal  du bus en dessous.</li></p>
+<li><b>Exploser</b> Affiche le chronogramme de chaque signal  du bus en dessous.</li>
 </ul> 
 <p>
 <b>Les boutons:</b> On trouve trois boutons au fond de notre fenêtre.
-<ul><li><b>Chager fichier :</b>Charge et affiche le résultat depuis un fichier préalablement sauvegardé. Cela ne permet pas de paramétrer la simulation.
-</li></p>
-<p><li>
-<b>Exporter... :</b>Exporte les données dans un fichier text. Vous devrez préciser le nom du fichier dans la fenêtre de sauvegarde. Le format du fichier est simple. La première ligne contient le nom des colonnes séparées par une tabulation. La seconde ligne présente le signal et l'échelle de temps si elle a été sélectionnée. Les lignes suivantes présente la valeur ses signaux séparés par une tabulation. La troisième ligne est l'initialisation puis chaque ligne représente un demi-cyle de l'horloge  <var><strong>sysclk</strong></var>.
+<ul><li><b class=button>Chager fichier :</b>Charge et affiche le résultat depuis un fichier préalablement sauvegardé. Cela ne permet pas de paramétrer la simulation.
+</li>
+<li>
+<b  class=button>Exporter... :</b>Exporte les données dans un fichier text. Vous devrez préciser le nom du fichier dans la fenêtre de sauvegarde. Le format du fichier est simple. La première ligne contient le nom des colonnes séparées par une tabulation. La seconde ligne présente le signal et l'échelle de temps si elle a été sélectionnée. Les lignes suivantes présente la valeur ses signaux séparés par une tabulation. La troisième ligne est l'initialisation puis chaque ligne représente un demi-cyle de l'horloge  <var>sysclk</var>.
 <pre>
 sysclk	X	a	b	c	
 clk:X:1:Hz
@@ -65,9 +65,9 @@ clk:X:1:Hz
 1	00	1	1	1	
 0	00	0	1	1	
 </pre>
-</li></p>
-<p><li>
-<b>Exporter image :</b>Exporte le chronogramme dans une image de type png. Vous devrez préciser le nom du fichier dans la fenêtre de sauvegarde.
+</li>
+<li>
+<b  class=button>Exporter image :</b>Exporte le chronogramme dans une image de type png. Vous devrez préciser le nom du fichier dans la fenêtre de sauvegarde.
 </li></ul></p>
 
 <p><b>Suite:</b> <a href="../index.html">Guide de l'utilisateur</a>.</p>
