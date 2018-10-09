@@ -284,6 +284,7 @@ public class Rom extends Mem {
 	@Override
 	public String getHDLName(AttributeSet attrs) {
 		StringBuffer CompleteName = new StringBuffer();
+		CompleteName.append("ROM_");
 		CompleteName.append(CorrectLabel.getCorrectLabel(attrs
 				.getValue(StdAttr.LABEL)));
 		if (CompleteName.length() == 0)
