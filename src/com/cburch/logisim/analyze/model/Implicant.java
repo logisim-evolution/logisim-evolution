@@ -190,7 +190,52 @@ public class Implicant implements Comparable<Implicant> {
 		// essential prime implicants don't cover everything.
 		// In that case, greedily pick out prime implicants
 		// that cover the most uncovered rows.
+		// BUG: This algorithm does not always find the correct solution
+		// Fix: We are first making a set that contains primes without the don't care set
+		boolean ContainsDontCare;
+		HashSet<Implicant> primesNoDontCare = new HashSet<Implicant>();
+		for (Iterator<Implicant> it = primes.iterator(); it.hasNext();) {
+			Implicant implicant = it.next();
+			ContainsDontCare = false;
+			for (Implicant term : implicant.getTerms()) {
+				if (table.getOutputEntry(term.getRow(),column).equals(Entry.DONT_CARE))
+					ContainsDontCare = true;
+			}
+			if (!ContainsDontCare) {
+				primesNoDontCare.add(implicant);
+				System.out.println("added");
+			} else System.out.println("discarded");
+		}
+		
+		// Now we determine again the essential primes of this reduced set
+		for (Implicant required : toCover) {
+			if (covered.contains(required))
+				continue;
+			int row = required.getRow();
+			Implicant essential = null;
+			for (Implicant imp : primesNoDontCare) {
+				if ((row & ~imp.unknowns) == imp.values) {
+					if (essential == null)
+						essential = imp;
+					else {
+						essential = null;
+						break;
+					}
+				}
+			}
+			if (essential != null) {
+				retSet.add(essential);
+				primesNoDontCare.remove(essential);
+				for (Implicant imp : essential.getTerms()) {
+					covered.add(imp);
+				}
+			}
+		}
+		toCover.removeAll(covered);
+
+		/* When this did not do the job we use a greedy algorithm */
 		while (!toCover.isEmpty()) {
+System.out.println("greedy");
 			// find the implicant covering the most rows
 			Implicant max = null;
 			int maxCount = 0;
