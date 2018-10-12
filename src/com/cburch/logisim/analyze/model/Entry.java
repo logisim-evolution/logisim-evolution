@@ -47,7 +47,7 @@ public class Entry {
 
 	public static final Entry ZERO = new Entry("0");
 	public static final Entry ONE = new Entry("1");
-	public static final Entry DONT_CARE = new Entry("x");
+	public static final Entry DONT_CARE = new Entry("-");
 	public static final Entry BUS_ERROR = new Entry(Strings.getter("busError"));
 
 	public static final Entry OSCILLATE_ERROR = new Entry(
