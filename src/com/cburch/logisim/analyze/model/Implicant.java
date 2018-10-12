@@ -203,8 +203,7 @@ public class Implicant implements Comparable<Implicant> {
 			}
 			if (!ContainsDontCare) {
 				primesNoDontCare.add(implicant);
-				System.out.println("added");
-			} else System.out.println("discarded");
+			}
 		}
 		
 		// Now we determine again the essential primes of this reduced set
@@ -226,6 +225,7 @@ public class Implicant implements Comparable<Implicant> {
 			if (essential != null) {
 				retSet.add(essential);
 				primesNoDontCare.remove(essential);
+				primes.remove(essential);
 				for (Implicant imp : essential.getTerms()) {
 					covered.add(imp);
 				}
@@ -235,7 +235,6 @@ public class Implicant implements Comparable<Implicant> {
 
 		/* When this did not do the job we use a greedy algorithm */
 		while (!toCover.isEmpty()) {
-System.out.println("greedy");
 			// find the implicant covering the most rows
 			Implicant max = null;
 			int maxCount = 0;
