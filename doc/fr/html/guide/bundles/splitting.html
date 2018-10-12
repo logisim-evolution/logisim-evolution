@@ -1,6 +1,8 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
 <html>
-<meta charset="UTF-8">
 <head>
+	<META http-equiv="content-type" content="text/html; charset=UTF-8">
+	<META http-equiv="Content-Language" content="fr">
 	<title>Répartiteur</title>
 	<LINK rel="stylesheet" type="text/css" href="../style.css">
 </head>
@@ -23,7 +25,27 @@
 <li>L'attribut <b class=propertie>Représentation</b> définit l'orientation des terminaisons.</li>
 <li>L'attribut <b class=propertie>Terminaisons</b> définit combien de terminaisons séparées il doit y avoir.</li>
 <li>L'attribut <b class=propertie>Apparence</b> définit la manière dont le composant est dessiné par rapport à son Bus.
-<center><img src="../../../../img-guide/bundles-splitter-apprence.png"></center>
+<center>
+<table>
+<tr><br>
+<td valign="top">Bus</td>
+<td><img  align="center" src="../../../../img-libs/splitter-right.png"></td>
+<td>Terminaisons</td>
+<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+<td><img  align="center" src="../../../../img-libs/splitter-right.png"></td>
+<td><img  align="center" src="../../../../img-libs/splitter-left.png"></td>
+<td><img  align="center" src="../../../../img-libs/splitter-center.png"></td>
+<td><img  align="center" src="../../../../img-libs/splitter-legacy.png"></td>
+</tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>A droite</td>
+<td>A gauche</td>
+<td>Au centre</td>
+<td>Héritage</td></tr>
+</table>
 </li>
 <li>L'attribut <b class=propertie>Largeur en bits</b> spécifie la largeur en bit du bus, c'est-à-dire le nombre de conducteurs.</li>
 <li>L'attribut <b class=propertie>Bit <var>x</var></b> définit quelle terminaison séparée correspond à quel bit <em>x</em> du bus. Il est modifiable et permet d'organiser à la main l'ordre des terminaisons. Si plusieurs bits correspondent à la même terminaison (premier exemple ci-dessus), alors l'ordre relatif sera le même que dans le bus. Les répartiteur Logisim ne peuvent pas avoir un bit du bus relié à plusieurs terminaisons.</li>

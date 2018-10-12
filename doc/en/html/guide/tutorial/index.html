@@ -1,6 +1,9 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
 <html>
-<meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <head>
+	<META http-equiv="content-type" content="text/html; charset=UTF-8">
+	<META http-equiv="Content-Language" content="en">
+	<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 	<title>Beginner's tutorial</title>
 	<LINK rel="stylesheet" type="text/css" href="../style.css">
 </head>
@@ -9,43 +12,42 @@
 <div class="maindiv">
 <h1>Beginner's tutorial</h1>
 
-<p><b>Next:</b> <a href="tutor-orient.html">Step 0: Orienting yourself</a></p>
-
 <p>Welcome to <b>Logisim-evolution</b></p>
 
 <p>Logisim-evolution allows you to design and simulate digital circuits. It  is intended as an educational tool, to help you learn how circuits work.</p>
-<p>To practice using Logisim, let's build a XOR circuit - that is, a circuit that takes two inputs (which we'll call <em>x</em> and <em>y</em>) and outputs 0 if the inputs are the same and 1 if they are different. The following truth table illustrates.</p>
-<table border="0" width="150px" align="center">
-<tbody>
-<tr style="background-color: #ccd1d6;">
-<th>&nbsp;x&nbsp;</th>
-<th>&nbsp;y&nbsp;</th>
-<th>x XOR y</th>
+<p>To practice using Logisim, let's build a XOR circuit - that is, a circuit that takes two inputs (which we'll call <var>x</var> and <var>y</var>) and outputs 0 if the inputs are the same and 1 if they are different. The following truth table illustrates.</p>
+<center>
+<table class=tblver>
+
+<tr class=tblvertitl>
+	<th width="20">x</th>
+	<th width="20">y</th>
+	<th width="30">x&nbsp;XOR&nbsp;y</th>
 </tr>
-<tr align="center">
-<td>0</td>
-<td>0</td>
-<td>1</td>
+<tr>
+	<td class=zerov>0</td>
+	<td class=zerov>0</td>
+	<td class=unov>1</td>
 </tr >
-<tr align="center">
-<td>1</td>
-<td>0</td>
-<td>0</td>
+<tr>
+	<td class=unov>1</td>
+	<td class=zerov>0</td>
+	<td class=zerov>0</td>
 </tr>
-<tr align="center">
-<td>0</td>
-<td>1</td>
-<td>1</td>
+<tr>
+	<td class=zerov>0</td>
+	<td class=unov>1</td>
+	<td class=unov>1</td>
 </tr>
-<tr align="center">
-<td>1</td>
-<td>1</td>
-<td>0</td>
+<tr>
+	<td class=unov>1</td>
+	<td class=unov>1</td>
+	<td class=zerov>0</td>
 </tr>
-</tbody>
 </table>
-We might design such a circuit on paper.
-<center><img src="../../../../img-guide/tutorial-xor-circ.png"></center>
+<br>
+We might design such a circuit on paper.<br>
+<img src="../../../../img-guide/tutorial-xor-circ.png"></center>
 <p>But just because it's on paper doesn't mean it's right. To verify our work, we'll draw it in Logisim and test it. As an added bonus, we'll get a circuit that's looks nicer than what you probably would draw by hand.</p>
 
 <p><a href="tutor-orient.html">Step 0: Orienting yourself</a>
@@ -53,6 +55,7 @@ We might design such a circuit on paper.
 <br><a href="tutor-wires.html">Step 2: Adding wires</a>
 <br><a href="tutor-text.html">Step 3: Adding text</a>
 <br><a href="tutor-test.html">Step 4: Testing your circuit</a>
+<br><a href="tutor-test.html">Step 5: Step by step mode</a>
 </p>
 
 <p>Enjoy your circuit-building!</p>

@@ -1,8 +1,10 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
 <html>
-<meta charset="UTF-8">
 <head>
+	<META http-equiv="content-type" content="text/html; charset=UTF-8">
+	<META http-equiv="Content-Language" content="fr">
 	<title>Délais sur les portes logiques</title>
-	<LINK rel="stylesheet" type="text/css" href="../style.css">
+	<link rel="stylesheet" type="text/css" href="../style.css">
 </head>
 
 <body>
@@ -14,7 +16,7 @@
 <p>Ce circuit "évidemment" génère toujours 0. Mais dans la réalité les sorties des portes ne réagissent pas instantanément à leurs entrées, et elles ne le font pas non plus dans Logisim. Par conséquent, lorsque l'entrée de ce circuit passe de 0 à 1, le retard introduit par la porte NOT fait que la porte  ET verra brièvement deux entrées 1 et émettra brièvement 1. Vous ne le verrez pas à l'écran. Mais l'effet est observable lorsque nous utilisons la sortie de la porte AND comme entrée de l'horloge d'une bascule D.
 </p>
 <center><img src="../../../../img-guide/prop-using-const0.png"></center>
-<p>La bascule D changera à chaque impulsion de la sortie de la porte AND soit quand l'entrée du circuit passe de 0 à 1. Le déroulement détaillé peut s'observer grâce au <a href="../tutorial/tutor-step.html">mode pas à pas</a> de la simulation.</p>
+<p>La bascule D changera à chaque impulsion de la sortie de la porte AND soit quand l'entrée du circuit passe de 0 à 1. Le déroulement détaillé peut aussi s'observer grâce au <a href="../tutorial/tutor-step.html">mode pas à pas</a> de la simulation.</p>
 
 <p>Chaque composant est associé à un délai. Les composants plus sophistiqués intégrés dans Logisim ont tendance à avoir des retards plus importants, mais ces retards sont quelque peu arbitraires et peuvent ne pas refléter la réalité.</p>
 

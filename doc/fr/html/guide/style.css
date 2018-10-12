@@ -15,6 +15,12 @@ div.leftdiv {
    max-width:160px;
    border:solid 0px;   
 }
+a {
+	color:#00137f;
+}
+a:hover{
+	color:#ff137f;
+}
 
 /* for titles */
 h1 {
@@ -40,7 +46,7 @@ b.menu {
 	background-color :#b0b0b0;
 	font-family:arial;
 	font-weight:bold;
-	font-size:15px;
+	font-size:12px;
 }
 /* for reference to button, onglets */
 b.button {
@@ -48,7 +54,7 @@ b.button {
 	background-color :#e0e0e0;
 	font-family:arial;
 	font-weight:normal;
-    font-size:15px;	
+    font-size:12px;	
 }
 /* for reference to properties /library */
 b.propertie {
@@ -70,12 +76,6 @@ b.note {
 b.reffig {
 	color: #00137f;
 	
-}
-a {
-	color:#00137f;
-}
-a:hover{
-	color:#ff137f;
 }
 
 /* for référence to the part of guide */
@@ -116,9 +116,9 @@ span.evalue {
 	color:#FF0000;
 }
 
-/* Définition pour la table présentation de lib
+/* Définition pour la table présentation de lib */
 
-/* Définition pour la table des composant de lib
+/* Définition pour la table des composant de lib */
 
 /* For list items */
 dt {
