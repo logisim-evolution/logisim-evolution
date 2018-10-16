@@ -39,7 +39,10 @@ var {
 tt {
 	font-size:110%;
 }
-
+/* For img icone in the text */
+img.intxt {
+	vertical-align:middle;
+}
 /* for reference to menu */
 b.menu {
 	color: black;
@@ -48,7 +51,7 @@ b.menu {
 	font-weight:bold;
 	font-size:12px;
 }
-/* for reference to button, onglets */
+/* for reference to button, tabs */
 b.button {
 	color: black;
 	background-color :#e0e0e0;
@@ -78,8 +81,12 @@ b.reffig {
 	
 }
 
-/* for référence to the part of guide */
+/* for reference to the part of guide */
 b.refguide {
+	color:#00137f;
+}
+/* For reference to question or answer of the pgm */
+b.refquest {
 	color:#00137f;
 }
 /* For tables of truth tables */
@@ -92,28 +99,33 @@ table.tblver {
 
 tr.tblvertitl{
 	background-color:#ccd1d6;
-	width:20;
 }
 td.space {
 	background-color:#ffffff;
 }
 td.zerov {
 	color:#008000;
+	text-align :center;
 }
 td.unov {
 	color:#00FF00;
+	text-align :center;
 }
 td.xvalue {
 	color:#0000FF;
+	text-align :center;
 }
 td.evalue {
 	color:#FF0000;
+	text-align :center;
 }
 span.xvalue {
 	color:#0000FF;
+	text-align :center;
 }
 span.evalue {
 	color:#FF0000;
+	text-align :center;
 }
 
 /* Définition pour la table présentation de lib */
@@ -125,5 +137,5 @@ dt {
 margin-top: 5px;
 }
 li  {
-	margin-top: 5px;
+margin-top: 5px;
 }
