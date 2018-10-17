@@ -36,6 +36,10 @@ public class Ttl7400 extends AbstractTtlGate {
 		super("7400", (byte) 14, new byte[] { 3, 6, 8, 11 }, true);
 	}
 
+	public Ttl7400(String name) {
+		super(name, (byte) 14, new byte[] { 3, 6, 8, 11 }, true);
+	}
+
 	@Override
 	public void paintInternal(InstancePainter painter, int x, int y, int height, boolean up) {
 		Graphics g = painter.getGraphics();
