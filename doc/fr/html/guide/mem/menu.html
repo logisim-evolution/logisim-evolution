@@ -24,7 +24,7 @@
 <dt><b>Charger l'image ... :</b></dt>
 <dd><p>Réinitialise toutes les valeurs en mémoire en fonction des valeurs trouvées dans un fichier en utilisant le format décrit ci-dessous.</p></dd>
 
-<dt><b>sauvegarder l'image ... :</b></dt>
+<dt><b>Sauvegarder l'image ... :</b></dt>
 <dd><p>Stocke toutes les valeurs en mémoire dans un fichier en utilisant le format décrit ci-dessous.</p></dd>
 
 </ul>
@@ -34,7 +34,8 @@
 </p>
 <blockquote><pre>
 v2.0 raw
-2 3 0 0 14 ff
+11 23 9*11 78 90 12 14 fe
+34 ef 1 54 23 12
 </pre></blockquote>
 <p>La première ligne identifie le format de fichier utilisé (actuellement, un seul format de fichier est reconnu "raw"). Les valeurs suivantes, en hexadécimal, répertorient les données à partir de l'adresse 0. Les fins de ligne ne sont pas interprétées. Si la dimension des données du fichier sont plus petite que l'espace en mémoire les cellules restantes seront à zero.</p>
 

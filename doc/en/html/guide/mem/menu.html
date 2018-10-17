@@ -1,59 +1,47 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
 <html>
 <head>
+	<META http-equiv="content-type" content="text/html; charset=UTF-8">
+	<META http-equiv="Content-Language" content="en">
 	<title>Pop-up menus and files</title>
+	<LINK rel="stylesheet" type="text/css" href="../style.css">
 </head>
-<body bgcolor="FFFFFF">
+
+<body>
+<div class="maindiv">
 
 <h1>Pop-up menus and files</h1>
 
-<p>The pop-up menu for memory includes four options in addition
-to the options common to all components:</p>
-<ul>
+<p>The pop-up menu for memory includes four options in addition to the options common to all components:</p>
+<dl>
+<blockquote>
+<dt><b>Edit Contents:</b></dt>
+<dd><p>Bring up a hex editor for editing the contents of memory.</p></dd>
 
-<li>Edit Contents: Bring up a hex editor for editing the contents
-of memory.</li>
+<dt><b>Clear Contents:</b></dt>
+<dd><p>Resets all values in memory to 0.</p></dd>
 
-<li>Clear Contents: Resets all values in memory to 0.</li>
+<dt><b>Load Image...:</b></dt>
+<dd><p>Resets all values in memory based on the values found in a file using the format described below.</p></dd>
 
-<li>Load Image...: Resets all values in memory based on the values
-found in a file using the format described below.</li>
+<dt><b>Save Image...:</b></dt>
+<dd><p>Stores all values in memory into a file using the format described below.</p></dd>
 
-<li>Save Image...: Stores all values in memory into a file using
-the format described below.</li>
+</dl>
 
-</ul>
-
-<p>The file format used for image files is intentionally simple;
-this permits you to write a program, such as an assembler, that
-generates memory images that can then be loaded into memory.
-As an example of this file format, if we had a 256-byte memory whose
-first five bytes were 2, 3, 0, 20, and -1, and all subsequent values
-were 0, then the image would be the following text file.</p>
+<p>The file format used for image files is intentionally simple; this permits you to write a program, such as an assembler, that generates memory images that can then be loaded into memory. As an example of this file format, if we had a 256-byte memory whose first five bytes were 2, 3, 0, 20, and -1, and all subsequent values were 0, then the image would be the following text file.</p>
 <blockquote><pre>
 v2.0 raw
-02
-03
-00
-14
-ff
+11 23 9*11 78 90 12 14 fe
+34 ef 1 54 23 12
 </pre></blockquote>
-<p>The first line identifies the file format used (currently, there is only
-one file format recognized). Subsequent values list the values in
-hexadecimal, starting from address 0; you can place several such
-values on the same line. If there are more memory locations than are identified
-in the file, Logisim will load 0 into the other memory locations.</p>
+<p>The first line identifies the file format used (currently, there is only one file format recognized). Subsequent values list the values in hexadecimal, starting from address 0; you can place several such values on the same line. If there are more memory locations than are identified in the file, Logisim will load 0 into the other memory locations.</p>
 
-<p>The image file can use run-length encoding; for example, rather than
-list the value <tt>00</tt> sixteen times in a row, the file can include
-<tt>16*00</tt>. Notice
-than the number of repetitions is written in base 10.
-Files produced by Logisim will use run-length encoding for runs of
-at least four values.</p>
+<p>The image file can use run-length encoding; for example, rather than list the value <tt>00</tt> sixteen times in a row, the file can include <tt>16*00</tt>. Notice than the number of repetitions is written in base 10. Files produced by Logisim will use run-length encoding for runs of at least four values.</p>
 
-<p>You can place comments into the file by using the '#' symbol: All characters
-in the line starting from the '#' symbol will be ignored by Logisim.</p>
+<p>You can place comments into the file by using the '#' symbol: All characters in the line starting from the '#' symbol will be ignored by Logisim.</p>
 
 <p><strong>Next:</strong> <a href="hex.html">Hex editor</a>.</p>
-
+</div>
 </body>
 </html>
