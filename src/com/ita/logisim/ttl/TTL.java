@@ -44,7 +44,7 @@ public class TTL extends Library {
 			new FactoryDescription("74273", Strings.getter("74273: octal D-Flipflop with clear"), "ttl.gif", "Ttl74273"),
 			new FactoryDescription("74283", Strings.getter("74283: 4-bit binary full adder"), "ttl.gif", "Ttl74283"),
 			new FactoryDescription("74377", Strings.getter("74377: octal D-Flipflop with enable"), "ttl.gif", "Ttl74377"),
-			new FactoryDescription("747266", Strings.getter("747266: quad 2-input XNOR gate"), "ttl.gif", "Ttl747266"), 
+			new FactoryDescription("74266", Strings.getter("74266: quad 2-input XNOR gate"), "ttl.gif", "Ttl74266"), 
 			};
 
 	static final Attribute<Boolean> VCC_GND = Attributes.forBoolean("VccGndPorts", Strings.getter("VccGndPorts"));

@@ -8,13 +8,13 @@ import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 
-public class Ttl747266 extends AbstractTtlGate {
+public class Ttl74266 extends AbstractTtlGate {
 
 	private class XNorGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
 
 		@Override
 		public String getComponentStringIdentifier() {
-			return "TTL747266";
+			return "TTL74266";
 		}
 
 		@Override
@@ -32,8 +32,8 @@ public class Ttl747266 extends AbstractTtlGate {
 
 	}
 
-	public Ttl747266() {
-		super("747266", (byte) 14, new byte[] { 3, 6, 8, 11 }, true);
+	public Ttl74266() {
+		super("74266", (byte) 14, new byte[] { 3, 6, 8, 11 }, true);
 	}
 
 	@Override
