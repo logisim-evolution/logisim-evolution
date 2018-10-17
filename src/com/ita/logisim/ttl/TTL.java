@@ -33,6 +33,8 @@ public class TTL extends Library {
 			new FactoryDescription("7447", Strings.getter("7447: BCD to 7-segment decoder"), "ttl.gif", "Ttl7447"),
 			new FactoryDescription("7451", Strings.getter("7451: dual AND-OR-INVERT gate"), "ttl.gif", "Ttl7451"),
 			new FactoryDescription("7454", Strings.getter("7454: Four wide AND-OR-INVERT gate"), "ttl.gif", "Ttl7454"),
+			new FactoryDescription("7458", Strings.getter("7458: dual AND-OR gate"), "ttl.gif", "Ttl7458"),
+			new FactoryDescription("7464", Strings.getter("7464: 4-2-3-2 AND-OR-INVERT gate"), "ttl.gif", "Ttl7464"),
 			new FactoryDescription("7474", Strings.getter("7474: dual D-Flipflops with preset and clear"), "ttl.gif", "Ttl7474"),
 			new FactoryDescription("7485", Strings.getter("7485: 4-bit magnitude comparator"), "ttl.gif", "Ttl7485"),
 			new FactoryDescription("7486", Strings.getter("7486: quad 2-input XOR gate"), "ttl.gif", "Ttl7486"),
