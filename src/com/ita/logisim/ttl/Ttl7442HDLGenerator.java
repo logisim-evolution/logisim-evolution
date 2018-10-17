@@ -12,6 +12,19 @@ import com.bfh.logisim.hdlgenerator.HDLGeneratorFactory;
 import com.cburch.logisim.data.AttributeSet;
 
 public class Ttl7442HDLGenerator extends AbstractHDLGeneratorFactory {
+	
+	private boolean IsExes3 = false;
+	private boolean IsGray = false;
+	
+	public Ttl7442HDLGenerator() {
+		super();
+	}
+
+	public Ttl7442HDLGenerator(boolean Exess3, boolean Gray) {
+		super();
+		IsExes3 = Exess3;
+		IsGray = Gray;
+	}
 
 	@Override
 	public String getComponentStringIdentifier() {
@@ -50,16 +63,40 @@ public class Ttl7442HDLGenerator extends AbstractHDLGeneratorFactory {
 	public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist,
 			AttributeSet attrs, FPGAReport Reporter, String HDLType) {
 		ArrayList<String> Contents = new ArrayList<String>();
-		Contents.add("   O0 <= NOT (NOT(D) AND NOT(C) AND NOT(B) AND NOT(A));");
-		Contents.add("   O1 <= NOT (NOT(D) AND NOT(C) AND NOT(B) AND     A );");
-		Contents.add("   O2 <= NOT (NOT(D) AND NOT(C) AND     B  AND NOT(A));");
-		Contents.add("   O3 <= NOT (NOT(D) AND NOT(C) AND     B  AND     A );");
-		Contents.add("   O4 <= NOT (NOT(D) AND     C  AND NOT(B) AND NOT(A));");
-		Contents.add("   O5 <= NOT (NOT(D) AND     C  AND NOT(B) AND     A );");
-		Contents.add("   O6 <= NOT (NOT(D) AND     C  AND     B  AND NOT(A));");
-		Contents.add("   O7 <= NOT (NOT(D) AND     C  AND     B  AND     A );");
-		Contents.add("   O8 <= NOT (    D  AND NOT(C) AND NOT(B) AND NOT(A));");
-		Contents.add("   O9 <= NOT (    D  AND NOT(C) AND NOT(B) AND     A );");
+		if (IsExes3) {
+			Contents.add("   O0 <= NOT (NOT(D) AND NOT(C) AND     B  AND     A );");
+			Contents.add("   O1 <= NOT (NOT(D) AND     C  AND NOT(B) AND NOT(A));");
+			Contents.add("   O2 <= NOT (NOT(D) AND     C  AND NOT(B) AND     A );");
+			Contents.add("   O3 <= NOT (NOT(D) AND     C  AND     B  AND NOT(A));");
+			Contents.add("   O4 <= NOT (NOT(D) AND     C  AND     B  AND     A );");
+			Contents.add("   O5 <= NOT (    D  AND NOT(C) AND NOT(B) AND NOT(A));");
+			Contents.add("   O6 <= NOT (    D  AND NOT(C) AND NOT(B) AND     A );");
+			Contents.add("   O7 <= NOT (    D  AND NOT(C) AND     B  AND NOT(A));");
+			Contents.add("   O8 <= NOT (    D  AND NOT(C) AND     B  AND     A );");
+			Contents.add("   O9 <= NOT (    D  AND     C  AND NOT(B) AND NOT(A));");
+		} else if (IsGray) {
+			Contents.add("   O0 <= NOT (NOT(D) AND NOT(C) AND     B  AND NOT(A));");
+			Contents.add("   O1 <= NOT (NOT(D) AND     C  AND     B  AND NOT(A));");
+			Contents.add("   O2 <= NOT (NOT(D) AND     C  AND     B  AND     A );");
+			Contents.add("   O3 <= NOT (NOT(D) AND     C  AND NOT(B) AND     A );");
+			Contents.add("   O4 <= NOT (NOT(D) AND     C  AND NOT(B) AND NOT(A));");
+			Contents.add("   O5 <= NOT (    D  AND     C  AND NOT(B) AND NOT(A));");
+			Contents.add("   O6 <= NOT (    D  AND     C  AND NOT(B) AND     A );");
+			Contents.add("   O7 <= NOT (    D  AND     C  AND     B  AND     A );");
+			Contents.add("   O8 <= NOT (    D  AND     C  AND     B  AND NOT(A));");
+			Contents.add("   O9 <= NOT (    D  AND NOT(C) AND     B  AND NOT(A));");
+		} else {
+			Contents.add("   O0 <= NOT (NOT(D) AND NOT(C) AND NOT(B) AND NOT(A));");
+			Contents.add("   O1 <= NOT (NOT(D) AND NOT(C) AND NOT(B) AND     A );");
+			Contents.add("   O2 <= NOT (NOT(D) AND NOT(C) AND     B  AND NOT(A));");
+			Contents.add("   O3 <= NOT (NOT(D) AND NOT(C) AND     B  AND     A );");
+			Contents.add("   O4 <= NOT (NOT(D) AND     C  AND NOT(B) AND NOT(A));");
+			Contents.add("   O5 <= NOT (NOT(D) AND     C  AND NOT(B) AND     A );");
+			Contents.add("   O6 <= NOT (NOT(D) AND     C  AND     B  AND NOT(A));");
+			Contents.add("   O7 <= NOT (NOT(D) AND     C  AND     B  AND     A );");
+			Contents.add("   O8 <= NOT (    D  AND NOT(C) AND NOT(B) AND NOT(A));");
+			Contents.add("   O9 <= NOT (    D  AND NOT(C) AND NOT(B) AND     A );");
+		}
 		return Contents;
 	}
 

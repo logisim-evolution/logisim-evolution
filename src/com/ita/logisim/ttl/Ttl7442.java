@@ -9,10 +9,20 @@ import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 
 public class Ttl7442 extends AbstractTtlGate {
+	
+	private boolean IsExec3 = false;
+	private boolean IsGray = false;
 
 	public Ttl7442() {
 		super("7442", (byte) 16, new byte[] { 1,2,3,4,5,6,7,9,10,11 },
 				new String[] { "O0", "O1", "O2", "O3", "O4", "O5", "O6", "O7", "O8", "O9","D","C","B","A"});
+	}
+
+	public Ttl7442(String name, int encoding) {
+		super(name, (byte) 16, new byte[] { 1,2,3,4,5,6,7,9,10,11 },
+				new String[] { "O0", "O1", "O2", "O3", "O4", "O5", "O6", "O7", "O8", "O9","D","C","B","A"});
+		IsExec3 = encoding == 1;
+		IsGray = encoding == 2;
 	}
 
 	@Override
@@ -67,7 +77,19 @@ public class Ttl7442 extends AbstractTtlGate {
 			state.setPort(7, Value.UNKNOWN, 1);
 			state.setPort(8, Value.UNKNOWN, 1);
 			state.setPort(9, Value.UNKNOWN, 1);
+		} else if (IsGray) {
+			state.setPort(0, decode == 2 ? Value.FALSE : Value.TRUE, 1);
+			state.setPort(1, decode == 6 ? Value.FALSE : Value.TRUE, 1);
+			state.setPort(2, decode == 7 ? Value.FALSE : Value.TRUE, 1);
+			state.setPort(3, decode == 5 ? Value.FALSE : Value.TRUE, 1);
+			state.setPort(4, decode == 4 ? Value.FALSE : Value.TRUE, 1);
+			state.setPort(5, decode == 12 ? Value.FALSE : Value.TRUE, 1);
+			state.setPort(6, decode == 13 ? Value.FALSE : Value.TRUE, 1);
+			state.setPort(7, decode == 15 ? Value.FALSE : Value.TRUE, 1);
+			state.setPort(8, decode == 14 ? Value.FALSE : Value.TRUE, 1);
+			state.setPort(9, decode == 10 ? Value.FALSE : Value.TRUE, 1);
 		} else {
+			if (IsExec3) decode -= 3;
 			state.setPort(0, decode == 0 ? Value.FALSE : Value.TRUE, 1);
 			state.setPort(1, decode == 1 ? Value.FALSE : Value.TRUE, 1);
 			state.setPort(2, decode == 2 ? Value.FALSE : Value.TRUE, 1);
@@ -93,7 +115,7 @@ public class Ttl7442 extends AbstractTtlGate {
 	public boolean HDLSupportedComponent(String HDLIdentifier,
 			AttributeSet attrs) {
 		if (MyHDLGenerator == null)
-			MyHDLGenerator = new Ttl7442HDLGenerator();
+			MyHDLGenerator = new Ttl7442HDLGenerator(IsExec3,IsGray);
 		return MyHDLGenerator.HDLTargetSupported(HDLIdentifier, attrs);
 	}
 }

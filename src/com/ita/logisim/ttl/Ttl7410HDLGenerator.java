@@ -14,14 +14,16 @@ import com.cburch.logisim.data.AttributeSet;
 public class Ttl7410HDLGenerator extends AbstractHDLGeneratorFactory {
 
 	private boolean Inverted = true;
+	private boolean andgate = true;
 	
 	public Ttl7410HDLGenerator() {
 		super();
 	}
 
-	public Ttl7410HDLGenerator(boolean invert) {
+	public Ttl7410HDLGenerator(boolean invert,boolean IsAnd) {
 		super();
 		Inverted = invert;
+		andgate = IsAnd;
 	}
 	
 	@Override
@@ -60,9 +62,10 @@ public class Ttl7410HDLGenerator extends AbstractHDLGeneratorFactory {
 			AttributeSet attrs, FPGAReport Reporter, String HDLType) {
 		ArrayList<String> Contents = new ArrayList<String>();
 		String Inv = Inverted ? "NOT" : "" ;
-		Contents.add("   Y0 <= "+Inv+" (A0 AND B0 AND C0);");
-		Contents.add("   Y1 <= "+Inv+" (A1 AND B1 AND C1);");
-		Contents.add("   Y2 <= "+Inv+" (A2 AND B2 AND C2);");
+		String Func = andgate ? "AND" : "OR";
+		Contents.add("   Y0 <= "+Inv+" (A0 "+Func+" B0 "+Func+" C0);");
+		Contents.add("   Y1 <= "+Inv+" (A1 "+Func+" B1 "+Func+" C1);");
+		Contents.add("   Y2 <= "+Inv+" (A2 "+Func+" B2 "+Func+" C2);");
 		return Contents;
 	}
 
