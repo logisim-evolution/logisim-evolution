@@ -1,10 +1,14 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
 <html>
 <head>
+	<META http-equiv="content-type" content="text/html; charset=UTF-8">
+	<META http-equiv="Content-Language" content="en">
 <title>Command-line verification</title>
+<LINK rel="stylesheet" type="text/css" href="../style.css">
 </head>
 
-<body bgcolor="FFFFFF">
-
+<body>
+<div class="maindiv">
 <h1>Command-line verification</h1>
 
 <blockquote><em>Subsections:</em>
@@ -13,40 +17,23 @@
 <br><a href="multi.html">Testing multiple files</a>
 </blockquote>
 
-<p>Logisim includes basic support for executing circuits from the command-line.
-This is intended both to help with scripted verification of circuit designs
-and to help instructors perform automated testing of students' solutions.</p>
+<p>Logisim includes basic support for executing circuits from the command-line. This is intended both to help with scripted verification of circuit designs and to help instructors perform automated testing of students' solutions.</p>
 
-<p>We'll start by seeing how to execute a circuit from the command line.
-For our example, we'll suppose we've built the below circuit in a file named <tt>adder-test.circ</tt>.
-It uses a two-bit adder as a subcircuit
-and iterates using a counter through all 16 possible inputs to it.</p>
+<p>We'll start by seeing how to execute a circuit from the command line. For our example, we'll suppose we've built the below circuit in a file named <tt>adder-test.circ</tt>. It uses a two-bit adder as a subcircuit and iterates using a counter through all 16 possible inputs to it.</p>
 
-<blockquote><img src="../../../../img-guide/verify-adder-test.png"></blockquote>
+<center><img src="../../../../img-guide/verify-adder-test.png">
+</center>
 
-<p>After this circuit has been built, we then execute Logisim from the command line,
-providing the filename of the project
-and the <q>-tty</q> option with the <q>table</q> parameter.</p>
+<p>After this circuit has been built, we then execute Logisim from the command line, providing the filename of the project and the <b class=propertie>-tty</b> option with the <<b class=propertie>table</b> parameter.</p>
 
-<blockquote><tt>java -jar logisim-filename.jar adder-test.circ -tty table</tt></blockquote>
+<blockquote>
+<tt>java -jar logisim-filename.jar adder-test.circ -tty table</tt>
+</blockquote>
 
-<p>Without bringing up any windows, Logisim loads the circuit and begins to execute it,
-ticking any clocks as fast as it can while completing the propagation between each tick.
-After each propagation is completed, Logisim loads the current values of the output pins;
-if any have changed from the previous propagation,
-then all values are displayed in tab-delimited format.
-If there is an output pin labeled with the special word <q>halt</q>,
-its output is not displayed &mdash; but once the pin's value reaches 1 after
-a propagation is completed, Logisim ends the simulation.</p>
+<p>Without bringing up any windows, Logisim loads the circuit and begins to execute it, ticking any clocks as fast as it can while completing the propagation between each tick. After each propagation is completed, Logisim loads the current values of the output pins; if any have changed from the previous propagation, then all values are displayed in tab-delimited format. If there is an output pin labeled with the special word <var>halt</var>,
+its output is not displayed &mdash; but once the pin's value reaches 1 after a propagation is completed, Logisim ends the simulation.</p>
 
-<p>For our example, Logisim displays the table below. Because we have two output
-pins corresponding to the two inputs <var>a</var> and <var>b</var> into the
-two-bit adder, these outputs are included as the first two columns of the output.
-And there is another output pin corresponding to the two-bit adder's output,
-so it is the third column.
-The columns are ordered left-to-right according to the top-down ordering within
-the circuit.</p>
-
+<p>For our example, Logisim displays the table below. Because we have two output pins corresponding to the two inputs <var>a</var> and <var>b</var> into the two-bit adder, these outputs are included as the first two columns of the output. And there is another output pin corresponding to the two-bit adder's output, so it is the third column. The columns are ordered left-to-right according to the top-down ordering within the circuit.</p>
 <blockquote><pre>
 00      00      000
 01      00      001
@@ -67,6 +54,6 @@ the circuit.</p>
 </pre></blockquote>
 
 <p><strong>Next:</strong> <a href="sub.html">Substituting libraries</a>.</p>
-
+</div>
 </body>
 </html>

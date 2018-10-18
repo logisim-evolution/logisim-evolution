@@ -16,37 +16,46 @@
 
 <h2>Construire la comparaison dans le circuit</h2>
 
-<p>Une approche consiste à construire un circuit de test qui effectue directement la comparaison. Ici, nous créons un circuit supplémentaire de test qui englobe le circuit à tester. Dans notre circuit global, nous incluons à la fois le sous-circuit de référence <tt><b> adder-master.circ </b></tt> et le sous-circuit à tester situé directement dans le circuit imbriqué. Nous le connectons de manière à ce qu’il n’y ait qu’une sortie, c’est-à-dire 1 tant que les deux sous-circuits concordent.</p>
+<p>Une approche consiste à construire un circuit de test qui effectue directement la comparaison. Ici, nous créons un circuit supplémentaire de test qui englobe le circuit à tester. Dans notre circuit global, nous incluons à la fois le sous-circuit de référence <tt><b>master.circ</b></tt> et le sous-circuit à tester situé directement dans le circuit imbriqué. Nous le connectons de manière à ce qu’il n’y ait qu’une sortie, c’est-à-dire 1 tant que les deux sous-circuits concordent.</p>
 
-<blockquote><img src="../../../../img-guide/verify-adder-test2.png"></blockquote
+<blockquote>
+<img src="../../../../img-guide/verify-adder-test2.png">
+</blockquote
 >
-<p>Maintenant, nous pouvons simplement lancer Logisim en remplaçant chaque fichier de requête. Pour toute solution correcte, la seule sortie sera <q> 1 </q>.</p>
+<p>Maintenant, nous pouvons simplement lancer Logisim en remplaçant chaque fichier de requête. Pour toute solution correcte, la seule sortie sera "1".</p>
 
 <h2>Utilisation de la redirection et des scripts shell</h2>
 
 <p>Si vous êtes assez à l'aise avec la ligne de commande, vous pouvez créer votre propre script shell pour y parvenir. Ici, nous utiliserons la redirection (l'opérateur &gt;) pour enregistrer la sortie de chaque circuit dans un fichier. Par exemple, nous pourrions émettre les deux commandes suivantes pour collecter la sortie du circuit maître et du circuit de requête.
 
-<blockquote><tt>java&nbsp;-jar&nbsp;logisim-filename.jar&nbsp;adder-test.circ&nbsp;-tty&nbsp;table&nbsp;&gt;&nbsp;output-master.txt
-<br>java&nbsp;-jar&nbsp;logisim-filename.jar&nbsp;adder-test.circ&nbsp;-tty&nbsp;table&nbsp;-sub&nbsp;adder-master.circ&nbsp;adder-query.circ&nbsp;&gt;&nbsp;output-query.txt</tt></blockquote>
+<blockquote>
+<tt>
+java -jar logisim-evolution.jar test.circ<br>
+&nbsp;&nbsp; -tty table &gt; out-master.txt
+<br>java -jar logisim-evolution.jar test.circ<br>
+&nbsp;&nbsp; -tty&nbsp;table -sub master.circ query.circ &gt; out-query.txt
+</tt>
+</blockquote>
 
-<p>Nous avons maintenant créé deux fichiers différents.
-Nous pouvons ensuite comparer les deux fichiers de sortie en utilisant un programme conçu à cet effet. Sous Linux ou MacOS X, vous souhaiterez peut-être utiliser les utilitaires de ligne de commande <em> cmp </em> ou <em> diff </em>. Sous Windows, vous souhaiterez peut-être utiliser WinMerge.</p>
+<p>Nous avons maintenant créé deux fichiers différents. Nous pouvons ensuite comparer les deux fichiers de sortie en utilisant un programme conçu à cet effet. Sous Linux ou MacOS X, vous souhaiterez peut-être utiliser les utilitaires de ligne de commande <b>cmp</b> ou <b>diff</b>. Sous Windows, vous souhaiterez peut-être utiliser l'utilitaire en ligne de commande <b>fc</b> or l'utilitaire WinMerge.</p>
 
-<p>Pour traiter plusieurs fichiers de requête, vous souhaitez créer un programme simple tel qu'un script shell pour parcourir chaque fichier et comparer les résultats. Voici comment je le ferais sous Linux <em>bash</em>:</p>
+<p>Pour traiter plusieurs fichiers de requête, vous souhaitez créer un programme simple tel qu'un script shell pour parcourir chaque fichier et comparer les résultats. Voici comment je le ferais sous Linux <b>bash</b>:</p>
 
-<blockquote><tt>RUN_TEST="java&nbsp;-jar&nbsp;logisim-filename.jar&nbsp;adder-test.circ&nbsp;-tty&nbsp;table"<br>
-${RUN_TEST}&nbsp;&gt;&nbsp;output-master.txt<br>
-for&nbsp;QUERY_FILE&nbsp;in&nbsp;adder-query*.circ<br>
+<blockquote>
+<tt>RUN_TEST="java -jar logisim-evolution.jar test.circ -tty table"<br>
+${RUN_TEST} &gt; out-master.txt<br>
+for QUERY_FILE in query*.circ<br>
 do<br>
-&nbsp;&nbsp;if&nbsp;${RUN_TEST}&nbsp;-sub&nbsp;adder-master.circ&nbsp;${QUERY_FILE}&nbsp;|&nbsp;cmp&nbsp;-s&nbsp;output-master.txt<br>
+&nbsp;&nbsp;if&nbsp;${RUN_TEST}&nbsp;-sub&nbsp;master.circ&nbsp;${QUERY_FILE}&nbsp;|&nbsp;cmp&nbsp;-s&nbsp;out-master.txt<br>
 &nbsp;&nbsp;then<br>
 &nbsp;&nbsp;&nbsp;&nbsp;echo&nbsp;"${QUERY_FILE}&nbsp;OK"<br>
 &nbsp;&nbsp;else<br>
 &nbsp;&nbsp;&nbsp;&nbsp;echo&nbsp;"${QUERY_FILE}&nbsp;different"<br>
 &nbsp;&nbsp;fi<br>
-done</tt></blockquote>
+done</tt>
+</blockquote>
 
-<p><b>Suite:</b><a href="test.html">Tester avec des vecteurs de test</a>.</p>
+<p><b>Suite:</b><a href="test.html"> Tester avec des vecteurs de test</a>.</p>
 
 </div></body>
 </html>

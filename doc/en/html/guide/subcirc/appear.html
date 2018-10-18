@@ -6,22 +6,27 @@
 	<title>Editing subcircuit appearance</title>
 	<link rel="stylesheet" type="text/css" href="../style.css">
 </head>
+
 <body>
 <div class="maindiv">
 
 <h1>Editing subcircuit appearance</h1>
 
 <h2>Default appearance</h2>
+<p><b class=note>Note:</b> There are two presentations of the circuits. Here we present the new appearance. A good part of the explanation is also suitable for the other presentation.
+La version de la présentation est sélectionnable dans la propriétés <b class=propertie>New appearance</b> properties of the circuit.</p>
+<p>By default when a sub-circuit is placed on a diagram it is drawn in a rectangle with the name of the circuit to the south, the entrances to the east and the exits to the west. The anchorage being at the top of the northwest pine.
+<center><img src="../../../../img-guide/subcirc-default-appear.png">
+</center>
+<p>Entries will be placed east of the rectangle and up and down in the order of their appearance in the detailed diagram (from left to right and from top to bottom).
+Outputs will be placed west of the rectangle in the same way. </P>
 
-<p>By default, when a subcircuit is placed within a larger circuit, it is drawn as a rectangle with a notch indicating the north end of the subcircuit's layout. Pins will be placed on the rectangle's border based on their facing:
-Pins that face east in the layout (and typically appear on the west side of the layout) will be placed on the rectangle's west side, according to their top-down ordering in the layout. Pins that face south in the layout (typically toward the north side of the layout) will be placed on the rectangle's north side, according to the left-to-right ordering in the layout.</p>
-
-<p>The default rectangle can optionally include some letters that will appear in the middle of the rectangle. To specify this, select the selection tool (<img src="../../../../icons/select.gif" width="16" height="16">) and click the background of the circuit's layout. This will show the circuit attributes in the attribute table, including the Shared Label, Shared Label Facing, and Shared Label Font attributes. The value of the Shared Label attribute will be drawn in the rectangle's center; the Shared Label Facing attribute customizes which direction the text is drawn, and of course the Shared Label Font attribute customizes the font used.</p>
+<p>It is possible to edit a label on the subcircuit instance by double-clicking on the rectangle. The position of the font and the attributes of the font can be modified in the property table.
+This same table allows the setting of the shared label (for all instances).</p>
 
 <h2>Customized appearance</h2>
 
-<p>The default appearance is very usable, and indeed Logisim existed for many years with no other option. If, however, you prefer that the subcircuit be drawn differently, you can select <b class=menu>|&nbsp;Project&nbsp;|</b>&rarr;<b class=menu>|&nbsp;Edit Circuit Appearance&nbsp;|</b> , and Logisim's interface will switch from its regular layout-editing interface to an interface for drawing the circuit's appearance.
-(You can also click the far-right icon (<img src="../../../../icons/projapp.gif">)
+<p>The default appearance is very usable, and indeed Logisim existed for many years with no other option. If, however, you prefer that the subcircuit be drawn differently, you can select <b class=menu>|&nbsp;Project&nbsp;|</b>&rarr;<b class=menu>|&nbsp;Edit Circuit Appearance&nbsp;|</b> , and Logisim's interface will switch from its regular layout-editing interface to an interface for drawing the circuit's appearance. (You can also click the far-right icon (<img src="../../../../icons/projapp.gif">)
 in the explorer pane's upper toolbar.) Below, we are editing the 2:1 multiplexer's appearance so that it is drawn with the usual trapezoid rather than a rectangle.</p>
 
 <center><img src="../../../img-guide/subcirc-custom-appear.png"></center>
@@ -39,11 +44,16 @@ in the explorer pane's upper toolbar.) Below, we are editing the 2:1 multiplexer
 <p>The <b>anchor</b> also identifies the appearance's facing, as indicated by the direction the anchor's line points from its circle. When placing the subcircuit into a layout, the user can change the subcircuit's facing; the anchor's facing indicates in which direction the appearance is oriented. In our example, the anchor is facing east, and each instance of the subcircuit in the <b class=reffig>Mux_4to1</b> is also facing east, so they are all drawn in the same orientation as the <b class=reffig>Mux_2to1</b> appearance.</p></li>
 
 <li><p>The blue circles (<img class=intxt src = "../../../../img-guide/pinoutput.png">) and squares with dots (<img class=intxt src = "../../../../img-guide/pininput.png" >) in them are the subcircuit's <q>ports.</q> There are exactly as many ports as there are input and output pins in the circuit. Ports corresponding to inputs are drawn as squares, while ports corresponding to outputs are drawn as circles. Each port indicates how a wire connecting into the circuit will correspond to an input or output pin within the layout.</p>
-
-<p>When you select a port, Logisim will indicate the corresponding pin by popping up a miniature diagram of the layout in the window's bottom right corner, with the corresponding pin(s) drawn in blue. This does not happen when all ports are selected.</p></li>
-
+</li>
 </ul>
 
+<p>When you select a port, Logisim will indicate the corresponding pin by popping up a miniature diagram of the layout in the window's bottom right corner, with the corresponding pin(s) drawn in blue. This does not happen when all ports are selected.</p>
+<P>
+We can change the zoom of the image using <b class=tkeybd>Ctrl+Mouse Wheel</b> or the down arrow button on the left of the workspace. The rate is displayed.
+</ P>
+<center>
+<img src="../../../img-guide/subcirc-custom-layout2.png">
+</center>
 <p>The toolbar contains tools for adding additional shapes, as listed below with descriptions of how the shift and alt key modifies the tool behavior. In addition, clicking or dragging the mouse with the control key pressed regularly snaps the mouse position to the nearest grid point.</p>
 <blockquote>
 <table>
