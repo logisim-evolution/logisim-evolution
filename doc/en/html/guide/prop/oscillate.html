@@ -1,21 +1,26 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
 <html>
 <head>
-<title>Oscillation errors</title>
+	<META http-equiv="content-type" content="text/html; charset=UTF-8">
+	<META http-equiv="Content-Language" content="en">
+	<title>Oscillation errors</title>
+	<link rel="stylesheet" type="text/css" href="../style.css">
 </head>
 
-<body bgcolor="FFFFFF">
+<body>
+<div class=maindiv>
 
 <h1>Oscillation errors</h1>
 
 <p>The propagation algorithm, which normally works silently without any
 problems, will become very visible
 when you create a circuit that oscillates.</p>
-<center><img src="../../../img-guide/prop-oscillate-before.png" width="335" height="223"></center>
+<center><img src="../../../img-guide/prop-oscillate-before.png"></center>
 <p>This circuit is currently in a stable condition. But if you change the
 input to 1, the circuit will effectively enter an infinite loop. After
 a while, Logisim will simply give up and show an "Oscillation apparent" message
 telling you that it believes that the circuit is oscillating.</p>
-<center><img src="../../../img-guide/prop-oscillate-error.png" width="335" height="223"></center>
+<center><img src="../../../img-guide/prop-oscillate-error.png"></center>
 <p>It will display the values it has at the time it gives up. These values
 will look wrong - in this screen shot, the AND gate is emitting 1
 although one of its inputs is 0, but it could be that the NOT gate
@@ -42,7 +47,7 @@ completed before oscillation occurs via the
 <a href="../opts/index.html">Project Options</a> window's
 <a href="../opts/simulate.html">Simulation tab</a>.</p>
 
-<p><strong>Next:</strong> <a href="shortcome.html">Shortcomings</a>.</p>
-
+<p><b>Next:</b> <a href="shortcome.html">Shortcomings</a>.</p>
+</div>
 </body>
 </html>

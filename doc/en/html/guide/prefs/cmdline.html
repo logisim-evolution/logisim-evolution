@@ -1,28 +1,32 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
 <html>
 <head>
+	<META http-equiv="content-type" content="text/html; charset=UTF-8">
+	<META http-equiv="Content-Language" content="en">
 	<title>Command-line options</title>
+	<link rel="stylesheet" type="text/css" href="../style.css">
 </head>
-<body bgcolor="FFFFFF">
 
+<body>
+<div class=maindiv>
 <h1>Command-line options</h1>
 
-<p>You can configure many of Logisim's application preferences via command
-line options.  This can be particularly useful in a laboratory of
-single-student computers where you want Logisim to start up the same
-for students every time, regardless of how previous students may have
-configured the program.</p>
+<p>You can configure many of Logisim's application preferences via command line options.  This can be particularly useful in a laboratory of single-student computers where you want Logisim to start up the same for students every time, regardless of how previous students may have configured the program.</p>
 
 <p>The overall command-line syntax is as follows.</p>
-<blockquote><pre>
+<blockquote>
+<pre>
 java -jar <em><b>jarFileName</b></em> <em>[options]</em> <em>[filenames]</em>
-</pre></blockquote>
-<p>The optional additional files named on the command line will be
-opened as separate windows within Logisim.</p>
+</pre>
+</blockquote>
+<p>The optional additional files named on the command line will be opened as separate windows within Logisim.</p>
 
 <p>The following example starts Logisim in its basic configuration.
-<blockquote><pre>
+<blockquote>
+<pre>
 java -jar <em><b>jarFileName</b></em> -plain -gates shaped -locale en
-</pre></blockquote></p>
+</pre>
+</blockquote></p>
 
 <p>Supported options include the following.
 <dl>
@@ -36,31 +40,23 @@ java -jar <em><b>jarFileName</b></em> -plain -gates shaped -locale en
 <dd><p>Configures which type of gate to use.</p></dd>
 
 <dt><tt>-locale <em><b>localeIdentifier</b></em></tt></dt>
-<dd><p>Configures which translation to use. As of this writing, the
-supported locales include:</p>
+<dd><p>Configures which translation to use. As of this writing, the supported locales include:</p>
 <center><table>
 <tr><th><tt>de</tt></th><td>German</td></tr>
 <tr><th><tt>el</tt></th><td>Greek</td></tr>
 <tr><th><tt>en</tt></th><td>English</td></tr>
 <tr><th><tt>es</tt></th><td>Spanish</td></tr>
 <tr><th><tt>fr</tt></th><td>French</td></tr>
-<tr><th><tt>ru</tt></th><td>Russian</td></tr>
+<tr><th><tt>pt</tt></th><td>Portugais</td></tr>
 <tr><th><tt>ru</tt></th><td>Russian</td></tr>
 </table></center></dd>
 
 <dt><tt>-accents <em>[<b>yes</b>|<b>no</b>]</em></tt></dt>
-<dd><p>This is only relevant for languages that use characters
-outside the 7-bit ASCII character set; this would include
-languages using accented characters, and it would not
-include English.
-If <em>no</em>, characters outside the 7-bit ASCII character
-set are replaced with equivalents appropriate to the language;
-this would be useful for Java/OS combinations where such characters
-are not supported well.</p></dd>
+<dd><p>This is only relevant for languages that use characters outside the 7-bit ASCII character set; this would include languages using accented characters, and it would not include English.
+If <em>no</em>, characters outside the 7-bit ASCII character set are replaced with equivalents appropriate to the language; this would be useful for Java/OS combinations where such characters are not supported well.</p></dd>
 
 <dt><tt>-clearprops</tt></dt>
-<dd><p>Clear all application preferences at startup, so Logisim will act as
-if it were being executed on the host system for the first time.</p></dd>
+<dd><p>Clear all application preferences at startup, so Logisim will act as if it were being executed on the host system for the first time.</p></dd>
 
 <dt><tt>-nosplash</tt></dt>
 <dd><p>Hides the initial Logisim splash screen.</p></dd>
@@ -71,9 +67,29 @@ if it were being executed on the host system for the first time.</p></dd>
 <dt><tt>-version</tt></dt>
 <dd><p>Displays the Logisim version number.</p></dd>
 
+<dt><tt>-noupdates</tt></dt>
+<dd><p>Do not update the software.</p></dd>
+
+<dt><tt>-analyze</tt></dt>
+<dd><p>Displays the combinatorial analysis menus.</p></dd>
+
+<dt><tt>-load file</tt></dt>
+<dd><p>Load an image in RAM (works only with -tty)</p></dd>
+
+<dt><tt>-sub file1 file2</tt>
+<dd><p>load the file by replacing the library file (file1) with the library file (file2).  More information in <a href="../verify/sub.html">Substituting libraries</a> </p></dd>
+
+<dt><tt>-tty </tt>[<b>table</b>|<b>speed</b>|<b>tty</b>|<b>halt</b>|<b>stats</b>]</dt> <dd><p>run without GUI. More information in <a href="../verify/other.html"> Other verification</a></p></dd>
+<p>Undocumented Options</p>
+<dt><tt>-test-circuit <b>testCircuitPathInput</b></tt></dt><dd><p></p></dd>
+<dt><tt>-testvector</tt></dt><dd><p></p></dd>
+<dt><tt>-test-fpga-implementation <b>inputpath</b> <b>Circuitimapfile</b> <b>cicuitimpname</b> <b>cicuitimpboard</b></tt></dt><dd><p></p></dd>
+<dt><tt>-test-circ-gen <b>testCircPathInput</b> <b>testCircPathOutput</b></tt></dt><dd><p></p></dd> 
+<dt><tt>-questa<em>[<b>yes</b>|<b>no</b>]</em></tt></dt><dd><p></p></dd>
+   
 </dl></p>
 
-<p><strong>Next:</strong> <em><a href="../index.html">User's Guide</a></em>.</p>
-
+<p><b>Next:</b> <a href="../index.html">User's Guide</a>.</p>
+</div>
 </body>
 </html>

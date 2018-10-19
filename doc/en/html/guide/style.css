@@ -8,6 +8,10 @@ div.maindiv {
 	max-width:560px;
 	border:solid 1px;
 }
+div.codediv {
+	max-width:660px;
+	border:solid 0px;
+}
 
 div.leftdiv {
    position:relative; 
