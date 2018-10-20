@@ -527,6 +527,8 @@ public class AppPreferences {
 			"showGhosts", true));
 	public static final PrefMonitor<Boolean> NAMED_CIRCUIT_BOXES = create(new PrefMonitorBoolean(
 			"namedBoxes", true));
+	public static final PrefMonitor<Boolean> NAMED_CIRCUIT_BOXES_FIXED_SIZE = create(new PrefMonitorBoolean(
+			"namedBoxes", true));
 	public static final PrefMonitor<Double> SCALE_FACTOR = create(new PrefMonitorDouble(
 			"Scale", (((!GraphicsEnvironment.isHeadless()) ? Toolkit.getDefaultToolkit().getScreenSize().getHeight() : 0)/1000) < 1.0 ? 1.0 :
 				((!GraphicsEnvironment.isHeadless()) ? Toolkit.getDefaultToolkit().getScreenSize().getHeight() : 0)/1000));

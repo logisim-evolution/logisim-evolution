@@ -83,10 +83,11 @@ class DefaultAppearance {
 
 	public static List<CanvasObject> build(Collection<Instance> pins,
 			                               boolean NamedBox,
+			                               boolean Fixed,
 			                               String CircuitName,
 			                               Graphics g) {
 		if (NamedBox) {
-			return new_build(pins,CircuitName,g);
+			return new_build(pins,CircuitName,g,Fixed);
 		} else {
 			return old_build(pins);
 		}
@@ -173,7 +174,7 @@ class DefaultAppearance {
         return ret;
     }
 
-    private static List<CanvasObject> new_build(Collection<Instance> pins, String CircuitName, Graphics g) {
+    private static List<CanvasObject> new_build(Collection<Instance> pins, String CircuitName, Graphics g, boolean FixedSize) {
 		Map<Direction, List<Instance>> edge;
 		edge = new HashMap<Direction, List<Instance>>();
 		edge.put(Direction.EAST, new ArrayList<Instance>());
@@ -212,7 +213,8 @@ class DefaultAppearance {
 		int maxVert = Math.max(numEast, numWest);
 
 		int dy = ((DrawAttr.FixedFontHeight+(DrawAttr.FixedFontHeight>>2)+5)/10)*10;
-		int textWidth = (MaxLeftLabelLength+MaxRightLabelLength+35) < (TitleWidth+15) ? TitleWidth+15 :
+		int textWidth = (FixedSize) ? 25*DrawAttr.FixedFontCharWidth : 
+			(MaxLeftLabelLength+MaxRightLabelLength+35) < (TitleWidth+15) ? TitleWidth+15 :
 			(MaxLeftLabelLength+MaxRightLabelLength+35);
 		int Thight = ((DrawAttr.FixedFontHeight+10)/10)*10;
 		int width = (textWidth/10)*10+20;
@@ -239,9 +241,9 @@ class DefaultAppearance {
 
 		List<CanvasObject> ret = new ArrayList<CanvasObject>();
 		placePins(ret, edge.get(Direction.WEST), rx, ry + 10, 0, dy,true,
-				sdy);
+				sdy,FixedSize);
 		placePins(ret, edge.get(Direction.EAST), rx + width, ry + 10, 0,
-				dy,false,sdy);
+				dy,false,sdy,FixedSize);
 		Rectangle rect = new Rectangle(rx+10,ry+height-Thight,width-20,Thight);
 		rect.setValue(DrawAttr.STROKE_WIDTH, Integer.valueOf(1));
 		rect.setValue(DrawAttr.PAINT_TYPE, DrawAttr.PAINT_FILL);
@@ -250,7 +252,14 @@ class DefaultAppearance {
 		rect = new Rectangle(rx+10, ry, width-20, height);
 		rect.setValue(DrawAttr.STROKE_WIDTH, Integer.valueOf(2));
 		ret.add(rect);
-		Text label = new Text(rx+(width>>1),ry+(height-DrawAttr.FixedFontDescent-5),CircuitName);
+		String Label = CircuitName;
+		if (FixedSize) {
+			if (Label.length()>23) {
+				Label = Label.substring(0, 20);
+				Label = Label.concat("...");
+			}
+		}
+		Text label = new Text(rx+(width>>1),ry+(height-DrawAttr.FixedFontDescent-5),Label);
 		label.getLabel().setHorizontalAlignment(EditableLabel.CENTER);
 		label.getLabel().setColor(Color.white);
 		label.getLabel().setFont(DrawAttr.DEFAULT_NAME_FONT);
@@ -296,7 +305,7 @@ class DefaultAppearance {
     }
     
     private static void placePins(List<CanvasObject> dest, List<Instance> pins,
-			int x, int y, int dx, int dy, boolean LeftSide, int ldy) {
+			int x, int y, int dx, int dy, boolean LeftSide, int ldy, boolean FixedSize) {
 		int halign;
 		Color color = Color.DARK_GRAY;
 		int ldx;
@@ -319,7 +328,14 @@ class DefaultAppearance {
 			dest.add(rect);
 			dest.add(new AppearancePort(Location.create(x, y), pin));
 			if (pin.getAttributeSet().containsAttribute(StdAttr.LABEL)) {
-				Text label = new Text(x+ldx,y+ldy,pin.getAttributeValue(StdAttr.LABEL));
+				String Label = pin.getAttributeValue(StdAttr.LABEL);
+				if (FixedSize) {
+					if (Label.length()>12) {
+						Label = Label.substring(0, 9);
+						Label = Label.concat("..");
+					}
+				}
+				Text label = new Text(x+ldx,y+ldy,Label);
 				label.getLabel().setHorizontalAlignment(halign);
 				label.getLabel().setColor(color);
 				label.getLabel().setFont(DrawAttr.DEFAULT_FIXED_PICH_FONT);

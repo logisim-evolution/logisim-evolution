@@ -293,7 +293,7 @@ public class LogisimFile extends Library implements LibraryEventSource,CircuitLi
 				AddTool tool1 = (AddTool) tool;
 				AttributeSet atrs = tool1.getAttributeSet();
 				for (Attribute<?> attr : atrs.getAttributes()) {
-					if (attr.getName().equals("circuit"))
+					if (attr==CircuitAttributes.NAME_ATTR)
 						atrs.setReadOnly(attr, true);
 				}
 			}

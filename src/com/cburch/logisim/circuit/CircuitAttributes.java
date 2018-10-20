@@ -146,22 +146,23 @@ public class CircuitAttributes extends AbstractAttributeSet {
 			.forString("circuitvhdlpath", Strings.getter("circuitVhdlPath"));
 	public static final Attribute<Boolean> NAMED_CIRCUIT_BOX = Attributes
 			.forBoolean("circuitnamedbox",Strings.getter("circuitNamedBox"));
+	public static final Attribute<Boolean> NAMED_CIRCUIT_BOX_FIXED_SIZE = Attributes
+			.forBoolean("circuitnamedboxfixedsize",Strings.getter("circuitNamedBoxFixedSize"));
 
 	private static final Attribute<?>[] STATIC_ATTRS = { NAME_ATTR,
 			CIRCUIT_LABEL_ATTR, CIRCUIT_LABEL_FACING_ATTR,
-			CIRCUIT_LABEL_FONT_ATTR,NAMED_CIRCUIT_BOX, 
+			CIRCUIT_LABEL_FONT_ATTR,NAMED_CIRCUIT_BOX,NAMED_CIRCUIT_BOX_FIXED_SIZE, 
 			CIRCUIT_VHDL_PATH, };
 
 	private static final Object[] STATIC_DEFAULTS = { "", "", Direction.EAST,
 			StdAttr.DEFAULT_LABEL_FONT, 
-			false, "", };
+			false,false, "", };
 
 	private static final List<Attribute<?>> INSTANCE_ATTRS = Arrays
 			.asList(new Attribute<?>[] { StdAttr.FACING, StdAttr.LABEL,
 					LABEL_LOCATION_ATTR, StdAttr.LABEL_FONT,StdAttr.LABEL_VISIBILITY,
 					CircuitAttributes.NAME_ATTR, CIRCUIT_LABEL_ATTR,
 					CIRCUIT_LABEL_FACING_ATTR, CIRCUIT_LABEL_FONT_ATTR,
-					NAMED_CIRCUIT_BOX, 
 					CIRCUIT_VHDL_PATH, });
 
 	private Circuit source;

@@ -181,6 +181,25 @@ public class XmlCircuitReader extends CircuitTransaction {
 		} catch (XmlReaderException e) {
 			reader.addErrors(e, circData.circuit.getName() + ".static");
 		}
+		try {
+			/* Here we check the attribute circuitnamedboxFixedSize for backwards compatibility */
+			boolean HasNamedBoxFixedSize = false;
+			for (Element attrElt : XmlIterator.forChildElements(circData.circuitElement, "a")) {
+				if (attrElt.hasAttribute("name")) {
+					String Name = attrElt.getAttribute("name");
+					if (Name.equals("circuitnamedboxfixedsize")) {
+						HasNamedBoxFixedSize = true;
+					}
+				}
+			}
+			reader.initAttributeSet(circData.circuitElement,
+					dest.getStaticAttributes(), null);
+			if ((!HasNamedBoxFixedSize)&&circData.circuitElement.hasChildNodes()) {
+				dest.getStaticAttributes().setValue(CircuitAttributes.NAMED_CIRCUIT_BOX_FIXED_SIZE, false);
+			}
+		} catch (XmlReaderException e) {
+			reader.addErrors(e, circData.circuit.getName() + ".static");
+		}
 
 		for (Element sub_elt : XmlIterator.forChildElements(elt)) {
 			String sub_elt_name = sub_elt.getTagName();

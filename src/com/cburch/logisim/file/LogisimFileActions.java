@@ -404,7 +404,6 @@ public class LogisimFileActions {
 				while (iter.hasNext()) {
 					Circuit circ = iter.next();
 					Circuit NewCirc = new Circuit(circ.getName(),ThisLib,circ.GetProject());
-System.out.println(NewCirc.getStaticAttributes());
 					CircuitMutation result = new CircuitMutation(NewCirc);
 					for (Component tool : circ.getNonWires()) {
 						if (AvailableTools.keySet().contains(tool.getFactory().getName().toUpperCase())) {

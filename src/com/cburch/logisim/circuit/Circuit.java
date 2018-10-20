@@ -265,6 +265,7 @@ public class Circuit {
 		Annotated = false;
 		logiFile = file;
 		staticAttrs.setValue(CircuitAttributes.NAMED_CIRCUIT_BOX, AppPreferences.NAMED_CIRCUIT_BOXES.getBoolean());
+		staticAttrs.setValue(CircuitAttributes.NAMED_CIRCUIT_BOX_FIXED_SIZE, AppPreferences.NAMED_CIRCUIT_BOXES_FIXED_SIZE.getBoolean());
 		this.proj = proj;
 	}
 

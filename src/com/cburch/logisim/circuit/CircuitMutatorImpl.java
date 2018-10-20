@@ -163,7 +163,8 @@ class CircuitMutatorImpl implements CircuitMutator {
 		log.add(CircuitChange.setForCircuit(circuit, attr, oldValue, newValue));
 		attrs.setValue(a, newValue);
 		if (attr == CircuitAttributes.NAME_ATTR ||
-			attr == CircuitAttributes.NAMED_CIRCUIT_BOX) {
+			attr == CircuitAttributes.NAMED_CIRCUIT_BOX ||
+			attr == CircuitAttributes.NAMED_CIRCUIT_BOX_FIXED_SIZE) {
 			circuit.getAppearance().recomputeDefaultAppearance();
 		}
 	}

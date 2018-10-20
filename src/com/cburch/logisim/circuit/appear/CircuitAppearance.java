@@ -290,10 +290,14 @@ public class CircuitAppearance extends Drawing {
 		return circuit.getStaticAttributes().getValue(CircuitAttributes.NAMED_CIRCUIT_BOX);
 	}
 
+	public boolean IsNamedBoxShapedFixedSize() {
+		return circuit.getStaticAttributes().getValue(CircuitAttributes.NAMED_CIRCUIT_BOX_FIXED_SIZE);
+	}
+
 	public void recomputeDefaultAppearance() {
 		if (isDefault) {
 			List<CanvasObject> shapes;
-			shapes = DefaultAppearance.build(circuitPins.getPins(),this.IsNamedBoxShaped(),this.getName(),circuit.GetGraphics());
+			shapes = DefaultAppearance.build(circuitPins.getPins(),this.IsNamedBoxShaped(),this.IsNamedBoxShapedFixedSize(),this.getName(),circuit.GetGraphics());
 			setObjectsForce(shapes);
 		}
 	}
