@@ -273,7 +273,6 @@ public class ProjectActions {
 			}
 			return;
 		}
-		updatecircs(mergelib,baseProject);
 		baseProject.doAction(LogisimFileActions.MergeFile(mergelib, baseProject.getLogisimFile()));
 	}
 

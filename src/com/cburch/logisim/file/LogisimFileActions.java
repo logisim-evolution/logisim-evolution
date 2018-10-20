@@ -30,20 +30,29 @@
 
 package com.cburch.logisim.file;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.jar.JarFile;
+import java.util.jar.Manifest;
 
 import javax.swing.JOptionPane;
 
 import com.cburch.logisim.circuit.Circuit;
-import com.cburch.logisim.circuit.SubcircuitFactory;
+import com.cburch.logisim.circuit.CircuitMutation;
+import com.cburch.logisim.circuit.Wire;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeSet;
+import com.cburch.logisim.data.Location;
 import com.cburch.logisim.proj.Action;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.proj.ProjectActions;
+import com.cburch.logisim.std.base.Text;
+import com.cburch.logisim.std.wiring.Pin;
 import com.cburch.logisim.tools.AddTool;
 import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.tools.LibraryTools;
@@ -74,15 +83,16 @@ public class LogisimFileActions {
 	}
 	
 	private static class MergeFile extends Action {
-		private ArrayList<Library> MergedLibraries = new ArrayList<Library>();
 		private ArrayList<Circuit> MergedCircuits = new ArrayList<Circuit>();
+		private ArrayList<File> JarLibs = new ArrayList<File>();
+		private ArrayList<File> LogiLibs = new ArrayList<File>();
 		
 		MergeFile(LogisimFile mergelib,
 				  LogisimFile source) {
 			HashMap<String,Library> LibNames = new HashMap<String,Library>();
 			HashSet<String> ToolList = new HashSet<String>();
-			HashSet<Circuit> NotImportedList = new HashSet<Circuit>();
 			HashMap<String,String> Error = new HashMap<String,String>();
+			boolean cancontinue = true;
 			for (Library lib : source.getLibraries()) {
 				LibraryTools.BuildLibraryList(lib,LibNames);
 			}
@@ -91,52 +101,231 @@ public class LogisimFileActions {
 			if (LibraryTools.LibraryIsConform(mergelib,new HashSet<String> (),new HashSet<String>(),Error)) {
 				/* Okay the library is now ready for merge */
 				for (Library lib : mergelib.getLibraries()) {
-					MergedLibraries.add(lib);
+					HashSet<String> NewToolList = new HashSet<String>();
+					LibraryTools.BuildToolList(lib,NewToolList);
+					ArrayList<String> ret = LibraryTools.LibraryCanBeMerged(ToolList, NewToolList);
+					if (!ret.isEmpty()) {
+						String Location ="";
+						HashMap<String,String> ToolNames =LibraryTools.GetToolLocation(source, Location, ret);
+						for (String key : ToolNames.keySet()) {
+							String SolStr = Strings.get("LibMergeFailure2")+" a) ";
+							String ErrLoc = ToolNames.get(key);
+							String[] ErrParts = ErrLoc.split("->");
+							if (ErrParts.length > 1) {
+								SolStr = SolStr.concat(Strings.get("LibMergeFailure4", ErrParts[1]));
+							} else {
+								SolStr = SolStr.concat(Strings.get("LibMergeFailure3", key));
+							}
+							SolStr = SolStr.concat(" "+Strings.get("LibMergeFailure5")+" b) ");
+							SolStr = SolStr.concat(Strings.get("LibMergeFailure6", lib.getName()));
+							Error.put(SolStr,Strings.get("LibMergeFailure1",lib.getName(),key));
+						}
+						cancontinue = false;
+					}
+					String[] splits = mergelib.getLoader().getDescriptor(lib).split("#");
+					File TheFile = mergelib.getLoader().getFileFor(splits[1], null);
+	                if (splits[0].equals("file"))
+	                	LogiLibs.add(TheFile);
+	                else if (splits[0].equals("jar"))
+	                	JarLibs.add(TheFile);
+				}
+				if (!cancontinue) {
+					LibraryTools.ShowErrors(mergelib.getName(),Error);
+					LogiLibs.clear();
+					JarLibs.clear();
+					return;
 				}
 				/* Okay merged the missing libraries, now add the circuits */
 				for (Circuit circ : mergelib.getCircuits()) {
-					if (ToolList.contains(circ.getName().toUpperCase())) {
-						Error.put(circ.getName(), Strings.get("CircNotImportedWarning"));
-						NotImportedList.add(circ);
+					String CircName = circ.getName().toUpperCase();
+					if (ToolList.contains(CircName)) {
+						ArrayList<String> ret = new ArrayList<String>();
+						ret.add(CircName);
+						HashMap<String,String> ToolNames =LibraryTools.GetToolLocation(source, "", ret);
+						for (String key : ToolNames.keySet()) {
+							String ErrLoc = ToolNames.get(key);
+							String[] ErrParts = ErrLoc.split("->");
+							if (ErrParts.length > 1) {
+								String SolStr = Strings.get("LibMergeFailure2")+" a) ";
+								SolStr = SolStr.concat(Strings.get("LibMergeFailure4", ErrParts[1]));
+								SolStr = SolStr.concat(" "+Strings.get("LibMergeFailure5")+" b) ");
+								SolStr = SolStr.concat(Strings.get("LibMergeFailure8", circ.getName()));
+								Error.put(SolStr,Strings.get("LibMergeFailure7",key,ErrParts[1]));
+								cancontinue = false;
+							}
+						} 
+						if (cancontinue) {
+							Circuit circ1 = LibraryTools.getCircuitFromLibs(source, CircName);
+							if (circ1 == null) {
+								JOptionPane.showMessageDialog(null,"Fatal internal error: Cannot find a referenced circuit","LogosimFileAction:", JOptionPane.ERROR_MESSAGE);
+								cancontinue = false;
+							} else if (!CircuitsAreEqual(circ1,circ)) {
+								int Reponse = JOptionPane.showConfirmDialog(null, 
+										Strings.get("FileMergeQuestion", circ.getName()),
+										Strings.get("FileMergeTitle"),JOptionPane.YES_NO_OPTION);
+								if (Reponse == JOptionPane.YES_OPTION) {
+									MergedCircuits.add(circ);
+								}
+							}
+						}
 					} else {
 						MergedCircuits.add(circ);
 					}
 				}
-				if (!Error.isEmpty())
-					LibraryTools.ShowWarnings(mergelib.getName(),Error);
-				if (!NotImportedList.isEmpty()) {
-/* BIG TODO: This is a dirty hack as it is not checked if the circuits are identical in the merge-set with those in the original set */
-					HashMap<String,Circuit> Replacements = new HashMap<String,Circuit>();
-					/* Some circuits have not been imported, we have to update the circuits */
-					/* first stage, make a map of circuits in the current set */
-					for (Circuit nicirc : NotImportedList) {
-						for (Circuit curcirc : source.getCircuits()) {
-							if (curcirc.getName().toUpperCase().equals(nicirc.getName().toUpperCase())) {
-								Replacements.put(curcirc.getName().toUpperCase(), curcirc);
+				if (!cancontinue) {
+					LibraryTools.ShowErrors(mergelib.getName(),Error);
+					LogiLibs.clear();
+					JarLibs.clear();
+					MergedCircuits.clear();
+					return;
+				}
+			} else LibraryTools.ShowErrors(mergelib.getName(),Error);
+		}
+		
+		private boolean CircuitsAreEqual(Circuit orig,Circuit newone) {
+			HashMap<Location,Component> origcomps = new HashMap<Location,Component>();
+			HashMap<Location,Component> newcomps = new HashMap<Location,Component>();
+			for (Component comp : orig.getWires()) {
+				origcomps.put(comp.getLocation(), comp);
+			}
+			for (Component comp : orig.getNonWires()) {
+				origcomps.put(comp.getLocation(), comp);
+			}
+			for (Component comp : newone.getWires()) {
+				newcomps.put(comp.getLocation(), comp);
+			}
+			for (Component comp : newone.getNonWires()) {
+				newcomps.put(comp.getLocation(), comp);
+			}
+			Iterator<Location> it = newcomps.keySet().iterator();
+			while (it.hasNext()) {
+				Location loc = it.next();
+				if (origcomps.containsKey(loc)) {
+					Component comp1 = newcomps.get(loc);
+					Component comp2 = newcomps.get(loc);
+					if (comp1.getFactory().getName().equals(comp2.getFactory().getName())) {
+						if (comp1.getFactory().getName().equals("Wire")) {
+							Wire wir1 = (Wire) comp1;
+							Wire wir2 = (Wire) comp2;
+							if (wir1.overlaps(wir2, true)) {
+								it.remove();
+								origcomps.remove(loc);
+							} else {
+								System.out.println("No Wire Overlap");
 							}
-						}
-					}
-					/* Second stage, iterate over all subcircuits and replace them when required */
-					for (Circuit importedCirc : MergedCircuits) {
-						for (Component comp : importedCirc.getNonWires()) {
-							if (comp instanceof SubcircuitFactory) {
-								SubcircuitFactory fact = (SubcircuitFactory) comp;
-								if (Replacements.containsKey(fact.getName().toUpperCase())) {
-									fact.setSubcircuit(Replacements.get(fact.getName().toUpperCase()));
-								}
+						} else {
+							if (comp1.getAttributeSet().equals(comp2.getAttributeSet())) {
+								it.remove();
+								origcomps.remove(loc);
+							} else {
+								System.out.println("Different component");
 							}
 						}
 					}
 				}
-			} else LibraryTools.ShowErrors(mergelib.getName(),Error);
+			}
+			return origcomps.isEmpty()&newcomps.isEmpty();
 		}
 
 		@Override
 		public void doIt(Project proj) {
-			for (Library lib : MergedLibraries)
-				proj.getLogisimFile().addLibrary(lib);
-			for (Circuit circ : MergedCircuits)
-				proj.getLogisimFile().addCircuit(circ);
+			Loader loader = proj.getLogisimFile().getLoader();
+			/* first we are going to merge the jar libraries */
+			for (int i = 0 ; i < JarLibs.size() ; i++) {
+				String className = null;
+				JarFile jarFile = null;
+				try {
+					jarFile = new JarFile(JarLibs.get(i));
+					Manifest manifest = jarFile.getManifest();
+					className = manifest.getMainAttributes().getValue(
+							"Library-Class");
+				} catch (IOException e) {
+					// if opening the JAR file failed, do nothing
+				} finally {
+					if (jarFile != null) {
+						try {
+							jarFile.close();
+						} catch (IOException e) {
+						}
+					}
+				}
+				// if the class name was not found, go back to the good old dialog
+				if (className == null) {
+					className = JOptionPane.showInputDialog(proj.getFrame(),
+							Strings.get("jarClassNamePrompt"),
+							Strings.get("jarClassNameTitle"),
+							JOptionPane.QUESTION_MESSAGE);
+					// if user canceled selection, abort
+					if (className == null)
+						continue;
+				}
+				Library lib = loader.loadJarLibrary(JarLibs.get(i), className);
+				if (lib != null) {
+					proj.doAction(LogisimFileActions.loadLibrary(lib,proj.getLogisimFile()));
+				}
+			}
+			JarLibs.clear();
+			/* next we are going to load the logisimfile  libraries */
+			for (int i = 0 ; i < LogiLibs.size() ; i++) {
+				Library put = loader.loadLogisimLibrary(LogiLibs.get(i));
+				if (put != null) {
+					proj.doAction(LogisimFileActions.loadLibrary(put, proj.getLogisimFile()));
+				}
+			}
+			LogiLibs.clear();
+			/*this we are going to do in two steps, first add the circuits with inputs, outputs and wires */
+			for (Circuit circ : MergedCircuits) {
+				Circuit NewCirc = null;
+				boolean replace = false;
+				for (Circuit circs : proj.getLogisimFile().getCircuits())
+					if (circs.getName().toUpperCase().equals(circ.getName().toUpperCase())) {
+						NewCirc = circs;
+						replace = true;
+					}
+				if (NewCirc==null)
+					NewCirc = new Circuit(circ.getName(),proj.getLogisimFile(),proj);
+				CircuitMutation result = new CircuitMutation(NewCirc);
+				if (replace)
+					result.clear();
+				for (Wire wir : circ.getWires()) {
+					result.add(Wire.create(wir.getEnd0(),wir.getEnd1()));
+				}
+				for (Component comp : circ.getNonWires()) {
+					if (comp.getFactory() instanceof Pin) {
+						result.add(Pin.FACTORY.createComponent(comp.getLocation(), (AttributeSet) comp.getAttributeSet().clone()));
+					}
+				}
+				if (!replace) {
+					result.execute();
+					proj.doAction(LogisimFileActions.addCircuit(NewCirc));
+				} else
+					proj.doAction(result.toAction(Strings.getter("replaceCircuitAction")));
+			}
+			HashMap<String,AddTool> AvailableTools = new HashMap<String,AddTool>();
+			LibraryTools.BuildToolList(proj.getLogisimFile(), AvailableTools);
+			/* in the second step we are going to add the rest of the contents */
+			for (Circuit circ : MergedCircuits) {
+				Circuit NewCirc = proj.getLogisimFile().getCircuit(circ.getName());
+				if (NewCirc != null) {
+					CircuitMutation result = new CircuitMutation(NewCirc);
+					for (Component comp : circ.getNonWires()) {
+						if (!(comp.getFactory() instanceof Pin)) {
+							AddTool current = AvailableTools.get(comp.getFactory().getName().toUpperCase());
+							if (current != null) {
+							   Component NewComp = current.getFactory().createComponent(comp.getLocation(),
+									   (AttributeSet) comp.getAttributeSet().clone());
+							   result.add(NewComp);
+							} else if (comp.getFactory().getName().equals("Text")) {
+								Component NewComp = Text.FACTORY.createComponent(comp.getLocation(), 
+										(AttributeSet) comp.getAttributeSet().clone());
+								result.add(NewComp);
+							} else System.out.println("Not found:"+comp.getFactory().getName());
+						}
+					}
+					result.execute();
+				}
+			}
+			MergedCircuits.clear();
 		}
 
 		@Override
@@ -146,16 +335,11 @@ public class LogisimFileActions {
 
 		@Override
 		public boolean isModification() {
-			return (MergedLibraries.size() > 0) ||
-				   (MergedCircuits.size() > 0);
+			return false;
 		}
 		
 		@Override
 		public void undo(Project proj) {
-			for (Library lib : MergedLibraries)
-				proj.getLogisimFile().removeLibrary(lib);
-			for (Circuit circ : MergedCircuits)
-				proj.getLogisimFile().removeCircuit(circ);
 		}
 	}
 

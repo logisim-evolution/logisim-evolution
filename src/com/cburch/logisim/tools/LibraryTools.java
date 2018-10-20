@@ -1,10 +1,14 @@
 package com.cburch.logisim.tools;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 
 import javax.swing.JOptionPane;
+
+import com.cburch.logisim.circuit.Circuit;
+import com.cburch.logisim.file.LogisimFile;
 
 
 public class LibraryTools {
@@ -34,6 +38,73 @@ public class LibraryTools {
 		}
 		for (Library sublib : lib.getLibraries())
 			BuildToolList(sublib,Tools);
+	}
+	
+	public static boolean BuildToolList(Library lib, HashMap<String,AddTool> Tools) {
+		boolean ret = true;
+		if (!lib.getName().equals("Base")) {
+			Iterator<? extends Tool> tooliter = lib.getTools().iterator();
+			while (tooliter.hasNext()) {
+			   Tool tool1 = tooliter.next();
+			   if (Tools.containsKey(tool1.getName().toUpperCase()))
+				   ret = false;
+			   else
+				   Tools.put(tool1.getName().toUpperCase(), (AddTool) tool1);
+			}
+		}
+		for (Library sublib : lib.getLibraries()) {
+			ret &= BuildToolList(sublib,Tools);
+		}
+		return ret;
+	}
+	
+	public static Circuit getCircuitFromLibs(Library lib, String UpperCaseName) {
+		Circuit ret = null;
+		if (lib instanceof LogisimFile) {
+			LogisimFile llib = (LogisimFile) lib;
+			for (Circuit circ : llib.getCircuits()) {
+				if (circ.getName().toUpperCase().equals(UpperCaseName))
+					return circ;
+			}
+		}
+		for (Library libs : lib.getLibraries()) {
+			ret = getCircuitFromLibs(libs, UpperCaseName);
+			if (ret != null)
+				return ret;
+		}
+		return null;
+	}
+	
+	public static ArrayList<String> LibraryCanBeMerged(HashSet<String> SourceTools, HashSet<String> NewTools) {
+		ArrayList<String> ret = new ArrayList<String>();
+		Iterator<String> Iter = NewTools.iterator();
+		while (Iter.hasNext()) {
+			String This = Iter.next();
+			if (SourceTools.contains(This)) {
+				ret.add(This);
+			}
+		}
+		return ret;
+	}
+	
+	public static HashMap<String,String> GetToolLocation(Library lib, String Location , ArrayList<String> UpercaseNames) {
+		Iterator<? extends Tool> tooliter = lib.getTools().iterator();
+		String MyLocation;
+		HashMap<String,String> ret = new HashMap<String,String>();
+		if (Location.isEmpty())
+			MyLocation = new String(lib.getName());
+		else
+			MyLocation = new String(Location+"->"+lib.getName());
+	    while (tooliter.hasNext()) {
+	    	Tool tool = tooliter.next();
+	    	if (UpercaseNames.contains(tool.getName().toUpperCase())) {
+	    		ret.put(tool.getName(), MyLocation);
+	    	}
+	    }
+	    for (Library sublib : lib.getLibraries()) {
+	    	ret.putAll(GetToolLocation(sublib, MyLocation , UpercaseNames));
+	    }
+	    return ret;
 	}
 	
 	public static boolean LibraryIsConform(Library lib, HashSet<String> Names, HashSet<String> Tools, HashMap<String,String> Error) {
