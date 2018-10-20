@@ -273,9 +273,6 @@ public class Circuit {
 		this.proj = proj;
 	}
 
-	public Project GetProject() {
-		return proj;
-	}
 
 	public Graphics GetGraphics() {
 		return (proj==null) ? null : proj.getFrame().getGraphics();
@@ -413,7 +410,8 @@ public class Circuit {
 		for (String subs : Subcircuits) {
 			Circuit circ = LibraryTools.getCircuitFromLibs(proj.getLogisimFile(), subs.toUpperCase());
 			boolean inLibrary = !proj.getLogisimFile().getCircuits().contains(circ);
-			circ.Annotate(ClearExistingLabels, reporter,inLibrary);
+			if (circ != null)
+				circ.Annotate(ClearExistingLabels, reporter,inLibrary);
 		}
 	}
 

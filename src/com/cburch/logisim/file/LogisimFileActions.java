@@ -403,7 +403,7 @@ public class LogisimFileActions {
 				ArrayList<Circuit> added = new ArrayList<Circuit>();
 				while (iter.hasNext()) {
 					Circuit circ = iter.next();
-					Circuit NewCirc = new Circuit(circ.getName(),ThisLib,circ.GetProject());
+					Circuit NewCirc = new Circuit(circ.getName(),ThisLib,proj);
 					CircuitMutation result = new CircuitMutation(NewCirc);
 					for (Component tool : circ.getNonWires()) {
 						if (AvailableTools.keySet().contains(tool.getFactory().getName().toUpperCase())) {
