@@ -847,7 +847,7 @@ MouseListener,PreferenceChangeListener {
 			if (ClearExistingLabels) {
 				root.ClearAnnotationLevel();
 			}
-			root.Annotate(ClearExistingLabels, MyReporter);
+			root.Annotate(ClearExistingLabels, MyReporter,false);
 			MyReporter.AddInfo("Annotation done");
 			/* TODO: Dirty hack, see Circuit.java function Annotate for details */
 			MyProject.repaintCanvas();

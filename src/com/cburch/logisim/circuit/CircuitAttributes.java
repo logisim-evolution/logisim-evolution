@@ -173,6 +173,7 @@ public class CircuitAttributes extends AbstractAttributeSet {
 	private Boolean LabelVisable;
 	private MyListener listener;
 	private Instance[] pinInstances;
+	private boolean NameReadOnly;
 
 	public CircuitAttributes(Circuit source) {
 		this.source = source;
@@ -183,6 +184,7 @@ public class CircuitAttributes extends AbstractAttributeSet {
 		labelFont = StdAttr.DEFAULT_LABEL_FONT;
 		LabelVisable = true;
 		pinInstances = new Instance[0];
+		NameReadOnly = false;
 	}
 
 	@Override
@@ -245,6 +247,21 @@ public class CircuitAttributes extends AbstractAttributeSet {
 		}
 	}
 
+	@Override
+	public void setReadOnly(Attribute<?> attr, boolean value) {
+		if (attr==NAME_ATTR) {
+			NameReadOnly = value;
+		}
+	}
+
+	public boolean isReadOnly(Attribute<?> attr) {
+		if (attr==NAME_ATTR) {
+			return NameReadOnly;
+		}
+		return false;
+	}
+
+	
 	@Override
 	public <E> void setValue(Attribute<E> attr, E value) {
 		if (attr == StdAttr.FACING) {

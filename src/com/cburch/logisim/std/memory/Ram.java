@@ -613,11 +613,11 @@ public class Ram extends Mem {
 	@Override
 	public String getHDLName(AttributeSet attrs) {
 		StringBuffer CompleteName = new StringBuffer();
-		CompleteName.append("RAM_");
-		CompleteName.append(CorrectLabel.getCorrectLabel(attrs
-				.getValue(StdAttr.LABEL)));
-		if (CompleteName.length() == 0) {
+		String Label = CorrectLabel.getCorrectLabel(attrs.getValue(StdAttr.LABEL));
+		if (Label.length()==0) {
 			CompleteName.append("RAM");
+		} else {
+			CompleteName.append("RAM_"+Label);
 		}
 		return CompleteName.toString();
 	}

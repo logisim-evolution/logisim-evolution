@@ -8,6 +8,7 @@ import java.util.Iterator;
 import javax.swing.JOptionPane;
 
 import com.cburch.logisim.circuit.Circuit;
+import com.cburch.logisim.file.LoadedLibrary;
 import com.cburch.logisim.file.LogisimFile;
 
 
@@ -68,7 +69,10 @@ public class LibraryTools {
 			}
 		}
 		for (Library libs : lib.getLibraries()) {
-			ret = getCircuitFromLibs(libs, UpperCaseName);
+			if (libs instanceof LoadedLibrary) {
+				LoadedLibrary lib1 = (LoadedLibrary) libs;
+				ret = getCircuitFromLibs(lib1.getBase(), UpperCaseName);
+			} else ret = getCircuitFromLibs(libs, UpperCaseName);
 			if (ret != null)
 				return ret;
 		}

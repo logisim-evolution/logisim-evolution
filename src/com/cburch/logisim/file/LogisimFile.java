@@ -58,6 +58,8 @@ import com.cburch.logisim.circuit.CircuitListener;
 import com.cburch.logisim.circuit.SubcircuitFactory;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.comp.ComponentFactory;
+import com.cburch.logisim.data.Attribute;
+import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.proj.Projects;
 import com.cburch.logisim.tools.AddTool;
@@ -286,6 +288,16 @@ public class LogisimFile extends Library implements LibraryEventSource,CircuitLi
 	}
 
 	public void addLibrary(Library lib) {
+		if (!lib.getName().equals("Base")) {
+			for (Tool tool : lib.getTools()) {
+				AddTool tool1 = (AddTool) tool;
+				AttributeSet atrs = tool1.getAttributeSet();
+				for (Attribute<?> attr : atrs.getAttributes()) {
+					if (attr.getName().equals("circuit"))
+						atrs.setReadOnly(attr, true);
+				}
+			}
+		}
 		libraries.add(lib);
 		fireEvent(LibraryEvent.ADD_LIBRARY, lib);
 	}

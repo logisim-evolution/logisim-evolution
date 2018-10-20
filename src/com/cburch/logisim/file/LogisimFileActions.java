@@ -386,6 +386,8 @@ public class LogisimFileActions {
 					if (lib1.getBase() instanceof LogisimFile) {
 						repair(proj,lib1.getBase());
 					}
+				} else if (lib instanceof LogisimFile) {
+					repair(proj,lib);
 				}
 				proj.getLogisimFile().addLibrary(lib);
 			}
@@ -401,7 +403,8 @@ public class LogisimFileActions {
 				ArrayList<Circuit> added = new ArrayList<Circuit>();
 				while (iter.hasNext()) {
 					Circuit circ = iter.next();
-					Circuit NewCirc = new Circuit(circ.getName(),ThisLib,proj);
+					Circuit NewCirc = new Circuit(circ.getName(),ThisLib,circ.GetProject());
+System.out.println(NewCirc.getStaticAttributes());
 					CircuitMutation result = new CircuitMutation(NewCirc);
 					for (Component tool : circ.getNonWires()) {
 						if (AvailableTools.keySet().contains(tool.getFactory().getName().toUpperCase())) {
@@ -427,8 +430,8 @@ public class LogisimFileActions {
 					Circuit NewCirc = added.get(i);
 					Circuit OldCirc = ThisLib.getCircuit(NewCirc.getName());
 					if (OldCirc!=null) {
-						ThisLib.removeCircuit(OldCirc);
 						ThisLib.addCircuit(added.get(i));
+						ThisLib.removeCircuit(OldCirc);
 					} else {
 						System.out.println("Horrible error");
 					}

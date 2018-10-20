@@ -79,6 +79,7 @@ import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.std.wiring.Clock;
 import com.cburch.logisim.std.wiring.Pin;
 import com.cburch.logisim.std.wiring.Tunnel;
+import com.cburch.logisim.tools.LibraryTools;
 import com.cburch.logisim.tools.SetAttributeAction;
 import com.cburch.logisim.tools.Strings;
 import com.cburch.logisim.util.AutoLabel;
@@ -271,6 +272,10 @@ public class Circuit {
 		this.proj = proj;
 	}
 
+	public Project GetProject() {
+		return proj;
+	}
+
 	public Graphics GetGraphics() {
 		return (proj==null) ? null : proj.getFrame().getGraphics();
 	}
@@ -298,7 +303,7 @@ public class Circuit {
 		}
 
 	}
-
+	
 	private static String GetAnnotationName(Component comp) {
 		String ComponentName;
 		/* Pins are treated specially */
@@ -323,7 +328,7 @@ public class Circuit {
 		return ComponentName;
 	}
 
-	public void Annotate(boolean ClearExistingLabels, FPGAReport reporter) {
+	public void Annotate(boolean ClearExistingLabels, FPGAReport reporter, boolean InsideLibrary) {
 		/* If I am already completely annotated, return */
 		if (Annotated) {
 			reporter.AddInfo("Nothing to do !");
@@ -377,6 +382,7 @@ public class Circuit {
 			}
 		}
 		/* Now Annotate */
+		boolean SizeMightHaveChanged = false;
 		for (Component comp : comps) {
 			String ComponentName = GetAnnotationName(comp);
 			if (!lablers.containsKey(ComponentName)||
@@ -390,13 +396,23 @@ public class Circuit {
 				act.set(comp, StdAttr.LABEL, NewLabel);
 				proj.doAction(act);
 				reporter.AddInfo("Labeled " + this.getName() + "/" + NewLabel);
+				if (comp.getFactory() instanceof Pin) {
+					SizeMightHaveChanged = true;
+				}
 			}
 		}
+		if (!comps.isEmpty()&InsideLibrary) {
+			reporter.AddSevereWarning("Annotated the circuit \""+this.getName()+"\" which is inside a library these changes will not be saved!");
+		}
+		if (SizeMightHaveChanged)
+			reporter.AddSevereWarning("Annotated one ore more pins in circuit \""+this.getName()+
+					"\" this might have changed it's boxsize and might have impacted it's connections in circuits using this one!");
 		Annotated = true;
 		/* Now annotate all circuits below me */
 		for (String subs : Subcircuits) {
-			Circuit circ = proj.getLogisimFile().getCircuit(subs);
-			circ.Annotate(ClearExistingLabels, reporter);
+			Circuit circ = LibraryTools.getCircuitFromLibs(proj.getLogisimFile(), subs.toUpperCase());
+			boolean inLibrary = !proj.getLogisimFile().getCircuits().contains(circ);
+			circ.Annotate(ClearExistingLabels, reporter,inLibrary);
 		}
 	}
 
