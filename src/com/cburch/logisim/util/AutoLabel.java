@@ -97,6 +97,32 @@ public class AutoLabel {
 		return "";
 	}
 	
+	public boolean CorrectMatrixBaseLabel(Circuit circ,ComponentFactory me, String Common, int maxX , int maxY) {
+		if ((Common == null)|(Common.isEmpty())|(maxX<0)|(maxY<0))
+				return true;
+		if (!SyntaxChecker.isVariableNameAcceptable(Common,true))
+			return false;
+		for (int x = 0 ; x < maxX ; x++)
+			for (int y = 0 ; y < maxY; y++) {
+				if (GetMatrixLabel(circ,me,Common,x,y).isEmpty()) {
+					return false;
+				}
+			}
+		return true;
+	}
+	
+	public String GetMatrixLabel(Circuit circ,ComponentFactory me, String Common, int x , int y) {
+		String Label;
+		if ((Common == null)|(Common.isEmpty())|(x<0)|(y<0))
+			return "";
+		if (circ == null||!CurrentLabel.containsKey(circ)||CurrentLabel.get(circ).isEmpty())
+			   return "";
+		Label = Common.concat("_X"+Integer.toString(x)+"_Y"+Integer.toString(y));
+		if (Circuit.IsCorrectLabel(Label,circ.getNonWires(),null,me,false)&SyntaxChecker.isVariableNameAcceptable(Label,false))
+			return Label;
+		return "";
+	}
+	
 	public String GetNext(Circuit circ,ComponentFactory me) {
 		if (circ==null)
 			return "";

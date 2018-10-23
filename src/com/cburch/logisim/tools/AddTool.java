@@ -35,6 +35,7 @@ import java.awt.Cursor;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 
 import javax.swing.Icon;
 import javax.swing.JOptionPane;
@@ -68,6 +69,7 @@ import com.cburch.logisim.tools.key.KeyConfigurationResult;
 import com.cburch.logisim.tools.key.KeyConfigurator;
 import com.cburch.logisim.util.AutoLabel;
 import com.cburch.logisim.util.StringUtil;
+import com.cburch.logisim.util.SyntaxChecker;
 
 public class AddTool extends Tool {
 	private class MyAttributeListener implements AttributeListener {
@@ -79,6 +81,7 @@ public class AddTool extends Tool {
 			bounds = null;
 		}
 	}
+	
 
 	private static int INVALID_COORD = Integer.MIN_VALUE;
 	private static int SHOW_NONE = 0;
@@ -102,6 +105,7 @@ public class AddTool extends Tool {
 	private int state = SHOW_GHOST;
 	private Action lastAddition;
 	private boolean keyHandlerTried;
+	private boolean MatrixPlace=false;
 	private KeyConfigurator keyHandler;
 	private AutoLabel AutoLabler = new AutoLabel();
 
@@ -152,6 +156,7 @@ public class AddTool extends Tool {
 		moveTo(canvas, canvas.getGraphics(), INVALID_COORD, INVALID_COORD);
 		bounds = null;
 		lastAddition = null;
+		MatrixPlace = false;
 	}
 
 	private Tool determineNext(Project proj) {
@@ -179,11 +184,26 @@ public class AddTool extends Tool {
 		ComponentFactory source = getFactory();
 		if (source == null)
 			return;
+		AttributeSet base = getBaseAttributes();
+		Bounds bds = source.getOffsetBounds(base);
+		Color DrawColor;
 		/* take care of coloring the components differently that require a label */
 		if (state == SHOW_GHOST) {
-			source.drawGhost(context, Color.GRAY, x, y, getBaseAttributes());
+			DrawColor = AutoLabler.IsActive(canvas.getCircuit()) ? Color.MAGENTA : Color.GRAY; 
+			source.drawGhost(context, DrawColor, x, y, getBaseAttributes());
+			if (MatrixPlace) {
+				source.drawGhost(context, DrawColor, x+bds.getWidth()+3, y, getBaseAttributes());
+				source.drawGhost(context, DrawColor, x, y+bds.getHeight()+3, getBaseAttributes());
+				source.drawGhost(context, DrawColor, x+bds.getWidth()+3, y+bds.getHeight()+3, getBaseAttributes());
+			}
 		} else if (state == SHOW_ADD) {
-			source.drawGhost(context, Color.BLACK, x, y, getBaseAttributes());
+			DrawColor = AutoLabler.IsActive(canvas.getCircuit()) ? Color.BLUE : Color.BLACK; 
+			source.drawGhost(context, DrawColor, x, y, getBaseAttributes());
+			if (MatrixPlace) {
+				source.drawGhost(context, DrawColor, x+bds.getWidth()+3, y, getBaseAttributes());
+				source.drawGhost(context, DrawColor, x, y+bds.getHeight()+3, getBaseAttributes());
+				source.drawGhost(context, DrawColor, x+bds.getWidth()+3, y+bds.getHeight()+3, getBaseAttributes());
+			}
 		}
 	}
 
@@ -227,7 +247,9 @@ public class AddTool extends Tool {
 				ret = Bounds.EMPTY_BOUNDS;
 			} else {
 				AttributeSet base = getBaseAttributes();
-				ret = source.getOffsetBounds(base).expand(5);
+				Bounds bds = source.getOffsetBounds(base);
+				Bounds mbds = Bounds.create(bds.getX(),bds.getY(),bds.getWidth()*2,bds.getHeight()*2);
+				ret = mbds.expand(5);
 			}
 			bounds = ret;
 		}
@@ -324,6 +346,10 @@ public class AddTool extends Tool {
 					canvas.repaint();
 				} else
 			switch (KeybEvent) {
+			case KeyEvent.VK_X:
+				MatrixPlace = !MatrixPlace;
+				canvas.repaint();
+				break;
 			case KeyEvent.VK_UP:
 				setFacing(canvas, Direction.NORTH);
 				break;
@@ -446,7 +472,7 @@ public class AddTool extends Tool {
 
 	@Override
 	public void mouseReleased(Canvas canvas, Graphics g, MouseEvent e) {
-		Component added = null;
+		ArrayList<Component> added = new ArrayList<Component>();
 		if (state == SHOW_ADD) {
 			Circuit circ = canvas.getCircuit();
 			if (!canvas.getProject().getLogisimFile().contains(circ))
@@ -454,50 +480,91 @@ public class AddTool extends Tool {
 			if (shouldSnap)
 				Canvas.snapToGrid(e);
 			moveTo(canvas, g, e.getX(), e.getY());
-
-			Location loc = Location.create(e.getX(), e.getY());
+			
 			ComponentFactory source = getFactory();
-			AttributeSet attrsCopy = (AttributeSet) attrs.clone();
-			/* Here we make sure to not overrride labels that have default value */
-			if ((attrsCopy.containsAttribute(StdAttr.LABEL)) && (attrsCopy.getValue(StdAttr.LABEL) == null)) {
-				attrsCopy.setValue(StdAttr.LABEL, AutoLabler.GetCurrent(canvas.getCircuit(),source));
-				if (AutoLabler.IsActive(canvas.getCircuit())) {
+			if (source == null)
+				return;
+			String Label = null;
+			if (attrs.containsAttribute(StdAttr.LABEL)) {
+				Label = attrs.getValue(StdAttr.LABEL);
+				/* Here we make sure to not overrride labels that have default value */
+				if (AutoLabler.IsActive(canvas.getCircuit())&((Label==null)|Label.isEmpty())) {
+					Label = AutoLabler.GetCurrent(canvas.getCircuit(),source);
 					if (AutoLabler.hasNext(canvas.getCircuit()))
 						AutoLabler.GetNext(canvas.getCircuit(),source);
 					else
 						AutoLabler.Stop(canvas.getCircuit());
-				} else AutoLabler.SetLabel("", canvas.getCircuit(),source);
+				}
+				if (!AutoLabler.IsActive(canvas.getCircuit()))
+					AutoLabler.SetLabel("", canvas.getCircuit(),source);
 			}
-			if (source == null)
-				return;
-
-			Component c = source.createComponent(loc, attrsCopy);
-
-			if (circ.hasConflict(c)) {
-				canvas.setErrorMessage(Strings.getter("exclusiveError"));
-				return;
-			}
-
-			Bounds bds = c.getBounds(g);
-			if (bds.getX() < 0 || bds.getY() < 0) {
-				canvas.setErrorMessage(Strings.getter("negativeCoordError"));
-				return;
+			
+			MatrixPlacerInfo matrix = new MatrixPlacerInfo(Label);
+			if (MatrixPlace) {
+				AttributeSet base = getBaseAttributes();
+				Bounds bds = source.getOffsetBounds(base).expand(5);
+				matrix.SetBounds(bds);
+				MatrixPlacerDialog diag = new MatrixPlacerDialog(matrix,source.getName());
+				boolean okay = false;
+				while (!okay) {
+					if (!diag.execute())
+						return;
+					if (SyntaxChecker.isVariableNameAcceptable(matrix.GetLabel(),true)) {
+						AutoLabler.SetLabel(matrix.GetLabel(), canvas.getCircuit(), source);
+						okay = AutoLabler.CorrectMatrixBaseLabel(canvas.getCircuit(), source, matrix.GetLabel(), 
+								matrix.getNrOfXCopies(), matrix.getNrOfYCopies());
+						AutoLabler.SetLabel(Label, canvas.getCircuit(), source);
+						if (!okay) {
+							JOptionPane.showMessageDialog(null, "Base label either has wrong syntax or is contained in circuit", "Matrixplacer", JOptionPane.ERROR_MESSAGE);
+							matrix.UndoLabel();
+						}
+					} else matrix.UndoLabel();
+				}
 			}
 
 			try {
 				CircuitMutation mutation = new CircuitMutation(circ);
-				mutation.add(c);
+				
+				for (int x = 0 ; x < matrix.getNrOfXCopies() ; x++) {
+					for (int y = 0 ; y < matrix.getNrOfYCopies() ; y++) {
+						Location loc = Location.create(e.getX()+matrix.GetDeltaX()*x, e.getY()+matrix.GetDeltaY()*y);
+						AttributeSet attrsCopy = (AttributeSet) attrs.clone();
+						if (matrix.GetLabel() != null) { 
+							if (MatrixPlace)
+								attrsCopy.setValue(StdAttr.LABEL, AutoLabler.GetMatrixLabel(canvas.getCircuit(), source, matrix.GetLabel(), x, y));
+							else {
+								attrsCopy.setValue(StdAttr.LABEL, matrix.GetLabel());
+							}
+						}
+						Component c = source.createComponent(loc, attrsCopy);
+
+						if (circ.hasConflict(c)) {
+							canvas.setErrorMessage(Strings.getter("exclusiveError"));
+							return;
+						}
+
+						Bounds bds = c.getBounds(g);
+						if (bds.getX() < 0 || bds.getY() < 0) {
+							canvas.setErrorMessage(Strings.getter("negativeCoordError"));
+							return;
+						}
+
+						mutation.add(c);
+						added.add(c);
+					}
+				}
 				Action action = mutation.toAction(Strings.getter(
 						"addComponentAction", factory.getDisplayGetter()));
 				canvas.getProject().doAction(action);
 				lastAddition = action;
-				added = c;
 				canvas.repaint();
 			} catch (CircuitException ex) {
 				JOptionPane.showMessageDialog(canvas.getProject().getFrame(),
 						ex.getMessage());
+				added.clear();
 			}
 			setState(canvas, SHOW_GHOST);
+			MatrixPlace = false;
 		} else if (state == SHOW_ADD_NO) {
 			setState(canvas, SHOW_NONE);
 		}
@@ -510,8 +577,8 @@ public class AddTool extends Tool {
 			if (act != null) {
 				proj.doAction(act);
 			}
-			if (added != null)
-				canvas.getSelection().add(added);
+			if (!added.isEmpty())
+				canvas.getSelection().addAll(added);
 		}
 	}
 
