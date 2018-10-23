@@ -34,6 +34,9 @@ import java.util.regex.Pattern;
 
 import javax.swing.JOptionPane;
 
+import com.bfh.logisim.designrulecheck.CorrectLabel;
+import com.bfh.logisim.hdlgenerator.HDLGeneratorFactory;
+
 public class SyntaxChecker {
 
 	public static boolean isVariableNameAcceptable(String val, Boolean ShowDialog) {
@@ -42,10 +45,23 @@ public class SyntaxChecker {
 		if (val.length() > 0) {
 			variableMatcher = variablePattern.matcher(val);
 			forbiddenMatcher = forbiddenPattern.matcher(val);
-			boolean ret = variableMatcher.matches() && !forbiddenMatcher.find();
+			boolean ret = true;
+			String HDL = CorrectLabel.HDLCorrectLabel(val);
+			String Message ="";
+			if (!variableMatcher.matches()) {
+				ret = false;
+				Message = Message.concat(Strings.get("variableInvalidCharacters"));
+			}
+			if (forbiddenMatcher.find()) {
+				ret = false;
+				Message = Message.concat(Strings.get("variableDoubleUnderscore"));
+			}
+			if (HDL!=null) {
+				ret = false;
+				Message = Message.concat( HDL.equals(HDLGeneratorFactory.VHDL) ? Strings.get("variableVHDLKeyword") : Strings.get("variableVerilogKeyword"));
+			}
 			if (!ret&&ShowDialog)
-				JOptionPane.showMessageDialog(null,
-						Strings.get("variableNameNotAcceptable"));
+				JOptionPane.showMessageDialog(null, Message.concat("\n"+Strings.get("variableNameNotAcceptable")));
 			return ret;
 		}
 		return false;

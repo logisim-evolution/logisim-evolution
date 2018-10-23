@@ -80,6 +80,16 @@ public class CorrectLabel {
 		return true;
 	}
 
+	public static String HDLCorrectLabel(String Label) {
+		if (Label.isEmpty())
+			return null;
+		if (VHDLKeywords.contains(Label.toLowerCase()))
+			return HDLGeneratorFactory.VHDL;
+		if (VerilogKeywords.contains(Label))
+			return HDLGeneratorFactory.VERILOG;
+		return null;
+	}
+
 	public static boolean IsCorrectLabel(String Label) {
 		if (Label.isEmpty())
 			return true;
