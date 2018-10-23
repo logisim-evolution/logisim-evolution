@@ -95,10 +95,6 @@ class ProbeAttributes extends AbstractAttributeSet {
 			facing = (Direction) value;
 		} else if (attr == StdAttr.LABEL) {
 			String val = (String) value;
-//			if (!SyntaxChecker.isVariableNameAcceptable(val) && !val.equals("")) {
-//				SyntaxChecker.showNonAcceptableNameMessage();
-//				val = "";
-//			}
 			if (label.equals(val))
 				return;
 			Oldvalue = (V) label;

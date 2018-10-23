@@ -112,19 +112,9 @@ public class AttributeSets {
 						+ attr.getName() + " absent");
 			if (isReadOnly(index))
 				throw new IllegalArgumentException("read only");
-//			if (isAttrLabel(attr)) {
-//				String val = (String) value;
-//				if (!SyntaxChecker.isVariableNameAcceptable(val)) {
-//					SyntaxChecker.showNonAcceptableNameMessage();
-//					values[index] = "";
-//				} else {
-//					values[index] = val;
-//				}
-//			} else {
 			    @SuppressWarnings("unchecked")
 				V oldvalue = (V) values[index];
 				values[index] = value;
-//			}
 			fireAttributeValueChanged(attr, value, oldvalue);
 		}
 	}

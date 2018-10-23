@@ -36,7 +36,6 @@ import java.util.List;
 
 import javax.swing.JOptionPane;
 
-import com.bfh.logisim.designrulecheck.CorrectLabel;
 import com.cburch.logisim.circuit.appear.CircuitAppearanceEvent;
 import com.cburch.logisim.circuit.appear.CircuitAppearanceListener;
 import com.cburch.logisim.data.AbstractAttributeSet;
@@ -99,13 +98,6 @@ public class CircuitAttributes extends AbstractAttributeSet {
 						return;
 					} else 
 				    if (!SyntaxChecker.isVariableNameAcceptable(NewName,true)) {
-						e.getSource().setValue(NAME_ATTR, OldName);
-						source.fireEvent(CircuitEvent.ACTION_SET_NAME, OldName);
-						return;
-					} else
-					if (CorrectLabel.IsKeyword(NewName,false)) {
-						JOptionPane.showMessageDialog(null, Strings.get("KeywordNameError"),"",
-								JOptionPane.ERROR_MESSAGE);
 						e.getSource().setValue(NAME_ATTR, OldName);
 						source.fireEvent(CircuitEvent.ACTION_SET_NAME, OldName);
 						return;

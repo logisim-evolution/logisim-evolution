@@ -143,13 +143,8 @@ class GateAttributes extends AbstractAttributeSet {
 			facing = (Direction) value;
 		} else if (attr == StdAttr.LABEL) {
 			String val = (String) value;
-//			if (!SyntaxChecker.isVariableNameAcceptable(val)) {
-//				SyntaxChecker.showNonAcceptableNameMessage();
-//				label = "";
-//			} else {
 			    oldvalue = label;
 				label = val;
-//			}
 		} else if (attr == StdAttr.LABEL_FONT) {
 			labelFont = (Font) value;
 		} else if (attr == ATTR_SIZE) {
