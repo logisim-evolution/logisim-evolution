@@ -1,3 +1,9 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE toc
+  PUBLIC
+  "-//Sun Microsystems Inc.//DTD
+   JavaHelp TOC Version 2.0//EN"
+  "http://java.sun.com/products/javahelp/toc_2_0.dtd">
 <toc version="2.0" categoryclosedimage="chapter" topicimage="topic">
   <tocitem image="toplevelfolder" target="top" text="Logisim Références">
     <tocitem target="guide" text="Guide pour débuter avec Logisim">
@@ -10,7 +16,6 @@
 		<tocitem target="tutorial_step" text="Etape 5: Le mode pas-à-pas"/>
       </tocitem>
       <tocitem target="attrlib" text="l'interface graphique">
-       
        <tocitem target="attrlib_canvas" text="La surface de travail (Canvas)"/>
 	   <tocitem target="attrlib_menu" text="Les menus"/>
 	   <tocitem target="attrlib_explore" text="Le panneau de navigation"/>
@@ -30,23 +35,15 @@
         <tocitem target="bundles_splitting" text="Répartiteur"/>
         <tocitem target="bundles_colors" text="Couleur des câbles"/>
       </tocitem>
+	<tocitem target="mem_guide" text="Composant mémoire">
+        <tocitem target="mem_menu" text="Menus Pop-up et fichiers"/>
+        <tocitem target="mem_hex" text="Editeur Hexadecimal"/>
+      </tocitem>
       <tocitem target="analyze" text="Analyse combinatoire">
         <tocitem target="analyze_open" text="Ouvrir l'analyse combinatoire"/>
         <tocitem target="analyze_table" text="Editer la table de vérité"/>
         <tocitem target="analyze_expr" text="Créer des expressions"/>
         <tocitem target="analyze_gen" text="Générer un circuit"/>
-      </tocitem>
-      <tocitem target="menu" text="Référence des menus">
-        <tocitem target="menu_file" text="Menu fichier"/>
-        <tocitem target="menu_edit" text="Menu éditer"/>
-        <tocitem target="menu_project" text="Menu projet"/>
-        <tocitem target="menu_simulate" text="Menu simulation"/>
-        <tocitem target="menu_winhelp" text="Menus fenêtre et aide"/>
-      </tocitem>
-      <tocitem target="mem_guide" text="Composant mémoire">
-        <tocitem target="mem_poke" text="Editer la mémoire"/>
-        <tocitem target="mem_menu" text="Menus Pop-up et fichiers"/>
-        <tocitem target="mem_hex" text="Editeur Hexadecimal"/>
       </tocitem>
       <tocitem target="log" text="Journalisation">
         <tocitem target="log_selection" text="Onglet de sélection"/>
@@ -57,6 +54,14 @@
         <tocitem target="verify_sub" text="Echanges de librairies"/>
         <tocitem target="verify_other" text="Autres options de vérification"/>
         <tocitem target="verify_multi" text="Tester plusieurs fichiers"/>
+		<tocitem target="verify_test" text="Vecteurs de test"/>
+      </tocitem>
+      <tocitem target="menu" text="Référence des menus">
+        <tocitem target="menu_file" text="Menu fichier"/>
+        <tocitem target="menu_edit" text="Menu éditer"/>
+        <tocitem target="menu_project" text="Menu projet"/>
+        <tocitem target="menu_simulate" text="Menu simulation"/>
+        <tocitem target="menu_winhelp" text="Menus fenêtre et aide"/>
       </tocitem>
       <tocitem target="prefs" text="Préférences de l'application">
         <tocitem target="prefs_template" text="L'onglet modèle"/>
