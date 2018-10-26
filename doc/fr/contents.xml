@@ -36,6 +36,7 @@
         <tocitem target="bundles_colors" text="Couleur des câbles"/>
       </tocitem>
 	<tocitem target="mem_guide" text="Composant mémoire">
+<!--			<tocitem target="mem_poke" Memory poke" /> -->
         <tocitem target="mem_menu" text="Menus Pop-up et fichiers"/>
         <tocitem target="mem_hex" text="Editeur Hexadecimal"/>
       </tocitem>
@@ -45,10 +46,11 @@
         <tocitem target="analyze_expr" text="Créer des expressions"/>
         <tocitem target="analyze_gen" text="Générer un circuit"/>
       </tocitem>
-      <tocitem target="log" text="Journalisation">
-        <tocitem target="log_selection" text="Onglet de sélection"/>
-        <tocitem target="log_table" text="Onglet table"/>
-        <tocitem target="log_file" text="Onglet fichier"/>
+      <tocitem target="log" text="Chronogramme">
+        <tocitem target="log_selection" text="Sélection des signaux"/>
+		<tocitem target="log_Timetable" text="Fenêtre Chronogramme " />	
+<!--        <tocitem target="log_table" text="Onglet table"/>
+            <tocitem target="log_file" text="Onglet fichier"/> -->
       </tocitem>
       <tocitem target="verify" text="Vérifications en ligne de commande/a&gt;">
         <tocitem target="verify_sub" text="Echanges de librairies"/>
@@ -62,6 +64,8 @@
         <tocitem target="menu_project" text="Menu projet"/>
         <tocitem target="menu_simulate" text="Menu simulation"/>
         <tocitem target="menu_winhelp" text="Menus fenêtre et aide"/>
+        <tocitem target="menu_exportab" text="Exportation d'images "/>  
+		<tocitem target="menu_printertab" text="Imprimer "/>		
       </tocitem>
       <tocitem target="prefs" text="Préférences de l'application">
         <tocitem target="prefs_template" text="L'onglet modèle"/>
@@ -81,6 +85,13 @@
         <tocitem target="prop_oscillate" text="Erreurs oscillatoire"/>
         <tocitem target="prop_shortcome" text="Limitations"/>
       </tocitem>
+	  <tocitem target="hdl-ip" text="HDL IP">
+			<tocitem target="hdl-ip_vhdlcomp" text="Entités VHDL" />
+			<tocitem target="hdl-ip_questa" text="Confugurer Questa Advanced Simulator" />
+			<tocitem target="hdl-ip_simulation" text="Simulateur VHDL" />
+			<tocitem target="hdl-ip_testbenchs" text="Simuler en bancs d'essai" />
+		</tocitem>
+	  <tocitem target="users" text="Users" />
       <tocitem target="jar" text="Librairies JAR">
         <tocitem target="jar_incr" text="Ajout en codage de Gray"/>
         <tocitem target="jar_library" text="Classe librairie"/>
@@ -90,8 +101,10 @@
       </tocitem>
       <tocitem target="about" text="A propos du programme">
         <tocitem target="about_gpl" text="GNU General Public License"/>
+		<tocitem target="about_gpl_tr)" text="GNU General Public License (fr)"/>
       </tocitem>
     </tocitem>
+	
     <tocitem target="libs" text="Référence de la bibliothèque">
       <tocitem target="wiring" text="Librairies câblage">
         <tocitem target="wiring_splitter" image="icon_splitter" text="Répartiteur"/>
@@ -151,6 +164,9 @@
         <tocitem target="io_dotmat" image="icon_dotmat" text="LED Matrix"/>
         <tocitem target="io_tty" image="icon_tty" text="TTY"/>
       </tocitem>
+	  <tocitem target="hdl" text="HDL-IP">
+		<tocitem target="hdl_vhdlentity" text="VHDL Entity" image="icon_vhdl" />
+      </tocitem>
       <tocitem target="base" text="Base library">
         <tocitem target="base_poke" image="icon_poke" text="Poke Tool"/>
         <tocitem target="base_edit" image="icon_edit" text="Edit Tool"/>
@@ -160,6 +176,13 @@
         <tocitem target="base_menu" image="icon_menu" text="Menu Tool"/>
         <tocitem target="base_label" image="icon_label" text="Text"/>
       </tocitem>
+	  <tocitem target="tcl" text="TCL library">
+          <tocitem target="tcl_reds_console" text="REDS console" image="icon_reds_console" />
+          <tocitem target="tcl_generic" text="Generic" image="icon_generic" />
+      </tocitem>
     </tocitem>
+	
+	
+	
   </tocitem>
 </toc>

@@ -36,6 +36,7 @@
 			<tocitem target="bundles_colors" text="Wire colors" />
 		</tocitem>
 		<tocitem target="mem_guide" text="Memory components">
+<!--			<tocitem target="mem_poke" Memory poke" /> -->
 			<tocitem target="mem_menu" text="Pop-up menus and files" />
 			<tocitem target="mem_hex" text="Hex editor" />
 		</tocitem>
@@ -47,8 +48,9 @@
 		</tocitem>
 		<tocitem target="log" text="Logging">
 			<tocitem target="log_selection" text="The Selection tab" />
-			<tocitem target="log_table" text="The Table tab" />
-			<tocitem target="log_file" text="The File tab" />
+			<tocitem target="log_Timetable" text="Timetable window" />
+<!--        	 <tocitem target="log_table" text="The Table tab" />
+			     <tocitem target="log_file" text="The File tab" /> -->					
 		</tocitem>
 		<tocitem target="verify" text="Command-line verification">
 			<tocitem target="verify_sub" text="Substituting libraries" />
@@ -62,6 +64,8 @@
 			<tocitem target="menu_project" text="The Project menu" />
 			<tocitem target="menu_simulate" text="The Simulate menu" />
 			<tocitem target="menu_winhelp" text="The Window and Help menus" />
+			<tocitem target="menu_exportab" text="Export Image"/>  
+			<tocitem target="menu_printertab" text="Printing "/>
 		</tocitem>
 		<tocitem target="prefs" text="Application preferences">
 			<tocitem target="prefs_template" text="The Template tab" />
@@ -97,6 +101,7 @@
 		</tocitem>
 		<tocitem target="about" text="About the program">
 			<tocitem target="about_gpl" text="GNU General Public License" />
+			
 		</tocitem>
 	</tocitem>
 
@@ -108,6 +113,7 @@
 		<tocitem target="wiring_tunnel" text="Tunnel" image="icon_tunnel" />
 		<tocitem target="wiring_pull" text="Pull Resistor" image="icon_pull" />
 		<tocitem target="wiring_clock" text="Clock" image="icon_clock" />
+		<tocitem target="wiring_por" image="icon_por" text="Power On Reset"/>
 		<tocitem target="wiring_constant" text="Constant" image="icon_constant" />
 		<tocitem target="wiring_const01" text="Power/Ground" image="icon_const01" />
 		<tocitem target="wiring_transist" text="Transistor" image="icon_transist" />
@@ -160,7 +166,7 @@
 	  </tocitem>
 	  <tocitem target="hdl" text="HDL-IP">
 		<tocitem target="hdl_vhdlentity" text="VHDL Entity" image="icon_vhdl" />
-          </tocitem>
+      </tocitem>
 	  <tocitem target="base" text="Base library">
 		<tocitem target="base_poke" text="Poke Tool" image="icon_poke" />
 		<tocitem target="base_edit" text="Edit Tool" image="icon_edit" />

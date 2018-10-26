@@ -5,7 +5,7 @@ It is not suitable for the web and hijacks some CSS rules
 /* For img */
 img {
 	width:86%;
-	max-width:100%
+	max-width:100%;
 }
 /* For img icone in the text */
 img.intxt {
