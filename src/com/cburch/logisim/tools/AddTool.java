@@ -504,7 +504,7 @@ public class AddTool extends Tool {
 				AttributeSet base = getBaseAttributes();
 				Bounds bds = source.getOffsetBounds(base).expand(5);
 				matrix.SetBounds(bds);
-				MatrixPlacerDialog diag = new MatrixPlacerDialog(matrix,source.getName());
+				MatrixPlacerDialog diag = new MatrixPlacerDialog(matrix,source.getName(),AutoLabler.IsActive(canvas.getCircuit()));
 				boolean okay = false;
 				while (!okay) {
 					if (!diag.execute())
