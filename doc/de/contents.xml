@@ -48,7 +48,7 @@
 		</tocitem>
 		<tocitem target="log" text="Ablaufverfolgung">
 			<tocitem target="log_selection" text="Die Registerkarte &quot;Auswahl&quot;" />
-			<tocitem target="log_Timetable" text="Timetable window" />
+			<tocitem target="log_timetable" text="Timetable window" />
 <!--			<tocitem target="log_table" text="Die Registerkarte &quot;Tabelle&quot;" />
 				<tocitem target="log_file" text="Die Registerkarte &quot;Datei&quot;" /> -->
 		</tocitem>

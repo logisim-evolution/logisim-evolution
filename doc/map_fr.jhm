@@ -32,7 +32,7 @@
   <mapID target="bundles_splitting" url="fr/html/guide/bundles/splitting.html"/>
   <mapID target="bundles_colors" url="fr/html/guide/bundles/colors.html"/>
   <mapID target="mem_guide" url="fr/html/guide/mem/index.html"/>
-<!-- <mapID target="mem_poke" url="fr/html/guide/mem/poke.html" /> -->
+  <mapID target="mem_poke" url="fr/html/guide/mem/poke.html" />  <!-- obsolete -->
   <mapID target="mem_menu" url="fr/html/guide/mem/menu.html"/>
   <mapID target="mem_hex" url="fr/html/guide/mem/hex.html"/>
   <mapID target="analyze" url="fr/html/guide/analyze/index.html"/>
@@ -42,8 +42,9 @@
   <mapID target="analyze_gen" url="fr/html/guide/analyze/gen.html"/>
   <mapID target="log" url="fr/html/guide/log/index.html"/>
   <mapID target="log_selection" url="fr/html/guide/log/selection.html"/>
-  <mapID target="log_table" url="fr/html/guide/log/table.html"/>
-  <mapID target="log_file" url="fr/html/guide/log/file.html"/>
+  <mapID target="log_timetable" url="fr/html/guide/log/timetable.html"/>  
+  <mapID target="log_table" url="fr/html/guide/log/table.html"/>  <!-- obsolete -->
+  <mapID target="log_file" url="fr/html/guide/log/file.html"/>  <!-- obsolete -->
   <mapID target="verify" url="fr/html/guide/verify/index.html"/>
   <mapID target="verify_sub" url="fr/html/guide/verify/sub.html"/>
   <mapID target="verify_other" url="fr/html/guide/verify/other.html"/>

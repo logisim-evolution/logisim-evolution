@@ -48,7 +48,7 @@
 		</tocitem>
 		<tocitem target="log" text="Registro">
 			<tocitem target="log_selection" text="A aba Seleção" />
-			<tocitem target="log_Timetable" text="Timetable window" />
+			<tocitem target="log_timetable" text="Timetable window" />
 <!--			<tocitem target="log_table" text="A aba Tabela" />
 			<tocitem target="log_file" text="A aba Arquivo" />  -->
 		</tocitem>

@@ -1,59 +1,95 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
-<head>
-    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-	<title>Einführung: Testen der Schaltung</title>
-</head>
-<body bgcolor="FFFFFF">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2018-10-23T06:18:42.262000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="de">
+    <title>Einführung: Testen der Schaltung   </title>
+    <link rel="stylesheet" type="text/css" href="../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
 
-<p><b>Weiter:</b> <em><a href="../index.html">Leitfaden für Benutzer von Logisim</a></em></p> 
+<p><b>Früher:</b> <a href="tutor-text.html">Schritt 3: Text hinzufügen</a></p> 
 
 <h2>Schritt 4: Testen der Schaltung</h2>
 
-<p>Der letzte Schritt ist das Testen der Schaltung, um zu sehen, ob diese wirklich wie geplant funktioniert. Zu diesem Zeitpunkt simuliert Logisim bereits das Verhalten der Schaltung. Lassen Sie uns noch einmal ansehen, wo wir gerade waren.<center><img src="../../../img-guide/tutorial-shot-all.png"  width=480 height=286></center>Beachten Sie, daß beide Eingänge auf 0 gesetzt sind, und auch am Ausgang haben wir eine 0. Dies zeigt uns, daß unsere Schaltung schon eine 0 ausrechnet, wenn beide Eingänge auf 0 gesetzt sind.</p>
+<p>Der letzte Schritt ist das Testen der Schaltung, um zu sehen, ob diese wirklich wie geplant funktioniert. Zu diesem Zeitpunkt simuliert Logisim bereits das Verhalten der Schaltung. Lassen Sie uns noch einmal ansehen, wo wir gerade waren.<center><img src="../../../img-guide/tutorial-shot-all.png"></center>Beachten Sie, daß beide Eingänge auf 0 gesetzt sind, und auch am Ausgang haben wir eine 0. Dies zeigt uns, daß unsere Schaltung schon eine 0 ausrechnet, wenn beide Eingänge auf 0 gesetzt sind.</p>
 
-<p>Jetzt probieren wir eine andere Eingangskombination. Wählen Sie das Schaltwerkzeug (<img src="../../../../icons/poke.gif" width="16" height="16">) aus, und schalten Sie die Eingänge um, indem Sie diese anklicken. Jedes Mal, wenn Sie einen Eingang anklicken, wird sich dessen Wert ändern. Wir können also zum Beispiel den unteren Eingang anklicken.<center><img src="../../../img-guide/tutorial-shot-test.png"  width=480 height=286></center>Sobald Sie den Wert am Eingang ändern, wird Logisim Ihnen anzeigen, welche Werte auf den einzelnen Leitungen geführt werden. Eine hellgrüne Leitung zeigt eine 1 an, eine dunkelgrüne (fast schwarze) Leitung eine 0. Sie können auch sehen, daß sich der Wert am Ausgang der Schaltung auf 1 geändert hat.</p>
+<p>Jetzt probieren wir eine andere Eingangskombination. Wählen Sie das Schaltwerkzeug (<img class="intxt" src="../../../../icons/poke.gif">) aus, und schalten Sie die Eingänge um, indem Sie diese anklicken. Jedes Mal, wenn Sie einen Eingang anklicken, wird sich dessen Wert ändern. Wir können also zum Beispiel den unteren Eingang anklicken.<center><img src="../../../img-guide/tutorial-shot-test.png"></center>Sobald Sie den Wert am Eingang ändern, wird Logisim Ihnen anzeigen, welche Werte auf den einzelnen Leitungen geführt werden. Eine hellgrüne Leitung zeigt eine 1 an, eine dunkelgrüne (fast schwarze) Leitung eine 0. Sie können auch sehen, daß sich der Wert am Ausgang der Schaltung auf 1 geändert hat.</p>
 
 <p>Bisher haben wir somit die ersten zwei Zeilen der Wahrheitstabelle getestet, und die Ausgangswerte (0 und 1) entsprechen unseren Erwartungen.</p>
 
-<table border="0" width="150px" align="center">
-<tbody>
-<tr style="background-color: #ccd1d6;">
-<th>&nbsp;x&nbsp;</th>
-<th>&nbsp;y&nbsp;</th>
-<th>x XOR y</th>
-</tr>
-<tr align="center">
-<td>0</td>
-<td>0</td>
-<td>1</td>
-</tr >
-<tr align="center">
-<td>1</td>
-<td>0</td>
-<td>0</td>
-</tr>
-<tr align="center">
-<td>0</td>
-<td>1</td>
-<td>1</td>
-</tr>
-<tr align="center">
-<td>1</td>
-<td>1</td>
-<td>0</td>
-</tr>
-</tbody>
-</table>
+ <center>
+        <table class="tblver">
+          <tbody>
+            <tr class="tblvertitl">
+              <th width="20">
+                x
+              </th>
+              <th width="20">
+                y
+              </th>
+              <th width="30">
+                x&nbsp;XOR&nbsp;y
+              </th>
+            </tr>
+            <tr>
+              <td class="zerov">
+                0
+              </td>
+              <td class="zerov">
+                0
+              </td>
+              <td class="unov">
+                1
+              </td>
+            </tr>
+            <tr>
+              <td class="unov">
+                1
+              </td>
+              <td class="zerov">
+                0
+              </td>
+              <td class="zerov">
+                0
+              </td>
+            </tr>
+            <tr>
+              <td class="zerov">
+                0
+              </td>
+              <td class="unov">
+                1
+              </td>
+              <td class="unov">
+                1
+              </td>
+            </tr>
+            <tr>
+              <td class="unov">
+                1
+              </td>
+              <td class="unov">
+                1
+              </td>
+              <td class="zerov">
+                0
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </center>
 
 <p>Durch Schalten der Eingänge durch die verschiedenen Kombinationen können wir auch die restlichen zwei Zeilen überprüfen. Wenn alles stimmt, sind wir fertig: Die Schaltung funktioniert!</p>
-
-<br><br>
-
 <p>Um unsere Arbeit zu archivieren, können Sie die Schaltung speichern oder ausdrucken. Die entsprechenden Funktionen finden Sie im Dateimenü, das auch einen Punkt zum Beenden von Logisim enthält. Aber warum sollten wir jetzt aufhören?</p>
 
 <p>Nachdem Sie jetzt die Einführung abgeschlossen haben, können Sie weiter mit Logisim experimentieren und eigene Schaltungen aufbauen. Wenn Sie Schaltungen mit komplexeren Funktionen aufbauen wollen, dann sollten Sie auch den Rest des Hilfesystems durchblättern, um zu sehen, welche Möglichkeiten Ihnen Logisim bietet. Logisim ist ein leistungsfähiges Programm, mit dem Sie riesige Schaltungen aufbauen und testen können. Diese Schritt-für-Schritt-Einführung kann nur die Oberfläche ankratzen.</p>
 
 <p><b>Weiter:</b> <em><a href="../index.html">Leitfaden für Benutzer von Logisim</a></em></p> 
-
+</div>
 </body>
 </html>

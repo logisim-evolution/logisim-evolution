@@ -48,7 +48,7 @@
       </tocitem>
       <tocitem target="log" text="Chronogramme">
         <tocitem target="log_selection" text="Sélection des signaux"/>
-		<tocitem target="log_Timetable" text="Fenêtre Chronogramme " />	
+		<tocitem target="log_timetable" text="Fenêtre Chronogramme " />	
 <!--        <tocitem target="log_table" text="Onglet table"/>
             <tocitem target="log_file" text="Onglet fichier"/> -->
       </tocitem>

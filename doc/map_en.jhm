@@ -43,9 +43,9 @@
 	<mapID target="analyze_gen" url="en/html/guide/analyze/gen.html" />
 	<mapID target="log" url="en/html/guide/log/index.html" />
 	<mapID target="log_selection" url="en/html/guide/log/selection.html" />
-	<mapID target="log_Timetable" url="en/html/guide/log/timetable.html" />
+	<mapID target="log_timetable" url="en/html/guide/log/timetable.html" />
 	<mapID target="log_table" url="en/html/guide/log/table.html" />  <!-- obsolete -->
-	<mapID target="log_file" url="en/html/guide/log/file.html" />
+	<mapID target="log_file" url="en/html/guide/log/file.html" />   <!-- obsolete -->
 	<mapID target="verify" url="en/html/guide/verify/index.html" />
 	<mapID target="verify_sub" url="en/html/guide/verify/sub.html" />
 	<mapID target="verify_other" url="en/html/guide/verify/other.html" />
