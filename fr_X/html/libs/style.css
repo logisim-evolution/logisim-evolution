@@ -1,0 +1,156 @@
+/* 
+Ce documenet CSS est adapté a l'utilisation dans java help v2.0
+Il n'est pas adapté pour le web. 
+*/
+div.serif {
+	 font-family:"Palatino Linotype", "Book Antiqua", Palatino, serif;
+}
+
+div.sans-serif {
+	font-family:Arial, Helvetica, sans-serif, sans-serif;
+}
+
+div.monospace {
+	 font-family: "Courier New", Courier, monospace;
+}
+
+div.cursive {
+	 font-family: "Comic Sans MS",cursive;
+}
+
+body {
+	  background-color: #FFFFFF;
+	  color:#000000;
+      }
+
+div.maindiv {
+	max-width:560px;
+	border:solid 1px;
+}
+
+div.leftdiv {
+   position:relative; 
+   float:left; 
+   max-width:160px;
+   border:solid 0px;   
+}
+
+.f08 {
+	font-size:80%;
+}
+.f09 {
+	font-size:90%;
+}
+.f10{
+	font-size:100%;
+}
+.f11{
+	font-size:110%;
+}
+.f12{
+	font-size:120%;
+}
+.f13{
+	font-size:130%;
+}
+h1 {
+	color: #00137f;
+}
+h2 {
+	color: #00137f;
+}
+h3{
+	color: #00137f;
+}
+var {
+	color: #0025ff;
+	font-weight:bold;
+}
+tt {
+	font-size:110%;
+}
+b.dblue {
+	color: #00008B;
+}
+b.orange {
+	color: #FF6a00;
+}
+b.red {
+	color: #FF0000;
+}
+b.dgreen {
+	color: #007F0E;
+}
+b.blue {
+	color: #8496ff;
+}
+b.green {
+	color: #00FF21;
+}
+b.grey {
+	color: #505050;
+}
+b.grey1 {
+	color: #909090;
+}
+b.note {
+		color: #FF6a00;
+}
+
+span.menu {
+	color: black;
+	background-color :#b0b0b0;
+	font-family:arial;
+	font-weight:bold;
+}
+
+span.propertie {
+	color:#00008B;
+	font-weight:bold;
+}
+
+span.tkeybd {
+	color:#007F0E;
+}
+
+/* 
+Définition pour les tables de vérités 
+*/
+table.tblver {
+	text-align :center;
+	border-spacing: 2px;
+	border-style: dotted;
+	border-width: 0px;
+}
+
+tr.tblvertitl{
+	background-color:#ccd1d6;
+	width:20;
+}
+td.space {
+	background-color:#ffffff;
+}
+td.zerov {
+	color:#008000;
+}
+td.unov {
+	color:#00FF00;
+}
+td.xvalue {
+	color:#0000FF;
+}
+td.evalue {
+	color:#FF0000;
+}
+span.xvalue {
+	color:#0000FF;
+}
+span.evalue {
+	color:#FF0000;
+}
+/* Définition pour les listes */
+dt {
+margin-top: 5px;
+}
+}
+}

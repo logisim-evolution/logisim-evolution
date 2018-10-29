@@ -1,0 +1,212 @@
+/* 
+This CSS documenet is suitable for use in java help v2.0
+It is not suitable for the web and hijacks some CSS rules
+*/
+
+/* For spaces, page background */
+div.maindiv {
+	max-width:560px;
+	border:solid 1px;
+}
+
+div.leftdiv {
+   position:relative; 
+   float:left; 
+   max-width:160px;
+   border:solid 0px;   
+}
+
+/* for titles */
+h1 {
+	color: #00137f;
+}
+h2 {
+	color: #00137f;
+}
+h3{
+	color: #00137f;
+}
+var {
+	color: #0025ff;
+	font-weight:bold;
+}
+tt {
+	font-size:110%;
+}
+
+/* for reference to menu */
+b.menu {
+	color: black;
+	background-color :#b0b0b0;
+	font-family:arial;
+	font-weight:bold;
+}
+/* for reference to buton */
+b.buton {
+	color: black;
+	background-color :#e0e0e0;
+	font-family:arial;
+	font-weight:normal; 
+}
+/* for reference to properties */
+b.propertie {
+	color:#00008B;
+	font-weight:bold;
+}
+
+/* for reference to properties keyboard/mouse keys */
+b.tkeybd {
+	color:#007F0E;
+}
+
+/* for reference to note: */
+b.note {
+	color:#007F0E;
+}
+
+/* for reference to the elements of the figures */
+b.reffig {
+	color:#007F0E;
+}
+
+
+/* For tables of truth tables */
+table.tblver {
+	text-align :center;
+	border-spacing: 2px;
+	border-style: dotted;
+	border-width: 0px;
+}
+
+tr.tblvertitl{
+	background-color:#ccd1d6;
+	width:20;
+}
+td.space {
+	background-color:#ffffff;
+}
+td.zerov {
+	color:#008000;
+}
+td.unov {
+	color:#00FF00;
+}
+td.xvalue {
+	color:#0000FF;
+}
+td.evalue {
+	color:#FF0000;
+}
+span.xvalue {
+	color:#0000FF;
+}
+span.evalue {
+	color:#FF0000;
+}
+
+/* Définition pour la table présentation de lib
+
+/* Définition pour la table des composant de lib
+
+/* For list items */
+dt {
+margin-top: 5px;
+}
+
+/* Pour tester les couleurs */
+span.blue {
+	color:#0000ff;
+}
+span.dblue {
+	color:#000090;
+}
+span.green {
+	color:#00ff00;
+}
+span.dgreen {
+	color:#009000;
+}
+span.red {
+	color:#ff0000;
+}
+span.dred {
+	color:#900000;
+}
+span.green {
+	color:#00ff00;
+}
+span.grey {
+	color:#909090;
+}
+span.dgrey {
+	color:#505050;
+}
+span.orange {
+	color:#ff8000;
+}
+span.violet {
+	color:#ff00ff;
+}
+span.manginta {
+	color:#00ffff;
+}
+span.jaune {
+	color:#ffff00;
+}
+span.t1 {
+	color:#006060;
+}
+span.t2 {
+	color:#707000;
+}
+span.t3 {
+	color:#c0c000;
+}
+
+/* for table test */
+table {
+ border-width:0px; 
+ border-style:solid; 
+ border-color:black;
+ }
+td { 
+ border-width:0px 0px 1px;
+ border-style:solid; 
+ border-color:black;
+ }
+/* for font test */
+font.px8 {
+	font-size: 8px;
+}
+font.px10 {
+	font-size: 10px;
+}
+font.px12 {
+	font-size: 12px;
+}
+font.px14 {
+	font-size: 14px;
+}
+font.px18 {
+	font-size: 18px;
+}
+font.px24 {
+	font-size: 24px;
+}
+font.p60 {
+	font-size: 60%;
+}
+font.p80 {
+	font-size: 80%;
+}
+font.p100 {
+	font-size: 100%;
+}
+font.p120 {
+	font-size: 120%;
+}
+font.p140 {
+	font-size: 140%;
+}
+
+

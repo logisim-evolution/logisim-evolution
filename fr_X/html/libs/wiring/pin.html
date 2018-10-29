@@ -1,0 +1,83 @@
+<html>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<head>
+	<title>Broche</title>
+	<LINK rel="stylesheet" type="text/css" href="../style.css">
+</head>
+
+
+<html>>
+<div class="maindiv">
+
+<h1><img  align="center" src="../../../../icons/pinInput.gif" width="32" height="32">
+<img  align="center" src="../../../../icons/pinOutput.gif" width="32" height="32">
+<em>Broche</em></h1>
+
+<p><table>
+<tr><td><strong>Librairie:</strong></td>
+	<td><a href="index.html">Câblage</a></td></tr>
+<tr><td><strong>Introduction:</strong></td>
+	<td>2.0 bêta 1 (dans la bibliothèque de base, déplacé dans le câblage en 2.7.0)</td></tr>
+<tr><td valign="top"><strong>Apparence:</strong></td>
+	<td valign="top"><img src="../../../../img-libs/pin.png" width="101" height="51"></td></tr>
+</table></p>
+
+<h2>Comportement</h2>
+
+<p>Le composant "Broche" est une sortie ou une entrée d’un circuit, en fonction de la valeur de son attribut <q>sortie?</q>. Logisim représente les broches de sortie à l'aide d'un cercle ou d'un rectangle arrondi, et les broches d'entrée sont représentées à l'aide de carrés ou de rectangles. Dans les deux cas, la valeur des bits individuels de la valeur envoyée ou reçue sont affichés dans le composant (sauf dans la vue de'impression, lorsque le composant indique uniquement sa largeur en bit).</p>
+
+<p>Une broche est un composant pratique pour interagir avec un circuit en mode simulation (en cliquant dessus), et les utilisateurs débutants de Logisim n'ont pas besoin de les utiliser d'une autre manière. Mais quand la complexité augemente on construit un circuit en utilisant plusieurs sous-circuits (comme décrit dans la section `<a href="../../guide/subcirc/index.html">Design hiérarchique</a>' du <em>Guide de l'utilisateur</em>) et on utilisera également des broches pour spécifier les interconnexions entre un circuit et un sous-circuit. En particulier, les composants pin du schéma d'un circuit définissent les broches qui apparaissent sur le symbole du sous-circuit lorsque q'il est utilisée dans un autre circuit. Dans une telle construction, les valeurs envoyées et reçues à ces emplacements sur le symbole du sous-circuit sont liées aux broches dans le schema du sous-circuit. </p>
+
+<h2>Pins</h2>
+
+<p>Un composant broche ne possède qu’une pin, qui sera une entrée pour lui si la broche est une connexion de sortie du schéma, et qui sera une sortie si la briche est une connexion d’entrée du schéma. Dans les deux cas, sa largeur de bit correspond à l'attribut Largeur de données et son emplacement est spécifié par l'attribut Orientation.</p>
+
+<h2>Attributs</h2>
+
+<p>Lorsque le composant est sélectionné ou ajouté, Alt-0 à Alt-9 modifie son attribut <q> Largeur de données </q>, les touches fléchées modifient son attribut <q> Orientation </q> et Alt avec une touche fléchée modifie l'attribut <q> Emplacement du libellé</p>
+
+<dl>
+
+<dt>Orientation</dt>
+<dd>Le côté du composant dessiné où doit se trouver sa pin d'entrée / sortie.</dd>
+
+<dt>Sortie ?</dt>
+<dd>Spécifie si le composant est une connexion de sortie ou une connexion d’entrée. (Notez que si le composant broche est une entrée, la connexion qui agit comme interface dans un circuit de hyerachie supérieur sera une sortie, et inversement.)</dd>
+
+<dt>Largeur de données</dt>
+<dd>Le nombre de bits correspondant à la largeur en bit prise en charge par la pin.</dd>
+
+<dt>Trois états?</dt>
+<dd>Pour une broche d’entrée, cette option détermine si l’utilisateur peut demander à la pin d’émettre des valeurs flottantes (Non spécifiée). L'attribut n'est utile que dans l'interface utilisateur pour la simulation. cela n'a aucun effet sur le comportement de la broche lorsque la disposition du circuit est utilisée comme sous-circuit. Pour une broche de sortie, l'attribut n'a aucun effet.</dd>
+
+<dt>Pull Comportement</dt>
+<dd>Pour une broche d'entrée, l'attribut spécifie comment les valeurs flottantes doivent être traitées dans la simulation  lorsqu'elles sont reçues en entrée depuis un circuit de hyérachie supérieur. Avec "inchangé", les valeurs flottantes sont reprise dans le schéma sous forme de valeurs flottantes; avec "pull up", ils sont convertis en 1 et avec "pull down", ils sont convertis en valeurs 0.</dd>
+
+<dt>Label</dt>
+<dd>Le texte dans l'étiquette associée au composant.</dd>
+
+<dt>Postion du Label</dt>
+<dd>L'emplacement de l'étiquette par rapport au composant.</dd>
+
+<dt>Police du Label</dt>
+<dd>La police avec laquelle rendre l'étiquette.</dd>
+
+</dl>
+
+<h2>Action de l'outil pousser</h2>
+
+<p>Cliquer sur une broche de sortie n’a aucun effet, bien que les attributs de la broche soient affichés.</p>
+
+<p>En cliquant sur une broche d’entrée, vous activez le bit sur lequel vous avez cliqué. S'il s'agit d'une broche à trois états, le bit correspondant va pivoter entre les trois états.</p>
+
+<p>Si, toutefois, l’utilisateur visualise l’état d’un sous-circuit comme décrit dans le <a href="../../guide/subcirc/debug.html"> débogage de Sous-circuits </a> du <em> Guide de l'utilisateur </em>, alors la valeur de la pin est pilotée par la valeur que le sous-circuit reçoit du circuit de hyérachie supérieur. L'utilisateur ne peut pas modifier la valeur sans rompre ce lien entre l'état du sous-circuit et l'état du circuit contenant, et Logisim demandera à l'utilisateur de vérifier que la rupture de ce lien est réellement souhaitée.</p>
+
+<h2>Action de l'outil text</h2>
+
+<p>Permet de modifier l’étiquette associée au composant.</p>
+
+<p><a href="../index.html">Retour à <em>Référence de la bibliothèque</em></a></p>
+
+</div>
+<html>>
+</html>

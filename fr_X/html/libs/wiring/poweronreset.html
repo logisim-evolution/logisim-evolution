@@ -1,0 +1,61 @@
+<html>
+<meta charset="UTF-8">
+<head>
+	<title>Reset au démarrage</title>
+	<LINK rel="stylesheet" type="text/css" href="../style.css">
+</head>
+
+
+<html>>
+<div class="maindiv">
+
+<h1><img  align="center" src="../../../../icons/por.png" width="32" height="32">
+<em>Reset au démarrage</em></h1>
+
+<p><table>
+<tr><td><strong>Librairie:</strong></td>
+	<td><a href="index.html">Câblage</a></td></tr>
+<tr><td><strong>Introduction:</strong></td>
+	<td>2.14.6</td></tr>
+<tr><td valign="top"><strong>Apparence:</strong></td>
+	<td valign="top"><img src="../../../../img-libs/por.png" width="23" height="23"></td></tr>
+</table></p>
+
+<h2>Comportement</h2>
+
+<p>Le composant POR émet un signal haut durant un temps défini par la propriété <q>Temps Reset</q> au démarrage de la simulation.
+Cela se passe soit a l'ouverture du projet par logisim soit quand on utilise le menu <a href="../../guide/menu/simulate.html">Redémarer la simulation</a><cr>
+En mode pas à pas (Menu Simulation / Simulation pas à pas ) il faut considérer environs trois pas par secondes de la propriété <q>Temps Reset</q>.
+
+<h2>Pins</h2>
+
+<p>Ce composant ne possède qu'une seule broche de un bit dont la valeur représentera l'état actuel du reset. L'emplacement de cette broche est spécifié dans l'attribut <q>Orientation.</q></p>
+
+<h2>Attributs</h2>
+
+<p>Lorsque le composant est sélectionné ou ajouté,
+les touches fléchées modifient son attribut <q>Orientation</q>.</p
+
+<dl>
+
+<dt>Orientation</dt>
+<dd>Le côté du composant dessiné où doit se trouver sa broche de sortie.</dd>
+
+<dt>Temps reset</dt>
+<dd>Le temps en seconde avant que le signale descende au niveau bas (0)</dd>
+
+</dl>
+
+<h2>Action de l'outil pousser</h2>
+
+<p>Aucun.</p>
+
+<h2>Action de l'outil text</h2>
+
+<p>Aucun.</p>
+
+<p><a href="../index.html">Retour à<em> Référence de la bibliothèque</em></a></p>
+
+</div>
+<html>>
+</html>

@@ -1,0 +1,188 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE toc
+  PUBLIC
+  "-//Sun Microsystems Inc.//DTD
+   JavaHelp TOC Version 2.0//EN"
+  "http://java.sun.com/products/javahelp/toc_2_0.dtd">
+<toc version="2.0" categoryclosedimage="chapter" topicimage="topic">
+  <tocitem image="toplevelfolder" target="top" text="Logisim Références">
+    <tocitem target="guide" text="Guide pour débuter avec Logisim">
+      <tocitem target="tutorial" text="Guide du débutant">
+        <tocitem target="tutorial_orient" text="Etape 0: S'orienter"/>
+        <tocitem target="tutorial_gates" text="Etape 1: Ajouter des portes logiques"/>
+        <tocitem target="tutorial_wires" text="Etape 2: Câblers"/>
+        <tocitem target="tutorial_text" text="Etape 3: Ajouter du texte"/>
+        <tocitem target="tutorial_test" text="Etape 4: Tester votre circuit"/>
+		<tocitem target="tutorial_step" text="Etape 5: Le mode pas-à-pas"/>
+      </tocitem>
+      <tocitem target="attrlib" text="l'interface graphique">
+       <tocitem target="attrlib_canvas" text="La surface de travail (Canvas)"/>
+	   <tocitem target="attrlib_menu" text="Les menus"/>
+	   <tocitem target="attrlib_explore" text="Le panneau de navigation"/>
+		<tocitem target="attrlib_toolsbar" text="les barre d'outils"/>
+        <tocitem target="attrlib_attr" text="Le tableau des attributs"/>
+        <tocitem target="attrlib_tool" text="Attributs des outils et des composants"/>
+      </tocitem>
+      <tocitem target="subcirc" text="Design hiérarchique">
+        <tocitem target="subcirc_creating" text="Créer des circuits"/>
+        <tocitem target="subcirc_using" text="Utiliser des sous-circuits"/>
+        <tocitem target="subcirc_appear" text="Editer l'apparence d'un sous-circuit"/>
+        <tocitem target="subcirc_debug" text="Déboguer un sous-circuit"/>
+        <tocitem target="subcirc_library" text="Librairies Logisim"/>
+      </tocitem>
+      <tocitem target="bundles" text="Nappe de câbles">
+        <tocitem target="bundles_creating" text="Créer une nappe"/>
+        <tocitem target="bundles_splitting" text="Répartiteur"/>
+        <tocitem target="bundles_colors" text="Couleur des câbles"/>
+      </tocitem>
+	<tocitem target="mem_guide" text="Composant mémoire">
+<!--			<tocitem target="mem_poke" Memory poke" /> -->
+        <tocitem target="mem_menu" text="Menus Pop-up et fichiers"/>
+        <tocitem target="mem_hex" text="Editeur Hexadecimal"/>
+      </tocitem>
+      <tocitem target="analyze" text="Analyse combinatoire">
+        <tocitem target="analyze_open" text="Ouvrir l'analyse combinatoire"/>
+        <tocitem target="analyze_table" text="Editer la table de vérité"/>
+        <tocitem target="analyze_expr" text="Créer des expressions"/>
+        <tocitem target="analyze_gen" text="Générer un circuit"/>
+      </tocitem>
+      <tocitem target="log" text="Chronogramme">
+        <tocitem target="log_selection" text="Sélection des signaux"/>
+		<tocitem target="log_timetable" text="Fenêtre Chronogramme " />	
+<!--        <tocitem target="log_table" text="Onglet table"/>
+            <tocitem target="log_file" text="Onglet fichier"/> -->
+      </tocitem>
+      <tocitem target="verify" text="Vérifications en ligne de commande/a&gt;">
+        <tocitem target="verify_sub" text="Echanges de librairies"/>
+        <tocitem target="verify_other" text="Autres options de vérification"/>
+        <tocitem target="verify_multi" text="Tester plusieurs fichiers"/>
+		<tocitem target="verify_test" text="Vecteurs de test"/>
+      </tocitem>
+      <tocitem target="menu" text="Référence des menus">
+        <tocitem target="menu_file" text="Menu fichier"/>
+        <tocitem target="menu_edit" text="Menu éditer"/>
+        <tocitem target="menu_project" text="Menu projet"/>
+        <tocitem target="menu_simulate" text="Menu simulation"/>
+        <tocitem target="menu_winhelp" text="Menus fenêtre et aide"/>
+        <tocitem target="menu_exportab" text="Exportation d'images "/>  
+		<tocitem target="menu_printertab" text="Imprimer "/>		
+      </tocitem>
+      <tocitem target="prefs" text="Préférences de l'application">
+        <tocitem target="prefs_template" text="L'onglet modèle"/>
+        <tocitem target="prefs_intl" text="L'onglet international"/>
+        <tocitem target="prefs_window" text="L'onglet fenêtre"/>
+        <tocitem target="prefs_layout" text="L'onglet de présentation"/>
+        <tocitem target="prefs_exp" text="L'onglet expérimental"/>
+        <tocitem target="prefs_cmdline" text="La ligne de commande"/>
+      </tocitem>
+      <tocitem target="opts" text="Options de projet">
+        <tocitem target="opts_simulate" text="Onglet simulation"/>
+        <tocitem target="opts_toolbar" text="Onglet de la boîte à outils"/>
+        <tocitem target="opts_mouse" text="Onglet du pointeur"/>
+      </tocitem>
+      <tocitem target="prop" text="Propagation des valeurs">
+        <tocitem target="prop_delays" text="Délais sur les portes logiques"/>
+        <tocitem target="prop_oscillate" text="Erreurs oscillatoire"/>
+        <tocitem target="prop_shortcome" text="Limitations"/>
+      </tocitem>
+	  <tocitem target="hdl-ip" text="HDL IP">
+			<tocitem target="hdl-ip_vhdlcomp" text="Entités VHDL" />
+			<tocitem target="hdl-ip_questa" text="Confugurer Questa Advanced Simulator" />
+			<tocitem target="hdl-ip_simulation" text="Simulateur VHDL" />
+			<tocitem target="hdl-ip_testbenchs" text="Simuler en bancs d'essai" />
+		</tocitem>
+	  <tocitem target="users" text="Users" />
+      <tocitem target="jar" text="Librairies JAR">
+        <tocitem target="jar_incr" text="Ajout en codage de Gray"/>
+        <tocitem target="jar_library" text="Classe librairie"/>
+        <tocitem target="jar_simpctr" text="Conteur simple en codage de Gray"/>
+        <tocitem target="jar_counter" text="Conteur en codage de Gray"/>
+        <tocitem target="jar_guide" text="Recommandations"/>
+      </tocitem>
+      <tocitem target="about" text="A propos du programme">
+        <tocitem target="about_gpl" text="GNU General Public License"/>
+		<tocitem target="about_gpl_tr)" text="GNU General Public License (fr)"/>
+      </tocitem>
+    </tocitem>
+	
+    <tocitem target="libs" text="Référence de la bibliothèque">
+      <tocitem target="wiring" text="Librairies câblage">
+        <tocitem target="wiring_splitter" image="icon_splitter" text="Répartiteur"/>
+        <tocitem target="wiring_pin" image="icon_pin" text="Pin"/>
+        <tocitem target="wiring_probe" image="icon_probe" text="Sonde"/>
+        <tocitem target="wiring_tunnel" image="icon_tunnel" text="Tunnel"/>
+        <tocitem target="wiring_pull" image="icon_pull" text="Résistance de charge"/>
+        <tocitem target="wiring_clock" image="icon_clock" text="Horloge"/>
+		<tocitem target="wiring_por" image="icon_por" text="Reset au démarage"/>
+        <tocitem target="wiring_constant" image="icon_constant" text="Constantes"/>
+        <tocitem target="wiring_const01" image="icon_const01" text="Alimentation/Masse"/>
+        <tocitem target="wiring_transist" image="icon_transist" text="Transistor"/>
+        <tocitem target="wiring_transmis" image="icon_transmis" text="Porte de passage"/>
+        <tocitem target="wiring_extender" image="icon_extender" text="Convertisseur de bits"/>
+      </tocitem>
+      <tocitem target="gates" text="Gates library">
+        <tocitem target="gates_not" image="icon_not" text="NOT Gate"/>
+        <tocitem target="gates_buffer" image="icon_buffer" text="Buffer"/>
+        <tocitem target="gates_basic" image="icon_basic" text="AND/OR/NAND/NOR Gate"/>
+        <tocitem target="gates_xor" image="icon_xor" text="XOR/XNOR/Even/Odd Gate"/>
+        <tocitem target="gates_controlled" image="icon_controlled" text="Controlled Buffer/Inverter"/>
+      </tocitem>
+      <tocitem target="plexers" text="Plexers library">
+        <tocitem target="plexers_mux" image="icon_mux" text="Multiplexer"/>
+        <tocitem target="plexers_demux" image="icon_demux" text="Demultiplexer"/>
+        <tocitem target="plexers_decoder" image="icon_decoder" text="Decoder"/>
+        <tocitem target="plexers_priencod" image="icon_priencod" text="Priority Encoder"/>
+        <tocitem target="plexers_selector" image="icon_selector" text="Bit Selector"/>
+      </tocitem>
+      <tocitem target="arith" text="Arithmetic library">
+        <tocitem target="arith_adder" image="icon_adder" text="Adder"/>
+        <tocitem target="arith_subtractor" image="icon_subtractor" text="Subtractor"/>
+        <tocitem target="arith_multiplier" image="icon_multiplier" text="Multiplier"/>
+        <tocitem target="arith_divider" image="icon_divider" text="Divider"/>
+        <tocitem target="arith_negator" image="icon_negator" text="Negator"/>
+        <tocitem target="arith_comparator" image="icon_comparator" text="Comparator"/>
+        <tocitem target="arith_shifter" image="icon_shifter" text="Shifter"/>
+        <tocitem target="arith_bitadder" image="icon_bitadder" text="Bit Adder"/>
+        <tocitem target="arith_bitfinder" image="icon_bitfinder" text="Bit Finder"/>
+      </tocitem>
+      <tocitem target="mem" text="Memory library">
+        <tocitem target="mem_flipflops" image="icon_flipflops" text="D/T/J-K/S-R Flip-Flop"/>
+        <tocitem target="mem_register" image="icon_register" text="Register"/>
+        <tocitem target="mem_counter" image="icon_counter" text="Counter"/>
+        <tocitem target="mem_shiftreg" image="icon_shiftreg" text="Shift Register"/>
+        <tocitem target="mem_random" image="icon_random" text="Random"/>
+        <tocitem target="mem_ram" image="icon_ram" text="RAM"/>
+        <tocitem target="mem_rom" image="icon_rom" text="ROM"/>
+      </tocitem>
+      <tocitem target="io" text="Input/Output library">
+        <tocitem target="io_button" image="icon_button" text="Button"/>
+        <tocitem target="io_joystick" image="icon_joystick" text="Joystick"/>
+        <tocitem target="io_keyboard" image="icon_keyboard" text="Keyboard"/>
+        <tocitem target="io_led" image="icon_led" text="LED"/>
+        <tocitem target="io_7seg" image="icon_7seg" text="7-Segment Display"/>
+        <tocitem target="io_hexdig" image="icon_hexdig" text="Hex Digit Display"/>
+        <tocitem target="io_dotmat" image="icon_dotmat" text="LED Matrix"/>
+        <tocitem target="io_tty" image="icon_tty" text="TTY"/>
+      </tocitem>
+	  <tocitem target="hdl" text="HDL-IP">
+		<tocitem target="hdl_vhdlentity" text="VHDL Entity" image="icon_vhdl" />
+      </tocitem>
+      <tocitem target="base" text="Base library">
+        <tocitem target="base_poke" image="icon_poke" text="Poke Tool"/>
+        <tocitem target="base_edit" image="icon_edit" text="Edit Tool"/>
+        <tocitem target="base_select" image="icon_select" text="Select Tool"/>
+        <tocitem target="base_wiring" image="icon_wiring" text="Wiring Tool"/>
+        <tocitem target="base_text" image="icon_text" text="Text Tool"/>
+        <tocitem target="base_menu" image="icon_menu" text="Menu Tool"/>
+        <tocitem target="base_label" image="icon_label" text="Text"/>
+      </tocitem>
+	  <tocitem target="tcl" text="TCL library">
+          <tocitem target="tcl_reds_console" text="REDS console" image="icon_reds_console" />
+          <tocitem target="tcl_generic" text="Generic" image="icon_generic" />
+      </tocitem>
+    </tocitem>
+	
+	
+	
+  </tocitem>
+</toc>

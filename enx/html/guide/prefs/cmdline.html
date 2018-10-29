@@ -1,0 +1,246 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2018-10-23T06:18:42.262000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="en">
+    <title>
+      Command-line options
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        Command-line options
+      </h1>
+      <p>
+        You can configure many of Logisim's application preferences via command line options. This can be particularly useful in a laboratory of single-student computers where you want Logisim to start up the same for students every time, regardless of how previous students may have configured the program.
+      </p>
+      <p>
+        The overall command-line syntax is as follows.
+      </p>
+      <blockquote>
+        <pre>java -jar <em><b>jarFileName</b></em> <em>[options]</em> <em>[filenames]</em>
+</pre>
+      </blockquote>
+      <p>
+        The optional additional files named on the command line will be opened as separate windows within Logisim.
+      </p>
+      <p>
+        The following example starts Logisim in its basic configuration.
+      </p>
+      <blockquote>
+        <pre>java -jar <em><b>jarFileName</b></em> -plain -gates shaped -locale en
+</pre>
+      </blockquote>
+      <p>
+        Supported options include the following.
+      </p>
+      <dl>
+        <dt>
+          <tt>-plain</tt>
+        </dt>
+        <dt>
+          <tt>-empty</tt>
+        </dt>
+        <dt>
+          <tt>-template <b><em>templateFile</em></b></tt>
+        </dt>
+        <dd>
+          <p>
+            Configures the template for Logisim to use.
+          </p>
+        </dd>
+        <dt>
+          <tt>-gates <em>[<b>shaped</b>|<b>rectangular</b>]</em></tt>
+        </dt>
+        <dd>
+          <p>
+            Configures which type of gate to use.
+          </p>
+        </dd>
+        <dt>
+          <tt>-locale <em><b>localeIdentifier</b></em></tt>
+        </dt>
+        <dd>
+          <p>
+            Configures which translation to use. As of this writing, the supported locales include:
+          </p>
+          <center>
+            <table>
+              <tbody>
+                <tr>
+                  <th>
+                    <tt>de</tt>
+                  </th>
+                  <td>
+                    German
+                  </td>
+                </tr>
+                <tr>
+                  <th>
+                    <tt>el</tt>
+                  </th>
+                  <td>
+                    Greek
+                  </td>
+                </tr>
+                <tr>
+                  <th>
+                    <tt>en</tt>
+                  </th>
+                  <td>
+                    English
+                  </td>
+                </tr>
+                <tr>
+                  <th>
+                    <tt>es</tt>
+                  </th>
+                  <td>
+                    Spanish
+                  </td>
+                </tr>
+                <tr>
+                  <th>
+                    <tt>fr</tt>
+                  </th>
+                  <td>
+                    French
+                  </td>
+                </tr>
+                <tr>
+                  <th>
+                    <tt>pt</tt>
+                  </th>
+                  <td>
+                    Portugais
+                  </td>
+                </tr>
+                <tr>
+                  <th>
+                    <tt>ru</tt>
+                  </th>
+                  <td>
+                    Russian
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </center>
+        </dd>
+        <dt>
+          <tt>-accents <em>[<b>yes</b>|<b>no</b>]</em></tt>
+        </dt>
+        <dd>
+          <p>
+            This is only relevant for languages that use characters outside the 7-bit ASCII character set; this would include languages using accented characters, and it would not include English. If <em>no</em>, characters outside the 7-bit ASCII character set are replaced with equivalents appropriate to the language; this would be useful for Java/OS combinations where such characters are not supported well.
+          </p>
+        </dd>
+        <dt>
+          <tt>-clearprops</tt>
+        </dt>
+        <dd>
+          <p>
+            Clear all application preferences at startup, so Logisim will act as if it were being executed on the host system for the first time.
+          </p>
+        </dd>
+        <dt>
+          <tt>-nosplash</tt>
+        </dt>
+        <dd>
+          <p>
+            Hides the initial Logisim splash screen.
+          </p>
+        </dd>
+        <dt>
+          <tt>-help</tt>
+        </dt>
+        <dd>
+          <p>
+            Displays a summary of the command line options.
+          </p>
+        </dd>
+        <dt>
+          <tt>-version</tt>
+        </dt>
+        <dd>
+          <p>
+            Displays the Logisim version number.
+          </p>
+        </dd>
+        <dt>
+          <tt>-noupdates</tt>
+        </dt>
+        <dd>
+          <p>
+            Do not update the software.
+          </p>
+        </dd>
+        <dt>
+          <tt>-analyze</tt>
+        </dt>
+        <dd>
+          <p>
+            Displays the combinatorial analysis menus.
+          </p>
+        </dd>
+        <dt>
+          <tt>-load file</tt>
+        </dt>
+        <dd>
+          <p>
+            Load an image in RAM (works only with -tty)
+          </p>
+        </dd>
+        <dt>
+          <tt>-sub file1 file2</tt>
+        </dt>
+        <dd>
+          <p>
+            load the file by replacing the library file (file1) with the library file (file2). More information in <a href="../verify/sub.html">Substituting libraries</a>
+          </p>
+        </dd>
+        <dt>
+          <tt>-tty</tt> [<b>table</b>|<b>speed</b>|<b>tty</b>|<b>halt</b>|<b>stats</b>]
+        </dt>
+        <dd>
+          <p>
+            run without GUI. More information in <a href="../verify/other.html">Other verification</a>
+          </p>
+        </dd>
+        <dd>
+          <p>
+            Undocumented Options
+          </p>
+        </dd>
+        <dt>
+          <tt>-test-circuit <b>testCircuitPathInput</b></tt>
+        </dt>
+        <dd></dd>
+        <dt>
+          <tt>-testvector</tt>
+        </dt>
+        <dd></dd>
+        <dt>
+          <tt>-test-fpga-implementation <b>inputpath</b> <b>Circuitimapfile</b> <b>cicuitimpname</b> <b>cicuitimpboard</b></tt>
+        </dt>
+        <dd></dd>
+        <dt>
+          <tt>-test-circ-gen <b>testCircPathInput</b> <b>testCircPathOutput</b></tt>
+        </dt>
+        <dd></dd>
+        <dt>
+          <tt>-questa<em>[<b>yes</b>|<b>no</b>]</em></tt>
+        </dt>
+        <dd></dd>
+      </dl>
+      <p>
+        <b>Next:</b> <a href="../index.html">User's Guide</a>.
+      </p>
+    </div>
+  </body>
+</html>

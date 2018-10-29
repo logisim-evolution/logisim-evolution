@@ -1,0 +1,104 @@
+<html>
+<meta charset="UTF-8">
+<head>
+	<title>Transmission Gate</title>
+	<LINK rel="stylesheet" type="text/css" href="../style.css">
+</head>
+
+
+<html>>
+<div class="maindiv">
+
+<h1><img  align="center" src="../../../../icons/transmis.gif" width="32" height="32">
+<em>Transmission Gate</em></h1>
+
+<p><table>
+<tr><td><strong>Librairie:</strong></td>
+	<td><a href="index.html">Câblage</a></td></tr>
+<tr><td><strong>Introduction:</strong></td>
+	<td>2.7.0</td></tr>
+<tr><td valign="top"><strong>Apparence:</strong></td>
+	<td valign="top"><img src="../../../../img-libs/transmis.png" width="44" height="43"></td></tr>
+</table></p>
+
+<h2>Comportement</h2>
+
+<p>Une porte de transmission a trois entrées appelées <em>source</em>, <em>n-gate</em> et <em>p-gate</em> et une sortie appelée <em>drain</em>. Schématisées, l'entrée <em>source</em> et la sortie <em>drain</em> sont reliées par deux plaques, Logisim dessine une pointe de flèche pour indiquer la direction du flux de l'entrée à la sortie.
+Les deux entrées <em>gate</em> sont dessinées sous forme de lignes reliées à des plaques parallèles reliant <em>source</em> à <em>drain</em>.
+La ligne d'entrée <em>p-gate</em> a un cercle, alors que la ligne d'entrée <em>n-gate</em> ne l'a pas.
+</p>
+
+<center><table>
+<tr><td></td><td align="center"><em>p-gate</em></td><td></td></tr>
+<tr><td valign="middle"><em>source</em></td>
+  <td align="center" valign="middle"><img src="../../../../img-libs/transmis.png" width="44" height="43"></td>
+  <td valign="middle"><em>drain</em></td>
+<tr><td></td><td align="center"><em>n-gate</em></td><td></td></tr>
+</table></center>
+
+<p>La porte de transmission est simplement la combinaison de deux transistors complémentaires. En effet, le même comportement peut être réalisé dans Logisim en n'utilisant qu'un seul transistor. Cependant, les concepteurs préfèrent parfois utiliser des paires de transistors appariés en raison de problèmes électriques avec la tension de drainage bien plus complexe que les tentatives de simulation de Logisim.
+</p>
+
+<p>Normalement la valeur des commandes de <em> n-gate </em> et <em> p-gate </em> devraient être opposés l'une à l'autre. Si <em> p-gate </em> vaut 0 et <em> n-gate </em> vaut 1, alors la valeur trouvée sur <em> source </em> est transmise au <em> drain </em>.
+Si <em> p-gate </em> vaut 1 et <em> p-gate </em> vaut 0, la connexion est rompue, la valeur du <em> drain </em> reste donc flottante. Dans tous les autres cas, <em> drain </em> reçoit une sortie d'erreur sauf si <em> source </em> est flottant, auquel cas <em> drain </em> est également flottant. Ce Comportement est résumé par le tableau suivant.
+</p>
+
+<center><table>
+<tr><th style="border-bottom: 1px solid"><em>p-gate</em></th><th style="border-bottom: 1px solid"><em>n-gate</em></th><th style="border-bottom: 1px solid"><em>drain</em></th></tr>
+<tr><td align="center" style="color:#088A29">0</td><td align="center" style="color:#088A29">0</td><td align="center">*</td></tr>
+<tr><td align="center" style="color:#088A29">0</td><td align="center" style="color:#00FF00">1</td><td align="center"><em>source</em></td></tr>
+<tr><td align="center" style="color:#00FF00">1</td><td align="center" style="color:#088A29">0</td><td align="center">X</td></tr>
+<tr><td align="center" style="color:#00FF00">1</td><td align="center" style="color:#00FF00">1</td><td align="center">*</td></tr>
+<tr><td align="center">X/E</td><td align="center"><em>tout</em></td><td align="center">*</td></tr>
+<tr><td align="center"><em>tout</em></td><td align="center">X/E</td><td align="center">*</td></tr>
+</t</div>
+<html>></table></center>
+<p>* Si <em>source</em> est Haute impédance, <em>drain</em> est Haute impédance autrement <em>drain</em> est en erreur.</p><p>Note:Etant donné que Logisim utilise les marqueurs X (haute impédance) et E (Erreur) j'ai utilisé les mêmes dans les illustrations plutôt que Z (haute impédance) et X (Erreur) plus communs dans d'autres documents</p>
+
+
+<p>Si l'attribut Data Bits est supérieur à 1, l'entrée <em> gate </em> est toujours d'un seul bit, mais sa valeur est appliquée simultanément à chacun des bits de l'entrée <em> source </em>.</p>
+
+<h2>Pins</h2>
+<p>Ce composant possède quatre broches, trois sont des entrées <q>Source</q>,<q>P-gate</q>,<q>N-gate</q> une est une  sortie <q>Drain</q></p>
+<dl>
+<dt>Source</dt>
+<dd>l'état sera transmis à la sortie si elle est déclenchée par l'entrée <em> gate </em>. La largeur de bit est définie par l'attribut Data Bits.</dd> 
+<dt>P-gate et N-gate</dt> 
+<dd>Ces entrées commandent la transmission. Normalement on applique des valeurs de commande opposée sur ces entrées. La largeur de bite est toujours de 1</dd>
+<dt>Drain</dd>
+<dd>Cette sortie reprend l'état de l'entrée quand lanporte est activé par les entrées Gate. Sinon elle est dans un état haute impédance (indéfini). Voir les figures ci-dessus pour plus de précisions</dd>
+
+</dl>
+
+<h2>Attributs</h2>
+
+<p>Lorsque le composant est sélectionné ou ajouté,
+Alt-0 à Alt-9 modifie l'attribut <q>Data Bits</q>,
+et les touches fléchées modifient son attribut <q>Orientation</q>.</p>
+
+<dl>
+
+<dt>Orientation</dt>
+<dd>Le côté du composant dessiné où doit se trouver sa broche de sortie <em>Drain</em>.</dd>
+
+<dt>Position Gate</dt>
+<dd>Disposition haut/gauche ou bas/droite de l'entrée <em>P-gate</em>.</dd>
+
+<dt>Data Bits</dt>
+<dd>Largeur en bit de l'entrée <em>Source</em> et de la sortie <em>Drain</em>. Les entrées <em>Gate</em> ont toujours une largeur de 1 bit.</dd>
+
+</dl>
+
+<h2>Action de l'outil pousser</h2>
+
+<p>Aucun.</p>
+
+<h2>Action de l'outil text</h2>
+
+<p>Aucun.</p>
+
+<p><a href="../index.html">Retour à<em> Référence de la bibliothèque</em></a></p>
+
+</div>
+<html>>
+</html>

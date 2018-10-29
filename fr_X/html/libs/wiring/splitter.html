@@ -1,0 +1,107 @@
+<html>
+<meta charset="UTF-8">
+<head>
+	<title>Répartiteur</title>
+	<LINK rel="stylesheet" type="text/css" href="../style.css">
+</head>
+
+
+<html>
+<div class="maindiv">
+
+<h1> <img src = "../../../../icons/splitter.gif" width = "32" height = "32">
+<em>Répartiteur (Splitter) </em> </h1>
+
+<table>
+<tr> <td> <strong>Librairie: </strong> </td>
+<td> <a href="index.html">Câblage </a> </td> </tr>
+<tr> <td> <strong>Introduction:&nbsp; </strong> </td>
+<td> 2.0 bêta 1 (dans la librairie de base, déplacé dans le la librairie câblage en 2.7.0) </td> </tr>
+<tr> <td valign = "top"> <strong>Apparence: </strong> </td>
+<td valign = "top"> <img src = "../../../../img-libs/splitter.png" width = "24" height = "44"> </td> </tr>
+</table>
+
+<h2>Comportement</h2>
+
+<p>Le répartiteur (Splitter) crée une correspondance entre une connexion multibits et plusieurs sous-ensembles distincts de ces bits. En dépit de son nom, il peut soit diviser une connexion multibits en sous-ensembles distincts, soit combiner des sous-ensembles en une connexion multibits, voire les deux simultanément. Une description plus complète des terminaisons de bus se trouve dans la <a
+href = "../../guide/bundles/splitting.html">section "Répartiteur" </a> du <em>Guide de l'utilisateur</em>. </p>
+
+<p>Logisim traite spécialement les terminaisons lors de la propagation de valeurs dans un circuit: alors que tous les autres composants ont un retard calculé pour simuler leur comportement réel, les valeurs se propagent instantanément à travers les terminaisons de bus (ainsi que dans les fils).</p>
+
+<p> <strong>Remarque:</strong> le terme <em>Splitter</em>, utilisé en anglais est un terme non standard, à ma connaissance, unique à Logisim. Je ne connais aucun terme standard pour un tel concept. le seul terme que j'ai entendu utiliser est <em>ripper (découdre/défonceuse) de bus</em>, mais ce terme est inutilement violent à mon goût.</p>
+
+<h2>Pin</h2>
+
+<p>Pour distinguer les différents points de connexion d’une terminaison, nous désignons le point de connexion d'un côté qui regroupe en un seul câble tous les fils : le <em>bus</em>, et nous désignons les multiples points de connexion de l’autre côté comme : les <em>terminaisons</em>. (voir figure ci-dessous)
+<center>
+<table>
+<td>
+<td valign="top">Bus</td>
+<td><img src="../../../../img-libs/splitter-right.png"></td><td>Terminaisons</td>
+</tr>
+</table>
+</center>
+<dl>
+<p><dt>Bus:</dt> 
+<dd>la largeur en bit du bus correspond à l'attribut <q>Largeur de bits</q> et c'est la valeur dénombrant tous les conducteurs transitant par le bus.</dd></p>
+
+<p><dt>Terminaison :</dt>
+<dd>La largeur de bit des terminaisons est determinée par la largeur de bit du bus divisé par le nombre de terminaisons dans les cas d'une division entière. Dans les autres cas, les largeurs seront réparties de manière fractionnaire équilibrée.<br>
+Par exemple un bus de 10bits avec 4 terminaisons aura deux terminaisons de 3bits et deux terminaisons de deux bits.</dd></p>
+
+</dl>
+<h2> Attributs </h2>
+
+<p>Lorsque le composant est sélectionné ou ajouté, les chiffres '0' à '9' modifient l'attribut <q>"Terminaisons"</q>, Alt-0 à Alt-9 modifient à la fois les attributs <q>"Terminaisons"</q> et <q>"Largeur de bit"</q> et les touches fléchées modifient l'attribut <q>Orientation</q>. </p>
+
+<dl>
+<p><dt>Orientation</dt>
+<dd>Précide de quel côté du composant dessiné doivent se trouver les broches de terminaisons</dd></p> 
+
+<p><dt>Terminaisons</dt>
+<dd>Nombre de terminaisons</dd></p>
+
+<p><dt>Largeur en bit</dt>
+<dd>Largeur en bit du bus</dd></p>
+
+<p><dt>Apparence</dt>
+<dd>Prend en charge différentes manières de représenter le séparateur dans le circuit. (Voir figure ci-dessous)
+L'option <q>Gauche</q> (par défaut) dessine une colonne vertébrale à gauche du bus (si on le considère comme une entrée), avec une ligne étiquetée provenant du dos pour chaque terminaison.
+L'option <q>Droite</q> dessine la colonne vertébrale à droite du bus. L'option <q>Centrée</q> centre la colonne vertébrale de manière à ce qu'elle soit à peu près égale à gauche et à droite.
+Et l'option <q>Héritage</q> dessine des lignes diagonales à chaque extrémité, sans étiquettes.
+Cette option est principalement destinée à la compatibilité avec les versions antérieures à la version 2.7.0, qui constituaient la seule option pour l'apparence du séparateur.
+<center>
+<table>
+<tr><td>
+<img  align="center" src="../../../../img-libs/splitter-right.png"></td><td>
+<img  align="center" src="../../../../img-libs/splitter-left.png"></td><td>
+<img  align="center" src="../../../../img-libs/splitter-center.png"></td><td>
+<img  align="center" src="../../../../img-libs/splitter-legacy.png"></td>
+</tr>
+<td>A droite</td><td>A gauche</td><td>Au centre</td><td>Héritage</td></tr>
+</table>
+</center> 
+</dd>
+</p> 
+
+<p><dt>Bit <var>x</var> </dt>
+<dd>Détermine l'index de la terminaison auquel correspond le bit <var> x </var> du bus. Les terminaisons sont indexées à partir de 0 en haut (pour un séparateur orienté est ou ouest) ou de 0 à gauche / ouest (pour un séparateur orienté nord ou sud). Un terminaison peut ne pas être connectée à un bit du bus par contre il n'y a aucun moyen pour q'un bit du bus soit connecté à plusieurs terminaisons.</P>
+
+<p>Parfois, vous pouvez vous éviter de triturer chaque attribut Bit <var> x </var> en faisant apparaître le menu contextuel d’un Répartiteur (généralement en cliquant dessus avec le bouton droit de la souris). Le menu contextuel comprend des options intitulées <q>Distribuer en ordre croissant</q> et <q>Distribuer en ordre décroissant</q>. L'option Distribuer en ordre croissant (par defaut) distribue les bits afin que chaque extrémité partagée reçoive le même nombre de bits à partir de la fin. L'option Distribuer en ordre decroissant fait de même mais commence par la fin avec le no le plus grand.
+Si le nombre de terminaisons ne divise pas exactement le nombre de bits du bus, les bits sont distribués sur les terminaisons de manière aussi uniforme que possible.</P> </dd >
+
+</dl>
+
+<h2> Comportement de l'outil pousser </h2>
+
+<p> Aucun.</p>
+
+<h2> Comportement de l'outil de texte </h2>
+
+<p> Aucun.</p>
+
+<p><a href="../index.html">Retour à <em> Référence de la bibliothèque </em> </a></p>
+
+</div>
+<html>
+</html>

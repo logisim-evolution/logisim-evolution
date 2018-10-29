@@ -1,0 +1,64 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2018-10-23T06:18:42.262000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="en">
+    <title>
+      Editing the truth table
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    ¨
+    <div class="maindiv">
+      <h1>
+        Editing the truth table
+      </h1>
+      <p>
+        On opening the Combinational Analysis window, you will see that it consists of five tabs. This page describes the first three tabs, <b class="button">Inputs</b>, <b class="button">Outputs</b>, and <b class="button">Table</b>. The next page of the guide describes the last two tabs, Expression and Minimized.
+      </p>
+      <h2>
+        The Inputs and Outputs tabs
+      </h2>
+      <center>
+        <img src="../../../img-guide/analyze-var.png" alt="#########">
+      </center>
+      <p>
+        The Inputs tab allows you to view and edit the list of inputs. To add new inputs, type it in the field at the pane's bottom, and click <b class="button">Add</b>. If you want to rename an existing input, select it in the list in the pane's upper left region; then type the name and click <b class="button">Rename</b>.
+      </p>
+      <p>
+        To remove an input, select it from the list and click <b class="button">Remove</b>. You can also reorder the inputs (which affects the order of columns in the truth table and in the generated circuit) using the <b class="button">Move Up</b> or <b class="button">Move Down</b> buttons on an input.
+      </p>
+      <p>
+        All actions affect the truth table immediately.
+      </p>
+      <p>
+        The <b class="button">Outputs</b> tab works in exactly the same way as the <b class="button">Inputs</b> tab, except of course it works with the list of outputs instead.
+      </p>
+      <h2>
+        The Table tab
+      </h2>
+      <p>
+        The only item under the <b class="button">Table</b> tab is the current truth table, diagrammed in the conventional order, with inputs constituting the columns on the left and outputs constituting the columns on the right.
+      </p>
+      <center>
+        <img src="../../../img-guide/analyze-tbl.png" alt="#########">
+      </center>
+      <p>
+        You can edit the current values appearing in the output columns by clicking on the value of interest. The values will cycle through 0, 1, and x (representing a "don't care"). As we'll see on the next page, any don't-care values allow the computation of minimized expressions some flexibility.
+      </p>
+      <p>
+        You can also navigate and edit the truth table using the keyboard. And you can copy and paste values using the clipboard. The clipboard can be transferred to any application supporting tab-delimited text (such as a spreadsheet).
+      </p>
+      <p>
+        If the truth table is based on an existing circuit, you may see some pink squares in the output columns with "!!" in them. These correspond to errors that occurred while calculating the value for that row - either the circuit seemed to be oscillating, or the output value was an error value (which would be pictured as a red wire in the Logisim circuit). Hovering your mouse over the entry should bring up a tool tip describing which type of error it was. Once you click on the error entry, you will be in the 0-1-x cycle; there is no way to go back.
+      </p>
+      <p>
+        <b>Next:</b> <a href="expr.html">Creating expressions</a>.
+      </p>
+    </div>
+  </body>
+</html>
