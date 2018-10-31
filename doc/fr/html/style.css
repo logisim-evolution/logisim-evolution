@@ -22,7 +22,7 @@ img.notscal {
 /* For spaces, page background */
 div.maindiv {
 	max-width:560px;
-	border:solid 1px;
+	border:solid 0px;
 	background-color:$808080;
 }
 div.codediv {
