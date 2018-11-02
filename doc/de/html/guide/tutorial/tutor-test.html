@@ -23,18 +23,20 @@
         Der letzte Schritt ist das Testen der Schaltung, um zu sehen, ob diese wirklich wie geplant funktioniert. Zu diesem Zeitpunkt simuliert Logisim bereits das Verhalten der Schaltung. Lassen Sie uns noch einmal ansehen, wo wir gerade waren.
       </p>
       <center>
-        <img src="../../../img-guide/tutorial-shot-all.png" alt="#########">
+        <img src="../../../img-guide/tutorial-shot-all2.png" alt="#########">
       </center>
-	  <p>Beachten Sie, daß beide Eingänge auf 0 gesetzt sind, und auch am Ausgang haben wir eine 0. Dies zeigt uns, daß unsere Schaltung schon eine 0 ausrechnet, wenn beide Eingänge auf 0 gesetzt sind.</p>
+      <p>
+        Beachten Sie, daß beide Eingänge auf 0 gesetzt sind, und auch am Ausgang haben wir eine 0. Dies zeigt uns, daß unsere Schaltung schon eine 0 ausrechnet, wenn beide Eingänge auf 0 gesetzt sind.
+      </p>
       <p>
         Jetzt probieren wir eine andere Eingangskombination. Wählen Sie das <b class="propertie">Schaltwerkzeug</b> (<img class="intxt" src="../../../../icons/poke.gif" alt="#########">) aus, und schalten Sie die Eingänge um, indem Sie diese anklicken. Jedes Mal, wenn Sie einen Eingang anklicken, wird sich dessen Wert ändern. Wir können also zum Beispiel den unteren Eingang anklicken (<var>y</var>).
       </p>
       <center>
         <img src="../../../img-guide/tutorial-shot-test.png" alt="#########">
       </center>
-	  <p>
-	  Sobald Sie den Wert am Eingang ändern, wird Logisim Ihnen anzeigen, welche Werte auf den einzelnen Leitungen geführt werden. Eine hellgrüne Leitung zeigt eine 1 an, eine dunkelgrüne (fast schwarze) Leitung eine 0. Sie können auch sehen, daß sich der Wert am Ausgang der Schaltung auf 1 geändert hat.
-	  </p>
+      <p>
+        Sobald Sie den Wert am Eingang ändern, wird Logisim Ihnen anzeigen, welche Werte auf den einzelnen Leitungen geführt werden. Eine hellgrüne Leitung zeigt eine 1 an, eine dunkelgrüne (fast schwarze) Leitung eine 0. Sie können auch sehen, daß sich der Wert am Ausgang der Schaltung auf 1 geändert hat.
+      </p>
       <p>
         Bisher haben wir somit die ersten zwei Zeilen der Wahrheitstabelle getestet, und die Ausgangswerte (0 und 1) entsprechen unseren Erwartungen.
       </p>
@@ -59,8 +61,8 @@
               <td class="zerov">
                 0
               </td>
-              <td class="unov">
-                1
+              <td class="zerov">
+                0
               </td>
             </tr>
             <tr>
@@ -70,8 +72,8 @@
               <td class="zerov">
                 0
               </td>
-              <td class="zerov">
-                0
+              <td class="unov">
+                1
               </td>
             </tr>
             <tr>
@@ -97,7 +99,7 @@
               </td>
             </tr>
           </tbody>
-        </table>
+        </table><br>
       </center>
       <p>
         Durch Schalten der Eingänge durch die verschiedenen Kombinationen können wir auch die restlichen zwei Zeilen überprüfen. Wenn alles stimmt, sind wir fertig: Die Schaltung funktioniert!
