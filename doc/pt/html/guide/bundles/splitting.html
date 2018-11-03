@@ -7,7 +7,7 @@
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <meta http-equiv="Content-Language" content="pt">
     <title>Distribuidores (Splitters)</title>
-    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" type="text/css" href="..\..\style.css">
   </head>
   <body>
     <div class="maindiv">
@@ -15,23 +15,15 @@
 <h1>Distribuidores (Splitters)</h1>
 
 <p> Quando você trabalhar com valores multi-bit, muitas vezes poderá querer rotear
-bits em direções diferentes.
-A ferramenta Distribuidor (Splitter) da biblioteca Base
-(<img src="../../../../icons/splitter.gif" width="16" height="16">)
+bits em direções diferentes. A ferramenta Distribuidor (Splitter (<img class="intxt" src="../../../../icons/splitter.gif">)) da biblioteca Base 
 lhe permitirá fazer isso.
 </p>
 
-<p> Por exemplo, suponha que queiramos construir um circuito que calcula bit a bit
-a conjunção de dois nibbles (meio byte) de uma entrada de oito bits
-(os quatro bits superiores e os quatro bits inferiores). Teremos um valor de oito bits
-no pinos de entrada, e é desejável dividi-lo em dois valores de quatro bits. No
-circuito abaixo, usaremos um distribuidor para conseguir isso: a entrada de 8 bits
-irá conectar-se ao distribuidor (que se assemelha a um pé de pássaro), que dividirá os
-8 bits em dois conjuntos de 4 bits, que irão para a porta AND e de lá para a saída.
+<p> Por exemplo, suponha que queiramos construir um circuito que calcula bit a bit a conjunção de dois nibbles (meio byte) de uma entrada de oito bits (os quatro bits superiores e os quatro bits inferiores). Teremos um valor de oito bits no pinos de entrada, e é desejável dividi-lo em dois valores de quatro bits. No circuito abaixo, usaremos um distribuidor para conseguir isso: a entrada de 8 bits irá conectar-se ao distribuidor (que se assemelha a um pé de pássaro), que dividirá os 8 bits em dois conjuntos de 4 bits, que irão para a porta AND e de lá para a saída.
 </p>
-
-(<img src="../../../../icons/splitter.gif" width="16" height="16">)
-<h5>(Figura do original em inglês)</h5></center>
+<center>
+<img class="intxt" src="../../../../img-guide/bundles-splitter-circ.png">
+</center>
 
 <p> Nesse exemplo, a distribuição acontecerá na verdade ao se separar um
 valor de entrada em vários de saída. Mas os distribuidores também poderão
@@ -43,8 +35,8 @@ e em seguida, será encaminhado de volta para o oeste através deles,
 e novamente para leste, onde finalmente chegará a sua saída.
 </p>
 
-<center><img src="../../../img-guide/bundles-splitter-2way.png" width="191" height="44"></center>
-<h5>(Figura do original em inglês)</h5></center>
+<center><img class="notscal" src="../../../../img-guide/bundles-splitter-2way.png"></center>
+</center>
 
 <p> A chave para o entendimento dos distribuidores são seus atributos.
 A seguir, o termo <em>terminações (split end)</em> refere-se às múltiplas conexões
