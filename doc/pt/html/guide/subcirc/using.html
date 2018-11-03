@@ -32,16 +32,16 @@
         <img src="../../../img-guide/subcirc-4-done.png"alt="#########">
       </center>
       <p>
-        Nosso circuito multiplexador 4:1 usará três cópias do multiplexador 2:1, cada uma desenhada como uma caixa com conexões em suas bordas. Os pinos nessa caixa corresponderão aos pinos de entrada e saída no circuito Mux_2To1. Os dois pinos no lado oeste da caixa corresponderão aos dois pinos direcionados para leste no circuito Mux_2To1; o pino do lado leste da caixa corresponderá ao pino a oeste no Mux_2To1 (que passa a ser um pino de saída) e os pinos no sul da caixa corresponderão aos pinos ao norte do Mux_2To1. A ordem dos dois pinos no lado oeste da caixa corresponderão aos mesmos de cima para baixo, de acordo com a concepção do subcircuito. (Se houvesse vários pinos no norte da caixa ou do lado sul, eles corresponderiam à mesma ordem da esquerda para a direita no subcircuito.)
+        Nosso circuito multiplexador 4:1 usará três cópias do multiplexador 2:1, cada uma desenhada como uma caixa com conexões em suas bordas. Os pinos nessa caixa corresponderão aos pinos de entrada e saída no circuito <b class="reffig">Mux_2to1</b>. Os dois pinos no lado oeste da caixa corresponderão aos dois pinos direcionados para leste no circuito Mux_2To1; o pino do lado leste da caixa corresponderá ao pino a oeste no Mux_2To1 (que passa a ser um pino de saída) e os pinos no sul da caixa corresponderão aos pinos ao norte do Mux_2To1. A ordem dos dois pinos no lado oeste da caixa corresponderão aos mesmos de cima para baixo, de acordo com a concepção do subcircuito. (Se houvesse vários pinos no norte da caixa ou do lado sul, eles corresponderiam à mesma ordem da esquerda para a direita no subcircuito.)
       </p>
       <p>
-        Se os pinos no <i>layout</i> do subcircuito tiverem rótulos associados eles, então Logisim irá mostrar a etiqueta como uma <strong>dica</strong> (isto é, uma caixa de texto temporária) quando o usuário passar o mouse sobre o localização correspondente do componente no subcircuito. (Se você encontrar essas dicas irritantes, poderá desativá-las através da <a href="../prefs/layout.html">aba Preferências da Janela de Layout .)</a>
+        Se os pinos no <i>layout</i> do subcircuito tiverem rótulos associados eles, então Logisim irá mostrar a etiqueta como uma <b>dica</b> (isto é, uma caixa de texto temporária) quando o usuário passar o mouse sobre o localização correspondente do componente no subcircuito. (Se você encontrar essas dicas irritantes, poderá desativá-las através da <a href="../prefs/layout.html">aba Preferências da Janela de Layout.)</a>
       </p><a href="../prefs/layout.html"></a>
       <center>
         <img class="notscal" src="../../../img-guide/subcirc-4-tip.png" alt="#########">
       </center>
       <p>
-        <a href="../prefs/layout.html">Vários outros componentes irão mostrar essas dicas também: para alguns dos pinos de um</a> <a href="../../libs/mem/flipflops.html"><i>flip-flop</i></a> predefinido, por exemplo, ao passar sobre ele explicará a função do que faz o pino.
+        Vários outros componentes irão mostrar essas dicas também: para alguns dos pinos de um <a href="../../libs/mem/flipflops.html"><i>flip-flop</i></a> predefinido, por exemplo, ao passar sobre ele explicará a função do que faz o pino.
       </p>
       <p>
         Aliás, todos os pinos de um circuito deverão ser uma entrada ou uma saída. Muitos <i>chips</i> fabricados têm pinos que se comportam como uma entrada em algumas situações e como uma saída em outras, você não poderá construir esses tipos de <i>chips</i> dentro Logisim (pelo menos na versão atual).
@@ -51,7 +51,7 @@
       </p>
       <p>
         Um vez que tenhamos o multiplexador 4:1 definido, poderemos usá-lo em outros circuitos. O Logisim não tem limites em quão profundo os circuitos possam ser aninhados - embora ele irá opor-se à colocação desses dentro de si próprios!
-      </p><strong>Nota:</strong> Não há nada de errado com a edição de um circuito que estiver sendo usado como um subcircuito, na verdade, isso é muito comum. Esteja ciente, no entanto, que quaisquer alterações nos pinos de um circuito (adicionando, excluindo ou movendo-os) irá reorganizá-los também naquele que o contiver. Assim, se você alterar os pinos em um circuito, você também terá necessidade de editar qualquer circuito que usá-lo como um subcircuito.
+      </p><b class="note">Nota:</b> Não há nada de errado com a edição de um circuito que estiver sendo usado como um subcircuito, na verdade, isso é muito comum. Esteja ciente, no entanto, que quaisquer alterações nos pinos de um circuito (adicionando, excluindo ou movendo-os) irá reorganizá-los também naquele que o contiver. Assim, se você alterar os pinos em um circuito, você também terá necessidade de editar qualquer circuito que usá-lo como um subcircuito.
       <p>
         <strong>Próximo:</strong> <a href="appear.html">Editar a forma do subcircuito</a>.
       </p>
