@@ -7,7 +7,7 @@
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <meta http-equiv="Content-Language" content="ru">
     <title>Пособие: Проверка вашей схемы</title>
-    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" type="text/css" href="../../style.css">
   </head>
   <body>
     <div class="maindiv">
@@ -20,45 +20,75 @@
 <center><img src="../../../img-guide/tutorial-shot-all2.png"></center>
 Обратите внимание, что на обоих входных контактах нули; и на выходном контакте тоже. Это уже говорит нам о том, что схема уже вычисляет 0, когда на обоих входах 0.</p>
 
-<p>Теперь попробуем другую комбинацию входов. Выберите Инструмент Нажатие (<img src="../../../../icons/poke.gif" width="16" height="16">) и начните менять значения на входах, щёлкая на них. Каждый раз, когда вы нажимаете на вход, его значение будет переключаться. Например, мы можем нажать сначала на нижний вход.
+<p>Теперь попробуем другую комбинацию входов. Выберите Инструмент Нажатие (<img class="intxt" src="../../../../icons/poke.gif">) и начните менять значения на входах, щёлкая на них. Каждый раз, когда вы нажимаете на вход, его значение будет переключаться. Например, мы можем нажать сначала на нижний вход.
 <center><img src="../../../img-guide/tutorial-shot-test.png"></center>
 Когда вы меняете входное значение, Logisim покажет вам, что значения путешествуют по проводам, отрисовывая их светло-зелёным, чтобы обозначить значение 1, или тёмно-зелёным (почти чёрным) чтобы обозначить значение 0. Вы также можете увидеть, что выходное значение сменилось на 1.</p>
 
 <p>До сих пор мы проверяли первые две строки нашей таблицы истинности и значения на выходах (0 и 1) соответствовали желаемым результатам.</p>
 
-<table border="0" width="150px" align="center">
-<tbody>
-<tr style="background-color: #ccd1d6;">
-<th>&nbsp;x&nbsp;</th>
-<th>&nbsp;y&nbsp;</th>
-<th>x XOR y</th>
-</tr>
-<tr align="center">
-<td>0</td>
-<td>0</td>
-<td>0</td>
-</tr >
-<tr align="center">
-<td>1</td>
-<td>0</td>
-<td>1</td>
-</tr>
-<tr align="center">
-<td>0</td>
-<td>1</td>
-<td>1</td>
-</tr>
-<tr align="center">
-<td>1</td>
-<td>1</td>
-<td>0</td>
-</tr>
-</tbody>
-</table>
+      <center>
+        <table class="tblver">
+          <tbody>
+            <tr class="tblvertitl">
+              <th width="20">
+                x
+              </th>
+              <th width="20">
+                y
+              </th>
+              <th width="30">
+                x&nbsp;XOR&nbsp;y
+              </th>
+            </tr>
+            <tr>
+              <td class="zerov">
+                0
+              </td>
+              <td class="zerov">
+                0
+              </td>
+              <td class="zerov">
+                0
+              </td>
+            </tr>
+            <tr>
+              <td class="unov">
+                1
+              </td>
+              <td class="zerov">
+                0
+              </td>
+              <td class="unov">
+                1
+              </td>
+            </tr>
+            <tr>
+              <td class="zerov">
+                0
+              </td>
+              <td class="unov">
+                1
+              </td>
+              <td class="unov">
+                1
+              </td>
+            </tr>
+            <tr>
+              <td class="unov">
+                1
+              </td>
+              <td class="unov">
+                1
+              </td>
+              <td class="zerov">
+                0
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </center>
 
 <p>Переключая Инструментом Нажатие разные комбинации, мы можем проверить оставшиеся две строки. Если все они совпадают, то мы закончили: схема работает!</p>
-
-<br><br>
 
 <p>Чтобы сохранить вашу выполненную работу, вы можете сохранить или распечатать схему. Меню Файл позволяет сделать это, и, конечно, оно также позволяет выйти из Logisim. Но зачем выходить сейчас?</p>
 

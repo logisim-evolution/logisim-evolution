@@ -7,7 +7,7 @@
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <meta http-equiv="Content-Language" content="ru">
     <title>Пособие начинающего</title>
-    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" type="text/css" href="../../style.css">
   </head>
   <body>
     <div class="maindiv">
@@ -22,38 +22,70 @@
 
 <p>Чтобы попрактиковаться в использовании Logisim, давайте построим схему Исключающее ИЛИ - то есть схему, которая имеет два входа (которые мы будем называть <em>х</em> и <em>у</em> ) и выдаёт на выходе 0, если значения на входах одинаковые, и 1, если они разные. Это иллюстрирует следующая таблица истинности.</p>
 
-<table border="0" width="150px" align="center">
-<tbody>
-<tr style="background-color: #ccd1d6;">
-<th>&nbsp;x&nbsp;</th>
-<th>&nbsp;y&nbsp;</th>
-<th>x XOR y</th>
-</tr>
-<tr align="center">
-<td>0</td>
-<td>0</td>
-<td>0</td>
-</tr >
-<tr align="center">
-<td>1</td>
-<td>0</td>
-<td>1</td>
-</tr>
-<tr align="center">
-<td>0</td>
-<td>1</td>
-<td>1</td>
-</tr>
-<tr align="center">
-<td>1</td>
-<td>1</td>
-<td>0</td>
-</tr>
-</tbody>
-</table>
+ <center>
+        <table class="tblver">
+          <tbody>
+            <tr class="tblvertitl">
+              <th width="20">
+                x
+              </th>
+              <th width="20">
+                y
+              </th>
+              <th width="30">
+                x&nbsp;XOR&nbsp;y
+              </th>
+            </tr>
+            <tr>
+              <td class="zerov">
+                0
+              </td>
+              <td class="zerov">
+                0
+              </td>
+              <td class="zerov">
+                0
+              </td>
+            </tr>
+            <tr>
+              <td class="unov">
+                1
+              </td>
+              <td class="zerov">
+                0
+              </td>
+              <td class="unov">
+                1
+              </td>
+            </tr>
+            <tr>
+              <td class="zerov">
+                0
+              </td>
+              <td class="unov">
+                1
+              </td>
+              <td class="unov">
+                1
+              </td>
+            </tr>
+            <tr>
+              <td class="unov">
+                1
+              </td>
+              <td class="unov">
+                1
+              </td>
+              <td class="zerov">
+                0
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </center>
 
 <p>Мы могли бы разработать такую схему на бумаге.
-<center><img src="../../../../img-guide/tutorial-xor-circ.png"></center>
+<center><img class="notscal" src="../../../../img-guide/tutorial-xor-circ.png"></center>
 Но то, что она на бумаге, ещё не означает, что она правильная. Чтобы проверить нашу работу, мы нарисуем её в Logisim и проверим её. В качестве дополнительного бонуса мы получим схему, которая выглядит лучше, чем то, что вы, вероятно, могли бы нарисовать от руки.</p>
 
 <p><a href="tutor-orient.html">Шаг 0: Осваиваемся</a> <br><a href="tutor-gates.html">Шаг 1: Добавление логических элементов</a> <br><a href="tutor-wires.html">Шаг 2: Добавление проводов</a> <br><a href="tutor-text.html">Шаг 3: Добавление текста</a> <br><a href="tutor-test.html">Шаг 4: Проверка вашей схемы</a>
