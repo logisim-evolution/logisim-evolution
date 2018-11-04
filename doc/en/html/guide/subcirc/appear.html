@@ -79,49 +79,65 @@
       <p>
         The toolbar contains tools for adding additional shapes, as listed below with descriptions of how the shift and alt key modifies the tool behavior. In addition, clicking or dragging the mouse with the control key pressed regularly snaps the mouse position to the nearest grid point.
       </p>
-	  <ul>
-        <li>
-          <p>
-            <img class=intxt  src="../../../../icons/select.gif" border="1" alt="#########"> <strong>Selection Tool :</strong> Select, move, copy, paste the symbols.
-          </p>
-        </li>
-		<li>
-          <p>
-            <img class=intxt  src="../../../../icons/text.gif" border="1" alt="#########"> <strong>Text Tool :</strong> Add, insert or edit a text.
-          </p>
-        </li>
-		<li>
-          <p>
-            <img class=intxt  src="../../../../icons/drawline.gif" border="1" alt="#########"> <strong>Line Tool :</strong> Creates a line segment.
-          </p>
-        </li>
-		<li>
-          <p>
-            <img class=intxt  src="../../../../icons/drawcurv.gif" border="1" alt="#########"> <strong>Curve tool:</strong> Create a quadratic Bezier curve. The first <b class="tkeybd">click</b> and drag specifies the beginning of the line, the second <b class="tkeybd">click</b> and drag ends the line and sets the curvature. A <b class="tkeybd">click</b> on the line shows you the three control points. <b class="tkeybd">Schift</b> and click on central control point impose a symmetrical curve. <b class="tkeybd">Alt</b> and click on center point draws the curve through the control point (under the mouse).
-          </p>
-        </li>
-		<li>
-          <p>
-            <img class=intxt src="../../../../icons/drawplin.gif" border="1" alt="#########"> <strong>Polylines tool</strong> Creates a sequence of connected lines, each <b class="tkeybd">click</b> starts a new line. <b class="tkeybd">shift-clicking</b> ensures that the angle between the previous vertex and the current one is a multiple of 45°. A <b class="tkeybd">double-click</b> ends the sequence.
-          </p>
-        </li>
-		<li>
-          <p>
-            <img class=intxt  src="../../../../icons/drawrect.gif" border="1" alt="#########"> <strong>Rectangle tool</strong> Create a rectangle or a square ( <b class="tkeybd">Shift</b> ) through dragging from one corner to the opposite corner and <b class="tkeybd">alt-drag</b> to create the rectangle starting from the center.
-          </p>
-        </li>
-		<li>
-          <p>
-            <img class=intxt  src="../../../../icons/drawoval.gif" border="1" alt="#########"> <strong>Oval tool</strong> Creates an oval or circle ( <b class="tkeybd">Shift</b> ) through dragging from one corner of its bounding box to the opposite corner  and <b class="tkeybd">alt-drag</b> to create the oval starting from the center.
-          </p>
-        </li>
-		<li>
-          <p>
-            <img class=intxt  src="../../../../icons/drawpoly.gif" border="1" alt="#########"> <strong>Polygon tool</strong> Create an arbitrary polygon, each <b class="tkeybd">click</b> starts a new face. A <b class="tkeybd">double-click</b> or <b class="tkeybd">Enter</b> key or <b class="tkeybd">click</b> th starting vertex to complete the shape.
-          </p>
-        </li>
-	  </ul>
-     
+	  <table class="toolslist">
+        <tbody>
+          <tr>
+            <td class="toolslist" valign="top">
+              <img class="intxt" src="../../../../icons/select.gif" alt="#########" border="1">
+            </td>
+            <td><strong>Selection Tool :</strong> Select, move, copy, paste the symbols.</td>
+          </tr>
+          <tr>
+            <td class="toolslist" valign="top">
+              <img class="intxt" src="../../../../icons/text.gif" alt="#########" border="1">
+            </td>
+            <td><strong>Text Tool :</strong> Add, insert or edit a text.</td>
+          </tr>
+          <tr>
+            <td class="toolslist" valign="top">
+              <img class="intxt" src="../../../../icons/drawline.gif" alt="#########" border="1">
+            </td>
+            <td><strong>Line Tool :</strong> Creates a line segment.</td>
+          </tr>
+          <tr>
+            <td class="toolslist" valign="top">
+              <img class="intxt" src="../../../../icons/drawcurv.gif" alt="#########" border="1">
+            </td>
+            <td><strong>Curve tool:</strong> Create a quadratic Bezier curve. The first <b class="tkeybd">click</b> and drag specifies the beginning of the line, the second <b class="tkeybd">click</b> and drag ends the line and sets the curvature. A <b class="tkeybd">click</b> on the line shows you the three control points. <b class="tkeybd">Schift</b> and click on central control point impose a symmetrical curve. <b class="tkeybd">Alt</b> and click on center point draws the curve through the control point (under the mouse).</td>
+          </tr>
+          <tr>
+            <td class="toolslist" valign="top">
+              <img class="intxt" src="../../../../icons/drawplin.gif" alt="#########" border="1">
+            </td>
+            <td><strong>Polylines tool</strong> Creates a sequence of connected lines, each <b class="tkeybd">click</b> starts a new line. <b class="tkeybd">shift-clicking</b> ensures that the angle between the previous vertex and the current one is a multiple of 45°. A <b class="tkeybd">double-click</b> ends the sequence.</td>
+          </tr>
+          <tr>
+            <td class="toolslist" valign="top">
+              <img class="intxt" src="../../../../icons/drawrect.gif" alt="#########" border="1">
+            </td>
+            <td><strong>Rectangle tool</strong> Create a rectangle or a square with rounded edges ( <b class="tkeybd">Shift</b> ) through dragging from one corner to the opposite corner and <b class="tkeybd">alt-drag</b> to create the rectangle starting from the center.</td>
+          </tr>
+          <tr>
+            <td class="toolslist" valign="top">
+              <img class="intxt" src="../../../../icons/drawrrct.gif" alt="#########" border="1">
+            </td>
+            <td><strong>Rectangle tool</strong> Create a rectangle or a square ( <b class="tkeybd">Shift</b> ) through dragging from one corner to the opposite corner and <b class="tkeybd">alt-drag</b> to create the rectangle starting from the center.</td>
+          </tr>
+          <tr>
+            <td class="toolslist" valign="top">
+              <img class="intxt" src="../../../../icons/drawoval.gif" alt="#########" border="1">
+            </td>
+            <td><strong>Oval tool</strong> Creates an oval or circle ( <b class="tkeybd">Shift</b> ) through dragging from one corner of its bounding box to the opposite corner  and <b class="tkeybd">alt-drag</b> to create the oval starting from the center.</td>
+          </tr>
+          <tr>
+            <td class="toolslist" valign="top">
+              <img class="intxt" src="../../../../icons/drawpoly.gif" alt="#########" border="1">
+            </td>
+            <td><strong>Polygon tool</strong> Create an arbitrary polygon, each <b class="tkeybd">click</b> starts a new face. A <b class="tkeybd">double-click</b> or <b class="tkeybd">Enter</b> key or <b class="tkeybd">click</b> th starting vertex to complete the shape.</td>
+          </tr>
+        </tbody>
+      </table>
+	 
       <p>
         <b>Next:</b> <a href="debug.html">Debugging subcircuits</a>.
       </p>

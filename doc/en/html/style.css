@@ -1,6 +1,6 @@
 /* 
-This CSS document is suitable for use in java help v2.0 and Web
-for this reason it can be strange
+This CSS document is suitable for use in java help v2.0
+There is a compromise between css rules and html properties for it to work
 */
 /* For img */
 img {
@@ -23,6 +23,7 @@ img.notscal {
 div.maindiv {
 	max-width:560px;
 	border:solid 0px;
+	background-color:$808080;
 }
 div.codediv {
 	max-width:660px;
@@ -112,6 +113,17 @@ b.refguide {
 b.refquest {
 	color:#00137f;
 }
+/* For tables tools list */
+table.toolslist {
+	border-spacing :2px 8px;
+}
+td.toolslist {
+	width:40;
+	text-align:center;
+	vertical-align:top;
+}
+
+
 /* For tables of truth tables */
 table.tblver {
 	text-align :center;
@@ -160,5 +172,5 @@ dt {
 margin-top: 5px;
 }
 li  {
-margin-top: 5px;
+margin-top: 5px; 
 }

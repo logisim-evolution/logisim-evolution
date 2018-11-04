@@ -1,6 +1,6 @@
 /* 
 This CSS document is suitable for use in java help v2.0
-It is not suitable for the web and hijacks some CSS rules
+There is a compromise between css rules and html properties for it to work
 */
 /* For img */
 img {
@@ -113,6 +113,17 @@ b.refguide {
 b.refquest {
 	color:#00137f;
 }
+/* For tables tools list */
+table.toolslist {
+	border-spacing :2px 8px;
+}
+td.toolslist {
+	width:40;
+	text-align:center;
+	vertical-align:top;
+}
+
+
 /* For tables of truth tables */
 table.tblver {
 	text-align :center;
@@ -162,12 +173,4 @@ margin-top: 5px;
 }
 li  {
 margin-top: 5px; 
-}
-li.  {
-margin-top: 5px;
-text-indent: -27px; 
-}
-
-ul.toolslist {
-	list-style-type:none;
 }
