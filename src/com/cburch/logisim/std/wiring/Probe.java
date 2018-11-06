@@ -50,6 +50,7 @@ import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.GraphicsUtil;
 
 public class Probe extends InstanceFactory {
@@ -170,10 +171,62 @@ public class Probe extends InstanceFactory {
 		return data == null ? Value.NIL : data.curValue;
 	}
 	static void paintValue(InstancePainter painter, Value value) {
-		paintValue(painter,value,false,false);
+		if (AppPreferences.NEW_INPUT_OUTPUT_SHAPES.getBoolean())
+			paintValue(painter,value,false,false);
+		else
+			paintOldStyleValue(painter,value);
+	}
+	
+	static void paintOldStyleValue(InstancePainter painter, Value value) {
+		Graphics g = painter.getGraphics();
+		Bounds bds = painter.getBounds(); // intentionally with no graphics
+											// object - we don't want label
+											// included
+
+		RadixOption radix = painter.getAttributeValue(RadixOption.ATTRIBUTE);
+		if (radix == null || radix == RadixOption.RADIX_2) {
+			int x = bds.getX();
+			int y = bds.getY();
+			int wid = value.getWidth();
+			if (wid == 0) {
+				x += bds.getWidth() / 2;
+				y += bds.getHeight() / 2;
+				GraphicsUtil.switchToWidth(g, 2);
+				g.drawLine(x - 4, y, x + 4, y);
+				return;
+			}
+			int x0 = bds.getX() + bds.getWidth() - 5;
+			int compWidth = wid * 10;
+			if (compWidth < bds.getWidth() - 3) {
+				x0 = bds.getX() + (bds.getWidth() + compWidth) / 2 - 5;
+			}
+			int cx = x0;
+			int cy = bds.getY() + bds.getHeight() - 12;
+			int cur = 0;
+			for (int k = 0; k < wid; k++) {
+				GraphicsUtil.drawCenteredText(g,
+						value.get(k).toDisplayString(), cx, cy);
+				++cur;
+				if (cur == 8) {
+					cur = 0;
+					cx = x0;
+					cy -= 20;
+				} else {
+					cx -= 10;
+				}
+			}
+		} else {
+			String text = radix.toString(value);
+			GraphicsUtil.drawCenteredText(g, text, bds.getX() + bds.getWidth()
+				/ 2, bds.getY() + bds.getHeight() / 2);
+		}
 	}
 	
 	static void paintValue(InstancePainter painter, Value value, boolean colored, boolean extend) {
+		if (!AppPreferences.NEW_INPUT_OUTPUT_SHAPES.getBoolean()) {
+			paintOldStyleValue(painter,value);
+			return;
+		}
 		Graphics g = painter.getGraphics();
 		Graphics2D g2 = (Graphics2D)g;
 		Bounds bds = painter.getBounds(); // intentionally with no graphics
@@ -267,7 +320,7 @@ public class Probe extends InstanceFactory {
 	@Override
 	public Bounds getOffsetBounds(AttributeSet attrsBase) {
 		ProbeAttributes attrs = (ProbeAttributes) attrsBase;
-		return getOffsetBounds(attrs.facing, attrs.width, attrs.radix,false,true);
+		return getOffsetBounds(attrs.facing, attrs.width, attrs.radix,false,AppPreferences.NEW_INPUT_OUTPUT_SHAPES.getBoolean());
 	}
 
 	@Override
@@ -299,6 +352,9 @@ public class Probe extends InstanceFactory {
 
 	@Override
 	public void paintInstance(InstancePainter painter) {
+		/* dirty hack to make the pin change shape correctly when in the preferences the new -> old shapes are changed */
+        painter.getInstance().recomputeBounds();
+        /* end dirty hack */
 		Value value = getValue(painter);
 
 		Graphics g = painter.getGraphics();

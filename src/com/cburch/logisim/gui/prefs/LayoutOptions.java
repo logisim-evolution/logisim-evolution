@@ -63,6 +63,8 @@ class LayoutOptions extends OptionsPanel {
 						Strings.getter("layoutNamedCircuitBoxes")),
 				new PrefBoolean(AppPreferences.NAMED_CIRCUIT_BOXES_FIXED_SIZE,
 						Strings.getter("layoutNamedCircuitBoxesFixedSize")),
+				new PrefBoolean(AppPreferences.NEW_INPUT_OUTPUT_SHAPES,
+						Strings.getter("layoutUseNewInputOutputSymbols")),
 				};
 
 		for (int i = 0; i < 2; i++) {

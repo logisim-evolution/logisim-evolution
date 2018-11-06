@@ -74,6 +74,7 @@ import com.cburch.logisim.instance.InstancePoker;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.tools.key.BitWidthConfigurator;
 import com.cburch.logisim.tools.key.DirectionConfigurator;
 import com.cburch.logisim.tools.key.JoinedConfigurator;
@@ -248,10 +249,16 @@ public class Pin extends InstanceFactory {
 				// don't want
 				// label
 				// included
-				Direction dir = state.getAttributeValue(StdAttr.FACING);
-				int yoffset = (dir==Direction.SOUTH) ? 10 : 0;
-				int i = (bds.getX() + bds.getWidth() - e.getX() - 15) / 10;
-				int j = (bds.getY() + bds.getHeight() - e.getY() - yoffset) / 20;
+				int i,j;
+				if (AppPreferences.NEW_INPUT_OUTPUT_SHAPES.getBoolean()) {
+					Direction dir = state.getAttributeValue(StdAttr.FACING);
+					int yoffset = (dir==Direction.SOUTH) ? 10 : 0;
+					i = (bds.getX() + bds.getWidth() - e.getX() - 15) / 10;
+					j = (bds.getY() + bds.getHeight() - e.getY() - yoffset) / 20;
+				} else {
+					i = (bds.getX() + bds.getWidth() - e.getX()) / 10;
+					j = (bds.getY() + bds.getHeight() - e.getY()) / 20;
+				}
 				int bit = 8 * j + i;
 				if (bit < 0 || bit >= width.getWidth()) {
 					return -1;
@@ -414,7 +421,7 @@ public class Pin extends InstanceFactory {
 
 	private static final Color ICON_WIDTH_COLOR = Value.WIDTH_ERROR_COLOR
 			.darker();
-
+	
 	public Pin() {
 		super("Pin", Strings.getter("pinComponent"));
 		setFacingAttribute(StdAttr.FACING);
@@ -459,7 +466,8 @@ public class Pin extends InstanceFactory {
 		BitWidth width = attrs.getValue(StdAttr.WIDTH);
 		return Probe.getOffsetBounds(facing, width,
 				attrs.getValue(RadixOption.ATTRIBUTE) /* RadixOption.RADIX_2 */,
-				!attrs.getValue(ATTR_TYPE),true);
+				(!attrs.getValue(ATTR_TYPE))&AppPreferences.NEW_INPUT_OUTPUT_SHAPES.getBoolean(),
+				AppPreferences.NEW_INPUT_OUTPUT_SHAPES.getBoolean());
 	}
 
 	public int getType(Instance instance) {
@@ -519,7 +527,9 @@ public class Pin extends InstanceFactory {
 	}
 	
 	public void DrawInputShape(Graphics g, int x, int y, int width , int height, Direction dir) {
-		if (dir==Direction.EAST) {
+		if (!AppPreferences.NEW_INPUT_OUTPUT_SHAPES.getBoolean()) {
+			g.drawRect(x + 1, y + 1, width-1 , height-1);
+		} else if (dir==Direction.EAST) {
 			g.drawLine(x+width-10, y, x+width, y+height/2);
 			g.drawLine(x+width-10, y+height, x+width, y+height/2);
 			g.drawLine(x,y, x, y+height);
@@ -546,8 +556,16 @@ public class Pin extends InstanceFactory {
 		}
 	}
 
-	public void DrawOutputShape(Graphics g, int x, int y, int width , int height, Direction dir) {
-		g.drawRoundRect(x, y, width, height, 20, 20);
+	public void DrawOutputShape(Graphics g, int x, int y, int width , int height, Direction dir,boolean SingleBit) {
+		if (AppPreferences.NEW_INPUT_OUTPUT_SHAPES.getBoolean())
+			g.drawRoundRect(x, y, width, height, 20, 20);
+		else {
+			if (SingleBit) {
+				g.drawOval(x + 1, y + 1, width-1 , height - 1);
+			} else {
+				g.drawRoundRect(x + 1, y + 1, width - 1, height - 1, 6, 6);
+			}
+		}
 	}
 	
 	@Override
@@ -561,7 +579,8 @@ public class Pin extends InstanceFactory {
 		GraphicsUtil.switchToWidth(g, 2);
 		boolean output = attrs.isOutput();
 		if (output) {
-			DrawOutputShape(g,x+bds.getX(),y+bds.getY(),bds.getWidth(),bds.getHeight(),attrs.getValue(StdAttr.FACING));
+			DrawOutputShape(g,x+bds.getX(),y+bds.getY(),bds.getWidth(),bds.getHeight(),attrs.getValue(StdAttr.FACING),
+					attrs.getValue(StdAttr.WIDTH) == BitWidth.ONE);
 		} else {
 			DrawInputShape(g,x+bds.getX(),y+bds.getY(),bds.getWidth(),bds.getHeight(),attrs.getValue(StdAttr.FACING));
 		}
@@ -627,6 +646,10 @@ public class Pin extends InstanceFactory {
 
 	@Override
 	public void paintInstance(InstancePainter painter) {
+		/* dirty hack to make the pin change shape correctly when in the preferences the new -> old shapes are changed */
+        painter.getInstance().recomputeBounds();
+        /* end dirty hack */
+        boolean NewStyle = AppPreferences.NEW_INPUT_OUTPUT_SHAPES.getBoolean();
 		PinAttributes attrs = (PinAttributes) painter.getAttributeSet();
 		Graphics g = painter.getGraphics();
 		Bounds bds = painter.getInstance().getBounds(); // intentionally with no
@@ -639,7 +662,8 @@ public class Pin extends InstanceFactory {
 		g.setColor(Color.black);
 		boolean IsOutput = attrs.type == EndData.OUTPUT_ONLY;
 		if (IsOutput) {
-			DrawOutputShape(g,x+1,y+1,bds.getWidth()-1,bds.getHeight()-1,attrs.getValue(StdAttr.FACING));
+			DrawOutputShape(g,x+1,y+1,bds.getWidth()-1,bds.getHeight()-1,attrs.getValue(StdAttr.FACING),
+					attrs.getValue(StdAttr.WIDTH) == BitWidth.ONE);
 		} else {
 			DrawInputShape(g,x+1,y+1,bds.getWidth()-1,bds.getHeight()-1,attrs.getValue(StdAttr.FACING));
 		}
@@ -654,28 +678,30 @@ public class Pin extends InstanceFactory {
 		} else {
 			PinState state = getState(painter);
 			if (attrs.width.getWidth() <= 1) {
-				Graphics2D g2 = (Graphics2D)g;
-				RadixOption radix = painter.getAttributeValue(RadixOption.ATTRIBUTE);
-				int offset = (attrs.getValue(StdAttr.FACING)==Direction.SOUTH) ?10 : 0;
-				g.setColor(Color.BLUE);
-				g2.scale(0.7, 0.7);
-				g2.drawString(radix.GetIndexChar(), (int)((bds.getX()+bds.getWidth()-13)/0.7), 
-						     (int)((bds.getY()+bds.getHeight()-(2+offset))/0.7));
-				g2.scale(1.0/0.7, 1.0/0.7);
-				g.setColor(Color.BLACK);
+				if (NewStyle) {
+					Graphics2D g2 = (Graphics2D)g;
+					RadixOption radix = painter.getAttributeValue(RadixOption.ATTRIBUTE);
+					int offset = (attrs.getValue(StdAttr.FACING)==Direction.SOUTH)&!IsOutput ?10 : 0;
+					g.setColor(Color.BLUE);
+					g2.scale(0.7, 0.7);
+					g2.drawString(radix.GetIndexChar(), (int)((bds.getX()+bds.getWidth()-13)/0.7), 
+						(int)((bds.getY()+bds.getHeight()-(2+offset))/0.7));
+					g2.scale(1.0/0.7, 1.0/0.7);
+					g.setColor(Color.BLACK);
+				}
 				Value found = state.foundValue;
-				if (!IsOutput) {
+				int offset = NewStyle ? 10 : 0;
+				if ((!IsOutput)|(!NewStyle)) {
 					g.setColor(found.getColor());
-					g.fillOval(x + 14, y + 4, 13, 13);
+					g.fillOval(x + 4 + offset, y + 4, 13, 13);
 				}
 				if (attrs.width.getWidth() == 1) {
-					if (!IsOutput) g.setColor(Color.WHITE);
+					if (!IsOutput|(!NewStyle)) g.setColor(Color.WHITE);
 					GraphicsUtil.drawCenteredText(g,
-							state.intendedValue.toDisplayString(), x + 21,
-							y + 9);
+							state.intendedValue.toDisplayString(), x + 11 + offset, y + 9);
 				}
 			} else {
-				Probe.paintValue(painter, state.intendedValue,!IsOutput,!IsOutput);
+				Probe.paintValue(painter, state.intendedValue,(!IsOutput)&NewStyle,(!IsOutput)&NewStyle);
 			}
 		}
 
