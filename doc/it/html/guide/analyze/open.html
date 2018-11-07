@@ -1,0 +1,63 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2018-10-23T06:18:42.262000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="it">
+    <title>
+      Opening Combinational Analysis
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        Opening Combinational Analysis
+      </h1>
+      <p>
+        The bulk of the <b class="refguide">Combinational Analysis</b> module is accessed through a single window of that name allowing you to view truth tables and Boolean expressions. This window can be opened in two ways.
+      </p>
+      <h2>
+        Via the Window menu
+      </h2>
+      <p>
+        Select <b class="menu">|&nbsp;Window&nbsp;|</b>→<b class="menu">|&nbsp;Combinational Analysis&nbsp;|</b>, and the current Combinational Analysis window will appear. If you haven't viewed the window before,the opened window will represent no circuit at all.
+      </p>
+      <p>
+        Only one Combinational Analysis window exists within Logisim, no matter how many projects are open. There is no way to have two different analysis windows open at once.
+      </p>
+      <h2>
+        Via the Project menu
+      </h2>
+      <p>
+        From a window for editing circuits, you can also request that Logisim analyze the current circuit by selecting the Analyze Circuit option from the menu <b class="menu">|&nbsp;Project&nbsp;|</b>→<b class="menu">|&nbsp;Analyse combinatoire&nbsp;|</b>. Before Logisim opens the window, it will compute Boolean expressions and a truth table corresponding to the circuit and place them there for you to view.
+      </p>
+      <p>
+        For the analysis to be successful, each input must be attached to an input pin, and each output must be attached to an output pin. Logisim will only analyze circuits with at most <b>eight</b> of each type, and all should be single-bit pins. Otherwise, you will see an error message and the window will not open.
+      </p>
+      <p>
+        In constructing Boolean expressions corresponding to a circuit, Logisim will first attempt to construct a Boolean expressions corresponding exactly to the gates in the circuit. But if the circuit uses some non-gate components (such as a multiplexer), or if the circuit is more than 100 levels deep (unlikely), then it will pop up a dialog box telling you that deriving Boolean expressions was impossible, and Logisim will instead derive the expressions based on the truth table, which will be derived by quietly trying each combination of inputs and reading the resulting outputs.
+      </p>
+      <p>
+        After analyzing a circuit, there is no continuing relationship between the circuit and the Combinational Analysis window. That is, changes to the circuit will not be reflected in the window, nor will changes to the Boolean expressions and/or truth table in the window be reflected in the circuit. Of course, you are always free to analyze a circuit again; and, as we will see later, you can replace the circuit with a circuit corresponding to what appears in the Combinational Analysis window.
+      </p>
+      <h2>
+        Limitations
+      </h2>
+      <p>
+        Logisim will not attempt to detect sequential circuits: If you tell it to analyze a sequential circuit, it will still create a truth table and corresponding Boolean expressions, although these will not accurately summarize the circuit behavior. (In fact, detecting sequential circuits is <em>provably impossible</em>, as it would amount to solving the Halting Problem. Of course, you might hope that Logisim would make at least some attempt - perhaps look for flip-flops or cycles in the wires - but it does not.) As a result, the Combinational Analysis system should not be used indiscriminately: Only use it when you are indeed sure that the circuit you are analyzing is indeed combinational!
+      </p>
+      <p>
+        Logisim will make a change to the original circuit that is perhaps unexpected: The Combinational Analysis system requires that each input and output have a unique name that conforming to the rules for Java identifiers. (Roughly, each character must either a letter or a digit, and the first character must be a letter. No spaces allowed!) It attempts to use the pins' existing labels, and to use a list of defaults if no label exists. If an existing label doesn't follow the Java-identifier rule, then Logisim will attempt to extract a valid name from the label if at all possible.
+      </p>
+      <p>
+        Incidentally, the ordering of the inputs in the truth table will match their top-down ordering in the original circuit, with ties being broken in left-right order. (The same applies to the ordering of outputs.)
+      </p>
+      <p>
+        <b>Next:</b> <a href="table.html">Editing the truth table</a>.
+      </p>
+    </div>
+  </body>
+</html>

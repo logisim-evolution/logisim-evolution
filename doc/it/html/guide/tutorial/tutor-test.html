@@ -1,0 +1,115 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2018-10-23T06:18:42.262000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="it">
+    <title>
+      Tutorial: Testing your circuit
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <p>
+        <b>Previous:</b><a href="tutor-text.html">Step 3: Adding text</a>
+      </p>
+      <h2>
+        Step 4: Testing your circuit
+      </h2>
+      <p>
+        Our final step is to test our circuit to ensure that it really does what we intended. Logisim is already simulating the circuit. Let's look again at where we were.
+      </p>
+      <center>
+        <img src="../../../img-guide/tutorial-shot-all2.png" alt="#########">
+      </center>
+      <p>
+        Note that the input pins both contain 0s; and so does the output pin. This already tells us that the circuit already computes a 0 when both inputs are 0.
+      </p>
+      <p>
+        Now to try another combination of inputs. Select the <b class="propertie">"Poke"</b> tool (<img class="intxt" src="../../../../icons/poke.gif" alt="#########">) and start poking the inputs by clicking on them. Each time you poke an input, its value will toggle. For example, we might first poke the bottom input (<var>y</var>).
+      </p>
+      <center>
+        <img src="../../../img-guide/tutorial-shot-test.png" alt="#########">
+      </center>
+      <p>
+        When you change the input value, Logisim will show you what values travel down the wires by drawing them light green to indicate a 1 value or dark green (almost black) to indicate a 0 value. You can also see that the output value has changed to 1.
+      </p>
+      <p>
+        So far, we have tested the first two rows of our truth table, and the outputs (0 and 1) match the desired outputs.
+      </p>
+      <center>
+        <table class="tblver">
+          <tbody>
+            <tr class="tblvertitl">
+              <th width="20">
+                x
+              </th>
+              <th width="20">
+                y
+              </th>
+              <th width="30">
+                x&nbsp;XOR&nbsp;y
+              </th>
+            </tr>
+            <tr>
+              <td class="zerov">
+                0
+              </td>
+              <td class="zerov">
+                0
+              </td>
+              <td class="zerov">
+                0
+              </td>
+            </tr>
+            <tr>
+              <td class="unov">
+                1
+              </td>
+              <td class="zerov">
+                0
+              </td>
+              <td class="unov">
+                1
+              </td>
+            </tr>
+            <tr>
+              <td class="zerov">
+                0
+              </td>
+              <td class="unov">
+                1
+              </td>
+              <td class="unov">
+                1
+              </td>
+            </tr>
+            <tr>
+              <td class="unov">
+                1
+              </td>
+              <td class="unov">
+                1
+              </td>
+              <td class="zerov">
+                0
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </center>
+      <p>
+        By poking the switches through different combinations, we can verify the other two rows. If they all match, then we're done: The circuit works!
+      </p>
+      <p>
+        To archive your completed work, you might want to save or print your circuit. The <b class="menu">|&nbsp;File&nbsp;|</b> menu allows this, and of course it also allows you to exit Logisim. But why quit now ?
+      </p>
+      <p>
+        <b>Next:</b> <a href="tutor-step.html">Step 5: The step by step mode</a>
+      </p>
+    </div>
+  </body>
+</html>

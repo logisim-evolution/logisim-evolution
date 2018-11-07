@@ -1,64 +1,118 @@
-
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
-<meta charset="UTF-8">
-<head>
-<title>Résistance de charge</title>
-</head>
-
-<body bgcolor="FFFFFF">
-
-<h1>
-<img  align="center" src="../../../icons/pullshap.gif" width="32" height="32">
-<img  align="center" src="../../../icons/pullrect.gif" width="32" height="32">
-<em>Résistance de charge</em></h1>
-
-<p><table>
-<tr><td><strong>Librairie:</strong></td>
-	<td><a href="index.html">Câblage</a></td></tr>
-<tr><td><strong>Introduction:</strong></td>
-	<td>2.5.0 (dans la librairie de base, déplacé dans le la librairie câblage en 2.7.0)</td></tr>
-<tr><td valign="top"><strong>Apparence:</strong></td>
-	<td valign="top">
-	<table><tbody>
-	<tr><th align="left">Shaped:</th><td><img src="../../../img-libs/pull-shaped.png" width="40" height="15"></td></tr>
-	<tr><th align="left">Rectangulaire:</th><td><img src="../../../img-libs/pull-rect.png" width="40" height="15"></td></tr>
-	</tbody></table></td></tr>
-</table></p>
-
-<h2>Comportement</h2>
-
-<p>Lorsqu'il est connecté à un point, ce composant n'a d'effet que lorsque la valeur de ce point est une valeur flottante indéfinie (Z) . Dans ce cas, la résistance tire le fil auquel elle est connectée vers la valeur indiquée dans son attribut <q>Direction de charge</q>. </p>
-
-<p>S'il est connecté à une valeur à plusieurs bits, chaque bit de la valeur flottante est tiré dans la direction spécifiée, tandis que les bits non flottants restent inchangés.</p>
-
-<h2>Pins</h2>
-
-<p>La résistance a juste une broche, qui est une sortie et hérite de la largeur de bits du composant auquel il est connecté.</p>
-
-<h2>Attributs</h2>
-
-<p>Lorsque le composant est sélectionné ou ajouté, les touches fléchées modifient son attribut <q>Orientation</q>.</p>
-
-<dl>
-
-<dt>Orientation</dt>
-<dd>Le côté du composant dessiné où doit se trouver sa broche de sortie.</dd>
-
-<dt>Direction charge</dt>
-<dd>Spécifie la valeur à laquelle une valeur flottante doit être tirée. Cela pourrait être 0, 1 ou la valeur d'erreur.
-</dd>
-
-</dl>
-
-<h2>Action de l'outil pousser</h2>
-
-<p>Aucun.</p>
-
-<h2>Action de l'outil text</h2>
-
-<p>Aucun.</p>
-
-<p><a href="../index.html">Retour à<em> Référence de la bibliothèque</em></a></p>
-
-</body>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2018-10-23T06:18:42.262000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="fr">
+    <title>
+      Résistance de charge
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        <img class="iconlibs" src="../../../../icons/pullshap.gif" alt="#########"> <img class="iconlibs" src="../../../../icons/pullrect.gif" alt="#########"> <em>Résistance de charge</em>
+      </h1>
+      <table>
+        <tbody>
+          <tr>
+            <td>
+              <strong>Librairie:</strong>
+            </td>
+            <td>
+              <a href="index.html">Câblage</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <strong>Introduction:</strong>
+            </td>
+            <td>
+              2.5.0 (dans la librairie de base, déplacé dans le la librairie câblage en 2.7.0)
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+              <strong>Apparence:</strong>
+            </td>
+            <td valign="top">
+              <table>
+                <tbody>
+                  <tr>
+                    <th align="left">
+                      Shaped:
+                    </th>
+                    <td>
+                      <img class="notscal" src="../../../../img-libs/pull-shaped.png" alt="#########">
+                    </td>
+                  </tr>
+                  <tr>
+                    <th align="left">
+                      Rectangulaire:
+                    </th>
+                    <td>
+                      <img class="notscal" src="../../../../img-libs/pull-rect.png" alt="#########">
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <h2>
+        Comportement
+      </h2>
+      <p>
+        Lorsqu'il est connecté à un point, ce composant n'a d'effet que lorsque la valeur de ce point est une valeur flottante indéfinie (Z) . Dans ce cas, la résistance tire le fil auquel elle est connectée vers la valeur indiquée dans son attribut <q>Direction de charge</q>.
+      </p>
+      <p>
+        S'il est connecté à une valeur à plusieurs bits, chaque bit de la valeur flottante est tiré dans la direction spécifiée, tandis que les bits non flottants restent inchangés.
+      </p>
+      <h2>
+        Pins
+      </h2>
+      <p>
+        La résistance a juste une broche, qui est une sortie et hérite de la largeur de bits du composant auquel il est connecté.
+      </p>
+      <h2>
+        Attributs
+      </h2>
+      <p>
+        Lorsque le composant est sélectionné ou ajouté, les touches fléchées modifient son attribut <q>Orientation</q>.
+      </p>
+      <dl>
+        <dt>
+          Orientation
+        </dt>
+        <dd>
+          Le côté du composant dessiné où doit se trouver sa broche de sortie.
+        </dd>
+        <dt>
+          Direction charge
+        </dt>
+        <dd>
+          Spécifie la valeur à laquelle une valeur flottante doit être tirée. Cela pourrait être 0, 1 ou la valeur d'erreur.
+        </dd>
+      </dl>
+      <h2>
+        Action de l'outil pousser
+      </h2>
+      <p>
+        Aucun.
+      </p>
+      <h2>
+        Action de l'outil text
+      </h2>
+      <p>
+        Aucun.
+      </p>
+      <p>
+        <a href="../index.html">Retour à <em>Référence de la bibliothèque</em></a>
+      </p>
+    </div>
+  </body>
 </html>

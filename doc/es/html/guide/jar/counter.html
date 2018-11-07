@@ -1,21 +1,28 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0//EN">
 <html>
-<head>
-    <title>Gray Code Counter</title>
-</head>
-<body bgcolor="FFFFFF">
-
-<h1>Gray Code Counter</h1>
-
-<p>This orientation to the Logisim libraries concludes with a
-fairly sophisticated Gray code counter that allows the user to alter its
-current value using the Poke Tool and to place a label on the component using
-the Text Tool. It also customizes the icon that appears in the explorer,
-associated with the tool.</p>
-
-<h2>GrayCounter</h2>
-
-<pre>
-package com.cburch.gray;
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2018-10-23T06:18:42.262000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="es">
+    <title>
+      Gray Code Counter
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="codediv">
+      <h1>
+        Gray Code Counter
+      </h1>
+      <p>
+        This orientation to the Logisim libraries concludes with a fairly sophisticated Gray code counter that allows the user to alter its current value using the Poke Tool and to place a label on the component using the Text Tool. It also customizes the icon that appears in the explorer, associated with the tool.
+      </p>
+      <h2>
+        GrayCounter
+      </h2>
+      <pre>package com.cburch.gray;
 
 import java.net.URL;
 
@@ -107,11 +114,10 @@ class GrayCounter extends InstanceFactory {
     }
 }
 </pre>
-
-<h2>CounterPoker</h2>
-
-<pre>
-package com.cburch.gray;
+      <h2>
+        CounterPoker
+      </h2>
+      <pre>package com.cburch.gray;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -163,11 +169,11 @@ public class CounterPoker extends InstancePoker {
         // convert it to a hex digit; if it isn't a hex digit, abort.
         int val = Character.digit(e.getKeyChar(), 16);
         BitWidth width = state.getAttributeValue(StdAttr.WIDTH);
-        if(val < 0 || (val & width.getMask()) != val) return;
+        if(val &lt; 0 || (val &amp; width.getMask()) != val) return;
 
         // compute the next value
         CounterData cur = CounterData.get(state, width);
-        int newVal = (cur.getValue().toIntValue() * 16 + val) & width.getMask();
+        int newVal = (cur.getValue().toIntValue() * 16 + val) &amp; width.getMask();
         Value newValue = Value.createKnown(width, newVal);
         cur.setValue(newValue);
         state.fireInvalidated();
@@ -180,9 +186,9 @@ public class CounterPoker extends InstancePoker {
     }
 }
 </pre>
-
-
-<p><strong>Next:</strong> <a href="guide.html">Guidelines</a>.</p>
-
-</body>
+      <p>
+        <b>Next:</b> <a href="guide.html">Guidelines</a>.
+      </p>
+    </div>
+  </body>
 </html>

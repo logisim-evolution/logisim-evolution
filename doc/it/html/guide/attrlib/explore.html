@@ -1,0 +1,112 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2018-10-23T06:18:42.262000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="it">
+    <title>
+      The explorer pane
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        The explorer pane
+      </h1>
+      <table>
+        <tbody>
+          <tr>
+            <td width="40%">
+              <img src="../../../img-guide/attrib-explor.png" alt="#########">
+            </td>
+            <td valign="top">
+              The navigation panel has two functions. It can present the circuits being simulated in the view <a href="../subcirc/debug.html">simulation</a> or as here the circuits in the top and the lower the libraries represented by folders. These libraries include tools you can use in your projects.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <p>
+        To access a library's components, you have only to <b class="tkeybd">double-click</b> the corresponding folder or a <b class="tkeybd">click</b> on the tiny key.
+      </p>
+      <p>
+        Below, I have opened the Gates library and selected the NAND tool from it. You can see that Logisim now stands ready to add NAND gates into the circuit.
+      </p>
+      <center>
+        <img src="../../../img-guide/attrlib-nand-select.png" alt="#########">
+      </center>
+      <p>
+        If you look through the choices in the Gates library, you'll notice that there was no need for us to develop a XOR circuit earlier: It's built into Logisim.
+      </p>
+      <p>
+        When you create a project, it automatically includes several libraries:
+      </p>
+      <ul>
+        <li>
+          <b>Wiring:</b> Components that interact directly with wires.
+        </li>
+        <li>
+          <b>Gates:</b> Components that perform simple logic functions.
+        </li>
+        <li>
+          <b>Plexers:</b> More complex combinational components, like multiplexers and decoders.
+        </li>
+        <li>
+          <b>Arithmetic:</b> Components that perform arithmetic.
+        </li>
+        <li>
+          <b>Memory:</b> Components that remember data, like flip-flops, registers, and RAM.
+        </li>
+        <li>
+          <b>I/O:</b> Components that exist for the purpose of interacting with the user.
+        </li>
+        <li>
+          <b>Base:</b> Tools that are integral to using Logisim, though you probably won't need to dig into this library very often.
+        </li>
+        <li>
+          <b>TCL:</b>
+        </li>
+        <li>
+          <b>HDL-IP:</b>
+        </li>
+        <li>
+          <b>BFH mega function:</b>
+        </li>
+      </ul>
+      <p>
+        Logisim allows you to add more libraries, too, using the menu <b class="menu">|&nbsp;Project&nbsp;|</b> → <b class="menu">|&nbsp;Load Library&nbsp;|</b> submenu of the Project menu. You can see that Logisim has three categories of libraries.
+      </p>
+      <ul>
+        <li>
+          <strong>Built-in libraries</strong> are libraries that are distributed with Logisim. These are documented in the <a href="../../libs/index.html">Library Reference</a>.
+        </li>
+        <li>
+          <strong>Logisim libraries</strong> are projects built within Logisim and saved to the disk as a Logisim project. You can develop a set of circuits in a single project (as described in the <a href="../subcirc/index.html">Subcircuits</a> section of this guide) and then use that set of circuits as a library for other projects.
+        </li>
+        <li>
+          <strong>JAR libraries</strong> are libraries that are developed in Java but not distributed with Logisim. You can download JAR libraries that others have written, or you can write your own as described in the <a href="../jar/index.html">JAR Libraries</a> section of this guide. Developing a JAR library is much more difficult than developing a Logisim library, but the components can be much fancier, including things like attributes and interaction with the user. The built-in libraries (other than Base) were written using the same API as JAR libraries can use, so they aptly demonstrate the range of functionality that the JAR libraries can support.
+          <p>
+            Some JAR libraries are distributed without any information about which Java class to start with. When loading such a JAR, Logisim will prompt you to type a class name. This class name should be provided by whoever distributed the JAR file to you.
+          </p>
+        </li>
+      </ul>
+      <p>
+        To remove a library, choose menu <b class="menu">|&nbsp;Project&nbsp;|</b> → <b class="menu">|&nbsp;Unload Library ...&nbsp;|</b>. Logisim will prevent you from unloading libraries that contain components used in a circuit, that appear in the toolbar, or that are mapped to a mouse button.
+      </p>
+      <center>
+        <img class="notscal" src="../../../img-guide/subcirc-remlib.png" alt="#########">
+      </center>
+      <p>
+        It is also possible to do this by pressing a <b class="tkeybd">click-left</b> on the library to disable.
+      </p>
+      <p>
+        Incidentally, a library technically contains tools, not components. Thus, in the Base library you'll find the <b class="propertie">Poke</b> Tool (<img class="intxt" src="../../../../icons/poke.gif" alt="#########">), the <b class="propertie">Edit</b> Tool (<img class="intxt" src="../../../../icons/select.gif" alt="#########">), and other tools that don't correspond directly to individual components. Most libraries, though, contain only tools for adding individual components; all built-in libraries other than the <b class="propertie">"Base"</b> library are like this.
+      </p>
+      <p>
+        <b>Next:</b> <a href="toolsbar.html">Toolbars</a>.
+      </p>
+    </div>
+  </body>
+</html>

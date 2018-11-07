@@ -1,0 +1,14 @@
+Organization of these folders
+
+Th file  doc_xx.hs it is the configuration for java help by language.
+Th file map_xx.jhm there are the configuration of the help tree
+
+The folder icons contains the icons for doc
+
+The folder img-guide contains the pictures of the guide without translation required
+
+The folder img-libs contains the pictures of the library without translation required
+
+The folders de, el,en,fr,pt,ru are the linguistic parts of the documentation 
+
+in each of these language folders we find a folder img-guide contains the pictures of the library with translation required.
