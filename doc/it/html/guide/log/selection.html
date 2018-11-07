@@ -1,0 +1,74 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2018-10-23T06:18:42.262000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="it">
+    <title>
+      The Selection tab
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        The Selection tab
+      </h1>
+      <p>
+        The Selection tab allows you to select which values should be included in the log. The window below corresponds to the following circuit.
+      </p>
+      <center>
+        <img class="notscal" src="../../../../img-guide/log-counter.png" alt="#########">
+      </center>
+      <center>
+        <img src="../../../img-guide/log-selection.png" alt="#########">
+      </center>
+      <p>
+        The tab is divided into three vertical areas. The first (leftmost) is a list of all components in the circuit whose values can be logged. Among the built-in libraries, the following types of components support logging.<br>
+      </p>
+      <blockquote>
+        Wiring library: Pin, Probe, and Clock components<br>
+        I/O library: Button and LED components<br>
+        Memory library: All components except ROM
+      </blockquote>For components which have labels associated with them, their names correspond to the labels; other components' names specify their type and their location within the circuit.<br>
+      Any subcircuits will also appear in the list; they cannot be selected for logging, but eligible components within them can be. Note that the RAM component requires you to choose which memory address(es) should be logged; it allows logging only for the first 256 addresses.
+      <p>
+        The last (rightmost) vertical area lists those components that have been selected. Also, it indicates the radix (base) in which the component's multi-bit values will be logged; the radix does not have a significant effect on one-bit values.
+      </p>
+      <p>
+        L'horloge <var>sysclk</var> doit y figurer, elle ne sera pas affichée dans le graphe.
+      </p>
+      <p>
+        The middle column of buttons allows the manipulation of the items within the selection.
+      </p>
+      <ul>
+        <li>
+          <b class="button">Add&gt;&gt;</b> adds the currently selected item(s) on the left side into the selection. Il est actif seulement pour les composants éligibles.
+        </li>
+        <li>
+          <b class="button">Change Radix</b> cycles the radix for the currently selected component in the selection between 2 (binary), 10 (decimal), and 16 (hexadecimal).
+        </li>
+        <li>
+          <b class="button">Move Up</b> moves the currently selected component in the selection forward one spot.
+        </li>
+        <li>
+          <b class="button">Move Down</b> moves the currently selected component in the selection back one spot.
+        </li>
+        <li>
+          <b class="button">&lt;&lt; Remove</b> removes the currently selected component in the selection.
+        </li>
+      </ul>
+      <p>
+        The fourth part below allows you to define if you want a time display above the graph. For this it is necessary to check the box <b class="reffig">"Time reference"</b> and select the signal that will be the reference. The frequency will define the displayed time scale. This does not solve the speed of execution of the circuit simulation. For example below we have selected the signal <b class="reffig">B0</b> and a frequency of 100hz.
+      </p>
+      <center>
+        <img src="../../../img-guide/log-graph1.png" alt="#########">
+      </center>
+      <p>
+        <b>Next:</b> <a href="timetable.html">Timetable window</a>.
+      </p>
+    </div>
+  </body>
+</html>

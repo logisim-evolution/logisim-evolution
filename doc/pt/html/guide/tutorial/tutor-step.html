@@ -1,0 +1,63 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2018-10-23T06:18:42.262000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="pt">
+    <title>
+      Tutorial: step by step mode
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <p>
+        <b>Previous:</b> <a href="tutor-test.html">Step 4: Testing your circuit</a>
+      </p>
+      <h2>
+        Step 5: The step by step mode
+      </h2>
+      <p>
+        In certain circumstances of study or in case of subtle problem related to the propagation of the signals, it is very useful to be able to observe these phenomena. Logisim simulates in a slightly naive way the propagation in gates. (the gates all have the same propagation delay), but it still allows to observe the main problems related to these parameters.
+      </p>
+      <p>
+        For the example, I only give you the key combinations needed for this exercise; you should know that for each key combination there is an equivalent submenu in the menu <b class="menu">|&nbsp;Simulation&nbsp;|</b>.
+      </p>
+      <p>
+      <center>
+        <img class="notscal" src="../../../../img-guide/tutorial-step1.png" alt="#########">
+      </center>
+      </p>
+      <p>
+        If you build the circuit above you will find that each change from 0 to 1 of the input <var>e</var> disturbs the flip-flop D.
+      </p>
+      <p>
+        To observe the phenomenon proceed as follows : Bring the circuit to the state where <var>e</var> is 0. Then do <b class="tkeybd">Ctrl-E</b> to disable automatic simulation. Push on the input <var>e</var> to switch it to 1. Nothing happens, it's normal. Then use the combination <b class="tkeybd">Ctr-I</b> and observe. Do it as many times as necessary.
+      </p>
+      <p>
+      <center>
+        <img class="notscal" src="../../../../img-guide/tutorial-step2.png" alt="#########">
+      </center>
+      </p>
+      <p>
+        You will notice blue circles on some ends of thread, these indicate that there is a change in the state of this thread at this step of the simulation. You can observe the brief passage through 1 of the output of the AND gate.
+      </p>
+      <p>
+        This method also makes it possible to observe asynchronous counter operation or propagation of the carry in an adder.
+      </p>
+      <p>
+      <center>
+        <img src="../../../../img-guide/tutorial-step3.gif" alt="#########">
+      </center>
+      </p>
+      <p>
+        Now that you are finished with tutorial, you can experiment with Logisim by building your own circuits. If you want to build circuits with more sophisticated features, then you should navigate through the rest of the help system to see what else you can do. Logisim is a powerful program, allowing you to build up and test huge circuits; this step-by-step process just scratches the surface.
+      </p>
+      <p>
+        <b>Retourner dans</b> <a href="../index.html">Guide utilisateur</a>
+      </p>
+    </div>
+  </body>
+</html>

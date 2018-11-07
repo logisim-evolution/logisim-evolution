@@ -1,10 +1,16 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0//EN">
 <html>
-<head>
-    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-<title>Пособие начинающего</title>
-</head>
-
-<body bgcolor="FFFFFF">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2018-10-23T06:18:42.262000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="ru">
+    <title>Пособие начинающего</title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
 
 <h1>Пособие начинающего</h1>
 
@@ -14,10 +20,72 @@
 
 <p>Logisim позволяет вам проектировать и моделировать цифровые схемы. Он задуман как образовательный инструмент, чтобы помочь вам узнать, как работают схемы.</p>
 
-<p>Чтобы попрактиковаться в использовании Logisim, давайте построим схему Исключающее ИЛИ - то есть схему, которая имеет два входа (которые мы будем называть <em>х</em> и <em>у</em> ) и выдаёт на выходе 0, если значения на входах одинаковые, и 1, если они разные. Это иллюстрирует следующая таблица истинности.
-<center><img src="../../../../en/img-guide/tutorial-xor-table.png" width="163" height="131"></center>
-Мы могли бы разработать такую схему на бумаге.
-<center><img src="../../../../en/img-guide/tutorial-xor-circ.png" width="323" height="147"></center>
+<p>Чтобы попрактиковаться в использовании Logisim, давайте построим схему Исключающее ИЛИ - то есть схему, которая имеет два входа (которые мы будем называть <var>х</var> и <var>у</var> ) и выдаёт на выходе 0, если значения на входах одинаковые, и 1, если они разные. Это иллюстрирует следующая таблица истинности.</p>
+
+ <center>
+        <table class="tblver">
+          <tbody>
+            <tr class="tblvertitl">
+              <th width="20">
+                x
+              </th>
+              <th width="20">
+                y
+              </th>
+              <th width="30">
+                x&nbsp;ИЛИ&nbsp;y
+              </th>
+            </tr>
+            <tr>
+              <td class="zerov">
+                0
+              </td>
+              <td class="zerov">
+                0
+              </td>
+              <td class="zerov">
+                0
+              </td>
+            </tr>
+            <tr>
+              <td class="unov">
+                1
+              </td>
+              <td class="zerov">
+                0
+              </td>
+              <td class="unov">
+                1
+              </td>
+            </tr>
+            <tr>
+              <td class="zerov">
+                0
+              </td>
+              <td class="unov">
+                1
+              </td>
+              <td class="unov">
+                1
+              </td>
+            </tr>
+            <tr>
+              <td class="unov">
+                1
+              </td>
+              <td class="unov">
+                1
+              </td>
+              <td class="zerov">
+                0
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </center>
+
+<p>Мы могли бы разработать такую схему на бумаге.
+<center><img class="notscal" src="../../../../img-guide/tutorial-xor-circ.png"></center>
 Но то, что она на бумаге, ещё не означает, что она правильная. Чтобы проверить нашу работу, мы нарисуем её в Logisim и проверим её. В качестве дополнительного бонуса мы получим схему, которая выглядит лучше, чем то, что вы, вероятно, могли бы нарисовать от руки.</p>
 
 <p><a href="tutor-orient.html">Шаг 0: Осваиваемся</a> <br><a href="tutor-gates.html">Шаг 1: Добавление логических элементов</a> <br><a href="tutor-wires.html">Шаг 2: Добавление проводов</a> <br><a href="tutor-text.html">Шаг 3: Добавление текста</a> <br><a href="tutor-test.html">Шаг 4: Проверка вашей схемы</a>
@@ -27,5 +95,4 @@
 
 <p><b>Далее:</b> <a href="tutor-orient.html">Шаг 0: Осваиваемся</a></p>
 
-</body>
-</html>
+</div></body></html>

@@ -1,17 +1,23 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0//EN">
 <html>
-<head>
-    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-<title>Задержки логических элементов</title>
-</head>
-
-<body bgcolor="FFFFFF">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2018-10-23T06:18:42.262000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="ru">
+    <title>Задержки логических элементов</title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
 
 <h1>Задержки логических элементов</h1>
 
 <p>В качестве примера уровня проработанности алгоритма Logisim рассмотрим следующую схему.</p>
-<center><img src="../../../../en/img-guide/prop-const0.png" width="171" height="55"></center>
+<center><img src="../../../../img-guide/prop-const0.png"></center>
 <p>Она "очевидно" всегда даёт 0 на выходе. Но элементы НЕ не реагируют мгновенно на сигналы на входах в реальности, и в Logisim - тоже. В результате, когда значение на входе этой цепи изменяется с 0 на 1, элемент И будет короткое время видеть 1 на обоих входах, и выдаст на выходе 1 на короткое время. Вы не увидите этого на экране. Но этот эффект можно наблюдать, если мы подадим выход элемента И на тактовый вход D триггера.</p>
-<center><img src="../../../../en/img-guide/prop-using-const0.png" width="231" height="68"></center>
+<center><img src="../../../../img-guide/prop-using-const0.png"></center>
 <p>Если вы нажмёте на вход чтобы изменить значение с 0 на 1, то на D триггер мгновенно придёт 1, и его значение будет переключаться каждый раз, когда значение на входе схемы меняется с 0 на 1.</p>
 
 <p>Каждый компонент имеет задержку, связанную с ним. Более сложные компоненты, встроенные в Logisim, как правило имеют большие задержки, но эти задержки несколько произвольны и могут не отражать реальность.</p>
@@ -24,5 +30,4 @@
 
 <p><strong>Далее:</strong> <a href="oscillate.html">Ошибки при возбуждении</a>.</p>
 
-</body>
-</html>
+</div></body></html>

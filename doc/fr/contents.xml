@@ -1,15 +1,21 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE toc
+  PUBLIC
+  "-//Sun Microsystems Inc.//DTD
+   JavaHelp TOC Version 2.0//EN"
+  "http://java.sun.com/products/javahelp/toc_2_0.dtd">
 <toc version="2.0" categoryclosedimage="chapter" topicimage="topic">
   <tocitem image="toplevelfolder" target="top" text="Logisim Références">
     <tocitem target="guide" text="Guide pour débuter avec Logisim">
       <tocitem target="tutorial" text="Guide du débutant">
-        <tocitem target="tutorial_orient" text="Etape 0: S'orienter'"/>
+        <tocitem target="tutorial_orient" text="Etape 0: S'orienter"/>
         <tocitem target="tutorial_gates" text="Etape 1: Ajouter des portes logiques"/>
         <tocitem target="tutorial_wires" text="Etape 2: Câblers"/>
         <tocitem target="tutorial_text" text="Etape 3: Ajouter du texte"/>
         <tocitem target="tutorial_test" text="Etape 4: Tester votre circuit"/>
+		<tocitem target="tutorial_step" text="Etape 5: Le mode pas-à-pas"/>
       </tocitem>
       <tocitem target="attrlib" text="l'interface graphique">
-       
        <tocitem target="attrlib_canvas" text="La surface de travail (Canvas)"/>
 	   <tocitem target="attrlib_menu" text="Les menus"/>
 	   <tocitem target="attrlib_explore" text="Le panneau de navigation"/>
@@ -29,11 +35,28 @@
         <tocitem target="bundles_splitting" text="Répartiteur"/>
         <tocitem target="bundles_colors" text="Couleur des câbles"/>
       </tocitem>
+	<tocitem target="mem_guide" text="Composant mémoire">
+<!--			<tocitem target="mem_poke" Memory poke" /> -->
+        <tocitem target="mem_menu" text="Menus Pop-up et fichiers"/>
+        <tocitem target="mem_hex" text="Editeur Hexadecimal"/>
+      </tocitem>
       <tocitem target="analyze" text="Analyse combinatoire">
         <tocitem target="analyze_open" text="Ouvrir l'analyse combinatoire"/>
         <tocitem target="analyze_table" text="Editer la table de vérité"/>
         <tocitem target="analyze_expr" text="Créer des expressions"/>
         <tocitem target="analyze_gen" text="Générer un circuit"/>
+      </tocitem>
+      <tocitem target="log" text="Chronogramme">
+        <tocitem target="log_selection" text="Sélection des signaux"/>
+		<tocitem target="log_timetable" text="Fenêtre Chronogramme " />	
+<!--        <tocitem target="log_table" text="Onglet table"/>
+            <tocitem target="log_file" text="Onglet fichier"/> -->
+      </tocitem>
+      <tocitem target="verify" text="Vérifications en ligne de commande/a&gt;">
+        <tocitem target="verify_sub" text="Echanges de librairies"/>
+        <tocitem target="verify_other" text="Autres options de vérification"/>
+        <tocitem target="verify_multi" text="Tester plusieurs fichiers"/>
+		<tocitem target="verify_test" text="Vecteurs de test"/>
       </tocitem>
       <tocitem target="menu" text="Référence des menus">
         <tocitem target="menu_file" text="Menu fichier"/>
@@ -41,21 +64,8 @@
         <tocitem target="menu_project" text="Menu projet"/>
         <tocitem target="menu_simulate" text="Menu simulation"/>
         <tocitem target="menu_winhelp" text="Menus fenêtre et aide"/>
-      </tocitem>
-      <tocitem target="mem_guide" text="Composant mémoire">
-        <tocitem target="mem_poke" text="Editer la mémoire"/>
-        <tocitem target="mem_menu" text="Menus Pop-up et fichiers"/>
-        <tocitem target="mem_hex" text="Editeur Hexadecimal"/>
-      </tocitem>
-      <tocitem target="log" text="Journalisation">
-        <tocitem target="log_selection" text="Onglet de sélection"/>
-        <tocitem target="log_table" text="Onglet table"/>
-        <tocitem target="log_file" text="Onglet fichier"/>
-      </tocitem>
-      <tocitem target="verify" text="Vérifications en ligne de commande/a&gt;">
-        <tocitem target="verify_sub" text="Echanges de librairies"/>
-        <tocitem target="verify_other" text="Autres options de vérification"/>
-        <tocitem target="verify_multi" text="Tester plusieurs fichiers"/>
+        <tocitem target="menu_exportab" text="Exportation d'images "/>  
+		<tocitem target="menu_printertab" text="Imprimer "/>		
       </tocitem>
       <tocitem target="prefs" text="Préférences de l'application">
         <tocitem target="prefs_template" text="L'onglet modèle"/>
@@ -75,6 +85,13 @@
         <tocitem target="prop_oscillate" text="Erreurs oscillatoire"/>
         <tocitem target="prop_shortcome" text="Limitations"/>
       </tocitem>
+	  <tocitem target="hdl-ip" text="HDL IP">
+			<tocitem target="hdl-ip_vhdlcomp" text="Entités VHDL" />
+			<tocitem target="hdl-ip_questa" text="Confugurer Questa Advanced Simulator" />
+			<tocitem target="hdl-ip_simulation" text="Simulateur VHDL" />
+			<tocitem target="hdl-ip_testbenchs" text="Simuler en bancs d'essai" />
+		</tocitem>
+	  <tocitem target="users" text="Users" />
       <tocitem target="jar" text="Librairies JAR">
         <tocitem target="jar_incr" text="Ajout en codage de Gray"/>
         <tocitem target="jar_library" text="Classe librairie"/>
@@ -84,8 +101,10 @@
       </tocitem>
       <tocitem target="about" text="A propos du programme">
         <tocitem target="about_gpl" text="GNU General Public License"/>
+		<tocitem target="about_gpl_tr)" text="GNU General Public License (fr)"/>
       </tocitem>
     </tocitem>
+	
     <tocitem target="libs" text="Référence de la bibliothèque">
       <tocitem target="wiring" text="Librairies câblage">
         <tocitem target="wiring_splitter" image="icon_splitter" text="Répartiteur"/>
@@ -145,6 +164,9 @@
         <tocitem target="io_dotmat" image="icon_dotmat" text="LED Matrix"/>
         <tocitem target="io_tty" image="icon_tty" text="TTY"/>
       </tocitem>
+	  <tocitem target="hdl" text="HDL-IP">
+		<tocitem target="hdl_vhdlentity" text="VHDL Entity" image="icon_vhdl" />
+      </tocitem>
       <tocitem target="base" text="Base library">
         <tocitem target="base_poke" image="icon_poke" text="Poke Tool"/>
         <tocitem target="base_edit" image="icon_edit" text="Edit Tool"/>
@@ -154,6 +176,13 @@
         <tocitem target="base_menu" image="icon_menu" text="Menu Tool"/>
         <tocitem target="base_label" image="icon_label" text="Text"/>
       </tocitem>
+	  <tocitem target="tcl" text="TCL library">
+          <tocitem target="tcl_reds_console" text="REDS console" image="icon_reds_console" />
+          <tocitem target="tcl_generic" text="Generic" image="icon_generic" />
+      </tocitem>
     </tocitem>
+	
+	
+	
   </tocitem>
 </toc>
