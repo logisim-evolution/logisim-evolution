@@ -19,6 +19,10 @@ img.notscal {
 	width:auto;
 	vertical-align:middle;
 }
+img.iconlibs{
+	height:32;
+	width:32;
+}
 /* For spaces, page background */
 div.maindiv {
 	max-width:560px;

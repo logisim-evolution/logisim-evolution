@@ -22,6 +22,9 @@
       <p>
         Por padrão, quando um subcircuito é colocado dentro de um circuito maior, ele será desenhado como um retângulo com um entalhe indicando a face norte do subcircuito. Pinos serão colocados nas bordas do retângulo com base em sua direção: pinos virados para o leste no <i>layout</i> (e que geralmente aparecem no lado oeste) serão colocados no lado do retângulo oeste, de acordo com sua ordem de cima para baixo no <i>layout</i>. Pinos que estiverem virados para o sul no <i>layout</i> (normalmente na direção norte) serão colocados no lado norte do retângulo, de acordo com a ordem da esquerda para a direita no <i>layout</i>.
       </p>
+      <center>
+        <img class="notscal" src="../../../../img-guide/subcirc-default-appear.png" alt="#########">
+      </center>
       <p>
         O retângulo padrão poderá opcionalmente incluir algumas letras que aparecerão no meio. Para especificar isso, escolher a ferramenta de seleção (<img class="intxt" src="../../../../icons/select.gif" alt="#########">) e clicar no fundo do <i>layout</i> do circuito. Isso irá mostrar a tabela de atributos do circuito, incluindo o rótulo, direçao da etiqueta, e fonte de rótulos. O valor do atributo Rótulo será desenhado no centro do retângulo; o atributo da direção da etiqueta para personalizar o sentido em que o texto será desenhado, e, claro, atributo que personaliza a fonte utilizada.
       </p>
@@ -29,7 +32,7 @@
         Forma personalizada
       </h2>
       <p>
-        A forma padrão é muito útil, e de fato Logisim existiu por muitos anos, sem outra opção. Se, no entanto, preferir que o subcircuito seja desenhado de forma diferente, você poderá selecionar <q>Editar Forma do Circuito</q> a partir do menu de projeto, e o Logisim mudará da sua interface normal de edição de <i>layout</i> para outra capaz de alterar a forma (aparência) do circuito. Abaixo, editaremos a aparência do multiplexador 2:1, para que seja desenhada como de costume por um trapézio, em vez de um retângulo. (Você poderá ver a barra de ferramentas do projeto, logo abaixo da normal. Isso poderá ser ativado através do menu de projeto, e ela permitirá uma mudança mais rápida entre a edição de <i>layout</i> e da forma.)
+        A forma padrão é muito útil, e de fato Logisim existiu por muitos anos, sem outra opção. Se, no entanto, preferir que o subcircuito seja desenhado de forma diferente, você poderá selecionar menu <b class="menu">|&nbsp;projeto&nbsp;|</b>→<b class="menu">|&nbsp;Editar Forma do Circuito&nbsp;|</b><q>Editar Forma do Circuito</q>, e o Logisim mudará da sua interface normal de edição de <i>"layout"</i> para outra capaz de alterar a forma "aparência" do circuito. Abaixo, editaremos a aparência do multiplexador 2:1, para que seja desenhada como de costume por um trapézio, em vez de um retângulo. (Você poderá ver a barra de ferramentas do projeto, logo abaixo da normal. Isso poderá ser ativado através do menu de projeto, e ela permitirá uma mudança mais rápida entre a edição de <i>layout</i> e da forma.)
       </p>
       <blockquote>
         <img src="../../../img-guide/subcirc-custom-appear.png" alt="#########">
@@ -44,12 +47,15 @@
         O editor de forma (aparência) é como um programa para desenho tradicional, mas há alguns símbolos especiais para indicar como o desenho funcionará quando colocado em um <i>layout</i> de circuito. Esses símbolos especiais não poderão ser removidos.
       </p>
       <ul>
-        <li>O círculo verde com uma linha que vem de fora, chamaremos de <q>âncora.</q> Há exatamente uma âncora em cada subcircuito. Cada componente em um circuito tem um único ponto para identificar a sua localização; um usuário verá isso ao criar um novo componente. O clique do mouse identificará apenas um local e, o componente será colocado em relação a ele (geralmente com a saída principal na posição do mouse). A âncora identificará a localização relativa ao desenho global do mouse quando o subcircuito for criado.
+        <li>
+          <p>
+            O círculo verde com uma linha que vem de fora, chamaremos de <b>âncora.</b>(<img class="intxt" src="../../../../img-guide/anchor.png" alt="#########">). Há exatamente uma âncora em cada subcircuito. Cada componente em um circuito tem um único ponto para identificar a sua localização; um usuário verá isso ao criar um novo componente. O clique do mouse identificará apenas um local e, o componente será colocado em relação a ele (geralmente com a saída principal na posição do mouse). A âncora identificará a localização relativa ao desenho global do mouse quando o subcircuito for criado.
+          </p>
           <p>
             A âncora também identificará a direção em sua aparência, conforme indicado pela direção da linha de pontos da âncora de seu círculo. Ao colocar um subcircuito em um <i>layout</i>, o usuário poderá mudar a face do subcircuito, a âncora indicará a direção em que a aparência será orientada. No nosso exemplo, a âncora será voltada para o leste, e cada instância do subcircuito no multiplexador 4:1 também estará voltada para o leste, então eles serão todos desenhados com a mesma orientação que a aparência do multiplexador 2:1.
           </p>
         </li>
-        <li>Os círculos azuis e quadrados com pontos são as <q>portas</q> dos subcircuitos Haverá exatamente tantas portas quantos os pinos de entrada e saída no circuito. Portas correspondentes às entradas serão desenhadas como quadrados, enquanto as portas correspondentes às saídas serão desenhados como círculos. Cada porta indicará como uma conexão para o circuito corresponderá a um pino de entrada ou saída dentro do <i>layout</i>.
+        <li>Os círculos azuis (<img class="intxt" src="../../../../img-guide/pinoutput.png" alt="#########">)e quadrados com pontos (<img class="intxt" src="../../../../img-guide/pininput.png" alt="#########">) são as <b>portas</b> dos subcircuitos Haverá exatamente tantas portas quantos os pinos de entrada e saída no circuito. Portas correspondentes às entradas serão desenhadas como quadrados, enquanto as portas correspondentes às saídas serão desenhados como círculos. Cada porta indicará como uma conexão para o circuito corresponderá a um pino de entrada ou saída dentro do <i>layout</i>.
           <p>
             Quando você selecionar uma porta, o Logisim indicará o pino correspondente fazendo sobressair um diagrama em miniatura do layout no canto inferior direito da janela, com o(s) pino(s) correspondente(s) desenhado(s_ em azul. Isso não acontecerá quando todas as portas estiverem selecionados.
           </p>
@@ -58,7 +64,6 @@
       <p>
         A barra de ferramentas contém aquelas para adicionar formas adicionais, conforme listado abaixo com descrições de como as teclas shift e alt modificam o comportamento da ferramenta. Além disso, clicando ou arrastando o mouse com a tecla control pressionada normalmente remeterá a posição do mouse para o ponto mais próximo na grade.
       </p>
-	  
       <table class="toolslist">
         <tbody>
           <tr>

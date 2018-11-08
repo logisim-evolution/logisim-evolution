@@ -9,7 +9,7 @@
     <title>
       Разветвители
     </title>
-    <link rel="stylesheet" type="text/css" href="../../../style.css">
+    <link rel="stylesheet" type="text/css" href="../../style.css">
   </head>
   <body>
     <div class="maindiv">
@@ -32,16 +32,80 @@
         <img class="notscal" src="../../../../img-guide/bundles-splitter-2way.png" alt="#########">
       </center>
       <p>
-        Ключ к пониманию разветвителей - их атрибуты. Далее термин <em>разъединённый конец</em> относится к одному из нескольких проводов на одной стороне, а термин <em>объединённый конец</em> относится к одиночному проводу на другой стороне.
+        Ключ к пониманию разветвителей - их атрибуты. Далее термин <b>разъединённый конец</b> относится к одному из нескольких проводов на одной стороне, а термин <b>объединённый конец</b> относится к одиночному проводу на другой стороне.
       </p>
       <ul>
-        <li>Атрибут <strong>Направление</strong> говорит о том, где должны быть разъединённые концы по отношению к объединённому концу.
+        <li>Атрибут <b class="propertie">Направление</b> говорит о том, где должны быть разъединённые концы по отношению к объединённому концу.
+		<div>
+            <table>
+              <tbody>
+                <tr>
+                  <td valign="top">
+                    объединённый конец
+                  </td>
+                  <td>
+                    <br>
+                    <img class=notscal src="../../../../img-libs/splitter-right.png" align="middle" alt="#########">
+                  </td>
+                  <td>
+                    разъединённый конец
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </li>
-        <li>Атрибут <strong>Веерный выход</strong> определяет, сколько должно быть разъединённых концов.
+        <li>Атрибут <b class="propertie">Веерный выход</b> определяет, сколько должно быть разъединённых концов.
         </li>
-        <li>Атрибут <strong>Разрядность входа</strong> определяет разрядность объединённого конца.
+        <li>Атрибут <b class="propertie">Разрядность входа</b> определяет разрядность объединённого конца.
         </li>
-        <li>Атрибут <strong>Бит <var>x</var></strong> определяет, какой разъединённый конец соответствует биту <em>x</em> объединённого конца. Если несколько битов соответствуют одному и тому же разъединённому концу, то их относительный порядок будет тем же, что и в объединённом конце. Разветвители в Logisim не могут иметь соответствие бита в объединённом конце нескольким разъединённым концам.
+		<li>L'attribut <b class="propertie">Apparence</b> définit la manière dont le composant est dessiné par rapport à son Bus.<br>
+          <div class="twodiv">
+            <table>
+              <tbody>
+                <tr>
+                  <td>
+                    <img class=notscal src="../../../../img-guide/splitter-right.png" align="middle" alt="#########">
+                  </td>
+                  <td>
+                    <img class=notscal src="../../../../img-guide/splitter-left.png" align="middle" alt="#########">
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    A droite
+                  </td>
+                  <td>
+                    A gauche
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="twodiv">
+            <table>
+              <tbody>
+                <tr>
+                  <td>
+                    <img src="../../../../img-guide/splitter-center.png" align="middle" alt="#########">
+                  </td>
+                  <td>
+                    <img src="../../../../img-guide/splitter-legacy.png" align="middle" alt="#########">
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    Au centre
+                  </td>
+                  <td>
+                    Héritage
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </li>
+        <li>Атрибут <b class="propertie">Бит</b> <var>x</var> определяет, какой разъединённый конец соответствует биту <var>x</var> объединённого конца. Если несколько битов соответствуют одному и тому же разъединённому концу, то их относительный порядок будет тем же, что и в объединённом конце. Разветвители в Logisim не могут иметь соответствие бита в объединённом конце нескольким разъединённым концам.
         </li>
       </ul>
       <p>
