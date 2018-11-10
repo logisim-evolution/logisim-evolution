@@ -23,13 +23,19 @@
               <img src="../../../img-guide/attrib-explor.png" alt="#########">
             </td>
             <td valign="top">
-              The navigation panel has two functions. It can present the circuits being simulated in the view <a href="../subcirc/debug.html">simulation</a> or as here the circuits in the top and the lower the libraries represented by folders. These libraries include tools you can use in your projects.
+              The navigation panel has two functions. It can present the circuits being simulated in the <a href="../subcirc/debug.html">simulation</a> view or as here the circuits at the top of the list and the lower libraries represented by folder icons. These libraries include tools you can use in your projects.
             </td>
           </tr>
         </tbody>
       </table>
       <p>
         Logisim организует инструменты в <strong>библиотеки</strong>. Они отображаются в виде папок в панели проводника; для доступа к компонентам библиотеки вам нужно дважды щёлкнуть соответствующую папку. Ниже я открыл библиотеку Элементы и выбрал инструмент И-НЕ из неё. Вы видите, что Logisim теперь готов добавить элемент И-НЕ в схему.
+      </p>
+	  <p>
+        To access the components of a library just open the library with a <b class="tkeybd">double-click</b> the corresponding folder or a <b class="tkeybd">click</b> on the tiny key then select the tool with a <b class="tkeybd">right-click</b> on the tool. Then move the mouse cursor over the canvas and a ghost drawing of the tool will follow the mouse cursor until you make the last click on the surface to drop it to the chosen location.
+      </p>
+      <p>
+        Below, I have opened the Gates library and selected the NAND tool from it. You can see that Logisim now stands ready to add NAND gates into the circuit.
       </p>
       <center>
         <img src="../../../img-guide/attrlib-nand-select.png" alt="#########">
@@ -57,40 +63,40 @@
         </li>
 		</li>
 		 <li>
-          <b>TCL:</b>
+          <b>TCL:</b> Я не документировал на данный момент
         </li>
         <li>
-          <b>HDL-IP:</b>
+          <b>HDL-IP:</b> Я не документировал на данный момент
         </li>
         <li>
-          <b>BFH mega function:</b>
+          <b>BFH mega function:</b> Я не документировал на данный момент
         </li>
       </ul>
       <p>
-        Logisim также позволяет вам добавлять другие библиотеки с помощью подменю Загрузить библиотеку в меню Проект. Вы видите, что Logisim имеет три категории библиотек.
+        Logisim также позволяет вам добавлять другие библиотеки с меню <b class="menu">|&nbsp;Проект&nbsp;|</b> → <b class="menu">|&nbsp;Загрузить библиотеки...&nbsp;|</b> или Теперь <b class="tkeybd">путем левого</b> щелчка один  корня проекта исследователь проекта. Вы можете видеть, что Logisim имеет три категории библиотек.
       </p>
       <ul>
         <li>
-          <strong>Встроенные библиотеки</strong> - библиотеки, распространяющиеся с Logisim. Они описаны в <em><a href="../../libs/index.html">Справке по библиотеке</a></em>.
+          <strong>Встроенные библиотеки</strong> - библиотеки, распространяющиеся с Logisim. Они описаны в <a href="../../libs/index.html">Справке по библиотеке</a>.
         </li>
         <li>
           <strong>Библиотеки Logisim</strong> - проекты, построенные в Logisim и сохранённые на диск как проект Logisim. Вы можете разработать набор схем в одном проекте (как описано в разделе <a href="../subcirc/index.html">Подсхемы</a> данного руководства), а затем использовать этот набор схем в виде библиотеки для других проектов.
         </li>
         <li>
-          <strong>Библиотеки JAR</strong> - библиотеки, разработанные в Java, но не распространяемые вместе с Logisim. Вы можете скачать JAR библиотеки, написанные другими людьми, или же вы можете написать свои собственные, как описано в разделе <a href="../jar/index.html">Библиотеки JAR</a> этого руководства. Разработка JAR библиотеки гораздо сложнее, чем разработка библиотеки Logisim, но компоненты могут быть гораздо более необычными, в том числе в плане атрибутов и взаимодействия с пользователем. Встроенные библиотеки (кроме библиотеки Базовые) были написаны с использованием того же API, что могут использовать библиотеки JAR, так что они удачно демонстрируют набор функциональных возможностей, которые JAR библиотеки могут поддерживать.
+          <strong>Библиотеки JAR</strong> - библиотеки, разработанные в Java, но не распространяемые вместе с Logisim. Вы можете скачать JAR библиотеки, написанные другими людьми, или же вы можете написать свои собственные, как описано в разделе <a href="../jar/index.html">Библиотеки JAR</a> этого руководства. Разработка JAR библиотеки гораздо сложнее, чем разработка библиотеки Logisim, но компоненты могут быть гораздо более необычными, в том числе в плане атрибутов и взаимодействия с пользователем. Встроенные библиотеки (кроме библиотеки <b class="propertie">Базовые</b>) были написаны с использованием того же API, что могут использовать библиотеки JAR, так что они удачно демонстрируют набор функциональных возможностей, которые JAR библиотеки могут поддерживать.
           <p>
             Некоторые JAR библиотеки распространяются без какой-либо информации о том, с какого класса Java начинать. При загрузке таких JAR, Logisim предложит вам ввести имя класса. Это имя класса должно быть предоставлено тем, кто распространяет этот JAR файл.
           </p>
         </li>
       </ul>
       <p>
-        Чтобы удалить библиотеку, выберите Выгрузить библиотеки... из меню Проект. Logisim предостережёт вас от выгрузки библиотек, которые содержат компоненты, используемые в схеме, присутствующие в панели инструментов, или привязанные к кнопке мыши.
+        Чтобы удалить библиотеку, выберите меню <b class="menu">|&nbsp;Проект&nbsp;|</b>→<b class="menu">|&nbsp;Выгрузить библиотеки...&nbsp;|</b> .Logisim предостережёт вас от выгрузки библиотек, которые содержат компоненты, используемые в схеме, присутствующие в панели инструментов, или привязанные к кнопке мыши.
       </p>
 	  <center>
         <img class="notscal" src="../../../img-guide/subcirc-remlib.png" alt="#########">
       </center>
       <p>
-        Кстати, технически библиотека содержит инструменты, а не компоненты. Так, в библиотеке Базовые вы найдете Инструмент Нажатие (<img class="intxt" src="../../../../icons/poke.gif" alt="#########">), Инструмент Правка(<img class="intxt" src="../../../../icons/select.gif" alt="#########">), и другие инструменты, которые не связаны напрямую с конкретными компонентами. Большинство библиотек, однако, содержат лишь инструменты для добавления отдельных компонентов; все встроенные библиотеки, кроме библиотеки Базовые - как раз такие.
+        Кстати, технически библиотека содержит инструменты, а не компоненты. Так, в библиотеке Базовые вы найдете Инструмент <b class="propertie">Нажатие</b> (<img class="intxt" src="../../../../icons/poke.gif" alt="#########">), Инструмент <b class="propertie">Правка</b> (<img class="intxt" src="../../../../icons/select.gif" alt="#########">), и другие инструменты, которые не связаны напрямую с конкретными компонентами. Большинство библиотек, однако, содержат лишь инструменты для добавления отдельных компонентов; все встроенные библиотеки, кроме библиотеки Базовые - как раз такие.
       </p>
       <p>
         <strong>Далее:<a href="toolsbar.html">Панели инструментов</a>.
