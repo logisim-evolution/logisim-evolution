@@ -114,10 +114,10 @@ class WindowOptions extends OptionsPanel {
 		
 		panel.add(new JLabel(" "));
 		panel.add(new JLabel(" "));
-		JLabel important = new JLabel(Strings.getter("windowToolbarPleaserestart"));
+		JLabel important = new JLabel(Strings.get("windowToolbarPleaserestart"));
 	    important.setFont(important.getFont().deriveFont(Font.ITALIC));
 	    panel.add(important);
-	    important = new JLabel(Strings.getter("windowToolbarImportant"));
+	    important = new JLabel(Strings.get("windowToolbarImportant"));
 	    important.setFont(important.getFont().deriveFont(Font.ITALIC));
 	    panel.add(important);
 		panel.add(ZoomLabel);
@@ -135,7 +135,7 @@ class WindowOptions extends OptionsPanel {
 			}
 			index++;
 		}
-		panel.add(new JLabel(Strings.getter("windowToolbarLookandfeel")));
+		panel.add(new JLabel(Strings.get("windowToolbarLookandfeel")));
 		panel.add(LookAndFeel);
 		LookAndFeel.addActionListener(Listener);
 
