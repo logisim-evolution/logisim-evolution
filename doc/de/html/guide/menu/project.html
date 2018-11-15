@@ -16,7 +16,7 @@
       <h1>
         Das Projektmenü
       </h1>
-      <dl>
+  <dl>
         <dt>
           <strong>Add Circuit...</strong>
         </dt>
@@ -62,23 +62,15 @@
         </dt>
         <dd>
           <p>
-            Sets the currently displayed circuit to be the project's <q>main circuit.</q> (This menu item will be grayed out if the current circuit is already the project's main circuit.) The only significance of the main circuit is that it is the circuit that first appears when a project file is opened.
+            Sets the currently displayed circuit to be the project's <b>main circuit.</b> This menu item will be grayed out if the current circuit is already the project's main circuit. The only significance of the main circuit is that it is the circuit that first appears when a project file is opened.
           </p>
         </dd>
-        <dt>
-          <strong>Edit Circuit Layout</strong>
+		<dt>
+          <strong>Remove Circuit</strong>
         </dt>
         <dd>
           <p>
-            Switches to allow you to edit how the layout of components that determines how the circuit works. This is what the program does when it starts, and you will edit circuit layouts most often using Logisim, so this menu item is normally disabled.
-          </p>
-        </dd>
-        <dt>
-          <strong>Edit Circuit Appearance</strong>
-        </dt>
-        <dd>
-          <p>
-            Switches to allow you to edit how the circuit will be represented when it is used as a subcircuit within another circuit. By default, the circuit is represented as a rectangle with a gray <q>notch</q> on its north end, but this menu option allows you to draw a different appearance for the subcircuit.
+            Removes the currently displayed circuit from the project. Logisim will prevent you from removing circuits that are used as subcircuits, and it will prevent you from removing the final circuit in a project.
           </p>
         </dd>
         <dt>
@@ -90,11 +82,35 @@
           </p>
         </dd>
         <dt>
-          <strong>Remove Circuit</strong>
+          <strong>View Toolbox</strong>
         </dt>
         <dd>
           <p>
-            Removes the currently displayed circuit from the project. Logisim will prevent you from removing circuits that are used as subcircuits, and it will prevent you from removing the final circuit in a project.
+            Changes the explorer pane to displaying a list of the project's circuits and the libraries that have been loaded.
+          </p>
+        </dd>
+        <dt>
+          <strong>View Simulation Tree</strong>
+        </dt>
+        <dd>
+          <p>
+            Changes the explorer pane to displaying the hierarchy of subcircuits in the current simulation.
+          </p>
+        </dd>
+        <dt>
+          <strong>Edit Circuit Layout</strong>
+        </dt>
+        <dd>
+          <p>
+            Switches to allow you to edit the layout of components, which determines how the circuit works. This menu item is usually disabled since you will usually be editing the layout anyway.
+          </p>
+        </dd>
+        <dt>
+          <strong>Edit Circuit Appearance</strong>
+        </dt>
+        <dd>
+          <p>
+            Switches to allow you to edit how the circuit will be represented when it is used as a subcircuit within another circuit. But this menu option allows you to draw a different appearance for the subcircuit.
           </p>
         </dd>
         <dt>
@@ -102,6 +118,8 @@
         </dt>
         <dd>
           <p>
+            <b class="note">Note:</b>Ce menu est désactivé par défaut dans la version courante de logisim-evolution. Il peut être réactivé par des options de la ligne de commande.<br>
+            <br>
             Computes a truth table and Boolean expressions corresponding to the current circuit, displaying them in <a href="../analyze/index.html">the Combinational Analysis window</a>. The analysis process will only be valid for combinational circuits. A full description of the analysis process is described <a href="../analyze/open.html">in the Combinational Analysis section</a>.
           </p>
         </dd>
@@ -112,7 +130,7 @@
           <p>
             Shows a dialog containing statistics about components used by the currently viewed circuit. The dialog includes a table with five columns:
           </p>
-		  <center>
+          <center>
             <img src="../../../img-guide/project-stat.png" alt="#########">
           </center>
           <ul>
