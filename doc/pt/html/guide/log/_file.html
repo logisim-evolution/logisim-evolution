@@ -1,0 +1,65 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2018-10-23T06:18:42.262000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="pt">
+    <title>A guia Arquivos (File)</title>
+    <link rel="stylesheet" type="text/css" href="..\..\style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+
+<h1>A guia Arquivos (File)</h1>
+
+<p> A guia Arquivo (File) permitirá que você especifique onde o registro deverá
+ser colocado. 
+</p>
+
+<center><img src="../../../img-guide/log-file.png" width="466" height="387"></center>
+
+<p> Na parte superior há um indicador se existir registro em andamento e
+um botão para ativá-lo ou desativá-lo. (Note que você não poderá habilitá-lo
+até que um arquivo seja selecionado mais abaixo.) Um botão lhe permitirá
+suspender e reiniciar gravações no arquivo. Quando você escolher a janela do projeto
+para a visualização outra simulação, o arquivo de registros irá parar automaticamente
+e, se você retornar ao original, e quiser continuar a registrar, você precisará
+reativar a gravação manualmente utilizando o botão na parte superior.
+</p>
+
+<p> No meio, há um indicador do que está sendo gravado no arquivo. Para
+alterá-lo, deve-se usar o botão Selecionar (Select). Ao fazer isso, a gravação
+será iniciada automaticamente. Se você selecionar um arquivo pré-existente, o Logisim
+perguntará se você deseja substituir o arquivo ou acrescentar novos
+registros ao seu final.
+</p>
+
+<p> Na parte inferior você poderá controlar se uma linha de cabeçalho deverá
+ser colocada no arquivo para indicar quais itens estarão na seleção. Se linhas de
+cabeçalho forem adicionadas, então, uma nova linha de cabeçalho também será colocada
+no arquivo sempre que a seleção for alterada.
+</p>
+
+<h2> Formato de arquivo </h2>
+
+<p> As entradas serão colocadas no arquivo em formato delimitado por tabulações
+correspondentes o mais próximo possível do que aparecer sob a guia Tabela. (Uma
+diferença é que todas as linhas de cabeçalho irão fornecer o caminho completo
+para os componentes em subcircuitos.) O formato é intencionalmente simples,
+de modo que você poderá submetê-lo a outro programa para ser processado, como um
+<i>script</i> Python/Perl ou um gerenciador de planilhas.
+</p>
+
+<p> Assim um <i>script</i> poderá processar o arquivo, ao mesmo tempo em que o Logisim
+estiver em execução, liberando novos registros para o disco a cada
+500 ms. Note-se que Logisim também poderá fechar intermitentemente e depois
+reabrir o arquivo durante a simulação, especialmente se alguns segundos
+decorrerem sem que qualquer novo registro tenha sido adicionado. 
+</p>
+
+<p><strong>Próximo:</strong> <em><a href="../index.html"><em>Guia do usuário</em></a></em>.</p>
+</div>
+</body>
+</html>

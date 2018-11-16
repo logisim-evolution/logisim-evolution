@@ -1,0 +1,35 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2018-10-23T06:18:42.262000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="de">
+    <title>Die Registerkarte "Datei"
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+
+<h1>Die Registerkarte "Datei"</h1>
+
+<p>Die Registerkarte "Datei" erlaubt es, die Datei anzugeben, die das Protokoll aufnehmen soll.</p>
+
+<center><img src="../../../../en/img-guide/log-file.png"></center>
+
+<p>Oben wird angezeigt, ob die Ablaufverfolgung aktiviert ist, und eine Schaltfläche um das Loggen zu aktivieren und zu deaktivieren. (Beachten Sie, daß vor der Aktivierung eine Datei ausgewählt sein muß.) Die Schaltfläche erlaubt es, das Loggen zeitweise anzuhalten und fortzusetzen. Wenn Sie im Projektfenster auf eine andere Simulation wechseln, wird das Loggen automatisch angehalten. Wenn Sie danach wieder zur ursprünglichen Simulation zurückschalten, dann müssen Sie das Loggen über diese Schaltfläche manuell wieder starten.</p>
+
+<p>In der Mitte wird angezeigt, in welche Datei protokolliert wird. Um diese zu ändern, benutzen Sie die Schaltfläche "Auswählen...". Nach der Auswahl einer Datei startet das Loggen automatisch. Wenn die ausgewählte Datei bereits existiert, wird Logisim fragen, ob Sie die Datei überschreiben, oder das neue Protokoll am Ende der Datei anhängen möchten.</p>
+
+<p>Unten können Sie auswählen, ob eine Kopfzeile in die Datei geschrieben werden soll, die angibt, welche Elemente sich in der Auswahl befinden. Wenn Kopfzeilen abgespeichert werden, dann wird jeweils eine neue Kopfzeile geschrieben, wenn sich die Auswahl ändert.</p>
+
+<h2>Dateiformat</h2>
+
+<p>Einträge werden in einem durch Tabulatoren abgegrenzten Format geschrieben, das dem Inhalt der Registerkarte "Tabelle" ähnelt. (Ein Unterschied ist, daß eine Kopfzeile den vollständigen Pfad zu Bauelementen angeben würde, die sich in Teilschaltungen befinden.) Das Format ist absichtlich sehr einfach gehalten, damit Sie die Daten leicht in ein anderes Programm zur Auswertung übernehmen können, wie z.B. ein Python/Perl-Skript oder eine Tabellenkalkulation.</p>
+
+<p>Damit ein anderes Programm gleichzeitig auf die Daten zugreifen kann, während die Simulation in Logisim läuft, werden die Daten alle 500 ms weggeschrieben. Beachten Sie auch, daß Logisim die Datei zwischenzeitlich schließen und später wieder öffnen kann, insbesondere dann, wenn mehrere Sekunden vergehen, bevor neue Daten hinzugefügt werden.</p>
+
+<p><strong>Weiter:</strong> <em><a href="../index.html"><em>Leitfaden für Benutzer von Logisim</em></a></em>.</p>
+</div></body></html>
