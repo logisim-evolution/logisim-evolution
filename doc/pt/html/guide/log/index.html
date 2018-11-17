@@ -6,59 +6,45 @@
     <meta name="changed" content="2018-10-23T06:18:42.262000000">
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <meta http-equiv="Content-Language" content="pt">
-    <title>Registro</title>
+    <title>
+      Cronograma
+    </title>
     <link rel="stylesheet" type="text/css" href="..\..\style.css">
   </head>
   <body>
     <div class="maindiv">
-
-<h1>Registro</h1>
-
-<p> Ao testar um circuito maior, e para documentar seu comportamento,
-um registro poderá ser guardado. Essa é a finalidade do módulo de registro do Logisim,
-que lhe permitirá selecionar os componentes cujos valores deverão ser registrados,
-opcionalmente, você poderá especificar um arquivo onde o registro deverá ser colocado.
-</p>
-
-<strong> Nota: </strong> O módulo de registro está em fase <i>alfa</i>, e poderá
-apresentar defeitos, bem como estar sujeito a alterações significativas no futuro.
-Enquanto relatórios de <i>bugs</i> e sugestões são bem-vindos para todos os casos, 
-eles serão particularmente bem-vindos a respeito desse recurso relativamente novo. 
-Se você não enviar comentários, então ele provavelmente não sofrerá alterações.
-</p>
-
-<p> Você poderá entrar no módulo através da opção Registro (Logging)...
-no menu Simular (Simulate). Ela abrirá uma janela com três guias.
-</p>
-
-<center><img src="../../../img-guide/log-selection.png"></center>
-
-<p>
-Vamos discutir cada uma dessas guias separadamente.
-</p>
-
-<blockquote>
-<a href="selection.html"> A guia Seleção </a>
-<br> <a href="table.html"> A guia Tabela </a>
-<br> <a href="file.html"> A guia Arquivo </a>
-</blockquote>
-</p>
-
-<p> Cada projeto tem apenas uma janela de registro; quando você alternar 
-para a visualização de outro circuito dentro do projeto, haverá troca de janelas,
-e automaticamente o foco irá mudar para o outro circuito. Ou seja, ele fará
-isso a menos que você esteja <a href="../subcirc/debug.html"> movendo para cima ou 
-para baixo dentro da mesma simulação </a>, caso em que o módulo de registro não
-irá se alterar. 
-</p>
-
-<p> Observe que, quando as opções de módulo de registro mudarem para outra
-simulação, ela deixará de gravar qualquer registro em arquivo. Se você alternar
-de volta para a simulação novamente, ele irá se lembrar da configuração para
-a simulação anterior, mas você terá que reativar o registro manualmente.
-</p>
-
-<p><strong>Próximo:</strong> <a href="selection.html">A guia Seleção (Selection)</a>.</p>
-</div>
-</body>
+      <h1>
+        Cronograma
+      </h1>
+	  <blockquote>
+        <em>Sous-sections:</em><br>
+        <a href="selection.html">Seleção de sinal</a><br>
+        <a href="timetable.html">Janela Cronograma</a>
+      </blockquote>
+      <p>
+        Para entender ou depurar um circuito, muitas vezes é muito útil poder observar os vários sinais de maneira visual, essa é a finalidade do cronograma. Este módulo permite a gravação de sinais em forma gráfica ou em uma tabela de valores em um arquivo de texto.
+      </p>
+      <center>
+        <img src="../../../img-guide/log-graph1.png" alt="#########">
+      </center>
+      <p>
+	  	Você pode entrar no módulo de registro via <b class="menu">|&nbsp;Simulation&nbsp;|</b>→<b class="menu">|&nbsp;Chronogramme&nbsp;|</b>. Ele traz a janela de seleção de sinal.
+      </p>
+      <p>
+        O circuito abaixo é um exemplo ilustrativo para o módulo de temporização. <br>
+      </p>
+	  <center>
+        <img class="notscal" src="../../../../img-guide/log-counter.png" alt="#########">
+      </center>
+      <p>
+	  Estes são os relógios que servem como um driver para exibir sinais. A simulação conhece dois relógios específicos. Um é imperativo e chamado <var>sysclk</var> e outro opcional e secundário chamado clkEstes são os relógios que servem como um driver para exibir sinais. A simulação conhece dois relógios específicos. Um é imperativo e chamado <var>sysclk</var> e outro opcional e secundário chamado <var>clk</var>
+      </p>
+      <p>
+      <b class="note">Nota:</b> É imperativo que um relógio chamado sysclk apareça no seu circuito. Ele será usado como base de tempo pelo módulo de cronograma. Não precisa estar conectado ao seu circuito. É, em princípio, o mais rápido e está definido para um ciclo de trabalho de 1/1 de tique.
+      </p>
+      <p>
+        <strong>Próximo:</strong> <a href="selection.html">A guia Seleção</a>.
+      </p>
+    </div>
+  </body>
 </html>
