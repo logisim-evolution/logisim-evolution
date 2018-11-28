@@ -1,0 +1,82 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2018-10-23T06:18:42.262000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="en">
+    <title>
+      Window Text Vector
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        Window Text Vector
+      </h1>
+      <p>
+        From the Test Vector Window you can load a test vector from a file, and Logisim will start running tests on the current circuit. is only one test vector window for the project, and the table will change to reflect whichever circuit is being simulated in the project window. Note, however, that the Test Vector module runs a separate copy of the circuit simulator, and so does not interfere with, and is not influenced by, the simulation in the project window.
+      </p>
+      <p>
+        For the example we will test the circuit below. This circuit gives the results of five logical functions from two inputs. It has an error the bottom NAND gate should be an AND port.
+      </p>
+      <center>
+        <img class="notscal" src="../../../../img-guide/vector-test.png" alt="#########">
+      </center>
+      <p>
+        The vector test file looks like this.<br>
+      </p>
+      <blockquote>
+        <pre>A B O_Nor O_Nand O_Xor O_Or O_And O_AB[2]
+0 0 1 1 0 0 0 00
+0 1 0 1 1 1 0 01
+1 0 0 1 1 1 0 10
+1 1 0 0 0 1 1 11
+</pre>
+      </blockquote>
+      <p>
+        To start the test, select the menu <b class="menu">|&nbsp; Simulata &nbsp;|</b>→<b class="menu">|&nbsp; Test Vector &nbsp;|</b> then use the button <b class="button">Load Vactor</b>. Select the file of vectors that you have built. The simulation is executed immediately and a table is displayed with the result.
+      </p>
+      <center>
+        <img src="../../../img-guide/vector-result.png" alt="#########">
+      </center>
+      <p>
+        Any incorrect output will be indicated in red. Lines with incorrect outputs are sorted at the top of the window.
+      </p>
+      <p>
+        The file format is simple. The first line contains column headers that correspond to the names of the signals. If the bit width is greater than 1 then it is necessary to specify it in square brackets. Example <tt>C[8]</tt>. The data for each test situation is in the following lines. Blank lines are ignored. Anything following a "#" character is a comment.
+      </p>
+      <p>
+        The remaining rows list each value separated by a space or tab. Values can be in hexadecimal, octal, binary, or signed decimal. The hexadecimal values must have the prefix <b><tt>&lt; tt=""&gt;</tt></b>. Octal values must have the prefix <b><tt>"0o"</tt></b>. inary and decimal are be distinguished by the number of digits: binary values must always have exactly as many digits as the width of the column; decimal values must always have fewer, should not have leading zeros, and may have a negative sign.
+      </p>
+      <p>
+        Here is an example of a test vector file:
+      </p>
+      <blockquote>
+        <pre>#test vector for adder 4bit 
+A[4] B[4] O[4] C_in C_out
+0000 0000 0000 0 0
+0000 0000 0001 1 0
+0xf 0xf 0000 1 0
+0xf 0xf 0001 1 1
+
+</pre>
+      </blockquote>
+      <p>
+        Depending on the representation of values in hexadecimal, octal or binary, the lowercase "<tt>x</tt>" is used to specify four, three or one "unimportant" bits. For example 101xx is a binary value of five bits, with the last two unspecified bits, and 0x1ax5 is a hexadecimal value with two unspecified four-bit bits. Such wildcards can not be used in decimal notation.
+      </p>
+      <p>
+        <strong>Command line:</strong> To facilitate automated testing, the test vector feature can be run from the command line as follows:
+      </p>
+      <blockquote>
+        <tt>java -jar logisim-evolution.jar -test &lt;circuitname&gt;<br>
+        &nbsp;&nbsp; &lt;vector.txt&gt; &lt;project.circ&gt;</tt>
+      </blockquote>
+      <p>
+        <b>Next:</b> <a href="../index.html"><em>User's Guide</em></a><em>.</em>
+      </p>
+    </div>
+  </body>
+</html>
