@@ -14,11 +14,11 @@
   <body>
     <div class="maindiv">
       <h1>
-        O menu Projeto (Project)
+        O menu Projeto
       </h1>
       <dl>
         <dt>
-          <strong>Adicionar Circuito ...</strong>
+          <strong>Adicionar circuito ...</strong>
         </dt>
         <dd>
           <p>
@@ -26,7 +26,7 @@
           </p>
         </dd>
         <dt>
-          <strong>Carregar Biblioteca</strong>
+          <strong>Carregar biblioteca</strong>
         </dt>
         <dd>
           <p>
@@ -34,7 +34,7 @@
           </p>
         </dd>
         <dt>
-          <strong>Decarregar Bibliotecas ...</strong>
+          <strong>Decarregar bibliotecas ...</strong>
         </dt>
         <dd>
           <p>
@@ -42,7 +42,7 @@
           </p>
         </dd>
         <dt>
-          <strong>Mover Circuito Para Cima</strong>
+          <strong>Mover circuito para cima</strong>
         </dt>
         <dd>
           <p>
@@ -50,7 +50,7 @@
           </p>
         </dd>
         <dt>
-          <strong>Mover Circuito Para Baixo</strong>
+          <strong>Mover circuito para baixo</strong>
         </dt>
         <dd>
           <p>
@@ -58,7 +58,15 @@
           </p>
         </dd>
         <dt>
-          <strong>Remover Circuito</strong>
+          <strong>Definir como circuito principal</strong>
+        </dt>
+        <dd>
+          <p>
+            Definir o circuito a ser exibido no momento como <q>circuito principal</q> do projeto. (Esse item de menu ficará cinza se o circuito atual for o principal.) Isso significa que ele será o circuito a aparecer primeiro quando o arquivo do projeto for aberto.
+          </p>
+        </dd>
+		<dt>
+          <strong>Remover circuito</strong>
         </dt>
         <dd>
           <p>
@@ -66,23 +74,15 @@
           </p>
         </dd>
         <dt>
-          <strong>Definir Como Circuito Principal</strong>
+          <strong>Restaurar forma padrão</strong>
         </dt>
         <dd>
           <p>
-            Definir o circuito a ser exibido no momento como <q>circuito principal</q> do projeto. (Esse item de menu ficará cinza se o circuito atual for o principal.) Isso significa que ele será o circuito a aparecer primeiro quando o arquivo do projeto for aberto.
+            Se a forma (aparência) do circuito tiver sido editada, esse item de menu irá restaurar a forma padrão. O item de menu será ativado somente quando houver edição da forma (aparência) do circuito. A aparência da aparência padrão pode ser alterada pela propriedade <b class="propertie">Use new box layout</b> da biblioteca.
           </p>
         </dd>
         <dt>
-          <strong>Restaurar Forma Padrão</strong>
-        </dt>
-        <dd>
-          <p>
-            Se a forma (aparência) do circuito tiver sido editada, esse item de menu irá restaurar a forma padrão para o retângulo com entalhe. O item de menu será ativado somente quando houver edição da forma (aparência) do circuito.
-          </p>
-        </dd>
-        <dt>
-          <strong>Ver Ferramentas</strong>
+          <strong>Ver ferramentas</strong>
         </dt>
         <dd>
           <p>
@@ -90,7 +90,7 @@
           </p>
         </dd>
         <dt>
-          <strong>Ver Simulação</strong>
+          <strong>Ver simulação</strong>
         </dt>
         <dd>
           <p>
@@ -98,7 +98,7 @@
           </p>
         </dd>
         <dt>
-          <strong>Editar <i>Layout</i> do Circuito</strong>
+          <strong>Editar layout do circuito</strong>
         </dt>
         <dd>
           <p>
@@ -106,7 +106,7 @@
           </p>
         </dd>
         <dt>
-          <strong>Editar Forma do Circuito</strong>
+          <strong>Editar forma do circuito</strong>
         </dt>
         <dd>
           <p>
@@ -114,15 +114,17 @@
           </p>
         </dd>
         <dt>
-          <strong>Analisar Circuito</strong>
+          <strong>Analisar circuito</strong>
         </dt>
         <dd>
           <p>
+		    <b class="note">Note:</b> This menu is disabled by default in the current version of logisim-evolution. It can be reactivated by command line options.<br>
+            <br>
             Computar a tabela-verdade e expressões lógicas correspondentes ao circuito, exibindo-as na janela <a href="../analyze/index.html">Análise Combinatória</a>. O processo de análise só será válido para circuitos combinacionais. Uma descrição completa do processo de análise é descrita na seção <a href="../analyze/open.html">Análise Combinatória</a>.
           </p>
         </dd>
         <dt>
-          <strong>Obter Estatísticas Do Circuito</strong>
+          <strong>Obter estatísticas do circuito</strong>
         </dt>
         <dd>
           <p>
@@ -150,25 +152,18 @@
             Se você usar circuitos de uma biblioteca Logisim, os componentes serão considerado <q>caixas pretas</q> : o conteúdo dos circuitos da biblioteca não serão usados na contagem original e recursiva.
           </p>
         </dd>
-        <dt>
-          <strong>Mostrar Barra De Projeto</strong>
-        </dt>
-        <dd>
-          <p>
-            Quando selecionado, esse item de menu mostrará uma pequena barra de ferramentas acima do painel Explorer, permitindo que o usuário tenha fácil acesso aos itens adicionar, renomear, reordenar e remover circuitos em um projeto. A barra de ferramentas também oferecerá suporte a alternância entre a edição de <i>layout</i> e a aparência do circuito.
-          </p>
-        </dd>
+       
         <dt>
           <strong>Opções ...</strong>
         </dt>
         <dd>
           <p>
-            Abrir a janela <a href="../opts/index.html">Opções de Projeto</a>.
+            Abrir a janela <a href="../opts/index.html">Opções de projeto</a>.
           </p>
         </dd>
       </dl>
       <p>
-        <strong>Próximo:</strong> <a href="simulate.html">O menu Simular (Simulate)</a>.
+        <strong>Próximo:</strong> <a href="simulate.html">O menu simular</a>.
       </p>
     </div>
   </body>
