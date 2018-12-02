@@ -184,7 +184,12 @@ public class CircuitBuilder {
 	private static InputData computeInputData(AnalyzerModel model) {
 		InputData ret = new InputData();
 		VariableList inputs = model.getInputs();
-		int spineX = 60;
+		int NameLength = 1;
+		for (int i = 0 ; i < inputs.size() ; i++) {
+			if (inputs.get(i).length() > NameLength)
+				NameLength = inputs.get(i).length();
+		}
+		int spineX = 80+NameLength*10;
 		ret.names = new String[inputs.size()];
 		for (int i = 0; i < inputs.size(); i++) {
 			String name = inputs.get(i);
@@ -457,7 +462,7 @@ public class CircuitBuilder {
 	private static void placeInputs(CircuitMutation result, InputData inputData) {
 		ArrayList<Location> forbiddenYs = new ArrayList<Location>();
 		Comparator<Location> compareYs = new CompareYs();
-		int curX = 40;
+		int curX = inputData.startX-(inputData.names.length+1)*20;
 		int curY = 30;
 		for (int i = 0; i < inputData.names.length; i++) {
 			String name = inputData.names[i];

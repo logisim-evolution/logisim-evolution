@@ -136,7 +136,7 @@ public class Probe extends InstanceFactory {
 	// static methods
 	//
 	public static Bounds getOffsetBounds(Direction dir, BitWidth width,
-			RadixOption radix, boolean extendy , boolean extendx) {
+			RadixOption radix, boolean NewLayout, boolean IsPin) {
 		int len = radix == null || radix == RadixOption.RADIX_2 ? width
 				.getWidth() : radix.getMaxLength(width);
 		int bwidth,bheight,x,y;
@@ -147,7 +147,7 @@ public class Probe extends InstanceFactory {
 			bwidth = (len<2) ? 20 : len*10;
 			bheight = 20;
 		}
-		if (extendx) bwidth+=20;
+		if (NewLayout) bwidth+=20;
 		if (dir == Direction.EAST) {
 			x = -bwidth;
 			y = -(bheight/2);
@@ -155,11 +155,19 @@ public class Probe extends InstanceFactory {
 			x = 0;
 			y = -(bheight/2);
 		} else if (dir == Direction.SOUTH) {
-			if (extendy) bheight += 10;
+			if (NewLayout&IsPin) bheight += 10;
+			if ((len==1)&NewLayout&IsPin) {
+				bwidth = 20;
+				bheight += 10;
+			}
 			x = -(bwidth/2);
 			y = -bheight;
 		} else {
-			if (extendy) bheight += 10;
+			if (NewLayout&IsPin) bheight += 10;
+			if ((len==1)&NewLayout&IsPin) {
+				bwidth = 20;
+				bheight += 10;
+			}
 			x = -(bwidth/2);
 			y = 0;
 		}
@@ -222,6 +230,16 @@ public class Probe extends InstanceFactory {
 		}
 	}
 	
+	static int BinairyXoffset(Direction dir, boolean IsPin, boolean IsOutput) {
+		boolean East  = dir == Direction.EAST;
+		boolean West  = dir == Direction.WEST;
+		if (IsPin&East&!IsOutput)
+			return 25;
+		if (IsPin&West&!IsOutput)
+			return 15;
+		return 20;
+	}
+	
 	static void paintValue(InstancePainter painter, Value value, boolean colored, boolean extend) {
 		if (!AppPreferences.NEW_INPUT_OUTPUT_SHAPES.getBoolean()) {
 			paintOldStyleValue(painter,value);
@@ -234,12 +252,21 @@ public class Probe extends InstanceFactory {
 											// included
 
 		RadixOption radix = painter.getAttributeValue(RadixOption.ATTRIBUTE);
-		Direction dir = painter.getAttributeValue(StdAttr.FACING); 
-		int offset = (dir==Direction.SOUTH&&extend) ? 10 : 0;
+		Direction dir = painter.getAttributeValue(StdAttr.FACING);
+		boolean IsOutput = (painter.getAttributeSet().containsAttribute(Pin.ATTR_TYPE)) ? painter.getAttributeValue(Pin.ATTR_TYPE):false;
+		boolean IsPin = (painter.getAttributeSet().containsAttribute(Pin.ATTR_TYPE));
+		boolean North = dir == Direction.NORTH;
+		boolean South = dir == Direction.SOUTH;
+		boolean East  = dir == Direction.EAST;
+		boolean West  = dir == Direction.WEST;
+		int LabelYOffset = extend&(South&!IsOutput) ? 10 : extend&IsOutput&(South|North) ? 7 : 0;
+		int LabelValueXOffset = IsPin&(North|South)&(bds.getWidth()==20) ? 7 : 
+			                    IsPin&!IsOutput&East ? 20 :
+			                    IsPin&!IsOutput&West ? 7 : 15;
 		g.setColor(Color.BLUE);
 		g2.scale(0.7, 0.7);
-		g2.drawString(radix.GetIndexChar(), (int)((bds.getX()+bds.getWidth()-15)/0.7), 
-				     (int)((bds.getY()+bds.getHeight()-(2+offset))/0.7));
+		g2.drawString(radix.GetIndexChar(), (int)((bds.getX()+bds.getWidth()-LabelValueXOffset)/0.7), 
+				     (int)((bds.getY()+bds.getHeight()-(2+LabelYOffset))/0.7));
 		g2.scale(1.0/0.7, 1.0/0.7);
 		g.setColor(Color.BLACK);
 		if (radix == null || radix == RadixOption.RADIX_2) {
@@ -253,8 +280,8 @@ public class Probe extends InstanceFactory {
 				g.drawLine(x - 4, y, x + 4, y);
 				return;
 			}
-			int yoffset = (dir==Direction.SOUTH&&extend) ? 22 : 12;
-			int x0 = bds.getX() + bds.getWidth() - 20;
+			int yoffset = extend&(South&!IsOutput) ? 22 : extend&IsOutput&(South|North) ? 17 : 12;
+			int x0 = bds.getX() + bds.getWidth() - BinairyXoffset(dir,IsPin,IsOutput);
 			int cx = x0;
 			int cy = bds.getY() + bds.getHeight() - yoffset;
 			int cur = 0;
@@ -279,10 +306,12 @@ public class Probe extends InstanceFactory {
 			}
 		} else {
 			String text = radix.toString(value);
-			int ypos = (dir == Direction.NORTH&&extend) ? bds.getY()+10+(bds.getHeight()-10)/2 :
-				       (dir == Direction.SOUTH&&extend) ? bds.getY()+(bds.getHeight()-10)/2 :
+			int off1 = IsOutput ? 5 : 10;
+			int off2 = IsOutput ? 5 : 0;
+			int ypos = (North&extend) ? bds.getY()+off1+(bds.getHeight()-15)/2 :
+				       extend&South ? bds.getY()+off2+(bds.getHeight()-15)/2 :
 				    	   bds.getY() + bds.getHeight() / 2;
-			GraphicsUtil.drawText(g, text, bds.getX() + bds.getWidth()-15,ypos , 
+			GraphicsUtil.drawText(g, text, bds.getX() + bds.getWidth()-LabelValueXOffset,ypos , 
 					GraphicsUtil.H_RIGHT, GraphicsUtil.H_CENTER);
 		}
 	}
@@ -320,7 +349,7 @@ public class Probe extends InstanceFactory {
 	@Override
 	public Bounds getOffsetBounds(AttributeSet attrsBase) {
 		ProbeAttributes attrs = (ProbeAttributes) attrsBase;
-		return getOffsetBounds(attrs.facing, attrs.width, attrs.radix,false,AppPreferences.NEW_INPUT_OUTPUT_SHAPES.getBoolean());
+		return getOffsetBounds(attrs.facing, attrs.width, attrs.radix,AppPreferences.NEW_INPUT_OUTPUT_SHAPES.getBoolean(),false);
 	}
 
 	@Override

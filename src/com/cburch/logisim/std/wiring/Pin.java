@@ -54,6 +54,7 @@ import javax.swing.text.MaskFormatter;
 
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.circuit.RadixOption;
+import com.cburch.logisim.circuit.Wire;
 import com.cburch.logisim.comp.EndData;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeOption;
@@ -253,7 +254,7 @@ public class Pin extends InstanceFactory {
 				if (AppPreferences.NEW_INPUT_OUTPUT_SHAPES.getBoolean()) {
 					Direction dir = state.getAttributeValue(StdAttr.FACING);
 					int yoffset = (dir==Direction.SOUTH) ? 10 : 0;
-					i = (bds.getX() + bds.getWidth() - e.getX() - 15) / 10;
+					i = (bds.getX() + bds.getWidth() + 5 - e.getX() - Probe.BinairyXoffset(dir, true, false)) / 10;
 					j = (bds.getY() + bds.getHeight() - e.getY() - yoffset) / 20;
 				} else {
 					i = (bds.getX() + bds.getWidth() - e.getX()) / 10;
@@ -320,7 +321,7 @@ public class Pin extends InstanceFactory {
 					handleBitPress(state, bit, e);
 				}
 				bitPressed = -1;
-			} else {
+			} else if (!state.getAttributeValue(Pin.ATTR_TYPE)) {
 				PinState pinState = getState(state);
 				EditText dialog = new EditText(pinState.intendedValue,
 						state.getAttributeValue(RadixOption.ATTRIBUTE),
@@ -431,6 +432,16 @@ public class Pin extends InstanceFactory {
 		setInstanceLogger(PinLogger.class);
 		setInstancePoker(PinPoker.class);
 	}
+	
+	private Direction PinLabelLoc(Direction PinDir) {
+		if (PinDir == Direction.EAST)
+			return Direction.WEST;
+		else if (PinDir == Direction.WEST)
+			return Direction.EAST;
+		else if (PinDir == Direction.NORTH)
+			return Direction.SOUTH;
+		else return Direction.NORTH;
+	}
 
 	//
 	// methods for instances
@@ -440,7 +451,7 @@ public class Pin extends InstanceFactory {
 		PinAttributes attrs = (PinAttributes) instance.getAttributeSet();
 		instance.addAttributeListener();
 		configurePorts(instance);
-		Probe.configureLabel(instance, attrs.labelloc, attrs.facing);
+		Probe.configureLabel(instance, PinLabelLoc(attrs.facing), attrs.facing);
 	}
 
 	private void configurePorts(Instance instance) {
@@ -464,10 +475,10 @@ public class Pin extends InstanceFactory {
 	public Bounds getOffsetBounds(AttributeSet attrs) {
 		Direction facing = attrs.getValue(StdAttr.FACING);
 		BitWidth width = attrs.getValue(StdAttr.WIDTH);
+		boolean NewLayout = AppPreferences.NEW_INPUT_OUTPUT_SHAPES.getBoolean(); 
 		return Probe.getOffsetBounds(facing, width,
 				attrs.getValue(RadixOption.ATTRIBUTE) /* RadixOption.RADIX_2 */,
-				(!attrs.getValue(ATTR_TYPE))&AppPreferences.NEW_INPUT_OUTPUT_SHAPES.getBoolean(),
-				AppPreferences.NEW_INPUT_OUTPUT_SHAPES.getBoolean());
+				NewLayout,true);
 	}
 
 	public int getType(Instance instance) {
@@ -512,10 +523,10 @@ public class Pin extends InstanceFactory {
 		if (attr == ATTR_TYPE) {
 			configurePorts(instance);
 		} else if (attr == StdAttr.WIDTH || attr == StdAttr.FACING
-				|| attr == Pin.ATTR_LABEL_LOC || attr == RadixOption.ATTRIBUTE) {
+				|| attr == RadixOption.ATTRIBUTE) {
 			instance.recomputeBounds();
 			PinAttributes attrs = (PinAttributes) instance.getAttributeSet();
-			Probe.configureLabel(instance, attrs.labelloc, attrs.facing);
+			Probe.configureLabel(instance, PinLabelLoc(attrs.facing), attrs.facing);
 		} else if (attr == Pin.ATTR_TRISTATE || attr == Pin.ATTR_PULL) {
 			instance.fireInvalidated();
 		}
@@ -526,40 +537,160 @@ public class Pin extends InstanceFactory {
 		return attrs.type != EndData.OUTPUT_ONLY;
 	}
 	
-	public void DrawInputShape(Graphics g, int x, int y, int width , int height, Direction dir) {
+	public void DrawInputShape(Graphics g, int x, int y, int width , int height, Direction dir, Color LineColor, boolean isBus) {
 		if (!AppPreferences.NEW_INPUT_OUTPUT_SHAPES.getBoolean()) {
 			g.drawRect(x + 1, y + 1, width-1 , height-1);
 		} else if (dir==Direction.EAST) {
-			g.drawLine(x+width-10, y, x+width, y+height/2);
-			g.drawLine(x+width-10, y+height, x+width, y+height/2);
+			if (isBus) {
+				GraphicsUtil.switchToWidth(g, Wire.WIDTH_BUS);
+				g.drawLine(x+width-5, y+height/2 , x+width-Wire.WIDTH_BUS/2, y+height/2);
+				GraphicsUtil.switchToWidth(g, 2);
+			} else {
+				Color col = g.getColor();
+				g.setColor(LineColor);
+				GraphicsUtil.switchToWidth(g, Wire.WIDTH);
+				g.drawLine(x+width-5, y+height/2 , x+width, y+height/2);
+				GraphicsUtil.switchToWidth(g, 2);
+				g.setColor(col);
+			}
+			g.drawLine(x+width-15, y, x+width-5, y+height/2);
+			g.drawLine(x+width-15, y+height, x+width-5, y+height/2);
 			g.drawLine(x,y, x, y+height);
-			g.drawLine(x, y, x+width-10, y);
-			g.drawLine(x, y+height, x+width-10, y+height);
+			g.drawLine(x, y, x+width-15, y);
+			g.drawLine(x, y+height, x+width-15, y+height);
 		} else if (dir==Direction.WEST) {
-			g.drawLine(x+10, y, x, y+height/2);
-			g.drawLine(x+10, y+height, x, y+height/2);
+			if (isBus) {
+				GraphicsUtil.switchToWidth(g, Wire.WIDTH_BUS);
+				g.drawLine(x+5, y+height/2 , x+Wire.WIDTH_BUS/2, y+height/2);
+				GraphicsUtil.switchToWidth(g, 2);
+			} else {
+				Color col = g.getColor();
+				g.setColor(LineColor);
+				GraphicsUtil.switchToWidth(g, Wire.WIDTH);
+				g.drawLine(x+5, y+height/2 , x, y+height/2);
+				GraphicsUtil.switchToWidth(g, 2);
+				g.setColor(col);
+			}
+			g.drawLine(x+15, y, x+5, y+height/2);
+			g.drawLine(x+15, y+height, x+5, y+height/2);
 			g.drawLine(x+width,y, x+width, y+height);
-			g.drawLine(x+10, y, x+width, y);
-			g.drawLine(x+10, y+height, x+width, y+height);
+			g.drawLine(x+15, y, x+width, y);
+			g.drawLine(x+15, y+height, x+width, y+height);
 		} else if (dir==Direction.NORTH) {
-			g.drawLine(x, y+10, x+width/2, y);
-			g.drawLine(x+width/2, y, x+width, y+10);
+			if (isBus) {
+				GraphicsUtil.switchToWidth(g, Wire.WIDTH_BUS);
+				g.drawLine(x+width/2, y+Wire.WIDTH_BUS/2 ,x+width/2, y+5);
+				GraphicsUtil.switchToWidth(g, 2);
+			} else {
+				Color col = g.getColor();
+				g.setColor(LineColor);
+				GraphicsUtil.switchToWidth(g, Wire.WIDTH);
+				g.drawLine(x+width/2, y ,x+width/2, y+5);
+				GraphicsUtil.switchToWidth(g, 2);
+				g.setColor(col);
+			}
+			g.drawLine(x, y+15, x+width/2, y+5);
+			g.drawLine(x+width/2, y+5, x+width, y+15);
 			g.drawLine(x, y+height, x+width, y+height);
-			g.drawLine(x, y+10, x, y+height);
-			g.drawLine(x+width, y+10, x+width, y+height);
+			g.drawLine(x, y+15, x, y+height);
+			g.drawLine(x+width, y+15, x+width, y+height);
 		} else {
-			g.drawLine(x, y+height-10, x+width/2, y+height);
-			g.drawLine(x+width/2, y+height, x+width, y+height-10);
+			if (isBus) {
+				GraphicsUtil.switchToWidth(g, Wire.WIDTH_BUS);
+				g.drawLine(x+width/2, y+height-Wire.WIDTH_BUS/2 ,x+width/2, y+height-5);
+				GraphicsUtil.switchToWidth(g, 2);
+			} else {
+				Color col = g.getColor();
+				g.setColor(LineColor);
+				GraphicsUtil.switchToWidth(g, Wire.WIDTH);
+				g.drawLine(x+width/2, y+height ,x+width/2, y+height-5);
+				GraphicsUtil.switchToWidth(g, 2);
+				g.setColor(col);
+			}
+			g.drawLine(x, y+height-15, x+width/2, y+height-5);
+			g.drawLine(x+width/2, y+height-5, x+width, y+height-15);
 			g.drawLine(x, y, x+width, y);
-			g.drawLine(x, y, x, y+height-10);
-			g.drawLine(x+width, y, x+width, y+height-10);
+			g.drawLine(x, y, x, y+height-15);
+			g.drawLine(x+width, y, x+width, y+height-15);
 		}
 	}
 
-	public void DrawOutputShape(Graphics g, int x, int y, int width , int height, Direction dir,boolean SingleBit) {
-		if (AppPreferences.NEW_INPUT_OUTPUT_SHAPES.getBoolean())
-			g.drawRoundRect(x, y, width, height, 20, 20);
-		else {
+	public void DrawOutputShape(Graphics g, int x, int y, int width , int height, Direction dir,boolean SingleBit, Color LineColor) {
+		if (AppPreferences.NEW_INPUT_OUTPUT_SHAPES.getBoolean()) {
+			if (dir==Direction.WEST) {
+				if (!SingleBit) {
+					GraphicsUtil.switchToWidth(g, Wire.WIDTH_BUS);
+					g.drawLine(x+3, y+height/2 , x+Wire.WIDTH_BUS/2, y+height/2);
+					GraphicsUtil.switchToWidth(g, 2);
+				} else {
+					Color col = g.getColor();
+					g.setColor(LineColor);
+					GraphicsUtil.switchToWidth(g, Wire.WIDTH);
+					g.drawLine(x, y+height/2 , x+3, y+height/2);
+					GraphicsUtil.switchToWidth(g, 2);
+					g.setColor(col);
+				}
+				g.drawLine(x+width-10, y, x+width, y+height/2);
+				g.drawLine(x+width-10, y+height, x+width, y+height/2);
+				g.drawLine(x+5,y, x+5, y+height);
+				g.drawLine(x+5, y, x+width-10, y);
+				g.drawLine(x+5, y+height, x+width-10, y+height);
+			} else if (dir==Direction.NORTH) {
+				if (!SingleBit) {
+					GraphicsUtil.switchToWidth(g, Wire.WIDTH_BUS);
+					g.drawLine(x+width/2, y+Wire.WIDTH_BUS/2 , x+width/2, y+3);
+					GraphicsUtil.switchToWidth(g, 2);
+				} else {
+					Color col = g.getColor();
+					g.setColor(LineColor);
+					GraphicsUtil.switchToWidth(g, Wire.WIDTH);
+					g.drawLine(x+width/2, y , x+width/2, y+3);
+					GraphicsUtil.switchToWidth(g, 2);
+					g.setColor(col);
+				}
+				g.drawLine(x, y+5, x+width, y+5);
+				g.drawLine(x, y+5, x, y+height-10);
+				g.drawLine(x+width, y+5, x+width, y+height-10);
+				g.drawLine(x, y+height-10, x+width/2, y+height);
+				g.drawLine(x+width/2, y+height, x+width, y+height-10 );
+			} else if (dir ==Direction.SOUTH) {
+				if (!SingleBit) {
+					GraphicsUtil.switchToWidth(g, Wire.WIDTH_BUS);
+					g.drawLine(x+width/2, y+height-Wire.WIDTH_BUS/2 , x+width/2, y+height-3);
+					GraphicsUtil.switchToWidth(g, 2);
+				} else {
+					Color col = g.getColor();
+					g.setColor(LineColor);
+					GraphicsUtil.switchToWidth(g, Wire.WIDTH);
+					g.drawLine(x+width/2, y+height , x+width/2, y+height-3);
+					GraphicsUtil.switchToWidth(g, 2);
+					g.setColor(col);
+				}
+				g.drawLine(x, y+height-5, x+width, y+height-5);
+				g.drawLine(x, y+height-5, x, y+10);
+				g.drawLine(x+width, y+height-5, x+width, y+10);
+				g.drawLine(x, y+10, x+width/2, y);
+				g.drawLine(x+width/2, y, x+width, y+10 );
+			} else {
+				if (!SingleBit) {
+					GraphicsUtil.switchToWidth(g, Wire.WIDTH_BUS);
+					g.drawLine(x+width-3, y+height/2 , x+width-Wire.WIDTH_BUS/2, y+height/2);
+					GraphicsUtil.switchToWidth(g, 2);
+				} else {
+					Color col = g.getColor();
+					g.setColor(LineColor);
+					GraphicsUtil.switchToWidth(g, Wire.WIDTH);
+					g.drawLine(x+width, y+height/2 , x+width-3, y+height/2);
+					GraphicsUtil.switchToWidth(g, 2);
+					g.setColor(col);
+				}
+				g.drawLine(x+10, y, x, y+height/2);
+				g.drawLine(x+10, y+height, x, y+height/2);
+				g.drawLine(x+width-5,y, x+width-5, y+height);
+				g.drawLine(x+width-5, y, x+10, y);
+				g.drawLine(x+width-5, y+height, x+10, y+height);
+			}
+		} else {
 			if (SingleBit) {
 				g.drawOval(x + 1, y + 1, width-1 , height - 1);
 			} else {
@@ -580,9 +711,10 @@ public class Pin extends InstanceFactory {
 		boolean output = attrs.isOutput();
 		if (output) {
 			DrawOutputShape(g,x+bds.getX(),y+bds.getY(),bds.getWidth(),bds.getHeight(),attrs.getValue(StdAttr.FACING),
-					attrs.getValue(StdAttr.WIDTH) == BitWidth.ONE);
+					attrs.getValue(StdAttr.WIDTH) == BitWidth.ONE,Color.GRAY);
 		} else {
-			DrawInputShape(g,x+bds.getX(),y+bds.getY(),bds.getWidth(),bds.getHeight(),attrs.getValue(StdAttr.FACING));
+			DrawInputShape(g,x+bds.getX(),y+bds.getY(),bds.getWidth(),bds.getHeight(),attrs.getValue(StdAttr.FACING),
+					Color.GRAY,false);
 		}
 	}
 
@@ -661,11 +793,14 @@ public class Pin extends InstanceFactory {
 		GraphicsUtil.switchToWidth(g, 2);
 		g.setColor(Color.black);
 		boolean IsOutput = attrs.type == EndData.OUTPUT_ONLY;
+		PinState state = getState(painter);
+		Value found = state.foundValue;
 		if (IsOutput) {
 			DrawOutputShape(g,x+1,y+1,bds.getWidth()-1,bds.getHeight()-1,attrs.getValue(StdAttr.FACING),
-					attrs.getValue(StdAttr.WIDTH) == BitWidth.ONE);
+					attrs.getValue(StdAttr.WIDTH) == BitWidth.ONE,found.getColor());
 		} else {
-			DrawInputShape(g,x+1,y+1,bds.getWidth()-1,bds.getHeight()-1,attrs.getValue(StdAttr.FACING));
+			DrawInputShape(g,x+1,y+1,bds.getWidth()-1,bds.getHeight()-1,attrs.getValue(StdAttr.FACING),
+					found.getColor(),attrs.width.getWidth()>1);
 		}
 
 		painter.drawLabel();
@@ -676,32 +811,37 @@ public class Pin extends InstanceFactory {
 					bds.getX() + bds.getWidth() / 2,
 					bds.getY() + bds.getHeight() / 2);
 		} else {
-			PinState state = getState(painter);
 			if (attrs.width.getWidth() <= 1) {
+				boolean North = attrs.getValue(StdAttr.FACING)==Direction.NORTH; 
+				boolean East = attrs.getValue(StdAttr.FACING)==Direction.EAST; 
+				boolean South = attrs.getValue(StdAttr.FACING)==Direction.SOUTH; 
+				boolean West = attrs.getValue(StdAttr.FACING)==Direction.WEST; 
 				if (NewStyle) {
 					Graphics2D g2 = (Graphics2D)g;
+					int TextXOffset = North|South ? 6 : (East&!IsOutput) ? 23 : (West&IsOutput) ? 18 : 13;
+					int TextYOffset = South ? (IsOutput) ? 10 : 20 : (North&IsOutput) ? 12 : 2; 
 					RadixOption radix = painter.getAttributeValue(RadixOption.ATTRIBUTE);
-					int offset = (attrs.getValue(StdAttr.FACING)==Direction.SOUTH)&!IsOutput ?10 : 0;
 					g.setColor(Color.BLUE);
 					g2.scale(0.7, 0.7);
-					g2.drawString(radix.GetIndexChar(), (int)((bds.getX()+bds.getWidth()-13)/0.7), 
-						(int)((bds.getY()+bds.getHeight()-(2+offset))/0.7));
+					g2.drawString(radix.GetIndexChar(), (int)((bds.getX()+bds.getWidth()-TextXOffset)/0.7), 
+						(int)((bds.getY()+bds.getHeight()-TextYOffset)/0.7));
 					g2.scale(1.0/0.7, 1.0/0.7);
 					g.setColor(Color.BLACK);
 				}
-				Value found = state.foundValue;
-				int offset = NewStyle ? 10 : 0;
+				int ValueXOffset = (NewStyle)&(North|South) ? -2 : (NewStyle & West & !IsOutput) ? 10 : 
+					               (NewStyle & West & IsOutput) ? 5 : (NewStyle & East & IsOutput) ? 10 : 0; 
+				int ValueYOffset = (NewStyle & North & !IsOutput) ? 18 : (NewStyle & (North|South) & IsOutput) ? 10 : 0; 
 				if ((!IsOutput)|(!NewStyle)) {
 					g.setColor(found.getColor());
-					g.fillOval(x + 4 + offset, y + 4, 13, 13);
+					g.fillOval(x + 5 + ValueXOffset, y + 4+ ValueYOffset, 11, 13);
 				}
 				if (attrs.width.getWidth() == 1) {
 					if (!IsOutput|(!NewStyle)) g.setColor(Color.WHITE);
 					GraphicsUtil.drawCenteredText(g,
-							state.intendedValue.toDisplayString(), x + 11 + offset, y + 9);
+							state.intendedValue.toDisplayString(), x + 11 + ValueXOffset, y + 9 + ValueYOffset);
 				}
 			} else {
-				Probe.paintValue(painter, state.intendedValue,(!IsOutput)&NewStyle,(!IsOutput)&NewStyle);
+				Probe.paintValue(painter, state.intendedValue,(!IsOutput)&NewStyle,NewStyle);
 			}
 		}
 
