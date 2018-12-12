@@ -1,0 +1,75 @@
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>Resistor para Ajuste</title>
+</head>
+
+<body bgcolor="FFFFFF">
+
+<h1>
+<img align="center" src="../../../../icons/pullshap.gif" width="32" height="32">
+<img align="center" src="../../../../icons/pullrect.gif" width="32" height="32">
+<em>Resistor para Ajuste</em></h1>
+
+<p><table>
+<tr><td><strong>Biblioteca:</strong></td>
+	<td><a href="index.html">Base</a></td></tr>
+<tr><td><strong>Introdução:</strong></td>
+	<td>2.5.0</td></tr>
+<tr><td valign="top"><strong>Aparência:</strong></td>
+	<td valign="top">
+	<table><tbody>
+	<tr><td>Portas convencionais:</td>
+		<td><img src="../../../../img-libs/pull-shaped.png"></td></tr>
+	<tr><td>Portas retangulares:</td>
+		<td><img src="../../../../img-libs/pull-rect.png"></td></tr>
+	</tbody></table></td></tr>
+</table></p>
+
+<h2>Comportamento</h2>
+
+<p> Quando conectado a um ponto, esse componente terá efeito apenas quando o valor
+nesse ponto for flutuante (Z). Nesse caso, o resistor de ajuste fará com que a
+conexão concorde com valor especificado pelo atributo<q> Direção de Ajuste</q>.
+</p>
+
+<p> Se estiver conectado a um valor multibit, então cada bit que estiver flutuando
+será ajustado para a direção especificada, enquanto os bits, que não estiverem
+flutuando, não serão alterados.
+</p>
+
+<h2>Pinos</h2>
+
+<p> O resitor possui apenas um pino, que será uma saída e terá largura em bits
+inferida do componente ao qual estiver conectado.
+</p>
+
+<h2>Atributos</h2>
+
+<p> Quando o componente for selecionado ou estiver sendo acrescentado,
+as teclas com setas poderão alterar o seu atributo <q> Direção</q>.
+</p>
+
+<dl>
+
+<dt> Direção </dt>
+<dd> A direção do pino do componente em relação ao seu centro. </dd>
+
+<dt> Direção para Ajuste </dt>
+<dd> Serve para especificar para qual valor um sinal flutuante deverá ser ajustado.
+Isso poderá ser para 0, 1, ou valor de erro. </dd>
+
+</dl>
+
+<h2> Comportamento da ferramenta Testar </h2>
+
+<p> Nenhum. </p>
+
+<h2> Comportamento da ferramenta Texto </h2>
+
+<p> Nenhum. </p>
+
+<p><a href="../index.html">Voltar à <em>Referência para bibliotecas</em></a></p>
+
+</body>
+</html>

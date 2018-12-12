@@ -1,0 +1,74 @@
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>Registrador de 8-bits do Logisim</title>
+</head>
+
+<body bgcolor="FFFFFF">
+
+<h1><img align="center" src="../../../../icons/register.gif" width="32" height="32">
+<em>Registrador de 8-bits do Logisim</em></h1>
+
+<p><table>
+<tr><td><strong>Biblioteca:</strong></td>
+	<td><a href="index.html">Legada</a></td></tr>
+<tr><td><strong>Introdução:</strong></td>
+	<td>2.0 Beta 12</td></tr>
+<tr><td valign="top"><strong>Aparência:</strong></td>
+	<td valign="top"><img src="../../../../img-libs/legacy-register.png"></td></tr>
+</table></p>
+
+<h2>Comportamento</h2>
+
+<p> Esses componentes existem apenas para compatibilidade com versões anteriores
+como as Logisim 1.0<var>X</var>, pois os novos circuitos, o registrador da
+<a href="../mem/flipflops.html">biblioteca Memória</a> devem ser usados em seu lugar. 
+</p>
+
+<p> O registrador armazena um único valor de 8 bits, que será exibido em
+hexadecimal dentro do retângulo, e será emitido através da saída em sua
+face leste. (O Logisim 1.0<var>X</var> não oferecia suporte para valores multibit,
+por isso registrador tinha que ter um pino individual para cada bit.) No
+momento em que a entrada de <i>clock</i> (indicada por um triângulo na face oeste)
+varia de 0 para 1, o valor a ser armazenado no registrador será guardado de
+acordo com os oito bits das entradas na face oeste. </p>
+
+
+<h2>Pinos</h2>
+
+<dl>
+
+<dt> Na face leste, oito pinos (saídas, com largura de 1 bit cada)
+<dd> Emitirá o valor atualmente armazenado pelo registrador, com o bit
+menos significativo no pino mais acima.
+
+<dt> Na face oeste, oito pinos (entradas, com largura de 1 bit cada)
+<dd> Cada vez que o <i>clock</i> variar de 0 para 1, o valor do registrador
+irá mudar para aquele presente na entrada naquele instante. O bit
+menos significativo estará no pino mais acima.
+
+<dt> Na face oeste, indicado por um triângulo (entrada, com largura de 1 bit)
+<dd> Entrada de <i>clock</i>: cada vez que esse valor variar de 0 para 1
+(borda de subida), o valor do registrador será atualizado para armazenar
+os valores das outras entradas na face oeste.
+
+</dl>
+
+<h2>Atributos</h2>
+
+<p>Nenhum.</p>
+
+<h2>Comportamento da ferramenta Testar</h2>
+
+<p> Ao clicar no registrador, o foco será passado ao teclado associado ao 
+registrador (indicado por um retângulo vermelho) e, ao digitar valores hexadecimais,
+esses irão ser armazenados no registrador.</p>
+
+<h2>Comportamento da ferramenta Texto</h2>
+
+<p>Nenhum.</p>
+
+<p><a href="../index.html">Voltar à <em>Referência para bibliotecas</em></a></p>
+
+</body>
+</html>

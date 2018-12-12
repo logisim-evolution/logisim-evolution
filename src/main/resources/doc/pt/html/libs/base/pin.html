@@ -1,0 +1,132 @@
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>Pino</title>
+</head>
+
+<body bgcolor="FFFFFF">
+
+<h1><img align="center" src="../../../../icons/pinInput.gif" width="32" height="32">
+<img align="center" src="../../../../icons/pinOutput.gif" width="32" height="32">
+<em>Pino</em></h1>
+
+<p><table>
+<tr><td><strong>Biblioteca:</strong></td>
+	<td><a href="index.html">Base</a></td></tr>
+<tr><td><strong>Introdução:</strong></td>
+	<td>2.0 Beta 1</td></tr>
+<tr><td valign="top"><strong>Aparência:</strong></td>
+	<td valign="top"><img src="../../../../img-libs/pin.png"></td></tr>
+</table></p>
+
+<h2>Comportamento</h2>
+
+<p> Um pino pode ser uma saída ou uma entrada para um circuito,
+dependendo do valor de seu atributo Saída?. Ao desenhar um pino, o Logisim
+representará as saídas por círculos ou retângulos com bordas arredondadas,
+e as entradas serão representadas por quadrados ou retângulos.
+Em ambos os casos, os bits individuais do valor que for recebido ou 
+enviado será mostrada pelo componente (exceto quando for prévia de uma
+impressão, quando o componente apenas informará quantos bits poderá
+comportar).
+</p>
+
+<p> Um pino é conveniente para se interagir com um circuito, e os usuários
+iniciantes do Logisim não precisarão usá-los necessariamente. Mas um usuário
+que estiver construindo um circuito que use vários subcircuitos (como descrito
+na seção '<a href="../../guide/subcirc/index.html">Subcircuitos</a>' do
+<em>Guia do Usuário</em>) poderá usar pinos para especificar a interface entre
+um circuito e um subcircuito. Em particular, o pino de um <i>layout</i> de circuito
+define como ele aparecerá quando for tomado por subcircuito e seu <i>layout</i> estiver
+sendo usado por outro. Em tal circuito, os valores enviados ou recebidos
+por essas posições no subcircuito serão vinculados aos pinos internos
+de seu <i>layout</i>.
+</p>
+
+<h2>Pinos</h2>
+
+<p> O componente tem apenas um ponto de conexão, que poderá ser uma entrada
+para o componente se for um pino de saída, ou uma saída para o componente 
+caso seja um pino de entrada. Em ambos os casos, sua largura em bits
+irá corresponder ao atributo Bits de Dados, e sua posição será especificada
+pelo atributo Direção.
+</p>
+
+<h2>Atributos</h2>
+
+<p> Quando o componente for selecionado ou estiver sendo acrescentado,
+os dígitos de '0 'a '9' poderão alterar o atributo <q> Bits de Dados </q>,
+Alt-0 até ALT-9 irá alterar o atributo <q> Direção </q> e
+e Alt com as teclas com setas poderão alterar o seu atributo <q>Posição do Rótulo</q>.
+</p>
+
+
+<dl>
+
+<dt> Direção </dt>
+<dd> A face do componente onde sua entrada/saída deverá estar. </dd>
+
+<dt> Saída? </dt>
+<dd> Serve para especificar se o componente irá funcionar com entrada ou saída.
+(Observar que se for um pino de entrada, então o pino irá funcionar como se sua
+interface dentro do circuito fosse uma saída, e vice-versa.) </dd>
+
+<dt> Bits de Dados </dt>
+<dd> O número de bits para o valor que o pino pode tratar.</dd>
+
+<dt> Tri-state? </dt>
+<dd> Para um pino de entrada, serve para configurar se o usuário poderá
+indicar que o pino poderá emitir valores indefinidos (ou seja, flutuantes).
+Esse atributo lida apenas com a interface com o usuário; ele não terá
+qualquer efeito sobre como o pino se comportará quanto o <i>layout</i>
+do circuito for usado como um subcircuito.
+Para um pino de saída, o atributo não terá efeito algum.</dd>
+
+<dt> Comportamento para Ajuste </dt>
+<dd> Para um pino de entrada, o atributo especificará como um valor flutuante
+deverá ser tratado quando recebido por uma entrada, talvez de um circuito que
+esteja usando o <i>layout</i>, como no caso de um subcircuito. Se "imutável", 
+os valores flutuantes serão enviados como tal; se "<i>pull-up</i>", eles serão 
+convertidos para 1 antes de serem submetidos; e se "<i>pull-down</i>", 
+eles serão convertidos para 0 antes de serem entregues.
+</dd>
+
+<dt> Rótulo </dt>
+<dd> O texto para o rótulo associado ao componente. </dd>
+
+<dt> Posição do Rótulo</dt>
+<dd> A posição do rótulo em relação ao componente.</dd>
+
+<dt> Fonte do Rótulo </dt>
+<dd> A fonte com a qual o rótulo será mostrado. </dd>
+
+
+</dl>
+
+<h2> Comportamento da ferramenta Testar </h2>
+
+<p> Ao clicar em um pino de saída não terá efeito algum, embora os atributos do 
+pino sejam apresentados.
+</p>
+
+<p> Ao clicar em um pino de entrada irá alternar bit que for clicado. Se for um
+pino <i>tri-state</i>, em seguida, o bit correspondente irá alternar entre eles.
+</p>
+
+<p> Se, no entanto, o usuário estiver consultando o estado de um subcircuito
+conforme descrito em <a href="../../guide/subcirc/debug.html"> 'Depuração
+de Subcircuitos' </a> do <em>Guia do Usuário</em>, então o valor do pino 
+ficará fixo em qualquer valor que o subcircuito que estiver recebendo do
+circuito que o contiver. O usuário não poderá alterar o valor sem quebrar
+o vínculo entre os estados do subcircuito e o do circuito, e o Logisim pedirá
+ao usuário para verificar se a quebra desse vínculo é realmente desejada.
+</p>
+
+<h2> Comportamento da ferramenta Texto </h2>
+
+<p> Permite que o rótulo associado ao componente seja editado.</p>
+
+<p><a href="../index.html">Voltar à <em>Referência para bibliotecas</em></a></p>
+
+</body>
+</html>

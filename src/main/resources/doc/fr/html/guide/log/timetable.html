@@ -1,0 +1,131 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2018-10-23T06:18:42.262000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="fr">
+    <title>
+      Fenêtre Chronogramme
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        Fenêtre Chronogramme
+      </h1>
+      <p>
+        Cette fenêtre permet la visualisation des signaux sélectionnés précédemment. Vous remarquerez le menu, la barre d'outils, deux zones d'affichage et les boutons.
+      </p>
+      <center>
+        <img src="../../../img-guide/log-graph1.png" alt="#########">
+      </center>
+      <p>
+        <b>Le menu windows</b> ne contient qu'une option pour préciser si la fenêtre reste affichée au-dessus des autres ou si elle peut passer en arrière-plan. Par défaut elle reste au-dessus.
+      </p>
+      <p>
+        <b>la barre de menu</b> dispose de cinq boutons<br>
+      </p>
+      <blockquote>
+        <table>
+          <tbody>
+            <tr>
+              <td align="right">
+                <img class=notscal src="../../../../icons/simstop.png" border="0" alt="#########">
+              </td>
+              <td>
+                &nbsp;
+              </td>
+              <td>
+                Permet d'activer la simulation ou de la stopper. Équivalente du menu <b class="menu">|&nbsp;Simulation&nbsp;|</b> <a href="../menu/simulate.html"><b class="menu">|&nbsp;Simulation enclenchée&nbsp;|</b></a>
+              </td>
+            </tr>
+            <tr>
+              <td align="right">
+                <img class=notscal src="../../../../icons/simstep.png" alt="#########"></a>
+              </td>
+              <td>
+                &nbsp;
+              </td>
+              <td>
+                Permet d'avancer d'un tic dans la simulation. Équivalente du menu <b class="menu">|&nbsp;Simulation&nbsp;|</b> <a href="../menu/simulate.html"><b class="menu">|&nbsp;un seul tic&nbsp;|</b></a>
+              </td>
+            </tr>
+            <tr>
+              <td align="right">
+                <img class=notscal src="../../../../icons/simtplay.png" alt="#########">
+              </td>
+              <td>
+                &nbsp;
+              </td>
+              <td>
+                Active ou désactive l'horloge <var>sysclk</var>. Équivalente du menu <b class="menu">|&nbsp;Simulation&nbsp;|</b> <a href="../menu/simulate.html"><b class="menu">|&nbsp;tics activés&nbsp;|</b></a>
+              </td>
+            </tr>
+            <tr>
+              <td align="right">
+                <img class=notscal src="../../../../icons/simtstep.png" alt="#########">
+              </td>
+              <td>
+                &nbsp;
+              </td>
+              <td>
+                Avance d'une demi-période l'horloge <var>sysclk</var>. Équivalente du menu <b class="menu">|&nbsp;Simulation&nbsp;|</b> <a href="../menu/simulate.html"><b class="menu">|&nbsp;'Un Seul tic&nbsp;|</b></a>
+              </td>
+            </tr>
+            <tr>
+              <td align="right">
+                <img class=notscal src="../../../../icons/clock.gif" alt="#########">
+              </td>
+              <td></td>
+              <td>
+                Avance d'une période ou d'une demi-période l'horloge <var>clk</var>. Équivalente du menu <b class="menu">|&nbsp;Simulation&nbsp;|</b> <a href="../menu/simulate.html"><b class="menu">|&nbsp;'Clk' un pas&nbsp;|</b></a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </blockquote>
+      <p>
+        <b>La zone d'affichage</b> Sur la droite trois colonnes: la première présente un icone du type de signal (bus ou simple) puis nous avons le nom et enfin la valeur du signal sous le curseur (la ligne rouge dans le graphe). Il est possible de déplacer le curseur à l'aide de la souris, il suffit de cliquer et déplacer. Un <b class="tkeybd">clic-droit</b> sur la ligne d'un signal de type bus affiche un menu contextuel avec deux options:
+      </p>
+      <ul>
+        <li>
+          <b class="menu">|&nbsp;Format&nbsp;|</b>: Ce menu ouvre une sélection de la base d'affichage des signaux (binaire,hexadécimal,octal,signer,non signer)
+        </li>
+        <li>
+          <b class="menu">|&nbsp;Exploser&nbsp;|</b>: Affiche, au dessous, le chronogramme de chaque signal du bus.
+        </li>
+      </ul>
+      <p>
+        <b>Les boutons:</b> On observe trois boutons au fond de notre fenêtre.
+      </p>
+      <ul>
+        <li>
+          <b class="button">Chager fichier</b> Charge et affiche le résultat depuis un fichier préalablement sauvegardé. Cela ne permet pas de paramétrer la simulation.
+        </li>
+        <li>
+          <b class="button">Exporter...</b> Exporte les données dans un fichier text. Vous devrez préciser le nom du fichier dans la fenêtre de sauvegarde. Le format du fichier est simple. La première ligne contient le nom des colonnes séparées par une tabulation. La seconde ligne présente le signal et l'échelle de temps si elle a été sélectionnée. Les lignes suivantes présente la valeur ses signaux séparés par une tabulation. La troisième ligne est l'initialisation puis chaque ligne représente un demi-cyle de l'horloge <var>sysclk</var>.
+          <pre>sysclk     X       a       b       c       
+clk:X:1:Hz
+0       11      0       0       0       
+0       11      0       0       0       
+1       01      1       1       0       
+0       01      0       1       0       
+1       10      1       0       1       
+0       10      0       0       1       
+1       00      1       1       1       
+0       00      0       1       1       
+</pre>
+        </li>
+        <li>
+          <b class="button">Exporter image :</b>Exporte le chronogramme dans une image de type png. Vous devrez préciser le nom du fichier dans la fenêtre de sauvegarde.
+        </li>
+      </ul>
+      <p>
+        <b>Suite:</b> <a href="../index.html">Guide de l'utilisateur</a>.
+      </p>
+    </div>
+  </body>
+</html>

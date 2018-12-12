@@ -1,0 +1,112 @@
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>Distribuidor</title>
+</head>
+
+<body bgcolor="FFFFFF">
+
+<h1><img align="center" src="../../../../icons/splitter.gif" width="32" height="32">
+<em>Distribuidor</em></h1>
+
+<p><table>
+<tr><td><strong>Biblioteca:</strong></td>
+	<td><a href="index.html">Base</a></td></tr>
+<tr><td><strong>Introdução:</strong></td>
+	<td>2.0 Beta 1</td></tr>
+<tr><td valign="top"><strong>Aparência:</strong></td>
+	<td valign="top"><img src="../../../../img-libs/splitter.png"></td></tr>
+</table></p>
+
+<h2>Comportamento</h2>
+
+<p> O distribuidor cria uma correspondência entre um valor multibit e vários
+subconjuntos separados de bits equivalentes. A despeito do seu nome, ele pode separar
+tanto um valor multibit em partes, quanto combiná-las em um valor multibit
+- de fato ele poderá fazer ambos de uma vez. Uma descrição mais completa dos
+distribuidores poderá ser encontrada na seção
+'<a href="../../guide/bundles/splitting.html">Distribuidores</a>' do
+<em>Guia do Usuário</em>.
+</p>
+
+<p> O Logisim trata os distribuidores de forma especial ao propagar sinais
+dentro de um circuito: enquanto todos os outros componentes precisam de um
+atraso calculado para fins do seu comportamento na simulação, os sinais 
+propagados pelos distribuidores (assim como também pelas conexões) serão
+transmitidos instantaneamente.
+</p>
+
+<p><strong>Nota:</strong> O termo <em>distribuidor</em> não é um termo 
+padronizado, é único do Logisim até onde eu saiba. Desconheço qualquer
+termo padrão para tal conceito; o único termo que já ví foi <em>bus ripper</em>,
+mas esse termo é desnecessariamente violento para o meu gosto.
+</p>
+
+<h2>Pinos</h2>
+
+<p> Para distinguir entre os diversos pontos de conexão em um distribuidor,
+irei referir-me à terminação com um ponto de conexão como sua
+<em>extremidade combinada</em>, e aos múltiplos pontos de conexão do outro
+lado como sua <em>extremidade dividida</em>.
+</p>
+
+<dl>
+
+<dt> A extremidade combinada (entrada/saída, com largura em bits de acordo com o
+atributo Bits de Dados) </dt>
+<dd> Representará um valor combinado por todos os bits que forem transmitidos pelo
+distribuidor.
+
+<dt> A extremidade dividida (entrada/saída, com largura em bits calculada com base
+nos atributos Bit <var>x</var>)
+<dd> O número de extremidades divididas será especificado pelo atributo Distribuição,
+e cada uma terá um índice que será no mínimo igual a zero e menor que o valor desse
+atributo. Para cada terminação, todos os bits para os quais o Bit <var> x </var>
+referir-se por seu índice, serão transmitidos através da extremidade, e a ordem 
+desses bits será a mesma na extremidade combinada.
+
+</dl>
+
+<h2>Atributos</h2>
+
+<p> Quando o componente for selecionado ou estiver sendo acrescentado,
+os dígitos de '0 'a '9' poderão alterar o atributo <q> Distribuição</q>,
+Alt-0 até ALT-9 irão alterar ambos os atributos <q> Distribuição</q> e
+<q> Largura de Bits à Entrada</q>, e as teclas com setas poderão
+alterar o seu atributo <q> Direção</q>.
+</p>
+
+<dl>
+
+<dt> Direção </dt>
+<dd> A posição da extremidade dividida em relação à combinada. </dd>
+
+<dt> Distribuição </dt>
+<dd> O número de terminações em uma extremidade. </dd>
+
+<dt> Largura em Bits à Entrada </dt>
+<dd> A largura em bits da extremidade combinada. </dd>
+
+<dt> Bit <var>x</var></dt>
+<dd> O índice de uma terminação ao qual o bit <var>x</var> corresponder
+na extremidade combinada. As terminações são indexadas a partir de 0 no
+topo (para um distribuidor voltado para leste ou oeste) e a partir de 0
+da esquerda/oeste (para um distribuidor voltado para norte ou sul). Um 
+bit pode ser especificado para não corresponder a qualquer uma das terminações. 
+Não há qualquer maneira pela qual um bit possa corresponder a múltiplas 
+terminações. </dd>
+
+</dl>
+
+<h2> Comportamento da ferramenta Testar </h2>
+
+<p> Nenhum. </p>
+
+<h2> Comportamento da ferramenta Texto </h2>
+
+<p> Nenhum. </p>
+
+<p><a href="../index.html">Voltar à <em>Referência para bibliotecas</em></a></p>
+
+</body>
+</html>

@@ -1,0 +1,105 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2018-10-23T06:18:42.262000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="fr">
+    <title>Divider</title>
+	<LINK rel="stylesheet" type="text/css" href="../../style.css">
+</head>
+
+<body bgcolor="FFFFFF">
+
+<h1><img align="center" src="../../../../icons/divider.gif" width="32" height="32">
+<em>Divider</em></h1>
+
+<p><table>
+<tr><td><strong>Library:</strong></td>
+	<td><a href="index.html">Arithmetic</a></td></tr>
+<tr><td><strong>Introduced:</strong></td>
+	<td>2.0 Beta 22</td></tr>
+<tr><td valign="top"><strong>Appearance:</strong></td>
+	<td valign="top"><img src="../../../../img-libs/divider.png" width="44" height="45"></td></tr>
+</table></p>
+
+<h2>Behavior</h2>
+
+<p>This component divides two values coming in via the west inputs and
+outputs the quotient on the east output. The component is designed so
+that it can be cascaded with other dividers to provide support a
+dividend with more bits than
+is possible with a single divider: The upper input provides the
+upper <var>dataBits</var> bits of the dividend (if it is specified at
+all), and the <var>rem</var> bits provide the remainder, which can be
+fed as the <var>upper</var> input into another divider.</p>
+
+<p>If the divisor is 0, then no division is performed (i.e., the divisor
+is assumed to be 1).</p>
+
+<p>The divider essentially performs unsigned division. That is, the
+remainder will always be between 0 and <var>divisor</var>-1. The
+quotient will always be an integer so that
+<center>
+<var>quotient</var> * <var>divisor</var> + <var>remainder</var>
+= <var>dividend</var> .
+</center>
+If, however, the <var>quotient</var> does not fit into
+<var>dataBits</var> bits, then only the lower <var>dataBits</var> bits
+will be reported. The component does not provide any method for
+accessing the upper <var>dataBits</var> bits.</p>
+
+<p>If either of the operands contains some floating bits or some error
+bits, then the component's outputs will be either entirely floating or
+entirely error values.</p>
+
+<h2>Pins</h2>
+
+<dl>
+
+<dt>West edge, north end (input, bit width matches Data Bits attribute)
+<dd>The lower <var>dataBits</var> bits of the dividend (that is, the
+first operand for the division).
+
+<dt>West edge, south end (input, bit width matches Data Bits attribute)
+<dd>The divisor (that is, the second operand for the division)
+
+<dt>North edge, labeled <var>upper</var> (input, bit width matches Data Bits attribute)
+<dd>The upper <var>dataBits</var> bits of the dividend (that is, the
+first operand for the division).
+
+<dt>East edge (output, bit width matches Data Bits attribute)
+<dd>The lower <var>dataBits</var> bits of the quotient, as specified
+above.
+
+<dt>South edge, labeled <var>rem</var> (output, bit width matches Data Bits attribute)
+<dd>The remainder of the division. This value will always be between 0
+and <var>divisor</var>-1.
+
+</dl>
+
+<h2>Attributes</h2>
+
+<p>When the component is selected or being added,
+Alt-0 through Alt-9 alter its <q>Data Bits</q> attribute.</p>
+
+<dl>
+
+<dt>Data Bits</dt>
+<dd>The bit width of the values to be divided and of the result.</dd>
+
+</dl>
+
+<h2>Poke Tool Behavior</h2>
+
+<p>None.</p>
+
+<h2>Text Tool Behavior</h2>
+
+<p>None.</p>
+
+<p><a href="../index.html">Back to <em>Library Reference</em></a></p>
+
+</body>
+</html>

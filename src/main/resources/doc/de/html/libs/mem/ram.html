@@ -1,0 +1,156 @@
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>RAM</title>
+</head>
+
+<body bgcolor="FFFFFF">
+
+<h1><img align="center" src="../../../../icons/ram.gif" width="32" height="32">
+<em>RAM</em></h1>
+
+<p><table>
+<tr><td><strong>Bibliothek:</strong></td>
+	<td><a href="index.html">Memory</a></td></tr>
+<tr><td><strong>Eingeführt:</strong></td>
+	<td>2.0 Beta 1</td></tr>
+<tr><td valign="top"><strong>Aussehen:</strong></td>
+	<td valign="top"><img src="../../../../img-libs/ram.png" width="305" height="84"></td></tr>
+</table></p>
+
+<h2>Verhalten</h2>
+
+<p>The RAM component, easily the most complex component in Logisim's
+built-in libraries, stores up to 16,777,216 values (specified in the Address
+Bit Width attribute), each of which can include up to to 32 bits
+(specified in the Data Bit Width attribute). The circuit can load and
+store values in RAM. Also, the user can modify individual values
+interactively via the Poke Tool, or the user can modify the entire
+contents via the Menu Tool.</p>
+
+<p>Current values are displayed in the component. Addresses displayed
+are listed in gray to the left of the display area. Inside, each value
+is listed using hexadecimal. The value at the currently selected address
+will be displayed in inverse text (white on black).</p>
+
+<p>The RAM component supports three different interfaces, depending on the
+Data Interface attribute.</p>
+
+<dl>
+
+<dt>One synchronous load/store port (default)</dt>
+<dd><p>The component includes a single port on its east side that serves for both
+loading and storing data. Which it performs depends on the input labeled
+<em>ld</em>: 1 (or floating) indicates to load the data at the address
+designated on the component's west side, and 0 indicates to store the data
+given on the port. To transmit data into and out of the component, you will
+need to use a Controlled Buffer component, as illustrated below.</p>
+
+<center><img src="../../../../img-libs/ramdemo.png" width="384" height="159"></center></dd>
+
+<dt>One asynchronous load/store port</dt>
+<dd><p>This is the same as above, except that there is no clock. The value
+found on the data bus is stored into memory whenever the <em>ld</em> input is
+0. If, while the <em>ld</em> input is 0, the address or data changes, then an
+additional store occurs. This option is meant to more closely approximate the
+interface of many available random-access memories.</p></dd>
+
+<dt>Separate load and store ports</dt>
+<dd><p>Two data ports are provided - one on the west side for storing data,
+and another on the east side for loading data. This option removes the
+necessity of dealing with the Controlled Buffer and so it is easier to
+use.</p></dd>
+
+<h2>Pins</h2>
+
+<dl>
+
+<dt><var>A</var> on west edge (input, bit width matches Address Bit Width attribute)</dt>
+<dd>Selects which of the values in memory is currently being accessed by the
+circuit.</dd>
+
+<dt><var>D</var> on west edge (input, bit width matches Data Bit Width attribute)</dt>
+<dd>This input is present only if "separate load and store ports" is selected
+for the Data Interface attribute. When a store is requested (via the clock changing
+from 0 to 1 while <em>sel</em> and <em>str</em> are both 1 or floating), the
+value found at this port is stored into memory at the currently selected address.</dd>
+
+<dt><var>D</var> on east edge (input/output or output, bit width matches Data Bit Width attribute)</dt>
+<dd>If <var>sel</var> and <var>ld</var> are 1 or floating, then the RAM
+component emits the value found at the currently selected address on this port.
+If there is a single load/store port, the value read from this port is
+stored whenever a store is requested.</dd>
+
+<dt><var>str</var> on south edge (input, bit width 1)</dt>
+<dd>Store: This input is present only if "separate load and store ports" is selected
+for the Data Interface attribute. When it is 1 or floating, a clock pulse will result
+in storing the data found on the west edge into memory (provided the
+<var>sel</var> input is also 1 or floating).</dd>
+
+<dt><var>sel</var> on south edge (input, bit width 1)
+<dd>Chip select: This input enables or disables the entire RAM module, based on
+whether the value is 1/floating or 0. The input is meant primarily for
+situations where you have multiple RAM units, only one of which would be
+enabled at any time.</dd>
+
+<dt>triangle on south edge (input, bit width 1)
+<dd>Clock input: This is absent when the Data Interface attribute's value is "One
+asynchronous load/store port." In other circumstances, when <var>ld</var> is 0,
+and this input rises from 0 to 1 (and <var>sel</var> is 1/undefined and
+<var>clr</var> is 0), then the value at the currently selected address
+changes to whatever value is
+at the <var>D</var> pin. As long as the clock input remains 0 or 1,
+though, the <var>D</var> value will not be stored into memory.</dd>
+
+<dt><var>ld</var> on south edge (input, bit width 1)
+<dd>Load: Selects whether the RAM should emit (on <var>D</var>)
+the value at the current address (<var>A</var>). This output behavior
+is enabled if <var>out</var> is 1 or undefined; if <var>out</var>
+is 0, then no value is pushed onto <var>D</var> - but if there is a combined
+load/store port, stores will be enabled.</dd>
+
+<dt><var>clr</var> on south edge (input, bit width 1)</dt>
+<dd>Clear: When this is 1, all values
+in memory are pinned to 0, no matter what the other inputs are.</dd>
+
+</dl>
+
+<h2>Attribute</h2>
+
+<p>When the component is selected or being added,
+the digits '0' through '9' alter its <q>Address Bit Width</q> attribute
+and Alt-0 through Alt-9 alter its <q>Data Bit Width</q> attribute.</p>
+
+<dl>
+
+<dt>Address Bit Width</dt>
+<dd>The bit width of the address bits. The number of values stored in
+RAM is 2<sup><var>addrBitWidth</var></sup>.</dd>
+
+<dt>Data Bit Width</dt>
+<dd>The bit width of each individual value in memory.</dd>
+
+<dt>Data Interface</dt>
+<dd>Configures which of the three interfaces are used for communicating data
+into and out of the component.</dd>
+
+</dl>
+
+<h2>Verhalten des Schaltwerkzeugs</h2>
+
+<p>See <a href="../../guide/mem/poke.html">poking memory</a>
+in the <em>User's Guide</em>.</p>
+
+<h2>Verhalten des Textwerkzeugs</h2>
+
+<p>Keines.</p>
+
+<h2>Menu Tool Behavior</h2>
+
+<p>See <a href="../../guide/mem/menu.html">pop-up menus and files</a>
+in the <em>User's Guide</em>.</p>
+
+<p><a href="../index.html">Zurück zur <em>Bibliotheksreferenz</em></a></p>
+
+</body>
+</html>

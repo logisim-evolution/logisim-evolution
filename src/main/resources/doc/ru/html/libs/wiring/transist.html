@@ -1,0 +1,133 @@
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>Транзистор</title>
+</head>
+
+<body bgcolor="FFFFFF">
+
+<h1><img align="center" src="../../../../icons/trans0.gif" width="32" height="32">
+<img align="center" src="../../../../icons/trans1.gif" width="32" height="32">
+<em>Транзистор</em></h1>
+
+<p><table>
+<tr><td><strong>Библиотека:</strong></td>
+	<td><a href="index.html">Проводка</a></td></tr>
+<tr><td><strong>Введён в:</strong></td>
+	<td>2.7.0</td></tr>
+<tr><td valign="top"><strong>Внешний вид:</strong></td>
+	<td valign="top"><img src="../../../../img-libs/trans0.png" width="44" height="23">
+	<img src="../../../../img-libs/trans1.png" width="44" height="23"></td></tr>
+</table></p>
+
+<h2>Поведение</h2>
+
+<p>Транзистор имеет два входа, называемые <em>затвор</em> и <em>исток</em>, и выход, называемый <em>сток</em>. На схемах вход <em>исток</em> и выход <em>сток</em> изображаются соединёнными пластиной; Logisim отрисовывает стрелку, указывающую направление потока от входа к выходу. Вход <em>затвор</em> изображён соединённым с пластиной, параллельной пластине, соединяющей <em>исток</em> со <em>стоком</em>. Logisim поддерживает два типа транзисторов с немного различными поведениями, описанными ниже; транзистор p-типа обозначен кружком, соединяющим вход <em>затвор</em> с его пластиной, а транзистор n-типа не имеет такого кружка.</p>
+
+<p>В зависимости от значения, поступающего на <em>затвор</em>, значение с <em>истока</em> может быть передано на <em>сток</em>; или соединения с <em>истоком</em> может не быть, тогда значение на <em>стоке</em> остаётся плавающим. Решение о передаче или разъединении зависит от типа транзистора: транзистор p-типа (обозначенный кружком на линии <em>затвора</em>) передаёт значение, когда на <em>затворе</em> 0, а транзистор n-типа (без кружка) передаёт значение, когда на <em>затворе</em> 1. Это поведение обобщено следующими таблицами.</p>
+
+<center><table>
+<tr><td><table><thead>
+<tr><td></td><th colspan="4" align="center"><b>p-тип</b></th></tr>
+<tr><td></td><td colspan="4" align="center"><img src="../../../../img-libs/trans0.png" width="44" height="23"></td></tr>
+</thead><tbody>
+<tr><td colspan="2"></td><th colspan="3"><em>затвор</em></th></tr>
+<tr><td colspan="2"></td><th align="center">0</th><th align="center">1</th><th align="center">X/Z</th></tr>
+<tr><td></td><th align="center">0</th>
+      <td align="center">0</td><td align="center">Z</td><td align="center">X</td></tr>
+<tr><th><em>исток</em></th><th align="center">1</th>
+      <td align="center">1</td><td align="center">Z</td><td align="center">X</td></tr>
+<tr><td></td><th align="center">Z</th>
+      <td align="center">Z</td><td align="center">Z</td><td align="center">Z</td></tr>
+<tr><td></td><th align="center">X</th>
+      <td align="center">X</td><td align="center">Z</td><td align="center">X</td></tr>
+</tbody></table></td><td>&nbsp;&nbsp;&nbsp;</td><td><table><thead>
+<tr><td></td><th colspan="4" align="center"><b>n-тип</b></th></tr>
+<tr><td></td><td colspan="4" align="center"><img src="../../../../img-libs/trans1.png" width="44" height="23"></td></tr>
+</thead><tbody>
+<tr><td colspan="2"></td><th colspan="3"><em>затвор</em></th></tr>
+<tr><td colspan="2"></td><th align="center">0</th><th align="center">1</th><th align="center">X/Z</th></tr>
+<tr><td></td><th align="center">0</th>
+      <td align="center">Z</td><td align="center">0</td><td align="center">X</td></tr>
+<tr><th><em>исток</em></th><th align="center">1</th>
+      <td align="center">Z</td><td align="center">1</td><td align="center">X</td></tr>
+<tr><td></td><th align="center">Z</th>
+      <td align="center">Z</td><td align="center">Z</td><td align="center">Z</td></tr>
+<tr><td></td><th align="center">X</th>
+      <td align="center">Z</td><td align="center">X</td><td align="center">X</td></tr>
+</table></td></tr></table></center>
+
+<p>Или в краткой форме:</p>
+
+<center><table>
+<tr><td><table><thead>
+<tr><th colspan="2" align="center"><b>p-тип</b></th></tr>
+<tr><td colspan="2" align="center"><img src="../../../../img-libs/trans0.png" width="44" height="23"></td></tr>
+</thead><tbody>
+<tr><th><em>затвор</em></th><th><em>сток</em></th></tr>
+<tr><td align="center">0</td><td align="center"><em>исток</em></td></tr>
+<tr><td align="center">1</td><td align="center">Z</td></tr>
+<tr><td align="center">X/Z</td><td align="center">X*</td></tr>
+</tbody></table></td><td>&nbsp;&nbsp;&nbsp;</td><td><table><thead>
+<tr><th colspan="2" align="center"><b>n-тип</b></th></tr>
+<tr><td colspan="2" align="center"><img src="../../../../img-libs/trans1.png" width="44" height="23"></td></tr>
+</thead><tbody>
+<tr><th><em>затвор</em></th><th><em>сток</em></th></tr>
+<tr><td align="center">0</td><td align="center">Z</td></tr>
+<tr><td align="center">1</td><td align="center"><em>исток</em></td></tr>
+<tr><td align="center">X/Z</td><td align="center">X*</td></tr>
+</table></td></tr></table>
+<p>* <em>Если на <em>истоке</em> Z, то на <em>стоке</em> Z; в противном случае на <em>стоке</em> X.</p>
+</center>
+
+<p>Если значение атрибута Биты данных больше единицы, то вход <em>затвор</em> остаётся однобитным, но значение на нём применяется одновременно к каждому биту входа <em>исток</em>.</p> 
+
+<p>Транзистор n-типа ведёт себя очень похоже на <a href="../gates/controlled.html">Управляемый буфер</a>. Основная разница в том, что транзистор предназначен для проектирования более элементарных схем.</p>
+
+<h2>Контакты (предполагается, что компонент направлен на восток, положение затвора - сверху/справа)</h2>
+
+<dl>
+
+<dt>Западный край (вход, разрядность соответствует атрибуту Биты данных)</dt>
+<dd>Вход <em>исток</em> компонента, значение с которого будет передано на выход, если это инициировано входом <em>затвор</em>.</dd>
+
+<dt>Северный край (вход, разрядность равна 1)</dt>
+<dd>Вход <em>затвор</em> компонента. Для транзисторов p-типа транзистор будет передавать значение, если значение на <em>затворе</em> - 0; для транзисторов n-типа это будет происходить, если на <em>затворе</em> 1.</dd>
+
+<dt>Восточный край (выход, разрядность соответствует атрибуту Биты данных)</dd>
+<dd>Выход компонента, значение на котором будет совпадать со значением на входе <em>исток</em>, если это определено входом <em>затвор</em>, или будет плавающим, если на входе <em>затвор</em> соответствующее значение. Если на <em>затворе</em> плавающее значение, или значение ошибки, то на выходе будет значение ошибки.</dd>
+
+</dl>
+
+<h2>Атрибуты</h2>
+
+<p>Когда компонент выбран, или уже добавлен, комбинации от Alt-0 до Alt-9 меняют его атрибут <q>Биты данных</q>, а клавиши со стрелками меняют его атрибут <q>Направление</q>.</p>
+
+<dl>
+
+<dt>Тип</dt>
+<dd>Определяет тип транзистора: p-тип или n-тип. </dd>
+
+<dt>Направление</dt>
+<dd>Направление компонента (его выхода относительно его входа).</dd>
+
+<dt>Положение затвора</dt>
+<dd>Положение входа затвор.</dd>
+
+<dt>Биты данных</dt>
+<dd>Разрядность входов и выходов компонента.</dd>
+
+</dl>
+
+<h2>Поведение Инструмента Нажатие</h2>
+
+<p>Нет.</p>
+
+<h2>Поведение Инструмента Текст</h2>
+
+<p>Нет.</p>
+
+<p><a href="../index.html">Назад к <em>Справке по библиотеке</em></a></p>
+
+</body>
+</html>

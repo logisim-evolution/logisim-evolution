@@ -1,0 +1,111 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2018-10-23T06:18:42.262000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="fr">
+    <title>Shifter</title>
+	<LINK rel="stylesheet" type="text/css" href="../../style.css">
+</head>
+
+<body bgcolor="FFFFFF">
+
+<h1><img align="center" src="../../../../icons/shifter.gif" width="32" height="32">
+<em>Shifter</em></h1>
+
+<p><table>
+<tr><td><strong>Library:</strong></td>
+	<td><a href="index.html">Arithmetic</a></td></tr>
+<tr><td><strong>Introduced:</strong></td>
+	<td>2.3.0</td></tr>
+<tr><td valign="top"><strong>Appearance:</strong></td>
+	<td valign="top"><img src="../../../../img-libs/shifter.png" width="44" height="42"></td></tr>
+</table></p>
+
+<h2>Behavior</h2>
+
+<p>This component includes two inputs, <var>data</var> and <var>dist</var>, and
+it has one output, which is the result of shifting <var>data</var> by
+<var>dist</var> places. Both <var>data</var> and output have the same number of
+bits in them. The component supports the following shift types:</p>
+
+<ul>
+
+<li>Logical Left: All bits in <var>data</var> are shifted up <var>dist</var> places,
+with the bottom <var>dist</var> places filled with 0's. For example,
+11001011 logically shifted left twice is 00101100. (The top two ones are lost.)</li>
+
+<li>Logical Right: All bits in <var>data</var> are shifted down <var>dist</var>
+places, with the upper <var>dist</var> places filled with 0's. For example,
+11001011 logically shifted right twice is 00110010. (The bottom two ones are
+lost.)</li>
+
+<li>Arithmetic Right: All bits in <var>data</var> are shifted down <var>dist</var>
+places, with the upper <var>dist</var> places filled with repetitions of
+whatever the uppermost bit in <var>data</var>. For example, 11001011
+arithmetically shifted right twice is 11110010.</li>
+
+<li>Rotate Left: All bits in <var>data</var> are shifted up <var>dist</var>
+places, with the top <var>dist</var> places wrapped around into the bottom.
+For example, 11001011 rotated left twice is 00101111.</li>
+
+<li>Rotate Right: All bits in <var>data</var> are shifted down <var>dist</var>
+places, with the bottom <var>dist</var> places wrapped around into the top.
+For example, 11001011 rotated right twice is 11110010.</li>
+
+</ul> 
+
+<p>Note that if <var>dist</var> contains any floating or error inputs, then
+the output is composed entirely of error values, since there is no way to
+guess how far to shift the input.</p>
+
+<h2>Pins</h2>
+
+<dl>
+
+<dt>West edge, north end (input, bit width matches the Data Bits attribute)</dt>
+<dd>The value to be shifted.</dd>
+
+<dt>West edge, south end (input, bit width is computed as below)</dt>
+<dd>The number of bits by which to shift the <var>data</var> input.
+This input should have as many bits as is the minimum number to indicate
+any shift distance from 0 up to one less than Data Bits; that is, it should
+be the ceiling of the base-2 logarithm of Data Bits. For example, if Data Bits
+were 8, this input would require 3 bits; but if it were 9, it would require
+4 bits.</dd>
+
+<dt>East edge (output, bit width matches the Data Bits attribute)
+<dd>The result of shifting the input value by the input distance.</dd>
+
+</dl>
+
+<h2>Attributes</h2>
+
+<p>When the component is selected or being added,
+Alt-0 through Alt-9 alter its <q>Data Bits</q> attribute.</p>
+
+<dl>
+
+<dt>Data Bits</dt>
+<dd>The bit width of the <var>data</var> input and of the output.</dd>
+
+<dt>Shift Type</dt>
+<dd>One of the five possible shift types as outlined above (Logical Left,
+Logical Right, Arithmetic Right, Rotate Left, Rotate Right).</dd>
+
+</dl>
+
+<h2>Poke Tool Behavior</h2>
+
+<p>None.</p>
+
+<h2>Text Tool Behavior</h2>
+
+<p>None.</p>
+
+<p><a href="../index.html">Back to <em>Library Reference</em></a></p>
+
+</body>
+</html>

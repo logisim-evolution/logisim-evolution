@@ -1,0 +1,159 @@
+<html>
+<head>
+<title>Counter</title>
+</head>
+
+<body bgcolor="FFFFFF">
+
+<h1><img align="center" src="../../../../icons/counter.gif" width="32" height="32">
+<em>Counter</em></h1>
+
+<p><table>
+<tr><td><strong>Library:</strong></td>
+	<td><a href="index.html">Memory</a></td></tr>
+<tr><td><strong>Introduced:</strong></td>
+	<td>2.3.0</td></tr>
+<tr><td valign="top"><strong>Appearance:</strong></td>
+	<td valign="top"><img src="../../../../img-libs/counter.png" width="34" height="44"></td></tr>
+</table></p>
+
+<h2>Behavior</h2>
+
+<p>The counter holds a single value, whose value is emitted on the output
+<var>Q</var>. Each time the clock input (diagrammed with a triangle on the
+component's south edge) triggers according to its Trigger attribute,
+the value in the counter may update based on
+the two inputs on the component's west edge: The upper input is called
+<var>load</var> and the lower is called <var>count</var>, and they are
+interpreted as follows.</p>
+
+<center><table><thead>
+<tr><td><var>load</var></td><td><var>count</var></td><td>trigger action</td></tr>
+</thead><tbody>
+<tr><td align="center">0 or z</td><td align="center">0</td>
+    <td>The counter remains unchanged.</td></tr>
+<tr><td align="center">0 or z</td><td align="center">1 or z</td>
+    <td>The counter increments.</td></tr>
+<tr><td align="center">1</td><td align="center">0</td>
+    <td>The counter loads the value found at the
+    <var>D</var> input.</td></tr>
+<tr><td align="center">1</td><td align="center">1 or z</td>
+    <td>The counter decrements.</td></tr>
+</tbody></table></center>
+
+<p>The range of counting can be configured using the Maximum
+Value attribute. When the counter reaches this value, the next
+increment wraps the counter back to 0; and if it is at 0,
+then a decrement will wrap the counter around back to its maximum value.</p>
+
+<p>In addition to the output <var>Q</var>, the component also includes a
+single-bit output <var>carry</var>. This is 1 whenever the counter is at its
+maximum and the <var>load</var> and <var>count</var> inputs indicate that the
+component should increment on the next step - or when the counter is at 0
+and the <var>load</var> and <var>count</var> inputs indicate to decrement at
+the next step.</p> 
+
+<p>The <var>clear</var> input resets the counter's value to 0 (all
+zeroes) asynchronously; that is, as long as the <var>clr</var> input
+is 1, the value is pinned to 0, regardless of the clock input.</p>
+
+<h2>Pins</h2>
+
+<dl>
+
+<dt>East edge, labeled <var>Q</var> (output, bit width matches Data Bits attribute)</dt>
+<dd>Outputs the value currently stored by the counter.</dd>
+
+<dt>East edge, lower pin (output, bit width 1)</dt>
+<dd>Carry: When <var>load</var> and <var>count</var> indicate to increment,
+this output is 1 whenever the counter is at its maximum. When <var>load</var>
+and <var>count</var> indicate to decrement, this output is 1 whenever the
+counter is at 0. At all other times, this output is 0.</dd>
+
+<dt>West edge, top pin (input, bit width 1)</dt>
+<dd>Load: When this is 1 while the <var>count</var> input is 0, the counter
+will load the value found at the <var>data</var> input at the next clock
+trigger - or, if the <var>count</var> input happens to be 1, the counter's
+value will decrement.</dd>
+
+<dt>West edge, middle pin labeled <var>D</var>
+  (input, bit with matches Data Bits attribute)</dt>
+<dd>Data: When the clock triggers while <var>load</var> is 1
+and <var>count</var> is 0, the counter's value changes to the value found at
+this input.</dd>
+
+<dt>West edge, lower pin labeled <var>ct</var> (input, bit width 1)</dt>
+<dd>Count: When this is 1 or unconnected, the value in the counter increments
+whenever the clock input is triggered - or it decrements if the <var>load</var>
+input happens to also be 1.</dd> 
+
+<dt>South edge, indicated with a triangle (input, bit width 1)
+<dd>Clock: At the instant that this is triggered as specified by the Trigger
+attribute, the counter updates as indicated by the <var>load</var> and
+<var>count</var> inputs.</dd>
+
+<dt>South edge, labeled 0 (input, bit width 1)
+<dd>Clear: When 0 or undefined, this input has no effect.
+As long as it is 1, the counter's value is asynchronously pinned to 0. This
+occurs asynchronously - that is, without regard to the current clock input
+value. As long as this is 1, the other inputs have no effect.</dd>
+
+</dl>
+
+
+<h2>Attributes</h2>
+
+<p>When the component is selected or being added,
+Alt-0 through Alt-9 alter its <q>Data Bits</q> attribute.</p>
+
+<dl>
+
+<dt>Data Bits</dt>
+<dd>The bit width of the value emitted by the component.</dd>
+
+<dt>Maximum Value</dt>
+<dd>The maximum value, at which point the counter will set its carry output.</dd>
+
+<dt>Action On Overflow</dt>
+<dd>The behavior when the counter attempts to increment beyond the maximum value
+or decrement beyond 0. Four possible actions are supported:
+<dl>
+<dt>Wrap around</dt>
+<dd>The next value is 0 (if incrementing - the maximum value if decrementing)</dd>
+<dt>Stay at value</dt>
+<dd>The counter's value remains at the maximum (or 0 if decrementing)</dd>
+<dt>Continue counting</dt>
+<dd>The counter continues incrementing/decrementing, keeping the number of bits
+as provided by the Data Bits attribute</dd>
+<dt>Load next value</dt>
+<dd>The next value is loaded from the D input.</dd>
+</dl></dd>
+
+<dt>Trigger</dt>
+<dd>Configures how the clock input is interpreted. The value <q>rising edge</q>
+indicates that the counter should update its value at the instant when the
+clock rises from 0 to 1. The <q>falling edge</q> value indicates that it should
+update at the instant the clock falls from 1 to 0.</dd>
+
+<dt>Label</dt>
+<dd>The text within the label associated with the component.</dd>
+
+<dt>Label Font</dt>
+<dd>The font with which to render the label.</dd>
+
+</dl>
+
+<h2>Poke Tool Behavior</h2>
+
+<p>Clicking the counter brings keyboard focus to the component
+(indicated by a red rectangle), and typing hexadecimal digits will
+change the value stored in the counter.</p>
+
+<h2>Text Tool Behavior</h2>
+
+<p>Allows the label associated with the component to be edited.</p>
+
+<p><a href="../index.html">Back to <em>Library Reference</em></a></p>
+
+</body>
+</html>

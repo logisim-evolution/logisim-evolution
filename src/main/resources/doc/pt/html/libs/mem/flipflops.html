@@ -1,0 +1,193 @@
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>Flip-Flops D/T/J-K/S-R</title>
+</head>
+
+<body bgcolor="FFFFFF">
+
+<h1><img align="center" src="../../../../icons/dFlipFlop.gif" width="32" height="32">
+<img align="center" src="../../../../icons/tFlipFlop.gif" width="32" height="32">
+<img align="center" src="../../../../icons/jkFlipFlop.gif" width="32" height="32">
+<img align="center" src="../../../../icons/srFlipFlop.gif" width="32" height="32">
+<em>Flip-Flops D/T/J-K/S-R</em></h1>
+
+<p><table>
+<tr><td><strong>Biblioteca:</strong></td>
+	<td><a href="index.html">Memória</a></td></tr>
+<tr><td><strong>Introdução:</strong></td>
+	<td>2.0 Beta 1</td></tr>
+<tr><td valign="top"><strong>Aparência:</strong></td>
+	<td valign="top"><img src="../../../../img-libs/flipflops.png">
+        </td></tr>
+</table></p>
+
+<h2>Comportamento</h2>
+
+<p> Cada <i>flip-flop</i> armazena um único bit como dado, o qual será emitido através
+da saída <var>Q</var> na face leste. Normalmente, o valor poderá ser controlado
+pelas entradas do lado oeste. Em particuar, o valor irá mudar quando houver variação
+da entrada de <i>clock</i>, marcada por um triângulo em cada <i>flip-flop</i>, quando 
+essa passar de 0 para 1 (ou o contrário se assim configurado); ao ocorrer, portanto, 
+uma borda de subida, o valor mudará de acordo com a tabela abaixo.
+</p>
+
+<center><table>
+<tr><th>Flip-Flop D</th>
+    <th>Flip-Flop T</th>
+    <th>Flip-Flop J-K</th>
+    <th>Flip-Flop S-R</th></tr>
+<tr><td align="center" valign="top">
+<table>
+<tr><th><var>D</var></th><th><var>Q</var></th></tr>
+<tr><td align="center">0</td><td align="center">0</td></tr>
+<tr><td align="center">1</td><td align="center">1</td></tr>
+</table>
+</td><td align="center" valign="top">
+<table>
+<tr><th><var>T</var></th><th><var>Q</var></th></tr>
+<tr><td align="center">0</td><td align="center"><var>Q</var></td></tr>
+<tr><td align="center">1</td><td align="center"><var>Q</var>'</td></tr>
+</table>
+</td><td align="center" valign="top">
+<table>
+<tr><th><var>J</var></th><th><var>K</var></th><th><var>Q</var></th></tr>
+<tr><td align="center">0</td><td align="center">0</td>
+  <td align="center"><var>Q</var></td></tr>
+<tr><td align="center">0</td><td align="center">1</td>
+  <td align="center">0</td></tr>
+<tr><td align="center">1</td><td align="center">0</td>
+  <td align="center">1</td></tr>
+<tr><td align="center">1</td><td align="center">1</td>
+  <td align="center"><var>Q</var>'</td></tr>
+</table>
+</td><td align="center" valign="top">
+<table>
+<tr><th><var>S</var></th><th><var>R</var></th><th><var>Q</var></th></tr>
+<tr><td align="center">0</td><td align="center">0</td>
+  <td align="center"><var>Q</var></td></tr>
+<tr><td align="center">0</td><td align="center">1</td>
+  <td align="center">0</td></tr>
+<tr><td align="center">1</td><td align="center">0</td>
+  <td align="center">1</td></tr>
+<tr><td align="center">1</td><td align="center">1</td>
+  <td align="center"><em>??</em></td></tr>
+</table>
+</tr></table></center>
+
+<p> Outra maneira de descrever os diferentes comportamentos dos <i>flip-flops</i>
+está no texto original em inglês.</p>
+<ul>
+
+<li><p><strong>Flip-Flop D:</strong> Quando houver variação do <i>clock</i>, o valor
+guardado no <i>flip-flop</i> será o valor na entrada <var>D</var> (<em>Data</em>)
+naquele instante.</p></li>
+
+<li><p><strong>Flip-Flop T:</strong> Quando houver variação do <i>clock</i>, o valor
+guardado no <i>flip-flop</i> será alternado ou mantido dependendo se o valor na entrada
+<var>T</var> (<em>Toggle</em>) for 1 ou 0.</p></li>
+
+<li><p><strong>Flip-Flop J-K:</strong> Quando houver variação do <i>clock</i>, o valor
+guardado no <i>flip-flop</i> será alternado se as entradas <var>J</var> e <var>K</var>
+forem ambas iguais a 1 e será mantido se ambas forem iguais a zero; se forem 
+diferentes, então o valor se tornará 1 se a entrada <var>J</var>
+(<em>Jump</em>) for 1 e será 0 se a entrada <var>K</var> (<em>Kill</em>)
+for 1.</p></li>
+
+<li><p><strong>Flip-Flop S-R:</strong> Quando houver variação do <i>clock</i>, o valor
+guardado no <i>flip-flop</i> será mantido se <var>R</var> e <var>S</var> forem ambos 
+iguais a 0; irá mudar para 0, se a entrada <var>R</var> (<em>Reset</em>) for 1, e
+se tornará 1 se a entrada <var>S</var> (<em>Set</em>) for 1.
+O comportamento não será especificado se as duas entradas forem forem iguais a 1.
+(No Logisim, o valor anterior do <i>flip-flop</i> será mantido.)</p></li>
+
+</ul>
+
+<p> Por padrão, o <i>clock</i> irá variar na borda de subida &mdash; ou seja, quando a
+entrada de <i>clock</i> variar de 0 para 1. Contudo, o atributo Gatilho permitirá que
+essa mudança ocorra na borda de descida (quando a entrada de <i>clock</i> variar de 1
+para 0), ou em nível baixo (enquanto a entrada de <i>clock</i> permanecer em 0). As
+opções de disparo dependentes do nível não estão disponíveis para os <i>flip-flops</i>
+T e J-K, porque esses se comportam de forma imprevisível quando forçados a
+alternar por tempo indeterminado.
+</p>
+
+<h2>Pinos</h2>
+
+<dl>
+
+<dt> Na face oeste, marcado por um triângulo (entrada, com largura de 1 bit) </dt>
+<dd> <i>clock</i>: no instante em que o valor dessa entrada variar de 0 para 1
+(borda de subida), haverá atualização de acordo com as entradas na face oeste.
+Enquanto se mantiver em 0 ou 1, essas entradas não terão efeito. </dd>
+
+<dt> Na face oeste, outros pino(s) rotulados (entrada(s), com largura de 1 bit) </dt>
+<dd> Essas entradas controlarão como o valor do flip-flop irá mudar durante a 
+subida de borda do <i>clock</i>. O comportamento exato dependerá do tipo de 
+<i>flip-flop</i>; a tabela acima resume esses comportamentos. </dd>
+
+<dt> Na face leste, marcado por <var>Q</var>, extremo norte (saída,
+com largura de 1 bit) </dt>
+<dd> Emitirá o valor corrente armazenado pelo <i>flip-flop</i>. </dd>
+
+<dt> Na face leste, extremo sul end (saída, com largura de 1 bit) </dt>
+<dd> Emitirá o complemento do valor corrente armazenado pelo <i>flip-flop</i>. </dd>
+
+<dt> Na face sul, extremo leste (entrada, com largura de 1 bit) </dt>
+<dd> reset assíncrono: se for igual a 0 ou indefinido, essa entrada não terá efeito
+algum. Enquanto se mantiver em 1, o valor do <i>flip-flop</i> ficará fixo em 0. 
+Isso ocorrerá assincronamente - ou seja, sem depender do valor corrente da entrada 
+de <i>clock</i>. Enquanto se mantiver em 1, as outras entradas não terão efeito algum. 
+</dd>
+
+<dt> Na face sul, posição central (entrada, com largura de 1 bit) </dt>
+<dd> enable: se for igual a 0, o disparo do <i>clock</i> será ignorado. O valor 
+corrente continuará a aparecer na saída. Os gatilhos do clock estarão habilitados 
+quando essa entrada for 1 ou indefinida. </dd>
+
+<dt> Na face sul, extremo oeste (entrada, com largura de 1 bit) </dt>
+<dd> set assíncrono: se for igual a 1 ou indefinido, essa entrada não terá efeito
+algum. Enquanto se mantiver em 1, o valor do <i>flip-flop</i> ficará fixo em 1.
+Enquanto se mantiver em 1, as outras entradas não terão efeito algum,
+exceção feita para a entrada reset, que tem prioridade. </dd>
+
+</dl>
+
+<h2>Atributos</h2>
+
+<dl>
+
+<dt> Gatilho </dt>
+<dd> Serve para configurar como a entrada de <i>clock</i> deverá ser interpretada.
+O valor <q>borda de subida</q> indicará que a atualização do <i>flip-flop</i> deverá
+ocorrer no instante em que o clock variar de 0 para 1. O valor <q>borda de descida</q>
+indicará que a atualização deverá ocorrer no instante em que o clock variar de 
+1 para 0. O valor <q>nível alto</q> indicará que a atualização deverá ocorrer
+continuamente enquanto o <i>clock</i> se mantiver em 1. E o valor <q>nível alto</q>
+indicará que o valor deverá ser atualizado continuamente enquanto a entrada de
+<i>clock</i> se mantiver em 0. Observar que as duas últimas opções não estão disponíveis
+para os <i>flip-flops</i> T e J-K. </dd>
+
+<dt> Rótulo </dt>
+<dd> O texto para o rótulo associado ao <i>flip-flop</i>. </dd>
+
+<dt> Fonte do Rótulo </dt>
+<dd> A fonte com a qual o rótulo será mostrado. </dd>
+
+</dl>
+
+<h2> Comportamento da ferramenta Testar </h2>
+
+<p> Ao cliclar sobre um <i>flip-flop</i> usando a ferramenta Testar isso irá alternar
+o bit nele armazenado, a menos que as entradas assíncronas set/reset tenham fixado
+o valor corrente do <i>flip-flop</i>. 
+</p>
+
+<h2> Comportamento da ferramenta Texto </h2>
+
+<p> Permite que o rótulo associado à porta seja editado.</p>
+
+<p><a href="../index.html">Voltar à <em>Referência para bibliotecas</em></a></p>
+
+</body>
+</html>

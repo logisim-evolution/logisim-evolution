@@ -1,0 +1,113 @@
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>Flip-Flop D/J-K do Logisim 1.0</title>
+</head>
+
+<body bgcolor="FFFFFF">
+
+<h1><img align="center" src="../../../../icons/dFlipFlop.gif" width="32" height="32">
+<img align="center" src="../../../../icons/jkFlipFlop.gif" width="32" height="32">
+<em>Flip-Flop D/J-K do Logisim 1.0</em></h1>
+
+<p><table>
+<tr><td><strong>Biblioteca:</strong></td>
+	<td><a href="index.html">Legada</a></td></tr>
+<tr><td><strong>Introdução:</strong></td>
+	<td>2.0 Beta 12</td></tr>
+<tr><td valign="top"><strong>Aparência:</strong></td>
+	<td valign="top"><img src="../../../../img-libs/legacy-flipflops.png"></td></tr>
+</table></p>
+
+<h2>Comportamento</h2>
+
+<p> Esses componentes existem apenas para compatibilidade com versões anteriores
+como as Logisim 1.0<var>X</var>, pois os novos circuitos, <i>flip-flops</i> da
+<a href="../mem/flipflops.html">biblioteca Memória</a> devem ser usados em seu lugar. 
+</p>
+
+<p> Cada <i>flip-flop</i> armazenará um único bit de dado, que será emitido através
+da saída <var> Q </var> no lado leste. Normalmente, o valor pode ser
+controlado através das entradas do lado oeste. Em particular, haverá variação
+quando a entrada de <strong><i>clock</i></strong>, marcada por um triângulo em
+cada <i>flip-flop</i>, varia de 0 para 1 (borda de subida), e o valor
+mudará de acordo com a tabela abaixo.
+
+<center><table>
+<tr><th><i>Flip-Flop D  </i></th>
+    <th><i>Flip-Flop J-K</i></th>
+<tr><td align="center" valign="top">
+<table>
+<tr><th><var>D</var></th><th><var>Q</var></th></tr>
+<tr><td align="center">0</td><td align="center">0</td></tr>
+<tr><td align="center">1</td><td align="center">1</td></tr>
+</table>
+</td><td align="center" valign="top">
+<table>
+<tr><th><var>J</var></th><th><var>K</var></th><th><var>Q</var></th></tr>
+<tr><td align="center">0</td><td align="center">0</td>
+  <td align="center"><var>Q</var></td></tr>
+<tr><td align="center">0</td><td align="center">1</td>
+  <td align="center">0</td></tr>
+<tr><td align="center">1</td><td align="center">0</td>
+  <td align="center">1</td></tr>
+<tr><td align="center">1</td><td align="center">1</td>
+  <td align="center"><var>Q</var>'</td></tr>
+</table>
+</tr></table></center>
+Outra forma para descrever o comportamento singular dos <i>flip-flops</i>
+está no texto original em inglês.
+<ul>
+
+<li> <strong> <i>Flip-Flop D:  </i></strong> Quando o relógio varia de 0 para 1,
+o valor a ser guardado pelo <i>flip-flop</i> será aquele presente na entrada
+<var> D </var> (<em>Dado</em>) naquele instante. </p>
+
+<li> <strong> <i>Flip-Flop JK: </i></strong> Quando o relógio varia de 0 para 1,
+o valor a ser guardado pelo <i>flip-flop</i> alternará se as entradas <var> J </var>
+e <var> K </var> forem iguais a 1, e permanecerá o mesmo se ambos forem 0;
+se forem diferentes, então o valor torna-se 1 se a entrada <var> J </var>
+(<em> Jump </em>) for 1 e 0 se a entrada <var> K </var> (<em>Kill</em>)
+for 1. </p> </li>
+
+</ul></p>
+
+<h2>Pinos</h2>
+
+<dl>
+
+<dt> Na face oeste, marcada pelo triângulo (entrada, com largura de 1 bit)
+<dd> entrada do <i>clock</i>: no instante em que esse valor de entrada muda de 0 para
+1 (a borda de subida), o valor será atualizado de acordo com os outras
+entradas na face oeste. Enquanto permanecer em 0 ou 1, nenhuma das outras
+entradas na face oeste terá qualquer efeito.
+
+<dt> Na face oeste, outro pino(s) rotulado(s) (entrada(s), com largura de 1 bit)
+<dd> Essas entradas controlam como serão as mudanças do valor <i>flip-flop</i> quando
+houver subida de borda do <i>clock</i>. Seu comportamento exato dependerá do
+<i>flip-flop</i>; as tabelas acima resumem seu comportamento.
+
+<dt> Na borda leste, marcado como <var> Q</var>, em cima (saída, com largura de 1 bit)
+<dd> Saída com o valor atualmente armazenado pelo <i>flip-flop</i>.
+
+<dt> Na borda leste, em baixo (saída, com largura de 1 bit)
+<dd> Saída com o complemento do valor atualmente armazenado pelo <i>flip-flop</i>.
+
+</dl>
+
+<h2>Atributos</h2>
+
+<p>Nenhum.</p>
+
+<h2>Comportamento da ferramenta Testar</h2>
+
+<p>Nenhum.</p>
+
+<h2>Comportamento da ferramenta Texto</h2>
+
+<p>Nenhum.</p>
+
+<p><a href="../index.html">Back to <em>Referência para bibliotecas</em></a></p>
+
+</body>
+</html>

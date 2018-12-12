@@ -1,0 +1,82 @@
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>Comparador</title>
+</head>
+
+<body bgcolor="FFFFFF">
+
+<h1><img align="center" src="../../../../icons/comparator.gif" width="32" height="32">
+<em>Comparador</em></h1>
+
+<p><table>
+<tr><td><strong>Biblioteca:</strong></td>
+	<td><a href="index.html">Aritmética</a></td></tr>
+<tr><td><strong>Introdução:</strong></td>
+	<td>2.0 Beta 22</td></tr>
+<tr><td valign="top"><strong>Aparência:</strong></td>
+	<td valign="top"><img src="../../../../img-libs/comparator.png"></td></tr>
+</table></p>
+
+<h2>Comportamento</h2>
+
+<p> Serve para comparar dois valores, quer sejam sem sinal ou em complemento de dois,
+dependendo do atributo Tipo Numérico. Normalmente, uma das saídas será 1, e as outras 
+duas saídas serão 0. </p>
+
+<p> A comparação será feita a partir dos bits mais significativos em
+cada número e irá decrescendo, em paralelo, até onde forem encontrados dois valores 
+em desacordo. Se, no entanto, um erro ou valor flutuante for encontrado, então, 
+todas as saídas irão corresponder a esse erro ou ao valor flutuante. </p>
+
+<h2>Pinos</h2>
+
+<dl>
+
+<dt> Na face oeste, extremo norte (entrada, com largura em bits de acordo com o
+atributo Bits de Dados)
+<dd> O primeiro dos dois valores a serem comparados.
+
+<dt> Na face oeste, extremo sul (entrada, com largura em bits de acordo com o
+atributo Bits de Dados)
+<dd> O segundo dos dois valores a serem comparados.
+
+<dt> Na face leste, marcado por <tt>>&gt;</tt> (saída, com largura de 1 bit)
+<dd> Será 1, se a primeira entrada for maior que a segunda; ou 0,
+se a primeira entrada for menor ou igual à segunda.
+
+<dt> Na face leste, marcado por <tt>=</tt> (saída, com largura de 1 bit)
+<dd> Será 1, se a primeira entrada é igual à segunda; ou 0, 
+se a primeira entrada não for igual à segunda.
+
+<dt> Na face leste, marcado por <tt>&lt;</tt> (saída, com largura de 1 bit)
+<dd> Será 1, se a primeira entrada for menor que a segunda; ou 0,
+se a primeira entrada for maior ou igual a segunda.
+
+</dl>
+
+<h2>Atributos</h2>
+
+<p> Quando o componente for selecionado ou estiver sendo acrescentado,
+Alt-0 até ALT-9 irão alterar o seu atributo <q> Bits de Dados </q>.
+</p>
+
+<dl>
+
+<dt> Bits de dados</dt>
+<dd> Largura dos bits de dados da entrada e da saída do componente.</dd>
+
+</dl>
+
+<h2> Comportamento da ferramenta Testar </h2>
+
+<p> Nenhum. </p>
+
+<h2> Comportamento da ferramenta Texto </h2>
+
+<p> Nenhum. </p>
+
+<p><a href="../index.html">Voltar à <em>Referência para bibliotecas</em></a></p>
+
+</body>
+</html>

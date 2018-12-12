@@ -1,0 +1,130 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2018-10-23T06:18:42.262000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="it">
+    <title>
+      Editing subcircuit appearance
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        Editing subcircuit appearance
+      </h1>
+      <h2>
+        Default appearance
+      </h2>
+      <p>
+        <b class="note">Note:</b> There are two presentations of the circuits. Here we present the new appearance. A good part of the explanation is also suitable for the other presentation. La version de la présentation est sélectionnable dans la propriétés <b class="propertie">New appearance</b> properties of the circuit.
+      </p>
+      <p>
+        By default when a sub-circuit is placed on a diagram it is drawn in a rectangle with the name of the circuit to the south, the entrances to the east and the exits to the west. The anchorage being at the top of the northwest pine.
+      </p>
+      <center>
+        <img class="notscal" src="../../../../img-guide/subcirc-default-appear.png" alt="#########">
+      </center>
+      <p>
+        Entries will be placed east of the rectangle and up and down in the order of their appearance in the detailed diagram (from left to right and from top to bottom). Outputs will be placed west of the rectangle in the same way.
+      </p>
+      <p>
+        It is possible to edit a label on the subcircuit instance by double-clicking on the rectangle. The position of the font and the attributes of the font can be modified in the property table. This same table allows the setting of the shared label (for all instances).
+      </p>
+      <h2>
+        Customized appearance
+      </h2>
+      <p>
+        The default appearance is very usable, and indeed Logisim existed for many years with no other option. If, however, you prefer that the subcircuit be drawn differently, you can select <b class="menu">|&nbsp;Project&nbsp;|</b>→<b class="menu">|&nbsp;Edit Circuit Appearance&nbsp;|</b> , and Logisim's interface will switch from its regular layout-editing interface to an interface for drawing the circuit's appearance. (You can also click the far-right icon (<img class="intxt" src="../../../../icons/projapp.gif" alt="#########">) in the explorer pane's upper toolbar.) Below, we are editing the 2:1 multiplexer's appearance so that it is drawn with the usual trapezoid rather than a rectangle.
+      </p>
+      <center>
+        <img src="../../../img-guide/subcirc-custom-appear.png" alt="#########">
+      </center>
+      <p>
+        With the appearance for the 2:1 multiplexer drawn as above, the layout for the 4:1 multiplexer would then appear as the following.
+      </p>
+      <center>
+        <img src="../../../img-guide/subcirc-custom-layout.png" alt="#########">
+      </center>
+      <p>
+        The appearance editor is like a traditional drawing program, but there are a few special symbols for indicating how the drawing works when placed into a circuit's layout. These special symbols cannot be removed.
+      </p>
+      <ul>
+        <li>
+          <p>
+            The green circle with a line coming out of it, which we'll call the <b>anchor.</b> (<img class="intxt" src="../../../../img-guide/anchor.png" alt="#########">) There is exactly one anchor in each subcircuit appearance. Each component in a circuit has a single point identifying its location; a user sees this when creating a new component: The mouse click identifies just a single location, and the component is placed relative to that (usually with the primary output at the mouse's location) The anchor identifies the mouse's location relative to the overall drawing when the subcircuit is created.
+          </p>
+          <p>
+            The <b>anchor</b> also identifies the appearance's facing, as indicated by the direction the anchor's line points from its circle. When placing the subcircuit into a layout, the user can change the subcircuit's facing; the anchor's facing indicates in which direction the appearance is oriented. In our example, the anchor is facing east, and each instance of the subcircuit in the <b class="reffig">Mux_4to1</b> is also facing east, so they are all drawn in the same orientation as the <b class="reffig">Mux_2to1</b> appearance.
+          </p>
+        </li>
+        <li>
+          <p>
+            The blue circles (<img class="intxt" src="../../../../img-guide/pinoutput.png" alt="#########">) and squares with dots (<img class="intxt" src="../../../../img-guide/pininput.png" alt="#########">) in them are the subcircuit's <q>ports.</q> There are exactly as many ports as there are input and output pins in the circuit. Ports corresponding to inputs are drawn as squares, while ports corresponding to outputs are drawn as circles. Each port indicates how a wire connecting into the circuit will correspond to an input or output pin within the layout.
+          </p>
+        </li>
+      </ul>
+      <p>
+        When you select a port, Logisim will indicate the corresponding pin by popping up a miniature diagram of the layout in the window's bottom right corner, with the corresponding pin(s) drawn in blue. This does not happen when all ports are selected.
+      </p>
+      <p>
+        We can change the zoom of the image using <b class="tkeybd">Ctrl+Mouse Wheel</b> or the down arrow button on the left of the workspace. The rate is displayed. <!-- P-->
+      </p>
+      <center>
+        <img src="../../../img-guide/subcirc-custom-layout2.png" alt="#########">
+      </center>
+      <p>
+        The toolbar contains tools for adding additional shapes, as listed below with descriptions of how the shift and alt key modifies the tool behavior. In addition, clicking or dragging the mouse with the control key pressed regularly snaps the mouse position to the nearest grid point.
+      </p>
+	  <ul>
+        <li>
+          <p>
+            <img class=intxt src="../../../../icons/select.gif" border="1" alt="#########"> <strong>Selection Tool :</strong> Select, move, copy, paste the symbols.
+          </p>
+        </li>
+		<li>
+          <p>
+            <img class=intxt src="../../../../icons/text.gif" border="1" alt="#########"> <strong>Text Tool :</strong> Add, insert or edit a text.
+          </p>
+        </li>
+		<li>
+          <p>
+            <img class=intxt src="../../../../icons/drawline.gif" border="1" alt="#########"> <strong>Line Tool :</strong> Creates a line segment.
+          </p>
+        </li>
+		<li>
+          <p>
+            <img class=intxt src="../../../../icons/drawcurv.gif" border="1" alt="#########"> <strong>Curve tool:</strong> Create a quadratic Bezier curve. The first <b class="tkeybd">click</b> and drag specifies the beginning of the line, the second <b class="tkeybd">click</b> and drag ends the line and sets the curvature. A <b class="tkeybd">click</b> on the line shows you the three control points. <b class="tkeybd">Schift</b> and click on central control point impose a symmetrical curve. <b class="tkeybd">Alt</b> and click on center point draws the curve through the control point (under the mouse).
+          </p>
+        </li>
+		<li>
+          <p>
+            <img class=intxt src="../../../../icons/drawplin.gif" border="1" alt="#########"> <strong>Polylines tool</strong> Creates a sequence of connected lines, each <b class="tkeybd">click</b> starts a new line. <b class="tkeybd">shift-clicking</b> ensures that the angle between the previous vertex and the current one is a multiple of 45°. A <b class="tkeybd">double-click</b> ends the sequence.
+          </p>
+        </li>
+		<li>
+          <p>
+            <img class=intxt src="../../../../icons/drawrect.gif" border="1" alt="#########"> <strong>Rectangle tool</strong> Create a rectangle or a square ( <b class="tkeybd">Shift</b> ) through dragging from one corner to the opposite corner and <b class="tkeybd">alt-drag</b> to create the rectangle starting from the center.
+          </p>
+        </li>
+		<li>
+          <p>
+            <img class=intxt src="../../../../icons/drawoval.gif" border="1" alt="#########"> <strong>Oval tool</strong> Creates an oval or circle ( <b class="tkeybd">Shift</b> ) through dragging from one corner of its bounding box to the opposite corner  and <b class="tkeybd">alt-drag</b> to create the oval starting from the center.
+          </p>
+        </li>
+		<li>
+          <p>
+            <img class=intxt src="../../../../icons/drawpoly.gif" border="1" alt="#########"> <strong>Polygon tool</strong> Create an arbitrary polygon, each <b class="tkeybd">click</b> starts a new face. A <b class="tkeybd">double-click</b> or <b class="tkeybd">Enter</b> key or <b class="tkeybd">click</b> th starting vertex to complete the shape.
+          </p>
+        </li>
+	  </ul>
+     
+      <p>
+        <b>Next:</b> <a href="debug.html">Debugging subcircuits</a>.
+      </p>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,90 @@
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>Somador</title>
+</head>
+
+<body bgcolor="FFFFFF">
+
+<h1><img align="center" src="../../../../icons/adder.gif" width="32" height="32">
+<em>Somador</em></h1>
+
+<p><table>
+<tr><td><strong>Biblioteca:</strong></td>
+	<td><a href="index.html">Aritmética</a></td></tr>
+<tr><td><strong>Introdução:</strong></td>
+	<td>2.0 Beta 11</td></tr>
+<tr><td valign="top"><strong>Aparência:</strong></td>
+	<td valign="top"><img src="../../../../img-libs/adder.png"></td></tr>
+</table></p>
+
+<h2>Comportamento</h2>
+
+<p> Esse componente adicionará dois valores que vierem através das entradas a oeste e
+fornecerá a soma na saída a leste. O componente é projetado de modo a poder ser
+conectado a outros somadores para tratar mais bits que os possíveis para um
+único somador. A entrada <i>carry-in</i> fornecerá um valor de um bit para ser adicionado ao
+montante (se for especificado), e a saída <i>carry-out</i> fornecerá um valor de um bit
+correspondente ao valor de <i>overflow</i> (transbordamento) que poderá ser enviado a
+outro componente.
+</p>
+
+<p> Se qualquer um dos adendos contiver algum bit flutuante ou erro, então
+o componente irá executar uma adição parcial. Ou seja, ele irá calcular com
+tantos bits de mais baixa ordem quanto possível. Mas, acima do bit flutuante
+ou de erro, o resultado terá bits flutuantes ou de erro.
+</p>
+
+<h2>Pinos</h2>
+
+<dl>
+
+<dt> Na face oeste, norte final (entrada, com largura em bits de acordo com o
+atributo Bits de Dados) </dt>
+<dd> Um dos dois valores a serem somados.
+
+<dt> Na face oeste, extremo sul (entrada, com largura em bits de acordo com o
+atributo Bits de Dados) </dt>
+<dd> O outro dos dois valores a serem somados.
+
+<dt> Na face norte, marcado <var> c in </var> (entrada, com largura de 1 bit)
+<dd> Valor do <i>carry-in</i> a ser acrescentado à soma. Se o valor for desconhecido
+(ou seja, flutuante), então será considerado como igual 0.
+
+<dt> Na face leste (saída, com largura em bits de acordo com o
+atributo Bits de Dados) </dt>
+<dd> Os bits de mais baixa ordem dos <var> Bits de Dados </var> da soma dos dois valores
+que vierem da face oeste, mais o bit de <var>c</var><sub><var>in</var></sub>.
+
+<dt> Na face sul, marcado <var> c out </var> (saída, com largura de 1 bit)
+<dd> O valor de <i>carry-out</i> calculado para a soma. Se os valores sem sinais somados
+produzirem um resultado que caiba nos <var> Bits de Dados </var>,
+então, esse bit será 0, caso contrário, será 1.
+
+</dl>
+
+<h2>Atributos</h2>
+
+<p> Quando o componente for selecionado ou estiver sendo acrescentado,
+Alt-0 até ALT-9 irão alterar o seu atributo <q> Bits de Dados </q>.
+</p>
+
+<dl>
+
+<dt> Bits de Dados </dt>
+<dd> A largura em bits dos valores a serem adicionados e também do resultado.</dd>
+
+</dl>
+
+<h2> Comportamento da ferramenta Testar </h2>
+
+<p> Nenhum. </p>
+
+<h2> Comportamento da ferramenta Texto </h2>
+
+<p> Nenhum. </p>
+
+<p><a href="../index.html">Voltar à <em>Referência para bibliotecas</em></a></p>
+
+</body>
+</html>

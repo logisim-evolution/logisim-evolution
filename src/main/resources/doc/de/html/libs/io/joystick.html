@@ -1,0 +1,75 @@
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>Joystick</title>
+</head>
+
+<body bgcolor="FFFFFF">
+
+<h1><img align="center" src="../../../../icons/joystick.gif" width="32" height="32">
+<em>Joystick</em></h1>
+
+<p><table>
+<tr><td><strong>Bibliothek:</strong></td>
+	<td><a href="index.html">Input/Output</a></td></tr>
+<tr><td><strong>Eingeführt:</strong></td>
+	<td>2.2.0</td></tr>
+<tr><td valign="top"><strong>Aussehen:</strong></td>
+	<td valign="top"><img src="../../../../img-libs/joystick.png" width="33" height="31"></td></tr>
+</table></p>
+
+<h2>Verhalten</h2>
+
+<p>The user can drag the red knob within the rounded-square area, and the outputs
+update to indicate the knob's current <var>x</var>- and
+<var>y</var>-coordinates. This is meant to emulate the joysticks known from
+the days of classical arcade games.</p>
+
+<h2>Pins</h2>
+
+<dl>
+
+<dt>West edge, north pin (output, bit width matches Bit Width attribute)</dt>
+<dd>Indicates knob's <var>x</var>-coordinate, to be interpreted as an unsigned
+integer whose value will never be 0. Thus, a value of 1 represents the far left,
+and the maximum value for the bit width indicates the far right. When the knob
+is at rest (in the center), the value has the bit pattern 10...00.</dd>
+
+<dt>West edge, south pin (output, bit width matches Bit Width attribute)</dt>
+<dd>Indicates knob's <var>y</var>-coordinate, whose value ranges as with the
+<var>x</var>-coordinate pin. When the knob is pulled to the top, this output's
+value is 1, and when the knob is pulled to the bottom, the output is the
+maximum value for the bit width selected.</dd>
+
+</dl>
+
+<h2>Attribute</h2>
+
+<p>When the component is selected or being added,
+Alt-2 through Alt-5 alter its <q>Bit Width</q> attribute.</p>
+
+<dl>
+
+<dt>Bit Width</dt>
+<dd>The number of bits used to indicate each of the knob's coordinates.</dd>
+
+<dt>Color</dt>
+<dd>The knob's color as it is drawn on the screen.</dd>
+
+</dl>
+
+<h2>Verhalten des Schaltwerkzeugs</h2>
+
+<p>Pressing the mouse button while within the joystick area moves the knob to
+that location and updates the outputs. Dragging the mouse continues to move
+the knob and update the outputs, keeping the knob within the joystick's area.
+Releasing the mouse button reverts the knob back to its rest position.</p>
+
+<h2>Verhalten des Textwerkzeugs</h2>
+
+<p>Keines.</p>
+
+<p><a href="../index.html">Zurück zur <em>Bibliotheksreferenz</em></a></p>
+
+</body>
+</html>
