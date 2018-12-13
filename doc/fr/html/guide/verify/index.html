@@ -36,7 +36,7 @@
         Une fois ce circuit construit, nous exécutons Logisim à partir de la ligne de commande, en indiquant le nom du projet et l’option <b class="propertie">-tty</b> et le paramètre <b class="propertie">table</b>.
       </p>
       <blockquote>
-        <tt>java -jar logisim-evolution.jar adder-test.circ -tty tabl</tt>
+        <tt>java -jar logisim-evolution.jar adder-test.circ -tty table</tt>
       </blockquote>
       <p>
         Sans affichage de la fenêtre graphique, Logisim charge le circuit et commence la simulation, il fait avancer les horloges aussi vite que possible tout en traitant les propagations entre chaque tic. Après chaque propagation, Logisim compare les valeurs générées des broches de sortie. Si des modifications ont été apportées à la propagation précédente, toutes les valeurs sont affichées dans un format délimité par des tabulations. Il est possible de tester la fin de la simulation à l'aide d'une broche spéciale labellisée <var>halt</var>. Elle ne s'affiche pas, mais quand elle change d'état vers le niveau haut (1) cela termine la simulation.
