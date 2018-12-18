@@ -1,0 +1,86 @@
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>Seletor de Bits</title>
+</head>
+
+<body bgcolor="FFFFFF">
+
+<h1><img align="center" src="../../../../icons/bitSelector.gif" width="32" height="32">
+<em>Seletor de Bits</em></h1>
+
+<p><table>
+<tr><td><strong>Biblioteca:</strong></td>
+	<td><a href="index.html">Plexers</a></td></tr>
+<tr><td><strong>Introdução:</strong></td>
+	<td>2.0.5</td></tr>
+<tr><td valign="top"><strong>Aparência:</strong></td>
+	<td valign="top"><img src="../../../../img-libs/selector.png"></td></tr>
+</table></p>
+
+<h2>Comportamento</h2>
+
+<p> Dada uma entrada com vários bits, o seletor irá dividi-lo em grupos de igual 
+tamanho (a partir do bit de mais baixa ordem - LSB) e dar saída
+ao grupo escolhido pela seleção feita à entrada. </p>
+
+<p> Por exemplo, se tivermos uma entrada de oito bits com 01010101, e desejarmos ter
+uma saída de três bits, em seguida, o grupo 0 será o de menor ordem com três bits em 101;
+grupo 1 serão os próximos três bits, 010; e o grupo 2 serão os próximos três bits,
+001. (Se faltarem bits, serão preenchidos com 0.) A escolha feita à entrada 
+deverá ser um número de dois bits que selecionará qual desses três grupos irá
+para a saída, se a seleção for 3, então 000 irá a saída </p>.
+
+<h2> Pinos (componente supondo voltado para leste) </h2>
+
+<dl>
+
+<dt> Na face oeste (entrada, com largura de bits de acordo com o 
+atributo Bits de Dados) </dt>
+<dd> Valores dos dados a partir da qual os bits deverão ser selecionados para a saída. 
+</dd>
+
+<dt> Na face leste (saída, com largura de bits de acordo com o atributo Bits de Saída) 
+</dt>
+<dd> Um grupo de bits de dados, escolhido pelo Seletor de Entrada. </dd>
+
+<dt> Na face sul (entrada, com a largura de bits igual ao quociente entre Bits de Dados
+e Bits de Saída, arredondada para cima) </dt>
+<dd> Seletor de Entrada: determinará qual dos grupos de bits deverá ser encaminhado
+para a saída. </dd>
+
+</dl>
+
+<h2>Atributos</h2>
+
+<p> Quando o componente for selecionado ou estiver sendo acrescentado,
+os dígitos de '0' a '9' poderão ter o seu atributo <q> Bits de Saída </q> alterado,
+Alt-0 até ALT-9 irão alterar o seu atributo <q> Bits de dados </q>,
+e as teclas com setas poderão alterar o seu atributo <q> Direção </q>.
+</p>
+
+<dl>
+
+<dt> Direção </dt>
+<dd> A direção do componente (especificará qual a saída relativa à entrada). </dd>
+
+<dt> Bits de Dados </dt>
+<dd> Largura em bits da entrada de dados do componente.</dd>
+
+<dt> Bits de saída </dt>
+<dd> Largura em bits da saída do componente.</dd>
+
+</dl>
+
+<h2> Comportamento da ferramenta Testar </h2>
+
+<p> Nenhum. </p>
+
+<h2> Comportamento da ferramenta Texto </h2>
+
+<p> Nenhum. </p>
+
+<p><a href="../index.html">Voltar à <em>Referência para bibliotecas</em></a></p>
+
+</body>
+</html>

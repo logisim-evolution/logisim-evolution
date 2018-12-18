@@ -1,0 +1,88 @@
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>Clock</title>
+</head>
+
+<body bgcolor="FFFFFF">
+
+<h1><img align="center" src="../../../../icons/clock.gif" width="32" height="32">
+<em><i>Clock</i></em></h1>
+
+<p><table>
+<tr><td><strong>Biblioteca:</strong></td>
+	<td><a href="index.html">Base</a></td></tr>
+<tr><td><strong>Introdução:</strong></td>
+	<td>2.0 Beta 13</td></tr>
+<tr><td valign="top"><strong>Aparência:</strong></td>
+	<td valign="top"><img src="../../../../img-libs/clock.png"></td></tr>
+</table></p>
+
+<h2>Comportamento</h2>
+
+<p> O <i>clock</i> alternará seu valor à saída periodicamente enquanto as variações 
+(<i>ticks</i>) forem habilitadas via 
+<a href="../../guide/menu/simulate.html">Menu Simulação</a>.
+(As variações (<i>ticks</i>) estarão desabilitadas por padrão.)
+Uma variação (<i>tick</i>") é a unidade de tempo do Logisim; a velocidade em que deve
+ocorrer poderá ser selecionada pelo submenu Frequência de <i>Tick</i> no menu Simulação.
+O ciclo do <i>clock</i> pode ser configurado para usar os atributos Duração em Alto e
+Duração em Baixo.
+</p>
+
+<p> Observar que a simulação de <i>clocks</i> no Logisim's é pouco realista:
+em circuitos reais, vários <i>clocks</i> podem derivar de outros e dificilmente
+estão em sincronia. Mas em Logisim, todos eles experimentarão a mesma
+taxa de variação de tempo.
+</p>
+
+<h2>Pinos</h2>
+
+<p> O <i>clock</i> tem apenas um pino, uma saída com largura de 1 bit,
+cujo valor representará o estado corrente do <i>clock</i>. A posição desse pino
+será especificada pelo atributo Direção. O valor do <i>clock</i> irá alternar
+conforme programado sempre que as variações (<i>ticks</i>) forem habilitadas,
+e sempre que o componente for clicado pela <a href="poke.html">
+ferramenta Testar</a>.
+</p>
+
+<h2>Atributos</h2>
+
+<p> Quando o componente for selecionado ou estiver sendo acrescentado,
+as teclas com setas poderão alterar o seu atributo <q> Direção </q>.
+
+<dl>
+
+<dt> Direção </dt>
+<dd> A face do componente onde o pino de saída deverá estar. </dd>
+
+<dt> Duração em Alto </dt>
+<dd> Quanto tempo em cada ciclo que a saída do <i>clock</i> deverá ficar em 1. </dd>
+
+<dt> Duração em Baixo </dt>
+<dd> Quanto tempo em cada ciclo que a saída do <i>clock</i> deverá ficar em 0. </dd>
+
+<dt> Rótulo </dt>
+<dd> O texto para o rótulo associado à porta. </dd>
+
+<dt> Posição do Rótulo </dt>
+<dd> A posição relativa do rótulo em relação ao componente. </dd>
+
+<dt> Fonte do Rótulo </dt>
+<dd> A fonte com a qual o rótulo será mostrado. </dd>
+
+</dl>
+
+<h2> Comportamento da ferramenta Testar </h2>
+
+<p> Ao clicar o componente <i>clock</i>, ele irá alternar o valor de sua saída corrente
+de imediato. </p>
+
+<h2> Comportamento da ferramenta Texto </h2>
+
+<p> Permite que o rótulo associado ao componente seja editado.</p>
+
+<p><a href="../index.html">Voltar à <em>Referência para bibliotecas</em></a></p>
+
+</body>
+</html>

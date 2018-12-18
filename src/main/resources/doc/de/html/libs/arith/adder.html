@@ -1,0 +1,85 @@
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>Addierer</title>
+</head>
+
+<body bgcolor="FFFFFF">
+
+<h1><img align="center" src="../../../../icons/adder.gif" width="32" height="32">
+<em>Addierer</em></h1>
+
+<p><table>
+<tr><td><strong>Bibliothek:</strong></td>
+	<td><a href="index.html">Arithmetic</a></td></tr>
+<tr><td><strong>Eingeführt:</strong></td>
+	<td>2.0 Beta 11</td></tr>
+<tr><td valign="top"><strong>Aussehen:</strong></td>
+	<td valign="top"><img src="../../../../img-libs/adder.png" width="44" height="45"></td></tr>
+</table></p>
+
+<h2>Verhalten</h2>
+
+<p>This component adds two values coming in via the west inputs and
+outputs the sum on the east output. The component is designed so that it
+can be cascaded with other adders to provide add more bits than is
+possible with a single adder: The carry-in input provides a
+one-bit value to be added into the sum also (if it is specified), and a
+carry-out output provides a one-bit overflow value that can be fed to
+another adder.</p>
+
+<p>If either of the addends contains some floating bits or some error
+bits, then the component will perform a partial addition. That is, it
+will compute as many low-order bits as possible. But above the floating
+or error bit, the result will have floating or error bits.</p>
+
+<h2>Pins</h2>
+
+<dl>
+
+<dt>West edge, north end (input, bit width matches Data Bits attribute)
+<dd>One of the two values to add.
+
+<dt>West edge, south end (input, bit width matches Data Bits attribute)
+<dd>The other of the two values to add.
+
+<dt>North edge, labeled <var>c in</var> (input, bit width 1)
+<dd>A carry value to add into the sum. If the value is unknown (i.e.,
+floating), then it is assumed to be 0.
+
+<dt>East edge (output, bit width matches Data Bits attribute)
+<dd>The lower <var>dataBits</var> bits of the sum of the two values
+coming in the west edge, plus the <var>c</var><sub><var>in</var></sub>
+bit.
+
+<dt>South edge, labeled <var>c out</var> (output, bit width 1)
+<dd>The carry bit computed for the sum. If the values added together as
+unsigned values yield a result that fits into <var>dataBits</var>
+bits, then this bit will be 0; otherwise, it will be 1.
+
+</dl>
+
+<h2>Attribute</h2>
+
+<p>When the component is selected or being added,
+Alt-0 through Alt-9 alter its <q>Data Bits</q> attribute.</p>
+
+<dl>
+
+<dt>Data Bits</dt>
+<dd>The bit width of the values to be added and of the result.</dd>
+
+</dl>
+
+<h2>Verhalten des Schaltwerkzeugs</h2>
+
+<p>Keines.</p>
+
+<h2>Verhalten des Textwerkzeugs</h2>
+
+<p>Keines.</p>
+
+<p><a href="../index.html">Zurück zur <em>Bibliotheksreferenz</em></a></p>
+
+</body>
+</html>

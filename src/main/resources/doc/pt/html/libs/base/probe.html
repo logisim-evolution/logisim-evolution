@@ -1,0 +1,82 @@
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>Ponta de Prova</title>
+</head>
+
+<body bgcolor="FFFFFF">
+
+<h1><img align="center" src="../../../../icons/probe.gif" width="32" height="32">
+<em>Probe</em></h1>
+
+<p><table>
+<tr><td><strong>Biblioteca:</strong></td>
+	<td><a href="index.html">Base</a></td></tr>
+<tr><td><strong>Introdução:</strong></td>
+	<td>2.0.3</td></tr>
+<tr><td valign="top"><strong>Aparência:</strong></td>
+	<td valign="top"><img src="../../../../img-libs/probe.png"></td></tr>
+</table></p>
+
+<h2>Comportamento</h2>
+
+<p> Uma ponta de prova é um elemento que simplesmente exibirá o valor em um dado
+ponto de um circuito. Ela mesma não interage com os outros componentes. 
+</p>
+
+<p> Na maioria dos aspectos, o componente ponta de prova é similar em funcionalidade
+ao <a href="pin.html">componente Pino</a> configurado para saída.
+A principal diferença é que se o circuito for usado como um subcircuito, então
+um pino de saída fará parte daquela interface, enquanto a ponta de prova não.
+Outra diferença é que a ponta de prova não possui um atributo Bits de Dados
+para ser configurado: a largura em bits será inferida a partir de qualquer
+valor que seja amostrado por sua entrada. Graficamente, elas são similares, mas
+possuem bordas ligeiramente diferentes: um pino possui a borda em preto, mais
+larga, enquanto a da ponta de prova será mais estreita, em cinza.
+</p>
+
+<h2>Pinos</h2>
+
+<p> O componente ponta de prova tem apenas um pino, o qual servirá como entrada.
+A largura em bits desse pino é adaptativa: a ponta de prova se ajustará a
+entradas de qualquer largura.
+</p>
+
+<h2>Atributos</h2>
+
+<p> Quando o componente for selecionado ou estiver sendo acrescentado,
+as teclas com setas poderão alterar o seu atributo <q> Direção</q>.
+</p>
+
+<dl>
+
+<dt> Direção </dt>
+<dd> A face do componente onde o seu pino de entrada deverá estar. </dd>
+
+<dt> Rótulo </dt>
+<dd> O texto para o rótulo associado ao componente. </dd>
+
+<dt> Posição do Rótulo </dt>
+<dd> A posição do rótulo em relação ao componente.</dd>
+
+<dt> Fonte do Rótulo </dt>
+<dd> A fonte com a qual o rótulo será mostrado. </dd>
+
+<dt> Base </dt>
+<dd> A base do sistema de numeração (por exemplo, binário, decimal, ou hexadecimal)
+no qual o valor será exibido.</dd>
+
+</dl>
+
+<h2> Comportamento da ferramenta Testar </h2>
+
+<p> Nenhum. </p>
+
+<h2> Comportamento da ferramenta Texto </h2>
+
+<p> Permite que o rótulo associado ao componente seja editado.</p>
+
+<p><a href="../index.html">Voltar à <em>Referência para bibliotecas</em></a></p>
+
+</body>
+</html>

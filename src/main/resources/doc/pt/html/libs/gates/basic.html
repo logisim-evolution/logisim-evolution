@@ -1,0 +1,182 @@
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>Portas AND/OR/NAND/NOR</title>
+</head>
+
+<body bgcolor="FFFFFF">
+
+<table><tr><td>
+<img align="center" src="../../../../icons/andGate.gif" width="32" height="32">
+<img align="center" src="../../../../icons/orGate.gif" width="32" height="32">
+<img align="center" src="../../../../icons/nandGate.gif" width="32" height="32">
+<img align="center" src="../../../../icons/norGate.gif" width="32" height="32"><br>
+<img align="center" src="../../../../icons/andGateRect.gif" width="32" height="32">
+<img align="center" src="../../../../icons/orGateRect.gif" width="32" height="32">
+<img align="center" src="../../../../icons/nandGateRect.gif" width="32" height="32">
+<img align="center" src="../../../../icons/norGateRect.gif" width="32" height="32">
+</td><td valign="center"><h1><em>Portas AND/OR/NAND/NOR</em></h1></table>
+
+<p><table>
+<tr><td><strong>Biblioteca:</strong></td>
+	<td><a href="index.html">Base</a></td></tr>
+<tr><td><strong>Introdução:</strong></td>
+	<td>2.0 Beta 1</td></tr>
+<tr><td valign="top"><strong>Aparência:</strong></td>
+	<td valign="top"><table>
+	<tr><th></th>
+		<th width="50">AND</th>
+		<th width="50">OR</th>
+		<th width="50">NAND</th>
+		<th width="50">NOR</th></tr>
+	<tr><th valign="middle" height="65">Convencional</th>
+	    <td rowspan="3" colspan="4">
+	       <img src="../../../../img-libs/basegate.png">
+	    </td></tr>
+	<tr><th valign="middle" height="65">Retangular</th></tr>
+	<tr><th valign="middle" height="65">DIN 40700</th></tr>
+	</table></td>
+</table></p>
+
+<h2>Comportamento</h2>
+
+<p> As portas AND, OR, NAND, e NOT servem para calcular as respectivas
+funções das entradas, e emitir o resultado à saída.
+</p>
+
+<p> Por padrão, todos as entradas que não estiverem conectadas serão consideradas
+desligadas e, portanto, ignoradas - isso é, se a entrada realmente não tiver algo 
+ligado a ela, nem mesmo um fio.
+Dessa forma, você poderá inserir um porta com 5 entradas, mas se conectar somente 
+duas entradas, ele irá funcionar como uma porta de 2 entradas; isso irá aliviá-lo 
+do trabalho de ter de se preocupar com a configuração do número de entradas cada 
+vez que você criar uma porta.
+(Se todas as entradas estiverem desconectadas, a saída será o valor de erro <em>X</em>.)
+Alguns usuários, no entanto, preferem que o Logisim insista que todas as entradas
+devam estar ligado, pois isso corresponde melhor às portas do mundo real.
+Você poderá permitir esse comportamento, se usar em Projeto &gt; Opções ... 
+na guia Simulação, o item de menu <q> Erro para entradas indefinidas</q> para
+<q> Saída de Porta Quando Indefinida. </q> 
+</p>
+
+<p> A tabela-verdade para portas de duas entradas é a que se segue.
+(A letra <em>X</em> representará o valor de erro,
+e a letra <em>Z</em> representará o valor flutuante.)
+</p>
+
+<center><table>
+<tr><td><table>
+<tr><th colspan="4" align="center"><b>AND</b></th></tr>
+<tr><td></td><th align="center">0</th><th align="center">1</th><th align="center">X/Z</th></tr>
+<tr><th align="center">0</th><td align="center">0</td><td align="center">0</td><td align="center">0</td></tr>
+<tr><th align="center">1</th><td align="center">0</td><td align="center">1</td><td align="center">X</td></tr>
+<tr><th align="center">X/Z</th><td align="center">0</td><td align="center">X</td><td align="center">X</td></tr>
+</table></td><td>&nbsp;&nbsp;&nbsp;</td><td><table>
+<tr><th colspan="4" align="center"><b>OR</b></th></tr>
+<tr><td></td><th align="center">0</th><th align="center">1</th><th align="center">X/Z</th></tr>
+<tr><th align="center">0</th><td align="center">0</td><td align="center">1</td><td align="center">X</td></tr>
+<tr><th align="center">1</th><td align="center">1</td><td align="center">1</td><td align="center">1</td></tr>
+<tr><th align="center">X/Z</th><td align="center">X</td><td align="center">1</td><td align="center">X</td></tr>
+</table></td></tr><tr><td><table>
+<tr><th colspan="4" align="center"><b>NAND</b></th></tr>
+<tr><td></td><th align="center">0</th><th align="center">1</th><th align="center">X/Z</th></tr>
+<tr><th align="center">0</th><td align="center">1</td><td align="center">1</td><td align="center">1</td></tr>
+<tr><th align="center">1</th><td align="center">1</td><td align="center">0</td><td align="center">X</td></tr>
+<tr><th align="center">X/Z</th><td align="center">1</td><td align="center">X</td><td align="center">X</td></tr>
+</table></td><td>&nbsp;&nbsp;&nbsp;</td><td><table>
+<tr><th colspan="4" align="center"><b>NOR</b></th></tr>
+<tr><td></td><th align="center">0</th><th align="center">1</th><th align="center">X/Z</th></tr>
+<tr><th align="center">0</th><td align="center">1</td><td align="center">0</td><td align="center">X</td></tr>
+<tr><th align="center">1</th><td align="center">0</td><td align="center">0</td><td align="center">0</td></tr>
+<tr><th align="center">X/Z</th><td align="center">X</td><td align="center">0</td><td align="center">X</td></tr>
+</table></td></tr></table></center>
+
+<p> Em resumo, esses componentes funcionarão como esperado, enquanto todas as entradas
+forem 0 ou 1.
+Se uma entrada não for nem 0 nem 1 (for flutuante, ou tiver o valor de erro)
+então, o componente a tratará como se fosse ambos 0 <em> e </em> 1:
+se a saída depender prioritariamente de um deles,
+(como quando uma porta AND tem uma entrada que é, definitivamente, 0
+e uma segunda entrada questionável), esse será o valor de saída;
+mas se a saída mudar dependendo se ele for 0 ou 1,
+a saída terá o valor de erro. 
+</p>
+
+<p> As versões multibit de cada porta irá realizar a operação bit a bit 
+para cada uma de suas entradas. </p>
+
+<h2>Pinos (supondo o component voltado para leste)</h2>
+
+<dl>
+
+<dt> Na face oeste (entradas, com largura em bits de acordo com o
+atributo Bits de Dados) </dt>
+<dd> <p> As entradas para o componente. Haverá tantas delas quanto
+a quantidade especificada pelo atributo Número de Entradas. 
+</p>
+
+<p> Observar que se você estiver usando portas convencionais, o lado oeste das
+portas OR e NOR serão curvos. No entanto, os pinos de entrada estarão sobre uma linha. 
+O Logisim irá traçar marcas curtas para indicar essas entradas; se você ultrapassar
+essas indicações, ele irá supor que a intenção seria apenas atingi-los.
+Em "Prévia da Impressão", essas marcas não serão desenhadas a menos que estejam
+conectados a fios. </p> </dd>
+
+<dt> Na face leste (saída, com largura em bits de acordo com o
+atributo Bits de Dados) </dt>
+<dd> <p> A porta de saída, cujo valor será calculado com base nos valores atuais
+das entradas conforme descrito acima. </p> </dd>
+
+</dl>
+
+<h2>Atributos</h2>
+
+<p> Quando o componente for selecionado ou estiver sendo acrescentado,
+os dígitos de '0 'a '9' poderão alterar o atributo <q> Número de Entradas </q>,
+Alt-0 até ALT-9 irão alterar o seu atributo <q> Bits de Dados </q>,
+e as teclas com setas poderão alterar o seu atributo <q> Direção </q>.
+</p>
+
+<dl>
+
+<dt> Direção </dt>
+<dd> A direção do componente (a posição das saídas em relação às entradas). </dd>
+
+<dt> Bits de Dados </dt>
+<dd> A largura em bits das entradas e das saídas do componente. </dd>
+
+<dt> Tamanho da Porta </dt>
+<dd> Serve para determinar se é para desenhar uma versão maior ou menor do
+componente. Isso não afetará o número de entradas, o que será especificada
+pelo atributo Número de Entradas. No entanto, se portas convencionais forem
+selecionadas, então a porta será desenhada com <q> "asas" </q> para acomodar
+as entradas adicionais além daquelas normalmente oferecidas. </dd>
+
+<dt> Número de Entradas </dt>
+<dd> Serve para determinar quantos pinos o componente terá em sua face oeste. </dd>
+
+<dt> Rótulo </dt>
+<dd> O texto para o rótulo associado à porta. </dd>
+
+<dt> Fonte do Rótulo </dt>
+<dd> A fonte com a qual o rótulo será mostrado. </dd>
+
+<dt> Negar <var>x</var> </dt>
+<dd>Se <q>sim</q>, a entrada será negada antes de ser introduzida no porta.
+As entradas serão contadas de cima para baixo, se a frente estiver a leste ou a oeste,
+e serão contados da esquerda para a direita, se a frente estiver ao norte ou ao sul.</dd>
+
+</dl>
+
+<h2> Comportamento da ferramenta Testar </h2>
+
+<p> Nenhum. </p>
+
+<h2> Comportamento da ferramenta Texto </h2>
+
+<p> Permite que o rótulo associado à porta seja editado.</p>
+
+<p><a href="../index.html">Voltar à <em>Referência para bibliotecas</em></a></p>
+
+</body>
+</html>

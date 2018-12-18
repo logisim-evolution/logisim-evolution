@@ -1,0 +1,271 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2018-10-23T06:18:42.262000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="fr">
+    <title>
+      Les barres d'outils
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1 id="tb1">
+        Les barres d'outils
+      </h1>
+      <p>
+        Logisim-evolution dispose de plusieurs barres d'outils. La barre d'outils principale est <a href="../opts/toolbar.html">configurable</a> et met à disposition un accès rapide aux outils les plus utilisés. Ceux-ci restent aussi toujours disponibles dans le panneau de navigation.
+      </p>
+      <center>
+        <img class="notscal" src="../../../../img-guide/tools10.png" alt="#########">
+      </center>
+      <center>
+        La barre dans le mode "édition du dessin"
+      </center>
+      <center>
+        <img class="notscal" src="../../../../img-guide/tools11.png" alt="#########">
+      </center>
+      <center>
+        La barre dans le mode "édition de l'apparence"
+      </center>
+      <p>
+        Une seconde barre d'outils pilote l'affichage du panneau de navigation et de la zone de dessins.
+      </p>
+      <center>
+        <img class="notscal" src="../../../../img-guide/tools2.png" alt="#########">
+      </center>
+      <p>
+        Et enfin deux autres barres apparaissent selon l'état du panneau de navigation. Elles sont présentées ci-dessous.
+      </p>
+      <center>
+        <img class="notscal" src="../../../../img-guide/tools31.png" alt="#########">&nbsp;&nbsp;<img class="notscal" src="../../../../img-guide/tools32.png" alt="#########">
+      </center>
+      <h2 id="tb2">
+        La barre d'outils principale
+      </h2>
+      <p>
+        Cette barre d'outils à deux présentations (voir ci-dessus) selon le mode d'édition choisit "édition du dessin" ou <a href="../subcirc/appear.html#pa1">"édition de l'apparence"</a>.
+      </p>
+      <h3>
+        La barre dans le mode "édition du dessin"
+      </h3>
+      <p>
+        Dans le mode "édition du dessin" elle est personnalisable à l'aide du menu <b class="menu">|&nbsp;Projet&nbsp;|</b>→<b class="menu">|&nbsp;Options&nbsp;|</b> onglet <b class="menu">|&nbsp;Barre&nbsp;d'outils&nbsp;|</b> La configuration est en présentée par la page sur les <a href="../opts/toolbar.html">L'onglet Outils.</a> Ci-dessous nous présentons brièvement les outils présents par défaut dans la barre. Il existe beaucoup d'autres composant pour construire des circuits. Vous trouverez beaucoup plus d'information sur l'ensemble des outils dans la <a href="../../libs/index.html">Référence de la bibliothèque</a>.
+      </p>
+	  <table class="toolslist">
+        <tbody>
+          <tr>
+            <td class="toolslist" valign="top">
+			  <a href="../../libs/base/poke.html"><img class="intxt" src="../../../../icons/poke.gif" border="1" alt="#########"></a>
+			</td>
+			<td><strong>Outil Pousser :</strong> <b class="tkeybd">Ctrl-1</b> Cet outil permet d'interagir avec les composants de simulation. Par exemple si vous <q>poussez</q> sur une connexion du circuit celle-ci basculera d'un état à l'autre ou si vous <q>poussez</q> sur un câble vous pourrez connaitre la valeur des signaux transportés. Plus d'information sur le lien <a href="../../libs/base/poke.html">pousser</a> de la librairie <b class="propertie">base</b>
+			</td>
+		  </tr>
+		  <tr>
+            <td class="toolslist" valign="top">
+			<a href="../../libs/base/select.html"><img class="intxt" src="../../../../icons/select.gif" border="1" alt="#########"></a>
+			</td>
+			<td><strong>L'outil Sélection :</strong> <b class="tkeybd">Ctrl-2</b> Cet outil est particulièrement utile au moment de la conception des circuits, il permet de poser,déplacer ou sélectionner les éléments. Il sert aussi à câbler le circuit. Plus d'information sur le lien <a href="../../libs/base/select.html">sélect</a> de la librairie <b class="propertie">base</b>.
+			</td>
+		  </tr>
+		  <tr>
+            <td class="toolslist" valign="top"><a href="../../libs/base/text.html"><img class="intxt" src="../../../../icons/text.gif" border="1" alt="#########"></a>
+			</td>
+			<td><strong>Outil Text :</strong> <b class="tkeybd">Ctrl-3</b> Cet outil permet de placer du text sur les dessins et de modifier les labels des composants.Plus d'information sur le lien <a href="../../libs/base/text.html">text</a> de la librairie <b class="propertie">base</b>
+			</td>
+		  </tr>
+		   <tr>
+            <td class="toolslist" valign="top"><a href="../../libs/wiring/pin.html"><img class="intxt" src="../../../../icons/pinInput.gif" border="1" alt="#########">&nbsp;<img class="intxt" src="../../../../icons/pinOutput.gif" border="1" alt="#########"></a>
+			</td>
+			<td><strong>Outil broche :</strong> <b class="tkeybd">Ctrl-4 / 5</b> Cet outil permet de placer des broches de connexion sur le schéma. Les connexions sont de deux types : entrée ou sortie. Elles sont présentées dans cette page <a href="../../libs/wiring/pin.html">Broche</a> de la librairie <b class="propertie">câblage</b>.
+			</td>
+		  </tr>
+		  </tr>
+		   <tr>
+            <td class="toolslist" valign="top"><a href="../../libs/gate/not.html"><img class="intxt" src="../../../../icons/notGate.gif" border="1" alt="#########">&nbsp;<a href="../../libs/gate/basic.html"><img class="intxt" src="../../../../icons/andGate.gif" border="1" alt="#########"></a>
+			</td>
+			<td><strong>Outils Not,And,Or :</strong> <b class="tkeybd">Ctrl-6 / 7 / 8</b> Ces outils permettent de placer les portes logiques de base sur le dessin. Les portes logiques sont présentées dans la <a href="../../libs/gates/index.html">librairie Portes logiques</a>.
+			</td>
+		  </tr>
+		 </tbody>
+		</table>
+      <h3>
+        La barre dans le mode "édition de l'apparence"
+      </h3>
+      <p>
+        Dans ce mode ou nous pouvons éditer le symbole d'un sous circuit. La barre propose des outils de dessins. Vous trouverez un peu plus d'information sur l'usage dans <a href="../subcirc/appear.html">Editer l'apparence d'un sous-circuit</a>
+      </p>
+	  <table class="toolslist">
+        <tbody>
+          <tr>
+            <td class="toolslist" valign="top">
+              <img class="intxt" src="../../../../icons/select.gif" alt="#########" border="1">
+            </td>
+            <td><strong>Outil Sélection :</strong> Sélectionne, déplace, copie, colle les symboles.</td>
+          </tr>
+          <tr>
+            <td class="toolslist" valign="top">
+              <img class="intxt" src="../../../../icons/text.gif" alt="#########" border="1">
+            </td>
+            <td><strong>Outil Text :</strong> Insert ou édite un text.</td>
+          </tr>
+          <tr>
+            <td class="toolslist" valign="top">
+              <img class="intxt" src="../../../../icons/drawline.gif" alt="#########" border="1">
+            </td>
+            <td><strong>Outil Ligne :</strong> Crée un segment de ligne.</td>
+          </tr>
+          <tr>
+            <td class="toolslist" valign="top">
+              <img class="intxt" src="../../../../icons/drawcurv.gif" alt="#########" border="1">
+            </td>
+            <td><strong>Outil Courbe :</strong> Crée une courbe de Bezier. Le premier clic et glisser spécifie le début de la ligne, le second clic et glisser termine la ligne et définit la courbure. Un clic sur la ligne vous montre les trois points de contrôle. <b class="tkeybd">Maj</b> et clic sur point central de contrôle imposent une courbe symétrique. <b class="tkeybd">Alt</b> et click sur point central dessine la courbe au travers du point de contrôle (sous la souris).</td>
+          </tr>
+          <tr>
+            <td class="toolslist" valign="top">
+              <img class="intxt" src="../../../../icons/drawplin.gif" alt="#########" border="1">
+            </td>
+            <td><strong>Outil Polylignes :</strong> Crée une séquence de lignes connectées, chaque <b class="tkeybd">clic</b> commence une nouvelle ligne. Un <b class="tkeybd">double-clic</b> termine la séquence.</td>
+          </tr>
+          <tr>
+            <td class="toolslist" valign="top">
+              <img class="intxt" src="../../../../icons/drawrect.gif" alt="#########" border="1">
+            </td>
+            <td><strong>Outil rectangle :</strong> Crée un rectangle ou un carré (<b class="tkeybd">Maj</b>) en glissant depuis un angle vers l'angle opposé.</td>
+          </tr>
+          <tr>
+            <td class="toolslist" valign="top">
+              <img class="intxt" src="../../../../icons/drawrrct.gif" alt="#########" border="1">
+            </td>
+            <td><strong>Outil rectangle :</strong> Crée un rectangle ou un carré a bord arrondi (<b class="tkeybd">Maj</b>) en glissant depuis un angle vers l'angle opposé.</td>
+          </tr>
+          <tr>
+            <td class="toolslist" valign="top">
+              <img class="intxt" src="../../../../icons/drawoval.gif" alt="#########" border="1">
+            </td>
+            <td><strong>Outil ovale :</strong> Crée un ovale ou un cercle (<b class="tkeybd">Maj</b>) en glissant depuis un angle vers l'angle opposé.</td>
+          </tr>
+          <tr>
+            <td class="toolslist" valign="top">
+              <img class="intxt" src="../../../../icons/drawpoly.gif" alt="#########" border="1">
+            </td>
+            <td><strong>Outil polygone :</strong> Crée un polygone, chaque <b class="tkeybd">clic</b> commence une nouvelle face. Un <b class="tkeybd">double-clic</b> termine la séquence.</td>
+          </tr>
+        </tbody>
+      </table>
+      <h2 id="tb3">
+        La barre d'outils auxiliaire
+      </h2>
+      <p>
+        Cette barre a quatre boutons les deux premiers concernent le mode de présentation dans le panneau de navigation et les deux autres concernent la présentation du projet.
+      </p>
+	  	  <table class="toolslist">
+        <tbody>
+          <tr>
+            <td class="toolslist" valign="top"><img class="intxt" src="../../../../icons/projtool.gif" border="1" alt="#########">
+			</td>
+			<td><strong>Afficher la barre d'outils</strong> Affiche les librairies et les outils dans le panneau de navigation.
+			</td>
+		  </tr>
+		  <tr>
+            <td class="toolslist" valign="top"><img class="intxt" src="../../../../icons/projsim.gif" border="1" alt="#########">
+			</td>
+			<td><strong>Afficher l'arborescence de simulation</strong> Affiche la hiérarchie des différents circuits actifs dans une simulation.
+			</td>
+		  </tr>
+		  <tr>
+            <td class="toolslist" valign="top"><img class="intxt" src="../../../../icons/projlayo.gif" border="1" alt="#########">
+			</td>
+			<td><strong>Vue éditer le dessin du Circuit</strong> Modifie la vue du canevas dans le mode <b>"schéma"</b> ce qui permet de créer nos circuits.
+			</td>
+		  </tr>
+		  <tr>
+            <td class="toolslist" valign="top"><img class="intxt" src="../../../../icons/projapp.gif" border="1" alt="#########">
+			</td>
+			<td><strong>Vue éditer l'apparence du circuit</strong> Modifie la vue canevas dans le mode <b>"dessins"</b> du symbole du circuit.
+			</td>
+		  </tr>
+		</tbody>
+	  </table>
+      <h2 id="tb4">
+        La barre d'outils du panneau de navigation
+      </h2>
+      <p>
+        Cette zone de barre d'outils affiche deux barres selon l'état du programme. La première a quatre boutons et est affichée quand le programme est dans le mode édition,dessin. Ce sont des raccourcis de certain des sous-menu du menu <a href="../menu/project.html"><b class="menu">|&nbsp;Projet&nbsp;|</b></a>.
+      </p>
+	  
+       <table class="toolslist">
+        <tbody>
+          <tr>
+            <td class="toolslist" valign="top"><img class="intxt" src="../../../../icons/projadd.gif" border="1" alt="#########">
+			</td>
+			<td> <strong>Ajouter un circuit</strong> Ajoute un nouveau crcuit à nos projets.
+			</td>
+		  </tr>
+		            <tr>
+            <td class="toolslist" valign="top"><img class="intxt" src="../../../../icons/projup.gif" border="1" alt="#########">
+			</td>
+			<td><strong>Monte le circuit</strong> dans la hiérarchie du projet.
+			</td>
+		  </tr>
+		            <tr>
+            <td class="toolslist" valign="top"><img class="intxt" src="../../../../icons/projdown.gif" border="1" alt="#########">
+			</td>
+			<td><strong>Descends le circuit</strong> dans la hiérarchie du projet.
+			</td>
+		  </tr>
+		            <tr>
+            <td class="toolslist" valign="top"><img class="intxt" src="../../../../icons/projdel.gif" border="1" alt="#########">
+			</td>
+			<td><strong>Supprime un circuit</strong> dans la hiérarchie du projet.
+			</td>
+		  </tr>
+		 </tbody>
+		 </table>
+      </ul>La seconde est affichée quand le programme est dans le mode arborescence de simulation. Ce sont des raccourcis de certains des sous-menus du menu <a href="../menu/simulate.html"><b class="menu">|&nbsp;Simulation&nbsp;|</b></a>
+	  <table class="toolslist">
+        <tbody>
+          <tr>
+            <td class="toolslist" valign="top"><img class="intxt" src="../../../../icons/simplay.png" border="1" alt="#########">
+			</td>
+			<td><strong>Enclencher/déclencher</strong> la simulation.
+			</td>
+		  </tr>
+		  <tr>
+            <td class="toolslist" valign="top"><img class="intxt" src="../../../../icons/simstep.png" border="1" alt="#########">
+			</td>
+			<td><strong>Simulation pas-à-pas</strong> Avancer d'un pas dans la simulation.
+			</td>
+		  </tr>
+		  <tr>
+            <td class="toolslist" valign="top"><img class="intxt" src="../../../../icons/simtplay.png" border="1" alt="#########">
+			</td>
+			<td><strong>Activer/désactiver tic</strong> Actives ou désactive le fonctionnement des horloges.
+			</td>
+		  </tr>
+		  <tr>
+            <td class="toolslist" valign="top"><img class="intxt" src="../../../../icons/simtstep.png" border="1" alt="#########">
+			</td>
+			<td><strong>Un seul tic</strong> Avance les horloges d'un tic.
+			</td>
+		  </tr>
+		  <tr>
+            <td class="toolslist" valign="top"><img class="intxt" src="../../../../icons/clock.gif" border="1" alt="#########">
+			</td>
+			<td><strong>'Clk' un pas</strong> Avance la simulation d'un cycle de l'horloge 'clk'.
+			</td>
+		  </tr>
+		</tbody>
+	  </table>
+      <p>
+        Vous trouverez plus d'information dans <a href="../menu/simulate.html">la page sur le menu simulation</a>
+      </p>
+      <p>
+        <b>Suite:</b> <a href="attr.html">La table des attributs</a>.
+      </p>
+    </div>
+  </body>
+</html>

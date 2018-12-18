@@ -1,0 +1,168 @@
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>RAM</title>
+</head>
+
+<body bgcolor="FFFFFF">
+
+<h1><img align="center" src="../../../../icons/ram.gif" width="32" height="32">
+<em>RAM</em></h1>
+
+<p><table>
+<tr><td><strong>Biblioteca:</strong></td>
+	<td><a href="index.html">Memória</a></td></tr>
+<tr><td><strong>Introdução:</strong></td>
+	<td>2.0 Beta 1</td></tr>
+<tr><td valign="top"><strong>Aparência:</strong></td>
+	<td valign="top"><img src="../../../../img-libs/ram.png"></td></tr>
+</table></p>
+
+<h2>Comportamento</h2>
+
+<p> O componente RAM, certamente é o componente mais complexo nas bibliotecas
+predefinidas do Logisim, capaz de armazenar até 16,777,216 valores (especificado pelo
+atributo Largura em Bits do Endereço), cada um deles com até 32 bits (especificado
+pleo atributo Largura em Bits de Dados). Um circuito poderá ler e escrever os valores
+na RAM. O usuário também poderá modificá-los interativamente via a ferramenta Testar, 
+ou poderá alterá-los completamente via a ferramenta Menu.
+
+<p> Os valores correntes serão mostrados no componente. Os endereços apresentados
+serão listados em cinza à esquerda. Na parte de dentro, cada valor será listado
+em hexadecimal. O endereço atual do endereço selecionado será mostrado em texto
+negativo (branco sobre preto). 
+</p>
+
+<p> O componente RAM oferece três interfaces diferentes, dependendo do atributo
+Interface de Dados.
+</p>
+
+<dl>
+
+<dt> Uma porta para leitura/escrita síncrona (padrão) </dt>
+<dd><p> O componente possui na sua face leste uma porta que servirá tanto
+para ler quanto para gravar dados. Qual a ação a ser executada dependerá
+da entrada marcada por <em>ld</em>: 1 (ou flutuante) indicará a leitura de
+dados do endereço informado pela face oeste, e 0 indicará a escrita dos dados
+entregues na porta. Para transmitir dados para dentro e para fora do componente,
+você precisará usar um componente do tipo <i>Buffer</i> Controlado, como ilustrado 
+abaixo.
+</p>
+
+<center><img src="../../../../img-libs/ramdemo.png"></center></dd>
+
+<dt> Uma porta para leitura/escrita assíncrona </dt>
+<dd><p> O mesmo descrito acima, exceto que não haverá participação do <i>clock</i>.
+O valor encontrado no barramento de dados será carregado na memória sempre que
+a entrada <em>ld</em> estiver em 0. Se, enquanto <em>ld</em> estiver em 0, o 
+endereço ou os dados mudarem, então uma carga adicional ocorrerá. Essa opção
+é a que mais se aproxima de muitas das memórias de acesso aleatório comumente 
+disponíveis. </dd>
+</p>
+
+<dt> Portas separadas para leitura e escrita </dt>
+<dd><p> Duas portas estão disponíveis - uma na face oeste para a escrita de dados,
+e outra na face leste para leitura de dados. Essa opção retirará a necessidade
+de se lidar com o <i>Buffer</i> Controlado e então ficará mais fácil de usar.
+</p></dd>
+
+<h2>Pinos</h2>
+
+<dl>
+
+<dt><var>A</var> Na face oeste (entrada, com largura em bits de acordo com o
+atributo Bits de Dados) </dt>
+<dd> Serve para selecionar quais os valores estarão sendo acessados atualmente
+pelo circuito. </dd>
+
+<dt><var>D</var> Na face oeste (entrada/saída, com largura em bits de acordo 
+com o atributo Bits de Dados) </dt>
+<dd> Se essa entrada estará presente somente se "portas separadas para leitura e
+escrita" tiverem sido selecionadas pelo atributo Interface de Dados. Quando uma
+escrita for requisitada (via mudança do <i>clock</i> de 0 para 1 enquanto 
+<var>sel</var> e <var>str</var> forem ambos iguais a 1 ou flutuante), o valor 
+encontrado nessa porta será escrito na memória no endereço atualmente selecionado. 
+</dd>
+
+<dt><var>D</var> Na face leste (entrada/saída ou saída, com largura em bits 
+de acordo com o atributo Bits de Dados) </dt>
+<dd> Se <var>sel</var> e <var>ld</var> forem iguais a 1 ou flutuante, então
+o componente RAM emitirá o valor encontrado no endereço corrente por essa porta.
+Se houver uma porta para leitura/escrita, o valor lido nessa porta será 
+escrito onde quer que o armazenamento seja requisitado. </dd>
+
+<dt><var>str</var> Na face sul (entrada, com largura de 1 bit)</dt>
+<dd> store: essa entrada estará presente somente se "portas separadas para leitura e 
+escrita" tiverem sido selecionadas pelo atributo Interface de Dados.
+Se for 1 ou flutuante, um pulso de <i>clock</i> resultará na escrita dos dados 
+encontrados na face oeste na memória (se a entrada <var>sel</var> também for 1 ou 
+flutuante). </dd>
+
+<dt><var>sel</var> Na face sul (entrada, com largura de 1 bit)</dt>
+<dd> chip select: essa entrada habilita ou desabilita o módulo RAM por inteiro,
+caso o valor seja igual a 1, flutuante ou 0. Essa entrada destina-se primariamente 
+para as situações em que houver múltiplas RAMs, mas somente uma delas deva estar
+habilitada em certo instante. </dd>
+
+<dt> Triângulo na face sul (entrada, com largura de 1 bit)</dt>
+<dd> <i>clock</i>: essa entrada estará ausente quanto o atributo Interface de Dados
+for "uma porta assíncrona para leitura/escrita". Em outras circunstâncias, quando
+<var>ld</var> for igual a 0, e essa entrada variar de 0 para 1 (e <var>sel</var>
+for igual a 1, indefinido e <var>clr</var> for 0), então o valor no endereço
+atualmente selecionado será alterado para o valor presente no pino <var>D</var>.
+Enquanto a entrada de <i>clock</i> permanecer em 0 ou 1, no entanto, o valor em
+<var>D</var> não será escrito na memória. </dd>
+
+<dt><var>ld</var> Na face sul (entrada, com largura de 1 bit)</dt>
+<dd> load: serve para selecionar se a RAM deverá emitir (em <var>D</var>)
+o valor no endereço atual (<var>A</var>). O comportamento dessa saída
+estará habilitado se <var>out</var> estiver em 1 ou indefinido; se <var>out</var>
+for 0, então nenhum valor será colocado em <var>D</var> - mas se houver uma porta
+de leitura/escrita combinada, a escrita estará habilitada. </dd>
+
+<dt><var>clr</var> Na face sul (entrada, com largura de 1 bit)</dt>
+<dd> clear: quando for igual a 1, todos os valores na memória ficarão iguais
+a 0, independente do que estiver nas outras portas. </dd>
+
+</dl>
+
+<h2>Atributos</h2>
+
+<p> Quando o componente for selecionado ou estiver sendo acrescentado,
+os dígitos de '0 'a '9' poderão alterar o atributo <q> Número de Entradas</q>,
+Alt-0 até ALT-9 irão alterar o seu atributo <q> Bits de Dados</q>.
+</p>
+
+<dl>
+
+<dt> Largura em Bits do Endereço </dt>
+<dd> A largura em bits do endereço. O número de valores armazenados na
+ROM será 2<sup><var>Largura em Bits do Endereço</var></sup>.</dd>
+
+<dt> Bits de Dados </dt>
+<dd> A largura em bits de cada valor individual na memória. </dd>
+
+<dt> Interface de Dados </dt>
+<dd> Serve para configurar quais das três interfaces serão usadas para comunicar
+dados para dentro e para fora do componente. </dd>
+
+</dl>
+
+<h2> Comportamento da ferramenta Testar </h2>
+
+<p>Ver <a href="../../guide/mem/poke.html">Testar memória</a>
+no <em>Guia do Usuário</em>.</p>
+
+<h2> Comportamento da ferramenta Texto </h2>
+
+<p> Nenhum. </p>
+
+<h2>Comportamento da ferramenta Menu</h2>
+
+<p>Ver <a href="../../guide/mem/menu.html">Menus <i>pop-up</i> e Arquivos</a>
+no <em>Guia do Usuário</em>.</p>
+
+<p><a href="../index.html">Voltar à <em>Referência para bibliotecas</em></a></p>
+
+</body>
+</html>

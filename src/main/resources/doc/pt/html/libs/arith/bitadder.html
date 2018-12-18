@@ -1,0 +1,83 @@
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>Contador de Bits</title>
+</head>
+
+<body bgcolor="FFFFFF">
+
+<h1><img align="center" src="../../../../icons/bitadder.gif" width="32" height="32">
+<em>Contador de Bits</em></h1>
+
+<p><table>
+<tr><td><strong>Biblioteca:</strong></td>
+	<td><a href="index.html">Aritmética</a></td></tr>
+<tr><td><strong>Introdução:</strong></td>
+	<td>2.6.0</td></tr>
+<tr><td valign="top"><strong>Aparência:</strong></td>
+	<td valign="top"><img src="../../../../img-libs/bitadder.png"></td></tr>
+</table></p>
+
+<h2>Comportamento</h2>
+
+<p> O componente determinará quantos bits em 1 estão em sua(s) entrada(s) e emitirá o
+número total de bits em 1 em sua saída. Por exemplo, para a entrada de 8 bits 10011101,
+a saída será a 5, uma vez que há cinco bits 1 na entrada (o primeiro, o último,
+e uma sequência de três bits no meio).
+</p>
+
+<p> Se qualquer um dos bits de entrada for um valor flutuante ou erro, então a saída
+conterá bits de erro na saída correspondente à faixa de saídas possíveis
+dependendo se os valores de erro/flutuante forem contados como zeros ou uns.
+Por exemplo, se a entrada de 14 bits for 111x10110x1101, a saída deve ser
+pelo menos 9 (se cada "x" for interpretado como zero)
+e no máximo 11 (se eles forem interpretados como um).
+Assim, a saída será 10EE: os dois bits mais significativos serão 1 e 0, pois todos
+os inteiros entre 9 e 11 têm 1 e 0 como seus dois primeiros bits, mas os dois últimos
+bits serão EE já que os inteiros entre 9 e 11 variam dentro desses limites.
+</p>
+
+<h2>Pinos</h2>
+
+<dl>
+
+<dt> Na face oeste (entradas, com largura em bits de acordo com o
+atributo Bits de Dados) </dt>
+<dd> As entradas cujos bits em 1 serão contados. O número de entradas será baseado
+no atributo Número de Entradas. </dd>
+
+<dt> Na face leste (saída, com largura en bits calculada conforme descrito abaixo) </dt>
+<dd> O número de bits de entrada iguais a 1. A largura em bits na saída será o
+número mínimo de bits para armazenar o maior valor possível (que seria
+o produto do atributo Bits de Dados pelo atributo Número de Entradas). </dd>
+
+</dl>
+
+<h2>Atributos</h2>
+
+<p> Quando o componente for selecionado ou estiver sendo acrescentado,
+os dígito de '0' a '9' poderão alterar seu atributo <q>Número de Entradas</q> e
+Alt-0 até ALT-9 irão alterar o seu atributo <q> Bits de Dados </q>.
+
+<dl>
+
+<dt> Bits de dados </dt>
+<dd> Largura em bits da(s) entrada(s).</dd>
+
+<dt> Número de Entradas </dt>
+<dd> Número de valores de entrada.</dd>
+
+</dl>
+
+<h2> Comportamento da ferramenta Testar </h2>
+
+<p> Nenhum. </p>
+
+<h2> Comportamento da ferramenta Texto </h2>
+
+<p> Nenhum. </p>
+
+<p><a href="../index.html">Voltar à <em>Referência para bibliotecas</em></a></p>
+
+</body>
+</html>

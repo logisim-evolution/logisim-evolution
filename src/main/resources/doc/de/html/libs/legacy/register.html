@@ -1,0 +1,73 @@
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>Logisim 1.0 8-Bit Register</title>
+</head>
+
+<body bgcolor="FFFFFF">
+
+<h1><img align="center" src="../../../../icons/register.gif" width="32" height="32">
+<em>Logisim 1.0 8-Bit Register</em></h1>
+
+<p><table>
+<tr><td><strong>Bibliothek:</strong></td>
+	<td><a href="index.html">Legacy</a></td></tr>
+<tr><td><strong>Eingeführt:</strong></td>
+	<td>2.0 Beta 12</td></tr>
+<tr><td valign="top"><strong>Aussehen:</strong></td>
+	<td valign="top"><img src="../../../../img-libs/legacy-register.png" width="34" height="93"></td></tr>
+</table></p>
+
+<h2>Verhalten</h2>
+
+<p>This component exists only for backwards compatibility
+with Logisim 1.0<var>X</var>; for new circuits, the
+<a href="../mem/register.html">Memory library's register</a> is
+recommended instead.</p>
+
+<p>The register stores a single 8-bit value, which is displayed in
+hexadecimal within its rectangle, and is emitted via its outputs on its
+east edge.  (Logisim 1.0<var>X</var> did not support multi-bit values,
+so the register had to have a pin for each individual bit.) At the
+instant when the clock input (indicated by a triangle on the west edge)
+rises from 0 to 1, the value stored in the register changes to the value
+specified through the eight other bits on the west edge.</p>
+
+<h2>Pins</h2>
+
+<dl>
+
+<dt>East edge, eight pins (outputs, bit width 1 each)
+<dd>Outputs the value currently stored by the register, with the
+lowest-order bit at the northmost pin.
+
+<dt>West edge, eight pins (inputs, bit width 1 each)
+<dd>At the instant that the clock value rises from 0 to 1,
+the register's value changes to the value of the inputs at
+that instant. The lowest-order bit is at the northmost pin.
+
+<dt>West edge, indicated with a triangle (input, bit width 1)
+<dd>Clock input: At the instant that this input value rises from 0 to
+1 (the rising edge), the register's value will be updated to the values
+of the other inputs on the west edge.
+
+</dl>
+
+<h2>Attribute</h2>
+
+<p>Keines.</p>
+
+<h2>Verhalten des Schaltwerkzeugs</h2>
+
+<p>Clicking the register brings keyboard focus to the register
+(indicated by a red rectangle), and typing hexadecimal digits will
+change the value stored in the register.</p>
+
+<h2>Verhalten des Textwerkzeugs</h2>
+
+<p>Keines.</p>
+
+<p><a href="../index.html">Zurück zur <em>Bibliotheksreferenz</em></a></p>
+
+</body>
+</html>

@@ -1,0 +1,160 @@
+<html>
+<head>
+<title>Transistor</title>
+</head>
+
+<body bgcolor="FFFFFF">
+
+<h1><img align="center" src="../../../../icons/trans0.gif" width="32" height="32">
+<img align="center" src="../../../../icons/trans1.gif" width="32" height="32">
+<em>Transistor</em></h1>
+
+<p><table>
+<tr><td><strong>Library:</strong></td>
+	<td><a href="index.html">Wiring</a></td></tr>
+<tr><td><strong>Introduced:</strong></td>
+	<td>2.7.0</td></tr>
+<tr><td valign="top"><strong>Appearance:</strong></td>
+	<td valign="top"><img src="../../../../img-libs/trans0.png" width="44" height="23">
+	<img src="../../../../img-libs/trans1.png" width="44" height="23"></td></tr>
+</table></p>
+
+<h2>Behavior</h2>
+
+<p>A transistor has two inputs, called <em>gate</em> and <em>source</em>,
+and one output, called <em>drain</em>. When diagrammed, the <em>source</em>
+input and <em>drain</em> output are drawn connected by a plate;
+Logisim draws an arrowhead to indicate the direction of flow from input to output.
+The <em>gate</em> input is drawn connected to a plate that is parallel to the
+plate connecting <em>source</em> to <em>drain</em>. Logisim supports two types of
+transistors, with slightly different behaviors described below; the P-type
+transistor is indicated by a circle connecting the <em>gate</em> input to its
+plate, while the N-type transistor has no such circle.</p>
+
+<p>Depending on the value found at <em>gate</em>,
+the value at <em>source</em> may be transmitted to
+<em>drain</em>; or there may be no connection from <em>source</em>,
+so <em>drain</em> is left floating. The determination of transmitting or disconnecting
+depends on the type of transistor: A P-type transistor
+(indicated by a circle on the <em>gate</em> line) transmits
+when <em>gate</em> is 0, while an N-type transistor (which has no such circle)
+transmits when <em>gate</em> is 1. The behavior is summarized by the
+following tables.</p>
+
+<center><table>
+<tr><td><table><thead>
+<tr><td></td><th colspan="4" align="center"><b>P-type</b></th></tr>
+<tr><td></td><td colspan="4" align="center"><img src="../../../../img-libs/trans0.png" width="44" height="23"></td></tr>
+</thead><tbody>
+<tr><td colspan="2"></td><th colspan="3"><em>gate</em></th></tr>
+<tr><td colspan="2"></td><th align="center">0</th><th align="center">1</th><th align="center">X/Z</th></tr>
+<tr><td></td><th align="center">0</th>
+      <td align="center">0</td><td align="center">Z</td><td align="center">X</td></tr>
+<tr><th><em>source</em></th><th align="center">1</th>
+      <td align="center">1</td><td align="center">Z</td><td align="center">X</td></tr>
+<tr><td></td><th align="center">Z</th>
+      <td align="center">Z</td><td align="center">Z</td><td align="center">Z</td></tr>
+<tr><td></td><th align="center">X</th>
+      <td align="center">X</td><td align="center">Z</td><td align="center">X</td></tr>
+</tbody></table></td><td>&nbsp;&nbsp;&nbsp;</td><td><table><thead>
+<tr><td></td><th colspan="4" align="center"><b>N-type</b></th></tr>
+<tr><td></td><td colspan="4" align="center"><img src="../../../../img-libs/trans1.png" width="44" height="23"></td></tr>
+</thead><tbody>
+<tr><td colspan="2"></td><th colspan="3"><em>gate</em></th></tr>
+<tr><td colspan="2"></td><th align="center">0</th><th align="center">1</th><th align="center">X/Z</th></tr>
+<tr><td></td><th align="center">0</th>
+      <td align="center">Z</td><td align="center">0</td><td align="center">X</td></tr>
+<tr><th><em>source</em></th><th align="center">1</th>
+      <td align="center">Z</td><td align="center">1</td><td align="center">X</td></tr>
+<tr><td></td><th align="center">Z</th>
+      <td align="center">Z</td><td align="center">Z</td><td align="center">Z</td></tr>
+<tr><td></td><th align="center">X</th>
+      <td align="center">Z</td><td align="center">X</td><td align="center">X</td></tr>
+</table></td></tr></table></center>
+
+<p>Or in summarized form:</p>
+
+<center><table>
+<tr><td><table><thead>
+<tr><th colspan="2" align="center"><b>P-type</b></th></tr>
+<tr><td colspan="2" align="center"><img src="../../../../img-libs/trans0.png" width="44" height="23"></td></tr>
+</thead><tbody>
+<tr><th><em>gate</em></th><th><em>drain</em></th></tr>
+<tr><td align="center">0</td><td align="center"><em>source</em></td></tr>
+<tr><td align="center">1</td><td align="center">Z</td></tr>
+<tr><td align="center">X/Z</td><td align="center">X*</td></tr>
+</tbody></table></td><td>&nbsp;&nbsp;&nbsp;</td><td><table><thead>
+<tr><th colspan="2" align="center"><b>N-type</b></th></tr>
+<tr><td colspan="2" align="center"><img src="../../../../img-libs/trans1.png" width="44" height="23"></td></tr>
+</thead><tbody>
+<tr><th><em>gate</em></th><th><em>drain</em></th></tr>
+<tr><td align="center">0</td><td align="center">Z</td></tr>
+<tr><td align="center">1</td><td align="center"><em>source</em></td></tr>
+<tr><td align="center">X/Z</td><td align="center">X*</td></tr>
+</table></td></tr></table>
+<p>* <em>If <em>source</em> is Z, <em>drain</em> is Z; otherwise <em>drain</em> is X.</p>
+</center>
+
+<p>If the Data Bits attribute is more than 1, the <em>gate</em> input is still
+a single bit, but its value is applied simultaneously to each of the
+<em>source</em> input's bits.</p> 
+
+<p>An N-type transistor behaves very similarly to a
+<a href="../gates/controlled.html">Controlled Buffer</a>. The primary difference
+is that a transistor is meant for more basic circuit designs.</p>
+
+<h2>Pins (assuming component faces east, gate line top/left)</h2>
+
+<dl>
+
+<dt>West edge (input, bit width matches Data Bits attribute)</dt>
+<dd>The component's <em>source</em> input that will transmit to the output
+if triggered by the <em>gate</em> input.</dd>
+
+<dt>North edge (input, bit width 1)</dt>
+<dd>The component's <em>gate</em> input. For P-type transistors, the transistor
+will transmit if the <em>gate</em> value is 0; for N-type transistors,
+this will trigger the transistor if the <em>gate</em> value is 1.</dd>
+
+<dt>East edge (output, bit width matches Data Bits attribute)</dd>
+<dd>The component's output, which will match the <em>source</em> input
+if indicated by the <em>gate</em> input, or will be floating if the <em>gate</em>
+input is the negation of what indicates negation. If <em>gate</em> is floating
+or an error value, then the output will be an error value.</dd>
+
+</dl>
+
+<h2>Attributes</h2>
+
+<p>When the component is selected or being added,
+Alt-0 through Alt-9 alter its <q>Data Bits</q> attribute
+and the arrow keys alter its <q>Facing</q> attribute.</p>
+
+<dl>
+
+<dt>Type</dt>
+<dd>Determines whether the transistor is P-type or N-type.</dd>
+
+<dt>Facing</dt>
+<dd>The direction of the component (its output relative to its input).</dd>
+
+<dt>Gate Location</dt>
+<dd>The location of the gate input.</dd>
+
+<dt>Data Bits</dt>
+<dd>The bit width of the component's inputs and outputs.</dd>
+
+</dl>
+
+<h2>Poke Tool Behavior</h2>
+
+<p>None.</p>
+
+<h2>Text Tool Behavior</h2>
+
+<p>None.</p>
+
+<p><a href="../index.html">Back to <em>Library Reference</em></a></p>
+
+</body>
+</html>

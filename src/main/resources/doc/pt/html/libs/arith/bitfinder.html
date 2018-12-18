@@ -1,0 +1,113 @@
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>Indexador de Bits</title>
+</head>
+
+<body bgcolor="FFFFFF">
+
+<h1><img align="center" src="../../../../icons/bitfindr.gif" width="32" height="32">
+<em>Indexador de Bits</em></h1>
+
+<p><table>
+<tr><td><strong>Biblioteca:</strong></td>
+	<td><a href="index.html">Arithmetic</a></td></tr>
+<tr><td><strong>Introdução:</strong></td>
+	<td>2.6.1</td></tr>
+<tr><td valign="top"><strong>Aparência:</strong></td>
+	<td valign="top"><img src="../../../../img-libs/bitfindr.png"></td></tr>
+</table></p>
+
+<h2>Comportamento</h2>
+
+<p> O componente receberá uma entrada multibit e determinará o índice de um bit,
+onde esse índice será calculado pela contagem iniciando em 0 no bit de mais baixa ordem.
+O índice exato a ser calculado dependerá do atributo Tipo, como ilustrado
+nos exemplos do quadro abaixo para a amostra de 8 bits de uma entrada igual a
+11010100. </p>
+
+<blockquote><table><thead>
+<tr><th>Tipo</th><th>Saída para 11010100</th></td></tr>
+</thead><tbody>
+<tr><td>Bit menos significativo em 1</td><td align="center">2</td></tr>
+<tr><td>Bit mais significativo em 1</td><td align="center">7</td></tr>
+<tr><td>Bit menos significativo em 0</td><td align="center">0</td></tr>
+<tr><td>Bit mais significativo 0</td><td align="center">5</td></tr>
+</tbody></table></blockquote>
+
+<p> Para o 1 de mais baixa ordem, a saída será 2 porque começando o índice de bits
+em 0 para o bit de mais baixa ordem, o primeiro 1, a ser encontrado será no índice 2.
+(Os bits de índices iguais a 0 e 1 são iguais a 0).
+Para o 1 de mais alta ordem, a saída será 7 porque o bit 1 mais significativo
+corresponderá ao índice 7 (mais uma vez contando a partir do bit de mais baixa ordem
+começando em 0).
+</p>
+
+<p> A saída do componente na face sul indicará se o bit desejado
+foi encontrado. Nos exemplos acima, envolvendo a entrada 11010100,
+a saída sul será igual a 1 em todos os casos.
+Mas se a entrada fosse 00000000 e o componente não encontrasse o 1 de
+mais baixa ordem, então a saída ao sul seria 0 - e a saída borda a oeste
+seria 0 também.
+</p>
+
+<p> Se durante a pesquisa pelo valor desejado, um valor diferente de 0 ou 1 for
+encontrado (o bit pode ser flutuante ou um valor de erro),
+então, as duas saídas serão compostas inteiramente por bits de erro.
+Observar que isso ocorrerá apenas se o bit com problema for encontrado antes do bit 
+desejado. Para a entrada x1010100, por exemplo, a saída ainda seria 2, se
+o valor 1 de mais baixa ordem for o desejado; contudo, obteremos valores de erro
+se o componente estiver a procurar o valor 0 ou 1 de mais alta ordem, uma vez que
+haverá um bit errado na posição mais significativa independente de ser 0 ou 1
+o bit de mais alta ordem.
+</p>
+
+<h2>Pinos</h2>
+
+<dl>
+
+<dt> Na face oeste (entrada, com largura em bits de acordo com o
+atributo Bits de Dados) </dt>
+<dd> A entrada multibit onde será procurado o bit desejado. </dd>
+
+<dt> Na face leste (saída, com largura em bits calculada conforme descrito abaixo) </dt>
+<dd> O índice do bit desejado, a contar de 0 para o bit de mais baixa ordem.
+A largura mínima em bits será a necessária para armazenar o máximo valor possível para índice,
+que deverá ser inferior ao valor do atributo Bits de Dados. </dd>
+
+<dt> Na face sul (saída, largura de 1 bit) </dt>
+<dd> Será 1, se o bit desejado for encontrado; 0,  se todos os bits à entrada forem o
+inverso do bit desejado; e será igual ao valor de erro, se um valor diferente de 0 e 
+de 1 for encontrado antes do bit desejado. </dd>
+
+</dl>
+
+<h2>Atributos</h2>
+
+<p> Quando o componente for selecionado ou estiver sendo acrescentado,
+Alt-0 até ALT-9 irão alterar o seu atributo <q> Bits de Dados </q>.
+</p>
+
+<dl>
+
+<dt> Bits de Dados </dt>
+<dd> A largura em bits da entrada. </dd>
+
+<dt> Tipo </dt>
+<dd> Serve para indicar qual o bit a ser procurado por &mdash; o 0 de mais baixa ordem,
+o 0 de mais alta ordem, o 1 de mais baixa ordem, e o 1 de mais alta ordem.</dd>
+
+</dl>
+
+<h2> Comportamento da ferramenta Testar </h2>
+
+<p> Nenhum. </p>
+
+<h2> Comportamento da ferramenta Texto </h2>
+
+<p> Nenhum. </p>
+
+<p><a href="../index.html">Voltar à <em>Referência para bibliotecas</em></a></p>
+
+</body>
+</html>

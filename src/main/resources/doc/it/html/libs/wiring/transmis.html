@@ -1,0 +1,121 @@
+<html>
+<head>
+<title>Transmission Gate</title>
+</head>
+
+<body bgcolor="FFFFFF">
+
+<h1><img align="center" src="../../../../icons/transmis.gif" width="32" height="32">
+<em>Transmission Gate</em></h1>
+
+<p><table>
+<tr><td><strong>Library:</strong></td>
+	<td><a href="index.html">Wiring</a></td></tr>
+<tr><td><strong>Introduced:</strong></td>
+	<td>2.7.0</td></tr>
+<tr><td valign="top"><strong>Appearance:</strong></td>
+	<td valign="top"><img src="../../../../img-libs/transmis.png" width="44" height="43"></td></tr>
+</table></p>
+
+<h2>Behavior</h2>
+
+<p>A transmission gate has three inputs,
+called <em>source</em>, <em>n-gate</em>, and <em>p-gate</em>;
+and it has one output, called <em>drain</em>. When diagrammed, the <em>source</em>
+input and <em>drain</em> output are drawn connected by two plates;
+Logisim draws an arrowhead to indicate the direction of flow from input to output.
+The two <em>gate</em> inputs are drawn as lines connected to plates parallel to
+each of the plates connecting <em>source</em> to <em>drain</em>.
+The <em>p-gate</em> input's line has a circle, while the <em>n-gate</em> input's line does not.</p>
+
+<center><table>
+<tr><td></td><td align="center"><em>p-gate</em></td><td></td></tr>
+<tr><td valign="middle"><em>source</em></td>
+  <td align="center" valign="middle"><img src="../../../../img-libs/transmis.png" width="44" height="43"></td>
+  <td valign="middle"><em>drain</em></td>
+<tr><td></td><td align="center"><em>n-gate</em></td><td></td></tr>
+</table></center>
+
+<p>The transmission gate is simply the combination of two complementary
+transistors. Indeed, the same behavior can be achieved in Logisim by using just
+one transistor. However, designers sometimes prefer to use matched pairs of
+transistors due to electrical issues with draining voltage
+that is more complex than Logisim attempts to simulate.</p>
+
+<p>The values at <em>n-gate</em> and <em>p-gate</em> are expected to be
+opposite to each other. If <em>p-gate</em> is 0 while <em>n-gate</em> is 1,
+then the value found at <em>source</em> is transmitted to <em>drain</em>.
+If <em>p-gate</em> is 1 while <em>p-gate</em> is 0, then the connection is broken,
+so the value at <em>drain</em> is left floating. In all other cases, <em>drain</em>
+receives an error output &mdash; unless <em>source</em> is floating,
+in which case <em>drain</em> is floating as well. This behavior is summarized by the following table.</p>
+
+<center><table>
+<tr><th><em>p-gate</em></th><th><em>n-gate</em></th><th><em>drain</em></th></tr>
+<tr><td align="center">0</td><td align="center">0</td><td align="center">X*</td></tr>
+<tr><td align="center">0</td><td align="center">1</td><td align="center"><em>source</em></td></tr>
+<tr><td align="center">1</td><td align="center">0</td><td align="center">Z</td></tr>
+<tr><td align="center">1</td><td align="center">1</td><td align="center">X*</td></tr>
+<tr><td align="center">X/Z</td><td align="center"><em>any</em></td><td align="center">X*</td></tr>
+<tr><td align="center"><em>any</em></td><td align="center">X/Z</td><td align="center">X*</td></tr>
+</tbody></table>
+<p>* <em>If <em>source</em> is Z, <em>drain</em> is Z; otherwise <em>drain</em> is X.</p>
+</center>
+
+<p>If the Data Bits attribute is more than 1, each <em>gate</em> input is still
+a single bit, but the <em>gate</em> values are applied simultaneously to each of the
+<em>source</em> input's bits.</p>
+
+<h2>Pins (assuming component faces east, gate line top/left)</h2>
+
+<dl>
+
+<dt>West edge (input, bit width matches Data Bits attribute)</dt>
+<dd>The component's <em>source</em> input that will transmit to the output
+if triggered by the <em>p-gate</em> and <em>n-gate</em> inputs.</dd>
+
+<dt>North edge (input, bit width 1)</dt>
+<dd>The component's <em>p-gate</em> input.</dd>
+
+<dt>South edge (input, bit width 1)</dt>
+<dd>The component's <em>n-gate</em> input.</dd>
+
+<dt>East edge (output, bit width matches Data Bits attribute)</dd>
+<dd>The component's output, which will match the <em>source</em> input
+if <em>p-gate</em> is 0 and <em>n-gate</em> is 1, or it will be floating if
+<em>p-gate</em> is 1 and <em>n-gate</em> is 0. For all other values on <em>p-gate</em> and <em>n-gate</em>,
+the output is an error value.</dd>
+
+</dl>
+
+<h2>Attributes</h2>
+
+<p>When the component is selected or being added,
+Alt-0 through Alt-9 alter its <q>Data Bits</q> attribute
+and the arrow keys alter its <q>Facing</q> attribute.</p>
+
+<dl>
+
+<dt>Facing</dt>
+<dd>The direction of the component (its output relative to its input).</dd>
+
+<dt>Gate Location</dt>
+<dd>The location of the gate input.</dd>
+
+<dt>Data Bits</dt>
+<dd>The bit width of the component's inputs and outputs.</dd>
+
+</dl>
+
+<h2>Poke Tool Behavior</h2>
+
+<p>None.</p>
+
+<h2>Text Tool Behavior</h2>
+
+<p>None.</p>
+
+<p><a href="../index.html">Back to <em>Library Reference</em></a></p>
+
+</body>
+</html>

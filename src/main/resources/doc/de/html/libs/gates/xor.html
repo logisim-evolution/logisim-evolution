@@ -1,0 +1,180 @@
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>XOR/XNOR/Odd Parity/Even Parity Gate</title>
+</head>
+
+<body bgcolor="FFFFFF">
+
+<table><tr><td>
+<img align="center" src="../../../../icons/xorGate.gif" width="32" height="32">
+<img align="center" src="../../../../icons/xnorGate.gif" width="32" height="32">
+<img align="center" src="../../../../icons/parityOddGate.gif" width="32" height="32">
+<img align="center" src="../../../../icons/parityEvenGate.gif" width="32" height="32"><br>
+<img align="center" src="../../../../icons/xorGateRect.gif" width="32" height="32">
+<img align="center" src="../../../../icons/xnorGateRect.gif" width="32" height="32">
+<img align="center" src="../../../../icons/parityOddGate.gif" width="32" height="32">
+<img align="center" src="../../../../icons/parityEvenGate.gif" width="32" height="32">
+</td><td valign="center"><h1><em>XOR/XNOR/Odd Parity/Even Parity Gate</em></h1></td></tr></table>
+
+<p><table>
+<tr><td><strong>Bibliothek:</strong></td>
+	<td><a href="index.html">Base</a></td></tr>
+<tr><td><strong>Eingeführt:</strong></td>
+	<td>2.0 Beta 1 for XOR/Odd/Even; 2.0 Beta 6 for XNOR</td></tr>
+<tr><td valign="top"><strong>Aussehen:</strong></td>
+	<td valign="top"><table>
+	<tr><th></th>
+		<th width="60">XOR</th>
+		<th width="60">XNOR</th>
+		<th width="50">Odd<br>Parity</th>
+		<th width="50">Even<br>Parity</th></tr>
+	<tr><th valign="middle" height="65" align="left">Shaped:</th>
+	    <td rowspan="3" colspan="4">
+	       <img src="../../../../img-libs/xor.png" width="295" height="113">
+	    </td></tr>
+	<tr><th valign="middle" height="65" align="left">Rectangular:</th></tr>
+	</table></td></tr>
+</table></p>
+
+<h2>Verhalten</h2>
+
+<p>The XOR, XNOR, Even Parity, and Odd Parity gates each compute
+the respective function of the inputs, and emit the result on the
+output.</p>
+
+<p>By default, any inputs that are left unconnected are ignored
+— that's if the input truly has nothing attached to it,
+not even a wire.
+In this way, you can insert a 5-input gate but only attach two inputs,
+and it will work as a 2-input gate;
+this relieves you from having to worry about configuring
+the number of inputs every time you create a gate.
+(If all inputs are unconnected, the output is the error value <em>X</em>.)
+Some users, though, prefer that Logisim insist that all inputs be connected,
+since this is what corresponds to real-world gates.
+You can enable this behavior by going to the Project &gt; Options… menu item,
+selecting the Simulation tab, and
+selecting <q>Error for undefined inputs</q> for
+<q>Gate Output When Undefined.</q></p>
+
+<p>The two-input truth table for the gates is the following.</p>
+<center><table>
+<tr><th><var>x</var></th><th><var>y</var></th><th>XOR</th>
+	<th>XNOR</th><th>Odd</th><th>Even</th></tr>
+<tr><td align="center">0</td><td align="center">0</td>
+  <td align="center">0</td><td align="center">1</td>
+  <td align="center">0</td><td align="center">1</td></tr>
+<tr><td align="center">0</td><td align="center">1</td>
+  <td align="center">1</td><td align="center">0</td>
+  <td align="center">1</td><td align="center">0</td></tr>
+<tr><td align="center">1</td><td align="center">0</td>
+  <td align="center">1</td><td align="center">0</td>
+  <td align="center">1</td><td align="center">0</td></tr>
+<tr><td align="center">1</td><td align="center">1</td>
+  <td align="center">0</td><td align="center">1</td>
+  <td align="center">0</td><td align="center">1</td></tr>
+</table></center>
+<p>As you can see, the Odd Parity gate and the XOR gate behave identically
+with two inputs; similarly, the even parity gate and the XNOR gate
+behave identically.
+But if there are more than two specified inputs, the XOR gate will emit
+1 only when there is exactly one 1 input, whereas the Odd Parity gate
+will emit 1 if there are an odd number of 1 inputs.
+The XNOR gate will emit 1 only when there is <em>not</em> exactly one 1
+input, while the Even Parity gate will emit 1 if there are an even
+number of 1 inputs. The XOR and XNOR gates include an attribute titled
+Multiple-Input Behavior that allow them to be configured to use the
+Odd Parity and Even Parity behavior.</p>
+
+<p>If any of the
+inputs are the error value (e.g., if conflicting values are coming into
+the same wire) or floating, then the output will be the error value.</p>
+
+<p>The multi-bit versions of each gate will perform its one-bit
+transformation bitwise on its inputs.</p>
+
+<p><strong>Note:</strong> Many authorities contend that the shaped XOR
+gate's behavior should correspond to the odd parity gate, but there is
+not agreement on this point.  Logisim's default behavior for XOR gates is based
+on the IEEE 91 standard. It is also consistent with the intuitive
+meaning underlying the term <em>exclusive or</em>: A waiter asking
+whether you want a side dish of mashed potatoes, carrots, peas, or cole
+slaw will only accept one choice, not three, whatever some authorities
+may tell you. (I must admit, though, that I have not subjected this
+statement to a rigorous test.) You can configure the XOR and XNOR gates
+to use parity by changing its <q>Multiple-Input Behavior</q> attribute.</p>
+
+<h2>Pins (wenn das Bauelement nach Osten zeigt)</h2>
+
+<dl>
+
+<dt>West edge (inputs, bit width according to Data Bits attribute)</dt>
+<dd><p>The inputs into the component. There will be as many of these as
+specified in the Number of Inputs attribute.</p>
+
+<p>Note that if you are using shaped gates, the west side of XOR and
+XNOR gates will be curved. Nonetheless, the input pins are in a line.
+Logisim will draw short stubs illustrating this; and if you overshoot a
+stub, it will silently assume that you did not mean to overshoot it. In
+"printer view", these stubs will not be drawn unless they are connected
+to wires.</p></dd>
+
+<dt>East edge (output, bit width according to Data Bits attribute)</dt>
+<dd><p>The gate's output, whose value is computed based on the current
+inputs as described above.</p></dd>
+
+</dl>
+
+<h2>Attribute</h2>
+
+<p>When the component is selected or being added,
+the digits '0' through '9' alter its <q>Number of Inputs</q> attribute,
+Alt-0 through Alt-9 alter its <q>Data Bits</q> attribute,
+and the arrow keys alter its <q>Facing</q> attribute.</p>
+
+<dl>
+
+<dt>Ausrichtung</dt>
+<dd>The direction of the component (its output relative to its inputs).</dd>
+
+<dt>Data Bits</dt>
+<dd>The bit width of the component's inputs and outputs.</dd>
+
+<dt>Gate Size</dt>
+<dd>Determines whether to draw a wider or narrower version of the
+component. This does not affect the number of inputs, which is specified
+by the Number of Inputs attribute; however, if the number of inputs exceeds 3 (for a
+narrow component) or 5 (for a wide component), then the gate will
+be drawn with "wings" to be able to accommodate the number of inputs
+requested.</dd>
+
+<dt>Number of Inputs</dt>
+<dd>Determines how many pins to have for the component on its west
+side.</dd>
+
+<dt>Label</dt>
+<dd>The text within the label associated with the gate.</dd>
+
+<dt>Label Font</dt>
+<dd>The font with which to render the label.</dd>
+
+<dt>Multiple-Input Behavior (XOR and XNOR only)</dt>
+<dd>When three or more inputs are provided, the XOR/XNOR gate's output will
+either be based on whether exactly one input is 1 (the default) or an odd number
+of inputs are 1.</dd>
+
+</dl>
+
+<h2>Verhalten des Schaltwerkzeugs</h2>
+
+<p>Keines.</p>
+
+<h2>Verhalten des Textwerkzeugs</h2>
+
+<p>Allows the label associated with the gate to be edited.</p>
+
+<p><a href="../index.html">Zurück zur <em>Bibliotheksreferenz</em></a></p>
+
+</body>
+</html>

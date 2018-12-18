@@ -1,0 +1,169 @@
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>Contador</title>
+</head>
+
+<body bgcolor="FFFFFF">
+
+<h1><img align="center" src="../../../../icons/counter.gif" width="32" height="32">
+<em>Contador</em></h1>
+
+<p><table>
+<tr><td><strong>Biblioteca:</strong></td>
+	<td><a href="index.html">Memória</a></td></tr>
+<tr><td><strong>Introdução:</strong></td>
+	<td>2.3.0</td></tr>
+<tr><td valign="top"><strong>Aparência:</strong></td>
+	<td valign="top"><img src="../../../../img-libs/counter.png"></td></tr>
+</table></p>
+
+<h2>Comportamento</h2>
+
+<p> O contador mantém certo valor, o qual será emitido pela saída
+<var>Q</var>. Cada vez que a entrada de <i>clock</i> (indicada por um triângulo 
+na face sul do componente) variar de acordo com o atributo Gatilho, o valor do 
+contador será atualizado de acordo com as duas entradas na face oeste do componente: 
+a superior será chamada <var>load</var> e a inferior <var>count</var>, e serão 
+interpretadas com se segue.
+
+<center><table><thead>
+<tr><td><var>load</var></td><td><var>count</var></td><td>Ação do gatilho</td></tr>
+</thead><tbody>
+<tr><td align="center">0 ou z</td><td align="center">0</td>
+    <td>Contador permanecerá imutável.</td></tr>
+<tr><td align="center">0 ou z</td><td align="center">1 ou z</td>
+    <td>Contador incrementará.</td></tr>
+<tr><td align="center">1</td><td align="center">0</td>
+    <td>Contador carregará valor encontrado na entrada
+    <var>D</var>.</td></tr>
+<tr><td align="center">1</td><td align="center">1 ou z</td>
+    <td>Contador decrementará.</td></tr>
+</tbody></table></center>
+
+<p> O limite da contagem poderá ser configurado pelo atributo Valor Máximo.
+Quando o contador alcançar esse valor, o próximo incremento levará o contador
+de volta para 0; e se já estiver em 0, um decremento o levará de volta ao
+Valor Máximo.
+</p>
+
+<p> Além da saída <var>Q</var>, o componente também possui uma saída de apenas
+um bit chamada <var>carry</var>. Essa será igual a 1 sempre que o contador
+atingir o valor máximo e as entradas <var>load</var> e <var>count</var> indicarem
+que o componente deverá fazer um incremento no próximo passo - ou quando o contador
+estiver em 0 e as entradas <var>load</var> e <var>count</var> indicarem decremento
+no próximo passo.
+</p>
+
+<p> A entrada <var>clear</var> reiniciará o contador a partir do valor 0
+(em todos os bits) assincronamente; ou seja, enquanto a entrada <var>clr</var>
+estiver em 1, o valor ficará fixo em 0, independente da entrada de <i>clock</i>.
+</p>
+
+<h2>Pinos</h2>
+
+<dl>
+
+<dt> Na face leste, marcado por <var>Q</var> (saída, com largura em bits
+de acordo com o atributo Bits de Dados) </dt>
+<dd> Emitirá o valor atualmente armazenado pelo contador. </dd>
+
+<dt> Na face leste, pino inferior (saída, com largura de 1 bit)</dt>
+<dd> <i>carry</i>: quando <var>load</var> e <var>count</var> indicarem incrementar,
+a saída será 1 sempre que o contador estiver no máximo. Quando <var>load</var>
+e <var>count</var> indicarem decrementar, essa saída será 1 sempre que o contador
+estiver em 0. Todas as outras vezes, a saída será 0. </dd>
+
+<dt> Na face oeste, pino superior (entrada, com largura de 1 bit)</dt>
+<dd> load: Se for 1, enquanto a entrada <var>count</var> for 0, o contador
+irá carregar o valor encontrado na entrada <var>data</var> na próxima variação
+do <i>clock</i> - ou, se a entrada <var>count</var> for 1, o valor do contador
+será decrementado. </dd>
+
+<dt> Na face oeste, pino central marcado por <var>D</var>
+(entrada, com largura em bits de acordo com o atributo Bits de Dados) </dt>
+<dd> Dado: quando o <i>clock</i> variar enquando a entrada <var>load</var> estiver em 1
+e <var>count</var> for 0, o conteúdo do contador irá mudar para o valor encontrado
+nessa entrada. </dd>
+
+<dt> Na face oeste, pino inferior marcado por <var>ct</var> (entrada,
+com largura de 1 bit)</dt>
+<dd> count: quando estiver em 1 ou desconectado, o valor no contador será
+incrementado sempre que a entrada de <i>clock</i> variar - ou decrementado se a
+entrada <var>load</var> também estiver em 1. </dd>
+
+<dt> Na face sul, indicado por um triângulo (entrada, com largura de 1 bit)
+<dd> <i>clock</i>: no instante em que variar conforme especificado pelo atributo 
+Gatilho, o contador irá se atualizar de acordo com as entradas <var>load</var> e
+<var>count</var>. </dd>
+
+<dt> Na face sul, marcado por 0 (entrada, com largura de 1 bit)
+<dd> clear: quando estiver em 0 ou indefinido, essa entrada não terá efeito algum.
+Enquanto permanecer em 1, o valor do contador se manterá em 0 assincronamente.
+Isso ocorrerá assincronamente - ou seja, sem depender do valor corrente da
+entrada de <i>clock</i>. Enquanto permanecer em 1, as outras entradas não terão 
+efeito. </dd>
+
+</dl>
+
+
+<h2>Atributos</h2>
+
+<p> Quando o componente for selecionado ou estiver sendo acrescentado,
+Alt-0 até ALT-9 irão alterar o seu atributo <q> Bits de Dados</q>.
+</p>
+
+<dl>
+
+<dt> Bits de Dados </dt>
+<dd> A largura em bits do valor emitido pelo componente. </dd>
+
+<dt> Valor Máximo </dt>
+<dd> O maior valor possível, a partir do qual o contador irá produzir saída 
+de <i>carry</i>.</dd>
+
+<dt> Ação quando <i>Overflow</i> </dt>
+<dd> O comportamento do contador quanto tentar fazer incremento além do valor máximo
+ou decrementar além de 0. Há quatro ações possíveis:
+<dl>
+<dt> Circular </dt>
+<dd> O próximo valor será 0 (se estiver incrementando - ou valor máximo se decrementando). </dd>
+<dt> Permanecer no Valor </dt>
+<dd> O contador permanecerá no valor máximo (ou 0 se estiver decrementando)</dd>
+<dt> Continuar Contando </dt>
+<dd> O contador continuará incrementando/decrementando, mantendo o número de bits
+conforme o estabelecido pelo atributo Bits de Dados. </dd>
+<dt> Carregar Próximo Valor </dt>
+<dd> O próximo valor será carregado a partir da entrada D.</dd>
+</dl></dd>
+
+<dt> Gatilho </dt>
+<dd> Serve para configurar como a entrada de <i>clock</i> será interpretada.
+O valor <q> Borda de Subida </q> serve para indicar que o contador deverá
+atualizar o seu valor no instante em o clock variar de 0 para 1. O valor
+<q> Borda de Descida </q> indicará que ele deverá realizar a atualização
+no instante em que o <i>clock</i> variar de 1 para 0.
+
+<dt> Rótulo </dt>
+<dd> O texto para o rótulo associado à porta. </dd>
+
+<dt> Fonte do Rótulo </dt>
+<dd> A fonte com a qual o rótulo será mostrado. </dd>
+
+</dl>
+
+<h2> Comportamento da ferramenta Testar </h2>
+
+<p> Ao clicar sobre o contador mudará o foco do teclado para esse componente
+(indicado por um retângulo vermelho), e ao digitar dígitos hexadecimais poderá
+alterar o valor armazenado no contador.
+</p>
+
+<h2> Comportamento da ferramenta Texto </h2>
+
+<p> Permite que o rótulo associado à porta seja editado.</p>
+
+<p><a href="../index.html">Voltar à <em>Referência para bibliotecas</em></a></p>
+
+</body>
+</html>

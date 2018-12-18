@@ -1,0 +1,57 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2018-10-23T06:18:42.262000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="pt">
+    <title>
+      Depurar subcircuitos
+    </title>
+    <link rel="stylesheet" type="text/css" href="..\..\style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        Depurar subcircuitos
+      </h1>
+      <p>
+        Ao testar circuitos maiores, você provavelmente encontrará <i>bugs</i>. Para se descobrir o que estiver acontecendo de errado, explorar o que estiver acontecendo no subcircuitos enquanto estiver testando o circuito global poderá ser bastante útil. Você poderá ver o estado do subcircuito usando três maneiras diferentes. A mais simples provavelmente será ver a hierarquia da simulação ao clicar no segundo ícone na barra de tarefas acima do painel do explorador, (<img class="intxt" src="../../../../icons/projsim.gif" alt="#########">), ou ao selecionar "Ver Simulação" no menu Projeto. Isso alterará o painel do explorador de modo a exibir a hierarquia dos subcircuitos que estiverem sendo simulados.
+      </p>
+      <center>
+        <img class="notscal" src="../../../../img-guide/subcirc-hierarchy.png" alt="#########">
+      </center>
+      <p>
+        Um duplo-clique em um elemento nessa hierarquia irá mostrar o que estiver acontecendo dentro desse subcircuito.
+      </p>
+      <p>
+        A segunda maneira pela qual você poderá entrar em um subcircuito abrir o menu <i>pop-up</i> do subcircuito pelo botão direito do mouse ou <i>control-click</i>, e escolher a opção Exibir (View).
+      </p>
+      <center>
+        <img src="../../../img-guide/subcirc-4-delve.png" alt="#########">
+      </center>
+      <p>
+        E a terceira maneira é primeiro selecionar a Ferramenta Testar e então clicar no subcircuito que desejar explorar; uma lupa irá aparecer sobre o centro do subcircuito, e um duplo-clique sobre ela irá apresentar o estado desse subcircuito.
+      </p>
+      <center>
+        <img class="notscal" src="../../../../img-guide/subcirc-4-delve2.png" alt="#########">
+      </center>
+      <p>
+        Em qualquer uma desses casos, uma vez dentro do subcircuito, será possível ver quais os valores dos pinos no subcircuito corresponderão aos valores que estiverem sendo enviados através deles para o circuito que os contiver.
+      </p>
+      <center>
+        <img src="../../../img-guide/subcirc-2-delve.png" alt="#########">
+      </center>
+      <p>
+        Enquanto no subcircuito, você terá permissão para alterar o circuito. Se as mudanças afetarem qualquer das saídas do subcircuito, elas serão propagadas para esse. Uma exceção: as entradas do subcircuito serão determinadas com base nos valores que entram no supercircuito, por isso não faz sentido alternar esses valores. Se você tentar introduzir uma modificação no subcircuito, uma caixa de diálogo se abrirá perguntando se <q>o pino está ligado ao estado do supercircuito. Criar um estado novo para o circuito?</q> Se clicar em Não, cancelarará o pedido de alteração, se clicar em Sim irá criar uma cópia dos estados vistos, diferente do circuito externo, com o pino de entrada alterado.
+      </p>
+      <p>
+        Depois de ter completado a visualização e/ou edição, poderá retornar ao circuito original ao clicar duas vezes no circuito principal no painel do Explorador, ou através do submenu Ir Ao Estado do menu Simulação.
+      </p>
+      <p>
+        <strong>Próximo:</strong> <a href="library.html">Bibliotecas do Logisim</a>.
+      </p>
+    </div>
+  </body>
+</html>

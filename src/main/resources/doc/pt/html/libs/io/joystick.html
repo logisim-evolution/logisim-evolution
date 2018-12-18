@@ -1,0 +1,74 @@
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>Joystick</title>
+</head>
+
+<body bgcolor="FFFFFF">
+
+<h1><img align="center" src="../../../../icons/joystick.gif" width="32" height="32">
+<em>Joystick</em></h1>
+
+<p><table>
+<tr><td><strong>Biblioteca:</strong></td>
+	<td><a href="index.html">Entrada/Saída</a></td></tr>
+<tr><td><strong>Introdução:</strong></td>
+	<td>2.2.0</td></tr>
+<tr><td valign="top"><strong>Aparência:</strong></td>
+	<td valign="top"><img src="../../../../img-libs/joystick.png"></td></tr>
+</table></p>
+
+<h2>Comportamento</h2>
+
+<p> O usuário poderá arrastar o botão vermelho na área quadricular arredondada, 
+e as saídas serão atualizadas para indicar as coordenadas atuais de <var>x</var> - e
+<var>y</var>. Isso serve para emular como funcionam os conhecidos <i>joysticks</i> dos
+jogos clássicos do tipo arcade. </p>
+
+<h2> Pinos </h2>
+
+<dl>
+
+<dt> Na face oeste, pino superior (saída, com tamanho dado pelo atributo
+Largura em Bits) </dt>
+<dd> Indicará a coordenada <var>x</var>, e deverá ser interpretado como um inteiro
+sem sinal cujo valor nunca será 0. Assim, um valor igual a 1 representará o extremo à
+esquerda, e o valor máximo para a largura do bit indicará o extremo à direita.
+Quando o botão está em repouso (no centro), o valor terá o padrão de bits 10 ... 00. </dd>
+
+<dt> Na face oeste, pino inferiro (saída, com tamanho dado pelo atributo
+Largura em Bits) </dt>
+<dd> Indicará a coordenada <var>y</var>, cujo valor irá variar conforme com o pino da
+coordenada <var>x</var>. Quando o botão for levado para cima, essa saída terá
+valor igual a 1, e quando o botão for levado para baixo, a saída será o
+valor máximo para a largura de bits selecionada. </dd>
+
+</dl>
+
+<h2> Atributos </h2>
+
+<dl>
+
+<dt> Largura em Bits </dt>
+<dd> O número de bits usado para indicar cada uma das coordenadas do botão. </dd>
+
+<dt> Cor </dt>
+<dd> A cor do botão como será desenhada na tela. </dd>
+
+</dl>
+
+<h2> comportamento da ferramenta Testar </h2>
+
+<p> Ao pressionar o botão do mouse enquanto dentro da área <i>joystick</i> movimentará
+o botão para aquela posição e atualizará as saídas. Ao arrastar o mouse continuará 
+a mover o botão e atualizar as saídas, enquanto mantiver o botão dentro da área do 
+<i>joystick</i>. Ao liberar o botão do mouse voltará à sua posição de repouso. </p>
+
+<h2> Comportamento da ferramenta Texto </h2>
+
+<p> Nenhum. </p>
+
+<p><a href="../index.html">Voltar à <em>Referência para bibliotecas</em></a></p>
+
+</body>
+</html>

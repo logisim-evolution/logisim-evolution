@@ -1,0 +1,116 @@
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>Buffer/Inversor Controlado</title>
+</head>
+
+<body bgcolor="FFFFFF">
+
+<h1><img align="center" src="../../../../icons/controlledBuffer.gif" width="32" height="32">
+<img align="center" src="../../../../icons/controlledInverter.gif" width="32" height="32">
+<em>Buffer/Inversor Controlado</em></h1>
+
+<p><table>
+<tr><td><strong>Biblioteca:</strong></td>
+	<td><a href="index.html">Portas</a></td></tr>
+<tr><td><strong>Introdução:</strong></td>
+	<td>2.0 Beta 1</td></tr>
+<tr><td valign="top"><strong>Aparência:</strong></td>
+	<td valign="top"><img src="../../../../img-libs/controlled.png"></td></tr>
+</table></p>
+
+<h2>Comportamento</h2>
+
+<p> O <i>buffer</i> e o inversor controlados, são muitas vezes chamados de
+<em>buffers/inversores tri-state</em>, cada um tem uma entrada para 
+um bit de "controle". O valor desse pino afetará a forma como o componente 
+se comportará:
+</p>
+<ul>
+
+<li> Quando o valor nesse pino for 1, então o componente se comporta exatamente 
+como o equivalente não controlado (um <a href = "buffer.html">buffer</a> ou um
+<a href="not.html">inversor</a> (porta NOT)).</li>
+
+<li> Quando o valor for 0 ou desconhecido (ou seja, flutuante), então o valor
+da saída componente também será flutuante. </li>
+
+<li> Quando o valor for um valor de erro (e isso pode ocorrer caso dois
+valores conflitantes estejam alimentando a entrada), então a saída será um
+valor de erro. </li>
+
+</ul>
+
+<p> Um <i>buffer</i> controlado pode ser útil quando você tiver uma conexão
+(muitas vezes chamado de <em>barramento (<i>bus</i>)</em>), cujo valor deverá
+corresponder a saída de um dentre vários componentes. Ao se colocar um
+<i>buffer</i> controlado entre cada saída de componente e o barramento, você
+poderá controlar se uma a saída deverá alimentar o barramento, ou não.
+</p>
+
+<h2>Pinos (supondo o componente voltado para leste, linha de controle à direita)</h2>
+
+<dl>
+
+<dt> Na face oeste (entrada, com largura em bits de acordo com o
+atributo Bits de Dados) </dt>
+<dd> A entrada do componente que será usada para calcular a saída se a
+entrada de controle for 1. </dd>
+
+<dt> Na face sul (entrada, com largura de 1 bit) </dt>
+<dd> Entrada de controle do componente. </dd>
+
+<dt> Na face leste (saída, com largura em bits de acordo com o
+atributo Bits de Dados) </dt>
+<dd> Saída do componente, a qual estará flutuando se a entrada de controle
+for 0 ou flutuante; ou igual ao o valor de erro, se a entrada de controle também
+estiver com erro; ou será calculada com base na entrada, a oeste, se a entrada
+de controle for 1. </dd>
+
+</dl>
+
+<h2>Atributos</h2>
+
+<p> Quando o componente for selecionado ou estiver sendo acrescentado,
+Alt-0 até ALT-9 irão alterar o seu atributo <q> Bits de Dados</q>,
+e as teclas com setas poderão alterar o seu atributo <q> Direção</q>.
+</p>
+
+<dl>
+
+<dt> Direção </dt>
+<dd> A direção do componente (a posição das saídas em relação às entradas). </dd>
+
+<dt> Bits de Dados </dt>
+<dd> A largura em bits da entrada e da saída do componente. </dd>
+
+<dt> Tamanho da Porta </dt>
+<dd> Serve para determinar se é para desenhar uma versão maior ou menor do
+componente (aplicável apenas ao inversor controlado). </dd>
+
+<dt> Posição da Linha de Controle </dt>
+<dd> A posição da linha de controle, imaginando-se que a saída seja vista a partir
+da entrada: se o componente estiver voltado para a leste, e for escolhida a direção
+para a <q>direita</q>, a linha de controle estará voltada para baixo; mas se for 
+escolhida a direção para a <q>esquerda</q>, a linha de controle estará para cima.</dd>
+
+<dt> Rótulo </dt>
+<dd> O texto para o rótulo associado à porta. </dd>
+
+<dt> Fonte do Rótulo </dt>
+<dd> A fonte com a qual o rótulo será mostrado. </dd>
+
+</dl>
+
+<h2> Comportamento da ferramenta Testar </h2>
+
+<p> Nenhum. </p>
+
+<h2> Comportamento da ferramenta Texto </h2>
+
+<p> Permite que o rótulo associado à porta seja editado.</p>
+
+<p><a href="../index.html">Voltar à <em>Referência para bibliotecas</em></a></p>
+
+</body>
+</html>

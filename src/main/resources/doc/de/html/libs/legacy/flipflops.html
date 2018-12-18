@@ -1,0 +1,114 @@
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>Logisim 1.0 D/J-K Flip-Flop</title>
+</head>
+
+<body bgcolor="FFFFFF">
+
+<h1><img align="center" src="../../../../icons/dFlipFlop.gif" width="32" height="32">
+<img align="center" src="../../../../icons/jkFlipFlop.gif" width="32" height="32">
+<em>Logisim 1.0 D/J-K Flip-Flop</em></h1>
+
+<p><table>
+<tr><td><strong>Bibliothek:</strong></td>
+	<td><a href="index.html">Legacy</a></td></tr>
+<tr><td><strong>Eingeführt:</strong></td>
+	<td>2.0 Beta 12</td></tr>
+<tr><td valign="top"><strong>Aussehen:</strong></td>
+	<td valign="top"><img src="../../../../img-libs/legacy-flipflops.png" width="84" height="33"></td></tr>
+</table></p>
+
+<h2>Verhalten</h2>
+
+<p>These components exist only for backwards compatibility
+with Logisim 1.0<var>X</var>; for new circuits, the
+<a href="../mem/flipflops.html">Memory library's flip-flops</a> are
+recommended instead.</p>
+
+<p>Each flip-flop stores a single bit of data, which is emitted through
+the <var>Q</var> output on the east side. Normally, the value can be
+controlled via the inputs to the west side. In particular, the value
+changes when the <strong>clock</strong> input, marked by a triangle on
+each flip-flop, rises from 0 to 1; on this rising edge, the value
+changes according to the corresponding table below.
+<center><table>
+<tr><th>D Flip-Flop</th>
+    <th>J-K Flip-Flop</th>
+</tr><tr><td align="center" valign="top">
+<table>
+<tr><th><var>D</var></th><th><var>Q</var></th></tr>
+<tr><td align="center">0</td><td align="center">0</td></tr>
+<tr><td align="center">1</td><td align="center">1</td></tr>
+</table>
+</td><td align="center" valign="top">
+<table>
+<tr><th><var>J</var></th><th><var>K</var></th><th><var>Q</var></th></tr>
+<tr><td align="center">0</td><td align="center">0</td>
+  <td align="center"><var>Q</var></td></tr>
+<tr><td align="center">0</td><td align="center">1</td>
+  <td align="center">0</td></tr>
+<tr><td align="center">1</td><td align="center">0</td>
+  <td align="center">1</td></tr>
+<tr><td align="center">1</td><td align="center">1</td>
+  <td align="center"><var>Q</var>'</td></tr>
+</table>
+</td></tr></table></center>
+Another way of describing the different behavior of the flip-flops
+is in English text.
+<ul>
+
+<li><strong>D Flip-Flop:</strong> When the clock rises from 0 to 1, the
+value remembered by the flip-flop becomes the value of the <var>D</var>
+input (<em>Data</em>) at that instant.</p>
+
+</li><li><p><strong>J-K Flip-Flop:</strong> When the clock rises from 0 to 1,
+the value remembered by the flip-flop
+toggles if the <var>J</var> and <var>K</var> inputs are both 1
+and the value remains the same if both are 0;
+if they are different, then the value becomes 1 if the <var>J</var>
+(<em>Jump</em>) input is 1 and 0 if the <var>K</var> (<em>Kill</em>)
+input is 1.</p></li>
+
+</ul></p>
+
+<h2>Pins</h2>
+
+<dl>
+
+<dt>West edge, marked by triangle (input, bit width 1)
+<dd>Clock input: At the instant that this input value switches from 0 to
+1 (the rising edge), the value will be updated according to the other
+inputs on the west edge.  As long as this remains 0 or 1, the other
+inputs on the west edge have no effect.
+
+<dt>West edge, other labeled pin(s) (input(s), bit width 1)
+<dd>These inputs control how the flip-flop's value changes during the
+rising edge of the clock. Their exact behavior depends on the
+flip-flop; the above tables summarize their behavior.
+
+<dt>East edge, labeled <var>Q</var>, north end (output, bit width 1)
+<dd>Outputs the value currently stored by the flip-flop.
+
+<dt>East edge, south end (output, bit width 1)
+<dd>Outputs the complement of the value currently stored by the
+flip-flop.
+
+</dl>
+
+<h2>Attribute</h2>
+
+<p>Keines.</p>
+
+<h2>Verhalten des Schaltwerkzeugs</h2>
+
+<p>Keines.</p>
+
+<h2>Verhalten des Textwerkzeugs</h2>
+
+<p>Keines.</p>
+
+<p><a href="../index.html">Zurück zur <em>Bibliotheksreferenz</em></a></p>
+
+</body>
+</html>

@@ -1,0 +1,102 @@
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>Verteiler</title>
+</head>
+
+<body bgcolor="FFFFFF">
+
+<h1><img align="center" src="../../../../icons/splitter.gif" width="32" height="32">
+<em>Verteiler</em></h1>
+
+<p><table>
+<tr><td><strong>Bibliothek:</strong></td>
+	<td><a href="index.html">Base</a></td></tr>
+<tr><td><strong>Eingeführt:</strong></td>
+	<td>2.0 Beta 1</td></tr>
+<tr><td valign="top"><strong>Aussehen:</strong></td>
+	<td valign="top"><img src="../../../../img-libs/splitter.png" width="24" height="44"></td></tr>
+</table></p>
+
+<h2>Verhalten</h2>
+
+<p>The splitter creates a correspondence between a multi-bit value and several
+separate subsets of those bits. Despite its name, it can either
+split a multi-bit value into component parts, or it can combine
+component parts into a multi-bit value - or indeed it can do both at once.
+A more complete description of splitters is found in the `<a
+href="../../guide/bundles/splitting.html">Splitters</a>' section of the
+<em>User's Guide</em>.</p>
+
+<p>Logisim treats splitters specially when propagating values within a
+circuit: Whereas all other components have a computed delay for purposes
+of simulating their behavior, values propagate through splitters (as
+well as wires) instantaneously.</p>
+
+<p><strong>Note:</strong> The term <em>splitter</em> is a non-standard
+term, which is unique to Logisim as far as I know. I am unaware of any
+standard term for such a concept; the only term I have heard used is
+<em>bus ripper</em>, but this term is unnecessarily violent for my
+tastes.</p>
+
+<h2>Pins</h2>
+
+<p>To distinguish the several connecting points for a splitter, we refer
+to the single connecting point one side as its <em>combined end</em>,
+and we refer to the multiple connecting points on the other side as its
+<em>split ends</em>.</p>
+
+<dl>
+
+<dt>Combined end (input/output bit width matches Bit Width In attribute)
+<dd>A value holding all of the bits traveling through the splitter.
+
+<dt>Split ends (input/output, bit width computed based on Bit <var>x</var> attributes)
+<dd>The number of split ends is specified in the Fan Out attribute, and
+each split end has an index that is at least 0 and less than the Fan Out
+attribute. For each split end, all bits for which Bit <var>x</var>
+refers to its index travels through that split end; the order of these
+bits is the same as their order within the combined end.
+
+</dl>
+
+<h2>Attribute</h2>
+
+<p>When the component is selected or being added,
+the digits '0' through '9' alter its <q>Fan Out</q> attribute,
+Alt-0 through Alt-9 alter both the <q>Fan Out</q> and <q>Bit Width In</q> attributes,
+and the arrow keys alter its <q>Facing</q> attribute.</p>
+
+<dl>
+
+<dt>Ausrichtung</dt>
+<dd>The location of the split ends relative to the combined end.</dd>
+
+<dt>Fan Out</dt>
+<dd>The number of split ends.</dd>
+
+<dt>Bit Width In</dt>
+<dd>The bit width of the combined end.</dd>
+
+<dt>Bit <var>x</var></dt>
+<dd>The index of the split end to which bit <var>x</var> of the combined
+end corresponds. The split ends are indexed starting from 0 at the top
+(for a splitter facing east or west) or from 0 at the left/west (for a
+splitter facing north or south). A bit can be specified to correspond to
+none of the split ends. There is no way for a bit to correspond to
+multiple split ends.</dd>
+
+</dl>
+
+<h2>Verhalten des Schaltwerkzeugs</h2>
+
+<p>Keines.</p>
+
+<h2>Verhalten des Textwerkzeugs</h2>
+
+<p>Keines.</p>
+
+<p><a href="../index.html">Zurück zur <em>Bibliotheksreferenz</em></a></p>
+
+</body>
+</html>

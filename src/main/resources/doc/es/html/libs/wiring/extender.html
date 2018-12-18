@@ -1,0 +1,82 @@
+<html>
+<head>
+<title>Bit Extender</title>
+</head>
+
+<body bgcolor="FFFFFF">
+
+<h1><img align="center" src="../../../../icons/extender.gif" width="32" height="32">
+<em>Bit Extender</em></h1>
+
+<p><table>
+<tr><td><strong>Library:</strong></td>
+	<td><a href="index.html">Wiring</a></td></tr>
+<tr><td><strong>Introduced:</strong></td>
+	<td>2.5.0 (in Base library, moved to Wiring in 2.7.0)</td></tr>
+<tr><td valign="top"><strong>Appearance:</strong></td>
+	<td valign="top"><img src="../../../../img-libs/extender.png" width="44" height="42"></td></tr>
+</table></p>
+
+<h2>Behavior</h2>
+
+<p>The bit extender transforms a value into a value of another bit width.
+If it's being transformed into a smaller bit width,
+it is simply truncated to keep the lowest-order bits.
+If it's being transformed into a large bit width,
+the lowest-order bits are the same,
+and you have a choice about what the additional high-order bits will be:
+They can all be 0, all be 1, all match the input's <q>sign bit</q>
+(its highest-order bit), or the component can have an additional one-bit
+input that determines the identity of these other bits.</p>
+
+<h2>Pins</h2>
+
+<dl>
+
+<dt>West edge (input, bit width from Bit Width In attribute)</dt>
+<dd><p>The multi-bit input whose value is to be transformed.</p></dd>
+
+<dt>East edge (output, bit width from Bit Width Out attribute)</dt>
+<dd><p>The computed output.</p></dd>
+
+<dt>North edge (input, bit width 1)</dt>
+<dd><p>Specifies what the additional bits in the output should be.
+This pin is available only when the Extension Type attribute is <q>Input.</q></p></dd>
+
+</dl>
+
+<h2>Attributes</h2>
+
+<p>When the component is selected or being added,
+the digits 0 through 9 alter the <q>Bit Width In</q> attribute
+and Alt-0 through Alt-9 alter its <q>Bit Width Out</q> attribute.</p>
+
+<dl>
+
+<dt>Bit Width In</dt>
+<dd>The input's bit width.</dd>
+
+<dt>Bit Width Out</dt>
+<dd>The output's bit width.</dd>
+
+<dt>Extension Type</dt>
+<dd>Assuming the output bit width exceeds the input bit width,
+this attribute configures what the additional output bits should be.
+If <q>Zero</q> or <q>One,</q> the additional bits are 0 or 1 accordingly.
+If <q>Sign,</q> the additional bits are taken to match the highest-order bit in the input.
+And if <q>Input,</q> the component has a second input on its north side whose one-bit value is used for the additional bits.</dd>
+
+</dl>
+
+<h2>Poke Tool Behavior</h2>
+
+<p>None.</p>
+
+<h2>Text Tool Behavior</h2>
+
+<p>None.</p>
+
+<p><a href="../index.html">Back to <em>Library Reference</em></a></p>
+
+</body>
+</html>

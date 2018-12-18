@@ -1,0 +1,184 @@
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>Ferramenta Editar</title>
+</head>
+
+<body bgcolor="FFFFFF">
+
+<h1><img align="center" src="../../../../icons/select.gif" width="32" height="32">
+<em>Ferramenta Editar</em></h1>
+
+<p><table>
+<tr><td><strong>Biblioteca:</strong></td>
+	<td><a href="index.html">Base</a></td></tr>
+<tr><td><strong>Introduçãp:</strong></td>
+	<td>2.3.0</td></tr>
+</table></p>
+
+<h2>Comportamento</h2>
+
+<p> A ferramenta Editar permitirá ao usuário rearranjar os componentes
+que existirem e acrescentar conexões. Exatamente o que a ferramenta fará 
+dependerá de onde o usuário clicar com o mouse na área de desenho.
+</p>
+
+<ul>
+
+<li><p> Quando o mouse estiver sobre um ponto de conexão de um componente
+que já exista, ou sobre um fio, a ferramenta Editar irá mostrar um pequeno
+círculo verde em torno na posição do mouse. Ao pressionar o botão ali, iniciará
+a inclusão de uma nova conexão. Mas se o usuário não arrastar o mouse, longe o
+bastante para iniciar a conexão, antes de soltar o botão, a ação será tratada
+como um clique, e um fio será simplesmente adicionado à seleção corrente.
+</p>
+
+<p> A largura em bits de uma conexão acrescentada será inferida a partir dos
+componentes aos quais estiver conectada. Se não estiver vinculada a qualquer
+componente, um fio será traçado em cinza para indicar que sua largura é 
+desconhecida; houver concordância na largura com a do componente naquela posição, 
+a conexão será traçada em cor laranja para indicar conflito, e efetivamente não haverá
+qualquer transmissão de sinal até que o usuário o resolva.
+</p>
+
+<p> Todas as conexões no Logisim serão ou horizontais ou verticais, nunca diagonais.
+</p>
+
+<p> As conexões não têm direção determinada; ou seja, elas transmitem valores
+de um ponto a outro. De fato, um fio pode transportar valores em ambas direções
+simultaneamente: no exemplo abaixo, um bit será transmitido da entrada superior
+à esquerda através da conexão central, e então voltará por ela, e novamente 
+de modo circular, até alcançar a saída inferior à direita.
+</p>
+<center><img src="../../../../img-guide/bundles-splitter-2way.png"></center>
+
+<p> Um simples arrastar do mouse poderá criar múltiplos segmentos de fios.
+O processo mais preciso é um pouco mais difícil de se descrever; mas
+funciona bem intuitivamente na prática: se você fizer uso da ferramenta 
+Conectar um segmento particular de fio será interrompido tão
+logo atinja o pino de um componente que já exista, ou onde quer que
+alcance outro segmento de fio de uma conexão também existente.
+Além disso, se uma extremidade de qualquer conexão múltipla
+alcançar o meio de outra já existente, então essa também passará a ter
+múltiplos segmentos.
+</p>
+
+<p> Você poderá encurtar ou apagar uma conexão existente ao arrastar qualquer 
+das extremidades de um segmento e seguir o caminho inverso na direção da outra
+extremidade. Durante o movimento, a mudança de tamanho será indicada por uma
+linha branca sobre a parte do fio que estiver sendo removida.
+</p>
+
+<p> Para alguns componentes que tiverem marcas para indicar onde há pontos
+de conexão disponíveis (tais como uma <a href="../gates/basic.html">porta OR</a> 
+ou um <a href="../gates/controlled.html">buffer controlado</a>), o Logisim,
+de forma sutil, corrigirá tentativas em criar fios que ultrapassem
+ligeiramente os pontos de conexão.
+</p>
+
+<li><p> Contudo, se o usuário pressionar a tecla Alt em um ponto no meio de um
+fio, então o círculo verde desaparecerá. Um clique do mouse selecionará a conexão
+e o mouse irá arrastá-la.
+</p>
+</li>
+
+<li><p> Ao pressionar o botão do mouse enquanto ele estiver sobre um componente
+selecionado ele irá arrastar todos os componentes na mesma seleção.
+</p>
+
+<p> Por padrão, Logisim irá calcular uma forma de acrescentar novos fios
+de modo que nenhuma conexão existente seja perdida durante o movimento.
+(Às vezes, ele irá eliminar ou encurtar fios existentes.)
+Se você estiver realizando um movimento em que você queira que essas alterações
+sejam feitas, você poderá pressionar a tecla <i>shift</i> durante a movimentação.
+Se você quiser desabilitar esse comportamento por completo,
+basta ir a Projeto &gt; Opções, selecionar a guia Área de Desenho,
+e desmarcar a caixa <q> Manter Conexões ao Mover </q>;
+nesse caso, as conexões serão calculadas somente quando a tecla <i>shift</i> for
+<em>pressionada</em>.
+</p>
+
+<p> Ao arrastar uma seleção isso poderá levar a um comportamento inesperado dos fios:
+se ao fazer isso, alguns fios passarem sobre outros, eles serão conectados, 
+e todos serão colocados na mesma seleção. Como resultado, se você arrastar a seleção 
+pela segunda vez, os fios que existirem previamente no local não serão deixados para 
+trás. Esse comportamento é necessário para manter coerência com o comportamento esperado
+para as conexões de fios no Logisim. E não constituirá, normalmente, um grande problema:
+o Logisim irá traçar a seleção inteira no instante em que desejar efetivá-la,
+e você não deverá fazê-lo, até que você tenha certeza que esteja no local correto.
+</p>
+
+<li><p> Ao clicar com o mouse sobre um componente não selecionado (mas não sobre um
+de seus pontos de conexão) todos os componentes da seleção atual serão fixados
+e a seleção passará ao(s) componente(s) que contiver(em) a posição clicada.
+</p></li>
+
+<li><p> <i>Shift+click</i> do mouse sobre um componente alternará sua presença na seleção.
+Se vários componentes compartilharem a mesma posição, a presença de todos será
+alternada.
+</p></li>
+
+<li><p> Ao começar a arrastar o mouse em uma posição que não contenha qualquer
+componente, fixará todos aqueles na seleção atual e iniciar o traçado de uma
+área retangular para seleção.
+Todos os componentes contidos dentro dessa área serão colocados na seleção.
+</p></li>
+
+<li><p> Ao clicar <i>shift</i> e arrastar o mouse a partir de uma posição que 
+não contiver qualquer componente iniciará uma seleção retangular. A presença 
+de todos os componentes contidos nessa área será alternada.
+</p></li>
+
+<li><p> Contudo, se a tecla <i>alt</i> for pressionada em uma posição que não contiver
+qualquer componente, iniciará o acréscimo de uma nova conexão. Um pequeno círculo
+verde será traçado em tal circunstância para indicar isso.
+</p></li>
+
+</ul></p>
+
+<p> Após selecionar os itens desejados, você poderá, naturalmente,
+recortar/copiar/colar/apagar todos os itens via
+<a href="../../guide/menu/edit.html"> menu Editar </a>.
+
+<p> Algumas teclas podem ter efeito sobre a ferramenta Editar.</p>
+
+<ul>
+
+<li><p> As teclas com setas poderão alterar o atributo Direção para todos os
+componentes na seleção que tiverem tal atributo.
+</p></li>
+
+<li><p> As teclas <i>Delete</i> e <i>Backspace</i> irão apagar tudo 
+o que estiver selecionado no circuito.</p></li>
+
+<li><p> As teclas <i>Insert</i> e <i>MenuKey-D</i> criarão uma cópia 
+dos componentes na seleção corrente.
+</p></li>
+
+</ul>
+
+<p> O comportamento do Logisim ao duplicar uma seleção ou ao colar a
+área de transferência em um circuito será um tanto peculiar: ele não irá colocar
+imediatamente os componentes no circuito, em vez disso, a seleção será uma
+coleção de "esboços transparentes", que será deixada no circuito assim que forem
+levados para outra posição ou removidos da seleção. (Esse comportamento peculiar
+é necessário porque, caso contrário, as conexões na
+seleção seriam fundidas àquelas no circuito atual de uma só vez, e não permitir,
+assim, que pudessem ser arrastadas de sua posição anterior junto 
+com o conteúdo da área de transferência até que fossem coladas onde o usuário desejasse.)
+</p>
+
+<h2>Atributos</h2>
+
+<p> Nenhum. Ao selecionar um componente, ela irá mostrar seus atributos.
+Se forem selecionados vários componentes, ela irá mostrar os atributos
+compartilhados por todos, em branco ficarão os valores diferentes e
+de outro modo, todos aqueles que tiverem em comum. (As conexões serão ignoradas
+se não houver qualquer outro componente na seleção.) Mudanças no valor do atributo
+afetarão todos os componentes selecionados.
+</p>
+
+<p><a href="../index.html">Voltar à <em>Referência para bibliotecas</em></a></p>
+
+</body>
+</html>

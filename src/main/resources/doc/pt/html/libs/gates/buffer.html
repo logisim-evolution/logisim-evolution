@@ -1,0 +1,93 @@
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>Buffer</title>
+</head>
+
+<body bgcolor="FFFFFF">
+
+<h1><img align="center" src="../../../../icons/bufferGate.gif" width="32" height="32">
+<em><i>Buffer</i></em></h1>
+
+<p><table>
+<tr><td><strong>Biblioteca:</strong></td>
+	<td><a href="index.html">Base</a></td></tr>
+<tr><td><strong>Introdução:</strong></td>
+	<td>2.0 Beta 1</td></tr>
+<tr><td valign="top"><strong>Aparência:</strong></td>
+	<td valign="top"><img src="../../../../img-libs/buffer.png"></td></tr>
+</table></p>
+
+<h2>Comportamento</h2>
+
+<p> O <i>buffer</i> simplesmente passa para a saída à direita o conteúdo recebido 
+na entrada do lado esquerdo.
+A tabela-verdade para o <i>buffer</i> de um bit é a que se segue.</p>
+<center><table>
+<tr><th><var>x</var></th><th>out</th></tr>
+<tr><td align="center">0</td><td align="center">0</td></tr>
+<tr><td align="center">1</td><td align="center">1</td></tr>
+</table></center>
+<p> Se a entrada não for especificada (ou seja, flutuante), então a saída
+também não será especificada - a menos que a opção "Saída de Porta Quando Indefinida"
+seja "Erro para Entradas Indefinidas", caso onde a saída será um valor de erro. Se
+a entrada for um valor de erro, a saída também o será.
+</p>
+
+<p> <i>Buffers</i> são os componentes de menor importância dentre os disponíveis
+pelo Logisim;  sua presença na biblioteca Gates é uma questão de completude
+(um componente para cada valor de um bit possível na tabela-verdade), pois é 
+interessante proporcionar uma funcionalidade equivalente a um elemento real. 
+Ainda assim, pode ser ocasionalmente útil para garantir que valores se propaguem 
+em apenas uma direção ao longo de uma conexão.
+</p>
+
+<h2>Pinos (supondo o component voltado para leste)</h2>
+
+<dl>
+
+<dt> Na face oeste (entrada, com largura em bits de acordo com o
+atributo Bits de Dados) </dt>
+<dd> A entrada para o componente. </dd>
+
+<dt> Na face leste (saída, com largura em bits de acordo com o
+atributo Bits de Dados) </dt>
+<dd> A saída, que sempre concordará com a entrada do lado esquerdo. </dd>
+
+</dl>
+
+<h2>Attributes</h2>
+
+<p> Quando o componente for selecionado ou estiver sendo acrescentado,
+Alt-0 até ALT-9 irão alterar o seu atributo <q> Bits de Dados</q>,
+e as teclas com setas poderão alterar o seu atributo <q> Direção</q>.
+
+<dl>
+
+<dt> Direção </dt>
+<dd> A direção do componente (a posição das saídas em relação às entradas). </dd>
+
+<dt> Bits de Dados </dt>
+<dd> A largura em bits da entrada e da saída do componente. </dd>
+
+<dt> Rótulo </dt>
+<dd> O texto para o rótulo associado à porta. </dd>
+
+<dt> Fonte do Rótulo </dt>
+<dd> A fonte com a qual o rótulo será mostrado. </dd>
+
+</dl>
+
+<h2> Comportamento da ferramenta Testar </h2>
+
+<p> Nenhum. </p>
+
+<h2> Comportamento da ferramenta Texto </h2>
+
+<p> Permite que o rótulo associado à porta seja editado.</p>
+
+<p><a href="../index.html">Voltar à <em>Referência para bibliotecas</em></a></p>
+
+
+</body>
+</html>

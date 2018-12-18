@@ -1,0 +1,98 @@
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>Ferramenta Conectar</title>
+</head>
+
+<body bgcolor="FFFFFF">
+
+<h1><img align="center" src="../../../../icons/wiring.gif" width="32" height="32">
+<em>Ferramenta Conectar</em></h1>
+
+<p><table>
+<tr><td><strong>Biblioteca:</strong></td>
+	<td><a href="index.html">Base</a></td></tr>
+<tr><td><strong>Introdução:</strong></td>
+	<td>2.0 Beta 1</td></tr>
+</table></p>
+
+<h2>Comportamento</h2>
+
+<p> A ferramenta Conectar será usada pra criar segmentos de fios que
+carregarão sinais de uma extremidade até outra. A largura em bits
+desses valores poderá ser qualquer; a largura exata será inferida
+automaticamente a partir dos componentes que estiver conectando.
+Se não estiver associada a qualquer componente, a conexão será traçada
+em cinza para indicar que a largura em bits é desconhecida; se não 
+houver concordância na largura com a do componente, a conexão será
+traçada em cor laranja para indicar conflito, e efetivamente não haverá
+qualquer transmissão de sinal até que o usuário o resolva.
+</p>
+
+<p> Um simples arrastar do mouse poderá criar múltiplos segmentos de fios.
+O processo mais preciso é um pouco mais difícil de se descrever; mas
+funciona bem intuitivamente na prática: se você fizer uso da ferramenta 
+Conectar um segmento particular de fio será interrompido tão
+logo atinja o pino de um componente que já exista, ou onde quer que
+alcance outro segmento de fio de uma conexão também existente.
+Além disso, se uma extremidade de qualquer conexão múltipla
+alcançar o meio de outra já existente, então essa também passará a ter
+múltiplos segmentos.
+</p>
+
+<p> Para alguns componentes que tiverem marcas para indicar onde há pontos
+de conexão disponíveis (tais como uma <a href="../gates/basic.html">porta OR</a> 
+ou um <a href="../gates/controlled.html">buffer controlado</a>), o Logisim 
+irá de forma sutil corrigir tentativas em criar fios que ultrapassem 
+ligeiramente os pontos de conexão.
+</p>
+
+<p> Você poderá encurtar um segmento de fio usando a ferramenta Conectar,
+ao arrastar qualquer das extremidades de um segmento, e isso irá superpor-se
+ao existente.
+</p>
+
+<p> Todas as conexões no Logisim serão ou horizontais ou verticais.</p>
+
+<p> As conexões não têm direção determinada; ou seja, elas transmitem valores
+de um ponto a outro. De fato, um fio pode transportar valores em ambas direções
+simultaneamente; a conexão central no exemplo abaixo fará isso.
+</p>
+<center><img src="../../../../img-guide/bundles-splitter-2way.png"></center>
+
+<h2>Atributos</h2>
+
+<p> A ferramenta Conectar não possui atributos, mas as conexões que criar, sim.
+</p>
+
+<dl>
+
+<dt> Direção </dt>
+<dd> Serve para indicar se uma conexão será horizontal ou vertical.
+O valor de seu atributo não poderá ser alterado. </dd>
+
+<dt> Comprimento </dt>
+<dd> Serve para indicar com quantos pixels será a conexão.
+O valor de seu atributo não poderá ser alterado. </dd>
+
+</dl>
+
+<h2> Comportamento da ferramenta Testar </h2>
+
+<p> Quando você clicar sobre um segmento de uma conexão existente 
+usando a ferramenta Testar, o Logisim irá mostrar o valor corrente
+que passa por ela. 
+Esse comportamento é particularmente útil para as conexões multibit,
+cuja cor (preta) não oferece uma informação visual sobre o que passa
+pelos fios de uma conexão.
+</p>
+
+<p> Para valores multibit, você poderá configurar exatamente como
+esses valores serão apresentados (em binário, decimal, ou hexadecimal,
+por exemplo) usando o painel <a href="../../guide/opts/canvas.html">
+Área de Desenho</a> da caixa de diálogo Opções de Projeto.
+
+<p><a href="../index.html">Voltar à <em>Referência para bibliotecas</em></a></p>
+
+</body>
+</html>
