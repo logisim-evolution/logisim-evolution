@@ -52,7 +52,7 @@ import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import com.bfh.logisim.designrulecheck.CorrectLabel;
+import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
 import com.cburch.logisim.analyze.model.VariableList;
 import com.cburch.logisim.analyze.model.VariableListEvent;
 import com.cburch.logisim.analyze.model.VariableListListener;

@@ -39,7 +39,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import com.bfh.logisim.designrulecheck.Netlist;
+import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.comp.ComponentDrawContext;
 import com.cburch.logisim.comp.ComponentFactory;

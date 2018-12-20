@@ -34,7 +34,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import com.bfh.logisim.library.BFHPraktika;
+import com.cburch.logisim.fpga.library.BFHPraktika;
 import com.cburch.logisim.std.arith.Arithmetic;
 import com.cburch.logisim.std.base.Base;
 import com.cburch.logisim.std.gates.Gates;

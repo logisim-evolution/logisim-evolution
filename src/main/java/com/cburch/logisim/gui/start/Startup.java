@@ -76,7 +76,7 @@ import javax.swing.JTextField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.bfh.logisim.fpgagui.FPGACommanderTests;
+import com.cburch.logisim.fpga.fpgagui.FPGACommanderTests;
 import com.cburch.logisim.LogisimVersion;
 import com.cburch.logisim.Main;
 import com.cburch.logisim.file.LoadFailedException;

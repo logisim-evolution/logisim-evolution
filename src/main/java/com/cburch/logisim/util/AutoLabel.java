@@ -41,7 +41,7 @@ import java.util.TreeSet;
 
 import javax.swing.JOptionPane;
 
-import com.bfh.logisim.designrulecheck.CorrectLabel;
+import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.comp.ComponentFactory;

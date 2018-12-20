@@ -42,8 +42,8 @@ import java.util.StringTokenizer;
 
 import javax.swing.JLabel;
 
-import com.bfh.logisim.designrulecheck.CorrectLabel;
-import com.bfh.logisim.designrulecheck.NetlistComponent;
+import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
+import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeSet;

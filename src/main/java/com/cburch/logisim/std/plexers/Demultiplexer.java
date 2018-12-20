@@ -33,7 +33,7 @@ package com.cburch.logisim.std.plexers;
 import java.awt.Color;
 import java.awt.Graphics;
 
-import com.bfh.logisim.designrulecheck.CorrectLabel;
+import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
 import com.cburch.logisim.LogisimVersion;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeSet;

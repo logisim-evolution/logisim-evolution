@@ -37,7 +37,7 @@ import java.util.Map;
 
 import javax.swing.Icon;
 
-import com.bfh.logisim.designrulecheck.CorrectLabel;
+import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
 import com.cburch.logisim.LogisimVersion;
 import com.cburch.logisim.analyze.model.Expression;
 import com.cburch.logisim.analyze.model.Expressions;

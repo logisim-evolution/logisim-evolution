@@ -12,8 +12,8 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 
-import com.bfh.logisim.fpgagui.FPGACommanderGui;
-import com.bfh.logisim.hdlgenerator.HDLGeneratorFactory;
+import com.cburch.logisim.fpga.fpgagui.FPGACommanderGui;
+import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
 import com.cburch.logisim.prefs.AppPreferences;
 
 @SuppressWarnings("serial")

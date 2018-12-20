@@ -3,9 +3,9 @@ package com.cburch.logisim.std.ttl;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import com.bfh.logisim.designrulecheck.Netlist;
-import com.bfh.logisim.designrulecheck.NetlistComponent;
-import com.bfh.logisim.fpgagui.FPGAReport;
+import com.cburch.logisim.fpga.designrulecheck.Netlist;
+import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
+import com.cburch.logisim.fpga.fpgagui.FPGAReport;
 import com.cburch.logisim.data.AttributeSet;
 
 public class Ttl74377 extends AbstractOctalFlops {

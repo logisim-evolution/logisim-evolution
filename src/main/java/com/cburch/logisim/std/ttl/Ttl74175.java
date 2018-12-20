@@ -2,8 +2,8 @@ package com.cburch.logisim.std.ttl;
 
 import java.awt.Graphics;
 
-import com.bfh.logisim.designrulecheck.CorrectLabel;
-import com.bfh.logisim.designrulecheck.NetlistComponent;
+import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
+import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Value;

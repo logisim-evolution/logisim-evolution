@@ -44,8 +44,8 @@ import javax.swing.JLabel;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
 
-import com.bfh.logisim.fpgagui.FPGACommanderGui;
-import com.bfh.logisim.settings.VendorSoftware;
+import com.cburch.logisim.fpga.fpgagui.FPGACommanderGui;
+import com.cburch.logisim.fpga.settings.VendorSoftware;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.Softwares;
 

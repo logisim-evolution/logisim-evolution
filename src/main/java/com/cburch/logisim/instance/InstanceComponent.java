@@ -40,8 +40,8 @@ import java.util.List;
 
 import javax.swing.JOptionPane;
 
-import com.bfh.logisim.designrulecheck.CorrectLabel;
-import com.bfh.logisim.designrulecheck.Netlist;
+import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
+import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.comp.ComponentDrawContext;

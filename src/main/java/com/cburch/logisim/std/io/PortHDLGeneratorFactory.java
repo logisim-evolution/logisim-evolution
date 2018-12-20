@@ -37,11 +37,11 @@ import java.util.Iterator;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import com.bfh.logisim.designrulecheck.Netlist;
-import com.bfh.logisim.designrulecheck.NetlistComponent;
-import com.bfh.logisim.fpgagui.FPGAReport;
-import com.bfh.logisim.hdlgenerator.AbstractHDLGeneratorFactory;
-import com.bfh.logisim.hdlgenerator.FileWriter;
+import com.cburch.logisim.fpga.designrulecheck.Netlist;
+import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
+import com.cburch.logisim.fpga.fpgagui.FPGAReport;
+import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.FileWriter;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.Splitter;
 import com.cburch.logisim.circuit.Wire;

@@ -34,9 +34,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.bfh.logisim.designrulecheck.Netlist;
-import com.bfh.logisim.designrulecheck.NetlistComponent;
-import com.bfh.logisim.fpgagui.FPGAReport;
+import com.cburch.logisim.fpga.designrulecheck.Netlist;
+import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
+import com.cburch.logisim.fpga.fpgagui.FPGAReport;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Value;
 

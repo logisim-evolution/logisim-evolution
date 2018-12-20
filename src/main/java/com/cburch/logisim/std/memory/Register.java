@@ -33,9 +33,9 @@ package com.cburch.logisim.std.memory;
 import java.awt.Color;
 import java.awt.Graphics;
 
-import com.bfh.logisim.designrulecheck.CorrectLabel;
-import com.bfh.logisim.designrulecheck.Netlist;
-import com.bfh.logisim.designrulecheck.NetlistComponent;
+import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
+import com.cburch.logisim.fpga.designrulecheck.Netlist;
+import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Attributes;

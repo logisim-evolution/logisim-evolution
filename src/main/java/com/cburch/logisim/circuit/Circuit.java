@@ -52,8 +52,8 @@ import javax.swing.JOptionPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.bfh.logisim.designrulecheck.Netlist;
-import com.bfh.logisim.fpgagui.FPGAReport;
+import com.cburch.logisim.fpga.designrulecheck.Netlist;
+import com.cburch.logisim.fpga.fpgagui.FPGAReport;
 import com.cburch.logisim.circuit.appear.CircuitAppearance;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.comp.ComponentDrawContext;

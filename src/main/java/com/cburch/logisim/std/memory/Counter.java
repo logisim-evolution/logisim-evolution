@@ -37,7 +37,7 @@ import java.awt.Graphics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.bfh.logisim.designrulecheck.NetlistComponent;
+import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.AttributeSet;
