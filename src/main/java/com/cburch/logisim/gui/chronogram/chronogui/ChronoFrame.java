@@ -27,7 +27,7 @@
  *       Yverdon-les-Bains, Switzerland
  *       http://reds.heig-vd.ch
  *******************************************************************************/
-package com.hepia.logisim.chronogui;
+package com.cburch.logisim.gui.chronogram.chronogui;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -65,12 +65,12 @@ import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.std.wiring.Clock;
 import com.cburch.logisim.util.Icons;
-import com.hepia.logisim.chronodata.ChronoData;
-import com.hepia.logisim.chronodata.ChronoDataWriter;
-import com.hepia.logisim.chronodata.ChronoModelEventHandler;
-import com.hepia.logisim.chronodata.NoSysclkException;
-import com.hepia.logisim.chronodata.SignalDataBus;
-import com.hepia.logisim.chronodata.TimelineParam;
+import com.cburch.logisim.gui.chronogram.chronodata.ChronoData;
+import com.cburch.logisim.gui.chronogram.chronodata.ChronoDataWriter;
+import com.cburch.logisim.gui.chronogram.chronodata.ChronoModelEventHandler;
+import com.cburch.logisim.gui.chronogram.chronodata.NoSysclkException;
+import com.cburch.logisim.gui.chronogram.chronodata.SignalDataBus;
+import com.cburch.logisim.gui.chronogram.chronodata.TimelineParam;
 import java.io.File;
 /**
  * Main chronogram JFrame Creates the chronogram

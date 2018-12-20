@@ -27,7 +27,7 @@
  *       Yverdon-les-Bains, Switzerland
  *       http://reds.heig-vd.ch
  *******************************************************************************/
-package com.hepia.logisim.chronodata;
+package com.cburch.logisim.gui.chronogram.chronodata;
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -35,7 +35,7 @@ import java.io.LineNumberReader;
 import java.util.ArrayList;
 import java.util.TreeMap;
 
-import com.hepia.logisim.chronogui.ChronoFrame;
+import com.cburch.logisim.gui.chronogram.chronogui.ChronoFrame;
 
 /**
  * Contains all data to be plotted

@@ -2,11 +2,11 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.hepia.logisim.chronogui;
+package com.cburch.logisim.gui.chronogram.chronogui;
 
-import com.hepia.logisim.chronodata.ChronoData;
-import com.hepia.logisim.chronodata.SignalData;
-import com.hepia.logisim.chronodata.SignalDataBus;
+import com.cburch.logisim.gui.chronogram.chronodata.ChronoData;
+import com.cburch.logisim.gui.chronogram.chronodata.SignalData;
+import com.cburch.logisim.gui.chronogram.chronodata.SignalDataBus;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;

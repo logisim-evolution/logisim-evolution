@@ -27,42 +27,12 @@
  *       Yverdon-les-Bains, Switzerland
  *       http://reds.heig-vd.ch
  *******************************************************************************/
-package com.hepia.logisim.chronogui;
+package com.cburch.logisim.gui.chronogram.chronodata;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-
-import javax.swing.JPanel;
-
-/**
- * Cursor is a Jpanel in front of all SignalDraw It displays a cursor by a red
- * vertical line
- */
-public class Cursor extends JPanel {
-
+public class NoSysclkException extends Exception {
 	private static final long serialVersionUID = 1L;
-	private int cursorPosition = 0;
 
-	public Cursor() {
-		this.setOpaque(false);
-		this.setDoubleBuffered(true);
-	}
-
-	public int getPosition() {
-		return cursorPosition;
-	}
-
-	public void paintComponent(Graphics g) {
-		super.paintComponent(g);
-		Graphics2D g2 = (Graphics2D) g;
-		g2.setStroke(new BasicStroke(1));
-		g2.setPaint(Color.red);
-		g2.drawLine(cursorPosition, getHeight(), cursorPosition, 0);
-	}
-
-	public void setPosition(int posX) {
-		cursorPosition = posX;
+	public NoSysclkException(String message) {
+		super(message);
 	}
 }

@@ -27,10 +27,10 @@
  *       Yverdon-les-Bains, Switzerland
  *       http://reds.heig-vd.ch
  *******************************************************************************/
-package com.hepia.logisim.chronogui;
+package com.cburch.logisim.gui.chronogram.chronogui;
 
-import com.hepia.logisim.chronodata.SignalData;
-import com.hepia.logisim.chronodata.SignalDataBus;
+import com.cburch.logisim.gui.chronogram.chronodata.SignalData;
+import com.cburch.logisim.gui.chronogram.chronodata.SignalDataBus;
 
 /**
  * Handles graphical actions and events on Chronoframe Left area: SignalNames

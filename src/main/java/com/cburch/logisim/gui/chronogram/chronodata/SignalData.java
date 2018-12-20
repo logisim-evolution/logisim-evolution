@@ -27,42 +27,48 @@
  *       Yverdon-les-Bains, Switzerland
  *       http://reds.heig-vd.ch
  *******************************************************************************/
-package com.hepia.logisim.chronogui;
+package com.cburch.logisim.gui.chronogram.chronodata;
+
+import java.util.ArrayList;
+
+import javax.swing.ImageIcon;
+
+import com.cburch.logisim.util.Icons;
 
 /**
- * Contains draw data that are common between LeftPanel and RightPanel
+ * Contains all data about one signal: signal values, the selected value, the
+ * choosed format...
  */
-public class CommonPanelParam {
+public class SignalData {
 
-	private int mHeaderHeight;
-	private int mSignalHeight;
+	private String name;
+	protected int selectedValuePos = 0;
+	protected ArrayList<String> data;
 
-	/**
-	 * CommonPanelParam defines the header and signal height
-	 * 
-	 * @param headerHeight
-	 *            header height in pixel
-	 * @param signalHeight
-	 *            signal height in pixel
-	 */
-	public CommonPanelParam(int headerHeight, int signalHeight) {
-		mHeaderHeight = headerHeight;
-		mSignalHeight = signalHeight;
+	public SignalData(String name, ArrayList<String> data) {
+		this.name = name;
+		this.data = data;
 	}
 
-	public int getHeaderHeight() {
-		return mHeaderHeight;
+	public ImageIcon getIcon() {
+		return (ImageIcon) Icons.getIcon("chronoSignal.gif");
 	}
 
-	public int getSignalHeight() {
-		return mSignalHeight;
+	public String getName() {
+		return name;
 	}
 
-	public void setHeaderHeight(int height) {
-		mHeaderHeight = height;
+	public String getSelectedValue() {
+		return data.size() > 0 ? data.get(selectedValuePos) : "";
 	}
 
-	public void setSignalHeight(int height) {
-		mSignalHeight = height;
+	public ArrayList<String> getSignalValues() {
+		return data;
 	}
+
+	public void setSelectedValuePos(int pos) {
+		if (pos < data.size() - 1)
+			selectedValuePos = pos;
+	}
+
 }

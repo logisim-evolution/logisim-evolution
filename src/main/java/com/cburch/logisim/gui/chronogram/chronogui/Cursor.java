@@ -27,48 +27,42 @@
  *       Yverdon-les-Bains, Switzerland
  *       http://reds.heig-vd.ch
  *******************************************************************************/
-package com.hepia.logisim.chronodata;
+package com.cburch.logisim.gui.chronogram.chronogui;
 
-import java.util.ArrayList;
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 
-import javax.swing.ImageIcon;
-
-import com.cburch.logisim.util.Icons;
+import javax.swing.JPanel;
 
 /**
- * Contains all data about one signal: signal values, the selected value, the
- * choosed format...
+ * Cursor is a Jpanel in front of all SignalDraw It displays a cursor by a red
+ * vertical line
  */
-public class SignalData {
+public class Cursor extends JPanel {
 
-	private String name;
-	protected int selectedValuePos = 0;
-	protected ArrayList<String> data;
+	private static final long serialVersionUID = 1L;
+	private int cursorPosition = 0;
 
-	public SignalData(String name, ArrayList<String> data) {
-		this.name = name;
-		this.data = data;
+	public Cursor() {
+		this.setOpaque(false);
+		this.setDoubleBuffered(true);
 	}
 
-	public ImageIcon getIcon() {
-		return (ImageIcon) Icons.getIcon("chronoSignal.gif");
+	public int getPosition() {
+		return cursorPosition;
 	}
 
-	public String getName() {
-		return name;
+	public void paintComponent(Graphics g) {
+		super.paintComponent(g);
+		Graphics2D g2 = (Graphics2D) g;
+		g2.setStroke(new BasicStroke(1));
+		g2.setPaint(Color.red);
+		g2.drawLine(cursorPosition, getHeight(), cursorPosition, 0);
 	}
 
-	public String getSelectedValue() {
-		return data.size() > 0 ? data.get(selectedValuePos) : "";
+	public void setPosition(int posX) {
+		cursorPosition = posX;
 	}
-
-	public ArrayList<String> getSignalValues() {
-		return data;
-	}
-
-	public void setSelectedValuePos(int pos) {
-		if (pos < data.size() - 1)
-			selectedValuePos = pos;
-	}
-
 }

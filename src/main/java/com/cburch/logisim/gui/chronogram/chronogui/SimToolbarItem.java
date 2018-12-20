@@ -31,7 +31,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.hepia.logisim.chronogui;
+package com.cburch.logisim.gui.chronogram.chronogui;
 
 import java.awt.AlphaComposite;
 import java.awt.Color;

@@ -27,7 +27,7 @@
  *       Yverdon-les-Bains, Switzerland
  *       http://reds.heig-vd.ch
  *******************************************************************************/
-package com.hepia.logisim.chronodata;
+package com.cburch.logisim.gui.chronogram.chronodata;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;

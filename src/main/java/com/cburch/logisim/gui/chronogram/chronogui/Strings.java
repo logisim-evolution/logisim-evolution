@@ -27,43 +27,20 @@
  *       Yverdon-les-Bains, Switzerland
  *       http://reds.heig-vd.ch
  *******************************************************************************/
-package com.hepia.logisim.chronodata;
+package com.cburch.logisim.gui.chronogram.chronogui;
 
-public class TimelineParam {
+import com.cburch.logisim.util.LocaleManager;
+import com.cburch.logisim.util.StringGetter;
 
-	public static String[] units = { "Hz", "KHz", "MHz", "GHz" };
-
-	private String selectedUnit;
-	private String signalClkName;
-	private int frequency;
-
-	public TimelineParam(String timelineString) {
-		String[] elems = timelineString.split(":");
-		this.selectedUnit = elems[3];
-		this.signalClkName = elems[1];
-		this.frequency = Integer.parseInt(elems[2]);
+public class Strings {
+	public static String get(String key) {
+		return source.get(key);
 	}
 
-	public TimelineParam(String selectedUnit, String signalClkName,
-			int frequency) {
-		this.selectedUnit = selectedUnit;
-		this.signalClkName = signalClkName;
-		this.frequency = frequency;
+	public static StringGetter getter(String key) {
+		return source.getter(key);
 	}
 
-	public int getFrequency() {
-		return frequency;
-	}
-
-	public String getSelectedUnit() {
-		return selectedUnit;
-	}
-
-	public String getSignalClkName() {
-		return signalClkName;
-	}
-
-	public String toString() {
-		return "clk:" + signalClkName + ":" + frequency + ":" + selectedUnit;
-	}
+	private static LocaleManager source = new LocaleManager(
+			"resources/logisim", "chronogram");
 }

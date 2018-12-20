@@ -27,7 +27,7 @@
  *       Yverdon-les-Bains, Switzerland
  *       http://reds.heig-vd.ch
  *******************************************************************************/
-package com.hepia.logisim.chronogui;
+package com.cburch.logisim.gui.chronogram.chronogui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -39,8 +39,8 @@ import javax.swing.JMenu;
 import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
 
-import com.hepia.logisim.chronodata.SignalData;
-import com.hepia.logisim.chronodata.SignalDataBus;
+import com.cburch.logisim.gui.chronogram.chronodata.SignalData;
+import com.cburch.logisim.gui.chronogram.chronodata.SignalDataBus;
 
 class PopupContents extends JPopupMenu implements ActionListener {
 	private static final long serialVersionUID = 1L;

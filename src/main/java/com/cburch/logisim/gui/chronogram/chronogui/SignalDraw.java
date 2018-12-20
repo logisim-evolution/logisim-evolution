@@ -27,7 +27,7 @@
  *       Yverdon-les-Bains, Switzerland
  *       http://reds.heig-vd.ch
  *******************************************************************************/
-package com.hepia.logisim.chronogui;
+package com.cburch.logisim.gui.chronogram.chronogui;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -44,8 +44,8 @@ import java.awt.image.BufferedImage;
 
 import javax.swing.JPanel;
 
-import com.hepia.logisim.chronodata.SignalData;
-import com.hepia.logisim.chronodata.SignalDataBus;
+import com.cburch.logisim.gui.chronogram.chronodata.SignalData;
+import com.cburch.logisim.gui.chronogram.chronodata.SignalDataBus;
 
 /**
  * Draw a single signal or bus in the chronogram right area

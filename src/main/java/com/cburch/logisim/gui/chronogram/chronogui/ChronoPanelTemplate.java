@@ -27,20 +27,15 @@
  *       Yverdon-les-Bains, Switzerland
  *       http://reds.heig-vd.ch
  *******************************************************************************/
-package com.hepia.logisim.chronogui;
+package com.cburch.logisim.gui.chronogram.chronogui;
 
-import com.cburch.logisim.util.LocaleManager;
-import com.cburch.logisim.util.StringGetter;
+import javax.swing.JPanel;
 
-public class Strings {
-	public static String get(String key) {
-		return source.get(key);
-	}
+/**
+ * LeftPanel and RightPanel extends ChronoPanelTemplate
+ */
+public class ChronoPanelTemplate extends JPanel {
 
-	public static StringGetter getter(String key) {
-		return source.getter(key);
-	}
-
-	private static LocaleManager source = new LocaleManager(
-			"resources/logisim", "chronogram");
+	private static final long serialVersionUID = 1L;
+	// not used anymore for now
 }

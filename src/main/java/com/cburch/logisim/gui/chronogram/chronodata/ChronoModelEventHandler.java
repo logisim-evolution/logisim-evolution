@@ -27,7 +27,7 @@
  *       Yverdon-les-Bains, Switzerland
  *       http://reds.heig-vd.ch
  *******************************************************************************/
-package com.hepia.logisim.chronodata;
+package com.cburch.logisim.gui.chronogram.chronodata;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -40,7 +40,7 @@ import com.cburch.logisim.gui.log.ModelEvent;
 import com.cburch.logisim.gui.log.ModelListener;
 import com.cburch.logisim.gui.log.Selection;
 import com.cburch.logisim.proj.Project;
-import com.hepia.logisim.chronogui.ChronoFrame;
+import com.cburch.logisim.gui.chronogram.chronogui.ChronoFrame;
 
 public class ChronoModelEventHandler implements ModelListener {
 

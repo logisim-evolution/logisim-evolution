@@ -27,45 +27,20 @@
  *       Yverdon-les-Bains, Switzerland
  *       http://reds.heig-vd.ch
  *******************************************************************************/
-package com.hepia.logisim.chronogui;
+package com.cburch.logisim.gui.chronogram.chronogui;
 
-import javax.swing.event.EventListenerList;
+import java.util.EventListener;
 
-import com.hepia.logisim.chronodata.SignalData;
-import com.hepia.logisim.chronodata.SignalDataBus;
+import com.cburch.logisim.gui.chronogram.chronodata.SignalData;
+import com.cburch.logisim.gui.chronogram.chronodata.SignalDataBus;
 
 /**
- * Manage the events that can happends on the chronogram
+ * Interface of available events on the chronogram
  */
-public class DrawAreaEventManager {
-
-	private final EventListenerList listeners = new EventListenerList();
-
-	public DrawAreaEventManager() {
-	}
-
-	public void addDrawAreaListener(IDrawAreaEvents listener) {
-		listeners.add(IDrawAreaEvents.class, listener);
-	}
+public interface IDrawAreaEvents extends EventListener {
 
 	/**
-	 * Fire Expand or close the selected bus
-	 * 
-	 * @param signalDataSource
-	 *            SignalDataBus that correspond to the object that trigger the
-	 *            event
-	 * @param expand
-	 *            if true expand the bus into multiple signals, close it
-	 *            otherwise
-	 */
-	public void fireExpand(SignalDataBus signalDataSource, boolean expand) {
-		for (IDrawAreaEvents listener : getListeners()) {
-			listener.toggleBusExpand(signalDataSource, expand);
-		}
-	}
-
-	/**
-	 * Fire mouse dragged event
+	 * Mouse dragged
 	 * 
 	 * @param signalDataSource
 	 *            SignalData that correspond to the object that trigger the
@@ -73,40 +48,28 @@ public class DrawAreaEventManager {
 	 * @param posX
 	 *            position of cursor on X axis
 	 */
-	public void fireMouseDragged(SignalData signalDataSource, int posX) {
-		for (IDrawAreaEvents listener : getListeners()) {
-			listener.mouseDragged(signalDataSource, posX);
-		}
-	}
+	void mouseDragged(SignalData signalDataSource, int posX);
 
 	/**
-	 * Fire mouse entered
+	 * Mouse entered
 	 * 
 	 * @param signalDataSource
 	 *            SignalData that correspond to the object that trigger the
 	 *            event
 	 */
-	public void fireMouseEntered(SignalData signalDataSource) {
-		for (IDrawAreaEvents listener : getListeners()) {
-			listener.mouseEntered(signalDataSource);
-		}
-	}
+	void mouseEntered(SignalData signalDataSource);
 
 	/**
-	 * Fire mouse exited
+	 * Mouse exited
 	 * 
 	 * @param signalDataSource
 	 *            SignalData that correspond to the object that trigger the
 	 *            event
 	 */
-	public void fireMouseExited(SignalData signalDataSource) {
-		for (IDrawAreaEvents listener : getListeners()) {
-			listener.mouseExited(signalDataSource);
-		}
-	}
+	void mouseExited(SignalData signalDataSource);
 
 	/**
-	 * Fire mouse pressed event
+	 * Mouse pressed
 	 * 
 	 * @param signalDataSource
 	 *            SignalData that correspond to the object that trigger the
@@ -114,11 +77,7 @@ public class DrawAreaEventManager {
 	 * @param posX
 	 *            position of cursor on X axis
 	 */
-	public void fireMousePressed(SignalData signalDataSource, int posX) {
-		for (IDrawAreaEvents listener : getListeners()) {
-			listener.mousePressed(signalDataSource, posX);
-		}
-	}
+	void mousePressed(SignalData signalDataSource, int posX);
 
 	/**
 	 * Change coding format on a bus
@@ -129,15 +88,22 @@ public class DrawAreaEventManager {
 	 * @param format
 	 *            new coding format
 	 */
-	public void fireSetCodingFormat(SignalDataBus signalDataSource,
-			String format) {
-		for (IDrawAreaEvents listener : getListeners()) {
-			listener.setCodingFormat(signalDataSource, format);
-		}
-	}
+	public void setCodingFormat(SignalDataBus signalDataSource, String format);
 
 	/**
-	 * Fire zoom event
+	 * Expand or close the selected bus
+	 * 
+	 * @param signalDataSource
+	 *            SignalDataBus that correspond to the object that trigger the
+	 *            event
+	 * @param expand
+	 *            if true expand the bus into multiple signals, close it
+	 *            otherwise
+	 */
+	void toggleBusExpand(SignalDataBus signalDataSource, boolean expand);
+
+	/**
+	 * Zoom
 	 * 
 	 * @param signalDataSource
 	 *            SignalData that correspond to the object that trigger the
@@ -147,17 +113,5 @@ public class DrawAreaEventManager {
 	 * @param posX
 	 *            position of cursor on X axis
 	 */
-	public void fireZoom(SignalData signalDataSource, int sens, int posX) {
-		for (IDrawAreaEvents listener : getListeners()) {
-			listener.zoom(signalDataSource, sens, posX);
-		}
-	}
-
-	public IDrawAreaEvents[] getListeners() {
-		return listeners.getListeners(IDrawAreaEvents.class);
-	}
-
-	public void removeDrawAreaListener(IDrawAreaEvents listener) {
-		listeners.remove(IDrawAreaEvents.class, listener);
-	}
+	void zoom(SignalData signalDataSource, int sens, int val);
 }

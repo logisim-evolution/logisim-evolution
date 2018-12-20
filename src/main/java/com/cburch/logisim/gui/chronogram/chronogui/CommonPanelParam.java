@@ -27,12 +27,42 @@
  *       Yverdon-les-Bains, Switzerland
  *       http://reds.heig-vd.ch
  *******************************************************************************/
-package com.hepia.logisim.chronodata;
+package com.cburch.logisim.gui.chronogram.chronogui;
 
-public class NoSysclkException extends Exception {
-	private static final long serialVersionUID = 1L;
+/**
+ * Contains draw data that are common between LeftPanel and RightPanel
+ */
+public class CommonPanelParam {
 
-	public NoSysclkException(String message) {
-		super(message);
+	private int mHeaderHeight;
+	private int mSignalHeight;
+
+	/**
+	 * CommonPanelParam defines the header and signal height
+	 * 
+	 * @param headerHeight
+	 *            header height in pixel
+	 * @param signalHeight
+	 *            signal height in pixel
+	 */
+	public CommonPanelParam(int headerHeight, int signalHeight) {
+		mHeaderHeight = headerHeight;
+		mSignalHeight = signalHeight;
+	}
+
+	public int getHeaderHeight() {
+		return mHeaderHeight;
+	}
+
+	public int getSignalHeight() {
+		return mSignalHeight;
+	}
+
+	public void setHeaderHeight(int height) {
+		mHeaderHeight = height;
+	}
+
+	public void setSignalHeight(int height) {
+		mSignalHeight = height;
 	}
 }
