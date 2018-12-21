@@ -34,7 +34,7 @@ import java.awt.Graphics;
 
 import javax.swing.JPopupMenu;
 
-import com.bfh.logisim.designrulecheck.Netlist;
+import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.comp.ComponentDrawContext;
 import com.cburch.logisim.comp.ComponentEvent;
 import com.cburch.logisim.comp.ComponentFactory;

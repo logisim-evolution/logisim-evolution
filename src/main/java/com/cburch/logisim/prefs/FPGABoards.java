@@ -57,8 +57,8 @@ import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import com.bfh.logisim.fpgaboardeditor.BoardReaderClass;
-import com.bfh.logisim.settings.BoardList;
+import com.cburch.logisim.fpga.fpgaboardeditor.BoardReaderClass;
+import com.cburch.logisim.fpga.settings.BoardList;
 
 public class FPGABoards implements ActionListener {
 

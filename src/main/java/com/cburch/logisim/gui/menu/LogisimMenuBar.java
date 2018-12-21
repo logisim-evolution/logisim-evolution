@@ -40,7 +40,7 @@ import javax.swing.JMenuBar;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import com.bfh.logisim.fpgamenu.MenuFPGA;
+import com.cburch.logisim.fpga.fpgamenu.MenuFPGA;
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.circuit.Simulator;
 import com.cburch.logisim.proj.Project;

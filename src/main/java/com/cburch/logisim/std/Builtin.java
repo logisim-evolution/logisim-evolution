@@ -34,7 +34,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import com.bfh.logisim.library.BFHPraktika;
+import com.cburch.logisim.fpga.library.BFHPraktika;
 import com.cburch.logisim.std.arith.Arithmetic;
 import com.cburch.logisim.std.base.Base;
 import com.cburch.logisim.std.gates.Gates;
@@ -46,8 +46,8 @@ import com.cburch.logisim.std.tcl.Tcl;
 import com.cburch.logisim.std.wiring.Wiring;
 import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.tools.Tool;
-import com.ita.logisim.io.ITA_IO;
-import com.ita.logisim.ttl.TTL;
+import com.cburch.logisim.std.io.extra.ITA_IO;
+import com.cburch.logisim.std.ttl.TTL;
 
 public class Builtin extends Library {
 	private List<Library> libraries = null;

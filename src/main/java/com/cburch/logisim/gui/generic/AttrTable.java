@@ -64,7 +64,7 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableModel;
 
-import com.bfh.logisim.hdlgenerator.HDLColorRenderer;
+import com.cburch.logisim.fpga.hdlgenerator.HDLColorRenderer;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.JDialogOk;
 import com.cburch.logisim.util.JInputComponent;

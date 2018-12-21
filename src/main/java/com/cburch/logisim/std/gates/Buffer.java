@@ -36,7 +36,7 @@ import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.Map;
 
-import com.bfh.logisim.designrulecheck.CorrectLabel;
+import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
 import com.cburch.logisim.analyze.model.Expression;
 import com.cburch.logisim.circuit.ExpressionComputer;
 import com.cburch.logisim.data.Attribute;

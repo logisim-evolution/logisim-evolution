@@ -35,10 +35,10 @@ import java.awt.Graphics;
 
 import javax.swing.Icon;
 
-import com.bfh.logisim.designrulecheck.CorrectLabel;
-import com.bfh.logisim.designrulecheck.NetlistComponent;
-import com.bfh.logisim.hdlgenerator.HDLGeneratorFactory;
-import com.bfh.logisim.hdlgenerator.IOComponentInformationContainer;
+import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
+import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
+import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.IOComponentInformationContainer;
 import com.cburch.logisim.LogisimVersion;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeSet;

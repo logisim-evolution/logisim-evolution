@@ -59,7 +59,7 @@ import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.tools.Tool;
 import com.cburch.logisim.util.EventSourceWeakSupport;
 import com.cburch.logisim.util.JFileChoosers;
-import com.hepia.logisim.chronogui.ChronoFrame;
+import com.cburch.logisim.gui.chronogram.chronogui.ChronoFrame;
 
 public class Project {
 	private static class ActionData {

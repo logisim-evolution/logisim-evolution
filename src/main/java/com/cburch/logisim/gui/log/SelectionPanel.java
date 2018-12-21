@@ -58,7 +58,7 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.TreePath;
 
-import com.hepia.logisim.chronodata.TimelineParam;
+import com.cburch.logisim.gui.chronogram.chronodata.TimelineParam;
 
 class SelectionPanel extends LogPanel {
 	private class Listener extends MouseAdapter implements ActionListener,

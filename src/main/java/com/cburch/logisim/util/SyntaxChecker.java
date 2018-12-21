@@ -34,8 +34,8 @@ import java.util.regex.Pattern;
 
 import javax.swing.JOptionPane;
 
-import com.bfh.logisim.designrulecheck.CorrectLabel;
-import com.bfh.logisim.hdlgenerator.HDLGeneratorFactory;
+import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
+import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
 
 public class SyntaxChecker {
 

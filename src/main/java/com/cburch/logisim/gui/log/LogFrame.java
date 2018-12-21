@@ -59,7 +59,7 @@ import com.cburch.logisim.util.LocaleListener;
 import com.cburch.logisim.util.LocaleManager;
 import com.cburch.logisim.util.StringUtil;
 import com.cburch.logisim.util.WindowMenuItemManager;
-import com.hepia.logisim.chronodata.TimelineParam;
+import com.cburch.logisim.gui.chronogram.chronodata.TimelineParam;
 
 public class LogFrame extends LFrame {
 	private class MyListener implements ActionListener, ProjectListener,
