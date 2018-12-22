@@ -562,9 +562,7 @@ public class Startup implements AWTEventListener {
 		Monitor.setProgress(2);
 
 		// Get the appropriate remote version number
-		LogisimVersion remoteVersion = LogisimVersion.parse(Main.VERSION
-				.hasTracker() ? logisimData.child("tracked_version").content()
-						: logisimData.child("untracked_version").content());
+		LogisimVersion remoteVersion = LogisimVersion.parse(logisimData.child("version").content());
 
 		// If the remote version is newer, perform the update
 		Monitor.setProgress(3);
@@ -601,9 +599,7 @@ public class Startup implements AWTEventListener {
 			}
 
 			// Get the appropriate remote filename to download
-			String remoteJar = Main.VERSION.hasTracker() ? logisimData.child(
-					"tracked_file").content() : logisimData.child(
-							"untracked_file").content();
+			String remoteJar = logisimData.child("file").content();
 
 					boolean updateOk = downloadInstallUpdatedVersion(remoteJar,
 							jarFile.getAbsolutePath());
