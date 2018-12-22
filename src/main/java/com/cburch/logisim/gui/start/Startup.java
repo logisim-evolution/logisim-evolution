@@ -72,6 +72,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
+import javax.swing.ProgressMonitor;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -143,6 +144,16 @@ public class Startup implements AWTEventListener {
 
 		if (isClearPreferences) {
 			AppPreferences.clear();
+		}
+		
+		if (AppPreferences.FirstTimeStartup.getBoolean()&!isTty) {
+			System.out.println("First time startup");
+			int Result = JOptionPane.showConfirmDialog(null, "This is the first time you run logisim\nLogisim provides the means to look for newer versions.\n"
+					+ "Your choice can always be changed in window->preferences->software in logisim.\n"
+					+ "Would you like to enable this feature?","Autoupdate",JOptionPane.YES_NO_OPTION);
+			if (Result == JOptionPane.YES_OPTION)
+				AppPreferences.AutomaticUpdateCheck.setBoolean(true);
+			AppPreferences.FirstTimeStartup.set(false);
 		}
 
 		// parse arguments
@@ -354,7 +365,7 @@ public class Startup implements AWTEventListener {
 			} else if (arg.equals("-analyze")) {
 				Main.ANALYZE = true;
 			} else if (arg.equals("-noupdates")) {
-				Main.UPDATE = false;
+				AppPreferences.AutomaticUpdateCheck.setBoolean(false);
 			} else if (arg.equals("-questa")) {
 				i++;
 				if (i >= args.length) {
@@ -511,18 +522,24 @@ public class Startup implements AWTEventListener {
 	 *         has to be stopped, false otherwise
 	 */
 	public boolean autoUpdate() {
-		if (!Main.UPDATE || !networkConnectionAvailable()) {
-			// Auto-update disabled from command line, or network connection not
-			// available
-			return (false);
+		if (!AppPreferences.AutomaticUpdateCheck.getBoolean())
+			return false;
+		ProgressMonitor Monitor = new ProgressMonitor(null,"Checking for new logisim version","Autoupdate",0,4);
+		Monitor.setProgress(0);
+		Monitor.setMillisToPopup(0);
+		Monitor.setMillisToDecideToPopup(0);
+		if (!networkConnectionAvailable()) {
+			Monitor.close();
+			return false;
 		}
-
+		Monitor.setProgress(1);
 		// Get the remote XML file containing the current version
 		URL xmlURL;
 		try {
 			xmlURL = new URL(Main.UPDATE_URL);
 		} catch (MalformedURLException e) {
 			logger.error("The URL of the XML file for the auto-updater is malformed.\nPlease report this error to the software maintainer\n-- AUTO-UPDATE ABORTED --");
+			Monitor.close();
 			return (false);
 		}
 		URLConnection conn;
@@ -530,6 +547,7 @@ public class Startup implements AWTEventListener {
 			conn = xmlURL.openConnection();
 		} catch (IOException e) {
 			logger.error("Although an Internet connection should be available, the system couldn't connect to the URL requested by the auto-updater\nIf the error persist, please contact the software maintainer\n-- AUTO-UPDATE ABORTED --");
+			Monitor.close();
 			return (false);
 		}
 		InputStream in;
@@ -537,9 +555,11 @@ public class Startup implements AWTEventListener {
 			in = conn.getInputStream();
 		} catch (IOException e) {
 			logger.error("Although an Internet connection should be available, the system couldn't retrieve the data requested by the auto-updater.\nIf the error persist, please contact the software maintainer\n-- AUTO-UPDATE ABORTED --");
+			Monitor.close();
 			return (false);
 		}
 		ArgonXML logisimData = new ArgonXML(in, "logisim-evolution");
+		Monitor.setProgress(2);
 
 		// Get the appropriate remote version number
 		LogisimVersion remoteVersion = LogisimVersion.parse(Main.VERSION
@@ -547,6 +567,7 @@ public class Startup implements AWTEventListener {
 						: logisimData.child("untracked_version").content());
 
 		// If the remote version is newer, perform the update
+		Monitor.setProgress(3);
 		if (remoteVersion.compareTo(Main.VERSION) > 0) {
 			int answer = JOptionPane.showConfirmDialog(null,
 					"A new Logisim-evolution version (" + remoteVersion
@@ -557,6 +578,7 @@ public class Startup implements AWTEventListener {
 			if (answer == 1) {
 				// User refused to update -- we just hope he gets sufficiently
 				// annoyed by the message that he finally updates!
+				Monitor.close();
 				return (false);
 			}
 
@@ -574,6 +596,7 @@ public class Startup implements AWTEventListener {
 						null,
 						"An error occurred while updating to the new Logisim-evolution version.\nPlease check the console for log information.",
 						"Update failed", JOptionPane.ERROR_MESSAGE);
+				Monitor.close();
 				return (false);
 			}
 
@@ -594,6 +617,7 @@ public class Startup implements AWTEventListener {
 										+ ") has been correctly installed.\nPlease restart Logisim-evolution for the changes to take effect.",
 										"Update succeeded",
 										JOptionPane.INFORMATION_MESSAGE);
+						Monitor.close();
 						return (true);
 					} else {
 						JOptionPane
@@ -601,9 +625,11 @@ public class Startup implements AWTEventListener {
 								null,
 								"An error occurred while updating to the new Logisim-evolution version.\nPlease check the console for log information.",
 								"Update failed", JOptionPane.ERROR_MESSAGE);
+						Monitor.close();
 						return (false);
 					}
 		}
+		Monitor.close();
 		return (false);
 	}
 

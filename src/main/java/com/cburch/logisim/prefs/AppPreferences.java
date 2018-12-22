@@ -629,4 +629,9 @@ public class AppPreferences {
 
 	public static final PrefMonitor<String> DIALOG_DIRECTORY = create(new PrefMonitorString(
 			"dialogDirectory", ""));
+	
+	public static final PrefMonitor<Boolean> FirstTimeStartup = create(new PrefMonitorBoolean(
+			"FirstTimeStartup", true));
+	public static final PrefMonitor<Boolean> AutomaticUpdateCheck = create(new PrefMonitorBoolean(
+			"AutomaticUpdateCheck", false));
 }

@@ -60,10 +60,10 @@ public class SoftwaresOptions extends OptionsPanel {
 
 			if (source == questaPathButton) {
 				Softwares.setQuestaPath(getPreferencesFrame());
-			} else
-			if (source == questaValidationCheckBox) {
-				AppPreferences.QUESTA_VALIDATION
-						.setBoolean(questaValidationCheckBox.isSelected());
+			} else if (source == AutoUpdateCheckbox) {
+				AppPreferences.AutomaticUpdateCheck.setBoolean(AutoUpdateCheckbox.isSelected());;
+			} else if (source == questaValidationCheckBox) {
+				AppPreferences.QUESTA_VALIDATION.setBoolean(questaValidationCheckBox.isSelected());
 			} else if (source == QuartusPathButton) {
 				FPGACommanderGui.selectToolPath(VendorSoftware.VendorAltera);
 			} else if (source == ISEPathButton) {
@@ -79,12 +79,10 @@ public class SoftwaresOptions extends OptionsPanel {
 
 			if (property.equals(AppPreferences.QUESTA_PATH.getIdentifier())) {
 				questaPathField.setText(AppPreferences.QUESTA_PATH.get());
-			} else
-			if (property.equals(AppPreferences.QUESTA_VALIDATION
-					.getIdentifier())) {
-				questaValidationCheckBox
-						.setSelected(AppPreferences.QUESTA_VALIDATION
-								.getBoolean());
+			} else if (property.equals(AppPreferences.AutomaticUpdateCheck.getIdentifier())) {
+				AutoUpdateCheckbox.setSelected(AppPreferences.AutomaticUpdateCheck.getBoolean());
+			} else if (property.equals(AppPreferences.QUESTA_VALIDATION.getIdentifier())) {
+				questaValidationCheckBox.setSelected(AppPreferences.QUESTA_VALIDATION.getBoolean());
 			} else if (property.equals(AppPreferences.QuartusToolPath.getIdentifier())) {
 				QuartusPathField.setText(AppPreferences.QuartusToolPath.get());
 			} else if (property.equals(AppPreferences.ISEToolPath.getIdentifier())) {
@@ -100,6 +98,7 @@ public class SoftwaresOptions extends OptionsPanel {
 
 	private MyListener myListener = new MyListener();
 
+	private JCheckBox AutoUpdateCheckbox = new JCheckBox();
 	private JCheckBox questaValidationCheckBox = new JCheckBox();
 	private JLabel questaPathLabel = new JLabel();
 	private JTextField questaPathField = new JTextField(40);
@@ -122,6 +121,7 @@ public class SoftwaresOptions extends OptionsPanel {
 		QuartusPathButton.addActionListener(myListener);
 		ISEPathButton.addActionListener(myListener);
 		VivadoPathButton.addActionListener(myListener);
+		AutoUpdateCheckbox.addActionListener(myListener);
 		AppPreferences.getPrefs().addPreferenceChangeListener(myListener);
 
 		JSeparator sep = new JSeparator(JSeparator.HORIZONTAL);
@@ -136,106 +136,120 @@ public class SoftwaresOptions extends OptionsPanel {
 		c.gridy = 0;
 		c.gridwidth = 3;
 		c.fill = GridBagConstraints.NONE;
-		add(questaValidationCheckBox, c);
+		add(AutoUpdateCheckbox, c);
 
 		c.gridx = 0;
 		c.gridy = 1;
 		c.gridwidth = 4;
 		c.weightx = 1.0;
 		c.fill = GridBagConstraints.HORIZONTAL;
-		add(sep, c);
+		add(new JSeparator(JSeparator.HORIZONTAL), c);
 
 		c.gridx = 0;
 		c.gridy = 2;
 		c.gridwidth = 3;
 		c.fill = GridBagConstraints.NONE;
-		add(questaPathLabel, c);
+		add(questaValidationCheckBox, c);
 
 		c.gridx = 0;
 		c.gridy = 3;
+		c.gridwidth = 4;
+		c.weightx = 1.0;
+		c.fill = GridBagConstraints.HORIZONTAL;
+		add(sep, c);
+
+		c.gridx = 0;
+		c.gridy = 4;
+		c.gridwidth = 3;
+		c.fill = GridBagConstraints.NONE;
+		add(questaPathLabel, c);
+
+		c.gridx = 0;
+		c.gridy = 5;
 		c.gridwidth = 2;
 		c.weightx = 1.0;
 		c.fill = GridBagConstraints.HORIZONTAL;
 		add(questaPathField, c);
 
 		c.gridx = 2;
-		c.gridy = 3;
+		c.gridy = 5;
 		c.fill = GridBagConstraints.NONE;
 		add(questaPathButton, c);
 		
 		c.gridx = 0;
-		c.gridy = 4;
+		c.gridy = 6;
 		c.gridwidth = 4;
 		c.weightx = 1.0;
 		c.fill = GridBagConstraints.HORIZONTAL;
 		add(new JSeparator(JSeparator.HORIZONTAL), c);
-
-		c.gridx = 0;
-		c.gridy = 5;
-		c.gridwidth = 4;
-		c.weightx = 1.0;
-		c.fill = GridBagConstraints.HORIZONTAL;
-		add(QuartusPathLabel,c);
-		c.gridx = 0;
-		c.gridy = 6;
-		c.gridwidth = 2;
-		c.weightx = 1.0;
-		c.fill = GridBagConstraints.HORIZONTAL;
-		add(QuartusPathField, c);
-		c.gridx = 2;
-		c.gridy = 6;
-		c.fill = GridBagConstraints.NONE;
-		add(QuartusPathButton, c);
 
 		c.gridx = 0;
 		c.gridy = 7;
 		c.gridwidth = 4;
 		c.weightx = 1.0;
 		c.fill = GridBagConstraints.HORIZONTAL;
-		add(new JSeparator(JSeparator.HORIZONTAL), c);
-
+		add(QuartusPathLabel,c);
 		c.gridx = 0;
 		c.gridy = 8;
-		c.gridwidth = 4;
-		c.weightx = 1.0;
-		c.fill = GridBagConstraints.HORIZONTAL;
-		add(ISEPathLabel,c);
-		c.gridx = 0;
-		c.gridy = 9;
 		c.gridwidth = 2;
 		c.weightx = 1.0;
 		c.fill = GridBagConstraints.HORIZONTAL;
-		add(ISEPathField, c);
+		add(QuartusPathField, c);
 		c.gridx = 2;
-		c.gridy = 9;
+		c.gridy = 8;
 		c.fill = GridBagConstraints.NONE;
-		add(ISEPathButton, c);
+		add(QuartusPathButton, c);
+
+		c.gridx = 0;
+		c.gridy = 9;
+		c.gridwidth = 4;
+		c.weightx = 1.0;
+		c.fill = GridBagConstraints.HORIZONTAL;
+		add(new JSeparator(JSeparator.HORIZONTAL), c);
 
 		c.gridx = 0;
 		c.gridy = 10;
 		c.gridwidth = 4;
 		c.weightx = 1.0;
 		c.fill = GridBagConstraints.HORIZONTAL;
+		add(ISEPathLabel,c);
+		c.gridx = 0;
+		c.gridy = 11;
+		c.gridwidth = 2;
+		c.weightx = 1.0;
+		c.fill = GridBagConstraints.HORIZONTAL;
+		add(ISEPathField, c);
+		c.gridx = 2;
+		c.gridy = 11;
+		c.fill = GridBagConstraints.NONE;
+		add(ISEPathButton, c);
+
+		c.gridx = 0;
+		c.gridy = 12;
+		c.gridwidth = 4;
+		c.weightx = 1.0;
+		c.fill = GridBagConstraints.HORIZONTAL;
 		add(new JSeparator(JSeparator.HORIZONTAL), c);
 
 		c.gridx = 0;
-		c.gridy = 11;
+		c.gridy = 13;
 		c.gridwidth = 4;
 		c.weightx = 1.0;
 		c.fill = GridBagConstraints.HORIZONTAL;
 		add(VivadoPathLabel,c);
 		c.gridx = 0;
-		c.gridy = 12;
+		c.gridy = 14;
 		c.gridwidth = 2;
 		c.weightx = 1.0;
 		c.fill = GridBagConstraints.HORIZONTAL;
 		add(VivadoPathField, c);
 		c.gridx = 2;
-		c.gridy = 12;
+		c.gridy = 14;
 		c.fill = GridBagConstraints.NONE;
 		add(VivadoPathButton, c);
 
-
+		AutoUpdateCheckbox.setSelected(AppPreferences.AutomaticUpdateCheck.getBoolean());
+		
 		questaValidationCheckBox.setSelected(AppPreferences.QUESTA_VALIDATION
 				.getBoolean());
 
@@ -261,6 +275,7 @@ public class SoftwaresOptions extends OptionsPanel {
 
 	@Override
 	public void localeChanged() {
+		AutoUpdateCheckbox.setText(Strings.get("AutoUpdateLabel"));
 		questaValidationCheckBox.setText(Strings
 				.get("softwaresQuestaValidationLabel"));
 		questaPathButton.setText(Strings.get("softwaresQuestaPathButton"));
