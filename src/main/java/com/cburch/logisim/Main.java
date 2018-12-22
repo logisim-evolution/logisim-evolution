@@ -93,13 +93,6 @@ public class Main {
 	public static final int COPYRIGHT_YEAR = 2018;
 
 	public static boolean ANALYZE = false;
-	/**
-	 * This flag enables auto-updates. It is true by default, so that users
-	 * normally check for updates at startup. On the other hand, this might be
-	 * annoying for developers, therefore we let them disable it from the
-	 * command line with the '-noupdates' option.
-	 */
-	public static boolean UPDATE = true;
 
 	/**
 	 * URL for the automatic updater
