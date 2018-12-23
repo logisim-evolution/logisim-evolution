@@ -37,10 +37,12 @@ import com.cburch.logisim.fpga.fpgaboardeditor.FPGAIOInformationContainer;
 import com.cburch.logisim.fpga.fpgaboardeditor.FPGAIOInformationContainer.IOComponentTypes;
 import com.cburch.logisim.fpga.fpgagui.MappableResourcesContainer;
 import com.cburch.logisim.fpga.hdlgenerator.IOComponentInformationContainer;
+import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
+import com.cburch.logisim.data.Location;
 import com.cburch.logisim.instance.InstanceFactory;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
@@ -135,6 +137,13 @@ public class ReptarLocalBus extends InstanceFactory {
 				FPGAIOInformationContainer.IOComponentTypes.LocalBus);
 
 	}
+	
+	@Override
+	public Component createComponent(Location loc, AttributeSet attrs) {
+		attrs.setReadOnly(StdAttr.LABEL, true);
+		return super.createComponent(loc, attrs);
+	}
+
 
 	@Override
 	public String getHDLName(AttributeSet attrs) {

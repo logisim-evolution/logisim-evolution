@@ -53,6 +53,8 @@ import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.proj.Project;
+import com.cburch.logisim.std.memory.Ram;
+import com.cburch.logisim.std.memory.Rom;
 import com.cburch.logisim.util.CollectionUtil;
 
 class SelectionBase {
@@ -210,7 +212,8 @@ class SelectionBase {
 		HashMap<Component, Component> ret = new HashMap<Component, Component>();
 		for (Component comp : components) {
 			Location oldLoc = comp.getLocation();
-			AttributeSet attrs = (AttributeSet) comp.getAttributeSet().clone();
+			AttributeSet attrs = (comp.getFactory() instanceof Rom)|(comp.getFactory() instanceof Ram) ? 
+					(AttributeSet) comp.getAttributeSet() : (AttributeSet) comp.getAttributeSet().clone();
 			int newX = oldLoc.getX() + dx;
 			int newY = oldLoc.getY() + dy;
 			Object snap = comp.getFactory().getFeature(
@@ -220,7 +223,6 @@ class SelectionBase {
 				newY = Canvas.snapYToGrid(newY);
 			}
 			Location newLoc = Location.create(newX, newY);
-
 			Component copy = comp.getFactory().createComponent(newLoc, attrs);
 			ret.put(comp, copy);
 		}
