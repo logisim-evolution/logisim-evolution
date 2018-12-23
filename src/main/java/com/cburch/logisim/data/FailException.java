@@ -30,16 +30,18 @@
 
 package com.cburch.logisim.data;
 
+import java.util.ArrayList;
+
 /**
  * Code taken from Cornell's version of Logisim:
  * http://www.cs.cornell.edu/courses/cs3410/2015sp/
  */
 public class FailException extends TestException {
-
+	
 	private static final long serialVersionUID = 1L;
 	private int column;
 	private Value expected, computed;
-	private FailException more;
+	private ArrayList<FailException> more = new ArrayList<FailException>();
 
 	public FailException(int column, String columnName, Value expected,
 			Value computed) {
@@ -51,7 +53,9 @@ public class FailException extends TestException {
 	}
 
 	public void add(FailException another) {
-		more = another;
+		more.add(another);
+		more.addAll(another.getMore());
+		another.clearMore();
 	}
 
 	public int getColumn() {
@@ -66,8 +70,19 @@ public class FailException extends TestException {
 		return expected;
 	}
 
-	public FailException getMore() {
+	public ArrayList<FailException> getMore() {
 		return more;
+	}
+	
+	public void clearMore() {
+		more.clear();
+	}
+	
+	public ArrayList<FailException> getAll() {
+		ArrayList<FailException> ret = new ArrayList<FailException>();
+		ret.add(this);
+		ret.addAll(more);
+		return ret;
 	}
 
 }

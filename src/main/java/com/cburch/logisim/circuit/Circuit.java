@@ -507,13 +507,14 @@ public class Circuit {
 
 			Value v = Pin.FACTORY.getValue(pinState);
 			if (!val[i].compatible(v)) {
-				if (err == null)
+				if (err == null) {
 					err = new FailException(i,
 							pinState.getAttributeValue(StdAttr.LABEL), val[i],
 							v);
-				else
+				} else {
 					err.add(new FailException(i, pinState
 							.getAttributeValue(StdAttr.LABEL), val[i], v));
+				}
 			}
 		}
 

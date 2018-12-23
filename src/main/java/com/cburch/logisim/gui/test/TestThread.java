@@ -89,8 +89,8 @@ public class TestThread extends UniquelyNamedThread implements CircuitListener {
 				System.out.println();
 				System.err.println(StringUtil.format(Strings.get("testFailed"),
 						Integer.toString(i + 1)));
-				for (; e != null; e = e.getMore())
-					System.out.println("  " + e.getMessage());
+				for (FailException e1 : e.getAll())
+					System.out.println("  " + e1.getMessage());
 				numFail++;
 				continue;
 			} catch (TestException e) {
