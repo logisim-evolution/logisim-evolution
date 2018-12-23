@@ -152,8 +152,7 @@ class TestPanel extends JPanel implements ValueTable.Model {
 				TestException err = results[row];
 				if (err != null && err instanceof FailException) {
 					failed = true;
-					for (FailException e = (FailException) err; e != null; e = e
-							.getMore()) {
+					for (FailException e : ((FailException) err).getAll()) {
 						int col = e.getColumn();
 						msg[col] = StringUtil.format(Strings
 								.get("expectedValueMessage"), e.getExpected()

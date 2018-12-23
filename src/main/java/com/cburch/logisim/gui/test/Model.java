@@ -40,6 +40,7 @@ import java.util.ArrayList;
 import javax.swing.SwingUtilities;
 
 import com.cburch.logisim.circuit.Circuit;
+import com.cburch.logisim.data.FailException;
 import com.cburch.logisim.data.TestException;
 import com.cburch.logisim.data.TestVector;
 import com.cburch.logisim.proj.Project;
@@ -241,9 +242,9 @@ class Model {
 			return;
 		for (int i = failed.size() + passed.size(); i < numPass + numFail; i++) {
 			if (results[i] == null)
-				passed.add(new Integer(i));
+				passed.add(i);
 			else
-				failed.add(new Integer(i));
+				failed.add(i);
 		}
 		fireTestResultsChanged();
 	}
