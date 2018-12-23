@@ -97,6 +97,6 @@ public class Main {
 	/**
 	 * URL for the automatic updater
 	 */
-	public static final String UPDATE_URL = "http://reds-data.heig-vd.ch/logisim-evolution/logisim_evolution_version.xml";
+	public static final String UPDATE_URL = "https://raw.githubusercontent.com/reds-heig/logisim-evolution/develop/logisim_evolution_version.xml";
 
 }

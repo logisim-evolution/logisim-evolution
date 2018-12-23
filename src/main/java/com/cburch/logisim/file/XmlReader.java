@@ -370,15 +370,6 @@ class XmlReader {
 								JOptionPane.WARNING_MESSAGE);
 			}
 
-			if (versionString.contains("t") && !Main.VERSION.hasTracker()) {
-				JOptionPane
-						.showMessageDialog(
-								null,
-								"The file you have opened contains tracked components.\nYou might encounter some problems in the execution.",
-								"No tracking system available",
-								JOptionPane.WARNING_MESSAGE);
-			}
-
 			// first, load the sublibraries
 			for (Element o : XmlIterator.forChildElements(elt, "lib")) {
 				Library lib = toLibrary(o);

@@ -184,14 +184,6 @@ public class LogisimVersion {
 		return (ret);
 	}
 
-	/**
-	 * If the considered Logisim version includes a tracker, returns true.
-	 * Assumption: the tracker is identified by a variant equals to "t"
-	 */
-	public boolean hasTracker() {
-		return (variant.equals("t"));
-	}
-
 	public String mainVersion() {
 		return (major + "." + minor + "." + release);
 	}

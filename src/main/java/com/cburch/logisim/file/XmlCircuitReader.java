@@ -68,9 +68,6 @@ public class XmlCircuitReader extends CircuitTransaction {
 	 */
 	static Component getComponent(Element elt, XmlReader.ReadContext reader)
 			throws XmlReaderException {
-		if (elt.getAttribute("trackercomp") != "" && !Main.VERSION.hasTracker()) {
-			return (null);
-		}
 
 		// Determine the factory that creates this element
 		String name = elt.getAttribute("name");
