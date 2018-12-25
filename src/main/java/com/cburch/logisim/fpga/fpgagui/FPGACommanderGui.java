@@ -737,7 +737,7 @@ MouseListener,PreferenceChangeListener {
 
 	@Override
 	protected boolean DownLoad(boolean skipVHDL, String CircuitName) {
-		if (!skipVHDL&canDownload()) {
+		if (!skipVHDL) {
 			if (!guiDRC()) {
 				return false;
 			}
@@ -754,8 +754,10 @@ MouseListener,PreferenceChangeListener {
 				return false;
 			}
 		}
-		return DownLoadDesign(!canDownload(), skipVHDL,
+		if (VendorSoftwarePresent())
+		   return DownLoadDesign(GenerateHDLOnlySelected(), skipVHDL,
 					circuitsList.getSelectedItem().toString(), writeToFlash.isSelected(), true);
+		return false;
 	}
 
 	public void AddConsole(String Message) {

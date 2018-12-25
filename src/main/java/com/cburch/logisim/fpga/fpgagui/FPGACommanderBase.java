@@ -46,13 +46,21 @@ public abstract class FPGACommanderBase {
 
 	protected abstract boolean DownLoad(boolean skipVHDL, String CircuitName);
 
-
-	protected boolean canDownload() {
-		if (!VendorSoftware.toolsPresent(MyBoardInformation.fpga.getVendor(),
-				VendorSoftware.GetToolPath(MyBoardInformation.fpga.getVendor())))
-			return false;
+	protected boolean VendorSoftwarePresent() {
+		return VendorSoftware.toolsPresent(MyBoardInformation.fpga.getVendor(),
+				VendorSoftware.GetToolPath(MyBoardInformation.fpga.getVendor()));
+	}
+	
+	protected boolean GenerateHDLOnlySelected() {
 		return AppPreferences.DownloadToBoard.get();
 	}
+
+//	protected boolean canDownload() {
+//		if (!VendorSoftware.toolsPresent(MyBoardInformation.fpga.getVendor(),
+//				VendorSoftware.GetToolPath(MyBoardInformation.fpga.getVendor())))
+//			return false;
+//		return AppPreferences.DownloadToBoard.get();
+//	}
 
 	protected boolean  MapDesign(String CircuitName) {
 		LogisimFile myfile = MyProject.getLogisimFile();
@@ -320,7 +328,8 @@ public abstract class FPGACommanderBase {
 					+ HDLPaths[ScriptPath] + File.separator,
 					RootSheet.getNetList(), MyMappableResources,
 					MyBoardInformation, Entities, Behaviors,
-					AppPreferences.HDL_Type.get())) {
+					AppPreferences.HDL_Type.get())
+					&!generateOnly) {
 				return AlteraDownload.Download(ProjectDir
 						+ HDLPaths[ScriptPath] + File.separator, SourcePath,
 						ProjectDir + HDLPaths[SandboxPath] + File.separator,
@@ -334,7 +343,7 @@ public abstract class FPGACommanderBase {
 					MyBoardInformation, Entities, Behaviors,
 					AppPreferences.HDL_Type.get(),
 					writeToFlash)
-					&& !generateOnly) {
+					& !generateOnly) {
 				return XilinxDownload.Download(MyBoardInformation,
 						ProjectDir + HDLPaths[ScriptPath] + File.separator,
 						ProjectDir + HDLPaths[UCFPath] + File.separator,
@@ -350,7 +359,7 @@ public abstract class FPGACommanderBase {
 					MyBoardInformation, Entities, Behaviors,
 					AppPreferences.HDL_Type.get(),
 					writeToFlash)
-					&& !generateOnly) {
+					& !generateOnly) {
 				return VivadoDownload.Download(
 						ProjectDir + HDLPaths[ScriptPath] + File.separator,
 						ProjectDir + HDLPaths[SandboxPath] + File.separator,

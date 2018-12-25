@@ -30,7 +30,7 @@ public class FPGACommanderTests extends FPGACommanderBase {
 
 	@Override
 	protected boolean DownLoad(boolean skipVHDL, String CircuitName) {
-		if (!canDownload() || !skipVHDL ) {
+		if (!skipVHDL ) {
 			if (!performDRC(CircuitName,HDLGeneratorFactory.VHDL)) {
 				return false;
 			}
@@ -51,11 +51,9 @@ public class FPGACommanderTests extends FPGACommanderBase {
 					MenuSimulate.SupportedTickFrequencies[defaultFrequencyinTbl])) {
 				return false;
 			}
-
-			if (canDownload() || skipVHDL) {
-				return DownLoadDesign(!canDownload(),skipVHDL,
-						CircuitName, writeToFlash, false);
-			}
+		}
+		if (VendorSoftwarePresent()) {
+			return DownLoadDesign(GenerateHDLOnlySelected(),skipVHDL, CircuitName, writeToFlash, false);
 		}
 
 		return false;
