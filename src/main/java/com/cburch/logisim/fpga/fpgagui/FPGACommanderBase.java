@@ -52,15 +52,8 @@ public abstract class FPGACommanderBase {
 	}
 	
 	protected boolean GenerateHDLOnlySelected() {
-		return AppPreferences.DownloadToBoard.get();
+		return !AppPreferences.DownloadToBoard.get();
 	}
-
-//	protected boolean canDownload() {
-//		if (!VendorSoftware.toolsPresent(MyBoardInformation.fpga.getVendor(),
-//				VendorSoftware.GetToolPath(MyBoardInformation.fpga.getVendor())))
-//			return false;
-//		return AppPreferences.DownloadToBoard.get();
-//	}
 
 	protected boolean  MapDesign(String CircuitName) {
 		LogisimFile myfile = MyProject.getLogisimFile();
