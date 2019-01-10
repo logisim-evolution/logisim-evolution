@@ -737,7 +737,7 @@ MouseListener,PreferenceChangeListener {
 
 	@Override
 	protected boolean DownLoad(boolean skipVHDL, String CircuitName) {
-		if (!canDownload() || !skipVHDL ) {
+		if (!skipVHDL) {
 			if (!guiDRC()) {
 				return false;
 			}
@@ -749,18 +749,14 @@ MouseListener,PreferenceChangeListener {
 				return false;
 			}
 
-
 			if (!MapPannel.isDoneAssignment()) {
 				MyReporter.AddError("Download to board canceled");
 				return false;
 			}
-
-			if (canDownload() || skipHDL.isSelected()) {
-				return DownLoadDesign(!canDownload(), skipHDL.isSelected(),
-						circuitsList.getSelectedItem().toString(), writeToFlash.isSelected(), true);
-			}
 		}
-
+		if (VendorSoftwarePresent())
+		   return DownLoadDesign(GenerateHDLOnlySelected(), skipVHDL,
+					circuitsList.getSelectedItem().toString(), writeToFlash.isSelected(), true);
 		return false;
 	}
 
