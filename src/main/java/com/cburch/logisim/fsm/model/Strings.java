@@ -28,58 +28,30 @@
  *       http://reds.heig-vd.ch
  *******************************************************************************/
 
-package com.cburch.logisim.std;
+package com.cburch.logisim.fsm.model;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import com.cburch.logisim.util.LocaleManager;
+import com.cburch.logisim.util.StringGetter;
+import com.cburch.logisim.util.StringUtil;
 
-import com.cburch.logisim.fpga.library.BFHPraktika;
-import com.cburch.logisim.fsm.model.Fsm;
-import com.cburch.logisim.std.arith.Arithmetic;
-import com.cburch.logisim.std.base.Base;
-import com.cburch.logisim.std.gates.Gates;
-import com.cburch.logisim.std.hdl.Hdl;
-import com.cburch.logisim.std.io.Io;
-import com.cburch.logisim.std.memory.Memory;
-import com.cburch.logisim.std.plexers.Plexers;
-import com.cburch.logisim.std.tcl.Tcl;
-import com.cburch.logisim.std.wiring.Wiring;
-import com.cburch.logisim.tools.Library;
-import com.cburch.logisim.tools.Tool;
-import com.cburch.logisim.std.io.extra.ITA_IO;
-import com.cburch.logisim.std.ttl.TTL;
+class Strings {
 
-public class Builtin extends Library {
-	private List<Library> libraries = null;
-
-	public Builtin() {
-		libraries = Arrays.asList(new Library[] { new Base(), new Gates(),
-				new Wiring(), new Plexers(), new Arithmetic(), new Memory(),
-				new Io(),  new TTL(), new Hdl(), new Fsm(), new Tcl(), new BFHPraktika(), new ITA_IO(),});
+	public static String get(String key) {
+		return source.get(key);
 	}
 
-	@Override
-	public String getDisplayName() {
-		return Strings.get("builtinLibrary");
+	public static String get(String key, String arg0) {
+		return StringUtil.format(source.get(key), arg0);
 	}
 
-	@Override
-	public List<Library> getLibraries() {
-		return libraries;
+	public static String get(String key, String arg0, String arg1) {
+		return StringUtil.format(source.get(key), arg0, arg1);
 	}
 
-	@Override
-	public String getName() {
-		return "Builtin";
+	public static StringGetter getter(String key) {
+		return source.getter(key);
 	}
 
-	@Override
-	public List<Tool> getTools() {
-		return Collections.emptyList();
-	}
-	
-	public boolean removeLibrary(String Name) {
-		return false;
-	}
+	private static LocaleManager source = new LocaleManager(
+			"resources/logisim", "fsm");
 }
