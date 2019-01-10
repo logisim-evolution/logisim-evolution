@@ -322,7 +322,7 @@ public abstract class FPGACommanderBase {
 					RootSheet.getNetList(), MyMappableResources,
 					MyBoardInformation, Entities, Behaviors,
 					AppPreferences.HDL_Type.get())
-					&!generateOnly) {
+					&& !generateOnly) {
 				return AlteraDownload.Download(ProjectDir
 						+ HDLPaths[ScriptPath] + File.separator, SourcePath,
 						ProjectDir + HDLPaths[SandboxPath] + File.separator,
@@ -336,7 +336,7 @@ public abstract class FPGACommanderBase {
 					MyBoardInformation, Entities, Behaviors,
 					AppPreferences.HDL_Type.get(),
 					writeToFlash)
-					& !generateOnly) {
+					&& !generateOnly) {
 				return XilinxDownload.Download(MyBoardInformation,
 						ProjectDir + HDLPaths[ScriptPath] + File.separator,
 						ProjectDir + HDLPaths[UCFPath] + File.separator,
@@ -352,7 +352,7 @@ public abstract class FPGACommanderBase {
 					MyBoardInformation, Entities, Behaviors,
 					AppPreferences.HDL_Type.get(),
 					writeToFlash)
-					& !generateOnly) {
+					&& !generateOnly) {
 				return VivadoDownload.Download(
 						ProjectDir + HDLPaths[ScriptPath] + File.separator,
 						ProjectDir + HDLPaths[SandboxPath] + File.separator,
