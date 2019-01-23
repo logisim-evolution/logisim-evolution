@@ -78,6 +78,33 @@ tasks {
         // backgroundImage = "src/main/resources/resources/logisim/img/logisim-icon-128.png"
         // javaProperties.put("apple.laf.useScreenMenuBar", "true")
         bundleExtras.put("CFBundleDisplayName", "Logisim-evolution")
+        bundleExtras.put(
+            "CFBundleDocumentTypes",
+            arrayOf(
+                mapOf(
+                    "LSItemContentTypes" to arrayOf("com.cburch.logisim.circ"),
+                    "CFBundleTypeName" to "Logisim-evolution circuit file",
+                    "LSHandlerRank" to "Owner",
+                    "CFBundleTypeRole" to "Editor",
+                    "LSIsAppleDefaultForType" to true
+                )
+            )
+        )
+        bundleExtras.put(
+            "UTExportedTypeDeclarations",
+            arrayOf(
+                mapOf(
+                    "UTTypeIdentifier" to "com.cburch.logisim.circ",
+                    "UTTypeDescription" to "Logisim-evolution circuit file",
+                    "UTTypeConformsTo" to arrayOf("public.data"),
+                    "UTTypeTagSpecification" to
+                    mapOf(
+                        "public.filename-extension" to arrayOf("circ"),
+                        "public.mime-type" to arrayOf("application-prs.cburch.logisim")
+                    )
+                )
+            )
+        )
         bundleExtras.put("LSApplicationCategoryType", "public.app-category.education")
         bundleExtras.put("NSHumanReadableCopyright", "Copyright © 2001–2019 Carl Burch, BFH, HEIG-VD, HEPIA, et al.")
         bundleExtras.put("NSSupportsAutomaticGraphicsSwitching", "true")
