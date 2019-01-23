@@ -14,6 +14,7 @@
   <mapID target="tutorial_wires" url="fr/html/guide/tutorial/tutor-wires.html"/>
   <mapID target="tutorial_text" url="fr/html/guide/tutorial/tutor-text.html"/>
   <mapID target="tutorial_test" url="fr/html/guide/tutorial/tutor-test.html"/>
+  <mapID target="tutorial_step" url="fr/html/guide/tutorial/tutor-step.html"/>
   <mapID target="attrlib" url="fr/html/guide/attrlib/index.html"/>
   <mapID target="attrlib_canvas" url="fr/html/guide/attrlib/canvas.html"/>  
   <mapID target="attrlib_menu" url="fr/html/guide/attrlib/menu.html"/>
@@ -86,6 +87,7 @@
   <mapID target="menu_printertab" url="fr/html/guide/menu/printertab.html" />
   <mapID target="about" url="fr/html/guide/about/index.html"/>
   <mapID target="about_gpl" url="fr/html/guide/about/gpl.html"/>
+  <mapID target="about_gpl_fr" url="fr/html/guide/about/gpl.html"/>
   
   <mapID target="libs" url="fr/html/libs/index.html"/>  
   <mapID target="wiring" url="fr/html/libs/wiring/index.html"/>

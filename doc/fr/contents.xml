@@ -101,7 +101,7 @@
       </tocitem>
       <tocitem target="about" text="A propos du programme">
         <tocitem target="about_gpl" text="GNU General Public License"/>
-		<tocitem target="about_gpl_tr)" text="GNU General Public License (fr)"/>
+		<tocitem target="about_gpl_fr" text="GNU General Public License (fr)"/>
       </tocitem>
     </tocitem>
 	
