@@ -3,6 +3,7 @@ plugins {
     java
     application
     id("com.github.johnrengelman.shadow") version "4.0.1"
+    id("edu.sc.seis.macAppBundle") version "2.3.0"
 }
 
 repositories {
@@ -63,4 +64,22 @@ tasks {
             include("README.md")
         }
     }
- }
+    macAppBundle {
+        mainClassName = "com.cburch.logisim.Main"
+        runtimeConfigurationName = "shadow"
+        jarTask = "shadowJar"
+        bundleJRE = false
+        highResolutionCapable = true
+        appName = "Logisim-evolution"
+        appStyle = "universalJavaApplicationStub"
+        bundleIdentifier = "com.cburch.logisim"
+        creatorCode = "????"
+        icon = "src/main/resources/resources/logisim/img/Logisim-evolution.icns"
+        // backgroundImage = "src/main/resources/resources/logisim/img/logisim-icon-128.png"
+        // javaProperties.put("apple.laf.useScreenMenuBar", "true")
+        bundleExtras.put("CFBundleDisplayName", "Logisim-evolution")
+        bundleExtras.put("LSApplicationCategoryType", "public.app-category.education")
+        bundleExtras.put("NSHumanReadableCopyright", "Copyright © 2001–2019 Carl Burch, BFH, HEIG-VD, HEPIA, et al.")
+        bundleExtras.put("NSSupportsAutomaticGraphicsSwitching", "true")
+    }
+}
