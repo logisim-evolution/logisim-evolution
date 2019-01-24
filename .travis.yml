@@ -2,9 +2,8 @@ language: java
 sudo: false
 jdk:
   - openjdk9
-  - oraclejdk9
+  - openjdk10
   - openjdk11
-  - oraclejdk11
 before_install:
   - chmod +x gradlew
   - chmod +x gradle/wrapper/gradle-wrapper.jar
