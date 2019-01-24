@@ -33,7 +33,7 @@ To execute it, run the downloaded file or type in a console/terminal:
 java -jar logisim-evolution.jar
 ```
 
-You can also compile it by yourself by cloning the repository on your local machine.
+You can also compile it by yourself by cloning the repository on your local machine and making sure that at least [OpenJDK](https://adoptopenjdk.net/) 9 is installed.
 Once this is done, enter the directory and execute:
 ```bash
 ./gradlew run
@@ -52,6 +52,16 @@ or on windows:
 gradlew shadowJar
 ```
 which will create a new jar file in 'build/libs' called 'logisim-evolution-_version_-all.jar' you can distribute freely.
+
+On macOS, you can build a native app bundle `Logisim-evolution.app` using:
+```bash
+./gradlew createApp
+```
+which you will afterwards find in the folder `build/macApp/`. This has the advantage that `.circ` files get automatically associated to the `Logisim-evolution.app` so that you can open them directly in the Finder. *Note:* Curently, the app needs a separately installed compatible JDK/JRE to execute. You may also build a DMG image `logisim-evolution-_version_.dmg` containing `Logisim-evolution.app` for distribution:
+```
+./gradlew createDmg
+```
+which you will find in the folder `build/distribution`.
 
 ## Testing logisim-evolution
 As logisim-evolution needs updates (new features and patches) and currently lacks unit tests, the *testing* branch was created.
