@@ -7,6 +7,8 @@ plugins {
     id("edu.sc.seis.macAppBundle") version "2.3.0"
 }
 
+
+
 repositories {
     jcenter()
     mavenCentral()
@@ -18,6 +20,9 @@ application {
 
 dependencies {
     implementation(fileTree("lib") {
+        include("**/*.jar")
+    })
+    implementation(fileTree("lib-emf") {
         include("**/*.jar")
     })
     implementation("org.hamcrest:hamcrest-core:1.3")
@@ -34,6 +39,7 @@ dependencies {
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
+    
 }
 
 task<Jar>("sourcesJar") {
@@ -41,7 +47,6 @@ task<Jar>("sourcesJar") {
     description = "Creates a source jar archive."
     dependsOn.add("classes")
     classifier = "src"
-
     from(sourceSets.main.get().allSource)
 }
 
