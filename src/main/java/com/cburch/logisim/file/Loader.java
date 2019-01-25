@@ -363,10 +363,6 @@ public class Loader implements LibraryLoader {
 
 		FileOutputStream fwrite = null;
 		try {
-			try {
-				MacCompatibility.setFileCreatorAndType(dest, "LGSM", "circ");
-			} catch (IOException e) {
-			}
 			fwrite = new FileOutputStream(dest);
 			file.write(fwrite, this, dest);
 			file.setName(toProjectName(dest));

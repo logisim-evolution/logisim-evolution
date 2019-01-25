@@ -47,6 +47,7 @@ import com.cburch.logisim.prefs.AppPreferences;
 
 public class Main {
 	public static void main(String[] args) throws Exception {
+		System.setProperty("apple.awt.application.name", "Logisim-evolution");
 		try {
 			if (!GraphicsEnvironment.isHeadless())  {
 				UIManager.setLookAndFeel(AppPreferences.LookAndFeel.get());
