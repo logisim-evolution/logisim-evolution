@@ -8,7 +8,7 @@ cd bin
 ln -s ../boards_model .
 ln -s ../src/main/resources/javax .
 ln -s ../lib .
-ln -s ../lib-em .
+ln -s ../lib-emf .
 ln -s ../src/main/resources/resources .
 ln -s ../src/main/resources/doc .
 cd ..
