@@ -3,18 +3,9 @@ plugins {
     id("com.github.ben-manes.versions") version "0.20.0"
     java
     application
-
+    id("org.xtext.xtend") version "2.0.2"
     id("com.github.johnrengelman.shadow") version "4.0.1"
     id("edu.sc.seis.macAppBundle") version "2.3.0"
-	id("org.xtext.xtend") version "2.0.2"
-}
-
-
-apply(plugin = "org.xtext.xtend")
-
-dependencies {
-   compile("org.eclipse.xtend:org.eclipse.xtend.lib:2.16.0")
-
 }
 
 repositories {
@@ -26,16 +17,15 @@ application {
     mainClassName = "com.cburch.logisim.Main"
 }
 
-
 sourceSets.getByName("main") {
     java.srcDir(mutableListOf("src-gen", "src"))
 }
-
 
 dependencies {
     implementation(fileTree("lib") {
         include("**/*.jar")
     })
+    compile("org.eclipse.xtend:org.eclipse.xtend.lib:2.16.0")
     implementation("org.hamcrest:hamcrest-core:1.3")
     implementation("javax.help:javahelp:2.0.05")
 //  implementation("com.fifesoft:rsyntaxtextarea:2.6.1") // Currently using 3.0.0-SNAPSHOT
