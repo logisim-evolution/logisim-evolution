@@ -30,68 +30,97 @@
 
 package com.cburch.logisim.gui.start;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-//MAC import java.io.File;
+import java.awt.Desktop;
+import java.awt.desktop.AboutHandler;
+import java.awt.desktop.AboutEvent;
+import java.awt.desktop.QuitHandler;
+import java.awt.desktop.QuitEvent;
+import java.awt.desktop.QuitResponse;
+import java.awt.desktop.PreferencesHandler;
+import java.awt.desktop.PreferencesEvent;
+import java.awt.desktop.PrintFilesHandler;
+import java.awt.desktop.PrintFilesEvent;
+import java.awt.desktop.OpenFilesHandler;
+import java.awt.desktop.OpenFilesEvent;
+import java.io.File;
 
-import net.roydesign.event.ApplicationEvent;
-import net.roydesign.mac.MRJAdapter;
-
-//MAC import com.apple.eawt.Application;
-//MAC import com.apple.eawt.ApplicationAdapter;
 import com.cburch.logisim.gui.prefs.PreferencesFrame;
 import com.cburch.logisim.proj.ProjectActions;
+import com.cburch.logisim.util.MacCompatibility;
 
-class MacOsAdapter { // MAC extends ApplicationAdapter {
+class MacOsAdapter {
 
-	private static class MyListener implements ActionListener {
-		public void actionPerformed(ActionEvent event) {
-			ApplicationEvent event2 = (ApplicationEvent) event;
-			int type = event2.getType();
-			switch (type) {
-			case ApplicationEvent.ABOUT:
-				About.showAboutDialog(null);
-				break;
-			case ApplicationEvent.QUIT_APPLICATION:
-				ProjectActions.doQuit();
-				break;
-			case ApplicationEvent.OPEN_DOCUMENT:
-				Startup.doOpen(event2.getFile());
-				break;
-			case ApplicationEvent.PRINT_DOCUMENT:
-				Startup.doPrint(event2.getFile());
-				break;
-			case ApplicationEvent.PREFERENCES:
-				PreferencesFrame.showPreferences();
-				break;
+	private static boolean listenersAdded = false;
+
+	/**
+	 * addListeners adds listeners for external events for the Mac.
+	 * It allows the program to work like a normal Mac application with double-click opening of the .circ documents.
+	 * Note that the .jar file must be wrapped in a .app for this to be meaningful on the Mac.
+	 * This code requires Java 9 or higher.
+	 */
+	public static void addListeners() {
+		if (listenersAdded || !MacCompatibility.isRunningOnMac()) {
+			return;
+		}
+		if (Desktop.isDesktopSupported()) {
+			listenersAdded = true;
+			Desktop dt = Desktop.getDesktop();
+			try {
+				dt.setAboutHandler(
+						new AboutHandler() {
+							public void handleAbout(AboutEvent e) {
+								About.showAboutDialog(null);
+							}
+						}
+						);
+			} catch (Exception e) {
+			}
+			try {
+				dt.setQuitHandler(
+						new QuitHandler() {
+							public void handleQuitRequestWith(QuitEvent e, QuitResponse response) {
+								ProjectActions.doQuit();
+								response.performQuit();
+							}
+						}
+						);
+			} catch (Exception e) {
+			}
+			try {
+				dt.setPreferencesHandler(
+						new PreferencesHandler() {
+							public void handlePreferences(PreferencesEvent e) {
+								PreferencesFrame.showPreferences();	
+							}
+						}
+						);
+			} catch (Exception e) {
+			}
+			try {
+				dt.setPrintFileHandler(
+						new PrintFilesHandler() {
+							public void printFiles(PrintFilesEvent e) {
+								for (File f : e.getFiles()) {
+									Startup.doPrint(f);
+								}
+							}
+						}
+						);
+			} catch (Exception e) {
+			}
+			try {
+				dt.setOpenFileHandler(
+						new OpenFilesHandler() {
+							public void openFiles(OpenFilesEvent e) {
+								for (File f : e.getFiles()) {
+									Startup.doOpen(f);
+								}
+							}
+						}
+						);
+			} catch (Exception e) {
 			}
 		}
 	}
 
-	static void addListeners(boolean added) {
-		MyListener myListener = new MyListener();
-		if (!added)
-			MRJAdapter.addOpenDocumentListener(myListener);
-		if (!added)
-			MRJAdapter.addPrintDocumentListener(myListener);
-		MRJAdapter.addPreferencesListener(myListener);
-		MRJAdapter.addQuitApplicationListener(myListener);
-		MRJAdapter.addAboutListener(myListener);
-	}
-
-	/*
-	 * MAC public void handleOpenFile(com.apple.eawt.ApplicationEvent event) {
-	 * Startup.doOpen(new File(event.getFilename())); }
-	 * 
-	 * public void handlePrintFile(com.apple.eawt.ApplicationEvent event) {
-	 * Startup.doPrint(new File(event.getFilename())); }
-	 * 
-	 * public void handlePreferences(com.apple.eawt.ApplicationEvent event) {
-	 * PreferencesFrame.showPreferences(); }
-	 */
-
-	public static void register() {
-		// MAC Application.getApplication().addApplicationListener(new
-		// MacOsAdapter());
-	}
 }
