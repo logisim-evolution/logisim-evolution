@@ -3,7 +3,7 @@ plugins {
     id("com.github.ben-manes.versions") version "0.20.0"
     java
     application
-    
+
     id("com.github.johnrengelman.shadow") version "4.0.1"
     id("edu.sc.seis.macAppBundle") version "2.3.0"
 	id("org.xtext.xtend") version "2.0.2"
@@ -14,7 +14,7 @@ apply(plugin = "org.xtext.xtend")
 
 dependencies {
    compile("org.eclipse.xtend:org.eclipse.xtend.lib:2.16.0")
-  
+
 }
 
 repositories {
@@ -48,9 +48,8 @@ dependencies {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
-    
+    sourceCompatibility = JavaVersion.VERSION_1_9
+    targetCompatibility = JavaVersion.VERSION_1_9
 }
 
 task<Jar>("sourcesJar") {
