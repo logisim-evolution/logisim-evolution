@@ -98,6 +98,7 @@ tasks {
                     "UTTypeIdentifier" to "com.cburch.logisim.circ",
                     "UTTypeDescription" to "Logisim-evolution circuit file",
                     "UTTypeConformsTo" to arrayOf("public.data"),
+                    "UTTypeIconFile" to "Logisim-evolution.icns",
                     "UTTypeTagSpecification" to
                     mapOf(
                         "public.filename-extension" to arrayOf("circ"),
