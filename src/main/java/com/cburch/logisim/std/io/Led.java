@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.std.io;
 
+import static com.cburch.logisim.std.Strings.S;
+
 import java.awt.Color;
 import java.awt.Graphics;
 
@@ -69,7 +71,7 @@ public class Led extends InstanceFactory {
 	}
 
 	public Led() {
-		super("LED", Strings.getter("ledComponent"));
+		super("LED", S.getter("ledComponent"));
 		setAttributes(new Attribute[] { StdAttr.FACING, Io.ATTR_ON_COLOR,
 				Io.ATTR_OFF_COLOR, Io.ATTR_ACTIVE, StdAttr.LABEL,
 				Io.ATTR_LABEL_LOC, StdAttr.LABEL_FONT, StdAttr.LABEL_COLOR, StdAttr.LABEL_VISIBILITY },

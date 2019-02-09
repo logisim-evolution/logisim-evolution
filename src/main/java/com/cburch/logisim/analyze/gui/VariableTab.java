@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.analyze.gui;
 
+import static com.cburch.logisim.analyze.Strings.S;
+
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -305,11 +307,11 @@ class VariableTab extends AnalyzerTab implements TabInterface {
 
 	@Override
 	void localeChanged() {
-		remove.setText(Strings.get("variableRemoveButton"));
-		moveUp.setText(Strings.get("variableMoveUpButton"));
-		moveDown.setText(Strings.get("variableMoveDownButton"));
-		add.setText(Strings.get("variableAddButton"));
-		rename.setText(Strings.get("variableRenameButton"));
+		remove.setText(S.get("variableRemoveButton"));
+		moveUp.setText(S.get("variableMoveUpButton"));
+		moveDown.setText(S.get("variableMoveDownButton"));
+		add.setText(S.get("variableAddButton"));
+		rename.setText(S.get("variableRenameButton"));
 		validateInput();
 	}
 
@@ -350,14 +352,14 @@ class VariableTab extends AnalyzerTab implements TabInterface {
 			errorShown = false;
 			ok = false;
 		} else if (!Character.isJavaIdentifierStart(text.charAt(0))) {
-			error.setText(Strings.get("variableStartError"));
+			error.setText(S.get("variableStartError"));
 			ok = false;
 		} else {
 			for (int i = 1; i < text.length() && ok; i++) {
 				char c = text.charAt(i);
 				if (!Character.isJavaIdentifierPart(c)) {
 					error.setText(StringUtil.format(
-							Strings.get("variablePartError"), "" + c));
+							S.get("variablePartError"), "" + c));
 					ok = false;
 				}
 			}
@@ -366,29 +368,29 @@ class VariableTab extends AnalyzerTab implements TabInterface {
 			if (!CorrectLabel.IsCorrectLabel(text)) {
 				ok = false;
 				if (CorrectLabel.IsKeyword(text, false)) {
-					error.setText(Strings.get("HdlKeyword"));
+					error.setText(S.get("HdlKeyword"));
 				} else {
 					String wrong = CorrectLabel.FirstInvalidCharacter(text);
-					error.setText(StringUtil.format(Strings.get("InvalidCharacter"),wrong));
+					error.setText(StringUtil.format(S.get("InvalidCharacter"),wrong));
 				}
 			}
 		}
 		if (ok) {
 			if (contains(text)) {
-				error.setText(Strings.get("variableDuplicateError"));
+				error.setText(S.get("variableDuplicateError"));
 				ok = false;
 			}
 		}
 		if (ok&&(Othertab!=null)) {
 			if (Othertab.contains(text)) {
-				error.setText(StringUtil.format(Strings.get("variableDuplicateError1"), OtherId));
+				error.setText(StringUtil.format(S.get("variableDuplicateError1"), OtherId));
 				ok = false;
 			}
 		}
 		if (ok || !errorShown) {
 			if (data.size() >= data.getMaximumSize()) {
 				error.setText(StringUtil.format(
-						Strings.get("variableMaximumError"),
+						S.get("variableMaximumError"),
 						"" + data.getMaximumSize()));
 			} else {
 				error.setText(" ");

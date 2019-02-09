@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.std.plexers;
 
+import static com.cburch.logisim.std.Strings.S;
+
 import java.awt.Color;
 import java.awt.Graphics;
 
@@ -55,7 +57,7 @@ public class PriorityEncoder extends InstanceFactory {
 	static final int GS = 3;
 
 	public PriorityEncoder() {
-		super("Priority Encoder", Strings.getter("priorityEncoderComponent"));
+		super("Priority Encoder", S.getter("priorityEncoderComponent"));
 		setAttributes(new Attribute[] { StdAttr.FACING, Plexers.ATTR_SELECT,
 				Plexers.ATTR_DISABLED }, new Object[] { Direction.EAST,
 				BitWidth.create(3), Plexers.DISABLED_ZERO });
@@ -213,13 +215,13 @@ public class PriorityEncoder extends InstanceFactory {
 		}
 
 		for (int i = 0; i < n; i++) {
-			ps[i].setToolTip(Strings.getter("priorityEncoderInTip", "" + i));
+			ps[i].setToolTip(S.getter("priorityEncoderInTip", "" + i));
 		}
-		ps[n + OUT].setToolTip(Strings.getter("priorityEncoderOutTip"));
-		ps[n + EN_IN].setToolTip(Strings.getter("priorityEncoderEnableInTip"));
+		ps[n + OUT].setToolTip(S.getter("priorityEncoderOutTip"));
+		ps[n + EN_IN].setToolTip(S.getter("priorityEncoderEnableInTip"));
 		ps[n + EN_OUT]
-				.setToolTip(Strings.getter("priorityEncoderEnableOutTip"));
-		ps[n + GS].setToolTip(Strings.getter("priorityEncoderGroupSignalTip"));
+				.setToolTip(S.getter("priorityEncoderEnableOutTip"));
+		ps[n + GS].setToolTip(S.getter("priorityEncoderGroupSignalTip"));
 
 		instance.setPorts(ps);
 	}

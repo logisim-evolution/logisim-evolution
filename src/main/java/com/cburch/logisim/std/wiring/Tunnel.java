@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.std.wiring;
 
+import static com.cburch.logisim.std.Strings.S;
+
 import java.awt.Color;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
@@ -59,7 +61,7 @@ public class Tunnel extends InstanceFactory {
 	static final int ARROW_MAX_WIDTH = 20;
 
 	public Tunnel() {
-		super("Tunnel", Strings.getter("tunnelComponent"));
+		super("Tunnel", S.getter("tunnelComponent"));
 		setIconName("tunnel.gif");
 		setFacingAttribute(StdAttr.FACING);
 		setKeyConfigurator(new BitWidthConfigurator(StdAttr.WIDTH));

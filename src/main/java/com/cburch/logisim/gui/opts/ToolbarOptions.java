@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.gui.opts;
 
+import static com.cburch.logisim.gui.Strings.S;
+
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -200,21 +202,21 @@ class ToolbarOptions extends OptionsPanel {
 
 	@Override
 	public String getHelpText() {
-		return Strings.get("toolbarHelp");
+		return S.get("toolbarHelp");
 	}
 
 	@Override
 	public String getTitle() {
-		return Strings.get("toolbarTitle");
+		return S.get("toolbarTitle");
 	}
 
 	@Override
 	public void localeChanged() {
-		addTool.setText(Strings.get("toolbarAddTool"));
-		addSeparator.setText(Strings.get("toolbarAddSeparator"));
-		moveUp.setText(Strings.get("toolbarMoveUp"));
-		moveDown.setText(Strings.get("toolbarMoveDown"));
-		remove.setText(Strings.get("toolbarRemove"));
+		addTool.setText(S.get("toolbarAddTool"));
+		addSeparator.setText(S.get("toolbarAddSeparator"));
+		moveUp.setText(S.get("toolbarMoveUp"));
+		moveDown.setText(S.get("toolbarMoveDown"));
+		remove.setText(S.get("toolbarRemove"));
 		list.localeChanged();
 	}
 }

@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.std.hdl;
 
+import static com.cburch.logisim.std.Strings.S;
+
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dialog;
@@ -99,7 +101,7 @@ public class HdlContentEditor extends JDialog implements JInputDialog {
 
 				JFileChooser chooser = JFileChoosers
 						.createAt(getDefaultImportFile(null));
-				chooser.setDialogTitle(Strings.get("openButton"));
+				chooser.setDialogTitle(S.get("openButton"));
 				int choice = chooser.showOpenDialog(HdlContentEditor.this);
 				if (choice == JFileChooser.APPROVE_OPTION) {
 					File f = chooser.getSelectedFile();
@@ -108,7 +110,7 @@ public class HdlContentEditor extends JDialog implements JInputDialog {
 					} catch (IOException e) {
 						JOptionPane.showMessageDialog(HdlContentEditor.this,
 								e.getMessage(),
-								Strings.get("hexOpenErrorTitle"),
+								S.get("hexOpenErrorTitle"),
 								JOptionPane.ERROR_MESSAGE);
 					}
 				}
@@ -116,7 +118,7 @@ public class HdlContentEditor extends JDialog implements JInputDialog {
 			if (source == save) {
 				JFileChooser chooser = JFileChoosers
 						.createSelected(getDefaultExportFile(null));
-				chooser.setDialogTitle(Strings.get("saveButton"));
+				chooser.setDialogTitle(S.get("saveButton"));
 				int choice = chooser.showSaveDialog(HdlContentEditor.this);
 				if (choice == JFileChooser.APPROVE_OPTION) {
 					File f = chooser.getSelectedFile();
@@ -125,7 +127,7 @@ public class HdlContentEditor extends JDialog implements JInputDialog {
 					} catch (IOException e) {
 						JOptionPane.showMessageDialog(HdlContentEditor.this,
 								e.getMessage(),
-								Strings.get("hexSaveErrorTitle"),
+								S.get("hexSaveErrorTitle"),
 								JOptionPane.ERROR_MESSAGE);
 					}
 				}
@@ -140,11 +142,11 @@ public class HdlContentEditor extends JDialog implements JInputDialog {
 
 		@Override
 		public void localeChanged() {
-			setTitle(Strings.get("hdlFrameTitle"));
-			open.setText(Strings.get("openButton"));
-			save.setText(Strings.get("saveButton"));
-			validate.setText(Strings.get("validateButton"));
-			close.setText(Strings.get("closeButton"));
+			setTitle(S.get("hdlFrameTitle"));
+			open.setText(S.get("openButton"));
+			save.setText(S.get("saveButton"));
+			validate.setText(S.get("validateButton"));
+			close.setText(S.get("closeButton"));
 		}
 
 		@Override
@@ -164,10 +166,10 @@ public class HdlContentEditor extends JDialog implements JInputDialog {
 	}
 
 	public static boolean confirmImport(Component parent) {
-		String[] options = { Strings.get("importOption"),
-				Strings.get("cancelOption") };
+		String[] options = { S.get("importOption"),
+				S.get("cancelOption") };
 		return JOptionPane.showOptionDialog(parent,
-				Strings.get("importMessage"), Strings.get("importTitle"), 0,
+				S.get("importMessage"), S.get("importTitle"), 0,
 				JOptionPane.QUESTION_MESSAGE, null, options, options[0]) == 0;
 	}
 
@@ -192,12 +194,12 @@ public class HdlContentEditor extends JDialog implements JInputDialog {
 	private JButton close = new JButton();
 
 	public HdlContentEditor(Dialog parent, Project proj, HdlModel model) {
-		super(parent, Strings.get("hdlFrameTitle"), true);
+		super(parent, S.get("hdlFrameTitle"), true);
 		configure(proj, model);
 	}
 
 	public HdlContentEditor(Frame parent, Project proj, HdlModel model) {
-		super(parent, Strings.get("hdlFrameTitle"), true);
+		super(parent, S.get("hdlFrameTitle"), true);
 		configure(proj, model);
 	}
 
@@ -212,12 +214,12 @@ public class HdlContentEditor extends JDialog implements JInputDialog {
 			return;
 		}
 
-		Object[] options = { Strings.get("confirmCloseYes"),
-				Strings.get("confirmCloseNo"),
-				Strings.get("confirmCloseBackup") };
+		Object[] options = { S.get("confirmCloseYes"),
+				S.get("confirmCloseNo"),
+				S.get("confirmCloseBackup") };
 		int n = JOptionPane.showOptionDialog(this,
-				Strings.get("confirmCloseMessage"),
-				Strings.get("confirmCloseTitle"),
+				S.get("confirmCloseMessage"),
+				S.get("confirmCloseTitle"),
 				JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE,
 				null, options, options[0]);
 

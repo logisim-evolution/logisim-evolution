@@ -29,6 +29,8 @@
  *******************************************************************************/
 package com.cburch.logisim.gui.chronogram.chronogui;
 
+import static com.cburch.logisim.gui.Strings.S;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -58,7 +60,7 @@ class PopupContents extends JPopupMenu implements ActionListener {
 			JRadioButtonMenuItem[] formats;
 			signalDataBus = (SignalDataBus) signalData;
 			// format choice
-			dataFormat = new JMenu(Strings.get("BusFormat"));
+			dataFormat = new JMenu(S.get("BusFormat"));
 			formats = new JRadioButtonMenuItem[5];
 			ButtonGroup group = new ButtonGroup();
 			for (int i = 0; i < SignalDataBus.signalFormat.length; ++i) {
@@ -78,7 +80,7 @@ class PopupContents extends JPopupMenu implements ActionListener {
 			add(dataFormat);
 
 			// expand
-			expandBus = new JRadioButtonMenuItem(Strings.get("BusExpand"));
+			expandBus = new JRadioButtonMenuItem(S.get("BusExpand"));
 			expandBus.setSelected(signalDataBus.isExpanded());
 			expandBus.addActionListener(this);
 			add(expandBus);

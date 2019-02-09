@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.circuit;
 
+import static com.cburch.logisim.circuit.Strings.S;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -147,7 +149,7 @@ public final class CircuitMutation extends CircuitTransaction {
 
 	public Action toAction(StringGetter name) {
 		if (name == null)
-			name = Strings.getter("unknownChangeAction");
+			name = S.getter("unknownChangeAction");
 		return new CircuitAction(name, this);
 	}
 }

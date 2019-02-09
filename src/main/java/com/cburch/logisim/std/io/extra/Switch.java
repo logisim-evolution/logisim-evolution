@@ -1,5 +1,7 @@
 package com.cburch.logisim.std.io.extra;
 
+import static com.cburch.logisim.std.Strings.S;
+
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.MouseEvent;
@@ -61,7 +63,7 @@ public class Switch extends InstanceFactory {
 	private static final int DEPTH = 3;
 
 	public Switch() {
-		super("Switch", Strings.getter("switchComponent"));
+		super("Switch", S.getter("switchComponent"));
 		setAttributes(
 				new Attribute[] { StdAttr.FACING, StdAttr.WIDTH, Io.ATTR_COLOR, StdAttr.LABEL, Io.ATTR_LABEL_LOC,
 						StdAttr.LABEL_FONT},
@@ -292,9 +294,9 @@ public class Switch extends InstanceFactory {
 		ps[0] = dir == Direction.EAST ? new Port(-20, 0, Port.INPUT, b)
 				: dir == Direction.WEST ? new Port(20, 0, Port.INPUT, b)
 						: dir == Direction.NORTH ? new Port(0, 20, Port.INPUT, b) : new Port(0, -20, Port.INPUT, b);
-		ps[0].setToolTip(Strings.getter("pinInputName"));
+		ps[0].setToolTip(S.getter("pinInputName"));
 		ps[1] = new Port(0, 0, Port.OUTPUT, b);
-		ps[1].setToolTip(Strings.getter("pinOutputName"));
+		ps[1].setToolTip(S.getter("pinOutputName"));
 		instance.setPorts(ps);
 	}
 }

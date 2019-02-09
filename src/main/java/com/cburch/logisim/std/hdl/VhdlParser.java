@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.std.hdl;
 
+import static com.cburch.logisim.std.Strings.S;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -159,7 +161,7 @@ public class VhdlParser {
 			return Port.INOUT;
 
 		throw new IllegalVhdlContentException(
-				Strings.get("invalidTypeException"));
+				S.get("invalidTypeException"));
 	}
 
 	public void parse() throws IllegalVhdlContentException {
@@ -172,12 +174,12 @@ public class VhdlParser {
 
 		if (parts.length > 2) {
 			throw new IllegalVhdlContentException(
-					Strings.get("duplicatedEntityException"));
+					S.get("duplicatedEntityException"));
 		}
 		if (!matcher.find() || matcher.groupCount() != 3
 				|| !matcher.group(1).equals(matcher.group(3))) {
 			throw new IllegalVhdlContentException(
-					Strings.get("CannotFindEntityException"));
+					S.get("CannotFindEntityException"));
 		}
 
 		name = matcher.group(1);
@@ -225,12 +227,12 @@ public class VhdlParser {
 		if (scanner.findWithinHorizon(
 				Pattern.compile(LINE_PATTERN, Pattern.CASE_INSENSITIVE), 0) == null)
 			throw new IllegalVhdlContentException(
-					Strings.get("lineDeclarationException"));
+					S.get("lineDeclarationException"));
 		MatchResult result = scanner.match();
 
 		if (result.groupCount() != 1)
 			throw new IllegalVhdlContentException(
-					Strings.get("lineDeclarationException"));
+					S.get("lineDeclarationException"));
 		type.append(getType(result.group(1).toLowerCase()));
 
 		return 1;
@@ -241,7 +243,7 @@ public class VhdlParser {
 		int index = line.indexOf(':');
 		if (index == -1)
 			throw new IllegalVhdlContentException(
-					Strings.get("multiplePortsDeclarationException"));
+					S.get("multiplePortsDeclarationException"));
 
 		Scanner local = new Scanner(line.substring(0, index));
 		local.useDelimiter(",");
@@ -277,7 +279,7 @@ public class VhdlParser {
 				Pattern.compile(PORT_PATTERN, Pattern.CASE_INSENSITIVE), 0) == null) {
 			local.close();
 			throw new IllegalVhdlContentException(
-					Strings.get("portDeclarationException"));
+					S.get("portDeclarationException"));
 		}
 		String name = local.match().group().trim();
 
@@ -321,12 +323,12 @@ public class VhdlParser {
 		if (scanner.findWithinHorizon(
 				Pattern.compile(VECTOR_PATTERN, Pattern.CASE_INSENSITIVE), 0) == null)
 			throw new IllegalVhdlContentException(
-					Strings.get("vectorDeclarationException"));
+					S.get("vectorDeclarationException"));
 		MatchResult result = scanner.match();
 
 		if (result.groupCount() != 3)
 			throw new IllegalVhdlContentException(
-					Strings.get("vectorDeclarationException"));
+					S.get("vectorDeclarationException"));
 		type.append(getType(result.group(1).toLowerCase()));
 
 		return Integer.parseInt(result.group(2))
@@ -339,7 +341,7 @@ public class VhdlParser {
 			input = new StringBuffer(source);
 		} catch (NullPointerException ex) {
 			throw new IllegalVhdlContentException(
-					Strings.get("emptySourceException"));
+					S.get("emptySourceException"));
 		}
 
 		int from;

@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.std.gates;
 
+import static com.cburch.logisim.std.Strings.S;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -54,7 +56,7 @@ public class Gates extends Library {
 
 	@Override
 	public String getDisplayName() {
-		return Strings.get("gatesLibrary");
+		return S.get("gatesLibrary");
 	}
 
 	@Override

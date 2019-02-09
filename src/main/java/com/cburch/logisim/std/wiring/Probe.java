@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.std.wiring;
 
+import static com.cburch.logisim.std.Strings.S;
+
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -319,7 +321,7 @@ public class Probe extends InstanceFactory {
 	public static final Probe FACTORY = new Probe();
 
 	public Probe() {
-		super("Probe", Strings.getter("probeComponent"));
+		super("Probe", S.getter("probeComponent"));
 		setIconName("probe.gif");
 		setFacingAttribute(StdAttr.FACING);
 		setInstanceLogger(ProbeLogger.class);

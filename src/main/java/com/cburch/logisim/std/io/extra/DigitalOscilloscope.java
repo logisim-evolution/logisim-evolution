@@ -1,5 +1,7 @@
 package com.cburch.logisim.std.io.extra;
 
+import static com.cburch.logisim.std.Strings.S;
+
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
@@ -25,30 +27,30 @@ import com.cburch.logisim.util.GraphicsUtil;
 public class DigitalOscilloscope extends InstanceFactory {
 
 	private static final Attribute<Integer> ATTR_INPUTS = Attributes.forIntegerRange("inputs",
-			Strings.getter("gateInputsAttr"), 1, 32);
+			S.getter("gateInputsAttr"), 1, 32);
 
 	private static final Attribute<Integer> ATTR_NSTATE = Attributes.forIntegerRange("nState",
-			Strings.getter("NStateAttr"), 4, 35);
+			S.getter("NStateAttr"), 4, 35);
 
-	private static final AttributeOption NO = new AttributeOption("no", Strings.getter("noOption"));
+	private static final AttributeOption NO = new AttributeOption("no", S.getter("noOption"));
 	private static final AttributeOption TRIG_RISING = new AttributeOption("rising",
-			Strings.getter("stdTriggerRising"));
+			S.getter("stdTriggerRising"));
 	private static final AttributeOption TRIG_FALLING = new AttributeOption("falling",
-			Strings.getter("stdTriggerFalling"));
-	private static final AttributeOption BOTH = new AttributeOption("both", Strings.getter("bothOption"));
+			S.getter("stdTriggerFalling"));
+	private static final AttributeOption BOTH = new AttributeOption("both", S.getter("bothOption"));
 
 	private static final Attribute<AttributeOption> VERT_LINE = Attributes.forOption("frontlines",
-			Strings.getter("DrawClockFrontLine"), new AttributeOption[] { NO, TRIG_RISING, TRIG_FALLING, BOTH });
+			S.getter("DrawClockFrontLine"), new AttributeOption[] { NO, TRIG_RISING, TRIG_FALLING, BOTH });
 
 	private static final Attribute<Boolean> SHOW_CLOCK = Attributes.forBoolean("showclock",
-			Strings.getter("ShowClockAttribute"));
+			S.getter("ShowClockAttribute"));
 
-	private static final Attribute<Color> ATTR_COLOR = Attributes.forColor("color", Strings.getter("BorderColor"));
+	private static final Attribute<Color> ATTR_COLOR = Attributes.forColor("color", S.getter("BorderColor"));
 
 	private final int border = 10;
 
 	public DigitalOscilloscope() {
-		super("Digital Oscilloscope", Strings.getter("DigitalOscilloscopeComponent"));
+		super("Digital Oscilloscope", S.getter("DigitalOscilloscopeComponent"));
 		setAttributes(
 				new Attribute<?>[] { ATTR_INPUTS, ATTR_NSTATE, VERT_LINE, SHOW_CLOCK, ATTR_COLOR, StdAttr.LABEL,
 						Io.ATTR_LABEL_LOC, StdAttr.LABEL_FONT },
@@ -301,12 +303,12 @@ public class DigitalOscilloscope extends InstanceFactory {
 		}
 		// enable
 		port[inputs + 1] = new Port(20, 30 * inputs + 2 * border, Port.INPUT, 1);
-		port[inputs + 1].setToolTip(Strings.getter("priorityEncoderEnableInTip"));
+		port[inputs + 1].setToolTip(S.getter("priorityEncoderEnableInTip"));
 		// clear
 		port[inputs + 2] = new Port(30, 30 * inputs + 2 * border, Port.INPUT, 1);
-		port[inputs + 2].setToolTip(Strings.getter("ClearDiagram"));
+		port[inputs + 2].setToolTip(S.getter("ClearDiagram"));
 		// clock
-		port[0].setToolTip(Strings.getter("DigitalOscilloscopeClock"));
+		port[0].setToolTip(S.getter("DigitalOscilloscopeClock"));
 
 		instance.setPorts(port);
 	}

@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.std.arith;
 
+import static com.cburch.logisim.std.Strings.S;
+
 import java.awt.Color;
 import java.awt.Graphics;
 import java.util.Arrays;
@@ -52,17 +54,17 @@ import com.cburch.logisim.tools.key.BitWidthConfigurator;
 
 public class Shifter extends InstanceFactory {
 	static final AttributeOption SHIFT_LOGICAL_LEFT = new AttributeOption("ll",
-			Strings.getter("shiftLogicalLeft"));
+			S.getter("shiftLogicalLeft"));
 	static final AttributeOption SHIFT_LOGICAL_RIGHT = new AttributeOption(
-			"lr", Strings.getter("shiftLogicalRight"));
+			"lr", S.getter("shiftLogicalRight"));
 	static final AttributeOption SHIFT_ARITHMETIC_RIGHT = new AttributeOption(
-			"ar", Strings.getter("shiftArithmeticRight"));
+			"ar", S.getter("shiftArithmeticRight"));
 	static final AttributeOption SHIFT_ROLL_LEFT = new AttributeOption("rl",
-			Strings.getter("shiftRollLeft"));
+			S.getter("shiftRollLeft"));
 	static final AttributeOption SHIFT_ROLL_RIGHT = new AttributeOption("rr",
-			Strings.getter("shiftRollRight"));
+			S.getter("shiftRollRight"));
 	static final Attribute<AttributeOption> ATTR_SHIFT = Attributes
-			.forOption("shift", Strings.getter("shifterShiftAttr"),
+			.forOption("shift", S.getter("shifterShiftAttr"),
 					new AttributeOption[] { SHIFT_LOGICAL_LEFT,
 							SHIFT_LOGICAL_RIGHT, SHIFT_ARITHMETIC_RIGHT,
 							SHIFT_ROLL_LEFT, SHIFT_ROLL_RIGHT });
@@ -72,7 +74,7 @@ public class Shifter extends InstanceFactory {
 	static final int OUT = 2;
 
 	public Shifter() {
-		super("Shifter", Strings.getter("shifterComponent"));
+		super("Shifter", S.getter("shifterComponent"));
 		setAttributes(new Attribute[] { StdAttr.WIDTH, ATTR_SHIFT },
 				new Object[] { BitWidth.create(8), SHIFT_LOGICAL_LEFT });
 		setKeyConfigurator(new BitWidthConfigurator(StdAttr.WIDTH));
@@ -97,9 +99,9 @@ public class Shifter extends InstanceFactory {
 		ps[IN0] = new Port(-40, -10, Port.INPUT, data);
 		ps[IN1] = new Port(-40, 10, Port.INPUT, shift);
 		ps[OUT] = new Port(0, 0, Port.OUTPUT, data);
-		ps[IN0].setToolTip(Strings.getter("shifterInputTip"));
-		ps[IN1].setToolTip(Strings.getter("shifterDistanceTip"));
-		ps[OUT].setToolTip(Strings.getter("shifterOutputTip"));
+		ps[IN0].setToolTip(S.getter("shifterInputTip"));
+		ps[IN1].setToolTip(S.getter("shifterDistanceTip"));
+		ps[OUT].setToolTip(S.getter("shifterOutputTip"));
 		instance.setPorts(ps);
 	}
 

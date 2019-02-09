@@ -29,6 +29,8 @@
  *******************************************************************************/
 package com.cburch.logisim.gui.chronogram.chronogui;
 
+import static com.cburch.logisim.gui.Strings.S;
+
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -229,14 +231,14 @@ public class ChronoFrame extends LFrame implements KeyListener, ActionListener,
 			fillMainSPlitPane();
 
 			if (chronogramData.size() == 0) {
-				statusLabel.setText(Strings.get("SimStatusNoSignal"));
+				statusLabel.setText(S.get("SimStatusNoSignal"));
 			} else {
-				statusLabel.setText(Strings.get("SimStatusCurrentScheme"));
+				statusLabel.setText(S.get("SimStatusCurrentScheme"));
 			}
 
 		} catch (NoSysclkException ex) {
 			createMainStructure();
-			statusLabel.setText(Strings.get("SimStatusNoSysclk"));
+			statusLabel.setText(S.get("SimStatusNoSysclk"));
 		}
 	}
 
@@ -287,20 +289,20 @@ public class ChronoFrame extends LFrame implements KeyListener, ActionListener,
 		topBar.setLayout(new FlowLayout(FlowLayout.LEFT));
 
 		// external file
-		chooseFileButton = new JButton(Strings.get("ButtonLoad"));
+		chooseFileButton = new JButton(S.get("ButtonLoad"));
 		chooseFileButton.setActionCommand("load");
 		chooseFileButton.addActionListener(myListener);
 		chooseFileButton.setPreferredSize(buttonSize);
 		chooseFileButton.setFocusable(false);
 
 		// export
-		exportDataInFile = new JButton(Strings.get("ButtonExport"));
+		exportDataInFile = new JButton(S.get("ButtonExport"));
 		exportDataInFile.setActionCommand("export");
 		exportDataInFile.addActionListener(myListener);
 		exportDataInFile.setPreferredSize(buttonSize);
 		exportDataInFile.setFocusable(false);
 
-        exportDataToImage = new JButton(Strings.get("Export as image"));
+        exportDataToImage = new JButton(S.get("Export as image"));
         exportDataToImage.setActionCommand("exportImg");
         exportDataToImage.addActionListener(myListener);
         exportDataToImage.setPreferredSize(buttonSize);
@@ -361,7 +363,7 @@ public class ChronoFrame extends LFrame implements KeyListener, ActionListener,
 		topBar.add(chooseFileButton);
 		topBar.add(exportDataInFile);
 		topBar.add(exportDataToImage);
-		topBar.add(new JLabel(Strings.get("SimStatusName")));
+		topBar.add(new JLabel(S.get("SimStatusName")));
 		topBar.add(statusLabel);
 		mainPanel.add(BorderLayout.SOUTH, topBar);
 
@@ -369,7 +371,7 @@ public class ChronoFrame extends LFrame implements KeyListener, ActionListener,
 		mainSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 		mainPanel.add(BorderLayout.CENTER, mainSplitPane);
 
-		setTitle(Strings.get("ChronoTitle") + ": "
+		setTitle(S.get("ChronoTitle") + ": "
 				+ project.getLogisimFile().getDisplayName());
 		setResizable(true);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -519,10 +521,10 @@ public class ChronoFrame extends LFrame implements KeyListener, ActionListener,
 				realTimeMode = false;
 				chronogramData = tmp;
 				fillMainSPlitPane();
-				statusLabel.setText(Strings.get("InputFileLoaded") + logFile);
+				statusLabel.setText(S.get("InputFileLoaded") + logFile);
 			}
 		} catch (NoSysclkException ex) {
-			errorMessage(Strings.get("InputFileNoSysclk"));
+			errorMessage(S.get("InputFileNoSysclk"));
 		} catch (Exception ex) {
 			errorMessage(ex.toString());
 		}

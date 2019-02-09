@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.gui.main;
 
+import static com.cburch.logisim.gui.Strings.S;
+
 import java.util.Comparator;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -102,17 +104,17 @@ class AttrTableSelectionModel extends AttributeSetTableModel implements
 
 		if (variousFound) {
 			SetInstance(factory);
-			return Strings.get("selectionVarious", "" + totalCount);
+			return S.fmt("selectionVarious", "" + totalCount);
 		} else if (factoryCount == 0) {
 			String circName = frame.getCanvas().getCircuit().getName();
 			SetInstance(frame.getCanvas().getCircuit().getSubcircuitFactory());
-			return Strings.get("circuitAttrTitle", circName);
+			return S.fmt("circuitAttrTitle", circName);
 		} else if (factoryCount == 1) {
 			SetInstance(factory);
-			return Strings.get("selectionOne", factory.getDisplayName());
+			return S.fmt("selectionOne", factory.getDisplayName());
 		} else {
 			SetInstance(factory);
-			return Strings.get("selectionMultiple", factory.getDisplayName(),
+			return S.fmt("selectionMultiple", factory.getDisplayName(),
 					"" + factoryCount);
 		}
 	}
@@ -155,7 +157,7 @@ class AttrTableSelectionModel extends AttributeSetTableModel implements
 			circuitModel.setValueRequested(attr, value);
 		} else {
 			SetAttributeAction act = new SetAttributeAction(circuit,
-					Strings.getter("selectionAttributeAction"));
+					S.getter("selectionAttributeAction"));
 			AutoLabel labler = null;
 			if (attr.equals(StdAttr.LABEL)) {
 				labler = new AutoLabel((String)value,circuit);

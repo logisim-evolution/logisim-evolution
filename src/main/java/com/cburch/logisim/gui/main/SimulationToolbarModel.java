@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.gui.main;
 
+import static com.cburch.logisim.gui.Strings.S;
+
 import java.util.List;
 
 import javax.swing.event.ChangeEvent;
@@ -57,17 +59,17 @@ class SimulationToolbarModel extends AbstractToolbarModel implements
 
 		simEnable = new LogisimToolbarItem(menu, "simplay.png",
 				LogisimMenuBar.SIMULATE_ENABLE,
-				Strings.getter("simulateEnableStepsTip"));
+				S.getter("simulateEnableStepsTip"));
 		simStep = new LogisimToolbarItem(menu, "simstep.png",
-				LogisimMenuBar.SIMULATE_STEP, Strings.getter("simulateStepTip"));
+				LogisimMenuBar.SIMULATE_STEP, S.getter("simulateStepTip"));
 		tickEnable = new LogisimToolbarItem(menu, "simtplay.png",
 				LogisimMenuBar.TICK_ENABLE,
-				Strings.getter("simulateEnableTicksTip"));
+				S.getter("simulateEnableTicksTip"));
 		tickStep = new LogisimToolbarItem(menu, "simtstep.png",
-				LogisimMenuBar.TICK_STEP, Strings.getter("simulateTickTip"));
+				LogisimMenuBar.TICK_STEP, S.getter("simulateTickTip"));
 		tickStepMain = new LogisimToolbarItem(menu, "clock.gif",
 				LogisimMenuBar.TICK_STEP_MAIN,
-				Strings.getter("simulateTickMainTip"));
+				S.getter("simulateTickMainTip"));
 
 		items = UnmodifiableList.create(new ToolbarItem[] { simEnable, simStep,
 				tickEnable, tickStep, tickStepMain, });
@@ -101,13 +103,11 @@ class SimulationToolbarModel extends AbstractToolbarModel implements
 		boolean running = sim != null && sim.isRunning();
 		boolean ticking = sim != null && sim.isTicking();
 		simEnable.setIcon(running ? "simstop.png" : "simplay.png");
-		simEnable.setToolTip(running ? Strings
-				.getter("simulateDisableStepsTip") : Strings
-				.getter("simulateEnableStepsTip"));
+		simEnable.setToolTip(running ? S.getter("simulateDisableStepsTip") : 
+			S.getter("simulateEnableStepsTip"));
 		tickEnable.setIcon(ticking ? "simtstop.png" : "simtplay.png");
-		tickEnable.setToolTip(ticking ? Strings
-				.getter("simulateDisableTicksTip") : Strings
-				.getter("simulateEnableTicksTip"));
+		tickEnable.setToolTip(ticking ? S.getter("simulateDisableTicksTip") : 
+			S.getter("simulateEnableTicksTip"));
 		fireToolbarAppearanceChanged();
 	}
 }

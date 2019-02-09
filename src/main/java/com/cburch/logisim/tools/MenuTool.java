@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.tools;
 
+import static com.cburch.logisim.tools.Strings.S;
+
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
@@ -58,9 +60,9 @@ public class MenuTool extends Tool {
 		Project proj;
 		Circuit circ;
 		Component comp;
-		JMenuItem del = new JMenuItem(Strings.get("compDeleteItem"));
-		JMenuItem attrs = new JMenuItem(Strings.get("compShowAttrItem"));
-		JMenuItem rotate = new JMenuItem(Strings.get("compRotate"));
+		JMenuItem del = new JMenuItem(S.get("compDeleteItem"));
+		JMenuItem attrs = new JMenuItem(S.get("compShowAttrItem"));
+		JMenuItem rotate = new JMenuItem(S.get("compRotate"));
 
 		MenuComponent(Project proj, Circuit circ, Component comp) {
 			this.proj = proj;
@@ -86,7 +88,7 @@ public class MenuTool extends Tool {
 				Circuit circ = proj.getCurrentCircuit();
 				CircuitMutation xn = new CircuitMutation(circ);
 				xn.remove(comp);
-				proj.doAction(xn.toAction(Strings.getter(
+				proj.doAction(xn.toAction(S.getter(
 						"removeComponentAction", comp.getFactory()
 								.getDisplayGetter())));
 			} else if (src == attrs) {
@@ -96,7 +98,7 @@ public class MenuTool extends Tool {
 				CircuitMutation xn = new CircuitMutation(circ);
 				Direction d = comp.getAttributeSet().getValue(StdAttr.FACING);
 				xn.set(comp, StdAttr.FACING, d.getRight());
-				proj.doAction(xn.toAction(Strings.getter(
+				proj.doAction(xn.toAction(S.getter(
 						"rotateComponentAction", comp.getFactory()
 								.getDisplayGetter())));
 			}
@@ -106,9 +108,9 @@ public class MenuTool extends Tool {
 	private class MenuSelection extends JPopupMenu implements ActionListener {
 		private static final long serialVersionUID = 1L;
 		Project proj;
-		JMenuItem del = new JMenuItem(Strings.get("selDeleteItem"));
-		JMenuItem cut = new JMenuItem(Strings.get("selCutItem"));
-		JMenuItem copy = new JMenuItem(Strings.get("selCopyItem"));
+		JMenuItem del = new JMenuItem(S.get("selDeleteItem"));
+		JMenuItem cut = new JMenuItem(S.get("selCutItem"));
+		JMenuItem copy = new JMenuItem(S.get("selCopyItem"));
 
 		MenuSelection(Project proj) {
 			this.proj = proj;
@@ -152,12 +154,12 @@ public class MenuTool extends Tool {
 
 	@Override
 	public String getDescription() {
-		return Strings.get("menuToolDesc");
+		return S.get("menuToolDesc");
 	}
 
 	@Override
 	public String getDisplayName() {
-		return Strings.get("menuTool");
+		return S.get("menuTool");
 	}
 
 	@Override

@@ -34,6 +34,8 @@
 
 package com.cburch.logisim.std.wiring;
 
+import static com.cburch.logisim.std.Strings.S;
+
 import java.awt.Graphics2D;
 
 import com.cburch.logisim.circuit.Wire;
@@ -68,7 +70,7 @@ public class Power extends InstanceFactory {
 	}
 
 	public Power() {
-		super("Power", Strings.getter("powerComponent"));
+		super("Power", S.getter("powerComponent"));
 		setIconName("power.gif");
 		setAttributes(new Attribute[] { StdAttr.FACING, StdAttr.WIDTH },
 				new Object[] { Direction.NORTH, BitWidth.ONE });

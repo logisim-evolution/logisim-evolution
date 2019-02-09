@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.util;
 
+import static com.cburch.logisim.util.Strings.S;
+
 import java.awt.Event;
 import java.awt.event.InputEvent;
 import java.util.ArrayList;
@@ -42,17 +44,17 @@ public class InputEventUtil {
 		StringTokenizer toks = new StringTokenizer(str);
 		while (toks.hasMoreTokens()) {
 			String s = toks.nextToken();
-			if (s.equals(Strings.get("ctrlMod")))
+			if (s.equals(S.get("ctrlMod")))
 				ret |= InputEvent.CTRL_DOWN_MASK;
-			else if (s.equals(Strings.get("altMod")))
+			else if (s.equals(S.get("altMod")))
 				ret |= InputEvent.ALT_DOWN_MASK;
-			else if (s.equals(Strings.get("shiftMod")))
+			else if (s.equals(S.get("shiftMod")))
 				ret |= InputEvent.SHIFT_DOWN_MASK;
-			else if (s.equals(Strings.get("button1Mod")))
+			else if (s.equals(S.get("button1Mod")))
 				ret |= InputEvent.BUTTON1_DOWN_MASK;
-			else if (s.equals(Strings.get("button2Mod")))
+			else if (s.equals(S.get("button2Mod")))
 				ret |= InputEvent.BUTTON2_DOWN_MASK;
-			else if (s.equals(Strings.get("button3Mod")))
+			else if (s.equals(S.get("button3Mod")))
 				ret |= InputEvent.BUTTON3_DOWN_MASK;
 			else
 				throw new NumberFormatException("InputEventUtil");
@@ -86,17 +88,17 @@ public class InputEventUtil {
 	public static String toDisplayString(int mods) {
 		ArrayList<String> arr = new ArrayList<String>();
 		if ((mods & InputEvent.CTRL_DOWN_MASK) != 0)
-			arr.add(Strings.get("ctrlMod"));
+			arr.add(S.get("ctrlMod"));
 		if ((mods & InputEvent.ALT_DOWN_MASK) != 0)
-			arr.add(Strings.get("altMod"));
+			arr.add(S.get("altMod"));
 		if ((mods & InputEvent.SHIFT_DOWN_MASK) != 0)
-			arr.add(Strings.get("shiftMod"));
+			arr.add(S.get("shiftMod"));
 		if ((mods & InputEvent.BUTTON1_DOWN_MASK) != 0)
-			arr.add(Strings.get("button1Mod"));
+			arr.add(S.get("button1Mod"));
 		if ((mods & InputEvent.BUTTON2_DOWN_MASK) != 0)
-			arr.add(Strings.get("button2Mod"));
+			arr.add(S.get("button2Mod"));
 		if ((mods & InputEvent.BUTTON3_DOWN_MASK) != 0)
-			arr.add(Strings.get("button3Mod"));
+			arr.add(S.get("button3Mod"));
 
 		if (arr.isEmpty())
 			return "";
@@ -118,13 +120,13 @@ public class InputEventUtil {
 	public static String toKeyDisplayString(int mods) {
 		ArrayList<String> arr = new ArrayList<String>();
 		if ((mods & Event.META_MASK) != 0)
-			arr.add(Strings.get("metaMod"));
+			arr.add(S.get("metaMod"));
 		if ((mods & Event.CTRL_MASK) != 0)
-			arr.add(Strings.get("ctrlMod"));
+			arr.add(S.get("ctrlMod"));
 		if ((mods & Event.ALT_MASK) != 0)
-			arr.add(Strings.get("altMod"));
+			arr.add(S.get("altMod"));
 		if ((mods & Event.SHIFT_MASK) != 0)
-			arr.add(Strings.get("shiftMod"));
+			arr.add(S.get("shiftMod"));
 
 		Iterator<String> it = arr.iterator();
 		if (it.hasNext()) {

@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.std.wiring;
 
+import static com.cburch.logisim.std.Strings.S;
+
 import javax.swing.JTextField;
 
 import com.cburch.logisim.data.Attribute;
@@ -62,14 +64,14 @@ public class DurationAttribute extends Attribute<Integer> {
 			Integer ret = Integer.valueOf(value);
 			if (ret.intValue() < min) {
 				throw new NumberFormatException(StringUtil.format(
-						Strings.get("durationSmallMessage"), "" + min));
+						S.get("durationSmallMessage"), "" + min));
 			} else if (ret.intValue() > max) {
 				throw new NumberFormatException(StringUtil.format(
-						Strings.get("durationLargeMessage"), "" + max));
+						S.get("durationLargeMessage"), "" + max));
 			}
 			return ret;
 		} catch (NumberFormatException e) {
-			throw new NumberFormatException(Strings.get("freqInvalidMessage"));
+			throw new NumberFormatException(S.get("freqInvalidMessage"));
 		}
 	}
 
@@ -77,16 +79,16 @@ public class DurationAttribute extends Attribute<Integer> {
 	public String toDisplayString(Integer value) {
 		if (TickUnits) {
 			if (value.equals(Integer.valueOf(1))) {
-				return Strings.get("clockDurationOneValue");
+				return S.get("clockDurationOneValue");
 			} else {
-				return StringUtil.format(Strings.get("clockDurationValue"),
+				return StringUtil.format(S.get("clockDurationValue"),
 						value.toString());
 			}
 		} else  {
 			if (value.equals(Integer.valueOf(1))) {
-				return Strings.get("PORDurationOneValue");
+				return S.get("PORDurationOneValue");
 			} else {
-				return StringUtil.format(Strings.get("PORDurationValue"),
+				return StringUtil.format(S.get("PORDurationValue"),
 						value.toString());
 			}
 		}

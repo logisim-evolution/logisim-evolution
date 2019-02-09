@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.gui.main;
 
+import static com.cburch.logisim.gui.Strings.S;
+
 import java.util.List;
 
 import com.cburch.draw.toolbar.AbstractToolbarModel;
@@ -54,22 +56,22 @@ class ProjectToolbarModel extends AbstractToolbarModel implements
 
 		itemAdd = new LogisimToolbarItem(menu, "projadd.gif",
 				LogisimMenuBar.ADD_CIRCUIT,
-				Strings.getter("projectAddCircuitTip"));
+				S.getter("projectAddCircuitTip"));
 		itemUp = new LogisimToolbarItem(menu, "projup.gif",
 				LogisimMenuBar.MOVE_CIRCUIT_UP,
-				Strings.getter("projectMoveCircuitUpTip"));
+				S.getter("projectMoveCircuitUpTip"));
 		itemDown = new LogisimToolbarItem(menu, "projdown.gif",
 				LogisimMenuBar.MOVE_CIRCUIT_DOWN,
-				Strings.getter("projectMoveCircuitDownTip"));
+				S.getter("projectMoveCircuitDownTip"));
 		itemDelete = new LogisimToolbarItem(menu, "projdel.gif",
 				LogisimMenuBar.REMOVE_CIRCUIT,
-				Strings.getter("projectRemoveCircuitTip"));
+				S.getter("projectRemoveCircuitTip"));
 		itemLayout = new LogisimToolbarItem(menu, "projlayo.gif",
 				LogisimMenuBar.EDIT_LAYOUT,
-				Strings.getter("projectEditLayoutTip"));
+				S.getter("projectEditLayoutTip"));
 		itemAppearance = new LogisimToolbarItem(menu, "projapp.gif",
 				LogisimMenuBar.EDIT_APPEARANCE,
-				Strings.getter("projectEditAppearanceTip"));
+				S.getter("projectEditAppearanceTip"));
 
 		items = UnmodifiableList.create(new ToolbarItem[] { itemAdd, itemUp,
 				itemDown, itemDelete, new ToolbarSeparator(4), itemLayout,

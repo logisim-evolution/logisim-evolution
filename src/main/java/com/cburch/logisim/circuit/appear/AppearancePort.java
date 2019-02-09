@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.circuit.appear;
 
+import static com.cburch.logisim.circuit.Strings.S;
+
 import java.awt.Color;
 import java.awt.Graphics;
 import java.util.List;
@@ -76,7 +78,7 @@ public class AppearancePort extends AppearanceElement {
 
 	@Override
 	public String getDisplayName() {
-		return Strings.get("circuitPort");
+		return S.get("circuitPort");
 	}
 
 	@Override

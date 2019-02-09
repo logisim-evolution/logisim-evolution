@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.fpga.fpgagui;
 
+import static com.cburch.logisim.fpga.Strings.S;
+
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -465,7 +467,7 @@ MouseListener,PreferenceChangeListener {
 		panel.add(textTargetFreq, c);
 		frequenciesList.addActionListener(this);
 		frequenciesList.setEnabled(true);
-		frequenciesList.addItem(Strings.get("Custom"));
+		frequenciesList.addItem(S.get("Custom"));
 		UpdateFrequencies();
 		frequenciesList.setActionCommand("Frequency");
 		c.gridx = 1;

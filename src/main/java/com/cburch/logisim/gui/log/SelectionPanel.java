@@ -29,6 +29,8 @@
  *******************************************************************************/
 package com.cburch.logisim.gui.log;
 
+import static com.cburch.logisim.gui.Strings.S;
+
 import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
@@ -222,7 +224,7 @@ class SelectionPanel extends LogPanel {
 		// enable area
 		enableChoosePanelCheckPanel = new JPanel(new FlowLayout());
 		enableChoosePanelCheckLabel = new JLabel(
-				Strings.get("timeSelectionEnable"));
+				S.get("timeSelectionEnable"));
 		enableChoosePanelCheckBox = new JCheckBox();
 		enableChoosePanelCheckBox.setSelected(false);
 		enableChoosePanelCheckBox.addItemListener(listener);
@@ -309,7 +311,7 @@ class SelectionPanel extends LogPanel {
 
 	@Override
 	public String getHelpText() {
-		return Strings.get("selectionHelp");
+		return S.get("selectionHelp");
 	}
 
 	public TimelineParam getTimelineParam() {
@@ -331,18 +333,18 @@ class SelectionPanel extends LogPanel {
 
 	@Override
 	public String getTitle() {
-		return Strings.get("selectionTab");
+		return S.get("selectionTab");
 	}
 
 	@Override
 	public void localeChanged() {
-		addTool.setText(Strings.get("selectionAdd"));
-		changeBase.setText(Strings.get("selectionChangeBase"));
-		moveUp.setText(Strings.get("selectionMoveUp"));
-		moveDown.setText(Strings.get("selectionMoveDown"));
-		remove.setText(Strings.get("selectionRemove"));
-		chooseClkLabel.setText(Strings.get("timeSelectionClock"));
-		chooseClkFrequencyLabel.setText(Strings.get("timeSelectionFrequency"));
+		addTool.setText(S.get("selectionAdd"));
+		changeBase.setText(S.get("selectionChangeBase"));
+		moveUp.setText(S.get("selectionMoveUp"));
+		moveDown.setText(S.get("selectionMoveDown"));
+		remove.setText(S.get("selectionRemove"));
+		chooseClkLabel.setText(S.get("timeSelectionClock"));
+		chooseClkFrequencyLabel.setText(S.get("timeSelectionFrequency"));
 		selector.localeChanged();
 		list.localeChanged();
 	}

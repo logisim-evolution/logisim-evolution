@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.circuit;
 
+import static com.cburch.logisim.circuit.Strings.S;
+
 import java.awt.Graphics;
 import java.awt.Stroke;
 import java.awt.BasicStroke;
@@ -83,15 +85,15 @@ public final class Wire implements Component, AttributeSet, CustomHandles,
 	public static final Stroke HIGHLIGHTED_STROKE = new BasicStroke(3, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[]{7}, 0);
 	public static final double DOT_MULTIPLY_FACTOR = 1.35; /* multiply factor for the intersection points */
 	public static final AttributeOption VALUE_HORZ = new AttributeOption(
-			"horz", Strings.getter("wireDirectionHorzOption"));
+			"horz", S.getter("wireDirectionHorzOption"));
 	public static final AttributeOption VALUE_VERT = new AttributeOption(
-			"vert", Strings.getter("wireDirectionVertOption"));
+			"vert", S.getter("wireDirectionVertOption"));
 
 	public static final Attribute<AttributeOption> dir_attr = Attributes
-			.forOption("direction", Strings.getter("wireDirectionAttr"),
+			.forOption("direction", S.getter("wireDirectionAttr"),
 					new AttributeOption[] { VALUE_HORZ, VALUE_VERT });
 	public static final Attribute<Integer> len_attr = Attributes.forInteger(
-			"length", Strings.getter("wireLengthAttr"));
+			"length", S.getter("wireLengthAttr"));
 
 	private static final List<Attribute<?>> ATTRIBUTES = Arrays
 			.asList(new Attribute<?>[] { dir_attr, len_attr });

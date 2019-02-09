@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.gui.opts;
 
+import static com.cburch.logisim.gui.Strings.S;
+
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -83,8 +85,8 @@ public class OptionsFrame extends LFrame {
 				tabbedPane.setToolTipTextAt(i, panels[i].getToolTipText());
 				panels[i].localeChanged();
 			}
-			revert.setText(Strings.get("revertButton"));
-			close.setText(Strings.get("closeButton"));
+			revert.setText(S.get("revertButton"));
+			close.setText(S.get("closeButton"));
 			windowManager.localeChanged();
 		}
 	}
@@ -92,7 +94,7 @@ public class OptionsFrame extends LFrame {
 	private class WindowMenuManager extends WindowMenuItemManager implements
 			LocaleListener {
 		WindowMenuManager() {
-			super(Strings.get("optionsFrameMenuItem"), false);
+			super(S.get("optionsFrameMenuItem"), false);
 		}
 
 		@Override
@@ -102,14 +104,14 @@ public class OptionsFrame extends LFrame {
 
 		public void localeChanged() {
 			String title = project.getLogisimFile().getDisplayName();
-			setText(StringUtil.format(Strings.get("optionsFrameMenuItem"),
+			setText(StringUtil.format(S.get("optionsFrameMenuItem"),
 					title));
 		}
 	}
 
 	private static String computeTitle(LogisimFile file) {
 		String name = file == null ? "???" : file.getName();
-		return StringUtil.format(Strings.get("optionsFrameTitle"), name);
+		return StringUtil.format(S.get("optionsFrameTitle"), name);
 	}
 
 	private static final long serialVersionUID = 1L;

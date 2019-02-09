@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.gui.main;
 
+import static com.cburch.logisim.gui.Strings.S;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -90,8 +92,8 @@ public class SelectionActions {
 
 		@Override
 		public String getName() {
-			return numAnchor == 1 ? Strings.get("dropComponentAction")
-					: Strings.get("dropComponentsAction");
+			return numAnchor == 1 ? S.get("dropComponentAction")
+					: S.get("dropComponentsAction");
 		}
 
 		@Override
@@ -134,7 +136,7 @@ public class SelectionActions {
 
 		@Override
 		public String getName() {
-			return Strings.get("copySelectionAction");
+			return S.get("copySelectionAction");
 		}
 
 		@Override
@@ -167,7 +169,7 @@ public class SelectionActions {
 
 		@Override
 		public String getName() {
-			return Strings.get("cutSelectionAction");
+			return S.get("cutSelectionAction");
 		}
 
 		@Override
@@ -196,7 +198,7 @@ public class SelectionActions {
 
 		@Override
 		public String getName() {
-			return Strings.get("deleteSelectionAction");
+			return S.get("deleteSelectionAction");
 		}
 
 		@Override
@@ -240,8 +242,7 @@ public class SelectionActions {
 
 		@Override
 		public String getName() {
-			return numDrops == 1 ? Strings.get("dropComponentAction") : Strings
-					.get("dropComponentsAction");
+			return numDrops == 1 ? S.get("dropComponentAction") : S.get("dropComponentsAction");
 		}
 
 		@Override
@@ -292,7 +293,7 @@ public class SelectionActions {
 
 		@Override
 		public String getName() {
-			return Strings.get("duplicateSelectionAction");
+			return S.get("duplicateSelectionAction");
 		}
 
 		@Override
@@ -349,7 +350,7 @@ public class SelectionActions {
 					Dependencies depends = canvas.getProject()
 							.getDependencies();
 					if (!depends.canAdd(circ, circFact.getSubcircuit())) {
-						canvas.setErrorMessage(com.cburch.logisim.tools.Strings
+						canvas.setErrorMessage(com.cburch.logisim.tools.Strings.S
 								.getter("circularError"));
 						return;
 					}
@@ -369,7 +370,7 @@ public class SelectionActions {
 
 		@Override
 		public String getName() {
-			return Strings.get("pasteClipboardAction");
+			return S.get("pasteClipboardAction");
 		}
 
 		@Override
@@ -412,7 +413,7 @@ public class SelectionActions {
 
 		@Override
 		public String getName() {
-			return Strings.get("moveSelectionAction");
+			return S.get("moveSelectionAction");
 		}
 
 		@Override
@@ -556,13 +557,13 @@ public class SelectionActions {
 					}
 					dropped.add(compFactory.getDisplayName());
 				} else {
-					String msg = Strings.get("pasteCloneQuery",
+					String msg = S.fmt("pasteCloneQuery",
 							compFactory.getName());
-					Object[] opts = { Strings.get("pasteCloneReplace"),
-							Strings.get("pasteCloneIgnore"),
-							Strings.get("pasteCloneCancel") };
+					Object[] opts = { S.get("pasteCloneReplace"),
+							S.get("pasteCloneIgnore"),
+							S.get("pasteCloneCancel") };
 					int select = JOptionPane.showOptionDialog(proj.getFrame(),
-							msg, Strings.get("pasteCloneTitle"), 0,
+							msg, S.get("pasteCloneTitle"), 0,
 							JOptionPane.QUESTION_MESSAGE, null, opts, opts[0]);
 					if (select == 0) {
 						copyFactory = candidate;
@@ -590,7 +591,7 @@ public class SelectionActions {
 		if (dropped != null) {
 			Collections.sort(dropped);
 			StringBuilder droppedStr = new StringBuilder();
-			droppedStr.append(Strings.get("pasteDropMessage"));
+			droppedStr.append(S.get("pasteDropMessage"));
 			String curName = dropped.get(0);
 			int curCount = 1;
 			int lines = 1;
@@ -618,7 +619,7 @@ public class SelectionActions {
 			area.setCaretPosition(0);
 			JScrollPane areaPane = new JScrollPane(area);
 			JOptionPane.showMessageDialog(proj.getFrame(), areaPane,
-					Strings.get("pasteDropTitle"), JOptionPane.WARNING_MESSAGE);
+					S.get("pasteDropTitle"), JOptionPane.WARNING_MESSAGE);
 		}
 
 		return replMap;

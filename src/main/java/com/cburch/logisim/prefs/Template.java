@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.prefs;
 
+import static com.cburch.logisim.proj.Strings.S;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -61,7 +63,7 @@ public class Template {
 	}
 
 	public static Template createEmpty() {
-		String circName = Strings.get("newCircuitName");
+		String circName = S.get("newCircuitName");
 		StringBuilder buf = new StringBuilder();
 		buf.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 		buf.append("<project source=\"" + Main.VERSION.mainVersion()

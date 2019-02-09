@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.std.wiring;
 
+import static com.cburch.logisim.std.Strings.S;
+
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -68,14 +70,11 @@ public class PullResistor extends InstanceFactory {
 	public static final Attribute<AttributeOption> ATTR_PULL_TYPE = Attributes
 			.forOption(
 					"pull",
-					Strings.getter("pullTypeAttr"),
+					S.getter("pullTypeAttr"),
 					new AttributeOption[] {
-							new AttributeOption(Value.FALSE, "0", Strings
-									.getter("pullZeroType")),
-							new AttributeOption(Value.TRUE, "1", Strings
-									.getter("pullOneType")),
-							new AttributeOption(Value.ERROR, "X", Strings
-									.getter("pullErrorType")) });
+							new AttributeOption(Value.FALSE, "0", S.getter("pullZeroType")),
+							new AttributeOption(Value.TRUE, "1", S.getter("pullOneType")),
+							new AttributeOption(Value.ERROR, "X", S.getter("pullErrorType")) });
 	public static final PullResistor FACTORY = new PullResistor();
 
 	private static final Icon ICON_SHAPED = Icons.getIcon("pullshap.gif");
@@ -83,7 +82,7 @@ public class PullResistor extends InstanceFactory {
 	private static final Icon ICON_RECTANGULAR = Icons.getIcon("pullrect.gif");
 
 	public PullResistor() {
-		super("Pull Resistor", Strings.getter("pullComponent"));
+		super("Pull Resistor", S.getter("pullComponent"));
 		setAttributes(new Attribute[] { StdAttr.FACING, ATTR_PULL_TYPE },
 				new Object[] { Direction.SOUTH, ATTR_PULL_TYPE.parse("0") });
 		setFacingAttribute(StdAttr.FACING);

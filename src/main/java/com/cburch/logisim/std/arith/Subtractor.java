@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.std.arith;
 
+import static com.cburch.logisim.std.Strings.S;
+
 import java.awt.Color;
 import java.awt.Graphics;
 
@@ -57,7 +59,7 @@ public class Subtractor extends InstanceFactory {
 	private static final int B_OUT = 4;
 
 	public Subtractor() {
-		super("Subtractor", Strings.getter("subtractorComponent"));
+		super("Subtractor", S.getter("subtractorComponent"));
 		setAttributes(new Attribute[] { StdAttr.WIDTH },
 				new Object[] { BitWidth.create(8) });
 		setKeyConfigurator(new BitWidthConfigurator(StdAttr.WIDTH));
@@ -70,11 +72,11 @@ public class Subtractor extends InstanceFactory {
 		ps[OUT] = new Port(0, 0, Port.OUTPUT, StdAttr.WIDTH);
 		ps[B_IN] = new Port(-20, -20, Port.INPUT, 1);
 		ps[B_OUT] = new Port(-20, 20, Port.OUTPUT, 1);
-		ps[IN0].setToolTip(Strings.getter("subtractorMinuendTip"));
-		ps[IN1].setToolTip(Strings.getter("subtractorSubtrahendTip"));
-		ps[OUT].setToolTip(Strings.getter("subtractorOutputTip"));
-		ps[B_IN].setToolTip(Strings.getter("subtractorBorrowInTip"));
-		ps[B_OUT].setToolTip(Strings.getter("subtractorBorrowOutTip"));
+		ps[IN0].setToolTip(S.getter("subtractorMinuendTip"));
+		ps[IN1].setToolTip(S.getter("subtractorSubtrahendTip"));
+		ps[OUT].setToolTip(S.getter("subtractorOutputTip"));
+		ps[B_IN].setToolTip(S.getter("subtractorBorrowInTip"));
+		ps[B_OUT].setToolTip(S.getter("subtractorBorrowOutTip"));
 		setPorts(ps);
 	}
 

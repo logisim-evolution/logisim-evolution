@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.file;
 
+import static com.cburch.logisim.file.Strings.S;
+
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -79,7 +81,7 @@ public class LogisimFile extends Library implements LibraryEventSource,CircuitLi
 			String oldname = (String) event.getData();
 			String newname = event.getCircuit().getName();
 			if (NameIsInUse(newname,event.getCircuit())) {
-				JOptionPane.showMessageDialog(null, "\""+newname+"\": "+Strings.get("circuitNameExists"),
+				JOptionPane.showMessageDialog(null, "\""+newname+"\": "+S.get("circuitNameExists"),
 						"",JOptionPane.ERROR_MESSAGE);
 				event.getCircuit().getStaticAttributes().setValue(CircuitAttributes.NAME_ATTR, oldname);
 			}
@@ -136,13 +138,13 @@ public class LogisimFile extends Library implements LibraryEventSource,CircuitLi
 				file.write(out, file.loader);
 			} catch (IOException e) {
 				file.loader.showError(StringUtil.format(
-						Strings.get("fileDuplicateError"), e.toString()));
+						S.get("fileDuplicateError"), e.toString()));
 			}
 			try {
 				out.close();
 			} catch (IOException e) {
 				file.loader.showError(StringUtil.format(
-						Strings.get("fileDuplicateError"), e.toString()));
+						S.get("fileDuplicateError"), e.toString()));
 			}
 		}
 	}
@@ -194,7 +196,7 @@ public class LogisimFile extends Library implements LibraryEventSource,CircuitLi
 				return loadSub(in, loader, file);
 			} catch (Exception t) {
 				loader.showError(StringUtil.format(
-						Strings.get("xmlFormatError"), firstExcept.toString()));
+						S.get("xmlFormatError"), firstExcept.toString()));
 			} finally {
 				try {
 					in.close();
@@ -211,7 +213,7 @@ public class LogisimFile extends Library implements LibraryEventSource,CircuitLi
 		try {
 			return loadSub(in, loader);
 		} catch (SAXException e) {
-			loader.showError(StringUtil.format(Strings.get("xmlFormatError"),
+			loader.showError(StringUtil.format(S.get("xmlFormatError"),
 					e.toString()));
 			return null;
 		}
@@ -262,7 +264,7 @@ public class LogisimFile extends Library implements LibraryEventSource,CircuitLi
 		this.loader = loader;
 
 		// Creates the default project name, adding an underscore if needed
-		name = Strings.get("defaultProjectName");
+		name = S.get("defaultProjectName");
 		if (Projects.windowNamed(name)) {
 			for (int i = 2; true; i++) {
 				if (!Projects.windowNamed(name + "_" + i)) {
@@ -325,7 +327,7 @@ public class LogisimFile extends Library implements LibraryEventSource,CircuitLi
 			reader.connect(writer);
 		} catch (IOException e) {
 			newloader.showError(StringUtil.format(
-					Strings.get("fileDuplicateError"), e.toString()));
+					S.get("fileDuplicateError"), e.toString()));
 			return null;
 		}
 		new WritingThread(writer, this).start();
@@ -333,7 +335,7 @@ public class LogisimFile extends Library implements LibraryEventSource,CircuitLi
 			return LogisimFile.load(reader, newloader);
 		} catch (IOException e) {
 			newloader.showError(StringUtil.format(
-					Strings.get("fileDuplicateError"), e.toString()));
+					S.get("fileDuplicateError"), e.toString()));
 			try {
 				reader.close();
 			} catch (IOException e1) {
@@ -473,7 +475,7 @@ public class LogisimFile extends Library implements LibraryEventSource,CircuitLi
 		for (Circuit circuit : getCircuits()) {
 			for (Component comp : circuit.getNonWires()) {
 				if (factories.contains(comp.getFactory())) {
-					return StringUtil.format(Strings.get("unloadUsedError"),
+					return StringUtil.format(S.get("unloadUsedError"),
 							circuit.getName());
 				}
 			}
@@ -483,10 +485,10 @@ public class LogisimFile extends Library implements LibraryEventSource,CircuitLi
 		MouseMappings mm = options.getMouseMappings();
 		for (Tool t : lib.getTools()) {
 			if (tb.usesToolFromSource(t)) {
-				return Strings.get("unloadToolbarError");
+				return S.get("unloadToolbarError");
 			}
 			if (mm.usesToolFromSource(t)) {
-				return Strings.get("unloadMappingError");
+				return S.get("unloadMappingError");
 			}
 		}
 
@@ -576,7 +578,7 @@ public class LogisimFile extends Library implements LibraryEventSource,CircuitLi
 			loader.showError("internal error configuring parser");
 		} catch (TransformerException e) {
 			String msg = e.getMessage();
-			String err = Strings.get("xmlConversionError");
+			String err = S.get("xmlConversionError");
 			if (msg == null)
 				err += ": " + msg;
 			loader.showError(err);

@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.std.gates;
 
+import static com.cburch.logisim.std.Strings.S;
+
 import java.awt.Graphics;
 import java.util.ArrayList;
 
@@ -82,7 +84,7 @@ class NorGate extends AbstractGate {
 	public static NorGate FACTORY = new NorGate();
 
 	private NorGate() {
-		super("NOR Gate", Strings.getter("norGateComponent"));
+		super("NOR Gate", S.getter("norGateComponent"));
 		setNegateOutput(true);
 		setRectangularLabel(OrGate.FACTORY.getRectangularLabel(null));
 		setIconNames("norGate.gif", "norGateRect.gif", "dinNorGate.gif");

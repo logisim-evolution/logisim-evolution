@@ -29,6 +29,8 @@
  *******************************************************************************/
 package com.cburch.logisim.gui.main;
 
+import static com.cburch.logisim.gui.Strings.S;
+
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
@@ -576,13 +578,13 @@ public class Canvas extends JPanel implements LocaleListener,
 
 			if (proj.getSimulator().isOscillating()) {
 				g.setColor(DEFAULT_ERROR_COLOR);
-				paintString(g, Strings.get("canvasOscillationError"));
+				paintString(g, S.get("canvasOscillationError"));
 				return;
 			}
 
 			if (proj.getSimulator().isExceptionEncountered()) {
 				g.setColor(DEFAULT_ERROR_COLOR);
-				paintString(g, Strings.get("canvasExceptionError"));
+				paintString(g, S.get("canvasExceptionError"));
 				return;
 			}
 
@@ -915,7 +917,7 @@ public class Canvas extends JPanel implements LocaleListener,
 			return;
 		}
 		viewport.setWidthMessage(
-				Strings.get("canvasWidthError") + (exceptions.size() == 1 ? "" : " (" + exceptions.size() + ")"));
+				S.get("canvasWidthError") + (exceptions.size() == 1 ? "" : " (" + exceptions.size() + ")"));
 		for (WidthIncompatibilityData ex : exceptions) {
 			Location p = ex.getPoint(0);
 			setArrows(p.getX(), p.getY(), p.getX(), p.getY());

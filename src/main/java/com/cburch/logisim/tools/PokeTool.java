@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.tools;
 
+import static com.cburch.logisim.tools.Strings.S;
+
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.event.KeyEvent;
@@ -182,12 +184,12 @@ public class PokeTool extends Tool {
 
 	@Override
 	public String getDescription() {
-		return Strings.get("pokeToolDesc");
+		return S.get("pokeToolDesc");
 	}
 
 	@Override
 	public String getDisplayName() {
-		return Strings.get("pokeTool");
+		return S.get("pokeTool");
 	}
 
 	@Override

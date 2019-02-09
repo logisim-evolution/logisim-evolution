@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.gui.start;
 
+import static com.cburch.logisim.gui.Strings.S;
+
 import java.awt.AWTEvent;
 import java.awt.Component;
 import java.awt.Toolkit;
@@ -164,7 +166,7 @@ public class Startup implements AWTEventListener {
 					i++;
 					String[] fmts = args[i].split(",");
 					if (fmts.length == 0) {
-						logger.error("{}", Strings.get("ttyFormatError"));
+						logger.error("{}", S.get("ttyFormatError"));
 					}
 					for (int j = 0; j < fmts.length; j++) {
 						String fmt = fmts[j].trim();
@@ -179,11 +181,11 @@ public class Startup implements AWTEventListener {
 						} else if (fmt.equals("stats")) {
 							ret.ttyFormat |= TtyInterface.FORMAT_STATISTICS;
 						} else {
-							logger.error("{}", Strings.get("ttyFormatError"));
+							logger.error("{}", S.get("ttyFormatError"));
 						}
 					}
 				} else {
-					logger.error("{}", Strings.get("ttyFormatError"));
+					logger.error("{}", S.get("ttyFormatError"));
 					return null;
 				}
 			} else if (arg.equals("-sub")) {
@@ -192,37 +194,37 @@ public class Startup implements AWTEventListener {
 					File b = new File(args[i + 2]);
 					if (ret.substitutions.containsKey(a)) {
 						logger.error("{}",
-								Strings.get("argDuplicateSubstitutionError"));
+								S.get("argDuplicateSubstitutionError"));
 						return null;
 					} else {
 						ret.substitutions.put(a, b);
 						i += 2;
 					}
 				} else {
-					logger.error("{}", Strings.get("argTwoSubstitutionError"));
+					logger.error("{}", S.get("argTwoSubstitutionError"));
 					return null;
 				}
 			} else if (arg.equals("-load")) {
 				if (i + 1 < args.length) {
 					i++;
 					if (ret.loadFile != null) {
-						logger.error("{}", Strings.get("loadMultipleError"));
+						logger.error("{}", S.get("loadMultipleError"));
 					}
 					File f = new File(args[i]);
 					ret.loadFile = f;
 				} else {
-					logger.error("{}", Strings.get("loadNeedsFileError"));
+					logger.error("{}", S.get("loadNeedsFileError"));
 					return null;
 				}
 			} else if (arg.equals("-empty")) {
 				if (ret.templFile != null || ret.templEmpty || ret.templPlain) {
-					logger.error("{}", Strings.get("argOneTemplateError"));
+					logger.error("{}", S.get("argOneTemplateError"));
 					return null;
 				}
 				ret.templEmpty = true;
 			} else if (arg.equals("-plain")) {
 				if (ret.templFile != null || ret.templEmpty || ret.templPlain) {
-					logger.error("{}", Strings.get("argOneTemplateError"));
+					logger.error("{}", S.get("argOneTemplateError"));
 					return null;
 				}
 				ret.templPlain = true;
@@ -241,7 +243,7 @@ public class Startup implements AWTEventListener {
 					AppPreferences.GATE_SHAPE
 					.set(AppPreferences.SHAPE_RECTANGULAR);
 				} else {
-					logger.error("{}", Strings.get("argGatesOptionError"));
+					logger.error("{}", S.get("argGatesOptionError"));
 					System.exit(-1);
 				}
 			} else if (arg.equals("-locale")) {
@@ -261,12 +263,12 @@ public class Startup implements AWTEventListener {
 				} else if (a.equals("no")) {
 					AppPreferences.ACCENTS_REPLACE.setBoolean(true);
 				} else {
-					logger.error("{}", Strings.get("argAccentsOptionError"));
+					logger.error("{}", S.get("argAccentsOptionError"));
 					System.exit(-1);
 				}
 			} else if (arg.equals("-template")) {
 				if (ret.templFile != null || ret.templEmpty || ret.templPlain) {
-					logger.error("{}", Strings.get("argOneTemplateError"));
+					logger.error("{}", S.get("argOneTemplateError"));
 					return null;
 				}
 				i++;
@@ -276,10 +278,10 @@ public class Startup implements AWTEventListener {
 				ret.templFile = new File(args[i]);
 				if (!ret.templFile.exists()) {
 					logger.error("{}", StringUtil.format(
-							Strings.get("templateMissingError"), args[i]));
+							S.get("templateMissingError"), args[i]));
 				} else if (!ret.templFile.canRead()) {
 					logger.error("{}", StringUtil.format(
-							Strings.get("templateCannotReadError"), args[i]));
+							S.get("templateCannotReadError"), args[i]));
 				}
 			} else if (arg.equals("-nosplash")) {
 				ret.showSplash = false;
@@ -377,7 +379,7 @@ public class Startup implements AWTEventListener {
 				} else if (a.equals("no")) {
 					AppPreferences.QUESTA_VALIDATION.setBoolean(false);
 				} else {
-					logger.error("{}", Strings.get("argQuestaOptionError"));
+					logger.error("{}", S.get("argQuestaOptionError"));
 					System.exit(-1);
 				}
 			} else if (arg.charAt(0) == '-') {
@@ -392,11 +394,11 @@ public class Startup implements AWTEventListener {
 			printUsage();
 		}
 		if (ret.isTty && ret.filesToOpen.isEmpty()) {
-			logger.error("{}", Strings.get("ttyNeedsFileError"));
+			logger.error("{}", S.get("ttyNeedsFileError"));
 			return null;
 		}
 		if (ret.loadFile != null && !ret.isTty) {
-			logger.error("{}", Strings.get("loadNeedsTtyError"));
+			logger.error("{}", S.get("loadNeedsTtyError"));
 			return null;
 		}
 
@@ -404,28 +406,28 @@ public class Startup implements AWTEventListener {
 	}
 
 	private static void printUsage() {
-		System.err.println(StringUtil.format(Strings.get("argUsage"),
+		System.err.println(StringUtil.format(S.get("argUsage"),
 				Startup.class.getName())); // OK
 		System.err.println(); // OK
-		System.err.println(Strings.get("argOptionHeader")); // OK
-		System.err.println("   " + Strings.get("argAccentsOption")); // OK
-		System.err.println("   " + Strings.get("argClearOption")); // OK
-		System.err.println("   " + Strings.get("argEmptyOption")); // OK
-		System.err.println("   " + Strings.get("argTestOption")); // OK
-		System.err.println("   " + Strings.get("argGatesOption")); // OK
-		System.err.println("   " + Strings.get("argHelpOption")); // OK
-		System.err.println("   " + Strings.get("argLoadOption")); // OK
-		System.err.println("   " + Strings.get("argLocaleOption")); // OK
-		System.err.println("   " + Strings.get("argNoSplashOption")); // OK
-		System.err.println("   " + Strings.get("argPlainOption")); // OK
-		System.err.println("   " + Strings.get("argSubOption")); // OK
-		System.err.println("   " + Strings.get("argTemplateOption")); // OK
-		System.err.println("   " + Strings.get("argTtyOption")); // OK
-		System.err.println("   " + Strings.get("argQuestaOption")); // OK
-		System.err.println("   " + Strings.get("argVersionOption")); // OK
-		System.err.println("   " + Strings.get("argTestCircGen")); // OK
-		System.err.println("   " + Strings.get("argTestCircuit")); // OK
-		System.err.println("   " + Strings.get("argTestImplement")); // OK
+		System.err.println(S.get("argOptionHeader")); // OK
+		System.err.println("   " + S.get("argAccentsOption")); // OK
+		System.err.println("   " + S.get("argClearOption")); // OK
+		System.err.println("   " + S.get("argEmptyOption")); // OK
+		System.err.println("   " + S.get("argTestOption")); // OK
+		System.err.println("   " + S.get("argGatesOption")); // OK
+		System.err.println("   " + S.get("argHelpOption")); // OK
+		System.err.println("   " + S.get("argLoadOption")); // OK
+		System.err.println("   " + S.get("argLocaleOption")); // OK
+		System.err.println("   " + S.get("argNoSplashOption")); // OK
+		System.err.println("   " + S.get("argPlainOption")); // OK
+		System.err.println("   " + S.get("argSubOption")); // OK
+		System.err.println("   " + S.get("argTemplateOption")); // OK
+		System.err.println("   " + S.get("argTtyOption")); // OK
+		System.err.println("   " + S.get("argQuestaOption")); // OK
+		System.err.println("   " + S.get("argVersionOption")); // OK
+		System.err.println("   " + S.get("argTestCircGen")); // OK
+		System.err.println("   " + S.get("argTestCircuit")); // OK
+		System.err.println("   " + S.get("argTestImplement")); // OK
 
 		System.exit(-1);
 	}
@@ -454,15 +456,15 @@ public class Startup implements AWTEventListener {
 	}
 
 	private static void setLocale(String lang) {
-		Locale[] opts = Strings.getLocaleOptions();
+		Locale[] opts = S.getLocaleOptions();
 		for (int i = 0; i < opts.length; i++) {
 			if (lang.equals(opts[i].toString())) {
 				LocaleManager.setLocale(opts[i]);
 				return;
 			}
 		}
-		logger.warn("{}", Strings.get("invalidLocaleError"));
-		logger.warn("{}", Strings.get("invalidLocaleOptionsHeader"));
+		logger.warn("{}", S.get("invalidLocaleError"));
+		logger.warn("{}", S.get("invalidLocaleOptionsHeader"));
 
 		for (int i = 0; i < opts.length; i++) {
 			logger.warn("   {}", opts[i].toString());

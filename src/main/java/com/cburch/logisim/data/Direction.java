@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.data;
 
+import static com.cburch.logisim.data.Strings.S;
+
 import com.cburch.logisim.util.StringGetter;
 
 public class Direction implements AttributeOptionInterface {
@@ -46,17 +48,17 @@ public class Direction implements AttributeOptionInterface {
 	}
 
 	public static final Direction EAST = new Direction("east",
-			Strings.getter("directionEastOption"),
-			Strings.getter("directionEastVertical"), 0);
+			S.getter("directionEastOption"),
+			S.getter("directionEastVertical"), 0);
 	public static final Direction WEST = new Direction("west",
-			Strings.getter("directionWestOption"),
-			Strings.getter("directionWestVertical"), 1);
+			S.getter("directionWestOption"),
+			S.getter("directionWestVertical"), 1);
 	public static final Direction NORTH = new Direction("north",
-			Strings.getter("directionNorthOption"),
-			Strings.getter("directionNorthVertical"), 2);
+			S.getter("directionNorthOption"),
+			S.getter("directionNorthVertical"), 2);
 	public static final Direction SOUTH = new Direction("south",
-			Strings.getter("directionSouthOption"),
-			Strings.getter("directionSouthVertical"), 3);
+			S.getter("directionSouthOption"),
+			S.getter("directionSouthVertical"), 3);
 
 	public static final Direction[] cardinals = { NORTH, EAST, SOUTH, WEST };
 

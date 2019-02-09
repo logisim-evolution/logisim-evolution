@@ -30,6 +30,8 @@
 
 package com.cburch.draw.shapes;
 
+import static com.cburch.draw.Strings.S;
+
 import java.awt.Graphics;
 import java.util.List;
 import java.util.Random;
@@ -72,7 +74,7 @@ public class Oval extends Rectangular {
 
 	@Override
 	public String getDisplayName() {
-		return Strings.get("shapeOval");
+		return S.get("shapeOval");
 	}
 
 	@Override

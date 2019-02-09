@@ -35,6 +35,8 @@
 
 package com.cburch.logisim.gui.test;
 
+import static com.cburch.logisim.gui.Strings.S;
+
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitEvent;
 import com.cburch.logisim.circuit.CircuitListener;
@@ -56,14 +58,14 @@ public class TestThread extends UniquelyNamedThread implements CircuitListener {
 	// used only for automated testing via command line arguments
 	public static int doTestVector(Project proj, Circuit circuit,
 			String vectorname) {
-		System.out.println(StringUtil.format(Strings.get("testLoadingVector"),
+		System.out.println(StringUtil.format(S.get("testLoadingVector"),
 				vectorname));
 		TestVector vec;
 		try {
 			vec = new TestVector(vectorname);
 		} catch (Exception e) {
 			System.err.println(StringUtil.format(
-					Strings.get("testLoadingFailed"), e.getMessage()));
+					S.get("testLoadingFailed"), e.getMessage()));
 			return -1;
 		}
 
@@ -72,11 +74,11 @@ public class TestThread extends UniquelyNamedThread implements CircuitListener {
 			tester = new TestThread(proj, circuit, vec);
 		} catch (TestException e) {
 			System.err.println(StringUtil.format(
-					Strings.get("testSetupFailed"), e.getMessage()));
+					S.get("testSetupFailed"), e.getMessage()));
 			return -1;
 		}
 
-		System.out.println(StringUtil.format(Strings.get("testRunning"),
+		System.out.println(StringUtil.format(S.get("testRunning"),
 				Integer.toString(vec.data.size())));
 
 		int numPass = 0, numFail = 0;
@@ -87,7 +89,7 @@ public class TestThread extends UniquelyNamedThread implements CircuitListener {
 				numPass++;
 			} catch (FailException e) {
 				System.out.println();
-				System.err.println(StringUtil.format(Strings.get("testFailed"),
+				System.err.println(StringUtil.format(S.get("testFailed"),
 						Integer.toString(i + 1)));
 				for (FailException e1 : e.getAll())
 					System.out.println("  " + e1.getMessage());
@@ -95,14 +97,14 @@ public class TestThread extends UniquelyNamedThread implements CircuitListener {
 				continue;
 			} catch (TestException e) {
 				System.out.println();
-				System.err.println(StringUtil.format(Strings.get("testFailed"),
+				System.err.println(StringUtil.format(S.get("testFailed"),
 						Integer.toString(i + 1) + " " + e.getMessage()));
 				numFail++;
 				continue;
 			}
 		}
 		System.out.println();
-		System.out.println(StringUtil.format(Strings.get("testResults"),
+		System.out.println(StringUtil.format(S.get("testResults"),
 				Integer.toString(numPass), Integer.toString(numFail)));
 		return 0;
 	}

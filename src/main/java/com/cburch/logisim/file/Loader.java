@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.file;
 
+import static com.cburch.logisim.file.Strings.S;
+
 import java.awt.Component;
 import java.awt.Dimension;
 import java.io.File;
@@ -63,7 +65,7 @@ public class Loader implements LibraryLoader {
 
 		@Override
 		public String getDescription() {
-			return Strings.get("jarFileFilter");
+			return S.get("jarFileFilter");
 		}
 	}
 
@@ -75,7 +77,7 @@ public class Loader implements LibraryLoader {
 
 		@Override
 		public String getDescription() {
-			return Strings.get("logisimFileFilter");
+			return S.get("logisimFileFilter");
 		}
 	}
 
@@ -87,7 +89,7 @@ public class Loader implements LibraryLoader {
 
 		@Override
 		public String getDescription() {
-			return Strings.get("tclFileFilter");
+			return S.get("tclFileFilter");
 		}
 	}
 
@@ -182,15 +184,15 @@ public class Loader implements LibraryLoader {
 		while (!file.canRead()) {
 			// It doesn't exist. Figure it out from the user.
 			JOptionPane.showMessageDialog(parent, StringUtil.format(
-					Strings.get("fileLibraryMissingError"), file.getName()));
+					S.get("fileLibraryMissingError"), file.getName()));
 			JFileChooser chooser = createChooser();
 			chooser.setFileFilter(filter);
 			chooser.setDialogTitle(StringUtil.format(
-					Strings.get("fileLibraryMissingTitle"), file.getName()));
+					S.get("fileLibraryMissingTitle"), file.getName()));
 			int action = chooser.showDialog(parent,
-					Strings.get("fileLibraryMissingButton"));
+					S.get("fileLibraryMissingButton"));
 			if (action != JFileChooser.APPROVE_OPTION) {
-				throw new LoaderException(Strings.get("fileLoadCanceledError"));
+				throw new LoaderException(S.get("fileLoadCanceledError"));
 			}
 			file = chooser.getSelectedFile();
 		}
@@ -241,11 +243,11 @@ public class Loader implements LibraryLoader {
 			retClass = loader.loadClass(className);
 		} catch (ClassNotFoundException e) {
 			throw new LoadFailedException(StringUtil.format(
-					Strings.get("jarClassNotFoundError"), className));
+					S.get("jarClassNotFoundError"), className));
 		}
 		if (!(Library.class.isAssignableFrom(retClass))) {
 			throw new LoadFailedException(StringUtil.format(
-					Strings.get("jarClassNotLibraryError"), className));
+					S.get("jarClassNotLibraryError"), className));
 		}
 
 		// instantiate library
@@ -254,7 +256,7 @@ public class Loader implements LibraryLoader {
 			ret = (Library) retClass.newInstance();
 		} catch (Exception e) {
 			throw new LoadFailedException(StringUtil.format(
-					Strings.get("jarLibraryNotCreatedError"), className));
+					S.get("jarLibraryNotCreatedError"), className));
 		}
 		return ret;
 	}
@@ -279,7 +281,7 @@ public class Loader implements LibraryLoader {
 		for (File fileOpening : filesOpening) {
 			if (fileOpening.equals(actual)) {
 				throw new LoadFailedException(StringUtil.format(
-						Strings.get("logisimCircularError"),
+						S.get("logisimCircularError"),
 						toProjectName(actual)));
 			}
 		}
@@ -290,7 +292,7 @@ public class Loader implements LibraryLoader {
 			ret = LogisimFile.load(actual, this);
 		} catch (IOException e) {
 			throw new LoadFailedException(StringUtil.format(
-					Strings.get("logisimLoadError"), toProjectName(actual),
+					S.get("logisimLoadError"), toProjectName(actual),
 					e.toString()));
 		} finally {
 			filesOpening.pop();
@@ -352,9 +354,8 @@ public class Loader implements LibraryLoader {
 		Library reference = LibraryManager.instance.findReference(file, dest);
 		if (reference != null) {
 			JOptionPane.showMessageDialog(parent, StringUtil.format(
-					Strings.get("fileCircularError"),
-					reference.getDisplayName()), Strings
-					.get("fileSaveErrorTitle"), JOptionPane.ERROR_MESSAGE);
+					S.get("fileCircularError"),
+					reference.getDisplayName()), S.get("fileSaveErrorTitle"), JOptionPane.ERROR_MESSAGE);
 			return false;
 		}
 
@@ -381,8 +382,8 @@ public class Loader implements LibraryLoader {
 				dest.delete();
 			JOptionPane.showMessageDialog(
 					parent,
-					StringUtil.format(Strings.get("fileSaveError"),
-							e.toString()), Strings.get("fileSaveErrorTitle"),
+					StringUtil.format(S.get("fileSaveError"),
+							e.toString()), S.get("fileSaveErrorTitle"),
 					JOptionPane.ERROR_MESSAGE);
 			return false;
 		} finally {
@@ -395,8 +396,8 @@ public class Loader implements LibraryLoader {
 					if (dest.exists() && dest.length() == 0)
 						dest.delete();
 					JOptionPane.showMessageDialog(parent, StringUtil.format(
-							Strings.get("fileSaveCloseError"), e.toString()),
-							Strings.get("fileSaveErrorTitle"),
+							S.get("fileSaveCloseError"), e.toString()),
+							S.get("fileSaveErrorTitle"),
 							JOptionPane.ERROR_MESSAGE);
 					return false;
 				}
@@ -410,8 +411,8 @@ public class Loader implements LibraryLoader {
 				dest.delete();
 			}
 			JOptionPane.showMessageDialog(parent,
-					Strings.get("fileSaveZeroError"),
-					Strings.get("fileSaveErrorTitle"),
+					S.get("fileSaveZeroError"),
+					S.get("fileSaveErrorTitle"),
 					JOptionPane.ERROR_MESSAGE);
 			return false;
 		}
@@ -457,10 +458,10 @@ public class Loader implements LibraryLoader {
 			JScrollPane scrollPane = new JScrollPane(textArea);
 			scrollPane.setPreferredSize(new Dimension(350, 150));
 			JOptionPane.showMessageDialog(parent, scrollPane,
-					Strings.get("fileErrorTitle"), JOptionPane.ERROR_MESSAGE);
+					S.get("fileErrorTitle"), JOptionPane.ERROR_MESSAGE);
 		} else {
 			JOptionPane.showMessageDialog(parent, description,
-					Strings.get("fileErrorTitle"), JOptionPane.ERROR_MESSAGE);
+					S.get("fileErrorTitle"), JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
@@ -470,7 +471,7 @@ public class Loader implements LibraryLoader {
 		String message = source.getMessage();
 		while (message != null) {
 			JOptionPane.showMessageDialog(parent, message,
-					Strings.get("fileMessageTitle"),
+					S.get("fileMessageTitle"),
 					JOptionPane.INFORMATION_MESSAGE);
 			message = source.getMessage();
 		}

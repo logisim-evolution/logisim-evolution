@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.gui.main;
 
+import static com.cburch.logisim.gui.Strings.S;
+
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -193,21 +195,21 @@ public class Print {
 			gbc.anchor = GridBagConstraints.NORTHWEST;
 			gbc.insets = new Insets(5, 0, 5, 0);
 			gbc.fill = GridBagConstraints.NONE;
-			addGb(new JLabel(Strings.get("labelCircuits") + " "));
+			addGb(new JLabel(S.get("labelCircuits") + " "));
 			gbc.fill = GridBagConstraints.HORIZONTAL;
 			addGb(new JScrollPane(list));
 			gbc.fill = GridBagConstraints.NONE;
 
 			gbc.gridy++;
-			addGb(new JLabel(Strings.get("labelHeader") + " "));
+			addGb(new JLabel(S.get("labelHeader") + " "));
 			addGb(header);
 
 			gbc.gridy++;
-			addGb(new JLabel(Strings.get("labelRotateToFit") + " "));
+			addGb(new JLabel(S.get("labelRotateToFit") + " "));
 			addGb(rotateToFit);
 
 			gbc.gridy++;
-			addGb(new JLabel(Strings.get("labelPrinterView") + " "));
+			addGb(new JLabel(S.get("labelPrinterView") + " "));
 			addGb(printerView);
 		}
 
@@ -234,14 +236,14 @@ public class Print {
 		Frame frame = proj.getFrame();
 		if (list.getModel().getSize() == 0) {
 			JOptionPane.showMessageDialog(proj.getFrame(),
-					Strings.get("printEmptyCircuitsMessage"),
-					Strings.get("printEmptyCircuitsTitle"),
+					S.get("printEmptyCircuitsMessage"),
+					S.get("printEmptyCircuitsTitle"),
 					JOptionPane.YES_NO_OPTION);
 			return;
 		}
 		ParmsPanel parmsPanel = new ParmsPanel(list);
 		int action = JOptionPane.showConfirmDialog(frame, parmsPanel,
-				Strings.get("printParmsTitle"), JOptionPane.OK_CANCEL_OPTION,
+				S.get("printParmsTitle"), JOptionPane.OK_CANCEL_OPTION,
 				JOptionPane.QUESTION_MESSAGE);
 		if (action != JOptionPane.OK_OPTION)
 			return;
@@ -262,8 +264,8 @@ public class Print {
 			job.print();
 		} catch (PrinterException e) {
 			JOptionPane.showMessageDialog(proj.getFrame(),
-					StringUtil.format(Strings.get("printError"), e.toString()),
-					Strings.get("printErrorTitle"), JOptionPane.ERROR_MESSAGE);
+					StringUtil.format(S.get("printError"), e.toString()),
+					S.get("printErrorTitle"), JOptionPane.ERROR_MESSAGE);
 		}
 	}
 

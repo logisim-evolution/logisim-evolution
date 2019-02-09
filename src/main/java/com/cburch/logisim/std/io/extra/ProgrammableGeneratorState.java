@@ -1,5 +1,7 @@
 package com.cburch.logisim.std.io.extra;
 
+import static com.cburch.logisim.std.Strings.S;
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -85,7 +87,7 @@ public class ProgrammableGeneratorState implements InstanceData, Cloneable {
 		inputs = new JTextField[this.durationHigh.length * 2];
 		// save / clear text for buttons transalted
 		String[] options = new String[] { new LocaleManager("resources/logisim", "gui").get("saveOption"),
-				Strings.get("ramClearMenuItem") };
+				S.get("ramClearMenuItem") };
 		JPanel panel = new JPanel(new GridBagLayout());
 		GridBagConstraints gbs = new GridBagConstraints();
 		// insets between states
@@ -93,16 +95,16 @@ public class ProgrammableGeneratorState implements InstanceData, Cloneable {
 		// state number font
 		Font state = new Font(Font.SANS_SERIF, Font.BOLD, 18);
 		JLabel statenumber;
-		JLabel up = new JLabel("<html><div style='text-align:center'>" + Strings.get("clockHighAttr") + "<br>("
-				+ Strings.get("clockDurationValue", "") + ")</div></html>");
+		JLabel up = new JLabel("<html><div style='text-align:center'>" + S.get("clockHighAttr") + "<br>("
+				+ S.fmt("clockDurationValue", "") + ")</div></html>");
 		gbs.ipadx = 10;
 		gbs.ipady = 5;
 		gbs.gridx = 1;
 		gbs.anchor = GridBagConstraints.CENTER;
 		gbs.insets = inset;
 		panel.add(up, gbs);
-		JLabel down = new JLabel("<html><div style='text-align:center'>" + Strings.get("clockLowAttr") + "<br>("
-				+ Strings.get("clockDurationValue", "") + ")</div></html>");
+		JLabel down = new JLabel("<html><div style='text-align:center'>" + S.get("clockLowAttr") + "<br>("
+				+ S.fmt("clockDurationValue", "") + ")</div></html>");
 		gbs.gridx = 2;
 		panel.add(down, gbs);
 		// 2 inputs a row
@@ -131,7 +133,7 @@ public class ProgrammableGeneratorState implements InstanceData, Cloneable {
 		scrollable.setBorder(null);
 		scrollable.getVerticalScrollBar().setUnitIncrement(13);
 		int option = JOptionPane.showOptionDialog(null, scrollable,
-				Strings.getter("ProgrammableGeneratorComponent").toString(), JOptionPane.OK_CANCEL_OPTION,
+				S.getter("ProgrammableGeneratorComponent").toString(), JOptionPane.OK_CANCEL_OPTION,
 				JOptionPane.PLAIN_MESSAGE, null, options, null);
 		if (option == 0) {
 			// save

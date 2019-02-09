@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.analyze.gui;
 
+import static com.cburch.logisim.analyze.Strings.S;
+
 import java.awt.event.ItemListener;
 
 import javax.swing.AbstractListModel;
@@ -193,7 +195,7 @@ class OutputSelector {
 	}
 
 	void localeChanged() {
-		label.setText(Strings.get("outputSelectLabel"));
+		label.setText(S.get("outputSelectLabel"));
 	}
 
 	public void removeItemListener(ItemListener l) {

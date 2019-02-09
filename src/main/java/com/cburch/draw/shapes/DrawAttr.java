@@ -30,6 +30,8 @@
 
 package com.cburch.draw.shapes;
 
+import static com.cburch.draw.Strings.S;
+
 import java.awt.Color;
 import java.awt.Font;
 import java.util.List;
@@ -76,41 +78,41 @@ public class DrawAttr {
 	public static final int FixedFontDescent = 1;
 
 	public static final AttributeOption ALIGN_LEFT = new AttributeOption(
-			Integer.valueOf(EditableLabel.LEFT), Strings.getter("alignStart"));
+			Integer.valueOf(EditableLabel.LEFT), S.getter("alignStart"));
 	public static final AttributeOption ALIGN_CENTER = new AttributeOption(
 			Integer.valueOf(EditableLabel.CENTER),
-			Strings.getter("alignMiddle"));
+			S.getter("alignMiddle"));
 	public static final AttributeOption ALIGN_RIGHT = new AttributeOption(
-			Integer.valueOf(EditableLabel.RIGHT), Strings.getter("alignEnd"));
+			Integer.valueOf(EditableLabel.RIGHT), S.getter("alignEnd"));
 
 	public static final AttributeOption PAINT_STROKE = new AttributeOption(
-			"stroke", Strings.getter("paintStroke"));
+			"stroke", S.getter("paintStroke"));
 	public static final AttributeOption PAINT_FILL = new AttributeOption(
-			"fill", Strings.getter("paintFill"));
+			"fill", S.getter("paintFill"));
 	public static final AttributeOption PAINT_STROKE_FILL = new AttributeOption(
-			"both", Strings.getter("paintBoth"));
+			"both", S.getter("paintBoth"));
 	public static final Attribute<Font> FONT = Attributes.forFont("font",
-			Strings.getter("attrFont"));
+			S.getter("attrFont"));
 	public static final Attribute<AttributeOption> ALIGNMENT = Attributes
-			.forOption("align", Strings.getter("attrAlign"),
+			.forOption("align", S.getter("attrAlign"),
 					new AttributeOption[] { ALIGN_LEFT, ALIGN_CENTER,
 							ALIGN_RIGHT });
 	public static final Attribute<AttributeOption> PAINT_TYPE = Attributes
-			.forOption("paintType", Strings.getter("attrPaint"),
+			.forOption("paintType", S.getter("attrPaint"),
 					new AttributeOption[] { PAINT_STROKE, PAINT_FILL,
 							PAINT_STROKE_FILL });
 	public static final Attribute<Integer> STROKE_WIDTH = Attributes
-			.forIntegerRange("stroke-width", Strings.getter("attrStrokeWidth"),
+			.forIntegerRange("stroke-width", S.getter("attrStrokeWidth"),
 					1, 8);
 	public static final Attribute<Color> STROKE_COLOR = Attributes.forColor(
-			"stroke", Strings.getter("attrStroke"));
+			"stroke", S.getter("attrStroke"));
 
 	public static final Attribute<Color> FILL_COLOR = Attributes.forColor(
-			"fill", Strings.getter("attrFill"));
+			"fill", S.getter("attrFill"));
 	public static final Attribute<Color> TEXT_DEFAULT_FILL = Attributes
-			.forColor("fill", Strings.getter("attrFill"));
+			.forColor("fill", S.getter("attrFill"));
 	public static final Attribute<Integer> CORNER_RADIUS = Attributes
-			.forIntegerRange("rx", Strings.getter("attrRx"), 1, 1000);
+			.forIntegerRange("rx", S.getter("attrRx"), 1, 1000);
 
 	public static final List<Attribute<?>> ATTRS_TEXT // for text
 	= createAttributes(new Attribute[] { FONT, ALIGNMENT, FILL_COLOR });

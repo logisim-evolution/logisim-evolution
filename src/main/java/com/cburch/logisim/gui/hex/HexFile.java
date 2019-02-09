@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.gui.hex;
 
+import static com.cburch.logisim.gui.Strings.S;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -111,7 +113,7 @@ public class HexFile {
 						leftValue = Long.parseLong(tok.substring(star + 1), 16);
 					}
 				} catch (NumberFormatException e) {
-					throw new IOException(Strings.get("hexNumberFormatError"));
+					throw new IOException(S.get("hexNumberFormatError"));
 				}
 
 				int n = (int) Math.min(data.length - pos, leftCount);
@@ -152,12 +154,12 @@ public class HexFile {
 		try {
 			in = new BufferedReader(new FileReader(src));
 		} catch (IOException e) {
-			throw new IOException(Strings.get("hexFileOpenError"));
+			throw new IOException(S.get("hexFileOpenError"));
 		}
 		try {
 			String header = in.readLine();
 			if (!header.equals(RAW_IMAGE_HEADER)) {
-				throw new IOException(Strings.get("hexHeaderFormatError"));
+				throw new IOException(S.get("hexHeaderFormatError"));
 			}
 			open(dst, in);
 			try {
@@ -165,7 +167,7 @@ public class HexFile {
 				in = null;
 				oldIn.close();
 			} catch (IOException e) {
-				throw new IOException(Strings.get("hexFileReadError"));
+				throw new IOException(S.get("hexFileReadError"));
 			}
 		} finally {
 			try {
@@ -182,7 +184,7 @@ public class HexFile {
 		while (reader.hasNext()) {
 			int[] values = reader.next();
 			if (offs + values.length - 1 > dst.getLastOffset()) {
-				throw new IOException(Strings.get("hexFileSizeError"));
+				throw new IOException(S.get("hexFileSizeError"));
 			}
 			dst.set(offs, values);
 			offs += values.length;
@@ -218,20 +220,20 @@ public class HexFile {
 		try {
 			out = new FileWriter(dst);
 		} catch (IOException e) {
-			throw new IOException(Strings.get("hexFileOpenError"));
+			throw new IOException(S.get("hexFileOpenError"));
 		}
 		try {
 			try {
 				out.write(RAW_IMAGE_HEADER + "\n");
 			} catch (IOException e) {
-				throw new IOException(Strings.get("hexFileWriteError"));
+				throw new IOException(S.get("hexFileWriteError"));
 			}
 			save(out, src);
 		} finally {
 			try {
 				out.close();
 			} catch (IOException e) {
-				throw new IOException(Strings.get("hexFileWriteError"));
+				throw new IOException(S.get("hexFileWriteError"));
 			}
 		}
 	}
@@ -261,7 +263,7 @@ public class HexFile {
 					out.write((cur - start) + "*");
 				out.write(Integer.toHexString(val));
 			} catch (IOException e) {
-				throw new IOException(Strings.get("hexFileWriteError"));
+				throw new IOException(S.get("hexFileWriteError"));
 			}
 			tokens++;
 		}

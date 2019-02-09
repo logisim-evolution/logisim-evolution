@@ -30,6 +30,8 @@
 
 package com.cburch.draw.actions;
 
+import static com.cburch.draw.Strings.S;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -71,7 +73,7 @@ public class ModelTranslateAction extends ModelAction {
 
 	@Override
 	public String getName() {
-		return Strings.get("actionTranslate", getShapesName(moved));
+		return S.fmt("actionTranslate", getShapesName(moved));
 	}
 
 	@Override

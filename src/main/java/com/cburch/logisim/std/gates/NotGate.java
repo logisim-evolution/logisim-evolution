@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.std.gates;
 
+import static com.cburch.logisim.std.Strings.S;
+
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -107,12 +109,12 @@ class NotGate extends InstanceFactory {
 	}
 
 	public static final AttributeOption SIZE_NARROW = new AttributeOption(
-			Integer.valueOf(20), Strings.getter("gateSizeNarrowOpt"));
+			Integer.valueOf(20), S.getter("gateSizeNarrowOpt"));
 	public static final AttributeOption SIZE_WIDE = new AttributeOption(
-			Integer.valueOf(30), Strings.getter("gateSizeWideOpt"));
+			Integer.valueOf(30), S.getter("gateSizeWideOpt"));
 
 	public static final Attribute<AttributeOption> ATTR_SIZE = Attributes
-			.forOption("size", Strings.getter("gateSizeAttr"),
+			.forOption("size", S.getter("gateSizeAttr"),
 					new AttributeOption[] { SIZE_NARROW, SIZE_WIDE });
 	private static final String RECT_LABEL = "1";
 	private static final Icon toolIcon = Icons.getIcon("notGate.gif");
@@ -123,7 +125,7 @@ class NotGate extends InstanceFactory {
 	public static InstanceFactory FACTORY = new NotGate();
 
 	private NotGate() {
-		super("NOT Gate", Strings.getter("notGateComponent"));
+		super("NOT Gate", S.getter("notGateComponent"));
 		setAttributes(new Attribute[] { StdAttr.FACING, StdAttr.WIDTH,
 				ATTR_SIZE, GateAttributes.ATTR_OUTPUT, StdAttr.LABEL,
 				StdAttr.LABEL_FONT, }, new Object[] { Direction.EAST,

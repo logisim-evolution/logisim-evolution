@@ -35,6 +35,8 @@
 
 package com.cburch.logisim.gui.test;
 
+import static com.cburch.logisim.gui.Strings.S;
+
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -88,9 +90,9 @@ public class TestFrame extends JFrame {
 					JOptionPane.showMessageDialog(
 							TestFrame.this,
 							StringUtil.format(
-									Strings.get("fileCannotReadMessage"),
+									S.get("fileCannotReadMessage"),
 									file.getName()),
-							Strings.get("fileCannotReadTitle"),
+							S.get("fileCannotReadTitle"),
 							JOptionPane.OK_OPTION);
 					return;
 				}
@@ -106,17 +108,17 @@ public class TestFrame extends JFrame {
 					JOptionPane.showMessageDialog(
 							TestFrame.this,
 							StringUtil.format(
-									Strings.get("fileCannotParseMessage"),
+									S.get("fileCannotParseMessage"),
 									file.getName(), e.getMessage()),
-							Strings.get("fileCannotReadTitle"),
+							S.get("fileCannotReadTitle"),
 							JOptionPane.OK_OPTION);
 				} catch (TestException e) {
 					JOptionPane.showMessageDialog(
 							TestFrame.this,
 							StringUtil.format(
-									Strings.get("fileWrongPinsMessage"),
+									S.get("fileWrongPinsMessage"),
 									file.getName(), e.getMessage()),
-							Strings.get("fileWrongPinsTitle"),
+							S.get("fileWrongPinsTitle"),
 							JOptionPane.OK_OPTION);
 				}
 			} else if (src == run) {
@@ -124,9 +126,9 @@ public class TestFrame extends JFrame {
 					getModel().start();
 				} catch (TestException e) {
 					JOptionPane.showMessageDialog(TestFrame.this, StringUtil
-							.format(Strings.get("fileWrongPinsMessage"),
-									curFile.getName(), e.getMessage()), Strings
-							.get("fileWrongPinsTitle"), JOptionPane.OK_OPTION);
+							.format(S.get("fileWrongPinsMessage"),
+									curFile.getName(), e.getMessage()), 
+							S.get("fileWrongPinsTitle"), JOptionPane.OK_OPTION);
 				}
 			} else if (src == stop) {
 				getModel().setPaused(true);
@@ -139,11 +141,11 @@ public class TestFrame extends JFrame {
 		public void localeChanged() {
 			setTitle(computeTitle(curModel, project));
 			panel.localeChanged();
-			load.setText(Strings.get("loadButton"));
-			run.setText(Strings.get("runButton"));
-			stop.setText(Strings.get("stopButton"));
-			reset.setText(Strings.get("resetButton"));
-			close.setText(Strings.get("closeButton"));
+			load.setText(S.get("loadButton"));
+			run.setText(S.get("runButton"));
+			stop.setText(S.get("stopButton"));
+			reset.setText(S.get("resetButton"));
+			close.setText(S.get("closeButton"));
 			myListener.testResultsChanged(getModel().getPass(), getModel()
 					.getFail());
 			windowManager.localeChanged();
@@ -181,9 +183,9 @@ public class TestFrame extends JFrame {
 		}
 
 		public void testResultsChanged(int numPass, int numFail) {
-			pass.setText(StringUtil.format(Strings.get("passMessage"),
+			pass.setText(StringUtil.format(S.get("passMessage"),
 					Integer.toString(numPass)));
-			fail.setText(StringUtil.format(Strings.get("failMessage"),
+			fail.setText(StringUtil.format(S.get("failMessage"),
 					Integer.toString(numFail)));
 			finished = numPass + numFail;
 		}
@@ -200,7 +202,7 @@ public class TestFrame extends JFrame {
 			LocaleListener, ProjectListener {
 
 		WindowMenuManager() {
-			super(Strings.get("logFrameMenuItem"), false);
+			super(S.get("logFrameMenuItem"), false);
 			project.addProjectListener(this);
 		}
 
@@ -210,7 +212,7 @@ public class TestFrame extends JFrame {
 
 		public void localeChanged() {
 			String title = project.getLogisimFile().getDisplayName();
-			setText(StringUtil.format(Strings.get("testFrameMenuItem"), title));
+			setText(StringUtil.format(S.get("testFrameMenuItem"), title));
 		}
 
 		public void projectChanged(ProjectEvent event) {
@@ -223,7 +225,7 @@ public class TestFrame extends JFrame {
 
 	private static String computeTitle(Model data, Project proj) {
 		String name = data == null ? "???" : data.getCircuit().getName();
-		return StringUtil.format(Strings.get("testFrameTitle"), name, proj
+		return StringUtil.format(S.get("testFrameTitle"), name, proj
 				.getLogisimFile().getDisplayName());
 	}
 

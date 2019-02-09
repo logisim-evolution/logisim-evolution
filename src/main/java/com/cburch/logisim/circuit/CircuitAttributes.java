@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.circuit;
 
+import static com.cburch.logisim.circuit.Strings.S;
+
 import java.awt.Font;
 import java.util.Arrays;
 import java.util.List;
@@ -91,7 +93,7 @@ public class CircuitAttributes extends AbstractAttributeSet {
 				String OldName = e.getOldValue() == null ? "ThisShouldNotHappen" : (String) e.getOldValue();
 				if (!NewName.equals(OldName)) {
 					if (NewName.isEmpty()) {
-						JOptionPane.showMessageDialog(null, Strings.get("EmptyNameError"),"",
+						JOptionPane.showMessageDialog(null, S.get("EmptyNameError"),"",
 								JOptionPane.ERROR_MESSAGE);
 						e.getSource().setValue(NAME_ATTR, OldName);
 						source.fireEvent(CircuitEvent.ACTION_SET_NAME, OldName);
@@ -119,27 +121,27 @@ public class CircuitAttributes extends AbstractAttributeSet {
 	}
 
 	public static final Attribute<String> NAME_ATTR = Attributes.forString(
-			"circuit", Strings.getter("circuitName"));
+			"circuit", S.getter("circuitName"));
 
 	public static final Attribute<Direction> LABEL_LOCATION_ATTR = Attributes
-			.forDirection("labelloc", Strings.getter("circuitLabelLocAttr"));
+			.forDirection("labelloc", S.getter("circuitLabelLocAttr"));
 
 	public static final Attribute<String> CIRCUIT_LABEL_ATTR = Attributes
-			.forString("clabel", Strings.getter("circuitLabelAttr"));
+			.forString("clabel", S.getter("circuitLabelAttr"));
 
 	public static final Attribute<Direction> CIRCUIT_LABEL_FACING_ATTR = Attributes
-			.forDirection("clabelup", Strings.getter("circuitLabelDirAttr"));
+			.forDirection("clabelup", S.getter("circuitLabelDirAttr"));
 
 	public static final Attribute<Font> CIRCUIT_LABEL_FONT_ATTR = Attributes
-			.forFont("clabelfont", Strings.getter("circuitLabelFontAttr"));
+			.forFont("clabelfont", S.getter("circuitLabelFontAttr"));
 	public static final Attribute<Boolean> CIRCUIT_IS_VHDL_BOX = Attributes
-			.forBoolean("circuitvhdl", Strings.getter("circuitIsVhdl"));
+			.forBoolean("circuitvhdl", S.getter("circuitIsVhdl"));
 	public static final Attribute<String> CIRCUIT_VHDL_PATH = Attributes
-			.forString("circuitvhdlpath", Strings.getter("circuitVhdlPath"));
+			.forString("circuitvhdlpath", S.getter("circuitVhdlPath"));
 	public static final Attribute<Boolean> NAMED_CIRCUIT_BOX = Attributes
-			.forBoolean("circuitnamedbox",Strings.getter("circuitNamedBox"));
+			.forBoolean("circuitnamedbox",S.getter("circuitNamedBox"));
 	public static final Attribute<Boolean> NAMED_CIRCUIT_BOX_FIXED_SIZE = Attributes
-			.forBoolean("circuitnamedboxfixedsize",Strings.getter("circuitNamedBoxFixedSize"));
+			.forBoolean("circuitnamedboxfixedsize",S.getter("circuitNamedBoxFixedSize"));
 
 	private static final Attribute<?>[] STATIC_ATTRS = { NAME_ATTR,
 			CIRCUIT_LABEL_ATTR, CIRCUIT_LABEL_FACING_ATTR,

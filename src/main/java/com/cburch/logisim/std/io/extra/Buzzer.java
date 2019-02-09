@@ -1,5 +1,7 @@
 package com.cburch.logisim.std.io.extra;
 
+import static com.cburch.logisim.std.Strings.S;
+
 import java.awt.Color;
 import java.awt.Graphics;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -85,12 +87,12 @@ public class Buzzer extends InstanceFactory {
 	private static final byte ENABLE = 1;
 	private static final byte VOL = 2;
 	private static final Attribute<BitWidth> VOLUME_WIDTH = Attributes.forBitWidth("vol_width",
-			Strings.getter("buzzerVolumeBitWidth"));
+			S.getter("buzzerVolumeBitWidth"));
 
-	private static final AttributeOption Hz = new AttributeOption("Hz", Strings.getter("Hz"));
-	private static final AttributeOption dHz = new AttributeOption("dHz", Strings.getter("dHz (0.1Hz)"));
+	private static final AttributeOption Hz = new AttributeOption("Hz", S.getter("Hz"));
+	private static final AttributeOption dHz = new AttributeOption("dHz", S.getter("dHz (0.1Hz)"));
 	private static final Attribute<AttributeOption> FREQUENCY_MEASURE = Attributes.forOption("freq_measure",
-			Strings.getter("buzzerFrequecy"), new AttributeOption[] { Hz, dHz });
+			S.getter("buzzerFrequecy"), new AttributeOption[] { Hz, dHz });
 
 	public static void StopBuzzerSound(Component comp, CircuitState circState) {
 		// static method, have to check if the comp parameter is a Buzzer or contains it
@@ -113,7 +115,7 @@ public class Buzzer extends InstanceFactory {
 	}
 
 	public Buzzer() {
-		super("Buzzer", Strings.getter("buzzerComponent"));
+		super("Buzzer", S.getter("buzzerComponent"));
 		setAttributes(
 				new Attribute[] { StdAttr.FACING, FREQUENCY_MEASURE, VOLUME_WIDTH, StdAttr.LABEL, StdAttr.LABEL_FONT},
 				new Object[] { Direction.WEST, Hz, BitWidth.create(7), "", StdAttr.DEFAULT_LABEL_FONT});
@@ -220,9 +222,9 @@ public class Buzzer extends InstanceFactory {
 			p[VOL] = new Port(10, 0, Port.INPUT, VolumeWidth);
 		}
 		p[ENABLE] = new Port(0, 0, Port.INPUT, 1);
-		p[FREQ].setToolTip(Strings.getter("buzzerFrequecy"));
-		p[ENABLE].setToolTip(Strings.getter("enableSound"));
-		p[VOL].setToolTip(Strings.getter("buzzerVolume"));
+		p[FREQ].setToolTip(S.getter("buzzerFrequecy"));
+		p[ENABLE].setToolTip(S.getter("enableSound"));
+		p[VOL].setToolTip(S.getter("buzzerVolume"));
 		instance.setPorts(p);
 	}
 }

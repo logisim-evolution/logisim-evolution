@@ -30,6 +30,8 @@
 
 package com.cburch.draw.gui;
 
+import static com.cburch.draw.Strings.S;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -79,11 +81,11 @@ class AttrTableSelectionModel extends AttributeSetTableModel implements
 		if (firstObject == null) {
 			return null;
 		} else if (commonClass == null) {
-			return Strings.get("selectionVarious", "" + totalCount);
+			return S.fmt("selectionVarious", "" + totalCount);
 		} else if (commonCount == 1) {
-			return Strings.get("selectionOne", firstObject.getDisplayName());
+			return S.fmt("selectionOne", firstObject.getDisplayName());
 		} else {
-			return Strings.get("selectionMultiple",
+			return S.fmt("selectionMultiple",
 					firstObject.getDisplayName(), "" + commonCount);
 		}
 	}

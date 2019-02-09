@@ -1,5 +1,7 @@
 package com.cburch.logisim.std.io.extra;
 
+import static com.cburch.logisim.std.Strings.S;
+
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -40,7 +42,7 @@ public class PlaRom extends InstanceFactory {
 		private CircuitState circ = null;
 
 		private ContentsAttribute() {
-			super("Contents", Strings.getter("romContentsAttr"));
+			super("Contents", S.getter("romContentsAttr"));
 		}
 
 		@Override
@@ -94,7 +96,7 @@ public class PlaRom extends InstanceFactory {
 
 		@Override
 		public String toDisplayString(String value) {
-			return Strings.get("romContentsValue");
+			return S.get("romContentsValue");
 		}
 
 	}
@@ -107,7 +109,7 @@ public class PlaRom extends InstanceFactory {
 		private PlaRomData data;
 
 		ContentsCell(PlaRomData data) {
-			super(Strings.get("romContentsValue"));
+			super(S.get("romContentsValue"));
 			this.data = data;
 			addMouseListener(this);
 		}
@@ -180,8 +182,8 @@ public class PlaRom extends InstanceFactory {
 			this.circState = proj.getCircuitState();
 			boolean enabled = circState != null;
 
-			this.edit = createItem(enabled, Strings.get("ramEditMenuItem"));
-			this.clear = createItem(enabled, Strings.get("ramClearMenuItem"));
+			this.edit = createItem(enabled, S.get("ramEditMenuItem"));
+			this.clear = createItem(enabled, S.get("ramClearMenuItem"));
 			menu.addSeparator();
 			menu.add(this.edit);
 			menu.add(this.clear);
@@ -196,13 +198,13 @@ public class PlaRom extends InstanceFactory {
 	}
 
 	private static final Attribute<Integer> ATTR_INPUTS = Attributes.forIntegerRange("inputs",
-			Strings.getter("gateInputsAttr"), 1, 32);
+			S.getter("gateInputsAttr"), 1, 32);
 
-	private static final Attribute<Integer> ATTR_AND = Attributes.forIntegerRange("and", Strings.getter("PlaANDAttr"),
+	private static final Attribute<Integer> ATTR_AND = Attributes.forIntegerRange("and", S.getter("PlaANDAttr"),
 			1, 32);
 
 	private static final Attribute<Integer> ATTR_OUTPUTS = Attributes.forIntegerRange("outputs",
-			Strings.getter("PlaOutputsAttr"), 1, 32);
+			S.getter("PlaOutputsAttr"), 1, 32);
 
 	private static final ContentsAttribute CONTENTS_ATTR = new ContentsAttribute();
 
@@ -245,7 +247,7 @@ public class PlaRom extends InstanceFactory {
 	}
 
 	public PlaRom() {
-		super("PlaRom", Strings.getter("PlaRomComponent"));
+		super("PlaRom", S.getter("PlaRomComponent"));
 		setIconName("plarom.gif");
 		setAttributes(
 				new Attribute[] { ATTR_INPUTS, ATTR_AND, ATTR_OUTPUTS, StdAttr.LABEL, StdAttr.LABEL_FONT, StdAttr.LABEL_VISIBILITY,
@@ -297,7 +299,7 @@ public class PlaRom extends InstanceFactory {
 		painter.drawPort(0);
 		painter.drawPort(1);
 		g.setColor(Color.GRAY);
-		painter.drawPort(2, Strings.get("ramCSLabel"), Direction.SOUTH);
+		painter.drawPort(2, S.get("ramCSLabel"), Direction.SOUTH);
 		painter.drawLabel();
 	}
 
@@ -329,12 +331,12 @@ public class PlaRom extends InstanceFactory {
 		ps[0] = new Port(0, 0, Port.INPUT, inputbitwidth);
 		ps[1] = new Port(60, 0, Port.OUTPUT, outputbitwidth);
 		ps[2] = new Port(30, 30, Port.INPUT, 1); // chip select
-		ps[0].setToolTip(Strings.getter("demultiplexerInTip"));
-		ps[1].setToolTip(Strings.getter("multiplexerOutTip"));
+		ps[0].setToolTip(S.getter("demultiplexerInTip"));
+		ps[1].setToolTip(S.getter("multiplexerOutTip"));
 		if (instance.getAttributeValue(Mem.ATTR_SELECTION) == Mem.SEL_HIGH)
-			ps[2].setToolTip(Strings.getter("memCSTip", "0"));
+			ps[2].setToolTip(S.getter("memCSTip", "0"));
 		else
-			ps[2].setToolTip(Strings.getter("memCSTip", "1"));
+			ps[2].setToolTip(S.getter("memCSTip", "1"));
 		instance.setPorts(ps);
 	}
 }

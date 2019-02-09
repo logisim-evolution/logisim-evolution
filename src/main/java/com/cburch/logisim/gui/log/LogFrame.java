@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.gui.log;
 
+import static com.cburch.logisim.gui.Strings.S;
+
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -92,7 +94,7 @@ public class LogFrame extends LFrame {
 				tabbedPane.setToolTipTextAt(i, panels[i].getToolTipText());
 				panels[i].localeChanged();
 			}
-			close.setText(Strings.get("closeButton"));
+			close.setText(S.get("closeButton"));
 			windowManager.localeChanged();
 		}
 
@@ -122,7 +124,7 @@ public class LogFrame extends LFrame {
 	private class WindowMenuManager extends WindowMenuItemManager implements
 			LocaleListener, ProjectListener, LibraryListener {
 		WindowMenuManager() {
-			super(Strings.get("logFrameMenuItem"), false);
+			super(S.get("logFrameMenuItem"), false);
 			project.addProjectListener(this);
 			project.addLibraryListener(this);
 		}
@@ -140,7 +142,7 @@ public class LogFrame extends LFrame {
 
 		public void localeChanged() {
 			String title = project.getLogisimFile().getDisplayName();
-			setText(StringUtil.format(Strings.get("logFrameMenuItem"), title));
+			setText(StringUtil.format(S.get("logFrameMenuItem"), title));
 		}
 
 		public void projectChanged(ProjectEvent event) {
@@ -153,7 +155,7 @@ public class LogFrame extends LFrame {
 	private static String computeTitle(Model data, Project proj) {
 		String name = data == null ? "???" : data.getCircuitState()
 				.getCircuit().getName();
-		return StringUtil.format(Strings.get("logFrameTitle"), name, proj
+		return StringUtil.format(S.get("logFrameTitle"), name, proj
 				.getLogisimFile().getDisplayName());
 	}
 
@@ -193,7 +195,7 @@ public class LogFrame extends LFrame {
 
 		JPanel buttonPanel = new JPanel();
 
-		chronogramButton = new JButton(Strings.get("startChronogram"));
+		chronogramButton = new JButton(S.get("startChronogram"));
 		chronogramButton.addActionListener(myListener);
 		buttonPanel.add(chronogramButton);
 		buttonPanel.add(close);

@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.std.wiring;
 
+import static com.cburch.logisim.std.Strings.S;
+
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 
@@ -53,26 +55,26 @@ import com.cburch.logisim.util.GraphicsUtil;
 
 public class BitExtender extends InstanceFactory {
 	private static final Attribute<BitWidth> ATTR_IN_WIDTH = Attributes
-			.forBitWidth("in_width", Strings.getter("extenderInAttr"));
+			.forBitWidth("in_width", S.getter("extenderInAttr"));
 	private static final Attribute<BitWidth> ATTR_OUT_WIDTH = Attributes
-			.forBitWidth("out_width", Strings.getter("extenderOutAttr"));
+			.forBitWidth("out_width", S.getter("extenderOutAttr"));
 	static final Attribute<AttributeOption> ATTR_TYPE = Attributes.forOption(
 			"type",
-			Strings.getter("extenderTypeAttr"),
+			S.getter("extenderTypeAttr"),
 			new AttributeOption[] {
-					new AttributeOption("zero", "zero", Strings
-							.getter("extenderZeroType")),
-					new AttributeOption("one", "one", Strings
-							.getter("extenderOneType")),
-					new AttributeOption("sign", "sign", Strings
-							.getter("extenderSignType")),
-					new AttributeOption("input", "input", Strings
-							.getter("extenderInputType")), });
+					new AttributeOption("zero", "zero", 
+							S.getter("extenderZeroType")),
+					new AttributeOption("one", "one", 
+							S.getter("extenderOneType")),
+					new AttributeOption("sign", "sign", 
+							S.getter("extenderSignType")),
+					new AttributeOption("input", "input", 
+							S.getter("extenderInputType")), });
 
 	public static final BitExtender FACTORY = new BitExtender();
 
 	public BitExtender() {
-		super("Bit Extender", Strings.getter("extenderComponent"));
+		super("Bit Extender", S.getter("extenderComponent"));
 		setIconName("extender.gif");
 		setAttributes(new Attribute[] { ATTR_IN_WIDTH, ATTR_OUT_WIDTH,
 				ATTR_TYPE },
@@ -143,16 +145,16 @@ public class BitExtender extends InstanceFactory {
 		String s0;
 		String type = getType(painter.getAttributeSet());
 		if (type.equals("zero"))
-			s0 = Strings.get("extenderZeroLabel");
+			s0 = S.get("extenderZeroLabel");
 		else if (type.equals("one"))
-			s0 = Strings.get("extenderOneLabel");
+			s0 = S.get("extenderOneLabel");
 		else if (type.equals("sign"))
-			s0 = Strings.get("extenderSignLabel");
+			s0 = S.get("extenderSignLabel");
 		else if (type.equals("input"))
-			s0 = Strings.get("extenderInputLabel");
+			s0 = S.get("extenderInputLabel");
 		else
 			s0 = "???"; // should never happen
-		String s1 = Strings.get("extenderMainLabel");
+		String s1 = S.get("extenderMainLabel");
 		Bounds bds = painter.getBounds();
 		int x = bds.getX() + bds.getWidth() / 2;
 		int y0 = bds.getY() + (bds.getHeight() / 2 + asc) / 2;

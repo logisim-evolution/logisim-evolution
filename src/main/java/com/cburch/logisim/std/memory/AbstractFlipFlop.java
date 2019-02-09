@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.std.memory;
 
+import static com.cburch.logisim.std.Strings.S;
+
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.MouseEvent;
@@ -137,11 +139,11 @@ abstract class AbstractFlipFlop extends InstanceFactory {
 		ps[numInputs + 2] = new Port(50, 50, Port.OUTPUT, 1);
 		ps[numInputs + 3] = new Port(20, 60, Port.INPUT, 1);
 		ps[numInputs + 4] = new Port(20, 0, Port.INPUT, 1);
-		ps[numInputs].setToolTip(Strings.getter("flipFlopClockTip"));
-		ps[numInputs + 1].setToolTip(Strings.getter("flipFlopQTip"));
-		ps[numInputs + 2].setToolTip(Strings.getter("flipFlopNotQTip"));
-		ps[numInputs + 3].setToolTip(Strings.getter("flipFlopResetTip"));
-		ps[numInputs + 4].setToolTip(Strings.getter("flipFlopPresetTip"));
+		ps[numInputs].setToolTip(S.getter("flipFlopClockTip"));
+		ps[numInputs + 1].setToolTip(S.getter("flipFlopQTip"));
+		ps[numInputs + 2].setToolTip(S.getter("flipFlopNotQTip"));
+		ps[numInputs + 3].setToolTip(S.getter("flipFlopResetTip"));
+		ps[numInputs + 4].setToolTip(S.getter("flipFlopPresetTip"));
 		setPorts(ps);
 	}
 

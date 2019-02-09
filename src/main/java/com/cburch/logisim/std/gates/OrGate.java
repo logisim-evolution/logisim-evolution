@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.std.gates;
 
+import static com.cburch.logisim.std.Strings.S;
+
 import java.awt.Graphics;
 import java.util.ArrayList;
 
@@ -80,7 +82,7 @@ class OrGate extends AbstractGate {
 	public static OrGate FACTORY = new OrGate();
 
 	private OrGate() {
-		super("OR Gate", Strings.getter("orGateComponent"));
+		super("OR Gate", S.getter("orGateComponent"));
 		setRectangularLabel("\u2265" + "1");
 		setIconNames("orGate.gif", "orGateRect.gif", "dinOrGate.gif");
 		setPaintInputLines(true);

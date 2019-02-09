@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.analyze.gui;
 
+import static com.cburch.logisim.analyze.Strings.S;
+
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
@@ -97,8 +99,8 @@ class MinimizedTab extends AnalyzerTab {
 		}
 
 		void localeChanged() {
-			choices[0] = Strings.get("minimizedSumOfProducts");
-			choices[1] = Strings.get("minimizedProductOfSums");
+			choices[0] = S.get("minimizedSumOfProducts");
+			choices[1] = S.get("minimizedProductOfSums");
 			fireContentsChanged(this, 0, choices.length);
 		}
 
@@ -237,8 +239,8 @@ class MinimizedTab extends AnalyzerTab {
 		selector.localeChanged();
 		karnaughMap.localeChanged();
 		minimizedExpr.localeChanged();
-		setAsExpr.setText(Strings.get("minimizedSetButton"));
-		formatLabel.setText(Strings.get("minimizedFormat"));
+		setAsExpr.setText(S.get("minimizedSetButton"));
+		formatLabel.setText(S.get("minimizedFormat"));
 		((FormatModel) formatChoice.getModel()).localeChanged();
 	}
 

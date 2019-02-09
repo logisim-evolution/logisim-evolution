@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.std.wiring;
 
+import static com.cburch.logisim.std.Strings.S;
+
 import java.awt.Color;
 import java.awt.Graphics;
 import java.util.Arrays;
@@ -132,7 +134,7 @@ public class Constant extends InstanceFactory {
 	}
 
 	public static final Attribute<Integer> ATTR_VALUE = Attributes
-			.forHexInteger("value", Strings.getter("constantValueAttr"));
+			.forHexInteger("value", S.getter("constantValueAttr"));
 
 	public static InstanceFactory FACTORY = new Constant();
 
@@ -143,7 +145,7 @@ public class Constant extends InstanceFactory {
 					ATTR_VALUE });
 
 	public Constant() {
-		super("Constant", Strings.getter("constantComponent"));
+		super("Constant", S.getter("constantComponent"));
 		setFacingAttribute(StdAttr.FACING);
 		setKeyConfigurator(JoinedConfigurator.create(
 				new ConstantConfigurator(), new BitWidthConfigurator(

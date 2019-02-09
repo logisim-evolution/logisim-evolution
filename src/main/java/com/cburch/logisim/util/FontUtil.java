@@ -30,19 +30,21 @@
 
 package com.cburch.logisim.util;
 
+import static com.cburch.logisim.util.Strings.S;
+
 import java.awt.Font;
 
 public class FontUtil {
 	public static String toStyleDisplayString(int style) {
 		switch (style) {
 		case Font.PLAIN:
-			return Strings.get("fontPlainStyle");
+			return S.get("fontPlainStyle");
 		case Font.ITALIC:
-			return Strings.get("fontItalicStyle");
+			return S.get("fontItalicStyle");
 		case Font.BOLD:
-			return Strings.get("fontBoldStyle");
+			return S.get("fontBoldStyle");
 		case Font.BOLD | Font.ITALIC:
-			return Strings.get("fontBoldItalicStyle");
+			return S.get("fontBoldItalicStyle");
 		default:
 			return "??";
 		}

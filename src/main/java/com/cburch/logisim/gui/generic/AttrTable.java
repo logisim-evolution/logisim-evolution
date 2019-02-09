@@ -29,6 +29,8 @@
  *******************************************************************************/
 package com.cburch.logisim.gui.generic;
 
+import static com.cburch.logisim.gui.Strings.S;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -191,7 +193,7 @@ public class AttrTable extends JPanel implements LocaleListener {
 						row.setValue(retval);
 					} catch (AttrTableSetException e) {
 						JOptionPane.showMessageDialog(parent, e.getMessage(),
-								Strings.get("attributeChangeInvalidTitle"),
+								S.get("attributeChangeInvalidTitle"),
 								JOptionPane.WARNING_MESSAGE);
 					}
 					editor = null; 
@@ -210,7 +212,7 @@ public class AttrTable extends JPanel implements LocaleListener {
 						row.setValue(retval);
 					} catch (AttrTableSetException e) {
 						JOptionPane.showMessageDialog(parent, e.getMessage(),
-								Strings.get("attributeChangeInvalidTitle"),
+								S.get("attributeChangeInvalidTitle"),
 								JOptionPane.WARNING_MESSAGE);
 					}
 					editor = null;
@@ -258,12 +260,12 @@ public class AttrTable extends JPanel implements LocaleListener {
 		Object value;
 
 		public MyDialog(Dialog parent, JInputComponent input) {
-			super(parent, Strings.get("attributeDialogTitle"), true);
+			super(parent, S.get("attributeDialogTitle"), true);
 			configure(input);
 		}
 
 		public MyDialog(Frame parent, JInputComponent input) {
-			super(parent, Strings.get("attributeDialogTitle"), true);
+			super(parent, S.get("attributeDialogTitle"), true);
 			configure(input);
 		}
 
@@ -451,7 +453,7 @@ public class AttrTable extends JPanel implements LocaleListener {
 					attrModel.getRow(rowIndex).setValue(value);
 				} catch (AttrTableSetException e) {
 					JOptionPane.showMessageDialog(parent, e.getMessage(),
-							Strings.get("attributeChangeInvalidTitle"),
+							S.get("attributeChangeInvalidTitle"),
 							JOptionPane.WARNING_MESSAGE);
 				}
 			}

@@ -2,7 +2,8 @@ package com.cburch.logisim.fpga.library;
 
 import java.util.List;
 
-import com.cburch.logisim.std.arith.Strings;
+import static com.cburch.logisim.std.Strings.S;
+
 import com.cburch.logisim.tools.FactoryDescription;
 import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.tools.Tool;
@@ -10,10 +11,10 @@ import com.cburch.logisim.tools.Tool;
 public class BFHPraktika extends Library {
 	private static FactoryDescription[] DESCRIPTIONS = {
 		new FactoryDescription("Binairy_to_BCD_converter",
-		         Strings.getter("Bin2BCD"), "",
+		         S.getter("Bin2BCD"), "",
 		         "bin2bcd"), 
 		new FactoryDescription("BCD_to_7_Segment_decoder",
-		         Strings.getter("BCD2SevenSegment"), "",
+		         S.getter("BCD2SevenSegment"), "",
 		         "bcd2sevenseg"),};
 
 private List<Tool> tools = null;
@@ -23,7 +24,7 @@ public BFHPraktika() {
 
 @Override
 public String getDisplayName() {
-	return Strings.get("BFH mega functions");
+	return S.get("BFH mega functions");
 }
 
 @Override

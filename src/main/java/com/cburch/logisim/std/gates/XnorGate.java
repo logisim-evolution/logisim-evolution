@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.std.gates;
 
+import static com.cburch.logisim.std.Strings.S;
+
 import java.awt.Graphics;
 import java.util.ArrayList;
 
@@ -64,7 +66,7 @@ class XnorGate extends AbstractGate {
 	public static XnorGate FACTORY = new XnorGate();
 
 	private XnorGate() {
-		super("XNOR Gate", Strings.getter("xnorGateComponent"), true);
+		super("XNOR Gate", S.getter("xnorGateComponent"), true);
 		setNegateOutput(true);
 		setAdditionalWidth(10);
 		setIconNames("xnorGate.gif", "xnorGateRect.gif", "dinXnorGate.gif");

@@ -1,5 +1,7 @@
 package com.cburch.logisim.std.io.extra;
 
+import static com.cburch.logisim.std.Strings.S;
+
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
@@ -187,9 +189,9 @@ public class PlaRomPanel extends JPanel implements MouseListener, MouseMotionLis
 		GraphicsUtil.switchToWidth(g, 2);
 		g.setColor(Color.DARK_GRAY);
 		g.setFont(new Font("sans serif", Font.BOLD, 14));
-		GraphicsUtil.drawCenteredText(g, "\u2190" + Strings.getter("demultiplexerInTip").toString(),
+		GraphicsUtil.drawCenteredText(g, "\u2190" + S.getter("demultiplexerInTip").toString(),
 				40 * (inputs + 1) - (20 - IMAGE_BORDER) + 5, IMAGE_BORDER-6);
-		GraphicsUtil.drawCenteredText(g, Strings.getter("multiplexerOutTip").toString() + "\u2192",
+		GraphicsUtil.drawCenteredText(g, S.getter("multiplexerOutTip").toString() + "\u2192",
 				IMAGE_BORDER + 10 + 40 * inputs, IMAGE_BORDER + 100 + 40 * and + 6);
 		for (byte i = 1; i <= inputs; i++) {
 			Color inputColor = data.getInputValue((byte) (i - 1)).getColor();

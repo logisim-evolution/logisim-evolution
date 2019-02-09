@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.analyze.model;
 
+import static com.cburch.logisim.analyze.Strings.S;
+
 import com.cburch.logisim.util.StringGetter;
 
 public class Entry {
@@ -48,10 +50,10 @@ public class Entry {
 	public static final Entry ZERO = new Entry("0");
 	public static final Entry ONE = new Entry("1");
 	public static final Entry DONT_CARE = new Entry("-");
-	public static final Entry BUS_ERROR = new Entry(Strings.getter("busError"));
+	public static final Entry BUS_ERROR = new Entry(S.getter("busError"));
 
 	public static final Entry OSCILLATE_ERROR = new Entry(
-			Strings.getter("oscillateError"));
+			S.getter("oscillateError"));
 
 	private String description;
 	private StringGetter errorMessage;

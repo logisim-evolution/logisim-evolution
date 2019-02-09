@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.std.arith;
 
+import static com.cburch.logisim.std.Strings.S;
+
 import java.util.List;
 
 import com.cburch.logisim.tools.FactoryDescription;
@@ -38,31 +40,31 @@ import com.cburch.logisim.tools.Tool;
 
 public class Arithmetic extends Library {
 	private static FactoryDescription[] DESCRIPTIONS = {
-			new FactoryDescription("Adder", Strings.getter("adderComponent"),
+			new FactoryDescription("Adder", S.getter("adderComponent"),
 					"adder.gif", "Adder"),
 			new FactoryDescription("Subtractor",
-					Strings.getter("subtractorComponent"), "subtractor.gif",
+					S.getter("subtractorComponent"), "subtractor.gif",
 					"Subtractor"),
 			new FactoryDescription("Multiplier",
-					Strings.getter("multiplierComponent"), "multiplier.gif",
+					S.getter("multiplierComponent"), "multiplier.gif",
 					"Multiplier"),
 			new FactoryDescription("Divider",
-					Strings.getter("dividerComponent"), "divider.gif",
+					S.getter("dividerComponent"), "divider.gif",
 					"Divider"),
 			new FactoryDescription("Negator",
-					Strings.getter("negatorComponent"), "negator.gif",
+					S.getter("negatorComponent"), "negator.gif",
 					"Negator"),
 			new FactoryDescription("Comparator",
-					Strings.getter("comparatorComponent"), "comparator.gif",
+					S.getter("comparatorComponent"), "comparator.gif",
 					"Comparator"),
 			new FactoryDescription("Shifter",
-					Strings.getter("shifterComponent"), "shifter.gif",
+					S.getter("shifterComponent"), "shifter.gif",
 					"Shifter"),
 			new FactoryDescription("BitAdder",
-					Strings.getter("bitAdderComponent"), "bitadder.gif",
+					S.getter("bitAdderComponent"), "bitadder.gif",
 					"BitAdder"),
 			new FactoryDescription("BitFinder",
-					Strings.getter("bitFinderComponent"), "bitfindr.gif",
+					S.getter("bitFinderComponent"), "bitfindr.gif",
 					"BitFinder"),};
 
 	private List<Tool> tools = null;
@@ -72,7 +74,7 @@ public class Arithmetic extends Library {
 
 	@Override
 	public String getDisplayName() {
-		return Strings.get("arithmeticLibrary");
+		return S.get("arithmeticLibrary");
 	}
 
 	@Override

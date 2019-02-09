@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.gui.appear;
 
+import static com.cburch.logisim.gui.Strings.S;
+
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -96,9 +98,9 @@ public class ClipboardActions extends Action {
 	@Override
 	public String getName() {
 		if (remove) {
-			return Strings.get("cutSelectionAction");
+			return S.get("cutSelectionAction");
 		} else {
-			return Strings.get("copySelectionAction");
+			return S.get("copySelectionAction");
 		}
 	}
 

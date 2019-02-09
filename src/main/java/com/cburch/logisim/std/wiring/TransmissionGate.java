@@ -34,6 +34,8 @@
 
 package com.cburch.logisim.std.wiring;
 
+import static com.cburch.logisim.std.Strings.S;
+
 import java.awt.Color;
 import java.awt.Graphics2D;
 
@@ -63,7 +65,7 @@ public class TransmissionGate extends InstanceFactory {
 	static final int GATE1 = 3;
 
 	public TransmissionGate() {
-		super("Transmission Gate", Strings.getter("transmissionGateComponent"));
+		super("Transmission Gate", S.getter("transmissionGateComponent"));
 		setIconName("transmis.gif");
 		setAttributes(new Attribute[] { StdAttr.FACING, Wiring.ATTR_GATE,
 				StdAttr.WIDTH }, new Object[] { Direction.EAST,

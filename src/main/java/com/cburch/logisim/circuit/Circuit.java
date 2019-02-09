@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.circuit;
 
+import static com.cburch.logisim.circuit.Strings.S;
+
 import java.awt.Graphics;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -195,7 +197,7 @@ public class Circuit {
 		for (Component comp : comps) {
 			if (comp.getFactory().getName().toUpperCase().equals(Name.toUpperCase())) {
 				if (ShowDialog) {
-					String msg = com.cburch.logisim.circuit.Strings.get("ComponentLabelNameError");
+					String msg = S.get("ComponentLabelNameError");
 					JOptionPane.showMessageDialog(null, "\""+Name+"\" : "+msg);
 				}
 				return true;
@@ -214,7 +216,7 @@ public class Circuit {
 						comp.getAttributeSet().getValue(StdAttr.LABEL) : "";
 						if (Label.toUpperCase().equals(Name.toUpperCase())) {
 							if (ShowDialog) {
-								String msg = com.cburch.logisim.circuit.Strings.get("UsedLabelNameError");
+								String msg = S.get("UsedLabelNameError");
 								JOptionPane.showMessageDialog(null, "\""+Name+"\" : "+msg);
 							}
 							return true;
@@ -344,7 +346,7 @@ public class Circuit {
 				String label = attrs.getValue(StdAttr.LABEL);
 				if (!label.isEmpty()) {
 					if (LabelNames.contains(label.toUpperCase())) {
-						SetAttributeAction act = new SetAttributeAction(this,Strings.getter("changeComponentAttributesAction"));
+						SetAttributeAction act = new SetAttributeAction(this,S.getter("changeComponentAttributesAction"));
 						act.set(comp, StdAttr.LABEL, "");
 						proj.doAction(act);
 						reporter.AddSevereWarning("Removed duplicated label "+this.getName()+"/"+label);
@@ -359,7 +361,7 @@ public class Circuit {
 					/* in case of label cleaning, we clear first the old label */
 					reporter.AddInfo("Cleared " + this.getName() + "/"
 							+ comp.getAttributeSet().getValue(StdAttr.LABEL));
-					SetAttributeAction act = new SetAttributeAction(this,Strings.getter("changeComponentAttributesAction"));
+					SetAttributeAction act = new SetAttributeAction(this,S.getter("changeComponentAttributesAction"));
 					act.set(comp, StdAttr.LABEL, "");
 					proj.doAction(act);
 				}
@@ -389,7 +391,7 @@ public class Circuit {
 				return;
 			} else {
 				String NewLabel = lablers.get(ComponentName).GetNext(this,comp.getFactory());
-				SetAttributeAction act = new SetAttributeAction(this,Strings.getter("changeComponentAttributesAction"));
+				SetAttributeAction act = new SetAttributeAction(this,S.getter("changeComponentAttributesAction"));
 				act.set(comp, StdAttr.LABEL, NewLabel);
 				proj.doAction(act);
 				reporter.AddInfo("Labeled " + this.getName() + "/" + NewLabel);
@@ -871,7 +873,7 @@ public class Circuit {
 		}
 		/* we do not have to check the wires as (1) Wire is a reserved keyword, and (2) they cannot have a label */
 		if (HaveAChange)
-			JOptionPane.showMessageDialog(null, "\""+Label+"\" : "+Strings.get("ComponentLabelCollisionError"));
+			JOptionPane.showMessageDialog(null, "\""+Label+"\" : "+S.get("ComponentLabelCollisionError"));
 	}
 
 	public void removeCircuitListener(CircuitListener what) {

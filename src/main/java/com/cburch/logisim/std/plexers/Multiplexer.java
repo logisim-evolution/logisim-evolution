@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.std.plexers;
 
+import static com.cburch.logisim.std.Strings.S;
+
 import java.awt.Color;
 import java.awt.Graphics;
 
@@ -74,7 +76,7 @@ public class Multiplexer extends InstanceFactory {
 	}
 
 	public Multiplexer() {
-		super("Multiplexer", Strings.getter("multiplexerComponent"));
+		super("Multiplexer", S.getter("multiplexerComponent"));
 		setAttributes(new Attribute[] { StdAttr.FACING,
 				Plexers.ATTR_SELECT_LOC, Plexers.ATTR_SELECT, StdAttr.WIDTH,
 				Plexers.ATTR_DISABLED, Plexers.ATTR_ENABLE }, new Object[] {
@@ -382,13 +384,13 @@ public class Multiplexer extends InstanceFactory {
 		ps[ps.length - 1] = new Port(0, 0, Port.OUTPUT, data.getWidth());
 
 		for (int i = 0; i < inputs; i++) {
-			ps[i].setToolTip(Strings.getter("multiplexerInTip", "" + i));
+			ps[i].setToolTip(S.getter("multiplexerInTip", "" + i));
 		}
-		ps[inputs].setToolTip(Strings.getter("multiplexerSelectTip"));
+		ps[inputs].setToolTip(S.getter("multiplexerSelectTip"));
 		if (enable) {
-			ps[inputs + 1].setToolTip(Strings.getter("multiplexerEnableTip"));
+			ps[inputs + 1].setToolTip(S.getter("multiplexerEnableTip"));
 		}
-		ps[ps.length - 1].setToolTip(Strings.getter("multiplexerOutTip"));
+		ps[ps.length - 1].setToolTip(S.getter("multiplexerOutTip"));
 
 		instance.setPorts(ps);
 	}

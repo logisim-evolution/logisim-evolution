@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.gui.start;
 
+import static com.cburch.logisim.gui.Strings.S;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -78,20 +80,20 @@ public class SplashScreen extends JWindow implements ActionListener {
 	private static final boolean PRINT_TIMES = false;
 
 	Marker[] markers = new Marker[] {
-			new Marker(377, Strings.get("progressLibraries")),
-			new Marker(990, Strings.get("progressTemplateCreate")),
-			new Marker(1002, Strings.get("progressTemplateOpen")),
-			new Marker(1002, Strings.get("progressTemplateLoad")),
-			new Marker(1470, Strings.get("progressTemplateClose")),
-			new Marker(1478, Strings.get("progressGuiInitialize")),
-			new Marker(2114, Strings.get("progressFileCreate")),
-			new Marker(2114, Strings.get("progressFileLoad")),
-			new Marker(2383, Strings.get("progressProjectCreate")),
-			new Marker(2519, Strings.get("progressFrameCreate")), };
+			new Marker(377, S.get("progressLibraries")),
+			new Marker(990, S.get("progressTemplateCreate")),
+			new Marker(1002, S.get("progressTemplateOpen")),
+			new Marker(1002, S.get("progressTemplateLoad")),
+			new Marker(1470, S.get("progressTemplateClose")),
+			new Marker(1478, S.get("progressGuiInitialize")),
+			new Marker(2114, S.get("progressFileCreate")),
+			new Marker(2114, S.get("progressFileLoad")),
+			new Marker(2383, S.get("progressProjectCreate")),
+			new Marker(2519, S.get("progressFrameCreate")), };
 	boolean inClose = false; // for avoiding mutual recursion
 	JProgressBar progress = new JProgressBar(0, PROGRESS_MAX);
-	JButton close = new JButton(Strings.get("startupCloseButton"));
-	JButton cancel = new JButton(Strings.get("startupQuitButton"));
+	JButton close = new JButton(S.get("startupCloseButton"));
+	JButton cancel = new JButton(S.get("startupQuitButton"));
 	long startTime = System.currentTimeMillis();
 
 	public SplashScreen() {

@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.data;
 
+import static com.cburch.logisim.data.Strings.S;
+
 import java.awt.Color;
 import java.util.Arrays;
 
@@ -488,9 +490,9 @@ public class Value {
 		if (width == 0)
 			return "-";
 		if (isErrorValue())
-			return Strings.get("valueError");
+			return S.get("valueError");
 		if (!isFullyDefined())
-			return Strings.get("valueUnknown");
+			return S.get("valueUnknown");
 
 		int value = toIntValue();
 		if (signed) {
@@ -509,9 +511,9 @@ public class Value {
 			return "-";
 		case 1:
 			if (error != 0)
-				return Strings.get("valueErrorSymbol");
+				return S.get("valueErrorSymbol");
 			else if (unknown != 0)
-				return Strings.get("valueUnknownSymbol");
+				return S.get("valueUnknownSymbol");
 			else if (value != 0)
 				return "1";
 			else
@@ -539,9 +541,9 @@ public class Value {
 			if (width == 0)
 				return "-";
 			if (isErrorValue())
-				return Strings.get("valueError");
+				return S.get("valueError");
 			if (!isFullyDefined())
-				return Strings.get("valueUnknown");
+				return S.get("valueUnknown");
 			return Integer.toString(toIntValue(), radix);
 		}
 	}

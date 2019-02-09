@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.std.gates;
 
+import static com.cburch.logisim.std.Strings.S;
+
 import java.awt.Graphics;
 import java.util.ArrayList;
 
@@ -88,7 +90,7 @@ class NandGate extends AbstractGate {
 	public static NandGate FACTORY = new NandGate();
 
 	private NandGate() {
-		super("NAND Gate", Strings.getter("nandGateComponent"));
+		super("NAND Gate", S.getter("nandGateComponent"));
 		setNegateOutput(true);
 		setRectangularLabel(AndGate.FACTORY.getRectangularLabel(null));
 		setIconNames("nandGate.gif", "nandGateRect.gif", "dinNandGate.gif");

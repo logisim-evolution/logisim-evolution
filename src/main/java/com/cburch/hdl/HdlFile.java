@@ -30,6 +30,8 @@
 
 package com.cburch.hdl;
 
+import static com.cburch.hdl.Strings.S;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -57,7 +59,7 @@ public class HdlFile {
 			}
 			editor.setText(content.toString());
 		} catch (IOException ex) {
-			throw new IOException(Strings.get("hdlFileReaderError"));
+			throw new IOException(S.get("hdlFileReaderError"));
 		} finally {
 			if (in != null) {
 				in.close();
@@ -74,7 +76,7 @@ public class HdlFile {
 			String data = editor.getText();
 			out.write(data, 0, data.length());
 		} catch (IOException ex) {
-			throw new IOException(Strings.get("hdlFileWriterError"));
+			throw new IOException(S.get("hdlFileWriterError"));
 		} finally {
 			if (out != null) {
 				out.close();

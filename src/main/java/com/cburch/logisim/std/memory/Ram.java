@@ -29,6 +29,8 @@
  *******************************************************************************/
 package com.cburch.logisim.std.memory;
 
+import static com.cburch.logisim.std.Strings.S;
+
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Window;
@@ -68,7 +70,7 @@ public class Ram extends Mem {
 	static class ContentsAttribute extends Attribute<MemContents> {
 
 		public ContentsAttribute() {
-			super("contents", Strings.getter("ramContentsAttr"));
+			super("contents", S.getter("ramContentsAttr"));
 		}
 
 		@Override
@@ -105,7 +107,7 @@ public class Ram extends Mem {
 
 		@Override
 		public String toDisplayString(MemContents value) {
-			return Strings.get("romContentsValue");
+			return S.get("romContentsValue");
 		}
 
 		@Override
@@ -129,7 +131,7 @@ public class Ram extends Mem {
 		MemContents contents;
 
 		ContentsCell(Window source, MemContents contents) {
-			super(Strings.get("romContentsValue"));
+			super(S.get("romContentsValue"));
 			this.source = source;
 			this.contents = contents;
 			addMouseListener(this);
@@ -168,7 +170,7 @@ public class Ram extends Mem {
 				Label = null;
 			}
 			if (option instanceof Integer) {
-				String disp = Strings.get("ramComponent");
+				String disp = S.get("ramComponent");
 				Location loc = state.getInstance().getLocation();
 				return (Label == null) ? disp + loc + "[" + option + "]"
 						: Label + "[" + option + "]";
@@ -250,7 +252,7 @@ public class Ram extends Mem {
 	private static Object[][] logOptions = new Object[9][];
 
 	public Ram() {
-		super("RAM", Strings.getter("ramComponent"), 3);
+		super("RAM", S.getter("ramComponent"), 3);
 		setIconName("ram.gif");
 		setInstanceLogger(Logger.class);
 	}
@@ -287,18 +289,18 @@ public class Ram extends Mem {
 		}
 		Port[] ps = new Port[portCount];
 		ps[ADDR] = new Port(0, 10, Port.INPUT, ADDR_ATTR);
-		ps[ADDR].setToolTip(Strings.getter("memAddrTip"));
+		ps[ADDR].setToolTip(S.getter("memAddrTip"));
 		ps[OE] = new Port(0, 60, Port.INPUT, 1);
-		ps[OE].setToolTip(Strings.getter("ramOETip"));
+		ps[OE].setToolTip(S.getter("ramOETip"));
 		ps[WE] = new Port(0, 50, Port.INPUT, 1);
-		ps[WE].setToolTip(Strings.getter("ramWETip"));
+		ps[WE].setToolTip(S.getter("ramWETip"));
 		if (!asynch) {
 			int ClockOffset = 70;
 			if (byteEnables) {
 				ClockOffset += NrOfByteEnables * 10;
 			}
 			ps[CLK] = new Port(0, ClockOffset, Port.INPUT, 1);
-			ps[CLK].setToolTip(Strings.getter("ramClkTip"));
+			ps[CLK].setToolTip(S.getter("ramClkTip"));
 		}
 		int ypos = (instance.getAttributeValue(Mem.DATA_ATTR).getWidth() == 1) ? getControlHeight(instance
 				.getAttributeSet()) + 10 : getControlHeight(instance
@@ -307,16 +309,16 @@ public class Ram extends Mem {
 		if (separate) {
 			if (asynch) {
 				ps[ADIN] = new Port(0, ypos, Port.INPUT, DATA_ATTR);
-				ps[ADIN].setToolTip(Strings.getter("ramInTip"));
+				ps[ADIN].setToolTip(S.getter("ramInTip"));
 			} else {
 				ps[SDIN] = new Port(0, ypos, Port.INPUT, DATA_ATTR);
-				ps[SDIN].setToolTip(Strings.getter("ramInTip"));
+				ps[SDIN].setToolTip(S.getter("ramInTip"));
 			}
 			ps[DATA] = new Port(SymbolWidth + 40, ypos, Port.OUTPUT, DATA_ATTR);
-			ps[DATA].setToolTip(Strings.getter("memDataTip"));
+			ps[DATA].setToolTip(S.getter("memDataTip"));
 		} else {
 			ps[DATA] = new Port(SymbolWidth + 50, ypos, Port.INOUT, DATA_ATTR);
-			ps[DATA].setToolTip(Strings.getter("ramBusTip"));
+			ps[DATA].setToolTip(S.getter("ramBusTip"));
 		}
 		if (byteEnables) {
 			int ByteEnableIndex = ByteEnableIndex(instance.getAttributeSet());
@@ -325,7 +327,7 @@ public class Ram extends Mem {
 						1);
 				String Label = "ramByteEnableTip"
 						+ Integer.toString(NrOfByteEnables - i - 1);
-				ps[ByteEnableIndex + i].setToolTip(Strings.getter(Label));
+				ps[ByteEnableIndex + i].setToolTip(S.getter(Label));
 			}
 		}
 		instance.setPorts(ps);

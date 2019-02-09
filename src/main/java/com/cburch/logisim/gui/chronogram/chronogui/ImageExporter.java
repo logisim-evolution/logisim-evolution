@@ -4,6 +4,8 @@
  */
 package com.cburch.logisim.gui.chronogram.chronogui;
 
+import static com.cburch.logisim.gui.Strings.S;
+
 import com.cburch.logisim.gui.chronogram.chronodata.ChronoData;
 import com.cburch.logisim.gui.chronogram.chronodata.SignalData;
 import com.cburch.logisim.gui.chronogram.chronodata.SignalDataBus;
@@ -231,7 +233,7 @@ public class ImageExporter extends javax.swing.JFrame implements ActionListener 
         leftPanel.setLayout(new BorderLayout());
         leftPanel.setBackground(Color.white);
 
-        String[] names = {Strings.get("SignalNameName")};
+        String[] names = {S.get("SignalNameName")};
         tableData = new Object[chronoData.size() - 1][1];
         int pos = 0;
         for (String signalName : chronoData.getSignalOrder()) {

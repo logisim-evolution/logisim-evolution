@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.fpga.fpgaboardeditor;
 
+import static com.cburch.logisim.fpga.Strings.S;
+
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Toolkit;
@@ -70,7 +72,7 @@ public class BoardDialog implements ActionListener, ComponentListener {
 
 		@Override
 		public String getDescription() {
-			return Strings.get("XMLFileFilter"); // TODO: language adaptation
+			return S.get("XMLFileFilter"); // TODO: language adaptation
 		}
 	}
 
@@ -124,7 +126,7 @@ public class BoardDialog implements ActionListener, ComponentListener {
 	public BoardDialog() {
 		GridBagConstraints gbc = new GridBagConstraints();
 
-		panel = new JFrame(Strings.get("FPGABoardEditor"));
+		panel = new JFrame(S.get("FPGABoardEditor"));
 		panel.setResizable(false);
 		panel.addComponentListener(this);
 		panel.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);

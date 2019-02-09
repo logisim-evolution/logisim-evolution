@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.std.tcl;
 
+import static com.cburch.logisim.std.Strings.S;
+
 import java.awt.Font;
 import java.awt.Window;
 import java.io.File;
@@ -51,7 +53,7 @@ public class TclComponentAttributes extends AbstractAttributeSet {
 		ContentFileCell chooser;
 
 		public ContentFileAttribute() {
-			super("filePath", Strings.getter("tclConsoleContentFile"));
+			super("filePath", S.getter("tclConsoleContentFile"));
 		}
 
 		public java.awt.Component getCellEditor(Window source, File file) {

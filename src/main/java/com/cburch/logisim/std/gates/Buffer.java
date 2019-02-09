@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.std.gates;
 
+import static com.cburch.logisim.std.Strings.S;
+
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -107,7 +109,7 @@ class Buffer extends InstanceFactory {
 	public static InstanceFactory FACTORY = new Buffer();
 
 	private Buffer() {
-		super("Buffer", Strings.getter("bufferComponent"));
+		super("Buffer", S.getter("bufferComponent"));
 		setAttributes(
 				new Attribute[] { StdAttr.FACING, StdAttr.WIDTH,
 						GateAttributes.ATTR_OUTPUT, StdAttr.LABEL,

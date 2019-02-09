@@ -29,6 +29,8 @@
  *******************************************************************************/
 package com.cburch.logisim.util;
 
+import static com.cburch.logisim.util.Strings.S;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -50,18 +52,18 @@ public class SyntaxChecker {
 			String Message ="";
 			if (!variableMatcher.matches()) {
 				ret = false;
-				Message = Message.concat(Strings.get("variableInvalidCharacters"));
+				Message = Message.concat(S.get("variableInvalidCharacters"));
 			}
 			if (forbiddenMatcher.find()) {
 				ret = false;
-				Message = Message.concat(Strings.get("variableDoubleUnderscore"));
+				Message = Message.concat(S.get("variableDoubleUnderscore"));
 			}
 			if (HDL!=null) {
 				ret = false;
-				Message = Message.concat( HDL.equals(HDLGeneratorFactory.VHDL) ? Strings.get("variableVHDLKeyword") : Strings.get("variableVerilogKeyword"));
+				Message = Message.concat( HDL.equals(HDLGeneratorFactory.VHDL) ? S.get("variableVHDLKeyword") : S.get("variableVerilogKeyword"));
 			}
 			if (!ret&&ShowDialog)
-				JOptionPane.showMessageDialog(null, Message.concat("\n"+Strings.get("variableNameNotAcceptable")));
+				JOptionPane.showMessageDialog(null, Message.concat("\n"+S.get("variableNameNotAcceptable")));
 			return ret;
 		}
 		return false;

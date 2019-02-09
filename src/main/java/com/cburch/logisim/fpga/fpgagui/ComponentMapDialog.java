@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.fpga.fpgagui;
 
+import static com.cburch.logisim.fpga.Strings.S;
+
 import java.awt.Color;
 import java.awt.Dialog.ModalityType;
 import java.awt.Dimension;
@@ -86,7 +88,6 @@ import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
 import com.cburch.logisim.fpga.fpgaboardeditor.BoardInformation;
 import com.cburch.logisim.fpga.fpgaboardeditor.BoardRectangle;
 import com.cburch.logisim.fpga.fpgaboardeditor.FPGAIOInformationContainer;
-import com.cburch.logisim.fpga.fpgaboardeditor.Strings;
 import com.cburch.logisim.fpga.fpgaboardeditor.ZoomSlider;
 import com.cburch.logisim.prefs.AppPreferences;
 
@@ -328,7 +329,7 @@ ListSelectionListener {
 
 		@Override
 		public String getDescription() {
-			return Strings.get("XMLFileFilter"); // TODO: language adaptation
+			return S.get("XMLFileFilter"); // TODO: language adaptation
 		}
 	}
 

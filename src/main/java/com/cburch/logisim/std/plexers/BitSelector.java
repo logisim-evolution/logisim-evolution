@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.std.plexers;
 
+import static com.cburch.logisim.std.Strings.S;
+
 import java.awt.Color;
 import java.awt.Graphics;
 
@@ -54,10 +56,10 @@ import com.cburch.logisim.util.GraphicsUtil;
 
 public class BitSelector extends InstanceFactory {
 	public static final Attribute<BitWidth> GROUP_ATTR = Attributes
-			.forBitWidth("group", Strings.getter("bitSelectorGroupAttr"));
+			.forBitWidth("group", S.getter("bitSelectorGroupAttr"));
 
 	public BitSelector() {
-		super("BitSelector", Strings.getter("bitSelectorComponent"));
+		super("BitSelector", S.getter("bitSelectorComponent"));
 		setAttributes(new Attribute[] { StdAttr.FACING, StdAttr.WIDTH,
 				GROUP_ATTR }, new Object[] { Direction.EAST,
 				BitWidth.create(8), BitWidth.ONE });
@@ -194,9 +196,9 @@ public class BitSelector extends InstanceFactory {
 		ps[1] = new Port(inPt.getX(), inPt.getY(), Port.INPUT, data.getWidth());
 		ps[2] = new Port(selPt.getX(), selPt.getY(), Port.INPUT,
 				select.getWidth());
-		ps[0].setToolTip(Strings.getter("bitSelectorOutputTip"));
-		ps[1].setToolTip(Strings.getter("bitSelectorDataTip"));
-		ps[2].setToolTip(Strings.getter("bitSelectorSelectTip"));
+		ps[0].setToolTip(S.getter("bitSelectorOutputTip"));
+		ps[1].setToolTip(S.getter("bitSelectorDataTip"));
+		ps[2].setToolTip(S.getter("bitSelectorSelectTip"));
 		instance.setPorts(ps);
 	}
 }
