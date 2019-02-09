@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.std.arith;
 
+import static com.cburch.logisim.std.Strings.S;
+
 import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeSet;
@@ -49,7 +51,7 @@ public class Negator extends InstanceFactory {
 	private static final int OUT = 1;
 
 	public Negator() {
-		super("Negator", Strings.getter("negatorComponent"));
+		super("Negator", S.getter("negatorComponent"));
 		setAttributes(new Attribute[] { StdAttr.WIDTH },
 				new Object[] { BitWidth.create(8) });
 		setKeyConfigurator(new BitWidthConfigurator(StdAttr.WIDTH));
@@ -59,8 +61,8 @@ public class Negator extends InstanceFactory {
 		Port[] ps = new Port[2];
 		ps[IN] = new Port(-40, 0, Port.INPUT, StdAttr.WIDTH);
 		ps[OUT] = new Port(0, 0, Port.OUTPUT, StdAttr.WIDTH);
-		ps[IN].setToolTip(Strings.getter("negatorInputTip"));
-		ps[OUT].setToolTip(Strings.getter("negatorOutputTip"));
+		ps[IN].setToolTip(S.getter("negatorInputTip"));
+		ps[OUT].setToolTip(S.getter("negatorOutputTip"));
 		setPorts(ps);
 	}
 

@@ -30,18 +30,8 @@
 
 package com.cburch.logisim.util;
 
-class Strings {
-	public static String get(String key) {
-		return source.get(key);
-	}
+import com.cburch.logisim.util.LocaleManager;
 
-	public static LocaleManager getLocaleManager() {
-		return source;
-	}
-
-	public static StringGetter getter(String key) {
-		return source.getter(key);
-	}
-
-	static LocaleManager source = new LocaleManager("resources/logisim", "util");
+public class Strings {
+  public static final LocaleManager S = new LocaleManager("resources/logisim", "util");
 }

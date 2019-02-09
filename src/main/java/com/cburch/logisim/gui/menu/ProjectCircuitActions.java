@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.gui.menu;
 
+import static com.cburch.logisim.gui.Strings.S;
+
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -66,7 +68,7 @@ import com.cburch.logisim.util.SyntaxChecker;
 public class ProjectCircuitActions {
 	private static void analyzeError(Project proj, String message) {
 		JOptionPane.showMessageDialog(proj.getFrame(), message,
-				Strings.get("analyzeErrorTitle"), JOptionPane.ERROR_MESSAGE);
+				S.get("analyzeErrorTitle"), JOptionPane.ERROR_MESSAGE);
 		return;
 	}
 
@@ -94,7 +96,7 @@ public class ProjectCircuitActions {
 			return;
 		} catch (AnalyzeException ex) {
 			JOptionPane.showMessageDialog(proj.getFrame(), ex.getMessage(),
-					Strings.get("analyzeNoExpressionTitle"),
+					S.get("analyzeNoExpressionTitle"),
 					JOptionPane.INFORMATION_MESSAGE);
 		}
 
@@ -110,20 +112,20 @@ public class ProjectCircuitActions {
 			JLabel error = null;
 			/* Checking for valid names */
 			if (name.isEmpty()) {
-				error = new JLabel(Strings.get("circuitNameMissingError"));
+				error = new JLabel(S.get("circuitNameMissingError"));
 			} else
 				if (CorrectLabel.IsKeyword(name,false)) {
-					error = new JLabel("\""+name+"\": "+Strings.get("circuitNameKeyword"));
+					error = new JLabel("\""+name+"\": "+S.get("circuitNameKeyword"));
 				} else
 			if (!SyntaxChecker.isVariableNameAcceptable(name,false)) {
-				error = new JLabel("\""+name+"\": "+Strings.get("circuitNameInvalidName"));
+				error = new JLabel("\""+name+"\": "+S.get("circuitNameInvalidName"));
 			} else
 			if (NameIsInUse(proj,name)) {
-				error = new JLabel("\""+name+"\": "+Strings.get("circuitNameExists"));
+				error = new JLabel("\""+name+"\": "+S.get("circuitNameExists"));
 			}
 			if (error != null) {
 				JOptionPane.showMessageDialog(proj.getFrame(), error,
-				Strings.get("circuitCreateTitle"), JOptionPane.ERROR_MESSAGE);
+				S.get("circuitCreateTitle"), JOptionPane.ERROR_MESSAGE);
 			} else {
 				Circuit circuit = new Circuit(name, proj.getLogisimFile(),proj);
 				proj.doAction(LogisimFileActions.addCircuit(circuit));
@@ -170,23 +172,23 @@ public class ProjectCircuitActions {
 			}
 			if (pin.getAttributeValue(StdAttr.WIDTH).getWidth() > 1) {
 				if (isInput) {
-					analyzeError(proj, Strings.get("analyzeMultibitInputError"));
+					analyzeError(proj, S.get("analyzeMultibitInputError"));
 				} else {
 					analyzeError(proj,
-							Strings.get("analyzeMultibitOutputError"));
+							S.get("analyzeMultibitOutputError"));
 				}
 				return;
 			}
 		}
 		if (inputNames.size() > AnalyzerModel.MAX_INPUTS) {
 			analyzeError(proj, StringUtil.format(
-					Strings.get("analyzeTooManyInputsError"), ""
+					S.get("analyzeTooManyInputsError"), ""
 							+ AnalyzerModel.MAX_INPUTS));
 			return;
 		}
 		if (outputNames.size() > AnalyzerModel.MAX_OUTPUTS) {
 			analyzeError(proj, StringUtil.format(
-					Strings.get("analyzeTooManyOutputsError"), ""
+					S.get("analyzeTooManyOutputsError"), ""
 							+ AnalyzerModel.MAX_OUTPUTS));
 			return;
 		}
@@ -214,13 +216,13 @@ public class ProjectCircuitActions {
 	public static void doRemoveCircuit(Project proj, Circuit circuit) {
 		if (proj.getLogisimFile().getTools().size() == 1) {
 			JOptionPane.showMessageDialog(proj.getFrame(),
-					Strings.get("circuitRemoveLastError"),
-					Strings.get("circuitRemoveErrorTitle"),
+					S.get("circuitRemoveLastError"),
+					S.get("circuitRemoveErrorTitle"),
 					JOptionPane.ERROR_MESSAGE);
 		} else if (!proj.getDependencies().canRemove(circuit)) {
 			JOptionPane.showMessageDialog(proj.getFrame(),
-					Strings.get("circuitRemoveUsedError"),
-					Strings.get("circuitRemoveErrorTitle"),
+					S.get("circuitRemoveUsedError"),
+					S.get("circuitRemoveErrorTitle"),
 					JOptionPane.ERROR_MESSAGE);
 		} else {
 			proj.doAction(LogisimFileActions.removeCircuit(circuit));
@@ -245,7 +247,7 @@ public class ProjectCircuitActions {
 	 */
 	private static String promptForCircuitName(JFrame frame, Library lib,
 			String initialValue) {
-		JLabel label = new JLabel(Strings.get("circuitNamePrompt"));
+		JLabel label = new JLabel(S.get("circuitNamePrompt"));
 		final JTextField field = new JTextField(15);
 		field.setText(initialValue);
 		JLabel error = new JLabel(" ");
@@ -272,7 +274,7 @@ public class ProjectCircuitActions {
 				JOptionPane.OK_CANCEL_OPTION);
 		pane.setInitialValue(field);
 		JDialog dlog = pane.createDialog(frame,
-				Strings.get("circuitNameDialogTitle"));
+				S.get("circuitNameDialogTitle"));
 		dlog.addWindowFocusListener(new WindowFocusListener() {
 			public void windowGainedFocus(WindowEvent arg0) {
 				field.requestFocus();

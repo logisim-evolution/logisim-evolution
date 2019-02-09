@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.gui.appear;
 
+import static com.cburch.logisim.gui.Strings.S;
+
 import java.util.ArrayList;
 
 import com.cburch.draw.model.CanvasObject;
@@ -57,7 +59,7 @@ public class RevertAppearanceAction extends Action {
 
 	@Override
 	public String getName() {
-		return Strings.get("revertAppearanceAction");
+		return S.get("revertAppearanceAction");
 	}
 
 	@Override

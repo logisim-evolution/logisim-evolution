@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.std.gates;
 
+import static com.cburch.logisim.std.Strings.S;
+
 import java.awt.Graphics;
 import java.util.ArrayList;
 
@@ -75,7 +77,7 @@ class XorGate extends AbstractGate {
 	public static XorGate FACTORY = new XorGate();
 
 	private XorGate() {
-		super("XOR Gate", Strings.getter("xorGateComponent"), true);
+		super("XOR Gate", S.getter("xorGateComponent"), true);
 		setAdditionalWidth(10);
 		setIconNames("xorGate.gif", "xorGateRect.gif", "dinXorGate.gif");
 		setPaintInputLines(true);

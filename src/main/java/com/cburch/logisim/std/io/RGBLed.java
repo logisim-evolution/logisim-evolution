@@ -29,6 +29,8 @@
  *******************************************************************************/
 package com.cburch.logisim.std.io;
 
+import static com.cburch.logisim.std.Strings.S;
+
 import java.awt.Color;
 import java.awt.Graphics;
 import java.util.ArrayList;
@@ -85,7 +87,7 @@ public class RGBLed extends InstanceFactory {
 	public static final int BLUE = 2;
 
 	public RGBLed() {
-		super("RGBLED", Strings.getter("RGBledComponent"));
+		super("RGBLED", S.getter("RGBledComponent"));
 		setAttributes(new Attribute[] { Io.ATTR_ACTIVE, StdAttr.LABEL,
 				Io.ATTR_LABEL_LOC, StdAttr.LABEL_FONT, StdAttr.LABEL_COLOR, StdAttr.LABEL_VISIBILITY },
 				new Object[] { Boolean.TRUE, "", Direction.EAST,
@@ -96,9 +98,9 @@ public class RGBLed extends InstanceFactory {
 		ps[RED] = new Port(0, 0, Port.INPUT, 1);
 		ps[GREEN] = new Port(10, -10, Port.INPUT, 1);
 		ps[BLUE] = new Port(10, 10, Port.INPUT, 1);
-		ps[RED].setToolTip(Strings.getter("RED"));
-		ps[GREEN].setToolTip(Strings.getter("GREEN"));
-		ps[BLUE].setToolTip(Strings.getter("BLUE"));
+		ps[RED].setToolTip(S.getter("RED"));
+		ps[GREEN].setToolTip(S.getter("GREEN"));
+		ps[BLUE].setToolTip(S.getter("BLUE"));
 		setPorts(ps);
 		setInstanceLogger(Logger.class);
 		MyIOInformation = new IOComponentInformationContainer(0, 3, 0, null,

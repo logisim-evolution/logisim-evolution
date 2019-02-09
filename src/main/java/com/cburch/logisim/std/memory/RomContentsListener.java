@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.std.memory;
 
+import static com.cburch.logisim.std.Strings.S;
+
 import com.cburch.hex.HexModel;
 import com.cburch.hex.HexModelListener;
 import com.cburch.logisim.proj.Action;
@@ -93,7 +95,7 @@ class RomContentsListener implements HexModelListener {
 
 		@Override
 		public String getName() {
-			return Strings.get("romChangeAction");
+			return S.get("romChangeAction");
 		}
 
 		@Override

@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.instance;
 
+import static com.cburch.logisim.std.Strings.S;
+
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -164,11 +166,11 @@ public class InstanceComponent implements Component, AttributeListener,
 					e.getSource().setValue(lattr, Oldvalue);
 				} else
 				if (getFactory().getName().toUpperCase().equals(value.toUpperCase())) {
-					JOptionPane.showMessageDialog(null, Strings.get("MatchedLabelNameError"));
+					JOptionPane.showMessageDialog(null, S.get("MatchedLabelNameError"));
 					e.getSource().setValue(lattr, Oldvalue);
 				} else 
 				if (CorrectLabel.IsKeyword(value,false)) {
-					JOptionPane.showMessageDialog(null, "\""+value+"\": "+Strings.get("KeywordNameError"));
+					JOptionPane.showMessageDialog(null, "\""+value+"\": "+S.get("KeywordNameError"));
 					e.getSource().setValue(lattr, Oldvalue);
 				} else {
 					fireLabelChanged(e);

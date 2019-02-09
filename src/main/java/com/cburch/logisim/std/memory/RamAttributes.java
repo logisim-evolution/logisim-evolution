@@ -29,6 +29,8 @@
  *******************************************************************************/
 package com.cburch.logisim.std.memory;
 
+import static com.cburch.logisim.std.Strings.S;
+
 import java.awt.Font;
 import java.util.Arrays;
 import java.util.List;
@@ -58,19 +60,19 @@ public class RamAttributes extends AbstractAttributeSet {
 
 	/* here the rest is defined */
 	static final AttributeOption BUS_BIDIR = new AttributeOption("bidir",
-			Strings.getter("ramBidirDataBus"));
+			S.getter("ramBidirDataBus"));
 	static final AttributeOption BUS_SEP = new AttributeOption("bibus",
-			Strings.getter("ramSeparateDataBus"));
+			S.getter("ramSeparateDataBus"));
 	static final Attribute<AttributeOption> ATTR_DBUS = Attributes.forOption(
-			"databus", Strings.getter("ramDataAttr"), new AttributeOption[] {
+			"databus", S.getter("ramDataAttr"), new AttributeOption[] {
 					BUS_BIDIR, BUS_SEP });
 	static final AttributeOption BUS_WITH_BYTEENABLES = new AttributeOption(
-			"byteEnables", Strings.getter("ramWithByteEnables"));
+			"byteEnables", S.getter("ramWithByteEnables"));
 	static final AttributeOption BUS_WITHOUT_BYTEENABLES = new AttributeOption(
-			"NobyteEnables", Strings.getter("ramNoByteEnables"));
+			"NobyteEnables", S.getter("ramNoByteEnables"));
 
 	static final Attribute<AttributeOption> ATTR_ByteEnables = Attributes
-			.forOption("byteenables", Strings.getter("ramByteEnables"),
+			.forOption("byteenables", S.getter("ramByteEnables"),
 					new AttributeOption[] { BUS_WITH_BYTEENABLES,
 							BUS_WITHOUT_BYTEENABLES });
 	private static List<Attribute<?>> ATTRIBUTES = Arrays

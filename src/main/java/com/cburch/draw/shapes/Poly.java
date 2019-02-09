@@ -30,6 +30,8 @@
 
 package com.cburch.draw.shapes;
 
+import static com.cburch.draw.Strings.S;
+
 import java.awt.Graphics;
 import java.awt.geom.GeneralPath;
 import java.util.List;
@@ -191,9 +193,9 @@ public class Poly extends FillableCanvasObject {
 	@Override
 	public String getDisplayName() {
 		if (closed) {
-			return Strings.get("shapePolygon");
+			return S.get("shapePolygon");
 		} else {
-			return Strings.get("shapePolyline");
+			return S.get("shapePolyline");
 		}
 	}
 

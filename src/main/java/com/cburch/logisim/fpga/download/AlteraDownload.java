@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.fpga.download;
 
+import static com.cburch.logisim.fpga.Strings.S;
+
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Rectangle;
@@ -70,16 +72,12 @@ public class AlteraDownload {
 				+ ToplevelHDLGeneratorFactory.FPGAToplevelName + ".sof")
 				.exists();
 		GridBagConstraints gbc = new GridBagConstraints();
-		JFrame panel = new JFrame("Altera Downloading");
+		JFrame panel = new JFrame(S.fmt("DownloadingInfo", "Altera"));
 		panel.setResizable(false);
 		panel.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		GridBagLayout thisLayout = new GridBagLayout();
 		panel.setLayout(thisLayout);
-		// PointerInfo mouseloc = MouseInfo.getPointerInfo();
-		// Point mlocation = mouseloc.getLocation();
-		// panel.setLocation(mlocation.x, mlocation.y);
-		JLabel LocText = new JLabel(
-				"Generating FPGA files and performing download; this may take a while");
+		JLabel LocText = new JLabel(S.get("FpgaDownloadInfo"));
 		gbc.gridx = 0;
 		gbc.gridy = 0;
 		gbc.fill = GridBagConstraints.HORIZONTAL;

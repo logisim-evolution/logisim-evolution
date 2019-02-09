@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.circuit;
 
+import static com.cburch.logisim.circuit.Strings.S;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -290,12 +292,12 @@ public class Analyze {
 
 			String defaultList;
 			if (Pin.FACTORY.isInputPin(pin)) {
-				defaultList = Strings.get("defaultInputLabels");
+				defaultList = S.get("defaultInputLabels");
 				if (defaultList.indexOf(",") < 0) {
 					defaultList = "a,b,c,d,e,f,g,h";
 				}
 			} else {
-				defaultList = Strings.get("defaultOutputLabels");
+				defaultList = S.get("defaultOutputLabels");
 				if (defaultList.indexOf(",") < 0) {
 					defaultList = "x,y,z,u,v,w,s,t";
 				}

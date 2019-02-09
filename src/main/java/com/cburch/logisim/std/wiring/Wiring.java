@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.std.wiring;
 
+import static com.cburch.logisim.std.Strings.S;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,11 +47,11 @@ import com.cburch.logisim.tools.Tool;
 public class Wiring extends Library {
 
 	static final AttributeOption GATE_TOP_LEFT = new AttributeOption("tl",
-			Strings.getter("wiringGateTopLeftOption"));
+			S.getter("wiringGateTopLeftOption"));
 	static final AttributeOption GATE_BOTTOM_RIGHT = new AttributeOption("br",
-			Strings.getter("wiringGateBottomRightOption"));
+			S.getter("wiringGateBottomRightOption"));
 	static final Attribute<AttributeOption> ATTR_GATE = Attributes.forOption(
-			"gate", Strings.getter("wiringGateAttr"), new AttributeOption[] {
+			"gate", S.getter("wiringGateAttr"), new AttributeOption[] {
 					GATE_TOP_LEFT, GATE_BOTTOM_RIGHT });
 
 	private static Tool[] ADD_TOOLS = { new AddTool(SplitterFactory.instance),
@@ -59,18 +61,18 @@ public class Wiring extends Library {
 			new AddTool(Constant.FACTORY), };
 
 	private static FactoryDescription[] DESCRIPTIONS = {
-			new FactoryDescription("Power", Strings.getter("powerComponent"),
+			new FactoryDescription("Power", S.getter("powerComponent"),
 					"power.gif", "Power"),
-			new FactoryDescription("Ground", Strings.getter("groundComponent"),
+			new FactoryDescription("Ground", S.getter("groundComponent"),
 					"ground.gif", "Ground"),
 			new FactoryDescription("Transistor",
-					Strings.getter("transistorComponent"), "trans0.gif",
+					S.getter("transistorComponent"), "trans0.gif",
 					"Transistor"),
 			new FactoryDescription("Transmission Gate",
-					Strings.getter("transmissionGateComponent"),
+					S.getter("transmissionGateComponent"),
 					"transmis.gif", "TransmissionGate"),
 			new FactoryDescription("Bit Extender",
-					Strings.getter("extenderComponent"), "extender.gif",
+					S.getter("extenderComponent"), "extender.gif",
 					"BitExtender"), };
 
 	private List<Tool> tools = null;
@@ -80,7 +82,7 @@ public class Wiring extends Library {
 
 	@Override
 	public String getDisplayName() {
-		return Strings.get("wiringLibrary");
+		return S.get("wiringLibrary");
 	}
 
 	@Override

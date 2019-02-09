@@ -1,5 +1,7 @@
 package com.cburch.logisim.tools;
 
+import static com.cburch.logisim.tools.Strings.S;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -14,11 +16,11 @@ import com.cburch.logisim.file.LogisimFile;
 
 public class LibraryTools {
 	public static void ShowErrors(String LibName,HashMap<String,String> Messages) {
-		JOptionPane.showMessageDialog(null, Message(LibName,Messages), Strings.get("LibLoadErrors")+" "+LibName+" !", JOptionPane.ERROR_MESSAGE);
+		JOptionPane.showMessageDialog(null, Message(LibName,Messages), S.get("LibLoadErrors")+" "+LibName+" !", JOptionPane.ERROR_MESSAGE);
 	}
 	
 	public static void ShowWarnings(String LibName,HashMap<String,String> Messages) {
-		JOptionPane.showMessageDialog(null, Message(LibName,Messages), Strings.get("LibLoadWarnings")+" "+LibName+" !", JOptionPane.WARNING_MESSAGE);
+		JOptionPane.showMessageDialog(null, Message(LibName,Messages), S.get("LibLoadWarnings")+" "+LibName+" !", JOptionPane.WARNING_MESSAGE);
 	}
 
 	private static String Message(String LibName,HashMap<String,String> Messages) {
@@ -26,7 +28,7 @@ public class LibraryTools {
 		int item = 0;
 		for (String myerror : Messages.keySet()) {
 			item++;
-			Message = Message.concat( item+") "+Strings.get(Messages.get(myerror))+" \""+myerror+"\".\n");
+			Message = Message.concat( item+") "+S.get(Messages.get(myerror))+" \""+myerror+"\".\n");
 		}
 		return  Message;
 	}

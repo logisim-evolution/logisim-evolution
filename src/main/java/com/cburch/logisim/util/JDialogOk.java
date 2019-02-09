@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.util;
 
+import static com.cburch.logisim.util.Strings.S;
+
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dialog;
@@ -69,8 +71,8 @@ public abstract class JDialogOk extends JDialog {
 	private static final long serialVersionUID = 1L;
 
 	private JPanel contents = new JPanel(new BorderLayout());
-	protected JButton ok = new JButton(Strings.get("dlogOkButton"));
-	protected JButton cancel = new JButton(Strings.get("dlogCancelButton"));
+	protected JButton ok = new JButton(S.get("dlogOkButton"));
+	protected JButton cancel = new JButton(S.get("dlogCancelButton"));
 
 	public JDialogOk(Dialog parent, String title, boolean model) {
 		super(parent, title, true);

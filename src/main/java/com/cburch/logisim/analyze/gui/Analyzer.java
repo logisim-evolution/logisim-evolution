@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.analyze.gui;
 
+import static com.cburch.logisim.analyze.Strings.S;
+
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
@@ -117,22 +119,22 @@ public class Analyzer extends LFrame {
 
 	private class MyListener implements LocaleListener {
 		public void localeChanged() {
-			Analyzer.this.setTitle(Strings.get("analyzerWindowTitle"));
-			tabbedPane.setTitleAt(INPUTS_TAB, Strings.get("inputsTab"));
-			tabbedPane.setTitleAt(OUTPUTS_TAB, Strings.get("outputsTab"));
-			tabbedPane.setTitleAt(TABLE_TAB, Strings.get("tableTab"));
-			tabbedPane.setTitleAt(EXPRESSION_TAB, Strings.get("expressionTab"));
-			tabbedPane.setTitleAt(MINIMIZED_TAB, Strings.get("minimizedTab"));
+			Analyzer.this.setTitle(S.get("analyzerWindowTitle"));
+			tabbedPane.setTitleAt(INPUTS_TAB, S.get("inputsTab"));
+			tabbedPane.setTitleAt(OUTPUTS_TAB, S.get("outputsTab"));
+			tabbedPane.setTitleAt(TABLE_TAB, S.get("tableTab"));
+			tabbedPane.setTitleAt(EXPRESSION_TAB, S.get("expressionTab"));
+			tabbedPane.setTitleAt(MINIMIZED_TAB, S.get("minimizedTab"));
 			tabbedPane
-					.setToolTipTextAt(INPUTS_TAB, Strings.get("inputsTabTip"));
+					.setToolTipTextAt(INPUTS_TAB, S.get("inputsTabTip"));
 			tabbedPane.setToolTipTextAt(OUTPUTS_TAB,
-					Strings.get("outputsTabTip"));
-			tabbedPane.setToolTipTextAt(TABLE_TAB, Strings.get("tableTabTip"));
+					S.get("outputsTabTip"));
+			tabbedPane.setToolTipTextAt(TABLE_TAB, S.get("tableTabTip"));
 			tabbedPane.setToolTipTextAt(EXPRESSION_TAB,
-					Strings.get("expressionTabTip"));
+					S.get("expressionTabTip"));
 			tabbedPane.setToolTipTextAt(MINIMIZED_TAB,
-					Strings.get("minimizedTabTip"));
-			buildCircuit.setText(Strings.get("buildCircuitButton"));
+					S.get("minimizedTabTip"));
+			buildCircuit.setText(S.get("buildCircuitButton"));
 			inputsPanel.localeChanged();
 			outputsPanel.localeChanged();
 			truthTablePanel.localeChanged();
@@ -175,8 +177,8 @@ public class Analyzer extends LFrame {
 	Analyzer() {
 		inputsPanel = new VariableTab(model.getInputs());
 		outputsPanel = new VariableTab(model.getOutputs());
-		inputsPanel.SetCompanion(outputsPanel, Strings.get("outputsTab"));
-		outputsPanel.SetCompanion(inputsPanel, Strings.get("inputsTab"));
+		inputsPanel.SetCompanion(outputsPanel, S.get("outputsTab"));
+		outputsPanel.SetCompanion(inputsPanel, S.get("inputsTab"));
 		truthTablePanel = new TableTab(model.getTruthTable());
 		expressionPanel = new ExpressionTab(model);
 		minimizedPanel = new MinimizedTab(model);

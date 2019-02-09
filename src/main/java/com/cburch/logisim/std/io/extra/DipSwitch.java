@@ -1,5 +1,7 @@
 package com.cburch.logisim.std.io.extra;
 
+import static com.cburch.logisim.std.Strings.S;
+
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.MouseEvent;
@@ -33,7 +35,7 @@ public class DipSwitch extends InstanceFactory {
 		public String getLogName(InstanceState state, Object option) {
 			String inName = state.getAttributeValue(StdAttr.LABEL);
 			if (inName == null || inName.equals("")) {
-				inName = Strings.get("DipSwitchComponent") + state.getInstance().getLocation();
+				inName = S.get("DipSwitchComponent") + state.getInstance().getLocation();
 			}
 			if (option instanceof Integer) {
 				return inName + "[" + option + "]";
@@ -156,12 +158,12 @@ public class DipSwitch extends InstanceFactory {
 	}
 
 	private static final Attribute<Integer> ATTR_NSWITCHES = Attributes.forIntegerRange("NSwitches",
-			Strings.getter("NumberOfSwitch"), 1, 32);
+			S.getter("NumberOfSwitch"), 1, 32);
 
 	private static final int DEPTH = 3;
 
 	public DipSwitch() {
-		super("DipSwitch", Strings.getter("DipSwitchComponent"));
+		super("DipSwitch", S.getter("DipSwitchComponent"));
 		setAttributes(
 				new Attribute[] { StdAttr.FACING, ATTR_NSWITCHES, StdAttr.LABEL, Io.ATTR_LABEL_LOC,
 						StdAttr.LABEL_FONT,StdAttr.LABEL_VISIBILITY},

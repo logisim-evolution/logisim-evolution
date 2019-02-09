@@ -1,5 +1,7 @@
 package com.cburch.logisim.std.io.extra;
 
+import static com.cburch.logisim.std.Strings.S;
+
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
@@ -132,15 +134,15 @@ public class Slider extends InstanceFactory {
 	}
 
 	private static final AttributeOption RIGHT_TO_LEFT = new AttributeOption("right_to_left",
-			Strings.getter("right_to_leftOption"));
+			S.getter("right_to_leftOption"));
 	private static final AttributeOption LEFT_TO_RIGHT = new AttributeOption("left_to_right",
-			Strings.getter("left_to_rightOption"));
+			S.getter("left_to_rightOption"));
 	private static final Attribute<AttributeOption> ATTR_DIR = Attributes.forOption("Direction",
 			new LocaleManager("resources/logisim", "circuit").getter("wireDirectionAttr"),
 			new AttributeOption[] { RIGHT_TO_LEFT, LEFT_TO_RIGHT });
 
 	private static final Attribute<Integer> ATTR_VALUE = Attributes.forHexInteger("value",
-			Strings.getter("constantValueAttr"));
+			S.getter("constantValueAttr"));
 
 	private static final byte SliderWidth = 100;
 
@@ -167,7 +169,7 @@ public class Slider extends InstanceFactory {
 	}
 
 	public Slider() {
-		super("Slider", Strings.getter("Slider"));
+		super("Slider", S.getter("Slider"));
 		setAttributes(
 				new Attribute[] { StdAttr.FACING, StdAttr.WIDTH, RadixOption.ATTRIBUTE, Io.ATTR_COLOR, StdAttr.LABEL,
 						StdAttr.LABEL_FONT, StdAttr.LABEL_VISIBILITY, ATTR_DIR, ATTR_VALUE },

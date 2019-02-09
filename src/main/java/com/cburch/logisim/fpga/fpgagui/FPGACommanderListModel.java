@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.fpga.fpgagui;
 
+import static com.cburch.logisim.fpga.Strings.S;
+
 import java.awt.Color;
 import java.awt.Component;
 import java.util.ArrayList;
@@ -132,10 +134,10 @@ public class FPGACommanderListModel extends  AbstractListModel<Object> {
 			if (msg != null) {
 				switch (msg.Severity()) {
 					case SimpleDRCContainer.LEVEL_SEVERE :
-						Line.append(Strings.get("SEVERE_MSG")+" ");
+						Line.append(S.get("SEVERE_MSG")+" ");
 						break;
 					case SimpleDRCContainer.LEVEL_FATAL :
-						Line.append(Strings.get("FATAL_MSG")+" ");
+						Line.append(S.get("FATAL_MSG")+" ");
 						break;
 				}
 				if (msg.HasCircuit()) {

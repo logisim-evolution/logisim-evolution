@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.gui.log;
 
+import static com.cburch.logisim.gui.Strings.S;
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -200,7 +202,7 @@ class TablePanel extends LogPanel {
 
 	@Override
 	public String getHelpText() {
-		return Strings.get("tableHelp");
+		return S.get("tableHelp");
 	}
 
 	public int getRow(MouseEvent event) {
@@ -213,7 +215,7 @@ class TablePanel extends LogPanel {
 
 	@Override
 	public String getTitle() {
-		return Strings.get("tableTab");
+		return S.get("tableTab");
 	}
 
 	JScrollBar getVerticalScrollBar() {
@@ -253,7 +255,7 @@ class TablePanel extends LogPanel {
 		int columns = sel.size();
 		if (columns == 0) {
 			g.setFont(BODY_FONT);
-			GraphicsUtil.drawCenteredText(g, Strings.get("tableEmptyMessage"),
+			GraphicsUtil.drawCenteredText(g, S.get("tableEmptyMessage"),
 					sz.width / 2, sz.height / 2);
 			return;
 		}

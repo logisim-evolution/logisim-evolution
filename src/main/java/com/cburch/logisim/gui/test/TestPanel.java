@@ -35,6 +35,8 @@
 
 package com.cburch.logisim.gui.test;
 
+import static com.cburch.logisim.gui.Strings.S;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 
@@ -105,7 +107,7 @@ class TestPanel extends JPanel implements ValueTable.Model {
 
 	public String getColumnName(int i) {
 		TestVector vec = getModel().getVector();
-		return i == 0 ? Strings.get("statusHeader") : vec.columnName[i - 1];
+		return i == 0 ? S.get("statusHeader") : vec.columnName[i - 1];
 	}
 
 	// ValueTable.Model implementation
@@ -139,8 +141,8 @@ class TestPanel extends JPanel implements ValueTable.Model {
 		int columns = vec.columnName.length;
 		String msg[] = new String[columns];
 		Value[] altdata = new Value[columns];
-		String passMsg = Strings.get("passStatus");
-		String failMsg = Strings.get("failStatus");
+		String passMsg = S.get("passStatus");
+		String failMsg = S.get("failStatus");
 
 		for (int i = firstRow; i < firstRow + numRows; i++) {
 			int row = model.sortedIndex(i);
@@ -154,8 +156,8 @@ class TestPanel extends JPanel implements ValueTable.Model {
 					failed = true;
 					for (FailException e : ((FailException) err).getAll()) {
 						int col = e.getColumn();
-						msg[col] = StringUtil.format(Strings
-								.get("expectedValueMessage"), e.getExpected()
+						msg[col] = StringUtil.format(
+								S.get("expectedValueMessage"), e.getExpected()
 								.toDisplayString(getColumnValueRadix(col + 1)));
 						altdata[col] = e.getComputed();
 					}

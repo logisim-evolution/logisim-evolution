@@ -30,6 +30,8 @@
 
 package com.cburch.draw.actions;
 
+import static com.cburch.draw.Strings.S;
+
 import java.util.Collection;
 import java.util.Collections;
 
@@ -53,7 +55,7 @@ public class ModelDeleteHandleAction extends ModelAction {
 
 	@Override
 	public String getName() {
-		return Strings.get("actionDeleteHandle");
+		return S.get("actionDeleteHandle");
 	}
 
 	@Override

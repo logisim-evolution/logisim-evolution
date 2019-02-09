@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.gui.start;
 
+import static com.cburch.logisim.gui.Strings.S;
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -134,7 +136,7 @@ class AboutCredits extends JComponent {
 		 * "github.com/reds-heig/logisim-evolution")); initialLines =
 		 * lines.size();
 		 */
-		lines.add(new CreditsLine(0, Strings.get("creditsRoleFork")));
+		lines.add(new CreditsLine(0, S.get("creditsRoleFork")));
 		lines.add(new CreditsLine(1,
 				"Haute \u00C9cole Sp\u00E9cialis\u00E9e Bernoise"));
 		lines.add(new CreditsLine(2, "http://www.bfh.ch"));
@@ -145,7 +147,7 @@ class AboutCredits extends JComponent {
 		lines.add(new CreditsLine(1, "Haute \u00C9cole d'Ing\u00E9nierie"));
 		lines.add(new CreditsLine(1, "et de Gestion du Canton de Vaud"));
 		lines.add(new CreditsLine(2, "http://www.heig-vd.ch"));
-		lines.add(new CreditsLine(0, Strings.get("creditsRoleCurrent")));
+		lines.add(new CreditsLine(0, S.get("creditsRoleCurrent")));
 		lines.add(new CreditsLine(1, "Haute \u00C9cole d'Ing\u00E9nierie"));
 		lines.add(new CreditsLine(1, "et de Gestion du Canton de Vaud"));
 		lines.add(new CreditsLine(2, "http://www.heig-vd.ch"));
@@ -154,7 +156,7 @@ class AboutCredits extends JComponent {
 		 * If you fork Logisim, feel free to change the above lines, but please
 		 * do not change these last four lines!
 		 */
-		lines.add(new CreditsLine(0, Strings.get("creditsRoleOriginal"),
+		lines.add(new CreditsLine(0, S.get("creditsRoleOriginal"),
 				hendrixLogo, HENDRIX_WIDTH));
 		lines.add(new CreditsLine(1, "Carl Burch"));
 		lines.add(new CreditsLine(2, "Hendrix College"));

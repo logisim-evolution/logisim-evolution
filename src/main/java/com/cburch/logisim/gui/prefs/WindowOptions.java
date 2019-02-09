@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.gui.prefs;
 
+import static com.cburch.logisim.gui.Strings.S;
+
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -88,10 +90,10 @@ class WindowOptions extends OptionsPanel {
 		
 
 		checks = new PrefBoolean[] { new PrefBoolean(
-				AppPreferences.SHOW_TICK_RATE, Strings.getter("windowTickRate")), };
+				AppPreferences.SHOW_TICK_RATE, S.getter("windowTickRate")), };
 
 		toolbarPlacement = new PrefOptionList(AppPreferences.TOOLBAR_PLACEMENT,
-				Strings.getter("windowToolbarLocation"), new PrefOption[] {
+				S.getter("windowToolbarLocation"), new PrefOption[] {
 						new PrefOption(Direction.NORTH.toString(),
 								Direction.NORTH.getDisplayGetter()),
 						new PrefOption(Direction.SOUTH.toString(),
@@ -101,9 +103,9 @@ class WindowOptions extends OptionsPanel {
 						new PrefOption(Direction.WEST.toString(),
 								Direction.WEST.getDisplayGetter()),
 						new PrefOption(AppPreferences.TOOLBAR_DOWN_MIDDLE,
-								Strings.getter("windowToolbarDownMiddle")),
+								S.getter("windowToolbarDownMiddle")),
 						new PrefOption(AppPreferences.TOOLBAR_HIDDEN,
-								Strings.getter("windowToolbarHidden")) });
+								S.getter("windowToolbarHidden")) });
 
 		JPanel panel = new JPanel(new TableLayout(2));
 		panel.add(toolbarPlacement.getJLabel());
@@ -114,10 +116,10 @@ class WindowOptions extends OptionsPanel {
 		
 		panel.add(new JLabel(" "));
 		panel.add(new JLabel(" "));
-		JLabel important = new JLabel(Strings.get("windowToolbarPleaserestart"));
+		JLabel important = new JLabel(S.get("windowToolbarPleaserestart"));
 	    important.setFont(important.getFont().deriveFont(Font.ITALIC));
 	    panel.add(important);
-	    important = new JLabel(Strings.get("windowToolbarImportant"));
+	    important = new JLabel(S.get("windowToolbarImportant"));
 	    important.setFont(important.getFont().deriveFont(Font.ITALIC));
 	    panel.add(important);
 		panel.add(ZoomLabel);
@@ -135,7 +137,7 @@ class WindowOptions extends OptionsPanel {
 			}
 			index++;
 		}
-		panel.add(new JLabel(Strings.get("windowToolbarLookandfeel")));
+		panel.add(new JLabel(S.get("windowToolbarLookandfeel")));
 		panel.add(LookAndFeel);
 		LookAndFeel.addActionListener(Listener);
 
@@ -149,12 +151,12 @@ class WindowOptions extends OptionsPanel {
 
 	@Override
 	public String getHelpText() {
-		return Strings.get("windowHelp");
+		return S.get("windowHelp");
 	}
 
 	@Override
 	public String getTitle() {
-		return Strings.get("windowTitle");
+		return S.get("windowTitle");
 	}
 
 	@Override

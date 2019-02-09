@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.data;
 
+import static com.cburch.logisim.data.Strings.S;
+
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
@@ -62,9 +64,9 @@ public class Attributes {
 		@Override
 		public String toDisplayString(Boolean value) {
 			if (value.booleanValue())
-				return Strings.get("booleanTrueOption");
+				return S.get("booleanTrueOption");
 			else
-				return Strings.get("booleanFalseOption");
+				return S.get("booleanFalseOption");
 		}
 	}
 

@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.std.hdl;
 
+import static com.cburch.logisim.std.Strings.S;
+
 import java.awt.Dimension;
 import java.awt.Insets;
 import java.io.BufferedReader;
@@ -192,7 +194,7 @@ public class VhdlContent extends HdlContent {
 			parser.parse();
 		} catch (Exception ex) {
 			JOptionPane.showMessageDialog(null, ex.getMessage(),
-					Strings.get("validationParseError"),
+					S.get("validationParseError"),
 					JOptionPane.ERROR_MESSAGE);
 			return false;
 		}
@@ -210,14 +212,14 @@ public class VhdlContent extends HdlContent {
 			VhdlParser.PortDescription desc = inputsDesc.get(i);
 			inputs[i] = new Port(0, (i * VhdlEntity.PORT_GAP)
 					+ VhdlEntity.HEIGHT, desc.getType(), desc.getWidth());
-			inputs[i].setToolTip(Strings.getter(desc.getName()));
+			inputs[i].setToolTip(S.getter(desc.getName()));
 		}
 
 		for (int i = 0; i < outputsDesc.size(); i++) {
 			VhdlParser.PortDescription desc = outputsDesc.get(i);
 			outputs[i] = new Port(VhdlEntity.WIDTH, (i * VhdlEntity.PORT_GAP)
 					+ VhdlEntity.HEIGHT, desc.getType(), desc.getWidth());
-			outputs[i].setToolTip(Strings.getter(desc.getName()));
+			outputs[i].setToolTip(S.getter(desc.getName()));
 		}
 
 		this.content = new StringBuffer(content);
@@ -244,8 +246,8 @@ public class VhdlContent extends HdlContent {
 
 			JOptionPane.showOptionDialog(null, sp, title.toString(),
 					JOptionPane.OK_OPTION, JOptionPane.ERROR_MESSAGE, null,
-					new String[] { Strings.get("validationErrorButton") },
-					Strings.get("validationErrorButton"));
+					new String[] { S.get("validationErrorButton") },
+					S.get("validationErrorButton"));
 			return false;
 		case Softwares.ABORD:
 			JOptionPane.showMessageDialog(null, result.toString(),

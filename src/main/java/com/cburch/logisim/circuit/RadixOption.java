@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.circuit;
 
+import static com.cburch.logisim.circuit.Strings.S;
+
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.Attributes;
@@ -40,7 +42,7 @@ import com.cburch.logisim.util.StringGetter;
 public abstract class RadixOption extends AttributeOption {
 	private static class Radix10Signed extends RadixOption {
 		private Radix10Signed() {
-			super("10signed", Strings.getter("radix10Signed"));
+			super("10signed", S.getter("radix10Signed"));
 		}
 
 		@Override
@@ -105,7 +107,7 @@ public abstract class RadixOption extends AttributeOption {
 
 	private static class Radix10Unsigned extends RadixOption {
 		private Radix10Unsigned() {
-			super("10unsigned", Strings.getter("radix10Unsigned"));
+			super("10unsigned", S.getter("radix10Unsigned"));
 		}
 
 		@Override
@@ -167,7 +169,7 @@ public abstract class RadixOption extends AttributeOption {
 
 	private static class Radix16 extends RadixOption {
 		private Radix16() {
-			super("16", Strings.getter("radix16"));
+			super("16", S.getter("radix16"));
 		}
 
 		@Override
@@ -188,7 +190,7 @@ public abstract class RadixOption extends AttributeOption {
 
 	private static class Radix2 extends RadixOption {
 		private Radix2() {
-			super("2", Strings.getter("radix2"));
+			super("2", S.getter("radix2"));
 		}
 
 		@Override
@@ -217,7 +219,7 @@ public abstract class RadixOption extends AttributeOption {
 
 	private static class Radix8 extends RadixOption {
 		private Radix8() {
-			super("8", Strings.getter("radix8"));
+			super("8", S.getter("radix8"));
 		}
 
 		@Override
@@ -263,7 +265,7 @@ public abstract class RadixOption extends AttributeOption {
 			RADIX_10_SIGNED, RADIX_10_UNSIGNED, RADIX_16 };
 
 	public static final Attribute<RadixOption> ATTRIBUTE = Attributes
-			.forOption("radix", Strings.getter("radixAttr"), OPTIONS);
+			.forOption("radix", S.getter("radixAttr"), OPTIONS);
 
 	private String saveName;
 

@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.gui.prefs;
 
+import static com.cburch.logisim.gui.Strings.S;
+
 import java.awt.Component;
 import java.awt.Dimension;
 
@@ -62,17 +64,17 @@ class IntlOptions extends OptionsPanel {
 	public IntlOptions(PreferencesFrame window) {
 		super(window);
 
-		locale = Strings.createLocaleSelector();
+		locale = S.createLocaleSelector();
 		replAccents = new PrefBoolean(AppPreferences.ACCENTS_REPLACE,
-				Strings.getter("intlReplaceAccents"));
+				S.getter("intlReplaceAccents"));
 		gateShape = new PrefOptionList(AppPreferences.GATE_SHAPE,
-				Strings.getter("intlGateShape"), new PrefOption[] {
+				S.getter("intlGateShape"), new PrefOption[] {
 						new PrefOption(AppPreferences.SHAPE_SHAPED,
-								Strings.getter("shapeShaped")),
+								S.getter("shapeShaped")),
 						new PrefOption(AppPreferences.SHAPE_RECTANGULAR,
-								Strings.getter("shapeRectangular")) });
+								S.getter("shapeRectangular")) });
 //						new PrefOption(AppPreferences.SHAPE_DIN40700,
-//								Strings.getter("shapeDIN40700")) 
+//								S.getter("shapeDIN40700")) 
 
 		Box localePanel = new Box(BoxLayout.X_AXIS);
 		localePanel.add(Box.createGlue());
@@ -97,18 +99,18 @@ class IntlOptions extends OptionsPanel {
 
 	@Override
 	public String getHelpText() {
-		return Strings.get("intlHelp");
+		return S.get("intlHelp");
 	}
 
 	@Override
 	public String getTitle() {
-		return Strings.get("intlTitle");
+		return S.get("intlTitle");
 	}
 
 	@Override
 	public void localeChanged() {
 		gateShape.localeChanged();
-		localeLabel.setText(Strings.get("intlLocale") + " ");
+		localeLabel.setText(S.get("intlLocale") + " ");
 		replAccents.localeChanged();
 		replAccents.setEnabled(LocaleManager.canReplaceAccents());
 	}

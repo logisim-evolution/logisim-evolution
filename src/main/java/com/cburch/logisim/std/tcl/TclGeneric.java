@@ -29,6 +29,8 @@
  *******************************************************************************/
 package com.cburch.logisim.std.tcl;
 
+import static com.cburch.logisim.std.Strings.S;
+
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
@@ -62,7 +64,7 @@ public class TclGeneric extends TclComponent {
 	static class ContentAttribute extends Attribute<VhdlContent> {
 
 		public ContentAttribute() {
-			super("content", Strings.getter("tclInterfaceDefinition"));
+			super("content", S.getter("tclInterfaceDefinition"));
 		}
 
 		@Override
@@ -82,7 +84,7 @@ public class TclGeneric extends TclComponent {
 
 		@Override
 		public String toDisplayString(VhdlContent value) {
-			return Strings.get("tclInterfaceDefinitionValue");
+			return S.get("tclInterfaceDefinitionValue");
 		}
 
 		@Override
@@ -111,7 +113,7 @@ public class TclGeneric extends TclComponent {
 	private WeakHashMap<Instance, TclGenericListener> contentListeners;
 
 	public TclGeneric() {
-		super("TclGeneric", Strings.getter("tclGeneric"));
+		super("TclGeneric", S.getter("tclGeneric"));
 
 		contentListeners = new WeakHashMap<Instance, TclGenericListener>();
 	}
@@ -135,7 +137,7 @@ public class TclGeneric extends TclComponent {
 
 	@Override
 	public String getDisplayName() {
-		return Strings.get("tclGeneric");
+		return S.get("tclGeneric");
 	}
 
 	@Override

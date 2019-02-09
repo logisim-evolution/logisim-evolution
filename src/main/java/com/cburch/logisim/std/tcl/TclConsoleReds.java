@@ -29,6 +29,8 @@
  *******************************************************************************/
 package com.cburch.logisim.std.tcl;
 
+import static com.cburch.logisim.std.Strings.S;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,7 +50,7 @@ import com.cburch.logisim.instance.Port;
 public class TclConsoleReds extends TclComponent {
 
 	public TclConsoleReds() {
-		super("TclConsoleReds", Strings.getter("tclConsoleReds"));
+		super("TclConsoleReds", S.getter("tclConsoleReds"));
 
 		List<PortDescription> inputsDesc = new ArrayList<PortDescription>();
 		List<PortDescription> outputsDesc = new ArrayList<PortDescription>();
@@ -105,14 +107,14 @@ public class TclConsoleReds extends TclComponent {
 			PortDescription desc = inputsDesc.get(i);
 			inputs[i] = new Port(0, (i * PORT_GAP) + HEIGHT, desc.getType(),
 					desc.getWidth());
-			inputs[i].setToolTip(Strings.getter(desc.getName()));
+			inputs[i].setToolTip(S.getter(desc.getName()));
 		}
 
 		for (int i = 0; i < outputsDesc.size(); i++) {
 			PortDescription desc = outputsDesc.get(i);
 			outputs[i] = new Port(WIDTH, (i * PORT_GAP) + HEIGHT,
 					desc.getType(), desc.getWidth());
-			outputs[i].setToolTip(Strings.getter(desc.getName()));
+			outputs[i].setToolTip(S.getter(desc.getName()));
 		}
 
 		setPorts(inputs, outputs);
@@ -120,6 +122,6 @@ public class TclConsoleReds extends TclComponent {
 
 	@Override
 	public String getDisplayName() {
-		return Strings.get("tclConsoleReds");
+		return S.get("tclConsoleReds");
 	}
 }

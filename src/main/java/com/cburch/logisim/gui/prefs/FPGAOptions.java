@@ -1,5 +1,7 @@
 package com.cburch.logisim.gui.prefs;
 
+import static com.cburch.logisim.gui.Strings.S;
+
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -55,18 +57,18 @@ public class FPGAOptions extends OptionsPanel {
 		this.frame=frame;
 		AppPreferences.getPrefs().addPreferenceChangeListener(myListener);
 		
-		WorkspaceLabel = new JLabel(Strings.get("FPGAWorkSpace"));
+		WorkspaceLabel = new JLabel(S.get("FPGAWorkSpace"));
 		WorkSpacePath = new JTextField(32);
 		WorkSpacePath.setText(AppPreferences.FPGA_Workspace.get());
 		WorkSpacePath.setEditable(false);
 		WorkSpaceButton = new JButton();
 		WorkSpaceButton.addActionListener(myListener);
-		WorkSpaceButton.setText(Strings.get("Browse"));
+		WorkSpaceButton.setText(S.get("Browse"));
 		HDL_Used = new PrefOptionList(AppPreferences.HDL_Type,
-				Strings.getter("HDLLanguageUsed"),new PrefOption[] {
-			new PrefOption(HDLGeneratorFactory.VHDL,Strings.getter(HDLGeneratorFactory.VHDL)),
-			new PrefOption(HDLGeneratorFactory.VERILOG,Strings.getter(HDLGeneratorFactory.VERILOG)) });
-		Download = new PrefBoolean(AppPreferences.DownloadToBoard,Strings.getter("FPGADownload"));
+				S.getter("HDLLanguageUsed"),new PrefOption[] {
+			new PrefOption(HDLGeneratorFactory.VHDL,S.getter(HDLGeneratorFactory.VHDL)),
+			new PrefOption(HDLGeneratorFactory.VERILOG,S.getter(HDLGeneratorFactory.VERILOG)) });
+		Download = new PrefBoolean(AppPreferences.DownloadToBoard,S.getter("FPGADownload"));
 		
 		GridBagLayout layout = new GridBagLayout();
 		GridBagConstraints c = new GridBagConstraints();
@@ -107,18 +109,18 @@ public class FPGAOptions extends OptionsPanel {
 
 	@Override
 	public String getHelpText() {
-		return Strings.get("FPGAHelp");
+		return S.get("FPGAHelp");
 	}
 
 	@Override
 	public String getTitle() {
-		return Strings.get("FPGATitle");
+		return S.get("FPGATitle");
 	}
 
 	@Override
 	public void localeChanged() {
-		WorkspaceLabel.setText(Strings.get("FPGAWorkSpace"));
-		WorkSpaceButton.setText(Strings.get("Browse"));
+		WorkspaceLabel.setText(S.get("FPGAWorkSpace"));
+		WorkSpaceButton.setText(S.get("Browse"));
 	}
 
 }

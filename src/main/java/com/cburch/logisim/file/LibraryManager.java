@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.file;
 
+import static com.cburch.logisim.file.Strings.S;
+
 import java.io.File;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
@@ -228,7 +230,7 @@ class LibraryManager {
 				return desc.toDescriptor(loader);
 			} else {
 				throw new LoaderException(StringUtil.format(
-						Strings.get("fileDescriptorUnknownError"),
+						S.get("fileDescriptorUnknownError"),
 						lib.getDisplayName()));
 			}
 		}
@@ -269,7 +271,7 @@ class LibraryManager {
 		int sep = desc.indexOf(desc_sep);
 		if (sep < 0) {
 			loader.showError(StringUtil.format(
-					Strings.get("fileDescriptorError"), desc));
+					S.get("fileDescriptorError"), desc));
 			return null;
 		}
 		String type = desc.substring(0, sep);
@@ -279,7 +281,7 @@ class LibraryManager {
 			Library ret = loader.getBuiltin().getLibrary(name);
 			if (ret == null) {
 				loader.showError(StringUtil.format(
-						Strings.get("fileBuiltinMissingError"), name));
+						S.get("fileBuiltinMissingError"), name));
 				return null;
 			}
 			return ret;
@@ -293,7 +295,7 @@ class LibraryManager {
 			File toRead = loader.getFileFor(fileName, Loader.JAR_FILTER);
 			return loadJarLibrary(loader, toRead, className);
 		} else {
-			loader.showError(StringUtil.format(Strings.get("fileTypeError"),
+			loader.showError(StringUtil.format(S.get("fileTypeError"),
 					type, desc));
 			return null;
 		}
@@ -321,7 +323,7 @@ class LibraryManager {
 		LibraryDescriptor descriptor = invMap.get(lib);
 		if (descriptor == null) {
 			loader.showError(StringUtil.format(
-					Strings.get("unknownLibraryFileError"),
+					S.get("unknownLibraryFileError"),
 					lib.getDisplayName()));
 		} else {
 			try {

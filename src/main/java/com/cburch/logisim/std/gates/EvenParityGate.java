@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.std.gates;
 
+import static com.cburch.logisim.std.Strings.S;
+
 import java.util.ArrayList;
 
 import com.cburch.logisim.analyze.model.Expression;
@@ -54,7 +56,7 @@ class EvenParityGate extends AbstractGate {
 	public static EvenParityGate FACTORY = new EvenParityGate();
 
 	private EvenParityGate() {
-		super("Even Parity", Strings.getter("evenParityComponent"));
+		super("Even Parity", S.getter("evenParityComponent"));
 		setRectangularLabel("2k");
 		setIconNames("parityEvenGate.gif");
 	}

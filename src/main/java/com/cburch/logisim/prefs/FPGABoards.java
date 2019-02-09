@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.prefs;
 
+import static com.cburch.logisim.proj.Strings.S;
+
 import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -274,7 +276,7 @@ public class FPGABoards implements ActionListener {
 		c.gridy = 0;
 		c.weightx = 1.0;
 		c.fill = GridBagConstraints.CENTER;
-		panel.add(new JLabel(Strings.get("ExternalBoards")),c);
+		panel.add(new JLabel(S.get("ExternalBoards")),c);
 		c.gridy = 1;
 		c.fill = GridBagConstraints.HORIZONTAL;
 		panel.add(new JSeparator(),c);
@@ -292,13 +294,13 @@ public class FPGABoards implements ActionListener {
 		c.gridy = 2;
 		c.gridx = 1;
 		AddButton = new JButton();
-		AddButton.setText(Strings.get("AddBoard"));
+		AddButton.setText(S.get("AddBoard"));
 		AddButton.setEnabled(NrBoards < MaxBoards);
 		AddButton.addActionListener(this);
 		panel.add(AddButton,c);
 		c.gridy = 3;
 		RemoveButton = new JButton();
-		RemoveButton.setText(Strings.get("RemoveBoard"));
+		RemoveButton.setText(S.get("RemoveBoard"));
 		RemoveButton.setEnabled(NrBoards > 0);
 		RemoveButton.addActionListener(this);
 		panel.add(RemoveButton,c);
@@ -374,8 +376,8 @@ public class FPGABoards implements ActionListener {
 	
 	private boolean AddBoard(boolean UpdateSelection) {
 		if (ExtBoardModel.getSize()>=MaxBoards) {
-			JOptionPane.showMessageDialog(null,Strings.get("MaxBoardsReached"),
-					                      Strings.get("AddExternalBoards"),JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null,S.get("MaxBoardsReached"),
+					                      S.get("AddExternalBoards"),JOptionPane.ERROR_MESSAGE);
 			return false;
 		}
 		String BoardFileName = GetBoardFile();
@@ -383,14 +385,14 @@ public class FPGABoards implements ActionListener {
 			return false;
 		BoardReaderClass test = new BoardReaderClass(BoardFileName);
 		if (test.GetBoardInformation()==null) {
-			JOptionPane.showMessageDialog(null,Strings.get("InvalidFileFormat"),
-                    Strings.get("AddExternalBoards"),JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null,S.get("InvalidFileFormat"),
+                    S.get("AddExternalBoards"),JOptionPane.ERROR_MESSAGE);
 			return false;
 		}
 		if (BuildInBoards.GetBoardNames().contains(BoardList.getBoardName(BoardFileName))) {
 			JOptionPane.showMessageDialog(null,
-					Strings.get("BoardPreset")+"\""+BoardList.getBoardName(BoardFileName)+"\"",
-                    Strings.get("AddExternalBoards"),JOptionPane.ERROR_MESSAGE);
+					S.get("BoardPreset")+"\""+BoardList.getBoardName(BoardFileName)+"\"",
+                    S.get("AddExternalBoards"),JOptionPane.ERROR_MESSAGE);
 			return false;
 		}
 		if (!AddExternalBoard(BoardFileName))
@@ -413,7 +415,7 @@ public class FPGABoards implements ActionListener {
 		if (test.exists()) {
 			fc.setSelectedFile(test);
 		}
-		fc.setDialogTitle(Strings.get("BoardSelection"));
+		fc.setDialogTitle(S.get("BoardSelection"));
 		int retval = fc.showOpenDialog(null);
 		if (retval == JFileChooser.APPROVE_OPTION) {
 			File file = fc.getSelectedFile();

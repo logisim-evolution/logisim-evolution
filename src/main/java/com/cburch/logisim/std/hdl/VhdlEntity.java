@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.std.hdl;
 
+import static com.cburch.logisim.std.Strings.S;
+
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
@@ -65,7 +67,7 @@ public class VhdlEntity extends InstanceFactory {
 	static class ContentAttribute extends Attribute<VhdlContent> {
 
 		public ContentAttribute() {
-			super("content", Strings.getter("vhdlContentAttr"));
+			super("content", S.getter("vhdlContentAttr"));
 		}
 
 		@Override
@@ -85,7 +87,7 @@ public class VhdlEntity extends InstanceFactory {
 
 		@Override
 		public String toDisplayString(VhdlContent value) {
-			return Strings.get("vhdlContentValue");
+			return S.get("vhdlContentValue");
 		}
 
 		@Override
@@ -123,7 +125,7 @@ public class VhdlEntity extends InstanceFactory {
 	private WeakHashMap<Instance, VhdlEntityListener> contentListeners;
 
 	public VhdlEntity() {
-		super("VHDL Entity", Strings.getter("vhdlComponent"));
+		super("VHDL Entity", S.getter("vhdlComponent"));
 
 		this.contentListeners = new WeakHashMap<Instance, VhdlEntityListener>();
 		this.setIconName("vhdl.gif");

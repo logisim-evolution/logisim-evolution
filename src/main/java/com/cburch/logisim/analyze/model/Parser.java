@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.analyze.model;
 
+import static com.cburch.logisim.analyze.Strings.S;
+
 import java.util.ArrayList;
 
 import com.cburch.logisim.util.StringGetter;
@@ -67,6 +69,7 @@ public class Parser {
 			this(type, offset, text.length(), text);
 		}
 
+		@SuppressWarnings("unused")
 		ParserException error(StringGetter message) {
 			return new ParserException(message, offset, length);
 		}
@@ -109,20 +112,18 @@ public class Parser {
 					push(stack,
 							current,
 							Expression.AND_LEVEL,
-							new Token(TOKEN_AND, t.offset, Strings
-									.get("implicitAndOperator")));
+							new Token(TOKEN_AND, t.offset, S.get("implicitAndOperator")));
 				}
 				push(stack, null, Expression.NOT_LEVEL, t);
 				current = null;
 			} else if (t.type == TOKEN_NOT_POSTFIX) {
-				throw t.error(Strings.getter("unexpectedApostrophe"));
+				throw t.error(S.getter("unexpectedApostrophe"));
 			} else if (t.type == TOKEN_LPAREN) {
 				if (current != null) {
 					push(stack,
 							current,
 							Expression.AND_LEVEL,
-							new Token(TOKEN_AND, t.offset, 0, Strings
-									.get("implicitAndOperator")));
+							new Token(TOKEN_AND, t.offset, 0, S.get("implicitAndOperator")));
 				}
 				push(stack, null, -2, t);
 				current = null;
@@ -130,7 +131,7 @@ public class Parser {
 				current = popTo(stack, -1, current);
 				// there had better be a LPAREN atop the stack now.
 				if (stack.isEmpty()) {
-					throw t.error(Strings.getter("lparenMissingError"));
+					throw t.error(S.getter("lparenMissingError"));
 				}
 				pop(stack);
 				while (i + 1 < tokens.size()
@@ -141,7 +142,7 @@ public class Parser {
 				current = popTo(stack, Expression.AND_LEVEL, current);
 			} else {
 				if (current == null) {
-					throw t.error(Strings.getter("missingLeftOperandError",
+					throw t.error(S.getter("missingLeftOperandError",
 							t.text));
 				}
 				int level = 0;
@@ -163,7 +164,7 @@ public class Parser {
 		current = popTo(stack, -1, current);
 		if (!stack.isEmpty()) {
 			Context top = pop(stack);
-			throw top.cause.error(Strings.getter("rparenMissingError"));
+			throw top.cause.error(S.getter("rparenMissingError"));
 		}
 		return current;
 	}
@@ -177,7 +178,7 @@ public class Parser {
 
 		for (Token token : tokens) {
 			if (token.type == TOKEN_ERROR) {
-				throw token.error(Strings.getter("invalidCharacterError",
+				throw token.error(S.getter("invalidCharacterError",
 						token.text));
 			} else if (token.type == TOKEN_IDENT) {
 				int index = model.getInputs().indexOf(token.text);
@@ -193,7 +194,7 @@ public class Parser {
 					} else if (opText.equals("OR")) {
 						token.type = TOKEN_OR;
 					} else {
-						throw token.error(Strings.getter("badVariableName",
+						throw token.error(S.getter("badVariableName",
 								token.text));
 					}
 				}
@@ -219,7 +220,7 @@ public class Parser {
 		while (!stack.isEmpty() && peekLevel(stack) >= level) {
 			Context top = pop(stack);
 			if (current == null)
-				throw top.cause.error(Strings.getter(
+				throw top.cause.error(S.getter(
 						"missingRightOperandError", top.cause.text));
 			switch (top.level) {
 			case Expression.AND_LEVEL:

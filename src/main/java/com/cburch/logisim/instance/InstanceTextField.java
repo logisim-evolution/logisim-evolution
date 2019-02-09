@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.instance;
 
+import static com.cburch.logisim.std.Strings.S;
+
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -117,7 +119,7 @@ public class InstanceTextField implements AttributeListener, TextFieldListener,
 	public Action getCommitAction(Circuit circuit, String oldText,
 			String newText) {
 		SetAttributeAction act = new SetAttributeAction(circuit,
-				Strings.getter("changeLabelAction"));
+				S.getter("changeLabelAction"));
 		act.set(comp, labelAttr, newText);
 		return act;
 	}

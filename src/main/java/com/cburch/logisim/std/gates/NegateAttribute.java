@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.std.gates;
 
+import static com.cburch.logisim.std.Strings.S;
+
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.Attributes;
 import com.cburch.logisim.data.Direction;
@@ -65,7 +67,7 @@ class NegateAttribute extends Attribute<Boolean> {
 
 	@Override
 	public String getDisplayName() {
-		String ret = StringUtil.format(Strings.get("gateNegateAttr"), ""
+		String ret = StringUtil.format(S.get("gateNegateAttr"), ""
 				+ (index + 1));
 		if (side != null) {
 			ret += " (" + side.toVerticalDisplayString() + ")";

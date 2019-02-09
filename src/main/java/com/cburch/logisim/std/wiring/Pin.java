@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.std.wiring;
 
+import static com.cburch.logisim.std.Strings.S;
+
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -219,8 +221,8 @@ public class Pin extends InstanceFactory {
 			PinAttributes attrs = (PinAttributes) state.getAttributeSet();
 			String ret = attrs.label;
 			if (ret == null || ret.equals("")) {
-				String type = attrs.type == EndData.INPUT_ONLY ? Strings
-						.get("pinInputName") : Strings.get("pinOutputName");
+				String type = attrs.type == EndData.INPUT_ONLY ? 
+						S.get("pinInputName") : S.get("pinOutputName");
 				return type + state.getInstance().getLocation();
 			} else {
 				return ret;
@@ -281,8 +283,8 @@ public class Pin extends InstanceFactory {
 				CircuitState circState = canvas.getCircuitState();
 				java.awt.Component frame = SwingUtilities.getRoot(canvas);
 				int choice = JOptionPane.showConfirmDialog(frame,
-						Strings.get("pinFrozenQuestion"),
-						Strings.get("pinFrozenTitle"),
+						S.get("pinFrozenQuestion"),
+						S.get("pinFrozenTitle"),
 						JOptionPane.OK_CANCEL_OPTION,
 						JOptionPane.WARNING_MESSAGE);
 				if (choice == JOptionPane.OK_OPTION) {
@@ -395,20 +397,20 @@ public class Pin extends InstanceFactory {
 	}
 
 	public static final Attribute<Boolean> ATTR_TRISTATE = Attributes
-			.forBoolean("tristate", Strings.getter("pinThreeStateAttr"));
+			.forBoolean("tristate", S.getter("pinThreeStateAttr"));
 	public static final Attribute<Boolean> ATTR_TYPE = Attributes.forBoolean(
-			"output", Strings.getter("pinOutputAttr"));
+			"output", S.getter("pinOutputAttr"));
 	public static final Attribute<Direction> ATTR_LABEL_LOC = Attributes
-			.forDirection("labelloc", Strings.getter("pinLabelLocAttr"));
+			.forDirection("labelloc", S.getter("pinLabelLocAttr"));
 	public static final AttributeOption PULL_NONE = new AttributeOption("none",
-			Strings.getter("pinPullNoneOption"));
+			S.getter("pinPullNoneOption"));
 	public static final AttributeOption PULL_UP = new AttributeOption("up",
-			Strings.getter("pinPullUpOption"));
+			S.getter("pinPullUpOption"));
 	public static final AttributeOption PULL_DOWN = new AttributeOption("down",
-			Strings.getter("pinPullDownOption"));
+			S.getter("pinPullDownOption"));
 
 	public static final Attribute<AttributeOption> ATTR_PULL = Attributes
-			.forOption("pull", Strings.getter("pinPullAttr"),
+			.forOption("pull", S.getter("pinPullAttr"),
 					new AttributeOption[] { PULL_NONE, PULL_UP, PULL_DOWN });
 
 	public static final Pin FACTORY = new Pin();
@@ -424,7 +426,7 @@ public class Pin extends InstanceFactory {
 			.darker();
 	
 	public Pin() {
-		super("Pin", Strings.getter("pinComponent"));
+		super("Pin", S.getter("pinComponent"));
 		setFacingAttribute(StdAttr.FACING);
 		setKeyConfigurator(JoinedConfigurator.create(new BitWidthConfigurator(
 				StdAttr.WIDTH), new DirectionConfigurator(ATTR_LABEL_LOC,
@@ -459,9 +461,9 @@ public class Pin extends InstanceFactory {
 		String endType = attrs.isOutput() ? Port.INPUT : Port.OUTPUT;
 		Port port = new Port(0, 0, endType, StdAttr.WIDTH);
 		if (attrs.isOutput()) {
-			port.setToolTip(Strings.getter("pinOutputToolTip"));
+			port.setToolTip(S.getter("pinOutputToolTip"));
 		} else {
-			port.setToolTip(Strings.getter("pinInputToolTip"));
+			port.setToolTip(S.getter("pinInputToolTip"));
 		}
 		instance.setPorts(new Port[] { port });
 	}

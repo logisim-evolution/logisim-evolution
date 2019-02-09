@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.std.arith;
 
+import static com.cburch.logisim.std.Strings.S;
+
 import java.awt.Color;
 import java.awt.Graphics;
 
@@ -107,7 +109,7 @@ public class Adder extends InstanceFactory {
 	private static final int C_OUT = 4;
 
 	public Adder() {
-		super("Adder", Strings.getter("adderComponent"));
+		super("Adder", S.getter("adderComponent"));
 		setAttributes(new Attribute[] { StdAttr.WIDTH },
 				new Object[] { BitWidth.create(8) });
 		setKeyConfigurator(new BitWidthConfigurator(StdAttr.WIDTH));
@@ -120,11 +122,11 @@ public class Adder extends InstanceFactory {
 		ps[OUT] = new Port(0, 0, Port.OUTPUT, StdAttr.WIDTH);
 		ps[C_IN] = new Port(-20, -20, Port.INPUT, 1);
 		ps[C_OUT] = new Port(-20, 20, Port.OUTPUT, 1);
-		ps[IN0].setToolTip(Strings.getter("adderInputTip"));
-		ps[IN1].setToolTip(Strings.getter("adderInputTip"));
-		ps[OUT].setToolTip(Strings.getter("adderOutputTip"));
-		ps[C_IN].setToolTip(Strings.getter("adderCarryInTip"));
-		ps[C_OUT].setToolTip(Strings.getter("adderCarryOutTip"));
+		ps[IN0].setToolTip(S.getter("adderInputTip"));
+		ps[IN1].setToolTip(S.getter("adderInputTip"));
+		ps[OUT].setToolTip(S.getter("adderOutputTip"));
+		ps[C_IN].setToolTip(S.getter("adderCarryInTip"));
+		ps[C_OUT].setToolTip(S.getter("adderCarryOutTip"));
 		setPorts(ps);
 	}
 

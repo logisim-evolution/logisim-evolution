@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.gui.generic;
 
+import static com.cburch.logisim.gui.Strings.S;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -68,7 +70,7 @@ public class ZoomControl extends JPanel {
 
 		@Override
 		public String getToolTipText(MouseEvent e) {
-			return Strings.get("zoomShowGrid");
+			return S.get("zoomShowGrid");
 		}
 
 		public void mouseClicked(MouseEvent e) {

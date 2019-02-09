@@ -3,6 +3,8 @@
 
 package com.cburch.logisim.std.ttl;
 
+import static com.cburch.logisim.std.Strings.S;
+
 import java.awt.Color;
 import java.awt.Graphics;
 
@@ -23,7 +25,7 @@ import com.cburch.logisim.util.GraphicsUtil;
 
 public class DisplayDecoder extends InstanceFactory {
 
-	private static final Attribute<Boolean> MULTI_BIT = Attributes.forBoolean("multibit", Strings.getter("ioMultiBit"));
+	private static final Attribute<Boolean> MULTI_BIT = Attributes.forBoolean("multibit", S.getter("ioMultiBit"));
 
 	public static void ComputeDisplayDecoderOutputs(InstanceState state, int inputvalue, int aPortIndex, int bPortIndex,
 			int cPortIndex, int dPortIndex, int ePortIndex, int fPortIndex, int gPortIndex, int LTPortIndex,
@@ -217,7 +219,7 @@ public class DisplayDecoder extends InstanceFactory {
 	}
 
 	public DisplayDecoder() {
-		super("DisplayDecoder", Strings.getter("DisplayDecoderComponent"));
+		super("DisplayDecoder", S.getter("DisplayDecoderComponent"));
 		setAttributes(new Attribute[] { StdAttr.FACING, MULTI_BIT }, new Object[] { Direction.EAST, Boolean.TRUE });
 		setFacingAttribute(StdAttr.FACING);
 		setIconName("displaydecoder.gif");
@@ -259,7 +261,7 @@ public class DisplayDecoder extends InstanceFactory {
 		Bounds bds = painter.getBounds();
 		byte nports = (byte) (11 + (painter.getAttributeValue(MULTI_BIT) ? 1 : 4));
 		boolean multibit = painter.getAttributeValue(MULTI_BIT);
-		String text = (painter.getPortValue(7) == Value.FALSE) ? "!" + Strings.get("memEnableLabel")
+		String text = (painter.getPortValue(7) == Value.FALSE) ? "!" + S.get("memEnableLabel")
 				: painter
 						.getPortValue(nports - 2) == Value.FALSE
 								? "BI"
@@ -277,12 +279,12 @@ public class DisplayDecoder extends InstanceFactory {
 				painter.drawPort(i);
 		}
 		g.setColor(Color.GRAY);
-		painter.drawPort(7, Strings.get("memEnableLabel"),
+		painter.drawPort(7, S.get("memEnableLabel"),
 				(dir == Direction.NORTH || dir == Direction.SOUTH) ? Direction.EAST : Direction.NORTH);
 		if (dir == Direction.NORTH || dir == Direction.SOUTH) {// write the port name only if horizontal to not overlap
-			painter.drawPort(nports - 3, Strings.get("LT"), Direction.WEST);
-			painter.drawPort(nports - 2, Strings.get("BI"), Direction.WEST);
-			painter.drawPort(nports - 1, Strings.get("RBI"), Direction.WEST);
+			painter.drawPort(nports - 3, S.get("LT"), Direction.WEST);
+			painter.drawPort(nports - 2, S.get("BI"), Direction.WEST);
+			painter.drawPort(nports - 1, S.get("RBI"), Direction.WEST);
 		} else {
 			painter.drawPort(nports - 3);
 			painter.drawPort(nports - 2);
@@ -314,17 +316,17 @@ public class DisplayDecoder extends InstanceFactory {
 				for (byte i = 8; i < in + 8; i++) {// inputs
 					// total lenght should be 80(10-A-20-B-20-C-20-D-10)
 					ps[i] = new Port(20 * (i - 8) - 30, y, Port.INPUT, 1);
-					ps[i].setToolTip(Strings.getter("DisplayDecoderInTip", "" + cin));
+					ps[i].setToolTip(S.getter("DisplayDecoderInTip", "" + cin));
 					cin++;
 				}
 			} else {
 				ps[8] = new Port(0, y, Port.INPUT, 4);
-				ps[8].setToolTip(Strings.getter("DisplayDecoderInTip", "" + cin));
+				ps[8].setToolTip(S.getter("DisplayDecoderInTip", "" + cin));
 			}
 			for (byte i = 0; i < out; i++) {// outputs
 				// total lenght should be 80(10-A-20-B-20-C-20-D-10)
 				ps[i] = new Port(10 * i - 30, 0, Port.OUTPUT, 1);
-				ps[i].setToolTip(Strings.getter("DisplayDecoderOutTip", "" + cout));
+				ps[i].setToolTip(S.getter("DisplayDecoderOutTip", "" + cout));
 				cout++;
 			}
 			ps[out] = new Port(-40, y / 2, Port.INPUT, 1); // enable input
@@ -337,16 +339,16 @@ public class DisplayDecoder extends InstanceFactory {
 			if (!multibit) {
 				for (byte i = 8; i < in + 8; i++) {// inputs
 					ps[i] = new Port(x, 20 * (i - 8) - 30, Port.INPUT, 1);
-					ps[i].setToolTip(Strings.getter("DisplayDecoderInTip", "" + cin));
+					ps[i].setToolTip(S.getter("DisplayDecoderInTip", "" + cin));
 					cin++;
 				}
 			} else {
 				ps[8] = new Port(x, 0, Port.INPUT, 4);
-				ps[8].setToolTip(Strings.getter("DisplayDecoderInTip", "" + cin));
+				ps[8].setToolTip(S.getter("DisplayDecoderInTip", "" + cin));
 			}
 			for (byte i = 0; i < out; i++) {// outputs
 				ps[i] = new Port(0, 10 * i - 30, Port.OUTPUT, 1);
-				ps[i].setToolTip(Strings.getter("DisplayDecoderOutTip", "" + cout));
+				ps[i].setToolTip(S.getter("DisplayDecoderOutTip", "" + cout));
 				cout++;
 			}
 			ps[out] = new Port(x / 2, -40, Port.INPUT, 1); // enable input
@@ -355,10 +357,10 @@ public class DisplayDecoder extends InstanceFactory {
 			ps[ps.length - 1] = new Port(x + (dir == Direction.EAST ? 30 : -30), 40, Port.INPUT, 1); // Ripple Blanking
 																										// Input
 		}
-		ps[out].setToolTip(Strings.getter("priorityEncoderEnableInTip"));
-		ps[ps.length - 3].setToolTip(Strings.getter("LampTestInTip"));
-		ps[ps.length - 2].setToolTip(Strings.getter("BlankingInputInTip"));
-		ps[ps.length - 1].setToolTip(Strings.getter("RippleBlankingInputInTip"));
+		ps[out].setToolTip(S.getter("priorityEncoderEnableInTip"));
+		ps[ps.length - 3].setToolTip(S.getter("LampTestInTip"));
+		ps[ps.length - 2].setToolTip(S.getter("BlankingInputInTip"));
+		ps[ps.length - 1].setToolTip(S.getter("RippleBlankingInputInTip"));
 		instance.setPorts(ps);
 	}
 }

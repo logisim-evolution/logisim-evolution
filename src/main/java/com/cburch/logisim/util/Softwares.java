@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.util;
 
+import static com.cburch.logisim.util.Strings.S;
+
 import java.awt.Component;
 import java.io.BufferedReader;
 import java.io.File;
@@ -127,8 +129,8 @@ public final class Softwares {
 
 		JFileChooser chooser = JFileChoosers.create();
 		chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-		chooser.setDialogTitle(Strings.get("questaDialogTitle"));
-		chooser.setApproveButtonText(Strings.get("questaDialogButton"));
+		chooser.setDialogTitle(S.get("questaDialogTitle"));
+		chooser.setApproveButtonText(S.get("questaDialogButton"));
 		int action = chooser.showOpenDialog(parent);
 		if (action == JFileChooser.APPROVE_OPTION) {
 			File file = chooser.getSelectedFile();
@@ -137,8 +139,8 @@ public final class Softwares {
 				path = file.getCanonicalPath();
 			} catch (IOException ex) {
 				JOptionPane.showMessageDialog(parent,
-						Strings.get("questaIoErrorMessage"),
-						Strings.get("questaErrorTitle"),
+						S.get("questaIoErrorMessage"),
+						S.get("questaErrorTitle"),
 						JOptionPane.ERROR_MESSAGE);
 				return null;
 			}
@@ -147,8 +149,8 @@ public final class Softwares {
 				AppPreferences.QUESTA_PATH.set(path);
 			} else {
 				JOptionPane.showMessageDialog(parent,
-						Strings.get("questaErrorMessage"),
-						Strings.get("questaErrorTitle"),
+						S.get("questaErrorMessage"),
+						S.get("questaErrorTitle"),
 						JOptionPane.ERROR_MESSAGE);
 				return null;
 			}
@@ -184,8 +186,8 @@ public final class Softwares {
 		File tmp = null;
 
 		if (questaPath == null) {
-			result.append(Strings.get("questaValidationAbordedMessage"));
-			title.append(Strings.get("questaValidationAbordedTitle"));
+			result.append(S.get("questaValidationAbordedMessage"));
+			title.append(S.get("questaValidationAbordedTitle"));
 			return ABORD;
 		}
 
@@ -194,9 +196,9 @@ public final class Softwares {
 			File tmpDir = new File(tmp.getParentFile().getCanonicalPath());
 
 			if (!createWorkLibrary(tmpDir, questaPath, result)) {
-				title.insert(0, Strings.get("questaLibraryErrorTitle"));
+				title.insert(0, S.get("questaLibraryErrorTitle"));
 				result.insert(0, System.getProperty("line.separator"));
-				result.insert(0, Strings.get("questaLibraryErrorMessage"));
+				result.insert(0, S.get("questaLibraryErrorMessage"));
 				return ERROR;
 			}
 
@@ -224,22 +226,22 @@ public final class Softwares {
 			}
 
 			if (vcom.waitFor() != 0) {
-				title.insert(0, Strings.get("questaValidationFailedTitle"));
+				title.insert(0, S.get("questaValidationFailedTitle"));
 				result.insert(0, System.getProperty("line.separator"));
-				result.insert(0, Strings.get("questaValidationFailedMessage"));
+				result.insert(0, S.get("questaValidationFailedMessage"));
 				return ERROR;
 			}
 		} catch (IOException e) {
-			title.insert(0, Strings.get("questaValidationFailedTitle"));
+			title.insert(0, S.get("questaValidationFailedTitle"));
 			result.replace(0, result.length(), e.getMessage());
 			result.insert(0, System.getProperty("line.separator"));
-			result.insert(0, Strings.get("questaValidationIoException"));
+			result.insert(0, S.get("questaValidationIoException"));
 			return ERROR;
 		} catch (InterruptedException e) {
-			title.insert(0, Strings.get("questaValidationFailedTitle"));
+			title.insert(0, S.get("questaValidationFailedTitle"));
 			result.replace(0, result.length(), e.getMessage());
 			result.insert(0, System.getProperty("line.separator"));
-			result.insert(0, Strings.get("questaValidationInterrupted"));
+			result.insert(0, S.get("questaValidationInterrupted"));
 			return ERROR;
 		} finally {
 			try {

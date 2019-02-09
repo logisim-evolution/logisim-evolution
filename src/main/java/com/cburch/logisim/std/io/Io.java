@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.std.io;
 
+import static com.cburch.logisim.std.Strings.S;
+
 import java.awt.Color;
 import java.util.List;
 
@@ -43,56 +45,56 @@ import com.cburch.logisim.tools.Tool;
 
 public class Io extends Library {
 	public static final AttributeOption LABEL_CENTER = new AttributeOption("center",
-			"center", Strings.getter("ioLabelCenter"));
+			"center", S.getter("ioLabelCenter"));
 
 	public static final Attribute<Color> ATTR_COLOR = Attributes.forColor("color",
-			Strings.getter("ioColorAttr"));
+			S.getter("ioColorAttr"));
 	static final Attribute<Color> ATTR_ON_COLOR = Attributes.forColor("color",
-			Strings.getter("ioOnColor"));
+			S.getter("ioOnColor"));
 	static final Attribute<Color> ATTR_OFF_COLOR = Attributes.forColor(
-			"offcolor", Strings.getter("ioOffColor"));
+			"offcolor", S.getter("ioOffColor"));
 	static final Attribute<Color> ATTR_BACKGROUND = Attributes.forColor("bg",
-			Strings.getter("ioBackgroundColor"));
+			S.getter("ioBackgroundColor"));
 	public static final Attribute<Object> ATTR_LABEL_LOC = Attributes.forOption(
-			"labelloc", Strings.getter("ioLabelLocAttr"), new Object[] {
+			"labelloc", S.getter("ioLabelLocAttr"), new Object[] {
 					LABEL_CENTER, Direction.NORTH, Direction.SOUTH,
 					Direction.EAST, Direction.WEST });
 	static final Attribute<Boolean> ATTR_ACTIVE = Attributes.forBoolean(
-			"active", Strings.getter("ioActiveAttr"));
+			"active", S.getter("ioActiveAttr"));
 
 	static final Color DEFAULT_BACKGROUND = new Color(255, 255, 255, 0);
 
 	private static FactoryDescription[] DESCRIPTIONS = {
-			new FactoryDescription("Button", Strings.getter("buttonComponent"),
+			new FactoryDescription("Button", S.getter("buttonComponent"),
 					"button.gif", "Button"),
 			new FactoryDescription("DipSwitch",
-					Strings.getter("dipswitchComponent"), "dipswitch.gif",
+					S.getter("dipswitchComponent"), "dipswitch.gif",
 					"DipSwitch"),
 			new FactoryDescription("Joystick",
-					Strings.getter("joystickComponent"), "joystick.gif",
+					S.getter("joystickComponent"), "joystick.gif",
 					"Joystick"),
 			new FactoryDescription("Keyboard",
-					Strings.getter("keyboardComponent"), "keyboard.gif",
+					S.getter("keyboardComponent"), "keyboard.gif",
 					"Keyboard"),
-			new FactoryDescription("LED", Strings.getter("ledComponent"),
+			new FactoryDescription("LED", S.getter("ledComponent"),
 					"led.gif", "Led"),
-			new FactoryDescription("PortIO", Strings.getter("pioComponent"),
+			new FactoryDescription("PortIO", S.getter("pioComponent"),
 					"pio.gif", "PortIO"),
 			new FactoryDescription("ReptarLB",
-					Strings.getter("repLBComponent"), "localbus.gif",
+					S.getter("repLBComponent"), "localbus.gif",
 					"ReptarLocalBus"),
-			new FactoryDescription("RGBLED", Strings.getter("RGBledComponent"),
+			new FactoryDescription("RGBLED", S.getter("RGBledComponent"),
 					"rgbled.gif", "RGBLed"),
 			new FactoryDescription("7-Segment Display",
-					Strings.getter("sevenSegmentComponent"), "7seg.gif",
+					S.getter("sevenSegmentComponent"), "7seg.gif",
 					"SevenSegment"),
 			new FactoryDescription("Hex Digit Display",
-					Strings.getter("hexDigitComponent"), "hexdig.gif",
+					S.getter("hexDigitComponent"), "hexdig.gif",
 					"HexDigit"),
 			new FactoryDescription("DotMatrix",
-					Strings.getter("dotMatrixComponent"), "dotmat.gif",
+					S.getter("dotMatrixComponent"), "dotmat.gif",
 					"DotMatrix"),
-			new FactoryDescription("TTY", Strings.getter("ttyComponent"),
+			new FactoryDescription("TTY", S.getter("ttyComponent"),
 					"tty.gif", "Tty"), };
 
 	private List<Tool> tools = null;
@@ -102,7 +104,7 @@ public class Io extends Library {
 
 	@Override
 	public String getDisplayName() {
-		return Strings.get("ioLibrary");
+		return S.get("ioLibrary");
 	}
 
 	@Override

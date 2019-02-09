@@ -29,6 +29,8 @@
  *******************************************************************************/
 package com.cburch.logisim.std.io;
 
+import static com.cburch.logisim.std.Strings.S;
+
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.MouseEvent;
@@ -118,11 +120,11 @@ public class DipSwitch extends InstanceFactory {
 	public static final int MIN_SWITCH = 2;
 
 	public static final Attribute<Integer> ATTR_SIZE = Attributes
-			.forIntegerRange("number", Strings.getter("nrOfSwitch"),
+			.forIntegerRange("number", S.getter("nrOfSwitch"),
 					MIN_SWITCH, MAX_SWITCH);
 
 	public DipSwitch() {
-		super("DipSwitch", Strings.getter("DipSwitchComponent"));
+		super("DipSwitch", S.getter("DipSwitchComponent"));
 		int dipSize = 8;
 		setAttributes(new Attribute[] { StdAttr.LABEL, Io.ATTR_LABEL_LOC,
 				StdAttr.LABEL_FONT, StdAttr.LABEL_COLOR, StdAttr.LABEL_VISIBILITY, ATTR_SIZE },

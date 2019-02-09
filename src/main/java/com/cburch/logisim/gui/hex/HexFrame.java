@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.gui.hex;
 
+import static com.cburch.logisim.gui.Strings.S;
+
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -115,7 +117,7 @@ public class HexFrame extends LFrame {
 			Object src = event.getSource();
 			if (src == open) {
 				JFileChooser chooser = JFileChoosers.createSelected(lastFile);
-				chooser.setDialogTitle(Strings.get("openButton"));
+				chooser.setDialogTitle(S.get("openButton"));
 				int choice = chooser.showOpenDialog(HexFrame.this);
 				if (choice == JFileChooser.APPROVE_OPTION) {
 					File f = chooser.getSelectedFile();
@@ -125,13 +127,13 @@ public class HexFrame extends LFrame {
 					} catch (IOException e) {
 						JOptionPane.showMessageDialog(HexFrame.this,
 								e.getMessage(),
-								Strings.get("hexOpenErrorTitle"),
+								S.get("hexOpenErrorTitle"),
 								JOptionPane.ERROR_MESSAGE);
 					}
 				}
 			} else if (src == save) {
 				JFileChooser chooser = JFileChoosers.createSelected(lastFile);
-				chooser.setDialogTitle(Strings.get("saveButton"));
+				chooser.setDialogTitle(S.get("saveButton"));
 				int choice = chooser.showSaveDialog(HexFrame.this);
 				if (choice == JFileChooser.APPROVE_OPTION) {
 					File f = chooser.getSelectedFile();
@@ -141,7 +143,7 @@ public class HexFrame extends LFrame {
 					} catch (IOException e) {
 						JOptionPane.showMessageDialog(HexFrame.this,
 								e.getMessage(),
-								Strings.get("hexSaveErrorTitle"),
+								S.get("hexSaveErrorTitle"),
 								JOptionPane.ERROR_MESSAGE);
 					}
 				}
@@ -153,17 +155,17 @@ public class HexFrame extends LFrame {
 		}
 
 		public void localeChanged() {
-			setTitle(Strings.get("hexFrameTitle"));
-			open.setText(Strings.get("openButton"));
-			save.setText(Strings.get("saveButton"));
-			close.setText(Strings.get("closeButton"));
+			setTitle(S.get("hexFrameTitle"));
+			open.setText(S.get("openButton"));
+			save.setText(S.get("saveButton"));
+			close.setText(S.get("closeButton"));
 		}
 	}
 
 	private class WindowMenuManager extends WindowMenuItemManager implements
 			LocaleListener {
 		WindowMenuManager() {
-			super(Strings.get("hexFrameMenuItem"), false);
+			super(S.get("hexFrameMenuItem"), false);
 			LocaleManager.addLocaleListener(this);
 		}
 
@@ -173,7 +175,7 @@ public class HexFrame extends LFrame {
 		}
 
 		public void localeChanged() {
-			setText(Strings.get("hexFrameMenuItem"));
+			setText(S.get("hexFrameMenuItem"));
 		}
 	}
 

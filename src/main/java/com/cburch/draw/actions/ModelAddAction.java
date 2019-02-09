@@ -30,6 +30,8 @@
 
 package com.cburch.draw.actions;
 
+import static com.cburch.draw.Strings.S;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -70,7 +72,7 @@ public class ModelAddAction extends ModelAction {
 
 	@Override
 	public String getName() {
-		return Strings.get("actionAdd", getShapesName(added));
+		return S.fmt("actionAdd", getShapesName(added));
 	}
 
 	@Override

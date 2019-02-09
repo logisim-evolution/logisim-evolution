@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.gui.prefs;
 
+import static com.cburch.logisim.gui.Strings.S;
+
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -265,27 +267,26 @@ public class SoftwaresOptions extends OptionsPanel {
 
 	@Override
 	public String getHelpText() {
-		return Strings.get("softwaresHelp");
+		return S.get("softwaresHelp");
 	}
 
 	@Override
 	public String getTitle() {
-		return Strings.get("softwaresTitle");
+		return S.get("softwaresTitle");
 	}
 
 	@Override
 	public void localeChanged() {
-		AutoUpdateCheckbox.setText(Strings.get("AutoUpdateLabel"));
-		questaValidationCheckBox.setText(Strings
-				.get("softwaresQuestaValidationLabel"));
-		questaPathButton.setText(Strings.get("softwaresQuestaPathButton"));
-		questaPathLabel.setText(Strings.get("softwaresQuestaPathLabel"));
-		QuartusPathButton.setText(Strings.get("softwaresQuestaPathButton"));
-		QuartusPathLabel.setText(Strings.get("QuartusToolPath"));
-		ISEPathButton.setText(Strings.get("softwaresQuestaPathButton"));
-		ISEPathLabel.setText(Strings.get("ISEToolPath"));
-		VivadoPathButton.setText(Strings.get("softwaresQuestaPathButton"));
-		VivadoPathLabel.setText(Strings.get("VivadoToolPath"));
+		AutoUpdateCheckbox.setText(S.get("AutoUpdateLabel"));
+		questaValidationCheckBox.setText(S.get("softwaresQuestaValidationLabel"));
+		questaPathButton.setText(S.get("softwaresQuestaPathButton"));
+		questaPathLabel.setText(S.get("softwaresQuestaPathLabel"));
+		QuartusPathButton.setText(S.get("softwaresQuestaPathButton"));
+		QuartusPathLabel.setText(S.get("QuartusToolPath"));
+		ISEPathButton.setText(S.get("softwaresQuestaPathButton"));
+		ISEPathLabel.setText(S.get("ISEToolPath"));
+		VivadoPathButton.setText(S.get("softwaresQuestaPathButton"));
+		VivadoPathLabel.setText(S.get("VivadoToolPath"));
 	}
 
 }

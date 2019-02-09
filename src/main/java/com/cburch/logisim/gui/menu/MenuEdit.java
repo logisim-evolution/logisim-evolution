@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.gui.menu;
 
+import static com.cburch.logisim.gui.Strings.S;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -64,10 +66,10 @@ class MenuEdit extends Menu {
 			Project proj = menubar.getProject();
 			Action last = proj == null ? null : proj.getLastAction();
 			if (last == null) {
-				undo.setText(Strings.get("editCantUndoItem"));
+				undo.setText(S.get("editCantUndoItem"));
 				undo.setEnabled(false);
 			} else {
-				undo.setText(StringUtil.format(Strings.get("editUndoItem"),
+				undo.setText(StringUtil.format(S.get("editUndoItem"),
 						last.getName()));
 				undo.setEnabled(true);
 			}
@@ -81,15 +83,14 @@ class MenuEdit extends Menu {
 
 					// Set the detailed, localized text
 
-					redo.setText(StringUtil.format(Strings.get("editRedoItem"),
+					redo.setText(StringUtil.format(S.get("editRedoItem"),
 							lastRedo.getName()));
 
 					// Set it to enabled
 					redo.setEnabled(true);
 				} else { // If there is no project...
 							// Let them know they can't redo anything
-					redo.setText(StringUtil.format(Strings
-							.get("editCantRedoItem")));
+					redo.setText(StringUtil.format(S.get("editCantRedoItem")));
 
 					// And disable the button
 					redo.setEnabled(false);
@@ -195,19 +196,19 @@ class MenuEdit extends Menu {
 	}
 
 	public void localeChanged() {
-		this.setText(Strings.get("editMenu"));
+		this.setText(S.get("editMenu"));
 		myListener.projectChanged(null);
-		cut.setText(Strings.get("editCutItem"));
-		copy.setText(Strings.get("editCopyItem"));
-		paste.setText(Strings.get("editPasteItem"));
-		delete.setText(Strings.get("editClearItem"));
-		dup.setText(Strings.get("editDuplicateItem"));
-		selall.setText(Strings.get("editSelectAllItem"));
-		raise.setText(Strings.get("editRaiseItem"));
-		lower.setText(Strings.get("editLowerItem"));
-		raiseTop.setText(Strings.get("editRaiseTopItem"));
-		lowerBottom.setText(Strings.get("editLowerBottomItem"));
-		addCtrl.setText(Strings.get("editAddControlItem"));
-		remCtrl.setText(Strings.get("editRemoveControlItem"));
+		cut.setText(S.get("editCutItem"));
+		copy.setText(S.get("editCopyItem"));
+		paste.setText(S.get("editPasteItem"));
+		delete.setText(S.get("editClearItem"));
+		dup.setText(S.get("editDuplicateItem"));
+		selall.setText(S.get("editSelectAllItem"));
+		raise.setText(S.get("editRaiseItem"));
+		lower.setText(S.get("editLowerItem"));
+		raiseTop.setText(S.get("editRaiseTopItem"));
+		lowerBottom.setText(S.get("editLowerBottomItem"));
+		addCtrl.setText(S.get("editAddControlItem"));
+		remCtrl.setText(S.get("editRemoveControlItem"));
 	}
 }

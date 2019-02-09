@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.std.memory;
 
+import static com.cburch.logisim.std.Strings.S;
+
 import java.util.List;
 
 import com.cburch.logisim.tools.FactoryDescription;
@@ -41,31 +43,31 @@ public class Memory extends Library {
 
 	private static FactoryDescription[] DESCRIPTIONS = {
 			new FactoryDescription("D Flip-Flop",
-					Strings.getter("dFlipFlopComponent"), "dFlipFlop.gif",
+					S.getter("dFlipFlopComponent"), "dFlipFlop.gif",
 					"DFlipFlop"),
 			new FactoryDescription("T Flip-Flop",
-					Strings.getter("tFlipFlopComponent"), "tFlipFlop.gif",
+					S.getter("tFlipFlopComponent"), "tFlipFlop.gif",
 					"TFlipFlop"),
 			new FactoryDescription("J-K Flip-Flop",
-					Strings.getter("jkFlipFlopComponent"), "jkFlipFlop.gif",
+					S.getter("jkFlipFlopComponent"), "jkFlipFlop.gif",
 					"JKFlipFlop"),
 			new FactoryDescription("S-R Flip-Flop",
-					Strings.getter("srFlipFlopComponent"), "srFlipFlop.gif",
+					S.getter("srFlipFlopComponent"), "srFlipFlop.gif",
 					"SRFlipFlop"),
 			new FactoryDescription("Register",
-					Strings.getter("registerComponent"), "register.gif",
+					S.getter("registerComponent"), "register.gif",
 					"Register"),
 			new FactoryDescription("Counter",
-					Strings.getter("counterComponent"), "counter.gif",
+					S.getter("counterComponent"), "counter.gif",
 					"Counter"),
 			new FactoryDescription("Shift Register",
-					Strings.getter("shiftRegisterComponent"), "shiftreg.gif",
+					S.getter("shiftRegisterComponent"), "shiftreg.gif",
 					"ShiftRegister"),
-			new FactoryDescription("Random", Strings.getter("randomComponent"),
+			new FactoryDescription("Random", S.getter("randomComponent"),
 					"random.gif", "Random"),
-			new FactoryDescription("RAM", Strings.getter("ramComponent"),
+			new FactoryDescription("RAM", S.getter("ramComponent"),
 					"ram.gif", "Ram"),
-			new FactoryDescription("ROM", Strings.getter("romComponent"),
+			new FactoryDescription("ROM", S.getter("romComponent"),
 					"rom.gif", "Rom"), };
 
 	private List<Tool> tools = null;
@@ -75,7 +77,7 @@ public class Memory extends Library {
 
 	@Override
 	public String getDisplayName() {
-		return Strings.get("memoryLibrary");
+		return S.get("memoryLibrary");
 	}
 
 	@Override

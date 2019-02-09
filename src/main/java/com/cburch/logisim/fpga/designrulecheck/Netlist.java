@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.fpga.designrulecheck;
 
+import static com.cburch.logisim.fpga.Strings.S;
+
 import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.Rectangle;
@@ -369,7 +371,7 @@ public class Netlist implements CircuitListener {
 			 * in the current implementation of logisim this should never
 			 * happen, but we leave it in
 			 */
-			Reporter.AddFatalError("Found a sheet in your design with an empty name. This is not allowed, please specify a name!");
+			Reporter.AddFatalError(S.get("EmptyNamedSheet"));
 			DRCStatus |= DRC_ERROR;
 		}
 		if (Sheetnames.contains(MyCircuit.getName())) {
@@ -377,9 +379,7 @@ public class Netlist implements CircuitListener {
 			 * in the current implementation of logisim this should never
 			 * happen, but we leave it in
 			 */
-			Reporter.AddFatalError("Found more than one sheet in your design with the name :\""
-					+ MyCircuit.getName()
-					+ "\". This is not allowed, please make sure that all sheets have a unique name!");
+			Reporter.AddFatalError(S.fmt("MultipleSheetSameName", MyCircuit.getName()));
 			DRCStatus |= DRC_ERROR;
 		} else {
 			Sheetnames.add(MyCircuit.getName());
@@ -393,26 +393,26 @@ public class Netlist implements CircuitListener {
 			}
 		}
 		drc.clear();
-		drc.add(new SimpleDRCContainer(MyCircuit, Strings.get("HDL_noLabel"),
+		drc.add(new SimpleDRCContainer(MyCircuit, S.get("HDL_noLabel"),
 				SimpleDRCContainer.LEVEL_FATAL,
 				SimpleDRCContainer.MARK_INSTANCE));
-		drc.add(new SimpleDRCContainer(MyCircuit, Strings
-				.get("HDL_CompNameIsLabel"), SimpleDRCContainer.LEVEL_FATAL,
+		drc.add(new SimpleDRCContainer(MyCircuit,
+				S.get("HDL_CompNameIsLabel"), SimpleDRCContainer.LEVEL_FATAL,
 				SimpleDRCContainer.MARK_INSTANCE
 				| SimpleDRCContainer.MARK_LABEL));
-		drc.add(new SimpleDRCContainer(MyCircuit, Strings
-				.get("HDL_LabelInvalid"), SimpleDRCContainer.LEVEL_FATAL,
+		drc.add(new SimpleDRCContainer(MyCircuit,
+				S.get("HDL_LabelInvalid"), SimpleDRCContainer.LEVEL_FATAL,
 				SimpleDRCContainer.MARK_INSTANCE
 				| SimpleDRCContainer.MARK_LABEL));
-		drc.add(new SimpleDRCContainer(MyCircuit, Strings
-				.get("HDL_DuplicatedLabels"), SimpleDRCContainer.LEVEL_FATAL,
+		drc.add(new SimpleDRCContainer(MyCircuit,
+				S.get("HDL_DuplicatedLabels"), SimpleDRCContainer.LEVEL_FATAL,
 				SimpleDRCContainer.MARK_INSTANCE
 				| SimpleDRCContainer.MARK_LABEL));
-		drc.add(new SimpleDRCContainer(MyCircuit, Strings.get("HDL_Tristate"),
+		drc.add(new SimpleDRCContainer(MyCircuit, S.get("HDL_Tristate"),
 				SimpleDRCContainer.LEVEL_FATAL,
 				SimpleDRCContainer.MARK_INSTANCE));
-		drc.add(new SimpleDRCContainer(MyCircuit, Strings
-				.get("HDL_unsupported"), SimpleDRCContainer.LEVEL_FATAL,
+		drc.add(new SimpleDRCContainer(MyCircuit, 
+				S.get("HDL_unsupported"), SimpleDRCContainer.LEVEL_FATAL,
 				SimpleDRCContainer.MARK_INSTANCE));
 		for (Component comp : MyCircuit.getNonWires()) {
 			/*
@@ -463,10 +463,8 @@ public class Netlist implements CircuitListener {
 					}
 					if (!CorrectLabel.IsCorrectLabel(comp.getFactory()
 							.getName(), HDLIdentifier,
-							"Found that the component \""
-									+ comp.getFactory().getName()
-									+ "\" in circuit \"" + MyCircuit.getName(),
-									Reporter)) {
+							S.fmt("FoundBadComponent", comp.getFactory().getName(),MyCircuit.getName()),
+							Reporter)) {
 						DRCStatus |= DRC_ERROR;
 					}
 					SubcircuitFactory sub = (SubcircuitFactory) comp
@@ -500,8 +498,7 @@ public class Netlist implements CircuitListener {
 		 * Okay we now know for sure that all elements are supported, lets build
 		 * the net list
 		 */
-		Reporter.AddInfo("Building netlist for sheet \"" + MyCircuit.getName()
-		+ "\"");
+		Reporter.AddInfo(S.fmt("BuildingNetlistFor", MyCircuit.getName()));
 		if (!this.GenerateNetlist(Reporter, HDLIdentifier)) {
 			this.clear();
 			DRCStatus = DRC_ERROR;
@@ -527,7 +524,7 @@ public class Netlist implements CircuitListener {
 			}
 			if (openInputs) {
 				SimpleDRCContainer warn = new SimpleDRCContainer(MyCircuit,
-						Strings.get("NetList_UnconnectedInputs"),
+						S.get("NetList_UnconnectedInputs"),
 						SimpleDRCContainer.LEVEL_NORMAL,
 						SimpleDRCContainer.MARK_INSTANCE);
 				warn.AddMarkComponent(comp.GetComponent());
@@ -543,7 +540,7 @@ public class Netlist implements CircuitListener {
 			}
 			if (openInputs) {
 				SimpleDRCContainer warn = new SimpleDRCContainer(MyCircuit,
-						Strings.get("NetList_UnconnectedInputs"),
+						S.get("NetList_UnconnectedInputs"),
 						SimpleDRCContainer.LEVEL_SEVERE,
 						SimpleDRCContainer.MARK_INSTANCE);
 				warn.AddMarkComponent(comp.GetComponent());
@@ -563,8 +560,7 @@ public class Netlist implements CircuitListener {
 			+ LocalNrOfInportBubles + LocalNrOfOutportBubles
 			+ LocalNrOfInOutBubles;
 			if (ports == 0) {
-				Reporter.AddFatalError("Toplevel \"" + MyCircuit.getName()
-				+ "\" has no input(s) and/or no output(s)!");
+				Reporter.AddFatalError(S.fmt("TopLevelNoIO", MyCircuit.getName()));
 				DRCStatus = DRC_ERROR;
 				return DRCStatus | CommonDRCStatus;
 			}
@@ -575,11 +571,8 @@ public class Netlist implements CircuitListener {
 			}
 		}
 
-		Reporter.AddInfo("Circuit \"" + MyCircuit.getName() + "\" has "
-				+ NumberOfNets() + " nets and " + NumberOfBusses()
-				+ " busses.");
-		Reporter.AddInfo("Circuit \"" + MyCircuit.getName()
-		+ "\" passed DRC check");
+		Reporter.AddInfo(S.fmt("CircuitInfoString", MyCircuit.getName(),NumberOfNets(),NumberOfBusses()));
+		Reporter.AddInfo(S.fmt("DRCPassesString", MyCircuit.getName()));
 		DRCStatus = DRC_PASSED;
 		return DRCStatus | CommonDRCStatus;
 	}
@@ -652,13 +645,12 @@ public class Netlist implements CircuitListener {
 		ArrayList<SimpleDRCContainer> drc = new ArrayList<SimpleDRCContainer>();
 		boolean errors = false;
 		IFPGAGrid gbc = FPGACliGuiFabric.getFPGAGrid();
-		IFPGAFrame panel = FPGACliGuiFabric.getFPGAFrame("Netlist: " + MyCircuit.getName());
+		IFPGAFrame panel = FPGACliGuiFabric.getFPGAFrame(S.fmt("NetlistLabelString", MyCircuit.getName()));
 		panel.setResizable(false);
 		panel.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		IFPGAGridLayout thisLayout = FPGACliGuiFabric.getFPGAGridLayout();
 		panel.setLayout(thisLayout);
-		IFPGALabel LocText =FPGACliGuiFabric.getFPGALabel("Generating Netlist for Circuit: "
-				+ MyCircuit.getName());
+		IFPGALabel LocText =FPGACliGuiFabric.getFPGALabel(S.fmt("NetlistInfoString", MyCircuit.getName()));
 		gbc.setGridx(0);
 		gbc.setGridy(1);
 		gbc.setFill(GridBagConstraints.HORIZONTAL);
@@ -701,10 +693,10 @@ public class Netlist implements CircuitListener {
 		Set<Component> TunnelList = new HashSet<Component>();
 		MyComplexSplitters.clear();
 		drc.clear();
-		drc.add(new SimpleDRCContainer(MyCircuit, Strings
-				.get("NetList_IOError"), SimpleDRCContainer.LEVEL_FATAL,
+		drc.add(new SimpleDRCContainer(MyCircuit, 
+				S.get("NetList_IOError"), SimpleDRCContainer.LEVEL_FATAL,
 				SimpleDRCContainer.MARK_INSTANCE));
-		drc.add(new SimpleDRCContainer(MyCircuit, Strings.get("NetList_BitwidthError"),SimpleDRCContainer.LEVEL_FATAL,SimpleDRCContainer.MARK_WIRE));
+		drc.add(new SimpleDRCContainer(MyCircuit, S.get("NetList_BitwidthError"),SimpleDRCContainer.LEVEL_FATAL,SimpleDRCContainer.MARK_WIRE));
 		for (Component com : components) {
 			/*
 			 * We do not process the splitter and tunnel, they are processed
@@ -786,8 +778,8 @@ public class Netlist implements CircuitListener {
 		 * Now we check if an input pin is connected to an output and in case of
 		 * a Splitter if it is connected to either of them
 		 */
-		drc.add(new SimpleDRCContainer(MyCircuit, Strings
-				.get("NetAdd_ComponentWidthMismatch"),
+		drc.add(new SimpleDRCContainer(MyCircuit, 
+				S.get("NetAdd_ComponentWidthMismatch"),
 				SimpleDRCContainer.LEVEL_FATAL,
 				SimpleDRCContainer.MARK_INSTANCE));
 		Map<Location, Integer> Points = new HashMap<Location, Integer>();
@@ -842,7 +834,7 @@ public class Netlist implements CircuitListener {
 			}
 		}
 		drc.clear();
-		drc.add(new SimpleDRCContainer(MyCircuit, Strings.get("NetMerge_BitWidthError"),SimpleDRCContainer.LEVEL_FATAL,SimpleDRCContainer.MARK_WIRE));
+		drc.add(new SimpleDRCContainer(MyCircuit, S.get("NetMerge_BitWidthError"),SimpleDRCContainer.LEVEL_FATAL,SimpleDRCContainer.MARK_WIRE));
 		if (TunnelsPresent) {
 			Iterator<Net> NetIterator = MyNets.listIterator();
 			while (NetIterator.hasNext()) {
@@ -904,7 +896,7 @@ public class Netlist implements CircuitListener {
 				}
 				if (FoundDuplicate) {
 					SimpleDRCContainer warn = new SimpleDRCContainer(MyCircuit,
-							Strings.get("NetList_duplicatedSplitter"),
+							S.get("NetList_duplicatedSplitter"),
 							SimpleDRCContainer.LEVEL_SEVERE,
 							SimpleDRCContainer.MARK_INSTANCE);
 					warn.AddMarkComponent(ThisSplitter);
@@ -917,7 +909,7 @@ public class Netlist implements CircuitListener {
 		/* In this round we are going to detect the unconnected nets meaning those having a width of 0 and remove them */
 		drc.clear();
 		Iterator<Net> NetIterator = MyNets.listIterator();
-		drc.add(new SimpleDRCContainer(MyCircuit,Strings.get("NetList_emptynets"),SimpleDRCContainer.LEVEL_NORMAL,SimpleDRCContainer.MARK_WIRE));
+		drc.add(new SimpleDRCContainer(MyCircuit,S.get("NetList_emptynets"),SimpleDRCContainer.LEVEL_NORMAL,SimpleDRCContainer.MARK_WIRE));
 		while (NetIterator.hasNext()) {
 			Net wire = NetIterator.next();
 			if (wire.BitWidth()==0) {
@@ -933,7 +925,7 @@ public class Netlist implements CircuitListener {
 		 * correctly connected and remove both versions from the set.
 		 */
 		drc.clear();
-		drc.add(new SimpleDRCContainer(MyCircuit,Strings.get("NetList_ShortCircuit"),SimpleDRCContainer.LEVEL_FATAL,SimpleDRCContainer.MARK_WIRE));
+		drc.add(new SimpleDRCContainer(MyCircuit,S.get("NetList_ShortCircuit"),SimpleDRCContainer.LEVEL_FATAL,SimpleDRCContainer.MARK_WIRE));
 		errors = false;
 		while (MySplitIterator.hasNext()) {
 			Component mySplitter = MySplitIterator.next();
@@ -997,7 +989,7 @@ public class Netlist implements CircuitListener {
 				}
 				if (issueWarning) {
 					SimpleDRCContainer warn = new SimpleDRCContainer(MyCircuit,
-							Strings.get("NetList_NoSplitterConnection"),
+							S.get("NetList_NoSplitterConnection"),
 							SimpleDRCContainer.LEVEL_SEVERE,
 							SimpleDRCContainer.MARK_INSTANCE);
 					warn.AddMarkComponent(mySplitter);
@@ -1082,7 +1074,7 @@ public class Netlist implements CircuitListener {
 			}
 			if (unconnectedEnds) {
 				SimpleDRCContainer warn = new SimpleDRCContainer(MyCircuit,
-						Strings.get("NetList_NoSplitterEndConnections"),
+						S.get("NetList_NoSplitterEndConnections"),
 						SimpleDRCContainer.LEVEL_NORMAL,
 						SimpleDRCContainer.MARK_INSTANCE);
 				warn.AddMarkComponent(com);
@@ -2062,7 +2054,7 @@ public class Netlist implements CircuitListener {
 		for (Net net : MyNets) {
 			if (net.IsRootNet()) {
 				if (net.hasShortCircuit()) {
-					SimpleDRCContainer error = new SimpleDRCContainer(MyCircuit,Strings.get("NetList_ShortCircuit"),SimpleDRCContainer.LEVEL_FATAL,SimpleDRCContainer.MARK_WIRE);
+					SimpleDRCContainer error = new SimpleDRCContainer(MyCircuit,S.get("NetList_ShortCircuit"),SimpleDRCContainer.LEVEL_FATAL,SimpleDRCContainer.MARK_WIRE);
 					error.AddMarkComponents(net.getWires());
 					Reporter.AddError(error);
 					ret = true;
@@ -2096,7 +2088,7 @@ public class Netlist implements CircuitListener {
 						MySinks.removeAll(HiddenSinkNets);
 						if (!HasSink) {
 							SimpleDRCContainer warn = new SimpleDRCContainer(MyCircuit,
-									Strings.get("NetList_SourceWithoutSink"),
+									S.get("NetList_SourceWithoutSink"),
 									SimpleDRCContainer.LEVEL_NORMAL,
 									SimpleDRCContainer.MARK_WIRE);
 							warn.AddMarkComponents(ThisNet.getWires());
@@ -2109,7 +2101,7 @@ public class Netlist implements CircuitListener {
 		if (MySinks.size()!= 0) {
 			for (ConnectionPoint Sink : MySinks) {
 				SimpleDRCContainer warn = new SimpleDRCContainer(MyCircuit,
-						Strings.get("NetList_UnsourcedSink"),
+						S.get("NetList_UnsourcedSink"),
 						SimpleDRCContainer.LEVEL_SEVERE,
 						SimpleDRCContainer.MARK_INSTANCE|SimpleDRCContainer.MARK_WIRE);
 				warn.AddMarkComponents(Sink.GetParrentNet().getWires());
@@ -2430,12 +2422,12 @@ public class Netlist implements CircuitListener {
 			if (GatedSet.keySet().contains(key)) {
 				/* big Problem, we have a component that is used with and without gated clocks */
 				error = true;
-				Reporter.AddFatalError(Strings.get("NetList_CircuitGatedNotGated"));
-				Reporter.AddErrorIncrement(Strings.get("NetList_TraceListBegin"));
+				Reporter.AddFatalError(S.get("NetList_CircuitGatedNotGated"));
+				Reporter.AddErrorIncrement(S.get("NetList_TraceListBegin"));
 				Map<NetlistComponent,Circuit> instances = NotGatedSet.get(key);
 				for (NetlistComponent comp : instances.keySet()) {
 					SimpleDRCContainer warn = new SimpleDRCContainer(instances.get(comp),
-							Strings.get("NetList_CircuitNotGated"),
+							S.get("NetList_CircuitNotGated"),
 							SimpleDRCContainer.LEVEL_NORMAL,
 							SimpleDRCContainer.MARK_INSTANCE,true);
 					warn.AddMarkComponent(comp.GetComponent());
@@ -2444,13 +2436,13 @@ public class Netlist implements CircuitListener {
 				instances = GatedSet.get(key);
 				for (NetlistComponent comp : instances.keySet()) {
 					SimpleDRCContainer warn = new SimpleDRCContainer(instances.get(comp),
-							Strings.get("NetList_CircuitGated"),
+							S.get("NetList_CircuitGated"),
 							SimpleDRCContainer.LEVEL_NORMAL,
 							SimpleDRCContainer.MARK_INSTANCE,true);
 					warn.AddMarkComponent(comp.GetComponent());
 					Reporter.AddError(warn);
 				}
-				Reporter.AddErrorIncrement(Strings.get("NetList_TraceListEnd"));
+				Reporter.AddErrorIncrement(S.get("NetList_TraceListEnd"));
 			}
 		}
 		return !error;
@@ -2506,15 +2498,15 @@ public class Netlist implements CircuitListener {
 		if (HierarchyNetlists.size()>1) {
 			if (GatedClock&&PinSources.isEmpty()) {
 				GatedClock = false; /* we have only non-pin driven gated clocks */
-				WarningForGatedClock(NonPinSources,NonPinGatedComponents,NonPinWires,WarnedComponents,HierarchyNetlists,Reporter,Strings.get("NetList_GatedClock"));
+				WarningForGatedClock(NonPinSources,NonPinGatedComponents,NonPinWires,WarnedComponents,HierarchyNetlists,Reporter,S.get("NetList_GatedClock"));
 			}
 
 			if (GatedClock&&!PinSources.isEmpty()) {
 				for (int i = 0 ; i < PinSources.size() ; i++) {
-					Reporter.AddSevereWarning(Strings.get("NetList_GatedClock"));
-					Reporter.AddWarningIncrement(Strings.get("NetList_TraceListBegin"));
+					Reporter.AddSevereWarning(S.get("NetList_GatedClock"));
+					Reporter.AddWarningIncrement(S.get("NetList_TraceListBegin"));
 					SimpleDRCContainer warn = new SimpleDRCContainer(MyCircuit,
-							Strings.get("NetList_GatedClockSink"),
+							S.get("NetList_GatedClockSink"),
 							SimpleDRCContainer.LEVEL_NORMAL,
 							SimpleDRCContainer.MARK_INSTANCE|SimpleDRCContainer.MARK_WIRE,true);
 					warn.AddMarkComponents(PinWires.get(i));
@@ -2522,7 +2514,7 @@ public class Netlist implements CircuitListener {
 						warn.AddMarkComponent(comp.GetComponent());
 					Reporter.AddWarning(warn);
 					WarningTraceForGatedClock(PinSources.get(i).getSource(),PinSources.get(i).getIndex(),HierarchyNetlists,CurrentHierarchyLevel,Reporter);
-					Reporter.AddWarningIncrement(Strings.get("NetList_TraceListEnd"));
+					Reporter.AddWarningIncrement(S.get("NetList_TraceListEnd"));
 				}
 			}
 
@@ -2546,8 +2538,8 @@ public class Netlist implements CircuitListener {
 			}
 		} else {
 			/* At toplevel we warn for all possible gated clocks */
-			WarningForGatedClock(NonPinSources,NonPinGatedComponents,NonPinWires,WarnedComponents,HierarchyNetlists,Reporter,Strings.get("NetList_GatedClock"));
-			WarningForGatedClock(PinSources,PinGatedComponents,PinWires,WarnedComponents,HierarchyNetlists,Reporter,Strings.get("NetList_PossibleGatedClock"));
+			WarningForGatedClock(NonPinSources,NonPinGatedComponents,NonPinWires,WarnedComponents,HierarchyNetlists,Reporter,S.get("NetList_GatedClock"));
+			WarningForGatedClock(PinSources,PinGatedComponents,PinWires,WarnedComponents,HierarchyNetlists,Reporter,S.get("NetList_PossibleGatedClock"));
 		}
 	}
 
@@ -2643,7 +2635,7 @@ public class Netlist implements CircuitListener {
 				/* Add severe warning, we found a memory with an unconnected clock input */
 				if (!WarnedComponents.contains(comp)) {
 					SimpleDRCContainer warn = new SimpleDRCContainer(MyCircuit,
-							Strings.get("NetList_NoClockConnection"),
+							S.get("NetList_NoClockConnection"),
 							SimpleDRCContainer.LEVEL_SEVERE,
 							SimpleDRCContainer.MARK_INSTANCE);
 					warn.AddMarkComponent(comp.GetComponent());
@@ -2719,7 +2711,7 @@ public class Netlist implements CircuitListener {
 				if (sfac instanceof Pin ||
 						sfac instanceof SubcircuitFactory) {
 					SimpleDRCContainer warn = new SimpleDRCContainer(SubNetList.getCircuit(),
-							Strings.get("NetList_GatedClockInt"),
+							S.get("NetList_GatedClockInt"),
 							SimpleDRCContainer.LEVEL_NORMAL,
 							SimpleDRCContainer.MARK_WIRE,true);
 					warn.AddMarkComponents(Segments);
@@ -2727,7 +2719,7 @@ public class Netlist implements CircuitListener {
 					SubNetList.WarningTraceForGatedClock(source.getSource(),source.getIndex(),NewHierarchyNetlists,NewHierarchyNames,Reporter);
 				} else {
 					SimpleDRCContainer warn = new SimpleDRCContainer(SubNetList.getCircuit(),
-							Strings.get("NetList_GatedClockSource"),
+							S.get("NetList_GatedClockSource"),
 							SimpleDRCContainer.LEVEL_NORMAL,
 							SimpleDRCContainer.MARK_WIRE,true);
 					warn.AddMarkComponents(Segments);
@@ -2794,7 +2786,7 @@ public class Netlist implements CircuitListener {
 				if (sfac instanceof Pin ||
 						sfac instanceof SubcircuitFactory) {
 					SimpleDRCContainer warn = new SimpleDRCContainer(SubNetList.getCircuit(),
-							Strings.get("NetList_GatedClockInt"),
+							S.get("NetList_GatedClockInt"),
 							SimpleDRCContainer.LEVEL_NORMAL,
 							SimpleDRCContainer.MARK_WIRE,true);
 					warn.AddMarkComponents(Segments);
@@ -2802,7 +2794,7 @@ public class Netlist implements CircuitListener {
 					SubNetList.WarningTraceForGatedClock(source.getSource(),source.getIndex(),NewHierarchyNetlists,NewHierarchyNames,Reporter);
 				} else {
 					SimpleDRCContainer warn = new SimpleDRCContainer(SubNetList.getCircuit(),
-							Strings.get("NetList_GatedClockSource"),
+							S.get("NetList_GatedClockSource"),
 							SimpleDRCContainer.LEVEL_NORMAL,
 							SimpleDRCContainer.MARK_WIRE,true);
 					warn.AddMarkComponents(Segments);
@@ -2825,10 +2817,10 @@ public class Netlist implements CircuitListener {
 				AlreadyWarned |= WarnedComponents.contains(comp);
 			if (!AlreadyWarned) {
 				if (Sources.get(i).getSource().GetComp().getFactory() instanceof SubcircuitFactory) {
-					Reporter.AddSevereWarning(Strings.get("NetList_GatedClock"));
-					Reporter.AddWarningIncrement(Strings.get("NetList_TraceListBegin"));
+					Reporter.AddSevereWarning(S.get("NetList_GatedClock"));
+					Reporter.AddWarningIncrement(S.get("NetList_TraceListBegin"));
 					SimpleDRCContainer warn = new SimpleDRCContainer(MyCircuit,
-							Strings.get("NetList_GatedClockSink"),
+							S.get("NetList_GatedClockSink"),
 							SimpleDRCContainer.LEVEL_NORMAL,
 							SimpleDRCContainer.MARK_INSTANCE|SimpleDRCContainer.MARK_WIRE,true);
 					warn.AddMarkComponents(Wires.get(i));
@@ -2836,7 +2828,7 @@ public class Netlist implements CircuitListener {
 						warn.AddMarkComponent(comp.GetComponent());
 					Reporter.AddWarning(warn);
 					WarningTraceForGatedClock(Sources.get(i).getSource(),Sources.get(i).getIndex(),HierarchyNetlists,CurrentHierarchyLevel,Reporter);
-					Reporter.AddWarningIncrement(Strings.get("NetList_TraceListEnd"));
+					Reporter.AddWarningIncrement(S.get("NetList_TraceListEnd"));
 				} else {
 					SimpleDRCContainer warn = new SimpleDRCContainer(MyCircuit,
 							Warning,

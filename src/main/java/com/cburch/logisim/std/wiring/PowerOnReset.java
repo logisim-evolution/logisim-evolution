@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.std.wiring;
 
+import static com.cburch.logisim.std.Strings.S;
+
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
@@ -59,10 +61,10 @@ public class PowerOnReset extends InstanceFactory {
 	public static final PowerOnReset FACTORY = new PowerOnReset();
 
 	public PowerOnReset() {
-		super("POR", Strings.getter("PowerOnResetComponent"));
+		super("POR", S.getter("PowerOnResetComponent"));
 		setAttributes(
 				new Attribute[] { StdAttr.FACING, new DurationAttribute(
-						"PorHighDuration", Strings.getter("porHighAttr"), 1,
+						"PorHighDuration", S.getter("porHighAttr"), 1,
 						10,false), },
 				new Object[] { Direction.EAST,Integer.valueOf(2),});
 		setFacingAttribute(StdAttr.FACING);

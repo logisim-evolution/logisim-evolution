@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.std.memory;
 
+import static com.cburch.logisim.std.Strings.S;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -76,8 +78,8 @@ public class DFlipFlop extends AbstractFlipFlop {
 	}
 
 	public DFlipFlop() {
-		super("D Flip-Flop", "dFlipFlop.gif", Strings
-				.getter("dFlipFlopComponent"), 1, true);
+		super("D Flip-Flop", "dFlipFlop.gif", 
+				S.getter("dFlipFlopComponent"), 1, true);
 	}
 
 	@Override

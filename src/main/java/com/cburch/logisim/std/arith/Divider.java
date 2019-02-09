@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.std.arith;
 
+import static com.cburch.logisim.std.Strings.S;
+
 import java.awt.Color;
 import java.awt.Graphics;
 
@@ -89,7 +91,7 @@ public class Divider extends InstanceFactory {
 	private static final int REM = 4;
 
 	public Divider() {
-		super("Divider", Strings.getter("dividerComponent"));
+		super("Divider", S.getter("dividerComponent"));
 		setAttributes(new Attribute[] { StdAttr.WIDTH },
 				new Object[] { BitWidth.create(8) });
 		setKeyConfigurator(new BitWidthConfigurator(StdAttr.WIDTH));
@@ -102,11 +104,11 @@ public class Divider extends InstanceFactory {
 		ps[OUT] = new Port(0, 0, Port.OUTPUT, StdAttr.WIDTH);
 		ps[UPPER] = new Port(-20, -20, Port.INPUT, StdAttr.WIDTH);
 		ps[REM] = new Port(-20, 20, Port.OUTPUT, StdAttr.WIDTH);
-		ps[IN0].setToolTip(Strings.getter("dividerDividendLowerTip"));
-		ps[IN1].setToolTip(Strings.getter("dividerDivisorTip"));
-		ps[OUT].setToolTip(Strings.getter("dividerOutputTip"));
-		ps[UPPER].setToolTip(Strings.getter("dividerDividendUpperTip"));
-		ps[REM].setToolTip(Strings.getter("dividerRemainderTip"));
+		ps[IN0].setToolTip(S.getter("dividerDividendLowerTip"));
+		ps[IN1].setToolTip(S.getter("dividerDivisorTip"));
+		ps[OUT].setToolTip(S.getter("dividerOutputTip"));
+		ps[UPPER].setToolTip(S.getter("dividerDividendUpperTip"));
+		ps[REM].setToolTip(S.getter("dividerRemainderTip"));
 		setPorts(ps);
 	}
 
@@ -119,9 +121,9 @@ public class Divider extends InstanceFactory {
 		painter.drawPort(IN0);
 		painter.drawPort(IN1);
 		painter.drawPort(OUT);
-		painter.drawPort(UPPER, Strings.get("dividerUpperInput"),
+		painter.drawPort(UPPER, S.get("dividerUpperInput"),
 				Direction.NORTH);
-		painter.drawPort(REM, Strings.get("dividerRemainderOutput"),
+		painter.drawPort(REM, S.get("dividerRemainderOutput"),
 				Direction.SOUTH);
 
 		Location loc = painter.getLocation();

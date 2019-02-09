@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.tools;
 
+import static com.cburch.logisim.tools.Strings.S;
+
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Graphics;
@@ -118,7 +120,7 @@ public class EditTool extends Tool {
 		final Circuit circuit = canvas.getCircuit();
 		final Selection sel = canvas.getSelection();
 		SetAttributeAction act = new SetAttributeAction(circuit,
-				Strings.getter("selectionRefaceAction"));
+				S.getter("selectionRefaceAction"));
 		for (Component comp : sel.getComponents()) {
 			if (!(comp instanceof Wire)) {
 				Attribute<Direction> attr = getFacingAttribute(comp);
@@ -142,7 +144,7 @@ public class EditTool extends Tool {
 			final Circuit circuit = canvas.getCircuit();
 			final Selection sel = canvas.getSelection();
 			SetAttributeAction act = new SetAttributeAction(circuit,
-					Strings.getter("selectionRefaceAction"));
+					S.getter("selectionRefaceAction"));
 			for (Component comp : sel.getComponents()) {
 				if (!(comp instanceof Wire)) {
 					Attribute<Direction> attr = getFacingAttribute(comp);
@@ -205,12 +207,12 @@ public class EditTool extends Tool {
 
 	@Override
 	public String getDescription() {
-		return Strings.get("editToolDesc");
+		return S.get("editToolDesc");
 	}
 
 	@Override
 	public String getDisplayName() {
-		return Strings.get("editTool");
+		return S.get("editTool");
 	}
 
 	private Attribute<Direction> getFacingAttribute(Component comp) {

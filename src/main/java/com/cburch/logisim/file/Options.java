@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.file;
 
+import static com.cburch.logisim.file.Strings.S;
+
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.AttributeSet;
@@ -38,25 +40,25 @@ import com.cburch.logisim.data.Attributes;
 
 public class Options {
 	public static final AttributeOption GATE_UNDEFINED_IGNORE = new AttributeOption(
-			"ignore", Strings.getter("gateUndefinedIgnore"));
+			"ignore", S.getter("gateUndefinedIgnore"));
 	public static final AttributeOption GATE_UNDEFINED_ERROR = new AttributeOption(
-			"error", Strings.getter("gateUndefinedError"));
+			"error", S.getter("gateUndefinedError"));
 
 	public static final AttributeOption TICK_MAIN_PERIOD = new AttributeOption(
-			"period", Strings.getter("tick_main_period"));
+			"period", S.getter("tick_main_period"));
 	public static final AttributeOption TICK_MAIN_HALF_PERIOD = new AttributeOption(
-			"half_period", Strings.getter("tick_main_half_period"));
+			"half_period", S.getter("tick_main_half_period"));
 
 	public static final Attribute<Integer> sim_limit_attr = Attributes
-			.forInteger("simlimit", Strings.getter("simLimitOption"));
+			.forInteger("simlimit", S.getter("simLimitOption"));
 	public static final Attribute<Integer> sim_rand_attr = Attributes
-			.forInteger("simrand", Strings.getter("simRandomOption"));
+			.forInteger("simrand", S.getter("simRandomOption"));
 	public static final Attribute<AttributeOption> ATTR_GATE_UNDEFINED = Attributes
-			.forOption("gateUndefined", Strings.getter("gateUndefinedOption"),
+			.forOption("gateUndefined", S.getter("gateUndefinedOption"),
 					new AttributeOption[] { GATE_UNDEFINED_IGNORE,
 							GATE_UNDEFINED_ERROR });
 	public static final Attribute<AttributeOption> ATTR_TICK_MAIN = Attributes
-			.forOption("tickmain", Strings.getter("mainTickOption"),
+			.forOption("tickmain", S.getter("mainTickOption"),
 					new AttributeOption[] { TICK_MAIN_HALF_PERIOD,
 							TICK_MAIN_PERIOD });
 

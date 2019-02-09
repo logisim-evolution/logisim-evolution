@@ -29,6 +29,8 @@
  *******************************************************************************/
 package com.cburch.logisim.std.memory;
 
+import static com.cburch.logisim.std.Strings.S;
+
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
@@ -91,16 +93,16 @@ public abstract class Mem extends InstanceFactory {
 
 	public static final int SymbolWidth = 200;
 	public static final Attribute<BitWidth> ADDR_ATTR = Attributes.forBitWidth(
-			"addrWidth", Strings.getter("ramAddrWidthAttr"), 2, 24);
+			"addrWidth", S.getter("ramAddrWidthAttr"), 2, 24);
 
 	public static final Attribute<BitWidth> DATA_ATTR = Attributes.forBitWidth(
-			"dataWidth", Strings.getter("ramDataWidthAttr"));
-	public static final AttributeOption SEL_HIGH = new AttributeOption("high", Strings.getter("stdTriggerHigh"));
+			"dataWidth", S.getter("ramDataWidthAttr"));
+	public static final AttributeOption SEL_HIGH = new AttributeOption("high", S.getter("stdTriggerHigh"));
 
-	public static final AttributeOption SEL_LOW = new AttributeOption("low", Strings.getter("stdTriggerLow"));
+	public static final AttributeOption SEL_LOW = new AttributeOption("low", S.getter("stdTriggerLow"));
 
 	public static final Attribute<AttributeOption> ATTR_SELECTION = Attributes.forOption("Select",
-			Strings.getter("ramSelAttr"), new AttributeOption[] { SEL_HIGH, SEL_LOW });
+			S.getter("ramSelAttr"), new AttributeOption[] { SEL_HIGH, SEL_LOW });
 	// port-related constants
 	static final int DATA = 0;
 	static final int ADDR = 1;

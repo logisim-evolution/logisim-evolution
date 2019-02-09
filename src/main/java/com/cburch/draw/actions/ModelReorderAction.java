@@ -30,6 +30,8 @@
 
 package com.cburch.draw.actions;
 
+import static com.cburch.draw.Strings.S;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -204,11 +206,11 @@ public class ModelReorderAction extends ModelAction {
 	@Override
 	public String getName() {
 		if (type < 0) {
-			return Strings.get("actionRaise", getShapesName(objects));
+			return S.fmt("actionRaise", getShapesName(objects));
 		} else if (type > 0) {
-			return Strings.get("actionLower", getShapesName(objects));
+			return S.fmt("actionLower", getShapesName(objects));
 		} else {
-			return Strings.get("actionReorder", getShapesName(objects));
+			return S.fmt("actionReorder", getShapesName(objects));
 		}
 	}
 

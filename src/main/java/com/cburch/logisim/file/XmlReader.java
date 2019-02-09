@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.file;
 
+import static com.cburch.logisim.file.Strings.S;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -115,7 +117,7 @@ class XmlReader {
 			Library ret = libs.get(lib_name);
 			if (ret == null) {
 				throw new XmlReaderException(StringUtil.format(
-						Strings.get("libMissingError"), lib_name));
+						S.get("libMissingError"), lib_name));
 			} else {
 				return ret;
 			}
@@ -130,7 +132,7 @@ class XmlReader {
 				if (!attrElt.hasAttribute("name")) {
 					if (messages == null)
 						messages = new ArrayList<String>();
-					messages.add(Strings.get("attrNameMissingError"));
+					messages.add(S.get("attrNameMissingError"));
 				} else {
 					String attrName = attrElt.getAttribute("name");
 					String attrVal;
@@ -186,7 +188,7 @@ class XmlReader {
 						if (messages == null)
 							messages = new ArrayList<String>();
 						messages.add(StringUtil.format(
-								Strings.get("attrValueInvalidError"), attrVal,
+								S.get("attrValueInvalidError"), attrVal,
 								attrName));
 					}
 				}
@@ -209,7 +211,7 @@ class XmlReader {
 
 				String mods_str = sub_elt.getAttribute("map");
 				if (mods_str == null || mods_str.equals("")) {
-					loader.showError(Strings.get("mappingMissingError"));
+					loader.showError(S.get("mappingMissingError"));
 					continue;
 				}
 				int mods;
@@ -217,7 +219,7 @@ class XmlReader {
 					mods = InputEventUtil.fromString(mods_str);
 				} catch (NumberFormatException e) {
 					loader.showError(StringUtil.format(
-							Strings.get("mappingBadError"), mods_str));
+							S.get("mappingBadError"), mods_str));
 					continue;
 				}
 
@@ -276,14 +278,14 @@ class XmlReader {
 							sub, pins);
 					if (m == null) {
 						addError(
-								Strings.get("fileAppearanceNotFound",
+								S.fmt("fileAppearanceNotFound",
 										sub.getTagName()),
 								context + "." + sub.getTagName());
 					} else {
 						shapes.add(m);
 					}
 				} catch (RuntimeException e) {
-					addError(Strings.get("fileAppearanceError",
+					addError(S.fmt("fileAppearanceError",
 							sub.getTagName()), context + "." + sub.getTagName());
 				}
 			}
@@ -311,11 +313,11 @@ class XmlReader {
 
 		private Library toLibrary(Element elt) {
 			if (!elt.hasAttribute("name")) {
-				loader.showError(Strings.get("libNameMissingError"));
+				loader.showError(S.get("libNameMissingError"));
 				return null;
 			}
 			if (!elt.hasAttribute("desc")) {
-				loader.showError(Strings.get("libDescMissingError"));
+				loader.showError(S.get("libDescMissingError"));
 				return null;
 			}
 			String name = elt.getAttribute("name");
@@ -326,7 +328,7 @@ class XmlReader {
 			libs.put(name, ret);
 			for (Element sub_elt : XmlIterator.forChildElements(elt, "tool")) {
 				if (!sub_elt.hasAttribute("name")) {
-					loader.showError(Strings.get("toolNameMissingError"));
+					loader.showError(S.get("toolNameMissingError"));
 				} else {
 					String tool_str = sub_elt.getAttribute("name");
 					Tool tool = ret.getTool(tool_str);
@@ -383,7 +385,7 @@ class XmlReader {
 				String name = circElt.getAttribute("name");
 
 				if (name == null || name.equals("")) {
-					addError(Strings.get("circNameMissingError"), "C??");
+					addError(S.get("circNameMissingError"), "C??");
 				}
 				CircuitData circData = new CircuitData(circElt, new Circuit(
 						name, file,proj));
@@ -445,11 +447,11 @@ class XmlReader {
 			Library lib = findLibrary(elt.getAttribute("lib"));
 			String name = elt.getAttribute("name");
 			if (name == null || name.equals("")) {
-				throw new XmlReaderException(Strings.get("toolNameMissing"));
+				throw new XmlReaderException(S.get("toolNameMissing"));
 			}
 			Tool tool = lib.getTool(name);
 			if (tool == null) {
-				throw new XmlReaderException(Strings.get("toolNotFound"));
+				throw new XmlReaderException(S.get("toolNotFound"));
 			}
 			return tool;
 		}

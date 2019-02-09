@@ -30,6 +30,8 @@
 
 package com.cburch.draw.shapes;
 
+import static com.cburch.draw.Strings.S;
+
 import java.awt.Color;
 import java.awt.Graphics;
 import java.util.List;
@@ -94,7 +96,7 @@ public class Line extends AbstractCanvasObject {
 
 	@Override
 	public String getDisplayName() {
-		return Strings.get("shapeLine");
+		return S.get("shapeLine");
 	}
 
 	public Location getEnd0() {

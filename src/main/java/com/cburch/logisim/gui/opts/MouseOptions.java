@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.gui.opts;
 
+import static com.cburch.logisim.gui.Strings.S;
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FontMetrics;
@@ -99,12 +101,12 @@ class MouseOptions extends OptionsPanel {
 			String label2;
 			if (curTool == null) {
 				g.setColor(Color.GRAY);
-				label1 = Strings.get("mouseMapNone");
+				label1 = S.get("mouseMapNone");
 				label2 = null;
 			} else {
 				g.setColor(Color.BLACK);
-				label1 = Strings.get("mouseMapText");
-				label2 = StringUtil.format(Strings.get("mouseMapText2"),
+				label1 = S.get("mouseMapText");
+				label2 = StringUtil.format(S.get("mouseMapText2"),
 						curTool.getDisplayName());
 			}
 			FontMetrics fm = g.getFontMetrics();
@@ -361,17 +363,17 @@ class MouseOptions extends OptionsPanel {
 
 	@Override
 	public String getHelpText() {
-		return Strings.get("mouseHelp");
+		return S.get("mouseHelp");
 	}
 
 	@Override
 	public String getTitle() {
-		return Strings.get("mouseTitle");
+		return S.get("mouseTitle");
 	}
 
 	@Override
 	public void localeChanged() {
-		remove.setText(Strings.get("mouseRemoveButton"));
+		remove.setText(S.get("mouseRemoveButton"));
 		addArea.repaint();
 	}
 

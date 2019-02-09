@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.std.gates;
 
+import static com.cburch.logisim.std.Strings.S;
+
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -61,11 +63,11 @@ import com.cburch.logisim.util.Icons;
 
 class ControlledBuffer extends InstanceFactory {
 	private static final AttributeOption RIGHT_HANDED = new AttributeOption(
-			"right", Strings.getter("controlledRightHanded"));
+			"right", S.getter("controlledRightHanded"));
 	private static final AttributeOption LEFT_HANDED = new AttributeOption(
-			"left", Strings.getter("controlledLeftHanded"));
+			"left", S.getter("controlledLeftHanded"));
 	private static final Attribute<AttributeOption> ATTR_CONTROL = Attributes
-			.forOption("control", Strings.getter("controlledControlOption"),
+			.forOption("control", S.getter("controlledControlOption"),
 					new AttributeOption[] { RIGHT_HANDED, LEFT_HANDED });
 
 	public static ComponentFactory FACTORY_BUFFER = new ControlledBuffer(false);
@@ -80,8 +82,8 @@ class ControlledBuffer extends InstanceFactory {
 
 	private ControlledBuffer(boolean isInverter) {
 		super(isInverter ? "Controlled Inverter" : "Controlled Buffer",
-				isInverter ? Strings.getter("controlledInverterComponent")
-						: Strings.getter("controlledBufferComponent"));
+				isInverter ? S.getter("controlledInverterComponent")
+						: S.getter("controlledBufferComponent"));
 		this.isInverter = isInverter;
 		if (isInverter) {
 			setAttributes(new Attribute[] { StdAttr.FACING, StdAttr.WIDTH,

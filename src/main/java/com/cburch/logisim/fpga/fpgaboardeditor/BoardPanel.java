@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.fpga.fpgaboardeditor;
 
+import static com.cburch.logisim.fpga.Strings.S;
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -64,7 +66,7 @@ public class BoardPanel extends JPanel implements MouseListener,
 
 		@Override
 		public String getDescription() {
-			return Strings.get("PNG File Filter"); // TODO: language adaptation
+			return S.get("PNG File Filter"); // TODO: language adaptation
 		}
 	}
 

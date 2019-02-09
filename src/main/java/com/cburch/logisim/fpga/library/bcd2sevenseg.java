@@ -32,6 +32,8 @@ package com.cburch.logisim.fpga.library;
 import java.awt.Color;
 import java.awt.Graphics;
 
+import static com.cburch.logisim.std.Strings.S;
+
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.BitWidth;
@@ -43,7 +45,6 @@ import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
-import com.cburch.logisim.std.arith.Strings;
 
 public class bcd2sevenseg extends InstanceFactory{
 
@@ -58,7 +59,7 @@ public class bcd2sevenseg extends InstanceFactory{
 	public static final int BCDin = 7;
 
 	public bcd2sevenseg() {
-		super("BCD_to_7_Segment_decoder", Strings.getter("BCD2SevenSegment"));
+		super("BCD_to_7_Segment_decoder", S.getter("BCD2SevenSegment"));
 		setAttributes(new Attribute[] {StdAttr.DUMMY},new Object[] {""});
 		setOffsetBounds(Bounds.create(-10, -20, 50, 100));
 		Port[] ps = new Port[8];
@@ -70,14 +71,14 @@ public class bcd2sevenseg extends InstanceFactory{
 		ps[Segment_F] = new Port(10, 0, Port.OUTPUT, 1);
 		ps[Segment_G] = new Port(0, 0, Port.OUTPUT, 1);
 		ps[BCDin] = new Port(10,80,Port.INPUT,4);
-		ps[Segment_A].setToolTip(Strings.getter("Segment_A"));
-		ps[Segment_B].setToolTip(Strings.getter("Segment_B"));
-		ps[Segment_C].setToolTip(Strings.getter("Segment_C"));
-		ps[Segment_D].setToolTip(Strings.getter("Segment_D"));
-		ps[Segment_E].setToolTip(Strings.getter("Segment_E"));
-		ps[Segment_F].setToolTip(Strings.getter("Segment_F"));
-		ps[Segment_G].setToolTip(Strings.getter("Segment_G"));
-		ps[BCDin].setToolTip(Strings.getter("BCD Value"));
+		ps[Segment_A].setToolTip(S.getter("Segment_A"));
+		ps[Segment_B].setToolTip(S.getter("Segment_B"));
+		ps[Segment_C].setToolTip(S.getter("Segment_C"));
+		ps[Segment_D].setToolTip(S.getter("Segment_D"));
+		ps[Segment_E].setToolTip(S.getter("Segment_E"));
+		ps[Segment_F].setToolTip(S.getter("Segment_F"));
+		ps[Segment_G].setToolTip(S.getter("Segment_G"));
+		ps[BCDin].setToolTip(S.getter("BCD Value"));
 		setPorts(ps);
 	}
 	

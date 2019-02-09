@@ -29,6 +29,8 @@
  *******************************************************************************/
 package com.cburch.logisim.gui.chronogram.chronogui;
 
+import static com.cburch.logisim.gui.Strings.S;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -82,8 +84,8 @@ public class LeftPanel extends ChronoPanelTemplate {
 		if (mChronoFrame.getChronoData().size() <= 1)
 			return;
 
-		String[] names = { "", Strings.get("SignalNameName"),
-				Strings.get("SignalNameValue") };
+		String[] names = { "", S.get("SignalNameName"),
+				S.get("SignalNameValue") };
 		tableData = new Object[mChronoFrame.getChronoData().size() - 1][3];
 		signalDataPositionInTable = new HashMap<SignalData, Integer>();
 		reverseSignalDataPositionInTable = new SignalData[mChronoFrame

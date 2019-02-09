@@ -1,5 +1,7 @@
 package com.cburch.logisim.std.io.extra;
 
+import static com.cburch.logisim.std.Strings.S;
+
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Window;
@@ -59,7 +61,7 @@ public class ProgrammableGenerator extends InstanceFactory {
 		private Component comp = null;
 
 		private ContentsAttribute() {
-			super("Contents", Strings.getter("romContentsAttr"));
+			super("Contents", S.getter("romContentsAttr"));
 		}
 
 		@Override
@@ -129,7 +131,7 @@ public class ProgrammableGenerator extends InstanceFactory {
 
 		@Override
 		public String toDisplayString(String value) {
-			return Strings.get("romContentsValue");
+			return S.get("romContentsValue");
 		}
 
 	}
@@ -142,7 +144,7 @@ public class ProgrammableGenerator extends InstanceFactory {
 		private ProgrammableGeneratorState data;
 
 		ContentsCell(ProgrammableGeneratorState data) {
-			super(Strings.get("romContentsValue"));
+			super(S.get("romContentsValue"));
 			this.data = data;
 			addMouseListener(this);
 		}
@@ -223,8 +225,8 @@ public class ProgrammableGenerator extends InstanceFactory {
 			this.circState = proj.getCircuitState();
 			boolean enabled = circState != null;
 
-			this.edit = createItem(enabled, Strings.get("ramEditMenuItem"));
-			this.reset = createItem(enabled, Strings.get("ramClearMenuItem"));
+			this.edit = createItem(enabled, S.get("ramEditMenuItem"));
+			this.reset = createItem(enabled, S.get("ramClearMenuItem"));
 			menu.addSeparator();
 			menu.add(this.edit);
 			menu.add(this.reset);
@@ -239,7 +241,7 @@ public class ProgrammableGenerator extends InstanceFactory {
 	}
 
 	private static final Attribute<Integer> ATTR_NSTATE = Attributes.forIntegerRange("nState",
-			Strings.getter("NStateAttr"), 1, 32);
+			S.getter("NStateAttr"), 1, 32);
 	private static final ContentsAttribute CONTENTS_ATTR = new ContentsAttribute();
 
 	public static final ProgrammableGenerator FACTORY = new ProgrammableGenerator();
@@ -314,7 +316,7 @@ public class ProgrammableGenerator extends InstanceFactory {
 	}
 
 	public ProgrammableGenerator() {
-		super("ProgrammableGenerator", Strings.getter("ProgrammableGeneratorComponent"));
+		super("ProgrammableGenerator", S.getter("ProgrammableGeneratorComponent"));
 		setAttributes(
 				new Attribute[] { StdAttr.FACING, ATTR_NSTATE, StdAttr.LABEL, Pin.ATTR_LABEL_LOC, StdAttr.LABEL_FONT,
 						CONTENTS_ATTR },

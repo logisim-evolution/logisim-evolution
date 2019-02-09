@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.gui.main;
 
+import static com.cburch.logisim.gui.Strings.S;
+
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -119,15 +121,15 @@ public class StatisticsDialog extends JDialog implements ActionListener {
 		public String getColumnName(int column) {
 			switch (column) {
 			case 0:
-				return Strings.get("statsComponentColumn");
+				return S.get("statsComponentColumn");
 			case 1:
-				return Strings.get("statsLibraryColumn");
+				return S.get("statsLibraryColumn");
 			case 2:
-				return Strings.get("statsSimpleCountColumn");
+				return S.get("statsSimpleCountColumn");
 			case 3:
-				return Strings.get("statsUniqueCountColumn");
+				return S.get("statsUniqueCountColumn");
 			case 4:
-				return Strings.get("statsRecursiveCountColumn");
+				return S.get("statsRecursiveCountColumn");
 			default:
 				return "??"; // should never happen
 			}
@@ -154,9 +156,9 @@ public class StatisticsDialog extends JDialog implements ActionListener {
 				if (row < countsLen) {
 					return count.getFactory().getDisplayName();
 				} else if (row == countsLen) {
-					return Strings.get("statsTotalWithout");
+					return S.get("statsTotalWithout");
 				} else {
-					return Strings.get("statsTotalWith");
+					return S.get("statsTotalWith");
 				}
 			case 1:
 				if (row < countsLen) {
@@ -190,17 +192,17 @@ public class StatisticsDialog extends JDialog implements ActionListener {
 			StatisticsTableModel model) {
 		super(parent, true);
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-		setTitle(Strings.get("statsDialogTitle", circuitName));
+		setTitle(S.fmt("statsDialogTitle", circuitName));
 
 		JTable table = new StatisticsTable();
 		TableSorter mySorter = new TableSorter(model, table.getTableHeader());
 		Comparator<String> comp = new CompareString("",
-				Strings.get("statsTotalWithout"), Strings.get("statsTotalWith"));
+				S.get("statsTotalWithout"), S.get("statsTotalWith"));
 		mySorter.setColumnComparator(String.class, comp);
 		table.setModel(mySorter);
 		JScrollPane tablePane = new JScrollPane(table);
 
-		JButton button = new JButton(Strings.get("statsCloseButton"));
+		JButton button = new JButton(S.get("statsCloseButton"));
 		button.addActionListener(this);
 		JPanel buttonPanel = new JPanel();
 		buttonPanel.add(button);

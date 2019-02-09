@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.fpga.fpgamenu;
 
+import static com.cburch.logisim.fpga.Strings.S;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -80,9 +82,9 @@ public class MenuFPGA extends JMenu implements ActionListener {
 	}
 
 	public void localeChanged() {
-		this.setText(Strings.get("FPGAMenu"));
-		BoardEditor.setText(Strings.get("BoardEditor"));
-		FPGACommander.setText(Strings.get("FPGA Commander"));
+		this.setText(S.get("FPGAMenu"));
+		BoardEditor.setText(S.get("BoardEditor"));
+		FPGACommander.setText(S.get("FPGACommander"));
 	}
 
 }

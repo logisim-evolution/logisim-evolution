@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.circuit;
 
+import static com.cburch.logisim.circuit.Strings.S;
+
 import com.cburch.logisim.util.StringUtil;
 
 public class AnalyzeException extends Exception {
@@ -37,7 +39,7 @@ public class AnalyzeException extends Exception {
 		private static final long serialVersionUID = 1L;
 
 		public CannotHandle(String reason) {
-			super(StringUtil.format(Strings.get("analyzeCannotHandleError"),
+			super(StringUtil.format(S.get("analyzeCannotHandleError"),
 					reason));
 		}
 	}
@@ -46,7 +48,7 @@ public class AnalyzeException extends Exception {
 		private static final long serialVersionUID = 1L;
 
 		public Circular() {
-			super(Strings.get("analyzeCircularError"));
+			super(S.get("analyzeCircularError"));
 		}
 	}
 
@@ -54,7 +56,7 @@ public class AnalyzeException extends Exception {
 		private static final long serialVersionUID = 1L;
 
 		public Conflict() {
-			super(Strings.get("analyzeConflictError"));
+			super(S.get("analyzeConflictError"));
 		}
 	}
 

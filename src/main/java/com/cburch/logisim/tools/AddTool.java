@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.tools;
 
+import static com.cburch.logisim.tools.Strings.S;
+
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Graphics;
@@ -282,7 +284,7 @@ public class AddTool extends Tool {
 			}
 		}
 		if (ret == null) {
-			ret = StringUtil.format(Strings.get("addToolText"),
+			ret = StringUtil.format(S.get("addToolText"),
 					getDisplayName());
 		}
 		return ret;
@@ -452,14 +454,14 @@ public class AddTool extends Tool {
 		// verify the addition would be valid
 		Circuit circ = canvas.getCircuit();
 		if (!canvas.getProject().getLogisimFile().contains(circ)) {
-			canvas.setErrorMessage(Strings.getter("cannotModifyError"));
+			canvas.setErrorMessage(S.getter("cannotModifyError"));
 			return;
 		}
 		if (factory instanceof SubcircuitFactory) {
 			SubcircuitFactory circFact = (SubcircuitFactory) factory;
 			Dependencies depends = canvas.getProject().getDependencies();
 			if (!depends.canAdd(circ, circFact.getSubcircuit())) {
-				canvas.setErrorMessage(Strings.getter("circularError"));
+				canvas.setErrorMessage(S.getter("circularError"));
 				return;
 			}
 		}
@@ -539,13 +541,13 @@ public class AddTool extends Tool {
 						Component c = source.createComponent(loc, attrsCopy);
 
 						if (circ.hasConflict(c)) {
-							canvas.setErrorMessage(Strings.getter("exclusiveError"));
+							canvas.setErrorMessage(S.getter("exclusiveError"));
 							return;
 						}
 
 						Bounds bds = c.getBounds(g);
 						if (bds.getX() < 0 || bds.getY() < 0) {
-							canvas.setErrorMessage(Strings.getter("negativeCoordError"));
+							canvas.setErrorMessage(S.getter("negativeCoordError"));
 							return;
 						}
 
@@ -553,7 +555,7 @@ public class AddTool extends Tool {
 						added.add(c);
 					}
 				}
-				Action action = mutation.toAction(Strings.getter(
+				Action action = mutation.toAction(S.getter(
 						"addComponentAction", factory.getDisplayGetter()));
 				canvas.getProject().doAction(action);
 				lastAddition = action;

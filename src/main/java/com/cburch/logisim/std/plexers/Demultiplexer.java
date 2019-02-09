@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.std.plexers;
 
+import static com.cburch.logisim.std.Strings.S;
+
 import java.awt.Color;
 import java.awt.Graphics;
 
@@ -54,7 +56,7 @@ import com.cburch.logisim.util.GraphicsUtil;
 
 public class Demultiplexer extends InstanceFactory {
 	public Demultiplexer() {
-		super("Demultiplexer", Strings.getter("demultiplexerComponent"));
+		super("Demultiplexer", S.getter("demultiplexerComponent"));
 		setAttributes(new Attribute[] { StdAttr.FACING,
 				Plexers.ATTR_SELECT_LOC, Plexers.ATTR_SELECT, StdAttr.WIDTH,
 				Plexers.ATTR_TRISTATE, Plexers.ATTR_DISABLED,
@@ -381,14 +383,14 @@ public class Demultiplexer extends InstanceFactory {
 		ps[ps.length - 1] = new Port(0, 0, Port.INPUT, data.getWidth());
 
 		for (int i = 0; i < outputs; i++) {
-			ps[i].setToolTip(Strings.getter("demultiplexerOutTip", "" + i));
+			ps[i].setToolTip(S.getter("demultiplexerOutTip", "" + i));
 		}
-		ps[outputs].setToolTip(Strings.getter("demultiplexerSelectTip"));
+		ps[outputs].setToolTip(S.getter("demultiplexerSelectTip"));
 		if (enable) {
 			ps[outputs + 1]
-					.setToolTip(Strings.getter("demultiplexerEnableTip"));
+					.setToolTip(S.getter("demultiplexerEnableTip"));
 		}
-		ps[ps.length - 1].setToolTip(Strings.getter("demultiplexerInTip"));
+		ps[ps.length - 1].setToolTip(S.getter("demultiplexerInTip"));
 
 		instance.setPorts(ps);
 	}

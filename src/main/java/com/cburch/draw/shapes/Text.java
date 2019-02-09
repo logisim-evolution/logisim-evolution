@@ -30,6 +30,8 @@
 
 package com.cburch.draw.shapes;
 
+import static com.cburch.draw.Strings.S;
+
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -89,7 +91,7 @@ public class Text extends AbstractCanvasObject {
 
 	@Override
 	public String getDisplayName() {
-		return Strings.get("shapeText");
+		return S.get("shapeText");
 	}
 
 	public List<Handle> getHandles() {

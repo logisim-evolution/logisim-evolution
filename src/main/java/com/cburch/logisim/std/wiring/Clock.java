@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.std.wiring;
 
+import static com.cburch.logisim.std.Strings.S;
+
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.MouseEvent;
@@ -146,18 +148,18 @@ public class Clock extends InstanceFactory {
 	}
 
 	public static final Attribute<Integer> ATTR_HIGH = new DurationAttribute(
-			"highDuration", Strings.getter("clockHighAttr"), 1,
+			"highDuration", S.getter("clockHighAttr"), 1,
 			Integer.MAX_VALUE,true);
 
 	public static final Attribute<Integer> ATTR_LOW = new DurationAttribute(
-			"lowDuration", Strings.getter("clockLowAttr"), 1, Integer.MAX_VALUE,true);
+			"lowDuration", S.getter("clockLowAttr"), 1, Integer.MAX_VALUE,true);
 
 	public static final Clock FACTORY = new Clock();
 
 	private static final Icon toolIcon = Icons.getIcon("clock.gif");
 
 	public Clock() {
-		super("Clock", Strings.getter("clockComponent"));
+		super("Clock", S.getter("clockComponent"));
 		setAttributes(
 				new Attribute[] { StdAttr.FACING, ATTR_HIGH, ATTR_LOW,
 						StdAttr.LABEL, Pin.ATTR_LABEL_LOC, StdAttr.LABEL_FONT },

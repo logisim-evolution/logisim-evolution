@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.analyze.gui;
 
+import static com.cburch.logisim.analyze.Strings.S;
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -111,7 +113,7 @@ class TableTab extends JPanel implements TruthTablePanel, TabInterface {
 			cellWidth = 24;
 			if (inputs == 0 || outputs == 0) {
 				cellWidth = Math.max(cellWidth,
-						fm.stringWidth(Strings.get("tableNullHeader")));
+						fm.stringWidth(S.get("tableNullHeader")));
 			}
 			for (int i = 0; i < inputs + outputs; i++) {
 				String header = i < inputs ? table.getInputHeader(i) : table
@@ -295,7 +297,7 @@ class TableTab extends JPanel implements TruthTablePanel, TabInterface {
 		int outputs = table.getOutputColumnCount();
 		if (inputs == 0 && outputs == 0) {
 			g.setFont(HeaderFont);
-			GraphicsUtil.drawCenteredText(g, Strings.get("tableEmptyMessage"),
+			GraphicsUtil.drawCenteredText(g, S.get("tableEmptyMessage"),
 					sz.width / 2, sz.height / 2);
 			return;
 		}
@@ -317,7 +319,7 @@ class TableTab extends JPanel implements TruthTablePanel, TabInterface {
 		int x = left;
 		int y = top + headerMetric.getAscent() + 1;
 		if (inputs == 0) {
-			x = paintHeader(Strings.get("tableNullHeader"), x, y, g,
+			x = paintHeader(S.get("tableNullHeader"), x, y, g,
 					headerMetric);
 		} else {
 			for (int i = 0; i < inputs; i++) {
@@ -325,7 +327,7 @@ class TableTab extends JPanel implements TruthTablePanel, TabInterface {
 			}
 		}
 		if (outputs == 0) {
-			x = paintHeader(Strings.get("tableNullHeader"), x, y, g,
+			x = paintHeader(S.get("tableNullHeader"), x, y, g,
 					headerMetric);
 		} else {
 			for (int i = 0; i < outputs; i++) {

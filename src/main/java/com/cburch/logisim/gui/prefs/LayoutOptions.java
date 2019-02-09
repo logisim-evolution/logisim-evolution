@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.gui.prefs;
 
+import static com.cburch.logisim.gui.Strings.S;
+
 import javax.swing.JPanel;
 
 import com.cburch.logisim.circuit.RadixOption;
@@ -48,23 +50,23 @@ class LayoutOptions extends OptionsPanel {
 
 		checks = new PrefBoolean[] {
 				new PrefBoolean(AppPreferences.AntiAliassing,
-						Strings.getter("layoutAntiAliasing")),
+						S.getter("layoutAntiAliasing")),
 				new PrefBoolean(AppPreferences.PRINTER_VIEW,
-						Strings.getter("layoutPrinterView")),
+						S.getter("layoutPrinterView")),
 				new PrefBoolean(AppPreferences.ATTRIBUTE_HALO,
-						Strings.getter("layoutAttributeHalo")),
+						S.getter("layoutAttributeHalo")),
 				new PrefBoolean(AppPreferences.COMPONENT_TIPS,
-						Strings.getter("layoutShowTips")),
+						S.getter("layoutShowTips")),
 				new PrefBoolean(AppPreferences.MOVE_KEEP_CONNECT,
-						Strings.getter("layoutMoveKeepConnect")),
+						S.getter("layoutMoveKeepConnect")),
 				new PrefBoolean(AppPreferences.ADD_SHOW_GHOSTS,
-						Strings.getter("layoutAddShowGhosts")), 
+						S.getter("layoutAddShowGhosts")), 
 				new PrefBoolean(AppPreferences.NAMED_CIRCUIT_BOXES,
-						Strings.getter("layoutNamedCircuitBoxes")),
+						S.getter("layoutNamedCircuitBoxes")),
 				new PrefBoolean(AppPreferences.NAMED_CIRCUIT_BOXES_FIXED_SIZE,
-						Strings.getter("layoutNamedCircuitBoxesFixedSize")),
+						S.getter("layoutNamedCircuitBoxesFixedSize")),
 				new PrefBoolean(AppPreferences.NEW_INPUT_OUTPUT_SHAPES,
-						Strings.getter("layoutUseNewInputOutputSymbols")),
+						S.getter("layoutUseNewInputOutputSymbols")),
 				};
 
 		for (int i = 0; i < 2; i++) {
@@ -76,18 +78,18 @@ class LayoutOptions extends OptionsPanel {
 			}
 			if (i == 0) {
 				radix1 = new PrefOptionList(AppPreferences.POKE_WIRE_RADIX1,
-						Strings.getter("layoutRadix1"), items);
+						S.getter("layoutRadix1"), items);
 			} else {
 				radix2 = new PrefOptionList(AppPreferences.POKE_WIRE_RADIX2,
-						Strings.getter("layoutRadix2"), items);
+						S.getter("layoutRadix2"), items);
 			}
 		}
 		afterAdd = new PrefOptionList(AppPreferences.ADD_AFTER,
-				Strings.getter("layoutAddAfter"), new PrefOption[] {
+				S.getter("layoutAddAfter"), new PrefOption[] {
 						new PrefOption(AppPreferences.ADD_AFTER_UNCHANGED,
-								Strings.getter("layoutAddAfterUnchanged")),
+								S.getter("layoutAddAfterUnchanged")),
 						new PrefOption(AppPreferences.ADD_AFTER_EDIT,
-								Strings.getter("layoutAddAfterEdit")) });
+								S.getter("layoutAddAfterEdit")) });
 
 		JPanel panel = new JPanel(new TableLayout(2));
 		panel.add(afterAdd.getJLabel());
@@ -106,12 +108,12 @@ class LayoutOptions extends OptionsPanel {
 
 	@Override
 	public String getHelpText() {
-		return Strings.get("layoutHelp");
+		return S.get("layoutHelp");
 	}
 
 	@Override
 	public String getTitle() {
-		return Strings.get("layoutTitle");
+		return S.get("layoutTitle");
 	}
 
 	@Override

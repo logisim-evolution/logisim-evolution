@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.std.io;
 
+import static com.cburch.logisim.std.Strings.S;
+
 import java.awt.Color;
 
 import com.cburch.logisim.data.Attribute;
@@ -44,7 +46,7 @@ import com.cburch.logisim.instance.Port;
 
 public class HexDigit extends InstanceFactory {
 	public HexDigit() {
-		super("Hex Digit Display", Strings.getter("hexDigitComponent"));
+		super("Hex Digit Display", S.getter("hexDigitComponent"));
 		setAttributes(new Attribute[] { Io.ATTR_ON_COLOR, Io.ATTR_OFF_COLOR,
 				Io.ATTR_BACKGROUND }, new Object[] { new Color(240, 0, 0),
 				SevenSegment.DEFAULT_OFF, Io.DEFAULT_BACKGROUND });

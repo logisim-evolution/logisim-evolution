@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.analyze.gui;
 
+import static com.cburch.logisim.analyze.Strings.S;
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -125,9 +127,9 @@ class KarnaughMapPanel extends JPanel implements TruthTablePanel {
 
 		String message = null;
 		if (output == null) {
-			message = Strings.get("karnaughNoOutputError");
+			message = S.get("karnaughNoOutputError");
 		} else if (table.getInputColumnCount() > MAX_VARS) {
-			message = Strings.get("karnaughTooManyInputsError");
+			message = S.get("karnaughTooManyInputsError");
 		}
 		if (message != null) {
 			if (g == null) {
@@ -262,9 +264,9 @@ class KarnaughMapPanel extends JPanel implements TruthTablePanel {
 		Dimension sz = getSize();
 		String message = null;
 		if (output == null) {
-			message = Strings.get("karnaughNoOutputError");
+			message = S.get("karnaughNoOutputError");
 		} else if (inputCount > MAX_VARS) {
-			message = Strings.get("karnaughTooManyInputsError");
+			message = S.get("karnaughTooManyInputsError");
 		}
 		if (message != null) {
 			g.setFont(HeaderFont);

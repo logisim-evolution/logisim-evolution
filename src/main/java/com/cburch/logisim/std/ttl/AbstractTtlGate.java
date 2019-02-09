@@ -1,5 +1,7 @@
 package com.cburch.logisim.std.ttl;
 
+import static com.cburch.logisim.std.Strings.S;
+
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
@@ -472,26 +474,26 @@ public abstract class AbstractTtlGate extends InstanceFactory {
 			} else if (isoutput) {// output port
 				ps[portindex] = new Port(dx, dy, Port.OUTPUT, 1);
 				if (this.portnames == null || this.portnames.length <= portindex)
-					ps[portindex].setToolTip(Strings.getter("demultiplexerOutTip", ": " + String.valueOf(i + 1)));
+					ps[portindex].setToolTip(S.getter("demultiplexerOutTip", ": " + String.valueOf(i + 1)));
 				else
-					ps[portindex].setToolTip(Strings.getter("demultiplexerOutTip",
+					ps[portindex].setToolTip(S.getter("demultiplexerOutTip",
 							String.valueOf(i + 1) + ": " + this.portnames[portindex]));
 			} else {// input port
 				if (hasvccgnd && i == this.pinnumber - 1) { // Vcc
 					ps[ps.length - 1] = new Port(dx, dy, Port.INPUT, 1);
-					ps[ps.length - 1].setToolTip(Strings.getter("Vcc: " + this.pinnumber));
+					ps[ps.length - 1].setToolTip(S.getter("Vcc: " + this.pinnumber));
 				} else if (i == this.pinnumber / 2 - 1) {// GND
 					if (hasvccgnd) {
 						ps[ps.length - 2] = new Port(dx, dy, Port.INPUT, 1);
-						ps[ps.length - 2].setToolTip(Strings.getter("GND: " + this.pinnumber / 2));
+						ps[ps.length - 2].setToolTip(S.getter("GND: " + this.pinnumber / 2));
 					}
 					portindex--;
 				} else if (i != this.pinnumber - 1 && i != this.pinnumber / 2 - 1) {// normal output
 					ps[portindex] = new Port(dx, dy, Port.INPUT, 1);
 					if (this.portnames == null || this.portnames.length <= portindex)
-						ps[portindex].setToolTip(Strings.getter("multiplexerInTip", ": " + String.valueOf(i + 1)));
+						ps[portindex].setToolTip(S.getter("multiplexerInTip", ": " + String.valueOf(i + 1)));
 					else
-						ps[portindex].setToolTip(Strings.getter("multiplexerInTip",
+						ps[portindex].setToolTip(S.getter("multiplexerInTip",
 								String.valueOf(i + 1) + ": " + this.portnames[portindex]));
 				}
 			}

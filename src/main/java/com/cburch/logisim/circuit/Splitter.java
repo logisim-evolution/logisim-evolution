@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.circuit;
 
+import static com.cburch.logisim.circuit.Strings.S;
+
 import java.awt.Graphics;
 
 import javax.swing.JPopupMenu;
@@ -223,7 +225,7 @@ public class Splitter extends ManagedComponent implements WireRepair,
 		}
 
 		if (end == 0) {
-			return Strings.get("splitterCombinedTip");
+			return S.get("splitterCombinedTip");
 		} else if (end > 0) {
 			int bits = 0;
 			StringBuilder buf = new StringBuilder();
@@ -250,13 +252,13 @@ public class Splitter extends ManagedComponent implements WireRepair,
 			String base;
 			switch (bits) {
 			case 0:
-				base = Strings.get("splitterSplit0Tip");
+				base = S.get("splitterSplit0Tip");
 				break;
 			case 1:
-				base = Strings.get("splitterSplit1Tip");
+				base = S.get("splitterSplit1Tip");
 				break;
 			default:
-				base = Strings.get("splitterSplitManyTip");
+				base = S.get("splitterSplitManyTip");
 				break;
 			}
 			return StringUtil.format(base, buf.toString());

@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.std.memory;
 
+import static com.cburch.logisim.std.Strings.S;
+
 import java.awt.Graphics;
 
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
@@ -110,7 +112,7 @@ public class Random extends InstanceFactory {
 	}
 
 	static final Attribute<Integer> ATTR_SEED = Attributes.forInteger("seed",
-			Strings.getter("randomSeedAttr"));
+			S.getter("randomSeedAttr"));
 	static final int OUT = 0;
 	public static final int CK = 1;
 
@@ -119,7 +121,7 @@ public class Random extends InstanceFactory {
 	static final int RST = 3;
 
 	public Random() {
-		super("Random", Strings.getter("randomComponent"));
+		super("Random", S.getter("randomComponent"));
 		setAttributes(new Attribute[] { StdAttr.WIDTH, ATTR_SEED,
 				StdAttr.EDGE_TRIGGER, StdAttr.LABEL, StdAttr.LABEL_FONT },
 				new Object[] { BitWidth.create(8), Integer.valueOf(0),
@@ -135,10 +137,10 @@ public class Random extends InstanceFactory {
 		ps[CK] = new Port(0, 50, Port.INPUT, 1);
 		ps[NXT] = new Port(0, 40, Port.INPUT, 1);
 		ps[RST] = new Port(0, 30, Port.INPUT, 1);
-		ps[OUT].setToolTip(Strings.getter("randomQTip"));
-		ps[CK].setToolTip(Strings.getter("randomClockTip"));
-		ps[NXT].setToolTip(Strings.getter("randomNextTip"));
-		ps[RST].setToolTip(Strings.getter("randomResetTip"));
+		ps[OUT].setToolTip(S.getter("randomQTip"));
+		ps[CK].setToolTip(S.getter("randomClockTip"));
+		ps[NXT].setToolTip(S.getter("randomNextTip"));
+		ps[RST].setToolTip(S.getter("randomResetTip"));
 		setPorts(ps);
 	}
 

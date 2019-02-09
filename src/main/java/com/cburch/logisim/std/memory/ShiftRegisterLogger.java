@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.std.memory;
 
+import static com.cburch.logisim.std.Strings.S;
+
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.instance.InstanceLogger;
@@ -41,7 +43,7 @@ public class ShiftRegisterLogger extends InstanceLogger {
 	public String getLogName(InstanceState state, Object option) {
 		String inName = state.getAttributeValue(StdAttr.LABEL);
 		if (inName == null || inName.equals("")) {
-			inName = Strings.get("shiftRegisterComponent")
+			inName = S.get("shiftRegisterComponent")
 					+ state.getInstance().getLocation();
 		}
 		if (option instanceof Integer) {

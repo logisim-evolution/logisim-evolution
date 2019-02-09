@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.gui.opts;
 
+import static com.cburch.logisim.gui.Strings.S;
+
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.file.MouseMappings;
@@ -57,7 +59,7 @@ class OptionsActions {
 
 		@Override
 		public String getName() {
-			return Strings.get("removeMouseMappingAction");
+			return S.get("removeMouseMappingAction");
 		}
 
 		@Override
@@ -88,7 +90,7 @@ class OptionsActions {
 
 		@Override
 		public String getName() {
-			return StringUtil.format(Strings.get("setOptionAction"),
+			return StringUtil.format(S.get("setOptionAction"),
 					attr.getDisplayName());
 		}
 
@@ -118,7 +120,7 @@ class OptionsActions {
 
 		@Override
 		public String getName() {
-			return Strings.get("addMouseMappingAction");
+			return S.get("addMouseMappingAction");
 		}
 
 		@Override

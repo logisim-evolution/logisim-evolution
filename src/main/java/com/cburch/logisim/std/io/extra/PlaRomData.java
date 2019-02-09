@@ -1,5 +1,7 @@
 package com.cburch.logisim.std.io.extra;
 
+import static com.cburch.logisim.std.Strings.S;
+
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.util.Arrays;
@@ -22,7 +24,7 @@ public class PlaRomData implements InstanceData {
 	private Value[] AndValue;
 	private Value[] OutputValue;
 	private String[] options = new String[] { new LocaleManager("resources/logisim", "gui").get("saveOption"),
-			Strings.get("ramClearMenuItem") };
+			S.get("ramClearMenuItem") };
 	private Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 	private JScrollPane panel;
 	private PlaRomPanel drawing;
@@ -103,7 +105,7 @@ public class PlaRomData implements InstanceData {
 			panel.setPreferredSize(
 					new Dimension((int) panel.getPreferredSize().getWidth(), (int) (screenSize.height * 0.75)));
 		int ret = JOptionPane.showOptionDialog(null, panel,
-				Strings.getter("Logisim: Pla Rom " + getSizeString() + " Edit Window").toString(),
+				S.getter("Logisim: Pla Rom " + getSizeString() + " Edit Window").toString(),
 				JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, this.options, null);
 		SaveData();
 		return ret;

@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.analyze.gui;
 
+import static com.cburch.logisim.analyze.Strings.S;
+
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -232,9 +234,9 @@ class ExpressionTab extends AnalyzerTab implements TabInterface {
 	void localeChanged() {
 		selector.localeChanged();
 		prettyView.localeChanged();
-		clear.setText(Strings.get("exprClearButton"));
-		revert.setText(Strings.get("exprRevertButton"));
-		enter.setText(Strings.get("exprEnterButton"));
+		clear.setText(S.get("exprClearButton"));
+		revert.setText(S.get("exprRevertButton"));
+		enter.setText(S.get("exprEnterButton"));
 		if (errorMessage != null) {
 			error.setText(errorMessage.toString());
 		}

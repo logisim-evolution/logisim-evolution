@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.fpga.designrulecheck;
 
+import static com.cburch.logisim.fpga.Strings.S;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -56,23 +58,21 @@ public class CorrectLabel {
 		for (int i = 0; i < Label.length(); i++) {
 			if (!Chars.contains(Label.toLowerCase().substring(i, i + 1))
 					&& !Numbers.contains(Label.substring(i, i + 1))) {
-				Reporter.AddFatalError(ErrorIdentifierString
-						+ " contains the illegal character \""
-						+ Label.substring(i, i + 1) + "\", please rename.");
+				Reporter.AddFatalError(ErrorIdentifierString +
+						S.fmt("IllegalChar",Label.substring(i, i + 1)));
 				return false;
 			}
 		}
 		if (HDLIdentifier.equals(HDLGeneratorFactory.VHDL)) {
 			if (VHDLKeywords.contains(Label.toLowerCase())) {
-				Reporter.AddFatalError(ErrorIdentifierString
-						+ " is a reserved VHDL keyword, please rename.");
+				Reporter.AddFatalError(ErrorIdentifierString + S.get("RezervedVHDLKeyword"));
 				return false;
 			}
 		} else {
 			if (HDLIdentifier.equals(HDLGeneratorFactory.VERILOG)) {
 				if (VerilogKeywords.contains(Label)) {
 					Reporter.AddFatalError(ErrorIdentifierString
-							+ " is a reserved Verilog keyword, please rename.");
+							+ S.get("RezervedVerilogKeyword"));
 					return false;
 				}
 			}
@@ -147,9 +147,9 @@ public class CorrectLabel {
 		IFPGAOptionPanel optionPanel = FPGACliGuiFabric.getFPGAOptionPanel();
 		if (VHDLKeywords.contains(Label.toLowerCase())) {
 			ret = true;
-			if (ShowDialog) optionPanel.doshowMessageDialog(null, Strings.get("VHDLKeywordNameError"));
+			if (ShowDialog) optionPanel.doshowMessageDialog(null, S.get("VHDLKeywordNameError"));
 		} else if (VerilogKeywords.contains(Label.toLowerCase())) {
-			if (ShowDialog) optionPanel.doshowMessageDialog(null, Strings.get("VerilogKeywordNameError"));
+			if (ShowDialog) optionPanel.doshowMessageDialog(null, S.get("VerilogKeywordNameError"));
 			ret = true;
 		}
 		return ret;

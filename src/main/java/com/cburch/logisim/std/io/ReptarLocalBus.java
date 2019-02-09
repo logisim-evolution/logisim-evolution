@@ -29,6 +29,8 @@
  *******************************************************************************/
 package com.cburch.logisim.std.io;
 
+import static com.cburch.logisim.std.Strings.S;
+
 import java.awt.Color;
 import java.awt.Graphics;
 import java.util.ArrayList;
@@ -98,7 +100,7 @@ public class ReptarLocalBus extends InstanceFactory {
 	private String defaultLocalBusName = "LocalBus";
 
 	public ReptarLocalBus() {
-		super("ReptarLB", Strings.getter("repLBComponent"));
+		super("ReptarLB", S.getter("repLBComponent"));
 
 		setAttributes(new Attribute[] {StdAttr.LABEL},
 				new Object[] {defaultLocalBusName});
@@ -119,17 +121,17 @@ public class ReptarLocalBus extends InstanceFactory {
 		ps[Addr_LB_o] = new Port(0, 80, Port.OUTPUT, 9);
 		ps[IRQ_i] = new Port(0, 90, Port.INPUT, 1);
 		// ps[Addr_Data_LB_io ] = new Port(0,80, Port.INOUT,16);
-		ps[SP6_LB_nCS3_o].setToolTip(Strings.getter("repLBTip"));
-		ps[SP6_LB_nADV_ALE_o].setToolTip(Strings.getter("repLBTip"));
-		ps[SP6_LB_RE_nOE_o].setToolTip(Strings.getter("repLBTip"));
-		ps[SP6_LB_nWE_o].setToolTip(Strings.getter("repLBTip"));
-		ps[SP6_LB_WAIT3_i].setToolTip(Strings.getter("repLBTip"));
-		ps[Addr_Data_LB_o].setToolTip(Strings.getter("repLBTip"));
-		ps[Addr_Data_LB_i].setToolTip(Strings.getter("repLBTip"));
-		ps[Addr_Data_LB_tris_i].setToolTip(Strings.getter("repLBTip"));
-		ps[Addr_LB_o].setToolTip(Strings.getter("repLBTip"));
-		ps[IRQ_i].setToolTip(Strings.getter("repLBTip"));
-		// ps[Addr_Data_LB_io ].setToolTip(Strings.getter("repLBTip"));
+		ps[SP6_LB_nCS3_o].setToolTip(S.getter("repLBTip"));
+		ps[SP6_LB_nADV_ALE_o].setToolTip(S.getter("repLBTip"));
+		ps[SP6_LB_RE_nOE_o].setToolTip(S.getter("repLBTip"));
+		ps[SP6_LB_nWE_o].setToolTip(S.getter("repLBTip"));
+		ps[SP6_LB_WAIT3_i].setToolTip(S.getter("repLBTip"));
+		ps[Addr_Data_LB_o].setToolTip(S.getter("repLBTip"));
+		ps[Addr_Data_LB_i].setToolTip(S.getter("repLBTip"));
+		ps[Addr_Data_LB_tris_i].setToolTip(S.getter("repLBTip"));
+		ps[Addr_LB_o].setToolTip(S.getter("repLBTip"));
+		ps[IRQ_i].setToolTip(S.getter("repLBTip"));
+		// ps[Addr_Data_LB_io ].setToolTip(S.getter("repLBTip"));
 		setPorts(ps);
 
 		// From FPGA pin view

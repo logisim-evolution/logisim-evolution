@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.std.plexers;
 
+import static com.cburch.logisim.std.Strings.S;
+
 import java.awt.Color;
 import java.awt.Graphics;
 
@@ -53,7 +55,7 @@ import com.cburch.logisim.util.GraphicsUtil;
 
 public class Decoder extends InstanceFactory {
 	public Decoder() {
-		super("Decoder", Strings.getter("decoderComponent"));
+		super("Decoder", S.getter("decoderComponent"));
 		setAttributes(new Attribute[] { StdAttr.FACING,
 				Plexers.ATTR_SELECT_LOC, Plexers.ATTR_SELECT,
 				Plexers.ATTR_TRISTATE, Plexers.ATTR_DISABLED,
@@ -372,11 +374,11 @@ public class Decoder extends InstanceFactory {
 					BitWidth.ONE);
 		}
 		for (int i = 0; i < outputs; i++) {
-			ps[i].setToolTip(Strings.getter("decoderOutTip", "" + i));
+			ps[i].setToolTip(S.getter("decoderOutTip", "" + i));
 		}
-		ps[outputs].setToolTip(Strings.getter("decoderSelectTip"));
+		ps[outputs].setToolTip(S.getter("decoderSelectTip"));
 		if (enable) {
-			ps[outputs + 1].setToolTip(Strings.getter("decoderEnableTip"));
+			ps[outputs + 1].setToolTip(S.getter("decoderEnableTip"));
 		}
 		instance.setPorts(ps);
 	}

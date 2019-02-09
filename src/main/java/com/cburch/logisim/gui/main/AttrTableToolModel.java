@@ -31,6 +31,8 @@
 package com.cburch.logisim.gui.main;
 
 
+import static com.cburch.logisim.gui.Strings.S;
+
 import javax.swing.JOptionPane;
 
 import com.cburch.logisim.circuit.CircuitAttributes;
@@ -61,7 +63,7 @@ public class AttrTableToolModel extends AttributeSetTableModel {
 
 	@Override
 	public String getTitle() {
-		return Strings.get("toolAttrTitle", tool.getDisplayName());
+		return S.fmt("toolAttrTitle", tool.getDisplayName());
 	}
 
 	public Tool getTool() {

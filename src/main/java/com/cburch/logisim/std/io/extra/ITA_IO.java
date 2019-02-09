@@ -1,5 +1,7 @@
 package com.cburch.logisim.std.io.extra;
 
+import static com.cburch.logisim.std.Strings.S;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,13 +13,13 @@ import com.cburch.logisim.tools.Tool;
 public class ITA_IO extends Library {
 
 	private static FactoryDescription[] DESCRIPTIONS = {
-			new FactoryDescription("Switch", Strings.getter("switchComponent"), "switch.gif", "Switch"),
-			new FactoryDescription("Buzzer", Strings.getter("buzzerComponent"), "buzzer.gif", "Buzzer"),
-			new FactoryDescription("DipSwitch", Strings.getter("DipSwitchComponent"), "dipswitch.gif", "DipSwitch"),
-			new FactoryDescription("Slider", Strings.getter("Slider"), "slider.gif", "Slider"),
-			new FactoryDescription("Digital Oscilloscope", Strings.getter("DigitalOscilloscopeComponent"),
+			new FactoryDescription("Switch", S.getter("switchComponent"), "switch.gif", "Switch"),
+			new FactoryDescription("Buzzer", S.getter("buzzerComponent"), "buzzer.gif", "Buzzer"),
+			new FactoryDescription("DipSwitch", S.getter("DipSwitchComponent"), "dipswitch.gif", "DipSwitch"),
+			new FactoryDescription("Slider", S.getter("Slider"), "slider.gif", "Slider"),
+			new FactoryDescription("Digital Oscilloscope", S.getter("DigitalOscilloscopeComponent"),
 					"digitaloscilloscope.gif", "DigitalOscilloscope"),
-			new FactoryDescription("PlaRom", Strings.getter("PlaRomComponent"), "plarom.gif", "PlaRom"),
+			new FactoryDescription("PlaRom", S.getter("PlaRomComponent"), "plarom.gif", "PlaRom"),
 	};
 	
 	private List<Tool> tools = null;

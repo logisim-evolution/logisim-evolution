@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.gui.start;
 
+import static com.cburch.logisim.gui.Strings.S;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -130,7 +132,7 @@ public class TtyInterface {
 			precision = 0.0000001;
 		hertz = (int) (hertz / precision) * precision;
 		String hertzStr = hertz == (int) hertz ? "" + (int) hertz : "" + hertz;
-		Object[] paramArray = { StringUtil.format(Strings.get("ttySpeedMsg")),
+		Object[] paramArray = { StringUtil.format(S.get("ttySpeedMsg")),
 				hertzStr, tickCount, elapse };
 		logger.info("{}", paramArray);
 	}
@@ -161,12 +163,12 @@ public class TtyInterface {
 				fmt + "%s\n", // OK
 				Integer.valueOf(totalWithout.getUniqueCount()),
 				Integer.valueOf(totalWithout.getRecursiveCount()),
-				Strings.get("statsTotalWithout"));
+				S.get("statsTotalWithout"));
 		System.out.printf(
 				fmt + "%s\n", // OK
 				Integer.valueOf(total.getUniqueCount()),
 				Integer.valueOf(total.getRecursiveCount()),
-				Strings.get("statsTotalWith"));
+				S.get("statsTotalWith"));
 	}
 
 	private static void displayTableRow(ArrayList<Value> prevOutputs,
@@ -252,7 +254,7 @@ public class TtyInterface {
 			file = loader.openLogisimFile(fileToOpen, args.getSubstitutions());
 		} catch (LoadFailedException e) {
 			logger.error("{}",
-					Strings.get("ttyLoadError", fileToOpen.getName()));
+					S.fmt("ttyLoadError", fileToOpen.getName()));
 
 			System.exit(-1);
 			return;
@@ -291,11 +293,11 @@ public class TtyInterface {
 			try {
 				boolean loaded = loadRam(circState, args.getLoadFile());
 				if (!loaded) {
-					logger.error("{}", Strings.get("loadNoRamError"));
+					logger.error("{}", S.get("loadNoRamError"));
 					System.exit(-1);
 				}
 			} catch (IOException e) {
-				logger.error("{}: {}", Strings.get("loadIoError"), e.toString());
+				logger.error("{}: {}", S.get("loadIoError"), e.toString());
 				System.exit(-1);
 			}
 		}
@@ -317,7 +319,7 @@ public class TtyInterface {
 			keyboardStates = new ArrayList<InstanceState>();
 			boolean ttyFound = prepareForTty(circState, keyboardStates);
 			if (!ttyFound) {
-				logger.error("{}", Strings.get("ttyNoTtyError"));
+				logger.error("{}", S.get("ttyNoTtyError"));
 				System.exit(-1);
 			}
 			if (keyboardStates.isEmpty()) {
@@ -375,9 +377,9 @@ public class TtyInterface {
 			ensureLineTerminated();
 		if (showHalt || retCode != 0) {
 			if (retCode == 0) {
-				logger.error("{}", Strings.get("ttyHaltReasonPin"));
+				logger.error("{}", S.get("ttyHaltReasonPin"));
 			} else if (retCode == 1) {
-				logger.error("{}", Strings.get("ttyHaltReasonOscillation"));
+				logger.error("{}", S.get("ttyHaltReasonOscillation"));
 			}
 		}
 		if (showSpeed) {

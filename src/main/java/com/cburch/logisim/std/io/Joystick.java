@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.std.io;
 
+import static com.cburch.logisim.std.Strings.S;
+
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.MouseEvent;
@@ -151,10 +153,10 @@ public class Joystick extends InstanceFactory {
 	}
 
 	static final Attribute<BitWidth> ATTR_WIDTH = Attributes.forBitWidth(
-			"bits", Strings.getter("ioBitWidthAttr"), 2, 5);
+			"bits", S.getter("ioBitWidthAttr"), 2, 5);
 
 	public Joystick() {
-		super("Joystick", Strings.getter("joystickComponent"));
+		super("Joystick", S.getter("joystickComponent"));
 		setAttributes(new Attribute[] { ATTR_WIDTH, Io.ATTR_COLOR },
 				new Object[] { BitWidth.create(4), Color.RED });
 		setKeyConfigurator(new BitWidthConfigurator(ATTR_WIDTH, 2, 5));

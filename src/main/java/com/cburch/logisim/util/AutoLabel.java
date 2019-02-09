@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.util;
 
+import static com.cburch.logisim.util.Strings.S;
+
 import java.awt.event.KeyEvent;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -253,8 +255,8 @@ public class AutoLabel {
 		String NewLabel = OldLabel;
 		while (!correct) {
 			NewLabel = (String) JOptionPane.showInputDialog(null, 
-					Strings.get("editLabelQuestion")+" "+ComponentName,
-					Strings.get("editLabelDialog"),
+					S.get("editLabelQuestion")+" "+ComponentName,
+					S.get("editLabelDialog"),
 					JOptionPane.QUESTION_MESSAGE,null,null,
 					OldLabel);
 			if (NewLabel!=null) {

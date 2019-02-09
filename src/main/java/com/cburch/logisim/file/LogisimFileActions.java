@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.file;
 
+import static com.cburch.logisim.file.Strings.S;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -73,7 +75,7 @@ public class LogisimFileActions {
 
 		@Override
 		public String getName() {
-			return Strings.get("addCircuitAction");
+			return S.get("addCircuitAction");
 		}
 
 		@Override
@@ -108,17 +110,17 @@ public class LogisimFileActions {
 						String Location ="";
 						HashMap<String,String> ToolNames =LibraryTools.GetToolLocation(source, Location, ret);
 						for (String key : ToolNames.keySet()) {
-							String SolStr = Strings.get("LibMergeFailure2")+" a) ";
+							String SolStr = S.get("LibMergeFailure2")+" a) ";
 							String ErrLoc = ToolNames.get(key);
 							String[] ErrParts = ErrLoc.split("->");
 							if (ErrParts.length > 1) {
-								SolStr = SolStr.concat(Strings.get("LibMergeFailure4", ErrParts[1]));
+								SolStr = SolStr.concat(S.fmt("LibMergeFailure4", ErrParts[1]));
 							} else {
-								SolStr = SolStr.concat(Strings.get("LibMergeFailure3", key));
+								SolStr = SolStr.concat(S.fmt("LibMergeFailure3", key));
 							}
-							SolStr = SolStr.concat(" "+Strings.get("LibMergeFailure5")+" b) ");
-							SolStr = SolStr.concat(Strings.get("LibMergeFailure6", lib.getName()));
-							Error.put(SolStr,Strings.get("LibMergeFailure1",lib.getName(),key));
+							SolStr = SolStr.concat(" "+S.get("LibMergeFailure5")+" b) ");
+							SolStr = SolStr.concat(S.fmt("LibMergeFailure6", lib.getName()));
+							Error.put(SolStr,S.fmt("LibMergeFailure1",lib.getName(),key));
 						}
 						cancontinue = false;
 					}
@@ -146,11 +148,11 @@ public class LogisimFileActions {
 							String ErrLoc = ToolNames.get(key);
 							String[] ErrParts = ErrLoc.split("->");
 							if (ErrParts.length > 1) {
-								String SolStr = Strings.get("LibMergeFailure2")+" a) ";
-								SolStr = SolStr.concat(Strings.get("LibMergeFailure4", ErrParts[1]));
-								SolStr = SolStr.concat(" "+Strings.get("LibMergeFailure5")+" b) ");
-								SolStr = SolStr.concat(Strings.get("LibMergeFailure8", circ.getName()));
-								Error.put(SolStr,Strings.get("LibMergeFailure7",key,ErrParts[1]));
+								String SolStr = S.get("LibMergeFailure2")+" a) ";
+								SolStr = SolStr.concat(S.fmt("LibMergeFailure4", ErrParts[1]));
+								SolStr = SolStr.concat(" "+S.get("LibMergeFailure5")+" b) ");
+								SolStr = SolStr.concat(S.fmt("LibMergeFailure8", circ.getName()));
+								Error.put(SolStr,S.fmt("LibMergeFailure7",key,ErrParts[1]));
 								cancontinue = false;
 							}
 						} 
@@ -161,8 +163,8 @@ public class LogisimFileActions {
 								cancontinue = false;
 							} else if (!CircuitsAreEqual(circ1,circ)) {
 								int Reponse = JOptionPane.showConfirmDialog(null, 
-										Strings.get("FileMergeQuestion", circ.getName()),
-										Strings.get("FileMergeTitle"),JOptionPane.YES_NO_OPTION);
+										S.fmt("FileMergeQuestion", circ.getName()),
+										S.get("FileMergeTitle"),JOptionPane.YES_NO_OPTION);
 								if (Reponse == JOptionPane.YES_OPTION) {
 									MergedCircuits.add(circ);
 								}
@@ -252,8 +254,8 @@ public class LogisimFileActions {
 				// if the class name was not found, go back to the good old dialog
 				if (className == null) {
 					className = JOptionPane.showInputDialog(proj.getFrame(),
-							Strings.get("jarClassNamePrompt"),
-							Strings.get("jarClassNameTitle"),
+							S.get("jarClassNamePrompt"),
+							S.get("jarClassNameTitle"),
 							JOptionPane.QUESTION_MESSAGE);
 					// if user canceled selection, abort
 					if (className == null)
@@ -299,7 +301,7 @@ public class LogisimFileActions {
 					result.execute();
 					proj.doAction(LogisimFileActions.addCircuit(NewCirc));
 				} else
-					proj.doAction(result.toAction(Strings.getter("replaceCircuitAction")));
+					proj.doAction(result.toAction(S.getter("replaceCircuitAction")));
 			}
 			HashMap<String,AddTool> AvailableTools = new HashMap<String,AddTool>();
 			LibraryTools.BuildToolList(proj.getLogisimFile(), AvailableTools);
@@ -330,7 +332,7 @@ public class LogisimFileActions {
 
 		@Override
 		public String getName() {
-			return Strings.get("mergeFileAction");
+			return S.get("mergeFileAction");
 		}
 
 		@Override
@@ -356,8 +358,8 @@ public class LogisimFileActions {
 			LibraryTools.BuildToolList(source,ToolList);
 			for (int i = 0; i < libs.length; i++) {
 				if (LibNames.keySet().contains(libs[i].getName().toUpperCase())) {
-					JOptionPane.showMessageDialog(null, "\""+libs[i].getName()+"\": "+Strings.get("LibraryAlreadyLoaded"),
-                			Strings.get("LibLoadErrors")+" "+libs[i].getName()+" !", JOptionPane.WARNING_MESSAGE);
+					JOptionPane.showMessageDialog(null, "\""+libs[i].getName()+"\": "+S.get("LibraryAlreadyLoaded"),
+                			S.get("LibLoadErrors")+" "+libs[i].getName()+" !", JOptionPane.WARNING_MESSAGE);
 				} else {
 					LibraryTools.RemovePresentLibraries(libs[i],LibNames,false);
 					if (LibraryTools.LibraryIsConform(libs[i],new HashSet<String> (),new HashSet<String>(),Error)) {
@@ -365,7 +367,7 @@ public class LogisimFileActions {
 						LibraryTools.BuildToolList(libs[i],AddedToolList);
 						for (String tool : AddedToolList)
 							if (ToolList.contains(tool))
-								Error.put(tool, Strings.get("LibraryMultipleToolError"));
+								Error.put(tool, S.get("LibraryMultipleToolError"));
 						if (Error.keySet().isEmpty()) {
 							LibraryTools.BuildLibraryList(libs[i],LibNames);
 							ToolList.addAll(AddedToolList);
@@ -450,9 +452,9 @@ public class LogisimFileActions {
 		@Override
 		public String getName() {
 			if (MergedLibs.size() <= 1) {
-				return Strings.get("loadLibraryAction");
+				return S.get("loadLibraryAction");
 			} else {
-				return Strings.get("loadLibrariesAction");
+				return S.get("loadLibrariesAction");
 			}
 		}
 
@@ -489,7 +491,7 @@ public class LogisimFileActions {
 
 		@Override
 		public String getName() {
-			return Strings.get("moveCircuitAction");
+			return S.get("moveCircuitAction");
 		}
 
 		@Override
@@ -520,7 +522,7 @@ public class LogisimFileActions {
 
 		@Override
 		public String getName() {
-			return Strings.get("removeCircuitAction");
+			return S.get("removeCircuitAction");
 		}
 
 		@Override
@@ -600,7 +602,7 @@ public class LogisimFileActions {
 
 		@Override
 		public String getName() {
-			return Strings.get("revertDefaultsAction");
+			return S.get("revertDefaultsAction");
 		}
 
 		@Override
@@ -635,7 +637,7 @@ public class LogisimFileActions {
 
 		@Override
 		public String getName() {
-			return Strings.get("setMainCircuitAction");
+			return S.get("setMainCircuitAction");
 		}
 
 		@Override
@@ -661,9 +663,9 @@ public class LogisimFileActions {
 		@Override
 		public String getName() {
 			if (libs.length == 1) {
-				return Strings.get("unloadLibraryAction");
+				return S.get("unloadLibraryAction");
 			} else {
-				return Strings.get("unloadLibrariesAction");
+				return S.get("unloadLibrariesAction");
 			}
 		}
 

@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.std.gates;
 
+import static com.cburch.logisim.std.Strings.S;
+
 import java.awt.Graphics;
 import java.util.ArrayList;
 
@@ -85,7 +87,7 @@ class AndGate extends AbstractGate {
 	public static AndGate FACTORY = new AndGate();
 
 	private AndGate() {
-		super("AND Gate", Strings.getter("andGateComponent"));
+		super("AND Gate", S.getter("andGateComponent"));
 		setRectangularLabel("&");
 		setIconNames("andGate.gif", "andGateRect.gif", "dinAndGate.gif");
 	}
