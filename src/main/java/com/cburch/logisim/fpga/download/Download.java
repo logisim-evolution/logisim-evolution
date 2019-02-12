@@ -16,8 +16,6 @@ import java.util.ArrayList;
 import javax.swing.JOptionPane;
 
 import com.cburch.logisim.circuit.Circuit;
-import com.cburch.logisim.file.LogisimFile;
-import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
 import com.cburch.logisim.fpga.fpgaboardeditor.BoardInformation;
 import com.cburch.logisim.fpga.fpgagui.ComponentMapDialog;
 import com.cburch.logisim.fpga.fpgagui.FPGACommanderBase;
@@ -39,7 +37,6 @@ public class Download extends FPGACommanderBase implements Runnable,WindowListen
 	private VendorDownload Downloader;
 	private String TopLevelSheet;
 	private double TickFrequency;
-	private boolean writeToFlash;
 	private static int BasicSteps = 5;
 	ArrayList<String> Entities = new ArrayList<String>();
 	ArrayList<String> Architectures = new ArrayList<String>();
@@ -66,7 +63,6 @@ public class Download extends FPGACommanderBase implements Runnable,WindowListen
 		this.UseGui = UseGui;
 		this.TopLevelSheet = TopLevelSheet;
 		this.TickFrequency = TickFrequency;
-		this.writeToFlash = writeToFlash;
 		Circuit RootSheet = MyProject.getLogisimFile().getCircuit(TopLevelSheet);
 		String Title = S.fmt("DownloadingInfo", VendorSoftware.getVendorString(Vendor));
 		int steps = BasicSteps;
@@ -78,6 +74,22 @@ public class Download extends FPGACommanderBase implements Runnable,WindowListen
 			                                		                           Entities,
 			                                		                           Architectures,
 			                                		                           AppPreferences.HDL_Type.get());
+			                                   break;
+			case VendorSoftware.VendorXilinx : Downloader = new XilinxDownload(GetProjDir(TopLevelSheet),
+                    		                                                   MyReporter,
+                    		                                                   RootSheet.getNetList(),
+			                                		                           MyBoardInformation,
+			                                		                           Entities,
+			                                		                           Architectures,
+			                                		                           AppPreferences.HDL_Type.get(),
+			                                		                           writeToFlash);
+			                                   break;
+			case VendorSoftware.VendorVivado : Downloader = new VivadoDownload(GetProjDir(TopLevelSheet),
+                    		                                                   MyReporter,
+                    		                                                   RootSheet.getNetList(),
+			                                		                           MyBoardInformation,
+			                                		                           Entities,
+			                                		                           Architectures);
 			                                   break;
 			default                          : MyReporter.AddFatalError("BUG: Tried to Download to an unknown target");
 			                                   return;
@@ -145,9 +157,11 @@ public class Download extends FPGACommanderBase implements Runnable,WindowListen
 				if (StopRequested)
 					return "Interrupted";
 				ProcessBuilder CurrentStage = Downloader.PerformStep(stages);
-				String result = execute(Downloader.GetStageMessage(stages),CurrentStage);
-				if (result != null)
-					return result;
+				if (CurrentStage != null) {
+					String result = execute(Downloader.GetStageMessage(stages),CurrentStage);
+					if (result != null)
+						return result;
+				}
 				MyGui.SetProgress(stages+BasicSteps);
 			}
 		}
@@ -165,7 +179,10 @@ public class Download extends FPGACommanderBase implements Runnable,WindowListen
 		ProcessBuilder DownloadBitfile = Downloader.DownloadToBoard();
 		if (StopRequested)
 			return "Interrupted";
-		return execute(S.get("FPGADownloadBitfile"),DownloadBitfile);
+		if (DownloadBitfile != null)
+			return execute(S.get("FPGADownloadBitfile"),DownloadBitfile);
+		else
+			return null;
 	}
 	
 	private String execute(String StageName, ProcessBuilder process) throws IOException, InterruptedException {
@@ -269,44 +286,6 @@ public class Download extends FPGACommanderBase implements Runnable,WindowListen
 		/* Stage 4 Create Download Scripts */
 		return CreateDownloadScripts();
 	}
-
-/*	protected boolean DownLoadDesign(boolean generateOnly, boolean downloadOnly, String CircuitName,
-			boolean writeToFlash, boolean downloadDesign) {
-
-	if (MyBoardInformation.fpga.getVendor() == VendorSoftware.VendorXilinx) {
-			if (XilinxDownload.GenerateISEScripts(MyReporter, ProjectDir,
-					ProjectDir + HDLPaths[ScriptPath] + File.separator,
-					ProjectDir + HDLPaths[UCFPath] + File.separator,
-					RootSheet.getNetList(), MyMappableResources,
-					MyBoardInformation, Entities, Behaviors,
-					AppPreferences.HDL_Type.get(),
-					writeToFlash)
-					&& !generateOnly) {
-				return XilinxDownload.Download(MyBoardInformation,
-						ProjectDir + HDLPaths[ScriptPath] + File.separator,
-						ProjectDir + HDLPaths[UCFPath] + File.separator,
-						ProjectDir, ProjectDir + HDLPaths[SandboxPath]
-								+ File.separator, MyReporter, downloadDesign);
-			}
-		} else if (MyBoardInformation.fpga.getVendor() == VendorSoftware.VendorVivado) {
-			if (VivadoDownload.GenerateScripts(MyReporter, ProjectDir,
-					ProjectDir + HDLPaths[ScriptPath] + File.separator,
-					ProjectDir + HDLPaths[XDCPath] + File.separator,
-					ProjectDir + HDLPaths[SandboxPath] + File.separator,
-					RootSheet.getNetList(), MyMappableResources,
-					MyBoardInformation, Entities, Behaviors,
-					AppPreferences.HDL_Type.get(),
-					writeToFlash)
-					&& !generateOnly) {
-				return VivadoDownload.Download(
-						ProjectDir + HDLPaths[ScriptPath] + File.separator,
-						ProjectDir + HDLPaths[SandboxPath] + File.separator,
-						MyReporter, downloadOnly, downloadDesign);
-			}
-		}
-	}
-*/
-
 
 	@Override
 	public void windowOpened(WindowEvent e) {

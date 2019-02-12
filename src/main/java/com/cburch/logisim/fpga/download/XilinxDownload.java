@@ -30,454 +30,154 @@
 
 package com.cburch.logisim.fpga.download;
 
-import java.awt.GridBagConstraints;
-import java.awt.Rectangle;
+import static com.cburch.logisim.fpga.Strings.S;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.fpgaboardeditor.BoardInformation;
 import com.cburch.logisim.fpga.fpgaboardeditor.IoStandards;
 import com.cburch.logisim.fpga.fpgaboardeditor.PullBehaviors;
+import com.cburch.logisim.fpga.fpgagui.FPGACommanderBase;
 import com.cburch.logisim.fpga.fpgagui.FPGAReport;
 import com.cburch.logisim.fpga.fpgagui.MappableResourcesContainer;
-import com.cburch.logisim.fpga.gui.FPGACliGuiFabric;
-import com.cburch.logisim.fpga.gui.IFPGAFrame;
-import com.cburch.logisim.fpga.gui.IFPGAGrid;
-import com.cburch.logisim.fpga.gui.IFPGAGridLayout;
-import com.cburch.logisim.fpga.gui.IFPGALabel;
-import com.cburch.logisim.fpga.gui.IFPGAProgressBar;
 import com.cburch.logisim.fpga.hdlgenerator.FileWriter;
 import com.cburch.logisim.fpga.hdlgenerator.TickComponentHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.ToplevelHDLGeneratorFactory;
 import com.cburch.logisim.fpga.settings.VendorSoftware;
-import com.cburch.logisim.proj.Projects;
 
-public class XilinxDownload {
-	/* TODO There are duplicated code lines amongst the 3 file AlteraDownload / Vivado / Xillinx
-	 * it should be sorted by using a base class to all 3 of them
-	 */
-	public static boolean Download(
-			BoardInformation BoardInfo, String scriptPath, String UcfPath,
-			String ProjectPath, String SandboxPath, FPGAReport MyReporter, boolean DownloadBitstream) {
-		VendorSoftware xilinxVendor = VendorSoftware.getSoftware(VendorSoftware.VendorXilinx);
-		boolean IsCPLD = BoardInfo.fpga.getPart().toUpperCase()
+public class XilinxDownload implements VendorDownload {
+
+	private VendorSoftware xilinxVendor = VendorSoftware.getSoftware(VendorSoftware.VendorXilinx);
+	private String ScriptPath;
+	private String ProjectPath;
+	private String SandboxPath;
+	private String UcfPath;
+	private FPGAReport Reporter;
+	private Netlist RootNetList;
+	private MappableResourcesContainer MapInfo;
+	private BoardInformation BoardInfo;
+	private ArrayList<String> Entities;
+	private ArrayList<String> Architectures;
+	private String HDLType;
+	private String BitfileExt;
+	private boolean IsCPLD;
+	private boolean writeToFlash;
+
+	private final static String vhdl_list_file = "XilinxVHDLList.prj";
+	private final static String script_file = "XilinxScript.cmd";
+	private final static String ucf_file = "XilinxConstraints.ucf";
+	private final static String download_file = "XilinxDownload";
+	private final static String mcs_file = "XilinxProm.mcs";
+
+	private final static Integer BUFFER_SIZE = 16 * 1024;
+
+	public XilinxDownload(String ProjectPath,
+                          FPGAReport Reporter,
+                          Netlist RootNetList,
+                          BoardInformation BoardInfo,
+                          ArrayList<String> Entities,
+                          ArrayList<String> Architectures,
+                          String HDLType,
+                          boolean WriteToFlash) {
+		this.ProjectPath = ProjectPath;
+		this.SandboxPath = FPGACommanderBase.GetDirectoryLocation(ProjectPath, FPGACommanderBase.SandboxPath);
+		this.ScriptPath = FPGACommanderBase.GetDirectoryLocation(ProjectPath, FPGACommanderBase.ScriptPath);
+		this.UcfPath = FPGACommanderBase.GetDirectoryLocation(ProjectPath, FPGACommanderBase.UCFPath);
+		this.Reporter = Reporter;
+		this.RootNetList = RootNetList;
+		this.BoardInfo = BoardInfo;
+		this.Entities = Entities;
+		this.Architectures = Architectures;
+		this.HDLType = HDLType;
+		this.writeToFlash = WriteToFlash;
+		IsCPLD = BoardInfo.fpga.getPart().toUpperCase()
 				.startsWith("XC2C")
 				|| BoardInfo.fpga.getPart().toUpperCase().startsWith("XA2C")
 				|| BoardInfo.fpga.getPart().toUpperCase().startsWith("XCR3")
 				|| BoardInfo.fpga.getPart().toUpperCase().startsWith("XC9500")
 				|| BoardInfo.fpga.getPart().toUpperCase().startsWith("XA9500");
-		String BitfileExt = (IsCPLD) ? "jed" : "bit";
-		boolean BitFileExists = new File(SandboxPath
-				+ ToplevelHDLGeneratorFactory.FPGAToplevelName + "."
-				+ BitfileExt).exists();
-		IFPGAGrid gbc = FPGACliGuiFabric.getFPGAGrid() ;
-		IFPGAFrame panel = FPGACliGuiFabric.getFPGAFrame("Xilinx Downloading");
-		panel.setResizable(false);
-		panel.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-		IFPGAGridLayout thisLayout = FPGACliGuiFabric.getFPGAGridLayout();
-		panel.setLayout(thisLayout);
-		// PointerInfo mouseloc = MouseInfo.getPointerInfo();
-		// Point mlocation = mouseloc.getLocation();
-		// panel.setLocation(mlocation.x,mlocation.y);
-		IFPGALabel LocText = FPGACliGuiFabric.getFPGALabel("Generating FPGA files and performing download; this may take a while");
+		BitfileExt = (IsCPLD) ? "jed" : "bit";
+	}
 
-		gbc.setGridx(0);
-		gbc.setGridy(1);
-		gbc.setFill(GridBagConstraints.HORIZONTAL);
-		panel.add(LocText, gbc);
-		IFPGAProgressBar progres = FPGACliGuiFabric.getFPGAProgressBar(0,  xilinxVendor.getBinaries().length);
-		progres.setValue(0);
-		progres.setStringPainted(true);
-		gbc.setGridx(0);
-		gbc.setGridy(2);
-		gbc.setFill(GridBagConstraints.HORIZONTAL);
-		panel.add(progres, gbc);
-		panel.pack();
+	@Override
+	public int GetNumberOfStages() {
+		return 5;
+	}
 
-		panel.setLocation(Projects.getCenteredLoc(panel.getWidth(),
-				panel.getHeight() * 4));
-		panel.setVisible(true);
-		Rectangle labelRect = LocText.getBounds();
-
-		labelRect.x = 0;
-		labelRect.y = 0;
-		LocText.paintImmediately(labelRect);
-
-		List<String> command = new ArrayList<String>();
-		if (!BitFileExists) {
-			try {
-				LocText.setText("Synthesizing Project");
-				labelRect = LocText.getBounds();
-				labelRect.x = 0;
-				labelRect.y = 0;
-				LocText.paintImmediately(labelRect);
-				Rectangle ProgRect = progres.getBounds();
-				ProgRect.x = 0;
-				ProgRect.y = 0;
-				progres.paintImmediately(ProgRect);
-				command.clear();
-				command.add(xilinxVendor.getBinaryPath(0));
-				command.add("-ifn");
-				command.add(scriptPath.replace(ProjectPath, "../")
-						+ File.separator + script_file);
-				command.add("-ofn");
-				command.add("logisim.log");
-				ProcessBuilder Xilinx = new ProcessBuilder(command);
-				Xilinx.directory(new File(SandboxPath));
-				final Process CreateProject = Xilinx.start();
-				InputStream is = CreateProject.getInputStream();
-				InputStreamReader isr = new InputStreamReader(is);
-				BufferedReader br = new BufferedReader(isr);
-				String line;
-				MyReporter.ClsScr();
-				while ((line = br.readLine()) != null) {
-					MyReporter.print(line);
-				}
-				CreateProject.waitFor();
-				if (CreateProject.exitValue() != 0) {
-					MyReporter
-					.AddFatalError("Failed to Synthesize Xilinx project; cannot download");
-					panel.dispose();
-					return false;
-				}
-			} catch (IOException e) {
-				MyReporter
-				.AddFatalError("Internal Error during Xilinx download");
-				panel.dispose();
-				return false;
-			} catch (InterruptedException e) {
-				MyReporter
-				.AddFatalError("Internal Error during Xilinx download");
-				panel.dispose();
-				return false;
-			}
+	@Override
+	public String GetStageMessage(int stage) {
+		switch (stage) {
+		   case 0 : return S.get("XilinxSynth");
+		   case 1 : return S.get("XilinxContraints");
+		   case 2 : return S.get("XilinxMap");
+		   case 3 : return S.get("XilinxPAR");
+		   case 4 : return S.get("XilinxBit");
+		   default: return "unknown";
 		}
+	}
 
-		if (!BitFileExists) {
-			try {
-				LocText.setText("Adding contraints");
-				labelRect = LocText.getBounds();
-				labelRect.x = 0;
-				labelRect.y = 0;
-				LocText.paintImmediately(labelRect);
-				progres.setValue(1);
-				Rectangle ProgRect = progres.getBounds();
-				ProgRect.x = 0;
-				ProgRect.y = 0;
-				progres.paintImmediately(ProgRect);
-				command.clear();
-				command.add(xilinxVendor.getBinaryPath(1));
-				command.add("-intstyle");
-				command.add("ise");
-				command.add("-uc");
-				command.add(UcfPath.replace(ProjectPath, "../")
-						+ File.separator + ucf_file);
-				command.add("logisim.ngc");
-				command.add("logisim.ngd");
-				ProcessBuilder Xilinx = new ProcessBuilder(command);
-				Xilinx.directory(new File(SandboxPath));
-				final Process CreateProject = Xilinx.start();
-				InputStream is = CreateProject.getInputStream();
-				InputStreamReader isr = new InputStreamReader(is);
-				BufferedReader br = new BufferedReader(isr);
-				String line;
-				MyReporter.ClsScr();
-				while ((line = br.readLine()) != null) {
-					MyReporter.print(line);
-				}
-				CreateProject.waitFor();
-				if (CreateProject.exitValue() != 0) {
-					MyReporter
-					.AddFatalError("Failed to add Xilinx constraints; cannot download");
-					panel.dispose();
-					return false;
-				}
-			} catch (IOException e) {
-				MyReporter
-				.AddFatalError("Internal Error during Xilinx download");
-				panel.dispose();
-				return false;
-			} catch (InterruptedException e) {
-				MyReporter
-				.AddFatalError("Internal Error during Xilinx download");
-				panel.dispose();
-				return false;
-			}
+	@Override
+	public ProcessBuilder PerformStep(int stage) {
+		switch (stage) {
+			case 0  : return Stage0Synth();
+			case 1  : return Stage1Constraints();
+			case 2  : return Stage2Map();
+			case 3  : return Stage3PAR();
+			case 4  : return Stage4Bit();
+			default : return null;
 		}
+	}
 
-		if (!BitFileExists && !IsCPLD) {
-			try {
-				LocText.setText("Mapping Design");
-				labelRect = LocText.getBounds();
-				labelRect.x = 0;
-				labelRect.y = 0;
-				LocText.paintImmediately(labelRect);
-				progres.setValue(2);
-				Rectangle ProgRect = progres.getBounds();
-				ProgRect.x = 0;
-				ProgRect.y = 0;
-				progres.paintImmediately(ProgRect);
-				command.clear();
-				command.add(xilinxVendor.getBinaryPath(2));
-				command.add("-intstyle");
-				command.add("ise");
-				command.add("-o");
-				command.add("logisim_map");
-				command.add("logisim.ngd");
-				ProcessBuilder Xilinx = new ProcessBuilder(command);
-				Xilinx.directory(new File(SandboxPath));
-				final Process CreateProject = Xilinx.start();
-				InputStream is = CreateProject.getInputStream();
-				InputStreamReader isr = new InputStreamReader(is);
-				BufferedReader br = new BufferedReader(isr);
-				String line;
-				MyReporter.ClsScr();
-				while ((line = br.readLine()) != null) {
-					MyReporter.print(line);
-				}
-				CreateProject.waitFor();
-				if (CreateProject.exitValue() != 0) {
-					MyReporter
-					.AddFatalError("Failed to map Xilinx design; cannot download");
-					panel.dispose();
-					return false;
-				}
-			} catch (IOException e) {
-				MyReporter
-				.AddFatalError("Internal Error during Xilinx download");
-				panel.dispose();
-				return false;
-			} catch (InterruptedException e) {
-				MyReporter
-				.AddFatalError("Internal Error during Xilinx download");
-				panel.dispose();
-				return false;
-			}
-		}
-		if (!BitFileExists) {
-			try {
-				LocText.setText("Place and routing Design");
-				labelRect = LocText.getBounds();
-				labelRect.x = 0;
-				labelRect.y = 0;
-				LocText.paintImmediately(labelRect);
-				progres.setValue(3);
-				Rectangle ProgRect = progres.getBounds();
-				ProgRect.x = 0;
-				ProgRect.y = 0;
-				progres.paintImmediately(ProgRect);
-				command.clear();
-				if (!IsCPLD) {
-					command.add(xilinxVendor.getBinaryPath(3));
-					command.add("-w");
-					command.add("-intstyle");
-					command.add("ise");
-					command.add("-ol");
-					command.add("high");
-					command.add("logisim_map");
-					command.add("logisim_par");
-					command.add("logisim_map.pcf");
-				} else {
-					command.add(xilinxVendor.getBinaryPath(6));
-					command.add("-p");
-					command.add(BoardInfo.fpga.getPart().toUpperCase() + "-"
-							+ BoardInfo.fpga.getSpeedGrade() + "-"
-							+ BoardInfo.fpga.getPackage().toUpperCase());
-					command.add("-intstyle");
-					command.add("ise");
-					/* TODO: do correct termination type */
-					command.add("-terminate");
-					if (BoardInfo.fpga.getUnusedPinsBehavior() == PullBehaviors.PullUp) {
-						command.add("pullup");
-					} else if (BoardInfo.fpga.getUnusedPinsBehavior() == PullBehaviors.PullDown) {
-						command.add("pulldown");
-					} else {
-						command.add("float");
-					}
-					command.add("-loc");
-					command.add("on");
-					command.add("-log");
-					command.add("logisim_cpldfit.log");
-					command.add("logisim.ngd");
-				}
-				ProcessBuilder Xilinx = new ProcessBuilder(command);
-				Xilinx.directory(new File(SandboxPath));
-				final Process CreateProject = Xilinx.start();
-				InputStream is = CreateProject.getInputStream();
-				InputStreamReader isr = new InputStreamReader(is);
-				BufferedReader br = new BufferedReader(isr);
-				String line;
-				MyReporter.ClsScr();
-				while ((line = br.readLine()) != null) {
-					MyReporter.print(line);
-				}
-				CreateProject.waitFor();
-				if (CreateProject.exitValue() != 0) {
-					MyReporter
-					.AddFatalError("Failed to P&R Xilinx design; cannot download");
-					panel.dispose();
-					return false;
-				}
-			} catch (IOException e) {
-				MyReporter
-				.AddFatalError("Internal Error during Xilinx download");
-				panel.dispose();
-				return false;
-			} catch (InterruptedException e) {
-				MyReporter
-				.AddFatalError("Internal Error during Xilinx download");
-				panel.dispose();
-				return false;
-			}
-		}
-		if (!BitFileExists) {
+	@Override
+	public boolean readyForDownload() {
+		return new File(SandboxPath+ToplevelHDLGeneratorFactory.FPGAToplevelName+"."+BitfileExt).exists();
+	}
 
-			if (!DownloadBitstream) {
-				return true;
+	@Override
+	public ProcessBuilder DownloadToBoard() {
+		if (!BoardInfo.fpga.USBTMCDownloadRequired()) {
+			List<String> command = new ArrayList<String>();
+			command.add(xilinxVendor.getBinaryPath(5));
+			command.add("-batch");
+			command.add(ScriptPath.replace(ProjectPath, "../")
+					+ File.separator + download_file);
+			ProcessBuilder Xilinx = new ProcessBuilder(command);
+			Xilinx.directory(new File(SandboxPath));
+			return Xilinx;
+		} else {
+			Reporter.ClsScr();
+			/* Here we do the USBTMC Download */
+			boolean usbtmcdevice = new File("/dev/usbtmc0").exists();
+			if (!usbtmcdevice) {
+				Reporter.AddFatalError(S.get("XilinxUsbTmc"));
+				return null;
 			}
-
+			File bitfile = new File(SandboxPath
+					+ ToplevelHDLGeneratorFactory.FPGAToplevelName + "."
+					+ BitfileExt);
+			byte[] bitfile_buffer = new byte[BUFFER_SIZE];
+			int bitfile_buffer_size;
+			BufferedInputStream bitfile_in;
 			try {
-				LocText.setText("Generating Bitfile");
-				labelRect = LocText.getBounds();
-				labelRect.x = 0;
-				labelRect.y = 0;
-				LocText.paintImmediately(labelRect);
-				progres.setValue(4);
-				Rectangle ProgRect = progres.getBounds();
-				ProgRect.x = 0;
-				ProgRect.y = 0;
-				progres.paintImmediately(ProgRect);
-				command.clear();
-				if (!IsCPLD) {
-					command.add(xilinxVendor.getBinaryPath(4));
-					command.add("-w");
-					if (BoardInfo.fpga.getUnusedPinsBehavior() == PullBehaviors.PullUp) {
-						command.add("-g");
-						command.add("UnusedPin:PULLUP");
-					}
-					if (BoardInfo.fpga.getUnusedPinsBehavior() == PullBehaviors.PullDown) {
-						command.add("-g");
-						command.add("UnusedPin:PULLDOWN");
-					}
-					command.add("-g");
-					command.add("StartupClk:CCLK");
-					command.add("logisim_par");
-					command.add(ToplevelHDLGeneratorFactory.FPGAToplevelName
-							+ ".bit");
-				} else {
-					command.add(xilinxVendor.getBinaryPath(7));
-					command.add("-i");
-					command.add("logisim.vm6");
-				}
-				ProcessBuilder Xilinx = new ProcessBuilder(command);
-				Xilinx.directory(new File(SandboxPath));
-				final Process CreateProject = Xilinx.start();
-				InputStream is = CreateProject.getInputStream();
-				InputStreamReader isr = new InputStreamReader(is);
-				BufferedReader br = new BufferedReader(isr);
-				String line;
-				MyReporter.ClsScr();
-				while ((line = br.readLine()) != null) {
-					MyReporter.print(line);
-				}
-				CreateProject.waitFor();
-				if (CreateProject.exitValue() != 0) {
-					MyReporter
-					.AddFatalError("Failed generate bitfile; cannot download");
-					panel.dispose();
-					return false;
-				}
-			} catch (IOException e) {
-				MyReporter
-				.AddFatalError("Internal Error during Xilinx download");
-				panel.dispose();
-				return false;
-			} catch (InterruptedException e) {
-				MyReporter
-				.AddFatalError("Internal Error during Xilinx download");
-				panel.dispose();
-				return false;
-			}
-		}
-		try {
-			LocText.setText("Downloading Bitfile");
-			labelRect = LocText.getBounds();
-			labelRect.x = 0;
-			labelRect.y = 0;
-			LocText.paintImmediately(labelRect);
-			progres.setValue(5);
-			Rectangle ProgRect = progres.getBounds();
-			ProgRect.x = 0;
-			ProgRect.y = 0;
-			progres.paintImmediately(ProgRect);
-			Object[] options = { "Yes, download","No, abort" };
-			/* TODO remove in case of cli mode */
-			if (FPGACliGuiFabric.getFPGAOptionPanel()
-					.doshowOptionDialog(
-							progres,
-							"Verify that your board is connected and you are ready to download.",
-							"Ready to download ?", JOptionPane.YES_NO_OPTION,
-							JOptionPane.WARNING_MESSAGE, null, options, options[0]) != JOptionPane.YES_OPTION) {
-				MyReporter.AddWarning("Download aborted.");
-				panel.dispose();
-				return false;
-			}
-			/* Until here update of status window */
-			if (!BoardInfo.fpga.USBTMCDownloadRequired()) {
-				command.clear();
-				command.add(xilinxVendor.getBinaryPath(5));
-				command.add("-batch");
-				command.add(scriptPath.replace(ProjectPath, "../")
-						+ File.separator + download_file);
-				ProcessBuilder Xilinx = new ProcessBuilder(command);
-				Xilinx.directory(new File(SandboxPath));
-				final Process CreateProject = Xilinx.start();
-				InputStream is = CreateProject.getInputStream();
-				InputStreamReader isr = new InputStreamReader(is);
-				BufferedReader br = new BufferedReader(isr);
-				String line;
-				MyReporter.ClsScr();
-				while ((line = br.readLine()) != null) {
-					MyReporter.print(line);
-				}
-				CreateProject.waitFor();
-				if (CreateProject.exitValue() != 0) {
-					MyReporter.AddFatalError("Failed in downloading");
-					panel.dispose();
-					return false;
-				}
-				/* Until here is the standard download with programmer */
-			} else {
-				MyReporter.ClsScr();
-				/* Here we do the USBTMC Download */
-				boolean usbtmcdevice = new File("/dev/usbtmc0").exists();
-				if (!usbtmcdevice) {
-					MyReporter.AddFatalError("Could not find usbtmc device");
-					panel.dispose();
-					return false;
-				}
-				File bitfile = new File(SandboxPath
-						+ ToplevelHDLGeneratorFactory.FPGAToplevelName + "."
-						+ BitfileExt);
-				byte[] bitfile_buffer = new byte[BUFFER_SIZE];
-				int bitfile_buffer_size;
-				BufferedInputStream bitfile_in = new BufferedInputStream(
+				bitfile_in = new BufferedInputStream(
 						new FileInputStream(bitfile));
-				File usbtmc = new File("/dev/usbtmc0");
-				BufferedOutputStream usbtmc_out = new BufferedOutputStream(
+			} catch (FileNotFoundException e) {
+				Reporter.AddFatalError(S.fmt("XilinxOpenFailure", bitfile));
+				return null;
+			}
+			File usbtmc = new File("/dev/usbtmc0");
+			BufferedOutputStream usbtmc_out;
+			try {
+				usbtmc_out = new BufferedOutputStream(
 						new FileOutputStream(usbtmc));
 				usbtmc_out.write("FPGA ".getBytes());
 				bitfile_buffer_size = bitfile_in.read(bitfile_buffer, 0,
@@ -489,42 +189,20 @@ public class XilinxDownload {
 				}
 				usbtmc_out.close();
 				bitfile_in.close();
+			} catch (IOException e) {
+				Reporter.AddFatalError(S.get("XilinxUsbTmcError"));
 			}
-		} catch (IOException e) {
-			MyReporter.AddFatalError("Internal Error during Xilinx download");
-			panel.dispose();
-			return false;
-		} catch (InterruptedException e) {
-			MyReporter.AddFatalError("Internal Error during Xilinx download");
-			panel.dispose();
-			return false;
 		}
-
-		panel.dispose();
-		return true;
+		return null;
 	}
 
-	public static boolean GenerateISEScripts(FPGAReport MyReporter,
-			String ProjectPath, String ScriptPath, String UcfPath,
-			Netlist RootNetlist, MappableResourcesContainer MapInfo,
-			BoardInformation BoardInfo, ArrayList<String> Entities,
-			ArrayList<String> Architectures, String HDLType,
-			boolean writeToFlash) {
-		boolean IsCPLD = BoardInfo.fpga.getPart().toUpperCase()
-				.startsWith("XC2C")
-				|| BoardInfo.fpga.getPart().toUpperCase().startsWith("XA2C")
-				|| BoardInfo.fpga.getPart().toUpperCase().startsWith("XCR3")
-				|| BoardInfo.fpga.getPart().toUpperCase().startsWith("XC9500")
-				|| BoardInfo.fpga.getPart().toUpperCase().startsWith("XA9500");
+	@Override
+	public boolean CreateDownloadScripts() {
 		String JTAGPos = String.valueOf(BoardInfo.fpga.getFpgaJTAGChainPosition());
-		String BitfileExt = (IsCPLD) ? "jed" : "bit";
-		File ScriptFile = FileWriter.GetFilePointer(ScriptPath, script_file,
-				MyReporter);
-		File VhdlListFile = FileWriter.GetFilePointer(ScriptPath,
-				vhdl_list_file, MyReporter);
-		File UcfFile = FileWriter.GetFilePointer(UcfPath, ucf_file, MyReporter);
-		File DownloadFile = FileWriter.GetFilePointer(ScriptPath,
-				download_file, MyReporter);
+		File ScriptFile = FileWriter.GetFilePointer(ScriptPath, script_file, Reporter);
+		File VhdlListFile = FileWriter.GetFilePointer(ScriptPath,vhdl_list_file, Reporter);
+		File UcfFile = FileWriter.GetFilePointer(UcfPath, ucf_file, Reporter);
+		File DownloadFile = FileWriter.GetFilePointer(ScriptPath,download_file, Reporter);
 		if (ScriptFile == null || VhdlListFile == null || UcfFile == null
 				|| DownloadFile == null) {
 			ScriptFile = new File(ScriptPath + script_file);
@@ -543,20 +221,20 @@ public class XilinxDownload {
 			Contents.add(HDLType.toUpperCase() + " work \""
 					+ Architectures.get(i) + "\"");
 		}
-		if (!FileWriter.WriteContents(VhdlListFile, Contents, MyReporter))
+		if (!FileWriter.WriteContents(VhdlListFile, Contents, Reporter))
 			return false;
 		Contents.clear();
 		Contents.add("run -top " + ToplevelHDLGeneratorFactory.FPGAToplevelName
 				+ " -ofn logisim.ngc -ofmt NGC -ifn "
 				+ ScriptPath.replace(ProjectPath, "../") + vhdl_list_file
 				+ " -ifmt mixed -p " + GetFPGADeviceString(BoardInfo));
-		if (!FileWriter.WriteContents(ScriptFile, Contents, MyReporter))
+		if (!FileWriter.WriteContents(ScriptFile, Contents, Reporter))
 			return false;
 		Contents.clear();
 		Contents.add("setmode -bscan");
 		if (writeToFlash && BoardInfo.fpga.isFlashDefined()) {
 			if (BoardInfo.fpga.getFlashName() == null) {
-				MyReporter.AddFatalError("Unable to find the flash on " + BoardInfo.getBoardName());
+				Reporter.AddFatalError(S.fmt("XilinxFlashMissing", BoardInfo.getBoardName()));
 			}
 			String FlashPos = String.valueOf(BoardInfo.fpga.getFlashJTAGChainPosition());
 			String McsFile = ScriptPath + File.separator + mcs_file;
@@ -587,10 +265,10 @@ public class XilinxDownload {
 			}
 		}
 		Contents.add("quit");
-		if (!FileWriter.WriteContents(DownloadFile, Contents, MyReporter))
+		if (!FileWriter.WriteContents(DownloadFile, Contents, Reporter))
 			return false;
 		Contents.clear();
-		if (RootNetlist.NumberOfClockTrees() > 0) {
+		if (RootNetList.NumberOfClockTrees() > 0) {
 			Contents.add("NET \"" + TickComponentHDLGeneratorFactory.FPGAClock
 					+ "\" " + GetXilinxClockPin(BoardInfo) + " ;");
 			Contents.add("NET \"" + TickComponentHDLGeneratorFactory.FPGAClock
@@ -600,23 +278,126 @@ public class XilinxDownload {
 					+ TickComponentHDLGeneratorFactory.FPGAClock
 					+ "\" = PERIOD \""
 					+ TickComponentHDLGeneratorFactory.FPGAClock + "\" "
-					+ GetClockFrequencyString(BoardInfo) + " HIGH 50 % ;");
+					+ Download.GetClockFrequencyString(BoardInfo) + " HIGH 50 % ;");
 			Contents.add("");
 		}
 		Contents.addAll(MapInfo.GetFPGAPinLocs(VendorSoftware.VendorXilinx));
-		return FileWriter.WriteContents(UcfFile, Contents, MyReporter);
+		return FileWriter.WriteContents(UcfFile, Contents, Reporter);
 	}
 
-	private static String GetClockFrequencyString(BoardInformation CurrentBoard) {
-		long clkfreq = CurrentBoard.fpga.getClockFrequency();
-		if (clkfreq % 1000000 == 0) {
-			clkfreq /= 1000000;
-			return Long.toString(clkfreq) + " MHz ";
-		} else if (clkfreq % 1000 == 0) {
-			clkfreq /= 1000;
-			return Long.toString(clkfreq) + " kHz ";
+	@Override
+	public void SetMapableResources(MappableResourcesContainer resources) {
+        MapInfo = resources;
+	}
+	
+	private ProcessBuilder Stage0Synth() {
+		List<String> command = new ArrayList<String>();
+		command.add(xilinxVendor.getBinaryPath(0));
+		command.add("-ifn");
+		command.add(ScriptPath.replace(ProjectPath, "../")
+				+ File.separator + script_file);
+		command.add("-ofn");
+		command.add("logisim.log");
+		ProcessBuilder stage0 = new ProcessBuilder(command);
+		stage0.directory(new File(SandboxPath));
+		return stage0;
+	}
+	
+	private ProcessBuilder Stage1Constraints() {
+		List<String> command = new ArrayList<String>();
+		command.add(xilinxVendor.getBinaryPath(1));
+		command.add("-intstyle");
+		command.add("ise");
+		command.add("-uc");
+		command.add(UcfPath.replace(ProjectPath, "../")
+				+ File.separator + ucf_file);
+		command.add("logisim.ngc");
+		command.add("logisim.ngd");
+		ProcessBuilder stage1 = new ProcessBuilder(command);
+		stage1.directory(new File(SandboxPath));
+		return stage1;
+	}
+	
+	private ProcessBuilder Stage2Map() {
+		if (IsCPLD) return null; /* mapping is skipped for the CPLD target*/
+		List<String> command = new ArrayList<String>();
+		command.add(xilinxVendor.getBinaryPath(2));
+		command.add("-intstyle");
+		command.add("ise");
+		command.add("-o");
+		command.add("logisim_map");
+		command.add("logisim.ngd");
+		ProcessBuilder stage2 = new ProcessBuilder(command);
+		stage2.directory(new File(SandboxPath));
+		return stage2;
+	}
+	
+	private ProcessBuilder Stage3PAR() {
+		List<String> command = new ArrayList<String>();
+		if (!IsCPLD) {
+			command.add(xilinxVendor.getBinaryPath(3));
+			command.add("-w");
+			command.add("-intstyle");
+			command.add("ise");
+			command.add("-ol");
+			command.add("high");
+			command.add("logisim_map");
+			command.add("logisim_par");
+			command.add("logisim_map.pcf");
+		} else {
+			command.add(xilinxVendor.getBinaryPath(6));
+			command.add("-p");
+			command.add(BoardInfo.fpga.getPart().toUpperCase() + "-"
+					+ BoardInfo.fpga.getSpeedGrade() + "-"
+					+ BoardInfo.fpga.getPackage().toUpperCase());
+			command.add("-intstyle");
+			command.add("ise");
+			/* TODO: do correct termination type */
+			command.add("-terminate");
+			if (BoardInfo.fpga.getUnusedPinsBehavior() == PullBehaviors.PullUp) {
+				command.add("pullup");
+			} else if (BoardInfo.fpga.getUnusedPinsBehavior() == PullBehaviors.PullDown) {
+				command.add("pulldown");
+			} else {
+				command.add("float");
+			}
+			command.add("-loc");
+			command.add("on");
+			command.add("-log");
+			command.add("logisim_cpldfit.log");
+			command.add("logisim.ngd");
 		}
-		return Long.toString(clkfreq);
+		ProcessBuilder stage3 = new ProcessBuilder(command);
+		stage3.directory(new File(SandboxPath));
+		return stage3;
+	}
+	
+	private ProcessBuilder Stage4Bit() {
+		List<String> command = new ArrayList<String>();
+		if (!IsCPLD) {
+			command.add(xilinxVendor.getBinaryPath(4));
+			command.add("-w");
+			if (BoardInfo.fpga.getUnusedPinsBehavior() == PullBehaviors.PullUp) {
+				command.add("-g");
+				command.add("UnusedPin:PULLUP");
+			}
+			if (BoardInfo.fpga.getUnusedPinsBehavior() == PullBehaviors.PullDown) {
+				command.add("-g");
+				command.add("UnusedPin:PULLDOWN");
+			}
+			command.add("-g");
+			command.add("StartupClk:CCLK");
+			command.add("logisim_par");
+			command.add(ToplevelHDLGeneratorFactory.FPGAToplevelName
+					+ ".bit");
+		} else {
+			command.add(xilinxVendor.getBinaryPath(7));
+			command.add("-i");
+			command.add("logisim.vm6");
+		}
+		ProcessBuilder stage4 = new ProcessBuilder(command);
+		stage4.directory(new File(SandboxPath));
+		return stage4;
 	}
 
 	private static String GetFPGADeviceString(BoardInformation CurrentBoard) {
@@ -648,16 +429,5 @@ public class XilinxDownload {
 		return result.toString();
 	}
 
-	private final static String vhdl_list_file = "XilinxVHDLList.prj";
-
-	private final static String script_file = "XilinxScript.cmd";
-
-	private final static String ucf_file = "XilinxConstraints.ucf";
-
-	private final static String download_file = "XilinxDownload";
-
-	private final static String mcs_file = "XilinxProm.mcs";
-
-	private final static Integer BUFFER_SIZE = 16 * 1024;
 
 }
