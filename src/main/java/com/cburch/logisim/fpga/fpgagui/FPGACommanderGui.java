@@ -35,6 +35,7 @@ import static com.cburch.logisim.fpga.Strings.S;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -71,6 +72,7 @@ import javax.swing.JTextArea;
 import javax.swing.ListSelectionModel;
 
 import com.cburch.logisim.fpga.designrulecheck.SimpleDRCContainer;
+import com.cburch.logisim.fpga.download.Download;
 import com.cburch.logisim.fpga.fpgaboardeditor.BoardReaderClass;
 import com.cburch.logisim.fpga.settings.VendorSoftware;
 import com.cburch.logisim.circuit.Circuit;
@@ -100,7 +102,6 @@ MouseListener,PreferenceChangeListener {
 					AppPreferences.Boards.GetSelectedBoardFileName())
 					.GetBoardInformation();
 			MyBoardInformation.setBoardName(AppPreferences.SelectedBoard.get());
-			MapPannel.SetBoardInformation(MyBoardInformation);
 			boardIcon = new BoardIcon(MyBoardInformation.GetImage());
 			boardPic.setIcon(boardIcon);
 			boardPic.repaint();
@@ -300,7 +301,6 @@ MouseListener,PreferenceChangeListener {
 
 	public static final int FONT_SIZE = 12;
 	private JFrame panel;
-	private ComponentMapDialog MapPannel;
 	private CustomFrequencySelDialog CustFreqPannel;
 	private JLabel textMainCircuit = new JLabel("Choose main circuit ");
 	private JLabel textTargetBoard = new JLabel("Choose target board ");
@@ -630,15 +630,6 @@ MouseListener,PreferenceChangeListener {
 		panel.setLocationRelativeTo(null);
 		panel.setVisible(false);
 
-
-		if (MyProject.getLogisimFile().getLoader().getMainFile() != null) {
-			MapPannel = new ComponentMapDialog(panel, MyProject
-					.getLogisimFile().getLoader().getMainFile()
-					.getAbsolutePath());
-		} else {
-			MapPannel = new ComponentMapDialog(panel, "");
-		}
-		MapPannel.SetBoardInformation(MyBoardInformation);
 		CustFreqPannel = new CustomFrequencySelDialog(panel,MyBoardInformation.fpga.getClockFrequency());
 		AppPreferences.getPrefs().addPreferenceChangeListener(this);
 	}
@@ -664,48 +655,27 @@ MouseListener,PreferenceChangeListener {
 			selectToolPath(MyBoardInformation.fpga.getVendor());
 			HandleHDLOnly();
 		} else if (e.getActionCommand().equals("Download")) {
-			DownLoad(skipHDL.isSelected(), circuitsList.getSelectedItem().toString());
+			validateButton.setEnabled(false);
+			Download Downloader = new Download(MyProject,
+					                           circuitsList.getSelectedItem().toString(),
+					                           GetTickfrequency(),
+					                           MyReporter,
+					                           MyBoardInformation,
+					                           writeToFlash.isSelected(),
+					                           skipHDL.isSelected(),
+					                           true);
+			Downloader.AddListener(this);
+			Downloader.DoDownload();
+		} else if (e.getSource() instanceof Download) {
+			validateButton.setEnabled(true);
 		}
 	}
 
-	private boolean guiDRC() {
-		clearAllMessages();
-		String CircuitName = circuitsList.getSelectedItem().toString();
-
-		clearAllMessages();
-		return  performDRC(CircuitName, HDLType.getText());
-	}
-
-	private boolean guiMapDesign(String CircuitName) {
-
-		if (!MapDesign(CircuitName)) {
-			return false;
-		}
-
-		MapPannel.SetBoardInformation(MyBoardInformation);
-		MapPannel.SetMappebleComponents(MyMappableResources);
-		panel.setVisible(false);
-		MapPannel.SetVisible(true);
-		panel.setVisible(true);
-
-		if (MapDesignCheckIOs()) {
-			return true;
-		}
-
-		MyReporter
-		.AddError("Not all IO components have been mapped to the board "
-				+ MyBoardInformation.getBoardName()
-				+ " please map all components to continue!");
-
-		return false;
-	}
-	
 	private double GetTickfrequency() {
 		double ret = 0.0;
 		if (frequenciesList.getSelectedIndex()==0) {
 			panel.setVisible(false);
 			CustFreqPannel.setVisible(true);
-//			panel.setVisible(true);
 			// Here a custom index is specified
 			return CustFreqPannel.GetFrequency();
 		} else {
@@ -737,31 +707,6 @@ MouseListener,PreferenceChangeListener {
 		return ret;
 	}
 
-	@Override
-	protected boolean DownLoad(boolean skipVHDL, String CircuitName) {
-		if (!skipVHDL) {
-			if (!guiDRC()) {
-				return false;
-			}
-			double frequency = GetTickfrequency();
-			if (!guiMapDesign(CircuitName)) {
-				return false;
-			}
-			if (!writeHDL(circuitsList.getSelectedItem().toString(),frequency)) {
-				return false;
-			}
-
-			if (!MapPannel.isDoneAssignment()) {
-				MyReporter.AddError("Download to board canceled");
-				return false;
-			}
-		}
-		if (VendorSoftwarePresent())
-		   return DownLoadDesign(GenerateHDLOnlySelected(), skipVHDL,
-					circuitsList.getSelectedItem().toString(), writeToFlash.isSelected(), true);
-		return false;
-	}
-
 	public void AddConsole(String Message) {
 		consoleConsole.add(Message + "\n");
 		StringBuffer Lines = new StringBuffer();
@@ -776,7 +721,10 @@ MouseListener,PreferenceChangeListener {
 			Rectangle rect = tabbedPane.getBounds();
 			rect.x = 0;
 			rect.y = 0;
-			tabbedPane.paintImmediately(rect);
+			if (EventQueue.isDispatchThread())
+				tabbedPane.paintImmediately(rect);
+			else
+				tabbedPane.repaint(rect);
 		}
 	}
 
@@ -789,7 +737,10 @@ MouseListener,PreferenceChangeListener {
 			Rectangle rect = tabbedPane.getBounds();
 			rect.x = 0;
 			rect.y = 0;
-			tabbedPane.paintImmediately(rect);
+			if (EventQueue.isDispatchThread())
+				tabbedPane.paintImmediately(rect);
+			else
+				tabbedPane.repaint(rect);
 		}
 	}
 
@@ -820,7 +771,10 @@ MouseListener,PreferenceChangeListener {
 			Rectangle rect = tabbedPane.getBounds();
 			rect.x = 0;
 			rect.y = 0;
-			tabbedPane.paintImmediately(rect);
+			if (EventQueue.isDispatchThread())
+				tabbedPane.paintImmediately(rect);
+			else
+				tabbedPane.repaint(rect);
 		}
 	}
 
@@ -833,7 +787,10 @@ MouseListener,PreferenceChangeListener {
 			Rectangle rect = tabbedPane.getBounds();
 			rect.x = 0;
 			rect.y = 0;
-			tabbedPane.paintImmediately(rect);
+			if (EventQueue.isDispatchThread())
+				tabbedPane.paintImmediately(rect);
+			else
+				tabbedPane.repaint(rect);
 		}
 	}
 
@@ -887,7 +844,10 @@ MouseListener,PreferenceChangeListener {
 		Rectangle rect = tabbedPane.getBounds();
 		rect.x = 0;
 		rect.y = 0;
-		tabbedPane.paintImmediately(rect);
+		if (EventQueue.isDispatchThread())
+			tabbedPane.paintImmediately(rect);
+		else
+			tabbedPane.repaint(rect);
 	}
 
 	public void ClearConsole() {
@@ -899,7 +859,10 @@ MouseListener,PreferenceChangeListener {
 		Rectangle rect = tabbedPane.getBounds();
 		rect.x = 0;
 		rect.y = 0;
-		tabbedPane.paintImmediately(rect);
+		if (EventQueue.isDispatchThread())
+			tabbedPane.paintImmediately(rect);
+		else
+			tabbedPane.repaint(rect);
 	}
 
 	private void RebuildCircuitSelection() {

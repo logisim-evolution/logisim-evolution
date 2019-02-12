@@ -61,6 +61,15 @@ public class VendorSoftware {
 
 		return result;
 	}
+	
+	public static String getVendorString(char vendor) {
+		switch (vendor) {
+			case VendorAltera : return Vendors[0];
+			case VendorXilinx : return Vendors[1];
+			case VendorVivado : return Vendors[2];
+			default           : return "Unknown";
+		}
+	}
 
 	public static VendorSoftware getSoftware(char vendor) {
 		switch(vendor) {

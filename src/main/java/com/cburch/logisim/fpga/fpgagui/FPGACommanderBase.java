@@ -8,6 +8,7 @@ import java.util.Set;
 import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.download.AlteraDownload;
+import com.cburch.logisim.fpga.download.Download;
 import com.cburch.logisim.fpga.download.VivadoDownload;
 import com.cburch.logisim.fpga.download.XilinxDownload;
 import com.cburch.logisim.fpga.fpgaboardeditor.BoardInformation;
@@ -29,22 +30,14 @@ public abstract class FPGACommanderBase {
 	protected FPGAReport MyReporter;
 	protected BoardInformation MyBoardInformation = null;
 	protected MappableResourcesContainer MyMappableResources;
-	private String[] HDLPaths = { HDLGeneratorFactory.VERILOG.toLowerCase(),
+	static String[] HDLPaths = { HDLGeneratorFactory.VERILOG.toLowerCase(),
 			HDLGeneratorFactory.VHDL.toLowerCase(), "scripts", "sandbox", "ucf", "xdc"};
-	@SuppressWarnings("unused")
-	private static final Integer VerilogSourcePath = 0;
-	@SuppressWarnings("unused")
-	protected static final Integer VHDLSourcePath = 1;
-	protected static final Integer ScriptPath = 2;
-	protected static final Integer SandboxPath = 3;
-	protected static final Integer UCFPath = 4;
-	protected static final Integer XDCPath = 5;
-
-	public FPGACommanderBase() {
-		// TODO Auto-generated constructor stub
-	}
-
-	protected abstract boolean DownLoad(boolean skipVHDL, String CircuitName);
+	public static final Integer VerilogSourcePath = 0;
+	public static final Integer VHDLSourcePath = 1;
+	public static final Integer ScriptPath = 2;
+	public static final Integer SandboxPath = 3;
+	public static final Integer UCFPath = 4;
+	public static final Integer XDCPath = 5;
 
 	protected boolean VendorSoftwarePresent() {
 		return VendorSoftware.toolsPresent(MyBoardInformation.fpga.getVendor(),
@@ -112,9 +105,18 @@ public abstract class FPGACommanderBase {
 		}
 		return (DRCResult == Netlist.DRC_PASSED);
 	}
+	
+	protected String GetProjDir(String selectedCircuit) {
+		String ProjectDir = AppPreferences.FPGA_Workspace.get() + File.separator
+				+ MyProject.getLogisimFile().getName();
+		if (!ProjectDir.endsWith(File.separator)) {
+			ProjectDir += File.separator;
+		}
+		ProjectDir += CorrectLabel.getCorrectLabel(selectedCircuit)+File.separator;
+		return ProjectDir;
+	}
 
 	protected boolean writeHDL(String selectedCircuit, Double frequency) {
-		String CircuitName = selectedCircuit;
 		if (!GenDirectory(AppPreferences.FPGA_Workspace.get() + File.separator
 				+ MyProject.getLogisimFile().getName())) {
 			MyReporter.AddFatalError("Unable to create directory: \""
@@ -122,15 +124,8 @@ public abstract class FPGACommanderBase {
 					+ MyProject.getLogisimFile().getName() + "\"");
 			return false;
 		}
-		String ProjectDir = AppPreferences.FPGA_Workspace.get() + File.separator
-				+ MyProject.getLogisimFile().getName();
-		if (!ProjectDir.endsWith(File.separator)) {
-			ProjectDir += File.separator;
-		}
-		LogisimFile myfile = MyProject.getLogisimFile();
-		Circuit RootSheet = myfile.getCircuit(CircuitName);
-		ProjectDir += CorrectLabel.getCorrectLabel(RootSheet.getName())
-				+ File.separator;
+		String ProjectDir = GetProjDir(selectedCircuit);
+		Circuit RootSheet = MyProject.getLogisimFile().getCircuit(selectedCircuit);
 		if (!CleanDirectory(ProjectDir)) {
 			MyReporter
 			.AddFatalError("Unable to cleanup old project files in directory: \""
@@ -259,7 +254,7 @@ public abstract class FPGACommanderBase {
 	}
 
 
-	private void GetVHDLFiles(String SourcePath, String Path,
+	protected void GetVHDLFiles(String SourcePath, String Path,
 			ArrayList<String> Entities, ArrayList<String> Behaviors,
 			String HDLType) {
 		File Dir = new File(Path);
@@ -291,78 +286,13 @@ public abstract class FPGACommanderBase {
 			}
 		}
 	}
-
-
-	protected boolean DownLoadDesign(boolean generateOnly, boolean downloadOnly, String CircuitName,
-			boolean writeToFlash, boolean downloadDesign) {
-		if (generateOnly && downloadOnly) {
-			MyReporter.AddError("Can not have skip VHDL generation and generate HDL only in the same time...");
-			return false;
-		}
-
-		String ProjectDir = AppPreferences.FPGA_Workspace.get() + File.separator
-				+ MyProject.getLogisimFile().getName();
-		if (!ProjectDir.endsWith(File.separator)) {
-			ProjectDir += File.separator;
-		}
-
-		LogisimFile myfile = MyProject.getLogisimFile();
-		Circuit RootSheet = myfile.getCircuit(CircuitName);
-		ProjectDir += CorrectLabel.getCorrectLabel(RootSheet.getName())
-				+ File.separator;
-		String SourcePath = ProjectDir + AppPreferences.HDL_Type.get().toLowerCase()
-				+ File.separator;
-		ArrayList<String> Entities = new ArrayList<String>();
-		ArrayList<String> Behaviors = new ArrayList<String>();
-		GetVHDLFiles(ProjectDir, SourcePath, Entities, Behaviors,
-				AppPreferences.HDL_Type.get());
-		if (MyBoardInformation.fpga.getVendor() == VendorSoftware.VendorAltera) {
-			if (AlteraDownload.GenerateQuartusScript(MyReporter, ProjectDir
-					+ HDLPaths[ScriptPath] + File.separator,
-					RootSheet.getNetList(), MyMappableResources,
-					MyBoardInformation, Entities, Behaviors,
-					AppPreferences.HDL_Type.get())
-					&& !generateOnly) {
-				return AlteraDownload.Download(ProjectDir
-						+ HDLPaths[ScriptPath] + File.separator, SourcePath,
-						ProjectDir + HDLPaths[SandboxPath] + File.separator,
-						MyReporter, downloadDesign);
-			}
-		} else if (MyBoardInformation.fpga.getVendor() == VendorSoftware.VendorXilinx) {
-			if (XilinxDownload.GenerateISEScripts(MyReporter, ProjectDir,
-					ProjectDir + HDLPaths[ScriptPath] + File.separator,
-					ProjectDir + HDLPaths[UCFPath] + File.separator,
-					RootSheet.getNetList(), MyMappableResources,
-					MyBoardInformation, Entities, Behaviors,
-					AppPreferences.HDL_Type.get(),
-					writeToFlash)
-					&& !generateOnly) {
-				return XilinxDownload.Download(MyBoardInformation,
-						ProjectDir + HDLPaths[ScriptPath] + File.separator,
-						ProjectDir + HDLPaths[UCFPath] + File.separator,
-						ProjectDir, ProjectDir + HDLPaths[SandboxPath]
-								+ File.separator, MyReporter, downloadDesign);
-			}
-		} else if (MyBoardInformation.fpga.getVendor() == VendorSoftware.VendorVivado) {
-			if (VivadoDownload.GenerateScripts(MyReporter, ProjectDir,
-					ProjectDir + HDLPaths[ScriptPath] + File.separator,
-					ProjectDir + HDLPaths[XDCPath] + File.separator,
-					ProjectDir + HDLPaths[SandboxPath] + File.separator,
-					RootSheet.getNetList(), MyMappableResources,
-					MyBoardInformation, Entities, Behaviors,
-					AppPreferences.HDL_Type.get(),
-					writeToFlash)
-					&& !generateOnly) {
-				return VivadoDownload.Download(
-						ProjectDir + HDLPaths[ScriptPath] + File.separator,
-						ProjectDir + HDLPaths[SandboxPath] + File.separator,
-						MyReporter, downloadOnly, downloadDesign);
-			}
-		}
-
-		return false;
+	
+	public static String GetDirectoryLocation(String ProjectBase, int Identifier) {
+		String Base = (ProjectBase.endsWith(File.separator)) ? ProjectBase : ProjectBase+File.separator;
+		if (Identifier >= HDLPaths.length)
+			return null;
+		return Base+HDLPaths[Identifier]+File.separator;
 	}
-
 
 	private boolean CleanDirectory(String dir) {
 		try {

@@ -9,6 +9,9 @@ import com.cburch.logisim.proj.Project;
 
 public class FPGACommanderTests extends FPGACommanderBase {
 
+	public boolean StartTests() {
+		return false;
+	}
 	private String circuitTestName = null;
 	private String circuitPathMap = null;
 	private boolean writeToFlash = false;
@@ -24,9 +27,7 @@ public class FPGACommanderTests extends FPGACommanderBase {
 		MyBoardInformation.setBoardName(boardName);
 	}
 
-	public boolean StartTests() {
-		return DownLoad(false, circuitTestName);
-	}
+	/* TODO not fixed yet for no gui 
 
 	@Override
 	protected boolean DownLoad(boolean skipVHDL, String CircuitName) {
@@ -58,4 +59,5 @@ public class FPGACommanderTests extends FPGACommanderBase {
 
 		return false;
 	}
+	*/
 }

@@ -42,6 +42,7 @@ import java.awt.event.WindowListener;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.text.DefaultCaret;
 
 
 @SuppressWarnings("serial")
@@ -61,11 +62,12 @@ public class FPGACommanderTextWindow extends JFrame implements KeyListener,Windo
 		setAlwaysOnTop(false);
 		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		Color bg = Color.black;
-
+		((DefaultCaret)textArea.getCaret()).setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
 		textArea.setForeground(fg);
 		textArea.setBackground(bg);
 		textArea.setFont(new Font("monospaced", Font.PLAIN, FontSize));
 		textArea.setEditable(false);
+		
 		clear();
 
 		JScrollPane textMessages = new JScrollPane(textArea);

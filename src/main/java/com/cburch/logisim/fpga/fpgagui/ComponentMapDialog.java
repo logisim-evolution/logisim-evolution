@@ -392,6 +392,10 @@ ListSelectionListener {
 
 	private MappableResourcesContainer MappableComponents;
 
+	private Object lock = new Object();
+	private boolean running = false;
+
+
 	private MouseListener mouseListener = new MouseListener() {
 		@Override
 		public void mouseClicked(MouseEvent e) {
@@ -606,25 +610,55 @@ ListSelectionListener {
 		if (MaxZoom < 100)
 			MaxZoom = 100;
 	}
+	public void run() {
+		MessageLine.setForeground(Color.BLUE);
+		MessageLine.setText("No messages");
+		panel.setVisible(true);
+		running = true;
+		Thread t = new Thread() {
+			public void run() {
+				synchronized (lock) {
+					while (running)
+						try {
+							lock.wait();
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+				}
+			}
+		};
+		t.run();
+		try {
+			t.join();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		panel.dispose();
+	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("Done")) {
-			doneAssignment = true;
-			panel.setVisible(false);
+			synchronized (lock) {
+				doneAssignment = true;
+				running = false;
+				lock.notify();
+			}
 		} else if (e.getActionCommand().equals("UnMapAll")) {
-			doneAssignment = false;
 			UnMapAll();
 		} else if (e.getActionCommand().equals("UnMap")) {
-			doneAssignment = false;
 			UnMapOne();
 		} else if (e.getActionCommand().equals("Save")) {
 			Save();
 		} else if (e.getActionCommand().equals("Load")) {
 			Load();
 		} else if (e.getActionCommand().equals("Cancel")) {
-			doneAssignment = false;
-			panel.dispose();
+			synchronized (lock) {
+				running = false;
+				lock.notify();
+			}
 		}
 	}
 
@@ -675,7 +709,7 @@ ListSelectionListener {
 	public boolean isDoneAssignment() {
 		return doneAssignment;
 	}
-
+	
 	private void Load() {
 		JFileChooser fc = new JFileChooser(OldDirectory);
 		fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
@@ -916,12 +950,6 @@ ListSelectionListener {
 		MappableComponents = mappable;
 		RebuildSelectionLists();
 		ClearSelections();
-	}
-
-	public void SetVisible(boolean selection) {
-		MessageLine.setForeground(Color.BLUE);
-		MessageLine.setText("No messages");
-		panel.setVisible(selection);
 	}
 
 	private void UnMapAll() {
