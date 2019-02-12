@@ -221,4 +221,9 @@ public class VivadoDownload implements VendorDownload {
 		return stage1;
 	}
 
+	@Override
+	public boolean BoardConnected() {
+		// TODO Detect if a board is connected, and in case of multiple boards select the one that should be used
+		return true;
+	}
 }

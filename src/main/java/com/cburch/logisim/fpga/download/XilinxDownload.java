@@ -429,5 +429,11 @@ public class XilinxDownload implements VendorDownload {
 		return result.toString();
 	}
 
+	@Override
+	public boolean BoardConnected() {
+		// TODO Detect if a board is connected, and in case of multiple boards select the one that should be used
+		return true;
+	}
+
 
 }

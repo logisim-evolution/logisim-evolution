@@ -33,6 +33,7 @@ package com.cburch.logisim.fpga.download;
 import static com.cburch.logisim.fpga.Strings.S;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,6 +62,7 @@ public class AlteraDownload implements VendorDownload {
 	private ArrayList<String> Entities;
 	private ArrayList<String> Architectures;
 	private String HDLType;
+	private String cablename;
 	
 	public AlteraDownload(String ProjectPath,
 			              FPGAReport Reporter,
@@ -78,6 +80,7 @@ public class AlteraDownload implements VendorDownload {
 		this.Entities = Entities;
 		this.Architectures = Architectures;
 		this.HDLType = HDLType;
+		cablename = "usb-blaster";
 	}
 	
 	public void SetMapableResources(MappableResourcesContainer resources) {
@@ -121,7 +124,7 @@ public class AlteraDownload implements VendorDownload {
 		List<String> command = new ArrayList<String>();
 		command.add(alteraVendor.getBinaryPath(1));
 		command.add("-c");
-		command.add("usb-blaster");
+		command.add(cablename);
 		command.add("-m");
 		command.add("jtag");
 		command.add("-o");
@@ -275,6 +278,51 @@ public class AlteraDownload implements VendorDownload {
 		result.add(Assignment + "RESERVE_NCEO_AFTER_CONFIGURATION \"USE AS REGULAR IO\"");
 		result.add(Assignment + "CYCLONEII_RESERVE_NCEO_AFTER_CONFIGURATION \"USE AS REGULAR IO\"");
 		return result;
+	}
+
+	@Override
+	public boolean BoardConnected() {
+		List<String> command = new ArrayList<String>();
+		command.add(alteraVendor.getBinaryPath(1));
+		command.add("--list");
+		ProcessBuilder Detect = new ProcessBuilder(command);
+		Detect.directory(new File(SandboxPath));
+		ArrayList<String> response = new ArrayList<String>();
+		try {
+			Reporter.print("");
+			Reporter.print("===");
+			Reporter.print("===> "+S.get("AlteraDetectDevice"));
+			Reporter.print("===");
+			if (Download.execute(Detect, response, Reporter)!= null)
+				return false;
+		} catch (IOException | InterruptedException e) {
+			return false;
+		}
+		ArrayList<String> Devices = Devices(response);
+		if (Devices == null)
+			return false;
+		if (Devices.size()==1)
+			return true;
+		String selection = Download.ChooseBoard(Devices);
+		if (selection == null)
+			return false;
+		cablename = selection;
+		return true;
+	}
+	
+	private ArrayList<String> Devices(ArrayList<String> lines) {
+		/* This code originates from Kevin Walsh */
+		ArrayList<String> dev = new ArrayList<String>();
+		for (String line : lines) {
+			int n = dev.size()+1;
+			if (!line.matches("^"+n+"\\) .*"))
+				continue;
+			line = line.replaceAll("^"+n+"\\) ", "");
+			dev.add(line.trim());
+		}
+		if (dev.size()==0)
+			return null;
+		return dev;
 	}
 
 }

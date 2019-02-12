@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JOptionPane;
 
@@ -24,6 +25,7 @@ import com.cburch.logisim.fpga.gui.DownloadProgressBar;
 import com.cburch.logisim.fpga.settings.VendorSoftware;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
+import com.cburch.logisim.proj.Projects;
 
 public class Download extends FPGACommanderBase implements Runnable,WindowListener  {
 	
@@ -176,13 +178,37 @@ public class Download extends FPGACommanderBase implements Runnable,WindowListen
 				JOptionPane.WARNING_MESSAGE, null, options, options[0]) != JOptionPane.YES_OPTION) {
 			return S.get("FPGADownloadAborted");
 		}
-		ProcessBuilder DownloadBitfile = Downloader.DownloadToBoard();
 		if (StopRequested)
 			return "Interrupted";
+		if (!Downloader.BoardConnected())
+			return S.get("FPGABoardNotConnected");
+		ProcessBuilder DownloadBitfile = Downloader.DownloadToBoard();
 		if (DownloadBitfile != null)
 			return execute(S.get("FPGADownloadBitfile"),DownloadBitfile);
 		else
 			return null;
+	}
+	
+	public static String execute(ProcessBuilder process,
+			                     ArrayList<String> Report,
+			                     FPGAReport MyReporter) throws IOException, InterruptedException {
+		Process Executable = process.start();
+		InputStream is = Executable.getInputStream();
+		InputStreamReader isr = new InputStreamReader(is);
+		BufferedReader br = new BufferedReader(isr);
+		String line;
+		while ((line = br.readLine()) != null) {
+			if (MyReporter != null)
+				MyReporter.print(line);
+			if (Report != null)
+				Report.add(line);
+		}
+		Executable.waitFor();
+		isr.close();
+		br.close();
+		if (Executable.exitValue()!= 0)
+			return S.get("FPGAStaticExecutionFailure");
+		return null;
 	}
 	
 	private String execute(String StageName, ProcessBuilder process) throws IOException, InterruptedException {
@@ -332,5 +358,24 @@ public class Download extends FPGACommanderBase implements Runnable,WindowListen
 			return Long.toString(clkfreq) + " kHz ";
 		}
 		return Long.toString(clkfreq);
+	}
+	
+	public static String ChooseBoard(List<String> devices) {
+		/* This code is based on the version of Kevin Walsh */
+		if (Projects.getTopFrame() != null) {
+			   String[] choices = new String[devices.size()];
+			   for (int i = 0; i < devices.size(); i++)
+			       choices[i] = devices.get(i);
+			    String choice = (String) JOptionPane.showInputDialog(null,
+			    		S.fmt("FPGAMultipleBoards", devices.size()),
+			    		S.get("FPGABoardSelection"),
+			    		JOptionPane.QUESTION_MESSAGE, null,
+			    		choices,
+			    		choices[0]);
+			    return choice;
+		} else {
+			/* TODO: add none gui selection */
+			return null;
+		}
 	}
 }

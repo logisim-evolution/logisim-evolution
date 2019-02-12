@@ -26,4 +26,9 @@ public interface VendorDownload {
 	/* This handle creates all the scripts required to to synthesis P&R bitstream generation
 	 */
 	public void SetMapableResources(MappableResourcesContainer resources);
+	
+	public boolean BoardConnected();
+	/*
+	 * This handle returns true if a board is connected 
+	 */
 }
