@@ -123,6 +123,7 @@ public class VendorSoftware {
 			progs.add("quartus_sh");
 			progs.add("quartus_pgm");
 			progs.add("quartus_map");
+			progs.add("quartus_cpf");
 		}
 		else if (vendor == VendorXilinx) {
 			progs.add("xst");

@@ -75,7 +75,8 @@ public class Download extends FPGACommanderBase implements Runnable,WindowListen
 			                                		                           MyBoardInformation,
 			                                		                           Entities,
 			                                		                           Architectures,
-			                                		                           AppPreferences.HDL_Type.get());
+			                                		                           AppPreferences.HDL_Type.get(),
+			                                		                           writeToFlash);
 			                                   break;
 			case VendorSoftware.VendorXilinx : Downloader = new XilinxDownload(GetProjDir(TopLevelSheet),
                     		                                                   MyReporter,

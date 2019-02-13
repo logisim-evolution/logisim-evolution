@@ -37,6 +37,19 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.fpgaboardeditor.BoardInformation;
 import com.cburch.logisim.fpga.fpgaboardeditor.PullBehaviors;
@@ -63,6 +76,10 @@ public class AlteraDownload implements VendorDownload {
 	private ArrayList<String> Architectures;
 	private String HDLType;
 	private String cablename;
+	private boolean WriteToFlash;
+
+	private static String AlteraTclFile = "AlteraDownload.tcl";
+	private static String AlteraCofFile = "AlteraFlash.cof";
 	
 	public AlteraDownload(String ProjectPath,
 			              FPGAReport Reporter,
@@ -70,7 +87,8 @@ public class AlteraDownload implements VendorDownload {
 			              BoardInformation BoardInfo,
 			              ArrayList<String> Entities,
 			              ArrayList<String> Architectures,
-			              String HDLType) {
+			              String HDLType,
+			              boolean WriteToFlash) {
 		this.ProjectPath = ProjectPath;
 		this.SandboxPath = FPGACommanderBase.GetDirectoryLocation(ProjectPath, FPGACommanderBase.SandboxPath);
 		this.ScriptPath = FPGACommanderBase.GetDirectoryLocation(ProjectPath, FPGACommanderBase.ScriptPath);
@@ -80,6 +98,7 @@ public class AlteraDownload implements VendorDownload {
 		this.Entities = Entities;
 		this.Architectures = Architectures;
 		this.HDLType = HDLType;
+		this.WriteToFlash = WriteToFlash;
 		cablename = "usb-blaster";
 	}
 	
@@ -121,6 +140,10 @@ public class AlteraDownload implements VendorDownload {
 	
 	@Override
 	public ProcessBuilder DownloadToBoard() {
+		if (WriteToFlash) {
+			if (!DoFlashing())
+				return null;
+		}
 		List<String> command = new ArrayList<String>();
 		command.add(alteraVendor.getBinaryPath(1));
 		command.add("-c");
@@ -149,7 +172,7 @@ public class AlteraDownload implements VendorDownload {
 		command.add("-t");
 		command.add(ScriptPath.replace(ProjectPath, ".."
 				+ File.separator)
-				+ "AlteraDownload.tcl");
+				+ AlteraTclFile);
 		ProcessBuilder stage0 = new ProcessBuilder(command);
 		stage0.directory(new File(SandboxPath));
 		System.out.println(command);
@@ -180,9 +203,9 @@ public class AlteraDownload implements VendorDownload {
 	@Override
 	public boolean CreateDownloadScripts() {
 		File ScriptFile = FileWriter.GetFilePointer(ScriptPath,
-				"AlteraDownload.tcl", Reporter);
+				AlteraTclFile, Reporter);
 		if (ScriptFile == null) {
-			ScriptFile = new File(ScriptPath + "AlteraDownload.tcl");
+			ScriptFile = new File(ScriptPath + AlteraTclFile);
 			return ScriptFile.exists();
 		}
 		String FileType = (HDLType.equals(HDLGeneratorFactory.VHDL)) ? "VHDL_FILE"
@@ -323,6 +346,196 @@ public class AlteraDownload implements VendorDownload {
 		if (dev.size()==0)
 			return null;
 		return dev;
+	}
+	
+	private boolean DoFlashing() {
+		if (!CreateCofFile()) {
+			Reporter.AddError(S.get("AlteraFlashError"));
+			return false;
+		}
+		if (!CreateJicFile()) {
+			Reporter.AddError(S.get("AlteraFlashError"));
+			return false;
+		}
+		if (!LoadProgrammerSof()) {
+			Reporter.AddError(S.get("AlteraFlashError"));
+			return false;
+		}
+		if (!FlashDevice()) {
+			Reporter.AddError(S.get("AlteraFlashError"));
+			return false;
+		}
+		return true;
+	}
+	
+	private boolean FlashDevice() {
+		String JicFile = ToplevelHDLGeneratorFactory.FPGAToplevelName+".jic";
+		Reporter.print("==>");
+		Reporter.print("==> "+S.get("AlteraFlash"));
+		Reporter.print("==>");
+		if (!new File(SandboxPath+JicFile).exists()) {
+			Reporter.AddError(S.fmt("AlteraFlashError", JicFile));
+			return false;
+		}
+		List<String> command = new ArrayList<String>();
+		command.add(alteraVendor.getBinaryPath(1));
+		command.add("-c");
+		command.add(cablename);
+		command.add("-m");
+		command.add("jtag");
+		command.add("-o");
+		command.add("P;"+JicFile);
+		ProcessBuilder Prog = new ProcessBuilder(command);
+		Prog.directory(new File(SandboxPath));
+		try {
+			String result = Download.execute(Prog, null, Reporter);
+			if (result!= null) {
+				Reporter.AddFatalError(S.get("AlteraFlashFailure"));
+				return false;
+			}
+		} catch (IOException|InterruptedException e) {
+			Reporter.AddFatalError(S.get("AlteraFlashFailure"));
+			return false;
+		}
+		return true;
+	}
+	
+	private boolean LoadProgrammerSof() {
+		String FpgaDevice = StripPackageSpeed();
+		String ProgrammerSofFile = VendorSoftware.GetToolPath(VendorSoftware.VendorAltera)+"../"+
+				                   "common/devinfo/programmer/sfl_"+FpgaDevice.toLowerCase()+".sof";
+		Reporter.print("==>");
+		Reporter.print("==> "+S.get("AlteraProgSof"));
+		Reporter.print("==>");
+		if (!new File(ProgrammerSofFile).exists()) {
+			Reporter.AddError(S.fmt("AlteraProgSofError", ProgrammerSofFile));
+			return false;
+		}
+		List<String> command = new ArrayList<String>();
+		command.add(alteraVendor.getBinaryPath(1));
+		command.add("-c");
+		command.add(cablename);
+		command.add("-m");
+		command.add("jtag");
+		command.add("-o");
+		command.add("P;"+ProgrammerSofFile);
+		ProcessBuilder Prog = new ProcessBuilder(command);
+		Prog.directory(new File(SandboxPath));
+		try {
+			String result = Download.execute(Prog, null, Reporter);
+			if (result!= null) {
+				Reporter.AddFatalError(S.get("AlteraProgSofFailure"));
+				return false;
+			}
+		} catch (IOException|InterruptedException e) {
+			Reporter.AddFatalError(S.get("AlteraProgSofFailure"));
+			return false;
+		}
+		return true;
+	}
+	
+	private String StripPackageSpeed() {
+		/* For the Cyclone IV devices the name used for Syntesis is in form
+		 * EP4CE15F23C8. For the programmer sof-file (for flash writing) we need to strip the part F23C8. 
+		 * For future supported devices this should be checked.
+		 */
+		String FpgaDevice = BoardInfo.fpga.getPart();
+		int index = FpgaDevice.indexOf("F");
+		return FpgaDevice.substring(0, index);
+	}
+	
+	private boolean CreateJicFile() {
+		if (!new File(ScriptPath+AlteraCofFile).exists()) {
+			Reporter.AddError(S.get("AlteraNoCof"));
+			return false;
+		}
+		Reporter.print("==>");
+		Reporter.print("==> "+S.get("AlteraJicFile"));
+		Reporter.print("==>");
+		List<String> command = new ArrayList<String>();
+		command.add(alteraVendor.getBinaryPath(3));
+		command.add("-c");
+		command.add((ScriptPath+AlteraCofFile).replace(ProjectPath, "../"));
+		ProcessBuilder Jic = new ProcessBuilder(command);
+		Jic.directory(new File(SandboxPath));
+		try {
+			String result = Download.execute(Jic, null, Reporter);
+			if (result!= null) {
+				Reporter.AddFatalError(S.get("AlteraJicFileError"));
+				return false;
+			}
+		} catch (IOException|InterruptedException e) {
+			Reporter.AddFatalError(S.get("AlteraJicFileError"));
+			return false;
+		}
+		
+		return true;
+	}
+	
+	private boolean CreateCofFile() {
+		if (!new File(SandboxPath+ToplevelHDLGeneratorFactory.FPGAToplevelName+".sof").exists()) {
+			Reporter.AddFatalError(S.get("AlteraNoSofFile"));
+			return false;
+		}
+		Reporter.print("==>");
+		Reporter.print("==> "+S.get("AlteraCofFile"));
+		Reporter.print("==>");
+		try {
+			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+			Document CofFile = docBuilder.newDocument();
+			CofFile.setXmlStandalone(true);
+			Element rootElement = CofFile.createElement("cof");
+			CofFile.appendChild(rootElement);
+			AddElement("eprom_name",BoardInfo.fpga.getFlashName(),rootElement,CofFile);
+			AddElement("flash_loader_device",StripPackageSpeed(),rootElement,CofFile);
+			AddElement("output_filename",SandboxPath+ToplevelHDLGeneratorFactory.FPGAToplevelName+".jic",rootElement,CofFile);
+			AddElement("n_pages","1",rootElement,CofFile);
+			AddElement("width","1",rootElement,CofFile);
+			AddElement("mode","7",rootElement,CofFile);
+			Element SofData = CofFile.createElement("sof_data");
+			rootElement.appendChild(SofData);
+			AddElement("user_name","Page_0",SofData,CofFile);
+			AddElement("page_flags","1",SofData,CofFile);
+			Element BitFile = CofFile.createElement("bit0");
+			SofData.appendChild(BitFile);
+			AddElement("sof_filename",SandboxPath+ToplevelHDLGeneratorFactory.FPGAToplevelName+".sof",BitFile,CofFile);
+			AddElement("version","10",rootElement,CofFile);
+			AddElement("create_cvp_file","0",rootElement,CofFile);
+			AddElement("create_hps_iocsr","0",rootElement,CofFile);
+			AddElement("auto_create_rpd","0",rootElement,CofFile);
+			AddElement("rpd_little_endian","1",rootElement,CofFile);
+			Element Options = CofFile.createElement("options");
+			rootElement.appendChild(Options);
+			AddElement("map_file","0",Options,CofFile);
+			Element AdvancedOptions = CofFile.createElement("advanced_options");
+			rootElement.appendChild(AdvancedOptions);
+			AddElement("ignore_epcs_id_check","2",AdvancedOptions,CofFile);
+			AddElement("ignore_condone_check","2",AdvancedOptions,CofFile);
+			AddElement("plc_adjustment","0",AdvancedOptions,CofFile);
+			AddElement("post_chain_bitstream_pad_bytes","-1",AdvancedOptions,CofFile);
+			AddElement("post_device_bitstream_pad_bytes","-1",AdvancedOptions,CofFile);
+			AddElement("bitslice_pre_padding","1",AdvancedOptions,CofFile);
+			TransformerFactory transformerfac = TransformerFactory.newInstance();
+			Transformer transformer = transformerfac.newTransformer();
+			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+			transformer.setOutputProperty(OutputKeys.METHOD, "xml");
+			transformer.setOutputProperty(OutputKeys.ENCODING, "US-ASCII");
+			transformer.setOutputProperty(OutputKeys.STANDALONE, "yes");
+			DOMSource source = new DOMSource(CofFile);
+			StreamResult result = new StreamResult(new File(ScriptPath+AlteraCofFile));
+			transformer.transform(source, result);
+		} catch (ParserConfigurationException|TransformerException e) {
+			Reporter.AddError(S.get("AlteraErrorCof"));
+			return false;
+		}
+		return true;
+	}
+	
+	private void AddElement(String ElementName , String ElementValue , Element root, Document doc) {
+		Element NamedElement = doc.createElement(ElementName);
+		NamedElement.appendChild(doc.createTextNode(ElementValue));
+		root.appendChild(NamedElement);
 	}
 
 }

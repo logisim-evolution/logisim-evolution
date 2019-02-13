@@ -33,7 +33,6 @@ package com.cburch.logisim.fpga.fpgagui;
 import static com.cburch.logisim.fpga.Strings.S;
 
 import java.awt.Color;
-import java.awt.Dialog.ModalityType;
 import java.awt.Dimension;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
@@ -92,7 +91,7 @@ import com.cburch.logisim.fpga.fpgaboardeditor.ZoomSlider;
 import com.cburch.logisim.prefs.AppPreferences;
 
 public class ComponentMapDialog implements ActionListener,
-ListSelectionListener {
+ListSelectionListener,Runnable {
 
 	private class MappedComponentIdContainer {
 
@@ -393,7 +392,6 @@ ListSelectionListener {
 	private MappableResourcesContainer MappableComponents;
 
 	private Object lock = new Object();
-	private boolean running = false;
 
 
 	private MouseListener mouseListener = new MouseListener() {
@@ -444,7 +442,7 @@ ListSelectionListener {
 
 		OldDirectory = projectPath;
 
-		panel = new JDialog(parrentFrame, ModalityType.APPLICATION_MODAL);
+		panel = new JDialog(parrentFrame);
 		panel.setTitle("Component to FPGA board mapping");
 		panel.setResizable(false);
 		panel.setAlwaysOnTop(true);
@@ -610,15 +608,15 @@ ListSelectionListener {
 		if (MaxZoom < 100)
 			MaxZoom = 100;
 	}
+
+	@Override
 	public void run() {
 		MessageLine.setForeground(Color.BLUE);
 		MessageLine.setText("No messages");
 		panel.setVisible(true);
-		running = true;
 		Thread t = new Thread() {
 			public void run() {
 				synchronized (lock) {
-					while (running)
 						try {
 							lock.wait();
 						} catch (InterruptedException e) {
@@ -643,7 +641,6 @@ ListSelectionListener {
 		if (e.getActionCommand().equals("Done")) {
 			synchronized (lock) {
 				doneAssignment = true;
-				running = false;
 				lock.notify();
 			}
 		} else if (e.getActionCommand().equals("UnMapAll")) {
@@ -656,7 +653,6 @@ ListSelectionListener {
 			Load();
 		} else if (e.getActionCommand().equals("Cancel")) {
 			synchronized (lock) {
-				running = false;
 				lock.notify();
 			}
 		}
