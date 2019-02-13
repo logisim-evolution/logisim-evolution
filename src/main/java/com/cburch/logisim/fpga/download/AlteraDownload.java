@@ -402,8 +402,9 @@ public class AlteraDownload implements VendorDownload {
 	
 	private boolean LoadProgrammerSof() {
 		String FpgaDevice = StripPackageSpeed();
-		String ProgrammerSofFile = VendorSoftware.GetToolPath(VendorSoftware.VendorAltera)+"../"+
-				                   "common/devinfo/programmer/sfl_"+FpgaDevice.toLowerCase()+".sof";
+		String ProgrammerSofFile = new File(VendorSoftware.GetToolPath(VendorSoftware.VendorAltera)).getParent()+
+				                   "common"+File.separator+"devinfo"+File.pathSeparatorChar+"programmer"+
+				                   File.separator+"sfl_"+FpgaDevice.toLowerCase()+".sof";
 		Reporter.print("==>");
 		Reporter.print("==> "+S.get("AlteraProgSof"));
 		Reporter.print("==>");

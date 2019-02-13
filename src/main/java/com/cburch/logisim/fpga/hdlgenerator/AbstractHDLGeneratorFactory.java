@@ -83,7 +83,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
 	public static boolean WriteArchitecture(String TargetDirectory,
 			ArrayList<String> Contents, String ComponentName,
 			FPGAReport Reporter, String HDLType) {
-		if (Contents.isEmpty()) {
+		if (Contents == null || Contents.isEmpty()) {
 			Reporter.AddFatalError("INTERNAL ERROR: Empty behavior description for Component '"
 					+ ComponentName + "' received!");
 			return false;
