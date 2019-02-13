@@ -20,6 +20,7 @@ public class HexDigitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 		ArrayList<String> Contents = new ArrayList<String>();
 		String Label = ComponentInfo.GetComponent().getAttributeSet().getValue(StdAttr.LABEL);
 		String BusName = GetBusName(ComponentInfo, 0, HDLType, Nets);
+		Contents.add(" ");
 		Contents.add("   "+Label+" : PROCESS ( "+BusName+" ) IS");
 		Contents.add("      VARIABLE v_segs : std_logic_vector( 6 DOWNTO 0 );");
         Contents.add("      BEGIN");
