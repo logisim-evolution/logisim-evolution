@@ -37,6 +37,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.JOptionPane;
+
 import org.w3c.dom.Element;
 
 import com.cburch.draw.model.AbstractCanvasObject;
@@ -118,6 +120,8 @@ public class XmlCircuitReader extends CircuitTransaction {
 	private XmlReader.ReadContext reader;
 
 	private List<XmlReader.CircuitData> circuitsData;
+	private boolean AskedUser = false;
+	private boolean IsHolyCross = false;
 
 	public XmlCircuitReader(XmlReader.ReadContext reader,
 			List<XmlReader.CircuitData> circDatas) {
@@ -163,19 +167,49 @@ public class XmlCircuitReader extends CircuitTransaction {
 		try {
 			/* Here we check the attribute circuitnamedbox for backwards compatibility */
 			boolean HasNamedBox = false;
+			boolean HasAppearAttr = false;
 			for (Element attrElt : XmlIterator.forChildElements(circData.circuitElement, "a")) {
 				if (attrElt.hasAttribute("name")) {
 					String Name = attrElt.getAttribute("name");
 					if (Name.equals("circuitnamedbox")) {
 						HasNamedBox = true;
 					}
+					if (Name.equals("appearance"))
+						HasAppearAttr = true;
 				}
 			}
 			reader.initAttributeSet(circData.circuitElement,
 					dest.getStaticAttributes(), null);
-			if ((!HasNamedBox)&&circData.circuitElement.hasChildNodes()) {
-				dest.getStaticAttributes().setValue(CircuitAttributes.NAMED_CIRCUIT_BOX, false);
+			if (circData.circuitElement.hasChildNodes()) {
+				if (HasNamedBox) {
+					/* This situation is clear, it is an older logisim-evolution file */
+					dest.getStaticAttributes().setValue(CircuitAttributes.APPEARANCE_ATTR, CircuitAttributes.APPEAR_EVOLUTION);
+				} else {
+					if (!HasAppearAttr) {
+						/* Here we have 2 possibilities, either a Holycross file or a logisim-evolution file
+						 * before the introduction of the named circuit boxes. So let's ask the user.
+						 */
+						if (!AskedUser) {
+							String[] choices = new String[2];
+							choices[0]="logisim-evolution";
+							choices[1]="holycross";
+							String choice = (String) JOptionPane.showInputDialog(null,
+									S.get("VersionQuestion"),
+									S.get("VersionSelect"),
+									JOptionPane.QUESTION_MESSAGE,null,choices,choices[1]);
+							IsHolyCross = choice.equals(choices[1]);
+							AskedUser = true;
+						}
+						if (IsHolyCross)
+							dest.getStaticAttributes().setValue(CircuitAttributes.APPEARANCE_ATTR, CircuitAttributes.APPEAR_FPGA);
+						else
+							dest.getStaticAttributes().setValue(CircuitAttributes.APPEARANCE_ATTR, CircuitAttributes.APPEAR_CLASSIC);
+					}
+				}
 			}
+//			if ((!HasNamedBox)&&) {
+//				dest.getStaticAttributes().setValue(CircuitAttributes.NAMED_CIRCUIT_BOX, false);
+//			}
 		} catch (XmlReaderException e) {
 			reader.addErrors(e, circData.circuit.getName() + ".static");
 		}

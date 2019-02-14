@@ -76,9 +76,8 @@ public class AttrTableToolModel extends AttributeSetTableModel {
 			AddTool mytool = (AddTool) tool;
 			if (mytool.getFactory() instanceof SubcircuitFactory) {
 				SubcircuitFactory fac = (SubcircuitFactory) mytool.getFactory();
-				if (attr.equals(CircuitAttributes.NAMED_CIRCUIT_BOX)||
-						attr.equals(CircuitAttributes.NAMED_CIRCUIT_BOX_FIXED_SIZE)||
-						attr.equals(CircuitAttributes.NAME_ATTR)) {
+				if (attr.equals(CircuitAttributes.NAMED_CIRCUIT_BOX_FIXED_SIZE)||
+					attr.equals(CircuitAttributes.NAME_ATTR)) {
 					try {
 						CircuitMutation mutation = new CircuitMutation(fac.getSubcircuit());
 						mutation.setForCircuit(attr, value);

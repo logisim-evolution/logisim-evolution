@@ -44,6 +44,7 @@ import com.cburch.logisim.data.AbstractAttributeSet;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeEvent;
 import com.cburch.logisim.data.AttributeListener;
+import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.AttributeSets;
 import com.cburch.logisim.data.Attributes;
@@ -138,26 +139,33 @@ public class CircuitAttributes extends AbstractAttributeSet {
 			.forBoolean("circuitvhdl", S.getter("circuitIsVhdl"));
 	public static final Attribute<String> CIRCUIT_VHDL_PATH = Attributes
 			.forString("circuitvhdlpath", S.getter("circuitVhdlPath"));
-	public static final Attribute<Boolean> NAMED_CIRCUIT_BOX = Attributes
-			.forBoolean("circuitnamedbox",S.getter("circuitNamedBox"));
 	public static final Attribute<Boolean> NAMED_CIRCUIT_BOX_FIXED_SIZE = Attributes
 			.forBoolean("circuitnamedboxfixedsize",S.getter("circuitNamedBoxFixedSize"));
+	public static final AttributeOption APPEAR_CLASSIC = StdAttr.APPEAR_CLASSIC;
+	public static final AttributeOption APPEAR_FPGA = StdAttr.APPEAR_FPGA;
+	public static final AttributeOption APPEAR_EVOLUTION = StdAttr.APPEAR_EVOLUTION;
+	public static final AttributeOption APPEAR_CUSTOM = new AttributeOption(
+	      "custom", S.getter("circuitCustomAppearance"));
+	public static final Attribute<AttributeOption> APPEARANCE_ATTR = Attributes
+	      .forOption("appearance", S.getter("circuitAppearanceAttr"),
+	          new AttributeOption[] { APPEAR_CLASSIC, APPEAR_EVOLUTION , APPEAR_FPGA, APPEAR_CUSTOM });
+
 
 	private static final Attribute<?>[] STATIC_ATTRS = { NAME_ATTR,
 			CIRCUIT_LABEL_ATTR, CIRCUIT_LABEL_FACING_ATTR,
-			CIRCUIT_LABEL_FONT_ATTR,NAMED_CIRCUIT_BOX,NAMED_CIRCUIT_BOX_FIXED_SIZE, 
-			CIRCUIT_VHDL_PATH, };
+			CIRCUIT_LABEL_FONT_ATTR,NAMED_CIRCUIT_BOX_FIXED_SIZE, 
+			CIRCUIT_VHDL_PATH,APPEARANCE_ATTR };
 
 	private static final Object[] STATIC_DEFAULTS = { "", "", Direction.EAST,
 			StdAttr.DEFAULT_LABEL_FONT, 
-			false,false, "", };
+			false, "",APPEAR_EVOLUTION };
 
 	private static final List<Attribute<?>> INSTANCE_ATTRS = Arrays
 			.asList(new Attribute<?>[] { StdAttr.FACING, StdAttr.LABEL,
 					LABEL_LOCATION_ATTR, StdAttr.LABEL_FONT,StdAttr.LABEL_VISIBILITY,
 					CircuitAttributes.NAME_ATTR, CIRCUIT_LABEL_ATTR,
 					CIRCUIT_LABEL_FACING_ATTR, CIRCUIT_LABEL_FONT_ATTR,
-					CIRCUIT_VHDL_PATH, });
+					CIRCUIT_VHDL_PATH,APPEARANCE_ATTR });
 
 	private Circuit source;
 	private Instance subcircInstance;

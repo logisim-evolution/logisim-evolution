@@ -45,6 +45,7 @@ import com.cburch.draw.model.CanvasObject;
 import com.cburch.draw.model.Drawing;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitAttributes;
+import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Location;
@@ -218,6 +219,13 @@ public class CircuitAppearance extends Drawing {
 	public CircuitPins getCircuitPins() {
 		return circuitPins;
 	}
+	
+	public AttributeOption getCircuitAppearance() {
+        if (circuit == null || circuit.getStaticAttributes() == null)
+            return null;
+        else 
+            return circuit.getStaticAttributes().getValue(CircuitAttributes.APPEARANCE_ATTR);
+	}
 
 	public Direction getFacing() {
 		AppearanceAnchor anchor = findAnchor();
@@ -286,10 +294,6 @@ public class CircuitAppearance extends Drawing {
 		}
 	}
 	
-	public boolean IsNamedBoxShaped() {
-		return circuit.getStaticAttributes().getValue(CircuitAttributes.NAMED_CIRCUIT_BOX);
-	}
-
 	public boolean IsNamedBoxShapedFixedSize() {
 		return circuit.getStaticAttributes().getValue(CircuitAttributes.NAMED_CIRCUIT_BOX_FIXED_SIZE);
 	}
@@ -297,7 +301,7 @@ public class CircuitAppearance extends Drawing {
 	public void recomputeDefaultAppearance() {
 		if (isDefault) {
 			List<CanvasObject> shapes;
-			shapes = DefaultAppearance.build(circuitPins.getPins(),this.IsNamedBoxShaped(),this.IsNamedBoxShapedFixedSize(),this.getName(),circuit.GetGraphics());
+			shapes = DefaultAppearance.build(circuitPins.getPins(),this.getCircuitAppearance(),this.IsNamedBoxShapedFixedSize(),this.getName(),circuit.GetGraphics());
 			setObjectsForce(shapes);
 		}
 	}

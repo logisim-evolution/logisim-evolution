@@ -525,8 +525,6 @@ public class AppPreferences {
 			"keepConnected", true));
 	public static final PrefMonitor<Boolean> ADD_SHOW_GHOSTS = create(new PrefMonitorBoolean(
 			"showGhosts", true));
-	public static final PrefMonitor<Boolean> NAMED_CIRCUIT_BOXES = create(new PrefMonitorBoolean(
-			"namedBoxes", true));
 	public static final PrefMonitor<Boolean> NAMED_CIRCUIT_BOXES_FIXED_SIZE = create(new PrefMonitorBoolean(
 			"namedBoxesFixed", true));
 	public static final PrefMonitor<Boolean> NEW_INPUT_OUTPUT_SHAPES = create(new PrefMonitorBoolean(

@@ -61,8 +61,6 @@ class LayoutOptions extends OptionsPanel {
 						S.getter("layoutMoveKeepConnect")),
 				new PrefBoolean(AppPreferences.ADD_SHOW_GHOSTS,
 						S.getter("layoutAddShowGhosts")), 
-				new PrefBoolean(AppPreferences.NAMED_CIRCUIT_BOXES,
-						S.getter("layoutNamedCircuitBoxes")),
 				new PrefBoolean(AppPreferences.NAMED_CIRCUIT_BOXES_FIXED_SIZE,
 						S.getter("layoutNamedCircuitBoxesFixedSize")),
 				new PrefBoolean(AppPreferences.NEW_INPUT_OUTPUT_SHAPES,

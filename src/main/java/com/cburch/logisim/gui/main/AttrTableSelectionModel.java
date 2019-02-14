@@ -168,8 +168,7 @@ class AttrTableSelectionModel extends AttributeSetTableModel implements
 				if (!(comp instanceof Wire)) {
 					if (comp.getFactory() instanceof SubcircuitFactory) {
 						SubcircuitFactory fac = (SubcircuitFactory) comp.getFactory();
-						if (attr.equals(CircuitAttributes.NAMED_CIRCUIT_BOX)||
-							attr.equals(CircuitAttributes.NAMED_CIRCUIT_BOX_FIXED_SIZE)||
+						if (attr.equals(CircuitAttributes.NAMED_CIRCUIT_BOX_FIXED_SIZE)||
 							attr.equals(CircuitAttributes.NAME_ATTR)) {
 							try {
 								CircuitMutation mutation = new CircuitMutation(fac.getSubcircuit());

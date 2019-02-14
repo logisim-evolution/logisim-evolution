@@ -74,7 +74,16 @@ public interface StdAttr {
 			"labelcolor", S.getter("ioLabelColorAttr"));
 	public static final Color DEFAULT_LABEL_COLOR = Color.BLUE;
 	public static final Attribute<Boolean> LABEL_VISIBILITY = Attributes.forBoolean(
-			"labelvisible", S.getter("stdLabelVisibility")); 
+			"labelvisible", S.getter("stdLabelVisibility"));
+	public static final AttributeOption APPEAR_CLASSIC = new AttributeOption(
+			"classic", S.getter("stdClassicAppearance"));
+	public static final AttributeOption APPEAR_FPGA = new AttributeOption(
+			"evolution", S.getter("stdEvolutionAppearance"));
+	public static final AttributeOption APPEAR_EVOLUTION = new AttributeOption(
+			"logisim_evolution", S.getter("stdLogisimEvolutionAppearance"));
+	public static final Attribute<AttributeOption> APPEARANCE = Attributes
+			.forOption("appearance", S.getter("stdAppearanceAttr"),
+					new AttributeOption[] { APPEAR_CLASSIC, APPEAR_FPGA, APPEAR_EVOLUTION });
 	
 	public static final Attribute<String> DUMMY = Attributes.forHidden();
 }
