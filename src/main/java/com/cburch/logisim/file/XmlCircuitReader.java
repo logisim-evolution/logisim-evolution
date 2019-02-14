@@ -51,6 +51,7 @@ import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.comp.ComponentFactory;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Location;
+import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.tools.AddTool;
 import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.tools.Tool;
@@ -69,7 +70,7 @@ public class XmlCircuitReader extends CircuitTransaction {
 	 * @return the component built from its XML description
 	 * @throws XmlReaderException
 	 */
-	static Component getComponent(Element elt, XmlReader.ReadContext reader)
+	static Component getComponent(Element elt, XmlReader.ReadContext reader, boolean IsHolyCross)
 			throws XmlReaderException {
 
 		// Determine the factory that creates this element
@@ -100,7 +101,7 @@ public class XmlCircuitReader extends CircuitTransaction {
 		// Determine attributes
 		String loc_str = elt.getAttribute("loc");
 		AttributeSet attrs = source.createAttributeSet();
-		reader.initAttributeSet(elt, attrs, source);
+		reader.initAttributeSet(elt, attrs, source,IsHolyCross);
 
 		// Create component if location known
 		if (loc_str == null || loc_str.equals("")) {
@@ -120,13 +121,14 @@ public class XmlCircuitReader extends CircuitTransaction {
 	private XmlReader.ReadContext reader;
 
 	private List<XmlReader.CircuitData> circuitsData;
-	private boolean AskedUser = false;
 	private boolean IsHolyCross = false;
 
 	public XmlCircuitReader(XmlReader.ReadContext reader,
-			List<XmlReader.CircuitData> circDatas) {
+			List<XmlReader.CircuitData> circDatas,
+			boolean HolyCrossFile) {
 		this.reader = reader;
 		this.circuitsData = circDatas;
+		this.IsHolyCross = HolyCrossFile;
 	}
 
 	void addWire(Circuit dest, CircuitMutator mutator, Element elt)
@@ -167,6 +169,7 @@ public class XmlCircuitReader extends CircuitTransaction {
 		try {
 			/* Here we check the attribute circuitnamedbox for backwards compatibility */
 			boolean HasNamedBox = false;
+			boolean HasNamedBoxFixedSize = false;
 			boolean HasAppearAttr = false;
 			for (Element attrElt : XmlIterator.forChildElements(circData.circuitElement, "a")) {
 				if (attrElt.hasAttribute("name")) {
@@ -176,10 +179,13 @@ public class XmlCircuitReader extends CircuitTransaction {
 					}
 					if (Name.equals("appearance"))
 						HasAppearAttr = true;
+					if (Name.equals("circuitnamedboxfixedsize")) {
+						HasNamedBoxFixedSize = true;
+					}
 				}
 			}
 			reader.initAttributeSet(circData.circuitElement,
-					dest.getStaticAttributes(), null);
+					dest.getStaticAttributes(), null,IsHolyCross);
 			if (circData.circuitElement.hasChildNodes()) {
 				if (HasNamedBox) {
 					/* This situation is clear, it is an older logisim-evolution file */
@@ -189,45 +195,15 @@ public class XmlCircuitReader extends CircuitTransaction {
 						/* Here we have 2 possibilities, either a Holycross file or a logisim-evolution file
 						 * before the introduction of the named circuit boxes. So let's ask the user.
 						 */
-						if (!AskedUser) {
-							String[] choices = new String[2];
-							choices[0]="logisim-evolution";
-							choices[1]="holycross";
-							String choice = (String) JOptionPane.showInputDialog(null,
-									S.get("VersionQuestion"),
-									S.get("VersionSelect"),
-									JOptionPane.QUESTION_MESSAGE,null,choices,choices[1]);
-							IsHolyCross = choice.equals(choices[1]);
-							AskedUser = true;
-						}
 						if (IsHolyCross)
 							dest.getStaticAttributes().setValue(CircuitAttributes.APPEARANCE_ATTR, CircuitAttributes.APPEAR_FPGA);
 						else
 							dest.getStaticAttributes().setValue(CircuitAttributes.APPEARANCE_ATTR, CircuitAttributes.APPEAR_CLASSIC);
 					}
 				}
-			}
-//			if ((!HasNamedBox)&&) {
-//				dest.getStaticAttributes().setValue(CircuitAttributes.NAMED_CIRCUIT_BOX, false);
-//			}
-		} catch (XmlReaderException e) {
-			reader.addErrors(e, circData.circuit.getName() + ".static");
-		}
-		try {
-			/* Here we check the attribute circuitnamedboxFixedSize for backwards compatibility */
-			boolean HasNamedBoxFixedSize = false;
-			for (Element attrElt : XmlIterator.forChildElements(circData.circuitElement, "a")) {
-				if (attrElt.hasAttribute("name")) {
-					String Name = attrElt.getAttribute("name");
-					if (Name.equals("circuitnamedboxfixedsize")) {
-						HasNamedBoxFixedSize = true;
-					}
+				if (!HasNamedBoxFixedSize) {
+					dest.getStaticAttributes().setValue(CircuitAttributes.NAMED_CIRCUIT_BOX_FIXED_SIZE, false);
 				}
-			}
-			reader.initAttributeSet(circData.circuitElement,
-					dest.getStaticAttributes(), null);
-			if ((!HasNamedBoxFixedSize)&&circData.circuitElement.hasChildNodes()) {
-				dest.getStaticAttributes().setValue(CircuitAttributes.NAMED_CIRCUIT_BOX_FIXED_SIZE, false);
 			}
 		} catch (XmlReaderException e) {
 			reader.addErrors(e, circData.circuit.getName() + ".static");
@@ -239,7 +215,7 @@ public class XmlCircuitReader extends CircuitTransaction {
 				try {
 					Component comp = knownComponents.get(sub_elt);
 					if (comp == null) {
-						comp = getComponent(sub_elt, reader);
+						comp = getComponent(sub_elt, reader,IsHolyCross);
 					}
 					if (comp != null) {
 						mutator.add(dest, comp);

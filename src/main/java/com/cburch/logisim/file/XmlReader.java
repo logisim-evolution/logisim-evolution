@@ -67,6 +67,7 @@ import com.cburch.logisim.data.AttributeDefaultProvider;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.instance.Instance;
+import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.std.wiring.Pin;
 import com.cburch.logisim.tools.Library;
@@ -124,7 +125,7 @@ class XmlReader {
 		}
 
 		void initAttributeSet(Element parentElt, AttributeSet attrs,
-				AttributeDefaultProvider defaults) throws XmlReaderException {
+				AttributeDefaultProvider defaults, boolean IsHolyCross) throws XmlReaderException {
 			ArrayList<String> messages = null;
 
 			HashMap<String, String> attrsDefined = new HashMap<String, String>();
@@ -173,7 +174,9 @@ class XmlReader {
 				String attrName = attr.getName();
 				String attrVal = attrsDefined.get(attrName);
 				if (attrVal == null) {
-					if (setDefaults) {
+					if (IsHolyCross && attr.equals(StdAttr.APPEARANCE)) {
+						attrs.setValue(StdAttr.APPEARANCE, StdAttr.APPEAR_CLASSIC);
+					} else if (setDefaults) {
 						Object val = defaults.getDefaultAttributeValue(attr,
 								ver);
 						if (val != null) {
@@ -225,7 +228,7 @@ class XmlReader {
 
 				tool = tool.cloneTool();
 				try {
-					initAttributeSet(sub_elt, tool.getAttributeSet(), tool);
+					initAttributeSet(sub_elt, tool.getAttributeSet(), tool, false);
 				} catch (XmlReaderException e) {
 					addErrors(e, "mapping." + tool.getName());
 				}
@@ -251,7 +254,7 @@ class XmlReader {
 						tool = tool.cloneTool();
 						try {
 							initAttributeSet(sub_elt, tool.getAttributeSet(),
-									tool);
+									tool,false);
 						} catch (XmlReaderException e) {
 							addErrors(e, "toolbar." + tool.getName());
 						}
@@ -298,11 +301,11 @@ class XmlReader {
 			}
 		}
 
-		private Map<Element, Component> loadKnownComponents(Element elt) {
+		private Map<Element, Component> loadKnownComponents(Element elt, boolean HolyCrossFile) {
 			Map<Element, Component> known = new HashMap<Element, Component>();
 			for (Element sub : XmlIterator.forChildElements(elt, "comp")) {
 				try {
-					Component comp = XmlCircuitReader.getComponent(sub, this);
+					Component comp = XmlCircuitReader.getComponent(sub, this, HolyCrossFile);
 					if (comp != null)
 						known.put(sub, comp);
 				} catch (XmlReaderException e) {
@@ -335,7 +338,7 @@ class XmlReader {
 					if (tool != null) {
 						try {
 							initAttributeSet(sub_elt, tool.getAttributeSet(),
-									tool);
+									tool,false);
 						} catch (XmlReaderException e) {
 							addErrors(e, "lib." + name + "." + tool_str);
 						}
@@ -348,10 +351,12 @@ class XmlReader {
 		private void toLogisimFile(Element elt,Project proj) {
 			// determine the version producing this file
 			String versionString = elt.getAttribute("source");
+			boolean HolyCrossFile = false;
 			if (versionString.equals("")) {
 				sourceVersion = Main.VERSION;
 			} else {
 				sourceVersion = LogisimVersion.parse(versionString);
+				HolyCrossFile = versionString.endsWith("-HC"); 
 			}
 
 			// If we are opening a pre-logisim-evolution file, there might be
@@ -390,7 +395,7 @@ class XmlReader {
 				CircuitData circData = new CircuitData(circElt, new Circuit(
 						name, file,proj));
 				file.addCircuit(circData.circuit);
-				circData.knownComponents = loadKnownComponents(circElt);
+				circData.knownComponents = loadKnownComponents(circElt,HolyCrossFile);
 				for (Element appearElt : XmlIterator.forChildElements(circElt,
 						"appear")) {
 					loadAppearance(appearElt, circData, name + ".appear");
@@ -410,7 +415,7 @@ class XmlReader {
 				case "options":
 					try {
 						initAttributeSet(sub_elt, file.getOptions()
-								.getAttributeSet(), null);
+								.getAttributeSet(), null,HolyCrossFile);
 					} catch (XmlReaderException e) {
 						addErrors(e, "options");
 					}
@@ -439,7 +444,7 @@ class XmlReader {
 
 			// fourth, execute a transaction that initializes all the circuits
 			XmlCircuitReader builder;
-			builder = new XmlCircuitReader(this, circuitsData);
+			builder = new XmlCircuitReader(this, circuitsData,HolyCrossFile);
 			builder.execute();
 		}
 
