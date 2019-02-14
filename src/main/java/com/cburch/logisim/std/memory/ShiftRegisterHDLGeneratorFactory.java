@@ -435,7 +435,10 @@ public class ShiftRegisterHDLGeneratorFactory extends
 										+ BracketClose, true, ComponentInfo,
 								6 + 2 * i, Reporter, HDLType, Nets));
 					}
-					for (int i = 0; i < NrOfStages - 1; i++) {
+					int NrOfOutStages = NrOfStages - 1;
+					if (attrs.getValue(StdAttr.APPEARANCE)==StdAttr.APPEAR_CLASSIC) 
+						NrOfOutStages = NrOfStages;
+					for (int i = 0; i < NrOfOutStages; i++) {
 						PortMap.putAll(GetNetMap(
 								"Q" + BracketOpen + Integer.toString(i)
 										+ BracketClose, true, ComponentInfo,
