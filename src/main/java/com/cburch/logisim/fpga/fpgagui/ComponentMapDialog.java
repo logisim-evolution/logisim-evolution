@@ -93,7 +93,7 @@ import com.cburch.logisim.fpga.fpgaboardeditor.ZoomSlider;
 import com.cburch.logisim.prefs.AppPreferences;
 
 public class ComponentMapDialog implements ActionListener,
-ListSelectionListener,Runnable,WindowListener {
+ListSelectionListener,WindowListener {
 
 	private class MappedComponentIdContainer {
 
@@ -377,7 +377,6 @@ ListSelectionListener,Runnable,WindowListener {
 	}
 
 	private JDialog panel;
-	private boolean doneAssignment = false;
 	private JButton UnMapButton = new JButton();
 	private JButton UnMapAllButton = new JButton();
 	private JButton DoneButton = new JButton();
@@ -411,6 +410,7 @@ ListSelectionListener,Runnable,WindowListener {
 	private MappableResourcesContainer MappableComponents;
 
 	private Object lock = new Object();
+	private boolean canceled = true;
 
 
 	private MouseListener mouseListener = new MouseListener() {
@@ -458,7 +458,6 @@ ListSelectionListener,Runnable,WindowListener {
 
 	@SuppressWarnings("rawtypes")
 	public ComponentMapDialog(JFrame parrentFrame, String projectPath) {
-
 		OldDirectory = new File(projectPath).getParent();
 		if (OldDirectory == null)
             OldDirectory = "";
@@ -557,7 +556,7 @@ ListSelectionListener,Runnable,WindowListener {
 		CancelButton.setText("Cancel");
 		CancelButton.setActionCommand("Cancel");
 		CancelButton.addActionListener(this);
-		CancelButton.setEnabled(true);
+		CancelButton.setEnabled(false);
 		c.gridy = 6;
 		panel.add(CancelButton, c);
 
@@ -612,12 +611,12 @@ ListSelectionListener,Runnable,WindowListener {
 		 * panel.getHeight()));
 		 */
 		panel.setLocationRelativeTo(null);
-		panel.setVisible(false);
 		UnMappedPane.setPreferredSize(new Dimension(
 				BoardPic.getWidth()/3, 6*DoneButton.getHeight()+ScaleButton.getHeight()));
 		MappedPane.setPreferredSize(new Dimension(
 				BoardPic.getWidth()/3, 6*DoneButton.getHeight()+ScaleButton.getHeight()));
 		panel.pack();
+		panel.setVisible(true);
 		int ScreenWidth = (int)Toolkit.getDefaultToolkit().getScreenSize().getWidth();
 		int ScreenHeight = (int)Toolkit.getDefaultToolkit().getScreenSize().getHeight();
 		int ImageWidth = BoardPic.getWidth();
@@ -632,17 +631,15 @@ ListSelectionListener,Runnable,WindowListener {
 		if (MaxZoom < 100)
 			MaxZoom = 100;
 	}
-
-	@Override
-	public void run() {
+	
+	public boolean run() {
 		MessageLine.setForeground(Color.BLUE);
 		MessageLine.setText("No messages");
-		panel.setVisible(true);
 		Thread t = new Thread() {
 			public void run() {
 				synchronized (lock) {
-						try {
-							lock.wait();
+					try {
+						lock.wait();
 						} catch (InterruptedException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
@@ -651,20 +648,23 @@ ListSelectionListener,Runnable,WindowListener {
 			}
 		};
 		t.run();
+		CancelButton.setEnabled(true);
 		try {
 			t.join();
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		panel.setVisible(false);
 		panel.dispose();
+		return !canceled;
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("Done")) {
+			canceled=false;
 			synchronized (lock) {
-				doneAssignment = true;
 				lock.notify();
 			}
 		} else if (e.getActionCommand().equals("UnMapAll")) {
@@ -727,10 +727,6 @@ ListSelectionListener,Runnable,WindowListener {
 		}
 	}
 
-	public boolean isDoneAssignment() {
-		return doneAssignment;
-	}
-	
 	private void Load() {
 		JFileChooser fc = new JFileChooser(OldDirectory);
 		fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);

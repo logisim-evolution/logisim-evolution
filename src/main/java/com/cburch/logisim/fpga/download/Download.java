@@ -282,8 +282,7 @@ public class Download extends FPGACommanderBase implements Runnable,WindowListen
 			MyGui.SetStatus(S.get("FPGAState3"));
 			MapPannel.SetBoardInformation(MyBoardInformation);
 			MapPannel.SetMappebleComponents(MyMappableResources);
-			MapPannel.run();
-			if (!MapPannel.isDoneAssignment()) {
+			if (!MapPannel.run()) {
 				MyReporter.AddError(S.get("FPGADownloadAborted"));
 				return false;
 			}
