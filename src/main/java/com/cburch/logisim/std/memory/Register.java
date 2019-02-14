@@ -43,6 +43,7 @@ import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Attributes;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
+import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.instance.Instance;
@@ -56,7 +57,12 @@ import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.StringUtil;
 
 public class Register extends InstanceFactory {
-	public static void DrawRegister(InstancePainter painter, int x, int y,
+	public static void DrawRegisterClassic(InstancePainter painter, int x, int y,
+										   int nr_of_bits, boolean isLatch, boolean neg_active,
+										   boolean has_we, String value) {
+	}
+	
+	public static void DrawRegisterEvolution(InstancePainter painter, int x, int y,
 			int nr_of_bits, boolean isLatch, boolean neg_active,
 			boolean has_we, Value value) {
 		int dq_width = (nr_of_bits == 1) ? 3 : 5;
@@ -136,6 +142,64 @@ public class Register extends InstanceFactory {
 			GraphicsUtil.switchToWidth(g, 1);
 		}
 	}
+	
+	  public void DrawRegisterClassic(InstancePainter painter) {
+		    Graphics g = painter.getGraphics();
+		    Bounds bds = painter.getBounds();
+		    RegisterData state = (RegisterData) painter.getData();
+		    BitWidth widthVal = painter.getAttributeValue(StdAttr.WIDTH);
+		    int width = widthVal == null ? 8 : widthVal.getWidth();
+
+		    // determine text to draw in label
+		    String a;
+		    String b = null;
+		    if (painter.getShowState()) {
+		      int val = state == null ? 0 : state.value.toIntValue();
+		      String str = StringUtil.toHexString(width, val);
+		      if (str.length() <= 4) {
+		        a = str;
+		      } else {
+		        int split = str.length() - 4;
+		        a = str.substring(0, split);
+		        b = str.substring(split);
+		      }
+		    } else {
+		      a = S.get("registerLabel");
+		      b = S.fmt("registerWidthLabel", "" + widthVal.getWidth());
+		    }
+
+		    // draw boundary, label
+		    painter.drawBounds();
+		    g.setColor(painter.getAttributeValue(StdAttr.LABEL_COLOR));
+		    painter.drawLabel();
+
+		    // draw input and output ports
+		    if (b == null) {
+		      painter.drawPort(IN,  "D", Direction.EAST);
+		      painter.drawPort(OUT, "Q", Direction.WEST);
+		    } else {
+		      painter.drawPort(IN);
+		      painter.drawPort(OUT);
+		    }
+		    g.setColor(Color.GRAY);
+		    painter.drawPort(CLR, "0", Direction.SOUTH);
+		    painter.drawPort(EN, S.get("memEnableLabel"), Direction.EAST);
+		    g.setColor(Color.BLACK);
+		    painter.drawClock(CK, Direction.NORTH);
+
+		    // draw contents
+		    if (b == null) {
+		      GraphicsUtil.drawText(g, a, bds.getX() + 15, bds.getY() + 4,
+		          GraphicsUtil.H_CENTER, GraphicsUtil.V_TOP);
+		    } else {
+		      GraphicsUtil.drawText(g, a, bds.getX() + 15, bds.getY() + 3,
+		          GraphicsUtil.H_CENTER, GraphicsUtil.V_TOP);
+		      GraphicsUtil.drawText(g, b, bds.getX() + 15, bds.getY() + 15,
+		          GraphicsUtil.H_CENTER, GraphicsUtil.V_TOP);
+		    }
+		  }
+
+
 
 	static final int DELAY = 8;
 	public static final int OUT = 0;
@@ -144,7 +208,6 @@ public class Register extends InstanceFactory {
 	static final int CLR = 3;
 	static final int EN = 4;
 	static final int Xsize = 60;
-
 	static final int Ysize = 90;
 
 	public static final Attribute<Boolean> ATTR_SHOW_IN_TAB = Attributes
@@ -153,36 +216,58 @@ public class Register extends InstanceFactory {
 	public Register() {
 		super("Register", S.getter("registerComponent"));
 		setAttributes(new Attribute[] { StdAttr.WIDTH, StdAttr.TRIGGER,
-				StdAttr.LABEL, StdAttr.LABEL_FONT, ATTR_SHOW_IN_TAB, },
+				StdAttr.LABEL, StdAttr.LABEL_FONT, ATTR_SHOW_IN_TAB, StdAttr.APPEARANCE},
 				new Object[] { BitWidth.create(8), StdAttr.TRIG_RISING, "",
-						StdAttr.DEFAULT_LABEL_FONT, false, });
+						StdAttr.DEFAULT_LABEL_FONT, false, StdAttr.APPEAR_EVOLUTION});
 		setKeyConfigurator(new BitWidthConfigurator(StdAttr.WIDTH));
-		setOffsetBounds(Bounds.create(0, 0, Xsize, Ysize));
 		setIconName("register.gif");
 		setInstancePoker(RegisterPoker.class);
 		setInstanceLogger(RegisterLogger.class);
 
-		Port[] ps = new Port[5];
-		ps[OUT] = new Port(60, 30, Port.OUTPUT, StdAttr.WIDTH);
-		ps[IN] = new Port(0, 30, Port.INPUT, StdAttr.WIDTH);
-		ps[CK] = new Port(0, 70, Port.INPUT, 1);
-		ps[CLR] = new Port(30, 90, Port.INPUT, 1);
-		ps[EN] = new Port(0, 50, Port.INPUT, 1);
-		ps[OUT].setToolTip(S.getter("registerQTip"));
-		ps[IN].setToolTip(S.getter("registerDTip"));
-		ps[CK].setToolTip(S.getter("registerClkTip"));
-		ps[CLR].setToolTip(S.getter("registerClrTip"));
-		ps[EN].setToolTip(S.getter("registerEnableTip"));
-		setPorts(ps);
 	}
-
+	
+	@Override
+	public Bounds getOffsetBounds(AttributeSet attrs) {
+		if (attrs.getValue(StdAttr.APPEARANCE) == StdAttr.APPEAR_CLASSIC) {
+			return Bounds.create(-30,-20,30,40);
+		} else {
+			return Bounds.create(0, 0, Xsize, Ysize);
+		}
+	}
+	
 	@Override
 	protected void configureNewInstance(Instance instance) {
+		instance.addAttributeListener();
+		updatePorts(instance);
 		Bounds bds = instance.getBounds();
 		instance.setTextField(StdAttr.LABEL, StdAttr.LABEL_FONT, bds.getX()
 				+ bds.getWidth() / 2, bds.getY() - 3, GraphicsUtil.H_CENTER,
 				GraphicsUtil.V_BASELINE);
 	}
+	
+	private void updatePorts(Instance instance) {
+		Port[] ps = new Port[5];
+		if (instance.getAttributeValue(StdAttr.APPEARANCE) == StdAttr.APPEAR_CLASSIC) {
+			ps[OUT] = new Port(0, 0, Port.OUTPUT, StdAttr.WIDTH);
+			ps[IN] = new Port(-30, 0, Port.INPUT, StdAttr.WIDTH);
+			ps[CK] = new Port(-20, 20, Port.INPUT, 1);
+			ps[CLR] = new Port(-10, 20, Port.INPUT, 1);
+			ps[EN] = new Port(-30, 10, Port.INPUT, 1);
+		} else {
+			ps[OUT] = new Port(60, 30, Port.OUTPUT, StdAttr.WIDTH);
+			ps[IN] = new Port(0, 30, Port.INPUT, StdAttr.WIDTH);
+			ps[CK] = new Port(0, 70, Port.INPUT, 1);
+			ps[CLR] = new Port(30, 90, Port.INPUT, 1);
+			ps[EN] = new Port(0, 50, Port.INPUT, 1);
+		}
+		ps[OUT].setToolTip(S.getter("registerQTip"));
+		ps[IN].setToolTip(S.getter("registerDTip"));
+		ps[CK].setToolTip(S.getter("registerClkTip"));
+		ps[CLR].setToolTip(S.getter("registerClrTip"));
+		ps[EN].setToolTip(S.getter("registerEnableTip"));
+		instance.setPorts(ps);
+	}
+
 
 	@Override
 	public String getHDLName(AttributeSet attrs) {
@@ -209,30 +294,33 @@ public class Register extends InstanceFactory {
 
 	@Override
 	public void paintInstance(InstancePainter painter) {
-		RegisterData state = (RegisterData) painter.getData();
-		BitWidth widthVal = painter.getAttributeValue(StdAttr.WIDTH);
-		int width = widthVal == null ? 8 : widthVal.getWidth();
-		Location loc = painter.getLocation();
-		int x = loc.getX();
-		int y = loc.getY();
+		if (painter.getAttributeValue(StdAttr.APPEARANCE) == StdAttr.APPEAR_CLASSIC) {
+			DrawRegisterClassic(painter);
+		} else {
+			RegisterData state = (RegisterData) painter.getData();
+			BitWidth widthVal = painter.getAttributeValue(StdAttr.WIDTH);
+			int width = widthVal == null ? 8 : widthVal.getWidth();
+			Location loc = painter.getLocation();
+			int x = loc.getX();
+			int y = loc.getY();
 
-		// determine text to draw in label
-		Object Trigger = painter.getAttributeValue(StdAttr.TRIGGER);
-		boolean IsLatch = Trigger.equals(StdAttr.TRIG_HIGH)
-				|| Trigger.equals(StdAttr.TRIG_LOW);
-		boolean NegActive = Trigger.equals(StdAttr.TRIG_FALLING)
-				|| Trigger.equals(StdAttr.TRIG_LOW);
+			// determine text to draw in label
+			Object Trigger = painter.getAttributeValue(StdAttr.TRIGGER);
+			boolean IsLatch = Trigger.equals(StdAttr.TRIG_HIGH)
+					|| Trigger.equals(StdAttr.TRIG_LOW);
+			boolean NegActive = Trigger.equals(StdAttr.TRIG_FALLING)
+					|| Trigger.equals(StdAttr.TRIG_LOW);
 
-		DrawRegister(painter, x, y, width, IsLatch, NegActive, true, (state == null) ? null : state.value);
-		painter.drawLabel();
+			DrawRegisterEvolution(painter, x, y, width, IsLatch, NegActive, true, (state == null) ? null : state.value);
+			painter.drawLabel();
 
-		// draw input and output ports
-		painter.drawPort(IN);
-		painter.drawPort(OUT);
-		painter.drawPort(CLR);
-		painter.drawPort(EN);
-		painter.drawPort(CK);
-
+			// draw input and output ports
+			painter.drawPort(IN);
+			painter.drawPort(OUT);
+			painter.drawPort(CLR);
+			painter.drawPort(EN);
+			painter.drawPort(CK);
+		}
 	}
 
 	@Override
@@ -267,5 +355,13 @@ public class Register extends InstanceFactory {
 	@Override
 	public int[] ClockPinIndex(NetlistComponent comp) {
 		return new int[] {CK};
+	}
+	
+	@Override
+	protected void instanceAttributeChanged(Instance instance , Attribute<?> attr) {
+		if (attr == StdAttr.WIDTH || attr == StdAttr.APPEARANCE) {
+			instance.recomputeBounds();
+			updatePorts(instance);
+		}
 	}
 }
