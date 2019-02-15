@@ -3,7 +3,7 @@
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="created" content="2018-10-23T06:18:10.521000000">
-    <meta name="changed" content="2018-10-23T06:18:42.262000000">
+    <meta name="changed" content="2019-01-16T07:25:12.532000000">
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <meta http-equiv="Content-Language" content="fr">
     <title>
@@ -20,7 +20,7 @@
         Apparence par défaut
       </h2>
       <p>
-        <b class="note">Note:</b> Il existe deux présentations des circuits. Nous présentons ici la nouvelle apparence. Une bonne partie des explications convient aussi pour l'autre présentation. La version de la présentation est sélectionnable dans la propriétés <b class="propertie">Nouvelle apparence</b> du circuit.
+        <b class="note">Note:</b> Il existe deux présentations des circuits. Nous présentons ici la nouvelle apparence. Une bonne partie des explications convient aussi pour l'autre présentation. La version de la présentation est sélectionnable dans la propriété <b class="propertie">Nouvelle apparence</b> du circuit.
       </p>
       <p>
         Par défaut quand un sous-circuit est placé sur un schéma il est dessiné dans un rectangle avec le nom du circuit au sud, les entrées à l'est et les sorties à l'ouest. L’ancrage étant au sommet de la pin nord-ouest.
@@ -38,7 +38,7 @@
         Personnaliser l'apparence
       </h2>
       <p>
-        L'apparence par défaut est très utilisée et existe dans Logisim depuis de nombreuses années sans autres options. Si, toutefois, vous préférez que le sous-circuit soit dessiné différemment, vous pouvez sélectionner le menu <b class="menu">|&nbsp;Projet&nbsp;|</b>→<b class="menu">|&nbsp;Editer l’apparence du circuit&nbsp;|</b> et Logisim passera de l'interface <i>"édition du dessin"</i> à l'interface <i>"édition de l'apparence"</i> du circuit. (Vous pouvez également cliquer sur l'icône à l'extrême droite (<img class="notscal" src="../../../../icons/projapp.gif" alt="#########">) de la <a href="../attrlib/toolsbar.html">barre d'outils de l'explorateur</a>.) Ci-dessous, nous modifions l’aspect du multiplexeur 2:1 pour qu’il soit dessiné avec un trapèze habituel plutôt qu'un rectangle.
+        L'apparence par défaut est très utilisée et existe dans Logisim depuis de nombreuses années sans autres options. Si, toutefois, vous préférez que le sous-circuit soit dessiné différemment, vous pouvez sélectionner le menu <b class="menu">|&nbsp;Projet&nbsp;|</b>→<b class="menu">|&nbsp;Editer l’apparence du circuit&nbsp;|</b> et Logisim passera de l'interface <i>"édition du dessin"</i> à l'interface <i>"édition de l'apparence"</i> du circuit. Vous pouvez également cliquer sur l'icône à l'extrême droite (<img class="notscal" src="../../../../icons/projapp.gif" alt="#########">) de la <a href="../attrlib/toolsbar.html">barre d'outils de l'explorateur</a>. Ci-dessous, nous modifions l’aspect du multiplexeur 2:1 pour qu’il soit dessiné avec un trapèze habituel plutôt qu'un rectangle.
       </p>
       <center>
         <img src="../../../img-guide/subcirc-custom-appear.png" alt="#########">
@@ -65,17 +65,18 @@
           <p>
             Les cercles bleus (<img class="intxt" src="../../../../img-guide/pinoutput.png" alt="#########">) et les carrés avec un point (<img class="intxt" src="../../../../img-guide/pininput.png" alt="#########">) sont les <b>connexions</b> du sous-circuit. Il y a exactement autant de symboles que de broche d'entrée et de sorties. Les connexions en entrée sont indiquées par des carrés et les connexions en sortie par des cercles. Chaque symbole indique comment un fil se connectant au circuit correspondra à une broche d'entrée ou de sortie dans la mise en page.
           </p>
-        </li>
-      </ul>
-      <p>
+		  <p>
         Lorsque vous sélectionnez une connexion, Logisim indiquera la broche correspondante en faisant apparaitre un diagramme miniature de la disposition dans une fenêtre en bas à droite et la broche correspondante dessinée en bleu. Cela ne se fait pas si toutes les connexions sont sélectionnées.
       </p>
+        </li>
+      </ul>
+      <center>
+        <img src="../../../img-guide/subcirc-custom-layout2.png" alt="#########">
+      </center>      
       <p>
         Nous pouvons modifier le zoom de l'image avec un <b class="tkeybd">Ctrl+Molette Souris</b> ou à l'aide des boutons fléchés en bas sur la gauche de l'espace de travail. Le taux est affiché.
       </p>
-      <center>
-        <img src="../../../img-guide/subcirc-custom-layout2.png" alt="#########">
-      </center>
+
       <p>
         La barre d'outils contient des outils pour ajouter des formes supplémentaires, comme indiqué ci-dessous. Certaines touches (<b class="tkeybd">Ctrl,Alt,Maj</b>) ont un effet sur la manière dont les figures sont dessinées. Ces touches peuvent se combiner entre elles.
       </p>
@@ -87,29 +88,29 @@
       <p>
         Ci-dessous une petite présentation de chaque outil
       </p>
-	  <table class="toolslist">
+	 <table class="toolslist">
         <tbody>
           <tr>
             <td class="toolslist" valign="top">
-              <img class="intxt" src="../../../../icons/select.gif" alt="#########" border="1">
+              <img class="intxt" src="../../../../icons/select.gif" alt="#########">
             </td>
             <td><strong>Outil Sélection :</strong> Sélectionne, déplace, copie, colle les symboles.</td>
           </tr>
           <tr>
             <td class="toolslist" valign="top">
-              <img class="intxt" src="../../../../icons/text.gif" alt="#########" border="1">
+              <img class="intxt"  src="../../../../icons/text.gif" alt="#########" border="1">
             </td>
             <td><strong>Outil Text :</strong> Insert ou édite un text.</td>
           </tr>
           <tr>
             <td class="toolslist" valign="top">
-              <img class="intxt" src="../../../../icons/drawline.gif" alt="#########" border="1">
+              <img class="intxt"  src="../../../../icons/drawline.gif" alt="#########" border="1">
             </td>
             <td><strong>Outil Ligne :</strong> Crée un segment de ligne.</td>
           </tr>
           <tr>
             <td class="toolslist" valign="top">
-              <img class="intxt" src="../../../../icons/drawcurv.gif" alt="#########" border="1">
+              <img class="intxt"  src="../../../../icons/drawcurv.gif" alt="#########" border="1">
             </td>
             <td><strong>Outil Courbe :</strong> Crée une courbe de Bezier. Le premier clic et glisser spécifie le début de la ligne, le second clic et glisser termine la ligne et définit la courbure. Un clic sur la ligne vous montre les trois points de contrôle. <b class="tkeybd">Maj</b> et clic sur point central de contrôle imposent une courbe symétrique. <b class="tkeybd">Alt</b> et click sur point central dessine la courbe au travers du point de contrôle (sous la souris).</td>
           </tr>
@@ -129,7 +130,7 @@
             <td class="toolslist" valign="top">
               <img class="intxt" src="../../../../icons/drawrrct.gif" alt="#########" border="1">
             </td>
-            <td><strong>Outil rectangle :</strong> Crée un rectangle ou un carré a bord arrondi (<b class="tkeybd">Maj</b>) en glissant depuis un angle vers l'angle opposé.</td>
+            <td><strong>Outil rectangle :</strong> Crée un rectangle ou un carré à bord arrondi (<b class="tkeybd">Maj</b>) en glissant depuis un angle vers l'angle opposé.</td>
           </tr>
           <tr>
             <td class="toolslist" valign="top">

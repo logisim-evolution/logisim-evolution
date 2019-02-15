@@ -3,7 +3,7 @@
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="created" content="2018-10-23T06:18:10.521000000">
-    <meta name="changed" content="2018-10-23T06:18:42.262000000">
+    <meta name="changed" content="2019-01-15T07:25:23.245000000">
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <meta http-equiv="Content-Language" content="fr">
     <title>
@@ -23,7 +23,7 @@
         La syntaxe globale de la ligne de commande est la suivante.
       </p>
       <blockquote>
-        <pre>java -jar <em><b>jarFileName</b></em> <em>[options]</em> <em>[filenames]</em>
+        <pre>java -jar <i><b>jarFileName</b></i> <i>[options]</i> <i>[filenames]</i>
 </pre>
       </blockquote>
       <p>
@@ -33,7 +33,7 @@
         L'exemple suivant démarre Logisim dans sa configuration de base.
       </p>
       <blockquote>
-        <pre>java -jar <em><b>jarFileName</b></em> -plain -gates shaped -locale fr
+        <pre>java -jar <i><b>jarFileName</b></i> -plain -gates shaped -locale fr
 </pre>
       </blockquote>
       <p>
@@ -52,7 +52,7 @@
           <pre>
 </pre>
           <dt>
-            <tt>-template <b><em>templateFile</em></b></tt>
+            <tt>-template <b><i>templateFile</i></b></tt>
           </dt>
           <pre>
 </pre>
@@ -72,7 +72,7 @@
           </p>
         </dd>
         <dt>
-          <tt>-locale <em><b>localeIdentifier</b></em></tt>
+          <tt>-locale <i><b>localeIdentifier</b></i></tt>
         </dt>
         <dd>
           <p>
@@ -81,59 +81,43 @@
           <table>
             <tbody>
               <tr>
-                <th>
-                  <tt>de</tt>
-                </th>
                 <td>
-                  Allemand
+                  <tt>de  </tt>Allemand
                 </td>
               </tr>
               <tr>
-                <th>
-                  <tt>el</tt>
-                </th>
                 <td>
-                  Grec
+                  <tt>el  </tt>Grec
                 </td>
               </tr>
               <tr>
-                <th>
-                  <tt>en</tt>
-                </th>
                 <td>
-                  Anglais
+                  <tt>en  </tt>Anglais
                 </td>
               </tr>
               <tr>
-                <th>
-                  <tt>es</tt>
-                </th>
                 <td>
-                  Espagnol
+                  <tt>es  </tt>Espagnol
                 </td>
               </tr>
               <tr>
-                <th>
-                  <tt>fr</tt>
-                </th>
-                <td>
-                  Français
+                <ts>
+                  <tt>fr  </tt>Français
                 </td>
               </tr>
               <tr>
-                <th>
-                  <tt>pt</tt>
-                </th>
                 <td>
-                  Portugais
+                  <tt>pt  </tt>Portugais
                 </td>
               </tr>
               <tr>
-                <th>
-                  <tt>ru</tt>
-                </th>
                 <td>
-                  Russe
+                  <tt>ru  </tt>Russe
+                </td>
+              </tr>
+			  <tr>
+                <td>
+                  <tt>it  </tt>Italien
                 </td>
               </tr>
             </tbody>
@@ -141,7 +125,7 @@
         </dd>
         <dd></dd>
         <dt>
-          <tt>-accents <em>[<b>yes</b>|<b>no</b>]</em></tt>
+          <tt>-accents <i>[<b>yes</b>|<b>no</b>]</i></tt>
         </dt>
         <dd>
           <p>
@@ -197,19 +181,19 @@
           </p>
         </dd>
         <dt>
-          <tt>-load file</tt>
+          <tt>-load <i><b>filename</b></i></tt>
         </dt>
         <dd>
           <p>
-            Charge une image dans les RAM (fonctionne seulement avec -tty)
+            Charge une image dans les RAM (fonctionne seulement avec -tty). Plus d'information dans <a href="../verify/other.html">Autres options de vérifications</a>
           </p>
         </dd>
         <dt>
-          <tt>-sub file1 file2</tt>
+          <tt>-sub <i><b>file1</b> <b>file2</b></i></tt>
         </dt>
         <dd>
           <p>
-            charger le fichier en remplaçant le fichier de bibliothèque (file1) par le le fichier de bibliothèque (file2). <a href="../verify/sub.html">Substituer des librairies</a>
+            Charger le fichier en remplaçant le fichier de bibliothèque (file1) par le le fichier de bibliothèque (file2). Plus d'information dans <a href="../verify/sub.html">Substituer des librairies</a>
           </p>
         </dd>
         <dt>
@@ -217,20 +201,20 @@
         </dt>
         <dd>
           <p>
-            exécuter sans interface graphique. Plus d'information dans <a href="../verify/other.html">Autres options de vérifications</a>
+            Exécuter sans interface graphique. Plus d'information dans <a href="../verify/other.html">Autres options de vérifications</a>
           </p>
         </dd>
+		<dt>
+          <tt>-testvector <i><b>circuitname</b> <b>vectorfile</b> <b>projectfile</b></i> </tt>
+		</dt>
         <dd>
-          <p>
-            Options non documentées
-          </p>
-        </dd>
+		  Exécute les tests de <b>circuitname</b> dans <b>projectfile</b> en focntion des vecteurs dans <b>vectorfile</b>. Plus d'information dans <a href="../verify/test.html">Fenêtre Vecteur de test</a> 
+		</dd>
+		</dl>
+		<h2>Options non documentées</h2>
+		<dl>
         <dt>
           <tt>-test-circuit <b>testCircuitPathInput</b></tt>
-        </dt>
-        <dd></dd>
-        <dt>
-          <tt>-testvector</tt>
         </dt>
         <dd></dd>
         <dt>
