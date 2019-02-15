@@ -167,6 +167,11 @@ span.evalue {
 	text-align :center;
 }
 
+/* To mark the areas to translate */ 
+span.totranslate {
+	color:##DA81F5;
+}
+
 /* Définition pour la table présentation de lib */
 
 /* Définition pour la table des composant de lib */
