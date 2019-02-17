@@ -121,7 +121,7 @@ abstract class AbstractFlipFlop extends InstanceFactory {
 				: StdAttr.EDGE_TRIGGER;
 		setAttributes(new Attribute[] { triggerAttribute, StdAttr.LABEL,
 				StdAttr.LABEL_FONT , StdAttr.APPEARANCE }, new Object[] { StdAttr.TRIG_RISING, "",
-				StdAttr.DEFAULT_LABEL_FONT,StdAttr.APPEAR_EVOLUTION });
+				StdAttr.DEFAULT_LABEL_FONT,AppPreferences.getDefaultAppearance() });
 		setInstancePoker(Poker.class);
 		setInstanceLogger(Logger.class);
 

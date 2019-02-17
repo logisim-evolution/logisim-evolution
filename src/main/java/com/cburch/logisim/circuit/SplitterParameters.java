@@ -65,35 +65,35 @@ class SplitterParameters {
 		}
 		int width = 20;
 
+		int gap = attrs.spacing * 10;
 		int offs = 6;
 		if (facing == Direction.NORTH || facing == Direction.SOUTH) { // ^ or V
 			int m = facing == Direction.NORTH ? 1 : -1;
-			dxEnd0 = justify == 0 ? 10 * ((fanout + 1) / 2 - 1)
-					: m * justify < 0 ? -10 : 10 * fanout;
+			dxEnd0 = justify == 0 ? gap * ((fanout + 1) / 2 - 1)
+					: m * justify < 0 ? -10 : (10 + gap * (fanout-1));
 			dyEnd0 = -m * width;
-			ddxEnd = -10;
+			ddxEnd = -gap;
 			ddyEnd = 0;
 			dxEndSpine = 0;
 			dyEndSpine = m * (width - offs);
-			dxSpine0 = m * justify * (10 * fanout - 1);
+			dxSpine0 = m * justify * (10 + gap *(fanout - 1) - 1);
 			dySpine0 = -m * offs;
 			dxSpine1 = m * justify * offs;
 			dySpine1 = -m * offs;
 			textAngle = 90;
 			halign = m > 0 ? GraphicsUtil.H_RIGHT : GraphicsUtil.H_LEFT;
-			valign = m * justify <= 0 ? GraphicsUtil.V_BASELINE
-					: GraphicsUtil.V_TOP;
+			valign = GraphicsUtil.V_BASELINE;
 		} else { // > or <
 			int m = facing == Direction.WEST ? -1 : 1;
 			dxEnd0 = m * width;
-			dyEnd0 = justify == 0 ? -10 * (fanout / 2) : m * justify > 0 ? 10
-					: -10 * fanout;
+			dyEnd0 = justify == 0 ? -gap * (fanout / 2) : m * justify > 0 ? 10
+					: -(10 + gap * (fanout-1));
 			ddxEnd = 0;
-			ddyEnd = 10;
+			ddyEnd = gap;
 			dxEndSpine = -m * (width - offs);
 			dyEndSpine = 0;
 			dxSpine0 = m * offs;
-			dySpine0 = m * justify * (10 * fanout - 1);
+			dySpine0 = m * justify * (10 + gap * (fanout - 1) - 1);
 			dxSpine1 = m * offs;
 			dySpine1 = m * justify * offs;
 			textAngle = 0;

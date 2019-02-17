@@ -32,9 +32,11 @@ package com.cburch.logisim.gui.prefs;
 
 import static com.cburch.logisim.gui.Strings.S;
 
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import com.cburch.logisim.circuit.RadixOption;
+import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.TableLayout;
 
@@ -42,6 +44,7 @@ class LayoutOptions extends OptionsPanel {
 	private static final long serialVersionUID = 1L;
 	private PrefBoolean[] checks;
 	private PrefOptionList afterAdd;
+	private PrefOptionList DefaultAppear;
 	private PrefOptionList radix1;
 	private PrefOptionList radix2;
 
@@ -66,7 +69,7 @@ class LayoutOptions extends OptionsPanel {
 				new PrefBoolean(AppPreferences.NEW_INPUT_OUTPUT_SHAPES,
 						S.getter("layoutUseNewInputOutputSymbols")),
 				};
-
+		
 		for (int i = 0; i < 2; i++) {
 			RadixOption[] opts = RadixOption.OPTIONS;
 			PrefOption[] items = new PrefOption[opts.length];
@@ -88,8 +91,18 @@ class LayoutOptions extends OptionsPanel {
 								S.getter("layoutAddAfterUnchanged")),
 						new PrefOption(AppPreferences.ADD_AFTER_EDIT,
 								S.getter("layoutAddAfterEdit")) });
+		DefaultAppear = new PrefOptionList(AppPreferences.DefaultAppearance,
+				S.getter("layoutDefaultApearance"), new PrefOption[] {
+						new PrefOption(StdAttr.APPEAR_CLASSIC.toString(),
+								StdAttr.APPEAR_CLASSIC.getDisplayGetter()),
+						new PrefOption(StdAttr.APPEAR_FPGA.toString(),
+								StdAttr.APPEAR_FPGA.getDisplayGetter()),
+						new PrefOption(StdAttr.APPEAR_EVOLUTION.toString(),
+								StdAttr.APPEAR_EVOLUTION.getDisplayGetter())});
 
 		JPanel panel = new JPanel(new TableLayout(2));
+		panel.add(DefaultAppear.getJLabel());
+		panel.add(DefaultAppear.getJComboBox());
 		panel.add(afterAdd.getJLabel());
 		panel.add(afterAdd.getJComboBox());
 		panel.add(radix1.getJLabel());

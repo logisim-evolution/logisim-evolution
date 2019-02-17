@@ -52,6 +52,7 @@ import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.tools.key.BitWidthConfigurator;
 import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.StringUtil;
@@ -218,7 +219,7 @@ public class Register extends InstanceFactory {
 		setAttributes(new Attribute[] { StdAttr.WIDTH, StdAttr.TRIGGER,
 				StdAttr.LABEL, StdAttr.LABEL_FONT, ATTR_SHOW_IN_TAB, StdAttr.APPEARANCE},
 				new Object[] { BitWidth.create(8), StdAttr.TRIG_RISING, "",
-						StdAttr.DEFAULT_LABEL_FONT, false, StdAttr.APPEAR_EVOLUTION});
+						StdAttr.DEFAULT_LABEL_FONT, false, AppPreferences.getDefaultAppearance()});
 		setKeyConfigurator(new BitWidthConfigurator(StdAttr.WIDTH));
 		setIconName("register.gif");
 		setInstancePoker(RegisterPoker.class);

@@ -51,6 +51,7 @@ import com.cburch.logisim.data.Attributes;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.SyntaxChecker;
 
 public class CircuitAttributes extends AbstractAttributeSet {
@@ -116,6 +117,7 @@ public class CircuitAttributes extends AbstractAttributeSet {
 	static AttributeSet createBaseAttrs(Circuit source, String name) {
 		AttributeSet ret = AttributeSets
 				.fixedSet(STATIC_ATTRS, STATIC_DEFAULTS);
+		ret.setValue(APPEARANCE_ATTR, AppPreferences.getDefaultCircuitAppearance());
 		ret.setValue(CircuitAttributes.NAME_ATTR, name);
 		ret.addAttributeListener(new StaticListener(source));
 		return ret;
@@ -158,7 +160,7 @@ public class CircuitAttributes extends AbstractAttributeSet {
 
 	private static final Object[] STATIC_DEFAULTS = { "", "", Direction.EAST,
 			StdAttr.DEFAULT_LABEL_FONT, 
-			false, "",APPEAR_EVOLUTION };
+			false, "", APPEAR_CLASSIC };
 
 	private static final List<Attribute<?>> INSTANCE_ATTRS = Arrays
 			.asList(new Attribute<?>[] { StdAttr.FACING, StdAttr.LABEL,

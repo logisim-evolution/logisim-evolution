@@ -37,7 +37,11 @@ import java.awt.Cursor;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
+import java.util.prefs.PreferenceChangeEvent;
+import java.util.prefs.PreferenceChangeListener;
 
 import javax.swing.Icon;
 import javax.swing.JOptionPane;
@@ -53,6 +57,7 @@ import com.cburch.logisim.comp.ComponentFactory;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeEvent;
 import com.cburch.logisim.data.AttributeListener;
+import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
@@ -73,7 +78,7 @@ import com.cburch.logisim.util.AutoLabel;
 import com.cburch.logisim.util.StringUtil;
 import com.cburch.logisim.util.SyntaxChecker;
 
-public class AddTool extends Tool {
+public class AddTool extends Tool implements PropertyChangeListener {
 	private class MyAttributeListener implements AttributeListener {
 		public void attributeListChanged(AttributeEvent e) {
 			bounds = null;
@@ -120,6 +125,10 @@ public class AddTool extends Tool {
 		this.shouldSnap = base.shouldSnap;
 		this.attrs = (AttributeSet) base.attrs.clone();
 		attrs.addAttributeListener(new MyAttributeListener());
+		if (this.attrs.containsAttribute(StdAttr.APPEARANCE)) {
+			System.out.println("Has appearance");
+			AppPreferences.DefaultAppearance.addPropertyChangeListener(this);
+		}
 	}
 
 	public AddTool(Class<? extends Library> base, FactoryDescription description) {
@@ -130,6 +139,9 @@ public class AddTool extends Tool {
 		this.attrs = new FactoryAttributes(base, description);
 		attrs.addAttributeListener(new MyAttributeListener());
 		this.keyHandlerTried = false;
+		if (this.attrs.containsAttribute(StdAttr.APPEARANCE)) {
+			AppPreferences.DefaultAppearance.addPropertyChangeListener(this);
+		}
 	}
 
 	public AddTool(ComponentFactory source) {
@@ -142,6 +154,16 @@ public class AddTool extends Tool {
 		Boolean value = (Boolean) source.getFeature(
 				ComponentFactory.SHOULD_SNAP, attrs);
 		this.shouldSnap = value == null ? true : value.booleanValue();
+		if (this.attrs.containsAttribute(StdAttr.APPEARANCE)) {
+			System.out.println("Has appearance");
+			AppPreferences.DefaultAppearance.addPropertyChangeListener(this);
+		}
+	}
+
+
+	@Override
+	public void propertyChange(PropertyChangeEvent evt) {
+		attrs.setValue(StdAttr.APPEARANCE, AppPreferences.getDefaultAppearance());
 	}
 
 	public void cancelOp() {
@@ -697,4 +719,5 @@ public class AddTool extends Tool {
 			return this.description.equals(o.description);
 		}
 	}
+
 }

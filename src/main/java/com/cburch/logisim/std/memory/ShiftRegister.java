@@ -49,6 +49,7 @@ import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.tools.key.BitWidthConfigurator;
 import com.cburch.logisim.tools.key.IntegerConfigurator;
 import com.cburch.logisim.tools.key.JoinedConfigurator;
@@ -74,7 +75,7 @@ public class ShiftRegister extends InstanceFactory {
 		setAttributes(new Attribute[] { StdAttr.WIDTH, ATTR_LENGTH, ATTR_LOAD,
 				StdAttr.EDGE_TRIGGER, StdAttr.LABEL, StdAttr.LABEL_FONT, StdAttr.APPEARANCE },
 				new Object[] { BitWidth.ONE, Integer.valueOf(8), Boolean.TRUE,
-						StdAttr.TRIG_RISING, "", StdAttr.DEFAULT_LABEL_FONT, StdAttr.APPEAR_EVOLUTION });
+						StdAttr.TRIG_RISING, "", StdAttr.DEFAULT_LABEL_FONT, AppPreferences.getDefaultAppearance() });
 		setKeyConfigurator(JoinedConfigurator
 				.create(new IntegerConfigurator(ATTR_LENGTH, 1, 32, 0),
 						new BitWidthConfigurator(StdAttr.WIDTH)));

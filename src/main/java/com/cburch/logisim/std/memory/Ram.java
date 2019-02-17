@@ -51,6 +51,7 @@ import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
+import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.gui.hex.HexFile;
@@ -614,14 +615,12 @@ public class Ram extends Mem {
 
 	@Override
 	public String getHDLName(AttributeSet attrs) {
-		StringBuffer CompleteName = new StringBuffer();
 		String Label = CorrectLabel.getCorrectLabel(attrs.getValue(StdAttr.LABEL));
 		if (Label.length()==0) {
-			CompleteName.append("RAM");
+			return "RAM";
 		} else {
-			CompleteName.append("RAM_"+Label);
+			return "RAMCONTENTS_"+Label;
 		}
-		return CompleteName.toString();
 	}
 
 	@Override
@@ -634,13 +633,17 @@ public class Ram extends Mem {
 
 	@Override
 	public Bounds getOffsetBounds(AttributeSet attrs) {
-		int len = attrs.getValue(Mem.DATA_ATTR).getWidth();
 		Object bus = attrs.getValue(RamAttributes.ATTR_DBUS);
 		boolean separate = bus == null ? false : bus
 				.equals(RamAttributes.BUS_SEP);
 		int xoffset = (separate) ? 40 : 50;
-		return Bounds.create(0, 0, SymbolWidth + xoffset,
-				getControlHeight(attrs) + 20 * len);
+		if (attrs.getValue(StdAttr.APPEARANCE) == StdAttr.APPEAR_CLASSIC) {
+			return Bounds.create(0, 0, SymbolWidth + xoffset, 140);
+		} else {
+			int len = attrs.getValue(Mem.DATA_ATTR).getWidth();
+			return Bounds.create(0, 0, SymbolWidth + xoffset,
+					getControlHeight(attrs) + 20 * len);
+		}
 	}
 
 	@Override
@@ -686,7 +689,8 @@ public class Ram extends Mem {
 		super.instanceAttributeChanged(instance, attr);
 		if ((attr == Mem.DATA_ATTR) || (attr == RamAttributes.ATTR_DBUS)
 				|| (attr == StdAttr.TRIGGER)
-				|| (attr == RamAttributes.ATTR_ByteEnables)) {
+				|| (attr == RamAttributes.ATTR_ByteEnables)
+				|| (attr == StdAttr.APPEARANCE)) {
 			if ((attr == Mem.DATA_ATTR) || (attr == StdAttr.TRIGGER)) {
 				boolean disable_due_to_bits = instance.getAttributeValue(
 						Mem.DATA_ATTR).getWidth() < 9;
@@ -726,35 +730,69 @@ public class Ram extends Mem {
 			configurePorts(instance);
 		}
 	}
+	
+	
+	public void DrawRamClassic(InstancePainter painter) {
+		DrawMemClassic(painter);
+		painter.drawPort(WE, S.get("ramWELabel"), Direction.EAST);
+		painter.drawPort(OE, S.get("ramOELabel"), Direction.EAST);
+		Object trigger = painter.getAttributeValue(StdAttr.TRIGGER);
+		boolean asynch = trigger.equals(StdAttr.TRIG_HIGH)
+				|| trigger.equals(StdAttr.TRIG_LOW);
+		if (!asynch)
+			painter.drawClock(CLK, Direction.EAST);
+		Object busVal = painter.getAttributeValue(RamAttributes.ATTR_DBUS);
+		boolean separate = busVal == null ? false : busVal.equals(RamAttributes.BUS_SEP);
+		if (separate) {
+			if (asynch) {
+				painter.drawPort(ADIN, S.get("ramDataLabel"), Direction.EAST);
+			} else {
+				painter.drawPort(SDIN, S.get("ramDataLabel"), Direction.EAST);
+			}
+		}
+		Object be = painter.getAttributeValue(RamAttributes.ATTR_ByteEnables);
+		boolean byteEnables = be == null ? false : be
+				.equals(RamAttributes.BUS_WITH_BYTEENABLES);
+		if (byteEnables) {
+			int NrOfByteEnables = GetNrOfByteEnables(painter.getAttributeSet());
+			int ByteEnableIndex = ByteEnableIndex(painter.getAttributeSet());
+			for (int i = 0; i < NrOfByteEnables; i++) {
+				painter.drawPort(ByteEnableIndex + i, S.get("ramWELabel")+(NrOfByteEnables-i-1), Direction.EAST);
+			}
+		}
+	}
 
 	@Override
 	public void paintInstance(InstancePainter painter) {
-		Graphics g = painter.getGraphics();
-		Bounds bds = painter.getBounds();
-		int NrOfBits = painter.getAttributeValue(Mem.DATA_ATTR).getWidth();
+		if (painter.getAttributeValue(StdAttr.APPEARANCE) == StdAttr.APPEAR_CLASSIC) {
+			DrawRamClassic(painter);
+		} else {
+			Graphics g = painter.getGraphics();
+			Bounds bds = painter.getBounds();
+			int NrOfBits = painter.getAttributeValue(Mem.DATA_ATTR).getWidth();
 
-		// int addrb = painter.getAttributeValue(Mem.ADDR_ATTR).getWidth();
+			String Label = painter.getAttributeValue(StdAttr.LABEL);
+			if (Label != null && painter.getAttributeValue(StdAttr.LABEL_VISIBILITY)) {
+				Font font = g.getFont();
+				g.setFont(painter.getAttributeValue(StdAttr.LABEL_FONT));
+				GraphicsUtil.drawCenteredText(g, Label, bds.getX() + bds.getWidth()
+						/ 2, bds.getY() - g.getFont().getSize());
+				g.setFont(font);
+			}
+			int xpos = bds.getX();
+			int ypos = bds.getY();
 
-		String Label = painter.getAttributeValue(StdAttr.LABEL);
-		if (Label != null) {
-			Font font = g.getFont();
-			g.setFont(painter.getAttributeValue(StdAttr.LABEL_FONT));
-			GraphicsUtil.drawCenteredText(g, Label, bds.getX() + bds.getWidth()
-					/ 2, bds.getY() - g.getFont().getSize());
-			g.setFont(font);
-		}
-		int xpos = bds.getX();
-		int ypos = bds.getY();
-
-		DrawControlBlock(painter, xpos, ypos);
-		for (int i = 0; i < NrOfBits; i++) {
-			DrawDataBlock(painter, xpos, ypos, i, NrOfBits);
-		}
-		/* Draw contents */
-		if (painter.getShowState()) {
-			RamState state = (RamState) getState(painter);
-			state.paint(painter.getGraphics(), bds.getX() + 20, bds.getY(),
-					true, getControlHeight(painter.getAttributeSet()));
+			DrawControlBlock(painter, xpos, ypos);
+			for (int i = 0; i < NrOfBits; i++) {
+				DrawDataBlock(painter, xpos, ypos, i, NrOfBits);
+			}
+			/* Draw contents */
+			if (painter.getShowState()) {
+				RamState state = (RamState) getState(painter);
+				state.paint(painter.getGraphics(), bds.getX(), bds.getY(),
+						60, getControlHeight(painter.getAttributeSet()) + 5,
+						Mem.SymbolWidth - 75, 20 * NrOfBits - 10, false);
+			}
 		}
 	}
 

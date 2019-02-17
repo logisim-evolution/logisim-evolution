@@ -46,6 +46,7 @@ import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Attributes;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
+import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceFactory;
@@ -94,12 +95,11 @@ public class Counter extends InstanceFactory {
 
 	public Counter() {
 		super("Counter", S.getter("counterComponent"));
-		setOffsetBounds(Bounds.create(0, 0, 30, 40));
+		setOffsetBounds(Bounds.create(-30, -20, 30, 40));
 		setIconName("counter.gif");
 		setInstancePoker(CounterPoker.class);
 		setInstanceLogger(RegisterLogger.class);
 		setKeyConfigurator(new BitWidthConfigurator(StdAttr.WIDTH));
-
 	}
 
 	@Override
@@ -113,27 +113,38 @@ public class Counter extends InstanceFactory {
 		BitWidth widthVal = instance.getAttributeValue(StdAttr.WIDTH);
 		int width = widthVal == null ? 8 : widthVal.getWidth();
 		Port[] ps = new Port[8];
-		if (width == 1) {
-			ps[OUT] = new Port(SymbolWidth(width) + 40, 120, Port.OUTPUT,
-					StdAttr.WIDTH);
-			ps[IN] = new Port(0, 120, Port.INPUT, StdAttr.WIDTH);
+		if (instance.getAttributeValue(StdAttr.APPEARANCE) == StdAttr.APPEAR_CLASSIC) {
+			ps[OUT] = new Port(0, 0, Port.OUTPUT, StdAttr.WIDTH);
+			ps[IN] = new Port(-30, 0, Port.INPUT, StdAttr.WIDTH);
+			ps[CK] = new Port(-20, 20, Port.INPUT, 1);
+			ps[CLR] = new Port(-10, 20, Port.INPUT, 1);
+			ps[LD] = new Port(-30, -10, Port.INPUT, 1);
+			ps[UD] = new Port(-20, -20, Port.INPUT, 1);
+			ps[EN] = new Port(-30, 10, Port.INPUT, 1);
+			ps[CARRY] = new Port(0, 10, Port.OUTPUT, 1);
 		} else {
-			ps[OUT] = new Port(SymbolWidth(width) + 40, 110, Port.OUTPUT,
-					StdAttr.WIDTH);
-			ps[IN] = new Port(0, 110, Port.INPUT, StdAttr.WIDTH);
+			if (width == 1) {
+				ps[OUT] = new Port(SymbolWidth(width) + 40, 120, Port.OUTPUT,
+						StdAttr.WIDTH);
+				ps[IN] = new Port(0, 120, Port.INPUT, StdAttr.WIDTH);
+			} else {
+				ps[OUT] = new Port(SymbolWidth(width) + 40, 110, Port.OUTPUT,
+						StdAttr.WIDTH);
+				ps[IN] = new Port(0, 110, Port.INPUT, StdAttr.WIDTH);
+			}
+			ps[CK] = new Port(0, 80, Port.INPUT, 1);
+			ps[CLR] = new Port(0, 20, Port.INPUT, 1);
+			ps[LD] = new Port(0, 30, Port.INPUT, 1);
+			ps[UD] = new Port(0, 50, Port.INPUT, 1);
+			ps[EN] = new Port(0, 70, Port.INPUT, 1);
+			ps[CARRY] = new Port(40 + SymbolWidth(width), 50, Port.OUTPUT, 1);
 		}
-		ps[CK] = new Port(0, 80, Port.INPUT, 1);
-		ps[CLR] = new Port(0, 20, Port.INPUT, 1);
-		ps[LD] = new Port(0, 30, Port.INPUT, 1);
-		ps[UD] = new Port(0, 50, Port.INPUT, 1);
-		ps[EN] = new Port(0, 70, Port.INPUT, 1);
-		ps[CARRY] = new Port(40 + SymbolWidth(width), 50, Port.OUTPUT, 1);
 		ps[OUT].setToolTip(S.getter("counterQTip"));
 		ps[IN].setToolTip(S.getter("counterDataTip"));
 		ps[CK].setToolTip(S.getter("counterClockTip"));
 		ps[CLR].setToolTip(S.getter("counterResetTip"));
 		ps[LD].setToolTip(S.getter("counterLoadTip"));
-		ps[UD].setToolTip(S.getter("counterUpDownTip"));
+			ps[UD].setToolTip(S.getter("counterUpDownTip"));
 		ps[EN].setToolTip(S.getter("counterEnableTip"));
 		ps[CARRY].setToolTip(S.getter("counterCarryTip"));
 		instance.setPorts(ps);
@@ -372,7 +383,10 @@ public class Counter extends InstanceFactory {
 	public Bounds getOffsetBounds(AttributeSet attrs) {
 		BitWidth widthVal = attrs.getValue(StdAttr.WIDTH);
 		int width = widthVal == null ? 8 : widthVal.getWidth();
-		return Bounds.create(0, 0, SymbolWidth(width) + 40, 110 + 20 * width);
+		if (attrs.getValue(StdAttr.APPEARANCE) == StdAttr.APPEAR_CLASSIC)
+			return Bounds.create(-30, -20, 30, 40);
+		else
+			return Bounds.create(0, 0, SymbolWidth(width) + 40, 110 + 20 * width);
 	}
 
 	@Override
@@ -385,14 +399,76 @@ public class Counter extends InstanceFactory {
 
 	@Override
 	protected void instanceAttributeChanged(Instance instance, Attribute<?> attr) {
-		if (attr == StdAttr.WIDTH) {
+		if (attr == StdAttr.WIDTH || attr == StdAttr.APPEARANCE) {
 			instance.recomputeBounds();
 			configurePorts(instance);
 		}
 	}
+	
+	public void DrawCounterClassic(InstancePainter painter) {
+        Graphics g = painter.getGraphics();
+        Bounds bds = painter.getBounds();
+        RegisterData state = (RegisterData) painter.getData();
+        BitWidth widthVal = painter.getAttributeValue(StdAttr.WIDTH);
+        int width = widthVal == null ? 8 : widthVal.getWidth();
+
+        // determine text to draw in label
+        String a;
+        String b = null;
+        if (painter.getShowState()) {
+            int val = state == null ? 0 : state.value.toIntValue();
+            String str = StringUtil.toHexString(width, val);
+            if (str.length() <= 4) {
+                a = str;
+            } else {
+                int split = str.length() - 4;
+                a = str.substring(0, split);
+                b = str.substring(split);
+            }
+        } else {
+            a = S.get("counterLabel");
+            b = S.fmt("registerWidthLabel", "" + widthVal.getWidth());
+        }
+
+        // draw boundary, label
+        painter.drawBounds();
+        painter.drawLabel();
+
+        // draw input and output ports
+        if (b == null) {
+            painter.drawPort(IN,  "D", Direction.EAST);
+            painter.drawPort(OUT, "Q", Direction.WEST);
+        } else {
+            painter.drawPort(IN);
+            painter.drawPort(OUT);
+        }
+        g.setColor(Color.GRAY);
+        painter.drawPort(LD);
+        painter.drawPort(UD);
+        painter.drawPort(CARRY);
+        painter.drawPort(CLR, "0", Direction.SOUTH);
+        painter.drawPort(EN, S.get("counterEnableLabel"), Direction.EAST);
+        g.setColor(Color.BLACK);
+        painter.drawClock(CK, Direction.NORTH);
+
+        // draw contents
+        if (b == null) {
+            GraphicsUtil.drawText(g, a, bds.getX() + 15, bds.getY() + 4,
+                    GraphicsUtil.H_CENTER, GraphicsUtil.V_TOP);
+        } else {
+            GraphicsUtil.drawText(g, a, bds.getX() + 15, bds.getY() + 3,
+                    GraphicsUtil.H_CENTER, GraphicsUtil.V_TOP);
+            GraphicsUtil.drawText(g, b, bds.getX() + 15, bds.getY() + 15,
+                    GraphicsUtil.H_CENTER, GraphicsUtil.V_TOP);
+        }
+	}
 
 	@Override
 	public void paintInstance(InstancePainter painter) {
+		if (painter.getAttributeValue(StdAttr.APPEARANCE) == StdAttr.APPEAR_CLASSIC) {
+			DrawCounterClassic(painter);
+			return;
+		}
 		int Xpos = painter.getLocation().getX();
 		int Ypos = painter.getLocation().getY();
 		painter.drawLabel();
