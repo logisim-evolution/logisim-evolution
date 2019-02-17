@@ -155,7 +155,6 @@ public class AddTool extends Tool implements PropertyChangeListener {
 				ComponentFactory.SHOULD_SNAP, attrs);
 		this.shouldSnap = value == null ? true : value.booleanValue();
 		if (this.attrs.containsAttribute(StdAttr.APPEARANCE)) {
-			System.out.println("Has appearance");
 			AppPreferences.DefaultAppearance.addPropertyChangeListener(this);
 		}
 	}
