@@ -162,7 +162,8 @@ public class AddTool extends Tool implements PropertyChangeListener {
 
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
-		attrs.setValue(StdAttr.APPEARANCE, AppPreferences.getDefaultAppearance());
+		if (AppPreferences.DefaultAppearance.isSource(evt))
+			attrs.setValue(StdAttr.APPEARANCE, AppPreferences.getDefaultAppearance());
 	}
 
 	public void cancelOp() {
