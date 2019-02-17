@@ -548,7 +548,7 @@ public class AppPreferences {
 			return StdAttr.APPEAR_CLASSIC;
 		
 	}
-	public static final PrefMonitor<Boolean> NEW_INPUT_OUTPUT_SHAPES = create(new PrefMonitorBoolean(
+	public static final PrefMonitor<Boolean> NEW_INPUT_OUTPUT_SHAPES = create(new PrefMonitorBooleanConvert(
 			"oldIO", true));
 	public static final PrefMonitor<Double> SCALE_FACTOR = create(new PrefMonitorDouble(
 			"Scale", (((!GraphicsEnvironment.isHeadless()) ? Toolkit.getDefaultToolkit().getScreenSize().getHeight() : 0)/1000) < 1.0 ? 1.0 :

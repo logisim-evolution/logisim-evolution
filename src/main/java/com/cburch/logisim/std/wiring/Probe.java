@@ -53,6 +53,8 @@ import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.prefs.AppPreferences;
+import com.cburch.logisim.prefs.PrefMonitorBooleanConvert;
 import com.cburch.logisim.util.GraphicsUtil;
 
 public class Probe extends InstanceFactory {
@@ -349,6 +351,7 @@ public class Probe extends InstanceFactory {
 		instance.setPorts(new Port[] { new Port(0, 0, Port.INPUT,
 				BitWidth.UNKNOWN) });
 		instance.addAttributeListener();
+		((PrefMonitorBooleanConvert)AppPreferences.NEW_INPUT_OUTPUT_SHAPES).addConvertListener((ProbeAttributes)instance.getAttributeSet());
 		configureLabel(instance);
 	}
 

@@ -78,6 +78,8 @@ import com.cburch.logisim.instance.InstancePoker;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.prefs.AppPreferences;
+import com.cburch.logisim.prefs.PrefMonitorBooleanConvert;
 import com.cburch.logisim.tools.key.BitWidthConfigurator;
 import com.cburch.logisim.tools.key.DirectionConfigurator;
 import com.cburch.logisim.tools.key.JoinedConfigurator;
@@ -452,6 +454,7 @@ public class Pin extends InstanceFactory {
 	protected void configureNewInstance(Instance instance) {
 		PinAttributes attrs = (PinAttributes) instance.getAttributeSet();
 		instance.addAttributeListener();
+		((PrefMonitorBooleanConvert)AppPreferences.NEW_INPUT_OUTPUT_SHAPES).addConvertListener(attrs);
 		configurePorts(instance);
 		Probe.configureLabel(instance, PinLabelLoc(attrs.facing), attrs.facing);
 	}

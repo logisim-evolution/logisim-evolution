@@ -45,8 +45,10 @@ import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
+import com.cburch.logisim.prefs.ConvertEvent;
+import com.cburch.logisim.prefs.ConvertEventListener;
 
-public class ProbeAttributes extends AbstractAttributeSet {
+public class ProbeAttributes extends AbstractAttributeSet implements ConvertEventListener {
 	public static ProbeAttributes instance = new ProbeAttributes();
 	
 	public static final AttributeOption APPEAR_EVOLUTION_NEW = new AttributeOption(
@@ -147,5 +149,10 @@ public class ProbeAttributes extends AbstractAttributeSet {
 			throw new IllegalArgumentException("unknown attribute");
 		}
 		fireAttributeValueChanged(attr, value,Oldvalue);
+	}
+
+	@Override
+	public void AttributeValueChanged(ConvertEvent e) {
+		setValue(PROBEAPPEARANCE,e.GetValue());
 	}
 }
