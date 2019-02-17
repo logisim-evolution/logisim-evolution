@@ -40,6 +40,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
+import com.cburch.logisim.LogisimVersion;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.AttributeSet;
@@ -106,6 +107,15 @@ public class Counter extends InstanceFactory {
 	protected void configureNewInstance(Instance instance) {
 		configurePorts(instance);
 		instance.addAttributeListener();
+	}
+
+	@Override
+	public Object getDefaultAttributeValue(Attribute<?> attr, LogisimVersion ver) {
+		if (attr.equals(StdAttr.APPEARANCE)) {
+			return StdAttr.APPEAR_CLASSIC;
+		} else {
+			return super.getDefaultAttributeValue(attr, ver);
+		}
 	}
 
 	private void configurePorts(Instance instance) {

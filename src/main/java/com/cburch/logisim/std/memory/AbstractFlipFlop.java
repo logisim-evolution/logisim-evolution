@@ -38,6 +38,7 @@ import java.awt.event.MouseEvent;
 
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
+import com.cburch.logisim.LogisimVersion;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.AttributeSet;
@@ -55,6 +56,7 @@ import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
+import com.cburch.logisim.std.wiring.ProbeAttributes;
 import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.StringGetter;
 
@@ -166,6 +168,15 @@ abstract class AbstractFlipFlop extends InstanceFactory {
 		ps[numInputs + 3].setToolTip(S.getter("flipFlopResetTip"));
 		ps[numInputs + 4].setToolTip(S.getter("flipFlopPresetTip"));
 		instance.setPorts(ps);
+	}
+
+	@Override
+	public Object getDefaultAttributeValue(Attribute<?> attr, LogisimVersion ver) {
+		if (attr.equals(StdAttr.APPEARANCE)) {
+			return StdAttr.APPEAR_CLASSIC;
+		} else {
+			return super.getDefaultAttributeValue(attr, ver);
+		}
 	}
 
 	  @Override

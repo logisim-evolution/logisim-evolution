@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.std.wiring;
 
+import static com.cburch.logisim.std.Strings.S;
+
 import java.awt.Font;
 import java.util.Arrays;
 import java.util.List;
@@ -37,16 +39,35 @@ import java.util.List;
 import com.cburch.logisim.circuit.RadixOption;
 import com.cburch.logisim.data.AbstractAttributeSet;
 import com.cburch.logisim.data.Attribute;
+import com.cburch.logisim.data.AttributeOption;
+import com.cburch.logisim.data.Attributes;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.prefs.AppPreferences;
 
-class ProbeAttributes extends AbstractAttributeSet {
+public class ProbeAttributes extends AbstractAttributeSet {
 	public static ProbeAttributes instance = new ProbeAttributes();
+	
+	public static final AttributeOption APPEAR_EVOLUTION_NEW = new AttributeOption(
+			"NewPins", S.getter("probeNewPin"));
+
+	public static final Attribute<AttributeOption> PROBEAPPEARANCE = Attributes
+			.forOption("appearance", S.getter("stdAppearanceAttr"),
+					new AttributeOption[] { StdAttr.APPEAR_CLASSIC , APPEAR_EVOLUTION_NEW});
+
 
 	private static final List<Attribute<?>> ATTRIBUTES = Arrays
 			.asList(new Attribute<?>[] { StdAttr.FACING, RadixOption.ATTRIBUTE,
-					StdAttr.LABEL, Pin.ATTR_LABEL_LOC, StdAttr.LABEL_FONT, });
+					StdAttr.LABEL, Pin.ATTR_LABEL_LOC, StdAttr.LABEL_FONT, PROBEAPPEARANCE});
+	
+	public static AttributeOption GetDefaultProbeAppearance() {
+		if (AppPreferences.NEW_INPUT_OUTPUT_SHAPES.getBoolean())
+			return APPEAR_EVOLUTION_NEW;
+		else
+			return StdAttr.APPEAR_CLASSIC;
+	}
+	
 
 	Direction facing = Direction.EAST;
 	String label = "";
@@ -54,6 +75,7 @@ class ProbeAttributes extends AbstractAttributeSet {
 	Font labelfont = StdAttr.DEFAULT_LABEL_FONT;
 	RadixOption radix = RadixOption.RADIX_2;
 	BitWidth width = BitWidth.ONE;
+	AttributeOption Appearance = StdAttr.APPEAR_CLASSIC;
 
 	public ProbeAttributes() {
 	}
@@ -81,6 +103,8 @@ class ProbeAttributes extends AbstractAttributeSet {
 			return (E) labelfont;
 		if (attr == RadixOption.ATTRIBUTE)
 			return (E) radix;
+		if (attr == PROBEAPPEARANCE)
+			return (E) Appearance;
 		return null;
 	}
 
@@ -114,6 +138,11 @@ class ProbeAttributes extends AbstractAttributeSet {
 			if (radix.equals(NewValue))
 				return;
 			radix = NewValue;
+		} else if (attr == PROBEAPPEARANCE) {
+			AttributeOption NewAppearance = (AttributeOption) value;
+			if (Appearance.equals(NewAppearance))
+				return;
+			Appearance = NewAppearance;
 		} else {
 			throw new IllegalArgumentException("unknown attribute");
 		}

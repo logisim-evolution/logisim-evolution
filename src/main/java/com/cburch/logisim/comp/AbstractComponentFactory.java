@@ -39,6 +39,8 @@ import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.IOComponentInformationContainer;
+import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.std.wiring.ProbeAttributes;
 import com.cburch.logisim.LogisimVersion;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeSet;
@@ -95,7 +97,7 @@ public abstract class AbstractComponentFactory implements ComponentFactory {
 		}
 		return dfltSet.getValue(attr);
 	}
-
+	
 	public StringGetter getDisplayGetter() {
 		return StringUtil.constantGetter(getName());
 	}

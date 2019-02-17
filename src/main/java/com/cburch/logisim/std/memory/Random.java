@@ -36,6 +36,7 @@ import java.awt.Color;
 import java.awt.Graphics;
 
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
+import com.cburch.logisim.LogisimVersion;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Attributes;
@@ -146,6 +147,15 @@ public class Random extends InstanceFactory {
 	    }
 	  }
 
+
+	@Override
+	public Object getDefaultAttributeValue(Attribute<?> attr, LogisimVersion ver) {
+		if (attr.equals(StdAttr.APPEARANCE)) {
+			return StdAttr.APPEAR_CLASSIC;
+		} else {
+			return super.getDefaultAttributeValue(attr, ver);
+		}
+	}
 
 	@Override
 	protected void configureNewInstance(Instance instance) {

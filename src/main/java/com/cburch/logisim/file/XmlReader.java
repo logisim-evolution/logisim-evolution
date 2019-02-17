@@ -68,8 +68,10 @@ import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.std.wiring.Pin;
+import com.cburch.logisim.std.wiring.ProbeAttributes;
 import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.tools.Tool;
 import com.cburch.logisim.util.InputEventUtil;
@@ -174,7 +176,9 @@ class XmlReader {
 				String attrName = attr.getName();
 				String attrVal = attrsDefined.get(attrName);
 				if (attrVal == null) {
-					if (IsHolyCross && attr.equals(StdAttr.APPEARANCE)) {
+					if (attr.equals(ProbeAttributes.PROBEAPPEARANCE)) {
+						attrs.setValue(ProbeAttributes.PROBEAPPEARANCE, StdAttr.APPEAR_CLASSIC);
+					} else if (IsHolyCross && attr.equals(StdAttr.APPEARANCE)) {
 						attrs.setValue(StdAttr.APPEARANCE, StdAttr.APPEAR_CLASSIC);
 					} else if (setDefaults) {
 						Object val = defaults.getDefaultAttributeValue(attr,
@@ -257,6 +261,12 @@ class XmlReader {
 									tool,false);
 						} catch (XmlReaderException e) {
 							addErrors(e, "toolbar." + tool.getName());
+						}
+						if (tool.getAttributeSet() != null) {
+							if (tool.getAttributeSet().containsAttribute(ProbeAttributes.PROBEAPPEARANCE))
+								tool.getAttributeSet().setValue(ProbeAttributes.PROBEAPPEARANCE,ProbeAttributes.GetDefaultProbeAppearance());
+							if (tool.getAttributeSet().containsAttribute(StdAttr.APPEARANCE))
+								tool.getAttributeSet().setValue(StdAttr.APPEARANCE, AppPreferences.getDefaultAppearance());
 						}
 						toolbar.addTool(tool);
 					}

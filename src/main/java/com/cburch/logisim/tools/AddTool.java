@@ -77,6 +77,7 @@ import com.cburch.logisim.tools.key.KeyConfigurator;
 import com.cburch.logisim.util.AutoLabel;
 import com.cburch.logisim.util.StringUtil;
 import com.cburch.logisim.util.SyntaxChecker;
+import com.cburch.logisim.std.wiring.ProbeAttributes;
 
 public class AddTool extends Tool implements PropertyChangeListener {
 	private class MyAttributeListener implements AttributeListener {
@@ -126,8 +127,10 @@ public class AddTool extends Tool implements PropertyChangeListener {
 		this.attrs = (AttributeSet) base.attrs.clone();
 		attrs.addAttributeListener(new MyAttributeListener());
 		if (this.attrs.containsAttribute(StdAttr.APPEARANCE)) {
-			System.out.println("Has appearance");
 			AppPreferences.DefaultAppearance.addPropertyChangeListener(this);
+		}
+		if (this.attrs.containsAttribute(ProbeAttributes.PROBEAPPEARANCE)) {
+			AppPreferences.NEW_INPUT_OUTPUT_SHAPES.addPropertyChangeListener(this);
 		}
 	}
 
@@ -141,6 +144,9 @@ public class AddTool extends Tool implements PropertyChangeListener {
 		this.keyHandlerTried = false;
 		if (this.attrs.containsAttribute(StdAttr.APPEARANCE)) {
 			AppPreferences.DefaultAppearance.addPropertyChangeListener(this);
+		}
+		if (this.attrs.containsAttribute(ProbeAttributes.PROBEAPPEARANCE)) {
+			AppPreferences.NEW_INPUT_OUTPUT_SHAPES.addPropertyChangeListener(this);
 		}
 	}
 
@@ -157,6 +163,9 @@ public class AddTool extends Tool implements PropertyChangeListener {
 		if (this.attrs.containsAttribute(StdAttr.APPEARANCE)) {
 			AppPreferences.DefaultAppearance.addPropertyChangeListener(this);
 		}
+		if (this.attrs.containsAttribute(ProbeAttributes.PROBEAPPEARANCE)) {
+			AppPreferences.NEW_INPUT_OUTPUT_SHAPES.addPropertyChangeListener(this);
+		}
 	}
 
 
@@ -164,6 +173,8 @@ public class AddTool extends Tool implements PropertyChangeListener {
 	public void propertyChange(PropertyChangeEvent evt) {
 		if (AppPreferences.DefaultAppearance.isSource(evt))
 			attrs.setValue(StdAttr.APPEARANCE, AppPreferences.getDefaultAppearance());
+		else if (AppPreferences.NEW_INPUT_OUTPUT_SHAPES.isSource(evt))
+			attrs.setValue(ProbeAttributes.PROBEAPPEARANCE, ProbeAttributes.GetDefaultProbeAppearance());
 	}
 
 	public void cancelOp() {
