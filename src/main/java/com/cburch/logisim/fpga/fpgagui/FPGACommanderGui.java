@@ -661,6 +661,7 @@ MouseListener,PreferenceChangeListener {
 					                           GetTickfrequency(),
 					                           MyReporter,
 					                           MyBoardInformation,
+					                           "",
 					                           writeToFlash.isSelected(),
 					                           skipHDL.isSelected(),
 					                           true);

@@ -1085,7 +1085,6 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
 		String Unconnected = (HDLType.equals(VHDL)) ? "OPEN" : "";
 		String FloatingValue = (FloatingNetTiedToGround) ? ZeroValue : OneValue;
 		if ((EndIndex >= 0) && (EndIndex < comp.NrOfEnds())) {
-System.out.println("End correct");
 			ConnectionEnd ThisEnd = comp.getEnd(EndIndex);
 			boolean IsOutput = ThisEnd.IsOutputEnd();
 			if (ThisEnd.NrOfBits() == 1) {

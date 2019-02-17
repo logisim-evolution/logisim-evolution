@@ -7,10 +7,6 @@ import java.util.Set;
 
 import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import com.cburch.logisim.fpga.download.AlteraDownload;
-import com.cburch.logisim.fpga.download.Download;
-import com.cburch.logisim.fpga.download.VivadoDownload;
-import com.cburch.logisim.fpga.download.XilinxDownload;
 import com.cburch.logisim.fpga.fpgaboardeditor.BoardInformation;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.FileWriter;
