@@ -70,7 +70,7 @@ public class XmlCircuitReader extends CircuitTransaction {
 	 * @return the component built from its XML description
 	 * @throws XmlReaderException
 	 */
-	static Component getComponent(Element elt, XmlReader.ReadContext reader, boolean IsHolyCross)
+	static Component getComponent(Element elt, XmlReader.ReadContext reader, boolean IsHolyCross, boolean IsEvolution)
 			throws XmlReaderException {
 
 		// Determine the factory that creates this element
@@ -101,7 +101,7 @@ public class XmlCircuitReader extends CircuitTransaction {
 		// Determine attributes
 		String loc_str = elt.getAttribute("loc");
 		AttributeSet attrs = source.createAttributeSet();
-		reader.initAttributeSet(elt, attrs, source,IsHolyCross);
+		reader.initAttributeSet(elt, attrs, source,IsHolyCross,IsEvolution);
 
 		// Create component if location known
 		if (loc_str == null || loc_str.equals("")) {
@@ -122,13 +122,15 @@ public class XmlCircuitReader extends CircuitTransaction {
 
 	private List<XmlReader.CircuitData> circuitsData;
 	private boolean IsHolyCross = false;
+	private boolean IsEvolution = false;
 
 	public XmlCircuitReader(XmlReader.ReadContext reader,
 			List<XmlReader.CircuitData> circDatas,
-			boolean HolyCrossFile) {
+			boolean HolyCrossFile, boolean EvolutionFile) {
 		this.reader = reader;
 		this.circuitsData = circDatas;
 		this.IsHolyCross = HolyCrossFile;
+		this.IsEvolution = EvolutionFile;
 	}
 
 	void addWire(Circuit dest, CircuitMutator mutator, Element elt)
@@ -185,7 +187,7 @@ public class XmlCircuitReader extends CircuitTransaction {
 				}
 			}
 			reader.initAttributeSet(circData.circuitElement,
-					dest.getStaticAttributes(), null,IsHolyCross);
+					dest.getStaticAttributes(), null,IsHolyCross,IsEvolution);
 			if (circData.circuitElement.hasChildNodes()) {
 				if (HasNamedBox) {
 					/* This situation is clear, it is an older logisim-evolution file */
@@ -215,7 +217,7 @@ public class XmlCircuitReader extends CircuitTransaction {
 				try {
 					Component comp = knownComponents.get(sub_elt);
 					if (comp == null) {
-						comp = getComponent(sub_elt, reader,IsHolyCross);
+						comp = getComponent(sub_elt, reader,IsHolyCross,IsEvolution);
 					}
 					if (comp != null) {
 						mutator.add(dest, comp);
