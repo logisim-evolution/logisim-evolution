@@ -163,15 +163,15 @@ public class FPGAReportTabbedPane  extends JTabbedPane implements MouseListener,
 	
 	private String GetAllignmentSpaces(int index) {
 		if (index < 9) {
-			return "    ";
+			return "    "+index;
 		} else if (index < 99) {
-			return "   ";
+			return "   "+index;
 		} else if (index < 999) {
-			return "  ";
+			return "  "+index;
 		} else if (index < 9999) {
-			return " ";
+			return " "+index;
 		}
-		return "";
+		return Integer.toString(index);
 	}
 
 	public void AddInfo(Object Message) {
@@ -352,7 +352,7 @@ public class FPGAReportTabbedPane  extends JTabbedPane implements MouseListener,
 							InfoWindow.addWindowListener(this);
 						}
 						remove(getSelectedIndex());
-					}
+					} else
 					if (getSelectedComponent().equals(panelConsole)) {
 						if (ConsoleWindow != null) {
 							ConsoleWindow.setVisible(true);
@@ -364,13 +364,13 @@ public class FPGAReportTabbedPane  extends JTabbedPane implements MouseListener,
 							ConsoleWindow.addWindowListener(this);
 						}
 						remove(getSelectedIndex());
-					}
+					} else 
 					if (getSelectedComponent().equals(panelWarnings)) {
 						if (WarningsWindow != null) {
 							WarningsWindow.setVisible(true);
 							remove(getSelectedIndex());
 						}
-					}
+					} else
 					if (getSelectedComponent().equals(panelErrors)) {
 						if (ErrorsWindow != null) {
 							ErrorsWindow.setVisible(true);
