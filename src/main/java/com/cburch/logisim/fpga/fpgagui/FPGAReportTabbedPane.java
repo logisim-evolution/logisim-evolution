@@ -88,7 +88,7 @@ public class FPGAReportTabbedPane  extends JTabbedPane implements MouseListener,
 		add(panelInfos,InfoTabIndex);
 		
 		/* now we setup the Warning window */
-		WarningsList = new FPGACommanderListModel();
+		WarningsList = new FPGACommanderListModel(true);
 		Warnings = new JList<Object>();
 		Warnings.setBackground(Color.BLACK);
 		Warnings.setForeground(Color.ORANGE);
@@ -96,7 +96,7 @@ public class FPGAReportTabbedPane  extends JTabbedPane implements MouseListener,
 		Warnings.setSelectionForeground(Color.BLACK);
 		Warnings.setFont(new Font("monospaced", Font.PLAIN, FONT_SIZE));
 		Warnings.setModel(WarningsList);
-		Warnings.setCellRenderer(WarningsList.getMyRenderer(true));
+		Warnings.setCellRenderer(WarningsList.getMyRenderer());
 		Warnings.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		Warnings.addMouseListener(this);
 		JScrollPane textWarnings = new JScrollPane(Warnings);
@@ -114,7 +114,7 @@ public class FPGAReportTabbedPane  extends JTabbedPane implements MouseListener,
 
 		
 		/* here we setup the Error window */
-		ErrorsList = new FPGACommanderListModel();
+		ErrorsList = new FPGACommanderListModel(false);
 		Errors = new JList<Object>();
 		Errors.setBackground(Color.BLACK);
 		Errors.setForeground(Color.RED);
@@ -122,7 +122,7 @@ public class FPGAReportTabbedPane  extends JTabbedPane implements MouseListener,
 		Errors.setSelectionForeground(Color.BLACK);
 		Errors.setFont(new Font("monospaced", Font.PLAIN, FONT_SIZE));
 		Errors.setModel(ErrorsList);
-		Errors.setCellRenderer(ErrorsList.getMyRenderer(true));
+		Errors.setCellRenderer(ErrorsList.getMyRenderer());
 		Errors.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		Errors.addMouseListener(this);
 		JScrollPane textErrors = new JScrollPane(Errors);
@@ -204,13 +204,8 @@ public class FPGAReportTabbedPane  extends JTabbedPane implements MouseListener,
 		if (idx >= 0) {
 			setSelectedIndex(idx);
 			setTitleAt(idx, "Infos (" + InfoMessages.size() + ")");
-			Rectangle rect = getBounds();
-			rect.x = 0;
-			rect.y = 0;
-			if (EventQueue.isDispatchThread())
-				paintImmediately(rect);
-			else
-				repaint(rect);
+			panelInfos.revalidate();
+			panelInfos.repaint();
 		}
 	}
 
@@ -220,13 +215,8 @@ public class FPGAReportTabbedPane  extends JTabbedPane implements MouseListener,
 		if (idx >= 0) {
 			setSelectedIndex(idx);
 			setTitleAt(idx, "Warnings (" + WarningsList.getCountNr() + ")");
-			Rectangle rect = getBounds();
-			rect.x = 0;
-			rect.y = 0;
-			if (EventQueue.isDispatchThread())
-				paintImmediately(rect);
-			else
-				repaint(rect);
+			panelWarnings.revalidate();
+			panelWarnings.repaint();
 		}
 	}
 
@@ -236,13 +226,8 @@ public class FPGAReportTabbedPane  extends JTabbedPane implements MouseListener,
 		if (idx >= 0) {
 			setSelectedIndex(idx);
 			setTitleAt(idx, "Errors (" + ErrorsList.getCountNr() + ")");
-			Rectangle rect = getBounds();
-			rect.x = 0;
-			rect.y = 0;
-			if (EventQueue.isDispatchThread())
-				paintImmediately(rect);
-			else
-				repaint(rect);
+			panelErrors.revalidate();
+			panelErrors.repaint();
 		}
 	}
 
@@ -272,13 +257,8 @@ public class FPGAReportTabbedPane  extends JTabbedPane implements MouseListener,
 		int idx = indexOfComponent(panelConsole);
 		if (idx >= 0) {
 			setSelectedIndex(idx);
-			Rectangle rect = getBounds();
-			rect.x = 0;
-			rect.y = 0;
-			if (EventQueue.isDispatchThread())
-				paintImmediately(rect);
-			else
-				repaint(rect);
+			panelConsole.revalidate();
+			panelConsole.repaint();
 		}
 	}
 

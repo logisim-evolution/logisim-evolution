@@ -31,11 +31,7 @@
 package com.cburch.logisim.fpga.fpgagui;
 
 import java.awt.Color;
-import java.awt.EventQueue;
 import java.awt.Font;
-import java.awt.Rectangle;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
@@ -48,9 +44,8 @@ import javax.swing.event.ListDataListener;
 
 
 @SuppressWarnings("serial")
-public class FPGACommanderListWindow  extends JFrame implements KeyListener,WindowListener,ListDataListener {
+public class FPGACommanderListWindow  extends JFrame implements WindowListener,ListDataListener {
 
-	private int FontSize = 14;
 	private String Title;
 	private JList<Object> textArea = new JList<Object>();
 	private boolean IsActive = false;
@@ -70,9 +65,9 @@ public class FPGACommanderListWindow  extends JFrame implements KeyListener,Wind
 		textArea.setForeground(fg);
 		textArea.setSelectionBackground(fg);
 		textArea.setSelectionForeground(bg);
-		textArea.setFont(new Font("monospaced", Font.PLAIN, FontSize));
+		textArea.setFont(new Font("monospaced", Font.PLAIN, 14));
 		textArea.setModel(model);
-		textArea.setCellRenderer(model.getMyRenderer(count));
+		textArea.setCellRenderer(model.getMyRenderer());
 		textArea.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		model.addListDataListener(this);
 
@@ -81,7 +76,6 @@ public class FPGACommanderListWindow  extends JFrame implements KeyListener,Wind
 		textMessages.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		add(textMessages);
 		setLocationRelativeTo(null);
-		textArea.addKeyListener(this);
 		pack();
 		addWindowListener(this);
 		this.count = count;
@@ -96,42 +90,6 @@ public class FPGACommanderListWindow  extends JFrame implements KeyListener,Wind
 		return textArea;
 	}
 	
-	@Override
-	public void keyTyped(KeyEvent e) {
-	}
-
-	@Override
-	public void keyPressed(KeyEvent e) {
-		Rectangle rect;
-		switch (e.getKeyCode()) {
-			case KeyEvent.VK_EQUALS:
-			case KeyEvent.VK_PLUS:
-			case KeyEvent.VK_ADD:
-				FontSize++;
-				textArea.setFont(new Font("monospaced", Font.PLAIN, FontSize));
-				rect = textArea.getBounds();
-				rect.x = 0;
-				rect.y = 0;
-				textArea.paintImmediately(rect);
-				break;
-			case KeyEvent.VK_MINUS:
-			case KeyEvent.VK_SUBTRACT:
-				if (FontSize > 8) {
-					FontSize--;
-					textArea.setFont(new Font("monospaced", Font.PLAIN, FontSize));
-					rect = textArea.getBounds();
-					rect.x = 0;
-					rect.y = 0;
-					textArea.paintImmediately(rect);
-				}
-				break;
-		}
-	}
-
-	@Override
-	public void keyReleased(KeyEvent e) {
-	}
-
 	@Override
 	public void windowOpened(WindowEvent e) {
 	}
@@ -174,12 +132,7 @@ public class FPGACommanderListWindow  extends JFrame implements KeyListener,Wind
 	@Override
 	public void contentsChanged(ListDataEvent e) {
 		setTitle((count)?Title+" ("+model.getCountNr()+")":Title);
-		Rectangle rect = textMessages.getBounds();
-		rect.x = 0;
-		rect.y = 0;
-		if (EventQueue.isDispatchThread())
-			textMessages.paintImmediately(rect);
-		else
-			textMessages.repaint(rect);
+		this.revalidate();
+		this.repaint();
 	}
 }
