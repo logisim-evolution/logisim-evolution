@@ -381,7 +381,7 @@ public class FPGACommanderGui extends FPGACommanderBase implements ActionListene
 			HandleHDLOnly();
 		} else if (e.getActionCommand().equals("Download")) {
 			validateButton.setEnabled(false);
-			clearAllMessages();
+			ReporterGui.clearAllMessages();
 			Download Downloader = new Download(MyProject,
 					                           circuitsList.getSelectedItem().toString(),
 					                           GetTickfrequency(),
@@ -435,7 +435,7 @@ public class FPGACommanderGui extends FPGACommanderBase implements ActionListene
 	}
 
 	private void Annotate(boolean ClearExistingLabels) {
-		clearAllMessages();
+		ReporterGui.clearAllMessages();
 		String CircuitName = circuitsList.getSelectedItem().toString();
 		Circuit root = MyProject.getLogisimFile().getCircuit(CircuitName);
 		if (root != null) {
@@ -460,10 +460,6 @@ public class FPGACommanderGui extends FPGACommanderBase implements ActionListene
 				break;
 			}
 		}
-	}
-
-	private void clearAllMessages() {
-		ReporterGui.clearAllMessages();
 	}
 
 	private void RebuildCircuitSelection() {
