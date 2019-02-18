@@ -34,24 +34,11 @@ import static com.cburch.logisim.fpga.Strings.S;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.EventQueue;
-import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.io.File;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Set;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
 
@@ -59,19 +46,11 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
-import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
-import javax.swing.JTextArea;
-import javax.swing.ListSelectionModel;
 
-import com.cburch.logisim.fpga.designrulecheck.SimpleDRCContainer;
 import com.cburch.logisim.fpga.download.Download;
 import com.cburch.logisim.fpga.fpgaboardeditor.BoardReaderClass;
 import com.cburch.logisim.fpga.settings.VendorSoftware;
@@ -88,8 +67,8 @@ import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.proj.ProjectEvent;
 import com.cburch.logisim.proj.ProjectListener;
 
-public class FPGACommanderGui extends FPGACommanderBase implements ActionListener,LibraryListener,ProjectListener,SimulatorListener,CircuitListener,WindowListener,
-MouseListener,PreferenceChangeListener {
+public class FPGACommanderGui extends FPGACommanderBase implements ActionListener,LibraryListener,ProjectListener,SimulatorListener,
+	CircuitListener,PreferenceChangeListener {
 
 	@Override
 	public void preferenceChange(PreferenceChangeEvent pce) {
@@ -112,151 +91,6 @@ MouseListener,PreferenceChangeListener {
 			writeToFlash.setVisible(MyBoardInformation.fpga.isFlashDefined());
 		}
 	}
-
-	@Override
-	public void mouseClicked(MouseEvent e) {
-	}
-
-	@Override
-	public void mousePressed(MouseEvent e) {
-		if (e.getClickCount()>1) {
-
-			if (e.getSource().equals(tabbedPane)) {
-				if (tabbedPane.getComponentCount()>0) {
-					if (tabbedPane.getSelectedComponent().equals(panelInfos)) {
-						InfoWindow.setVisible(true);
-						tabbedPane.remove(tabbedPane.getSelectedIndex());
-					} else
-						if (tabbedPane.getSelectedComponent().equals(panelWarnings)) {
-							WarningWindow.setVisible(true);
-							tabbedPane.remove(tabbedPane.getSelectedIndex());
-						} else
-							if (tabbedPane.getSelectedComponent().equals(panelErrors)) {
-								ErrorWindow.setVisible(true);
-								clearDRCTrace();
-								tabbedPane.remove(tabbedPane.getSelectedIndex());
-							} else
-								if (tabbedPane.getSelectedComponent().equals(panelConsole)) {
-									ConsoleWindow.setVisible(true);
-									tabbedPane.remove(tabbedPane.getSelectedIndex());
-								}
-				}
-			}
-		}
-	}
-
-	@Override
-	public void mouseReleased(MouseEvent e) {
-		if (e.getSource().equals(Errors)||
-				e.getSource().equals(ErrorWindow.getListObject())) {
-			clearDRCTrace();
-			int idx = -1;
-			if (e.getSource().equals(Errors))
-				idx = Errors.getSelectedIndex();
-			else
-				idx = ErrorWindow.getListObject().getSelectedIndex();
-			if (idx >= 0) {
-				if (ErrorsList.getElementAt(idx) instanceof SimpleDRCContainer) {
-					GenerateDRCTrace((SimpleDRCContainer)ErrorsList.getElementAt(idx));
-				}
-			}
-		} else
-			if (e.getSource().equals(Warnings)||
-					e.getSource().equals(WarningWindow.getListObject())) {
-				clearDRCTrace();
-				int idx = -1;
-				if (e.getSource().equals(Warnings))
-					idx = Warnings.getSelectedIndex();
-				else
-					idx = WarningWindow.getListObject().getSelectedIndex();
-				if (idx >= 0)
-					if (WarningsList.getElementAt(idx) instanceof SimpleDRCContainer)
-						GenerateDRCTrace((SimpleDRCContainer)WarningsList.getElementAt(idx));
-			}
-	}
-
-	@Override
-	public void mouseEntered(MouseEvent e) {
-	}
-
-	@Override
-	public void mouseExited(MouseEvent e) {
-	}
-
-	@Override
-	public void windowOpened(WindowEvent e) {
-		if (e.getSource().equals(panel)) {
-			InfoWindow.setVisible(InfoWindow.IsActivated());
-			WarningWindow.setVisible(WarningWindow.IsActivated());
-			ErrorWindow.setVisible(ErrorWindow.IsActivated());
-			ConsoleWindow.setVisible(ConsoleWindow.IsActivated());
-		}
-	}
-
-	@Override
-	public void windowClosing(WindowEvent e) {
-		if (e.getSource().equals(InfoWindow)) {
-			tabbedPane.add(panelInfos, 0);
-			tabbedPane.setTitleAt(0, "Infos (" + consoleInfos.size() + ")");
-			tabbedPane.setSelectedIndex(0);
-		}
-		if (e.getSource().equals(WarningWindow)) {
-			int idx = tabbedPane.getComponentCount();
-			Set<Component> comps = new HashSet<Component>(Arrays.asList(tabbedPane.getComponents()));
-			if (comps.contains(panelConsole))
-				idx = tabbedPane.indexOfComponent(panelConsole);
-			if (comps.contains(panelErrors))
-				idx = tabbedPane.indexOfComponent(panelErrors);
-			tabbedPane.add(panelWarnings, idx);
-			tabbedPane.setTitleAt(idx, "Warnings (" + WarningsList.getCountNr() + ")");
-		}
-		if (e.getSource().equals(ErrorWindow)) {
-			int idx = tabbedPane.getComponentCount();
-			Set<Component> comps = new HashSet<Component>(Arrays.asList(tabbedPane.getComponents()));
-			if (comps.contains(panelConsole))
-				idx = tabbedPane.indexOfComponent(panelConsole);
-			tabbedPane.add(panelErrors, idx);
-			tabbedPane.setTitleAt(idx, "Errors (" + ErrorsList.getCountNr() + ")");
-			clearDRCTrace();
-		}
-		if (e.getSource().equals(ConsoleWindow)) {
-			tabbedPane.add(panelConsole, tabbedPane.getComponentCount());
-		}
-		if (e.getSource().equals(panel)) {
-			InfoWindow.setVisible(false);
-			WarningWindow.setVisible(false);
-			ErrorWindow.setVisible(false);
-			ConsoleWindow.setVisible(false);
-			clearDRCTrace();
-		}
-	}
-
-	@Override
-	public void windowClosed(WindowEvent e) {
-	}
-
-	@Override
-	public void windowIconified(WindowEvent e) {
-	}
-
-	@Override
-	public void windowDeiconified(WindowEvent e) {
-	}
-
-	@Override
-	public void windowActivated(WindowEvent e) {
-		if (e.getSource().equals(panel)) {
-			InfoWindow.setVisible(InfoWindow.IsActivated());
-			WarningWindow.setVisible(WarningWindow.IsActivated());
-			ErrorWindow.setVisible(ErrorWindow.IsActivated());
-			ConsoleWindow.setVisible(ConsoleWindow.IsActivated());
-		}
-	}
-
-	@Override
-	public void windowDeactivated(WindowEvent e) {
-	}
-
 
 	@Override
 	public void libraryChanged(LibraryEvent event) {
@@ -295,7 +129,7 @@ MouseListener,PreferenceChangeListener {
 		if (act == CircuitEvent.ACTION_SET_NAME) {
 			RebuildCircuitSelection();
 		}
-		clearDRCTrace();
+		ReporterGui.clearDRCTrace();
 	}
 
 
@@ -319,34 +153,12 @@ MouseListener,PreferenceChangeListener {
 	private JButton ToolPath = new JButton();
 	private JButton Workspace = new JButton();
 	private JCheckBox skipHDL = new JCheckBox("Skip VHDL generation?");
-	private JTextArea textAreaInfo = new JTextArea(10, 50);
-	private JTextArea textAreaConsole = new JTextArea(10, 50);
-	private JComponent panelInfos = new JPanel();
-	private JComponent panelWarnings = new JPanel();
-	private JComponent panelErrors = new JPanel();
-	private JComponent panelConsole = new JPanel();
 	private static final String SelectToolPathMessage = "Select Toolpath to Download";
 	private static final String OnlyHDLMessage = "Generate HDL only";
 	private static final String HDLandDownloadMessage = "Download to board";
-	private JTabbedPane tabbedPane = new JTabbedPane();
-	private LinkedList<String> consoleInfos = new LinkedList<String>();
-	private LinkedList<String> consoleConsole = new LinkedList<String>();
+	private FPGAReportTabbedPane ReporterGui;
 	@SuppressWarnings("unused")
 	private static final Integer VerilogSourcePath = 0;
-
-	private FPGACommanderListModel WarningsList = new FPGACommanderListModel();
-	private JList<Object> Warnings = new JList<Object>();
-	private FPGACommanderListWindow WarningWindow = new FPGACommanderListWindow("FPGACommander: Warnings",Color.ORANGE,true,WarningsList);
-
-	private FPGACommanderListModel ErrorsList = new FPGACommanderListModel();
-	private JList<Object> Errors = new JList<Object>();
-	private FPGACommanderListWindow ErrorWindow = new FPGACommanderListWindow("FPGACommander: Errors",Color.RED,true,ErrorsList);
-
-
-	private FPGACommanderTextWindow InfoWindow;
-	private FPGACommanderTextWindow ConsoleWindow;
-	private boolean DRCTraceActive = false;
-	private SimpleDRCContainer ActiveDRCContainer;
 	
 	private void UpdateFrequencies() {
 		long Clockfreq = MyBoardInformation.fpga.getClockFrequency();
@@ -382,23 +194,11 @@ MouseListener,PreferenceChangeListener {
 	}
 
 	public FPGACommanderGui(Project Main) {
-		MyReporter = new FPGAReportGui(this);
 		MyProject = Main;
-		InfoWindow = new FPGACommanderTextWindow("FPGACommander: Infos",Color.GRAY,true);
-		ConsoleWindow = new FPGACommanderTextWindow("FPGACommander: Console",Color.LIGHT_GRAY,false);
 		panel = new JFrame("FPGA Commander : " + MyProject.getLogisimFile().getName());
 		panel.setResizable(false);
 		panel.setAlwaysOnTop(false);
 		panel.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-		panel.addWindowListener(this);
-		InfoWindow.addWindowListener(this);
-		WarningWindow.addWindowListener(this);
-		WarningWindow.setSize(new Dimension(740,400));
-		WarningWindow.getListObject().addMouseListener(this);
-		ErrorWindow.addWindowListener(this);
-		ErrorWindow.setSize(new Dimension(740,400));
-		ErrorWindow.getListObject().addMouseListener(this);
-		ConsoleWindow.addWindowListener(this);
 
 		GridBagLayout thisLayout = new GridBagLayout();
 		GridBagConstraints c = new GridBagConstraints();
@@ -539,92 +339,12 @@ MouseListener,PreferenceChangeListener {
 		c.gridy = 0;
 		panel.add(Workspace, c);
 
-		// output console
-		Color fg = Color.GRAY;
-		Color bg = Color.black;
-
-		textAreaInfo.setForeground(fg);
-		textAreaInfo.setBackground(bg);
-		textAreaInfo.setFont(new Font("monospaced", Font.PLAIN, FONT_SIZE));
-		Warnings.setBackground(bg);
-		Warnings.setForeground(Color.ORANGE);
-		Warnings.setSelectionBackground(Color.ORANGE);
-		Warnings.setSelectionForeground(bg);
-		Warnings.setFont(new Font("monospaced", Font.PLAIN, FONT_SIZE));
-		Warnings.setModel(WarningsList);
-		Warnings.setCellRenderer(WarningsList.getMyRenderer(true));
-		Warnings.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		Warnings.addMouseListener(this);
-		Errors.setBackground(bg);
-		Errors.setForeground(Color.RED);
-		Errors.setSelectionBackground(Color.RED);
-		Errors.setSelectionForeground(bg);
-		Errors.setFont(new Font("monospaced", Font.PLAIN, FONT_SIZE));
-		Errors.setModel(ErrorsList);
-		Errors.setCellRenderer(ErrorsList.getMyRenderer(true));
-		Errors.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		Errors.addMouseListener(this);
-
-		textAreaConsole.setForeground(Color.LIGHT_GRAY);
-		textAreaConsole.setBackground(bg);
-		textAreaConsole.setFont(new Font("monospaced", Font.PLAIN, FONT_SIZE));
-		JScrollPane textMessages = new JScrollPane(textAreaInfo);
-		JScrollPane textWarnings = new JScrollPane(Warnings);
-		JScrollPane textErrors = new JScrollPane(Errors);
-		JScrollPane textConsole = new JScrollPane(textAreaConsole);
-		textMessages
-		.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-		textMessages
-		.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		textWarnings
-		.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-		textWarnings
-		.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		textErrors
-		.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-		textErrors
-		.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		textConsole
-		.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-		textConsole
-		.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-
-		GridLayout consolesLayout = new GridLayout(1, 1);
-
-		panelInfos.setLayout(consolesLayout);
-		panelWarnings.setLayout(consolesLayout);
-		panelErrors.setLayout(consolesLayout);
-		panelConsole.setLayout(consolesLayout);
-
-		panelInfos.add(textMessages);
-		panelInfos.setName("Infos (0)");
-		panelWarnings.add(textWarnings);
-		panelWarnings.setName("Warnings (0)");
-		panelErrors.add(textErrors);
-		panelErrors.setName("Errors (0)");
-		panelConsole.add(textConsole);
-		panelConsole.setName("Console");
-
-		tabbedPane.add(panelInfos); // index 0
-		tabbedPane.add(panelWarnings); // index 1
-		tabbedPane.add(panelErrors); // index 2
-		tabbedPane.add(panelConsole); // index 3
-		tabbedPane.addMouseListener(this);
-
-		textAreaInfo.setEditable(false);
-		textAreaConsole.setEditable(false);
-
-		consoleInfos.clear();
-		consoleConsole.clear();
-
-		textAreaInfo.setText(null);
-		textAreaConsole.setText(null);
-
+		// FPGAReporter GUI
+		ReporterGui = new FPGAReportTabbedPane(MyProject);
 		c.gridx = 0;
 		c.gridy = 7;
 		c.gridwidth = 5;
-		tabbedPane.setPreferredSize(new Dimension(700, 20 * FONT_SIZE));
-		panel.add(tabbedPane, c);
+		panel.add(ReporterGui, c);
 
 		panel.pack();
 		panel.setLocationRelativeTo(null);
@@ -632,6 +352,11 @@ MouseListener,PreferenceChangeListener {
 
 		CustFreqPannel = new CustomFrequencySelDialog(panel,MyBoardInformation.fpga.getClockFrequency());
 		AppPreferences.getPrefs().addPreferenceChangeListener(this);
+		MyReporter = new FPGAReportGui(this);
+	}
+	
+	public FPGAReportTabbedPane getReporterGui() {
+		return ReporterGui;
 	}
 
 	private void HandleHDLOnly() {
@@ -656,6 +381,7 @@ MouseListener,PreferenceChangeListener {
 			HandleHDLOnly();
 		} else if (e.getActionCommand().equals("Download")) {
 			validateButton.setEnabled(false);
+			clearAllMessages();
 			Download Downloader = new Download(MyProject,
 					                           circuitsList.getSelectedItem().toString(),
 					                           GetTickfrequency(),
@@ -708,93 +434,6 @@ MouseListener,PreferenceChangeListener {
 		return ret;
 	}
 
-	public void AddConsole(String Message) {
-		consoleConsole.add(Message + "\n");
-		StringBuffer Lines = new StringBuffer();
-		for (String mes : consoleConsole) {
-			Lines.append(mes);
-		}
-		textAreaConsole.setText(Lines.toString());
-		ConsoleWindow.add(Lines.toString());
-		int idx = tabbedPane.indexOfComponent(panelConsole);
-		if (idx >= 0) {
-			tabbedPane.setSelectedIndex(idx);
-			Rectangle rect = tabbedPane.getBounds();
-			rect.x = 0;
-			rect.y = 0;
-			if (EventQueue.isDispatchThread())
-				tabbedPane.paintImmediately(rect);
-			else
-				tabbedPane.repaint(rect);
-		}
-	}
-
-	public void AddErrors(Object Message) {
-		ErrorsList.add(Message);
-		int idx = tabbedPane.indexOfComponent(panelErrors);
-		if (idx >= 0) {
-			tabbedPane.setSelectedIndex(idx);
-			tabbedPane.setTitleAt(idx, "Errors (" + ErrorsList.getCountNr() + ")");
-			Rectangle rect = tabbedPane.getBounds();
-			rect.x = 0;
-			rect.y = 0;
-			if (EventQueue.isDispatchThread())
-				tabbedPane.paintImmediately(rect);
-			else
-				tabbedPane.repaint(rect);
-		}
-	}
-
-	public void AddInfo(Object Message) {
-		StringBuffer Line = new StringBuffer();
-		if (consoleInfos.size() < 9) {
-			Line.append("    ");
-		} else if (consoleInfos.size() < 99) {
-			Line.append("   ");
-		} else if (consoleInfos.size() < 999) {
-			Line.append("  ");
-		} else if (consoleInfos.size() < 9999) {
-			Line.append(" ");
-		}
-		Line.append(Integer.toString(consoleInfos.size() + 1) + "> " + Message.toString()
-		+ "\n");
-		consoleInfos.add(Line.toString());
-		Line.setLength(0);
-		for (String mes : consoleInfos) {
-			Line.append(mes);
-		}
-		textAreaInfo.setText(Line.toString());
-		InfoWindow.add(Line.toString());
-		int idx = tabbedPane.indexOfComponent(panelInfos);
-		if (idx >= 0) {
-			tabbedPane.setSelectedIndex(idx);
-			tabbedPane.setTitleAt(idx, "Infos (" + consoleInfos.size() + ")");
-			Rectangle rect = tabbedPane.getBounds();
-			rect.x = 0;
-			rect.y = 0;
-			if (EventQueue.isDispatchThread())
-				tabbedPane.paintImmediately(rect);
-			else
-				tabbedPane.repaint(rect);
-		}
-	}
-
-	public void AddWarning(Object Message) {
-		WarningsList.add(Message);
-		int idx = tabbedPane.indexOfComponent(panelWarnings);
-		if (idx >= 0) {
-			tabbedPane.setSelectedIndex(idx);
-			tabbedPane.setTitleAt(idx, "Warnings (" + WarningsList.getCountNr() + ")");
-			Rectangle rect = tabbedPane.getBounds();
-			rect.x = 0;
-			rect.y = 0;
-			if (EventQueue.isDispatchThread())
-				tabbedPane.paintImmediately(rect);
-			else
-				tabbedPane.repaint(rect);
-		}
-	}
-
 	private void Annotate(boolean ClearExistingLabels) {
 		clearAllMessages();
 		String CircuitName = circuitsList.getSelectedItem().toString();
@@ -824,46 +463,7 @@ MouseListener,PreferenceChangeListener {
 	}
 
 	private void clearAllMessages() {
-		clearDRCTrace();
-		textAreaInfo.setText(null);
-		consoleInfos.clear();
-		int idx = tabbedPane.indexOfComponent(panelInfos);
-		if (idx >= 0) {
-			tabbedPane.setTitleAt(idx, "Infos (" + consoleInfos.size() + ")");
-			tabbedPane.setSelectedIndex(idx);
-		}
-		WarningsList.clear();
-		idx = tabbedPane.indexOfComponent(panelWarnings);
-		if (idx >= 0)
-			tabbedPane.setTitleAt(idx, "Warnings (" + WarningsList.getCountNr() + ")");
-		ErrorsList.clear();
-		idx = tabbedPane.indexOfComponent(panelErrors);
-		if (idx >= 0)
-			tabbedPane.setTitleAt(idx, "Errors (" + ErrorsList.getCountNr() + ")");
-		InfoWindow.clear();
-		ConsoleWindow.clear();
-		Rectangle rect = tabbedPane.getBounds();
-		rect.x = 0;
-		rect.y = 0;
-		if (EventQueue.isDispatchThread())
-			tabbedPane.paintImmediately(rect);
-		else
-			tabbedPane.repaint(rect);
-	}
-
-	public void ClearConsole() {
-		consoleConsole.clear();
-		int idx = tabbedPane.indexOfComponent(panelConsole);
-		if (idx >= 0)
-			tabbedPane.setSelectedIndex(idx);
-		textAreaConsole.setText(null);
-		Rectangle rect = tabbedPane.getBounds();
-		rect.x = 0;
-		rect.y = 0;
-		if (EventQueue.isDispatchThread())
-			tabbedPane.paintImmediately(rect);
-		else
-			tabbedPane.repaint(rect);
+		ReporterGui.clearAllMessages();
 	}
 
 	private void RebuildCircuitSelection() {
@@ -961,21 +561,4 @@ MouseListener,PreferenceChangeListener {
 		}
 	}
 
-	private void clearDRCTrace() {
-		if (DRCTraceActive) {
-			ActiveDRCContainer.ClearMarks();
-			DRCTraceActive = false;
-			MyProject.repaintCanvas();
-		}
-	}
-
-	private void GenerateDRCTrace(SimpleDRCContainer dc) {
-		DRCTraceActive = true;
-		ActiveDRCContainer = dc;
-		dc.MarkComponents();
-		if (dc.HasCircuit())
-			if (!MyProject.getCurrentCircuit().equals(dc.GetCircuit()))
-				MyProject.setCurrentCircuit(dc.GetCircuit());
-		MyProject.repaintCanvas();
-	}
 }

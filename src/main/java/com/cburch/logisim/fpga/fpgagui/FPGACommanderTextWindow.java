@@ -32,6 +32,7 @@ package com.cburch.logisim.fpga.fpgagui;
 
 
 import java.awt.Color;
+import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
@@ -50,8 +51,7 @@ public class FPGACommanderTextWindow extends JFrame implements KeyListener,Windo
 
 	private int FontSize;
 	private String Title;
-	private int LineCount;
-	private JTextArea textArea = new JTextArea(25, 80);
+	private JTextArea textArea;
 	private boolean IsActive = false;
 	private boolean count;
 	
@@ -62,6 +62,7 @@ public class FPGACommanderTextWindow extends JFrame implements KeyListener,Windo
 		setAlwaysOnTop(false);
 		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		Color bg = Color.black;
+		textArea = new JTextArea(25, 80);
 		((DefaultCaret)textArea.getCaret()).setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
 		textArea.setForeground(fg);
 		textArea.setBackground(bg);
@@ -80,7 +81,6 @@ public class FPGACommanderTextWindow extends JFrame implements KeyListener,Windo
 		textArea.addKeyListener(this);
 		pack();
 		addWindowListener(this);
-		LineCount = 0;
 		this.count = count;
 		FontSize = textMessages.getFont().getSize();
 	}
@@ -91,20 +91,21 @@ public class FPGACommanderTextWindow extends JFrame implements KeyListener,Windo
 	
 	public void clear() {
 		textArea.setText(null);
-		LineCount = 0;
 		if (count)
 			setTitle(Title+" (0)");
 	}
 	
-	public void add(String line) {
-		LineCount++;
+	public void set(String line, int LineCount) {
 		textArea.setText(line);
 		if (count)
 			setTitle(Title+" ("+LineCount+")");
 		Rectangle rect = textArea.getBounds();
 		rect.x = 0;
 		rect.y = 0;
-		textArea.paintImmediately(rect);
+		if (EventQueue.isDispatchThread())
+			textArea.paintImmediately(rect);
+		else
+			textArea.repaint(rect);
 	}
 
 	@Override

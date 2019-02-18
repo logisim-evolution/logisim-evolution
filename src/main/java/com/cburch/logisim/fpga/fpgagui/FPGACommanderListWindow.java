@@ -31,6 +31,7 @@
 package com.cburch.logisim.fpga.fpgagui;
 
 import java.awt.Color;
+import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
@@ -55,9 +56,10 @@ public class FPGACommanderListWindow  extends JFrame implements KeyListener,Wind
 	private boolean IsActive = false;
 	private boolean count;
 	private FPGACommanderListModel model;
+	private JScrollPane textMessages;
 	
 	public FPGACommanderListWindow(String Title,Color fg, boolean count, FPGACommanderListModel model) {
-		super((count)?Title+" (0)":Title);
+		super((count)?Title+" ("+model.getCountNr()+")":Title);
 		this.Title = Title;
 		setResizable(true);
 		setAlwaysOnTop(false);
@@ -74,11 +76,9 @@ public class FPGACommanderListWindow  extends JFrame implements KeyListener,Wind
 		textArea.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		model.addListDataListener(this);
 
-		JScrollPane textMessages = new JScrollPane(textArea);
-		textMessages
-			.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-		textMessages
-			.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		textMessages = new JScrollPane(textArea);
+		textMessages.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+		textMessages.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		add(textMessages);
 		setLocationRelativeTo(null);
 		textArea.addKeyListener(this);
@@ -174,5 +174,12 @@ public class FPGACommanderListWindow  extends JFrame implements KeyListener,Wind
 	@Override
 	public void contentsChanged(ListDataEvent e) {
 		setTitle((count)?Title+" ("+model.getCountNr()+")":Title);
+		Rectangle rect = textMessages.getBounds();
+		rect.x = 0;
+		rect.y = 0;
+		if (EventQueue.isDispatchThread())
+			textMessages.paintImmediately(rect);
+		else
+			textMessages.repaint(rect);
 	}
 }

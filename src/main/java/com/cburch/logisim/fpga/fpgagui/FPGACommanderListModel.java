@@ -182,7 +182,8 @@ public class FPGACommanderListModel extends  AbstractListModel<Object> {
 				add.SetListNumber(count);
 		}
 		myData.add(toAdd);
-		FireEvent(null);
+		ListDataEvent e = new ListDataEvent(this,ListDataEvent.CONTENTS_CHANGED,0,myData.size());
+		FireEvent(e);
 	}
 	
 	public int getCountNr() {
