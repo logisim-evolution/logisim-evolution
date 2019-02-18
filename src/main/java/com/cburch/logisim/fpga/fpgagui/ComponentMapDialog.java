@@ -33,7 +33,6 @@ package com.cburch.logisim.fpga.fpgagui;
 import static com.cburch.logisim.fpga.Strings.S;
 
 import java.awt.Color;
-import java.awt.Dialog.ModalityType;
 import java.awt.Dimension;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
@@ -46,6 +45,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Set;
@@ -92,7 +93,7 @@ import com.cburch.logisim.fpga.fpgaboardeditor.ZoomSlider;
 import com.cburch.logisim.prefs.AppPreferences;
 
 public class ComponentMapDialog implements ActionListener,
-ListSelectionListener {
+ListSelectionListener,WindowListener {
 
 	private class MappedComponentIdContainer {
 
@@ -101,8 +102,15 @@ ListSelectionListener {
 
 		public MappedComponentIdContainer(String key,
 				BoardRectangle SelectedItem) {
-			this.key = key;
 			rect = SelectedItem;
+			String label = rect.GetLabel();
+			if (label != null && label.length()!= 0) {
+				if (key == null || key.length() == 0)
+					key = "["+label+"]";
+				else
+					key = "["+label+"] "+key;
+			}
+			this.key = key;
 		}
 
 		public BoardRectangle getRectangle() {
@@ -205,7 +213,7 @@ ListSelectionListener {
 		@Override
 		public void mouseMoved(MouseEvent e) {
 			HandleSelect(e);
-			if (MappableComponents.hasMappedComponents()) {
+			if (MappableComponents.hasMappedComponents() || !SelectableItems.isEmpty()) {
 				if (Note != null) {
 					if (Note.getRectangle().PointInside(
 							AppPreferences.getDownScaled(e.getX(),scale),
@@ -226,6 +234,16 @@ ListSelectionListener {
 						break;
 					}
 				}
+                if (NewItem == null) {
+                    for (BoardRectangle Item : SelectableItems) {
+                            if (Item.PointInside(AppPreferences.getDownScaled(e.getX()), 
+                            		             AppPreferences.getDownScaled(e.getY())) 
+                            		&& Item.GetLabel() != null && Item.GetLabel().length() != 0) {
+                                    NewItem = Item;
+                                    break;
+                            }
+                    }
+                }
 				if (Note == null) {
 					if (NewItem != null) {
 						Note = new MappedComponentIdContainer(newKey, NewItem);
@@ -359,7 +377,6 @@ ListSelectionListener {
 	}
 
 	private JDialog panel;
-	private boolean doneAssignment = false;
 	private JButton UnMapButton = new JButton();
 	private JButton UnMapAllButton = new JButton();
 	private JButton DoneButton = new JButton();
@@ -391,6 +408,10 @@ ListSelectionListener {
 	private MappedComponentIdContainer Note;
 
 	private MappableResourcesContainer MappableComponents;
+
+	private Object lock = new Object();
+	private boolean canceled = true;
+
 
 	private MouseListener mouseListener = new MouseListener() {
 		@Override
@@ -437,10 +458,14 @@ ListSelectionListener {
 
 	@SuppressWarnings("rawtypes")
 	public ComponentMapDialog(JFrame parrentFrame, String projectPath) {
-
-		OldDirectory = projectPath;
-
-		panel = new JDialog(parrentFrame, ModalityType.APPLICATION_MODAL);
+		OldDirectory = new File(projectPath).getParent();
+		if (OldDirectory == null)
+            OldDirectory = "";
+        else if (OldDirectory.length() != 0 && !OldDirectory.endsWith(File.separator))
+            OldDirectory += File.separator;
+		
+		panel = new JDialog(parrentFrame);
+		panel.addWindowListener(this);
 		panel.setTitle("Component to FPGA board mapping");
 		panel.setResizable(false);
 		panel.setAlwaysOnTop(true);
@@ -531,7 +556,7 @@ ListSelectionListener {
 		CancelButton.setText("Cancel");
 		CancelButton.setActionCommand("Cancel");
 		CancelButton.addActionListener(this);
-		CancelButton.setEnabled(true);
+		CancelButton.setEnabled(false);
 		c.gridy = 6;
 		panel.add(CancelButton, c);
 
@@ -586,12 +611,12 @@ ListSelectionListener {
 		 * panel.getHeight()));
 		 */
 		panel.setLocationRelativeTo(null);
-		panel.setVisible(false);
 		UnMappedPane.setPreferredSize(new Dimension(
 				BoardPic.getWidth()/3, 6*DoneButton.getHeight()+ScaleButton.getHeight()));
 		MappedPane.setPreferredSize(new Dimension(
 				BoardPic.getWidth()/3, 6*DoneButton.getHeight()+ScaleButton.getHeight()));
 		panel.pack();
+		panel.setVisible(true);
 		int ScreenWidth = (int)Toolkit.getDefaultToolkit().getScreenSize().getWidth();
 		int ScreenHeight = (int)Toolkit.getDefaultToolkit().getScreenSize().getHeight();
 		int ImageWidth = BoardPic.getWidth();
@@ -606,25 +631,54 @@ ListSelectionListener {
 		if (MaxZoom < 100)
 			MaxZoom = 100;
 	}
+	
+	public boolean run() {
+		MessageLine.setForeground(Color.BLUE);
+		MessageLine.setText("No messages");
+		Thread t = new Thread() {
+			public void run() {
+				synchronized (lock) {
+					try {
+						lock.wait();
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+				}
+			}
+		};
+		t.run();
+		CancelButton.setEnabled(true);
+		try {
+			t.join();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		panel.setVisible(false);
+		panel.dispose();
+		return !canceled;
+	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("Done")) {
-			doneAssignment = true;
-			panel.setVisible(false);
+			canceled=false;
+			synchronized (lock) {
+				lock.notify();
+			}
 		} else if (e.getActionCommand().equals("UnMapAll")) {
-			doneAssignment = false;
 			UnMapAll();
 		} else if (e.getActionCommand().equals("UnMap")) {
-			doneAssignment = false;
 			UnMapOne();
 		} else if (e.getActionCommand().equals("Save")) {
 			Save();
 		} else if (e.getActionCommand().equals("Load")) {
 			Load();
 		} else if (e.getActionCommand().equals("Cancel")) {
-			doneAssignment = false;
-			panel.dispose();
+			synchronized (lock) {
+				lock.notify();
+			}
 		}
 	}
 
@@ -638,42 +692,39 @@ ListSelectionListener {
 		SelectableItems.clear();
 	}
 
-	private String getDirName(String window_name) {
+	private String getFileName(String window_name, String SuggestedFileName) {
 		JFileChooser fc = new JFileChooser(OldDirectory);
-		fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
 		fc.setDialogTitle(window_name);
-		if (!OldDirectory.isEmpty()) {
-			File SelFile = new File(OldDirectory);
-			fc.setSelectedFile(SelFile);
-		}
+		File SelFile = new File(OldDirectory,SuggestedFileName);
+		fc.setSelectedFile(SelFile);
 		FileFilter ff = new FileFilter() {
 			@Override
 			public boolean accept(File f) {
-				return f.isDirectory();
+				return true;
 			}
 
 			@Override
 			public String getDescription() {
-				return "Select Directory";
+				return "Select Filename";
 			}
 		};
 		fc.setFileFilter(ff);
 		fc.setAcceptAllFileFilterUsed(false);
-		int retval = fc.showOpenDialog(null);
+		int retval = fc.showSaveDialog(null);
 		if (retval == JFileChooser.APPROVE_OPTION) {
 			File file = fc.getSelectedFile();
-			OldDirectory = file.getPath();
-			if (!OldDirectory.endsWith(File.separator)) {
-				OldDirectory += File.separator;
-			}
-			return OldDirectory;
+            if (file.getParent() != null) {
+                OldDirectory = file.getParent();
+                if (OldDirectory == null)
+                    OldDirectory = "";
+                else if (OldDirectory.length() != 0 && !OldDirectory.endsWith(File.separator))
+                    OldDirectory += File.separator;
+            }
+            return file.getPath();
 		} else {
 			return "";
 		}
-	}
-
-	public boolean isDoneAssignment() {
-		return doneAssignment;
 	}
 
 	private void Load() {
@@ -844,12 +895,11 @@ ListSelectionListener {
 
 	private void Save() {
 		panel.setVisible(false);
-		String SelectedDir = getDirName("Select Directory to save the current map");
-		if (!SelectedDir.isEmpty()) {
-			String SaveFileName = SelectedDir
-					+ CorrectLabel.getCorrectLabel(MappableComponents
-							.GetToplevelName()) + "-"
-							+ BoardInfo.getBoardName() + "-MAP.xml";
+		 String suggestedName =
+                 CorrectLabel.getCorrectLabel(MappableComponents.GetToplevelName())
+                 + "-" + BoardInfo.getBoardName() + "-MAP.xml";
+		String SaveFileName = getFileName("Select filename to save the current map", suggestedName);
+		if (!SaveFileName.isEmpty()) {
 			try {
 				// Create instance of DocumentBuilderFactory
 				DocumentBuilderFactory factory = DocumentBuilderFactory
@@ -918,12 +968,6 @@ ListSelectionListener {
 		ClearSelections();
 	}
 
-	public void SetVisible(boolean selection) {
-		MessageLine.setForeground(Color.BLUE);
-		MessageLine.setText("No messages");
-		panel.setVisible(selection);
-	}
-
 	private void UnMapAll() {
 		ClearSelections();
 		MappableComponents.UnmapAll();
@@ -984,6 +1028,37 @@ ListSelectionListener {
 			CancelButton.setEnabled(true);
 			BoardPic.paintImmediately(0,0,BoardPic.getWidth(),BoardPic.getHeight());
 		}
+	}
+
+	@Override
+	public void windowOpened(WindowEvent e) {
+	}
+
+	@Override
+	public void windowClosing(WindowEvent e) {
+		synchronized (lock) {
+			lock.notify();
+		}
+	}
+
+	@Override
+	public void windowClosed(WindowEvent e) {
+	}
+
+	@Override
+	public void windowIconified(WindowEvent e) {
+	}
+
+	@Override
+	public void windowDeiconified(WindowEvent e) {
+	}
+
+	@Override
+	public void windowActivated(WindowEvent e) {
+	}
+
+	@Override
+	public void windowDeactivated(WindowEvent e) {
 	}
 
 }

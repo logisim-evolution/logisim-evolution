@@ -323,6 +323,13 @@ public class Startup implements AWTEventListener {
 					printUsage();
 
 				ret.testCircuitImpBoard = args[i];
+				i++;
+				if (i < args.length) {
+					if (!args[i].startsWith("-"))
+						ret.testTickFrequency = (double) Integer.valueOf(args[i]);
+					else 
+						i--;
+				}
 
 
 				ret.filesToOpen.add(new File(ret.testCircuitImpPath));
@@ -474,6 +481,7 @@ public class Startup implements AWTEventListener {
 
 	/* Test implementation */
 	private String testCircuitImpPath = null;
+	private double testTickFrequency = 1;
 	/* Name of the circuit withing logisim */
 	private String testCircuitImpName = null;
 	/* Name of the board to run on i.e Reptar, MAXV ...*/
@@ -903,7 +911,8 @@ public class Startup implements AWTEventListener {
 						FPGACommanderTests testImpFpga = new FPGACommanderTests(proj,
 								testCircuitImpMapFile,
 								testCircuitImpName,
-								testCircuitImpBoard);
+								testCircuitImpBoard,
+								testTickFrequency);
 
 						if (testImpFpga.StartTests()) {
 							System.exit(0);

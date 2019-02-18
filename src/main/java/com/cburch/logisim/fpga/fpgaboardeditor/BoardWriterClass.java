@@ -75,6 +75,7 @@ class BoardWriterClass {
 	public static String ImageInformationString = "BoardPicture";
 	public static String MultiPinInformationString = "NrOfPins";
 	public static String MultiPinPrefixString = "FPGAPin_";
+	public static String LabelString = "Label";
 	private DocumentBuilderFactory factory;
 	private DocumentBuilder parser;
 	private Document boardInfo;

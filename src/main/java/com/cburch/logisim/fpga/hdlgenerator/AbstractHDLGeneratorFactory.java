@@ -83,7 +83,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
 	public static boolean WriteArchitecture(String TargetDirectory,
 			ArrayList<String> Contents, String ComponentName,
 			FPGAReport Reporter, String HDLType) {
-		if (Contents.isEmpty()) {
+		if (Contents == null || Contents.isEmpty()) {
 			Reporter.AddFatalError("INTERNAL ERROR: Empty behavior description for Component '"
 					+ ComponentName + "' received!");
 			return false;
@@ -484,7 +484,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
 		return Contents.toString();
 	}
 
-	public String GetBusNameContinues(NetlistComponent comp, int EndIndex,
+	static public String GetBusNameContinues(NetlistComponent comp, int EndIndex,
 			String HDLType, Netlist TheNets) {
 		String Result;
 		String BracketOpen = (HDLType.equals(HDLGeneratorFactory.VHDL)) ? "(" : "[";
@@ -513,6 +513,26 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
 				+ VectorLoopId
 				+ Integer.toString(ConnectionInformation.GetConnection(
 						(byte) (0)).GetParrentNetBitIndex()) + BracketClose;
+		return Result;
+	}
+
+	static public String GetBusName(NetlistComponent comp, int EndIndex,
+			String HDLType, Netlist TheNets) {
+		String Result;
+		if ((EndIndex < 0) || (EndIndex >= comp.NrOfEnds())) {
+			return "";
+		}
+		ConnectionEnd ConnectionInformation = comp.getEnd(EndIndex);
+		int NrOfBits = ConnectionInformation.NrOfBits();
+		if (NrOfBits == 1) {
+			return "";
+		}
+		if (!TheNets.IsContinuesBus(comp, EndIndex)) {
+			return "";
+		}
+		Net ConnectedNet = ConnectionInformation.GetConnection((byte) 0)
+				.GetParrentNet();
+		Result = BusName + Integer.toString(TheNets.GetNetId(ConnectedNet));
 		return Result;
 	}
 
