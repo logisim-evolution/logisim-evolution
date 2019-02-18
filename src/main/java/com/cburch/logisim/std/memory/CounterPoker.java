@@ -80,11 +80,20 @@ public class CounterPoker extends InstancePoker {
 		BitWidth dataWidth = painter.getAttributeValue(StdAttr.WIDTH);
 		int width = dataWidth == null ? 8 : dataWidth.getWidth();
 		int len = (width + 3) / 4;
-		int xcenter = Counter.SymbolWidth(width) - 25;
 
 		Graphics g = painter.getGraphics();
 		g.setColor(Color.RED);
-		g.drawRect(bds.getX() + xcenter - len * 4, bds.getY() + 22, len * 8, 16);
+		if (painter.getAttributeValue(StdAttr.APPEARANCE) == StdAttr.APPEAR_CLASSIC) {
+			if (len > 4) {
+				g.drawRect(bds.getX(), bds.getY() + 3, bds.getWidth(), 25);
+			} else {
+				int wid = 7 * len + 2;
+				g.drawRect(bds.getX() + (bds.getWidth() - wid) / 2, bds.getY() + 4, wid, 15);
+			}
+		} else {
+			int xcenter = Counter.SymbolWidth(width) - 25;
+			g.drawRect(bds.getX() + xcenter - len * 4, bds.getY() + 22, len * 8, 16);
+		}
 		g.setColor(Color.BLACK);
 	}
 }

@@ -36,6 +36,7 @@ import java.util.List;
 import com.cburch.logisim.circuit.RadixOption;
 import com.cburch.logisim.comp.EndData;
 import com.cburch.logisim.data.Attribute;
+import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.instance.StdAttr;
 
@@ -46,12 +47,13 @@ class PinAttributes extends ProbeAttributes {
 			.asList(new Attribute<?>[] { StdAttr.FACING, Pin.ATTR_TYPE,
 					StdAttr.WIDTH, Pin.ATTR_TRISTATE, Pin.ATTR_PULL,
 					StdAttr.LABEL, StdAttr.LABEL_FONT,
-					RadixOption.ATTRIBUTE });
+					RadixOption.ATTRIBUTE, PROBEAPPEARANCE });
 
 	BitWidth width = BitWidth.ONE;
 	boolean threeState = false;// true;
 	int type = EndData.INPUT_ONLY;
 	Object pull = Pin.PULL_NONE;
+	AttributeOption Appearance = ProbeAttributes.APPEAR_EVOLUTION_NEW;
 
 	public PinAttributes() {
 	}
@@ -72,6 +74,8 @@ class PinAttributes extends ProbeAttributes {
 			return (V) Boolean.valueOf(type == EndData.OUTPUT_ONLY);
 		if (attr == Pin.ATTR_PULL)
 			return (V) pull;
+		if (attr == PROBEAPPEARANCE)
+			return (V) Appearance;
 		return super.getValue(attr);
 	}
 
@@ -107,6 +111,11 @@ class PinAttributes extends ProbeAttributes {
 			if (pull.equals(newPull))
 				return;
 			pull = newPull;
+		} else if (attr == PROBEAPPEARANCE ){
+			AttributeOption NewAppearance = (AttributeOption) value;
+			if (Appearance.equals(NewAppearance))
+				return;
+			Appearance = NewAppearance;
 		} else {
 			oldvalue = (V) super.getValue(attr);
 			super.setValue(attr, value);

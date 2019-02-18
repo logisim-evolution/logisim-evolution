@@ -38,6 +38,7 @@ import java.awt.event.MouseEvent;
 
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
+import com.cburch.logisim.LogisimVersion;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.AttributeSet;
@@ -55,6 +56,7 @@ import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
+import com.cburch.logisim.std.wiring.ProbeAttributes;
 import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.StringGetter;
 
@@ -108,44 +110,83 @@ abstract class AbstractFlipFlop extends InstanceFactory {
 	}
 
 	private static final int STD_PORTS = 5;
+	private int numInputs;
 
 	private Attribute<AttributeOption> triggerAttribute;
 
 	protected AbstractFlipFlop(String name, String iconName, StringGetter desc,
 			int numInputs, boolean allowLevelTriggers) {
 		super(name, desc);
+		this.numInputs = numInputs;
 		setIconName(iconName);
 		triggerAttribute = allowLevelTriggers ? StdAttr.TRIGGER
 				: StdAttr.EDGE_TRIGGER;
 		setAttributes(new Attribute[] { triggerAttribute, StdAttr.LABEL,
-				StdAttr.LABEL_FONT }, new Object[] { StdAttr.TRIG_RISING, "",
-				StdAttr.DEFAULT_LABEL_FONT });
-		setOffsetBounds(Bounds.create(-10, 0, 60, 60));
+				StdAttr.LABEL_FONT , StdAttr.APPEARANCE }, new Object[] { StdAttr.TRIG_RISING, "",
+				StdAttr.DEFAULT_LABEL_FONT,AppPreferences.getDefaultAppearance() });
 		setInstancePoker(Poker.class);
 		setInstanceLogger(Logger.class);
 
+	}
+	
+	private void updatePorts(Instance instance) {
 		Port[] ps = new Port[numInputs + STD_PORTS];
-		if (numInputs == 1) {
-			ps[0] = new Port(-10, 10, Port.INPUT, 1);
-			ps[1] = new Port(-10, 50, Port.INPUT, 1);
-		} else if (numInputs == 2) {
-			ps[0] = new Port(-10, 10, Port.INPUT, 1);
-			ps[1] = new Port(-10, 30, Port.INPUT, 1);
-			ps[2] = new Port(-10, 50, Port.INPUT, 1);
+		if (instance.getAttributeValue(StdAttr.APPEARANCE)==StdAttr.APPEAR_CLASSIC) {
+		      if (numInputs == 1) {
+		          ps[0] = new Port(-40, 20, Port.INPUT, 1);
+		          ps[1] = new Port(-40,  0, Port.INPUT, 1);
+		        } else if (numInputs == 2) {
+		          ps[0] = new Port(-40,  0, Port.INPUT, 1);
+		          ps[1] = new Port(-40, 20, Port.INPUT, 1);
+		          ps[2] = new Port(-40, 10, Port.INPUT, 1);
+		        } else {
+		          throw new RuntimeException("flip-flop input > 2");
+		        }
+		        ps[numInputs + 1] = new Port(  0,  0, Port.OUTPUT, 1);
+		        ps[numInputs + 2] = new Port(  0, 20, Port.OUTPUT, 1);
+		        ps[numInputs + 3] = new Port(-10, 30, Port.INPUT,  1);
+		        ps[numInputs + 4] = new Port(-30, 30, Port.INPUT,  1);
 		} else {
-			throw new RuntimeException("flip-flop input > 2");
+			if (numInputs == 1) {
+				ps[0] = new Port(-10, 10, Port.INPUT, 1);
+				ps[1] = new Port(-10, 50, Port.INPUT, 1);
+			} else if (numInputs == 2) {
+				ps[0] = new Port(-10, 10, Port.INPUT, 1);
+				ps[1] = new Port(-10, 30, Port.INPUT, 1);
+				ps[2] = new Port(-10, 50, Port.INPUT, 1);
+			} else {
+				throw new RuntimeException("flip-flop input > 2");
+			}
+			ps[numInputs + 1] = new Port(50, 10, Port.OUTPUT, 1);
+			ps[numInputs + 2] = new Port(50, 50, Port.OUTPUT, 1);
+			ps[numInputs + 3] = new Port(20, 60, Port.INPUT, 1);
+			ps[numInputs + 4] = new Port(20, 0, Port.INPUT, 1);
 		}
-		ps[numInputs + 1] = new Port(50, 10, Port.OUTPUT, 1);
-		ps[numInputs + 2] = new Port(50, 50, Port.OUTPUT, 1);
-		ps[numInputs + 3] = new Port(20, 60, Port.INPUT, 1);
-		ps[numInputs + 4] = new Port(20, 0, Port.INPUT, 1);
 		ps[numInputs].setToolTip(S.getter("flipFlopClockTip"));
 		ps[numInputs + 1].setToolTip(S.getter("flipFlopQTip"));
 		ps[numInputs + 2].setToolTip(S.getter("flipFlopNotQTip"));
 		ps[numInputs + 3].setToolTip(S.getter("flipFlopResetTip"));
 		ps[numInputs + 4].setToolTip(S.getter("flipFlopPresetTip"));
-		setPorts(ps);
+		instance.setPorts(ps);
 	}
+
+	@Override
+	public Object getDefaultAttributeValue(Attribute<?> attr, LogisimVersion ver) {
+		if (attr.equals(StdAttr.APPEARANCE)) {
+			return StdAttr.APPEAR_CLASSIC;
+		} else {
+			return super.getDefaultAttributeValue(attr, ver);
+		}
+	}
+
+	  @Override
+	  public Bounds getOffsetBounds(AttributeSet attrs) {
+	    if (attrs.getValue(StdAttr.APPEARANCE) == StdAttr.APPEAR_CLASSIC) {
+	      return Bounds.create(-40, -10, 40, 40);
+	    } else {
+	      return Bounds.create(-10, 0, 60, 60);
+	    }
+	  }
 
 	protected abstract Value computeValue(Value[] inputs, Value curValue);
 
@@ -154,6 +195,8 @@ abstract class AbstractFlipFlop extends InstanceFactory {
 	//
 	@Override
 	protected void configureNewInstance(Instance instance) {
+	    instance.addAttributeListener();
+	    updatePorts(instance);
 		Bounds bds = instance.getBounds();
 		instance.setTextField(StdAttr.LABEL, StdAttr.LABEL_FONT, bds.getX()
 				+ bds.getWidth() / 2, bds.getY() - 3, GraphicsUtil.H_CENTER,
@@ -190,6 +233,46 @@ abstract class AbstractFlipFlop extends InstanceFactory {
 
 	@Override
 	public void paintInstance(InstancePainter painter) {
+		if (painter.getAttributeValue(StdAttr.APPEARANCE) == StdAttr.APPEAR_CLASSIC) {
+			paintInstanceClassic(painter);
+		} else {
+			paintInstanceEvolution(painter);
+		}
+	}
+	
+	private void paintInstanceClassic(InstancePainter painter) {
+	    Graphics g = painter.getGraphics();
+	    painter.drawBounds();
+	    painter.drawLabel();
+	    if (painter.getShowState()) {
+	      Location loc = painter.getLocation();
+	      StateData myState = (StateData) painter.getData();
+	      if (myState != null) {
+	        int x = loc.getX();
+	        int y = loc.getY();
+	        g.setColor(myState.curValue.getColor());
+	        g.fillOval(x - 26, y + 4, 13, 13);
+	        g.setColor(Color.WHITE);
+	        GraphicsUtil.drawCenteredText(g, 
+	            myState.curValue.toDisplayString(), x - 20, y + 9);
+	        g.setColor(Color.BLACK);
+	      }
+	    }
+
+	    int n = numInputs;
+	    g.setColor(Color.GRAY);
+	    painter.drawPort(n + 3, "0", Direction.SOUTH);
+	    painter.drawPort(n + 4, "1", Direction.SOUTH);
+	    g.setColor(Color.BLACK);
+	    for (int i = 0; i < n; i++) {
+	      painter.drawPort(i, getInputName(i), Direction.EAST);
+	    }
+	    painter.drawClock(n, Direction.EAST);
+	    painter.drawPort(n + 1, "Q", Direction.WEST);
+	    painter.drawPort(n + 2);
+	}
+	
+	private void paintInstanceEvolution(InstancePainter painter) {
 		Graphics g = painter.getGraphics();
 		painter.drawLabel();
 		Location loc = painter.getLocation();
@@ -209,7 +292,7 @@ abstract class AbstractFlipFlop extends InstanceFactory {
 			}
 		}
 
-		int n = getPorts().size() - STD_PORTS;
+		int n = numInputs;
 		g.setColor(Color.GRAY);
 		painter.drawPort(n + 3, "R", Direction.SOUTH);
 		painter.drawPort(n + 4, "S", Direction.NORTH);
@@ -245,7 +328,7 @@ abstract class AbstractFlipFlop extends InstanceFactory {
 		GraphicsUtil.switchToWidth(g, 1);
 		painter.drawPort(n + 2);
 	}
-
+	
 	@Override
 	public void propagate(InstanceState state) {
 		// boolean changed = false;
@@ -256,7 +339,7 @@ abstract class AbstractFlipFlop extends InstanceFactory {
 			state.setData(data);
 		}
 
-		int n = getPorts().size() - STD_PORTS;
+		int n = numInputs;
 		Object triggerType = state.getAttributeValue(triggerAttribute);
 		boolean triggered = data
 				.updateClock(state.getPortValue(n), triggerType);
@@ -293,6 +376,13 @@ abstract class AbstractFlipFlop extends InstanceFactory {
 	
 	@Override
 	public int[] ClockPinIndex(NetlistComponent comp) {
-		return new int[] {getPorts().size() - STD_PORTS};
+		return new int[] {numInputs};
 	}
+	  @Override
+	  protected void instanceAttributeChanged(Instance instance, Attribute<?> attr) {
+	    if (attr == StdAttr.APPEARANCE) {
+	      instance.recomputeBounds();
+	      updatePorts(instance);
+	    }
+	  }
 }

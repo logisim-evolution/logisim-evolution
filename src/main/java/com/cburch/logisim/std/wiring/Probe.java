@@ -36,6 +36,7 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 
+import com.cburch.logisim.LogisimVersion;
 import com.cburch.logisim.circuit.RadixOption;
 import com.cburch.logisim.comp.TextField;
 import com.cburch.logisim.data.Attribute;
@@ -53,6 +54,7 @@ import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
+import com.cburch.logisim.prefs.PrefMonitorBooleanConvert;
 import com.cburch.logisim.util.GraphicsUtil;
 
 public class Probe extends InstanceFactory {
@@ -181,7 +183,7 @@ public class Probe extends InstanceFactory {
 		return data == null ? Value.NIL : data.curValue;
 	}
 	static void paintValue(InstancePainter painter, Value value) {
-		if (AppPreferences.NEW_INPUT_OUTPUT_SHAPES.getBoolean())
+		if (painter.getAttributeValue(ProbeAttributes.PROBEAPPEARANCE)==ProbeAttributes.APPEAR_EVOLUTION_NEW)
 			paintValue(painter,value,false,false);
 		else
 			paintOldStyleValue(painter,value);
@@ -242,8 +244,17 @@ public class Probe extends InstanceFactory {
 		return 20;
 	}
 	
+	@Override
+	public Object getDefaultAttributeValue(Attribute<?> attr, LogisimVersion ver) {
+		if (attr.equals(ProbeAttributes.PROBEAPPEARANCE)) {
+			return StdAttr.APPEAR_CLASSIC;
+		} else {
+			return super.getDefaultAttributeValue(attr, ver);
+		}
+	}
+
 	static void paintValue(InstancePainter painter, Value value, boolean colored, boolean extend) {
-		if (!AppPreferences.NEW_INPUT_OUTPUT_SHAPES.getBoolean()) {
+		if (painter.getAttributeValue(ProbeAttributes.PROBEAPPEARANCE)!=ProbeAttributes.APPEAR_EVOLUTION_NEW) {
 			paintOldStyleValue(painter,value);
 			return;
 		}
@@ -340,18 +351,22 @@ public class Probe extends InstanceFactory {
 		instance.setPorts(new Port[] { new Port(0, 0, Port.INPUT,
 				BitWidth.UNKNOWN) });
 		instance.addAttributeListener();
+		((PrefMonitorBooleanConvert)AppPreferences.NEW_INPUT_OUTPUT_SHAPES).addConvertListener((ProbeAttributes)instance.getAttributeSet());
 		configureLabel(instance);
 	}
 
 	@Override
 	public AttributeSet createAttributeSet() {
-		return new ProbeAttributes();
+		AttributeSet attrs = new ProbeAttributes();
+		attrs.setValue(ProbeAttributes.PROBEAPPEARANCE, ProbeAttributes.GetDefaultProbeAppearance());
+		return attrs;
 	}
 
 	@Override
 	public Bounds getOffsetBounds(AttributeSet attrsBase) {
 		ProbeAttributes attrs = (ProbeAttributes) attrsBase;
-		return getOffsetBounds(attrs.facing, attrs.width, attrs.radix,AppPreferences.NEW_INPUT_OUTPUT_SHAPES.getBoolean(),false);
+		return getOffsetBounds(attrs.facing, attrs.width, attrs.radix,
+				attrs.Appearance==ProbeAttributes.APPEAR_EVOLUTION_NEW,false);
 	}
 
 	@Override
@@ -364,7 +379,7 @@ public class Probe extends InstanceFactory {
 	protected void instanceAttributeChanged(Instance instance, Attribute<?> attr) {
 		if (attr == Pin.ATTR_LABEL_LOC) {
 			configureLabel(instance);
-		} else if (attr == StdAttr.FACING || attr == RadixOption.ATTRIBUTE) {
+		} else if (attr == StdAttr.FACING || attr == RadixOption.ATTRIBUTE || attr == ProbeAttributes.PROBEAPPEARANCE) {
 			instance.recomputeBounds();
 			configureLabel(instance);
 		}
@@ -383,9 +398,6 @@ public class Probe extends InstanceFactory {
 
 	@Override
 	public void paintInstance(InstancePainter painter) {
-		/* dirty hack to make the pin change shape correctly when in the preferences the new -> old shapes are changed */
-        painter.getInstance().recomputeBounds();
-        /* end dirty hack */
 		Value value = getValue(painter);
 
 		Graphics g = painter.getGraphics();

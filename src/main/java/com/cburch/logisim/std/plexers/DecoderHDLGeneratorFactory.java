@@ -43,7 +43,7 @@ public class DecoderHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
 	@Override
 	public String getComponentStringIdentifier() {
-		return "DECODER";
+		return "BINDECODER";
 	}
 
 	@Override

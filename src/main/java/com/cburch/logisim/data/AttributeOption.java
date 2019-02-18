@@ -57,6 +57,10 @@ public class AttributeOption implements AttributeOptionInterface {
 		return desc.toString();
 	}
 
+	public StringGetter getDisplayGetter() {
+		return desc;
+	}
+
 	@Override
 	public String toString() {
 		return name;

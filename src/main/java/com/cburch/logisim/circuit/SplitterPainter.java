@@ -65,7 +65,7 @@ class SplitterPainter {
 					if (old == null) {
 						ends[curEnd] = toAdd;
 					} else {
-						ends[curEnd] = old + "," + toAdd;
+						ends[curEnd] = toAdd + "," + old;
 					}
 				}
 				curEnd = bit;
@@ -142,7 +142,7 @@ class SplitterPainter {
 			if (fanout > 3) {
 				GraphicsUtil.switchToWidth(g, SPINE_WIDTH);
 				g.setColor(Color.BLACK);
-				g.drawLine(x1 + dx, ySpine, x1 + (fanout - 2) * dx, ySpine);
+				g.drawLine(x1 + (dx>0?10:-10), ySpine, x1 + (fanout - 1) * dx + (dx>0?10:-10), ySpine);
 			} else {
 				g.setColor(Color.BLACK);
 				g.fillOval(x0 - SPINE_DOT / 2, ySpine - SPINE_DOT / 2,
@@ -167,7 +167,7 @@ class SplitterPainter {
 			if (fanout >= 3) {
 				GraphicsUtil.switchToWidth(g, SPINE_WIDTH);
 				g.setColor(Color.BLACK);
-				g.drawLine(xSpine, y1 + dy, xSpine, y1 + (fanout - 2) * dy);
+				g.drawLine(xSpine, y1 + (dy>0?10:-10), xSpine, y1 + (fanout - 1) * dy + (dy>0?10:-10));
 			} else {
 				g.setColor(Color.BLACK);
 				g.fillOval(xSpine - SPINE_DOT / 2, y0 - SPINE_DOT / 2,

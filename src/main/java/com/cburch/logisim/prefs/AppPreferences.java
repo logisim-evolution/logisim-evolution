@@ -55,8 +55,10 @@ import javax.swing.UIManager;
 import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
 import com.cburch.logisim.Main;
 import com.cburch.logisim.circuit.RadixOption;
+import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.gui.start.Startup;
+import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.LocaleListener;
 import com.cburch.logisim.util.LocaleManager;
 import com.cburch.logisim.util.PropertyChangeWeakSupport;
@@ -525,11 +527,28 @@ public class AppPreferences {
 			"keepConnected", true));
 	public static final PrefMonitor<Boolean> ADD_SHOW_GHOSTS = create(new PrefMonitorBoolean(
 			"showGhosts", true));
-	public static final PrefMonitor<Boolean> NAMED_CIRCUIT_BOXES = create(new PrefMonitorBoolean(
-			"namedBoxes", true));
 	public static final PrefMonitor<Boolean> NAMED_CIRCUIT_BOXES_FIXED_SIZE = create(new PrefMonitorBoolean(
 			"namedBoxesFixed", true));
-	public static final PrefMonitor<Boolean> NEW_INPUT_OUTPUT_SHAPES = create(new PrefMonitorBoolean(
+	public static final PrefMonitor<String> DefaultAppearance = create(new PrefMonitorStringOpts(
+			"defaultAppearance" , new String[] {StdAttr.APPEAR_CLASSIC.toString(),
+					StdAttr.APPEAR_FPGA.toString(),StdAttr.APPEAR_EVOLUTION.toString()},
+					StdAttr.APPEAR_EVOLUTION.toString()));
+	public static AttributeOption getDefaultAppearance() {
+		if (DefaultAppearance.get().equals(StdAttr.APPEAR_EVOLUTION.toString()))
+			return StdAttr.APPEAR_EVOLUTION;
+		else
+			return StdAttr.APPEAR_CLASSIC;
+	}
+	public static AttributeOption getDefaultCircuitAppearance() {
+		if (DefaultAppearance.get().equals(StdAttr.APPEAR_EVOLUTION.toString()))
+			return StdAttr.APPEAR_EVOLUTION;
+		else if (DefaultAppearance.get().equals(StdAttr.APPEAR_FPGA.toString()))
+			return StdAttr.APPEAR_FPGA;
+		else
+			return StdAttr.APPEAR_CLASSIC;
+		
+	}
+	public static final PrefMonitor<Boolean> NEW_INPUT_OUTPUT_SHAPES = create(new PrefMonitorBooleanConvert(
 			"oldIO", true));
 	public static final PrefMonitor<Double> SCALE_FACTOR = create(new PrefMonitorDouble(
 			"Scale", (((!GraphicsEnvironment.isHeadless()) ? Toolkit.getDefaultToolkit().getScreenSize().getHeight() : 0)/1000) < 1.0 ? 1.0 :

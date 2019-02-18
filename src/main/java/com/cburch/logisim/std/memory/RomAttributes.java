@@ -36,9 +36,11 @@ import java.util.WeakHashMap;
 
 import com.cburch.logisim.data.AbstractAttributeSet;
 import com.cburch.logisim.data.Attribute;
+import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.gui.hex.HexFrame;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
 
 class RomAttributes extends AbstractAttributeSet {
@@ -65,7 +67,8 @@ class RomAttributes extends AbstractAttributeSet {
 
 	private static List<Attribute<?>> ATTRIBUTES = Arrays
 			.asList(new Attribute<?>[] { Mem.ADDR_ATTR, Mem.DATA_ATTR,
-					Rom.CONTENTS_ATTR, StdAttr.LABEL, StdAttr.LABEL_FONT, StdAttr.LABEL_VISIBILITY });
+					Rom.CONTENTS_ATTR, StdAttr.LABEL, StdAttr.LABEL_FONT, StdAttr.LABEL_VISIBILITY,
+					StdAttr.APPEARANCE});
 
 	private static WeakHashMap<MemContents, RomContentsListener> listenerRegistry = new WeakHashMap<MemContents, RomContentsListener>();
 
@@ -76,6 +79,7 @@ class RomAttributes extends AbstractAttributeSet {
 	private String Label = "";
 	private Font LabelFont = StdAttr.DEFAULT_LABEL_FONT;
 	private Boolean LabelVisable = false;
+	private AttributeOption Appearance = AppPreferences.getDefaultAppearance();
 
 	RomAttributes() {
 		contents = MemContents.create(addrBits.getWidth(), dataBits.getWidth(),true);
@@ -87,6 +91,9 @@ class RomAttributes extends AbstractAttributeSet {
 		d.addrBits = addrBits;
 		d.dataBits = dataBits;
 		d.contents = contents.clone();
+		d.LabelFont = LabelFont;
+		d.LabelVisable = LabelVisable;
+		d.Appearance = Appearance;
 	}
 
 	@Override
@@ -114,6 +121,9 @@ class RomAttributes extends AbstractAttributeSet {
 		}
 		if (attr == StdAttr.LABEL_VISIBILITY) {
 			return (V) LabelVisable;
+		}
+		if (attr == StdAttr.APPEARANCE) {
+			return (V) Appearance;
 		}
 		return null;
 	}
@@ -163,6 +173,12 @@ class RomAttributes extends AbstractAttributeSet {
 			if (LabelVisable.equals(newVis))
 				return;
 			LabelVisable = newVis;
+			fireAttributeValueChanged(attr, value,null);
+		} else if (attr == StdAttr.APPEARANCE) {
+			AttributeOption NewAppearance = (AttributeOption) value;
+			if (Appearance.equals(NewAppearance))
+				return;
+			Appearance = NewAppearance;
 			fireAttributeValueChanged(attr, value,null);
 		}
 	}

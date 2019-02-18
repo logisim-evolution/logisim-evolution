@@ -54,6 +54,7 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.text.MaskFormatter;
 
+import com.cburch.logisim.LogisimVersion;
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.circuit.RadixOption;
 import com.cburch.logisim.circuit.Wire;
@@ -78,6 +79,7 @@ import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
+import com.cburch.logisim.prefs.PrefMonitorBooleanConvert;
 import com.cburch.logisim.tools.key.BitWidthConfigurator;
 import com.cburch.logisim.tools.key.DirectionConfigurator;
 import com.cburch.logisim.tools.key.JoinedConfigurator;
@@ -253,7 +255,7 @@ public class Pin extends InstanceFactory {
 				// label
 				// included
 				int i,j;
-				if (AppPreferences.NEW_INPUT_OUTPUT_SHAPES.getBoolean()) {
+				if (state.getAttributeValue(ProbeAttributes.PROBEAPPEARANCE)==ProbeAttributes.APPEAR_EVOLUTION_NEW) {
 					Direction dir = state.getAttributeValue(StdAttr.FACING);
 					int yoffset = (dir==Direction.SOUTH) ? 10 : 0;
 					i = (bds.getX() + bds.getWidth() + 5 - e.getX() - Probe.BinairyXoffset(dir, true, false)) / 10;
@@ -452,8 +454,18 @@ public class Pin extends InstanceFactory {
 	protected void configureNewInstance(Instance instance) {
 		PinAttributes attrs = (PinAttributes) instance.getAttributeSet();
 		instance.addAttributeListener();
+		((PrefMonitorBooleanConvert)AppPreferences.NEW_INPUT_OUTPUT_SHAPES).addConvertListener(attrs);
 		configurePorts(instance);
 		Probe.configureLabel(instance, PinLabelLoc(attrs.facing), attrs.facing);
+	}
+
+	@Override
+	public Object getDefaultAttributeValue(Attribute<?> attr, LogisimVersion ver) {
+		if (attr.equals(ProbeAttributes.PROBEAPPEARANCE)) {
+			return StdAttr.APPEAR_CLASSIC;
+		} else {
+			return super.getDefaultAttributeValue(attr, ver);
+		}
 	}
 
 	private void configurePorts(Instance instance) {
@@ -470,14 +482,16 @@ public class Pin extends InstanceFactory {
 
 	@Override
 	public AttributeSet createAttributeSet() {
-		return new PinAttributes();
+		AttributeSet attrs = new PinAttributes();
+		attrs.setValue(ProbeAttributes.PROBEAPPEARANCE, ProbeAttributes.GetDefaultProbeAppearance());
+		return attrs;
 	}
 
 	@Override
 	public Bounds getOffsetBounds(AttributeSet attrs) {
 		Direction facing = attrs.getValue(StdAttr.FACING);
 		BitWidth width = attrs.getValue(StdAttr.WIDTH);
-		boolean NewLayout = AppPreferences.NEW_INPUT_OUTPUT_SHAPES.getBoolean(); 
+		boolean NewLayout = attrs.getValue(ProbeAttributes.PROBEAPPEARANCE) == ProbeAttributes.APPEAR_EVOLUTION_NEW; 
 		return Probe.getOffsetBounds(facing, width,
 				attrs.getValue(RadixOption.ATTRIBUTE) /* RadixOption.RADIX_2 */,
 				NewLayout,true);
@@ -525,7 +539,7 @@ public class Pin extends InstanceFactory {
 		if (attr == ATTR_TYPE) {
 			configurePorts(instance);
 		} else if (attr == StdAttr.WIDTH || attr == StdAttr.FACING
-				|| attr == RadixOption.ATTRIBUTE) {
+				|| attr == RadixOption.ATTRIBUTE || attr == ProbeAttributes.PROBEAPPEARANCE ) {
 			instance.recomputeBounds();
 			PinAttributes attrs = (PinAttributes) instance.getAttributeSet();
 			Probe.configureLabel(instance, PinLabelLoc(attrs.facing), attrs.facing);
@@ -539,8 +553,8 @@ public class Pin extends InstanceFactory {
 		return attrs.type != EndData.OUTPUT_ONLY;
 	}
 	
-	public void DrawInputShape(Graphics g, int x, int y, int width , int height, Direction dir, Color LineColor, boolean isBus) {
-		if (!AppPreferences.NEW_INPUT_OUTPUT_SHAPES.getBoolean()) {
+	public void DrawInputShape(boolean NewShape, Graphics g, int x, int y, int width , int height, Direction dir, Color LineColor, boolean isBus) {
+		if (!NewShape) {
 			g.drawRect(x + 1, y + 1, width-1 , height-1);
 		} else if (dir==Direction.EAST) {
 			if (isBus) {
@@ -617,8 +631,8 @@ public class Pin extends InstanceFactory {
 		}
 	}
 
-	public void DrawOutputShape(Graphics g, int x, int y, int width , int height, Direction dir,boolean SingleBit, Color LineColor) {
-		if (AppPreferences.NEW_INPUT_OUTPUT_SHAPES.getBoolean()) {
+	public void DrawOutputShape(boolean NewShape, Graphics g, int x, int y, int width , int height, Direction dir,boolean SingleBit, Color LineColor) {
+		if (NewShape) {
 			if (dir==Direction.WEST) {
 				if (!SingleBit) {
 					GraphicsUtil.switchToWidth(g, Wire.WIDTH_BUS);
@@ -711,11 +725,12 @@ public class Pin extends InstanceFactory {
 		Graphics g = painter.getGraphics();
 		GraphicsUtil.switchToWidth(g, 2);
 		boolean output = attrs.isOutput();
+		boolean NewShape = attrs.getValue(ProbeAttributes.PROBEAPPEARANCE) == ProbeAttributes.APPEAR_EVOLUTION_NEW;
 		if (output) {
-			DrawOutputShape(g,x+bds.getX(),y+bds.getY(),bds.getWidth(),bds.getHeight(),attrs.getValue(StdAttr.FACING),
+			DrawOutputShape(NewShape,g,x+bds.getX(),y+bds.getY(),bds.getWidth(),bds.getHeight(),attrs.getValue(StdAttr.FACING),
 					attrs.getValue(StdAttr.WIDTH) == BitWidth.ONE,Color.GRAY);
 		} else {
-			DrawInputShape(g,x+bds.getX(),y+bds.getY(),bds.getWidth(),bds.getHeight(),attrs.getValue(StdAttr.FACING),
+			DrawInputShape(NewShape,g,x+bds.getX(),y+bds.getY(),bds.getWidth(),bds.getHeight(),attrs.getValue(StdAttr.FACING),
 					Color.GRAY,false);
 		}
 	}
@@ -780,11 +795,8 @@ public class Pin extends InstanceFactory {
 
 	@Override
 	public void paintInstance(InstancePainter painter) {
-		/* dirty hack to make the pin change shape correctly when in the preferences the new -> old shapes are changed */
-        painter.getInstance().recomputeBounds();
-        /* end dirty hack */
-        boolean NewStyle = AppPreferences.NEW_INPUT_OUTPUT_SHAPES.getBoolean();
 		PinAttributes attrs = (PinAttributes) painter.getAttributeSet();
+        boolean NewStyle = attrs.getValue(ProbeAttributes.PROBEAPPEARANCE) == ProbeAttributes.APPEAR_EVOLUTION_NEW;
 		Graphics g = painter.getGraphics();
 		Bounds bds = painter.getInstance().getBounds(); // intentionally with no
 		// graphics object - we
@@ -798,10 +810,10 @@ public class Pin extends InstanceFactory {
 		PinState state = getState(painter);
 		Value found = state.foundValue;
 		if (IsOutput) {
-			DrawOutputShape(g,x+1,y+1,bds.getWidth()-1,bds.getHeight()-1,attrs.getValue(StdAttr.FACING),
+			DrawOutputShape(NewStyle,g,x+1,y+1,bds.getWidth()-1,bds.getHeight()-1,attrs.getValue(StdAttr.FACING),
 					attrs.getValue(StdAttr.WIDTH) == BitWidth.ONE,found.getColor());
 		} else {
-			DrawInputShape(g,x+1,y+1,bds.getWidth()-1,bds.getHeight()-1,attrs.getValue(StdAttr.FACING),
+			DrawInputShape(NewStyle,g,x+1,y+1,bds.getWidth()-1,bds.getHeight()-1,attrs.getValue(StdAttr.FACING),
 					found.getColor(),attrs.width.getWidth()>1);
 		}
 

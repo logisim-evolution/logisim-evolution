@@ -41,6 +41,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.swing.JMenuItem;
@@ -345,6 +346,26 @@ public class SubcircuitFactory extends InstanceFactory {
 			computePorts(instance);
 		} else if (attr == CircuitAttributes.LABEL_LOCATION_ATTR) {
 			configureLabel(instance);
+		} else if (attr == CircuitAttributes.APPEARANCE_ATTR) {
+			final Circuit src = source;
+	      	CircuitTransaction xn = new ChangeAppearanceTransaction();
+	      	source.getLocker().execute(xn);
+	    }
+	}
+
+	private class ChangeAppearanceTransaction extends CircuitTransaction {
+		ChangeAppearanceTransaction() { }
+		@Override
+		protected Map<Circuit, Integer> getAccessedCircuits() {
+			Map<Circuit, Integer> accessMap = new HashMap<Circuit, Integer>();
+			for (Circuit supercirc : source.getCircuitsUsingThis()) {
+				accessMap.put(supercirc, READ_WRITE);
+			}
+			return accessMap;
+		}
+		@Override
+		protected void run(CircuitMutator mutator) {
+			source.getAppearance().recomputeDefaultAppearance();
 		}
 	}
 

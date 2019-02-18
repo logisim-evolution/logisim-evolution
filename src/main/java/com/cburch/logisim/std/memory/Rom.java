@@ -47,6 +47,7 @@ import java.util.WeakHashMap;
 import javax.swing.JLabel;
 
 import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
+import com.cburch.logisim.LogisimVersion;
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeSet;
@@ -196,6 +197,15 @@ public class Rom extends Mem {
 	}
 
 	@Override
+	public Object getDefaultAttributeValue(Attribute<?> attr, LogisimVersion ver) {
+		if (attr.equals(StdAttr.APPEARANCE)) {
+			return StdAttr.APPEAR_CLASSIC;
+		} else {
+			return super.getDefaultAttributeValue(attr, ver);
+		}
+	}
+
+	@Override
 	public AttributeSet createAttributeSet() {
 		return new RomAttributes();
 	}
@@ -227,7 +237,7 @@ public class Rom extends Mem {
 						+ " x "
 						+ Integer.toString(painter.getAttributeValue(
 								Mem.DATA_ATTR).getWidth()), xpos
-						+ (SymbolWidth / 2) + 20, ypos + 5);
+						+ (SymbolWidth / 2) + 20, ypos + 6);
 		GraphicsUtil.switchToWidth(g, 1);
 		DrawAddress(painter, xpos, ypos + 10,
 				painter.getAttributeValue(Mem.ADDR_ATTR).getWidth());
@@ -285,14 +295,12 @@ public class Rom extends Mem {
 
 	@Override
 	public String getHDLName(AttributeSet attrs) {
-		StringBuffer CompleteName = new StringBuffer();
 		String Label = CorrectLabel.getCorrectLabel(attrs.getValue(StdAttr.LABEL));
 		if (Label.length()==0) {
-			CompleteName.append("ROM");
+			return "ROM";
 		} else {
-			CompleteName.append("ROM_"+Label);
+			return "ROMCONTENTS_"+Label;
 		}
-		return CompleteName.toString();
 	}
 
 	@Override
@@ -308,8 +316,12 @@ public class Rom extends Mem {
 	@Override
 	public Bounds getOffsetBounds(AttributeSet attrs) {
 		int len = attrs.getValue(Mem.DATA_ATTR).getWidth();
-		return Bounds.create(0, 0, SymbolWidth + 40, getControlHeight(attrs)
-				+ 20 * len);
+		if (attrs.getValue(StdAttr.APPEARANCE) == StdAttr.APPEAR_CLASSIC) {
+			return Bounds.create(0,0,SymbolWidth+40,140);
+		} else {
+			return Bounds.create(0, 0, SymbolWidth + 40, getControlHeight(attrs)
+					+ 20 * len);
+		}
 	}
 
 	@Override
@@ -344,39 +356,48 @@ public class Rom extends Mem {
 
 	@Override
 	protected void instanceAttributeChanged(Instance instance, Attribute<?> attr) {
-		if (attr == Mem.DATA_ATTR) {
+		if (attr == Mem.DATA_ATTR || attr == StdAttr.APPEARANCE) {
 			instance.recomputeBounds();
 			configurePorts(instance);
 		}
 	}
 
+	public void DrawRomClassic(InstancePainter painter) {
+		DrawMemClassic(painter);
+	}
+	
 	@Override
 	public void paintInstance(InstancePainter painter) {
-		Graphics g = painter.getGraphics();
-		Bounds bds = painter.getBounds();
+		if (painter.getAttributeValue(StdAttr.APPEARANCE) == StdAttr.APPEAR_CLASSIC) {
+			DrawRomClassic(painter);
+		} else {
+			Graphics g = painter.getGraphics();
+			Bounds bds = painter.getBounds();
 
-		String Label = painter.getAttributeValue(StdAttr.LABEL);
-		if (Label != null) {
-			Font font = g.getFont();
-			g.setFont(painter.getAttributeValue(StdAttr.LABEL_FONT));
-			GraphicsUtil.drawCenteredText(g, Label, bds.getX() + bds.getWidth()
+			String Label = painter.getAttributeValue(StdAttr.LABEL);
+			if (Label != null && painter.getAttributeValue(StdAttr.LABEL_VISIBILITY)) {
+				Font font = g.getFont();
+				g.setFont(painter.getAttributeValue(StdAttr.LABEL_FONT));
+				GraphicsUtil.drawCenteredText(g, Label, bds.getX() + bds.getWidth()
 					/ 2, bds.getY() - g.getFont().getSize());
-			g.setFont(font);
-		}
-		int xpos = bds.getX();
-		int ypos = bds.getY();
-		int NrOfBits = painter.getAttributeValue(Mem.DATA_ATTR).getWidth();
-		/* draw control */
-		DrawControlBlock(painter, xpos, ypos);
-		/* draw body */
-		for (int i = 0; i < NrOfBits; i++) {
-			DrawDataBlock(painter, xpos, ypos, i, NrOfBits);
-		}
-		/* Draw contents */
-		if (painter.getShowState()) {
-			MemState state = getState(painter);
-			state.paint(painter.getGraphics(), bds.getX() + 20, bds.getY(),
-					false, getControlHeight(painter.getAttributeSet()));
+				g.setFont(font);
+			}
+			int xpos = bds.getX();
+			int ypos = bds.getY();
+			int NrOfBits = painter.getAttributeValue(Mem.DATA_ATTR).getWidth();
+			/* draw control */
+			DrawControlBlock(painter, xpos, ypos);
+			/* draw body */
+			for (int i = 0; i < NrOfBits; i++) {
+				DrawDataBlock(painter, xpos, ypos, i, NrOfBits);
+			}
+			/* Draw contents */
+			if (painter.getShowState()) {
+				MemState state = getState(painter);
+				state.paint(painter.getGraphics(), bds.getX(), bds.getY(),
+						    25, getControlHeight(painter.getAttributeSet())+5,
+						    Mem.SymbolWidth - 20 , 20*NrOfBits - 10 , false);
+			}
 		}
 	}
 

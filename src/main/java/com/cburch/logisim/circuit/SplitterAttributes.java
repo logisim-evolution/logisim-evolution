@@ -183,6 +183,9 @@ class SplitterAttributes extends AbstractAttributeSet {
 
 	public static final AttributeOption APPEAR_LEGACY = new AttributeOption(
 			"legacy", S.getter("splitterAppearanceLegacy"));
+	
+	public static final Attribute<Integer> ATTR_SPACING = Attributes.forIntegerRange(
+			"spacing", S.getter("splitterSpacing"), 1,9);
 
 	public static final AttributeOption APPEAR_LEFT = new AttributeOption(
 			"left", S.getter("splitterAppearanceLeft"));
@@ -206,7 +209,7 @@ class SplitterAttributes extends AbstractAttributeSet {
 
 	private static final List<Attribute<?>> INIT_ATTRIBUTES = Arrays
 			.asList(new Attribute<?>[] { StdAttr.FACING, ATTR_FANOUT,
-					ATTR_WIDTH, ATTR_APPEARANCE, });
+					ATTR_WIDTH, ATTR_APPEARANCE, ATTR_SPACING});
 
 	private static final String unchosen_val = "none";
 	private ArrayList<Attribute<?>> attrs = new ArrayList<Attribute<?>>(
@@ -214,6 +217,7 @@ class SplitterAttributes extends AbstractAttributeSet {
 	private SplitterParameters parameters;
 	AttributeOption appear = APPEAR_LEFT;
 	Direction facing = Direction.EAST;
+	int spacing = 1;
 	byte fanout = 2; // number of ends this splits into
 	byte[] bit_end = new byte[2]; // how each bit maps to an end (0 if nowhere);
 
@@ -293,6 +297,7 @@ class SplitterAttributes extends AbstractAttributeSet {
 		dest.facing = this.facing;
 		dest.fanout = this.fanout;
 		dest.appear = this.appear;
+		dest.spacing = this.spacing;
 		dest.bit_end = this.bit_end.clone();
 		dest.options = this.options;
 	}
@@ -326,6 +331,8 @@ class SplitterAttributes extends AbstractAttributeSet {
 			return (V) BitWidth.create(bit_end.length);
 		} else if (attr == ATTR_APPEARANCE) {
 			return (V) appear;
+		} else if (attr == ATTR_SPACING) {
+			return (V) Integer.valueOf(spacing);
 		} else if (attr instanceof BitOutAttribute) {
 			BitOutAttribute bitOut = (BitOutAttribute) attr;
 			return (V) Integer.valueOf(bit_end[bitOut.which]);
@@ -347,8 +354,8 @@ class SplitterAttributes extends AbstractAttributeSet {
 			int newValue = ((Integer) value).intValue();
 			byte[] bits = bit_end;
 			for (int i = 0; i < bits.length; i++) {
-				if (bits[i] >= newValue)
-					bits[i] = (byte) (newValue - 1);
+				if (bits[i] > newValue)
+					bits[i] = (byte) newValue;
 			}
 			if (fanout == (byte) newValue)
 				return;
@@ -363,6 +370,12 @@ class SplitterAttributes extends AbstractAttributeSet {
 			bit_end = new byte[width.getWidth()];
 			configureOptions();
 			configureDefaults();
+		} else if (attr == ATTR_SPACING) {
+			int s = (Integer) value;
+			if ( s == spacing )
+				return;
+			spacing = s;
+			parameters = null;
 		} else if (attr == ATTR_APPEARANCE) {
 			AttributeOption appearance = (AttributeOption) value;
 			if (appear.equals(appearance))

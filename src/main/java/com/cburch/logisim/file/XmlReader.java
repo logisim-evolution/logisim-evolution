@@ -67,8 +67,11 @@ import com.cburch.logisim.data.AttributeDefaultProvider;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.instance.Instance;
+import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.std.wiring.Pin;
+import com.cburch.logisim.std.wiring.ProbeAttributes;
 import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.tools.Tool;
 import com.cburch.logisim.util.InputEventUtil;
@@ -124,7 +127,7 @@ class XmlReader {
 		}
 
 		void initAttributeSet(Element parentElt, AttributeSet attrs,
-				AttributeDefaultProvider defaults) throws XmlReaderException {
+				AttributeDefaultProvider defaults, boolean IsHolyCross, boolean IsEvolution) throws XmlReaderException {
 			ArrayList<String> messages = null;
 
 			HashMap<String, String> attrsDefined = new HashMap<String, String>();
@@ -173,7 +176,21 @@ class XmlReader {
 				String attrName = attr.getName();
 				String attrVal = attrsDefined.get(attrName);
 				if (attrVal == null) {
-					if (setDefaults) {
+					if (attr.equals(ProbeAttributes.PROBEAPPEARANCE)) {
+						attrs.setValue(ProbeAttributes.PROBEAPPEARANCE, StdAttr.APPEAR_CLASSIC);
+					} else if (attr.equals(StdAttr.APPEARANCE)) {
+						if (IsHolyCross)
+							attrs.setValue(StdAttr.APPEARANCE, StdAttr.APPEAR_CLASSIC);
+						else if (IsEvolution)
+							attrs.setValue(StdAttr.APPEARANCE, StdAttr.APPEAR_EVOLUTION);
+						else {
+							Object val = defaults.getDefaultAttributeValue(attr,
+									ver);
+							if (val != null) {
+								attrs.setValue(attr, val);
+							}
+						}
+					} else if (setDefaults) {
 						Object val = defaults.getDefaultAttributeValue(attr,
 								ver);
 						if (val != null) {
@@ -198,7 +215,7 @@ class XmlReader {
 			}
 		}
 
-		private void initMouseMappings(Element elt) {
+		private void initMouseMappings(Element elt, boolean IsHolyCross, boolean IsEvolution) {
 			MouseMappings map = file.getOptions().getMouseMappings();
 			for (Element sub_elt : XmlIterator.forChildElements(elt, "tool")) {
 				Tool tool;
@@ -225,7 +242,7 @@ class XmlReader {
 
 				tool = tool.cloneTool();
 				try {
-					initAttributeSet(sub_elt, tool.getAttributeSet(), tool);
+					initAttributeSet(sub_elt, tool.getAttributeSet(), tool, IsHolyCross, IsEvolution);
 				} catch (XmlReaderException e) {
 					addErrors(e, "mapping." + tool.getName());
 				}
@@ -234,7 +251,7 @@ class XmlReader {
 			}
 		}
 
-		private void initToolbarData(Element elt) {
+		private void initToolbarData(Element elt, boolean IsHolyCross, boolean IsEvolution) {
 			ToolbarData toolbar = file.getOptions().getToolbarData();
 			for (Element sub_elt : XmlIterator.forChildElements(elt)) {
 				if (sub_elt.getTagName().equals("sep")) {
@@ -251,9 +268,15 @@ class XmlReader {
 						tool = tool.cloneTool();
 						try {
 							initAttributeSet(sub_elt, tool.getAttributeSet(),
-									tool);
+									tool,IsHolyCross,IsEvolution);
 						} catch (XmlReaderException e) {
 							addErrors(e, "toolbar." + tool.getName());
+						}
+						if (tool.getAttributeSet() != null) {
+							if (tool.getAttributeSet().containsAttribute(ProbeAttributes.PROBEAPPEARANCE))
+								tool.getAttributeSet().setValue(ProbeAttributes.PROBEAPPEARANCE,ProbeAttributes.GetDefaultProbeAppearance());
+							if (tool.getAttributeSet().containsAttribute(StdAttr.APPEARANCE))
+								tool.getAttributeSet().setValue(StdAttr.APPEARANCE, AppPreferences.getDefaultAppearance());
 						}
 						toolbar.addTool(tool);
 					}
@@ -298,11 +321,11 @@ class XmlReader {
 			}
 		}
 
-		private Map<Element, Component> loadKnownComponents(Element elt) {
+		private Map<Element, Component> loadKnownComponents(Element elt, boolean HolyCrossFile, boolean EvolutionFile) {
 			Map<Element, Component> known = new HashMap<Element, Component>();
 			for (Element sub : XmlIterator.forChildElements(elt, "comp")) {
 				try {
-					Component comp = XmlCircuitReader.getComponent(sub, this);
+					Component comp = XmlCircuitReader.getComponent(sub, this, HolyCrossFile,EvolutionFile);
 					if (comp != null)
 						known.put(sub, comp);
 				} catch (XmlReaderException e) {
@@ -311,7 +334,7 @@ class XmlReader {
 			return known;
 		}
 
-		private Library toLibrary(Element elt) {
+		private Library toLibrary(Element elt,boolean IsHolyCross, boolean IsEvolution) {
 			if (!elt.hasAttribute("name")) {
 				loader.showError(S.get("libNameMissingError"));
 				return null;
@@ -335,7 +358,7 @@ class XmlReader {
 					if (tool != null) {
 						try {
 							initAttributeSet(sub_elt, tool.getAttributeSet(),
-									tool);
+									tool,IsHolyCross,IsEvolution);
 						} catch (XmlReaderException e) {
 							addErrors(e, "lib." + name + "." + tool_str);
 						}
@@ -348,10 +371,13 @@ class XmlReader {
 		private void toLogisimFile(Element elt,Project proj) {
 			// determine the version producing this file
 			String versionString = elt.getAttribute("source");
+			boolean HolyCrossFile = false;
+			boolean IsEvolutionFile = true;
 			if (versionString.equals("")) {
 				sourceVersion = Main.VERSION;
 			} else {
 				sourceVersion = LogisimVersion.parse(versionString);
+				HolyCrossFile = versionString.endsWith("-HC"); 
 			}
 
 			// If we are opening a pre-logisim-evolution file, there might be
@@ -362,6 +388,7 @@ class XmlReader {
 			// strange in their
 			// circuits...
 			if (sourceVersion.compareTo(LogisimVersion.get(2, 7, 2)) < 0) {
+				IsEvolutionFile = true;
 				JOptionPane
 						.showMessageDialog(
 								null,
@@ -374,7 +401,7 @@ class XmlReader {
 
 			// first, load the sublibraries
 			for (Element o : XmlIterator.forChildElements(elt, "lib")) {
-				Library lib = toLibrary(o);
+				Library lib = toLibrary(o,HolyCrossFile,IsEvolutionFile);
 				if (lib != null)
 					file.addLibrary(lib);
 			}
@@ -390,7 +417,7 @@ class XmlReader {
 				CircuitData circData = new CircuitData(circElt, new Circuit(
 						name, file,proj));
 				file.addCircuit(circData.circuit);
-				circData.knownComponents = loadKnownComponents(circElt);
+				circData.knownComponents = loadKnownComponents(circElt,HolyCrossFile,IsEvolutionFile);
 				for (Element appearElt : XmlIterator.forChildElements(circElt,
 						"appear")) {
 					loadAppearance(appearElt, circData, name + ".appear");
@@ -410,16 +437,16 @@ class XmlReader {
 				case "options":
 					try {
 						initAttributeSet(sub_elt, file.getOptions()
-								.getAttributeSet(), null);
+								.getAttributeSet(), null,HolyCrossFile,IsEvolutionFile);
 					} catch (XmlReaderException e) {
 						addErrors(e, "options");
 					}
 					break;
 				case "mappings":
-					initMouseMappings(sub_elt);
+					initMouseMappings(sub_elt,HolyCrossFile,IsEvolutionFile);
 					break;
 				case "toolbar":
-					initToolbarData(sub_elt);
+					initToolbarData(sub_elt,HolyCrossFile,IsEvolutionFile);
 					break;
 				case "main":
 					String main = sub_elt.getAttribute("name");
@@ -439,7 +466,7 @@ class XmlReader {
 
 			// fourth, execute a transaction that initializes all the circuits
 			XmlCircuitReader builder;
-			builder = new XmlCircuitReader(this, circuitsData);
+			builder = new XmlCircuitReader(this, circuitsData,HolyCrossFile,IsEvolutionFile);
 			builder.execute();
 		}
 

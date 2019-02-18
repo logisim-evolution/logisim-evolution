@@ -57,7 +57,6 @@ class MemState implements InstanceData, Cloneable, HexModelListener {
 	private int xOffset = 0;
 	private int yOffset = 0;
 	private int CharHeight = 0;
-	private int ControlBlockHeight = 0;
 
 	MemState(MemContents contents) {
 		this.contents = contents;
@@ -69,20 +68,23 @@ class MemState implements InstanceData, Cloneable, HexModelListener {
 			int[] oldValues) {
 	}
 
-	private void CalculateDisplayParameters(Graphics g, boolean HasDataIn) {
+	private void CalculateDisplayParameters(Graphics g,
+			int offsetX, int offsetY,
+			int DisplayWidth, int DisplayHeight) {
 		RecalculateParameters = false;
 		int addrBits = getAddrBits();
 		int dataBits = contents.getWidth();
-		int TotalWidth = (HasDataIn) ? Mem.SymbolWidth - 80
-				: Mem.SymbolWidth - 40;
-		int TotalHeight = (dataBits == 1) ? 16 : (dataBits * 20) - 6;
 		Font font = g.getFont();
 		FontMetrics fm = g.getFontMetrics(font);
 		AddrBlockSize = ((fm.stringWidth(StringUtil.toHexString(addrBits, 0)) + 9) / 10) * 10;
 		DataSize = fm.stringWidth(StringUtil.toHexString(dataBits, 0) + " ");
 		SpaceSize = fm.stringWidth(" ");
-		NrDataSymbolsEachLine = (TotalWidth - AddrBlockSize) / DataSize;
-		NrOfLines = (dataBits == 1) ? 1 : TotalHeight / (fm.getHeight() + 2);
+		NrDataSymbolsEachLine = (DisplayWidth - AddrBlockSize) / DataSize;
+		if (NrDataSymbolsEachLine > 3 && NrDataSymbolsEachLine % 2 != 0)
+			NrDataSymbolsEachLine--;
+		NrOfLines = DisplayHeight / (fm.getHeight() + 2); // (dataBits == 1) ? 1 : TotalHeight / (fm.getHeight() + 2);
+		if (NrOfLines == 0)
+			NrOfLines = 1;
 		int TotalShowableEntries = NrDataSymbolsEachLine * NrOfLines;
 		int TotalNrOfEntries = (1 << addrBits);
 		while (TotalShowableEntries > (TotalNrOfEntries + NrDataSymbolsEachLine - 1)) {
@@ -95,14 +97,11 @@ class MemState implements InstanceData, Cloneable, HexModelListener {
 		}
 		/* here we calculate to total x-sizes */
 		DataBlockSize = NrDataSymbolsEachLine * (DataSize);
-		int TotalSize = AddrBlockSize + DataBlockSize;
-		xOffset = (Mem.SymbolWidth / 2) - (TotalSize / 2);
+		int TotalWidth = AddrBlockSize + DataBlockSize;
+		xOffset = offsetX + (DisplayWidth / 2) - (TotalWidth / 2);
 		/* Same calculations for the height */
 		CharHeight = fm.getHeight();
-		int BlockHeigt = NrOfLines * (CharHeight + 2);
-		yOffset = (dataBits * 10) - (BlockHeigt / 2);
-		if (yOffset > 5)
-			yOffset = 5;
+		yOffset = offsetY;
 	}
 
 	@Override
@@ -132,9 +131,9 @@ class MemState implements InstanceData, Cloneable, HexModelListener {
 		 * This function returns the address of a data symbol inside the data
 		 * block
 		 */
-		int ystart = ControlBlockHeight + yOffset;
+		int ystart = yOffset;
 		int ystop = ystart + NrOfLines * (CharHeight + 2);
-		int xstart = 20 + xOffset + AddrBlockSize;
+		int xstart = xOffset + AddrBlockSize;
 		int xstop = xstart + DataBlockSize;
 		if ((x < xstart) | (x > xstop) | (y < ystart) | (y > ystop))
 			return -1;
@@ -149,17 +148,12 @@ class MemState implements InstanceData, Cloneable, HexModelListener {
 	public Bounds getBounds(long addr, Bounds bds) {
 		/* This function returns the rectangle shape around an item */
 		if (addr < 0) {
-			return Bounds.create(bds.getX() + 20 + xOffset, bds.getY()
-					+ ControlBlockHeight + yOffset, AddrBlockSize,
-					CharHeight + 2);
+			return Bounds.create(bds.getX() + xOffset, bds.getY() + yOffset,
+					AddrBlockSize, CharHeight + 2);
 		} else {
 			addr -= curScroll;
-			int line = ((int) addr) / NrDataSymbolsEachLine;
-			int item = ((int) addr) % NrDataSymbolsEachLine;
-			return Bounds.create(bds.getX() + 20 + xOffset + AddrBlockSize
-					+ item * (DataSize), bds.getY() + ControlBlockHeight
-					+ yOffset + line * (CharHeight + 2), DataSize,
-					CharHeight + 2);
+			return Bounds.create(bds.getX() + xOffset, bds.getY() + yOffset,
+					AddrBlockSize, CharHeight + 2);
 		}
 	}
 
@@ -211,12 +205,15 @@ class MemState implements InstanceData, Cloneable, HexModelListener {
 		setBits(contents.getLogLength(), contents.getWidth());
 	}
 
-	public void paint(Graphics g, int leftX, int topY, boolean HasDataIn,
-			int ControlBlockHeight) {
-		this.ControlBlockHeight = ControlBlockHeight;
-		topY += ControlBlockHeight;
-		if (RecalculateParameters)
-			CalculateDisplayParameters(g, HasDataIn);
+	private boolean classicAppearance = true;
+	public void paint(Graphics g, int leftX, int topY, 
+			int offsetX, int offsetY, 
+			int DisplayWidth, int DisplayHeight, boolean classic) 
+	{
+		if (RecalculateParameters || classicAppearance != classic) {
+			classicAppearance = classic;
+			CalculateDisplayParameters(g, offsetX, offsetY, DisplayWidth, DisplayHeight);
+		}
 		int BlockHeigt = NrOfLines * (CharHeight + 2);
 		int TotalNrOfEntries = (1 << getAddrBits());
 		g.setColor(Color.LIGHT_GRAY);
@@ -325,4 +322,5 @@ class MemState implements InstanceData, Cloneable, HexModelListener {
 		}
 		curScroll = addr;
 	}
+
 }
