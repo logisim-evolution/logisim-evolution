@@ -38,6 +38,8 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.io.File;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
@@ -68,7 +70,7 @@ import com.cburch.logisim.proj.ProjectEvent;
 import com.cburch.logisim.proj.ProjectListener;
 
 public class FPGACommanderGui extends FPGACommanderBase implements ActionListener,LibraryListener,ProjectListener,SimulatorListener,
-	CircuitListener,PreferenceChangeListener {
+	CircuitListener,WindowListener,PreferenceChangeListener {
 
 	@Override
 	public void preferenceChange(PreferenceChangeEvent pce) {
@@ -199,6 +201,7 @@ public class FPGACommanderGui extends FPGACommanderBase implements ActionListene
 		panel.setResizable(false);
 		panel.setAlwaysOnTop(false);
 		panel.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+		panel.addWindowListener(this);
 
 		GridBagLayout thisLayout = new GridBagLayout();
 		GridBagConstraints c = new GridBagConstraints();
@@ -555,6 +558,35 @@ public class FPGACommanderGui extends FPGACommanderBase implements ActionListene
 			panel.setVisible(false);
 			panel.setVisible(true);
 		}
+	}
+
+	@Override
+	public void windowOpened(WindowEvent e) {
+	}
+
+	@Override
+	public void windowClosing(WindowEvent e) {
+		ReporterGui.CloseOpenWindows();
+	}
+
+	@Override
+	public void windowClosed(WindowEvent e) {
+	}
+
+	@Override
+	public void windowIconified(WindowEvent e) {
+	}
+
+	@Override
+	public void windowDeiconified(WindowEvent e) {
+	}
+
+	@Override
+	public void windowActivated(WindowEvent e) {
+	}
+
+	@Override
+	public void windowDeactivated(WindowEvent e) {
 	}
 
 }

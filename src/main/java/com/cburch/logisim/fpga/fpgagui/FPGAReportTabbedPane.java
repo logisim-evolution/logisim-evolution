@@ -319,6 +319,37 @@ public class FPGAReportTabbedPane  extends JTabbedPane implements MouseListener,
 		else
 			repaint(rect);
 	}
+	
+	public void CloseOpenWindows() {
+		if (InfoWindow != null) {
+			if (InfoWindow.isVisible()) {
+				InfoWindow.setVisible(false);
+				add(panelInfos,InfoTabIndex);
+				UpdateInfoTab();
+			}
+		}
+		if (WarningsWindow != null) {
+			if (WarningsWindow.isVisible()) {
+				WarningsWindow.setVisible(false);
+				add(panelWarnings, WarningsTabIndex);
+				setTitleAt(WarningsTabIndex, "Warnings (" + WarningsList.getCountNr() + ")");
+				clearDRCTrace();
+			}
+		}
+		if (ErrorsWindow != null)
+			if (ErrorsWindow.isVisible()) {
+				ErrorsWindow.setVisible(false);
+				add(panelErrors, ErrorsTabIndex);
+				setTitleAt(ErrorsTabIndex, "Errors (" + ErrorsList.getCountNr() + ")");
+				clearDRCTrace();
+			}
+		if (ConsoleWindow != null)
+			if (ConsoleWindow.isVisible()) {
+				ConsoleWindow.setVisible(false);
+				add(panelConsole, ConsoleTabIndex);
+				UpdateConsoleTab();
+			}
+	}
 
 	private void GenerateDRCTrace(SimpleDRCContainer dc) {
 		DRCTraceActive = true;
