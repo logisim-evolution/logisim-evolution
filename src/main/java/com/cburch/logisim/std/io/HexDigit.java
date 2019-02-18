@@ -35,24 +35,37 @@ import static com.cburch.logisim.std.Strings.S;
 import java.awt.Color;
 
 import com.cburch.logisim.data.Attribute;
+import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
+import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Value;
+import com.cburch.logisim.fpga.fpgaboardeditor.FPGAIOInformationContainer;
+import com.cburch.logisim.fpga.hdlgenerator.IOComponentInformationContainer;
 import com.cburch.logisim.instance.InstanceDataSingleton;
 import com.cburch.logisim.instance.InstanceFactory;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
+import com.cburch.logisim.instance.StdAttr;
 
 public class HexDigit extends InstanceFactory {
 	public HexDigit() {
 		super("Hex Digit Display", S.getter("hexDigitComponent"));
 		setAttributes(new Attribute[] { Io.ATTR_ON_COLOR, Io.ATTR_OFF_COLOR,
-				Io.ATTR_BACKGROUND }, new Object[] { new Color(240, 0, 0),
-				SevenSegment.DEFAULT_OFF, Io.DEFAULT_BACKGROUND });
+				Io.ATTR_BACKGROUND , StdAttr.LABEL,
+				Io.ATTR_LABEL_LOC, StdAttr.LABEL_FONT, StdAttr.LABEL_VISIBILITY}, new Object[] { new Color(240, 0, 0),
+				SevenSegment.DEFAULT_OFF, Io.DEFAULT_BACKGROUND , "", Direction.EAST, StdAttr.DEFAULT_LABEL_FONT, false });
 		setPorts(new Port[] { new Port(0, 0, Port.INPUT, 4) });
 		setOffsetBounds(Bounds.create(-15, -60, 40, 60));
 		setIconName("hexdig.gif");
+		MyIOInformation = new IOComponentInformationContainer(0, 8, 0, null,
+				SevenSegment.GetLabels(), null,
+				FPGAIOInformationContainer.IOComponentTypes.SevenSegment);
+		MyIOInformation
+				.AddAlternateMapType(FPGAIOInformationContainer.IOComponentTypes.LED);
+		MyIOInformation
+				.AddAlternateMapType(FPGAIOInformationContainer.IOComponentTypes.Pin);
 	}
 
 	@Override
@@ -144,4 +157,17 @@ public class HexDigit extends InstanceFactory {
 			data.setValue(value);
 		}
 	}
+	@Override
+	public boolean RequiresNonZeroLabel() {
+		return true;
+	}
+
+	@Override
+	public boolean HDLSupportedComponent(String HDLIdentifier,
+			AttributeSet attrs) {
+		if (MyHDLGenerator == null)
+			MyHDLGenerator = new HexDigitHDLGeneratorFactory();
+		return MyHDLGenerator.HDLTargetSupported(HDLIdentifier, attrs);
+	}
+
 }

@@ -3,10 +3,10 @@ package com.cburch.logisim.fpga.fpgagui;
 import com.cburch.logisim.fpga.designrulecheck.SimpleDRCContainer;
 
 public class FPGAReportGui extends FPGAReport {
-	private FPGACommanderGui myCommander = null;
+	private FPGAReportTabbedPane myCommander = null;
 
 	public FPGAReportGui(FPGACommanderGui parent) {
-		myCommander = parent;
+		myCommander = parent.getReporterGui();
 	}
 
 	@Override

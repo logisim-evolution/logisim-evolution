@@ -3,166 +3,166 @@
 <BoardInformation>
 <!--This section decribes the FPGA and its clock-->
 <ClockInformation FPGApin="PIN_T22" Frequency="12000000" IOStandard="Default" PullBehavior="Float"/>
-<FPGAInformation Family="Cyclone IV E" JTAGPos="1" Package="FBGA 432" Part="EP4CE15F23C8" Speedgrade="C8" USBTMC="false" Vendor="ALTERA"/>
+<FPGAInformation Family="Cyclone IV E" FlashName="EPCQ16" FlashPos="1" JTAGPos="1" Package="FBGA 432" Part="EP4CE15F23C8" Speedgrade="C8" USBTMC="false" Vendor="ALTERA"/>
 <UnusedPins PullBehavior="Float"/>
 </BoardInformation>
 <IOComponents>
 <!--This section describes all Components present on the boards-->
-<Button ActivityLevel="Active low" FPGAPinIOStandard="Default" FPGAPinName="PIN_AB11" FPGAPinPullBehavior="Float" Height="32" LocationX="578" LocationY="2" Width="38"/>
-<Button ActivityLevel="Active low" FPGAPinIOStandard="Default" FPGAPinName="PIN_AA11" FPGAPinPullBehavior="Float" Height="30" LocationX="653" LocationY="2" Width="36"/>
-<Button ActivityLevel="Active low" FPGAPinIOStandard="Default" FPGAPinName="PIN_G22" FPGAPinPullBehavior="Float" Height="34" LocationX="374" LocationY="76" Width="37"/>
-<Button ActivityLevel="Active low" FPGAPinIOStandard="Default" FPGAPinName="PIN_A12" FPGAPinPullBehavior="Float" Height="34" LocationX="373" LocationY="116" Width="36"/>
-<Button ActivityLevel="Active low" FPGAPinIOStandard="Default" FPGAPinName="PIN_B12" FPGAPinPullBehavior="Float" Height="34" LocationX="373" LocationY="157" Width="36"/>
-<Button ActivityLevel="Active low" FPGAPinIOStandard="Default" FPGAPinName="PIN_A11" FPGAPinPullBehavior="Float" Height="33" LocationX="373" LocationY="197" Width="36"/>
-<Button ActivityLevel="Active low" FPGAPinIOStandard="Default" FPGAPinName="PIN_B11" FPGAPinPullBehavior="Float" Height="33" LocationX="373" LocationY="235" Width="36"/>
-<DIPSwitch ActivityLevel="Active low" FPGAPinIOStandard="LVCMOS18" FPGAPinPullBehavior="Pull Up" FPGAPin_0="PIN_Y8" FPGAPin_1="PIN_AB7" FPGAPin_2="PIN_AA7" FPGAPin_3="PIN_Y7" FPGAPin_4="PIN_Y6" FPGAPin_5="PIN_AB5" FPGAPin_6="PIN_AA5" FPGAPin_7="PIN_AB4" Height="128" LocationX="691" LocationY="55" NrOfPins="8" Width="47"/>
-<DIPSwitch ActivityLevel="Active low" FPGAPinIOStandard="LVCMOS18" FPGAPinPullBehavior="Pull Up" FPGAPin_0="PIN_V11" FPGAPin_1="PIN_V10" FPGAPin_2="PIN_AB10" FPGAPin_3="PIN_AA10" FPGAPin_4="PIN_AB9" FPGAPin_5="PIN_AA9" FPGAPin_6="PIN_AB8" FPGAPin_7="PIN_AA8" Height="129" LocationX="691" LocationY="189" NrOfPins="8" Width="46"/>
-<SevenSegment ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPin_0="PIN_T3" FPGAPin_1="PIN_R6" FPGAPin_2="PIN_R5" FPGAPin_3="PIN_P7" FPGAPin_4="PIN_N8" FPGAPin_5="PIN_N7" FPGAPin_6="PIN_P8" FPGAPin_7="PIN_P6" Height="55" LocationX="602" LocationY="245" NrOfPins="8" Width="82"/>
-<SevenSegment ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPin_0="PIN_R10" FPGAPin_1="PIN_T9" FPGAPin_2="PIN_R9" FPGAPin_3="PIN_R8" FPGAPin_4="PIN_T7" FPGAPin_5="PIN_R7" FPGAPin_6="PIN_T4" FPGAPin_7="PIN_T8" Height="55" LocationX="603" LocationY="187" NrOfPins="8" Width="81"/>
-<SevenSegment ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPin_0="PIN_U9" FPGAPin_1="PIN_W8" FPGAPin_2="PIN_V8" FPGAPin_3="PIN_Y4" FPGAPin_4="PIN_T11" FPGAPin_5="PIN_R11" FPGAPin_6="PIN_T10" FPGAPin_7="PIN_W7" Height="54" LocationX="603" LocationY="128" NrOfPins="8" Width="80"/>
-<SevenSegment ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPin_0="PIN_U11" FPGAPin_1="PIN_G18" FPGAPin_2="PIN_M8" FPGAPin_3="PIN_L6" FPGAPin_4="PIN_W10" FPGAPin_5="PIN_U10" FPGAPin_6="PIN_V9" FPGAPin_7="PIN_L7" Height="54" LocationX="603" LocationY="70" NrOfPins="8" Width="80"/>
-<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="PIN_F2" FPGAPinPullBehavior="Float" Height="10" LocationX="196" LocationY="325" Width="10"/>
-<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="PIN_E3" FPGAPinPullBehavior="Float" Height="11" LocationX="196" LocationY="310" Width="10"/>
-<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="PIN_C2" FPGAPinPullBehavior="Float" Height="10" LocationX="197" LocationY="295" Width="9"/>
-<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="PIN_B2" FPGAPinPullBehavior="Float" Height="9" LocationX="197" LocationY="282" Width="10"/>
-<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="PIN_F1" FPGAPinPullBehavior="Float" Height="10" LocationX="180" LocationY="325" Width="10"/>
-<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="PIN_E4" FPGAPinPullBehavior="Float" Height="9" LocationX="180" LocationY="311" Width="10"/>
-<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="PIN_C1" FPGAPinPullBehavior="Float" Height="9" LocationX="180" LocationY="297" Width="11"/>
-<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="PIN_B1" FPGAPinPullBehavior="Float" Height="9" LocationX="180" LocationY="281" Width="11"/>
-<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="PIN_G5" FPGAPinPullBehavior="Float" Height="10" LocationX="197" LocationY="195" Width="10"/>
-<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="PIN_G4" FPGAPinPullBehavior="Float" Height="10" LocationX="197" LocationY="181" Width="9"/>
-<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="PIN_G3" FPGAPinPullBehavior="Float" Height="9" LocationX="197" LocationY="167" Width="10"/>
-<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="PIN_H2" FPGAPinPullBehavior="Float" Height="11" LocationX="197" LocationY="151" Width="10"/>
-<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="PIN_H1" FPGAPinPullBehavior="Float" Height="9" LocationX="182" LocationY="195" Width="9"/>
-<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="PIN_J3" FPGAPinPullBehavior="Float" Height="8" LocationX="182" LocationY="180" Width="9"/>
-<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="PIN_J2" FPGAPinPullBehavior="Float" Height="9" LocationX="182" LocationY="166" Width="10"/>
-<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="PIN_J1" FPGAPinPullBehavior="Float" Height="9" LocationX="182" LocationY="151" Width="10"/>
-<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="PIN_AA16" FPGAPinPullBehavior="Float" Height="15" LocationX="662" LocationY="305" Width="16"/>
-<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="PIN_AB16" FPGAPinPullBehavior="Float" Height="14" LocationX="644" LocationY="305" Width="16"/>
-<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="PIN_AA15" FPGAPinPullBehavior="Float" Height="14" LocationX="627" LocationY="305" Width="15"/>
-<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="PIN_AB15" FPGAPinPullBehavior="Float" Height="13" LocationX="610" LocationY="305" Width="15"/>
-<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="PIN_AA12" FPGAPinPullBehavior="Float" Height="14" LocationX="559" LocationY="305" Width="13"/>
-<Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="PIN_AB12" FPGAPinPullBehavior="Float" Height="14" LocationX="540" LocationY="304" Width="15"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_E6" Height="9" LocationX="248" LocationY="265" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_J16" Height="9" LocationX="248" LocationY="247" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_K16" Height="9" LocationX="248" LocationY="231" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_J17" Height="9" LocationX="248" LocationY="215" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_K17" Height="9" LocationX="248" LocationY="198" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_J18" Height="9" LocationX="248" LocationY="180" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_K18" Height="9" LocationX="248" LocationY="165" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_F19" Height="9" LocationX="248" LocationY="147" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_J15" Height="9" LocationX="248" LocationY="130" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_K15" Height="9" LocationX="248" LocationY="113" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_L16" Height="9" LocationX="248" LocationY="95" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_L15" Height="9" LocationX="248" LocationY="77" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_D6" Height="9" LocationX="260" LocationY="265" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_H9" Height="9" LocationX="260" LocationY="247" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_F10" Height="9" LocationX="260" LocationY="231" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_G12" Height="9" LocationX="260" LocationY="215" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_E10" Height="9" LocationX="260" LocationY="198" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_G14" Height="9" LocationX="260" LocationY="180" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_G15" Height="9" LocationX="260" LocationY="165" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_G16" Height="9" LocationX="260" LocationY="147" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_F14" Height="9" LocationX="260" LocationY="130" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_J22" Height="9" LocationX="260" LocationY="113" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_K21" Height="9" LocationX="260" LocationY="95" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_D19" Height="9" LocationX="260" LocationY="77" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_E5" Height="9" LocationX="270" LocationY="265" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_F8" Height="9" LocationX="270" LocationY="247" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_G10" Height="9" LocationX="270" LocationY="231" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_F11" Height="9" LocationX="270" LocationY="215" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_E9" Height="9" LocationX="270" LocationY="198" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_H13" Height="9" LocationX="270" LocationY="180" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_H14" Height="9" LocationX="270" LocationY="165" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_H15" Height="9" LocationX="270" LocationY="147" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_G17" Height="9" LocationX="270" LocationY="130" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_J21" Height="9" LocationX="270" LocationY="113" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_F15" Height="9" LocationX="270" LocationY="95" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_F17" Height="9" LocationX="270" LocationY="77" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_B5" Height="9" LocationX="281" LocationY="265" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_G8" Height="9" LocationX="281" LocationY="247" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_H10" Height="9" LocationX="281" LocationY="231" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_E11" Height="9" LocationX="281" LocationY="215" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_G7" Height="9" LocationX="281" LocationY="198" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_G13" Height="9" LocationX="281" LocationY="180" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_D10" Height="9" LocationX="281" LocationY="165" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_F12" Height="9" LocationX="281" LocationY="147" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_H16" Height="9" LocationX="281" LocationY="130" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_H19" Height="9" LocationX="281" LocationY="113" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_E15" Height="9" LocationX="281" LocationY="95" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_D17" Height="9" LocationX="281" LocationY="77" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_C4" Height="9" LocationX="292" LocationY="265" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_E7" Height="9" LocationX="292" LocationY="247" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_G9" Height="9" LocationX="292" LocationY="231" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_H11" Height="9" LocationX="292" LocationY="215" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_F7" Height="9" LocationX="292" LocationY="198" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_H12" Height="9" LocationX="292" LocationY="180" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_F9" Height="9" LocationX="292" LocationY="165" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_E12" Height="9" LocationX="292" LocationY="147" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_E13" Height="9" LocationX="292" LocationY="130" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_H17" Height="9" LocationX="292" LocationY="113" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_D15" Height="9" LocationX="292" LocationY="95" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_K22" Height="9" LocationX="292" LocationY="77" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_A4" Height="9" LocationX="303" LocationY="265" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_C7" Height="9" LocationX="303" LocationY="247" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_A8" Height="9" LocationX="303" LocationY="231" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_A10" Height="9" LocationX="303" LocationY="215" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_A14" Height="9" LocationX="303" LocationY="198" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_A16" Height="9" LocationX="303" LocationY="180" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_A18" Height="9" LocationX="303" LocationY="165" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_B20" Height="9" LocationX="303" LocationY="147" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_B22" Height="9" LocationX="303" LocationY="130" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_E22" Height="9" LocationX="303" LocationY="113" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_H21" Height="9" LocationX="303" LocationY="95" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_L21" Height="9" LocationX="303" LocationY="77" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_C3" Height="9" LocationX="314" LocationY="265" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_A5" Height="9" LocationX="314" LocationY="247" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_B7" Height="9" LocationX="314" LocationY="231" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_B9" Height="9" LocationX="314" LocationY="215" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_C13" Height="9" LocationX="314" LocationY="198" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_C15" Height="9" LocationX="314" LocationY="180" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_C17" Height="9" LocationX="314" LocationY="165" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_C19" Height="9" LocationX="314" LocationY="147" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_A20" Height="9" LocationX="314" LocationY="130" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_D20" Height="9" LocationX="314" LocationY="113" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_F20" Height="9" LocationX="314" LocationY="95" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_F16" Height="9" LocationX="314" LocationY="77" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_B3" Height="9" LocationX="325" LocationY="265" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_C6" Height="9" LocationX="325" LocationY="247" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_A7" Height="9" LocationX="325" LocationY="231" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_A9" Height="9" LocationX="325" LocationY="215" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_B13" Height="9" LocationX="325" LocationY="198" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_B15" Height="9" LocationX="325" LocationY="180" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_B17" Height="9" LocationX="325" LocationY="165" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_B19" Height="9" LocationX="325" LocationY="147" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_C21" Height="9" LocationX="325" LocationY="130" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_D21" Height="9" LocationX="325" LocationY="113" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_F22" Height="9" LocationX="325" LocationY="95" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_E16" Height="9" LocationX="325" LocationY="77" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_A3" Height="9" LocationX="336" LocationY="265" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_B6" Height="9" LocationX="336" LocationY="247" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_C8" Height="9" LocationX="336" LocationY="231" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_C10" Height="9" LocationX="336" LocationY="215" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_A13" Height="9" LocationX="336" LocationY="198" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_A15" Height="9" LocationX="336" LocationY="180" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_A17" Height="9" LocationX="336" LocationY="165" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_A19" Height="9" LocationX="336" LocationY="147" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_B21" Height="9" LocationX="336" LocationY="130" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_D22" Height="9" LocationX="336" LocationY="113" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_F21" Height="9" LocationX="336" LocationY="95" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_L22" Height="9" LocationX="336" LocationY="77" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_B4" Height="9" LocationX="347" LocationY="265" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_A6" Height="9" LocationX="347" LocationY="247" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_B8" Height="9" LocationX="347" LocationY="231" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_B10" Height="9" LocationX="347" LocationY="215" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_B14" Height="9" LocationX="347" LocationY="198" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_B16" Height="9" LocationX="347" LocationY="180" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_B18" Height="9" LocationX="347" LocationY="165" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_C20" Height="9" LocationX="347" LocationY="147" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_C22" Height="9" LocationX="347" LocationY="130" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_E21" Height="9" LocationX="347" LocationY="113" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_H22" Height="9" LocationX="347" LocationY="95" Width="7"/>
-<LED ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_H20" Height="9" LocationX="347" LocationY="77" Width="7"/>
+<Button Label="SW7" ActivityLevel="Active low" FPGAPinIOStandard="Default" FPGAPinName="PIN_AB11" FPGAPinPullBehavior="Float" Height="32" LocationX="578" LocationY="2" Width="38"/>
+<Button Label="SW6" ActivityLevel="Active low" FPGAPinIOStandard="Default" FPGAPinName="PIN_AA11" FPGAPinPullBehavior="Float" Height="30" LocationX="653" LocationY="2" Width="36"/>
+<Button Label="SW5" ActivityLevel="Active low" FPGAPinIOStandard="Default" FPGAPinName="PIN_G22" FPGAPinPullBehavior="Float" Height="34" LocationX="374" LocationY="76" Width="37"/>
+<Button Label="SW4" ActivityLevel="Active low" FPGAPinIOStandard="Default" FPGAPinName="PIN_A12" FPGAPinPullBehavior="Float" Height="34" LocationX="373" LocationY="116" Width="36"/>
+<Button Label="SW3" ActivityLevel="Active low" FPGAPinIOStandard="Default" FPGAPinName="PIN_B12" FPGAPinPullBehavior="Float" Height="34" LocationX="373" LocationY="157" Width="36"/>
+<Button Label="SW2" ActivityLevel="Active low" FPGAPinIOStandard="Default" FPGAPinName="PIN_A11" FPGAPinPullBehavior="Float" Height="33" LocationX="373" LocationY="197" Width="36"/>
+<Button Label="SW1" ActivityLevel="Active low" FPGAPinIOStandard="Default" FPGAPinName="PIN_B11" FPGAPinPullBehavior="Float" Height="33" LocationX="373" LocationY="235" Width="36"/>
+<DIPSwitch Label="DIP-switch2" ActivityLevel="Active low" FPGAPinIOStandard="LVCMOS18" FPGAPinPullBehavior="Pull Up" FPGAPin_0="PIN_Y8" FPGAPin_1="PIN_AB7" FPGAPin_2="PIN_AA7" FPGAPin_3="PIN_Y7" FPGAPin_4="PIN_Y6" FPGAPin_5="PIN_AB5" FPGAPin_6="PIN_AA5" FPGAPin_7="PIN_AB4" Height="128" LocationX="691" LocationY="55" NrOfPins="8" Width="47"/>
+<DIPSwitch Label="DIP-switch1" ActivityLevel="Active low" FPGAPinIOStandard="LVCMOS18" FPGAPinPullBehavior="Pull Up" FPGAPin_0="PIN_V11" FPGAPin_1="PIN_V10" FPGAPin_2="PIN_AB10" FPGAPin_3="PIN_AA10" FPGAPin_4="PIN_AB9" FPGAPin_5="PIN_AA9" FPGAPin_6="PIN_AB8" FPGAPin_7="PIN_AA8" Height="129" LocationX="691" LocationY="189" NrOfPins="8" Width="46"/>
+<SevenSegment Label="SEG1" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPin_0="PIN_T3" FPGAPin_1="PIN_R6" FPGAPin_2="PIN_R5" FPGAPin_3="PIN_P7" FPGAPin_4="PIN_N8" FPGAPin_5="PIN_N7" FPGAPin_6="PIN_P8" FPGAPin_7="PIN_P6" Height="55" LocationX="602" LocationY="245" NrOfPins="8" Width="82"/>
+<SevenSegment Label="SEG2" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPin_0="PIN_R10" FPGAPin_1="PIN_T9" FPGAPin_2="PIN_R9" FPGAPin_3="PIN_R8" FPGAPin_4="PIN_T7" FPGAPin_5="PIN_R7" FPGAPin_6="PIN_T4" FPGAPin_7="PIN_T8" Height="55" LocationX="603" LocationY="187" NrOfPins="8" Width="81"/>
+<SevenSegment Label="SEG3" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPin_0="PIN_U9" FPGAPin_1="PIN_W8" FPGAPin_2="PIN_V8" FPGAPin_3="PIN_Y4" FPGAPin_4="PIN_T11" FPGAPin_5="PIN_R11" FPGAPin_6="PIN_T10" FPGAPin_7="PIN_W7" Height="54" LocationX="603" LocationY="128" NrOfPins="8" Width="80"/>
+<SevenSegment Label="SEG4" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPin_0="PIN_U11" FPGAPin_1="PIN_G18" FPGAPin_2="PIN_M8" FPGAPin_3="PIN_L6" FPGAPin_4="PIN_W10" FPGAPin_5="PIN_U10" FPGAPin_6="PIN_V9" FPGAPin_7="PIN_L7" Height="54" LocationX="603" LocationY="70" NrOfPins="8" Width="80"/>
+<Pin Label="PMOD1 I/O 1" FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="PIN_F2" FPGAPinPullBehavior="Float" Height="10" LocationX="196" LocationY="325" Width="10"/>
+<Pin Label="PMOD1 I/O 2" FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="PIN_E3" FPGAPinPullBehavior="Float" Height="11" LocationX="196" LocationY="310" Width="10"/>
+<Pin Label="PMOD1 I/O 3" FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="PIN_C2" FPGAPinPullBehavior="Float" Height="10" LocationX="197" LocationY="295" Width="9"/>
+<Pin Label="PMOD1 I/O 4" FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="PIN_B2" FPGAPinPullBehavior="Float" Height="9" LocationX="197" LocationY="282" Width="10"/>
+<Pin Label="PMOD1 I/O 7" FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="PIN_F1" FPGAPinPullBehavior="Float" Height="10" LocationX="180" LocationY="325" Width="10"/>
+<Pin Label="PMOD1 I/O 8" FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="PIN_E4" FPGAPinPullBehavior="Float" Height="9" LocationX="180" LocationY="311" Width="10"/>
+<Pin Label="PMOD1 I/O 9" FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="PIN_C1" FPGAPinPullBehavior="Float" Height="9" LocationX="180" LocationY="297" Width="11"/>
+<Pin Label="PMOD1 I/O 10" FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="PIN_B1" FPGAPinPullBehavior="Float" Height="9" LocationX="180" LocationY="281" Width="11"/>
+<Pin Label="PMOD2 I/O 1" FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="PIN_G5" FPGAPinPullBehavior="Float" Height="10" LocationX="197" LocationY="195" Width="10"/>
+<Pin Label="PMOD2 I/O 2" FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="PIN_G4" FPGAPinPullBehavior="Float" Height="10" LocationX="197" LocationY="181" Width="9"/>
+<Pin Label="PMOD2 I/O 3" FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="PIN_G3" FPGAPinPullBehavior="Float" Height="9" LocationX="197" LocationY="167" Width="10"/>
+<Pin Label="PMOD2 I/O 4" FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="PIN_H2" FPGAPinPullBehavior="Float" Height="11" LocationX="197" LocationY="151" Width="10"/>
+<Pin Label="PMOD2 I/O 7" FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="PIN_H1" FPGAPinPullBehavior="Float" Height="9" LocationX="182" LocationY="195" Width="9"/>
+<Pin Label="PMOD2 I/O 8" FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="PIN_J3" FPGAPinPullBehavior="Float" Height="8" LocationX="182" LocationY="180" Width="9"/>
+<Pin Label="PMOD2 I/O 9" FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="PIN_J2" FPGAPinPullBehavior="Float" Height="9" LocationX="182" LocationY="166" Width="10"/>
+<Pin Label="PMOD2 I/O 10" FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="PIN_J1" FPGAPinPullBehavior="Float" Height="9" LocationX="182" LocationY="151" Width="10"/>
+<Pin Label="PMOD2 I/O 1" FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="PIN_AA16" FPGAPinPullBehavior="Float" Height="15" LocationX="662" LocationY="305" Width="16"/>
+<Pin Label="PMOD3 I/O 2" FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="PIN_AB16" FPGAPinPullBehavior="Float" Height="14" LocationX="644" LocationY="305" Width="16"/>
+<Pin Label="PMOD3 I/O 3" FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="PIN_AA15" FPGAPinPullBehavior="Float" Height="14" LocationX="627" LocationY="305" Width="15"/>
+<Pin Label="PMOD2 I/O 4" FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="PIN_AB15" FPGAPinPullBehavior="Float" Height="13" LocationX="610" LocationY="305" Width="15"/>
+<Pin Label="PMOD2 CLK 1" FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="PIN_AA12" FPGAPinPullBehavior="Float" Height="14" LocationX="559" LocationY="305" Width="13"/>
+<Pin Label="PMOD2 CLK 2" FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="PIN_AB12" FPGAPinPullBehavior="Float" Height="14" LocationX="540" LocationY="304" Width="15"/>
+<LED Label="LED(1,1)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_E6" Height="9" LocationX="248" LocationY="265" Width="7"/>
+<LED Label="LED(1,2)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_J16" Height="9" LocationX="248" LocationY="247" Width="7"/>
+<LED Label="LED(1,3)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_K16" Height="9" LocationX="248" LocationY="231" Width="7"/>
+<LED Label="LED(1,4)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_J17" Height="9" LocationX="248" LocationY="215" Width="7"/>
+<LED Label="LED(1,5)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_K17" Height="9" LocationX="248" LocationY="198" Width="7"/>
+<LED Label="LED(1,6)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_J18" Height="9" LocationX="248" LocationY="180" Width="7"/>
+<LED Label="LED(1,7)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_K18" Height="9" LocationX="248" LocationY="165" Width="7"/>
+<LED Label="LED(1,8)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_F19" Height="9" LocationX="248" LocationY="147" Width="7"/>
+<LED Label="LED(1,9)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_J15" Height="9" LocationX="248" LocationY="130" Width="7"/>
+<LED Label="LED(1,10)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_K15" Height="9" LocationX="248" LocationY="113" Width="7"/>
+<LED Label="LED(1,11)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_L16" Height="9" LocationX="248" LocationY="95" Width="7"/>
+<LED Label="LED(1,12)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_L15" Height="9" LocationX="248" LocationY="77" Width="7"/>
+<LED Label="LED(2,1)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_D6" Height="9" LocationX="260" LocationY="265" Width="7"/>
+<LED Label="LED(2,2)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_H9" Height="9" LocationX="260" LocationY="247" Width="7"/>
+<LED Label="LED(2,3)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_F10" Height="9" LocationX="260" LocationY="231" Width="7"/>
+<LED Label="LED(2,4)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_G12" Height="9" LocationX="260" LocationY="215" Width="7"/>
+<LED Label="LED(2,5)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_E10" Height="9" LocationX="260" LocationY="198" Width="7"/>
+<LED Label="LED(2,6)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_G14" Height="9" LocationX="260" LocationY="180" Width="7"/>
+<LED Label="LED(2,7)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_G15" Height="9" LocationX="260" LocationY="165" Width="7"/>
+<LED Label="LED(2,8)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_G16" Height="9" LocationX="260" LocationY="147" Width="7"/>
+<LED Label="LED(2,9)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_F14" Height="9" LocationX="260" LocationY="130" Width="7"/>
+<LED Label="LED(2,10)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_J22" Height="9" LocationX="260" LocationY="113" Width="7"/>
+<LED Label="LED(2,11)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_K21" Height="9" LocationX="260" LocationY="95" Width="7"/>
+<LED Label="LED(2,12)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_D19" Height="9" LocationX="260" LocationY="77" Width="7"/>
+<LED Label="LED(3,1)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_E5" Height="9" LocationX="270" LocationY="265" Width="7"/>
+<LED Label="LED(3,2)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_F8" Height="9" LocationX="270" LocationY="247" Width="7"/>
+<LED Label="LED(3,3)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_G10" Height="9" LocationX="270" LocationY="231" Width="7"/>
+<LED Label="LED(3,4)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_F11" Height="9" LocationX="270" LocationY="215" Width="7"/>
+<LED Label="LED(3,5)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_E9" Height="9" LocationX="270" LocationY="198" Width="7"/>
+<LED Label="LED(3,6)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_H13" Height="9" LocationX="270" LocationY="180" Width="7"/>
+<LED Label="LED(3,7)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_H14" Height="9" LocationX="270" LocationY="165" Width="7"/>
+<LED Label="LED(3,8)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_H15" Height="9" LocationX="270" LocationY="147" Width="7"/>
+<LED Label="LED(3,9)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_G17" Height="9" LocationX="270" LocationY="130" Width="7"/>
+<LED Label="LED(3,10)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_J21" Height="9" LocationX="270" LocationY="113" Width="7"/>
+<LED Label="LED(3,11)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_F15" Height="9" LocationX="270" LocationY="95" Width="7"/>
+<LED Label="LED(3,12)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_F17" Height="9" LocationX="270" LocationY="77" Width="7"/>
+<LED Label="LED(4,1)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_B5" Height="9" LocationX="281" LocationY="265" Width="7"/>
+<LED Label="LED(4,2)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_G8" Height="9" LocationX="281" LocationY="247" Width="7"/>
+<LED Label="LED(4,3)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_H10" Height="9" LocationX="281" LocationY="231" Width="7"/>
+<LED Label="LED(4,4)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_E11" Height="9" LocationX="281" LocationY="215" Width="7"/>
+<LED Label="LED(4,5)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_G7" Height="9" LocationX="281" LocationY="198" Width="7"/>
+<LED Label="LED(4,6)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_G13" Height="9" LocationX="281" LocationY="180" Width="7"/>
+<LED Label="LED(4,7)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_D10" Height="9" LocationX="281" LocationY="165" Width="7"/>
+<LED Label="LED(4,8)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_F12" Height="9" LocationX="281" LocationY="147" Width="7"/>
+<LED Label="LED(4,9)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_H16" Height="9" LocationX="281" LocationY="130" Width="7"/>
+<LED Label="LED(4,10)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_H19" Height="9" LocationX="281" LocationY="113" Width="7"/>
+<LED Label="LED(4,11)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_E15" Height="9" LocationX="281" LocationY="95" Width="7"/>
+<LED Label="LED(4,12)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_D17" Height="9" LocationX="281" LocationY="77" Width="7"/>
+<LED Label="LED(5,1)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_C4" Height="9" LocationX="292" LocationY="265" Width="7"/>
+<LED Label="LED(5,2)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_E7" Height="9" LocationX="292" LocationY="247" Width="7"/>
+<LED Label="LED(5,3)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_G9" Height="9" LocationX="292" LocationY="231" Width="7"/>
+<LED Label="LED(5,4)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_H11" Height="9" LocationX="292" LocationY="215" Width="7"/>
+<LED Label="LED(5,5)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_F7" Height="9" LocationX="292" LocationY="198" Width="7"/>
+<LED Label="LED(5,6)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_H12" Height="9" LocationX="292" LocationY="180" Width="7"/>
+<LED Label="LED(5,7)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_F9" Height="9" LocationX="292" LocationY="165" Width="7"/>
+<LED Label="LED(5,8)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_E12" Height="9" LocationX="292" LocationY="147" Width="7"/>
+<LED Label="LED(5,9)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_E13" Height="9" LocationX="292" LocationY="130" Width="7"/>
+<LED Label="LED(5,10)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_H17" Height="9" LocationX="292" LocationY="113" Width="7"/>
+<LED Label="LED(5,11)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_D15" Height="9" LocationX="292" LocationY="95" Width="7"/>
+<LED Label="LED(5,12)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_K22" Height="9" LocationX="292" LocationY="77" Width="7"/>
+<LED Label="LED(6,1)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_A4" Height="9" LocationX="303" LocationY="265" Width="7"/>
+<LED Label="LED(6,2)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_C7" Height="9" LocationX="303" LocationY="247" Width="7"/>
+<LED Label="LED(6,3)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_A8" Height="9" LocationX="303" LocationY="231" Width="7"/>
+<LED Label="LED(6,4)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_A10" Height="9" LocationX="303" LocationY="215" Width="7"/>
+<LED Label="LED(6,5)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_A14" Height="9" LocationX="303" LocationY="198" Width="7"/>
+<LED Label="LED(6,6)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_A16" Height="9" LocationX="303" LocationY="180" Width="7"/>
+<LED Label="LED(6,7)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_A18" Height="9" LocationX="303" LocationY="165" Width="7"/>
+<LED Label="LED(6,8)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_B20" Height="9" LocationX="303" LocationY="147" Width="7"/>
+<LED Label="LED(6,9)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_B22" Height="9" LocationX="303" LocationY="130" Width="7"/>
+<LED Label="LED(6,10)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_E22" Height="9" LocationX="303" LocationY="113" Width="7"/>
+<LED Label="LED(6,11)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_H21" Height="9" LocationX="303" LocationY="95" Width="7"/>
+<LED Label="LED(6,12)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_L21" Height="9" LocationX="303" LocationY="77" Width="7"/>
+<LED Label="LED(7,1)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_C3" Height="9" LocationX="314" LocationY="265" Width="7"/>
+<LED Label="LED(7,2)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_A5" Height="9" LocationX="314" LocationY="247" Width="7"/>
+<LED Label="LED(7,3)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_B7" Height="9" LocationX="314" LocationY="231" Width="7"/>
+<LED Label="LED(7,4)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_B9" Height="9" LocationX="314" LocationY="215" Width="7"/>
+<LED Label="LED(7,5)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_C13" Height="9" LocationX="314" LocationY="198" Width="7"/>
+<LED Label="LED(7,6)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_C15" Height="9" LocationX="314" LocationY="180" Width="7"/>
+<LED Label="LED(7,7)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_C17" Height="9" LocationX="314" LocationY="165" Width="7"/>
+<LED Label="LED(7,8)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_C19" Height="9" LocationX="314" LocationY="147" Width="7"/>
+<LED Label="LED(7,9)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_A20" Height="9" LocationX="314" LocationY="130" Width="7"/>
+<LED Label="LED(7,10)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_D20" Height="9" LocationX="314" LocationY="113" Width="7"/>
+<LED Label="LED(7,11)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_F20" Height="9" LocationX="314" LocationY="95" Width="7"/>
+<LED Label="LED(7,12)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_F16" Height="9" LocationX="314" LocationY="77" Width="7"/>
+<LED Label="LED(8,1)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_B3" Height="9" LocationX="325" LocationY="265" Width="7"/>
+<LED Label="LED(8,2)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_C6" Height="9" LocationX="325" LocationY="247" Width="7"/>
+<LED Label="LED(8,3)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_A7" Height="9" LocationX="325" LocationY="231" Width="7"/>
+<LED Label="LED(8,4)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_A9" Height="9" LocationX="325" LocationY="215" Width="7"/>
+<LED Label="LED(8,5)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_B13" Height="9" LocationX="325" LocationY="198" Width="7"/>
+<LED Label="LED(8,6)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_B15" Height="9" LocationX="325" LocationY="180" Width="7"/>
+<LED Label="LED(8,7)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_B17" Height="9" LocationX="325" LocationY="165" Width="7"/>
+<LED Label="LED(8,8)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_B19" Height="9" LocationX="325" LocationY="147" Width="7"/>
+<LED Label="LED(8,9)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_C21" Height="9" LocationX="325" LocationY="130" Width="7"/>
+<LED Label="LED(8,10)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_D21" Height="9" LocationX="325" LocationY="113" Width="7"/>
+<LED Label="LED(8,11)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_F22" Height="9" LocationX="325" LocationY="95" Width="7"/>
+<LED Label="LED(8,12)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_E16" Height="9" LocationX="325" LocationY="77" Width="7"/>
+<LED Label="LED(9,1)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_A3" Height="9" LocationX="336" LocationY="265" Width="7"/>
+<LED Label="LED(9,2)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_B6" Height="9" LocationX="336" LocationY="247" Width="7"/>
+<LED Label="LED(9,3)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_C8" Height="9" LocationX="336" LocationY="231" Width="7"/>
+<LED Label="LED(9,4)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_C10" Height="9" LocationX="336" LocationY="215" Width="7"/>
+<LED Label="LED(9,5)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_A13" Height="9" LocationX="336" LocationY="198" Width="7"/>
+<LED Label="LED(9,6)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_A15" Height="9" LocationX="336" LocationY="180" Width="7"/>
+<LED Label="LED(9,7)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_A17" Height="9" LocationX="336" LocationY="165" Width="7"/>
+<LED Label="LED(9,8)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_A19" Height="9" LocationX="336" LocationY="147" Width="7"/>
+<LED Label="LED(9,9)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_B21" Height="9" LocationX="336" LocationY="130" Width="7"/>
+<LED Label="LED(9,10)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_D22" Height="9" LocationX="336" LocationY="113" Width="7"/>
+<LED Label="LED(9,11)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_F21" Height="9" LocationX="336" LocationY="95" Width="7"/>
+<LED Label="LED(9,12)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_L22" Height="9" LocationX="336" LocationY="77" Width="7"/>
+<LED Label="LED(10,1)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_B4" Height="9" LocationX="347" LocationY="265" Width="7"/>
+<LED Label="LED(10,2)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_A6" Height="9" LocationX="347" LocationY="247" Width="7"/>
+<LED Label="LED(10,3)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_B8" Height="9" LocationX="347" LocationY="231" Width="7"/>
+<LED Label="LED(10,4)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_B10" Height="9" LocationX="347" LocationY="215" Width="7"/>
+<LED Label="LED(10,5)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_B14" Height="9" LocationX="347" LocationY="198" Width="7"/>
+<LED Label="LED(10,6)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_B16" Height="9" LocationX="347" LocationY="180" Width="7"/>
+<LED Label="LED(10,7)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_B18" Height="9" LocationX="347" LocationY="165" Width="7"/>
+<LED Label="LED(10,8)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_C20" Height="9" LocationX="347" LocationY="147" Width="7"/>
+<LED Label="LED(10,9)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_C22" Height="9" LocationX="347" LocationY="130" Width="7"/>
+<LED Label="LED(10,10)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_E21" Height="9" LocationX="347" LocationY="113" Width="7"/>
+<LED Label="LED(10,11)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_H22" Height="9" LocationX="347" LocationY="95" Width="7"/>
+<LED Label="LED(10,12)" ActivityLevel="Active high" FPGAPinDriveStrength="2 mA" FPGAPinIOStandard="LVCMOS18" FPGAPinName="PIN_H20" Height="9" LocationX="347" LocationY="77" Width="7"/>
 <Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="PIN_P16" FPGAPinPullBehavior="Float" Height="11" LocationX="56" LocationY="323" Width="11"/>
 <Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="PIN_P17" FPGAPinPullBehavior="Float" Height="11" LocationX="56" LocationY="305" Width="11"/>
 <Pin FPGAPinDriveStrength="Default" FPGAPinIOStandard="LVCMOS33" FPGAPinName="PIN_R18" FPGAPinPullBehavior="Float" Height="11" LocationX="56" LocationY="287" Width="11"/>

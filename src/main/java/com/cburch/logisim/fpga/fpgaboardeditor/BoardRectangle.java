@@ -36,6 +36,7 @@ public class BoardRectangle {
 	private int Width;
 	private int Height;
 	private boolean IsActiveHigh = true;
+	private String Label;
 
 	public BoardRectangle(int x, int y, int w, int h) {
 		this.set(x, y, w, h);
@@ -68,6 +69,10 @@ public class BoardRectangle {
 
 	public boolean IsActiveOnHigh() {
 		return IsActiveHigh;
+	}
+	
+	public String GetLabel() {
+		return Label;
 	}
 
 	public Boolean Overlap(BoardRectangle rect) {
@@ -143,6 +148,10 @@ public class BoardRectangle {
 
 	public void SetActiveOnHigh(boolean IsActiveHigh) {
 		this.IsActiveHigh = IsActiveHigh;
+	}
+	
+	public void SetLabel(String Label) {
+		this.Label= Label;
 	}
 
 }

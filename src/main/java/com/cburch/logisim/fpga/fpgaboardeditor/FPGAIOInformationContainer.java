@@ -194,6 +194,7 @@ public class FPGAIOInformationContainer {
 	private char MyActivityLevel;
 	private char MyIOStandard;
 	private char MyDriveStrength;
+	private String MyLabel;
 
 	private boolean abort = false;
 
@@ -207,6 +208,7 @@ public class FPGAIOInformationContainer {
 		MyActivityLevel = PinActivity.Unknown;
 		MyIOStandard = IoStandards.Unknown;
 		MyDriveStrength = DriveStrength.Unknown;
+		MyLabel = null;
 	}
 
 	public FPGAIOInformationContainer(IOComponentTypes Type,
@@ -220,6 +222,9 @@ public class FPGAIOInformationContainer {
 		MyActivityLevel = PinActivity.Unknown;
 		MyIOStandard = IoStandards.Unknown;
 		MyDriveStrength = DriveStrength.Unknown;
+		MyLabel = null;
+		if (rect != null)
+			rect.SetLabel(null);
 		if (IOComponentTypes.SimpleInputSet.contains(Type)) {
 			if (MyType.equals(IOComponentTypes.DIPSwitch)
 					|| MyType.equals(IOComponentTypes.PortIO)) {
@@ -234,8 +239,8 @@ public class FPGAIOInformationContainer {
 
 	public FPGAIOInformationContainer(IOComponentTypes Type,
 			BoardRectangle rect, String loc, String pull, String active,
-			String standard, String drive) {
-		this.Set(Type, rect, loc, pull, active, standard, drive);
+			String standard, String drive, String label) {
+		this.Set(Type, rect, loc, pull, active, standard, drive,label);
 	}
 
 	public FPGAIOInformationContainer(Node DocumentInfo) {
@@ -252,6 +257,7 @@ public class FPGAIOInformationContainer {
 		MyActivityLevel = PinActivity.Unknown;
 		MyIOStandard = IoStandards.Unknown;
 		MyDriveStrength = DriveStrength.Unknown;
+		MyLabel = null;
 		IOComponentTypes SetId = IOComponentTypes
 				.getEnumFromString(DocumentInfo.getNodeName());
 		if (IOComponentTypes.KnownComponentSet.contains(SetId)) {
@@ -291,6 +297,9 @@ public class FPGAIOInformationContainer {
 				MyPinLocations.put(Integer.parseInt(Id),
 						ThisAttr.getNodeValue());
 			}
+			if (ThisAttr.getNodeName().equals(BoardWriterClass.LabelString)) {
+				MyLabel = ThisAttr.getNodeValue();
+			}
 			if (ThisAttr.getNodeName().equals(
 					DriveStrength.DriveAttributeString)) {
 				MyDriveStrength = DriveStrength.getId(ThisAttr.getNodeValue());
@@ -329,6 +338,8 @@ public class FPGAIOInformationContainer {
 		if (MyType.equals(IOComponentTypes.Pin))
 			MyActivityLevel = PinActivity.ActiveHigh;
 		MyRectangle = new BoardRectangle(x, y, width, height);
+		if (MyLabel != null)
+			MyRectangle.SetLabel(MyLabel);
 	}
 
 	public void edit(BoardDialog parent) {
@@ -416,6 +427,12 @@ public class FPGAIOInformationContainer {
 					result.setAttributeNode(PinX);
 				}
 			}
+			if (MyLabel != null ) {
+				Attr label = doc
+						.createAttribute(BoardWriterClass.LabelString);
+				label.setValue(MyLabel);
+				result.setAttributeNode(label);
+			}
 			if (MyDriveStrength != DriveStrength.Unknown) {
 				Attr drive = doc
 						.createAttribute(DriveStrength.DriveAttributeString);
@@ -447,6 +464,10 @@ public class FPGAIOInformationContainer {
 					e.getMessage());
 		}
 		return null;
+	}
+	
+	public String GetLabel() {
+		return MyLabel;
 	}
 
 	public char GetDrive() {
@@ -564,7 +585,16 @@ public class FPGAIOInformationContainer {
 		}
 		c.gridy = maxY;
 
-		JLabel StandardText = new JLabel("Specify FPGA pin standard:");
+
+        JLabel LabText = new JLabel("Optional pin label:");
+        c.gridy++;
+        c.gridx = 0;
+        selWindow.add(LabText, c);
+        JTextField LabelInput = new JTextField(6);
+        c.gridx = 1;
+        selWindow.add(LabelInput, c);
+
+        JLabel StandardText = new JLabel("Specify FPGA pin standard:");
 		c.gridy++;
 		c.gridx = 0;
 		selWindow.add(StandardText, c);
@@ -658,6 +688,10 @@ public class FPGAIOInformationContainer {
 					for (int i = 0; i < NrOfDevicePins; i++) {
 						MyPinLocations.put(i, LocInputs.get(i).getText());
 					}
+                    if (LabelInput.getText() != null && LabelInput.getText().length() != 0)
+                        MyLabel = LabelInput.getText();
+                    else
+                        MyLabel = null;
 					MyIOStandard = IoStandards.getId(StandardInput
 							.getSelectedItem().toString());
 					if (IOComponentTypes.OutputComponentSet.contains(MyType)) {
@@ -889,7 +923,7 @@ public class FPGAIOInformationContainer {
 	}
 
 	public void Set(IOComponentTypes Type, BoardRectangle rect, String loc,
-			String pull, String active, String standard, String drive) {
+			String pull, String active, String standard, String drive, String label) {
 		MyType = Type;
 		MyRectangle = rect;
 		rect.SetActiveOnHigh(active
@@ -901,6 +935,9 @@ public class FPGAIOInformationContainer {
 		MyIOStandard = IoStandards.getId(standard);
 		MyIdentifier = 0;
 		MyDriveStrength = DriveStrength.getId(drive);
+		MyLabel = label;
+		if (rect != null)
+			rect.SetLabel(label);
 	}
 
 	public void SetId(long id) {
