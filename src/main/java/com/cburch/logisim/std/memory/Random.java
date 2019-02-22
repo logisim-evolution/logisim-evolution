@@ -85,26 +85,40 @@ public class Random extends InstanceFactory {
 		private long initSeed;
 		private long curSeed;
 		private int value;
+		private long ResetValue;
+		private Value OldReset;
 
 		public StateData(Object seed) {
-			reset(seed);
+			ResetValue = this.initSeed =  this.curSeed = getRandomSeed(seed);
+			this.value = (int) this.initSeed;
+			OldReset = Value.UNKNOWN;
+		}
+		
+		public void PropagateReset(Value Reset, Object seed) {
+			if (OldReset == Value.FALSE && Reset == Value.TRUE) {
+				ResetValue = getRandomSeed(seed);
+			}
+			OldReset = Reset;
 		}
 
-		void reset(Object seed) {
-			long start = seed instanceof Integer ? ((Integer) seed).intValue()
-					: 0;
-			if (start == 0) {
+		public void reset(Object seed) {
+			this.initSeed = ResetValue;
+			this.curSeed = ResetValue;
+			this.value = (int) ResetValue;
+		}
+		
+		private long getRandomSeed(Object seed) {
+			long retValue = seed instanceof Integer ? ((Integer) seed).intValue() : 0;
+			if (retValue == 0) {
 				// Prior to 2.7.0, this would reset to the seed at the time of
 				// the StateData's creation. It seems more likely that what
 				// would be intended was starting a new sequence entirely...
-				start = (System.currentTimeMillis() ^ multiplier) & mask;
-				if (start == initSeed) {
-					start = (start + multiplier) & mask;
+				retValue = (System.currentTimeMillis() ^ multiplier) & mask;
+				if (retValue == initSeed) {
+					retValue = (retValue + multiplier) & mask;
 				}
 			}
-			this.initSeed = start;
-			this.curSeed = start;
-			this.value = (int) start;
+			return retValue;
 		}
 
 		void step() {
@@ -346,6 +360,7 @@ public class Random extends InstanceFactory {
 		boolean triggered = data.updateClock(state.getPortValue(CK),
 				triggerType);
 
+		data.PropagateReset(state.getPortValue(RST),state.getAttributeValue(ATTR_SEED));
 		if (state.getPortValue(RST) == Value.TRUE) {
 			data.reset(state.getAttributeValue(ATTR_SEED));
 		} else if (triggered && state.getPortValue(NXT) != Value.FALSE) {
