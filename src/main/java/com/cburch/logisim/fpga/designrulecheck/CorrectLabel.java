@@ -52,32 +52,41 @@ public class CorrectLabel {
 	}
 
 	public static boolean IsCorrectLabel(String Label, String HDLIdentifier,
-			String ErrorIdentifierString, FPGAReport Reporter) {
+			                             String ErrorIdentifierString, FPGAReport Reporter) {
+		String err = NameErrors(Label, HDLIdentifier, ErrorIdentifierString);
+        if (err != null) {
+            Reporter.AddFatalError(err);
+            return false;
+        }
+        return true;
+    }
+	
+	public static String VhdlNameErrors(String Label) {
+    	return NameErrors(Label, HDLGeneratorFactory.VHDL, "VHDL entity name");
+    }
+
+	public static String NameErrors(String Label, String HDLIdentifier,
+			String ErrorIdentifierString) {
 		if (Label.isEmpty())
-			return true;
+			return null;
 		for (int i = 0; i < Label.length(); i++) {
 			if (!Chars.contains(Label.toLowerCase().substring(i, i + 1))
 					&& !Numbers.contains(Label.substring(i, i + 1))) {
-				Reporter.AddFatalError(ErrorIdentifierString +
-						S.fmt("IllegalChar",Label.substring(i, i + 1)));
-				return false;
+				return ErrorIdentifierString + S.fmt("IllegalChar",Label.substring(i, i + 1));
 			}
 		}
 		if (HDLIdentifier.equals(HDLGeneratorFactory.VHDL)) {
 			if (VHDLKeywords.contains(Label.toLowerCase())) {
-				Reporter.AddFatalError(ErrorIdentifierString + S.get("RezervedVHDLKeyword"));
-				return false;
+				return ErrorIdentifierString + S.get("ReservedVHDLKeyword");
 			}
 		} else {
 			if (HDLIdentifier.equals(HDLGeneratorFactory.VERILOG)) {
 				if (VerilogKeywords.contains(Label)) {
-					Reporter.AddFatalError(ErrorIdentifierString
-							+ S.get("RezervedVerilogKeyword"));
-					return false;
+					return ErrorIdentifierString + S.get("ReservedVerilogKeyword");
 				}
 			}
 		}
-		return true;
+		return null;
 	}
 
 	public static String HDLCorrectLabel(String Label) {
@@ -162,7 +171,7 @@ public class CorrectLabel {
 			"f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r",
 			"s", "t", "u", "v", "w", "x", "y", "z", " ", "-", "_" };
 	private static final List<String> Chars = Arrays.asList(AllowedStrings);
-	private static final String[] ReservedVHDLWords = { "abs", "access",
+	public static final String[] ReservedVHDLWords = { "abs", "access",
 			"after", "alias", "all", "and", "architecture", "array", "assert",
 			"attribute", "begin", "block", "body", "buffer", "bus", "case",
 			"component", "configuration", "constant", "disconnect", "downto",
