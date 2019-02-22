@@ -163,6 +163,10 @@ class MenuListener {
 			Circuit cur = proj == null ? null : proj.getCurrentCircuit();
 			if (src == LogisimMenuBar.ADD_CIRCUIT) {
 				ProjectCircuitActions.doAddCircuit(proj);
+			} else if (src == LogisimMenuBar.ADD_VHDL) {
+				ProjectCircuitActions.doAddVhdl(proj);
+			} else if (src == LogisimMenuBar.IMPORT_VHDL) {
+				ProjectCircuitActions.doImportVhdl(proj);
 			} else if (src == LogisimMenuBar.MOVE_CIRCUIT_UP) {
 				ProjectCircuitActions.doMoveCircuit(proj, cur, -1);
 			} else if (src == LogisimMenuBar.MOVE_CIRCUIT_DOWN) {
@@ -192,7 +196,7 @@ class MenuListener {
 			Project proj = frame.getProject();
 			LogisimFile file = proj.getLogisimFile();
 			Circuit cur = proj.getCurrentCircuit();
-			int curIndex = file.getCircuits().indexOf(cur);
+			int curIndex = file.indexOfCircuit(cur);
 			boolean isProjectCircuit = curIndex >= 0;
 			String editorView = frame.getEditorView();
 			String explorerView = frame.getExplorerView();
@@ -217,6 +221,8 @@ class MenuListener {
 			}
 
 			menubar.setEnabled(LogisimMenuBar.ADD_CIRCUIT, true);
+			menubar.setEnabled(LogisimMenuBar.ADD_VHDL, true);
+			menubar.setEnabled(LogisimMenuBar.IMPORT_VHDL, true);
 			menubar.setEnabled(LogisimMenuBar.MOVE_CIRCUIT_UP, canMoveUp);
 			menubar.setEnabled(LogisimMenuBar.MOVE_CIRCUIT_DOWN, canMoveDown);
 			menubar.setEnabled(LogisimMenuBar.SET_MAIN_CIRCUIT, canSetMain);
@@ -294,6 +300,8 @@ class MenuListener {
 			}
 
 			menubar.addActionListener(LogisimMenuBar.ADD_CIRCUIT, this);
+			menubar.addActionListener(LogisimMenuBar.ADD_VHDL, this);
+			menubar.addActionListener(LogisimMenuBar.IMPORT_VHDL, this);
 			menubar.addActionListener(LogisimMenuBar.MOVE_CIRCUIT_UP, this);
 			menubar.addActionListener(LogisimMenuBar.MOVE_CIRCUIT_DOWN, this);
 			menubar.addActionListener(LogisimMenuBar.SET_MAIN_CIRCUIT, this);

@@ -59,6 +59,8 @@ import com.cburch.logisim.std.base.Base;
 import com.cburch.logisim.tools.AddTool;
 import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.tools.Tool;
+import com.cburch.logisim.vhdl.base.VhdlContent;
+import com.cburch.logisim.vhdl.base.VhdlEntity;
 
 class ToolboxManip implements ProjectExplorerListener {
 	private class MyListener implements ProjectListener, LibraryListener,
@@ -208,6 +210,9 @@ class ToolboxManip implements ProjectExplorerListener {
 				if (source instanceof SubcircuitFactory) {
 					Circuit circ = ((SubcircuitFactory) source).getSubcircuit();
 					return Popups.forCircuit(proj, tool, circ);
+				} else if (source instanceof VhdlEntity) {
+					VhdlContent vhdl = ((VhdlEntity) source).getContent();
+					return Popups.forVhdl(proj, tool, vhdl);
 				} else {
 					return null;
 				}

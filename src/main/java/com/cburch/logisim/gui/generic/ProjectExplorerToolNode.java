@@ -40,12 +40,17 @@ import com.cburch.logisim.circuit.CircuitListener;
 import com.cburch.logisim.circuit.SubcircuitFactory;
 import com.cburch.logisim.tools.AddTool;
 import com.cburch.logisim.tools.Tool;
+import com.cburch.logisim.vhdl.base.HdlModel;
+import com.cburch.logisim.vhdl.base.HdlModelListener;
+import com.cburch.logisim.vhdl.base.VhdlContent;
+import com.cburch.logisim.vhdl.base.VhdlEntity;
 
 public class ProjectExplorerToolNode extends ProjectExplorerModel.Node<Tool>
-		implements CircuitListener {
+		implements CircuitListener, HdlModelListener {
 
 	private static final long serialVersionUID = 1L;
 	private Circuit circuit;
+	private VhdlContent vhdl;
 
 	public ProjectExplorerToolNode(ProjectExplorerModel model, Tool tool) {
 		super(model, tool);
@@ -55,9 +60,17 @@ public class ProjectExplorerToolNode extends ProjectExplorerModel.Node<Tool>
 			if (factory instanceof SubcircuitFactory) {
 				circuit = ((SubcircuitFactory) factory).getSubcircuit();
 				circuit.addCircuitListener(this);
+			} else if (factory instanceof VhdlContent) {
+                vhdl = ((VhdlEntity) factory).getContent();
+                vhdl.addHdlModelListener(this);
 			}
 		}
 	}
+	
+    public void contentSet(HdlModel model) {
+        // fireStructureChanged();
+        fireStructureChanged();
+    }
 
 	public void circuitChanged(CircuitEvent event) {
 		int act = event.getAction();
@@ -79,6 +92,9 @@ public class ProjectExplorerToolNode extends ProjectExplorerModel.Node<Tool>
 	void decommission() {
 		if (circuit != null) {
 			circuit.removeCircuitListener(this);
+		}
+		if (vhdl != null) {
+            vhdl.removeHdlModelListener(this);
 		}
 	}
 

@@ -76,6 +76,7 @@ import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.tools.Tool;
 import com.cburch.logisim.util.InputEventUtil;
 import com.cburch.logisim.util.StringUtil;
+import com.cburch.logisim.vhdl.base.VhdlContent;
 
 class XmlReader {
 
@@ -406,24 +407,32 @@ class XmlReader {
 					file.addLibrary(lib);
 			}
 
-			// second, create the circuits - empty for now
-			List<CircuitData> circuitsData = new ArrayList<CircuitData>();
-			for (Element circElt : XmlIterator.forChildElements(elt, "circuit")) {
-				String name = circElt.getAttribute("name");
-
-				if (name == null || name.equals("")) {
-					addError(S.get("circNameMissingError"), "C??");
-				}
-				CircuitData circData = new CircuitData(circElt, new Circuit(
-						name, file,proj));
-				file.addCircuit(circData.circuit);
-				circData.knownComponents = loadKnownComponents(circElt,HolyCrossFile,IsEvolutionFile);
-				for (Element appearElt : XmlIterator.forChildElements(circElt,
-						"appear")) {
-					loadAppearance(appearElt, circData, name + ".appear");
-				}
-				circuitsData.add(circData);
-			}
+			// second, create the circuits - empty for now - and the vhdl entities
+            List<CircuitData> circuitsData = new ArrayList<CircuitData>();
+            for (Element circElt : XmlIterator.forChildElements(elt)) {
+            	switch (circElt.getTagName()) {
+            		case "vhdl":
+            			String vhdl = circElt.getTextContent();
+            			VhdlContent contents = VhdlContent.parse(vhdl, file);
+            			if (contents != null) {
+            				file.addVhdlContent(contents);
+            			}
+            			break;
+            		case "circuit":
+            			String name = circElt.getAttribute("name");
+            			if (name == null || name.equals("")) {
+            				addError(S.get("circNameMissingError"), "C??");
+            			}
+	            		CircuitData circData = new CircuitData(circElt, new Circuit(name, file,proj));
+	            		file.addCircuit(circData.circuit);
+	            		circData.knownComponents = loadKnownComponents(circElt,HolyCrossFile,IsEvolutionFile);
+	            		for (Element appearElt : XmlIterator.forChildElements(circElt,"appear")) {
+	            			loadAppearance(appearElt, circData, name + ".appear");
+	            		}
+	            		circuitsData.add(circData);
+            		default: // do nothing
+            	}
+            }
 
 			// third, process the other child elements
 			for (Element sub_elt : XmlIterator.forChildElements(elt)) {
@@ -431,6 +440,7 @@ class XmlReader {
 
 				switch (name) {
 				case "circuit":
+				case "vhdl":
 				case "lib":
 					// Nothing to do: Done earlier.
 					break;
@@ -604,7 +614,7 @@ class XmlReader {
 			if (!validLabels.containsKey(label)) {
 				// Check if the name is invalid, in which case create
 				// a valid version and put it in the map
-				if (labelVHDLInvalid(label)) {
+				if (VhdlContent.labelVHDLInvalid(label)) {
 					String initialLabel = label;
 					label = generateValidVHDLLabel(label);
 					validLabels.put(initialLabel, label);
@@ -836,21 +846,6 @@ class XmlReader {
 				}
 			}
 		}
-	}
-
-	/**
-	 * Check if a given label could be a valid VHDL variable name
-	 * 
-	 * @param label
-	 *            candidate VHDL variable name
-	 * @return true if the label is NOT a valid name, false otherwise
-	 */
-	public static boolean labelVHDLInvalid(String label) {
-		if (!label.matches("^[A-Za-z][A-Za-z0-9_]*") || label.endsWith("_")
-				|| label.matches(".*__.*"))
-			return (true);
-
-		return (false);
 	}
 
 	/**

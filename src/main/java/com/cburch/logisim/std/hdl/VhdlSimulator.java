@@ -93,7 +93,7 @@ public class VhdlSimulator implements CircuitListener {
 	final static String SIM_RESOURCES_PATH = "/resources/logisim/sim/";
 	final static String SIM_PATH = System.getProperty("java.io.tmpdir")
 			+ "/logisim/sim/";
-	final static String SIM_SRC_PATH = SIM_PATH + "src/";
+	public final static String SIM_SRC_PATH = SIM_PATH + "src/";
 
 	final static String SIM_COMP_PATH = SIM_PATH + "comp/";
 

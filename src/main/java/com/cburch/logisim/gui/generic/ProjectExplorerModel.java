@@ -30,6 +30,7 @@
 
 package com.cburch.logisim.gui.generic;
 
+import javax.swing.SwingUtilities;
 /**
  * Code taken from Cornell's version of Logisim:
  * http://www.cs.cornell.edu/courses/cs3410/2015sp/
@@ -114,13 +115,24 @@ class ProjectExplorerModel extends DefaultTreeModel implements ProjectListener {
 	}
 
 	void fireStructureChanged() {
-		Node<?> root = (Node<?>) getRoot();
-		if (root != null) {
-			this.fireTreeStructureChanged(this, root.getUserObjectPath(), null,
-					null);
-		} else {
-			this.fireTreeStructureChanged(this, null, null, null);
-		}
+		final ProjectExplorerModel model = this;
+        final Node<?> root = (Node<?>) getRoot();
+        try {
+            SwingUtilities.invokeAndWait(new Runnable() {
+                @Override
+                public void run() {
+                    if (root != null) {
+                            model.fireTreeNodesChanged(model, root.getUserObjectPath(), null, null);
+                            model.fireTreeStructureChanged(model, root.getUserObjectPath(), null, null);
+                    } else {
+                            model.fireTreeNodesChanged(model, null, null, null);
+                            model.fireTreeStructureChanged(model, null, null, null);
+                    }
+                }
+            });
+        } catch (InterruptedException e) {
+        } catch (java.lang.reflect.InvocationTargetException e) {
+        }
 	}
 
 	// ProjectListener methods

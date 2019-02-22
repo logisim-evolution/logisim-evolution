@@ -1,34 +1,4 @@
-/*******************************************************************************
- * This file is part of logisim-evolution.
- *
- *   logisim-evolution is free software: you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation, either version 3 of the License, or
- *   (at your option) any later version.
- *
- *   logisim-evolution is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *   GNU General Public License for more details.
- *
- *   You should have received a copy of the GNU General Public License
- *   along with logisim-evolution.  If not, see <http://www.gnu.org/licenses/>.
- *
- *   Original code by Carl Burch (http://www.cburch.com), 2011.
- *   Subsequent modifications by :
- *     + Haute École Spécialisée Bernoise
- *       http://www.bfh.ch
- *     + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *       http://hepia.hesge.ch/
- *     + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *       http://www.heig-vd.ch/
- *   The project is currently maintained by :
- *     + REDS Institute - HEIG-VD
- *       Yverdon-les-Bains, Switzerland
- *       http://reds.heig-vd.ch
- *******************************************************************************/
-
-package com.cburch.logisim.std.hdl;
+package com.cburch.logisim.vhdl.gui;
 
 import static com.cburch.logisim.vhdl.Strings.S;
 
@@ -56,15 +26,15 @@ import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rtextarea.RTextScrollPane;
 
-import com.cburch.hdl.HdlFile;
-import com.cburch.hdl.HdlModel;
-import com.cburch.hdl.HdlModelListener;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.util.FileUtil;
 import com.cburch.logisim.util.JFileChoosers;
 import com.cburch.logisim.util.JInputDialog;
 import com.cburch.logisim.util.LocaleListener;
 import com.cburch.logisim.util.LocaleManager;
+import com.cburch.logisim.vhdl.base.HdlModel;
+import com.cburch.logisim.vhdl.base.HdlModelListener;
+import com.cburch.logisim.vhdl.file.HdlFile;
 
 public class HdlContentEditor extends JDialog implements JInputDialog {
 
@@ -196,11 +166,13 @@ public class HdlContentEditor extends JDialog implements JInputDialog {
 	public HdlContentEditor(Dialog parent, Project proj, HdlModel model) {
 		super(parent, S.get("hdlFrameTitle"), true);
 		configure(proj, model);
+		setLocationRelativeTo(parent);
 	}
 
 	public HdlContentEditor(Frame parent, Project proj, HdlModel model) {
 		super(parent, S.get("hdlFrameTitle"), true);
 		configure(proj, model);
+		setLocationRelativeTo(parent);
 	}
 
 	private void close() {

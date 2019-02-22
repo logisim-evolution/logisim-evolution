@@ -1,34 +1,4 @@
-/*******************************************************************************
- * This file is part of logisim-evolution.
- *
- *   logisim-evolution is free software: you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation, either version 3 of the License, or
- *   (at your option) any later version.
- *
- *   logisim-evolution is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *   GNU General Public License for more details.
- *
- *   You should have received a copy of the GNU General Public License
- *   along with logisim-evolution.  If not, see <http://www.gnu.org/licenses/>.
- *
- *   Original code by Carl Burch (http://www.cburch.com), 2011.
- *   Subsequent modifications by :
- *     + Haute École Spécialisée Bernoise
- *       http://www.bfh.ch
- *     + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *       http://hepia.hesge.ch/
- *     + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *       http://www.heig-vd.ch/
- *   The project is currently maintained by :
- *     + REDS Institute - HEIG-VD
- *       Yverdon-les-Bains, Switzerland
- *       http://reds.heig-vd.ch
- *******************************************************************************/
-
-package com.cburch.logisim.std.hdl;
+package com.cburch.logisim.vhdl.base;
 
 import static com.cburch.logisim.vhdl.Strings.S;
 
@@ -45,10 +15,9 @@ import java.util.WeakHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.cburch.hdl.HdlModel;
-import com.cburch.hdl.HdlModelListener;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeSet;
+import com.cburch.logisim.data.Attributes;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.gui.main.Frame;
@@ -59,11 +28,12 @@ import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.proj.Project;
+import com.cburch.logisim.std.hdl.VhdlSimulator;
 import com.cburch.logisim.util.GraphicsUtil;
+import com.cburch.logisim.util.StringGetter;
 import com.cburch.logisim.util.StringUtil;
 
-public class VhdlEntity extends InstanceFactory {
-
+public class VhdlEntity  extends InstanceFactory {
 	static class ContentAttribute extends Attribute<VhdlContent> {
 
 		public ContentAttribute() {
@@ -79,10 +49,7 @@ public class VhdlEntity extends InstanceFactory {
 
 		@Override
 		public VhdlContent parse(String value) {
-			VhdlContent content = VhdlContent.create();
-			if (!content.compare(value))
-				content.setContent(value);
-			return content;
+			return VhdlContent.parse(value, null /* todo: get project file */);
 		}
 
 		@Override
@@ -114,6 +81,8 @@ public class VhdlEntity extends InstanceFactory {
 	}
 
 	final static Logger logger = LoggerFactory.getLogger(VhdlEntity.class);
+	static final Attribute<String> NAME_ATTR = Attributes.forString(
+			"vhdlEntity", S.getter("vhdlEntityName"));
 
 	static final Attribute<VhdlContent> CONTENT_ATTR = new ContentAttribute();
 	static final int WIDTH = 140;
@@ -124,11 +93,34 @@ public class VhdlEntity extends InstanceFactory {
 
 	private WeakHashMap<Instance, VhdlEntityListener> contentListeners;
 
-	public VhdlEntity() {
-		super("VHDL Entity", S.getter("vhdlComponent"));
-
+	private VhdlContent content;
+	
+	public VhdlEntity(VhdlContent content) {
+		super("", null);
+        this.content = content;
 		this.contentListeners = new WeakHashMap<Instance, VhdlEntityListener>();
 		this.setIconName("vhdl.gif");
+	}
+
+	@Override
+	public String getName() {
+            if (content == null)
+                return "VHDL Entity";
+            else
+		return content.getName();
+	}
+
+	@Override
+	public StringGetter getDisplayGetter() {
+		if (content == null)
+			return S.getter("vhdlComponent");
+		else
+			return StringUtil.constantGetter(content.getName());
+	}
+
+
+	public VhdlContent getContent() {
+		return content;
 	}
 
 	@Override
@@ -145,7 +137,7 @@ public class VhdlEntity extends InstanceFactory {
 
 	@Override
 	public AttributeSet createAttributeSet() {
-		return new VhdlEntityAttributes();
+		return new VhdlEntityAttributes(content);
 	}
 
 	@Override

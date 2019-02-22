@@ -171,7 +171,7 @@ public class CorrectLabel {
 			"f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r",
 			"s", "t", "u", "v", "w", "x", "y", "z", " ", "-", "_" };
 	private static final List<String> Chars = Arrays.asList(AllowedStrings);
-	public static final String[] ReservedVHDLWords = { "abs", "access",
+	private static final String[] ReservedVHDLWords = { "abs", "access",
 			"after", "alias", "all", "and", "architecture", "array", "assert",
 			"attribute", "begin", "block", "body", "buffer", "bus", "case",
 			"component", "configuration", "constant", "disconnect", "downto",
@@ -186,7 +186,7 @@ public class CorrectLabel {
 			"sll", "sra", "srl", "subtype", "then", "to", "transport", "type",
 			"unaffected", "units", "until", "use", "variable", "wait", "when",
 			"while", "with", "xnor", "xor" };
-	private static final List<String> VHDLKeywords = Arrays
+	public static final List<String> VHDLKeywords = Arrays
 			.asList(ReservedVHDLWords);
 
 	private static final String[] ReservedVerilogWords = { "always", "ifnone",

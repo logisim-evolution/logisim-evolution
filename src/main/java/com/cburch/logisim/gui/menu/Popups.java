@@ -52,6 +52,7 @@ import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.tools.AddTool;
 import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.tools.Tool;
+import com.cburch.logisim.vhdl.base.VhdlContent;
 
 public class Popups {
 	@SuppressWarnings("serial")
@@ -130,7 +131,43 @@ public class Popups {
 		}
 	}
 
-	@SuppressWarnings("serial")
+		private static class VhdlPopup extends JPopupMenu implements ActionListener {
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+			Project proj;
+			VhdlContent vhdl;
+			JMenuItem edit = new JMenuItem(
+			S.get("projectEditVhdlItem"));
+			JMenuItem remove = new JMenuItem(S.get("projectRemoveVhdlItem"));
+
+			VhdlPopup(Project proj, Tool tool, VhdlContent vhdl) {
+				super(S.get("vhdlMenu"));
+				this.proj = proj;
+				this.vhdl = vhdl;
+				add(edit);
+				edit.addActionListener(this);
+				add(remove);
+				remove.addActionListener(this);
+                edit.setEnabled(true);
+                boolean canChange = proj.getLogisimFile().contains(vhdl);
+                LogisimFile file = proj.getLogisimFile();
+                remove.setEnabled(canChange && proj.getDependencies().canRemove(vhdl));
+			}
+
+			public void actionPerformed(ActionEvent e) {
+				Object source = e.getSource();
+				if (source == edit) {
+					proj.getFrame().setEditorView(Frame.EDIT_LAYOUT);
+					vhdl.openEditor(proj);
+				} else if (source == remove) {
+					ProjectCircuitActions.doRemoveVhdl(proj, vhdl);
+				}
+			}
+		}
+
+@SuppressWarnings("serial")
 	private static class LibraryPopup extends JPopupMenu implements
 			ActionListener {
 		Project proj;
@@ -169,6 +206,7 @@ public class Popups {
 			ActionListener {
 		Project proj;
 		JMenuItem add = new JMenuItem(S.get("projectAddCircuitItem"));
+		JMenuItem vhdl = new JMenuItem(S.get("projectAddVhdlItem"));
 		JMenu load = new JMenu(S.get("projectLoadLibraryItem"));
 		JMenuItem loadBuiltin = new JMenuItem(
 				S.get("projectLoadBuiltinItem"));
@@ -189,6 +227,8 @@ public class Popups {
 
 			add(add);
 			add.addActionListener(this);
+			add(vhdl);
+			vhdl.addActionListener(this);
 			add(load);
 		}
 
@@ -196,6 +236,8 @@ public class Popups {
 			Object src = e.getSource();
 			if (src == add) {
 				ProjectCircuitActions.doAddCircuit(proj);
+			} else if (src == vhdl) {
+				ProjectCircuitActions.doAddVhdl(proj);
 			} else if (src == loadBuiltin) {
 				ProjectLibraryActions.doLoadBuiltinLibrary(proj);
 			} else if (src == loadLogisim) {
@@ -208,6 +250,10 @@ public class Popups {
 
 	public static JPopupMenu forCircuit(Project proj, AddTool tool, Circuit circ) {
 		return new CircuitPopup(proj, tool, circ);
+	}
+
+	public static JPopupMenu forVhdl(Project proj, AddTool tool, VhdlContent vhdl) {
+		return new VhdlPopup(proj, tool, vhdl);
 	}
 
 	public static JPopupMenu forLibrary(Project proj, Library lib, boolean isTop) {

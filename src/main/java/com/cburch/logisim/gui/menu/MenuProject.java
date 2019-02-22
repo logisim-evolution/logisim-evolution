@@ -69,6 +69,10 @@ class MenuProject extends Menu {
 
 	private MenuItemImpl addCircuit = new MenuItemImpl(this,
 			LogisimMenuBar.ADD_CIRCUIT);
+	private MenuItemImpl addVhdl = new MenuItemImpl(this,
+			LogisimMenuBar.ADD_VHDL);
+	private MenuItemImpl importVhdl = new MenuItemImpl(this,
+			LogisimMenuBar.IMPORT_VHDL);
 	private JMenu loadLibrary = new JMenu();
 	private JMenuItem loadBuiltin = new JMenuItem();
 	private JMenuItem loadLogisim = new JMenuItem();
@@ -102,6 +106,8 @@ class MenuProject extends Menu {
 		this.menubar = menubar;
 
 		menubar.registerItem(LogisimMenuBar.ADD_CIRCUIT, addCircuit);
+		menubar.registerItem(LogisimMenuBar.ADD_VHDL, addVhdl);
+		menubar.registerItem(LogisimMenuBar.IMPORT_VHDL, importVhdl);
 		loadBuiltin.addActionListener(myListener);
 		loadLogisim.addActionListener(myListener);
 		loadJar.addActionListener(myListener);
@@ -126,6 +132,8 @@ class MenuProject extends Menu {
 		loadLibrary.add(loadJar);
 
 		add(addCircuit);
+		add(addVhdl);
+		add(importVhdl);
 		add(loadLibrary);
 		add(unload);
 		addSeparator();
@@ -160,6 +168,7 @@ class MenuProject extends Menu {
     @Override
 	void computeEnabled() {
 		setEnabled(menubar.getProject() != null || addCircuit.hasListeners()
+				|| addVhdl.hasListeners() || importVhdl.hasListeners()
 				|| moveUp.hasListeners() || moveDown.hasListeners()
 				|| setAsMain.hasListeners() || remove.hasListeners()
 				|| layout.hasListeners() || revertAppearance.hasListeners()
@@ -172,6 +181,8 @@ class MenuProject extends Menu {
 	public void localeChanged() {
 		setText(S.get("projectMenu"));
 		addCircuit.setText(S.get("projectAddCircuitItem"));
+		addVhdl.setText(S.get("projectAddVhdlItem"));
+		importVhdl.setText(S.get("projectImportVhdlItem"));
 		loadLibrary.setText(S.get("projectLoadLibraryItem"));
 		loadBuiltin.setText(S.get("projectLoadBuiltinItem"));
 		loadLogisim.setText(S.get("projectLoadLogisimItem"));

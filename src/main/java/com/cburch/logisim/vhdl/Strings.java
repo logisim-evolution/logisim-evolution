@@ -28,46 +28,11 @@
  *       http://reds.heig-vd.ch
  *******************************************************************************/
 
-package com.cburch.logisim.std.hdl;
+package com.cburch.logisim.vhdl;
 
-import static com.cburch.logisim.vhdl.Strings.S;
+import com.cburch.logisim.util.LocaleManager;
 
-import java.util.List;
-
-import com.cburch.logisim.tools.FactoryDescription;
-import com.cburch.logisim.tools.Library;
-import com.cburch.logisim.tools.Tool;
-
-public class Hdl extends Library {
-
-	private static FactoryDescription[] DESCRIPTIONS = { new FactoryDescription(
-			"VHDL Entity", S.getter("vhdlComponent"), "vhdl.gif",
-			"VhdlEntity"), };
-
-	private List<Tool> tools = null;
-
-	public Hdl() {
-	}
-
-	@Override
-	public String getDisplayName() {
-		return S.get("hdlLibrary");
-	}
-
-	@Override
-	public String getName() {
-		return "HDL-IP";
-	}
-
-	@Override
-	public List<Tool> getTools() {
-		if (tools == null) {
-			tools = FactoryDescription.getTools(Hdl.class, DESCRIPTIONS);
-		}
-		return tools;
-	}
-
-	public boolean removeLibrary(String Name) {
-		return false;
-	}
+public class Strings {
+  public static final LocaleManager S = new LocaleManager("resources/logisim", "hdl");
 }
+
