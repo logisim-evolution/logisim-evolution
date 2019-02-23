@@ -86,7 +86,7 @@ public abstract class AttributeSetTableModel implements AttrTableModel,
 			return !attrs.isReadOnly(attr);
 		}
 
-		public void setValue(Object value) throws AttrTableSetException {
+		public void setValue(Window parent, Object value) throws AttrTableSetException {
 			Attribute<Object> attr = this.attr;
 			if (attr == null || value == null)
 				return;
@@ -141,7 +141,7 @@ public abstract class AttributeSetTableModel implements AttrTableModel,
 		}
 		
 		@Override
-		public void setValue(Object value) {
+		public void setValue(Window parent, Object value) {
 			// Do Nothing
 		}
 		

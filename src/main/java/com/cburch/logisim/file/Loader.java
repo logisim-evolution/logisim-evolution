@@ -55,6 +55,7 @@ import com.cburch.logisim.util.JFileChoosers;
 import com.cburch.logisim.util.MacCompatibility;
 import com.cburch.logisim.util.StringUtil;
 import com.cburch.logisim.util.ZipClassLoader;
+import com.cburch.logisim.vhdl.file.HdlFile;
 
 public class Loader implements LibraryLoader {
 	private static class JarFileFilter extends FileFilter {
@@ -495,5 +496,26 @@ public class Loader implements LibraryLoader {
 			return ret;
 		}
 	}
-
+	
+	public String vhdlImportChooser(Component window) {
+        JFileChooser chooser = createChooser();
+        chooser.setFileFilter(Loader.VHDL_FILTER);
+        chooser.setDialogTitle(com.cburch.logisim.vhdl.Strings.S.get("hdlOpenButton"));
+        int returnVal = chooser.showOpenDialog(window);
+        if (returnVal != JFileChooser.APPROVE_OPTION)
+            return null;
+        File selected = chooser.getSelectedFile();
+        if (selected == null)
+            return null;
+        try {
+            String vhdl = HdlFile.load(selected);
+            return vhdl;
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(window,
+                    e.getMessage(),
+                    S.get("hexOpenErrorTitle"),
+                    JOptionPane.ERROR_MESSAGE);
+            return null;
+        }
+    }
 }

@@ -35,10 +35,6 @@ public class HdlFile {
 		}
 	}
 
-	public static void open(File file, HdlContentEditor editor) throws IOException {
-        editor.setText(load(file));
-    }
-	
 	public static void save(File file, HdlContentEditor editor)
 			throws IOException {
 		BufferedWriter out = null;

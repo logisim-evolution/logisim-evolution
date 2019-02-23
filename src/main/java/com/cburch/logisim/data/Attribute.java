@@ -66,6 +66,11 @@ public abstract class Attribute<V> {
 	public String getName() {
 		return name;
 	}
+	
+	public V parse(Window source, String value) {
+        return parse(value);
+    }
+
 
 	public abstract V parse(String value);
 

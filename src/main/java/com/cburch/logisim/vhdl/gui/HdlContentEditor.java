@@ -68,27 +68,14 @@ public class HdlContentEditor extends JDialog implements JInputDialog {
 				if (!editor.getText().equals(model.getContent()))
 					if (!confirmImport(HdlContentEditor.this))
 						return;
-
-				JFileChooser chooser = JFileChoosers
-						.createAt(getDefaultImportFile(null));
-				chooser.setDialogTitle(S.get("openButton"));
-				int choice = chooser.showOpenDialog(HdlContentEditor.this);
-				if (choice == JFileChooser.APPROVE_OPTION) {
-					File f = chooser.getSelectedFile();
-					try {
-						HdlFile.open(f, HdlContentEditor.this);
-					} catch (IOException e) {
-						JOptionPane.showMessageDialog(HdlContentEditor.this,
-								e.getMessage(),
-								S.get("hexOpenErrorTitle"),
-								JOptionPane.ERROR_MESSAGE);
-					}
-				}
+				String vhdl = project.getLogisimFile().getLoader().vhdlImportChooser(HdlContentEditor.this);
+                if (vhdl != null)
+                    setText(vhdl);
 			}
 			if (source == save) {
 				JFileChooser chooser = JFileChoosers
 						.createSelected(getDefaultExportFile(null));
-				chooser.setDialogTitle(S.get("saveButton"));
+				chooser.setDialogTitle(S.get("hdlSaveButton"));
 				int choice = chooser.showSaveDialog(HdlContentEditor.this);
 				if (choice == JFileChooser.APPROVE_OPTION) {
 					File f = chooser.getSelectedFile();
@@ -113,8 +100,8 @@ public class HdlContentEditor extends JDialog implements JInputDialog {
 		@Override
 		public void localeChanged() {
 			setTitle(S.get("hdlFrameTitle"));
-			open.setText(S.get("openButton"));
-			save.setText(S.get("saveButton"));
+			open.setText(S.get("hdlOpenButton"));
+			save.setText(S.get("hdlSaveButton"));
 			validate.setText(S.get("validateButton"));
 			close.setText(S.get("closeButton"));
 		}

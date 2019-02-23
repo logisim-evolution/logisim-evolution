@@ -48,8 +48,14 @@ public class VhdlEntity  extends InstanceFactory {
 		}
 
 		@Override
+		public VhdlContent parse(Window source, String value) {
+			Project proj = source instanceof Frame ? ((Frame) source).getProject() : null;
+			return VhdlContent.parse(value, proj.getLogisimFile());
+		}
+		
+		@Override
 		public VhdlContent parse(String value) {
-			return VhdlContent.parse(value, null /* todo: get project file */);
+			return null;
 		}
 
 		@Override

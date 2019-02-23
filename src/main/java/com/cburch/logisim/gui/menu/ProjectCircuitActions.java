@@ -178,31 +178,17 @@ public class ProjectCircuitActions {
 	}
 
 	public static void doImportVhdl(Project proj) {
-		JFileChooser chooser = proj.getLogisimFile().getLoader().createChooser();
-		chooser.setFileFilter(Loader.VHDL_FILTER);
-		int returnVal = chooser.showOpenDialog(proj.getFrame());
-		if (returnVal != JFileChooser.APPROVE_OPTION)
+		String vhdl = proj.getLogisimFile().getLoader().vhdlImportChooser(proj.getFrame());
+		if (vhdl == null)
                     return;
-		File selected = chooser.getSelectedFile();
-		if (selected == null)
-                    return;
-                try {
-                    String vhdl = HdlFile.load(selected);
-                    VhdlContent content = VhdlContent.parse(vhdl, proj.getLogisimFile());
-                    if (content == null)
-                        return;
-                    if (VhdlContent.labelVHDLInvalidNotify(content.getName(), proj.getLogisimFile())) {
-                        return;
-                    }
-                    proj.doAction(LogisimFileActions.addVhdl(content));
-                    content.openEditor(proj);
-                } catch (IOException e) {
-                    JOptionPane.showMessageDialog(proj.getFrame(),
-                            "There was an error opening the file",
-                            "Can't open file",
-                            JOptionPane.ERROR_MESSAGE);
-                }
-
+		VhdlContent content = VhdlContent.parse(vhdl, proj.getLogisimFile());
+        if (content == null)
+            return;
+        if (VhdlContent.labelVHDLInvalidNotify(content.getName(), proj.getLogisimFile())) {
+        	return;
+        }
+        proj.doAction(LogisimFileActions.addVhdl(content));
+        content.openEditor(proj);
 	}
 
 
