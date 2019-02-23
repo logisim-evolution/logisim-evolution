@@ -62,6 +62,7 @@ import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.tools.AddTool;
 import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.tools.Tool;
+import com.cburch.logisim.vhdl.base.VhdlEntity;
 
 public class SelectionActions {
 	/**
@@ -515,7 +516,8 @@ public class SelectionActions {
 						} else if (fact == factory) {
 							return fact;
 						} else if (fact.getClass() == factory.getClass()
-								&& !(fact instanceof SubcircuitFactory)) {
+								&& !(fact instanceof SubcircuitFactory)
+								&& !(fact instanceof VhdlEntity)){
 							return fact;
 						}
 					}

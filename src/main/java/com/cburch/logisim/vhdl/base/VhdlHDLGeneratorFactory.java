@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
@@ -30,6 +31,36 @@ public class VhdlHDLGeneratorFactory extends AbstractHDLGeneratorFactory  {
 		contents.add(content.getArchitecture());
 
 		return contents;
+	}
+
+	@Override
+	public SortedMap<String, Integer> GetParameterMap(Netlist Nets,
+			NetlistComponent ComponentInfo, FPGAReport Reporter) {
+		AttributeSet attrs = ComponentInfo.GetComponent().getAttributeSet();
+		VhdlContent content = attrs.getValue(VhdlEntity.CONTENT_ATTR);
+		SortedMap<String, Integer> ParameterMap = new TreeMap<String, Integer>();
+                for (Attribute<Integer> a : content.getGenericAttributes()) {
+                    VhdlEntityAttributes.VhdlGenericAttribute va = (VhdlEntityAttributes.VhdlGenericAttribute)a;
+                    VhdlContent.Generic g = va.getGeneric();
+                    Integer v = attrs.getValue(a);
+                    if (v != null) {
+                        ParameterMap.put(g.getName(), v);
+                    } else {
+                        ParameterMap.put(g.getName(), g.getDefaultValue());
+                    }
+                }
+		return ParameterMap;
+	}
+
+	@Override
+	public SortedMap<Integer, String> GetParameterList(AttributeSet attrs) {
+		VhdlContent content = attrs.getValue(VhdlEntity.CONTENT_ATTR);
+		SortedMap<Integer, String> Parameters = new TreeMap<Integer, String>();
+                int i = -1;
+                for (VhdlContent.Generic g : content.getGenerics()) {
+                   Parameters.put(i--, g.getName());
+                }
+		return Parameters;
 	}
 
 	@Override

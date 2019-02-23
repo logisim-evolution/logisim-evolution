@@ -32,6 +32,7 @@ import com.cburch.logisim.std.hdl.VhdlSimulator;
 import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.StringGetter;
 import com.cburch.logisim.util.StringUtil;
+import com.cburch.logisim.vhdl.gui.HdlContentEditor;
 
 public class VhdlEntity  extends InstanceFactory {
 	static class ContentAttribute extends Attribute<VhdlContent> {
@@ -44,7 +45,7 @@ public class VhdlEntity  extends InstanceFactory {
 		public java.awt.Component getCellEditor(Window source, VhdlContent value) {
 			Project proj = source instanceof Frame ? ((Frame) source)
 					.getProject() : null;
-			return VhdlEntityAttributes.getContentEditor(source, value, proj);
+			return HdlContentEditor.getContentEditor(source, value, proj);
 		}
 
 		@Override
@@ -69,23 +70,6 @@ public class VhdlEntity  extends InstanceFactory {
 		}
 	}
 
-	static class VhdlEntityListener implements HdlModelListener {
-
-		Instance instance;
-
-		VhdlEntityListener(Instance instance) {
-			this.instance = instance;
-		}
-
-		@Override
-		public void contentSet(HdlModel source) {
-			// ((InstanceState)
-			// instance).getProject().getSimulator().getVhdlSimulator().fireInvalidated();
-			instance.fireInvalidated();
-			instance.recomputeBounds();
-		}
-	}
-
 	final static Logger logger = LoggerFactory.getLogger(VhdlEntity.class);
 	static final Attribute<String> NAME_ATTR = Attributes.forString(
 			"vhdlEntity", S.getter("vhdlEntityName"));
@@ -97,14 +81,11 @@ public class VhdlEntity  extends InstanceFactory {
 
 	static final int X_PADDING = 5;
 
-	private WeakHashMap<Instance, VhdlEntityListener> contentListeners;
-
 	private VhdlContent content;
 	
 	public VhdlEntity(VhdlContent content) {
 		super("", null);
         this.content = content;
-		this.contentListeners = new WeakHashMap<Instance, VhdlEntityListener>();
 		this.setIconName("vhdl.gif");
 	}
 
@@ -131,13 +112,9 @@ public class VhdlEntity  extends InstanceFactory {
 
 	@Override
 	protected void configureNewInstance(Instance instance) {
-		VhdlContent content = instance.getAttributeValue(CONTENT_ATTR);
-		VhdlEntityListener listener = new VhdlEntityListener(instance);
-
-		contentListeners.put(instance, listener);
-		content.addHdlModelListener(listener);
-
-		instance.addAttributeListener();
+		VhdlEntityAttributes attrs = (VhdlEntityAttributes)instance.getAttributeSet();
+        attrs.setInstance(instance);
+        instance.addAttributeListener();
 		updatePorts(instance);
 	}
 

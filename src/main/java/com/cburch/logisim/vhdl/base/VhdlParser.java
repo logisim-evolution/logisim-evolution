@@ -4,7 +4,6 @@ import static com.cburch.logisim.std.Strings.S;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -13,6 +12,32 @@ import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.instance.Port;
 
 public class VhdlParser {
+
+    private static class Scanner {
+        String input;
+        MatchResult m;
+        Scanner(String input) {
+            this.input = input;
+        }
+        boolean next(Pattern p) {
+            m = null;
+            Matcher match = p.matcher(input);
+            if (!match.lookingAt())
+                return false;
+            m = match;
+            if (match.hitEnd()) 
+                input = "";
+            else
+                input = input.substring(m.end());
+            return true;
+        }
+        MatchResult match() {
+            return m;
+        }
+        String remaining() {
+            return input;
+        }
+    }
 
 	public static class IllegalVhdlContentException extends Exception {
 
@@ -61,18 +86,70 @@ public class VhdlParser {
 		}
 	}
 
-	private static final String ENTITY_PATTERN = "\\s*entity\\s+(\\w+)\\s+is\\s+(.*?end)\\s+(\\w+)\\s*;";
-	private static final String ARCH_PATTERN = "\\s*architecture.*";
-	private static final String LIBRARY_PATTERN = "\\s*library\\s+\\w+\\s*;";
-	private static final String USING_PATTERN = "\\s*use\\s+\\S+\\s*;";
 
-	private static final String PORTS_PATTERN = "\\s*port\\s*[(](.*)[)]\\s*;\\s*end";
-	private static final String PORT_PATTERN = "\\s*(\\w+)\\s*";
-	private static final String LINE_PATTERN = ":\\s*(\\w+)\\s+std_logic";
-	private static final String VECTOR_PATTERN = ":\\s*(\\w+)\\s+std_logic_vector\\s*[(]\\s*(\\d+)\\s+downto\\s+(\\d+)\\s*[)]";
+	public static class GenericDescription {
+
+		protected String name;
+		protected String type;
+		protected int dval;
+
+		public GenericDescription(String name, String type, int dval) {
+			this.name = name;
+			this.type = type;
+			this.dval = dval;
+		}
+
+		public GenericDescription(String name, String type) {
+			this.name = name;
+			this.type = type;
+                        if (type.equals("positive"))
+                            dval = 1;
+                        else
+                            dval = 0;
+		}
+
+		public String getName() {
+			return this.name;
+		}
+
+		public String getType() {
+			return this.type;
+		}
+
+		public int getDefaultValue() {
+			return this.dval;
+		}
+	}
+
+	private static Pattern regex(String pattern) {
+		pattern = pattern.trim();
+		pattern = "^ " + pattern;
+		pattern = pattern.replaceAll("  ", "\\\\s+"); // Two spaces = required whitespace
+		pattern = pattern.replaceAll(" ", "\\\\s*"); // One space = optional whitespace
+		return Pattern.compile(pattern, Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
+	}
+
+	private static final Pattern LIBRARY = regex("library  \\w+ ;");
+	private static final Pattern USING = regex("use  \\S+ ;");
+	private static final Pattern ENTITY = regex("entity  (\\w+)  is");
+	private static final Pattern END = regex("end  (\\w+) ;");
+	private static final Pattern ARCHITECTURE = regex("architecture .*");
+
+	private static final Pattern SEMICOLON = regex(";");
+	private static final Pattern OPENLIST = regex("[(]");
+	private static final Pattern DONELIST = regex("[)] ;");
+
+	private static final Pattern PORTS = regex("port");
+	private static final Pattern PORT = regex("(\\w+(?: , \\w+)*) : (\\w+)  (\\w+)");
+	private static final Pattern RANGE = regex("[(] (\\d+) downto (\\d+) [)]");
+
+	private static final Pattern GENERICS = regex("generic");
+	private static final Pattern GENERIC = regex("(\\w+(?: , \\w+)*) : (\\w+)");
+	private static final Pattern DVALUE = regex(":= (\\w+)");
 
 	private List<PortDescription> inputs;
 	private List<PortDescription> outputs;
+	private List<GenericDescription> generics;
 	private String source;
 	private String name;
 	private String libraries;
@@ -82,6 +159,7 @@ public class VhdlParser {
 		this.source = source;
 		this.inputs = new ArrayList<PortDescription>();
 		this.outputs = new ArrayList<PortDescription>();
+		this.generics = new ArrayList<GenericDescription>();
 	}
 
 	public String getArchitecture() {
@@ -110,6 +188,14 @@ public class VhdlParser {
 		return inputs;
 	}
 
+	public List<PortDescription> getOutputs() {
+		return outputs;
+	}
+
+	public List<GenericDescription> getGenerics() {
+		return generics;
+	}
+
 	public String getLibraries() {
 		return libraries;
 	}
@@ -118,193 +204,145 @@ public class VhdlParser {
 		return name;
 	}
 
-	public List<PortDescription> getOutputs() {
-		return outputs;
-	}
-
-	private String getType(String type) throws IllegalVhdlContentException {
-		if (type.equals("in"))
+	private String getPortType(String type) throws IllegalVhdlContentException {
+		if (type.equalsIgnoreCase("in"))
 			return Port.INPUT;
-		if (type.equals("out"))
+		if (type.equalsIgnoreCase("out"))
 			return Port.OUTPUT;
-		if (type.equals("inout"))
+		if (type.equalsIgnoreCase("inout"))
 			return Port.INOUT;
 
 		throw new IllegalVhdlContentException(
-				S.get("invalidTypeException"));
+				S.get("invalidTypeException")+": "+type);
 	}
 
-	public void parse() throws IllegalVhdlContentException {
-		String input = removeComments();
-		Pattern pattern = Pattern.compile(ENTITY_PATTERN, Pattern.DOTALL
-				| Pattern.CASE_INSENSITIVE);
+    public void parse() throws IllegalVhdlContentException {
+        Scanner input = new Scanner(removeComments());
+        parseLibraries(input);
+        if (!input.next(ENTITY))
+            throw new IllegalVhdlContentException(S.get("CannotFindEntityException"));
+        name = input.match().group(1);
+        while (parsePorts(input) || parseGenerics(input));
+        if (!input.next(END))
+            throw new IllegalVhdlContentException(S.get("CannotFindEntityException"));
+        if (!input.match().group(1).equals(name))
+            throw new IllegalVhdlContentException(S.get("CannotFindEntityException"));
+        parseArchitecture(input);
+        if (input.remaining().length() > 0)
+            throw new IllegalVhdlContentException(S.get("CannotFindEntityException"));
+    }
 
-		String[] parts = pattern.split(input);
-		Matcher matcher = pattern.matcher(input);
+    private void parseArchitecture(Scanner input) throws IllegalVhdlContentException {
+        if (input.next(ARCHITECTURE))
+            architecture = input.match().group();
+        else
+            architecture = "";
+    }	
 
-		if (parts.length > 2) {
-			throw new IllegalVhdlContentException(
-					S.get("duplicatedEntityException"));
-		}
-		if (!matcher.find() || matcher.groupCount() != 3
-				|| !matcher.group(1).equals(matcher.group(3))) {
-			throw new IllegalVhdlContentException(
-					S.get("CannotFindEntityException"));
-		}
 
-		name = matcher.group(1);
-		parsePorts(matcher.group(2));
-
-		parseLibraries(parts[0]);
-		parseContent(parts.length == 2 ? parts[1] : "");
-	}
-
-	private void parseContent(String input) throws IllegalVhdlContentException {
-		Matcher matcher = Pattern.compile(ARCH_PATTERN,
-				Pattern.DOTALL | Pattern.CASE_INSENSITIVE).matcher(input);
-
-		if (matcher.find()) {
-			architecture = matcher.group().trim();
-		} else {
-			architecture = "";
-		}
-	}
-
-	private void parseLibraries(String input)
-			throws IllegalVhdlContentException {
+    private void parseLibraries(Scanner input) throws IllegalVhdlContentException {
 		StringBuilder result = new StringBuilder();
-
-		Matcher library = Pattern.compile(LIBRARY_PATTERN,
-				Pattern.CASE_INSENSITIVE).matcher(input);
-		while (library.find()) {
-			result.append(library.group().trim().replaceAll("\\s+", " "));
-			result.append(System.getProperty("line.separator"));
-		}
-
-		Matcher using = Pattern
-				.compile(USING_PATTERN, Pattern.CASE_INSENSITIVE)
-				.matcher(input);
-		while (using.find()) {
-			result.append(using.group().trim().replaceAll("\\s+", " "));
-			result.append(System.getProperty("line.separator"));
+		while (input.next(LIBRARY) || input.next(USING)) {
+            result.append(input.match().group().trim().replaceAll("\\s+", " "));
+            result.append(System.getProperty("line.separator"));
 		}
 
 		libraries = result.toString();
 	}
 
-	private int parseLine(Scanner scanner, StringBuilder type)
-			throws IllegalVhdlContentException {
-		if (scanner.findWithinHorizon(
-				Pattern.compile(LINE_PATTERN, Pattern.CASE_INSENSITIVE), 0) == null)
-			throw new IllegalVhdlContentException(
-					S.get("lineDeclarationException"));
-		MatchResult result = scanner.match();
+    private void parsePort(Scanner input) throws IllegalVhdlContentException {
+        // Example: "name : IN std_logic"
+        // Example: "name : OUT std_logic_vector(expr downto expr)"
+        // Example: "name1, name2, name3 : IN std_logic"
+        // Example: "name1, name2, name3 : OUT std_logic_vector(expr downto expr)"
 
-		if (result.groupCount() != 1)
-			throw new IllegalVhdlContentException(
-					S.get("lineDeclarationException"));
-		type.append(getType(result.group(1).toLowerCase()));
+        if (!input.next(PORT))
+            throw new IllegalVhdlContentException(S.get("portDeclarationException"));
+        String names = input.match().group(1).trim();
+        String ptype = getPortType(input.match().group(2).trim());
+        String type = input.match().group(3).trim();
 
-		return 1;
+        int width;
+        if (type.equalsIgnoreCase("std_logic")) {
+            width = 1;
+        } else {
+            if (!input.next(RANGE))
+                throw new IllegalVhdlContentException(S.get("portDeclarationException"));
+            int upper = Integer.parseInt(input.match().group(1));
+            int lower = Integer.parseInt(input.match().group(2));
+            width = upper - lower + 1;
+        }
+
+        for (String name : names.split("\\s*,\\s*")) {
+            if (ptype == Port.INPUT)
+                inputs.add(new PortDescription(name, ptype, width));
+            else
+                outputs.add(new PortDescription(name, ptype, width));
+        }
 	}
 
-	private void parseMultiplePorts(String line)
-			throws IllegalVhdlContentException {
-		int index = line.indexOf(':');
-		if (index == -1)
-			throw new IllegalVhdlContentException(
-					S.get("multiplePortsDeclarationException"));
+	private boolean parsePorts(Scanner input) throws IllegalVhdlContentException {
+        // Example: "port ( decl ) ;"
+        // Example: "port ( decl ; decl ; decl ) ;"
+		if (!input.next(PORTS))
+            return false;
+		if (!input.next(OPENLIST))
+            throw new IllegalVhdlContentException(S.get("portDeclarationException"));
+        parsePort(input);
+        while (input.next(SEMICOLON))
+            parsePort(input);
+        if (!input.next(DONELIST))
+            throw new IllegalVhdlContentException(S.get("portDeclarationException"));
+        return true;
+	}
 
-		Scanner local = new Scanner(line.substring(0, index));
-		local.useDelimiter(",");
-
-		List<String> names = new ArrayList<String>();
-		while (local.hasNext())
-			names.add(local.next().trim());
-
-		local.close();
-		local = new Scanner(line);
-
-		int width;
-		StringBuilder type = new StringBuilder();
-		if (line.toLowerCase().contains("std_logic_vector"))
-			width = parseVector(local, type);
-		else
-			width = parseLine(local, type);
-
-		for (String name : names) {
-			if (type.toString().equals(Port.INPUT))
-				inputs.add(new PortDescription(name, type.toString(), width));
-			else
-				outputs.add(new PortDescription(name, type.toString(), width));
+	private void parseGeneric(Scanner input) throws IllegalVhdlContentException {
+		// Example: "name : integer"
+		// Example: "name : integer := constant"
+		// Example: "name1, name2, name3 : integer"
+		if (!input.next(GENERIC))
+			throw new IllegalVhdlContentException(S.get("genericDeclarationException"));
+		String names = input.match().group(1).trim();
+		String type = input.match().group(2).trim();
+		if (!type.equalsIgnoreCase("integer") && !type.equalsIgnoreCase("natural") && !type.equalsIgnoreCase("positive")) {
+			throw new IllegalVhdlContentException(S.get("genericTypeException") + ": " + type);
+		}
+		type = type.toLowerCase();
+		int dval = 0;
+		if (type.equals("positive")) {
+			dval = 1;
+		}
+		if (input.next(DVALUE)) {
+			String s = input.match().group(1);
+			try {
+				dval = Integer.decode(s);
+			} catch (NumberFormatException e) {
+				throw new IllegalVhdlContentException(S.get("genericValueException") + ": " + s);
+			}
+			if (type.equals("natural") && dval < 0 || type.equals("positive") && dval < 1)
+				throw new IllegalVhdlContentException(S.get("genericValueException") + ": " + dval);
 		}
 
-		local.close();
-	}
-
-	private void parsePort(String line) throws IllegalVhdlContentException {
-		Scanner local = new Scanner(line);
-
-		if (local.findWithinHorizon(
-				Pattern.compile(PORT_PATTERN, Pattern.CASE_INSENSITIVE), 0) == null) {
-			local.close();
-			throw new IllegalVhdlContentException(
-					S.get("portDeclarationException"));
+		for (String name : names.split("\\s*,\\s*")) {
+			generics.add(new GenericDescription(name, type, dval));
 		}
-		String name = local.match().group().trim();
+    }
 
-		int width;
-		StringBuilder type = new StringBuilder();
-		if (line.toLowerCase().contains("std_logic_vector"))
-			width = parseVector(local, type);
-		else
-			width = parseLine(local, type);
-
-		if (type.toString().equals(Port.INPUT))
-			inputs.add(new PortDescription(name, type.toString(), width));
-		else
-			outputs.add(new PortDescription(name, type.toString(), width));
-
-		local.close();
-	}
-
-	private void parsePorts(String input) throws IllegalVhdlContentException {
-		Matcher matcher = Pattern.compile(PORTS_PATTERN,
-				Pattern.DOTALL | Pattern.CASE_INSENSITIVE).matcher(input);
-		if (!matcher.find() || matcher.groupCount() != 1)
-			return;
-		String ports = matcher.group(1);
-
-		Scanner scanner = new Scanner(ports);
-		scanner.useDelimiter(";");
-		while (scanner.hasNext()) {
-			String statement = scanner.next();
-			if (statement.contains(","))
-				parseMultiplePorts(statement.trim());
-			else
-				parsePort(statement.trim());
-		}
-
-		scanner.close();
-	}
-
-	private int parseVector(Scanner scanner, StringBuilder type)
-			throws IllegalVhdlContentException {
-		if (scanner.findWithinHorizon(
-				Pattern.compile(VECTOR_PATTERN, Pattern.CASE_INSENSITIVE), 0) == null)
-			throw new IllegalVhdlContentException(
-					S.get("vectorDeclarationException"));
-		MatchResult result = scanner.match();
-
-		if (result.groupCount() != 3)
-			throw new IllegalVhdlContentException(
-					S.get("vectorDeclarationException"));
-		type.append(getType(result.group(1).toLowerCase()));
-
-		return Integer.parseInt(result.group(2))
-				- Integer.parseInt(result.group(3)) + 1;
-	}
-
+    private boolean parseGenerics(Scanner input) throws IllegalVhdlContentException {
+        // Example: generic ( decl ) ;
+        // Example: generic ( decl ; decl ; decl ) ;
+        if (!input.next(GENERICS))
+            return false;
+        if (!input.next(OPENLIST))
+            throw new IllegalVhdlContentException(S.get("genericDeclarationException"));
+        parseGeneric(input);
+        while (input.next(SEMICOLON))
+            parseGeneric(input);
+        if (!input.next(DONELIST))
+            throw new IllegalVhdlContentException(S.get("genericDeclarationException"));
+        return true;
+    }
+    
 	private String removeComments() throws IllegalVhdlContentException {
 		StringBuffer input;
 		try {

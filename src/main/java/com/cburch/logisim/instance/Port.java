@@ -48,7 +48,7 @@ public class Port {
 		else if (s.equals(INOUT))
 			return SHARED;
 		else
-			throw new IllegalArgumentException("Not recognized port type");
+			throw new IllegalArgumentException("Not recognized port type: "+s);
 	}
 
 	private static boolean toExclusive(String s) {
@@ -59,7 +59,7 @@ public class Port {
 		else if (s.equals(SHARED))
 			return false;
 		else
-			throw new IllegalArgumentException("Not recognized exclusion type");
+			throw new IllegalArgumentException("Not recognized exclusion type: "+s);
 	}
 
 	private static int toType(String s) {
@@ -72,7 +72,7 @@ public class Port {
 		else if (s.equals(INOUT))
 			return EndData.INPUT_OUTPUT;
 		else
-			throw new IllegalArgumentException("Not recognized port type");
+			throw new IllegalArgumentException("Not recognized port type: "+s);
 	}
 
 	public static final String INPUT = "input";

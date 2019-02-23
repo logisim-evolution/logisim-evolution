@@ -197,6 +197,7 @@ public class LogisimFile extends Library implements LibraryEventSource,CircuitLi
 				in = new ReaderInputStream(new FileReader(file), "UTF8");
 				return loadSub(in, loader, file);
 			} catch (Exception t) {
+				firstExcept.printStackTrace();
 				loader.showError(StringUtil.format(
 						S.get("xmlFormatError"), firstExcept.toString()));
 			} finally {
@@ -215,6 +216,7 @@ public class LogisimFile extends Library implements LibraryEventSource,CircuitLi
 		try {
 			return loadSub(in, loader);
 		} catch (SAXException e) {
+			e.printStackTrace();
 			loader.showError(StringUtil.format(S.get("xmlFormatError"),
 					e.toString()));
 			return null;

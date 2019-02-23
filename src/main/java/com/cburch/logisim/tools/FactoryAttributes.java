@@ -40,7 +40,7 @@ import com.cburch.logisim.data.AttributeListener;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.AttributeSets;
 
-class FactoryAttributes implements AttributeSet, AttributeListener, Cloneable {
+public class FactoryAttributes implements AttributeSet, AttributeListener, Cloneable {
 	private Class<? extends Library> descBase;
 	private FactoryDescription desc;
 	private ComponentFactory factory;
@@ -107,7 +107,7 @@ class FactoryAttributes implements AttributeSet, AttributeListener, Cloneable {
 		return getBase().getAttributes();
 	}
 
-	AttributeSet getBase() {
+	public AttributeSet getBase() {
 		AttributeSet ret = baseAttrs;
 		if (ret == null) {
 			ComponentFactory fact = factory;

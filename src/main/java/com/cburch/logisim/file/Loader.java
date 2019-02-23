@@ -332,6 +332,8 @@ public class Loader implements LibraryLoader {
 			LogisimFile ret = loadLogisimFile(file);
 			if (ret != null)
 				setMainFile(file);
+			else
+                throw new LoadFailedException("File could not be opened");
 			showMessages(ret);
 			return ret;
 		} catch (LoaderException e) {

@@ -8,6 +8,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -16,13 +17,25 @@ import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
+import com.cburch.logisim.data.Attribute;
+import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.file.LogisimFile;
 import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.util.Softwares;
+import com.cburch.logisim.vhdl.gui.HdlContentEditor;
 
 public class VhdlContent extends HdlContent {
+
+	public static class Generic extends VhdlParser.GenericDescription {
+		public Generic(VhdlParser.GenericDescription g) {
+                    super(g.name, g.type, g.dval);
+                }
+		public Generic(Generic g) {
+                    super(g.name, g.type, g.dval);
+                }
+	}
 
 	public static VhdlContent create(String name, LogisimFile file) {
         VhdlContent content = new VhdlContent(file);
@@ -71,9 +84,12 @@ public class VhdlContent extends HdlContent {
 
 	private static final String TEMPLATE = loadTemplate();
 
+	protected AttributeSet staticAttrs;
 	protected StringBuffer content;
 	protected Port[] inputs;
 	protected Port[] outputs;
+    protected Generic[] generics;
+    protected List<Attribute<Integer>> genericAttrs;
 	protected String name;
 	protected String libraries;
 	protected String architecture;
@@ -115,6 +131,23 @@ public class VhdlContent extends HdlContent {
 	public String getContent() {
 		return content.toString();
 	}
+
+	public Generic[] getGenerics() {
+		if (generics == null) {
+			return new Generic[0];
+                }
+		return generics;
+	}
+
+        public List<Attribute<Integer>> getGenericAttributes() {
+		if (genericAttrs == null) {
+			genericAttrs = new ArrayList<Attribute<Integer>>();
+                        for (Generic g : getGenerics()) {
+                            genericAttrs.add(VhdlEntityAttributes.forGeneric(g));
+                        }
+                }
+                return genericAttrs;
+        }
 
 	public Port[] getInputs() {
 		if (inputs == null)
@@ -178,7 +211,11 @@ public class VhdlContent extends HdlContent {
 		try {
 			parser.parse();
 		} catch (Exception ex) {
-			JOptionPane.showMessageDialog(null, ex.getMessage(),
+            String msg = ex.getMessage();
+            if (msg == null || msg.length() == 0)
+                msg = ex.toString();
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(null, msg,
 					S.get("validationParseError"),
 					JOptionPane.ERROR_MESSAGE);
 			return false;
@@ -214,14 +251,48 @@ public class VhdlContent extends HdlContent {
 			outputs[i].setToolTip(S.getter(desc.getName()));
 		}
 
+
+        // If name and type is unchanged, keep old generic and attribute.
+        Generic[] oldGenerics = generics;
+        List<Attribute<Integer>> oldAttrs = genericAttrs;
+
+        generics = new Generic[parser.getGenerics().size()];
+        genericAttrs = new ArrayList<Attribute<Integer>>();
+        int i = 0;
+        for (VhdlParser.GenericDescription g : parser.getGenerics()) {
+            boolean found = false;
+            if (oldGenerics != null) {
+                for (int j = 0; j < oldGenerics.length; j++) {
+                    Generic old = oldGenerics[j];
+                    if (old != null && old.getName().equals(g.getName()) && old.getType().equals(g.getType())) {
+                        generics[i] = old;
+                        oldGenerics[j] = null;
+                        genericAttrs.add(oldAttrs.get(j));
+                        found = true;
+                        break;
+                    }
+                }
+            }
+            if (!found) {
+                generics[i] = new Generic(g);
+                genericAttrs.add(VhdlEntityAttributes.forGeneric(generics[i]));
+            }
+            i++;
+        }
+
 		this.content = new StringBuffer(content);
+		this.staticAttrs = VhdlEntityAttributes.createBaseAttrs(this);
 		fireContentSet();
 
 		return true;
 	}
 	
+    public AttributeSet getStaticAttributes() {
+        return staticAttrs;
+    }
+
 	public void openEditor(Project proj) {
-        VhdlEntityAttributes.getContentEditor(proj.getFrame(), this, proj).setVisible(true);
+		HdlContentEditor.getContentEditor(proj.getFrame(), this, proj).setVisible(true);
     }
 
     static final String ENTITY_PATTERN = "(\\s*\\bentity\\s+)%entityname%(\\s+is)\\b";
