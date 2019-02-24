@@ -85,7 +85,8 @@ public class TclVhdlEntityContent extends VhdlContent {
 	private static final String TEMPLATE = loadTemplate();
 
 	protected TclVhdlEntityContent() {
-		super.parseContent(TEMPLATE);
+		super();
+		super.setContent(TEMPLATE);
 	}
 
 }

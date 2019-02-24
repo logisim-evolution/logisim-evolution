@@ -35,7 +35,9 @@ package com.cburch.logisim.gui.generic;
  * http://www.cs.cornell.edu/courses/cs3410/2015sp/
  */
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Shape;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -74,6 +76,8 @@ import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.tools.Tool;
 import com.cburch.logisim.util.LocaleListener;
 import com.cburch.logisim.util.LocaleManager;
+import com.cburch.logisim.vhdl.base.VhdlContent;
+import com.cburch.logisim.vhdl.base.VhdlEntity;
 
 public class ProjectExplorer extends JTree implements LocaleListener {
 
@@ -93,7 +97,7 @@ public class ProjectExplorer extends JTree implements LocaleListener {
 	private class MyCellRenderer extends DefaultTreeCellRenderer {
 
 		private static final long serialVersionUID = 1L;
-
+		
 		@Override
 		public java.awt.Component getTreeCellRendererComponent(JTree tree,
 				Object value, boolean selected, boolean expanded, boolean leaf,
@@ -101,7 +105,6 @@ public class ProjectExplorer extends JTree implements LocaleListener {
 			java.awt.Component ret;
 			ret = super.getTreeCellRendererComponent(tree, value, selected,
 					expanded, leaf, row, hasFocus);
-
 			if (ret instanceof JComponent) {
 				JComponent comp = (JComponent) ret;
 				comp.setToolTipText(null);
@@ -110,9 +113,25 @@ public class ProjectExplorer extends JTree implements LocaleListener {
 				ProjectExplorerToolNode toolNode = (ProjectExplorerToolNode) value;
 				Tool tool = toolNode.getValue();
 				if (ret instanceof JLabel) {
-					((JLabel) ret).setText(tool.getDisplayName());
-					((JLabel) ret).setIcon(new ToolIcon(tool));
-					((JLabel) ret).setToolTipText(tool.getDescription());
+                    JLabel label = (JLabel)ret;
+                    boolean viewed = false;
+                    if (tool instanceof AddTool && proj != null && proj.getFrame() != null) {
+                            Circuit circ = null;
+                            VhdlContent vhdl = null;
+                            ComponentFactory fact = ((AddTool) tool).getFactory(false);
+                            if (fact instanceof SubcircuitFactory) {
+                                    circ = ((SubcircuitFactory) fact).getSubcircuit();
+                            } else if (fact instanceof VhdlEntity) {
+                                    vhdl = ((VhdlEntity) fact).getContent();
+                            }
+                            if (proj.getFrame().getHdlEditorView() == null)
+                                viewed = (circ != null && circ == proj.getCurrentCircuit());
+                            else
+                                viewed = (vhdl != null && vhdl == proj.getFrame().getHdlEditorView());
+                    }
+                    label.setText(tool.getDisplayName());
+                    label.setIcon(new ToolIcon(tool));
+                    label.setToolTipText(tool.getDescription());
 				}
 			} else if (value instanceof ProjectExplorerLibraryNode) {
 				ProjectExplorerLibraryNode libNode = (ProjectExplorerLibraryNode) value;
@@ -149,7 +168,11 @@ public class ProjectExplorer extends JTree implements LocaleListener {
 				TreePath path = getPathForLocation(e.getX(), e.getY());
 				if (path != null && listener != null) {
 					listener.doubleClicked(new ProjectExplorerEvent(path));
-				}
+				} 
+			} else {
+				TreePath path = getPathForLocation(e.getX(), e.getY());
+                if (listener != null)
+                        listener.selectionChanged(new ProjectExplorerEvent(path));
 			}
 		}
 
@@ -171,20 +194,23 @@ public class ProjectExplorer extends JTree implements LocaleListener {
 			checkForPopup(e);
 		}
 
-		//
+        void changedNode(Object o) {
+            ProjectExplorerModel model = (ProjectExplorerModel) getModel();
+            if (model != null && o instanceof Tool) {
+                ProjectExplorerModel.Node<Tool> node = model.findTool((Tool)o);
+                if (node != null)
+                    node.fireNodeChanged();
+            }
+        }
+        //
 		// project/library file/circuit listener methods
 		//
 		public void projectChanged(ProjectEvent event) {
 			int act = event.getAction();
-			if (act == ProjectEvent.ACTION_SET_TOOL) {
-				TreePath path = getSelectionPath();
-				if (path != null
-						&& path.getLastPathComponent() != event.getTool()) {
-					clearSelection();
-				}
-			} else if (act == ProjectEvent.ACTION_SET_CURRENT) {
-				ProjectExplorer.this.repaint();
-			}
+            if (act == ProjectEvent.ACTION_SET_CURRENT || act == ProjectEvent.ACTION_SET_TOOL) {
+                changedNode(event.getOldData());
+                changedNode(event.getData());
+            }
 		}
 
 		//
@@ -192,7 +218,7 @@ public class ProjectExplorer extends JTree implements LocaleListener {
 		//
 		public void propertyChange(PropertyChangeEvent event) {
 			if (AppPreferences.GATE_SHAPE.isSource(event)) {
-				repaint();
+				ProjectExplorer.this.repaint();
 			}
 		}
 
@@ -276,6 +302,8 @@ public class ProjectExplorer extends JTree implements LocaleListener {
 
 		Tool tool;
 		Circuit circ = null;
+		VhdlContent vhdl = null;
+
 
 		ToolIcon(Tool tool) {
 			this.tool = tool;
@@ -283,6 +311,8 @@ public class ProjectExplorer extends JTree implements LocaleListener {
 				ComponentFactory fact = ((AddTool) tool).getFactory(false);
 				if (fact instanceof SubcircuitFactory) {
 					circ = ((SubcircuitFactory) fact).getSubcircuit();
+				} else if (fact instanceof VhdlEntity) {
+					vhdl = ((VhdlEntity) fact).getContent();
 				}
 			}
 		}
@@ -296,13 +326,20 @@ public class ProjectExplorer extends JTree implements LocaleListener {
 		}
 
 		public void paintIcon(java.awt.Component c, Graphics g, int x, int y) {
-			// draw halo if appropriate
-			if (tool == haloedTool
-					&& AppPreferences.ATTRIBUTE_HALO.getBoolean()) {
+			boolean viewed;
+            if (proj.getFrame().getHdlEditorView() == null)
+                viewed = (circ != null && circ == proj.getCurrentCircuit());
+            else
+                viewed = (vhdl != null && vhdl == proj.getFrame().getHdlEditorView());
+            boolean haloed = !viewed &&
+                    (tool == haloedTool && AppPreferences.ATTRIBUTE_HALO.getBoolean());
+            // draw halo if appropriate
+            if (haloed) {
+            	Shape s = g.getClip();
+            	g.clipRect(x, y, AppPreferences.getScaled(AppPreferences.BoxSize), AppPreferences.getScaled(AppPreferences.BoxSize));
 				g.setColor(Canvas.HALO_COLOR);
-				g.fillRoundRect(x, y, AppPreferences.getScaled(AppPreferences.BoxSize), AppPreferences.getScaled(AppPreferences.BoxSize), 
-						AppPreferences.getScaled(AppPreferences.BoxSize>>1), AppPreferences.getScaled(AppPreferences.BoxSize>>1));
 				g.setColor(Color.BLACK);
+				g.setClip(s);
 			}
 
 			// draw tool icon
@@ -314,7 +351,7 @@ public class ProjectExplorer extends JTree implements LocaleListener {
 			gIcon.dispose();
 
 			// draw magnifying glass if appropriate
-			if (circ == proj.getCurrentCircuit()) {
+			if (viewed) {
 				int tx = x + AppPreferences.getScaled(AppPreferences.BoxSize-7);
 				int ty = y + AppPreferences.getScaled(AppPreferences.BoxSize-7);
 				int[] xp = { tx - 1, x + AppPreferences.getScaled(AppPreferences.BoxSize-2), 
@@ -388,19 +425,20 @@ public class ProjectExplorer extends JTree implements LocaleListener {
 		}
 	}
 
-	public void localeChanged() {
+	 public void updateStructure() {
+         ProjectExplorerModel model = (ProjectExplorerModel) getModel();
+         model.updateStructure();
+     }
+
+	 public void localeChanged() {
 		// repaint() would work, except that names that get longer will be
 		// abbreviated with an ellipsis, even when they fit into the window.
-		ProjectExplorerModel model = (ProjectExplorerModel) getModel();
+		final ProjectExplorerModel model = (ProjectExplorerModel) getModel();
 		model.fireStructureChanged();
 	}
 
 	public void setHaloedTool(Tool t) {
-		if (haloedTool == t)
-			return;
-
 		haloedTool = t;
-		repaint();
 	}
 
 	public void setListener(ProjectExplorerListener value) {

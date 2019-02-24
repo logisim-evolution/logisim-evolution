@@ -800,15 +800,6 @@ public class Canvas extends JPanel implements LocaleListener,
 		addKeyListener(myListener);
 		addMouseWheelListener(myListener);
 
-		// YSY
-		// try {
-		// URL url =
-		// Canvas.class.getClassLoader().getResource("resources/logisim/img/HESSO.png");
-		// image = ImageIO.read(url);
-		// } catch (IOException e) {
-		// e.printStackTrace();
-		// }
-
 		proj.addProjectListener(myProjectListener);
 		proj.addLibraryListener(myProjectListener);
 		proj.addCircuitListener(myProjectListener);
@@ -853,6 +844,8 @@ public class Canvas extends JPanel implements LocaleListener,
 	}
 
 	private void completeAction() {
+		if (proj.getCurrentCircuit() == null)
+			return;
 		computeSize(false);
 		// TODO for SimulatorPrototype: proj.getSimulator().releaseUserEvents();
 		proj.getSimulator().requestPropagate();
@@ -860,6 +853,8 @@ public class Canvas extends JPanel implements LocaleListener,
 	}
 
 	public void computeSize(boolean immediate) {
+		if (proj.getCurrentCircuit() == null)
+			return;
 		Graphics g = getGraphics();
 		Bounds bounds;
 		if (g != null)
@@ -1057,15 +1052,6 @@ public class Canvas extends JPanel implements LocaleListener,
 
 	@Override
 	public void paintComponent(Graphics g) {
-		// int i, j = 0;
-		// for (i = 0; i <= this.getParent().getWidth() / image.getWidth(); i++)
-		// {
-		// for (j = 0; j <= this.getParent().getHeight() / image.getHeight();
-		// j++) {
-		// g.drawImage(image, i * image.getWidth(), j * image.getHeight(),
-		// this);
-		// }
-		// }
 		if (AppPreferences.AntiAliassing.getBoolean()) {
 			Graphics2D g2 = (Graphics2D) g;
 			g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
@@ -1165,6 +1151,9 @@ public class Canvas extends JPanel implements LocaleListener,
 	}
 
 	public void updateArrows() {
+		/* Disable for VHDL content */ 
+		if (proj.getCurrentCircuit() == null)
+			return;
 		Graphics g = getGraphics();
 		Bounds circBds;
 		if (g != null)
@@ -1184,6 +1173,9 @@ public class Canvas extends JPanel implements LocaleListener,
 	}
 
 	public void setArrows(int x0, int y0, int x1, int y1) {
+		/* Disable for VHDL content */ 
+		if (proj.getCurrentCircuit() == null)
+			return;
 		viewport.clearArrows();
 		Rectangle viewableBase, viewable;
 		if (canvasPane != null) {

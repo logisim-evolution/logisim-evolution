@@ -59,15 +59,18 @@ import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.tools.Tool;
 import com.cburch.logisim.util.EventSourceWeakSupport;
 import com.cburch.logisim.util.JFileChoosers;
+import com.cburch.logisim.vhdl.base.HdlModel;
 import com.cburch.logisim.gui.chronogram.chronogui.ChronoFrame;
 
 public class Project {
 	private static class ActionData {
 		CircuitState circuitState;
+		HdlModel hdlModel;
 		Action action;
 
-		public ActionData(CircuitState circuitState, Action action) {
+		public ActionData(CircuitState circuitState, HdlModel hdlModel, Action action) {
 			this.circuitState = circuitState;
+			this.hdlModel = hdlModel;
 			this.action = action;
 		}
 	}
@@ -106,6 +109,7 @@ public class Project {
 
 	private LogisimFile file;
 	private CircuitState circuitState;
+	private HdlModel hdlModel;
 	private HashMap<Circuit, CircuitState> stateMap = new HashMap<Circuit, CircuitState>();
 	private Frame frame = null;
 	private OptionsFrame optionsFrame = null;
@@ -179,7 +183,7 @@ public class Project {
 			}
 			toAdd = first.append(act);
 			if (toAdd != null) {
-				undoLog.add(new ActionData(circuitState, toAdd));
+				undoLog.add(new ActionData(circuitState, hdlModel, toAdd));
 				if (toAdd.isModification())
 					++undoMods;
 			}
@@ -191,7 +195,7 @@ public class Project {
 					toAdd));
 			return;
 		}
-		undoLog.add(new ActionData(circuitState, toAdd));
+		undoLog.add(new ActionData(circuitState, hdlModel, toAdd));
 		fireEvent(new ProjectEvent(ProjectEvent.ACTION_START, this, act));
 		act.doIt(this);
 		while (undoLog.size() > MAX_UNDO_SIZE) {
@@ -275,6 +279,40 @@ public class Project {
 		return circuitState == null ? null : circuitState.getCircuit();
 	}
 
+	public HdlModel getCurrentHdl() {
+        return hdlModel;
+	}
+
+	public void setCurrentHdlModel(HdlModel hdl) {
+        if (hdlModel == hdl)
+            return;
+        CircuitState old = circuitState;
+        HdlModel oldHdl = hdlModel;
+        Circuit oldCircuit = old == null ? null : old.getCircuit();
+        if (oldCircuit != null) {
+                for (CircuitListener l : circuitListeners) {
+                        oldCircuit.removeCircuitListener(l);
+                }
+        }
+        circuitState = null;
+        hdlModel = hdl;
+        if (old != null) {
+            simulator.setCircuitState(null);
+        }
+        Object oldActive = old;
+        if (oldHdl != null)
+            oldActive = oldHdl;
+        fireEvent(ProjectEvent.ACTION_SET_CURRENT, oldActive, hdl);
+        if (old != null)
+            fireEvent(ProjectEvent.ACTION_SET_STATE, old, null);
+        if (oldCircuit != null)
+            oldCircuit.displayChanged();
+        if (oldHdl != null)
+            oldHdl.displayChanged();
+        hdl.displayChanged();
+	}
+
+	
 	public Dependencies getDependencies() {
 		return depends;
 	}
@@ -387,7 +425,10 @@ public class Project {
 			ActionData data = redoLog.removeLast();
 
 			// Restore the circuit state to the redo's state
-			setCircuitState(data.circuitState);
+			if (data.circuitState != null)
+                setCircuitState(data.circuitState);
+            else if (data.hdlModel != null)
+                setCurrentHdlModel(data.hdlModel);
 
 			// Get the actions required to make that state change happen
 			Action action = data.action;
@@ -427,11 +468,16 @@ public class Project {
 		fireEvent(new ProjectEvent(ProjectEvent.REPAINT_REQUEST, this, null));
 	}
 
+	public static Project theFirst;
 	public void setCircuitState(CircuitState value) {
 		if (value == null || circuitState == value)
 			return;
 
 		CircuitState old = circuitState;
+        HdlModel oldHdl = hdlModel;
+        Object oldActive = old;
+        if (oldHdl != null)
+            oldActive = oldHdl;
 		Circuit oldCircuit = old == null ? null : old.getCircuit();
 		Circuit newCircuit = value.getCircuit();
 		boolean circuitChanged = old == null || oldCircuit != newCircuit;
@@ -456,16 +502,22 @@ public class Project {
 				}
 			}
 		}
+		hdlModel = null;
 		circuitState = value;
 		stateMap.put(circuitState.getCircuit(), circuitState);
 		simulator.setCircuitState(circuitState);
 		if (circuitChanged) {
-			fireEvent(ProjectEvent.ACTION_SET_CURRENT, oldCircuit, newCircuit);
+			fireEvent(ProjectEvent.ACTION_SET_CURRENT, oldActive, newCircuit);
 			if (newCircuit != null) {
 				for (CircuitListener l : circuitListeners) {
 					newCircuit.addCircuitListener(l);
 				}
 			}
+			 if (oldCircuit != null)
+                 oldCircuit.displayChanged();
+             if (oldHdl != null)
+                 oldHdl.displayChanged();
+             newCircuit.displayChanged();
 		}
 		fireEvent(ProjectEvent.ACTION_SET_STATE, old, circuitState);
 	}
@@ -567,7 +619,10 @@ public class Project {
 		if (undoLog != null && undoLog.size() > 0) {
 			redoLog.addLast(undoLog.getLast());
 			ActionData data = undoLog.removeLast();
-			setCircuitState(data.circuitState);
+            if (data.circuitState != null)
+                setCircuitState(data.circuitState);
+            else if (data.hdlModel != null)
+                setCurrentHdlModel(data.hdlModel);
 			Action action = data.action;
 			if (action.isModification()) {
 				--undoMods;

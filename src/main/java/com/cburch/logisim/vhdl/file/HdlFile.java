@@ -9,8 +9,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import com.cburch.logisim.vhdl.gui.HdlContentEditor;
-
 public class HdlFile {
 
 	public static String load(File file) throws IOException {
@@ -35,14 +33,13 @@ public class HdlFile {
 		}
 	}
 
-	public static void save(File file, HdlContentEditor editor)
+	public static void save(File file, String text)
 			throws IOException {
 		BufferedWriter out = null;
 
 		try {
 			out = new BufferedWriter(new FileWriter(file));
-			String data = editor.getText();
-			out.write(data, 0, data.length());
+			out.write(text, 0, text.length());
 		} catch (IOException ex) {
 			throw new IOException(S.get("hdlFileWriterError"));
 		} finally {

@@ -574,7 +574,11 @@ public class Circuit {
 		fireEvent(new CircuitEvent(action, this, data));
 	}
 
-	public Collection<Component> getAllContaining(Location pt) {
+	 public void displayChanged() {
+         fireEvent(CircuitEvent.ACTION_DISPLAY_CHANGE, null);
+	 }
+	 
+	 public Collection<Component> getAllContaining(Location pt) {
 		LinkedHashSet<Component> ret = new LinkedHashSet<Component>();
 		for (Component comp : getComponents()) {
 			if (comp.contains(pt))

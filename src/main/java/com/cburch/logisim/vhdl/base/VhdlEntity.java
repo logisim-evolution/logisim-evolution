@@ -6,11 +6,9 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
-import java.awt.Window;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
-import java.util.WeakHashMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,61 +18,23 @@ import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Attributes;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Value;
-import com.cburch.logisim.gui.main.Frame;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceFactory;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
-import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.std.hdl.VhdlSimulator;
 import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.StringGetter;
 import com.cburch.logisim.util.StringUtil;
-import com.cburch.logisim.vhdl.gui.HdlContentEditor;
 
-public class VhdlEntity  extends InstanceFactory {
-	static class ContentAttribute extends Attribute<VhdlContent> {
-
-		public ContentAttribute() {
-			super("content", S.getter("vhdlContentAttr"));
-		}
-
-		@Override
-		public java.awt.Component getCellEditor(Window source, VhdlContent value) {
-			Project proj = source instanceof Frame ? ((Frame) source)
-					.getProject() : null;
-			return HdlContentEditor.getContentEditor(source, value, proj);
-		}
-
-		@Override
-		public VhdlContent parse(Window source, String value) {
-			Project proj = source instanceof Frame ? ((Frame) source).getProject() : null;
-			return VhdlContent.parse(value, proj.getLogisimFile());
-		}
-		
-		@Override
-		public VhdlContent parse(String value) {
-			return null;
-		}
-
-		@Override
-		public String toDisplayString(VhdlContent value) {
-			return S.get("vhdlContentValue");
-		}
-
-		@Override
-		public String toStandardString(VhdlContent value) {
-			return value.getContent();
-		}
-	}
+public class VhdlEntity  extends InstanceFactory implements HdlModelListener {
 
 	final static Logger logger = LoggerFactory.getLogger(VhdlEntity.class);
 	static final Attribute<String> NAME_ATTR = Attributes.forString(
 			"vhdlEntity", S.getter("vhdlEntityName"));
 
-	static final Attribute<VhdlContent> CONTENT_ATTR = new ContentAttribute();
 	static final int WIDTH = 140;
 	static final int HEIGHT = 40;
 	static final int PORT_GAP = 10;
@@ -86,7 +46,11 @@ public class VhdlEntity  extends InstanceFactory {
 	public VhdlEntity(VhdlContent content) {
 		super("", null);
         this.content = content;
-		this.setIconName("vhdl.gif");
+        this.content.addHdlModelListener(this);
+        if (content.isValid()) 
+            this.setIconName("vhdl.gif");
+        else
+            this.setIconName("vhdl-invalid.gif");
 	}
 
 	@Override
@@ -125,7 +89,7 @@ public class VhdlEntity  extends InstanceFactory {
 
 	@Override
 	public String getHDLName(AttributeSet attrs) {
-		return attrs.getValue(CONTENT_ATTR).getName().toLowerCase();
+		return content.getName().toLowerCase();
 	}
 
 	@Override
@@ -141,7 +105,6 @@ public class VhdlEntity  extends InstanceFactory {
 
 	@Override
 	public Bounds getOffsetBounds(AttributeSet attrs) {
-		VhdlContent content = attrs.getValue(CONTENT_ATTR);
 		int nbInputs = content.getInputsNumber();
 		int nbOutputs = content.getOutputsNumber();
 
@@ -159,16 +122,11 @@ public class VhdlEntity  extends InstanceFactory {
 
 	@Override
 	protected void instanceAttributeChanged(Instance instance, Attribute<?> attr) {
-		if (attr == CONTENT_ATTR) {
-			updatePorts(instance);
-			instance.recomputeBounds();
-		}
 	}
 
 	@Override
 	public void paintInstance(InstancePainter painter) {
 		Graphics g = painter.getGraphics();
-		VhdlContent content = painter.getAttributeValue(CONTENT_ATTR);
 		FontMetrics metric = g.getFontMetrics();
 
 		Bounds bds = painter.getBounds();
@@ -320,7 +278,7 @@ public class VhdlEntity  extends InstanceFactory {
 			writer = new PrintWriter(VhdlSimulator.SIM_SRC_PATH
 					+ getHDLTopName(attrs) + ".vhdl", "UTF-8");
 
-			String content = attrs.getValue(CONTENT_ATTR).getContent();
+			String content = this.content.getContent();
 
 			content = content.replaceAll("(?i)" + getHDLName(attrs),
 					getHDLTopName(attrs));
@@ -339,7 +297,21 @@ public class VhdlEntity  extends InstanceFactory {
 	}
 
 	void updatePorts(Instance instance) {
-		VhdlContent content = instance.getAttributeValue(CONTENT_ATTR);
 		instance.setPorts(content.getPorts());
 	}
+
+	@Override
+	public void contentSet(HdlModel source) {
+		if (content.isValid()) 
+			this.setIconName("vhdl.gif");
+		else
+			this.setIconName("vhdl-invalid.gif");
+	}
+	
+	@Override
+    public void aboutToSave(HdlModel source) { }
+
+    @Override
+    public void displayChanged(HdlModel source) { }
+
 }

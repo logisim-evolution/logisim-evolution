@@ -218,7 +218,9 @@ class XmlWriter {
 	}
 	
 	Element fromVhdl(VhdlContent vhdl) {
+		vhdl.aboutToSave();
 		Element ret = doc.createElement("vhdl");
+		ret.setAttribute("name", vhdl.getName());
 		ret.setTextContent(vhdl.getContent());
 		return ret;
 	}

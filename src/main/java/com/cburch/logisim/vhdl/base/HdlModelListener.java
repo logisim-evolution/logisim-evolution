@@ -8,4 +8,13 @@ public interface HdlModelListener {
 	 */
 	public void contentSet(HdlModel source);
 
+	/**
+	 * Called when the content of the given model is about to be saved.
+	 */
+	public void aboutToSave(HdlModel source);
+
+	/**
+	 * Called when the vhdl icon or name has changed.
+	 */
+	public void displayChanged(HdlModel source);
 }

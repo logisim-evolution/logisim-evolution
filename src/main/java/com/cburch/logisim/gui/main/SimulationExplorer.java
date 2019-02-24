@@ -131,6 +131,10 @@ class SimulationExplorer extends JPanel implements ProjectListener,
 		if (action == ProjectEvent.ACTION_SET_STATE) {
 			Simulator sim = project.getSimulator();
 			CircuitState root = sim.getCircuitState();
+            if (root == null) {
+                tree.setModel(null);
+                return;
+            }
 			if (model.getRootState() != root) {
 				model = new SimulationTreeModel(root);
 				tree.setModel(model);

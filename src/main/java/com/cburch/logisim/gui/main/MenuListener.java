@@ -229,8 +229,8 @@ class MenuListener {
 			menubar.setEnabled(LogisimMenuBar.REMOVE_CIRCUIT, canRemove);
 			menubar.setEnabled(LogisimMenuBar.VIEW_TOOLBOX, !viewToolbox);
 			menubar.setEnabled(LogisimMenuBar.VIEW_SIMULATION, !viewSimulation);
-			menubar.setEnabled(LogisimMenuBar.EDIT_LAYOUT, !viewLayout);
-			menubar.setEnabled(LogisimMenuBar.EDIT_APPEARANCE, !viewAppearance);
+			menubar.setEnabled(LogisimMenuBar.EDIT_LAYOUT, viewAppearance);
+			menubar.setEnabled(LogisimMenuBar.EDIT_APPEARANCE, viewLayout);
 			menubar.setEnabled(LogisimMenuBar.REVERT_APPEARANCE, canRevert);
 			menubar.setEnabled(LogisimMenuBar.ANALYZE_CIRCUIT, true);
 			menubar.setEnabled(LogisimMenuBar.CIRCUIT_STATS, true);
@@ -266,13 +266,13 @@ class MenuListener {
 		public void projectChanged(ProjectEvent event) {
 			int action = event.getAction();
 			if (action == ProjectEvent.ACTION_SET_CURRENT) {
-				Circuit old = (Circuit) event.getOldData();
-				if (old != null) {
-					old.getAppearance().removeCanvasModelListener(this);
+				if (event.getOldData() instanceof Circuit) {
+                    Circuit old = (Circuit) event.getOldData();
+                    old.getAppearance().removeCanvasModelListener(this);
 				}
-				Circuit circ = (Circuit) event.getData();
-				if (circ != null) {
-					circ.getAppearance().addCanvasModelListener(this);
+				if (event.getData() instanceof Circuit) {
+                    Circuit circ = (Circuit) event.getData();
+                    circ.getAppearance().addCanvasModelListener(this);
 				}
 				computeEnabled();
 			} else if (action == ProjectEvent.ACTION_SET_FILE) {

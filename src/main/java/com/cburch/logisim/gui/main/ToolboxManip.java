@@ -180,6 +180,7 @@ class ToolboxManip implements ProjectExplorerListener {
 	public void doubleClicked(ProjectExplorerEvent event) {
 		Object clicked = event.getTarget();
 		if (clicked instanceof ProjectExplorerToolNode) {
+			((ProjectExplorerToolNode)clicked).fireNodeChanged();
 			Tool baseTool = ((ProjectExplorerToolNode) clicked).getValue();
 			if (baseTool instanceof AddTool) {
 				AddTool tool = (AddTool) baseTool;
@@ -190,6 +191,11 @@ class ToolboxManip implements ProjectExplorerListener {
 					proj.getFrame().setEditorView(Frame.EDIT_LAYOUT);
 					if (lastSelected != null){
 						proj.setTool(lastSelected);
+					} else if (source instanceof VhdlEntity) {
+                        VhdlEntity vhdl = (VhdlEntity) source;
+                        proj.setCurrentHdlModel(vhdl.getContent());
+                        if (lastSelected != null)
+                        	proj.setTool(lastSelected);
 					} else {
 						Library base = proj.getLogisimFile().getLibrary("Base");
 						if (base != null)
@@ -255,6 +261,7 @@ class ToolboxManip implements ProjectExplorerListener {
 	public void selectionChanged(ProjectExplorerEvent event) {
 		Object selected = event.getTarget();
 		if (selected instanceof ProjectExplorerToolNode) {
+			 ((ProjectExplorerToolNode)selected).fireNodeChanged();
 			Tool tool = ((ProjectExplorerToolNode) selected).getValue();
 			if (tool instanceof AddTool) {
 				AddTool addTool = (AddTool) tool;

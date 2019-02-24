@@ -173,7 +173,7 @@ public class ProjectCircuitActions {
                         if (content == null)
                             return;
 			proj.doAction(LogisimFileActions.addVhdl(content));
-                        content.openEditor(proj);
+                        proj.setCurrentHdlModel(content);
 		}
 	}
 
@@ -181,14 +181,14 @@ public class ProjectCircuitActions {
 		String vhdl = proj.getLogisimFile().getLoader().vhdlImportChooser(proj.getFrame());
 		if (vhdl == null)
                     return;
-		VhdlContent content = VhdlContent.parse(vhdl, proj.getLogisimFile());
+		VhdlContent content = VhdlContent.parse(null,vhdl, proj.getLogisimFile());
         if (content == null)
             return;
         if (VhdlContent.labelVHDLInvalidNotify(content.getName(), proj.getLogisimFile())) {
         	return;
         }
         proj.doAction(LogisimFileActions.addVhdl(content));
-        content.openEditor(proj);
+        proj.setCurrentHdlModel(content);
 	}
 
 

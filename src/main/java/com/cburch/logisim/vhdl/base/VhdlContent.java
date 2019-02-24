@@ -22,9 +22,7 @@ import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.file.LogisimFile;
 import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
 import com.cburch.logisim.instance.Port;
-import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.util.Softwares;
-import com.cburch.logisim.vhdl.gui.HdlContentEditor;
 
 public class VhdlContent extends HdlContent {
 
@@ -38,18 +36,16 @@ public class VhdlContent extends HdlContent {
 	}
 
 	public static VhdlContent create(String name, LogisimFile file) {
-        VhdlContent content = new VhdlContent(file);
-        if (!content.parseContent(TEMPLATE.replaceAll("%entityname%", name))) {
-            return null;
-        }
+        VhdlContent content = new VhdlContent(name,file);
+        if (!content.setContent(TEMPLATE.replaceAll("%entityname%", name)))
+            content.showErrors();
         return content;
 	}
 
-	public static VhdlContent parse(String vhdl, LogisimFile file) {
-        VhdlContent content = new VhdlContent(file);
-        if (!content.setContent(vhdl)) {
-            return null;
-        }
+	public static VhdlContent parse(String name,String vhdl, LogisimFile file) {
+        VhdlContent content = new VhdlContent(name,file);
+        if (!content.setContent(vhdl))
+            content.showErrors();
         return content;
 	}
 
@@ -86,6 +82,7 @@ public class VhdlContent extends HdlContent {
 
 	protected AttributeSet staticAttrs;
 	protected StringBuffer content;
+	protected boolean valid;
 	protected Port[] inputs;
 	protected Port[] outputs;
     protected Generic[] generics;
@@ -95,14 +92,16 @@ public class VhdlContent extends HdlContent {
 	protected String architecture;
 	private LogisimFile logiFile;
 
-	protected VhdlContent(LogisimFile file) {
+	protected VhdlContent(String name, LogisimFile file) {
         logiFile = file;
+        this.name = name;
 	}
 
 	public VhdlContent clone() {
 		try {
 			VhdlContent ret = (VhdlContent) super.clone();
 			ret.content = new StringBuffer(this.content);
+			ret.valid = this.valid;
 			return ret;
 		} catch (CloneNotSupportedException ex) {
 			return this;
@@ -119,6 +118,11 @@ public class VhdlContent extends HdlContent {
 		return content.toString().replaceAll("\\r\\n|\\r|\\n", " ")
 				.equals(value.replaceAll("\\r\\n|\\r|\\n", " "));
 	}
+	
+	@Override
+    public boolean isValid() {
+        return valid;
+    }
 
 	public String getArchitecture() {
 		if (architecture == null)
@@ -174,7 +178,6 @@ public class VhdlContent extends HdlContent {
 	public String getName() {
 		if (name == null)
 			return "";
-
 		return name;
 	}
 
@@ -206,96 +209,15 @@ public class VhdlContent extends HdlContent {
 		return inputs.length + outputs.length;
 	}
 
-	public boolean parseContent(String content) {
-		VhdlParser parser = new VhdlParser(content.toString());
-		try {
-			parser.parse();
-		} catch (Exception ex) {
-            String msg = ex.getMessage();
-            if (msg == null || msg.length() == 0)
-                msg = ex.toString();
-            ex.printStackTrace();
-            JOptionPane.showMessageDialog(null, msg,
-					S.get("validationParseError"),
-					JOptionPane.ERROR_MESSAGE);
-			return false;
-		}
-
-		if (!parser.getName().equals(name)) {
-            if (labelVHDLInvalidNotify(parser.getName(), logiFile))
-                return false;
-        } else {
-            if (labelVHDLInvalidNotify(parser.getName(), null))
-                return false;
-        }
-        name = parser.getName();
-		libraries = parser.getLibraries();
-		architecture = parser.getArchitecture();
-
-		List<VhdlParser.PortDescription> inputsDesc = parser.getInputs();
-		List<VhdlParser.PortDescription> outputsDesc = parser.getOutputs();
-		inputs = new Port[inputsDesc.size()];
-		outputs = new Port[outputsDesc.size()];
-
-		for (int i = 0; i < inputsDesc.size(); i++) {
-			VhdlParser.PortDescription desc = inputsDesc.get(i);
-			inputs[i] = new Port(0, (i * VhdlEntity.PORT_GAP)
-					+ VhdlEntity.HEIGHT, desc.getType(), desc.getWidth());
-			inputs[i].setToolTip(S.getter(desc.getName()));
-		}
-
-		for (int i = 0; i < outputsDesc.size(); i++) {
-			VhdlParser.PortDescription desc = outputsDesc.get(i);
-			outputs[i] = new Port(VhdlEntity.WIDTH, (i * VhdlEntity.PORT_GAP)
-					+ VhdlEntity.HEIGHT, desc.getType(), desc.getWidth());
-			outputs[i].setToolTip(S.getter(desc.getName()));
-		}
-
-
-        // If name and type is unchanged, keep old generic and attribute.
-        Generic[] oldGenerics = generics;
-        List<Attribute<Integer>> oldAttrs = genericAttrs;
-
-        generics = new Generic[parser.getGenerics().size()];
-        genericAttrs = new ArrayList<Attribute<Integer>>();
-        int i = 0;
-        for (VhdlParser.GenericDescription g : parser.getGenerics()) {
-            boolean found = false;
-            if (oldGenerics != null) {
-                for (int j = 0; j < oldGenerics.length; j++) {
-                    Generic old = oldGenerics[j];
-                    if (old != null && old.getName().equals(g.getName()) && old.getType().equals(g.getType())) {
-                        generics[i] = old;
-                        oldGenerics[j] = null;
-                        genericAttrs.add(oldAttrs.get(j));
-                        found = true;
-                        break;
-                    }
-                }
-            }
-            if (!found) {
-                generics[i] = new Generic(g);
-                genericAttrs.add(VhdlEntityAttributes.forGeneric(generics[i]));
-            }
-            i++;
-        }
-
-		this.content = new StringBuffer(content);
-		this.staticAttrs = VhdlEntityAttributes.createBaseAttrs(this);
-		fireContentSet();
-
-		return true;
-	}
-	
     public AttributeSet getStaticAttributes() {
         return staticAttrs;
     }
 
-	public void openEditor(Project proj) {
-		HdlContentEditor.getContentEditor(proj.getFrame(), this, proj).setVisible(true);
+    public void aboutToSave() {
+        fireAboutToSave();
     }
 
-    static final String ENTITY_PATTERN = "(\\s*\\bentity\\s+)%entityname%(\\s+is)\\b";
+   static final String ENTITY_PATTERN = "(\\s*\\bentity\\s+)%entityname%(\\s+is)\\b";
     static final String ARCH_PATTERN = "(\\s*\\barchitecture\\s+\\w+\\s+of\\s+)%entityname%\\b";
     static final String END_PATTERN = "(\\s*\\bend\\s+)%entityname%(\\s*;)";    
 
@@ -346,38 +268,136 @@ public class VhdlContent extends HdlContent {
         return setContent(s);
     }
 
+    private StringBuffer errTitle = new StringBuffer();
+    private StringBuffer errMessage = new StringBuffer();
+    private int errCode = 0;
+    private Exception errException;
+    
+    @Override
+    public void showErrors() {
+        if (valid && errTitle.length() == 0 && errMessage.length() == 0)
+            return;
+        if (errException != null)
+            errException.printStackTrace();
+        if (errCode == Softwares.ERROR) {
+            JTextArea message = new JTextArea();
+            message.setText(errMessage.toString());
+            message.setEditable(false);
+            message.setLineWrap(false);
+            message.setMargin(new Insets(5, 5, 5, 5));
+
+            JScrollPane sp = new JScrollPane(message);
+            sp.setPreferredSize(new Dimension(700, 400));
+
+            JOptionPane.showOptionDialog(null, sp, errTitle.toString(),
+                    JOptionPane.OK_OPTION, JOptionPane.ERROR_MESSAGE, null,
+                    new String[] { S.get("validationErrorButton") },
+                    S.get("validationErrorButton"));
+        } else if (errCode == Softwares.ABORD) {
+            JOptionPane.showMessageDialog(null, errMessage.toString(),
+                    errTitle.toString(), JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(null, errMessage.toString(),
+                    errTitle.toString(), JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+
 	
 
 	@Override
-	public boolean setContent(String content) {
-		StringBuffer title = new StringBuffer();
-		StringBuffer result = new StringBuffer();
+    public boolean setContent(String vhdl) {
+		if (valid && content.toString().equals(vhdl))
+            return true;
+        content = new StringBuffer(vhdl);
+        valid = false;
+        try {
+            errTitle.setLength(0);
+            errMessage.setLength(0);
+            errCode = Softwares.validateVhdl(content.toString(), errTitle, errMessage);
+            if (errCode != Softwares.SUCCESS)
+                return false;
 
-		switch (Softwares.validateVhdl(content, title, result)) {
-		case Softwares.ERROR:
-			JTextArea message = new JTextArea();
-			message.setText(result.toString());
-			message.setEditable(false);
-			message.setLineWrap(false);
-			message.setMargin(new Insets(5, 5, 5, 5));
+            VhdlParser parser = new VhdlParser(content.toString());
+            try {
+                parser.parse();
+            } catch (Exception ex) {
+                String msg = ex.getMessage();
+                if (msg == null || msg.length() == 0)
+                    msg = ex.toString();
+                errTitle.append(S.get("validationParseError"));
+                errMessage.append(msg);
+                errException = ex;
+                return false;
+            }
+            if (!parser.getName().equals(name)) {
+                if (labelVHDLInvalidNotify(parser.getName(), logiFile))
+                    return false;
+            } else {
+                if (labelVHDLInvalidNotify(parser.getName(), null))
+                    return false;
+            }
 
-			JScrollPane sp = new JScrollPane(message);
-			sp.setPreferredSize(new Dimension(700, 400));
+            valid = true;
+            name = parser.getName();
 
-			JOptionPane.showOptionDialog(null, sp, title.toString(),
-					JOptionPane.OK_OPTION, JOptionPane.ERROR_MESSAGE, null,
-					new String[] { S.get("validationErrorButton") },
-					S.get("validationErrorButton"));
-			return false;
-		case Softwares.ABORD:
-			JOptionPane.showMessageDialog(null, result.toString(),
-					title.toString(), JOptionPane.INFORMATION_MESSAGE);
-			return false;
-		case Softwares.SUCCESS:
-			return parseContent(content);
-		}
+            libraries = parser.getLibraries();
+            architecture = parser.getArchitecture();
 
-		return false;
-	}
+            List<VhdlParser.PortDescription> inputsDesc = parser.getInputs();
+            List<VhdlParser.PortDescription> outputsDesc = parser.getOutputs();
+            inputs = new Port[inputsDesc.size()];
+            outputs = new Port[outputsDesc.size()];
 
+            for (int i = 0; i < inputsDesc.size(); i++) {
+                VhdlParser.PortDescription desc = inputsDesc.get(i);
+                inputs[i] = new Port(0, (i * VhdlEntity.PORT_GAP)
+                        + VhdlEntity.HEIGHT, desc.getType(), desc.getWidth());
+                inputs[i].setToolTip(S.getter(desc.getName()));
+            }
+
+            for (int i = 0; i < outputsDesc.size(); i++) {
+                VhdlParser.PortDescription desc = outputsDesc.get(i);
+                outputs[i] = new Port(VhdlEntity.WIDTH, (i * VhdlEntity.PORT_GAP)
+                        + VhdlEntity.HEIGHT, desc.getType(), desc.getWidth());
+                outputs[i].setToolTip(S.getter(desc.getName()));
+            }
+
+
+            // If name and type is unchanged, keep old generic and attribute.
+            Generic[] oldGenerics = generics;
+            List<Attribute<Integer>> oldAttrs = genericAttrs;
+
+            generics = new Generic[parser.getGenerics().size()];
+            genericAttrs = new ArrayList<Attribute<Integer>>();
+            int i = 0;
+            for (VhdlParser.GenericDescription g : parser.getGenerics()) {
+                boolean found = false;
+                if (oldGenerics != null) {
+                    for (int j = 0; j < oldGenerics.length; j++) {
+                        Generic old = oldGenerics[j];
+                        if (old != null && old.getName().equals(g.getName()) && old.getType().equals(g.getType())) {
+                            generics[i] = old;
+                            oldGenerics[j] = null;
+                            genericAttrs.add(oldAttrs.get(j));
+                            found = true;
+                            break;
+                        }
+                    }
+                }
+                if (!found) {
+                    generics[i] = new Generic(g);
+                    genericAttrs.add(VhdlEntityAttributes.forGeneric(generics[i]));
+                }
+                i++;
+            }
+
+            staticAttrs = VhdlEntityAttributes.createBaseAttrs(this);
+
+            valid = true;
+            return true;
+        } finally {
+            fireContentSet();
+        }
+    }
 }

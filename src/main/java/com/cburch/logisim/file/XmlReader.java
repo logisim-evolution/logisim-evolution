@@ -410,16 +410,21 @@ class XmlReader {
 			// second, create the circuits - empty for now - and the vhdl entities
             List<CircuitData> circuitsData = new ArrayList<CircuitData>();
             for (Element circElt : XmlIterator.forChildElements(elt)) {
+            	String name;
             	switch (circElt.getTagName()) {
             		case "vhdl":
+            			name = circElt.getAttribute("name");
+                        if (name == null || name.equals("")) {
+                            addError(S.get("circNameMissingError"), "C??");
+                        }
             			String vhdl = circElt.getTextContent();
-            			VhdlContent contents = VhdlContent.parse(vhdl, file);
+            			VhdlContent contents = VhdlContent.parse(name,vhdl, file);
             			if (contents != null) {
             				file.addVhdlContent(contents);
             			}
             			break;
             		case "circuit":
-            			String name = circElt.getAttribute("name");
+            			name = circElt.getAttribute("name");
             			if (name == null || name.equals("")) {
             				addError(S.get("circNameMissingError"), "C??");
             			}

@@ -28,45 +28,15 @@
  *       http://reds.heig-vd.ch
  *******************************************************************************/
 
-package com.cburch.logisim.circuit;
+package com.cburch.logisim.vhdl.sim;
 
-public class CircuitEvent {
-	public final static int ACTION_SET_NAME = 0; // name changed
-	public final static int ACTION_ADD = 1; // component added
-	public final static int ACTION_REMOVE = 2; // component removed
-	public final static int ACTION_CHANGE = 3; // component changed
-	public final static int ACTION_INVALIDATE = 4; // component invalidated (pin
-													// types changed)
-	public final static int ACTION_CLEAR = 5; // entire circuit cleared
-	public final static int TRANSACTION_DONE = 6;
-	public final static int CHANGE_DEFAULT_BOX_APPEARANCE = 7;
-	public final static int ACTION_CHECK_NAME = 8;
-	public final static int ACTION_DISPLAY_CHANGE = 9; // viewed/haloed status change
-
-	private int action;
-	private Circuit circuit;
-	private Object data;
-
-	CircuitEvent(int action, Circuit circuit, Object data) {
-		this.action = action;
-		this.circuit = circuit;
-		this.data = data;
-	}
-
-	// access methods
-	public int getAction() {
-		return action;
-	}
-
-	public Circuit getCircuit() {
-		return circuit;
-	}
-
-	public Object getData() {
-		return data;
-	}
-
-	public CircuitTransactionResult getResult() {
-		return (CircuitTransactionResult) data;
-	}
+/**
+* Listener interface for all classes who wants to be advised on current VHDL
+* simulator status changes.
+* 
+* @author christian.mueller@heig-vd.ch
+* @since 2.12.0.t
+*/
+public interface VhdlSimulatorListener {
+	public void stateChanged();
 }

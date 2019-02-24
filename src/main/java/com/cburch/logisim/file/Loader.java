@@ -502,7 +502,7 @@ public class Loader implements LibraryLoader {
 	public String vhdlImportChooser(Component window) {
         JFileChooser chooser = createChooser();
         chooser.setFileFilter(Loader.VHDL_FILTER);
-        chooser.setDialogTitle(com.cburch.logisim.vhdl.Strings.S.get("hdlOpenButton"));
+        chooser.setDialogTitle(com.cburch.logisim.vhdl.Strings.S.get("hdlOpenDialog"));
         int returnVal = chooser.showOpenDialog(window);
         if (returnVal != JFileChooser.APPROVE_OPTION)
             return null;

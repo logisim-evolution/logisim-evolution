@@ -25,8 +25,7 @@ public class VhdlHDLGeneratorFactory extends AbstractHDLGeneratorFactory  {
 		contents.addAll(FileWriter.getGenerateRemark(ComponentName, HDLType,
 				TheNetlist.projName()));
 
-		VhdlContent content = (VhdlContent) attrs
-				.getValue(VhdlEntity.CONTENT_ATTR);
+		VhdlContent content = ((VhdlEntityAttributes) attrs).getContent();;
 		contents.add(content.getLibraries());
 		contents.add(content.getArchitecture());
 
@@ -37,7 +36,7 @@ public class VhdlHDLGeneratorFactory extends AbstractHDLGeneratorFactory  {
 	public SortedMap<String, Integer> GetParameterMap(Netlist Nets,
 			NetlistComponent ComponentInfo, FPGAReport Reporter) {
 		AttributeSet attrs = ComponentInfo.GetComponent().getAttributeSet();
-		VhdlContent content = attrs.getValue(VhdlEntity.CONTENT_ATTR);
+		VhdlContent content = ((VhdlEntityAttributes) attrs).getContent();
 		SortedMap<String, Integer> ParameterMap = new TreeMap<String, Integer>();
                 for (Attribute<Integer> a : content.getGenericAttributes()) {
                     VhdlEntityAttributes.VhdlGenericAttribute va = (VhdlEntityAttributes.VhdlGenericAttribute)a;
@@ -54,7 +53,7 @@ public class VhdlHDLGeneratorFactory extends AbstractHDLGeneratorFactory  {
 
 	@Override
 	public SortedMap<Integer, String> GetParameterList(AttributeSet attrs) {
-		VhdlContent content = attrs.getValue(VhdlEntity.CONTENT_ATTR);
+		VhdlContent content = ((VhdlEntityAttributes) attrs).getContent();;
 		SortedMap<Integer, String> Parameters = new TreeMap<Integer, String>();
                 int i = -1;
                 for (VhdlContent.Generic g : content.getGenerics()) {
@@ -73,7 +72,8 @@ public class VhdlHDLGeneratorFactory extends AbstractHDLGeneratorFactory  {
 			AttributeSet attrs) {
 		SortedMap<String, Integer> inputs = new TreeMap<String, Integer>();
 
-		Port[] rawInputs = attrs.getValue(VhdlEntity.CONTENT_ATTR).getInputs();
+		VhdlContent content = ((VhdlEntityAttributes) attrs).getContent();
+		Port[] rawInputs = content.getInputs();
 		for (int i = 0; i < rawInputs.length; i++)
 			inputs.put(rawInputs[i].getToolTip(), rawInputs[i]
 					.getFixedBitWidth().getWidth());
@@ -86,8 +86,8 @@ public class VhdlHDLGeneratorFactory extends AbstractHDLGeneratorFactory  {
 			AttributeSet attrs) {
 		SortedMap<String, Integer> outputs = new TreeMap<String, Integer>();
 
-		Port[] rawOutputs = attrs.getValue(VhdlEntity.CONTENT_ATTR)
-				.getOutputs();
+		VhdlContent content = ((VhdlEntityAttributes) attrs).getContent();
+		Port[] rawOutputs = content.getOutputs();
 		for (int i = 0; i < rawOutputs.length; i++)
 			outputs.put(rawOutputs[i].getToolTip(), rawOutputs[i]
 					.getFixedBitWidth().getWidth());
@@ -101,7 +101,7 @@ public class VhdlHDLGeneratorFactory extends AbstractHDLGeneratorFactory  {
 		SortedMap<String, String> PortMap = new TreeMap<String, String>();
 
 		AttributeSet attrs = ComponentInfo.GetComponent().getAttributeSet();
-		VhdlContent content = attrs.getValue(VhdlEntity.CONTENT_ATTR);
+		VhdlContent content = ((VhdlEntityAttributes) attrs).getContent();
 
 		Port[] inputs = content.getInputs();
 		Port[] outputs = content.getOutputs();

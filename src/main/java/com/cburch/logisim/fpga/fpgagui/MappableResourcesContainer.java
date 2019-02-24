@@ -590,10 +590,10 @@ public class MappableResourcesContainer {
 				used--;
 			}
 		}
-		/* We dont want to list Pin if they are not enough */
-		if (List.size() < used) {
-			List.clear();
-		}
+		/* We dont want to list Pin if there are not enough */
+		//if (List.size() < used) {
+		//	List.clear();
+		//}
 		return List;
 	}
 
