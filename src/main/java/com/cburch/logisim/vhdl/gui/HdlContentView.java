@@ -293,6 +293,11 @@ public class HdlContentView extends JPanel implements DocumentListener, HdlModel
         }
         @Override
         public void displayChanged(HdlModel source) { }
+      
+	@Override
+	public void appearanceChanged(HdlModel source) { }
+
+
 
       public void setHdlModel(HdlModel model) {
             if (this.model == model)

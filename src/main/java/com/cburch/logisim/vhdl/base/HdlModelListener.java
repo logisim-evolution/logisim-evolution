@@ -14,6 +14,11 @@ public interface HdlModelListener {
 	public void aboutToSave(HdlModel source);
 
 	/**
+	 * Called when the vhdl appearance has changed.
+	 */
+	public void appearanceChanged(HdlModel source);
+
+	/**
 	 * Called when the vhdl icon or name has changed.
 	 */
 	public void displayChanged(HdlModel source);

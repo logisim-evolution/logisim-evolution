@@ -84,13 +84,12 @@ public class CircuitAppearance extends Drawing {
 	}
 	
 	public String getName() {
-		return circuit.getName();
+		if (circuit == null || circuit.getStaticAttributes() == null)
+            return null;
+        else 
+            return circuit.getStaticAttributes().getValue(CircuitAttributes.NAME_ATTR);
 	}
-	
-	public Graphics GetGraphics() {
-		return circuit.GetGraphics();
-	}
-	
+
 	public CircuitPins GetCircuitPin() {
 		return circuitPins;
 	}
@@ -295,13 +294,19 @@ public class CircuitAppearance extends Drawing {
 	}
 	
 	public boolean IsNamedBoxShapedFixedSize() {
-		return circuit.getStaticAttributes().getValue(CircuitAttributes.NAMED_CIRCUIT_BOX_FIXED_SIZE);
+		if (circuit == null || circuit.getStaticAttributes() == null)
+			return true;
+		if (circuit.getStaticAttributes().containsAttribute(CircuitAttributes.NAMED_CIRCUIT_BOX_FIXED_SIZE))
+			return circuit.getStaticAttributes().getValue(CircuitAttributes.NAMED_CIRCUIT_BOX_FIXED_SIZE);
+		else
+			return true;
 	}
 
 	public void recomputeDefaultAppearance() {
 		if (isDefault) {
 			List<CanvasObject> shapes;
-			shapes = DefaultAppearance.build(circuitPins.getPins(),this.getCircuitAppearance(),this.IsNamedBoxShapedFixedSize(),this.getName(),circuit.GetGraphics());
+			shapes = DefaultAppearance.build(circuitPins.getPins(),getCircuitAppearance(),
+					IsNamedBoxShapedFixedSize(),getName());
 			setObjectsForce(shapes);
 		}
 	}

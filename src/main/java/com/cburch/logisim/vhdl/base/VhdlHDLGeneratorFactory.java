@@ -73,10 +73,10 @@ public class VhdlHDLGeneratorFactory extends AbstractHDLGeneratorFactory  {
 		SortedMap<String, Integer> inputs = new TreeMap<String, Integer>();
 
 		VhdlContent content = ((VhdlEntityAttributes) attrs).getContent();
-		Port[] rawInputs = content.getInputs();
-		for (int i = 0; i < rawInputs.length; i++)
-			inputs.put(rawInputs[i].getToolTip(), rawInputs[i]
-					.getFixedBitWidth().getWidth());
+		for (VhdlParser.PortDescription p : content.getPorts()) {
+            if (p.getType() == Port.INPUT)
+                    inputs.put(p.getName(), p.getWidth().getWidth());
+        }
 
 		return inputs;
 	}
@@ -87,10 +87,10 @@ public class VhdlHDLGeneratorFactory extends AbstractHDLGeneratorFactory  {
 		SortedMap<String, Integer> outputs = new TreeMap<String, Integer>();
 
 		VhdlContent content = ((VhdlEntityAttributes) attrs).getContent();
-		Port[] rawOutputs = content.getOutputs();
-		for (int i = 0; i < rawOutputs.length; i++)
-			outputs.put(rawOutputs[i].getToolTip(), rawOutputs[i]
-					.getFixedBitWidth().getWidth());
+		for (VhdlParser.PortDescription p : content.getPorts()) {
+            if (p.getType() == Port.OUTPUT)
+                    outputs.put(p.getName(), p.getWidth().getWidth());
+        }
 
 		return outputs;
 	}
@@ -103,16 +103,11 @@ public class VhdlHDLGeneratorFactory extends AbstractHDLGeneratorFactory  {
 		AttributeSet attrs = ComponentInfo.GetComponent().getAttributeSet();
 		VhdlContent content = ((VhdlEntityAttributes) attrs).getContent();
 
-		Port[] inputs = content.getInputs();
-		Port[] outputs = content.getOutputs();
-
-		for (int i = 0; i < inputs.length; i++)
-			PortMap.putAll(GetNetMap(inputs[i].getToolTip(), true,
-					ComponentInfo, i, Reporter, HDLType, Nets));
-		for (int i = 0; i < outputs.length; i++)
-			PortMap.putAll(GetNetMap(outputs[i].getToolTip(), true,
-					ComponentInfo, i + inputs.length, Reporter, HDLType, Nets));
-
+        int i = 0;
+        for (VhdlParser.PortDescription p : content.getPorts()) {
+        	PortMap.putAll(GetNetMap(p.getName(), true,
+        			ComponentInfo, i++, Reporter, HDLType, Nets));
+        }
 		return PortMap;
 	}
 

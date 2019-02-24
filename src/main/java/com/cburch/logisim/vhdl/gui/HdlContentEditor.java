@@ -127,6 +127,8 @@ public class HdlContentEditor extends JDialog implements JInputDialog {
          public void aboutToSave(HdlModel source) { }
          @Override
          public void displayChanged(HdlModel source) { }
+         @Override
+         public void appearanceChanged(HdlModel source) { }
     }
 
 	public static boolean confirmImport(Component parent) {

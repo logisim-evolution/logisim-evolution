@@ -79,6 +79,9 @@ public class ProjectExplorerToolNode extends ProjectExplorerModel.Node<Tool>
     public void displayChanged(HdlModel source) {
         fireNodeChanged();
     }
+
+    @Override
+    public void appearanceChanged(HdlModel source) { }
     
     public void circuitChanged(CircuitEvent event) {
 		int act = event.getAction();

@@ -150,7 +150,7 @@ public class CircuitAttributes extends AbstractAttributeSet {
 	      "custom", S.getter("circuitCustomAppearance"));
 	public static final Attribute<AttributeOption> APPEARANCE_ATTR = Attributes
 	      .forOption("appearance", S.getter("circuitAppearanceAttr"),
-	          new AttributeOption[] { APPEAR_CLASSIC, APPEAR_EVOLUTION , APPEAR_FPGA, APPEAR_CUSTOM });
+	          new AttributeOption[] { APPEAR_CLASSIC, APPEAR_FPGA, APPEAR_EVOLUTION , APPEAR_CUSTOM });
 
 
 	private static final Attribute<?>[] STATIC_ATTRS = { NAME_ATTR,

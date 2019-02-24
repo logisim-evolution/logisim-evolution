@@ -30,30 +30,17 @@
 
 package com.cburch.logisim.circuit.appear;
 
-import java.awt.Color;
-import java.awt.Graphics;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import com.cburch.draw.shapes.Curve;
 import com.cburch.draw.model.CanvasObject;
-import com.cburch.draw.shapes.DrawAttr;
-import com.cburch.draw.shapes.Rectangle;
-import com.cburch.draw.shapes.Text;
-import com.cburch.draw.util.EditableLabel;
 import com.cburch.logisim.circuit.CircuitAttributes;
-import com.cburch.logisim.circuit.Wire;
 import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.instance.Instance;
-import com.cburch.logisim.instance.StdAttr;
-import com.cburch.logisim.std.wiring.Pin;
 
 class DefaultAppearance {
 
@@ -87,14 +74,13 @@ class DefaultAppearance {
 	public static List<CanvasObject> build(Collection<Instance> pins,
 			                               AttributeOption style,
 			                               boolean Fixed,
-			                               String CircuitName,
-			                               Graphics g) {
+			                               String CircuitName) {
 		if (style == CircuitAttributes.APPEAR_CLASSIC) {
 			return DefaultClassicAppearance.build(pins);
 		} else if (style == CircuitAttributes.APPEAR_FPGA) {
 			return DefaultHolyCrossAppearance.build(pins, CircuitName);
 		} else {
-			return DefaultEvolutionAppearance.build(pins, CircuitName, g, Fixed);
+			return DefaultEvolutionAppearance.build(pins, CircuitName, Fixed);
 		}
 	}
 
