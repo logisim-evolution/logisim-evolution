@@ -854,6 +854,21 @@ class XmlReader {
 	}
 
 	/**
+	 * Check if a given label could be a valid VHDL variable name
+	 * 
+	 * @param label
+	 *            candidate VHDL variable name
+	 * @return true if the label is NOT a valid name, false otherwise
+	 */
+	public static boolean labelVHDLInvalid(String label) {
+		if (!label.matches("^[A-Za-z][A-Za-z0-9_]*") || label.endsWith("_")
+				|| label.matches(".*__.*"))
+			return (true);
+
+		return (false);
+	}
+
+	/**
 	 * Replace invalid labels in circuit nodes.
 	 * 
 	 * @param root
