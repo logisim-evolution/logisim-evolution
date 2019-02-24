@@ -49,6 +49,7 @@ public class VhdlEntity  extends InstanceFactory implements HdlModelListener {
 	static final int X_PADDING = 5;
 
 	private VhdlContent content;
+	private ArrayList<Instance> MyInstances;
 	
 	public VhdlEntity(VhdlContent content) {
 		super("", null);
@@ -60,6 +61,7 @@ public class VhdlEntity  extends InstanceFactory implements HdlModelListener {
             this.setIconName("vhdl-invalid.gif");
         setFacingAttribute(StdAttr.FACING);
         appearance = VhdlAppearance.create(getPins(), getName(), StdAttr.APPEAR_EVOLUTION);
+        MyInstances = new ArrayList<Instance>();
 	}
 
 	@Override
@@ -89,6 +91,8 @@ public class VhdlEntity  extends InstanceFactory implements HdlModelListener {
         attrs.setInstance(instance);
         instance.addAttributeListener();
 		updatePorts(instance);
+		if (!MyInstances.contains(instance))
+			MyInstances.add(instance);
 	}
 
 	@Override
@@ -330,8 +334,14 @@ public class VhdlEntity  extends InstanceFactory implements HdlModelListener {
                 ports[i].setToolTip(StringUtil.constantGetter(label));
             }
         }
-        instance.setPorts(ports);
-        instance.recomputeBounds();
+        for (Instance j : MyInstances) {
+        	j.setPorts(ports);
+        	j.recomputeBounds();
+        }
+        if (!MyInstances.contains(instance)) {
+        	instance.setPorts(ports);
+        	instance.recomputeBounds();
+        }
     }
 	
 	@Override
