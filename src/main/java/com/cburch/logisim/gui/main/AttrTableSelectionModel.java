@@ -106,6 +106,7 @@ class AttrTableSelectionModel extends AttributeSetTableModel implements
 			SetInstance(factory);
 			return S.fmt("selectionVarious", "" + totalCount);
 		} else if (factoryCount == 0) {
+			/* TODO: fix null pointer exception on VHDL-circuit */
 			String circName = frame.getCanvas().getCircuit().getName();
 			SetInstance(frame.getCanvas().getCircuit().getSubcircuitFactory());
 			return S.fmt("circuitAttrTitle", circName);

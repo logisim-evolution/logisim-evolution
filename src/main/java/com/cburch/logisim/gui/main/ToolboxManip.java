@@ -191,16 +191,16 @@ class ToolboxManip implements ProjectExplorerListener {
 					proj.getFrame().setEditorView(Frame.EDIT_LAYOUT);
 					if (lastSelected != null){
 						proj.setTool(lastSelected);
-					} else if (source instanceof VhdlEntity) {
-                        VhdlEntity vhdl = (VhdlEntity) source;
-                        proj.setCurrentHdlModel(vhdl.getContent());
-                        if (lastSelected != null)
-                        	proj.setTool(lastSelected);
 					} else {
 						Library base = proj.getLogisimFile().getLibrary("Base");
 						if (base != null)
 							proj.setTool(base.getTool("Edit Tool"));
 					}
+				} else if (source instanceof VhdlEntity) {
+                    VhdlEntity vhdl = (VhdlEntity) source;
+                    proj.setCurrentHdlModel(vhdl.getContent());
+                    if (lastSelected != null)
+                    	proj.setTool(lastSelected);
 				}
 			}
 		}

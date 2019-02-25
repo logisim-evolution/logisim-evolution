@@ -172,6 +172,7 @@ public class ProjectCircuitActions {
                         VhdlContent content = VhdlContent.create(name, proj.getLogisimFile());
                         if (content == null)
                             return;
+System.out.println(content.getName()+" "+content.getStaticAttributes());
 			proj.doAction(LogisimFileActions.addVhdl(content));
                         proj.setCurrentHdlModel(content);
 		}

@@ -137,7 +137,9 @@ public class VhdlEntity  extends InstanceFactory implements HdlModelListener {
         if (attr == StdAttr.FACING) {
             updatePorts(instance);
         } else if (attr == StdAttr.APPEARANCE) {
-            updatePorts(instance);
+            for (Instance j : MyInstances) {
+                updatePorts(j);
+            }
         }
 	}
 
@@ -334,14 +336,8 @@ public class VhdlEntity  extends InstanceFactory implements HdlModelListener {
                 ports[i].setToolTip(StringUtil.constantGetter(label));
             }
         }
-        for (Instance j : MyInstances) {
-        	j.setPorts(ports);
-        	j.recomputeBounds();
-        }
-        if (!MyInstances.contains(instance)) {
-        	instance.setPorts(ports);
-        	instance.recomputeBounds();
-        }
+        instance.setPorts(ports);
+        instance.recomputeBounds();
     }
 	
 	@Override
