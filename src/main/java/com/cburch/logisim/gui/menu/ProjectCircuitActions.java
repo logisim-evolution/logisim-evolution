@@ -37,13 +37,10 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Map;
 
 import javax.swing.JDialog;
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -57,7 +54,6 @@ import com.cburch.logisim.analyze.model.AnalyzerModel;
 import com.cburch.logisim.circuit.Analyze;
 import com.cburch.logisim.circuit.AnalyzeException;
 import com.cburch.logisim.circuit.Circuit;
-import com.cburch.logisim.file.Loader;
 import com.cburch.logisim.file.LogisimFile;
 import com.cburch.logisim.file.LogisimFileActions;
 import com.cburch.logisim.instance.Instance;
@@ -70,7 +66,6 @@ import com.cburch.logisim.tools.Tool;
 import com.cburch.logisim.util.StringUtil;
 import com.cburch.logisim.util.SyntaxChecker;
 import com.cburch.logisim.vhdl.base.VhdlContent;
-import com.cburch.logisim.vhdl.file.HdlFile;
 
 public class ProjectCircuitActions {
 	private static void analyzeError(Project proj, String message) {
@@ -166,15 +161,13 @@ public class ProjectCircuitActions {
 	}
 
 	public static void doAddVhdl(Project proj) {
-		String name = promptForVhdlName(proj.getFrame(),
-				proj.getLogisimFile(), "");
+		String name = promptForVhdlName(proj.getFrame(),proj.getLogisimFile(), "");
 		if (name != null) {
-                        VhdlContent content = VhdlContent.create(name, proj.getLogisimFile());
-                        if (content == null)
-                            return;
-System.out.println(content.getName()+" "+content.getStaticAttributes());
+			VhdlContent content = VhdlContent.create(name, proj.getLogisimFile());
+			if (content == null)
+				return;
 			proj.doAction(LogisimFileActions.addVhdl(content));
-                        proj.setCurrentHdlModel(content);
+			proj.setCurrentHdlModel(content);
 		}
 	}
 

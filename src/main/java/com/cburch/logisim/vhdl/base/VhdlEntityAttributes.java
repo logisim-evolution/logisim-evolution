@@ -8,8 +8,6 @@ import java.util.List;
 
 import com.cburch.logisim.data.AbstractAttributeSet;
 import com.cburch.logisim.data.Attribute;
-import com.cburch.logisim.data.AttributeEvent;
-import com.cburch.logisim.data.AttributeListener;
 import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.AttributeSets;
@@ -112,7 +110,7 @@ public class VhdlEntityAttributes  extends AbstractAttributeSet {
     private List<Attribute<?>> instanceAttrs;
     private VhdlEntityListener listener;
 
-	VhdlEntityAttributes(VhdlContent content) {
+	public VhdlEntityAttributes(VhdlContent content) {
 		this.content = content;
 		genericValues = null;
         vhdlInstance = null;

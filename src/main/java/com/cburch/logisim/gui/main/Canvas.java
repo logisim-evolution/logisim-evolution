@@ -103,6 +103,7 @@ import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.LocaleListener;
 import com.cburch.logisim.util.LocaleManager;
 import com.cburch.logisim.util.StringGetter;
+import com.cburch.logisim.vhdl.base.HdlModel;
 
 public class Canvas extends JPanel implements LocaleListener,
 		CanvasPaneContents,AdjustmentListener {
@@ -924,6 +925,10 @@ public class Canvas extends JPanel implements LocaleListener,
 	//
 	public Circuit getCircuit() {
 		return proj.getCurrentCircuit();
+	}
+	
+	public HdlModel getCurrentHdl() {
+		return proj.getCurrentHdl();
 	}
 
 	public CircuitState getCircuitState() {

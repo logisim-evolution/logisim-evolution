@@ -56,6 +56,8 @@ import com.cburch.logisim.proj.Action;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.tools.SetAttributeAction;
 import com.cburch.logisim.util.AutoLabel;
+import com.cburch.logisim.vhdl.base.VhdlContent;
+import com.cburch.logisim.vhdl.base.VhdlEntityAttributes;
 
 class AttrTableSelectionModel extends AttributeSetTableModel implements
 		Selection.Listener {
@@ -106,10 +108,19 @@ class AttrTableSelectionModel extends AttributeSetTableModel implements
 			SetInstance(factory);
 			return S.fmt("selectionVarious", "" + totalCount);
 		} else if (factoryCount == 0) {
-			/* TODO: fix null pointer exception on VHDL-circuit */
-			String circName = frame.getCanvas().getCircuit().getName();
-			SetInstance(frame.getCanvas().getCircuit().getSubcircuitFactory());
-			return S.fmt("circuitAttrTitle", circName);
+			Circuit circ = frame.getCanvas().getCircuit();
+			if (circ != null) {
+				String circName = circ.getName();
+				SetInstance(circ.getSubcircuitFactory());
+				return S.fmt("circuitAttrTitle", circName);
+			} else {
+				VhdlContent hdl = (VhdlContent) frame.getCanvas().getCurrentHdl();
+				String circName = hdl.getName();
+				/* TODO */
+				SetInstance(null);
+				/* BUG: Attributes still bogus in this situation */
+				return S.fmt("hdlAttrTitle", circName);
+			}
 		} else if (factoryCount == 1) {
 			SetInstance(factory);
 			return S.fmt("selectionOne", factory.getDisplayName());
