@@ -87,6 +87,8 @@ import com.cburch.logisim.proj.ProjectActions;
 import com.cburch.logisim.proj.ProjectEvent;
 import com.cburch.logisim.proj.ProjectListener;
 import com.cburch.logisim.proj.Projects;
+import com.cburch.logisim.std.hdl.VhdlSimState;
+import com.cburch.logisim.std.hdl.VhdlSimulator;
 import com.cburch.logisim.std.hdl.VhdlSimulatorConsole;
 import com.cburch.logisim.std.hdl.VhdlSimulatorListener;
 import com.cburch.logisim.tools.Tool;
@@ -98,6 +100,9 @@ import com.cburch.logisim.util.StringUtil;
 import com.cburch.logisim.util.VerticalSplitPane;
 import com.cburch.logisim.vhdl.base.HdlModel;
 import com.cburch.logisim.vhdl.gui.HdlContentView;
+import com.cburch.logisim.vhdl.gui.VhdlSimStateNew;
+import com.cburch.logisim.vhdl.gui.VhdlSimulatorConsoleNew;
+import com.cburch.logisim.vhdl.sim.VhdlSimulatorNew;
 
 public class Frame extends LFrame implements LocaleListener {
 	class MyProjectListener implements ProjectListener, LibraryListener,
@@ -192,60 +197,6 @@ public class Frame extends LFrame implements LocaleListener {
 		public void windowOpened(WindowEvent e) {
 			layoutCanvas.computeSize(true);
 		}
-	}
-
-	private class VhdlSimState extends JPanel implements VhdlSimulatorListener {
-
-		private static final long serialVersionUID = 1L;
-		Ellipse2D.Double circle;
-		Color color;
-		private int margin = 5;
-
-		public VhdlSimState() {
-			int radius = 15;
-			circle = new Ellipse2D.Double(margin, margin, radius, radius);
-			setOpaque(false);
-			color = Color.GRAY;
-			this.setBorder(new EmptyBorder(margin, margin, margin, margin));
-		}
-
-		public Dimension getPreferredSize() {
-			Rectangle bounds = circle.getBounds();
-			return new Dimension(bounds.width + 2 * margin, bounds.height + 2
-					* margin);
-		}
-
-		public void paintComponent(Graphics g) {
-			super.paintComponent(g);
-			Graphics2D g2 = (Graphics2D) g;
-			g2.setColor(color);
-			g2.fill(circle);
-		}
-
-		@Override
-		public void stateChanged() {
-
-			switch (proj.getVhdlSimulator().getState()) {
-			case DISABLED:
-				color = Color.GRAY;
-				break;
-			case ENABLED:
-				color = Color.RED;
-				break;
-			case STARTING:
-				color = Color.ORANGE;
-				break;
-			case RUNNING:
-				color = new Color(40, 180, 40);
-				break;
-			}
-
-			this.repaint();
-
-			// this.setText("VHDL Sim : " +
-			// proj.getSimulator().getCircuitState().getVhdlSimulator().getState());
-		}
-
 	}
 
 	private static Point getInitialLocation() {
@@ -343,12 +294,13 @@ public class Frame extends LFrame implements LocaleListener {
 	private Toolbox toolbox;
 	private SimulationExplorer simExplorer;
 	private AttrTable attrTable;
-	private VhdlSimState vhdlSimState;
+//	private VhdlSimState vhdlSimState;
 	private ZoomControl zoom;
 	// for the Layout view
 	private LayoutToolbarModel layoutToolbarModel;
 	private Canvas layoutCanvas;
 	private VhdlSimulatorConsole vhdlSimulatorConsole;
+	private VhdlSimulatorConsoleNew vhdlSimulatorConsoleNew;
 	private HdlContentView hdlEditor;
 
 	private ZoomModel layoutZoomModel;
@@ -360,9 +312,6 @@ public class Frame extends LFrame implements LocaleListener {
 	// for the Appearance view
 	private AppearanceView appearance;
 	
-	// for VHDL Editor
-	private ToolbarModel hdlToolbarModel;
-
 	private Double lastFraction = AppPreferences.WINDOW_RIGHT_SPLIT.get();
 
 	public Frame(Project proj) {
@@ -413,10 +362,6 @@ public class Frame extends LFrame implements LocaleListener {
 		RegTabContent regPanel = new RegTabContent(this);
 		tabPane.addTab("Registers", regPanel);
 
-		vhdlSimState = new VhdlSimState();
-		vhdlSimState.stateChanged();
-		proj.getVhdlSimulator().addVhdlSimStateListener(vhdlSimState);
-
 		zoom = new ZoomControl(layoutZoomModel,layoutCanvas);
 
 		// set up the central area
@@ -447,11 +392,21 @@ public class Frame extends LFrame implements LocaleListener {
 				AppPreferences.WINDOW_LEFT_SPLIT.get().doubleValue());
 
 		hdlEditor = new HdlContentView(proj);
-		vhdlSimulatorConsole = new VhdlSimulatorConsole(proj);
-		editRegion = new HorizontalSplitPane(mainPanelSuper,
-				hdlEditor, 1.0);
-		rightRegion = new HorizontalSplitPane(editRegion,
-				vhdlSimulatorConsole, 1.0);
+		editRegion = new HorizontalSplitPane(mainPanelSuper,hdlEditor, 1.0);
+
+		if (proj.getVhdlSimulator() instanceof VhdlSimulator) {
+			VhdlSimState state = new VhdlSimState(proj);
+			state.stateChanged();
+			((VhdlSimulator)proj.getVhdlSimulator()).addVhdlSimStateListener(state);
+			vhdlSimulatorConsole = new VhdlSimulatorConsole(proj);
+			rightRegion = new HorizontalSplitPane(editRegion,vhdlSimulatorConsole, 1.0);
+		} else {
+			VhdlSimStateNew state = new VhdlSimStateNew(proj);
+			state.stateChanged();
+			((VhdlSimulatorNew)proj.getVhdlSimulator()).addVhdlSimStateListener(state);
+			vhdlSimulatorConsoleNew = new VhdlSimulatorConsoleNew(proj);
+			rightRegion = new HorizontalSplitPane(editRegion,vhdlSimulatorConsoleNew, 1.0);
+		}
 
 		mainRegion = new VerticalSplitPane(leftRegion, rightRegion,
 				AppPreferences.WINDOW_MAIN_SPLIT.get().doubleValue());
@@ -553,8 +508,11 @@ public class Frame extends LFrame implements LocaleListener {
 		return this.zoom;
 	}
 
-	public VhdlSimulatorConsole getVhdlSimulatorConsole() {
-		return vhdlSimulatorConsole;
+	public Object getVhdlSimulatorConsole() {
+		if (vhdlSimulatorConsole != null)
+			return vhdlSimulatorConsole;
+		else
+			return vhdlSimulatorConsoleNew;
 	}
 
 	public ZoomModel getZoomModel() {

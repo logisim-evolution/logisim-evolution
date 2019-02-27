@@ -57,7 +57,6 @@ import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.tools.SetAttributeAction;
 import com.cburch.logisim.util.AutoLabel;
 import com.cburch.logisim.vhdl.base.VhdlContent;
-import com.cburch.logisim.vhdl.base.VhdlEntityAttributes;
 
 class AttrTableSelectionModel extends AttributeSetTableModel implements
 		Selection.Listener {
@@ -116,9 +115,7 @@ class AttrTableSelectionModel extends AttributeSetTableModel implements
 			} else {
 				VhdlContent hdl = (VhdlContent) frame.getCanvas().getCurrentHdl();
 				String circName = hdl.getName();
-				/* TODO */
 				SetInstance(null);
-				/* BUG: Attributes still bogus in this situation */
 				return S.fmt("hdlAttrTitle", circName);
 			}
 		} else if (factoryCount == 1) {

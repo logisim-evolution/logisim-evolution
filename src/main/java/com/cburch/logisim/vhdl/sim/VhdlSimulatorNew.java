@@ -1,33 +1,4 @@
-/*******************************************************************************
- * This file is part of logisim-evolution.
- *
- *   logisim-evolution is free software: you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation, either version 3 of the License, or
- *   (at your option) any later version.
- *
- *   logisim-evolution is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *   GNU General Public License for more details.
- *
- *   You should have received a copy of the GNU General Public License
- *   along with logisim-evolution.  If not, see <http://www.gnu.org/licenses/>.
- *
- *   Original code by Carl Burch (http://www.cburch.com), 2011.
- *   Subsequent modifications by :
- *     + Haute École Spécialisée Bernoise
- *       http://www.bfh.ch
- *     + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *       http://hepia.hesge.ch/
- *     + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *       http://www.heig-vd.ch/
- *   The project is currently maintained by :
- *     + REDS Institute - HEIG-VD
- *       Yverdon-les-Bains, Switzerland
- *       http://reds.heig-vd.ch
- *******************************************************************************/
-package com.cburch.logisim.std.hdl;
+package com.cburch.logisim.vhdl.sim;
 
 import java.io.File;
 import java.io.IOException;
@@ -51,6 +22,8 @@ import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.util.SocketClient;
+import com.cburch.logisim.vhdl.base.VhdlEntity;
+import com.cburch.logisim.vhdl.gui.VhdlSimulatorConsoleNew;
 
 /**
  * VHDL simulator allows Logisim to simulate the behavior of VHDL architectures.
@@ -61,7 +34,7 @@ import com.cburch.logisim.util.SocketClient;
  * @author christian.mueller@heig-vd.ch
  * @since 2.12.0
  */
-public class VhdlSimulator implements CircuitListener {
+public class VhdlSimulatorNew implements CircuitListener {
 
 	public enum State {
 		DISABLED, ENABLED, STARTING, RUNNING;
@@ -86,7 +59,7 @@ public class VhdlSimulator implements CircuitListener {
 		return vhdlComp;
 	}
 
-	final static Logger logger = LoggerFactory.getLogger(VhdlSimulator.class);
+	final static Logger logger = LoggerFactory.getLogger(VhdlSimulatorNew.class);
 
 	final static Charset ENCODING = StandardCharsets.UTF_8;
 	final static String VHDL_TEMPLATES_PATH = "/resources/logisim/hdl/";
@@ -110,7 +83,7 @@ public class VhdlSimulator implements CircuitListener {
 
 	private State state = State.DISABLED;
 
-	public VhdlSimulator(Project circuitState) {
+	public VhdlSimulatorNew(Project circuitState) {
 		this.project = circuitState;
 	}
 
@@ -158,8 +131,8 @@ public class VhdlSimulator implements CircuitListener {
 		if (getProject().getFrame() != null) {
 			getProject().getFrame().setVhdlSimulatorConsoleStatus(false);
 			if (getProject().getFrame().getVhdlSimulatorConsole() != null &&
-					getProject().getFrame().getVhdlSimulatorConsole() instanceof VhdlSimulatorConsole)
-				((VhdlSimulatorConsole)getProject().getFrame().getVhdlSimulatorConsole()).clear();
+				getProject().getFrame().getVhdlSimulatorConsole() instanceof VhdlSimulatorConsoleNew)
+				((VhdlSimulatorConsoleNew)getProject().getFrame().getVhdlSimulatorConsole()).clear();
 		}
 	}
 
@@ -446,5 +419,6 @@ public class VhdlSimulator implements CircuitListener {
 		socketClient.start();
 		setState(State.RUNNING);
 	}
+
 
 }

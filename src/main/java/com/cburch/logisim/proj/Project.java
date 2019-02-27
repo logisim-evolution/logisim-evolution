@@ -60,6 +60,7 @@ import com.cburch.logisim.tools.Tool;
 import com.cburch.logisim.util.EventSourceWeakSupport;
 import com.cburch.logisim.util.JFileChoosers;
 import com.cburch.logisim.vhdl.base.HdlModel;
+import com.cburch.logisim.vhdl.sim.VhdlSimulatorNew;
 import com.cburch.logisim.gui.chronogram.chronogui.ChronoFrame;
 
 public class Project {
@@ -106,6 +107,7 @@ public class Project {
 
 	private Simulator simulator = new Simulator();
 	private VhdlSimulator vhdlSimulator = null;
+	private VhdlSimulatorNew vhdlSimulatorNew = null;
 
 	private LogisimFile file;
 	private CircuitState circuitState;
@@ -130,10 +132,6 @@ public class Project {
 	public Project(LogisimFile file) {
 		addLibraryListener(myListener);
 		setLogisimFile(file);
-
-		this.vhdlSimulator = new VhdlSimulator(this);
-		// circuit.addCircuitListener(vhdlSimulator);
-
 	}
 
 	public void addCircuitListener(CircuitListener value) {
@@ -286,6 +284,7 @@ public class Project {
 	public void setCurrentHdlModel(HdlModel hdl) {
         if (hdlModel == hdl)
             return;
+        setTool(null);
         CircuitState old = circuitState;
         HdlModel oldHdl = hdlModel;
         Circuit oldCircuit = old == null ? null : old.getCircuit();
@@ -395,7 +394,11 @@ public class Project {
 		return tool;
 	}
 
-	public VhdlSimulator getVhdlSimulator() {
+	public Object getVhdlSimulator() {
+		// vhdlSimulator = new VhdlSimulator(this);
+		if (vhdlSimulator == null)
+			vhdlSimulator = new VhdlSimulator(this);
+
 		return vhdlSimulator;
 	}
 

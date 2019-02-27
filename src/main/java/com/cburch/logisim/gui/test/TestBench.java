@@ -14,7 +14,9 @@ import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.proj.ProjectActions;
+import com.cburch.logisim.std.hdl.VhdlSimulator;
 import com.cburch.logisim.std.wiring.Pin;
+import com.cburch.logisim.vhdl.sim.VhdlSimulatorNew;
 
 
 public class TestBench {
@@ -100,13 +102,22 @@ public class TestBench {
 			return false;
 		}
 
-		sim.getCircuitState().getProject().getVhdlSimulator().enable();
-		/* Start Simulation */
-		sim.setIsRunning(true);
-
-		/* TODO Timeout */
-		while(!sim.getCircuitState().getProject().getVhdlSimulator().isEnabled()) {
-			Thread.yield();
+		if (sim.getCircuitState().getProject().getVhdlSimulator() instanceof VhdlSimulator) {
+			VhdlSimulator vsim = (VhdlSimulator) sim.getCircuitState().getProject().getVhdlSimulator();
+			vsim.enable();
+			sim.setIsRunning(true);
+			/* TODO Timeout */
+			while (vsim.isEnabled()) {
+				Thread.yield();
+			}
+		} else {
+			VhdlSimulatorNew vsim = (VhdlSimulatorNew) sim.getCircuitState().getProject().getVhdlSimulator();
+			vsim.enable();
+			sim.setIsRunning(true);
+			/* TODO Timeout */
+			while (vsim.isEnabled()) {
+				Thread.yield();
+			}
 		}
 
 		return true;

@@ -135,8 +135,9 @@ class VhdlSimulatorTclBinder {
 
 						/* Here we make sure it is possible to print something */
 						if (vhdlSimulator.getProject().getFrame() != null) {
-							vhdlSimulator.getProject().getFrame()
-							.getVhdlSimulatorConsole().append(line + "\n");
+							if (vhdlSimulator.getProject().getFrame().getVhdlSimulatorConsole() != null &&
+								vhdlSimulator.getProject().getFrame().getVhdlSimulatorConsole() instanceof VhdlSimulatorConsole)
+							((VhdlSimulatorConsole)vhdlSimulator.getProject().getFrame().getVhdlSimulatorConsole()).append(line + "\n");
 						}
 
 						errorMessage += "\n" + line;
@@ -154,9 +155,11 @@ class VhdlSimulatorTclBinder {
 										nextLine = sc.nextLine();
 										if (nextLine.length() > 0)
 											if (vhdlSimulator.getProject().getFrame() != null) {
-												vhdlSimulator.getProject()
+												if (vhdlSimulator.getProject().getFrame().getVhdlSimulatorConsole() != null &&
+													vhdlSimulator.getProject().getFrame().getVhdlSimulatorConsole() instanceof VhdlSimulatorConsole)
+												((VhdlSimulatorConsole)vhdlSimulator.getProject()
 												.getFrame()
-												.getVhdlSimulatorConsole()
+												.getVhdlSimulatorConsole())
 												.append(nextLine + "\n");
 											}
 									}

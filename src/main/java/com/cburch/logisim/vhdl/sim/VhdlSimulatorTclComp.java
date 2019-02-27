@@ -58,9 +58,9 @@ class VhdlSimulatorTclComp {
 			.getLogger(VhdlSimulatorTclComp.class);
 
 	private boolean valid = false;
-	private VhdlSimulator vhdlSimulator;
+	private VhdlSimulatorNew vhdlSimulator;
 
-	VhdlSimulatorTclComp(VhdlSimulator vs) {
+	VhdlSimulatorTclComp(VhdlSimulatorNew vs) {
 		vhdlSimulator = vs;
 	}
 
@@ -79,7 +79,7 @@ class VhdlSimulatorTclComp {
 		comp_files.append(System.getProperty("line.separator"));
 
 		/* For each vhdl entity */
-		for (Component comp : VhdlSimulator.getVhdlComponents(vhdlSimulator
+		for (Component comp : VhdlSimulatorNew.getVhdlComponents(vhdlSimulator
 				.getProject().getCircuitState())) {
 			if (comp.getFactory().getClass().equals(VhdlEntity.class)) {
 
@@ -101,7 +101,7 @@ class VhdlSimulatorTclComp {
 		try {
 			template = new String(FileUtil.getBytes(this.getClass()
 					.getResourceAsStream(
-							(VhdlSimulator.SIM_RESOURCES_PATH + "comp.templ"))));
+							(VhdlSimulatorNew.SIM_RESOURCES_PATH + "comp.templ"))));
 
 			template = template.replaceAll("%date%",
 					LocaleManager.parserSDF.format(new Date()));
@@ -115,7 +115,7 @@ class VhdlSimulatorTclComp {
 
 		PrintWriter writer;
 		try {
-			writer = new PrintWriter(VhdlSimulator.SIM_PATH + "comp.tcl",
+			writer = new PrintWriter(VhdlSimulatorNew.SIM_PATH + "comp.tcl",
 					"UTF-8");
 			writer.print(template);
 			writer.close();

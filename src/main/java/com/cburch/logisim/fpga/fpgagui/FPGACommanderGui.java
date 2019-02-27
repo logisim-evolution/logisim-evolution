@@ -105,7 +105,9 @@ public class FPGACommanderGui extends FPGACommanderBase implements ActionListene
 	@Override
 	public void projectChanged(ProjectEvent event) {
 		if (event.getAction() == ProjectEvent.ACTION_SET_CURRENT) {
-			SetCurrentSheet(event.getCircuit().getName());
+			Circuit circ = event.getCircuit();
+			if (circ != null)
+				SetCurrentSheet(circ.getName());
 		} else if (event.getAction() == ProjectEvent.ACTION_SET_FILE) {
 			RebuildCircuitSelection();
 		}
@@ -474,8 +476,8 @@ public class FPGACommanderGui extends FPGACommanderBase implements ActionListene
 			circuitsList.addItem(thisone.getName());
 			thisone.removeCircuitListener(this);
 			thisone.addCircuitListener(this);
-			if (thisone.getName().equals(
-					MyProject.getCurrentCircuit().getName())) {
+			if (MyProject.getCurrentCircuit() != null && 
+			    thisone.getName().equals(MyProject.getCurrentCircuit().getName())) {
 				circuitsList.setSelectedIndex(i);
 			}
 			i++;

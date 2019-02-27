@@ -27,7 +27,7 @@
  *       Yverdon-les-Bains, Switzerland
  *       http://reds.heig-vd.ch
  *******************************************************************************/
-package com.cburch.logisim.std.hdl;
+package com.cburch.logisim.vhdl.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -45,9 +45,10 @@ import javax.swing.border.EmptyBorder;
 
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.util.SmartScroller;
+import com.cburch.logisim.vhdl.sim.VhdlSimulatorListener;
 import com.cburch.logisim.vhdl.sim.VhdlSimulatorNew;
 
-public class VhdlSimulatorConsole extends JPanel {
+public class VhdlSimulatorConsoleNew extends JPanel {
 
 	private class VhdlSimState extends JPanel implements VhdlSimulatorListener {
 
@@ -80,8 +81,8 @@ public class VhdlSimulatorConsole extends JPanel {
 		@Override
 		public void stateChanged() {
 			
-			if (project.getVhdlSimulator() instanceof VhdlSimulator) {
-				VhdlSimulator vsim = (VhdlSimulator) project.getVhdlSimulator(); 
+			if (project.getVhdlSimulator() instanceof VhdlSimulatorNew) {
+				VhdlSimulatorNew vsim = (VhdlSimulatorNew) project.getVhdlSimulator(); 
 				switch (vsim.getState()) {
 				case DISABLED:
 					color = Color.GRAY;
@@ -114,7 +115,7 @@ public class VhdlSimulatorConsole extends JPanel {
 
 	private Project project;
 
-	public VhdlSimulatorConsole(Project proj) {
+	public VhdlSimulatorConsoleNew(Project proj) {
 		project = proj;
 
 		show();
@@ -129,7 +130,7 @@ public class VhdlSimulatorConsole extends JPanel {
 	}
 
 	public void show() {
-		if (!(project.getVhdlSimulator() instanceof VhdlSimulator))
+		if (!(project.getVhdlSimulator() instanceof VhdlSimulatorNew))
 			return;
 		this.setLayout(new BorderLayout());
 
@@ -146,7 +147,8 @@ public class VhdlSimulatorConsole extends JPanel {
 		/* Add Simulator state indicator */
 		vhdlSimState = new VhdlSimState();
 		vhdlSimState.stateChanged();
-		((VhdlSimulator)project.getVhdlSimulator()).addVhdlSimStateListener(vhdlSimState);
+
+		((VhdlSimulatorNew)project.getVhdlSimulator()).addVhdlSimStateListener(vhdlSimState);
 
 		this.add(vhdlSimState, BorderLayout.PAGE_END);
 	}

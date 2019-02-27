@@ -57,7 +57,9 @@ import com.cburch.logisim.proj.ProjectEvent;
 import com.cburch.logisim.proj.ProjectListener;
 import com.cburch.logisim.std.base.Base;
 import com.cburch.logisim.tools.AddTool;
+import com.cburch.logisim.tools.EditTool;
 import com.cburch.logisim.tools.Library;
+import com.cburch.logisim.tools.PokeTool;
 import com.cburch.logisim.tools.Tool;
 import com.cburch.logisim.vhdl.base.VhdlContent;
 import com.cburch.logisim.vhdl.base.VhdlEntity;
@@ -189,18 +191,10 @@ class ToolboxManip implements ProjectExplorerListener {
 					SubcircuitFactory circFact = (SubcircuitFactory) source;
 					proj.setCurrentCircuit(circFact.getSubcircuit());
 					proj.getFrame().setEditorView(Frame.EDIT_LAYOUT);
-					if (lastSelected != null){
-						proj.setTool(lastSelected);
-					} else {
-						Library base = proj.getLogisimFile().getLibrary("Base");
-						if (base != null)
-							proj.setTool(base.getTool("Edit Tool"));
-					}
+					setDefaultTool(lastSelected,proj);
 				} else if (source instanceof VhdlEntity) {
                     VhdlEntity vhdl = (VhdlEntity) source;
                     proj.setCurrentHdlModel(vhdl.getContent());
-                    if (lastSelected != null)
-                    	proj.setTool(lastSelected);
 				}
 			}
 		}
@@ -248,17 +242,26 @@ class ToolboxManip implements ProjectExplorerListener {
 		proj.doAction(LogisimFileActions.moveCircuit(dragged, targetIndex));
 	}
 	
-	private static void setSelectTool( Project proj ) {
-		for (Library sub : proj.getLogisimFile().getLibraries()) {
-			if (sub instanceof Base) {
-				Tool tool = ((Base)sub).getTool("Edit Tool");
-				if (tool != null)
-					proj.setTool(tool);
+	 private static void setDefaultTool(Tool lastSelected, Project proj) {
+         if (lastSelected != null) {
+             proj.setTool(lastSelected);
+         } else {
+             for (Library sub : proj.getLogisimFile().getLibraries()) {
+                 if (sub instanceof Base) {
+                     Tool tool = ((Base)sub).getTool("Edit Tool");
+                     if (tool != null) {
+                         proj.setTool(tool);
+                         break;
+                     }
+                 }
 			}
 		}
 	}
 
 	public void selectionChanged(ProjectExplorerEvent event) {
+		if (proj.getTool() instanceof PokeTool || proj.getTool() instanceof EditTool) {
+            lastSelected = proj.getTool();
+        }
 		Object selected = event.getTarget();
 		if (selected instanceof ProjectExplorerToolNode) {
 			 ((ProjectExplorerToolNode)selected).fireNodeChanged();
@@ -272,15 +275,11 @@ class ToolboxManip implements ProjectExplorerListener {
 					if (proj.getCurrentCircuit() == circ) {
 						AttrTableModel m = new AttrTableCircuitModel(proj, circ);
 						proj.getFrame().setAttrTableModel(m);
-						setSelectTool(proj);
+						setDefaultTool(lastSelected,proj);
 						return;
 					}
 				}
 			}
-
-			// This was causing the selection to lag behind double-clicks,
-			// commented-out
-			// lastSelected = proj.getTool();
 			proj.setTool(tool);
 			proj.getFrame().viewAttributes(tool);
 		}

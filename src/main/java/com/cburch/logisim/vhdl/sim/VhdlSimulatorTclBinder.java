@@ -47,7 +47,8 @@ import org.slf4j.LoggerFactory;
 import com.cburch.logisim.tools.MessageBox;
 import com.cburch.logisim.util.FileUtil;
 import com.cburch.logisim.util.Softwares;
-import com.cburch.logisim.vhdl.sim.VhdlSimulator.State;
+import com.cburch.logisim.vhdl.gui.VhdlSimulatorConsoleNew;
+import com.cburch.logisim.vhdl.sim.VhdlSimulatorNew.State;
 
 /**
  * The TCL binder is a TCL program creating a socket server. The signals have to
@@ -74,9 +75,9 @@ class VhdlSimulatorTclBinder {
 	private Process process;
 	private Boolean running = false;
 
-	private VhdlSimulator vhdlSimulator;
+	private VhdlSimulatorNew vhdlSimulator;
 
-	public VhdlSimulatorTclBinder(VhdlSimulator vs) {
+	public VhdlSimulatorTclBinder(VhdlSimulatorNew vs) {
 
 		vhdlSimulator = vs;
 
@@ -96,7 +97,7 @@ class VhdlSimulatorTclBinder {
 		Map<String, String> env = builder.environment();
 		env.put("LM_LICENSE_FILE", "1650@eilic01");
 
-		builder.directory(new File(VhdlSimulator.SIM_PATH + "comp/"));
+		builder.directory(new File(VhdlSimulatorNew.SIM_PATH + "comp/"));
 
 		/* Redirect error on stdout */
 		builder.redirectErrorStream(true);
@@ -136,8 +137,10 @@ class VhdlSimulatorTclBinder {
 
 						/* Here we make sure it is possible to print something */
 						if (vhdlSimulator.getProject().getFrame() != null) {
-							vhdlSimulator.getProject().getFrame()
-							.getVhdlSimulatorConsole().append(line + "\n");
+							if (vhdlSimulator.getProject().getFrame().getVhdlSimulatorConsole() != null &&
+								vhdlSimulator.getProject().getFrame().getVhdlSimulatorConsole() instanceof VhdlSimulatorConsoleNew)
+							((VhdlSimulatorConsoleNew)vhdlSimulator.getProject().getFrame()
+							.getVhdlSimulatorConsole()).append(line + "\n");
 						}
 
 						errorMessage += "\n" + line;
@@ -155,9 +158,11 @@ class VhdlSimulatorTclBinder {
 										nextLine = sc.nextLine();
 										if (nextLine.length() > 0)
 											if (vhdlSimulator.getProject().getFrame() != null) {
-												vhdlSimulator.getProject()
+												if (vhdlSimulator.getProject().getFrame().getVhdlSimulatorConsole() != null &&
+													vhdlSimulator.getProject().getFrame().getVhdlSimulatorConsole() instanceof VhdlSimulatorConsoleNew)
+												((VhdlSimulatorConsoleNew)vhdlSimulator.getProject()
 												.getFrame()
-												.getVhdlSimulatorConsole()
+												.getVhdlSimulatorConsole())
 												.append(nextLine + "\n");
 											}
 									}

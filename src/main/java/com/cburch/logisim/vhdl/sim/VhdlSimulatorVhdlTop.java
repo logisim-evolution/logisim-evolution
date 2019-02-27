@@ -61,9 +61,9 @@ public class VhdlSimulatorVhdlTop {
 			.getLogger(VhdlSimulatorVhdlTop.class);
 
 	private boolean valid = false;
-	private VhdlSimulator vhdlSimulator;
+	private VhdlSimulatorNew vhdlSimulator;
 
-	VhdlSimulatorVhdlTop(VhdlSimulator vs) {
+	VhdlSimulatorVhdlTop(VhdlSimulatorNew vs) {
 		vhdlSimulator = vs;
 	}
 
@@ -92,7 +92,7 @@ public class VhdlSimulatorVhdlTop {
 		Boolean firstPort = true, firstComp = true, firstMap = true;
 
 		/* For each vhdl entity */
-		for (Component comp : VhdlSimulator.getVhdlComponents(vhdlSimulator
+		for (Component comp : VhdlSimulatorNew.getVhdlComponents(vhdlSimulator
 				.getProject().getCircuitState())) {
 			if (comp.getFactory().getClass().equals(VhdlEntity.class)) {
 
@@ -210,7 +210,7 @@ public class VhdlSimulatorVhdlTop {
 			template = new String(
 					FileUtil.getBytes(this.getClass()
 							.getResourceAsStream(
-									VhdlSimulator.VHDL_TEMPLATES_PATH
+									VhdlSimulatorNew.VHDL_TEMPLATES_PATH
 											+ "top_sim.templ")));
 		} catch (IOException e) {
 			logger.error("Could not read template : {}", e.getMessage());
@@ -225,8 +225,8 @@ public class VhdlSimulatorVhdlTop {
 
 		PrintWriter writer;
 		try {
-			writer = new PrintWriter(VhdlSimulator.SIM_SRC_PATH
-					+ VhdlSimulator.SIM_TOP_FILENAME, "UTF-8");
+			writer = new PrintWriter(VhdlSimulatorNew.SIM_SRC_PATH
+					+ VhdlSimulatorNew.SIM_TOP_FILENAME, "UTF-8");
 			writer.print(template);
 			writer.close();
 		} catch (FileNotFoundException e) {

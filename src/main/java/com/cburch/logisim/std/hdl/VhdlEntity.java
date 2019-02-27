@@ -248,11 +248,12 @@ public class VhdlEntity extends InstanceFactory {
 	 * done in Simulation.java.
 	 */
 	public void propagate(InstanceState state) {
+		
+		if (state.getProject().getVhdlSimulator() instanceof VhdlSimulator &&
+				((VhdlSimulator)state.getProject().getVhdlSimulator()).isEnabled()
+				&& ((VhdlSimulator)state.getProject().getVhdlSimulator()).isRunning()) {
 
-		if (state.getProject().getVhdlSimulator().isEnabled()
-				&& state.getProject().getVhdlSimulator().isRunning()) {
-
-			VhdlSimulator vhdlSimulator = state.getProject().getVhdlSimulator();
+			VhdlSimulator vhdlSimulator = (VhdlSimulator) state.getProject().getVhdlSimulator();
 
 			for (Port p : state.getInstance().getPorts()) {
 				int index = state.getPortIndex(p);
