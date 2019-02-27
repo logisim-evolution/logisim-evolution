@@ -36,8 +36,6 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
@@ -46,7 +44,6 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.geom.Ellipse2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import javax.swing.JFrame;
@@ -54,7 +51,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.WindowConstants;
-import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -87,10 +83,6 @@ import com.cburch.logisim.proj.ProjectActions;
 import com.cburch.logisim.proj.ProjectEvent;
 import com.cburch.logisim.proj.ProjectListener;
 import com.cburch.logisim.proj.Projects;
-import com.cburch.logisim.std.hdl.VhdlSimState;
-import com.cburch.logisim.std.hdl.VhdlSimulator;
-import com.cburch.logisim.std.hdl.VhdlSimulatorConsole;
-import com.cburch.logisim.std.hdl.VhdlSimulatorListener;
 import com.cburch.logisim.tools.Tool;
 import com.cburch.logisim.util.HorizontalSplitPane;
 import com.cburch.logisim.util.JFileChoosers;
@@ -100,9 +92,8 @@ import com.cburch.logisim.util.StringUtil;
 import com.cburch.logisim.util.VerticalSplitPane;
 import com.cburch.logisim.vhdl.base.HdlModel;
 import com.cburch.logisim.vhdl.gui.HdlContentView;
-import com.cburch.logisim.vhdl.gui.VhdlSimStateNew;
-import com.cburch.logisim.vhdl.gui.VhdlSimulatorConsoleNew;
-import com.cburch.logisim.vhdl.sim.VhdlSimulatorNew;
+import com.cburch.logisim.vhdl.gui.VhdlSimState;
+import com.cburch.logisim.vhdl.gui.VhdlSimulatorConsole;
 
 public class Frame extends LFrame implements LocaleListener {
 	class MyProjectListener implements ProjectListener, LibraryListener,
@@ -300,7 +291,6 @@ public class Frame extends LFrame implements LocaleListener {
 	private LayoutToolbarModel layoutToolbarModel;
 	private Canvas layoutCanvas;
 	private VhdlSimulatorConsole vhdlSimulatorConsole;
-	private VhdlSimulatorConsoleNew vhdlSimulatorConsoleNew;
 	private HdlContentView hdlEditor;
 
 	private ZoomModel layoutZoomModel;
@@ -393,20 +383,12 @@ public class Frame extends LFrame implements LocaleListener {
 
 		hdlEditor = new HdlContentView(proj);
 		editRegion = new HorizontalSplitPane(mainPanelSuper,hdlEditor, 1.0);
+		vhdlSimulatorConsole = new VhdlSimulatorConsole(proj);
+		rightRegion = new HorizontalSplitPane(editRegion,vhdlSimulatorConsole, 1.0);
 
-		if (proj.getVhdlSimulator() instanceof VhdlSimulator) {
-			VhdlSimState state = new VhdlSimState(proj);
-			state.stateChanged();
-			((VhdlSimulator)proj.getVhdlSimulator()).addVhdlSimStateListener(state);
-			vhdlSimulatorConsole = new VhdlSimulatorConsole(proj);
-			rightRegion = new HorizontalSplitPane(editRegion,vhdlSimulatorConsole, 1.0);
-		} else {
-			VhdlSimStateNew state = new VhdlSimStateNew(proj);
-			state.stateChanged();
-			((VhdlSimulatorNew)proj.getVhdlSimulator()).addVhdlSimStateListener(state);
-			vhdlSimulatorConsoleNew = new VhdlSimulatorConsoleNew(proj);
-			rightRegion = new HorizontalSplitPane(editRegion,vhdlSimulatorConsoleNew, 1.0);
-		}
+		VhdlSimState state = new VhdlSimState(proj);
+		state.stateChanged();
+		proj.getVhdlSimulator().addVhdlSimStateListener(state);
 
 		mainRegion = new VerticalSplitPane(leftRegion, rightRegion,
 				AppPreferences.WINDOW_MAIN_SPLIT.get().doubleValue());
@@ -508,11 +490,8 @@ public class Frame extends LFrame implements LocaleListener {
 		return this.zoom;
 	}
 
-	public Object getVhdlSimulatorConsole() {
-		if (vhdlSimulatorConsole != null)
-			return vhdlSimulatorConsole;
-		else
-			return vhdlSimulatorConsoleNew;
+	public VhdlSimulatorConsole getVhdlSimulatorConsole() {
+		return vhdlSimulatorConsole;
 	}
 
 	public ZoomModel getZoomModel() {

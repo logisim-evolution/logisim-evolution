@@ -61,17 +61,17 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
 	}
 
 	private static List<Attribute<?>> attributes = Arrays.asList(
-			VhdlEntity.CONTENT_ATTR, StdAttr.LABEL, StdAttr.LABEL_FONT, StdAttr.LABEL_VISIBILITY);
+			VhdlEntityComponent.CONTENT_ATTR, StdAttr.LABEL, StdAttr.LABEL_FONT, StdAttr.LABEL_VISIBILITY);
 
 	private final static WeakHashMap<HdlContent, HdlContentEditor> windowRegistry = new WeakHashMap<HdlContent, HdlContentEditor>();
 
-	private VhdlContent content;
+	private VhdlContentComponent content;
 	private String label = "";
 	private Font labelFont = StdAttr.DEFAULT_LABEL_FONT;
 	private Boolean labelVisable = false;
 
 	VhdlEntityAttributes() {
-		content = VhdlContent.create();
+		content = VhdlContentComponent.create();
 	}
 
 	@Override
@@ -89,7 +89,7 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
 	@SuppressWarnings("unchecked")
 	@Override
 	public <V> V getValue(Attribute<V> attr) {
-		if (attr == VhdlEntity.CONTENT_ATTR) {
+		if (attr == VhdlEntityComponent.CONTENT_ATTR) {
 			return (V) content;
 		}
 		if (attr == StdAttr.LABEL) {
@@ -107,8 +107,8 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
 	@SuppressWarnings("unchecked")
 	@Override
 	public <V> void setValue(Attribute<V> attr, V value) {
-		if (attr == VhdlEntity.CONTENT_ATTR) {
-			VhdlContent newContent = (VhdlContent) value;
+		if (attr == VhdlEntityComponent.CONTENT_ATTR) {
+			VhdlContentComponent newContent = (VhdlContentComponent) value;
 			if (!content.equals(newContent))
 				content = newContent;
 			fireAttributeValueChanged(attr, value,null);

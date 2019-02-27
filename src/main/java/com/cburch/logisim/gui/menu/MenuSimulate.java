@@ -56,10 +56,9 @@ import com.cburch.logisim.gui.log.LogFrame;
 import com.cburch.logisim.gui.test.TestFrame;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.proj.Project;
-import com.cburch.logisim.std.hdl.VhdlSimulator;
 import com.cburch.logisim.std.wiring.Clock;
 import com.cburch.logisim.util.StringUtil;
-import com.cburch.logisim.vhdl.sim.VhdlSimulatorNew;
+import com.cburch.logisim.vhdl.sim.VhdlSimulatorTop;
 
 @SuppressWarnings("serial")
 public class MenuSimulate extends Menu {
@@ -114,43 +113,22 @@ public class MenuSimulate extends Menu {
 
 					/* Restart VHDL simulation (in QuestaSim) */
 					if (sim.getCircuitState().getProject().getVhdlSimulator() != null) {
-						if (sim.getCircuitState().getProject().getVhdlSimulator() instanceof VhdlSimulator) {
-							VhdlSimulator vsim = (VhdlSimulator) sim.getCircuitState().getProject().getVhdlSimulator();
-							if (vsim.isRunning()) {
-								vsim.reset();
-								/*
-								 * We have to wait until the restart finishes, otherwise
-								 * the signal reset will be sent to the VHDL simulator
-								 * before the sim is loaded and errors will occur Time
-								 * (0,5s) is arbitrary
-								 * 
-								 * FIXME: if you find a way to make a blocking reset
-								 * until it's restarted, feel free to go on
-								 */
-								try {
-									Thread.sleep(500);
-								} catch (InterruptedException ex) {
-									Thread.currentThread().interrupt();
-								}
-							}
-						} else {
-							VhdlSimulatorNew vsim = (VhdlSimulatorNew) sim.getCircuitState().getProject().getVhdlSimulator();
-							if (vsim.isRunning()) {
-								vsim.reset();
-								/*
-								 * We have to wait until the restart finishes, otherwise
-								 * the signal reset will be sent to the VHDL simulator
-								 * before the sim is loaded and errors will occur Time
-								 * (0,5s) is arbitrary
-								 * 
-								 * FIXME: if you find a way to make a blocking reset
-								 * until it's restarted, feel free to go on
-								 */
-								try {
-									Thread.sleep(500);
-								} catch (InterruptedException ex) {
-									Thread.currentThread().interrupt();
-								}
+						VhdlSimulatorTop vsim = sim.getCircuitState().getProject().getVhdlSimulator();
+						if (vsim.isRunning()) {
+							vsim.reset();
+							/*
+							 * We have to wait until the restart finishes, otherwise
+							 * the signal reset will be sent to the VHDL simulator
+							 * before the sim is loaded and errors will occur Time
+							 * (0,5s) is arbitrary
+							 * 
+							 * FIXME: if you find a way to make a blocking reset
+							 * until it's restarted, feel free to go on
+							 */
+							try {
+								Thread.sleep(500);
+							} catch (InterruptedException ex) {
+								Thread.currentThread().interrupt();
 							}
 						}
 					}
@@ -168,21 +146,12 @@ public class MenuSimulate extends Menu {
 			} else if (src == simulate_vhdl_enable
 					|| src == LogisimMenuBar.SIMULATE_VHDL_ENABLE) {
 				if (proj.getVhdlSimulator() != null) {
-					if (proj.getVhdlSimulator() instanceof VhdlSimulator) {
-						VhdlSimulator vsim = (VhdlSimulator)proj.getVhdlSimulator();
-						vsim.setEnabled(!vsim.isEnabled());
-					} else {
-						VhdlSimulatorNew vsim = (VhdlSimulatorNew)proj.getVhdlSimulator();
-						vsim.setEnabled(!vsim.isEnabled());
-					}
+					proj.getVhdlSimulator().setEnabled(!proj.getVhdlSimulator().isEnabled());
 				}
 			} else if (src == vhdl_sim_files
 					|| src == LogisimMenuBar.GENERATE_VHDL_SIM_FILES) {
 				if (proj.getVhdlSimulator() != null) {
-					if (proj.getVhdlSimulator() instanceof VhdlSimulator)
-						((VhdlSimulator)proj.getVhdlSimulator()).restart();
-					else
-						((VhdlSimulatorNew)proj.getVhdlSimulator()).restart();
+					proj.getVhdlSimulator().restart();
 				}
 			} else if (src == tickOnce || src == LogisimMenuBar.TICK_STEP_MAIN) {
 				int ticks = 0;

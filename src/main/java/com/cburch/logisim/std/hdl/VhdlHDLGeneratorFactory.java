@@ -53,8 +53,8 @@ public class VhdlHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 		contents.addAll(FileWriter.getGenerateRemark(ComponentName, HDLType,
 				TheNetlist.projName()));
 
-		VhdlContent content = (VhdlContent) attrs
-				.getValue(VhdlEntity.CONTENT_ATTR);
+		VhdlContentComponent content = (VhdlContentComponent) attrs
+				.getValue(VhdlEntityComponent.CONTENT_ATTR);
 		contents.add(content.getLibraries());
 		contents.add(content.getArchitecture());
 
@@ -71,7 +71,7 @@ public class VhdlHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 			AttributeSet attrs) {
 		SortedMap<String, Integer> inputs = new TreeMap<String, Integer>();
 
-		Port[] rawInputs = attrs.getValue(VhdlEntity.CONTENT_ATTR).getInputs();
+		Port[] rawInputs = attrs.getValue(VhdlEntityComponent.CONTENT_ATTR).getInputs();
 		for (int i = 0; i < rawInputs.length; i++)
 			inputs.put(rawInputs[i].getToolTip(), rawInputs[i]
 					.getFixedBitWidth().getWidth());
@@ -84,7 +84,7 @@ public class VhdlHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 			AttributeSet attrs) {
 		SortedMap<String, Integer> outputs = new TreeMap<String, Integer>();
 
-		Port[] rawOutputs = attrs.getValue(VhdlEntity.CONTENT_ATTR)
+		Port[] rawOutputs = attrs.getValue(VhdlEntityComponent.CONTENT_ATTR)
 				.getOutputs();
 		for (int i = 0; i < rawOutputs.length; i++)
 			outputs.put(rawOutputs[i].getToolTip(), rawOutputs[i]
@@ -99,7 +99,7 @@ public class VhdlHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 		SortedMap<String, String> PortMap = new TreeMap<String, String>();
 
 		AttributeSet attrs = ComponentInfo.GetComponent().getAttributeSet();
-		VhdlContent content = attrs.getValue(VhdlEntity.CONTENT_ATTR);
+		VhdlContentComponent content = attrs.getValue(VhdlEntityComponent.CONTENT_ATTR);
 
 		Port[] inputs = content.getInputs();
 		Port[] outputs = content.getOutputs();

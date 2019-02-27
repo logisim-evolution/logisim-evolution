@@ -14,9 +14,8 @@ import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.proj.ProjectActions;
-import com.cburch.logisim.std.hdl.VhdlSimulator;
 import com.cburch.logisim.std.wiring.Pin;
-import com.cburch.logisim.vhdl.sim.VhdlSimulatorNew;
+import com.cburch.logisim.vhdl.sim.VhdlSimulatorTop;
 
 
 public class TestBench {
@@ -101,23 +100,13 @@ public class TestBench {
 			//	logger.error("FATAL ERROR - no simulator available");
 			return false;
 		}
-
-		if (sim.getCircuitState().getProject().getVhdlSimulator() instanceof VhdlSimulator) {
-			VhdlSimulator vsim = (VhdlSimulator) sim.getCircuitState().getProject().getVhdlSimulator();
-			vsim.enable();
-			sim.setIsRunning(true);
-			/* TODO Timeout */
-			while (vsim.isEnabled()) {
-				Thread.yield();
-			}
-		} else {
-			VhdlSimulatorNew vsim = (VhdlSimulatorNew) sim.getCircuitState().getProject().getVhdlSimulator();
-			vsim.enable();
-			sim.setIsRunning(true);
-			/* TODO Timeout */
-			while (vsim.isEnabled()) {
-				Thread.yield();
-			}
+		
+		VhdlSimulatorTop vsim = sim.getCircuitState().getProject().getVhdlSimulator();
+		vsim.enable();
+		sim.setIsRunning(true);
+		/* TODO Timeout */
+		while (vsim.isEnabled()) {
+			Thread.yield();
 		}
 
 		return true;

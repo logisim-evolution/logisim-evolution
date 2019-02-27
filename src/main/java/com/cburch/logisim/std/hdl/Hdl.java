@@ -42,7 +42,7 @@ public class Hdl extends Library {
 
 	private static FactoryDescription[] DESCRIPTIONS = { new FactoryDescription(
 			"VHDL Entity", S.getter("vhdlComponent"), "vhdl.gif",
-			"VhdlEntity"), };
+			"VhdlEntityComponent"), };
 
 	private List<Tool> tools = null;
 

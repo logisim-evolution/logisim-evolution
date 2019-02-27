@@ -53,14 +53,13 @@ import com.cburch.logisim.gui.main.SelectionActions;
 import com.cburch.logisim.gui.opts.OptionsFrame;
 import com.cburch.logisim.gui.test.TestFrame;
 import com.cburch.logisim.gui.test.TestThread;
-import com.cburch.logisim.std.hdl.VhdlSimulator;
 import com.cburch.logisim.tools.AddTool;
 import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.tools.Tool;
 import com.cburch.logisim.util.EventSourceWeakSupport;
 import com.cburch.logisim.util.JFileChoosers;
 import com.cburch.logisim.vhdl.base.HdlModel;
-import com.cburch.logisim.vhdl.sim.VhdlSimulatorNew;
+import com.cburch.logisim.vhdl.sim.VhdlSimulatorTop;
 import com.cburch.logisim.gui.chronogram.chronogui.ChronoFrame;
 
 public class Project {
@@ -106,8 +105,7 @@ public class Project {
 	private static final int MAX_UNDO_SIZE = 64;
 
 	private Simulator simulator = new Simulator();
-	private VhdlSimulator vhdlSimulator = null;
-	private VhdlSimulatorNew vhdlSimulatorNew = null;
+	private VhdlSimulatorTop VhdlSimulator = null;
 
 	private LogisimFile file;
 	private CircuitState circuitState;
@@ -394,12 +392,11 @@ public class Project {
 		return tool;
 	}
 
-	public Object getVhdlSimulator() {
-		// vhdlSimulator = new VhdlSimulator(this);
-		if (vhdlSimulator == null)
-			vhdlSimulator = new VhdlSimulator(this);
+	public VhdlSimulatorTop getVhdlSimulator() {
+		if (VhdlSimulator == null)
+			VhdlSimulator = new VhdlSimulatorTop(this);
 
-		return vhdlSimulator;
+		return VhdlSimulator;
 	}
 
 	public boolean isFileDirty() {

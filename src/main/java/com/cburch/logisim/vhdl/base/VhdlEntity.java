@@ -34,7 +34,7 @@ import com.cburch.logisim.std.wiring.Pin;
 import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.StringGetter;
 import com.cburch.logisim.util.StringUtil;
-import com.cburch.logisim.vhdl.sim.VhdlSimulatorNew;
+import com.cburch.logisim.vhdl.sim.VhdlSimulatorTop;
 
 public class VhdlEntity  extends InstanceFactory implements HdlModelListener {
 
@@ -181,11 +181,10 @@ public class VhdlEntity  extends InstanceFactory implements HdlModelListener {
 	 */
 	public void propagate(InstanceState state) {
 
-		if (state.getProject().getVhdlSimulator() instanceof VhdlSimulatorNew &&
-				((VhdlSimulatorNew)state.getProject().getVhdlSimulator()).isEnabled()
-				&& ((VhdlSimulatorNew)state.getProject().getVhdlSimulator()).isRunning()) {
+		if (state.getProject().getVhdlSimulator().isEnabled()
+			&& state.getProject().getVhdlSimulator().isRunning()) {
 
-			VhdlSimulatorNew vhdlSimulator = (VhdlSimulatorNew)state.getProject().getVhdlSimulator();
+			VhdlSimulatorTop vhdlSimulator = state.getProject().getVhdlSimulator();
 
 			for (Port p : state.getInstance().getPorts()) {
 				int index = state.getPortIndex(p);
@@ -275,7 +274,7 @@ public class VhdlEntity  extends InstanceFactory implements HdlModelListener {
 
 		PrintWriter writer;
 		try {
-			writer = new PrintWriter(VhdlSimulatorNew.SIM_SRC_PATH
+			writer = new PrintWriter(VhdlSimConstants.SIM_SRC_PATH
 					+ getHDLTopName(attrs) + ".vhdl", "UTF-8");
 
 			String content = this.content.getContent();

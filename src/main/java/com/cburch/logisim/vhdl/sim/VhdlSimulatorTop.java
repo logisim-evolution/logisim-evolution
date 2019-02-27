@@ -1,56 +1,25 @@
-/*******************************************************************************
- * This file is part of logisim-evolution.
- *
- *   logisim-evolution is free software: you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation, either version 3 of the License, or
- *   (at your option) any later version.
- *
- *   logisim-evolution is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *   GNU General Public License for more details.
- *
- *   You should have received a copy of the GNU General Public License
- *   along with logisim-evolution.  If not, see <http://www.gnu.org/licenses/>.
- *
- *   Original code by Carl Burch (http://www.cburch.com), 2011.
- *   Subsequent modifications by :
- *     + Haute École Spécialisée Bernoise
- *       http://www.bfh.ch
- *     + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *       http://hepia.hesge.ch/
- *     + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *       http://www.heig-vd.ch/
- *   The project is currently maintained by :
- *     + REDS Institute - HEIG-VD
- *       Yverdon-les-Bains, Switzerland
- *       http://reds.heig-vd.ch
- *******************************************************************************/
-package com.cburch.logisim.std.hdl;
+package com.cburch.logisim.vhdl.sim;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
 
 import javax.help.UnsupportedOperationException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.cburch.logisim.circuit.CircuitEvent;
 import com.cburch.logisim.circuit.CircuitListener;
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.comp.Component;
+import com.cburch.logisim.comp.ComponentFactory;
 import com.cburch.logisim.proj.Project;
+import com.cburch.logisim.std.hdl.VhdlEntityComponent;
 import com.cburch.logisim.util.SocketClient;
+import com.cburch.logisim.vhdl.base.VhdlEntity;
+import com.cburch.logisim.vhdl.base.VhdlSimConstants;
+import com.cburch.logisim.vhdl.base.VhdlSimConstants.State;
 
 /**
  * VHDL simulator allows Logisim to simulate the behavior of VHDL architectures.
@@ -61,43 +30,8 @@ import com.cburch.logisim.util.SocketClient;
  * @author christian.mueller@heig-vd.ch
  * @since 2.12.0
  */
-public class VhdlSimulator implements CircuitListener {
 
-	public enum State {
-		DISABLED, ENABLED, STARTING, RUNNING;
-	}
-
-	public static List<Component> getVhdlComponents(CircuitState s) {
-
-		LinkedList<Component> vhdlComp = new LinkedList<Component>();
-
-		/* Add current circuits comp */
-		for (Component comp : s.getCircuit().getNonWires()) {
-			if (comp.getFactory().getClass().equals(VhdlEntity.class)) {
-				vhdlComp.add(comp);
-			}
-		}
-
-		/* Add subcircuits comp */
-		for (CircuitState sub : s.getSubstates()) {
-			vhdlComp.addAll(getVhdlComponents(sub));
-		}
-
-		return vhdlComp;
-	}
-
-	final static Logger logger = LoggerFactory.getLogger(VhdlSimulator.class);
-
-	final static Charset ENCODING = StandardCharsets.UTF_8;
-	final static String VHDL_TEMPLATES_PATH = "/resources/logisim/hdl/";
-	final static String SIM_RESOURCES_PATH = "/resources/logisim/sim/";
-	final static String SIM_PATH = System.getProperty("java.io.tmpdir")
-			+ "/logisim/sim/";
-	public final static String SIM_SRC_PATH = SIM_PATH + "src/";
-
-	final static String SIM_COMP_PATH = SIM_PATH + "comp/";
-
-	final static String SIM_TOP_FILENAME = "top_sim.vhdl";
+public class VhdlSimulatorTop implements CircuitListener {
 
 	private VhdlSimulatorVhdlTop vhdlTop = new VhdlSimulatorVhdlTop(this);
 	private VhdlSimulatorTclComp tclRun = new VhdlSimulatorTclComp(this);
@@ -110,7 +44,7 @@ public class VhdlSimulator implements CircuitListener {
 
 	private State state = State.DISABLED;
 
-	public VhdlSimulator(Project circuitState) {
+	public VhdlSimulatorTop(Project circuitState) {
 		this.project = circuitState;
 	}
 
@@ -157,9 +91,7 @@ public class VhdlSimulator implements CircuitListener {
 		/* Hide and empty console log */
 		if (getProject().getFrame() != null) {
 			getProject().getFrame().setVhdlSimulatorConsoleStatus(false);
-			if (getProject().getFrame().getVhdlSimulatorConsole() != null &&
-					getProject().getFrame().getVhdlSimulatorConsole() instanceof VhdlSimulatorConsole)
-				((VhdlSimulatorConsole)getProject().getFrame().getVhdlSimulatorConsole()).clear();
+			getProject().getFrame().getVhdlSimulatorConsole().clear();
 		}
 	}
 
@@ -237,28 +169,28 @@ public class VhdlSimulator implements CircuitListener {
 		vhdlTop.fireInvalidated();
 		tclRun.fireInvalidated();
 
-		new File(SIM_PATH).mkdirs();
-		new File(SIM_SRC_PATH).mkdirs();
-		new File(SIM_COMP_PATH).mkdirs();
+		new File(VhdlSimConstants.SIM_PATH).mkdirs();
+		new File(VhdlSimConstants.SIM_SRC_PATH).mkdirs();
+		new File(VhdlSimConstants.SIM_COMP_PATH).mkdirs();
 
 		try {
 			Files.copy(
 					this.getClass().getResourceAsStream(
-							SIM_RESOURCES_PATH + "questasim_binder.tcl"),
-					Paths.get(SIM_PATH + "questasim_binder.tcl"),
+							VhdlSimConstants.SIM_RESOURCES_PATH + "questasim_binder.tcl"),
+					Paths.get(VhdlSimConstants.SIM_PATH + "questasim_binder.tcl"),
 					StandardCopyOption.REPLACE_EXISTING);
 			Files.copy(
 					this.getClass().getResourceAsStream(
-							SIM_RESOURCES_PATH + "run.tcl"),
-					Paths.get(SIM_PATH + "run.tcl"),
+							VhdlSimConstants.SIM_RESOURCES_PATH + "run.tcl"),
+					Paths.get(VhdlSimConstants.SIM_PATH + "run.tcl"),
 					StandardCopyOption.REPLACE_EXISTING);
 			Files.copy(
 					this.getClass().getResourceAsStream(
-							SIM_RESOURCES_PATH + "modelsim.ini"),
-					Paths.get(SIM_COMP_PATH + "modelsim.ini"),
+							VhdlSimConstants.SIM_RESOURCES_PATH + "modelsim.ini"),
+					Paths.get(VhdlSimConstants.SIM_COMP_PATH + "modelsim.ini"),
 					StandardCopyOption.REPLACE_EXISTING);
 		} catch (IOException e) {
-			logger.error("Cannot copy simulation files: {}", e.getMessage());
+			VhdlSimConstants.logger.error("Cannot copy simulation files: {}", e.getMessage());
 			e.printStackTrace();
 		}
 
@@ -266,8 +198,12 @@ public class VhdlSimulator implements CircuitListener {
 		tclRun.generate();
 
 		/* Generate each component's file */
-		for (Component comp : getVhdlComponents(project.getCircuitState())) {
-			((VhdlEntity) comp.getFactory()).saveFile(comp.getAttributeSet());
+		for (Component comp : VhdlSimConstants.getVhdlComponents(project.getCircuitState(),true)) {
+			ComponentFactory fact = comp.getFactory();
+			if (fact instanceof VhdlEntity)
+				((VhdlEntity) comp.getFactory()).saveFile(comp.getAttributeSet());
+			else
+				((VhdlEntityComponent) comp.getFactory()).saveFile(comp.getAttributeSet());
 		}
 	}
 
@@ -290,6 +226,8 @@ public class VhdlSimulator implements CircuitListener {
 			if (comp.getFactory().getClass().equals(VhdlEntity.class)) {
 				return true;
 			}
+			if (comp.getFactory().getClass().equals(VhdlEntityComponent.class))
+				return true;
 		}
 
 		/* Test sub-circuits */

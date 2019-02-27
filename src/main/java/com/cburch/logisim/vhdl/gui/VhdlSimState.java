@@ -12,9 +12,9 @@ import javax.swing.border.EmptyBorder;
 
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.vhdl.sim.VhdlSimulatorListener;
-import com.cburch.logisim.vhdl.sim.VhdlSimulatorNew;
 
-public class VhdlSimStateNew  extends JPanel implements VhdlSimulatorListener {
+public class VhdlSimState  extends JPanel implements VhdlSimulatorListener {
+
 
 	private static final long serialVersionUID = 1L;
 	Ellipse2D.Double circle;
@@ -22,7 +22,7 @@ public class VhdlSimStateNew  extends JPanel implements VhdlSimulatorListener {
 	private int margin = 5;
 	private Project proj;
 
-	public VhdlSimStateNew(Project proj) {
+	public VhdlSimState(Project proj) {
 		this.proj = proj;
 		int radius = 15;
 		circle = new Ellipse2D.Double(margin, margin, radius, radius);
@@ -46,9 +46,7 @@ public class VhdlSimStateNew  extends JPanel implements VhdlSimulatorListener {
 
 	@Override
 	public void stateChanged() {
-		if (proj.getVhdlSimulator() instanceof VhdlSimulatorNew) {
-			VhdlSimulatorNew sim = (VhdlSimulatorNew) proj.getVhdlSimulator(); 
-			switch (sim.getState()) {
+		switch (proj.getVhdlSimulator().getState()) {
 			case DISABLED:
 				color = Color.GRAY;
 				break;
@@ -61,7 +59,6 @@ public class VhdlSimStateNew  extends JPanel implements VhdlSimulatorListener {
 			case RUNNING:
 				color = new Color(40, 180, 40);
 				break;
-			}
 		}
 		this.repaint();
 

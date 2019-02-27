@@ -41,9 +41,11 @@ import org.slf4j.LoggerFactory;
 
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.instance.InstanceState;
+import com.cburch.logisim.std.hdl.VhdlEntityComponent;
 import com.cburch.logisim.util.FileUtil;
 import com.cburch.logisim.util.LocaleManager;
 import com.cburch.logisim.vhdl.base.VhdlEntity;
+import com.cburch.logisim.vhdl.base.VhdlSimConstants;
 
 /**
  * The VHDL source file have to be compiled before they can be simulated. This
@@ -52,22 +54,22 @@ import com.cburch.logisim.vhdl.base.VhdlEntity;
  *
  * @author christian.mueller@heig-vd.ch
  */
-class VhdlSimulatorTclComp {
+public class VhdlSimulatorTclComp {
 
 	final static Logger logger = LoggerFactory
 			.getLogger(VhdlSimulatorTclComp.class);
 
 	private boolean valid = false;
-	private VhdlSimulatorNew vhdlSimulator;
+	private VhdlSimulatorTop vsim;
 
-	VhdlSimulatorTclComp(VhdlSimulatorNew vs) {
-		vhdlSimulator = vs;
+	public VhdlSimulatorTclComp(VhdlSimulatorTop vs) {
+		vsim = vs;
 	}
 
 	public void fireInvalidated() {
 		valid = false;
 	}
-
+	
 	public void generate() {
 
 		/* Do not generate if file is already valid */
@@ -79,12 +81,11 @@ class VhdlSimulatorTclComp {
 		comp_files.append(System.getProperty("line.separator"));
 
 		/* For each vhdl entity */
-		for (Component comp : VhdlSimulatorNew.getVhdlComponents(vhdlSimulator
-				.getProject().getCircuitState())) {
-			if (comp.getFactory().getClass().equals(VhdlEntity.class)) {
+		for (Component comp : VhdlSimConstants.getVhdlComponents(vsim.getProject().getCircuitState(),true)) {
+			if (comp.getFactory().getClass().equals(VhdlEntity.class) ||
+				comp.getFactory().getClass().equals(VhdlEntityComponent.class)) {
 
-				InstanceState state = vhdlSimulator.getProject()
-						.getCircuitState().getInstanceState(comp);
+				InstanceState state = vsim.getProject().getCircuitState().getInstanceState(comp);
 				String componentName = comp.getFactory().getHDLTopName(
 						state.getInstance().getAttributeSet());
 
@@ -101,7 +102,7 @@ class VhdlSimulatorTclComp {
 		try {
 			template = new String(FileUtil.getBytes(this.getClass()
 					.getResourceAsStream(
-							(VhdlSimulatorNew.SIM_RESOURCES_PATH + "comp.templ"))));
+							(VhdlSimConstants.SIM_RESOURCES_PATH + "comp.templ"))));
 
 			template = template.replaceAll("%date%",
 					LocaleManager.parserSDF.format(new Date()));
@@ -115,7 +116,7 @@ class VhdlSimulatorTclComp {
 
 		PrintWriter writer;
 		try {
-			writer = new PrintWriter(VhdlSimulatorNew.SIM_PATH + "comp.tcl",
+			writer = new PrintWriter(VhdlSimConstants.SIM_PATH + "comp.tcl",
 					"UTF-8");
 			writer.print(template);
 			writer.close();

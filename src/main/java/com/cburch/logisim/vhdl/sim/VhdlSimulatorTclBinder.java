@@ -47,8 +47,8 @@ import org.slf4j.LoggerFactory;
 import com.cburch.logisim.tools.MessageBox;
 import com.cburch.logisim.util.FileUtil;
 import com.cburch.logisim.util.Softwares;
-import com.cburch.logisim.vhdl.gui.VhdlSimulatorConsoleNew;
-import com.cburch.logisim.vhdl.sim.VhdlSimulatorNew.State;
+import com.cburch.logisim.vhdl.base.VhdlSimConstants;
+import com.cburch.logisim.vhdl.base.VhdlSimConstants.State;
 
 /**
  * The TCL binder is a TCL program creating a socket server. The signals have to
@@ -66,7 +66,7 @@ import com.cburch.logisim.vhdl.sim.VhdlSimulatorNew.State;
  *
  * @author christian.mueller@heig-vd.ch
  */
-class VhdlSimulatorTclBinder {
+public class VhdlSimulatorTclBinder {
 
 	final static Logger logger = LoggerFactory
 			.getLogger(VhdlSimulatorTclBinder.class);
@@ -75,12 +75,14 @@ class VhdlSimulatorTclBinder {
 	private Process process;
 	private Boolean running = false;
 
-	private VhdlSimulatorNew vhdlSimulator;
+	private VhdlSimulatorTop vsim = null;
 
-	public VhdlSimulatorTclBinder(VhdlSimulatorNew vs) {
-
-		vhdlSimulator = vs;
-
+	public VhdlSimulatorTclBinder(VhdlSimulatorTop vs) {
+		vsim = vs;
+		Init(vs.getSocketClient().getServerPort());
+	}
+	
+	private void Init(int serverPort) {
 		List<String> command = new ArrayList<String>();
 
 		command.add(FileUtil.correctPath(Softwares.getQuestaPath())
@@ -88,7 +90,7 @@ class VhdlSimulatorTclBinder {
 
 		command.add("-c");
 		command.add("-do");
-		command.add("do ../run.tcl " + vs.getSocketClient().getServerPort());
+		command.add("do ../run.tcl " + serverPort);
 		command.add("-errorfile");
 		command.add("../questasim_errors.log");
 
@@ -97,7 +99,7 @@ class VhdlSimulatorTclBinder {
 		Map<String, String> env = builder.environment();
 		env.put("LM_LICENSE_FILE", "1650@eilic01");
 
-		builder.directory(new File(VhdlSimulatorNew.SIM_PATH + "comp/"));
+		builder.directory(new File(VhdlSimConstants.SIM_PATH + "comp/"));
 
 		/* Redirect error on stdout */
 		builder.redirectErrorStream(true);
@@ -106,7 +108,7 @@ class VhdlSimulatorTclBinder {
 	public Boolean isRunning() {
 		return running;
 	}
-
+	
 	public void start() {
 
 		try {
@@ -136,11 +138,8 @@ class VhdlSimulatorTclBinder {
 					while ((line = reader.readLine()) != null) {
 
 						/* Here we make sure it is possible to print something */
-						if (vhdlSimulator.getProject().getFrame() != null) {
-							if (vhdlSimulator.getProject().getFrame().getVhdlSimulatorConsole() != null &&
-								vhdlSimulator.getProject().getFrame().getVhdlSimulatorConsole() instanceof VhdlSimulatorConsoleNew)
-							((VhdlSimulatorConsoleNew)vhdlSimulator.getProject().getFrame()
-							.getVhdlSimulatorConsole()).append(line + "\n");
+						if (vsim.getProject().getFrame() != null) {
+							vsim.getProject().getFrame().getVhdlSimulatorConsole().append(line + "\n");
 						}
 
 						errorMessage += "\n" + line;
@@ -157,20 +156,15 @@ class VhdlSimulatorTclBinder {
 									while (sc.hasNextLine()) {
 										nextLine = sc.nextLine();
 										if (nextLine.length() > 0)
-											if (vhdlSimulator.getProject().getFrame() != null) {
-												if (vhdlSimulator.getProject().getFrame().getVhdlSimulatorConsole() != null &&
-													vhdlSimulator.getProject().getFrame().getVhdlSimulatorConsole() instanceof VhdlSimulatorConsoleNew)
-												((VhdlSimulatorConsoleNew)vhdlSimulator.getProject()
-												.getFrame()
-												.getVhdlSimulatorConsole())
-												.append(nextLine + "\n");
+											if (vsim.getProject().getFrame() != null) {
+												vsim.getProject().getFrame().getVhdlSimulatorConsole().append(nextLine + "\n");
 											}
 									}
 									sc.close();
 								}
 							}).start();
 
-							vhdlSimulator.tclStartCallback();
+							vsim.tclStartCallback();
 							return;
 						}
 					}
@@ -179,7 +173,7 @@ class VhdlSimulatorTclBinder {
 							"Error starting VHDL simulator", errorMessage,
 							JOptionPane.ERROR_MESSAGE);
 					userInfoBox.show();
-					vhdlSimulator.setState(State.ENABLED);
+					vsim.setState(State.ENABLED);
 
 				} catch (IOException e) {
 					e.printStackTrace();
@@ -193,7 +187,8 @@ class VhdlSimulatorTclBinder {
 			return;
 
 		/* We ask the binder to end itself */
-		vhdlSimulator.getSocketClient().send("end");
+		if (vsim.getSocketClient() != null)
+			vsim.getSocketClient().send("end");
 
 		/* Wait for the process to end */
 		/*
