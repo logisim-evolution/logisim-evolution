@@ -1,36 +1,6 @@
-/*******************************************************************************
- * This file is part of logisim-evolution.
- *
- *   logisim-evolution is free software: you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation, either version 3 of the License, or
- *   (at your option) any later version.
- *
- *   logisim-evolution is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *   GNU General Public License for more details.
- *
- *   You should have received a copy of the GNU General Public License
- *   along with logisim-evolution.  If not, see <http://www.gnu.org/licenses/>.
- *
- *   Original code by Carl Burch (http://www.cburch.com), 2011.
- *   Subsequent modifications by :
- *     + Haute École Spécialisée Bernoise
- *       http://www.bfh.ch
- *     + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *       http://hepia.hesge.ch/
- *     + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *       http://www.heig-vd.ch/
- *   The project is currently maintained by :
- *     + REDS Institute - HEIG-VD
- *       Yverdon-les-Bains, Switzerland
- *       http://reds.heig-vd.ch
- *******************************************************************************/
-
 package com.cburch.logisim.std.hdl;
 
-import static com.cburch.logisim.std.Strings.S;
+import static com.cburch.logisim.vhdl.Strings.S;
 
 import java.awt.Dimension;
 import java.awt.Insets;
@@ -50,14 +20,14 @@ import com.cburch.hdl.HdlModel;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.util.Softwares;
 
-public class VhdlContent extends HdlContent {
+public class VhdlContentComponent extends HdlContent {
 
-	public static VhdlContent create() {
-		return new VhdlContent();
+	public static VhdlContentComponent create() {
+		return new VhdlContentComponent();
 	}
 
 	private static String loadTemplate() {
-		InputStream input = VhdlContent.class.getResourceAsStream(RESOURCE);
+		InputStream input = VhdlContentComponent.class.getResourceAsStream(RESOURCE);
 		BufferedReader in = new BufferedReader(new InputStreamReader(input));
 
 		StringBuilder tmp = new StringBuilder();
@@ -75,7 +45,7 @@ public class VhdlContent extends HdlContent {
 				if (input != null)
 					input.close();
 			} catch (IOException ex) {
-				Logger.getLogger(VhdlContent.class.getName()).log(Level.SEVERE,
+				Logger.getLogger(VhdlContentComponent.class.getName()).log(Level.SEVERE,
 						null, ex);
 			}
 		}
@@ -94,13 +64,13 @@ public class VhdlContent extends HdlContent {
 	protected String libraries;
 	protected String architecture;
 
-	protected VhdlContent() {
+	protected VhdlContentComponent() {
 		this.parseContent(TEMPLATE);
 	}
 
-	public VhdlContent clone() {
+	public VhdlContentComponent clone() {
 		try {
-			VhdlContent ret = (VhdlContent) super.clone();
+			VhdlContentComponent ret = (VhdlContentComponent) super.clone();
 			ret.content = new StringBuffer(this.content);
 			return ret;
 		} catch (CloneNotSupportedException ex) {
@@ -210,15 +180,15 @@ public class VhdlContent extends HdlContent {
 
 		for (int i = 0; i < inputsDesc.size(); i++) {
 			VhdlParser.PortDescription desc = inputsDesc.get(i);
-			inputs[i] = new Port(0, (i * VhdlEntity.PORT_GAP)
-					+ VhdlEntity.HEIGHT, desc.getType(), desc.getWidth());
+			inputs[i] = new Port(0, (i * VhdlEntityComponent.PORT_GAP)
+					+ VhdlEntityComponent.HEIGHT, desc.getType(), desc.getWidth());
 			inputs[i].setToolTip(S.getter(desc.getName()));
 		}
 
 		for (int i = 0; i < outputsDesc.size(); i++) {
 			VhdlParser.PortDescription desc = outputsDesc.get(i);
-			outputs[i] = new Port(VhdlEntity.WIDTH, (i * VhdlEntity.PORT_GAP)
-					+ VhdlEntity.HEIGHT, desc.getType(), desc.getWidth());
+			outputs[i] = new Port(VhdlEntityComponent.WIDTH, (i * VhdlEntityComponent.PORT_GAP)
+					+ VhdlEntityComponent.HEIGHT, desc.getType(), desc.getWidth());
 			outputs[i].setToolTip(S.getter(desc.getName()));
 		}
 

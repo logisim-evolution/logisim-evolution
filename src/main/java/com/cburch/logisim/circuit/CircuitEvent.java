@@ -41,6 +41,7 @@ public class CircuitEvent {
 	public final static int TRANSACTION_DONE = 6;
 	public final static int CHANGE_DEFAULT_BOX_APPEARANCE = 7;
 	public final static int ACTION_CHECK_NAME = 8;
+	public final static int ACTION_DISPLAY_CHANGE = 9; // viewed/haloed status change
 
 	private int action;
 	private Circuit circuit;

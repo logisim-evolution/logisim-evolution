@@ -27,7 +27,8 @@
  *       Yverdon-les-Bains, Switzerland
  *       http://reds.heig-vd.ch
  *******************************************************************************/
-package com.cburch.logisim.std.hdl;
+
+package com.cburch.logisim.vhdl.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -45,6 +46,8 @@ import javax.swing.border.EmptyBorder;
 
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.util.SmartScroller;
+import com.cburch.logisim.vhdl.sim.VhdlSimulatorListener;
+import com.cburch.logisim.vhdl.sim.VhdlSimulatorTop;
 
 public class VhdlSimulatorConsole extends JPanel {
 
@@ -78,8 +81,8 @@ public class VhdlSimulatorConsole extends JPanel {
 
 		@Override
 		public void stateChanged() {
-
-			switch (project.getVhdlSimulator().getState()) {
+			VhdlSimulatorTop vsim = project.getVhdlSimulator();
+			switch (vsim.getState()) {
 			case DISABLED:
 				color = Color.GRAY;
 				break;
@@ -96,9 +99,10 @@ public class VhdlSimulatorConsole extends JPanel {
 				color = new Color(40, 180, 40);
 				break;
 			}
-
+			
 			this.repaint();
 		}
+
 	}
 
 	private static final long serialVersionUID = 1L;
@@ -139,6 +143,7 @@ public class VhdlSimulatorConsole extends JPanel {
 		/* Add Simulator state indicator */
 		vhdlSimState = new VhdlSimState();
 		vhdlSimState.stateChanged();
+
 		project.getVhdlSimulator().addVhdlSimStateListener(vhdlSimState);
 
 		this.add(vhdlSimState, BorderLayout.PAGE_END);

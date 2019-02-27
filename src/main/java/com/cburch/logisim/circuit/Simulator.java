@@ -131,6 +131,7 @@ public class Simulator {
 									exceptionEncountered = false;
 									propagator.propagate();
 								} catch (UnsupportedOperationException thr) {
+									thr.printStackTrace();
 									exceptionEncountered = true;
 									setIsRunning(false);
 								} catch (Exception thr) {
@@ -291,7 +292,7 @@ public class Simulator {
 	}
 
 	public void setCircuitState(CircuitState state) {
-		manager.setPropagator(state.getPropagator());
+		manager.setPropagator(state == null ? null : state.getPropagator());
 		renewTickerAwake();
 	}
 

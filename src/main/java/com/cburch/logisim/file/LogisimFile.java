@@ -71,6 +71,8 @@ import com.cburch.logisim.util.EventSourceWeakSupport;
 import com.cburch.logisim.util.ListUtil;
 import com.cburch.logisim.util.StringUtil;
 import com.cburch.logisim.util.UniquelyNamedThread;
+import com.cburch.logisim.vhdl.base.VhdlContent;
+import com.cburch.logisim.vhdl.base.VhdlEntity;
 
 public class LogisimFile extends Library implements LibraryEventSource,CircuitListener {
 
@@ -195,6 +197,7 @@ public class LogisimFile extends Library implements LibraryEventSource,CircuitLi
 				in = new ReaderInputStream(new FileReader(file), "UTF8");
 				return loadSub(in, loader, file);
 			} catch (Exception t) {
+				firstExcept.printStackTrace();
 				loader.showError(StringUtil.format(
 						S.get("xmlFormatError"), firstExcept.toString()));
 			} finally {
@@ -213,6 +216,7 @@ public class LogisimFile extends Library implements LibraryEventSource,CircuitLi
 		try {
 			return loadSub(in, loader);
 		} catch (SAXException e) {
+			e.printStackTrace();
 			loader.showError(StringUtil.format(S.get("xmlFormatError"),
 					e.toString()));
 			return null;
@@ -288,6 +292,16 @@ public class LogisimFile extends Library implements LibraryEventSource,CircuitLi
 			setMainCircuit(circuit);
 		fireEvent(LibraryEvent.ADD_TOOL, tool);
 	}
+	
+	public void addVhdlContent(VhdlContent content) {
+		addVhdlContent(content, tools.size());
+	}
+
+    public void addVhdlContent(VhdlContent content, int index) {
+    	AddTool tool = new AddTool(new VhdlEntity(content));
+    	tools.add(index, tool);
+    	fireEvent(LibraryEvent.ADD_TOOL, tool);
+    }
 
 	public void addLibrary(Library lib) {
 		if (!lib.getName().equals("Base")) {
@@ -346,12 +360,40 @@ public class LogisimFile extends Library implements LibraryEventSource,CircuitLi
 
 	public boolean contains(Circuit circ) {
 		for (AddTool tool : tools) {
-			SubcircuitFactory factory = (SubcircuitFactory) tool.getFactory();
-			if (factory.getSubcircuit() == circ)
-				return true;
+            if (tool.getFactory() instanceof SubcircuitFactory) {
+                SubcircuitFactory factory = (SubcircuitFactory) tool.getFactory();
+                if (factory.getSubcircuit() == circ)
+                        return true;
+            }
 		}
 		return false;
 	}
+
+    public boolean containsFactory(String name) {
+        for (AddTool tool : tools) {
+        	if (tool.getFactory() instanceof VhdlEntity) {
+        		VhdlEntity factory = (VhdlEntity) tool.getFactory();
+        		if (factory.getContent().getName().equals(name))
+        			return true;
+                } else if (tool.getFactory() instanceof SubcircuitFactory) {
+                	SubcircuitFactory factory = (SubcircuitFactory) tool.getFactory();
+                	if (factory.getSubcircuit().getName().equals(name))
+                		return true;
+                }
+        } 
+        return false;
+    }
+
+    public boolean contains(VhdlContent content) {
+    	for (AddTool tool : tools) {
+    		if (tool.getFactory() instanceof VhdlEntity) {
+    			VhdlEntity factory = (VhdlEntity) tool.getFactory();
+    			if (factory.getContent() == content)
+    				return true;
+    		}
+    	}
+    	return false;
+    }
 
 	private Tool findTool(Library lib, Tool query) {
 		for (Tool tool : lib.getTools()) {
@@ -379,9 +421,23 @@ public class LogisimFile extends Library implements LibraryEventSource,CircuitLi
 
 	public AddTool getAddTool(Circuit circ) {
 		for (AddTool tool : tools) {
-			SubcircuitFactory factory = (SubcircuitFactory) tool.getFactory();
-			if (factory.getSubcircuit() == circ) {
-				return tool;
+            if (tool.getFactory() instanceof SubcircuitFactory) {
+                SubcircuitFactory factory = (SubcircuitFactory) tool.getFactory();
+                if (factory.getSubcircuit() == circ) {
+                        return tool;
+                }
+            }
+		}
+		return null;
+	}
+
+	public AddTool getAddTool(VhdlContent content) {
+		for (AddTool tool : tools) {
+			if (tool.getFactory() instanceof VhdlEntity) {
+				VhdlEntity factory = (VhdlEntity) tool.getFactory();
+				if (factory.getContent() == content) {		
+					return tool;
+				}
 			}
 		}
 		return null;
@@ -391,25 +447,80 @@ public class LogisimFile extends Library implements LibraryEventSource,CircuitLi
 		if (name == null)
 			return null;
 		for (AddTool tool : tools) {
-			SubcircuitFactory factory = (SubcircuitFactory) tool.getFactory();
-			if (name.equals(factory.getName()))
-				return factory.getSubcircuit();
+			if (tool.getFactory() instanceof SubcircuitFactory) {
+                SubcircuitFactory factory = (SubcircuitFactory) tool.getFactory();
+                if (name.equals(factory.getName()))
+                        return factory.getSubcircuit();
+            }
 		}
 		return null;
 	}
 
+	public VhdlContent getVhdlContent(String name) {
+		if (name == null)
+			return null;
+		for (AddTool tool : tools) {
+            if (tool.getFactory() instanceof VhdlEntity) {
+                VhdlEntity factory = (VhdlEntity) tool.getFactory();
+                if (name.equals(factory.getName()))
+                        return factory.getContent();
+            	}
+            }
+		return null;
+	}
+
 	public int getCircuitCount() {
-		return tools.size();
+		return getCircuits().size();
 	}
 
 	public List<Circuit> getCircuits() {
 		List<Circuit> ret = new ArrayList<Circuit>(tools.size());
 		for (AddTool tool : tools) {
-			SubcircuitFactory factory = (SubcircuitFactory) tool.getFactory();
-			ret.add(factory.getSubcircuit());
+			if (tool.getFactory() instanceof SubcircuitFactory) {
+                SubcircuitFactory factory = (SubcircuitFactory) tool.getFactory();
+                ret.add(factory.getSubcircuit());
+            }
 		}
 		return ret;
 	}
+
+    public int indexOfCircuit(Circuit circ) {
+	for (int i = 0; i < tools.size(); i++) {
+                    AddTool tool = tools.get(i);
+                    if (tool.getFactory() instanceof SubcircuitFactory) {
+                        SubcircuitFactory factory = (SubcircuitFactory) tool.getFactory();
+                        if (factory.getSubcircuit() == circ) {
+                                return i;
+                        }
+                    }
+		}
+		return -1;
+    }
+
+    public List<VhdlContent> getVhdlContents() {
+    	List<VhdlContent> ret = new ArrayList<VhdlContent>(tools.size());
+    	for (AddTool tool : tools) {
+    		if (tool.getFactory() instanceof VhdlEntity) {
+    			VhdlEntity factory = (VhdlEntity) tool.getFactory();
+    			ret.add(factory.getContent());
+    		}
+    	}
+    	return ret;
+    }
+
+    public int indexOfVhdl(VhdlContent vhdl) {
+    	for (int i = 0; i < tools.size(); i++) {
+    		AddTool tool = tools.get(i);
+    		if (tool.getFactory() instanceof VhdlEntity) {
+    			VhdlEntity factory = (VhdlEntity) tool.getFactory();
+    			if (factory.getContent() == vhdl) {
+    				return i;
+    			}
+    		}
+    	}
+    	return -1;
+    }
+
 
 	@Override
 	public List<?> getElements() {
@@ -513,11 +624,11 @@ public class LogisimFile extends Library implements LibraryEventSource,CircuitLi
 	}
 
 	public void removeCircuit(Circuit circuit) {
-		if (tools.size() <= 1) {
+		if (getCircuitCount() <= 1) {
 			throw new RuntimeException("Cannot remove last circuit");
 		}
 
-		int index = getCircuits().indexOf(circuit);
+		int index = indexOfCircuit(circuit);
 		if (index >= 0) {
 			Tool circuitTool = tools.remove(index);
 
@@ -528,6 +639,14 @@ public class LogisimFile extends Library implements LibraryEventSource,CircuitLi
 				setMainCircuit(factory.getSubcircuit());
 			}
 			fireEvent(LibraryEvent.REMOVE_TOOL, circuitTool);
+		}
+	}
+
+	public void removeVhdl(VhdlContent vhdl) {
+		int index = indexOfVhdl(vhdl);
+		if (index >= 0) {
+			Tool vhdlTool = tools.remove(index);
+			fireEvent(LibraryEvent.REMOVE_TOOL, vhdlTool);
 		}
 	}
 

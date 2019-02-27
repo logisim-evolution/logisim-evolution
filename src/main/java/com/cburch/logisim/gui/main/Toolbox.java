@@ -59,4 +59,8 @@ class Toolbox extends JPanel {
 	void setHaloedTool(Tool value) {
 		toolbox.setHaloedTool(value);
 	}
+	
+	public void updateStructure() {
+        toolbox.updateStructure();
+	}
 }

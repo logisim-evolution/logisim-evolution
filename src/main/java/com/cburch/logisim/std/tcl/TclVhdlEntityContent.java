@@ -36,7 +36,7 @@ import java.io.InputStreamReader;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.cburch.logisim.std.hdl.VhdlContent;
+import com.cburch.logisim.std.hdl.VhdlContentComponent;
 
 /**
  * This is the same as the parent, just the template has to change. Code
@@ -46,7 +46,7 @@ import com.cburch.logisim.std.hdl.VhdlContent;
  * @author christian.mueller@heig-vd.ch
  *
  */
-public class TclVhdlEntityContent extends VhdlContent {
+public class TclVhdlEntityContent extends VhdlContentComponent {
 
 	public static TclVhdlEntityContent create() {
 		return new TclVhdlEntityContent();
@@ -54,7 +54,7 @@ public class TclVhdlEntityContent extends VhdlContent {
 
 	// TODO: remove code duplication with parent class
 	private static String loadTemplate() {
-		InputStream input = VhdlContent.class.getResourceAsStream(RESOURCE);
+		InputStream input = VhdlContentComponent.class.getResourceAsStream(RESOURCE);
 		BufferedReader in = new BufferedReader(new InputStreamReader(input));
 
 		StringBuilder tmp = new StringBuilder();
@@ -72,7 +72,7 @@ public class TclVhdlEntityContent extends VhdlContent {
 				if (input != null)
 					input.close();
 			} catch (IOException ex) {
-				Logger.getLogger(VhdlContent.class.getName()).log(Level.SEVERE,
+				Logger.getLogger(VhdlContentComponent.class.getName()).log(Level.SEVERE,
 						null, ex);
 			}
 		}
@@ -85,7 +85,8 @@ public class TclVhdlEntityContent extends VhdlContent {
 	private static final String TEMPLATE = loadTemplate();
 
 	protected TclVhdlEntityContent() {
-		super.parseContent(TEMPLATE);
+		super();
+		super.setContent(TEMPLATE);
 	}
 
 }

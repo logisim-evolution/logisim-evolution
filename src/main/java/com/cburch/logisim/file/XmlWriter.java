@@ -67,6 +67,7 @@ import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.tools.Tool;
 import com.cburch.logisim.util.InputEventUtil;
 import com.cburch.logisim.util.StringUtil;
+import com.cburch.logisim.vhdl.base.VhdlContent;
 
 class XmlWriter {
 	static void write(LogisimFile file, OutputStream out, LibraryLoader loader,
@@ -215,6 +216,16 @@ class XmlWriter {
 		}
 		return ret;
 	}
+	
+	Element fromVhdl(VhdlContent vhdl) {
+		vhdl.aboutToSave();
+		Element ret = doc.createElement("vhdl");
+		ret.setAttribute("name", vhdl.getName());
+		ret.setTextContent(vhdl.getContent());
+		return ret;
+	}
+
+
 
 	Element fromComponent(Component comp) {
 		ComponentFactory source = comp.getFactory();
@@ -296,6 +307,9 @@ class XmlWriter {
 
 		for (Circuit circ : file.getCircuits()) {
 			ret.appendChild(fromCircuit(circ));
+		}
+		for (VhdlContent vhdl : file.getVhdlContents()) {
+			ret.appendChild(fromVhdl(vhdl));
 		}
 		return ret;
 	}

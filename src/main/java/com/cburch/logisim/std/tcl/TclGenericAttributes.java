@@ -42,7 +42,7 @@ import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.std.hdl.HdlContent;
 import com.cburch.logisim.std.hdl.HdlContentEditor;
-import com.cburch.logisim.std.hdl.VhdlContent;
+import com.cburch.logisim.std.hdl.VhdlContentComponent;
 
 /**
  * This attribute set is the same as the one for the TclComponent but it adds an
@@ -74,7 +74,7 @@ public class TclGenericAttributes extends TclComponentAttributes {
 
 	private final static WeakHashMap<HdlContent, HdlContentEditor> windowRegistry = new WeakHashMap<HdlContent, HdlContentEditor>();
 
-	private VhdlContent vhdlEntitiy;
+	private VhdlContentComponent vhdlEntitiy;
 
 	TclGenericAttributes() {
 		super();
@@ -113,7 +113,7 @@ public class TclGenericAttributes extends TclComponentAttributes {
 	@Override
 	public <V> void setValue(Attribute<V> attr, V value) {
 		if (attr == TclGeneric.CONTENT_ATTR) {
-			VhdlContent newContent = (VhdlContent) value;
+			VhdlContentComponent newContent = (VhdlContentComponent) value;
 			if (!vhdlEntitiy.equals(newContent))
 				vhdlEntitiy = newContent;
 			fireAttributeValueChanged(attr, value,null);

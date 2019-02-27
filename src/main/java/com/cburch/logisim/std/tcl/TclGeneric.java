@@ -48,7 +48,7 @@ import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.proj.Project;
-import com.cburch.logisim.std.hdl.VhdlContent;
+import com.cburch.logisim.std.hdl.VhdlContentComponent;
 import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.StringUtil;
 
@@ -61,34 +61,34 @@ import com.cburch.logisim.util.StringUtil;
  */
 public class TclGeneric extends TclComponent {
 
-	static class ContentAttribute extends Attribute<VhdlContent> {
+	static class ContentAttribute extends Attribute<VhdlContentComponent> {
 
 		public ContentAttribute() {
 			super("content", S.getter("tclInterfaceDefinition"));
 		}
 
 		@Override
-		public java.awt.Component getCellEditor(Window source, VhdlContent value) {
+		public java.awt.Component getCellEditor(Window source, VhdlContentComponent value) {
 			Project proj = source instanceof com.cburch.logisim.gui.main.Frame ? ((com.cburch.logisim.gui.main.Frame) source)
 					.getProject() : null;
 			return TclGenericAttributes.getContentEditor(source, value, proj);
 		}
 
 		@Override
-		public VhdlContent parse(String value) {
-			VhdlContent content = VhdlContent.create();
+		public VhdlContentComponent parse(String value) {
+			VhdlContentComponent content = VhdlContentComponent.create();
 			if (!content.compare(value))
 				content.setContent(value);
 			return content;
 		}
 
 		@Override
-		public String toDisplayString(VhdlContent value) {
+		public String toDisplayString(VhdlContentComponent value) {
 			return S.get("tclInterfaceDefinitionValue");
 		}
 
 		@Override
-		public String toStandardString(VhdlContent value) {
+		public String toStandardString(VhdlContentComponent value) {
 			return value.getContent();
 		}
 	}
@@ -108,7 +108,7 @@ public class TclGeneric extends TclComponent {
 		}
 	}
 
-	static final Attribute<VhdlContent> CONTENT_ATTR = new ContentAttribute();
+	static final Attribute<VhdlContentComponent> CONTENT_ATTR = new ContentAttribute();
 
 	private WeakHashMap<Instance, TclGenericListener> contentListeners;
 
@@ -120,7 +120,7 @@ public class TclGeneric extends TclComponent {
 
 	@Override
 	protected void configureNewInstance(Instance instance) {
-		VhdlContent content = instance.getAttributeValue(CONTENT_ATTR);
+		VhdlContentComponent content = instance.getAttributeValue(CONTENT_ATTR);
 		TclGenericListener listener = new TclGenericListener(instance);
 
 		contentListeners.put(instance, listener);
@@ -142,7 +142,7 @@ public class TclGeneric extends TclComponent {
 
 	@Override
 	public Bounds getOffsetBounds(AttributeSet attrs) {
-		VhdlContent content = attrs.getValue(CONTENT_ATTR);
+		VhdlContentComponent content = attrs.getValue(CONTENT_ATTR);
 		int nbInputs = content.getInputsNumber();
 		int nbOutputs = content.getOutputsNumber();
 
@@ -161,7 +161,7 @@ public class TclGeneric extends TclComponent {
 	@Override
 	public void paintInstance(InstancePainter painter) {
 		Graphics g = painter.getGraphics();
-		VhdlContent content = painter.getAttributeValue(CONTENT_ATTR);
+		VhdlContentComponent content = painter.getAttributeValue(CONTENT_ATTR);
 		FontMetrics metric = g.getFontMetrics();
 
 		Bounds bds = painter.getBounds();
@@ -206,7 +206,7 @@ public class TclGeneric extends TclComponent {
 
 	@Override
 	void updatePorts(Instance instance) {
-		VhdlContent content = instance.getAttributeValue(CONTENT_ATTR);
+		VhdlContentComponent content = instance.getAttributeValue(CONTENT_ATTR);
 		instance.setPorts(content.getPorts());
 		setPorts(content.getPorts());
 	}

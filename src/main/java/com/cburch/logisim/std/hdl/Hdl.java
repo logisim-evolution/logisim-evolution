@@ -30,7 +30,7 @@
 
 package com.cburch.logisim.std.hdl;
 
-import static com.cburch.logisim.std.Strings.S;
+import static com.cburch.logisim.vhdl.Strings.S;
 
 import java.util.List;
 
@@ -42,7 +42,7 @@ public class Hdl extends Library {
 
 	private static FactoryDescription[] DESCRIPTIONS = { new FactoryDescription(
 			"VHDL Entity", S.getter("vhdlComponent"), "vhdl.gif",
-			"VhdlEntity"), };
+			"VhdlEntityComponent"), };
 
 	private List<Tool> tools = null;
 

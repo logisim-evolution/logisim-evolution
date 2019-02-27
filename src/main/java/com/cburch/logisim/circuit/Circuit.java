@@ -83,7 +83,6 @@ import com.cburch.logisim.std.wiring.Pin;
 import com.cburch.logisim.std.wiring.Tunnel;
 import com.cburch.logisim.tools.LibraryTools;
 import com.cburch.logisim.tools.SetAttributeAction;
-import com.cburch.logisim.tools.Strings;
 import com.cburch.logisim.util.AutoLabel;
 import com.cburch.logisim.util.CollectionUtil;
 import com.cburch.logisim.util.EventSourceWeakSupport;
@@ -272,10 +271,6 @@ public class Circuit {
 
 	public void SetProject(Project proj) {
 		this.proj = proj;
-	}
-
-	public Graphics GetGraphics() {
-		return (proj==null) ? null : proj.getFrame().getGraphics();
 	}
 
 	//
@@ -574,7 +569,11 @@ public class Circuit {
 		fireEvent(new CircuitEvent(action, this, data));
 	}
 
-	public Collection<Component> getAllContaining(Location pt) {
+	 public void displayChanged() {
+         fireEvent(CircuitEvent.ACTION_DISPLAY_CHANGE, null);
+	 }
+	 
+	 public Collection<Component> getAllContaining(Location pt) {
 		LinkedHashSet<Component> ret = new LinkedHashSet<Component>();
 		for (Component comp : getComponents()) {
 			if (comp.contains(pt))

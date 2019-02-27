@@ -52,32 +52,41 @@ public class CorrectLabel {
 	}
 
 	public static boolean IsCorrectLabel(String Label, String HDLIdentifier,
-			String ErrorIdentifierString, FPGAReport Reporter) {
+			                             String ErrorIdentifierString, FPGAReport Reporter) {
+		String err = NameErrors(Label, HDLIdentifier, ErrorIdentifierString);
+        if (err != null) {
+            Reporter.AddFatalError(err);
+            return false;
+        }
+        return true;
+    }
+	
+	public static String VhdlNameErrors(String Label) {
+    	return NameErrors(Label, HDLGeneratorFactory.VHDL, "VHDL entity name");
+    }
+
+	public static String NameErrors(String Label, String HDLIdentifier,
+			String ErrorIdentifierString) {
 		if (Label.isEmpty())
-			return true;
+			return null;
 		for (int i = 0; i < Label.length(); i++) {
 			if (!Chars.contains(Label.toLowerCase().substring(i, i + 1))
 					&& !Numbers.contains(Label.substring(i, i + 1))) {
-				Reporter.AddFatalError(ErrorIdentifierString +
-						S.fmt("IllegalChar",Label.substring(i, i + 1)));
-				return false;
+				return ErrorIdentifierString + S.fmt("IllegalChar",Label.substring(i, i + 1));
 			}
 		}
 		if (HDLIdentifier.equals(HDLGeneratorFactory.VHDL)) {
 			if (VHDLKeywords.contains(Label.toLowerCase())) {
-				Reporter.AddFatalError(ErrorIdentifierString + S.get("RezervedVHDLKeyword"));
-				return false;
+				return ErrorIdentifierString + S.get("ReservedVHDLKeyword");
 			}
 		} else {
 			if (HDLIdentifier.equals(HDLGeneratorFactory.VERILOG)) {
 				if (VerilogKeywords.contains(Label)) {
-					Reporter.AddFatalError(ErrorIdentifierString
-							+ S.get("RezervedVerilogKeyword"));
-					return false;
+					return ErrorIdentifierString + S.get("ReservedVerilogKeyword");
 				}
 			}
 		}
-		return true;
+		return null;
 	}
 
 	public static String HDLCorrectLabel(String Label) {
@@ -177,7 +186,7 @@ public class CorrectLabel {
 			"sll", "sra", "srl", "subtype", "then", "to", "transport", "type",
 			"unaffected", "units", "until", "use", "variable", "wait", "when",
 			"while", "with", "xnor", "xor" };
-	private static final List<String> VHDLKeywords = Arrays
+	public static final List<String> VHDLKeywords = Arrays
 			.asList(ReservedVHDLWords);
 
 	private static final String[] ReservedVerilogWords = { "always", "ifnone",

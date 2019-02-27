@@ -36,11 +36,8 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.font.FontRenderContext;
-import java.awt.font.TextLayout;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Rectangle2D;
-import java.util.Arrays;
+import java.util.HashMap;
 
 import javax.swing.JTextField;
 
@@ -67,8 +64,6 @@ public class EditableLabel implements Cloneable {
 	private int width;
 	private int ascent;
 	private int descent;
-	private int[] charX;
-	private int[] charY;
 
 	public EditableLabel(int x, int y, String text, Font font) {
 		this.x = x;
@@ -90,33 +85,63 @@ public class EditableLabel implements Cloneable {
 		}
 	}
 
-	private void computeDimensions(Graphics g, Font font, FontMetrics fm) {
-		String s = text;
-		FontRenderContext frc = ((Graphics2D) g).getFontRenderContext();
-		width = fm.stringWidth(s);
-		ascent = fm.getAscent();
-		descent = fm.getDescent();
-		int[] xs = new int[s.length()];
-		int[] ys = new int[s.length()];
-		for (int i = 0; i < xs.length; i++) {
-			xs[i] = fm.stringWidth(s.substring(0, i + 1));
-			TextLayout lay = new TextLayout(s.substring(i, i + 1), font, frc);
-			Rectangle2D rect = lay.getBounds();
-			int asc = (int) Math.ceil(-rect.getMinY());
-			int desc = (int) Math.ceil(rect.getMaxY());
-			if (asc < 0)
-				asc = 0;
-			if (asc > 0xFFFF)
-				asc = 0xFFFF;
-			if (desc < 0)
-				desc = 0;
-			if (desc > 0xFFFF)
-				desc = 0xFFFF;
-			ys[i] = (asc << 16) | desc;
-		}
-		charX = xs;
-		charY = ys;
-		dimsKnown = true;
+	private static final Object lock = new Object();
+    private static final HashMap<Font, FontMetrics> metrics = new HashMap<Font, FontMetrics>();
+    private static final HashMap<Font, FontMetrics> imetrics = new HashMap<Font, FontMetrics>();
+    // Java bug? FontMetrics ascent and descent are negated when rendered
+    // upside-down, and they are both zero when rendered sideways. Also,
+    // strings are rendered smaller (small gaps between letters) when
+    // upside-down or left-rotated. So we cache two different metrics for
+    // each font: one for upright and right-rotated text; and one for
+    // upside-down and left-rotated text.
+    private static final FontMetrics fontMetricsFor(Graphics g, String text) {
+        Font font = g.getFont();
+        Graphics2D g2 = (Graphics2D)g;
+        HashMap<Font, FontMetrics> map;
+        int mask = AffineTransform.TYPE_QUADRANT_ROTATION
+                   | AffineTransform.TYPE_TRANSLATION
+                   | AffineTransform.TYPE_UNIFORM_SCALE;
+        int t = g2.getTransform().getType();
+        if ((t & ~mask) != 0) {
+            return g.getFontMetrics(); // unusual transformation, hope for the best
+        } else if ((t & AffineTransform.TYPE_QUADRANT_ROTATION) == 0) {
+            map = metrics; // upright
+        } else {
+            double m[] = new double[4];
+            g2.getTransform().getMatrix(m);
+            if (m[0] > 0.5) {
+                map = metrics; // upright
+            } else if (m[0] < -0.5) {
+                map = imetrics; // upside-down
+            } else if (m[1] > 0.5) {
+                map = metrics; // right-rotated
+                g2 = (Graphics2D)g2.create();
+                g2.rotate(-Math.PI/2); // now upright
+            } else {
+                map = imetrics; // left-rotated
+                g2 = (Graphics2D)g2.create();
+                g2.rotate(-Math.PI/2); // now upside-down
+            }
+        }
+        FontMetrics fm;
+        synchronized(lock) {
+            fm = map.get(font);
+            if (fm == null) {
+                fm = g2.getFontMetrics();
+                map.put(font, fm);
+            }
+        }
+        if (g != g2)
+            g2.dispose();
+        return fm;
+    }
+
+    private void computeDimensions(Graphics g) {
+    	FontMetrics fm = fontMetricsFor(g, text);
+    	width = fm.stringWidth(text);
+    	ascent = Math.abs(fm.getAscent());
+    	descent = Math.abs(fm.getDescent());
+    	dimsKnown = true;
 	}
 
 	public void configureTextField(EditableLabelField field) {
@@ -142,8 +167,8 @@ public class EditableLabel implements Cloneable {
 			w = 0;
 		}
 
-		int x0 = x;
-		int y0 = getBaseY() - ascent;
+		float x0 = x;
+		float y0 = getBaseY() - ascent;
 		if (zoom != 1.0) {
 			x0 = (int) Math.round(x0 * zoom);
 			y0 = (int) Math.round(y0 * zoom);
@@ -157,7 +182,7 @@ public class EditableLabel implements Cloneable {
 			x0 = x0 - border;
 			break;
 		case CENTER:
-			x0 = x0 - (w / 2) + 1;
+			x0 = x0 - (w / 2.0f) + 1;
 			break;
 		case RIGHT:
 			x0 = x0 - w + border + 1;
@@ -169,34 +194,13 @@ public class EditableLabel implements Cloneable {
 
 		field.setHorizontalAlignment(horzAlign);
 		field.setForeground(color);
-		field.setBounds(x0, y0, w, h);
+		field.setBounds((int)x0, (int)y0, w, h);
 	}
 
 	public boolean contains(int qx, int qy) {
-		int x0 = getLeftX();
-		int y0 = getBaseY();
-		if (qx >= x0 && qx < x0 + width && qy >= y0 - ascent
-				&& qy < y0 + descent) {
-			int[] xs = charX;
-			int[] ys = charY;
-			if (xs == null || ys == null) {
-				return true;
-			} else {
-				int i = Arrays.binarySearch(xs, qx - x0);
-				if (i < 0)
-					i = -(i + 1);
-				if (i >= xs.length) {
-					return false;
-				} else {
-					int asc = (ys[i] >> 16) & 0xFFFF;
-					int desc = ys[i] & 0xFFFF;
-					int dy = y0 - qy;
-					return dy >= -desc && dy <= asc;
-				}
-			}
-		} else {
-			return false;
-		}
+		float x0 = getLeftX();
+		float y0 = getBaseY();
+		return (qx >= x0 && qx < x0 + width && qy >= y0 - ascent && qy < y0 + descent);
 	}
 
 	@Override
@@ -214,12 +218,12 @@ public class EditableLabel implements Cloneable {
 		}
 	}
 
-	private int getBaseY() {
+	private float getBaseY() {
 		switch (vertAlign) {
 		case TOP:
 			return y + ascent;
 		case MIDDLE:
-			return y + (ascent - descent) / 2;
+			return y + (ascent - descent) / 2.0f;
 		case BASELINE:
 			return y;
 		case BOTTOM:
@@ -233,8 +237,8 @@ public class EditableLabel implements Cloneable {
 	// more complex methods
 	//
 	public Bounds getBounds() {
-		int x0 = getLeftX();
-		int y0 = getBaseY() - ascent;
+		int x0 = (int)getLeftX();
+		int y0 = (int)getBaseY() - ascent;
 		int w = width;
 		int h = ascent + descent;
 		return Bounds.create(x0, y0, w, h);
@@ -252,12 +256,12 @@ public class EditableLabel implements Cloneable {
 		return horzAlign;
 	}
 
-	private int getLeftX() {
+	private float getLeftX() {
 		switch (horzAlign) {
 		case LEFT:
 			return x;
 		case CENTER:
-			return x - width / 2;
+			return x - width / 2.0f;
 		case RIGHT:
 			return x - width;
 		default:
@@ -297,13 +301,11 @@ public class EditableLabel implements Cloneable {
 
 	public void paint(Graphics g) {
 		g.setFont(font);
-		if (!dimsKnown) {
-			computeDimensions(g, font, g.getFontMetrics());
-		}
-		int x0 = getLeftX();
-		int y0 = getBaseY();
 		g.setColor(color);
-		g.drawString(text, x0, y0);
+		computeDimensions(g);
+		float x0 = getLeftX();
+		float y0 = getBaseY();
+		((Graphics2D)g).drawString(text, x0, y0);
 	}
 
 	public void setColor(Color value) {

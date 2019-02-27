@@ -486,7 +486,7 @@ ListSelectionListener,WindowListener {
 
 		/* Add some text */
 		JLabel UnmappedText = new JLabel();
-		UnmappedText.setText("Unmapped List:");
+		UnmappedText.setText("Unmapped Components:");
 		UnmappedText.setHorizontalTextPosition(JLabel.CENTER);
 		UnmappedText.setPreferredSize(new Dimension(
 				BoardPic.getWidth()/3, AppPreferences.getScaled(25)));
@@ -500,7 +500,7 @@ ListSelectionListener,WindowListener {
 		c.gridwidth = 1;
 		panel.add(UnmappedText, c);
 		JLabel MappedText = new JLabel();
-		MappedText.setText("Mapped List:");
+		MappedText.setText("Mapped Components:");
 		MappedText.setHorizontalTextPosition(JLabel.CENTER);
 		MappedText.setPreferredSize(new Dimension(
 				BoardPic.getWidth()/3, AppPreferences.getScaled(25)));

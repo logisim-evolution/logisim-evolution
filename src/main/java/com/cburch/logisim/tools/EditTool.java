@@ -165,7 +165,9 @@ public class EditTool extends Tool {
 		current = select;
 		canvas.getSelection().setSuppressHandles(null);
 		cache.clear();
-		canvas.getCircuit().removeCircuitListener(listener);
+		Circuit circ = canvas.getCircuit();
+		if (circ != null)
+			circ.removeCircuitListener(listener);
 		canvas.getSelection().removeListener(listener);
 	}
 
@@ -279,6 +281,8 @@ public class EditTool extends Tool {
 		}
 
 		Circuit circ = canvas.getCircuit();
+		if (circ == null)
+			return false;
 		Collection<? extends Component> at = circ.getComponents(loc);
 		if (at != null && at.size() > 0)
 			return wiring;
@@ -451,7 +455,9 @@ public class EditTool extends Tool {
 		current = select;
 		lastCanvas = canvas;
 		cache.clear();
-		canvas.getCircuit().addCircuitListener(listener);
+		Circuit circ = canvas.getCircuit();
+		if (circ != null)
+			circ.addCircuitListener(listener);
 		canvas.getSelection().addListener(listener);
 		select.select(canvas);
 	}

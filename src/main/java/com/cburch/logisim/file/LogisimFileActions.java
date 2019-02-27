@@ -59,6 +59,7 @@ import com.cburch.logisim.tools.AddTool;
 import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.tools.LibraryTools;
 import com.cburch.logisim.tools.Tool;
+import com.cburch.logisim.vhdl.base.VhdlContent;
 
 public class LogisimFileActions {
 	private static class AddCircuit extends Action {
@@ -81,6 +82,29 @@ public class LogisimFileActions {
 		@Override
 		public void undo(Project proj) {
 			proj.getLogisimFile().removeCircuit(circuit);
+		}
+	}
+	
+	private static class AddVhdl extends Action {
+		private VhdlContent vhdl;
+
+		AddVhdl(VhdlContent vhdl) {
+			this.vhdl = vhdl;
+		}
+
+		@Override
+		public void doIt(Project proj) {
+			proj.getLogisimFile().addVhdlContent(vhdl);
+		}
+
+		@Override
+		public String getName() {
+			return S.get("addVhdlAction");
+		}
+
+		@Override
+		public void undo(Project proj) {
+			proj.getLogisimFile().removeVhdl(vhdl);
 		}
 	}
 	
@@ -516,7 +540,7 @@ public class LogisimFileActions {
 
 		@Override
 		public void doIt(Project proj) {
-			index = proj.getLogisimFile().getCircuits().indexOf(circuit);
+			index = proj.getLogisimFile().indexOfCircuit(circuit);
 			proj.getLogisimFile().removeCircuit(circuit);
 		}
 
@@ -528,6 +552,31 @@ public class LogisimFileActions {
 		@Override
 		public void undo(Project proj) {
 			proj.getLogisimFile().addCircuit(circuit, index);
+		}
+	}
+
+	private static class RemoveVhdl extends Action {
+		private VhdlContent vhdl;
+		private int index;
+
+		RemoveVhdl(VhdlContent vhdl) {
+			this.vhdl = vhdl;
+		}
+
+		@Override
+		public void doIt(Project proj) {
+			index = proj.getLogisimFile().indexOfVhdl(vhdl);
+			proj.getLogisimFile().removeVhdl(vhdl);
+		}
+
+		@Override
+		public String getName() {
+			return S.get("removeVhdlAction");
+		}
+
+		@Override
+		public void undo(Project proj) {
+			proj.getLogisimFile().addVhdlContent(vhdl, index);
 		}
 	}
 
@@ -543,6 +592,11 @@ public class LogisimFileActions {
 			this.value = value;
 		}
 	}
+
+	public static Action addVhdl(VhdlContent vhdl) {
+		return new AddVhdl(vhdl);
+	}
+
 
 	private static class RevertDefaults extends Action {
 		private Options oldOpts;
@@ -699,6 +753,10 @@ public class LogisimFileActions {
 
 	public static Action removeCircuit(Circuit circuit) {
 		return new RemoveCircuit(circuit);
+	}
+	
+	public static Action removeVhdl(VhdlContent vhdl) {
+		return new RemoveVhdl(vhdl);
 	}
 
 	public static Action revertDefaults() {

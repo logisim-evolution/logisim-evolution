@@ -55,6 +55,7 @@ import com.cburch.logisim.util.JFileChoosers;
 import com.cburch.logisim.util.MacCompatibility;
 import com.cburch.logisim.util.StringUtil;
 import com.cburch.logisim.util.ZipClassLoader;
+import com.cburch.logisim.vhdl.file.HdlFile;
 
 public class Loader implements LibraryLoader {
 	private static class JarFileFilter extends FileFilter {
@@ -69,6 +70,18 @@ public class Loader implements LibraryLoader {
 		}
 	}
 
+	private static class VhdlFileFilter extends FileFilter {
+		@Override
+		public boolean accept(File f) {
+			return f.isDirectory() || f.getName().endsWith(".vhd") || f.getName().endsWith(".vhdl");
+		}
+
+		@Override
+		public String getDescription() {
+			return S.get("vhdlFileFilter");
+		}
+	}
+	
 	private static class LogisimFileFilter extends FileFilter {
 		@Override
 		public boolean accept(File f) {
@@ -123,6 +136,7 @@ public class Loader implements LibraryLoader {
 
 	public static final FileFilter JAR_FILTER = new JarFileFilter();
 	public static final FileFilter TCL_FILTER = new TclFileFilter();
+	public static final FileFilter VHDL_FILTER = new VhdlFileFilter();
 
 	// fixed
 	private Component parent;
@@ -297,7 +311,8 @@ public class Loader implements LibraryLoader {
 		} finally {
 			filesOpening.pop();
 		}
-		ret.setName(toProjectName(actual));
+		if (ret != null)
+			ret.setName(toProjectName(actual));
 		return ret;
 	}
 
@@ -317,6 +332,8 @@ public class Loader implements LibraryLoader {
 			LogisimFile ret = loadLogisimFile(file);
 			if (ret != null)
 				setMainFile(file);
+			else
+                throw new LoadFailedException("File could not be opened");
 			showMessages(ret);
 			return ret;
 		} catch (LoaderException e) {
@@ -481,5 +498,26 @@ public class Loader implements LibraryLoader {
 			return ret;
 		}
 	}
-
+	
+	public String vhdlImportChooser(Component window) {
+        JFileChooser chooser = createChooser();
+        chooser.setFileFilter(Loader.VHDL_FILTER);
+        chooser.setDialogTitle(com.cburch.logisim.vhdl.Strings.S.get("hdlOpenDialog"));
+        int returnVal = chooser.showOpenDialog(window);
+        if (returnVal != JFileChooser.APPROVE_OPTION)
+            return null;
+        File selected = chooser.getSelectedFile();
+        if (selected == null)
+            return null;
+        try {
+            String vhdl = HdlFile.load(selected);
+            return vhdl;
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(window,
+                    e.getMessage(),
+                    S.get("hexOpenErrorTitle"),
+                    JOptionPane.ERROR_MESSAGE);
+            return null;
+        }
+    }
 }

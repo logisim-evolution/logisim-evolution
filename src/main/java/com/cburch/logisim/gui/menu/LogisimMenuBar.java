@@ -81,6 +81,11 @@ public class LogisimMenuBar extends JMenuBar {
 	public static final LogisimMenuItem ADD_CONTROL = new LogisimMenuItem(
 			"AddControl");
 
+	public static final LogisimMenuItem ADD_VHDL = new LogisimMenuItem(
+			"AddVhdl");
+	public static final LogisimMenuItem IMPORT_VHDL = new LogisimMenuItem(
+			"ImportVhdl");
+
 	public static final LogisimMenuItem REMOVE_CONTROL = new LogisimMenuItem(
 			"RemoveControl");
 	public static final LogisimMenuItem ADD_CIRCUIT = new LogisimMenuItem(

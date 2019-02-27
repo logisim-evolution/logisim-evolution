@@ -31,7 +31,6 @@
 package com.cburch.logisim.circuit.appear;
 
 import java.awt.Color;
-import java.awt.Graphics;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -56,14 +55,14 @@ public class DefaultEvolutionAppearance {
 	
 	private DefaultEvolutionAppearance() {}
 	
-    public static List<CanvasObject> build(Collection<Instance> pins, String CircuitName, Graphics g, boolean FixedSize) {
+    public static List<CanvasObject> build(Collection<Instance> pins, String CircuitName, boolean FixedSize) {
 		Map<Direction, List<Instance>> edge;
 		edge = new HashMap<Direction, List<Instance>>();
 		edge.put(Direction.EAST, new ArrayList<Instance>());
 		edge.put(Direction.WEST, new ArrayList<Instance>());
 		int MaxLeftLabelLength = 0;
 		int MaxRightLabelLength = 0;
-		int TitleWidth = CircuitName.length()*DrawAttr.FixedFontCharWidth;
+		int TitleWidth = (CircuitName == null) ? 14*DrawAttr.FixedFontCharWidth : CircuitName.length()*DrawAttr.FixedFontCharWidth;
 
 		if (!pins.isEmpty()) {
 			for (Instance pin : pins) {
@@ -129,12 +128,12 @@ public class DefaultEvolutionAppearance {
 		Rectangle rect = new Rectangle(rx+10,ry+height-Thight,width-20,Thight);
 		rect.setValue(DrawAttr.STROKE_WIDTH, Integer.valueOf(1));
 		rect.setValue(DrawAttr.PAINT_TYPE, DrawAttr.PAINT_FILL);
-		rect.setValue(DrawAttr.FILL_COLOR, Color.black);
+		rect.setValue(DrawAttr.FILL_COLOR, Color.BLACK);
 		ret.add(rect);
 		rect = new Rectangle(rx+10, ry, width-20, height);
 		rect.setValue(DrawAttr.STROKE_WIDTH, Integer.valueOf(2));
 		ret.add(rect);
-		String Label = CircuitName;
+		String Label = CircuitName == null ? "VHDL Component" : CircuitName;
 		if (FixedSize) {
 			if (Label.length()>23) {
 				Label = Label.substring(0, 20);
@@ -143,7 +142,7 @@ public class DefaultEvolutionAppearance {
 		}
 		Text label = new Text(rx+(width>>1),ry+(height-DrawAttr.FixedFontDescent-5),Label);
 		label.getLabel().setHorizontalAlignment(EditableLabel.CENTER);
-		label.getLabel().setColor(Color.white);
+		label.getLabel().setColor(Color.WHITE);
 		label.getLabel().setFont(DrawAttr.DEFAULT_NAME_FONT);
 		ret.add(label);
 		ret.add(new AppearanceAnchor(Location.create(rx + ax, ry + ay)));

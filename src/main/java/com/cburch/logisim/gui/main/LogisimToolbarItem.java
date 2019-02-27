@@ -46,7 +46,7 @@ import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.Icons;
 import com.cburch.logisim.util.StringGetter;
 
-class LogisimToolbarItem implements ToolbarItem {
+public class LogisimToolbarItem implements ToolbarItem {
 	private MenuListener menu;
 	private Icon icon;
 	private LogisimMenuItem action;

@@ -20,7 +20,7 @@ public class DefaultClassicAppearance {
 
 	private static final int OFFS = 50;
 	
-	private DefaultClassicAppearance() {}
+	public DefaultClassicAppearance() {}
 	
     public static List<CanvasObject> build(Collection<Instance> pins) {
         Map<Direction,List<Instance>> edge;

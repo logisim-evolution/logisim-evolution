@@ -190,7 +190,7 @@ public class AttrTable extends JPanel implements LocaleListener {
 					dlog.setVisible(true);
 					Object retval = dlog.getValue();
 					try {
-						row.setValue(retval);
+						row.setValue(parent,retval);
 					} catch (AttrTableSetException e) {
 						JOptionPane.showMessageDialog(parent, e.getMessage(),
 								S.get("attributeChangeInvalidTitle"),
@@ -209,7 +209,7 @@ public class AttrTable extends JPanel implements LocaleListener {
 					dlog.setVisible(true);
 					Object retval = dlog.getValue();
 					try {
-						row.setValue(retval);
+						row.setValue(parent,retval);
 					} catch (AttrTableSetException e) {
 						JOptionPane.showMessageDialog(parent, e.getMessage(),
 								S.get("attributeChangeInvalidTitle"),
@@ -450,7 +450,7 @@ public class AttrTable extends JPanel implements LocaleListener {
 		public void setValueAt(Object value, int rowIndex, int columnIndex) {
 			if (columnIndex > 0) {
 				try {
-					attrModel.getRow(rowIndex).setValue(value);
+					attrModel.getRow(rowIndex).setValue(parent,value);
 				} catch (AttrTableSetException e) {
 					JOptionPane.showMessageDialog(parent, e.getMessage(),
 							S.get("attributeChangeInvalidTitle"),

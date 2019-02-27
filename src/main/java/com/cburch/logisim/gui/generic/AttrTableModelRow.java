@@ -42,5 +42,5 @@ public interface AttrTableModelRow {
 
 	public boolean isValueEditable();
 
-	public void setValue(Object value) throws AttrTableSetException;
+	public void setValue(Window parent, Object value) throws AttrTableSetException;
 }

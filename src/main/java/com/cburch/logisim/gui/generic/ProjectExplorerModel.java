@@ -30,17 +30,22 @@
 
 package com.cburch.logisim.gui.generic;
 
+import java.util.Enumeration;
+
+import javax.swing.SwingUtilities;
 /**
  * Code taken from Cornell's version of Logisim:
  * http://www.cs.cornell.edu/courses/cs3410/2015sp/
  */
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeNode;
 
 import com.cburch.logisim.file.LogisimFile;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.proj.ProjectEvent;
 import com.cburch.logisim.proj.ProjectListener;
+import com.cburch.logisim.tools.Tool;
 
 class ProjectExplorerModel extends DefaultTreeModel implements ProjectListener {
 
@@ -60,7 +65,7 @@ class ProjectExplorerModel extends DefaultTreeModel implements ProjectListener {
 
 		abstract void decommission();
 
-		void fireNodeChanged() {
+		public void fireNodeChanged() {
 			Node<?> parent = (Node<?>) this.getParent();
 
 			if (parent == null) {
@@ -113,22 +118,42 @@ class ProjectExplorerModel extends DefaultTreeModel implements ProjectListener {
 		proj.addProjectListener(this);
 	}
 
+    Node<Tool> findTool(Tool tool) {
+        final Node<?> root = (Node<?>) getRoot();
+        if (root == null || tool == null)
+            return null;
+        Enumeration<TreeNode> en = root.depthFirstEnumeration();
+        while (en.hasMoreElements()) {
+            Node<?> node = (Node<?>)en.nextElement();
+            if (node.getValue() == tool)
+                return (Node<Tool>)node;
+        }
+        return null;
+    }
+
 	void fireStructureChanged() {
-		Node<?> root = (Node<?>) getRoot();
-		if (root != null) {
-			this.fireTreeStructureChanged(this, root.getUserObjectPath(), null,
-					null);
-		} else {
-			this.fireTreeStructureChanged(this, null, null, null);
-		}
+		final ProjectExplorerModel model = this;
+        final Node<?> root = (Node<?>) getRoot();
+        SwingUtilities.invokeLater(new Runnable() {
+        	@Override
+        	public void run() {
+        		if (root != null) {
+        			model.fireTreeNodesChanged(model, root.getUserObjectPath(), null, null);
+        			model.fireTreeStructureChanged(model, root.getUserObjectPath(), null, null);
+        		} else {
+        			model.fireTreeNodesChanged(model, null, null, null);
+        			model.fireTreeStructureChanged(model, null, null, null);
+        		}
+        	}
+        });
 	}
 
 	// ProjectListener methods
 	public void projectChanged(ProjectEvent event) {
 		int act = event.getAction();
-
 		if (act == ProjectEvent.ACTION_SET_FILE) {
 			setLogisimFile(proj.getLogisimFile());
+			fireStructureChanged();
 		}
 	}
 
@@ -159,6 +184,11 @@ class ProjectExplorerModel extends DefaultTreeModel implements ProjectListener {
 			value.addProjectListener(this);
 			setLogisimFile(value.getLogisimFile());
 		}
+		fireStructureChanged();
 	}
+
+    public void updateStructure() {
+        fireStructureChanged();
+    }
 
 }

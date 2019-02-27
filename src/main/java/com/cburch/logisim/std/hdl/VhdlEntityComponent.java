@@ -1,36 +1,6 @@
-/*******************************************************************************
- * This file is part of logisim-evolution.
- *
- *   logisim-evolution is free software: you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation, either version 3 of the License, or
- *   (at your option) any later version.
- *
- *   logisim-evolution is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *   GNU General Public License for more details.
- *
- *   You should have received a copy of the GNU General Public License
- *   along with logisim-evolution.  If not, see <http://www.gnu.org/licenses/>.
- *
- *   Original code by Carl Burch (http://www.cburch.com), 2011.
- *   Subsequent modifications by :
- *     + Haute École Spécialisée Bernoise
- *       http://www.bfh.ch
- *     + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *       http://hepia.hesge.ch/
- *     + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *       http://www.heig-vd.ch/
- *   The project is currently maintained by :
- *     + REDS Institute - HEIG-VD
- *       Yverdon-les-Bains, Switzerland
- *       http://reds.heig-vd.ch
- *******************************************************************************/
-
 package com.cburch.logisim.std.hdl;
 
-import static com.cburch.logisim.std.Strings.S;
+import static com.cburch.logisim.vhdl.Strings.S;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -61,37 +31,39 @@ import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.StringUtil;
+import com.cburch.logisim.vhdl.base.VhdlSimConstants;
+import com.cburch.logisim.vhdl.sim.VhdlSimulatorTop;
 
-public class VhdlEntity extends InstanceFactory {
+public class VhdlEntityComponent  extends InstanceFactory {
 
-	static class ContentAttribute extends Attribute<VhdlContent> {
+	static class ContentAttribute extends Attribute<VhdlContentComponent> {
 
 		public ContentAttribute() {
 			super("content", S.getter("vhdlContentAttr"));
 		}
 
 		@Override
-		public java.awt.Component getCellEditor(Window source, VhdlContent value) {
+		public java.awt.Component getCellEditor(Window source, VhdlContentComponent value) {
 			Project proj = source instanceof Frame ? ((Frame) source)
 					.getProject() : null;
 			return VhdlEntityAttributes.getContentEditor(source, value, proj);
 		}
 
 		@Override
-		public VhdlContent parse(String value) {
-			VhdlContent content = VhdlContent.create();
+		public VhdlContentComponent parse(String value) {
+			VhdlContentComponent content = VhdlContentComponent.create();
 			if (!content.compare(value))
 				content.setContent(value);
 			return content;
 		}
 
 		@Override
-		public String toDisplayString(VhdlContent value) {
+		public String toDisplayString(VhdlContentComponent value) {
 			return S.get("vhdlContentValue");
 		}
 
 		@Override
-		public String toStandardString(VhdlContent value) {
+		public String toStandardString(VhdlContentComponent value) {
 			return value.getContent();
 		}
 	}
@@ -113,9 +85,9 @@ public class VhdlEntity extends InstanceFactory {
 		}
 	}
 
-	final static Logger logger = LoggerFactory.getLogger(VhdlEntity.class);
+	final static Logger logger = LoggerFactory.getLogger(VhdlEntityComponent.class);
 
-	static final Attribute<VhdlContent> CONTENT_ATTR = new ContentAttribute();
+	public static final Attribute<VhdlContentComponent> CONTENT_ATTR = new ContentAttribute();
 	static final int WIDTH = 140;
 	static final int HEIGHT = 40;
 	static final int PORT_GAP = 10;
@@ -124,16 +96,31 @@ public class VhdlEntity extends InstanceFactory {
 
 	private WeakHashMap<Instance, VhdlEntityListener> contentListeners;
 
-	public VhdlEntity() {
+	public VhdlEntityComponent() {
 		super("VHDL Entity", S.getter("vhdlComponent"));
 
 		this.contentListeners = new WeakHashMap<Instance, VhdlEntityListener>();
 		this.setIconName("vhdl.gif");
 	}
+	
+	public void SetSimName(AttributeSet attrs , String SName) {
+		if (attrs == null)
+			return;
+		VhdlEntityAttributes atrs = (VhdlEntityAttributes) attrs;
+		if (atrs.containsAttribute(VhdlSimConstants.SIM_NAME_ATTR))
+			atrs.setValue(VhdlSimConstants.SIM_NAME_ATTR, SName);
+	}
+	
+	public String GetSimName(AttributeSet attrs) {
+		if (attrs == null)
+			return null;
+		VhdlEntityAttributes atrs = (VhdlEntityAttributes) attrs;
+		return atrs.getValue(VhdlSimConstants.SIM_NAME_ATTR);
+	}
 
 	@Override
 	protected void configureNewInstance(Instance instance) {
-		VhdlContent content = instance.getAttributeValue(CONTENT_ATTR);
+		VhdlContentComponent content = instance.getAttributeValue(CONTENT_ATTR);
 		VhdlEntityListener listener = new VhdlEntityListener(instance);
 
 		contentListeners.put(instance, listener);
@@ -166,7 +153,7 @@ public class VhdlEntity extends InstanceFactory {
 
 	@Override
 	public Bounds getOffsetBounds(AttributeSet attrs) {
-		VhdlContent content = attrs.getValue(CONTENT_ATTR);
+		VhdlContentComponent content = attrs.getValue(CONTENT_ATTR);
 		int nbInputs = content.getInputsNumber();
 		int nbOutputs = content.getOutputsNumber();
 
@@ -193,7 +180,7 @@ public class VhdlEntity extends InstanceFactory {
 	@Override
 	public void paintInstance(InstancePainter painter) {
 		Graphics g = painter.getGraphics();
-		VhdlContent content = painter.getAttributeValue(CONTENT_ATTR);
+		VhdlContentComponent content = painter.getAttributeValue(CONTENT_ATTR);
 		FontMetrics metric = g.getFontMetrics();
 
 		Bounds bds = painter.getBounds();
@@ -248,17 +235,17 @@ public class VhdlEntity extends InstanceFactory {
 	 * done in Simulation.java.
 	 */
 	public void propagate(InstanceState state) {
-
+		
 		if (state.getProject().getVhdlSimulator().isEnabled()
 				&& state.getProject().getVhdlSimulator().isRunning()) {
 
-			VhdlSimulator vhdlSimulator = state.getProject().getVhdlSimulator();
+			VhdlSimulatorTop vhdlSimulator =  state.getProject().getVhdlSimulator();
 
 			for (Port p : state.getInstance().getPorts()) {
 				int index = state.getPortIndex(p);
 				Value val = state.getPortValue(index);
 
-				String vhdlEntityName = getHDLTopName(state.getAttributeSet());
+				String vhdlEntityName = GetSimName(state.getAttributeSet());
 
 				String message = p.getType() + ":" + vhdlEntityName + "_"
 						+ p.getToolTip() + ":" + val.toBinaryString() + ":"
@@ -342,13 +329,13 @@ public class VhdlEntity extends InstanceFactory {
 
 		PrintWriter writer;
 		try {
-			writer = new PrintWriter(VhdlSimulator.SIM_SRC_PATH
-					+ getHDLTopName(attrs) + ".vhdl", "UTF-8");
+			writer = new PrintWriter(VhdlSimConstants.SIM_SRC_PATH
+					+ GetSimName(attrs) + ".vhdl", "UTF-8");
 
 			String content = attrs.getValue(CONTENT_ATTR).getContent();
 
 			content = content.replaceAll("(?i)" + getHDLName(attrs),
-					getHDLTopName(attrs));
+					GetSimName(attrs));
 
 			writer.print(content);
 			writer.close();
@@ -364,7 +351,7 @@ public class VhdlEntity extends InstanceFactory {
 	}
 
 	void updatePorts(Instance instance) {
-		VhdlContent content = instance.getAttributeValue(CONTENT_ATTR);
+		VhdlContentComponent content = instance.getAttributeValue(CONTENT_ATTR);
 		instance.setPorts(content.getPorts());
 	}
 }

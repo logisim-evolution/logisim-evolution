@@ -30,7 +30,7 @@
 
 package com.cburch.logisim.std.hdl;
 
-import static com.cburch.logisim.std.Strings.S;
+import static com.cburch.logisim.vhdl.Strings.S;
 
 import java.util.ArrayList;
 import java.util.List;

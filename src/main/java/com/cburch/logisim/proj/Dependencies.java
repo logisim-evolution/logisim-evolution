@@ -41,6 +41,8 @@ import com.cburch.logisim.file.LibraryListener;
 import com.cburch.logisim.file.LogisimFile;
 import com.cburch.logisim.tools.AddTool;
 import com.cburch.logisim.util.Dag;
+import com.cburch.logisim.vhdl.base.VhdlContent;
+import com.cburch.logisim.vhdl.base.VhdlEntity;
 
 public class Dependencies {
 	private class MyListener implements LibraryListener, CircuitListener {
@@ -53,6 +55,9 @@ public class Dependencies {
 					SubcircuitFactory factory = (SubcircuitFactory) comp
 							.getFactory();
 					depends.addEdge(e.getCircuit(), factory.getSubcircuit());
+				} else if (comp.getFactory() instanceof VhdlEntity) {
+                    VhdlEntity factory = (VhdlEntity) comp .getFactory();
+                    depends.addEdge(e.getCircuit(), factory.getContent());
 				}
 				break;
 			case CircuitEvent.ACTION_REMOVE:
@@ -70,6 +75,18 @@ public class Dependencies {
 					if (!found)
 						depends.removeEdge(e.getCircuit(),
 								factory.getSubcircuit());
+				} else if (comp.getFactory() instanceof VhdlEntity) {
+					VhdlEntity factory = (VhdlEntity)comp.getFactory();
+					boolean found = false;
+					for (Component o : e.getCircuit().getNonWires()) {
+						if (o.getFactory() == factory) {
+							found = true;
+							break;
+						}
+					}
+					if (!found)
+						depends.removeEdge(e.getCircuit(),
+								factory.getContent());
 				}
 				break;
 			case CircuitEvent.ACTION_CLEAR:
@@ -99,6 +116,9 @@ public class Dependencies {
 						Circuit circ = circFact.getSubcircuit();
 						depends.removeNode(circ);
 						circ.removeCircuitListener(this);
+					} else if (factory instanceof VhdlEntity) {
+						VhdlEntity circFact = (VhdlEntity)factory;
+						depends.removeNode(circFact.getContent());
 					}
 				}
 				break;
@@ -128,6 +148,10 @@ public class Dependencies {
 		return !depends.hasPredecessors(circ);
 	}
 
+	public boolean canRemove(VhdlContent vhdl) {
+		return !depends.hasPredecessors(vhdl);
+	}
+
 	private void processCircuit(Circuit circ) {
 		circ.addCircuitListener(myListener);
 		for (Component comp : circ.getNonWires()) {
@@ -135,6 +159,9 @@ public class Dependencies {
 				SubcircuitFactory factory = (SubcircuitFactory) comp
 						.getFactory();
 				depends.addEdge(circ, factory.getSubcircuit());
+			} else if (comp.getFactory() instanceof VhdlEntity) {
+				VhdlEntity factory = (VhdlEntity) comp .getFactory();
+				depends.addEdge(circ, factory.getContent());
 			}
 		}
 	}

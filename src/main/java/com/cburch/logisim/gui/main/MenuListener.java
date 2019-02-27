@@ -163,6 +163,10 @@ class MenuListener {
 			Circuit cur = proj == null ? null : proj.getCurrentCircuit();
 			if (src == LogisimMenuBar.ADD_CIRCUIT) {
 				ProjectCircuitActions.doAddCircuit(proj);
+			} else if (src == LogisimMenuBar.ADD_VHDL) {
+				ProjectCircuitActions.doAddVhdl(proj);
+			} else if (src == LogisimMenuBar.IMPORT_VHDL) {
+				ProjectCircuitActions.doImportVhdl(proj);
 			} else if (src == LogisimMenuBar.MOVE_CIRCUIT_UP) {
 				ProjectCircuitActions.doMoveCircuit(proj, cur, -1);
 			} else if (src == LogisimMenuBar.MOVE_CIRCUIT_DOWN) {
@@ -192,7 +196,7 @@ class MenuListener {
 			Project proj = frame.getProject();
 			LogisimFile file = proj.getLogisimFile();
 			Circuit cur = proj.getCurrentCircuit();
-			int curIndex = file.getCircuits().indexOf(cur);
+			int curIndex = file.indexOfCircuit(cur);
 			boolean isProjectCircuit = curIndex >= 0;
 			String editorView = frame.getEditorView();
 			String explorerView = frame.getExplorerView();
@@ -217,14 +221,16 @@ class MenuListener {
 			}
 
 			menubar.setEnabled(LogisimMenuBar.ADD_CIRCUIT, true);
+			menubar.setEnabled(LogisimMenuBar.ADD_VHDL, true);
+			menubar.setEnabled(LogisimMenuBar.IMPORT_VHDL, true);
 			menubar.setEnabled(LogisimMenuBar.MOVE_CIRCUIT_UP, canMoveUp);
 			menubar.setEnabled(LogisimMenuBar.MOVE_CIRCUIT_DOWN, canMoveDown);
 			menubar.setEnabled(LogisimMenuBar.SET_MAIN_CIRCUIT, canSetMain);
 			menubar.setEnabled(LogisimMenuBar.REMOVE_CIRCUIT, canRemove);
 			menubar.setEnabled(LogisimMenuBar.VIEW_TOOLBOX, !viewToolbox);
 			menubar.setEnabled(LogisimMenuBar.VIEW_SIMULATION, !viewSimulation);
-			menubar.setEnabled(LogisimMenuBar.EDIT_LAYOUT, !viewLayout);
-			menubar.setEnabled(LogisimMenuBar.EDIT_APPEARANCE, !viewAppearance);
+			menubar.setEnabled(LogisimMenuBar.EDIT_LAYOUT, viewAppearance);
+			menubar.setEnabled(LogisimMenuBar.EDIT_APPEARANCE, viewLayout);
 			menubar.setEnabled(LogisimMenuBar.REVERT_APPEARANCE, canRevert);
 			menubar.setEnabled(LogisimMenuBar.ANALYZE_CIRCUIT, true);
 			menubar.setEnabled(LogisimMenuBar.CIRCUIT_STATS, true);
@@ -260,13 +266,13 @@ class MenuListener {
 		public void projectChanged(ProjectEvent event) {
 			int action = event.getAction();
 			if (action == ProjectEvent.ACTION_SET_CURRENT) {
-				Circuit old = (Circuit) event.getOldData();
-				if (old != null) {
-					old.getAppearance().removeCanvasModelListener(this);
+				if (event.getOldData() instanceof Circuit) {
+                    Circuit old = (Circuit) event.getOldData();
+                    old.getAppearance().removeCanvasModelListener(this);
 				}
-				Circuit circ = (Circuit) event.getData();
-				if (circ != null) {
-					circ.getAppearance().addCanvasModelListener(this);
+				if (event.getData() instanceof Circuit) {
+                    Circuit circ = (Circuit) event.getData();
+                    circ.getAppearance().addCanvasModelListener(this);
 				}
 				computeEnabled();
 			} else if (action == ProjectEvent.ACTION_SET_FILE) {
@@ -294,6 +300,8 @@ class MenuListener {
 			}
 
 			menubar.addActionListener(LogisimMenuBar.ADD_CIRCUIT, this);
+			menubar.addActionListener(LogisimMenuBar.ADD_VHDL, this);
+			menubar.addActionListener(LogisimMenuBar.IMPORT_VHDL, this);
 			menubar.addActionListener(LogisimMenuBar.MOVE_CIRCUIT_UP, this);
 			menubar.addActionListener(LogisimMenuBar.MOVE_CIRCUIT_DOWN, this);
 			menubar.addActionListener(LogisimMenuBar.SET_MAIN_CIRCUIT, this);

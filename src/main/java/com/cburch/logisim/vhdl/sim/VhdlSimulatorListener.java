@@ -28,15 +28,15 @@
  *       http://reds.heig-vd.ch
  *******************************************************************************/
 
-package com.cburch.logisim.std.hdl;
+package com.cburch.logisim.vhdl.sim;
 
 /**
- * Listener interface for all classes who wants to be advised on current VHDL
- * simulator status changes.
- * 
- * @author christian.mueller@heig-vd.ch
- * @since 2.12.0.t
- */
+* Listener interface for all classes who wants to be advised on current VHDL
+* simulator status changes.
+* 
+* @author christian.mueller@heig-vd.ch
+* @since 2.12.0.t
+*/
 public interface VhdlSimulatorListener {
 	public void stateChanged();
 }

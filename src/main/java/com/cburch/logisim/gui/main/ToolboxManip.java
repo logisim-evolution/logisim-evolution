@@ -57,8 +57,12 @@ import com.cburch.logisim.proj.ProjectEvent;
 import com.cburch.logisim.proj.ProjectListener;
 import com.cburch.logisim.std.base.Base;
 import com.cburch.logisim.tools.AddTool;
+import com.cburch.logisim.tools.EditTool;
 import com.cburch.logisim.tools.Library;
+import com.cburch.logisim.tools.PokeTool;
 import com.cburch.logisim.tools.Tool;
+import com.cburch.logisim.vhdl.base.VhdlContent;
+import com.cburch.logisim.vhdl.base.VhdlEntity;
 
 class ToolboxManip implements ProjectExplorerListener {
 	private class MyListener implements ProjectListener, LibraryListener,
@@ -178,6 +182,7 @@ class ToolboxManip implements ProjectExplorerListener {
 	public void doubleClicked(ProjectExplorerEvent event) {
 		Object clicked = event.getTarget();
 		if (clicked instanceof ProjectExplorerToolNode) {
+			((ProjectExplorerToolNode)clicked).fireNodeChanged();
 			Tool baseTool = ((ProjectExplorerToolNode) clicked).getValue();
 			if (baseTool instanceof AddTool) {
 				AddTool tool = (AddTool) baseTool;
@@ -186,13 +191,10 @@ class ToolboxManip implements ProjectExplorerListener {
 					SubcircuitFactory circFact = (SubcircuitFactory) source;
 					proj.setCurrentCircuit(circFact.getSubcircuit());
 					proj.getFrame().setEditorView(Frame.EDIT_LAYOUT);
-					if (lastSelected != null){
-						proj.setTool(lastSelected);
-					} else {
-						Library base = proj.getLogisimFile().getLibrary("Base");
-						if (base != null)
-							proj.setTool(base.getTool("Edit Tool"));
-					}
+					setDefaultTool(lastSelected,proj);
+				} else if (source instanceof VhdlEntity) {
+                    VhdlEntity vhdl = (VhdlEntity) source;
+                    proj.setCurrentHdlModel(vhdl.getContent());
 				}
 			}
 		}
@@ -208,6 +210,9 @@ class ToolboxManip implements ProjectExplorerListener {
 				if (source instanceof SubcircuitFactory) {
 					Circuit circ = ((SubcircuitFactory) source).getSubcircuit();
 					return Popups.forCircuit(proj, tool, circ);
+				} else if (source instanceof VhdlEntity) {
+					VhdlContent vhdl = ((VhdlEntity) source).getContent();
+					return Popups.forVhdl(proj, tool, vhdl);
 				} else {
 					return null;
 				}
@@ -237,19 +242,29 @@ class ToolboxManip implements ProjectExplorerListener {
 		proj.doAction(LogisimFileActions.moveCircuit(dragged, targetIndex));
 	}
 	
-	private static void setSelectTool( Project proj ) {
-		for (Library sub : proj.getLogisimFile().getLibraries()) {
-			if (sub instanceof Base) {
-				Tool tool = ((Base)sub).getTool("Edit Tool");
-				if (tool != null)
-					proj.setTool(tool);
+	 private static void setDefaultTool(Tool lastSelected, Project proj) {
+         if (lastSelected != null) {
+             proj.setTool(lastSelected);
+         } else {
+             for (Library sub : proj.getLogisimFile().getLibraries()) {
+                 if (sub instanceof Base) {
+                     Tool tool = ((Base)sub).getTool("Edit Tool");
+                     if (tool != null) {
+                         proj.setTool(tool);
+                         break;
+                     }
+                 }
 			}
 		}
 	}
 
 	public void selectionChanged(ProjectExplorerEvent event) {
+		if (proj.getTool() instanceof PokeTool || proj.getTool() instanceof EditTool) {
+            lastSelected = proj.getTool();
+        }
 		Object selected = event.getTarget();
 		if (selected instanceof ProjectExplorerToolNode) {
+			 ((ProjectExplorerToolNode)selected).fireNodeChanged();
 			Tool tool = ((ProjectExplorerToolNode) selected).getValue();
 			if (tool instanceof AddTool) {
 				AddTool addTool = (AddTool) tool;
@@ -260,15 +275,11 @@ class ToolboxManip implements ProjectExplorerListener {
 					if (proj.getCurrentCircuit() == circ) {
 						AttrTableModel m = new AttrTableCircuitModel(proj, circ);
 						proj.getFrame().setAttrTableModel(m);
-						setSelectTool(proj);
+						setDefaultTool(lastSelected,proj);
 						return;
 					}
 				}
 			}
-
-			// This was causing the selection to lag behind double-clicks,
-			// commented-out
-			// lastSelected = proj.getTool();
 			proj.setTool(tool);
 			proj.getFrame().viewAttributes(tool);
 		}
