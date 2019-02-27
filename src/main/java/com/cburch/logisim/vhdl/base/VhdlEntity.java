@@ -68,8 +68,9 @@ public class VhdlEntity  extends InstanceFactory implements HdlModelListener {
 		if (attrs == null)
 			return;
 		VhdlEntityAttributes atrs = (VhdlEntityAttributes) attrs;
+		String Label = (attrs.getValue(StdAttr.LABEL) != "") ? getHDLTopName(attrs) : SName;
 		if (atrs.containsAttribute(VhdlSimConstants.SIM_NAME_ATTR))
-			atrs.setValue(VhdlSimConstants.SIM_NAME_ATTR, SName);
+			atrs.setValue(VhdlSimConstants.SIM_NAME_ATTR, Label);
 	}
 	
 	public String GetSimName(AttributeSet attrs) {

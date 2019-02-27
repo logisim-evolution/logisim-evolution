@@ -129,7 +129,8 @@ public class Simulator {
 								propagateRequested = false;
 								try {
 									exceptionEncountered = false;
-									propagator.propagate();
+									if (propagator != null)
+										propagator.propagate();
 								} catch (UnsupportedOperationException thr) {
 									thr.printStackTrace();
 									exceptionEncountered = true;
@@ -159,7 +160,8 @@ public class Simulator {
 							exceptionEncountered = false;
 							try {
 								stepPoints.clear();
-								propagator.step(stepPoints);
+								if (propagator != null)
+									propagator.step(stepPoints);
 							} catch (Exception thr) {
 								thr.printStackTrace();
 								exceptionEncountered = true;
