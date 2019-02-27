@@ -42,6 +42,7 @@ import com.cburch.logisim.data.AbstractAttributeSet;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.proj.Project;
+import com.cburch.logisim.vhdl.base.VhdlSimConstants;
 
 public class VhdlEntityAttributes extends AbstractAttributeSet {
 
@@ -61,7 +62,8 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
 	}
 
 	private static List<Attribute<?>> attributes = Arrays.asList(
-			VhdlEntityComponent.CONTENT_ATTR, StdAttr.LABEL, StdAttr.LABEL_FONT, StdAttr.LABEL_VISIBILITY);
+			VhdlEntityComponent.CONTENT_ATTR, StdAttr.LABEL, StdAttr.LABEL_FONT, 
+			StdAttr.LABEL_VISIBILITY,VhdlSimConstants.SIM_NAME_ATTR);
 
 	private final static WeakHashMap<HdlContent, HdlContentEditor> windowRegistry = new WeakHashMap<HdlContent, HdlContentEditor>();
 
@@ -69,6 +71,7 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
 	private String label = "";
 	private Font labelFont = StdAttr.DEFAULT_LABEL_FONT;
 	private Boolean labelVisable = false;
+	private String SimName = "";
 
 	VhdlEntityAttributes() {
 		content = VhdlContentComponent.create();
@@ -100,6 +103,9 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
 		}
 		if (attr == StdAttr.LABEL_VISIBILITY) {
 			return (V) labelVisable;
+		}
+		if (attr == VhdlSimConstants.SIM_NAME_ATTR) {
+			return (V) SimName;
 		}
 		return null;
 	}
@@ -135,6 +141,21 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
 			labelVisable=newvis;
 			fireAttributeValueChanged(attr, value,null);
 		}
+		if (attr == VhdlSimConstants.SIM_NAME_ATTR) {
+			String Name = (String) value;
+			if (value.equals(SimName))
+				return;
+			SimName = Name;
+			fireAttributeValueChanged(attr, value,null);
+		}
+	}
+	
+	@Override
+	public boolean isToSave(Attribute<?> attr) {
+		if (attr == VhdlSimConstants.SIM_NAME_ATTR) {
+			return false;
+		}
+		return true;
 	}
 
 }

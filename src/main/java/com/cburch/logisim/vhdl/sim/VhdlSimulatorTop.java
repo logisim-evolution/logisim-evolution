@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.help.UnsupportedOperationException;
 
@@ -193,17 +194,27 @@ public class VhdlSimulatorTop implements CircuitListener {
 			VhdlSimConstants.logger.error("Cannot copy simulation files: {}", e.getMessage());
 			e.printStackTrace();
 		}
+		
+		List<Component> VhdlComponents = VhdlSimConstants.getVhdlComponents(project.getCircuitState(),true);
+		for (int index = 0 ; index < VhdlComponents.size() ; index++) {
+			ComponentFactory fact = VhdlComponents.get(index).getFactory();
+			String label = VhdlSimConstants.VHDL_COMPONENT_SIM_NAME+index;
+			if (fact instanceof VhdlEntity)
+				((VhdlEntity) fact).SetSimName(VhdlComponents.get(index).getAttributeSet(), label);
+			else
+				((VhdlEntityComponent) fact).SetSimName(VhdlComponents.get(index).getAttributeSet(), label);
+		}
 
-		vhdlTop.generate();
-		tclRun.generate();
+		vhdlTop.generate(VhdlComponents);
+		tclRun.generate(VhdlComponents);
 
 		/* Generate each component's file */
-		for (Component comp : VhdlSimConstants.getVhdlComponents(project.getCircuitState(),true)) {
+		for (Component comp : VhdlComponents) {
 			ComponentFactory fact = comp.getFactory();
 			if (fact instanceof VhdlEntity)
-				((VhdlEntity) comp.getFactory()).saveFile(comp.getAttributeSet());
+				((VhdlEntity) fact).saveFile(comp.getAttributeSet());
 			else
-				((VhdlEntityComponent) comp.getFactory()).saveFile(comp.getAttributeSet());
+				((VhdlEntityComponent) fact).saveFile(comp.getAttributeSet());
 		}
 	}
 

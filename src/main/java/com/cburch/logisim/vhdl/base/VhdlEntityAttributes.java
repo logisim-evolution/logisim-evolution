@@ -73,13 +73,13 @@ public class VhdlEntityAttributes  extends AbstractAttributeSet {
 
 	private static List<Attribute<?>> static_attributes = Arrays.asList(
 			(Attribute<?>)VhdlEntity.NAME_ATTR, StdAttr.LABEL, StdAttr.LABEL_FONT, StdAttr.LABEL_VISIBILITY,
-			StdAttr.FACING, StdAttr.APPEARANCE);
+			StdAttr.FACING, StdAttr.APPEARANCE, VhdlSimConstants.SIM_NAME_ATTR);
 
     static AttributeSet createBaseAttrs(VhdlContent content) {
         VhdlContent.Generic[] g = content.getGenerics();
         List<Attribute<Integer>> a = content.getGenericAttributes();
-        Attribute<?>[] attrs = new Attribute<?>[6 + g.length];
-        Object[] value = new Object[6 + g.length];
+        Attribute<?>[] attrs = new Attribute<?>[7 + g.length];
+        Object[] value = new Object[7 + g.length];
         attrs[0] = VhdlEntity.NAME_ATTR;
         value[0] = content.getName();
         attrs[1] = StdAttr.LABEL;
@@ -92,6 +92,8 @@ public class VhdlEntityAttributes  extends AbstractAttributeSet {
         value[4] = Direction.EAST;
         attrs[5] = StdAttr.APPEARANCE;
         value[5] = StdAttr.APPEAR_EVOLUTION;
+        attrs[6] = VhdlSimConstants.SIM_NAME_ATTR;
+        value[6] = "";
         for (int i = 0; i < g.length; i++) {
             attrs[6+i] = a.get(i);
             value[6+i] = new Integer(g[i].getDefaultValue());
@@ -103,6 +105,7 @@ public class VhdlEntityAttributes  extends AbstractAttributeSet {
  	private VhdlContent content;
 	private Instance vhdlInstance;
 	private String label = "";
+	private String SimName = "";
 	private Font labelFont = StdAttr.DEFAULT_LABEL_FONT;
 	private Direction facing = Direction.EAST;
 	private Boolean labelVisable = false;
@@ -117,7 +120,7 @@ public class VhdlEntityAttributes  extends AbstractAttributeSet {
         listener = null;
         updateGenerics();
 	}
-
+	
 	public VhdlContent getContent() {
         return content;
     }
@@ -143,6 +146,7 @@ public class VhdlEntityAttributes  extends AbstractAttributeSet {
         instanceAttrs.add(StdAttr.LABEL_VISIBILITY);
         instanceAttrs.add(StdAttr.FACING);
         instanceAttrs.add(StdAttr.APPEARANCE);
+        instanceAttrs.add(VhdlSimConstants.SIM_NAME_ATTR);
         for (Attribute<Integer> a : genericAttrs) {
             instanceAttrs.add(a);
         }
@@ -200,16 +204,14 @@ public class VhdlEntityAttributes  extends AbstractAttributeSet {
 		if (attr == StdAttr.FACING) {
 			return (V) facing;
 		}
+		if (attr == VhdlSimConstants.SIM_NAME_ATTR) {
+			return (V) SimName;
+		}
 		if (genericValues.containsKey((Attribute<Integer>)attr)) {
             V v = (V) genericValues.get((Attribute<Integer>)attr);
             return v;
         }
 		return null;
-	}
-
-	@Override
-	public boolean isToSave(Attribute<?> attr) {
-            return true;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -257,6 +259,14 @@ public class VhdlEntityAttributes  extends AbstractAttributeSet {
 			fireAttributeValueChanged(attr, value,null);
 			return;
 		}
+		if (attr == VhdlSimConstants.SIM_NAME_ATTR) {
+			String Name = (String) value;
+			if (Name.equals(SimName))
+				return;
+			SimName = Name;
+			fireAttributeValueChanged(attr, value,null);
+			return;
+		}
 		if (attr == StdAttr.APPEARANCE && (value == StdAttr.APPEAR_FPGA || value == StdAttr.APPEAR_CLASSIC ||
 				value == StdAttr.APPEAR_EVOLUTION)) {
 			AttributeOption a = (AttributeOption) value;
@@ -294,5 +304,13 @@ public class VhdlEntityAttributes  extends AbstractAttributeSet {
         }
         
     }
+
+	@Override
+	public boolean isToSave(Attribute<?> attr) {
+		if (attr == VhdlSimConstants.SIM_NAME_ATTR) {
+			return false;
+		}
+		return true;
+	}
 
 }

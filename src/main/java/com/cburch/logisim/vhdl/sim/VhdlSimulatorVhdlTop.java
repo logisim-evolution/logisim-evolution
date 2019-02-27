@@ -34,19 +34,21 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.cburch.logisim.comp.Component;
+import com.cburch.logisim.comp.ComponentFactory;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.std.hdl.VhdlContentComponent;
 import com.cburch.logisim.std.hdl.VhdlEntityComponent;
 import com.cburch.logisim.util.FileUtil;
 import com.cburch.logisim.util.LocaleManager;
-import com.cburch.logisim.vhdl.base.VhdlContent;
 import com.cburch.logisim.vhdl.base.VhdlEntity;
 import com.cburch.logisim.vhdl.base.VhdlEntityAttributes;
 import com.cburch.logisim.vhdl.base.VhdlParser;
@@ -79,205 +81,7 @@ public class VhdlSimulatorVhdlTop {
 		valid = false;
 	}
 	
-	private void GetContentNew(Component comp,
-			                   StringBuilder ports,
-			                   StringBuilder components,
-			                   StringBuilder map) {
-		InstanceState state = vhdlSimulator.getProject()
-				.getCircuitState().getInstanceState(comp);
-
-		VhdlContent content = ((VhdlEntityAttributes)state.getAttributeSet()).getContent();
-
-		String vhdlEntityName = comp.getFactory().getHDLTopName(
-				state.getInstance().getAttributeSet());
-
-		/*
-		 * Create ports
-		 */
-		for (VhdlParser.PortDescription port : content.getPorts()) {
-
-			if (!firstPort) {
-				ports.append(";");
-				ports.append(System.getProperty("line.separator"));
-			} else {
-				firstPort = false;
-			}
-
-			String portName = vhdlEntityName + "_" + port.getName();
-			ports.append("		" + portName + " : " + port.getVhdlType()
-					+ " std_logic");
-
-			int width = port.getWidth().getWidth();
-			if (width > 1) {
-				ports.append("_vector(" + (width - 1) + " downto 0)");
-			}
-		}
-
-		/*
-		 * Create components
-		 */
-		components.append("	component " + vhdlEntityName);
-		components.append(System.getProperty("line.separator"));
-
-		components.append("		port (");
-		components.append(System.getProperty("line.separator"));
-
-		firstComp = true;
-		for (VhdlParser.PortDescription port : content.getPorts()) {
-			if (!firstComp) {
-				components.append(";");
-				components.append(System.getProperty("line.separator"));
-			} else
-				firstComp = false;
-
-			components.append("			" + port.getName() + " : "
-					+ port.getVhdlType() + " std_logic");
-
-			int width = port.getWidth().getWidth();
-			if (width > 1) {
-				components.append("_vector(" + (width - 1)
-						+ " downto 0)");
-			}
-		}
-
-		components.append(System.getProperty("line.separator"));
-		components.append("		);");
-		components.append(System.getProperty("line.separator"));
-
-		components.append("	end component ;");
-		components.append(System.getProperty("line.separator"));
-
-		components.append("	");
-		components.append(System.getProperty("line.separator"));
-
-		/*
-		 * Create port map
-		 */
-		map.append("	" + vhdlEntityName + "_map : " + vhdlEntityName
-				+ " port map (");
-		map.append(System.getProperty("line.separator"));
-
-		firstMap = true;
-		for (VhdlParser.PortDescription port : content.getPorts()) {
-
-			if (!firstMap) {
-				map.append(",");
-				map.append(System.getProperty("line.separator"));
-			} else
-				firstMap = false;
-
-			map.append("		" + port.getName() + " => "
-					+ vhdlEntityName + "_" + port.getName());
-		}
-		map.append(System.getProperty("line.separator"));
-		map.append("	);");
-		map.append(System.getProperty("line.separator"));
-		map.append("	");
-		map.append(System.getProperty("line.separator"));
-	}
-	
-	private void GetContentOld(Component comp,
-            StringBuilder ports,
-            StringBuilder components,
-            StringBuilder map) {
-		
-		String type[] = { "inout", "in", "out" };
-
-		InstanceState state = vhdlSimulator.getProject()
-				.getCircuitState().getInstanceState(comp);
-
-		VhdlContentComponent content = state.getAttributeValue(VhdlEntityComponent.CONTENT_ATTR);
-
-		String vhdlEntityName = comp.getFactory().getHDLTopName(
-				state.getInstance().getAttributeSet());
-
-		/*
-		 * Create ports
-		 */
-		for (Port port : content.getPorts()) {
-
-			if (!firstPort) {
-				ports.append(";");
-				ports.append(System.getProperty("line.separator"));
-			} else {
-				firstPort = false;
-			}
-
-			String portName = vhdlEntityName + "_" + port.getToolTip();
-			ports.append("		" + portName + " : " + type[port.getType()]
-					+ " std_logic");
-
-			int width = port.getFixedBitWidth().getWidth();
-			if (width > 1) {
-				ports.append("_vector(" + (width - 1) + " downto 0)");
-			}
-		}
-
-		/*
-		 * Create components
-		 */
-		components.append("	component " + vhdlEntityName);
-		components.append(System.getProperty("line.separator"));
-
-		components.append("		port (");
-		components.append(System.getProperty("line.separator"));
-
-		firstComp = true;
-		for (Port port : content.getPorts()) {
-			if (!firstComp) {
-				components.append(";");
-				components.append(System.getProperty("line.separator"));
-			} else
-				firstComp = false;
-
-			components.append("			" + port.getToolTip() + " : "
-					+ type[port.getType()] + " std_logic");
-
-			int width = port.getFixedBitWidth().getWidth();
-			if (width > 1) {
-				components.append("_vector(" + (width - 1)
-						+ " downto 0)");
-			}
-		}
-
-		components.append(System.getProperty("line.separator"));
-		components.append("		);");
-		components.append(System.getProperty("line.separator"));
-
-		components.append("	end component ;");
-		components.append(System.getProperty("line.separator"));
-
-		components.append("	");
-		components.append(System.getProperty("line.separator"));
-
-		/*
-		 * Create port map
-		 */
-		map.append("	" + vhdlEntityName + "_map : " + vhdlEntityName
-				+ " port map (");
-		map.append(System.getProperty("line.separator"));
-
-		firstMap = true;
-		for (Port port : content.getPorts()) {
-
-			if (!firstMap) {
-				map.append(",");
-				map.append(System.getProperty("line.separator"));
-			} else
-				firstMap = false;
-
-			map.append("		" + port.getToolTip() + " => "
-					+ vhdlEntityName + "_" + port.getToolTip());
-		}
-		map.append(System.getProperty("line.separator"));
-		map.append("	);");
-		map.append(System.getProperty("line.separator"));
-		map.append("	");
-		map.append(System.getProperty("line.separator"));
-	}
-
-
-	public void generate() {
+	public void generate(List<Component> comps) {
 
 		/* Do not generate if file is already valid */
 		if (valid)
@@ -296,14 +100,106 @@ public class VhdlSimulatorVhdlTop {
 		map.append(System.getProperty("line.separator"));
 
 		firstPort = firstComp = firstMap = true;
+		String type[] = { Port.INOUT, Port.INPUT, Port.OUTPUT };
 
 		/* For each vhdl entity */
-		for (Component comp : VhdlSimConstants.getVhdlComponents(vhdlSimulator
-				.getProject().getCircuitState(),true)) {
-			if (comp.getFactory().getClass().equals(VhdlEntity.class))
-				GetContentNew(comp,ports,components,map);
-			if (comp.getFactory().getClass().equals(VhdlEntityComponent.class))
-				GetContentOld(comp,ports,components,map);
+		for (Component comp : comps) {
+			InstanceState state = vhdlSimulator.getProject().getCircuitState().getInstanceState(comp);
+			
+			ComponentFactory fac = comp.getFactory();
+			String vhdlEntityName;
+			List<VhdlParser.PortDescription> MyPorts = new ArrayList<VhdlParser.PortDescription>();
+			if (fac instanceof VhdlEntity) {
+				vhdlEntityName = ((VhdlEntity) fac).GetSimName(state.getInstance().getAttributeSet()); 
+				MyPorts.addAll(((VhdlEntityAttributes)state.getAttributeSet()).getContent().getPorts());
+			} else {
+				vhdlEntityName = ((VhdlEntityComponent) fac).GetSimName(state.getInstance().getAttributeSet());
+				for (Port port : ((VhdlContentComponent)state.getAttributeValue(VhdlEntityComponent.CONTENT_ATTR)).getPorts()) {
+					VhdlParser.PortDescription nport = new VhdlParser.PortDescription(port.getToolTip(),
+							type[port.getType()],port.getFixedBitWidth().getWidth());
+					MyPorts.add(nport);
+				}
+			}
+
+			/*
+			 * Create ports
+			 */
+			for (VhdlParser.PortDescription port : MyPorts) {
+				if (!firstPort) {
+					ports.append(";");
+					ports.append(System.getProperty("line.separator"));
+				} else {
+					firstPort = false;
+				}
+				String portName = vhdlEntityName + "_" + port.getName();
+				ports.append("		" + portName + " : " + port.getVhdlType() + " std_logic");
+				int width = port.getWidth().getWidth();
+				if (width > 1) {
+					ports.append("_vector(" + (width - 1) + " downto 0)");
+				}
+			}
+
+			/*
+			 * Create components
+			 */
+			components.append("	component " + vhdlEntityName);
+			components.append(System.getProperty("line.separator"));
+
+			components.append("		port (");
+			components.append(System.getProperty("line.separator"));
+
+			firstComp = true;
+			for (VhdlParser.PortDescription port : MyPorts) {
+				if (!firstComp) {
+					components.append(";");
+					components.append(System.getProperty("line.separator"));
+				} else
+					firstComp = false;
+
+				components.append("			" + port.getName() + " : "
+						+ port.getVhdlType() + " std_logic");
+
+				int width = port.getWidth().getWidth();
+				if (width > 1) {
+					components.append("_vector(" + (width - 1)
+							+ " downto 0)");
+				}
+			}
+
+			components.append(System.getProperty("line.separator"));
+			components.append("		);");
+			components.append(System.getProperty("line.separator"));
+
+			components.append("	end component ;");
+			components.append(System.getProperty("line.separator"));
+
+			components.append("	");
+			components.append(System.getProperty("line.separator"));
+
+			/*
+			 * Create port map
+			 */
+			map.append("	" + vhdlEntityName + "_map : " + vhdlEntityName
+					+ " port map (");
+			map.append(System.getProperty("line.separator"));
+
+			firstMap = true;
+			for (VhdlParser.PortDescription port : MyPorts) {
+
+				if (!firstMap) {
+					map.append(",");
+					map.append(System.getProperty("line.separator"));
+				} else
+					firstMap = false;
+
+				map.append("		" + port.getName() + " => "
+						+ vhdlEntityName + "_" + port.getName());
+			}
+			map.append(System.getProperty("line.separator"));
+			map.append("	);");
+			map.append(System.getProperty("line.separator"));
+			map.append("	");
+			map.append(System.getProperty("line.separator"));
 		}
 
 		ports.append(System.getProperty("line.separator"));

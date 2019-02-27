@@ -35,11 +35,13 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.cburch.logisim.comp.Component;
+import com.cburch.logisim.comp.ComponentFactory;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.std.hdl.VhdlEntityComponent;
 import com.cburch.logisim.util.FileUtil;
@@ -70,7 +72,7 @@ public class VhdlSimulatorTclComp {
 		valid = false;
 	}
 	
-	public void generate() {
+	public void generate(List<Component> comps) {
 
 		/* Do not generate if file is already valid */
 		if (valid)
@@ -81,13 +83,19 @@ public class VhdlSimulatorTclComp {
 		comp_files.append(System.getProperty("line.separator"));
 
 		/* For each vhdl entity */
-		for (Component comp : VhdlSimConstants.getVhdlComponents(vsim.getProject().getCircuitState(),true)) {
+		for (Component comp : comps) {
 			if (comp.getFactory().getClass().equals(VhdlEntity.class) ||
 				comp.getFactory().getClass().equals(VhdlEntityComponent.class)) {
 
 				InstanceState state = vsim.getProject().getCircuitState().getInstanceState(comp);
-				String componentName = comp.getFactory().getHDLTopName(
+				String componentName;
+				ComponentFactory fact = comp.getFactory();
+				if (fact instanceof VhdlEntity)
+					componentName = ((VhdlEntity) fact).GetSimName(
 						state.getInstance().getAttributeSet());
+				else
+					componentName = ((VhdlEntityComponent) fact).GetSimName(
+							state.getInstance().getAttributeSet());
 
 				comp_files.append("vcom -reportprogress 300 -work work ../src/"
 						+ componentName + ".vhdl");
