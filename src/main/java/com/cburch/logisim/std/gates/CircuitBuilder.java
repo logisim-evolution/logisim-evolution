@@ -37,13 +37,17 @@ import java.util.HashMap;
 
 import com.cburch.logisim.analyze.model.AnalyzerModel;
 import com.cburch.logisim.analyze.model.Expression;
+import com.cburch.logisim.analyze.model.Var;
 import com.cburch.logisim.analyze.model.VariableList;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitMutation;
+import com.cburch.logisim.circuit.SplitterAttributes;
+import com.cburch.logisim.circuit.SplitterFactory;
 import com.cburch.logisim.circuit.Wire;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.comp.ComponentFactory;
 import com.cburch.logisim.data.AttributeSet;
+import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Location;
@@ -53,6 +57,17 @@ import com.cburch.logisim.std.wiring.Constant;
 import com.cburch.logisim.std.wiring.Pin;
 
 public class CircuitBuilder {
+
+	// worst case inputs: 8x2 input pin and 12-bit splitter
+	private static final int INPUT_START_X = 80 + 8*10 + 12*10;
+	private static final int INPUT_START_Y = 80;
+	private static final int INPUT_SPACE_Y = 50;
+
+	private static final int OUTPUT_START_Y = 80;
+
+	private static final int SPINE_START_X = INPUT_START_X + 20;
+	private static final int SPINE_SPACE_X = 10;
+
 	private static class CompareYs implements Comparator<Location> {
 		public int compare(Location a, Location b) {
 			return a.getY() - b.getY();
@@ -130,10 +145,10 @@ public class CircuitBuilder {
 		CircuitMutation result = new CircuitMutation(destCirc);
 		result.clear();
 
-		Layout[] layouts = new Layout[model.getOutputs().size()];
+		Layout[] layouts = new Layout[model.getOutputs().bits.size()];
 		int maxWidth = 0;
 		for (int i = 0; i < layouts.length; i++) {
-			String output = model.getOutputs().get(i);
+			String output = model.getOutputs().bits.get(i);
 			Expression expr = model.getOutputExpressions()
 					.getExpression(output);
 			CircuitDetermination det = CircuitDetermination.create(expr);
@@ -152,30 +167,54 @@ public class CircuitBuilder {
 
 		InputData inputData = computeInputData(model);
 		int x = inputData.getStartX();
-		int y = 10;
+		int y =  OUTPUT_START_Y;
 		int outputX = x + maxWidth + 20;
+		HashMap<String, Location> outlocs = new HashMap<>();
 		for (int i = 0; i < layouts.length; i++) {
-			String outputName = model.getOutputs().get(i);
+			String output = model.getOutputs().bits.get(i);
 			Layout layout = layouts[i];
-			Location output;
+			Location outloc;
 			int height;
 			if (layout == null) {
-				output = Location.create(outputX, y + 20);
+				outloc = Location.create(outputX, y + 20);
 				height = 40;
 			} else {
 				int dy = 0;
 				if (layout.outputY < 20)
 					dy = 20 - layout.outputY;
 				height = Math.max(dy + layout.height, 40);
-				output = Location.create(outputX, y + dy + layout.outputY);
-				placeComponents(result, layouts[i], x, y + dy, inputData,
-						output);
+				outloc = Location.create(outputX, y + dy + layout.outputY);
+				placeComponents(result, layouts[i], x, y + dy, inputData,outloc);
 			}
-			placeOutput(result, output, outputName);
+			outlocs.put(output, outloc);
 			y += height + 10;
 		}
-		placeInputs(result, inputData);
+		placeOutputs(result, model.getOutputs(), outlocs);
+		placeInputs(result, model.getInputs(), inputData);
 		return result;
+	}
+	
+	private static class Bus {
+	    String name;
+	    Location loc[];
+	    Bus(String n, int width) { name = n; loc = new Location[width]; }
+	}
+
+	private static void placeOutputs(CircuitMutation result, VariableList outputs, HashMap<String, Location> outlocs) {
+		for (Bus b: createBusses(outputs, outlocs)) {
+			placePins(result, b, true);
+		}
+	}
+
+	private static ArrayList<Bus> createBusses(VariableList vars, HashMap<String, Location> locs) {
+		ArrayList<Bus> busses = new ArrayList<Bus>();
+                for (Var v: vars.vars) {
+                        Bus bus = new Bus(v.name, v.width);
+                        for (int b = 0; b < v.width; b++)
+                                bus.loc[b] = locs.get(v.bitName(b));
+                        busses.add(bus);
+                }
+		return busses;
 	}
 
 	//
@@ -184,18 +223,13 @@ public class CircuitBuilder {
 	private static InputData computeInputData(AnalyzerModel model) {
 		InputData ret = new InputData();
 		VariableList inputs = model.getInputs();
-		int NameLength = 1;
-		for (int i = 0 ; i < inputs.size() ; i++) {
-			if (inputs.get(i).length() > NameLength)
-				NameLength = inputs.get(i).length();
-		}
-		int spineX = 80+NameLength*10;
-		ret.names = new String[inputs.size()];
-		for (int i = 0; i < inputs.size(); i++) {
-			String name = inputs.get(i);
+		int spineX = SPINE_START_X;
+		ret.names = new String[inputs.bits.size()];
+		for (int i = 0; i < inputs.bits.size(); i++) {
+			String name = inputs.bits.get(i);
 			ret.names[i] = name;
 			ret.inputs.put(name, new SingleInput(spineX));
-			spineX += 20;
+			spineX += SPINE_SPACE_X;
 		}
 		ret.startX = spineX;
 		return ret;
@@ -271,10 +305,19 @@ public class CircuitBuilder {
 		}
 
 		Layout[] sub = new Layout[inputs.size()];
+		boolean[] invert = new boolean[inputs.size()];
 		int subWidth = 0; // maximum width of sublayouts
 		int subHeight = 0; // total height of sublayouts
 		for (int i = 0; i < sub.length; i++) {
-			sub[i] = layoutGatesSub(inputs.get(i));
+			CircuitDetermination subcirc = inputs.get(i);
+			if (sub.length > 1 && subcirc instanceof CircuitDetermination.Gate) {
+				CircuitDetermination.Gate subgate = (CircuitDetermination.Gate)inputs.get(i);
+				if (subgate.getFactory() == NotGate.FACTORY) {
+					invert[i] = true;
+					subcirc = subgate.getInputs().get(0);
+				}
+			}
+			sub[i] = layoutGatesSub(subcirc);
 			if (sub.length % 2 == 0 && i == (sub.length + 1) / 2
 					&& sub[i - 1].height + sub[i].height == 0) {
 				// if there are an even number of inputs, then there is a
@@ -296,6 +339,11 @@ public class CircuitBuilder {
 
 			int ins = sub.length;
 			attrs.setValue(GateAttributes.ATTR_INPUTS, Integer.valueOf(ins));
+		}
+		for (int i = 0; i < invert.length; i++) {
+			if (!invert[i])
+				continue;
+			attrs.setValue(new NegateAttribute(i, null), Boolean.TRUE);
 		}
 
 		// determine layout's width
@@ -459,11 +507,12 @@ public class CircuitBuilder {
 	//
 	// placeInputs
 	//
-	private static void placeInputs(CircuitMutation result, InputData inputData) {
+	private static void placeInputs(CircuitMutation result, VariableList inputs, InputData inputData) {
 		ArrayList<Location> forbiddenYs = new ArrayList<Location>();
 		Comparator<Location> compareYs = new CompareYs();
-		int curX = inputData.startX-(inputData.names.length+1)*20;
-		int curY = 30;
+		int curX = INPUT_START_X;
+		int curY = INPUT_START_Y;
+		HashMap<String, Location> inlocs = new HashMap<>();
 		for (int i = 0; i < inputData.names.length; i++) {
 			String name = inputData.names[i];
 			SingleInput singleInput = inputData.inputs.get(name);
@@ -484,16 +533,7 @@ public class CircuitBuilder {
 				singleInput.ys.add(spineLoc);
 			}
 			Location loc = Location.create(curX, curY);
-
-			// now create the pin
-			ComponentFactory factory = Pin.FACTORY;
-			AttributeSet attrs = factory.createAttributeSet();
-			attrs.setValue(StdAttr.FACING, Direction.EAST);
-			attrs.setValue(Pin.ATTR_TYPE, Boolean.FALSE);
-			attrs.setValue(Pin.ATTR_TRISTATE, Boolean.FALSE);
-			attrs.setValue(StdAttr.LABEL, name);
-			attrs.setValue(Pin.ATTR_LABEL_LOC, Direction.NORTH);
-			result.add(factory.createComponent(loc, attrs));
+			inlocs.put(name, loc);
 
 			ArrayList<Location> spine = singleInput.ys;
 			if (spine.size() > 0) {
@@ -526,21 +566,67 @@ public class CircuitBuilder {
 
 			// advance y and forbid spine intersections for next pin
 			forbiddenYs.addAll(singleInput.ys);
-			curY += 50;
+			curY += INPUT_SPACE_Y;
 		}
+		for (Bus b: createBusses(inputs, inlocs)) 
+			placePins(result, b, false);
 	}
 
 	//
 	// placeOutput
 	//
-	private static void placeOutput(CircuitMutation result, Location loc,
-			String name) {
+	private static Location placeSplitter(CircuitMutation result, Location loc[], boolean isOutput) {
+		int n = loc.length;
+		ComponentFactory factory = SplitterFactory.instance;
+		AttributeSet attrs = factory.createAttributeSet();
+		attrs.setValue(SplitterAttributes.ATTR_WIDTH, BitWidth.create(n));
+		attrs.setValue(SplitterAttributes.ATTR_FANOUT, n);
+		attrs.setValue(SplitterAttributes.ATTR_APPEARANCE, SplitterAttributes.APPEAR_LEFT);
+		attrs.setValue(StdAttr.FACING, isOutput ? Direction.NORTH : Direction.SOUTH);
+		Bounds bds = factory.getOffsetBounds(attrs);
+		int w = roundUp(bds.getWidth());
+		int h = roundUp(bds.getHeight());
+		Location splitloc;
+		if (isOutput)
+			splitloc = loc[0].translate(w, h);
+		else
+			splitloc = loc[n-1].translate(-w, -h);
+		Component splitter = factory.createComponent(splitloc, attrs);
+		result.add(splitter);
+		// Create the L-wires
+		for (int i = 0; i < n; i++) {
+			Location a = loc[i];
+			Location c = splitter.getEnd(i+1).getLocation();
+			Location b = Location.create(c.getX(), a.getY());
+			if (a.getX() != b.getX())
+				result.add(Wire.create(a, b));
+			if (b.getY() != c.getY())
+				result.add(Wire.create(b, c));
+		}
+		return splitloc;
+	}
+
+	private static void placePins(CircuitMutation result, Bus bus, boolean isOutput) {
+		if (bus.loc.length == 1) {
+		    placePin(result, bus.loc[0], bus.name, isOutput, 1);
+		} else {
+		    Location splitloc = placeSplitter(result, bus.loc, isOutput);
+		    Location pinloc = splitloc.translate(isOutput ? 10 : -10, 0);
+		    result.add(Wire.create(splitloc, pinloc));
+		    placePin(result, pinloc, bus.name, isOutput, bus.loc.length);
+		}
+	}
+
+	private static void placePin(CircuitMutation result, Location loc,
+			String name, boolean isOutput, int width) {
 		ComponentFactory factory = Pin.FACTORY;
 		AttributeSet attrs = factory.createAttributeSet();
-		attrs.setValue(StdAttr.FACING, Direction.WEST);
-		attrs.setValue(Pin.ATTR_TYPE, Boolean.TRUE);
+		attrs.setValue(StdAttr.FACING, isOutput ? Direction.WEST : Direction.EAST);
+		attrs.setValue(Pin.ATTR_TYPE, isOutput);
+		attrs.setValue(Pin.ATTR_TRISTATE, Boolean.FALSE);
 		attrs.setValue(StdAttr.LABEL, name);
 		attrs.setValue(Pin.ATTR_LABEL_LOC, Direction.NORTH);
+		attrs.setValue(StdAttr.WIDTH, BitWidth.create(width));
 		result.add(factory.createComponent(loc, attrs));
 	}
 

@@ -58,6 +58,9 @@ import com.cburch.logisim.util.GraphicsUtil;
 class KarnaughMapPanel extends JPanel implements TruthTablePanel {
 	private class MyListener implements OutputExpressionsListener,
 			TruthTableListener {
+		
+		public void rowsChanged(TruthTableEvent event) {}
+		
 		public void cellsChanged(TruthTableEvent event) {
 			repaint();
 		}
@@ -192,7 +195,7 @@ class KarnaughMapPanel extends JPanel implements TruthTablePanel {
 	}
 
 	public int getOutputColumn(MouseEvent event) {
-		return model.getOutputs().indexOf(output);
+		return model.getOutputs().bits.indexOf(output);
 	}
 
 	private int getRow(int tableRow, int rows, int cols) {
@@ -287,7 +290,7 @@ class KarnaughMapPanel extends JPanel implements TruthTablePanel {
 		g.setFont(HeaderFont);
 		FontMetrics headFm = g.getFontMetrics(HeaderFont);
 		for (int i = 0 ; i < inputCount ; i++) {
-			String header = model.getInputs().get(i);
+			String header = model.getInputs().bits.get(i);
 			Boolean rotated = false;
 			int middleOffset = (headFm.stringWidth(header)>>1);
 			int xoffset = headHeight+11;

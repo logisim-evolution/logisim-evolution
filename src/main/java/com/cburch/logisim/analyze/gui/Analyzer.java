@@ -111,6 +111,9 @@ public class Analyzer extends LFrame {
 			if (selected instanceof JScrollPane) {
 				selected = ((JScrollPane) selected).getViewport().getView();
 			}
+			if (selected instanceof JPanel) {
+				((JPanel)selected).requestFocus();
+			}
 			if (selected instanceof AnalyzerTab) {
 				((AnalyzerTab) selected).updateTab();
 			}
@@ -219,12 +222,13 @@ public class Analyzer extends LFrame {
 	}
 
 	private void addTab(int index, final JComponent comp) {
+		if (comp instanceof TableTab) {
+			tabbedPane.insertTab("Untitled", null, comp, null, index);
+			return;
+		}
 		final JScrollPane pane = new JScrollPane(comp,
 				ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
 				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-		if (comp instanceof TableTab) {
-			pane.setVerticalScrollBar(((TableTab) comp).getVerticalScrollBar());
-		}
 		pane.addComponentListener(new ComponentListener() {
 			public void componentHidden(ComponentEvent arg0) {
 			}

@@ -32,6 +32,7 @@ package com.cburch.logisim.analyze.gui;
 
 import static com.cburch.logisim.analyze.Strings.S;
 
+import java.awt.Rectangle;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.ClipboardOwner;
 import java.awt.datatransfer.DataFlavor;
@@ -104,40 +105,27 @@ class TableTabClip implements ClipboardOwner {
 	}
 
 	public void copy() {
-		TableTabCaret caret = table.getCaret();
-		int c0 = caret.getCursorCol();
-		int r0 = caret.getCursorRow();
-		int c1 = caret.getMarkCol();
-		int r1 = caret.getMarkRow();
-		if (c1 < c0) {
-			int t = c0;
-			c0 = c1;
-			c1 = t;
-		}
-		if (r1 < r0) {
-			int t = r0;
-			r0 = r1;
-			r1 = t;
-		}
-
+		Rectangle s = table.getCaret().getSelection();
+		if (s.width <= 0 || s.height <= 0)
+			return;
 		TruthTable t = table.getTruthTable();
 		int inputs = t.getInputColumnCount();
-		String[] header = new String[c1 - c0 + 1];
-		for (int c = c0; c <= c1; c++) {
+		String[] header = new String[s.width];
+		for (int c = s.x; c < s.x + s.width; c++) {
 			if (c < inputs) {
-				header[c - c0] = t.getInputHeader(c);
+				header[c - s.x] = t.getInputHeader(c);
 			} else {
-				header[c - c0] = t.getOutputHeader(c - inputs);
+				header[c - s.x] = t.getOutputHeader(c - inputs);
 			}
 		}
-		String[][] contents = new String[r1 - r0 + 1][c1 - c0 + 1];
-		for (int r = r0; r <= r1; r++) {
-			for (int c = c0; c <= c1; c++) {
+		String[][] contents = new String[s.height][s.width];
+		for (int r = s.y; r < s.y + s.height; r++) {
+			for (int c = s.x; c < s.x + s.width; c++) {
 				if (c < inputs) {
-					contents[r - r0][c - c0] = t.getInputEntry(r, c)
+					contents[r - s.y][c - s.x] = t.getInputEntry(r, c)
 							.getDescription();
 				} else {
-					contents[r - r0][c - c0] = t.getOutputEntry(r, c - inputs)
+					contents[r - s.y][c - s.x] = t.getOutputEntry(r, c - inputs)
 							.getDescription();
 				}
 			}
@@ -230,21 +218,16 @@ class TableTabClip implements ClipboardOwner {
 					JOptionPane.ERROR_MESSAGE);
 			return;
 		}
-
-		TableTabCaret caret = table.getCaret();
-		int c0 = caret.getCursorCol();
-		int c1 = caret.getMarkCol();
-		int r0 = caret.getCursorRow();
-		int r1 = caret.getMarkRow();
-		if (r0 < 0 || r1 < 0 || c0 < 0 || c1 < 0)
+		Rectangle s = table.getCaret().getSelection();
+		if (s.width <= 0 || s.height <= 0)
 			return;
 		TruthTable model = table.getTruthTable();
-		int rows = model.getRowCount();
+		int rows = model.getVisibleRowCount();
 		int inputs = model.getInputColumnCount();
 		int outputs = model.getOutputColumnCount();
-		if (c0 == c1 && r0 == r1) {
-			if (r0 + entries.length > rows
-					|| c0 + entries[0].length > inputs + outputs) {
+		if (s.width == 1 && s.height == 1) {
+			if (s.y + entries.length > rows
+					|| s.x + entries[0].length > inputs + outputs) {
 				JOptionPane.showMessageDialog(table.getRootPane(),
 						S.get("clipPasteEndError"),
 						S.get("clipPasteErrorTitle"),
@@ -252,19 +235,7 @@ class TableTabClip implements ClipboardOwner {
 				return;
 			}
 		} else {
-			if (r0 > r1) {
-				int t = r0;
-				r0 = r1;
-				r1 = t;
-			}
-			if (c0 > c1) {
-				int t = c0;
-				c0 = c1;
-				c1 = t;
-			}
-
-			if (r1 - r0 + 1 != entries.length
-					|| c1 - c0 + 1 != entries[0].length) {
+			if (s.height != entries.length || s.width != entries[0].length) {
 				JOptionPane.showMessageDialog(table.getRootPane(),
 						S.get("clipPasteSizeError"),
 						S.get("clipPasteErrorTitle"),
@@ -274,8 +245,8 @@ class TableTabClip implements ClipboardOwner {
 		}
 		for (int r = 0; r < entries.length; r++) {
 			for (int c = 0; c < entries[0].length; c++) {
-				if (c0 + c >= inputs) {
-					model.setOutputEntry(r0 + r, c0 + c - inputs, entries[r][c]);
+				if (s.x + c >= inputs) {
+					model.setVisibleOutputEntry(s.y + r, s.x + c - inputs, entries[r][c]);
 				}
 			}
 		}

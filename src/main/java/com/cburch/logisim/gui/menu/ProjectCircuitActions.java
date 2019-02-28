@@ -51,6 +51,7 @@ import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
 import com.cburch.logisim.analyze.gui.Analyzer;
 import com.cburch.logisim.analyze.gui.AnalyzerManager;
 import com.cburch.logisim.analyze.model.AnalyzerModel;
+import com.cburch.logisim.analyze.model.Var;
 import com.cburch.logisim.circuit.Analyze;
 import com.cburch.logisim.circuit.AnalyzeException;
 import com.cburch.logisim.circuit.Circuit;
@@ -76,17 +77,17 @@ public class ProjectCircuitActions {
 
 	private static void configureAnalyzer(Project proj, Circuit circuit,
 			Analyzer analyzer, Map<Instance, String> pinNames,
-			ArrayList<String> inputNames, ArrayList<String> outputNames) {
-		analyzer.getModel().setVariables(inputNames, outputNames);
+			ArrayList<Var> inputVars, ArrayList<Var> outputVars) {
+		analyzer.getModel().setVariables(inputVars, outputVars);
 
 		// If there are no inputs, we stop with that tab selected
-		if (inputNames.size() == 0) {
+		if (inputVars.size() == 0) {
 			analyzer.setSelectedTab(Analyzer.INPUTS_TAB);
 			return;
 		}
 
 		// If there are no outputs, we stop with that tab selected
-		if (outputNames.size() == 0) {
+		if (outputVars.size() == 0) {
 			analyzer.setSelectedTab(Analyzer.OUTPUTS_TAB);
 			return;
 		}
@@ -188,33 +189,29 @@ public class ProjectCircuitActions {
 
 	public static void doAnalyze(Project proj, Circuit circuit) {
 		Map<Instance, String> pinNames = Analyze.getPinLabels(circuit);
-		ArrayList<String> inputNames = new ArrayList<String>();
-		ArrayList<String> outputNames = new ArrayList<String>();
+		ArrayList<Var> inputVars = new ArrayList<Var>();
+		ArrayList<Var> outputVars = new ArrayList<Var>();
+		int numInputs = 0, numOutputs = 0;
 		for (Map.Entry<Instance, String> entry : pinNames.entrySet()) {
 			Instance pin = entry.getKey();
 			boolean isInput = Pin.FACTORY.isInputPin(pin);
-			if (isInput) {
-				inputNames.add(entry.getValue());
-			} else {
-				outputNames.add(entry.getValue());
-			}
-			if (pin.getAttributeValue(StdAttr.WIDTH).getWidth() > 1) {
-				if (isInput) {
-					analyzeError(proj, S.get("analyzeMultibitInputError"));
-				} else {
-					analyzeError(proj,
-							S.get("analyzeMultibitOutputError"));
-				}
-				return;
-			}
+			int width = pin.getAttributeValue(StdAttr.WIDTH).getWidth();
+            Var v = new Var(entry.getValue(), width);
+            if (isInput) {
+                    inputVars.add(v);
+                    numInputs += width;
+            } else {
+                    outputVars.add(v);
+                    numOutputs += width;
+            }
 		}
-		if (inputNames.size() > AnalyzerModel.MAX_INPUTS) {
+		if (numInputs > AnalyzerModel.MAX_INPUTS) {
 			analyzeError(proj, StringUtil.format(
 					S.get("analyzeTooManyInputsError"), ""
 							+ AnalyzerModel.MAX_INPUTS));
 			return;
 		}
-		if (outputNames.size() > AnalyzerModel.MAX_OUTPUTS) {
+		if (numOutputs > AnalyzerModel.MAX_OUTPUTS) {
 			analyzeError(proj, StringUtil.format(
 					S.get("analyzeTooManyOutputsError"), ""
 							+ AnalyzerModel.MAX_OUTPUTS));
@@ -223,9 +220,11 @@ public class ProjectCircuitActions {
 
 		Analyzer analyzer = AnalyzerManager.getAnalyzer();
 		analyzer.getModel().setCurrentCircuit(proj, circuit);
-		configureAnalyzer(proj, circuit, analyzer, pinNames, inputNames,
-				outputNames);
-		analyzer.setVisible(true);
+		configureAnalyzer(proj, circuit, analyzer, pinNames, inputVars,outputVars);
+		if (!analyzer.isVisible()) {
+			analyzer.setVisible(true);
+			analyzer.setLocationRelativeTo(proj.getFrame());
+		}
 		analyzer.toFront();
 	}
 

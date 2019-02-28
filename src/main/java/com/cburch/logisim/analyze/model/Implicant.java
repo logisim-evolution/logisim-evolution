@@ -76,7 +76,7 @@ public class Implicant implements Comparable<Implicant> {
 	static List<Implicant> computeMinimal(int format, AnalyzerModel model,
 			String variable) {
 		TruthTable table = model.getTruthTable();
-		int column = model.getOutputs().indexOf(variable);
+		int column = model.getOutputs().bits.indexOf(variable);
 		if (column < 0)
 			return Collections.emptyList();
 

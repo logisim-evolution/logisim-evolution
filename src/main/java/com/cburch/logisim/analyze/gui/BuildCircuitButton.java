@@ -95,8 +95,7 @@ class BuildCircuitButton extends JButton {
 
 			VariableList outputs = model.getOutputs();
 			boolean enableNands = true;
-			for (int i = 0; i < outputs.size(); i++) {
-				String output = outputs.get(i);
+			for (String output : outputs.bits) {
 				Expression expr = model.getOutputExpressions().getExpression(
 						output);
 				if (expr != null && expr.containsXor()) {

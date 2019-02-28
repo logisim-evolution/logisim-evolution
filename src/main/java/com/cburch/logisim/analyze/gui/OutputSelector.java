@@ -46,89 +46,43 @@ import com.cburch.logisim.analyze.model.VariableListEvent;
 import com.cburch.logisim.analyze.model.VariableListListener;
 
 class OutputSelector {
-	@SuppressWarnings("rawtypes")
-	private class Model extends AbstractListModel implements ComboBoxModel,
-			VariableListListener {
+		private class Model extends AbstractListModel<String> implements ComboBoxModel<String>,
+					VariableListListener {
 		private static final long serialVersionUID = 1L;
-		private Object selected;
+		private String selected;
 
-		public Object getElementAt(int index) {
-			return source.get(index);
+		@Override
+		public String getElementAt(int index) {
+			return source.bits.get(index);
 		}
 
-		public Object getSelectedItem() {
+		@Override
+		public String getSelectedItem() {
 			return selected;
 		}
 
 		public int getSize() {
-			return source.size();
+			return source.bits.size();
 		}
 
 		public void listChanged(VariableListEvent event) {
-			int index;
-			String variable;
-			Object selection;
-			switch (event.getType()) {
-			case VariableListEvent.ALL_REPLACED:
-				computePrototypeValue();
-				fireContentsChanged(this, 0, getSize());
-				if (source.isEmpty()) {
-					select.setSelectedItem(null);
-				} else {
-					select.setSelectedItem(source.get(0));
-				}
-				break;
-			case VariableListEvent.ADD:
-				variable = event.getVariable();
-				if (prototypeValue == null
-						|| variable.length() > prototypeValue.length()) {
-					computePrototypeValue();
-				}
-
-				index = source.indexOf(variable);
-				fireIntervalAdded(this, index, index);
-				if (select.getSelectedItem() == null) {
-					select.setSelectedItem(variable);
-				}
-				break;
-			case VariableListEvent.REMOVE:
-				variable = event.getVariable();
-				if (variable.equals(prototypeValue))
-					computePrototypeValue();
-				index = ((Integer) event.getData()).intValue();
-				fireIntervalRemoved(this, index, index);
-				selection = select.getSelectedItem();
-				if (selection != null && selection.equals(variable)) {
-					selection = source.isEmpty() ? null : source.get(0);
-					select.setSelectedItem(selection);
-				}
-				break;
-			case VariableListEvent.MOVE:
-				fireContentsChanged(this, 0, getSize());
-				break;
-			case VariableListEvent.REPLACE:
-				variable = event.getVariable();
-				if (variable.equals(prototypeValue))
-					computePrototypeValue();
-				index = ((Integer) event.getData()).intValue();
-				fireContentsChanged(this, index, index);
-				selection = select.getSelectedItem();
-				if (selection != null && selection.equals(variable)) {
-					select.setSelectedItem(event.getSource().get(index));
-				}
-				break;
-			}
+            int oldSize = select.getItemCount();
+            int newSize = source.bits.size();
+            fireContentsChanged(this, 0, oldSize > newSize ? oldSize : newSize);
+            if (!source.bits.contains(selected)) {
+                    selected = (newSize == 0 ? null : source.bits.get(0));
+                    select.setSelectedItem(selected);
+            }
 		}
 
 		public void setSelectedItem(Object value) {
-			selected = value;
+			selected = (String) value;
 		}
 	}
 
 	private VariableList source;
 	private JLabel label = new JLabel();
-	@SuppressWarnings("rawtypes")
-	private JComboBox select = new JComboBox<>();
+	private JComboBox<String> select = new JComboBox<String>();
 	private String prototypeValue = null;
 
 	@SuppressWarnings("unchecked")
@@ -147,12 +101,11 @@ class OutputSelector {
 	@SuppressWarnings("unchecked")
 	private void computePrototypeValue() {
 		String newValue;
-		if (source.isEmpty()) {
+		if (source.bits.isEmpty()) {
 			newValue = "xx";
 		} else {
 			newValue = "xx";
-			for (int i = 0, n = source.size(); i < n; i++) {
-				String candidate = source.get(i);
+			for (String candidate: source.bits) {
 				if (candidate.length() > newValue.length())
 					newValue = candidate;
 			}
@@ -172,8 +125,7 @@ class OutputSelector {
 		return ret;
 	}
 
-	@SuppressWarnings("rawtypes")
-	public JComboBox getComboBox() {
+	public JComboBox<String> getComboBox() {
 		return select;
 	}
 
@@ -182,12 +134,12 @@ class OutputSelector {
 	}
 
 	public String getSelectedOutput() {
-		String value = (String) select.getSelectedItem();
-		if (value != null && !source.contains(value)) {
-			if (source.isEmpty()) {
+		String value = (String)select.getSelectedItem();
+		if (value != null && !source.bits.contains(value)) {
+			if (source.bits.isEmpty()) {
 				value = null;
 			} else {
-				value = source.get(0);
+				value = source.bits.get(0);
 			}
 			select.setSelectedItem(value);
 		}

@@ -47,6 +47,7 @@ import com.cburch.logisim.analyze.model.Entry;
 import com.cburch.logisim.analyze.model.Expression;
 import com.cburch.logisim.analyze.model.Expressions;
 import com.cburch.logisim.analyze.model.TruthTable;
+import com.cburch.logisim.analyze.model.Var;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Location;
@@ -58,11 +59,28 @@ import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.std.wiring.Pin;
 
 public class Analyze {
-	private static class ExpressionMap extends HashMap<Location, Expression> {
+	public static class LocationBit {
+	    Location loc;
+	    int bit;
+	    public LocationBit(Location l, int b) { loc = l; bit = b; }
+	    @Override
+	    public boolean equals(Object other) {
+		if (other == null || !(other instanceof LocationBit))
+		    return false;
+		LocationBit that = (LocationBit)other;
+		return (that.loc.equals(this.loc) && that.bit == this.bit);
+	    }
+	    @Override
+	    public int hashCode() {
+		return loc.hashCode() + bit;
+	    }
+	}
+	
+	private static class ExpressionMap extends HashMap<LocationBit, Expression> implements ExpressionComputer.Map {
 		private static final long serialVersionUID = 1L;
 		private Circuit circuit;
-		private Set<Location> dirtyPoints = new HashSet<Location>();
-		private Map<Location, Component> causes = new HashMap<Location, Component>();
+		private Set<LocationBit> dirtyPoints = new HashSet<LocationBit>();
+		private Map<LocationBit, Component> causes = new HashMap<LocationBit, Component>();
 		private Component currentCause = null;
 
 		ExpressionMap(Circuit circuit) {
@@ -70,7 +88,7 @@ public class Analyze {
 		}
 
 		@Override
-		public Expression put(Location point, Expression expression) {
+		public Expression put(LocationBit point, Expression expression) {
 			Expression ret = super.put(point, expression);
 			if (currentCause != null)
 				causes.put(point, currentCause);
@@ -78,6 +96,13 @@ public class Analyze {
 				dirtyPoints.add(point);
 			}
 			return ret;
+		}
+		public Expression put(Location point, int bit, Expression expression) {
+			return put(new LocationBit(point, bit), expression);
+		}
+
+		public Expression get(Location point, int bit) {
+			return get(new LocationBit(point, bit));
 		}
 	}
 
@@ -87,7 +112,7 @@ public class Analyze {
 	 */
 	private static Expression checkForCircularExpressions(
 			ExpressionMap expressionMap) throws AnalyzeException {
-		for (Location point : expressionMap.dirtyPoints) {
+		for (LocationBit point : expressionMap.dirtyPoints) {
 			Expression expr = expressionMap.get(point);
 			if (expr.isCircular())
 				return expr;
@@ -106,20 +131,23 @@ public class Analyze {
 			Map<Instance, String> pinNames) throws AnalyzeException {
 		ExpressionMap expressionMap = new ExpressionMap(circuit);
 
-		ArrayList<String> inputNames = new ArrayList<String>();
-		ArrayList<String> outputNames = new ArrayList<String>();
+		ArrayList<Var> inputVars = new ArrayList<Var>();
+		ArrayList<Var> outputVars = new ArrayList<Var>();
 		ArrayList<Instance> outputPins = new ArrayList<Instance>();
 		for (Map.Entry<Instance, String> entry : pinNames.entrySet()) {
 			Instance pin = entry.getKey();
 			String label = entry.getValue();
+			int width = pin.getAttributeValue(StdAttr.WIDTH).getWidth();
 			if (Pin.FACTORY.isInputPin(pin)) {
 				expressionMap.currentCause = Instance.getComponentFor(pin);
-				Expression e = Expressions.variable(label);
-				expressionMap.put(pin.getLocation(), e);
-				inputNames.add(label);
+				for (int b = 0; b < width; b++) {
+					Expression e = Expressions.variable(width > 1 ? label + ":" + b : label);
+					expressionMap.put(new LocationBit(pin.getLocation(), b), e);
+				}
+				inputVars.add(new Var(label, width));
 			} else {
 				outputPins.add(pin);
-				outputNames.add(label);
+				outputVars.add(new Var(label, width));
 			}
 		}
 
@@ -130,7 +158,7 @@ public class Analyze {
 				throw new AnalyzeException.Circular();
 			}
 
-			propagateWires(expressionMap, new HashSet<Location>(
+			propagateWires(expressionMap, new HashSet<LocationBit>(
 					expressionMap.dirtyPoints));
 
 			HashSet<Component> dirtyComponents = getDirtyComponents(circuit,
@@ -143,11 +171,16 @@ public class Analyze {
 				throw new AnalyzeException.Circular();
 		}
 
-		model.setVariables(inputNames, outputNames);
+		model.setVariables(inputVars, outputVars);
 		for (int i = 0; i < outputPins.size(); i++) {
 			Instance pin = outputPins.get(i);
-			model.getOutputExpressions().setExpression(outputNames.get(i),
-					expressionMap.get(pin.getLocation()));
+			String label = pinNames.get(pin);
+			int width = pin.getAttributeValue(StdAttr.WIDTH).getWidth();
+			for (int b = 0; b < width; b++) {
+				LocationBit loc = new LocationBit(pin.getLocation(), b);
+				String name = (width > 1 ? label + ":" + b : label);
+				model.getOutputExpressions().setExpression(name, expressionMap.get(loc));
+			}
 		}
 	}
 
@@ -158,32 +191,45 @@ public class Analyze {
 	public static void computeTable(AnalyzerModel model, Project proj,
 			Circuit circuit, Map<Instance, String> pinLabels) {
 		ArrayList<Instance> inputPins = new ArrayList<Instance>();
+		ArrayList<Var> inputVars = new ArrayList<Var>();
 		ArrayList<String> inputNames = new ArrayList<String>();
 		ArrayList<Instance> outputPins = new ArrayList<Instance>();
+		ArrayList<Var> outputVars = new ArrayList<Var>();
 		ArrayList<String> outputNames = new ArrayList<String>();
 		for (Map.Entry<Instance, String> entry : pinLabels.entrySet()) {
 			Instance pin = entry.getKey();
+			int width = pin.getAttributeValue(StdAttr.WIDTH).getWidth();
+            Var var = new Var(entry.getValue(), width);
 			if (Pin.FACTORY.isInputPin(pin)) {
 				inputPins.add(pin);
-				inputNames.add(entry.getValue());
+				for (String name : var)
+                    inputNames.add(name);
+				inputVars.add(var);
 			} else {
 				outputPins.add(pin);
-				outputNames.add(entry.getValue());
+				for (String name : var)
+                    outputNames.add(name);
+				outputVars.add(var);
 			}
 		}
 
-		int inputCount = inputPins.size();
+		int inputCount = inputNames.size();
 		int rowCount = 1 << inputCount;
-		Entry[][] columns = new Entry[outputPins.size()][rowCount];
+		Entry[][] columns = new Entry[outputNames.size()][rowCount];
 
 		for (int i = 0; i < rowCount; i++) {
 			CircuitState circuitState = new CircuitState(proj, circuit);
-			for (int j = 0; j < inputCount; j++) {
+			int incol = 0;
+			for (int j = 0; j < inputPins.size(); j++) {
 				Instance pin = inputPins.get(j);
+				int width = pin.getAttributeValue(StdAttr.WIDTH).getWidth();
+				Value v[] = new Value[width];
+				for (int b = 0; b < width; b++) {
+					boolean value = TruthTable.isInputSet(i, incol++, inputCount);
+					v[b] = value ?  Value.TRUE : Value.FALSE;
+				}
 				InstanceState pinState = circuitState.getInstanceState(pin);
-				boolean value = TruthTable.isInputSet(i, j, inputCount);
-				Pin.FACTORY
-						.setValue(pinState, value ? Value.TRUE : Value.FALSE);
+				Pin.FACTORY.setValue(pinState, Value.create(v));
 			}
 
 			Propagator prop = circuitState.getPropagator();
@@ -199,25 +245,29 @@ public class Analyze {
 					columns[j][i] = Entry.OSCILLATE_ERROR;
 				}
 			} else {
-				for (int j = 0; j < columns.length; j++) {
+				int outcol = 0;
+				for (int j = 0; j < outputPins.size(); j++) {
 					Instance pin = outputPins.get(j);
+					int width = pin.getAttributeValue(StdAttr.WIDTH).getWidth();
 					InstanceState pinState = circuitState.getInstanceState(pin);
 					Entry out;
-					Value outValue = Pin.FACTORY.getValue(pinState).get(0);
-					if (outValue == Value.TRUE)
-						out = Entry.ONE;
-					else if (outValue == Value.FALSE)
-						out = Entry.ZERO;
-					else if (outValue == Value.ERROR)
-						out = Entry.BUS_ERROR;
-					else
-						out = Entry.DONT_CARE;
-					columns[j][i] = out;
+					for (int b = 0; b < width; b++) {
+						Value outValue = Pin.FACTORY.getValue(pinState).get(b);
+						if (outValue == Value.TRUE)
+							out = Entry.ONE;
+						else if (outValue == Value.FALSE)
+							out = Entry.ZERO;
+						else if (outValue == Value.ERROR)
+							out = Entry.BUS_ERROR;
+						else
+							out = Entry.DONT_CARE;
+						columns[outcol++][i] = out;
+					}
 				}
 			}
 		}
 
-		model.setVariables(inputNames, outputNames);
+		model.setVariables(inputVars, outputVars);
 		for (int i = 0; i < columns.length; i++) {
 			model.getTruthTable().setOutputColumn(i, columns[i]);
 		}
@@ -225,10 +275,10 @@ public class Analyze {
 
 	// computes outputs of affected components
 	private static HashSet<Component> getDirtyComponents(Circuit circuit,
-			Set<Location> pointsToProcess) throws AnalyzeException {
+			Set<LocationBit> pointsToProcess) throws AnalyzeException {
 		HashSet<Component> dirtyComponents = new HashSet<Component>();
-		for (Location point : pointsToProcess) {
-			for (Component comp : circuit.getNonWires(point)) {
+		for (LocationBit point : pointsToProcess) {
+			for (Component comp : circuit.getNonWires(point.loc)) {
 				dirtyComponents.add(comp);
 			}
 		}
@@ -343,8 +393,9 @@ public class Analyze {
 				}
 			} else if (comp.getFactory() instanceof Pin) {
 				; // pins are handled elsewhere
+			} else if (comp.getFactory() instanceof SplitterFactory) {
+				; // splitters are handled elsewhere	
 			} else {
-				// pins are handled elsewhere
 				throw new AnalyzeException.CannotHandle(comp.getFactory()
 						.getDisplayName());
 			}
@@ -353,25 +404,32 @@ public class Analyze {
 
 	// propagates expressions down wires
 	private static void propagateWires(ExpressionMap expressionMap,
-			HashSet<Location> pointsToProcess) throws AnalyzeException {
+			HashSet<LocationBit> pointsToProcess) throws AnalyzeException {
 		expressionMap.currentCause = null;
-		for (Location p : pointsToProcess) {
+		for (LocationBit p : pointsToProcess) {
 			Expression e = expressionMap.get(p);
 			expressionMap.currentCause = expressionMap.causes.get(p);
-			WireBundle bundle = expressionMap.circuit.wires.getWireBundle(p);
-			if (e != null && bundle != null && bundle.points != null) {
-				for (Location p2 : bundle.points) {
-					if (p2.equals(p))
-						continue;
-					Expression old = expressionMap.get(p2);
-					if (old != null) {
-						Component eCause = expressionMap.currentCause;
-						Component oldCause = expressionMap.causes.get(p2);
-						if (eCause != oldCause && !old.equals(e)) {
-							throw new AnalyzeException.Conflict();
+			WireBundle bundle = expressionMap.circuit.wires.getWireBundle(p.loc);
+			if (e != null && bundle != null && bundle.isValid() && bundle.threads != null) {
+				if (bundle.threads.length <= p.bit) {
+					throw new AnalyzeException.CannotHandle("incompatible widths");
+				}
+				WireThread t = bundle.threads[p.bit];
+				for (CircuitWires.ThreadBundle tb : t.getBundles()) {
+					for (Location p2 : tb.b.points) {
+						if (p2.equals(p))
+							continue;
+						LocationBit p2b = new LocationBit(p2, tb.loc);
+						Expression old = expressionMap.get(p2b);
+						if (old != null) {
+							Component eCause = expressionMap.currentCause;
+							Component oldCause = expressionMap.causes.get(p2b);
+							if (eCause != oldCause && !old.equals(e)) {
+								throw new AnalyzeException.Conflict();
+							}
 						}
+						expressionMap.put(p2b, e);
 					}
-					expressionMap.put(p2, e);
 				}
 			}
 		}

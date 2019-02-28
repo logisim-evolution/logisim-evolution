@@ -93,7 +93,7 @@ public class Main {
 	public static final String VERSION_NAME = VERSION.toString();
 	public static final int COPYRIGHT_YEAR = 2018;
 
-	public static boolean ANALYZE = false;
+	public static boolean ANALYZE = true;
 
 	/**
 	 * URL for the automatic updater

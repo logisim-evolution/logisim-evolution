@@ -91,7 +91,7 @@ public class AnalyzerModel {
 		currentCircuit = circuit;
 	}
 
-	public void setVariables(List<String> inputs, List<String> outputs) {
+	public void setVariables(List<Var> inputs, List<Var> outputs) {
 		this.inputs.setAll(inputs);
 		this.outputs.setAll(outputs);
 	}

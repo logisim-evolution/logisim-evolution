@@ -39,32 +39,48 @@ import java.util.List;
 public class OutputExpressions {
 	private class MyListener implements VariableListListener,
 			TruthTableListener {
+		
+		public void rowsChanged(TruthTableEvent event) { }
+		
 		public void cellsChanged(TruthTableEvent event) {
-			String output = model.getOutputs().get(event.getColumn());
+			String output = model.getOutputs().bits.get(event.getColumn());
 			invalidate(output, false);
 		}
 
 		private void inputsChanged(VariableListEvent event) {
+			Var v = event.getVariable();
 			int type = event.getType();
 			if (type == VariableListEvent.ALL_REPLACED && !outputData.isEmpty()) {
 				outputData.clear();
 				fireModelChanged(OutputExpressionsEvent.ALL_VARIABLES_REPLACED);
 			} else if (type == VariableListEvent.REMOVE) {
-				String input = event.getVariable();
-				for (String output : outputData.keySet()) {
-					OutputData data = getOutputData(output, false);
-					if (data != null)
-						data.removeInput(input);
-				}
+                for (String input : v) {
+                    for (String output : outputData.keySet()) {
+                            OutputData data = getOutputData(output, false);
+                            if (data != null)
+                                    data.removeInput(input);
+                    }
+                }
 			} else if (type == VariableListEvent.REPLACE) {
-				String input = event.getVariable();
-				int inputIndex = ((Integer) event.getData()).intValue();
-				String newName = event.getSource().get(inputIndex);
-				for (String output : outputData.keySet()) {
-					OutputData data = getOutputData(output, false);
-					if (data != null)
-						data.replaceInput(input, newName);
-				}
+                Var oldVar = v;
+                Var newVar = model.getInputs().vars.get(event.getIndex());
+                for (String output : outputData.keySet()) {
+                        for (int b = 0; b < oldVar.width && b < newVar.width; b++) {
+                                OutputData data = getOutputData(output, false);
+                                if (data != null)
+                                        data.replaceInput(oldVar.bitName(b), newVar.bitName(b));
+                        }
+                        for (int b = newVar.width; b < oldVar.width; b++) {
+                                OutputData data = getOutputData(output, false);
+                                if (data != null)
+                                        data.removeInput(oldVar.bitName(b));
+                        }
+                        if (oldVar.width < newVar.width) {
+                                OutputData data = getOutputData(output, false);
+                                if (data != null)
+                                        data.invalidate(false, false);
+                        }
+                }
 			} else if (type == VariableListEvent.MOVE
 					|| type == VariableListEvent.ADD) {
 				for (String output : outputData.keySet()) {
@@ -88,16 +104,23 @@ public class OutputExpressions {
 				outputData.clear();
 				fireModelChanged(OutputExpressionsEvent.ALL_VARIABLES_REPLACED);
 			} else if (type == VariableListEvent.REMOVE) {
-				outputData.remove(event.getVariable());
+				for (String bit : event.getVariable())
+                    outputData.remove(bit);
 			} else if (type == VariableListEvent.REPLACE) {
-				String oldName = event.getVariable();
-				if (outputData.containsKey(oldName)) {
-					OutputData toMove = outputData.remove(oldName);
-					int inputIndex = ((Integer) event.getData()).intValue();
-					String newName = event.getSource().get(inputIndex);
-					toMove.output = newName;
-					outputData.put(newName, toMove);
-				}
+				Var oldVar = event.getVariable();
+                Var newVar = model.getInputs().vars.get(event.getIndex());
+                for (int b = 0; b < oldVar.width && b < newVar.width; b++) {
+                        String oldName = oldVar.bitName(b);
+                        String newName = newVar.bitName(b);
+                        if (outputData.containsKey(oldName)) {
+                                OutputData toMove = outputData.remove(oldName);
+                                toMove.output = newName;
+                                outputData.put(newName, toMove);
+                        }
+                }
+                for (int b = newVar.width; b < oldVar.width; b++) {
+                        outputData.remove(oldVar.bitName(b));
+                }
 			}
 		}
 
@@ -167,7 +190,7 @@ public class OutputExpressions {
 					TruthTable table = model.getTruthTable();
 					Entry[] outputColumn = computeColumn(model.getTruthTable(),
 							expr);
-					int outputIndex = model.getOutputs().indexOf(output);
+					int outputIndex = model.getOutputs().bits.indexOf(output);
 
 					Entry[] currentColumn = table.getOutputColumn(outputIndex);
 					if (!columnsMatch(currentColumn, outputColumn)
@@ -253,7 +276,7 @@ public class OutputExpressions {
 
 			if (expr != minimalExpr) { // for efficiency to avoid recomputation
 				Entry[] values = computeColumn(model.getTruthTable(), expr);
-				int outputColumn = model.getOutputs().indexOf(output);
+				int outputColumn = model.getOutputs().bits.indexOf(output);
 				updatingTable = true;
 				try {
 					model.getTruthTable().setOutputColumn(outputColumn, values);
@@ -413,7 +436,7 @@ public class OutputExpressions {
 			throw new IllegalArgumentException("null output name");
 		OutputData ret = outputData.get(output);
 		if (ret == null && create) {
-			if (model.getOutputs().indexOf(output) < 0) {
+			if (model.getOutputs().bits.indexOf(output) < 0) {
 				throw new IllegalArgumentException("unrecognized output "
 						+ output);
 			}
