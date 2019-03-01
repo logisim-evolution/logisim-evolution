@@ -33,6 +33,7 @@ package com.cburch.logisim.analyze.gui;
 import static com.cburch.logisim.analyze.Strings.S;
 
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -43,7 +44,6 @@ import java.util.ArrayList;
 import java.text.AttributedString;
 import java.awt.font.TextAttribute;
 import java.awt.font.FontRenderContext;
-import java.awt.font.LineBreakMeasurer;
 import java.awt.font.TextLayout;
 
 import javax.swing.JPanel;
@@ -195,6 +195,10 @@ class ExpressionView extends JPanel {
 				}
 			});
 			this.text = text.toString();
+System.out.println(this.text);
+for (int i = 0 ; i < nots.size() ; i++) {
+	System.out.println(i+":"+nots.get(i).startIndex+"..."+nots.get(i).stopIndex);
+}
 		}
 	}
 
@@ -209,7 +213,10 @@ class ExpressionView extends JPanel {
 			int width = getWidth();
 			if (renderData != null && Math.abs(renderData.width - width) > 2) {
 				Graphics g = getGraphics();
-				FontMetrics fm = g == null ? null : g.getFontMetrics();
+				FontMetrics fm = null;
+				if (g != null) {
+					fm = g.getFontMetrics(AppPreferences.getScaledFont(EXPRESSION_BASE_FONT));
+				}
 				renderData = new RenderData(renderData.exprData, width, fm);
 				setPreferredSize(renderData.getPreferredSize());
 				revalidate();
@@ -351,11 +358,10 @@ class ExpressionView extends JPanel {
 					if (nd.depth > maxDepth)
 						maxDepth = nd.depth;
 				}
-				lineY[i] = curY + maxDepth * NOT_SEP;
+				lineY[i] = curY + (maxDepth+1) * AppPreferences.getScaled(NOT_SEP);
 				curY = lineY[i] + fm.getHeight() + EXTRA_LEADING;
 			}
-			height = Math.max(MINIMUM_HEIGHT, curY - fm.getLeading()
-					- EXTRA_LEADING);
+			height = Math.max(MINIMUM_HEIGHT, curY);
 		}
 
 		private void computeNotDepths() {
@@ -387,8 +393,19 @@ class ExpressionView extends JPanel {
 			return new Dimension(10, height);
 		}
 
-		private AttributedString style(String s, int end, ArrayList<Range>subs) {
-			AttributedString as = new AttributedString(s.substring(0, end));
+		private AttributedString style(String s, int end, ArrayList<Range>subs,
+				boolean replaceSpaces) {
+			/* This is a hack to get TextLayout to correctly format and calculate the width
+			 * of this substring (see remark in getWidth(...) below. As we have a mono spaced
+			 * font the size of all chars is equal.
+			 */
+			String sub = s.substring(0, end).replace(" ", replaceSpaces ? "_" : " ").
+					replace("(", replaceSpaces ? "_" : "(").
+					replace(")", replaceSpaces ? "_" : ")");
+			AttributedString as = new AttributedString(sub);
+			Font ExpressionFont = AppPreferences.getScaledFont(EXPRESSION_BASE_FONT);
+			as.addAttribute(TextAttribute.FAMILY, ExpressionFont.getFamily());
+			as.addAttribute(TextAttribute.SIZE, ExpressionFont.getSize());
 			for (Range r : subs) {
 				if (r.stopIndex <= end)
 					as.addAttribute(TextAttribute.SUPERSCRIPT, TextAttribute.SUPERSCRIPT_SUB, r.startIndex, r.stopIndex);
@@ -399,9 +416,13 @@ class ExpressionView extends JPanel {
 		private int getWidth(FontRenderContext ctx, String s, int end, ArrayList<Range> subs) {
 			if (end == 0)
 				return 0;
-			AttributedString as = style(s, end, subs);
-			LineBreakMeasurer m = new LineBreakMeasurer(as.getIterator(), ctx);
-			TextLayout layout = m.nextLayout(Integer.MAX_VALUE);
+			AttributedString as = style(s, end, subs,true);
+			/* The TextLayout class will omit trailing spaces, incorrectly format parenthesis, 
+			 * hence the width is incorrectly calculated. Therefore in the previous method we can
+			 * replace the spaces and parenthesis by underscores to prevent this problem; maybe 
+			 * there is a more intelligent way.
+			 */ 
+			TextLayout layout = new TextLayout(as.getIterator(), ctx);
 			return (int)layout.getBounds().getWidth();
 		}
 
@@ -423,7 +444,7 @@ class ExpressionView extends JPanel {
                 		 notStarts[i][j] = getWidth(ctx, line, not.startIndex, subs);
                 		 notStops[i][j] = getWidth(ctx, line, not.stopIndex, subs);
                 	 }
-                	 lineStyled[i] = style(line, line.length(), subs);
+                	 lineStyled[i] = style(line, line.length(), subs, false);
                  }
 			 }
 			 for (int i = 0; i < lineStyled.length; i++) {
@@ -433,13 +454,13 @@ class ExpressionView extends JPanel {
 				 ArrayList<Range> nots = lineNots.get(i);
 				 for (int j = 0; j < nots.size(); j++) {
 					Range nd = nots.get(j);
-					int notY = y + lineY[i] - nd.depth * NOT_SEP;
+					int notY = y + lineY[i] - nd.depth * AppPreferences.getScaled(NOT_SEP);
 					int startX = x + notStarts[i][j];
 					int stopX = x + notStops[i][j];
 					g.drawLine(startX, notY, stopX, notY);
 					g.drawLine(startX, notY-1, stopX, notY-1);
 				}
-			}
+			 }
 		}
 	}
 
@@ -459,6 +480,9 @@ class ExpressionView extends JPanel {
 	private static final int EXTRA_LEADING = 4;
 
 	private static final int MINIMUM_HEIGHT = 25;
+	
+	private static final Font EXPRESSION_BASE_FONT = new Font("Monospaced", Font.PLAIN, 14);
+	private Font ExpressionFont = null;
 
 	private MyListener myListener = new MyListener();
 
@@ -472,7 +496,7 @@ class ExpressionView extends JPanel {
 	void localeChanged() {
 		repaint();
 	}
-
+	
 	@Override
 	public void paintComponent(Graphics g) {
 		if (AppPreferences.AntiAliassing.getBoolean()) {
@@ -493,7 +517,10 @@ class ExpressionView extends JPanel {
 	public void setExpression(Expression expr) {
 		ExpressionData exprData = new ExpressionData(expr);
 		Graphics g = getGraphics();
-		FontMetrics fm = g == null ? null : g.getFontMetrics();
+		FontMetrics fm = null;
+		if (g != null) {
+			fm = g.getFontMetrics(AppPreferences.getScaledFont(EXPRESSION_BASE_FONT));
+		}
 		renderData = new RenderData(exprData, getWidth(), fm);
 		setPreferredSize(renderData.getPreferredSize());
 		revalidate();

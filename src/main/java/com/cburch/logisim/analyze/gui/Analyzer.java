@@ -178,8 +178,8 @@ public class Analyzer extends LFrame {
 	private BuildCircuitButton buildCircuit;
 
 	Analyzer() {
-		inputsPanel = new VariableTab(model.getInputs());
-		outputsPanel = new VariableTab(model.getOutputs());
+		inputsPanel = new VariableTab(model.getInputs(), AnalyzerModel.MAX_INPUTS);
+		outputsPanel = new VariableTab(model.getOutputs(), AnalyzerModel.MAX_OUTPUTS);
 		inputsPanel.SetCompanion(outputsPanel, S.get("outputsTab"));
 		outputsPanel.SetCompanion(inputsPanel, S.get("inputsTab"));
 		truthTablePanel = new TableTab(model.getTruthTable());

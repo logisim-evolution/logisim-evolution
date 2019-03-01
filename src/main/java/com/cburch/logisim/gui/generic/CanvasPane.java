@@ -36,13 +36,14 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
+import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
-
-import com.cburch.logisim.util.MacCompatibility;
 
 public class CanvasPane extends JScrollPane {
 	private class Listener implements ComponentListener, PropertyChangeListener {
@@ -92,19 +93,65 @@ public class CanvasPane extends JScrollPane {
 			}
 		}
 	}
+	
+	private class ZoomListener implements MouseWheelListener {
+		@Override
+		public void mouseWheelMoved(MouseWheelEvent mwe) {
+			if (mwe.isControlDown()) {
+				double zoom = zoomModel.getZoomFactor();
+				double opts[] = zoomModel.getZoomOptions();
+				if (mwe.getWheelRotation() < 0) { // ZOOM IN
+					zoom += 0.1;
+					double max = opts[opts.length-1] / 100.0;
+					zoomModel.setZoomFactor(zoom >= max ? max : zoom);
+				} else { // ZOOM OUT
+					zoom -= 0.1;
+					double min = opts[0] / 100.0;
+					zoomModel.setZoomFactor(zoom <= min ? min : zoom);
+				}
+			} else if (mwe.isShiftDown()) {
+				getHorizontalScrollBar().setValue(
+						scrollValue(getHorizontalScrollBar(), mwe.getWheelRotation()));
+			} else {
+				getVerticalScrollBar().setValue(
+						scrollValue(getVerticalScrollBar(), mwe.getWheelRotation()));
+			}
+		}
+
+		private int scrollValue(JScrollBar bar, int val) {
+			if (val > 0) {
+				if (bar.getValue() < bar.getMaximum() + val * 2
+						* bar.getBlockIncrement()) {
+					return bar.getValue() + val * 2 * bar.getBlockIncrement();
+				}
+			} else {
+				if (bar.getValue() > bar.getMinimum() + val * 2
+						* bar.getBlockIncrement()) {
+					return bar.getValue() + val * 2 * bar.getBlockIncrement();
+				}
+			}
+			return 0;
+		}
+	}
+
+
 
 	private static final long serialVersionUID = 1L;
 
 	private CanvasPaneContents contents;
 	private Listener listener;
+	private ZoomListener zoomListener;
 	private ZoomModel zoomModel;
 
 	public CanvasPane(CanvasPaneContents contents) {
 		super((Component) contents);
 		this.contents = contents;
 		this.listener = new Listener();
+		this.zoomListener = new ZoomListener();
 		this.zoomModel = null;
 		addComponentListener(listener);
+		setWheelScrollingEnabled(false);
+		addMouseWheelListener(zoomListener);
 		contents.setCanvasPane(this);
 	}
 

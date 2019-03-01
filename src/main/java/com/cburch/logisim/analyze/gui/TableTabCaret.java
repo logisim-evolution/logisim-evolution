@@ -74,7 +74,7 @@ class TableTabCaret {
 			}  else if (action.equals("0")) {
 				doKey('0');
 			}  else if (action.equals("x")) {
-				doKey('x');
+				doKey('-');
 			} else if (action.equals("compact")) {
 				TruthTable model = table.getTruthTable();
 				model.compactVisibleRows();
@@ -181,7 +181,6 @@ class TableTabCaret {
 			}
 			TruthTable model = table.getTruthTable();
 			int inputs = table.getInputColumnCount();
-			int outputs = table.getOutputColumnCount();
 			Entry newEntry = null;
 			int dx = 1, dy = 0;
 			switch (c) {
@@ -205,11 +204,14 @@ class TableTabCaret {
 				case '1':
 					newEntry = Entry.ONE;
 					break;
+				case '-':
 				case 'x':
+				case 'X':
 					newEntry = Entry.DONT_CARE;
 					break;
 				case '\n':
 					dy = 1;
+					dx = 0;
 					break;
 				case '\u0008': // backspace
 					newEntry = Entry.DONT_CARE;
@@ -258,32 +260,33 @@ class TableTabCaret {
 			else if (newEntry != null) {
 				model.setVisibleOutputEntry(cursor.row, cursor.col - inputs, newEntry);
 			}
-
-			if (!markA.isValid() || !markB.isValid())
-				return;
-			Rectangle s = getSelection();
+			AutoMoveCursor(dx,dy);
+		}
+		
+		private void AutoMoveCursor(int dx , int dy) {
 			int row = cursor.row;
 			int col = cursor.col;
-			if (dy > 0) { // advance down
-				col = s.x;
-				if (++row >= s.y + s.height)
-					row = s.y;
-			} else if (dx > 0) { // advance right
-				if (++col >= s.x + s.width) {
-					col = s.x;
-					if (++row >= s.y + s.height) {
-						row = s.y;
-					}
-				}
-			} else if (dx < 0) { // advance left
-				if (--col < s.x) {
-					col = s.x + s.width - 1;
-					if (--row < s.y)
-						row = s.y + s.height - 1;
-				}
+			int InputCols = table.getInputColumnCount();
+			int outputCols = table.getOutputColumnCount();
+			int NrOfEntries = table.getRowCount();
+			int newRow = row+dy;
+			int newCol = col+dx;
+			int maxcol = col < InputCols ? InputCols : InputCols+outputCols;
+			int mincol = col < InputCols ? 0 : InputCols;
+			if (newCol >= maxcol) {
+				newCol = mincol;
+				newRow++;
 			}
+			if (newCol < mincol) {
+				newCol = maxcol-1;
+				newRow--;
+			}
+			if (newRow < 0)
+				newRow = NrOfEntries-1;
+			if (newRow >= NrOfEntries)
+				newRow = 0;
 			Pt oldCursor = cursor;
-			cursor = new Pt(row, col);
+			cursor = new Pt(newRow, newCol);
 			repaint(oldCursor, cursor, markA, markB);
 			scrollTo(cursor);
 		}

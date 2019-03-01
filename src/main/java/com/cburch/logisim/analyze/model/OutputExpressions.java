@@ -108,7 +108,7 @@ public class OutputExpressions {
                     outputData.remove(bit);
 			} else if (type == VariableListEvent.REPLACE) {
 				Var oldVar = event.getVariable();
-                Var newVar = model.getInputs().vars.get(event.getIndex());
+                Var newVar = model.getOutputs().vars.get(event.getIndex());
                 for (int b = 0; b < oldVar.width && b < newVar.width; b++) {
                         String oldName = oldVar.bitName(b);
                         String newName = newVar.bitName(b);
@@ -191,7 +191,6 @@ public class OutputExpressions {
 					Entry[] outputColumn = computeColumn(model.getTruthTable(),
 							expr);
 					int outputIndex = model.getOutputs().bits.indexOf(output);
-
 					Entry[] currentColumn = table.getOutputColumn(outputIndex);
 					if (!columnsMatch(currentColumn, outputColumn)
 							|| isAllUndefined(outputColumn) || formatChanged) {

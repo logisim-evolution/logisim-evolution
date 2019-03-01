@@ -58,6 +58,7 @@ import com.cburch.logisim.analyze.model.OutputExpressionsEvent;
 import com.cburch.logisim.analyze.model.OutputExpressionsListener;
 import com.cburch.logisim.analyze.model.Parser;
 import com.cburch.logisim.analyze.model.ParserException;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.StringGetter;
 
 class ExpressionTab extends AnalyzerTab implements TabInterface {
@@ -176,7 +177,7 @@ class ExpressionTab extends AnalyzerTab implements TabInterface {
 		field.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0),
 				myListener);
 		field.getDocument().addDocumentListener(myListener);
-		field.setFont(new Font("Monospaced", Font.PLAIN, 14));
+		field.setFont(AppPreferences.getScaledFont(new Font("Monospaced", Font.PLAIN, 14)));
 
 		JPanel buttons = new JPanel();
 		buttons.add(clear);
@@ -190,7 +191,6 @@ class ExpressionTab extends AnalyzerTab implements TabInterface {
 		gc.gridx = 0;
 		gc.gridy = GridBagConstraints.RELATIVE;
 		gc.fill = GridBagConstraints.BOTH;
-
 		JPanel selectorPanel = selector.createPanel();
 		gb.setConstraints(selectorPanel, gc);
 		add(selectorPanel);

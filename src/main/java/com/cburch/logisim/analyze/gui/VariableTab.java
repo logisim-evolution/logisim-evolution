@@ -174,10 +174,9 @@ class VariableTab extends AnalyzerTab implements TabInterface {
 	private VariableTab Othertab = null;
 	private String OtherId;
 
-	private static final Integer widths[] = new Integer[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 };
 	private JList<Var> list = new JList<Var>();
 	private JTextField field = new JTextField();
-	private JComboBox<Integer> width = new JComboBox<Integer>(widths);
+	private JComboBox<Integer> width;
 	private JButton remove = new JButton();
 	private JButton moveUp = new JButton();
 	private JButton moveDown = new JButton();
@@ -186,9 +185,13 @@ class VariableTab extends AnalyzerTab implements TabInterface {
 	private JLabel error = new JLabel(" ");
 
 	@SuppressWarnings("unchecked")
-	VariableTab(VariableList data) {
+	VariableTab(VariableList data, int maxwidth) {
 		this.data = data;
 
+		Integer widths[] = new Integer[maxwidth > 32 ? 32 : maxwidth];
+		for (int i = 0; i < widths.length; i++)
+			widths[i] = i+1;
+		width = new JComboBox<Integer>(widths);
 		list.setModel(new VariableListModel(data));
 		list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		list.addListSelectionListener(myListener);

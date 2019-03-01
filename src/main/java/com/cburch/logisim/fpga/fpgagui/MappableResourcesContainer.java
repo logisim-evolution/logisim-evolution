@@ -32,6 +32,7 @@ package com.cburch.logisim.fpga.fpgagui;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -527,7 +528,7 @@ public class MappableResourcesContainer {
 	}
 
 	public Set<String> MappedList() {
-		SortedSet<String> result = new TreeSet<String>();
+		SortedSet<String> result = new TreeSet<String>(new NaturalOrderComparator());
 		for (String MapName : mappedList.keySet()) {
 			result.add(MapNametoDisplayName(MapName));
 		}
@@ -581,19 +582,13 @@ public class MappableResourcesContainer {
 	 */
 	private ArrayList<BoardRectangle> RemoveUsedItems(
 			ArrayList<BoardRectangle> List, int pinNeeded) {
-		int used = pinNeeded;
 		Iterator<BoardRectangle> ListIterator = List.iterator();
 		while (ListIterator.hasNext()) {
 			BoardRectangle current = ListIterator.next();
 			if (mappedList.containsValue(current)) {
 				ListIterator.remove();
-				used--;
 			}
 		}
-		/* We dont want to list Pin if there are not enough */
-		//if (List.size() < used) {
-		//	List.clear();
-		//}
 		return List;
 	}
 
@@ -670,7 +665,7 @@ public class MappableResourcesContainer {
 	}
 
 	public Set<String> UnmappedList() {
-		SortedSet<String> result = new TreeSet<String>();
+		SortedSet<String> result = new TreeSet<String>(new NaturalOrderComparator());
 
 		for (ArrayList<String> key : myMappableResources.keySet()) {
 			for (String MapName : GetMapNamesList(key,
@@ -682,4 +677,88 @@ public class MappableResourcesContainer {
 		}
 		return result;
 	}
+	/*
+	   The code below for NaturalOrderComparator comes from:
+       https://github.com/paour/natorder/blob/master/NaturalOrderComparator.java
+       
+	   It has been altered for use in Logisim (removed the main class). 
+	   The original file header is as follows:
+	   
+	   NaturalOrderComparator.java -- Perform 'natural order' comparisons of strings in Java.
+	   Copyright (C) 2003 by Pierre-Luc Paour <natorder@paour.com>
+	   
+	   Based on the C version by Martin Pool, of which this is more or less a straight conversion.
+	   Copyright (C) 2000 by Martin Pool <mbp@humbug.org.au>
+	   
+	   This software is provided 'as-is', without any express or implied
+	   warranty.  In no event will the authors be held liable for any damages
+	   arising from the use of this software.
+	   
+	   Permission is granted to anyone to use this software for any purpose,
+	   including commercial applications, and to alter it and redistribute it
+	   freely, subject to the following restrictions:
+	   
+	   1. The origin of this software must not be misrepresented; you must not
+	   claim that you wrote the original software. If you use this software
+	   in a product, an acknowledgment in the product documentation would be
+	   appreciated but is not required.
+	   2. Altered source versions must be plainly marked as such, and must not be
+	   misrepresented as being the original software.
+	   3. This notice may not be removed or altered from any source distribution.
+	*/
+
+	private static class NaturalOrderComparator implements Comparator<String> {
+		public int compare(String a, String b) {
+			int na = a.length(), nb = b.length();
+			int ia = 0, ib = 0;
+			for (;; ia++, ib++) {
+				char ca = charAt(a, ia, na);
+				char cb = charAt(b, ib, nb);
+
+				// skip spaces
+				while (Character.isSpaceChar(ca))
+					ca = charAt(a, ++ia, na);
+				while (Character.isSpaceChar(cb))
+					cb = charAt(b, ++ib, nb);
+
+				// copmare numerical sequences
+				if (Character.isDigit(ca) && Character.isDigit(cb))
+				{
+					int bias = 0;
+					for (;; ia++, ib++)
+					{
+						ca = charAt(a, ia, na);
+						cb = charAt(b, ib, nb);
+						if (!Character.isDigit(ca) && !Character.isDigit(cb))
+							break;
+						else if (!Character.isDigit(ca))
+							return -1; // a is less
+						else if (!Character.isDigit(cb))
+							return +1; // a is greater
+						else if (bias == 0 && ca < cb)
+							bias = -1; // a is less, if equal length
+						else if (bias == 0 && ca > cb)
+							bias = +1; // a is greater, if equal length
+					}
+					if (bias != 0)
+						return bias;
+				}
+
+				// compare ascii
+				if (ca < cb)
+					return -1; // a is less
+				else if (ca > cb)
+					return +1; // a is greater
+				else if (ca == 0 && cb == 0)
+					return a.compareTo(b);
+			}
+		}
+
+		static char charAt(String s, int i, int n) {
+			return (i >= n ? 0 : s.charAt(i));
+		}
+
+	}
+
+
 }

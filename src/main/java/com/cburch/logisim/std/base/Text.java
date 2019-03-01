@@ -119,9 +119,27 @@ public class Text extends InstanceFactory {
 		String text = attrs.getText();
 		if (text == null || text.length() == 0)
 			return Bounds.EMPTY_BOUNDS;
+		int n = 0;
+		int c = 0;
+		int lines = 0;
+		for (int i = 0; i < text.length(); i++) {
+				if (text.charAt(i) == '\n') {
+						n = (c > n ? c : n);
+						c = 0;
+						lines++;
+				} else if (text.charAt(i) == '\t') {
+						c += 4;
+				} else {
+						c++;
+				}
+		}
+		if (text.charAt(text.length()-1) != '\n') {
+				n = (c > n ? c : n);
+				lines++;
+		}
 		int size = attrs.getFont().getSize();
-		int h = size;
-		int w = size * text.length() / 2;
+		int h = size * lines;
+		int w = size * n * 2 / 3;
 		int ha = attrs.getHorizontalAlign();
 		int va = attrs.getVerticalAlign();
 		int x;

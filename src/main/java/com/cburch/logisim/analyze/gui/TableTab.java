@@ -32,6 +32,7 @@ package com.cburch.logisim.analyze.gui;
 
 import static com.cburch.logisim.analyze.Strings.S;
 
+import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -63,7 +64,6 @@ import com.cburch.logisim.analyze.model.TruthTableEvent;
 import com.cburch.logisim.analyze.model.TruthTableListener;
 import com.cburch.logisim.analyze.model.Var;
 import com.cburch.logisim.prefs.AppPreferences;
-import com.cburch.logisim.util.GraphicsUtil;
 
 class TableTab extends JPanel implements TruthTablePanel, TabInterface {
 	private class MyListener implements TruthTableListener {
@@ -278,7 +278,7 @@ class TableTab extends JPanel implements TruthTablePanel, TabInterface {
 			@Override
 			public Dimension getPreferredSize() {
 				Dimension d = super.getPreferredSize();
-				int s = (int)(d.getWidth()<d.getHeight() ? d.getHeight() : d.getWidth());
+				int s = (int)d.getHeight();
 				return new Dimension (s,s);
 			}
 	}
@@ -378,6 +378,8 @@ class TableTab extends JPanel implements TruthTablePanel, TabInterface {
 	public JPanel getBody() {
 		return body;
 	}
+	
+	private static Canvas canvas = new Canvas();
 
 	private void computePreferredSize() {
 		inputVars = table.getInputVariables();
@@ -396,12 +398,10 @@ class TableTab extends JPanel implements TruthTablePanel, TabInterface {
 		inDim.reset(inputVars);
 		outDim.reset(outputVars);
 		Graphics g = getGraphics();
-		if (g != null) {
-			FontMetrics fm = g.getFontMetrics(HEAD_FONT);
-			cellHeight = fm.getHeight();
-			inDim.calculate(fm);
-			outDim.calculate(fm);
-		}
+		FontMetrics fm = (g != null ? g.getFontMetrics(HEAD_FONT) : canvas.getFontMetrics(HEAD_FONT));
+		cellHeight = fm.getHeight();
+		inDim.calculate(fm);
+		outDim.calculate(fm);
 
 		tableWidth = inDim.width + COLUMNS_HSEP + outDim.width;
 

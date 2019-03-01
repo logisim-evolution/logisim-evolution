@@ -47,7 +47,7 @@ public class EditableLabelField extends JTextField {
 
 	public EditableLabelField() {
 		super(10);
-		setBackground(new Color(255, 255, 255, 128));
+		setBackground(new Color(255, 0, 255, 128));
 		setOpaque(false);
 		setBorder(BorderFactory.createCompoundBorder(
 				BorderFactory.createLineBorder(Color.BLACK),

@@ -246,8 +246,10 @@ public class TruthTable {
 	}
 
 	public Entry getOutputEntry(int idx, int col) {
+		if (idx < 0 || col < 0)
+			return DEFAULT_ENTRY;
 		Entry[] column = columns.get(col);
-		return (column == null ? DEFAULT_ENTRY : column[idx]);
+		return (column == null ? DEFAULT_ENTRY : idx < column.length ? column[idx] : DEFAULT_ENTRY);
 	}
 
 	public Entry getVisibleInputEntry(int row, int col) {
@@ -594,7 +596,7 @@ public class TruthTable {
 
 		private void removeInput(int index, int oldCount) {
 			// force an Entry column of each row.input to 'x', then remove it
-			int b = (1 << (oldCount - index));                      // _0001000
+			int b = (1 << (oldCount - 1 - index));                      // _0001000
 			boolean changed[] = new boolean[columns.size()];
 			for (int i = 0; i < rows.size(); i++) {
 				Row r = rows.get(i);

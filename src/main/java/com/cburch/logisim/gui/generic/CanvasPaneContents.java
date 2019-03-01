@@ -32,11 +32,11 @@ package com.cburch.logisim.gui.generic;
 
 import java.awt.Dimension;
 import java.awt.Rectangle;
+import java.awt.event.MouseWheelListener;
 
 import javax.swing.Scrollable;
 
 public interface CanvasPaneContents extends Scrollable {
-	// from Scrollable
 	public Dimension getPreferredScrollableViewportSize();
 
 	public int getScrollableBlockIncrement(Rectangle visibleRect,
@@ -52,4 +52,6 @@ public interface CanvasPaneContents extends Scrollable {
 	public void recomputeSize();
 
 	public void setCanvasPane(CanvasPane pane);
+	
+	public void addMouseWheelListener(MouseWheelListener listener);
 }

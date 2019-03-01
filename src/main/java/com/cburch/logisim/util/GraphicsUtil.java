@@ -33,10 +33,11 @@ package com.cburch.logisim.util;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+
+import com.cburch.draw.util.TextMetrics;
 
 public class GraphicsUtil {
 	static public void drawArrow(Graphics g, int x0, int y0, int x1, int y1,
@@ -63,7 +64,7 @@ public class GraphicsUtil {
 		g.setColor(oldColor);
 		GraphicsUtil.switchToWidth(g, 1);
 	}
-
+	
 	static public void drawCenteredArc(Graphics g, int x, int y, int r,
 			int start, int dist) {
 		g.drawArc(x - r, y - r, 2 * r, 2 * r, start, dist);
@@ -107,7 +108,8 @@ public class GraphicsUtil {
 		if (text.length() == 0)
 			return;
 		Rectangle bd = getTextBounds(g, text, x, y, halign, valign);
-		g.drawString(text, bd.x, bd.y + g.getFontMetrics().getAscent());
+		TextMetrics tm = new TextMetrics(g, text);
+		g.drawString(text, bd.x, bd.y + tm.ascent);
 	}
 	
 	static public void drawText(Graphics g, String text, int x, int y,
@@ -115,13 +117,14 @@ public class GraphicsUtil {
 		if (text.length() == 0)
 			return;
 		Rectangle bd = getTextBounds(g, text, x, y, halign, valign);
+		TextMetrics tm = new TextMetrics(g, text);
 		if(g instanceof Graphics2D) {
 			((Graphics2D) g).setPaint(bg);
 			g.fillRect(bd.x, bd.y, bd.width, bd.height);
 			((Graphics2D) g).setPaint(fg);
-			((Graphics2D) g).drawString(text, bd.x, bd.y + g.getFontMetrics().getAscent());
+			((Graphics2D) g).drawString(text, bd.x, bd.y + tm.ascent);
 		} else {
-			g.drawString(text, bd.x, bd.y + g.getFontMetrics().getAscent());
+			g.drawString(text, bd.x, bd.y + tm.ascent);
 		}
 	}
 
@@ -142,11 +145,10 @@ public class GraphicsUtil {
 			int y, int halign, int valign) {
 		if (g == null)
 			return new Rectangle(x, y, 0, 0);
-		FontMetrics mets = g.getFontMetrics();
-		int width = mets.stringWidth(text);
-		int ascent = mets.getAscent();
-		int descent = mets.getDescent();
-		int height = ascent + descent;
+		TextMetrics tm = new TextMetrics(g, text);
+		int width = tm.width;
+		int ascent = tm.ascent;
+		int height = tm.height;
 
 		Rectangle ret = new Rectangle(x, y, width, height);
 		switch (halign) {
