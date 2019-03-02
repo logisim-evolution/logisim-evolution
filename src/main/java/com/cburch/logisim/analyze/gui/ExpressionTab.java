@@ -268,9 +268,16 @@ class ExpressionTab extends AnalyzerTab implements TabInterface {
 
 	@Override
 	void updateTab() {
-		String output = getCurrentVariable();
-		prettyView.setExpression(model.getOutputExpressions().getExpression(
-				output));
+		final String output = getCurrentVariable();
+		if (model.getTruthTable().getRowCount() > 4096) {
+			(new Analyzer.PleaseWait<Expression>(S.get("expressionCalc"), this) {
+				@Override
+				public Expression doInBackground() throws Exception {
+					return model.getOutputExpressions().getExpression(output);
+				}
+			}).get();
+		}
+		prettyView.setExpression(model.getOutputExpressions().getExpression(output));
 		myListener.currentStringChanged();
 	}
 }

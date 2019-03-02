@@ -218,12 +218,11 @@ public class ProjectCircuitActions {
 			return;
 		}
 
-		Analyzer analyzer = AnalyzerManager.getAnalyzer();
+		Analyzer analyzer = AnalyzerManager.getAnalyzer(proj.getFrame());
 		analyzer.getModel().setCurrentCircuit(proj, circuit);
 		configureAnalyzer(proj, circuit, analyzer, pinNames, inputVars,outputVars);
 		if (!analyzer.isVisible()) {
 			analyzer.setVisible(true);
-			analyzer.setLocationRelativeTo(proj.getFrame());
 		}
 		analyzer.toFront();
 	}

@@ -206,7 +206,7 @@ public class TestFrame extends JFrame {
 			project.addProjectListener(this);
 		}
 
-		public JFrame getJFrame(boolean create) {
+		public JFrame getJFrame(boolean create, java.awt.Component parent) {
 			return TestFrame.this;
 		}
 

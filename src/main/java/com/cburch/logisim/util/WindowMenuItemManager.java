@@ -49,7 +49,7 @@ public abstract class WindowMenuItemManager {
 		}
 
 		public void windowClosing(WindowEvent event) {
-			JFrame frame = getJFrame(false);
+			JFrame frame = getJFrame(false, null);
 			if (frame.getDefaultCloseOperation() == JFrame.HIDE_ON_CLOSE) {
 				removeFromManager();
 			}
@@ -118,7 +118,7 @@ public abstract class WindowMenuItemManager {
 		WindowMenuManager.setCurrentManager(this);
 	}
 
-	public abstract JFrame getJFrame(boolean create);
+	public abstract JFrame getJFrame(boolean create, java.awt.Component parent);
 
 	JRadioButtonMenuItem getMenuItem(WindowMenu key) {
 		return menuItems.get(key);

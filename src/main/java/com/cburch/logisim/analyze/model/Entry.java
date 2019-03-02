@@ -80,6 +80,15 @@ public class Entry  implements Comparable<Entry> {
 		return "Entry[" + description + "]";
 	}
 	
+	public String toBitString() {
+		if (this == DONT_CARE ||
+			this == ZERO ||
+			this == ONE)
+			return description;
+		else
+			return "?";
+	}
+	
 	@Override
 	public int compareTo(Entry other) {
 		return (this.sortOrder - other.sortOrder);

@@ -54,33 +54,33 @@ public class OutputExpressions {
 				outputData.clear();
 				fireModelChanged(OutputExpressionsEvent.ALL_VARIABLES_REPLACED);
 			} else if (type == VariableListEvent.REMOVE) {
-                for (String input : v) {
-                    for (String output : outputData.keySet()) {
-                            OutputData data = getOutputData(output, false);
-                            if (data != null)
-                                    data.removeInput(input);
-                    }
-                }
+				for (String input : v) {
+					for (String output : outputData.keySet()) {
+						OutputData data = getOutputData(output, false);
+						if (data != null)
+							data.removeInput(input);
+					}
+				}
 			} else if (type == VariableListEvent.REPLACE) {
-                Var oldVar = v;
-                Var newVar = model.getInputs().vars.get(event.getIndex());
-                for (String output : outputData.keySet()) {
-                        for (int b = 0; b < oldVar.width && b < newVar.width; b++) {
-                                OutputData data = getOutputData(output, false);
-                                if (data != null)
-                                        data.replaceInput(oldVar.bitName(b), newVar.bitName(b));
-                        }
-                        for (int b = newVar.width; b < oldVar.width; b++) {
-                                OutputData data = getOutputData(output, false);
-                                if (data != null)
-                                        data.removeInput(oldVar.bitName(b));
-                        }
-                        if (oldVar.width < newVar.width) {
-                                OutputData data = getOutputData(output, false);
-                                if (data != null)
-                                        data.invalidate(false, false);
-                        }
-                }
+				Var oldVar = v;
+				Var newVar = model.getInputs().vars.get(event.getIndex());
+				for (String output : outputData.keySet()) {
+					for (int b = 0; b < oldVar.width && b < newVar.width; b++) {
+						OutputData data = getOutputData(output, false);
+						if (data != null)
+							data.replaceInput(oldVar.bitName(b), newVar.bitName(b));
+					}
+					for (int b = newVar.width; b < oldVar.width; b++) {
+						OutputData data = getOutputData(output, false);
+						if (data != null)
+							data.removeInput(oldVar.bitName(b));
+					}
+					if (oldVar.width < newVar.width) {
+						OutputData data = getOutputData(output, false);
+						if (data != null)
+							data.invalidate(false, false);
+					}
+				}
 			} else if (type == VariableListEvent.MOVE
 					|| type == VariableListEvent.ADD) {
 				for (String output : outputData.keySet()) {
@@ -447,8 +447,13 @@ public class OutputExpressions {
 
 	private void invalidate(String output, boolean formatChanged) {
 		OutputData data = getOutputData(output, false);
-		if (data != null)
-			data.invalidate(false, false);
+		if (data != null) {
+			if (!allowUpdates) {
+				outputData.remove(output);
+			} else {
+				data.invalidate(false, false);
+			}
+		}
 	}
 
 	public boolean isExpressionMinimal(String output) {
@@ -479,5 +484,15 @@ public class OutputExpressions {
 			getOutputData(output, true).setMinimizedFormat(format);
 			invalidate(output, true);
 		}
+	}
+	
+	private boolean allowUpdates = false;
+
+	public void enableUpdates() {
+		allowUpdates = true;
+	}
+
+	public void disableUpdates() {
+		allowUpdates = false;
 	}
 }

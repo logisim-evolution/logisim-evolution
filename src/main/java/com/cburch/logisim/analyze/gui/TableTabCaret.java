@@ -30,6 +30,8 @@
 
 package com.cburch.logisim.analyze.gui;
 
+import static com.cburch.logisim.analyze.Strings.S;
+
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Rectangle;
@@ -76,8 +78,18 @@ class TableTabCaret {
 			}  else if (action.equals("x")) {
 				doKey('-');
 			} else if (action.equals("compact")) {
-				TruthTable model = table.getTruthTable();
-				model.compactVisibleRows();
+				final TruthTable tt = table.getTruthTable();
+				if (tt.getRowCount() > 4096) {
+					(new Analyzer.PleaseWait<Void>(S.get("tabcaretCompactRows"), table) {
+						@Override
+						public Void doInBackground() throws Exception {
+							tt.compactVisibleRows();
+							return null;
+						}
+					}).get();
+				} else {
+					tt.compactVisibleRows();
+				}
 			} else if (action.equals("expand")) {
 				TruthTable model = table.getTruthTable();
 				model.expandVisibleRows();

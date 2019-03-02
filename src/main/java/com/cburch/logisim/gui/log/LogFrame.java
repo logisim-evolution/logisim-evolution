@@ -130,7 +130,7 @@ public class LogFrame extends LFrame {
 		}
 
 		@Override
-		public JFrame getJFrame(boolean create) {
+		public JFrame getJFrame(boolean create, java.awt.Component parent) {
 			return LogFrame.this;
 		}
 

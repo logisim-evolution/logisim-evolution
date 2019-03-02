@@ -36,6 +36,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.SortedMap;
 
 public class TruthTable {
 
@@ -47,7 +49,7 @@ public class TruthTable {
 	private AnalyzerModel model;
 	private ArrayList<Row> rows = new ArrayList<>();         // visible input rows
 	private ArrayList<Entry[]> columns = new ArrayList<>();  // output columns
-	private CompareInputs sortByInputs = new CompareInputs();
+	private static final CompareInputs sortByInputs = new CompareInputs();
 
 	private class Row implements Iterable<Integer> {
 		// todo: probably more efficient to store this in baseIdx/dcMask format.
@@ -60,6 +62,12 @@ public class TruthTable {
 				idx = idx >> 1;
 				mask = mask >> 1;
 			}
+		}
+
+		Row(Entry entries[], int numInputs) {
+			inputs = new Entry[numInputs];
+			for (int i = 0; i < numInputs; i++)
+				inputs[i] = entries[i];
 		}
 
 		public int baseIndex() {
@@ -94,6 +102,20 @@ public class TruthTable {
 			s += "]";
 			s += " dup=" + duplicity();
 			s += String.format(" base=%x dcmask=%x", baseIndex(), dcMask());
+			return s;
+		}
+		
+		public String toBitString(List<Var> vars) {
+			String s = null;
+			int i = 0;
+			for (Var v : vars) {
+				if (s == null)
+					s = "";
+				else
+					s += " ";
+				for (int j = 0; j < v.width; j++)
+					s += inputs[i++].toBitString();
+			}
 			return s;
 		}
 
@@ -181,8 +203,33 @@ public class TruthTable {
 	}
 
 	public void compactVisibleRows() {
-		// find an
+		SortedMap<Implicant, String> partition = Implicant.computePartition(model);
+		rows.clear();
+		initColumns();
+		int ni = getInputColumnCount();
+		int no = getOutputColumnCount();
+		for (Map.Entry<Implicant, String> it : partition.entrySet()) {
+			Implicant imp = it.getKey();
+			String val = it.getValue();
+			Row r = new Row(imp.values, ni, imp.unknowns);
+			rows.add(r);
+			for (int col = 0; col < no; col++) {
+				Entry value = Entry.parse(""+val.charAt(col));
+				Entry[] column = columns.get(col);
+				if (column == null && value == DEFAULT_ENTRY)
+					continue;
+				else if (column == null)
+					column = getOutputColumn(col);
+				for (Integer idx : r) {
+					column[idx] = value;
+				}
+			}
+		}
 		fireRowsChanged();
+		for (int col = 0; col < no; col++) {
+			if (columns.get(col) != null)
+				fireCellsChanged(col);
+		}
 	}
 
 	public void setOutputColumn(int col, Entry[] values) {
@@ -251,12 +298,26 @@ public class TruthTable {
 		Entry[] column = columns.get(col);
 		return (column == null ? DEFAULT_ENTRY : idx < column.length ? column[idx] : DEFAULT_ENTRY);
 	}
+	
+	public String getVisibleOutputs(int row) {
+		Row r = rows.get(row);
+		int idx = r.baseIndex();
+		String s = "";
+		for (Entry[] column : columns)
+			s += (column == null ? DEFAULT_ENTRY : column[idx]).getDescription();
+		return s;
+	}
 
 	public Entry getVisibleInputEntry(int row, int col) {
 		Row r = rows.get(row);
 		return r.inputs[col];
 	}
 
+	public int getVisibleRowDcMask(int row) {
+		Row r = rows.get(row);
+		return r.dcMask();
+	}
+	
 	public int getVisibleRowIndex(int row) {
 		Row r = rows.get(row);
 		return r.baseIndex();
@@ -419,6 +480,72 @@ public class TruthTable {
 				return i;
 		}
 		throw new IllegalStateException("missing row");
+	}
+
+	public void setVisibleRows(ArrayList<Entry[]> newEntries, boolean force) {
+		int ni = getInputColumnCount();
+		int no = getOutputColumnCount();
+		ArrayList<Row> newRows = new ArrayList<>(newEntries.size());
+		for (Entry values[] : newEntries) {
+			if (values.length != ni + no)
+				throw new IllegalArgumentException("wrong column count");
+			newRows.add(new Row(values, ni));
+		}
+		// check that newRows has no intersections
+		List<Var> ivars = getInputVariables();
+		int taken[] = new int[getRowCount()];
+		for (int i = 0; i < newRows.size(); i++) {
+			Row r = newRows.get(i);
+			for (Integer idx : r) {
+				if (taken[idx] != 0 && !force) {
+					throw new IllegalArgumentException(String.format(
+							"Some inputs are repeated." +
+							" For example, rows %d and %d have overlapping input values %s and %s.",
+							taken[idx], i+1, newRows.get(taken[idx]-1).toBitString(ivars), r.toBitString(ivars)));
+				} else if (taken[idx] != 0) {
+					// todo: split row
+					throw new IllegalArgumentException("Sorry, this error can't yet be fixed. Eliminate duplicate rows then try again.");
+				} else {
+					taken[idx] = i+1;
+				}
+			}
+		}
+		// check that newRows covers all possible cases
+		for (int i = 0; i < getRowCount(); i++) {
+			if (taken[i] == 0 && !force) {
+					throw new IllegalArgumentException(String.format(
+							"Some inputs are missing." +
+							" For example, there is no row for input %s.",
+							new Row(i, ni, 0).toBitString(ivars)));
+			} else if (taken[i] == 0) {
+				newRows.add(new Row(i, ni, 0));
+			}
+		}
+
+		Collections.sort(newRows, sortByInputs);
+		rows.clear();
+		rows = newRows;
+		initColumns();
+
+		for (Entry values[] : newEntries) {
+			Row r = new Row(values, ni);
+			for (int col = 0; col < no; col++) {
+				Entry value = values[ni + col];
+				Entry[] column = columns.get(col);
+				if (column == null && value == DEFAULT_ENTRY)
+					continue;
+				else if (column == null)
+					column = getOutputColumn(col);
+				for (Integer idx : r) {
+					column[idx] = value;
+				}
+			}
+		}
+		fireRowsChanged();
+		for (int col = 0; col < no; col++) {
+			if (columns.get(col) != null)
+				fireCellsChanged(col);
+		}
 	}
 
 	public void setOutputEntry(int idx, int col, Entry value) {

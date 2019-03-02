@@ -57,6 +57,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingConstants;
 
 import com.cburch.logisim.analyze.model.Entry;
 import com.cburch.logisim.analyze.model.TruthTable;
@@ -64,9 +65,11 @@ import com.cburch.logisim.analyze.model.TruthTableEvent;
 import com.cburch.logisim.analyze.model.TruthTableListener;
 import com.cburch.logisim.analyze.model.Var;
 import com.cburch.logisim.prefs.AppPreferences;
+import com.cburch.logisim.util.LocaleListener;
+import com.cburch.logisim.util.LocaleManager;
 
 class TableTab extends JPanel implements TruthTablePanel, TabInterface {
-	private class MyListener implements TruthTableListener {
+	private class MyListener implements TruthTableListener,LocaleListener {
 		public void rowsChanged(TruthTableEvent event) { updateTable(); }
 		public void cellsChanged(TruthTableEvent event) { repaint(); }
 		public void structureChanged(TruthTableEvent event) { updateTable(); }
@@ -77,6 +80,12 @@ class TableTab extends JPanel implements TruthTablePanel, TabInterface {
 			expand.setEnabled(getRowCount() < table.getRowCount());
 			count.setText(String.format("%d of %d rows shown", getRowCount(), table.getRowCount()));
 			repaint();
+		}
+		@Override
+		public void localeChanged() {
+			expand.localeChanged();
+			compact.localeChanged();
+			count.setText(S.fmt("tableRowsShown", getRowCount(), table.getRowCount()));
 		}
 	}
 
@@ -254,19 +263,28 @@ class TableTab extends JPanel implements TruthTablePanel, TabInterface {
 	private JButton one = new SquareButton(Entry.ONE.getDescription());
 	private JButton zero = new SquareButton(Entry.ZERO.getDescription());
 	private JButton dontcare = new SquareButton(Entry.DONT_CARE.getDescription());
-	private JButton expand = new TightButton("Show All Rows");
-	private JLabel count = new JLabel("0 of 0 rows shown");
+	private TightButton expand = new TightButton("tableExpand");
+	private TightButton compact = new TightButton("tableCompact");
+	private JLabel count = new JLabel(S.fmt("tableRowsShown",0,0), SwingConstants.CENTER);
+	
 
 	private class TightButton extends JButton {
 		    /**
 		 * 
 		 */
 		private static final long serialVersionUID = 1L;
+		private String id;
+		
+		void localeChanged() {
+			setText(S.get(id));
+		}
 
-			TightButton(String s) {
-				super(s);
-				setMargin(new Insets(0,0,0,0));
-			}
+
+		TightButton(String s) {
+			super(S.get(s));
+			id = s;
+			setMargin(new Insets(0,0,0,0));
+		}
 	}
 
 	private class SquareButton extends TightButton {
@@ -333,17 +351,16 @@ class TableTab extends JPanel implements TruthTablePanel, TabInterface {
 		toolbar.add(dontcare);
 		toolbar.add(one);
 		toolbar.add(zero);
-		// toolbar.add(compact);
+		toolbar.add(compact);
 		toolbar.add(expand);
-		toolbar.add(count);
 		one.setActionCommand("1");
 		zero.setActionCommand("0");
 		dontcare.setActionCommand("x");
-		// compact.setActionCommand("compact");
+		compact.setActionCommand("compact");
 		expand.setActionCommand("expand");
 
 		expand.setEnabled(getRowCount() < table.getRowCount());
-		count.setText(String.format("%d of %d rows shown", getRowCount(), table.getRowCount()));
+		count.setText(S.fmt("tableRowsShown", getRowCount(), table.getRowCount()));
 
 		GridBagLayout layout = new GridBagLayout();
 		setLayout(layout);
@@ -354,6 +371,9 @@ class TableTab extends JPanel implements TruthTablePanel, TabInterface {
 		gc.weightx = 1;
 		layout.setConstraints(toolbar, gc);
 		add(toolbar);
+		gc.gridy++;
+		layout.setConstraints(count, gc);
+		add(count);
 		gc.gridy++;
 		layout.setConstraints(headerPane, gc);
 		add(headerPane);
@@ -370,9 +390,11 @@ class TableTab extends JPanel implements TruthTablePanel, TabInterface {
 		one.addActionListener(caret.getListener());
 		zero.addActionListener(caret.getListener());
 		dontcare.addActionListener(caret.getListener());
+		compact.addActionListener(caret.getListener());
 		expand.addActionListener(caret.getListener());
 		clip = new TableTabClip(this);
 		computePreferredSize();
+		LocaleManager.addLocaleListener(myListener);
 	}
 	
 	public JPanel getBody() {
