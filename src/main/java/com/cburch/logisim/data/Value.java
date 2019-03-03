@@ -36,6 +36,7 @@ import java.awt.Color;
 import java.util.Arrays;
 
 import com.cburch.logisim.util.Cache;
+import com.cburch.logisim.prefs.AppPreferences;
 
 public class Value {
 
@@ -234,15 +235,15 @@ public class Value {
 	public static final Value NIL = new Value(0, 0, 0, 0);
 	public static final int MAX_WIDTH = 32;
 	public static final Color NIL_COLOR = Color.GRAY;
-	public static final Color FALSE_COLOR = new Color(0, 100, 0);
+	public static Color FALSE_COLOR; 
 
-	public static final Color TRUE_COLOR = new Color(0, 210, 0);
+	public static Color TRUE_COLOR; 
 
-	public static final Color UNKNOWN_COLOR = new Color(40, 40, 255);
+	public static Color UNKNOWN_COLOR; 
 
 	public static final Color ERROR_COLOR = new Color(192, 0, 0);
 
-	public static final Color WIDTH_ERROR_COLOR = new Color(255, 123, 0);
+	public static Color WIDTH_ERROR_COLOR;
 
 	public static final Color MULTI_COLOR = Color.BLACK;
 
@@ -371,6 +372,17 @@ public class Value {
 	}
 
 	public Color getColor() {
+		if(AppPreferences.COLORBLIND_MODE.getBoolean()) {
+			WIDTH_ERROR_COLOR = new Color(196, 19, 219); // pink is new width error
+			UNKNOWN_COLOR = new Color(1, 188, 157); // green is new unknown
+			TRUE_COLOR = new Color(244, 235, 66); // yellow is new True
+			FALSE_COLOR = new Color(32, 59, 232); // blue is new False
+		} else {
+			WIDTH_ERROR_COLOR = new Color(255, 123, 0);
+			UNKNOWN_COLOR = new Color(40, 40, 255);
+			TRUE_COLOR = new Color(0, 210, 0);
+			FALSE_COLOR = new Color(0, 100, 0);
+		}
 		if (error != 0) {
 			return ERROR_COLOR;
 		} else if (width == 0) {
