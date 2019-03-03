@@ -56,6 +56,8 @@ class LayoutOptions extends OptionsPanel {
 						S.getter("layoutAntiAliasing")),
 				new PrefBoolean(AppPreferences.PRINTER_VIEW,
 						S.getter("layoutPrinterView")),
+				new PrefBoolean(AppPreferences.COLORBLIND_MODE,
+						S.getter("layoutColorblindMode")),
 				new PrefBoolean(AppPreferences.ATTRIBUTE_HALO,
 						S.getter("layoutAttributeHalo")),
 				new PrefBoolean(AppPreferences.COMPONENT_TIPS,
