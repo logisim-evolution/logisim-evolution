@@ -58,6 +58,7 @@ import com.cburch.logisim.proj.ProjectActions;
 import com.cburch.logisim.proj.Projects;
 import com.cburch.logisim.std.gates.CircuitBuilder;
 import com.cburch.logisim.util.StringUtil;
+import com.cburch.logisim.util.SyntaxChecker;
 
 class BuildCircuitButton extends JButton {
 	private class DialogPanel extends JPanel {
@@ -179,6 +180,17 @@ class BuildCircuitButton extends JButton {
 							S.get("buildDialogErrorTitle"),
 							JOptionPane.ERROR_MESSAGE);
 					continue;
+				}
+				
+				if (!SyntaxChecker.isVariableNameAcceptable(name, true))
+					continue;
+				
+				if (dest!=null) {
+					/* prevent upper-case lower-case mismatch */
+					for (Circuit circ:dest.getLogisimFile().getCircuits()) {
+						if (circ.getName().toLowerCase().equals(name.toLowerCase()))
+							name = circ.getName();
+					}
 				}
 
 				if (dest != null && dest.getLogisimFile().getCircuit(name) != null) {
