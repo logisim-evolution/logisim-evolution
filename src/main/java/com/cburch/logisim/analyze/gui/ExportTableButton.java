@@ -52,6 +52,7 @@ import com.cburch.logisim.analyze.model.Var;
 import com.cburch.logisim.analyze.model.VariableList;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.util.JFileChoosers;
+import com.cburch.logisim.util.StringGetter;
 
 public class ExportTableButton extends JButton {
 
@@ -88,23 +89,13 @@ public class ExportTableButton extends JButton {
 	void doSave(File file) throws IOException {
 		PrintStream out = new PrintStream(file);
 		try {
-			out.println("# Truth table");
+			out.println(S.get("tableRemark1"));
 			Circuit c = model.getCurrentCircuit();
 			if (c != null)
-				out.println("# Generated from circuit " + c.getName());
-			out.println("# Exported on " + new Date());
+				out.println(S.fmt("tableRemark2", c.getName()));
+			out.println(S.fmt("tableRemark3", new Date()));
 			out.println();
-			out.println("# Hints and Notes on Formatting:");
-			out.println("# * You can edit this file then import it back into Logisim!");
-			out.println("# * Anything after a '#' is a comment and will be ignored.");
-			out.println("# * Blank lines and separator lines (e.g., ~~~~~~) are ignored.");
-			out.println("# * Keep column names simple (no spaces, punctuation, etc.)");
-			out.println("# * 'Name[N..0]' indicates an N+1 bit variable, whereas");
-			out.println("#   'Name' by itself indicates a 1-bit variable.");
-			out.println("# * You can use 'x' or '-' to indicate \"don't care\" for both");
-			out.println("#   input and output bits.");
-			out.println("# * You can use binary (e.g., '10100011xxxx') notation or");
-			out.println("#   or hex (e.g., 'C3x'). Logisim will figure out which is which.");
+			out.println(S.get("tableRemark4"));
 			out.println();
 			VariableList inputs = model.getInputs();
 			VariableList outputs = model.getOutputs();
@@ -213,17 +204,25 @@ public class ExportTableButton extends JButton {
 		}
 	}
 
-	public static final FileFilter FILE_FILTER = new TableFilter();
-	private static class TableFilter extends FileFilter {
+	public static final FileFilter FILE_FILTER = new TableFilter(S.getter("tableFileFilter"),".txt");
+	public static class TableFilter extends FileFilter {
+		StringGetter description;
+		String extention;
+		
+		public TableFilter(StringGetter descr, String ext) {
+			description = descr;
+			extention = ext;
+		}
+		
 		public boolean accept(File f) {
 			if (!f.isFile())
 				return true;
 			String name = f.getName();
 			int i = name.lastIndexOf('.');
-			return (i > 0 && name.substring(i).toLowerCase().equals(".txt"));
+			return (i > 0 && name.substring(i).toLowerCase().equals(extention));
 		}
 
 		public String getDescription() {
-			return "Logisim-evolution Truth Table (*.txt)";
+			return description.toString();
 		}
 	}}

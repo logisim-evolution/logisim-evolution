@@ -235,6 +235,11 @@ class TableTabCaret {
 			if (newEntry != null && cursor.col < inputs) {
 				// Nearly all of this is just trying to do a sensible
 				// cursor/selection update.
+				// FIXME: This is very inefficient for large tables. It
+				// makes a round trip from row numbers to indexes and
+				// back, for the cursor and the marks. But there is no
+				// obvious way to get from an index to a row number
+				// except for scanning all existing rows.
 				// First: save the old state
 				Pt oldCursor = cursor, oldMarkA = markA, oldMarkB = markB;
 				List<Integer> oldCursorIdx, oldMarkIdx;

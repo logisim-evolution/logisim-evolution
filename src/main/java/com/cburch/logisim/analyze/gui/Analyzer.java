@@ -57,8 +57,12 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import com.cburch.logisim.analyze.model.AnalyzerModel;
+import com.cburch.logisim.analyze.model.TruthTable;
+import com.cburch.logisim.analyze.model.TruthTableEvent;
+import com.cburch.logisim.analyze.model.TruthTableListener;
 import com.cburch.logisim.gui.generic.LFrame;
 import com.cburch.logisim.gui.menu.LogisimMenuBar;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.LocaleListener;
 import com.cburch.logisim.util.LocaleManager;
 
@@ -149,6 +153,7 @@ public class Analyzer extends LFrame {
 			importTable.setText(S.get("importTableButton"));
 			buildCircuit.setText(S.get("buildCircuitButton"));
 			exportTable.setText(S.get("exportTableButton"));
+			exportTex.setText(S.get("exportLatexButton"));
 			inputsPanel.localeChanged();
 			outputsPanel.localeChanged();
 			truthTablePanel.localeChanged();
@@ -157,6 +162,21 @@ public class Analyzer extends LFrame {
 			importTable.localeChanged();
 			buildCircuit.localeChanged();
 			exportTable.localeChanged();
+			exportTex.localeChanged();
+		}
+	}
+	
+	private class TableListener implements TruthTableListener {
+		public void rowsChanged(TruthTableEvent event) {update();}
+		public void cellsChanged(TruthTableEvent event) {}
+		public void structureChanged(TruthTableEvent event) {update();}
+		
+		private void update() {
+			TruthTable tt = model.getTruthTable();
+			buildCircuit.setEnabled(tt.getInputColumnCount()>0 && tt.getOutputColumnCount()>0);
+			exportTable.setEnabled(tt.getInputColumnCount()>0 && tt.getOutputColumnCount()>0);
+			exportTex.setEnabled(tt.getInputColumnCount()>0 && tt.getOutputColumnCount()>0 &&
+					tt.getRowCount() <= ExportLatexButton.MAX_TRUTH_TABLE_ROWS);
 		}
 	}
 
@@ -178,6 +198,7 @@ public class Analyzer extends LFrame {
 
 	public static final int MINIMIZED_TAB = 4;
 	private MyListener myListener = new MyListener();
+	private TableListener tableListener = new TableListener();
 	private EditListener editListener = new EditListener();
 	private AnalyzerModel model = new AnalyzerModel();
 
@@ -191,8 +212,10 @@ public class Analyzer extends LFrame {
 	private BuildCircuitButton buildCircuit;
 	private ImportTableButton importTable;
 	private ExportTableButton exportTable;
+	private ExportLatexButton exportTex;
 	
 	Analyzer() {
+		model.getTruthTable().addTruthTableListener(tableListener);
 		inputsPanel = new VariableTab(model.getInputs(), AnalyzerModel.MAX_INPUTS);
 		outputsPanel = new VariableTab(model.getOutputs(), AnalyzerModel.MAX_OUTPUTS);
 		inputsPanel.SetCompanion(outputsPanel, S.get("outputsTab"));
@@ -202,7 +225,11 @@ public class Analyzer extends LFrame {
 		minimizedPanel = new MinimizedTab(model);
 		importTable = new ImportTableButton(this, model);
 		buildCircuit = new BuildCircuitButton(this, model);
+		buildCircuit.setEnabled(false);
 		exportTable = new ExportTableButton(this, model);
+		exportTable.setEnabled(false);
+		exportTex = new ExportLatexButton(this,model);
+		exportTex.setEnabled(false);
 
 		truthTablePanel.addMouseListener(new TruthTableMouseListener());
 
@@ -215,13 +242,14 @@ public class Analyzer extends LFrame {
 
 		Container contents = getContentPane();
 		JPanel vertStrut = new JPanel(null);
-		vertStrut.setPreferredSize(new Dimension(0, 300));
+		vertStrut.setPreferredSize(new Dimension(0, AppPreferences.getScaled(300)));
 		JPanel horzStrut = new JPanel(null);
-		horzStrut.setPreferredSize(new Dimension(450, 0));
+		horzStrut.setPreferredSize(new Dimension(AppPreferences.getScaled(450), 0));
 		JPanel buttonPanel = new JPanel();
 		buttonPanel.add(importTable);
 		buttonPanel.add(buildCircuit);
 		buttonPanel.add(exportTable);
+		buttonPanel.add(exportTex);
 		contents.add(vertStrut, BorderLayout.WEST);
 		contents.add(horzStrut, BorderLayout.NORTH);
 		contents.add(tabbedPane, BorderLayout.CENTER);
