@@ -304,8 +304,17 @@ public class Parser {
                     while ("0123456789".indexOf(in.charAt(pos)) >= 0)
                             pos++;
 				}
+				boolean skipchar = false;
+				if (in.charAt(pos) == '[') {
+					pos++;
+                    while ("0123456789".indexOf(in.charAt(pos)) >= 0)
+                        pos++;
+                    skipchar=in.charAt(pos) == ']';
+				}
 				tokens.add(new Token(TOKEN_IDENT, start, in.substring(start,
-						pos)));
+						pos).replace('[', ':')));
+				if (skipchar)
+					pos++;
 			} else {
 				switch (startChar) {
 				case '(':

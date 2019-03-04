@@ -65,8 +65,11 @@ import com.cburch.logisim.util.StringUtil;
 class VariableTab extends AnalyzerTab implements TabInterface {
 	private class MyListener implements ActionListener, DocumentListener,ListSelectionListener {
 		public void actionPerformed(ActionEvent event) {
-			String name = field.getText().trim();
-            int w = (Integer)width.getSelectedItem();
+			String value = field.getText().trim();
+			int end = (value.contains("[")) ? value.indexOf('[') :value.length();
+			String name = value.substring(0, end);
+			int NrOfBits = getSpecifiedNrOfBits();
+            int w = NrOfBits > 0 ? NrOfBits : (Integer)width.getSelectedItem();
             Var newVar = new Var(name, w);
             Var oldVar = list.getSelectedValue();
 			Object src = event.getSource();
@@ -80,6 +83,12 @@ class VariableTab extends AnalyzerTab implements TabInterface {
 				}
 			} else if (src == rename && rename.isEnabled()) {
 				if (oldVar != null && !name.equals("")) {
+					if (contains(name) && !oldVar.name.toLowerCase().equals(name.toLowerCase())) {
+						for (Var item : data.vars) {
+							if (item.name.toLowerCase().equals(name.toLowerCase()))
+								oldVar = item;
+						}
+					}
 					data.replace(oldVar, newVar);
 					list.setSelectedValue(newVar, true);
 					width.setSelectedItem(1);
@@ -105,8 +114,9 @@ class VariableTab extends AnalyzerTab implements TabInterface {
 		public void valueChanged(ListSelectionEvent event) {
             Var var = list.getSelectedValue();
             if (var != null) {
-                    field.setText(var.name);
-                    width.setSelectedItem(var.width);
+            	String index = (var.width>1) ? "["+(var.width-1)+"..0]" : ""; 
+                field.setText(var.name+index);
+                width.setSelectedItem(var.width);
             }
             computeEnabled();
 		}
@@ -284,7 +294,10 @@ class VariableTab extends AnalyzerTab implements TabInterface {
 		moveDown.setEnabled(selected && index < max);
 
 		int err = validateInput();
-        int w = (Integer)width.getSelectedItem();
+		int specbit = getSpecifiedNrOfBits();
+		if (specbit == 0 || specbit > 32)
+			specbit = -1;
+        int w = (specbit < 0) ? (Integer)width.getSelectedItem() : specbit;
         add.setEnabled(err == OK && data.bits.size() + w <= data.getMaximumSize());
         rename.setEnabled((err == OK || err == RESIZED) && selected);
 	}
@@ -338,25 +351,85 @@ class VariableTab extends AnalyzerTab implements TabInterface {
 		return false;
 	}
 	
+	
 	private static final int OK = 0;
     private static final int EMPTY = 1;
     private static final int UNCHANGED = 2;
     private static final int RESIZED = 3;
     private static final int BAD_NAME = 4;
     private static final int DUP_NAME = 5;
+    private static final int NO_START_PAR = -1;
+    private static final int NO_VALID_MSB_INDEX = -2;
+    private static final int NO_VALID_INDEX_SEP = -3;
+    private static final int NO_VALID_LSB_INDEX = -4;
+    private static final int LSB_BIGGER_MSB = -5;
+    private static final int NO_FINAL_PAR = -6;
+    private static final int INVALID_CHARS = -7;
+    
+    private int getSpecifiedNrOfBits() {
+		String text = field.getText().trim();
+		String bits;
+		if (text.contains("[") && text.endsWith("]")) {
+			int idx = text.indexOf('[');
+			bits = text.substring(idx,text.length());
+		} else return -1;
+		return checkindex(bits);
+    }
+    
+    private int checkindex(String index) {
+    	int length = index.length();
+    	int pos = 0;
+    	if (length < 2)
+    		return 0;
+    	if (index.charAt(pos++)!='[')
+    		return NO_START_PAR;
+    	while ((pos < length) && ("0123456789".indexOf(index.charAt(pos))>=0))
+    		pos++;
+    	if (pos == 1)
+    		return NO_VALID_MSB_INDEX;
+    	int MSBIndex = Integer.parseInt(index.substring(1, pos));
+    	if (pos >= length-3)
+    		return 0;
+    	if (!index.substring(pos, pos+2).equals(".."))
+    		return NO_VALID_INDEX_SEP;
+    	pos += 2;
+    	int curpos = pos;
+    	while ((pos < length)&&("0123456789".indexOf(index.charAt(pos))>=0))
+    		pos++;
+    	if (pos == curpos)
+    		return NO_VALID_LSB_INDEX;
+    	int LSBIndex = Integer.parseInt(index.substring(curpos, pos));
+    	if (LSBIndex > MSBIndex)
+    		return LSB_BIGGER_MSB;
+    	if (pos >= length)
+    		return 0;
+    	if (index.charAt(pos++) != ']')
+    		return NO_FINAL_PAR;
+    	if (pos != length)
+    		return INVALID_CHARS;
+    	return MSBIndex-LSBIndex+1;
+    }
 
 	private int validateInput() {
 		Var oldVar = list.getSelectedValue();
 		String text = field.getText().trim();
+		String name = "";
+		String index = "";
+		if (text.contains("[")) {
+			int idx = text.indexOf('[');
+			name = text.substring(0, idx);
+			index = text.substring(idx,text.length());
+		} else name = text;
+			
 		int w = (Integer)width.getSelectedItem();
 		int err = OK;
 		if (text.length() == 0) {
 			err = EMPTY;
-		} else if (!Character.isJavaIdentifierStart(text.charAt(0))) {
+		} else if (!Character.isJavaIdentifierStart(name.charAt(0))) {
 			error.setText(S.get("variableStartError"));
 			err = BAD_NAME;
 		} else {
-			for (int i = 1; i < text.length() && err == OK; i++) {
+			for (int i = 1; i < name.length() && err == OK; i++) {
 				char c = text.charAt(i);
 				if (!Character.isJavaIdentifierPart(c)) {
 					error.setText(StringUtil.format(
@@ -366,38 +439,61 @@ class VariableTab extends AnalyzerTab implements TabInterface {
 			}
 		}
 		if (err == OK) {
-			if (!CorrectLabel.IsCorrectLabel(text)) {
+			if (!CorrectLabel.IsCorrectLabel(name)) {
 				err = BAD_NAME;
-				if (CorrectLabel.IsKeyword(text, false)) {
+				if (CorrectLabel.IsKeyword(name, false)) {
 					error.setText(S.get("HdlKeyword"));
 				} else {
-					String wrong = CorrectLabel.FirstInvalidCharacter(text);
+					String wrong = CorrectLabel.FirstInvalidCharacter(name);
 					error.setText(StringUtil.format(S.get("InvalidCharacter"),wrong));
 				}
 			}
 		}
 		if (err == OK) {
-			if (contains(text)) {
-				error.setText(S.get("variableDuplicateError"));
-				err = DUP_NAME;
-			}
+			if (contains(name))
+				err = RESIZED;
 		}
 		if ((err == OK)&&(Othertab!=null)) {
-			if (Othertab.contains(text)) {
+			if (Othertab.contains(name)) {
 				error.setText(StringUtil.format(S.get("variableDuplicateError1"), OtherId));
 				err = DUP_NAME;
 			}
 		}
+		int NrOfBits = checkindex(index);
+		if (NrOfBits < 0) {
+			String ErrorText = null;
+			if (NrOfBits == NO_START_PAR)
+				ErrorText = S.get("variableRangeStartPar");
+			else if (NrOfBits == NO_VALID_MSB_INDEX)
+				ErrorText = S.get("variableRangeMSBWrong");
+			else if (NrOfBits == NO_VALID_INDEX_SEP)
+				ErrorText = S.get("variableRangeWrongSep");
+			else if (NrOfBits == NO_VALID_LSB_INDEX)
+				ErrorText = S.get("variableRangeWrongSep");
+			else if (NrOfBits == LSB_BIGGER_MSB)
+				ErrorText = S.get("variableRangeWrongLB");
+			else if (NrOfBits == NO_FINAL_PAR)
+				ErrorText = S.get("variableRangeFinalPar");
+			else if (NrOfBits == INVALID_CHARS)
+				ErrorText = S.get("variableRangeInvalChar");
+			if (ErrorText != null) {
+				error.setText(ErrorText);
+				err = NrOfBits;
+			}
+		} else if (NrOfBits > 0 && NrOfBits != w) {
+			w = NrOfBits;
+		}
+		
 		if (err == OK && oldVar != null) {
-            if (oldVar.name.equals(text) && oldVar.width == w)
+            if (oldVar.name.equals(name) && oldVar.width == w)
                     err = UNCHANGED;
-            else if (oldVar.name.equals(text))
+            else if (oldVar.name.equals(name))
                     err = RESIZED;
 		}
 		if (err == OK) {
             for (int i = 0, n = data.vars.size(); i < n && err == OK; i++) {
                     Var other = data.vars.get(i);
-                    if (other != oldVar && text.equals(other.name)) {
+                    if (other != oldVar && name.equals(other.name)) {
                             error.setText(S.get("variableDuplicateError"));
                             err = DUP_NAME;
                     }

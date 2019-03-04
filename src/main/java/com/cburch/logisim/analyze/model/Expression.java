@@ -353,7 +353,11 @@ public abstract class Expression {
 			}
 
 			public void visitVariable(String name) {
-				text.append(name);
+				String[] parts = name.split(":");
+				if (parts.length > 1) {
+					text.append(parts[0]+"["+parts[1]+"]");
+				} else
+					text.append(name);
 			}
 
 			public void visitXor(Expression a, Expression b) {
