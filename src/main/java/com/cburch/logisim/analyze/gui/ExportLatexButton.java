@@ -349,7 +349,7 @@ public class ExportLatexButton extends JButton  {
 				if (tt.getRowCount() > MAX_TRUTH_TABLE_ROWS) {
 					out.println(S.fmt("latexKarnaughToBig",(int)Math.ceil(Math.log(MAX_TRUTH_TABLE_ROWS)/Math.log(2))));
 				} else {
-					out.print(S.get("latexKarnaughText"));
+					out.println(S.get("latexKarnaughText"));
 					out.println(SUB_SECTION_SEP);
 					out.println("\\subsection{"+S.get("latexKarnaughEmptyIndexed")+"}");
 					for (int i = 0 ; i < model.getOutputs().vars.size() ; i++) {
@@ -405,7 +405,7 @@ public class ExportLatexButton extends JButton  {
 						Var outp = model.getTruthTable().getOutputVariable(o);
 						if (outp.width == 1) {
 							Expression exp = model.getOutputExpressions().getMinimalExpression(outp.name);
-							out.println(new ExpressionLatex(exp,outp,1).get()+"\\\\");
+							out.println(new ExpressionLatex(exp,outp,0).get()+"\\\\");
 						} else {
 							for (int idx = outp.width-1 ; idx >= 0 ; idx--) {
 								Expression exp = model.getOutputExpressions().getMinimalExpression(outp.name+":"+idx);

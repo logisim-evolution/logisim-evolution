@@ -50,7 +50,7 @@ public class ExpressionLatex {
 		if (expr == null)
 			return;
 		String FName;
-		if (Function.width == 0) {
+		if (Function.width == 1) {
 			FName = "\\textbf{"+Function.name+"}";
 		} else {
 			if (bitindex <0 || bitindex >= Function.width)

@@ -388,6 +388,14 @@ class VariableTab extends AnalyzerTab implements TabInterface {
     	if (pos == 1)
     		return NO_VALID_MSB_INDEX;
     	int MSBIndex = Integer.parseInt(index.substring(1, pos));
+    	if (pos >= length)
+    		return 0;
+    	if (index.charAt(pos++) == ']') {
+    		if (pos != length)
+    			return INVALID_CHARS;
+    		else
+    			return MSBIndex;
+    	}
     	if (pos >= length-3)
     		return 0;
     	if (!index.substring(pos, pos+2).equals(".."))
