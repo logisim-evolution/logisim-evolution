@@ -287,11 +287,14 @@ public class Download extends FPGACommanderBase implements Runnable,WindowListen
 			MyReporter.AddFatalError(S.fmt("FPGANameContainsSpaces", Name));
 			return false;
 		}
-		String Dir = MyProject.getLogisimFile().getLoader().getMainFile().toString();
-		if (Dir.contains(" ")) {
-			MyReporter.AddFatalError(S.fmt("FPGADirContainsSpaces", Dir));
-			return false;
-		}
+		/* Is this test really required...... */
+//		if (MyProject.getLogisimFile().getLoader().getMainFile() != null) {
+//			String Dir = MyProject.getLogisimFile().getLoader().getMainFile().toString();
+//			if (Dir.contains(" ")) {
+//				MyReporter.AddFatalError(S.fmt("FPGADirContainsSpaces", Dir));
+//				return false;
+//			}
+//		}
 		/* Stage 1 Is design map able on Board */
 		if (UseGui) {
 			MyGui.SetProgress(1);

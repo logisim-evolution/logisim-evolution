@@ -390,13 +390,14 @@ class VariableTab extends AnalyzerTab implements TabInterface {
     	int MSBIndex = Integer.parseInt(index.substring(1, pos));
     	if (pos >= length)
     		return 0;
-    	if (index.charAt(pos++) == ']') {
+    	if (index.charAt(pos) == ']') {
+    		pos++;
     		if (pos != length)
     			return INVALID_CHARS;
     		else
     			return MSBIndex;
     	}
-    	if (pos >= length-3)
+    	if (pos >= length-2)
     		return 0;
     	if (!index.substring(pos, pos+2).equals(".."))
     		return NO_VALID_INDEX_SEP;

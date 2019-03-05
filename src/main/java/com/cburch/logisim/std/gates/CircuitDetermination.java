@@ -100,6 +100,12 @@ abstract class CircuitDetermination {
 				}
 			}
 
+			if (aret instanceof Input) {
+				Input a = (Input) aret;
+				a.TogleInversion();
+				return a;
+			}
+
 			Gate ret = new Gate(NotGate.FACTORY);
 			ret.inputs.add(aret);
 			return ret;
@@ -217,7 +223,13 @@ abstract class CircuitDetermination {
 		private void notAllInputs() {
 			for (int i = 0; i < inputs.size(); i++) {
 				CircuitDetermination old = inputs.get(i);
-				if (old.isNandNot()) {
+				if (inputs.get(i) instanceof CircuitDetermination.Value) {
+					Value inp = (Value)inputs.get(i);
+					inp.value ^= 1;
+				} else if (inputs.get(i) instanceof CircuitDetermination.Input) {
+					Input inp = (Input) inputs.get(i);
+					inp.TogleInversion();
+				} else if (old.isNandNot()) {
 					inputs.set(i, ((Gate) old).inputs.get(0));
 				} else {
 					Gate now = new Gate(NandGate.FACTORY);
@@ -284,6 +296,7 @@ abstract class CircuitDetermination {
 
 	static class Input extends CircuitDetermination {
 		private String name;
+		private boolean inverted = false;
 
 		private Input(String name) {
 			this.name = name;
@@ -291,6 +304,14 @@ abstract class CircuitDetermination {
 
 		String getName() {
 			return name;
+		}
+		
+		public void TogleInversion() {
+			inverted = !inverted;
+		}
+		
+		boolean IsInvertedVersion() {
+			return inverted;
 		}
 	}
 
