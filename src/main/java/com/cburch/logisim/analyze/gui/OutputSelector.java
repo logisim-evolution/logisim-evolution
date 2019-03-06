@@ -32,13 +32,26 @@ package com.cburch.logisim.analyze.gui;
 
 import static com.cburch.logisim.analyze.Strings.S;
 
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Insets;
 import java.awt.event.ItemListener;
+import java.awt.font.FontRenderContext;
+import java.awt.font.TextAttribute;
+import java.awt.font.TextLayout;
+import java.text.AttributedString;
 
 import javax.swing.AbstractListModel;
 import javax.swing.ComboBoxModel;
+import javax.swing.DefaultListCellRenderer;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.ListCellRenderer;
 
 import com.cburch.logisim.analyze.model.AnalyzerModel;
 import com.cburch.logisim.analyze.model.VariableList;
@@ -46,11 +59,67 @@ import com.cburch.logisim.analyze.model.VariableListEvent;
 import com.cburch.logisim.analyze.model.VariableListListener;
 
 class OutputSelector {
-		private class Model extends AbstractListModel<String> implements ComboBoxModel<String>,
-					VariableListListener {
+	private class Model extends AbstractListModel<String> implements ComboBoxModel<String>,
+				VariableListListener {
+		
+		private class AttributedJLabel extends DefaultListCellRenderer {
+			private static final long serialVersionUID = 1L;
+			
+			@Override
+			public Dimension getPreferredSize() {
+				Dimension dim = super.getPreferredSize();
+				Font f = getFont();
+				Insets i = getInsets();
+				dim.height = i.top+i.bottom+f.getSize()+f.getSize()/2;
+				return dim;
+			}
+			
+			
+			@Override
+			public Component getListCellRendererComponent(JList<? extends Object> list, Object value, int index,
+					boolean isSelected, boolean cellHasFocus) {
+				super.getListCellRendererComponent(list,value,index,isSelected,cellHasFocus);
+				this.setText((String)value);
+				return this;
+			}
+			
+			@Override
+			public void paint(Graphics g) {
+				String txt = getText();
+				if (txt == null) {
+					super.paint(g);
+					return;
+				}
+				Graphics2D g2 = (Graphics2D)g.create();
+				Insets i = getInsets();
+				Font font = getFont();
+				g2.setPaint(getBackground());
+				g2.fillRect(0, 0, getWidth(), getHeight());
+				FontRenderContext frc = g2.getFontRenderContext();
+				AttributedString as;
+				if (txt.contains(":")) {
+					int idx = txt.indexOf(':');
+					as = new AttributedString(txt.substring(0,idx)+txt.substring(idx+1, txt.length()));
+					as.addAttribute(TextAttribute.SUPERSCRIPT, TextAttribute.SUPERSCRIPT_SUB,idx,txt.length()-1);
+				} else as = new AttributedString(txt);
+				as.addAttribute(TextAttribute.FAMILY, font.getFamily());
+				as.addAttribute(TextAttribute.SIZE, font.getSize());
+				TextLayout tl = new TextLayout(as.getIterator(),frc);
+				g2.setColor(getForeground());
+				tl.draw(g2, i.left, i.top+tl.getAscent());
+System.out.println(font.getSize()+" "+((int) tl.getBounds().getHeight()));
+			}
+			
+		}
+		
 		private static final long serialVersionUID = 1L;
 		private String selected;
-
+		private AttributedJLabel MyRenderer = new AttributedJLabel();
+		
+		public ListCellRenderer<Object> getMyRenderer() {
+			return MyRenderer;
+		}
+				
 		@Override
 		public String getElementAt(int index) {
 			return source.bits.get(index);
@@ -79,43 +148,22 @@ class OutputSelector {
 			selected = (String) value;
 		}
 	}
-
+	
 	private VariableList source;
 	private JLabel label = new JLabel();
 	private JComboBox<String> select = new JComboBox<String>();
-	private String prototypeValue = null;
 
-	@SuppressWarnings("unchecked")
 	public OutputSelector(AnalyzerModel model) {
 		this.source = model.getOutputs();
 
 		Model listModel = new Model();
 		select.setModel(listModel);
+		select.setRenderer(listModel.getMyRenderer());
 		source.addVariableListListener(listModel);
 	}
 
 	public void addItemListener(ItemListener l) {
 		select.addItemListener(l);
-	}
-
-	@SuppressWarnings("unchecked")
-	private void computePrototypeValue() {
-		String newValue;
-		if (source.bits.isEmpty()) {
-			newValue = "xx";
-		} else {
-			newValue = "xx";
-			for (String candidate: source.bits) {
-				if (candidate.length() > newValue.length())
-					newValue = candidate;
-			}
-		}
-		if (prototypeValue == null
-				|| newValue.length() != prototypeValue.length()) {
-			prototypeValue = newValue;
-			select.setPrototypeDisplayValue(prototypeValue + "xx");
-			select.revalidate();
-		}
 	}
 
 	public JPanel createPanel() {
