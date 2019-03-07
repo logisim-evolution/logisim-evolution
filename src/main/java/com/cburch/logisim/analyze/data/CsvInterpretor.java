@@ -326,6 +326,10 @@ public class CsvInterpretor {
 			JOptionPane.showMessageDialog(parent,S.fmt("CsvNoSepFound", 1,FileName),S.get("openButton"), JOptionPane.ERROR_MESSAGE);
 			return false;
 		}
+		if (inputs.bits.isEmpty()) {
+			JOptionPane.showMessageDialog(parent,S.fmt("CsvNoInputsFound", 1,FileName),S.get("openButton"), JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
 		for (String key : bitspresent.keySet()) {
 			ArrayList<Boolean> bit = bitspresent.get(key);
 			for (int x = 0 ; x < bit.size() ; x++) {
