@@ -105,12 +105,14 @@ public class CsvInterpretor {
 	
 	public CsvInterpretor(File file , CsvParameter param, JFrame parent) {
 		content = new ArrayList<List<String>>();
+		inputs = new VariableList(AnalyzerModel.MAX_INPUTS);
+		outputs = new VariableList(AnalyzerModel.MAX_OUTPUTS);
 		FileName = file.getName();
 		this.parent = parent;
 		readFile(file,param);
-		if (content.isEmpty()) return;
-		inputs = new VariableList(AnalyzerModel.MAX_INPUTS);
-		outputs = new VariableList(AnalyzerModel.MAX_OUTPUTS);
+		if (content.isEmpty()) {
+			return;
+		}
 		if (!getInputsOutputs() || !CheckEntries()) {
 			content = new ArrayList<List<String>>();
 			return;
@@ -118,6 +120,8 @@ public class CsvInterpretor {
 	}
 	
 	public void getTruthTable(AnalyzerModel model) throws IOException {
+		if (content.size() <= 1)
+			return;
 		ArrayList<Entry[]> rows = new ArrayList<Entry[]>();
 		int NrOfEntries = inputs.bits.size()+outputs.bits.size();
 		for (int row = 1 ; row < content.size() ; row++) {
