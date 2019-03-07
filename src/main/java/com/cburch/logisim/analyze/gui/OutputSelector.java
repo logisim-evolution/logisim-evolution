@@ -107,7 +107,6 @@ class OutputSelector {
 				TextLayout tl = new TextLayout(as.getIterator(),frc);
 				g2.setColor(getForeground());
 				tl.draw(g2, i.left, i.top+tl.getAscent());
-System.out.println(font.getSize()+" "+((int) tl.getBounds().getHeight()));
 			}
 			
 		}

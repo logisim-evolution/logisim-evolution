@@ -62,7 +62,7 @@ import com.cburch.logisim.analyze.model.VariableListEvent;
 import com.cburch.logisim.analyze.model.VariableListListener;
 import com.cburch.logisim.util.StringUtil;
 
-class VariableTab extends AnalyzerTab implements TabInterface {
+public class VariableTab extends AnalyzerTab implements TabInterface {
 	private class MyListener implements ActionListener, DocumentListener,ListSelectionListener {
 		public void actionPerformed(ActionEvent event) {
 			String value = field.getText().trim();
@@ -352,19 +352,19 @@ class VariableTab extends AnalyzerTab implements TabInterface {
 	}
 	
 	
-	private static final int OK = 0;
-    private static final int EMPTY = 1;
-    private static final int UNCHANGED = 2;
-    private static final int RESIZED = 3;
-    private static final int BAD_NAME = 4;
-    private static final int DUP_NAME = 5;
-    private static final int NO_START_PAR = -1;
-    private static final int NO_VALID_MSB_INDEX = -2;
-    private static final int NO_VALID_INDEX_SEP = -3;
-    private static final int NO_VALID_LSB_INDEX = -4;
-    private static final int LSB_BIGGER_MSB = -5;
-    private static final int NO_FINAL_PAR = -6;
-    private static final int INVALID_CHARS = -7;
+	public static final int OK = 0;
+	public static final int EMPTY = 1;
+	public static final int UNCHANGED = 2;
+	public static final int RESIZED = 3;
+	public static final int BAD_NAME = 4;
+	public static final int DUP_NAME = 5;
+	public static final int NO_START_PAR = -1;
+	public static final int NO_VALID_MSB_INDEX = -2;
+	public static final int NO_VALID_INDEX_SEP = -3;
+	public static final int NO_VALID_LSB_INDEX = -4;
+	public static final int LSB_BIGGER_MSB = -5;
+	public static final int NO_FINAL_PAR = -6;
+    public static final int INVALID_CHARS = -7;
     
     private int getSpecifiedNrOfBits() {
 		String text = field.getText().trim();
@@ -376,7 +376,7 @@ class VariableTab extends AnalyzerTab implements TabInterface {
 		return checkindex(bits);
     }
     
-    private int checkindex(String index) {
+    public static int checkindex(String index) {
     	int length = index.length();
     	int pos = 0;
     	if (length < 2)

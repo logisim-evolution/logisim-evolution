@@ -36,21 +36,15 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Scanner;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
+import com.cburch.logisim.analyze.file.TruthtableCsvFile;
+import com.cburch.logisim.analyze.file.TruthtableTextFile;
 import com.cburch.logisim.analyze.model.AnalyzerModel;
-import com.cburch.logisim.analyze.model.Entry;
-import com.cburch.logisim.analyze.model.TruthTable;
-import com.cburch.logisim.analyze.model.Var;
-import com.cburch.logisim.analyze.model.VariableList;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.util.JFileChoosers;
 
@@ -75,179 +69,6 @@ public class ImportTableButton extends JButton {
 		setText(S.get("importTableButton"));
 	}
 
-	static final Pattern NAME_FORMAT = Pattern.compile("([a-zA-Z][a-zA-Z_0-9]*)\\[(-?[0-9]+)\\.\\.(-?[0-9]+)\\]");
-
-	int lineno = 0;
-
-	void validateHeader(String line, VariableList inputs, VariableList outputs) throws IOException {
-		String s[] = line.split("\\s+");
-		VariableList cur = inputs;
-		for (int i = 0; i < s.length; i++) {
-			if (s[i].equals("|")) {
-				if (cur == inputs)
-					cur = outputs;
-				else
-					throw new IOException(String.format("Line %d: Separator '|' must appear only once.", lineno));
-				continue;
-			}
-			String name = s[i];
-			if (name.matches("[a-zA-Z][a-zA-Z_0-9]*")) {
-				cur.add(new Var(name, 1));
-			} else {
-				Matcher m = NAME_FORMAT.matcher(name);
-				if (!m.matches())
-					throw new IOException(String.format("Line %d: Invalid variable name '%s'.", lineno, name));
-				String n = m.group(1);
-				int a, b;
-				try {
-					a = Integer.parseInt(m.group(2));
-					b = Integer.parseInt(m.group(3));
-				} catch (NumberFormatException e) {
-					throw new IOException(String.format("Line %d: Invalid bit range in '%s'.", lineno, name));
-				}
-				if (a < 1 || b != 0)
-					throw new IOException(String.format("Line %d: Invalid bit range in '%s'.", lineno, name));
-				try {
-					cur.add(new Var(n, a-b+1));
-				} catch (IllegalArgumentException e) {
-					throw new IOException(String.format("Line %d: Too many bits in %s for truth table (max = %d bits).",
-							lineno, (cur == inputs ? "input" : "output"),
-							(cur == inputs ? AnalyzerModel.MAX_INPUTS : AnalyzerModel.MAX_OUTPUTS)));
-				}
-			}
-		}
-		if (inputs.vars.size() == 0)
-			throw new IOException(String.format("Line %d: Truth table has no inputs.", lineno));
-		if (outputs.vars.size() == 0)
-			throw new IOException(String.format("Line %d: Truth table has no outputs.", lineno));
-	}
-
-
-	Entry parseBit(char c, String sval, Var var) throws IOException {
-		if (c == 'x' || c == 'X' || c == '-')
-			return Entry.DONT_CARE;
-		else if (c == '0')
-			return Entry.ZERO;
-		else if (c == '1')
-			return Entry.ONE;
-		else
-			throw new IOException(String.format("Line %d: Bit value '%c' in \"%s\" must be one of '0', '1', 'x', or '-'.", lineno, c, sval));
-	}
-	
-	Entry parseHex(char c, int bit, int nbits, String sval, Var var) throws IOException {
-		if (c == 'x' || c == 'X'  || c == '-')
-			return Entry.DONT_CARE;
-		int d = 0;
-		if ('0' <= c && c <= '9')
-			d = c - '0';
-		else if ('a' <= c && c <= 'f')
-			d = 0xa + (c - 'a');
-		else if ('A' <= c && c <= 'F')
-			d = 0xA + (c - 'A');
-		else 
-			throw new IOException(String.format("Line %d: Hex digit '%c' in \"%s\" must be one of '0'-'9', 'a'-'f' or 'x'.", lineno, c, sval));
-		if (nbits < 4 && (d >= (1<<nbits)))
-			throw new IOException(String.format("Line %d: Hex value \"%s\" contains too many bits for %s.", lineno, sval, var.name));
-		return (((d & (1 << bit)) == 0) ? Entry.ZERO : Entry.ONE);
-	}
-
-	int parseVal(Entry[] row, int col, String sval, Var var) throws IOException {
-		if (sval.length() == var.width) {
-			// must be binary
-			for (int i = 0; i < var.width; i++)
-				row[col++] = parseBit(sval.charAt(i), sval, var);
-		} else if (sval.length() == (var.width + 3)/4) { 
-			// try hex
-			for (int i = 0; i < var.width; i++) {
-				row[col++] = parseHex(sval.charAt((i+((4-(var.width%4))%4))/4), (var.width-i-1)%4, var.width - ((var.width-i-1)/4)*4, sval, var);
-			}
-		} else {
-			throw new IOException(String.format("Line %d: Expected %d bits (or %d hex digits) in column %s, but found \"%s\".",
-						lineno, var.width, (var.width+3)/4, var.name, sval));
-		}
-		return col;
-	}
-
-
-
-	void validateRow(String line, VariableList inputs, VariableList outputs, ArrayList<Entry[]> rows) throws IOException {
-		Entry[] row = new Entry[inputs.bits.size() + outputs.bits.size()];
-		int col = 0;
-		String s[] = line.split("\\s+");
-		int ix = 0;
-		for (Var var : inputs.vars) {
-			if (ix >= s.length || s[ix].equals("|"))
-				throw new IOException(String.format("Line %d: Not enough input columns.", lineno));
-			col = parseVal(row, col, s[ix++], var);
-		}
-		if (ix >= s.length)
-			throw new IOException(String.format("Line %d: Missing '|' column separator.", lineno));
-		else if (!s[ix].equals("|"))
-			throw new IOException(String.format("Line %d: Too many input columns.", lineno));
-		ix++;
-		for (Var var : outputs.vars) {
-			if (ix >= s.length)
-				throw new IOException(String.format("Line %d: Not enough output columns.", lineno));
-			else if (s[ix].equals("|"))
-				throw new IOException(String.format("Line %d: Column separator '|' must appear only once.", lineno));
-			col = parseVal(row, col, s[ix++], var);
-		}
-		if (ix != s.length)
-			throw new IOException(String.format("Line %d: Too many output columns.", lineno));
-		rows.add(row);
-	}
-
-	void doLoad(File file) throws IOException {
-		lineno = 0;
-		Scanner sc = new Scanner(file);
-		VariableList inputs = new VariableList(AnalyzerModel.MAX_INPUTS);
-		VariableList outputs = new VariableList(AnalyzerModel.MAX_OUTPUTS);
-		ArrayList<Entry[]> rows = new ArrayList<>();
-		try {
-			while (sc.hasNextLine()) {
-				lineno++;
-			    String line = sc.nextLine();
-				int ix = line.indexOf('#');
-				if (ix >= 0)
-					line = line.substring(0, ix);
-				line = line.trim();
-				if (line.equals(""))
-					continue;
-				else if (line.matches("\\s*[~_=-][ ~_=-|]*"))
-					continue;
-				else if (inputs.vars.size() == 0)
-					validateHeader(line, inputs, outputs);
-				else
-					validateRow(line, inputs, outputs, rows);
-			}
-			if (rows.size() == 0)
-				throw new IOException("End of file: Truth table has no rows.");
-			try {
-				model.setVariables(inputs.vars, outputs.vars);
-			} catch (IllegalArgumentException e) {
-				throw new IOException(e.getMessage());
-			}
-			TruthTable table = model.getTruthTable();
-			try {
-				table.setVisibleRows(rows, false);
-			} catch (IllegalArgumentException e) {
-				int confirm = JOptionPane.showConfirmDialog(parent,
-						new String[]{ e.getMessage(), S.get("tableParseErrorMessage") },
-						S.get("tableParseErrorTitle"),
-						JOptionPane.YES_NO_OPTION);
-				if (confirm != JOptionPane.YES_OPTION)
-					return;
-				try {
-					table.setVisibleRows(rows, true);
-				} catch (IllegalArgumentException ex) {
-					throw new IOException(ex.getMessage());
-				}
-			}
-		} finally {
-			sc.close();
-		}
-	}
-
 	private File lastFile = null;
 	void doLoad() {
 		if (lastFile == null) {
@@ -259,9 +80,9 @@ public class ImportTableButton extends JButton {
 		}
 		JFileChooser chooser = JFileChoosers.createSelected(lastFile);
 		chooser.setDialogTitle(S.get("openButton"));
-		chooser.addChoosableFileFilter(chooser.getAcceptAllFileFilter());
-		chooser.addChoosableFileFilter(ExportTableButton.FILE_FILTER);
-		chooser.setFileFilter(ExportTableButton.FILE_FILTER);
+		chooser.addChoosableFileFilter(TruthtableTextFile.FILE_FILTER);
+		chooser.addChoosableFileFilter(TruthtableCsvFile.FILE_FILTER);
+		chooser.setFileFilter(TruthtableTextFile.FILE_FILTER);
 		int choice = chooser.showOpenDialog(parent);
 		if (choice == JFileChooser.APPROVE_OPTION) {
 			File file = chooser.getSelectedFile();
@@ -278,7 +99,20 @@ public class ImportTableButton extends JButton {
 				return;
 			}
 			try {
-				doLoad(file);
+				String FileName = file.getName();
+				int idx = FileName.lastIndexOf(".");
+				String ext = FileName.substring(idx+1);
+				if (ext.equals("txt"))
+					TruthtableTextFile.doLoad(file,model,parent);
+				else if (ext.equals("csv"))
+					TruthtableCsvFile.doLoad(file,model,parent);
+				else {
+					JOptionPane.showMessageDialog(parent,
+							S.fmt("DoNotKnowHowto",FileName),
+							S.get("openErrorTitle"),
+							JOptionPane.ERROR_MESSAGE);
+					return;
+				}
 				lastFile = file;
 			} catch (IOException e) {
 				JOptionPane.showMessageDialog(parent,

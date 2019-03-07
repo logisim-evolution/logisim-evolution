@@ -56,6 +56,7 @@ import javax.swing.SwingWorker;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import com.cburch.logisim.analyze.file.AnalyzerTexWriter;
 import com.cburch.logisim.analyze.model.AnalyzerModel;
 import com.cburch.logisim.analyze.model.TruthTable;
 import com.cburch.logisim.analyze.model.TruthTableEvent;
@@ -176,7 +177,7 @@ public class Analyzer extends LFrame {
 			buildCircuit.setEnabled(tt.getInputColumnCount()>0 && tt.getOutputColumnCount()>0);
 			exportTable.setEnabled(tt.getInputColumnCount()>0 && tt.getOutputColumnCount()>0);
 			exportTex.setEnabled(tt.getInputColumnCount()>0 && tt.getOutputColumnCount()>0 &&
-					tt.getRowCount() <= ExportLatexButton.MAX_TRUTH_TABLE_ROWS);
+					tt.getRowCount() <= AnalyzerTexWriter.MAX_TRUTH_TABLE_ROWS);
 		}
 	}
 

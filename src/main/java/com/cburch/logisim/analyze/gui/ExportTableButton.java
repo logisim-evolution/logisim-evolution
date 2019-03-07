@@ -36,23 +36,17 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintStream;
-import java.util.Date;
 
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import javax.swing.filechooser.FileFilter;
 
+import com.cburch.logisim.analyze.file.TruthtableCsvFile;
+import com.cburch.logisim.analyze.file.TruthtableTextFile;
 import com.cburch.logisim.analyze.model.AnalyzerModel;
-import com.cburch.logisim.analyze.model.Entry;
-import com.cburch.logisim.analyze.model.TruthTable;
-import com.cburch.logisim.analyze.model.Var;
-import com.cburch.logisim.analyze.model.VariableList;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.util.JFileChoosers;
-import com.cburch.logisim.util.StringGetter;
 
 public class ExportTableButton extends JButton {
 
@@ -75,86 +69,6 @@ public class ExportTableButton extends JButton {
 		setText(S.get("exportTableButton"));
 	}
 
-	private static void center(PrintStream out, String s, int n) {
-		int pad = n - s.length();
-		if (pad <= 0) {
-			out.printf("%s", s);
-		} else {
-			String left = (pad/2 > 0) ? "%" + (pad/2) + "s" : "%s";
-			String right = (pad-pad/2) > 0 ? "%" + (pad-pad/2) + "s" : "%s";
-			out.printf(left + "%s" + right, "", s, "");
-		}
-	}
-
-	void doSave(File file) throws IOException {
-		PrintStream out = new PrintStream(file);
-		try {
-			out.println(S.get("tableRemark1"));
-			Circuit c = model.getCurrentCircuit();
-			if (c != null)
-				out.println(S.fmt("tableRemark2", c.getName()));
-			out.println(S.fmt("tableRemark3", new Date()));
-			out.println();
-			out.println(S.get("tableRemark4"));
-			out.println();
-			VariableList inputs = model.getInputs();
-			VariableList outputs = model.getOutputs();
-			int colwidth[] = new int[inputs.vars.size() + outputs.vars.size()];
-			int i;
-			i = 0;
-			for(Var var : inputs.vars)
-				colwidth[i++] = Math.max(var.toString().length(), var.width);
-			for(Var var : outputs.vars)
-				colwidth[i++] = Math.max(var.toString().length(), var.width);
-			i = 0;
-			for(Var var : inputs.vars) {
-				center(out, var.toString(), colwidth[i++]);
-				out.print(" ");
-			}
-			out.print("|");
-			for(Var var : outputs.vars) {
-				out.print(" ");
-				center(out, var.toString(), colwidth[i++]);
-			}
-			out.println();
-			for(i = 0; i < colwidth.length; i++) {
-				for (int j = 0; j < colwidth[i]+1; j++)
-					out.print("~");
-			}
-			out.println("~");
-			TruthTable table = model.getTruthTable();
-			int rows = table.getVisibleRowCount();
-			for (int row = 0; row < rows; row++) {
-				i = 0;
-				int col;
-				col = 0;
-				for (Var var : inputs.vars) {
-					String s = "";
-					for (int b = var.width - 1; b >= 0; b--) {
-						Entry val = table.getVisibleInputEntry(row, col++);
-						s += val.toBitString();
-					}
-					center(out, s, colwidth[i++]);
-					out.print(" ");
-				}
-				out.print("|");
-				col = 0;
-				for (Var var : outputs.vars) {
-					String s = "";
-					for (int b = var.width - 1; b >= 0; b--) {
-						Entry val = table.getVisibleOutputEntry(row, col++);
-						s += val.toBitString();
-					}
-					out.print(" ");
-					center(out, s, colwidth[i++]);
-				}
-				out.println();
-			}
-		} finally {
-			out.close();
-		}
-	}
-
 	private File lastFile = null;
 	void doSave() {
 		if (lastFile == null) {
@@ -166,9 +80,9 @@ public class ExportTableButton extends JButton {
 		}
 		JFileChooser chooser = JFileChoosers.createSelected(lastFile);
 		chooser.setDialogTitle(S.get("saveButton"));
-		chooser.addChoosableFileFilter(chooser.getAcceptAllFileFilter());
-		chooser.addChoosableFileFilter(FILE_FILTER);
-		chooser.setFileFilter(FILE_FILTER);
+		chooser.addChoosableFileFilter(TruthtableTextFile.FILE_FILTER);
+		chooser.addChoosableFileFilter(TruthtableCsvFile.FILE_FILTER);
+		chooser.setFileFilter(TruthtableTextFile.FILE_FILTER);
 		int choice = chooser.showSaveDialog(parent);
 		if (choice == JFileChooser.APPROVE_OPTION) {
 			File file = chooser.getSelectedFile();
@@ -193,7 +107,20 @@ public class ExportTableButton extends JButton {
 					return;
 			}
 			try {
-				doSave(file);
+				String FileName = file.getName();
+				int idx = FileName.lastIndexOf(".");
+				String ext = FileName.substring(idx+1);
+				if (ext.equals("txt"))
+					TruthtableTextFile.doSave(file,model);
+				else if (ext.equals("csv"))
+					TruthtableCsvFile.doSave(file, model);
+				else {
+					JOptionPane.showMessageDialog(parent,
+							S.fmt("DoNotKnowHowto",FileName),
+							S.get("openErrorTitle"),
+							JOptionPane.ERROR_MESSAGE);
+					return;
+				}
 				lastFile = file;
 			} catch (IOException e) {
 				JOptionPane.showMessageDialog(parent,
@@ -204,25 +131,4 @@ public class ExportTableButton extends JButton {
 		}
 	}
 
-	public static final FileFilter FILE_FILTER = new TableFilter(S.getter("tableFileFilter"),".txt");
-	public static class TableFilter extends FileFilter {
-		StringGetter description;
-		String extention;
-		
-		public TableFilter(StringGetter descr, String ext) {
-			description = descr;
-			extention = ext;
-		}
-		
-		public boolean accept(File f) {
-			if (!f.isFile())
-				return true;
-			String name = f.getName();
-			int i = name.lastIndexOf('.');
-			return (i > 0 && name.substring(i).toLowerCase().equals(extention));
-		}
-
-		public String getDescription() {
-			return description.toString();
-		}
-	}}
+}
