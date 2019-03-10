@@ -22,6 +22,14 @@ public class ColorBlindColors {
 			new Color(255,182,119), new Color(182,219,255), new Color(255,255,109)
 	};
 	
+	public final static String[] PALETTE14NAMES = {
+			"MyPurple", "MyRedBrown" ,
+			"MyNavyGreen", "MyNavyBlue", "MyBrown",
+			"MyGrayGreen", "MyLightPurple", "MyOrange",
+			"MyMagenta", "MyLightBlue", "MyGreen",
+			"MySkin", "MyGrayBlue", "MyYellow"
+	};
+	
 	public static Color[] PALETTE14WithAlpha(int alpha) {
 		Color[] res = new Color[PALETTE14.length];
 		for (int i = 0 ; i < PALETTE14.length ; i++) {

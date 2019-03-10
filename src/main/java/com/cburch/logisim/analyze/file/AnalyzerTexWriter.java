@@ -32,21 +32,29 @@ package com.cburch.logisim.analyze.file;
 
 import static com.cburch.logisim.analyze.Strings.S;
 
+import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.text.DecimalFormat;
 import java.util.Date;
 import java.util.List;
 
 import javax.swing.filechooser.FileFilter;
 
 import com.cburch.logisim.analyze.data.ExpressionLatex;
+import com.cburch.logisim.analyze.data.KMapGroups;
+import com.cburch.logisim.analyze.data.KMapGroups.CoverColor;
+import com.cburch.logisim.analyze.data.KMapGroups.CoverInfo;
+import com.cburch.logisim.analyze.data.KMapGroups.KMapGroupInfo;
+import com.cburch.logisim.analyze.gui.KarnaughMapPanel;
 import com.cburch.logisim.analyze.model.AnalyzerModel;
 import com.cburch.logisim.analyze.model.Entry;
 import com.cburch.logisim.analyze.model.Expression;
 import com.cburch.logisim.analyze.model.TruthTable;
 import com.cburch.logisim.analyze.model.Var;
 import com.cburch.logisim.analyze.model.VariableList;
+import com.cburch.logisim.prefs.AppPreferences;
 
 public class AnalyzerTexWriter {
 
@@ -93,18 +101,18 @@ public class AnalyzerTexWriter {
 		for (int i = 0 ; i < inputVars.size() ; i++) {
 			Var inp = inputVars.get(i); 
 			if (inp.width == 1) {
-				out.append("$\\textbf{"+inp.name+"}$&");
+				out.append("$"+inp.name+""+ "$&");
 			} else {
 				String format = i ==inputVars.size() - 1 ? "c|" : "c";
-				out.append("\\multicolumn{"+inp.width+"}{"+format+"}{$\\textbf{"+inp.name+"["+(inp.width-1)+"..0]}$}&");
+				out.append("\\multicolumn{"+inp.width+"}{"+format+"}{$"+inp.name+"["+(inp.width-1)+"..0]$}&");
 			}
 		}
 		for (int i = 0 ; i < outputVars.size(); i++) {
 			Var outp = outputVars.get(i);
 			if (outp.width == 1) {
-				out.append("$\\textbf{"+outp.name+"}$");
+				out.append("$"+outp.name+"$");
 			} else {
-				out.append("\\multicolumn{"+outp.width+"}{c}{$\\textbf{"+outp.name+"["+(outp.width-1)+"..0]}$}");
+				out.append("\\multicolumn{"+outp.width+"}{c}{$"+outp.name+"["+(outp.width-1)+"..0]$}");
 			}
 			out.append(i< outputVars.size()-1 ? "&" : "\\\\");
 		}
@@ -117,11 +125,11 @@ public class AnalyzerTexWriter {
 		for (int row = 0 ; row < tt.getVisibleRowCount() ; row++) {
 			for (int col = 0 ; col < NrOfInCols(model) ; col++) {
 				Entry val = tt.getVisibleInputEntry(row, col);
-				content.append("$\\textbf{"+val.getDescription()+"}$&");
+				content.append("$"+val.getDescription()+"$&");
 			}
 			for (int col = 0 ; col < NrOfOutCols(model) ; col++) {
 				Entry val = tt.getVisibleOutputEntry(row, col);
-				content.append("$\\textbf{"+val.getDescription()+"}$");
+				content.append("$"+val.getDescription()+"$");
 				content.append(col == NrOfOutCols(model)-1 ? "\\\\\n" : "&");
 			}
 		}
@@ -133,11 +141,11 @@ public class AnalyzerTexWriter {
 		for (int row = 0 ; row < tt.getRowCount() ; row++) {
 			for (int col = 0 ; col < NrOfInCols(model) ; col++) {
 				Entry val = tt.getInputEntry(row, col);
-				content.append("$\\textbf{"+val.getDescription()+"}$&");
+				content.append("$"+val.getDescription()+"$&");
 			}
 			for (int col = 0 ; col < NrOfOutCols(model) ; col++) {
 				Entry val = tt.getOutputEntry(row, col);
-				content.append("$\\textbf{"+val.getDescription()+"}$");
+				content.append("$"+val.getDescription()+"$");
 				content.append(col == NrOfOutCols(model)-1 ? "\\\\\n" : "&");
 			}
 		}
@@ -145,29 +153,131 @@ public class AnalyzerTexWriter {
 	}
 	
 	private static final String K_INTRO = "\\begin{tikzpicture}[karnaugh,";
-	private static final String K_INDEX = "enable indices,";
+	private static final String K_NUMBERED = "disable bars,";
 	private static final String K_SETUP = "x=1\\kmunitlength,y=1\\kmunitlength,kmbar left sep=1\\kmunitlength,grp/.style n args={4}{#1,fill=#1!30,minimum width= #2\\kmunitlength,minimum height=#3\\kmunitlength,rounded corners=0.2\\kmunitlength,fill opacity=0.6,rectangle,draw}]";
+	
+	/*
+	 * The package takes another order of the input variables as logisim, therefore we have to reorder:
+	 * 
+	 * 	kmapsize		logisim:		karnaugh_tikz:
+	 *      1			 A				 A
+	 *      2			 AB              AB
+	 *      3            ABC             BAC
+	 *      4            ABCD            ACBD
+	 *      5            ABCDE           CADBE
+	 */
+	
+	private static int[] reordered(int NrOfInputs) {
+		switch (NrOfInputs) {
+			case 1 : int[] ret1 = {0};
+					 return ret1;
+			case 2 : int[] ret2 = {0,1};
+					 return ret2;
+			case 3 : int[] ret3 = {1,0,2};
+					 return ret3;
+			case 4 : int[] ret4 = {0,2,1,3};
+			         return ret4;
+			case 5 : int[] ret5 = {2,0,3,1,4};
+			         return ret5;
+		}
+		return null;
+	}
+	
+	private static int reorderedIndex(int NrOfInputs , int row) {
+		int result = 0;
+		int[] reorder = reordered(NrOfInputs);
+		int[] values = new int[NrOfInputs];
+		for (int i = 0 ; i < NrOfInputs ; i++)
+			values[i] = 1 << (NrOfInputs-reorder[i]-1);
+		int mask = 1 << (NrOfInputs-1);
+		for (int i = 0 ; i < NrOfInputs ; i++) {
+			if ((row&mask) == mask)
+				result |= values[i];
+			mask >>=1;
+		}
+		return result;
+	}
 	
 	private static String getKarnaughInputs(AnalyzerModel model) {
 		StringBuffer content = new StringBuffer();
-		for (int i = 0 ; i < model.getInputs().vars.size() ; i++) {
-			Var inp = model.getInputs().vars.get(i);
-			if (inp.width==1) {
-				content.append("{$\\text{"+inp.name+"}$}");
+		int[] reorder = reordered(model.getInputs().bits.size());
+		for (int i = 0 ; i < model.getInputs().bits.size() ; i++) {
+			String inp = model.getInputs().bits.get(reorder[i]);
+			if (inp.contains(":")) {
+				String[] split = inp.split(":");
+				content.append("{$"+split[0]+"_"+split[1]+"$}");
 			} else {
-				for (int j = inp.width-1 ; j >= 0 ; j--) {
-					content.append("{$\\text{"+inp.name+"}_"+j+"$}");
-				}
+				content.append("{$"+inp+"$}");
 			}
 		}
 		return content.toString();
 	}
 	
-	private static String getKarnaughEmpty(String name, boolean index, AnalyzerModel model) {
+	private static String getGrayCode(int nrVars) {
+		switch (nrVars) {
+			case 2 : return "{0/00,1/01,2/11,3/10}";
+			case 3 : return "{0/000,1/001,2/011,3/010,4/110,5/111,6/101,7/100}";
+			default: return "{0/0,1/1}";
+		}
+	}
+	
+	private static String getNumberedHeader(String name,AnalyzerModel model) {
+		StringBuffer content = new StringBuffer();
+		TruthTable table = model.getTruthTable();
+		DecimalFormat df = new DecimalFormat("0.0");
+		int kmapRows = 1 << KarnaughMapPanel.ROW_VARS[table.getInputColumnCount()];
+		content.append("\n");
+		StringBuffer leftVars = new StringBuffer();
+		StringBuffer topVars = new StringBuffer();
+		int nrLeftVars = KarnaughMapPanel.ROW_VARS[table.getInputColumnCount()];
+		int count = 0;
+		for (Var inp : table.getInputVariables()) {
+			if (inp.width == 1) {
+				if (count++ < nrLeftVars) {
+					if (leftVars.length()!=0)
+						leftVars.append(", ");
+					leftVars.append("$"+inp.name+"$");
+				} else {
+					if (topVars.length()!=0)
+						topVars.append(", ");
+					topVars.append("$"+inp.name+"$");
+				}
+			} else {
+				for (int idx = inp.width ; idx >= 0  ; idx--) {
+					if (count++ < nrLeftVars) {
+						if (leftVars.length()!=0)
+							leftVars.append(", ");
+						leftVars.append("$"+inp.name+"_{"+idx+"}$");
+					} else {
+						if (topVars.length()!=0)
+							topVars.append(", ");
+						topVars.append("$"+inp.name+"_{"+idx+"}$");
+					}
+				}
+			}
+		}
+		content.append("\\draw[kmbox] ("+df.format(-0.5)+","+df.format((double)kmapRows+0.5)+")\n");
+		content.append("   node[below left]{"+leftVars.toString()+"}\n");
+		content.append("   node[above right]{"+topVars.toString()+"} +(-0.2,0.2)\n");
+		content.append("   node[above left]{"+name+"};");
+		content.append("\\draw (0,"+kmapRows+") -- (-0.7,"+df.format((double)kmapRows+0.7)+");\n");
+		content.append("\\foreach \\x/\\1 in %\n");
+		content.append(getGrayCode(KarnaughMapPanel.COL_VARS[table.getInputColumnCount()])+" {\n");
+		content.append("   \\node at (\\x+0.5,"+df.format(kmapRows+0.2)+") {\\1};\n}\n");
+		content.append("\\foreach \\y/\\1 in %\n");
+		content.append(getGrayCode(KarnaughMapPanel.ROW_VARS[table.getInputColumnCount()])+" {\n");
+		content.append("   \\node at (-0.4,-0.5-\\y+"+df.format(kmapRows)+") {\\1};\n}\n");
+		return content.toString();
+	}
+	
+	private static String getKarnaughEmpty(String name, boolean lined, AnalyzerModel model) {
 		StringBuffer content = new StringBuffer();
 		content.append("\\begin{center}\n");
-		content.append(K_INTRO+(index ? K_INDEX: "")+K_SETUP+"\n");
-		content.append("\\karnaughmap{"+NrOfInCols(model)+"}{"+name+"}{"+getKarnaughInputs(model)+"}{}{}\n");
+		content.append(K_INTRO+(lined ? "" : K_NUMBERED)+K_SETUP+"\n");
+		content.append("\\karnaughmap{"+NrOfInCols(model)+"}{"+name+"}{"+getKarnaughInputs(model)+"}{}{");
+		if (!lined) 
+			content.append(getNumberedHeader(name,model));
+		content.append("}\n");
 		content.append("\\end{tikzpicture}\n");
 		content.append("\\end{center}");
 		return content.toString();
@@ -176,23 +286,73 @@ public class AnalyzerTexWriter {
 	private static String getKValues(int outcol,AnalyzerModel model) {
 		StringBuffer content = new StringBuffer();
 		for (int i = 0 ; i < model.getTruthTable().getRowCount() ; i++) {
-			content.append(model.getTruthTable().getOutputEntry(i, outcol).getDescription());
+			int idx = reorderedIndex(model.getInputs().bits.size(),i);
+			content.append(model.getTruthTable().getOutputEntry(idx, outcol).getDescription());
 		}
 		return content.toString();
 	}
 	
-	private static String getKarnaugh(String name, int outcol,AnalyzerModel model) {
+	private static String getKarnaugh(String name, boolean lined, int outcol,AnalyzerModel model) {
 		StringBuffer content = new StringBuffer();
 		content.append("\\begin{center}\n");
-		content.append(K_INTRO+K_SETUP+"\n");
+		content.append(K_INTRO+(lined ? "" : K_NUMBERED)+K_SETUP+"\n");
 		content.append("\\karnaughmap{"+NrOfInCols(model)+"}{"+name+"}{"+getKarnaughInputs(model)+
-				"}\n{"+getKValues(outcol,model)+"}{}\n");
+				"}\n{"+getKValues(outcol,model)+"}{");
+		if (!lined) 
+			content.append(getNumberedHeader(name,model));
+		content.append("}\n");
+		content.append("\\end{tikzpicture}\n");
+		content.append("\\end{center}");
+		return content.toString();
+	}
+	
+	private static double OFFSET = 0.2;
+	
+	private static String getCovers(String name, AnalyzerModel model) {
+		StringBuffer content = new StringBuffer();
+		TruthTable table = model.getTruthTable();
+		if (table.getInputColumnCount() > KarnaughMapPanel.MAX_VARS)
+			return content.toString();
+		KMapGroups groups = new KMapGroups(model);
+		groups.setOutput(name);
+		CoverColor colors = new CoverColor();
+		DecimalFormat df = new DecimalFormat("0.0");
+		int idx = 0;
+		int kmapRows = 1 << KarnaughMapPanel.ROW_VARS[table.getInputColumnCount()];
+		for (KMapGroupInfo group : groups.getCovers()) {
+			for (CoverInfo thiscover : group.getAreas()) {
+				content.append("   \\node[grp={"+colors.getColorName(group.getColor())+"}");
+				double width = thiscover.getWidth() - OFFSET;
+				double height = thiscover.getHeight() - OFFSET;
+				content.append("{"+df.format(width)+"}{"+df.format(height)+"}]");
+				content.append("(n"+(idx++)+") at");
+				double y = (double)kmapRows - ((double)thiscover.getHeight())/2.0 - thiscover.getRow();
+				double x = ((double)thiscover.getWidth())/2.0+thiscover.getCol();
+				content.append("("+df.format(x)+","+df.format(y)+") {};\n");
+			}
+		}
+		return content.toString();
+	}
+	
+	private static String getKarnaughGroups(String output,String name, boolean lined, int outcol,AnalyzerModel model) {
+		StringBuffer content = new StringBuffer();
+		content.append("\\begin{center}\n");
+		content.append(K_INTRO+(lined ? "" : K_NUMBERED)+K_SETUP+"\n");
+		content.append("\\karnaughmap{"+NrOfInCols(model)+"}{"+name+"}{"+getKarnaughInputs(model)+
+				"}\n{"+getKValues(outcol,model)+"}{");
+		if (!lined) 
+			content.append(getNumberedHeader(name,model));
+		else 
+			content.append("\n");
+		content.append(getCovers(output,model));
+		content.append("}\n");
 		content.append("\\end{tikzpicture}\n");
 		content.append("\\end{center}");
 		return content.toString();
 	}
 	
 	public static void doSave(File file, AnalyzerModel model) throws IOException {
+		boolean linedStyle = AppPreferences.KMAP_LINED_STYLE.getBoolean();
 		PrintStream out = new PrintStream(file);
 		try {
 			/*
@@ -212,6 +372,16 @@ public class AnalyzerTexWriter {
 			out.println("\\usepackage{tikz}");
 			out.println("\\usetikzlibrary{karnaugh}");
 			out.println("\\pagestyle{fancy}");
+			out.println();
+			/*
+			 * Here we define our own colors
+			 */
+			CoverColor cols = new CoverColor();
+			for (int i = 0 ; i < cols.nrOfColors() ; i++) {
+				Color col = cols.getColor(i);
+				out.println("\\definecolor{"+cols.getColorName(col)+"}{RGB}{"+col.getRed()+","+
+						col.getGreen()+","+col.getBlue()+"}");
+			}
 			out.println();
 			/*
 			 * Here we create the headers and footers
@@ -272,30 +442,16 @@ public class AnalyzerTexWriter {
 				} else {
 					out.println(S.get("latexKarnaughText"));
 					out.println(SUB_SECTION_SEP);
-					out.println("\\subsection{"+S.get("latexKarnaughEmptyIndexed")+"}");
-					for (int i = 0 ; i < model.getOutputs().vars.size() ; i++) {
-						Var outp = model.getOutputs().vars.get(i);
-						if (outp.width == 1) {
-							String func = "$\\textbf{"+outp.name+"}$";
-							out.println(getKarnaughEmpty(func,true,model));
-						} else {
-							for (int idx = outp.width-1 ; idx >= 0 ; idx--) {
-								String func = "$\\textbf{"+outp.name+"}_{\\textbf{"+idx+"}}$";
-								out.println(getKarnaughEmpty(func,true,model));
-							}
-						}
-					}
-					out.println(SUB_SECTION_SEP);
 					out.println("\\subsection{"+S.get("latexKarnaughEmpty")+"}");
 					for (int i = 0 ; i < model.getOutputs().vars.size() ; i++) {
 						Var outp = model.getOutputs().vars.get(i);
 						if (outp.width == 1) {
-							String func = "$\\textbf{"+outp.name+"}$";
-							out.println(getKarnaughEmpty(func,false,model));
+							String func = "$"+outp.name+"$";
+							out.println(getKarnaughEmpty(func,linedStyle,model));
 						} else {
 							for (int idx = outp.width-1 ; idx >= 0 ; idx--) {
-								String func = "$\\textbf{"+outp.name+"}_{\\textbf{"+idx+"}}$";
-								out.println(getKarnaughEmpty(func,false,model));
+								String func = "$"+outp.name+"_{"+idx+"}$";
+								out.println(getKarnaughEmpty(func,linedStyle,model));
 							}
 						}
 					}
@@ -305,18 +461,30 @@ public class AnalyzerTexWriter {
 					for (int i = 0 ; i < model.getOutputs().vars.size() ; i++) {
 						Var outp = model.getOutputs().vars.get(i);
 						if (outp.width == 1) {
-							String func = "$\\textbf{"+outp.name+"}$";
-							out.println(getKarnaugh(func,outcol++,model));
+							String func = "$"+outp.name+"$";
+							out.println(getKarnaugh(func,linedStyle,outcol++,model));
 						} else {
 							for (int idx = outp.width-1 ; idx >= 0 ; idx--) {
-								String func = "$\\textbf{"+outp.name+"}_{\\textbf{"+idx+"}}$";
-								out.println(getKarnaugh(func,outcol++,model));
+								String func = "$"+outp.name+"_{"+idx+"}$";
+								out.println(getKarnaugh(func,linedStyle,outcol++,model));
 							}
 						}
 					}
-					/*
-					 * TODO: generated the karnaux maps with the colored groups
-					 */
+					out.println(SUB_SECTION_SEP);
+					out.println("\\subsection{"+S.get("latexKarnaughFilledInGroups")+"}");
+					outcol = 0;
+					for (int i = 0 ; i < model.getOutputs().vars.size() ; i++) {
+						Var outp = model.getOutputs().vars.get(i);
+						if (outp.width == 1) {
+							String func = "$"+outp.name+"$";
+							out.println(getKarnaughGroups(outp.name,func,linedStyle,outcol++,model));
+						} else {
+							for (int idx = outp.width-1 ; idx >= 0 ; idx--) {
+								String func = "$"+outp.name+"_{"+idx+"}$";
+								out.println(getKarnaughGroups(outp.name+":"+idx,func,linedStyle,outcol++,model));
+							}
+						}
+					}
 					/*
 					 * Finally we print the minimal expressions 
 					 */
@@ -326,11 +494,11 @@ public class AnalyzerTexWriter {
 						Var outp = model.getTruthTable().getOutputVariable(o);
 						if (outp.width == 1) {
 							Expression exp = model.getOutputExpressions().getMinimalExpression(outp.name);
-							out.println(new ExpressionLatex(exp,outp,0).get()+"\\\\");
+							out.println(new ExpressionLatex(exp,outp,0).get()+"~\\\\");
 						} else {
 							for (int idx = outp.width-1 ; idx >= 0 ; idx--) {
 								Expression exp = model.getOutputExpressions().getMinimalExpression(outp.name+":"+idx);
-								out.println(new ExpressionLatex(exp,outp,idx).get()+"\\\\");
+								out.println(new ExpressionLatex(exp,outp,idx).get()+"~\\\\");
 							}
 						}
 					}

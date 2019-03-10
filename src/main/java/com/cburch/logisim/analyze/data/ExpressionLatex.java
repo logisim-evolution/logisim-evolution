@@ -51,11 +51,11 @@ public class ExpressionLatex {
 			return;
 		String FName;
 		if (Function.width == 1) {
-			FName = "\\textbf{"+Function.name+"}";
+			FName = Function.name;
 		} else {
 			if (bitindex <0 || bitindex >= Function.width)
 				return;
-			FName = "\\textbf{"+Function.name+"}_{\\textbf{"+bitindex+"}}";
+			FName = Function.name+"_{"+bitindex+"}";
 		}
 		buildLatex(expr,FName);
 	}
@@ -113,9 +113,9 @@ public class ExpressionLatex {
                  if (i >= 0) {
                      String sub = name.substring(i+1);
                      name = name.substring(0, i);
-                     text.append("\\text{"+name+"}_{\\text{"+sub+"}}");
+                     text.append(name+"_{"+sub+"}");
                  } else {
-                         text.append("\\text{"+name+"}");
+                         text.append(name);
                  }
 				return null;
 			}

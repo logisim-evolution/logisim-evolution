@@ -162,7 +162,7 @@ public class KarnaughMapPanel extends JPanel implements TruthTablePanel,MouseMot
 		kMapGroups = new KMapGroups(model);
 		addMouseMotionListener(this);
 	}
-
+	
 	private void computePreferredSize() {
 		SelInfo = null;
 		Graphics2D g = (Graphics2D)getGraphics();
@@ -189,6 +189,7 @@ public class KarnaughMapPanel extends JPanel implements TruthTablePanel,MouseMot
 			computePreferredLinedSize(g,table);
 			computePreferredNumberedSize(g,table);
 			int boxWidth = Math.max(KLinedInfo.getWidth(), KNumberedInfo.getWidth());
+			boxWidth = Math.max(boxWidth, AppPreferences.getScaled(300));
 			int boxHeight = Math.max(KLinedInfo.getHeight(), KNumberedInfo.getHeight());
 			KLinedInfo.calculateOffsets(boxWidth, boxHeight);
 			KNumberedInfo.calculateOffsets(boxWidth, boxHeight);

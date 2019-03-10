@@ -33,6 +33,7 @@ package com.cburch.logisim.analyze.data;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import com.cburch.draw.model.ColorBlindColors;
@@ -45,7 +46,7 @@ import com.cburch.logisim.prefs.AppPreferences;
 
 public class KMapGroups {
 	
-	private class CoverColor {
+	public static class CoverColor {
 		// for a 8x4 kmap we need maximum of 16 colors for the covers
 		// based on : https://sashat.me/2017/01/11/list-of-20-simple-distinct-colors/
 		private final Color[] CoverColors = { new Color(128,0,0), //Maroon
@@ -65,26 +66,63 @@ public class KMapGroups {
 				                              new Color(170,255,195), // Mint
 				                              new Color(240,50,230) //Magenta
 		};
+		private final String[] CoverColorNames = {"MyMaroon",
+				                                  "MyRed",
+				                                  "MyPink",
+				                                  "MyBrown",
+				                                  "MyOrange",
+				                                  "MyApricot",
+				                                  "MyOlive",
+				                                  "MyYellow",
+				                                  "MyLime",
+				                                  "MyNavy",
+				                                  "MyPurple",
+				                                  "MyGreen",
+				                                  "MyBlue",
+				                                  "MyLavender",
+				                                  "MyMint",
+				                                  "MyMagenta"
+		};
 		private int index;
-		private Color[] Colors;
+		private List<Color> colors;
+		private List<String> colorNames; 
 		
 		public CoverColor() {
 			index = -1;
-			if (AppPreferences.COLORBLIND_MODE.getBoolean())
-				Colors = ColorBlindColors.PALETTE14;
-			else
-				Colors = CoverColors;
+			if (AppPreferences.COLORBLIND_MODE.getBoolean()) {
+				colors = Arrays.asList(ColorBlindColors.PALETTE14);
+				colorNames = Arrays.asList(ColorBlindColors.PALETTE14NAMES);
+			} else {
+				colors = Arrays.asList(CoverColors);
+				colorNames = Arrays.asList(CoverColorNames);
+			}
+		}
+		
+		public String getColorName(Color col) {
+			if (colors.contains(col))
+				return colorNames.get(colors.indexOf(col));
+			return null;
+		}
+		
+		public int nrOfColors() {
+			return colors.size();
+		}
+		
+		public Color getColor( int index ) {
+			if (index < 0 || index >= colors.size())
+				return null;
+			return colors.get(index);
 		}
 		
 		public Color getNext() {
 			index++;
-			if (index < 0 || index >= Colors.length)
+			if (index < 0 || index >= colors.size())
 				index = 0;
-			return Colors[index];
+			return colors.get(index);
 		}
 	}
 	
-	private class CoverInfo  {
+	public class CoverInfo  {
 		private int startRow;
 		private int startCol;
 		private int width;
@@ -158,7 +196,7 @@ public class KMapGroups {
 		}
 	}
 	
-	private class KMapGroupInfo {
+	public class KMapGroupInfo {
 		private ArrayList<CoverInfo> Areas;
 		private Color color;
 		private ArrayList<Implicant> singleCoveredImplicants;
@@ -172,6 +210,14 @@ public class KMapGroups {
 			one.add(imp);
 			expression = Implicant.toExpression(format, model, one);
 			build(imp);
+		}
+		
+		public ArrayList<CoverInfo> getAreas() {
+			return Areas;
+		}
+		
+		public Color getColor() {
+			return color;
 		}
 		
 		public void removeSingleCover(Implicant imp) {
@@ -302,6 +348,10 @@ public class KMapGroups {
 	public void setformat(int format) {
 		this.format = format;
 		update();
+	}
+	
+	public ArrayList<KMapGroupInfo> getCovers() {
+		return covers;
 	}
 	
 	public void setOutput(String name) {
