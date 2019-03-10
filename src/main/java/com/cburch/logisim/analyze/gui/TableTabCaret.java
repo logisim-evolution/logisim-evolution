@@ -96,7 +96,6 @@ class TableTabCaret {
 			}
 		}
 		public void keyPressed(KeyEvent e) {
-			Pt oldCursor = cursor;
 			int rows = table.getRowCount();
 			int inputs = table.getInputColumnCount();
 			int outputs = table.getOutputColumnCount();
@@ -195,43 +194,42 @@ class TableTabCaret {
 			int inputs = table.getInputColumnCount();
 			Entry newEntry = null;
 			int dx = 1, dy = 0;
-			switch (c) {
-				case ' ':
-					if (cursor.col < inputs) {
-						Entry cur = model.getVisibleInputEntry(cursor.row, cursor.col);
-						newEntry = (cur == Entry.DONT_CARE ? Entry.ZERO : Entry.ONE);
-					} else {
-						Entry cur = model.getVisibleOutputEntry(cursor.row, cursor.col - inputs);
-						if (cur == Entry.ZERO)
-							newEntry = Entry.ONE;
-						else if (cur == Entry.ONE)
-							newEntry = Entry.DONT_CARE;
-						else
-							newEntry = Entry.ZERO;
-					}
-					break;
-				case '0':
-					newEntry = Entry.ZERO;
-					break;
-				case '1':
-					newEntry = Entry.ONE;
-					break;
-				case '-':
-				case 'x':
-				case 'X':
-					newEntry = Entry.DONT_CARE;
-					break;
-				case '\n':
-					dy = 1;
-					dx = 0;
-					break;
-				case '\u0008': // backspace
-					newEntry = Entry.DONT_CARE;
-					dx = -1;
-					break;
-				default:
-					return;
-			}
+		    switch (c) {
+		    	case ' ':
+		    		if (cursor.col < inputs) {
+		    			Entry cur = model.getVisibleInputEntry(cursor.row, cursor.col);
+		    			newEntry = (cur == Entry.DONT_CARE ? Entry.ZERO : Entry.ONE);
+		    		} else {
+		    			Entry cur = model.getVisibleOutputEntry(cursor.row, cursor.col - inputs);
+		    			if (cur == Entry.ZERO)
+		    				newEntry = Entry.ONE;
+		    			else if (cur == Entry.ONE)
+		    				newEntry = Entry.DONT_CARE;
+		    			else
+		    				newEntry = Entry.ZERO;
+		    		}
+		    		break;
+		    	case '0':
+		    		newEntry = Entry.ZERO;
+		    		break;
+		    	case '1':
+		    		newEntry = Entry.ONE;
+		    		break;
+		    	case '-':
+		    	case 'x':
+		    	case 'X':
+		    		newEntry = Entry.DONT_CARE;
+		    		break;
+		    	case '\n':
+		    		dy = 1;
+		    		break;
+		    	case '\u0008': // backspace
+		    		newEntry = Entry.DONT_CARE;
+		    		dx = -1;
+		    		break;
+		    	default:
+		    		return;
+		    }
 			if (newEntry != null && cursor.col < inputs) {
 				// Nearly all of this is just trying to do a sensible
 				// cursor/selection update.
@@ -277,38 +275,45 @@ class TableTabCaret {
 			else if (newEntry != null) {
 				model.setVisibleOutputEntry(cursor.row, cursor.col - inputs, newEntry);
 			}
-			AutoMoveCursor(dx,dy);
-		}
-		
-		private void AutoMoveCursor(int dx , int dy) {
+			if (!markA.isValid() || !markB.isValid())
+				return;
+			Rectangle s = getSelection();
 			int row = cursor.row;
 			int col = cursor.col;
-			int InputCols = table.getInputColumnCount();
-			int outputCols = table.getOutputColumnCount();
-			int NrOfEntries = table.getRowCount();
-			int newRow = row+dy;
-			int newCol = col+dx;
-			int maxcol = col < InputCols ? InputCols : InputCols+outputCols;
-			int mincol = col < InputCols ? 0 : InputCols;
-			if (newCol >= maxcol) {
-				newCol = mincol;
-				newRow++;
+			if (dy > 0) { // advance down
+				col = s.x;
+				if (++row >= s.y + s.height)
+					row = s.y;
+			} else if (dx > 0) { // advance right
+				if (++col >= s.x + s.width) {
+					col = s.x;
+					if (++row >= s.y + s.height) {
+						row = s.y;
+					}
+				}
+			} else if (dx < 0) { // advance left
+				if (--col < s.x) {
+					col = s.x + s.width - 1;
+					if (--row < s.y)
+						row = s.y + s.height - 1;
+				}
 			}
-			if (newCol < mincol) {
-				newCol = maxcol-1;
-				newRow--;
-			}
-			if (newRow < 0)
-				newRow = NrOfEntries-1;
-			if (newRow >= NrOfEntries)
-				newRow = 0;
 			Pt oldCursor = cursor;
-			cursor = new Pt(newRow, newCol);
+			cursor = new Pt(row, col);
 			repaint(oldCursor, cursor, markA, markB);
 			scrollTo(cursor);
 		}
-
-		public void mouseClicked(MouseEvent e) {}
+			
+		public void mouseClicked(MouseEvent e) {
+			if (cursor.isValid() && cursor.col >= table.getInputColumnCount()) {
+				/* We clicked inside the output region; we mark the complete 
+				 * region below the cursor.
+				 * markA is already set, so we set markB to the end of the table 
+				 */
+				markB = new Pt(table.getRowCount()-1,markA.col);
+				repaint(markA,markB);
+			}
+		}
 
 		public void mouseDragged(MouseEvent e) {
 			Pt oldMarkB = markB;
@@ -339,8 +344,9 @@ class TableTabCaret {
 			table.requestFocus();
 			if ((e.getModifiers() & InputEvent.SHIFT_MASK) != 0)
 				mouseDragged(e);
-			else
+			else {
 				setCursor(pointAt(e), pointNear(e));
+			}
 		}
 		
 		public void mouseReleased(MouseEvent e) {
@@ -474,7 +480,7 @@ class TableTabCaret {
 			return new Rectangle(0, 0, -1, -1);
 		}
 	}
-
+	
 	void paintBackground(Graphics g) {
 		if (hilightRows != null) {
 			g.setColor(HIGHLIGHT_COLOR);

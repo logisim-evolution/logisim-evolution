@@ -281,7 +281,7 @@ public class Implicant implements Comparable<Implicant> {
 		return ret;
 	}
 
-	static Expression toExpression(int format, AnalyzerModel model,
+	public static Expression toExpression(int format, AnalyzerModel model,
 			List<Implicant> implicants) {
 		if (implicants == null)
 			return null;

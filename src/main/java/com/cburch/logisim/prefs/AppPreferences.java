@@ -531,6 +531,7 @@ public class AppPreferences {
 			"showGhosts", true));
 	public static final PrefMonitor<Boolean> NAMED_CIRCUIT_BOXES_FIXED_SIZE = create(new PrefMonitorBoolean(
 			"namedBoxesFixed", true));
+	public static final PrefMonitor<Boolean> KMAP_LINED_STYLE = create(new PrefMonitorBoolean("KmapLinedStyle",false));
 	public static final PrefMonitor<String> DefaultAppearance = create(new PrefMonitorStringOpts(
 			"defaultAppearance" , new String[] {StdAttr.APPEAR_CLASSIC.toString(),
 					StdAttr.APPEAR_FPGA.toString(),StdAttr.APPEAR_EVOLUTION.toString()},

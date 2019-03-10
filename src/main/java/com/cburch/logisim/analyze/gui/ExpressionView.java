@@ -81,7 +81,7 @@ class ExpressionView extends JPanel {
 		}
 	}
 
-	private static class RenderData {
+	static class RenderData {
 		ExpressionData exprData;
 		int prefWidth;
 		int width;
@@ -259,6 +259,36 @@ class ExpressionView extends JPanel {
 			}
 			return as;
 		}
+		
+		public int getWidth(Graphics g) {
+			if (lineStyled == null) {
+				 FontRenderContext ctx = ((Graphics2D)g).getFontRenderContext();
+                 lineStyled = new AttributedString[lineText.length];
+                 notStarts = new int[lineText.length][];
+                 notStops = new int[lineText.length][];
+                 for (int i = 0; i < lineText.length; i++) {
+                	 String line = lineText[i];
+                	 ArrayList<Range> nots = lineNots.get(i);
+                	 ArrayList<Range> subs = lineSubscripts.get(i);
+                	 notStarts[i] = new int[nots.size()];
+                	 notStops[i] = new int[nots.size()];
+                	 for (int j = 0; j < nots.size(); j++) {
+                		 Range not = nots.get(j);
+                		 notStarts[i][j] = getWidth(ctx, line, not.startIndex, subs);
+                		 notStops[i][j] = getWidth(ctx, line, not.stopIndex, subs);
+                	 }
+                	 lineStyled[i] = style(line, line.length(), subs, false);
+                 }
+			 }
+			FontRenderContext ctx = ((Graphics2D)g).getFontRenderContext();
+			int width = 0;
+			for (int i = 0 ; i < lineStyled.length ; i++) {
+				TextLayout test = new TextLayout(lineStyled[i].getIterator(),ctx);
+				if (test.getBounds().getWidth() > width)
+					width = (int)test.getBounds().getWidth();
+			}
+			return width;
+		}
 
 		private int getWidth(FontRenderContext ctx, String s, int end, ArrayList<Range> subs) {
 			if (end == 0)
@@ -320,7 +350,7 @@ class ExpressionView extends JPanel {
 
 	private static final int MINIMUM_HEIGHT = 25;
 	
-	private static final Font EXPRESSION_BASE_FONT = new Font("Monospaced", Font.PLAIN, 14);
+	public static final Font EXPRESSION_BASE_FONT = new Font("Monospaced", Font.PLAIN, 14);
 
 	private MyListener myListener = new MyListener();
 
@@ -333,6 +363,10 @@ class ExpressionView extends JPanel {
 
 	void localeChanged() {
 		repaint();
+	}
+	
+	public RenderData getRenderData() {
+		return renderData;
 	}
 	
 	@Override
