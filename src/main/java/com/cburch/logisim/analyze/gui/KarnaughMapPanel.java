@@ -44,6 +44,7 @@ import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.Stroke;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.font.FontRenderContext;
 import java.awt.font.TextAttribute;
@@ -70,13 +71,15 @@ import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.GraphicsUtil;
 
-public class KarnaughMapPanel extends JPanel implements TruthTablePanel,MouseMotionListener {
+public class KarnaughMapPanel extends JPanel implements TruthTablePanel,MouseMotionListener,
+						MouseListener {
 	private class MyListener implements OutputExpressionsListener,
 			TruthTableListener {
 		
 		public void rowsChanged(TruthTableEvent event) {}
 		
 		public void cellsChanged(TruthTableEvent event) {
+			kMapGroups.update();
 			repaint();
 		}
 
@@ -124,9 +127,9 @@ public class KarnaughMapPanel extends JPanel implements TruthTablePanel,MouseMot
 		public int getHeaderHeight() { return headHeight; }
 	}
 
-	public static final int MAX_VARS = 5;
-	public static final int[] ROW_VARS = { 0, 0, 1, 1, 2 , 2 };
-	public static final int[] COL_VARS = { 0, 1, 1, 2, 2 , 3 };
+	public static final int MAX_VARS = 6;
+	public static final int[] ROW_VARS = { 0, 0, 1, 1, 2 , 2 , 3};
+	public static final int[] COL_VARS = { 0, 1, 1, 2, 2 , 3 , 3};
 	private static final int[] BigCOL_Index = {0,1,3,2,6,7,5,4};
 	private static final int[] BigCOL_Place = {0,1,3,2,7,6,4,5};
 	private static final int CELL_HORZ_SEP = 10;
@@ -161,6 +164,7 @@ public class KarnaughMapPanel extends JPanel implements TruthTablePanel,MouseMot
 		KMapLined = AppPreferences.KMAP_LINED_STYLE.get();
 		kMapGroups = new KMapGroups(model);
 		addMouseMotionListener(this);
+		addMouseListener(this);
 	}
 	
 	private void computePreferredSize() {
@@ -317,6 +321,9 @@ public class KarnaughMapPanel extends JPanel implements TruthTablePanel,MouseMot
 		if (cols > 4) {
 			tableHeight += headHeight+(headHeight>>2)+11;
 		}
+		if (rows > 4) {
+			tableWidth += headHeight+(headHeight>>2)+11;
+		}
 		headWidth = 0;
 		KLinedInfo = new KMapInfo(headWidth,headHeight,tableWidth,tableHeight);
 	}
@@ -354,6 +361,9 @@ public class KarnaughMapPanel extends JPanel implements TruthTablePanel,MouseMot
 
 	public static int getRow(int tableRow, int rows, int cols) {
 		int ret = tableRow / cols;
+		if (rows > 4) {
+			return BigCOL_Place[ret];
+		}
 		switch (ret) {
 		case 2:
 			return 3;
@@ -642,6 +652,8 @@ public class KarnaughMapPanel extends JPanel implements TruthTablePanel,MouseMot
 			         		yoffset += (rows-1)*cellHeight;
 			         		if (inputCount < 4)
 			         			yoffset += cellHeight/2;
+			         		if (inputCount >5)
+			         			yoffset -= cellHeight;
 			         		xoffset = headFm.getAscent();
 			         	}
 			         	break;
@@ -657,9 +669,10 @@ public class KarnaughMapPanel extends JPanel implements TruthTablePanel,MouseMot
 					  		rotated=true;
 					  		xoffset += 4*cellWidth+11+headFm.getAscent();
 					  		yoffset += 2*cellHeight;
-					  		if (inputCount > 4) {
+					  		if (inputCount > 4)
 					  			xoffset += 4*cellWidth;
-					  		}
+			         		if (inputCount >5)
+			         			yoffset += 2*cellHeight;
 					  	}
 			          	break;
 				case 2  : rotated = false;
@@ -669,6 +682,10 @@ public class KarnaughMapPanel extends JPanel implements TruthTablePanel,MouseMot
 		      		  	  } else if (inputCount == 4 ){
 		      		  		  xoffset += 3*cellWidth;
 		      		  		  yoffset = headFm.getAscent();
+		      		  	  } else if (inputCount == 6) {
+		      		  		  xoffset += 11+8*cellWidth+headFm.getAscent()+headHeight+(headHeight>>2);
+		      		  		  yoffset += 2*cellHeight;
+		      		  		  rotated = true;
 		      		  	  } else {
 		      		  		  xoffset += 6*cellWidth;
 		      		  		  yoffset += 11+4*cellHeight+headFm.getAscent();
@@ -678,15 +695,27 @@ public class KarnaughMapPanel extends JPanel implements TruthTablePanel,MouseMot
 			              if (inputCount == 4) {
 			            	  xoffset += 2*cellWidth;
 			            	  yoffset += 11+4*cellHeight+headFm.getAscent();
+			              } else if (inputCount == 6) {
+			            	  xoffset += 6*cellWidth;
+			            	  yoffset += 11+8*cellHeight+headFm.getAscent();
 			              } else {
 			            	  xoffset += 4*cellWidth;
 			            	  yoffset = headFm.getAscent();
 			              }
 			              break;
 				case 4 : rotated = false;
-					     xoffset += 2*cellWidth;
-					     yoffset += 11+4*cellHeight+headFm.getAscent()+headHeight+(headHeight>>2);
+				         if (inputCount == 6) {
+			            	  xoffset += 4*cellWidth;
+			            	  yoffset = headFm.getAscent();
+				         } else {
+				        	 xoffset += 2*cellWidth;
+				        	 yoffset += 11+4*cellHeight+headFm.getAscent()+headHeight+(headHeight>>2);
+				         }
 					     break;
+				case 5 : rotated = false;
+	        	 		 xoffset += 2*cellWidth;
+	        	 		 yoffset += 11+8*cellHeight+headFm.getAscent()+headHeight+(headHeight>>2);
+	        	 		 break;
 				default : break;
 			}
 			if (rotated) {
@@ -695,9 +724,17 @@ public class KarnaughMapPanel extends JPanel implements TruthTablePanel,MouseMot
 				g.drawString(header.getIterator(), -middleOffset, 0 );
 				g.rotate(Math.PI / 2.0);
 				g.translate(-(xoffset+x), -(yoffset+y));
+				if (i==2 && inputCount == 6) {
+					yoffset += 4*cellHeight;
+					g.translate(xoffset+x, yoffset+y);
+					g.rotate(-Math.PI / 2.0);
+					g.drawString(header.getIterator(), -middleOffset, 0 );
+					g.rotate(Math.PI / 2.0);
+					g.translate(-(xoffset+x), -(yoffset+y));
+				}
 			} else
 				g.drawString(header.getIterator(), xoffset+x-middleOffset, yoffset+y);
-			if (i==4)
+			if ((i==4 && inputCount == 5) || (i==5))
 				g.drawString(header.getIterator(), 4*cellWidth+xoffset+x-middleOffset, yoffset+y);
 		}
 
@@ -729,6 +766,14 @@ public class KarnaughMapPanel extends JPanel implements TruthTablePanel,MouseMot
 			case 4 :
 				drawKmapLine(g,new Point(x-8, y+2*cellHeight) , new Point(x-8, y+4*cellHeight));
 				drawKmapLine(g,new Point(x+cols*cellWidth+8, y+cellHeight) , new Point(x+cols*cellWidth+8, y+3*cellHeight));
+				break;
+			case 8 :
+				drawKmapLine(g,new Point(x-8, y+4*cellHeight), new Point(x-8, y+8*cellHeight));
+				drawKmapLine(g,new Point(x+cols*cellWidth+8, y+2*cellHeight), new Point(x+cols*cellWidth+8, y+6*cellHeight));
+				drawKmapLine(g,new Point(x+cols*cellWidth+8+headHeight+(headHeight>>2),y+1*cellHeight), 
+						new Point(x+cols*cellWidth+8+headHeight+(headHeight>>2), y+3*cellHeight));
+				drawKmapLine(g,new Point(x+cols*cellWidth+8+headHeight+(headHeight>>2),y+5*cellHeight), 
+						new Point(x+cols*cellWidth+8+headHeight+(headHeight>>2), y+7*cellHeight));
 				break;
 		}
 	}
@@ -826,6 +871,9 @@ public class KarnaughMapPanel extends JPanel implements TruthTablePanel,MouseMot
 	}
 
 	private int toRow(int row, int rows) {
+		if (rows > 4) {
+			return BigCOL_Index[row];
+		}
 		if (rows == 4) {
 			switch (row) {
 			case 2:
@@ -858,11 +906,7 @@ public class KarnaughMapPanel extends JPanel implements TruthTablePanel,MouseMot
 		}
 	}
 
-	@Override
-	public void mouseDragged(MouseEvent e) {
-	}
-
-	@Override
+	public void mouseDragged(MouseEvent e) {}
 	public void mouseMoved(MouseEvent e) {
 		if (KMapArea == null)
 			return;
@@ -877,5 +921,27 @@ public class KarnaughMapPanel extends JPanel implements TruthTablePanel,MouseMot
 		} else if (!kMapGroups.clearHighlight())
 			computePreferredSize();
 	}
+	public void mouseClicked(MouseEvent e) {
+		if (KMapArea == null)
+			return;
+		int row = getRow(e);
+		if (row < 0)
+			return;
+		int col = getOutputColumn(e);
+		TruthTable tt = model.getTruthTable();
+		tt.expandVisibleRows();
+		Entry entry = tt.getOutputEntry(row, col);
+		if (entry.equals(Entry.DONT_CARE)) {
+			tt.setOutputEntry(row, col, Entry.ZERO);
+		} else if (entry.equals(Entry.ZERO)) {
+			tt.setOutputEntry(row, col, Entry.ONE);
+		} else if (entry.equals(Entry.ONE)) {
+			tt.setOutputEntry(row, col, Entry.DONT_CARE);
+		}
+	}
+	public void mousePressed(MouseEvent e) {}
+	public void mouseReleased(MouseEvent e) {}
+	public void mouseEntered(MouseEvent e) {}
+	public void mouseExited(MouseEvent e) {}
 
 }

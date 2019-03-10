@@ -165,6 +165,7 @@ public class AnalyzerTexWriter {
 	 *      3            ABC             BAC
 	 *      4            ABCD            ACBD
 	 *      5            ABCDE           CADBE
+	 *      6            ABCDEF			 ADBECF
 	 */
 	
 	private static int[] reordered(int NrOfInputs) {
@@ -179,6 +180,8 @@ public class AnalyzerTexWriter {
 			         return ret4;
 			case 5 : int[] ret5 = {2,0,3,1,4};
 			         return ret5;
+			case 6 : int[] ret6 = {0,3,1,4,2,5};
+			         return ret6;
 		}
 		return null;
 	}

@@ -295,7 +295,8 @@ public class KMapGroups {
 					return;
 				int row = KarnaughMapPanel.getRow(tableRow, kmapRows, kmapCols);
 				int col = KarnaughMapPanel.getCol(tableRow, kmapRows, kmapCols);
-				imps[row][col] = true;
+				if ((row < kmapRows)&&(col < kmapCols))
+					imps[row][col] = true;
 			}
 			CoverInfo current = null;
 			for (int row = 0 ; row < kmapRows ; row++)
