@@ -47,8 +47,8 @@ import com.cburch.logisim.prefs.AppPreferences;
 public class KMapGroups {
 	
 	public static class CoverColor {
-		// for a 8x4 kmap we need maximum of 16 colors for the covers
-		// based on : https://sashat.me/2017/01/11/list-of-20-simple-distinct-colors/
+		// for a 8x4 kmap we need maximum of 16 colors for the covers.
+		// colors are based on : https://sashat.me/2017/01/11/list-of-20-simple-distinct-colors/
 		private final Color[] CoverColors = { new Color(128,0,0), //Maroon
 				                              new Color(230,25,75), //Red
 				                              new Color(250,190,190), // Pink
@@ -266,15 +266,17 @@ public class KMapGroups {
 		}
 		
 		private void addSingleCover(Implicant imp) {
-			boolean isNotCovered = true;
+			/* we have to make sure that only one cover contains the implicant
+			 * in case that multiple covers cover the implicant, so we remove
+			 * a multi-covered implicant from the existing covers. We could also
+			 * not add it to the current cover, it's a choice.
+			 */
 			for (KMapGroupInfo other : covers) {
 				if (other.containsSingleCover(imp)) {
-					isNotCovered = false;
 					other.removeSingleCover(imp);
 				}
 			}
-			if (isNotCovered)
-				singleCoveredImplicants.add(imp);
+			singleCoveredImplicants.add(imp);
 		}
 		
 		private void build(Implicant imp) {

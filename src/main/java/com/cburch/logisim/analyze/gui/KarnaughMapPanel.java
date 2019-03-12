@@ -151,6 +151,7 @@ public class KarnaughMapPanel extends JPanel implements TruthTablePanel,MouseMot
 	private KMapInfo KNumberedInfo;
 	private KMapGroups kMapGroups;
 	private Bounds SelInfo;
+	private Point hover;
 	
 
 	public KarnaughMapPanel(AnalyzerModel model) {
@@ -165,6 +166,7 @@ public class KarnaughMapPanel extends JPanel implements TruthTablePanel,MouseMot
 		kMapGroups = new KMapGroups(model);
 		addMouseMotionListener(this);
 		addMouseListener(this);
+		hover = new Point(-1,-1);
 	}
 	
 	private void computePreferredSize() {
@@ -400,9 +402,25 @@ public class KarnaughMapPanel extends JPanel implements TruthTablePanel,MouseMot
 	public String getToolTipText(MouseEvent event) {
 		TruthTable table = model.getTruthTable();
 		int row = getRow(event);
+		if (row < 0)
+			return null;
 		int col = getOutputColumn(event);
-		Entry entry = table.getOutputEntry(row, col);
-		return entry.getErrorMessage();
+	    Entry entry = table.getOutputEntry(row, col);
+	    String s = entry.getErrorMessage();
+	    if (s == null)
+	      s = "";
+	    else
+	      s += "<br>";
+	    s += output + " = " + entry.getDescription();
+	    List<String> inputs = model.getInputs().bits;
+	    if (inputs.size() == 0)
+	      return "<html>"+s+"</html>";
+	    s += "<br>When:";
+	    int n = inputs.size();
+	    for (int i = 0; i < MAX_VARS && i < inputs.size(); i++) {
+	      s += "<br>&nbsp;&nbsp;&nbsp;&nbsp;" + inputs.get(i) + " = " + ((row>>(n-i-1)) & 1);
+	    }
+	    return "<html>"+s+"</html>";
 	}
 
 	public TruthTable getTruthTable() {
@@ -806,16 +824,17 @@ public class KarnaughMapPanel extends JPanel implements TruthTablePanel,MouseMot
 					g.fillRect(x + j * cellWidth, y + i * cellHeight,
 							cellWidth, cellHeight);
 					g.setColor(Color.BLACK);
+				} else if (hover.x == j && hover.y == i) {
+					g.fillRect(x + j * cellWidth, y + i * cellHeight,
+							cellWidth, cellHeight);
 				}
+				g.setStroke(new BasicStroke(2));
 				g.drawRect(x + j * cellWidth, y + i * cellHeight,
 							cellWidth, cellHeight);
-				g.drawRect(x + j * cellWidth+1, y + i * cellHeight+1,
-						cellWidth-2, cellHeight-2);
+				g.setStroke(oldstroke);
 			}
 		}
 
-		g.drawRect(x,y,cols*cellWidth,rows*cellHeight);
-		g.drawRect(x-1,y-1,cols*cellWidth+2,rows*cellHeight+2);
 		if (outputColumn < 0)
 			return;
 		
@@ -916,10 +935,24 @@ public class KarnaughMapPanel extends JPanel implements TruthTablePanel,MouseMot
 			(posY >= KMapArea.getY()) && (posY <= KMapArea.getY()+KMapArea.getHeight())) {
 			int x = posX - KMapArea.getX();
 			int y = posY - KMapArea.getY();
-			if (kMapGroups.highlight(x/cellWidth, y/cellHeight))
-				computePreferredSize();
-		} else if (!kMapGroups.clearHighlight())
-			computePreferredSize();
+			int col = x/cellWidth; 
+			int row = y/cellHeight;
+			if (kMapGroups.highlight(col,row))
+				repaint();
+			if (col != hover.x || row != hover.y) {
+				hover.x = col;
+				hover.y = row;
+				repaint();
+			}
+		} else {
+			if (!kMapGroups.clearHighlight())
+				repaint();
+			if (hover.x >= 0 || hover.y >= 0) {
+				hover.x = -1;
+				hover.y = -1;
+				repaint();
+			}
+		}
 	}
 	public void mouseClicked(MouseEvent e) {
 		if (KMapArea == null)
