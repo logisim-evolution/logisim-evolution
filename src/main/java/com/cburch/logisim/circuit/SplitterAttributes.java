@@ -44,7 +44,7 @@ import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.instance.StdAttr;
 
-class SplitterAttributes extends AbstractAttributeSet {
+public class SplitterAttributes extends AbstractAttributeSet {
 	static class BitOutAttribute extends Attribute<Integer> {
 		int which;
 		BitOutOption[] options;

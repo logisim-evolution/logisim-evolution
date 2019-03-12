@@ -37,13 +37,17 @@ import java.util.HashMap;
 
 import com.cburch.logisim.analyze.model.AnalyzerModel;
 import com.cburch.logisim.analyze.model.Expression;
+import com.cburch.logisim.analyze.model.Var;
 import com.cburch.logisim.analyze.model.VariableList;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitMutation;
+import com.cburch.logisim.circuit.SplitterAttributes;
+import com.cburch.logisim.circuit.SplitterFactory;
 import com.cburch.logisim.circuit.Wire;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.comp.ComponentFactory;
 import com.cburch.logisim.data.AttributeSet;
+import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Location;
@@ -53,35 +57,115 @@ import com.cburch.logisim.std.wiring.Constant;
 import com.cburch.logisim.std.wiring.Pin;
 
 public class CircuitBuilder {
+	
+	private static int SPINE_DISTANCE = 10;
+	private static int BUS_SPINE_TO_WIRE_SPINE_DISTANCE = 20;
+	private static int MINIMAL_PIN_DISTANCE = 30;
+	private static int SPLITTER_HEIGHT = 20;
+	private static int TOP_BORDER = 40; // minimal value due to constants
+	private static int INVERTER_WIDTH = 30;
+	private static int NAND_WIDTH = 40;
+	private static int GATE_HEIGHT = 40;
+	
 	private static class CompareYs implements Comparator<Location> {
 		public int compare(Location a, Location b) {
 			return a.getY() - b.getY();
 		}
 	}
-
+	
 	private static class InputData {
 		int startX;
-		String[] names;
-		HashMap<String, SingleInput> inputs = new HashMap<String, SingleInput>();
+		int startY;
+		int pinX;
+		private ArrayList<String> names = new ArrayList<String>();
+		private HashMap<String, SingleInput> inputs = new HashMap<String, SingleInput>();
+		private HashMap<String, SingleInput> inverted_inputs = new HashMap<String, SingleInput>();
 
 		InputData() {
 		}
-
-		int getSpineX(String input) {
-			SingleInput data = inputs.get(input);
-			return data.spineX;
+		
+		public void addInput(String Name,SingleInput Info) {
+			inputs.put(Name, Info);
+			names.add(Name);
+		}
+		
+		public int CreateInvertedLocs(int SpineX) {
+			int cur = SpineX+SPINE_DISTANCE;
+			addInput("0",new SingleInput(cur)); // Constant zero line
+			cur += 20;
+			addInput("1",new SingleInput(cur)); // Constant one line
+			cur += NAND_WIDTH+20;
+			for (int i = 0 ; i < NrOfInputs() ; i++) {
+				inverted_inputs.put(names.get(i), new SingleInput(cur));
+				cur += SPINE_DISTANCE;
+			}
+			return cur;
+		}
+		
+		public int GetInverterXLoc() {
+			boolean hasOne = !inputs.get("1").ys.isEmpty();
+			boolean hasZero = !inputs.get("0").ys.isEmpty();
+			if (hasOne)
+				return inverted_inputs.get(names.get(0)).spineX-10;
+			if (hasZero)
+				return inverted_inputs.get(names.get(0)).spineX-20;
+			else
+				return inverted_inputs.get(names.get(0)).spineX-20-SPINE_DISTANCE;
+		}
+		
+		public boolean hasInvertedConnections(String name) {
+			SingleInput inp = inverted_inputs.get(name);
+			if (inp == null)
+				return false;
+			return !inp.ys.isEmpty();
+		}
+		
+		int NrOfInputs() {
+			return names.size();
 		}
 
+		int getSpineX(String input, boolean inverted) {
+			SingleInput data = (inverted) ? inverted_inputs.get(input) : inputs.get(input);
+			return data.spineX;
+		}
+		
 		int getStartX() {
 			return startX;
 		}
-
-		void registerConnection(String input, Location loc) {
-			SingleInput data = inputs.get(input);
+		
+		int getStartY() {
+			return startY;
+		}
+		
+		int getPinX() {
+			return pinX;
+		}
+		
+		public int InverterHeight() {
+			int nr = names.size();
+			if (names.contains("0"))
+				nr--;
+			if (names.contains("1"))
+				nr--;
+			return nr*GATE_HEIGHT;
+		}
+		
+		public SingleInput getInputLocs(String Name,boolean inverted) {
+			return inverted ? inverted_inputs.get(Name) : inputs.get(Name);
+		}
+		
+		public String getInputName(int index) {
+			if ((index < 0)||(index>=NrOfInputs()))
+					return null;
+			return names.get(index);
+		}
+		
+		void registerConnection(String input, Location loc, boolean inverted) {
+			SingleInput data = (inverted) ? inverted_inputs.get(input) : inputs.get(input);
 			data.ys.add(loc);
 		}
 	}
-
+	
 	private static class Layout {
 		// initialized by parent
 		int y; // top edge relative to parent's top edge
@@ -97,6 +181,7 @@ public class CircuitBuilder {
 					// left edge
 		Layout[] subLayouts;
 		String inputName; // for references directly to inputs
+		boolean inverted;
 
 		Layout(int width, int height, int outputY, ComponentFactory factory,
 				AttributeSet attrs, Layout[] subLayouts, int subX) {
@@ -110,30 +195,37 @@ public class CircuitBuilder {
 			this.inputName = null;
 		}
 
-		Layout(String inputName) {
+		Layout(String inputName, boolean inverted) {
 			this(0, 0, 0, null, null, null, 0);
 			this.inputName = inputName;
+			this.inverted = inverted;
 		}
 	}
 
 	private static class SingleInput {
 		int spineX;
+		int spineY;
 		ArrayList<Location> ys = new ArrayList<Location>();
 
 		SingleInput(int spineX) {
 			this.spineX = spineX;
 		}
-	}
 
+		SingleInput(int spineX,int spineY) {
+			this.spineX = spineX;
+			this.spineY = spineY;
+		}
+	}
+	
 	public static CircuitMutation build(Circuit destCirc, AnalyzerModel model,
 			boolean twoInputs, boolean useNands) {
 		CircuitMutation result = new CircuitMutation(destCirc);
 		result.clear();
 
-		Layout[] layouts = new Layout[model.getOutputs().size()];
+		Layout[] layouts = new Layout[model.getOutputs().bits.size()];
 		int maxWidth = 0;
 		for (int i = 0; i < layouts.length; i++) {
-			String output = model.getOutputs().get(i);
+			String output = model.getOutputs().bits.get(i);
 			Expression expr = model.getOutputExpressions()
 					.getExpression(output);
 			CircuitDetermination det = CircuitDetermination.create(expr);
@@ -151,30 +243,33 @@ public class CircuitBuilder {
 		}
 
 		InputData inputData = computeInputData(model);
+		InputData outputData = new InputData();
+		outputData.startY = inputData.startY;
 		int x = inputData.getStartX();
-		int y = 10;
+		int y = inputData.getStartY()+inputData.InverterHeight();
 		int outputX = x + maxWidth + 20;
 		for (int i = 0; i < layouts.length; i++) {
-			String outputName = model.getOutputs().get(i);
+			String outputName = model.getOutputs().bits.get(i);
 			Layout layout = layouts[i];
 			Location output;
 			int height;
 			if (layout == null) {
-				output = Location.create(outputX, y + 20);
-				height = 40;
+				outputData.addInput(outputName, null);
+				height = -10;
 			} else {
 				int dy = 0;
 				if (layout.outputY < 20)
 					dy = 20 - layout.outputY;
 				height = Math.max(dy + layout.height, 40);
 				output = Location.create(outputX, y + dy + layout.outputY);
+				outputData.addInput(outputName, new SingleInput(outputX,y + dy + layout.outputY));
 				placeComponents(result, layouts[i], x, y + dy, inputData,
 						output);
 			}
-			placeOutput(result, output, outputName);
 			y += height + 10;
 		}
-		placeInputs(result, inputData);
+		placeInputs(model, result, inputData,useNands);
+		placeOutputs(model, result, outputData);
 		return result;
 	}
 
@@ -185,19 +280,47 @@ public class CircuitBuilder {
 		InputData ret = new InputData();
 		VariableList inputs = model.getInputs();
 		int NameLength = 1;
-		for (int i = 0 ; i < inputs.size() ; i++) {
-			if (inputs.get(i).length() > NameLength)
-				NameLength = inputs.get(i).length();
+		int BusLength = 1;
+		int NrOfBusses = 0;
+		for (int i = 0 ; i < inputs.vars.size() ; i++) {
+			if (inputs.vars.get(i).name.length() > NameLength)
+				NameLength = inputs.vars.get(i).name.length();
+			if (inputs.vars.get(i).width> BusLength) {
+				BusLength = inputs.vars.get(i).width;
+			}
+			if (inputs.vars.get(i).width>1)
+				NrOfBusses++;
 		}
-		int spineX = 80+NameLength*10;
-		ret.names = new String[inputs.size()];
-		for (int i = 0; i < inputs.size(); i++) {
-			String name = inputs.get(i);
-			ret.names[i] = name;
-			ret.inputs.put(name, new SingleInput(spineX));
-			spineX += 20;
+		int spineX = 100+NameLength*10+(BusLength-1)*10;
+		ret.pinX = spineX-10;
+		if (NrOfBusses > 0) 
+			spineX += NrOfBusses*SPINE_DISTANCE+ BUS_SPINE_TO_WIRE_SPINE_DISTANCE;
+		int cnt = 0;
+		for (int i = 0; i < inputs.vars.size(); i++) {
+			Var inp = inputs.vars.get(i);
+			if (inp.width == 1) {
+				String name = inputs.bits.get(cnt++);
+				ret.addInput(name, new SingleInput(spineX));
+				spineX += SPINE_DISTANCE;
+			} else {
+				for (int idx = inp.width-1 ; idx >= 0 ; idx--) {
+					String name = inputs.bits.get(cnt++);
+					ret.addInput(name, new SingleInput(spineX));
+					spineX += SPINE_DISTANCE;
+				}
+			}
 		}
+		/* do the same for the inverted inputs */
+		spineX = ret.CreateInvertedLocs(spineX);
+		spineX += SPINE_DISTANCE;
+		VariableList outputs = model.getOutputs();
+		int NrOutBusses = 0;
+		for (int i = 0 ; i < outputs.vars.size() ; i++)
+			if (outputs.vars.get(i).width > 1)
+				NrOutBusses++;
+		NrOfBusses = Math.max(NrOfBusses, NrOutBusses);
 		ret.startX = spineX;
+		ret.startY = TOP_BORDER+NrOfBusses*SPLITTER_HEIGHT+(NrOfBusses>0 ? 10 : 0);
 		return ret;
 	}
 
@@ -211,9 +334,12 @@ public class CircuitBuilder {
 	private static Layout layoutGatesSub(CircuitDetermination det) {
 		if (det instanceof CircuitDetermination.Input) {
 			CircuitDetermination.Input input = (CircuitDetermination.Input) det;
-			return new Layout(input.getName());
+			return new Layout(input.getName(),input.IsInvertedVersion());
 		} else if (det instanceof CircuitDetermination.Value) {
 			CircuitDetermination.Value value = (CircuitDetermination.Value) det;
+			if ((value.getValue() == 1)||(value.getValue() == 0)) {
+				return new Layout(Integer.toString(value.getValue()),false);
+			}
 			ComponentFactory factory = Constant.FACTORY;
 			AttributeSet attrs = factory.createAttributeSet();
 			attrs.setValue(Constant.ATTR_VALUE,
@@ -231,7 +357,8 @@ public class CircuitBuilder {
 		// Handle a NOT implemented with a NAND as a special case
 		if (gate.isNandNot()) {
 			CircuitDetermination subDet = inputs.get(0);
-			if (!(subDet instanceof CircuitDetermination.Input)) {
+			if (!(subDet instanceof CircuitDetermination.Input)&&
+				!(subDet instanceof CircuitDetermination.Value)) {
 				Layout[] sub = new Layout[1];
 				sub[0] = layoutGatesSub(subDet);
 				sub[0].y = 0;
@@ -358,9 +485,9 @@ public class CircuitBuilder {
 	private static void placeComponents(CircuitMutation result, Layout layout,
 			int x, int y, InputData inputData, Location output) {
 		if (layout.inputName != null) {
-			int inputX = inputData.getSpineX(layout.inputName);
+			int inputX = inputData.getSpineX(layout.inputName,layout.inverted);
 			Location input = Location.create(inputX, output.getY());
-			inputData.registerConnection(layout.inputName, input);
+			inputData.registerConnection(layout.inputName, input,layout.inverted);
 			result.add(Wire.create(input, output));
 			return;
 		}
@@ -455,92 +582,301 @@ public class CircuitBuilder {
 			placeComponents(result, sub, subX, subY, inputData, subOutput);
 		}
 	}
-
-	//
-	// placeInputs
-	//
-	private static void placeInputs(CircuitMutation result, InputData inputData) {
-		ArrayList<Location> forbiddenYs = new ArrayList<Location>();
-		Comparator<Location> compareYs = new CompareYs();
-		int curX = inputData.startX-(inputData.names.length+1)*20;
-		int curY = 30;
-		for (int i = 0; i < inputData.names.length; i++) {
-			String name = inputData.names[i];
-			SingleInput singleInput = inputData.inputs.get(name);
-
-			// determine point where we can intersect with spine
-			int spineX = singleInput.spineX;
-			Location spineLoc = Location.create(spineX, curY);
-			if (singleInput.ys.size() > 0) {
-				// search for a Y that won't intersect with others
-				// (we needn't bother if the pin doesn't connect
-				// with anything anyway.)
-				Collections.sort(forbiddenYs, compareYs);
-				while (Collections.binarySearch(forbiddenYs, spineLoc,
-						compareYs) >= 0) {
-					curY += 10;
-					spineLoc = Location.create(spineX, curY);
+	
+	private static void placeInputInverters(CircuitMutation result, InputData inputData, boolean UseNands) {
+		int InvYpos = inputData.getStartY()+GATE_HEIGHT/2;
+		for (int i = 0 ; i < inputData.NrOfInputs() ; i++) {
+			String iName = inputData.getInputName(i);
+			if (inputData.hasInvertedConnections(iName)) {
+				if (UseNands) {
+					ComponentFactory fact = NandGate.FACTORY;
+					AttributeSet attrs = fact.createAttributeSet();
+					attrs.setValue(GateAttributes.ATTR_SIZE, GateAttributes.SIZE_NARROW);
+					Location IPloc1 = Location.create(inputData.getSpineX("1", false),InvYpos-10);
+					inputData.registerConnection("1", IPloc1, false);
+					Location Ploc = Location.create(inputData.GetInverterXLoc(), InvYpos);
+					result.add(fact.createComponent(Ploc, attrs));
+					Location IPloc2 = Location.create(inputData.GetInverterXLoc()-NAND_WIDTH,InvYpos-10);
+					result.add(Wire.create(IPloc1, IPloc2));
+					IPloc1 = Location.create(inputData.getSpineX(iName, false),InvYpos+10);
+					IPloc2 = Location.create(inputData.GetInverterXLoc()-NAND_WIDTH,InvYpos+10);
+					result.add(Wire.create(IPloc1, IPloc2));
+					inputData.registerConnection(iName, IPloc1, false);
+					Location IPloc3 = Location.create(inputData.getSpineX(iName, true), InvYpos);
+					result.add(Wire.create(Ploc, IPloc3));
+					inputData.registerConnection(iName, IPloc3, true);
+				} else {
+					ComponentFactory fact = NotGate.FACTORY;
+					AttributeSet attrs = fact.createAttributeSet();
+					Location Ploc = Location.create(inputData.GetInverterXLoc(), InvYpos);
+					result.add(fact.createComponent(Ploc, attrs));
+					Location IPloc1 = Location.create(inputData.getSpineX(iName, false),InvYpos);
+					Location IPloc2 = Location.create(inputData.GetInverterXLoc()-INVERTER_WIDTH,InvYpos);
+					result.add(Wire.create(IPloc1, IPloc2));
+					inputData.registerConnection(iName, IPloc1, false);
+					Location IPloc3 = Location.create(inputData.getSpineX(iName, true), InvYpos);
+					result.add(Wire.create(Ploc, IPloc3));
+					inputData.registerConnection(iName, IPloc3, true);
 				}
-				singleInput.ys.add(spineLoc);
+				/* Here we draw the inverted spine */
+				createSpine(result,inputData.getInputLocs(iName, true).ys,new CompareYs());
+				InvYpos += GATE_HEIGHT;
 			}
-			Location loc = Location.create(curX, curY);
-
-			// now create the pin
-			ComponentFactory factory = Pin.FACTORY;
-			AttributeSet attrs = factory.createAttributeSet();
-			attrs.setValue(StdAttr.FACING, Direction.EAST);
-			attrs.setValue(Pin.ATTR_TYPE, Boolean.FALSE);
-			attrs.setValue(Pin.ATTR_TRISTATE, Boolean.FALSE);
-			attrs.setValue(StdAttr.LABEL, name);
-			attrs.setValue(Pin.ATTR_LABEL_LOC, Direction.NORTH);
-			result.add(factory.createComponent(loc, attrs));
-
-			ArrayList<Location> spine = singleInput.ys;
-			if (spine.size() > 0) {
-				// create wire connecting pin to spine
-				/*
-				 * This should no longer matter - the wires will be repaired
-				 * anyway by the circuit's WireRepair class. if (spine.size() ==
-				 * 2 && spine.get(0).equals(spine.get(1))) { // a freak accident
-				 * where the input is used just once, // and it happens that the
-				 * pin is placed where no // spine is necessary Iterator<Wire>
-				 * it = circuit.getWires(spineLoc).iterator(); Wire existing =
-				 * it.next(); Wire replace = Wire.create(loc,
-				 * existing.getEnd1()); result.replace(existing, replace); }
-				 * else {
-				 */
-				result.add(Wire.create(loc, spineLoc));
-				// }
-
-				// create spine
-				Collections.sort(spine, compareYs);
-				Location prev = spine.get(0);
-				for (int k = 1, n = spine.size(); k < n; k++) {
-					Location cur = spine.get(k);
-					if (!cur.equals(prev)) {
-						result.add(Wire.create(prev, cur));
-						prev = cur;
-					}
-				}
-			}
-
-			// advance y and forbid spine intersections for next pin
-			forbiddenYs.addAll(singleInput.ys);
-			curY += 50;
+		}
+	}
+	
+	private static void placeConstants(CircuitMutation result, InputData inputData) {
+		ComponentFactory fact = Constant.FACTORY;
+		if (!inputData.getInputLocs("0", false).ys.isEmpty()) {
+			AttributeSet attrs = fact.createAttributeSet();
+			attrs.setValue(StdAttr.FACING, Direction.SOUTH);
+			attrs.setValue(Constant.ATTR_VALUE, 0);
+			Location loc = Location.create(inputData.getSpineX("0", false), inputData.startY-10);
+			result.add(fact.createComponent(loc, attrs));
+			inputData.registerConnection("0", loc, false);
+			createSpine(result,inputData.getInputLocs("0", false).ys,new CompareYs());
+		}
+		if (!inputData.getInputLocs("1", false).ys.isEmpty()) {
+			AttributeSet attrs = fact.createAttributeSet();
+			attrs.setValue(StdAttr.FACING, Direction.SOUTH);
+			attrs.setValue(Constant.ATTR_VALUE, 1);
+			Location loc = Location.create(inputData.getSpineX("1", false), inputData.startY-10);
+			result.add(fact.createComponent(loc, attrs));
+			inputData.registerConnection("1", loc, false);
+			createSpine(result,inputData.getInputLocs("1", false).ys,new CompareYs());
 		}
 	}
 
 	//
+	// placeInputs
+	//
+	private static void placeInputs(AnalyzerModel model, CircuitMutation result, InputData inputData,
+			                        boolean UseNands) {
+		ArrayList<Location> forbiddenYs = new ArrayList<Location>();
+		Comparator<Location> compareYs = new CompareYs();
+		int curX = inputData.getPinX();
+		int curY = inputData.getStartY()+20;
+		VariableList inputs = model.getInputs();
+		
+		/* we start with placing the inverters */
+		placeInputInverters(result, inputData, UseNands);
+		/* now we do the constants */
+		placeConstants(result, inputData);
+		
+		int idx = 0;
+		int busNr = 0;
+		int busY = inputData.startY-10;
+		for (int nr = 0; nr < inputs.vars.size(); nr++) {
+			Var inp = inputs.vars.get(nr);
+			if (inp.width == 1) {
+				String name = inputData.getInputName(idx++);
+				SingleInput singleInput = inputData.getInputLocs(name,false);
+
+				// determine point where we can intersect with spine
+				int spineX = singleInput.spineX;
+				Location spineLoc = Location.create(spineX, curY);
+				if (singleInput.ys.size() > 0) {
+					// search for a Y that won't intersect with others
+					// (we needn't bother if the pin doesn't connect
+					// with anything anyway.)
+					Collections.sort(forbiddenYs, compareYs);
+					while (Collections.binarySearch(forbiddenYs, spineLoc,
+							compareYs) >= 0) {
+						curY += 10;
+						spineLoc = Location.create(spineX, curY);
+					}
+					singleInput.ys.add(spineLoc);
+				}
+				Location loc = Location.create(curX, curY);
+
+				// now create the pin
+				placeInput(result,loc,name,1);
+
+				ArrayList<Location> spine = singleInput.ys;
+				if (spine.size() > 0) {
+					// create wire connecting pin to spine
+					result.add(Wire.create(loc, spineLoc));
+
+					// create spine
+					createSpine(result,spine,compareYs);
+				}
+				
+				// advance y and forbid spine intersections for next pin
+				forbiddenYs.addAll(singleInput.ys);
+				curY += MINIMAL_PIN_DISTANCE;
+			} else {
+				/* first place the input and the splitter */
+				String name = inp.name;
+				Location ploc = Location.create(curX, curY);
+				/* create the pin */
+				placeInput(result,ploc,name,inp.width);
+				/* determine the position of the splitter */
+				String MSBname = inputData.getInputName(idx);
+				SingleInput singleInput = inputData.getInputLocs(MSBname,false);
+				int spineX = singleInput.spineX;
+				Location sloc = Location.create(spineX-10, busY-SPLITTER_HEIGHT);
+				placeSplitter(result,sloc,inp.width,true);
+				/* place the bus connection */
+				Location BI1 = Location.create(ploc.getX()+10+busNr*SPINE_DISTANCE, ploc.getY());
+				Location BI2 = Location.create(BI1.getX(), sloc.getY());
+				result.add(Wire.create(ploc, BI1));
+				result.add(Wire.create(BI1, BI2));
+				result.add(Wire.create(BI2, sloc));
+				busNr++;
+				/* Now connect to the spines */
+				for (int bit = inp.width-1 ; bit >= 0 ; bit--) {
+					MSBname = inputData.getInputName(idx++);
+					singleInput = inputData.getInputLocs(MSBname,false);
+					spineX = singleInput.spineX;
+					ArrayList<Location> spine = singleInput.ys;
+					if (spine.size() > 0) {
+						/* add a location for the bus entry */
+						Location bloc = Location.create(spineX, busY);
+						spine.add(bloc);
+						Collections.sort(forbiddenYs, compareYs);
+						// create spine
+						createSpine(result,spine,compareYs);
+					}
+					forbiddenYs.addAll(singleInput.ys);
+				}
+				busY -= SPLITTER_HEIGHT;
+				curY += MINIMAL_PIN_DISTANCE;
+			}
+		}
+
+	}
+	
+	private static void createSpine(CircuitMutation result, ArrayList<Location> spine, Comparator<Location> compareYs) {
+		Collections.sort(spine, compareYs);
+		Location prev = spine.get(0);
+		for (int k = 1, n = spine.size(); k < n; k++) {
+			Location cur = spine.get(k);
+			if (!cur.equals(prev)) {
+				result.add(Wire.create(prev, cur));
+				prev = cur;
+			}
+		}
+	}
+	
+	private static void placeInput(CircuitMutation result, Location loc, String name, int NrOfBits) {
+		ComponentFactory factory = Pin.FACTORY;
+		AttributeSet attrs = factory.createAttributeSet();
+		attrs.setValue(StdAttr.FACING, Direction.EAST);
+		attrs.setValue(Pin.ATTR_TYPE, Boolean.FALSE);
+		attrs.setValue(Pin.ATTR_TRISTATE, Boolean.FALSE);
+		attrs.setValue(StdAttr.LABEL, name);
+		attrs.setValue(StdAttr.WIDTH, BitWidth.create(NrOfBits));
+		result.add(factory.createComponent(loc, attrs));
+	}
+	
+	private static void placeSplitter(CircuitMutation result, Location loc, int NrOfBits, boolean input) {
+		ComponentFactory factory = SplitterFactory.instance;
+		AttributeSet attrs = factory.createAttributeSet();
+		attrs.setValue(StdAttr.FACING, Direction.SOUTH);
+		attrs.setValue(SplitterAttributes.ATTR_FANOUT, NrOfBits);
+		attrs.setValue(SplitterAttributes.ATTR_WIDTH, BitWidth.create(NrOfBits));
+		attrs.setValue(SplitterAttributes.ATTR_APPEARANCE, input ? SplitterAttributes.APPEAR_LEFT:
+			SplitterAttributes.APPEAR_RIGHT);
+		attrs.setValue(SplitterAttributes.ATTR_SPACING, SPINE_DISTANCE/10);
+		result.add(factory.createComponent(loc, attrs));
+	}
+
+	private static void placeOutputs(AnalyzerModel model, CircuitMutation result, InputData outputData) {
+		int startX=0;
+		int nrOfBusses = 0;
+		VariableList outputs = model.getOutputs();
+		for (int idx = 0 ; idx < outputData.NrOfInputs() ; idx++) {
+			String name = outputData.getInputName(idx);
+			int posX = (outputData.getInputLocs(name,false)==null) ? 0 : outputData.getInputLocs(name,false).spineX;
+			if (posX > startX)
+				startX = posX;
+		}
+		for (int idx = 0 ; idx < outputs.vars.size() ; idx++) {
+			if (outputs.vars.get(idx).width>1)
+				nrOfBusses++;
+		}
+		int pinX = startX+outputData.NrOfInputs()*SPINE_DISTANCE+10;
+		if (nrOfBusses > 0) 
+			pinX += (nrOfBusses-1)*SPINE_DISTANCE+BUS_SPINE_TO_WIRE_SPINE_DISTANCE;
+		int pinY = outputData.getStartY()+20;
+		int busX = pinX-10;
+		int busID = 0;
+		/* first we place the outputs with at least one connection, in the second pass we place the empty
+		 * outputs.
+		 */
+		int cnt = 0;
+		for (int idx = 0 ; idx < outputs.vars.size() ; idx++) {
+			Var outp = outputs.vars.get(idx);
+			String name = outputData.getInputName(cnt);
+			if (outp.width == 1) {
+				Location Ppoint = Location.create(pinX, pinY);
+				placeOutput(result,Ppoint,outp.name,1);
+				SingleInput singleOutput = outputData.getInputLocs(name,false);
+				if (singleOutput != null) {
+					Location Cpoint = Location.create(singleOutput.spineX, singleOutput.spineY);
+					int Xoff = startX+cnt*SPINE_DISTANCE;
+					Location Ipoint1 = Location.create(Xoff, Cpoint.getY());
+					Location Ipoint2 = Location.create(Xoff, Ppoint.getY());
+					if (Cpoint.getX()!= Ipoint1.getX())
+						result.add(Wire.create(Cpoint, Ipoint1));
+					if (Ipoint1.getY()!=Ipoint2.getY())
+						result.add(Wire.create(Ipoint1, Ipoint2));
+					if (Ipoint2.getX() != Ppoint.getX())
+						result.add(Wire.create(Ipoint2, Ppoint));
+				}
+				cnt++;
+			} else {
+				Location Ppoint = Location.create(pinX, pinY);
+				placeOutput(result,Ppoint,outp.name,outp.width);
+				/* process the splitter */
+				int SStartX = startX+cnt*SPINE_DISTANCE;
+				Location Spoint = Location.create(SStartX+(outp.width-1)*SPINE_DISTANCE+10, 
+						TOP_BORDER+busID*SPLITTER_HEIGHT);
+				placeSplitter(result,Spoint,outp.width,false);
+				// process the bus connection
+				Location Ipoint1 = Location.create(busX-busID*SPINE_DISTANCE, Spoint.getY());
+				Location Ipoint2 = Location.create(Ipoint1.getX(), Ppoint.getY());
+				busID++;
+				if (Spoint.getX()!= Ipoint1.getX())
+					result.add(Wire.create(Spoint, Ipoint1));
+				if (Ipoint1.getY()!=Ipoint2.getY())
+					result.add(Wire.create(Ipoint1, Ipoint2));
+				if (Ipoint2.getX()!= Ppoint.getX())
+					result.add(Wire.create(Ipoint2, Ppoint));
+				// process the connections 
+				for (int bit = 0 ; bit < outp.width; bit++) {
+					Location SEpoint = Location.create(SStartX+bit*SPINE_DISTANCE, Spoint.getY()+20);
+					String tname = outputData.getInputName(cnt+bit);
+					SingleInput singleOutput = outputData.getInputLocs(tname,false);
+					if (singleOutput != null) {
+						Location Cpoint = Location.create(singleOutput.spineX, singleOutput.spineY);
+						if (SEpoint.getX() == Cpoint.getX()) {
+							result.add(Wire.create(SEpoint, Cpoint));
+						} else {
+							Location Ipoint = Location.create(SEpoint.getX(), Cpoint.getY());
+							result.add(Wire.create(Cpoint, Ipoint));
+							result.add(Wire.create(SEpoint, Ipoint));
+						}
+					}
+				}
+				// all done 
+				cnt += outp.width;
+			}
+			pinY+=MINIMAL_PIN_DISTANCE;
+		}
+	}
+	//
 	// placeOutput
 	//
 	private static void placeOutput(CircuitMutation result, Location loc,
-			String name) {
+			String name, int NrOfBits) {
 		ComponentFactory factory = Pin.FACTORY;
 		AttributeSet attrs = factory.createAttributeSet();
 		attrs.setValue(StdAttr.FACING, Direction.WEST);
 		attrs.setValue(Pin.ATTR_TYPE, Boolean.TRUE);
 		attrs.setValue(StdAttr.LABEL, name);
 		attrs.setValue(Pin.ATTR_LABEL_LOC, Direction.NORTH);
+		attrs.setValue(StdAttr.WIDTH, BitWidth.create(NrOfBits));
 		result.add(factory.createComponent(loc, attrs));
 	}
 

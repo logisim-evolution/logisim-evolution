@@ -36,8 +36,8 @@ import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.proj.Project;
 
 public class AnalyzerModel {
-	public static final int MAX_INPUTS = 12;
-	public static final int MAX_OUTPUTS = 12;
+	public static final int MAX_INPUTS = 20;
+	public static final int MAX_OUTPUTS = 256;
 
 	public static final int FORMAT_SUM_OF_PRODUCTS = 0;
 	public static final int FORMAT_PRODUCT_OF_SUMS = 1;
@@ -91,7 +91,7 @@ public class AnalyzerModel {
 		currentCircuit = circuit;
 	}
 
-	public void setVariables(List<String> inputs, List<String> outputs) {
+	public void setVariables(List<Var> inputs, List<Var> outputs) {
 		this.inputs.setAll(inputs);
 		this.outputs.setAll(outputs);
 	}

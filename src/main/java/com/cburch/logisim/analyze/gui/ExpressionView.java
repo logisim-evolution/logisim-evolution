@@ -33,6 +33,7 @@ package com.cburch.logisim.analyze.gui;
 import static com.cburch.logisim.analyze.Strings.S;
 
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -40,145 +41,19 @@ import java.awt.RenderingHints;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.util.ArrayList;
+import java.text.AttributedString;
+import java.awt.font.TextAttribute;
+import java.awt.font.FontRenderContext;
+import java.awt.font.TextLayout;
 
 import javax.swing.JPanel;
 
+import com.cburch.logisim.analyze.data.ExpressionData;
+import com.cburch.logisim.analyze.data.Range;
 import com.cburch.logisim.analyze.model.Expression;
-import com.cburch.logisim.analyze.model.ExpressionVisitor;
 import com.cburch.logisim.prefs.AppPreferences;
 
 class ExpressionView extends JPanel {
-	private static class ExpressionData {
-		String text;
-		final ArrayList<NotData> nots = new ArrayList<NotData>();
-		int[] badness;
-
-		ExpressionData(Expression expr) {
-			if (expr == null) {
-				text = "";
-				badness = new int[0];
-			} else {
-				computeText(expr);
-				computeBadnesses();
-			}
-		}
-
-		private void computeBadnesses() {
-			badness = new int[text.length() + 1];
-			badness[text.length()] = 0;
-			if (text.length() == 0)
-				return;
-
-			badness[0] = Integer.MAX_VALUE;
-			NotData curNot = nots.isEmpty() ? null : (NotData) nots.get(0);
-			int curNotIndex = 0;
-			char prev = text.charAt(0);
-			for (int i = 1; i < text.length(); i++) {
-				// invariant: curNot.stopIndex >= i (and is first such),
-				// or curNot == null if none such exists
-				char cur = text.charAt(i);
-				if (cur == ' ') {
-					badness[i] = BADNESS_BEFORE_SPACE;
-					;
-				} else if (Character.isJavaIdentifierPart(cur)) {
-					if (Character.isJavaIdentifierPart(prev)) {
-						badness[i] = BADNESS_IDENT_BREAK;
-					} else {
-						badness[i] = BADNESS_BEFORE_AND;
-					}
-				} else if (cur == '+') {
-					badness[i] = BADNESS_BEFORE_OR;
-				} else if (cur == '^') {
-					badness[i] = BADNESS_BEFORE_XOR;
-				} else if (cur == ')') {
-					badness[i] = BADNESS_BEFORE_SPACE;
-				} else { // cur == '('
-					badness[i] = BADNESS_BEFORE_AND;
-				}
-
-				while (curNot != null && curNot.stopIndex <= i) {
-					++curNotIndex;
-					curNot = (curNotIndex >= nots.size() ? null
-							: (NotData) nots.get(curNotIndex));
-				}
-
-				if (curNot != null && badness[i] < BADNESS_IDENT_BREAK) {
-					int depth = 0;
-					NotData nd = curNot;
-					int ndi = curNotIndex;
-					while (nd != null && nd.startIndex < i) {
-						if (nd.stopIndex > i)
-							++depth;
-						++ndi;
-						nd = ndi < nots.size() ? (NotData) nots.get(ndi) : null;
-					}
-					if (depth > 0) {
-						badness[i] += BADNESS_NOT_BREAK + (depth - 1)
-								* BADNESS_PER_NOT_BREAK;
-					}
-				}
-
-				prev = cur;
-			}
-		}
-
-		private void computeText(Expression expr) {
-			final StringBuilder text = new StringBuilder();
-			expr.visit(new ExpressionVisitor<Object>() {
-				private Object binary(Expression a, Expression b, int level,
-						String op) {
-					if (a.getPrecedence() < level) {
-						text.append("(");
-						a.visit(this);
-						text.append(")");
-					} else {
-						a.visit(this);
-					}
-					text.append(op);
-					if (b.getPrecedence() < level) {
-						text.append("(");
-						b.visit(this);
-						text.append(")");
-					} else {
-						b.visit(this);
-					}
-					return null;
-				}
-
-				public Object visitAnd(Expression a, Expression b) {
-					return binary(a, b, Expression.AND_LEVEL, " ");
-				}
-
-				public Object visitConstant(int value) {
-					text.append("" + Integer.toString(value, 16));
-					return null;
-				}
-
-				public Object visitNot(Expression a) {
-					NotData notData = new NotData();
-					notData.startIndex = text.length();
-					nots.add(notData);
-					a.visit(this);
-					notData.stopIndex = text.length();
-					return null;
-				}
-
-				public Object visitOr(Expression a, Expression b) {
-					return binary(a, b, Expression.OR_LEVEL, " + ");
-				}
-
-				public Object visitVariable(String name) {
-					text.append(name);
-					return null;
-				}
-
-				public Object visitXor(Expression a, Expression b) {
-					return binary(a, b, Expression.XOR_LEVEL, " ^ ");
-				}
-			});
-			this.text = text.toString();
-		}
-	}
 
 	private class MyListener implements ComponentListener {
 		public void componentHidden(ComponentEvent arg0) {
@@ -191,7 +66,10 @@ class ExpressionView extends JPanel {
 			int width = getWidth();
 			if (renderData != null && Math.abs(renderData.width - width) > 2) {
 				Graphics g = getGraphics();
-				FontMetrics fm = g == null ? null : g.getFontMetrics();
+				FontMetrics fm = null;
+				if (g != null) {
+					fm = g.getFontMetrics(AppPreferences.getScaledFont(EXPRESSION_BASE_FONT));
+				}
 				renderData = new RenderData(renderData.exprData, width, fm);
 				setPreferredSize(renderData.getPreferredSize());
 				revalidate();
@@ -203,20 +81,19 @@ class ExpressionView extends JPanel {
 		}
 	}
 
-	private static class NotData {
-		int startIndex;
-		int stopIndex;
-		int depth;
-	}
-
-	private static class RenderData {
+	static class RenderData {
 		ExpressionData exprData;
 		int prefWidth;
 		int width;
 		int height;
 		String[] lineText;
-		ArrayList<ArrayList<NotData>> lineNots;
-		int[] lineY;
+		ArrayList<ArrayList<Range>> lineNots;
+		ArrayList<ArrayList<Range>> lineSubscripts;
+		int[] lineY;               
+		AttributedString[] lineStyled;
+        int[][] notStarts;
+        int[][] notStops;
+		
 
 		RenderData(ExpressionData exprData, int width, FontMetrics fm) {
 			this.exprData = exprData;
@@ -224,54 +101,61 @@ class ExpressionView extends JPanel {
 			height = MINIMUM_HEIGHT;
 
 			if (fm == null) {
-				lineText = new String[] { exprData.text };
-				lineNots = new ArrayList<ArrayList<NotData>>();
+				lineStyled = null;
+				lineText = new String[] { exprData.getText() };
+				lineSubscripts = new ArrayList<ArrayList<Range>>();
+                lineSubscripts.add(exprData.subscripts);
+                lineNots = new ArrayList<ArrayList<Range>>();
 				lineNots.add(exprData.nots);
 				computeNotDepths();
 				lineY = new int[] { MINIMUM_HEIGHT };
 			} else {
-				if (exprData.text.length() == 0) {
+				if (exprData.getText().length() == 0) {
+					lineStyled = null;
 					lineText = new String[] { S.get("expressionEmpty") };
-					lineNots = new ArrayList<ArrayList<NotData>>();
-					lineNots.add(new ArrayList<NotData>());
+					lineSubscripts = new ArrayList<ArrayList<Range>>();
+					lineSubscripts.add(new ArrayList<Range>());
+					lineNots = new ArrayList<ArrayList<Range>>();
+					lineNots.add(new ArrayList<Range>());
 				} else {
 					computeLineText(fm);
-					computeLineNots();
+					lineSubscripts = computeLineAttribs(exprData.subscripts);
+					lineNots = computeLineAttribs(exprData.nots);
 					computeNotDepths();
 				}
 				computeLineY(fm);
-				prefWidth = lineText.length > 1 ? width : fm
-						.stringWidth(lineText[0]);
+				prefWidth =  lineText.length > 1 ? width : fm.stringWidth(lineText[0]);
 			}
 		}
 
-		private void computeLineNots() {
-			ArrayList<NotData> allNots = exprData.nots;
-			lineNots = new ArrayList<ArrayList<NotData>>();
+		private ArrayList<ArrayList<Range>> computeLineAttribs(ArrayList<Range> attribs) {
+			ArrayList<ArrayList<Range>> attrs = new ArrayList<ArrayList<Range>>();
 			for (int i = 0; i < lineText.length; i++) {
-				lineNots.add(new ArrayList<NotData>());
+				attrs.add(new ArrayList<Range>());
 			}
-			for (NotData nd : allNots) {
+			for (Range nd : attribs) {
 				int pos = 0;
-				for (int j = 0; j < lineNots.size() && pos < nd.stopIndex; j++) {
+				for (int j = 0; j < attrs.size() && pos < nd.stopIndex; j++) {
 					String line = lineText[j];
 					int nextPos = pos + line.length();
 					if (nextPos > nd.startIndex) {
-						NotData toAdd = new NotData();
+						Range toAdd = new Range();
 						toAdd.startIndex = Math.max(pos, nd.startIndex) - pos;
 						toAdd.stopIndex = Math.min(nextPos, nd.stopIndex) - pos;
-						lineNots.get(j).add(toAdd);
+						attrs.get(j).add(toAdd);
 					}
 					pos = nextPos;
 				}
 			}
+			return attrs;
 		}
 
 		private void computeLineText(FontMetrics fm) {
-			String text = exprData.text;
-			int[] badness = exprData.badness;
+			String text = exprData.getText();
+			int[] badness = exprData.getBadness();
 
 			if (fm.stringWidth(text) <= width) {
+				lineStyled = null;
 				lineText = new String[] { text };
 				return;
 			}
@@ -307,6 +191,7 @@ class ExpressionView extends JPanel {
 				lines.add(bestLine);
 				startPos = bestStopPos;
 			}
+			lineStyled = null;
 			lineText = lines.toArray(new String[lines.size()]);
 		}
 
@@ -315,29 +200,28 @@ class ExpressionView extends JPanel {
 			int curY = 0;
 			for (int i = 0; i < lineY.length; i++) {
 				int maxDepth = -1;
-				ArrayList<NotData> nots = lineNots.get(i);
-				for (NotData nd : nots) {
+				ArrayList<Range> nots = lineNots.get(i);
+				for (Range nd : nots) {
 					if (nd.depth > maxDepth)
 						maxDepth = nd.depth;
 				}
-				lineY[i] = curY + maxDepth * NOT_SEP;
+				lineY[i] = curY + (maxDepth+1) * AppPreferences.getScaled(NOT_SEP);
 				curY = lineY[i] + fm.getHeight() + EXTRA_LEADING;
 			}
-			height = Math.max(MINIMUM_HEIGHT, curY - fm.getLeading()
-					- EXTRA_LEADING);
+			height = Math.max(MINIMUM_HEIGHT, curY);
 		}
 
 		private void computeNotDepths() {
-			for (ArrayList<NotData> nots : lineNots) {
+			for (ArrayList<Range> nots : lineNots) {
 				int n = nots.size();
 				int[] stack = new int[n];
 				for (int i = 0; i < nots.size(); i++) {
-					NotData nd = nots.get(i);
+					Range nd = nots.get(i);
 					int depth = 0;
 					int top = 0;
 					stack[0] = nd.stopIndex;
 					for (int j = i + 1; j < nots.size(); j++) {
-						NotData nd2 = nots.get(j);
+						Range nd2 = nots.get(j);
 						if (nd2.startIndex >= nd.stopIndex)
 							break;
 						while (nd2.startIndex >= stack[top])
@@ -356,36 +240,108 @@ class ExpressionView extends JPanel {
 			return new Dimension(10, height);
 		}
 
+		private AttributedString style(String s, int end, ArrayList<Range>subs,
+				boolean replaceSpaces) {
+			/* This is a hack to get TextLayout to correctly format and calculate the width
+			 * of this substring (see remark in getWidth(...) below. As we have a mono spaced
+			 * font the size of all chars is equal.
+			 */
+			String sub = s.substring(0, end).replace(" ", replaceSpaces ? "_" : " ").
+					replace("(", replaceSpaces ? "_" : "(").
+					replace(")", replaceSpaces ? "_" : ")");
+			AttributedString as = new AttributedString(sub);
+			Font ExpressionFont = AppPreferences.getScaledFont(EXPRESSION_BASE_FONT);
+			as.addAttribute(TextAttribute.FAMILY, ExpressionFont.getFamily());
+			as.addAttribute(TextAttribute.SIZE, ExpressionFont.getSize());
+			for (Range r : subs) {
+				if (r.stopIndex <= end)
+					as.addAttribute(TextAttribute.SUPERSCRIPT, TextAttribute.SUPERSCRIPT_SUB, r.startIndex, r.stopIndex);
+			}
+			return as;
+		}
+		
+		public int getWidth(Graphics g) {
+			if (lineStyled == null) {
+				 FontRenderContext ctx = ((Graphics2D)g).getFontRenderContext();
+                 lineStyled = new AttributedString[lineText.length];
+                 notStarts = new int[lineText.length][];
+                 notStops = new int[lineText.length][];
+                 for (int i = 0; i < lineText.length; i++) {
+                	 String line = lineText[i];
+                	 ArrayList<Range> nots = lineNots.get(i);
+                	 ArrayList<Range> subs = lineSubscripts.get(i);
+                	 notStarts[i] = new int[nots.size()];
+                	 notStops[i] = new int[nots.size()];
+                	 for (int j = 0; j < nots.size(); j++) {
+                		 Range not = nots.get(j);
+                		 notStarts[i][j] = getWidth(ctx, line, not.startIndex, subs);
+                		 notStops[i][j] = getWidth(ctx, line, not.stopIndex, subs);
+                	 }
+                	 lineStyled[i] = style(line, line.length(), subs, false);
+                 }
+			 }
+			FontRenderContext ctx = ((Graphics2D)g).getFontRenderContext();
+			int width = 0;
+			for (int i = 0 ; i < lineStyled.length ; i++) {
+				TextLayout test = new TextLayout(lineStyled[i].getIterator(),ctx);
+				if (test.getBounds().getWidth() > width)
+					width = (int)test.getBounds().getWidth();
+			}
+			return width;
+		}
+
+		private int getWidth(FontRenderContext ctx, String s, int end, ArrayList<Range> subs) {
+			if (end == 0)
+				return 0;
+			AttributedString as = style(s, end, subs,true);
+			/* The TextLayout class will omit trailing spaces, incorrectly format parenthesis, 
+			 * hence the width is incorrectly calculated. Therefore in the previous method we can
+			 * replace the spaces and parenthesis by underscores to prevent this problem; maybe 
+			 * there is a more intelligent way.
+			 */ 
+			TextLayout layout = new TextLayout(as.getIterator(), ctx);
+			return (int)layout.getBounds().getWidth();
+		}
+
 		public void paint(Graphics g, int x, int y) {
 			FontMetrics fm = g.getFontMetrics();
-			int i = -1;
-			for (String line : lineText) {
-				i++;
-				g.drawString(line, x, y + lineY[i] + fm.getAscent());
+			 if (lineStyled == null) {
+				 FontRenderContext ctx = ((Graphics2D)g).getFontRenderContext();
+                 lineStyled = new AttributedString[lineText.length];
+                 notStarts = new int[lineText.length][];
+                 notStops = new int[lineText.length][];
+                 for (int i = 0; i < lineText.length; i++) {
+                	 String line = lineText[i];
+                	 ArrayList<Range> nots = lineNots.get(i);
+                	 ArrayList<Range> subs = lineSubscripts.get(i);
+                	 notStarts[i] = new int[nots.size()];
+                	 notStops[i] = new int[nots.size()];
+                	 for (int j = 0; j < nots.size(); j++) {
+                		 Range not = nots.get(j);
+                		 notStarts[i][j] = getWidth(ctx, line, not.startIndex, subs);
+                		 notStops[i][j] = getWidth(ctx, line, not.stopIndex, subs);
+                	 }
+                	 lineStyled[i] = style(line, line.length(), subs, false);
+                 }
+			 }
+			 for (int i = 0; i < lineStyled.length; i++) {
+				 AttributedString as = lineStyled[i];
+				 g.drawString(as.getIterator(), x, y + lineY[i] + fm.getAscent());
 
-				ArrayList<NotData> nots = lineNots.get(i);
-				for (NotData nd : nots) {
-					int notY = y + lineY[i] - nd.depth * NOT_SEP;
-					int startX = x
-							+ fm.stringWidth(line.substring(0, nd.startIndex));
-					int stopX = x
-							+ fm.stringWidth(line.substring(0, nd.stopIndex));
+				 ArrayList<Range> nots = lineNots.get(i);
+				 for (int j = 0; j < nots.size(); j++) {
+					Range nd = nots.get(j);
+					int notY = y + lineY[i] - nd.depth * AppPreferences.getScaled(NOT_SEP);
+					int startX = x + notStarts[i][j];
+					int stopX = x + notStops[i][j];
 					g.drawLine(startX, notY, stopX, notY);
 					g.drawLine(startX, notY-1, stopX, notY-1);
 				}
-			}
+			 }
 		}
 	}
 
 	private static final long serialVersionUID = 1L;
-	private static final int BADNESS_IDENT_BREAK = 10000;
-	private static final int BADNESS_BEFORE_SPACE = 500;
-	private static final int BADNESS_BEFORE_AND = 50;
-	private static final int BADNESS_BEFORE_XOR = 30;
-
-	private static final int BADNESS_BEFORE_OR = 0;
-	private static final int BADNESS_NOT_BREAK = 100;
-	private static final int BADNESS_PER_NOT_BREAK = 30;
 
 	private static final int BADNESS_PER_PIXEL = 1;
 
@@ -393,6 +349,8 @@ class ExpressionView extends JPanel {
 	private static final int EXTRA_LEADING = 4;
 
 	private static final int MINIMUM_HEIGHT = 25;
+	
+	public static final Font EXPRESSION_BASE_FONT = new Font("Monospaced", Font.PLAIN, 14);
 
 	private MyListener myListener = new MyListener();
 
@@ -406,7 +364,11 @@ class ExpressionView extends JPanel {
 	void localeChanged() {
 		repaint();
 	}
-
+	
+	public RenderData getRenderData() {
+		return renderData;
+	}
+	
 	@Override
 	public void paintComponent(Graphics g) {
 		if (AppPreferences.AntiAliassing.getBoolean()) {
@@ -427,7 +389,10 @@ class ExpressionView extends JPanel {
 	public void setExpression(Expression expr) {
 		ExpressionData exprData = new ExpressionData(expr);
 		Graphics g = getGraphics();
-		FontMetrics fm = g == null ? null : g.getFontMetrics();
+		FontMetrics fm = null;
+		if (g != null) {
+			fm = g.getFontMetrics(AppPreferences.getScaledFont(EXPRESSION_BASE_FONT));
+		}
 		renderData = new RenderData(exprData, getWidth(), fm);
 		setPreferredSize(renderData.getPreferredSize());
 		revalidate();

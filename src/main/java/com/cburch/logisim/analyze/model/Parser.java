@@ -181,7 +181,7 @@ public class Parser {
 				throw token.error(S.getter("invalidCharacterError",
 						token.text));
 			} else if (token.type == TOKEN_IDENT) {
-				int index = model.getInputs().indexOf(token.text);
+				int index = model.getInputs().bits.indexOf(token.text);
 				if (index < 0) {
 					// ok; but maybe this is an operator
 					String opText = token.text.toUpperCase();
@@ -299,8 +299,22 @@ public class Parser {
 			if (Character.isJavaIdentifierStart(startChar)) {
 				while (Character.isJavaIdentifierPart(in.charAt(pos)))
 					pos++;
+				if (in.charAt(pos) == ':') {
+                    pos++;
+                    while ("0123456789".indexOf(in.charAt(pos)) >= 0)
+                            pos++;
+				}
+				boolean skipchar = false;
+				if (in.charAt(pos) == '[') {
+					pos++;
+                    while ("0123456789".indexOf(in.charAt(pos)) >= 0)
+                        pos++;
+                    skipchar=in.charAt(pos) == ']';
+				}
 				tokens.add(new Token(TOKEN_IDENT, start, in.substring(start,
-						pos)));
+						pos).replace('[', ':')));
+				if (skipchar)
+					pos++;
 			} else {
 				switch (startChar) {
 				case '(':

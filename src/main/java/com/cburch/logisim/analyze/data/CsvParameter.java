@@ -28,21 +28,37 @@
  *       http://reds.heig-vd.ch
  *******************************************************************************/
 
-package com.cburch.logisim.gui.generic;
+package com.cburch.logisim.analyze.data;
 
-import java.awt.Frame;
+import com.cburch.logisim.analyze.file.TruthtableCsvFile;
 
-import javax.swing.JDialog;
-
-public class LDialog extends JDialog {
-	private static final long serialVersionUID = 1L;
-
-	public LDialog(Frame owner, String title, boolean modal) {
-		super(owner, title, modal);
-		init();
+public class CsvParameter {
+	private char quote = TruthtableCsvFile.DEFAULT_QUOTE;
+	private char seperator = TruthtableCsvFile.DEFAULT_SEPARATOR;
+	private boolean valid = false;
+	
+	public void setQuote(char quote) {
+		this.quote = quote;
+	}
+	
+	public void setSeperator(char seperator) {
+		this.seperator = seperator;
+	}
+	
+	public char quote() {
+		return quote;
+	}
+	
+	public char seperator() {
+		return seperator;
+	}
+	
+	public void setValid() {
+		valid = true;
+	}
+	
+	public boolean isValid() {
+		return valid;
 	}
 
-	private void init() {
-		LFrame.attachIcon(this);
-	}
 }

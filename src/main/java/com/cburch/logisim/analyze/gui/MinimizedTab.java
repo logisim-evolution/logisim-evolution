@@ -52,6 +52,7 @@ import com.cburch.logisim.analyze.model.AnalyzerModel;
 import com.cburch.logisim.analyze.model.OutputExpressions;
 import com.cburch.logisim.analyze.model.OutputExpressionsEvent;
 import com.cburch.logisim.analyze.model.OutputExpressionsListener;
+import com.cburch.logisim.prefs.AppPreferences;
 
 class MinimizedTab extends AnalyzerTab {
 	@SuppressWarnings("rawtypes")
@@ -113,6 +114,55 @@ class MinimizedTab extends AnalyzerTab {
 		}
 	}
 
+	@SuppressWarnings("rawtypes")
+	private static class StyleModel extends AbstractListModel implements
+			ComboBoxModel {
+		private static final long serialVersionUID = 1L;
+
+		private String[] choices;
+		private int selected;
+		
+		private StyleModel() {
+			selected = AppPreferences.KMAP_LINED_STYLE.get() ? 1 : 0;
+			choices = new String[2];
+			localeChanged();
+		}
+
+		public int getSize() {
+			return choices.length;
+		}
+
+		public Object getElementAt(int index) {
+			return choices[index];
+		}
+
+		void localeChanged() {
+			choices[0] = S.get("KmapNumberedStyle");
+			choices[1] = S.get("KMapLinedStyle");
+			fireContentsChanged(this, 0, choices.length);
+		}
+
+		public void setSelectedItem(Object anItem) {
+			for (int i = 0; i < choices.length; i++) {
+				if (choices[i].equals(anItem)) {
+					selected = i;
+				}
+			}
+		}
+		
+		public void setStyle(KarnaughMapPanel karnaughMap) {
+			if (selected == 0)
+				karnaughMap.setStyleNumbered();
+			else
+				karnaughMap.setStyleLined();
+		}
+
+		@Override
+		public Object getSelectedItem() {
+			return choices[selected];
+		}
+		
+	}
 	private class MyListener implements OutputExpressionsListener,
 			ActionListener, ItemListener {
 		public void actionPerformed(ActionEvent event) {
@@ -143,6 +193,10 @@ class MinimizedTab extends AnalyzerTab {
 				FormatModel model = (FormatModel) formatChoice.getModel();
 				outputExprs.setMinimizedFormat(output,
 						model.getSelectedFormat());
+				karnaughMap.setFormat(model.getSelectedFormat());
+			} else if (event.getSource() == formatStyle) {
+				StyleModel model = (StyleModel) formatStyle.getModel();
+				model.setStyle(karnaughMap);
 			} else {
 				updateTab();
 			}
@@ -154,17 +208,20 @@ class MinimizedTab extends AnalyzerTab {
 	private OutputSelector selector;
 	private KarnaughMapPanel karnaughMap;
 	private JLabel formatLabel = new JLabel();
+	private JLabel styleLabel = new JLabel();
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private JComboBox formatChoice = new JComboBox<>(new FormatModel());
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private JComboBox formatStyle = new JComboBox<>(new StyleModel());
 	private ExpressionView minimizedExpr = new ExpressionView();
 	private JButton setAsExpr = new JButton();
 
 	private MyListener myListener = new MyListener();
-	// private AnalyzerModel model;
+	private AnalyzerModel model;
 	private OutputExpressions outputExprs;
 
 	public MinimizedTab(AnalyzerModel model) {
-		// this.model = model;
+		this.model = model;
 		this.outputExprs = model.getOutputExpressions();
 		outputExprs.addOutputExpressionsListener(myListener);
 
@@ -174,32 +231,28 @@ class MinimizedTab extends AnalyzerTab {
 		karnaughMap.addMouseListener(new TruthTableMouseListener());
 		setAsExpr.addActionListener(myListener);
 		formatChoice.addItemListener(myListener);
+		formatStyle.addItemListener(myListener);
 		
 		JPanel buttons = new JPanel(new GridLayout(1, 1));
 		buttons.add(setAsExpr);
 
-		JPanel formatPanel = new JPanel();
-		formatPanel.add(formatLabel);
-		formatPanel.add(formatChoice);
-
 		GridBagLayout gb = new GridBagLayout();
 		GridBagConstraints gc = new GridBagConstraints();
 		setLayout(gb);
-		gc.gridx = 0;
-		gc.gridy = 0;
-		addRow(gb, gc, selector.getLabel(), selector.getComboBox());
-		addRow(gb, gc, formatLabel, formatChoice);
-
-		gc.weightx = 0.0;
-		gc.gridx = 0;
-		gc.gridwidth = 2;
+		gc.weightx = 1.0;
+		gc.gridwidth = 1;
 		gc.gridy = GridBagConstraints.RELATIVE;
-		gc.fill = GridBagConstraints.BOTH;
+		gc.gridx = 0;
+		gc.fill = GridBagConstraints.NONE;
 		gc.anchor = GridBagConstraints.CENTER;
+		JPanel cntrl = control();
+		gb.setConstraints(cntrl, gc);
+		add(cntrl);
 		gb.setConstraints(karnaughMap, gc);
 		add(karnaughMap);
 		Insets oldInsets = gc.insets;
-		gc.insets = new Insets(20, 0, 0, 0);
+		gc.insets = new Insets(20, 0, 20, 0);
+		gc.fill = GridBagConstraints.BOTH;
 		gb.setConstraints(minimizedExpr, gc);
 		add(minimizedExpr);
 		gc.insets = oldInsets;
@@ -211,23 +264,39 @@ class MinimizedTab extends AnalyzerTab {
 		setAsExpr.setEnabled(selected != null
 				&& !outputExprs.isExpressionMinimal(selected));
 	}
-
-	private void addRow(GridBagLayout gb, GridBagConstraints gc, JLabel label,
-			@SuppressWarnings("rawtypes") JComboBox choice) {
-		Insets oldInsets = gc.insets;
-		gc.weightx = 0.0;
+	
+	private JPanel control() {
+		JPanel control = new JPanel();
+		GridBagLayout gb = new GridBagLayout();
+		GridBagConstraints gc = new GridBagConstraints();
+		control.setLayout(gb);
+		gc.weightx = 1.0;
+		gc.gridwidth = 1;
+		gc.gridy = 0;
 		gc.gridx = 0;
-		gc.fill = GridBagConstraints.HORIZONTAL;
-		gc.anchor = GridBagConstraints.LINE_START;
-		gc.insets = new Insets(5, 5, 5, 5);
-		gb.setConstraints(label, gc);
-		add(label);
-		gc.gridx = 1;
 		gc.fill = GridBagConstraints.VERTICAL;
-		gb.setConstraints(choice, gc);
-		add(choice);
+		gc.anchor = GridBagConstraints.EAST;
+		gc.insets = new Insets(3, 10, 3, 10);
+		gb.setConstraints(selector.getLabel(), gc);
+		control.add(selector.getLabel());
 		gc.gridy++;
-		gc.insets = oldInsets;
+		gb.setConstraints(formatLabel, gc);
+		control.add(formatLabel);
+		gc.gridy++;
+		gb.setConstraints(styleLabel, gc);
+		control.add(styleLabel);
+		gc.gridx = 1;
+		gc.gridy = 0;
+		gc.anchor = GridBagConstraints.WEST;
+		gb.setConstraints(selector.getComboBox(), gc);
+		control.add(selector.getComboBox());
+		gc.gridy++;
+		gb.setConstraints(formatChoice, gc);
+		control.add(formatChoice);
+		gc.gridy++;
+		gb.setConstraints(formatStyle, gc);
+		control.add(formatStyle);
+		return control;
 	}
 
 	private String getCurrentVariable() {
@@ -241,12 +310,24 @@ class MinimizedTab extends AnalyzerTab {
 		minimizedExpr.localeChanged();
 		setAsExpr.setText(S.get("minimizedSetButton"));
 		formatLabel.setText(S.get("minimizedFormat"));
+		styleLabel.setText(S.get("KmapStyle"));
 		((FormatModel) formatChoice.getModel()).localeChanged();
+		((StyleModel) formatStyle.getModel()).localeChanged();
 	}
 
+	@SuppressWarnings("serial")
 	@Override
 	void updateTab() {
-		String output = getCurrentVariable();
+		final String output = getCurrentVariable();
+		if (model.getTruthTable().getRowCount() > 4096) {
+			(new Analyzer.PleaseWait<Void>(S.get("expressionCalc"), this) {
+				@Override
+				public Void doInBackground() throws Exception {
+					model.getOutputExpressions().getExpression(output);
+					return null;
+				}
+			}).get();
+		}
 		karnaughMap.setOutput(output);
 		int format = outputExprs.getMinimizedFormat(output);
 		formatChoice.setSelectedIndex(FormatModel.getFormatIndex(format));

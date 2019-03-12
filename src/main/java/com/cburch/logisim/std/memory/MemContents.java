@@ -278,6 +278,8 @@ class MemContents implements Cloneable, HexModel {
 	public void set(long addr, int value) {
 		int page = (int) (addr >>> PAGE_SIZE_BITS);
 		int offs = (int) (addr & PAGE_MASK);
+		if (page < 0 || page >= pages.length)
+			return;
 		int old = pages[page] == null ? 0 : pages[page].get(offs) & mask;
 		int val = value & mask;
 		if (old != val) {

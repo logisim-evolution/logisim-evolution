@@ -40,10 +40,11 @@ import com.cburch.logisim.util.WindowMenuItemManager;
 
 public class AnalyzerManager extends WindowMenuItemManager implements
 		LocaleListener {
-	public static Analyzer getAnalyzer() {
+	public static Analyzer getAnalyzer(java.awt.Component parent) {
 		if (analysisWindow == null) {
 			analysisWindow = new Analyzer();
 			analysisWindow.pack();
+			analysisWindow.setLocationRelativeTo(parent);
 			if (analysisManager != null)
 				analysisManager.frameOpened(analysisWindow);
 		}
@@ -63,9 +64,9 @@ public class AnalyzerManager extends WindowMenuItemManager implements
 	}
 
 	@Override
-	public JFrame getJFrame(boolean create) {
+	public JFrame getJFrame(boolean create, java.awt.Component parent) {
 		if (create) {
-			return getAnalyzer();
+			return getAnalyzer(parent);
 		} else {
 			return analysisWindow;
 		}

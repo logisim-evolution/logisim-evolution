@@ -42,6 +42,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.AbstractListModel;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -55,81 +56,70 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
+import com.cburch.logisim.analyze.model.Var;
 import com.cburch.logisim.analyze.model.VariableList;
 import com.cburch.logisim.analyze.model.VariableListEvent;
 import com.cburch.logisim.analyze.model.VariableListListener;
 import com.cburch.logisim.util.StringUtil;
 
-class VariableTab extends AnalyzerTab implements TabInterface {
-	private class MyListener implements ActionListener, DocumentListener,
-			ListSelectionListener {
+public class VariableTab extends AnalyzerTab implements TabInterface {
+	private class MyListener implements ActionListener, DocumentListener,ListSelectionListener {
 		public void actionPerformed(ActionEvent event) {
+			String value = field.getText().trim();
+			int end = (value.contains("[")) ? value.indexOf('[') :value.length();
+			String name = value.substring(0, end);
+			int NrOfBits = getSpecifiedNrOfBits();
+            int w = NrOfBits > 0 ? NrOfBits : (Integer)width.getSelectedItem();
+            Var newVar = new Var(name, w);
+            Var oldVar = list.getSelectedValue();
 			Object src = event.getSource();
 			if ((src == add || src == field) && add.isEnabled()) {
-				String name = field.getText().trim();
 				if (!name.equals("")) {
-					data.add(name);
-					if (data.contains(name)) {
-						list.setSelectedValue(name, true);
+					data.add(newVar);
+					list.setSelectedValue(newVar, true);
+					width.setSelectedItem(1);
+					field.setText("");
+					field.grabFocus();
+				}
+			} else if (src == rename && rename.isEnabled()) {
+				if (oldVar != null && !name.equals("")) {
+					if (contains(name) && !oldVar.name.toLowerCase().equals(name.toLowerCase())) {
+						for (Var item : data.vars) {
+							if (item.name.toLowerCase().equals(name.toLowerCase()))
+								oldVar = item;
+						}
 					}
+					data.replace(oldVar, newVar);
+					list.setSelectedValue(newVar, true);
+					width.setSelectedItem(1);
 					field.setText("");
 					field.grabFocus();
 				}
-			} else if (src == rename) {
-				String oldName = (String) list.getSelectedValue();
-				String newName = field.getText().trim();
-				if (oldName != null && !newName.equals("")) {
-					data.replace(oldName, newName);
-					field.setText("");
-					field.grabFocus();
-				}
-			} else if (src == remove) {
-				String name = (String) list.getSelectedValue();
-				if (name != null)
-					data.remove(name);
-			} else if (src == moveUp) {
-				String name = (String) list.getSelectedValue();
-				if (name != null) {
-					data.move(name, -1);
-					list.setSelectedValue(name, true);
-				}
-			} else if (src == moveDown) {
-				String name = (String) list.getSelectedValue();
-				if (name != null) {
-					data.move(name, 1);
-					list.setSelectedValue(name, true);
-				}
+			} else if (src == remove && oldVar != null) {
+                data.remove(oldVar);
+			} else if (src == moveUp && oldVar != null) {
+                data.move(oldVar, -1);
+                list.setSelectedValue(oldVar, true);
+			} else if (src == moveDown && oldVar != null) {
+                data.move(oldVar, 1);
+                list.setSelectedValue(oldVar, true);
+			} else if (src == width) {
+                computeEnabled();
 			}
 		}
 
-		public void changedUpdate(DocumentEvent event) {
-			insertUpdate(event);
-		}
-
-		public void insertUpdate(DocumentEvent event) {
-			computeEnabled();
-		}
-
-		public void removeUpdate(DocumentEvent event) {
-			insertUpdate(event);
-		}
-
+		public void changedUpdate(DocumentEvent event) { computeEnabled(); }
+		public void insertUpdate(DocumentEvent event) { computeEnabled(); }
+		public void removeUpdate(DocumentEvent event) { computeEnabled(); }
 		public void valueChanged(ListSelectionEvent event) {
-			computeEnabled();
+            Var var = list.getSelectedValue();
+            if (var != null) {
+            	String index = (var.width>1) ? "["+(var.width-1)+"..0]" : ""; 
+                field.setText(var.name+index);
+                width.setSelectedItem(var.width);
+            }
+            computeEnabled();
 		}
-
-		/*
-		 * public void listChanged(VariableListEvent event) { switch
-		 * (event.getType()) { case VariableListEvent.ALL_REPLACED:
-		 * list.setSelectedIndices(new int[0]); break; case
-		 * VariableListEvent.REMOVE: if
-		 * (event.getVariable().equals(list.getSelectedValue())) { int index =
-		 * ((Integer) event.getData()).intValue(); if (index >= data.size()) {
-		 * if (data.isEmpty()) { list.setSelectedIndices(new int[0]); } index =
-		 * data.size() - 1; } list.setSelectedValue(data.get(index), true); }
-		 * break; case VariableListEvent.ADD: case VariableListEvent.MOVE: case
-		 * VariableListEvent.REPLACE: break; } list.validate(); }
-		 */
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -137,7 +127,7 @@ class VariableTab extends AnalyzerTab implements TabInterface {
 			VariableListListener {
 		private static final long serialVersionUID = 1L;
 		private VariableList list;
-		private String[] listCopy;
+		private Var[] listCopy;
 
 		public VariableListModel(VariableList list) {
 			this.list = list;
@@ -145,9 +135,8 @@ class VariableTab extends AnalyzerTab implements TabInterface {
 			list.addVariableListListener(this);
 		}
 
-		public Object getElementAt(int index) {
-			return index >= 0 && index < listCopy.length ? listCopy[index]
-					: null;
+		public Object getElementAt(int i) {
+			return i >= 0 && i < listCopy.length ? listCopy[i] : null;
 		}
 
 		public int getSize() {
@@ -155,39 +144,36 @@ class VariableTab extends AnalyzerTab implements TabInterface {
 		}
 
 		public void listChanged(VariableListEvent event) {
-			String[] oldCopy = listCopy;
+			int oldSize = listCopy.length;
 			updateCopy();
-			int index;
+			Integer idx = event.getIndex();
 			switch (event.getType()) {
 			case VariableListEvent.ALL_REPLACED:
-				fireContentsChanged(this, 0, oldCopy.length);
+				fireContentsChanged(this, 0, oldSize);
 				return;
 			case VariableListEvent.ADD:
-				index = list.indexOf(event.getVariable());
-				fireIntervalAdded(this, index, index);
+				fireIntervalAdded(this, idx, idx);
 				return;
 			case VariableListEvent.REMOVE:
-				index = ((Integer) event.getData()).intValue();
-				fireIntervalRemoved(this, index, index);
+				fireIntervalRemoved(this, idx, idx);
 				return;
 			case VariableListEvent.MOVE:
 				fireContentsChanged(this, 0, getSize());
 				return;
 			case VariableListEvent.REPLACE:
-				index = ((Integer) event.getData()).intValue();
-				fireContentsChanged(this, index, index);
+				fireContentsChanged(this, idx, idx);
 				return;
 			}
 		}
 
 		private void update() {
-			String[] oldCopy = listCopy;
+			int oldSize = listCopy.length;
 			updateCopy();
-			fireContentsChanged(this, 0, oldCopy.length);
+			fireContentsChanged(this, 0, oldSize);
 		}
 
 		private void updateCopy() {
-			listCopy = list.toArray(new String[list.size()]);
+			listCopy = list.vars.toArray(new Var[list.vars.size()]);
 		}
 	}
 
@@ -198,9 +184,9 @@ class VariableTab extends AnalyzerTab implements TabInterface {
 	private VariableTab Othertab = null;
 	private String OtherId;
 
-	@SuppressWarnings("rawtypes")
-	private JList list = new JList();
+	private JList<Var> list = new JList<Var>();
 	private JTextField field = new JTextField();
+	private JComboBox<Integer> width;
 	private JButton remove = new JButton();
 	private JButton moveUp = new JButton();
 	private JButton moveDown = new JButton();
@@ -209,9 +195,13 @@ class VariableTab extends AnalyzerTab implements TabInterface {
 	private JLabel error = new JLabel(" ");
 
 	@SuppressWarnings("unchecked")
-	VariableTab(VariableList data) {
+	VariableTab(VariableList data, int maxwidth) {
 		this.data = data;
 
+		Integer widths[] = new Integer[maxwidth > 32 ? 32 : maxwidth];
+		for (int i = 0; i < widths.length; i++)
+			widths[i] = i+1;
+		width = new JComboBox<Integer>(widths);
 		list.setModel(new VariableListModel(data));
 		list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		list.addListSelectionListener(myListener);
@@ -222,6 +212,7 @@ class VariableTab extends AnalyzerTab implements TabInterface {
 		rename.addActionListener(myListener);
 		field.addActionListener(myListener);
 		field.getDocument().addDocumentListener(myListener);
+		width.addActionListener(myListener);
 
 		JScrollPane listPane = new JScrollPane(list,
 				ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
@@ -255,12 +246,22 @@ class VariableTab extends AnalyzerTab implements TabInterface {
 		add(topPanel);
 
 		gc.insets = new Insets(10, 10, 0, 10);
-		gc.gridwidth = GridBagConstraints.REMAINDER;
+		gc.weightx = 1.0;
 		gc.gridx = 0;
 		gc.gridy = GridBagConstraints.RELATIVE;
-		gc.fill = GridBagConstraints.HORIZONTAL;
+		gc.fill = GridBagConstraints.BOTH;
 		gb.setConstraints(field, gc);
 		add(field);
+		
+        JPanel wPanel = new JPanel();
+        wPanel.add(new JLabel("width: "));
+        wPanel.add(width);
+        gc.insets = new Insets(10, 10, 0, 10);
+        gc.weightx = 0.0;
+        gc.gridx = 1;
+        gc.fill = GridBagConstraints.NONE;
+        gb.setConstraints(wPanel, gc);
+        add(wPanel);
 
 		gc.insets = oldInsets;
 		gc.fill = GridBagConstraints.NONE;
@@ -269,11 +270,13 @@ class VariableTab extends AnalyzerTab implements TabInterface {
 		add(fieldPanel);
 
 		gc.fill = GridBagConstraints.HORIZONTAL;
+		gc.gridx = 0;
+		gc.gridwidth = 2;
 		gb.setConstraints(error, gc);
 		add(error);
 
-		if (!data.isEmpty())
-			list.setSelectedValue(data.get(0), true);
+		if (!data.vars.isEmpty())
+			list.setSelectedValue(data.vars.get(0), true);
 		computeEnabled();
 	}
 	
@@ -290,9 +293,13 @@ class VariableTab extends AnalyzerTab implements TabInterface {
 		moveUp.setEnabled(selected && index > 0);
 		moveDown.setEnabled(selected && index < max);
 
-		boolean ok = validateInput();
-		add.setEnabled(ok && data.size() < data.getMaximumSize());
-		rename.setEnabled(ok && selected);
+		int err = validateInput();
+		int specbit = getSpecifiedNrOfBits();
+		if (specbit == 0 || specbit > 32)
+			specbit = -1;
+        int w = (specbit < 0) ? (Integer)width.getSelectedItem() : specbit;
+        add.setEnabled(err == OK && data.bits.size() + w <= data.getMaximumSize());
+        rename.setEnabled((err == OK || err == RESIZED) && selected);
 	}
 
 	public void copy() {
@@ -336,59 +343,173 @@ class VariableTab extends AnalyzerTab implements TabInterface {
 	}
 	
 	public boolean contains(String label) {
-		for (int i = 0, n = data.size(); i < n; i++) {
-			String other = data.get(i);
+		for (int i = 0, n = data.vars.size(); i < n; i++) {
+			String other = data.vars.get(i).name;
 			if (label.toLowerCase().equals(other.toLowerCase()))
 				return true;
 		}
 		return false;
 	}
-
-	private boolean validateInput() {
+	
+	
+	public static final int OK = 0;
+	public static final int EMPTY = 1;
+	public static final int UNCHANGED = 2;
+	public static final int RESIZED = 3;
+	public static final int BAD_NAME = 4;
+	public static final int DUP_NAME = 5;
+	public static final int NO_START_PAR = -1;
+	public static final int NO_VALID_MSB_INDEX = -2;
+	public static final int NO_VALID_INDEX_SEP = -3;
+	public static final int NO_VALID_LSB_INDEX = -4;
+	public static final int LSB_BIGGER_MSB = -5;
+	public static final int NO_FINAL_PAR = -6;
+    public static final int INVALID_CHARS = -7;
+    
+    private int getSpecifiedNrOfBits() {
 		String text = field.getText().trim();
-		boolean ok = true;
-		boolean errorShown = true;
+		String bits;
+		if (text.contains("[") && text.endsWith("]")) {
+			int idx = text.indexOf('[');
+			bits = text.substring(idx,text.length());
+		} else return -1;
+		return checkindex(bits);
+    }
+    
+    public static int checkindex(String index) {
+    	int length = index.length();
+    	int pos = 0;
+    	if (length < 2)
+    		return 0;
+    	if (index.charAt(pos++)!='[')
+    		return NO_START_PAR;
+    	while ((pos < length) && ("0123456789".indexOf(index.charAt(pos))>=0))
+    		pos++;
+    	if (pos == 1)
+    		return NO_VALID_MSB_INDEX;
+    	int MSBIndex = Integer.parseInt(index.substring(1, pos));
+    	if (pos >= length)
+    		return 0;
+    	if (index.charAt(pos) == ']') {
+    		pos++;
+    		if (pos != length)
+    			return INVALID_CHARS;
+    		else
+    			return MSBIndex;
+    	}
+    	if (pos >= length-2)
+    		return 0;
+    	if (!index.substring(pos, pos+2).equals(".."))
+    		return NO_VALID_INDEX_SEP;
+    	pos += 2;
+    	int curpos = pos;
+    	while ((pos < length)&&("0123456789".indexOf(index.charAt(pos))>=0))
+    		pos++;
+    	if (pos == curpos)
+    		return NO_VALID_LSB_INDEX;
+    	int LSBIndex = Integer.parseInt(index.substring(curpos, pos));
+    	if (LSBIndex > MSBIndex)
+    		return LSB_BIGGER_MSB;
+    	if (pos >= length)
+    		return 0;
+    	if (index.charAt(pos++) != ']')
+    		return NO_FINAL_PAR;
+    	if (pos != length)
+    		return INVALID_CHARS;
+    	return MSBIndex-LSBIndex+1;
+    }
+
+	private int validateInput() {
+		Var oldVar = list.getSelectedValue();
+		String text = field.getText().trim();
+		String name = "";
+		String index = "";
+		if (text.contains("[")) {
+			int idx = text.indexOf('[');
+			name = text.substring(0, idx);
+			index = text.substring(idx,text.length());
+		} else name = text;
+			
+		int w = (Integer)width.getSelectedItem();
+		int err = OK;
 		if (text.length() == 0) {
-			errorShown = false;
-			ok = false;
-		} else if (!Character.isJavaIdentifierStart(text.charAt(0))) {
+			err = EMPTY;
+		} else if (!Character.isJavaIdentifierStart(name.charAt(0))) {
 			error.setText(S.get("variableStartError"));
-			ok = false;
+			err = BAD_NAME;
 		} else {
-			for (int i = 1; i < text.length() && ok; i++) {
+			for (int i = 1; i < name.length() && err == OK; i++) {
 				char c = text.charAt(i);
 				if (!Character.isJavaIdentifierPart(c)) {
 					error.setText(StringUtil.format(
 							S.get("variablePartError"), "" + c));
-					ok = false;
+					err = BAD_NAME;
 				}
 			}
 		}
-		if (ok) {
-			if (!CorrectLabel.IsCorrectLabel(text)) {
-				ok = false;
-				if (CorrectLabel.IsKeyword(text, false)) {
+		if (err == OK) {
+			if (!CorrectLabel.IsCorrectLabel(name)) {
+				err = BAD_NAME;
+				if (CorrectLabel.IsKeyword(name, false)) {
 					error.setText(S.get("HdlKeyword"));
 				} else {
-					String wrong = CorrectLabel.FirstInvalidCharacter(text);
+					String wrong = CorrectLabel.FirstInvalidCharacter(name);
 					error.setText(StringUtil.format(S.get("InvalidCharacter"),wrong));
 				}
 			}
 		}
-		if (ok) {
-			if (contains(text)) {
-				error.setText(S.get("variableDuplicateError"));
-				ok = false;
-			}
+		if (err == OK) {
+			if (contains(name))
+				err = RESIZED;
 		}
-		if (ok&&(Othertab!=null)) {
-			if (Othertab.contains(text)) {
+		if ((err == OK)&&(Othertab!=null)) {
+			if (Othertab.contains(name)) {
 				error.setText(StringUtil.format(S.get("variableDuplicateError1"), OtherId));
-				ok = false;
+				err = DUP_NAME;
 			}
 		}
-		if (ok || !errorShown) {
-			if (data.size() >= data.getMaximumSize()) {
+		int NrOfBits = checkindex(index);
+		if (NrOfBits < 0) {
+			String ErrorText = null;
+			if (NrOfBits == NO_START_PAR)
+				ErrorText = S.get("variableRangeStartPar");
+			else if (NrOfBits == NO_VALID_MSB_INDEX)
+				ErrorText = S.get("variableRangeMSBWrong");
+			else if (NrOfBits == NO_VALID_INDEX_SEP)
+				ErrorText = S.get("variableRangeWrongSep");
+			else if (NrOfBits == NO_VALID_LSB_INDEX)
+				ErrorText = S.get("variableRangeWrongSep");
+			else if (NrOfBits == LSB_BIGGER_MSB)
+				ErrorText = S.get("variableRangeWrongLB");
+			else if (NrOfBits == NO_FINAL_PAR)
+				ErrorText = S.get("variableRangeFinalPar");
+			else if (NrOfBits == INVALID_CHARS)
+				ErrorText = S.get("variableRangeInvalChar");
+			if (ErrorText != null) {
+				error.setText(ErrorText);
+				err = NrOfBits;
+			}
+		} else if (NrOfBits > 0 && NrOfBits != w) {
+			w = NrOfBits;
+		}
+		
+		if (err == OK && oldVar != null) {
+            if (oldVar.name.equals(name) && oldVar.width == w)
+                    err = UNCHANGED;
+            else if (oldVar.name.equals(name))
+                    err = RESIZED;
+		}
+		if (err == OK) {
+            for (int i = 0, n = data.vars.size(); i < n && err == OK; i++) {
+                    Var other = data.vars.get(i);
+                    if (other != oldVar && name.equals(other.name)) {
+                            error.setText(S.get("variableDuplicateError"));
+                            err = DUP_NAME;
+                    }
+            }
+		}
+		if (err == OK || err == EMPTY) {
+			if (data.bits.size() + w > data.getMaximumSize()) {
 				error.setText(StringUtil.format(
 						S.get("variableMaximumError"),
 						"" + data.getMaximumSize()));
@@ -396,6 +517,6 @@ class VariableTab extends AnalyzerTab implements TabInterface {
 				error.setText(" ");
 			}
 		}
-		return ok;
+		return err;
 	}
 }

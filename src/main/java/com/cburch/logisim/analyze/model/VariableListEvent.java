@@ -39,30 +39,36 @@ public class VariableListEvent {
 
 	private VariableList source;
 	private int type;
-	private String variable;
-	private Object data;
+	private Var variable;
+	private Integer index, bitIndex;
 
-	public VariableListEvent(VariableList source, int type, String variable,
-			Object data) {
+	public VariableListEvent(VariableList source, int type, Var variable,
+			Integer index, Integer bitIndex) {
 		this.source = source;
 		this.type = type;
 		this.variable = variable;
-		this.data = data;
+		this.index = index;
+		this.bitIndex = bitIndex;
 	}
 
-	public Object getData() {
-		return data;
-	}
 
 	public VariableList getSource() {
 		return source;
+	}
+	
+	public Integer getIndex() {
+		return index;
+	}
+	
+	public Integer getBitIndex() {
+		return bitIndex;
 	}
 
 	public int getType() {
 		return type;
 	}
 
-	public String getVariable() {
+	public Var getVariable() {
 		return variable;
 	}
 }

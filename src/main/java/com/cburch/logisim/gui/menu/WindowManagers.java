@@ -71,7 +71,7 @@ public class WindowManagers {
 		}
 
 		@Override
-		public JFrame getJFrame(boolean create) {
+		public JFrame getJFrame(boolean create, java.awt.Component parent) {
 			return proj.getFrame();
 		}
 
@@ -95,7 +95,7 @@ public class WindowManagers {
 		closed.removeAll(nowOpen);
 		for (Project proj : closed) {
 			ProjectManager manager = projectMap.get(proj);
-			manager.frameClosed(manager.getJFrame(false));
+			manager.frameClosed(manager.getJFrame(false, null));
 			projectMap.remove(proj);
 		}
 

@@ -193,13 +193,13 @@ class MenuListener {
 		}
 
 		private void computeEnabled() {
-			Project proj = frame.getProject();
-			LogisimFile file = proj.getLogisimFile();
-			Circuit cur = proj.getCurrentCircuit();
-			int curIndex = file.indexOfCircuit(cur);
+			Project proj = frame == null ? null : frame.getProject();
+			LogisimFile file = proj == null ? null : proj.getLogisimFile();
+			Circuit cur = proj == null ? null : proj.getCurrentCircuit();
+			int curIndex = file == null ? -1 : file.indexOfCircuit(cur);
 			boolean isProjectCircuit = curIndex >= 0;
-			String editorView = frame.getEditorView();
-			String explorerView = frame.getExplorerView();
+			String editorView = frame == null ? "" : frame.getEditorView();
+			String explorerView = frame == null ? "" : frame.getExplorerView();
 			boolean canSetMain = false;
 			boolean canMoveUp = false;
 			boolean canMoveDown = false;

@@ -36,9 +36,7 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
-import com.cburch.logisim.analyze.model.Expression;
 import com.cburch.logisim.analyze.model.Expressions;
 import com.cburch.logisim.circuit.ExpressionComputer;
 import com.cburch.logisim.data.AbstractAttributeSet;
@@ -116,12 +114,14 @@ public class Constant extends InstanceFactory {
 			this.instance = instance;
 		}
 
-		public void computeExpression(Map<Location, Expression> expressionMap) {
+		public void computeExpression(ExpressionComputer.Map expressionMap) {
 			AttributeSet attrs = instance.getAttributeSet();
-			int intValue = attrs.getValue(ATTR_VALUE).intValue();
-
-			expressionMap.put(instance.getLocation(),
-					Expressions.constant(intValue));
+			int width = attrs.getValue(StdAttr.WIDTH).getWidth();
+			Value v = Value.createKnown(BitWidth.create(width), attrs.getValue(ATTR_VALUE));
+			for (int b = 0; b < width; b++) {
+				expressionMap.put(instance.getLocation(), b,
+						Expressions.constant(v.get(b).toIntValue()));
+			}
 		}
 	}
 

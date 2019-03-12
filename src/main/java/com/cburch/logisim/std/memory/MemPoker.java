@@ -71,6 +71,24 @@ public class MemPoker extends InstancePoker {
 		}
 
 		@Override
+		public void keyPressed(InstanceState state, KeyEvent e) {
+			MemState data = (MemState) state.getData();
+			if (e.getKeyCode() == KeyEvent.VK_UP) {
+				data.setScroll(data.getScroll() - data.GetNrOfLineItems());
+			} else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+				data.setScroll(data.getScroll() + data.GetNrOfLineItems());
+			} else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+				data.setScroll(data.getScroll() - data.GetNrOfLineItems());
+			} else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+				data.setScroll(data.getScroll() + data.GetNrOfLineItems());
+			} else if (e.getKeyCode() == KeyEvent.VK_PAGE_UP) {
+				data.setScroll(data.getScroll() - (data.GetNrOfLines() - 1) * data.GetNrOfLineItems());
+			} else if (e.getKeyCode() == KeyEvent.VK_PAGE_DOWN) {
+				data.setScroll(data.getScroll() + (data.GetNrOfLines() - 1) * data.GetNrOfLineItems());
+			}
+		}
+
+		@Override
 		public void paint(InstancePainter painter) {
 			Bounds bds = getBounds(painter);
 			Graphics g = painter.getGraphics();
@@ -125,6 +143,24 @@ public class MemPoker extends InstancePoker {
 			}
 		}
 
+		@Override
+		public void keyPressed(InstanceState state, KeyEvent e) {
+			MemState data = (MemState) state.getData();
+			if (e.getKeyCode() == KeyEvent.VK_UP) {
+				moveTo(data, data.getCursor() - data.GetNrOfLineItems());
+			} else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+				moveTo(data, data.getCursor() + data.GetNrOfLineItems());
+			} else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+				moveTo(data, data.getCursor() - 1);
+			} else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+				moveTo(data, data.getCursor() + 1);
+			} else if (e.getKeyCode() == KeyEvent.VK_PAGE_UP) {
+				moveTo(data, data.getCursor() - (data.GetNrOfLines() - 1) * data.GetNrOfLineItems());
+			} else if (e.getKeyCode() == KeyEvent.VK_PAGE_DOWN) {
+				moveTo(data, data.getCursor() + (data.GetNrOfLines() - 1) * data.GetNrOfLineItems());
+			}
+		}
+
 		private void moveTo(MemState data, long addr) {
 			if (data.isValidAddr(addr)) {
 				data.setCursor(addr);
@@ -173,6 +209,11 @@ public class MemPoker extends InstancePoker {
 		return true;
 	}
 
+	@Override
+	public void keyPressed(InstanceState state, KeyEvent e) {
+		sub.keyPressed(state, e);
+	}
+	
 	@Override
 	public void keyTyped(InstanceState state, KeyEvent e) {
 		sub.keyTyped(state, e);
