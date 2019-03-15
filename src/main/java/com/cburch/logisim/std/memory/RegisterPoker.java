@@ -71,8 +71,30 @@ public class RegisterPoker extends InstancePoker {
 		curValue = (curValue * 16 + val) & dataWidth.getMask();
 		RegisterData data = (RegisterData) state.getData();
 		data.value = Value.createKnown(dataWidth, curValue);
-
 		state.fireInvalidated();
+	}
+
+	@Override
+	public void keyPressed(InstanceState state, KeyEvent e) {
+		BitWidth dataWidth = state.getAttributeValue(StdAttr.WIDTH);
+		if (dataWidth == null)
+			dataWidth = BitWidth.create(8);
+		if (e.getKeyCode() == KeyEvent.VK_UP) {
+			int maxVal = dataWidth.getMask();
+			if (curValue != maxVal) {
+				curValue = curValue + 1;
+				RegisterData data = (RegisterData) state.getData();
+				data.value = Value.createKnown(dataWidth, curValue);
+				state.fireInvalidated();
+			}
+		} else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+			if (curValue != 0) {
+				curValue = curValue - 1;
+				RegisterData data = (RegisterData) state.getData();
+				data.value = Value.createKnown(dataWidth, curValue);
+				state.fireInvalidated();
+			}
+		}
 	}
 
 	@Override

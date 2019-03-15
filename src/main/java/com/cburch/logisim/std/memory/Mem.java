@@ -128,6 +128,12 @@ public abstract class Mem extends InstanceFactory {
 	@Override
 	protected void configureNewInstance(Instance instance) {
 		configurePorts(instance);
+		Bounds bds = instance.getBounds();
+		int x = bds.getX() + bds.getWidth() / 2;
+		int y = bds.getY() - 2;
+		int halign = GraphicsUtil.H_CENTER;
+		int valign = GraphicsUtil.V_BOTTOM;
+		instance.setTextField(StdAttr.LABEL, StdAttr.LABEL_FONT, x, y, halign, valign);
 	}
 
 	abstract void configurePorts(Instance instance);

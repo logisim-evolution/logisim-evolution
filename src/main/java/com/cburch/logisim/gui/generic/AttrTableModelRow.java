@@ -42,5 +42,7 @@ public interface AttrTableModelRow {
 
 	public boolean isValueEditable();
 
+	public boolean multiEditCompatible(AttrTableModelRow other);
+
 	public void setValue(Window parent, Object value) throws AttrTableSetException;
 }

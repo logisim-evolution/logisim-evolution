@@ -267,8 +267,6 @@ public class Frame extends LFrame implements LocaleListener {
 	public static final String VIEW_TOOLBOX = "toolbox";
 	public static final String VIEW_SIMULATION = "simulation";
 	public static final String VIEW_TRACKER = "tracker";
-//	private static final double[] ZOOM_OPTIONS = { 20, 50, 75, 100, 133, 150,
-//			200, 250, 300, 400 };
 	private Project proj;
 	private MyProjectListener myProjectListener = new MyProjectListener();
 	// GUI elements shared between views
@@ -285,7 +283,6 @@ public class Frame extends LFrame implements LocaleListener {
 	private Toolbox toolbox;
 	private SimulationExplorer simExplorer;
 	private AttrTable attrTable;
-//	private VhdlSimState vhdlSimState;
 	private ZoomControl zoom;
 	// for the Layout view
 	private LayoutToolbarModel layoutToolbarModel;
@@ -319,12 +316,13 @@ public class Frame extends LFrame implements LocaleListener {
 		// set up elements for the Layout view
 		layoutToolbarModel = new LayoutToolbarModel(this, proj);
 		layoutCanvas = new Canvas(proj);
+		CanvasPane canvasPane = new CanvasPane(layoutCanvas);
 		double[] Options = new double[49];
 		for (int i = 0 ; i < 49 ; i++) {
 			Options[i]=(double)((i+1)*20);
 		}
 		layoutZoomModel = new BasicZoomModel(AppPreferences.LAYOUT_SHOW_GRID,
-				AppPreferences.LAYOUT_ZOOM, Options);//ZOOM_OPTIONS);
+				AppPreferences.LAYOUT_ZOOM, Options,canvasPane);//ZOOM_OPTIONS);
 
 		layoutCanvas.getGridPainter().setZoomModel(layoutZoomModel);
 		layoutEditHandler = new LayoutEditHandler(this);
@@ -355,7 +353,6 @@ public class Frame extends LFrame implements LocaleListener {
 		zoom = new ZoomControl(layoutZoomModel,layoutCanvas);
 
 		// set up the central area
-		CanvasPane canvasPane = new CanvasPane(layoutCanvas);
 		mainPanelSuper = new JPanel(new BorderLayout());
 		canvasPane.setZoomModel(layoutZoomModel);
 		mainPanel = new CardPanel();
@@ -374,7 +371,7 @@ public class Frame extends LFrame implements LocaleListener {
 
 		JPanel attrFooter = new JPanel(new BorderLayout());
 
-		attrFooter.add(zoom, BorderLayout.LINE_END);
+		attrFooter.add(zoom);
 
 		attrPanel.add(attrFooter, BorderLayout.SOUTH);
 
@@ -615,12 +612,14 @@ public class Frame extends LFrame implements LocaleListener {
 			toolbar.setToolbarModel(app.getToolbarModel());
 			app.getAttrTableDrawManager(attrTable).attributesSelected();
 			zoom.setZoomModel(app.getZoomModel());
+			zoom.setAutoZoomButtonEnabled(false);
 			menuListener.setEditHandler(app.getEditHandler());
 			mainPanel.setView(view);
 			app.getCanvas().requestFocus();
 		} else { // layout view
 			toolbar.setToolbarModel(layoutToolbarModel);
 			zoom.setZoomModel(layoutZoomModel);
+			zoom.setAutoZoomButtonEnabled(true);
 			menuListener.setEditHandler(layoutEditHandler);
 			viewAttributes(proj.getTool(), true);
 			mainPanel.setView(view);
@@ -644,6 +643,7 @@ public class Frame extends LFrame implements LocaleListener {
 
 	private void setHdlEditorView(HdlModel hdl) {
         hdlEditor.setHdlModel(hdl);
+        zoom.setZoomModel(null);
         editRegion.setFraction(0.0);
 
         toolbar.setToolbarModel(hdlEditor.getToolbarModel());

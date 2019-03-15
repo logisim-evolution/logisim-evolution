@@ -42,10 +42,11 @@ import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.Attributes;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Direction;
+import com.cburch.logisim.gui.generic.ComboBox;
 import com.cburch.logisim.instance.StdAttr;
 
 public class SplitterAttributes extends AbstractAttributeSet {
-	static class BitOutAttribute extends Attribute<Integer> {
+	public static class BitOutAttribute extends Attribute<Integer> {
 		int which;
 		BitOutOption[] options;
 
@@ -59,12 +60,30 @@ public class SplitterAttributes extends AbstractAttributeSet {
 			return new BitOutAttribute(which, options);
 		}
 
-		@SuppressWarnings({ "rawtypes", "unchecked" })
+		public boolean sameOptions(BitOutAttribute other) {
+			if (options.length != other.options.length)
+				return false;
+			for (BitOutOption a : options) {
+				boolean found = false;
+				for (BitOutOption b : other.options) {
+					if (a.toString().equals(b.toString())) {
+						found = true;
+						break;
+					}
+				}
+				if (!found)
+					return false;
+			}
+			return true;
+		}
+
+		@SuppressWarnings({ "rawtypes" })
 		@Override
 		public java.awt.Component getCellEditor(Integer value) {
 			int index = value.intValue();
-			javax.swing.JComboBox combo = new javax.swing.JComboBox(options);
+			ComboBox combo = new ComboBox<>(options);
 			combo.setSelectedIndex(index);
+			combo.setMaximumRowCount(options.length);
 			return combo;
 		}
 

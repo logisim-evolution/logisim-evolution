@@ -385,7 +385,6 @@ public class EditTool extends Tool {
 	public void mouseEntered(Canvas canvas, Graphics g, MouseEvent e) {
 		pressX = -1;
 		current.mouseEntered(canvas, g, e);
-		canvas.requestFocusInWindow();
 	}
 
 	@Override
@@ -402,6 +401,7 @@ public class EditTool extends Tool {
 
 	@Override
 	public void mousePressed(Canvas canvas, Graphics g, MouseEvent e) {
+		canvas.requestFocusInWindow();
 		boolean wire = updateLocation(canvas, e);
 		Location oldWireLoc = wireLoc;
 		wireLoc = NULL_LOCATION;
@@ -493,15 +493,17 @@ public class EditTool extends Tool {
 				if (o != null) {
 					lastX = snapx;
 					lastY = snapy;
-					canvas.repaint();
+					Location oldWireLoc = wireLoc;
 					boolean ret = ((Boolean) o).booleanValue();
 					wireLoc = ret ? snap : NULL_LOCATION;
+					repaintIndicators(canvas, oldWireLoc, wireLoc);
 					return ret;
 				}
 			} else {
 				cache.clear();
 			}
 
+			Location oldWireLoc = wireLoc; 
 			boolean ret = isEligible && isWiringPoint(canvas, snap, mods);
 			wireLoc = ret ? snap : NULL_LOCATION;
 			cache.put(snap, Boolean.valueOf(ret));
@@ -515,9 +517,18 @@ public class EditTool extends Tool {
 
 			lastX = snapx;
 			lastY = snapy;
-			canvas.repaint();
+			repaintIndicators(canvas, oldWireLoc, wireLoc);
 			return ret;
 		}
+	}
+
+	private void repaintIndicators(Canvas canvas, Location a, Location b) {
+		if (a.equals(b))
+			return;
+		if (a != NULL_LOCATION)
+			canvas.repaint(a.getX()-6, a.getY()-6, 12, 12);
+		if (b != NULL_LOCATION)
+			canvas.repaint(b.getX()-6, b.getY()-6, 12, 12);
 	}
 
 	private boolean updateLocation(Canvas canvas, KeyEvent e) {

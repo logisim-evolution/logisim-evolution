@@ -224,7 +224,21 @@ public class TextTool extends Tool {
 
 	@Override
 	public void mouseDragged(Canvas canvas, Graphics g, MouseEvent e) {
-		// TODO: enhance label editing
+		Project proj = canvas.getProject();
+		Circuit circ = canvas.getCircuit();
+
+		if (!proj.getLogisimFile().contains(circ)) {
+			if (caret != null)
+				caret.cancelEditing();
+			canvas.setErrorMessage(S.getter("cannotModifyError"));
+			return;
+		}
+
+		// Maybe user is clicking within the current caret.
+		if (caret != null) {
+			caret.mouseDragged(e);
+			proj.repaintCanvas();
+		}
 	}
 
 	@Override
@@ -322,7 +336,20 @@ public class TextTool extends Tool {
 
 	@Override
 	public void mouseReleased(Canvas canvas, Graphics g, MouseEvent e) {
-		// TODO: enhance label editing
+		Project proj = canvas.getProject();
+		Circuit circ = canvas.getCircuit();
+
+		if (!proj.getLogisimFile().contains(circ)) {
+			if (caret != null)
+				caret.cancelEditing();
+			canvas.setErrorMessage(S.getter("cannotModifyError"));
+			return;
+		}
+
+		if (caret != null) {
+			caret.mouseReleased(e);
+			proj.repaintCanvas();
+		}
 	}
 
 	@Override

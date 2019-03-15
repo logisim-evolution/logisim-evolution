@@ -33,6 +33,7 @@ import static com.cburch.logisim.std.Strings.S;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
@@ -64,8 +65,18 @@ public class DipSwitch extends InstanceFactory {
 		public void mousePressed(InstanceState state, MouseEvent e) {
 			State val = (State) state.getData();
 			Location loc = state.getInstance().getLocation();
-			int cx = e.getX() - loc.getX() - 5;
-			int i = cx / 10;
+			Direction facing = state.getInstance().getAttributeValue(StdAttr.FACING);
+			int n = state.getInstance().getAttributeValue(ATTR_SIZE);
+			int i;
+			if (facing == Direction.SOUTH) {
+				i = n + (e.getX() - loc.getX() - 5) / 10;
+			}  else if (facing == Direction.EAST) {
+				i = (e.getY() - loc.getY() - 5) / 10;
+			}  else if (facing == Direction.WEST) {
+				i = (loc.getY() - e.getY() - 5) / 10;
+			}  else {
+				i = (e.getX() - loc.getX() - 5) / 10;
+			}
 			val.ToggleBit(i);
 			state.getInstance().fireInvalidated();
 		}
@@ -126,9 +137,9 @@ public class DipSwitch extends InstanceFactory {
 	public DipSwitch() {
 		super("DipSwitch", S.getter("DipSwitchComponent"));
 		int dipSize = 8;
-		setAttributes(new Attribute[] { StdAttr.LABEL, Io.ATTR_LABEL_LOC,
+		setAttributes(new Attribute[] { StdAttr.FACING, StdAttr.LABEL, Io.ATTR_LABEL_LOC,
 				StdAttr.LABEL_FONT, StdAttr.LABEL_COLOR, StdAttr.LABEL_VISIBILITY, ATTR_SIZE },
-				new Object[] { "", Direction.EAST, StdAttr.DEFAULT_LABEL_FONT,
+				new Object[] {Direction.NORTH, "", Direction.EAST, StdAttr.DEFAULT_LABEL_FONT,
 						StdAttr.DEFAULT_LABEL_COLOR, false, dipSize });
 		setFacingAttribute(StdAttr.FACING);
 		setIconName("dipswitch.gif");
@@ -142,64 +153,43 @@ public class DipSwitch extends InstanceFactory {
 				.AddAlternateMapType(FPGAIOInformationContainer.IOComponentTypes.Pin);
 	}
 
-	private void computeTextField(Instance instance) {
-		Direction facing = Direction.NORTH;
-		Object labelLoc = instance.getAttributeValue(Io.ATTR_LABEL_LOC);
-
-		Bounds bds = instance.getBounds();
-		int x = bds.getX() + bds.getWidth() / 2;
-		int y = bds.getY() + bds.getHeight() / 2;
-		int halign = GraphicsUtil.H_CENTER;
-		int valign = GraphicsUtil.V_CENTER;
-		if (labelLoc == Direction.NORTH) {
-			y = bds.getY() - 2;
-			valign = GraphicsUtil.V_BOTTOM;
-		} else if (labelLoc == Direction.SOUTH) {
-			y = bds.getY() + bds.getHeight() + 2;
-			valign = GraphicsUtil.V_TOP;
-		} else if (labelLoc == Direction.EAST) {
-			x = bds.getX() + bds.getWidth() + 2;
-			halign = GraphicsUtil.H_LEFT;
-		} else if (labelLoc == Direction.WEST) {
-			x = bds.getX() - 2;
-			halign = GraphicsUtil.H_RIGHT;
-		}
-		if (labelLoc == facing) {
-			if (labelLoc == Direction.NORTH || labelLoc == Direction.SOUTH) {
-				x += 2;
-				halign = GraphicsUtil.H_LEFT;
-			} else {
-				y -= 2;
-				valign = GraphicsUtil.V_BOTTOM;
-			}
-		}
-
-		instance.setTextField(StdAttr.LABEL, StdAttr.LABEL_FONT, x, y, halign,
-				valign);
-	}
-
 	@Override
 	protected void configureNewInstance(Instance instance) {
 		instance.addAttributeListener();
-		configurePorts(instance);
-		computeTextField(instance);
+		updatePorts(instance);
+		Io.computeLabelTextField(instance, null, 0);
 		MyIOInformation.setNrOfInports(instance.getAttributeValue(ATTR_SIZE),
 				GetLabels(instance.getAttributeValue(ATTR_SIZE)));
 	}
 
-	private void configurePorts(Instance instance) {
-		Port[] ps = new Port[instance.getAttributeValue(ATTR_SIZE)];
-		for (int i = 0; i < instance.getAttributeValue(ATTR_SIZE); i++) {
-			ps[i] = new Port((i + 1) * 10, 0, Port.OUTPUT, 1);
+	private void updatePorts(Instance instance) {
+		Direction facing = instance.getAttributeValue(StdAttr.FACING);
+		int n = instance.getAttributeValue(ATTR_SIZE);
+		int cx = 0, cy = 0, dx = 0, dy = 0;
+		if (facing == Direction.WEST) {
+			// cy = -10*(n+1); dy = 10;
+			dy = -10;
+		} else if (facing == Direction.EAST) {
+			// cy = 10*(n+1); dy = -10;
+			dy = 10;
+		} else if (facing == Direction.SOUTH) {
+			cx = -10*(n+1); dx = 10;
+		} else {
+			dx = 10;
+		}
+		Port[] ps = new Port[n];
+		for (int i = 0; i < ps.length; i++) {
+			ps[i] = new Port(cx+(i+1)*dx, cy+(i+1)*dy, Port.OUTPUT, 1);
+			ps[i].setToolTip(S.getter("DIP"+(i+1)));
 		}
 		instance.setPorts(ps);
 	}
 
 	@Override
 	public Bounds getOffsetBounds(AttributeSet attrs) {
-		return Bounds.create(0, 0,
-				10 + attrs.getValue(ATTR_SIZE).intValue() * 10, 40).rotate(
-				Direction.NORTH, Direction.NORTH, 0, 0);
+		Direction facing = attrs.getValue(StdAttr.FACING);
+		int n = attrs.getValue(ATTR_SIZE);
+		return Bounds.create(0, 0, (n+1)*10, 40).rotate(Direction.NORTH, facing, 0, 0);
 	}
 
 	@Override
@@ -214,14 +204,18 @@ public class DipSwitch extends InstanceFactory {
 	@Override
 	protected void instanceAttributeChanged(Instance instance, Attribute<?> attr) {
 		if (attr == Io.ATTR_LABEL_LOC) {
-			computeTextField(instance);
+			Io.computeLabelTextField(instance, null, 0);
 		} else if (attr == ATTR_SIZE) {
 			instance.recomputeBounds();
-			configurePorts(instance);
-			computeTextField(instance);
+			updatePorts(instance);
+			Io.computeLabelTextField(instance, null, 0);
 			MyIOInformation.setNrOfInports(
 					instance.getAttributeValue(ATTR_SIZE),
 					GetLabels(instance.getAttributeValue(ATTR_SIZE)));
+		} else if (attr == StdAttr.FACING) {
+			instance.recomputeBounds();
+			updatePorts(instance);
+			Io.computeLabelTextField(instance, null, 0);
 		}
 	}
 
@@ -233,35 +227,48 @@ public class DipSwitch extends InstanceFactory {
 			state = new State(val, painter.getAttributeValue(ATTR_SIZE));
 			painter.setData(state);
 		}
-		Bounds bds = painter.getBounds().expand(-1);
+		int n = painter.getAttributeValue(ATTR_SIZE);
 
+		Direction facing = painter.getAttributeValue(StdAttr.FACING);
+		Location loc = painter.getLocation();
+		int x = loc.getX();
+		int y = loc.getY();
+		if (facing == Direction.SOUTH) {
+			x -= 10*(n+1);
+			y -= 40;
+		} 
 		Graphics g = painter.getGraphics();
-		GraphicsUtil.switchToWidth(g, 2);
-		g.setColor(Color.darkGray);
-		g.fillRect(bds.getX(), bds.getY(), bds.getWidth(), bds.getHeight());
-		GraphicsUtil.switchToWidth(g, 1);
+		g.translate(x, y);
+		double rotate = 0.0;
+		if (facing != Direction.NORTH && facing != Direction.SOUTH && g instanceof Graphics2D) {
+			rotate = -facing.getRight().toRadians();
+			((Graphics2D) g).rotate(rotate);
+		}
+		g.setColor(Color.DARK_GRAY);
+		g.fillRect(1, 1, (n+1)*10-2, 40-2);
 		g.setColor(Color.white);
 		g.setFont(DrawAttr.DEFAULT_FONT);
-		int offset = 0;
-		for (int i = 0; i < painter.getAttributeValue(ATTR_SIZE); i++) {
-			if (i == 9) {
-				g.setFont(g.getFont()
-						.deriveFont(g.getFont().getSize2D() * 0.6f));
-				offset = -2;
-			}
-			g.fillRect(bds.getX() + 6 + (i * 10), bds.getY() + 15, 6, 20);
-			g.drawChars(Integer.toString(i + 1).toCharArray(), 0, Integer
-					.toString(i + 1).toCharArray().length, bds.getX() + 5
-					+ offset + i * 10, bds.getY() + 12);
+		if (n > 9) {
+			g.setFont(g.getFont().deriveFont(g.getFont().getSize2D() * 0.6f));
 		}
-		g.setColor(Color.lightGray);
-		for (int i = 0; i < painter.getAttributeValue(ATTR_SIZE); i++) {
-			int ypos = (state.BitSet(i)) ? bds.getY() + 16 : bds.getY() + 25;
-			g.fillRect(bds.getX() + 7 + (i * 10), ypos, 4, 9);
+		for (int i = 0; i < n; i++) {
+			g.fillRect(7+(i*10), 16, 6, 20);
+			String s = Integer.toString(i + 1);
+			GraphicsUtil.drawCenteredText(g, s, 9+(i*10), 8);
 		}
+		g.setColor(Color.GRAY);
+		for (int i = 0; i < n; i++) {
+			int ypos = (state.BitSet(i)) ? 17 : 26;
+			g.fillRect(8+(i*10), ypos, 4, 9);
+		}
+
+		if (rotate != 0.0) {
+			((Graphics2D) g).rotate(-rotate);
+		}
+		g.translate(-x, -y);
+
 		painter.drawLabel();
 		painter.drawPorts();
-
 	}
 
 	@Override

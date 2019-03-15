@@ -63,7 +63,7 @@ public class LayoutThumbnail extends JComponent {
 		circuitState = null;
 		ports = null;
 		setBackground(Color.LIGHT_GRAY);
-		setPreferredSize(new Dimension(200, 200));
+		setPreferredSize(new Dimension(400, 300));
 	}
 
 	@Override

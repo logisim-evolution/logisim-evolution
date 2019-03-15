@@ -34,6 +34,7 @@ import static com.cburch.logisim.std.Strings.S;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
@@ -56,7 +57,6 @@ import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
-import com.cburch.logisim.std.wiring.ProbeAttributes;
 import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.StringGetter;
 
@@ -80,9 +80,15 @@ abstract class AbstractFlipFlop extends InstanceFactory {
 
 		private boolean isInside(InstanceState state, MouseEvent e) {
 			Location loc = state.getInstance().getLocation();
-			int dx = e.getX() - (loc.getX() + 20);
-			int dy = e.getY() - (loc.getY() + 30);
-			int d2 = dx * dx + dy * dy;
+			int dx, dy;
+            if (state.getAttributeValue(StdAttr.APPEARANCE) == StdAttr.APPEAR_CLASSIC) {
+				dx = e.getX() - (loc.getX() - 20);
+				dy = e.getY() - (loc.getY() + 10);
+			} else {
+				dx = e.getX() - (loc.getX() + 20);
+				dy = e.getY() - (loc.getY() + 30);
+			}
+            int d2 = dx * dx + dy * dy;
 			return d2 < 8 * 8;
 		}
 
@@ -102,6 +108,37 @@ abstract class AbstractFlipFlop extends InstanceFactory {
 				state.fireInvalidated();
 			}
 			isPressed = false;
+		}
+		
+		@Override
+		public void keyTyped(InstanceState state, KeyEvent e) {
+			int val = Character.digit(e.getKeyChar(), 16);
+			if (val < 0)
+				return;
+			StateData myState = (StateData) state.getData();
+			if (myState == null)
+				return;
+			if (val == 0 && myState.curValue != Value.FALSE) {
+				myState.curValue = Value.FALSE;
+				state.fireInvalidated();
+			} else if (val == 1 && myState.curValue != Value.TRUE) {
+				myState.curValue = Value.TRUE;
+				state.fireInvalidated();
+			}
+		}
+
+		@Override
+		public void keyPressed(InstanceState state, KeyEvent e) {
+			StateData myState = (StateData) state.getData();
+			if (myState == null)
+				return;
+			if (e.getKeyCode() == KeyEvent.VK_DOWN && myState.curValue != Value.FALSE) {
+				myState.curValue = Value.FALSE;
+				state.fireInvalidated();
+			} else if (e.getKeyCode() == KeyEvent.VK_UP && myState.curValue != Value.TRUE) {
+				myState.curValue = Value.TRUE;
+				state.fireInvalidated();
+			}
 		}
 	}
 

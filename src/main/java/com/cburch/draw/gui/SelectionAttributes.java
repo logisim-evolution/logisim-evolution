@@ -114,7 +114,8 @@ public class SelectionAttributes extends AbstractAttributeSet {
 			Map<AttributeSet, CanvasObject> oldSel = selected;
 			Map<AttributeSet, CanvasObject> newSel = new HashMap<AttributeSet, CanvasObject>();
 			for (CanvasObject o : selection.getSelected()) {
-				newSel.put(o.getAttributeSet(), o);
+				if (o != null)
+					newSel.put(o.getAttributeSet(), o);
 			}
 			selected = newSel;
 			boolean change = false;

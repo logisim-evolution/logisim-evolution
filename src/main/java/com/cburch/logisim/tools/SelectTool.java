@@ -430,12 +430,8 @@ public class SelectTool extends Tool {
 	}
 
 	@Override
-	public void mouseEntered(Canvas canvas, Graphics g, MouseEvent e) {
-		canvas.requestFocusInWindow();
-	}
-
-	@Override
 	public void mousePressed(Canvas canvas, Graphics g, MouseEvent e) {
+		canvas.requestFocusInWindow();
 		Project proj = canvas.getProject();
 		Selection sel = proj.getSelection();
 		Circuit circuit = canvas.getCircuit();

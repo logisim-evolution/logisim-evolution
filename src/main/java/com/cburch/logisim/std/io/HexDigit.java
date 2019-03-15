@@ -50,13 +50,22 @@ import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
 
 public class HexDigit extends InstanceFactory {
+	
+	protected static final int HEX = 0;
+	protected static final int DP = 1;
+
 	public HexDigit() {
 		super("Hex Digit Display", S.getter("hexDigitComponent"));
 		setAttributes(new Attribute[] { Io.ATTR_ON_COLOR, Io.ATTR_OFF_COLOR,
 				Io.ATTR_BACKGROUND , StdAttr.LABEL,
 				Io.ATTR_LABEL_LOC, StdAttr.LABEL_FONT, StdAttr.LABEL_VISIBILITY}, new Object[] { new Color(240, 0, 0),
 				SevenSegment.DEFAULT_OFF, Io.DEFAULT_BACKGROUND , "", Direction.EAST, StdAttr.DEFAULT_LABEL_FONT, false });
-		setPorts(new Port[] { new Port(0, 0, Port.INPUT, 4) });
+		Port[] ps = new Port[2];
+		ps[HEX] = new Port(0, 0, Port.INPUT, 4);
+		ps[DP] = new Port(20, 0, Port.INPUT, 1);
+		ps[HEX].setToolTip(S.getter("hexDigitDataTip"));
+		ps[DP].setToolTip(S.getter("hexDigitDPTip"));
+		setPorts(ps);
 		setOffsetBounds(Bounds.create(-15, -60, 40, 60));
 		setIconName("hexdig.gif");
 		MyIOInformation = new IOComponentInformationContainer(0, 8, 0, null,
@@ -70,15 +79,16 @@ public class HexDigit extends InstanceFactory {
 
 	@Override
 	public void paintInstance(InstancePainter painter) {
-		SevenSegment.drawBase(painter, false);
+		SevenSegment.drawBase(painter, true);
 	}
 
 	@Override
 	public void propagate(InstanceState state) {
 		int summary = 0;
-		Value baseVal = state.getPortValue(0);
+		Value baseVal = state.getPortValue(HEX);
 		if (baseVal == null)
 			baseVal = Value.createUnknown(BitWidth.create(4));
+		Value dpVal = state.getPortValue(DP);
 		int segs; // each nibble is one segment, in top-down, left-to-right
 		// order: middle three nibbles are the three horizontal segments
 		switch (baseVal.toIntValue()) {
@@ -148,7 +158,9 @@ public class HexDigit extends InstanceFactory {
 			summary |= 16; // vertical seg at bottom left
 		if ((segs & 0x1000000) != 0)
 			summary |= 32; // vertical seg at top left
-
+		if (dpVal != null && dpVal.toIntValue() == 1)
+			summary |= 128; // decimal point
+		
 		Object value = Integer.valueOf(summary);
 		InstanceDataSingleton data = (InstanceDataSingleton) state.getData();
 		if (data == null) {

@@ -19,9 +19,10 @@ public class HexDigitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 			String CircuitName, String HDLType) {
 		ArrayList<String> Contents = new ArrayList<String>();
 		String Label = ComponentInfo.GetComponent().getAttributeSet().getValue(StdAttr.LABEL);
-		String BusName = GetBusName(ComponentInfo, 0, HDLType, Nets);
+		String BusName = GetBusName(ComponentInfo, HexDigit.HEX, HDLType, Nets);
+		String DPName = GetNetName(ComponentInfo, HexDigit.DP, true, HDLType,Nets);
 		Contents.add(" ");
-		Contents.add("   "+Label+" : PROCESS ( "+BusName+" ) IS");
+		Contents.add("   "+Label+" : PROCESS ( "+BusName+", "+DPName+" ) IS");
 		Contents.add("      VARIABLE v_segs : std_logic_vector( 6 DOWNTO 0 );");
         Contents.add("      BEGIN");
         Contents.add("         CASE ( "+BusName+" ) IS");
@@ -46,7 +47,7 @@ public class HexDigitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         	Contents.add("         "+HDLGeneratorFactory.LocalOutputBubbleBusname+"("+ 
         			Integer.toString(ComponentInfo.GetLocalBubbleOutputStartId() + i) + ") <= v_segs("+i+");");
         Contents.add("         "+HDLGeneratorFactory.LocalOutputBubbleBusname+"("+ 
-        			Integer.toString(ComponentInfo.GetLocalBubbleOutputStartId() + 7) + ") <= '0';");
+        			Integer.toString(ComponentInfo.GetLocalBubbleOutputStartId() + 7) + ") <= "+DPName+";");
         Contents.add("      END PROCESS "+Label+";");
 		return Contents;
 	}

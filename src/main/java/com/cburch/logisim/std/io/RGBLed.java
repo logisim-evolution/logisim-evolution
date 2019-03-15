@@ -81,27 +81,17 @@ public class RGBLed extends InstanceFactory {
 	}
 
 	public static final int RED = 0;
-
 	public static final int GREEN = 1;
-
 	public static final int BLUE = 2;
 
 	public RGBLed() {
 		super("RGBLED", S.getter("RGBledComponent"));
-		setAttributes(new Attribute[] { Io.ATTR_ACTIVE, StdAttr.LABEL,
+		setAttributes(new Attribute[] { StdAttr.FACING, Io.ATTR_ACTIVE, StdAttr.LABEL,
 				Io.ATTR_LABEL_LOC, StdAttr.LABEL_FONT, StdAttr.LABEL_COLOR, StdAttr.LABEL_VISIBILITY },
-				new Object[] { Boolean.TRUE, "", Direction.EAST,
+				new Object[] { Direction.WEST, Boolean.TRUE, "", Direction.EAST,
 						StdAttr.DEFAULT_LABEL_FONT, StdAttr.DEFAULT_LABEL_COLOR, true });
 		setFacingAttribute(StdAttr.FACING);
 		setIconName("rgbled.gif");
-		Port[] ps = new Port[3];
-		ps[RED] = new Port(0, 0, Port.INPUT, 1);
-		ps[GREEN] = new Port(10, -10, Port.INPUT, 1);
-		ps[BLUE] = new Port(10, 10, Port.INPUT, 1);
-		ps[RED].setToolTip(S.getter("RED"));
-		ps[GREEN].setToolTip(S.getter("GREEN"));
-		ps[BLUE].setToolTip(S.getter("BLUE"));
-		setPorts(ps);
 		setInstanceLogger(Logger.class);
 		MyIOInformation = new IOComponentInformationContainer(0, 3, 0, null,
 				GetLabels(), null,
@@ -111,58 +101,45 @@ public class RGBLed extends InstanceFactory {
 		MyIOInformation
 				.AddAlternateMapType(FPGAIOInformationContainer.IOComponentTypes.LED);
 	}
+	
+	private void updatePorts(Instance instance) {
+		Direction facing = instance.getAttributeValue(StdAttr.FACING);
+		Port[] ps = new Port[3];
+		int cx = 0, cy = 0, dx = 0, dy = 0;
+		if (facing == Direction.NORTH) {
+			cy = 10; dx = 10;
+		} else if (facing == Direction.EAST) {
+			cx = -10; dy = 10;
+		} else if (facing == Direction.SOUTH) {
+			cy = -10; dx = -10;
+		} else {
+			cx = 10; dy = -10;
+		}
+		ps[RED] = new Port(0, 0, Port.INPUT, 1);
+		ps[GREEN] = new Port(cx+dx, cy+dy, Port.INPUT, 1);
+		ps[BLUE] = new Port(cx-dx, cy-dy, Port.INPUT, 1);
+		ps[RED].setToolTip(S.getter("RED"));
+		ps[GREEN].setToolTip(S.getter("GREEN"));
+		ps[BLUE].setToolTip(S.getter("BLUE"));
+		instance.setPorts(ps);
+	}
 
 	@Override
 	public boolean ActiveOnHigh(AttributeSet attrs) {
 		return attrs.getValue(Io.ATTR_ACTIVE);
 	}
 
-	private void computeTextField(Instance instance) {
-		Direction facing = Direction.WEST;
-		Object labelLoc = instance.getAttributeValue(Io.ATTR_LABEL_LOC);
-
-		Bounds bds = instance.getBounds();
-		int x = bds.getX() + bds.getWidth() / 2;
-		int y = bds.getY() + bds.getHeight() / 2;
-		int halign = GraphicsUtil.H_CENTER;
-		int valign = GraphicsUtil.V_CENTER;
-		if (labelLoc == Direction.NORTH) {
-			y = bds.getY() - 2;
-			valign = GraphicsUtil.V_BOTTOM;
-		} else if (labelLoc == Direction.SOUTH) {
-			y = bds.getY() + bds.getHeight() + 2;
-			valign = GraphicsUtil.V_TOP;
-		} else if (labelLoc == Direction.EAST) {
-			x = bds.getX() + bds.getWidth() + 2;
-			halign = GraphicsUtil.H_LEFT;
-		} else if (labelLoc == Direction.WEST) {
-			x = bds.getX() - 2;
-			halign = GraphicsUtil.H_RIGHT;
-		}
-		if (labelLoc == facing) {
-			if (labelLoc == Direction.NORTH || labelLoc == Direction.SOUTH) {
-				x += 2;
-				halign = GraphicsUtil.H_LEFT;
-			} else {
-				y -= 2;
-				valign = GraphicsUtil.V_BOTTOM;
-			}
-		}
-
-		instance.setTextField(StdAttr.LABEL, StdAttr.LABEL_FONT, x, y, halign,
-				valign);
-	}
-
 	@Override
 	protected void configureNewInstance(Instance instance) {
 		instance.addAttributeListener();
-		computeTextField(instance);
+		updatePorts(instance);
+		Io.computeLabelTextField(instance);
 	}
 
 	@Override
 	public Bounds getOffsetBounds(AttributeSet attrs) {
-		return Bounds.create(0, -10, 20, 20).rotate(Direction.WEST,
-				Direction.WEST, 0, 0);
+		Direction facing = attrs.getValue(StdAttr.FACING);
+		return Bounds.create(0, -10, 20, 20).rotate(Direction.WEST, facing, 0, 0);
 	}
 
 	@Override
@@ -175,8 +152,12 @@ public class RGBLed extends InstanceFactory {
 
 	@Override
 	protected void instanceAttributeChanged(Instance instance, Attribute<?> attr) {
-		if (attr == Io.ATTR_LABEL_LOC) {
-			computeTextField(instance);
+		if (attr == StdAttr.FACING) {
+			instance.recomputeBounds();
+			updatePorts(instance);
+			Io.computeLabelTextField(instance);
+		} else if (attr == Io.ATTR_LABEL_LOC) {
+			Io.computeLabelTextField(instance);
 		}
 	}
 

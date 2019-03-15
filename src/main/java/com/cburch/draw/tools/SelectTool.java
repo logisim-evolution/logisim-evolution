@@ -456,7 +456,8 @@ public class SelectTool extends AbstractTool {
 			} else {
 				CanvasObject clicked;
 				clicked = getObjectAt(model, start.getX(), start.getY(), true);
-				selection.setSelected(clicked, !selected.contains(clicked));
+				if (clicked != null)
+					selection.setSelected(clicked, !selected.contains(clicked));
 			}
 			break;
 		default:

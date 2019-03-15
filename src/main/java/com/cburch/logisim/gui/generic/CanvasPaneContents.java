@@ -36,6 +36,8 @@ import java.awt.event.MouseWheelListener;
 
 import javax.swing.Scrollable;
 
+import com.cburch.logisim.data.Bounds;
+
 public interface CanvasPaneContents extends Scrollable {
 	public Dimension getPreferredScrollableViewportSize();
 
@@ -54,4 +56,7 @@ public interface CanvasPaneContents extends Scrollable {
 	public void setCanvasPane(CanvasPane pane);
 	
 	public void addMouseWheelListener(MouseWheelListener listener);
+	
+	public void center();
+	
 }

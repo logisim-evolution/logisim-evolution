@@ -64,8 +64,8 @@ public class WidthIncompatibilityData {
 		if (this.size() != o.size())
 			return false;
 		for (int i = 0; i < this.size(); i++) {
-			Location p = this.getPoint(i);
-			BitWidth w = this.getBitWidth(i);
+			Location p = o.getPoint(i);
+			BitWidth w = o.getBitWidth(i);
 			boolean matched = false;
 			for (int j = 0; j < o.size(); j++) {
 				Location q = this.getPoint(j);
@@ -87,6 +87,23 @@ public class WidthIncompatibilityData {
 
 	public Location getPoint(int i) {
 		return points.get(i);
+	}
+
+	public BitWidth getCommonBitWidth() {
+		int hist[] = new int[33];
+		BitWidth maxwidth = null;
+		int maxcount = 0;
+		for (BitWidth bw : widths) {
+			int w = bw.getWidth();
+			int n = ++hist[w];
+			if (n > maxcount) {
+				maxcount = n;
+				maxwidth = bw;
+			} else if (n == maxcount) {
+				maxwidth = null;
+			}
+		}
+		return maxwidth;
 	}
 
 	@Override

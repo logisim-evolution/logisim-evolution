@@ -40,6 +40,7 @@ import java.util.HashSet;
 
 import com.cburch.logisim.fpga.hdlgenerator.HDLColorRenderer;
 import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
+import com.cburch.logisim.circuit.SplitterAttributes;
 import com.cburch.logisim.comp.ComponentFactory;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeEvent;
@@ -88,6 +89,19 @@ public abstract class AttributeSetTableModel implements AttrTableModel,
 
 		public boolean isValueEditable() {
 			return !attrs.isReadOnly(attr);
+		}
+
+		public boolean multiEditCompatible(AttrTableModelRow other) {
+			if (other == null || !(other instanceof AttrRow))
+				return false;
+			AttrRow o = (AttrRow)other;
+			if (!(((Object)attr) instanceof SplitterAttributes.BitOutAttribute))
+				return false;
+			if (!(((Object)o.attr) instanceof SplitterAttributes.BitOutAttribute))
+				return false;
+			SplitterAttributes.BitOutAttribute a = (SplitterAttributes.BitOutAttribute)(Object)attr;
+			SplitterAttributes.BitOutAttribute b = (SplitterAttributes.BitOutAttribute)(Object)o.attr;
+			return a.sameOptions(b);
 		}
 
 		public void setValue(Window parent, Object value) throws AttrTableSetException {

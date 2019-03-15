@@ -121,6 +121,8 @@ public class AppearanceCanvas extends Canvas implements CanvasPaneContents,
 			model.addCanvasModelListener(listener);
 		grid.addPropertyChangeListener(GridPainter.ZOOM_PROPERTY, listener);
 	}
+	
+	public void center() {}
 
 	private void computeSize(boolean immediate) {
 		hidePopup();

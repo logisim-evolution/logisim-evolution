@@ -32,7 +32,6 @@ package com.cburch.logisim.gui.generic;
 
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
@@ -67,7 +66,6 @@ public class CanvasPane extends JScrollPane {
 		public void propertyChange(PropertyChangeEvent e) {
 			String prop = e.getPropertyName();
 			if (prop.equals(ZoomModel.ZOOM)) {
-				Point point = getMousePosition(true);
 				double oldZoom = ((Double) e.getOldValue()).doubleValue();
 				Rectangle r = getViewport().getViewRect();
 				double cx = (r.x + r.width / 2) / oldZoom;
@@ -75,21 +73,13 @@ public class CanvasPane extends JScrollPane {
 
 				double newZoom = ((Double) e.getNewValue()).doubleValue();
 				r = getViewport().getViewRect();
-				/* Better zooming model based on the code of the logisim-IT code */
-				if (point != null) {
-					int newX = (int) Math.round(
-							(r.getX()/oldZoom)*newZoom + (point.getX()/oldZoom)*newZoom - point.getX());
-					int newY = (int) Math.round(
-							(r.getY()/oldZoom)*newZoom + (point.getY()/oldZoom)*newZoom - point.getY());
-					   getHorizontalScrollBar().setValue(newX);
-					   getVerticalScrollBar().setValue(newY);
-				} else {
-				   int hv = (int) (cx * newZoom) - r.width / 2;
-				   int vv = (int) (cy * newZoom) - r.height / 2;
-				   getHorizontalScrollBar().setValue(hv);
-				   getVerticalScrollBar().setValue(vv);
-				}
+				int hv = (int) (cx * newZoom) - r.width / 2;
+				int vv = (int) (cy * newZoom) - r.height / 2;
+				getHorizontalScrollBar().setValue(hv);
+				getVerticalScrollBar().setValue(vv);
 				contents.recomputeSize();
+			} else if (prop.equals(ZoomModel.CENTER)) {
+				contents.center();
 			}
 		}
 	}
@@ -103,11 +93,11 @@ public class CanvasPane extends JScrollPane {
 				if (mwe.getWheelRotation() < 0) { // ZOOM IN
 					zoom += 0.1;
 					double max = opts[opts.length-1] / 100.0;
-					zoomModel.setZoomFactor(zoom >= max ? max : zoom);
+					zoomModel.setZoomFactor(zoom >= max ? max : zoom,mwe);
 				} else { // ZOOM OUT
 					zoom -= 0.1;
 					double min = opts[0] / 100.0;
-					zoomModel.setZoomFactor(zoom <= min ? min : zoom);
+					zoomModel.setZoomFactor(zoom <= min ? min : zoom,mwe);
 				}
 			} else if (mwe.isShiftDown()) {
 				getHorizontalScrollBar().setValue(
@@ -170,10 +160,12 @@ public class CanvasPane extends JScrollPane {
 		ZoomModel oldModel = zoomModel;
 		if (oldModel != null) {
 			oldModel.removePropertyChangeListener(ZoomModel.ZOOM, listener);
+			oldModel.removePropertyChangeListener(ZoomModel.CENTER, listener);
 		}
 		zoomModel = model;
 		if (model != null) {
 			model.addPropertyChangeListener(ZoomModel.ZOOM, listener);
+			model.addPropertyChangeListener(ZoomModel.CENTER, listener);
 		}
 	}
 

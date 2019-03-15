@@ -30,8 +30,11 @@
 
 package com.cburch.logisim.gui.generic;
 
+import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+
+import javax.swing.SwingUtilities;
 
 import com.cburch.logisim.prefs.PrefMonitor;
 
@@ -41,13 +44,14 @@ public class BasicZoomModel implements ZoomModel {
 	private PropertyChangeSupport support;
 	private double zoomFactor;
 	private boolean showGrid;
+	private CanvasPane canvas;
 
-	public BasicZoomModel(PrefMonitor<Boolean> gridPref,
-			PrefMonitor<Double> zoomPref, double[] zoomOpts) {
+	public BasicZoomModel(PrefMonitor<Boolean> gridPref,PrefMonitor<Double> zoomPref,double[] zoomOpts,CanvasPane pane) {
 		zoomOptions = zoomOpts;
 		support = new PropertyChangeSupport(this);
 		zoomFactor = 1.0;
 		showGrid = true;
+		canvas = pane;
 
 		setZoomFactor(zoomPref.get().doubleValue());
 		setShowGrid(gridPref.getBoolean());
@@ -89,4 +93,51 @@ public class BasicZoomModel implements ZoomModel {
 					Double.valueOf(oldValue), Double.valueOf(value));
 		}
 	}
+	
+	public void setZoomFactor(double value, MouseEvent e) {
+		double oldValue = zoomFactor;
+		if (value != oldValue) {
+			if (canvas == null)
+				setZoomFactor(value);
+			// Attempt to maintain mouse position during zoom, using
+			// [m]ax, [v]alue, [e]xtent, and [r]elative position within it,
+			// to calculate target [n]ew[m]ax, [p]ercent and [n]ew[v]alue.
+			double mx = canvas.getHorizontalScrollBar().getMaximum();
+			int vx = canvas.getHorizontalScrollBar().getValue();
+			double ex = canvas.getHorizontalScrollBar().getVisibleAmount();
+			int rx = e.getX() - vx;
+			double my = canvas.getVerticalScrollBar().getMaximum();
+			int vy = canvas.getVerticalScrollBar().getValue();
+			double ey = canvas.getVerticalScrollBar().getVisibleAmount();
+			int ry = e.getY() - vy;
+			zoomFactor = value;
+			support.firePropertyChange(ZoomModel.ZOOM,
+					Double.valueOf(oldValue), Double.valueOf(value));
+			double nmx = mx * value / oldValue;
+			double px = (vx / mx) + (ex/mx - ex/nmx) * (rx / ex);
+			int nvx = (int)(nmx * px);
+			double nmy = my * value / oldValue;
+			double py = (vy / my) + (ey/my - ey/nmy) * (ry / ey);
+			int nvy = (int)(nmy * py);
+			canvas.getHorizontalScrollBar().setValue(nvx);
+			canvas.getVerticalScrollBar().setValue(nvy);
+		}
+	}
+
+	@Override
+	public void setZoomFactorCenter(double value) {
+		double oldValue = zoomFactor;
+		if (value != oldValue) {
+			zoomFactor = value;
+			support.firePropertyChange(ZoomModel.ZOOM,
+					Double.valueOf(oldValue), Double.valueOf(value));
+			SwingUtilities.invokeLater( new Runnable() {
+				@Override
+				public void run() {
+					support.firePropertyChange(ZoomModel.CENTER,
+							Double.valueOf(oldValue), Double.valueOf(value));
+				}
+			});
+		}
+	};
 }

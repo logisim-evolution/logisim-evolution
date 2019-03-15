@@ -373,15 +373,9 @@ public class Rom extends Mem {
 		} else {
 			Graphics g = painter.getGraphics();
 			Bounds bds = painter.getBounds();
-
-			String Label = painter.getAttributeValue(StdAttr.LABEL);
-			if (Label != null && painter.getAttributeValue(StdAttr.LABEL_VISIBILITY)) {
-				Font font = g.getFont();
-				g.setFont(painter.getAttributeValue(StdAttr.LABEL_FONT));
-				GraphicsUtil.drawCenteredText(g, Label, bds.getX() + bds.getWidth()
-					/ 2, bds.getY() - g.getFont().getSize());
-				g.setFont(font);
-			}
+			
+			painter.drawLabel();
+			
 			int xpos = bds.getX();
 			int ypos = bds.getY();
 			int NrOfBits = painter.getAttributeValue(Mem.DATA_ATTR).getWidth();

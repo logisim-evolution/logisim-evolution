@@ -49,17 +49,32 @@ public class ShiftRegisterPoker extends InstancePoker {
 	private int computeStage(InstanceState state, MouseEvent e) {
 		BitWidth widObj = state.getAttributeValue(StdAttr.WIDTH);
 		Bounds bds = state.getInstance().getBounds();
+		if (state.getAttributeValue(StdAttr.APPEARANCE) == StdAttr.APPEAR_CLASSIC) {
+			Integer lenObj = state.getAttributeValue(ShiftRegister.ATTR_LENGTH);
+			Boolean loadObj = state.getAttributeValue(ShiftRegister.ATTR_LOAD);
 
-		int len = (widObj.getWidth() + 3) / 4;
-		int boxXpos = ((ShiftRegister.SymbolWidth - 30) / 2 + 30) - (len * 4);
-		int boxXend = boxXpos + 2 + len * 8;
-		int y = e.getY() - bds.getY() - 80;
-		if (y < 0)
-			return -1;
-		int x = e.getX() - bds.getX() - 10;
-		if ((x < boxXpos) || (x > boxXend))
-			return -1;
-		return (y / 20);
+			int y = bds.getY();
+			String label = state.getAttributeValue(StdAttr.LABEL);
+			if (label == null || label.equals("")) y += bds.getHeight() / 2;
+			else y += 3 * bds.getHeight() / 4;
+			y = e.getY() - y;
+			if (y <= -6 || y >= 8) return -1;
+			int x = e.getX() - (bds.getX() + 15);
+			if (!loadObj.booleanValue() || widObj.getWidth() > 4) return -1;
+			if (x < 0 || x >= lenObj.intValue() * 10) return -1;
+			return x / 10;
+		} else {
+			int len = (widObj.getWidth() + 3) / 4;
+			int boxXpos = ((ShiftRegister.SymbolWidth - 30) / 2 + 30) - (len * 4);
+			int boxXend = boxXpos + 2 + len * 8;
+			int y = e.getY() - bds.getY() - 80;
+			if (y < 0)
+				return -1;
+			int x = e.getX() - bds.getX() - 10;
+			if ((x < boxXpos) || (x > boxXend))
+				return -1;
+			return (y / 20);
+		}
 	}
 
 	@Override
@@ -74,7 +89,7 @@ public class ShiftRegisterPoker extends InstancePoker {
 		if (loc < 0)
 			return;
 		char c = e.getKeyChar();
-		if (c == ' ') {
+		if (c == ' ' || c == '\t') {
 			Integer lenObj = state.getAttributeValue(ShiftRegister.ATTR_LENGTH);
 			if (loc < lenObj.intValue() - 1) {
 				this.loc = loc + 1;
@@ -102,6 +117,33 @@ public class ShiftRegisterPoker extends InstancePoker {
 		}
 	}
 
+	@Override
+	public void keyPressed(InstanceState state, KeyEvent e) {
+		int loc = this.loc;
+		if (loc < 0)
+			return;
+		BitWidth dataWidth = state.getAttributeValue(StdAttr.WIDTH);
+		if (dataWidth == null)
+			dataWidth = BitWidth.create(8);
+		ShiftRegisterData data = (ShiftRegisterData) state.getData();
+		int i = data.getLength() - 1 - loc;
+		int curValue = data.get(i).toIntValue();
+		if (e.getKeyCode() == KeyEvent.VK_UP) {
+			int maxVal = dataWidth.getMask();
+			if (curValue != maxVal) {
+				curValue = curValue + 1;
+				data.set(i, Value.createKnown(dataWidth, curValue));
+				state.fireInvalidated();
+			}
+		} else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+			if (curValue != 0) {
+				curValue = curValue - 1;
+				data.set(i, Value.createKnown(dataWidth, curValue));
+				state.fireInvalidated();
+			}
+		}
+	}
+	
 	@Override
 	public void mousePressed(InstanceState state, MouseEvent e) {
 		loc = computeStage(state, e);
@@ -136,12 +178,23 @@ public class ShiftRegisterPoker extends InstancePoker {
 			return;
 		BitWidth widObj = painter.getAttributeValue(StdAttr.WIDTH);
 		Bounds bds = painter.getInstance().getBounds();
-		int len = (widObj.getWidth() + 3) / 4;
-		int boxXpos = ((ShiftRegister.SymbolWidth - 30) / 2 + 30) - (len * 4)
-				+ bds.getX() + 10;
-		int y = bds.getY() + 82 + loc * 20;
-		Graphics g = painter.getGraphics();
-		g.setColor(Color.RED);
-		g.drawRect(boxXpos, y, 2 + len * 8, 16);
+		if (painter.getAttributeValue(StdAttr.APPEARANCE) == StdAttr.APPEAR_CLASSIC) {
+			int x = bds.getX() + 15 + loc * 10;
+			int y = bds.getY();
+			String label = painter.getAttributeValue(StdAttr.LABEL);
+			if (label == null || label.equals("")) y += bds.getHeight() / 2;
+			else y += 3 * bds.getHeight() / 4;
+			Graphics g = painter.getGraphics();
+			g.setColor(Color.RED);
+			g.drawRect(x, y - 6, 10, 13);
+		} else {
+			int len = (widObj.getWidth() + 3) / 4;
+			int boxXpos = ((ShiftRegister.SymbolWidth - 30) / 2 + 30) - (len * 4)
+					+ bds.getX() + 10;
+			int y = bds.getY() + 82 + loc * 20;
+			Graphics g = painter.getGraphics();
+			g.setColor(Color.RED);
+			g.drawRect(boxXpos, y, 2 + len * 8, 16);
+		}
 	}
 }

@@ -61,9 +61,10 @@ public class AppearanceView {
 		attrs = new DrawingAttributeSet();
 		SelectTool selectTool = new SelectTool();
 		canvas = new AppearanceCanvas(selectTool);
+		canvasPane = new CanvasPane(canvas);
 		toolbarModel = new AppearanceToolbarModel(selectTool, canvas, attrs);
 		zoomModel = new BasicZoomModel(AppPreferences.APPEARANCE_SHOW_GRID,
-				AppPreferences.APPEARANCE_ZOOM, ZOOM_OPTIONS);
+				AppPreferences.APPEARANCE_ZOOM, ZOOM_OPTIONS,canvasPane);
 		canvas.getGridPainter().setZoomModel(zoomModel);
 		attrTableManager = null;
 		canvasPane = new CanvasPane(canvas);
