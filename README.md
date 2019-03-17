@@ -133,6 +133,7 @@ The code is licensed under [GPLv3](https://www.gnu.org/licenses/gpl-3.0.en.html)
 The following institutions/people actively contributed to logisim-evolution:
 
 * Carl Burch - Hendrix College - USA
+* Kevin Walsh [College of the Holy Cross](http://www.holycross.edu) - USA
 * [Haute École Spécialisée Bernoise](http://www.bfh.ch) - Switzerland
 * [Haute École du paysage, d'ingénierie et d'architecture de Genève](http://hepia.hesge.ch) - Switzerland
 * [Haute École d'Ingénierie et de Gestion du Canton de Vaud](http://www.heig-vd.ch) - Switzerland
