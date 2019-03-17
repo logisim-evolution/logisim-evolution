@@ -14,59 +14,17 @@
  *   You should have received a copy of the GNU General Public License
  *   along with logisim-evolution.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   Original code by Carl Burch (http://www.cburch.com), 2011.
- *   Subsequent modifications by :
- *     + Haute École Spécialisée Bernoise
- *       http://www.bfh.ch
- *     + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *       http://hepia.hesge.ch/
- *     + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *       http://www.heig-vd.ch/
- *   The project is currently maintained by :
- *     + REDS Institute - HEIG-VD
- *       Yverdon-les-Bains, Switzerland
- *       http://reds.heig-vd.ch
+ * Original code by Carl Burch (http://www.cburch.com), 2011.
+ * Subsequent modifications by:
+ *   + College of the Holy Cross
+ *     http://www.holycross.edu
+ *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
+ *     http://www.bfh.ch
+ *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
+ *     http://hepia.hesge.ch/
+ *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
+ *     http://www.heig-vd.ch/
  *******************************************************************************/
-/**
- * Simple XML parser, taken from
- * http://argonrain.wordpress.com/about/xml-java/
- * 
- * Example usage:
- * --[ config.xml ]--
- * <config>
- *   <title>test</title>
- *   <version
- *       major="1"
- *       minor="2"/>
- *   <roles>
- *       <role name="admin"/>
- *       <role name="user"/>
- *   </roles>
- *   <users>
- *       <user name="joe" password="pass" role="admin"/>
- *       <user name="harry" password="secret" role="user" email="harry@me.com"/>
- *   </users>
- *   <test/>
- * </config>
- * 
- * --[ PARSER ]--
- * ArgonXML config = new ArgonXML("config.xml","config");
- * System.out.println("title: "+config.child("title").content());
- * ArgonXML version = config.child("version");
- * System.out.println("version: "+version.integer("major")+"."+version.integer("minor"));
- * for(ArgonXML role:config.child("roles").children("role"))
- *   System.out.println("role: name: "+role.string("name"));
- * for(ArgonXML user:config.child("users").children("user")) {
- *   String email = user.optString("email");
- *   System.out.println(
- *       "user: name: "+user.string("name")+
- *       ", password: "+user.string("password")+
- *       ", role: "+user.string("role")+
- *       ", email: "+(email==null ? "-" : email));
- * }
- * System.out.println("test: "+config.option("test"));
- * 
- */
 
 package com.cburch.logisim.util;
 
