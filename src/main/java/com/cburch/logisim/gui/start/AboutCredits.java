@@ -132,8 +132,8 @@ class AboutCredits extends JComponent {
 		lines.add(new CreditsLine(0, S.get("creditsRoleFork")));
 	    lines.add(new CreditsLine(1, "College of the Holy Cross"));
 	    lines.add(new CreditsLine(2, "http://www.holycross.edu"));
-		lines.add(new CreditsLine(1,
-				"Haute \u00C9cole Sp\u00E9cialis\u00E9e Bernoise"));
+		lines.add(new CreditsLine(1, "Haute \u00C9cole Sp\u00E9cialis\u00E9e Bernoise/"));
+		lines.add(new CreditsLine(1, "Berner Fachhochschule"));
 		lines.add(new CreditsLine(2, "http://www.bfh.ch"));
 		lines.add(new CreditsLine(1,
 				"Haute \u00C9cole du paysage, d'ing\u00E9nierie"));
