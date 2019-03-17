@@ -26,6 +26,8 @@
  *     http://www.heig-vd.ch/
  *******************************************************************************/
 
+package com.cburch.logisim.std.io;
+
 import java.util.ArrayList;
 
 import com.cburch.logisim.data.AttributeSet;
