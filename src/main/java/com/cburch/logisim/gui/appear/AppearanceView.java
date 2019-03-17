@@ -30,6 +30,9 @@
 
 package com.cburch.logisim.gui.appear;
 
+import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
+
 import com.cburch.draw.canvas.Canvas;
 import com.cburch.draw.gui.AttrTableDrawManager;
 import com.cburch.draw.toolbar.ToolbarModel;
@@ -62,14 +65,18 @@ public class AppearanceView {
 		SelectTool selectTool = new SelectTool();
 		canvas = new AppearanceCanvas(selectTool);
 		canvasPane = new CanvasPane(canvas);
-		toolbarModel = new AppearanceToolbarModel(selectTool, canvas, attrs);
+		ShowStateTool ssTool = new ShowStateTool(this, canvas, attrs);
+		toolbarModel = new AppearanceToolbarModel(selectTool, ssTool, canvas, attrs);
 		zoomModel = new BasicZoomModel(AppPreferences.APPEARANCE_SHOW_GRID,
 				AppPreferences.APPEARANCE_ZOOM, ZOOM_OPTIONS,canvasPane);
 		canvas.getGridPainter().setZoomModel(zoomModel);
 		attrTableManager = null;
-		canvasPane = new CanvasPane(canvas);
 		canvasPane.setZoomModel(zoomModel);
 		editHandler = new AppearanceEditHandler(canvas);
+	}
+
+	public JFrame getFrame() {
+		return (JFrame)SwingUtilities.getAncestorOfClass(JFrame.class, canvasPane);
 	}
 
 	public AttributeSet getAttributeSet() {

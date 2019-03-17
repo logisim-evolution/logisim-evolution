@@ -16,16 +16,14 @@
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
  * Subsequent modifications by:
- *   + Haute École Spécialisée Bernoise
+ *   + College of the Holy Cross
+ *     http://www.holycross.edu
+ *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
  *     http://www.bfh.ch
  *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
  *     http://hepia.hesge.ch/
  *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
  *     http://www.heig-vd.ch/
- *   + REDS Institute - HEIG-VD, Yverdon-les-Bains, Switzerland
- *     http://reds.heig-vd.ch
- * This version of the project is currently maintained by:
- *   + Kevin Walsh (kwalsh@holycross.edu, http://mathcs.holycross.edu/~kwalsh)
  */
 
 package com.cburch.draw;

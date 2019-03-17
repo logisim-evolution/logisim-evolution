@@ -229,19 +229,46 @@ public class SvgReader {
 		int size = Integer.parseInt(fontSize);
 		ret.setValue(DrawAttr.FONT, new Font(fontFamily, styleFlags, size));
 
-		String alignStr = elt.getAttribute("text-anchor");
+		String halignStr = elt.getAttribute("text-anchor");
 		AttributeOption halign;
-		if (alignStr.equals("start")) {
-			halign = DrawAttr.ALIGN_LEFT;
-		} else if (alignStr.equals("end")) {
-			halign = DrawAttr.ALIGN_RIGHT;
+		if (halignStr.equals("start")) {
+			halign = DrawAttr.HALIGN_LEFT;
+		} else if (halignStr.equals("end")) {
+			halign = DrawAttr.HALIGN_RIGHT;
 		} else {
-			halign = DrawAttr.ALIGN_CENTER;
+			halign = DrawAttr.HALIGN_CENTER;
 		}
-		ret.setValue(DrawAttr.ALIGNMENT, halign);
+		ret.setValue(DrawAttr.HALIGNMENT, halign);
+
+		String valignStr = elt.getAttribute("dominant-baseline");
+		AttributeOption valign;
+		if (valignStr.equals("top")) {
+			valign = DrawAttr.VALIGN_TOP;
+		} else if (valignStr.equals("bottom")) {
+			valign = DrawAttr.VALIGN_BOTTOM;
+		} else if (valignStr.equals("alphabetic")) {
+			valign = DrawAttr.VALIGN_BASELINE;
+		} else {
+			valign = DrawAttr.VALIGN_MIDDLE;
+		}
+		ret.setValue(DrawAttr.VALIGNMENT, valign);
 
 		// fill color is handled after we return
 		return ret;
+	}
+
+	public static Font getFontAttribute(Element elt) {
+		String fontFamily = elt.getAttribute("font-family");
+		String fontStyle = elt.getAttribute("font-style");
+		String fontWeight = elt.getAttribute("font-weight");
+		String fontSize = elt.getAttribute("font-size");
+		int styleFlags = 0;
+		if (fontStyle.equals("italic"))
+			styleFlags |= Font.ITALIC;
+		if (fontWeight.equals("bold"))
+			styleFlags |= Font.BOLD;
+		int size = Integer.parseInt(fontSize);
+		return new Font(fontFamily, styleFlags, size);
 	}
 
 	private static Color getColor(String hue, String opacity) {

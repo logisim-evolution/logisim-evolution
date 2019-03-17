@@ -35,13 +35,22 @@ import static com.cburch.logisim.gui.Strings.S;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.cburch.logisim.circuit.Circuit;
+import com.cburch.logisim.circuit.CircuitAttributes;
+import com.cburch.logisim.circuit.CircuitMutator;
+import com.cburch.logisim.circuit.CircuitTransaction;
+import com.cburch.logisim.circuit.SubcircuitFactory;
+import com.cburch.logisim.comp.ComponentFactory;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeSet;
+import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.proj.Action;
 import com.cburch.logisim.proj.Project;
+import com.cburch.logisim.tools.FactoryAttributes;
 import com.cburch.logisim.tools.Tool;
 import com.cburch.logisim.tools.key.KeyConfigurationEvent;
 import com.cburch.logisim.tools.key.KeyConfigurationResult;
+import com.cburch.logisim.vhdl.base.VhdlEntity;
 
 public class ToolAttributeAction extends Action {
 	public static Action create(KeyConfigurationResult results) {
@@ -65,33 +74,101 @@ public class ToolAttributeAction extends Action {
 	}
 
 	@Override
-	public void doIt(Project proj) {
-		AttributeSet attrs = config.getEvent().getAttributeSet();
-		Map<Attribute<?>, Object> newValues = config.getAttributeValues();
-		Map<Attribute<?>, Object> oldValues = new HashMap<Attribute<?>, Object>(
-				newValues.size());
-		for (Map.Entry<Attribute<?>, Object> entry : newValues.entrySet()) {
-			@SuppressWarnings("unchecked")
-			Attribute<Object> attr = (Attribute<Object>) entry.getKey();
-			oldValues.put(attr, attrs.getValue(attr));
-			attrs.setValue(attr, entry.getValue());
-		}
-		this.oldValues = oldValues;
-	}
-
-	@Override
 	public String getName() {
 		return S.get("changeToolAttrAction");
 	}
 
 	@Override
+	public void doIt(Project proj) {
+		if (affectsAppearance()) {
+			ActionTransaction xn = new ActionTransaction(true);
+			xn.execute();
+		} else {
+			execute(true);
+		}
+	}
+
+	@Override
 	public void undo(Project proj) {
+		if (affectsAppearance()) {
+			ActionTransaction xn = new ActionTransaction(true);
+			xn.execute();
+		} else {
+			execute(false);
+		}
+	}
+
+	boolean affectsAppearance() {
 		AttributeSet attrs = config.getEvent().getAttributeSet();
-		Map<Attribute<?>, Object> oldValues = this.oldValues;
-		for (Map.Entry<Attribute<?>, Object> entry : oldValues.entrySet()) {
-			@SuppressWarnings("unchecked")
-			Attribute<Object> attr = (Attribute<Object>) entry.getKey();
-			attrs.setValue(attr, entry.getValue());
+		if (attrs instanceof FactoryAttributes) {
+			ComponentFactory factory = ((FactoryAttributes)attrs).getFactory();
+			if (factory instanceof SubcircuitFactory) {
+				for (Attribute<?> attr : config.getAttributeValues().keySet()) {
+					if (attr == CircuitAttributes.APPEARANCE_ATTR)
+						return true;
+				}
+			} else if (factory instanceof VhdlEntity) {
+				for (Attribute<?> attr : config.getAttributeValues().keySet()) {
+					if (attr == StdAttr.APPEARANCE)
+						return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	private void execute(boolean forward) {
+		if (forward) {
+			AttributeSet attrs = config.getEvent().getAttributeSet();
+			Map<Attribute<?>, Object> newValues = config.getAttributeValues();
+			Map<Attribute<?>, Object> oldValues = new HashMap<Attribute<?>, Object>(
+					newValues.size());
+			for (Map.Entry<Attribute<?>, Object> entry : newValues.entrySet()) {
+				@SuppressWarnings("unchecked")
+				Attribute<Object> attr = (Attribute<Object>) entry.getKey();
+				oldValues.put(attr, attrs.getValue(attr));
+				attrs.setValue(attr, entry.getValue());
+			}
+			this.oldValues = oldValues;
+		} else {
+			AttributeSet attrs = config.getEvent().getAttributeSet();
+			Map<Attribute<?>, Object> oldValues = this.oldValues;
+			for (Map.Entry<Attribute<?>, Object> entry : oldValues.entrySet()) {
+				@SuppressWarnings("unchecked")
+				Attribute<Object> attr = (Attribute<Object>) entry.getKey();
+				attrs.setValue(attr, entry.getValue());
+			}
+		}
+	}
+
+	private class ActionTransaction extends CircuitTransaction {
+		private boolean forward;
+		ActionTransaction(boolean forward) { this.forward = forward; }
+
+		@Override
+		protected Map<Circuit, Integer> getAccessedCircuits() {
+			Map<Circuit, Integer> accessMap = new HashMap<>();
+			AttributeSet attrs = config.getEvent().getAttributeSet();
+			if (attrs instanceof FactoryAttributes) {
+				ComponentFactory factory = ((FactoryAttributes)attrs).getFactory();
+				if (factory instanceof SubcircuitFactory) {
+					Circuit circuit = ((SubcircuitFactory)factory).getSubcircuit();
+					for (Circuit supercirc : circuit.getCircuitsUsingThis()) {
+						accessMap.put(supercirc, READ_WRITE);
+					}
+				} else if (factory instanceof VhdlEntity) {
+					VhdlEntity vhdl = (VhdlEntity)factory;
+					for (Circuit supercirc : vhdl.getCircuitsUsingThis()) {
+						accessMap.put(supercirc, READ_WRITE);
+					}
+				}
+			}
+			return accessMap;
+		}
+
+		@Override
+		protected void run(CircuitMutator mutator) {
+			ToolAttributeAction.this.execute(forward);
 		}
 	}
 

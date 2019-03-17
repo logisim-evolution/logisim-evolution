@@ -375,7 +375,7 @@ public class SubcircuitFactory extends InstanceFactory {
 		Direction defaultFacing = source.getAppearance().getFacing();
 		Location loc = painter.getLocation();
 		g.translate(loc.getX(), loc.getY());
-		source.getAppearance().paintSubcircuit(g, facing);
+		source.getAppearance().paintSubcircuit(painter, g, facing);
 		drawCircuitLabel(painter, getOffsetBounds(attrs), facing, defaultFacing);
 		g.translate(-loc.getX(), -loc.getY());
 		painter.drawLabel();

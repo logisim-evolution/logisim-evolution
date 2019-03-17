@@ -41,6 +41,8 @@ import org.slf4j.LoggerFactory;
 
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.LogisimVersion;
+import com.cburch.logisim.circuit.appear.DynamicElement;
+import com.cburch.logisim.circuit.appear.DynamicElementProvider;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.AttributeSet;
@@ -59,7 +61,7 @@ import com.cburch.logisim.tools.key.BitWidthConfigurator;
 import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.StringUtil;
 
-public class Counter extends InstanceFactory {
+public class Counter extends InstanceFactory implements DynamicElementProvider {
 
 	public static int SymbolWidth(int NrOfBits) {
 		return 150 + ((NrOfBits - 8) / 5) * 10;
@@ -576,4 +578,7 @@ public class Counter extends InstanceFactory {
 		return new int[] {CK};
 	}
 
+	public DynamicElement createDynamicElement(int x, int y, DynamicElement.Path path) {
+		return new CounterShape(x, y, path);
+	}
 }

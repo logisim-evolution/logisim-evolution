@@ -115,13 +115,13 @@ public class DrawingAttributeSet implements AttributeSet, Cloneable {
 	}
 
 	static final List<Attribute<?>> ATTRS_ALL = UnmodifiableList
-			.create(new Attribute<?>[] { DrawAttr.FONT, DrawAttr.ALIGNMENT,
+			.create(new Attribute<?>[] { DrawAttr.FONT, DrawAttr.HALIGNMENT, DrawAttr.VALIGNMENT,
 					DrawAttr.PAINT_TYPE, DrawAttr.STROKE_WIDTH,
 					DrawAttr.STROKE_COLOR, DrawAttr.FILL_COLOR,
 					DrawAttr.TEXT_DEFAULT_FILL, DrawAttr.CORNER_RADIUS });
 
 	static final List<Object> DEFAULTS_ALL = Arrays.asList(new Object[] {
-			DrawAttr.DEFAULT_FONT, DrawAttr.ALIGN_CENTER,
+			DrawAttr.DEFAULT_FONT, DrawAttr.HALIGN_CENTER, DrawAttr.VALIGN_MIDDLE,
 			DrawAttr.PAINT_STROKE, Integer.valueOf(1), Color.BLACK,
 			Color.WHITE, Color.BLACK, Integer.valueOf(10) });
 

@@ -28,56 +28,58 @@
  *       http://reds.heig-vd.ch
  *******************************************************************************/
 
-package com.cburch.draw.model;
+package com.cburch.logisim.gui.appear;
 
 import java.awt.Graphics;
-import java.util.List;
+import java.awt.Dimension;
+import java.awt.Point;
+import javax.swing.Icon;
 
-import com.cburch.logisim.data.Attribute;
-import com.cburch.logisim.data.AttributeSet;
-import com.cburch.logisim.data.Bounds;
-import com.cburch.logisim.data.Location;
+import com.cburch.draw.tools.DrawingAttributeSet;
+import com.cburch.draw.toolbar.ToolbarClickableItem;
+import com.cburch.logisim.util.Icons;
 
-public interface CanvasObject {
-	public abstract Handle canDeleteHandle(Location desired);
+public class ShowStateTool implements ToolbarClickableItem {
 
-	public abstract Handle canInsertHandle(Location desired);
+	private AppearanceView view;
+	private AppearanceCanvas canvas;
+	private DrawingAttributeSet attrs;
+	private Icon icon, pressed;
 
-	public abstract boolean canMoveHandle(Handle handle);
+	public ShowStateTool(AppearanceView view, AppearanceCanvas canvas, DrawingAttributeSet attrs) {
+		this.view = view;
+		this.canvas = canvas;
+		this.attrs = attrs;
+		icon = Icons.getIcon("showstate.gif");
+		pressed = Icons.getIcon("showstate_pressed.gif");
+	}
 
-	public abstract boolean canRemove();
+	public Dimension getDimension(Object orientation) {
+		return new Dimension(icon.getIconWidth() + 8, icon.getIconHeight() + 8);
+	}
 
-	public abstract CanvasObject clone();
+	public String getToolTip() {
+		return "Select state to be shown";
+	}
 
-	public abstract boolean contains(Location loc, boolean assumeFilled);
+	public boolean isSelectable() {
+		return false;
+	}
 
-	public Handle deleteHandle(Handle handle);
+	public void clicked() {
+		ShowStateDialog w = new ShowStateDialog(view.getFrame(), canvas);
+		Point p = view.getFrame().getLocation();
+		p.translate(80, 50);
+		w.setLocation(p);
+		w.setVisible(true);
+	}
 
-	public abstract AttributeSet getAttributeSet();
+	public void paintIcon(java.awt.Component destination, Graphics g) {
+		icon.paintIcon(destination, g, 4, 4);
+	}
 
-	public abstract Bounds getBounds();
+	public void paintPressedIcon(java.awt.Component destination, Graphics g) {
+		pressed.paintIcon(destination, g, 4, 4);
+	}
 
-	public abstract String getDisplayName();
-	
-	public abstract String getDisplayNameAndLabel();
-
-	public abstract List<Handle> getHandles(HandleGesture gesture);
-
-	public abstract <V> V getValue(Attribute<V> attr);
-
-	public void insertHandle(Handle desired, Handle previous);
-
-	public abstract boolean matches(CanvasObject other);
-
-	public abstract int matchesHashCode();
-
-	public Handle moveHandle(HandleGesture gesture);
-
-	public abstract boolean overlaps(CanvasObject other);
-
-	public abstract void paint(Graphics g, HandleGesture gesture);
-
-	public <V> void setValue(Attribute<V> attr, V value);
-
-	public void translate(int dx, int dy);
 }

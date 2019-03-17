@@ -55,7 +55,7 @@ class AppearanceToolbarModel extends AbstractToolbarModel implements
 	private Canvas canvas;
 	private List<ToolbarItem> items;
 
-	public AppearanceToolbarModel(AbstractTool selectTool, Canvas canvas,
+	public AppearanceToolbarModel(AbstractTool selectTool, ShowStateTool ssTool, Canvas canvas,
 			DrawingAttributeSet attrs) {
 		this.canvas = canvas;
 
@@ -69,6 +69,7 @@ class AppearanceToolbarModel extends AbstractToolbarModel implements
 		for (AbstractTool tool : tools) {
 			rawItems.add(new ToolbarToolItem(tool));
 		}
+		rawItems.add(ssTool);
 		items = Collections.unmodifiableList(rawItems);
 		canvas.addPropertyChangeListener(Canvas.TOOL_PROPERTY, this);
 	}

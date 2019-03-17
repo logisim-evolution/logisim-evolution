@@ -38,6 +38,8 @@ import java.awt.Graphics;
 import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
+import com.cburch.logisim.circuit.appear.DynamicElement;
+import com.cburch.logisim.circuit.appear.DynamicElementProvider;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Attributes;
@@ -57,7 +59,7 @@ import com.cburch.logisim.tools.key.BitWidthConfigurator;
 import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.StringUtil;
 
-public class Register extends InstanceFactory {
+public class Register extends InstanceFactory implements DynamicElementProvider {
 	public static void DrawRegisterClassic(InstancePainter painter, int x, int y,
 										   int nr_of_bits, boolean isLatch, boolean neg_active,
 										   boolean has_we, String value) {
@@ -364,5 +366,9 @@ public class Register extends InstanceFactory {
 			instance.recomputeBounds();
 			updatePorts(instance);
 		}
+	}
+	
+	public DynamicElement createDynamicElement(int x, int y, DynamicElement.Path path) {
+		return new RegisterShape(x, y, path);
 	}
 }

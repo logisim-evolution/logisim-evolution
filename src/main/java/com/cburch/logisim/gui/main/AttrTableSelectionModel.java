@@ -74,6 +74,7 @@ class AttrTableSelectionModel extends AttributeSetTableModel implements
 	public String getTitle() {
 		ComponentFactory wireFactory = null;
 		ComponentFactory factory = null;
+		String label = null;
 		int factoryCount = 0;
 		int totalCount = 0;
 		boolean variousFound = false;
@@ -91,6 +92,7 @@ class AttrTableSelectionModel extends AttributeSetTableModel implements
 			} else if (factory == null) {
 				factory = fact;
 				factoryCount = 1;
+				label = comp.getAttributeSet().getValue(StdAttr.LABEL);
 			} else {
 				variousFound = true;
 			}
@@ -118,6 +120,8 @@ class AttrTableSelectionModel extends AttributeSetTableModel implements
 				SetInstance(null);
 				return S.fmt("hdlAttrTitle", circName);
 			}
+		} else if (factoryCount == 1 && label != null && label.length() > 0) {
+			return S.fmt("selectionOne", factory.getDisplayName()) + " \"" + label + "\"";
 		} else if (factoryCount == 1) {
 			SetInstance(factory);
 			return S.fmt("selectionOne", factory.getDisplayName());

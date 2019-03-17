@@ -45,7 +45,26 @@ public abstract class CircuitTransaction {
 		Map<Circuit, Lock> locks = CircuitLocker.acquireLocks(this, mutator);
 		CircuitTransactionResult result;
 		try {
-			this.run(mutator);
+			try {
+				this.run(mutator);
+			} catch (CircuitLocker.LockException e) {
+				System.out.println("*** Circuit Lock Bug Diagnostics ***");
+				System.out.println("This thread: " + Thread.currentThread());
+				System.out.println("owns " + locks.size() + " locks, as follows:");
+				for (Map.Entry<Circuit, Lock> entry : locks.entrySet()) {
+					Circuit circuit = entry.getKey();
+					Lock lock = entry.getValue();
+					System.out.printf("  circuit \"%s\" [lock serial: %d] with lock %s\n",
+							circuit.getName(), circuit.getLocker().getSerialNumber(), lock);
+				}
+				System.out.println("attempted to access without a lock:");
+				System.out.printf("  circuit \"%s\" [lock serial: %d/%d]\n",
+						e.getCircuit().getName(), e.getSerialNumber(),
+						e.getCircuit().getLocker().getSerialNumber());
+				System.out.println("  owned by thread: " + e.getMutatingThread());
+				System.out.println("  with mutator: " + e.getCircuitMutator());
+				throw e;
+			}
 
 			// Let the port locations of each subcircuit's appearance be
 			// updated to reflect the changes - this needs to happen before

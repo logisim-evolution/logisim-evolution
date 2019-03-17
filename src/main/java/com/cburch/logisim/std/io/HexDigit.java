@@ -34,6 +34,8 @@ import static com.cburch.logisim.std.Strings.S;
 
 import java.awt.Color;
 
+import com.cburch.logisim.circuit.appear.DynamicElement;
+import com.cburch.logisim.circuit.appear.DynamicElementProvider;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.BitWidth;
@@ -49,7 +51,7 @@ import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
 
-public class HexDigit extends InstanceFactory {
+public class HexDigit extends InstanceFactory implements DynamicElementProvider {
 	
 	protected static final int HEX = 0;
 	protected static final int DP = 1;
@@ -180,6 +182,11 @@ public class HexDigit extends InstanceFactory {
 		if (MyHDLGenerator == null)
 			MyHDLGenerator = new HexDigitHDLGeneratorFactory();
 		return MyHDLGenerator.HDLTargetSupported(HDLIdentifier, attrs);
+	}
+
+	public DynamicElement createDynamicElement(int x, int y, DynamicElement.Path path) {
+		return new HexDigitShape(x, y, path);
+	
 	}
 
 }

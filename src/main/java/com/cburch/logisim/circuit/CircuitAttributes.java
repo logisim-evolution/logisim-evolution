@@ -57,6 +57,10 @@ import com.cburch.logisim.util.SyntaxChecker;
 public class CircuitAttributes extends AbstractAttributeSet {
 	private class MyListener implements AttributeListener,
 			CircuitAppearanceListener {
+		private Circuit source;
+		private MyListener(Circuit s) {
+			source = s;
+		}
 		public void attributeListChanged(AttributeEvent e) {
 		}
 
@@ -76,6 +80,8 @@ public class CircuitAttributes extends AbstractAttributeSet {
 				subcircInstance.recomputeBounds();
 			}
 			subcircInstance.fireInvalidated();
+			if (source != null & !source.getAppearance().isDefaultAppearance())
+				source.getStaticAttributes().setValue(APPEARANCE_ATTR, APPEAR_CUSTOM);
 		}
 	}
 
@@ -110,13 +116,17 @@ public class CircuitAttributes extends AbstractAttributeSet {
 						source.fireEvent(CircuitEvent.ACTION_SET_NAME, NewName);
 					}
 				}
+			}  else if (e.getAttribute() == APPEARANCE_ATTR) {
+				if (e.getValue() == APPEAR_CLASSIC || e.getValue() == APPEAR_FPGA || e.getValue() == APPEAR_EVOLUTION) {
+					source.getAppearance().setDefaultAppearance(true);
+					source.RecalcDefaultShape();
+				}
 			}
 		}
 	}
 
 	static AttributeSet createBaseAttrs(Circuit source, String name) {
-		AttributeSet ret = AttributeSets
-				.fixedSet(STATIC_ATTRS, STATIC_DEFAULTS);
+		AttributeSet ret = AttributeSets.fixedSet(STATIC_ATTRS, STATIC_DEFAULTS);
 		ret.setValue(APPEARANCE_ATTR, AppPreferences.getDefaultCircuitAppearance());
 		ret.setValue(CircuitAttributes.NAME_ATTR, name);
 		ret.addAttributeListener(new StaticListener(source));
@@ -156,18 +166,18 @@ public class CircuitAttributes extends AbstractAttributeSet {
 	private static final Attribute<?>[] STATIC_ATTRS = { NAME_ATTR,
 			CIRCUIT_LABEL_ATTR, CIRCUIT_LABEL_FACING_ATTR,
 			CIRCUIT_LABEL_FONT_ATTR,APPEARANCE_ATTR,NAMED_CIRCUIT_BOX_FIXED_SIZE, 
-			CIRCUIT_VHDL_PATH };
+			CIRCUIT_VHDL_PATH,ShowStateOption.ATTR };
 
 	private static final Object[] STATIC_DEFAULTS = { "", "", Direction.EAST,
 			StdAttr.DEFAULT_LABEL_FONT, APPEAR_CLASSIC, 
-			false, "" };
+			false, "",ShowStateOption.NONE };
 
 	private static final List<Attribute<?>> INSTANCE_ATTRS = Arrays
 			.asList(new Attribute<?>[] { StdAttr.FACING, StdAttr.LABEL,
 					LABEL_LOCATION_ATTR, StdAttr.LABEL_FONT,StdAttr.LABEL_VISIBILITY,
-					CircuitAttributes.NAME_ATTR, CIRCUIT_LABEL_ATTR,
+					NAME_ATTR, CIRCUIT_LABEL_ATTR,
 					CIRCUIT_LABEL_FACING_ATTR, CIRCUIT_LABEL_FONT_ATTR,APPEARANCE_ATTR,
-					CIRCUIT_VHDL_PATH });
+					CIRCUIT_VHDL_PATH,ShowStateOption.ATTR });
 
 	private Circuit source;
 	private Instance subcircInstance;
@@ -246,7 +256,7 @@ public class CircuitAttributes extends AbstractAttributeSet {
 	void setSubcircuit(Instance value) {
 		subcircInstance = value;
 		if (subcircInstance != null && listener == null) {
-			listener = new MyListener();
+			listener = new MyListener(source);
 			source.getStaticAttributes().addAttributeListener(listener);
 			source.getAppearance().addCircuitAppearanceListener(listener);
 		}

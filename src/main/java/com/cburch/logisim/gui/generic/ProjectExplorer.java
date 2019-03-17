@@ -35,7 +35,6 @@ package com.cburch.logisim.gui.generic;
  * http://www.cs.cornell.edu/courses/cs3410/2015sp/
  */
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Shape;
 import java.awt.event.ActionEvent;
@@ -114,21 +113,6 @@ public class ProjectExplorer extends JTree implements LocaleListener {
 				Tool tool = toolNode.getValue();
 				if (ret instanceof JLabel) {
                     JLabel label = (JLabel)ret;
-                    boolean viewed = false;
-                    if (tool instanceof AddTool && proj != null && proj.getFrame() != null) {
-                            Circuit circ = null;
-                            VhdlContent vhdl = null;
-                            ComponentFactory fact = ((AddTool) tool).getFactory(false);
-                            if (fact instanceof SubcircuitFactory) {
-                                    circ = ((SubcircuitFactory) fact).getSubcircuit();
-                            } else if (fact instanceof VhdlEntity) {
-                                    vhdl = ((VhdlEntity) fact).getContent();
-                            }
-                            if (proj.getFrame().getHdlEditorView() == null)
-                                viewed = (circ != null && circ == proj.getCurrentCircuit());
-                            else
-                                viewed = (vhdl != null && vhdl == proj.getFrame().getHdlEditorView());
-                    }
                     label.setText(tool.getDisplayName());
                     label.setIcon(new ToolIcon(tool));
                     label.setToolTipText(tool.getDescription());
@@ -169,6 +153,10 @@ public class ProjectExplorer extends JTree implements LocaleListener {
 				if (path != null && listener != null) {
 					listener.doubleClicked(new ProjectExplorerEvent(path));
 				} 
+			} else {
+				TreePath path = getPathForLocation(e.getX(), e.getY());
+				if (listener != null)
+					listener.selectionChanged(new ProjectExplorerEvent(path));
 			}
 		}
 

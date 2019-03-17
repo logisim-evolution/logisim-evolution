@@ -28,56 +28,45 @@
  *       http://reds.heig-vd.ch
  *******************************************************************************/
 
-package com.cburch.draw.model;
+package com.cburch.logisim.std.io;
+
+import static com.cburch.logisim.std.Strings.S;
 
 import java.awt.Graphics;
+import java.awt.Color;
+import java.awt.Font;
 import java.util.List;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
+import com.cburch.logisim.instance.InstanceDataSingleton;
+import com.cburch.logisim.circuit.CircuitState;
+import com.cburch.logisim.circuit.appear.DynamicElement;
 import com.cburch.logisim.data.Attribute;
-import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Bounds;
-import com.cburch.logisim.data.Location;
+import com.cburch.logisim.util.UnmodifiableList;
+import com.cburch.logisim.util.GraphicsUtil;
+import com.cburch.draw.util.EditableLabel;
 
-public interface CanvasObject {
-	public abstract Handle canDeleteHandle(Location desired);
+public class HexDigitShape extends SevenSegmentShape {
 
-	public abstract Handle canInsertHandle(Location desired);
+	public HexDigitShape(int x, int y, DynamicElement.Path p) {
+		super(x, y, p);
+	}
 
-	public abstract boolean canMoveHandle(Handle handle);
+	@Override
+	public Element toSvgElement(Document doc) {
+		return toSvgElement(doc.createElement("visible-hexdigit"));
+	}
 
-	public abstract boolean canRemove();
+	@Override
+	public String getDisplayName() {
+		return S.get("hexDigitComponent");
+	}
 
-	public abstract CanvasObject clone();
-
-	public abstract boolean contains(Location loc, boolean assumeFilled);
-
-	public Handle deleteHandle(Handle handle);
-
-	public abstract AttributeSet getAttributeSet();
-
-	public abstract Bounds getBounds();
-
-	public abstract String getDisplayName();
-	
-	public abstract String getDisplayNameAndLabel();
-
-	public abstract List<Handle> getHandles(HandleGesture gesture);
-
-	public abstract <V> V getValue(Attribute<V> attr);
-
-	public void insertHandle(Handle desired, Handle previous);
-
-	public abstract boolean matches(CanvasObject other);
-
-	public abstract int matchesHashCode();
-
-	public Handle moveHandle(HandleGesture gesture);
-
-	public abstract boolean overlaps(CanvasObject other);
-
-	public abstract void paint(Graphics g, HandleGesture gesture);
-
-	public <V> void setValue(Attribute<V> attr, V value);
-
-	public void translate(int dx, int dy);
+	@Override
+	public String toString() {
+		return "Hex Digit:" + getBounds();
+	}
 }

@@ -43,11 +43,14 @@ import javax.swing.JComponent;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.circuit.appear.AppearancePort;
+import com.cburch.logisim.circuit.appear.DynamicElement;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.comp.ComponentDrawContext;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.prefs.AppPreferences;
+import com.cburch.logisim.std.io.Led;
+import com.cburch.logisim.std.io.RGBLed;
 import com.cburch.logisim.std.wiring.Pin;
 import com.cburch.logisim.util.GraphicsUtil;
 
@@ -57,13 +60,14 @@ public class LayoutThumbnail extends JComponent {
 	private static final int BORDER = 10;
 
 	private CircuitState circuitState;
-	private Collection<Instance> ports;
+	private Collection<Instance> ports, elts;
 
-	public LayoutThumbnail() {
+	public LayoutThumbnail(Dimension size) {
 		circuitState = null;
 		ports = null;
+		elts = null;
 		setBackground(Color.LIGHT_GRAY);
-		setPreferredSize(new Dimension(400, 300));
+		setPreferredSize(size);
 	}
 
 	@Override
@@ -96,7 +100,7 @@ public class LayoutThumbnail extends JComponent {
 			context.setShowState(false);
 			context.setShowColor(false);
 			circuit.draw(context, Collections.<Component> emptySet());
-			if (ports != null) {
+			if (ports != null && ports.size() > 0) {
 				gCopy.setColor(AppearancePort.COLOR);
 				int width = Math.max(4, (int) ((2 / scale) + 0.5));
 				GraphicsUtil.switchToWidth(gCopy, width);
@@ -117,6 +121,23 @@ public class LayoutThumbnail extends JComponent {
 					}
 				}
 			}
+			if (elts != null && elts.size() > 0) {
+				gCopy.setColor(DynamicElement.COLOR);
+				int width = Math.max(4, (int) ((2 / scale) + 0.5));
+				GraphicsUtil.switchToWidth(gCopy, width);
+				for (Instance elt : elts) {
+					Bounds b = elt.getBounds();
+					int x = b.getX();
+					int y = b.getY();
+					int w = b.getWidth();
+					int h = b.getHeight();
+					if (elt.getFactory() instanceof Led || elt.getFactory() instanceof RGBLed) {
+						gCopy.drawOval(x, y, w, h);
+					} else {
+						gCopy.drawRect(x, y, w, h);
+					}
+				}
+			}
 			gCopy.dispose();
 
 			g.setColor(Color.BLACK);
@@ -125,9 +146,10 @@ public class LayoutThumbnail extends JComponent {
 		}
 	}
 
-	public void setCircuit(CircuitState circuitState, Collection<Instance> ports) {
+	public void setCircuit(CircuitState circuitState, Collection<Instance> ports, Collection<Instance> elts) {
 		this.circuitState = circuitState;
 		this.ports = ports;
+		this.elts = elts;
 		repaint();
 	}
 

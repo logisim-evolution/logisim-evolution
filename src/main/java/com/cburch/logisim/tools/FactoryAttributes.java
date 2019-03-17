@@ -107,6 +107,13 @@ public class FactoryAttributes implements AttributeSet, AttributeListener, Clone
 		return getBase().getAttributes();
 	}
 
+	public ComponentFactory getFactory() {
+		if (factory != null)
+			return factory;
+		else
+			return desc.getFactory(descBase);
+	}
+
 	public AttributeSet getBase() {
 		AttributeSet ret = baseAttrs;
 		if (ret == null) {

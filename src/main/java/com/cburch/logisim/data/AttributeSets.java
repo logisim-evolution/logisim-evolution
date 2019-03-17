@@ -36,7 +36,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class AttributeSets {
-	private static class FixedSet extends AbstractAttributeSet {
+	static class FixedSet extends AbstractAttributeSet {
 		private List<Attribute<?>> attrs;
 		private Object[] values;
 		private int readOnly = 0;

@@ -9,11 +9,15 @@ import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Map;
+import java.util.WeakHashMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.cburch.logisim.circuit.Circuit;
+import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.AttributeSet;
@@ -167,7 +171,7 @@ public class VhdlEntity  extends InstanceFactory implements HdlModelListener {
 
 		Location loc = painter.getLocation();
 		g.translate(loc.getX(), loc.getY());
-		appearance.paintSubcircuit(g, facing);
+		appearance.paintSubcircuit(painter, g, facing);
 		g.translate(-loc.getX(), -loc.getY());
 
 		String label = painter.getAttributeValue(StdAttr.LABEL);
@@ -372,5 +376,16 @@ public class VhdlEntity  extends InstanceFactory implements HdlModelListener {
     
     @Override
     public void appearanceChanged(HdlModel source) { }
+    
+    private WeakHashMap<Component, Circuit> circuitsUsingThis = new WeakHashMap<>();
+	public Collection<Circuit> getCircuitsUsingThis() {
+		return circuitsUsingThis.values();
+	}
+	public void addCircuitUsing(Component comp, Circuit circ) {
+		circuitsUsingThis.put(comp, circ);
+	}
+	public void removeCircuitUsing(Component comp) {
+		circuitsUsingThis.remove(comp);
+	}
 
 }

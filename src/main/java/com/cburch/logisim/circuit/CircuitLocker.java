@@ -39,7 +39,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-class CircuitLocker {
+public class CircuitLocker {
 	private static class CircuitComparator implements Comparator<Circuit> {
 		public int compare(Circuit a, Circuit b) {
 			int an = a.getLocker().serialNumber;
@@ -116,10 +116,14 @@ class CircuitLocker {
 		mutatingMutator = null;
 	}
 
-	void checkForWritePermission(String operationName) {
+	public int getSerialNumber() {
+		return serialNumber;
+	}
+
+	void checkForWritePermission(String operationName, Circuit circuit) {
 		if (mutatingThread != Thread.currentThread()) {
-			throw new IllegalStateException(operationName
-					+ " outside transaction");
+			throw new LockException(operationName + " outside transaction",
+					circuit, serialNumber, mutatingThread, mutatingMutator);
 		}
 	}
 
@@ -137,5 +141,28 @@ class CircuitLocker {
 
 	public boolean hasWriteLock() {
 		return mutatingThread == Thread.currentThread();
+	}
+
+	public static class LockException extends IllegalStateException {
+		private static final long serialVersionUID = 1L;
+		private Circuit circuit;
+		private int serialNumber;
+		private transient Thread mutatingThread;
+		private CircuitMutatorImpl mutatingMutator;
+		public LockException(String msg,
+				Circuit circ,
+				int serial,
+				Thread thread,
+				CircuitMutatorImpl mutator) {
+			super(msg);
+			circuit = circ;
+			serialNumber = serial;
+			mutatingThread = thread;
+			mutatingMutator = mutator;
+		}
+		public Circuit getCircuit() { return circuit; }
+		public int getSerialNumber() { return serialNumber; }
+		public Thread getMutatingThread() { return mutatingThread; }
+		public CircuitMutatorImpl getCircuitMutator() { return mutatingMutator; }
 	}
 }

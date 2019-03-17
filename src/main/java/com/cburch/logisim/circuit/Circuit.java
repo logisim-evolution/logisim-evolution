@@ -38,8 +38,10 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -57,6 +59,7 @@ import org.slf4j.LoggerFactory;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.fpgagui.FPGAReport;
 import com.cburch.logisim.circuit.appear.CircuitAppearance;
+import com.cburch.logisim.circuit.appear.DynamicElementProvider;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.comp.ComponentDrawContext;
 import com.cburch.logisim.comp.ComponentEvent;
@@ -74,10 +77,12 @@ import com.cburch.logisim.data.TestException;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.file.LogisimFile;
 import com.cburch.logisim.instance.Instance;
+import com.cburch.logisim.instance.InstanceComponent;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
+import com.cburch.logisim.std.io.Led;
 import com.cburch.logisim.std.wiring.Clock;
 import com.cburch.logisim.std.wiring.Pin;
 import com.cburch.logisim.std.wiring.Tunnel;
@@ -86,6 +91,7 @@ import com.cburch.logisim.tools.SetAttributeAction;
 import com.cburch.logisim.util.AutoLabel;
 import com.cburch.logisim.util.CollectionUtil;
 import com.cburch.logisim.util.EventSourceWeakSupport;
+import com.cburch.logisim.vhdl.base.VhdlEntity;
 
 public class Circuit {
 	private class EndChangedTransaction extends CircuitTransaction {
@@ -131,7 +137,7 @@ public class Circuit {
 
 		@Override
 		public void endChanged(ComponentEvent e) {
-			locker.checkForWritePermission("ends changed");
+			locker.checkForWritePermission("ends changed", Circuit.this);
 			Annotated = false;
 			MyNetList.clear();
 			Component comp = e.getSource();
@@ -279,6 +285,14 @@ public class Circuit {
 	public void addCircuitListener(CircuitListener what) {
 		listeners.add(what);
 	}
+	
+	public void RecalcDefaultShape() {
+		if (appearance.isDefaultAppearance()) {
+			appearance.recomputeDefaultAppearance();
+		}
+	}
+
+
 
 	private class AnnotateComparator implements Comparator<Component> {
 
@@ -703,7 +717,7 @@ public class Circuit {
 		return wires.points.getExclusive(loc);
 	}
 
-	CircuitLocker getLocker() {
+	public CircuitLocker getLocker() {
 		return locker;
 	}
 
@@ -784,7 +798,7 @@ public class Circuit {
 
 	void mutatorAdd(Component c) {
 		// logger.debug("mutatorAdd: {}", c);
-		locker.checkForWritePermission("add");
+		locker.checkForWritePermission("add", this);
 
 		Annotated = false;
 		MyNetList.clear();
@@ -808,6 +822,9 @@ public class Circuit {
 			} else if (factory instanceof SubcircuitFactory) {
 				SubcircuitFactory subcirc = (SubcircuitFactory) factory;
 				subcirc.getSubcircuit().circuitsUsingThis.put(c, this);
+			} else if (factory instanceof VhdlEntity) {
+				VhdlEntity vhdl = (VhdlEntity)factory;
+				vhdl.addCircuitUsing(c, this);
 			}
 			c.addComponentListener(myComponentListener);
 		}
@@ -816,7 +833,7 @@ public class Circuit {
 	}
 
 	public void mutatorClear() {
-		locker.checkForWritePermission("clear");
+		locker.checkForWritePermission("clear",this);
 
 		Set<Component> oldComps = comps;
 		comps = new LinkedHashSet<Component>();
@@ -828,6 +845,9 @@ public class Circuit {
 			if (comp.getFactory() instanceof SubcircuitFactory) {
 				SubcircuitFactory sub = (SubcircuitFactory) comp.getFactory();
 				sub.getSubcircuit().circuitsUsingThis.remove(comp);
+			} else if (comp.getFactory() instanceof VhdlEntity) {
+				VhdlEntity vhdl = (VhdlEntity)comp.getFactory();
+				vhdl.removeCircuitUsing(comp);
 			}
 		}
 		fireEvent(CircuitEvent.ACTION_CLEAR, oldComps);
@@ -836,7 +856,7 @@ public class Circuit {
 	void mutatorRemove(Component c) {
 		//logger.debug("mutatorRemove: {}", c);
 
-		locker.checkForWritePermission("remove");
+		locker.checkForWritePermission("remove",this);
 
 		Annotated = false;
 		MyNetList.clear();
@@ -851,6 +871,27 @@ public class Circuit {
 			} else if (factory instanceof SubcircuitFactory) {
 				SubcircuitFactory subcirc = (SubcircuitFactory) factory;
 				subcirc.getSubcircuit().circuitsUsingThis.remove(c);
+			} else if (factory instanceof VhdlEntity) {
+				VhdlEntity vhdl = (VhdlEntity)factory;
+				vhdl.removeCircuitUsing(c);
+			} else if (factory instanceof DynamicElementProvider &&
+					c instanceof InstanceComponent) {
+				// TODO: remove stale appearance dynamic elements in
+				// CircuitTransaction.execute() instead?
+				HashSet<Circuit> allAffected = new HashSet<>();
+				LinkedList<Circuit> todo = new LinkedList<>();
+				todo.add(this);
+				while (!todo.isEmpty()) {
+					Circuit circ = todo.remove();
+					if (allAffected.contains(circ))
+						continue;
+					allAffected.add(circ);
+					for (Circuit other : circ.circuitsUsingThis.values())
+						if (!allAffected.contains(other))
+							todo.add(other);
+				}
+				for (Circuit circ : allAffected)
+					circ.appearance.removeDynamicElement((InstanceComponent)c);
 			}
 			c.removeComponentListener(myComponentListener);
 		}

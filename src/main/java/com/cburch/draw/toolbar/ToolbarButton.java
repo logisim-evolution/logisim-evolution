@@ -89,21 +89,32 @@ class ToolbarButton extends JComponent implements MouseListener {
 	}
 
 	public void mousePressed(MouseEvent e) {
-		if (item != null && item.isSelectable()) {
+		if (item != null && (item.isSelectable() || (item instanceof ToolbarClickableItem))) {
 			toolbar.setPressed(this);
 		}
 	}
 
 	public void mouseReleased(MouseEvent e) {
 		if (toolbar.getPressed() == this) {
-			toolbar.getToolbarModel().itemSelected(item);
 			toolbar.setPressed(null);
+			if (item != null && item.isSelectable()) {
+				toolbar.getToolbarModel().itemSelected(item);
+			} else if (item != null && item instanceof ToolbarClickableItem) {
+				((ToolbarClickableItem)item).clicked();
+			}
 		}
 	}
 
 	@Override
 	public void paintComponent(Graphics g) {
 		if (toolbar.getPressed() == this) {
+			if (item instanceof ToolbarClickableItem) {
+				Graphics g2 = g.create();
+				g2.translate(BORDER, BORDER);
+				((ToolbarClickableItem)item).paintPressedIcon(ToolbarButton.this, g2);
+				g2.dispose();
+				return;
+			}
 			Dimension dim = item.getDimension(toolbar.getOrientation());
 			Color defaultColor = g.getColor();
 			GraphicsUtil.switchToWidth(g, 2);

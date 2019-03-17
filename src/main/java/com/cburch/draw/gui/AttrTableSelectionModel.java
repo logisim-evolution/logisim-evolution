@@ -83,7 +83,7 @@ class AttrTableSelectionModel extends AttributeSetTableModel implements
 		} else if (commonClass == null) {
 			return S.fmt("selectionVarious", "" + totalCount);
 		} else if (commonCount == 1) {
-			return S.fmt("selectionOne", firstObject.getDisplayName());
+			return S.fmt("selectionOne", firstObject.getDisplayNameAndLabel());
 		} else {
 			return S.fmt("selectionMultiple",
 					firstObject.getDisplayName(), "" + commonCount);

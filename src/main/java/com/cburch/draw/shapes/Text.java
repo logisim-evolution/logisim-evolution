@@ -95,7 +95,7 @@ public class Text extends AbstractCanvasObject {
 	}
 
 	public List<Handle> getHandles() {
-		Bounds bds = label.getBounds();
+		Bounds bds = getBounds();
 		int x = bds.getX();
 		int y = bds.getY();
 		int w = bds.getWidth();
@@ -129,17 +129,30 @@ public class Text extends AbstractCanvasObject {
 			return (V) label.getFont();
 		} else if (attr == DrawAttr.FILL_COLOR) {
 			return (V) label.getColor();
-		} else if (attr == DrawAttr.ALIGNMENT) {
+		} else if (attr == DrawAttr.HALIGNMENT) {
 			int halign = label.getHorizontalAlignment();
 			AttributeOption h;
 			if (halign == EditableLabel.LEFT) {
-				h = DrawAttr.ALIGN_LEFT;
+				h = DrawAttr.HALIGN_LEFT;
 			} else if (halign == EditableLabel.RIGHT) {
-				h = DrawAttr.ALIGN_RIGHT;
+				h = DrawAttr.HALIGN_RIGHT;
 			} else {
-				h = DrawAttr.ALIGN_CENTER;
+				h = DrawAttr.HALIGN_CENTER;
 			}
 			return (V) h;
+		} else if (attr == DrawAttr.VALIGNMENT) {
+			int valign = label.getVerticalAlignment();
+			AttributeOption v;
+			if (valign == EditableLabel.TOP) {
+				v = DrawAttr.VALIGN_TOP;
+			} else if (valign == EditableLabel.BOTTOM) {
+				v = DrawAttr.VALIGN_BOTTOM;
+			} else if (valign == EditableLabel.BASELINE) {
+				v = DrawAttr.VALIGN_BASELINE;
+			} else {
+				v = DrawAttr.VALIGN_MIDDLE;
+			}
+			return (V) v;
 		} else {
 			return null;
 		}
@@ -185,9 +198,12 @@ public class Text extends AbstractCanvasObject {
 			label.setFont((Font) value);
 		} else if (attr == DrawAttr.FILL_COLOR) {
 			label.setColor((Color) value);
-		} else if (attr == DrawAttr.ALIGNMENT) {
+		} else if (attr == DrawAttr.HALIGNMENT) {
 			Integer intVal = (Integer) ((AttributeOption) value).getValue();
 			label.setHorizontalAlignment(intVal.intValue());
+		} else if (attr == DrawAttr.VALIGNMENT) {
+			Integer intVal = (Integer) ((AttributeOption) value).getValue();
+			label.setVerticalAlignment(intVal.intValue());
 		}
 	}
 }

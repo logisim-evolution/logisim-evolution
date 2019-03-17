@@ -125,6 +125,10 @@ public abstract class AbstractCanvasObject implements AttributeSet,
 	public abstract Bounds getBounds();
 
 	public abstract String getDisplayName();
+	
+	public String getDisplayNameAndLabel() {
+		return getDisplayName();
+	}
 
 	public abstract List<Handle> getHandles(HandleGesture gesture);
 

@@ -47,6 +47,7 @@ import com.cburch.logisim.instance.InstanceFactory;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.util.GraphicsUtil;
+import com.cburch.logisim.util.StringUtil;
 
 public class Text extends InstanceFactory {
 	public static Attribute<String> ATTR_TEXT = Attributes.forString("text",
@@ -114,53 +115,6 @@ public class Text extends InstanceFactory {
 		return new TextAttributes();
 	}
 
-	private Bounds estimateBounds(TextAttributes attrs) {
-		// TODO - you can imagine being more clever here
-		String text = attrs.getText();
-		if (text == null || text.length() == 0)
-			return Bounds.EMPTY_BOUNDS;
-		int n = 0;
-		int c = 0;
-		int lines = 0;
-		for (int i = 0; i < text.length(); i++) {
-				if (text.charAt(i) == '\n') {
-						n = (c > n ? c : n);
-						c = 0;
-						lines++;
-				} else if (text.charAt(i) == '\t') {
-						c += 4;
-				} else {
-						c++;
-				}
-		}
-		if (text.charAt(text.length()-1) != '\n') {
-				n = (c > n ? c : n);
-				lines++;
-		}
-		int size = attrs.getFont().getSize();
-		int h = size * lines;
-		int w = size * n * 2 / 3;
-		int ha = attrs.getHorizontalAlign();
-		int va = attrs.getVerticalAlign();
-		int x;
-		int y;
-		if (ha == TextField.H_LEFT) {
-			x = 0;
-		} else if (ha == TextField.H_RIGHT) {
-			x = -w;
-		} else {
-			x = -w / 2;
-		}
-		if (va == TextField.V_TOP) {
-			y = 0;
-		} else if (va == TextField.V_CENTER) {
-			y = -h / 2;
-		} else {
-			y = -h;
-		}
-		return Bounds.create(x, y, w, h);
-	}
-
 	@Override
 	public Bounds getOffsetBounds(AttributeSet attrsBase) {
 		TextAttributes attrs = (TextAttributes) attrsBase;
@@ -170,7 +124,9 @@ public class Text extends InstanceFactory {
 		} else {
 			Bounds bds = attrs.getOffsetBounds();
 			if (bds == null) {
-				bds = estimateBounds(attrs);
+				bds = StringUtil.estimateBounds(attrs.getText(), attrs.getFont(),
+						attrs.getHorizontalAlign(),
+						attrs.getVerticalAlign());
 				attrs.setOffsetBounds(bds);
 			}
 			return bds == null ? Bounds.EMPTY_BOUNDS : bds;

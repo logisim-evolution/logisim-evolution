@@ -146,8 +146,7 @@ public class InstancePainter implements InstanceState {
 	public InstanceData getData() {
 		CircuitState circState = context.getCircuitState();
 		if (circState == null || comp == null) {
-			throw new UnsupportedOperationException(
-					"setData on InstancePainter");
+			throw new UnsupportedOperationException("setData on InstancePainter");
 		} else {
 			
 			return (InstanceData) circState.getData(comp);
