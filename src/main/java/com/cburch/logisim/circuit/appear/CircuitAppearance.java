@@ -14,18 +14,16 @@
  *   You should have received a copy of the GNU General Public License
  *   along with logisim-evolution.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   Original code by Carl Burch (http://www.cburch.com), 2011.
- *   Subsequent modifications by :
- *     + Haute École Spécialisée Bernoise
- *       http://www.bfh.ch
- *     + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *       http://hepia.hesge.ch/
- *     + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *       http://www.heig-vd.ch/
- *   The project is currently maintained by :
- *     + REDS Institute - HEIG-VD
- *       Yverdon-les-Bains, Switzerland
- *       http://reds.heig-vd.ch
+ * Original code by Carl Burch (http://www.cburch.com), 2011.
+ * Subsequent modifications by:
+ *   + College of the Holy Cross
+ *     http://www.holycross.edu
+ *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
+ *     http://www.bfh.ch
+ *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
+ *     http://hepia.hesge.ch/
+ *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
+ *     http://www.heig-vd.ch/
  *******************************************************************************/
 
 package com.cburch.logisim.circuit.appear;
@@ -45,11 +43,14 @@ import com.cburch.draw.model.CanvasObject;
 import com.cburch.draw.model.Drawing;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitAttributes;
+import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.instance.Instance;
+import com.cburch.logisim.instance.InstanceComponent;
+import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.util.EventSourceWeakSupport;
 
 public class CircuitAppearance extends Drawing {
@@ -129,7 +130,7 @@ public class CircuitAppearance extends Drawing {
 			recomputePorts();
 		}
 	}
-
+	
 	/**
 	 * Code taken from Cornell's version of Logisim:
 	 * http://www.cs.cornell.edu/courses/cs3410/2015sp/
@@ -271,7 +272,7 @@ public class CircuitAppearance extends Drawing {
 		return isDefault;
 	}
 
-	public void paintSubcircuit(Graphics g, Direction facing) {
+	public void paintSubcircuit(InstancePainter painter, Graphics g, Direction facing) {
 		Direction defaultFacing = getFacing();
 		double rotate = 0.0;
 		if (facing != defaultFacing && g instanceof Graphics2D) {
@@ -280,10 +281,18 @@ public class CircuitAppearance extends Drawing {
 		}
 		Location offset = findAnchorLocation();
 		g.translate(-offset.getX(), -offset.getY());
+		CircuitState state = null;
+		if (painter.getShowState()) {
+			try { state = (CircuitState)painter.getData(); }
+			catch (UnsupportedOperationException e) { }
+		}
 		for (CanvasObject shape : getObjectsFromBottom()) {
 			if (!(shape instanceof AppearanceElement)) {
 				Graphics dup = g.create();
-				shape.paint(dup, null);
+				if (shape instanceof DynamicElement)
+					((DynamicElement)shape).paintDynamic(dup, state);
+				else
+					shape.paint(dup, null);
 				dup.dispose();
 			}
 		}
@@ -329,6 +338,27 @@ public class CircuitAppearance extends Drawing {
 		checkToFirePortsChanged(shapes);
 	}
 
+	public void removeDynamicElement(InstanceComponent c) {
+		ArrayList<CanvasObject> toRemove = new ArrayList<>();
+		for (CanvasObject o : getObjectsFromBottom()) {
+			if (o instanceof DynamicElement) {
+				if (((DynamicElement)o).getPath().contains(c))
+					toRemove.add(o);
+			}
+		}
+		if (toRemove.isEmpty())
+			return;
+		boolean oldSuppress = suppressRecompute;
+		try {
+			suppressRecompute = true;
+			removeObjects(toRemove);
+			recomputeDefaultAppearance();
+		} finally {
+			suppressRecompute = oldSuppress;
+		}
+		fireCircuitAppearanceChanged(CircuitAppearanceEvent.ALL_TYPES);
+	}
+
 	void replaceAutomatically(List<AppearancePort> removes,
 			List<AppearancePort> adds) {
 		// this should be called only when substituting ports via PortManager
@@ -349,6 +379,8 @@ public class CircuitAppearance extends Drawing {
 			isDefault = value;
 			if (value) {
 				recomputeDefaultAppearance();
+			} else {
+				circuit.getStaticAttributes().setValue(CircuitAttributes.APPEARANCE_ATTR, CircuitAttributes.APPEAR_CUSTOM);
 			}
 		}
 	}

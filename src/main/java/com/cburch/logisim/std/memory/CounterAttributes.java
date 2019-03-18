@@ -14,18 +14,16 @@
  *   You should have received a copy of the GNU General Public License
  *   along with logisim-evolution.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   Original code by Carl Burch (http://www.cburch.com), 2011.
- *   Subsequent modifications by :
- *     + Haute École Spécialisée Bernoise
- *       http://www.bfh.ch
- *     + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *       http://hepia.hesge.ch/
- *     + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *       http://www.heig-vd.ch/
- *   The project is currently maintained by :
- *     + REDS Institute - HEIG-VD
- *       Yverdon-les-Bains, Switzerland
- *       http://reds.heig-vd.ch
+ * Original code by Carl Burch (http://www.cburch.com), 2011.
+ * Subsequent modifications by:
+ *   + College of the Holy Cross
+ *     http://www.holycross.edu
+ *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
+ *     http://www.bfh.ch
+ *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
+ *     http://hepia.hesge.ch/
+ *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
+ *     http://www.heig-vd.ch/
  *******************************************************************************/
 
 package com.cburch.logisim.std.memory;
@@ -37,6 +35,7 @@ import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.AttributeSets;
 import com.cburch.logisim.data.BitWidth;
+import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
 
@@ -47,10 +46,10 @@ class CounterAttributes extends AbstractAttributeSet {
 	public CounterAttributes() {
 		base = AttributeSets.fixedSet(new Attribute<?>[] { StdAttr.WIDTH,
 				Counter.ATTR_MAX, Counter.ATTR_ON_GOAL, StdAttr.EDGE_TRIGGER,
-				StdAttr.LABEL, StdAttr.LABEL_FONT, StdAttr.APPEARANCE },
+				StdAttr.LABEL, StdAttr.LABEL_FONT, StdAttr.LABEL_LOC, StdAttr.APPEARANCE },
 				new Object[] { BitWidth.create(8), Integer.valueOf(0xFF),
 						Counter.ON_GOAL_WRAP, StdAttr.TRIG_RISING, "",
-						StdAttr.DEFAULT_LABEL_FONT, AppPreferences.getDefaultAppearance() });
+						StdAttr.DEFAULT_LABEL_FONT, Direction.NORTH, AppPreferences.getDefaultAppearance() });
 	}
 
 	@Override

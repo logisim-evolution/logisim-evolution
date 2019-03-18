@@ -14,18 +14,16 @@
  *   You should have received a copy of the GNU General Public License
  *   along with logisim-evolution.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   Original code by Carl Burch (http://www.cburch.com), 2011.
- *   Subsequent modifications by :
- *     + Haute École Spécialisée Bernoise
- *       http://www.bfh.ch
- *     + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *       http://hepia.hesge.ch/
- *     + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *       http://www.heig-vd.ch/
- *   The project is currently maintained by :
- *     + REDS Institute - HEIG-VD
- *       Yverdon-les-Bains, Switzerland
- *       http://reds.heig-vd.ch
+ * Original code by Carl Burch (http://www.cburch.com), 2011.
+ * Subsequent modifications by:
+ *   + College of the Holy Cross
+ *     http://www.holycross.edu
+ *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
+ *     http://www.bfh.ch
+ *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
+ *     http://hepia.hesge.ch/
+ *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
+ *     http://www.heig-vd.ch/
  *******************************************************************************/
 
 package com.cburch.logisim.circuit.appear;
@@ -45,6 +43,7 @@ import com.cburch.draw.model.HandleGesture;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.instance.Instance;
+import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.std.wiring.Pin;
 import com.cburch.logisim.util.UnmodifiableList;
 
@@ -79,6 +78,15 @@ public class AppearancePort extends AppearanceElement {
 	@Override
 	public String getDisplayName() {
 		return S.get("circuitPort");
+	}
+	
+	@Override
+	public String getDisplayNameAndLabel() {
+		String label = pin.getAttributeValue(StdAttr.LABEL);
+		if (label != null && label.length() > 0)
+			return getDisplayName() + " \"" + label + "\"";
+		else
+			return getDisplayName();
 	}
 
 	@Override

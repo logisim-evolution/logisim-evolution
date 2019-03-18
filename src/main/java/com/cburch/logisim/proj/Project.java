@@ -14,18 +14,16 @@
  *   You should have received a copy of the GNU General Public License
  *   along with logisim-evolution.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   Original code by Carl Burch (http://www.cburch.com), 2011.
- *   Subsequent modifications by :
- *     + Haute École Spécialisée Bernoise
- *       http://www.bfh.ch
- *     + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *       http://hepia.hesge.ch/
- *     + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *       http://www.heig-vd.ch/
- *   The project is currently maintained by :
- *     + REDS Institute - HEIG-VD
- *       Yverdon-les-Bains, Switzerland
- *       http://reds.heig-vd.ch
+ * Original code by Carl Burch (http://www.cburch.com), 2011.
+ * Subsequent modifications by:
+ *   + College of the Holy Cross
+ *     http://www.holycross.edu
+ *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
+ *     http://www.bfh.ch
+ *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
+ *     http://hepia.hesge.ch/
+ *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
+ *     http://www.heig-vd.ch/
  *******************************************************************************/
 
 package com.cburch.logisim.proj;
@@ -37,6 +35,7 @@ import javax.swing.JFileChooser;
 
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitListener;
+import com.cburch.logisim.circuit.CircuitLocker;
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.circuit.Simulator;
 import com.cburch.logisim.circuit.SubcircuitFactory;
@@ -184,7 +183,19 @@ public class Project {
 					++undoMods;
 			}
 			fireEvent(new ProjectEvent(ProjectEvent.ACTION_START, this, act));
-			act.doIt(this);
+			try {
+				act.doIt(this);
+			} catch (CircuitLocker.LockException e) {
+				System.out.println("*** Circuit Lock Bug Diagnostics ***");
+				System.out.println("This thread: " + Thread.currentThread());
+				System.out.println("attempted to access without any locks:");
+				System.out.printf("  circuit \"%s\" [lock serial: %d/%d]\n",
+						e.getCircuit().getName(), e.getSerialNumber(),
+						e.getCircuit().getLocker().getSerialNumber());
+				System.out.println("  owned by thread: " + e.getMutatingThread());
+				System.out.println("  with mutator: " + e.getCircuitMutator());
+				throw e;
+			}
 			file.setDirty(isFileDirty());
 			fireEvent(new ProjectEvent(ProjectEvent.ACTION_COMPLETE, this, act));
 			fireEvent(new ProjectEvent(ProjectEvent.ACTION_MERGE, this, first,
@@ -193,7 +204,19 @@ public class Project {
 		}
 		undoLog.add(new ActionData(circuitState, hdlModel, toAdd));
 		fireEvent(new ProjectEvent(ProjectEvent.ACTION_START, this, act));
-		act.doIt(this);
+		try {
+			act.doIt(this);
+		} catch (CircuitLocker.LockException e) {
+			System.out.println("*** Circuit Lock Bug Diagnostics ***");
+			System.out.println("This thread: " + Thread.currentThread());
+			System.out.println("attempted to access without any locks:");
+			System.out.printf("  circuit \"%s\" [lock serial: %d/%d]\n",
+					e.getCircuit().getName(), e.getSerialNumber(),
+					e.getCircuit().getLocker().getSerialNumber());
+			System.out.println("  owned by thread: " + e.getMutatingThread());
+			System.out.println("  with mutator: " + e.getCircuitMutator());
+			throw e;
+		}
 		while (undoLog.size() > MAX_UNDO_SIZE) {
 			undoLog.removeFirst();
 		}

@@ -14,21 +14,22 @@
  *   You should have received a copy of the GNU General Public License
  *   along with logisim-evolution.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   Original code by Carl Burch (http://www.cburch.com), 2011.
- *   Subsequent modifications by :
- *     + Haute École Spécialisée Bernoise
- *       http://www.bfh.ch
- *     + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *       http://hepia.hesge.ch/
- *     + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *       http://www.heig-vd.ch/
- *   The project is currently maintained by :
- *     + REDS Institute - HEIG-VD
- *       Yverdon-les-Bains, Switzerland
- *       http://reds.heig-vd.ch
+ * Original code by Carl Burch (http://www.cburch.com), 2011.
+ * Subsequent modifications by:
+ *   + College of the Holy Cross
+ *     http://www.holycross.edu
+ *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
+ *     http://www.bfh.ch
+ *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
+ *     http://hepia.hesge.ch/
+ *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
+ *     http://www.heig-vd.ch/
  *******************************************************************************/
 
 package com.cburch.logisim.gui.appear;
+
+import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
 
 import com.cburch.draw.canvas.Canvas;
 import com.cburch.draw.gui.AttrTableDrawManager;
@@ -61,14 +62,19 @@ public class AppearanceView {
 		attrs = new DrawingAttributeSet();
 		SelectTool selectTool = new SelectTool();
 		canvas = new AppearanceCanvas(selectTool);
-		toolbarModel = new AppearanceToolbarModel(selectTool, canvas, attrs);
+		canvasPane = new CanvasPane(canvas);
+		ShowStateTool ssTool = new ShowStateTool(this, canvas, attrs);
+		toolbarModel = new AppearanceToolbarModel(selectTool, ssTool, canvas, attrs);
 		zoomModel = new BasicZoomModel(AppPreferences.APPEARANCE_SHOW_GRID,
-				AppPreferences.APPEARANCE_ZOOM, ZOOM_OPTIONS);
+				AppPreferences.APPEARANCE_ZOOM, ZOOM_OPTIONS,canvasPane);
 		canvas.getGridPainter().setZoomModel(zoomModel);
 		attrTableManager = null;
-		canvasPane = new CanvasPane(canvas);
 		canvasPane.setZoomModel(zoomModel);
 		editHandler = new AppearanceEditHandler(canvas);
+	}
+
+	public JFrame getFrame() {
+		return (JFrame)SwingUtilities.getAncestorOfClass(JFrame.class, canvasPane);
 	}
 
 	public AttributeSet getAttributeSet() {

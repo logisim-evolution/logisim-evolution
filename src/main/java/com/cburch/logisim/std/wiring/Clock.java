@@ -14,18 +14,16 @@
  *   You should have received a copy of the GNU General Public License
  *   along with logisim-evolution.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   Original code by Carl Burch (http://www.cburch.com), 2011.
- *   Subsequent modifications by :
- *     + Haute École Spécialisée Bernoise
- *       http://www.bfh.ch
- *     + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *       http://hepia.hesge.ch/
- *     + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *       http://www.heig-vd.ch/
- *   The project is currently maintained by :
- *     + REDS Institute - HEIG-VD
- *       Yverdon-les-Bains, Switzerland
- *       http://reds.heig-vd.ch
+ * Original code by Carl Burch (http://www.cburch.com), 2011.
+ * Subsequent modifications by:
+ *   + College of the Holy Cross
+ *     http://www.holycross.edu
+ *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
+ *     http://www.bfh.ch
+ *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
+ *     http://hepia.hesge.ch/
+ *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
+ *     http://www.heig-vd.ch/
  *******************************************************************************/
 
 package com.cburch.logisim.std.wiring;
@@ -34,6 +32,7 @@ import static com.cburch.logisim.std.Strings.S;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 
 import javax.swing.Icon;
@@ -56,6 +55,7 @@ import com.cburch.logisim.instance.InstancePoker;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.tools.key.DirectionConfigurator;
 import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.Icons;
 
@@ -162,22 +162,14 @@ public class Clock extends InstanceFactory {
 		super("Clock", S.getter("clockComponent"));
 		setAttributes(
 				new Attribute[] { StdAttr.FACING, ATTR_HIGH, ATTR_LOW,
-						StdAttr.LABEL, Pin.ATTR_LABEL_LOC, StdAttr.LABEL_FONT },
+						StdAttr.LABEL, StdAttr.LABEL_LOC, StdAttr.LABEL_FONT },
 				new Object[] { Direction.EAST, Integer.valueOf(1),
 						Integer.valueOf(1), "", Direction.WEST,
 						StdAttr.DEFAULT_LABEL_FONT });
 		setFacingAttribute(StdAttr.FACING);
 		setInstanceLogger(ClockLogger.class);
 		setInstancePoker(ClockPoker.class);
-	}
-
-	//
-	// private methods
-	//
-	private void configureLabel(Instance instance) {
-		Direction facing = instance.getAttributeValue(StdAttr.FACING);
-		Direction labelLoc = instance.getAttributeValue(Pin.ATTR_LABEL_LOC);
-		Probe.configureLabel(instance, labelLoc, facing);
+		setKeyConfigurator(new DirectionConfigurator(StdAttr.LABEL_LOC, KeyEvent.ALT_DOWN_MASK));
 	}
 
 	//
@@ -187,7 +179,7 @@ public class Clock extends InstanceFactory {
 	protected void configureNewInstance(Instance instance) {
 		instance.addAttributeListener();
 		instance.setPorts(new Port[] { new Port(0, 0, Port.OUTPUT, BitWidth.ONE) });
-		configureLabel(instance);
+		instance.computeLabelTextField(Instance.AVOID_LEFT);
 	}
 
 	@Override
@@ -212,11 +204,11 @@ public class Clock extends InstanceFactory {
 
 	@Override
 	protected void instanceAttributeChanged(Instance instance, Attribute<?> attr) {
-		if (attr == Pin.ATTR_LABEL_LOC) {
-			configureLabel(instance);
+		if (attr == StdAttr.LABEL_LOC) {
+			instance.computeLabelTextField(Instance.AVOID_LEFT);
 		} else if (attr == StdAttr.FACING) {
 			instance.recomputeBounds();
-			configureLabel(instance);
+			instance.computeLabelTextField(Instance.AVOID_LEFT);
 		}
 	}
 

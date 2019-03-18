@@ -14,19 +14,18 @@
  *   You should have received a copy of the GNU General Public License
  *   along with logisim-evolution.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   Original code by Carl Burch (http://www.cburch.com), 2011.
- *   Subsequent modifications by :
- *     + Haute École Spécialisée Bernoise
- *       http://www.bfh.ch
- *     + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *       http://hepia.hesge.ch/
- *     + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *       http://www.heig-vd.ch/
- *   The project is currently maintained by :
- *     + REDS Institute - HEIG-VD
- *       Yverdon-les-Bains, Switzerland
- *       http://reds.heig-vd.ch
+ * Original code by Carl Burch (http://www.cburch.com), 2011.
+ * Subsequent modifications by:
+ *   + College of the Holy Cross
+ *     http://www.holycross.edu
+ *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
+ *     http://www.bfh.ch
+ *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
+ *     http://hepia.hesge.ch/
+ *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
+ *     http://www.heig-vd.ch/
  *******************************************************************************/
+
 package com.cburch.logisim.gui.main;
 
 import static com.cburch.logisim.gui.Strings.S;
@@ -249,7 +248,7 @@ public class Canvas extends JPanel implements LocaleListener,
 							e.getY() * getZoomFactor() - getVerticalScrollBar())
 					&& viewport.zoomButtonColor != defaultzoomButtonColor)
 					|| e.getButton() == MouseEvent.BUTTON2 && e.getClickCount() == 2) {
-				autoZoomCenter();
+				center();
 				setCursor(proj.getTool().getCursor());
 			}
 			if (drag_tool != null) {
@@ -276,35 +275,16 @@ public class Canvas extends JPanel implements LocaleListener,
 		      if (mwe.isControlDown()) {
 		        ZoomModel zoomModel = proj.getFrame().getZoomModel();
 		        double zoom = zoomModel.getZoomFactor();
-		        // Attempt to maintain mouse position during zoom, using
-		        // [m]ax, [v]alue, [e]xtent, and [r]elative position within it,
-		        // to calculate target [n]ew[m]ax, [p]ercent and [n]ew[v]alue.
-		        double mx = canvasPane.getHorizontalScrollBar().getMaximum();
-		        int vx = canvasPane.getHorizontalScrollBar().getValue();
-		        double ex = canvasPane.getHorizontalScrollBar().getVisibleAmount();
-		        int rx = mwe.getX() - vx;
-		        double my = canvasPane.getVerticalScrollBar().getMaximum();
-		        int vy = canvasPane.getVerticalScrollBar().getValue();
-		        double ey = canvasPane.getVerticalScrollBar().getVisibleAmount();
-		        int ry = mwe.getY() - vy;
-		        double newZoom = zoom;
+				double opts[] = zoomModel.getZoomOptions();
 		        if (mwe.getWheelRotation() < 0) { // ZOOM IN
-		          newZoom += 0.1;
-		          zoomModel.setZoomFactor(newZoom >= 4.0 ? 4.0 : newZoom);
-
+		        	zoom += 0.1;
+		          double max = opts[opts.length-1]/100.0;
+		          zoomModel.setZoomFactor(zoom >= max ? max : zoom,mwe);
 		        } else { // ZOOM OUT
-		          newZoom -= 0.1;
-		          zoomModel.setZoomFactor(newZoom <= 0.2 ? 0.2 : newZoom);
+		        	zoom -= 0.1;
+		          double min = opts[0]/100.0;
+		          zoomModel.setZoomFactor(zoom <= min ? min : zoom,mwe);
 		        }
-		        newZoom = zoomModel.getZoomFactor();
-		        double nmx = mx * newZoom / zoom;
-		        double px = (vx / mx) + (ex/mx - ex/nmx) * (rx / ex);
-		        int nvx = (int)(nmx * px);
-		        double nmy = my * newZoom / zoom;
-		        double py = (vy / my) + (ey/my - ey/nmy) * (ry / ey);
-		        int nvy = (int)(nmy * py);
-		        canvasPane.getHorizontalScrollBar().setValue(nvx);
-		        canvasPane.getVerticalScrollBar().setValue(nvy);
 		      } else if (tool != null && tool instanceof PokeTool && ((PokeTool)tool).isScrollable()) {
 		        int id = (mwe.getWheelRotation() < 0) ? KeyEvent.VK_UP : KeyEvent.VK_DOWN;
 		        KeyEvent e = new KeyEvent(mwe.getComponent(), KeyEvent.KEY_PRESSED,
@@ -851,7 +831,7 @@ public class Canvas extends JPanel implements LocaleListener,
 		return canvasPane;
 	}
 	
-	public void autoZoomCenter() {
+	public void center() {
 		Graphics g = getGraphics();
 		Bounds bounds;
 		if (g != null)
@@ -862,7 +842,6 @@ public class Canvas extends JPanel implements LocaleListener,
 			setScrollBar(0, 0);
 			return;
 		}
-		
 		int xpos = (int) (Math.round(bounds.getX() * getZoomFactor()
 				- (canvasPane.getViewport().getSize().getWidth() - bounds.getWidth() * getZoomFactor()) / 2));
 		int ypos = (int) (Math.round(bounds.getY() * getZoomFactor()

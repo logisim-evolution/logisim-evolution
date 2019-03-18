@@ -14,18 +14,16 @@
  *   You should have received a copy of the GNU General Public License
  *   along with logisim-evolution.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   Original code by Carl Burch (http://www.cburch.com), 2011.
- *   Subsequent modifications by :
- *     + Haute École Spécialisée Bernoise
- *       http://www.bfh.ch
- *     + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *       http://hepia.hesge.ch/
- *     + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *       http://www.heig-vd.ch/
- *   The project is currently maintained by :
- *     + REDS Institute - HEIG-VD
- *       Yverdon-les-Bains, Switzerland
- *       http://reds.heig-vd.ch
+ * Original code by Carl Burch (http://www.cburch.com), 2011.
+ * Subsequent modifications by:
+ *   + College of the Holy Cross
+ *     http://www.holycross.edu
+ *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
+ *     http://www.bfh.ch
+ *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
+ *     http://hepia.hesge.ch/
+ *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
+ *     http://www.heig-vd.ch/
  *******************************************************************************/
 
 package com.cburch.logisim.std.io;
@@ -33,7 +31,10 @@ package com.cburch.logisim.std.io;
 import static com.cburch.logisim.std.Strings.S;
 
 import java.awt.Color;
+import java.awt.event.KeyEvent;
 
+import com.cburch.logisim.circuit.appear.DynamicElement;
+import com.cburch.logisim.circuit.appear.DynamicElementProvider;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.BitWidth;
@@ -48,17 +49,28 @@ import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.tools.key.DirectionConfigurator;
 
-public class HexDigit extends InstanceFactory {
+public class HexDigit extends InstanceFactory implements DynamicElementProvider {
+	
+	protected static final int HEX = 0;
+	protected static final int DP = 1;
+
 	public HexDigit() {
 		super("Hex Digit Display", S.getter("hexDigitComponent"));
 		setAttributes(new Attribute[] { Io.ATTR_ON_COLOR, Io.ATTR_OFF_COLOR,
 				Io.ATTR_BACKGROUND , StdAttr.LABEL,
-				Io.ATTR_LABEL_LOC, StdAttr.LABEL_FONT, StdAttr.LABEL_VISIBILITY}, new Object[] { new Color(240, 0, 0),
+				StdAttr.LABEL_LOC, StdAttr.LABEL_FONT, StdAttr.LABEL_VISIBILITY}, new Object[] { new Color(240, 0, 0),
 				SevenSegment.DEFAULT_OFF, Io.DEFAULT_BACKGROUND , "", Direction.EAST, StdAttr.DEFAULT_LABEL_FONT, false });
-		setPorts(new Port[] { new Port(0, 0, Port.INPUT, 4) });
+		Port[] ps = new Port[2];
+		ps[HEX] = new Port(0, 0, Port.INPUT, 4);
+		ps[DP] = new Port(20, 0, Port.INPUT, 1);
+		ps[HEX].setToolTip(S.getter("hexDigitDataTip"));
+		ps[DP].setToolTip(S.getter("hexDigitDPTip"));
+		setPorts(ps);
 		setOffsetBounds(Bounds.create(-15, -60, 40, 60));
 		setIconName("hexdig.gif");
+		setKeyConfigurator(new DirectionConfigurator(StdAttr.LABEL_LOC, KeyEvent.ALT_DOWN_MASK));
 		MyIOInformation = new IOComponentInformationContainer(0, 8, 0, null,
 				SevenSegment.GetLabels(), null,
 				FPGAIOInformationContainer.IOComponentTypes.SevenSegment);
@@ -70,15 +82,16 @@ public class HexDigit extends InstanceFactory {
 
 	@Override
 	public void paintInstance(InstancePainter painter) {
-		SevenSegment.drawBase(painter, false);
+		SevenSegment.drawBase(painter, true);
 	}
 
 	@Override
 	public void propagate(InstanceState state) {
 		int summary = 0;
-		Value baseVal = state.getPortValue(0);
+		Value baseVal = state.getPortValue(HEX);
 		if (baseVal == null)
 			baseVal = Value.createUnknown(BitWidth.create(4));
+		Value dpVal = state.getPortValue(DP);
 		int segs; // each nibble is one segment, in top-down, left-to-right
 		// order: middle three nibbles are the three horizontal segments
 		switch (baseVal.toIntValue()) {
@@ -148,7 +161,9 @@ public class HexDigit extends InstanceFactory {
 			summary |= 16; // vertical seg at bottom left
 		if ((segs & 0x1000000) != 0)
 			summary |= 32; // vertical seg at top left
-
+		if (dpVal != null && dpVal.toIntValue() == 1)
+			summary |= 128; // decimal point
+		
 		Object value = Integer.valueOf(summary);
 		InstanceDataSingleton data = (InstanceDataSingleton) state.getData();
 		if (data == null) {
@@ -168,6 +183,11 @@ public class HexDigit extends InstanceFactory {
 		if (MyHDLGenerator == null)
 			MyHDLGenerator = new HexDigitHDLGeneratorFactory();
 		return MyHDLGenerator.HDLTargetSupported(HDLIdentifier, attrs);
+	}
+
+	public DynamicElement createDynamicElement(int x, int y, DynamicElement.Path path) {
+		return new HexDigitShape(x, y, path);
+	
 	}
 
 }

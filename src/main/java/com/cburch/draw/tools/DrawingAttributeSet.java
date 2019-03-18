@@ -14,18 +14,16 @@
  *   You should have received a copy of the GNU General Public License
  *   along with logisim-evolution.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   Original code by Carl Burch (http://www.cburch.com), 2011.
- *   Subsequent modifications by :
- *     + Haute École Spécialisée Bernoise
- *       http://www.bfh.ch
- *     + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *       http://hepia.hesge.ch/
- *     + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *       http://www.heig-vd.ch/
- *   The project is currently maintained by :
- *     + REDS Institute - HEIG-VD
- *       Yverdon-les-Bains, Switzerland
- *       http://reds.heig-vd.ch
+ * Original code by Carl Burch (http://www.cburch.com), 2011.
+ * Subsequent modifications by:
+ *   + College of the Holy Cross
+ *     http://www.holycross.edu
+ *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
+ *     http://www.bfh.ch
+ *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
+ *     http://hepia.hesge.ch/
+ *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
+ *     http://www.heig-vd.ch/
  *******************************************************************************/
 
 package com.cburch.draw.tools;
@@ -115,13 +113,13 @@ public class DrawingAttributeSet implements AttributeSet, Cloneable {
 	}
 
 	static final List<Attribute<?>> ATTRS_ALL = UnmodifiableList
-			.create(new Attribute<?>[] { DrawAttr.FONT, DrawAttr.ALIGNMENT,
+			.create(new Attribute<?>[] { DrawAttr.FONT, DrawAttr.HALIGNMENT, DrawAttr.VALIGNMENT,
 					DrawAttr.PAINT_TYPE, DrawAttr.STROKE_WIDTH,
 					DrawAttr.STROKE_COLOR, DrawAttr.FILL_COLOR,
 					DrawAttr.TEXT_DEFAULT_FILL, DrawAttr.CORNER_RADIUS });
 
 	static final List<Object> DEFAULTS_ALL = Arrays.asList(new Object[] {
-			DrawAttr.DEFAULT_FONT, DrawAttr.ALIGN_CENTER,
+			DrawAttr.DEFAULT_FONT, DrawAttr.HALIGN_CENTER, DrawAttr.VALIGN_MIDDLE,
 			DrawAttr.PAINT_STROKE, Integer.valueOf(1), Color.BLACK,
 			Color.WHITE, Color.BLACK, Integer.valueOf(10) });
 

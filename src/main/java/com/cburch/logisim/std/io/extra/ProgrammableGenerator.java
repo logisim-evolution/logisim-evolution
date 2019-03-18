@@ -1,3 +1,31 @@
+/*******************************************************************************
+ * This file is part of logisim-evolution.
+ *
+ *   logisim-evolution is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   logisim-evolution is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with logisim-evolution.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Original code by Carl Burch (http://www.cburch.com), 2011.
+ * Subsequent modifications by:
+ *   + College of the Holy Cross
+ *     http://www.holycross.edu
+ *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
+ *     http://www.bfh.ch
+ *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
+ *     http://hepia.hesge.ch/
+ *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
+ *     http://www.heig-vd.ch/
+ *******************************************************************************/
+
 package com.cburch.logisim.std.io.extra;
 
 import static com.cburch.logisim.std.Strings.S;
@@ -7,6 +35,7 @@ import java.awt.Graphics2D;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
@@ -34,9 +63,9 @@ import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.proj.Project;
-import com.cburch.logisim.std.wiring.Pin;
 import com.cburch.logisim.std.wiring.Probe;
 import com.cburch.logisim.tools.MenuExtender;
+import com.cburch.logisim.tools.key.DirectionConfigurator;
 import com.cburch.logisim.util.GraphicsUtil;
 
 public class ProgrammableGenerator extends InstanceFactory {
@@ -318,7 +347,7 @@ public class ProgrammableGenerator extends InstanceFactory {
 	public ProgrammableGenerator() {
 		super("ProgrammableGenerator", S.getter("ProgrammableGeneratorComponent"));
 		setAttributes(
-				new Attribute[] { StdAttr.FACING, ATTR_NSTATE, StdAttr.LABEL, Pin.ATTR_LABEL_LOC, StdAttr.LABEL_FONT,
+				new Attribute[] { StdAttr.FACING, ATTR_NSTATE, StdAttr.LABEL, StdAttr.LABEL_LOC, StdAttr.LABEL_FONT,
 						CONTENTS_ATTR },
 				new Object[] { Direction.EAST, Integer.valueOf(4), "", Direction.WEST, StdAttr.DEFAULT_LABEL_FONT,
 						 "" });
@@ -326,16 +355,9 @@ public class ProgrammableGenerator extends InstanceFactory {
 		setInstanceLogger(ClockLogger.class);
 		setInstancePoker(Poker.class);
 		setIconName("programmablegenerator.gif");
+		setKeyConfigurator(new DirectionConfigurator(StdAttr.LABEL_LOC, KeyEvent.ALT_DOWN_MASK));
 	}
 
-	//
-	// private methods
-	//
-	private void configureLabel(Instance instance) {
-		Direction facing = instance.getAttributeValue(StdAttr.FACING);
-		Direction labelLoc = instance.getAttributeValue(Pin.ATTR_LABEL_LOC);
-		Probe.configureLabel(instance, labelLoc, facing);
-	}
 
 	//
 	// methods for instances
@@ -344,7 +366,7 @@ public class ProgrammableGenerator extends InstanceFactory {
 	protected void configureNewInstance(Instance instance) {
 		instance.addAttributeListener();
 		instance.setPorts(new Port[] { new Port(0, 0, Port.OUTPUT, BitWidth.ONE) });
-		configureLabel(instance);
+		instance.computeLabelTextField(Instance.AVOID_LEFT);
 	}
 
 	@Override
@@ -362,11 +384,11 @@ public class ProgrammableGenerator extends InstanceFactory {
 
 	@Override
 	protected void instanceAttributeChanged(Instance instance, Attribute<?> attr) {
-		if (attr == Pin.ATTR_LABEL_LOC) {
-			configureLabel(instance);
+		if (attr == StdAttr.LABEL_LOC) {
+			instance.computeLabelTextField(Instance.AVOID_LEFT);
 		} else if (attr == StdAttr.FACING) {
 			instance.recomputeBounds();
-			configureLabel(instance);
+			instance.computeLabelTextField(Instance.AVOID_LEFT);
 		}
 	}
 

@@ -14,18 +14,16 @@
  *   You should have received a copy of the GNU General Public License
  *   along with logisim-evolution.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   Original code by Carl Burch (http://www.cburch.com), 2011.
- *   Subsequent modifications by :
- *     + Haute École Spécialisée Bernoise
- *       http://www.bfh.ch
- *     + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *       http://hepia.hesge.ch/
- *     + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *       http://www.heig-vd.ch/
- *   The project is currently maintained by :
- *     + REDS Institute - HEIG-VD
- *       Yverdon-les-Bains, Switzerland
- *       http://reds.heig-vd.ch
+ * Original code by Carl Burch (http://www.cburch.com), 2011.
+ * Subsequent modifications by:
+ *   + College of the Holy Cross
+ *     http://www.holycross.edu
+ *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
+ *     http://www.bfh.ch
+ *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
+ *     http://hepia.hesge.ch/
+ *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
+ *     http://www.heig-vd.ch/
  *******************************************************************************/
 
 package com.cburch.logisim.circuit;
@@ -42,10 +40,11 @@ import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.Attributes;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Direction;
+import com.cburch.logisim.gui.generic.ComboBox;
 import com.cburch.logisim.instance.StdAttr;
 
 public class SplitterAttributes extends AbstractAttributeSet {
-	static class BitOutAttribute extends Attribute<Integer> {
+	public static class BitOutAttribute extends Attribute<Integer> {
 		int which;
 		BitOutOption[] options;
 
@@ -59,12 +58,30 @@ public class SplitterAttributes extends AbstractAttributeSet {
 			return new BitOutAttribute(which, options);
 		}
 
-		@SuppressWarnings({ "rawtypes", "unchecked" })
+		public boolean sameOptions(BitOutAttribute other) {
+			if (options.length != other.options.length)
+				return false;
+			for (BitOutOption a : options) {
+				boolean found = false;
+				for (BitOutOption b : other.options) {
+					if (a.toString().equals(b.toString())) {
+						found = true;
+						break;
+					}
+				}
+				if (!found)
+					return false;
+			}
+			return true;
+		}
+
+		@SuppressWarnings({ "rawtypes" })
 		@Override
 		public java.awt.Component getCellEditor(Integer value) {
 			int index = value.intValue();
-			javax.swing.JComboBox combo = new javax.swing.JComboBox(options);
+			ComboBox combo = new ComboBox<>(options);
 			combo.setSelectedIndex(index);
+			combo.setMaximumRowCount(options.length);
 			return combo;
 		}
 

@@ -14,18 +14,16 @@
  *   You should have received a copy of the GNU General Public License
  *   along with logisim-evolution.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   Original code by Carl Burch (http://www.cburch.com), 2011.
- *   Subsequent modifications by :
- *     + Haute École Spécialisée Bernoise
- *       http://www.bfh.ch
- *     + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *       http://hepia.hesge.ch/
- *     + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *       http://www.heig-vd.ch/
- *   The project is currently maintained by :
- *     + REDS Institute - HEIG-VD
- *       Yverdon-les-Bains, Switzerland
- *       http://reds.heig-vd.ch
+ * Original code by Carl Burch (http://www.cburch.com), 2011.
+ * Subsequent modifications by:
+ *   + College of the Holy Cross
+ *     http://www.holycross.edu
+ *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
+ *     http://www.bfh.ch
+ *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
+ *     http://hepia.hesge.ch/
+ *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
+ *     http://www.heig-vd.ch/
  *******************************************************************************/
 
 package com.cburch.logisim.gui.start;
@@ -131,23 +129,16 @@ class AboutCredits extends JComponent {
 
 		lines = new ArrayList<CreditsLine>();
 		linesHeight = 0; // computed in paintComponent
-		/*
-		 * lines.add(new CreditsLine(1,
-		 * "github.com/reds-heig/logisim-evolution")); initialLines =
-		 * lines.size();
-		 */
 		lines.add(new CreditsLine(0, S.get("creditsRoleFork")));
-		lines.add(new CreditsLine(1,
-				"Haute \u00C9cole Sp\u00E9cialis\u00E9e Bernoise"));
+	    lines.add(new CreditsLine(1, "College of the Holy Cross"));
+	    lines.add(new CreditsLine(2, "http://www.holycross.edu"));
+		lines.add(new CreditsLine(1, "Haute \u00C9cole Sp\u00E9cialis\u00E9e Bernoise/"));
+		lines.add(new CreditsLine(1, "Berner Fachhochschule"));
 		lines.add(new CreditsLine(2, "http://www.bfh.ch"));
 		lines.add(new CreditsLine(1,
 				"Haute \u00C9cole du paysage, d'ing\u00E9nierie"));
 		lines.add(new CreditsLine(1, "et d'architecture de Gen\u00E8ve"));
 		lines.add(new CreditsLine(2, "http://hepia.hesge.ch"));
-		lines.add(new CreditsLine(1, "Haute \u00C9cole d'Ing\u00E9nierie"));
-		lines.add(new CreditsLine(1, "et de Gestion du Canton de Vaud"));
-		lines.add(new CreditsLine(2, "http://www.heig-vd.ch"));
-		lines.add(new CreditsLine(0, S.get("creditsRoleCurrent")));
 		lines.add(new CreditsLine(1, "Haute \u00C9cole d'Ing\u00E9nierie"));
 		lines.add(new CreditsLine(1, "et de Gestion du Canton de Vaud"));
 		lines.add(new CreditsLine(2, "http://www.heig-vd.ch"));

@@ -14,18 +14,16 @@
  *   You should have received a copy of the GNU General Public License
  *   along with logisim-evolution.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   Original code by Carl Burch (http://www.cburch.com), 2011.
- *   Subsequent modifications by :
- *     + Haute École Spécialisée Bernoise
- *       http://www.bfh.ch
- *     + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *       http://hepia.hesge.ch/
- *     + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *       http://www.heig-vd.ch/
- *   The project is currently maintained by :
- *     + REDS Institute - HEIG-VD
- *       Yverdon-les-Bains, Switzerland
- *       http://reds.heig-vd.ch
+ * Original code by Carl Burch (http://www.cburch.com), 2011.
+ * Subsequent modifications by:
+ *   + College of the Holy Cross
+ *     http://www.holycross.edu
+ *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
+ *     http://www.bfh.ch
+ *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
+ *     http://hepia.hesge.ch/
+ *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
+ *     http://www.heig-vd.ch/
  *******************************************************************************/
 
 package com.cburch.logisim.std.wiring;
@@ -61,7 +59,7 @@ public class ProbeAttributes extends AbstractAttributeSet implements ConvertEven
 
 	private static final List<Attribute<?>> ATTRIBUTES = Arrays
 			.asList(new Attribute<?>[] { StdAttr.FACING, RadixOption.ATTRIBUTE,
-					StdAttr.LABEL, Pin.ATTR_LABEL_LOC, StdAttr.LABEL_FONT, PROBEAPPEARANCE});
+					StdAttr.LABEL, StdAttr.LABEL_LOC, StdAttr.LABEL_FONT, PROBEAPPEARANCE});
 	
 	public static AttributeOption GetDefaultProbeAppearance() {
 		if (AppPreferences.NEW_INPUT_OUTPUT_SHAPES.getBoolean())
@@ -99,7 +97,7 @@ public class ProbeAttributes extends AbstractAttributeSet implements ConvertEven
 			return (E) facing;
 		if (attr == StdAttr.LABEL)
 			return (E) label;
-		if (attr == Pin.ATTR_LABEL_LOC)
+		if (attr == StdAttr.LABEL_LOC)
 			return (E) labelloc;
 		if (attr == StdAttr.LABEL_FONT)
 			return (E) labelfont;
@@ -125,7 +123,7 @@ public class ProbeAttributes extends AbstractAttributeSet implements ConvertEven
 				return;
 			Oldvalue = (V) label;
 			label = val;
-		} else if (attr == Pin.ATTR_LABEL_LOC) {
+		} else if (attr == StdAttr.LABEL_LOC) {
 			Direction newValue = (Direction) value;
 			if (labelloc.equals(newValue))
 				return;

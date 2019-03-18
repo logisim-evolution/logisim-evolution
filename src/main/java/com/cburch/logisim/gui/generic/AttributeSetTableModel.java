@@ -14,18 +14,16 @@
  *   You should have received a copy of the GNU General Public License
  *   along with logisim-evolution.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   Original code by Carl Burch (http://www.cburch.com), 2011.
- *   Subsequent modifications by :
- *     + Haute École Spécialisée Bernoise
- *       http://www.bfh.ch
- *     + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *       http://hepia.hesge.ch/
- *     + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *       http://www.heig-vd.ch/
- *   The project is currently maintained by :
- *     + REDS Institute - HEIG-VD
- *       Yverdon-les-Bains, Switzerland
- *       http://reds.heig-vd.ch
+ * Original code by Carl Burch (http://www.cburch.com), 2011.
+ * Subsequent modifications by:
+ *   + College of the Holy Cross
+ *     http://www.holycross.edu
+ *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
+ *     http://www.bfh.ch
+ *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
+ *     http://hepia.hesge.ch/
+ *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
+ *     http://www.heig-vd.ch/
  *******************************************************************************/
 
 package com.cburch.logisim.gui.generic;
@@ -40,6 +38,7 @@ import java.util.HashSet;
 
 import com.cburch.logisim.fpga.hdlgenerator.HDLColorRenderer;
 import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
+import com.cburch.logisim.circuit.SplitterAttributes;
 import com.cburch.logisim.comp.ComponentFactory;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeEvent;
@@ -88,6 +87,19 @@ public abstract class AttributeSetTableModel implements AttrTableModel,
 
 		public boolean isValueEditable() {
 			return !attrs.isReadOnly(attr);
+		}
+
+		public boolean multiEditCompatible(AttrTableModelRow other) {
+			if (other == null || !(other instanceof AttrRow))
+				return false;
+			AttrRow o = (AttrRow)other;
+			if (!(((Object)attr) instanceof SplitterAttributes.BitOutAttribute))
+				return false;
+			if (!(((Object)o.attr) instanceof SplitterAttributes.BitOutAttribute))
+				return false;
+			SplitterAttributes.BitOutAttribute a = (SplitterAttributes.BitOutAttribute)(Object)attr;
+			SplitterAttributes.BitOutAttribute b = (SplitterAttributes.BitOutAttribute)(Object)o.attr;
+			return a.sameOptions(b);
 		}
 
 		public void setValue(Window parent, Object value) throws AttrTableSetException {

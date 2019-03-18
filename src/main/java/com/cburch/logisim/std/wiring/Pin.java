@@ -14,18 +14,16 @@
  *   You should have received a copy of the GNU General Public License
  *   along with logisim-evolution.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   Original code by Carl Burch (http://www.cburch.com), 2011.
- *   Subsequent modifications by :
- *     + Haute École Spécialisée Bernoise
- *       http://www.bfh.ch
- *     + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *       http://hepia.hesge.ch/
- *     + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *       http://www.heig-vd.ch/
- *   The project is currently maintained by :
- *     + REDS Institute - HEIG-VD
- *       Yverdon-les-Bains, Switzerland
- *       http://reds.heig-vd.ch
+ * Original code by Carl Burch (http://www.cburch.com), 2011.
+ * Subsequent modifications by:
+ *   + College of the Holy Cross
+ *     http://www.holycross.edu
+ *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
+ *     http://www.bfh.ch
+ *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
+ *     http://hepia.hesge.ch/
+ *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
+ *     http://www.heig-vd.ch/
  *******************************************************************************/
 
 package com.cburch.logisim.std.wiring;
@@ -38,20 +36,29 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowFocusListener;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.swing.BorderFactory;
 import javax.swing.Icon;
+import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.text.MaskFormatter;
 
 import com.cburch.logisim.LogisimVersion;
@@ -85,135 +92,158 @@ import com.cburch.logisim.tools.key.DirectionConfigurator;
 import com.cburch.logisim.tools.key.JoinedConfigurator;
 import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.Icons;
+import com.cburch.logisim.util.LocaleListener;
 
 public class Pin extends InstanceFactory {
 
 	@SuppressWarnings("serial")
-	private static class EditText extends JDialog implements KeyListener {
+	private static class EditDecimal extends JDialog implements KeyListener,LocaleListener {
 
-		private Value value = null;
-		private Value oldVal = null;
-		private JFormattedTextField text = null;
+		private JFormattedTextField text;
 		private int bitWidth;
-		RadixOption radix = RadixOption.RADIX_16;
+		PinState pinState;
+		InstanceState state;
+		RadixOption radix;
+		boolean tristate;
+		private static final Color VALID_COLOR = new Color(0xff, 0xf0, 0x99);
+		private static final Color INVALID_COLOR = new Color(0xff, 0x66, 0x66);
+		final JButton ok;
+		final JButton cancel;
 
-		public EditText(Value value, RadixOption radix, int width) {
+		public void localeChanged() {
+			setTitle(S.get("PinEnterDecimal"));
+			ok.setText(S.get("PinOkay"));
+			cancel.setText(S.get("PinCancel"));
+		}
+		
+		public EditDecimal(InstanceState state) {
 			super();
-			String mask = "";
-			GridBagConstraints gbc = new GridBagConstraints();
-			MaskFormatter formatter = new MaskFormatter();
-			DecimalFormat df = new DecimalFormat();
-			JLabel label = new JLabel("");
-			Color back = new Color(0xff, 0xf0, 0x99);
+			this.state = state;
+			radix = state.getAttributeValue(RadixOption.ATTRIBUTE);
+			pinState = getState(state);
+			Value value = pinState.intendedValue;
+			bitWidth = value.getWidth();
+			PinAttributes attrs = (PinAttributes) state.getAttributeSet();
+			tristate = (attrs.threeState && attrs.pull == PULL_NONE);
 
-			setUndecorated(true);
-			setModal(true);
+			setTitle(S.get("PinEnterDecimal"));
+			GridBagConstraints gbc = new GridBagConstraints();
+			ok = new JButton(S.get("PinOkay"));
+			cancel = new JButton(S.get("PinCancel"));
+			ok.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					accept();
+				}
+			});
+			cancel.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					EditDecimal.this.setVisible(false);
+				}
+			});
+			addWindowFocusListener(new WindowFocusListener() {            
+				public void windowLostFocus(WindowEvent e) {
+					EditDecimal.this.setVisible(false);
+				}
+				public void windowGainedFocus(WindowEvent e) { }
+			});
 			setLayout(new GridBagLayout());
 
-			this.radix = radix;
-			bitWidth = width;
-			oldVal = value;
-			// System.err.println("Wdth:"+bitWidth);
+			text = new JFormattedTextField();
+			text.setFont(AppPreferences.getScaledFont(DEFAULT_FONT));
+			text.setColumns(11);
+			text.setText(value.toDecimalString(radix == RadixOption.RADIX_10_SIGNED));
+			text.selectAll();
 
-			try {
-				formatter.setPlaceholderCharacter('_');
-				if (radix == RadixOption.RADIX_16) {
-					label.setText("0x");
-					for (int i = 0; i < Math.ceil(bitWidth / 4.0); i++) {
-						mask += "H";
+			text.getDocument().addDocumentListener(new DocumentListener() {
+				public void insertUpdate(DocumentEvent e) {
+					String s = text.getText();
+					if (isEditValid(s)) {
+						text.setBackground(VALID_COLOR);
+						ok.setEnabled(true);
+					} else {
+						text.setBackground(INVALID_COLOR);
+						ok.setEnabled(false);
 					}
-					formatter.setMask(mask);
-					text = new JFormattedTextField(formatter);
-					text.setText(value.toHexString());
-				} else if (radix == RadixOption.RADIX_8) {
-					label.setText("0");
-					for (int i = 0; i < Math.ceil(bitWidth / 3.0); i++) {
-						mask += "#";
-					}
-					formatter.setInvalidCharacters("89");
-					formatter.setMask(mask);
-					text = new JFormattedTextField(formatter);
-					text.setText(value.toOctalString());
-				} else if (radix == RadixOption.RADIX_10_SIGNED) {
-					mask = "#;-#";
-					df.setParseIntegerOnly(true);
-					df.applyPattern(mask);
-					df.setMaximumIntegerDigits(11);
-					text = new JFormattedTextField(df);
-					text.setColumns(11);
-					// System.err.println("Val:" + value.toDecimalString(true));
-					text.setText(value.toDecimalString(true));
-				} else if (radix == RadixOption.RADIX_10_UNSIGNED) {
-					mask = "#;";
-					df.setParseIntegerOnly(true);
-					df.applyPattern(mask);
-					df.setMaximumIntegerDigits(10);
-					text = new JFormattedTextField(df);
-					text.setColumns(10);
-					// System.err.println("Val:" +
-					// value.toDecimalString(false));
-					text.setText(value.toDecimalString(false));
 				}
-			} catch (ParseException ex) {
-				Logger.getLogger(Pin.class.getName()).log(Level.SEVERE, null,
-						ex);
-			}
+				public void removeUpdate(DocumentEvent e) {
+					insertUpdate(e);
+				}
+				public void changedUpdate(DocumentEvent e) { }
+			});
 
-			gbc.gridx = gbc.gridy = 0;
-			add(label, gbc);
+			gbc.gridx = 0;
+			gbc.gridy = 1;
+			add(cancel, gbc);
 			gbc.gridx = 1;
+			gbc.gridy = 1;
+			add(ok, gbc);
+			gbc.gridx = 0;
+			gbc.gridy = 0;
 			gbc.gridwidth = GridBagConstraints.REMAINDER;
 			gbc.anchor = GridBagConstraints.BASELINE;
+			gbc.insets = new Insets(8,4,8,4);
 			text.addKeyListener(this);
-			text.setBorder(null);
-			text.setBackground(back);
+			text.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
+			text.setBackground(VALID_COLOR);
 			add(text, gbc);
 
 			pack();
 		}
 
-		public Value getValue() {
-			return value;
+		public void accept() {
+			String s = text.getText();
+			if (isEditValid(s)) {
+				Value newVal;
+				if (s.equals("x") || s.equals("X") || s.equals("???")) {
+					newVal = Value.createUnknown(BitWidth.create(bitWidth));
+				} else {
+					try {
+						int n = (int) Long.parseLong(s);
+						newVal = Value.createKnown(BitWidth.create(bitWidth), n);
+					} catch (NumberFormatException exception) {
+						return;
+					}
+				}
+				setVisible(false);
+				pinState.intendedValue = newVal;
+				state.fireInvalidated();
+			}
+		}
+
+		boolean isEditValid(String s) {
+			if (s == null)
+				return false;
+			s = s.trim();
+			if (s.equals(""))
+				return false;
+			if (tristate && (s.equals("x") || s.equals("X") || s.equals("???")))
+				return true;
+			try {
+				long n = Long.parseLong(s);
+				if (radix == RadixOption.RADIX_10_SIGNED)
+					return (n >= -(1L << (bitWidth-1)) && n < (1L << bitWidth-1));
+				else
+					return (n >= 0 && n < (1L << bitWidth));
+			} catch (NumberFormatException e) {
+				return false;
+			}
 		}
 
 		@Override
 		public void keyPressed(KeyEvent e) {
 			if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-				if (text.isEditValid()) {
-					if (radix == RadixOption.RADIX_10_SIGNED
-							|| radix == RadixOption.RADIX_10_UNSIGNED) {
-						try {
-							value = Value.createKnown(
-									BitWidth.create(bitWidth),
-									(int) Long.parseLong(text.getText()));
-						} catch (NumberFormatException exception) {
-							value = oldVal;
-							return;
-						}
-					} else if (radix == RadixOption.RADIX_16) {
-						value = Value.createKnown(BitWidth.create(bitWidth),
-								(int) Long.parseLong(text.getText(), 16));
-					} else if (radix == RadixOption.RADIX_8) {
-						value = Value.createKnown(BitWidth.create(bitWidth),
-								(int) Long.parseLong(text.getText(), 8));
-					}
-					setVisible(false);
-				}
+				accept();
 			} else if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-				value = oldVal;
 				setVisible(false);
 			}
 		}
 
 		@Override
-		public void keyReleased(KeyEvent e) {
-			;
-		}
+		public void keyReleased(KeyEvent e) { }
 
 		@Override
-		public void keyTyped(KeyEvent e) {
-			;
-		}
+		public void keyTyped(KeyEvent e) { }
+
 	}
 
 	public static class PinLogger extends InstanceLogger {
@@ -241,19 +271,25 @@ public class Pin extends InstanceFactory {
 	public static class PinPoker extends InstancePoker {
 
 		int bitPressed = -1;
+		int bitCaret = -1;
 
 		private int getBit(InstanceState state, MouseEvent e) {
+			RadixOption radix = state.getAttributeValue(RadixOption.ATTRIBUTE);
 			BitWidth width = state.getAttributeValue(StdAttr.WIDTH);
-			if (width.getWidth() == 1) {
+			int r;
+			if (radix == RadixOption.RADIX_16) {
+				r = 4;
+			} else if (radix == RadixOption.RADIX_8) {
+				r = 3;
+			} else if (radix == RadixOption.RADIX_2) {
+				r = 1;
+			} else {
+				return -1;
+			}
+			if (width.getWidth() <= r) {
 				return 0;
 			} else {
-				Bounds bds = state.getInstance().getBounds(); // intentionally
-				// with no
-				// graphics
-				// object - we
-				// don't want
-				// label
-				// included
+				Bounds bds = state.getInstance().getBounds(); 
 				int i,j;
 				if (state.getAttributeValue(ProbeAttributes.PROBEAPPEARANCE)==ProbeAttributes.APPEAR_EVOLUTION_NEW) {
 					Direction dir = state.getAttributeValue(StdAttr.FACING);
@@ -261,10 +297,10 @@ public class Pin extends InstanceFactory {
 					i = (bds.getX() + bds.getWidth() + 5 - e.getX() - Probe.BinairyXoffset(dir, true, false)) / 10;
 					j = (bds.getY() + bds.getHeight() - e.getY() - yoffset) / 20;
 				} else {
-					i = (bds.getX() + bds.getWidth() - e.getX()) / 10;
-					j = (bds.getY() + bds.getHeight() - e.getY()) / 20;
+					i = (bds.getX() + bds.getWidth() - e.getX()-4) / (r == 1 ? 10 : 7);
+					j = (bds.getY() + bds.getHeight() - e.getY()-2) / 14;
 				}
-				int bit = 8 * j + i;
+				int bit = (r==1) ? 8 * j + i : i*r;
 				if (bit < 0 || bit >= width.getWidth()) {
 					return -1;
 				} else {
@@ -273,15 +309,14 @@ public class Pin extends InstanceFactory {
 			}
 		}
 
-		private void handleBitPress(InstanceState state, int bit, MouseEvent e) {
+		private boolean handleBitPress(InstanceState state, int bit, RadixOption radix, java.awt.Component src, char ch) {
 			PinAttributes attrs = (PinAttributes) state.getAttributeSet();
 			if (!attrs.isInput()) {
-				return;
+				return false;
 			}
 
-			java.awt.Component sourceComp = e.getComponent();
-			if (sourceComp instanceof Canvas && !state.isCircuitRoot()) {
-				Canvas canvas = (Canvas) e.getComponent();
+			if (src instanceof Canvas && !state.isCircuitRoot()) {
+				Canvas canvas = (Canvas)src;
 				CircuitState circState = canvas.getCircuitState();
 				java.awt.Component frame = SwingUtilities.getRoot(canvas);
 				int choice = JOptionPane.showConfirmDialog(frame,
@@ -294,22 +329,65 @@ public class Pin extends InstanceFactory {
 					canvas.getProject().setCircuitState(circState);
 					state = circState.getInstanceState(state.getInstance());
 				} else {
-					return;
+					return false;
 				}
 			}
 
+			BitWidth width = state.getAttributeValue(StdAttr.WIDTH);
 			PinState pinState = getState(state);
-			Value val = pinState.intendedValue.get(bit);
-			if (val == Value.FALSE) {
-				val = Value.TRUE;
-			} else if (val == Value.TRUE) {
-				val = attrs.threeState && attrs.pull == PULL_NONE ? Value.UNKNOWN
-						: Value.FALSE;
+			int r = (radix == RadixOption.RADIX_16 ? 4 :
+					(radix == RadixOption.RADIX_8 ? 3 : 1));
+			if (bit+r > width.getWidth())
+				r = width.getWidth() - bit;
+			Value val[] = pinState.intendedValue.getAll();
+			boolean tristate = (attrs.threeState && attrs.pull == PULL_NONE);
+			if (ch == 0) {
+				boolean zeros = true, ones = true, defined = true;
+				for (int b = bit; b < bit + r; b++) {
+					if (val[b] == Value.FALSE)
+						ones = false;
+					else if (val[b] == Value.TRUE)
+						zeros = false;
+					else
+						defined = false;
+				}
+				if (!defined || (ones && !tristate)) {
+					for (int b = bit; b < bit + r; b++)
+						val[b] = Value.FALSE;
+				} else if (ones && tristate) {
+					for (int b = bit; b < bit + r; b++)
+						val[b] = Value.UNKNOWN;
+				} else {
+					int carry = 1;
+					Value v[] = new Value[]{ Value.FALSE, Value.TRUE };
+					for (int b = bit; b < bit + r; b++) {
+						int s = (val[b] == Value.TRUE ? 1 : 0) + carry;
+						val[b] = v[(s % 2)];
+						carry = s / 2;
+					}
+				}
+			} else if (tristate && (ch == 'x' || ch == 'X')) {
+				for (int b = bit; b < bit + r; b++)
+					val[b] = Value.UNKNOWN;
 			} else {
-				val = Value.FALSE;
+				int d;
+				if ('0' <= ch && ch <= '9')
+					d = ch - '0';
+				else if ('a' <= ch && ch <= 'f')
+					d = 0xa + (ch - 'a');
+				else if ('A' <= ch && ch <= 'F')
+					d = 0xA + (ch - 'A');
+				else
+					return false;
+				if (d >= 1 << r)
+					return false;
+				for (int i = 0; i < r; i++)
+					val[bit+i] = (((d&(1<<i)) != 0) ? Value.TRUE : Value.FALSE);
 			}
-			pinState.intendedValue = pinState.intendedValue.set(bit, val);
+			for (int b = bit; b < bit + r; b++)
+				pinState.intendedValue = pinState.intendedValue.set(b, val[b]);
 			state.fireInvalidated();
+			return true;
 		}
 
 		@Override
@@ -319,23 +397,83 @@ public class Pin extends InstanceFactory {
 
 		@Override
 		public void mouseReleased(InstanceState state, MouseEvent e) {
-			if (state.getAttributeValue(RadixOption.ATTRIBUTE) == RadixOption.RADIX_2) {
+			RadixOption radix = state.getAttributeValue(RadixOption.ATTRIBUTE);
+			if (radix == RadixOption.RADIX_10_SIGNED || radix == RadixOption.RADIX_10_UNSIGNED) {
+				EditDecimal dialog = new EditDecimal(state);
+				dialog.setLocation(e.getXOnScreen()-60, e.getYOnScreen()-40);
+				dialog.setVisible(true);
+			} else {
 				int bit = getBit(state, e);
 				if (bit == bitPressed && bit >= 0) {
-					handleBitPress(state, bit, e);
+					bitCaret = bit;
+					handleBitPress(state, bit, radix, e.getComponent(), (char)0);
+				}
+				if (bitCaret < 0) {
+					BitWidth width = state.getAttributeValue(StdAttr.WIDTH);
+					int r = (radix == RadixOption.RADIX_16 ? 4 :
+							(radix == RadixOption.RADIX_8 ? 3 : 1));
+					bitCaret = ((width.getWidth()-1)/r) * r;
 				}
 				bitPressed = -1;
-			} else if (!state.getAttributeValue(Pin.ATTR_TYPE)) {
-				PinState pinState = getState(state);
-				EditText dialog = new EditText(pinState.intendedValue,
-						state.getAttributeValue(RadixOption.ATTRIBUTE),
-						pinState.intendedValue.getWidth());
-				dialog.setLocation(e.getXOnScreen(), e.getYOnScreen());
-				dialog.setVisible(true);
-				// System.err.println("New Value: '" + dialog.getValue() + "'");
-				pinState.intendedValue = dialog.getValue();
-				state.fireInvalidated();
 			}
+		}
+
+		@Override
+		public void keyTyped(InstanceState state, KeyEvent e) {
+			char ch = e.getKeyChar();
+			RadixOption radix = state.getAttributeValue(RadixOption.ATTRIBUTE);
+			if (radix == RadixOption.RADIX_10_SIGNED || radix == RadixOption.RADIX_10_UNSIGNED)
+				return;
+			int r = (radix == RadixOption.RADIX_16 ? 4 :
+					(radix == RadixOption.RADIX_8 ? 3 : 1));
+			BitWidth width = state.getAttributeValue(StdAttr.WIDTH);
+			if (bitCaret < 0)
+				bitCaret = ((width.getWidth()-1)/r) * r;
+			if (handleBitPress(state, bitCaret, radix, e.getComponent(), ch)) {
+				bitCaret -= r;
+				if (bitCaret < 0)
+					bitCaret = ((width.getWidth()-1)/r) * r;
+			}
+		}
+
+		@Override
+		public void paint(InstancePainter painter) {
+			if (bitCaret < 0)
+				return;
+			BitWidth width = painter.getAttributeValue(StdAttr.WIDTH);
+			RadixOption radix = painter.getAttributeValue(RadixOption.ATTRIBUTE);
+			if (radix == RadixOption.RADIX_10_SIGNED || radix == RadixOption.RADIX_10_UNSIGNED)
+				return;
+			int r = (radix == RadixOption.RADIX_16 ? 4 :
+					(radix == RadixOption.RADIX_8 ? 3 : 1));
+			if (width.getWidth() <= r)
+				return;
+			Bounds bds = painter.getBounds();
+			Graphics g = painter.getGraphics();
+			GraphicsUtil.switchToWidth(g, 2);
+			g.setColor(Color.RED);
+			int y = bds.getY() + bds.getHeight();
+			int x = bds.getX() + bds.getWidth();
+			Direction dir = painter.getAttributeValue(StdAttr.FACING);
+			int yoffset = (dir==Direction.SOUTH) ? 10 : 0;
+			if (radix == RadixOption.RADIX_2) {
+				x -= 2 + 10 * (bitCaret % 8);
+				y -= 2 + 14 * (bitCaret / 8);
+				if (painter.getAttributeValue(ProbeAttributes.PROBEAPPEARANCE)==ProbeAttributes.APPEAR_EVOLUTION_NEW) {
+					x -= Probe.BinairyXoffset(dir, true, false)-5;
+					y -= yoffset;
+				}
+				g.drawLine(x - 6, y, x, y);
+			} else {
+				x -= 4 + 7 * (bitCaret / r);
+				y -= 4;
+				if (painter.getAttributeValue(ProbeAttributes.PROBEAPPEARANCE)==ProbeAttributes.APPEAR_EVOLUTION_NEW) {
+					y -= yoffset;
+					x -= Probe.BinairyXoffset(dir, true, false)-5;
+				}
+				g.drawLine(x - 6, y, x, y);
+			}
+			g.setColor(Color.BLACK);
 		}
 	}
 
@@ -402,8 +540,6 @@ public class Pin extends InstanceFactory {
 			.forBoolean("tristate", S.getter("pinThreeStateAttr"));
 	public static final Attribute<Boolean> ATTR_TYPE = Attributes.forBoolean(
 			"output", S.getter("pinOutputAttr"));
-	public static final Attribute<Direction> ATTR_LABEL_LOC = Attributes
-			.forDirection("labelloc", S.getter("pinLabelLocAttr"));
 	public static final AttributeOption PULL_NONE = new AttributeOption("none",
 			S.getter("pinPullNoneOption"));
 	public static final AttributeOption PULL_UP = new AttributeOption("up",
@@ -421,18 +557,18 @@ public class Pin extends InstanceFactory {
 
 	private static final Icon ICON_OUT = Icons.getIcon("pinOutput.gif");
 
-	private static final Font ICON_WIDTH_FONT = new Font("SansSerif",
-			Font.BOLD, 9);
+	private static final Font ICON_WIDTH_FONT = new Font("SansSerif", Font.BOLD, 9);
+	
+	public static final Font DEFAULT_FONT = new Font("monospaced", Font.PLAIN, 12);
 
-	private static final Color ICON_WIDTH_COLOR = Value.WIDTH_ERROR_COLOR
-			.darker();
+	private static final Color ICON_WIDTH_COLOR = Value.WIDTH_ERROR_COLOR.darker();
 	
 	public Pin() {
 		super("Pin", S.getter("pinComponent"));
 		setFacingAttribute(StdAttr.FACING);
-		setKeyConfigurator(JoinedConfigurator.create(new BitWidthConfigurator(
-				StdAttr.WIDTH), new DirectionConfigurator(ATTR_LABEL_LOC,
-				KeyEvent.ALT_DOWN_MASK)));
+		setKeyConfigurator(JoinedConfigurator.create(
+				new BitWidthConfigurator(StdAttr.WIDTH),
+				new DirectionConfigurator(StdAttr.LABEL_LOC, KeyEvent.ALT_DOWN_MASK)));
 		setInstanceLogger(PinLogger.class);
 		setInstancePoker(PinPoker.class);
 	}
@@ -456,7 +592,7 @@ public class Pin extends InstanceFactory {
 		instance.addAttributeListener();
 		((PrefMonitorBooleanConvert)AppPreferences.NEW_INPUT_OUTPUT_SHAPES).addConvertListener(attrs);
 		configurePorts(instance);
-		Probe.configureLabel(instance, PinLabelLoc(attrs.facing), attrs.facing);
+		instance.computeLabelTextField(Instance.AVOID_LEFT);
 	}
 
 	@Override
@@ -542,7 +678,7 @@ public class Pin extends InstanceFactory {
 				|| attr == RadixOption.ATTRIBUTE || attr == ProbeAttributes.PROBEAPPEARANCE ) {
 			instance.recomputeBounds();
 			PinAttributes attrs = (PinAttributes) instance.getAttributeSet();
-			Probe.configureLabel(instance, PinLabelLoc(attrs.facing), attrs.facing);
+			instance.computeLabelTextField(Instance.AVOID_LEFT, PinLabelLoc(attrs.facing));
 		} else if (attr == Pin.ATTR_TRISTATE || attr == Pin.ATTR_PULL) {
 			instance.fireInvalidated();
 		}
@@ -798,10 +934,7 @@ public class Pin extends InstanceFactory {
 		PinAttributes attrs = (PinAttributes) painter.getAttributeSet();
         boolean NewStyle = attrs.getValue(ProbeAttributes.PROBEAPPEARANCE) == ProbeAttributes.APPEAR_EVOLUTION_NEW;
 		Graphics g = painter.getGraphics();
-		Bounds bds = painter.getInstance().getBounds(); // intentionally with no
-		// graphics object - we
-		// don't want label
-		// included
+		Bounds bds = painter.getInstance().getBounds(); // intentionally with no graphics object - we don't want label included
 		int x = bds.getX();
 		int y = bds.getY();
 		GraphicsUtil.switchToWidth(g, 2);
@@ -851,6 +984,7 @@ public class Pin extends InstanceFactory {
 				}
 				if (attrs.width.getWidth() == 1) {
 					if (!IsOutput|(!NewStyle)) g.setColor(Color.WHITE);
+					g.setFont(DEFAULT_FONT);
 					GraphicsUtil.drawCenteredText(g,
 							state.intendedValue.toDisplayString(), x + 11 + ValueXOffset, y + 9 + ValueYOffset);
 				}

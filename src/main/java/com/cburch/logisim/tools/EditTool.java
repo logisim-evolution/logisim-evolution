@@ -14,18 +14,16 @@
  *   You should have received a copy of the GNU General Public License
  *   along with logisim-evolution.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   Original code by Carl Burch (http://www.cburch.com), 2011.
- *   Subsequent modifications by :
- *     + Haute École Spécialisée Bernoise
- *       http://www.bfh.ch
- *     + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *       http://hepia.hesge.ch/
- *     + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *       http://www.heig-vd.ch/
- *   The project is currently maintained by :
- *     + REDS Institute - HEIG-VD
- *       Yverdon-les-Bains, Switzerland
- *       http://reds.heig-vd.ch
+ * Original code by Carl Burch (http://www.cburch.com), 2011.
+ * Subsequent modifications by:
+ *   + College of the Holy Cross
+ *     http://www.holycross.edu
+ *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
+ *     http://www.bfh.ch
+ *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
+ *     http://hepia.hesge.ch/
+ *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
+ *     http://www.heig-vd.ch/
  *******************************************************************************/
 
 package com.cburch.logisim.tools;
@@ -385,7 +383,6 @@ public class EditTool extends Tool {
 	public void mouseEntered(Canvas canvas, Graphics g, MouseEvent e) {
 		pressX = -1;
 		current.mouseEntered(canvas, g, e);
-		canvas.requestFocusInWindow();
 	}
 
 	@Override
@@ -402,6 +399,7 @@ public class EditTool extends Tool {
 
 	@Override
 	public void mousePressed(Canvas canvas, Graphics g, MouseEvent e) {
+		canvas.requestFocusInWindow();
 		boolean wire = updateLocation(canvas, e);
 		Location oldWireLoc = wireLoc;
 		wireLoc = NULL_LOCATION;
@@ -493,15 +491,17 @@ public class EditTool extends Tool {
 				if (o != null) {
 					lastX = snapx;
 					lastY = snapy;
-					canvas.repaint();
+					Location oldWireLoc = wireLoc;
 					boolean ret = ((Boolean) o).booleanValue();
 					wireLoc = ret ? snap : NULL_LOCATION;
+					repaintIndicators(canvas, oldWireLoc, wireLoc);
 					return ret;
 				}
 			} else {
 				cache.clear();
 			}
 
+			Location oldWireLoc = wireLoc; 
 			boolean ret = isEligible && isWiringPoint(canvas, snap, mods);
 			wireLoc = ret ? snap : NULL_LOCATION;
 			cache.put(snap, Boolean.valueOf(ret));
@@ -515,9 +515,18 @@ public class EditTool extends Tool {
 
 			lastX = snapx;
 			lastY = snapy;
-			canvas.repaint();
+			repaintIndicators(canvas, oldWireLoc, wireLoc);
 			return ret;
 		}
+	}
+
+	private void repaintIndicators(Canvas canvas, Location a, Location b) {
+		if (a.equals(b))
+			return;
+		if (a != NULL_LOCATION)
+			canvas.repaint(a.getX()-6, a.getY()-6, 12, 12);
+		if (b != NULL_LOCATION)
+			canvas.repaint(b.getX()-6, b.getY()-6, 12, 12);
 	}
 
 	private boolean updateLocation(Canvas canvas, KeyEvent e) {

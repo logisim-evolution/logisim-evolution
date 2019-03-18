@@ -14,19 +14,18 @@
  *   You should have received a copy of the GNU General Public License
  *   along with logisim-evolution.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   Original code by Carl Burch (http://www.cburch.com), 2011.
- *   Subsequent modifications by :
- *     + Haute École Spécialisée Bernoise
- *       http://www.bfh.ch
- *     + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *       http://hepia.hesge.ch/
- *     + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *       http://www.heig-vd.ch/
- *   The project is currently maintained by :
- *     + REDS Institute - HEIG-VD
- *       Yverdon-les-Bains, Switzerland
- *       http://reds.heig-vd.ch
+ * Original code by Carl Burch (http://www.cburch.com), 2011.
+ * Subsequent modifications by:
+ *   + College of the Holy Cross
+ *     http://www.holycross.edu
+ *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
+ *     http://www.bfh.ch
+ *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
+ *     http://hepia.hesge.ch/
+ *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
+ *     http://www.heig-vd.ch/
  *******************************************************************************/
+
 package com.cburch.logisim.gui.generic;
 
 import static com.cburch.logisim.gui.Strings.S;
@@ -82,14 +81,17 @@ public class AttrTable extends JPanel implements LocaleListener {
 
 		LinkedList<CellEditorListener> listeners = new LinkedList<CellEditorListener>();
 		AttrTableModelRow currentRow;
+		AttrTableModelRow[] currentRows;
+		int[] currentRowIndexes;
 		Component currentEditor;
+		boolean multiEditActive = false;
 
 		//
 		// ActionListener methods
 		//
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			stopCellEditing();
+				stopCellEditing();
 		}
 
 		//
@@ -113,10 +115,19 @@ public class AttrTable extends JPanel implements LocaleListener {
 		}
 
 		public void fireEditingCanceled() {
+			int col = table.getEditingColumn();
 			ChangeEvent e = new ChangeEvent(AttrTable.this);
 			for (CellEditorListener l : new ArrayList<CellEditorListener>(
 					listeners)) {
 				l.editingCanceled(e);
+			}
+			if (multiEditActive) {
+				Object value = getCellEditorValue();
+				for (int r : currentRowIndexes) {
+					if (r == table.getEditingRow())
+						continue;
+					table.setValueAt(value, r, col);
+				}
 			}
 		}
 
@@ -173,6 +184,9 @@ public class AttrTable extends JPanel implements LocaleListener {
 				Object value, boolean isSelected, int rowIndex, int columnIndex) {
 			AttrTableModel attrModel = tableModel.attrModel;
 			AttrTableModelRow row = attrModel.getRow(rowIndex);
+			AttrTableModelRow[] rows = null;
+			int rowIndexes[] = null;
+			multiEditActive = false;
 
 			if ((columnIndex == 0)||(rowIndex==0)) {
 				return new JLabel(row.getLabel());
@@ -185,6 +199,22 @@ public class AttrTable extends JPanel implements LocaleListener {
 				if (editor instanceof JComboBox) {
 					((JComboBox) editor).addActionListener(this);
 					editor.addFocusListener(this);
+					rowIndexes = table.getSelectedRows();
+					if (isSelected && rowIndexes.length > 1) {
+						multiEditActive = true;
+						rows = new AttrTableModelRow[rowIndexes.length];
+						for (int i = 0; i < rowIndexes.length; i++) {
+							rows[i] = attrModel.getRow(rowIndexes[i]);
+							if (!row.multiEditCompatible(rows[i])) {
+								multiEditActive = false;
+								rowIndexes = null;
+								rows = null;
+								break;
+							}
+						}
+					} else {
+						rowIndexes = null;
+					}
 				} else if (editor instanceof JInputDialog) {
 					JInputDialog dlog = (JInputDialog) editor;
 					dlog.setVisible(true);
@@ -221,9 +251,22 @@ public class AttrTable extends JPanel implements LocaleListener {
 				}
 
 				currentRow = row;
+				currentRows = rows;
+				currentRowIndexes = rowIndexes;
 				currentEditor = editor;
 				return editor;
 			}
+		}
+		
+		public boolean isEditing(AttrTableModelRow row) {
+			if (currentRow == row)
+				return true;
+			if (currentRows == null)
+				return false;
+			for (AttrTableModelRow r : currentRows)
+				if (r == row)
+					return true;
+			return false;
 		}
 
 		@Override
@@ -242,7 +285,7 @@ public class AttrTable extends JPanel implements LocaleListener {
 		public boolean shouldSelectCell(EventObject anEvent) {
 			// Returns true if the editing cell should be selected,
 			// false otherwise.
-			return true;
+			return !multiEditActive;
 		}
 
 		@Override
@@ -377,7 +420,7 @@ public class AttrTable extends JPanel implements LocaleListener {
 
 			TableCellEditor ed = table.getCellEditor();
 			if (row >= 0 && ed instanceof CellEditor
-					&& attrModel.getRow(row) == ((CellEditor) ed).currentRow) {
+					&& ((CellEditor)ed).isEditing(attrModel.getRow(row))) {
 				ed.cancelCellEditing();
 			}
 

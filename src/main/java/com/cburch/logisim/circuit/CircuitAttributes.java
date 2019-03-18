@@ -14,18 +14,16 @@
  *   You should have received a copy of the GNU General Public License
  *   along with logisim-evolution.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   Original code by Carl Burch (http://www.cburch.com), 2011.
- *   Subsequent modifications by :
- *     + Haute École Spécialisée Bernoise
- *       http://www.bfh.ch
- *     + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *       http://hepia.hesge.ch/
- *     + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *       http://www.heig-vd.ch/
- *   The project is currently maintained by :
- *     + REDS Institute - HEIG-VD
- *       Yverdon-les-Bains, Switzerland
- *       http://reds.heig-vd.ch
+ * Original code by Carl Burch (http://www.cburch.com), 2011.
+ * Subsequent modifications by:
+ *   + College of the Holy Cross
+ *     http://www.holycross.edu
+ *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
+ *     http://www.bfh.ch
+ *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
+ *     http://hepia.hesge.ch/
+ *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
+ *     http://www.heig-vd.ch/
  *******************************************************************************/
 
 package com.cburch.logisim.circuit;
@@ -57,6 +55,10 @@ import com.cburch.logisim.util.SyntaxChecker;
 public class CircuitAttributes extends AbstractAttributeSet {
 	private class MyListener implements AttributeListener,
 			CircuitAppearanceListener {
+		private Circuit source;
+		private MyListener(Circuit s) {
+			source = s;
+		}
 		public void attributeListChanged(AttributeEvent e) {
 		}
 
@@ -76,6 +78,8 @@ public class CircuitAttributes extends AbstractAttributeSet {
 				subcircInstance.recomputeBounds();
 			}
 			subcircInstance.fireInvalidated();
+			if (source != null & !source.getAppearance().isDefaultAppearance())
+				source.getStaticAttributes().setValue(APPEARANCE_ATTR, APPEAR_CUSTOM);
 		}
 	}
 
@@ -110,13 +114,17 @@ public class CircuitAttributes extends AbstractAttributeSet {
 						source.fireEvent(CircuitEvent.ACTION_SET_NAME, NewName);
 					}
 				}
+			}  else if (e.getAttribute() == APPEARANCE_ATTR) {
+				if (e.getValue() == APPEAR_CLASSIC || e.getValue() == APPEAR_FPGA || e.getValue() == APPEAR_EVOLUTION) {
+					source.getAppearance().setDefaultAppearance(true);
+					source.RecalcDefaultShape();
+				}
 			}
 		}
 	}
 
 	static AttributeSet createBaseAttrs(Circuit source, String name) {
-		AttributeSet ret = AttributeSets
-				.fixedSet(STATIC_ATTRS, STATIC_DEFAULTS);
+		AttributeSet ret = AttributeSets.fixedSet(STATIC_ATTRS, STATIC_DEFAULTS);
 		ret.setValue(APPEARANCE_ATTR, AppPreferences.getDefaultCircuitAppearance());
 		ret.setValue(CircuitAttributes.NAME_ATTR, name);
 		ret.addAttributeListener(new StaticListener(source));
@@ -165,7 +173,7 @@ public class CircuitAttributes extends AbstractAttributeSet {
 	private static final List<Attribute<?>> INSTANCE_ATTRS = Arrays
 			.asList(new Attribute<?>[] { StdAttr.FACING, StdAttr.LABEL,
 					LABEL_LOCATION_ATTR, StdAttr.LABEL_FONT,StdAttr.LABEL_VISIBILITY,
-					CircuitAttributes.NAME_ATTR, CIRCUIT_LABEL_ATTR,
+					NAME_ATTR, CIRCUIT_LABEL_ATTR,
 					CIRCUIT_LABEL_FACING_ATTR, CIRCUIT_LABEL_FONT_ATTR,APPEARANCE_ATTR,
 					CIRCUIT_VHDL_PATH });
 
@@ -246,7 +254,7 @@ public class CircuitAttributes extends AbstractAttributeSet {
 	void setSubcircuit(Instance value) {
 		subcircInstance = value;
 		if (subcircInstance != null && listener == null) {
-			listener = new MyListener();
+			listener = new MyListener(source);
 			source.getStaticAttributes().addAttributeListener(listener);
 			source.getAppearance().addCircuitAppearanceListener(listener);
 		}

@@ -14,23 +14,24 @@
  *   You should have received a copy of the GNU General Public License
  *   along with logisim-evolution.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   Original code by Carl Burch (http://www.cburch.com), 2011.
- *   Subsequent modifications by :
- *     + Haute École Spécialisée Bernoise
- *       http://www.bfh.ch
- *     + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *       http://hepia.hesge.ch/
- *     + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *       http://www.heig-vd.ch/
- *   The project is currently maintained by :
- *     + REDS Institute - HEIG-VD
- *       Yverdon-les-Bains, Switzerland
- *       http://reds.heig-vd.ch
+ * Original code by Carl Burch (http://www.cburch.com), 2011.
+ * Subsequent modifications by:
+ *   + College of the Holy Cross
+ *     http://www.holycross.edu
+ *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
+ *     http://www.bfh.ch
+ *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
+ *     http://hepia.hesge.ch/
+ *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
+ *     http://www.heig-vd.ch/
  *******************************************************************************/
 
 package com.cburch.logisim.util;
 
+import java.awt.Font;
 import java.awt.FontMetrics;
+
+import com.cburch.logisim.data.Bounds;
 
 public class StringUtil {
 	public static StringGetter constantGetter(final String value) {
@@ -100,5 +101,54 @@ public class StringUtil {
 			ret = ret.substring(ret.length() - len);
 		return ret;
 	}
+
+	public static Bounds estimateBounds(String text, Font font) {
+		return estimateBounds(text, font, GraphicsUtil.H_LEFT, GraphicsUtil.V_TOP);
+	}
+
+	public static Bounds estimateBounds(String text, Font font, int hAlign, int vAlign) {
+		// TODO - you can imagine being more clever here
+		if (text == null || text.length() == 0)
+			text = "X"; // return Bounds.EMPTY_BOUNDS;
+		int n = 0;
+		int c = 0;
+		int lines = 0;
+		for (int i = 0; i < text.length(); i++) {
+				if (text.charAt(i) == '\n') {
+						n = (c > n ? c : n);
+						c = 0;
+						lines++;
+				} else if (text.charAt(i) == '\t') {
+						c += 4;
+				} else {
+						c++;
+				}
+		}
+		if (text.charAt(text.length()-1) != '\n') {
+				n = (c > n ? c : n);
+				lines++;
+		}
+		int size = font.getSize();
+		int h = size * lines;
+		int w = size * n * 2 / 3; // assume approx monospace 12x8 aspect ratio
+		int x;
+		int y;
+		if (hAlign == GraphicsUtil.H_LEFT) {
+			x = 0;
+		} else if (hAlign == GraphicsUtil.H_RIGHT) {
+			x = -w;
+		} else {
+			x = -w / 2;
+		}
+		if (vAlign == GraphicsUtil.V_TOP) {
+			y = 0;
+		} else if (vAlign == GraphicsUtil.V_CENTER) {
+			y = -h / 2;
+		} else {
+			y = -h;
+		}
+		return Bounds.create(x, y, w, h);
+	}
+
 
 }

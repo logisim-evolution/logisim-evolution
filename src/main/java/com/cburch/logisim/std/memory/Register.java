@@ -14,18 +14,16 @@
  *   You should have received a copy of the GNU General Public License
  *   along with logisim-evolution.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   Original code by Carl Burch (http://www.cburch.com), 2011.
- *   Subsequent modifications by :
- *     + Haute École Spécialisée Bernoise
- *       http://www.bfh.ch
- *     + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *       http://hepia.hesge.ch/
- *     + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *       http://www.heig-vd.ch/
- *   The project is currently maintained by :
- *     + REDS Institute - HEIG-VD
- *       Yverdon-les-Bains, Switzerland
- *       http://reds.heig-vd.ch
+ * Original code by Carl Burch (http://www.cburch.com), 2011.
+ * Subsequent modifications by:
+ *   + College of the Holy Cross
+ *     http://www.holycross.edu
+ *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
+ *     http://www.bfh.ch
+ *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
+ *     http://hepia.hesge.ch/
+ *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
+ *     http://www.heig-vd.ch/
  *******************************************************************************/
 
 package com.cburch.logisim.std.memory;
@@ -34,10 +32,13 @@ import static com.cburch.logisim.std.Strings.S;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.event.KeyEvent;
 
 import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
+import com.cburch.logisim.circuit.appear.DynamicElement;
+import com.cburch.logisim.circuit.appear.DynamicElementProvider;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Attributes;
@@ -54,10 +55,12 @@ import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.tools.key.BitWidthConfigurator;
+import com.cburch.logisim.tools.key.DirectionConfigurator;
+import com.cburch.logisim.tools.key.JoinedConfigurator;
 import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.StringUtil;
 
-public class Register extends InstanceFactory {
+public class Register extends InstanceFactory implements DynamicElementProvider {
 	public static void DrawRegisterClassic(InstancePainter painter, int x, int y,
 										   int nr_of_bits, boolean isLatch, boolean neg_active,
 										   boolean has_we, String value) {
@@ -217,10 +220,12 @@ public class Register extends InstanceFactory {
 	public Register() {
 		super("Register", S.getter("registerComponent"));
 		setAttributes(new Attribute[] { StdAttr.WIDTH, StdAttr.TRIGGER,
-				StdAttr.LABEL, StdAttr.LABEL_FONT, ATTR_SHOW_IN_TAB, StdAttr.APPEARANCE},
+				StdAttr.LABEL, StdAttr.LABEL_LOC, StdAttr.LABEL_FONT, ATTR_SHOW_IN_TAB, StdAttr.APPEARANCE},
 				new Object[] { BitWidth.create(8), StdAttr.TRIG_RISING, "",
-						StdAttr.DEFAULT_LABEL_FONT, false, AppPreferences.getDefaultAppearance()});
-		setKeyConfigurator(new BitWidthConfigurator(StdAttr.WIDTH));
+						Direction.NORTH, StdAttr.DEFAULT_LABEL_FONT, false, AppPreferences.getDefaultAppearance()});
+		setKeyConfigurator(JoinedConfigurator.create(
+				new BitWidthConfigurator(StdAttr.WIDTH),
+				new DirectionConfigurator(StdAttr.LABEL_LOC, KeyEvent.ALT_DOWN_MASK)));
 		setIconName("register.gif");
 		setInstancePoker(RegisterPoker.class);
 		setInstanceLogger(RegisterLogger.class);
@@ -241,9 +246,7 @@ public class Register extends InstanceFactory {
 		instance.addAttributeListener();
 		updatePorts(instance);
 		Bounds bds = instance.getBounds();
-		instance.setTextField(StdAttr.LABEL, StdAttr.LABEL_FONT, bds.getX()
-				+ bds.getWidth() / 2, bds.getY() - 3, GraphicsUtil.H_CENTER,
-				GraphicsUtil.V_BASELINE);
+		instance.computeLabelTextField(Instance.AVOID_SIDES);
 	}
 	
 	private void updatePorts(Instance instance) {
@@ -363,6 +366,13 @@ public class Register extends InstanceFactory {
 		if (attr == StdAttr.WIDTH || attr == StdAttr.APPEARANCE) {
 			instance.recomputeBounds();
 			updatePorts(instance);
+			instance.computeLabelTextField(Instance.AVOID_SIDES);
+		} else if (attr == StdAttr.LABEL_LOC) {
+			instance.computeLabelTextField(Instance.AVOID_SIDES);
 		}
+	}
+	
+	public DynamicElement createDynamicElement(int x, int y, DynamicElement.Path path) {
+		return new RegisterShape(x, y, path);
 	}
 }

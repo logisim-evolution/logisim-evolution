@@ -14,18 +14,16 @@
  *   You should have received a copy of the GNU General Public License
  *   along with logisim-evolution.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   Original code by Carl Burch (http://www.cburch.com), 2011.
- *   Subsequent modifications by :
- *     + Haute École Spécialisée Bernoise
- *       http://www.bfh.ch
- *     + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *       http://hepia.hesge.ch/
- *     + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *       http://www.heig-vd.ch/
- *   The project is currently maintained by :
- *     + REDS Institute - HEIG-VD
- *       Yverdon-les-Bains, Switzerland
- *       http://reds.heig-vd.ch
+ * Original code by Carl Burch (http://www.cburch.com), 2011.
+ * Subsequent modifications by:
+ *   + College of the Holy Cross
+ *     http://www.holycross.edu
+ *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
+ *     http://www.bfh.ch
+ *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
+ *     http://hepia.hesge.ch/
+ *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
+ *     http://www.heig-vd.ch/
  *******************************************************************************/
 
 package com.cburch.logisim.std.wiring;
@@ -33,6 +31,7 @@ package com.cburch.logisim.std.wiring;
 import static com.cburch.logisim.std.Strings.S;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.util.Arrays;
 import java.util.List;
@@ -139,6 +138,7 @@ public class Constant extends InstanceFactory {
 	public static InstanceFactory FACTORY = new Constant();
 
 	private static final Color BACKGROUND_COLOR = new Color(230, 230, 230);
+	private static final Font DEFAULT_FONT = new Font("monospaced", Font.PLAIN, 12);
 
 	private static final List<Attribute<?>> ATTRIBUTES = Arrays
 			.asList(new Attribute<?>[] { StdAttr.FACING, StdAttr.WIDTH,
@@ -175,122 +175,18 @@ public class Constant extends InstanceFactory {
 		Direction facing = attrs.getValue(StdAttr.FACING);
 		BitWidth width = attrs.getValue(StdAttr.WIDTH);
 		int chars = (width.getWidth() + 3) / 4;
-
-		Bounds ret = null;
-		if (facing == Direction.EAST) {
-			switch (chars) {
-			case 1:
-				ret = Bounds.create(-16, -8, 16, 16);
-				break;
-			case 2:
-				ret = Bounds.create(-16, -8, 16, 16);
-				break;
-			case 3:
-				ret = Bounds.create(-26, -8, 26, 16);
-				break;
-			case 4:
-				ret = Bounds.create(-36, -8, 36, 16);
-				break;
-			case 5:
-				ret = Bounds.create(-46, -8, 46, 16);
-				break;
-			case 6:
-				ret = Bounds.create(-56, -8, 56, 16);
-				break;
-			case 7:
-				ret = Bounds.create(-66, -8, 66, 16);
-				break;
-			case 8:
-				ret = Bounds.create(-76, -8, 76, 16);
-				break;
-			}
-		} else if (facing == Direction.WEST) {
-			switch (chars) {
-			case 1:
-				ret = Bounds.create(0, -8, 16, 16);
-				break;
-			case 2:
-				ret = Bounds.create(0, -8, 16, 16);
-				break;
-			case 3:
-				ret = Bounds.create(0, -8, 26, 16);
-				break;
-			case 4:
-				ret = Bounds.create(0, -8, 36, 16);
-				break;
-			case 5:
-				ret = Bounds.create(0, -8, 46, 16);
-				break;
-			case 6:
-				ret = Bounds.create(0, -8, 56, 16);
-				break;
-			case 7:
-				ret = Bounds.create(0, -8, 66, 16);
-				break;
-			case 8:
-				ret = Bounds.create(0, -8, 76, 16);
-				break;
-			}
-		} else if (facing == Direction.SOUTH) {
-			switch (chars) {
-			case 1:
-				ret = Bounds.create(-8, -16, 16, 16);
-				break;
-			case 2:
-				ret = Bounds.create(-8, -16, 16, 16);
-				break;
-			case 3:
-				ret = Bounds.create(-13, -16, 26, 16);
-				break;
-			case 4:
-				ret = Bounds.create(-18, -16, 36, 16);
-				break;
-			case 5:
-				ret = Bounds.create(-23, -16, 46, 16);
-				break;
-			case 6:
-				ret = Bounds.create(-28, -16, 56, 16);
-				break;
-			case 7:
-				ret = Bounds.create(-33, -16, 66, 16);
-				break;
-			case 8:
-				ret = Bounds.create(-38, -16, 76, 16);
-				break;
-			}
-		} else if (facing == Direction.NORTH) {
-			switch (chars) {
-			case 1:
-				ret = Bounds.create(-8, 0, 16, 16);
-				break;
-			case 2:
-				ret = Bounds.create(-8, 0, 16, 16);
-				break;
-			case 3:
-				ret = Bounds.create(-13, 0, 26, 16);
-				break;
-			case 4:
-				ret = Bounds.create(-18, 0, 36, 16);
-				break;
-			case 5:
-				ret = Bounds.create(-23, 0, 46, 16);
-				break;
-			case 6:
-				ret = Bounds.create(-28, 0, 56, 16);
-				break;
-			case 7:
-				ret = Bounds.create(-33, 0, 66, 16);
-				break;
-			case 8:
-				ret = Bounds.create(-38, 0, 76, 16);
-				break;
-			}
-		}
-		if (ret == null) {
+		int w = 7 + 7*chars;
+		if (facing == Direction.EAST)
+			return Bounds.create(-w, -8, w, 16);
+		else if (facing == Direction.WEST) 
+			return Bounds.create(0, -8, w, 16);
+		else if (facing == Direction.SOUTH) 
+			return Bounds.create(-w/2, -16, w, 16);
+		else if (facing == Direction.NORTH) 
+			return Bounds.create(-w/2, 0, w, 16);
+		else 
 			throw new IllegalArgumentException("unrecognized arguments "
 					+ facing + " " + width);
-		}
-		return ret;
 	}
 
 	@Override
@@ -321,9 +217,10 @@ public class Constant extends InstanceFactory {
 
 		Graphics g = painter.getGraphics();
 		GraphicsUtil.switchToWidth(g, 2);
-		g.fillOval(-2, -2, 5, 5);
+		g.fillOval(-2, -2, 4, 4);
+		g.setFont(DEFAULT_FONT);
 		GraphicsUtil.drawCenteredText(g, vStr, bds.getX() + bds.getWidth() / 2,
-				bds.getY() + bds.getHeight() / 2);
+				bds.getY() + bds.getHeight() / 2 - 2);
 	}
 
 	//
@@ -379,11 +276,13 @@ public class Constant extends InstanceFactory {
 		if (v.getWidth() == 1) {
 			if (painter.shouldDrawColor())
 				g.setColor(v.getColor());
+			g.setFont(DEFAULT_FONT);
 			GraphicsUtil.drawCenteredText(g, v.toString(),
 					x + bds.getX() + bds.getWidth() / 2,
 					y + bds.getY() + bds.getHeight() / 2 - 2);
 		} else {
 			g.setColor(Color.BLACK);
+			g.setFont(DEFAULT_FONT);
 			GraphicsUtil.drawCenteredText(g, v.toHexString(), x + bds.getX()
 					+ bds.getWidth() / 2, y + bds.getY() + bds.getHeight() / 2
 					- 2);

@@ -14,18 +14,16 @@
  *   You should have received a copy of the GNU General Public License
  *   along with logisim-evolution.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   Original code by Carl Burch (http://www.cburch.com), 2011.
- *   Subsequent modifications by :
- *     + Haute École Spécialisée Bernoise
- *       http://www.bfh.ch
- *     + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *       http://hepia.hesge.ch/
- *     + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *       http://www.heig-vd.ch/
- *   The project is currently maintained by :
- *     + REDS Institute - HEIG-VD
- *       Yverdon-les-Bains, Switzerland
- *       http://reds.heig-vd.ch
+ * Original code by Carl Burch (http://www.cburch.com), 2011.
+ * Subsequent modifications by:
+ *   + College of the Holy Cross
+ *     http://www.holycross.edu
+ *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
+ *     http://www.bfh.ch
+ *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
+ *     http://hepia.hesge.ch/
+ *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
+ *     http://www.heig-vd.ch/
  *******************************************************************************/
 
 package com.cburch.logisim.circuit;
@@ -36,6 +34,7 @@ import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.std.wiring.Pin;
+import com.cburch.logisim.vhdl.base.VhdlEntity;
 
 class CircuitChange {
 	public static CircuitChange add(Circuit circuit, Component comp) {
@@ -159,9 +158,20 @@ class CircuitChange {
 			return comp.getFactory() instanceof Pin
 					&& (attr == StdAttr.WIDTH || attr == Pin.ATTR_TYPE || attr == StdAttr.LABEL);
 		case SET_FOR_CIRCUIT :
-			return (attr == CircuitAttributes.NAME_ATTR ||attr == CircuitAttributes.NAMED_CIRCUIT_BOX_FIXED_SIZE);
+			return (attr == CircuitAttributes.NAME_ATTR ||attr == CircuitAttributes.NAMED_CIRCUIT_BOX_FIXED_SIZE ||
+					attr == CircuitAttributes.APPEARANCE_ATTR);
 		default:
 			return false;
+		}
+	}
+	
+	boolean concernsSiblingComponents() {
+		switch (type) {
+			case SET:
+				return (comp.getFactory() instanceof SubcircuitFactory && attr == CircuitAttributes.APPEARANCE_ATTR)
+						|| (comp.getFactory() instanceof VhdlEntity && attr == StdAttr.APPEARANCE);
+			default:
+				return false;
 		}
 	}
 

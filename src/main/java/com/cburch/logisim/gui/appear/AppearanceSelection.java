@@ -14,18 +14,16 @@
  *   You should have received a copy of the GNU General Public License
  *   along with logisim-evolution.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   Original code by Carl Burch (http://www.cburch.com), 2011.
- *   Subsequent modifications by :
- *     + Haute École Spécialisée Bernoise
- *       http://www.bfh.ch
- *     + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *       http://hepia.hesge.ch/
- *     + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *       http://www.heig-vd.ch/
- *   The project is currently maintained by :
- *     + REDS Institute - HEIG-VD
- *       Yverdon-les-Bains, Switzerland
- *       http://reds.heig-vd.ch
+ * Original code by Carl Burch (http://www.cburch.com), 2011.
+ * Subsequent modifications by:
+ *   + College of the Holy Cross
+ *     http://www.holycross.edu
+ *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
+ *     http://www.bfh.ch
+ *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
+ *     http://hepia.hesge.ch/
+ *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
+ *     http://www.heig-vd.ch/
  *******************************************************************************/
 
 package com.cburch.logisim.gui.appear;
@@ -40,8 +38,8 @@ public class AppearanceSelection extends Selection {
 	@Override
 	public void setMovingDelta(int dx, int dy) {
 		if (shouldSnap(getSelected())) {
-			dx = (dx + 5) / 10 * 10;
-			dy = (dy + 5) / 10 * 10;
+			dx = Math.round(dx/10.0f) * 10;
+			dy = Math.round(dy/10.0f) * 10;
 		}
 		super.setMovingDelta(dx, dy);
 	}
@@ -50,8 +48,8 @@ public class AppearanceSelection extends Selection {
 	public void setMovingShapes(Collection<? extends CanvasObject> shapes,
 			int dx, int dy) {
 		if (shouldSnap(shapes)) {
-			dx = (dx + 5) / 10 * 10;
-			dy = (dy + 5) / 10 * 10;
+			dx = Math.round(dx/10.0f) * 10;
+			dy = Math.round(dy/10.0f) * 10;
 		}
 		super.setMovingShapes(shapes, dx, dy);
 	}

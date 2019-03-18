@@ -14,18 +14,16 @@
  *   You should have received a copy of the GNU General Public License
  *   along with logisim-evolution.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   Original code by Carl Burch (http://www.cburch.com), 2011.
- *   Subsequent modifications by :
- *     + Haute École Spécialisée Bernoise
- *       http://www.bfh.ch
- *     + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *       http://hepia.hesge.ch/
- *     + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *       http://www.heig-vd.ch/
- *   The project is currently maintained by :
- *     + REDS Institute - HEIG-VD
- *       Yverdon-les-Bains, Switzerland
- *       http://reds.heig-vd.ch
+ * Original code by Carl Burch (http://www.cburch.com), 2011.
+ * Subsequent modifications by:
+ *   + College of the Holy Cross
+ *     http://www.holycross.edu
+ *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
+ *     http://www.bfh.ch
+ *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
+ *     http://hepia.hesge.ch/
+ *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
+ *     http://www.heig-vd.ch/
  *******************************************************************************/
 
 package com.cburch.logisim.circuit;
@@ -40,9 +38,11 @@ import java.util.List;
 import java.util.Map;
 
 import com.cburch.logisim.comp.Component;
+import com.cburch.logisim.comp.ComponentFactory;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.proj.Action;
 import com.cburch.logisim.util.StringGetter;
+import com.cburch.logisim.vhdl.base.VhdlEntity;
 
 public final class CircuitMutation extends CircuitTransaction {
 	private Circuit primary;
@@ -76,8 +76,10 @@ public final class CircuitMutation extends CircuitTransaction {
 
 	@Override
 	protected Map<Circuit, Integer> getAccessedCircuits() {
-		HashMap<Circuit, Integer> accessMap = new HashMap<Circuit, Integer>();
+		HashMap<Circuit, Integer> accessMap = new HashMap<>();
 		HashSet<Circuit> supercircsDone = new HashSet<Circuit>();
+		HashSet<VhdlEntity> vhdlDone = new HashSet<>();
+		HashSet<ComponentFactory> siblingsDone = new HashSet<>();
 		for (CircuitChange change : changes) {
 			Circuit circ = change.getCircuit();
 			accessMap.put(circ, READ_WRITE);
@@ -87,6 +89,30 @@ public final class CircuitMutation extends CircuitTransaction {
 				if (isFirstForCirc) {
 					for (Circuit supercirc : circ.getCircuitsUsingThis()) {
 						accessMap.put(supercirc, READ_WRITE);
+					}
+				}
+			}
+
+			if (change.concernsSiblingComponents()) {
+				ComponentFactory factory = change.getComponent().getFactory();
+				boolean isFirstForSibling = siblingsDone.add(factory);
+				if (isFirstForSibling) {
+					if (factory instanceof SubcircuitFactory) {
+						Circuit sibling = ((SubcircuitFactory)factory).getSubcircuit();
+						boolean isFirstForCirc = supercircsDone.add(sibling);
+						if (isFirstForCirc) {
+							for (Circuit supercirc : sibling.getCircuitsUsingThis()) {
+								accessMap.put(supercirc, READ_WRITE);
+							}
+						}
+					} else if (factory instanceof VhdlEntity) {
+						VhdlEntity sibling = (VhdlEntity)factory;
+						boolean isFirstForVhdl = vhdlDone.add(sibling);
+						if (isFirstForVhdl) {
+							for (Circuit supercirc : sibling.getCircuitsUsingThis()) {
+								accessMap.put(supercirc, READ_WRITE);
+							}
+						}
 					}
 				}
 			}

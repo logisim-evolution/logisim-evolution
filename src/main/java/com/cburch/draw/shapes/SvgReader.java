@@ -14,18 +14,16 @@
  *   You should have received a copy of the GNU General Public License
  *   along with logisim-evolution.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   Original code by Carl Burch (http://www.cburch.com), 2011.
- *   Subsequent modifications by :
- *     + Haute École Spécialisée Bernoise
- *       http://www.bfh.ch
- *     + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *       http://hepia.hesge.ch/
- *     + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *       http://www.heig-vd.ch/
- *   The project is currently maintained by :
- *     + REDS Institute - HEIG-VD
- *       Yverdon-les-Bains, Switzerland
- *       http://reds.heig-vd.ch
+ * Original code by Carl Burch (http://www.cburch.com), 2011.
+ * Subsequent modifications by:
+ *   + College of the Holy Cross
+ *     http://www.holycross.edu
+ *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
+ *     http://www.bfh.ch
+ *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
+ *     http://hepia.hesge.ch/
+ *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
+ *     http://www.heig-vd.ch/
  *******************************************************************************/
 
 package com.cburch.draw.shapes;
@@ -229,22 +227,55 @@ public class SvgReader {
 		int size = Integer.parseInt(fontSize);
 		ret.setValue(DrawAttr.FONT, new Font(fontFamily, styleFlags, size));
 
-		String alignStr = elt.getAttribute("text-anchor");
+		String halignStr = elt.getAttribute("text-anchor");
 		AttributeOption halign;
-		if (alignStr.equals("start")) {
-			halign = DrawAttr.ALIGN_LEFT;
-		} else if (alignStr.equals("end")) {
-			halign = DrawAttr.ALIGN_RIGHT;
+		if (halignStr.equals("start")) {
+			halign = DrawAttr.HALIGN_LEFT;
+		} else if (halignStr.equals("end")) {
+			halign = DrawAttr.HALIGN_RIGHT;
 		} else {
-			halign = DrawAttr.ALIGN_CENTER;
+			halign = DrawAttr.HALIGN_CENTER;
 		}
-		ret.setValue(DrawAttr.ALIGNMENT, halign);
+		ret.setValue(DrawAttr.HALIGNMENT, halign);
+
+		String valignStr = elt.getAttribute("dominant-baseline");
+		AttributeOption valign;
+		if (valignStr.equals("top")) {
+			valign = DrawAttr.VALIGN_TOP;
+		} else if (valignStr.equals("bottom")) {
+			valign = DrawAttr.VALIGN_BOTTOM;
+		} else if (valignStr.equals("alphabetic")) {
+			valign = DrawAttr.VALIGN_BASELINE;
+		} else {
+			valign = DrawAttr.VALIGN_MIDDLE;
+		}
+		ret.setValue(DrawAttr.VALIGNMENT, valign);
 
 		// fill color is handled after we return
 		return ret;
 	}
 
-	private static Color getColor(String hue, String opacity) {
+	public static Font getFontAttribute(Element elt, String prefix, String defaultFamily, int defaultSize) {
+		String fontFamily = elt.getAttribute(prefix + "font-family");
+		if (fontFamily == null || fontFamily.length() == 0)
+			fontFamily = defaultFamily;
+		String fontStyle = elt.getAttribute(prefix + "font-style");
+		if (fontStyle == null || fontStyle.length() == 0)
+			fontStyle = "plain";
+		String fontWeight = elt.getAttribute(prefix + "font-weight");
+		if (fontWeight == null || fontWeight.length() == 0)
+			fontWeight = "plain";
+		String fontSize = elt.getAttribute(prefix + "font-size");
+		int styleFlags = 0;
+		if (fontStyle.equals("italic"))
+			styleFlags |= Font.ITALIC;
+		if (fontWeight.equals("bold"))
+			styleFlags |= Font.BOLD;
+		int size = (fontSize != null && fontSize.length() > 0 ? Integer.parseInt(fontSize) : defaultSize);
+		return new Font(fontFamily, styleFlags, size);
+	}
+
+	public static Color getColor(String hue, String opacity) {
 		int r;
 		int g;
 		int b;

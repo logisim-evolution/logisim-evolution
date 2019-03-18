@@ -14,18 +14,16 @@
  *   You should have received a copy of the GNU General Public License
  *   along with logisim-evolution.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   Original code by Carl Burch (http://www.cburch.com), 2011.
- *   Subsequent modifications by :
- *     + Haute École Spécialisée Bernoise
- *       http://www.bfh.ch
- *     + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *       http://hepia.hesge.ch/
- *     + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *       http://www.heig-vd.ch/
- *   The project is currently maintained by :
- *     + REDS Institute - HEIG-VD
- *       Yverdon-les-Bains, Switzerland
- *       http://reds.heig-vd.ch
+ * Original code by Carl Burch (http://www.cburch.com), 2011.
+ * Subsequent modifications by:
+ *   + College of the Holy Cross
+ *     http://www.holycross.edu
+ *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
+ *     http://www.bfh.ch
+ *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
+ *     http://hepia.hesge.ch/
+ *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
+ *     http://www.heig-vd.ch/
  *******************************************************************************/
 
 package com.cburch.logisim.gui.generic;
@@ -94,9 +92,11 @@ public class ProjectExplorer extends JTree implements LocaleListener {
 			ProjectExplorer.this.requestFocus();
 		}
 	}
+	
 	private class MyCellRenderer extends DefaultTreeCellRenderer {
 
 		private static final long serialVersionUID = 1L;
+		
 		
 		@Override
 		public java.awt.Component getTreeCellRendererComponent(JTree tree,
@@ -105,6 +105,9 @@ public class ProjectExplorer extends JTree implements LocaleListener {
 			java.awt.Component ret;
 			ret = super.getTreeCellRendererComponent(tree, value, selected,
 					expanded, leaf, row, hasFocus);
+			Font plainFont = AppPreferences.getScaledFont(ret.getFont());
+			Font boldFont = new Font(plainFont.getFontName(), Font.BOLD, plainFont.getSize());
+			ret.setFont(plainFont);
 			if (ret instanceof JComponent) {
 				JComponent comp = (JComponent) ret;
 				comp.setToolTipText(null);
@@ -113,22 +116,23 @@ public class ProjectExplorer extends JTree implements LocaleListener {
 				ProjectExplorerToolNode toolNode = (ProjectExplorerToolNode) value;
 				Tool tool = toolNode.getValue();
 				if (ret instanceof JLabel) {
-                    JLabel label = (JLabel)ret;
-                    boolean viewed = false;
-                    if (tool instanceof AddTool && proj != null && proj.getFrame() != null) {
-                            Circuit circ = null;
-                            VhdlContent vhdl = null;
-                            ComponentFactory fact = ((AddTool) tool).getFactory(false);
-                            if (fact instanceof SubcircuitFactory) {
-                                    circ = ((SubcircuitFactory) fact).getSubcircuit();
-                            } else if (fact instanceof VhdlEntity) {
-                                    vhdl = ((VhdlEntity) fact).getContent();
-                            }
-                            if (proj.getFrame().getHdlEditorView() == null)
-                                viewed = (circ != null && circ == proj.getCurrentCircuit());
-                            else
-                                viewed = (vhdl != null && vhdl == proj.getFrame().getHdlEditorView());
-                    }
+					JLabel label = (JLabel)ret;
+					boolean viewed = false;
+					if (tool instanceof AddTool && proj != null && proj.getFrame() != null) {
+						Circuit circ = null;
+						VhdlContent vhdl = null;
+						ComponentFactory fact = ((AddTool) tool).getFactory(false);
+						if (fact instanceof SubcircuitFactory) {
+							circ = ((SubcircuitFactory) fact).getSubcircuit();
+						} else if (fact instanceof VhdlEntity) {
+							vhdl = ((VhdlEntity) fact).getContent();
+						}
+						if (proj.getFrame().getHdlEditorView() == null)
+							viewed = (circ != null && circ == proj.getCurrentCircuit());
+						else
+							viewed = (vhdl != null && vhdl == proj.getFrame().getHdlEditorView());
+					}
+					label.setFont(viewed ? boldFont : plainFont);
                     label.setText(tool.getDisplayName());
                     label.setIcon(new ToolIcon(tool));
                     label.setToolTipText(tool.getDescription());
@@ -148,6 +152,7 @@ public class ProjectExplorer extends JTree implements LocaleListener {
 			return ret;
 		}
 	}
+	
 	private class MyListener implements MouseListener, TreeSelectionListener,
 			ProjectListener, PropertyChangeListener {
 		private void checkForPopup(MouseEvent e) {
@@ -155,7 +160,7 @@ public class ProjectExplorer extends JTree implements LocaleListener {
 				TreePath path = getPathForLocation(e.getX(), e.getY());
 				if (path != null && listener != null) {
 					JPopupMenu menu = listener
-							.menuRequested(new ProjectExplorerEvent(path));
+						.menuRequested(new ProjectExplorerEvent(path));
 					if (menu != null) {
 						menu.show(ProjectExplorer.this, e.getX(), e.getY());
 					}
@@ -190,23 +195,23 @@ public class ProjectExplorer extends JTree implements LocaleListener {
 			checkForPopup(e);
 		}
 
-        void changedNode(Object o) {
-            ProjectExplorerModel model = (ProjectExplorerModel) getModel();
-            if (model != null && o instanceof Tool) {
-                ProjectExplorerModel.Node<Tool> node = model.findTool((Tool)o);
-                if (node != null)
-                    node.fireNodeChanged();
-            }
-        }
-        //
+		void changedNode(Object o) {
+			ProjectExplorerModel model = (ProjectExplorerModel) getModel();
+			if (model != null && o instanceof Tool) {
+				ProjectExplorerModel.Node<Tool> node = model.findTool((Tool)o);
+				if (node != null)
+					node.fireNodeChanged();
+			}
+		}
+		//
 		// project/library file/circuit listener methods
 		//
 		public void projectChanged(ProjectEvent event) {
 			int act = event.getAction();
-            if (act == ProjectEvent.ACTION_SET_CURRENT || act == ProjectEvent.ACTION_SET_TOOL) {
-                changedNode(event.getOldData());
-                changedNode(event.getData());
-            }
+			if (act == ProjectEvent.ACTION_SET_CURRENT || act == ProjectEvent.ACTION_SET_TOOL) {
+				changedNode(event.getOldData());
+				changedNode(event.getData());
+			}
 		}
 
 		//
@@ -281,16 +286,19 @@ public class ProjectExplorer extends JTree implements LocaleListener {
 
 		@Override
 		public void setSelectionPath(TreePath path) {
-			if (isPathValid(path))
+			if (isPathValid(path)) {
+				clearSelection();
 				super.setSelectionPath(path);
+			}
 		}
 
 		@Override
 		public void setSelectionPaths(TreePath[] paths) {
 			paths = getValidPaths(paths);
-
-			if (paths != null)
+			if (paths != null) {
+				clearSelection();
 				super.setSelectionPaths(paths);
+			}
 		}
 	}
 
@@ -323,12 +331,12 @@ public class ProjectExplorer extends JTree implements LocaleListener {
 
 		public void paintIcon(java.awt.Component c, Graphics g, int x, int y) {
 			boolean viewed;
-            if (proj.getFrame().getHdlEditorView() == null)
-                viewed = (circ != null && circ == proj.getCurrentCircuit());
-            else
-                viewed = (vhdl != null && vhdl == proj.getFrame().getHdlEditorView());
-            boolean haloed = !viewed &&
-                    (tool == haloedTool && AppPreferences.ATTRIBUTE_HALO.getBoolean());
+			if (proj.getFrame().getHdlEditorView() == null)
+				viewed = (circ != null && circ == proj.getCurrentCircuit());
+			else
+				viewed = (vhdl != null && vhdl == proj.getFrame().getHdlEditorView());
+			boolean haloed = !viewed &&
+				(tool == haloedTool && AppPreferences.ATTRIBUTE_HALO.getBoolean());
             // draw halo if appropriate
             if (haloed) {
             	Shape s = g.getClip();

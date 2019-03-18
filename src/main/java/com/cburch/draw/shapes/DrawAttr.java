@@ -14,18 +14,16 @@
  *   You should have received a copy of the GNU General Public License
  *   along with logisim-evolution.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   Original code by Carl Burch (http://www.cburch.com), 2011.
- *   Subsequent modifications by :
- *     + Haute École Spécialisée Bernoise
- *       http://www.bfh.ch
- *     + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *       http://hepia.hesge.ch/
- *     + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *       http://www.heig-vd.ch/
- *   The project is currently maintained by :
- *     + REDS Institute - HEIG-VD
- *       Yverdon-les-Bains, Switzerland
- *       http://reds.heig-vd.ch
+ * Original code by Carl Burch (http://www.cburch.com), 2011.
+ * Subsequent modifications by:
+ *   + College of the Holy Cross
+ *     http://www.holycross.edu
+ *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
+ *     http://www.bfh.ch
+ *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
+ *     http://hepia.hesge.ch/
+ *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
+ *     http://www.heig-vd.ch/
  *******************************************************************************/
 
 package com.cburch.draw.shapes;
@@ -77,14 +75,21 @@ public class DrawAttr {
 	public static final int FixedFontAscent = 9;
 	public static final int FixedFontDescent = 1;
 
-	public static final AttributeOption ALIGN_LEFT = new AttributeOption(
-			Integer.valueOf(EditableLabel.LEFT), S.getter("alignStart"));
-	public static final AttributeOption ALIGN_CENTER = new AttributeOption(
-			Integer.valueOf(EditableLabel.CENTER),
-			S.getter("alignMiddle"));
-	public static final AttributeOption ALIGN_RIGHT = new AttributeOption(
-			Integer.valueOf(EditableLabel.RIGHT), S.getter("alignEnd"));
+	public static final AttributeOption HALIGN_LEFT = new AttributeOption(
+			Integer.valueOf(EditableLabel.LEFT), S.getter("alignLeft"));
+	public static final AttributeOption HALIGN_CENTER = new AttributeOption(
+			Integer.valueOf(EditableLabel.CENTER), S.getter("alignCenter"));
+	public static final AttributeOption HALIGN_RIGHT = new AttributeOption(
+			Integer.valueOf(EditableLabel.RIGHT), S.getter("alignRight"));
 
+	public static final AttributeOption VALIGN_TOP = new AttributeOption(
+			Integer.valueOf(EditableLabel.TOP), S.getter("alignTop"));
+	public static final AttributeOption VALIGN_MIDDLE = new AttributeOption(
+			Integer.valueOf(EditableLabel.MIDDLE), S.getter("alignMiddle"));
+	public static final AttributeOption VALIGN_BASELINE = new AttributeOption(
+			Integer.valueOf(EditableLabel.BASELINE), S.getter("alignBaseline"));
+	public static final AttributeOption VALIGN_BOTTOM = new AttributeOption(
+			Integer.valueOf(EditableLabel.BOTTOM), S.getter("alignBottom"));
 	public static final AttributeOption PAINT_STROKE = new AttributeOption(
 			"stroke", S.getter("paintStroke"));
 	public static final AttributeOption PAINT_FILL = new AttributeOption(
@@ -93,10 +98,12 @@ public class DrawAttr {
 			"both", S.getter("paintBoth"));
 	public static final Attribute<Font> FONT = Attributes.forFont("font",
 			S.getter("attrFont"));
-	public static final Attribute<AttributeOption> ALIGNMENT = Attributes
-			.forOption("align", S.getter("attrAlign"),
-					new AttributeOption[] { ALIGN_LEFT, ALIGN_CENTER,
-							ALIGN_RIGHT });
+	public static final Attribute<AttributeOption> HALIGNMENT = Attributes
+			.forOption("halign", S.getter("attrHAlign"),
+					new AttributeOption[] { HALIGN_LEFT, HALIGN_CENTER, HALIGN_RIGHT });
+	public static final Attribute<AttributeOption> VALIGNMENT = Attributes
+			.forOption("valign", S.getter("attrVAlign"),
+					new AttributeOption[] { VALIGN_TOP, VALIGN_MIDDLE, VALIGN_BASELINE, VALIGN_BOTTOM });
 	public static final Attribute<AttributeOption> PAINT_TYPE = Attributes
 			.forOption("paintType", S.getter("attrPaint"),
 					new AttributeOption[] { PAINT_STROKE, PAINT_FILL,
@@ -115,9 +122,9 @@ public class DrawAttr {
 			.forIntegerRange("rx", S.getter("attrRx"), 1, 1000);
 
 	public static final List<Attribute<?>> ATTRS_TEXT // for text
-	= createAttributes(new Attribute[] { FONT, ALIGNMENT, FILL_COLOR });
+	= createAttributes(new Attribute[] { FONT, HALIGNMENT, VALIGNMENT, FILL_COLOR });
 	public static final List<Attribute<?>> ATTRS_TEXT_TOOL // for text tool
-	= createAttributes(new Attribute[] { FONT, ALIGNMENT, TEXT_DEFAULT_FILL });
+	= createAttributes(new Attribute[] { FONT, HALIGNMENT, VALIGNMENT, TEXT_DEFAULT_FILL });
 	public static final List<Attribute<?>> ATTRS_STROKE // for line, polyline
 	= createAttributes(new Attribute[] { STROKE_WIDTH, STROKE_COLOR });
 

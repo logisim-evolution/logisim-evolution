@@ -14,19 +14,18 @@
  *   You should have received a copy of the GNU General Public License
  *   along with logisim-evolution.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   Original code by Carl Burch (http://www.cburch.com), 2011.
- *   Subsequent modifications by :
- *     + Haute École Spécialisée Bernoise
- *       http://www.bfh.ch
- *     + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *       http://hepia.hesge.ch/
- *     + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *       http://www.heig-vd.ch/
- *   The project is currently maintained by :
- *     + REDS Institute - HEIG-VD
- *       Yverdon-les-Bains, Switzerland
- *       http://reds.heig-vd.ch
+ * Original code by Carl Burch (http://www.cburch.com), 2011.
+ * Subsequent modifications by:
+ *   + College of the Holy Cross
+ *     http://www.holycross.edu
+ *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
+ *     http://www.bfh.ch
+ *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
+ *     http://hepia.hesge.ch/
+ *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
+ *     http://www.heig-vd.ch/
  *******************************************************************************/
+
 package com.cburch.logisim.std.memory;
 
 import static com.cburch.logisim.std.Strings.S;
@@ -781,14 +780,7 @@ public class Ram extends Mem {
 			Bounds bds = painter.getBounds();
 			int NrOfBits = painter.getAttributeValue(Mem.DATA_ATTR).getWidth();
 
-			String Label = painter.getAttributeValue(StdAttr.LABEL);
-			if (Label != null && painter.getAttributeValue(StdAttr.LABEL_VISIBILITY)) {
-				Font font = g.getFont();
-				g.setFont(painter.getAttributeValue(StdAttr.LABEL_FONT));
-				GraphicsUtil.drawCenteredText(g, Label, bds.getX() + bds.getWidth()
-						/ 2, bds.getY() - g.getFont().getSize());
-				g.setFont(font);
-			}
+			painter.drawLabel();
 			int xpos = bds.getX();
 			int ypos = bds.getY();
 

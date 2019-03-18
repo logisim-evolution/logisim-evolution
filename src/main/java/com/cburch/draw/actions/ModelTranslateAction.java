@@ -14,18 +14,16 @@
  *   You should have received a copy of the GNU General Public License
  *   along with logisim-evolution.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   Original code by Carl Burch (http://www.cburch.com), 2011.
- *   Subsequent modifications by :
- *     + Haute École Spécialisée Bernoise
- *       http://www.bfh.ch
- *     + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *       http://hepia.hesge.ch/
- *     + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *       http://www.heig-vd.ch/
- *   The project is currently maintained by :
- *     + REDS Institute - HEIG-VD
- *       Yverdon-les-Bains, Switzerland
- *       http://reds.heig-vd.ch
+ * Original code by Carl Burch (http://www.cburch.com), 2011.
+ * Subsequent modifications by:
+ *   + College of the Holy Cross
+ *     http://www.holycross.edu
+ *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
+ *     http://www.bfh.ch
+ *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
+ *     http://hepia.hesge.ch/
+ *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
+ *     http://www.heig-vd.ch/
  *******************************************************************************/
 
 package com.cburch.draw.actions;
@@ -55,18 +53,6 @@ public class ModelTranslateAction extends ModelAction {
 	}
 
 	@Override
-	public Action append(Action other) {
-		if (other instanceof ModelTranslateAction) {
-			ModelTranslateAction o = (ModelTranslateAction) other;
-			if (this.moved.equals(o.moved)) {
-				return new ModelTranslateAction(getModel(), moved, this.dx
-						+ o.dx, this.dy + o.dy);
-			}
-		}
-		return super.append(other);
-	}
-
-	@Override
 	void doSub(CanvasModel model) {
 		model.translateObjects(moved, dx, dy);
 	}
@@ -79,16 +65,6 @@ public class ModelTranslateAction extends ModelAction {
 	@Override
 	public Collection<CanvasObject> getObjects() {
 		return Collections.unmodifiableSet(moved);
-	}
-
-	@Override
-	public boolean shouldAppendTo(Action other) {
-		if (other instanceof ModelTranslateAction) {
-			ModelTranslateAction o = (ModelTranslateAction) other;
-			return this.moved.equals(o.moved);
-		} else {
-			return false;
-		}
 	}
 
 	@Override

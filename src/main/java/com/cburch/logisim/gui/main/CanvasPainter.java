@@ -14,18 +14,16 @@
  *   You should have received a copy of the GNU General Public License
  *   along with logisim-evolution.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   Original code by Carl Burch (http://www.cburch.com), 2011.
- *   Subsequent modifications by :
- *     + Haute École Spécialisée Bernoise
- *       http://www.bfh.ch
- *     + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *       http://hepia.hesge.ch/
- *     + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *       http://www.heig-vd.ch/
- *   The project is currently maintained by :
- *     + REDS Institute - HEIG-VD
- *       Yverdon-les-Bains, Switzerland
- *       http://reds.heig-vd.ch
+ * Original code by Carl Burch (http://www.cburch.com), 2011.
+ * Subsequent modifications by:
+ *   + College of the Holy Cross
+ *     http://www.holycross.edu
+ *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
+ *     http://www.bfh.ch
+ *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
+ *     http://hepia.hesge.ch/
+ *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
+ *     http://www.heig-vd.ch/
  *******************************************************************************/
 
 package com.cburch.logisim.gui.main;
@@ -81,10 +79,9 @@ class CanvasPainter implements PropertyChangeListener {
 		if (exceptions == null || exceptions.size() == 0)
 			return;
 
-		g.setColor(Value.WIDTH_ERROR_COLOR);
-		GraphicsUtil.switchToWidth(g, 2);
 		FontMetrics fm = base.getFontMetrics(g.getFont());
 		for (WidthIncompatibilityData ex : exceptions) {
+			BitWidth common = ex.getCommonBitWidth();
 			for (int i = 0; i < ex.size(); i++) {
 				Location p = ex.getPoint(i);
 				BitWidth w = ex.getBitWidth(i);
@@ -108,9 +105,20 @@ class CanvasPainter implements PropertyChangeListener {
 						break;
 					}
 				}
+				GraphicsUtil.switchToWidth(g, 2);
+				if (common != null && !w.equals(common)) {
+					g.setColor(Value.WIDTH_ERROR_HIGHLIGHT_COLOR);
+					g.drawOval(p.getX() - 5, p.getY() - 5, 10, 10);
+				}
+				g.setColor(Value.WIDTH_ERROR_COLOR);
 				g.drawOval(p.getX() - 4, p.getY() - 4, 8, 8);
-				g.drawString(caption, p.getX() + 5,
-						p.getY() + 2 + fm.getAscent());
+				GraphicsUtil.switchToWidth(g, 3);
+				GraphicsUtil.outlineText(g, caption, p.getX() + 4,
+						p.getY() + 1 + fm.getAscent(),
+						Value.WIDTH_ERROR_CAPTION_COLOR,
+						common != null && !w.equals(common) ?
+						Value.WIDTH_ERROR_HIGHLIGHT_COLOR :
+						Value.WIDTH_ERROR_CAPTION_BGCOLOR);
 			}
 		}
 		g.setColor(Color.BLACK);

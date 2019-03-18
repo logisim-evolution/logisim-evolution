@@ -14,18 +14,16 @@
  *   You should have received a copy of the GNU General Public License
  *   along with logisim-evolution.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   Original code by Carl Burch (http://www.cburch.com), 2011.
- *   Subsequent modifications by :
- *     + Haute École Spécialisée Bernoise
- *       http://www.bfh.ch
- *     + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *       http://hepia.hesge.ch/
- *     + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *       http://www.heig-vd.ch/
- *   The project is currently maintained by :
- *     + REDS Institute - HEIG-VD
- *       Yverdon-les-Bains, Switzerland
- *       http://reds.heig-vd.ch
+ * Original code by Carl Burch (http://www.cburch.com), 2011.
+ * Subsequent modifications by:
+ *   + College of the Holy Cross
+ *     http://www.holycross.edu
+ *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
+ *     http://www.bfh.ch
+ *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
+ *     http://hepia.hesge.ch/
+ *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
+ *     http://www.heig-vd.ch/
  *******************************************************************************/
 
 package com.cburch.draw.toolbar;
@@ -89,21 +87,32 @@ class ToolbarButton extends JComponent implements MouseListener {
 	}
 
 	public void mousePressed(MouseEvent e) {
-		if (item != null && item.isSelectable()) {
+		if (item != null && (item.isSelectable() || (item instanceof ToolbarClickableItem))) {
 			toolbar.setPressed(this);
 		}
 	}
 
 	public void mouseReleased(MouseEvent e) {
 		if (toolbar.getPressed() == this) {
-			toolbar.getToolbarModel().itemSelected(item);
 			toolbar.setPressed(null);
+			if (item != null && item.isSelectable()) {
+				toolbar.getToolbarModel().itemSelected(item);
+			} else if (item != null && item instanceof ToolbarClickableItem) {
+				((ToolbarClickableItem)item).clicked();
+			}
 		}
 	}
 
 	@Override
 	public void paintComponent(Graphics g) {
 		if (toolbar.getPressed() == this) {
+			if (item instanceof ToolbarClickableItem) {
+				Graphics g2 = g.create();
+				g2.translate(BORDER, BORDER);
+				((ToolbarClickableItem)item).paintPressedIcon(ToolbarButton.this, g2);
+				g2.dispose();
+				return;
+			}
 			Dimension dim = item.getDimension(toolbar.getOrientation());
 			Color defaultColor = g.getColor();
 			GraphicsUtil.switchToWidth(g, 2);

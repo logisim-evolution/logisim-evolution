@@ -14,18 +14,16 @@
  *   You should have received a copy of the GNU General Public License
  *   along with logisim-evolution.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   Original code by Carl Burch (http://www.cburch.com), 2011.
- *   Subsequent modifications by :
- *     + Haute École Spécialisée Bernoise
- *       http://www.bfh.ch
- *     + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *       http://hepia.hesge.ch/
- *     + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *       http://www.heig-vd.ch/
- *   The project is currently maintained by :
- *     + REDS Institute - HEIG-VD
- *       Yverdon-les-Bains, Switzerland
- *       http://reds.heig-vd.ch
+ * Original code by Carl Burch (http://www.cburch.com), 2011.
+ * Subsequent modifications by:
+ *   + College of the Holy Cross
+ *     http://www.holycross.edu
+ *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
+ *     http://www.bfh.ch
+ *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
+ *     http://hepia.hesge.ch/
+ *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
+ *     http://www.heig-vd.ch/
  *******************************************************************************/
 
 package com.cburch.logisim.instance;
@@ -73,6 +71,12 @@ public interface StdAttr {
 	public static final Attribute<Color> LABEL_COLOR = Attributes.forColor(
 			"labelcolor", S.getter("ioLabelColorAttr"));
 	public static final Color DEFAULT_LABEL_COLOR = Color.BLUE;
+	public static final AttributeOption LABEL_CENTER = new AttributeOption("center",
+			"center", S.getter("stdLabelCenter"));
+	public static final Attribute<Object> LABEL_LOC = Attributes.forOption(
+			"labelloc", S.getter("stdLabelLocAttr"), new Object[] {
+					LABEL_CENTER, Direction.NORTH, Direction.SOUTH,
+					Direction.EAST, Direction.WEST });
 	public static final Attribute<Boolean> LABEL_VISIBILITY = Attributes.forBoolean(
 			"labelvisible", S.getter("stdLabelVisibility"));
 	public static final AttributeOption APPEAR_CLASSIC = new AttributeOption(

@@ -14,18 +14,16 @@
  *   You should have received a copy of the GNU General Public License
  *   along with logisim-evolution.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   Original code by Carl Burch (http://www.cburch.com), 2011.
- *   Subsequent modifications by :
- *     + Haute École Spécialisée Bernoise
- *       http://www.bfh.ch
- *     + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *       http://hepia.hesge.ch/
- *     + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *       http://www.heig-vd.ch/
- *   The project is currently maintained by :
- *     + REDS Institute - HEIG-VD
- *       Yverdon-les-Bains, Switzerland
- *       http://reds.heig-vd.ch
+ * Original code by Carl Burch (http://www.cburch.com), 2011.
+ * Subsequent modifications by:
+ *   + College of the Holy Cross
+ *     http://www.holycross.edu
+ *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
+ *     http://www.bfh.ch
+ *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
+ *     http://hepia.hesge.ch/
+ *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
+ *     http://www.heig-vd.ch/
  *******************************************************************************/
 
 package com.cburch.logisim.util;
@@ -34,29 +32,6 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 public class IteratorUtil {
-	private static class ArrayIterator<E> implements Iterator<E> {
-		private E[] data;
-		private int i = -1;
-
-		private ArrayIterator(E[] data) {
-			this.data = data;
-		}
-
-		public boolean hasNext() {
-			return i + 1 < data.length;
-		}
-
-		public E next() {
-			if (!hasNext())
-				throw new NoSuchElementException();
-			i++;
-			return data[i];
-		}
-
-		public void remove() {
-			throw new UnsupportedOperationException("ArrayIterator.remove");
-		}
-	}
 
 	private static class EmptyIterator<E> implements Iterator<E> {
 		private EmptyIterator() {
@@ -105,34 +80,6 @@ public class IteratorUtil {
 		}
 	}
 
-	private static class UnitIterator<E> implements Iterator<E> {
-		private E data;
-		private boolean taken = false;
-
-		private UnitIterator(E data) {
-			this.data = data;
-		}
-
-		public boolean hasNext() {
-			return !taken;
-		}
-
-		public E next() {
-			if (taken)
-				throw new NoSuchElementException();
-			taken = true;
-			return data;
-		}
-
-		public void remove() {
-			throw new UnsupportedOperationException("UnitIterator.remove");
-		}
-	}
-
-	public static <E> Iterator<E> createArrayIterator(E[] data) {
-		return new ArrayIterator<E>(data);
-	}
-
 	public static <E> Iterator<E> createJoinedIterator(
 			Iterator<? extends E> i0, Iterator<? extends E> i1) {
 		if (!i0.hasNext()) {
@@ -146,10 +93,6 @@ public class IteratorUtil {
 		} else {
 			return new IteratorUnion<E>(i0, i1);
 		}
-	}
-
-	public static <E> Iterator<E> createUnitIterator(E data) {
-		return new UnitIterator<E>(data);
 	}
 
 	public static <E> Iterator<E> emptyIterator() {

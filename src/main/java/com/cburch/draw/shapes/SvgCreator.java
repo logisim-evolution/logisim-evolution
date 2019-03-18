@@ -14,18 +14,16 @@
  *   You should have received a copy of the GNU General Public License
  *   along with logisim-evolution.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   Original code by Carl Burch (http://www.cburch.com), 2011.
- *   Subsequent modifications by :
- *     + Haute École Spécialisée Bernoise
- *       http://www.bfh.ch
- *     + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *       http://hepia.hesge.ch/
- *     + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *       http://www.heig-vd.ch/
- *   The project is currently maintained by :
- *     + REDS Institute - HEIG-VD
- *       Yverdon-les-Bains, Switzerland
- *       http://reds.heig-vd.ch
+ * Original code by Carl Burch (http://www.cburch.com), 2011.
+ * Subsequent modifications by:
+ *   + College of the Holy Cross
+ *     http://www.holycross.edu
+ *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
+ *     http://www.bfh.ch
+ *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
+ *     http://hepia.hesge.ch/
+ *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
+ *     http://www.heig-vd.ch/
  *******************************************************************************/
 
 package com.cburch.draw.shapes;
@@ -40,8 +38,8 @@ import com.cburch.draw.model.AbstractCanvasObject;
 import com.cburch.draw.model.Handle;
 import com.cburch.logisim.data.Location;
 
-class SvgCreator {
-	private static boolean colorMatches(Color a, Color b) {
+public class SvgCreator {
+	public static boolean colorMatches(Color a, Color b) {
 		return a.getRed() == b.getRed() && a.getGreen() == b.getGreen()
 				&& a.getBlue() == b.getBlue();
 	}
@@ -135,7 +133,8 @@ class SvgCreator {
 		Location loc = text.getLocation();
 		Font font = text.getValue(DrawAttr.FONT);
 		Color fill = text.getValue(DrawAttr.FILL_COLOR);
-		Object halign = text.getValue(DrawAttr.ALIGNMENT);
+		Object halign = text.getValue(DrawAttr.HALIGNMENT);
+		Object valign = text.getValue(DrawAttr.VALIGNMENT);
 		elt.setAttribute("x", "" + loc.getX());
 		elt.setAttribute("y", "" + loc.getY());
 		if (!colorMatches(fill, Color.BLACK)) {
@@ -144,27 +143,40 @@ class SvgCreator {
 		if (showOpacity(fill)) {
 			elt.setAttribute("fill-opacity", getOpacityString(fill));
 		}
-		elt.setAttribute("font-family", font.getFamily());
-		elt.setAttribute("font-size", "" + font.getSize());
-		int style = font.getStyle();
-		if ((style & Font.ITALIC) != 0) {
-			elt.setAttribute("font-style", "italic");
-		}
-		if ((style & Font.BOLD) != 0) {
-			elt.setAttribute("font-weight", "bold");
-		}
-		if (halign == DrawAttr.ALIGN_LEFT) {
+		setFontAttribute(elt, font,"");
+		if (halign == DrawAttr.HALIGN_LEFT) {
 			elt.setAttribute("text-anchor", "start");
-		} else if (halign == DrawAttr.ALIGN_RIGHT) {
+		} else if (halign == DrawAttr.HALIGN_RIGHT) {
 			elt.setAttribute("text-anchor", "end");
 		} else {
 			elt.setAttribute("text-anchor", "middle");
+		}
+		if (valign == DrawAttr.VALIGN_TOP) {
+			elt.setAttribute("dominant-baseline", "top");
+		} else if (valign == DrawAttr.VALIGN_BOTTOM) {
+			elt.setAttribute("dominant-baseline", "bottom");
+		} else if (valign == DrawAttr.VALIGN_BASELINE) {
+			elt.setAttribute("dominant-baseline", "alphabetic");
+		} else {
+			elt.setAttribute("dominant-baseline", "central");
 		}
 		elt.appendChild(doc.createTextNode(text.getText()));
 		return elt;
 	}
 
-	private static String getColorString(Color color) {
+	public static void setFontAttribute(Element elt, Font font, String prefix) {
+		elt.setAttribute(prefix + "font-family", font.getFamily());
+		elt.setAttribute(prefix + "font-size", "" + font.getSize());
+		int style = font.getStyle();
+		if ((style & Font.ITALIC) != 0) {
+			elt.setAttribute(prefix + "font-style", "italic");
+		}
+		if ((style & Font.BOLD) != 0) {
+			elt.setAttribute(prefix + "font-weight", "bold");
+		}
+	}
+
+	public static String getColorString(Color color) {
 		return String.format("#%02x%02x%02x", Integer.valueOf(color.getRed()),
 				Integer.valueOf(color.getGreen()),
 				Integer.valueOf(color.getBlue()));

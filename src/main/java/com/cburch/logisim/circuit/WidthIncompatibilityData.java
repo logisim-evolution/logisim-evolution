@@ -14,18 +14,16 @@
  *   You should have received a copy of the GNU General Public License
  *   along with logisim-evolution.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   Original code by Carl Burch (http://www.cburch.com), 2011.
- *   Subsequent modifications by :
- *     + Haute École Spécialisée Bernoise
- *       http://www.bfh.ch
- *     + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *       http://hepia.hesge.ch/
- *     + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *       http://www.heig-vd.ch/
- *   The project is currently maintained by :
- *     + REDS Institute - HEIG-VD
- *       Yverdon-les-Bains, Switzerland
- *       http://reds.heig-vd.ch
+ * Original code by Carl Burch (http://www.cburch.com), 2011.
+ * Subsequent modifications by:
+ *   + College of the Holy Cross
+ *     http://www.holycross.edu
+ *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
+ *     http://www.bfh.ch
+ *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
+ *     http://hepia.hesge.ch/
+ *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
+ *     http://www.heig-vd.ch/
  *******************************************************************************/
 
 package com.cburch.logisim.circuit;
@@ -64,8 +62,8 @@ public class WidthIncompatibilityData {
 		if (this.size() != o.size())
 			return false;
 		for (int i = 0; i < this.size(); i++) {
-			Location p = this.getPoint(i);
-			BitWidth w = this.getBitWidth(i);
+			Location p = o.getPoint(i);
+			BitWidth w = o.getBitWidth(i);
 			boolean matched = false;
 			for (int j = 0; j < o.size(); j++) {
 				Location q = this.getPoint(j);
@@ -87,6 +85,23 @@ public class WidthIncompatibilityData {
 
 	public Location getPoint(int i) {
 		return points.get(i);
+	}
+
+	public BitWidth getCommonBitWidth() {
+		int hist[] = new int[33];
+		BitWidth maxwidth = null;
+		int maxcount = 0;
+		for (BitWidth bw : widths) {
+			int w = bw.getWidth();
+			int n = ++hist[w];
+			if (n > maxcount) {
+				maxcount = n;
+				maxwidth = bw;
+			} else if (n == maxcount) {
+				maxwidth = null;
+			}
+		}
+		return maxwidth;
 	}
 
 	@Override

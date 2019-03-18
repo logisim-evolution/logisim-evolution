@@ -108,7 +108,7 @@ tasks {
             )
         )
         bundleExtras.put("LSApplicationCategoryType", "public.app-category.education")
-        bundleExtras.put("NSHumanReadableCopyright", "Copyright © 2001–2019 Carl Burch, BFH, HEIG-VD, HEPIA, et al.")
+        bundleExtras.put("NSHumanReadableCopyright", "Copyright © 2001–2019 Carl Burch, BFH, HEIG-VD, HEPIA, Holy Cross, et al.")
         bundleExtras.put("NSSupportsAutomaticGraphicsSwitching", "true")
     }
 }

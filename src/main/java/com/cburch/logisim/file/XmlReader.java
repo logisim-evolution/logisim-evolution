@@ -14,18 +14,16 @@
  *   You should have received a copy of the GNU General Public License
  *   along with logisim-evolution.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   Original code by Carl Burch (http://www.cburch.com), 2011.
- *   Subsequent modifications by :
- *     + Haute École Spécialisée Bernoise
- *       http://www.bfh.ch
- *     + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *       http://hepia.hesge.ch/
- *     + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *       http://www.heig-vd.ch/
- *   The project is currently maintained by :
- *     + REDS Institute - HEIG-VD
- *       Yverdon-les-Bains, Switzerland
- *       http://reds.heig-vd.ch
+ * Original code by Carl Burch (http://www.cburch.com), 2011.
+ * Subsequent modifications by:
+ *   + College of the Holy Cross
+ *     http://www.holycross.edu
+ *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
+ *     http://www.bfh.ch
+ *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
+ *     http://hepia.hesge.ch/
+ *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
+ *     http://www.heig-vd.ch/
  *******************************************************************************/
 
 package com.cburch.logisim.file;
@@ -120,8 +118,7 @@ class XmlReader {
 
 			Library ret = libs.get(lib_name);
 			if (ret == null) {
-				throw new XmlReaderException(StringUtil.format(
-						S.get("libMissingError"), lib_name));
+				throw new XmlReaderException(StringUtil.format(S.get("libMissingError"), lib_name));
 			} else {
 				return ret;
 			}
@@ -146,9 +143,7 @@ class XmlReader {
 							/* De-relativize the path */
 							String dirPath = "";
 							if (srcFilePath != null)
-								dirPath = srcFilePath
-										.substring(0, srcFilePath
-												.lastIndexOf(File.separator));
+								dirPath = srcFilePath.substring(0, srcFilePath.lastIndexOf(File.separator));
 							Path tmp = Paths.get(dirPath, attrVal);
 							attrVal = tmp.toString();
 						}
@@ -163,8 +158,7 @@ class XmlReader {
 				return;
 
 			LogisimVersion ver = sourceVersion;
-			boolean setDefaults = defaults != null
-					&& !defaults.isAllDefaultValues(attrs, ver);
+			boolean setDefaults = defaults != null && !defaults.isAllDefaultValues(attrs, ver);
 			// We need to process this in order, and we have to refetch the
 			// attribute list each time because it may change as we iterate
 			// (as it will for a splitter).
@@ -205,9 +199,7 @@ class XmlReader {
 					} catch (NumberFormatException e) {
 						if (messages == null)
 							messages = new ArrayList<String>();
-						messages.add(StringUtil.format(
-								S.get("attrValueInvalidError"), attrVal,
-								attrName));
+						messages.add(StringUtil.format(S.get("attrValueInvalidError"), attrVal, attrName));
 					}
 				}
 			}
@@ -236,8 +228,7 @@ class XmlReader {
 				try {
 					mods = InputEventUtil.fromString(mods_str);
 				} catch (NumberFormatException e) {
-					loader.showError(StringUtil.format(
-							S.get("mappingBadError"), mods_str));
+					loader.showError(StringUtil.format(S.get("mappingBadError"), mods_str));
 					continue;
 				}
 
@@ -285,8 +276,20 @@ class XmlReader {
 			}
 		}
 
-		private void loadAppearance(Element appearElt, CircuitData circData,
-				String context) {
+		private Map<Element, Component> loadKnownComponents(Element elt, boolean IsHolyCross, boolean IsEvolution) {
+			Map<Element, Component> known = new HashMap<Element, Component>();
+			for (Element sub : XmlIterator.forChildElements(elt, "comp")) {
+				try {
+					Component comp = XmlCircuitReader.getComponent(sub, this,IsHolyCross,IsEvolution);
+					if (comp != null)
+						known.put(sub, comp);
+				} catch (XmlReaderException e) {
+				}
+			}
+			return known;
+		}
+
+		void loadAppearance(Element appearElt, XmlReader.CircuitData circData, String context) {
 			Map<Location, Instance> pins = new HashMap<Location, Instance>();
 			for (Component comp : circData.knownComponents.values()) {
 				if (comp.getFactory() == Pin.FACTORY) {
@@ -297,20 +300,20 @@ class XmlReader {
 
 			List<AbstractCanvasObject> shapes = new ArrayList<AbstractCanvasObject>();
 			for (Element sub : XmlIterator.forChildElements(appearElt)) {
+				// Dynamic shapes are skipped here. They are resolved later in
+				// XmlCircuitReader once the full Circuit tree has been built.
+				// Static shapes (e.g. pins and anchors) need to be done here.
+				if (sub.getTagName().startsWith("visible-"))
+					continue;
 				try {
-					AbstractCanvasObject m = AppearanceSvgReader.createShape(
-							sub, pins);
+					AbstractCanvasObject m = AppearanceSvgReader.createShape(sub, pins,null);
 					if (m == null) {
-						addError(
-								S.fmt("fileAppearanceNotFound",
-										sub.getTagName()),
-								context + "." + sub.getTagName());
+						addError(S.fmt("fileAppearanceNotFound", sub.getTagName()), context + "." + sub.getTagName());
 					} else {
 						shapes.add(m);
 					}
 				} catch (RuntimeException e) {
-					addError(S.fmt("fileAppearanceError",
-							sub.getTagName()), context + "." + sub.getTagName());
+					addError(S.fmt("fileAppearanceError", sub.getTagName()), context + "." + sub.getTagName());
 				}
 			}
 			if (!shapes.isEmpty()) {
@@ -320,19 +323,6 @@ class XmlReader {
 					circData.appearance.addAll(shapes);
 				}
 			}
-		}
-
-		private Map<Element, Component> loadKnownComponents(Element elt, boolean HolyCrossFile, boolean EvolutionFile) {
-			Map<Element, Component> known = new HashMap<Element, Component>();
-			for (Element sub : XmlIterator.forChildElements(elt, "comp")) {
-				try {
-					Component comp = XmlCircuitReader.getComponent(sub, this, HolyCrossFile,EvolutionFile);
-					if (comp != null)
-						known.put(sub, comp);
-				} catch (XmlReaderException e) {
-				}
-			}
-			return known;
 		}
 
 		private Library toLibrary(Element elt,boolean IsHolyCross, boolean IsEvolution) {
@@ -390,12 +380,11 @@ class XmlReader {
 			// circuits...
 			if (sourceVersion.compareTo(LogisimVersion.get(2, 7, 2)) < 0) {
 				IsEvolutionFile = true;
-				JOptionPane
-						.showMessageDialog(
+				JOptionPane.showMessageDialog(
 								null,
 								"You are opening a file created with original Logisim code.\n"
-										+ "You might encounter some problems in the execution, since some components evolved since then.\n"
-										+ "Moreover, labels will be converted to match VHDL limitations for variable names.",
+								+ "You might encounter some problems in the execution, since some components evolved since then.\n"
+								+ "Moreover, labels will be converted to match VHDL limitations for variable names.",
 								"Old file format -- compatibility mode",
 								JOptionPane.WARNING_MESSAGE);
 			}
@@ -411,32 +400,34 @@ class XmlReader {
             List<CircuitData> circuitsData = new ArrayList<CircuitData>();
             for (Element circElt : XmlIterator.forChildElements(elt)) {
             	String name;
-            	switch (circElt.getTagName()) {
-            		case "vhdl":
-            			name = circElt.getAttribute("name");
-                        if (name == null || name.equals("")) {
-                            addError(S.get("circNameMissingError"), "C??");
-                        }
-            			String vhdl = circElt.getTextContent();
-            			VhdlContent contents = VhdlContent.parse(name,vhdl, file);
-            			if (contents != null) {
-            				file.addVhdlContent(contents);
-            			}
-            			break;
-            		case "circuit":
-            			name = circElt.getAttribute("name");
-            			if (name == null || name.equals("")) {
-            				addError(S.get("circNameMissingError"), "C??");
-            			}
-	            		CircuitData circData = new CircuitData(circElt, new Circuit(name, file,proj));
-	            		file.addCircuit(circData.circuit);
-	            		circData.knownComponents = loadKnownComponents(circElt,HolyCrossFile,IsEvolutionFile);
-	            		for (Element appearElt : XmlIterator.forChildElements(circElt,"appear")) {
-	            			loadAppearance(appearElt, circData, name + ".appear");
-	            		}
-	            		circuitsData.add(circData);
-            		default: // do nothing
-            	}
+				switch (circElt.getTagName()) {
+					case "vhdl":
+						name = circElt.getAttribute("name");
+						if (name == null || name.equals("")) {
+							addError(S.get("circNameMissingError"), "C??");
+						}
+						String vhdl = circElt.getTextContent();
+						VhdlContent contents = VhdlContent.parse(name, vhdl, file);
+						if (contents != null) {
+							file.addVhdlContent(contents);
+						}
+						break;
+					case "circuit":
+						name = circElt.getAttribute("name");
+
+						if (name == null || name.equals("")) {
+							addError(S.get("circNameMissingError"), "C??");
+						}
+						CircuitData circData = new CircuitData(circElt, new Circuit(name, file,proj));
+						file.addCircuit(circData.circuit);
+						circData.knownComponents = loadKnownComponents(circElt,HolyCrossFile,IsEvolutionFile);
+						for (Element appearElt : XmlIterator.forChildElements(circElt, "appear")) {
+							loadAppearance(appearElt, circData, name + ".appear");
+						}
+						circuitsData.add(circData);
+					default:
+						// do nothing
+				}
             }
 
 			// third, process the other child elements
@@ -444,38 +435,36 @@ class XmlReader {
 				String name = sub_elt.getTagName();
 
 				switch (name) {
-				case "circuit":
-				case "vhdl":
-				case "lib":
-					// Nothing to do: Done earlier.
-					break;
-				case "options":
-					try {
-						initAttributeSet(sub_elt, file.getOptions()
-								.getAttributeSet(), null,HolyCrossFile,IsEvolutionFile);
-					} catch (XmlReaderException e) {
-						addErrors(e, "options");
-					}
-					break;
-				case "mappings":
-					initMouseMappings(sub_elt,HolyCrossFile,IsEvolutionFile);
-					break;
-				case "toolbar":
-					initToolbarData(sub_elt,HolyCrossFile,IsEvolutionFile);
-					break;
-				case "main":
-					String main = sub_elt.getAttribute("name");
-					Circuit circ = file.getCircuit(main);
-					if (circ != null) {
-						file.setMainCircuit(circ);
-					}
-					break;
-				case "message":
-					file.addMessage(sub_elt.getAttribute("value"));
-					break;
-				default:
-					throw new IllegalArgumentException(
-							"Invalid node in logisim file: " + name);
+					case "circuit":
+					case "vhdl":
+					case "lib":
+						// Nothing to do: Done earlier.
+						break;
+					case "options":
+						try {
+							initAttributeSet(sub_elt, file.getOptions().getAttributeSet(), null,HolyCrossFile,IsEvolutionFile);
+						} catch (XmlReaderException e) {
+							addErrors(e, "options");
+						}
+						break;
+					case "mappings":
+						initMouseMappings(sub_elt,HolyCrossFile,IsEvolutionFile);
+						break;
+					case "toolbar":
+						initToolbarData(sub_elt,HolyCrossFile,IsEvolutionFile);
+						break;
+					case "main":
+						String main = sub_elt.getAttribute("name");
+						Circuit circ = file.getCircuit(main);
+						if (circ != null) {
+							file.setMainCircuit(circ);
+						}
+						break;
+					case "message":
+						file.addMessage(sub_elt.getAttribute("value"));
+						break;
+					default:
+						throw new IllegalArgumentException("Invalid node in logisim file: " + name);
 				}
 			}
 
@@ -522,15 +511,14 @@ class XmlReader {
 		assert (validLabels != null);
 
 		switch (nodeType) {
-		case "circuit":
-			replaceCircuitNodes(root, attrType, validLabels);
-			break;
-		case "comp":
-			replaceCompNodes(root, validLabels);
-			break;
-		default:
-			throw new IllegalArgumentException("Invalid node type requested: "
-					+ nodeType);
+			case "circuit":
+				replaceCircuitNodes(root, attrType, validLabels);
+				break;
+			case "comp":
+				replaceCompNodes(root, validLabels);
+				break;
+			default:
+				throw new IllegalArgumentException("Invalid node type requested: "+ nodeType);
 		}
 	}
 
@@ -744,17 +732,15 @@ class XmlReader {
 		List<String> attrValuesList = new ArrayList<String>();
 
 		switch (nodeType) {
-		case "circuit":
-			inspectCircuitNodes(root, attrType, attrValuesList);
-			break;
-		case "comp":
-			inspectCompNodes(root, attrValuesList);
-			break;
-		default:
-			throw new IllegalArgumentException("Invalid node type requested: "
-					+ nodeType);
+			case "circuit":
+				inspectCircuitNodes(root, attrType, attrValuesList);
+				break;
+			case "comp":
+				inspectCompNodes(root, attrValuesList);
+				break;
+			default:
+				throw new IllegalArgumentException("Invalid node type requested: "+ nodeType);
 		}
-
 		return attrValuesList;
 	}
 
@@ -778,36 +764,31 @@ class XmlReader {
 
 		// Circuits are top-level in the XML file
 		switch (attrType) {
-		case "name":
-			for (Element circElt : XmlIterator
-					.forChildElements(root, "circuit")) {
-				// Circuit's name is directly available as an attribute
-				String name = circElt.getAttribute("name");
-				attrValuesList.add(name);
-			}
-			break;
-		case "label":
-			for (Element circElt : XmlIterator
-					.forChildElements(root, "circuit")) {
-				// label is available through its a child node
-				for (Element attrElt : XmlIterator.forChildElements(circElt,
-						"a")) {
-					if (attrElt.hasAttribute("name")) {
-						String aName = attrElt.getAttribute("name");
-						if (aName.equals("label")) {
-							String label = attrElt.getAttribute("val");
-							if (label.length() > 0) {
-								attrValuesList.add(label);
+			case "name":
+				for (Element circElt : XmlIterator.forChildElements(root, "circuit")) {
+					// Circuit's name is directly available as an attribute
+					String name = circElt.getAttribute("name");
+					attrValuesList.add(name);
+				}
+				break;
+			case "label":
+				for (Element circElt : XmlIterator.forChildElements(root, "circuit")) {
+					// label is available through its a child node
+					for (Element attrElt : XmlIterator.forChildElements(circElt,"a")) {
+						if (attrElt.hasAttribute("name")) {
+							String aName = attrElt.getAttribute("name");
+							if (aName.equals("label")) {
+								String label = attrElt.getAttribute("val");
+								if (label.length() > 0) {
+									attrValuesList.add(label);
+								}
 							}
 						}
 					}
 				}
-			}
-			break;
-		default:
-			throw new IllegalArgumentException(
-					"Invalid attribute type requested: " + attrType
-							+ " for node type: circuit");
+				break;
+			default:
+				throw new IllegalArgumentException("Invalid attribute type requested: " + attrType + " for node type: circuit");
 		}
 	}
 

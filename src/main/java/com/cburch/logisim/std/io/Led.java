@@ -14,18 +14,16 @@
  *   You should have received a copy of the GNU General Public License
  *   along with logisim-evolution.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   Original code by Carl Burch (http://www.cburch.com), 2011.
- *   Subsequent modifications by :
- *     + Haute École Spécialisée Bernoise
- *       http://www.bfh.ch
- *     + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *       http://hepia.hesge.ch/
- *     + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *       http://www.heig-vd.ch/
- *   The project is currently maintained by :
- *     + REDS Institute - HEIG-VD
- *       Yverdon-les-Bains, Switzerland
- *       http://reds.heig-vd.ch
+ * Original code by Carl Burch (http://www.cburch.com), 2011.
+ * Subsequent modifications by:
+ *   + College of the Holy Cross
+ *     http://www.holycross.edu
+ *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
+ *     http://www.bfh.ch
+ *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
+ *     http://hepia.hesge.ch/
+ *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
+ *     http://www.heig-vd.ch/
  *******************************************************************************/
 
 package com.cburch.logisim.std.io;
@@ -34,9 +32,12 @@ import static com.cburch.logisim.std.Strings.S;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.event.KeyEvent;
 
 import com.cburch.logisim.fpga.fpgaboardeditor.FPGAIOInformationContainer;
 import com.cburch.logisim.fpga.hdlgenerator.IOComponentInformationContainer;
+import com.cburch.logisim.circuit.appear.DynamicElement;
+import com.cburch.logisim.circuit.appear.DynamicElementProvider;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Bounds;
@@ -50,9 +51,10 @@ import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.tools.key.DirectionConfigurator;
 import com.cburch.logisim.util.GraphicsUtil;
 
-public class Led extends InstanceFactory {
+public class Led extends InstanceFactory implements DynamicElementProvider {
 
 	public static class Logger extends InstanceLogger {
 		@Override
@@ -74,12 +76,13 @@ public class Led extends InstanceFactory {
 		super("LED", S.getter("ledComponent"));
 		setAttributes(new Attribute[] { StdAttr.FACING, Io.ATTR_ON_COLOR,
 				Io.ATTR_OFF_COLOR, Io.ATTR_ACTIVE, StdAttr.LABEL,
-				Io.ATTR_LABEL_LOC, StdAttr.LABEL_FONT, StdAttr.LABEL_COLOR, StdAttr.LABEL_VISIBILITY },
+				StdAttr.LABEL_LOC, StdAttr.LABEL_FONT, StdAttr.LABEL_COLOR, StdAttr.LABEL_VISIBILITY },
 				new Object[] { Direction.WEST, new Color(240, 0, 0),
 						Color.DARK_GRAY, Boolean.TRUE, "", Direction.EAST,
 						StdAttr.DEFAULT_LABEL_FONT, StdAttr.DEFAULT_LABEL_COLOR, true });
 		setFacingAttribute(StdAttr.FACING);
 		setIconName("led.gif");
+		setKeyConfigurator(new DirectionConfigurator(StdAttr.LABEL_LOC, KeyEvent.ALT_DOWN_MASK));
 		setPorts(new Port[] { new Port(0, 0, Port.INPUT, 1) });
 		setInstanceLogger(Logger.class);
 		MyIOInformation = new IOComponentInformationContainer(0, 1, 0,
@@ -93,53 +96,16 @@ public class Led extends InstanceFactory {
 		return attrs.getValue(Io.ATTR_ACTIVE);
 	}
 
-	private void computeTextField(Instance instance) {
-		Direction facing = instance.getAttributeValue(StdAttr.FACING);
-		Object labelLoc = instance.getAttributeValue(Io.ATTR_LABEL_LOC);
-
-		Bounds bds = instance.getBounds();
-		int x = bds.getX() + bds.getWidth() / 2;
-		int y = bds.getY() + bds.getHeight() / 2;
-		int halign = GraphicsUtil.H_CENTER;
-		int valign = GraphicsUtil.V_CENTER;
-		if (labelLoc == Direction.NORTH) {
-			y = bds.getY() - 2;
-			valign = GraphicsUtil.V_BOTTOM;
-		} else if (labelLoc == Direction.SOUTH) {
-			y = bds.getY() + bds.getHeight() + 2;
-			valign = GraphicsUtil.V_TOP;
-		} else if (labelLoc == Direction.EAST) {
-			x = bds.getX() + bds.getWidth() + 2;
-			halign = GraphicsUtil.H_LEFT;
-		} else if (labelLoc == Direction.WEST) {
-			x = bds.getX() - 2;
-			halign = GraphicsUtil.H_RIGHT;
-		}
-		if (labelLoc == facing) {
-			if (labelLoc == Direction.NORTH || labelLoc == Direction.SOUTH) {
-				x += 2;
-				halign = GraphicsUtil.H_LEFT;
-			} else {
-				y -= 2;
-				valign = GraphicsUtil.V_BOTTOM;
-			}
-		}
-
-		instance.setTextField(StdAttr.LABEL, StdAttr.LABEL_FONT, x, y, halign,
-				valign);
-	}
-
 	@Override
 	protected void configureNewInstance(Instance instance) {
 		instance.addAttributeListener();
-		computeTextField(instance);
+		instance.computeLabelTextField(Instance.AVOID_LEFT);
 	}
 
 	@Override
 	public Bounds getOffsetBounds(AttributeSet attrs) {
 		Direction facing = attrs.getValue(StdAttr.FACING);
-		return Bounds.create(0, -10, 20, 20).rotate(Direction.WEST, facing, 0,
-				0);
+		return Bounds.create(0, -10, 20, 20).rotate(Direction.WEST, facing, 0,0);
 	}
 
 	@Override
@@ -154,9 +120,9 @@ public class Led extends InstanceFactory {
 	protected void instanceAttributeChanged(Instance instance, Attribute<?> attr) {
 		if (attr == StdAttr.FACING) {
 			instance.recomputeBounds();
-			computeTextField(instance);
-		} else if (attr == Io.ATTR_LABEL_LOC) {
-			computeTextField(instance);
+			instance.computeLabelTextField(Instance.AVOID_LEFT);
+		} else if (attr == StdAttr.LABEL_LOC) {
+			instance.computeLabelTextField(Instance.AVOID_LEFT);
 		}
 	}
 
@@ -206,5 +172,9 @@ public class Led extends InstanceFactory {
 	@Override
 	public boolean RequiresNonZeroLabel() {
 		return true;
+	}
+	
+	public DynamicElement createDynamicElement(int x, int y, DynamicElement.Path path) {
+		return new LedShape(x, y, path);
 	}
 }

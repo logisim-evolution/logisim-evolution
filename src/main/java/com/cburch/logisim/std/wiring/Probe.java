@@ -14,18 +14,16 @@
  *   You should have received a copy of the GNU General Public License
  *   along with logisim-evolution.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   Original code by Carl Burch (http://www.cburch.com), 2011.
- *   Subsequent modifications by :
- *     + Haute École Spécialisée Bernoise
- *       http://www.bfh.ch
- *     + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *       http://hepia.hesge.ch/
- *     + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *       http://www.heig-vd.ch/
- *   The project is currently maintained by :
- *     + REDS Institute - HEIG-VD
- *       Yverdon-les-Bains, Switzerland
- *       http://reds.heig-vd.ch
+ * Original code by Carl Burch (http://www.cburch.com), 2011.
+ * Subsequent modifications by:
+ *   + College of the Holy Cross
+ *     http://www.holycross.edu
+ *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
+ *     http://www.bfh.ch
+ *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
+ *     http://hepia.hesge.ch/
+ *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
+ *     http://www.heig-vd.ch/
  *******************************************************************************/
 
 package com.cburch.logisim.std.wiring;
@@ -35,6 +33,7 @@ import static com.cburch.logisim.std.Strings.S;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.event.KeyEvent;
 
 import com.cburch.logisim.LogisimVersion;
 import com.cburch.logisim.circuit.RadixOption;
@@ -55,6 +54,7 @@ import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.prefs.PrefMonitorBooleanConvert;
+import com.cburch.logisim.tools.key.DirectionConfigurator;
 import com.cburch.logisim.util.GraphicsUtil;
 
 public class Probe extends InstanceFactory {
@@ -87,58 +87,6 @@ public class Probe extends InstanceFactory {
 		}
 	}
 
-	public static void configureLabel(Instance instance, Direction labelLoc,
-			Direction facing) {
-		Bounds bds = instance.getBounds();
-		int x;
-		int y;
-		int halign;
-		int valign;
-		if (labelLoc == Direction.NORTH) {
-			halign = TextField.H_CENTER;
-			valign = TextField.V_BOTTOM;
-			x = bds.getX() + bds.getWidth() / 2;
-			y = bds.getY() - 2;
-			if (facing == labelLoc) {
-				halign = TextField.H_LEFT;
-				x += 2;
-			}
-		} else if (labelLoc == Direction.SOUTH) {
-			halign = TextField.H_CENTER;
-			valign = TextField.V_TOP;
-			x = bds.getX() + bds.getWidth() / 2;
-			y = bds.getY() + bds.getHeight() + 2;
-			if (facing == labelLoc) {
-				halign = TextField.H_LEFT;
-				x += 2;
-			}
-		} else if (labelLoc == Direction.EAST) {
-			halign = TextField.H_LEFT;
-			valign = TextField.V_CENTER;
-			x = bds.getX() + bds.getWidth() + 2;
-			y = bds.getY() + bds.getHeight() / 2;
-			if (facing == labelLoc) {
-				valign = TextField.V_BOTTOM;
-				y -= 2;
-			}
-		} else { // WEST
-			halign = TextField.H_RIGHT;
-			valign = TextField.V_CENTER;
-			x = bds.getX() - 2;
-			y = bds.getY() + bds.getHeight() / 2;
-			if (facing == labelLoc) {
-				valign = TextField.V_BOTTOM;
-				y -= 2;
-			}
-		}
-
-		instance.setTextField(StdAttr.LABEL, StdAttr.LABEL_FONT, x, y, halign,
-				valign);
-	}
-
-	//
-	// static methods
-	//
 	public static Bounds getOffsetBounds(Direction dir, BitWidth width,
 			RadixOption radix, boolean NewLayout, boolean IsPin) {
 		int len = radix == null || radix == RadixOption.RADIX_2 ? width
@@ -213,7 +161,7 @@ public class Probe extends InstanceFactory {
 				x0 = bds.getX() + (bds.getWidth() + compWidth) / 2 - 5;
 			}
 			int cx = x0;
-			int cy = bds.getY() + bds.getHeight() - 12;
+			int cy = bds.getY() + bds.getHeight() - 10;
 			int cur = 0;
 			for (int k = 0; k < wid; k++) {
 				GraphicsUtil.drawCenteredText(g,
@@ -222,7 +170,7 @@ public class Probe extends InstanceFactory {
 				if (cur == 8) {
 					cur = 0;
 					cx = x0;
-					cy -= 20;
+					cy -= 14;
 				} else {
 					cx -= 10;
 				}
@@ -230,7 +178,7 @@ public class Probe extends InstanceFactory {
 		} else {
 			String text = radix.toString(value);
 			GraphicsUtil.drawCenteredText(g, text, bds.getX() + bds.getWidth()
-				/ 2, bds.getY() + bds.getHeight() / 2);
+				/ 2, bds.getY() + bds.getHeight() / 2 - 2);
 		}
 	}
 	
@@ -263,7 +211,7 @@ public class Probe extends InstanceFactory {
 		Bounds bds = painter.getBounds(); // intentionally with no graphics
 											// object - we don't want label
 											// included
-
+		g.setFont(Pin.DEFAULT_FONT);
 		RadixOption radix = painter.getAttributeValue(RadixOption.ATTRIBUTE);
 		Direction dir = painter.getAttributeValue(StdAttr.FACING);
 		boolean IsOutput = (painter.getAttributeSet().containsAttribute(Pin.ATTR_TYPE)) ? painter.getAttributeValue(Pin.ATTR_TYPE):false;
@@ -276,6 +224,8 @@ public class Probe extends InstanceFactory {
 		int LabelValueXOffset = IsPin&(North|South)&(bds.getWidth()==20) ? 7 : 
 			                    IsPin&!IsOutput&East ? 20 :
 			                    IsPin&!IsOutput&West ? 7 : 15;
+		if (radix != null && radix != RadixOption.RADIX_2)
+			LabelValueXOffset += 3;
 		g.setColor(Color.BLUE);
 		g2.scale(0.7, 0.7);
 		g2.drawString(radix.GetIndexChar(), (int)((bds.getX()+bds.getWidth()-LabelValueXOffset)/0.7), 
@@ -304,15 +254,14 @@ public class Probe extends InstanceFactory {
 					g.fillOval(cx-4, cy-6, 9, 16);
 					g.setColor(Color.WHITE);
 				}
-				GraphicsUtil.drawCenteredText(g,
-						value.get(k).toDisplayString(), cx, cy);
+				GraphicsUtil.drawCenteredText(g,value.get(k).toDisplayString(), cx, cy);
 				if (colored)
 					g.setColor(Color.BLACK);
 				++cur;
 				if (cur == 8) {
 					cur = 0;
 					cx = x0;
-					cy -= 20;
+					cy -= 14;
 				} else {
 					cx -= 10;
 				}
@@ -324,7 +273,7 @@ public class Probe extends InstanceFactory {
 			int ypos = (North&extend) ? bds.getY()+off1+(bds.getHeight()-15)/2 :
 				       extend&South ? bds.getY()+off2+(bds.getHeight()-15)/2 :
 				    	   bds.getY() + bds.getHeight() / 2;
-			GraphicsUtil.drawText(g, text, bds.getX() + bds.getWidth()-LabelValueXOffset,ypos , 
+			GraphicsUtil.drawText(g, text, bds.getX() + bds.getWidth()-LabelValueXOffset-2,ypos , 
 					GraphicsUtil.H_RIGHT, GraphicsUtil.H_CENTER);
 		}
 	}
@@ -334,13 +283,9 @@ public class Probe extends InstanceFactory {
 	public Probe() {
 		super("Probe", S.getter("probeComponent"));
 		setIconName("probe.gif");
+		setKeyConfigurator(new DirectionConfigurator(StdAttr.LABEL_LOC, KeyEvent.ALT_DOWN_MASK));
 		setFacingAttribute(StdAttr.FACING);
 		setInstanceLogger(ProbeLogger.class);
-	}
-
-	void configureLabel(Instance instance) {
-		ProbeAttributes attrs = (ProbeAttributes) instance.getAttributeSet();
-		Probe.configureLabel(instance, attrs.labelloc, attrs.facing);
 	}
 
 	//
@@ -352,7 +297,7 @@ public class Probe extends InstanceFactory {
 				BitWidth.UNKNOWN) });
 		instance.addAttributeListener();
 		((PrefMonitorBooleanConvert)AppPreferences.NEW_INPUT_OUTPUT_SHAPES).addConvertListener((ProbeAttributes)instance.getAttributeSet());
-		configureLabel(instance);
+		instance.computeLabelTextField(Instance.AVOID_LEFT);
 	}
 
 	@Override
@@ -377,11 +322,11 @@ public class Probe extends InstanceFactory {
 
 	@Override
 	protected void instanceAttributeChanged(Instance instance, Attribute<?> attr) {
-		if (attr == Pin.ATTR_LABEL_LOC) {
-			configureLabel(instance);
+		if (attr == StdAttr.LABEL_LOC) {
+			instance.computeLabelTextField(Instance.AVOID_LEFT);
 		} else if (attr == StdAttr.FACING || attr == RadixOption.ATTRIBUTE || attr == ProbeAttributes.PROBEAPPEARANCE) {
 			instance.recomputeBounds();
-			configureLabel(instance);
+			instance.computeLabelTextField(Instance.AVOID_LEFT);
 		}
 	}
 
@@ -461,7 +406,7 @@ public class Probe extends InstanceFactory {
 						.getAttributeSet();
 				attrs.width = newValue.getBitWidth();
 				state.getInstance().recomputeBounds();
-				configureLabel(state.getInstance());
+				state.getInstance().computeLabelTextField(Instance.AVOID_LEFT);
 			}
 		}
 	}

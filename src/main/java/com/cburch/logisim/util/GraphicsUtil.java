@@ -14,18 +14,16 @@
  *   You should have received a copy of the GNU General Public License
  *   along with logisim-evolution.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   Original code by Carl Burch (http://www.cburch.com), 2011.
- *   Subsequent modifications by :
- *     + Haute École Spécialisée Bernoise
- *       http://www.bfh.ch
- *     + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *       http://hepia.hesge.ch/
- *     + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *       http://www.heig-vd.ch/
- *   The project is currently maintained by :
- *     + REDS Institute - HEIG-VD
- *       Yverdon-les-Bains, Switzerland
- *       http://reds.heig-vd.ch
+ * Original code by Carl Burch (http://www.cburch.com), 2011.
+ * Subsequent modifications by:
+ *   + College of the Holy Cross
+ *     http://www.holycross.edu
+ *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
+ *     http://www.bfh.ch
+ *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
+ *     http://hepia.hesge.ch/
+ *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
+ *     http://www.heig-vd.ch/
  *******************************************************************************/
 
 package com.cburch.logisim.util;
@@ -36,6 +34,10 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.awt.Shape;
+import java.awt.font.FontRenderContext;
+import java.awt.font.GlyphVector;
+import java.awt.geom.AffineTransform;
 
 import com.cburch.draw.util.TextMetrics;
 
@@ -82,6 +84,32 @@ public class GraphicsUtil {
 		drawText(g, text, x, y, H_CENTER, V_CENTER, fg, bg);
 	}
 
+	static public Rectangle getTextCursor(Graphics g, String text,
+			int x, int y, int pos, int halign, int valign) {
+		Rectangle r = getTextBounds(g, text, x, y, halign, valign);
+		if (pos > 0)
+			r.x += new TextMetrics(g, text.substring(0, pos)).width;
+		r.width = 1;
+		return r;
+	}
+
+	static public int getTextPosition(Graphics g, String text,
+			int x, int y, int halign, int valign) {
+		Rectangle r = getTextBounds(g, text, 0, 0, halign, valign);
+		x -= (int)r.x;
+	    int last = 0;
+	    Font font = g.getFont();
+	    FontRenderContext fr = ((Graphics2D)g).getFontRenderContext();
+	    for (int i = 0; i < text.length(); i++) {
+		    	int cur = (int)font.getStringBounds(text.substring(0, i + 1), fr).getWidth();
+	    	if (x <= (last + cur) / 2) {
+	    		return i;
+	    	}
+	    	last = cur;
+	    }
+	    return text.length();
+	}
+
 	static public void drawText(Graphics g, Font font, String text, int x,
 			int y, int halign, int valign, Color fg, Color bg) {
 		Font oldfont = g.getFont();
@@ -126,6 +154,19 @@ public class GraphicsUtil {
 		} else {
 			g.drawString(text, bd.x, bd.y + tm.ascent);
 		}
+	}
+
+	static public void outlineText(Graphics g, String text, int x, int y, Color fg, Color bg) {
+		Graphics2D g2 = (Graphics2D)g;
+        GlyphVector glyphVector = g2.getFont().createGlyphVector(g2.getFontRenderContext(), text);
+        Shape textShape = glyphVector.getOutline();
+		AffineTransform transform = g2.getTransform();
+		g2.translate(x, y);
+        g2.setColor(bg);
+        g2.draw(textShape);
+        g2.setColor(fg);
+        g2.fill(textShape);
+		g2.setTransform(transform);
 	}
 
 	static public Rectangle getTextBounds(Graphics g, Font font, String text,

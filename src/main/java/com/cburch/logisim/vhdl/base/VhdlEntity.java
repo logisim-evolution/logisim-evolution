@@ -1,3 +1,31 @@
+/*******************************************************************************
+ * This file is part of logisim-evolution.
+ *
+ *   logisim-evolution is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   logisim-evolution is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with logisim-evolution.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Original code by Carl Burch (http://www.cburch.com), 2011.
+ * Subsequent modifications by:
+ *   + College of the Holy Cross
+ *     http://www.holycross.edu
+ *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
+ *     http://www.bfh.ch
+ *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
+ *     http://hepia.hesge.ch/
+ *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
+ *     http://www.heig-vd.ch/
+ *******************************************************************************/
+
 package com.cburch.logisim.vhdl.base;
 
 import static com.cburch.logisim.vhdl.Strings.S;
@@ -9,11 +37,15 @@ import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Map;
+import java.util.WeakHashMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.cburch.logisim.circuit.Circuit;
+import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.AttributeSet;
@@ -167,7 +199,7 @@ public class VhdlEntity  extends InstanceFactory implements HdlModelListener {
 
 		Location loc = painter.getLocation();
 		g.translate(loc.getX(), loc.getY());
-		appearance.paintSubcircuit(g, facing);
+		appearance.paintSubcircuit(painter, g, facing);
 		g.translate(-loc.getX(), -loc.getY());
 
 		String label = painter.getAttributeValue(StdAttr.LABEL);
@@ -372,5 +404,16 @@ public class VhdlEntity  extends InstanceFactory implements HdlModelListener {
     
     @Override
     public void appearanceChanged(HdlModel source) { }
+    
+    private WeakHashMap<Component, Circuit> circuitsUsingThis = new WeakHashMap<>();
+	public Collection<Circuit> getCircuitsUsingThis() {
+		return circuitsUsingThis.values();
+	}
+	public void addCircuitUsing(Component comp, Circuit circ) {
+		circuitsUsingThis.put(comp, circ);
+	}
+	public void removeCircuitUsing(Component comp) {
+		circuitsUsingThis.remove(comp);
+	}
 
 }

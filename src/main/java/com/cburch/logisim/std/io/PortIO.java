@@ -14,25 +14,25 @@
  *   You should have received a copy of the GNU General Public License
  *   along with logisim-evolution.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   Original code by Carl Burch (http://www.cburch.com), 2011.
- *   Subsequent modifications by :
- *     + Haute École Spécialisée Bernoise
- *       http://www.bfh.ch
- *     + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *       http://hepia.hesge.ch/
- *     + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *       http://www.heig-vd.ch/
- *   The project is currently maintained by :
- *     + REDS Institute - HEIG-VD
- *       Yverdon-les-Bains, Switzerland
- *       http://reds.heig-vd.ch
+ * Original code by Carl Burch (http://www.cburch.com), 2011.
+ * Subsequent modifications by:
+ *   + College of the Holy Cross
+ *     http://www.holycross.edu
+ *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
+ *     http://www.bfh.ch
+ *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
+ *     http://hepia.hesge.ch/
+ *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
+ *     http://www.heig-vd.ch/
  *******************************************************************************/
+
 package com.cburch.logisim.std.io;
 
 import static com.cburch.logisim.std.Strings.S;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
 import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
@@ -51,6 +51,9 @@ import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.tools.key.DirectionConfigurator;
+import com.cburch.logisim.tools.key.IntegerConfigurator;
+import com.cburch.logisim.tools.key.JoinedConfigurator;
 import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.StringUtil;
 
@@ -83,12 +86,15 @@ public class PortIO extends InstanceFactory {
 	public PortIO() {
 		super("PortIO", S.getter("pioComponent"));
 		int portSize = 8;
-		setAttributes(new Attribute[] { StdAttr.LABEL, Io.ATTR_LABEL_LOC,
+		setAttributes(new Attribute[] { StdAttr.LABEL, StdAttr.LABEL_LOC,
 				StdAttr.LABEL_FONT, StdAttr.LABEL_COLOR, StdAttr.LABEL_VISIBILITY, ATTR_SIZE, ATTR_BUS },
 				new Object[] { "", Direction.EAST, StdAttr.DEFAULT_LABEL_FONT,
 						StdAttr.DEFAULT_LABEL_COLOR, false, portSize, BUSES });
 		setFacingAttribute(StdAttr.FACING);
 		setIconName("pio.gif");
+		setKeyConfigurator(JoinedConfigurator.create(
+				new IntegerConfigurator(ATTR_SIZE, MIN_IO, MAX_IO,  KeyEvent.ALT_DOWN_MASK),
+				new DirectionConfigurator(StdAttr.LABEL_LOC, KeyEvent.ALT_DOWN_MASK)));
 		// setInstancePoker(Poker.class);
 		MyIOInformation = new IOComponentInformationContainer(0, 0, portSize,
 				null, null, GetLabels(portSize),
@@ -100,7 +106,7 @@ public class PortIO extends InstanceFactory {
 
 	private void computeTextField(Instance instance) {
 		Direction facing = Direction.NORTH;
-		Object labelLoc = instance.getAttributeValue(Io.ATTR_LABEL_LOC);
+		Object labelLoc = instance.getAttributeValue(StdAttr.LABEL_LOC);
 
 		Bounds bds = instance.getBounds();
 		int x = bds.getX() + bds.getWidth() / 2;
@@ -229,7 +235,7 @@ public class PortIO extends InstanceFactory {
 
 	@Override
 	protected void instanceAttributeChanged(Instance instance, Attribute<?> attr) {
-		if (attr == Io.ATTR_LABEL_LOC) {
+		if (attr == StdAttr.LABEL_LOC) {
 			computeTextField(instance);
 		} else if (attr == ATTR_SIZE) {
 			instance.recomputeBounds();

@@ -14,18 +14,16 @@
  *   You should have received a copy of the GNU General Public License
  *   along with logisim-evolution.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   Original code by Carl Burch (http://www.cburch.com), 2011.
- *   Subsequent modifications by :
- *     + Haute École Spécialisée Bernoise
- *       http://www.bfh.ch
- *     + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *       http://hepia.hesge.ch/
- *     + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *       http://www.heig-vd.ch/
- *   The project is currently maintained by :
- *     + REDS Institute - HEIG-VD
- *       Yverdon-les-Bains, Switzerland
- *       http://reds.heig-vd.ch
+ * Original code by Carl Burch (http://www.cburch.com), 2011.
+ * Subsequent modifications by:
+ *   + College of the Holy Cross
+ *     http://www.holycross.edu
+ *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
+ *     http://www.bfh.ch
+ *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
+ *     http://hepia.hesge.ch/
+ *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
+ *     http://www.heig-vd.ch/
  *******************************************************************************/
 
 package com.cburch.logisim.std.io;
@@ -34,10 +32,13 @@ import static com.cburch.logisim.std.Strings.S;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
 import com.cburch.logisim.fpga.fpgaboardeditor.FPGAIOInformationContainer;
 import com.cburch.logisim.fpga.hdlgenerator.IOComponentInformationContainer;
+import com.cburch.logisim.circuit.appear.DynamicElement;
+import com.cburch.logisim.circuit.appear.DynamicElementProvider;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Bounds;
@@ -50,9 +51,10 @@ import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.tools.key.DirectionConfigurator;
 import com.cburch.logisim.util.GraphicsUtil;
 
-public class SevenSegment extends InstanceFactory {
+public class SevenSegment extends InstanceFactory implements DynamicElementProvider {
 	static void drawBase(InstancePainter painter, boolean DrawPoint) {
 		ensureSegments();
 		InstanceDataSingleton data = (InstanceDataSingleton) painter.getData();
@@ -135,11 +137,12 @@ public class SevenSegment extends InstanceFactory {
 		super("7-Segment Display", S.getter("sevenSegmentComponent"));
 		setAttributes(new Attribute[] { Io.ATTR_ON_COLOR, Io.ATTR_OFF_COLOR,
 				Io.ATTR_BACKGROUND, Io.ATTR_ACTIVE, StdAttr.LABEL,
-				Io.ATTR_LABEL_LOC, StdAttr.LABEL_FONT, StdAttr.LABEL_VISIBILITY }, new Object[] {
+				StdAttr.LABEL_LOC, StdAttr.LABEL_FONT, StdAttr.LABEL_VISIBILITY }, new Object[] {
 				new Color(240, 0, 0), DEFAULT_OFF, Io.DEFAULT_BACKGROUND,
 				Boolean.TRUE, "", Direction.EAST, StdAttr.DEFAULT_LABEL_FONT, false });
 		setOffsetBounds(Bounds.create(-5, 0, 40, 60));
 		setIconName("7seg.gif");
+		setKeyConfigurator(new DirectionConfigurator(StdAttr.LABEL_LOC, KeyEvent.ALT_DOWN_MASK));
 		Port[] ps = new Port[8];
 		ps[Segment_A] = new Port(20, 0, Port.INPUT, 1);
 		ps[Segment_B] = new Port(30, 0, Port.INPUT, 1);
@@ -174,7 +177,7 @@ public class SevenSegment extends InstanceFactory {
 
 	private void computeTextField(Instance instance) {
 		Direction facing = instance.getAttributeValue(StdAttr.FACING);
-		Object labelLoc = instance.getAttributeValue(Io.ATTR_LABEL_LOC);
+		Object labelLoc = instance.getAttributeValue(StdAttr.LABEL_LOC);
 
 		Bounds bds = instance.getBounds();
 		int x = bds.getX() + bds.getWidth() / 2;
@@ -227,7 +230,7 @@ public class SevenSegment extends InstanceFactory {
 		if (attr == StdAttr.FACING) {
 			instance.recomputeBounds();
 			computeTextField(instance);
-		} else if (attr == Io.ATTR_LABEL_LOC) {
+		} else if (attr == StdAttr.LABEL_LOC) {
 			computeTextField(instance);
 		}
 	}
@@ -257,5 +260,9 @@ public class SevenSegment extends InstanceFactory {
 	@Override
 	public boolean RequiresNonZeroLabel() {
 		return true;
+	}
+	
+	public DynamicElement createDynamicElement(int x, int y, DynamicElement.Path path) {
+		return new SevenSegmentShape(x, y, path);
 	}
 }
