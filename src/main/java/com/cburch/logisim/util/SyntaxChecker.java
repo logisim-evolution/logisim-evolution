@@ -61,6 +61,10 @@ public class SyntaxChecker {
 				ret = false;
 				Message = Message.concat( HDL.equals(HDLGeneratorFactory.VHDL) ? S.get("variableVHDLKeyword") : S.get("variableVerilogKeyword"));
 			}
+			if (val.endsWith("_")) {
+				ret = false;
+				Message = Message.concat(S.get("variableEndsWithUndescore"));
+			}
 			if (!ret&&ShowDialog)
 				JOptionPane.showMessageDialog(null, Message.concat("\n"+S.get("variableNameNotAcceptable")));
 			return ret;

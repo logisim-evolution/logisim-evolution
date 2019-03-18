@@ -38,8 +38,8 @@ public class AppearanceSelection extends Selection {
 	@Override
 	public void setMovingDelta(int dx, int dy) {
 		if (shouldSnap(getSelected())) {
-			dx = (dx + 5) / 10 * 10;
-			dy = (dy + 5) / 10 * 10;
+			dx = Math.round(dx/10.0f) * 10;
+			dy = Math.round(dy/10.0f) * 10;
 		}
 		super.setMovingDelta(dx, dy);
 	}
@@ -48,8 +48,8 @@ public class AppearanceSelection extends Selection {
 	public void setMovingShapes(Collection<? extends CanvasObject> shapes,
 			int dx, int dy) {
 		if (shouldSnap(shapes)) {
-			dx = (dx + 5) / 10 * 10;
-			dy = (dy + 5) / 10 * 10;
+			dx = Math.round(dx/10.0f) * 10;
+			dy = Math.round(dy/10.0f) * 10;
 		}
 		super.setMovingShapes(shapes, dx, dy);
 	}

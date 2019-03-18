@@ -161,7 +161,7 @@ public class Probe extends InstanceFactory {
 				x0 = bds.getX() + (bds.getWidth() + compWidth) / 2 - 5;
 			}
 			int cx = x0;
-			int cy = bds.getY() + bds.getHeight() - 12;
+			int cy = bds.getY() + bds.getHeight() - 10;
 			int cur = 0;
 			for (int k = 0; k < wid; k++) {
 				GraphicsUtil.drawCenteredText(g,
@@ -170,7 +170,7 @@ public class Probe extends InstanceFactory {
 				if (cur == 8) {
 					cur = 0;
 					cx = x0;
-					cy -= 20;
+					cy -= 14;
 				} else {
 					cx -= 10;
 				}
@@ -178,7 +178,7 @@ public class Probe extends InstanceFactory {
 		} else {
 			String text = radix.toString(value);
 			GraphicsUtil.drawCenteredText(g, text, bds.getX() + bds.getWidth()
-				/ 2, bds.getY() + bds.getHeight() / 2);
+				/ 2, bds.getY() + bds.getHeight() / 2 - 2);
 		}
 	}
 	
@@ -211,7 +211,7 @@ public class Probe extends InstanceFactory {
 		Bounds bds = painter.getBounds(); // intentionally with no graphics
 											// object - we don't want label
 											// included
-
+		g.setFont(Pin.DEFAULT_FONT);
 		RadixOption radix = painter.getAttributeValue(RadixOption.ATTRIBUTE);
 		Direction dir = painter.getAttributeValue(StdAttr.FACING);
 		boolean IsOutput = (painter.getAttributeSet().containsAttribute(Pin.ATTR_TYPE)) ? painter.getAttributeValue(Pin.ATTR_TYPE):false;
@@ -224,6 +224,8 @@ public class Probe extends InstanceFactory {
 		int LabelValueXOffset = IsPin&(North|South)&(bds.getWidth()==20) ? 7 : 
 			                    IsPin&!IsOutput&East ? 20 :
 			                    IsPin&!IsOutput&West ? 7 : 15;
+		if (radix != null && radix != RadixOption.RADIX_2)
+			LabelValueXOffset += 3;
 		g.setColor(Color.BLUE);
 		g2.scale(0.7, 0.7);
 		g2.drawString(radix.GetIndexChar(), (int)((bds.getX()+bds.getWidth()-LabelValueXOffset)/0.7), 
@@ -252,15 +254,14 @@ public class Probe extends InstanceFactory {
 					g.fillOval(cx-4, cy-6, 9, 16);
 					g.setColor(Color.WHITE);
 				}
-				GraphicsUtil.drawCenteredText(g,
-						value.get(k).toDisplayString(), cx, cy);
+				GraphicsUtil.drawCenteredText(g,value.get(k).toDisplayString(), cx, cy);
 				if (colored)
 					g.setColor(Color.BLACK);
 				++cur;
 				if (cur == 8) {
 					cur = 0;
 					cx = x0;
-					cy -= 20;
+					cy -= 14;
 				} else {
 					cx -= 10;
 				}
@@ -272,7 +273,7 @@ public class Probe extends InstanceFactory {
 			int ypos = (North&extend) ? bds.getY()+off1+(bds.getHeight()-15)/2 :
 				       extend&South ? bds.getY()+off2+(bds.getHeight()-15)/2 :
 				    	   bds.getY() + bds.getHeight() / 2;
-			GraphicsUtil.drawText(g, text, bds.getX() + bds.getWidth()-LabelValueXOffset,ypos , 
+			GraphicsUtil.drawText(g, text, bds.getX() + bds.getWidth()-LabelValueXOffset-2,ypos , 
 					GraphicsUtil.H_RIGHT, GraphicsUtil.H_CENTER);
 		}
 	}

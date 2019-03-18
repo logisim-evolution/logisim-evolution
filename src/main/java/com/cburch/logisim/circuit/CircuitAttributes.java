@@ -164,18 +164,18 @@ public class CircuitAttributes extends AbstractAttributeSet {
 	private static final Attribute<?>[] STATIC_ATTRS = { NAME_ATTR,
 			CIRCUIT_LABEL_ATTR, CIRCUIT_LABEL_FACING_ATTR,
 			CIRCUIT_LABEL_FONT_ATTR,APPEARANCE_ATTR,NAMED_CIRCUIT_BOX_FIXED_SIZE, 
-			CIRCUIT_VHDL_PATH,ShowStateOption.ATTR };
+			CIRCUIT_VHDL_PATH };
 
 	private static final Object[] STATIC_DEFAULTS = { "", "", Direction.EAST,
 			StdAttr.DEFAULT_LABEL_FONT, APPEAR_CLASSIC, 
-			false, "",ShowStateOption.NONE };
+			false, "" };
 
 	private static final List<Attribute<?>> INSTANCE_ATTRS = Arrays
 			.asList(new Attribute<?>[] { StdAttr.FACING, StdAttr.LABEL,
 					LABEL_LOCATION_ATTR, StdAttr.LABEL_FONT,StdAttr.LABEL_VISIBILITY,
 					NAME_ATTR, CIRCUIT_LABEL_ATTR,
 					CIRCUIT_LABEL_FACING_ATTR, CIRCUIT_LABEL_FONT_ATTR,APPEARANCE_ATTR,
-					CIRCUIT_VHDL_PATH,ShowStateOption.ATTR });
+					CIRCUIT_VHDL_PATH });
 
 	private Circuit source;
 	private Instance subcircInstance;
