@@ -33,6 +33,7 @@ import static com.cburch.logisim.std.Strings.S;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
@@ -42,6 +43,7 @@ import com.cburch.draw.shapes.DrawAttr;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Attributes;
+import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Location;
@@ -54,6 +56,9 @@ import com.cburch.logisim.instance.InstancePoker;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.tools.key.BitWidthConfigurator;
+import com.cburch.logisim.tools.key.DirectionConfigurator;
+import com.cburch.logisim.tools.key.JoinedConfigurator;
 import com.cburch.logisim.util.GraphicsUtil;
 
 public class DipSwitch extends InstanceFactory {
@@ -65,7 +70,7 @@ public class DipSwitch extends InstanceFactory {
 			State val = (State) state.getData();
 			Location loc = state.getInstance().getLocation();
 			Direction facing = state.getInstance().getAttributeValue(StdAttr.FACING);
-			int n = state.getInstance().getAttributeValue(ATTR_SIZE);
+			int n = state.getInstance().getAttributeValue(ATTR_SIZE).getWidth();
 			int i;
 			if (facing == Direction.SOUTH) {
 				i = n + (e.getX() - loc.getX() - 5) / 10;
@@ -129,19 +134,22 @@ public class DipSwitch extends InstanceFactory {
 
 	public static final int MIN_SWITCH = 2;
 
-	public static final Attribute<Integer> ATTR_SIZE = Attributes
-			.forIntegerRange("number", S.getter("nrOfSwitch"),
+	public static final Attribute<BitWidth> ATTR_SIZE = Attributes
+			.forBitWidth("number", S.getter("nrOfSwitch"),
 					MIN_SWITCH, MAX_SWITCH);
 
 	public DipSwitch() {
 		super("DipSwitch", S.getter("DipSwitchComponent"));
 		int dipSize = 8;
-		setAttributes(new Attribute[] { StdAttr.FACING, StdAttr.LABEL, Io.ATTR_LABEL_LOC,
+		setAttributes(new Attribute[] { StdAttr.FACING, StdAttr.LABEL, StdAttr.LABEL_LOC,
 				StdAttr.LABEL_FONT, StdAttr.LABEL_COLOR, StdAttr.LABEL_VISIBILITY, ATTR_SIZE },
 				new Object[] {Direction.NORTH, "", Direction.EAST, StdAttr.DEFAULT_LABEL_FONT,
-						StdAttr.DEFAULT_LABEL_COLOR, false, dipSize });
+						StdAttr.DEFAULT_LABEL_COLOR, false, BitWidth.create(dipSize) });
 		setFacingAttribute(StdAttr.FACING);
 		setIconName("dipswitch.gif");
+		setKeyConfigurator(JoinedConfigurator.create(
+				new BitWidthConfigurator(ATTR_SIZE),
+				new DirectionConfigurator(StdAttr.LABEL_LOC, KeyEvent.ALT_DOWN_MASK)));
 		setInstancePoker(Poker.class);
 		MyIOInformation = new IOComponentInformationContainer(dipSize, 0, 0,
 				GetLabels(dipSize), null, null,
@@ -156,14 +164,14 @@ public class DipSwitch extends InstanceFactory {
 	protected void configureNewInstance(Instance instance) {
 		instance.addAttributeListener();
 		updatePorts(instance);
-		Io.computeLabelTextField(instance, null, 0);
-		MyIOInformation.setNrOfInports(instance.getAttributeValue(ATTR_SIZE),
-				GetLabels(instance.getAttributeValue(ATTR_SIZE)));
+		instance.computeLabelTextField(Instance.AVOID_LEFT);
+		MyIOInformation.setNrOfInports(instance.getAttributeValue(ATTR_SIZE).getWidth(),
+				GetLabels(instance.getAttributeValue(ATTR_SIZE).getWidth()));
 	}
 
 	private void updatePorts(Instance instance) {
 		Direction facing = instance.getAttributeValue(StdAttr.FACING);
-		int n = instance.getAttributeValue(ATTR_SIZE);
+		int n = instance.getAttributeValue(ATTR_SIZE).getWidth();
 		int cx = 0, cy = 0, dx = 0, dy = 0;
 		if (facing == Direction.WEST) {
 			// cy = -10*(n+1); dy = 10;
@@ -187,7 +195,7 @@ public class DipSwitch extends InstanceFactory {
 	@Override
 	public Bounds getOffsetBounds(AttributeSet attrs) {
 		Direction facing = attrs.getValue(StdAttr.FACING);
-		int n = attrs.getValue(ATTR_SIZE);
+		int n = attrs.getValue(ATTR_SIZE).getWidth();
 		return Bounds.create(0, 0, (n+1)*10, 40).rotate(Direction.NORTH, facing, 0, 0);
 	}
 
@@ -202,31 +210,31 @@ public class DipSwitch extends InstanceFactory {
 
 	@Override
 	protected void instanceAttributeChanged(Instance instance, Attribute<?> attr) {
-		if (attr == Io.ATTR_LABEL_LOC) {
-			Io.computeLabelTextField(instance, null, 0);
+		if (attr == StdAttr.LABEL_LOC) {
+			instance.computeLabelTextField(Instance.AVOID_LEFT);
 		} else if (attr == ATTR_SIZE) {
 			instance.recomputeBounds();
 			updatePorts(instance);
-			Io.computeLabelTextField(instance, null, 0);
+			instance.computeLabelTextField(Instance.AVOID_LEFT);
 			MyIOInformation.setNrOfInports(
-					instance.getAttributeValue(ATTR_SIZE),
-					GetLabels(instance.getAttributeValue(ATTR_SIZE)));
+					instance.getAttributeValue(ATTR_SIZE).getWidth(),
+					GetLabels(instance.getAttributeValue(ATTR_SIZE).getWidth()));
 		} else if (attr == StdAttr.FACING) {
 			instance.recomputeBounds();
 			updatePorts(instance);
-			Io.computeLabelTextField(instance, null, 0);
+			instance.computeLabelTextField(Instance.AVOID_LEFT);
 		}
 	}
 
 	@Override
 	public void paintInstance(InstancePainter painter) {
 		State state = (State) painter.getData();
-		if (state == null || state.size != painter.getAttributeValue(ATTR_SIZE)) {
+		if (state == null || state.size != painter.getAttributeValue(ATTR_SIZE).getWidth()) {
 			int val = (state == null) ? 0 : state.Value;
-			state = new State(val, painter.getAttributeValue(ATTR_SIZE));
+			state = new State(val, painter.getAttributeValue(ATTR_SIZE).getWidth());
 			painter.setData(state);
 		}
-		int n = painter.getAttributeValue(ATTR_SIZE);
+		int n = painter.getAttributeValue(ATTR_SIZE).getWidth();
 
 		Direction facing = painter.getAttributeValue(StdAttr.FACING);
 		Location loc = painter.getLocation();
@@ -273,9 +281,9 @@ public class DipSwitch extends InstanceFactory {
 	@Override
 	public void propagate(InstanceState state) {
 		State pins = (State) state.getData();
-		if (pins == null || pins.size != state.getAttributeValue(ATTR_SIZE)) {
+		if (pins == null || pins.size != state.getAttributeValue(ATTR_SIZE).getWidth()) {
 			int val = (pins == null) ? 0 : pins.Value;
-			pins = new State(val, state.getAttributeValue(ATTR_SIZE));
+			pins = new State(val, state.getAttributeValue(ATTR_SIZE).getWidth());
 			state.setData(pins);
 		}
 		for (int i = 0; i < pins.size; i++) {

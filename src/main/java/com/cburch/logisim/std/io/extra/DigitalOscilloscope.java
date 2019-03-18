@@ -35,6 +35,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.event.KeyEvent;
 
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeOption;
@@ -49,7 +50,7 @@ import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
-import com.cburch.logisim.std.io.Io;
+import com.cburch.logisim.tools.key.DirectionConfigurator;
 import com.cburch.logisim.util.GraphicsUtil;
 
 public class DigitalOscilloscope extends InstanceFactory {
@@ -81,41 +82,17 @@ public class DigitalOscilloscope extends InstanceFactory {
 		super("Digital Oscilloscope", S.getter("DigitalOscilloscopeComponent"));
 		setAttributes(
 				new Attribute<?>[] { ATTR_INPUTS, ATTR_NSTATE, VERT_LINE, SHOW_CLOCK, ATTR_COLOR, StdAttr.LABEL,
-						Io.ATTR_LABEL_LOC, StdAttr.LABEL_FONT },
+						StdAttr.LABEL_LOC, StdAttr.LABEL_FONT },
 				new Object[] { 3, 10, TRIG_RISING, true, new Color(0, 208, 208), "", Direction.NORTH,
 						StdAttr.DEFAULT_LABEL_FONT});
 		setIconName("digitaloscilloscope.gif");
-	}
-
-	private void computeTextField(Instance instance) {
-		Object labelLoc = instance.getAttributeValue(Io.ATTR_LABEL_LOC);
-
-		Bounds bds = instance.getBounds();
-		int x = bds.getX() + bds.getWidth() / 2;
-		int y = bds.getY() + bds.getHeight() / 2;
-		int halign = GraphicsUtil.H_CENTER;
-		int valign = GraphicsUtil.V_CENTER_OVERALL;
-		if (labelLoc == Direction.NORTH) {
-			y = bds.getY() - 2;
-			valign = GraphicsUtil.V_BOTTOM;
-		} else if (labelLoc == Direction.SOUTH) {
-			y = bds.getY() + bds.getHeight() + 2;
-			valign = GraphicsUtil.V_TOP;
-		} else if (labelLoc == Direction.EAST) {
-			x = bds.getX() + bds.getWidth() + 2;
-			halign = GraphicsUtil.H_LEFT;
-		} else if (labelLoc == Direction.WEST) {
-			x = bds.getX();
-			y = bds.getY() - 2;
-			valign = GraphicsUtil.V_BOTTOM;
-		}
-		instance.setTextField(StdAttr.LABEL, StdAttr.LABEL_FONT, x, y, halign, valign);
+		setKeyConfigurator(new DirectionConfigurator(StdAttr.LABEL_LOC, KeyEvent.ALT_DOWN_MASK));
 	}
 
 	@Override
 	protected void configureNewInstance(Instance instance) {
 		instance.addAttributeListener();
-		computeTextField(instance);
+		instance.computeLabelTextField(Instance.AVOID_LEFT);
 		updateports(instance);
 	}
 
@@ -146,9 +123,9 @@ public class DigitalOscilloscope extends InstanceFactory {
 		if (attr == ATTR_NSTATE || attr == ATTR_INPUTS || attr == SHOW_CLOCK) {
 			instance.recomputeBounds();
 			updateports(instance);
-			computeTextField(instance);
-		} else if (attr == Io.ATTR_LABEL_LOC) {
-			computeTextField(instance);
+			instance.computeLabelTextField(Instance.AVOID_LEFT);
+		} else if (attr == StdAttr.LABEL_LOC) {
+			instance.computeLabelTextField(Instance.AVOID_LEFT);
 		}
 	}
 

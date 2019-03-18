@@ -98,7 +98,12 @@ public class AppearanceSvgReader {
 			} else {
 				return null;
 			}
-			shape.parseSvgElement(elt);
+			try {
+				shape.parseSvgElement(elt);
+			} catch (Exception e) {
+				e.printStackTrace();
+				throw e;
+			}
 			return shape;
 		}
 		return SvgReader.createShape(elt);

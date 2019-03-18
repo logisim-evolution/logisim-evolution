@@ -66,7 +66,6 @@ import com.cburch.logisim.tools.AddTool;
 import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.tools.Tool;
 import com.cburch.logisim.util.EventSourceWeakSupport;
-import com.cburch.logisim.util.ListUtil;
 import com.cburch.logisim.util.StringUtil;
 import com.cburch.logisim.util.UniquelyNamedThread;
 import com.cburch.logisim.vhdl.base.VhdlContent;
@@ -519,11 +518,6 @@ public class LogisimFile extends Library implements LibraryEventSource,CircuitLi
     	return -1;
     }
 
-
-	@Override
-	public List<?> getElements() {
-		return ListUtil.joinImmutableLists(tools, libraries);
-	}
 
 	@Override
 	public List<Library> getLibraries() {

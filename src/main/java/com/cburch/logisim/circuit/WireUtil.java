@@ -36,6 +36,7 @@ import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.data.Location;
 
 public class WireUtil {
+	/*
 	static CircuitPoints computeCircuitPoints(
 			Collection<? extends Component> components) {
 		CircuitPoints points = new CircuitPoints();
@@ -104,4 +105,5 @@ public class WireUtil {
 
 	private WireUtil() {
 	}
+	*/
 }

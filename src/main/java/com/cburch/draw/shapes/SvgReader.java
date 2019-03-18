@@ -255,21 +255,27 @@ public class SvgReader {
 		return ret;
 	}
 
-	public static Font getFontAttribute(Element elt) {
-		String fontFamily = elt.getAttribute("font-family");
-		String fontStyle = elt.getAttribute("font-style");
-		String fontWeight = elt.getAttribute("font-weight");
-		String fontSize = elt.getAttribute("font-size");
+	public static Font getFontAttribute(Element elt, String prefix, String defaultFamily, int defaultSize) {
+		String fontFamily = elt.getAttribute(prefix + "font-family");
+		if (fontFamily == null || fontFamily.length() == 0)
+			fontFamily = defaultFamily;
+		String fontStyle = elt.getAttribute(prefix + "font-style");
+		if (fontStyle == null || fontStyle.length() == 0)
+			fontStyle = "plain";
+		String fontWeight = elt.getAttribute(prefix + "font-weight");
+		if (fontWeight == null || fontWeight.length() == 0)
+			fontWeight = "plain";
+		String fontSize = elt.getAttribute(prefix + "font-size");
 		int styleFlags = 0;
 		if (fontStyle.equals("italic"))
 			styleFlags |= Font.ITALIC;
 		if (fontWeight.equals("bold"))
 			styleFlags |= Font.BOLD;
-		int size = Integer.parseInt(fontSize);
+		int size = (fontSize != null && fontSize.length() > 0 ? Integer.parseInt(fontSize) : defaultSize);
 		return new Font(fontFamily, styleFlags, size);
 	}
 
-	private static Color getColor(String hue, String opacity) {
+	public static Color getColor(String hue, String opacity) {
 		int r;
 		int g;
 		int b;

@@ -48,15 +48,14 @@ import com.cburch.logisim.util.UnmodifiableList;
 import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.std.io.Io;
 import com.cburch.logisim.instance.InstanceDataSingleton;
+import com.cburch.logisim.instance.StdAttr;
 
 public class LedShape extends DynamicElement {
-	static final int DEFAULT_STROKE_WIDTH = 1;
 	static final int DEFAULT_RADIUS = 5;
 
 
 	public LedShape(int x, int y, DynamicElement.Path p) {
 		super(p, Bounds.create(x, y, 2*DEFAULT_RADIUS, 2*DEFAULT_RADIUS));
-		strokeWidth = DEFAULT_STROKE_WIDTH;
 	}
 
 	@Override
@@ -75,24 +74,8 @@ public class LedShape extends DynamicElement {
 
 	@Override
 	public List<Attribute<?>> getAttributes() {
-		return UnmodifiableList.create(new Attribute<?>[] { DrawAttr.STROKE_WIDTH});
-	}
-
-	@Override
-	@SuppressWarnings("unchecked")
-	public <V> V getValue(Attribute<V> attr) {
-		if (attr == DrawAttr.STROKE_WIDTH) {
-			return (V) Integer.valueOf(strokeWidth);
-		} else {
-			return null;
-		}
-	}
-
-	@Override
-	public void updateValue(Attribute<?> attr, Object value) {
-		if (attr == DrawAttr.STROKE_WIDTH) {
-			strokeWidth = ((Integer) value).intValue();
-		}
+		return UnmodifiableList.create(new Attribute<?>[] {
+			DrawAttr.STROKE_WIDTH, ATTR_LABEL, StdAttr.LABEL_FONT, StdAttr.LABEL_COLOR });
 	}
 
 	@Override
@@ -119,6 +102,7 @@ public class LedShape extends DynamicElement {
 			g.setColor(Color.darkGray);
 			g.drawOval(x, y, w, h);
 		}
+		drawLabel(g);
 	}
 
 	@Override
@@ -126,23 +110,6 @@ public class LedShape extends DynamicElement {
 		return toSvgElement(doc.createElement("visible-led"));
 	}
 
-	public Element toSvgElement(Element ret) {
-		ret.setAttribute("x", "" + bounds.getX());
-		ret.setAttribute("y", "" + bounds.getY());
-		ret.setAttribute("width", "" + bounds.getWidth());
-		ret.setAttribute("height", "" + bounds.getHeight());
-		if (strokeWidth != DEFAULT_STROKE_WIDTH)
-			ret.setAttribute("stroke-width", "" + strokeWidth);
-		ret.setAttribute("path", path.toSvgString());
-		return ret;
-	}
-
-	@Override
-	public void parseSvgElement(Element elt) {
-		if (elt.hasAttribute("stroke-width"))
-			strokeWidth = Integer.parseInt(elt.getAttribute("stroke-width").trim());
-	}
-	
 	@Override
 	public String getDisplayName() {
 		return S.get("ledComponent");

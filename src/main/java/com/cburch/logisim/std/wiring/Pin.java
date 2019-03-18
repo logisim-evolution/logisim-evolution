@@ -400,8 +400,6 @@ public class Pin extends InstanceFactory {
 			.forBoolean("tristate", S.getter("pinThreeStateAttr"));
 	public static final Attribute<Boolean> ATTR_TYPE = Attributes.forBoolean(
 			"output", S.getter("pinOutputAttr"));
-	public static final Attribute<Direction> ATTR_LABEL_LOC = Attributes
-			.forDirection("labelloc", S.getter("pinLabelLocAttr"));
 	public static final AttributeOption PULL_NONE = new AttributeOption("none",
 			S.getter("pinPullNoneOption"));
 	public static final AttributeOption PULL_UP = new AttributeOption("up",
@@ -428,9 +426,9 @@ public class Pin extends InstanceFactory {
 	public Pin() {
 		super("Pin", S.getter("pinComponent"));
 		setFacingAttribute(StdAttr.FACING);
-		setKeyConfigurator(JoinedConfigurator.create(new BitWidthConfigurator(
-				StdAttr.WIDTH), new DirectionConfigurator(ATTR_LABEL_LOC,
-				KeyEvent.ALT_DOWN_MASK)));
+		setKeyConfigurator(JoinedConfigurator.create(
+				new BitWidthConfigurator(StdAttr.WIDTH),
+				new DirectionConfigurator(StdAttr.LABEL_LOC, KeyEvent.ALT_DOWN_MASK)));
 		setInstanceLogger(PinLogger.class);
 		setInstancePoker(PinPoker.class);
 	}
@@ -454,7 +452,7 @@ public class Pin extends InstanceFactory {
 		instance.addAttributeListener();
 		((PrefMonitorBooleanConvert)AppPreferences.NEW_INPUT_OUTPUT_SHAPES).addConvertListener(attrs);
 		configurePorts(instance);
-		Probe.configureLabel(instance, PinLabelLoc(attrs.facing), attrs.facing);
+		instance.computeLabelTextField(Instance.AVOID_LEFT);
 	}
 
 	@Override
@@ -540,7 +538,7 @@ public class Pin extends InstanceFactory {
 				|| attr == RadixOption.ATTRIBUTE || attr == ProbeAttributes.PROBEAPPEARANCE ) {
 			instance.recomputeBounds();
 			PinAttributes attrs = (PinAttributes) instance.getAttributeSet();
-			Probe.configureLabel(instance, PinLabelLoc(attrs.facing), attrs.facing);
+			instance.computeLabelTextField(Instance.AVOID_LEFT, PinLabelLoc(attrs.facing));
 		} else if (attr == Pin.ATTR_TRISTATE || attr == Pin.ATTR_PULL) {
 			instance.fireInvalidated();
 		}

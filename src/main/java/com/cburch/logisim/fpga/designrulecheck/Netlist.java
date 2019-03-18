@@ -315,8 +315,7 @@ public class Netlist implements CircuitListener {
 				int subInputBubbles = comp.GetIOInformationContainer()
 						.GetNrOfInports();
 				if (comp.GetComponent().getFactory() instanceof DipSwitch) {
-					subInputBubbles = comp.GetComponent().getAttributeSet()
-							.getValue(DipSwitch.ATTR_SIZE);
+					subInputBubbles = comp.GetComponent().getAttributeSet().getValue(DipSwitch.ATTR_SIZE).getWidth();
 				}
 				int subInOutBubbles = comp.GetIOInformationContainer()
 						.GetNrOfInOutports();

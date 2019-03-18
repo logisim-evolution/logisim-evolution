@@ -34,10 +34,10 @@ import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.Direction;
 
 public class DirectionConfigurator implements KeyConfigurator, Cloneable {
-	private Attribute<Direction> attr;
+	private Attribute<? extends Object> attr;
 	private int modsEx;
 
-	public DirectionConfigurator(Attribute<Direction> attr, int modifiersEx) {
+	public DirectionConfigurator(Attribute<? extends Object> attr, int modifiersEx) {
 		this.attr = attr;
 		this.modsEx = modifiersEx;
 	}

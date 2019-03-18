@@ -33,6 +33,7 @@ import static com.cburch.logisim.std.Strings.S;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.event.KeyEvent;
 
 import com.cburch.logisim.LogisimVersion;
 import com.cburch.logisim.circuit.RadixOption;
@@ -53,6 +54,7 @@ import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.prefs.PrefMonitorBooleanConvert;
+import com.cburch.logisim.tools.key.DirectionConfigurator;
 import com.cburch.logisim.util.GraphicsUtil;
 
 public class Probe extends InstanceFactory {
@@ -85,58 +87,6 @@ public class Probe extends InstanceFactory {
 		}
 	}
 
-	public static void configureLabel(Instance instance, Direction labelLoc,
-			Direction facing) {
-		Bounds bds = instance.getBounds();
-		int x;
-		int y;
-		int halign;
-		int valign;
-		if (labelLoc == Direction.NORTH) {
-			halign = TextField.H_CENTER;
-			valign = TextField.V_BOTTOM;
-			x = bds.getX() + bds.getWidth() / 2;
-			y = bds.getY() - 2;
-			if (facing == labelLoc) {
-				halign = TextField.H_LEFT;
-				x += 2;
-			}
-		} else if (labelLoc == Direction.SOUTH) {
-			halign = TextField.H_CENTER;
-			valign = TextField.V_TOP;
-			x = bds.getX() + bds.getWidth() / 2;
-			y = bds.getY() + bds.getHeight() + 2;
-			if (facing == labelLoc) {
-				halign = TextField.H_LEFT;
-				x += 2;
-			}
-		} else if (labelLoc == Direction.EAST) {
-			halign = TextField.H_LEFT;
-			valign = TextField.V_CENTER;
-			x = bds.getX() + bds.getWidth() + 2;
-			y = bds.getY() + bds.getHeight() / 2;
-			if (facing == labelLoc) {
-				valign = TextField.V_BOTTOM;
-				y -= 2;
-			}
-		} else { // WEST
-			halign = TextField.H_RIGHT;
-			valign = TextField.V_CENTER;
-			x = bds.getX() - 2;
-			y = bds.getY() + bds.getHeight() / 2;
-			if (facing == labelLoc) {
-				valign = TextField.V_BOTTOM;
-				y -= 2;
-			}
-		}
-
-		instance.setTextField(StdAttr.LABEL, StdAttr.LABEL_FONT, x, y, halign,
-				valign);
-	}
-
-	//
-	// static methods
-	//
 	public static Bounds getOffsetBounds(Direction dir, BitWidth width,
 			RadixOption radix, boolean NewLayout, boolean IsPin) {
 		int len = radix == null || radix == RadixOption.RADIX_2 ? width
@@ -332,13 +282,9 @@ public class Probe extends InstanceFactory {
 	public Probe() {
 		super("Probe", S.getter("probeComponent"));
 		setIconName("probe.gif");
+		setKeyConfigurator(new DirectionConfigurator(StdAttr.LABEL_LOC, KeyEvent.ALT_DOWN_MASK));
 		setFacingAttribute(StdAttr.FACING);
 		setInstanceLogger(ProbeLogger.class);
-	}
-
-	void configureLabel(Instance instance) {
-		ProbeAttributes attrs = (ProbeAttributes) instance.getAttributeSet();
-		Probe.configureLabel(instance, attrs.labelloc, attrs.facing);
 	}
 
 	//
@@ -350,7 +296,7 @@ public class Probe extends InstanceFactory {
 				BitWidth.UNKNOWN) });
 		instance.addAttributeListener();
 		((PrefMonitorBooleanConvert)AppPreferences.NEW_INPUT_OUTPUT_SHAPES).addConvertListener((ProbeAttributes)instance.getAttributeSet());
-		configureLabel(instance);
+		instance.computeLabelTextField(Instance.AVOID_LEFT);
 	}
 
 	@Override
@@ -375,11 +321,11 @@ public class Probe extends InstanceFactory {
 
 	@Override
 	protected void instanceAttributeChanged(Instance instance, Attribute<?> attr) {
-		if (attr == Pin.ATTR_LABEL_LOC) {
-			configureLabel(instance);
+		if (attr == StdAttr.LABEL_LOC) {
+			instance.computeLabelTextField(Instance.AVOID_LEFT);
 		} else if (attr == StdAttr.FACING || attr == RadixOption.ATTRIBUTE || attr == ProbeAttributes.PROBEAPPEARANCE) {
 			instance.recomputeBounds();
-			configureLabel(instance);
+			instance.computeLabelTextField(Instance.AVOID_LEFT);
 		}
 	}
 
@@ -459,7 +405,7 @@ public class Probe extends InstanceFactory {
 						.getAttributeSet();
 				attrs.width = newValue.getBitWidth();
 				state.getInstance().recomputeBounds();
-				configureLabel(state.getInstance());
+				state.getInstance().computeLabelTextField(Instance.AVOID_LEFT);
 			}
 		}
 	}

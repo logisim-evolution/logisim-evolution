@@ -71,6 +71,12 @@ public interface StdAttr {
 	public static final Attribute<Color> LABEL_COLOR = Attributes.forColor(
 			"labelcolor", S.getter("ioLabelColorAttr"));
 	public static final Color DEFAULT_LABEL_COLOR = Color.BLUE;
+	public static final AttributeOption LABEL_CENTER = new AttributeOption("center",
+			"center", S.getter("stdLabelCenter"));
+	public static final Attribute<Object> LABEL_LOC = Attributes.forOption(
+			"labelloc", S.getter("stdLabelLocAttr"), new Object[] {
+					LABEL_CENTER, Direction.NORTH, Direction.SOUTH,
+					Direction.EAST, Direction.WEST });
 	public static final Attribute<Boolean> LABEL_VISIBILITY = Attributes.forBoolean(
 			"labelvisible", S.getter("stdLabelVisibility"));
 	public static final AttributeOption APPEAR_CLASSIC = new AttributeOption(

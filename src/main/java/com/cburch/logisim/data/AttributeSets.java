@@ -200,10 +200,6 @@ public class AttributeSets {
 		}
 	}
 
-	public static <V> AttributeSet fixedSet(Attribute<V> attr, V initValue) {
-		return new SingletonSet(attr, initValue);
-	}
-
 	public static final AttributeSet EMPTY = new AttributeSet() {
 		public void addAttributeListener(AttributeListener l) {
 		}

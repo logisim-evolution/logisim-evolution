@@ -59,7 +59,7 @@ public class ProbeAttributes extends AbstractAttributeSet implements ConvertEven
 
 	private static final List<Attribute<?>> ATTRIBUTES = Arrays
 			.asList(new Attribute<?>[] { StdAttr.FACING, RadixOption.ATTRIBUTE,
-					StdAttr.LABEL, Pin.ATTR_LABEL_LOC, StdAttr.LABEL_FONT, PROBEAPPEARANCE});
+					StdAttr.LABEL, StdAttr.LABEL_LOC, StdAttr.LABEL_FONT, PROBEAPPEARANCE});
 	
 	public static AttributeOption GetDefaultProbeAppearance() {
 		if (AppPreferences.NEW_INPUT_OUTPUT_SHAPES.getBoolean())
@@ -97,7 +97,7 @@ public class ProbeAttributes extends AbstractAttributeSet implements ConvertEven
 			return (E) facing;
 		if (attr == StdAttr.LABEL)
 			return (E) label;
-		if (attr == Pin.ATTR_LABEL_LOC)
+		if (attr == StdAttr.LABEL_LOC)
 			return (E) labelloc;
 		if (attr == StdAttr.LABEL_FONT)
 			return (E) labelfont;
@@ -123,7 +123,7 @@ public class ProbeAttributes extends AbstractAttributeSet implements ConvertEven
 				return;
 			Oldvalue = (V) label;
 			label = val;
-		} else if (attr == Pin.ATTR_LABEL_LOC) {
+		} else if (attr == StdAttr.LABEL_LOC) {
 			Direction newValue = (Direction) value;
 			if (labelloc.equals(newValue))
 				return;

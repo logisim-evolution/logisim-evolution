@@ -32,6 +32,7 @@ import static com.cburch.logisim.std.Strings.S;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
 import com.cburch.logisim.fpga.fpgaboardeditor.FPGAIOInformationContainer;
@@ -51,6 +52,7 @@ import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.tools.key.DirectionConfigurator;
 import com.cburch.logisim.util.GraphicsUtil;
 
 public class RGBLed extends InstanceFactory implements DynamicElementProvider {
@@ -88,11 +90,12 @@ public class RGBLed extends InstanceFactory implements DynamicElementProvider {
 	public RGBLed() {
 		super("RGBLED", S.getter("RGBledComponent"));
 		setAttributes(new Attribute[] { StdAttr.FACING, Io.ATTR_ACTIVE, StdAttr.LABEL,
-				Io.ATTR_LABEL_LOC, StdAttr.LABEL_FONT, StdAttr.LABEL_COLOR, StdAttr.LABEL_VISIBILITY },
+				StdAttr.LABEL_LOC, StdAttr.LABEL_FONT, StdAttr.LABEL_COLOR, StdAttr.LABEL_VISIBILITY },
 				new Object[] { Direction.WEST, Boolean.TRUE, "", Direction.EAST,
 						StdAttr.DEFAULT_LABEL_FONT, StdAttr.DEFAULT_LABEL_COLOR, true });
 		setFacingAttribute(StdAttr.FACING);
 		setIconName("rgbled.gif");
+		setKeyConfigurator(new DirectionConfigurator(StdAttr.LABEL_LOC, KeyEvent.ALT_DOWN_MASK));
 		setInstanceLogger(Logger.class);
 		MyIOInformation = new IOComponentInformationContainer(0, 3, 0, null,
 				GetLabels(), null,
@@ -134,7 +137,7 @@ public class RGBLed extends InstanceFactory implements DynamicElementProvider {
 	protected void configureNewInstance(Instance instance) {
 		instance.addAttributeListener();
 		updatePorts(instance);
-		Io.computeLabelTextField(instance);
+		instance.computeLabelTextField(Instance.AVOID_LEFT);
 	}
 
 	@Override
@@ -156,9 +159,9 @@ public class RGBLed extends InstanceFactory implements DynamicElementProvider {
 		if (attr == StdAttr.FACING) {
 			instance.recomputeBounds();
 			updatePorts(instance);
-			Io.computeLabelTextField(instance);
-		} else if (attr == Io.ATTR_LABEL_LOC) {
-			Io.computeLabelTextField(instance);
+			instance.computeLabelTextField(Instance.AVOID_LEFT);
+		} else if (attr == StdAttr.LABEL_LOC) {
+			instance.computeLabelTextField(Instance.AVOID_LEFT);
 		}
 	}
 

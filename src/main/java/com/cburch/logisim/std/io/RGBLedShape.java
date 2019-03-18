@@ -43,7 +43,6 @@ import com.cburch.logisim.std.io.Io;
 import com.cburch.logisim.instance.InstanceDataSingleton;
 
 public class RGBLedShape extends LedShape {
-	private static final int DEFAULT_STROKE_WIDTH = 1;
 	
 	public RGBLedShape(int x, int y, DynamicElement.Path p) {
 		super(x, y, p);
@@ -51,10 +50,10 @@ public class RGBLedShape extends LedShape {
 
 	@Override
 	public void paintDynamic(Graphics g, CircuitState state) {
-		int x = bounds.getX();
-		int y = bounds.getY();
-		int w = bounds.getWidth();
-		int h = bounds.getHeight();
+		int x = bounds.getX() + 1;
+		int y = bounds.getY() + 1;
+		int w = bounds.getWidth() - 2;
+		int h = bounds.getHeight() - 2;
 		GraphicsUtil.switchToWidth(g, strokeWidth);
 		if (state == null) {
 			g.setColor(Color.lightGray);
@@ -75,6 +74,7 @@ public class RGBLedShape extends LedShape {
 			g.setColor(Color.darkGray);
 			g.drawOval(x, y, w, h);
 		}
+		drawLabel(g);
 	}
 
 	@Override

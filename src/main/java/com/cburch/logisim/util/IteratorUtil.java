@@ -32,29 +32,6 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 public class IteratorUtil {
-	private static class ArrayIterator<E> implements Iterator<E> {
-		private E[] data;
-		private int i = -1;
-
-		private ArrayIterator(E[] data) {
-			this.data = data;
-		}
-
-		public boolean hasNext() {
-			return i + 1 < data.length;
-		}
-
-		public E next() {
-			if (!hasNext())
-				throw new NoSuchElementException();
-			i++;
-			return data[i];
-		}
-
-		public void remove() {
-			throw new UnsupportedOperationException("ArrayIterator.remove");
-		}
-	}
 
 	private static class EmptyIterator<E> implements Iterator<E> {
 		private EmptyIterator() {
@@ -103,34 +80,6 @@ public class IteratorUtil {
 		}
 	}
 
-	private static class UnitIterator<E> implements Iterator<E> {
-		private E data;
-		private boolean taken = false;
-
-		private UnitIterator(E data) {
-			this.data = data;
-		}
-
-		public boolean hasNext() {
-			return !taken;
-		}
-
-		public E next() {
-			if (taken)
-				throw new NoSuchElementException();
-			taken = true;
-			return data;
-		}
-
-		public void remove() {
-			throw new UnsupportedOperationException("UnitIterator.remove");
-		}
-	}
-
-	public static <E> Iterator<E> createArrayIterator(E[] data) {
-		return new ArrayIterator<E>(data);
-	}
-
 	public static <E> Iterator<E> createJoinedIterator(
 			Iterator<? extends E> i0, Iterator<? extends E> i1) {
 		if (!i0.hasNext()) {
@@ -144,10 +93,6 @@ public class IteratorUtil {
 		} else {
 			return new IteratorUnion<E>(i0, i1);
 		}
-	}
-
-	public static <E> Iterator<E> createUnitIterator(E data) {
-		return new UnitIterator<E>(data);
 	}
 
 	public static <E> Iterator<E> emptyIterator() {

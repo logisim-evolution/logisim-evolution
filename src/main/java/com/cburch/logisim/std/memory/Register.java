@@ -32,6 +32,7 @@ import static com.cburch.logisim.std.Strings.S;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.event.KeyEvent;
 
 import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
@@ -54,6 +55,8 @@ import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.tools.key.BitWidthConfigurator;
+import com.cburch.logisim.tools.key.DirectionConfigurator;
+import com.cburch.logisim.tools.key.JoinedConfigurator;
 import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.StringUtil;
 
@@ -217,10 +220,12 @@ public class Register extends InstanceFactory implements DynamicElementProvider 
 	public Register() {
 		super("Register", S.getter("registerComponent"));
 		setAttributes(new Attribute[] { StdAttr.WIDTH, StdAttr.TRIGGER,
-				StdAttr.LABEL, StdAttr.LABEL_FONT, ATTR_SHOW_IN_TAB, StdAttr.APPEARANCE},
+				StdAttr.LABEL, StdAttr.LABEL_LOC, StdAttr.LABEL_FONT, ATTR_SHOW_IN_TAB, StdAttr.APPEARANCE},
 				new Object[] { BitWidth.create(8), StdAttr.TRIG_RISING, "",
-						StdAttr.DEFAULT_LABEL_FONT, false, AppPreferences.getDefaultAppearance()});
-		setKeyConfigurator(new BitWidthConfigurator(StdAttr.WIDTH));
+						Direction.NORTH, StdAttr.DEFAULT_LABEL_FONT, false, AppPreferences.getDefaultAppearance()});
+		setKeyConfigurator(JoinedConfigurator.create(
+				new BitWidthConfigurator(StdAttr.WIDTH),
+				new DirectionConfigurator(StdAttr.LABEL_LOC, KeyEvent.ALT_DOWN_MASK)));
 		setIconName("register.gif");
 		setInstancePoker(RegisterPoker.class);
 		setInstanceLogger(RegisterLogger.class);
@@ -241,9 +246,7 @@ public class Register extends InstanceFactory implements DynamicElementProvider 
 		instance.addAttributeListener();
 		updatePorts(instance);
 		Bounds bds = instance.getBounds();
-		instance.setTextField(StdAttr.LABEL, StdAttr.LABEL_FONT, bds.getX()
-				+ bds.getWidth() / 2, bds.getY() - 3, GraphicsUtil.H_CENTER,
-				GraphicsUtil.V_BASELINE);
+		instance.computeLabelTextField(Instance.AVOID_SIDES);
 	}
 	
 	private void updatePorts(Instance instance) {
@@ -363,6 +366,9 @@ public class Register extends InstanceFactory implements DynamicElementProvider 
 		if (attr == StdAttr.WIDTH || attr == StdAttr.APPEARANCE) {
 			instance.recomputeBounds();
 			updatePorts(instance);
+			instance.computeLabelTextField(Instance.AVOID_SIDES);
+		} else if (attr == StdAttr.LABEL_LOC) {
+			instance.computeLabelTextField(Instance.AVOID_SIDES);
 		}
 	}
 	

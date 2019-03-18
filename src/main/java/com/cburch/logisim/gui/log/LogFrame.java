@@ -181,8 +181,8 @@ public class LogFrame extends LFrame {
 		setSimulator(project.getSimulator(), project.getCircuitState());
 
 		panels = new LogPanel[] { new SelectionPanel(this),
-		// new ScrollPanel(this),
-		// new FilePanel(this),
+		new ScrollPanel(this),
+		new FilePanel(this),
 		};
 		tabbedPane = new JTabbedPane();
 		for (int index = 0; index < panels.length; index++) {

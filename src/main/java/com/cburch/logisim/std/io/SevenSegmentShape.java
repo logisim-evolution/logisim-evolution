@@ -38,6 +38,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.cburch.logisim.instance.InstanceDataSingleton;
+import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.circuit.appear.DynamicElement;
 import com.cburch.logisim.data.Attribute;
@@ -53,15 +54,9 @@ public class SevenSegmentShape extends DynamicElement {
 
 	@Override
 	public List<Attribute<?>> getAttributes() {
-		return UnmodifiableList.create(new Attribute<?>[] { });
+		return UnmodifiableList.create(new Attribute<?>[] {
+			ATTR_LABEL, StdAttr.LABEL_FONT, StdAttr.LABEL_COLOR });
 	}
-
-	@Override
-	@SuppressWarnings("unchecked")
-	public <V> V getValue(Attribute<V> attr) { return null; }
-
-	@Override
-	public void updateValue(Attribute<?> attr, Object value) { }
 
 	@Override
 	public void paintDynamic(Graphics g, CircuitState state) {
@@ -99,7 +94,9 @@ public class SevenSegmentShape extends DynamicElement {
 				g.fillOval(x + 11, y + 17, 2, 2); // draw decimal point
 			}
 		}
+		drawLabel(g);
 	}
+	
 	static final int SEGMENTS[][] = new int[][]{
 			new int[] {3, 1, 6, 2},
 			new int[] {9, 3, 2, 6},
@@ -114,17 +111,6 @@ public class SevenSegmentShape extends DynamicElement {
 	public Element toSvgElement(Document doc) {
 		return toSvgElement(doc.createElement("visible-sevensegment"));
 	}
-
-	public Element toSvgElement(Element ret) {
-		ret.setAttribute("x", "" + bounds.getX());
-		ret.setAttribute("y", "" + bounds.getY());
-		ret.setAttribute("width", "" + bounds.getWidth());
-		ret.setAttribute("height", "" + bounds.getHeight());
-		ret.setAttribute("path", path.toSvgString());
-		return ret;
-	}
-
-	public void parseSvgElement(Element elt) { }
 
 	@Override
 	public String getDisplayName() {

@@ -43,7 +43,6 @@ public class ITA_IO extends Library {
 	private static FactoryDescription[] DESCRIPTIONS = {
 			new FactoryDescription("Switch", S.getter("switchComponent"), "switch.gif", "Switch"),
 			new FactoryDescription("Buzzer", S.getter("buzzerComponent"), "buzzer.gif", "Buzzer"),
-			new FactoryDescription("DipSwitch", S.getter("DipSwitchComponent"), "dipswitch.gif", "DipSwitch"),
 			new FactoryDescription("Slider", S.getter("Slider"), "slider.gif", "Slider"),
 			new FactoryDescription("Digital Oscilloscope", S.getter("DigitalOscilloscopeComponent"),
 					"digitaloscilloscope.gif", "DigitalOscilloscope"),

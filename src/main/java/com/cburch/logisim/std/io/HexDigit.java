@@ -31,6 +31,7 @@ package com.cburch.logisim.std.io;
 import static com.cburch.logisim.std.Strings.S;
 
 import java.awt.Color;
+import java.awt.event.KeyEvent;
 
 import com.cburch.logisim.circuit.appear.DynamicElement;
 import com.cburch.logisim.circuit.appear.DynamicElementProvider;
@@ -48,6 +49,7 @@ import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.tools.key.DirectionConfigurator;
 
 public class HexDigit extends InstanceFactory implements DynamicElementProvider {
 	
@@ -58,7 +60,7 @@ public class HexDigit extends InstanceFactory implements DynamicElementProvider 
 		super("Hex Digit Display", S.getter("hexDigitComponent"));
 		setAttributes(new Attribute[] { Io.ATTR_ON_COLOR, Io.ATTR_OFF_COLOR,
 				Io.ATTR_BACKGROUND , StdAttr.LABEL,
-				Io.ATTR_LABEL_LOC, StdAttr.LABEL_FONT, StdAttr.LABEL_VISIBILITY}, new Object[] { new Color(240, 0, 0),
+				StdAttr.LABEL_LOC, StdAttr.LABEL_FONT, StdAttr.LABEL_VISIBILITY}, new Object[] { new Color(240, 0, 0),
 				SevenSegment.DEFAULT_OFF, Io.DEFAULT_BACKGROUND , "", Direction.EAST, StdAttr.DEFAULT_LABEL_FONT, false });
 		Port[] ps = new Port[2];
 		ps[HEX] = new Port(0, 0, Port.INPUT, 4);
@@ -68,6 +70,7 @@ public class HexDigit extends InstanceFactory implements DynamicElementProvider 
 		setPorts(ps);
 		setOffsetBounds(Bounds.create(-15, -60, 40, 60));
 		setIconName("hexdig.gif");
+		setKeyConfigurator(new DirectionConfigurator(StdAttr.LABEL_LOC, KeyEvent.ALT_DOWN_MASK));
 		MyIOInformation = new IOComponentInformationContainer(0, 8, 0, null,
 				SevenSegment.GetLabels(), null,
 				FPGAIOInformationContainer.IOComponentTypes.SevenSegment);

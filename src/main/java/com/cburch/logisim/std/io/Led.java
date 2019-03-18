@@ -32,6 +32,7 @@ import static com.cburch.logisim.std.Strings.S;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.event.KeyEvent;
 
 import com.cburch.logisim.fpga.fpgaboardeditor.FPGAIOInformationContainer;
 import com.cburch.logisim.fpga.hdlgenerator.IOComponentInformationContainer;
@@ -50,6 +51,7 @@ import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.tools.key.DirectionConfigurator;
 import com.cburch.logisim.util.GraphicsUtil;
 
 public class Led extends InstanceFactory implements DynamicElementProvider {
@@ -74,12 +76,13 @@ public class Led extends InstanceFactory implements DynamicElementProvider {
 		super("LED", S.getter("ledComponent"));
 		setAttributes(new Attribute[] { StdAttr.FACING, Io.ATTR_ON_COLOR,
 				Io.ATTR_OFF_COLOR, Io.ATTR_ACTIVE, StdAttr.LABEL,
-				Io.ATTR_LABEL_LOC, StdAttr.LABEL_FONT, StdAttr.LABEL_COLOR, StdAttr.LABEL_VISIBILITY },
+				StdAttr.LABEL_LOC, StdAttr.LABEL_FONT, StdAttr.LABEL_COLOR, StdAttr.LABEL_VISIBILITY },
 				new Object[] { Direction.WEST, new Color(240, 0, 0),
 						Color.DARK_GRAY, Boolean.TRUE, "", Direction.EAST,
 						StdAttr.DEFAULT_LABEL_FONT, StdAttr.DEFAULT_LABEL_COLOR, true });
 		setFacingAttribute(StdAttr.FACING);
 		setIconName("led.gif");
+		setKeyConfigurator(new DirectionConfigurator(StdAttr.LABEL_LOC, KeyEvent.ALT_DOWN_MASK));
 		setPorts(new Port[] { new Port(0, 0, Port.INPUT, 1) });
 		setInstanceLogger(Logger.class);
 		MyIOInformation = new IOComponentInformationContainer(0, 1, 0,
@@ -96,7 +99,7 @@ public class Led extends InstanceFactory implements DynamicElementProvider {
 	@Override
 	protected void configureNewInstance(Instance instance) {
 		instance.addAttributeListener();
-		Io.computeLabelTextField(instance);
+		instance.computeLabelTextField(Instance.AVOID_LEFT);
 	}
 
 	@Override
@@ -117,9 +120,9 @@ public class Led extends InstanceFactory implements DynamicElementProvider {
 	protected void instanceAttributeChanged(Instance instance, Attribute<?> attr) {
 		if (attr == StdAttr.FACING) {
 			instance.recomputeBounds();
-			Io.computeLabelTextField(instance);
-		} else if (attr == Io.ATTR_LABEL_LOC) {
-			Io.computeLabelTextField(instance);
+			instance.computeLabelTextField(Instance.AVOID_LEFT);
+		} else if (attr == StdAttr.LABEL_LOC) {
+			instance.computeLabelTextField(Instance.AVOID_LEFT);
 		}
 	}
 

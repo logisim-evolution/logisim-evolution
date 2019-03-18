@@ -53,18 +53,6 @@ public class ModelTranslateAction extends ModelAction {
 	}
 
 	@Override
-	public Action append(Action other) {
-		if (other instanceof ModelTranslateAction) {
-			ModelTranslateAction o = (ModelTranslateAction) other;
-			if (this.moved.equals(o.moved)) {
-				return new ModelTranslateAction(getModel(), moved, this.dx
-						+ o.dx, this.dy + o.dy);
-			}
-		}
-		return super.append(other);
-	}
-
-	@Override
 	void doSub(CanvasModel model) {
 		model.translateObjects(moved, dx, dy);
 	}
@@ -77,16 +65,6 @@ public class ModelTranslateAction extends ModelAction {
 	@Override
 	public Collection<CanvasObject> getObjects() {
 		return Collections.unmodifiableSet(moved);
-	}
-
-	@Override
-	public boolean shouldAppendTo(Action other) {
-		if (other instanceof ModelTranslateAction) {
-			ModelTranslateAction o = (ModelTranslateAction) other;
-			return this.moved.equals(o.moved);
-		} else {
-			return false;
-		}
 	}
 
 	@Override

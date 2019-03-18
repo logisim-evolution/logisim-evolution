@@ -29,21 +29,10 @@
 package com.cburch.draw.undo;
 
 public abstract class Action {
-	public Action append(Action other) {
-		return new ActionUnion(this, other);
-	}
 
 	public abstract void doIt();
 
 	public abstract String getName();
-
-	public boolean isModification() {
-		return true;
-	}
-
-	public boolean shouldAppendTo(Action other) {
-		return false;
-	}
 
 	public abstract void undo();
 }

@@ -33,6 +33,7 @@ import static com.cburch.logisim.std.Strings.S;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.event.KeyEvent;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,6 +57,8 @@ import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.tools.key.BitWidthConfigurator;
+import com.cburch.logisim.tools.key.DirectionConfigurator;
+import com.cburch.logisim.tools.key.JoinedConfigurator;
 import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.StringUtil;
 
@@ -99,6 +102,9 @@ public class Counter extends InstanceFactory implements DynamicElementProvider {
 		setOffsetBounds(Bounds.create(-30, -20, 30, 40));
 		setIconName("counter.gif");
 		setInstancePoker(CounterPoker.class);
+		setKeyConfigurator(JoinedConfigurator.create(
+				new BitWidthConfigurator(StdAttr.WIDTH),
+				new DirectionConfigurator(StdAttr.LABEL_LOC, KeyEvent.ALT_DOWN_MASK)));
 		setInstanceLogger(RegisterLogger.class);
 		setKeyConfigurator(new BitWidthConfigurator(StdAttr.WIDTH));
 	}
@@ -412,6 +418,9 @@ public class Counter extends InstanceFactory implements DynamicElementProvider {
 		if (attr == StdAttr.WIDTH || attr == StdAttr.APPEARANCE) {
 			instance.recomputeBounds();
 			configurePorts(instance);
+			instance.computeLabelTextField(Instance.AVOID_SIDES);
+		} else if (attr == StdAttr.LABEL_LOC) {
+			instance.computeLabelTextField(Instance.AVOID_SIDES);
 		}
 	}
 	
