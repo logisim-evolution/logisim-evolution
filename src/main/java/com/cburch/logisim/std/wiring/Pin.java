@@ -44,22 +44,16 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
-import java.text.DecimalFormat;
-import java.text.ParseException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFormattedTextField;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.text.MaskFormatter;
 
 import com.cburch.logisim.LogisimVersion;
 import com.cburch.logisim.circuit.CircuitState;
@@ -272,6 +266,35 @@ public class Pin extends InstanceFactory {
 
 		int bitPressed = -1;
 		int bitCaret = -1;
+		
+		private int getRow(InstanceState state, MouseEvent e) {
+			int row = 0;
+			Direction dir = state.getAttributeValue(StdAttr.FACING);
+			Bounds bds = state.getInstance().getBounds(); 
+			if (dir == Direction.EAST || dir == Direction.WEST)
+				row = (bds.getY()+bds.getHeight()-e.getY()) / 20;
+			else if (dir == Direction.NORTH)
+				row = (bds.getX()+bds.getWidth()-e.getX()) / 20;
+			else
+				row = (e.getX()-bds.getX()) / 20;
+			return row;
+		}
+		
+		private int getColumn(InstanceState state, MouseEvent e, boolean isBinair) {
+			int col = 0;
+			int distance = isBinair ? 10 : DIGIT_WIDTH;
+			Direction dir = state.getAttributeValue(StdAttr.FACING);
+			Bounds bds = state.getInstance().getBounds();
+			if (dir == Direction.EAST || dir == Direction.WEST) {
+				int offset = dir == Direction.EAST ? 20 : 10;
+				col = (bds.getX()+bds.getWidth()-e.getX()-offset)/distance;
+			} else if (dir == Direction.NORTH)
+				col = (e.getY()-bds.getY()-20)/distance;
+			else
+				col = (bds.getY()+bds.getHeight()-e.getY()-20)/distance;
+			
+			return col;
+		}
 
 		private int getBit(InstanceState state, MouseEvent e) {
 			RadixOption radix = state.getAttributeValue(RadixOption.ATTRIBUTE);
@@ -292,12 +315,10 @@ public class Pin extends InstanceFactory {
 				Bounds bds = state.getInstance().getBounds(); 
 				int i,j;
 				if (state.getAttributeValue(ProbeAttributes.PROBEAPPEARANCE)==ProbeAttributes.APPEAR_EVOLUTION_NEW) {
-					Direction dir = state.getAttributeValue(StdAttr.FACING);
-					int yoffset = (dir==Direction.SOUTH) ? 10 : 0;
-					i = (bds.getX() + bds.getWidth() + 5 - e.getX() - Probe.BinairyXoffset(dir, true, false)) / 10;
-					j = (bds.getY() + bds.getHeight() - e.getY() - yoffset) / 20;
+					i = getColumn(state, e, r==1);
+					j = getRow(state, e);
 				} else {
-					i = (bds.getX() + bds.getWidth() - e.getX()-4) / (r == 1 ? 10 : 7);
+					i = (bds.getX() + bds.getWidth() - e.getX()-(r==1 ? 0 : 4)) / (r == 1 ? 10 : 8);
 					j = (bds.getY() + bds.getHeight() - e.getY()-2) / 14;
 				}
 				int bit = (r==1) ? 8 * j + i : i*r;
@@ -314,7 +335,6 @@ public class Pin extends InstanceFactory {
 			if (!attrs.isInput()) {
 				return false;
 			}
-
 			if (src instanceof Canvas && !state.isCircuitRoot()) {
 				Canvas canvas = (Canvas)src;
 				CircuitState circState = canvas.getCircuitState();
@@ -332,7 +352,6 @@ public class Pin extends InstanceFactory {
 					return false;
 				}
 			}
-
 			BitWidth width = state.getAttributeValue(StdAttr.WIDTH);
 			PinState pinState = getState(state);
 			int r = (radix == RadixOption.RADIX_16 ? 4 :
@@ -342,13 +361,11 @@ public class Pin extends InstanceFactory {
 			Value val[] = pinState.intendedValue.getAll();
 			boolean tristate = (attrs.threeState && attrs.pull == PULL_NONE);
 			if (ch == 0) {
-				boolean zeros = true, ones = true, defined = true;
+				boolean ones = true, defined = true;
 				for (int b = bit; b < bit + r; b++) {
 					if (val[b] == Value.FALSE)
 						ones = false;
-					else if (val[b] == Value.TRUE)
-						zeros = false;
-					else
+					else if (val[b] != Value.TRUE)
 						defined = false;
 				}
 				if (!defined || (ones && !tristate)) {
@@ -397,6 +414,11 @@ public class Pin extends InstanceFactory {
 
 		@Override
 		public void mouseReleased(InstanceState state, MouseEvent e) {
+			if (!((PinAttributes)state.getAttributeSet()).isInput()) {
+				bitPressed = -1;
+				bitCaret = -1;
+				return;
+			}
 			RadixOption radix = state.getAttributeValue(RadixOption.ATTRIBUTE);
 			if (radix == RadixOption.RADIX_10_SIGNED || radix == RadixOption.RADIX_10_UNSIGNED) {
 				EditDecimal dialog = new EditDecimal(state);
@@ -414,8 +436,8 @@ public class Pin extends InstanceFactory {
 							(radix == RadixOption.RADIX_8 ? 3 : 1));
 					bitCaret = ((width.getWidth()-1)/r) * r;
 				}
-				bitPressed = -1;
 			}
+			bitPressed = -1;
 		}
 
 		@Override
@@ -450,27 +472,39 @@ public class Pin extends InstanceFactory {
 				return;
 			Bounds bds = painter.getBounds();
 			Graphics g = painter.getGraphics();
-			GraphicsUtil.switchToWidth(g, 2);
 			g.setColor(Color.RED);
 			int y = bds.getY() + bds.getHeight();
 			int x = bds.getX() + bds.getWidth();
-			Direction dir = painter.getAttributeValue(StdAttr.FACING);
-			int yoffset = (dir==Direction.SOUTH) ? 10 : 0;
-			if (radix == RadixOption.RADIX_2) {
-				x -= 2 + 10 * (bitCaret % 8);
-				y -= 2 + 14 * (bitCaret / 8);
-				if (painter.getAttributeValue(ProbeAttributes.PROBEAPPEARANCE)==ProbeAttributes.APPEAR_EVOLUTION_NEW) {
-					x -= Probe.BinairyXoffset(dir, true, false)-5;
-					y -= yoffset;
+			if (painter.getAttributeValue(ProbeAttributes.PROBEAPPEARANCE)==ProbeAttributes.APPEAR_EVOLUTION_NEW) {
+				Direction dir = painter.getAttributeValue(StdAttr.FACING);
+				int distance = radix == RadixOption.RADIX_2 ? 10 : DIGIT_WIDTH;
+				int bwidth = 15;
+				int bheight = distance-1;
+				if (dir == Direction.EAST || dir == Direction.WEST) {
+					int offset = dir == Direction.EAST ? 20 : 10;
+					x -= offset + distance * (radix == RadixOption.RADIX_2 ? bitCaret % 8 : bitCaret / r);
+					y -= radix == RadixOption.RADIX_2 ? 20*(bitCaret / 8) : 0;
+					bwidth = distance-1;
+					bheight = 15;
+					x -= bwidth;
+					y -= 18;
+				} else if (dir == Direction.NORTH) {
+					y = bds.getY() + 21 + distance * (radix == RadixOption.RADIX_2 ? bitCaret % 8 : bitCaret / r);
+					x -= 18 + (radix == RadixOption.RADIX_2 ? 20*(bitCaret / 8) : 0);
+				} else {
+					y -= 19 + distance + distance * (radix == RadixOption.RADIX_2 ? bitCaret % 8 : bitCaret / r);
+					x = bds.getX() + 3 + (radix == RadixOption.RADIX_2 ? 20*(bitCaret / 8) : 0);
 				}
-				g.drawLine(x - 6, y, x, y);
+				g.drawRect(x, y, bwidth, bheight);
 			} else {
-				x -= 4 + 7 * (bitCaret / r);
-				y -= 4;
-				if (painter.getAttributeValue(ProbeAttributes.PROBEAPPEARANCE)==ProbeAttributes.APPEAR_EVOLUTION_NEW) {
-					y -= yoffset;
-					x -= Probe.BinairyXoffset(dir, true, false)-5;
+				if (radix == RadixOption.RADIX_2) {
+					x -= 2 + 10 * (bitCaret % 8);
+					y -= 2 + 14 * (bitCaret / 8);
+				} else {
+					x -= 4 + DIGIT_WIDTH * (bitCaret / r);
+					y -= 4;
 				}
+				GraphicsUtil.switchToWidth(g, 2);
 				g.drawLine(x - 6, y, x, y);
 			}
 			g.setColor(Color.BLACK);
@@ -552,16 +586,12 @@ public class Pin extends InstanceFactory {
 					new AttributeOption[] { PULL_NONE, PULL_UP, PULL_DOWN });
 
 	public static final Pin FACTORY = new Pin();
-
 	private static final Icon ICON_IN = Icons.getIcon("pinInput.gif");
-
 	private static final Icon ICON_OUT = Icons.getIcon("pinOutput.gif");
-
 	private static final Font ICON_WIDTH_FONT = new Font("SansSerif", Font.BOLD, 9);
-	
 	public static final Font DEFAULT_FONT = new Font("monospaced", Font.PLAIN, 12);
-
 	private static final Color ICON_WIDTH_COLOR = Value.WIDTH_ERROR_COLOR.darker();
+	public static final int DIGIT_WIDTH = 8;
 	
 	public Pin() {
 		super("Pin", S.getter("pinComponent"));
@@ -628,9 +658,7 @@ public class Pin extends InstanceFactory {
 		Direction facing = attrs.getValue(StdAttr.FACING);
 		BitWidth width = attrs.getValue(StdAttr.WIDTH);
 		boolean NewLayout = attrs.getValue(ProbeAttributes.PROBEAPPEARANCE) == ProbeAttributes.APPEAR_EVOLUTION_NEW; 
-		return Probe.getOffsetBounds(facing, width,
-				attrs.getValue(RadixOption.ATTRIBUTE) /* RadixOption.RADIX_2 */,
-				NewLayout,true);
+		return Probe.getOffsetBounds(facing, width,attrs.getValue(RadixOption.ATTRIBUTE),NewLayout,true);
 	}
 
 	public int getType(Instance instance) {
@@ -689,164 +717,211 @@ public class Pin extends InstanceFactory {
 		return attrs.type != EndData.OUTPUT_ONLY;
 	}
 	
-	public void DrawInputShape(boolean NewShape, Graphics g, int x, int y, int width , int height, Direction dir, Color LineColor, boolean isBus) {
+	private void drawNewStyleValue(InstancePainter painter, int width , int height, boolean isOutput, boolean isGhost) {
+		/* Note: we are here in an translated environment the point (0,0) presents the pin location*/
+		if (isGhost)
+			return;
+		Value value = getState(painter).intendedValue;
+		Graphics g = painter.getGraphics();
+		Graphics2D g2 = (Graphics2D)g;
+		g.setFont(Pin.DEFAULT_FONT);
+		RadixOption radix = painter.getAttributeValue(RadixOption.ATTRIBUTE);
+		Direction dir = painter.getAttributeSet().getValue(StdAttr.FACING);
+		int westTranslate = (isOutput) ? width : width+10;
+		if (dir == Direction.WEST) {
+			g2.rotate(-Math.PI);
+			g2.translate(westTranslate, 0);
+		}
+		if (!painter.getShowState()) {
+			g.setColor(Color.BLACK);
+			GraphicsUtil.drawCenteredText(g, "x" + ((PinAttributes) painter.getAttributeSet()).width.getWidth(),-15-(width-15)/2,0);
+		} else {
+			int labelYPos = height/2-2;
+			int LabelValueXOffset = (isOutput) ? -15 : -20;
+			g.setColor(Color.BLUE);
+			g2.scale(0.7, 0.7);
+			g2.drawString(radix.GetIndexChar(), (int)((double)LabelValueXOffset/0.7),(int)((double)labelYPos/0.7));
+			g2.scale(1.0/0.7, 1.0/0.7);
+			g.setColor(Color.BLACK);
+			if (radix == null || radix == RadixOption.RADIX_2) {
+				int wid = value.getWidth();
+				if (wid == 0) {
+					GraphicsUtil.switchToWidth(g, 2);
+					int x = -15-(width-15)/2;
+					g.drawLine(x - 4, 0, x + 4, 0);
+					if (dir == Direction.WEST) {
+						g2.translate(-westTranslate, 0);
+						g2.rotate(Math.PI);
+					}
+					return;
+				}
+				int x0 = (isOutput) ? -20 : -25;
+				int cx = x0;
+				int cy = height/2-12;
+				int cur = 0;
+				for (int k = 0; k < wid; k++) {
+					if (radix == RadixOption.RADIX_2 && !isOutput) {
+						g.setColor(value.get(k).getColor());
+						g.fillOval(cx-4, cy-5, 9, 14);
+						g.setColor(Color.WHITE);
+					}
+					GraphicsUtil.drawCenteredText(g,value.get(k).toDisplayString(), cx, cy);
+					if (radix == RadixOption.RADIX_2 && !isOutput)
+						g.setColor(Color.BLACK);
+					++cur;
+					if (cur == 8) {
+						cur = 0;
+						cx = x0;
+						cy -= 20;
+					} else {
+						cx -= 10;
+					}
+				}
+			}  else {
+				String text = radix.toString(value);
+				int cx = (isOutput) ? -15 : -20;
+				for (int k = text.length()-1 ; k >= 0 ; k--) {
+					GraphicsUtil.drawText(g, text.substring(k, k+1), cx,-2,GraphicsUtil.H_RIGHT, GraphicsUtil.H_CENTER);
+					cx -= Pin.DIGIT_WIDTH;
+				}
+			}
+		}
+		if (dir == Direction.WEST) {
+			g2.translate(-westTranslate, 0);
+			g2.rotate(Math.PI);
+		}
+	}
+	
+	private void drawInputShape(InstancePainter painter, int x, int y, int width , int height, Color LineColor, boolean isGhost) {
+		PinAttributes attrs = (PinAttributes) painter.getAttributeSet();
+		boolean NewShape = attrs.getValue(ProbeAttributes.PROBEAPPEARANCE) == ProbeAttributes.APPEAR_EVOLUTION_NEW;
+		boolean isBus = attrs.getValue(StdAttr.WIDTH).getWidth() > 1;
+		Direction dir = attrs.getValue(StdAttr.FACING);
+		Graphics g = painter.getGraphics();
 		if (!NewShape) {
 			g.drawRect(x + 1, y + 1, width-1 , height-1);
-		} else if (dir==Direction.EAST) {
-			if (isBus) {
-				GraphicsUtil.switchToWidth(g, Wire.WIDTH_BUS);
-				g.drawLine(x+width-5, y+height/2 , x+width-Wire.WIDTH_BUS/2, y+height/2);
-				GraphicsUtil.switchToWidth(g, 2);
-			} else {
-				Color col = g.getColor();
-				g.setColor(LineColor);
-				GraphicsUtil.switchToWidth(g, Wire.WIDTH);
-				g.drawLine(x+width-5, y+height/2 , x+width, y+height/2);
-				GraphicsUtil.switchToWidth(g, 2);
-				g.setColor(col);
+			if (!isGhost) {
+				if (!painter.getShowState()) {
+					g.setColor(Color.BLACK);
+					GraphicsUtil.drawCenteredText(g, "x" + attrs.width.getWidth(),x+width/2,y+height/2);
+				} else {
+					Probe.paintValue(painter, getState(painter).intendedValue,!isBus);
+				}
 			}
-			g.drawLine(x+width-15, y, x+width-5, y+height/2);
-			g.drawLine(x+width-15, y+height, x+width-5, y+height/2);
-			g.drawLine(x,y, x, y+height);
-			g.drawLine(x, y, x+width-15, y);
-			g.drawLine(x, y+height, x+width-15, y+height);
-		} else if (dir==Direction.WEST) {
-			if (isBus) {
-				GraphicsUtil.switchToWidth(g, Wire.WIDTH_BUS);
-				g.drawLine(x+5, y+height/2 , x+Wire.WIDTH_BUS/2, y+height/2);
-				GraphicsUtil.switchToWidth(g, 2);
-			} else {
-				Color col = g.getColor();
-				g.setColor(LineColor);
-				GraphicsUtil.switchToWidth(g, Wire.WIDTH);
-				g.drawLine(x+5, y+height/2 , x, y+height/2);
-				GraphicsUtil.switchToWidth(g, 2);
-				g.setColor(col);
-			}
-			g.drawLine(x+15, y, x+5, y+height/2);
-			g.drawLine(x+15, y+height, x+5, y+height/2);
-			g.drawLine(x+width,y, x+width, y+height);
-			g.drawLine(x+15, y, x+width, y);
-			g.drawLine(x+15, y+height, x+width, y+height);
-		} else if (dir==Direction.NORTH) {
-			if (isBus) {
-				GraphicsUtil.switchToWidth(g, Wire.WIDTH_BUS);
-				g.drawLine(x+width/2, y+Wire.WIDTH_BUS/2 ,x+width/2, y+5);
-				GraphicsUtil.switchToWidth(g, 2);
-			} else {
-				Color col = g.getColor();
-				g.setColor(LineColor);
-				GraphicsUtil.switchToWidth(g, Wire.WIDTH);
-				g.drawLine(x+width/2, y ,x+width/2, y+5);
-				GraphicsUtil.switchToWidth(g, 2);
-				g.setColor(col);
-			}
-			g.drawLine(x, y+15, x+width/2, y+5);
-			g.drawLine(x+width/2, y+5, x+width, y+15);
-			g.drawLine(x, y+height, x+width, y+height);
-			g.drawLine(x, y+15, x, y+height);
-			g.drawLine(x+width, y+15, x+width, y+height);
 		} else {
+			Graphics2D g2 = (Graphics2D)g;
+			int xpos = x+width;
+			int ypos = y+height/2;
+			int rwidth = width;
+			int rheight = height;
+			double rotation = 0;
+			if (dir == Direction.NORTH) {
+				rotation = -Math.PI/2;
+				xpos = x+width/2;
+				ypos = y;
+				rwidth = height;
+				rheight = width;
+			} else if (dir == Direction.SOUTH) {
+				rotation = Math.PI/2;
+				xpos = x+width/2;
+				ypos = y+height;
+				rwidth = height;
+				rheight = width;
+			} else if (dir == Direction.WEST) {
+				rotation = Math.PI;
+				xpos = x;
+				ypos = y+height/2;
+			}
+			g2.translate(xpos, ypos);
+			g2.rotate(rotation);
 			if (isBus) {
 				GraphicsUtil.switchToWidth(g, Wire.WIDTH_BUS);
-				g.drawLine(x+width/2, y+height-Wire.WIDTH_BUS/2 ,x+width/2, y+height-5);
+				g.drawLine(Wire.WIDTH_BUS/2-5, 0, 0, 0);
 				GraphicsUtil.switchToWidth(g, 2);
 			} else {
 				Color col = g.getColor();
 				g.setColor(LineColor);
 				GraphicsUtil.switchToWidth(g, Wire.WIDTH);
-				g.drawLine(x+width/2, y+height ,x+width/2, y+height-5);
+				g.drawLine(-5, 0 , 0, 0);
 				GraphicsUtil.switchToWidth(g, 2);
 				g.setColor(col);
 			}
-			g.drawLine(x, y+height-15, x+width/2, y+height-5);
-			g.drawLine(x+width/2, y+height-5, x+width, y+height-15);
-			g.drawLine(x, y, x+width, y);
-			g.drawLine(x, y, x, y+height-15);
-			g.drawLine(x+width, y, x+width, y+height-15);
+			g.drawLine(-15,-rheight/2,-5,0);
+			g.drawLine(-15, rheight/2,-5,0);
+			g.drawLine(-rwidth,-rheight/2, -rwidth, rheight/2);
+			g.drawLine(-rwidth, -rheight/2, -15, -rheight/2);
+			g.drawLine(-rwidth, rheight/2, -15, rheight/2);
+			drawNewStyleValue(painter, rwidth, rheight, false, isGhost);
+			g2.rotate(-rotation);
+			g2.translate(-xpos, -ypos);
 		}
 	}
 
-	public void DrawOutputShape(boolean NewShape, Graphics g, int x, int y, int width , int height, Direction dir,boolean SingleBit, Color LineColor) {
+	private void DrawOutputShape(InstancePainter painter, int x, int y, int width , int height, Color LineColor, boolean isGhost) {
+		PinAttributes attrs = (PinAttributes) painter.getAttributeSet();
+		boolean NewShape = attrs.getValue(ProbeAttributes.PROBEAPPEARANCE) == ProbeAttributes.APPEAR_EVOLUTION_NEW;
+		boolean isBus = attrs.getValue(StdAttr.WIDTH).getWidth() > 1;
+		Direction dir = attrs.getValue(StdAttr.FACING);
+		Graphics g = painter.getGraphics();
 		if (NewShape) {
-			if (dir==Direction.WEST) {
-				if (!SingleBit) {
-					GraphicsUtil.switchToWidth(g, Wire.WIDTH_BUS);
-					g.drawLine(x+3, y+height/2 , x+Wire.WIDTH_BUS/2, y+height/2);
-					GraphicsUtil.switchToWidth(g, 2);
-				} else {
-					Color col = g.getColor();
-					g.setColor(LineColor);
-					GraphicsUtil.switchToWidth(g, Wire.WIDTH);
-					g.drawLine(x, y+height/2 , x+3, y+height/2);
-					GraphicsUtil.switchToWidth(g, 2);
-					g.setColor(col);
-				}
-				g.drawLine(x+width-10, y, x+width, y+height/2);
-				g.drawLine(x+width-10, y+height, x+width, y+height/2);
-				g.drawLine(x+5,y, x+5, y+height);
-				g.drawLine(x+5, y, x+width-10, y);
-				g.drawLine(x+5, y+height, x+width-10, y+height);
-			} else if (dir==Direction.NORTH) {
-				if (!SingleBit) {
-					GraphicsUtil.switchToWidth(g, Wire.WIDTH_BUS);
-					g.drawLine(x+width/2, y+Wire.WIDTH_BUS/2 , x+width/2, y+3);
-					GraphicsUtil.switchToWidth(g, 2);
-				} else {
-					Color col = g.getColor();
-					g.setColor(LineColor);
-					GraphicsUtil.switchToWidth(g, Wire.WIDTH);
-					g.drawLine(x+width/2, y , x+width/2, y+3);
-					GraphicsUtil.switchToWidth(g, 2);
-					g.setColor(col);
-				}
-				g.drawLine(x, y+5, x+width, y+5);
-				g.drawLine(x, y+5, x, y+height-10);
-				g.drawLine(x+width, y+5, x+width, y+height-10);
-				g.drawLine(x, y+height-10, x+width/2, y+height);
-				g.drawLine(x+width/2, y+height, x+width, y+height-10 );
-			} else if (dir ==Direction.SOUTH) {
-				if (!SingleBit) {
-					GraphicsUtil.switchToWidth(g, Wire.WIDTH_BUS);
-					g.drawLine(x+width/2, y+height-Wire.WIDTH_BUS/2 , x+width/2, y+height-3);
-					GraphicsUtil.switchToWidth(g, 2);
-				} else {
-					Color col = g.getColor();
-					g.setColor(LineColor);
-					GraphicsUtil.switchToWidth(g, Wire.WIDTH);
-					g.drawLine(x+width/2, y+height , x+width/2, y+height-3);
-					GraphicsUtil.switchToWidth(g, 2);
-					g.setColor(col);
-				}
-				g.drawLine(x, y+height-5, x+width, y+height-5);
-				g.drawLine(x, y+height-5, x, y+10);
-				g.drawLine(x+width, y+height-5, x+width, y+10);
-				g.drawLine(x, y+10, x+width/2, y);
-				g.drawLine(x+width/2, y, x+width, y+10 );
-			} else {
-				if (!SingleBit) {
-					GraphicsUtil.switchToWidth(g, Wire.WIDTH_BUS);
-					g.drawLine(x+width-3, y+height/2 , x+width-Wire.WIDTH_BUS/2, y+height/2);
-					GraphicsUtil.switchToWidth(g, 2);
-				} else {
-					Color col = g.getColor();
-					g.setColor(LineColor);
-					GraphicsUtil.switchToWidth(g, Wire.WIDTH);
-					g.drawLine(x+width, y+height/2 , x+width-3, y+height/2);
-					GraphicsUtil.switchToWidth(g, 2);
-					g.setColor(col);
-				}
-				g.drawLine(x+10, y, x, y+height/2);
-				g.drawLine(x+10, y+height, x, y+height/2);
-				g.drawLine(x+width-5,y, x+width-5, y+height);
-				g.drawLine(x+width-5, y, x+10, y);
-				g.drawLine(x+width-5, y+height, x+10, y+height);
+			Graphics2D g2 = (Graphics2D)g;
+			int xpos = x+width;
+			int ypos = y+height/2;
+			int rwidth = width;
+			int rheight = height;
+			double rotation = 0;
+			if (dir == Direction.NORTH) {
+				rotation = -Math.PI/2;
+				xpos = x+width/2;
+				ypos = y;
+				rwidth = height;
+				rheight = width;
+			} else if (dir == Direction.SOUTH) {
+				rotation = Math.PI/2;
+				xpos = x+width/2;
+				ypos = y+height;
+				rwidth = height;
+				rheight = width;
+			} else if (dir == Direction.WEST) {
+				rotation = Math.PI;
+				xpos = x;
+				ypos = y+height/2;
 			}
+			g2.translate(xpos, ypos);
+			g2.rotate(rotation);
+			if (isBus) {
+				GraphicsUtil.switchToWidth(g, Wire.WIDTH_BUS);
+				g.drawLine(-3, 0, -Wire.WIDTH_BUS/2, 0);
+				GraphicsUtil.switchToWidth(g, 2);
+			} else {
+				Color col = g.getColor();
+				g.setColor(LineColor);
+				GraphicsUtil.switchToWidth(g, Wire.WIDTH);
+				g.drawLine(-3, 0 , 0, 0);
+				GraphicsUtil.switchToWidth(g, 2);
+				g.setColor(col);
+			}
+			g.drawLine(10-rwidth, -rheight/2, -rwidth, 0);
+			g.drawLine(10-rwidth, rheight/2, -rwidth, 0);
+			g.drawLine(-5,-rheight/2, -5, rheight/2);
+			g.drawLine(-5, -rheight/2, 10-rwidth, -rheight/2);
+			g.drawLine(-5, rheight/2, 10-rwidth, rheight/2);
+			drawNewStyleValue(painter, rwidth, rheight, true, isGhost);
+			g2.rotate(-rotation);
+			g2.translate(-xpos, -ypos);
 		} else {
-			if (SingleBit) {
+			if (!isBus) {
 				g.drawOval(x + 1, y + 1, width-1 , height - 1);
 			} else {
 				g.drawRoundRect(x + 1, y + 1, width - 1, height - 1, 6, 6);
+			}
+			if (!isGhost) {
+				if (!painter.getShowState()) {
+					g.setColor(Color.BLACK);
+					GraphicsUtil.drawCenteredText(g, "x" + attrs.width.getWidth(),x+width/2,y+height/2);
+				} else {
+					Probe.paintValue(painter, getState(painter).intendedValue,!isBus);
+				}
 			}
 		}
 	}
@@ -860,14 +935,10 @@ public class Pin extends InstanceFactory {
 		int y = loc.getY();
 		Graphics g = painter.getGraphics();
 		GraphicsUtil.switchToWidth(g, 2);
-		boolean output = attrs.isOutput();
-		boolean NewShape = attrs.getValue(ProbeAttributes.PROBEAPPEARANCE) == ProbeAttributes.APPEAR_EVOLUTION_NEW;
-		if (output) {
-			DrawOutputShape(NewShape,g,x+bds.getX(),y+bds.getY(),bds.getWidth(),bds.getHeight(),attrs.getValue(StdAttr.FACING),
-					attrs.getValue(StdAttr.WIDTH) == BitWidth.ONE,Color.GRAY);
+		if (attrs.isOutput()) {
+			DrawOutputShape(painter,x+bds.getX(),y+bds.getY(),bds.getWidth(),bds.getHeight(),Color.GRAY,true);
 		} else {
-			DrawInputShape(NewShape,g,x+bds.getX(),y+bds.getY(),bds.getWidth(),bds.getHeight(),attrs.getValue(StdAttr.FACING),
-					Color.GRAY,false);
+			drawInputShape(painter,x+bds.getX(),y+bds.getY(),bds.getWidth(),bds.getHeight(),Color.GRAY,true);
 		}
 	}
 
@@ -932,27 +1003,23 @@ public class Pin extends InstanceFactory {
 	@Override
 	public void paintInstance(InstancePainter painter) {
 		PinAttributes attrs = (PinAttributes) painter.getAttributeSet();
-        boolean NewStyle = attrs.getValue(ProbeAttributes.PROBEAPPEARANCE) == ProbeAttributes.APPEAR_EVOLUTION_NEW;
 		Graphics g = painter.getGraphics();
 		Bounds bds = painter.getInstance().getBounds(); // intentionally with no graphics object - we don't want label included
+		boolean IsOutput = attrs.type == EndData.OUTPUT_ONLY;
+		PinState state = getState(painter);
+		Value found = state.foundValue;
 		int x = bds.getX();
 		int y = bds.getY();
 		GraphicsUtil.switchToWidth(g, 2);
 		g.setColor(Color.black);
-		boolean IsOutput = attrs.type == EndData.OUTPUT_ONLY;
-		PinState state = getState(painter);
-		Value found = state.foundValue;
 		if (IsOutput) {
-			DrawOutputShape(NewStyle,g,x+1,y+1,bds.getWidth()-1,bds.getHeight()-1,attrs.getValue(StdAttr.FACING),
-					attrs.getValue(StdAttr.WIDTH) == BitWidth.ONE,found.getColor());
+			DrawOutputShape(painter,x+1,y+1,bds.getWidth()-1,bds.getHeight()-1,found.getColor(),false);
 		} else {
-			DrawInputShape(NewStyle,g,x+1,y+1,bds.getWidth()-1,bds.getHeight()-1,attrs.getValue(StdAttr.FACING),
-					found.getColor(),attrs.width.getWidth()>1);
+			drawInputShape(painter,x+1,y+1,bds.getWidth()-1,bds.getHeight()-1,found.getColor(),false);
 		}
-
 		painter.drawLabel();
 
-		if (!painter.getShowState()) {
+/*		if (!painter.getShowState()) {
 			g.setColor(Color.BLACK);
 			GraphicsUtil.drawCenteredText(g, "x" + attrs.width.getWidth(),
 					bds.getX() + bds.getWidth() / 2,
@@ -992,7 +1059,7 @@ public class Pin extends InstanceFactory {
 				Probe.paintValue(painter, state.intendedValue,(!IsOutput)&NewStyle,NewStyle);
 			}
 		}
-
+*/
 		painter.drawPorts();
 	}
 

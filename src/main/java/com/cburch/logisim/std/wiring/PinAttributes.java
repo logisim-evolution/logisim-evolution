@@ -85,6 +85,7 @@ class PinAttributes extends ProbeAttributes {
 		return type != EndData.INPUT_ONLY;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public <V> void setValue(Attribute<V> attr, V value) {
 		V oldvalue = null;
@@ -93,6 +94,12 @@ class PinAttributes extends ProbeAttributes {
 			if (width == NewWidth)
 				return;
 			width = (BitWidth) value;
+			if (width.getWidth() > 8 && Appearance == ProbeAttributes.APPEAR_EVOLUTION_NEW) {
+				oldvalue = (V) super.getValue(attr);
+				super.setValue(RadixOption.ATTRIBUTE, RadixOption.RADIX_16);
+				fireAttributeValueChanged((Attribute<V>)RadixOption.ATTRIBUTE, (V) RadixOption.RADIX_16, oldvalue);
+				oldvalue = null;
+			}
 		} else if (attr == Pin.ATTR_TRISTATE) {
 			boolean NewThree = ((Boolean) value).booleanValue();
 			if (threeState == NewThree)
