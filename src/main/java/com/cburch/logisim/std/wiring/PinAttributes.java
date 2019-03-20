@@ -85,21 +85,15 @@ class PinAttributes extends ProbeAttributes {
 		return type != EndData.INPUT_ONLY;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public <V> void setValue(Attribute<V> attr, V value) {
-		V oldvalue = null;
 		if (attr == StdAttr.WIDTH) {
 			BitWidth NewWidth = (BitWidth) value;
 			if (width == NewWidth)
 				return;
 			width = (BitWidth) value;
-			if (width.getWidth() > 8 && Appearance == ProbeAttributes.APPEAR_EVOLUTION_NEW) {
-				oldvalue = (V) super.getValue(attr);
+			if (width.getWidth() > 8 && Appearance == ProbeAttributes.APPEAR_EVOLUTION_NEW) 
 				super.setValue(RadixOption.ATTRIBUTE, RadixOption.RADIX_16);
-				fireAttributeValueChanged((Attribute<V>)RadixOption.ATTRIBUTE, (V) RadixOption.RADIX_16, oldvalue);
-				oldvalue = null;
-			}
 		} else if (attr == Pin.ATTR_TRISTATE) {
 			boolean NewThree = ((Boolean) value).booleanValue();
 			if (threeState == NewThree)
@@ -121,11 +115,16 @@ class PinAttributes extends ProbeAttributes {
 			if (Appearance.equals(NewAppearance))
 				return;
 			Appearance = NewAppearance;
+		} else if (attr == RadixOption.ATTRIBUTE){
+			if (width.getWidth() == 1) {
+				super.setValue(RadixOption.ATTRIBUTE, RadixOption.RADIX_2);
+			} else
+				super.setValue(attr, value);
+			return;
 		} else {
-			oldvalue = (V) super.getValue(attr);
 			super.setValue(attr, value);
 			return;
 		}
-		fireAttributeValueChanged(attr, value, oldvalue);
+		fireAttributeValueChanged(attr, value, null);
 	}
 }
