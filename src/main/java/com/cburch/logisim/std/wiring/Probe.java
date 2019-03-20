@@ -37,7 +37,6 @@ import java.awt.event.KeyEvent;
 
 import com.cburch.logisim.LogisimVersion;
 import com.cburch.logisim.circuit.RadixOption;
-import com.cburch.logisim.comp.TextField;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.BitWidth;
@@ -96,10 +95,14 @@ public class Probe extends InstanceFactory {
 			bwidth = (len < 2) ? 20 : (len >= 8) ? 80 : len*10;
 			bheight = (len > 24) ? 80 : (len > 16) ? 60 : (len > 8) ? 40 : 20;
 		} else {
-			bwidth = (len<2) ? 20 : len*10;
+			if (len < 2)
+				bwidth = 20;
+			else 
+				bwidth = len*Pin.DIGIT_WIDTH;
 			bheight = 20;
 		}
-		if (NewLayout) bwidth+=20;
+		if (NewLayout) bwidth+= (len == 1) ? 20 : 25;
+		bwidth = ((bwidth+9)/10)*10;
 		if (dir == Direction.EAST) {
 			x = -bwidth;
 			y = -(bheight/2);
@@ -107,18 +110,18 @@ public class Probe extends InstanceFactory {
 			x = 0;
 			y = -(bheight/2);
 		} else if (dir == Direction.SOUTH) {
-			if (NewLayout&IsPin) bheight += 10;
-			if ((len==1)&NewLayout&IsPin) {
-				bwidth = 20;
-				bheight += 10;
+			if (NewLayout&&IsPin) {
+				x = bwidth;
+				bwidth = bheight;
+				bheight = x;
 			}
 			x = -(bwidth/2);
 			y = -bheight;
 		} else {
-			if (NewLayout&IsPin) bheight += 10;
-			if ((len==1)&NewLayout&IsPin) {
-				bwidth = 20;
-				bheight += 10;
+			if (NewLayout&&IsPin) {
+				x = bwidth;
+				bwidth = bheight;
+				bheight = x;
 			}
 			x = -(bwidth/2);
 			y = 0;
@@ -132,7 +135,7 @@ public class Probe extends InstanceFactory {
 	}
 	static void paintValue(InstancePainter painter, Value value) {
 		if (painter.getAttributeValue(ProbeAttributes.PROBEAPPEARANCE)==ProbeAttributes.APPEAR_EVOLUTION_NEW)
-			paintValue(painter,value,false,false);
+			paintValue(painter,value,false);
 		else
 			paintOldStyleValue(painter,value);
 	}
@@ -182,16 +185,6 @@ public class Probe extends InstanceFactory {
 		}
 	}
 	
-	static int BinairyXoffset(Direction dir, boolean IsPin, boolean IsOutput) {
-		boolean East  = dir == Direction.EAST;
-		boolean West  = dir == Direction.WEST;
-		if (IsPin&East&!IsOutput)
-			return 25;
-		if (IsPin&West&!IsOutput)
-			return 15;
-		return 20;
-	}
-	
 	@Override
 	public Object getDefaultAttributeValue(Attribute<?> attr, LogisimVersion ver) {
 		if (attr.equals(ProbeAttributes.PROBEAPPEARANCE)) {
@@ -201,35 +194,36 @@ public class Probe extends InstanceFactory {
 		}
 	}
 
-	static void paintValue(InstancePainter painter, Value value, boolean colored, boolean extend) {
-		if (painter.getAttributeValue(ProbeAttributes.PROBEAPPEARANCE)!=ProbeAttributes.APPEAR_EVOLUTION_NEW) {
-			paintOldStyleValue(painter,value);
-			return;
-		}
+	static void paintValue(InstancePainter painter, Value value, boolean colored) {
 		Graphics g = painter.getGraphics();
 		Graphics2D g2 = (Graphics2D)g;
 		Bounds bds = painter.getBounds(); // intentionally with no graphics
 											// object - we don't want label
 											// included
 		g.setFont(Pin.DEFAULT_FONT);
-		RadixOption radix = painter.getAttributeValue(RadixOption.ATTRIBUTE);
-		Direction dir = painter.getAttributeValue(StdAttr.FACING);
 		boolean IsOutput = (painter.getAttributeSet().containsAttribute(Pin.ATTR_TYPE)) ? painter.getAttributeValue(Pin.ATTR_TYPE):false;
-		boolean IsPin = (painter.getAttributeSet().containsAttribute(Pin.ATTR_TYPE));
-		boolean North = dir == Direction.NORTH;
-		boolean South = dir == Direction.SOUTH;
-		boolean East  = dir == Direction.EAST;
-		boolean West  = dir == Direction.WEST;
-		int LabelYOffset = extend&(South&!IsOutput) ? 10 : extend&IsOutput&(South|North) ? 7 : 0;
-		int LabelValueXOffset = IsPin&(North|South)&(bds.getWidth()==20) ? 7 : 
-			                    IsPin&!IsOutput&East ? 20 :
-			                    IsPin&!IsOutput&West ? 7 : 15;
+		if (painter.getAttributeValue(ProbeAttributes.PROBEAPPEARANCE)!=ProbeAttributes.APPEAR_EVOLUTION_NEW) {
+			if (colored) {
+				int x = bds.getX();
+				int y = bds.getY();
+				if (!IsOutput) {
+					g.setColor(value.get(0).getColor());
+					g.fillOval(x + 5, y + 4, 11, 13);
+				}
+				if (!IsOutput) g.setColor(Color.WHITE);
+				GraphicsUtil.drawCenteredText(g,value.get(0).toDisplayString(), x + 10, y + 9);
+			} else
+				paintOldStyleValue(painter,value);
+			return;
+		}
+		RadixOption radix = painter.getAttributeValue(RadixOption.ATTRIBUTE);
+		int LabelValueXOffset = 15;
 		if (radix != null && radix != RadixOption.RADIX_2)
 			LabelValueXOffset += 3;
 		g.setColor(Color.BLUE);
 		g2.scale(0.7, 0.7);
 		g2.drawString(radix.GetIndexChar(), (int)((bds.getX()+bds.getWidth()-LabelValueXOffset)/0.7), 
-				     (int)((bds.getY()+bds.getHeight()-(2+LabelYOffset))/0.7));
+				     (int)((bds.getY()+bds.getHeight()-2)/0.7));
 		g2.scale(1.0/0.7, 1.0/0.7);
 		g.setColor(Color.BLACK);
 		if (radix == null || radix == RadixOption.RADIX_2) {
@@ -243,38 +237,31 @@ public class Probe extends InstanceFactory {
 				g.drawLine(x - 4, y, x + 4, y);
 				return;
 			}
-			int yoffset = extend&(South&!IsOutput) ? 22 : extend&IsOutput&(South|North) ? 17 : 12;
-			int x0 = bds.getX() + bds.getWidth() - BinairyXoffset(dir,IsPin,IsOutput);
+			int yoffset = 12;
+			int x0 = bds.getX() + bds.getWidth() - 20;
 			int cx = x0;
 			int cy = bds.getY() + bds.getHeight() - yoffset;
 			int cur = 0;
 			for (int k = 0; k < wid; k++) {
-				if (colored) {
-					g.setColor(value.get(k).getColor());
-					g.fillOval(cx-4, cy-6, 9, 16);
-					g.setColor(Color.WHITE);
-				}
 				GraphicsUtil.drawCenteredText(g,value.get(k).toDisplayString(), cx, cy);
-				if (colored)
-					g.setColor(Color.BLACK);
 				++cur;
 				if (cur == 8) {
 					cur = 0;
 					cx = x0;
-					cy -= 14;
+					cy -= 20;
 				} else {
 					cx -= 10;
 				}
 			}
 		} else {
 			String text = radix.toString(value);
-			int off1 = IsOutput ? 5 : 10;
-			int off2 = IsOutput ? 5 : 0;
-			int ypos = (North&extend) ? bds.getY()+off1+(bds.getHeight()-15)/2 :
-				       extend&South ? bds.getY()+off2+(bds.getHeight()-15)/2 :
-				    	   bds.getY() + bds.getHeight() / 2;
-			GraphicsUtil.drawText(g, text, bds.getX() + bds.getWidth()-LabelValueXOffset-2,ypos , 
-					GraphicsUtil.H_RIGHT, GraphicsUtil.H_CENTER);
+			int ypos = bds.getY() + bds.getHeight() / 2;
+			int cy = ypos;
+			int cx = bds.getX() + bds.getWidth()-LabelValueXOffset-2;
+			for (int k = text.length()-1 ; k >= 0 ; k--) {
+				GraphicsUtil.drawText(g, text.substring(k, k+1), cx,cy-1,GraphicsUtil.H_RIGHT, GraphicsUtil.H_CENTER);
+				cx -= Pin.DIGIT_WIDTH;
+			}
 		}
 	}
 
