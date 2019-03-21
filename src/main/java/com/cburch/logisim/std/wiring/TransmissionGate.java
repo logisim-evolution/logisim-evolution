@@ -142,34 +142,35 @@ public class TransmissionGate extends InstanceFactory {
 		}
 
 		g.setColor(flip ? input : output);
-		g.drawLine(0, 20, 11, 20);
-		g.drawLine(11, 13, 11, 27);
+		g.drawLine(0, 20, 13, 20);
+		g.drawLine(13, 14, 13, 26);
 
 		g.setColor(flip ? output : input);
-		g.drawLine(29, 20, 40, 20);
-		g.drawLine(29, 13, 29, 27);
+		g.drawLine(27, 20, 40, 20);
+		g.drawLine(27, 14, 27, 26);
 
 		g.setColor(gate0);
-		g.drawLine(20, 35, 20, 40);
-		GraphicsUtil.switchToWidth(g, 1);
-		g.drawOval(18, 30, 4, 4);
-		g.drawLine(10, 30, 30, 30);
+		g.drawLine(20, 38, 20, 40);
+		GraphicsUtil.switchToWidth(g, 2);
+		g.drawOval(17, 32, 6, 6);
+		g.drawLine(11, 31, 29, 31);
 		GraphicsUtil.switchToWidth(g, Wire.WIDTH);
 
 		g.setColor(gate1);
-		g.drawLine(20, 9, 20, 0);
-		GraphicsUtil.switchToWidth(g, 1);
-		g.drawLine(10, 10, 30, 10);
+		g.drawLine(20, 7, 20, 0);
+		GraphicsUtil.switchToWidth(g, 2);
+		g.drawLine(11, 9, 29, 9);
 
 		g.setColor(platform);
-		g.drawLine(9, 12, 31, 12);
-		g.drawLine(9, 28, 31, 28);
+		g.drawLine(9, 13, 31, 13);
+		g.drawLine(9, 27, 31, 27);
+		GraphicsUtil.switchToWidth(g, 1);
 		if (flip) { // arrow
-			g.drawLine(18, 17, 21, 20);
-			g.drawLine(18, 23, 21, 20);
+			g.drawLine(19, 18, 21, 20);
+			g.drawLine(19, 22, 21, 20);
 		} else {
-			g.drawLine(22, 17, 19, 20);
-			g.drawLine(22, 23, 19, 20);
+			g.drawLine(21, 18, 19, 20);
+			g.drawLine(21, 22, 19, 20);
 		}
 
 		g.dispose();
@@ -212,7 +213,6 @@ public class TransmissionGate extends InstanceFactory {
 	@Override
 	public void paintInstance(InstancePainter painter) {
 		drawInstance(painter, false);
-		painter.drawPorts();
 	}
 
 	@Override
@@ -251,6 +251,10 @@ public class TransmissionGate extends InstanceFactory {
 			ports[GATE1] = new Port(20 * (dx + dy), 20 * (-dx + dy),
 					Port.INPUT, 1);
 		}
+		ports[INPUT].setToolTip(S.getter("transmissionGateSource"));
+		ports[OUTPUT].setToolTip(S.getter("transmissionGateDrain"));
+		ports[GATE0].setToolTip(S.getter("transmissionGatePGate"));
+		ports[GATE1].setToolTip(S.getter("transmissionGateNGate"));
 		instance.setPorts(ports);
 	}
 }

@@ -622,7 +622,7 @@ public class Pin extends InstanceFactory {
 		instance.addAttributeListener();
 		((PrefMonitorBooleanConvert)AppPreferences.NEW_INPUT_OUTPUT_SHAPES).addConvertListener(attrs);
 		configurePorts(instance);
-		instance.computeLabelTextField(Instance.AVOID_LEFT);
+		instance.computeLabelTextField(Instance.AVOID_LEFT,PinLabelLoc(attrs.getValue(StdAttr.FACING)));
 	}
 
 	@Override
@@ -1018,48 +1018,6 @@ public class Pin extends InstanceFactory {
 			drawInputShape(painter,x+1,y+1,bds.getWidth()-1,bds.getHeight()-1,found.getColor(),false);
 		}
 		painter.drawLabel();
-
-/*		if (!painter.getShowState()) {
-			g.setColor(Color.BLACK);
-			GraphicsUtil.drawCenteredText(g, "x" + attrs.width.getWidth(),
-					bds.getX() + bds.getWidth() / 2,
-					bds.getY() + bds.getHeight() / 2);
-		} else {
-			if (attrs.width.getWidth() <= 1) {
-				boolean North = attrs.getValue(StdAttr.FACING)==Direction.NORTH; 
-				boolean East = attrs.getValue(StdAttr.FACING)==Direction.EAST; 
-				boolean South = attrs.getValue(StdAttr.FACING)==Direction.SOUTH; 
-				boolean West = attrs.getValue(StdAttr.FACING)==Direction.WEST; 
-				if (NewStyle) {
-					Graphics2D g2 = (Graphics2D)g;
-					int TextXOffset = North|South ? 6 : (East&!IsOutput) ? 23 : (West&IsOutput) ? 18 : 13;
-					int TextYOffset = South ? (IsOutput) ? 10 : 20 : (North&IsOutput) ? 12 : 2; 
-					RadixOption radix = painter.getAttributeValue(RadixOption.ATTRIBUTE);
-					g.setColor(Color.BLUE);
-					g2.scale(0.7, 0.7);
-					g2.drawString(radix.GetIndexChar(), (int)((bds.getX()+bds.getWidth()-TextXOffset)/0.7), 
-						(int)((bds.getY()+bds.getHeight()-TextYOffset)/0.7));
-					g2.scale(1.0/0.7, 1.0/0.7);
-					g.setColor(Color.BLACK);
-				}
-				int ValueXOffset = (NewStyle)&(North|South) ? -2 : (NewStyle & West & !IsOutput) ? 10 : 
-					               (NewStyle & West & IsOutput) ? 5 : (NewStyle & East & IsOutput) ? 10 : 0; 
-				int ValueYOffset = (NewStyle & North & !IsOutput) ? 18 : (NewStyle & (North|South) & IsOutput) ? 10 : 0; 
-				if ((!IsOutput)|(!NewStyle)) {
-					g.setColor(found.getColor());
-					g.fillOval(x + 5 + ValueXOffset, y + 4+ ValueYOffset, 11, 13);
-				}
-				if (attrs.width.getWidth() == 1) {
-					if (!IsOutput|(!NewStyle)) g.setColor(Color.WHITE);
-					g.setFont(DEFAULT_FONT);
-					GraphicsUtil.drawCenteredText(g,
-							state.intendedValue.toDisplayString(), x + 11 + ValueXOffset, y + 9 + ValueYOffset);
-				}
-			} else {
-				Probe.paintValue(painter, state.intendedValue,(!IsOutput)&NewStyle,NewStyle);
-			}
-		}
-*/
 		painter.drawPorts();
 	}
 

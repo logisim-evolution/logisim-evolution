@@ -31,10 +31,12 @@ package com.cburch.logisim.std.io;
 import static com.cburch.logisim.std.Strings.S;
 
 import java.awt.Color;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.Attributes;
+import com.cburch.logisim.tools.AddTool;
 import com.cburch.logisim.tools.FactoryDescription;
 import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.tools.Tool;
@@ -104,7 +106,9 @@ public class Io extends Library {
 	@Override
 	public List<Tool> getTools() {
 		if (tools == null) {
-			tools = FactoryDescription.getTools(Io.class, DESCRIPTIONS);
+			tools = new ArrayList<>();
+			tools.addAll(FactoryDescription.getTools(Io.class, DESCRIPTIONS));
+			tools.add(new AddTool(Video.factory));
 		}
 		return tools;
 	}

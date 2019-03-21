@@ -86,9 +86,10 @@ public class Transistor extends InstanceFactory {
 		BitWidth width = state.getAttributeValue(StdAttr.WIDTH);
 		Value gate = state.getPortValue(GATE);
 		Value input = state.getPortValue(INPUT);
-		Value desired = state.getAttributeValue(ATTR_TYPE) == TYPE_P ? Value.FALSE
-				: Value.TRUE;
-
+		Object type = state.getAttributeValue(ATTR_TYPE);
+		Value desired = type == TYPE_P ? Value.FALSE : Value.TRUE;
+		Value masked = type == TYPE_P ? Value.FALSE : Value.TRUE;
+		
 		if (!gate.isFullyDefined()) {
 			if (input.isFullyDefined()) {
 				return Value.createError(width);
@@ -104,7 +105,14 @@ public class Transistor extends InstanceFactory {
 		} else if (gate != desired) {
 			return Value.createUnknown(width);
 		} else {
-			return input;
+			// masked inputs become Z outputs
+			// all other inputs pass through to output
+			Value[] v = input.getAll();
+			for (int i = 0; i < v.length; i++) {
+				if (v[i] == masked)
+					v[i] = Value.UNKNOWN;
+			}
+			return Value.create(v);
 		}
 	}
 
@@ -163,32 +171,33 @@ public class Transistor extends InstanceFactory {
 		// input and output lines
 		GraphicsUtil.switchToWidth(g, Wire.WIDTH);
 		g.setColor(output);
-		g.drawLine(0, 0, -11, 0);
-		g.drawLine(-11, m * 7, -11, 0);
-
+		g.drawLine(0, 0, -13, 0);
+		g.drawLine(-13, m * 6, -13, 0);
+		
 		g.setColor(input);
-		g.drawLine(-40, 0, -29, 0);
-		g.drawLine(-29, m * 7, -29, 0);
+		g.drawLine(-40, 0, -27, 0);
+		g.drawLine(-27, m * 6, -27, 0);
 
 		// gate line
 		g.setColor(gate);
 		if (type == TYPE_P) {
-			g.drawLine(-20, m * 20, -20, m * 15);
-			GraphicsUtil.switchToWidth(g, 1);
-			g.drawOval(-22, m * 12 - 2, 4, 4);
+			g.drawLine(-20, m * 20, -20, m * 18);
+			GraphicsUtil.switchToWidth(g, 2);
+			g.drawOval(-20 - 3, m * 15 - 3, 6, 6);
 		} else {
-			g.drawLine(-20, m * 20, -20, m * 11);
-			GraphicsUtil.switchToWidth(g, 1);
+			g.drawLine(-20, m * 20, -20, m * 13);
+			GraphicsUtil.switchToWidth(g, 2);
 		}
 
 		// draw platforms
-		g.drawLine(-10, m * 10, -30, m * 10); // gate platform
+		g.drawLine(-12, m * 12, -28, m * 12); // gate platform
 		g.setColor(platform);
-		g.drawLine(-9, m * 8, -31, m * 8); // input/output platform
+		g.drawLine(-9, m * 7, -31, m * 7); // input/output platform
 
 		// arrow (same color as platform)
-		g.drawLine(-21, m * 6, -18, m * 3);
-		g.drawLine(-21, 0, -18, m * 3);
+		GraphicsUtil.switchToWidth(g, 1);
+		g.drawLine(-21, m * 4, -19, m * 2);
+		g.drawLine(-21, 0, -19, m * 2);
 
 		g.rotate(-radians);
 		g.translate(-loc.getX(), -loc.getY());
@@ -227,7 +236,7 @@ public class Transistor extends InstanceFactory {
 		if (attr == StdAttr.FACING || attr == Wiring.ATTR_GATE) {
 			instance.recomputeBounds();
 			updatePorts(instance);
-		} else if (attr == StdAttr.WIDTH) {
+		} else if (attr == StdAttr.WIDTH || attr == ATTR_TYPE) {
 			updatePorts(instance);
 		} else if (attr == ATTR_TYPE) {
 			instance.fireInvalidated();
@@ -249,7 +258,6 @@ public class Transistor extends InstanceFactory {
 	@Override
 	public void paintInstance(InstancePainter painter) {
 		drawInstance(painter, false);
-		painter.drawPorts();
 	}
 
 	@Override
@@ -278,11 +286,18 @@ public class Transistor extends InstanceFactory {
 		ports[OUTPUT] = new Port(0, 0, Port.OUTPUT, StdAttr.WIDTH);
 		ports[INPUT] = new Port(40 * dx, 40 * dy, Port.INPUT, StdAttr.WIDTH);
 		if (flip) {
-			ports[GATE] = new Port(20 * (dx + dy), 20 * (-dx + dy), Port.INPUT,
-					1);
+			ports[GATE] = new Port(20 * (dx + dy), 20 * (-dx + dy), Port.INPUT,1);
 		} else {
-			ports[GATE] = new Port(20 * (dx - dy), 20 * (dx + dy), Port.INPUT,
-					1);
+			ports[GATE] = new Port(20 * (dx - dy), 20 * (dx + dy), Port.INPUT,1);
+		}
+		if (instance.getAttributeValue(ATTR_TYPE) == TYPE_P) {
+			ports[GATE].setToolTip(S.getter("transistorPGate"));
+			ports[INPUT].setToolTip(S.getter("transistorPSource"));
+			ports[OUTPUT].setToolTip(S.getter("transistorPDrain"));
+		} else {
+			ports[GATE].setToolTip(S.getter("transistorNGate"));
+			ports[INPUT].setToolTip(S.getter("transistorNSource"));
+			ports[OUTPUT].setToolTip(S.getter("transistorNDrain"));
 		}
 		instance.setPorts(ports);
 	}
