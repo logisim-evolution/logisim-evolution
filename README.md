@@ -77,6 +77,8 @@ Users who are willing test new features should checkout the testing branch. The 
 
 Then every semester, the testing branch will be merged in the master for a new release.
 
+## Code style
+All logisim java files have been converted using google-java-format. If you are using eclipse there is a plugin available to adhere to this standard. More information on the google java format can be found [here](https://github.com/google/google-java-format). At the moment version 1.6 is used.
 
 ## Documentation
 
