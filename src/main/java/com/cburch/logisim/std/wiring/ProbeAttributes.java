@@ -71,7 +71,7 @@ public class ProbeAttributes extends AbstractAttributeSet implements ConvertEven
 
 	Direction facing = Direction.EAST;
 	String label = "";
-	Direction labelloc = Direction.WEST;
+	Object labelloc = Direction.WEST;
 	Font labelfont = StdAttr.DEFAULT_LABEL_FONT;
 	RadixOption radix = RadixOption.RADIX_2;
 	BitWidth width = BitWidth.ONE;
@@ -124,10 +124,9 @@ public class ProbeAttributes extends AbstractAttributeSet implements ConvertEven
 			Oldvalue = (V) label;
 			label = val;
 		} else if (attr == StdAttr.LABEL_LOC) {
-			Direction newValue = (Direction) value;
-			if (labelloc.equals(newValue))
+			if (labelloc.equals(value))
 				return;
-			labelloc = newValue;
+			labelloc = value;
 		} else if (attr == StdAttr.LABEL_FONT) {
 			Font NewValue = (Font) value;
 			if (labelfont.equals(NewValue))

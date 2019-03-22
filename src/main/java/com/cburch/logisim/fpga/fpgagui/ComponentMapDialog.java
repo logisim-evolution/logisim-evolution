@@ -898,6 +898,8 @@ ListSelectionListener,WindowListener {
                  + "-" + BoardInfo.getBoardName() + "-MAP.xml";
 		String SaveFileName = getFileName("Select filename to save the current map", suggestedName);
 		if (!SaveFileName.isEmpty()) {
+			if (!SaveFileName.endsWith(".xml"))
+				SaveFileName = SaveFileName.concat(".xml");
 			try {
 				// Create instance of DocumentBuilderFactory
 				DocumentBuilderFactory factory = DocumentBuilderFactory

@@ -95,6 +95,7 @@ public class SplashScreen extends JWindow implements ActionListener {
 	long startTime = System.currentTimeMillis();
 
 	public SplashScreen() {
+		setName("Welcome to Logisim Evolution");
 		JPanel imagePanel = About.getImagePanel();
 		imagePanel.setBorder(null);
 

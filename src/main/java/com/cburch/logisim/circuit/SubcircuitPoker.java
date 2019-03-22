@@ -105,7 +105,7 @@ public class SubcircuitPoker extends InstancePoker {
 				g.setColor(MAGNIFYING_INTERIOR);
 			}
 			g.fillOval(cx - 9, cy - 9, 18, 18);
-			g.setColor(Color.BLACK);
+			g.setColor(Color.GRAY);
 			g.drawOval(cx - 9, cy - 9, 18, 18);
 			g.fillPolygon(xp, yp, xp.length);
 		}

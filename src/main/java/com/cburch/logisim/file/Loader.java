@@ -67,6 +67,18 @@ public class Loader implements LibraryLoader {
 		}
 	}
 
+	private static class TxtFileFilter extends FileFilter {
+		@Override
+		public boolean accept(File f) {
+			return f.isDirectory() || f.getName().endsWith(".txt");
+		}
+
+		@Override
+		public String getDescription() {
+			return S.get("txtFileFilter");
+		}
+	}
+
 	private static class VhdlFileFilter extends FileFilter {
 		@Override
 		public boolean accept(File f) {
@@ -132,6 +144,7 @@ public class Loader implements LibraryLoader {
 	public static final FileFilter LOGISIM_FILTER = new LogisimFileFilter();
 
 	public static final FileFilter JAR_FILTER = new JarFileFilter();
+	public static final FileFilter TXT_FILTER = new TxtFileFilter();
 	public static final FileFilter TCL_FILTER = new TclFileFilter();
 	public static final FileFilter VHDL_FILTER = new VhdlFileFilter();
 

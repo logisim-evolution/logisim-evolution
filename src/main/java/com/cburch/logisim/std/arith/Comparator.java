@@ -51,7 +51,7 @@ public class Comparator extends InstanceFactory {
 	public static final AttributeOption SIGNED_OPTION = new AttributeOption(
 			"twosComplement", "twosComplement",
 			S.getter("twosComplementOption"));
-	private static final AttributeOption UNSIGNED_OPTION = new AttributeOption(
+	public static final AttributeOption UNSIGNED_OPTION = new AttributeOption(
 			"unsigned", "unsigned", S.getter("unsignedOption"));
 	public static final Attribute<AttributeOption> MODE_ATTRIBUTE = Attributes
 			.forOption("mode", S.getter("comparatorType"),

@@ -175,7 +175,15 @@ public class Startup implements AWTEventListener {
 							ret.ttyFormat |= TtyInterface.FORMAT_HALT;
 						} else if (fmt.equals("stats")) {
 							ret.ttyFormat |= TtyInterface.FORMAT_STATISTICS;
-						} else {
+						} else if (fmt.equals("binary"))
+				            ret.ttyFormat |= TtyInterface.FORMAT_TABLE_BIN;
+				          else if (fmt.equals("hex"))
+				            ret.ttyFormat |= TtyInterface.FORMAT_TABLE_HEX;
+				          else if (fmt.equals("csv"))
+				            ret.ttyFormat |= TtyInterface.FORMAT_TABLE_CSV;
+				          else if (fmt.equals("tabs"))
+				            ret.ttyFormat |= TtyInterface.FORMAT_TABLE_TABBED;
+				          else {
 							logger.error("{}", S.get("ttyFormatError"));
 						}
 					}
@@ -241,6 +249,51 @@ public class Startup implements AWTEventListener {
 					logger.error("{}", S.get("argGatesOptionError"));
 					System.exit(-1);
 				}
+			} else if (arg.equals("-geom")) {
+				i++;
+				if (i >= args.length) {
+					printUsage();
+				}
+				String wxh[] = args[i].split("[xX]");
+				if (wxh.length != 2 || wxh[0].length() < 1 || wxh[1].length() < 1) {
+					logger.error("{}", S.get("argGeometryError"));
+					System.exit(1);
+				}
+				int p = wxh[1].indexOf('+', 1);
+				String loc = null;
+				int x = 0, y = 0;
+				if (p >= 0) {
+					loc = wxh[1].substring(p+1);
+					wxh[1] = wxh[1].substring(0, p);
+					String xy[] = loc.split("\\+");
+					if (xy.length != 2 || xy[0].length() < 1 || xy[0].length() < 1) {
+						logger.error("{}", S.get("argGeometryError"));
+						System.exit(1);
+					}
+					try {
+						x = Integer.parseInt(xy[0]);
+						y = Integer.parseInt(xy[1]);
+					} catch (NumberFormatException e) {
+						logger.error("{}", S.get("argGeometryError"));
+						System.exit(1);
+					}
+				}
+				int w = 0, h = 0;
+				try {
+					w = Integer.parseInt(wxh[0]);
+					h = Integer.parseInt(wxh[1]);
+				} catch (NumberFormatException e) {
+					logger.error("{}", S.get("argGeometryError"));
+					System.exit(1);
+				}
+				if (w <= 0 || h <= 0) {
+					logger.error("{}", S.get("argGeometryError"));
+					System.exit(1);
+				}
+				AppPreferences.WINDOW_WIDTH.set(w);
+				AppPreferences.WINDOW_HEIGHT.set(h);
+				if (loc != null)
+					AppPreferences.WINDOW_LOCATION.set(x+","+y);
 			} else if (arg.equals("-locale")) {
 				i++;
 				if (i >= args.length) {
@@ -363,8 +416,12 @@ public class Startup implements AWTEventListener {
 				ret.filesToOpen.add(new File(ret.testCircPathInput));
 				ret.showSplash = false;
 				ret.exitAfterStartup = true;
-			}
-			else if (arg.equals("-clearprefs")) {
+			} else if (arg.equals("-circuit")) {
+				i++;
+				if (i >= args.length)
+					printUsage();
+				ret.circuitToTest = args[i];
+			} else if (arg.equals("-clearprefs") || arg.equals("-clearprops")) {
 				// already handled above
 			} else if (arg.equals("-analyze")) {
 				Main.ANALYZE = true;
@@ -412,9 +469,12 @@ public class Startup implements AWTEventListener {
 				Startup.class.getName())); // OK
 		System.err.println(); // OK
 		System.err.println(S.get("argOptionHeader")); // OK
+		System.err.println("   " + S.get("argNoUpdatesOption")); // OK
+		System.err.println("   " + S.get("argGeometryOption")); // OK
 		System.err.println("   " + S.get("argAccentsOption")); // OK
 		System.err.println("   " + S.get("argClearOption")); // OK
 		System.err.println("   " + S.get("argEmptyOption")); // OK
+		System.err.println("   " + S.get("argAnalyzeOption")); // OK
 		System.err.println("   " + S.get("argTestOption")); // OK
 		System.err.println("   " + S.get("argGatesOption")); // OK
 		System.err.println("   " + S.get("argHelpOption")); // OK
@@ -430,6 +490,7 @@ public class Startup implements AWTEventListener {
 		System.err.println("   " + S.get("argTestCircGen")); // OK
 		System.err.println("   " + S.get("argTestCircuit")); // OK
 		System.err.println("   " + S.get("argTestImplement")); // OK
+		System.err.println("   " + S.get("argCircuitOption")); // OK
 
 		System.exit(-1);
 	}
@@ -751,6 +812,10 @@ public class Startup implements AWTEventListener {
 
 	File getLoadFile() {
 		return loadFile;
+	}
+
+	String getCircuitToTest() {
+		return circuitToTest;
 	}
 
 	Map<File, File> getSubstitutions() {

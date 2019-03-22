@@ -32,8 +32,10 @@ import static com.cburch.logisim.std.Strings.S;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.math.BigInteger;
 
 import com.cburch.logisim.data.Attribute;
+import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
@@ -49,21 +51,31 @@ import com.cburch.logisim.tools.key.BitWidthConfigurator;
 import com.cburch.logisim.util.GraphicsUtil;
 
 public class Multiplier extends InstanceFactory {
-	static Value[] computeProduct(BitWidth width, Value a, Value b, Value c_in) {
+
+	public static final AttributeOption SIGNED_OPTION = Comparator.SIGNED_OPTION;
+	public static final AttributeOption UNSIGNED_OPTION = Comparator.UNSIGNED_OPTION;
+	public static final Attribute<AttributeOption> MODE_ATTR = Comparator.MODE_ATTRIBUTE;
+
+	static long extend(int w, int v, boolean unsigned) {
+		long mask = (1L << w) - 1;
+		if (unsigned) return v & mask;
+		else if ((v & (1<<(w-1))) != 0) return (long)v | ~mask;
+		else return (long)v;
+	}
+
+	static Value[] computeProduct(BitWidth width, Value a, Value b, Value c_in, boolean unsigned) {
 		int w = width.getWidth();
 		if (c_in == Value.NIL || c_in.isUnknown())
 			c_in = Value.createKnown(width, 0);
 		if (a.isFullyDefined() && b.isFullyDefined() && c_in.isFullyDefined()) {
-			long sum;
-			if (w >= 32) {
-				sum = (a.toIntValue() & 0xffffffffL) * (b.toIntValue() & 0xffffffffL)
-					+ (c_in.toIntValue() & 0xffffffffL);
-			} else {
-				sum = (long) a.toIntValue() * (long) b.toIntValue()
-					+ (long) c_in.toIntValue();
-			}
-			return new Value[] { Value.createKnown(width, (int) sum),
-					Value.createKnown(width, (int) (sum >> w)) };
+			BigInteger aa = BigInteger.valueOf(extend(w, a.toIntValue(), unsigned));
+			BigInteger bb = BigInteger.valueOf(extend(w, b.toIntValue(), unsigned));
+			BigInteger cc = BigInteger.valueOf(extend(w, c_in.toIntValue(), unsigned));
+			BigInteger rr = aa.multiply(bb).add(cc);
+			long mask = (1L << w) - 1;
+			int lo = rr.and(BigInteger.valueOf(mask)).intValue();
+			int hi = rr.shiftRight(w).and(BigInteger.valueOf(mask)).intValue();
+			return new Value[] { Value.createKnown(width, lo), Value.createKnown(width, hi) };
 		} else {
 			Value[] avals = a.getAll();
 			int aOk = findUnknown(avals);
@@ -80,7 +92,13 @@ public class Multiplier extends InstanceFactory {
 
 			int known = Math.min(Math.min(aOk, bOk), cOk);
 			int error = Math.min(Math.min(aErr, bErr), cErr);
-			int ret = ax * bx + cx;
+
+			// fixme: this is probably wrong, but the inputs were bad anyway
+			BigInteger aa = BigInteger.valueOf(extend(w, ax, unsigned));
+			BigInteger bb = BigInteger.valueOf(extend(w, bx, unsigned));
+			BigInteger cc = BigInteger.valueOf(extend(w, cx, unsigned));
+			BigInteger rr = aa.multiply(bb).add(cc);
+			long ret = rr.longValue();
 
 			Value[] bits = new Value[w];
 			for (int i = 0; i < w; i++) {
@@ -94,8 +112,7 @@ public class Multiplier extends InstanceFactory {
 			}
 			return new Value[] {
 					Value.create(bits),
-					error < w ? Value.createError(width) : Value
-							.createUnknown(width) };
+					error < w ? Value.createError(width) : Value.createUnknown(width) };
 		}
 	}
 
@@ -139,8 +156,8 @@ public class Multiplier extends InstanceFactory {
 
 	public Multiplier() {
 		super("Multiplier", S.getter("multiplierComponent"));
-		setAttributes(new Attribute[] { StdAttr.WIDTH },
-				new Object[] { BitWidth.create(8) });
+		setAttributes(new Attribute[] { StdAttr.WIDTH, MODE_ATTR },
+				new Object[] { BitWidth.create(8), SIGNED_OPTION });
 		setKeyConfigurator(new BitWidthConfigurator(StdAttr.WIDTH));
 		setOffsetBounds(Bounds.create(-40, -20, 40, 40));
 		setIconName("multiplier.gif");
@@ -193,16 +210,16 @@ public class Multiplier extends InstanceFactory {
 	public void propagate(InstanceState state) {
 		// get attributes
 		BitWidth dataWidth = state.getAttributeValue(StdAttr.WIDTH);
+		boolean unsigned = state.getAttributeValue(MODE_ATTR).equals(UNSIGNED_OPTION);
 
 		// compute outputs
 		Value a = state.getPortValue(IN0);
 		Value b = state.getPortValue(IN1);
 		Value c_in = state.getPortValue(C_IN);
-		Value[] outs = Multiplier.computeProduct(dataWidth, a, b, c_in);
+		Value[] outs = computeProduct(dataWidth, a, b, c_in,unsigned);
 
 		// propagate them
-		int delay = dataWidth.getWidth() * (dataWidth.getWidth() + 2)
-				* PER_DELAY;
+		int delay = dataWidth.getWidth() * (dataWidth.getWidth() + 2)* PER_DELAY;
 		state.setPort(OUT, outs[0], delay);
 		state.setPort(C_OUT, outs[1], delay);
 	}

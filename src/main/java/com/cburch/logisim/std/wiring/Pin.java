@@ -603,7 +603,7 @@ public class Pin extends InstanceFactory {
 		setInstancePoker(PinPoker.class);
 	}
 	
-	private Direction PinLabelLoc(Direction PinDir) {
+	private static Direction PinLabelLoc(Direction PinDir) {
 		if (PinDir == Direction.EAST)
 			return Direction.WEST;
 		else if (PinDir == Direction.WEST)

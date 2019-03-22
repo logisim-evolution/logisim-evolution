@@ -32,6 +32,10 @@ import java.io.File;
 import java.io.OutputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -48,8 +52,12 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import com.cburch.draw.model.AbstractCanvasObject;
 import com.cburch.logisim.LogisimVersion;
@@ -68,6 +76,103 @@ import com.cburch.logisim.util.StringUtil;
 import com.cburch.logisim.vhdl.base.VhdlContent;
 
 class XmlWriter {
+
+	/* We sort some parts of the xml tree, to help with reproducibility and to
+	 * ease testing (e.g. diff a circuit file). Attribute name=value pairs seem
+	 * to be sorted already, so we don't worry about those. The code below sorts
+	 * the nodes, but only in best-effort fashion (some nodes are identical
+	 * except for their child contents, which seems overkill to bother sorting).
+	 * Parts of the tree where node order matters (top-level "project", the
+	 * libraries, and the toolbar, for example) are not sorted.
+	 */
+
+	static String attrToString(Attr a) {
+		String n = a.getName();
+		String v = a.getValue().replaceAll("&", "&amp;").replaceAll("\"", "&quot;");
+		return n + "=\"" + v + "\"";
+	}
+
+	static String attrsToString(NamedNodeMap a) {
+		int n = a.getLength();
+		if (n == 0)
+			return "";
+		else if (n == 1)
+			return attrToString((Attr)a.item(0));
+		ArrayList<String> lst = new ArrayList<String>();
+		for (int i = 0; i < n; i++) {
+			lst.add(attrToString((Attr)a.item(i)));
+		}
+		Collections.sort(lst);
+		String s = lst.get(0);
+		for (int i = 1; i < n; i++)
+			s = s + " " + lst.get(i);
+		return s;
+	}
+
+	static int stringCompare(String a, String b) {
+		if (a == b) return 0;
+		else if (a == null) return -1;
+		else if (b == null) return 1;
+		else return a.compareTo(b);
+	}
+
+	static Comparator<Node> nodeComparator = new Comparator<Node>() {
+		public int compare(Node a, Node b) {
+			String na = a.getNodeName();
+			String nb = b.getNodeName();
+			int c = stringCompare(na, nb);
+			if (c != 0) return c;
+			String ma = attrsToString(a.getAttributes());
+			String mb = attrsToString(b.getAttributes());
+			c = stringCompare(ma, mb);
+			if (c != 0) return c;
+			String va = a.getNodeValue();
+			String vb = b.getNodeValue();
+			c = stringCompare(va, vb);
+			if (c != 0) return c;
+			// This can happen in some cases, e.g. two text components
+			// on top of each other. But it seems rare enough to not
+			// worry about, since our normalization here is just for
+			// ease of comparing circ files during testing.
+			// System.out.printf("sorts equal:\n");
+			// System.out.printf(" a: <%s %s>%s\n", na, ma, va);
+			// System.out.printf(" b: <%s %s>%s\n", nb, mb, vb);
+			return 0;
+		}
+	};
+
+	static void sort(Node top) {
+		NodeList children = top.getChildNodes();
+		int n = children.getLength();
+		String name = top.getNodeName();
+		// project (contains ordered elements, do not sort)
+		// - main
+		// - toolbar (contains ordered elements, do not sort)
+		//   - tool(s)
+		//     - a(s)
+		// - lib(s) (contains orderd elements, do not sort)
+		//   - tool(s)
+		//     - a(s)
+		// - options
+		//   - a(s)
+		// - circuit(s)
+		//   - a(s)
+		//   - comp(s)
+		//   - wire(s)
+		if (n > 1 && !name.equals("project") && !name.equals("lib") && !name.equals("toolbar")) {
+			Node[] a = new Node[n];
+			for (int i = 0; i < n; i++)
+				a[i] = children.item(i);
+			Arrays.sort(a, nodeComparator);
+			for (int i = 0; i < n; i++)
+				top.insertBefore(a[i], null); // moves a[i] to end
+		}
+		for (int i = 0; i < n; i++) {
+			sort(children.item(i));
+		}
+	}
+
+
 	static void write(LogisimFile file, OutputStream out, LibraryLoader loader,
 			File destFile) throws ParserConfigurationException,
 			TransformerConfigurationException, TransformerException {
@@ -101,7 +206,9 @@ class XmlWriter {
 					"2");
 		} catch (IllegalArgumentException e) {
 		}
-
+		
+		doc.normalize();
+		sort(doc);
 		Source src = new DOMSource(doc);
 		Result dest = new StreamResult(out);
 		tf.transform(src, dest);

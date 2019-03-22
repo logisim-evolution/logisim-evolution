@@ -32,8 +32,10 @@ import static com.cburch.logisim.std.Strings.S;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.math.BigInteger;
 
 import com.cburch.logisim.data.Attribute;
+import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
@@ -48,29 +50,29 @@ import com.cburch.logisim.tools.key.BitWidthConfigurator;
 import com.cburch.logisim.util.GraphicsUtil;
 
 public class Divider extends InstanceFactory {
-	static Value[] computeResult(BitWidth width, Value a, Value b, Value upper) {
+
+	public static final AttributeOption SIGNED_OPTION = Comparator.SIGNED_OPTION;
+	public static final AttributeOption UNSIGNED_OPTION = Comparator.UNSIGNED_OPTION;
+	public static final Attribute<AttributeOption> MODE_ATTR = Comparator.MODE_ATTRIBUTE;
+
+	static Value[] computeResult(BitWidth width, Value a, Value b, Value upper, boolean unsigned) {
 		int w = width.getWidth();
 		if (upper == Value.NIL || upper.isUnknown())
 			upper = Value.createKnown(width, 0);
 		if (a.isFullyDefined() && b.isFullyDefined() && upper.isFullyDefined()) {
-			long num = ((long) upper.toIntValue() << w)
-					| ((long) a.toIntValue() & 0xFFFFFFFFL);
-			long den = (long) b.toIntValue() & 0xFFFFFFFFL;
-			if (den == 0)
-				den = 1;
-			long result = num / den;
-			long rem = num % den;
-			if (rem < 0) {
-				if (den >= 0) {
-					rem += den;
-					result--;
-				} else {
-					rem -= den;
-					result++;
-				}
-			}
-			return new Value[] { Value.createKnown(width, (int) result),
-					Value.createKnown(width, (int) rem) };
+			BigInteger uu = BigInteger.valueOf(Multiplier.extend(w, upper.toIntValue(), unsigned));
+			BigInteger aa = BigInteger.valueOf(Multiplier.extend(w, a.toIntValue(), unsigned));
+			BigInteger bb = BigInteger.valueOf(Multiplier.extend(w, b.toIntValue(), unsigned));
+
+			BigInteger num = uu.shiftLeft(w).or(aa);
+			BigInteger den = bb.equals(BigInteger.ZERO) ? BigInteger.valueOf(1) : bb;
+
+			BigInteger res[] = num.divideAndRemainder(den);
+			long mask = (1L << w) - 1;
+			int result = res[0].and(BigInteger.valueOf(mask)).intValue();
+			int rem = res[1].and(BigInteger.valueOf(mask)).intValue();
+			return new Value[] { Value.createKnown(width, result),
+					Value.createKnown(width, rem) };
 		} else if (a.isErrorValue() || b.isErrorValue() || upper.isErrorValue()) {
 			return new Value[] { Value.createError(width),
 					Value.createError(width) };
@@ -81,17 +83,16 @@ public class Divider extends InstanceFactory {
 	}
 
 	static final int PER_DELAY = 1;
-	private static final int IN0 = 0;
-	private static final int IN1 = 1;
-	private static final int OUT = 2;
-	private static final int UPPER = 3;
-
-	private static final int REM = 4;
+	static final int IN0 = 0;
+	static final int IN1 = 1;
+	static final int OUT = 2;
+	static final int UPPER = 3;
+	static final int REM = 4;
 
 	public Divider() {
 		super("Divider", S.getter("dividerComponent"));
-		setAttributes(new Attribute[] { StdAttr.WIDTH },
-				new Object[] { BitWidth.create(8) });
+		setAttributes(new Attribute[] { StdAttr.WIDTH, MODE_ATTR },
+				new Object[] { BitWidth.create(8), SIGNED_OPTION });
 		setKeyConfigurator(new BitWidthConfigurator(StdAttr.WIDTH));
 		setOffsetBounds(Bounds.create(-40, -20, 40, 40));
 		setIconName("divider.gif");
@@ -139,16 +140,16 @@ public class Divider extends InstanceFactory {
 	public void propagate(InstanceState state) {
 		// get attributes
 		BitWidth dataWidth = state.getAttributeValue(StdAttr.WIDTH);
+		boolean unsigned = state.getAttributeValue(MODE_ATTR).equals(UNSIGNED_OPTION);
 
 		// compute outputs
 		Value a = state.getPortValue(IN0);
 		Value b = state.getPortValue(IN1);
 		Value upper = state.getPortValue(UPPER);
-		Value[] outs = Divider.computeResult(dataWidth, a, b, upper);
+		Value[] outs = computeResult(dataWidth, a, b, upper,unsigned);
 
 		// propagate them
-		int delay = dataWidth.getWidth() * (dataWidth.getWidth() + 2)
-				* PER_DELAY;
+		int delay = dataWidth.getWidth() * (dataWidth.getWidth() + 2) * PER_DELAY;
 		state.setPort(OUT, outs[0], delay);
 		state.setPort(REM, outs[1], delay);
 	}

@@ -43,6 +43,8 @@ public class MultiplierHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 	final private static int NrOfBitsId = -1;
 	final private static String CalcBitsStr = "NrOfCalcBits";
 	final private static int CalcBitsId = -2;
+	final private static String UnsignedStr = "UnsignedMultiplier";
+	final private static int UnsignedId = -3;
 
 	@Override
 	public String getComponentStringIdentifier() {
@@ -64,16 +66,16 @@ public class MultiplierHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 			AttributeSet attrs, FPGAReport Reporter, String HDLType) {
 		ArrayList<String> Contents = new ArrayList<String>();
 		if (HDLType.equals(VHDL)) {
-			Contents.add("   s_mult_result <= std_logic_vector(unsigned(INP_A)*unsigned(INP_B));");
-			Contents.add("   s_extended_Cin(" + CalcBitsStr + "-1 DOWNTO "
-					+ NrOfBitsStr + ") <= (OTHERS => '0');");
-			Contents.add("   s_extended_Cin(" + NrOfBitsStr
-					+ "-1 DOWNTO 0) <= Cin;");
-			Contents.add("   s_new_result  <= std_logic_vector(unsigned(s_mult_result) + unsigned(s_extended_Cin));");
-			Contents.add("   Mult_hi       <= s_new_result(" + CalcBitsStr
-					+ "-1 DOWNTO " + NrOfBitsStr + ");");
-			Contents.add("   Mult_lo       <= s_new_result(" + NrOfBitsStr
-					+ "-1 DOWNTO 0);");
+			Contents.add("   s_mult_result <= std_logic_vector(unsigned(INP_A)*unsigned(INP_B))");
+			Contents.add("                       WHEN "+UnsignedStr+"= 1 ELSE");
+			Contents.add("                    std_logic_vector(signed(INP_A)*signed(INP_B));");
+			Contents.add("   s_extended_Cin(" + CalcBitsStr + "-1 DOWNTO " + NrOfBitsStr + ") <= (OTHERS => '0');");
+			Contents.add("   s_extended_Cin(" + NrOfBitsStr + "-1 DOWNTO 0) <= Cin;");
+			Contents.add("   s_new_result  <= std_logic_vector(unsigned(s_mult_result) + unsigned(s_extended_Cin))");
+			Contents.add("                       WHEN "+UnsignedStr+"= 1 ELSE");
+			Contents.add("                    std_logic_vector(signed(s_mult_result) + signed(s_extended_Cin));");
+			Contents.add("   Mult_hi       <= s_new_result(" + CalcBitsStr + "-1 DOWNTO " + NrOfBitsStr + ");");
+			Contents.add("   Mult_lo       <= s_new_result(" + NrOfBitsStr + "-1 DOWNTO 0);");
 		}
 		return Contents;
 	}
@@ -92,6 +94,7 @@ public class MultiplierHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 		SortedMap<Integer, String> Parameters = new TreeMap<Integer, String>();
 		Parameters.put(NrOfBitsId, NrOfBitsStr);
 		Parameters.put(CalcBitsId, CalcBitsStr);
+		Parameters.put(UnsignedId, UnsignedStr);
 		return Parameters;
 	}
 
@@ -101,8 +104,10 @@ public class MultiplierHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 		SortedMap<String, Integer> ParameterMap = new TreeMap<String, Integer>();
 		int NrOfBits = ComponentInfo.GetComponent().getEnd(0).getWidth()
 				.getWidth();
+		boolean isUnsigned = ComponentInfo.GetComponent().getAttributeSet().getValue(Multiplier.MODE_ATTR).equals(Multiplier.UNSIGNED_OPTION);
 		ParameterMap.put(NrOfBitsStr, NrOfBits);
 		ParameterMap.put(CalcBitsStr, 2 * NrOfBits);
+		ParameterMap.put(UnsignedStr, isUnsigned ? 1 : 0);
 		return ParameterMap;
 	}
 
