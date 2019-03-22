@@ -40,16 +40,18 @@ class Toolbox extends JPanel {
   private static final long serialVersionUID = 1L;
   private ProjectExplorer toolbox;
 
-  Toolbox(Project proj, MenuListener menu) {
+  Toolbox(Project proj, Frame frame, MenuListener menu) {
     super(new BorderLayout());
 
-    ToolboxToolbarModel toolbarModel = new ToolboxToolbarModel(menu);
+    ToolboxToolbarModel toolbarModel = new ToolboxToolbarModel(frame,menu);
     Toolbar toolbar = new Toolbar(toolbarModel);
     add(toolbar, BorderLayout.NORTH);
 
     toolbox = new ProjectExplorer(proj);
     toolbox.setListener(new ToolboxManip(proj, toolbox));
     add(new JScrollPane(toolbox), BorderLayout.CENTER);
+    
+    toolbarModel.menuEnableChanged(menu);
   }
 
   void setHaloedTool(Tool value) {

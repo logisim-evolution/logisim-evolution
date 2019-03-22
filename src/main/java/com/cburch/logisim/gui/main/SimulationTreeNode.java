@@ -29,27 +29,56 @@
 package com.cburch.logisim.gui.main;
 
 import com.cburch.logisim.comp.ComponentFactory;
+
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
 import javax.swing.tree.TreeNode;
 
-public abstract class SimulationTreeNode implements TreeNode {
-  public abstract Enumeration<? extends TreeNode> children();
+public class SimulationTreeNode implements TreeNode {
+  protected SimulationTreeModel model;
+  protected SimulationTreeNode parent;
+  protected ArrayList<TreeNode> children;
 
-  public abstract boolean getAllowsChildren();
+  public SimulationTreeNode(SimulationTreeModel model, SimulationTreeNode parent) {
+    this.model = model;
+    this.parent = parent;
+    this.children = new ArrayList<TreeNode>();
+  }
 
-  public abstract TreeNode getChildAt(int childIndex);
+  public Enumeration<TreeNode> children() {
+    return Collections.enumeration(children);
+  }
 
-  public abstract int getChildCount();
+  public boolean getAllowsChildren() {
+    return true;
+  }
 
-  public abstract ComponentFactory getComponentFactory();
+  public TreeNode getChildAt(int index) {
+    return children.get(index);
+  }
 
-  public abstract int getIndex(TreeNode node);
+  public int getChildCount() {
+    return children.size();
+  }
 
-  public abstract TreeNode getParent();
+  public ComponentFactory getComponentFactory() {
+    return null;
+  }
+
+  public int getIndex(TreeNode node) {
+    return children.indexOf(node);
+  }
+
+  public TreeNode getParent() {
+    return parent;
+  }
 
   public boolean isCurrentView(SimulationTreeModel model) {
     return false;
   }
 
-  public abstract boolean isLeaf();
+  public boolean isLeaf() {
+	  return false;
+  }
 }

@@ -90,6 +90,9 @@ import javax.swing.JSpinner;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.ProgressMonitor;
+import javax.swing.UIDefaults;
+import javax.swing.UIManager;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -908,6 +911,15 @@ public class Startup implements AWTEventListener {
       // will occur eventually anyway; we might as well do it when the
       // monitor says we are
     }
+
+    // Make ENTER and SPACE have the same effect for focused buttons.
+    UIManager.getDefaults().put("Button.focusInputMap",
+        new UIDefaults.LazyInputMap(new Object[] {
+          "ENTER", "pressed",
+          "released ENTER", "released",
+          "SPACE","pressed",
+          "released SPACE","released"
+        }));
 
     // if user has double-clicked a file to open, we'll
     // use that as the file to open now.

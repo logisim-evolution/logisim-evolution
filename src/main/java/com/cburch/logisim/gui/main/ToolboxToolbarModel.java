@@ -37,13 +37,16 @@ import com.cburch.logisim.util.UnmodifiableList;
 import java.util.List;
 
 class ToolboxToolbarModel extends AbstractToolbarModel implements MenuListener.EnabledListener {
+  private Frame frame;
   private LogisimToolbarItem itemAdd;
   private LogisimToolbarItem itemUp;
   private LogisimToolbarItem itemDown;
+  private LogisimToolbarItem itemAppearance;
   private LogisimToolbarItem itemDelete;
   private List<ToolbarItem> items;
 
-  public ToolboxToolbarModel(MenuListener menu) {
+  public ToolboxToolbarModel(Frame frame, MenuListener menu) {
+    this.frame = frame;
     itemAdd =
         new LogisimToolbarItem(
             menu, "projadd.gif", LogisimMenuBar.ADD_CIRCUIT, S.getter("projectAddCircuitTip"));
@@ -59,6 +62,9 @@ class ToolboxToolbarModel extends AbstractToolbarModel implements MenuListener.E
             "projdown.gif",
             LogisimMenuBar.MOVE_CIRCUIT_DOWN,
             S.getter("projectMoveCircuitDownTip"));
+    itemAppearance = new LogisimToolbarItem(menu, "projapp.gif",
+            LogisimMenuBar.TOGGLE_APPEARANCE,
+            S.getter("projectEditAppearanceTip"));
     itemDelete =
         new LogisimToolbarItem(
             menu,
@@ -69,7 +75,7 @@ class ToolboxToolbarModel extends AbstractToolbarModel implements MenuListener.E
     items =
         UnmodifiableList.create(
             new ToolbarItem[] {
-              itemAdd, itemUp, itemDown, itemDelete,
+              itemAdd, itemUp, itemDown, itemAppearance, itemDelete,
             });
 
     menu.addEnabledListener(this);
@@ -82,7 +88,8 @@ class ToolboxToolbarModel extends AbstractToolbarModel implements MenuListener.E
 
   @Override
   public boolean isSelected(ToolbarItem item) {
-    return false;
+	  return (item == itemAppearance)
+		        && frame.getEditorView().equals(Frame.EDIT_APPEARANCE);
   }
 
   @Override
@@ -92,9 +99,6 @@ class ToolboxToolbarModel extends AbstractToolbarModel implements MenuListener.E
     }
   }
 
-  //
-  // EnabledListener methods
-  //
   public void menuEnableChanged(MenuListener source) {
     fireToolbarAppearanceChanged();
   }

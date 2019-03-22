@@ -31,11 +31,11 @@ package com.cburch.logisim.gui.main;
 import static com.cburch.logisim.gui.Strings.S;
 
 import com.cburch.draw.toolbar.Toolbar;
-import com.cburch.draw.toolbar.ToolbarModel;
-import com.cburch.logisim.Main; // for version name
+import com.cburch.logisim.Main;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitEvent;
 import com.cburch.logisim.circuit.CircuitListener;
+import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.data.AttributeEvent;
 import com.cburch.logisim.data.AttributeSet;
@@ -74,6 +74,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
@@ -132,6 +133,12 @@ public class Frame extends LFrame implements LocaleListener {
         computeTitle();
         proj.setTool(proj.getOptions().getToolbarData().getFirstTool());
         placeToolbar();
+      } else if (action == ProjectEvent.ACTION_SET_STATE) {
+        if (event.getData() instanceof CircuitState) {
+          CircuitState state = (CircuitState)event.getData();
+          if (state.getParentState() != null)
+            topTab.setSelectedIndex(1); // sim explorer view
+        }
       } else if (action == ProjectEvent.ACTION_SET_CURRENT) {
         if (event.getData() instanceof Circuit) {
           setEditorView(EDIT_LAYOUT);
@@ -165,9 +172,7 @@ public class Frame extends LFrame implements LocaleListener {
     @Override
     public void stateChanged(ChangeEvent event) {
       Object source = event.getSource();
-      if (source == explorerPane) {
-        firePropertyChange(EXPLORER_VIEW, "???", getExplorerView());
-      } else if (source == mainPanel) {
+      if (source == mainPanel) {
         firePropertyChange(EDITOR_VIEW, "???", getEditorView());
       }
     }
@@ -257,9 +262,6 @@ public class Frame extends LFrame implements LocaleListener {
   public static final String EDIT_LAYOUT = "layout";
   public static final String EDIT_APPEARANCE = "appearance";
   public static final String EDIT_HDL = "hdl";
-  public static final String VIEW_TOOLBOX = "toolbox";
-  public static final String VIEW_SIMULATION = "simulation";
-  public static final String VIEW_TRACKER = "tracker";
   private Project proj;
   private MyProjectListener myProjectListener = new MyProjectListener();
   // GUI elements shared between views
@@ -271,11 +273,11 @@ public class Frame extends LFrame implements LocaleListener {
   private JPanel mainPanelSuper;
   private CardPanel mainPanel;
   // left-side elements
-  private Toolbar projectToolbar;
-  private CardPanel explorerPane;
+  private JTabbedPane topTab, bottomTab;
   private Toolbox toolbox;
   private SimulationExplorer simExplorer;
   private AttrTable attrTable;
+  private RegTabContent regPanel;
   private ZoomControl zoom;
   // for the Layout view
   private LayoutToolbarModel layoutToolbarModel;
@@ -333,18 +335,12 @@ public class Frame extends LFrame implements LocaleListener {
     toolbar = new Toolbar(layoutToolbarModel);
 
     // set up the left-side components
-    ToolbarModel projectToolbarModel = new ExplorerToolbarModel(this, menuListener);
-    projectToolbar = new Toolbar(projectToolbarModel);
-    toolbox = new Toolbox(proj, menuListener);
+    toolbox = new Toolbox(proj, this , menuListener);
     simExplorer = new SimulationExplorer(proj, menuListener);
-    explorerPane = new CardPanel();
-    explorerPane.addView(VIEW_TOOLBOX, toolbox);
-    explorerPane.addView(VIEW_SIMULATION, simExplorer);
-    explorerPane.setView(VIEW_TOOLBOX);
-    attrTable = new AttrTable(this);
-    JTabbedPane tabPane = attrTable.getTabPane();
-    RegTabContent regPanel = new RegTabContent(this);
-    tabPane.addTab("Registers", regPanel);
+    bottomTab = new JTabbedPane();
+    bottomTab.setFont(AppPreferences.getScaledFont(new Font("Dialog", Font.BOLD, 9)));
+    bottomTab.addTab("Properties", attrTable = new AttrTable(this));
+    bottomTab.addTab("State", regPanel = new RegTabContent(this));
 
     zoom = new ZoomControl(layoutZoomModel, layoutCanvas);
 
@@ -360,24 +356,29 @@ public class Frame extends LFrame implements LocaleListener {
     // on the right and a split pane on the left containing the
     // explorer and attribute values.
     JPanel explPanel = new JPanel(new BorderLayout());
-    explPanel.add(projectToolbar, BorderLayout.NORTH);
-    explPanel.add(explorerPane, BorderLayout.CENTER);
-    JPanel attrPanel = new JPanel(new BorderLayout());
-    attrPanel.add(attrTable, BorderLayout.CENTER);
+    explPanel.add(toolbox, BorderLayout.CENTER);
 
+    JPanel simPanel = new JPanel(new BorderLayout());
+    // simPanel.add(new JButton("stuff"), BorderLayout.NORTH); 
+    simPanel.add(simExplorer, BorderLayout.CENTER);
+
+    topTab = new JTabbedPane();
+    topTab.setFont(new Font("Dialog", Font.BOLD, 9));
+    topTab.add("Design", explPanel);
+    topTab.add("Simulate", simPanel);
+    
     JPanel attrFooter = new JPanel(new BorderLayout());
-
     attrFooter.add(zoom);
 
-    attrPanel.add(attrFooter, BorderLayout.SOUTH);
-
-    leftRegion =
-        new HorizontalSplitPane(
-            explPanel, attrPanel, AppPreferences.WINDOW_LEFT_SPLIT.get().doubleValue());
+    JPanel bottomTabAndZoom = new JPanel(new BorderLayout());
+    bottomTabAndZoom.add(bottomTab, BorderLayout.CENTER);
+    bottomTabAndZoom.add(attrFooter, BorderLayout.SOUTH);
+    leftRegion = new HorizontalSplitPane(
+       topTab, bottomTabAndZoom, AppPreferences.WINDOW_LEFT_SPLIT.get().doubleValue());
 
     hdlEditor = new HdlContentView(proj);
-    editRegion = new HorizontalSplitPane(mainPanelSuper, hdlEditor, 1.0);
     vhdlSimulatorConsole = new VhdlSimulatorConsole(proj);
+    editRegion = new HorizontalSplitPane(mainPanelSuper, hdlEditor, 1.0);
     rightRegion = new HorizontalSplitPane(editRegion, vhdlSimulatorConsole, 1.0);
 
     VhdlSimState state = new VhdlSimState(proj);
@@ -409,10 +410,8 @@ public class Frame extends LFrame implements LocaleListener {
       proj.setTool(proj.getOptions().getToolbarData().getFirstTool());
     }
     mainPanel.addChangeListener(myProjectListener);
-    explorerPane.addChangeListener(myProjectListener);
     AppPreferences.TOOLBAR_PLACEMENT.addPropertyChangeListener(myProjectListener);
     placeToolbar();
-    ((MenuListener.EnabledListener) projectToolbarModel).menuEnableChanged(menuListener);
 
     LocaleManager.addLocaleListener(this);
     toolbox.updateStructure();
@@ -468,10 +467,6 @@ public class Frame extends LFrame implements LocaleListener {
 
   public String getEditorView() {
     return (getHdlEditorView() != null ? EDIT_HDL : mainPanel.getView());
-  }
-
-  public String getExplorerView() {
-    return explorerPane.getView();
   }
 
   public Project getProject() {
@@ -611,12 +606,7 @@ public class Frame extends LFrame implements LocaleListener {
     }
   }
 
-  public void setExplorerView(String view) {
-    explorerPane.setView(view);
-  }
-
   public void setVhdlSimulatorConsoleStatus(boolean visible) {
-
     if (visible) {
       rightRegion.setFraction(lastFraction);
     } else {

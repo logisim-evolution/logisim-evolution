@@ -78,7 +78,7 @@ public class Propagator {
       Propagator p = prop.get();
       if (p == null) {
         e.getSource().removeAttributeListener(this);
-      } else if (e.getAttribute().equals(Options.sim_rand_attr)) {
+      } else if (e.getAttribute().equals(Options.ATTR_SIM_RAND)) {
         p.updateRandomness();
       }
     }
@@ -445,7 +445,7 @@ public class Propagator {
 
   private void updateRandomness() {
     Options opts = root.getProject().getOptions();
-    Object rand = opts.getAttributeSet().getValue(Options.sim_rand_attr);
+    Object rand = opts.getAttributeSet().getValue(Options.ATTR_SIM_RAND);
     int val = ((Integer) rand).intValue();
     int logVal = 0;
     while ((1 << logVal) < val) logVal++;

@@ -38,24 +38,12 @@ import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowEvent;
-import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
 public class PreferencesFrame extends LFrame {
-  private class MyListener implements ActionListener, LocaleListener {
-    public void actionPerformed(ActionEvent event) {
-      Object src = event.getSource();
-      if (src == close) {
-        WindowEvent e = new WindowEvent(PreferencesFrame.this, WindowEvent.WINDOW_CLOSING);
-        PreferencesFrame.this.processWindowEvent(e);
-      }
-    }
 
+  private class MyListener implements LocaleListener {
     public void localeChanged() {
       setTitle(S.get("preferencesFrameTitle"));
       for (int i = 0; i < panels.length; i++) {
@@ -63,7 +51,6 @@ public class PreferencesFrame extends LFrame {
         tabbedPane.setToolTipTextAt(i, panels[i].getToolTipText());
         panels[i].localeChanged();
       }
-      close.setText(S.get("closeButton"));
     }
   }
 
@@ -109,14 +96,10 @@ public class PreferencesFrame extends LFrame {
   private OptionsPanel[] panels;
   private JTabbedPane tabbedPane;
 
-  private JButton close = new JButton();
-
   private PreferencesFrame() {
     setDefaultCloseOperation(HIDE_ON_CLOSE);
-    setJMenuBar(null);
 
-    panels =
-        new OptionsPanel[] {
+    panels = new OptionsPanel[] {
           new TemplateOptions(this),
           new IntlOptions(this),
           new WindowOptions(this),
@@ -133,17 +116,12 @@ public class PreferencesFrame extends LFrame {
       if (panel instanceof IntlOptions) intlIndex = index;
     }
 
-    JPanel buttonPanel = new JPanel();
-    buttonPanel.add(close);
-    close.addActionListener(myListener);
-
     Container contents = getContentPane();
     tabbedPane.setPreferredSize(
         new Dimension(
             Toolkit.getDefaultToolkit().getScreenSize().width / 2,
             Toolkit.getDefaultToolkit().getScreenSize().height / 2));
     contents.add(tabbedPane, BorderLayout.CENTER);
-    contents.add(buttonPanel, BorderLayout.SOUTH);
 
     if (intlIndex >= 0) tabbedPane.setSelectedIndex(intlIndex);
 

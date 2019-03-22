@@ -283,7 +283,9 @@ public class MenuSimulate extends Menu {
   }
 
   public static final Double[] SupportedTickFrequencies = {
-    4096.0, 2048.0, 1024.0, 512.0, 256.0, 128.0, 64.0, 32.0, 16.0, 8.0, 4.0, 2.0, 1.0, 0.5, 0.25
+    1024000.0, 512000.0, 256000.0, 128000.0, 64000.0,
+    32000.0, 1600.0, 8000.0, 4000.0, 2000.0, 1000.0,
+    512.0, 256.0, 128.0, 64.0, 32.0, 16.0, 8.0, 4.0, 2.0, 1.0, 0.5, 0.25
   };
   private LogisimMenuBar menubar;
   private MyListener myListener = new MyListener();
@@ -299,8 +301,7 @@ public class MenuSimulate extends Menu {
   private MenuItemImpl tickOnce;
   private MenuItemImpl tickOnceMain;
   private JMenu tickFreq = new JMenu();
-  private TickFrequencyChoice[] tickFreqs =
-      new TickFrequencyChoice[SupportedTickFrequencies.length];
+  private TickFrequencyChoice[] tickFreqs = new TickFrequencyChoice[SupportedTickFrequencies.length];
   private JMenu downStateMenu = new JMenu();
   private ArrayList<CircuitStateMenuItem> downStateItems = new ArrayList<CircuitStateMenuItem>();
   private JMenu upStateMenu = new JMenu();

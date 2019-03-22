@@ -57,6 +57,8 @@ import com.cburch.logisim.vhdl.base.HdlModel;
 import com.cburch.logisim.vhdl.sim.VhdlSimulatorTop;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
+
 import javax.swing.JFileChooser;
 
 public class Project {
@@ -105,9 +107,10 @@ public class Project {
   private VhdlSimulatorTop VhdlSimulator = null;
 
   private LogisimFile file;
-  private CircuitState circuitState;
   private HdlModel hdlModel;
-  private HashMap<Circuit, CircuitState> stateMap = new HashMap<Circuit, CircuitState>();
+  private CircuitState circuitState; // active sim state
+  private HashMap<Circuit, CircuitState> recentRootState = new HashMap<>(); // most recent root sim state for each circuit
+  private LinkedList<CircuitState> allRootStates = new LinkedList<>(); // all root sim states, in display order
   private Frame frame = null;
   private OptionsFrame optionsFrame = null;
   private LogFrame logFrame = null;
@@ -273,6 +276,10 @@ public class Project {
     return chronoFrame;
   }
 
+  public List<CircuitState> getRootCircuitStates() {
+    return allRootStates;
+  }
+
   public CircuitState getCircuitState() {
     return circuitState;
   }
@@ -281,10 +288,11 @@ public class Project {
     if (circuitState != null && circuitState.getCircuit() == circuit) {
       return circuitState;
     } else {
-      CircuitState ret = stateMap.get(circuit);
+      CircuitState ret = recentRootState.get(circuit);
       if (ret == null) {
         ret = new CircuitState(this, circuit);
-        stateMap.put(circuit, ret);
+        recentRootState.put(circuit, ret);
+        allRootStates.add(ret);
       }
       return ret;
     }
@@ -466,7 +474,6 @@ public class Project {
     fireEvent(new ProjectEvent(ProjectEvent.REPAINT_REQUEST, this, null));
   }
 
-  public static Project theFirst;
 
   public void setCircuitState(CircuitState value) {
     if (value == null || circuitState == value) return;
@@ -499,7 +506,9 @@ public class Project {
     }
     hdlModel = null;
     circuitState = value;
-    stateMap.put(circuitState.getCircuit(), circuitState);
+    if (circuitState.getParentState() == null) {
+      recentRootState.put(newCircuit, circuitState);
+    }
     simulator.setCircuitState(circuitState);
     if (circuitChanged) {
       fireEvent(ProjectEvent.ACTION_SET_CURRENT, oldActive, newCircuit);
@@ -516,9 +525,11 @@ public class Project {
   }
 
   public void setCurrentCircuit(Circuit circuit) {
-    CircuitState circState = stateMap.get(circuit);
+    CircuitState circState = recentRootState.get(circuit);
     if (circState == null) {
       circState = new CircuitState(this, circuit);
+      recentRootState.put(circuit, circState);
+      allRootStates.add(circState);
     }
     setCircuitState(circState);
   }
@@ -548,7 +559,8 @@ public class Project {
       }
     }
     file = value;
-    stateMap.clear();
+    recentRootState.clear();
+    allRootStates.clear();
     depends = new Dependencies(file);
     undoLog.clear();
     redoLog.clear();

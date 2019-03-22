@@ -46,9 +46,6 @@ public class Simulator {
     private volatile boolean resetRequested = false;
     private volatile boolean propagateRequested = false;
     private volatile boolean complete = false;
-    // These variables apply only if PRINT_TICK_RATE is set
-    int tickRateTicks = 0;
-    long tickRateStart = System.currentTimeMillis();
 
     private void doTick() {
       synchronized (this) {

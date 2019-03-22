@@ -29,8 +29,6 @@
 package com.cburch.logisim.gui.main;
 
 import com.cburch.draw.toolbar.Toolbar;
-import com.cburch.logisim.circuit.CircuitState;
-import com.cburch.logisim.circuit.Simulator;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.proj.ProjectEvent;
 import com.cburch.logisim.proj.ProjectListener;
@@ -65,7 +63,7 @@ class SimulationExplorer extends JPanel implements ProjectListener, MouseListene
     Toolbar toolbar = new Toolbar(toolbarModel);
     add(toolbar, BorderLayout.NORTH);
 
-    model = new SimulationTreeModel(proj.getSimulator().getCircuitState());
+    model = new SimulationTreeModel(proj.getRootCircuitStates());
     model.setCurrentView(project.getCircuitState());
     tree = new ScaledTree(model);
     tree.setCellRenderer(new SimulationTreeRenderer());
@@ -94,12 +92,6 @@ class SimulationExplorer extends JPanel implements ProjectListener, MouseListene
     }
   }
 
-  //
-  // MouseListener methods
-  //
-  //
-  // MouseListener methods
-  //
   public void mouseEntered(MouseEvent e) {}
 
   public void mouseExited(MouseEvent e) {}
@@ -113,22 +105,10 @@ class SimulationExplorer extends JPanel implements ProjectListener, MouseListene
     checkForPopup(e);
   }
 
-  //
-  // ProjectListener methods
-  //
   public void projectChanged(ProjectEvent event) {
     int action = event.getAction();
     if (action == ProjectEvent.ACTION_SET_STATE) {
-      Simulator sim = project.getSimulator();
-      CircuitState root = sim.getCircuitState();
-      if (root == null) {
-        tree.setModel(null);
-        return;
-      }
-      if (model.getRootState() != root) {
-        model = new SimulationTreeModel(root);
-        tree.setModel(model);
-      }
+      model.updateSimulationList(project.getRootCircuitStates());
       model.setCurrentView(project.getCircuitState());
       TreePath path = model.mapToPath(project.getCircuitState());
       if (path != null) {

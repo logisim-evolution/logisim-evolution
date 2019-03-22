@@ -41,7 +41,6 @@ import com.cburch.logisim.instance.StdAttr;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Enumeration;
 import javax.swing.tree.TreeNode;
 
 class SimulationTreeCircuitNode extends SimulationTreeNode
@@ -52,22 +51,17 @@ class SimulationTreeCircuitNode extends SimulationTreeNode
     }
   }
 
-  private SimulationTreeModel model;
-  private SimulationTreeCircuitNode parent;
   private CircuitState circuitState;
   private Component subcircComp;
-  private ArrayList<TreeNode> children;
 
   public SimulationTreeCircuitNode(
       SimulationTreeModel model,
       SimulationTreeCircuitNode parent,
       CircuitState circuitState,
       Component subcircComp) {
-    this.model = model;
-    this.parent = parent;
+	super(model,parent);
     this.circuitState = circuitState;
     this.subcircComp = subcircComp;
-    this.children = new ArrayList<TreeNode>();
     circuitState.getCircuit().addCircuitListener(this);
     if (subcircComp != null) {
       subcircComp.getAttributeSet().addAttributeListener(this);
@@ -86,11 +80,6 @@ class SimulationTreeCircuitNode extends SimulationTreeNode
     if (attr == CircuitAttributes.CIRCUIT_LABEL_ATTR || attr == StdAttr.LABEL) {
       model.fireNodeChanged(this);
     }
-  }
-
-  @Override
-  public Enumeration<TreeNode> children() {
-    return Collections.enumeration(children);
   }
 
   public void circuitChanged(CircuitEvent event) {
@@ -157,21 +146,6 @@ class SimulationTreeCircuitNode extends SimulationTreeNode
     }
   }
 
-  @Override
-  public boolean getAllowsChildren() {
-    return true;
-  }
-
-  @Override
-  public TreeNode getChildAt(int index) {
-    return children.get(index);
-  }
-
-  @Override
-  public int getChildCount() {
-    return children.size();
-  }
-
   public CircuitState getCircuitState() {
     return circuitState;
   }
@@ -182,23 +156,8 @@ class SimulationTreeCircuitNode extends SimulationTreeNode
   }
 
   @Override
-  public int getIndex(TreeNode node) {
-    return children.indexOf(node);
-  }
-
-  @Override
-  public TreeNode getParent() {
-    return parent;
-  }
-
-  @Override
   public boolean isCurrentView(SimulationTreeModel model) {
     return model.getCurrentView() == circuitState;
-  }
-
-  @Override
-  public boolean isLeaf() {
-    return false;
   }
 
   @Override
