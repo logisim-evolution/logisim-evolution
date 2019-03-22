@@ -1,63 +1,55 @@
-/*******************************************************************************
- * This file is part of logisim-evolution.
+/**
+ * ***************************************************************************** This file is part
+ * of logisim-evolution.
  *
- *   logisim-evolution is free software: you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation, either version 3 of the License, or
- *   (at your option) any later version.
+ * <p>logisim-evolution is free software: you can redistribute it and/or modify it under the terms
+ * of the GNU General Public License as published by the Free Software Foundation, either version 3
+ * of the License, or (at your option) any later version.
  *
- *   logisim-evolution is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *   GNU General Public License for more details.
+ * <p>logisim-evolution is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
  *
- *   You should have received a copy of the GNU General Public License
- *   along with logisim-evolution.  If not, see <http://www.gnu.org/licenses/>.
+ * <p>You should have received a copy of the GNU General Public License along with
+ * logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
- *******************************************************************************/
-
+ * <p>Original code by Carl Burch (http://www.cburch.com), 2011. Subsequent modifications by: +
+ * College of the Holy Cross http://www.holycross.edu + Haute École Spécialisée Bernoise/Berner
+ * Fachhochschule http://www.bfh.ch + Haute École du paysage, d'ingénierie et d'architecture de
+ * Genève http://hepia.hesge.ch/ + Haute École d'Ingénierie et de Gestion du Canton de Vaud
+ * http://www.heig-vd.ch/
+ * *****************************************************************************
+ */
 package com.cburch.draw.canvas;
 
+import com.cburch.draw.model.CanvasObject;
 import java.util.Collection;
 import java.util.EventObject;
 
-import com.cburch.draw.model.CanvasObject;
-
 public class SelectionEvent extends EventObject {
-	private static final long serialVersionUID = 1L;
-	public static final int ACTION_ADDED = 0;
-	public static final int ACTION_REMOVED = 1;
-	public static final int ACTION_HANDLE = 2;
+  private static final long serialVersionUID = 1L;
+  public static final int ACTION_ADDED = 0;
+  public static final int ACTION_REMOVED = 1;
+  public static final int ACTION_HANDLE = 2;
 
-	private int action;
-	private Collection<CanvasObject> affected;
+  private int action;
+  private Collection<CanvasObject> affected;
 
-	public SelectionEvent(Selection source, int action,
-			Collection<CanvasObject> affected) {
-		super(source);
-		this.action = action;
-		this.affected = affected;
-	}
+  public SelectionEvent(Selection source, int action, Collection<CanvasObject> affected) {
+    super(source);
+    this.action = action;
+    this.affected = affected;
+  }
 
-	public int getAction() {
-		return action;
-	}
+  public int getAction() {
+    return action;
+  }
 
-	public Collection<CanvasObject> getAffected() {
-		return affected;
-	}
+  public Collection<CanvasObject> getAffected() {
+    return affected;
+  }
 
-	public Selection getSelection() {
-		return (Selection) getSource();
-	}
+  public Selection getSelection() {
+    return (Selection) getSource();
+  }
 }
