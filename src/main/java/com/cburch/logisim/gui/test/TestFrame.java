@@ -36,6 +36,7 @@ import com.cburch.logisim.circuit.SimulatorEvent;
 import com.cburch.logisim.circuit.SimulatorListener;
 import com.cburch.logisim.data.TestException;
 import com.cburch.logisim.data.TestVector;
+import com.cburch.logisim.gui.generic.LFrame;
 import com.cburch.logisim.gui.menu.LogisimMenuBar;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.proj.ProjectEvent;
@@ -61,7 +62,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-public class TestFrame extends JFrame {
+public class TestFrame extends LFrame {
 
   private class MyListener
       implements ActionListener, ProjectListener, SimulatorListener, LocaleListener, ModelListener {
@@ -69,8 +70,7 @@ public class TestFrame extends JFrame {
     public void actionPerformed(ActionEvent event) {
       Object src = event.getSource();
       if (src == close) {
-        WindowEvent e = new WindowEvent(TestFrame.this, WindowEvent.WINDOW_CLOSING);
-        TestFrame.this.processWindowEvent(e);
+         requestClose();
       } else if (src == load) {
         int result = chooser.showOpenDialog(TestFrame.this);
         if (result != JFileChooser.APPROVE_OPTION) return;
@@ -226,11 +226,10 @@ public class TestFrame extends JFrame {
   private JLabel fail = new JLabel();
 
   public TestFrame(Project project) {
+    super(false,project);
     this.project = project;
     this.windowManager = new WindowMenuManager();
     project.addProjectListener(myListener);
-    setDefaultCloseOperation(HIDE_ON_CLOSE);
-    setJMenuBar(new LogisimMenuBar(this, project));
     setSimulator(project.getSimulator(), project.getCircuitState().getCircuit());
 
     chooser.addChoosableFileFilter(chooser.getAcceptAllFileFilter());

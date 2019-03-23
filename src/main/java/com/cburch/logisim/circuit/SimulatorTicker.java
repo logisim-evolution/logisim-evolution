@@ -121,8 +121,8 @@ class SimulatorTicker extends UniquelyNamedThread {
     notifyAll();
   }
 
-  public synchronized void tickOnce() {
-    ticksPending++;
+  public synchronized void tick(int count) {
+    ticksPending += count;
     notifyAll();
   }
 }

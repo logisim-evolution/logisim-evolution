@@ -113,9 +113,8 @@ class MenuHelp extends JMenu implements ActionListener {
         helpSet = new HelpSet(null, hsURL);
         helpComponent = new JHelp(helpSet);
         if (helpFrame == null) {
-          helpFrame = new LFrame();
+          helpFrame = new LFrame(false,null);
           helpFrame.setTitle(S.get("helpWindowTitle"));
-          helpFrame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
           helpFrame.getContentPane().add(helpComponent);
           helpFrame.setPreferredSize(
               new Dimension(

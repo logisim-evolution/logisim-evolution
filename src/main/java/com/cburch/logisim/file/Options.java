@@ -42,11 +42,6 @@ public class Options {
   public static final AttributeOption GATE_UNDEFINED_ERROR =
       new AttributeOption("error", S.getter("gateUndefinedError"));
 
-  public static final AttributeOption TICK_MAIN_PERIOD =
-      new AttributeOption("period", S.getter("tick_main_period"));
-  public static final AttributeOption TICK_MAIN_HALF_PERIOD =
-      new AttributeOption("half_period", S.getter("tick_main_half_period"));
-
   public static final Attribute<Integer> ATTR_SIM_LIMIT =
       Attributes.forInteger("simlimit", S.getter("simLimitOption"));
   public static final Attribute<Integer> ATTR_SIM_RAND =
@@ -56,20 +51,11 @@ public class Options {
           "gateUndefined",
           S.getter("gateUndefinedOption"),
           new AttributeOption[] {GATE_UNDEFINED_IGNORE, GATE_UNDEFINED_ERROR});
-  public static final Attribute<AttributeOption> ATTR_TICK_MAIN =
-      Attributes.forOption(
-          "tickmain",
-          S.getter("mainTickOption"),
-          new AttributeOption[] {TICK_MAIN_HALF_PERIOD, TICK_MAIN_PERIOD});
 
   public static final Integer sim_rand_dflt = Integer.valueOf(32);
 
-  private static final Attribute<?>[] ATTRIBUTES = {
-    ATTR_GATE_UNDEFINED, ATTR_SIM_LIMIT, ATTR_SIM_RAND, ATTR_TICK_MAIN,
-  };
-  private static final Object[] DEFAULTS = {
-    GATE_UNDEFINED_IGNORE, Integer.valueOf(1000), Integer.valueOf(0), TICK_MAIN_HALF_PERIOD,
-  };
+  private static final Attribute<?>[] ATTRIBUTES = {ATTR_GATE_UNDEFINED, ATTR_SIM_LIMIT, ATTR_SIM_RAND};
+  private static final Object[] DEFAULTS = {GATE_UNDEFINED_IGNORE, Integer.valueOf(1000), Integer.valueOf(0)};
 
   private AttributeSet attrs;
   private MouseMappings mmappings;

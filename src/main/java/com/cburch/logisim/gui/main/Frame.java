@@ -265,7 +265,6 @@ public class Frame extends LFrame implements LocaleListener {
   private Project proj;
   private MyProjectListener myProjectListener = new MyProjectListener();
   // GUI elements shared between views
-  private LogisimMenuBar menubar;
   private MenuListener menuListener;
   private Toolbar toolbar;
   private HorizontalSplitPane leftRegion, rightRegion, editRegion;
@@ -297,6 +296,7 @@ public class Frame extends LFrame implements LocaleListener {
   private Double lastFraction = AppPreferences.WINDOW_RIGHT_SPLIT.get();
 
   public Frame(Project proj) {
+    super(true,proj);
     this.proj = proj;
 
     setBackground(Color.white);
@@ -328,10 +328,8 @@ public class Frame extends LFrame implements LocaleListener {
     attrTableSelectionModel = new AttrTableSelectionModel(proj, this);
 
     // set up menu bar and toolbar
-    menubar = new LogisimMenuBar(this, proj);
     menuListener = new MenuListener(this, menubar);
     menuListener.setEditHandler(layoutEditHandler);
-    setJMenuBar(menubar);
     toolbar = new Toolbar(layoutToolbarModel);
 
     // set up the left-side components

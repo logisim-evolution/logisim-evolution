@@ -454,7 +454,7 @@ public class Circuit {
 
     while (true) {
       int i = 0;
-      project.getSimulator().tick();
+      project.getSimulator().tick(1);
       Thread.yield();
 
       for (Instance pinstatus : pin) {

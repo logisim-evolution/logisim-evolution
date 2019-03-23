@@ -42,40 +42,28 @@ import javax.swing.event.ChangeListener;
 
 class SimulationToolbarModel extends AbstractToolbarModel implements ChangeListener {
   private Project project;
-  private LogisimToolbarItem simEnable;
+  private LogisimToolbarItem simRunToggle;
   private LogisimToolbarItem simStep;
   private LogisimToolbarItem tickEnable;
-  private LogisimToolbarItem tickStep;
-  private LogisimToolbarItem tickStepMain;
+  private LogisimToolbarItem tickHalf;
+  private LogisimToolbarItem tickFull;
   private List<ToolbarItem> items;
 
   public SimulationToolbarModel(Project project, MenuListener menu) {
     this.project = project;
 
-    simEnable =
-        new LogisimToolbarItem(
-            menu,
-            "simplay.png",
-            LogisimMenuBar.SIMULATE_ENABLE,
-            S.getter("simulateEnableStepsTip"));
-    simStep =
-        new LogisimToolbarItem(
+    simRunToggle = new LogisimToolbarItem(menu, "simrun.png",
+            LogisimMenuBar.SIMULATE_RUN_TOGGLE, S.getter("simulateRunTip"));
+    simStep = new LogisimToolbarItem(
             menu, "simstep.png", LogisimMenuBar.SIMULATE_STEP, S.getter("simulateStepTip"));
-    tickEnable =
-        new LogisimToolbarItem(
+    tickEnable = new LogisimToolbarItem(
             menu, "simtplay.png", LogisimMenuBar.TICK_ENABLE, S.getter("simulateEnableTicksTip"));
-    tickStep =
-        new LogisimToolbarItem(
-            menu, "simtstep.png", LogisimMenuBar.TICK_STEP, S.getter("simulateTickTip"));
-    tickStepMain =
-        new LogisimToolbarItem(
-            menu, "clock.gif", LogisimMenuBar.TICK_STEP_MAIN, S.getter("simulateTickMainTip"));
-
-    items =
-        UnmodifiableList.create(
-            new ToolbarItem[] {
-              simEnable, simStep, tickEnable, tickStep, tickStepMain,
-            });
+    tickHalf = new LogisimToolbarItem(menu, "tickhalf.png",
+            LogisimMenuBar.TICK_HALF, S.getter("simulateTickHalfTip"));
+    tickFull = new LogisimToolbarItem(menu, "tickfull.png",
+            LogisimMenuBar.TICK_FULL, S.getter("simulateTickFullTip"));
+    
+    items = UnmodifiableList.create(new ToolbarItem[] {simRunToggle, simStep, tickEnable, tickHalf, tickFull, });
 
     menu.getMenuBar().addEnableListener(this);
     stateChanged(null);
@@ -98,19 +86,14 @@ class SimulationToolbarModel extends AbstractToolbarModel implements ChangeListe
     }
   }
 
-  //
-  // ChangeListener methods
-  //
   public void stateChanged(ChangeEvent e) {
     Simulator sim = project.getSimulator();
     boolean running = sim != null && sim.isRunning();
     boolean ticking = sim != null && sim.isTicking();
-    simEnable.setIcon(running ? "simstop.png" : "simplay.png");
-    simEnable.setToolTip(
-        running ? S.getter("simulateDisableStepsTip") : S.getter("simulateEnableStepsTip"));
+    simRunToggle.setIcon(running ? "simstop.png" : "simrun.png");
+    simRunToggle.setToolTip(S.getter(running ? "simulateStopTip" : "simulateRunTip"));
     tickEnable.setIcon(ticking ? "simtstop.png" : "simtplay.png");
-    tickEnable.setToolTip(
-        ticking ? S.getter("simulateDisableTicksTip") : S.getter("simulateEnableTicksTip"));
+    tickEnable.setToolTip(S.getter(ticking ? "simulateDisableTicksTip" : "simulateEnableTicksTip"));
     fireToolbarAppearanceChanged();
   }
 }

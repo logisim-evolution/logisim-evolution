@@ -28,6 +28,9 @@
 
 package com.cburch.logisim.gui.generic;
 
+import com.cburch.logisim.Main;
+import com.cburch.logisim.gui.menu.LogisimMenuBar;
+import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.util.WindowClosable;
 import java.awt.Image;
 import java.awt.Window;
@@ -79,9 +82,17 @@ public class LFrame extends JFrame implements WindowClosable {
   private static final int DEFAULT_SIZE = 48;
 
   private static Image DEFAULT_ICON = null;
+  
+  protected final LogisimMenuBar menubar;
 
-  public LFrame() {
+  public LFrame(boolean toplevel, Project proj) {
     LFrame.attachIcon(this);
+    if (toplevel || Main.MacOS) {
+    	menubar = new LogisimMenuBar(this,proj);
+    	setJMenuBar(menubar);
+    } else {
+    	menubar = null;
+    }
   }
 
   @Override

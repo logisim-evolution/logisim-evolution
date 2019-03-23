@@ -104,10 +104,10 @@ public class OptionsFrame extends LFrame {
   private JTabbedPane tabbedPane;
 
   public OptionsFrame(Project project) {
+    super(false,project);
     this.project = project;
     this.file = project.getLogisimFile();
     file.addLibraryListener(myListener);
-    setDefaultCloseOperation(HIDE_ON_CLOSE);
     panels = new OptionsPanel[] { new SimulateOptions(this), 
         new ToolbarOptions(this), new MouseOptions(this),
         new RevertPanel(this)};

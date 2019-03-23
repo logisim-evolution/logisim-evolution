@@ -87,16 +87,17 @@ public class LogisimMenuBar extends JMenuBar {
   public static final LogisimMenuItem ANALYZE_CIRCUIT = new LogisimMenuItem("AnalyzeCircuit");
 
   public static final LogisimMenuItem CIRCUIT_STATS = new LogisimMenuItem("GetCircuitStatistics");
-  public static final LogisimMenuItem SIMULATE_ENABLE = new LogisimMenuItem("SimulateEnable");
+  public static final LogisimMenuItem SIMULATE_STOP = new LogisimMenuItem("SimulateStop");
+  public static final LogisimMenuItem SIMULATE_RUN = new LogisimMenuItem("SimulateRun");
+  public static final LogisimMenuItem SIMULATE_RUN_TOGGLE = new LogisimMenuItem("SimulateRun");
   public static final LogisimMenuItem SIMULATE_STEP = new LogisimMenuItem("SimulateStep");
   public static final LogisimMenuItem SIMULATE_VHDL_ENABLE =
       new LogisimMenuItem("SimulateVhdlEnable");
   public static final LogisimMenuItem GENERATE_VHDL_SIM_FILES =
       new LogisimMenuItem("GenerateVhdlSimFiles");
   public static final LogisimMenuItem TICK_ENABLE = new LogisimMenuItem("TickEnable");
-  public static final LogisimMenuItem TICK_STEP = new LogisimMenuItem("TickStep");
-
-  public static final LogisimMenuItem TICK_STEP_MAIN = new LogisimMenuItem("TickStepMain");
+  public static final LogisimMenuItem TICK_HALF = new LogisimMenuItem("TickHalf");
+  public static final LogisimMenuItem TICK_FULL = new LogisimMenuItem("TickFull");
 
   private JFrame parent;
   private MyListener listener;

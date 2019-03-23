@@ -111,7 +111,7 @@ public class Analyzer extends LFrame {
     }
 
     public void stateChanged(ChangeEvent e) {
-      enableItems((LogisimMenuBar) getJMenuBar());
+      enableItems(menubar);
 
       Object selected = tabbedPane.getSelectedComponent();
       if (selected instanceof JScrollPane) {
@@ -215,6 +215,7 @@ public class Analyzer extends LFrame {
   private ExportLatexButton exportTex;
 
   Analyzer() {
+    super(true,null);
     model.getTruthTable().addTruthTableListener(tableListener);
     inputsPanel = new VariableTab(model.getInputs(), AnalyzerModel.MAX_INPUTS);
     outputsPanel = new VariableTab(model.getOutputs(), AnalyzerModel.MAX_OUTPUTS);
@@ -263,8 +264,6 @@ public class Analyzer extends LFrame {
     LocaleManager.addLocaleListener(myListener);
     myListener.localeChanged();
 
-    LogisimMenuBar menubar = new LogisimMenuBar(this, null);
-    setJMenuBar(menubar);
     editListener.register(menubar);
   }
 

@@ -357,16 +357,13 @@ public class Project {
     else return redoLog.getLast().action;
   }
 
-  public LogFrame getLogFrame(boolean create) {
+  public LogFrame getLogFrame() {
     if (logFrame == null) {
-      if (create) logFrame = new LogFrame(this);
+      logFrame = new LogFrame(this);
     }
     return logFrame;
   }
 
-  //
-  // access methods
-  //
   public LogisimFile getLogisimFile() {
     return file;
   }

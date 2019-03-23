@@ -97,7 +97,7 @@ public class PreferencesFrame extends LFrame {
   private JTabbedPane tabbedPane;
 
   private PreferencesFrame() {
-    setDefaultCloseOperation(HIDE_ON_CLOSE);
+    super(false,null);
 
     panels = new OptionsPanel[] {
           new TemplateOptions(this),

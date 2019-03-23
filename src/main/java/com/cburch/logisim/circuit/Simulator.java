@@ -108,14 +108,14 @@ public class Simulator {
             firePropagationCompleted();
             propagateRequested |= isRunning;
           }
-
+          // TODO: fix unsynchronized access to shared variables
           if (propagateRequested || ticksRequested > 0 || stepsRequested > 0) {
             boolean ticked = false;
-            propagateRequested = false;
             if (isRunning) {
               stepPoints.clear();
               stepsRequested = 0;
               if (propagator == null) {
+                propagateRequested = false;
                 ticksRequested = 0;
               } else {
                 ticked = ticksRequested > 0;
@@ -143,24 +143,23 @@ public class Simulator {
                   propagateRequested = false;
                 }
               }
-            } else {
-              if (stepsRequested > 0) {
-                if (ticksRequested > 0) {
+            } else if (stepsRequested > 0) {
+                if (ticksRequested > 0 || (isTicking && !propagateRequested)) {
                   ticksRequested = 1;
                   doTick();
                 }
-
+                propagateRequested = false;
                 synchronized (this) {
                   stepsRequested--;
                 }
                 exceptionEncountered = false;
                 try {
                   stepPoints.clear();
-                  if (propagator != null) propagator.step(stepPoints);
+                  propagator.step(stepPoints);
+                  propagateRequested |= propagator.isPending();
                 } catch (Exception thr) {
                   thr.printStackTrace();
                   exceptionEncountered = true;
-                }
               }
             }
             if (ticked) {
@@ -314,6 +313,7 @@ public class Simulator {
     }
   }
 
+  //TODO: convert half-cycle frequency to full-cycle frequency
   public void setTickFrequency(double freq) {
     if (tickFrequency != freq) {
       int millis = (int) Math.round(1000 / freq);
@@ -344,19 +344,7 @@ public class Simulator {
     }
   }
 
-  public void tick() {
-    ticker.tickOnce();
-  }
-
-  public void tickMain(int count) {
-    while (count > 0) {
-      ticker.tickOnce();
-      count--;
-      try {
-        Thread.sleep(50);
-      } catch (InterruptedException ex) {
-        Logger.getLogger(Simulator.class.getName()).log(Level.SEVERE, null, ex);
-      }
-    }
+  public void tick(int count) {
+	    ticker.tick(count);
   }
 }

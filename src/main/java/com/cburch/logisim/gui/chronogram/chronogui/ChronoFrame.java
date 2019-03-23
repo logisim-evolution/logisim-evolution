@@ -133,10 +133,10 @@ public class ChronoFrame extends LFrame implements KeyListener, ActionListener, 
           ((JButton) e.getSource()).setIcon(Icons.getIcon("simtstop.png"));
         }
         simulator.setIsTicking(!simulator.isTicking());
-      } else if ("tstep".equals(e.getActionCommand())) {
-        simulator.tick();
-      } else if ("tmainstep".equals(e.getActionCommand())) {
-        tickMain();
+      } else if ("thalf".equals(e.getActionCommand())) {
+        simulator.tick(1);
+      } else if ("tfull".equals(e.getActionCommand())) {
+        simulator.tick(2);
       }
     }
 
@@ -187,6 +187,7 @@ public class ChronoFrame extends LFrame implements KeyListener, ActionListener, 
 
   /** Offline mode ChronoFrame constructor */
   public ChronoFrame(Project prj) {
+    super(false,prj);
     realTimeMode = false;
     commonPanelParam = new CommonPanelParam(20, 38);
     createMainStructure();
@@ -194,6 +195,7 @@ public class ChronoFrame extends LFrame implements KeyListener, ActionListener, 
 
   /** Real time mode ChronoFrame constructor */
   public ChronoFrame(Project prj, LogFrame logFrame) {
+    super(false,prj);
     realTimeMode = true;
 
     this.logFrame = logFrame;
@@ -314,22 +316,18 @@ public class ChronoFrame extends LFrame implements KeyListener, ActionListener, 
     tplayButton.setToolTipText("Start/Stop 'sysclk' tick");
     tplayButton.setFocusable(false);
     bar.add(tplayButton);
-    JButton tstepButton = new JButton(Icons.getIcon("simtstep.png"));
-    tstepButton.setActionCommand("tstep");
-    tstepButton.addActionListener(myListener);
-    tstepButton.setToolTipText("Step one 'sysclk' tick");
-    tstepButton.setFocusable(false);
-    bar.add(tstepButton);
-    JButton tmainstepButton = new JButton(Icons.getIcon("clock.gif"));
-    tmainstepButton.setActionCommand("tmainstep");
-    tmainstepButton.addActionListener(myListener);
-    tmainstepButton.setToolTipText("Step one 'clk' tick");
-    tmainstepButton.setFocusable(false);
-    if (chronogramData.get("clk") == null) {
-      tmainstepButton.setEnabled(false);
-      tmainstepButton.setToolTipText("Please create a clock named 'clk' to enable this function");
-    }
-    bar.add(tmainstepButton);
+	JButton thalfButton = new JButton(Icons.getIcon("tickhalf.png"));
+	thalfButton.setActionCommand("thalf");
+	thalfButton.addActionListener(myListener);
+	thalfButton.setToolTipText("Tick half clock cycle");
+	thalfButton.setFocusable(false);
+	bar.add(thalfButton);
+	JButton tfullButton = new JButton(Icons.getIcon("tickfull.gif"));
+	tfullButton.setActionCommand("tfull");
+	tfullButton.addActionListener(myListener);
+	tfullButton.setToolTipText("Tick full clock cycle");
+	tfullButton.setFocusable(false);
+	bar.add(tfullButton);
 
     mainPanel.add(BorderLayout.NORTH, bar);
 
@@ -434,10 +432,6 @@ public class ChronoFrame extends LFrame implements KeyListener, ActionListener, 
     return leftPanel;
   }
 
-  public int getNbrOfTick() {
-    return chronogramData.get("sysclk").getSignalValues().size();
-  }
-
   public Project getProject() {
     return project;
   }
@@ -462,10 +456,7 @@ public class ChronoFrame extends LFrame implements KeyListener, ActionListener, 
   public void keyPressed(KeyEvent ke) {
     int keyCode = ke.getKeyCode();
     if (keyCode == KeyEvent.VK_F2) {
-      tickMain();
-      // if(ke.getSource() instanceof JTable){
-      // ((JTable)(ke.getSource())).getInputMap()
-      // }
+      simulator.tick(2);
     }
   }
 
@@ -528,32 +519,6 @@ public class ChronoFrame extends LFrame implements KeyListener, ActionListener, 
 
   public void setTimelineParam(TimelineParam timelineParam) {
     this.timelineParam = timelineParam;
-  }
-
-  private void tickMain() {
-    int ticks = 0;
-    for (com.cburch.logisim.comp.Component clock :
-        project.getLogisimFile().getMainCircuit().getClocks()) {
-      if (clock.getAttributeSet().getValue(StdAttr.LABEL).contentEquals("clk")) {
-        if (project
-            .getOptions()
-            .getAttributeSet()
-            .getValue(Options.ATTR_TICK_MAIN)
-            .equals(Options.TICK_MAIN_HALF_PERIOD)) {
-          if (project.getCircuitState().getValue(clock.getLocation()).toIntValue() == 0) {
-            ticks = clock.getAttributeSet().getValue(Clock.ATTR_LOW);
-          } else {
-            ticks = clock.getAttributeSet().getValue(Clock.ATTR_HIGH);
-          }
-        } else {
-          ticks =
-              clock.getAttributeSet().getValue(Clock.ATTR_LOW)
-                  + clock.getAttributeSet().getValue(Clock.ATTR_HIGH);
-        }
-        break;
-      }
-    }
-    simulator.tickMain(ticks);
   }
 
   /**

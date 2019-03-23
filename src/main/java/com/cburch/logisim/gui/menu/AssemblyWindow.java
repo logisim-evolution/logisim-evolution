@@ -34,12 +34,10 @@ import com.cburch.logisim.circuit.SimulatorEvent;
 import com.cburch.logisim.circuit.SimulatorListener;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.data.Value;
-import com.cburch.logisim.file.Options;
 import com.cburch.logisim.gui.generic.LFrame;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.std.memory.Register;
-import com.cburch.logisim.std.wiring.Clock;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -136,7 +134,7 @@ public class AssemblyWindow
     fileMenu.addSeparator();
     fileMenu.add(close);
 
-    windows = new LFrame();
+    windows = new LFrame(false,null);
     windows.setTitle("Assembly: " + proj.getLogisimFile().getDisplayName());
     windows.setJMenuBar(winMenuBar);
     windows.toFront();
@@ -278,28 +276,8 @@ public class AssemblyWindow
   public void keyReleased(KeyEvent ke) {
     int keyCode = ke.getKeyCode();
     if (keyCode == KeyEvent.VK_F2) {
-      int ticks = 0;
-      for (com.cburch.logisim.comp.Component clock :
-          proj.getLogisimFile().getMainCircuit().getClocks()) {
-        if (clock.getAttributeSet().getValue(StdAttr.LABEL).contentEquals("clk")) {
-          if (proj.getOptions()
-              .getAttributeSet()
-              .getValue(Options.ATTR_TICK_MAIN)
-              .equals(Options.TICK_MAIN_HALF_PERIOD)) {
-            if (proj.getCircuitState().getValue(clock.getLocation()).toIntValue() == 0) {
-              ticks = clock.getAttributeSet().getValue(Clock.ATTR_LOW);
-            } else {
-              ticks = clock.getAttributeSet().getValue(Clock.ATTR_HIGH);
-            }
-          } else {
-            ticks =
-                clock.getAttributeSet().getValue(Clock.ATTR_LOW)
-                    + clock.getAttributeSet().getValue(Clock.ATTR_HIGH);
-          }
-          break;
-        }
-      }
-      proj.getSimulator().tickMain(ticks);
+    	if (proj.getSimulator() != null)
+            proj.getSimulator().tick(2);
     }
   }
 

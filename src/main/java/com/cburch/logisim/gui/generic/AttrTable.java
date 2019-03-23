@@ -223,13 +223,7 @@ public class AttrTable extends JPanel implements LocaleListener {
           editor = null;
         } else if (editor instanceof JInputComponent) {
           JInputComponent input = (JInputComponent) editor;
-          MyDialog dlog;
-          Window parent = AttrTable.this.parent;
-          if (parent instanceof Frame) {
-            dlog = new MyDialog((Frame) parent, input);
-          } else {
-            dlog = new MyDialog((Dialog) parent, input);
-          }
+          MyDialog dlog = new MyDialog(input);
           dlog.setVisible(true);
           Object retval = dlog.getValue();
           try {
@@ -294,13 +288,8 @@ public class AttrTable extends JPanel implements LocaleListener {
     JInputComponent input;
     Object value;
 
-    public MyDialog(Dialog parent, JInputComponent input) {
-      super(parent, S.get("attributeDialogTitle"), true);
-      configure(input);
-    }
-
-    public MyDialog(Frame parent, JInputComponent input) {
-      super(parent, S.get("attributeDialogTitle"), true);
+    public MyDialog(JInputComponent input) {
+        super(S.get("attributeDialogTitle"));
       configure(input);
     }
 

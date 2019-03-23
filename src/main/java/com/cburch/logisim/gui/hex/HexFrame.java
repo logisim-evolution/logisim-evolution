@@ -186,10 +186,7 @@ public class HexFrame extends LFrame {
   private JButton close = new JButton();
 
   public HexFrame(Project proj, HexModel model) {
-    setDefaultCloseOperation(HIDE_ON_CLOSE);
-
-    LogisimMenuBar menubar = new LogisimMenuBar(this, proj);
-    setJMenuBar(menubar);
+    super(false,proj);
     menubar.disableFile();
     menubar.disableProject();
 

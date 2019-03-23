@@ -30,6 +30,8 @@ package com.cburch.logisim;
 
 import com.cburch.logisim.gui.start.Startup;
 import com.cburch.logisim.prefs.AppPreferences;
+import com.cburch.logisim.util.MacCompatibility;
+
 import java.awt.GraphicsEnvironment;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -88,6 +90,7 @@ public class Main {
   public static final String VERSION_NAME = VERSION.toString();
   public static final int COPYRIGHT_YEAR = 2018;
 
+  public static boolean MacOS = MacCompatibility.isRunningOnMac();
   public static boolean ANALYZE = true;
 
   /** URL for the automatic updater */

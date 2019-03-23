@@ -37,14 +37,10 @@ import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.circuit.Simulator;
 import com.cburch.logisim.circuit.SimulatorEvent;
 import com.cburch.logisim.circuit.SimulatorListener;
-import com.cburch.logisim.file.Options;
 import com.cburch.logisim.gui.log.LogFrame;
 import com.cburch.logisim.gui.test.TestFrame;
-import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.proj.Project;
-import com.cburch.logisim.std.wiring.Clock;
 import com.cburch.logisim.util.StringUtil;
-import com.cburch.logisim.vhdl.sim.VhdlSimulatorTop;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -98,7 +94,17 @@ public class MenuSimulate extends Menu {
       Object src = e.getSource();
       Project proj = menubar.getProject();
       Simulator sim = proj == null ? null : proj.getSimulator();
-      if (src == run || src == LogisimMenuBar.SIMULATE_ENABLE) {
+      if (src == LogisimMenuBar.SIMULATE_STOP) {
+        if (sim != null) {
+          sim.setIsRunning(false);
+          proj.repaintCanvas();
+        }
+      } else if (src == LogisimMenuBar.SIMULATE_RUN) {
+        if (sim != null) {
+          sim.setIsRunning(true);
+          proj.repaintCanvas();
+        }
+      } else if (src == runToggle || src == LogisimMenuBar.SIMULATE_RUN_TOGGLE) {
         if (sim != null) {
           sim.setIsRunning(!sim.isRunning());
           proj.repaintCanvas();
@@ -107,37 +113,38 @@ public class MenuSimulate extends Menu {
         if (sim != null) {
 
           /* Restart VHDL simulation (in QuestaSim) */
-          if (sim.getCircuitState().getProject().getVhdlSimulator() != null) {
-            VhdlSimulatorTop vsim = sim.getCircuitState().getProject().getVhdlSimulator();
-            if (vsim.isRunning()) {
-              vsim.reset();
-              /*
-               * We have to wait until the restart finishes, otherwise
-               * the signal reset will be sent to the VHDL simulator
-               * before the sim is loaded and errors will occur Time
-               * (0,5s) is arbitrary
-               *
-               * FIXME: if you find a way to make a blocking reset
-               * until it's restarted, feel free to go on
-               */
-              try {
-                Thread.sleep(500);
-              } catch (InterruptedException ex) {
-                Thread.currentThread().interrupt();
-              }
+          if (sim.getCircuitState().getProject().getVhdlSimulator().isRunning()) {
+            sim.getCircuitState().getProject().getVhdlSimulator().reset();
+            /*
+             * We have to wait until the restart finishes, otherwise
+             * the signal reset will be sent to the VHDL simulator
+             * before the sim is loaded and errors will occur Time
+             * (0,5s) is arbitrary
+             *
+             * FIXME: if you find a way to make a blocking reset
+             * until it's restarted, feel free to go on
+             */
+            try {
+              Thread.sleep(500);
+            } catch (InterruptedException ex) {
+              Thread.currentThread().interrupt();
             }
           }
-
           sim.requestReset();
         }
       } else if (src == step || src == LogisimMenuBar.SIMULATE_STEP) {
         if (sim != null) {
+          sim.setIsRunning(false);
           sim.step();
         }
-      } else if (src == tickOnce || src == LogisimMenuBar.TICK_STEP) {
+      } else if (src == tickHalf || src == LogisimMenuBar.TICK_HALF) {
         if (sim != null) {
-          sim.tick();
+          sim.tick(1);
         }
+      } else if (src == tickFull || src == LogisimMenuBar.TICK_FULL) {
+          if (sim != null) {
+            sim.tick(2);
+          }
       } else if (src == simulate_vhdl_enable || src == LogisimMenuBar.SIMULATE_VHDL_ENABLE) {
         if (proj.getVhdlSimulator() != null) {
           proj.getVhdlSimulator().setEnabled(!proj.getVhdlSimulator().isEnabled());
@@ -146,35 +153,12 @@ public class MenuSimulate extends Menu {
         if (proj.getVhdlSimulator() != null) {
           proj.getVhdlSimulator().restart();
         }
-      } else if (src == tickOnce || src == LogisimMenuBar.TICK_STEP_MAIN) {
-        int ticks = 0;
-        for (com.cburch.logisim.comp.Component clock :
-            proj.getLogisimFile().getMainCircuit().getClocks()) {
-          if (clock.getAttributeSet().getValue(StdAttr.LABEL).contentEquals("clk")) {
-            if (proj.getOptions()
-                .getAttributeSet()
-                .getValue(Options.ATTR_TICK_MAIN)
-                .equals(Options.TICK_MAIN_HALF_PERIOD)) {
-              if (currentState.getValue(clock.getLocation()).toIntValue() == 0) {
-                ticks = clock.getAttributeSet().getValue(Clock.ATTR_LOW);
-              } else {
-                ticks = clock.getAttributeSet().getValue(Clock.ATTR_HIGH);
-              }
-            } else {
-              ticks =
-                  clock.getAttributeSet().getValue(Clock.ATTR_LOW)
-                      + clock.getAttributeSet().getValue(Clock.ATTR_HIGH);
-            }
-            break;
-          }
-        }
-        sim.tickMain(ticks);
       } else if (src == ticksEnabled || src == LogisimMenuBar.TICK_ENABLE) {
         if (sim != null) {
           sim.setIsTicking(!sim.isTicking());
         }
       } else if (src == log) {
-        LogFrame frame = menubar.getProject().getLogFrame(true);
+        LogFrame frame = menubar.getProject().getLogFrame();
         frame.setVisible(true);
       } else if (src == assemblyWindow) {
         if (assWin == null || assWin.isVisible() == false) {
@@ -199,7 +183,7 @@ public class MenuSimulate extends Menu {
         return;
       }
       computeEnabled();
-      run.setSelected(sim.isRunning());
+      runToggle.setSelected(sim.isRunning());
       ticksEnabled.setSelected(sim.isTicking());
       double freq = sim.getTickFrequency();
       for (int i = 0; i < tickFreqs.length; i++) {
@@ -210,7 +194,6 @@ public class MenuSimulate extends Menu {
 
     @Override
     public void stateChanged(ChangeEvent e) {
-      step.setEnabled(run.isEnabled() && !run.isSelected());
     }
 
     @Override
@@ -292,14 +275,14 @@ public class MenuSimulate extends Menu {
   private CircuitState currentState = null;
   private CircuitState bottomState = null;
   private Simulator currentSim = null;
-  private MenuItemCheckImpl run;
+  private MenuItemCheckImpl runToggle;
   private JMenuItem reset = new JMenuItem();
   private MenuItemImpl step;
   private MenuItemImpl vhdl_sim_files;
   private MenuItemCheckImpl simulate_vhdl_enable;
   private MenuItemCheckImpl ticksEnabled;
-  private MenuItemImpl tickOnce;
-  private MenuItemImpl tickOnceMain;
+  private MenuItemImpl tickHalf;
+  private MenuItemImpl tickFull;
   private JMenu tickFreq = new JMenu();
   private TickFrequencyChoice[] tickFreqs = new TickFrequencyChoice[SupportedTickFrequencies.length];
   private JMenu downStateMenu = new JMenu();
@@ -314,28 +297,28 @@ public class MenuSimulate extends Menu {
 
   public MenuSimulate(LogisimMenuBar menubar) {
     this.menubar = menubar;
-    run = new MenuItemCheckImpl(this, LogisimMenuBar.SIMULATE_ENABLE);
+    runToggle = new MenuItemCheckImpl(this, LogisimMenuBar.SIMULATE_RUN_TOGGLE);
     step = new MenuItemImpl(this, LogisimMenuBar.SIMULATE_STEP);
     simulate_vhdl_enable = new MenuItemCheckImpl(this, LogisimMenuBar.SIMULATE_VHDL_ENABLE);
     vhdl_sim_files = new MenuItemImpl(this, LogisimMenuBar.GENERATE_VHDL_SIM_FILES);
     ticksEnabled = new MenuItemCheckImpl(this, LogisimMenuBar.TICK_ENABLE);
-    tickOnce = new MenuItemImpl(this, LogisimMenuBar.TICK_STEP);
-    tickOnceMain = new MenuItemImpl(this, LogisimMenuBar.TICK_STEP_MAIN);
+    tickHalf = new MenuItemImpl(this, LogisimMenuBar.TICK_HALF);
+    tickFull = new MenuItemImpl(this, LogisimMenuBar.TICK_FULL);
 
-    menubar.registerItem(LogisimMenuBar.SIMULATE_ENABLE, run);
+    menubar.registerItem(LogisimMenuBar.SIMULATE_RUN_TOGGLE, runToggle);
     menubar.registerItem(LogisimMenuBar.SIMULATE_STEP, step);
     menubar.registerItem(LogisimMenuBar.SIMULATE_VHDL_ENABLE, simulate_vhdl_enable);
     menubar.registerItem(LogisimMenuBar.GENERATE_VHDL_SIM_FILES, vhdl_sim_files);
     menubar.registerItem(LogisimMenuBar.TICK_ENABLE, ticksEnabled);
-    menubar.registerItem(LogisimMenuBar.TICK_STEP, tickOnce);
-    menubar.registerItem(LogisimMenuBar.TICK_STEP_MAIN, tickOnceMain);
+    menubar.registerItem(LogisimMenuBar.TICK_HALF, tickHalf);
+    menubar.registerItem(LogisimMenuBar.TICK_FULL, tickFull);
 
     int menuMask = getToolkit().getMenuShortcutKeyMask();
-    run.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, menuMask));
+    runToggle.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, menuMask));
     reset.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, menuMask));
     step.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I, menuMask));
-    tickOnce.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T, menuMask));
-    tickOnceMain.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F2, 0));
+    tickHalf.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T, menuMask));
+    tickFull.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F2, 0));
     ticksEnabled.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_K, menuMask));
 
     ButtonGroup bgroup = new ButtonGroup();
@@ -345,17 +328,17 @@ public class MenuSimulate extends Menu {
       tickFreq.add(tickFreqs[i]);
     }
 
-    add(run);
-    add(reset);
+    add(runToggle);
     add(step);
+    add(reset);
     add(simulate_vhdl_enable);
     add(vhdl_sim_files);
     addSeparator();
     add(upStateMenu);
     add(downStateMenu);
     addSeparator();
-    add(tickOnce);
-    add(tickOnceMain);
+    add(tickHalf);
+    add(tickFull);
     add(ticksEnabled);
     add(tickFreq);
     addSeparator();
@@ -365,30 +348,31 @@ public class MenuSimulate extends Menu {
     add(assemblyWindow);
 
     setEnabled(false);
-    run.setEnabled(false);
+    runToggle.setEnabled(false);
     reset.setEnabled(false);
     step.setEnabled(false);
     simulate_vhdl_enable.setEnabled(false);
     vhdl_sim_files.setEnabled(false);
     upStateMenu.setEnabled(false);
     downStateMenu.setEnabled(false);
-    tickOnce.setEnabled(false);
-    tickOnceMain.setEnabled(false);
+    tickHalf.setEnabled(false);
+    tickFull.setEnabled(false);
     ticksEnabled.setEnabled(false);
     tickFreq.setEnabled(false);
 
-    run.addChangeListener(myListener);
-    menubar.addActionListener(LogisimMenuBar.SIMULATE_ENABLE, myListener);
+    runToggle.addChangeListener(myListener);
+    menubar.addActionListener(LogisimMenuBar.SIMULATE_RUN_TOGGLE, myListener);
     menubar.addActionListener(LogisimMenuBar.SIMULATE_STEP, myListener);
     menubar.addActionListener(LogisimMenuBar.SIMULATE_VHDL_ENABLE, myListener);
     menubar.addActionListener(LogisimMenuBar.GENERATE_VHDL_SIM_FILES, myListener);
     menubar.addActionListener(LogisimMenuBar.TICK_ENABLE, myListener);
-    menubar.addActionListener(LogisimMenuBar.TICK_STEP, myListener);
-    menubar.addActionListener(LogisimMenuBar.TICK_STEP_MAIN, myListener);
-    // run.addActionListener(myListener);
+    menubar.addActionListener(LogisimMenuBar.TICK_HALF, myListener);
+    menubar.addActionListener(LogisimMenuBar.TICK_FULL, myListener);
+    // runToggle.addActionListener(myListener);
     reset.addActionListener(myListener);
     // step.addActionListener(myListener);
-    // tickOnce.addActionListener(myListener);
+    // tickHalf.addActionListener(myListener);
+    // tickFull.addActionListener(myListener);
     // ticksEnabled.addActionListener(myListener);
     log.addActionListener(myListener);
     test.addActionListener(myListener);
@@ -410,29 +394,29 @@ public class MenuSimulate extends Menu {
     Simulator sim = this.currentSim;
     boolean simRunning = sim != null && sim.isRunning();
     setEnabled(present);
-    run.setEnabled(present);
+    runToggle.setEnabled(present);
     reset.setEnabled(present);
-    step.setEnabled(present && !simRunning);
+    step.setEnabled(present);
     simulate_vhdl_enable.setEnabled(present);
     vhdl_sim_files.setEnabled(present);
     upStateMenu.setEnabled(present);
     downStateMenu.setEnabled(present);
-    tickOnce.setEnabled(present);
-    tickOnceMain.setEnabled(present);
-    ticksEnabled.setEnabled(present && simRunning);
+    tickHalf.setEnabled(present);
+    tickFull.setEnabled(present);
+    ticksEnabled.setEnabled(present);
     tickFreq.setEnabled(present);
     menubar.fireEnableChanged();
   }
 
   public void localeChanged() {
     this.setText(S.get("simulateMenu"));
-    run.setText(S.get("simulateRunItem"));
+    runToggle.setText(S.get("simulateRunItem"));
     reset.setText(S.get("simulateResetItem"));
     step.setText(S.get("simulateStepItem"));
     simulate_vhdl_enable.setText(S.get("simulateVhdlEnableItem"));
     vhdl_sim_files.setText(S.get("simulateGenVhdlFilesItem"));
-    tickOnce.setText(S.get("simulateTickOnceItem"));
-    tickOnceMain.setText(S.get("simulateTickOnceMainItem"));
+    tickHalf.setText(S.get("simulateTickHalfItem"));
+    tickFull.setText(S.get("simulateTickFullItem"));
     ticksEnabled.setText(S.get("simulateTickItem"));
     tickFreq.setText(S.get("simulateTickFreqMenu"));
     for (int i = 0; i < tickFreqs.length; i++) {

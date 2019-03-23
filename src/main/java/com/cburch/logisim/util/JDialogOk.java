@@ -33,7 +33,8 @@ import static com.cburch.logisim.util.Strings.S;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dialog;
-import java.awt.Frame;
+import java.awt.KeyboardFocusManager;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -70,14 +71,12 @@ public abstract class JDialogOk extends JDialog {
   private JPanel contents = new JPanel(new BorderLayout());
   protected JButton ok = new JButton(S.get("dlogOkButton"));
   protected JButton cancel = new JButton(S.get("dlogCancelButton"));
-
-  public JDialogOk(Dialog parent, String title, boolean model) {
-    super(parent, title, true);
-    configure();
-  }
-
-  public JDialogOk(Frame parent, String title, boolean model) {
-    super(parent, title, true);
+  protected Window parent;
+  
+  public JDialogOk(String title) {
+    super(KeyboardFocusManager.getCurrentKeyboardFocusManager().getActiveWindow(),
+        title, Dialog.ModalityType.APPLICATION_MODAL);
+    parent = KeyboardFocusManager.getCurrentKeyboardFocusManager().getActiveWindow();
     configure();
   }
 

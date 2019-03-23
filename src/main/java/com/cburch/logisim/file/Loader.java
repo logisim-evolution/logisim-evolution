@@ -174,8 +174,8 @@ public class Loader implements LibraryLoader {
     return builtin;
   }
 
-  // used here and in LibraryManager only
-  File getCurrentDirectory() {
+  // used here and in LibraryManager only, also in MemMenu
+  public File getCurrentDirectory() {
     File ref;
     if (!filesOpening.empty()) {
       ref = filesOpening.peek();
