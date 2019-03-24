@@ -71,7 +71,7 @@ import javax.swing.filechooser.FileFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class ExportImage {
+public class ExportImage {
 
   private static class ExportThread extends UniquelyNamedThread {
     Frame frame;
@@ -164,12 +164,12 @@ class ExportImage {
     }
   }
 
-  private static class ImageFileFilter extends FileFilter {
+  public static class ImageFileFilter extends FileFilter {
     private int type;
     private String[] extensions;
     private StringGetter desc;
 
-    private ImageFileFilter(int type, StringGetter desc, String[] exts) {
+    public ImageFileFilter(int type, StringGetter desc, String[] exts) {
       this.type = type;
       this.desc = desc;
       extensions = new String[exts.length];
@@ -289,8 +289,28 @@ class ExportImage {
       if (curJim != null) curScale.setPreferredSize(curJim);
     }
   }
+  
+  public static ImageFileFilter getFilter(int fmt) {
+    switch (fmt) {
+    case FORMAT_GIF:
+      return new ImageFileFilter(fmt,
+          S.getter("exportGifFilter"), new String[] { "gif" });
+    case FORMAT_PNG:
+      return new ImageFileFilter(fmt,
+          S.getter("exportPngFilter"), new String[] { "png" });
+    case FORMAT_JPG:
+      return new ImageFileFilter(fmt,
+          S.getter("exportJpgFilter"), new String[] { "jpg",
+            "jpeg", "jpe", "jfi", "jfif", "jfi" });
+    default:
+      logger.error("Unexpected image format; aborted!");
+      return null;
+    }
+  }
 
-  static void doExport(Project proj) {
+
+
+  public static void doExport(Project proj) {
     // First display circuit/parameter selection dialog
     Frame frame = proj.getFrame();
     CircuitJList list = new CircuitJList(proj, true);
@@ -316,30 +336,15 @@ class ExportImage {
     boolean printerView = options.getPrinterView();
     if (circuits.isEmpty()) return;
 
-    ImageFileFilter filter;
     int fmt = options.getImageFormat();
-    switch (options.getImageFormat()) {
-      case FORMAT_GIF:
-        filter = new ImageFileFilter(fmt, S.getter("exportGifFilter"), new String[] {"gif"});
-        break;
-      case FORMAT_PNG:
-        filter = new ImageFileFilter(fmt, S.getter("exportPngFilter"), new String[] {"png"});
-        break;
-      case FORMAT_JPG:
-        filter =
-            new ImageFileFilter(
-                fmt,
-                S.getter("exportJpgFilter"),
-                new String[] {"jpg", "jpeg", "jpe", "jfi", "jfif", "jfi"});
-        break;
-      default:
-        logger.error("Unexpected image format; aborted!");
+    ImageFileFilter filter = getFilter(fmt);
+    if (filter == null)
         return;
-    }
 
     // Then display file chooser
     Loader loader = proj.getLogisimFile().getLoader();
     JFileChooser chooser = loader.createChooser();
+    chooser.setAcceptAllFileFilterUsed(false);
     if (circuits.size() > 1) {
       chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
       chooser.setDialogTitle(S.get("exportImageDirectorySelect"));
@@ -395,11 +400,11 @@ class ExportImage {
 
   private static final int SLIDER_DIVISIONS = 6;
 
-  private static final int FORMAT_GIF = 0;
+  public static final int FORMAT_GIF = 0;
 
-  private static final int FORMAT_PNG = 1;
+  public static final int FORMAT_PNG = 1;
 
-  private static final int FORMAT_JPG = 2;
+  public static final int FORMAT_JPG = 2;
 
   private static final int BORDER_SIZE = 5;
 

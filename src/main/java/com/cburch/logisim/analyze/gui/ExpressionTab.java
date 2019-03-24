@@ -36,6 +36,8 @@ import com.cburch.logisim.analyze.model.OutputExpressionsEvent;
 import com.cburch.logisim.analyze.model.OutputExpressionsListener;
 import com.cburch.logisim.analyze.model.Parser;
 import com.cburch.logisim.analyze.model.ParserException;
+import com.cburch.logisim.gui.menu.EditHandler;
+import com.cburch.logisim.gui.menu.LogisimMenuBar;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.StringGetter;
 import java.awt.Font;
@@ -43,6 +45,8 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
@@ -57,7 +61,7 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-class ExpressionTab extends AnalyzerTab implements TabInterface {
+class ExpressionTab extends AnalyzerTab {
   private class MyListener extends AbstractAction
       implements DocumentListener, OutputExpressionsListener, ItemListener {
     private static final long serialVersionUID = 1L;
@@ -168,6 +172,15 @@ class ExpressionTab extends AnalyzerTab implements TabInterface {
     field.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), myListener);
     field.getDocument().addDocumentListener(myListener);
     field.setFont(AppPreferences.getScaledFont(new Font("Monospaced", Font.PLAIN, 14)));
+    field.addFocusListener(new FocusListener() {
+      public void focusGained(FocusEvent e) { 
+        editHandler.computeEnabled();
+      }
+      public void focusLost(FocusEvent e) {
+        if (!e.isTemporary())
+          editHandler.computeEnabled();
+      }
+    });
 
     JPanel buttons = new JPanel();
     buttons.add(clear);
@@ -208,16 +221,6 @@ class ExpressionTab extends AnalyzerTab implements TabInterface {
     setError(null);
   }
 
-  public void copy() {
-    field.requestFocus();
-    field.copy();
-  }
-
-  public void delete() {
-    field.requestFocus();
-    field.replaceSelection("");
-  }
-
   String getCurrentVariable() {
     return selector.getSelectedOutput();
   }
@@ -234,18 +237,8 @@ class ExpressionTab extends AnalyzerTab implements TabInterface {
     }
   }
 
-  public void paste() {
-    field.requestFocus();
-    field.paste();
-  }
-
   void registerDefaultButtons(DefaultRegistry registry) {
     registry.registerDefaultButton(field, enter);
-  }
-
-  public void selectAll() {
-    field.requestFocus();
-    field.selectAll();
   }
 
   private void setError(StringGetter msg) {
@@ -273,4 +266,59 @@ class ExpressionTab extends AnalyzerTab implements TabInterface {
     prettyView.setExpression(model.getOutputExpressions().getExpression(output));
     myListener.currentStringChanged();
   }
+  
+  @Override
+  EditHandler getEditHandler() {
+    return editHandler;
+  }
+
+  EditHandler editHandler = new EditHandler() {
+    public void computeEnabled() {
+      boolean canEdit = field.hasFocus();
+      setEnabled(LogisimMenuBar.CUT, canEdit);
+      setEnabled(LogisimMenuBar.COPY, canEdit);
+      setEnabled(LogisimMenuBar.PASTE, canEdit);
+      setEnabled(LogisimMenuBar.DELETE, canEdit);
+      setEnabled(LogisimMenuBar.DUPLICATE, false);
+      setEnabled(LogisimMenuBar.SELECT_ALL, canEdit);
+      setEnabled(LogisimMenuBar.RAISE, false);
+      setEnabled(LogisimMenuBar.LOWER, false);
+      setEnabled(LogisimMenuBar.RAISE_TOP, false);
+      setEnabled(LogisimMenuBar.LOWER_BOTTOM, false);
+      setEnabled(LogisimMenuBar.ADD_CONTROL, false);
+      setEnabled(LogisimMenuBar.REMOVE_CONTROL, false);
+    }
+
+    public void cut() {
+      field.requestFocus();
+      field.cut();
+    }
+    public void copy() { 
+      field.requestFocus();
+      field.copy();
+    }
+    public void paste() {
+      field.requestFocus();
+      field.paste();
+    }
+    public void delete() {
+      field.requestFocus();
+      field.replaceSelection("");
+    }
+    public void duplicate() {
+    }
+    public void selectAll() {
+      field.requestFocus();
+      field.selectAll();
+    }
+
+    public void raise() { }
+    public void lower() { }
+    public void raiseTop() { }
+    public void lowerBottom() { }
+
+    public void addControlPoint() { }
+    public void removeControlPoint() { }
+  };
+
 }

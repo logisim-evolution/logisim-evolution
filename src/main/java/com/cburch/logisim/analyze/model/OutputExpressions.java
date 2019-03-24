@@ -369,27 +369,47 @@ public class OutputExpressions {
   //
   public Expression getExpression(String output) {
     if (output == null) return null;
-    return getOutputData(output, true).getExpression();
+    try {
+      return getOutputData(output, true).getExpression();
+    } catch (Exception e) {
+      return null;
+    }
   }
 
   public String getExpressionString(String output) {
     if (output == null) return "";
-    return getOutputData(output, true).getExpressionString();
+    try {
+      return getOutputData(output, true).getExpressionString();
+    } catch (Exception e) {
+      return "";
+    }
   }
 
   public Expression getMinimalExpression(String output) {
     if (output == null) return Expressions.constant(0);
-    return getOutputData(output, true).getMinimalExpression();
+    try {
+      return getOutputData(output, true).getMinimalExpression();
+    } catch (Exception e) {
+      return Expressions.constant(0);
+    }
   }
 
   public List<Implicant> getMinimalImplicants(String output) {
     if (output == null) return Implicant.MINIMAL_LIST;
-    return getOutputData(output, true).getMinimalImplicants();
+    try {
+      return getOutputData(output, true).getMinimalImplicants();
+    } catch (Exception e) {
+      return Implicant.MINIMAL_LIST;
+    }
   }
 
   public int getMinimizedFormat(String output) {
     if (output == null) return AnalyzerModel.FORMAT_SUM_OF_PRODUCTS;
-    return getOutputData(output, true).getMinimizedFormat();
+    try {
+      return getOutputData(output, true).getMinimizedFormat();
+    } catch (Exception e) {
+      return AnalyzerModel.FORMAT_SUM_OF_PRODUCTS;
+    }
   }
 
   private OutputData getOutputData(String output, boolean create) {
@@ -434,9 +454,6 @@ public class OutputExpressions {
     getOutputData(output, true).setExpression(expr, exprString);
   }
 
-  //
-  // modifier methods
-  //
   public void setMinimizedFormat(String output, int format) {
     int oldFormat = getMinimizedFormat(output);
     if (format != oldFormat) {

@@ -49,7 +49,7 @@ import com.cburch.logisim.circuit.appear.AppearanceAnchor;
 import com.cburch.logisim.circuit.appear.AppearanceElement;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Location;
-import com.cburch.logisim.gui.main.EditHandler;
+import com.cburch.logisim.gui.menu.EditHandler;
 import com.cburch.logisim.gui.menu.LogisimMenuBar;
 import com.cburch.logisim.proj.Project;
 import java.beans.PropertyChangeEvent;

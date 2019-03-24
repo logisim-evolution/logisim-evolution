@@ -40,6 +40,7 @@ public class VariableList {
   private ArrayList<String> names;
   public final List<Var> vars;
   public final List<String> bits;
+  private ArrayList<VariableList> others;
 
   public VariableList(int maxSize) {
     this.maxSize = maxSize;
@@ -47,6 +48,27 @@ public class VariableList {
     names = maxSize > 16 ? new ArrayList<String>() : new ArrayList<String>(maxSize);
     vars = Collections.unmodifiableList(data);
     bits = Collections.unmodifiableList(names);
+    others = new ArrayList<VariableList>();
+  }
+  
+  public void addCompanion(VariableList var) {
+	  others.add(var);
+  }
+  
+  public boolean containsDuplicate(VariableList data, Var oldVar, String name) {
+	  boolean found = false;
+      for (int i = 0, n = vars.size(); i < n && !found; i++) {
+          Var other = vars.get(i);
+          if (other != oldVar && name.equals(other.name))
+        	  found = true;
+      }
+      for (int i = 0 ; i < others.size() && !found ; i++) {
+        VariableList l = others.get(i);
+        if (l.equals(data)) 
+          continue;
+    	found |= l.containsDuplicate(data, oldVar, name);
+      }
+	  return found;
   }
 
   public void add(Var V) {

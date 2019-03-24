@@ -26,26 +26,20 @@
  *     http://www.heig-vd.ch/
  */
 
-package com.cburch.logisim.analyze.gui;
+package com.cburch.logisim.gui.menu;
 
-import javax.swing.JPanel;
-import com.cburch.logisim.gui.menu.EditHandler;
-import com.cburch.logisim.gui.menu.PrintHandler;
+import java.awt.event.ActionEvent;
 
-abstract class AnalyzerTab extends JPanel {
-  private static final long serialVersionUID = 1L;
+public class PrintHandler {
 
-  abstract void localeChanged();
+  public void print() { }
+  public void exportImage() { }
 
-  abstract void updateTab();
-  
-
-  EditHandler getEditHandler() {
-    return null;
+  public void actionPerformed(ActionEvent e) {
+    Object src = e.getSource();
+    if (src == LogisimMenuBar.PRINT)
+      print();
+    else if (src == LogisimMenuBar.EXPORT_IMAGE)
+      exportImage();
   }
-  
-  PrintHandler getPrintHandler() {
-    return null;
-  }
-
 }

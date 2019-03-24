@@ -37,9 +37,9 @@ import java.util.regex.Pattern;
 import javax.swing.JOptionPane;
 
 public class SyntaxChecker {
-
-  public static boolean isVariableNameAcceptable(String val, Boolean ShowDialog) {
-    if (val.length() == 0) return true;
+	
+  public static String getErrorMessage(String val) {
+    if (val.length() == 0) return null;
     if (val.length() > 0) {
       variableMatcher = variablePattern.matcher(val);
       forbiddenMatcher = forbiddenPattern.matcher(val);
@@ -66,12 +66,21 @@ public class SyntaxChecker {
         ret = false;
         Message = Message.concat(S.get("variableEndsWithUndescore"));
       }
-      if (!ret && ShowDialog)
-        JOptionPane.showMessageDialog(
-            null, Message.concat("\n" + S.get("variableNameNotAcceptable")));
-      return ret;
+      if (Message.length() == 0)
+    	  return null;
+      else
+    	  return Message;
     }
-    return false;
+    return null;
+  }
+
+  public static boolean isVariableNameAcceptable(String val, Boolean ShowDialog) {
+    String Message = getErrorMessage(val);
+    if (Message != null && ShowDialog) {
+        JOptionPane.showMessageDialog(
+                null, Message.concat("\n" + S.get("variableNameNotAcceptable")));
+    }
+    return Message == null;
   }
 
   private static Pattern variablePattern = Pattern.compile("^([a-zA-Z]+\\w*)");

@@ -39,7 +39,7 @@ import com.cburch.logisim.gui.generic.AttrTable;
 import com.cburch.logisim.gui.generic.BasicZoomModel;
 import com.cburch.logisim.gui.generic.CanvasPane;
 import com.cburch.logisim.gui.generic.ZoomModel;
-import com.cburch.logisim.gui.main.EditHandler;
+import com.cburch.logisim.gui.menu.EditHandler;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
 import javax.swing.JFrame;

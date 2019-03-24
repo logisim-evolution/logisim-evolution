@@ -68,27 +68,15 @@ class MenuEdit extends Menu {
         undo.setText(StringUtil.format(S.get("editUndoItem"), last.getName()));
         undo.setEnabled(true);
       }
-
-      // If there is a project open...
-      if (proj != null)
-        // And you CAN redo an undo...
-        if (proj.getCanRedo()) {
-          // Get that action
-          Action lastRedo = proj.getLastRedoAction();
-
-          // Set the detailed, localized text
-
-          redo.setText(StringUtil.format(S.get("editRedoItem"), lastRedo.getName()));
-
-          // Set it to enabled
-          redo.setEnabled(true);
-        } else { // If there is no project...
-          // Let them know they can't redo anything
-          redo.setText(StringUtil.format(S.get("editCantRedoItem")));
-
-          // And disable the button
-          redo.setEnabled(false);
-        }
+      
+      Action next = (proj == null || !proj.getCanRedo()) ? null : proj.getLastRedoAction();
+      if (next != null) {
+        redo.setText(S.fmt("editRedoItem", next.getName()));
+        redo.setEnabled(true);
+      } else {
+        redo.setText(S.get("editCantRedoItem"));
+        redo.setEnabled(false);
+      }
     }
   }
 

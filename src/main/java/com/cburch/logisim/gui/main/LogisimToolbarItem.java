@@ -30,6 +30,7 @@ package com.cburch.logisim.gui.main;
 
 import com.cburch.draw.toolbar.ToolbarItem;
 import com.cburch.logisim.gui.menu.LogisimMenuItem;
+import com.cburch.logisim.gui.menu.MenuListener;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.Icons;
 import com.cburch.logisim.util.StringGetter;
