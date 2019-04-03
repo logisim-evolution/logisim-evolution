@@ -129,6 +129,7 @@ public class Analyzer extends LFrame {
           tt.getInputColumnCount() > 0
               && tt.getOutputColumnCount() > 0
               && tt.getRowCount() <= AnalyzerTexWriter.MAX_TRUTH_TABLE_ROWS);
+      ioPanel.updateTab();
     }
   }
 

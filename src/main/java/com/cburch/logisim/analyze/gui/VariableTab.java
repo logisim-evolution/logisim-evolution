@@ -80,7 +80,6 @@ import com.cburch.logisim.analyze.model.Var;
 import com.cburch.logisim.analyze.model.VariableList;
 import com.cburch.logisim.analyze.model.VariableListEvent;
 import com.cburch.logisim.analyze.model.VariableListListener;
-import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
 import com.cburch.logisim.gui.menu.EditHandler;
 import com.cburch.logisim.gui.menu.LogisimMenuBar;
 import com.cburch.logisim.gui.menu.LogisimMenuItem;
@@ -95,43 +94,43 @@ public class VariableTab extends AnalyzerTab {
   private JLabel inputsLabel, outputsLabel;
 
   private JTable ioTable(VariableList data, LogisimMenuBar menubar) {
-  final TableCellEditor ed1 = new SingleClickVarEditor(data);
-  final TableCellEditor ed2 = new DoubleClickVarEditor(data);
-  JTable table = new JTable(9, 1) {
-  public TableCellEditor getCellEditor(int row, int column) {
+    final TableCellEditor ed1 = new SingleClickVarEditor(data);
+    final TableCellEditor ed2 = new DoubleClickVarEditor(data);
+    JTable table = new JTable(9, 1) {
+      public TableCellEditor getCellEditor(int row, int column) {
         return (row == getRowCount() - 1 ? ed1 : ed2);
       }
-  };
-  table.getTableHeader().setUI(null);
-  table.setModel(new VariableTableModel(data, table));
-  table.setDefaultRenderer(Var.class, new VarRenderer());
-  table.setRowHeight(30);
-  table.setShowGrid(false);
-  table.setDragEnabled(true);
-  table.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
-  table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-  TransferHandler ccp = new VarTransferHandler(table, data);
-  table.setTransferHandler(ccp);
-  table.setDropMode(DropMode.INSERT_ROWS);
+    };
+    table.getTableHeader().setUI(null);
+    table.setModel(new VariableTableModel(data, table));
+    table.setDefaultRenderer(Var.class, new VarRenderer());
+    table.setRowHeight(30);
+    table.setShowGrid(false);
+    table.setDragEnabled(true);
+    table.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
+    table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+    TransferHandler ccp = new VarTransferHandler(table, data);
+    table.setTransferHandler(ccp);
+    table.setDropMode(DropMode.INSERT_ROWS);
 
-  InputMap inputMap = table.getInputMap();
-  for (LogisimMenuItem item: LogisimMenuBar.EDIT_ITEMS) {
-    KeyStroke accel = menubar.getAccelerator(item);
-    inputMap.put(accel, item);
+    InputMap inputMap = table.getInputMap();
+    for (LogisimMenuItem item: LogisimMenuBar.EDIT_ITEMS) {
+      KeyStroke accel = menubar.getAccelerator(item);
+      inputMap.put(accel, item);
     }
 
-  ActionMap actionMap = table.getActionMap();
+    ActionMap actionMap = table.getActionMap();
 
-  actionMap.put(LogisimMenuBar.CUT, ccp.getCutAction());
-  actionMap.put(LogisimMenuBar.COPY, ccp.getCopyAction());
-  actionMap.put(LogisimMenuBar.PASTE, ccp.getPasteAction());
-  actionMap.put(LogisimMenuBar.DELETE, new AbstractAction() {
-    public void actionPerformed(ActionEvent e) {
-      int idx = table.getSelectedRow();
-      if (idx < 0 || idx >= data.vars.size())
-        return;
-      data.remove(data.vars.get(idx));
-      if (idx >= data.vars.size())
+    actionMap.put(LogisimMenuBar.CUT, ccp.getCutAction());
+    actionMap.put(LogisimMenuBar.COPY, ccp.getCopyAction());
+    actionMap.put(LogisimMenuBar.PASTE, ccp.getPasteAction());
+    actionMap.put(LogisimMenuBar.DELETE, new AbstractAction() {
+      public void actionPerformed(ActionEvent e) {
+        int idx = table.getSelectedRow();
+        if (idx < 0 || idx >= data.vars.size())
+          return;
+        data.remove(data.vars.get(idx));
+        if (idx >= data.vars.size())
         idx = data.vars.size() - 1;
       if (idx >= 0)
         table.changeSelection(idx, 0, false, false);
@@ -318,13 +317,13 @@ public class VariableTab extends AnalyzerTab {
     while ((pos < length) && ("0123456789".indexOf(index.charAt(pos)) >= 0)) pos++;
     if (pos == 1) return NO_VALID_MSB_INDEX;
     int MSBIndex = Integer.parseInt(index.substring(1, pos));
-    if (pos >= length) return 0;
+    if (pos >= length) return NO_FINAL_PAR;
     if (index.charAt(pos) == ']') {
       pos++;
       if (pos != length) return INVALID_CHARS;
       else return MSBIndex;
     }
-    if (pos >= length - 2) return 0;
+    if (pos >= length - 2) return NO_VALID_INDEX_SEP;
     if (!index.substring(pos, pos + 2).equals("..")) return NO_VALID_INDEX_SEP;
     pos += 2;
     int curpos = pos;
@@ -332,7 +331,7 @@ public class VariableTab extends AnalyzerTab {
     if (pos == curpos) return NO_VALID_LSB_INDEX;
     int LSBIndex = Integer.parseInt(index.substring(curpos, pos));
     if (LSBIndex > MSBIndex) return LSB_BIGGER_MSB;
-    if (pos >= length) return 0;
+    if (pos >= length) return NO_FINAL_PAR;
     if (index.charAt(pos++) != ']') return NO_FINAL_PAR;
     if (pos != length) return INVALID_CHARS;
     return MSBIndex - LSBIndex + 1;
@@ -360,23 +359,6 @@ public class VariableTab extends AnalyzerTab {
     	  err = BAD_NAME;
     	  error.setText(message);
       }
-    }
-    int NrOfBits = checkindex(text);
-    if (NrOfBits < 0) {
-      String ErrorText = null;
-      if (NrOfBits == NO_START_PAR) ErrorText = S.get("variableRangeStartPar");
-      else if (NrOfBits == NO_VALID_MSB_INDEX) ErrorText = S.get("variableRangeMSBWrong");
-      else if (NrOfBits == NO_VALID_INDEX_SEP) ErrorText = S.get("variableRangeWrongSep");
-      else if (NrOfBits == NO_VALID_LSB_INDEX) ErrorText = S.get("variableRangeWrongSep");
-      else if (NrOfBits == LSB_BIGGER_MSB) ErrorText = S.get("variableRangeWrongLB");
-      else if (NrOfBits == NO_FINAL_PAR) ErrorText = S.get("variableRangeFinalPar");
-      else if (NrOfBits == INVALID_CHARS) ErrorText = S.get("variableRangeInvalChar");
-      if (ErrorText != null) {
-        error.setText(ErrorText);
-        err = NrOfBits;
-      }
-    } else if (NrOfBits > 0 && NrOfBits != w) {
-      w = NrOfBits;
     }
 
     if (err == OK && oldVar != null) {
@@ -548,6 +530,7 @@ public class VariableTab extends AnalyzerTab {
     JPanel p;
     Var editing;
     VariableList data;
+    
     public SingleClickVarEditor(VariableList data) {
       field.setBorder(BorderFactory.createCompoundBorder(
             field.getBorder(),
@@ -603,9 +586,21 @@ public class VariableTab extends AnalyzerTab {
         name = text.substring(0, idx);
         index = text.substring(idx, text.length());
         w = checkindex(index);
-        if (w <= 0)
+        if (w <= 0) {
+          String ErrorText = null;
+          if (w == NO_START_PAR) ErrorText = S.get("variableRangeStartPar");
+          else if (w == NO_VALID_MSB_INDEX) ErrorText = S.get("variableRangeMSBWrong");
+          else if (w == NO_VALID_INDEX_SEP) ErrorText = S.get("variableRangeWrongSep");
+          else if (w == NO_VALID_LSB_INDEX) ErrorText = S.get("variableRangeWrongSep");
+          else if (w == LSB_BIGGER_MSB) ErrorText = S.get("variableRangeWrongLB");
+          else if (w == NO_FINAL_PAR) ErrorText = S.get("variableRangeFinalPar");
+          else if (w == INVALID_CHARS) ErrorText = S.get("variableRangeInvalChar");
+          if (ErrorText != null) {
+            error.setText(ErrorText);
+          }
           w = (Integer)width.getSelectedItem();
-        else {
+          return false;
+        } else {
           width.setSelectedIndex(w-1);
           w -= 1;
           field.setText(name);
@@ -666,7 +661,7 @@ public class VariableTab extends AnalyzerTab {
     if (0 < i && i < j && j == s.length()-1) {
       String braces = s.substring(i+1, j);
       if (!braces.endsWith("..0")) {
-        error.setText("Variables must be of the form 'name[N..0]'");
+        error.setText(S.get("variableFormat"));
         return null;
       }
       try {
@@ -675,15 +670,15 @@ public class VariableTab extends AnalyzerTab {
         w = -1;
       }
       if (w < 1) {
-        error.setText("Variables must be of the form 'name[N..0]'");
+        error.setText(S.get("variableFormat"));
         return null;
       } else if (w > 32) {
-        error.setText("Variables can't be more than 32 bits wide");
+        error.setText(S.get("variableTooMuchBits"));
         return null;
       }
       s = s.substring(0, i).trim();
     } else if (i >= 0 || j >= 0) {
-      error.setText("Variables must be of the form 'name[N..0]'");
+      error.setText(S.get("variableFormat"));
       return null;
     }
     s = s.trim();
