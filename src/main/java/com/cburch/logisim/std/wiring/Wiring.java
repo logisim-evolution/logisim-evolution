@@ -67,15 +67,10 @@ public class Wiring extends Library {
   private static FactoryDescription[] DESCRIPTIONS = {
     new FactoryDescription("Power", S.getter("powerComponent"), "power.gif", "Power"),
     new FactoryDescription("Ground", S.getter("groundComponent"), "ground.gif", "Ground"),
-    new FactoryDescription(
-        "Transistor", S.getter("transistorComponent"), "trans0.gif", "Transistor"),
-    new FactoryDescription(
-        "Transmission Gate",
-        S.getter("transmissionGateComponent"),
-        "transmis.gif",
-        "TransmissionGate"),
-    new FactoryDescription(
-        "Bit Extender", S.getter("extenderComponent"), "extender.gif", "BitExtender"),
+    new FactoryDescription("NoConnect",S.getter("noConnectionComponent"),"noconnect.gif","DoNotConnect"),
+    new FactoryDescription("Transistor", S.getter("transistorComponent"), "trans0.gif", "Transistor"),
+    new FactoryDescription("Transmission Gate",S.getter("transmissionGateComponent"),"transmis.gif","TransmissionGate"),
+    new FactoryDescription("Bit Extender", S.getter("extenderComponent"), "extender.gif", "BitExtender"),
   };
 
   private List<Tool> tools = null;
