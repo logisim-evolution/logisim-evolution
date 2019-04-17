@@ -32,9 +32,12 @@ import static com.cburch.logisim.analyze.Strings.S;
 
 import com.cburch.logisim.analyze.file.AnalyzerTexWriter;
 import com.cburch.logisim.analyze.model.AnalyzerModel;
+import com.cburch.logisim.analyze.model.Expression;
+import com.cburch.logisim.analyze.model.Parser;
 import com.cburch.logisim.analyze.model.TruthTable;
 import com.cburch.logisim.analyze.model.TruthTableEvent;
 import com.cburch.logisim.analyze.model.TruthTableListener;
+import com.cburch.logisim.analyze.model.Var;
 import com.cburch.logisim.gui.generic.LFrame;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.LocaleListener;
@@ -42,8 +45,9 @@ import com.cburch.logisim.util.LocaleManager;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
+import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import javax.swing.JComponent;
@@ -125,16 +129,38 @@ public class Analyzer extends LFrame {
       TruthTable tt = model.getTruthTable();
       buildCircuit.setEnabled(tt.getInputColumnCount() > 0 && tt.getOutputColumnCount() > 0);
       exportTable.setEnabled(tt.getInputColumnCount() > 0 && tt.getOutputColumnCount() > 0);
-      exportTex.setEnabled(
-          tt.getInputColumnCount() > 0
-              && tt.getOutputColumnCount() > 0
+      exportTex.setEnabled(tt.getInputColumnCount() > 0 && tt.getOutputColumnCount() > 0
               && tt.getRowCount() <= AnalyzerTexWriter.MAX_TRUTH_TABLE_ROWS);
       ioPanel.updateTab();
     }
   }
 
-  public static void main(String[] args) {
+  public static void main(String[] args) throws Exception {
     Analyzer frame = new Analyzer();
+    AnalyzerModel model = frame.getModel();
+
+    if (args.length >= 2) {
+      ArrayList<Var> inputs = new ArrayList<>();
+      ArrayList<Var> outputs = new ArrayList<>();
+      for (String s: args[0].split(","))
+        inputs.add(Var.parse(s));
+      for (String s: args[1].split(","))
+        outputs.add(Var.parse(s));
+      model.setVariables(inputs, outputs);
+    }
+    for (int i = 2; i < args.length; i++) {
+      String s = args[i];
+      int idx = s.indexOf('=');
+      if (idx < 0) {
+        Parser.parse(s, model); // for testing Parser.parse
+        continue;
+      } else {
+        String name = s.substring(0, idx);
+        String exprString = s.substring(idx+1);
+        Expression expr = Parser.parse(exprString, model);
+        model.getOutputExpressions().setExpression(name, expr, exprString);
+      }
+    }
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     frame.pack();
     frame.setVisible(true);
@@ -169,8 +195,8 @@ public class Analyzer extends LFrame {
     menuListener = new AnalyzerMenuListener(menubar);
     ioPanel = new VariableTab(model.getInputs(), model.getOutputs(), menubar);
     truthTablePanel = new TableTab(model.getTruthTable());
-    expressionPanel = new ExpressionTab(model);
-    minimizedPanel = new MinimizedTab(model);
+    expressionPanel = new ExpressionTab(model, menubar);
+    minimizedPanel = new MinimizedTab(model, menubar);
     importTable = new ImportTableButton(this, model);
     buildCircuit = new BuildCircuitButton(this, model);
     buildCircuit.setEnabled(false);
@@ -178,8 +204,6 @@ public class Analyzer extends LFrame {
     exportTable.setEnabled(false);
     exportTex = new ExportLatexButton(this, model);
     exportTex.setEnabled(false);
-
-    truthTablePanel.addMouseListener(new TruthTableMouseListener());
 
     tabbedPane = new JTabbedPane();
     addTab(IO_TAB, ioPanel);
@@ -202,8 +226,6 @@ public class Analyzer extends LFrame {
     contents.add(tabbedPane, BorderLayout.CENTER);
     contents.add(buttonPanel, BorderLayout.SOUTH);
 
-    DefaultRegistry registry = new DefaultRegistry(getRootPane());
-    expressionPanel.registerDefaultButtons(registry);
     
     LocaleManager.addLocaleListener(myLocaleListener);
     myLocaleListener.localeChanged();
@@ -213,28 +235,19 @@ public class Analyzer extends LFrame {
   }
 
   private void addTab(int index, final JComponent comp) {
-    if (comp instanceof TableTab || comp instanceof VariableTab) {
-      tabbedPane.insertTab("Untitled", null, comp, null, index);
-      return;
+    if (comp instanceof TableTab || comp instanceof VariableTab || comp instanceof ExpressionTab) {
+        tabbedPane.insertTab("Untitled", null, comp, null, index);
+        return;
     }
-    final JScrollPane pane =
-        new JScrollPane(
-            comp,
-            ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
-            ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-    pane.addComponentListener(
-        new ComponentListener() {
-          public void componentHidden(ComponentEvent arg0) {}
-
-          public void componentMoved(ComponentEvent arg0) {}
-
-          public void componentResized(ComponentEvent event) {
-            int width = pane.getViewport().getWidth();
-            comp.setSize(new Dimension(width, comp.getHeight()));
-          }
-
-          public void componentShown(ComponentEvent arg0) {}
-        });
+    final JScrollPane pane = new JScrollPane(comp,
+        ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
+        ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+    pane.addComponentListener(new ComponentAdapter() {
+      public void componentResized(ComponentEvent event) {
+        int width = pane.getViewport().getWidth();
+        comp.setSize(new Dimension(width, comp.getHeight()));
+      }
+    });
     tabbedPane.insertTab("Untitled", null, pane, null, index);
   }
 

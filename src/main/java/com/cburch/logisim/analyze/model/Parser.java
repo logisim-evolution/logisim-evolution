@@ -75,7 +75,9 @@ public class Parser {
   private static boolean okCharacter(char c) {
     return Character.isWhitespace(c)
         || Character.isJavaIdentifierStart(c)
-        || "()01~^+!&|".indexOf(c) >= 0;
+        || "()01~-^+*!&|=\\':[]".indexOf(c) >= 0
+        || "\u22C0\u22C1\u2227\u2228\u2295\u22C5\u00AC\u2219".indexOf(c) >= 0
+        || "\u21D4\u2261\u2194\u02DC\u00B7\u2225\u22BB\u22A4\u22A5".indexOf(c) >= 0;
   }
 
   private static Expression parse(ArrayList<Token> tokens) throws ParserException {
@@ -94,12 +96,12 @@ public class Parser {
           here = Expressions.not(here);
           i++;
         }
-        while (peekLevel(stack) == Expression.NOT_LEVEL) {
+        while (peekLevel(stack) == Expression.Op.NOT.Level) {
           here = Expressions.not(here);
           pop(stack);
         }
         current = Expressions.and(current, here);
-        if (peekLevel(stack) == Expression.AND_LEVEL) {
+        if (peekLevel(stack) == Expression.Op.AND.Level) {
           Context top = pop(stack);
           current = Expressions.and(top.current, current);
         }
@@ -108,20 +110,16 @@ public class Parser {
           push(
               stack,
               current,
-              Expression.AND_LEVEL,
+              Expression.Op.AND.Level,
               new Token(TOKEN_AND, t.offset, S.get("implicitAndOperator")));
         }
-        push(stack, null, Expression.NOT_LEVEL, t);
+        push(stack, null, Expression.Op.NOT.Level, t);
         current = null;
       } else if (t.type == TOKEN_NOT_POSTFIX) {
         throw t.error(S.getter("unexpectedApostrophe"));
       } else if (t.type == TOKEN_LPAREN) {
         if (current != null) {
-          push(
-              stack,
-              current,
-              Expression.AND_LEVEL,
-              new Token(TOKEN_AND, t.offset, 0, S.get("implicitAndOperator")));
+          push(stack,current,Expression.Op.AND.Level,new Token(TOKEN_AND, t.offset, 0, S.get("implicitAndOperator")));
         }
         push(stack, null, -2, t);
         current = null;
@@ -136,7 +134,7 @@ public class Parser {
           current = Expressions.not(current);
           i++;
         }
-        current = popTo(stack, Expression.AND_LEVEL, current);
+        current = popTo(stack, Expression.Op.AND.Level, current);
       } else {
         if (current == null) {
           throw t.error(S.getter("missingLeftOperandError", t.text));
@@ -144,13 +142,15 @@ public class Parser {
         int level = 0;
         switch (t.type) {
           case TOKEN_AND:
-            level = Expression.AND_LEVEL;
+            level = Expression.Op.AND.Level;
             break;
           case TOKEN_OR:
-            level = Expression.OR_LEVEL;
+            level = Expression.Op.OR.Level;
             break;
           case TOKEN_XOR:
-            level = Expression.XOR_LEVEL;
+            level = Expression.Op.XOR.Level;
+          case TOKEN_EQ:
+        	level = Expression.Op.EQ.Level;
             break;
         }
         push(stack, popTo(stack, level, current), level, t);
@@ -166,13 +166,29 @@ public class Parser {
   }
 
   public static Expression parse(String in, AnalyzerModel model) throws ParserException {
+    return parse(in, model, false);
+  }
+  
+  public static Expression parseMaybeAssignment(String in, AnalyzerModel model) throws ParserException {
+    return parse(in, model, true);
+  }
+  
+  private static Expression parse(String in, AnalyzerModel model, boolean allowOutputAssignment) throws ParserException {
     ArrayList<Token> tokens = toTokens(in, false);
 
     if (tokens.size() == 0) return null;
 
+    int i = -1;
     for (Token token : tokens) {
-      if (token.type == TOKEN_ERROR) {
+      i++;
+      if (token.type == TOKEN_ERROR_BADCHAR) {
         throw token.error(S.getter("invalidCharacterError", token.text));
+      } else if (token.type == TOKEN_ERROR_BRACE) {
+        throw token.error(S.getter("missingBraceError", token.text));
+      } else if (token.type == TOKEN_ERROR_SUBSCRIPT) {
+        throw token.error(S.getter("missingSubscriptError", token.text));
+      } else if (token.type == TOKEN_ERROR_IDENT) {
+       throw token.error(S.getter("missingIdentifierError", token.text));
       } else if (token.type == TOKEN_IDENT) {
         int index = model.getInputs().bits.indexOf(token.text);
         if (index < 0) {
@@ -186,7 +202,14 @@ public class Parser {
             token.type = TOKEN_XOR;
           } else if (opText.equals("OR")) {
             token.type = TOKEN_OR;
+          } else if (opText.contentEquals("EQUALS")) {
+            token.type = TOKEN_EQ;
           } else {
+            if (i == 0 && allowOutputAssignment) {
+              index = model.getOutputs().bits.indexOf(token.text);
+              if (index <= 0 && tokens.size() >= 2 && tokens.get(1).type == TOKEN_EQ)
+              continue;
+            }
             throw token.error(S.getter("badVariableName", token.text));
           }
         }
@@ -212,20 +235,16 @@ public class Parser {
       Context top = pop(stack);
       if (current == null)
         throw top.cause.error(S.getter("missingRightOperandError", top.cause.text));
-      switch (top.level) {
-        case Expression.AND_LEVEL:
+      else if (top.level == Expression.Op.AND.Level)
           current = Expressions.and(top.current, current);
-          break;
-        case Expression.OR_LEVEL:
+      else if (top.level == Expression.Op.OR.Level)
           current = Expressions.or(top.current, current);
-          break;
-        case Expression.XOR_LEVEL:
+      else if (top.level == Expression.Op.XOR.Level)
           current = Expressions.xor(top.current, current);
-          break;
-        case Expression.NOT_LEVEL:
+      else if (top.level == Expression.Op.EQ.Level)
+          current = Expressions.eq(top.current, current);
+      else if (top.level == Expression.Op.NOT.Level)
           current = Expressions.not(current);
-          break;
-      }
     }
     return current;
   }
@@ -234,19 +253,7 @@ public class Parser {
     stack.add(new Context(expr, level, cause));
   }
 
-  /**
-   * I wrote this without thinking, and then realized that this is quite complicated because of
-   * removing operators. I haven't bothered to do it correctly; instead, it just regenerates a
-   * string from the raw expression. static String removeVariable(String in, String variable) {
-   * StringBuilder ret = new StringBuilder(); ArrayList tokens = toTokens(in, true); Token lastWhite
-   * = null; for (int i = 0, n = tokens.size(); i < n; i++) { Token token = (Token) tokens.get(i);
-   * if (token.type == TOKEN_IDENT && token.text.equals(variable)) { ; // just ignore it } else if
-   * (token.type == TOKEN_WHITE) { if (lastWhite != null) { if (lastWhite.text.length() >=
-   * token.text.length()) { ; // don't repeat shorter whitespace } else { ret.replace(ret.length() -
-   * lastWhite.text.length(), ret.length(), token.text); lastWhite = token; } } else { lastWhite =
-   * token; ret.append(token.text); } } else { lastWhite = null; ret.append(token.text); } } return
-   * ret.toString(); }
-   */
+  //Note: Doing this without "tokenizing then re-stringify" is tricky.
   static String replaceVariable(String in, String oldName, String newName) {
     StringBuilder ret = new StringBuilder();
     ArrayList<Token> tokens = toTokens(in, true);
@@ -266,32 +273,71 @@ public class Parser {
     // Guarantee that we will stop just after reading whitespace,
     // not in the middle of a token.
     in = in + " ";
+    int len = in.length();
     int pos = 0;
+  outerloop:
     while (true) {
       int whiteStart = pos;
-      while (pos < in.length() && Character.isWhitespace(in.charAt(pos))) pos++;
-      if (includeWhite && pos != whiteStart) {
-        tokens.add(new Token(TOKEN_WHITE, whiteStart, in.substring(whiteStart, pos)));
-      }
-      if (pos == in.length()) return tokens;
+      while (pos < len && Character.isWhitespace(in.charAt(pos))) pos++;
 
+      if (includeWhite && pos != whiteStart)
+        tokens.add(new Token(TOKEN_WHITE, whiteStart, in.substring(whiteStart, pos)));
+      if (pos == len)
+        return tokens;
+      
       int start = pos;
       char startChar = in.charAt(pos);
       pos++;
       if (Character.isJavaIdentifierStart(startChar)) {
         while (Character.isJavaIdentifierPart(in.charAt(pos))) pos++;
+        String name = in.substring(start, pos);
+        String subscript = null;
         if (in.charAt(pos) == ':') {
           pos++;
+          int substart = pos;
           while ("0123456789".indexOf(in.charAt(pos)) >= 0) pos++;
-        }
-        boolean skipchar = false;
-        if (in.charAt(pos) == '[') {
+          subscript = in.substring(substart, pos);
+        } else if (in.charAt(pos) == '[') {
+          int bracestart = pos;
           pos++;
-          while ("0123456789".indexOf(in.charAt(pos)) >= 0) pos++;
-          skipchar = in.charAt(pos) == ']';
+          while (pos < len && Character.isWhitespace(in.charAt(pos)))
+            pos++;
+          if (pos == len) {
+            tokens.add(new Token(TOKEN_ERROR_BRACE, start, in.substring(bracestart)));
+            continue outerloop;
+          }
+          int substart = pos;
+          while ("0123456789".indexOf(in.charAt(pos)) >= 0)
+            pos++;
+          subscript = in.substring(substart, pos);
+          while (pos < len && Character.isWhitespace(in.charAt(pos)))
+            pos++;
+          if (pos == len) {
+            tokens.add(new Token(TOKEN_ERROR_BRACE, start, in.substring(bracestart)));
+            continue outerloop;
+          }
+          if (in.charAt(pos) != ']') {
+            tokens.add(new Token(TOKEN_ERROR_BRACE, start, in.substring(bracestart)));
+            continue outerloop;
+          }
+          pos++;
         }
-        tokens.add(new Token(TOKEN_IDENT, start, in.substring(start, pos).replace('[', ':')));
-        if (skipchar) pos++;
+        if (subscript != null) {
+          subscript = subscript.trim();
+          if (subscript.equals("")) {
+            tokens.add(new Token(TOKEN_ERROR_SUBSCRIPT, start, in.substring(start, pos)));
+            continue outerloop;
+          }
+          try {
+            int s = Integer.parseInt(subscript);
+            tokens.add(new Token(TOKEN_IDENT, start, name + "[" + s + "]"));
+          } catch (NumberFormatException e) {
+            // should not happen
+            tokens.add(new Token(TOKEN_ERROR_SUBSCRIPT, start, in.substring(start, pos)));
+          }
+        } else {
+          tokens.add(new Token(TOKEN_IDENT, start, name));
+        }
       } else {
         switch (startChar) {
           case '(':
@@ -300,24 +346,47 @@ public class Parser {
           case ')':
             tokens.add(new Token(TOKEN_RPAREN, start, ")"));
             break;
-          case '0':
           case '1':
-            tokens.add(new Token(TOKEN_CONST, start, "" + startChar));
+          case '\u22A4':
+            tokens.add(new Token(TOKEN_CONST, start, "1"));
+            break;
+          case '0':
+          case '\u22A5':
+            tokens.add(new Token(TOKEN_CONST,start,"0"));
             break;
           case '~':
+          case '-':
+          case '!':
+          case '\u00AC': // logical not
+          case '\u02DC': // tilde
             tokens.add(new Token(TOKEN_NOT, start, "~"));
             break;
           case '\'':
             tokens.add(new Token(TOKEN_NOT_POSTFIX, start, "'"));
             break;
           case '^':
+          case '\u2295': // xor
+          case '\u22BB': // underbar-vee (xor)
             tokens.add(new Token(TOKEN_XOR, start, "^"));
             break;
           case '+':
+          case '\u22C1': // large disjunction
+          case '\u2228': // small disjunction
+          case '\u2225': // logical or
             tokens.add(new Token(TOKEN_OR, start, "+"));
             break;
-          case '!':
-            tokens.add(new Token(TOKEN_NOT, start, "!"));
+          case '*':
+          case '\u22C0': // large conjunction
+          case '\u2227': // small conjunction
+          case '\u22C5': // cdot
+          case '\u2219': // bullet
+          case '\u00B7': // middle-dot
+            tokens.add(new Token(TOKEN_AND, start, "*"));
+            break;
+          case '\u21D4': // left-right-doublearrow
+          case '\u2261': // equiv
+          case '\u2194': // left-right-arrow
+            tokens.add(new Token(TOKEN_EQ, start, "="));
             break;
           case '&':
             if (in.charAt(pos) == '&') pos++;
@@ -327,35 +396,40 @@ public class Parser {
             if (in.charAt(pos) == '|') pos++;
             tokens.add(new Token(TOKEN_OR, start, in.substring(start, pos)));
             break;
+          case '=':
+              if (in.charAt(pos) == '=')
+                pos++;
+              tokens.add(new Token(TOKEN_EQ, start, in.substring(start, pos)));
+              break;
+            case ':':
+            case '[':
+            case ']':
+              tokens.add(new Token(TOKEN_ERROR_IDENT, start, in.substring(start, start+1)));
+              break;
           default:
             while (!okCharacter(in.charAt(pos))) pos++;
             String errorText = in.substring(start, pos);
-            tokens.add(new Token(TOKEN_ERROR, start, errorText));
+            tokens.add(new Token(TOKEN_ERROR_BADCHAR, start, errorText));
         }
       }
     }
   }
 
-  //
-  // tokenizing code
-  //
   private static final int TOKEN_AND = 0;
   private static final int TOKEN_OR = 1;
   private static final int TOKEN_XOR = 2;
-
-  private static final int TOKEN_NOT = 3;
-
-  private static final int TOKEN_NOT_POSTFIX = 4;
-
-  private static final int TOKEN_LPAREN = 5;
-
-  private static final int TOKEN_RPAREN = 6;
-
-  private static final int TOKEN_IDENT = 7;
-
-  private static final int TOKEN_CONST = 8;
-  private static final int TOKEN_WHITE = 9;
-  private static final int TOKEN_ERROR = 10;
+  private static final int TOKEN_EQ = 3;
+  private static final int TOKEN_NOT = 4;
+  private static final int TOKEN_NOT_POSTFIX = 5;
+  private static final int TOKEN_LPAREN = 6;
+  private static final int TOKEN_RPAREN = 7;
+  private static final int TOKEN_IDENT = 8;
+  private static final int TOKEN_CONST = 9;
+  private static final int TOKEN_WHITE = 10;
+  private static final int TOKEN_ERROR_BADCHAR = 11;
+  private static final int TOKEN_ERROR_BRACE = 12;
+  private static final int TOKEN_ERROR_SUBSCRIPT = 13;
+  private static final int TOKEN_ERROR_IDENT = 14;
 
   private Parser() {}
 }

@@ -35,19 +35,15 @@ import com.cburch.logisim.analyze.model.TruthTable;
 import com.cburch.logisim.analyze.model.TruthTableEvent;
 import com.cburch.logisim.analyze.model.TruthTableListener;
 import com.cburch.logisim.analyze.model.Var;
-import com.cburch.logisim.gui.main.ExportImage;
 import com.cburch.logisim.gui.menu.EditHandler;
 import com.cburch.logisim.gui.menu.LogisimMenuBar;
 import com.cburch.logisim.gui.menu.PrintHandler;
 import com.cburch.logisim.prefs.AppPreferences;
-import com.cburch.logisim.util.GifEncoder;
 import com.cburch.logisim.util.GraphicsUtil;
-import com.cburch.logisim.util.JFileChoosers;
 import com.cburch.logisim.util.LocaleListener;
 import com.cburch.logisim.util.LocaleManager;
 import java.awt.Canvas;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -57,7 +53,6 @@ import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.KeyboardFocusManager;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.event.ComponentAdapter;
@@ -66,25 +61,19 @@ import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.awt.print.PageFormat;
 import java.awt.print.Printable;
-import java.awt.print.PrinterException;
-import java.awt.print.PrinterJob;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.imageio.ImageIO;
 import javax.swing.JButton;
-import javax.swing.JFileChooser;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
-import javax.swing.filechooser.FileFilter;
 
-class TableTab extends AnalyzerTab implements TruthTablePanel, Printable {
+class TableTab extends AnalyzerTab {
+  public static final Color ERROR_COLOR = new Color(255, 128, 128);
   private class MyListener implements TruthTableListener, LocaleListener {
     public void rowsChanged(TruthTableEvent event) {
       updateTable();
@@ -133,8 +122,6 @@ class TableTab extends AnalyzerTab implements TruthTablePanel, Printable {
   private int cellHeight;
   private int tableWidth, headerHeight, bodyHeight;
   private ColumnGroupDimensions inDim, outDim;
-  private int provisionalX, provisionalY;
-  private Entry provisionalValue = null;
   private TableTabCaret caret;
   private TableTabClip clip;
 
@@ -262,15 +249,7 @@ class TableTab extends AnalyzerTab implements TruthTablePanel, Printable {
                   : entry == Entry.BUS_ERROR ? Color.RED : Color.BLACK);
           String label = entry.getDescription();
           int width = fm.stringWidth(label);
-          boolean provisional = false;
-          if (provisional) {
-            provisional = false;
-            g.setColor(Color.GREEN);
-            g.drawString(label, x + (cellWidth - width) / 2, cy);
-            g.setColor(Color.BLACK);
-          } else {
-            g.drawString(label, x + (cellWidth - width) / 2, cy);
-          }
+          g.drawString(label, x + (cellWidth - width) / 2, cy);
           x += cellWidth;
         }
         x += cellPadding;
@@ -408,6 +387,23 @@ class TableTab extends AnalyzerTab implements TruthTablePanel, Printable {
     expand.addActionListener(caret.getListener());
     clip = new TableTabClip(this);
     computePreferredSize();
+    this.addComponentListener(new ComponentAdapter() {
+      boolean done;
+      public void componentShown(ComponentEvent e) {
+        TableTab.this.removeComponentListener(this);
+        if (done)
+          return;
+        done = true;
+        // account for missing scrollbar on header portion
+        int pad = bodyPane.getVerticalScrollBar().getWidth();
+        GridBagConstraints gc = layout.getConstraints(headerPane);
+        Insets i = gc.insets;
+        gc.insets.set(i.top, i.left, i.bottom, i.right + pad);
+        layout.setConstraints(headerPane, gc);
+        invalidate();
+        repaint();
+      }
+    });
     editHandler.computeEnabled();
     LocaleManager.addLocaleListener(myListener);
   }
@@ -457,7 +453,7 @@ class TableTab extends AnalyzerTab implements TruthTablePanel, Printable {
     body.setPreferredSize(new Dimension(tableWidth, bodyHeight));
     bodyPane.setPreferredSize(new Dimension(tableWidth, 1));
 
-    setPreferredSize(new Dimension(tableWidth, tableHeight));
+    setPreferredSize(new Dimension(tableWidth+40, tableHeight));
     revalidate();
     repaint();
   }
@@ -687,7 +683,6 @@ class TableTab extends AnalyzerTab implements TruthTablePanel, Printable {
 
       int top = canvasHeight - cellHeight - HEADER_VSEP;
       int left = Math.max(0, (canvasWidth - tableWidth) / 2);
-      int mid = left + inDim.width + COLUMNS_HSEP;
 
       g.setColor(Color.GRAY);
       int lineX = left + inDim.width + COLUMNS_HSEP / 2;
@@ -697,20 +692,11 @@ class TableTab extends AnalyzerTab implements TruthTablePanel, Printable {
 
       g.setColor(Color.BLACK);
       g.setFont(HEAD_FONT);
-      FontMetrics fm = g.getFontMetrics();
       inDim.paintHeaders(g, left, top);
       outDim.paintHeaders(g, left + inDim.width + COLUMNS_HSEP, top);
     }
   }
 
-  public void setEntryProvisional(int y, int x, Entry value) {
-    provisionalY = y;
-    provisionalX = x;
-    provisionalValue = value;
-    int top = (getHeight() - bodyHeight) / 2 + cellHeight + HEADER_VSEP + y * cellHeight;
-    repaint(0, top, body.getWidth(), cellHeight);
-  }
-  
   @Override
   EditHandler getEditHandler() {
     return editHandler;
@@ -773,150 +759,56 @@ class TableTab extends AnalyzerTab implements TruthTablePanel, Printable {
 
   PrintHandler printHandler = new PrintHandler() {
     @Override
-    public void print() {
-      LocaleManager S = com.cburch.logisim.gui.Strings.S;
-      PageFormat format = new PageFormat();
-      PrinterJob job = PrinterJob.getPrinterJob();
-      job.setPrintable(TableTab.this, format);
-      if (!job.printDialog())
-        return;
-      try {
-        job.print();
-      } catch (PrinterException e) {
-
-        JOptionPane.showMessageDialog(
-            KeyboardFocusManager.getCurrentKeyboardFocusManager().getActiveWindow(),
-            S.fmt("printError", e.toString()),
-            S.get("printErrorTitle"), JOptionPane.ERROR_MESSAGE);
-      }
+    public Dimension getExportImageSize() {
+      int width = tableWidth;
+      int height = headerHeight + bodyHeight;
+      return new Dimension(width, height);
     }
     
-    File lastFile;
     @Override
-    public void exportImage() {
-    	LocaleManager S = com.cburch.logisim.gui.Strings.S;
-        FileFilter[] filters = {
-          ExportImage.getFilter(ExportImage.FORMAT_PNG),
-          ExportImage.getFilter(ExportImage.FORMAT_GIF),
-          ExportImage.getFilter(ExportImage.FORMAT_JPG)
-        };
-        JFileChooser chooser = JFileChoosers.createSelected(lastFile);
-        chooser.setAcceptAllFileFilterUsed(false);
-        for (FileFilter ff : filters)
-          chooser.addChoosableFileFilter( ff);
-        chooser.setFileFilter(filters[0]);
-        chooser.setDialogTitle(S.get("exportImageFileSelect"));
+    public void paintExportImage(BufferedImage img, Graphics2D g) {
+      int width = img.getWidth();
+      int height = img.getHeight();
+      g.setClip(0, 0, width, height);
+      header.paintComponent(g, true, width, headerHeight);
+      g.translate(0, headerHeight);
+      body.paintComponent(g, true, width, bodyHeight);
+    }
+    
+    @Override
+    public int print(Graphics2D g, PageFormat pf, int pageNum, double w, double h) {
+      FontMetrics fm = g.getFontMetrics();
 
-        int returnVal = chooser.showDialog(
-            KeyboardFocusManager.getCurrentKeyboardFocusManager().getActiveWindow(),
-            S.get("exportImageButton"));
-        if (returnVal != JFileChooser.APPROVE_OPTION)
-          return;
-        File dest = chooser.getSelectedFile();
-        FileFilter fmt = chooser.getFileFilter();
-        if (!fmt.accept(dest)) {
-          if (fmt == filters[0]) dest = new File(dest + ".png");
-          else if (fmt == filters[1]) dest = new File(dest + ".gif");
-          else dest = new File(dest + ".jpg");
-        }
-        lastFile = dest;
-        if (dest.exists()) {
-          int confirm = JOptionPane.showConfirmDialog(
-              KeyboardFocusManager.getCurrentKeyboardFocusManager().getActiveWindow(),
-              S.get("confirmOverwriteMessage"),
-              S.get("confirmOverwriteTitle"),
-              JOptionPane.YES_NO_OPTION);
-          if (confirm != JOptionPane.YES_OPTION)
-            return;
-        }
-        TableTab.this.exportImage(dest,
-            fmt == filters[0] ? ExportImage.FORMAT_PNG
-            : fmt == filters[1] ? ExportImage.FORMAT_GIF
-            : ExportImage.FORMAT_JPG);
+      // shrink horizontally to fit
+      double scale = 1.0;
+      if (tableWidth > w)
+        scale = w / tableWidth;
+
+      // figure out how many pages we will need
+      int n = getRowCount();
+      double headHeight = (fm.getHeight() * 1.5 + headerHeight * scale);
+      int rowsPerPage = (int)((h - headHeight) / (cellHeight * scale));
+      int numPages = (n + rowsPerPage - 1) / rowsPerPage;
+      if (pageNum >= numPages)
+        return Printable.NO_SUCH_PAGE;
+
+      // g.drawRect(0, 0, (int)w-1, (int)h-1); // bage border
+      GraphicsUtil.drawText(g,
+          String.format("Combinational Analysis (page %d of %d)", pageNum+1, numPages),
+          (int)(w/2), 0, GraphicsUtil.H_CENTER, GraphicsUtil.V_TOP);
+
+      g.translate(0, fm.getHeight() * 1.5);
+      g.scale(scale, scale);
+      header.paintComponent(g, true, (int)(w/scale), headerHeight);
+      g.translate(0, headerHeight);
+
+      int yHeight = cellHeight * rowsPerPage;
+      int yTop = pageNum * yHeight;
+      g.translate(0, -yTop);
+      g.setClip(0, yTop, (int)(w/scale), yHeight);
+      body.paintComponent(g, true, (int)(w/scale), bodyHeight);
+
+      return Printable.PAGE_EXISTS;
     }
   };
-
-  public void exportImage(File dest, int fmt) {
-    LocaleManager S = com.cburch.logisim.gui.Strings.S;
-    Component parent = KeyboardFocusManager.getCurrentKeyboardFocusManager().getActiveWindow();
-
-    int width = tableWidth;
-    int height = headerHeight + bodyHeight;
-    BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-    Graphics base = img.getGraphics();
-    Graphics gr = base.create();
-    if (!(gr instanceof Graphics2D)) {
-      String msg = S.get("couldNotCreateImage");
-      JOptionPane.showMessageDialog(parent, msg);
-      gr.dispose();
-      return;
-    }
-    Graphics2D g = (Graphics2D)gr;
-    g.setColor(Color.white);
-    g.fillRect(0, 0, width, height);
-    g.setColor(Color.black);
-
-    g.setClip(0, 0, width, height);
-    header.paintComponent(g, true, width, headerHeight);
-    g.translate(0, headerHeight);
-    body.paintComponent(g, true, width, bodyHeight);
-
-    try {
-      switch (fmt) {
-      case ExportImage.FORMAT_GIF:
-        GifEncoder.toFile(img, dest, null);
-        break;
-      case ExportImage.FORMAT_PNG:
-        ImageIO.write(img, "PNG", dest);
-        break;
-      case ExportImage.FORMAT_JPG:
-        ImageIO.write(img, "JPEG", dest);
-        break;
-      }
-    } catch (Exception e) {
-      String msg = S.get("couldNotCreateFile");
-      JOptionPane.showMessageDialog(parent, msg);
-    } finally {
-      g.dispose();
-    }
-  }
-
-
-  public int print(Graphics pg, PageFormat pf, int pageNum) {
-    double imWidth = pf.getImageableWidth();
-    double imHeight = pf.getImageableHeight();
-    Graphics2D g = (Graphics2D) pg;
-    FontMetrics fm = g.getFontMetrics();
-
-    // shrink horizontally to fit
-    double scale = 1.0;
-    if (tableWidth > imWidth)
-      scale = imWidth / tableWidth;
-
-    // figure out how many pages we will need
-    int n = getRowCount();
-    double headHeight = (fm.getHeight() * 1.5 + headerHeight * scale);
-    int rowsPerPage = (int)((imHeight - headHeight) / (cellHeight * scale));
-    int numPages = (n + rowsPerPage - 1) / rowsPerPage;
-    if (pageNum >= numPages)
-      return Printable.NO_SUCH_PAGE;
-
-    g.translate(pf.getImageableX(), pf.getImageableY());
-    GraphicsUtil.drawText(g,
-        String.format("Combinational Analysis (page %d of %d)", pageNum+1, numPages),
-        (int)(imWidth/2), 0, GraphicsUtil.H_CENTER, GraphicsUtil.V_TOP);
-
-    g.translate(0, fm.getHeight() * 1.5);
-    g.scale(scale, scale);
-    header.paintComponent(g, true, (int)(imWidth/scale), headerHeight);
-    g.translate(0, headerHeight);
-
-    int yHeight = cellHeight * rowsPerPage;
-    int yTop = pageNum * yHeight;
-    g.translate(0, -yTop);
-    g.setClip(0, yTop, (int)(imWidth/scale), yHeight);
-    body.paintComponent(g, true, (int)(imWidth/scale), bodyHeight);
-
-    return Printable.PAGE_EXISTS;
-  }
 }

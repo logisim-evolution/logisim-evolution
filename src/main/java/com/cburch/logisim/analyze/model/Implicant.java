@@ -333,7 +333,7 @@ public class Implicant implements Comparable<Implicant> {
     return (unknowns << 16) | values;
   }
 
-  private Expression toProduct(TruthTable source) {
+  public Expression toProduct(TruthTable source) {
     Expression term = null;
     int cols = source.getInputColumnCount();
     for (int i = cols - 1; i >= 0; i--) {
@@ -346,7 +346,7 @@ public class Implicant implements Comparable<Implicant> {
     return term == null ? Expressions.constant(1) : term;
   }
 
-  private Expression toSum(TruthTable source) {
+  public Expression toSum(TruthTable source) {
     Expression term = null;
     int cols = source.getInputColumnCount();
     for (int i = cols - 1; i >= 0; i--) {

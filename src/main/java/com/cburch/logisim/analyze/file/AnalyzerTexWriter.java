@@ -30,7 +30,6 @@ package com.cburch.logisim.analyze.file;
 
 import static com.cburch.logisim.analyze.Strings.S;
 
-import com.cburch.logisim.analyze.data.ExpressionLatex;
 import com.cburch.logisim.analyze.data.KMapGroups;
 import com.cburch.logisim.analyze.data.KMapGroups.CoverColor;
 import com.cburch.logisim.analyze.data.KMapGroups.CoverInfo;
@@ -39,9 +38,13 @@ import com.cburch.logisim.analyze.gui.KarnaughMapPanel;
 import com.cburch.logisim.analyze.model.AnalyzerModel;
 import com.cburch.logisim.analyze.model.Entry;
 import com.cburch.logisim.analyze.model.Expression;
+import com.cburch.logisim.analyze.model.Expressions;
+import com.cburch.logisim.analyze.model.ParserException;
 import com.cburch.logisim.analyze.model.TruthTable;
 import com.cburch.logisim.analyze.model.Var;
+import com.cburch.logisim.analyze.model.Var.Bit;
 import com.cburch.logisim.analyze.model.VariableList;
+import com.cburch.logisim.analyze.model.Expression.Notation;
 import com.cburch.logisim.prefs.AppPreferences;
 import java.awt.Color;
 import java.io.File;
@@ -223,13 +226,15 @@ public class AnalyzerTexWriter {
     StringBuffer content = new StringBuffer();
     int[] reorder = reordered(model.getInputs().bits.size());
     for (int i = 0; i < model.getInputs().bits.size(); i++) {
-      String inp = model.getInputs().bits.get(reorder[i]);
-      if (inp.contains(":")) {
-        String[] split = inp.split(":");
-        content.append("{$" + split[0] + "_" + split[1] + "$}");
-      } else {
-        content.append("{$" + inp + "$}");
-      }
+      try {
+	    Bit inp = Bit.parse(model.getInputs().bits.get(reorder[i]));
+        content.append("{$"+inp.name);
+        if (inp.b >= 0)
+          content.append("_"+Integer.toString(inp.b));
+        content.append("$}");
+	  } catch (ParserException e) {
+		// TODO Auto-generated catch block
+	  }
     }
     return content.toString();
   }
@@ -394,6 +399,9 @@ public class AnalyzerTexWriter {
 
   public static void doSave(File file, AnalyzerModel model) throws IOException {
     boolean linedStyle = AppPreferences.KMAP_LINED_STYLE.getBoolean();
+    /* make sure the model is up to date */
+    boolean modelIsUpdating = model.getOutputExpressions().UpdatesEnabled();
+    model.getOutputExpressions().enableUpdates();
     PrintStream out = new PrintStream(file);
     try {
       /*
@@ -538,7 +546,7 @@ public class AnalyzerTexWriter {
               for (int idx = outp.width - 1; idx >= 0; idx--) {
                 String func = "$" + outp.name + "_{" + idx + "}$";
                 out.println(
-                    getKarnaughGroups(outp.name + ":" + idx, func, linedStyle, outcol++, model));
+                    getKarnaughGroups(outp.name + "[" + idx + "]", func, linedStyle, outcol++, model));
               }
             }
           }
@@ -550,13 +558,15 @@ public class AnalyzerTexWriter {
           for (int o = 0; o < model.getTruthTable().getOutputVariables().size(); o++) {
             Var outp = model.getTruthTable().getOutputVariable(o);
             if (outp.width == 1) {
-              Expression exp = model.getOutputExpressions().getMinimalExpression(outp.name);
-              out.println(new ExpressionLatex(exp, outp, 0).get() + "~\\\\");
+              Expression exp = Expressions.eq(Expressions.variable(outp.name),
+                  model.getOutputExpressions().getMinimalExpression(outp.name));
+              out.println(exp.toString(Notation.LaTeX)+ "~\\\\");
             } else {
               for (int idx = outp.width - 1; idx >= 0; idx--) {
-                Expression exp =
-                    model.getOutputExpressions().getMinimalExpression(outp.name + ":" + idx);
-                out.println(new ExpressionLatex(exp, outp, idx).get() + "~\\\\");
+                String name = outp.bitName(idx);
+                Expression exp = Expressions.eq(Expressions.variable(name),
+                    model.getOutputExpressions().getMinimalExpression(name));
+                out.println(exp.toString(Notation.LaTeX)+ "~\\\\");
               }
             }
           }
@@ -569,5 +579,7 @@ public class AnalyzerTexWriter {
     } finally {
       out.close();
     }
+    if (!modelIsUpdating)
+    	model.getOutputExpressions().disableUpdates();
   }
 }

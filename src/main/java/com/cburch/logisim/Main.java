@@ -30,7 +30,6 @@ package com.cburch.logisim;
 
 import com.cburch.logisim.gui.start.Startup;
 import com.cburch.logisim.prefs.AppPreferences;
-import com.cburch.logisim.util.MacCompatibility;
 
 import java.awt.GraphicsEnvironment;
 import java.io.PrintWriter;

@@ -62,7 +62,6 @@ import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
@@ -76,6 +75,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellEditor;
 import org.jdesktop.xswingx.BuddySupport;
 
+import com.cburch.logisim.analyze.model.ParserException;
 import com.cburch.logisim.analyze.model.Var;
 import com.cburch.logisim.analyze.model.VariableList;
 import com.cburch.logisim.analyze.model.VariableListEvent;
@@ -96,7 +96,7 @@ public class VariableTab extends AnalyzerTab {
   private JTable ioTable(VariableList data, LogisimMenuBar menubar) {
     final TableCellEditor ed1 = new SingleClickVarEditor(data);
     final TableCellEditor ed2 = new DoubleClickVarEditor(data);
-    JTable table = new JTable(9, 1) {
+    JTable table = new JTable(1, 1) {
       public TableCellEditor getCellEditor(int row, int column) {
         return (row == getRowCount() - 1 ? ed1 : ed2);
       }
@@ -388,6 +388,7 @@ public class VariableTab extends AnalyzerTab {
   }
 
   EditHandler editHandler = new EditHandler() {
+    @Override
     public void computeEnabled() {
       int n = (focus == null || focus.isEditing()) ? -1 : (focus.getRowCount() - 1);
       int i = (focus == null || focus.isEditing()) ? -1 : focus.getSelectedRow();
@@ -404,6 +405,8 @@ public class VariableTab extends AnalyzerTab {
       setEnabled(LogisimMenuBar.ADD_CONTROL, false);
       setEnabled(LogisimMenuBar.REMOVE_CONTROL, false);
     }
+    
+    @Override
     public void actionPerformed(ActionEvent e) {
       Object action = e.getSource();
       if (focus != null) focus.getActionMap().get(action).actionPerformed(null);
@@ -527,7 +530,6 @@ public class VariableTab extends AnalyzerTab {
   public class SingleClickVarEditor extends AbstractCellEditor implements TableCellEditor {
     JTextField field = new JTextField();
     JComboBox<Integer> width;
-    JPanel p;
     Var editing;
     VariableList data;
     
@@ -654,35 +656,12 @@ public class VariableTab extends AnalyzerTab {
   }
 
   Var parse(String s) {
-    s = s.trim();
-    int i = s.indexOf('[');
-    int j = s.lastIndexOf(']');
-    int w = 1;
-    if (0 < i && i < j && j == s.length()-1) {
-      String braces = s.substring(i+1, j);
-      if (!braces.endsWith("..0")) {
-        error.setText(S.get("variableFormat"));
-        return null;
-      }
-      try {
-        w = 1+Integer.parseInt(braces.substring(0, braces.length()-3));
-      } catch (NumberFormatException e) {
-        w = -1;
-      }
-      if (w < 1) {
-        error.setText(S.get("variableFormat"));
-        return null;
-      } else if (w > 32) {
-        error.setText(S.get("variableTooMuchBits"));
-        return null;
-      }
-      s = s.substring(0, i).trim();
-    } else if (i >= 0 || j >= 0) {
-      error.setText(S.get("variableFormat"));
+    try {
+      return Var.parse(s);
+    } catch (ParserException e) {
+      error.setText(e.getMessage());
       return null;
     }
-    s = s.trim();
-    return new Var(s, w);
   }
 
   private class VarTransferHandler extends TransferHandler {

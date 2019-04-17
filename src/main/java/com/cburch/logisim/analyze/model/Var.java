@@ -28,6 +28,9 @@
 
 package com.cburch.logisim.analyze.model;
 
+import static com.cburch.logisim.analyze.Strings.S;
+
+import java.text.ParseException;
 import java.util.Iterator;
 
 public class Var implements Iterable<String> {
@@ -58,11 +61,83 @@ public class Var implements Iterable<String> {
     else return name;
   }
 
+  public static Var parse(String s) throws ParserException {
+    s = s.trim();
+    int i = s.indexOf('[');
+    int j = s.lastIndexOf(']');
+    int w = 1;
+    if (0 < i && i < j && j == s.length()-1) {
+      String braces = s.substring(i+1, j);
+      if (!braces.endsWith("..0"))
+        throw new ParserException(S.getter("variableFormat"), i);
+      try {
+        w = 1+Integer.parseInt(braces.substring(0, braces.length()-3));
+      } catch (NumberFormatException e) {
+        throw new ParserException(S.getter("variableFormat"), i);
+      }
+      if (w < 1)
+        throw new ParserException(S.getter("variableFormat"), i);
+      else if (w > 32)
+        throw new ParserException(S.getter("variableTooMuchBits"), i);
+      s = s.substring(0, i).trim();
+    } else if (i >= 0 || j >= 0) {
+      throw new ParserException(S.getter("variableFormat"), i >= 0 ? i : j);
+    } else {
+      s = s.trim();
+    }
+    return new Var(s, w);
+  }
+  
+  public static class Bit {
+    public String name;
+    public int b; // -1 means no index
+    public Bit(String name, int b) {
+      this.name = name;
+      this.b = b;
+    }
+    public String toString() {
+      if (b == -1)
+        return name;
+      else
+        return name + "[" + b + "]";
+    }
+    public static Bit parse(String s) throws ParserException {
+      s = s.trim();
+      int i = s.indexOf(':');
+      if (i > 0) {
+        try {
+          String name = s.substring(0, i);
+          int sub = Integer.parseInt(s.substring(i+1));
+          return new Bit(name, sub);
+        } catch (NumberFormatException e) {
+          throw new ParserException(S.getter("badVariableIndexError"), i);
+        }
+      } else if (i == 0) {
+        throw new ParserException(S.getter("badVariableColonError"), i);
+      }
+      i = s.indexOf('[');
+      int j = s.lastIndexOf(']');
+      if (0 < i && i < j && j == s.length()-1) {
+        try {
+          String name = s.substring(0, i).trim();
+          int sub = Integer.parseInt(s.substring(i+1, j));
+          return new Bit(name, sub);
+        } catch (NumberFormatException e) {
+          throw new ParserException(S.getter("badVariableIndexError"), i);
+        }
+      } else if (i >= 0 || j >= 0) {
+        throw new ParserException(S.getter("badVariableBitFormError"), i >= 0 ? i : j);
+      }
+      return new Bit(s, -1);
+    }
+  }
+
+
   public String bitName(int b) {
     if (b >= width) {
       throw new IllegalArgumentException("Can't access bit " + b + " of " + width);
     }
-    if (width > 1) return name + ":" + b;
+    if (width > 1) return name + "[" + b + "]";
     else return name;
   }
 

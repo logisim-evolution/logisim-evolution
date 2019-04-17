@@ -33,15 +33,15 @@ public class Expressions {
     And(Expression a, Expression b) {
       super(a, b);
     }
-
+    
     @Override
     public int getPrecedence() {
-      return Expression.AND_LEVEL;
+      return Expression.Op.AND.Level;
     }
 
     @Override
-    public <T> T visit(ExpressionVisitor<T> visitor) {
-      return visitor.visitAnd(a, b);
+    public Op getOp() {
+    	return Expression.Op.AND;
     }
 
     @Override
@@ -50,8 +50,8 @@ public class Expressions {
     }
 
     @Override
-    void visit(Visitor visitor) {
-      visitor.visitAnd(a, b);
+    public <T> T visit(Visitor<T> visitor) {
+      return visitor.visitAnd(a, b);
     }
   }
 
@@ -96,6 +96,11 @@ public class Expressions {
     public int getPrecedence() {
       return Integer.MAX_VALUE;
     }
+    
+    @Override
+    public Op getOp() {
+      return null;
+    }
 
     @Override
     public int hashCode() {
@@ -103,18 +108,13 @@ public class Expressions {
     }
 
     @Override
-    public <T> T visit(ExpressionVisitor<T> visitor) {
+    public <T> T visit(Visitor<T> visitor) {
       return visitor.visitConstant(value);
     }
 
     @Override
     int visit(IntVisitor visitor) {
       return visitor.visitConstant(value);
-    }
-
-    @Override
-    void visit(Visitor visitor) {
-      visitor.visitConstant(value);
     }
   }
 
@@ -134,7 +134,12 @@ public class Expressions {
 
     @Override
     public int getPrecedence() {
-      return Expression.NOT_LEVEL;
+      return Expression.Op.NOT.Level;
+    }
+    
+    @Override
+    public Op getOp() {
+    	return Expression.Op.NOT;
     }
 
     @Override
@@ -143,18 +148,13 @@ public class Expressions {
     }
 
     @Override
-    public <T> T visit(ExpressionVisitor<T> visitor) {
+    public <T> T visit(Visitor<T> visitor) {
       return visitor.visitNot(a);
     }
 
     @Override
     int visit(IntVisitor visitor) {
       return visitor.visitNot(a);
-    }
-
-    @Override
-    void visit(Visitor visitor) {
-      visitor.visitNot(a);
     }
   }
 
@@ -165,11 +165,16 @@ public class Expressions {
 
     @Override
     public int getPrecedence() {
-      return Expression.OR_LEVEL;
+      return Expression.Op.OR.Level;
+    }
+    
+    @Override
+    public Op getOp() {
+    	return Expression.Op.OR;
     }
 
     @Override
-    public <T> T visit(ExpressionVisitor<T> visitor) {
+    public <T> T visit(Visitor<T> visitor) {
       return visitor.visitOr(a, b);
     }
 
@@ -177,14 +182,9 @@ public class Expressions {
     int visit(IntVisitor visitor) {
       return visitor.visitOr(a, b);
     }
-
-    @Override
-    void visit(Visitor visitor) {
-      visitor.visitOr(a, b);
-    }
   }
 
-  private static class Variable extends Expression {
+  protected static class Variable extends Expression {
     private String name;
 
     Variable(String name) {
@@ -207,20 +207,20 @@ public class Expressions {
     public int hashCode() {
       return name.hashCode();
     }
+    
+    @Override
+    public Op getOp() {
+    	return null;
+    }
 
     @Override
-    public <T> T visit(ExpressionVisitor<T> visitor) {
+    public <T> T visit(Visitor<T> visitor) {
       return visitor.visitVariable(name);
     }
 
     @Override
     int visit(IntVisitor visitor) {
       return visitor.visitVariable(name);
-    }
-
-    @Override
-    void visit(Visitor visitor) {
-      visitor.visitVariable(name);
     }
   }
 
@@ -231,11 +231,16 @@ public class Expressions {
 
     @Override
     public int getPrecedence() {
-      return Expression.XOR_LEVEL;
+      return Expression.Op.XOR.Level;
+    }
+    
+    @Override
+    public Op getOp() {
+    	return Expression.Op.XOR;
     }
 
     @Override
-    public <T> T visit(ExpressionVisitor<T> visitor) {
+    public <T> T visit(Visitor<T> visitor) {
       return visitor.visitXor(a, b);
     }
 
@@ -243,13 +248,34 @@ public class Expressions {
     int visit(IntVisitor visitor) {
       return visitor.visitXor(a, b);
     }
-
-    @Override
-    void visit(Visitor visitor) {
-      visitor.visitXor(a, b);
-    }
   }
 
+  protected static class Eq extends Binary {
+    Eq(Expression a, Expression b) {
+      super(a, b);
+    }
+
+    @Override
+    public int getPrecedence() {
+      return Expression.Op.EQ.Level;
+    }
+    
+    @Override
+    public Op getOp() {
+    	return Expression.Op.EQ;
+    }
+
+    @Override
+    public <T> T visit(Visitor<T> visitor) {
+      return visitor.visitEq(a, b);
+    }
+
+    @Override
+    int visit(IntVisitor visitor) {
+      return visitor.visitEq(a, b);
+    }
+  }
+  
   public static Expression and(Expression a, Expression b) {
     if (a == null) return b;
     if (b == null) return a;
@@ -271,14 +297,22 @@ public class Expressions {
     return new Or(a, b);
   }
 
-  public static Expression variable(String name) {
-    return new Variable(name);
-  }
-
   public static Expression xor(Expression a, Expression b) {
     if (a == null) return b;
     if (b == null) return a;
     return new Xor(a, b);
+  }
+  
+  public static Expression eq(Expression a, Expression b) {
+    if (a == null)
+      return b;
+    if (b == null)
+      return a;
+    return new Eq(a, b);
+  }
+
+  public static Expression variable(String name) {
+    return new Variable(name);
   }
 
   private Expressions() {}

@@ -342,7 +342,7 @@ public class KMapGroups {
     this.format = format;
     update();
   }
-
+  
   public ArrayList<KMapGroupInfo> getCovers() {
     return covers;
   }

@@ -99,9 +99,15 @@ class OutputSelector {
         if (txt.contains(":")) {
           int idx = txt.indexOf(':');
           as = new AttributedString(txt.substring(0, idx) + txt.substring(idx + 1, txt.length()));
-          as.addAttribute(
-              TextAttribute.SUPERSCRIPT, TextAttribute.SUPERSCRIPT_SUB, idx, txt.length() - 1);
-        } else as = new AttributedString(txt);
+          as.addAttribute(TextAttribute.SUPERSCRIPT, TextAttribute.SUPERSCRIPT_SUB, idx, txt.length() - 1);
+        } else if (txt.contains("[")) {
+          int start = txt.indexOf('[');
+          int stop = txt.lastIndexOf(']');
+          as = new AttributedString(txt.substring(0,start)+txt.substring(start+1,stop));
+          as.addAttribute(TextAttribute.SUPERSCRIPT, TextAttribute.SUPERSCRIPT_SUB, start, start+(stop-start-1));
+        } else {
+          as = new AttributedString(txt);
+        }
         as.addAttribute(TextAttribute.FAMILY, font.getFamily());
         as.addAttribute(TextAttribute.SIZE, font.getSize());
         TextLayout tl = new TextLayout(as.getIterator(), frc);

@@ -29,7 +29,6 @@
 package com.cburch.logisim.std.gates;
 
 import com.cburch.logisim.analyze.model.Expression;
-import com.cburch.logisim.analyze.model.ExpressionVisitor;
 import com.cburch.logisim.comp.ComponentFactory;
 import java.util.ArrayList;
 
@@ -39,7 +38,7 @@ import java.util.ArrayList;
  * permits easy manipulation of an expression's translation.
  */
 abstract class CircuitDetermination {
-  private static class Determine implements ExpressionVisitor<CircuitDetermination> {
+  private static class Determine implements Expression.Visitor<CircuitDetermination> {
     private Gate binary(
         CircuitDetermination aret, CircuitDetermination bret, ComponentFactory factory) {
       if (aret instanceof Gate) {
@@ -71,14 +70,17 @@ abstract class CircuitDetermination {
       return ret;
     }
 
+    @Override
     public CircuitDetermination visitAnd(Expression a, Expression b) {
       return binary(a.visit(this), b.visit(this), AndGate.FACTORY);
     }
 
+    @Override
     public CircuitDetermination visitConstant(int value) {
       return new Value(value);
     }
 
+    @Override
     public CircuitDetermination visitNot(Expression aBase) {
       CircuitDetermination aret = aBase.visit(this);
       if (aret instanceof Gate) {
@@ -106,16 +108,24 @@ abstract class CircuitDetermination {
       return ret;
     }
 
+    @Override
     public CircuitDetermination visitOr(Expression a, Expression b) {
       return binary(a.visit(this), b.visit(this), OrGate.FACTORY);
     }
 
+    @Override
     public CircuitDetermination visitVariable(String name) {
       return new Input(name);
     }
 
+    @Override
     public CircuitDetermination visitXor(Expression a, Expression b) {
       return binary(a.visit(this), b.visit(this), XorGate.FACTORY);
+    }
+    
+    @Override
+    public CircuitDetermination visitEq(Expression a, Expression b) {
+    	return binary(a.visit(this), b.visit(this), XnorGate.FACTORY);
     }
   }
 

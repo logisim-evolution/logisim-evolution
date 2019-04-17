@@ -98,7 +98,7 @@ class BuildCircuitButton extends JButton {
       boolean enableNands = true;
       for (String output : outputs.bits) {
         Expression expr = model.getOutputExpressions().getExpression(output);
-        if (expr != null && expr.containsXor()) {
+        if (expr != null && (expr.contains(Expression.Op.XOR) || expr.contains(Expression.Op.EQ))) {
           enableNands = false;
           break;
         }

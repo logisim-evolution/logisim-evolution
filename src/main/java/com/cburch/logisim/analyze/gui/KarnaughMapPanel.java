@@ -31,12 +31,12 @@ package com.cburch.logisim.analyze.gui;
 import static com.cburch.logisim.analyze.Strings.S;
 
 import com.cburch.draw.model.ColorBlindColors;
-import com.cburch.logisim.analyze.data.ExpressionData;
+import com.cburch.logisim.analyze.data.ExpressionRenderData;
 import com.cburch.logisim.analyze.data.KMapGroups;
-import com.cburch.logisim.analyze.gui.ExpressionView.RenderData;
 import com.cburch.logisim.analyze.model.AnalyzerModel;
 import com.cburch.logisim.analyze.model.Entry;
 import com.cburch.logisim.analyze.model.Expression;
+import com.cburch.logisim.analyze.model.Expression.Notation;
 import com.cburch.logisim.analyze.model.OutputExpressionsEvent;
 import com.cburch.logisim.analyze.model.OutputExpressionsListener;
 import com.cburch.logisim.analyze.model.TruthTable;
@@ -56,6 +56,8 @@ import java.awt.GridLayout;
 import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.Stroke;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -68,7 +70,8 @@ import java.util.List;
 import javax.swing.JPanel;
 
 public class KarnaughMapPanel extends JPanel
-    implements TruthTablePanel, MouseMotionListener, MouseListener {
+    implements MouseMotionListener, MouseListener {
+  public static final Color ERROR_COLOR = new Color(0xa0, 0x20, 0x20);
   private class MyListener implements OutputExpressionsListener, TruthTableListener {
 
     public void rowsChanged(TruthTableEvent event) {}
@@ -147,6 +150,7 @@ public class KarnaughMapPanel extends JPanel
   private static final int CELL_VERT_SEP = 10;
 
   private MyListener myListener = new MyListener();
+  private ExpressionView completeExpression;
   private AnalyzerModel model;
   private String output;
   private int cellWidth = 1;
@@ -163,9 +167,17 @@ public class KarnaughMapPanel extends JPanel
   private KMapGroups kMapGroups;
   private Bounds SelInfo;
   private Point hover;
+  private Notation notation = Notation.MATHEMATICAL;
+  private boolean selected;
+  private Dimension kMapDim;
+  
+  boolean isSelected() {
+	  return selected;
+  }
 
-  public KarnaughMapPanel(AnalyzerModel model) {
+  public KarnaughMapPanel(AnalyzerModel model, ExpressionView expr) {
     super(new GridLayout(1, 1));
+    completeExpression = expr;
     this.model = model;
     EntryFont = AppPreferences.getScaledFont(getFont());
     HeaderFont = EntryFont.deriveFont(Font.BOLD);
@@ -177,6 +189,19 @@ public class KarnaughMapPanel extends JPanel
     addMouseMotionListener(this);
     addMouseListener(this);
     hover = new Point(-1, -1);
+    FocusListener f = new FocusListener() {
+      public void focusGained(FocusEvent e) {
+        if (e.isTemporary()) return;
+        selected = true;
+        repaint();
+      }
+      public void focusLost(FocusEvent e) {
+        if (e.isTemporary()) return;
+        selected = false;
+        repaint();
+      }
+    };
+    addFocusListener(f);
   }
 
   private void computePreferredSize() {
@@ -218,10 +243,15 @@ public class KarnaughMapPanel extends JPanel
       selectedHeight = 3 * (int) t1.getBounds().getHeight();
       SelInfo = Bounds.create(0, boxHeight, boxWidth, selectedHeight);
       setPreferredSize(new Dimension(boxWidth, boxHeight + selectedHeight));
+      kMapDim = new Dimension(boxWidth,boxHeight); 
     }
 
     invalidate();
     if (g != null) repaint();
+  }
+  
+  public Dimension getKMapDim() {
+    return kMapDim;
   }
 
   private List<TextLayout> header(
@@ -436,6 +466,10 @@ public class KarnaughMapPanel extends JPanel
 
   @Override
   public void paintComponent(Graphics g) {
+	  paintKmap(g,true);
+  }
+  
+  public void paintKmap(Graphics g , boolean selectionBlock) {
     if (!(g instanceof Graphics2D)) return;
     Graphics2D g2 = (Graphics2D) g;
     if (AppPreferences.AntiAliassing.getBoolean()) {
@@ -444,9 +478,11 @@ public class KarnaughMapPanel extends JPanel
       g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
     }
     Color col = g2.getColor();
-    g2.setColor(getBackground());
-    g2.fillRect(0, 0, getBounds().width, getBounds().height);
-    g2.setColor(col);
+    if (selectionBlock) {
+      g2.setColor(getBackground());
+      g2.fillRect(0, 0, getBounds().width, getBounds().height);
+      g2.setColor(col);
+    }
 
     TruthTable table = model.getTruthTable();
     int inputCount = table.getInputColumnCount();
@@ -480,6 +516,8 @@ public class KarnaughMapPanel extends JPanel
       y += KNumberedInfo.getHeaderHeight() + cellHeight;
       PaintKMap(g2, x, y, table);
     }
+    if (!selectionBlock)
+      return;
     Expression expr = kMapGroups.GetHighlightedExpression();
     Color bcol = kMapGroups.GetBackgroundColor();
     FontRenderContext ctx = g2.getFontRenderContext();
@@ -498,12 +536,16 @@ public class KarnaughMapPanel extends JPanel
       TextLayout t1 = new TextLayout(S.get("SelectedKmapGroup"), HeaderFont, ctx);
       int xoff = (SelInfo.getWidth() - (int) t1.getBounds().getWidth()) / 2;
       t1.draw(g2, xoff + SelInfo.getX(), SelInfo.getY() + t1.getAscent());
-      FontMetrics fm =
-          g.getFontMetrics(AppPreferences.getScaledFont(ExpressionView.EXPRESSION_BASE_FONT));
-      RenderData t2 = new RenderData(new ExpressionData(expr), SelInfo.getWidth(), fm);
-      xoff = (SelInfo.getWidth() - t2.getWidth(g)) / 2;
+      ExpressionRenderData t2 = new ExpressionRenderData(expr, SelInfo.getWidth(), notation);
+      xoff = (SelInfo.getWidth() - t2.getWidth()) / 2;
       t2.paint(g, xoff + SelInfo.getX(), (int) (SelInfo.getY() + t1.getAscent() + t1.getDescent()));
     }
+  }
+  
+  public void setNotation(Notation notation) {
+	  if (notation == this.notation)
+		  return;
+	  this.notation = notation;
   }
 
   private String label(int row, int rows) {
@@ -603,13 +645,15 @@ public class KarnaughMapPanel extends JPanel
     StringBuffer str = new StringBuffer();
     int idx = 0;
     while (header != null && idx < header.length()) {
-      if (header.charAt(idx) == ':') {
+      if (header.charAt(idx) == ':' || header.charAt(idx) == '[') {
         idx++;
         starts.add(str.length());
         while (idx < header.length() && "0123456789".indexOf(header.charAt(idx)) >= 0) {
           str.append(header.charAt(idx++));
         }
         stops.add(str.length());
+        if ((idx < header.length()) && header.charAt(idx) == ']')
+          idx++;
       } else str.append(header.charAt(idx++));
     }
     AttributedString styled = new AttributedString(str.toString());
@@ -963,14 +1007,23 @@ public class KarnaughMapPanel extends JPanel
       int y = posY - KMapArea.getY();
       int col = x / cellWidth;
       int row = y / cellHeight;
-      if (kMapGroups.highlight(col, row)) repaint();
+      if (kMapGroups.highlight(col, row)) {
+        Expression expr = kMapGroups.GetHighlightedExpression();
+        completeExpression.getRenderData().setSubExpression(expr);
+        completeExpression.repaint();
+        repaint();
+      }
       if (col != hover.x || row != hover.y) {
         hover.x = col;
         hover.y = row;
         repaint();
       }
     } else {
-      if (!kMapGroups.clearHighlight()) repaint();
+      if (!kMapGroups.clearHighlight()) {
+        completeExpression.getRenderData().setSubExpression(null);
+        completeExpression.repaint();
+        repaint();
+      }
       if (hover.x >= 0 || hover.y >= 0) {
         hover.x = -1;
         hover.y = -1;

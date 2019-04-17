@@ -30,25 +30,54 @@ package com.cburch.logisim.analyze.gui;
 
 import static com.cburch.logisim.analyze.Strings.S;
 
+import com.cburch.logisim.analyze.data.ExpressionRenderData;
 import com.cburch.logisim.analyze.model.AnalyzerModel;
+import com.cburch.logisim.analyze.model.Expression.Notation;
 import com.cburch.logisim.analyze.model.OutputExpressions;
 import com.cburch.logisim.analyze.model.OutputExpressionsEvent;
 import com.cburch.logisim.analyze.model.OutputExpressionsListener;
+import com.cburch.logisim.gui.menu.EditHandler;
+import com.cburch.logisim.gui.menu.LogisimMenuBar;
+import com.cburch.logisim.gui.menu.LogisimMenuItem;
+import com.cburch.logisim.gui.menu.PrintHandler;
 import com.cburch.logisim.prefs.AppPreferences;
+
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.Image;
 import java.awt.Insets;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
+import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
+import java.awt.print.PageFormat;
+import java.awt.print.Printable;
+import java.io.IOException;
+
 import javax.swing.AbstractListModel;
 import javax.swing.ComboBoxModel;
+import javax.swing.InputMap;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.KeyStroke;
+import javax.swing.TransferHandler;
 
 class MinimizedTab extends AnalyzerTab {
   @SuppressWarnings("rawtypes")
@@ -154,6 +183,49 @@ class MinimizedTab extends AnalyzerTab {
       return choices[selected];
     }
   }
+  
+  @SuppressWarnings("rawtypes")
+  public static class NotationModel extends AbstractListModel implements ComboBoxModel {
+    private static final long serialVersionUID = 1L;
+    
+    private String[] choices;
+    private int selected;
+
+    public NotationModel() {
+    selected = 0;
+    choices = new String[3];
+    localeChanged();
+    }
+    
+    public int getSize() {
+    return choices.length;
+    }
+    
+    public Object getElementAt(int index) {
+    return choices[index];
+    }
+    
+    public void localeChanged() {
+    choices[Notation.LOGIC.Id] = S.get("expressionLogicrepresentation");
+    choices[Notation.MATHEMATICAL.Id] = S.get("expressionMathrepresentation");
+    choices[Notation.PROGRAMMING.Id] = S.get("expressionProgrepresentation");
+    fireContentsChanged(this, 0, choices.length);
+    }
+    
+    public void setSelectedItem(Object anItem) {
+      for (int i = 0; i < choices.length; i++) {
+        if (choices[i].equals(anItem)) {
+          selected = i;
+        }
+      }
+    }
+    
+    @Override
+    public Object getSelectedItem() {
+      return choices[selected];
+    }
+
+  }
 
   private class MyListener implements OutputExpressionsListener, ActionListener, ItemListener {
     public void actionPerformed(ActionEvent event) {
@@ -184,6 +256,10 @@ class MinimizedTab extends AnalyzerTab {
       } else if (event.getSource() == formatStyle) {
         StyleModel model = (StyleModel) formatStyle.getModel();
         model.setStyle(karnaughMap);
+      } else if (event.getSource() == notationChoice) {
+        Notation notation = Notation.values()[notationChoice.getSelectedIndex()];
+        minimizedExpr.setNotation(notation);
+        karnaughMap.setNotation(notation);
       } else {
         updateTab();
       }
@@ -196,12 +272,16 @@ class MinimizedTab extends AnalyzerTab {
   private KarnaughMapPanel karnaughMap;
   private JLabel formatLabel = new JLabel();
   private JLabel styleLabel = new JLabel();
+  private JLabel notationLabel = new JLabel();
 
   @SuppressWarnings({"rawtypes", "unchecked"})
   private JComboBox formatChoice = new JComboBox<>(new FormatModel());
 
   @SuppressWarnings({"rawtypes", "unchecked"})
   private JComboBox formatStyle = new JComboBox<>(new StyleModel());
+  
+  @SuppressWarnings({ "unchecked", "rawtypes" })
+  private JComboBox notationChoice = new JComboBox<>(new NotationModel());
 
   private ExpressionView minimizedExpr = new ExpressionView();
   private JButton setAsExpr = new JButton();
@@ -210,18 +290,18 @@ class MinimizedTab extends AnalyzerTab {
   private AnalyzerModel model;
   private OutputExpressions outputExprs;
 
-  public MinimizedTab(AnalyzerModel model) {
+  public MinimizedTab(AnalyzerModel model, LogisimMenuBar menubar) {
     this.model = model;
     this.outputExprs = model.getOutputExpressions();
     outputExprs.addOutputExpressionsListener(myListener);
 
     selector = new OutputSelector(model);
     selector.addItemListener(myListener);
-    karnaughMap = new KarnaughMapPanel(model);
-    karnaughMap.addMouseListener(new TruthTableMouseListener());
+    karnaughMap = new KarnaughMapPanel(model,minimizedExpr);
     setAsExpr.addActionListener(myListener);
     formatChoice.addItemListener(myListener);
     formatStyle.addItemListener(myListener);
+    notationChoice.addItemListener(myListener);
 
     JPanel buttons = new JPanel(new GridLayout(1, 1));
     buttons.add(setAsExpr);
@@ -252,6 +332,54 @@ class MinimizedTab extends AnalyzerTab {
 
     String selected = selector.getSelectedOutput();
     setAsExpr.setEnabled(selected != null && !outputExprs.isExpressionMinimal(selected));
+    TransferHandler ccpTab, ccpKmap, ccpExpr;
+    setTransferHandler(ccpTab = new MinimizedTransferHandler());
+    karnaughMap.setTransferHandler(ccpKmap = new KmapTransferHandler());
+    minimizedExpr.setTransferHandler(ccpExpr = new ExpressionTransferHandler());
+
+    InputMap inputMap1 = getInputMap();
+    InputMap inputMap2 = karnaughMap.getInputMap();
+    InputMap inputMap3 = minimizedExpr.getInputMap();
+    for (LogisimMenuItem item: LogisimMenuBar.EDIT_ITEMS) {
+      KeyStroke accel = menubar.getAccelerator(item);
+      inputMap1.put(accel, item);
+      inputMap2.put(accel, item);
+      inputMap3.put(accel, item);
+    }
+
+    getActionMap().put(LogisimMenuBar.COPY, ccpTab.getCopyAction());
+    karnaughMap.getActionMap().put(LogisimMenuBar.COPY, ccpKmap.getCopyAction());
+    minimizedExpr.getActionMap().put(LogisimMenuBar.COPY, ccpExpr.getCopyAction());
+
+    MouseMotionAdapter m = new MouseMotionAdapter() {
+      public void mouseDragged(MouseEvent e) {
+        JComponent c = (JComponent)e.getSource();
+        TransferHandler handler = c.getTransferHandler();
+        handler.exportAsDrag(c, e, TransferHandler.COPY);
+      }
+    };
+    karnaughMap.addMouseMotionListener(m);
+    minimizedExpr.addMouseMotionListener(m);
+
+    addMouseListener(new MouseAdapter() {
+      public void mouseClicked(MouseEvent e) {
+        requestFocusInWindow();
+      }
+    });
+
+    FocusListener f = new FocusListener() {
+      public void focusGained(FocusEvent e) {
+        if (e.isTemporary()) return;
+        editHandler.computeEnabled();
+      }
+      public void focusLost(FocusEvent e) {
+        if (e.isTemporary()) return;
+        editHandler.computeEnabled();
+      }
+    };
+    addFocusListener(f);
+    minimizedExpr.addFocusListener(f);
+    karnaughMap.addFocusListener(f);
   }
 
   private JPanel control() {
@@ -274,6 +402,9 @@ class MinimizedTab extends AnalyzerTab {
     gc.gridy++;
     gb.setConstraints(styleLabel, gc);
     control.add(styleLabel);
+    gc.gridy++;
+    gb.setConstraints(notationLabel, gc);
+    control.add(notationLabel);
     gc.gridx = 1;
     gc.gridy = 0;
     gc.anchor = GridBagConstraints.WEST;
@@ -285,6 +416,9 @@ class MinimizedTab extends AnalyzerTab {
     gc.gridy++;
     gb.setConstraints(formatStyle, gc);
     control.add(formatStyle);
+    gc.gridy++;
+    gb.setConstraints(notationChoice, gc);
+    control.add(notationChoice);
     return control;
   }
 
@@ -296,12 +430,13 @@ class MinimizedTab extends AnalyzerTab {
   void localeChanged() {
     selector.localeChanged();
     karnaughMap.localeChanged();
-    minimizedExpr.localeChanged();
     setAsExpr.setText(S.get("minimizedSetButton"));
     formatLabel.setText(S.get("minimizedFormat"));
     styleLabel.setText(S.get("KmapStyle"));
+    notationLabel.setText(S.get("ExpressionNotation"));
     ((FormatModel) formatChoice.getModel()).localeChanged();
     ((StyleModel) formatStyle.getModel()).localeChanged();
+    ((NotationModel) notationChoice.getModel()).localeChanged();
   }
 
   @SuppressWarnings("serial")
@@ -325,8 +460,187 @@ class MinimizedTab extends AnalyzerTab {
     setAsExpr.setEnabled(output != null && !outputExprs.isExpressionMinimal(output));
   }
   
-  public void editCopy() {}
-  public void editPaste() {}
-  public void editDelete() {}
-  public void editSelectAll() {}
+  @Override
+  EditHandler getEditHandler() {
+    return editHandler;
+  }
+
+  EditHandler editHandler = new EditHandler() {
+    @Override
+    public void computeEnabled() {
+      boolean viewing = minimizedExpr.isFocusOwner()
+          || karnaughMap.isFocusOwner();
+      setEnabled(LogisimMenuBar.CUT, false);
+      setEnabled(LogisimMenuBar.COPY, viewing);
+      setEnabled(LogisimMenuBar.PASTE, false);
+      setEnabled(LogisimMenuBar.DELETE, false);
+      setEnabled(LogisimMenuBar.DUPLICATE, false);
+      setEnabled(LogisimMenuBar.SELECT_ALL, false);
+      setEnabled(LogisimMenuBar.RAISE, false);
+      setEnabled(LogisimMenuBar.LOWER, false);
+      setEnabled(LogisimMenuBar.RAISE_TOP, false);
+      setEnabled(LogisimMenuBar.LOWER_BOTTOM, false);
+      setEnabled(LogisimMenuBar.ADD_CONTROL, false);
+      setEnabled(LogisimMenuBar.REMOVE_CONTROL, false);
+    }
+    @Override
+    public void actionPerformed(ActionEvent e) {
+      Object action = e.getSource();
+      if (minimizedExpr.isSelected())
+        minimizedExpr.getActionMap().get(action).actionPerformed(e);
+      else if (karnaughMap.isSelected())
+        karnaughMap.getActionMap().get(action).actionPerformed(e);
+    }
+  };
+
+  private class MinimizedTransferHandler extends TransferHandler {
+    @Override
+    protected Transferable createTransferable(JComponent c) {
+      if (minimizedExpr.isFocusOwner()) {
+        return new KmapSelection(karnaughMap);
+      } else if (karnaughMap.isFocusOwner()) {
+        return new ExpressionSelection(minimizedExpr.getRenderData());
+      } else {
+        return null;
+      }
+    }
+    @Override
+    public int getSourceActions(JComponent c) { return COPY; }
+    @Override
+    public boolean importData(TransferHandler.TransferSupport info) { return false; }
+    @Override
+    protected void exportDone(JComponent c, Transferable tdata, int action) { }
+    @Override
+    public boolean canImport(TransferHandler.TransferSupport support) { return false; }
+  }
+  
+  private class KmapTransferHandler extends MinimizedTransferHandler {
+    @Override
+    protected Transferable createTransferable(JComponent c) {
+      return new KmapSelection(karnaughMap);
+    }
+  }
+  
+  private class ExpressionTransferHandler extends MinimizedTransferHandler {
+    @Override
+    protected Transferable createTransferable(JComponent c) {
+      return new ExpressionSelection(minimizedExpr.getRenderData());
+    }
+  }
+  
+  static class ImageSelection implements Transferable {
+    private Image image;
+
+    public ImageSelection() { }
+
+    public void setImage(Image image) {
+      this.image = image;
+    }
+
+    @Override
+    public DataFlavor[] getTransferDataFlavors() {
+      return new DataFlavor[] { DataFlavor.imageFlavor };
+    }
+
+    @Override
+    public boolean isDataFlavorSupported(DataFlavor flavor) {
+      return DataFlavor.imageFlavor.equals(flavor);
+    }
+
+    @Override
+    public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException {
+      if (!DataFlavor.imageFlavor.equals(flavor)) {
+        throw new UnsupportedFlavorException(flavor);
+      }
+      return image;
+    }
+  }
+
+  static class KmapSelection extends ImageSelection {
+    public KmapSelection(KarnaughMapPanel kmap) {
+      int w = kmap.getKMapDim().width;
+      int h = kmap.getKMapDim().height;
+      BufferedImage img = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
+      Graphics2D g = img.createGraphics();
+      g.setColor(Color.WHITE);
+      g.fillRect(0, 0, w, h);
+      g.setColor(Color.BLACK);
+      kmap.paintKmap(g,false);
+      g.dispose();
+      setImage(img);
+    }
+  }
+
+  static class ExpressionSelection extends ImageSelection {
+    public ExpressionSelection(ExpressionRenderData prettyView) {
+      if (prettyView == null)
+        return;
+      Dimension dim = prettyView.getPreferredSize();
+      int w = dim.width;
+      int h = dim.height;
+      BufferedImage img = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
+      Graphics2D g = img.createGraphics();
+      g.setColor(Color.WHITE);
+      g.fillRect(0, 0, w, h);
+      g.setColor(Color.BLACK);
+      prettyView.paint(g,0,0);
+      g.dispose();
+      setImage(img);
+    }
+  }
+  
+
+  @Override
+  PrintHandler getPrintHandler() {
+    return printHandler;
+  }
+
+  PrintHandler printHandler = new PrintHandler() {
+    @Override
+    public Dimension getExportImageSize() {
+      int kWidth = karnaughMap.getKMapDim().width;
+      int kHeight = karnaughMap.getKMapDim().height;
+      int eWidth = minimizedExpr.getRenderData().getPreferredSize().width;
+      int eHeight = minimizedExpr.getRenderData().getPreferredSize().height;
+      int width = Math.max(kWidth, eWidth);
+      int height = kHeight + 30 + eHeight;
+      return new Dimension(width, height);
+    }
+
+    @Override
+    public void paintExportImage(BufferedImage img, Graphics2D g) {
+      int width = img.getWidth();
+      int height = img.getHeight();
+      g.setClip(0, 0, width, height);
+
+      AffineTransform xform = g.getTransform();
+      g.translate((width - karnaughMap.getWidth())/2, 0);
+      g.setColor(Color.BLACK);
+      karnaughMap.paintKmap(g,false);
+      g.setTransform(xform);
+
+      ExpressionRenderData prettyView = minimizedExpr.getRenderData();
+      g.translate((width - prettyView.getWidth())/2, karnaughMap.getKMapDim().height + 30);
+      g.setColor(Color.BLACK);
+      prettyView.paint(g,0,0);
+    }
+
+    @Override
+    public int print(Graphics2D g, PageFormat pf, int pageNum, double w, double h) {
+      if (pageNum != 0)
+        return Printable.NO_SUCH_PAGE;
+
+      AffineTransform xform = g.getTransform();
+      g.translate((w - karnaughMap.getWidth())/2, 0);
+      g.setColor(Color.BLACK);
+      karnaughMap.paintKmap(g,false);
+      g.setTransform(xform);
+
+      ExpressionRenderData prettyView = minimizedExpr.getRenderData();
+      g.translate((w - prettyView.getWidth())/2, karnaughMap.getKMapDim().height + 30);
+      g.setColor(Color.BLACK);
+      prettyView.paint(g,0,0);
+      return Printable.PAGE_EXISTS;
+    }
+  };
 }
