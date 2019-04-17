@@ -1,18 +1,18 @@
-/*******************************************************************************
+/**
  * This file is part of logisim-evolution.
  *
- *   logisim-evolution is free software: you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation, either version 3 of the License, or
- *   (at your option) any later version.
+ * Logisim-evolution is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by the
+ * Free Software Foundation, either version 3 of the License, or (at your
+ * option) any later version.
  *
- *   logisim-evolution is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *   GNU General Public License for more details.
+ * Logisim-evolution is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+ * for more details.
  *
- *   You should have received a copy of the GNU General Public License
- *   along with logisim-evolution.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along 
+ * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
  * Subsequent modifications by:
@@ -24,16 +24,11 @@
  *     http://hepia.hesge.ch/
  *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
  *     http://www.heig-vd.ch/
- *******************************************************************************/
+ */
 
 package com.cburch.logisim.std.wiring;
 
 import static com.cburch.logisim.std.Strings.S;
-
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.event.KeyEvent;
 
 import com.cburch.logisim.LogisimVersion;
 import com.cburch.logisim.circuit.RadixOption;
@@ -55,346 +50,354 @@ import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.prefs.PrefMonitorBooleanConvert;
 import com.cburch.logisim.tools.key.DirectionConfigurator;
 import com.cburch.logisim.util.GraphicsUtil;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.event.KeyEvent;
 
 public class Probe extends InstanceFactory {
-	public static class ProbeLogger extends InstanceLogger {
-		public ProbeLogger() {
-		}
+  public static class ProbeLogger extends InstanceLogger {
+    public ProbeLogger() {}
 
-		@Override
-		public String getLogName(InstanceState state, Object option) {
-			String ret = state.getAttributeValue(StdAttr.LABEL);
-			return ret != null && !ret.equals("") ? ret : null;
-		}
+    @Override
+    public String getLogName(InstanceState state, Object option) {
+      String ret = state.getAttributeValue(StdAttr.LABEL);
+      return ret != null && !ret.equals("") ? ret : null;
+    }
 
-		@Override
-		public Value getLogValue(InstanceState state, Object option) {
-			return getValue(state);
-		}
-	}
+    @Override
+    public Value getLogValue(InstanceState state, Object option) {
+      return getValue(state);
+    }
+  }
 
-	private static class StateData implements InstanceData, Cloneable {
-		Value curValue = Value.NIL;
+  private static class StateData implements InstanceData, Cloneable {
+    Value curValue = Value.NIL;
 
-		@Override
-		public Object clone() {
-			try {
-				return super.clone();
-			} catch (CloneNotSupportedException e) {
-				return null;
-			}
-		}
-	}
+    @Override
+    public Object clone() {
+      try {
+        return super.clone();
+      } catch (CloneNotSupportedException e) {
+        return null;
+      }
+    }
+  }
 
-	public static Bounds getOffsetBounds(Direction dir, BitWidth width,
-			RadixOption radix, boolean NewLayout, boolean IsPin) {
-		int len = radix == null || radix == RadixOption.RADIX_2 ? width
-				.getWidth() : radix.getMaxLength(width);
-		int bwidth,bheight,x,y;
-		if (radix == RadixOption.RADIX_2) {
-			bwidth = (len < 2) ? 20 : (len >= 8) ? 80 : len*10;
-			bheight = (len > 24) ? 80 : (len > 16) ? 60 : (len > 8) ? 40 : 20;
-		} else {
-			if (len < 2)
-				bwidth = 20;
-			else 
-				bwidth = len*Pin.DIGIT_WIDTH;
-			bheight = 20;
-		}
-		if (NewLayout) bwidth+= (len == 1) ? 20 : 25;
-		bwidth = ((bwidth+9)/10)*10;
-		if (dir == Direction.EAST) {
-			x = -bwidth;
-			y = -(bheight/2);
-		} else if (dir == Direction.WEST) {
-			x = 0;
-			y = -(bheight/2);
-		} else if (dir == Direction.SOUTH) {
-			if (NewLayout&&IsPin) {
-				x = bwidth;
-				bwidth = bheight;
-				bheight = x;
-			}
-			x = -(bwidth/2);
-			y = -bheight;
-		} else {
-			if (NewLayout&&IsPin) {
-				x = bwidth;
-				bwidth = bheight;
-				bheight = x;
-			}
-			x = -(bwidth/2);
-			y = 0;
-		}
-		return Bounds.create(x, y, bwidth, bheight);
-	}
+  public static Bounds getOffsetBounds(
+      Direction dir, BitWidth width, RadixOption radix, boolean NewLayout, boolean IsPin) {
+    int len =
+        radix == null || radix == RadixOption.RADIX_2
+            ? width.getWidth()
+            : radix.getMaxLength(width);
+    int bwidth, bheight, x, y;
+    if (radix == RadixOption.RADIX_2) {
+      bwidth = (len < 2) ? 20 : (len >= 8) ? 80 : len * 10;
+      bheight = (len > 24) ? 80 : (len > 16) ? 60 : (len > 8) ? 40 : 20;
+    } else {
+      if (len < 2) bwidth = 20;
+      else bwidth = len * Pin.DIGIT_WIDTH;
+      bheight = 20;
+    }
+    if (NewLayout) bwidth += (len == 1) ? 20 : 25;
+    bwidth = ((bwidth + 9) / 10) * 10;
+    if (dir == Direction.EAST) {
+      x = -bwidth;
+      y = -(bheight / 2);
+    } else if (dir == Direction.WEST) {
+      x = 0;
+      y = -(bheight / 2);
+    } else if (dir == Direction.SOUTH) {
+      if (NewLayout && IsPin) {
+        x = bwidth;
+        bwidth = bheight;
+        bheight = x;
+      }
+      x = -(bwidth / 2);
+      y = -bheight;
+    } else {
+      if (NewLayout && IsPin) {
+        x = bwidth;
+        bwidth = bheight;
+        bheight = x;
+      }
+      x = -(bwidth / 2);
+      y = 0;
+    }
+    return Bounds.create(x, y, bwidth, bheight);
+  }
 
-	private static Value getValue(InstanceState state) {
-		StateData data = (StateData) state.getData();
-		return data == null ? Value.NIL : data.curValue;
-	}
-	static void paintValue(InstancePainter painter, Value value) {
-		if (painter.getAttributeValue(ProbeAttributes.PROBEAPPEARANCE)==ProbeAttributes.APPEAR_EVOLUTION_NEW)
-			paintValue(painter,value,false);
-		else
-			paintOldStyleValue(painter,value);
-	}
-	
-	static void paintOldStyleValue(InstancePainter painter, Value value) {
-		Graphics g = painter.getGraphics();
-		Bounds bds = painter.getBounds(); // intentionally with no graphics
-											// object - we don't want label
-											// included
+  private static Value getValue(InstanceState state) {
+    StateData data = (StateData) state.getData();
+    return data == null ? Value.NIL : data.curValue;
+  }
 
-		RadixOption radix = painter.getAttributeValue(RadixOption.ATTRIBUTE);
-		if (radix == null || radix == RadixOption.RADIX_2) {
-			int x = bds.getX();
-			int y = bds.getY();
-			int wid = value.getWidth();
-			if (wid == 0) {
-				x += bds.getWidth() / 2;
-				y += bds.getHeight() / 2;
-				GraphicsUtil.switchToWidth(g, 2);
-				g.drawLine(x - 4, y, x + 4, y);
-				return;
-			}
-			int x0 = bds.getX() + bds.getWidth() - 5;
-			int compWidth = wid * 10;
-			if (compWidth < bds.getWidth() - 3) {
-				x0 = bds.getX() + (bds.getWidth() + compWidth) / 2 - 5;
-			}
-			int cx = x0;
-			int cy = bds.getY() + bds.getHeight() - 10;
-			int cur = 0;
-			for (int k = 0; k < wid; k++) {
-				GraphicsUtil.drawCenteredText(g,
-						value.get(k).toDisplayString(), cx, cy);
-				++cur;
-				if (cur == 8) {
-					cur = 0;
-					cx = x0;
-					cy -= 14;
-				} else {
-					cx -= 10;
-				}
-			}
-		} else {
-			String text = radix.toString(value);
-			GraphicsUtil.drawCenteredText(g, text, bds.getX() + bds.getWidth()
-				/ 2, bds.getY() + bds.getHeight() / 2 - 2);
-		}
-	}
-	
-	@Override
-	public Object getDefaultAttributeValue(Attribute<?> attr, LogisimVersion ver) {
-		if (attr.equals(ProbeAttributes.PROBEAPPEARANCE)) {
-			return StdAttr.APPEAR_CLASSIC;
-		} else {
-			return super.getDefaultAttributeValue(attr, ver);
-		}
-	}
+  static void paintValue(InstancePainter painter, Value value) {
+    if (painter.getAttributeValue(ProbeAttributes.PROBEAPPEARANCE)
+        == ProbeAttributes.APPEAR_EVOLUTION_NEW) paintValue(painter, value, false);
+    else paintOldStyleValue(painter, value);
+  }
 
-	static void paintValue(InstancePainter painter, Value value, boolean colored) {
-		Graphics g = painter.getGraphics();
-		Graphics2D g2 = (Graphics2D)g;
-		Bounds bds = painter.getBounds(); // intentionally with no graphics
-											// object - we don't want label
-											// included
-		g.setFont(Pin.DEFAULT_FONT);
-		boolean IsOutput = (painter.getAttributeSet().containsAttribute(Pin.ATTR_TYPE)) ? painter.getAttributeValue(Pin.ATTR_TYPE):false;
-		if (painter.getAttributeValue(ProbeAttributes.PROBEAPPEARANCE)!=ProbeAttributes.APPEAR_EVOLUTION_NEW) {
-			if (colored) {
-				int x = bds.getX();
-				int y = bds.getY();
-				if (!IsOutput) {
-					g.setColor(value.get(0).getColor());
-					g.fillOval(x + 5, y + 4, 11, 13);
-				}
-				if (!IsOutput) g.setColor(Color.WHITE);
-				GraphicsUtil.drawCenteredText(g,value.get(0).toDisplayString(), x + 10, y + 9);
-			} else
-				paintOldStyleValue(painter,value);
-			return;
-		}
-		RadixOption radix = painter.getAttributeValue(RadixOption.ATTRIBUTE);
-		int LabelValueXOffset = 15;
-		if (radix != null && radix != RadixOption.RADIX_2)
-			LabelValueXOffset += 3;
-		g.setColor(Color.BLUE);
-		g2.scale(0.7, 0.7);
-		g2.drawString(radix.GetIndexChar(), (int)((bds.getX()+bds.getWidth()-LabelValueXOffset)/0.7), 
-				     (int)((bds.getY()+bds.getHeight()-2)/0.7));
-		g2.scale(1.0/0.7, 1.0/0.7);
-		g.setColor(Color.BLACK);
-		if (radix == null || radix == RadixOption.RADIX_2) {
-			int x = bds.getX();
-			int y = bds.getY();
-			int wid = value.getWidth();
-			if (wid == 0) {
-				x += bds.getWidth() / 2;
-				y += bds.getHeight() / 2;
-				GraphicsUtil.switchToWidth(g, 2);
-				g.drawLine(x - 4, y, x + 4, y);
-				return;
-			}
-			int yoffset = 12;
-			int x0 = bds.getX() + bds.getWidth() - 20;
-			int cx = x0;
-			int cy = bds.getY() + bds.getHeight() - yoffset;
-			int cur = 0;
-			for (int k = 0; k < wid; k++) {
-				GraphicsUtil.drawCenteredText(g,value.get(k).toDisplayString(), cx, cy);
-				++cur;
-				if (cur == 8) {
-					cur = 0;
-					cx = x0;
-					cy -= 20;
-				} else {
-					cx -= 10;
-				}
-			}
-		} else {
-			String text = radix.toString(value);
-			int ypos = bds.getY() + bds.getHeight() / 2;
-			int cy = ypos;
-			int cx = bds.getX() + bds.getWidth()-LabelValueXOffset-2;
-			for (int k = text.length()-1 ; k >= 0 ; k--) {
-				GraphicsUtil.drawText(g, text.substring(k, k+1), cx,cy-1,GraphicsUtil.H_RIGHT, GraphicsUtil.H_CENTER);
-				cx -= Pin.DIGIT_WIDTH;
-			}
-		}
-	}
+  static void paintOldStyleValue(InstancePainter painter, Value value) {
+    Graphics g = painter.getGraphics();
+    Bounds bds = painter.getBounds(); // intentionally with no graphics
+    // object - we don't want label
+    // included
 
-	public static final Probe FACTORY = new Probe();
+    RadixOption radix = painter.getAttributeValue(RadixOption.ATTRIBUTE);
+    if (radix == null || radix == RadixOption.RADIX_2) {
+      int x = bds.getX();
+      int y = bds.getY();
+      int wid = value.getWidth();
+      if (wid == 0) {
+        x += bds.getWidth() / 2;
+        y += bds.getHeight() / 2;
+        GraphicsUtil.switchToWidth(g, 2);
+        g.drawLine(x - 4, y, x + 4, y);
+        return;
+      }
+      int x0 = bds.getX() + bds.getWidth() - 5;
+      int compWidth = wid * 10;
+      if (compWidth < bds.getWidth() - 3) {
+        x0 = bds.getX() + (bds.getWidth() + compWidth) / 2 - 5;
+      }
+      int cx = x0;
+      int cy = bds.getY() + bds.getHeight() - 10;
+      int cur = 0;
+      for (int k = 0; k < wid; k++) {
+        GraphicsUtil.drawCenteredText(g, value.get(k).toDisplayString(), cx, cy);
+        ++cur;
+        if (cur == 8) {
+          cur = 0;
+          cx = x0;
+          cy -= 14;
+        } else {
+          cx -= 10;
+        }
+      }
+    } else {
+      String text = radix.toString(value);
+      GraphicsUtil.drawCenteredText(
+          g, text, bds.getX() + bds.getWidth() / 2, bds.getY() + bds.getHeight() / 2 - 2);
+    }
+  }
 
-	public Probe() {
-		super("Probe", S.getter("probeComponent"));
-		setIconName("probe.gif");
-		setKeyConfigurator(new DirectionConfigurator(StdAttr.LABEL_LOC, KeyEvent.ALT_DOWN_MASK));
-		setFacingAttribute(StdAttr.FACING);
-		setInstanceLogger(ProbeLogger.class);
-	}
+  @Override
+  public Object getDefaultAttributeValue(Attribute<?> attr, LogisimVersion ver) {
+    if (attr.equals(ProbeAttributes.PROBEAPPEARANCE)) {
+      return StdAttr.APPEAR_CLASSIC;
+    } else {
+      return super.getDefaultAttributeValue(attr, ver);
+    }
+  }
 
-	//
-	// methods for instances
-	//
-	@Override
-	protected void configureNewInstance(Instance instance) {
-		instance.setPorts(new Port[] { new Port(0, 0, Port.INPUT,
-				BitWidth.UNKNOWN) });
-		instance.addAttributeListener();
-		((PrefMonitorBooleanConvert)AppPreferences.NEW_INPUT_OUTPUT_SHAPES).addConvertListener((ProbeAttributes)instance.getAttributeSet());
-		instance.computeLabelTextField(Instance.AVOID_LEFT);
-	}
+  static void paintValue(InstancePainter painter, Value value, boolean colored) {
+    Graphics g = painter.getGraphics();
+    Graphics2D g2 = (Graphics2D) g;
+    Bounds bds = painter.getBounds(); // intentionally with no graphics
+    // object - we don't want label
+    // included
+    g.setFont(Pin.DEFAULT_FONT);
+    boolean IsOutput =
+        (painter.getAttributeSet().containsAttribute(Pin.ATTR_TYPE))
+            ? painter.getAttributeValue(Pin.ATTR_TYPE)
+            : false;
+    if (painter.getAttributeValue(ProbeAttributes.PROBEAPPEARANCE)
+        != ProbeAttributes.APPEAR_EVOLUTION_NEW) {
+      if (colored) {
+        int x = bds.getX();
+        int y = bds.getY();
+        if (!IsOutput) {
+          g.setColor(value.get(0).getColor());
+          g.fillOval(x + 5, y + 4, 11, 13);
+        }
+        if (!IsOutput) g.setColor(Color.WHITE);
+        GraphicsUtil.drawCenteredText(g, value.get(0).toDisplayString(), x + 10, y + 9);
+      } else paintOldStyleValue(painter, value);
+      return;
+    }
+    RadixOption radix = painter.getAttributeValue(RadixOption.ATTRIBUTE);
+    int LabelValueXOffset = 15;
+    if (radix != null && radix != RadixOption.RADIX_2) LabelValueXOffset += 3;
+    g.setColor(Color.BLUE);
+    g2.scale(0.7, 0.7);
+    g2.drawString(
+        radix.GetIndexChar(),
+        (int) ((bds.getX() + bds.getWidth() - LabelValueXOffset) / 0.7),
+        (int) ((bds.getY() + bds.getHeight() - 2) / 0.7));
+    g2.scale(1.0 / 0.7, 1.0 / 0.7);
+    g.setColor(Color.BLACK);
+    if (radix == null || radix == RadixOption.RADIX_2) {
+      int x = bds.getX();
+      int y = bds.getY();
+      int wid = value.getWidth();
+      if (wid == 0) {
+        x += bds.getWidth() / 2;
+        y += bds.getHeight() / 2;
+        GraphicsUtil.switchToWidth(g, 2);
+        g.drawLine(x - 4, y, x + 4, y);
+        return;
+      }
+      int yoffset = 12;
+      int x0 = bds.getX() + bds.getWidth() - 20;
+      int cx = x0;
+      int cy = bds.getY() + bds.getHeight() - yoffset;
+      int cur = 0;
+      for (int k = 0; k < wid; k++) {
+        GraphicsUtil.drawCenteredText(g, value.get(k).toDisplayString(), cx, cy);
+        ++cur;
+        if (cur == 8) {
+          cur = 0;
+          cx = x0;
+          cy -= 20;
+        } else {
+          cx -= 10;
+        }
+      }
+    } else {
+      String text = radix.toString(value);
+      int ypos = bds.getY() + bds.getHeight() / 2;
+      int cy = ypos;
+      int cx = bds.getX() + bds.getWidth() - LabelValueXOffset - 2;
+      for (int k = text.length() - 1; k >= 0; k--) {
+        GraphicsUtil.drawText(
+            g, text.substring(k, k + 1), cx, cy - 1, GraphicsUtil.H_RIGHT, GraphicsUtil.H_CENTER);
+        cx -= Pin.DIGIT_WIDTH;
+      }
+    }
+  }
 
-	@Override
-	public AttributeSet createAttributeSet() {
-		AttributeSet attrs = new ProbeAttributes();
-		attrs.setValue(ProbeAttributes.PROBEAPPEARANCE, ProbeAttributes.GetDefaultProbeAppearance());
-		return attrs;
-	}
+  public static final Probe FACTORY = new Probe();
 
-	@Override
-	public Bounds getOffsetBounds(AttributeSet attrsBase) {
-		ProbeAttributes attrs = (ProbeAttributes) attrsBase;
-		return getOffsetBounds(attrs.facing, attrs.width, attrs.radix,
-				attrs.Appearance==ProbeAttributes.APPEAR_EVOLUTION_NEW,false);
-	}
+  public Probe() {
+    super("Probe", S.getter("probeComponent"));
+    setIconName("probe.gif");
+    setKeyConfigurator(new DirectionConfigurator(StdAttr.LABEL_LOC, KeyEvent.ALT_DOWN_MASK));
+    setFacingAttribute(StdAttr.FACING);
+    setInstanceLogger(ProbeLogger.class);
+  }
 
-	@Override
-	public boolean HDLSupportedComponent(String HDLIdentifier,
-			AttributeSet attrs) {
-		return true;
-	}
+  //
+  // methods for instances
+  //
+  @Override
+  protected void configureNewInstance(Instance instance) {
+    instance.setPorts(new Port[] {new Port(0, 0, Port.INPUT, BitWidth.UNKNOWN)});
+    instance.addAttributeListener();
+    ((PrefMonitorBooleanConvert) AppPreferences.NEW_INPUT_OUTPUT_SHAPES)
+        .addConvertListener((ProbeAttributes) instance.getAttributeSet());
+    instance.computeLabelTextField(Instance.AVOID_LEFT);
+  }
 
-	@Override
-	protected void instanceAttributeChanged(Instance instance, Attribute<?> attr) {
-		if (attr == StdAttr.LABEL_LOC) {
-			instance.computeLabelTextField(Instance.AVOID_LEFT);
-		} else if (attr == StdAttr.FACING || attr == RadixOption.ATTRIBUTE || attr == ProbeAttributes.PROBEAPPEARANCE) {
-			instance.recomputeBounds();
-			instance.computeLabelTextField(Instance.AVOID_LEFT);
-		}
-	}
+  @Override
+  public AttributeSet createAttributeSet() {
+    AttributeSet attrs = new ProbeAttributes();
+    attrs.setValue(ProbeAttributes.PROBEAPPEARANCE, ProbeAttributes.GetDefaultProbeAppearance());
+    return attrs;
+  }
 
-	//
-	// graphics methods
-	//
-	@Override
-	public void paintGhost(InstancePainter painter) {
-		Graphics g = painter.getGraphics();
-		Bounds bds = painter.getOffsetBounds();
-		g.drawOval(bds.getX() + 1, bds.getY() + 1, bds.getWidth() - 1,
-				bds.getHeight() - 1);
-	}
+  @Override
+  public Bounds getOffsetBounds(AttributeSet attrsBase) {
+    ProbeAttributes attrs = (ProbeAttributes) attrsBase;
+    return getOffsetBounds(
+        attrs.facing,
+        attrs.width,
+        attrs.radix,
+        attrs.Appearance == ProbeAttributes.APPEAR_EVOLUTION_NEW,
+        false);
+  }
 
-	@Override
-	public void paintInstance(InstancePainter painter) {
-		Value value = getValue(painter);
+  @Override
+  public boolean HDLSupportedComponent(String HDLIdentifier, AttributeSet attrs) {
+    return true;
+  }
 
-		Graphics g = painter.getGraphics();
-		Bounds bds = painter.getBounds(); // intentionally with no graphics
-											// object - we don't want label
-											// included
-		int x = bds.getX();
-		int y = bds.getY();
-		Color back = new Color(0xff, 0xf0, 0x99);
-		if (value.getWidth() <= 1) {
-			g.setColor(back);
-			g.fillOval(x + 1, y + 1, bds.getWidth() - 2, bds.getHeight() - 2);
-			g.setColor(Color.lightGray);
-			g.drawOval(x + 1, y + 1, bds.getWidth() - 2, bds.getHeight() - 2);
-		} else {
-			g.setColor(back);
-			g.fillRoundRect(x + 1, y + 1, bds.getWidth() - 2,
-					bds.getHeight() - 2, 20, 20);
-			g.setColor(Color.lightGray);
-			g.drawRoundRect(x + 1, y + 1, bds.getWidth() - 2,
-					bds.getHeight() - 2, 20, 20);
-		}
+  @Override
+  protected void instanceAttributeChanged(Instance instance, Attribute<?> attr) {
+    if (attr == StdAttr.LABEL_LOC) {
+      instance.computeLabelTextField(Instance.AVOID_LEFT);
+    } else if (attr == StdAttr.FACING
+        || attr == RadixOption.ATTRIBUTE
+        || attr == ProbeAttributes.PROBEAPPEARANCE) {
+      instance.recomputeBounds();
+      instance.computeLabelTextField(Instance.AVOID_LEFT);
+    }
+  }
 
-		g.setColor(Color.GRAY);
-		painter.drawLabel();
-		g.setColor(Color.DARK_GRAY);
+  //
+  // graphics methods
+  //
+  @Override
+  public void paintGhost(InstancePainter painter) {
+    Graphics g = painter.getGraphics();
+    Bounds bds = painter.getOffsetBounds();
+    g.drawOval(bds.getX() + 1, bds.getY() + 1, bds.getWidth() - 1, bds.getHeight() - 1);
+  }
 
-		if (!painter.getShowState()) {
-			if (value.getWidth() > 0) {
-				GraphicsUtil.drawCenteredText(g, "x" + value.getWidth(),
-						bds.getX() + bds.getWidth() / 2,
-						bds.getY() + bds.getHeight() / 2);
-			}
-		} else {
-			paintValue(painter, value);
-		}
+  @Override
+  public void paintInstance(InstancePainter painter) {
+    Value value = getValue(painter);
 
-		painter.drawPorts();
-	}
+    Graphics g = painter.getGraphics();
+    Bounds bds = painter.getBounds(); // intentionally with no graphics
+    // object - we don't want label
+    // included
+    int x = bds.getX();
+    int y = bds.getY();
+    Color back = new Color(0xff, 0xf0, 0x99);
+    if (value.getWidth() <= 1) {
+      g.setColor(back);
+      g.fillOval(x + 1, y + 1, bds.getWidth() - 2, bds.getHeight() - 2);
+      g.setColor(Color.lightGray);
+      g.drawOval(x + 1, y + 1, bds.getWidth() - 2, bds.getHeight() - 2);
+    } else {
+      g.setColor(back);
+      g.fillRoundRect(x + 1, y + 1, bds.getWidth() - 2, bds.getHeight() - 2, 20, 20);
+      g.setColor(Color.lightGray);
+      g.drawRoundRect(x + 1, y + 1, bds.getWidth() - 2, bds.getHeight() - 2, 20, 20);
+    }
 
-	@Override
-	public void propagate(InstanceState state) {
-		StateData oldData = (StateData) state.getData();
-		Value oldValue = oldData == null ? Value.NIL : oldData.curValue;
-		Value newValue = state.getPortValue(0);
-		boolean same = oldValue == null ? newValue == null : oldValue
-				.equals(newValue);
-		if (!same) {
-			if (oldData == null) {
-				oldData = new StateData();
-				oldData.curValue = newValue;
-				state.setData(oldData);
-			} else {
-				oldData.curValue = newValue;
-			}
-			int oldWidth = oldValue == null ? 1 : oldValue.getBitWidth()
-					.getWidth();
-			int newWidth = newValue.getBitWidth().getWidth();
-			if (oldWidth != newWidth) {
-				ProbeAttributes attrs = (ProbeAttributes) state
-						.getAttributeSet();
-				attrs.width = newValue.getBitWidth();
-				state.getInstance().recomputeBounds();
-				state.getInstance().computeLabelTextField(Instance.AVOID_LEFT);
-			}
-		}
-	}
+    g.setColor(Color.GRAY);
+    painter.drawLabel();
+    g.setColor(Color.DARK_GRAY);
+
+    if (!painter.getShowState()) {
+      if (value.getWidth() > 0) {
+        GraphicsUtil.drawCenteredText(
+            g,
+            "x" + value.getWidth(),
+            bds.getX() + bds.getWidth() / 2,
+            bds.getY() + bds.getHeight() / 2);
+      }
+    } else {
+      paintValue(painter, value);
+    }
+
+    painter.drawPorts();
+  }
+
+  @Override
+  public void propagate(InstanceState state) {
+    StateData oldData = (StateData) state.getData();
+    Value oldValue = oldData == null ? Value.NIL : oldData.curValue;
+    Value newValue = state.getPortValue(0);
+    boolean same = oldValue == null ? newValue == null : oldValue.equals(newValue);
+    if (!same) {
+      if (oldData == null) {
+        oldData = new StateData();
+        oldData.curValue = newValue;
+        state.setData(oldData);
+      } else {
+        oldData.curValue = newValue;
+      }
+      int oldWidth = oldValue == null ? 1 : oldValue.getBitWidth().getWidth();
+      int newWidth = newValue.getBitWidth().getWidth();
+      if (oldWidth != newWidth) {
+        ProbeAttributes attrs = (ProbeAttributes) state.getAttributeSet();
+        attrs.width = newValue.getBitWidth();
+        state.getInstance().recomputeBounds();
+        state.getInstance().computeLabelTextField(Instance.AVOID_LEFT);
+      }
+    }
+  }
 }

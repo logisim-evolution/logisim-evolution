@@ -1,18 +1,18 @@
-/*******************************************************************************
+/**
  * This file is part of logisim-evolution.
  *
- *   logisim-evolution is free software: you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation, either version 3 of the License, or
- *   (at your option) any later version.
+ * Logisim-evolution is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by the
+ * Free Software Foundation, either version 3 of the License, or (at your
+ * option) any later version.
  *
- *   logisim-evolution is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *   GNU General Public License for more details.
+ * Logisim-evolution is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+ * for more details.
  *
- *   You should have received a copy of the GNU General Public License
- *   along with logisim-evolution.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along 
+ * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
  * Subsequent modifications by:
@@ -24,29 +24,25 @@
  *     http://hepia.hesge.ch/
  *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
  *     http://www.heig-vd.ch/
- *******************************************************************************/
+ */
 
 package com.cburch.logisim.gui.generic;
 
 /**
- * Code taken from Cornell's version of Logisim:
- * http://www.cs.cornell.edu/courses/cs3410/2015sp/
+ * Code taken from Cornell's version of Logisim: http://www.cs.cornell.edu/courses/cs3410/2015sp/
  */
-import javax.swing.JPopupMenu;
-
 import com.cburch.logisim.tools.AddTool;
+import javax.swing.JPopupMenu;
 
 public interface ProjectExplorerListener {
 
-	public void deleteRequested(ProjectExplorerEvent event);
+  public void deleteRequested(ProjectExplorerEvent event);
 
-	public void doubleClicked(ProjectExplorerEvent event);
+  public void doubleClicked(ProjectExplorerEvent event);
 
-	public JPopupMenu menuRequested(ProjectExplorerEvent event);
+  public JPopupMenu menuRequested(ProjectExplorerEvent event);
 
-	public void moveRequested(ProjectExplorerEvent event, AddTool dragged,
-			AddTool target);
+  public void moveRequested(ProjectExplorerEvent event, AddTool dragged, AddTool target);
 
-	public void selectionChanged(ProjectExplorerEvent event);
-
+  public void selectionChanged(ProjectExplorerEvent event);
 }

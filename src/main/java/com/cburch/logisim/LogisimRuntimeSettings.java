@@ -1,18 +1,18 @@
-/*******************************************************************************
+/**
  * This file is part of logisim-evolution.
  *
- *   logisim-evolution is free software: you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation, either version 3 of the License, or
- *   (at your option) any later version.
+ * Logisim-evolution is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by the
+ * Free Software Foundation, either version 3 of the License, or (at your
+ * option) any later version.
  *
- *   logisim-evolution is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *   GNU General Public License for more details.
+ * Logisim-evolution is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+ * for more details.
  *
- *   You should have received a copy of the GNU General Public License
- *   along with logisim-evolution.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along 
+ * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
  * Subsequent modifications by:
@@ -24,7 +24,7 @@
  *     http://hepia.hesge.ch/
  *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
  *     http://www.heig-vd.ch/
- *******************************************************************************/
+ */
 
 package com.cburch.logisim;
 
@@ -32,21 +32,19 @@ import java.awt.GraphicsEnvironment;
 
 public class LogisimRuntimeSettings {
 
-	static private boolean isGui = true;
-	static public final boolean CLI = false;
-	static public final boolean GUI = false;
+  private static boolean isGui = true;
+  public static final boolean CLI = false;
+  public static final boolean GUI = false;
 
+  public static boolean isRunTimeIsGui() {
+    if (!GraphicsEnvironment.isHeadless()) {
+      return !GraphicsEnvironment.isHeadless();
+    }
 
+    return isGui;
+  }
 
-	static public boolean isRunTimeIsGui() {
-		if (!GraphicsEnvironment.isHeadless()) {
-			return !GraphicsEnvironment.isHeadless();
-		}
-
-		return isGui;
-	}
-
-	static public void setIsGui(boolean value) {
-		isGui = value;
-	}
+  public static void setIsGui(boolean value) {
+    isGui = value;
+  }
 }

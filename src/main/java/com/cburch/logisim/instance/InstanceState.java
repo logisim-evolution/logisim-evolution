@@ -1,18 +1,18 @@
-/*******************************************************************************
+/**
  * This file is part of logisim-evolution.
  *
- *   logisim-evolution is free software: you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation, either version 3 of the License, or
- *   (at your option) any later version.
+ * Logisim-evolution is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by the
+ * Free Software Foundation, either version 3 of the License, or (at your
+ * option) any later version.
  *
- *   logisim-evolution is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *   GNU General Public License for more details.
+ * Logisim-evolution is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+ * for more details.
  *
- *   You should have received a copy of the GNU General Public License
- *   along with logisim-evolution.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along 
+ * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
  * Subsequent modifications by:
@@ -24,7 +24,7 @@
  *     http://hepia.hesge.ch/
  *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
  *     http://www.heig-vd.ch/
- *******************************************************************************/
+ */
 
 package com.cburch.logisim.instance;
 
@@ -34,31 +34,31 @@ import com.cburch.logisim.data.Value;
 import com.cburch.logisim.proj.Project;
 
 public interface InstanceState {
-	public void fireInvalidated();
+  public void fireInvalidated();
 
-	public AttributeSet getAttributeSet();
+  public AttributeSet getAttributeSet();
 
-	public <E> E getAttributeValue(Attribute<E> attr);
+  public <E> E getAttributeValue(Attribute<E> attr);
 
-	public InstanceData getData();
+  public InstanceData getData();
 
-	public InstanceFactory getFactory();
+  public InstanceFactory getFactory();
 
-	public Instance getInstance();
+  public Instance getInstance();
 
-	public int getPortIndex(Port port);
+  public int getPortIndex(Port port);
 
-	public Value getPortValue(int portIndex);
+  public Value getPortValue(int portIndex);
 
-	public Project getProject();
+  public Project getProject();
 
-	public long getTickCount();
+  public long getTickCount();
 
-	public boolean isCircuitRoot();
+  public boolean isCircuitRoot();
 
-	public boolean isPortConnected(int portIndex);
+  public boolean isPortConnected(int portIndex);
 
-	public void setData(InstanceData value);
+  public void setData(InstanceData value);
 
-	public void setPort(int portIndex, Value value, int delay);
+  public void setPort(int portIndex, Value value, int delay);
 }

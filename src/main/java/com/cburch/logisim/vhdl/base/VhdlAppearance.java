@@ -1,18 +1,18 @@
-/*******************************************************************************
+/**
  * This file is part of logisim-evolution.
  *
- *   logisim-evolution is free software: you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation, either version 3 of the License, or
- *   (at your option) any later version.
+ * Logisim-evolution is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by the
+ * Free Software Foundation, either version 3 of the License, or (at your
+ * option) any later version.
  *
- *   logisim-evolution is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *   GNU General Public License for more details.
+ * Logisim-evolution is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+ * for more details.
  *
- *   You should have received a copy of the GNU General Public License
- *   along with logisim-evolution.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along 
+ * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
  * Subsequent modifications by:
@@ -24,11 +24,9 @@
  *     http://hepia.hesge.ch/
  *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
  *     http://www.heig-vd.ch/
- *******************************************************************************/
+ */
 
 package com.cburch.logisim.vhdl.base;
-
-import java.util.List;
 
 import com.cburch.draw.model.CanvasObject;
 import com.cburch.logisim.circuit.appear.CircuitAppearance;
@@ -38,20 +36,21 @@ import com.cburch.logisim.circuit.appear.DefaultHolyCrossAppearance;
 import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.StdAttr;
+import java.util.List;
 
 public class VhdlAppearance extends CircuitAppearance {
-    VhdlAppearance(List <CanvasObject> shapes) {
-        super(null);
-        setObjectsForce(shapes);
-    }
-    static VhdlAppearance create(List<Instance> pins, String name, AttributeOption style) {
-        if (style == StdAttr.APPEAR_CLASSIC) {
-            return new VhdlAppearance(DefaultClassicAppearance.build(pins));
-        } else if (style == StdAttr.APPEAR_FPGA) { 
-            return new VhdlAppearance(DefaultHolyCrossAppearance.build(pins, name));
-        } else {
-            return new VhdlAppearance(DefaultEvolutionAppearance.build(pins, name,true));
-        }
-    }
-}
+  VhdlAppearance(List<CanvasObject> shapes) {
+    super(null);
+    setObjectsForce(shapes);
+  }
 
+  static VhdlAppearance create(List<Instance> pins, String name, AttributeOption style) {
+    if (style == StdAttr.APPEAR_CLASSIC) {
+      return new VhdlAppearance(DefaultClassicAppearance.build(pins));
+    } else if (style == StdAttr.APPEAR_FPGA) {
+      return new VhdlAppearance(DefaultHolyCrossAppearance.build(pins, name));
+    } else {
+      return new VhdlAppearance(DefaultEvolutionAppearance.build(pins, name, true));
+    }
+  }
+}
