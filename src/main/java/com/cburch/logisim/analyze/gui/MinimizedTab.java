@@ -193,7 +193,7 @@ class MinimizedTab extends AnalyzerTab {
 
     public NotationModel() {
     selected = 0;
-    choices = new String[3];
+    choices = new String[5];
     localeChanged();
     }
     
@@ -208,7 +208,9 @@ class MinimizedTab extends AnalyzerTab {
     public void localeChanged() {
     choices[Notation.LOGIC.Id] = S.get("expressionLogicrepresentation");
     choices[Notation.MATHEMATICAL.Id] = S.get("expressionMathrepresentation");
-    choices[Notation.PROGRAMMING.Id] = S.get("expressionProgrepresentation");
+    choices[Notation.ALTLOGIC.Id] = S.get("expressionAltLogicrepresentation");
+    choices[Notation.PROGBITS.Id] = S.get("expressionProgbitsrepresentation");
+    choices[Notation.PROGBOOLS.Id] = S.get("expressionProgboolsrepresentation");
     fireContentsChanged(this, 0, choices.length);
     }
     
