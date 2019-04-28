@@ -53,7 +53,8 @@ import java.awt.image.BufferedImageOp;
 import java.awt.image.ImageObserver;
 import java.awt.image.RenderedImage;
 import java.awt.image.renderable.RenderableImage;
-import java.io.FileWriter;
+import java.io.File;
+import java.io.IOException;
 import java.text.AttributedCharacterIterator;
 import java.util.Map;
 
@@ -107,12 +108,12 @@ public class TikZWriter extends Graphics2D {
 
   @Override
   public void drawString(AttributedCharacterIterator iterator, int x, int y) {
-    // TODO Auto-generated method stub
+    MyInfo.addString(iterator, (int)x,(int)y);
   }
 
   @Override
   public void drawString(AttributedCharacterIterator iterator, float x, float y) {
-    // TODO Auto-generated method stub
+    MyInfo.addString(iterator, (int)x,(int)y);
   }
 
   @Override
@@ -313,8 +314,7 @@ public class TikZWriter extends Graphics2D {
 
   @Override
   public Rectangle getClipBounds() {
-    // TODO Auto-generated method stub
-    return null;
+    return MyInfo.getClip();
   }
 
   @Override
@@ -324,7 +324,7 @@ public class TikZWriter extends Graphics2D {
 
   @Override
   public void setClip(int x, int y, int width, int height) {
-    // TODO Auto-generated method stub
+    MyInfo.setClip(x, y, width, height);
   }
 
   @Override
@@ -445,7 +445,7 @@ public class TikZWriter extends Graphics2D {
   public void dispose() {
   }
   
-  public void WriteFile(FileWriter outfile) {
+  public void WriteFile(File outfile) throws IOException {
     MyInfo.WriteFile(outfile);
   }
 

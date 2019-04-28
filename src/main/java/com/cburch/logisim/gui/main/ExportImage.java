@@ -50,8 +50,6 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.List;
 import javax.imageio.ImageIO;
 import javax.swing.Box;
@@ -158,9 +156,7 @@ public class ExportImage {
             ImageIO.write(img, "JPEG", where);
             break;
           case FORMAT_TIKZ:
-            FileWriter writer = new FileWriter(where);
-            ((TikZWriter)g).WriteFile(writer);
-            writer.close();
+            ((TikZWriter)g).WriteFile(where);
             break;
         }
       } catch (Exception e) {

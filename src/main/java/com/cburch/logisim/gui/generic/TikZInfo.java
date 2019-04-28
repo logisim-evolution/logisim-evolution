@@ -32,13 +32,17 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.Stroke;
+import java.awt.font.TextAttribute;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.AttributedCharacterIterator;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -69,6 +73,7 @@ public class TikZInfo implements Cloneable {
   private Font curFont;
   private BasicStroke curStroke = new BasicStroke(1);
   private double myRotation = 0;
+  private Rectangle clip;
   
   public interface DrawObject {
     public String getTikZCommand();
@@ -83,6 +88,7 @@ public class TikZInfo implements Cloneable {
     protected ArrayList<Point> points = new ArrayList<Point>();
     protected float strokeWidth;
     protected String Color;
+    protected double alpha;
     protected boolean filled;
     protected boolean close;
 
@@ -95,6 +101,7 @@ public class TikZInfo implements Cloneable {
       transform(end, end);
       strokeWidth = getStrokeWidth();
       Color = getDrawColorString();
+      alpha = (double)drawColor.getAlpha()/255.0;
       points.clear();
       filled = false;
       close = false;
@@ -362,6 +369,7 @@ public class TikZInfo implements Cloneable {
       private float strokeWidth = 0;
       private String Color = "";
       private boolean filled = false;
+      private double alpha;
       
       public BezierInfo() {
         startPoint = controlPoint1 = controlPoint2 = endPoint = null;
@@ -374,6 +382,7 @@ public class TikZInfo implements Cloneable {
           startPoint = nextPoint;
           endPoint = null;
           Color = getDrawColorString();
+          this.alpha = (double)drawColor.getAlpha()/255.0;
           this.filled = filled;
           strokeWidth = getStrokeWidth();
         } else {
@@ -417,7 +426,8 @@ public class TikZInfo implements Cloneable {
         newInst.closePath = closePath;
         newInst.strokeWidth = strokeWidth;
         newInst.Color = Color;
-        newInst.filled = filled;
+        newInst.filled = this.filled;
+        newInst.alpha = this.alpha;
         return newInst;
       }
       
@@ -440,7 +450,10 @@ public class TikZInfo implements Cloneable {
           contents.append((filled) ? "\\fill " : "\\draw");
           contents.append("[line width=");
           double width = strokeWidth*BASIC_STROKE_WIDTH;
-          contents.append(rounded(width)+"pt, "+Color+" ] ");
+          contents.append(rounded(width)+"pt, "+Color);
+          if (filled && this.alpha != 1.0)
+            contents.append(", fill opacity="+rounded(this.alpha));
+          contents.append(" ] ");
           contents.append(getPoint(startPoint));
         } else {
           if (controlPoint1 == null && controlPoint2 == null) {
@@ -481,23 +494,18 @@ public class TikZInfo implements Cloneable {
         double[] coords = new double[6];
         int type = p.currentSegment(coords);
         if (type == PathIterator.SEG_MOVETO) {
-          //System.out.println("MoveTo: "+coords[0]+","+coords[1]);
           Point current = new Point((int)coords[0],(int)coords[1]);
           myPath.add(new BezierInfo(current,true,filled));
         } else if (type == PathIterator.SEG_LINETO) {
-          //System.out.println("LineTo: "+coords[0]+","+coords[1]);
           Point next = new Point((int)coords[0],(int)coords[1]);
           myPath.add(new BezierInfo(next,false,false));
         } else if (type == PathIterator.SEG_CLOSE) {
-          //System.out.println("SegClose");
           myPath.add(new BezierInfo());
         } else if (type == PathIterator.SEG_QUADTO) {
-          //System.out.println("QuadTo: "+coords[0]+","+coords[1]+"  "+coords[2]+","+coords[3]);
           Point control = new Point((int)coords[0],(int)coords[1]);
           Point next = new Point((int)coords[2],(int)coords[3]);
           myPath.add(new BezierInfo(control,next));
         } else if (type == PathIterator.SEG_CUBICTO) {
-          //System.out.println("CubicTo: "+coords[0]+","+coords[1]+"  "+coords[2]+","+coords[3]+"  "+coords[4]+","+coords[5]);
           Point control1 = new Point((int)coords[0],(int)coords[1]);
           Point control2 = new Point((int)coords[2],(int)coords[3]);
           Point next = new Point((int)coords[4],(int)coords[5]);
@@ -548,8 +556,7 @@ public class TikZInfo implements Cloneable {
 
     public TikZRectangle(int x1, int y1, int x2, int y2, int arcwidth, int archeight, boolean filled) {
       super(x1,y1,x2,y2);
-      double arcRad = Math.max(arcwidth, archeight);
-      rad = arcRad / COORDINATE_DOWNSCALE_FACTOR;
+      rad = Math.max(arcwidth, archeight)/2.0;
       this.filled = filled;
     }
 
@@ -572,6 +579,7 @@ public class TikZInfo implements Cloneable {
       NewIns.Color = Color;
       NewIns.filled = filled;
       NewIns.rad = rad;
+      NewIns.alpha = alpha;
       return NewIns;
     }
     
@@ -583,7 +591,9 @@ public class TikZInfo implements Cloneable {
       double width = strokeWidth*BASIC_STROKE_WIDTH;
       contents.append(rounded(width)+"pt, "+Color);
       if (rad != 0)
-        contents.append(", rounded corners="+rad+"");
+        contents.append(", rounded corners="+rad);
+      if (filled && alpha != 1.0)
+        contents.append(", fill opacity="+rounded(alpha));
       contents.append(" ] ");
       contents.append(getPoint(start));
       contents.append("rectangle");
@@ -623,6 +633,7 @@ public class TikZInfo implements Cloneable {
       NewIns.xRad = xRad;
       NewIns.yRad = yRad;
       NewIns.rotation = rotation;
+      NewIns.alpha = alpha;
       return NewIns;
     }
     
@@ -635,6 +646,8 @@ public class TikZInfo implements Cloneable {
       contents.append(rounded(width)+"pt, "+Color);
       if (rotation != 0)
         contents.append(", rotate around={"+this.rotation+":"+getPoint(start)+"}");
+      if (filled && alpha != 1.0)
+        contents.append(", fill opacity="+rounded(alpha));
       contents.append("] ");
       contents.append(getPoint(start));
       contents.append("ellipse ("+xRad+" and "+yRad+" );");
@@ -692,6 +705,7 @@ public class TikZInfo implements Cloneable {
       NewIns.rotation = rotation;
       NewIns.startAngle = startAngle;
       NewIns.stopAngle = stopAngle;
+      NewIns.alpha = alpha;
       return NewIns;
     }
 
@@ -701,7 +715,10 @@ public class TikZInfo implements Cloneable {
       contents.append(filled ? "\\fill " : "\\draw ");
       contents.append("[line width=");
       double width = strokeWidth*BASIC_STROKE_WIDTH;
-      contents.append(rounded(width)+"pt, "+Color+"] ");
+      contents.append(rounded(width)+"pt, "+Color);
+      if (filled && alpha != 1.0)
+        contents.append(", fill opacity="+rounded(alpha));
+      contents.append("] ");
       contents.append(getPoint(start));
       contents.append("arc ("+startAngle+":"+stopAngle+":"+xRad+" and "+yRad+" );");
       return contents.toString();
@@ -712,6 +729,7 @@ public class TikZInfo implements Cloneable {
 
     private Point location;
     private String name;
+    private AttributedCharacterIterator sIter;
     private String color;
     private double rotation;
     private int fIndex;
@@ -722,15 +740,66 @@ public class TikZInfo implements Cloneable {
     public TikZString() {};
     
     public TikZString(String str, int x, int y) {
-       fIndex = fontIndex;
-       fSize = fontSize;
-       fBold = fontBold;
-       fItalic = fontItalic;
-       color = getDrawColorString();
-       rotation = -getRotationDegrees();
-       name = str;
-       location = new Point(x,y);
-       transform(location,location);
+      name = str;
+      sIter = null;
+      init(x,y);
+      fIndex = fontIndex;
+      fSize = fontSize;
+      fBold = fontBold;
+      fItalic = fontItalic;
+    }
+    
+    public TikZString(AttributedCharacterIterator str, int x , int y) {
+      name = null;
+      sIter = str;
+      if (str.getAttribute(TextAttribute.FAMILY)==null || str.getAttribute(TextAttribute.FAMILY).equals("Default")) {
+    	fIndex = fontIndex;
+        fSize = fontSize;
+        fBold = fontBold;
+        fItalic = fontItalic;
+      } else {
+        fBold = str.getAttribute(TextAttribute.WEIGHT)==TextAttribute.WEIGHT_BOLD;
+        fItalic = false;
+        fSize = (int) str.getAttribute(TextAttribute.SIZE);
+        String fontName = (String) str.getAttribute(TextAttribute.FAMILY);
+        if (!usedFonts.contains(fontName))
+          usedFonts.add(fontName);
+        fIndex = usedFonts.indexOf(fontName);
+      }
+      init(x,y);
+    }
+    
+    private void init(int x, int y) {
+      rotation = -getRotationDegrees();
+      location = new Point(x,y);
+      transform(location,location);
+      color = getDrawColorString();
+    }
+    
+    private String getAttrString() {
+      /* this is a very simplified implementation that should suffice for logisim evolution */
+      StringBuffer content = new StringBuffer();
+      content.append("$\\text{");
+      while (sIter.getIndex() < sIter.getEndIndex()) {
+        if (sIter.getAttribute(TextAttribute.SUPERSCRIPT) == TextAttribute.SUPERSCRIPT_SUB) {
+          content.append("}_{\\text{");
+          while (sIter.getIndex() < sIter.getEndIndex() && sIter.getAttribute(TextAttribute.SUPERSCRIPT) == TextAttribute.SUPERSCRIPT_SUB) {
+            content.append(sIter.current());
+            sIter.next();
+          }
+          content.append("}}\\text{");
+        } else {
+          char kar = sIter.current();
+          if (kar == '\u22C5') {
+            content.append("}\\cdot\\text{");
+          } else {
+            content.append(kar);
+          }
+          sIter.next();
+        }
+      }
+      content.append("}$");
+      return content.toString();
     }
     
     @Override
@@ -745,7 +814,12 @@ public class TikZInfo implements Cloneable {
       content.append("\\selectfont\\node[inner sep=0, outer sep=0, "+color+", anchor=base west");
       if (rotation != 0)
         content.append(", rotate="+this.rotation);
-      content.append("] at "+getPoint(location)+" {"+name+"};}");
+      content.append("] at "+getPoint(location)+" {");
+      if (name != null)
+        content.append(name);
+      else
+        content.append(getAttrString());
+      content.append("};}");
       return content.toString();
     }
 
@@ -803,6 +877,8 @@ public class TikZInfo implements Cloneable {
     NewInst.usedFonts = usedFonts;
     NewInst.fontBold = fontBold;
     NewInst.fontItalic = fontItalic;
+    if (clip != null)
+      NewInst.clip = (Rectangle) clip.clone();
     return NewInst;
   }
   
@@ -927,6 +1003,10 @@ public class TikZInfo implements Cloneable {
     Contents.add(new TikZString(str,x,y));  
   }
 
+  public void addString(AttributedCharacterIterator str, int x, int y) {
+    Contents.add(new TikZString(str,x,y));  
+  }
+
   public void rotate(double theta) {
     getAffineTransform().rotate(theta);
     myRotation += theta;
@@ -965,6 +1045,14 @@ public class TikZInfo implements Cloneable {
       }
     }
     Contents.addAll(copyList);
+  }
+  
+  public void setClip(int x, int y, int width, int height) {
+    clip = new Rectangle(x,y,width,height);
+  }
+  
+  public Rectangle getClip() {
+    return clip;
   }
 
   private void optimize() {
@@ -1024,26 +1112,26 @@ public class TikZInfo implements Cloneable {
     return content.toString();
   }
   
-  public void WriteFile(FileWriter outfile) {
+  public void WriteFile(File outfile) throws IOException {
     optimize();
-    try {
-      outfile.write("% You can change the size of the picture by putting it into the construct:\n");
-      outfile.write("% 1) \\resizebox{10cm}{!}{\"below picture\"} to scale horizontally to 10 cm\n");
-      outfile.write("% 2) \\resizebox{!}{15cm}{\"below picture\"} to scale vertically to 15 cm\n");
-      outfile.write("% 3) \\resizebox{10cm}{15cm}{\"below picture\"} a combination of above two\n");
-      outfile.write("% It is not recomended to use the scale option of the tikzpicture environment.\n");
-      outfile.write("\\begin{tikzpicture}[x=10pt,y=-10pt]\n");
-      for (int i = 0 ; i < usedFonts.size() ; i++)
-        outfile.write(getFontDefinition(i));
-      for (String key : customColors.keySet())
-        outfile.write(customColors.get(key)+"\n");
-      for (DrawObject obj : Contents)
-        outfile.write(obj.getTikZCommand()+"\n");
-      outfile.write("\\end{tikzpicture}\n\n");
-      Contents.clear();
-      customColors.clear();
-    } catch (IOException e) {
-    }
+    FileWriter writer = new FileWriter(outfile);
+    writer.write("% Important: If latex complains about unicode characters, please use \"\\usepackage[utf8x]{inputenc}\" in your preamble\n");
+    writer.write("% You can change the size of the picture by putting it into the construct:\n");
+    writer.write("% 1) \\resizebox{10cm}{!}{\"below picture\"} to scale horizontally to 10 cm\n");
+    writer.write("% 2) \\resizebox{!}{15cm}{\"below picture\"} to scale vertically to 15 cm\n");
+    writer.write("% 3) \\resizebox{10cm}{15cm}{\"below picture\"} a combination of above two\n");
+    writer.write("% It is not recomended to use the scale option of the tikzpicture environment.\n");
+    writer.write("\\begin{tikzpicture}[x=10pt,y=-10pt]\n");
+    for (int i = 0 ; i < usedFonts.size() ; i++)
+      writer.write(getFontDefinition(i));
+    for (String key : customColors.keySet())
+      writer.write(customColors.get(key)+"\n");
+    for (DrawObject obj : Contents)
+      writer.write(obj.getTikZCommand()+"\n");
+    writer.write("\\end{tikzpicture}\n\n");
+    Contents.clear();
+    customColors.clear();
+    writer.close();
   }
 
   

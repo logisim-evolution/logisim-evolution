@@ -49,6 +49,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 
+import com.cburch.logisim.gui.generic.TikZWriter;
 import com.cburch.logisim.gui.main.ExportImage;
 import com.cburch.logisim.gui.main.ExportImage.ImageFileFilter;
 import com.cburch.logisim.util.GifEncoder;
@@ -94,7 +95,8 @@ public abstract class PrintHandler implements Printable {
     ImageFileFilter[] filters = {
       ExportImage.getFilter(ExportImage.FORMAT_PNG),
       ExportImage.getFilter(ExportImage.FORMAT_GIF),
-      ExportImage.getFilter(ExportImage.FORMAT_JPG)
+      ExportImage.getFilter(ExportImage.FORMAT_JPG),
+      ExportImage.getFilter(ExportImage.FORMAT_TIKZ)
     };
     JFileChooser chooser = JFileChoosers.createSelected(getLastExported());
     chooser.setAcceptAllFileFilterUsed(false);
@@ -113,7 +115,8 @@ public abstract class PrintHandler implements Printable {
     if (!ff.accept(dest)) {
       if (ff == filters[0]) dest = new File(dest + ".png");
       else if (ff == filters[1]) dest = new File(dest + ".gif");
-      else dest = new File(dest + ".jpg");
+      else if (ff == filters[2]) dest = new File(dest + ".jpg");
+      else dest = new File(dest+".tex");
     }
     setLastExported(dest);
     if (dest.exists()) {
@@ -127,7 +130,8 @@ public abstract class PrintHandler implements Printable {
     }
     int fmt = (ff == filters[0] ? ExportImage.FORMAT_PNG
         : ff == filters[1] ? ExportImage.FORMAT_GIF
-        : ExportImage.FORMAT_JPG);
+        : ff == filters[2] ? ExportImage.FORMAT_JPG
+        : ExportImage.FORMAT_TIKZ);
     exportImage(dest, fmt);
   }
 
@@ -159,9 +163,14 @@ public abstract class PrintHandler implements Printable {
     if (d == null && showErr("couldNotCreateImage"))
       return;
 
+    Graphics base;
+    Graphics gr;
     BufferedImage img = new BufferedImage(d.width, d.height, BufferedImage.TYPE_INT_RGB);
-    Graphics base = img.getGraphics();
-    Graphics gr = base.create();
+    if (fmt == ExportImage.FORMAT_TIKZ)
+      base = new TikZWriter();
+    else
+      base = img.getGraphics();
+    gr = base.create();
     try {
       if (!(gr instanceof Graphics2D) && showErr("couldNotCreateImage"))
         return;
@@ -174,6 +183,7 @@ public abstract class PrintHandler implements Printable {
         paintExportImage(img, g);
       } catch (Exception e) {
         showErr("couldNotCreateImage");
+        e.printStackTrace();
         return;
       }
 
@@ -187,6 +197,9 @@ public abstract class PrintHandler implements Printable {
           break;
         case ExportImage.FORMAT_JPG:
           ImageIO.write(img, "JPEG", dest);
+          break;
+        case ExportImage.FORMAT_TIKZ:
+          ((TikZWriter)g).WriteFile(dest);
           break;
         }
       } catch (Exception e) {
