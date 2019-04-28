@@ -784,7 +784,11 @@ public class TikZInfo implements Cloneable {
         if (sIter.getAttribute(TextAttribute.SUPERSCRIPT) == TextAttribute.SUPERSCRIPT_SUB) {
           content.append("}_{\\text{");
           while (sIter.getIndex() < sIter.getEndIndex() && sIter.getAttribute(TextAttribute.SUPERSCRIPT) == TextAttribute.SUPERSCRIPT_SUB) {
-            content.append(sIter.current());
+            char kar = sIter.current();
+            if (kar == '_')
+              content.append("\\_");
+            else
+              content.append(sIter.current());
             sIter.next();
           }
           content.append("}}\\text{");
@@ -792,6 +796,8 @@ public class TikZInfo implements Cloneable {
           char kar = sIter.current();
           if (kar == '\u22C5') {
             content.append("}\\cdot\\text{");
+          } else if (kar == '_') {
+            content.append("\\_");
           } else {
             content.append(kar);
           }
@@ -816,7 +822,7 @@ public class TikZInfo implements Cloneable {
         content.append(", rotate="+this.rotation);
       content.append("] at "+getPoint(location)+" {");
       if (name != null)
-        content.append(name);
+        content.append(name.replaceAll("_", "\\_"));
       else
         content.append(getAttrString());
       content.append("};}");
