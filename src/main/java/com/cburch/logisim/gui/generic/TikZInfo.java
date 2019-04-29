@@ -605,7 +605,6 @@ public class TikZInfo implements Cloneable {
   
   private class TikZArc extends TikZElipse {
 
-    private Point center;
     private double startAngle,stopAngle;
     private Point2D startPos = new Point2D.Double();
 
@@ -615,19 +614,14 @@ public class TikZInfo implements Cloneable {
       color = getDrawColorString();
       points.clear();
       close = false;
-      center = new Point(x+(width>>1),y+(height>>1));
-      Point Radius = new Point(width>>1,height>>1);
+      Point2D Radius = new Point2D.Double();
+      Point2D center = new Point2D.Double();
+      Radius.setLocation(((double)width)/2.0, ((double)height)/2.0);
+      center.setLocation(((double)x)+Radius.getX(), ((double)y)+Radius.getY());
       double startAnglePi = ((double) startAngle * Math.PI)/180.0;
       double startX = center.getX()+Radius.getX()*Math.cos(startAnglePi);
       double startY = center.getY()-Radius.getY()*Math.sin(startAnglePi);
-      start = new Point((int)startX,(int)startY);
       double stopAnglePi = ((double) (startAngle+arcAngle) * Math.PI)/180.0;
-      double stopX = center.getX()+Radius.getX()*Math.cos(stopAnglePi);
-      double stopY = center.getY()-Radius.getY()*Math.sin(stopAnglePi);
-      end = new Point((int)stopX,(int)stopY);
-      transform(center, center);
-      transform(start, start);
-      transform(end, end);
       xRad = Radius.getX()/COORDINATE_DOWNSCALE_FACTOR;
       yRad = Radius.getY()/COORDINATE_DOWNSCALE_FACTOR;
       this.startAngle = -toDegree(startAnglePi);
@@ -644,8 +638,6 @@ public class TikZInfo implements Cloneable {
     @Override
     public DrawObject clone() {
       TikZArc NewIns = new TikZArc();
-      NewIns.start = (Point) start.clone();
-      NewIns.end = (Point) end.clone();
       NewIns.strokeWidth = strokeWidth;
       NewIns.color = color;
       NewIns.filled = filled;
@@ -655,6 +647,7 @@ public class TikZInfo implements Cloneable {
       NewIns.startAngle = startAngle;
       NewIns.stopAngle = stopAngle;
       NewIns.alpha = alpha;
+      NewIns.startPos = (Point2D) startPos.clone();
       return NewIns;
     }
 
