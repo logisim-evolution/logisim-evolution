@@ -87,7 +87,7 @@ public class TikZInfo implements Cloneable {
     protected Point end;
     protected ArrayList<Point> points = new ArrayList<Point>();
     protected float strokeWidth;
-    protected String Color;
+    protected String color;
     protected double alpha;
     protected boolean filled;
     protected boolean close;
@@ -100,7 +100,7 @@ public class TikZInfo implements Cloneable {
       transform(start, start);
       transform(end, end);
       strokeWidth = getStrokeWidth();
-      Color = getDrawColorString();
+      color = getDrawColorString();
       alpha = (double)drawColor.getAlpha()/255.0;
       points.clear();
       filled = false;
@@ -167,12 +167,8 @@ public class TikZInfo implements Cloneable {
     }
     
     public TikZLine(int[] xPoints, int[] yPoints, int nPoints, boolean fill, boolean isPolygon) {
-      TikZLineCreate(xPoints,yPoints,nPoints,fill,isPolygon);
-    }
-      
-    private void TikZLineCreate(int[] xPoints, int[] yPoints, int nPoints, boolean fill , boolean isPolygon) {
       strokeWidth = getStrokeWidth();
-      Color = getDrawColorString();
+      color = getDrawColorString();
       start = null;
       end = null;
       for (int i = 0 ; i < nPoints ; i++) {
@@ -182,29 +178,6 @@ public class TikZInfo implements Cloneable {
       }
       filled = fill;
       close = isPolygon;
-    }
-    
-    public boolean canMerge(Point nstart , Point nend) {
-      if (close)
-        return false;
-      if (!getDrawColorString().equals(Color))
-        return false;
-      if (getStrokeWidth()!=strokeWidth)
-        return false;
-      if (points.isEmpty()) {
-        if (nstart.equals(end))
-          return true;
-        if (nend.equals(start))
-          return true;
-      } else {
-        Point p1 = points.get(0);
-        if (p1.equals(nend))
-          return true;
-        p1 = points.get(points.size()-1);
-        if (p1.equals(nstart))
-          return true;
-      }
-      return false;
     }
     
     public Point getStartPoint() {
@@ -224,7 +197,7 @@ public class TikZInfo implements Cloneable {
     public boolean canMerge(TikZLine l) {
       if (close || l.close)
         return false;
-      if (!Color.equals(l.Color))
+      if (!color.equals(l.color))
         return false;
       if (strokeWidth != l.strokeWidth)
         return false;
@@ -291,31 +264,6 @@ public class TikZInfo implements Cloneable {
       return true;
     }
     
-    public boolean merge(Point nstart , Point nend) {
-      if (points.isEmpty()) {
-        if (nstart.equals(end)) {
-          /* have to add the new segment after this segment */
-          points.add(start);
-          points.add(end);
-          points.add(nend);
-        } else if (nend.equals(start)) {
-          /* have to add the new segment before the current segment */
-          points.add(nstart);
-          points.add(start);
-          points.add(end);
-        } else return false;
-      } else {
-        Point p1 = points.get(0);
-        Point p2 = points.get(points.size()-1);
-        if (p1.equals(nend)) {
-          points.add(0, nstart);
-        } else if (p2.equals(nstart)) {
-          points.add(nend);
-        } else return false;
-      }
-      return true;
-    }
-    
     @Override
     public String getTikZCommand() {
       StringBuffer contents = new StringBuffer();
@@ -325,7 +273,7 @@ public class TikZInfo implements Cloneable {
         contents.append("\\draw ");
       contents.append("[line width=");
       double width = strokeWidth*BASIC_STROKE_WIDTH;
-      contents.append(rounded(width)+"pt, "+Color+" ] ");
+      contents.append(rounded(width)+"pt, "+color+" ] ");
       if (points.isEmpty()) {
         contents.append(getPoint(start));
         contents.append("--");
@@ -353,7 +301,7 @@ public class TikZInfo implements Cloneable {
       NewIns.start = (Point) start.clone();
       NewIns.end = (Point) end.clone();
       NewIns.strokeWidth = strokeWidth;
-      NewIns.Color = Color;
+      NewIns.color = color;
       NewIns.points = (ArrayList<Point>) points.clone();
       NewIns.filled = filled;
       NewIns.close = close;
@@ -567,7 +515,7 @@ public class TikZInfo implements Cloneable {
     }
     
     public void setBackColor() {
-      this.Color = getBackColorString();
+      this.color = getBackColorString();
     }
       
     @Override
@@ -576,7 +524,7 @@ public class TikZInfo implements Cloneable {
       NewIns.start = (Point) start.clone();
       NewIns.end = (Point) end.clone();
       NewIns.strokeWidth = strokeWidth;
-      NewIns.Color = Color;
+      NewIns.color = color;
       NewIns.filled = filled;
       NewIns.rad = rad;
       NewIns.alpha = alpha;
@@ -589,7 +537,7 @@ public class TikZInfo implements Cloneable {
       contents.append(filled ? "\\fill " : "\\draw ");
       contents.append("[line width=");
       double width = strokeWidth*BASIC_STROKE_WIDTH;
-      contents.append(rounded(width)+"pt, "+Color);
+      contents.append(rounded(width)+"pt, "+color);
       if (rad != 0)
         contents.append(", rounded corners="+rad);
       if (filled && alpha != 1.0)
@@ -628,7 +576,7 @@ public class TikZInfo implements Cloneable {
       NewIns.start = (Point) start.clone();
       NewIns.end = (Point) end.clone();
       NewIns.strokeWidth = strokeWidth;
-      NewIns.Color = Color;
+      NewIns.color = color;
       NewIns.filled = filled;
       NewIns.xRad = xRad;
       NewIns.yRad = yRad;
@@ -643,7 +591,7 @@ public class TikZInfo implements Cloneable {
       contents.append(filled ? "\\fill " : "\\draw ");
       contents.append("[line width=");
       double width = strokeWidth*BASIC_STROKE_WIDTH;
-      contents.append(rounded(width)+"pt, "+Color);
+      contents.append(rounded(width)+"pt, "+color);
       if (rotation != 0)
         contents.append(", rotate around={"+this.rotation+":"+getPoint(start)+"}");
       if (filled && alpha != 1.0)
@@ -659,35 +607,36 @@ public class TikZInfo implements Cloneable {
 
     private Point center;
     private double startAngle,stopAngle;
+    private Point2D startPos = new Point2D.Double();
 
     public TikZArc(int x, int y, int width, int height, int startAngle, int arcAngle, boolean fill) {
       filled = fill;
       strokeWidth = getStrokeWidth();
-      Color = getDrawColorString();
+      color = getDrawColorString();
       points.clear();
       close = false;
       center = new Point(x+(width>>1),y+(height>>1));
       Point Radius = new Point(width>>1,height>>1);
       double startAnglePi = ((double) startAngle * Math.PI)/180.0;
       double startX = center.getX()+Radius.getX()*Math.cos(startAnglePi);
-      double startY = center.getY()+Radius.getY()*Math.sin(startAnglePi);
+      double startY = center.getY()-Radius.getY()*Math.sin(startAnglePi);
       start = new Point((int)startX,(int)startY);
       double stopAnglePi = ((double) (startAngle+arcAngle) * Math.PI)/180.0;
       double stopX = center.getX()+Radius.getX()*Math.cos(stopAnglePi);
-      double stopY = center.getY()+Radius.getY()*Math.sin(stopAnglePi);
+      double stopY = center.getY()-Radius.getY()*Math.sin(stopAnglePi);
       end = new Point((int)stopX,(int)stopY);
       transform(center, center);
       transform(start, start);
       transform(end, end);
       xRad = Radius.getX()/COORDINATE_DOWNSCALE_FACTOR;
       yRad = Radius.getY()/COORDINATE_DOWNSCALE_FACTOR;
-      // the angles needs to be negated as the positive y-direction in TikZ is
-      // opposite to the one used in logisim 
-      this.startAngle = toDegree(startAnglePi);
-      stopAngle = toDegree(stopAnglePi);
+      this.startAngle = -toDegree(startAnglePi);
+      stopAngle = -toDegree(stopAnglePi);
       rotation = (int) getRotationDegrees();
       this.startAngle += rotation;
       stopAngle += rotation;
+      startPos.setLocation(startX, startY);
+      transform(startPos,startPos);
     }
     
     public TikZArc() {};
@@ -698,7 +647,7 @@ public class TikZInfo implements Cloneable {
       NewIns.start = (Point) start.clone();
       NewIns.end = (Point) end.clone();
       NewIns.strokeWidth = strokeWidth;
-      NewIns.Color = Color;
+      NewIns.color = color;
       NewIns.filled = filled;
       NewIns.xRad = xRad;
       NewIns.yRad = yRad;
@@ -715,11 +664,11 @@ public class TikZInfo implements Cloneable {
       contents.append(filled ? "\\fill " : "\\draw ");
       contents.append("[line width=");
       double width = strokeWidth*BASIC_STROKE_WIDTH;
-      contents.append(rounded(width)+"pt, "+Color);
+      contents.append(rounded(width)+"pt, "+color);
       if (filled && alpha != 1.0)
         contents.append(", fill opacity="+rounded(alpha));
       contents.append("] ");
-      contents.append(getPoint(start));
+      contents.append("("+rounded(startPos.getX())/10.0+","+rounded(startPos.getY())/10.0+")");
       contents.append("arc ("+startAngle+":"+stopAngle+":"+xRad+" and "+yRad+" );");
       return contents.toString();
     }
@@ -788,7 +737,7 @@ public class TikZInfo implements Cloneable {
             if (kar == '_')
               content.append("\\_");
             else
-              content.append(sIter.current());
+              content.append(kar);
             sIter.next();
           }
           content.append("}}\\text{");
@@ -822,7 +771,12 @@ public class TikZInfo implements Cloneable {
         content.append(", rotate="+this.rotation);
       content.append("] at "+getPoint(location)+" {");
       if (name != null)
-        content.append(name.replaceAll("_", "\\_"));
+        for (int i = 0 ; i < name.length() ; i++) {  
+          char kar = name.charAt(i);
+          if (kar == '_')
+            content.append("\\");
+          content.append(kar);
+        }
       else
         content.append(getAttrString());
       content.append("};}");
@@ -961,20 +915,7 @@ public class TikZInfo implements Cloneable {
     return (angle/Math.PI)*180.0;
   }
 
-  public void addMergeLine(int x1, int y1, int x2, int y2) {
-    Point start = new Point(x1,y1);
-    Point end = new Point(x2,y2);
-    transform(start, start);
-    transform(end, end);
-    for (DrawObject obj : Contents) {
-      if (obj instanceof TikZLine) {
-        TikZLine line = (TikZLine) obj;
-        if (line.canMerge(start, end)) {
-          if (line.merge(start, end))
-            return;
-        }
-      }
-    }
+  public void addLine(int x1, int y1, int x2, int y2) {
     Contents.add(new TikZLine(x1,y1,x2,y2));
   }
   
@@ -1127,7 +1068,7 @@ public class TikZInfo implements Cloneable {
     writer.write("% 2) \\resizebox{!}{15cm}{\"below picture\"} to scale vertically to 15 cm\n");
     writer.write("% 3) \\resizebox{10cm}{15cm}{\"below picture\"} a combination of above two\n");
     writer.write("% It is not recomended to use the scale option of the tikzpicture environment.\n");
-    writer.write("\\begin{tikzpicture}[x=10pt,y=-10pt]\n");
+    writer.write("\\begin{tikzpicture}[x=10pt,y=-10pt,line cap=rect]\n");
     for (int i = 0 ; i < usedFonts.size() ; i++)
       writer.write(getFontDefinition(i));
     for (String key : customColors.keySet())
