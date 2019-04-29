@@ -77,7 +77,6 @@ public class TikZInfo implements Cloneable {
   
   public interface DrawObject {
     public String getTikZCommand();
-    public void addSVGElement(Document doc);
     public boolean insideArea(int x, int y, int width, int height);
     public DrawObject clone();
     public void move(int dx , int dy);
