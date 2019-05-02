@@ -123,7 +123,8 @@ public abstract class PrintHandler implements Printable {
       if (ff == filters[0]) dest = new File(dest + ".png");
       else if (ff == filters[1]) dest = new File(dest + ".gif");
       else if (ff == filters[2]) dest = new File(dest + ".jpg");
-      else dest = new File(dest+".tex");
+      else if (ff == filters[3]) dest = new File(dest+".tex");
+      else dest = new File(dest+".svg");
     }
     setLastExported(dest);
     if (dest.exists()) {
