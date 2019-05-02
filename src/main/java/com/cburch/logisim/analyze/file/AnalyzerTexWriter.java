@@ -412,7 +412,7 @@ public class AnalyzerTexWriter {
           "\\usepackage["
               + S.get("latexBabelLanguage")
               + ",shorthands=off]{babel}        % shorhands=off is required for babel french in combination with tikz karnaugh....");
-      out.println("\\usepackage[utf8]{inputenc}");
+      out.println("\\usepackage[utf8x]{inputenc}");
       out.println("\\usepackage[T1]{fontenc}");
       out.println("\\usepackage{amsmath}");
       out.println("\\usepackage{geometry}");

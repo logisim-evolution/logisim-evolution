@@ -153,7 +153,7 @@ public class Multiplier extends InstanceFactory {
     super("Multiplier", S.getter("multiplierComponent"));
     setAttributes(
         new Attribute[] {StdAttr.WIDTH, MODE_ATTR},
-        new Object[] {BitWidth.create(8), SIGNED_OPTION});
+        new Object[] {BitWidth.create(8), UNSIGNED_OPTION});
     setKeyConfigurator(new BitWidthConfigurator(StdAttr.WIDTH));
     setOffsetBounds(Bounds.create(-40, -20, 40, 40));
     setIconName("multiplier.gif");

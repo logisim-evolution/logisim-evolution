@@ -35,6 +35,8 @@ import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.comp.ComponentDrawContext;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.file.Loader;
+import com.cburch.logisim.gui.generic.TikZWriter;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.util.GifEncoder;
 import com.cburch.logisim.util.StringGetter;
@@ -107,12 +109,19 @@ public class ExportImage {
       Bounds bds = circuit.getBounds(canvas.getGraphics()).expand(BORDER_SIZE);
       int width = (int) Math.round(bds.getWidth() * scale);
       int height = (int) Math.round(bds.getHeight() * scale);
+      Graphics g;
+      Graphics base;
       BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-      Graphics base = img.getGraphics();
-      Graphics g = base.create();
-      g.setColor(Color.white);
-      g.fillRect(0, 0, width, height);
-      g.setColor(Color.black);
+      if (filter.type == FORMAT_TIKZ || filter.type == FORMAT_SVG) {
+        base = new TikZWriter();   
+        g = base.create();
+      } else {
+        base = img.getGraphics();
+        g = base.create();
+        g.setColor(Color.white);
+        g.fillRect(0, 0, width, height);
+        g.setColor(Color.black);
+      }
       if (g instanceof Graphics2D) {
         ((Graphics2D) g).scale(scale, scale);
         ((Graphics2D) g).translate(-bds.getX(), -bds.getY());
@@ -146,9 +155,16 @@ public class ExportImage {
           case FORMAT_JPG:
             ImageIO.write(img, "JPEG", where);
             break;
+          case FORMAT_TIKZ:
+            ((TikZWriter)g).WriteFile(where);
+            break;
+          case FORMAT_SVG:
+            ((TikZWriter)g).WriteSvg(width, height,where);
+            break;
         }
       } catch (Exception e) {
         JOptionPane.showMessageDialog(frame, S.get("couldNotCreateFile"));
+        e.printStackTrace();
         monitor.close();
         return;
       }
@@ -201,6 +217,8 @@ public class ExportImage {
     JRadioButton formatPng;
     JRadioButton formatGif;
     JRadioButton formatJpg;
+    JRadioButton formatTikZ;
+    JRadioButton formatSvg;
     GridBagLayout gridbag;
     GridBagConstraints gbc;
     Dimension curJim;
@@ -211,10 +229,16 @@ public class ExportImage {
       formatPng = new JRadioButton("PNG");
       formatGif = new JRadioButton("GIF");
       formatJpg = new JRadioButton("JPEG");
+      formatTikZ = new JRadioButton("TikZ");
+      formatSvg = new JRadioButton("SVG");
       ButtonGroup bgroup = new ButtonGroup();
       bgroup.add(formatPng);
       bgroup.add(formatGif);
       bgroup.add(formatJpg);
+      bgroup.add(formatTikZ);
+      bgroup.add(formatSvg);
+      formatTikZ.addChangeListener(this);
+      formatSvg.addChangeListener(this);
       formatPng.setSelected(true);
 
       slider = new JSlider(JSlider.HORIZONTAL, -3 * SLIDER_DIVISIONS, 3 * SLIDER_DIVISIONS, 0);
@@ -223,7 +247,8 @@ public class ExportImage {
       curScale = new JLabel("222%");
       curScale.setHorizontalAlignment(SwingConstants.RIGHT);
       curScale.setVerticalAlignment(SwingConstants.CENTER);
-      curJim = new Dimension(curScale.getPreferredSize());
+      Dimension d = curScale.getPreferredSize();
+      curJim = new Dimension(AppPreferences.getScaled(d.width+(d.width>>1)),AppPreferences.getScaled(d.height));
       curJim.height = Math.max(curJim.height, slider.getPreferredSize().height);
       stateChanged(null);
 
@@ -252,6 +277,8 @@ public class ExportImage {
       formatsPanel.add(formatPng);
       formatsPanel.add(formatGif);
       formatsPanel.add(formatJpg);
+      formatsPanel.add(formatTikZ);
+      formatsPanel.add(formatSvg);
       addGb(formatsPanel);
 
       gbc.gridy++;
@@ -272,6 +299,8 @@ public class ExportImage {
     int getImageFormat() {
       if (formatGif.isSelected()) return FORMAT_GIF;
       if (formatJpg.isSelected()) return FORMAT_JPG;
+      if (formatTikZ.isSelected()) return FORMAT_TIKZ;
+      if (formatSvg.isSelected()) return FORMAT_SVG;
       return FORMAT_PNG;
     }
 
@@ -287,6 +316,20 @@ public class ExportImage {
       double scale = getScale();
       curScale.setText((int) Math.round(100.0 * scale) + "%");
       if (curJim != null) curScale.setPreferredSize(curJim);
+      if (e == null)
+        return;
+      if (e.getSource().equals(formatTikZ)||e.getSource().equals(formatSvg)) {
+        if (formatTikZ.isSelected() || formatSvg.isSelected()) {
+          curScale.setEnabled(false);
+          slider.setEnabled(false);
+          slider.setValue(0);
+          curScale.setText(100+ "%");
+          if (curJim != null) curScale.setPreferredSize(curJim);
+        } else {
+          curScale.setEnabled(true);
+          slider.setEnabled(true);
+        }
+      }
     }
   }
   
@@ -302,6 +345,12 @@ public class ExportImage {
       return new ImageFileFilter(fmt,
           S.getter("exportJpgFilter"), new String[] { "jpg",
             "jpeg", "jpe", "jfi", "jfif", "jfi" });
+    case FORMAT_TIKZ:
+      return new ImageFileFilter(fmt,
+          S.getter("exportTikZFilter"), new String[] { "tex" });
+    case FORMAT_SVG:
+      return new ImageFileFilter(fmt,
+          S.getter("exportSvgFilter"), new String[] { "svg" });
     default:
       logger.error("Unexpected image format; aborted!");
       return null;
@@ -405,6 +454,10 @@ public class ExportImage {
   public static final int FORMAT_PNG = 1;
 
   public static final int FORMAT_JPG = 2;
+
+  public static final int FORMAT_TIKZ = 3;
+  
+  public static final int FORMAT_SVG = 4;
 
   private static final int BORDER_SIZE = 5;
 
