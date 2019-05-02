@@ -36,13 +36,15 @@
         After this circuit has been built, we then execute Logisim from the command line, providing the filename of the project and the <b class="propertie">-tty</b> option with the &lt;<b class="propertie">table</b> parameter.
       </p>
       <blockquote>
+	  <div class="forcode">
         <tt>java -jar logisim-filename.jar adder-test.circ -tty table</tt>
+	  </div>
       </blockquote>
       <p>
         Without bringing up any windows, Logisim loads the circuit and begins to execute it, ticking any clocks as fast as it can while completing the propagation between each tick. After each propagation is completed, Logisim loads the current values of the output pins; if any have changed from the previous propagation, then all values are displayed in tab-delimited format. If there is an output pin labeled with the special word <var>halt</var>, its output is not displayed — but once the pin's value reaches 1 after a propagation is completed, Logisim ends the simulation.
       </p>
       <p>
-        For our example, Logisim displays the table below. Because we have two output pins corresponding to the two inputs <var>a</var> and <var>b</var> into the two-bit adder, these outputs are included as the first two columns of the output. And there is another output pin corresponding to the two-bit adder's output, so it is the third column. The columns are ordered left-to-right according to the top-down ordering within the circuit.
+        For our example, Logisim displays the table below. Because we have two output pins corresponding to the two inputs <var>a</var> and <var>b</var> into the two-bit adder, these outputs are included as the first two columns of the output. And there is another output pin <var>sum</var> corresponding to the two-bit adder's output, so it is the third column. The columns are ordered left-to-right according to the top-down ordering within the circuit.
       </p>
       <blockquote>
         <pre>00      00      000

@@ -2,8 +2,8 @@
 <html>
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="created" content="2018-10-23T06:18:10.521000000">
-    <meta name="changed" content="2018-10-23T06:18:42.262000000">
+    <meta name="created" content="2019-03-16T06:18:10.521000000">
+    <meta name="changed" content="2019-03-16T06:18:42.262000000">
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <meta http-equiv="Content-Language" content="en">
     <title>
@@ -17,12 +17,16 @@
         The Layout tab
       </h1>
       <center>
-        <img src="../../../img-guide/prefs-layout.png" width="375" height="321" alt="#########">
+        <img src="../../../img-guide/prefs-layout.png" alt="#########">
       </center>
       <p>
         This tab includes preferences affecting the behavior of the circuit layout editor.
       </p>
       <ul>
+	    <li>
+		<p><b>Use anti-aliasing:</b> Activates the anti-aliasing effect of the graphics card. Tracks will appear smoother on the screen or print.
+		</p>
+		</li>
         <li>
           <p>
             <b>Printer view:</b> Specifies whether to display the circuit on the screen in the same way it is displayed through the printer. Normally this is off, and Logisim displays the on-screen circuit with indications of the current circuit state, and it displays some hints about component interface (most notably, it draws legs on OR gates to indicate where they would connect). The printer view, though, omits indications of state, and it omits such interface hints.
@@ -54,6 +58,10 @@
             <b>Show Ghosts while adding:</b> When checked, and when a tool for adding a new component is selected, a light-gray outline of a component to be added is drawn as the mouse moves across the canvas. For example, if you select the AND gate tool and move the mouse into the window (without pressing the mouse's button), a gray outline of an AND gate will display where the AND gate will appear when the mouse is clicked.
           </p>
         </li>
+		<li>
+		<p><b>Use pin labels on circuit boxes:</b> 
+		</p>
+		</li>
         <li>
           <p>
             <b>After adding component:</b> By default, after adding each individual component, Logisim switches back to the Edit Tool to allow you to move components around and to add wires. The drop-down box allows you to change this behavior so that Logisim stays at the same tool for adding more of the same component, until you yourself opt to choose the Edit Tool. (This was Logisim's default behavior prior to Logisim 2.3.0. While more intuitive, this behavior requires more mouse movement to switch between tools.)
@@ -61,7 +69,7 @@
         </li>
         <li>
           <p>
-            <strong>First radix when wire poked:</strong> Configures how values are displayed when a wire is clicked using the Poke Tool. Clicking a wire displays temporarily the value, staying until the user clicks elsewhere in the circuit.
+            <b>First radix when wire poked:</b> Configures how values are displayed when a wire is clicked using the Poke Tool. Clicking a wire displays temporarily the value, staying until the user clicks elsewhere in the circuit.
           </p>
           <center>
             <img class="notscal" src="../../../../img-guide/layouttab1.png" alt="#########">
@@ -69,7 +77,7 @@
         </li>
         <li>
           <p>
-            <strong>Second radix when wire poked:</strong> Configures the second part of how wire values are displayed.
+            <b>Second radix when wire poked:</b> Configures the second part of how wire values are displayed.
           </p>
         </li>
       </ul>
