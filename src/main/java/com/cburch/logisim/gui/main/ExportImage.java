@@ -112,7 +112,7 @@ public class ExportImage {
       Graphics g;
       Graphics base;
       BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-      if (filter.type == FORMAT_TIKZ) {
+      if (filter.type == FORMAT_TIKZ || filter.type == FORMAT_SVG) {
         base = new TikZWriter();   
         g = base.create();
       } else {
@@ -158,9 +158,13 @@ public class ExportImage {
           case FORMAT_TIKZ:
             ((TikZWriter)g).WriteFile(where);
             break;
+          case FORMAT_SVG:
+            ((TikZWriter)g).WriteSvg(width, height,where);
+            break;
         }
       } catch (Exception e) {
         JOptionPane.showMessageDialog(frame, S.get("couldNotCreateFile"));
+        e.printStackTrace();
         monitor.close();
         return;
       }
@@ -214,6 +218,7 @@ public class ExportImage {
     JRadioButton formatGif;
     JRadioButton formatJpg;
     JRadioButton formatTikZ;
+    JRadioButton formatSvg;
     GridBagLayout gridbag;
     GridBagConstraints gbc;
     Dimension curJim;
@@ -225,12 +230,15 @@ public class ExportImage {
       formatGif = new JRadioButton("GIF");
       formatJpg = new JRadioButton("JPEG");
       formatTikZ = new JRadioButton("TikZ");
+      formatSvg = new JRadioButton("SVG");
       ButtonGroup bgroup = new ButtonGroup();
       bgroup.add(formatPng);
       bgroup.add(formatGif);
       bgroup.add(formatJpg);
       bgroup.add(formatTikZ);
+      bgroup.add(formatSvg);
       formatTikZ.addChangeListener(this);
+      formatSvg.addChangeListener(this);
       formatPng.setSelected(true);
 
       slider = new JSlider(JSlider.HORIZONTAL, -3 * SLIDER_DIVISIONS, 3 * SLIDER_DIVISIONS, 0);
@@ -270,6 +278,7 @@ public class ExportImage {
       formatsPanel.add(formatGif);
       formatsPanel.add(formatJpg);
       formatsPanel.add(formatTikZ);
+      formatsPanel.add(formatSvg);
       addGb(formatsPanel);
 
       gbc.gridy++;
@@ -291,6 +300,7 @@ public class ExportImage {
       if (formatGif.isSelected()) return FORMAT_GIF;
       if (formatJpg.isSelected()) return FORMAT_JPG;
       if (formatTikZ.isSelected()) return FORMAT_TIKZ;
+      if (formatSvg.isSelected()) return FORMAT_SVG;
       return FORMAT_PNG;
     }
 
@@ -308,8 +318,8 @@ public class ExportImage {
       if (curJim != null) curScale.setPreferredSize(curJim);
       if (e == null)
         return;
-      if (e.getSource().equals(formatTikZ)) {
-        if (formatTikZ.isSelected()) {
+      if (e.getSource().equals(formatTikZ)||e.getSource().equals(formatSvg)) {
+        if (formatTikZ.isSelected() || formatSvg.isSelected()) {
           curScale.setEnabled(false);
           slider.setEnabled(false);
           slider.setValue(0);
@@ -338,6 +348,9 @@ public class ExportImage {
     case FORMAT_TIKZ:
       return new ImageFileFilter(fmt,
           S.getter("exportTikZFilter"), new String[] { "tex" });
+    case FORMAT_SVG:
+      return new ImageFileFilter(fmt,
+          S.getter("exportSvgFilter"), new String[] { "svg" });
     default:
       logger.error("Unexpected image format; aborted!");
       return null;
@@ -443,6 +456,8 @@ public class ExportImage {
   public static final int FORMAT_JPG = 2;
 
   public static final int FORMAT_TIKZ = 3;
+  
+  public static final int FORMAT_SVG = 4;
 
   private static final int BORDER_SIZE = 5;
 

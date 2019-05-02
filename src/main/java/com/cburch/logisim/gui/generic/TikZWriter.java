@@ -58,6 +58,9 @@ import java.io.IOException;
 import java.text.AttributedCharacterIterator;
 import java.util.Map;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
+
 public class TikZWriter extends Graphics2D {
   
   private TikZInfo MyInfo;
@@ -449,6 +452,10 @@ public class TikZWriter extends Graphics2D {
   
   public void WriteFile(File outfile) throws IOException {
     MyInfo.WriteFile(outfile);
+  }
+  
+  public void WriteSvg(int width,int height, File outfile) throws IOException,ParserConfigurationException,TransformerException {
+    MyInfo.WriteSvg(width, height,outfile);  
   }
 
 }

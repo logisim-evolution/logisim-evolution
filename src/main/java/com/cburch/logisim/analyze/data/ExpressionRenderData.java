@@ -47,6 +47,7 @@ import java.util.ArrayList;
 import com.cburch.logisim.analyze.model.Expression;
 import com.cburch.logisim.analyze.model.Expression.Notation;
 import com.cburch.logisim.prefs.AppPreferences;
+import com.cburch.logisim.util.GraphicsUtil;
 
 public class ExpressionRenderData {
 
@@ -368,8 +369,9 @@ public class ExpressionRenderData {
         int stopX = x + notStops[i][j];
         if (nd.startIndex >= md.startIndex && nd.stopIndex <= md.stopIndex)
         	g.setColor(MARKCOLOR);
+        GraphicsUtil.switchToWidth(g, 2);
         g.drawLine(startX, notY, stopX, notY);
-        g.drawLine(startX, notY - 1, stopX, notY - 1);
+        GraphicsUtil.switchToWidth(g, 1);
         if (nd.startIndex >= md.startIndex && nd.stopIndex <= md.stopIndex)
         	g.setColor(curCol);
       }

@@ -45,23 +45,33 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.text.AttributedCharacterIterator;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.ListIterator;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import com.cburch.draw.shapes.DrawAttr;
 
 public class TikZInfo implements Cloneable {
 
   private static double BASIC_STROKE_WIDTH = 1;
-  private static double COORDINATE_DOWNSCALE_FACTOR = 10.0;
-  private static String[] KNOWNCOLORS = {"white","black","red","green","blue","cyan","magenta","yellow"};
-  private static List<String> KNOWNCOLORLIST = Arrays.asList(KNOWNCOLORS);
 
   private AffineTransform myTransformer = new AffineTransform();
-  private Color drawColor = Color.BLACK;
-  private Color backColor = Color.WHITE;
+  private Color drawColor;
+  private Color backColor;
   private ArrayList<DrawObject> Contents = new ArrayList<DrawObject>();
   private HashMap<String,String> customColors = new HashMap<String,String>();
   private ArrayList<String> usedFonts = new ArrayList<String>();
@@ -69,8 +79,8 @@ public class TikZInfo implements Cloneable {
   private int fontSize;
   private boolean fontBold;
   private boolean fontItalic;
-  private String currentDrawColor = "black";
-  private String currentBackColor = "white";
+  private String currentDrawColor;
+  private String currentBackColor;
   private Font curFont;
   private BasicStroke curStroke = new BasicStroke(1);
   private double myRotation = 0;
@@ -78,6 +88,7 @@ public class TikZInfo implements Cloneable {
   
   public interface DrawObject {
     public String getTikZCommand();
+    public void getSvgCommand(Document root, Element e);
     public boolean insideArea(int x, int y, int width, int height);
     public DrawObject clone();
     public void move(int dx , int dy);
@@ -153,6 +164,10 @@ public class TikZInfo implements Cloneable {
         }
       }
     }
+
+	@Override
+	public void getSvgCommand(Document root, Element e) {
+	}
   }
   
   private class TikZLine extends AbstratctTikZ {
@@ -290,6 +305,31 @@ public class TikZInfo implements Cloneable {
       contents.append(";");
       return contents.toString();
     }
+    
+    @Override
+    public void getSvgCommand(Document root, Element e) {
+      StringBuffer content = new StringBuffer();
+      Element ne = root.createElement(close ? "polygon" : "polyline");
+      e.appendChild(ne);
+      ne.setAttribute("fill", filled ? "rgb("+customColors.get(color)+")" : "none");
+      ne.setAttribute("stroke", filled ? "none" : "rgb("+customColors.get(color)+")");
+      double width = strokeWidth*BASIC_STROKE_WIDTH;
+      ne.setAttribute("stroke-width", Double.toString(rounded(width)));
+      ne.setAttribute("stroke-linecap", "square");
+      if (points.isEmpty()) {
+        content.append(start.x+","+start.y+" "+end.x+","+end.y);
+      } else {
+        boolean first = true;
+        for (Point point : points) {
+          if (first)
+            first = false;
+          else
+            content.append(" ");
+          content.append(point.x+","+point.y);
+        }
+      }
+      ne.setAttribute("points", content.toString());
+    }
 
     @SuppressWarnings("unchecked")
     @Override
@@ -394,6 +434,25 @@ public class TikZInfo implements Cloneable {
         return contents.toString();
       }
       
+      public String getSvgPath() {
+          StringBuffer contents = new StringBuffer();
+          if (closePath) {
+            contents.append(" Z");
+          } else if (startPoint != null) {
+            contents.append(" M"+startPoint.getX()+","+startPoint.getY());
+          } else {
+            if (controlPoint1 == null && controlPoint2 == null) {
+              contents.append(" L"+endPoint.getX()+","+endPoint.getY());
+            } else {
+              Point2D sPoint = (controlPoint2 == null) ? controlPoint1 : controlPoint2;
+              contents.append(" C"+controlPoint1.getX()+","+controlPoint1.getY());
+              contents.append(" "+sPoint.getX()+","+sPoint.getY());
+              contents.append(" "+endPoint.getX()+","+endPoint.getY());
+            }
+          }
+          return contents.toString();
+      }
+      
       public boolean insideArea(int x, int y, int width, int height) {
       if (closePath)
         return true;
@@ -467,10 +526,10 @@ public class TikZInfo implements Cloneable {
   public String getTikZCommand() {
     StringBuffer contents = new StringBuffer();
     contents.append("\\begin{pgfpicture}\n");
-    contents.append("   \\begin{pgfmagnify}{10pt}{-10pt}\n");
+    contents.append("   \\begin{pgfmagnify}{1pt}{-1pt}\n");
     contents.append("      \\pgfsetrectcap\n"); 
     contents.append("      \\pgfseteorule\n"); 
-    contents.append("      \\pgfsetlinewidth{"+strokeWidth/COORDINATE_DOWNSCALE_FACTOR+"}\n"); 
+    contents.append("      \\pgfsetlinewidth{"+strokeWidth+"}\n"); 
     contents.append("      \\color{"+color+"}\n"); 
     contents.append("      \\pgfsetfillopacity{"+alpha+"}\n");
     for (BezierInfo point : myPath) {
@@ -480,6 +539,24 @@ public class TikZInfo implements Cloneable {
     contents.append("   \\end{pgfmagnify}\n");
     contents.append("\\end{pgfpicture}");
     return contents.toString();
+  }
+
+  @Override
+  public void getSvgCommand(Document root, Element e) {
+    Element ne = root.createElement("path");
+    e.appendChild(ne);
+    ne.setAttribute("fill", filled ? "rgb("+customColors.get(color)+")" : "none");
+    if (filled && alpha != 1.0)
+      ne.setAttribute("fill-opacity", Double.toString(rounded(alpha)));
+    ne.setAttribute("stroke", filled ? "none" : "rgb("+customColors.get(color)+")");
+    double width = strokeWidth*BASIC_STROKE_WIDTH;
+    ne.setAttribute("stroke-width", Double.toString(rounded(width)));
+    ne.setAttribute("stroke-linecap", "square");
+    StringBuffer content = new StringBuffer();
+    for (BezierInfo point : myPath) {
+      content.append(point.getSvgPath());
+    }
+    ne.setAttribute("d", content.toString());
   }
 
   @Override
@@ -562,10 +639,10 @@ public class TikZInfo implements Cloneable {
         contents.append(";");
       } else {
         contents.append("\\begin{pgfpicture}\n");
-        contents.append("   \\begin{pgfmagnify}{10pt}{-10pt}\n");
+        contents.append("   \\begin{pgfmagnify}{1pt}{-1pt}\n");
         contents.append("      \\pgfsetrectcap\n"); 
         contents.append("      \\pgfsetcornersarced{"+getPgfPoint(rad)+"}\n"); 
-        contents.append("      \\pgfsetlinewidth{"+strokeWidth/COORDINATE_DOWNSCALE_FACTOR+"}\n"); 
+        contents.append("      \\pgfsetlinewidth{"+strokeWidth+"}\n"); 
         contents.append("      \\color{"+color+"}\n"); 
         contents.append("      \\pgfsetfillopacity{"+alpha+"}\n");
         contents.append("      \\pgfpathrectanglecorners{"+getPgfPoint(start)+"}{"+getPgfPoint(end)+"}\n");
@@ -574,6 +651,31 @@ public class TikZInfo implements Cloneable {
         contents.append("\\end{pgfpicture}");
       }
       return contents.toString();
+    }
+    
+    @Override
+    public void getSvgCommand(Document root, Element e) {
+      Element ne = root.createElement("rect");
+      e.appendChild(ne);
+      ne.setAttribute("fill", filled ? "rgb("+customColors.get(color)+")" : "none");
+      if (filled && alpha != 1.0)
+        ne.setAttribute("fill-opacity", Double.toString(rounded(alpha)));
+      ne.setAttribute("stroke", filled ? "none" : "rgb("+customColors.get(color)+")");
+      double width = strokeWidth*BASIC_STROKE_WIDTH;
+      ne.setAttribute("stroke-width", Double.toString(rounded(width)));
+      ne.setAttribute("stroke-linecap", "square");
+      if (rad != null) {
+        ne.setAttribute("rx", Double.toString(rad.getX()));
+        ne.setAttribute("ry", Double.toString(rad.getY()));
+      }
+      int xpos = (end.x < start.x) ? end.x : start.x;
+      int bwidth = Math.abs(end.x-start.x);
+      int ypos = (end.y < start.y) ? end.y : start.y;
+      int bheight = Math.abs(end.y-start.y);
+      ne.setAttribute("x", Integer.toString(xpos));
+      ne.setAttribute("y", Integer.toString(ypos));
+      ne.setAttribute("width", Integer.toString(bwidth));
+      ne.setAttribute("height", Integer.toString(bheight));
     }
   }
 
@@ -591,8 +693,8 @@ public class TikZInfo implements Cloneable {
     
     private void init(int width , int height, boolean filled) {
       this.filled = filled;
-      xRad = ((double)width)/(2*COORDINATE_DOWNSCALE_FACTOR);
-      yRad = ((double)height)/(2*COORDINATE_DOWNSCALE_FACTOR);
+      xRad = ((double)width)/2.0;
+      yRad = ((double)height)/2.0;
       rotation = (int) getRotationDegrees();
     }
 
@@ -627,12 +729,33 @@ public class TikZInfo implements Cloneable {
       contents.append("ellipse ("+xRad+" and "+yRad+" );");
       return contents.toString();
     }
+
+    @Override
+    public void getSvgCommand(Document root, Element e) {
+      Element ne = root.createElement("ellipse");
+      e.appendChild(ne);
+      ne.setAttribute("fill", filled ? "rgb("+customColors.get(color)+")" : "none");
+      if (filled && alpha != 1.0)
+        ne.setAttribute("fill-opacity", Double.toString(rounded(alpha)));
+      ne.setAttribute("stroke", filled ? "none" : "rgb("+customColors.get(color)+")");
+      double width = strokeWidth*BASIC_STROKE_WIDTH;
+      ne.setAttribute("stroke-width", Double.toString(rounded(width)));
+      if (rotation !=0)
+        ne.setAttribute("transform", "translate("+start.getX()+" "+start.getY()+") rotate("+this.rotation+")");
+      else {
+    	ne.setAttribute("cx", Double.toString(start.getX()));
+    	ne.setAttribute("cy", Double.toString(start.getY()));
+      }
+      ne.setAttribute("rx", Double.toString(Math.abs(xRad)));
+      ne.setAttribute("ry", Double.toString(Math.abs(yRad)));
+    }
   }
   
   private class TikZArc extends TikZElipse {
 
     private double startAngle,stopAngle;
     private Point2D startPos = new Point2D.Double();
+    private Point2D stopPos = new Point2D.Double();
 
     public TikZArc(int x, int y, int width, int height, int startAngle, int arcAngle, boolean fill) {
       filled = fill;
@@ -648,8 +771,10 @@ public class TikZInfo implements Cloneable {
       double startX = center.getX()+Radius.getX()*Math.cos(startAnglePi);
       double startY = center.getY()-Radius.getY()*Math.sin(startAnglePi);
       double stopAnglePi = ((double) (startAngle+arcAngle) * Math.PI)/180.0;
-      xRad = Radius.getX()/COORDINATE_DOWNSCALE_FACTOR;
-      yRad = Radius.getY()/COORDINATE_DOWNSCALE_FACTOR;
+      double stopX = center.getX()+Radius.getX()*Math.cos(stopAnglePi);
+      double stopY = center.getY()-Radius.getY()*Math.sin(stopAnglePi);
+      xRad = Radius.getX();
+      yRad = Radius.getY();
       this.startAngle = -toDegree(startAnglePi);
       stopAngle = -toDegree(stopAnglePi);
       rotation = (int) getRotationDegrees();
@@ -657,6 +782,8 @@ public class TikZInfo implements Cloneable {
       stopAngle += rotation;
       startPos.setLocation(startX, startY);
       transform(startPos,startPos);
+      stopPos.setLocation(stopX,stopY);
+      transform(stopPos,stopPos);
     }
     
     public TikZArc() {};
@@ -674,6 +801,7 @@ public class TikZInfo implements Cloneable {
       NewIns.stopAngle = stopAngle;
       NewIns.alpha = alpha;
       NewIns.startPos = (Point2D) startPos.clone();
+      NewIns.stopPos = (Point2D) stopPos.clone();
       return NewIns;
     }
 
@@ -687,9 +815,26 @@ public class TikZInfo implements Cloneable {
       if (filled && alpha != 1.0)
         contents.append(", fill opacity="+rounded(alpha));
       contents.append("] ");
-      contents.append("("+rounded(startPos.getX())/10.0+","+rounded(startPos.getY())/10.0+")");
+      contents.append("("+rounded(startPos.getX())+","+rounded(startPos.getY())+")");
       contents.append("arc ("+startAngle+":"+stopAngle+":"+xRad+" and "+yRad+" );");
       return contents.toString();
+    }
+    
+    @Override
+    public void getSvgCommand(Document root, Element e) {
+      Element ne = root.createElement("path");
+      e.appendChild(ne);
+      ne.setAttribute("fill", filled ? "rgb("+customColors.get(color)+")" : "none");
+      if (filled && alpha != 1.0)
+        ne.setAttribute("fill-opacity", Double.toString(rounded(alpha)));
+      ne.setAttribute("stroke", filled ? "none" : "rgb("+customColors.get(color)+")");
+      double width = strokeWidth*BASIC_STROKE_WIDTH;
+      ne.setAttribute("stroke-width", Double.toString(rounded(width)));
+      StringBuffer content = new StringBuffer();
+      String info = startAngle > stopAngle ? " 0,0 " : " 0,1 ";
+      content.append("M"+startPos.getX()+","+startPos.getY());
+      content.append(" A"+xRad+","+yRad+" "+this.startAngle+info+stopPos.getX()+","+stopPos.getY());
+      ne.setAttribute("d", content.toString());
     }
   }
   
@@ -744,27 +889,52 @@ public class TikZInfo implements Cloneable {
       color = getDrawColorString();
     }
     
-    private String getAttrString() {
+    private String getAttrString(boolean svg, Document root, Element e) {
       /* this is a very simplified implementation that should suffice for logisim evolution */
+      sIter.first();
       StringBuffer content = new StringBuffer();
-      content.append("$\\text{");
+      Element tspan = null;
+      if (!svg)
+        content.append("$\\text{");
+      else
+        tspan = root.createElement("tspan");
       while (sIter.getIndex() < sIter.getEndIndex()) {
         if (sIter.getAttribute(TextAttribute.SUPERSCRIPT) == TextAttribute.SUPERSCRIPT_SUB) {
-          content.append("}_{\\text{");
+          if (svg) {
+            if (content.length()>0) {
+              e.appendChild(tspan);
+              tspan.setTextContent(content.toString());
+              content = new StringBuffer();
+            }
+            tspan = root.createElement("tspan");
+            tspan.setAttribute("dy", "3");
+            tspan.setAttribute("font-size", ".7em");
+          } else
+            content.append("}_{\\text{");
           while (sIter.getIndex() < sIter.getEndIndex() && sIter.getAttribute(TextAttribute.SUPERSCRIPT) == TextAttribute.SUPERSCRIPT_SUB) {
             char kar = sIter.current();
-            if (kar == '_')
+            if (kar == '_' && !svg)
               content.append("\\_");
             else
               content.append(kar);
             sIter.next();
           }
-          content.append("}}\\text{");
+          if (svg) {
+            if (content.length()>0) {
+              e.appendChild(tspan);
+              tspan.setTextContent(content.toString());
+              content = new StringBuffer();
+              tspan = root.createElement("tspan");
+              tspan.setAttribute("dy", "-3");
+            } else
+                tspan = root.createElement("tspan");
+          } else
+            content.append("}}\\text{");
         } else {
           char kar = sIter.current();
-          if (kar == '\u22C5') {
+          if (kar == '\u22C5' && !svg) {
             content.append("}\\cdot\\text{");
-          } else if (kar == '_') {
+          } else if (kar == '_' && !svg) {
             content.append("\\_");
           } else {
             content.append(kar);
@@ -772,7 +942,13 @@ public class TikZInfo implements Cloneable {
           sIter.next();
         }
       }
-      content.append("}$");
+      if (!svg)
+        content.append("}$");
+      else if (content.length()>0) {
+        e.appendChild(tspan);
+        tspan.setTextContent(content.toString());
+        content = new StringBuffer();
+      }
       return content.toString();
     }
     
@@ -797,9 +973,33 @@ public class TikZInfo implements Cloneable {
           content.append(kar);
         }
       else
-        content.append(getAttrString());
+        content.append(getAttrString(false,null,null));
       content.append("};}");
       return content.toString();
+    }
+
+    @Override
+    public void getSvgCommand(Document root, Element e) {
+      Element ne = root.createElement("text");
+      ne.setAttribute("font-family",usedFonts.get(fontIndex) );
+      ne.setAttribute("font-size", Integer.toString(fSize));
+      if (fBold) 
+        ne.setAttribute("font-weight", "bold");
+      if (fItalic)
+    	ne.setAttribute("font-style", "italic");
+      if (this.rotation != 0)
+        ne.setAttribute("transform","rotate("+Double.toString(-this.rotation)+","+location.getX()+","+location.getY()+")");
+      ne.setAttribute("x", Double.toString(location.getX()));
+      ne.setAttribute("y", Double.toString(location.getY()));
+      ne.setAttribute("fill", "rgb("+customColors.get(color)+")");
+      if (name != null) {
+        ne.setTextContent(name);
+        if (!name.isEmpty())
+          e.appendChild(ne);
+      } else {
+        getAttrString(true,root,ne);
+        e.appendChild(ne);
+      }
     }
 
     @Override
@@ -826,7 +1026,7 @@ public class TikZInfo implements Cloneable {
     public void move(int dx, int dy) {
       location = new Point(location.x+dx,location.y+dy);
     }
-      
+
   }
   
   public static double rounded( double v ) {
@@ -834,17 +1034,17 @@ public class TikZInfo implements Cloneable {
   }
   
   public static String getPoint(Point2D p) {
-    double x = p.getX()/COORDINATE_DOWNSCALE_FACTOR;
-    double y = (p.getY()/COORDINATE_DOWNSCALE_FACTOR);
-    return " ("+rounded(x)+","+rounded(y)+") ";
+    return " ("+rounded(p.getX())+","+rounded(p.getY())+") ";
   }
   
   public static String getPgfPoint(Point2D p) {
-    return "\\pgfpoint{"+p.getX()/COORDINATE_DOWNSCALE_FACTOR+"}{"+p.getY()/COORDINATE_DOWNSCALE_FACTOR+"}";
+    return "\\pgfpoint{"+p.getX()+"}{"+p.getY()+"}";
   }
     
   public TikZInfo() {
     setFont(DrawAttr.DEFAULT_FONT);
+    setBackground(Color.WHITE);
+    setColor(Color.BLACK);
   }
      
   public TikZInfo clone() {
@@ -870,15 +1070,11 @@ public class TikZInfo implements Cloneable {
   }
   
   private String getColorName(Color c) {
-    String colname = c.toString().toLowerCase();
     String custname = "custcol_"+Integer.toString(c.getRed(), 16)+"_"+
                    Integer.toString(c.getGreen(), 16)+"_"+Integer.toString(c.getBlue(),16);
-    if (!KNOWNCOLORLIST.contains(colname) && !customColors.containsKey(custname)) {
-      String LaTeXCol = "\\definecolor{"+custname+"}{RGB}{"+Integer.toString(c.getRed())+", "+
-         Integer.toString(c.getGreen())+", "+Integer.toString(c.getBlue())+"}";
-      customColors.put(custname, LaTeXCol);
-    }
-    return KNOWNCOLORLIST.contains(colname) ? colname : custname;
+    String RGBCol = Integer.toString(c.getRed())+", "+Integer.toString(c.getGreen())+", "+Integer.toString(c.getBlue());
+    customColors.put(custname, RGBCol);
+    return custname;
   }
 
   public void transform(Point2D src , Point2D dest) {
@@ -1096,6 +1292,13 @@ public class TikZInfo implements Cloneable {
     return content.toString();
   }
   
+  private String getColorDefinitions() {
+    StringBuffer content = new StringBuffer();
+    for (String key : customColors.keySet())
+      content.append("\\definecolor{"+key+"}{RGB}{"+customColors.get(key)+"}\n");
+    return content.toString();
+  }
+  
   public void WriteFile(File outfile) throws IOException {
     optimize();
     FileWriter writer = new FileWriter(outfile);
@@ -1105,17 +1308,41 @@ public class TikZInfo implements Cloneable {
     writer.write("% 2) \\resizebox{!}{15cm}{\"below picture\"} to scale vertically to 15 cm\n");
     writer.write("% 3) \\resizebox{10cm}{15cm}{\"below picture\"} a combination of above two\n");
     writer.write("% It is not recomended to use the scale option of the tikzpicture environment.\n");
-    writer.write("\\begin{tikzpicture}[x=10pt,y=-10pt,line cap=rect]\n");
+    writer.write("\\begin{tikzpicture}[x=1pt,y=-1pt,line cap=rect]\n");
     for (int i = 0 ; i < usedFonts.size() ; i++)
       writer.write(getFontDefinition(i));
-    for (String key : customColors.keySet())
-      writer.write(customColors.get(key)+"\n");
+    writer.write(getColorDefinitions());
     for (DrawObject obj : Contents)
       writer.write(obj.getTikZCommand()+"\n");
     writer.write("\\end{tikzpicture}\n\n");
-    Contents.clear();
-    customColors.clear();
     writer.close();
+  }
+  
+  public void WriteSvg(int width,int height,File outfile) throws IOException,ParserConfigurationException,TransformerException {
+    optimize();
+    DocumentBuilderFactory factory;
+    DocumentBuilder parser;
+    Document svgInfo;
+    // Create instance of DocumentBuilderFactory
+    factory = DocumentBuilderFactory.newInstance();
+    // Get the DocumentBuilder
+    parser = factory.newDocumentBuilder();
+    // Create blank DOM Document
+    svgInfo = parser.newDocument();
+    Element svg = svgInfo.createElement("svg");
+    svg.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+    svg.setAttribute("version", "1.1");
+    svg.setAttribute("viewBox", "0 0 "+width+" "+height);
+    svgInfo.appendChild(svg);
+    for (DrawObject obj : Contents)
+      obj.getSvgCommand(svgInfo,svg);
+    TransformerFactory tranFactory = TransformerFactory.newInstance();
+    tranFactory.setAttribute("indent-number", 3);
+    Transformer aTransformer = tranFactory.newTransformer();
+    aTransformer.setOutputProperty(OutputKeys.INDENT, "yes");
+    Source src = new DOMSource(svgInfo);
+    Result dest = new StreamResult(outfile);
+    aTransformer.transform(src, dest);
   }
 
   

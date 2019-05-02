@@ -96,7 +96,8 @@ public abstract class PrintHandler implements Printable {
       ExportImage.getFilter(ExportImage.FORMAT_PNG),
       ExportImage.getFilter(ExportImage.FORMAT_GIF),
       ExportImage.getFilter(ExportImage.FORMAT_JPG),
-      ExportImage.getFilter(ExportImage.FORMAT_TIKZ)
+      ExportImage.getFilter(ExportImage.FORMAT_TIKZ),
+      ExportImage.getFilter(ExportImage.FORMAT_SVG)
     };
     JFileChooser chooser = JFileChoosers.createSelected(getLastExported());
     chooser.setAcceptAllFileFilterUsed(false);
@@ -111,7 +112,13 @@ public abstract class PrintHandler implements Printable {
     if (returnVal != JFileChooser.APPROVE_OPTION)
       return;
     File dest = chooser.getSelectedFile();
-    FileFilter ff = chooser.getFileFilter();
+    FileFilter ff = null;
+    for (int i = 0; i < filters.length ; i++) {
+      if (filters[i].accept(dest))
+        ff = filters[i];
+    }
+    if (ff == null)
+      ff = chooser.getFileFilter();
     if (!ff.accept(dest)) {
       if (ff == filters[0]) dest = new File(dest + ".png");
       else if (ff == filters[1]) dest = new File(dest + ".gif");
@@ -131,7 +138,8 @@ public abstract class PrintHandler implements Printable {
     int fmt = (ff == filters[0] ? ExportImage.FORMAT_PNG
         : ff == filters[1] ? ExportImage.FORMAT_GIF
         : ff == filters[2] ? ExportImage.FORMAT_JPG
-        : ExportImage.FORMAT_TIKZ);
+        : ff == filters[2] ? ExportImage.FORMAT_TIKZ
+        : ExportImage.FORMAT_SVG);
     exportImage(dest, fmt);
   }
 
@@ -158,7 +166,6 @@ public abstract class PrintHandler implements Printable {
   }
 
   public void exportImage(File dest, int fmt) {
-
     Dimension d = getExportImageSize();
     if (d == null && showErr("couldNotCreateImage"))
       return;
@@ -166,7 +173,7 @@ public abstract class PrintHandler implements Printable {
     Graphics base;
     Graphics gr;
     BufferedImage img = new BufferedImage(d.width, d.height, BufferedImage.TYPE_INT_RGB);
-    if (fmt == ExportImage.FORMAT_TIKZ)
+    if (fmt == ExportImage.FORMAT_TIKZ || fmt == ExportImage.FORMAT_SVG)
       base = new TikZWriter();
     else
       base = img.getGraphics();
@@ -183,7 +190,6 @@ public abstract class PrintHandler implements Printable {
         paintExportImage(img, g);
       } catch (Exception e) {
         showErr("couldNotCreateImage");
-        e.printStackTrace();
         return;
       }
 
@@ -200,6 +206,9 @@ public abstract class PrintHandler implements Printable {
           break;
         case ExportImage.FORMAT_TIKZ:
           ((TikZWriter)g).WriteFile(dest);
+          break;
+        case ExportImage.FORMAT_SVG:
+          ((TikZWriter)g).WriteSvg(d.width, d.height,dest);
           break;
         }
       } catch (Exception e) {
