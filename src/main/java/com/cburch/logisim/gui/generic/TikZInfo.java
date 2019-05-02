@@ -35,6 +35,7 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.Stroke;
+import java.awt.font.GlyphVector;
 import java.awt.font.TextAttribute;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.PathIterator;
@@ -152,10 +153,6 @@ public class TikZInfo implements Cloneable {
         }
       }
     }
-  
-     public double rounded( double v ) {
-       return ((double)Math.round(v*1000.0))/1000.0;
-     }
   }
   
   private class TikZLine extends AbstratctTikZ {
@@ -312,27 +309,19 @@ public class TikZInfo implements Cloneable {
   
   private class TikZBezier extends AbstratctTikZ {
     private class BezierInfo implements Cloneable {
-      private Point startPoint,controlPoint1,controlPoint2,endPoint;
+      private Point2D startPoint,controlPoint1,controlPoint2,endPoint;
       private boolean closePath;
-      private float strokeWidth = 0;
-      private String Color = "";
-      private boolean filled = false;
-      private double alpha;
       
       public BezierInfo() {
         startPoint = controlPoint1 = controlPoint2 = endPoint = null;
         closePath = true;
       }
       
-      public BezierInfo(Point nextPoint, boolean startpoint, boolean filled) {
+      public BezierInfo(Point2D nextPoint, boolean startpoint, boolean filled) {
         controlPoint1 = controlPoint2 = null;
         if (startpoint) {
           startPoint = nextPoint;
           endPoint = null;
-          Color = getDrawColorString();
-          this.alpha = (double)drawColor.getAlpha()/255.0;
-          this.filled = filled;
-          strokeWidth = getStrokeWidth();
         } else {
           startPoint = null;
           endPoint = nextPoint;
@@ -341,7 +330,7 @@ public class TikZInfo implements Cloneable {
         scale();
       }
       
-      public BezierInfo(Point controlPoint, Point nextPoint) {
+      public BezierInfo(Point2D controlPoint, Point2D nextPoint) {
         startPoint = controlPoint2 = null;
         controlPoint1 = controlPoint;
         endPoint = nextPoint;
@@ -349,7 +338,7 @@ public class TikZInfo implements Cloneable {
         scale();
       }
       
-      public BezierInfo(Point controlPointa, Point controlPointb, Point nextPoint) {
+      public BezierInfo(Point2D controlPointa, Point2D controlPointb, Point2D nextPoint) {
         startPoint = null;
         controlPoint1 = controlPointa;
         controlPoint2 = controlPointb;
@@ -372,45 +361,34 @@ public class TikZInfo implements Cloneable {
         newInst.controlPoint2 = controlPoint2;
         newInst.endPoint = endPoint;
         newInst.closePath = closePath;
-        newInst.strokeWidth = strokeWidth;
-        newInst.Color = Color;
-        newInst.filled = this.filled;
-        newInst.alpha = this.alpha;
         return newInst;
       }
       
       public void move(int dx , int dy) {
+    	AffineTransform at = AffineTransform.getTranslateInstance(dx, dy);
         if (startPoint!= null)
-          startPoint = new Point(startPoint.x+dx,startPoint.y+dy);
+          at.transform(startPoint, startPoint);
         if (controlPoint1 != null)
-          controlPoint1 = new Point(controlPoint1.x+dx,controlPoint1.y+dy);
+          at.transform(controlPoint1, controlPoint1);
         if (controlPoint2 != null)
-          controlPoint2 = new Point(controlPoint1.x+dx,controlPoint1.y+dy);
+          at.transform(controlPoint2, controlPoint2);
         if (endPoint != null)
-          endPoint = new Point(endPoint.x+dx,endPoint.y+dy);
+          at.transform(endPoint, endPoint);
       }
       
       public String getTikZCommand() {
         StringBuffer contents = new StringBuffer();
         if (closePath) {
-          contents.append(" -- cycle");
+          contents.append("      \\pgfpathclose\n");
         } else if (startPoint != null) {
-          contents.append((filled) ? "\\fill " : "\\draw");
-          contents.append("[line width=");
-          double width = strokeWidth*BASIC_STROKE_WIDTH;
-          contents.append(rounded(width)+"pt, "+Color);
-          if (filled && this.alpha != 1.0)
-            contents.append(", fill opacity="+rounded(this.alpha));
-          contents.append(" ] ");
-          contents.append(getPoint(startPoint));
+          contents.append("      \\pgfpathmoveto{"+getPgfPoint(startPoint)+"}\n");
         } else {
           if (controlPoint1 == null && controlPoint2 == null) {
-            contents.append(" -- "+getPoint(endPoint));
+            contents.append("      \\pgfpathlineto{"+getPgfPoint(endPoint)+"}\n");
           } else {
-            contents.append(" .. controls "+getPoint(controlPoint1));
-            if (controlPoint2 != null)
-              contents.append(" and "+getPoint(controlPoint2));
-            contents.append(" .. "+getPoint(endPoint));
+            contents.append("      \\pgfpathcurveto{"+getPgfPoint(controlPoint1)+"}");
+            contents.append("{"+getPgfPoint(controlPoint2 == null ? controlPoint1 : controlPoint2)+"}");
+            contents.append("{"+getPgfPoint(endPoint)+"}\n");
           }
         }
         return contents.toString();
@@ -420,14 +398,14 @@ public class TikZInfo implements Cloneable {
       if (closePath)
         return true;
         boolean inside = true;
-        int x1 = x;
-        int x2 = x+width;
-        int y1 = y;
-        int y2 = y+height;
+        double x1 = x;
+        double x2 = x+width;
+        double y1 = y;
+        double y2 = y+height;
         if (startPoint != null)
-          inside &= (startPoint.x >= x1 && startPoint.x <= x2) && (startPoint.y >= y1 && startPoint.y <= y2);
+          inside &= (startPoint.getX() >= x1 && startPoint.getX() <= x2) && (startPoint.getY() >= y1 && startPoint.getY() <= y2);
         if (endPoint != null)
-          inside &= (endPoint.x >= x1 && endPoint.x <= x2) && (endPoint.y >= y1 && endPoint.y <= y2);
+          inside &= (endPoint.getX() >= x1 && endPoint.getX() <= x2) && (endPoint.getY() >= y1 && endPoint.getY() <= y2);
         return inside;
       }
     }
@@ -435,28 +413,50 @@ public class TikZInfo implements Cloneable {
     private ArrayList<BezierInfo> myPath = new ArrayList<BezierInfo>();
     
     public TikZBezier() {};
-
+    
     public TikZBezier(Shape s, boolean filled) {
-      PathIterator p = s.getPathIterator(new AffineTransform());
+      Point2D p = new Point2D.Double();
+      p.setLocation(0, 0);
+      create(p,s,filled);
+    }
+
+    public TikZBezier(Point2D orig, Shape s, boolean filled) {
+      create(orig,s,filled);
+    }
+    
+    private void create(Point2D origin, Shape s, boolean filled) {
+      this.filled = filled;
+      this.color = getDrawColorString();
+      this.alpha = (double)drawColor.getAlpha()/255.0;
+      this.strokeWidth = getStrokeWidth();
+      AffineTransform at = AffineTransform.getTranslateInstance(origin.getX(), origin.getY());
+      PathIterator p = s.getPathIterator(at);
       while (!p.isDone()) {
         double[] coords = new double[6];
-        int type = p.currentSegment(coords);
+        int type = p.currentSegment(coords);        
         if (type == PathIterator.SEG_MOVETO) {
-          Point current = new Point((int)coords[0],(int)coords[1]);
+          Point2D current = new Point2D.Double();
+          current.setLocation(coords[0],coords[1]);
           myPath.add(new BezierInfo(current,true,filled));
         } else if (type == PathIterator.SEG_LINETO) {
-          Point next = new Point((int)coords[0],(int)coords[1]);
+          Point2D next = new Point2D.Double();
+          next.setLocation(coords[0],coords[1]);
           myPath.add(new BezierInfo(next,false,false));
         } else if (type == PathIterator.SEG_CLOSE) {
           myPath.add(new BezierInfo());
         } else if (type == PathIterator.SEG_QUADTO) {
-          Point control = new Point((int)coords[0],(int)coords[1]);
-          Point next = new Point((int)coords[2],(int)coords[3]);
+          Point2D next = new Point2D.Double();
+          Point2D control = new Point2D.Double();
+          control.setLocation(coords[0],coords[1]);
+          next.setLocation(coords[2],coords[3]);
           myPath.add(new BezierInfo(control,next));
         } else if (type == PathIterator.SEG_CUBICTO) {
-          Point control1 = new Point((int)coords[0],(int)coords[1]);
-          Point control2 = new Point((int)coords[2],(int)coords[3]);
-          Point next = new Point((int)coords[4],(int)coords[5]);
+          Point2D next = new Point2D.Double();
+          Point2D control1 = new Point2D.Double();
+          Point2D control2 = new Point2D.Double();
+          control1.setLocation(coords[0],coords[1]);
+          control2.setLocation(coords[2],coords[3]);
+          next.setLocation(coords[4],coords[5]);
           myPath.add(new BezierInfo(control1,control2,next));
         }
         p.next();
@@ -466,11 +466,20 @@ public class TikZInfo implements Cloneable {
   @Override
   public String getTikZCommand() {
     StringBuffer contents = new StringBuffer();
+    contents.append("\\begin{pgfpicture}\n");
+    contents.append("   \\begin{pgfmagnify}{10pt}{-10pt}\n");
+    contents.append("      \\pgfsetrectcap\n"); 
+    contents.append("      \\pgfseteorule\n"); 
+    contents.append("      \\pgfsetlinewidth{"+strokeWidth/COORDINATE_DOWNSCALE_FACTOR+"}\n"); 
+    contents.append("      \\color{"+color+"}\n"); 
+    contents.append("      \\pgfsetfillopacity{"+alpha+"}\n");
     for (BezierInfo point : myPath) {
       contents.append(point.getTikZCommand());
     }
-    contents.append(" ;");
-      return contents.toString();
+    contents.append("      \\pgfusepath{"+(filled?"fill":"stroke")+"}\n");
+    contents.append("   \\end{pgfmagnify}\n");
+    contents.append("\\end{pgfpicture}");
+    return contents.toString();
   }
 
   @Override
@@ -484,6 +493,10 @@ public class TikZInfo implements Cloneable {
   @Override
   public DrawObject clone() {
       TikZBezier newInst = new TikZBezier();
+      newInst.filled = filled;
+      newInst.color = color;
+      newInst.alpha = alpha;
+      newInst.strokeWidth = strokeWidth;
       for (BezierInfo point : myPath)
         newInst.myPath.add(point.clone());  
     return newInst;
@@ -498,20 +511,21 @@ public class TikZInfo implements Cloneable {
   }
   
   private class TikZRectangle extends AbstratctTikZ {
-    double rad;
+    Point2D rad;
   
     public TikZRectangle() {};
 
     public TikZRectangle(int x1, int y1, int x2, int y2, int arcwidth, int archeight, boolean filled) {
       super(x1,y1,x2,y2);
-      rad = Math.max(arcwidth, archeight)/2.0;
+      rad = new Point2D.Double();
+      rad.setLocation(((double)arcwidth)/2.0, ((double)archeight)/2.0);
       this.filled = filled;
     }
 
     public TikZRectangle(int x1, int y1, int x2, int y2, boolean filled) {
       super(x1,y1,x2,y2);
       this.filled = filled;
-      rad = 0;
+      rad = null;
     }
     
     public void setBackColor() {
@@ -526,7 +540,7 @@ public class TikZInfo implements Cloneable {
       NewIns.strokeWidth = strokeWidth;
       NewIns.color = color;
       NewIns.filled = filled;
-      NewIns.rad = rad;
+      NewIns.rad = (Point2D) rad.clone();
       NewIns.alpha = alpha;
       return NewIns;
     }
@@ -534,19 +548,31 @@ public class TikZInfo implements Cloneable {
     @Override
     public String getTikZCommand() {
       StringBuffer contents = new StringBuffer();
-      contents.append(filled ? "\\fill " : "\\draw ");
-      contents.append("[line width=");
-      double width = strokeWidth*BASIC_STROKE_WIDTH;
-      contents.append(rounded(width)+"pt, "+color);
-      if (rad != 0)
-        contents.append(", rounded corners="+rad);
-      if (filled && alpha != 1.0)
-        contents.append(", fill opacity="+rounded(alpha));
-      contents.append(" ] ");
-      contents.append(getPoint(start));
-      contents.append("rectangle");
-      contents.append(getPoint(end));
-      contents.append(";");
+      if (rad == null) {
+        contents.append(filled ? "\\fill " : "\\draw ");
+        contents.append("[line width=");
+        double width = strokeWidth*BASIC_STROKE_WIDTH;
+        contents.append(rounded(width)+"pt, "+color);
+        if (filled && alpha != 1.0)
+          contents.append(", fill opacity="+rounded(alpha));
+        contents.append(" ] ");
+        contents.append(getPoint(start));
+        contents.append("rectangle");
+        contents.append(getPoint(end));
+        contents.append(";");
+      } else {
+        contents.append("\\begin{pgfpicture}\n");
+        contents.append("   \\begin{pgfmagnify}{10pt}{-10pt}\n");
+        contents.append("      \\pgfsetrectcap\n"); 
+        contents.append("      \\pgfsetcornersarced{"+getPgfPoint(rad)+"}\n"); 
+        contents.append("      \\pgfsetlinewidth{"+strokeWidth/COORDINATE_DOWNSCALE_FACTOR+"}\n"); 
+        contents.append("      \\color{"+color+"}\n"); 
+        contents.append("      \\pgfsetfillopacity{"+alpha+"}\n");
+        contents.append("      \\pgfpathrectanglecorners{"+getPgfPoint(start)+"}{"+getPgfPoint(end)+"}\n");
+        contents.append("      \\pgfusepath{"+(filled?"fill":"stroke")+"}\n");
+        contents.append("   \\end{pgfmagnify}\n");
+        contents.append("\\end{pgfpicture}");
+      }
       return contents.toString();
     }
   }
@@ -803,12 +829,20 @@ public class TikZInfo implements Cloneable {
       
   }
   
-  public static String getPoint(Point p) {
-    double x = p.getX()/COORDINATE_DOWNSCALE_FACTOR;
-    double y = (p.getY()/COORDINATE_DOWNSCALE_FACTOR);
-    return " ("+x+","+y+") ";
+  public static double rounded( double v ) {
+    return ((double)Math.round(v*1000.0))/1000.0;
   }
   
+  public static String getPoint(Point2D p) {
+    double x = p.getX()/COORDINATE_DOWNSCALE_FACTOR;
+    double y = (p.getY()/COORDINATE_DOWNSCALE_FACTOR);
+    return " ("+rounded(x)+","+rounded(y)+") ";
+  }
+  
+  public static String getPgfPoint(Point2D p) {
+    return "\\pgfpoint{"+p.getX()/COORDINATE_DOWNSCALE_FACTOR+"}{"+p.getY()/COORDINATE_DOWNSCALE_FACTOR+"}";
+  }
+    
   public TikZInfo() {
     setFont(DrawAttr.DEFAULT_FONT);
   }
@@ -993,6 +1027,16 @@ public class TikZInfo implements Cloneable {
   
   public Rectangle getClip() {
     return clip;
+  }
+  
+  public void drawGlyphVector(GlyphVector g, float x, float y) {
+    for (int i=0 ; i < g.getNumGlyphs(); i++) {
+      AffineTransform at = AffineTransform.getTranslateInstance(x, y);
+      Point2D p = g.getGlyphPosition(i);
+      at.transform(p, p);
+      Shape shape = g.getGlyphOutline(i);
+      Contents.add(new TikZBezier(p,shape,true));
+    }
   }
 
   private void optimize() {

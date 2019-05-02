@@ -77,23 +77,23 @@ public class TikZWriter extends Graphics2D {
 
   @Override
   public boolean drawImage(Image img, AffineTransform xform, ImageObserver obs) {
-    // TODO Auto-generated method stub
+    System.out.println("TikZ not yet supported : drawImage(Image img, AffineTransform xform, ImageObserver obs)");
     return false;
   }
 
   @Override
   public void drawImage(BufferedImage img, BufferedImageOp op, int x, int y) {
-    // TODO Auto-generated method stub
+	  System.out.println("TikZ not yet supported : drawImage(BufferedImage img, BufferedImageOp op, int x, int y)");
   }
 
   @Override
   public void drawRenderedImage(RenderedImage img, AffineTransform xform) {
-    // TODO Auto-generated method stub
+	  System.out.println("TikZ not yet supported : drawRenderedImage(RenderedImage img, AffineTransform xform)");
   }
 
   @Override
   public void drawRenderableImage(RenderableImage img, AffineTransform xform) {
-    // TODO Auto-generated method stub
+	  System.out.println("TikZ not yet supported : drawRenderableImage(RenderableImage img, AffineTransform xform)");
   }
 
   @Override
@@ -118,7 +118,7 @@ public class TikZWriter extends Graphics2D {
 
   @Override
   public void drawGlyphVector(GlyphVector g, float x, float y) {
-    // TODO Auto-generated method stub
+	  MyInfo.drawGlyphVector(g, x, y);
   }
 
   @Override
@@ -128,24 +128,24 @@ public class TikZWriter extends Graphics2D {
 
   @Override
   public boolean hit(Rectangle rect, Shape s, boolean onStroke) {
-    // TODO Auto-generated method stub
+	  System.out.println("TikZ not yet supported : hit(Rectangle rect, Shape s, boolean onStroke)");
     return false;
   }
 
   @Override
   public GraphicsConfiguration getDeviceConfiguration() {
-    // TODO Auto-generated method stub
+	  System.out.println("TikZ not yet supported : GraphicsConfiguration getDeviceConfiguration()");
     return null;
   }
 
   @Override
   public void setComposite(Composite comp) {
-    // TODO Auto-generated method stub
+	  System.out.println("TikZ not yet supported : setComposite(Composite comp)");
   }
 
   @Override
   public void setPaint(Paint paint) {
-    // TODO Auto-generated method stub
+	  System.out.println("TikZ not yet supported : setPaint(Paint paint)");
   }
 
   @Override
@@ -155,28 +155,28 @@ public class TikZWriter extends Graphics2D {
 
   @Override
   public void setRenderingHint(Key hintKey, Object hintValue) {
-    // TODO Auto-generated method stub
+	  System.out.println("TikZ not yet supported : setRenderingHint(Key hintKey, Object hintValue)");
   }
 
   @Override
   public Object getRenderingHint(Key hintKey) {
-    // TODO Auto-generated method stub
+	  System.out.println("TikZ not yet supported : getRenderingHint(Key hintKey)");
     return null;
   }
 
   @Override
   public void setRenderingHints(Map<?, ?> hints) {
-    // TODO Auto-generated method stub
+	  System.out.println("TikZ not yet supported : setRenderingHints(Map<?, ?> hints)");
   }
 
   @Override
   public void addRenderingHints(Map<?, ?> hints) {
-    // TODO Auto-generated method stub
+	  System.out.println("TikZ not yet supported : addRenderingHints(Map<?, ?> hints)");
   }
 
   @Override
   public RenderingHints getRenderingHints() {
-    // TODO Auto-generated method stub
+	  System.out.println("TikZ not yet supported : RenderingHints getRenderingHints()");
     return null;
   }
 
@@ -227,13 +227,13 @@ public class TikZWriter extends Graphics2D {
 
   @Override
   public Paint getPaint() {
-    // TODO Auto-generated method stub
+	  System.out.println("TikZ not yet supported : getPaint()");
     return null;
   }
 
   @Override
   public Composite getComposite() {
-    // TODO Auto-generated method stub
+	  System.out.println("TikZ not yet supported : getComposite()");
     return null;
   }
 
@@ -254,7 +254,7 @@ public class TikZWriter extends Graphics2D {
 
   @Override
   public void clip(Shape s) {
-    // TODO Auto-generated method stub
+	  System.out.println("TikZ not yet supported : clip(Shape s)");
   }
 
   @Override
@@ -319,7 +319,7 @@ public class TikZWriter extends Graphics2D {
 
   @Override
   public void clipRect(int x, int y, int width, int height) {
-    // TODO Auto-generated method stub
+	  System.out.println("TikZ not yet supported : clipRect(int x, int y, int width, int height)");
   }
 
   @Override
@@ -329,13 +329,13 @@ public class TikZWriter extends Graphics2D {
 
   @Override
   public Shape getClip() {
-    // TODO Auto-generated method stub
+	  System.out.println("TikZ not yet supported : getClip()");
     return null;
   }
 
   @Override
   public void setClip(Shape clip) {
-    // TODO Auto-generated method stub
+	  System.out.println("TikZ not yet supported : setClip(Shape clip)");
   }
 
   @Override
@@ -405,39 +405,41 @@ public class TikZWriter extends Graphics2D {
 
   @Override
   public boolean drawImage(Image img, int x, int y, ImageObserver observer) {
-    // TODO Auto-generated method stub
+	  System.out.println("TikZ not yet supported : drawImage(Image img, int x, int y, ImageObserver observer)");
     return false;
   }
 
   @Override
   public boolean drawImage(Image img, int x, int y, int width, int height, ImageObserver observer) {
-    // TODO Auto-generated method stub
+	  System.out.println("TikZ not yet supported : drawImage(Image img, int x, int y, int width, int height, ImageObserver observer)");
     return false;
   }
 
   @Override
   public boolean drawImage(Image img, int x, int y, Color bgcolor, ImageObserver observer) {
-    // TODO Auto-generated method stub
+	  System.out.println("TikZ not yet supported : drawImage(Image img, int x, int y, Color bgcolor, ImageObserver observer)");
     return false;
   }
 
   @Override
   public boolean drawImage(Image img, int x, int y, int width, int height, Color bgcolor, ImageObserver observer) {
-    // TODO Auto-generated method stub
+	  System.out.println("TikZ not yet supported : drawImage(Image img, int x, int y, int width, int height, Color bgcolor, ImageObserver observer)");
     return false;
   }
 
   @Override
   public boolean drawImage(Image img, int dx1, int dy1, int dx2, int dy2, int sx1, int sy1, int sx2, int sy2,
       ImageObserver observer) {
-    // TODO Auto-generated method stub
+	  System.out.println("TikZ not yet supported : drawImage(Image img, int dx1, int dy1, int dx2, int dy2, int sx1, int sy1, int sx2, int sy2,\n" + 
+	  		"      ImageObserver observer)");
     return false;
   }
 
   @Override
   public boolean drawImage(Image img, int dx1, int dy1, int dx2, int dy2, int sx1, int sy1, int sx2, int sy2,
       Color bgcolor, ImageObserver observer) {
-    // TODO Auto-generated method stub
+	  System.out.println("TikZ not yet supported : drawImage(Image img, int dx1, int dy1, int dx2, int dy2, int sx1, int sy1, int sx2, int sy2,\n" + 
+	  		"      Color bgcolor, ImageObserver observer)");
     return false;
   }
 
