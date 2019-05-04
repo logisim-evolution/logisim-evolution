@@ -38,6 +38,7 @@ import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.util.GraphicsUtil;
 import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 
 class AndGate extends AbstractGate {
@@ -128,9 +129,12 @@ class AndGate extends AbstractGate {
     int xend = iconSize-negateSize-rad;
     int[] xp = new int[] {xend, xstart, xstart, xend};
     int[] yp = new int[] {ystart, ystart, yend, yend};
+    AffineTransform af = g.getTransform();
+    g.translate(borderSize, borderSize);
     g.drawPolyline(xp, yp, 4);
     GraphicsUtil.drawCenteredArc(g, xend, iconSize>>1 , rad, -90, 180);
     paintIconPins(g,iconSize,borderSize,negateSize,inverted,false);
+    g.setTransform(af);
   }
 
   @Override

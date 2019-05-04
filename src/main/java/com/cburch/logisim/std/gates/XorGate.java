@@ -39,6 +39,7 @@ import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.tools.WireRepairData;
 import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
 import java.util.ArrayList;
 
@@ -128,22 +129,26 @@ class XorGate extends AbstractGate {
   }
 	  
   protected static void paintIconANSI(Graphics2D g, int iconSize, int borderSize, int negateSize, boolean inverted) {
+    int xoff = negateSize >>1;
     int ystart = negateSize >>1;
     int yend = iconSize-ystart;
     int xstart = 0;
     int xend = iconSize-negateSize;
     GeneralPath shape = new GeneralPath();
     shape.moveTo(xend, iconSize>>1);
-    shape.quadTo((2*xend)/3, ystart, xstart+negateSize, ystart);
-    shape.quadTo(negateSize+xend/3, iconSize>>1, xstart+negateSize, yend);
+    shape.quadTo((2*xend)/3, ystart, xstart+xoff, ystart);
+    shape.quadTo(xoff+xend/3, iconSize>>1, xstart+xoff, yend);
     shape.quadTo((2*xend)/3, yend, xend, iconSize>>1);
     shape.closePath();
     shape.moveTo(xstart, ystart);
     shape.quadTo(xend/3, iconSize>>1, xstart, yend);
     shape.moveTo(xstart, ystart);
     shape.closePath();
+    AffineTransform af = g.getTransform();
+    g.translate(borderSize, borderSize);
     g.draw(shape);
     paintIconPins(g,iconSize,borderSize,negateSize,inverted,false);
+    g.setTransform(af);
   }
 
   @Override

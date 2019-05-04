@@ -60,7 +60,6 @@ import com.cburch.logisim.tools.key.BitWidthConfigurator;
 import com.cburch.logisim.tools.key.DirectionConfigurator;
 import com.cburch.logisim.tools.key.JoinedConfigurator;
 import com.cburch.logisim.util.GraphicsUtil;
-import com.cburch.logisim.util.Icons;
 import com.cburch.logisim.util.LocaleListener;
 import java.awt.Color;
 import java.awt.Font;
@@ -76,8 +75,9 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
+import java.awt.font.TextLayout;
+
 import javax.swing.BorderFactory;
-import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFormattedTextField;
@@ -573,8 +573,6 @@ public class Pin extends InstanceFactory {
           "pull", S.getter("pinPullAttr"), new AttributeOption[] {PULL_NONE, PULL_UP, PULL_DOWN});
 
   public static final Pin FACTORY = new Pin();
-  private static final Icon ICON_IN = Icons.getIcon("pinInput.gif");
-  private static final Icon ICON_OUT = Icons.getIcon("pinOutput.gif");
   private static final Font ICON_WIDTH_FONT = new Font("SansSerif", Font.BOLD, 9);
   public static final Font DEFAULT_FONT = new Font("monospaced", Font.PLAIN, 12);
   private static final Color ICON_WIDTH_COLOR = Value.WIDTH_ERROR_COLOR.darker();
@@ -871,8 +869,7 @@ public class Pin extends InstanceFactory {
       Color LineColor,
       boolean isGhost) {
     PinAttributes attrs = (PinAttributes) painter.getAttributeSet();
-    boolean NewShape =
-        attrs.getValue(ProbeAttributes.PROBEAPPEARANCE) == ProbeAttributes.APPEAR_EVOLUTION_NEW;
+    boolean NewShape = attrs.getValue(ProbeAttributes.PROBEAPPEARANCE) == ProbeAttributes.APPEAR_EVOLUTION_NEW;
     boolean isBus = attrs.getValue(StdAttr.WIDTH).getWidth() > 1;
     Direction dir = attrs.getValue(StdAttr.FACING);
     Graphics g = painter.getGraphics();
@@ -975,65 +972,75 @@ public class Pin extends InstanceFactory {
   //
   @Override
   public void paintIcon(InstancePainter painter) {
-    paintIconBase(painter);
-    BitWidth w = painter.getAttributeValue(StdAttr.WIDTH);
-    if (!w.equals(BitWidth.ONE)) {
-      Graphics g = painter.getGraphics();
-      g.setColor(ICON_WIDTH_COLOR);
-      g.setFont(ICON_WIDTH_FONT);
-      GraphicsUtil.drawCenteredText(g, "" + w.getWidth(), 10, 9);
-      g.setColor(Color.BLACK);
-    }
-  }
-
-  private void paintIconBase(InstancePainter painter) {
     PinAttributes attrs = (PinAttributes) painter.getAttributeSet();
     Direction dir = attrs.facing;
     boolean output = attrs.isOutput();
-    Graphics g = painter.getGraphics();
-    if (output) {
-      if (ICON_OUT != null) {
-        Icons.paintRotated(g, 2, 2, dir, ICON_OUT, painter.getDestination());
-        return;
-      }
+    Graphics2D g = (Graphics2D)painter.getGraphics();
+    int iconSize = AppPreferences.getIconSize();
+    GraphicsUtil.switchToWidth(g, AppPreferences.getScaled(1));
+    BitWidth w = attrs.getValue(StdAttr.WIDTH);
+    int pinSize = iconSize>>2;
+    if (attrs.getValue(ProbeAttributes.PROBEAPPEARANCE) == ProbeAttributes.APPEAR_EVOLUTION_NEW) {
+      int arrowHeight = (10*iconSize)>>4;
+      int yoff = (3*iconSize)>>4;
+      int xoff = output?pinSize : 0;
+      int[] yPoints = new int[] {yoff, yoff, yoff+(arrowHeight>>1), yoff+arrowHeight, yoff+arrowHeight};
+      int[] xPoints = new int[] {xoff, xoff+iconSize-(pinSize<<1), xoff+iconSize-pinSize,
+    		  xoff+iconSize-(pinSize<<1), xoff};
+      g.setColor(Color.black);
+      g.drawPolygon(xPoints, yPoints, xPoints.length);
+      g.setColor(Value.TRUE.getColor());
+      GraphicsUtil.switchToWidth(g, AppPreferences.getScaled(2));
+      if (output)
+        g.drawLine(0, yoff+(arrowHeight>>1), pinSize , yoff+(arrowHeight>>1));
+      else
+    	g.drawLine(iconSize-pinSize, yoff+(arrowHeight>>1), iconSize , yoff+(arrowHeight>>1));
     } else {
-      if (ICON_IN != null) {
-        Icons.paintRotated(g, 2, 2, dir, ICON_IN, painter.getDestination());
-        return;
+      int iconOffset = AppPreferences.getScaled(4);
+      int boxWidth = iconSize-(iconOffset<<1);
+      int pinWidth = AppPreferences.getScaled(3);
+      int pinx = iconOffset+boxWidth;
+      int piny = iconOffset+(boxWidth>>1)-(pinWidth>>1);
+      if (dir == Direction.WEST) {
+        pinx = iconOffset-pinWidth;
+      } else if (dir == Direction.NORTH) {
+        pinx = iconOffset+(boxWidth>>1)-(pinWidth>>1);
+        piny = iconOffset-pinWidth;
+      } else if (dir == Direction.SOUTH) {
+        pinx = iconOffset+(boxWidth>>1)-(pinWidth>>1);
+        piny = iconOffset+boxWidth;
       }
+      g.setColor(Color.black);
+      if (output) {
+        g.drawOval(iconOffset, iconOffset, boxWidth, boxWidth);
+      } else {
+        g.drawRect(iconOffset, iconOffset, boxWidth, boxWidth);
+      }
+      g.setColor(Value.TRUE.getColor());
+      g.fillOval(iconOffset+(boxWidth>>2), iconOffset+(boxWidth>>3), boxWidth>>1, (3*boxWidth)>>2);
+      g.fillOval(pinx, piny, pinWidth, pinWidth);
     }
-    int pinx = 16;
-    int piny = 9;
-    if (dir == Direction.EAST) { // keep defaults
-    } else if (dir == Direction.WEST) {
-      pinx = 4;
-    } else if (dir == Direction.NORTH) {
-      pinx = 9;
-      piny = 4;
-    } else if (dir == Direction.SOUTH) {
-      pinx = 9;
-      piny = 16;
+    if (!w.equals(BitWidth.ONE)) {
+      g.setColor(ICON_WIDTH_COLOR);
+      g.setFont(ICON_WIDTH_FONT);
+      TextLayout bw = new TextLayout(Integer.toString(w.getWidth()), ICON_WIDTH_FONT, g.getFontRenderContext());
+      float xpos = (float)AppPreferences.getIconSize()/2-(float)bw.getBounds().getCenterX();
+      float ypos = (float)AppPreferences.getIconSize()/2-(float)bw.getBounds().getCenterY();
+      if (attrs.getValue(ProbeAttributes.PROBEAPPEARANCE) == ProbeAttributes.APPEAR_EVOLUTION_NEW)
+        if (output)
+          xpos = pinSize+(iconSize-pinSize)/2-(float)bw.getBounds().getCenterX();
+        else
+          xpos = (iconSize-pinSize)/2-(float)bw.getBounds().getCenterX();
+      bw.draw(g, xpos, ypos);
+      g.setColor(Color.BLACK);
     }
-
-    g.setColor(Color.black);
-    if (output) {
-      g.drawOval(4, 4, 13, 13);
-    } else {
-      g.drawRect(4, 4, 13, 13);
-    }
-    g.setColor(Value.TRUE.getColor());
-    g.fillOval(7, 7, 8, 8);
-    g.fillOval(pinx, piny, 3, 3);
   }
 
   @Override
   public void paintInstance(InstancePainter painter) {
     PinAttributes attrs = (PinAttributes) painter.getAttributeSet();
     Graphics g = painter.getGraphics();
-    Bounds bds =
-        painter
-            .getInstance()
-            .getBounds(); // intentionally with no graphics object - we don't want label included
+    Bounds bds = painter .getInstance().getBounds(); // intentionally with no graphics object - we don't want label included
     boolean IsOutput = attrs.type == EndData.OUTPUT_ONLY;
     PinState state = getState(painter);
     Value found = state.foundValue;

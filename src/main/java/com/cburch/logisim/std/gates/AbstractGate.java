@@ -61,6 +61,7 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.font.TextLayout;
+import java.awt.geom.AffineTransform;
 
 abstract class AbstractGate extends InstanceFactory {
   static Value pullOutput(Value value, Object outType) {
@@ -468,22 +469,23 @@ abstract class AbstractGate extends InstanceFactory {
     g.setColor(Color.black);
     GraphicsUtil.switchToWidth(g, AppPreferences.getScaled(1));
     int border = AppPreferences.getIconBorder();
-    g.translate(border, border);
     if (painter.getGateShape().equals(AppPreferences.SHAPE_RECTANGULAR))
       paintIconIEC(g,getRectangularLabel(painter.getAttributeSet()),negateOutput,false);
     else
-      paintIconANSI(g,AppPreferences.getIconSize(),border,AppPreferences.getScaled(4));
+      paintIconANSI(g,AppPreferences.getIconSize()-(border<<1),border,AppPreferences.getScaled(4));
     g.dispose();
     return;
   }
   
   protected static void paintIconIEC(Graphics2D g, String label, boolean negateOutput, boolean singleInput) {
 	GraphicsUtil.switchToWidth(g, AppPreferences.getScaled(1));
-    int iconSize = AppPreferences.getIconSize();
     int iconBorder = AppPreferences.getIconBorder();
+    int iconSize = AppPreferences.getIconSize()-(iconBorder<<1);
     int negateDiameter = AppPreferences.getScaled(4);
     int yoffset = singleInput ? (int)((double)iconSize/6.0) : 0;
     int ysize = singleInput ? iconSize-(yoffset<<1) : iconSize;
+    AffineTransform af = g.getTransform();
+    g.translate(iconBorder, iconBorder);
     g.drawRect(0, yoffset, iconSize-negateDiameter, ysize);
     Font IconFont = g.getFont().deriveFont(((float)iconSize)/2).deriveFont(Font.BOLD);
     g.setFont(IconFont);
@@ -503,6 +505,7 @@ abstract class AbstractGate extends InstanceFactory {
       txt.draw(g, xpos, ypos);
     }
     paintIconPins(g,iconSize,iconBorder,negateDiameter,negateOutput,singleInput);
+    g.setTransform(af);
   }
   
   protected static void paintIconPins(Graphics2D g , int iconSize,
@@ -519,9 +522,11 @@ abstract class AbstractGate extends InstanceFactory {
   
   protected static void paintIconBufferANSI(Graphics2D g, boolean negate,boolean controlled) {
     GraphicsUtil.switchToWidth(g, AppPreferences.getScaled(1));
-    int iconSize = AppPreferences.getIconSize();
     int borderSize = AppPreferences.getIconBorder();
+    int iconSize = AppPreferences.getIconSize()-(borderSize<<1);
     int negateSize = AppPreferences.getScaled(4);
+    AffineTransform af = g.getTransform();
+    g.translate(borderSize, borderSize);
     int ystart = negateSize >>1;
     int yend = iconSize-ystart;
     int xstart = 0;
@@ -532,6 +537,7 @@ abstract class AbstractGate extends InstanceFactory {
     paintIconPins(g,iconSize,borderSize,negateSize,negate,true);
     if (controlled)
       g.drawLine(xend>>1, ((3*(yend-ystart))>>2)+ystart , xend>>1, yend);
+    g.setTransform(af);
   }
 
   protected abstract void paintIconANSI(Graphics2D g, int iconSize, int borderSize, int negateSize);

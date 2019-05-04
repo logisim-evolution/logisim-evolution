@@ -38,8 +38,8 @@ import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.tools.WireRepairData;
-import com.cburch.logisim.util.GraphicsUtil;
 import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
 import java.util.ArrayList;
 
@@ -130,8 +130,11 @@ class OrGate extends AbstractGate {
     shape.quadTo(xend/3, iconSize>>1, xstart, yend);
     shape.quadTo((2*xend)/3, yend, xend, iconSize>>1);
     shape.closePath();
+    AffineTransform af = g.getTransform();
+    g.translate(borderSize, borderSize);
     g.draw(shape);
     paintIconPins(g,iconSize,borderSize,negateSize,inverted,false);
+    g.setTransform(af);
   }
 
 
