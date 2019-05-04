@@ -47,15 +47,14 @@ import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.tools.WireRepair;
 import com.cburch.logisim.tools.WireRepairData;
 import com.cburch.logisim.tools.key.BitWidthConfigurator;
 import com.cburch.logisim.util.GraphicsUtil;
-import com.cburch.logisim.util.Icons;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import javax.swing.Icon;
 
 class ControlledBuffer extends InstanceFactory {
   private static final AttributeOption RIGHT_HANDED =
@@ -70,9 +69,6 @@ class ControlledBuffer extends InstanceFactory {
 
   public static ComponentFactory FACTORY_BUFFER = new ControlledBuffer(false);
   public static ComponentFactory FACTORY_INVERTER = new ControlledBuffer(true);
-
-  private static final Icon ICON_BUFFER = Icons.getIcon("controlledBuffer.gif");
-  private static final Icon ICON_INVERTER = Icons.getIcon("controlledInverter.gif");
 
   private boolean isInverter;
 
@@ -192,20 +188,11 @@ class ControlledBuffer extends InstanceFactory {
 
   @Override
   public void paintIcon(InstancePainter painter) {
-    Graphics g = painter.getGraphics();
-    Icon icon = isInverter ? ICON_INVERTER : ICON_BUFFER;
-    if (icon != null) {
-      icon.paintIcon(painter.getDestination(), g, 2, 2);
-    } else {
-      int x = isInverter ? 0 : 2;
-      g.setColor(Color.BLACK);
-      int[] xp = new int[] {x + 15, x + 1, x + 1, x + 15};
-      int[] yp = new int[] {10, 3, 17, 10};
-      g.drawPolyline(xp, yp, 4);
-      if (isInverter) g.drawOval(x + 13, 8, 4, 4);
-      g.setColor(Value.FALSE_COLOR);
-      g.drawLine(x + 8, 14, x + 8, 18);
-    }
+    Graphics2D g = (Graphics2D)painter.getGraphics();
+    if (painter.getGateShape() == AppPreferences.SHAPE_RECTANGULAR)
+      AbstractGate.paintIconIEC(g, "EN1", isInverter, false);
+    else
+      AbstractGate.paintIconBufferANSI(g, isInverter, true);
   }
 
   @Override

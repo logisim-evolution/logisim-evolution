@@ -36,10 +36,8 @@ import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
-import com.cburch.logisim.util.GraphicsUtil;
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics;
+
+import java.awt.Graphics2D;
 import java.util.ArrayList;
 
 class OddParityGate extends AbstractGate {
@@ -55,11 +53,11 @@ class OddParityGate extends AbstractGate {
   }
 
   public static OddParityGate FACTORY = new OddParityGate();
+  private String ODD_PARITY_LABEL = "2k+1";
 
   private OddParityGate() {
     super("Odd Parity", S.getter("oddParityComponent"));
-    setRectangularLabel("2k+1");
-    setIconNames("parityOddGate.gif");
+    setRectangularLabel(ODD_PARITY_LABEL);
   }
 
   @Override
@@ -93,24 +91,12 @@ class OddParityGate extends AbstractGate {
   }
 
   @Override
-  public void paintIconRectangular(InstancePainter painter) {
-    Graphics g = painter.getGraphics();
-    g.setColor(Color.black);
-    g.drawRect(1, 2, 16, 16);
-    Font old = g.getFont();
-    g.setFont(old.deriveFont(9.0f));
-    GraphicsUtil.drawCenteredText(g, "2k", 9, 6);
-    GraphicsUtil.drawCenteredText(g, "+1", 9, 13);
-    g.setFont(old);
-  }
-
-  @Override
-  public void paintIconShaped(InstancePainter painter) {
-    paintIconRectangular(painter);
-  }
-
-  @Override
   protected void paintShape(InstancePainter painter, int width, int height) {
     paintRectangular(painter, width, height);
+  }
+
+  @Override
+  protected void paintIconANSI(Graphics2D g, int iconSize, int borderSize, int negateSize) {
+    AbstractGate.paintIconIEC(g, ODD_PARITY_LABEL, false, false);
   }
 }

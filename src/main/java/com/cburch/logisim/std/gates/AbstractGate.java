@@ -55,12 +55,12 @@ import com.cburch.logisim.tools.key.BitWidthConfigurator;
 import com.cburch.logisim.tools.key.IntegerConfigurator;
 import com.cburch.logisim.tools.key.JoinedConfigurator;
 import com.cburch.logisim.util.GraphicsUtil;
-import com.cburch.logisim.util.Icons;
 import com.cburch.logisim.util.StringGetter;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import javax.swing.Icon;
+import java.awt.font.TextLayout;
 
 abstract class AbstractGate extends InstanceFactory {
   static Value pullOutput(Value value, Object outType) {
@@ -81,8 +81,6 @@ abstract class AbstractGate extends InstanceFactory {
     }
   }
 
-  private String[] iconNames = new String[3];
-  private Icon[] icons = new Icon[3];
   private int bonusWidth = 0;
   private boolean negateOutput = false;
   private boolean isXor = false;
@@ -227,38 +225,6 @@ abstract class AbstractGate extends InstanceFactory {
       }
     }
     return CompleteName.toString();
-  }
-
-  private Icon getIcon(int type) {
-    Icon ret = icons[type];
-    if (ret != null) {
-      return ret;
-    } else {
-      String iconName = iconNames[type];
-      if (iconName == null) {
-        return null;
-      } else {
-        ret = Icons.getIcon(iconName);
-        if (ret == null) {
-          iconNames[type] = null;
-        } else {
-          icons[type] = ret;
-        }
-        return ret;
-      }
-    }
-  }
-
-  private Icon getIconDin40700() {
-    return getIcon(2);
-  }
-
-  private Icon getIconRectangular() {
-    return getIcon(1);
-  }
-
-  private Icon getIconShaped() {
-    return getIcon(0);
   }
 
   //
@@ -498,41 +464,77 @@ abstract class AbstractGate extends InstanceFactory {
 
   @Override
   public final void paintIcon(InstancePainter painter) {
-    Graphics g = painter.getGraphics();
+    Graphics2D g = (Graphics2D) painter.getGraphics().create();
     g.setColor(Color.black);
-    if (painter.getGateShape() == AppPreferences.SHAPE_RECTANGULAR) {
-      Icon iconRect = getIconRectangular();
-      if (iconRect != null) {
-        iconRect.paintIcon(painter.getDestination(), g, 2, 2);
-      } else {
-        paintIconRectangular(painter);
-      }
-      //		} else if (painter.getGateShape() == AppPreferences.SHAPE_DIN40700) {
-      //			Icon iconDin = getIconDin40700();
-      //			if (iconDin != null) {
-      //				iconDin.paintIcon(painter.getDestination(), g, 2, 2);
-      //			} else {
-      //				paintIconRectangular(painter);
-      //			}
+    GraphicsUtil.switchToWidth(g, AppPreferences.getScaled(1));
+    int border = AppPreferences.getIconBorder();
+    g.translate(border, border);
+    if (painter.getGateShape().equals(AppPreferences.SHAPE_RECTANGULAR))
+      paintIconIEC(g,getRectangularLabel(painter.getAttributeSet()),negateOutput,false);
+    else
+      paintIconANSI(g,AppPreferences.getIconSize(),border,AppPreferences.getScaled(4));
+    g.dispose();
+    return;
+  }
+  
+  protected static void paintIconIEC(Graphics2D g, String label, boolean negateOutput, boolean singleInput) {
+	GraphicsUtil.switchToWidth(g, AppPreferences.getScaled(1));
+    int iconSize = AppPreferences.getIconSize();
+    int iconBorder = AppPreferences.getIconBorder();
+    int negateDiameter = AppPreferences.getScaled(4);
+    int yoffset = singleInput ? (int)((double)iconSize/6.0) : 0;
+    int ysize = singleInput ? iconSize-(yoffset<<1) : iconSize;
+    g.drawRect(0, yoffset, iconSize-negateDiameter, ysize);
+    Font IconFont = g.getFont().deriveFont(((float)iconSize)/2).deriveFont(Font.BOLD);
+    g.setFont(IconFont);
+    if (label.length() < 3) {
+      TextLayout txt = new TextLayout(label,IconFont,g.getFontRenderContext());
+      float xpos =  ((float)iconSize-(float)negateDiameter)/2-(float)txt.getBounds().getCenterX();
+      float ypos = ((float)iconSize)/2-(float)txt.getBounds().getCenterY();
+      txt.draw(g, xpos, ypos);
     } else {
-      Icon iconShaped = getIconShaped();
-      if (iconShaped != null) {
-        iconShaped.paintIcon(painter.getDestination(), g, 2, 2);
-      } else {
-        paintIconShaped(painter);
-      }
+      TextLayout txt = new TextLayout(label.substring(0, 2),IconFont,g.getFontRenderContext());
+      float xpos =  ((float)iconSize-(float)negateDiameter)/2-(float)txt.getBounds().getCenterX();
+      float ypos = ((float)iconSize)/4-(float)txt.getBounds().getCenterY();
+      txt.draw(g, xpos, ypos);
+      txt = new TextLayout(label.substring(2, label.length()<5 ? label.length() : 4),IconFont,g.getFontRenderContext());
+      xpos =  ((float)iconSize-(float)negateDiameter)/2-(float)txt.getBounds().getCenterX();
+      ypos = (3*(float)iconSize)/4-(float)txt.getBounds().getCenterY();
+      txt.draw(g, xpos, ypos);
+    }
+    paintIconPins(g,iconSize,iconBorder,negateDiameter,negateOutput,singleInput);
+  }
+  
+  protected static void paintIconPins(Graphics2D g , int iconSize,
+		  int iconBorder, int negateDiameter, boolean negateOutput, boolean singleInput ) {
+    if (negateOutput) g.drawOval(iconSize-negateDiameter, (iconSize-negateDiameter)>>1, negateDiameter, negateDiameter);
+    g.drawLine(iconSize-(negateOutput ? 0 : negateDiameter), iconSize>>1, iconSize-(negateOutput ? 0 : negateDiameter)+iconBorder, iconSize>>1);
+    if (singleInput)
+      g.drawLine(-iconBorder, iconSize>>1, 0, iconSize>>1);
+    else {	
+      g.drawLine(-iconBorder, iconSize>>2, 0, iconSize>>2);
+      g.drawLine(-iconBorder, (3*iconSize)>>2, 0, (3*iconSize)>>2);
     }
   }
-
-  protected void paintIconRectangular(InstancePainter painter) {
-    Graphics g = painter.getGraphics();
-    g.drawRect(1, 2, 16, 16);
-    if (negateOutput) g.drawOval(16, 8, 4, 4);
-    String label = getRectangularLabel(painter.getAttributeSet());
-    GraphicsUtil.drawCenteredText(g, label, 9, 8);
+  
+  protected static void paintIconBufferANSI(Graphics2D g, boolean negate,boolean controlled) {
+    GraphicsUtil.switchToWidth(g, AppPreferences.getScaled(1));
+    int iconSize = AppPreferences.getIconSize();
+    int borderSize = AppPreferences.getIconBorder();
+    int negateSize = AppPreferences.getScaled(4);
+    int ystart = negateSize >>1;
+    int yend = iconSize-ystart;
+    int xstart = 0;
+    int xend = iconSize-negateSize;
+    int[] xpos = new int[] {xstart,xend,xstart,xstart};
+    int[] ypos = new int[] {ystart,iconSize>>1,yend,ystart};
+    g.drawPolygon(xpos, ypos, 4);
+    paintIconPins(g,iconSize,borderSize,negateSize,negate,true);
+    if (controlled)
+      g.drawLine(xend>>1, ((3*(yend-ystart))>>2)+ystart , xend>>1, yend);
   }
 
-  protected abstract void paintIconShaped(InstancePainter painter);
+  protected abstract void paintIconANSI(Graphics2D g, int iconSize, int borderSize, int negateSize);
 
   @Override
   public void paintInstance(InstancePainter painter) {
@@ -592,16 +594,6 @@ abstract class AbstractGate extends InstanceFactory {
 
   protected void setAdditionalWidth(int value) {
     bonusWidth = value;
-  }
-
-  protected void setIconNames(String all) {
-    setIconNames(all, all, all);
-  }
-
-  protected void setIconNames(String shaped, String rect, String din) {
-    iconNames[0] = shaped;
-    iconNames[1] = rect;
-    iconNames[2] = din;
   }
 
   protected void setNegateOutput(boolean value) {

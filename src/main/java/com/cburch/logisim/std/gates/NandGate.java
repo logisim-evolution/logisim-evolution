@@ -36,8 +36,8 @@ import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
-import com.cburch.logisim.util.GraphicsUtil;
-import java.awt.Graphics;
+
+import java.awt.Graphics2D;
 import java.util.ArrayList;
 
 class NandGate extends AbstractGate {
@@ -86,7 +86,6 @@ class NandGate extends AbstractGate {
     super("NAND Gate", S.getter("nandGateComponent"));
     setNegateOutput(true);
     setRectangularLabel(AndGate.FACTORY.getRectangularLabel(null));
-    setIconNames("nandGate.gif", "nandGateRect.gif", "dinNandGate.gif");
   }
 
   @Override
@@ -120,13 +119,8 @@ class NandGate extends AbstractGate {
   }
 
   @Override
-  public void paintIconShaped(InstancePainter painter) {
-    Graphics g = painter.getGraphics();
-    int[] xp = new int[] {8, 0, 0, 8};
-    int[] yp = new int[] {2, 2, 18, 18};
-    g.drawPolyline(xp, yp, 4);
-    GraphicsUtil.drawCenteredArc(g, 8, 10, 8, -90, 180);
-    g.drawOval(16, 8, 4, 4);
+  public void paintIconANSI(Graphics2D g, int iconSize, int borderSize, int negateSize) {
+    AndGate.paintIconANSI(g, iconSize, borderSize, negateSize,true);
   }
 
   @Override

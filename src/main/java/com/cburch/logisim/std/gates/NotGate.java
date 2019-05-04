@@ -53,12 +53,10 @@ import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.tools.key.BitWidthConfigurator;
 import com.cburch.logisim.util.GraphicsUtil;
-import com.cburch.logisim.util.Icons;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
-import javax.swing.Icon;
 
 class NotGate extends InstanceFactory {
 
@@ -107,8 +105,6 @@ class NotGate extends InstanceFactory {
       Attributes.forOption(
           "size", S.getter("gateSizeAttr"), new AttributeOption[] {SIZE_NARROW, SIZE_WIDE});
   private static final String RECT_LABEL = "1";
-  private static final Icon toolIcon = Icons.getIcon("notGate.gif");
-  private static final Icon toolIconRect = Icons.getIcon("notGateRect.gif");
 
   //	private static final Icon toolIconDin = Icons.getIcon("dinNotGate.gif");
 
@@ -268,42 +264,11 @@ class NotGate extends InstanceFactory {
   //
   @Override
   public void paintIcon(InstancePainter painter) {
-    Graphics g = painter.getGraphics();
-    g.setColor(Color.black);
-    if (painter.getGateShape() == AppPreferences.SHAPE_RECTANGULAR) {
-      if (toolIconRect != null) {
-        toolIconRect.paintIcon(painter.getDestination(), g, 2, 2);
-      } else {
-        g.drawRect(0, 2, 16, 16);
-        GraphicsUtil.drawCenteredText(g, RECT_LABEL, 8, 8);
-        g.drawOval(16, 8, 4, 4);
-      }
-      //		} else if (painter.getGateShape() == AppPreferences.SHAPE_DIN40700) {
-      //			if (toolIconDin != null) {
-      //				toolIconDin.paintIcon(painter.getDestination(), g, 2, 2);
-      //			} else {
-      //				g.drawRect(0, 2, 16, 16);
-      //				GraphicsUtil.drawCenteredText(g, RECT_LABEL, 8, 8);
-      //				g.drawOval(16, 8, 4, 4);
-      //			}
-    } else {
-      if (toolIcon != null) {
-        toolIcon.paintIcon(painter.getDestination(), g, 2, 2);
-      } else {
-        int[] xp = new int[4];
-        int[] yp = new int[4];
-        xp[0] = 15;
-        yp[0] = 10;
-        xp[1] = 1;
-        yp[1] = 3;
-        xp[2] = 1;
-        yp[2] = 17;
-        xp[3] = 15;
-        yp[3] = 10;
-        g.drawPolyline(xp, yp, 4);
-        g.drawOval(15, 8, 4, 4);
-      }
-    }
+    Graphics2D g = (Graphics2D)painter.getGraphics();
+    if (painter.getGateShape() == AppPreferences.SHAPE_RECTANGULAR) 
+      AbstractGate.paintIconIEC(g, RECT_LABEL, true,true);
+    else
+      AbstractGate.paintIconBufferANSI(g, true,false);
   }
 
   @Override

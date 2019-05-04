@@ -36,6 +36,8 @@ import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
+
+import java.awt.Graphics2D;
 import java.util.ArrayList;
 
 class EvenParityGate extends AbstractGate {
@@ -51,11 +53,11 @@ class EvenParityGate extends AbstractGate {
   }
 
   public static EvenParityGate FACTORY = new EvenParityGate();
+  private String LABEL = "2k";
 
   private EvenParityGate() {
     super("Even Parity", S.getter("evenParityComponent"));
-    setRectangularLabel("2k");
-    setIconNames("parityEvenGate.gif");
+    setRectangularLabel(LABEL);
   }
 
   @Override
@@ -89,8 +91,8 @@ class EvenParityGate extends AbstractGate {
   }
 
   @Override
-  public void paintIconShaped(InstancePainter painter) {
-    paintIconRectangular(painter);
+  public void paintIconANSI(Graphics2D g, int iconSize, int borderSize, int negateSize) {
+    AbstractGate.paintIconIEC(g, LABEL, false, false);
   }
 
   @Override
