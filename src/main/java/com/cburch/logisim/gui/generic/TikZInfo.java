@@ -915,6 +915,8 @@ public class TikZInfo implements Cloneable {
             char kar = sIter.current();
             if (kar == '_' && !svg)
               content.append("\\_");
+            if (kar == '&' && !svg)
+                content.append("\\&");
             else
               content.append(kar);
             sIter.next();
@@ -936,6 +938,8 @@ public class TikZInfo implements Cloneable {
             content.append("}\\cdot\\text{");
           } else if (kar == '_' && !svg) {
             content.append("\\_");
+          } else if (kar == '&' && !svg) {
+              content.append("\\&");
           } else {
             content.append(kar);
           }
@@ -971,7 +975,7 @@ public class TikZInfo implements Cloneable {
         else
           for (int i = 0 ; i < name.length() ; i++) {  
             char kar = name.charAt(i);
-            if (kar == '_')
+            if (kar == '_' || kar == '&')
               content.append("\\");
             content.append(kar);
           }
