@@ -816,7 +816,7 @@ public class TikZInfo implements Cloneable {
         contents.append(", fill opacity="+rounded(alpha));
       contents.append("] ");
       contents.append("("+rounded(startPos.getX())+","+rounded(startPos.getY())+")");
-      contents.append("arc ("+startAngle+":"+stopAngle+":"+xRad+" and "+yRad+" );");
+      contents.append(" arc ("+startAngle+":"+stopAngle+":"+xRad+" and "+yRad+" );");
       return contents.toString();
     }
     
@@ -915,6 +915,8 @@ public class TikZInfo implements Cloneable {
             char kar = sIter.current();
             if (kar == '_' && !svg)
               content.append("\\_");
+            if (kar == '&' && !svg)
+                content.append("\\&");
             else
               content.append(kar);
             sIter.next();
@@ -936,6 +938,8 @@ public class TikZInfo implements Cloneable {
             content.append("}\\cdot\\text{");
           } else if (kar == '_' && !svg) {
             content.append("\\_");
+          } else if (kar == '&' && !svg) {
+              content.append("\\&");
           } else {
             content.append(kar);
           }
@@ -966,12 +970,15 @@ public class TikZInfo implements Cloneable {
         content.append(", rotate="+this.rotation);
       content.append("] at "+getPoint(location)+" {");
       if (name != null)
-        for (int i = 0 ; i < name.length() ; i++) {  
-          char kar = name.charAt(i);
-          if (kar == '_')
-            content.append("\\");
-          content.append(kar);
-        }
+        if (name.isEmpty())
+          return "";
+        else
+          for (int i = 0 ; i < name.length() ; i++) {  
+            char kar = name.charAt(i);
+            if (kar == '_' || kar == '&')
+              content.append("\\");
+            content.append(kar);
+          }
       else
         content.append(getAttrString(false,null,null));
       content.append("};}");

@@ -38,8 +38,9 @@ import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.tools.WireRepairData;
-import com.cburch.logisim.util.GraphicsUtil;
-import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.GeneralPath;
 import java.util.ArrayList;
 
 class XorGate extends AbstractGate {
@@ -74,7 +75,6 @@ class XorGate extends AbstractGate {
   private XorGate() {
     super("XOR Gate", S.getter("xorGateComponent"), true);
     setAdditionalWidth(10);
-    setIconNames("xorGate.gif", "xorGateRect.gif", "dinXorGate.gif");
     setPaintInputLines(true);
   }
 
@@ -124,12 +124,31 @@ class XorGate extends AbstractGate {
   }
 
   @Override
-  public void paintIconShaped(InstancePainter painter) {
-    Graphics g = painter.getGraphics();
-    GraphicsUtil.drawCenteredArc(g, 2, -5, 22, -90, 53);
-    GraphicsUtil.drawCenteredArc(g, 2, 23, 22, 90, -53);
-    GraphicsUtil.drawCenteredArc(g, -10, 9, 16, -30, 60);
-    GraphicsUtil.drawCenteredArc(g, -12, 9, 16, -30, 60);
+  public void paintIconANSI(Graphics2D g, int iconSize, int borderSize, int negateSize) {
+    paintIconANSI(g, iconSize, borderSize, negateSize,false);
+  }
+	  
+  protected static void paintIconANSI(Graphics2D g, int iconSize, int borderSize, int negateSize, boolean inverted) {
+    int xoff = negateSize >>1;
+    int ystart = negateSize >>1;
+    int yend = iconSize-ystart;
+    int xstart = 0;
+    int xend = iconSize-negateSize;
+    GeneralPath shape = new GeneralPath();
+    shape.moveTo(xend, iconSize>>1);
+    shape.quadTo((2*xend)/3, ystart, xstart+xoff, ystart);
+    shape.quadTo(xoff+xend/3, iconSize>>1, xstart+xoff, yend);
+    shape.quadTo((2*xend)/3, yend, xend, iconSize>>1);
+    shape.closePath();
+    shape.moveTo(xstart, ystart);
+    shape.quadTo(xend/3, iconSize>>1, xstart, yend);
+    shape.moveTo(xstart, ystart);
+    shape.closePath();
+    AffineTransform af = g.getTransform();
+    g.translate(borderSize, borderSize);
+    g.draw(shape);
+    paintIconPins(g,iconSize,borderSize,negateSize,inverted,false);
+    g.setTransform(af);
   }
 
   @Override

@@ -38,8 +38,8 @@ import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.tools.WireRepairData;
-import com.cburch.logisim.util.GraphicsUtil;
-import java.awt.Graphics;
+
+import java.awt.Graphics2D;
 import java.util.ArrayList;
 
 class XnorGate extends AbstractGate {
@@ -64,7 +64,6 @@ class XnorGate extends AbstractGate {
     super("XNOR Gate", S.getter("xnorGateComponent"), true);
     setNegateOutput(true);
     setAdditionalWidth(10);
-    setIconNames("xnorGate.gif", "xnorGateRect.gif", "dinXnorGate.gif");
     setPaintInputLines(true);
   }
 
@@ -105,13 +104,8 @@ class XnorGate extends AbstractGate {
   }
 
   @Override
-  public void paintIconShaped(InstancePainter painter) {
-    Graphics g = painter.getGraphics();
-    GraphicsUtil.drawCenteredArc(g, 0, -5, 22, -90, 53);
-    GraphicsUtil.drawCenteredArc(g, 0, 23, 22, 90, -53);
-    GraphicsUtil.drawCenteredArc(g, -8, 9, 16, -30, 60);
-    GraphicsUtil.drawCenteredArc(g, -10, 9, 16, -30, 60);
-    g.drawOval(16, 8, 4, 4);
+  public void paintIconANSI(Graphics2D g, int iconSize, int borderSize, int negateSize) {
+    XorGate.paintIconANSI(g, iconSize, borderSize, negateSize,true);
   }
 
   @Override

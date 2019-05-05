@@ -457,11 +457,19 @@ public class AppPreferences {
   private static Template emptyTemplate = null;
   private static Template customTemplate = null;
   private static File customTemplateFile = null;
+  
+  public static int getIconSize() {
+    return getScaled(IconSize);
+  }
+  
+  public static int getIconBorder() {
+    return getScaled(IconBorder);
+  }
 
   // International preferences
-  public static final String SHAPE_SHAPED = "shaped";
+  public static final String SHAPE_SHAPED = "shaped"; //ANSI
 
-  public static final String SHAPE_RECTANGULAR = "rectangular";
+  public static final String SHAPE_RECTANGULAR = "rectangular"; //IEC
   //	public static final String SHAPE_DIN40700 = "din40700";
 
   public static final PrefMonitor<String> GATE_SHAPE =

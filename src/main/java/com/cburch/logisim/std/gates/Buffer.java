@@ -47,6 +47,7 @@ import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.tools.key.BitWidthConfigurator;
 import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.Icons;
@@ -213,18 +214,23 @@ class Buffer extends InstanceFactory {
     }
 
     GraphicsUtil.switchToWidth(g, 2);
-    int[] xp = new int[4];
-    int[] yp = new int[4];
-    xp[0] = 0;
-    yp[0] = 0;
-    xp[1] = -19;
-    yp[1] = -7;
-    xp[2] = -19;
-    yp[2] = 7;
-    xp[3] = 0;
-    yp[3] = 0;
-    g.drawPolyline(xp, yp, 4);
-
+    Object shape = painter.getGateShape();
+    if (shape == AppPreferences.SHAPE_RECTANGULAR) {
+      g.drawRect(-19, -9, 18, 18);
+      GraphicsUtil.drawCenteredText(g, "1", -10, 0);
+    } else {
+      int[] xp = new int[4];
+      int[] yp = new int[4];
+      xp[0] = 0;
+      yp[0] = 0;
+      xp[1] = -19;
+      yp[1] = -7;
+      xp[2] = -19;
+      yp[2] = 7;
+      xp[3] = 0;
+      yp[3] = 0;
+      g.drawPolyline(xp, yp, 4);
+    }
     if (rotate != 0.0) {
       ((Graphics2D) g).rotate(-rotate);
     }
@@ -253,5 +259,14 @@ class Buffer extends InstanceFactory {
     Value in = state.getPortValue(1);
     in = Buffer.repair(state, in);
     state.setPort(0, in, GateAttributes.DELAY);
+  }
+  
+  @Override
+  public void paintIcon(InstancePainter painter) {
+    Graphics2D g = (Graphics2D)painter.getGraphics();
+    if (painter.getGateShape() == AppPreferences.SHAPE_RECTANGULAR)
+      AbstractGate.paintIconIEC(g, "1", false,true);
+    else
+      AbstractGate.paintIconBufferANSI(g, false,false);
   }
 }
