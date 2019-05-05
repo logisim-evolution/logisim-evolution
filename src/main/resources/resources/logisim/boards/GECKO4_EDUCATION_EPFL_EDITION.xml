@@ -3,7 +3,7 @@
 <BoardInformation>
 <!--This section decribes the FPGA and its clock-->
 <ClockInformation FPGApin="PIN_T22" Frequency="12000000" IOStandard="Default" PullBehavior="Float"/>
-<FPGAInformation Family="Cyclone IV E" FlashName="null" FlashPos="2" JTAGPos="1" Package="FBGA 432" Part="EP4CE30F23C8" Speedgrade="C8" USBTMC="false" Vendor="ALTERA"/>
+<FPGAInformation Family="Cyclone IV E" FlashName="EPCQ16" FlashPos="1" JTAGPos="1" Package="FBGA 432" Part="EP4CE30F23C8" Speedgrade="C8" USBTMC="false" Vendor="ALTERA"/>
 <UnusedPins PullBehavior="Float"/>
 </BoardInformation>
 <IOComponents>
