@@ -96,8 +96,6 @@ class WindowOptions extends OptionsPanel {
               new PrefOption(Direction.SOUTH.toString(), Direction.SOUTH.getDisplayGetter()),
               new PrefOption(Direction.EAST.toString(), Direction.EAST.getDisplayGetter()),
               new PrefOption(Direction.WEST.toString(), Direction.WEST.getDisplayGetter()),
-              new PrefOption(
-                  AppPreferences.TOOLBAR_DOWN_MIDDLE, S.getter("windowToolbarDownMiddle")),
               new PrefOption(AppPreferences.TOOLBAR_HIDDEN, S.getter("windowToolbarHidden"))
             });
 

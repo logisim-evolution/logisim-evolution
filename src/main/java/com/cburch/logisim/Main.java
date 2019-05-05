@@ -88,7 +88,7 @@ public class Main {
       LogisimVersion.get(3, 0, 0, LogisimVersion.FINAL_REVISION);
 
   public static final String VERSION_NAME = VERSION.toString();
-  public static final int COPYRIGHT_YEAR = 2018;
+  public static final int COPYRIGHT_YEAR = 2019;
 
   public static boolean ANALYZE = true;
 
