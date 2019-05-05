@@ -131,6 +131,8 @@ public class Shifter extends InstanceFactory {
   protected void instanceAttributeChanged(Instance instance, Attribute<?> attr) {
     if (attr == StdAttr.WIDTH) {
       configurePorts(instance);
+    } else if (attr == ATTR_SHIFT) {
+      instance.fireInvalidated();
     }
   }
 

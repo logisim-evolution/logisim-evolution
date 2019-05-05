@@ -155,7 +155,7 @@ public class DipSwitch extends InstanceFactory {
           Direction.EAST,
           StdAttr.DEFAULT_LABEL_FONT,
           StdAttr.DEFAULT_LABEL_COLOR,
-          false,
+          true,
           BitWidth.create(dipSize)
         });
     setFacingAttribute(StdAttr.FACING);

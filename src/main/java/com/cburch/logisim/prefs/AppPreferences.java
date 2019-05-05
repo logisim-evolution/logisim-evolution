@@ -501,7 +501,6 @@ public class AppPreferences {
 
   // Window preferences
   public static final String TOOLBAR_HIDDEN = "hidden";
-  public static final String TOOLBAR_DOWN_MIDDLE = "downMiddle";
   public static final PrefMonitor<Boolean> SHOW_TICK_RATE =
       create(new PrefMonitorBoolean("showTickRate", false));
   public static final PrefMonitor<String> TOOLBAR_PLACEMENT =
@@ -513,7 +512,6 @@ public class AppPreferences {
                 Direction.SOUTH.toString(),
                 Direction.EAST.toString(),
                 Direction.WEST.toString(),
-                TOOLBAR_DOWN_MIDDLE,
                 TOOLBAR_HIDDEN
               },
               Direction.NORTH.toString()));

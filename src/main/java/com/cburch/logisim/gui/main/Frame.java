@@ -52,7 +52,6 @@ import com.cburch.logisim.gui.generic.LFrame;
 import com.cburch.logisim.gui.generic.RegTabContent;
 import com.cburch.logisim.gui.generic.ZoomControl;
 import com.cburch.logisim.gui.generic.ZoomModel;
-import com.cburch.logisim.gui.menu.LogisimMenuBar;
 import com.cburch.logisim.gui.menu.MainMenuListener;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
@@ -73,7 +72,6 @@ import com.cburch.logisim.vhdl.gui.VhdlSimState;
 import com.cburch.logisim.vhdl.gui.VhdlSimulatorConsole;
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GraphicsConfiguration;
@@ -491,14 +489,8 @@ public class Frame extends LFrame implements LocaleListener {
 
   private void placeToolbar() {
     String loc = AppPreferences.TOOLBAR_PLACEMENT.get();
-    Container contents = getContentPane();
-    contents.remove(toolbar);
     mainPanelSuper.remove(toolbar);
-    if (AppPreferences.TOOLBAR_HIDDEN.equals(loc)) {; // don't place value anywhere
-    } else if (AppPreferences.TOOLBAR_DOWN_MIDDLE.equals(loc)) {
-      toolbar.setOrientation(Toolbar.VERTICAL);
-      mainPanelSuper.add(toolbar, BorderLayout.WEST);
-    } else { // it is a BorderLayout constant
+    if (!AppPreferences.TOOLBAR_HIDDEN.equals(loc)) {
       Object value = BorderLayout.NORTH;
       for (Direction dir : Direction.cardinals) {
         if (dir.toString().equals(loc)) {
@@ -513,12 +505,11 @@ public class Frame extends LFrame implements LocaleListener {
           }
         }
       }
-
-      contents.add(toolbar, value);
+      mainPanelSuper.add(toolbar, value);
       boolean vertical = value == BorderLayout.WEST || value == BorderLayout.EAST;
       toolbar.setOrientation(vertical ? Toolbar.VERTICAL : Toolbar.HORIZONTAL);
     }
-    contents.validate();
+    getContentPane().validate();
   }
 
   public void savePreferences() {
