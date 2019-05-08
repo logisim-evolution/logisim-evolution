@@ -2,8 +2,8 @@
 <html>
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="created" content="2018-10-23T06:18:10.521000000">
-    <meta name="changed" content="2018-10-23T06:18:42.262000000">
+    <meta name="created" content="2019-03-16T06:18:10.521000000">
+    <meta name="changed" content="2019-03-16T06:18:42.262000000">
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <meta http-equiv="Content-Language" content="en">
     <title>
@@ -23,7 +23,7 @@
         The overall command-line syntax is as follows.
       </p>
       <blockquote>
-        <pre>java -jar <em><b>jarFileName</b></em> <em>[options]</em> <em>[filenames]</em>
+        <pre>java -jar <i><b>jarFileName</b></i> <i>[options]</i> <i>[filenames]</i>
 </pre>
       </blockquote>
       <p>
@@ -33,7 +33,7 @@
         The following example starts Logisim in its basic configuration.
       </p>
       <blockquote>
-        <pre>java -jar <em><b>jarFileName</b></em> -plain -gates shaped -locale en
+        <pre>java -jar <i><b>jarFileName</b></i> -plain -gates shaped -locale en
 </pre>
       </blockquote>
       <p>
@@ -47,7 +47,7 @@
           <tt>-empty</tt>
         </dt>
         <dt>
-          <tt>-template <b><em>templateFile</em></b></tt>
+          <tt>-template <b><i>templateFile</i></b></tt>
         </dt>
         <dd>
           <p>
@@ -55,7 +55,7 @@
           </p>
         </dd>
         <dt>
-          <tt>-gates <em>[<b>shaped</b>|<b>rectangular</b>]</em></tt>
+          <tt>-gates <i>[<b>shaped</b>|<b>rectangular</b>]</i></tt>
         </dt>
         <dd>
           <p>
@@ -63,81 +63,65 @@
           </p>
         </dd>
         <dt>
-          <tt>-locale <em><b>localeIdentifier</b></em></tt>
+          <tt>-locale <i><b>localeIdentifier</b></i></tt>
         </dt>
         <dd>
           <p>
             Configures which translation to use. As of this writing, the supported locales include:
           </p>
-          <center>
+
             <table>
               <tbody>
                 <tr>
-                  <th>
-                    <tt>de</tt>
-                  </th>
                   <td>
-                    German
+                    <tt>de  </tt>German
                   </td>
                 </tr>
                 <tr>
-                  <th>
-                    <tt>el</tt>
-                  </th>
                   <td>
-                    Greek
+                    <tt>el  </tt>Greek
                   </td>
                 </tr>
                 <tr>
-                  <th>
-                    <tt>en</tt>
-                  </th>
                   <td>
-                    English
+                    <tt>en  </tt>English
                   </td>
                 </tr>
                 <tr>
-                  <th>
-                    <tt>es</tt>
-                  </th>
                   <td>
-                    Spanish
+                    <tt>es  </tt>Spanish
                   </td>
                 </tr>
                 <tr>
-                  <th>
-                    <tt>fr</tt>
-                  </th>
                   <td>
-                    French
+                    <tt>fr  </tt>French
                   </td>
                 </tr>
                 <tr>
-                  <th>
-                    <tt>pt</tt>
-                  </th>
                   <td>
-                    Portugais
+                    <tt>pt  </tt>Portugais
                   </td>
                 </tr>
                 <tr>
-                  <th>
-                    <tt>ru</tt>
-                  </th>
                   <td>
-                    Russian
+                    <tt>ru  </tt>Russian
                   </td>
                 </tr>
+				<tr>
+                  <td>
+                    <tt>it  </tt> Italian
+                  </td>
+                </tr>				
               </tbody>
             </table>
-          </center>
+
         </dd>
         <dt>
-          <tt>-accents <em>[<b>yes</b>|<b>no</b>]</em></tt>
+          <tt>-accents <i>[<b>yes</b>|<b>no</b>]</i></tt>
         </dt>
         <dd>
           <p>
-            This is only relevant for languages that use characters outside the 7-bit ASCII character set; this would include languages using accented characters, and it would not include English. If <em>no</em>, characters outside the 7-bit ASCII character set are replaced with equivalents appropriate to the language; this would be useful for Java/OS combinations where such characters are not supported well.
+            This is only relevant for languages that use characters outside the 7-bit ASCII character set; this would include languages using accented characters, and it would not include English. If <i>no</i>, characters outside the 7-bit ASCII character set are replaced with equivalents appropriate to the language; this would be useful for Java/OS combinations where such characters are not supported well.
           </p>
         </dd>
         <dt>
@@ -189,7 +173,7 @@
           </p>
         </dd>
         <dt>
-          <tt>-load file</tt>
+          <tt>-load <i><b>filename</b></i></tt>
         </dt>
         <dd>
           <p>
@@ -197,7 +181,7 @@
           </p>
         </dd>
         <dt>
-          <tt>-sub file1 file2</tt>
+          <tt>-sub <i><b>file1</b> <b>file2</b></i></tt>
         </dt>
         <dd>
           <p>
@@ -209,14 +193,18 @@
         </dt>
         <dd>
           <p>
-            run without GUI. More information in <a href="../verify/other.html">Other verification</a>
+            Run without GUI. More information in <a href="../verify/other.html">Other verification</a>
           </p>
         </dd>
+		<dt>
+          <tt>-testvector <i><b>circuitname</b> <b>vectorfile</b> <b>projectfile</b></i> </tt>
+        </dt>
         <dd>
-          <p>
-            Undocumented Options
-          </p>
-        </dd>
+		<p>Run the <b>circuitname</b> tests in <b>projectfile</b> based on vectors in <b>vectorfile</b>. More information in <a href="../verify/test.html">Window Text Vector</a> 
+		</p></dd>
+        </dl>
+		<h2>Undocumented Options</h2>
+		<dl>
         <dt>
           <tt>-test-circuit <b>testCircuitPathInput</b></tt>
         </dt>
@@ -234,7 +222,7 @@
         </dt>
         <dd></dd>
         <dt>
-          <tt>-questa<em>[<b>yes</b>|<b>no</b>]</em></tt>
+          <tt>-questa<i>[<b>yes</b>|<b>no</b>]</i></tt>
         </dt>
         <dd></dd>
       </dl>

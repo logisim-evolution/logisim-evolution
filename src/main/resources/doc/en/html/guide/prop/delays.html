@@ -2,8 +2,8 @@
 <html>
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="created" content="2018-10-23T06:18:10.521000000">
-    <meta name="changed" content="2018-10-23T06:18:42.262000000">
+    <meta name="created" content="2019-03-16T06:18:10.521000000">
+    <meta name="changed" content="2019-03-16T06:18:42.262000000">
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <meta http-equiv="Content-Language" content="en">
     <title>
@@ -29,7 +29,7 @@
         <img class="notscal" src="../../../../img-guide/prop-using-const0.png" alt="#########">
       </center>
       <p>
-        Poking the 0 input to become 1 leads to an instantaneous 1 going into the D flip-flop, and thus the flip-flop's value will toggle every time the circuit input goes from 0 to 1. The detailed sequence can also be observed thanks to the step-by-step mode of the simulation.
+        Poking the 0 input to become 1 leads to an instantaneous 1 going into the D flip-flop, and thus the flip-flop's value will toggle every time the circuit input goes from 0 to 1. The detailed sequence can also be observed thanks to the <a href="../tutorial/tutor-step.html">step-by-step</a> mode of the simulation.
       </p>
       <p>
         Every component has a delay associated with it. More sophisticated components built into Logisim tend to have larger delays, but these delays are somewhat arbitrary and may not reflect reality.
@@ -38,7 +38,7 @@
         From a technical point of view, it is relatively easy to deal with this level of sophistication in a single circuit. Dealing with gate delays well across subcircuits, though, is a bit more complex; Logisim does attempt to address this correctly by placing all primitive component's propagation values into a single schedule regardless of the subcircuit in which the component lies.
       </p>
       <p>
-        (Via the <a href="../opts/index.html">Project Options</a> window's <a href="../opts/simulate.html">Simulation tab</a>, you can configure Logisim to add a random, occasional delay to a component's propagation. This is intended to simulate the unevenness of real circuits. In particular, an R-S latch built using two NOR gates will oscillate without this randomness, as both gates will process their inputs in lockstep. This randomness is disabled by default.)
+        Via the <a href="../opts/index.html">Project Options</a> window's <a href="../opts/simulate.html">Simulation tab</a>, you can configure Logisim to add a random, occasional delay to a component's propagation. This is intended to simulate the unevenness of real circuits. In particular, an R-S latch built using two NOR gates will oscillate without this randomness, as both gates will process their inputs in lockstep. This randomness is disabled by default.
       </p>
       <p>
         Note that I'm stopping short of saying that Logisim always addresses gate delays well. But at least it tries.
