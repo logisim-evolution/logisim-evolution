@@ -51,8 +51,11 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+
 import javax.swing.filechooser.FileFilter;
 
 public class AnalyzerTexWriter {
@@ -253,7 +256,7 @@ public class AnalyzerTexWriter {
   private static String getNumberedHeader(String name, AnalyzerModel model) {
     StringBuffer content = new StringBuffer();
     TruthTable table = model.getTruthTable();
-    DecimalFormat df = new DecimalFormat("0.0");
+    DecimalFormat df = (DecimalFormat) NumberFormat.getNumberInstance(Locale.ENGLISH);
     int kmapRows = 1 << KarnaughMapPanel.ROW_VARS[table.getInputColumnCount()];
     content.append("\n");
     StringBuffer leftVars = new StringBuffer();
@@ -355,7 +358,7 @@ public class AnalyzerTexWriter {
     KMapGroups groups = new KMapGroups(model);
     groups.setOutput(name);
     CoverColor colors = new CoverColor();
-    DecimalFormat df = new DecimalFormat("0.0");
+    DecimalFormat df = (DecimalFormat) NumberFormat.getNumberInstance(Locale.ENGLISH);
     int idx = 0;
     int kmapRows = 1 << KarnaughMapPanel.ROW_VARS[table.getInputColumnCount()];
     for (KMapGroupInfo group : groups.getCovers()) {
