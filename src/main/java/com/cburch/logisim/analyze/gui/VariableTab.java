@@ -508,7 +508,7 @@ public class VariableTab extends AnalyzerTab {
         Object value, boolean isSelected, boolean hasFocus, int row, int column) {
       boolean empty = value.toString().equals("");
       if (empty)
-        value = "Click to add a new variable";
+        value = S.get("variableClickToAdd");
       JComponent c = (JComponent)super.getTableCellRendererComponent(table,
           value, isSelected, hasFocus, row, column);
       c.setFont(empty ? italic : plain);

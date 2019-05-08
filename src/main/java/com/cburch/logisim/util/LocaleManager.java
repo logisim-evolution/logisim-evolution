@@ -39,6 +39,7 @@ import java.util.ResourceBundle;
 import java.util.StringTokenizer;
 import javax.swing.JComponent;
 import javax.swing.JScrollPane;
+import javax.swing.UIManager;
 
 public class LocaleManager {
   private static class LocaleGetter implements StringGetter {
@@ -165,6 +166,40 @@ public class LocaleManager {
     }
     return ret.toString();
   }
+  
+  private static void updateButtonText() {
+    UIManager.put("FileChooser.openDialogTitleText", S.get("LMopenDialogTitleText"));
+    UIManager.put("FileChooser.saveDialogTitleText", S.get("LMsaveDialogTitleText"));
+    UIManager.put("FileChooser.lookInLabelText", S.get("LMlookInLabelText"));
+    UIManager.put("FileChooser.saveInLabelText", S.get("LMsaveInLabelText"));
+    UIManager.put("FileChooser.upFolderToolTipText", S.get("LMupFolderToolTipText"));
+    UIManager.put("FileChooser.homeFolderToolTipText", S.get("LMhomeFolderToolTipText"));
+    UIManager.put("FileChooser.newFolderToolTipText", S.get("LMnewFolderToolTipText"));
+    UIManager.put("FileChooser.listViewButtonToolTipText", S.get("LMlistViewButtonToolTipText"));
+    UIManager.put("FileChooser.detailsViewButtonToolTipText", S.get("LMdetailsViewButtonToolTipText"));
+    UIManager.put("FileChooser.fileNameHeaderText", S.get("LMfileNameHeaderText"));
+    UIManager.put("FileChooser.fileSizeHeaderText", S.get("LMfileSizeHeaderText"));
+    UIManager.put("FileChooser.fileTypeHeaderText", S.get("LMfileTypeHeaderText"));
+    UIManager.put("FileChooser.fileDateHeaderText", S.get("LMfileDateHeaderText"));
+    UIManager.put("FileChooser.fileAttrHeaderText", S.get("LMfileAttrHeaderText"));
+    UIManager.put("FileChooser.fileNameLabelText", S.get("LMfileNameLabelText"));
+    UIManager.put("FileChooser.filesOfTypeLabelText", S.get("LMfilesOfTypeLabelText"));
+    UIManager.put("FileChooser.openButtonText", S.get("LMopenButtonText"));
+    UIManager.put("FileChooser.openButtonToolTipText", S.get("LMopenButtonToolTipText"));
+    UIManager.put("FileChooser.saveButtonText", S.get("LMsaveButtonText"));
+    UIManager.put("FileChooser.saveButtonToolTipText", S.get("LMsaveButtonToolTipText"));
+    UIManager.put("FileChooser.directoryOpenButtonText", S.get("LMdirectoryOpenButtonText"));
+    UIManager.put("FileChooser.directoryOpenButtonToolTipText", S.get("LMdirectoryOpenButtonToolTipText"));
+    UIManager.put("FileChooser.cancelButtonText", S.get("LMcancelButtonText"));
+    UIManager.put("FileChooser.cancelButtonToolTipText", S.get("LMcancelButtonToolTipText"));
+    UIManager.put("FileChooser.newFolderErrorText", S.get("LMnewFolderErrorText"));
+    UIManager.put("FileChooser.acceptAllFileFilterText", S.get("LMacceptAllFileFilterText"));
+    UIManager.put("OptionPane.okButtonText", S.get("LMokButtonText"));
+    UIManager.put("OptionPane.yesButtonText", S.get("LMyesButtonText"));
+    UIManager.put("OptionPane.noButtonText", S.get("LMnoButtonText"));
+    UIManager.put("OptionPane.cancelButtonText", S.get("LMcancelButtonText"));
+    UIManager.put("ProgressMonitor.progressText", S.get("LMprogressText"));
+  }
 
   public static void setLocale(Locale loc) {
     Locale cur = getLocale();
@@ -195,6 +230,7 @@ public class LocaleManager {
         man.loadDefault();
       }
       repl = replaceAccents ? fetchReplaceAccents() : null;
+      updateButtonText();
       fireLocaleChanged();
     }
   }
