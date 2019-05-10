@@ -48,21 +48,12 @@ public class LibraryTools {
         JOptionPane.ERROR_MESSAGE);
   }
 
-  public static void ShowWarnings(String LibName, HashMap<String, String> Messages) {
-    JOptionPane.showMessageDialog(
-        null,
-        Message(LibName, Messages),
-        S.get("LibLoadWarnings") + " " + LibName + " !",
-        JOptionPane.WARNING_MESSAGE);
-  }
-
   private static String Message(String LibName, HashMap<String, String> Messages) {
     String Message = "";
     int item = 0;
     for (String myerror : Messages.keySet()) {
       item++;
-      Message =
-          Message.concat(item + ") " + S.get(Messages.get(myerror)) + " \"" + myerror + "\".\n");
+      Message = Message.concat(item + ") " + Messages.get(myerror) + " \"" + myerror + "\".\n");
     }
     return Message;
   }
@@ -151,7 +142,7 @@ public class LibraryTools {
       if (Tools.contains(tool.getName().toUpperCase())) {
         HasErrors = true;
         if (!Error.containsKey(tool.getName())) {
-          Error.put(tool.getName(), "LibraryHasDuplicatedTools");
+          Error.put(tool.getName(), S.get("LibraryHasDuplicatedTools"));
         }
       }
       Tools.add(tool.getName().toUpperCase());
@@ -160,7 +151,7 @@ public class LibraryTools {
       if (Names.contains(sublib.getName().toUpperCase())) {
         HasErrors = true;
         if (!Error.containsKey(sublib.getName())) {
-          Error.put(sublib.getName(), "LibraryHasDuplicatedSublibraries");
+          Error.put(sublib.getName(), S.get("LibraryHasDuplicatedSublibraries"));
         }
       }
       Names.add(sublib.getName().toUpperCase());

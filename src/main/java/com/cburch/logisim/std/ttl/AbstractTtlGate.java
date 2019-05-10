@@ -486,9 +486,7 @@ public abstract class AbstractTtlGate extends InstanceFactory {
         if (this.portnames == null || this.portnames.length <= portindex)
           ps[portindex].setToolTip(S.getter("demultiplexerOutTip", ": " + String.valueOf(i + 1)));
         else
-          ps[portindex].setToolTip(
-              S.getter(
-                  "demultiplexerOutTip", String.valueOf(i + 1) + ": " + this.portnames[portindex]));
+          ps[portindex].setToolTip(S.getter("demultiplexerOutTip", String.valueOf(i + 1) + ": " + this.portnames[portindex]));
       } else { // input port
         if (hasvccgnd && i == this.pinnumber - 1) { // Vcc
           ps[ps.length - 1] = new Port(dx, dy, Port.INPUT, 1);
@@ -504,9 +502,7 @@ public abstract class AbstractTtlGate extends InstanceFactory {
           if (this.portnames == null || this.portnames.length <= portindex)
             ps[portindex].setToolTip(S.getter("multiplexerInTip", ": " + String.valueOf(i + 1)));
           else
-            ps[portindex].setToolTip(
-                S.getter(
-                    "multiplexerInTip", String.valueOf(i + 1) + ": " + this.portnames[portindex]));
+            ps[portindex].setToolTip(S.getter("multiplexerInTip", String.valueOf(i + 1) + ": " + this.portnames[portindex]));
         }
       }
       portindex++;

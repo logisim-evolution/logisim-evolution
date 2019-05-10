@@ -229,28 +229,9 @@ public class Loader implements LibraryLoader {
 
   Library loadJarFile(File request, String className) throws LoadFailedException {
     File actual = getSubstitution(request);
-    // Up until 2.1.8, this was written to use a URLClassLoader, which
-    // worked pretty well, except that the class never releases its file
-    // handles. For this reason, with 2.2.0, it's been switched to use
-    // a custom-written class ZipClassLoader instead. The ZipClassLoader
-    // is based on something downloaded off a forum, and I'm not as sure
-    // that it works as well. It certainly does more file accesses.
 
     // Anyway, here's the line for this new version:
     ZipClassLoader loader = new ZipClassLoader(actual);
-
-    // And here's the code that was present up until 2.1.8, and which I
-    // know to work well except for the closing-files bit. If necessary, we
-    // can revert by deleting the above declaration and reinstating the
-    // below.
-    /*
-     * URL url; try { url = new URL("file", "localhost",
-     * file.getCanonicalPath()); } catch (MalformedURLException e1) { throw
-     * new LoadFailedException("Internal error: Malformed URL"); } catch
-     * (IOException e1) { throw new
-     * LoadFailedException(Strings.get("jarNotOpenedError")); }
-     * URLClassLoader loader = new URLClassLoader(new URL[] { url });
-     */
 
     // load library class from loader
     Class<?> retClass;

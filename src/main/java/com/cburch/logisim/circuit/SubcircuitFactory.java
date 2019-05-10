@@ -413,9 +413,4 @@ public class SubcircuitFactory extends InstanceFactory {
     return true;
   }
 
-  /*
-   * TODO public String getToolTip(ComponentUserEvent e) { return
-   * StringUtil.format(Strings.get("subcircuitCircuitTip"),
-   * source.getDisplayName()); }
-   */
 }

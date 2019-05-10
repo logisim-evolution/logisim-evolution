@@ -28,6 +28,7 @@
 
 package com.cburch.logisim.std.base;
 
+import static com.cburch.logisim.std.Strings.S;
 import com.cburch.logisim.tools.AddTool;
 import com.cburch.logisim.tools.EditTool;
 import com.cburch.logisim.tools.Library;
@@ -62,7 +63,7 @@ public class Base extends Library {
 
   @Override
   public String getDisplayName() {
-    return Strings.get("baseLibrary");
+    return S.get("baseLibrary");
   }
 
   @Override

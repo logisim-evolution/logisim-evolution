@@ -93,8 +93,8 @@ public class FPGAOptions extends OptionsPanel {
             AppPreferences.HDL_Type,
             S.getter("HDLLanguageUsed"),
             new PrefOption[] {
-              new PrefOption(HDLGeneratorFactory.VHDL, S.getter(HDLGeneratorFactory.VHDL)),
-              new PrefOption(HDLGeneratorFactory.VERILOG, S.getter(HDLGeneratorFactory.VERILOG))
+              new PrefOption(HDLGeneratorFactory.VHDL, S.getter("VHDL")),
+              new PrefOption(HDLGeneratorFactory.VERILOG, S.getter("Verilog"))
             });
     Download = new PrefBoolean(AppPreferences.DownloadToBoard, S.getter("FPGADownload"));
 

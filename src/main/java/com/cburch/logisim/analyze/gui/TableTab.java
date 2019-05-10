@@ -97,8 +97,8 @@ class TableTab extends AnalyzerTab {
 
     @Override
     public void localeChanged() {
-      expand.localeChanged();
-      compact.localeChanged();
+      expand.setText(S.get("tableExpand"));
+      compact.setText(S.get("tableCompact"));
       count.setText(S.fmt("tableRowsShown", getRowCount(), table.getRowCount()));
     }
   }
@@ -260,23 +260,16 @@ class TableTab extends AnalyzerTab {
   private JButton one = new SquareButton(Entry.ONE.getDescription());
   private JButton zero = new SquareButton(Entry.ZERO.getDescription());
   private JButton dontcare = new SquareButton(Entry.DONT_CARE.getDescription());
-  private TightButton expand = new TightButton("tableExpand");
-  private TightButton compact = new TightButton("tableCompact");
+  private TightButton expand = new TightButton(S.get("tableExpand"));
+  private TightButton compact = new TightButton(S.get("tableCompact"));
   private JLabel count = new JLabel(S.fmt("tableRowsShown", 0, 0), SwingConstants.CENTER);
 
   private class TightButton extends JButton {
     /** */
     private static final long serialVersionUID = 1L;
 
-    private String id;
-
-    void localeChanged() {
-      setText(S.get(id));
-    }
-
     TightButton(String s) {
-      super(S.get(s));
-      id = s;
+      super(s);
       setMargin(new Insets(0, 0, 0, 0));
     }
   }
