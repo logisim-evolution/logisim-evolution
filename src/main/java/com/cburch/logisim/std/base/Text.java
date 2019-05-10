@@ -28,6 +28,8 @@
 
 package com.cburch.logisim.std.base;
 
+import static com.cburch.logisim.std.Strings.S;
+
 import com.cburch.logisim.comp.TextField;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeOption;
@@ -48,50 +50,50 @@ import java.awt.Rectangle;
 
 public class Text extends InstanceFactory {
   public static Attribute<String> ATTR_TEXT =
-      Attributes.forString("text", Strings.getter("textTextAttr"));
+      Attributes.forString("text", S.getter("textTextAttr"));
   public static Attribute<Font> ATTR_FONT =
-      Attributes.forFont("font", Strings.getter("textFontAttr"));
+      Attributes.forFont("font", S.getter("textFontAttr"));
   public static Attribute<AttributeOption> ATTR_HALIGN =
       Attributes.forOption(
           "halign",
-          Strings.getter("textHorzAlignAttr"),
+          S.getter("textHorzAlignAttr"),
           new AttributeOption[] {
             new AttributeOption(
-                Integer.valueOf(TextField.H_LEFT), "left", Strings.getter("textHorzAlignLeftOpt")),
+                Integer.valueOf(TextField.H_LEFT), "left", S.getter("textHorzAlignLeftOpt")),
             new AttributeOption(
                 Integer.valueOf(TextField.H_RIGHT),
                 "right",
-                Strings.getter("textHorzAlignRightOpt")),
+                S.getter("textHorzAlignRightOpt")),
             new AttributeOption(
                 Integer.valueOf(TextField.H_CENTER),
                 "center",
-                Strings.getter("textHorzAlignCenterOpt")),
+                S.getter("textHorzAlignCenterOpt")),
           });
   public static Attribute<AttributeOption> ATTR_VALIGN =
       Attributes.forOption(
           "valign",
-          Strings.getter("textVertAlignAttr"),
+          S.getter("textVertAlignAttr"),
           new AttributeOption[] {
             new AttributeOption(
-                Integer.valueOf(TextField.V_TOP), "top", Strings.getter("textVertAlignTopOpt")),
+                Integer.valueOf(TextField.V_TOP), "top", S.getter("textVertAlignTopOpt")),
             new AttributeOption(
                 Integer.valueOf(TextField.V_BASELINE),
                 "base",
-                Strings.getter("textVertAlignBaseOpt")),
+                S.getter("textVertAlignBaseOpt")),
             new AttributeOption(
                 Integer.valueOf(TextField.V_BOTTOM),
                 "bottom",
-                Strings.getter("textVertAlignBottomOpt")),
+                S.getter("textVertAlignBottomOpt")),
             new AttributeOption(
                 Integer.valueOf(TextField.H_CENTER),
                 "center",
-                Strings.getter("textVertAlignCenterOpt")),
+                S.getter("textVertAlignCenterOpt")),
           });
 
   public static final Text FACTORY = new Text();
 
   private Text() {
-    super("Text", Strings.getter("textComponent"));
+    super("Text", S.getter("textComponent"));
     setIconName("text.gif");
     setShouldSnap(false);
   }

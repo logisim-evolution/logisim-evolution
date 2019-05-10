@@ -502,9 +502,7 @@ public class AnalyzerTexWriter {
         out.println(SECTION_SEP);
         out.println("\\section{" + S.get("latexKarnaugh") + "}");
         if (tt.getRowCount() > MAX_TRUTH_TABLE_ROWS) {
-          out.println(
-              S.fmt(
-                  "latexKarnaughToBig",
+          out.println(S.fmt("latexKarnaughToBig",
                   (int) Math.ceil(Math.log(MAX_TRUTH_TABLE_ROWS) / Math.log(2))));
         } else {
           out.println(S.get("latexKarnaughText"));

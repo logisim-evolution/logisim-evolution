@@ -114,11 +114,11 @@ public class ProjectActions {
     Matcher m = p.matcher(filename);
     if (m.find()) {
       IsOk = false;
-      Errors.put(FILE_NAME_FORMAT_ERROR, "InvalidFileFormatError");
+      Errors.put(FILE_NAME_FORMAT_ERROR, S.get("InvalidFileFormatError"));
     }
     if (ForbiddenNames.contains(filename.toUpperCase())) {
       IsOk = false;
-      Errors.put(FILE_NAME_KEYWORD_ERROR, "UsedLibraryToolnameError");
+      Errors.put(FILE_NAME_KEYWORD_ERROR, S.get("UsedLibraryToolnameError"));
     }
     return IsOk;
   }
@@ -457,8 +457,10 @@ public class ProjectActions {
       validFilename = checkValidFilename(chooser.getSelectedFile().getName(), proj, Error);
       if (!validFilename) {
         String Message = "\"" + chooser.getSelectedFile() + "\":\n";
-        for (String key : Error.keySet())
-          Message = Message.concat("=> " + S.get(Error.get(key)) + "\n");
+        for (String key : Error.keySet()) {
+          String error = S.get(Error.get(key));
+          Message = Message.concat("=> " + error + "\n");
+        }
         JOptionPane.showMessageDialog(
             chooser, Message, S.get("FileSaveAsItem"), JOptionPane.ERROR_MESSAGE);
       }
