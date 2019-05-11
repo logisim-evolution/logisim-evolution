@@ -32,10 +32,14 @@ import static com.cburch.logisim.gui.Strings.S;
 
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.prefs.AppPreferences;
+import com.cburch.logisim.proj.Project;
+import com.cburch.logisim.proj.Projects;
 import com.cburch.logisim.util.TableLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
+
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -59,7 +63,11 @@ class WindowOptions extends OptionsPanel {
       if (!source.getValueIsAdjusting()) {
         int value = (int) source.getValue();
         AppPreferences.SCALE_FACTOR.set((double) value / 100.0);
-        localeChanged();
+        List<Project> nowOpen = Projects.getOpenProjects();
+        for (Project proj : nowOpen) {
+          proj.getFrame().revalidate();
+          proj.getFrame().repaint();
+        }
       }
     }
 

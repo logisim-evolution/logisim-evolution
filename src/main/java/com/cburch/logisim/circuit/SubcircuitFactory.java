@@ -45,6 +45,7 @@ import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.std.wiring.Pin;
 import com.cburch.logisim.tools.MenuExtender;
@@ -52,6 +53,7 @@ import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.StringGetter;
 import com.cburch.logisim.util.StringUtil;
 import java.awt.AlphaComposite;
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Composite;
 import java.awt.Font;
@@ -60,6 +62,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.font.TextLayout;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.JMenuItem;
@@ -323,7 +326,6 @@ public class SubcircuitFactory extends InstanceFactory {
     } else if (attr == CircuitAttributes.LABEL_LOCATION_ATTR) {
       configureLabel(instance);
     } else if (attr == CircuitAttributes.APPEARANCE_ATTR) {
-      final Circuit src = source;
       CircuitTransaction xn = new ChangeAppearanceTransaction();
       source.getLocker().execute(xn);
     }
@@ -412,5 +414,81 @@ public class SubcircuitFactory extends InstanceFactory {
   public boolean RequiresNonZeroLabel() {
     return true;
   }
+  
+  @Override
+  public void paintIcon(InstancePainter painter) {
+    Graphics2D g2 = (Graphics2D) painter.getGraphics().create();
+    CircuitAttributes attrs = (CircuitAttributes) painter.getAttributeSet();
+    if (attrs.getValue(CircuitAttributes.APPEARANCE_ATTR).equals(CircuitAttributes.APPEAR_CLASSIC))
+      paintClasicIcon(g2);
+    else if (attrs.getValue(CircuitAttributes.APPEARANCE_ATTR).equals(CircuitAttributes.APPEAR_FPGA))
+      paintHCIcon(g2);
+    else
+      paintEvolutionIcon(g2);
+    g2.dispose();
+  }
 
+  public static void paintClasicIcon(Graphics2D g2) {
+    g2.setStroke(new BasicStroke(AppPreferences.getScaled(2)));
+    g2.setColor(Color.GRAY);
+    g2.drawArc(AppPreferences.getScaled(6), AppPreferences.getScaled(-2), AppPreferences.getScaled(4), 
+    		AppPreferences.getScaled(6), 180, 180);
+    g2.setColor(Color.BLACK);
+    g2.drawRect(AppPreferences.getScaled(2), AppPreferences.getScaled(1), 
+    		AppPreferences.getScaled(12), AppPreferences.getScaled(14));
+    int wh = AppPreferences.getScaled(3);
+    for (int y = 0 ; y < 3 ; y++) {
+      if (y==1)
+        g2.setColor(Value.TRUE_COLOR);
+      else
+        g2.setColor(Value.FALSE_COLOR);
+      g2.fillOval(AppPreferences.getScaled(1), AppPreferences.getScaled(y*4+3), wh, wh);
+      if (y < 2) {
+        g2.setColor(Value.UNKNOWN_COLOR);
+        g2.fillOval(AppPreferences.getScaled(12), AppPreferences.getScaled(y*4+3), wh, wh);
+      }
+    }
+  }
+  
+  public static void paintHCIcon(Graphics2D g2) {
+    g2.setStroke(new BasicStroke(AppPreferences.getScaled(2)));
+    g2.setColor(Color.BLACK);
+    g2.drawRect(AppPreferences.getScaled(1), AppPreferences.getScaled(1), 
+    	  AppPreferences.getScaled(14), AppPreferences.getScaled(14));
+    Font f = g2.getFont().deriveFont((float)AppPreferences.getIconSize()/4);
+    TextLayout l = new TextLayout("main",f,g2.getFontRenderContext());
+    l.draw(g2, (float)(AppPreferences.getIconSize()/2-l.getBounds().getCenterX()), 
+           (float)(AppPreferences.getIconSize()/4-l.getBounds().getCenterY()));
+    int wh = AppPreferences.getScaled(3);
+    for (int y = 1 ; y < 3 ; y++) {
+      if (y==1)
+        g2.setColor(Value.TRUE_COLOR);
+      else
+        g2.setColor(Value.FALSE_COLOR);
+      g2.fillOval(AppPreferences.getScaled(0), AppPreferences.getScaled(y*4+3), wh, wh);
+      if (y < 2) {
+        g2.setColor(Value.UNKNOWN_COLOR);
+        g2.fillOval(AppPreferences.getScaled(13), AppPreferences.getScaled(y*4+3), wh, wh);
+      }
+    }
+  }
+  
+  public static void paintEvolutionIcon(Graphics2D g2) {
+    g2.setStroke(new BasicStroke(AppPreferences.getScaled(2)));
+    g2.setColor(Color.BLACK);
+    g2.drawRect(AppPreferences.getScaled(2), 0, 
+    	  AppPreferences.getScaled(12), AppPreferences.getScaled(16));
+    g2.fillRect(AppPreferences.getScaled(2), (3*AppPreferences.getIconSize())/4, 
+      	  AppPreferences.getScaled(12), AppPreferences.getIconSize()/4);
+    for (int y = 0 ; y < 3 ; y++) {
+      g2.drawLine(0, AppPreferences.getScaled(y*4+2), AppPreferences.getScaled(2), AppPreferences.getScaled(y*4+2));
+      if (y < 2)
+        g2.drawLine(AppPreferences.getScaled(13), AppPreferences.getScaled(y*4+2), AppPreferences.getScaled(15), AppPreferences.getScaled(y*4+2));
+    }
+    g2.setColor(Color.WHITE);
+    Font f = g2.getFont().deriveFont((float)AppPreferences.getIconSize()/4);
+    TextLayout l = new TextLayout("main",f,g2.getFontRenderContext());
+    l.draw(g2, (float)(AppPreferences.getIconSize()/2-l.getBounds().getCenterX()), 
+           (float)((7*AppPreferences.getIconSize())/8-l.getBounds().getCenterY()));
+  }
 }

@@ -31,9 +31,9 @@ package com.cburch.logisim.gui.generic;
 import static com.cburch.logisim.gui.Strings.S;
 
 import com.cburch.logisim.data.Bounds;
+import com.cburch.logisim.gui.icons.ZoomIcon;
 import com.cburch.logisim.gui.main.Canvas;
 import com.cburch.logisim.prefs.AppPreferences;
-import com.cburch.logisim.util.Icons;
 import com.cburch.logisim.util.LocaleListener;
 import com.cburch.logisim.util.LocaleManager;
 import java.awt.BorderLayout;
@@ -51,6 +51,7 @@ import java.awt.event.MouseListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import javax.swing.DefaultBoundedRangeModel;
+import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -169,8 +170,8 @@ public class ZoomControl extends JPanel implements LocaleListener {
     private static final long serialVersionUID = 1L;
     boolean out;
 
-    public ZoomButton(String icon, boolean left) {
-      super(Icons.getIcon(icon));
+    public ZoomButton(Icon icon, boolean left) {
+      super(icon);
       out = left;
       setOpaque(false);
       setBackground(new java.awt.Color(0, 0, 0, 0));
@@ -349,8 +350,8 @@ public class ZoomControl extends JPanel implements LocaleListener {
     label = new ZoomLabel();
     sliderModel = new SliderModel(model);
 
-    plus = new ZoomButton("zoomin.gif", false);
-    minus = new ZoomButton("zoomout.gif", true);
+    plus = new ZoomButton(new ZoomIcon(ZoomIcon.ZOOMIN), false);
+    minus = new ZoomButton(new ZoomIcon(ZoomIcon.ZOOMOUT), true);
     slider = new JSlider(sliderModel);
 
     JPanel zoom = new JPanel(new BorderLayout());
