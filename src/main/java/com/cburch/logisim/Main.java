@@ -31,6 +31,7 @@ package com.cburch.logisim;
 import com.cburch.logisim.gui.start.Startup;
 import com.cburch.logisim.prefs.AppPreferences;
 
+import java.awt.Font;
 import java.awt.GraphicsEnvironment;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -39,6 +40,8 @@ import java.io.Writer;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.plaf.FontUIResource;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,6 +51,7 @@ public class Main {
     try {
       if (!GraphicsEnvironment.isHeadless()) {
         UIManager.setLookAndFeel(AppPreferences.LookAndFeel.get());
+        UIManager.put("ToolTip.font", new FontUIResource("SansSerif", Font.BOLD, AppPreferences.getScaled(12))); 
       }
     } catch (ClassNotFoundException e) {
       e.printStackTrace();

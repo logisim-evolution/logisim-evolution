@@ -99,7 +99,8 @@ public class InstanceTextField implements AttributeListener, TextFieldListener, 
     if (field != null && LabelIsVisable) {
       Graphics g = context.getGraphics().create();
       Color currentColor = g.getColor();
-      g.setColor(fontColor);
+      if (!context.isPrintView())
+        g.setColor(fontColor);
       field.draw(g);
       g.setColor(currentColor);
       g.dispose();
