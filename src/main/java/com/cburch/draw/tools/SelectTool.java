@@ -40,6 +40,7 @@ import com.cburch.draw.model.HandleGesture;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Location;
+import com.cburch.logisim.gui.icons.SelectIcon;
 import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.Icons;
 import java.awt.Color;
@@ -75,6 +76,7 @@ public class SelectTool extends AbstractTool {
   private static final int HANDLE_SIZE = 8;
 
   private static final Color RECT_SELECT_BACKGROUND = new Color(0, 0, 0, 32);
+  private static SelectIcon icon = new SelectIcon();
   private int curAction;
   private List<CanvasObject> beforePressSelection;
   private Handle beforePressHandle;
@@ -246,7 +248,7 @@ public class SelectTool extends AbstractTool {
 
   @Override
   public Icon getIcon() {
-    return Icons.getIcon("select.gif");
+    return icon;
   }
 
   @Override

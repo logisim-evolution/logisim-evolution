@@ -49,13 +49,19 @@ public class LogisimToolbarItem implements ToolbarItem {
   private LogisimMenuItem action;
   private StringGetter toolTip;
 
-  public LogisimToolbarItem(
-      MenuListener menu, String iconName, LogisimMenuItem action, StringGetter toolTip) {
+  public LogisimToolbarItem(MenuListener menu, String iconName, LogisimMenuItem action, StringGetter toolTip) {
     this.menu = menu;
     this.icon = Icons.getIcon(iconName);
     this.action = action;
     this.toolTip = toolTip;
   }
+
+  public LogisimToolbarItem(MenuListener menu, Icon icon, LogisimMenuItem action, StringGetter toolTip) {
+	    this.menu = menu;
+	    this.icon = icon;
+	    this.action = action;
+	    this.toolTip = toolTip;
+	  }
 
   public void doAction() {
     if (menu != null && menu.isEnabled(action)) {

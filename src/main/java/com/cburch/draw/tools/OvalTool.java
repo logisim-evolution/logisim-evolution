@@ -28,11 +28,11 @@
 
 package com.cburch.draw.tools;
 
+import com.cburch.draw.icons.DrawShapeIcon;
 import com.cburch.draw.model.CanvasObject;
 import com.cburch.draw.shapes.DrawAttr;
 import com.cburch.draw.shapes.Oval;
 import com.cburch.logisim.data.Attribute;
-import com.cburch.logisim.util.Icons;
 import java.awt.Graphics;
 import java.util.List;
 import javax.swing.Icon;
@@ -66,6 +66,6 @@ public class OvalTool extends RectangularTool {
 
   @Override
   public Icon getIcon() {
-    return Icons.getIcon("drawoval.gif");
+    return new DrawShapeIcon(DrawShapeIcon.ELIPSE);
   }
 }

@@ -28,11 +28,11 @@
 
 package com.cburch.draw.tools;
 
+import com.cburch.draw.icons.DrawShapeIcon;
 import com.cburch.draw.model.CanvasObject;
 import com.cburch.draw.shapes.DrawAttr;
 import com.cburch.draw.shapes.RoundRectangle;
 import com.cburch.logisim.data.Attribute;
-import com.cburch.logisim.util.Icons;
 import java.awt.Graphics;
 import java.util.List;
 import javax.swing.Icon;
@@ -68,6 +68,6 @@ public class RoundRectangleTool extends RectangularTool {
 
   @Override
   public Icon getIcon() {
-    return Icons.getIcon("drawrrct.gif");
+    return new DrawShapeIcon(DrawShapeIcon.ROUNDEDRECTANGLE);
   }
 }

@@ -30,6 +30,7 @@ package com.cburch.draw.tools;
 
 import com.cburch.draw.actions.ModelAddAction;
 import com.cburch.draw.canvas.Canvas;
+import com.cburch.draw.icons.DrawLineIcon;
 import com.cburch.draw.model.CanvasModel;
 import com.cburch.draw.model.CanvasObject;
 import com.cburch.draw.shapes.DrawAttr;
@@ -97,7 +98,7 @@ public class LineTool extends AbstractTool {
 
   @Override
   public Icon getIcon() {
-    return Icons.getIcon("drawline.gif");
+    return new DrawLineIcon();
   }
 
   @Override

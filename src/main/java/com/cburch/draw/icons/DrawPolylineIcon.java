@@ -26,49 +26,41 @@
  *     http://www.heig-vd.ch/
  */
 
-package com.cburch.draw.toolbar;
+package com.cburch.draw.icons;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.geom.GeneralPath;
 
+import com.cburch.logisim.gui.icons.AbstractIcon;
 import com.cburch.logisim.prefs.AppPreferences;
 
-public class ToolbarSeparator implements ToolbarItem {
-  private int size;
+public class DrawPolylineIcon extends AbstractIcon {
 
-  public ToolbarSeparator(int size) {
-    this.size = size;
+  private static int[] points = {1,14,1,1,7,8,13,4,10,13};
+  private boolean closed = false;
+  
+  public DrawPolylineIcon(boolean closed) {
+    this.closed = closed;  
   }
 
-  public Dimension getDimension(Object orientation) {
-    return new Dimension(size, size);
+  @Override
+  protected void paintIcon(Graphics2D g2) {
+    g2.setStroke(new BasicStroke(AppPreferences.getScaled(2)));
+    g2.setColor(Color.BLUE.darker());
+    GeneralPath p = new GeneralPath();
+    p.moveTo(AppPreferences.getScaled(points[0]), AppPreferences.getScaled(points[1]));
+    for (int i = 2 ; i < points.length ; i+=2)
+      p.lineTo(AppPreferences.getScaled(points[i]), AppPreferences.getScaled(points[i+1]));
+    if (closed)
+      p.closePath();
+    g2.draw(p);
+    g2.setStroke(new BasicStroke(AppPreferences.getScaled(1)));
+    g2.setColor(Color.GRAY);
+    int wh = AppPreferences.getScaled(3);
+    for (int i = 0 ; i < points.length ; i+=2)
+      g2.drawRect(AppPreferences.getScaled(points[i]-1), AppPreferences.getScaled(points[i+1]-1), wh, wh);
   }
 
-  public String getToolTip() {
-    return null;
-  }
-
-  public boolean isSelectable() {
-    return false;
-  }
-
-  public void paintIcon(Component destination, Graphics g) {
-    Dimension dim = destination.getSize();
-    g.setColor(Color.GRAY);
-    int x = 0;
-    int y = 0;
-    int w = dim.width;
-    int h = dim.height;
-    int width = AppPreferences.getScaled(2);
-    if (h >= w) { // separator is a vertical line in horizontal toolbar
-      x = (w - width - 2) / 2;
-      w = width;
-    } else { // separator is a horizontal line in vertical toolbar
-      y = (h - width - 2) / 2;
-      h = width;
-    }
-    g.fillRect(x, y, w, h);
-  }
 }

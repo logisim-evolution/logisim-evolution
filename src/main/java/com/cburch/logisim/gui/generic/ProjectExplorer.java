@@ -35,6 +35,7 @@ import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.SubcircuitFactory;
 import com.cburch.logisim.comp.ComponentDrawContext;
 import com.cburch.logisim.comp.ComponentFactory;
+import com.cburch.logisim.gui.icons.TreeIcon;
 import com.cburch.logisim.gui.main.Canvas;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
@@ -47,6 +48,7 @@ import com.cburch.logisim.util.LocaleListener;
 import com.cburch.logisim.util.LocaleManager;
 import com.cburch.logisim.vhdl.base.VhdlContent;
 import com.cburch.logisim.vhdl.base.VhdlEntity;
+
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -370,7 +372,7 @@ public class ProjectExplorer extends JTree implements LocaleListener {
             y + AppPreferences.getScaled(AppPreferences.BoxSize >> 2),
             AppPreferences.getScaled(AppPreferences.BoxSize >> 1),
             AppPreferences.getScaled(AppPreferences.BoxSize >> 1));
-        g.setColor(Color.BLACK);
+        g.setColor(new Color(139,69,19));
         g.drawOval(
             x + AppPreferences.getScaled(AppPreferences.BoxSize >> 2),
             y + AppPreferences.getScaled(AppPreferences.BoxSize >> 2),
@@ -380,7 +382,7 @@ public class ProjectExplorer extends JTree implements LocaleListener {
       }
     }
   }
-
+  
   private static final long serialVersionUID = 1L;
 
   private static final String DIRTY_MARKER = "*";
@@ -417,6 +419,9 @@ public class ProjectExplorer extends JTree implements LocaleListener {
     proj.addProjectListener(myListener);
     AppPreferences.GATE_SHAPE.addPropertyChangeListener(myListener);
     LocaleManager.addLocaleListener(this);
+    DefaultTreeCellRenderer renderer = (DefaultTreeCellRenderer) getCellRenderer();
+    renderer.setClosedIcon(new TreeIcon(true));
+    renderer.setOpenIcon(new TreeIcon(false));
   }
 
   public Tool getSelectedTool() {

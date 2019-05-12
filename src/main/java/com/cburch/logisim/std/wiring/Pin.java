@@ -795,8 +795,7 @@ public class Pin extends InstanceFactory {
       Color LineColor,
       boolean isGhost) {
     PinAttributes attrs = (PinAttributes) painter.getAttributeSet();
-    boolean NewShape =
-        attrs.getValue(ProbeAttributes.PROBEAPPEARANCE) == ProbeAttributes.APPEAR_EVOLUTION_NEW;
+    boolean NewShape = attrs.getValue(ProbeAttributes.PROBEAPPEARANCE) == ProbeAttributes.APPEAR_EVOLUTION_NEW;
     boolean isBus = attrs.getValue(StdAttr.WIDTH).getWidth() > 1;
     Direction dir = attrs.getValue(StdAttr.FACING);
     Graphics g = painter.getGraphics();
@@ -843,7 +842,8 @@ public class Pin extends InstanceFactory {
         GraphicsUtil.switchToWidth(g, 2);
       } else {
         Color col = g.getColor();
-        g.setColor(LineColor);
+        if (painter.getShowState())
+          g.setColor(LineColor);
         GraphicsUtil.switchToWidth(g, Wire.WIDTH);
         g.drawLine(-5, 0, 0, 0);
         GraphicsUtil.switchToWidth(g, 2);
@@ -905,7 +905,8 @@ public class Pin extends InstanceFactory {
         GraphicsUtil.switchToWidth(g, 2);
       } else {
         Color col = g.getColor();
-        g.setColor(LineColor);
+        if (painter.getShowState())
+          g.setColor(LineColor);
         GraphicsUtil.switchToWidth(g, Wire.WIDTH);
         g.drawLine(-3, 0, 0, 0);
         GraphicsUtil.switchToWidth(g, 2);

@@ -42,6 +42,7 @@ import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.GraphicsUtil;
 import java.awt.Color;
 import java.awt.Font;
@@ -508,5 +509,30 @@ public abstract class AbstractTtlGate extends InstanceFactory {
       portindex++;
     }
     instance.setPorts(ps);
+  }
+  
+  @Override
+  public final void paintIcon(InstancePainter painter) {
+    Graphics2D g = (Graphics2D) painter.getGraphics().create();
+    g.setColor(Color.DARK_GRAY.brighter());
+    GraphicsUtil.switchToWidth(g, AppPreferences.getScaled(1));
+    g.fillRoundRect(AppPreferences.getScaled(4), 0 , AppPreferences.getScaled(8), AppPreferences.getScaled(16), 
+    		AppPreferences.getScaled(3), AppPreferences.getScaled(3));
+    g.setColor(Color.black);
+    g.drawRoundRect(AppPreferences.getScaled(4), 0 , AppPreferences.getScaled(8), AppPreferences.getScaled(16), 
+    		AppPreferences.getScaled(3), AppPreferences.getScaled(3));
+    int wh1 = AppPreferences.getScaled(3);
+    int wh2 = AppPreferences.getScaled(2);
+    for (int y = 0 ; y < 3 ; y++) {
+      g.setColor(Color.LIGHT_GRAY);
+      g.fillRect(wh2, AppPreferences.getScaled(y*5+1), wh1, wh1);
+      g.fillRect(AppPreferences.getScaled(12), AppPreferences.getScaled(y*5+1),wh1,wh1);
+      g.setColor(Color.BLACK);
+      g.drawRect(wh2, AppPreferences.getScaled(y*5+1), wh1, wh1);
+      g.drawRect(AppPreferences.getScaled(12), AppPreferences.getScaled(y*5+1),wh1,wh1);
+    }
+    g.drawRoundRect(AppPreferences.getScaled(6), 0 , AppPreferences.getScaled(6), AppPreferences.getScaled(16), 
+    		AppPreferences.getScaled(3), AppPreferences.getScaled(3));
+    g.dispose();
   }
 }

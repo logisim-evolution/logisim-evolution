@@ -45,6 +45,7 @@ public class Base extends Library {
   private List<Tool> tools = null;
 
   public Base() {
+    setHidden();
     SelectTool select = new SelectTool();
     WiringTool wiring = new WiringTool();
 
@@ -57,7 +58,7 @@ public class Base extends Library {
               wiring,
               new TextTool(),
               new MenuTool(),
-              new AddTool(Text.FACTORY),
+              new AddTool(new Text(true)),
             });
   }
 

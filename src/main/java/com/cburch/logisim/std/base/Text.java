@@ -37,15 +37,18 @@ import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Attributes;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Location;
+import com.cburch.logisim.gui.icons.TextIcon;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceFactory;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
+import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.StringUtil;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Rectangle;
 
 public class Text extends InstanceFactory {
@@ -91,11 +94,17 @@ public class Text extends InstanceFactory {
           });
 
   public static final Text FACTORY = new Text();
+  private boolean isLabel;
 
   private Text() {
     super("Text", S.getter("textComponent"));
-    setIconName("text.gif");
     setShouldSnap(false);
+  }
+  
+  public Text(boolean isLabel) {
+    super("Text", S.getter("textComponent"));
+    setShouldSnap(false);
+    this.isLabel = isLabel;
   }
 
   private void configureLabel(Instance instance) {
@@ -199,6 +208,16 @@ public class Text extends InstanceFactory {
     g.setColor(Color.BLACK);
     paintGhost(painter);
     g.translate(-x, -y);
+  }
+  
+  @Override
+  public void paintIcon(InstancePainter painter) {
+    Graphics2D g2 = (Graphics2D) painter.getGraphics().create();
+    if (isLabel)
+      g2.setColor(StdAttr.DEFAULT_LABEL_COLOR);
+    TextIcon t = new TextIcon();
+    t.paintIcon(null, g2, 0, 0);
+    g2.dispose();
   }
 
   @Override

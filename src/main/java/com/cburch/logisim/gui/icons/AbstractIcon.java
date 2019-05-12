@@ -26,46 +26,38 @@
  *     http://www.heig-vd.ch/
  */
 
-package com.cburch.draw.tools;
+package com.cburch.logisim.gui.icons;
 
-import com.cburch.draw.icons.DrawShapeIcon;
-import com.cburch.draw.model.CanvasObject;
-import com.cburch.draw.shapes.DrawAttr;
-import com.cburch.draw.shapes.Rectangle;
-import com.cburch.logisim.data.Attribute;
+import java.awt.BasicStroke;
+import java.awt.Component;
 import java.awt.Graphics;
-import java.util.List;
+import java.awt.Graphics2D;
+
 import javax.swing.Icon;
 
-public class RectangleTool extends RectangularTool {
-  private DrawingAttributeSet attrs;
+import com.cburch.logisim.prefs.AppPreferences;
 
-  public RectangleTool(DrawingAttributeSet attrs) {
-    this.attrs = attrs;
+public abstract class AbstractIcon implements Icon {
+
+  @Override
+  public void paintIcon(Component c, Graphics g, int x, int y) {
+    Graphics2D g2 = (Graphics2D) g.create();
+    g2.setStroke(new BasicStroke(AppPreferences.getScaled(1)));
+    g2.translate(x, y);
+    paintIcon(g2);
+    g2.dispose();
+  }
+
+  protected abstract void paintIcon(Graphics2D g2);
+
+@Override
+  public int getIconWidth() {
+    return AppPreferences.getIconSize();
   }
 
   @Override
-  public CanvasObject createShape(int x, int y, int w, int h) {
-    return attrs.applyTo(new Rectangle(x, y, w, h));
+  public int getIconHeight() {
+    return AppPreferences.getIconSize();
   }
-
-  @Override
-  public void drawShape(Graphics g, int x, int y, int w, int h) {
-    g.drawRect(x, y, w, h);
-  }
-
-  @Override
-  public void fillShape(Graphics g, int x, int y, int w, int h) {
-    g.fillRect(x, y, w, h);
-  }
-
-  @Override
-  public List<Attribute<?>> getAttributes() {
-    return DrawAttr.getFillAttributes(attrs.getValue(DrawAttr.PAINT_TYPE));
-  }
-
-  @Override
-  public Icon getIcon() {
-    return new DrawShapeIcon(DrawShapeIcon.RECTANGLE);
-  }
+  
 }
