@@ -26,46 +26,32 @@
  *     http://www.heig-vd.ch/
  */
 
-package com.cburch.draw.tools;
+package com.cburch.draw.icons;
 
-import com.cburch.draw.icons.DrawShapeIcon;
-import com.cburch.draw.model.CanvasObject;
-import com.cburch.draw.shapes.DrawAttr;
-import com.cburch.draw.shapes.Rectangle;
-import com.cburch.logisim.data.Attribute;
-import java.awt.Graphics;
-import java.util.List;
-import javax.swing.Icon;
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.geom.GeneralPath;
 
-public class RectangleTool extends RectangularTool {
-  private DrawingAttributeSet attrs;
+import com.cburch.logisim.gui.icons.AbstractIcon;
+import com.cburch.logisim.prefs.AppPreferences;
 
-  public RectangleTool(DrawingAttributeSet attrs) {
-    this.attrs = attrs;
-  }
+public class DrawCurveIcon extends AbstractIcon {
 
   @Override
-  public CanvasObject createShape(int x, int y, int w, int h) {
-    return attrs.applyTo(new Rectangle(x, y, w, h));
+  protected void paintIcon(Graphics2D g2) {
+    g2.setStroke(new BasicStroke(AppPreferences.getScaled(2)));
+    g2.setColor(Color.BLUE.darker());
+    GeneralPath p = new GeneralPath();
+    p.moveTo(AppPreferences.getScaled(1), AppPreferences.getScaled(5));
+    p.quadTo(AppPreferences.getScaled(10), AppPreferences.getScaled(1), AppPreferences.getScaled(14), AppPreferences.getScaled(14));
+    g2.draw(p);
+    g2.setColor(Color.GRAY);
+    g2.setStroke(new BasicStroke(AppPreferences.getScaled(1)));
+    int wh = AppPreferences.getScaled(3);
+    g2.drawRect(0, AppPreferences.getScaled(4), wh, wh);
+    g2.drawRect(AppPreferences.getScaled(9),0, wh, wh);
+    g2.drawRect(AppPreferences.getScaled(13), AppPreferences.getScaled(13), wh, wh);
   }
 
-  @Override
-  public void drawShape(Graphics g, int x, int y, int w, int h) {
-    g.drawRect(x, y, w, h);
-  }
-
-  @Override
-  public void fillShape(Graphics g, int x, int y, int w, int h) {
-    g.fillRect(x, y, w, h);
-  }
-
-  @Override
-  public List<Attribute<?>> getAttributes() {
-    return DrawAttr.getFillAttributes(attrs.getValue(DrawAttr.PAINT_TYPE));
-  }
-
-  @Override
-  public Icon getIcon() {
-    return new DrawShapeIcon(DrawShapeIcon.RECTANGLE);
-  }
 }

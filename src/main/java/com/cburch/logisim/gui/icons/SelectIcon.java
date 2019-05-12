@@ -26,46 +26,26 @@
  *     http://www.heig-vd.ch/
  */
 
-package com.cburch.draw.tools;
+package com.cburch.logisim.gui.icons;
 
-import com.cburch.draw.icons.DrawShapeIcon;
-import com.cburch.draw.model.CanvasObject;
-import com.cburch.draw.shapes.DrawAttr;
-import com.cburch.draw.shapes.Rectangle;
-import com.cburch.logisim.data.Attribute;
-import java.awt.Graphics;
-import java.util.List;
-import javax.swing.Icon;
+import java.awt.Graphics2D;
 
-public class RectangleTool extends RectangularTool {
-  private DrawingAttributeSet attrs;
+import com.cburch.logisim.prefs.AppPreferences;
 
-  public RectangleTool(DrawingAttributeSet attrs) {
-    this.attrs = attrs;
-  }
+public class SelectIcon extends AbstractIcon {
 
   @Override
-  public CanvasObject createShape(int x, int y, int w, int h) {
-    return attrs.applyTo(new Rectangle(x, y, w, h));
+  protected void paintIcon(Graphics2D g2) {
+    int[] xp = {3, 3, 7, 10, 11, 9, 14};
+    int[] yp = {0, 17, 12, 16, 16, 12, 12};
+    int[] sxp = new int[xp.length];
+    int[] syp = new int[yp.length];
+    for (int i = 0 ; i < xp.length ; i++) {
+      sxp[i] = AppPreferences.getScaled(xp[i]);
+      syp[i] = AppPreferences.getScaled(yp[i]);
+    }
+    g2.setColor(java.awt.Color.black);
+    g2.fillPolygon(sxp, syp, xp.length);
   }
 
-  @Override
-  public void drawShape(Graphics g, int x, int y, int w, int h) {
-    g.drawRect(x, y, w, h);
-  }
-
-  @Override
-  public void fillShape(Graphics g, int x, int y, int w, int h) {
-    g.fillRect(x, y, w, h);
-  }
-
-  @Override
-  public List<Attribute<?>> getAttributes() {
-    return DrawAttr.getFillAttributes(attrs.getValue(DrawAttr.PAINT_TYPE));
-  }
-
-  @Override
-  public Icon getIcon() {
-    return new DrawShapeIcon(DrawShapeIcon.RECTANGLE);
-  }
 }

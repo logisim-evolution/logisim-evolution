@@ -40,7 +40,7 @@ import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeEvent;
 import com.cburch.logisim.data.AttributeListener;
 import com.cburch.logisim.data.Location;
-import com.cburch.logisim.util.Icons;
+import com.cburch.logisim.gui.icons.TextIcon;
 import java.awt.Cursor;
 import java.awt.Graphics;
 import java.awt.Point;
@@ -92,6 +92,7 @@ public class TextTool extends AbstractTool {
   private Text curText;
   private Canvas curCanvas;
   private boolean isTextNew;
+  private static TextIcon icon = new TextIcon();
 
   public TextTool(DrawingAttributeSet attrs) {
     this.attrs = attrs;
@@ -160,7 +161,7 @@ public class TextTool extends AbstractTool {
 
   @Override
   public Icon getIcon() {
-    return Icons.getIcon("text.gif");
+    return icon;
   }
 
   @Override

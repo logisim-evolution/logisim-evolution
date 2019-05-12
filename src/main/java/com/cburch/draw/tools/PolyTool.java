@@ -30,6 +30,7 @@ package com.cburch.draw.tools;
 
 import com.cburch.draw.actions.ModelAddAction;
 import com.cburch.draw.canvas.Canvas;
+import com.cburch.draw.icons.DrawPolylineIcon;
 import com.cburch.draw.model.CanvasModel;
 import com.cburch.draw.model.CanvasObject;
 import com.cburch.draw.shapes.DrawAttr;
@@ -116,11 +117,7 @@ public class PolyTool extends AbstractTool {
 
   @Override
   public Icon getIcon() {
-    if (closed) {
-      return Icons.getIcon("drawpoly.gif");
-    } else {
-      return Icons.getIcon("drawplin.gif");
-    }
+    return new DrawPolylineIcon(closed);
   }
 
   @Override

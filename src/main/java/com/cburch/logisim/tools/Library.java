@@ -33,6 +33,8 @@ import java.util.Collections;
 import java.util.List;
 
 public abstract class Library {
+  private boolean hidden = false;
+	
   public boolean contains(ComponentFactory query) {
     return indexOf(query) >= 0;
   }
@@ -94,6 +96,14 @@ public abstract class Library {
 
   public boolean isDirty() {
     return false;
+  }
+  
+  public boolean isHidden() {
+    return hidden;  
+  }
+  
+  public void setHidden() {
+    hidden = true;
   }
 
   @Override

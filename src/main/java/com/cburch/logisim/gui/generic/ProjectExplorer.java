@@ -372,7 +372,7 @@ public class ProjectExplorer extends JTree implements LocaleListener {
             y + AppPreferences.getScaled(AppPreferences.BoxSize >> 2),
             AppPreferences.getScaled(AppPreferences.BoxSize >> 1),
             AppPreferences.getScaled(AppPreferences.BoxSize >> 1));
-        g.setColor(Color.BLACK);
+        g.setColor(new Color(139,69,19));
         g.drawOval(
             x + AppPreferences.getScaled(AppPreferences.BoxSize >> 2),
             y + AppPreferences.getScaled(AppPreferences.BoxSize >> 2),

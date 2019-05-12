@@ -30,7 +30,7 @@ package com.cburch.logisim.gui.appear;
 
 import com.cburch.draw.toolbar.ToolbarClickableItem;
 import com.cburch.draw.tools.DrawingAttributeSet;
-import com.cburch.logisim.util.Icons;
+import com.cburch.logisim.gui.icons.ShowStateIcon;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Point;
@@ -47,8 +47,8 @@ public class ShowStateTool implements ToolbarClickableItem {
     this.view = view;
     this.canvas = canvas;
     this.attrs = attrs;
-    icon = Icons.getIcon("showstate.gif");
-    pressed = Icons.getIcon("showstate_pressed.gif");
+    icon = new ShowStateIcon(false);
+    pressed = new ShowStateIcon(true);
   }
 
   public Dimension getDimension(Object orientation) {

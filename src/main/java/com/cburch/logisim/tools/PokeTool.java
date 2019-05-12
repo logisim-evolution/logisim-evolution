@@ -46,14 +46,19 @@ import com.cburch.logisim.gui.main.Canvas;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.util.Icons;
+
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.awt.geom.GeneralPath;
+
 import javax.swing.Icon;
 
 public class PokeTool extends Tool {
@@ -133,8 +138,6 @@ public class PokeTool extends Tool {
       }
     }
   }
-
-  private static final Icon toolIcon = Icons.getIcon("poke.gif");
 
   private static final Color caretColor = new Color(255, 255, 150);
 
@@ -290,19 +293,31 @@ public class PokeTool extends Tool {
 
   @Override
   public void paintIcon(ComponentDrawContext c, int x, int y) {
-    Graphics g = c.getGraphics();
-    if (toolIcon != null) {
-      toolIcon.paintIcon(c.getDestination(), g, x + 2, y + 2);
-    } else {
-      g.setColor(java.awt.Color.black);
-      g.drawLine(x + 4, y + 2, x + 4, y + 17);
-      g.drawLine(x + 4, y + 17, x + 1, y + 11);
-      g.drawLine(x + 4, y + 17, x + 7, y + 11);
-
-      g.drawLine(x + 15, y + 2, x + 15, y + 17);
-      g.drawLine(x + 15, y + 2, x + 12, y + 8);
-      g.drawLine(x + 15, y + 2, x + 18, y + 8);
-    }
+    Graphics2D g2 = (Graphics2D) c.getGraphics().create();
+    g2.translate(x, y);
+    g2.setStroke(new BasicStroke(AppPreferences.getScaled(1)));
+    GeneralPath p = new GeneralPath();
+    p.moveTo(scale(6), scale(15));
+    p.quadTo(scale(5), scale(10), scale(1), scale(7));
+    p.quadTo(scale(2.5), scale(4), scale(4), scale(7));
+    p.quadTo(scale(6), scale(6), scale(6), scale(10));
+    p.lineTo(scale(6), scale(1));
+    p.quadTo(scale(7), scale(-1), scale(8), scale(1));
+    p.lineTo(scale(8), scale(8));
+    p.quadTo(scale(9), scale(2), scale(10), scale(8));
+    p.quadTo(scale(11), scale(2), scale(12), scale(8));
+    p.lineTo(scale(12), scale(9));
+    p.quadTo(scale(13), scale(4), scale(14), scale(9));
+    p.quadTo(scale(12), scale(11), scale(13), scale(15));
+    g2.setColor(new Color(240,184,160));
+    g2.fill(p);
+    g2.setColor(Color.BLACK);
+    g2.draw(p);
+    g2.dispose();
+  }
+  
+  private static double scale(double s) {
+    return AppPreferences.getScaled(s);
   }
 
   private void removeCaret(boolean normal) {

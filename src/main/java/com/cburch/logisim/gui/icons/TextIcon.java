@@ -26,46 +26,22 @@
  *     http://www.heig-vd.ch/
  */
 
-package com.cburch.draw.tools;
+package com.cburch.logisim.gui.icons;
 
-import com.cburch.draw.icons.DrawShapeIcon;
-import com.cburch.draw.model.CanvasObject;
-import com.cburch.draw.shapes.DrawAttr;
-import com.cburch.draw.shapes.Rectangle;
-import com.cburch.logisim.data.Attribute;
-import java.awt.Graphics;
-import java.util.List;
-import javax.swing.Icon;
+import java.awt.Font;
+import java.awt.Graphics2D;
+import java.awt.font.TextLayout;
 
-public class RectangleTool extends RectangularTool {
-  private DrawingAttributeSet attrs;
+import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.prefs.AppPreferences;
 
-  public RectangleTool(DrawingAttributeSet attrs) {
-    this.attrs = attrs;
-  }
+public class TextIcon extends AbstractIcon {
 
   @Override
-  public CanvasObject createShape(int x, int y, int w, int h) {
-    return attrs.applyTo(new Rectangle(x, y, w, h));
+  protected void paintIcon(Graphics2D g2) {
+    Font f = StdAttr.DEFAULT_LABEL_FONT.deriveFont((float)AppPreferences.getIconSize());
+    TextLayout l = new TextLayout("A",f,g2.getFontRenderContext());
+    l.draw(g2,(float)(AppPreferences.getIconSize()/2-l.getBounds().getCenterX()),(float)(AppPreferences.getIconSize()/2-l.getBounds().getCenterY()));
   }
 
-  @Override
-  public void drawShape(Graphics g, int x, int y, int w, int h) {
-    g.drawRect(x, y, w, h);
-  }
-
-  @Override
-  public void fillShape(Graphics g, int x, int y, int w, int h) {
-    g.fillRect(x, y, w, h);
-  }
-
-  @Override
-  public List<Attribute<?>> getAttributes() {
-    return DrawAttr.getFillAttributes(attrs.getValue(DrawAttr.PAINT_TYPE));
-  }
-
-  @Override
-  public Icon getIcon() {
-    return new DrawShapeIcon(DrawShapeIcon.RECTANGLE);
-  }
 }

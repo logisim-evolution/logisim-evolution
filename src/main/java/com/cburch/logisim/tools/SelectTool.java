@@ -41,6 +41,7 @@ import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Location;
+import com.cburch.logisim.gui.icons.SelectIcon;
 import com.cburch.logisim.gui.main.Canvas;
 import com.cburch.logisim.gui.main.Selection;
 import com.cburch.logisim.gui.main.Selection.Event;
@@ -127,7 +128,6 @@ public class SelectTool extends Tool {
   private static final int IDLE = 0;
   private static final int MOVING = 1;
   private static final int RECT_SELECT = 2;
-  private static final Icon toolIcon = Icons.getIcon("select.gif");
 
   private static final Color COLOR_UNMATCHED = new Color(192, 0, 0);
 
@@ -142,6 +142,7 @@ public class SelectTool extends Tool {
   private boolean drawConnections;
   private MoveGesture moveGesture;
   private HashMap<Component, KeyConfigurator> keyHandlers;
+  private static SelectIcon icon = new SelectIcon();
 
   private HashSet<Selection> selectionsAdded;
   private AutoLabel AutoLabler = new AutoLabel();
@@ -572,15 +573,7 @@ public class SelectTool extends Tool {
 
   @Override
   public void paintIcon(ComponentDrawContext c, int x, int y) {
-    Graphics g = c.getGraphics();
-    if (toolIcon != null) {
-      toolIcon.paintIcon(c.getDestination(), g, x + 2, y + 2);
-    } else {
-      int[] xp = {x + 5, x + 5, x + 9, x + 12, x + 14, x + 11, x + 16};
-      int[] yp = {y, y + 17, y + 12, y + 18, y + 18, y + 12, y + 12};
-      g.setColor(java.awt.Color.black);
-      g.fillPolygon(xp, yp, xp.length);
-    }
+    icon.paintIcon(null, c.getGraphics(), x, y);
   }
 
   private void processKeyEvent(Canvas canvas, KeyEvent e, int type) {

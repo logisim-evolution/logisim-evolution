@@ -58,7 +58,7 @@ public class ProjectExplorerLibraryNode extends ProjectExplorerModel.Node<Librar
 
   private void buildChildren() {
     Library lib = getValue();
-    if (lib != null) {
+    if (lib != null && !(lib.isHidden())) {
       buildChildren(new ProjectExplorerToolNode(getModel(), null), lib.getTools(), 0);
       buildChildren(
           new ProjectExplorerLibraryNode(getModel(), null),
@@ -95,6 +95,8 @@ public class ProjectExplorerLibraryNode extends ProjectExplorerModel.Node<Librar
     oldPos = startIndex;
 
     for (T tool : items) {
+      if (tool instanceof Library && ((Library)tool).isHidden())
+        continue;
       ProjectExplorerModel.Node<T> node = nodeMap.get(tool);
 
       if (node == null) {

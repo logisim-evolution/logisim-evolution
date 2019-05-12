@@ -30,6 +30,7 @@ package com.cburch.draw.tools;
 
 import com.cburch.draw.actions.ModelAddAction;
 import com.cburch.draw.canvas.Canvas;
+import com.cburch.draw.icons.DrawCurveIcon;
 import com.cburch.draw.model.CanvasModel;
 import com.cburch.draw.shapes.Curve;
 import com.cburch.draw.shapes.CurveUtil;
@@ -95,7 +96,7 @@ public class CurveTool extends AbstractTool {
 
   @Override
   public Icon getIcon() {
-    return Icons.getIcon("drawcurv.gif");
+    return new DrawCurveIcon();
   }
 
   @Override
