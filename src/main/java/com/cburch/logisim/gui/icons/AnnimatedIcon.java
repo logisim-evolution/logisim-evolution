@@ -35,9 +35,32 @@ import java.awt.Graphics2D;
 
 import javax.swing.Icon;
 
+import com.cburch.logisim.gui.icons.AnnimationTimer.AnnimationListener;
+import com.cburch.logisim.gui.main.Frame;
 import com.cburch.logisim.prefs.AppPreferences;
 
-public abstract class AbstractIcon implements Icon {
+public abstract class AnnimatedIcon implements Icon,AnnimationListener {
+
+  public boolean registered;
+  
+  public AnnimatedIcon() {
+    registered = false;
+    Frame.ANNIMATIONICONTIMER.registerListener(this);
+  }
+
+  @Override
+  public void annimationUpdate() {
+    if (registered) {
+      updateIcon();
+    }
+  }
+  
+  public void registerParrent(Component parrent) {
+    registered = true;
+    Frame.ANNIMATIONICONTIMER.addParrent(parrent);
+  }
+  
+  protected abstract void updateIcon();
 
   @Override
   public void paintIcon(Component c, Graphics g, int x, int y) {
@@ -59,5 +82,5 @@ public abstract class AbstractIcon implements Icon {
   public int getIconHeight() {
     return AppPreferences.getIconSize();
   }
-  
+    
 }

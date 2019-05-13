@@ -28,36 +28,42 @@
 
 package com.cburch.logisim.gui.icons;
 
-import java.awt.BasicStroke;
 import java.awt.Component;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.TimerTask;
 
-import javax.swing.Icon;
+public class AnnimationTimer extends TimerTask {
 
-import com.cburch.logisim.prefs.AppPreferences;
-
-public abstract class AbstractIcon implements Icon {
-
-  @Override
-  public void paintIcon(Component c, Graphics g, int x, int y) {
-    Graphics2D g2 = (Graphics2D) g.create();
-    g2.setStroke(new BasicStroke(AppPreferences.getScaled(1)));
-    g2.translate(x, y);
-    paintIcon(g2);
-    g2.dispose();
-  }
-
-  protected abstract void paintIcon(Graphics2D g2);
-
-  @Override
-  public int getIconWidth() {
-    return AppPreferences.getIconSize();
-  }
-
-  @Override
-  public int getIconHeight() {
-    return AppPreferences.getIconSize();
+  public interface AnnimationListener {
+    public void annimationUpdate();
   }
   
+  private List<AnnimationListener> listeners = new ArrayList<>();
+  private ArrayList<Component> parrents = new ArrayList<>();
+
+  public void registerListener(AnnimationListener l) {
+    if (l != null)
+      listeners.add(l);
+  }
+  
+  public void removeListener(AnnimationListener l) {
+    if (l == null)
+      return;
+    if (listeners.contains(l))
+      listeners.remove(l);
+  }
+  
+  public void addParrent(Component parrent) {
+    if (!parrents.contains(parrent))
+      parrents.add(parrent);
+  }
+  @Override
+  public void run() {
+    for (AnnimationListener l : listeners)
+      l.annimationUpdate();
+    for (Component c : parrents)
+      c.repaint();
+  }
+
 }

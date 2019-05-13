@@ -876,7 +876,7 @@ public class Startup implements AWTEventListener {
         showSplash = false;
       }
     }
-
+    
     Toolkit.getDefaultToolkit()
         .addAWTEventListener(this, AWTEvent.COMPONENT_EVENT_MASK | AWTEvent.CONTAINER_EVENT_MASK);
     // pre-load the two basic component libraries, just so that the time
@@ -1012,7 +1012,7 @@ public class Startup implements AWTEventListener {
     }
     return result;
   }
-
+  
   @Override
   public void eventDispatched(AWTEvent event) {
     if (event instanceof ContainerEvent) {

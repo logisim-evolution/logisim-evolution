@@ -110,6 +110,8 @@ public abstract class Tool implements AttributeDefaultProvider {
   public void mouseReleased(Canvas canvas, Graphics g, MouseEvent e) {}
 
   public void paintIcon(ComponentDrawContext c, int x, int y) {}
+  
+  public void registerParrent(java.awt.Component parrent) {}
 
   public void select(Canvas canvas) {}
 

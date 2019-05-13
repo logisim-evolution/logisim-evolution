@@ -34,20 +34,27 @@ import java.awt.Graphics2D;
 
 import com.cburch.logisim.prefs.AppPreferences;
 
-public class LEDIcon extends AbstractIcon {
+public class LEDIcon extends AnnimatedIcon {
 
   private boolean isRGB;
+  private int showstate;
   
   public LEDIcon(boolean RGB) {
+    super();
     isRGB = RGB;
+    showstate = -1;
   }
   @Override
   protected void paintIcon(Graphics2D g2) {
     int xy = AppPreferences.getScaled(2);
     int wh = AppPreferences.getScaled(12);
-    g2.setColor(Color.RED);
+    int r = (showstate&1) == 1 ? 255 : 0;
+    int g = (showstate&2) == 2 ? 255 : 0;
+    int b = (showstate&4) == 4 ? 255 : 0;
+    Color c = (showstate >= 0) ? new Color(r,g,b) : Color.RED;
+    g2.setColor(c);
     g2.fillOval(xy, xy, wh, wh);
-    if (isRGB) {
+    if (isRGB && showstate < 0) {
       g2.setColor(Color.GREEN);
       g2.fillArc(xy, xy, wh, wh, 0, 120);
       g2.setColor(Color.BLUE);
@@ -56,6 +63,12 @@ public class LEDIcon extends AbstractIcon {
     g2.setColor(Color.BLACK);
     g2.setStroke(new BasicStroke(AppPreferences.getScaled(2)));
     g2.drawOval(xy, xy, wh, wh);
+  }
+
+  @Override
+  protected void updateIcon() {
+    showstate++;
+    showstate %= isRGB ? 8:2;
   }
 
 }

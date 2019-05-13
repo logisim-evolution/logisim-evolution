@@ -52,6 +52,7 @@ import com.cburch.logisim.gui.generic.LFrame;
 import com.cburch.logisim.gui.generic.RegTabContent;
 import com.cburch.logisim.gui.generic.ZoomControl;
 import com.cburch.logisim.gui.generic.ZoomModel;
+import com.cburch.logisim.gui.icons.AnnimationTimer;
 import com.cburch.logisim.gui.menu.MainMenuListener;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
@@ -84,6 +85,8 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.Timer;
+
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -93,6 +96,10 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 public class Frame extends LFrame implements LocaleListener {
+
+  public static final AnnimationTimer ANNIMATIONICONTIMER = new AnnimationTimer();
+  private Timer timer = new Timer();
+
   class MyProjectListener
       implements ProjectListener,
           LibraryListener,
@@ -183,12 +190,14 @@ public class Frame extends LFrame implements LocaleListener {
     public void windowClosing(WindowEvent e) {
       if (confirmClose(S.get("confirmCloseTitle"))) {
         layoutCanvas.closeCanvas();
+        timer.cancel();
         Frame.this.dispose();
       }
     }
 
     @Override
     public void windowOpened(WindowEvent e) {
+      timer.schedule(ANNIMATIONICONTIMER, 1000, 500);
       layoutCanvas.computeSize(true);
     }
   }
@@ -412,6 +421,10 @@ public class Frame extends LFrame implements LocaleListener {
 
     LocaleManager.addLocaleListener(this);
     toolbox.updateStructure();
+  }
+  
+  public Toolbar getToolbar() {
+    return toolbar;
   }
 
   private void computeTitle() {

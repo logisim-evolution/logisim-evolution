@@ -38,6 +38,8 @@ import com.cburch.logisim.proj.ProjectEvent;
 import com.cburch.logisim.proj.ProjectListener;
 import com.cburch.logisim.tools.Tool;
 import java.util.Enumeration;
+
+import javax.swing.JTree;
 import javax.swing.SwingUtilities;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
@@ -103,12 +105,14 @@ class ProjectExplorerModel extends DefaultTreeModel implements ProjectListener {
   private static final long serialVersionUID = 1L;
 
   private Project proj;
+  private JTree GuiElement;
 
-  ProjectExplorerModel(Project proj) {
+  ProjectExplorerModel(Project proj, JTree gui) {
     super(null);
     this.proj = proj;
-    setRoot(new ProjectExplorerLibraryNode(this, proj.getLogisimFile()));
+    setRoot(new ProjectExplorerLibraryNode(this, proj.getLogisimFile(),gui));
     proj.addProjectListener(this);
+    GuiElement = gui;
   }
 
   Node<Tool> findTool(Tool tool) {
@@ -156,7 +160,7 @@ class ProjectExplorerModel extends DefaultTreeModel implements ProjectListener {
     if (file == null) {
       setRoot(null);
     } else {
-      setRoot(new ProjectExplorerLibraryNode(this, file));
+      setRoot(new ProjectExplorerLibraryNode(this, file,GuiElement));
     }
 
     fireStructureChanged();
