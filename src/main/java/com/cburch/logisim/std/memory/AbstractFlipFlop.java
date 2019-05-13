@@ -57,6 +57,8 @@ import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 
+import javax.swing.Icon;
+
 abstract class AbstractFlipFlop extends InstanceFactory {
   public static class Logger extends InstanceLogger {
     @Override
@@ -144,8 +146,7 @@ abstract class AbstractFlipFlop extends InstanceFactory {
 
   private Attribute<AttributeOption> triggerAttribute;
 
-  protected AbstractFlipFlop(
-      String name, String iconName, StringGetter desc, int numInputs, boolean allowLevelTriggers) {
+  protected AbstractFlipFlop(String name, String iconName, StringGetter desc, int numInputs, boolean allowLevelTriggers) {
     super(name, desc);
     this.numInputs = numInputs;
     setIconName(iconName);
@@ -158,6 +159,20 @@ abstract class AbstractFlipFlop extends InstanceFactory {
     setInstancePoker(Poker.class);
     setInstanceLogger(Logger.class);
   }
+
+  protected AbstractFlipFlop(String name, Icon icon, StringGetter desc, int numInputs, boolean allowLevelTriggers) {
+	    super(name, desc);
+	    this.numInputs = numInputs;
+	    setIcon(icon);
+	    triggerAttribute = allowLevelTriggers ? StdAttr.TRIGGER : StdAttr.EDGE_TRIGGER;
+	    setAttributes(
+	        new Attribute[] {triggerAttribute, StdAttr.LABEL, StdAttr.LABEL_FONT, StdAttr.APPEARANCE},
+	        new Object[] {
+	          StdAttr.TRIG_RISING, "", StdAttr.DEFAULT_LABEL_FONT, AppPreferences.getDefaultAppearance()
+	        });
+	    setInstancePoker(Poker.class);
+	    setInstanceLogger(Logger.class);
+	  }
 
   private void updatePorts(Instance instance) {
     Port[] ps = new Port[numInputs + STD_PORTS];

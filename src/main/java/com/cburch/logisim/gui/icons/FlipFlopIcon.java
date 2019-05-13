@@ -32,8 +32,8 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.font.TextLayout;
+import java.awt.geom.GeneralPath;
 
-import com.cburch.logisim.data.Value;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
 
@@ -98,8 +98,42 @@ public class FlipFlopIcon extends AbstractIcon {
     int[] yp = {scale(11),scale(12),scale(13)};
     g2.drawPolygon(xp, yp, 3);
     g2.drawOval(scale(12), scale(10), scale(4), scale(4));
-    g2.setColor(Value.FALSE_COLOR);
-    g2.fillOval(scale(6), scale(5), scale(4), scale(5));
+    GeneralPath p = new GeneralPath();
+    switch (type) {
+      case D_FLIPFLOP :
+        p.moveTo(scale(7), scale(5));
+        p.lineTo(scale(6), scale(5));
+        p.lineTo(scale(6), scale(2));
+        p.lineTo(scale(7), scale(2));
+        p.quadTo(scale(10), scale(4), scale(7), scale(5));
+        break;
+      case T_FLIPFLOP :
+        p.moveTo(scale(6), scale(2));
+        p.lineTo(scale(8), scale(2));
+        p.moveTo(scale(7), scale(2));
+        p.lineTo(scale(7), scale(4));
+        break;
+      case JK_FLIPFLOP :
+        p.moveTo(scale(6), scale(2));
+        p.lineTo(scale(8), scale(2));
+        p.lineTo(scale(8), scale(4));
+        p.quadTo(scale(7), scale(6), scale(6), scale(4));
+        p.moveTo(scale(6), scale(6));
+        p.lineTo(scale(6), scale(8));
+        p.moveTo(scale(8), scale(6));
+        p.lineTo(scale(7), scale(7));
+        p.lineTo(scale(8), scale(8));
+        break;
+      case SR_FLIPFLOP :
+        p.moveTo(scale(7), scale(1));
+        p.curveTo(scale(4), scale(2), scale(9), scale(4), scale(6), scale(5));
+        p.moveTo(scale(6), scale(9));
+        p.lineTo(scale(6), scale(6));
+        p.quadTo(scale(9), scale(7), scale(7), scale(8));
+        p.lineTo(scale(8), scale(9));
+        break;
+    }
+    g2.draw(p);
   }
   
   private void paintRegisterIcon(Graphics2D g2) {
@@ -114,6 +148,6 @@ public class FlipFlopIcon extends AbstractIcon {
     g2.drawPolygon(xp, yp, 3);
     g2.drawLine(scale(0), scale(12), scale(2), scale(12));
     g2.fillRect(0, scale(5), scale(2), scale(2));
-    g2.fillRect(scale(10), scale(5), scale(5), scale(2));
+    g2.fillRect(scale(10), scale(5), scale(6), scale(2));
   }
 }

@@ -35,6 +35,8 @@ import com.cburch.logisim.data.Value;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.fpgagui.FPGAReport;
+import com.cburch.logisim.gui.icons.FlipFlopIcon;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -71,7 +73,7 @@ public class DFlipFlop extends AbstractFlipFlop {
   }
 
   public DFlipFlop() {
-    super("D Flip-Flop", "dFlipFlop.gif", S.getter("dFlipFlopComponent"), 1, true);
+    super("D Flip-Flop", new FlipFlopIcon(FlipFlopIcon.D_FLIPFLOP), S.getter("dFlipFlopComponent"), 1, true);
   }
 
   @Override
