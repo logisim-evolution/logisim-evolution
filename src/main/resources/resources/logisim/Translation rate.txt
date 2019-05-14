@@ -1,0 +1,15 @@
+Translation rate  2019 V15.0.2
+                   Line     de    el    es    fr    pt    ru    it
+analyse.properties  144    31%   31%   31%  100%   31%   31%   31%  
+circuit.properties   59    71%   59%   81%  100%   74%   71%   71%
+data.properties      14   100%  100%  100%  100%  100%  100%  100%
+draw.propeties       42   100%  100%  100%  100%  100%  100%  100%
+file.properties      87    72%   73%   81%  100%   77%   75%   75%
+fpga.properties     101     0%    0%   32%   14%    4%    0%    0%
+gui.properties      455    76%   73%   99%  100%   87%   75%   76%
+hdl.properties       25     0%    0%    5%  100%    5%    0%    0%
+proj.properties      33    54%   54%  100%  100%   54%   54%   54%
+std.properties      443    73%   72%   80%   91%   78%   73%   74%
+tools.properties     35    85%   85%  100%  100%   91%   85%   85%  
+util.properties      72    27%   20%   51%   58%   48%   27%   27%
+ 
