@@ -32,29 +32,34 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 
-import com.cburch.logisim.gui.icons.AbstractIcon;
+import com.cburch.logisim.gui.icons.AnnimatedIcon;
 import com.cburch.logisim.prefs.AppPreferences;
 
-public class DrawShapeIcon extends AbstractIcon {
+public class DrawShapeIcon extends AnnimatedIcon {
 
   public static final int RECTANGLE = 0;
   public static final int ROUNDEDRECTANGLE = 1;
   public static final int ELIPSE = 2;
   
   private int type;
+  private int state;
+  private static int[] points = {3,2,8,4,14,8};
   
   public DrawShapeIcon( int type ) {
     this.type = type;
+    state = 3;
   }
 
   @Override
   protected void paintIcon(Graphics2D g2) {
+    if (state == 0)
+      return;
     g2.setStroke(new BasicStroke(AppPreferences.getScaled(2)));
     g2.setColor(Color.BLUE.darker());
-    int x = AppPreferences.getScaled(1);
-    int width = AppPreferences.getScaled(14);
-    int y = AppPreferences.getScaled(3);
-    int height = AppPreferences.getScaled(8);
+    int x = scale(1);
+    int y = scale(3);
+    int width = scale(points[(state-1)*2]);
+    int height = scale(points[(state-1)*2+1]);
     if (type == RECTANGLE)
       g2.drawRect(x, y, width, height);
     else if (type == ROUNDEDRECTANGLE)
@@ -65,6 +70,16 @@ public class DrawShapeIcon extends AbstractIcon {
     g2.setStroke(new BasicStroke(AppPreferences.getScaled(1)));
     g2.drawRect(0, y-x, y, y);
     g2.drawRect(width-x, y+height-x, y, y);
+  }
+
+  @Override
+  public void annimationUpdate() {
+    state = (state+1)&3;
+  }
+
+  @Override
+  public void resetToStatic() {
+    state = 3;
   }
 
 }

@@ -40,6 +40,7 @@ import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.fpga.fpgaboardeditor.FPGAIOInformationContainer;
 import com.cburch.logisim.fpga.hdlgenerator.IOComponentInformationContainer;
+import com.cburch.logisim.gui.icons.SevenSegmentIcon;
 import com.cburch.logisim.instance.InstanceDataSingleton;
 import com.cburch.logisim.instance.InstanceFactory;
 import com.cburch.logisim.instance.InstancePainter;
@@ -83,7 +84,7 @@ public class HexDigit extends InstanceFactory implements DynamicElementProvider 
     ps[DP].setToolTip(S.getter("hexDigitDPTip"));
     setPorts(ps);
     setOffsetBounds(Bounds.create(-15, -60, 40, 60));
-    setIconName("hexdig.gif");
+    setIcon(new SevenSegmentIcon(true));
     setKeyConfigurator(new DirectionConfigurator(StdAttr.LABEL_LOC, KeyEvent.ALT_DOWN_MASK));
     MyIOInformation =
         new IOComponentInformationContainer(
@@ -102,16 +103,11 @@ public class HexDigit extends InstanceFactory implements DynamicElementProvider 
   public void paintInstance(InstancePainter painter) {
     SevenSegment.drawBase(painter, true);
   }
-
-  @Override
-  public void propagate(InstanceState state) {
-    int summary = 0;
-    Value baseVal = state.getPortValue(HEX);
-    if (baseVal == null) baseVal = Value.createUnknown(BitWidth.create(4));
-    Value dpVal = state.getPortValue(DP);
+  
+  public static int getSegs(int value) {
     int segs; // each nibble is one segment, in top-down, left-to-right
     // order: middle three nibbles are the three horizontal segments
-    switch (baseVal.toIntValue()) {
+    switch (value) {
       case 0:
         segs = 0x1110111;
         break;
@@ -160,17 +156,38 @@ public class HexDigit extends InstanceFactory implements DynamicElementProvider 
       case 15:
         segs = 0x1111000;
         break;
+      case -1:
+        segs = SEG_B_MASK|SEG_C_MASK|SEG_E_MASK|SEG_F_MASK|SEG_G_MASK;
+        break; // a H for static icon
       default:
         segs = 0x0001000;
         break; // a dash '-'
     }
-    if ((segs & 0x1) != 0) summary |= 4; // vertical seg in bottom right
-    if ((segs & 0x10) != 0) summary |= 2; // vertical seg in top right
-    if ((segs & 0x100) != 0) summary |= 8; // horizontal seg at bottom
-    if ((segs & 0x1000) != 0) summary |= 64; // horizontal seg at middle
-    if ((segs & 0x10000) != 0) summary |= 1; // horizontal seg at top
-    if ((segs & 0x100000) != 0) summary |= 16; // vertical seg at bottom left
-    if ((segs & 0x1000000) != 0) summary |= 32; // vertical seg at top left
+    return segs;
+  }
+  
+  public static int SEG_A_MASK = 0x10000;
+  public static int SEG_B_MASK = 0x10;
+  public static int SEG_C_MASK = 0x1;
+  public static int SEG_D_MASK = 0x100;
+  public static int SEG_E_MASK = 0x100000;
+  public static int SEG_F_MASK = 0x1000000;
+  public static int SEG_G_MASK = 0x1000;
+
+  @Override
+  public void propagate(InstanceState state) {
+    int summary = 0;
+    Value baseVal = state.getPortValue(HEX);
+    if (baseVal == null) baseVal = Value.createUnknown(BitWidth.create(4));
+    Value dpVal = state.getPortValue(DP);
+    int segs = getSegs(baseVal.toIntValue());
+    if ((segs & SEG_C_MASK) != 0) summary |= 4; // vertical seg in bottom right
+    if ((segs & SEG_B_MASK) != 0) summary |= 2; // vertical seg in top right
+    if ((segs & SEG_D_MASK) != 0) summary |= 8; // horizontal seg at bottom
+    if ((segs & SEG_G_MASK) != 0) summary |= 64; // horizontal seg at middle
+    if ((segs & SEG_A_MASK) != 0) summary |= 1; // horizontal seg at top
+    if ((segs & SEG_E_MASK) != 0) summary |= 16; // vertical seg at bottom left
+    if ((segs & SEG_F_MASK) != 0) summary |= 32; // vertical seg at top left
     if (dpVal != null && dpVal.toIntValue() == 1) summary |= 128; // decimal point
 
     Object value = Integer.valueOf(summary);

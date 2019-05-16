@@ -41,27 +41,22 @@ import com.cburch.logisim.prefs.AppPreferences;
 
 public abstract class AnnimatedIcon implements Icon,AnnimationListener {
 
-  public boolean registered;
-  
   public AnnimatedIcon() {
-    registered = false;
     Frame.ANNIMATIONICONTIMER.registerListener(this);
   }
 
-  @Override
-  public void annimationUpdate() {
-    if (registered) {
-      updateIcon();
-    }
-  }
-  
   public void registerParrent(Component parrent) {
-    registered = true;
     Frame.ANNIMATIONICONTIMER.addParrent(parrent);
   }
   
-  protected abstract void updateIcon();
-
+  public static int scale(int v) {
+    return AppPreferences.getScaled(v);
+  }
+  
+  public static double scale(double v) {
+    return AppPreferences.getScaled(v);
+  }
+	  
   @Override
   public void paintIcon(Component c, Graphics g, int x, int y) {
     Graphics2D g2 = (Graphics2D) g.create();

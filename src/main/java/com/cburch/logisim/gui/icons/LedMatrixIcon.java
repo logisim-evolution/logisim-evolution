@@ -32,48 +32,47 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 
-import com.cburch.logisim.prefs.AppPreferences;
+public class LedMatrixIcon extends AnnimatedIcon {
 
-public class LEDIcon extends AnnimatedIcon {
-
-  private boolean isRGB;
-  private int showstate;
-  
-  public LEDIcon(boolean RGB) {
-    super();
-    isRGB = RGB;
-    showstate = -1;
-  }
-  @Override
-  protected void paintIcon(Graphics2D g2) {
-    int xy = AppPreferences.getScaled(2);
-    int wh = AppPreferences.getScaled(12);
-    int r = (showstate&1) == 1 ? 255 : 0;
-    int g = (showstate&2) == 2 ? 255 : 0;
-    int b = (showstate&4) == 4 ? 255 : 0;
-    Color c = (showstate >= 0) ? new Color(r,g,b) : Color.RED;
-    g2.setColor(c);
-    g2.fillOval(xy, xy, wh, wh);
-    if (isRGB && showstate < 0) {
-      g2.setColor(Color.GREEN);
-      g2.fillArc(xy, xy, wh, wh, 0, 120);
-      g2.setColor(Color.BLUE);
-      g2.fillArc(xy, xy, wh, wh, 120, 120);
-    }
-    g2.setColor(Color.BLACK);
-    g2.setStroke(new BasicStroke(AppPreferences.getScaled(2)));
-    g2.drawOval(xy, xy, wh, wh);
-  }
+  private double xDir = 0.7;
+  private double yDir = 1;
+  private double x = 2;
+  private double y = 1;
 
   @Override
   public void annimationUpdate() {
-      showstate++;
-      showstate %= isRGB ? 8:2;
+    x += xDir;
+    if (x<0 || x > 3.5) {
+      xDir = -xDir;
+      x += 2*xDir;
+    }
+    y += yDir;
+    if (y<0 || y > 3.5) {
+      yDir = -yDir;
+      y += 2*yDir;
+    }
   }
 
   @Override
   public void resetToStatic() {
-    showstate = -1;
+    x = 2;
+    y = 1;
+  }
+
+  @Override
+  protected void paintIcon(Graphics2D g2) {
+	g2.setStroke(new BasicStroke(scale(2)));
+    g2.setColor(Color.WHITE);
+    g2.fillRect(0, 0, scale(16), scale(16));
+    g2.setColor(Color.BLACK);
+    g2.drawRect(0, 0, scale(16), scale(16));
+    int xint = (int) x;
+    int yint = (int) y;
+    for (int i = 0 ; i < 4 ; i++)
+      for (int j = 0 ; j < 4 ; j++) {
+    	  g2.setColor((i==xint)&&(j==yint)?Color.GREEN.darker() : Color.GREEN.brighter().brighter());
+    	  g2.fillOval(scale(2+i*3), scale(2+j*3), scale(3), scale(3));
+      }
   }
 
 }

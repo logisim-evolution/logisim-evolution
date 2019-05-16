@@ -590,6 +590,7 @@ public class Frame extends LFrame implements LocaleListener {
         app.setCircuit(proj, proj.getCircuitState());
         mainPanel.addView(EDIT_APPEARANCE, app.getCanvasPane());
         appearance = app;
+        ANNIMATIONICONTIMER.addParrent(toolbar);
       }
       toolbar.setToolbarModel(app.getToolbarModel());
       app.getAttrTableDrawManager(attrTable).attributesSelected();

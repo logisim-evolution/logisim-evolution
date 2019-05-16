@@ -29,18 +29,31 @@
 package com.cburch.logisim.gui.icons;
 
 import java.awt.Component;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TimerTask;
 
-public class AnnimationTimer extends TimerTask {
+import com.cburch.logisim.prefs.AppPreferences;
+
+public class AnnimationTimer extends TimerTask implements PropertyChangeListener {
 
   public interface AnnimationListener {
     public void annimationUpdate();
+    public void resetToStatic();
   }
   
-  private List<AnnimationListener> listeners = new ArrayList<>();
-  private ArrayList<Component> parrents = new ArrayList<>();
+  private List<AnnimationListener> listeners;
+  private ArrayList<Component> parrents;
+  private boolean animate;
+  
+  public AnnimationTimer() {
+    listeners = new ArrayList<>();
+    parrents = new ArrayList<>();
+    animate = AppPreferences.ANIMATED_ICONS.getBoolean();
+    AppPreferences.ANIMATED_ICONS.addPropertyChangeListener(this);
+  }
 
   public void registerListener(AnnimationListener l) {
     if (l != null)
@@ -58,12 +71,32 @@ public class AnnimationTimer extends TimerTask {
     if (!parrents.contains(parrent))
       parrents.add(parrent);
   }
+  
+  public void removeParrent(Component parrent) {
+    if (parrents.contains(parrent))
+      parrents.remove(parrent);
+  }
+  
   @Override
   public void run() {
+	if (!animate)
+	  return;
     for (AnnimationListener l : listeners)
       l.annimationUpdate();
     for (Component c : parrents)
       c.repaint();
+  }
+
+  @Override
+  public void propertyChange(PropertyChangeEvent evt) {
+    boolean lastanimate = animate;
+    animate = AppPreferences.ANIMATED_ICONS.getBoolean();
+    if (lastanimate && !animate) {
+        for (AnnimationListener l : listeners)
+            l.resetToStatic();
+        for (Component c : parrents)
+            c.repaint();
+    }
   }
 
 }

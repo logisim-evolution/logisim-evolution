@@ -55,21 +55,17 @@ public class Io extends Library {
 
   private static FactoryDescription[] DESCRIPTIONS = {
     new FactoryDescription("Button", S.getter("buttonComponent"), "button.gif", "Button"),
-    new FactoryDescription(
-        "DipSwitch", S.getter("dipswitchComponent"), "dipswitch.gif", "DipSwitch"),
+    new FactoryDescription("DipSwitch", S.getter("dipswitchComponent"), "dipswitch.gif", "DipSwitch"),
     new FactoryDescription("Joystick", S.getter("joystickComponent"), "joystick.gif", "Joystick"),
     new FactoryDescription("Keyboard", S.getter("keyboardComponent"), "keyboard.gif", "Keyboard"),
     new FactoryDescription("LED", S.getter("ledComponent"), "led.gif", "Led"),
-    new FactoryDescription("PortIO", S.getter("pioComponent"), "pio.gif", "PortIO"),
-    new FactoryDescription(
-        "ReptarLB", S.getter("repLBComponent"), "localbus.gif", "ReptarLocalBus"),
     new FactoryDescription("RGBLED", S.getter("RGBledComponent"), "rgbled.gif", "RGBLed"),
-    new FactoryDescription(
-        "7-Segment Display", S.getter("sevenSegmentComponent"), "7seg.gif", "SevenSegment"),
-    new FactoryDescription(
-        "Hex Digit Display", S.getter("hexDigitComponent"), "hexdig.gif", "HexDigit"),
+    new FactoryDescription("7-Segment Display", S.getter("sevenSegmentComponent"), "7seg.gif", "SevenSegment"),
+    new FactoryDescription("Hex Digit Display", S.getter("hexDigitComponent"), "hexdig.gif", "HexDigit"),
     new FactoryDescription("DotMatrix", S.getter("dotMatrixComponent"), "dotmat.gif", "DotMatrix"),
     new FactoryDescription("TTY", S.getter("ttyComponent"), "tty.gif", "Tty"),
+    new FactoryDescription("PortIO", S.getter("pioComponent"), "pio.gif", "PortIO"),
+    new FactoryDescription("ReptarLB", S.getter("repLBComponent"), "localbus.gif", "ReptarLocalBus"),
   };
 
   private List<Tool> tools = null;
