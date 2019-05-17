@@ -30,6 +30,8 @@ package com.cburch.logisim.fpga.fpgagui;
 
 import com.cburch.logisim.fpga.designrulecheck.SimpleDRCContainer;
 import com.cburch.logisim.fpga.gui.ListModelCellRenderer;
+import com.cburch.logisim.gui.main.Frame;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;

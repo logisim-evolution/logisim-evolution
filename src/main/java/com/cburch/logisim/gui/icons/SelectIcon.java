@@ -36,6 +36,10 @@ public class SelectIcon extends AbstractIcon {
 
   @Override
   protected void paintIcon(Graphics2D g2) {
+    paint(g2);
+  }
+  
+  public static void paint(Graphics2D g2) {
     int[] xp = {3, 3, 7, 10, 11, 9, 14};
     int[] yp = {0, 17, 12, 16, 16, 12, 12};
     int[] sxp = new int[xp.length];

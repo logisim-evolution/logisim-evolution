@@ -197,7 +197,6 @@ public class Frame extends LFrame implements LocaleListener {
 
     @Override
     public void windowOpened(WindowEvent e) {
-      timer.schedule(ANNIMATIONICONTIMER, 1000, 500);
       layoutCanvas.computeSize(true);
     }
   }
@@ -421,6 +420,11 @@ public class Frame extends LFrame implements LocaleListener {
 
     LocaleManager.addLocaleListener(this);
     toolbox.updateStructure();
+    try {
+       timer.schedule(ANNIMATIONICONTIMER, 1000, 500);
+    } catch (IllegalStateException e) {
+      /* just continue, the timer was already running */
+    }
   }
   
   public Toolbar getToolbar() {
