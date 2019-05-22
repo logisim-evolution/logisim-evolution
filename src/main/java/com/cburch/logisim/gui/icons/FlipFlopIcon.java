@@ -59,10 +59,6 @@ public class FlipFlopIcon extends AbstractIcon {
       paintEvolutionIcon(g2);
   }
   
-  private static int scale( int c ) {
-    return AppPreferences.getScaled(c);
-  }
-
   private void paintClassicIcon(Graphics2D g2) {
     g2.drawRect(scale(2), scale(2), scale(12), scale(12));
     String str = "";
