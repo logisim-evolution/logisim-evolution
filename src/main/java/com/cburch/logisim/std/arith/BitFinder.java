@@ -37,6 +37,7 @@ import com.cburch.logisim.data.Attributes;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Value;
+import com.cburch.logisim.gui.icons.ArithmeticIcon;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceFactory;
 import com.cburch.logisim.instance.InstancePainter;
@@ -67,7 +68,7 @@ public class BitFinder extends InstanceFactory {
     setAttributes(
         new Attribute[] {StdAttr.WIDTH, TYPE}, new Object[] {BitWidth.create(8), LOW_ONE});
     setKeyConfigurator(new BitWidthConfigurator(StdAttr.WIDTH));
-    setIconName("bitfindr.gif");
+    setIcon(new ArithmeticIcon("?"));
   }
 
   private int computeOutputBits(int maxBits) {

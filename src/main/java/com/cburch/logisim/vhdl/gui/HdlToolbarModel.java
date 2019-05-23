@@ -32,8 +32,8 @@ import static com.cburch.logisim.vhdl.Strings.S;
 
 import com.cburch.draw.toolbar.AbstractToolbarModel;
 import com.cburch.draw.toolbar.ToolbarItem;
+import com.cburch.logisim.gui.icons.HdlIcon;
 import com.cburch.logisim.proj.Project;
-import com.cburch.logisim.util.Icons;
 import com.cburch.logisim.util.StringGetter;
 import com.cburch.logisim.vhdl.base.HdlModel;
 import com.cburch.logisim.vhdl.base.HdlModelListener;
@@ -49,8 +49,7 @@ import java.util.Collections;
 import java.util.List;
 import javax.swing.Icon;
 
-class HdlToolbarModel extends AbstractToolbarModel implements HdlModelListener {
-  private Project proj;
+public class HdlToolbarModel extends AbstractToolbarModel implements HdlModelListener {
   private HdlContentView editor;
   private List<ToolbarItem> items;
 
@@ -61,13 +60,12 @@ class HdlToolbarModel extends AbstractToolbarModel implements HdlModelListener {
   public static final String HDL_VALIDATE = "hdlValidate";
 
   public HdlToolbarModel(Project proj, HdlContentView editor) {
-    this.proj = proj;
     this.editor = editor;
 
     ArrayList<ToolbarItem> rawItems = new ArrayList<ToolbarItem>();
-    hdlImport = new HdlToolbarItem("hdlimport.gif", HDL_IMPORT, S.getter("hdlOpenButton"));
-    hdlExport = new HdlToolbarItem("hdlexport.gif", HDL_EXPORT, S.getter("hdlSaveButton"));
-    hdlValidate = new HdlToolbarItem("hdlvalidate.gif", HDL_VALIDATE, S.getter("validateButton"));
+    hdlImport = new HdlToolbarItem(new HdlIcon(HDL_IMPORT), HDL_IMPORT, S.getter("hdlOpenButton"));
+    hdlExport = new HdlToolbarItem(new HdlIcon(HDL_EXPORT), HDL_EXPORT, S.getter("hdlSaveButton"));
+    hdlValidate = new HdlToolbarItem(new HdlIcon(HDL_VALIDATE), HDL_VALIDATE, S.getter("validateButton"));
     rawItems.add(hdlImport);
     rawItems.add(hdlExport);
     rawItems.add(hdlValidate);
@@ -130,14 +128,10 @@ class HdlToolbarModel extends AbstractToolbarModel implements HdlModelListener {
     String action;
     StringGetter toolTip;
 
-    public HdlToolbarItem(String iconName, String action, StringGetter toolTip) {
-      this.icon = Icons.getIcon(iconName);
+    public HdlToolbarItem(Icon icon, String action, StringGetter toolTip) {
+      this.icon = icon;
       this.action = action;
       this.toolTip = toolTip;
-    }
-
-    public void doAction() {
-      if (isEnabled(action)) HdlToolbarModel.this.doAction(action);
     }
 
     public Dimension getDimension(Object orientation) {

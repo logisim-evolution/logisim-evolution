@@ -276,6 +276,7 @@ public class Frame extends LFrame implements LocaleListener {
   private Toolbar toolbar;
   private HorizontalSplitPane leftRegion, rightRegion, editRegion;
   private VerticalSplitPane mainRegion;
+  private JPanel rightPanel;
   private JPanel mainPanelSuper;
   private CardPanel mainPanel;
   // left-side elements
@@ -385,22 +386,21 @@ public class Frame extends LFrame implements LocaleListener {
     vhdlSimulatorConsole = new VhdlSimulatorConsole(proj);
     editRegion = new HorizontalSplitPane(mainPanelSuper, hdlEditor, 1.0);
     rightRegion = new HorizontalSplitPane(editRegion, vhdlSimulatorConsole, 1.0);
+    
+    rightPanel = new JPanel(new BorderLayout());
+    rightPanel.add(rightRegion,BorderLayout.CENTER);
 
     VhdlSimState state = new VhdlSimState(proj);
     state.stateChanged();
     proj.getVhdlSimulator().addVhdlSimStateListener(state);
 
-    mainRegion =
-        new VerticalSplitPane(
-            leftRegion, rightRegion, AppPreferences.WINDOW_MAIN_SPLIT.get().doubleValue());
+    mainRegion = new VerticalSplitPane(leftRegion, rightPanel, AppPreferences.WINDOW_MAIN_SPLIT.get().doubleValue());
 
     getContentPane().add(mainRegion, BorderLayout.CENTER);
 
     computeTitle();
 
-    this.setSize(
-        AppPreferences.WINDOW_WIDTH.get().intValue(),
-        AppPreferences.WINDOW_HEIGHT.get().intValue());
+    this.setSize(AppPreferences.WINDOW_WIDTH.get().intValue(),AppPreferences.WINDOW_HEIGHT.get().intValue());
     Point prefPoint = getInitialLocation();
     if (prefPoint != null) {
       this.setLocation(prefPoint);
@@ -506,7 +506,7 @@ public class Frame extends LFrame implements LocaleListener {
 
   private void placeToolbar() {
     String loc = AppPreferences.TOOLBAR_PLACEMENT.get();
-    mainPanelSuper.remove(toolbar);
+    rightPanel.remove(toolbar);
     if (!AppPreferences.TOOLBAR_HIDDEN.equals(loc)) {
       Object value = BorderLayout.NORTH;
       for (Direction dir : Direction.cardinals) {
@@ -522,7 +522,7 @@ public class Frame extends LFrame implements LocaleListener {
           }
         }
       }
-      mainPanelSuper.add(toolbar, value);
+      rightPanel.add(toolbar,value);
       boolean vertical = value == BorderLayout.WEST || value == BorderLayout.EAST;
       toolbar.setOrientation(vertical ? Toolbar.VERTICAL : Toolbar.HORIZONTAL);
     }
@@ -627,7 +627,6 @@ public class Frame extends LFrame implements LocaleListener {
     hdlEditor.setHdlModel(hdl);
     zoom.setZoomModel(null);
     editRegion.setFraction(0.0);
-
     toolbar.setToolbarModel(hdlEditor.getToolbarModel());
   }
 

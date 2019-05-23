@@ -41,6 +41,7 @@ import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
+import com.cburch.logisim.gui.icons.ArithmeticIcon;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceComponent;
 import com.cburch.logisim.instance.InstanceFactory;
@@ -69,8 +70,8 @@ import org.slf4j.LoggerFactory;
 public class VhdlEntity extends InstanceFactory implements HdlModelListener {
 
   static final Logger logger = LoggerFactory.getLogger(VhdlEntity.class);
-  static final Attribute<String> NAME_ATTR =
-      Attributes.forString("vhdlEntity", S.getter("vhdlEntityName"));
+  static final Attribute<String> NAME_ATTR = Attributes.forString("vhdlEntity", S.getter("vhdlEntityName"));
+  static final ArithmeticIcon icon = new ArithmeticIcon("VHDL");
 
   static final int WIDTH = 140;
   static final int HEIGHT = 40;
@@ -85,8 +86,8 @@ public class VhdlEntity extends InstanceFactory implements HdlModelListener {
     super("", null);
     this.content = content;
     this.content.addHdlModelListener(this);
-    if (content.isValid()) this.setIconName("vhdl.gif");
-    else this.setIconName("vhdl-invalid.gif");
+    this.setIcon(icon);
+    icon.setInvalid(!content.isValid());
     setFacingAttribute(StdAttr.FACING);
     appearance = VhdlAppearance.create(getPins(), getName(), StdAttr.APPEAR_EVOLUTION);
     MyInstances = new ArrayList<Instance>();
@@ -379,8 +380,7 @@ public class VhdlEntity extends InstanceFactory implements HdlModelListener {
 
   @Override
   public void contentSet(HdlModel source) {
-    if (content.isValid()) this.setIconName("vhdl.gif");
-    else this.setIconName("vhdl-invalid.gif");
+    icon.setInvalid(!content.isValid());
   }
 
   @Override

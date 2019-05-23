@@ -38,6 +38,7 @@ import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
+import com.cburch.logisim.gui.icons.ArithmeticIcon;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceFactory;
 import com.cburch.logisim.instance.InstancePainter;
@@ -83,7 +84,7 @@ public class Shifter extends InstanceFactory {
         new Object[] {BitWidth.create(8), SHIFT_LOGICAL_LEFT});
     setKeyConfigurator(new BitWidthConfigurator(StdAttr.WIDTH));
     setOffsetBounds(Bounds.create(-40, -20, 40, 40));
-    setIconName("shifter.gif");
+    setIcon(new ArithmeticIcon("\u2b05"));
   }
 
   @Override
