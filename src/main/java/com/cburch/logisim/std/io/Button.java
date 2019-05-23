@@ -39,6 +39,7 @@ import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.fpga.fpgaboardeditor.FPGAIOInformationContainer;
 import com.cburch.logisim.fpga.hdlgenerator.IOComponentInformationContainer;
+import com.cburch.logisim.gui.icons.ButtonIcon;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceDataSingleton;
 import com.cburch.logisim.instance.InstanceFactory;
@@ -115,7 +116,7 @@ public class Button extends InstanceFactory {
           true
         });
     setFacingAttribute(StdAttr.FACING);
-    setIconName("button.gif");
+    setIcon(new ButtonIcon());
     setKeyConfigurator(new DirectionConfigurator(StdAttr.LABEL_LOC, KeyEvent.ALT_DOWN_MASK));
     setPorts(new Port[] {new Port(0, 0, Port.OUTPUT, 1)});
     setInstancePoker(Poker.class);

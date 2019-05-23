@@ -54,10 +54,10 @@ public class HdlIcon extends AbstractIcon {
     TextLayout t = new TextLayout("LIBRARY",f,g2.getFontRenderContext());
     t.draw(g2, (float)(getIconWidth()/2-t.getBounds().getCenterX()), 
     		(float)((3*getIconHeight())/8-t.getBounds().getCenterY()));
-    t = new TextLayout("USE ieee",f,g2.getFontRenderContext());
+    t = new TextLayout("USE iee",f,g2.getFontRenderContext());
     t.draw(g2, (float)(getIconWidth()/2-t.getBounds().getCenterX()), 
     		(float)((5*getIconHeight())/8-t.getBounds().getCenterY()));
-    t = new TextLayout("ENTITY b",f,g2.getFontRenderContext());
+    t = new TextLayout("ENTITY ",f,g2.getFontRenderContext());
     t.draw(g2, (float)(getIconWidth()/2-t.getBounds().getCenterX()), 
     		(float)((7*getIconHeight())/8-t.getBounds().getCenterY()));
     if (type.equals(HdlToolbarModel.HDL_VALIDATE)) {

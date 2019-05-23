@@ -52,7 +52,7 @@ public class ArithmeticIcon extends AbstractIcon {
     g2.setColor(Color.BLACK);
     float scale = Opp.length() >= 2 ? 2 : 1;
     int yoff = Opp.length() > 2 ? getIconHeight()>>2 : getIconHeight()>>1; 
-    Font f = g2.getFont().deriveFont(scale((float)getIconWidth()/(float)(1.4*scale))).deriveFont(Font.BOLD);
+    Font f = g2.getFont().deriveFont((float)getIconWidth()/scale).deriveFont(Font.BOLD);
     g2.drawRect(scale(1), scale(1), getIconWidth()-scale(2), getIconHeight()-scale(2));
     TextLayout t = new TextLayout(Opp.length() > 2 ? Opp.substring(0, 2) : Opp,f,g2.getFontRenderContext());
     t.draw(g2, (float)(getIconWidth()/2-t.getBounds().getCenterX()),(float)(yoff-t.getBounds().getCenterY()));
