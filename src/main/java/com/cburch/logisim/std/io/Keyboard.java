@@ -36,6 +36,7 @@ import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Value;
+import com.cburch.logisim.gui.icons.ButtonIcon;
 import com.cburch.logisim.instance.InstanceFactory;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstancePoker;
@@ -179,7 +180,7 @@ public class Keyboard extends InstanceFactory {
         new Attribute[] {ATTR_BUFFER, StdAttr.EDGE_TRIGGER},
         new Object[] {Integer.valueOf(32), StdAttr.TRIG_RISING});
     setOffsetBounds(Bounds.create(0, -15, WIDTH, HEIGHT));
-    setIconName("keyboard.gif");
+    setIcon(new ButtonIcon(S.getter("keyboardComponent")));
     setInstancePoker(Poker.class);
 
     Port[] ps = new Port[5];

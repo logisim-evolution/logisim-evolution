@@ -36,6 +36,7 @@ import com.cburch.logisim.data.Attributes;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Value;
+import com.cburch.logisim.gui.icons.TtyIcon;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceFactory;
 import com.cburch.logisim.instance.InstancePainter;
@@ -70,7 +71,7 @@ public class Tty extends InstanceFactory {
   private static final int COL_WIDTH = 7;
 
   private static final Color DEFAULT_BACKGROUND = new Color(0, 0, 0, 64);
-  private static final Font DEFAULT_FONT = new Font("monospaced", Font.PLAIN, 12);
+  public static final Font DEFAULT_FONT = new Font("monospaced", Font.PLAIN, 12);
 
   private static final Attribute<Integer> ATTR_COLUMNS =
       Attributes.forIntegerRange("cols", S.getter("ttyColsAttr"), 1, 120);
@@ -91,7 +92,7 @@ public class Tty extends InstanceFactory {
           Color.BLACK,
           DEFAULT_BACKGROUND
         });
-    setIconName("tty.gif");
+    setIcon(new TtyIcon());
 
     Port[] ps = new Port[4];
     ps[CLR] = new Port(20, 10, Port.INPUT, 1);

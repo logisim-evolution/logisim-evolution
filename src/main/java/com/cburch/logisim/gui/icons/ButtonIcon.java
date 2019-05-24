@@ -29,22 +29,38 @@
 package com.cburch.logisim.gui.icons;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.font.TextLayout;
 
 import com.cburch.logisim.data.Value;
+import com.cburch.logisim.util.StringGetter;
 
 public class ButtonIcon extends AnnimatedIcon {
 
   private int state = 0;
+  private int index = 0;
+  private StringGetter name = null;
+  
+  public ButtonIcon() {};
+  
+  public ButtonIcon(StringGetter sg) {
+    name = sg;
+    index = 0;
+  }
 
   @Override
   public void annimationUpdate() {
     state = (state+1)&3;
+    if (name != null) {
+      index = (index+1)%name.toString().length();
+    }
   }
 
   @Override
   public void resetToStatic() {
     state = 0;
+    index = 0;
   }
 
   @Override
@@ -70,9 +86,20 @@ public class ButtonIcon extends AnnimatedIcon {
     g2.fillRect(scale(state), scale(state), wh, wh);
     g2.setColor(Color.BLACK);
     g2.drawRect(scale(state), scale(state), wh, wh);
-    g2.setColor(state == 3 ? Value.TRUE_COLOR : Value.FALSE_COLOR);
-    g2.fillOval(scale(13), scale(7), scale(3), scale(3));
-    g2.drawOval(scale(13), scale(7), scale(3), scale(3));
+    if (name == null) {
+      g2.setColor(state == 3 ? Value.TRUE_COLOR : Value.FALSE_COLOR);
+      g2.fillOval(scale(13), scale(7), scale(3), scale(3));
+      g2.drawOval(scale(13), scale(7), scale(3), scale(3));
+    } else {
+      String s = name.toString();
+      if (index >= s.length())
+        index = 0;
+      Font f = g2.getFont().deriveFont((float)wh);
+      TextLayout t = new TextLayout(s.substring(index, index+1),f,g2.getFontRenderContext());
+      g2.setColor(Color.BLUE);
+      float center = scale(state)+wh/2;
+      t.draw(g2, center-(float)t.getBounds().getCenterX(), center-(float)t.getBounds().getCenterY());
+    }
   }
 
 }
