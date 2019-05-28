@@ -39,6 +39,7 @@ import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
+import com.cburch.logisim.gui.icons.DiceIcon;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceData;
 import com.cburch.logisim.instance.InstanceFactory;
@@ -155,7 +156,7 @@ public class Random extends InstanceFactory {
     setKeyConfigurator(new BitWidthConfigurator(StdAttr.WIDTH));
 
     setOffsetBounds(Bounds.create(0, 0, 80, 90));
-    setIconName("random.gif");
+    setIcon(new DiceIcon());
     setInstanceLogger(Logger.class);
   }
 
