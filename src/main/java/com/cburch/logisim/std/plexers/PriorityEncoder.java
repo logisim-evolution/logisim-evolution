@@ -36,6 +36,7 @@ import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Value;
+import com.cburch.logisim.gui.icons.ArithmeticIcon;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceFactory;
 import com.cburch.logisim.instance.InstancePainter;
@@ -59,7 +60,7 @@ public class PriorityEncoder extends InstanceFactory {
         new Attribute[] {StdAttr.FACING, Plexers.ATTR_SELECT, Plexers.ATTR_DISABLED},
         new Object[] {Direction.EAST, BitWidth.create(3), Plexers.DISABLED_ZERO});
     setKeyConfigurator(new BitWidthConfigurator(Plexers.ATTR_SELECT, 1, 5, 0));
-    setIconName("priencod.gif");
+    setIcon(new ArithmeticIcon("Pri"));
     setFacingAttribute(StdAttr.FACING);
   }
 

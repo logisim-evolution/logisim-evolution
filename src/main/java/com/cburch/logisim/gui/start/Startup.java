@@ -1067,6 +1067,5 @@ public class Startup implements AWTEventListener {
         }
       }
     }
-    // TODO Auto-generated method stub
   }
 }

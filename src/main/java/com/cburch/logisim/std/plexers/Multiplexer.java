@@ -39,6 +39,7 @@ import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
+import com.cburch.logisim.gui.icons.PlexerIcon;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceFactory;
 import com.cburch.logisim.instance.InstancePainter;
@@ -98,7 +99,7 @@ public class Multiplexer extends InstanceFactory {
         JoinedConfigurator.create(
             new BitWidthConfigurator(Plexers.ATTR_SELECT, 1, 5, 0),
             new BitWidthConfigurator(StdAttr.WIDTH)));
-    setIconName("multiplexer.gif");
+    setIcon(new PlexerIcon(false,false));
     setFacingAttribute(StdAttr.FACING);
   }
 

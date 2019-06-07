@@ -39,6 +39,7 @@ import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
+import com.cburch.logisim.gui.icons.PlexerIcon;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceFactory;
 import com.cburch.logisim.instance.InstancePainter;
@@ -65,7 +66,7 @@ public class BitSelector extends InstanceFactory {
             new BitWidthConfigurator(GROUP_ATTR, 1, Value.MAX_WIDTH, 0),
             new BitWidthConfigurator(StdAttr.WIDTH)));
 
-    setIconName("bitSelector.gif");
+    setIcon(new PlexerIcon(false,true));
     setFacingAttribute(StdAttr.FACING);
   }
 
