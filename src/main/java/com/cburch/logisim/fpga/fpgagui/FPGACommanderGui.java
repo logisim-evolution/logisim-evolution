@@ -164,31 +164,15 @@ public class FPGACommanderGui extends FPGACommanderBase
   private static final Integer VerilogSourcePath = 0;
 
   private void UpdateFrequencies() {
-    long Clockfreq = MyBoardInformation.fpga.getClockFrequency();
-    long Freq = 512000000;
-    int added = 1;
     frequenciesList.setSelectedIndex(0);
     for (int i = frequenciesList.getItemCount() - 1; i > 0; i--) frequenciesList.removeItemAt(i);
-    while (Freq > 4100) {
-      if ((Clockfreq / Freq) >= 4) {
-        if (Freq >= 1000000) {
-          frequenciesList.addItem(Integer.toString((int) (Freq / 1000000)) + " MHz");
-          added++;
-        } else {
-          frequenciesList.addItem(Integer.toString((int) (Freq / 1000)) + " KHz");
-          added++;
-        }
-      }
-      if (Freq == 1000000) Freq = 512000;
-      else Freq /= 2;
-    }
     for (String freq : MenuSimulate.getTickFrequencyStrings()) {
       frequenciesList.addItem(freq);
     }
     for (int i = 0; i < MenuSimulate.SupportedTickFrequencies.length; i++) {
       if (MenuSimulate.SupportedTickFrequencies[i].equals(
           MyProject.getSimulator().getTickFrequency())) {
-        frequenciesList.setSelectedIndex(i + added);
+        frequenciesList.setSelectedIndex(i + 1);
       }
     }
   }
@@ -428,7 +412,7 @@ public class FPGACommanderGui extends FPGACommanderBase
       }
       if (i == TickIndex.length()) return ret;
       if (TickIndex.charAt(i) == 'M') ret *= 1000000.0;
-      if (TickIndex.charAt(i) == 'K') ret *= 1000.0;
+      if (TickIndex.charAt(i) == 'k') ret *= 1000.0;
     }
     return ret;
   }

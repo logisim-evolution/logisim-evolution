@@ -97,7 +97,7 @@ public class TimelineDraw extends JPanel {
       out += "ns";
     } else if (timelineParam.getSelectedUnit().equals("MHz")) {
       out += "us";
-    } else if (timelineParam.getSelectedUnit().equals("KHz")) {
+    } else if (timelineParam.getSelectedUnit().equals("kHz")) {
       out += "ms";
     } else {
       out += "s";
