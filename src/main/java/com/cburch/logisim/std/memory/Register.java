@@ -43,6 +43,7 @@ import com.cburch.logisim.data.Value;
 import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
+import com.cburch.logisim.gui.icons.FlipFlopIcon;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceFactory;
 import com.cburch.logisim.instance.InstancePainter;
@@ -244,7 +245,7 @@ public class Register extends InstanceFactory implements DynamicElementProvider 
         JoinedConfigurator.create(
             new BitWidthConfigurator(StdAttr.WIDTH),
             new DirectionConfigurator(StdAttr.LABEL_LOC, KeyEvent.ALT_DOWN_MASK)));
-    setIconName("register.gif");
+    setIcon(new FlipFlopIcon(FlipFlopIcon.REGISTER));
     setInstancePoker(RegisterPoker.class);
     setInstanceLogger(RegisterLogger.class);
   }

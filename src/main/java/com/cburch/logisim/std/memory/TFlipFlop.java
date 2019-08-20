@@ -36,6 +36,8 @@ import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.fpgagui.FPGAReport;
 import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
+import com.cburch.logisim.gui.icons.FlipFlopIcon;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -73,7 +75,7 @@ public class TFlipFlop extends AbstractFlipFlop {
   }
 
   public TFlipFlop() {
-    super("T Flip-Flop", "tFlipFlop.gif", S.getter("tFlipFlopComponent"), 1, false);
+    super("T Flip-Flop", new FlipFlopIcon(FlipFlopIcon.T_FLIPFLOP), S.getter("tFlipFlopComponent"), 1, false);
   }
 
   @Override

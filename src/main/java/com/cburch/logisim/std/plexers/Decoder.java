@@ -39,6 +39,7 @@ import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
+import com.cburch.logisim.gui.icons.PlexerIcon;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceFactory;
 import com.cburch.logisim.instance.InstancePainter;
@@ -71,7 +72,7 @@ public class Decoder extends InstanceFactory {
           Boolean.TRUE
         });
     setKeyConfigurator(new BitWidthConfigurator(Plexers.ATTR_SELECT, 1, 5, 0));
-    setIconName("decoder.gif");
+    setIcon(new PlexerIcon(true,false));
     setFacingAttribute(StdAttr.FACING);
   }
 

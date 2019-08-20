@@ -32,6 +32,8 @@ import static com.cburch.logisim.fpga.Strings.S;
 
 import com.cburch.logisim.fpga.fpgaboardeditor.FPGAIOInformationContainer.IOComponentTypes;
 import com.cburch.logisim.fpga.settings.VendorSoftware;
+import com.cburch.logisim.gui.icons.ErrorIcon;
+import com.cburch.logisim.gui.icons.WarningIcon;
 import com.cburch.logisim.proj.Projects;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -43,7 +45,6 @@ import java.awt.event.ComponentListener;
 import java.io.File;
 import java.util.Iterator;
 import java.util.LinkedList;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -96,8 +97,6 @@ public class BoardDialog implements ActionListener, ComponentListener {
 
   private JFrame panel;
   public LinkedList<BoardRectangle> defined_components = new LinkedList<BoardRectangle>();
-  public static final String pictureError = "/resources/logisim/error.png";
-  public static final String pictureWarning = "/resources/logisim/warning.png";
   private String action_id;
   boolean abort;
   private BoardInformation TheBoard = new BoardInformation();
@@ -787,9 +786,9 @@ public class BoardDialog implements ActionListener, ComponentListener {
     final JDialog dialog = new JDialog(parent, type);
     JLabel pic = new JLabel();
     if (type.equals("Warning")) {
-      pic.setIcon(new ImageIcon(getClass().getResource(pictureWarning)));
+      pic.setIcon(new WarningIcon());
     } else {
-      pic.setIcon(new ImageIcon(getClass().getResource(pictureError)));
+      pic.setIcon(new ErrorIcon());
     }
     GridBagLayout dialogLayout = new GridBagLayout();
     dialog.setLayout(dialogLayout);
@@ -827,9 +826,9 @@ public class BoardDialog implements ActionListener, ComponentListener {
     final JFrame dialog = new JFrame(type);
     JLabel pic = new JLabel();
     if (type.equals("Warning")) {
-      pic.setIcon(new ImageIcon(parrent.getClass().getResource(pictureWarning)));
+      pic.setIcon(new WarningIcon());
     } else {
-      pic.setIcon(new ImageIcon(parrent.getClass().getResource(pictureError)));
+      pic.setIcon(new ErrorIcon());
     }
     GridBagLayout dialogLayout = new GridBagLayout();
     dialog.setLayout(dialogLayout);

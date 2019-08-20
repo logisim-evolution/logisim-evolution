@@ -36,12 +36,14 @@ import java.awt.font.TextLayout;
 
 import com.cburch.logisim.prefs.AppPreferences;
 
-public class ShowStateIcon extends AbstractIcon {
+public class ShowStateIcon extends AnnimatedIcon {
 
   private boolean pressed;
+  private int state;
   
   public ShowStateIcon( boolean pressed ) {
-    this.pressed = pressed;  
+    this.pressed = pressed;
+    state = 5;
   }
 
   @Override
@@ -54,18 +56,32 @@ public class ShowStateIcon extends AbstractIcon {
     g2.setColor(Color.BLACK);
     g2.drawRect(0, 0, getIconWidth(), getIconHeight()/2);
     Font f = g2.getFont().deriveFont((float)getIconWidth()/(float)2);
-    TextLayout l = new TextLayout("010",f,g2.getFontRenderContext());
+    String str = Integer.toBinaryString(state);
+    while (str.length()<3) {
+    	str = "0"+str;
+    }
+    TextLayout l = new TextLayout(str,f,g2.getFontRenderContext());
     l.draw(g2, (float)((double)getIconWidth()/2.0-l.getBounds().getCenterX()), 
     		(float)((double)getIconHeight()/4.0-l.getBounds().getCenterY()));
     int wh = AppPreferences.getScaled(AppPreferences.IconSize/2-AppPreferences.IconBorder);
     int offset = AppPreferences.getScaled(AppPreferences.IconBorder);
-    g2.setColor(Color.RED);
+    g2.setColor((state&4) != 0 ? Color.RED : Color.DARK_GRAY);
     g2.fillOval(offset, offset+getIconHeight()/2, wh, wh);
-    g2.setColor(Color.GREEN);
+    g2.setColor((state&1) != 0 ? Color.GREEN : Color.DARK_GRAY);
     g2.fillOval(offset+getIconWidth()/2, offset+getIconHeight()/2, wh, wh);
     g2.setColor(Color.BLACK);
     g2.drawOval(offset, offset+getIconHeight()/2, wh, wh);
     g2.drawOval(offset+getIconWidth()/2, offset+getIconHeight()/2, wh, wh);
+  }
+
+  @Override
+  public void annimationUpdate() {
+    state = (state+1)&7;
+  }
+
+  @Override
+  public void resetToStatic() {
+    state = 5;
   }
 
 }

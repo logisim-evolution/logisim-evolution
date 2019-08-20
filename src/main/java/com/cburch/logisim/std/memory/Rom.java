@@ -40,6 +40,7 @@ import com.cburch.logisim.data.Value;
 import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
 import com.cburch.logisim.gui.hex.HexFile;
 import com.cburch.logisim.gui.hex.HexFrame;
+import com.cburch.logisim.gui.icons.ArithmeticIcon;
 import com.cburch.logisim.gui.main.Frame;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstancePainter;
@@ -157,7 +158,7 @@ public class Rom extends Mem {
 
   public Rom() {
     super("ROM", S.getter("romComponent"), 0);
-    setIconName("rom.gif");
+    setIcon(new ArithmeticIcon("ROM",3));
     memListeners = new WeakHashMap<Instance, MemListener>();
   }
 

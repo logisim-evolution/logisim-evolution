@@ -39,6 +39,7 @@ import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
+import com.cburch.logisim.gui.icons.PlexerIcon;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceFactory;
 import com.cburch.logisim.instance.InstancePainter;
@@ -78,7 +79,7 @@ public class Demultiplexer extends InstanceFactory {
             new BitWidthConfigurator(Plexers.ATTR_SELECT, 1, 5, 0),
             new BitWidthConfigurator(StdAttr.WIDTH)));
     setFacingAttribute(StdAttr.FACING);
-    setIconName("demultiplexer.gif");
+    setIcon(new PlexerIcon(true,false));
   }
 
   @Override

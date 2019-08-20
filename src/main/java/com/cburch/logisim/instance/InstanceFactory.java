@@ -108,6 +108,10 @@ public abstract class InstanceFactory extends AbstractComponentFactory {
     }
     return bds.contains(loc, 1);
   }
+  
+  public Icon getIcon() {
+    return icon;  
+  }
 
   @Override
   public AttributeSet createAttributeSet() {

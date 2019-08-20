@@ -39,6 +39,7 @@ import com.cburch.logisim.gui.chronogram.chronodata.NoSysclkException;
 import com.cburch.logisim.gui.chronogram.chronodata.SignalDataBus;
 import com.cburch.logisim.gui.chronogram.chronodata.TimelineParam;
 import com.cburch.logisim.gui.generic.LFrame;
+import com.cburch.logisim.gui.icons.SimulationIcon;
 import com.cburch.logisim.gui.log.LogFrame;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.proj.Project;
@@ -119,18 +120,18 @@ public class ChronoFrame extends LFrame implements KeyListener, ActionListener, 
 
       } else if ("play".equals(e.getActionCommand())) {
         if (simulator.isRunning()) {
-          ((JButton) e.getSource()).setIcon(Icons.getIcon("simplay.png"));
+          SIMSTOPICON.setType(SimulationIcon.SIM_PAUSE);
         } else {
-          ((JButton) e.getSource()).setIcon(Icons.getIcon("simstop.png"));
+          SIMSTOPICON.setType(SimulationIcon.SIM_PLAY);
         }
         simulator.setIsRunning(!simulator.isRunning());
       } else if ("step".equals(e.getActionCommand())) {
         simulator.step();
       } else if ("tplay".equals(e.getActionCommand())) {
         if (simulator.isTicking()) {
-          ((JButton) e.getSource()).setIcon(Icons.getIcon("simtplay.png"));
+          SIMENABLEICON.setType(SimulationIcon.SIM_DISABLE);
         } else {
-          ((JButton) e.getSource()).setIcon(Icons.getIcon("simtstop.png"));
+          SIMENABLEICON.setType(SimulationIcon.SIM_ENABLE);
         }
         simulator.setIsTicking(!simulator.isTicking());
       } else if ("thalf".equals(e.getActionCommand())) {
@@ -184,6 +185,8 @@ public class ChronoFrame extends LFrame implements KeyListener, ActionListener, 
   private JCheckBoxMenuItem ontopItem;
 
   private JMenuItem close;
+  private final static SimulationIcon SIMSTOPICON = new SimulationIcon(SimulationIcon.SIM_PAUSE);
+  private final static SimulationIcon SIMENABLEICON = new SimulationIcon(SimulationIcon.SIM_ENABLE);
 
   /** Offline mode ChronoFrame constructor */
   public ChronoFrame(Project prj) {
@@ -289,40 +292,41 @@ public class ChronoFrame extends LFrame implements KeyListener, ActionListener, 
     JToolBar bar = new JToolBar();
     bar.setFocusable(false);
     JButton playButton;
+    playButton = new JButton(SIMSTOPICON);
     if (simulator != null && simulator.isRunning()) {
-      playButton = new JButton(Icons.getIcon("simstop.png"));
+      SIMSTOPICON.setType(SimulationIcon.SIM_PAUSE);
     } else {
-      playButton = new JButton(Icons.getIcon("simplay.png"));
+      SIMSTOPICON.setType(SimulationIcon.SIM_PLAY);
     }
     playButton.setActionCommand("play");
     playButton.addActionListener(myListener);
     playButton.setToolTipText("Start/Stop simulation");
     playButton.setFocusable(false);
     bar.add(playButton);
-    JButton stepButton = new JButton(Icons.getIcon("simstep.png"));
+    JButton stepButton = new JButton(new SimulationIcon(SimulationIcon.SIM_STEP));
     stepButton.setActionCommand("step");
     stepButton.addActionListener(myListener);
     stepButton.setToolTipText("Simulate one step");
     stepButton.setFocusable(false);
     bar.add(stepButton);
-    JButton tplayButton;
+    JButton tplayButton = new JButton(SIMENABLEICON);
     if (simulator != null && simulator.isTicking()) {
-      tplayButton = new JButton(Icons.getIcon("simtstop.png"));
+      SIMENABLEICON.setType(SimulationIcon.SIM_DISABLE);
     } else {
-      tplayButton = new JButton(Icons.getIcon("simtplay.png"));
+      SIMENABLEICON.setType(SimulationIcon.SIM_ENABLE);
     }
     tplayButton.setActionCommand("tplay");
     tplayButton.addActionListener(myListener);
     tplayButton.setToolTipText("Start/Stop 'sysclk' tick");
     tplayButton.setFocusable(false);
     bar.add(tplayButton);
-	JButton thalfButton = new JButton(Icons.getIcon("tickhalf.png"));
+	JButton thalfButton = new JButton(new SimulationIcon(SimulationIcon.SIM_HALF_TICK));
 	thalfButton.setActionCommand("thalf");
 	thalfButton.addActionListener(myListener);
 	thalfButton.setToolTipText("Tick half clock cycle");
 	thalfButton.setFocusable(false);
 	bar.add(thalfButton);
-	JButton tfullButton = new JButton(Icons.getIcon("tickfull.gif"));
+	JButton tfullButton = new JButton(new SimulationIcon(SimulationIcon.SIM_FULL_TICK));
 	tfullButton.setActionCommand("tfull");
 	tfullButton.addActionListener(myListener);
 	tfullButton.setToolTipText("Tick full clock cycle");

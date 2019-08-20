@@ -36,6 +36,7 @@ import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Value;
+import com.cburch.logisim.gui.icons.ArithmeticIcon;
 import com.cburch.logisim.gui.main.Frame;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceFactory;
@@ -124,7 +125,7 @@ public class VhdlEntityComponent extends InstanceFactory {
     super("VHDL Entity", S.getter("vhdlComponent"));
 
     this.contentListeners = new WeakHashMap<Instance, VhdlEntityListener>();
-    this.setIconName("vhdl.gif");
+    this.setIcon(new ArithmeticIcon("VHDL"));
   }
 
   public void SetSimName(AttributeSet attrs, String SName) {

@@ -36,6 +36,10 @@ import com.cburch.logisim.file.LoadFailedException;
 import com.cburch.logisim.file.Loader;
 import com.cburch.logisim.fpga.fpgagui.FPGACommanderTests;
 import com.cburch.logisim.gui.generic.CanvasPane;
+import com.cburch.logisim.gui.icons.ErrorIcon;
+import com.cburch.logisim.gui.icons.InfoIcon;
+import com.cburch.logisim.gui.icons.QuestionIcon;
+import com.cburch.logisim.gui.icons.WarningIcon;
 import com.cburch.logisim.gui.main.Print;
 import com.cburch.logisim.gui.menu.LogisimMenuBar;
 import com.cburch.logisim.gui.menu.WindowManagers;
@@ -71,7 +75,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import javax.help.JHelp;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JCheckBoxMenuItem;
@@ -876,7 +879,7 @@ public class Startup implements AWTEventListener {
         showSplash = false;
       }
     }
-
+    
     Toolkit.getDefaultToolkit()
         .addAWTEventListener(this, AWTEvent.COMPONENT_EVENT_MASK | AWTEvent.CONTAINER_EVENT_MASK);
     // pre-load the two basic component libraries, just so that the time
@@ -1012,7 +1015,7 @@ public class Startup implements AWTEventListener {
     }
     return result;
   }
-
+  
   @Override
   public void eventDispatched(AWTEvent event) {
     if (event instanceof ContainerEvent) {
@@ -1046,43 +1049,23 @@ public class Startup implements AWTEventListener {
         if (container instanceof JOptionPane) {
           JOptionPane pane = (JOptionPane) container;
           if (HasIcon(pane)) {
-            ImageIcon icon;
             switch (pane.getMessageType()) {
               case JOptionPane.ERROR_MESSAGE:
-                icon =
-                    new ImageIcon(
-                        getClass().getClassLoader().getResource("resources/logisim/error.png"));
-                pane.setIcon(AppPreferences.getScaledImageIcon(icon, 3));
+                pane.setIcon(new ErrorIcon());
                 break;
               case JOptionPane.QUESTION_MESSAGE:
-                icon =
-                    new ImageIcon(
-                        getClass().getClassLoader().getResource("resources/logisim/question.png"));
-                pane.setIcon(AppPreferences.getScaledImageIcon(icon, 3));
-                break;
-              case JOptionPane.PLAIN_MESSAGE:
-                icon =
-                    new ImageIcon(
-                        getClass().getClassLoader().getResource("resources/logisim/plain.png"));
-                pane.setIcon(AppPreferences.getScaledImageIcon(icon, 3));
+                pane.setIcon(new QuestionIcon());
                 break;
               case JOptionPane.INFORMATION_MESSAGE:
-                icon =
-                    new ImageIcon(
-                        getClass().getClassLoader().getResource("resources/logisim/info.png"));
-                pane.setIcon(AppPreferences.getScaledImageIcon(icon, 3));
+                pane.setIcon(new InfoIcon());
                 break;
               case JOptionPane.WARNING_MESSAGE:
-                icon =
-                    new ImageIcon(
-                        getClass().getClassLoader().getResource("resources/logisim/warning.png"));
-                pane.setIcon(AppPreferences.getScaledImageIcon(icon, 3));
+                pane.setIcon(new WarningIcon());
                 break;
             }
           }
         }
       }
     }
-    // TODO Auto-generated method stub
   }
 }

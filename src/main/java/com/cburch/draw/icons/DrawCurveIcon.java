@@ -33,25 +33,51 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.GeneralPath;
 
-import com.cburch.logisim.gui.icons.AbstractIcon;
-import com.cburch.logisim.prefs.AppPreferences;
+import com.cburch.logisim.gui.icons.AnnimatedIcon;
 
-public class DrawCurveIcon extends AbstractIcon {
+public class DrawCurveIcon extends AnnimatedIcon {
 
+  private int states = 5;
+  
   @Override
   protected void paintIcon(Graphics2D g2) {
-    g2.setStroke(new BasicStroke(AppPreferences.getScaled(2)));
-    g2.setColor(Color.BLUE.darker());
-    GeneralPath p = new GeneralPath();
-    p.moveTo(AppPreferences.getScaled(1), AppPreferences.getScaled(5));
-    p.quadTo(AppPreferences.getScaled(10), AppPreferences.getScaled(1), AppPreferences.getScaled(14), AppPreferences.getScaled(14));
-    g2.draw(p);
-    g2.setColor(Color.GRAY);
-    g2.setStroke(new BasicStroke(AppPreferences.getScaled(1)));
-    int wh = AppPreferences.getScaled(3);
-    g2.drawRect(0, AppPreferences.getScaled(4), wh, wh);
-    g2.drawRect(AppPreferences.getScaled(9),0, wh, wh);
-    g2.drawRect(AppPreferences.getScaled(13), AppPreferences.getScaled(13), wh, wh);
+	int wh = scale(3);
+    g2.setStroke(new BasicStroke(scale(1)));
+	g2.setColor(Color.GRAY);
+	switch (states) {
+	  case 5:
+	  case 4:
+		g2.drawRect(scale(9), scale(0), wh, wh);
+	  case 3:
+		g2.setStroke(new BasicStroke(scale(2)));
+		if (states > 4) {
+          g2.setColor(Color.BLUE.darker());
+          GeneralPath p = new GeneralPath();
+          p.moveTo(scale(1), scale(5));
+          p.quadTo(scale(10), scale(1), scale(14), scale(14));
+          g2.draw(p);
+        } else {
+          g2.setColor(Color.DARK_GRAY);
+          g2.drawLine(scale(1), scale(6), scale(14), scale(14));
+        }
+	  case 2:
+        g2.setColor(Color.GRAY);
+        g2.setStroke(new BasicStroke(scale(1)));
+        g2.drawRect(scale(13), scale(13), wh, wh);
+	  case 1:
+		g2.drawRect(scale(0), scale(5), wh, wh);
+	}
+  }
+
+  @Override
+  public void annimationUpdate() {
+    states++;
+    states %= 6;
+  }
+
+  @Override
+  public void resetToStatic() {
+    states = 5;
   }
 
 }

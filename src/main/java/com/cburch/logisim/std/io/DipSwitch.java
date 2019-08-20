@@ -41,6 +41,7 @@ import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.fpga.fpgaboardeditor.FPGAIOInformationContainer;
 import com.cburch.logisim.fpga.hdlgenerator.IOComponentInformationContainer;
+import com.cburch.logisim.gui.icons.DipswitchIcon;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceData;
 import com.cburch.logisim.instance.InstanceFactory;
@@ -159,7 +160,7 @@ public class DipSwitch extends InstanceFactory {
           BitWidth.create(dipSize)
         });
     setFacingAttribute(StdAttr.FACING);
-    setIconName("dipswitch.gif");
+    setIcon(new DipswitchIcon());
     setKeyConfigurator(
         JoinedConfigurator.create(
             new BitWidthConfigurator(ATTR_SIZE),

@@ -53,14 +53,12 @@ class LayoutOptions extends OptionsPanel {
           new PrefBoolean(AppPreferences.PRINTER_VIEW, S.getter("layoutPrinterView")),
           new PrefBoolean(AppPreferences.COLORBLIND_MODE, S.getter("layoutColorblindMode")),
           new PrefBoolean(AppPreferences.ATTRIBUTE_HALO, S.getter("layoutAttributeHalo")),
+          new PrefBoolean(AppPreferences.ANIMATED_ICONS, S.getter("layoutAnimatedIcons")),
           new PrefBoolean(AppPreferences.COMPONENT_TIPS, S.getter("layoutShowTips")),
           new PrefBoolean(AppPreferences.MOVE_KEEP_CONNECT, S.getter("layoutMoveKeepConnect")),
           new PrefBoolean(AppPreferences.ADD_SHOW_GHOSTS, S.getter("layoutAddShowGhosts")),
-          new PrefBoolean(
-              AppPreferences.NAMED_CIRCUIT_BOXES_FIXED_SIZE,
-              S.getter("layoutNamedCircuitBoxesFixedSize")),
-          new PrefBoolean(
-              AppPreferences.NEW_INPUT_OUTPUT_SHAPES, S.getter("layoutUseNewInputOutputSymbols")),
+          new PrefBoolean(AppPreferences.NAMED_CIRCUIT_BOXES_FIXED_SIZE,S.getter("layoutNamedCircuitBoxesFixedSize")),
+          new PrefBoolean(AppPreferences.NEW_INPUT_OUTPUT_SHAPES, S.getter("layoutUseNewInputOutputSymbols")),
         };
 
     for (int i = 0; i < 2; i++) {

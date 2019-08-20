@@ -34,6 +34,7 @@ package com.cburch.logisim.gui.generic;
 import com.cburch.logisim.file.LibraryEvent;
 import com.cburch.logisim.file.LibraryListener;
 import com.cburch.logisim.file.LogisimFile;
+import com.cburch.logisim.tools.AddTool;
 import com.cburch.logisim.tools.Library;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -41,14 +42,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.JTree;
+
 public class ProjectExplorerLibraryNode extends ProjectExplorerModel.Node<Library>
     implements LibraryListener {
 
   private static final long serialVersionUID = 1L;
   private LogisimFile file;
+  private JTree guiElement = null;
 
-  ProjectExplorerLibraryNode(ProjectExplorerModel model, Library lib) {
+  ProjectExplorerLibraryNode(ProjectExplorerModel model, Library lib, JTree gui) {
     super(model, lib);
+    guiElement = gui;
     if (lib instanceof LogisimFile) {
       file = (LogisimFile) lib;
       file.addLibraryListener(this);
@@ -61,7 +66,7 @@ public class ProjectExplorerLibraryNode extends ProjectExplorerModel.Node<Librar
     if (lib != null && !(lib.isHidden())) {
       buildChildren(new ProjectExplorerToolNode(getModel(), null), lib.getTools(), 0);
       buildChildren(
-          new ProjectExplorerLibraryNode(getModel(), null),
+          new ProjectExplorerLibraryNode(getModel(), null,guiElement),
           lib.getLibraries(),
           lib.getTools().size());
     }
@@ -97,6 +102,10 @@ public class ProjectExplorerLibraryNode extends ProjectExplorerModel.Node<Librar
     for (T tool : items) {
       if (tool instanceof Library && ((Library)tool).isHidden())
         continue;
+      if (tool instanceof AddTool) {
+        AddTool a = (AddTool)tool;
+        a.registerParrent(guiElement);
+      }
       ProjectExplorerModel.Node<T> node = nodeMap.get(tool);
 
       if (node == null) {
@@ -187,7 +196,7 @@ public class ProjectExplorerLibraryNode extends ProjectExplorerModel.Node<Librar
 
   @Override
   ProjectExplorerLibraryNode create(Library userObject) {
-    return new ProjectExplorerLibraryNode(getModel(), userObject);
+    return new ProjectExplorerLibraryNode(getModel(), userObject,guiElement);
   }
 
   @Override

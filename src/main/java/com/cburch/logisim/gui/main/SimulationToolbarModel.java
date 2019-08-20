@@ -33,6 +33,7 @@ import static com.cburch.logisim.gui.Strings.S;
 import com.cburch.draw.toolbar.AbstractToolbarModel;
 import com.cburch.draw.toolbar.ToolbarItem;
 import com.cburch.logisim.circuit.Simulator;
+import com.cburch.logisim.gui.icons.SimulationIcon;
 import com.cburch.logisim.gui.menu.LogisimMenuBar;
 import com.cburch.logisim.gui.menu.MenuListener;
 import com.cburch.logisim.proj.Project;
@@ -49,19 +50,22 @@ class SimulationToolbarModel extends AbstractToolbarModel implements ChangeListe
   private LogisimToolbarItem tickHalf;
   private LogisimToolbarItem tickFull;
   private List<ToolbarItem> items;
+  
+  private static final SimulationIcon RunToggleIcon = new SimulationIcon(SimulationIcon.SIM_PLAY);
+  private static final SimulationIcon EnableDisableIcon = new SimulationIcon(SimulationIcon.SIM_ENABLE);
 
   public SimulationToolbarModel(Project project, MenuListener menu) {
     this.project = project;
 
-    simRunToggle = new LogisimToolbarItem(menu, "simrun.png",
+    simRunToggle = new LogisimToolbarItem(menu, RunToggleIcon,
             LogisimMenuBar.SIMULATE_RUN_TOGGLE, S.getter("simulateRunTip"));
-    simStep = new LogisimToolbarItem(
-            menu, "simstep.png", LogisimMenuBar.SIMULATE_STEP, S.getter("simulateStepTip"));
-    tickEnable = new LogisimToolbarItem(
-            menu, "simtplay.png", LogisimMenuBar.TICK_ENABLE, S.getter("simulateEnableTicksTip"));
-    tickHalf = new LogisimToolbarItem(menu, "tickhalf.png",
+    simStep = new LogisimToolbarItem(menu, new SimulationIcon(SimulationIcon.SIM_STEP), 
+    		LogisimMenuBar.SIMULATE_STEP, S.getter("simulateStepTip"));
+    tickEnable = new LogisimToolbarItem(menu, EnableDisableIcon, 
+    		LogisimMenuBar.TICK_ENABLE, S.getter("simulateEnableTicksTip"));
+    tickHalf = new LogisimToolbarItem(menu, new SimulationIcon(SimulationIcon.SIM_HALF_TICK),
             LogisimMenuBar.TICK_HALF, S.getter("simulateTickHalfTip"));
-    tickFull = new LogisimToolbarItem(menu, "tickfull.png",
+    tickFull = new LogisimToolbarItem(menu,  new SimulationIcon(SimulationIcon.SIM_FULL_TICK),
             LogisimMenuBar.TICK_FULL, S.getter("simulateTickFullTip"));
     
     items = UnmodifiableList.create(new ToolbarItem[] {simRunToggle, simStep, tickEnable, tickHalf, tickFull, });
@@ -91,9 +95,9 @@ class SimulationToolbarModel extends AbstractToolbarModel implements ChangeListe
     Simulator sim = project.getSimulator();
     boolean running = sim != null && sim.isRunning();
     boolean ticking = sim != null && sim.isTicking();
-    simRunToggle.setIcon(running ? "simstop.png" : "simrun.png");
+    RunToggleIcon.setType(running ? SimulationIcon.SIM_PAUSE : SimulationIcon.SIM_PLAY);
     simRunToggle.setToolTip(S.getter(running ? "simulateStopTip" : "simulateRunTip"));
-    tickEnable.setIcon(ticking ? "simtstop.png" : "simtplay.png");
+    EnableDisableIcon.setType(ticking ? SimulationIcon.SIM_DISABLE : SimulationIcon.SIM_ENABLE);
     tickEnable.setToolTip(S.getter(ticking ? "simulateDisableTicksTip" : "simulateEnableTicksTip"));
     fireToolbarAppearanceChanged();
   }

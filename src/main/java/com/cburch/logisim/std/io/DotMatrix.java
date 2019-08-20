@@ -36,6 +36,7 @@ import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Attributes;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Value;
+import com.cburch.logisim.gui.icons.LedMatrixIcon;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceData;
 import com.cburch.logisim.instance.InstanceFactory;
@@ -209,7 +210,7 @@ public class DotMatrix extends InstanceFactory {
           Integer.valueOf(0),
           SHAPE_SQUARE
         });
-    setIconName("dotmat.gif");
+    setIcon(new LedMatrixIcon());
   }
 
   @Override

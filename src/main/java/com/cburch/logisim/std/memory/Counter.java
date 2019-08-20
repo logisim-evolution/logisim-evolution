@@ -42,6 +42,7 @@ import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
+import com.cburch.logisim.gui.icons.CounterIcon;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceFactory;
 import com.cburch.logisim.instance.InstancePainter;
@@ -99,7 +100,7 @@ public class Counter extends InstanceFactory implements DynamicElementProvider {
   public Counter() {
     super("Counter", S.getter("counterComponent"));
     setOffsetBounds(Bounds.create(-30, -20, 30, 40));
-    setIconName("counter.gif");
+    setIcon(new CounterIcon());
     setInstancePoker(CounterPoker.class);
     setKeyConfigurator(
         JoinedConfigurator.create(

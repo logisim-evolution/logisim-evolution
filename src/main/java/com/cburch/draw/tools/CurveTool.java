@@ -38,7 +38,6 @@ import com.cburch.draw.shapes.DrawAttr;
 import com.cburch.draw.shapes.LineUtil;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.Location;
-import com.cburch.logisim.util.Icons;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Graphics;

@@ -45,9 +45,11 @@ import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Location;
+import com.cburch.logisim.gui.icons.AnnimatedIcon;
 import com.cburch.logisim.gui.main.Canvas;
 import com.cburch.logisim.gui.main.SelectionActions;
 import com.cburch.logisim.gui.main.ToolAttributeAction;
+import com.cburch.logisim.instance.InstanceFactory;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Action;
@@ -155,6 +157,18 @@ public class AddTool extends Tool implements PropertyChangeListener {
     }
     if (this.attrs.containsAttribute(ProbeAttributes.PROBEAPPEARANCE)) {
       AppPreferences.NEW_INPUT_OUTPUT_SHAPES.addPropertyChangeListener(this);
+    }
+  }
+  
+  @Override
+  public void registerParrent(java.awt.Component parrent) {
+    ComponentFactory fac = getFactory();
+    if (fac != null && fac instanceof InstanceFactory) {
+      InstanceFactory f = (InstanceFactory) fac;
+      if (f.getIcon() instanceof AnnimatedIcon) {
+        AnnimatedIcon i = (AnnimatedIcon) f.getIcon();
+        i.registerParrent(parrent);
+      }
     }
   }
 

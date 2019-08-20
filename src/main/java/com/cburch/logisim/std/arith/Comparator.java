@@ -39,6 +39,7 @@ import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
+import com.cburch.logisim.gui.icons.ArithmeticIcon;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceFactory;
 import com.cburch.logisim.instance.InstancePainter;
@@ -71,7 +72,7 @@ public class Comparator extends InstanceFactory {
         new Object[] {BitWidth.create(8), SIGNED_OPTION});
     setKeyConfigurator(new BitWidthConfigurator(StdAttr.WIDTH));
     setOffsetBounds(Bounds.create(-40, -20, 40, 40));
-    setIconName("comparator.gif");
+    setIcon(new ArithmeticIcon("\u2276"));
 
     Port[] ps = new Port[5];
     ps[IN0] = new Port(-40, -10, Port.INPUT, StdAttr.WIDTH);

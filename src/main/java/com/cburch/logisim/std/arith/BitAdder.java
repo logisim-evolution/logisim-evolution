@@ -37,6 +37,7 @@ import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
+import com.cburch.logisim.gui.icons.ArithmeticIcon;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceFactory;
 import com.cburch.logisim.instance.InstancePainter;
@@ -62,7 +63,7 @@ public class BitAdder extends InstanceFactory {
         JoinedConfigurator.create(
             new IntegerConfigurator(NUM_INPUTS, 1, 32, 0),
             new BitWidthConfigurator(StdAttr.WIDTH)));
-    setIconName("bitadder.gif");
+    setIcon(new ArithmeticIcon("#"));
   }
 
   private int computeOutputBits(int width, int inputs) {

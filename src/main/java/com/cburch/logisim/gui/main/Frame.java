@@ -52,6 +52,7 @@ import com.cburch.logisim.gui.generic.LFrame;
 import com.cburch.logisim.gui.generic.RegTabContent;
 import com.cburch.logisim.gui.generic.ZoomControl;
 import com.cburch.logisim.gui.generic.ZoomModel;
+import com.cburch.logisim.gui.icons.AnnimationTimer;
 import com.cburch.logisim.gui.menu.MainMenuListener;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
@@ -84,6 +85,8 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.Timer;
+
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -93,6 +96,10 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 public class Frame extends LFrame implements LocaleListener {
+
+  public static final AnnimationTimer ANNIMATIONICONTIMER = new AnnimationTimer();
+  private Timer timer = new Timer();
+
   class MyProjectListener
       implements ProjectListener,
           LibraryListener,
@@ -183,6 +190,7 @@ public class Frame extends LFrame implements LocaleListener {
     public void windowClosing(WindowEvent e) {
       if (confirmClose(S.get("confirmCloseTitle"))) {
         layoutCanvas.closeCanvas();
+        timer.cancel();
         Frame.this.dispose();
       }
     }
@@ -268,6 +276,7 @@ public class Frame extends LFrame implements LocaleListener {
   private Toolbar toolbar;
   private HorizontalSplitPane leftRegion, rightRegion, editRegion;
   private VerticalSplitPane mainRegion;
+  private JPanel rightPanel;
   private JPanel mainPanelSuper;
   private CardPanel mainPanel;
   // left-side elements
@@ -377,22 +386,21 @@ public class Frame extends LFrame implements LocaleListener {
     vhdlSimulatorConsole = new VhdlSimulatorConsole(proj);
     editRegion = new HorizontalSplitPane(mainPanelSuper, hdlEditor, 1.0);
     rightRegion = new HorizontalSplitPane(editRegion, vhdlSimulatorConsole, 1.0);
+    
+    rightPanel = new JPanel(new BorderLayout());
+    rightPanel.add(rightRegion,BorderLayout.CENTER);
 
     VhdlSimState state = new VhdlSimState(proj);
     state.stateChanged();
     proj.getVhdlSimulator().addVhdlSimStateListener(state);
 
-    mainRegion =
-        new VerticalSplitPane(
-            leftRegion, rightRegion, AppPreferences.WINDOW_MAIN_SPLIT.get().doubleValue());
+    mainRegion = new VerticalSplitPane(leftRegion, rightPanel, AppPreferences.WINDOW_MAIN_SPLIT.get().doubleValue());
 
     getContentPane().add(mainRegion, BorderLayout.CENTER);
 
     computeTitle();
 
-    this.setSize(
-        AppPreferences.WINDOW_WIDTH.get().intValue(),
-        AppPreferences.WINDOW_HEIGHT.get().intValue());
+    this.setSize(AppPreferences.WINDOW_WIDTH.get().intValue(),AppPreferences.WINDOW_HEIGHT.get().intValue());
     Point prefPoint = getInitialLocation();
     if (prefPoint != null) {
       this.setLocation(prefPoint);
@@ -412,6 +420,15 @@ public class Frame extends LFrame implements LocaleListener {
 
     LocaleManager.addLocaleListener(this);
     toolbox.updateStructure();
+    try {
+       timer.schedule(ANNIMATIONICONTIMER, 1000, 500);
+    } catch (IllegalStateException e) {
+      /* just continue, the timer was already running */
+    }
+  }
+  
+  public Toolbar getToolbar() {
+    return toolbar;
   }
 
   private void computeTitle() {
@@ -489,7 +506,7 @@ public class Frame extends LFrame implements LocaleListener {
 
   private void placeToolbar() {
     String loc = AppPreferences.TOOLBAR_PLACEMENT.get();
-    mainPanelSuper.remove(toolbar);
+    rightPanel.remove(toolbar);
     if (!AppPreferences.TOOLBAR_HIDDEN.equals(loc)) {
       Object value = BorderLayout.NORTH;
       for (Direction dir : Direction.cardinals) {
@@ -505,7 +522,7 @@ public class Frame extends LFrame implements LocaleListener {
           }
         }
       }
-      mainPanelSuper.add(toolbar, value);
+      rightPanel.add(toolbar,value);
       boolean vertical = value == BorderLayout.WEST || value == BorderLayout.EAST;
       toolbar.setOrientation(vertical ? Toolbar.VERTICAL : Toolbar.HORIZONTAL);
     }
@@ -577,6 +594,7 @@ public class Frame extends LFrame implements LocaleListener {
         app.setCircuit(proj, proj.getCircuitState());
         mainPanel.addView(EDIT_APPEARANCE, app.getCanvasPane());
         appearance = app;
+        ANNIMATIONICONTIMER.addParrent(toolbar);
       }
       toolbar.setToolbarModel(app.getToolbarModel());
       app.getAttrTableDrawManager(attrTable).attributesSelected();
@@ -609,7 +627,6 @@ public class Frame extends LFrame implements LocaleListener {
     hdlEditor.setHdlModel(hdl);
     zoom.setZoomModel(null);
     editRegion.setFraction(0.0);
-
     toolbar.setToolbarModel(hdlEditor.getToolbarModel());
   }
 

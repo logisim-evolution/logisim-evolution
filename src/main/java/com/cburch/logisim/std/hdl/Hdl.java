@@ -30,6 +30,7 @@ package com.cburch.logisim.std.hdl;
 
 import static com.cburch.logisim.vhdl.Strings.S;
 
+import com.cburch.logisim.gui.icons.ArithmeticIcon;
 import com.cburch.logisim.tools.FactoryDescription;
 import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.tools.Tool;
@@ -38,8 +39,8 @@ import java.util.List;
 public class Hdl extends Library {
 
   private static FactoryDescription[] DESCRIPTIONS = {
-    new FactoryDescription(
-        "VHDL Entity", S.getter("vhdlComponent"), "vhdl.gif", "VhdlEntityComponent"),
+    new FactoryDescription("VHDL Entity", S.getter("vhdlComponent"), new ArithmeticIcon("VHDL"), 
+    		"VhdlEntityComponent"),
   };
 
   private List<Tool> tools = null;

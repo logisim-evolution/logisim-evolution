@@ -59,6 +59,7 @@ import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.tools.ToolTipMaker;
 import java.awt.Color;
 import java.awt.Graphics;
@@ -134,9 +135,9 @@ class Video extends ManagedComponent implements ToolTipMaker, AttributeListener 
             BLINK_OPTIONS[0],
             RESET_OPTIONS[0],
             COLOR_OPTIONS[0],
-            new Integer(128),
-            new Integer(128),
-            new Integer(2)
+            128,
+            128,
+            2
           });
     }
 
@@ -231,20 +232,27 @@ class Video extends ManagedComponent implements ToolTipMaker, AttributeListener 
   }
 
   static void drawVideoIcon(ComponentDrawContext context, int x, int y) {
-    Graphics g = context.getGraphics();
+    Graphics g = context.getGraphics().create();
+    g.translate(x, y);
     g.setColor(Color.WHITE);
-    g.fillRoundRect(x + 2, y + 2, 16 - 1, 16 - 1, 3, 3);
+    g.fillRoundRect(scale(2), scale(2), scale(16 - 1), scale(16 - 1), scale(3), scale(3));
     g.setColor(Color.BLACK);
-    g.drawRoundRect(x + 2, y + 2, 16 - 1, 16 - 1, 3, 3);
+    g.drawRoundRect(scale(2),scale(2), scale(16 - 1), scale(16 - 1), scale(3), scale(3));
+    int five = scale(5);
+    int ten = scale(10);
     g.setColor(Color.RED);
-    g.fillRect(x + 5, y + 5, 5, 5);
+    g.fillRect(five, five, five, five);
     g.setColor(Color.BLUE);
-    g.fillRect(x + 10, y + 5, 5, 5);
+    g.fillRect(ten, five, five, five);
     g.setColor(Color.GREEN);
-    g.fillRect(x + 5, y + 10, 5, 5);
-    g.setColor(Color.CYAN);
-    g.fillRect(x + 10, y + 10, 5, 5);
-    g.setColor(Color.BLACK);
+    g.fillRect(five, ten, five, five);
+    g.setColor(Color.MAGENTA);
+    g.fillRect(ten, ten, five, five);
+    g.dispose();
+  }
+  
+  private static int scale(int v) {
+    return AppPreferences.getScaled(v);  
   }
 
   boolean blink() {

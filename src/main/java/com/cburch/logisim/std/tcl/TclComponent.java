@@ -32,6 +32,7 @@ import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Value;
+import com.cburch.logisim.gui.icons.ArithmeticIcon;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceFactory;
 import com.cburch.logisim.instance.InstancePainter;
@@ -105,7 +106,7 @@ public abstract class TclComponent extends InstanceFactory {
     inputs = new Port[0];
     outputs = new Port[0];
 
-    setIconName("tcl.gif");
+    setIcon(new ArithmeticIcon("TCL",3));
   }
 
   //

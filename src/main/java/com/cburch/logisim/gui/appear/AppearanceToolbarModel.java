@@ -51,8 +51,7 @@ class AppearanceToolbarModel extends AbstractToolbarModel implements PropertyCha
   private Canvas canvas;
   private List<ToolbarItem> items;
 
-  public AppearanceToolbarModel(
-      AbstractTool selectTool, ShowStateTool ssTool, Canvas canvas, DrawingAttributeSet attrs) {
+  public AppearanceToolbarModel(AbstractTool selectTool, ShowStateTool ssTool, Canvas canvas, DrawingAttributeSet attrs) {
     this.canvas = canvas;
 
     AbstractTool[] tools = {

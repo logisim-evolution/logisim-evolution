@@ -39,6 +39,7 @@ import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.fpga.fpgaboardeditor.FPGAIOInformationContainer;
 import com.cburch.logisim.fpga.hdlgenerator.IOComponentInformationContainer;
+import com.cburch.logisim.gui.icons.SevenSegmentIcon;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceDataSingleton;
 import com.cburch.logisim.instance.InstanceFactory;
@@ -159,7 +160,7 @@ public class SevenSegment extends InstanceFactory implements DynamicElementProvi
           false
         });
     setOffsetBounds(Bounds.create(-5, 0, 40, 60));
-    setIconName("7seg.gif");
+    setIcon(new SevenSegmentIcon(false));
     setKeyConfigurator(new DirectionConfigurator(StdAttr.LABEL_LOC, KeyEvent.ALT_DOWN_MASK));
     Port[] ps = new Port[8];
     ps[Segment_A] = new Port(20, 0, Port.INPUT, 1);

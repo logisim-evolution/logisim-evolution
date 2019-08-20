@@ -43,6 +43,7 @@ import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.gui.hex.HexFile;
 import com.cburch.logisim.gui.hex.HexFrame;
+import com.cburch.logisim.gui.icons.ArithmeticIcon;
 import com.cburch.logisim.gui.main.Frame;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceLogger;
@@ -241,7 +242,7 @@ public class Ram extends Mem {
 
   public Ram() {
     super("RAM", S.getter("ramComponent"), 3);
-    setIconName("ram.gif");
+    setIcon(new ArithmeticIcon("RAM",3));
     setInstanceLogger(Logger.class);
   }
 

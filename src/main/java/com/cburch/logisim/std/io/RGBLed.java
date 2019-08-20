@@ -39,6 +39,7 @@ import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.fpga.fpgaboardeditor.FPGAIOInformationContainer;
 import com.cburch.logisim.fpga.hdlgenerator.IOComponentInformationContainer;
+import com.cburch.logisim.gui.icons.LEDIcon;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceDataSingleton;
 import com.cburch.logisim.instance.InstanceFactory;
@@ -105,7 +106,7 @@ public class RGBLed extends InstanceFactory implements DynamicElementProvider {
           true
         });
     setFacingAttribute(StdAttr.FACING);
-    setIconName("rgbled.gif");
+    setIcon(new LEDIcon(true));
     setKeyConfigurator(new DirectionConfigurator(StdAttr.LABEL_LOC, KeyEvent.ALT_DOWN_MASK));
     setInstanceLogger(Logger.class);
     MyIOInformation =

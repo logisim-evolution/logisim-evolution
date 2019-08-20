@@ -50,7 +50,7 @@ public abstract class AbstractIcon implements Icon {
 
   protected abstract void paintIcon(Graphics2D g2);
 
-@Override
+  @Override
   public int getIconWidth() {
     return AppPreferences.getIconSize();
   }
@@ -60,4 +60,16 @@ public abstract class AbstractIcon implements Icon {
     return AppPreferences.getIconSize();
   }
   
+  public static int scale(int v) {
+    return AppPreferences.getScaled(v);
+  }
+	  
+  public static double scale(double v) {
+    return AppPreferences.getScaled(v);
+  }
+		  
+  public static float scale(float v) {
+    return AppPreferences.getScaled(v);
+  }
+			  
 }

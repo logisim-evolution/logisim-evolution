@@ -31,7 +31,7 @@ package com.cburch.logisim.fpga.gui;
 import static com.cburch.logisim.fpga.Strings.S;
 
 import com.cburch.logisim.fpga.designrulecheck.SimpleDRCContainer;
-import com.cburch.logisim.util.Icons;
+import com.cburch.logisim.gui.icons.DrcIcon;
 import java.awt.Color;
 import java.awt.Component;
 import javax.swing.JLabel;
@@ -48,6 +48,9 @@ public class ListModelCellRenderer extends JLabel implements ListCellRenderer<Ob
   private static Color SEVERE = Color.yellow;
   private static Color NORMAL = Color.LIGHT_GRAY;
   private static Color ADDENDUM = Color.GRAY;
+  
+  private static final DrcIcon NoDRC = new DrcIcon(false);
+  private static final DrcIcon DRCError = new DrcIcon(true);
 
   public ListModelCellRenderer(boolean countLines) {
     CountLines = countLines;
@@ -61,14 +64,11 @@ public class ListModelCellRenderer extends JLabel implements ListCellRenderer<Ob
     setBackground(list.getBackground());
     setForeground(list.getForeground());
     StringBuffer Line = new StringBuffer();
-    setIcon(Icons.getIcon("empty.png")); /* place holder too make space for the trace icon */
     if (value instanceof SimpleDRCContainer) {
       msg = (SimpleDRCContainer) value;
     }
+    setIcon((msg != null && msg.DRCInfoPresent())?DRCError : NoDRC);
     if (msg != null) {
-      if (msg.DRCInfoPresent()) {
-        setIcon(Icons.getIcon("drc_trace.png"));
-      }
       switch (msg.Severity()) {
         case SimpleDRCContainer.LEVEL_SEVERE:
           setForeground(SEVERE);

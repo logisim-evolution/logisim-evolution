@@ -30,6 +30,8 @@ package com.cburch.logisim.fpga.fpgaboardeditor;
 
 import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
 import com.cburch.logisim.fpga.settings.VendorSoftware;
+import com.cburch.logisim.gui.icons.ErrorIcon;
+import com.cburch.logisim.gui.icons.WarningIcon;
 import com.cburch.logisim.proj.Projects;
 import com.cburch.logisim.std.io.DipSwitch;
 import com.cburch.logisim.std.io.PortIO;
@@ -45,7 +47,6 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
@@ -920,9 +921,9 @@ public class FPGAIOInformationContainer {
     final JDialog dialog = new JDialog(parent, type);
     JLabel pic = new JLabel();
     if (type.equals("Warning")) {
-      pic.setIcon(new ImageIcon(getClass().getResource(BoardDialog.pictureWarning)));
+      pic.setIcon(new WarningIcon());
     } else {
-      pic.setIcon(new ImageIcon(getClass().getResource(BoardDialog.pictureError)));
+      pic.setIcon(new ErrorIcon());
     }
     GridBagLayout dialogLayout = new GridBagLayout();
     dialog.setLayout(dialogLayout);

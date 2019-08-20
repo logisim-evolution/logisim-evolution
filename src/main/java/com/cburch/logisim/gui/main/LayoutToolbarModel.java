@@ -40,6 +40,7 @@ import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.proj.ProjectEvent;
 import com.cburch.logisim.proj.ProjectListener;
+import com.cburch.logisim.tools.AddTool;
 import com.cburch.logisim.tools.Tool;
 import com.cburch.logisim.util.InputEventUtil;
 import java.awt.Color;
@@ -198,6 +199,8 @@ class LayoutToolbarModel extends AbstractToolbarModel {
       if (tool == null) {
         newItems.add(new ToolbarSeparator(4));
       } else {
+    	if (tool instanceof AddTool)
+    	  ((AddTool)tool).registerParrent(frame.getToolbar());
         ToolbarItem i = findItem(oldItems, tool);
         if (i == null) {
           newItems.add(new ToolItem(tool));
