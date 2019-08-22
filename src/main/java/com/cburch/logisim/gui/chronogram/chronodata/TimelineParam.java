@@ -30,7 +30,7 @@ package com.cburch.logisim.gui.chronogram.chronodata;
 
 public class TimelineParam {
 
-  public static String[] units = {"Hz", "KHz", "MHz", "GHz"};
+  public static String[] units = {"Hz", "kHz", "MHz", "GHz"};
 
   private String selectedUnit;
   private String signalClkName;
