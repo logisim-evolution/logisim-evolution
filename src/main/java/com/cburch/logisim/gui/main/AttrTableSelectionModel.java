@@ -39,7 +39,9 @@ import com.cburch.logisim.circuit.Wire;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.comp.ComponentFactory;
 import com.cburch.logisim.data.Attribute;
+import com.cburch.logisim.data.AttributeEvent;
 import com.cburch.logisim.data.Location;
+import com.cburch.logisim.gui.generic.AttrTableModelRow;
 import com.cburch.logisim.gui.generic.AttrTableSetException;
 import com.cburch.logisim.gui.generic.AttributeSetTableModel;
 import com.cburch.logisim.gui.main.Selection.Event;
@@ -63,6 +65,13 @@ class AttrTableSelectionModel extends AttributeSetTableModel implements Selectio
     this.project = project;
     this.frame = frame;
     frame.getCanvas().getSelection().addListener(this);
+  }
+
+  @Override
+  public void attributeValueChanged(AttributeEvent e) {
+    super.attributeValueChanged(e);
+    if (e.getAttribute().equals(StdAttr.LABEL))
+      fireTitleChanged();
   }
 
   @Override
@@ -115,11 +124,9 @@ class AttrTableSelectionModel extends AttributeSetTableModel implements Selectio
         SetInstance(null);
         return S.fmt("hdlAttrTitle", circName);
       }
-    } else if (factoryCount == 1 && label != null && label.length() > 0) {
-      return S.fmt("selectionOne", factory.getDisplayName()) + " \"" + label + "\"";
     } else if (factoryCount == 1) {
       SetInstance(factory);
-      return S.fmt("selectionOne", factory.getDisplayName());
+      return S.fmt("selectionOne", factory.getDisplayName()+((label != null && label.length() > 0)? " \"" + label + "\"":""));
     } else {
       SetInstance(factory);
       return S.fmt("selectionMultiple", factory.getDisplayName(), "" + factoryCount);
