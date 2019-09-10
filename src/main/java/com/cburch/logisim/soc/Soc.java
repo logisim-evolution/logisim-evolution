@@ -26,70 +26,45 @@
  *     http://www.heig-vd.ch/
  */
 
-package com.cburch.logisim.std;
+package com.cburch.logisim.soc;
 
-import static com.cburch.logisim.std.Strings.S;
+import static com.cburch.logisim.soc.Strings.S;
 
-import com.cburch.logisim.fpga.library.BFHPraktika;
-import com.cburch.logisim.soc.Soc;
-import com.cburch.logisim.std.arith.Arithmetic;
-import com.cburch.logisim.std.base.Base;
-import com.cburch.logisim.std.gates.Gates;
-import com.cburch.logisim.std.hdl.Hdl;
-import com.cburch.logisim.std.io.Io;
-import com.cburch.logisim.std.io.extra.ITA_IO;
-import com.cburch.logisim.std.memory.Memory;
-import com.cburch.logisim.std.plexers.Plexers;
-import com.cburch.logisim.std.tcl.Tcl;
-import com.cburch.logisim.std.ttl.TTL;
-import com.cburch.logisim.std.wiring.Wiring;
-import com.cburch.logisim.tools.Library;
-import com.cburch.logisim.tools.Tool;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
-public class Builtin extends Library {
-  private List<Library> libraries = null;
+import com.cburch.logisim.tools.FactoryDescription;
+import com.cburch.logisim.tools.Library;
+import com.cburch.logisim.tools.Tool;
 
-  public Builtin() {
-    libraries =
-        Arrays.asList(
-            new Library[] {
-              new Base(),
-              new Gates(),
-              new Wiring(),
-              new Plexers(),
-              new Arithmetic(),
-              new Memory(),
-              new Io(),
-              new TTL(),
-              new Hdl(),
-              new Tcl(),
-              new BFHPraktika(),
-              new ITA_IO(),
-              new Soc(),
-            });
-  }
+public class Soc  extends Library {
+
+  private static FactoryDescription[] DESCRIPTIONS = {
+    new FactoryDescription(
+        "Rv32im", S.getter("Rv32imComponent"), "Rv32im.gif", "rv32im.Rv32im_riscv"),
+    new FactoryDescription(
+        "SocBus", S.getter("SocBusComponent"), "" , "bus.SocBus" ),
+    new FactoryDescription(
+         "Socmem", S.getter("SocMemoryComponent"), "" , "memory.SocMemory" ),
+  };
+  
+  private List<Tool> tools = null;
 
   @Override
   public String getDisplayName() {
-    return S.get("builtinLibrary");
-  }
-
-  @Override
-  public List<Library> getLibraries() {
-    return libraries;
+    return S.get("socLibrary");
   }
 
   @Override
   public String getName() {
-    return "Builtin";
+    return "Soc";
   }
 
   @Override
   public List<Tool> getTools() {
-    return Collections.emptyList();
+    if (tools == null) {
+      tools = FactoryDescription.getTools(Soc.class, DESCRIPTIONS);
+    }
+    return tools;
   }
 
   public boolean removeLibrary(String Name) {

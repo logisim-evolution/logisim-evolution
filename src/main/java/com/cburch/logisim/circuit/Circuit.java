@@ -56,6 +56,7 @@ import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
+import com.cburch.logisim.soc.data.SocSimulationManager;
 import com.cburch.logisim.std.wiring.Clock;
 import com.cburch.logisim.std.wiring.Pin;
 import com.cburch.logisim.std.wiring.Tunnel;
@@ -252,6 +253,7 @@ public class Circuit {
   private Netlist MyNetList;
   private boolean Annotated;
   private Project proj;
+  private SocSimulationManager socSim = new SocSimulationManager();
 
   private LogisimFile logiFile;
 
@@ -273,6 +275,10 @@ public class Circuit {
 
   public void SetProject(Project proj) {
     this.proj = proj;
+  }
+  
+  public SocSimulationManager getSocSimulationManager() {
+    return socSim;
   }
 
   //
@@ -782,7 +788,25 @@ public class Circuit {
       // add it into the circuit
       boolean added = comps.add(c);
       if (!added) return;
-
+      socSim.registerComponent(c);
+      /* Here we check for duplicated labels and clear the label if it already exists in
+       * the circuit
+       */
+      if (c.getAttributeSet().containsAttribute(StdAttr.LABEL) && !(c.getFactory() instanceof Tunnel)) {
+        HashSet<String> labels = new HashSet<String>();
+        for (Component comp : comps) {
+          if (comp.equals(c))
+            continue;
+          if (comp.getAttributeSet().containsAttribute(StdAttr.LABEL)) {
+            String label = comp.getAttributeSet().getValue(StdAttr.LABEL);
+            if (label != null && !label.isBlank())
+        	    labels.add(label.toUpperCase());
+          }
+        }
+        String label = c.getAttributeSet().getValue(StdAttr.LABEL);
+        if (label != null && !label.isBlank() && labels.contains(label.toUpperCase()))
+          c.getAttributeSet().setValue(StdAttr.LABEL, "");
+      }
       wires.add(c);
       ComponentFactory factory = c.getFactory();
       if (factory instanceof Clock) {
@@ -810,6 +834,7 @@ public class Circuit {
     MyNetList.clear();
     Annotated = false;
     for (Component comp : oldComps) {
+      socSim.removeComponent(comp);
       if (comp.getFactory() instanceof SubcircuitFactory) {
         SubcircuitFactory sub = (SubcircuitFactory) comp.getFactory();
         sub.getSubcircuit().circuitsUsingThis.remove(comp);
@@ -833,6 +858,7 @@ public class Circuit {
     } else {
       wires.remove(c);
       comps.remove(c);
+      socSim.removeComponent(c);
       ComponentFactory factory = c.getFactory();
       if (factory instanceof Clock) {
         clocks.remove(c);

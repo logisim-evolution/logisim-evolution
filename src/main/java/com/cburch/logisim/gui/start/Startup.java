@@ -91,6 +91,7 @@ import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JTabbedPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ProgressMonitor;
 import javax.swing.UIDefaults;
@@ -1033,6 +1034,7 @@ public class Startup implements AWTEventListener {
             || (container instanceof JSpinner)
             || (container instanceof JTabbedPane)
             || (container instanceof JTextField)
+            || (container instanceof JTextArea)
             || (container instanceof JHelp)
             || (container instanceof JFileChooser)
             || ((container instanceof JScrollPane) && (!(container instanceof CanvasPane)))

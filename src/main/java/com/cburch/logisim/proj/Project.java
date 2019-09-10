@@ -145,7 +145,7 @@ public class Project {
     fileListeners.add(value);
     if (file != null) file.addLibraryListener(value);
   }
-
+  
   //
   // Listener methods
   //

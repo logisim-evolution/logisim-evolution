@@ -123,7 +123,7 @@ public class SelectionActions {
     @Override
     public void doIt(Project proj) {
       oldClip = Clipboard.get();
-      Clipboard.set(sel, sel.getAttributeSet(), true);
+      Clipboard.set(sel, sel.getAttributeSet());
     }
 
     @Override
@@ -155,7 +155,7 @@ public class SelectionActions {
     @Override
     public void doIt(Project proj) {
       oldClip = Clipboard.get();
-      Clipboard.set(sel, sel.getAttributeSet(), false);
+      Clipboard.set(sel, sel.getAttributeSet());
       second.doIt(proj);
     }
 
@@ -350,7 +350,6 @@ public class SelectionActions {
       } else {
         xnReverse = null;
       }
-      clip.ClearLabels();
     }
 
     @Override
