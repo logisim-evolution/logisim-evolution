@@ -224,7 +224,11 @@ public class RV32im_state implements SocUpSimulationStateListener,SocProcessorIn
     }
     TraceInfo trace = new TraceInfo(pc,instruction,exe.getAsmInstruction(),false);
     if (!exe.execute(this)) {
-      JOptionPane.showMessageDialog(null,S.get("RV32imFetchExecutionError"),
+      StringBuffer s = new StringBuffer();
+      s.append(S.get("RV32imFetchExecutionError"));
+      if (exe.getErrorMessage() != null)
+        s.append("\n"+exe.getErrorMessage());
+      JOptionPane.showMessageDialog(null,s.toString(),
          getMasterName()+S.get("RV32imFetchTransaction"),JOptionPane.ERROR_MESSAGE);
       simState.errorInExecution();
       trace.setError();

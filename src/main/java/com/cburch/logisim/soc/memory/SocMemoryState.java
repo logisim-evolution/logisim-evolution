@@ -39,6 +39,7 @@ import com.cburch.logisim.soc.data.SocBusInfo;
 import com.cburch.logisim.soc.data.SocBusSlaveInterface;
 import com.cburch.logisim.soc.data.SocBusSlaveListener;
 import com.cburch.logisim.soc.data.SocBusTransaction;
+import com.cburch.logisim.soc.data.SocSupport;
 
 public class SocMemoryState implements SocBusSlaveInterface {
 
@@ -153,7 +154,7 @@ public class SocMemoryState implements SocBusSlaveInterface {
   public boolean setSocBusInfo(SocBusInfo i) {
     if (attachedBus.getBusId().equals(i.getBusId()))
       return false;
-    attachedBus = i;
+    attachedBus.setBusId(i.getBusId());
     return true;
   }
   
@@ -198,8 +199,10 @@ public class SocMemoryState implements SocBusSlaveInterface {
 
   @Override
   public boolean canHandleTransaction(SocBusTransaction trans) {
-    int endAddress = startAddress+sizeInBytes-1;
-    return (trans.getAddress() >= startAddress)&&(trans.getAddress() <= endAddress);
+	long addr = SocSupport.convUnsignedInt(trans.getAddress());
+	long start = SocSupport.convUnsignedInt(startAddress);
+	long end = start+sizeInBytes;
+    return (addr >= start)&&(addr < end);
   }
   
   @Override

@@ -122,4 +122,5 @@ public class Rv32imMemoryOrderingInstructions implements RV32imExecutionUnitInte
       s.append("w");
   }
 
+  public String getErrorMessage() { return null; }
 }

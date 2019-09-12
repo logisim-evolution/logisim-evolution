@@ -165,4 +165,5 @@ public class RV32imIntegerRegisterRegisterOperations implements RV32imExecutionU
     return true;
   }
 
+  public String getErrorMessage() { return null; }
 }

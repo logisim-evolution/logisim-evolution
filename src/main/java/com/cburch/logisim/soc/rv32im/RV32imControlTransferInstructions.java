@@ -203,4 +203,6 @@ public class RV32imControlTransferInstructions implements RV32imExecutionUnitInt
     return false;
   }
 
+  public String getErrorMessage() { return null; }
+  
 }

@@ -36,4 +36,5 @@ public interface RV32imExecutionUnitInterface {
   public boolean setBinInstruction(int instr);
   public boolean performedJump();
   public boolean isValid();
+  public String getErrorMessage();
 }

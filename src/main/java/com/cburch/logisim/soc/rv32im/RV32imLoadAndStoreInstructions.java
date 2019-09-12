@@ -28,6 +28,8 @@
 
 package com.cburch.logisim.soc.rv32im;
 
+import static com.cburch.logisim.soc.Strings.S;
+
 import com.cburch.logisim.soc.data.SocBusTransaction;
 import com.cburch.logisim.soc.file.ElfHeader;
 
@@ -61,11 +63,12 @@ public class RV32imLoadAndStoreInstructions implements RV32imExecutionUnitInterf
   private int destination;
   private int immediate;
   private int base;
+  private String errorMessage;
   
-  @Override
   public boolean execute(RV32im_state state) {
     if (!valid)
       return false;
+    errorMessage = null;
     int toBeStored = state.getRegisterValue(destination);
     long address = ElfHeader.getLongValue((Integer)state.getRegisterValue(base))+immediate;
     int transType = -1;
@@ -82,7 +85,7 @@ public class RV32imLoadAndStoreInstructions implements RV32imExecutionUnitInterf
                           ElfHeader.getIntValue((Long)address),toBeStored,transType,
                           state.getMasterName());
                       SocBusTransaction ret = state.insertTransaction(trans, false);
-                      return !ret.hasError();
+                      return !transactionHasError(ret);
       case INSTR_LB :
       case INSTR_LBU: transType = SocBusTransaction.ByteAccess;
       case INSTR_LH :
@@ -91,8 +94,7 @@ public class RV32imLoadAndStoreInstructions implements RV32imExecutionUnitInterf
                       trans = new SocBusTransaction(SocBusTransaction.READTransaction,
                           ElfHeader.getIntValue((Long)address),0,transType,state.getMasterName());
                       ret = state.insertTransaction(trans, false);
-                      if (ret.hasError())
-                        return false;
+                      if (transactionHasError(ret)) return false;
                       int toBeLoaded = ret.getData();
                       switch (operation) {
                         case INSTR_LBU : toBeLoaded &= 0xFF;
@@ -110,6 +112,19 @@ public class RV32imLoadAndStoreInstructions implements RV32imExecutionUnitInterf
                       return true;
     }
     return false;
+  }
+  
+  private boolean transactionHasError(SocBusTransaction trans) {
+    if (trans.hasError()) {
+      StringBuffer s = new StringBuffer();
+      if (trans.isReadTransaction())
+        s.append(S.get("RV32imLoadStoreErrorInReadTransaction")+"\n");
+      else
+        s.append(S.get("RV32imLoadStoreErrorInWriteTransaction")+"\n");
+      s.append(trans.getErrorMessage());
+      errorMessage = s.toString();
+    }
+    return trans.hasError();
   }
 
   public String getAsmInstruction() {
@@ -184,5 +199,7 @@ public class RV32imLoadAndStoreInstructions implements RV32imExecutionUnitInterf
     }
     return false;
   }
+
+  public String getErrorMessage() { return errorMessage; }
 
 }

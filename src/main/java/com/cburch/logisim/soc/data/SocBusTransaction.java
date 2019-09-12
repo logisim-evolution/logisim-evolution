@@ -42,6 +42,13 @@ public class SocBusTransaction implements Cloneable {
   public static final int MultipleSlavesError = 3;
   public static final int NoneAtomicReadWriteError = 4;
   public static final int NoSocBusConnectedError = 5;
+  public static final int MisallignedAddressError = 6;
+  public static final int AccessTypeNotSupportedError = 7;
+  public static final int ReadOnlyAccessError = 8;
+  public static final int WriteOnlyAccessError = 9;
+  public static final int RegisterDoesNotExistError = 10;
+  
+  
   public static final int ByteAccess = 1;
   public static final int HalfWordAccess = 2;
   public static final int WordAccess = 3;
@@ -91,6 +98,16 @@ public class SocBusTransaction implements Cloneable {
       case MultipleSlavesError : return S.get("SocTransactionMultipleSlaveAnswers");
       case NoneAtomicReadWriteError : return S.get("SocTransactionNoneAtomicRW");
       case NoSocBusConnectedError : return S.get("SocTransactionNoBusConnected");
+      case MisallignedAddressError: return S.get("SocTransactionMisallignedAddress");
+      case AccessTypeNotSupportedError : 
+        switch (access) {
+          case ByteAccess     : return S.get("SocTransactionByteAccesNoSupport");
+          case HalfWordAccess : return S.get("SocTransactionHalfWordAccesNoSupport");
+          default             : return S.get("SocTransactionWordAccesNoSupport");
+        }
+      case ReadOnlyAccessError : return S.get("SocTransactionReadOnlyAccessError");
+      case WriteOnlyAccessError: return S.get("SocTransactionWriteOnlyAccessError");
+      case RegisterDoesNotExistError : return S.get("SocTransactionRegisterDoesNotExist");
     }
     return S.get("SocTransactionUnknownError");
   }
@@ -103,6 +120,16 @@ public class SocBusTransaction implements Cloneable {
       case MultipleSlavesError : return S.get("SocTransactionMultipleSlaveAnswersShort");
       case NoneAtomicReadWriteError : return S.get("SocTransactionNoneAtomicRWShort");
       case NoSocBusConnectedError : return S.get("SocTransactionNoBusConnectedShort");
+      case MisallignedAddressError: return S.get("SocTransactionMisallignedAddressShort");
+      case AccessTypeNotSupportedError : 
+        switch (access) {
+          case ByteAccess     : return S.get("SocTransactionByteAccesNoSupportShort");
+          case HalfWordAccess : return S.get("SocTransactionHalfWordAccesNoSupportShort");
+          default             : return S.get("SocTransactionWordAccesNoSupportShort");
+        }
+      case ReadOnlyAccessError : return S.get("SocTransactionReadOnlyAccessErrorShort");
+      case WriteOnlyAccessError: return S.get("SocTransactionWriteOnlyAccessErrorShort");
+      case RegisterDoesNotExistError : return S.get("SocTransactionRegisterDoesNotExistShort");
     }
     return S.get("SocTransactionUnknownErrorShort");
   }

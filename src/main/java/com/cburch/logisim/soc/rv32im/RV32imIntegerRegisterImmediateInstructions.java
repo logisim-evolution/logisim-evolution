@@ -216,4 +216,5 @@ public class RV32imIntegerRegisterImmediateInstructions implements RV32imExecuti
     valid = false;
   }
 
+  public String getErrorMessage() { return null; }
 }

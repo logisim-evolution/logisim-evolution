@@ -44,7 +44,6 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellRenderer;
 
 import com.cburch.logisim.instance.InstanceComponent;
-import com.cburch.logisim.soc.file.ElfHeader;
 import com.cburch.logisim.util.LocaleListener;
 import com.cburch.logisim.util.LocaleManager;
 

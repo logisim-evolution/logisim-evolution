@@ -26,50 +26,17 @@
  *     http://www.heig-vd.ch/
  */
 
-package com.cburch.logisim.soc;
+package com.cburch.logisim.soc.data;
 
-import static com.cburch.logisim.soc.Strings.S;
+public class SocSupport {
 
-import java.util.List;
+  private static final long LongMask = (1L<<32)-1L;
 
-import com.cburch.logisim.tools.FactoryDescription;
-import com.cburch.logisim.tools.Library;
-import com.cburch.logisim.tools.Tool;
-
-public class Soc  extends Library {
-
-  private static FactoryDescription[] DESCRIPTIONS = {
-    new FactoryDescription(
-        "Rv32im", S.getter("Rv32imComponent"), "Rv32im.gif", "rv32im.Rv32im_riscv"),
-    new FactoryDescription(
-        "SocBus", S.getter("SocBusComponent"), "" , "bus.SocBus" ),
-    new FactoryDescription(
-         "Socmem", S.getter("SocMemoryComponent"), "" , "memory.SocMemory" ),
-    new FactoryDescription(
-            "SocPio", S.getter("SocPioComponent"), "" , "pio.SocPio" ),
-  };
+  public static long convUnsignedInt(int value) {
+    return ((long)value)&LongMask;
+  }
   
-  private List<Tool> tools = null;
-
-  @Override
-  public String getDisplayName() {
-    return S.get("socLibrary");
-  }
-
-  @Override
-  public String getName() {
-    return "Soc";
-  }
-
-  @Override
-  public List<Tool> getTools() {
-    if (tools == null) {
-      tools = FactoryDescription.getTools(Soc.class, DESCRIPTIONS);
-    }
-    return tools;
-  }
-
-  public boolean removeLibrary(String Name) {
-    return false;
+  public static int convUnsignedLong(long value) {
+    return (int)(value&LongMask);
   }
 }

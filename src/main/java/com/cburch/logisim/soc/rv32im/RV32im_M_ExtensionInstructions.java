@@ -138,4 +138,6 @@ public class RV32im_M_ExtensionInstructions implements RV32imExecutionUnitInterf
     return false;
   }
 
+  public String getErrorMessage() { return null; }
+
 }

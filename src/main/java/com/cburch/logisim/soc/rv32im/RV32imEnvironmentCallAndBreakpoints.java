@@ -88,4 +88,5 @@ public class RV32imEnvironmentCallAndBreakpoints implements RV32imExecutionUnitI
     return false;
   }
 
+  public String getErrorMessage() { return null; }
 }
