@@ -47,6 +47,8 @@ public class Soc  extends Library {
          "Socmem", S.getter("SocMemoryComponent"), "" , "memory.SocMemory" ),
     new FactoryDescription(
             "SocPio", S.getter("SocPioComponent"), "" , "pio.SocPio" ),
+    new FactoryDescription(
+            "SocVga", S.getter("SocVgaComponent"), "" , "vga.SocVga" ),
   };
   
   private List<Tool> tools = null;

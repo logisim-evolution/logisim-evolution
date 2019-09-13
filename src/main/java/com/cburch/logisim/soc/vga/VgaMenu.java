@@ -26,7 +26,7 @@
  *     http://www.heig-vd.ch/
  */
 
-package com.cburch.logisim.soc.pio;
+package com.cburch.logisim.soc.vga;
 
 import static com.cburch.logisim.soc.Strings.S;
 
@@ -48,16 +48,16 @@ import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.soc.data.SocSupport;
 import com.cburch.logisim.tools.MenuExtender;
 
-public class PioMenu implements ActionListener, MenuExtender {
+public class VgaMenu implements ActionListener, MenuExtender {
 
   private Instance instance;
   private Frame frame;
   private JMenuItem exportC;
   
-  public PioMenu(Instance inst) {
+  public VgaMenu( Instance inst ) {
     instance = inst;
   }
-  
+
   @Override
   public void configureMenu(JPopupMenu menu, Project proj) {
     this.frame = proj.getFrame();
@@ -73,14 +73,14 @@ public class PioMenu implements ActionListener, MenuExtender {
       exportC();
   }
 
-  private void exportC() {
+  public void exportC() {
     JFileChooser fc = new JFileChooser();
     fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
     int result = fc.showDialog(frame, S.get("SelectDirectoryToStoreC"));
     if (result == JFileChooser.APPROVE_OPTION) {
-      PioState myState = instance.getAttributeValue(PioAttributes.PIO_STATE);
+      VgaState myState = instance.getAttributeValue(VgaAttributes.VGA_STATE);
       if (myState == null)
-        throw new NullPointerException("BUG in PioMenu.java");
+        throw new NullPointerException("BUG in VgaMenu.java");
       String compName = myState.getName().replace(" ", "_").replace("@", "_").replace(",", "_").toUpperCase();
       String headerFileName = fc.getSelectedFile().getAbsolutePath()+File.separator+compName+".h";
       String cFileName = fc.getSelectedFile().getAbsolutePath()+File.separator+compName+".c";
@@ -89,7 +89,7 @@ public class PioMenu implements ActionListener, MenuExtender {
       try {
         headerFile = new FileWriter(headerFileName,false);
       } catch (IOException e) {
-    	headerFile = null;
+        headerFile = null;
       }
       try {
         cFile = new FileWriter(cFileName,false);
@@ -102,67 +102,24 @@ public class PioMenu implements ActionListener, MenuExtender {
       }
       PrintWriter headerWriter = new PrintWriter(headerFile);
       PrintWriter cWriter = new PrintWriter(cFile);
-      headerWriter.println("/* Logisim automatically generated file for a PIO-component */\n");
-      cWriter.println("/* Logisim automatically generated file for a PIO-component */\n");
+      headerWriter.println("/* Logisim automatically generated file for a VGA-component */\n");
+      cWriter.println("/* Logisim automatically generated file for a VGA-component */\n");
       headerWriter.println("#ifndef __"+compName+"_H__");
       headerWriter.println("#define __"+compName+"_H__");
       headerWriter.println();
+      headerWriter.println("#define SOFT_MODE_160X120_MASK "+VgaAttributes.MODE_160_120_MASK);
+      headerWriter.println("#define SOFT_MODE_320X240_MASK "+VgaAttributes.MODE_320_240_MASK);
+      headerWriter.println("#define SOFT_MODE_640X480_MASK "+VgaAttributes.MODE_640_480_MASK);
+      headerWriter.println("#define SOFT_MODE_800X600_MASK "+VgaAttributes.MODE_800_600_MASK);
+      headerWriter.println("#define SOFT_MODE_1024X768_MASK "+VgaAttributes.MODE_1024_768_MASK);
+      headerWriter.println();
       int base = myState.getStartAddress();
-      int nrBits = myState.getNrOfIOs().getWidth();
-      String functName;
-      if (myState.getPortDirection() != PioAttributes.PORT_INPUT) {
-    	  functName = "OutputValue";
-          headerWriter.println(S.fmt("PioMenuOutputDataFunctionRemark",Integer.toString(nrBits)));
-          SocSupport.addSetterFunction(headerWriter,compName,functName,base,0,true);
-          headerWriter.println();
-          SocSupport.addSetterFunction(cWriter,compName,functName,base,0,false);
-      }
-      if (myState.getPortDirection() != PioAttributes.PORT_OUTPUT) {
-        functName = "InputValue";
-        headerWriter.println(S.fmt("PioMenuInputDataFunctionRemark",Integer.toString(nrBits)));
-        SocSupport.addGetterFunction(headerWriter,compName,functName,base,0,true);
-        headerWriter.println();
-        SocSupport.addGetterFunction(cWriter,compName,functName,base,0,false);
-        if (myState.getPortDirection() == PioAttributes.PORT_BIDIR) {
-          functName = "DirectionReg";
-          headerWriter.println(S.fmt("PioMenuBidirFunctionsRemark", Integer.toString(nrBits)));
-          SocSupport.addAllFunctions(headerWriter,cWriter,compName,functName,base,2);
-        }
-        if (myState.inputGeneratesIrq()) {
-          functName = "IrqMaskReg";
-          String reactName = myState.getIrqType() == PioAttributes.IRQ_EDGE ? S.get("PioMenuIrqEdge") : S.get("PioMenuIrqLevel");
-          headerWriter.println(S.fmt("PioMenuMaskFunctionsRemark", reactName, Integer.toString(nrBits)));          
-          SocSupport.addAllFunctions(headerWriter,cWriter,compName,functName,base,2);
-        }
-        if (myState.inputIsCapturedSynchronisely()) {
-          functName = "EdgeCapturReg";
-          String EdgeName = S.get("PioMenuCaptureAny");
-          if (myState.getInputCaptureEdge() == PioAttributes.CAPT_RISING)
-            EdgeName = S.get("PioMenuCaptureRising");
-          if (myState.getInputCaptureEdge() == PioAttributes.CAPT_FALLING)
-            EdgeName = S.get("PioMenuCaptureFalling");
-          String ClearName = myState.inputCaptureSupportsBitClearing() ? S.get("PioMenuCaptureBit") : S.get("PioMenuCaptureAll");
-          headerWriter.println(S.fmt("PioMenuEdgeCaptureRemark", EdgeName, ClearName, Integer.toString(nrBits)));
-          SocSupport.addAllFunctions(headerWriter,cWriter,compName,functName,base,3);
-        }
-        if (myState.outputSupportsBitManipulations()) {
-          functName = "OutsetReg";
-          headerWriter.println(S.fmt("PioMenuOutSetRemark", Integer.toString(nrBits)));
-          SocSupport.addSetterFunction(headerWriter,compName,functName,base,4,true);
-          headerWriter.println();
-          SocSupport.addSetterFunction(cWriter,compName,functName,base,4,false);
-          functName = "OutclearReg";
-          headerWriter.println(S.fmt("PioMenuOutClearRemark", Integer.toString(nrBits)));
-          SocSupport.addSetterFunction(headerWriter,compName,functName,base,5,true);
-          headerWriter.println();
-          SocSupport.addSetterFunction(cWriter,compName,functName,base,5,false);
-        }
-      }
+      headerWriter.println(S.get("VgaMenuModeSelectFunctions"));
+      SocSupport.addAllFunctions(headerWriter,cWriter,compName,"VgaMode",base,0);
       headerWriter.println("#endif");
       headerWriter.close();
       cWriter.close();
       JOptionPane.showMessageDialog(frame, S.fmt("SuccesCreatingHeaderAndCFile", headerFileName, cFileName));
     }
   }
-  
 }

@@ -277,6 +277,10 @@ public class Circuit {
     this.proj = proj;
   }
   
+  public Project getProject() {
+    return proj;
+  }
+  
   public SocSimulationManager getSocSimulationManager() {
     return socSim;
   }

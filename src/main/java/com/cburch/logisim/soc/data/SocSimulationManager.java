@@ -187,7 +187,7 @@ public class SocSimulationManager implements SocBusMasterInterface {
               if (factor.isSocSlave())
                 binfo.registerSocBusSlave(factor.getSlaveInterface(comp.getAttributeSet()));
               if (factor.isSocSniffer())
-                binfo.registerSocBusSniffer(fact.getSnifferInterface(comp.getAttributeSet()));
+                binfo.registerSocBusSniffer(factor.getSnifferInterface(comp.getAttributeSet()));
               iter.remove();
             } else if (id == null || id.isBlank()) iter.remove();
           }
