@@ -31,6 +31,7 @@ package com.cburch.logisim.std;
 import static com.cburch.logisim.std.Strings.S;
 
 import com.cburch.logisim.fpga.library.BFHPraktika;
+import com.cburch.logisim.soc.Soc;
 import com.cburch.logisim.std.arith.Arithmetic;
 import com.cburch.logisim.std.base.Base;
 import com.cburch.logisim.std.gates.Gates;
@@ -67,6 +68,7 @@ public class Builtin extends Library {
               new Tcl(),
               new BFHPraktika(),
               new ITA_IO(),
+              new Soc(),
             });
   }
 

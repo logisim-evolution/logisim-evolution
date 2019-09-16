@@ -34,6 +34,8 @@ import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.instance.Instance;
+import com.cburch.logisim.soc.rv32im.RV32imShape;
+import com.cburch.logisim.soc.vga.SocVgaShape;
 import com.cburch.logisim.std.io.HexDigitShape;
 import com.cburch.logisim.std.io.LedShape;
 import com.cburch.logisim.std.io.RGBLedShape;
@@ -89,6 +91,10 @@ public class AppearanceSvgReader {
         shape = new RegisterShape(x, y, path);
       } else if (name.equals("visible-counter")) {
         shape = new CounterShape(x, y, path);
+      } else if (name.equals("visible-vga")) {
+        shape = new SocVgaShape(x,y,path);
+      } else if (name.equals("visible-riscv")) {
+        shape = new RV32imShape(x,y,path);
       } else {
         return null;
       }

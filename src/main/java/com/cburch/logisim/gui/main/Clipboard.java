@@ -30,8 +30,6 @@ package com.cburch.logisim.gui.main;
 
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.data.AttributeSet;
-import com.cburch.logisim.instance.StdAttr;
-import com.cburch.logisim.std.wiring.Tunnel;
 import com.cburch.logisim.util.PropertyChangeWeakSupport;
 import java.beans.PropertyChangeListener;
 import java.util.Collection;
@@ -73,8 +71,8 @@ class Clipboard {
     propertySupport.firePropertyChange(contentsProperty, old, current);
   }
 
-  public static void set(Selection value, AttributeSet oldAttrs, boolean ClearLabels) {
-    set(new Clipboard(value, oldAttrs, ClearLabels));
+  public static void set(Selection value, AttributeSet oldAttrs) {
+    set(new Clipboard(value, oldAttrs));
   }
 
   public static final String contentsProperty = "contents";
@@ -92,38 +90,19 @@ class Clipboard {
    * This function is in charge of copy paste.
    * Now the tunnels' labels are not cleared except if it is requested to.
    */
-  private Clipboard(Selection sel, AttributeSet viewAttrs, boolean ClearLabels) {
+  private Clipboard(Selection sel, AttributeSet viewAttrs) {
     components = new HashSet<Component>();
     oldAttrs = null;
     newAttrs = null;
     for (Component base : sel.getComponents()) {
       AttributeSet baseAttrs = base.getAttributeSet();
       AttributeSet copyAttrs = (AttributeSet) baseAttrs.clone();
-      /* We clear all labels on the Clipboard */
-      if (copyAttrs.containsAttribute(StdAttr.LABEL) && ClearLabels) {
-        if (!(base.getFactory() instanceof Tunnel)) {
-          copyAttrs.setValue(StdAttr.LABEL, "");
-        }
-      }
 
       Component copy = base.getFactory().createComponent(base.getLocation(), copyAttrs);
       components.add(copy);
       if (baseAttrs == viewAttrs) {
         oldAttrs = baseAttrs;
         newAttrs = copyAttrs;
-      }
-    }
-  }
-
-  public void ClearLabels() {
-    for (Component comp : components) {
-      AttributeSet attrs = comp.getAttributeSet();
-      if (comp.getFactory() instanceof Tunnel) {
-        continue;
-      }
-
-      if (attrs.containsAttribute(StdAttr.LABEL)) {
-        attrs.setValue(StdAttr.LABEL, "");
       }
     }
   }

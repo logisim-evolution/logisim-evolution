@@ -264,7 +264,7 @@ public class CircuitAppearance extends Drawing {
   public boolean isDefaultAppearance() {
     return isDefault;
   }
-
+  
   public void paintSubcircuit(InstancePainter painter, Graphics g, Direction facing) {
     Direction defaultFacing = getFacing();
     double rotate = 0.0;
@@ -284,7 +284,11 @@ public class CircuitAppearance extends Drawing {
     for (CanvasObject shape : getObjectsFromBottom()) {
       if (!(shape instanceof AppearanceElement)) {
         Graphics dup = g.create();
-        if (shape instanceof DynamicElement) ((DynamicElement) shape).paintDynamic(dup, state);
+        if (shape instanceof DynamicElement) {
+          ((DynamicElement) shape).paintDynamic(dup, state);
+          if (shape instanceof DynamicElementWithPoker)
+            ((DynamicElementWithPoker)shape).setAnchor(offset);
+        }
         else shape.paint(dup, null);
         dup.dispose();
       }

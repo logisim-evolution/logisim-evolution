@@ -40,6 +40,7 @@ import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.fpga.hdlgenerator.CircuitHDLGeneratorFactory;
 import com.cburch.logisim.instance.Instance;
+import com.cburch.logisim.instance.InstanceComponent;
 import com.cburch.logisim.instance.InstanceFactory;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
@@ -48,6 +49,7 @@ import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.std.wiring.Pin;
+import com.cburch.logisim.tools.CircuitStateHolder;
 import com.cburch.logisim.tools.MenuExtender;
 import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.StringGetter;
@@ -93,6 +95,17 @@ public class SubcircuitFactory extends InstanceFactory {
       JMenuItem item = new JMenuItem(text);
       item.addActionListener(this);
       menu.add(item);
+      for (Component comp : source.getNonWires()) {
+        if (comp instanceof InstanceComponent) {
+          InstanceComponent c = (InstanceComponent) comp;
+          if (c.getInstance().getFactory().providesSubCircuitMenu()) {
+            MenuExtender m = (MenuExtender) c.getFeature(MenuExtender.class);
+            if (m instanceof CircuitStateHolder)
+                ((CircuitStateHolder)m).setCircuitState((CircuitState)instance.getData(proj.getCircuitState()));
+            m.configureMenu(menu, proj);
+          }
+        }
+      }
     }
 
     public String toString() {

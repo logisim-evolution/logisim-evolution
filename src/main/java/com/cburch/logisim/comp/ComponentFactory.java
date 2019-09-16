@@ -111,4 +111,7 @@ public interface ComponentFactory extends AttributeDefaultProvider {
 
   /* Added for HDL generation */
   public boolean RequiresNonZeroLabel();
+  
+  /* Added for Soc simulation core */
+  public boolean isSocComponent();
 }

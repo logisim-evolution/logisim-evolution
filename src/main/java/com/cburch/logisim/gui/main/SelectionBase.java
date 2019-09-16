@@ -158,7 +158,7 @@ class SelectionBase {
     }
   }
 
-  private HashMap<Component, Component> copyComponents(Collection<Component> components) {
+  private HashMap<Component, Component> copyComponents(Collection<Component> components,boolean translate) {
     // determine translation offset where we can legally place the clipboard
     int dx;
     int dy;
@@ -196,18 +196,18 @@ class SelectionBase {
       if (bds.getX() + dx >= 0
           && bds.getY() + dy >= 0
           && !hasConflictTranslated(components, dx, dy, true)) {
-        return copyComponents(components, dx, dy);
+        return copyComponents(components, dx, dy,translate);
       }
     }
   }
 
   private HashMap<Component, Component> copyComponents(
-      Collection<Component> components, int dx, int dy) {
+      Collection<Component> components, int dx, int dy,boolean translate) {
     HashMap<Component, Component> ret = new HashMap<Component, Component>();
     for (Component comp : components) {
       Location oldLoc = comp.getLocation();
       AttributeSet attrs =
-          (comp.getFactory() instanceof Rom) | (comp.getFactory() instanceof Ram)
+          translate | (comp.getFactory() instanceof Rom) | (comp.getFactory() instanceof Ram)
               ? (AttributeSet) comp.getAttributeSet()
               : (AttributeSet) comp.getAttributeSet().clone();
       int newX = oldLoc.getX() + dx;
@@ -316,7 +316,7 @@ class SelectionBase {
   void pasteHelper(CircuitMutation xn, Collection<Component> comps) {
     clear(xn);
 
-    Map<Component, Component> newLifted = copyComponents(comps);
+    Map<Component, Component> newLifted = copyComponents(comps,false);
     lifted.addAll(newLifted.values());
     fireSelectionChanged();
   }
@@ -373,12 +373,13 @@ class SelectionBase {
   }
 
   void translateHelper(CircuitMutation xn, int dx, int dy) {
-    Map<Component, Component> selectedAfter = copyComponents(selected, dx, dy);
-    for (Map.Entry<Component, Component> entry : selectedAfter.entrySet()) {
+    Map<Component, Component> translatedComps = copyComponents(selected, dx, dy,true);
+    for (Map.Entry<Component, Component> entry : translatedComps.entrySet()) {
       xn.replace(entry.getKey(), entry.getValue());
+      selected.add(entry.getValue());
     }
 
-    Map<Component, Component> liftedAfter = copyComponents(lifted, dx, dy);
+    Map<Component, Component> liftedAfter = copyComponents(lifted, dx, dy,true);
     lifted.clear();
     for (Map.Entry<Component, Component> entry : liftedAfter.entrySet()) {
       xn.add(entry.getValue());

@@ -164,6 +164,10 @@ public abstract class AbstractComponentFactory implements ComponentFactory {
   public boolean RequiresGlobalClock() {
     return false;
   }
+  
+  public boolean isSocComponent() {
+    return false;
+  }
 
   /* HDL Methods */
   public boolean RequiresNonZeroLabel() {

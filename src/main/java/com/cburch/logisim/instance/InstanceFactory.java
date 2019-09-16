@@ -349,4 +349,8 @@ public abstract class InstanceFactory extends AbstractComponentFactory {
   public void setShouldSnap(boolean value) {
     shouldSnap = Boolean.valueOf(value);
   }
+  
+  public boolean providesSubCircuitMenu() {
+    return false;
+  }
 }
