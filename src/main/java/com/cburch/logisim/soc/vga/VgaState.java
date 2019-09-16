@@ -378,7 +378,7 @@ public class VgaState implements SocBusSlaveInterface, SocBusSnifferInterface,So
 
   public String getName() {
     String name = label;
-    if (name == null || name.isBlank()) {
+    if (name == null || name.isEmpty()) {
       Location loc = attachedBus.getComponent().getLocation();
       name = attachedBus.getComponent().getFactory().getDisplayName()+"@"+loc.getX()+","+loc.getY();
     }

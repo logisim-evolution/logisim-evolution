@@ -184,7 +184,7 @@ public class SocBusStateInfo extends JDialog implements ActionListener,LocaleLis
   
   public String getName() {
     String name = myComp.getAttributeSet().getValue(StdAttr.LABEL);
-    if (name == null || name.isBlank()) {
+    if (name == null || name.isEmpty()) {
       Location loc = myComp.getLocation();
       name = myComp.getFactory().getDisplayName()+"@"+loc.getX()+","+loc.getY();
     }

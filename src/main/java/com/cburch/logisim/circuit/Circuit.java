@@ -803,12 +803,12 @@ public class Circuit {
             continue;
           if (comp.getAttributeSet().containsAttribute(StdAttr.LABEL)) {
             String label = comp.getAttributeSet().getValue(StdAttr.LABEL);
-            if (label != null && !label.isBlank())
+            if (label != null && !label.isEmpty())
         	    labels.add(label.toUpperCase());
           }
         }
         String label = c.getAttributeSet().getValue(StdAttr.LABEL);
-        if (label != null && !label.isBlank() && labels.contains(label.toUpperCase()))
+        if (label != null && !label.isEmpty() && labels.contains(label.toUpperCase()))
           c.getAttributeSet().setValue(StdAttr.LABEL, "");
       }
       wires.add(c);

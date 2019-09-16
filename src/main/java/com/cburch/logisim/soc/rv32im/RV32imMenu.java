@@ -67,7 +67,7 @@ public class RV32imMenu implements ActionListener, MenuExtender, CircuitStateHol
   public void configureMenu(JPopupMenu menu, Project proj) {
     frame = proj.getFrame();
     String instName = instance.getAttributeValue(StdAttr.LABEL);
-    if (instName == null || instName.isBlank()) {
+    if (instName == null || instName.isEmpty()) {
       Location loc = instance.getLocation();
       instName = instance.getFactory().getHDLName(instance.getAttributeSet())+"@"+loc.getX()+","+loc.getY();
     }

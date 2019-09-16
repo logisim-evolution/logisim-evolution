@@ -146,12 +146,12 @@ public class SocSimulationManager implements SocBusMasterInterface {
   private CircuitState state;
 
   public String getSocBusDisplayString(String id) {
-    if (id == null || id.isBlank() || !socBusses.containsKey(id))
+    if (id == null || id.isEmpty() || !socBusses.containsKey(id))
       return null;
     SocBusStateInfo bus = socBusses.get(id);
     Component c = bus.getComponent();
     String name = c == null ? null : c.getAttributeSet().getValue(StdAttr.LABEL);
-    if ((name == null || name.isBlank()) && c != null) {
+    if ((name == null || name.isEmpty()) && c != null) {
       Location loc = c.getLocation();
       name = c.getFactory().getDisplayName()+"@"+loc.getX()+","+loc.getY();
     }
@@ -192,7 +192,7 @@ public class SocSimulationManager implements SocBusMasterInterface {
               if (factor.isSocSniffer())
                 binfo.registerSocBusSniffer(factor.getSnifferInterface(comp.getAttributeSet()));
               iter.remove();
-            } else if (id == null || id.isBlank()) iter.remove();
+            } else if (id == null || id.isEmpty()) iter.remove();
           }
         }
       }
@@ -244,7 +244,7 @@ public class SocSimulationManager implements SocBusMasterInterface {
     		null,
     		busses.keySet().toArray(),
     		"");
-    if (res!=null && !res.isBlank())
+    if (res!=null && !res.isEmpty())
       return busses.get(res);
     return "";
   }

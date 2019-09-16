@@ -115,7 +115,7 @@ public class SocBusAttributes extends AbstractAttributeSet {
     if (attr == StdAttr.LABEL_VISIBILITY)
       return (V) LabelVisable;
     if (attr == SOC_BUS_ID) {
-      if (ID.getBusId() == null || ID.getBusId().isBlank()) {
+      if (ID.getBusId() == null || ID.getBusId().isEmpty()) {
         Date date = new Date();
         String[] names = this.toString().split("@");
           ID.setBusId(String.format("0x%016X%s", date.getTime(), names[names.length-1]));

@@ -412,7 +412,7 @@ public class PioState implements SocBusSlaveInterface {
     if (attachedBus == null || attachedBus.getComponent() == null)
       return "BUG: Unknown";
     String name = label;
-    if (name == null || name.isBlank()) {
+    if (name == null || name.isEmpty()) {
       Location loc = attachedBus.getComponent().getLocation();
       name = attachedBus.getComponent().getFactory().getDisplayName()+"@"+loc.getX()+","+loc.getY();
     }
