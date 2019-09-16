@@ -30,6 +30,7 @@ package com.cburch.logisim.soc.rv32im;
 
 import java.math.BigInteger;
 
+import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.soc.file.ElfHeader;
 
 public class RV32im_M_ExtensionInstructions implements RV32imExecutionUnitInterface {
@@ -54,7 +55,7 @@ public class RV32im_M_ExtensionInstructions implements RV32imExecutionUnitInterf
   private int source1;
   private int source2;
   
-  public boolean execute(RV32im_state state) {
+  public boolean execute(RV32im_state.ProcessorState state, CircuitState cState) {
     if (!valid) return false;
     int val1 = state.getRegisterValue(source1);
     int val2 = state.getRegisterValue(source2);

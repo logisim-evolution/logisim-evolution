@@ -76,12 +76,6 @@ public class SocBus extends SocInstanceFactory {
     super.instanceAttributeChanged(instance, attr);
     if (attr.equals(SocBusAttributes.NrOfTracesAttr)) {
        instance.recomputeBounds();
-       SocBusInfo info = (SocBusInfo)instance.getAttributeValue(SocBusAttributes.SOC_BUS_ID);
-       if (info != null) {
-         SocBusStateInfo data = info.getSocSimulationManager().getSocBusState(info.getBusId());
-         if (data != null)
-           data.cleanup();
-       }
     }
   }
   
@@ -113,18 +107,23 @@ public class SocBus extends SocInstanceFactory {
     g2.setFont(StdAttr.DEFAULT_LABEL_FONT);
     GraphicsUtil.drawCenteredText(g2, "SOC Bus Interconnect", loc.getX()+320, loc.getY()+10);
     g2.setFont(f);
+    if (painter.isPrintView()) return;
     SocBusInfo info = (SocBusInfo)painter.getAttributeValue(SocBusAttributes.SOC_BUS_ID);
     SocBusStateInfo data = info.getSocSimulationManager().getSocBusState(info.getBusId());
     if (data != null)
-      data.paint(loc.getX(),loc.getY(),g2,painter.getInstance(),painter.getAttributeValue(SocBusAttributes.SOC_TRACE_VISABLE));
+      data.paint(loc.getX(),loc.getY(),g2,painter.getInstance(),painter.getAttributeValue(SocBusAttributes.SOC_TRACE_VISABLE),painter.getData());
   }
 
   @Override
   public void propagate(InstanceState state) {
 	SocBusInfo info = (SocBusInfo)state.getAttributeValue(SocBusAttributes.SOC_BUS_ID);
     SocBusStateInfo data = info.getSocSimulationManager().getSocBusState(info.getBusId());
-    if (data != null)
+    SocBusStateInfo.SocBusState dat = (SocBusStateInfo.SocBusState) state.getData();
+    if (dat == null)
+      state.setData(data.getNewState());
+    if (data != null) {
       data.setReset(state.getPortValue(0));
+    }
   }
 
   @Override

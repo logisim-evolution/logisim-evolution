@@ -41,10 +41,12 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
 import com.cburch.logisim.circuit.Circuit;
+import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.gui.main.Frame;
+import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.soc.bus.SocBusAttributes;
 
@@ -141,6 +143,7 @@ public class SocSimulationManager implements SocBusMasterInterface {
   public final static Attribute<SocBusInfo> SOC_BUS_SELECT = new SocBusSelectAttribute();
   private HashMap<String,SocBusStateInfo> socBusses = new HashMap<String,SocBusStateInfo>();
   private ArrayList<Component> toBeChecked = new ArrayList<Component>();
+  private CircuitState state;
 
   public String getSocBusDisplayString(String id) {
     if (id == null || id.isBlank() || !socBusses.containsKey(id))
@@ -269,15 +272,27 @@ public class SocSimulationManager implements SocBusMasterInterface {
     if (toBeChecked.contains(comp))
       toBeChecked.remove(comp);
   }
+  
+  public Object getdata(Component comp) {
+    if (state == null)
+      return null;
+    return state.getData(comp);
+  }
+  
+  public InstanceState getState(Component comp) {
+    if (state == null)
+      return null;
+    return state.getInstanceState(comp);
+  }
 
 
   @Override
-  public SocBusTransaction initializeTransaction(SocBusTransaction trans, String busId) {
+  public void initializeTransaction(SocBusTransaction trans, String busId, CircuitState cState) {
+    state = cState;
     SocBusStateInfo info = socBusses.get(busId);
     if (info == null || info.getComponent() == null) {
-      SocBusTransaction res = trans.clone();
-      res.setError(SocBusTransaction.NoSocBusConnectedError);
-      return res;
+      trans.setError(SocBusTransaction.NoSocBusConnectedError);
+      return;
     }
     Iterator<Component> iter = toBeChecked.iterator();
     while (iter.hasNext()) {
@@ -299,7 +314,7 @@ public class SocSimulationManager implements SocBusMasterInterface {
       }
       iter.remove();
     }
-	return info.initializeTransaction(trans, busId);
+	info.initializeTransaction(trans, busId);
   }
   
 }

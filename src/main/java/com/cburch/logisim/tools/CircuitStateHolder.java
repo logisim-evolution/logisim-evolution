@@ -26,12 +26,10 @@
  *     http://www.heig-vd.ch/
  */
 
-package com.cburch.logisim.soc.data;
+package com.cburch.logisim.tools;
 
 import com.cburch.logisim.circuit.CircuitState;
 
-public interface SocProcessorInterface {
-
-  public void setEntryPointandReset(long entryPoint);
-  public void insertTransaction(SocBusTransaction trans, boolean hidden, CircuitState cState);
+public interface CircuitStateHolder {
+   public void setCircuitState(CircuitState state);
 }

@@ -32,6 +32,8 @@ import static com.cburch.logisim.soc.Strings.S;
 
 import javax.swing.JOptionPane;
 
+import com.cburch.logisim.circuit.CircuitState;
+
 public class RV32imEnvironmentCallAndBreakpoints implements RV32imExecutionUnitInterface {
 
   private final static int SYSTEM = 0x73;
@@ -45,7 +47,7 @@ public class RV32imEnvironmentCallAndBreakpoints implements RV32imExecutionUnitI
   private int operation;
   private boolean valid;
   
-  public boolean execute(RV32im_state state) {
+  public boolean execute(RV32im_state.ProcessorState state, CircuitState cState) {
     if (!valid)
       return false;
     JOptionPane.showMessageDialog(null, S.get("Rv32imECABNotImplmented"));

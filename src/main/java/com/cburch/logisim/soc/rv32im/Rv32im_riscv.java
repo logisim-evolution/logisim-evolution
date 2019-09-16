@@ -34,16 +34,21 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.event.MouseEvent;
 
+import com.cburch.logisim.circuit.appear.DynamicElement;
+import com.cburch.logisim.circuit.appear.DynamicElement.Path;
+import com.cburch.logisim.circuit.appear.DynamicElementProvider;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Location;
+import com.cburch.logisim.data.Value;
 import com.cburch.logisim.gui.icons.ArithmeticIcon;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstancePoker;
 import com.cburch.logisim.instance.InstanceState;
+import com.cburch.logisim.instance.InstanceStateImpl;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.soc.data.SocBusSlaveInterface;
@@ -55,7 +60,7 @@ import com.cburch.logisim.soc.data.SocUpSimulationState;
 import com.cburch.logisim.tools.MenuExtender;
 import com.cburch.logisim.util.GraphicsUtil;
 
-public class Rv32im_riscv extends SocInstanceFactory {
+public class Rv32im_riscv extends SocInstanceFactory implements DynamicElementProvider {
   
   public static class SimStatePoker extends InstancePoker {
     @Override
@@ -63,7 +68,7 @@ public class Rv32im_riscv extends SocInstanceFactory {
       Location loc = state.getInstance().getLocation();
       Bounds bloc = SocUpSimulationState.getButtonLocation(loc.getX(), loc.getY(), simStateBounds);
       if (bloc.contains(e.getX(), e.getY())) {
-        state.getAttributeValue(RV32imAttributes.RV32IM_STATE).simButtonPressed();
+        ((RV32im_state.ProcessorState)state.getData()).SimButtonPressed();
       }
     }
   }
@@ -84,6 +89,11 @@ public class Rv32im_riscv extends SocInstanceFactory {
     return new RV32imAttributes();
   }
   
+  @Override
+  public boolean providesSubCircuitMenu() {
+    return true;
+  }
+
   @Override
   protected Object getInstanceFeature(Instance instance, Object key) {
     if (key == MenuExtender.class) {
@@ -133,7 +143,6 @@ public class Rv32im_riscv extends SocInstanceFactory {
 
   @Override
   public void paintInstance(InstancePainter painter) {
-    RV32im_state state = painter.getAttributeValue(RV32imAttributes.RV32IM_STATE);
     Location loc = painter.getLocation();
     Graphics2D g2 = (Graphics2D)painter.getGraphics();
     painter.drawBounds();
@@ -147,15 +156,25 @@ public class Rv32im_riscv extends SocInstanceFactory {
     g2.setFont(StdAttr.DEFAULT_LABEL_FONT);
     GraphicsUtil.drawCenteredText(g2, "RISC V IM simulator", loc.getX()+320, loc.getY()+630);
     g2.setFont(f);
+    if (painter.isPrintView()) return;
     painter.getAttributeValue(SocSimulationManager.SOC_BUS_SELECT).paint(g2, 
     		Bounds.create(loc.getX()+busConBounds.getX(), loc.getY()+busConBounds.getY(), 
     				busConBounds.getWidth(), busConBounds.getHeight()));
-    state.paint(loc.getX(), loc.getY(), g2,painter.getInstance(),painter.getAttributeValue(RV32imAttributes.RV32IM_STATE_VISABLE));
+    RV32im_state state = painter.getAttributeValue(RV32imAttributes.RV32IM_STATE);
+    state.paint(loc.getX(), loc.getY(), g2,painter.getInstance(),painter.getAttributeValue(RV32imAttributes.RV32IM_STATE_VISABLE), painter.getData());
   }
 
   @Override
   public void propagate(InstanceState state) {
-    state.getAttributeValue(RV32imAttributes.RV32IM_STATE).updateClock(state.getPortValue(1), state.getPortValue(0));
+    RV32im_state.ProcessorState data = (RV32im_state.ProcessorState) state.getData(); 
+	if (data == null) {
+	  data = state.getAttributeValue(RV32imAttributes.RV32IM_STATE).getNewState();
+	  state.setData(data);
+	}
+	if (state.getPortValue(0) == Value.TRUE)
+	  data.reset();
+	else
+	  data.setClock(state.getPortValue(1), ((InstanceStateImpl)state).getCircuitState());
   }
 
   @Override
@@ -167,6 +186,11 @@ public class Rv32im_riscv extends SocInstanceFactory {
   @Override
   public SocProcessorInterface getProcessorInterface(AttributeSet attrs) {
     return attrs.getValue(RV32imAttributes.RV32IM_STATE);
+  }
+
+  @Override
+  public DynamicElement createDynamicElement(int x, int y, Path path) {
+    return new RV32imShape(x,y,path);
   }
   
 }

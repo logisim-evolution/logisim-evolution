@@ -242,6 +242,26 @@ public abstract class DynamicElement extends AbstractCanvasObject {
     }
     return o;
   }
+  
+  protected InstanceComponent getComponent(CircuitState state) {
+    Object o = state.getData(path.elt[0]);
+    InstanceComponent comp = path.elt[0];
+    for (int i = 1; i < path.elt.length && o != null; i++) {
+      if (!(o instanceof CircuitState)) {
+        throw new IllegalStateException(
+            "Expecting CircuitState for path["
+                + (i - 1)
+                + "] "
+                + path.elt[i - 1]
+                + "  but got: "
+                + o);
+      }
+      state = (CircuitState) o;
+      comp = path.elt[i];
+      o = state.getData(path.elt[i]);
+    }
+    return comp;
+  }
 
   @Override
   public String getDisplayNameAndLabel() {

@@ -33,7 +33,6 @@ import static com.cburch.logisim.soc.Strings.S;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -50,10 +49,13 @@ import javax.swing.JTable;
 import javax.swing.table.TableCellRenderer;
 
 import com.cburch.logisim.comp.Component;
+import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceComponent;
+import com.cburch.logisim.instance.InstanceData;
+import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.soc.bus.SocBusAttributes;
@@ -62,101 +64,63 @@ import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.LocaleListener;
 import com.cburch.logisim.util.LocaleManager;
 
-public class SocBusStateInfo extends JDialog implements SocBusMasterInterface,ActionListener,
-        LocaleListener,WindowListener {
+public class SocBusStateInfo extends JDialog implements ActionListener,LocaleListener,WindowListener {
 
   private static final long serialVersionUID = 1L;
   public static final int TraceWidth = 630;
   public static final int TraceHeight = 30;
   
-  private class TransactionInfo {
-    SocBusTransaction request,response;
+  public class SocBusState implements InstanceData,Cloneable {
     
-    public TransactionInfo(SocBusTransaction request, SocBusTransaction response) {
-      this.request = request;
-      this.response = response;
+    private static final int NR_OF_TRACES_TO_KEEP = 10000;
+    private LinkedList<SocBusTransaction> trace;
+    private long startTraceIndex;
+    
+    public SocBusState() {
+      trace = new LinkedList<SocBusTransaction>();
+      startTraceIndex = 0;
     }
-    
-    private void paintTraceInfo(Graphics2D g, SocBusTransaction t, boolean isRequest) {
-      g.setColor(Color.BLACK);
-      g.drawLine(0, 0, 0, TraceHeight-2);
-      if (t.hasError()) {
-        Font f = g.getFont();
-        g.setColor(Color.RED);
-        g.setFont(StdAttr.DEFAULT_LABEL_FONT);
-        GraphicsUtil.drawCenteredText(g, t.getShortErrorMessage(), 117, (TraceHeight-2)>>1);
-        g.setFont(f);
-        g.setColor(Color.BLACK);
-        return;
-      }
-      String title = isRequest ? S.get("SocBusStateMaster")+t.transactionInitiator() : 
-      S.get("SocBusStateSlave")+t.transactionResponder();
-      GraphicsUtil.drawCenteredText(g, title, 118, (TraceHeight-2)/4);
-      g.drawRect(2, (TraceHeight-2)>>1, 92, (TraceHeight-2)>>1);
-      g.drawLine(14, (TraceHeight-2)>>1, 14, (TraceHeight-2));
-      GraphicsUtil.drawCenteredText(g, "A", 8, (3*(TraceHeight-2))/4);
-      String Str = String.format("0x%08X", t.getAddress());
-      GraphicsUtil.drawCenteredText(g, Str, 53, (3*(TraceHeight-2))/4);
-      g.drawRect(98, (TraceHeight-2)>>1, 92, (TraceHeight-2)>>1);
-      g.drawLine(110, (TraceHeight-2)>>1, 110, (TraceHeight-2));
-      GraphicsUtil.drawCenteredText(g, "D", 104, (3*(TraceHeight-2))/4);
-      if ((isRequest && t.isWriteTransaction())||
-          (!isRequest && t.isReadTransaction())) {
-    	String format = "0x%08X";
-    	if (t.getAccessType() == SocBusTransaction.HalfWordAccess)
-    	  format = "0x%04X";
-    	if (t.getAccessType() == SocBusTransaction.ByteAccess)
-      	  format = "0x%02X";
-        Str = String.format(format, t.getData());
-      }
-      else
-        Str = S.get("SocBusStateNoDataMax10chars");
-      GraphicsUtil.drawCenteredText(g, Str, 148, (3*(TraceHeight-2))/4);
-      if (!isRequest)
-        return;
-      if (t.isAtomicTransaction()) {
-        g.setColor(Color.yellow);
-        g.fillRect(203, (TraceHeight-2)>>1 , 10, (TraceHeight-2)>>1);
-        g.setColor(Color.BLUE);
-        GraphicsUtil.drawCenteredText(g, "A", 208, (3*(TraceHeight-2))/4);
-        g.setColor(Color.BLACK);
-      }
-      if (t.isWriteTransaction()) {
-        g.fillRect(214, (TraceHeight-2)>>1 , 10, (TraceHeight-2)>>1);
-        g.setColor(Color.WHITE);
-        GraphicsUtil.drawCenteredText(g, "W", 219, (3*(TraceHeight-2))/4);
-        g.setColor(Color.BLACK);
-      }
-      if (t.isReadTransaction()) {
-        g.fillRect(225, (TraceHeight-2)>>1 , 10, (TraceHeight-2)>>1);
-        g.setColor(Color.WHITE);
-        GraphicsUtil.drawCenteredText(g, "R", 230, (3*(TraceHeight-2))/4);
-        g.setColor(Color.BLACK);
+ 
+    public SocBusState clone() {
+      try {
+        return (SocBusState) super.clone();
+      } catch (CloneNotSupportedException e) {
+        return null;
       }
     }
+
+    public void addTransaction(SocBusTransaction t) {
+      while (trace.size() >= NR_OF_TRACES_TO_KEEP) {
+        startTraceIndex++;
+        trace.removeFirst();
+      }
+      trace.addLast(t);
+    }
     
-    public void paint(int x , int y, Graphics2D g2, Long index) {
-      Graphics2D g = (Graphics2D)g2.create();
-      g.translate(x, y);
-      g.setColor(Color.WHITE);
-      g.fillRect(0, 0, TraceWidth-2, TraceHeight-2);
-      g.setColor(Color.BLACK);
-      g.drawRect(0, 0, TraceWidth-2, TraceHeight-2);
-      GraphicsUtil.drawCenteredText(g, S.get("SocBusStateTraceIndex"), 79, (TraceHeight-2)/4);
-      GraphicsUtil.drawCenteredText(g, index.toString(), 79, (3*(TraceHeight-2)/4));
-      g.translate(158, 0);
-      paintTraceInfo(g,request,true);
-      g.translate(235, 0);
-      paintTraceInfo(g,response,false);
-      g.dispose();
+    public void clear() {
+      trace.clear();
+      startTraceIndex = 0;
+    }
+    
+    public void paint(Graphics2D g , Bounds b) {
+      if (trace.isEmpty()) {
+        GraphicsUtil.drawCenteredText(g, S.get("SocBusNoTrace"), b.getCenterX(), b.getCenterY());
+        return;
+      }
+      long nrOfTraces = b.getHeight()/TraceHeight;
+      if (nrOfTraces > trace.size())
+        nrOfTraces = trace.size();
+      int startIndex = trace.size()-1;
+      for (int i = 0 ; i < nrOfTraces; i++) {
+        SocBusTransaction t = trace.get(startIndex-i);
+        t.paint(b.getX()+1, b.getY()+1+i*TraceHeight, g, startTraceIndex+startIndex-i);
+      }
     }
   }
-
+  
   private SocSimulationManager socManager;
   private Component myComp;
   private ArrayList<SocBusSnifferInterface> sniffers;
-  private LinkedList<TransactionInfo> trace;
-  private long traceCountOffset;
   private Value oldReset;
   private JButton okButton;
   private JLabel title;
@@ -170,8 +134,6 @@ public class SocBusStateInfo extends JDialog implements SocBusMasterInterface,Ac
     socManager = man;
     myComp = comp;
     sniffers = new ArrayList<SocBusSnifferInterface>();
-    trace = new LinkedList<TransactionInfo>();
-    traceCountOffset = 0;
     oldReset = Value.UNKNOWN;
     memMap = new SocMemMapModel();
     String id = comp.getAttributeSet().getValue(SocBusAttributes.SOC_BUS_ID).getBusId();
@@ -182,8 +144,8 @@ public class SocBusStateInfo extends JDialog implements SocBusMasterInterface,Ac
     title = new JLabel(S.get("SocMemoryMapTitle"),JLabel.CENTER);
     add(title,BorderLayout.NORTH);
     JTable table = new JTable(memMap) {
-	  private static final long serialVersionUID = 1L;
-	  public TableCellRenderer getCellRenderer(int row, int column) { return memMap.getCellRender(); }
+      private static final long serialVersionUID = 1L;
+      public TableCellRenderer getCellRenderer(int row, int column) { return memMap.getCellRender(); }
     };
     table.getTableHeader().setDefaultRenderer(memMap.getHeaderRenderer());
     table.setFillsViewportHeight(true);
@@ -231,8 +193,8 @@ public class SocBusStateInfo extends JDialog implements SocBusMasterInterface,Ac
   
   public void setReset( Value reset ) {
     if (oldReset.equals(Value.FALSE) && reset.equals(Value.TRUE)) {
-      traceCountOffset = 0;
-      trace.clear();
+      if (getRegPropagateState() != null)
+        getRegPropagateState().clear();
     }
     oldReset = reset;
   }
@@ -253,50 +215,43 @@ public class SocBusStateInfo extends JDialog implements SocBusMasterInterface,Ac
     return mygui;
   }
 
-  @Override
-  public SocBusTransaction initializeTransaction(SocBusTransaction trans, String busId) {
-    SocBusTransaction ret = trans.clone();
+  public void initializeTransaction(SocBusTransaction trans, String busId) {
     int nrOfReponders = 0;
     int reponder = -1;
     ArrayList<SocBusSlaveInterface> slaves = memMap.getSlaves();
     if (slaves.isEmpty())
-      ret.setError(SocBusTransaction.NoSlavesError);
+      trans.setError(SocBusTransaction.NoSlavesError);
     else if (trans.isReadTransaction()&&trans.isWriteTransaction()&&!trans.isAtomicTransaction())
-      ret.setError(SocBusTransaction.NoneAtomicReadWriteError);
+      trans.setError(SocBusTransaction.NoneAtomicReadWriteError);
     else {
       for (int i = 0 ; i < slaves.size() ; i++) {
-        if (slaves.get(i).canHandleTransaction(ret)) {
+        if (slaves.get(i).canHandleTransaction(trans)) {
           nrOfReponders++;
           reponder = i;
         }
       }
       if (nrOfReponders == 0)
-        ret.setError(SocBusTransaction.NoResponsError);
+        trans.setError(SocBusTransaction.NoResponsError);
       else if (nrOfReponders != 1)
-        ret.setError(SocBusTransaction.MultipleSlavesError);
+        trans.setError(SocBusTransaction.MultipleSlavesError);
       else
-        ret = slaves.get(reponder).handleTransaction(trans);
+        slaves.get(reponder).handleTransaction(trans);
     }
-    if (!ret.hasError()&&!ret.isHidden()) {
+    if (!trans.hasError()&&!trans.isHidden()) {
       for (SocBusSnifferInterface sniffer : sniffers)
-        sniffer.sniffTransaction(ret);
+        sniffer.sniffTransaction(trans);
     }
-    if (!ret.isHidden()) {
-      cleanup();
-      trace.add(new TransactionInfo(trans,ret));
-      ((InstanceComponent) myComp).getInstance().fireInvalidated();
-    }
-    return ret;
-  }
-  
-  public void cleanup() {
-    while (trace.size()>=myComp.getAttributeSet().getValue(SocBusAttributes.NrOfTracesAttr).getWidth()) {
-      trace.removeFirst();
-      traceCountOffset++;
+    if (!trans.isHidden()) {
+      SocBusState data = getRegPropagateState();
+      if (data != null) {
+        data.addTransaction(trans);
+        if (myComp.getAttributeSet().getValue(SocBusAttributes.SOC_TRACE_VISABLE))
+          ((InstanceComponent) myComp).getInstance().fireInvalidated();
+      }
     }
   }
   
-  public void paint(int x , int y , Graphics2D g2, Instance inst, boolean visible) {
+  public void paint(int x , int y , Graphics2D g2, Instance inst, boolean visible,InstanceData info) {
     Graphics2D g = (Graphics2D) g2.create();
     g.translate(x+5, y+25);
     int nrOfTraces = inst.getAttributeValue(SocBusAttributes.NrOfTracesAttr).getWidth();
@@ -307,14 +262,19 @@ public class SocBusStateInfo extends JDialog implements SocBusMasterInterface,Ac
     g.drawRect(0, 0, TraceWidth, height);
     if (!visible) 
       GraphicsUtil.drawCenteredText(g, S.get("SocHiddenForFasterSimulation"), 320, height/2);
-    else if (trace.isEmpty()) {
-      GraphicsUtil.drawCenteredText(g, S.get("SocBusNoTrace"), 320, height/2);
-    } else {
-      for (int i = 0 ; i < trace.size() ; i++) {
-        trace.get(i).paint(1, 1+i*30, g, traceCountOffset+i);
-      }
+    else {
+      if (info != null)
+        ((SocBusState)info).paint(g, Bounds.create(0,0,640,height));
     }
     g.dispose();
+  }
+  
+  public SocBusState getNewState() {
+    return new SocBusState();
+  }
+  
+  public SocBusState getRegPropagateState() {
+    return (SocBusState) socManager.getdata(myComp);
   }
   
   @Override

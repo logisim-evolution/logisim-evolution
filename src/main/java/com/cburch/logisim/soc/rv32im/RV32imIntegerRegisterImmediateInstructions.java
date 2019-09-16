@@ -28,6 +28,7 @@
 
 package com.cburch.logisim.soc.rv32im;
 
+import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.soc.file.ElfHeader;
 
 public class RV32imIntegerRegisterImmediateInstructions implements RV32imExecutionUnitInterface {
@@ -74,7 +75,7 @@ public class RV32imIntegerRegisterImmediateInstructions implements RV32imExecuti
   private int operation;
   private boolean valid = false;
   
-  public boolean execute(RV32im_state state) {
+  public boolean execute(RV32im_state.ProcessorState state, CircuitState cState) {
     if (!valid)
       return false;
     int result = 0;

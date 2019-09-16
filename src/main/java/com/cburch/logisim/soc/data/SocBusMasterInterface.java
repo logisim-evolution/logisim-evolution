@@ -28,6 +28,8 @@
 
 package com.cburch.logisim.soc.data;
 
+import com.cburch.logisim.circuit.CircuitState;
+
 public interface SocBusMasterInterface {
-   public SocBusTransaction initializeTransaction(SocBusTransaction trans, String busId);
+   public void initializeTransaction(SocBusTransaction trans, String busId, CircuitState cstate);
 }

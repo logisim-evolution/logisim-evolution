@@ -30,7 +30,14 @@ package com.cburch.logisim.soc.data;
 
 import static com.cburch.logisim.soc.Strings.S;
 
-public class SocBusTransaction implements Cloneable {
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics2D;
+
+import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.util.GraphicsUtil;
+
+public class SocBusTransaction {
 
   public static int READTransaction = 1;
   public static int WRITETransaction = 2;
@@ -53,7 +60,7 @@ public class SocBusTransaction implements Cloneable {
   public static final int HalfWordAccess = 2;
   public static final int WordAccess = 3;
    
-  private int address,data,type,access;
+  private int address,writeData,readData,type,access;
   private String MasterName;
   private String SlaveName;
   private int Error;
@@ -62,20 +69,13 @@ public class SocBusTransaction implements Cloneable {
   public SocBusTransaction(int type , int addr , int value, int access, String master) {
      this.type = type;
      this.address = addr;
-     this.data = value;
+     this.writeData = value;
      this.access = access;
      MasterName = master;
      SlaveName = null;
+     readData = 0;
      Error = NoError;
      hidden = false;
-  }
-  
-  public SocBusTransaction clone() {
-	SocBusTransaction ret = new SocBusTransaction(type,address,data,access,MasterName);
-	ret.SlaveName = SlaveName;
-	ret.Error = Error;
-	ret.hidden = hidden;
-	return ret;
   }
   
   public void setAsHiddenTransaction() {
@@ -162,12 +162,16 @@ public class SocBusTransaction implements Cloneable {
     return address;
   }
   
-  public int getData() {
-    return data;
+  public int getReadData() {
+    return readData;
   }
   
-  public void setData(int value) {
-    data = value;
+  public int getWriteData() {
+    return writeData;
+  }
+	  
+  public void setReadData(int value) {
+    readData = value;
   }
   
   public String transactionInitiator() {
@@ -181,4 +185,79 @@ public class SocBusTransaction implements Cloneable {
   public void setTransactionResponder( String name ) {
     SlaveName = name;
   }
+  
+  private void paintTraceInfo(Graphics2D g, boolean isRequest) {
+    g.setColor(Color.BLACK);
+    g.drawLine(0, 0, 0, SocBusStateInfo.TraceHeight-2);
+    if (hasError()&&!isRequest) {
+      Font f = g.getFont();
+      g.setColor(Color.RED);
+      g.setFont(StdAttr.DEFAULT_LABEL_FONT);
+      GraphicsUtil.drawCenteredText(g, getShortErrorMessage(), 117, (SocBusStateInfo.TraceHeight-2)>>1);
+      g.setFont(f);
+      g.setColor(Color.BLACK);
+      return;
+    }
+    String title = isRequest ? S.get("SocBusStateMaster")+transactionInitiator() : 
+    S.get("SocBusStateSlave")+transactionResponder();
+    GraphicsUtil.drawCenteredText(g, title, 118, (SocBusStateInfo.TraceHeight-2)/4);
+    g.drawRect(2, (SocBusStateInfo.TraceHeight-2)>>1, 92, (SocBusStateInfo.TraceHeight-2)>>1);
+    g.drawLine(14, (SocBusStateInfo.TraceHeight-2)>>1, 14, (SocBusStateInfo.TraceHeight-2));
+    GraphicsUtil.drawCenteredText(g, "A", 8, (3*(SocBusStateInfo.TraceHeight-2))/4);
+    String Str = String.format("0x%08X", getAddress());
+    GraphicsUtil.drawCenteredText(g, Str, 53, (3*(SocBusStateInfo.TraceHeight-2))/4);
+    g.drawRect(98, (SocBusStateInfo.TraceHeight-2)>>1, 92, (SocBusStateInfo.TraceHeight-2)>>1);
+    g.drawLine(110, (SocBusStateInfo.TraceHeight-2)>>1, 110, (SocBusStateInfo.TraceHeight-2));
+    GraphicsUtil.drawCenteredText(g, "D", 104, (3*(SocBusStateInfo.TraceHeight-2))/4);
+    if ((isRequest && isWriteTransaction())||
+        (!isRequest && isReadTransaction())) {
+      String format = "0x%08X";
+      if (getAccessType() == SocBusTransaction.HalfWordAccess)
+        format = "0x%04X";
+      if (getAccessType() == SocBusTransaction.ByteAccess)
+        format = "0x%02X";
+      Str = String.format(format, isRequest ? getWriteData() : getReadData());
+    }
+    else
+      Str = S.get("SocBusStateNoDataMax10chars");
+    GraphicsUtil.drawCenteredText(g, Str, 148, (3*(SocBusStateInfo.TraceHeight-2))/4);
+    if (!isRequest)
+      return;
+    if (isAtomicTransaction()) {
+      g.setColor(Color.yellow);
+      g.fillRect(203, (SocBusStateInfo.TraceHeight-2)>>1 , 10, (SocBusStateInfo.TraceHeight-2)>>1);
+      g.setColor(Color.BLUE);
+      GraphicsUtil.drawCenteredText(g, "A", 208, (3*(SocBusStateInfo.TraceHeight-2))/4);
+      g.setColor(Color.BLACK);
+    }
+    if (isWriteTransaction()) {
+      g.fillRect(214, (SocBusStateInfo.TraceHeight-2)>>1 , 10, (SocBusStateInfo.TraceHeight-2)>>1);
+      g.setColor(Color.WHITE);
+      GraphicsUtil.drawCenteredText(g, "W", 219, (3*(SocBusStateInfo.TraceHeight-2))/4);
+      g.setColor(Color.BLACK);
+    }
+    if (isReadTransaction()) {
+      g.fillRect(225, (SocBusStateInfo.TraceHeight-2)>>1 , 10, (SocBusStateInfo.TraceHeight-2)>>1);
+      g.setColor(Color.WHITE);
+      GraphicsUtil.drawCenteredText(g, "R", 230, (3*(SocBusStateInfo.TraceHeight-2))/4);
+      g.setColor(Color.BLACK);
+    }
+  }
+    
+  public void paint(int x , int y, Graphics2D g2, Long index) {
+    Graphics2D g = (Graphics2D)g2.create();
+    g.translate(x, y);
+    g.setColor(Color.WHITE);
+    g.fillRect(0, 0, SocBusStateInfo.TraceWidth-2, SocBusStateInfo.TraceHeight-2);
+    g.setColor(Color.BLACK);
+    g.drawRect(0, 0, SocBusStateInfo.TraceWidth-2, SocBusStateInfo.TraceHeight-2);
+    GraphicsUtil.drawCenteredText(g, S.get("SocBusStateTraceIndex"), 79, (SocBusStateInfo.TraceHeight-2)/4);
+    GraphicsUtil.drawCenteredText(g, index.toString(), 79, (3*(SocBusStateInfo.TraceHeight-2)/4));
+    g.translate(158, 0);
+    paintTraceInfo(g,true);
+    g.translate(235, 0);
+    paintTraceInfo(g,false);
+    g.dispose();
+  }
+
 }

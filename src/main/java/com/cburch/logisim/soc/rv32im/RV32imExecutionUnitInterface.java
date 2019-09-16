@@ -28,8 +28,10 @@
 
 package com.cburch.logisim.soc.rv32im;
 
+import com.cburch.logisim.circuit.CircuitState;
+
 public interface RV32imExecutionUnitInterface {
-  public boolean execute(RV32im_state state);
+  public boolean execute(RV32im_state.ProcessorState state, CircuitState cstate);
   public String getAsmInstruction();
   public int getBinInstruction();
   public boolean setAsmInstruction(String instr);

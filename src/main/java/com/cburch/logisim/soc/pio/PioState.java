@@ -235,11 +235,12 @@ public class PioState implements SocBusSlaveInterface {
     return true;
   }
   
-  public int handleOperations(boolean captureOnly) {
-    InstanceComponent comp = (InstanceComponent) attachedBus.getComponent();
-    InstanceState state = comp.getInstanceStateImpl();
-    checkState(state);
-    PioRegState regs = (PioRegState) state.getData();
+  public int handleOperations(InstanceState state, boolean captureOnly) {
+	PioState.PioRegState regs = (PioState.PioRegState)state.getData();
+	if (regs == null) {
+		regs = new PioRegState();
+	  state.setData(regs);
+	}
     if (state.getPortValue(SocPio.ResetIndex) == Value.TRUE)
       regs.reset();
     int index = inputGeneratesIrq() ? 2 : 1;
@@ -273,33 +274,29 @@ public class PioState implements SocBusSlaveInterface {
     return 0;
   }
   
-  private void checkState(InstanceState state) {
-    if (state.getData() == null)
-      state.setData(new PioRegState());
+  private PioRegState getRegPropagateState() {
+    return (PioRegState) attachedBus.getSocSimulationManager().getdata(attachedBus.getComponent());
   }
-  
-  private PioRegState getRegState() {
-    InstanceComponent comp = (InstanceComponent) attachedBus.getComponent();
-    InstanceState state = comp.getInstanceStateImpl();
-    checkState(state);
-    return (PioRegState) state.getData();
+
+  private InstanceState getPropagateState() {
+    return attachedBus.getSocSimulationManager().getState(attachedBus.getComponent());
   }
-  
+
   private void handleOutputWriteTransaction(SocBusTransaction trans) {
     if (direction == PioAttributes.PORT_INPUT)
       trans.setError(SocBusTransaction.ReadOnlyAccessError);
     else {
-      PioRegState pdata = getRegState();
-      pdata.outputRegister = trans.getData();
-      handleOperations(false);
+      PioRegState pdata = getRegPropagateState();
+      pdata.outputRegister = trans.getWriteData();
+      handleOperations(getPropagateState(),false);
     }
   }
   
   private void handleInputReadTransaction(SocBusTransaction trans) {
     if (direction == PioAttributes.PORT_OUTPUT)
       trans.setError(SocBusTransaction.WriteOnlyAccessError);
-    else
-      trans.setData(handleOperations(true));
+    else 
+      trans.setReadData(handleOperations(getPropagateState(),true));
   }
   
   private void handleDirectionRegister(SocBusTransaction trans) {
@@ -307,11 +304,11 @@ public class PioState implements SocBusSlaveInterface {
       trans.setError(SocBusTransaction.RegisterDoesNotExistError);
       return;
     }
-    PioRegState s = getRegState();
+    PioRegState s = getRegPropagateState();
     if (trans.isReadTransaction())
-      trans.setData(s.directionRegister);
+      trans.setReadData(s.directionRegister);
     if (trans.isWriteTransaction())
-      s.directionRegister = trans.getData();
+      s.directionRegister = trans.getWriteData();
   }
   
   private void handleIrqMaskRegister(SocBusTransaction trans) {
@@ -319,11 +316,11 @@ public class PioState implements SocBusSlaveInterface {
       trans.setError(SocBusTransaction.RegisterDoesNotExistError);
       return;
     }
-    PioRegState s = getRegState();
+    PioRegState s = getRegPropagateState();
     if (trans.isReadTransaction())
-      trans.setData(s.interruptMask);
+      trans.setReadData(s.interruptMask);
     else
-      s.interruptMask = trans.getData();
+      s.interruptMask = trans.getWriteData();
   }
   
   private void handleCaptureRegister(SocBusTransaction trans) {
@@ -331,12 +328,12 @@ public class PioState implements SocBusSlaveInterface {
       trans.setError(SocBusTransaction.RegisterDoesNotExistError);
       return;
     }
-    PioRegState s = getRegState();
+    PioRegState s = getRegPropagateState();
     if (trans.isReadTransaction()) 
-      trans.setData(s.captureRegister);
+      trans.setReadData(s.captureRegister);
     if (trans.isWriteTransaction()) {
       if (inputCaptureSupportsBitClearing()) {
-        int mask = trans.getData() ^ -1;
+        int mask = trans.getWriteData() ^ -1;
         s.captureRegister &= mask;
       } else
         s.captureRegister = 0;
@@ -351,15 +348,15 @@ public class PioState implements SocBusSlaveInterface {
     if (trans.isReadTransaction()) {
       trans.setError(SocBusTransaction.WriteOnlyAccessError);
     }
-    PioRegState s = getRegState();
-    int mask = trans.getData();
+    PioRegState s = getRegPropagateState();
+    int mask = trans.getWriteData();
     if (clear) {
       mask ^= -1;
       s.outputRegister &= mask;
     } else {
       s.outputRegister |= mask;
     }
-    handleOperations(false);
+    handleOperations(getPropagateState(),false);
   }
 
   /* Here the SocBusSlave interface handles are defined */
@@ -372,38 +369,36 @@ public class PioState implements SocBusSlaveInterface {
   }
 
   @Override
-  public SocBusTransaction handleTransaction(SocBusTransaction trans) {
+  public void handleTransaction(SocBusTransaction trans) {
     if (!canHandleTransaction(trans))
-      return null;
-    SocBusTransaction ret = trans.clone();
-    ret.setTransactionResponder(getName());
+      return;
+    trans.setTransactionResponder(getName());
     long addr = SocSupport.convUnsignedInt(trans.getAddress());
     long start = SocSupport.convUnsignedInt(startAddress);
     int index = (int)(addr-start);
-    if (ret.getAccessType() != SocBusTransaction.WordAccess) {
-      ret.setError(SocBusTransaction.AccessTypeNotSupportedError);
-      return ret;
+    if (trans.getAccessType() != SocBusTransaction.WordAccess) {
+      trans.setError(SocBusTransaction.AccessTypeNotSupportedError);
+      return;
     }
     switch (index) {
-      case DATA_REG_INDEX  : if (ret.isWriteTransaction())
-                               handleOutputWriteTransaction(ret);
-                             if (ret.isReadTransaction())
-                               handleInputReadTransaction(ret);
+      case DATA_REG_INDEX  : if (trans.isWriteTransaction())
+                               handleOutputWriteTransaction(trans);
+                             if (trans.isReadTransaction())
+                               handleInputReadTransaction(trans);
                              break;
-      case DIR_REG_INDEX   : handleDirectionRegister(ret);
+      case DIR_REG_INDEX   : handleDirectionRegister(trans);
                              break;
-      case IRQ_MASK_INDEX  : handleIrqMaskRegister(ret);
+      case IRQ_MASK_INDEX  : handleIrqMaskRegister(trans);
                              break;
-      case EDGE_CAPT_INDEX : handleCaptureRegister(ret);
+      case EDGE_CAPT_INDEX : handleCaptureRegister(trans);
                              break;
-      case OUT_SET_INDEX   : handleOutputBitOperation(ret,false);
+      case OUT_SET_INDEX   : handleOutputBitOperation(trans,false);
                              break;
-      case OUT_CLEAR_INDEX : handleOutputBitOperation(ret,true);
+      case OUT_CLEAR_INDEX : handleOutputBitOperation(trans,true);
                              break;
-      default              : ret.setError(SocBusTransaction.MisallignedAddressError);
+      default              : trans.setError(SocBusTransaction.MisallignedAddressError);
                              break;
     }
-    return ret;
   }
 
   @Override

@@ -35,6 +35,7 @@ import java.util.Random;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.instance.InstanceComponent;
+import com.cburch.logisim.instance.InstanceData;
 import com.cburch.logisim.soc.data.SocBusInfo;
 import com.cburch.logisim.soc.data.SocBusSlaveInterface;
 import com.cburch.logisim.soc.data.SocBusSlaveListener;
@@ -43,69 +44,130 @@ import com.cburch.logisim.soc.data.SocSupport;
 
 public class SocMemoryState implements SocBusSlaveInterface {
 
-  private class SocMemoryInfo {
-    private LinkedList<Integer> contents = new LinkedList<Integer>();
-    private int startAddress;
-    private Random rand = new Random();
+  public class SocMemoryInfo implements InstanceData,Cloneable {
+    private class SocMemoryInfoBlock {
+      private LinkedList<Integer> contents = new LinkedList<Integer>();
+      private int startAddress;
+      private Random rand = new Random();
     
-    public SocMemoryInfo(int address, int data) {
-      startAddress = (address>>2)<<2;
-      contents.add(data);
-    }
-    
-    public boolean canAddBefore( int address ) {
-      int previousAddress = getStartAddress()-4;
-      return (address >= previousAddress) && (address < getStartAddress());
-    }
-    
-    public boolean canAddAfter( int address ) {
-      return (address >= getEndAddress())&&(address < getEndAddress()+4);
-    }
-    
-    public boolean contains( int address ) {
-      return (address >= getStartAddress()) && (address < getEndAddress());
-    }
-    
-    public boolean canAdd(int address) {
-      return canAddBefore(address) || canAddAfter(address);
-    }
-    
-    public boolean addInfo(int address, int data) {
-      if (canAddBefore(address)) {
-        contents.addFirst(data);
-        startAddress -= 4;
-        return true;
-      }
-      if (canAddAfter(address)) {
+      public SocMemoryInfoBlock(int address, int data) {
+        startAddress = (address>>2)<<2;
         contents.add(data);
-        return true;
       }
-      if (contains(address)) {
+    
+      public boolean canAddBefore( int address ) {
+        int previousAddress = getStartAddress()-4;
+        return (address >= previousAddress) && (address < getStartAddress());
+      }
+    
+      public boolean canAddAfter( int address ) {
+        return (address >= getEndAddress())&&(address < getEndAddress()+4);
+      }
+    
+      public boolean contains( int address ) {
+        return (address >= getStartAddress()) && (address < getEndAddress());
+      }
+    
+      public boolean canAdd(int address) {
+        return canAddBefore(address) || canAddAfter(address);
+      }
+    
+      public boolean addInfo(int address, int data) {
+        if (canAddBefore(address)) {
+          contents.addFirst(data);
+          startAddress -= 4;
+          return true;
+        }
+        if (canAddAfter(address)) {
+          contents.add(data);
+          return true;
+        }
+        if (contains(address)) {
+          int index = (address-startAddress)>>2;
+          contents.set(index, data);
+          return true;
+        }
+        return false;
+      }
+    
+      public int getValue(int address) {
         int index = (address-startAddress)>>2;
-        contents.set(index, data);
-        return true;
+        if (index >= contents.size()) {
+          return rand.nextInt();
+        }
+        return contents.get(index);
       }
-      return false;
-    }
     
-    public int getValue(int address) {
-      int index = (address-startAddress)>>2;
-      if (index >= contents.size()) {
-        return rand.nextInt();
+      public int getStartAddress() {
+        return startAddress;
       }
-      return contents.get(index);
-    }
     
-    public int getStartAddress() {
-      return startAddress;
+      public int getEndAddress() {
+        return startAddress+contents.size()*4;
+      }
     }
+
+    private ArrayList<SocMemoryInfoBlock> memInfo;
     
-    public int getEndAddress() {
-      return startAddress+contents.size()*4;
+    public SocMemoryInfo() {
+      memInfo = new ArrayList<SocMemoryInfoBlock>();
+    }
+
+    public SocMemoryInfo clone() {
+      try {
+        return (SocMemoryInfo) super.clone();
+      } catch (CloneNotSupportedException e) {
+        return null;
+      }
+    }
+      
+    public int getWord(int address) {
+      for (SocMemoryInfoBlock info : memInfo)
+        if (info.contains(address))
+          return info.getValue(address);
+      return rand.nextInt();
+    }
+
+    public void writeWord(int address, int wdata) {
+      ArrayList<SocMemoryInfoBlock> adders = new ArrayList<SocMemoryInfoBlock>();
+      for (SocMemoryInfoBlock info : memInfo) {
+        if (info.contains(address)) {
+          info.addInfo(address, wdata);
+          return;
+        }
+        if (info.canAdd(address))
+          adders.add(info);
+      }
+      if (adders.isEmpty()) {
+        /* we have to create a new set */
+        memInfo.add(new SocMemoryInfoBlock(address,wdata));
+        return;
+      }
+      if (adders.size() == 1) {
+        /* easy case we can add in front or at the end of an existing one */
+        adders.get(0).addInfo(address, wdata);
+        return;
+      }
+      if (adders.size() > 2) {
+        System.out.println("BUG! Memory management does not function corectly for the SocMemory component!");
+        return;
+      }
+      SocMemoryInfoBlock addbefore = adders.get(0).canAddBefore(address) ? adders.get(0) :
+          adders.get(1).canAddBefore(address) ? adders.get(1) : null;
+      SocMemoryInfoBlock addAfter = adders.get(0).canAddAfter(address) ? adders.get(0) :
+          adders.get(1).canAddAfter(address) ? adders.get(1) : null;
+      if (addbefore == null || addAfter == null) {
+        System.out.println("BUG! Memory management does not function corectly for the SocMemory component!");
+        return;
+      }
+      addAfter.addInfo(address, wdata);
+      for (int i = addbefore.getStartAddress() ; i < addbefore.getEndAddress() ; i += 4) {
+        addAfter.addInfo(i, addbefore.getValue(i));
+      }
+      memInfo.remove(addbefore);
     }
   }
   
-  private ArrayList<SocMemoryInfo> memInfo = new ArrayList<SocMemoryInfo>();
   private int startAddress;
   private int sizeInBytes;
   private Random rand = new Random();
@@ -196,6 +258,10 @@ public class SocMemoryState implements SocBusSlaveInterface {
     if (listeners.contains(l))
       listeners.remove(l);
   }
+  
+  public SocMemoryInfo getNewState() {
+    return new SocMemoryInfo();
+  }
 
   @Override
   public boolean canHandleTransaction(SocBusTransaction trans) {
@@ -206,29 +272,25 @@ public class SocMemoryState implements SocBusSlaveInterface {
   }
   
   @Override
-  public SocBusTransaction handleTransaction(SocBusTransaction trans) {
+  public void handleTransaction(SocBusTransaction trans) {
 	if (!canHandleTransaction(trans)) /* this should never happen */
-	  return null;
-	SocBusTransaction ret = trans.clone();
+	  return;
 	if (trans.isReadTransaction()) {
-	  ret.setData(performReadAction(trans.getAddress(),trans.getAccessType()));
+	  trans.setReadData(performReadAction(trans.getAddress(),trans.getAccessType()));
 	}
 	if (trans.isWriteTransaction()) {
-	  performWriteAction(trans.getAddress(),trans.getData(),trans.getAccessType());
+	  performWriteAction(trans.getAddress(),trans.getWriteData(),trans.getAccessType());
 	}
-	ret.setTransactionResponder(getName());
-    return ret;
+	trans.setTransactionResponder(getName());
   }
   
-  private int getWord(int address) {
-    for (SocMemoryInfo info : memInfo)
-      if (info.contains(address))
-        return info.getValue(address);
-    return rand.nextInt();
+  private SocMemoryInfo getRegPropagateState() {
+    return (SocMemoryInfo) attachedBus.getSocSimulationManager().getdata(attachedBus.getComponent());
   }
   
   private int performReadAction(int address, int type) {
-    int value = getWord((address>>2)<<2);
+    SocMemoryInfo data = getRegPropagateState();
+    int value = (data == null) ? rand.nextInt() : data.getWord((address>>2)<<2);
     int adbit1 = (address >> 1)&1;
     switch (type) {
       case SocBusTransaction.WordAccess : return value;
@@ -249,7 +311,7 @@ public class SocMemoryState implements SocBusSlaveInterface {
   private void performWriteAction(int address, int data, int type) {
 	int wdata = data;
 	if (type != SocBusTransaction.WordAccess) {
-	  int oldData = getWord(address);
+	  int oldData = performReadAction(address,SocBusTransaction.WordAccess);
 	  if (type == SocBusTransaction.HalfWordAccess) {
 	    int bit1 = (address >> 1)&1;
 	    int mdata = data&0xFFFF;
@@ -279,42 +341,7 @@ public class SocMemoryState implements SocBusSlaveInterface {
 	    }
 	  }
 	}
-    ArrayList<SocMemoryInfo> adders = new ArrayList<SocMemoryInfo>();
-    for (SocMemoryInfo info : memInfo) {
-      if (info.contains(address)) {
-        info.addInfo(address, wdata);
-        return;
-      }
-      if (info.canAdd(address))
-        adders.add(info);
-    }
-    if (adders.isEmpty()) {
-      /* we have to create a new set */
-      memInfo.add(new SocMemoryInfo(address,wdata));
-      return;
-    }
-    if (adders.size() == 1) {
-      /* easy case we can add in front or at the end of an existing one */
-      adders.get(0).addInfo(address, wdata);
-      return;
-    }
-    if (adders.size() > 2) {
-      System.out.println("BUG! Memory management does not function corectly for the SocMemory component!");
-      return;
-    }
-    SocMemoryInfo addbefore = adders.get(0).canAddBefore(address) ? adders.get(0) :
-        adders.get(1).canAddBefore(address) ? adders.get(1) : null;
-    SocMemoryInfo addAfter = adders.get(0).canAddAfter(address) ? adders.get(0) :
-        adders.get(1).canAddAfter(address) ? adders.get(1) : null;
-    if (addbefore == null || addAfter == null) {
-      System.out.println("BUG! Memory management does not function corectly for the SocMemory component!");
-      return;
-    }
-    addAfter.addInfo(address, wdata);
-    for (int i = addbefore.getStartAddress() ; i < addbefore.getEndAddress() ; i += 4) {
-      addAfter.addInfo(i, addbefore.getValue(i));
-    }
-    memInfo.remove(addbefore);
+	getRegPropagateState().writeWord(address, wdata);
   }
   
   private void fireNameChanged() {

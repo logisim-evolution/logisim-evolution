@@ -33,12 +33,16 @@ import static com.cburch.logisim.soc.Strings.S;
 import java.awt.Font;
 import java.awt.Graphics;
 
+import com.cburch.logisim.circuit.appear.DynamicElement;
+import com.cburch.logisim.circuit.appear.DynamicElement.Path;
+import com.cburch.logisim.circuit.appear.DynamicElementProvider;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.gui.icons.ArithmeticIcon;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstancePainter;
+import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.soc.data.SocBusSlaveInterface;
 import com.cburch.logisim.soc.data.SocBusSnifferInterface;
@@ -48,7 +52,7 @@ import com.cburch.logisim.soc.data.SocSimulationManager;
 import com.cburch.logisim.tools.MenuExtender;
 import com.cburch.logisim.util.GraphicsUtil;
 
-public class SocVga extends SocInstanceFactory {
+public class SocVga extends SocInstanceFactory implements DynamicElementProvider {
 
   public SocVga() {
     super("SocVga",S.getter("SocVgaComponent"),SocSlave|SocSniffer|SocMaster);
@@ -90,7 +94,17 @@ public class SocVga extends SocInstanceFactory {
   }
 
   @Override
+  public void propagate(InstanceState state) {
+    if (state.getData() == null)
+      state.setData(state.getAttributeValue(VgaAttributes.VGA_STATE).getNewState());
+  }
+
+  @Override
   public void paintInstance(InstancePainter painter) {
+	Bounds bds1 = painter.getBounds();
+	Bounds bds2 = getOffsetBounds(painter.getAttributeSet());
+	if (bds1.getWidth() != bds2.getWidth() || bds1.getHeight() != bds2.getHeight())
+	  setTextField(painter.getInstance());
     painter.drawBounds();
     painter.drawLabel();
     Graphics g = painter.getGraphics().create();
@@ -104,9 +118,9 @@ public class SocVga extends SocInstanceFactory {
     painter.getAttributeValue(SocSimulationManager.SOC_BUS_SELECT).paint(g, 
             Bounds.create(VgaState.LEFT_MARGIN, bds.getHeight()-VgaState.BOTTOM_MARGIN+1, 
                 bds.getWidth()-VgaState.LEFT_MARGIN-VgaState.RIGHT_MARGIN, VgaState.BOTTOM_MARGIN-2));
-    painter.getAttributeValue(VgaAttributes.VGA_STATE).checkState();
     VgaState.VgaDisplayState data = (VgaState.VgaDisplayState) painter.getData();
-    data.paint(g);
+    if (data != null)
+      data.paint(g,painter.getCircuitState());
     g.dispose();
   }
 
@@ -116,4 +130,9 @@ public class SocVga extends SocInstanceFactory {
   public SocBusSnifferInterface getSnifferInterface(AttributeSet attrs) { return attrs.getValue(VgaAttributes.VGA_STATE); }
   @Override
   public SocProcessorInterface getProcessorInterface(AttributeSet attrs) { return null; }
+
+  @Override
+  public DynamicElement createDynamicElement(int x, int y, Path path) {
+	return new SocVgaShape(x,y,path);
+  }
 }

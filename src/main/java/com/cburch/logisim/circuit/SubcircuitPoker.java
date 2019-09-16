@@ -28,11 +28,14 @@
 
 package com.cburch.logisim.circuit;
 
+import com.cburch.draw.model.CanvasObject;
+import com.cburch.logisim.circuit.appear.DynamicElementWithPoker;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.gui.main.Canvas;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstancePoker;
 import com.cburch.logisim.instance.InstanceState;
+
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.MouseEvent;
@@ -63,6 +66,10 @@ public class SubcircuitPoker extends InstancePoker {
 
   @Override
   public void mousePressed(InstanceState state, MouseEvent e) {
+    for (CanvasObject c : ((SubcircuitFactory)state.getInstance().getFactory()).getSubcircuit().getAppearance().getObjectsFromTop()) {
+      if (c instanceof DynamicElementWithPoker)
+        ((DynamicElementWithPoker)c).mousePressed(state, e);
+    }
     if (isWithin(state, e)) {
       mouseDown = true;
       state.getInstance().fireInvalidated();
@@ -71,6 +78,10 @@ public class SubcircuitPoker extends InstancePoker {
 
   @Override
   public void mouseReleased(InstanceState state, MouseEvent e) {
+   for (CanvasObject c : ((SubcircuitFactory)state.getInstance().getFactory()).getSubcircuit().getAppearance().getObjectsFromTop()) {
+      if (c instanceof DynamicElementWithPoker)
+        ((DynamicElementWithPoker)c).mouseReleased(state, e);
+    }
     if (mouseDown) {
       mouseDown = false;
       Object sub = state.getData();

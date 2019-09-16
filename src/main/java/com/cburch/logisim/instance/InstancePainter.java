@@ -147,6 +147,10 @@ public class InstancePainter implements InstanceState {
       return (InstanceData) circState.getData(comp);
     }
   }
+  
+  public CircuitState getCircuitState() {
+    return context.getCircuitState();
+  }
 
   public java.awt.Component getDestination() {
     return context.getDestination();

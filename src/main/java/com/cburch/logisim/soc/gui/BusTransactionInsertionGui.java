@@ -46,7 +46,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
-import com.cburch.logisim.soc.data.SocBusMasterInterface;
+import com.cburch.logisim.instance.InstanceComponent;
+import com.cburch.logisim.soc.data.SocBusStateInfo;
 import com.cburch.logisim.soc.data.SocBusTransaction;
 import com.cburch.logisim.util.LocaleListener;
 import com.cburch.logisim.util.LocaleManager;
@@ -54,7 +55,7 @@ import com.cburch.logisim.util.LocaleManager;
 public class BusTransactionInsertionGui extends JDialog implements WindowListener,ActionListener,LocaleListener {
 
   private static final long serialVersionUID = 1L;
-  private SocBusMasterInterface myBus;
+  private SocBusStateInfo myBus;
   private String myBusId;
   private JLabel address = new JLabel();
   private JTextField addrValue = new JTextField(8);
@@ -70,7 +71,7 @@ public class BusTransactionInsertionGui extends JDialog implements WindowListene
   private JCheckBox halfTrans = new JCheckBox(); 
   private JCheckBox byteTrans = new JCheckBox(); 
   
-  public BusTransactionInsertionGui(SocBusMasterInterface bus, String BusId) {
+  public BusTransactionInsertionGui(SocBusStateInfo bus, String BusId) {
     myBus = bus;
     myBusId = BusId;
     LocaleManager.addLocaleListener(this);
@@ -159,9 +160,10 @@ public class BusTransactionInsertionGui extends JDialog implements WindowListene
 	if (writeAction.isSelected()) type |= SocBusTransaction.WRITETransaction;
 	if (atomicAction.isSelected()) type |= SocBusTransaction.ATOMICTransaction;
     SocBusTransaction trans = new SocBusTransaction(type,addr,data,action,S.get("SocTransInsManual"));
-    SocBusTransaction res = myBus.initializeTransaction(trans, myBusId);
-    String line1 = res.getShortErrorMessage()+"\n";
-    String line2 = (res.isReadTransaction()&&!res.hasError()) ? S.get("SocTransInsReadData")+String.format("0x%08X", res.getData()) : " ";
+    InstanceComponent comp = (InstanceComponent) myBus.getComponent();
+    myBus.getSocSimulationManager().initializeTransaction(trans, myBusId,comp.getInstanceStateImpl().getProject().getCircuitState());
+    String line1 = trans.getShortErrorMessage()+"\n";
+    String line2 = (trans.isReadTransaction()&&!trans.hasError()) ? S.get("SocTransInsReadData")+String.format("0x%08X", trans.getReadData()) : " ";
     result.setText(line1+line2);
   }
 

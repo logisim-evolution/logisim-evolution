@@ -85,11 +85,7 @@ public class RV32imAttributes extends AbstractAttributeSet {
     d.labelVisable = labelVisable;
     d.stateVisable = stateVisable;
     d.upState = new RV32im_state();
-    d.upState.setResetVector(upState.getResetVector());
-    d.upState.setExceptionVector(upState.getExceptionVector());
-    d.upState.setNrOfIrqs(upState.getNrOfIrqs());
-    d.upState.setAttachedBus(upState.getAttachedBus());
-    d.upState.setLabel(upState.getLabel());
+    upState.copyInto(d.upState);
   }
 
   @Override

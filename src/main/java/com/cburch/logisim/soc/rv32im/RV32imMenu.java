@@ -35,38 +35,60 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 
+import com.cburch.logisim.circuit.CircuitState;
+import com.cburch.logisim.data.Location;
 import com.cburch.logisim.instance.Instance;
+import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.soc.file.ElfHeader;
 import com.cburch.logisim.soc.file.ProcessorReadElf;
+import com.cburch.logisim.tools.CircuitStateHolder;
 import com.cburch.logisim.tools.MenuExtender;
 
-public class RV32imMenu implements ActionListener, MenuExtender {
+public class RV32imMenu implements ActionListener, MenuExtender, CircuitStateHolder {
 
   private Instance instance;
   private Frame frame;
   private JMenuItem ReadElf;
+  private CircuitState cState;
+  private JMenuItem showState;
   
   public RV32imMenu( Instance instance ) {
     this.instance = instance;
+    cState = null;
   }
   
   @Override
   public void configureMenu(JPopupMenu menu, Project proj) {
     frame = proj.getFrame();
-    ReadElf = createItem(true,S.get("Rv32imReadElf"));
+    String instName = instance.getAttributeValue(StdAttr.LABEL);
+    if (instName == null || instName.isBlank()) {
+      Location loc = instance.getLocation();
+      instName = instance.getFactory().getHDLName(instance.getAttributeSet())+"@"+loc.getX()+","+loc.getY();
+    }
+    String name = cState == null ? S.get("Rv32imReadElf") : instName+" : "+S.get("Rv32imReadElf");
+    ReadElf = createItem(true,name);
+    showState = createItem(true,instName+" : "+S.get("Rv32imShowState"));
     menu.addSeparator();
     menu.add(ReadElf);
+    if (cState != null)
+      menu.add(showState);
   }
 
   @Override
   public void actionPerformed(ActionEvent e) {
     Object src = e.getSource();
     if (src == ReadElf) readElf();
+    if (src == showState) {
+      JFrame frame = (JFrame)instance.getData(cState);
+      frame.setTitle(S.get("RV32imCpuStateWindow"));
+      frame.setVisible(true);
+    }
   }
 
   private JMenuItem createItem(boolean enabled, String label) {
@@ -83,11 +105,16 @@ public class RV32imMenu implements ActionListener, MenuExtender {
     if (retVal != JFileChooser.APPROVE_OPTION)
       return;
     ProcessorReadElf reader = new ProcessorReadElf(fc.getSelectedFile(),instance,ElfHeader.EM_RISCV,true);
-    if (!reader.canExecute()||!reader.execute()) {
+    if (!reader.canExecute()||!reader.execute(cState)) {
       JOptionPane.showMessageDialog(frame, reader.getErrorMessage(), S.get("Rv32imErrorReadingElfTitle"), JOptionPane.ERROR_MESSAGE);
       return;
     }
     JOptionPane.showMessageDialog(frame, S.get("ProcReadElfLoadedAndEntrySet"));
+  }
+
+  @Override
+  public void setCircuitState(CircuitState state) {
+    cState = state;
   }
 
 }

@@ -30,6 +30,7 @@ package com.cburch.logisim.soc.rv32im;
 
 import static com.cburch.logisim.soc.Strings.S;
 
+import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.soc.data.SocBusTransaction;
 import com.cburch.logisim.soc.file.ElfHeader;
 
@@ -65,7 +66,7 @@ public class RV32imLoadAndStoreInstructions implements RV32imExecutionUnitInterf
   private int base;
   private String errorMessage;
   
-  public boolean execute(RV32im_state state) {
+  public boolean execute(RV32im_state.ProcessorState state, CircuitState cState) {
     if (!valid)
       return false;
     errorMessage = null;
@@ -84,8 +85,8 @@ public class RV32imLoadAndStoreInstructions implements RV32imExecutionUnitInterf
                       SocBusTransaction trans = new SocBusTransaction(SocBusTransaction.WRITETransaction,
                           ElfHeader.getIntValue((Long)address),toBeStored,transType,
                           state.getMasterName());
-                      SocBusTransaction ret = state.insertTransaction(trans, false);
-                      return !transactionHasError(ret);
+                      state.insertTransaction(trans, false, cState);
+                      return !transactionHasError(trans);
       case INSTR_LB :
       case INSTR_LBU: transType = SocBusTransaction.ByteAccess;
       case INSTR_LH :
@@ -93,9 +94,9 @@ public class RV32imLoadAndStoreInstructions implements RV32imExecutionUnitInterf
       case INSTR_LW : if (transType < 0) transType = SocBusTransaction.WordAccess;
                       trans = new SocBusTransaction(SocBusTransaction.READTransaction,
                           ElfHeader.getIntValue((Long)address),0,transType,state.getMasterName());
-                      ret = state.insertTransaction(trans, false);
-                      if (transactionHasError(ret)) return false;
-                      int toBeLoaded = ret.getData();
+                      state.insertTransaction(trans, false, cState);
+                      if (transactionHasError(trans)) return false;
+                      int toBeLoaded = trans.getReadData();
                       switch (operation) {
                         case INSTR_LBU : toBeLoaded &= 0xFF;
                                          break;

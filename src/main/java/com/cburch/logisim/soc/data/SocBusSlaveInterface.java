@@ -34,7 +34,7 @@ public interface SocBusSlaveInterface {
 
   public boolean canHandleTransaction(SocBusTransaction trans);
   
-  public SocBusTransaction handleTransaction(SocBusTransaction trans);
+  public void handleTransaction(SocBusTransaction trans);
   
   public Integer getStartAddress();
   public Integer getMemorySize();

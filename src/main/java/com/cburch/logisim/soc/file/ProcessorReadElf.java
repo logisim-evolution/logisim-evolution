@@ -35,6 +35,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.soc.data.SocBusTransaction;
 import com.cburch.logisim.soc.data.SocInstanceFactory;
@@ -140,7 +141,7 @@ public class ProcessorReadElf {
     return "BUG: Should not happen";
   }
 
-  public boolean execute() {
+  public boolean execute(CircuitState cState) {
     for (int i = 0 ; i < programHeader.getNrOfHeaders() ; i++) {
       ProgramHeader h = programHeader.getHeader(i);
       if (ElfHeader.getIntValue(h.getValue(ElfProgramHeader.P_TYPE)) != ElfProgramHeader.PT_LOAD)
@@ -175,8 +176,9 @@ public class ProcessorReadElf {
       for (int j = 0 ; j < memSize ; j++) {
         int data = (j<buffer.length) ? buffer[j] : 0;
         int addr = ElfHeader.getIntValue(ElfHeader.returnCorrectValue(startAddr+(long)j,true));
-        SocBusTransaction res = cpu.insertTransaction(new SocBusTransaction(SocBusTransaction.WRITETransaction,addr,data,SocBusTransaction.ByteAccess,"elf"),true);
-        if (res.hasError()) {
+        SocBusTransaction trans = new SocBusTransaction(SocBusTransaction.WRITETransaction,addr,data,SocBusTransaction.ByteAccess,"elf"); 
+        cpu.insertTransaction(trans,true,cState);
+        if (trans.hasError()) {
            start = startAddr;
            end = startAddr+memSize-1;
            status = MEM_LOAD_ERROR;

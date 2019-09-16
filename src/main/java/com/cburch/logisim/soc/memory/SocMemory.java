@@ -41,6 +41,7 @@ import com.cburch.logisim.data.Location;
 import com.cburch.logisim.gui.icons.ArithmeticIcon;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstancePainter;
+import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.soc.data.SocBusSlaveInterface;
 import com.cburch.logisim.soc.data.SocBusSnifferInterface;
@@ -85,6 +86,13 @@ public class SocMemory extends SocInstanceFactory {
   }
 
   @Override
+  public void propagate(InstanceState state) {
+    SocMemoryState.SocMemoryInfo data = (SocMemoryState.SocMemoryInfo) state.getData();
+    if (data == null) 
+      state.setData(state.getAttributeValue(SocMemoryAttributes.SOCMEM_STATE).getNewState());
+  }
+  
+  @Override
   public void paintInstance(InstancePainter painter) {
     Graphics2D g2 = (Graphics2D) painter.getGraphics();
     Location loc = painter.getLocation();
@@ -94,10 +102,11 @@ public class SocMemory extends SocInstanceFactory {
     g2.setFont(StdAttr.DEFAULT_LABEL_FONT);
     GraphicsUtil.drawCenteredText(g2, "SOC Memory", loc.getX()+160, loc.getY()+10);
     g2.setFont(f);
-    painter.getAttributeValue(SocSimulationManager.SOC_BUS_SELECT).paint(g2, 
-    		Bounds.create(loc.getX()+5, loc.getY()+40, 310, 18));
     GraphicsUtil.drawCenteredText(g2, S.get("SocMemBase")+String.format("0x%08X", painter.getAttributeValue(SocMemoryAttributes.START_ADDRESS)), loc.getX()+80, loc.getY()+30);
     GraphicsUtil.drawCenteredText(g2, S.get("SocMemSizeStr")+getSizeString(painter.getAttributeValue(SocMemoryAttributes.MEM_SIZE)), loc.getX()+240, loc.getY()+30);
+    if (painter.isPrintView()) return;
+    painter.getAttributeValue(SocSimulationManager.SOC_BUS_SELECT).paint(g2, 
+    		Bounds.create(loc.getX()+5, loc.getY()+40, 310, 18));
   }
   
   private String getSizeString(BitWidth addr) {

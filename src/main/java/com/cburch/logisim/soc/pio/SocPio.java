@@ -149,29 +149,33 @@ public class SocPio extends SocInstanceFactory {
     if (dir == PioAttributes.PORT_INPUT || dir == PioAttributes.PORT_INOUT) {
       for (int b = 0 ; b < nrBits ; b++) 
         painter.drawPort(index+b);
-      index += nrBits;
-      g2.drawRect(loc.getX()+40, loc.getY()+80, 340, 40);
-      GraphicsUtil.drawCenteredText(g2, S.get("SocPioInputs"), loc.getX()+210, loc.getY()+95);
-      GraphicsUtil.drawCenteredText(g2, "0", loc.getX()+370, loc.getY()+110);
-      if (nrBits > 9) {
-        GraphicsUtil.drawCenteredText(g2, Integer.toString(nrBits-1), loc.getX()+380-nrBits*10, loc.getY()+110);
-      } else {
-        for (int b = 1 ;  b < nrBits ; b++)
-          GraphicsUtil.drawCenteredText(g2, Integer.toString(b), loc.getX()+370-b*10, loc.getY()+110);
+      if (!painter.isPrintView()) {
+        index += nrBits;
+        g2.drawRect(loc.getX()+40, loc.getY()+80, 340, 40);
+        GraphicsUtil.drawCenteredText(g2, S.get("SocPioInputs"), loc.getX()+210, loc.getY()+95);
+        GraphicsUtil.drawCenteredText(g2, "0", loc.getX()+370, loc.getY()+110);
+        if (nrBits > 9) {
+          GraphicsUtil.drawCenteredText(g2, Integer.toString(nrBits-1), loc.getX()+380-nrBits*10, loc.getY()+110);
+        } else {
+          for (int b = 1 ;  b < nrBits ; b++)
+            GraphicsUtil.drawCenteredText(g2, Integer.toString(b), loc.getX()+370-b*10, loc.getY()+110);
+        }
       }
     }
     if (dir == PioAttributes.PORT_INOUT || dir == PioAttributes.PORT_OUTPUT || dir == PioAttributes.PORT_BIDIR) {
       for (int b = 0 ; b < nrBits ; b++) 
         painter.drawPort(index+b);
-      String name = (dir == PioAttributes.PORT_BIDIR) ? S.get("SocPioBidirs") : S.get("SocPioOutputs");
-      g2.drawRect(loc.getX()+40, loc.getY(), 340, 40);
-      GraphicsUtil.drawCenteredText(g2, name, loc.getX()+210, loc.getY()+25);
-      GraphicsUtil.drawCenteredText(g2, "0", loc.getX()+370, loc.getY()+10);
-      if (nrBits > 9) {
-        GraphicsUtil.drawCenteredText(g2, Integer.toString(nrBits-1), loc.getX()+380-nrBits*10, loc.getY()+10);
-      } else {
-        for (int b = 1 ;  b < nrBits ; b++)
-          GraphicsUtil.drawCenteredText(g2, Integer.toString(b), loc.getX()+370-b*10, loc.getY()+10);
+      if (!painter.isPrintView()) {
+        String name = (dir == PioAttributes.PORT_BIDIR) ? S.get("SocPioBidirs") : S.get("SocPioOutputs");
+        g2.drawRect(loc.getX()+40, loc.getY(), 340, 40);
+        GraphicsUtil.drawCenteredText(g2, name, loc.getX()+210, loc.getY()+25);
+        GraphicsUtil.drawCenteredText(g2, "0", loc.getX()+370, loc.getY()+10);
+        if (nrBits > 9) {
+          GraphicsUtil.drawCenteredText(g2, Integer.toString(nrBits-1), loc.getX()+380-nrBits*10, loc.getY()+10);
+        } else {
+          for (int b = 1 ;  b < nrBits ; b++)
+            GraphicsUtil.drawCenteredText(g2, Integer.toString(b), loc.getX()+370-b*10, loc.getY()+10);
+        }
       }
     }
   }
@@ -179,7 +183,7 @@ public class SocPio extends SocInstanceFactory {
   @Override
   public void propagate(InstanceState state) {
     PioState myState = state.getAttributeValue(PioAttributes.PIO_STATE);
-    myState.handleOperations(false);
+    myState.handleOperations(state,false);
   }
 
   @Override
@@ -193,6 +197,7 @@ public class SocPio extends SocInstanceFactory {
     g2.setFont(StdAttr.DEFAULT_LABEL_FONT);
     GraphicsUtil.drawCenteredText(g2, "SOC parallel IO", loc.getX()+210, loc.getY()+50);
     g2.setFont(f);
+    if (painter.isPrintView()) return;
     painter.getAttributeValue(SocSimulationManager.SOC_BUS_SELECT).paint(g2, 
     		Bounds.create(loc.getX()+45, loc.getY()+61, 330, 18));
   }
