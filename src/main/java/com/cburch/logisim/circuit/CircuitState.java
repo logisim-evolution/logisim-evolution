@@ -79,9 +79,10 @@ public class CircuitState implements InstanceData {
             substates.remove(substate);
             substate.parentState = null;
             substate.parentComp = null;
+            substate.reset();
           }
-        }
-
+        } else if (getData(comp) != null && getData(comp) instanceof ComponentDataGuiProvider) 
+          ((ComponentDataGuiProvider)getData(comp)).dispose();
         if (comp instanceof Wire) {
           Wire w = (Wire) comp;
           markPointAsDirty(w.getEnd0());
@@ -96,6 +97,13 @@ public class CircuitState implements InstanceData {
       else if (action == CircuitEvent.ACTION_CLEAR) {
         substates.clear();
         wireData = null;
+        for (Component c : componentData.keySet()) {
+          if (componentData.get(c) != null && componentData.get(c) instanceof ComponentDataGuiProvider)
+            ((ComponentDataGuiProvider)componentData.get(c)).dispose();
+          else if (componentData.get(c) instanceof CircuitState) {
+            ((CircuitState)componentData.get(c)).reset();
+          }
+        }
         componentData.clear();
         values.clear();
         dirtyComponents.clear();
@@ -419,7 +427,11 @@ public class CircuitState implements InstanceData {
     wireData = null;
     for (Iterator<Component> it = componentData.keySet().iterator(); it.hasNext(); ) {
       Component comp = it.next();
-      if (!(comp.getFactory() instanceof SubcircuitFactory)) it.remove();
+      if (!(comp.getFactory() instanceof SubcircuitFactory)) {
+        if (componentData.get(comp) instanceof ComponentDataGuiProvider)
+          ((ComponentDataGuiProvider)componentData.get(comp)).dispose();
+        it.remove();
+      }
     }
     values.clear();
     dirtyComponents.clear();
@@ -445,6 +457,7 @@ public class CircuitState implements InstanceData {
           substates.remove(oldState);
           oldState.parentState = null;
           oldState.parentComp = null;
+          oldState.reset();
         }
         if (newState != null && newState.parentState != this) {
           // this is the first time I've heard about this CircuitState
@@ -455,6 +468,9 @@ public class CircuitState implements InstanceData {
           newState.markAllComponentsDirty();
         }
       }
+    } else {
+      if (componentData.get(comp)!= null && componentData.get(comp) instanceof ComponentDataGuiProvider)
+        ((ComponentDataGuiProvider)componentData.get(comp)).dispose();
     }
     componentData.put(comp, data);
   }

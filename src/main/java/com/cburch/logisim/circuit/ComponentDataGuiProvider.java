@@ -26,11 +26,8 @@
  *     http://www.heig-vd.ch/
  */
 
-package com.cburch.logisim.tools;
+package com.cburch.logisim.circuit;
 
-import com.cburch.logisim.circuit.CircuitState;
-
-public interface CircuitStateHolder {
-   public void setCircuitState(CircuitState state);
-   public void addHierarchyName(String name);
+public interface ComponentDataGuiProvider {
+   public void dispose();
 }

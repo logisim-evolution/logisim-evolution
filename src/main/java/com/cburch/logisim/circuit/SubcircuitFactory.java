@@ -95,13 +95,40 @@ public class SubcircuitFactory extends InstanceFactory {
       JMenuItem item = new JMenuItem(text);
       item.addActionListener(this);
       menu.add(item);
+      String iname = instance.getAttributeValue(StdAttr.LABEL);
+      if (iname == null || iname.isEmpty()) {
+        Location loc = instance.getLocation();
+        iname = instance.getFactory().getDisplayName()+"@"+loc.getX()+","+loc.getY();
+      }
+      getSubMenuItems(menu,proj,(CircuitState)instance.getData(proj.getCircuitState()),
+    		  proj.getCurrentCircuit().getName()+":"+iname);
+    }
+    
+    public void getSubMenuItems(JPopupMenu menu, Project proj, CircuitState state, String Name) {
       for (Component comp : source.getNonWires()) {
         if (comp instanceof InstanceComponent) {
           InstanceComponent c = (InstanceComponent) comp;
-          if (c.getInstance().getFactory().providesSubCircuitMenu()) {
+          if (c.getFactory() instanceof SubcircuitFactory) {
+        	CircuitFeature m = (CircuitFeature) c.getFeature(MenuExtender.class);
+            String name = c.getAttributeSet().getValue(StdAttr.LABEL);
+            if (name == null || name.isEmpty()) {
+              Location loc = c.getLocation();
+              name = c.getFactory().getDisplayName()+"@"+loc.getX()+","+loc.getY();
+            }
+        	String NewName = Name+(Name.isEmpty()? "" : ":")+name;
+            m.getSubMenuItems(menu, proj, (CircuitState)c.getInstance().getData(state),NewName);
+          } else if (c.getInstance().getFactory().providesSubCircuitMenu()) {
             MenuExtender m = (MenuExtender) c.getFeature(MenuExtender.class);
-            if (m instanceof CircuitStateHolder)
-                ((CircuitStateHolder)m).setCircuitState((CircuitState)instance.getData(proj.getCircuitState()));
+            if (m instanceof CircuitStateHolder) {
+              CircuitStateHolder csh = (CircuitStateHolder) m;
+              csh.setCircuitState(state);
+              String name = c.getAttributeSet().getValue(StdAttr.LABEL);
+              if (name == null || name.isEmpty()) {
+                Location loc = c.getLocation();
+                name = c.getFactory().getDisplayName()+"@"+loc.getX()+","+loc.getY();
+              }
+              csh.addHierarchyName(Name+(Name.isEmpty()? "" : ":")+name);
+            }
             m.configureMenu(menu, proj);
           }
         }
@@ -112,7 +139,7 @@ public class SubcircuitFactory extends InstanceFactory {
       return source.getName();
     }
   }
-
+  
   private Circuit source;
 
   public SubcircuitFactory(Circuit source) {

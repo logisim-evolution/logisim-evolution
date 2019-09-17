@@ -32,14 +32,20 @@ import static com.cburch.logisim.soc.Strings.S;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.util.LinkedList;
 
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 
 import com.cburch.logisim.circuit.CircuitState;
+import com.cburch.logisim.circuit.ComponentDataGuiProvider;
 import com.cburch.logisim.data.BitWidth;
+import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.instance.Instance;
@@ -47,6 +53,7 @@ import com.cburch.logisim.instance.InstanceComponent;
 import com.cburch.logisim.instance.InstanceData;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.InstanceStateImpl;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.soc.data.SocBusInfo;
 import com.cburch.logisim.soc.data.SocBusTransaction;
 import com.cburch.logisim.soc.data.SocProcessorInterface;
@@ -56,27 +63,37 @@ import com.cburch.logisim.util.GraphicsUtil;
 
 public class RV32im_state implements SocUpSimulationStateListener,SocProcessorInterface {
 
-  public class ProcessorState extends JFrame implements InstanceData,Cloneable {
-    private int[] registers;
+  public class ProcessorState extends JPanel implements InstanceData,Cloneable,ComponentDataGuiProvider,
+                                                        WindowListener {
+	private static final long serialVersionUID = 1L;
+	private int[] registers;
     private Boolean[] registers_valid;
     private int pc;
     private int lastRegisterWritten = -1;
     private LinkedList<TraceInfo> instrTrace;
     private Value lastClock;
     private SocUpSimulationState simState;
+    private Instance myInstance;
+    private boolean visible;
     
-    public ProcessorState() {
+    public ProcessorState(Instance inst) {
       registers = new int[32];
       registers_valid = new Boolean[32];
       instrTrace = new LinkedList<TraceInfo>();
       lastClock = Value.createUnknown(BitWidth.ONE);
       simState = new SocUpSimulationState();
-      this.setSize(Rv32im_riscv.upStateBounds.getWidth(), Rv32im_riscv.upStateBounds.getHeight());
-      this.setResizable(false);
+      myInstance = inst;
+      this.setSize(AppPreferences.getScaled(Rv32im_riscv.upStateBounds.getWidth()), 
+              AppPreferences.getScaled(Rv32im_riscv.upStateBounds.getHeight()));
+      Rv32im_riscv.MENU_PROVIDER.registerCpuState(this, inst);
+      visible = false;
       reset();
     }
     
-    
+    @Override
+    public void paint(Graphics g) {
+      draw( (Graphics2D) g, true);
+    }
     public void reset() {
       pc = resetVector;
       for (int i = 1 ; i < 31 ; i++)
@@ -146,14 +163,6 @@ public class RV32im_state implements SocUpSimulationStateListener,SocProcessorIn
       return getName();
     }
     
-    private void UpdateShowState() {
-      if (this.isVisible()) {
-        Graphics2D g = (Graphics2D)this.getGraphics();
-        g.translate(0, 50);
-        draw(g);
-      }
-    }
-    
     public void execute(CircuitState cState) {
       /* check the simulation state */
       if (!simState.canExecute())
@@ -183,6 +192,7 @@ public class RV32im_state implements SocUpSimulationStateListener,SocProcessorIn
         simState.errorInExecution();
         instrTrace.addFirst(new TraceInfo(pc,instruction,S.get("RV32imFetchInvInstrAsm"),true));
         pc = pc + 4;
+        if (visible) repaint();
         return;
       }
       TraceInfo trace = new TraceInfo(pc,instruction,exe.getAsmInstruction(),false);
@@ -196,14 +206,14 @@ public class RV32im_state implements SocUpSimulationStateListener,SocProcessorIn
         simState.errorInExecution();
         trace.setError();
         instrTrace.addFirst(trace);
-        UpdateShowState();
+        if (visible) repaint();
         return;
       }
       instrTrace.addFirst(trace);
       /* all done increment pc */
       if (!exe.performedJump())
         pc = pc+4;
-      UpdateShowState();
+      if (visible) repaint();
     }
       
     public ProcessorState clone() {
@@ -218,89 +228,166 @@ public class RV32im_state implements SocUpSimulationStateListener,SocProcessorIn
       if (hidden) trans.setAsHiddenTransaction();
         attachedBus.getSocSimulationManager().initializeTransaction(trans, attachedBus.getBusId(),cState);
     }
-
-    public void drawRegisters(Graphics2D g, int x , int y) {
+    
+    public void drawRegisters(Graphics2D g, int x , int y, boolean scale) {
       Graphics2D g2 = (Graphics2D) g.create();
+      Bounds bds;
+      if (scale)
+        g2.setFont(AppPreferences.getScaledFont(g.getFont()));
       g2.translate(x, y);
+      int blockWidth = getBlockWidth(g2,scale);
+      int blockX = ((scale ? AppPreferences.getScaled(160):160)-blockWidth)/2;
+      if (scale) {
+        blockWidth = AppPreferences.getDownScaled(blockWidth);
+        blockX = AppPreferences.getDownScaled(blockX);
+      }
       g2.setColor(Color.YELLOW);
-      g2.fillRect(0, 0, 160, 495);
+      bds = RV32im_state.getBounds(0,0,160,495,scale);
+      g2.fillRect(bds.getX(), bds.getY(), bds.getWidth(), bds.getHeight());
       g2.setColor(Color.BLUE);
-      g2.fillRect(0, 0, 160, 15);
+      bds = RV32im_state.getBounds(0,0,160,15,scale);
+      g2.fillRect(bds.getX(), bds.getY(), bds.getWidth(), bds.getHeight());
       g2.setColor(Color.YELLOW);
-      GraphicsUtil.drawCenteredText(g2, S.get("Rv32imRegisterFile"), 80, 6);
+      bds = RV32im_state.getBounds(80,6,0,0,scale);
+      GraphicsUtil.drawCenteredText(g2, S.get("Rv32imRegisterFile"), bds.getX(), bds.getY());
       g2.setColor(Color.BLACK);
-      g2.drawRect(0, 0, 160, 495);
+      bds = RV32im_state.getBounds(0,0,160,495,scale);
+      g2.drawRect(bds.getX(), bds.getY(), bds.getWidth(), bds.getHeight());
       for (int i = 0 ; i < 32 ; i++) {
-        GraphicsUtil.drawCenteredText(g2, "x"+i, 20, 21+i*15);
+    	bds = RV32im_state.getBounds(20,21+i*15,0,0,scale);
+        GraphicsUtil.drawCenteredText(g2, "x"+i, bds.getX(), bds.getY());
         g2.setColor(i==lastRegisterWritten ? Color.BLUE : Color.WHITE);
-        g2.fillRect(40, 16+i*15, 78, 13);
+        bds = RV32im_state.getBounds(blockX, 16+i*15, blockWidth, 13,scale);
+        g2.fillRect(bds.getX(), bds.getY(), bds.getWidth(), bds.getHeight());
         g2.setColor(Color.BLACK);
-        g2.drawRect(40, 16+i*15, 78, 13);
+        g2.drawRect(bds.getX(), bds.getY(), bds.getWidth(), bds.getHeight());
         g2.setColor(i==lastRegisterWritten ? Color.WHITE : Color.BLUE);
-        GraphicsUtil.drawCenteredText(g2, getRegisterValueHex(i), 79, 21+i*15);
+        bds = RV32im_state.getBounds(blockX+blockWidth/2, 21+i*15,0,0,scale);
+        GraphicsUtil.drawCenteredText(g2, getRegisterValueHex(i), bds.getX(), bds.getY());
         g2.setColor(Color.darkGray);
-        GraphicsUtil.drawCenteredText(g2, registerABINames[i] , 140, 21+i*15);
+        bds = RV32im_state.getBounds(140, 21+i*15,0,0,scale);
+        GraphicsUtil.drawCenteredText(g2, registerABINames[i] , bds.getX(), bds.getY());
         g2.setColor(Color.BLACK);
       }
       g2.dispose();
     }
       
-    public void drawProgramCounter(Graphics2D g, int x , int y) {
+    public void drawProgramCounter(Graphics2D g, int x , int y, boolean scale) {
       Graphics2D g2 = (Graphics2D) g.create();
-      g2.translate(x, y);
+      Bounds bds;
+      if (scale)
+        g2.setFont(AppPreferences.getScaledFont(g.getFont()));
+      bds = RV32im_state.getBounds(x,y,0,0,scale);
+      g2.translate(bds.getX(), bds.getY());
+      int blockWidth = getBlockWidth(g2,scale);
+      if (scale)
+        blockWidth = AppPreferences.getDownScaled(blockWidth);
       g2.setColor(Color.YELLOW);
-      g2.fillRect(0, 0, 80, 30);
+      bds = RV32im_state.getBounds(0,0,blockWidth,30,scale);
+      g2.fillRect(bds.getX(), bds.getY(), bds.getWidth(), bds.getHeight());
       g2.setColor(Color.BLUE);
-      g2.fillRect(0, 0, 80, 15);
+      bds = RV32im_state.getBounds(0,0,blockWidth,15,scale);
+      g2.fillRect(bds.getX(), bds.getY(), bds.getWidth(), bds.getHeight());
       g2.setColor(Color.YELLOW);
-      GraphicsUtil.drawCenteredText(g2, S.get("Rv32imProgramCounter"), 40, 6);
+      bds = RV32im_state.getBounds(blockWidth/2,6,0,0,scale);
+      GraphicsUtil.drawCenteredText(g2, S.get("Rv32imProgramCounter"), bds.getX(), bds.getY());
       g2.setColor(Color.BLACK);
-      g2.drawRect(0, 0, 80, 30);
+      bds = RV32im_state.getBounds(0,0,blockWidth,30,scale);
+      g2.drawRect(bds.getX(), bds.getY(), bds.getWidth(), bds.getHeight());
       g2.setColor(Color.WHITE);
-      g2.fillRect(1, 16, 78, 13);
+      bds = RV32im_state.getBounds(1,16,blockWidth-2,13,scale);
+      g2.fillRect(bds.getX(), bds.getY(), bds.getWidth(), bds.getHeight());
       g2.setColor(Color.BLACK);
-      g2.drawRect(1, 16, 78, 13);
+      g2.drawRect(bds.getX(), bds.getY(), bds.getWidth(), bds.getHeight());
       g2.setColor(Color.RED);
-      GraphicsUtil.drawCenteredText(g2, String.format("0x%08X", pc), 40, 21);
+      bds = RV32im_state.getBounds(blockWidth/2,21,0,0,scale);
+      GraphicsUtil.drawCenteredText(g2, String.format("0x%08X", pc), bds.getX(), bds.getY());
       g2.dispose();
     }
       
-    public void drawTrace(Graphics2D g, int x , int y) {
+    public void drawTrace(Graphics2D g, int x , int y, boolean scale) {
       Graphics2D g2 = (Graphics2D) g.create();
-      g2.translate(x, y);
+      Bounds bds;
+      if (scale)
+        g2.setFont(AppPreferences.getScaledFont(g.getFont()));
+      int blockWidth = getBlockWidth(g2,scale);
+      if (scale)
+        blockWidth = AppPreferences.getDownScaled(blockWidth);
+      bds = RV32im_state.getBounds(x,y,0,0,scale);
+      g2.translate(bds.getX(), bds.getY());
       g2.setColor(Color.YELLOW);
-      g2.fillRect(0, 0, 415, 455);
+      bds = RV32im_state.getBounds(0,0,415,455,scale);
+      g2.fillRect(bds.getX(), bds.getY(), bds.getWidth(), bds.getHeight());
       g2.setColor (Color.BLUE);
-      g2.fillRect(0, 0, 415, 15);
+      bds = RV32im_state.getBounds(0,0,415,15,scale);
+      g2.fillRect(bds.getX(), bds.getY(), bds.getWidth(), bds.getHeight());
       g2.setColor(Color.YELLOW);
-      GraphicsUtil.drawCenteredText(g2, S.get("Rv32imExecutionTrace"), 207, 6);
+      bds = RV32im_state.getBounds(207,6,0,0,scale);
+      GraphicsUtil.drawCenteredText(g2, S.get("Rv32imExecutionTrace"), bds.getX(), bds.getY());
       g2.setColor(Color.BLACK);
-      g2.drawRect(0, 0, 415, 455);
+      bds = RV32im_state.getBounds(0,0,415,455,scale);
+      g2.drawRect(bds.getX(), bds.getY(), bds.getWidth(), bds.getHeight());
       g2.setColor(Color.WHITE);
-      g2.fillRect(5, 15, 80, 15);
-      g2.fillRect(90, 15, 80, 15);
-      g2.fillRect(175, 15, 235, 15);
+      bds = RV32im_state.getBounds(5,15,blockWidth,15,scale);
+      g2.fillRect(bds.getX(), bds.getY(), bds.getWidth(), bds.getHeight());
+      bds = RV32im_state.getBounds(10+blockWidth,15,blockWidth,15,scale);
+      g2.fillRect(bds.getX(), bds.getY(), bds.getWidth(), bds.getHeight());
+      bds = RV32im_state.getBounds(15+2*blockWidth,15,395-2*blockWidth,15,scale);
+      g2.fillRect(bds.getX(), bds.getY(), bds.getWidth(), bds.getHeight());
       g2.setColor(Color.BLACK);
-      GraphicsUtil.drawCenteredText(g2, S.get("Rv32imProgramCounter"), 45, 21);
-      GraphicsUtil.drawCenteredText(g2, S.get("Rv32imBinInstruction"), 130, 21);
-      GraphicsUtil.drawCenteredText(g2, S.get("Rv32imAsmInstruction"), 287, 21);
-      if (instrTrace.isEmpty())
-        GraphicsUtil.drawCenteredText(g2, S.get("Rv32imEmptyTrace"), 207, 250);
-      else {
+      bds = RV32im_state.getBounds(5+blockWidth/2,21,0,0,scale);
+      GraphicsUtil.drawCenteredText(g2, S.get("Rv32imProgramCounter"), bds.getX(), bds.getY());
+      bds = RV32im_state.getBounds(10+blockWidth+blockWidth/2,21,0,0,scale);
+      GraphicsUtil.drawCenteredText(g2, S.get("Rv32imBinInstruction"), bds.getX(), bds.getY());
+      bds = RV32im_state.getBounds(215+blockWidth,21,0,0,scale);
+      GraphicsUtil.drawCenteredText(g2, S.get("Rv32imAsmInstruction"), bds.getX(), bds.getY());
+      if (instrTrace.isEmpty()) {
+        bds = RV32im_state.getBounds(207,250,0,0,scale);
+        GraphicsUtil.drawCenteredText(g2, S.get("Rv32imEmptyTrace"), bds.getX(), bds.getY());
+      } else {
         int yOff = 30;
         for (TraceInfo t : instrTrace) {
-          t.paint(g2, yOff);
+          t.paint(g2, yOff,scale);
           yOff += TRACEHEIGHT;
         }
       }
       g2.dispose();
     }
     
-    public void draw(Graphics2D g) {
-      drawRegisters(g,0,0);
-      drawProgramCounter(g,170,0);
-      drawTrace(g,170,40);
+    public void draw(Graphics2D g, boolean scale) {
+      Font f = g.getFont();
+      g.setFont(new Font( "Monospaced", Font.PLAIN, 12 ));
+      drawRegisters(g,0,0,scale);
+      drawProgramCounter(g,170,0,scale);
+      drawTrace(g,170,40,scale);
+      g.setFont(f);
     }
+
+    @Override
+    public void dispose() {
+      Rv32im_riscv.MENU_PROVIDER.deregisterCpuState(this, myInstance);
+    }
+
+	@Override
+	public void windowOpened(WindowEvent e) {repaint(); visible = true;}
+
+	@Override
+	public void windowClosing(WindowEvent e) {visible = false;}
+
+	@Override
+	public void windowClosed(WindowEvent e) {}
+
+	@Override
+	public void windowIconified(WindowEvent e) {visible = false;}
+
+	@Override
+	public void windowDeiconified(WindowEvent e) {repaint(); visible = true;}
+
+	@Override
+	public void windowActivated(WindowEvent e) {visible = true;}
+
+	@Override
+	public void windowDeactivated(WindowEvent e) {}
       
   }
 
@@ -335,26 +422,35 @@ public class RV32im_state implements SocUpSimulationStateListener,SocProcessorIn
       error = true;
     }
     
-    public void paint(Graphics2D g , int yOffset ) {
+    public void paint(Graphics2D g , int yOffset , boolean scale) {
+      int blockWidth = getBlockWidth(g,scale);
+      if (scale)
+        blockWidth = AppPreferences.getDownScaled(blockWidth);
       int xOff = 5;
-      paintBox(g,xOff,yOffset,pc);
-      xOff += 85;
-      paintBox(g,xOff,yOffset,instruction);
-      xOff += 85;
+      paintBox(g,xOff,yOffset,pc, scale, blockWidth);
+      xOff += blockWidth+5;
+      paintBox(g,xOff,yOffset,instruction, scale, blockWidth);
+      xOff += blockWidth+5;
       g.setColor(error ? Color.RED : Color.BLACK);
       Font f = g.getFont();
-      g.setFont(new Font( "Monospaced", Font.PLAIN, 12 ).deriveFont(Font.BOLD));
-      g.drawString(asm, xOff, yOffset+15);
+      Font myFont = scale ? AppPreferences.getScaledFont(new Font( "Monospaced", Font.PLAIN, 12 ).deriveFont(Font.BOLD)) :
+                            new Font( "Monospaced", Font.PLAIN, 12 ).deriveFont(Font.BOLD);
+      g.setFont(myFont);
+      Bounds bds = RV32im_state.getBounds(xOff,yOffset+15,0,0,scale);
+      g.drawString(asm, bds.getX(), bds.getY());
       g.setFont(f);
     }
     
-    private void paintBox(Graphics2D g, int x , int y , int value ) {
+    private void paintBox(Graphics2D g, int x , int y , int value , boolean scale , int blockWidth) {
       g.setColor(Color.WHITE);
-      g.fillRect(x, y+1, 80, TRACEHEIGHT-2);
+      Bounds bds;
+      bds = getBounds(x, y+1, blockWidth, TRACEHEIGHT-2,scale);
+      g.fillRect(bds.getX(), bds.getY(), bds.getWidth(), bds.getHeight());
       g.setColor(Color.BLACK);
-      g.drawRect(x, y+1, 80, TRACEHEIGHT-2);
+      g.drawRect(bds.getX(), bds.getY(), bds.getWidth(), bds.getHeight());
       g.setColor(error ? Color.RED : Color.DARK_GRAY);
-      GraphicsUtil.drawCenteredText(g, String.format("0x%08X", value), x+40, y+TRACEHEIGHT/2);
+      bds = RV32im_state.getBounds(x+blockWidth/2, y+TRACEHEIGHT/2,0,0,scale);
+      GraphicsUtil.drawCenteredText(g, String.format("0x%08X", value), bds.getX(), bds.getY());
       g.setColor(Color.BLACK);
     }
   }
@@ -439,8 +535,8 @@ public class RV32im_state implements SocUpSimulationStateListener,SocProcessorIn
     return attachedBus;
   }
   
-  public ProcessorState getNewState() {
-    return new ProcessorState();
+  public ProcessorState getNewState(Instance inst) {
+    return new ProcessorState(inst);
   }
   
   public ProcessorState getRegState() {
@@ -458,7 +554,7 @@ public class RV32im_state implements SocUpSimulationStateListener,SocProcessorIn
     g.translate(x+Rv32im_riscv.upStateBounds.getX(), y+Rv32im_riscv.upStateBounds.getY());
     ProcessorState state = (ProcessorState) pstate;
     if (visible&&state != null) {
-      state.draw(g);
+      state.draw(g,false);
     } else {
       g.setColor(Color.LIGHT_GRAY);
       g.fillRect(0, 0, Rv32im_riscv.upStateBounds.getWidth(), Rv32im_riscv.upStateBounds.getHeight());
@@ -469,6 +565,21 @@ public class RV32im_state implements SocUpSimulationStateListener,SocProcessorIn
     if (state != null) state.simState.paint(g2, x, y, Rv32im_riscv.simStateBounds);
   }
 
+  private static Bounds getBounds(int x , int y , int width , int height, boolean scale) {
+    if (scale)
+      return Bounds.create(AppPreferences.getScaled(x), AppPreferences.getScaled(y), 
+              AppPreferences.getScaled(width), AppPreferences.getScaled(height));
+    return Bounds.create(x, y, width, height);
+  }
+
+  private static int getBlockWidth(Graphics2D g2,boolean scale) {
+    FontMetrics f =g2.getFontMetrics();
+    int StrWidth = f.stringWidth("0x00000000")+(scale ? AppPreferences.getScaled(2) : 2);
+    int blkPrefWidth = scale ? AppPreferences.getScaled(80) : 80;
+    int blockWidth = StrWidth < blkPrefWidth ? blkPrefWidth : StrWidth;
+    return blockWidth;
+  }
+    
   @Override
   public void SimulationStateChanged() {
     if (attachedBus != null && attachedBus.getComponent() != null)

@@ -57,10 +57,13 @@ import com.cburch.logisim.soc.data.SocInstanceFactory;
 import com.cburch.logisim.soc.data.SocProcessorInterface;
 import com.cburch.logisim.soc.data.SocSimulationManager;
 import com.cburch.logisim.soc.data.SocUpSimulationState;
+import com.cburch.logisim.soc.gui.RV32imMenuProvider;
 import com.cburch.logisim.tools.MenuExtender;
 import com.cburch.logisim.util.GraphicsUtil;
 
 public class Rv32im_riscv extends SocInstanceFactory implements DynamicElementProvider {
+
+  public static final RV32imMenuProvider MENU_PROVIDER = new RV32imMenuProvider();
   
   public static class SimStatePoker extends InstancePoker {
     @Override
@@ -97,7 +100,7 @@ public class Rv32im_riscv extends SocInstanceFactory implements DynamicElementPr
   @Override
   protected Object getInstanceFeature(Instance instance, Object key) {
     if (key == MenuExtender.class) {
-      return new RV32imMenu(instance);
+      return MENU_PROVIDER.getMenu(instance);
     }
     return super.getInstanceFeature(instance, key);
   }
@@ -168,7 +171,7 @@ public class Rv32im_riscv extends SocInstanceFactory implements DynamicElementPr
   public void propagate(InstanceState state) {
     RV32im_state.ProcessorState data = (RV32im_state.ProcessorState) state.getData(); 
 	if (data == null) {
-	  data = state.getAttributeValue(RV32imAttributes.RV32IM_STATE).getNewState();
+	  data = state.getAttributeValue(RV32imAttributes.RV32IM_STATE).getNewState(state.getInstance());
 	  state.setData(data);
 	}
 	if (state.getPortValue(0) == Value.TRUE)
