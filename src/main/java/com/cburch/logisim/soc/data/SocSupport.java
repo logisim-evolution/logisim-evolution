@@ -30,8 +30,15 @@ package com.cburch.logisim.soc.data;
 
 import java.awt.event.ActionListener;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 
 import javax.swing.JMenuItem;
+
+import com.cburch.logisim.circuit.CircuitState;
+import com.cburch.logisim.circuit.SubcircuitFactory;
+import com.cburch.logisim.comp.Component;
+import com.cburch.logisim.data.Location;
+import com.cburch.logisim.instance.StdAttr;
 
 public class SocSupport {
 
@@ -84,4 +91,47 @@ public class SocSupport {
     return ret;
   }
 	  
+  public static String getComponentName(Component comp) {
+    String name = comp.getAttributeSet().getValue(StdAttr.LABEL);
+    if (name == null || name.isEmpty()) {
+      Location loc = comp.getLocation();
+      name = comp.getFactory().getDisplayName()+"@"+loc.getX()+","+loc.getY();
+    }
+    return name;
+  }
+  
+  private static String getMasterHierName(CircuitState state) {
+    ArrayList<CircuitState> states = new ArrayList<CircuitState>();
+    CircuitState s = state;
+    while (s.isSubstate()) {
+      states.add(s);
+      s = s.getParentState();
+    }
+    StringBuffer name = new StringBuffer();
+    name.append(s.getCircuit().getName()+":");
+    for (int i = states.size()-1 ; i >= 0 ; i--) {
+      for (Component c : s.getCircuit().getNonWires()) {
+        if (c.getFactory() instanceof SubcircuitFactory) {
+          CircuitState tmp = (CircuitState)s.getData(c);
+          if (tmp.equals(states.get(i)))
+            name.append(getComponentName(c)+":");
+        }
+      }
+      s = states.get(i);
+    }
+    return name.toString();
+  }
+  
+  public static String getMasterName(CircuitState state, Component comp) {
+    if (!state.isSubstate())
+      return getComponentName(comp);
+    return getMasterHierName(state)+getComponentName(comp);
+  }
+	  
+  public static String getMasterName(CircuitState state, String compName) {
+    if (!state.isSubstate())
+      return compName;
+    return getMasterHierName(state)+compName;
+  }
+		  
 }

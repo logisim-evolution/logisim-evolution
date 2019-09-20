@@ -372,7 +372,7 @@ public class PioState implements SocBusSlaveInterface {
   public void handleTransaction(SocBusTransaction trans) {
     if (!canHandleTransaction(trans))
       return;
-    trans.setTransactionResponder(getName());
+    trans.setTransactionResponder(attachedBus.getComponent());
     long addr = SocSupport.convUnsignedInt(trans.getAddress());
     long start = SocSupport.convUnsignedInt(startAddress);
     int index = (int)(addr-start);

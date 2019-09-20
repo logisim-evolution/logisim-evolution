@@ -132,7 +132,7 @@ public class VgaState implements SocBusSlaveInterface, SocBusSnifferInterface,So
           for (int pixel = 0 ; pixel < lineSize ; pixel++) {
             int index = line*lineSize+pixel;
           SocBusTransaction trans = new SocBusTransaction(SocBusTransaction.READTransaction,
-        vgaBufferAddress+index*4,0,SocBusTransaction.WordAccess,getName());
+        vgaBufferAddress+index*4,0,SocBusTransaction.WordAccess,"vgadma");
         trans.setAsHiddenTransaction();
         initializeTransaction(trans,attachedBus.getBusId(),cState);
         int data = trans.hasError() ? 0 : trans.getReadData();
@@ -341,7 +341,7 @@ public class VgaState implements SocBusSlaveInterface, SocBusSnifferInterface,So
   public void handleTransaction(SocBusTransaction trans) {
     if (!canHandleTransaction(trans))
       return;
-    trans.setTransactionResponder(getName());
+    trans.setTransactionResponder(attachedBus.getComponent());
     if (trans.getAccessType() != SocBusTransaction.WordAccess) {
       trans.setError(SocBusTransaction.AccessTypeNotSupportedError);
       return;

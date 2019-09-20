@@ -93,6 +93,7 @@ import javax.swing.JSpinner;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.JToolTip;
 import javax.swing.ProgressMonitor;
 import javax.swing.UIDefaults;
 import javax.swing.UIManager;
@@ -1026,6 +1027,7 @@ public class Startup implements AWTEventListener {
         if ((container instanceof JButton)
             || (container instanceof JCheckBox)
             || (container instanceof JComboBox)
+            || (container instanceof JToolTip)
             || (container instanceof JLabel)
             || (container instanceof JMenu)
             || (container instanceof JMenuItem)

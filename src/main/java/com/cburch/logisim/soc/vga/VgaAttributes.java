@@ -154,31 +154,32 @@ public class VgaAttributes extends AbstractAttributeSet {
 
   @Override
   public <V> void setValue(Attribute<V> attr, V value) {
-    if (attr == START_ADDRESS) {
+	V oldValue = getValue(attr);
+   if (attr == START_ADDRESS) {
       if (state.setStartAddress((Integer) value))
-        fireAttributeValueChanged(attr, value, null);
+        fireAttributeValueChanged(attr, value, oldValue);
       return;
     }
     if (attr == MODE) {
       if (state.setInitialMode((AttributeOption) value))
-        fireAttributeValueChanged(attr, value, null);
+        fireAttributeValueChanged(attr, value, oldValue);
       return;
     }
     if (attr == BUFFER_ADDRESS) {
       if (state.setVgaBufferStartAddress((Integer) value ))
-        fireAttributeValueChanged(attr, value, null);
+        fireAttributeValueChanged(attr, value, oldValue);
       return;
     }
     if (attr == StdAttr.LABEL) {
      if (state.setLabel((String) value))
-       fireAttributeValueChanged(attr, value, null);
+       fireAttributeValueChanged(attr, value, oldValue);
      return;
     }
     if (attr == StdAttr.LABEL_FONT) {
       Font f = (Font) value;
       if (!f.equals(labelFont)) {
         labelFont = f;
-        fireAttributeValueChanged(attr, value, null);
+        fireAttributeValueChanged(attr, value, oldValue);
       }
       return;
     }
@@ -186,38 +187,38 @@ public class VgaAttributes extends AbstractAttributeSet {
       Boolean b = (Boolean) value;
       if (b != labelVisible) {
         labelVisible = b;
-        fireAttributeValueChanged(attr, value, null);
+        fireAttributeValueChanged(attr, value, oldValue);
       }
       return;
     }
     if (attr == SocSimulationManager.SOC_BUS_SELECT) {
       if (state.setBusInfo((SocBusInfo) value))
-        fireAttributeValueChanged(attr, value, null);
+        fireAttributeValueChanged(attr, value, oldValue);
       return;
     }
     if (attr == SOFT_160_120) {
       if (state.setSoft160x120((Boolean)value))
-        fireAttributeValueChanged(attr, value, null);
+        fireAttributeValueChanged(attr, value, oldValue);
       return;
     }
     if (attr == SOFT_320_240) {
       if (state.setSoft320x240((Boolean)value))
-        fireAttributeValueChanged(attr, value, null);
+        fireAttributeValueChanged(attr, value, oldValue);
       return;
     }
     if (attr == SOFT_640_480) {
       if (state.setSoft640x480((Boolean)value))
-        fireAttributeValueChanged(attr, value, null);
+        fireAttributeValueChanged(attr, value, oldValue);
       return;
     }
     if (attr == SOFT_800_600) {
       if (state.setSoft800x600((Boolean)value))
-        fireAttributeValueChanged(attr, value, null);
+        fireAttributeValueChanged(attr, value, oldValue);
       return;
     }
     if (attr == SOFT_1024_768) {
       if (state.setSoft1024x768((Boolean)value))
-        fireAttributeValueChanged(attr, value, null);
+        fireAttributeValueChanged(attr, value, oldValue);
       return;
     }
   }

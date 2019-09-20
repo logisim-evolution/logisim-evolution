@@ -84,7 +84,7 @@ public class RV32imLoadAndStoreInstructions implements RV32imExecutionUnitInterf
       case INSTR_SW : if (transType < 0) transType = SocBusTransaction.WordAccess;
                       SocBusTransaction trans = new SocBusTransaction(SocBusTransaction.WRITETransaction,
                           ElfHeader.getIntValue((Long)address),toBeStored,transType,
-                          state.getMasterName());
+                          state.getMasterComponent());
                       state.insertTransaction(trans, false, cState);
                       return !transactionHasError(trans);
       case INSTR_LB :
@@ -93,7 +93,7 @@ public class RV32imLoadAndStoreInstructions implements RV32imExecutionUnitInterf
       case INSTR_LHU: if (transType < 0 ) transType = SocBusTransaction.HalfWordAccess;
       case INSTR_LW : if (transType < 0) transType = SocBusTransaction.WordAccess;
                       trans = new SocBusTransaction(SocBusTransaction.READTransaction,
-                          ElfHeader.getIntValue((Long)address),0,transType,state.getMasterName());
+                          ElfHeader.getIntValue((Long)address),0,transType,state.getMasterComponent());
                       state.insertTransaction(trans, false, cState);
                       if (transactionHasError(trans)) return false;
                       int toBeLoaded = trans.getReadData();

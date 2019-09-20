@@ -82,7 +82,7 @@ public class CircuitState implements InstanceData {
             substate.reset();
           }
         } else if (getData(comp) != null && getData(comp) instanceof ComponentDataGuiProvider) 
-          ((ComponentDataGuiProvider)getData(comp)).dispose();
+          ((ComponentDataGuiProvider)getData(comp)).destroy();
         if (comp instanceof Wire) {
           Wire w = (Wire) comp;
           markPointAsDirty(w.getEnd0());
@@ -99,7 +99,7 @@ public class CircuitState implements InstanceData {
         wireData = null;
         for (Component c : componentData.keySet()) {
           if (componentData.get(c) != null && componentData.get(c) instanceof ComponentDataGuiProvider)
-            ((ComponentDataGuiProvider)componentData.get(c)).dispose();
+            ((ComponentDataGuiProvider)componentData.get(c)).destroy();
           else if (componentData.get(c) instanceof CircuitState) {
             ((CircuitState)componentData.get(c)).reset();
           }
@@ -429,7 +429,7 @@ public class CircuitState implements InstanceData {
       Component comp = it.next();
       if (!(comp.getFactory() instanceof SubcircuitFactory)) {
         if (componentData.get(comp) instanceof ComponentDataGuiProvider)
-          ((ComponentDataGuiProvider)componentData.get(comp)).dispose();
+          ((ComponentDataGuiProvider)componentData.get(comp)).destroy();
         it.remove();
       }
     }
@@ -470,7 +470,7 @@ public class CircuitState implements InstanceData {
       }
     } else {
       if (componentData.get(comp)!= null && componentData.get(comp) instanceof ComponentDataGuiProvider)
-        ((ComponentDataGuiProvider)componentData.get(comp)).dispose();
+        ((ComponentDataGuiProvider)componentData.get(comp)).destroy();
     }
     componentData.put(comp, data);
   }

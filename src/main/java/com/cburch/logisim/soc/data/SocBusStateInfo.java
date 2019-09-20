@@ -33,6 +33,7 @@ import static com.cburch.logisim.soc.Strings.S;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -44,22 +45,23 @@ import java.util.LinkedList;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.TableCellRenderer;
 
+import com.cburch.logisim.circuit.ComponentDataGuiProvider;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Location;
-import com.cburch.logisim.data.Value;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceComponent;
 import com.cburch.logisim.instance.InstanceData;
-import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
+import com.cburch.logisim.soc.bus.SocBus;
 import com.cburch.logisim.soc.bus.SocBusAttributes;
-import com.cburch.logisim.soc.gui.BusTransactionInsertionGui;
+import com.cburch.logisim.soc.gui.TraceWindowTableModel;
 import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.LocaleListener;
 import com.cburch.logisim.util.LocaleManager;
@@ -69,16 +71,58 @@ public class SocBusStateInfo extends JDialog implements ActionListener,LocaleLis
   private static final long serialVersionUID = 1L;
   public static final int TraceWidth = 630;
   public static final int TraceHeight = 30;
+  public static final int BlockWidth = 238;
   
-  public class SocBusState implements InstanceData,Cloneable {
+  public interface SocBusStateListener {
+    public void fireCanged(SocBusState item);
+  }
+  
+  public class SocBusState implements InstanceData,Cloneable,ComponentDataGuiProvider {
     
-    private static final int NR_OF_TRACES_TO_KEEP = 10000;
+    public class SocBusStateTrace extends JPanel {
+      private static final long serialVersionUID = 1L;
+	  private SocBusTransaction action;
+      private long index;
+      private TraceWindowTableModel model;
+      
+      public SocBusStateTrace(SocBusTransaction action, long index, TraceWindowTableModel model) {
+        this.action = action;
+        this.index = index;
+        this.model = model;
+      }
+      
+      public SocBusTransaction getTransaction() { return action; }
+      
+      @Override
+      public void paint(Graphics g) {
+        Graphics2D g2 = (Graphics2D)g.create();
+        g2.setFont(AppPreferences.getScaledFont(g2.getFont()));
+        if (action == null) {
+          if (index == 0)
+            GraphicsUtil.drawCenteredText(g2, S.get("SocBusNoTrace"), getWidth()/2, getHeight()/2);
+          g2.dispose();
+          return;
+        }
+        int boxWidth = action.paint(g2, index, model.getBoxWidth());
+        g2.dispose();
+        if (boxWidth != model.getBoxWidth()) model.setBoxWidth(boxWidth);
+      }
+    }
+    
+	private static final int NR_OF_TRACES_TO_KEEP = 10000;
     private LinkedList<SocBusTransaction> trace;
     private long startTraceIndex;
+    private SocBusStateInfo parrent;
+    private Instance instance;
+    private ArrayList<SocBusStateListener> listeners;
     
-    public SocBusState() {
+    public SocBusState(SocBusStateInfo parrent, Instance instance) {
       trace = new LinkedList<SocBusTransaction>();
       startTraceIndex = 0;
+      this.parrent = parrent;
+      this.instance = instance;
+      SocBus.MENU_PROVIDER.registerBusState(this, instance);
+      listeners = new ArrayList<SocBusStateListener>();
     }
  
     public SocBusState clone() {
@@ -95,11 +139,15 @@ public class SocBusStateInfo extends JDialog implements ActionListener,LocaleLis
         trace.removeFirst();
       }
       trace.addLast(t);
+      for (SocBusStateListener l : listeners) l.fireCanged(this);
     }
     
     public void clear() {
+      if (trace.size() == 0)
+        return;
       trace.clear();
       startTraceIndex = 0;
+      for (SocBusStateListener l : listeners) l.fireCanged(this);
     }
     
     public void paint(Graphics2D g , Bounds b) {
@@ -116,17 +164,36 @@ public class SocBusStateInfo extends JDialog implements ActionListener,LocaleLis
         t.paint(b.getX()+1, b.getY()+1+i*TraceHeight, g, startTraceIndex+startIndex-i);
       }
     }
+    
+    public int getNrOfEntires() { return trace.size(); }
+    public void registerListener(SocBusStateListener l) { if (!listeners.contains(l)) listeners.add(l); }
+    public void deregisterListener(SocBusStateListener l) { if (listeners.contains(l)) listeners.remove(l); }
+
+    public SocBusStateTrace getEntry(int index, TraceWindowTableModel model) {
+      if (index < 0 || index >= trace.size()) {
+    	if (index == 0)
+    	  return new SocBusStateTrace(null,0,model);
+        return null;
+      }
+      long indx = startTraceIndex+trace.size()-index-1;
+      return new SocBusStateTrace(trace.get(trace.size()-index-1),indx,model);
+    }
+
+    @Override
+    public void destroy() {
+      if (parrent != null && parrent.isVisible())
+        parrent.setVisible(false);
+      SocBus.MENU_PROVIDER.deregisterBusState(this, instance);
+    }
   }
   
   private SocSimulationManager socManager;
   private Component myComp;
   private ArrayList<SocBusSnifferInterface> sniffers;
-  private Value oldReset;
   private JButton okButton;
   private JLabel title;
   private JScrollPane scroll;
   private SocMemMapModel memMap;
-  private BusTransactionInsertionGui mygui;
   
   public SocBusStateInfo(SocSimulationManager man , Component comp ) {
     super();
@@ -134,11 +201,7 @@ public class SocBusStateInfo extends JDialog implements ActionListener,LocaleLis
     socManager = man;
     myComp = comp;
     sniffers = new ArrayList<SocBusSnifferInterface>();
-    oldReset = Value.UNKNOWN;
     memMap = new SocMemMapModel();
-    String id = comp.getAttributeSet().getValue(SocBusAttributes.SOC_BUS_ID).getBusId();
-    mygui = new BusTransactionInsertionGui(this,id);
-    mygui.setTitle(S.get("SocInsertTransWindowTitle")+getName());
     setTitle(S.get("SocMemMapWindowTitle")+getName());
     setLayout(new BorderLayout());
     title = new JLabel(S.get("SocMemoryMapTitle"),JLabel.CENTER);
@@ -191,14 +254,6 @@ public class SocBusStateInfo extends JDialog implements ActionListener,LocaleLis
     return name;
   }
   
-  public void setReset( Value reset ) {
-    if (oldReset.equals(Value.FALSE) && reset.equals(Value.TRUE)) {
-      if (getRegPropagateState() != null)
-        getRegPropagateState().clear();
-    }
-    oldReset = reset;
-  }
-  
   public SocSimulationManager getSocSimulationManager() {
     return socManager;
   }
@@ -211,10 +266,6 @@ public class SocBusStateInfo extends JDialog implements ActionListener,LocaleLis
     myComp = comp;
   }
   
-  public BusTransactionInsertionGui getTransactionInsertionGui() {
-    return mygui;
-  }
-
   public void initializeTransaction(SocBusTransaction trans, String busId) {
     int nrOfReponders = 0;
     int reponder = -1;
@@ -269,8 +320,8 @@ public class SocBusStateInfo extends JDialog implements ActionListener,LocaleLis
     g.dispose();
   }
   
-  public SocBusState getNewState() {
-    return new SocBusState();
+  public SocBusState getNewState(Instance instance) {
+    return new SocBusState(this,instance);
   }
   
   public SocBusState getRegPropagateState() {

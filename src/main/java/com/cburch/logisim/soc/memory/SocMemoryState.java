@@ -281,7 +281,7 @@ public class SocMemoryState implements SocBusSlaveInterface {
 	if (trans.isWriteTransaction()) {
 	  performWriteAction(trans.getAddress(),trans.getWriteData(),trans.getAccessType());
 	}
-	trans.setTransactionResponder(getName());
+	trans.setTransactionResponder(attachedBus.getComponent());
   }
   
   private SocMemoryInfo getRegPropagateState() {
