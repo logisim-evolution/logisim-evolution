@@ -28,6 +28,8 @@
 
 package com.cburch.logisim.soc.rv32im;
 
+import java.util.ArrayList;
+
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.soc.file.ElfHeader;
 
@@ -60,7 +62,7 @@ public class RV32imControlTransferInstructions implements RV32imExecutionUnitInt
    */
   
   /* TODO: add all other pseudo branch instructions like BLZ,BGEZ, etc */
-  private static final String[] AsmOpcodes = {"BEQ","BNE","JAL","JALR","BLT","BGE","BLTU","BGEU","J","JR",
+  private final static String[] AsmOpcodes = {"BEQ","BNE","JAL","JALR","BLT","BGE","BLTU","BGEU","J","JR",
           "RET","BNEZ","BEQZ"};
 
   private boolean valid = false;
@@ -71,6 +73,14 @@ public class RV32imControlTransferInstructions implements RV32imExecutionUnitInt
   private int immediate;
   private int source1;
   private int source2;
+  public boolean isPcRelative;
+  
+  public ArrayList<String> getInstructions() {
+    ArrayList<String> opcodes = new ArrayList<String>();
+    for (int i = 0 ; i < AsmOpcodes.length ; i++)
+      opcodes.add(AsmOpcodes[i]);
+    return opcodes;
+  };
 
   public boolean execute(RV32im_state.ProcessorState state, CircuitState cState) {
     if (!valid)
@@ -140,22 +150,52 @@ public class RV32imControlTransferInstructions implements RV32imExecutionUnitInt
     switch (operation) {
       case INSTR_RET  : break;
       case INSTR_JAL  : s.append(RV32im_state.registerABINames[destination]+",");
-      case INSTR_J    : s.append("pc"+((immediate>=0) ? "+" : "")+immediate);
+      case INSTR_J    : s.append("pc");
+                        if (immediate != 0) s.append(((immediate>=0) ? "+" : "")+immediate);
                         break;
       case INSTR_JALR : s.append(RV32im_state.registerABINames[destination]+",");
       case INSTR_JR   : s.append(RV32im_state.registerABINames[source1]);
-                        s.append(((immediate>=0) ? "+" : "")+immediate);
+                        if (immediate != 0) s.append(","+immediate);
                         break;
       case INSTR_BEQZ :
-      case INSTR_BNEZ : s.append(RV32im_state.registerABINames[source1]+",pc"+((immediate>=0) ? "+" : "")+immediate);
+      case INSTR_BNEZ : s.append(RV32im_state.registerABINames[source1]+",pc");
+                        if (immediate != 0) s.append(((immediate>=0) ? "+" : "")+immediate);
                         break;
-      default         : s.append(RV32im_state.registerABINames[source2]+","+RV32im_state.registerABINames[source1]+",");
-                        s.append("pc"+((immediate>=0) ? "+" : "")+immediate);
+      default         : s.append(RV32im_state.registerABINames[source2]+","+RV32im_state.registerABINames[source1]+",pc");
+                        if (immediate != 0) s.append(((immediate>=0) ? "+" : "")+immediate);
     }
     return s.toString();
   }
+  
+  public String getAsmInstruction( String label ) {
+    if (!valid)
+      return null;
+    StringBuffer s = new StringBuffer();
+    s.append(AsmOpcodes[operation].toLowerCase());
+    while (s.length()<RV32imSupport.ASM_FIELD_SIZE)
+      s.append(" ");
+    switch (operation) {
+      case INSTR_RET  : break;
+      case INSTR_JAL  : s.append(RV32im_state.registerABINames[destination]+",");
+      case INSTR_J    : s.append(label);
+                        break;
+      case INSTR_JALR : s.append(RV32im_state.registerABINames[destination]+",");
+      case INSTR_JR   : s.append(RV32im_state.registerABINames[source1]);
+                        if (immediate != 0) s.append(","+immediate);
+                        break;
+      case INSTR_BEQZ :
+      case INSTR_BNEZ : s.append(RV32im_state.registerABINames[source1]+","+label);
+                        break;
+      default         : s.append(RV32im_state.registerABINames[source2]+","+RV32im_state.registerABINames[source1]+",");
+                        s.append(label);
+    }
+    return s.toString();
+  }
+	  
+  
 
   public int getBinInstruction() { return instruction; }
+  public boolean isPcRelative() { return isPcRelative; }
 
   public boolean setAsmInstruction(String instr) {
     valid = false;
@@ -168,6 +208,8 @@ public class RV32imControlTransferInstructions implements RV32imExecutionUnitInt
     valid = decodeBin();
     return valid;
   }
+  
+  public int getOffset() { return immediate; }
 
   public boolean performedJump() {return valid&jumped;}
 
@@ -175,6 +217,7 @@ public class RV32imControlTransferInstructions implements RV32imExecutionUnitInt
   
   private boolean decodeBin() {
     int opcode = RV32imSupport.getOpcode(instruction);
+    isPcRelative = true;
     switch (opcode) {
       case JAL    : destination = RV32imSupport.getDestinationRegisterIndex(instruction);
                     operation = (destination == 0) ? INSTR_J : INSTR_JAL;
@@ -182,6 +225,7 @@ public class RV32imControlTransferInstructions implements RV32imExecutionUnitInt
                     return true;
       case JALR   : if (RV32imSupport.getFunct3(instruction)!=0)
                       return false;
+                    isPcRelative = true;
                     destination = RV32imSupport.getDestinationRegisterIndex(instruction);
                     operation = (destination == 0) ? INSTR_JR : INSTR_JALR;
                     source1 = RV32imSupport.getSourceRegister1Index(instruction);

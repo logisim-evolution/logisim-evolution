@@ -28,6 +28,8 @@
 
 package com.cburch.logisim.soc.rv32im;
 
+import java.util.ArrayList;
+
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.soc.file.ElfHeader;
 
@@ -59,7 +61,7 @@ public class RV32imIntegerRegisterImmediateInstructions implements RV32imExecuti
   private static final int INSTR_NOT = 14;
   private static final int INSTR_MV = 15;
   
-  private static final String[] AsmOpcodes = {"ADDI","SLLI","SLTI","SLTIU","XORI","SRLI","ORI",
+  private final static String[] AsmOpcodes = {"ADDI","SLLI","SLTI","SLTIU","XORI","SRLI","ORI",
                                               "ANDI","SRAI","LUI","AUIPC","NOP","LI","SEQZ","NOT","MV"};
   /* pseudo instructions:
    * NOP -> ADDI r0,r0,0
@@ -75,6 +77,13 @@ public class RV32imIntegerRegisterImmediateInstructions implements RV32imExecuti
   private int operation;
   private boolean valid = false;
   
+  public ArrayList<String> getInstructions() {
+    ArrayList<String> opcodes = new ArrayList<String>();
+    for (int i = 0 ; i < AsmOpcodes.length ; i++)
+      opcodes.add(AsmOpcodes[i]);
+    return opcodes;
+  };
+
   public boolean execute(RV32im_state.ProcessorState state, CircuitState cState) {
     if (!valid)
       return false;
@@ -126,9 +135,10 @@ public class RV32imIntegerRegisterImmediateInstructions implements RV32imExecuti
       s.append(" ");
     switch (operation) {
       case INSTR_NOP  : break;
-      case INSTR_LI   :
+      case INSTR_LI   : s.append(RV32im_state.registerABINames[destination]+","+immediate);
+                        break;
       case INSTR_LUI  :
-      case INSTR_AUIPC: s.append(RV32im_state.registerABINames[destination]+","+immediate);
+      case INSTR_AUIPC: s.append(RV32im_state.registerABINames[destination]+","+((immediate>>12)&0xFFFFF));
                         break;
       case INSTR_MV   :
       case INSTR_NOT  :

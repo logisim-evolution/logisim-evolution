@@ -45,6 +45,7 @@ import com.cburch.logisim.data.Location;
 import com.cburch.logisim.gui.main.Frame;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.soc.file.ElfHeader;
 import com.cburch.logisim.soc.file.ProcessorReadElf;
@@ -56,6 +57,7 @@ public class RV32imMenuProvider implements ActionListener {
 
   private static final int LOAD_ELF_FUNCTION = 1;
   private static final int SHOW_STATE_FUNCTION = 2;
+  private static final int SHOW_PROGRAM = 3;
 
   private class InstanceMenuItem extends JMenuItem {
     private static final long serialVersionUID = 1L;
@@ -74,6 +76,15 @@ public class RV32imMenuProvider implements ActionListener {
       this.csh = csh;
     }
       
+    public InstanceMenuItem(Instance inst, String label, int function, Object data, CircuitState state, CircuitStateHolder.HierarchyInfo csh) {
+      super(label);
+      instance = inst;
+      this.function = function;
+      this.data = (RV32im_state.ProcessorState)data;
+      circuitState = state;
+      this.csh = csh;
+    }
+        
     public InstanceMenuItem(Instance inst, String label, int function, CircuitState state) {
       super(label);
       instance = inst;
@@ -117,7 +128,8 @@ public class RV32imMenuProvider implements ActionListener {
         instName = instance.getFactory().getHDLName(instance.getAttributeSet())+"@"+loc.getX()+","+loc.getY();
       }
       String name = circuitState != null ? instName+" : "+S.get("Rv32imReadElf") : S.get("Rv32imReadElf");
-      InstanceMenuItem ReadElf = new InstanceMenuItem(instance,name,LOAD_ELF_FUNCTION,circuitState);
+      CircuitState state = circuitState == null ? proj.getCircuitState() : circuitState;
+      InstanceMenuItem ReadElf = new InstanceMenuItem(instance,name,LOAD_ELF_FUNCTION,state);
       ReadElf.addActionListener(parrent);
       ReadElf.setEnabled(true);
       menu.addSeparator();
@@ -129,6 +141,20 @@ public class RV32imMenuProvider implements ActionListener {
         showState.setEnabled(true);
         menu.add(showState);
       }
+      name = circuitState != null ? instName+" : "+S.get("Rv32imShowProgram") : S.get("Rv32imShowProgram");
+      if (state != null)
+        if (((RV32im_state.ProcessorState)instance.getData(state)).programLoaded()) {
+          HierarchyInfo hinfo;
+          if (circuitState == null) {
+            hinfo = new HierarchyInfo(proj.getCurrentCircuit());
+            hinfo.addComponent(instance.getComponent());
+          } else hinfo = hierarchy;
+          InstanceMenuItem showProg = new InstanceMenuItem(instance,name,SHOW_PROGRAM,
+                  (RV32im_state.ProcessorState)instance.getData(state),state,hinfo);
+          showProg.addActionListener(parrent);
+          showProg.setEnabled(true);
+          menu.add(showProg);
+        }
     }
     
     @Override
@@ -148,11 +174,13 @@ public class RV32imMenuProvider implements ActionListener {
   
   private class InstanceInformation {
     private Frame parrentFrame;
-    private HashMap<RV32im_state.ProcessorState,ListeningFrame> myFrames;
+    private HashMap<RV32im_state.ProcessorState,ListeningFrame> myStates;
+    private HashMap<RV32im_state.ProcessorState,ListeningFrame> myPrograms;
     
     public InstanceInformation(Instance inst, RV32imMenuProvider parrent) {
       parrentFrame = null;
-      myFrames = new HashMap<RV32im_state.ProcessorState,ListeningFrame>();
+      myStates = new HashMap<RV32im_state.ProcessorState,ListeningFrame>();
+      myPrograms = new HashMap<RV32im_state.ProcessorState,ListeningFrame>();
     }
     
     public void readElf(Instance instance, CircuitState circuitState) {
@@ -170,27 +198,35 @@ public class RV32imMenuProvider implements ActionListener {
     }
     
     public void registerCpuState(RV32im_state.ProcessorState data) {
-      if (myFrames.containsKey(data))
-        return;
-      myFrames.put(data, null);
+      if (!myStates.containsKey(data))
+        myStates.put(data, null);
+      if (!myPrograms.containsKey(data))
+        myPrograms.put(data, null);
     }
     
     public void destroyCpuState(RV32im_state.ProcessorState data) {
-      if (!myFrames.containsKey(data))
-        return;
-      if (myFrames.get(data) != null) {
-        myFrames.get(data).setVisible(false);
-        myFrames.get(data).dispose();
+      if (myStates.containsKey(data)) {
+        if (myStates.get(data) != null) {
+          myStates.get(data).setVisible(false);
+          myStates.get(data).dispose();
+        }
+        myStates.remove(data);
       }
-      myFrames.remove(data);
+      if (myPrograms.containsKey(data)) {
+        if (myPrograms.get(data) != null) {
+          myPrograms.get(data).setVisible(false);
+          myPrograms.get(data).dispose();
+        }
+        myPrograms.remove(data);
+      }
     }
     
     public void showState(RV32im_state.ProcessorState data, CircuitStateHolder.HierarchyInfo csh) {
       if (parrentFrame == null || data == null)
         return;
-      if (myFrames.containsKey(data))
-        if (myFrames.get(data)!= null) {
-          JFrame frame = myFrames.get(data); 
+      if (myStates.containsKey(data))
+        if (myStates.get(data)!= null) {
+          JFrame frame = myStates.get(data); 
           frame.setVisible(true);
           int state = frame.getExtendedState();
           state &= ~Frame.ICONIFIED;
@@ -204,7 +240,28 @@ public class RV32imMenuProvider implements ActionListener {
       frame.setVisible(true);
       frame.getContentPane().add(data);
       frame.addWindowListener(data);
-      myFrames.put(data, frame);
+      myStates.put(data, frame);
+    }
+
+    public void showProgram(RV32im_state.ProcessorState data, CircuitStateHolder.HierarchyInfo csh, CircuitState state) {
+      if (parrentFrame == null || data == null)
+        return;
+      if (myPrograms.containsKey(data))
+        if (myPrograms.get(data)!= null) {
+          JFrame frame = myPrograms.get(data); 
+          frame.setVisible(true);
+          int fstate = frame.getExtendedState();
+          fstate &= ~Frame.ICONIFIED;
+          frame.setExtendedState(fstate);
+          return;
+        }
+      ListeningFrame frame = new ListeningFrame(S.getter("RV32imMenuCpuProgramWindowTitle"),csh);
+      frame.setSize(AppPreferences.getScaled(320),AppPreferences.getScaled(240));
+      parrentFrame.addWindowListener(frame);
+      frame.add(data.getAsmWindow());
+      frame.setVisible(true);
+      frame.addWindowListener(data);
+      myPrograms.put(data, frame);
     }
     
     public void setParrentFrame(Frame frame) {
@@ -238,6 +295,8 @@ public class RV32imMenuProvider implements ActionListener {
           case LOAD_ELF_FUNCTION   : myInfo.get(inst).readElf(inst,info.getCircuitState());
                                      return;
           case SHOW_STATE_FUNCTION : myInfo.get(inst).showState(info.getState(),info.getHierarchyInfo());
+                                     return;
+          case SHOW_PROGRAM        : myInfo.get(inst).showProgram(info.getState(), info.getHierarchyInfo(),info.getCircuitState());
                                      return;
         }
       }

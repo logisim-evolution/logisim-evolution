@@ -29,6 +29,7 @@
 package com.cburch.logisim.soc.rv32im;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.soc.file.ElfHeader;
@@ -46,7 +47,7 @@ public class RV32im_M_ExtensionInstructions implements RV32imExecutionUnitInterf
   private static final int INSTR_REM = 6;
   private static final int INSTR_REMU = 7;
   
-  private static final String[] AsmOpcodes = {"MUL","MULH","MULHSU","MULHU","DIV","DIVU","REM","REMU"};
+  private final static String[] AsmOpcodes = {"MUL","MULH","MULHSU","MULHU","DIV","DIVU","REM","REMU"};
 
   private int instruction;
   private boolean valid;
@@ -55,6 +56,13 @@ public class RV32im_M_ExtensionInstructions implements RV32imExecutionUnitInterf
   private int source1;
   private int source2;
   
+  public ArrayList<String> getInstructions() {
+    ArrayList<String> opcodes = new ArrayList<String>();
+    for (int i = 0 ; i < AsmOpcodes.length ; i++)
+      opcodes.add(AsmOpcodes[i]);
+    return opcodes;
+  };
+
   public boolean execute(RV32im_state.ProcessorState state, CircuitState cState) {
     if (!valid) return false;
     int val1 = state.getRegisterValue(source1);

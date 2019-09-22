@@ -42,6 +42,7 @@ import com.cburch.logisim.instance.StdAttr;
 
 public class SocSupport {
 
+
   private static final long LongMask = (1L<<32)-1L;
 
   public static long convUnsignedInt(int value) {
@@ -90,7 +91,7 @@ public class SocSupport {
     ret.addActionListener(l);
     return ret;
   }
-	  
+  
   public static String getComponentName(Component comp) {
     String name = comp.getAttributeSet().getValue(StdAttr.LABEL);
     if (name == null || name.isEmpty()) {
@@ -127,11 +128,11 @@ public class SocSupport {
       return getComponentName(comp);
     return getMasterHierName(state)+getComponentName(comp);
   }
-	  
+  
   public static String getMasterName(CircuitState state, String compName) {
     if (!state.isSubstate())
       return compName;
     return getMasterHierName(state)+compName;
   }
-		  
+  
 }

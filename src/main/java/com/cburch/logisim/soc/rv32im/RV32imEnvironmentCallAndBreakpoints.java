@@ -30,6 +30,8 @@ package com.cburch.logisim.soc.rv32im;
 
 import static com.cburch.logisim.soc.Strings.S;
 
+import java.util.ArrayList;
+
 import javax.swing.JOptionPane;
 
 import com.cburch.logisim.circuit.CircuitState;
@@ -41,12 +43,19 @@ public class RV32imEnvironmentCallAndBreakpoints implements RV32imExecutionUnitI
   private final static int INSTR_ECALL = 0;
   private final static int INSTR_EBREAK = 1;
   
-  private static final String[] AsmOpcodes = {"ECALL","EBREAK"};
+  private final static String[] AsmOpcodes = {"ECALL","EBREAK"};
 
   private int instruction = 0;
   private int operation;
   private boolean valid;
   
+  public ArrayList<String> getInstructions() {
+    ArrayList<String> opcodes = new ArrayList<String>();
+    for (int i = 0 ; i < AsmOpcodes.length ; i++)
+      opcodes.add(AsmOpcodes[i]);
+    return opcodes;
+  };
+
   public boolean execute(RV32im_state.ProcessorState state, CircuitState cState) {
     if (!valid)
       return false;

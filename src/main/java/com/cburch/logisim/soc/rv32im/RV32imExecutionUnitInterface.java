@@ -28,6 +28,8 @@
 
 package com.cburch.logisim.soc.rv32im;
 
+import java.util.ArrayList;
+
 import com.cburch.logisim.circuit.CircuitState;
 
 public interface RV32imExecutionUnitInterface {
@@ -39,4 +41,5 @@ public interface RV32imExecutionUnitInterface {
   public boolean performedJump();
   public boolean isValid();
   public String getErrorMessage();
+  public ArrayList<String> getInstructions();
 }

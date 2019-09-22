@@ -41,6 +41,11 @@ import java.util.LinkedList;
 
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+
+import org.fife.ui.rsyntaxtextarea.AbstractTokenMakerFactory;
+import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
+import org.fife.ui.rsyntaxtextarea.TokenMakerFactory;
 
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.circuit.ComponentDataGuiProvider;
@@ -52,7 +57,6 @@ import com.cburch.logisim.data.Value;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceComponent;
 import com.cburch.logisim.instance.InstanceData;
-import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.InstanceStateImpl;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.soc.data.SocBusInfo;
@@ -61,6 +65,8 @@ import com.cburch.logisim.soc.data.SocProcessorInterface;
 import com.cburch.logisim.soc.data.SocSupport;
 import com.cburch.logisim.soc.data.SocUpSimulationState;
 import com.cburch.logisim.soc.data.SocUpSimulationStateListener;
+import com.cburch.logisim.soc.file.ElfProgramHeader;
+import com.cburch.logisim.soc.file.ElfSectionHeader;
 import com.cburch.logisim.util.GraphicsUtil;
 
 public class RV32im_state implements SocUpSimulationStateListener,SocProcessorInterface {
@@ -77,6 +83,10 @@ public class RV32im_state implements SocUpSimulationStateListener,SocProcessorIn
     private SocUpSimulationState simState;
     private Instance myInstance;
     private boolean visible;
+    private Integer entryPoint;
+    private RSyntaxTextArea asmWindow;
+    private boolean programLoaded;
+    private JScrollPane asmScrollWindow;
     
     public ProcessorState(Instance inst) {
       registers = new int[32];
@@ -89,6 +99,14 @@ public class RV32im_state implements SocUpSimulationStateListener,SocProcessorIn
               AppPreferences.getScaled(Rv32im_riscv.upStateBounds.getHeight()));
       Rv32im_riscv.MENU_PROVIDER.registerCpuState(this, inst);
       visible = false;
+      entryPoint = null;
+      asmWindow = new RSyntaxTextArea(20,60);
+      AbstractTokenMakerFactory atmf = (AbstractTokenMakerFactory) TokenMakerFactory.getDefaultInstance();
+      atmf.putMapping("asm/riscv", "com.cburch.logisim.soc.rv32im.RV32imSyntaxHighlighter");
+      asmWindow.setSyntaxEditingStyle("asm/riscv");
+      asmWindow.setEditable(false);
+      asmScrollWindow = new JScrollPane(asmWindow);
+      programLoaded = false;
       reset();
     }
     
@@ -96,14 +114,28 @@ public class RV32im_state implements SocUpSimulationStateListener,SocProcessorIn
     public void paint(Graphics g) {
       draw( (Graphics2D) g, true);
     }
-    public void reset() {
-      pc = resetVector;
+    
+    public void reset() { reset(null,null,null,null); }
+    
+    public void reset(CircuitState state,Integer entry,ElfProgramHeader progInfo,ElfSectionHeader sectInfo) {
+      if (entry != null) entryPoint = entry;
+      if (progInfo != null || sectInfo != null) {
+        asmWindow.setText(RV32imDecoder.getProgram(state, this, progInfo, sectInfo));
+        asmWindow.setCaretPosition(0);
+        programLoaded = true;
+      }
+      pc = entryPoint != null ? entryPoint : resetVector;
       for (int i = 1 ; i < 31 ; i++)
         registers_valid[i] = false;
       registers_valid[0] = true;
       lastRegisterWritten = -1;
       instrTrace.clear();
+      if (visible) repaint();
     }
+    
+    public int getEntryPoint() { return entryPoint; }
+    public boolean programLoaded() { return programLoaded; }
+    public JScrollPane getAsmWindow() { return asmScrollWindow; }
     
     public void setClock(Value clock, CircuitState cState) {
       if (lastClock == Value.FALSE && clock == Value.TRUE)
@@ -396,7 +428,7 @@ public class RV32im_state implements SocUpSimulationStateListener,SocProcessorIn
   private String label;
   private SocBusInfo attachedBus;
   
-  private static final RV32imDecoder DECODER = new RV32imDecoder(); 
+  public static final RV32imDecoder DECODER = new RV32imDecoder(); 
   public static String[] registerABINames = {"zero","ra","sp","gp","tp","t0","t1","t2",
 		                                      "s0","s1","a0","a1","a2","a3","a4","a5",
 		                                      "a6","a7","s2","s3","s4","s5","s6","s7","s8","s9",
@@ -538,16 +570,6 @@ public class RV32im_state implements SocUpSimulationStateListener,SocProcessorIn
     return new ProcessorState(inst);
   }
   
-  public ProcessorState getRegState() {
-    InstanceComponent comp = (InstanceComponent) attachedBus.getComponent();
-    if (comp == null)
-      return null;
-    InstanceState state = comp.getInstanceStateImpl();
-    if (state == null)
-      return null;
-    return (ProcessorState) state.getData();
-  }
-	  
   public void paint(int x , int y , Graphics2D g2, Instance inst, boolean visible, InstanceData pstate) {
     Graphics2D g = (Graphics2D) g2.create();
     g.translate(x+Rv32im_riscv.upStateBounds.getX(), y+Rv32im_riscv.upStateBounds.getY());
@@ -586,14 +608,16 @@ public class RV32im_state implements SocUpSimulationStateListener,SocProcessorIn
   }
 
   @Override
-  public void setEntryPointandReset(long entryPoint) {
+  public void setEntryPointandReset(CircuitState state, long entryPoint, ElfProgramHeader progInfo,
+		                            ElfSectionHeader sectInfo) {
     int entry = (int) entryPoint;
     if (attachedBus != null && attachedBus.getComponent() != null) {
       InstanceComponent comp = (InstanceComponent)attachedBus.getComponent();
-      comp.getAttributeSet().setValue(RV32imAttributes.RESET_VECTOR, entry);
-      if (getRegState() != null)
-        getRegState().reset();
-      comp.getInstance().fireInvalidated();
+      if (comp.getInstance() != null) {
+        ProcessorState pstate = (ProcessorState)comp.getInstance().getData(state);
+        if (pstate != null) pstate.reset(state,entry,progInfo,sectInfo);
+        comp.getInstance().fireInvalidated();
+      }
     }
   }
 

@@ -29,9 +29,12 @@
 package com.cburch.logisim.soc.data;
 
 import com.cburch.logisim.circuit.CircuitState;
+import com.cburch.logisim.soc.file.ElfProgramHeader;
+import com.cburch.logisim.soc.file.ElfSectionHeader;
 
 public interface SocProcessorInterface {
 
-  public void setEntryPointandReset(long entryPoint);
+  public void setEntryPointandReset(CircuitState state, long entryPoint, ElfProgramHeader progInfo, 
+                                    ElfSectionHeader sectInfo);
   public void insertTransaction(SocBusTransaction trans, boolean hidden, CircuitState cState);
 }

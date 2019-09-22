@@ -430,7 +430,9 @@ public class CircuitState implements InstanceData {
       if (!(comp.getFactory() instanceof SubcircuitFactory)) {
         if (componentData.get(comp) instanceof ComponentDataGuiProvider)
           ((ComponentDataGuiProvider)componentData.get(comp)).destroy();
-        it.remove();
+    /*  it.remove(); ktt1: clear out the state instead of removing the key to prevent concurrent
+        modification error */
+        componentData.put(comp, null); 
       }
     }
     values.clear();
