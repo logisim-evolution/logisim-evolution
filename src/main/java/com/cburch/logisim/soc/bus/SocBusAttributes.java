@@ -133,11 +133,12 @@ public class SocBusAttributes extends AbstractAttributeSet {
   
   @Override
   public <V> void setValue(Attribute<V> attr, V value) {
+    V oldValue = getValue(attr);
     if (attr == NrOfTracesAttr) {
       BitWidth v = (BitWidth) value;
       if (!TraceSize.equals(v)) {
         TraceSize = v;
-        fireAttributeValueChanged(attr, value, null);
+        fireAttributeValueChanged(attr, value, oldValue);
       }
       return;
     }
@@ -145,7 +146,7 @@ public class SocBusAttributes extends AbstractAttributeSet {
       String v = (String) value;
       if (!Label.equals(v)) {
         Label = v;
-        fireAttributeValueChanged(attr, value, null);
+        fireAttributeValueChanged(attr, value, oldValue);
       }
       return;
     }
@@ -153,7 +154,7 @@ public class SocBusAttributes extends AbstractAttributeSet {
       Font f = (Font) value;
       if (!LabelFont.equals(f)) {
         LabelFont = f;
-        fireAttributeValueChanged(attr, value, null);
+        fireAttributeValueChanged(attr, value, oldValue);
       }
       return;
     }
@@ -161,7 +162,7 @@ public class SocBusAttributes extends AbstractAttributeSet {
       Boolean v = (Boolean) value;
       if (LabelVisable != v) {
         LabelVisable = v;
-        fireAttributeValueChanged(attr, value, null);
+        fireAttributeValueChanged(attr, value, oldValue);
       }
       return;
     }
@@ -173,7 +174,7 @@ public class SocBusAttributes extends AbstractAttributeSet {
       Boolean v = (Boolean) value;
       if (traceVisable != v) {
         traceVisable = v;
-        fireAttributeValueChanged(attr, value, null);
+        fireAttributeValueChanged(attr, value, oldValue);
       }
       return;
     }

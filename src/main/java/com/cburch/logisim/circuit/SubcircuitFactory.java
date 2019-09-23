@@ -95,13 +95,28 @@ public class SubcircuitFactory extends InstanceFactory {
       JMenuItem item = new JMenuItem(text);
       item.addActionListener(this);
       menu.add(item);
+      CircuitStateHolder.HierarchyInfo hi = new CircuitStateHolder.HierarchyInfo(proj.getCurrentCircuit());
+      hi.addComponent(instance.getComponent());
+      getSubMenuItems(menu,proj,(CircuitState)instance.getData(proj.getCircuitState()),hi);
+    }
+    
+    public void getSubMenuItems(JPopupMenu menu, Project proj, CircuitState state, 
+                                CircuitStateHolder.HierarchyInfo hi) {
       for (Component comp : source.getNonWires()) {
         if (comp instanceof InstanceComponent) {
           InstanceComponent c = (InstanceComponent) comp;
-          if (c.getInstance().getFactory().providesSubCircuitMenu()) {
+          if (c.getFactory() instanceof SubcircuitFactory) {
+        	CircuitFeature m = (CircuitFeature) c.getFeature(MenuExtender.class);
+            CircuitStateHolder.HierarchyInfo newhi = hi.getCopy();
+        	newhi.addComponent(c);
+            m.getSubMenuItems(menu, proj, (CircuitState)c.getInstance().getData(state),newhi);
+          } else if (c.getInstance().getFactory().providesSubCircuitMenu()) {
             MenuExtender m = (MenuExtender) c.getFeature(MenuExtender.class);
-            if (m instanceof CircuitStateHolder)
-                ((CircuitStateHolder)m).setCircuitState((CircuitState)instance.getData(proj.getCircuitState()));
+            if (m instanceof CircuitStateHolder) {
+              CircuitStateHolder csh = (CircuitStateHolder) m;
+              csh.setCircuitState(state);
+              csh.setHierarchyName(hi);
+            }
             m.configureMenu(menu, proj);
           }
         }
@@ -112,7 +127,7 @@ public class SubcircuitFactory extends InstanceFactory {
       return source.getName();
     }
   }
-
+  
   private Circuit source;
 
   public SubcircuitFactory(Circuit source) {

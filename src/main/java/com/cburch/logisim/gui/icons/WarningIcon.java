@@ -44,11 +44,11 @@ public class WarningIcon implements Icon {
   private int wh;
   
   public WarningIcon() {
-  wh = AppPreferences.getIconSize();
+    wh = AppPreferences.getIconSize();
   }
 
   public WarningIcon(double scale) {
-  wh = (int)AppPreferences.getScaled(scale*AppPreferences.getIconSize());
+    wh = (int)AppPreferences.getScaled(scale*AppPreferences.getIconSize());
   }
 
   @Override

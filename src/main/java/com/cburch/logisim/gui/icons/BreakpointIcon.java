@@ -26,15 +26,39 @@
  *     http://www.heig-vd.ch/
  */
 
-package com.cburch.logisim.soc.data;
+package com.cburch.logisim.gui.icons;
 
-import com.cburch.logisim.circuit.CircuitState;
-import com.cburch.logisim.soc.file.ElfProgramHeader;
-import com.cburch.logisim.soc.file.ElfSectionHeader;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Font;
+import java.awt.Graphics;
 
-public interface SocProcessorInterface {
+import javax.swing.Icon;
 
-  public void setEntryPointandReset(CircuitState state, long entryPoint, ElfProgramHeader progInfo, 
-                                    ElfSectionHeader sectInfo);
-  public void insertTransaction(SocBusTransaction trans, boolean hidden, CircuitState cState);
+import com.cburch.logisim.prefs.AppPreferences;
+import com.cburch.logisim.util.GraphicsUtil;
+
+public class BreakpointIcon implements Icon {
+
+  private int wh = AppPreferences.getScaled(12);
+
+  @Override
+  public void paintIcon(Component c, Graphics g, int x, int y) {
+    g.setColor(Color.RED);
+    g.fillOval(x, y, wh, wh);
+    g.setColor(Color.DARK_GRAY);
+    g.drawOval(x, y, wh, wh);
+    g.setColor(Color.YELLOW);
+    Font f = g.getFont();
+    g.setFont(f.deriveFont(Font.BOLD,(f.getSize()*6)/10));
+    GraphicsUtil.drawCenteredText(g, "B", x+wh/2, y+wh/2);
+    g.setFont(f);
+  }
+
+  @Override
+  public int getIconWidth() { return wh; }
+
+  @Override
+  public int getIconHeight() { return wh; }
+
 }

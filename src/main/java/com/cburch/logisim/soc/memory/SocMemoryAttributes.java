@@ -118,22 +118,23 @@ public class SocMemoryAttributes extends AbstractAttributeSet {
 
   @Override
   public <V> void setValue(Attribute<V> attr, V value) {
+	V oldValue = getValue(attr);
     if (attr == START_ADDRESS) {
       if (memState.setStartAddress((Integer) value))
-    	fireAttributeValueChanged(attr, value, null);
+    	fireAttributeValueChanged(attr, value, oldValue);
       return;
     }
     if (attr == MEM_SIZE) {
       if (memState.setSize((BitWidth) value)) {
         memSize = (BitWidth) value;
-        fireAttributeValueChanged(attr, value, null);
+        fireAttributeValueChanged(attr, value, oldValue);
       }
       return;
     }
     if (attr == StdAttr.LABEL) {
       String l = (String) value;
       if (memState.setLabel(l)) {
-        fireAttributeValueChanged(attr, value, null);
+        fireAttributeValueChanged(attr, value, oldValue);
       }
       return;
     }
@@ -141,7 +142,7 @@ public class SocMemoryAttributes extends AbstractAttributeSet {
       Font f = (Font) value;
       if (!labelFont.equals(f)) {
         labelFont = f;
-        fireAttributeValueChanged(attr, value, null);
+        fireAttributeValueChanged(attr, value, oldValue);
       }
       return;
     }
@@ -149,13 +150,13 @@ public class SocMemoryAttributes extends AbstractAttributeSet {
       Boolean v = (Boolean) value;
       if (!labelVisable.equals(v)) {
         labelVisable = v;
-        fireAttributeValueChanged(attr, value, null);
+        fireAttributeValueChanged(attr, value, oldValue);
       }
       return;
     }
     if (attr == SocSimulationManager.SOC_BUS_SELECT) {
       if (memState.setSocBusInfo((SocBusInfo) value)) {
-        fireAttributeValueChanged(attr, value, null);
+        fireAttributeValueChanged(attr, value, oldValue);
       }
       return;
     }

@@ -30,6 +30,8 @@ package com.cburch.logisim.soc.rv32im;
 
 import static com.cburch.logisim.soc.Strings.S;
 
+import java.util.ArrayList;
+
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.soc.data.SocBusTransaction;
 import com.cburch.logisim.soc.file.ElfHeader;
@@ -52,11 +54,8 @@ public class RV32imLoadAndStoreInstructions implements RV32imExecutionUnitInterf
   private static final int INSTR_SB = 5;
   private static final int INSTR_SH = 6;
   private static final int INSTR_SW = 7;
-  private static final int INSTR_SBZ = 8;
-  private static final int INSTR_SHZ = 9;
-  private static final int INSTR_SWZ = 10;
   
-  private static final String[] AsmOpcodes = {"LB","LH","LW","LBU","LHU","SB","SH","SW","SBZ","SHZ","SWZ"};
+  private final static String[] AsmOpcodes = {"LB","LH","LW","LBU","LHU","SB","SH","SW"};
 
   private int instruction = 0;
   private boolean valid = false;
@@ -66,6 +65,13 @@ public class RV32imLoadAndStoreInstructions implements RV32imExecutionUnitInterf
   private int base;
   private String errorMessage;
   
+  public ArrayList<String> getInstructions() {
+    ArrayList<String> opcodes = new ArrayList<String>();
+    for (int i = 0 ; i < AsmOpcodes.length ; i++)
+      opcodes.add(AsmOpcodes[i]);
+    return opcodes;
+  };
+
   public boolean execute(RV32im_state.ProcessorState state, CircuitState cState) {
     if (!valid)
       return false;
@@ -74,17 +80,14 @@ public class RV32imLoadAndStoreInstructions implements RV32imExecutionUnitInterf
     long address = ElfHeader.getLongValue((Integer)state.getRegisterValue(base))+immediate;
     int transType = -1;
     switch (operation) {
-      case INSTR_SBZ:
       case INSTR_SB : toBeStored &= 0xFF;
                       transType = SocBusTransaction.ByteAccess;
-      case INSTR_SHZ:
       case INSTR_SH : toBeStored &= 0xFFFF;
                       if (transType < 0 ) transType = SocBusTransaction.HalfWordAccess;
-      case INSTR_SWZ:
       case INSTR_SW : if (transType < 0) transType = SocBusTransaction.WordAccess;
                       SocBusTransaction trans = new SocBusTransaction(SocBusTransaction.WRITETransaction,
                           ElfHeader.getIntValue((Long)address),toBeStored,transType,
-                          state.getMasterName());
+                          state.getMasterComponent());
                       state.insertTransaction(trans, false, cState);
                       return !transactionHasError(trans);
       case INSTR_LB :
@@ -93,7 +96,7 @@ public class RV32imLoadAndStoreInstructions implements RV32imExecutionUnitInterf
       case INSTR_LHU: if (transType < 0 ) transType = SocBusTransaction.HalfWordAccess;
       case INSTR_LW : if (transType < 0) transType = SocBusTransaction.WordAccess;
                       trans = new SocBusTransaction(SocBusTransaction.READTransaction,
-                          ElfHeader.getIntValue((Long)address),0,transType,state.getMasterName());
+                          ElfHeader.getIntValue((Long)address),0,transType,state.getMasterComponent());
                       state.insertTransaction(trans, false, cState);
                       if (transactionHasError(trans)) return false;
                       int toBeLoaded = trans.getReadData();
@@ -135,17 +138,9 @@ public class RV32imLoadAndStoreInstructions implements RV32imExecutionUnitInterf
     s.append(AsmOpcodes[operation].toLowerCase());
     while (s.length()<RV32imSupport.ASM_FIELD_SIZE)
       s.append(" ");
-    switch (operation) {
-      case INSTR_SBZ:
-      case INSTR_SHZ:
-      case INSTR_SWZ: s.append(immediate);
-                      s.append("("+RV32im_state.registerABINames[base]+")");
-                      break;
-      default       : s.append(RV32im_state.registerABINames[destination]+",");
-                      s.append(immediate);
-                      s.append("("+RV32im_state.registerABINames[base]+")");
-                      break;
-    }
+    s.append(RV32im_state.registerABINames[destination]+",");
+    s.append(immediate);
+    s.append("("+RV32im_state.registerABINames[base]+")");
     return s.toString();
   }
 
@@ -194,8 +189,6 @@ public class RV32imLoadAndStoreInstructions implements RV32imExecutionUnitInterf
       immediate = RV32imSupport.getImmediateValue(instruction, RV32imSupport.S_TYPE);
       base = RV32imSupport.getSourceRegister1Index(instruction);
       destination = RV32imSupport.getSourceRegister2Index(instruction);
-      if (destination == 0)
-        operation += 3;
       return true;
     }
     return false;

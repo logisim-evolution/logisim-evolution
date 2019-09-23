@@ -38,6 +38,7 @@ import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Location;
+import com.cburch.logisim.data.Value;
 import com.cburch.logisim.gui.icons.ArithmeticIcon;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstancePainter;
@@ -50,10 +51,13 @@ import com.cburch.logisim.soc.data.SocBusSnifferInterface;
 import com.cburch.logisim.soc.data.SocBusStateInfo;
 import com.cburch.logisim.soc.data.SocInstanceFactory;
 import com.cburch.logisim.soc.data.SocProcessorInterface;
+import com.cburch.logisim.soc.gui.SocBusMenuProvider;
 import com.cburch.logisim.tools.MenuExtender;
 import com.cburch.logisim.util.GraphicsUtil;
 
 public class SocBus extends SocInstanceFactory {
+	
+  public static final SocBusMenuProvider MENU_PROVIDER = new SocBusMenuProvider();
 
   public SocBus() {
     super("SocBus",S.getter("SocBusComponent"),SocBus);
@@ -120,16 +124,20 @@ public class SocBus extends SocInstanceFactory {
     SocBusStateInfo data = info.getSocSimulationManager().getSocBusState(info.getBusId());
     SocBusStateInfo.SocBusState dat = (SocBusStateInfo.SocBusState) state.getData();
     if (dat == null)
-      state.setData(data.getNewState());
-    if (data != null) {
-      data.setReset(state.getPortValue(0));
-    }
+      state.setData(data.getNewState(state.getInstance()));
+    if (state.getPortValue(0)==Value.TRUE)
+      dat.clear();
+  }
+
+  @Override
+  public boolean providesSubCircuitMenu() {
+    return true;
   }
 
   @Override
   protected Object getInstanceFeature(Instance instance, Object key) {
     if (key == MenuExtender.class) {
-      return new SocBusMenu(instance);
+      return MENU_PROVIDER.getMenu(instance);
     }
     return super.getInstanceFeature(instance, key);
   }

@@ -26,15 +26,8 @@
  *     http://www.heig-vd.ch/
  */
 
-package com.cburch.logisim.soc.data;
+package com.cburch.logisim.circuit;
 
-import com.cburch.logisim.circuit.CircuitState;
-import com.cburch.logisim.soc.file.ElfProgramHeader;
-import com.cburch.logisim.soc.file.ElfSectionHeader;
-
-public interface SocProcessorInterface {
-
-  public void setEntryPointandReset(CircuitState state, long entryPoint, ElfProgramHeader progInfo, 
-                                    ElfSectionHeader sectInfo);
-  public void insertTransaction(SocBusTransaction trans, boolean hidden, CircuitState cState);
+public interface ComponentDataGuiProvider {
+   public void destroy();
 }

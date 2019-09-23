@@ -28,6 +28,8 @@
 
 package com.cburch.logisim.soc.rv32im;
 
+import java.util.ArrayList;
+
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.soc.file.ElfHeader;
 
@@ -52,7 +54,7 @@ public class RV32imIntegerRegisterRegisterOperations implements RV32imExecutionU
   /* Pseudo instructions:
    * SNEZ rd,rs -> SLTU rd,x0,rs
    */
-  private static final String[] AsmOpcodes = {"ADD","SLL","SLT","SLTU","XOR","SRL","OR","AND","SUB","SRA","SNEZ"};
+  private final static String[] AsmOpcodes = {"ADD","SLL","SLT","SLTU","XOR","SRL","OR","AND","SUB","SRA","SNEZ"};
 
   private int instruction = 0;
   private int destination;
@@ -61,6 +63,13 @@ public class RV32imIntegerRegisterRegisterOperations implements RV32imExecutionU
   private int operation;
   private boolean valid = false;
 	  
+  public ArrayList<String> getInstructions() {
+    ArrayList<String> opcodes = new ArrayList<String>();
+    for (int i = 0 ; i < AsmOpcodes.length ; i++)
+      opcodes.add(AsmOpcodes[i]);
+    return opcodes;
+  };
+
   public boolean execute(RV32im_state.ProcessorState state, CircuitState cState) {
     if (!valid)
       return false;

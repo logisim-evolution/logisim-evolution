@@ -28,8 +28,70 @@
 
 package com.cburch.logisim.tools;
 
+import java.util.ArrayList;
+
+import com.cburch.logisim.circuit.Circuit;
+import com.cburch.logisim.circuit.CircuitListener;
 import com.cburch.logisim.circuit.CircuitState;
+import com.cburch.logisim.circuit.SubcircuitFactory;
+import com.cburch.logisim.comp.Component;
+import com.cburch.logisim.comp.ComponentListener;
+import com.cburch.logisim.soc.data.SocSupport;
 
 public interface CircuitStateHolder {
+   public class HierarchyInfo {
+     private Circuit mainCircuit;
+     private ArrayList<Component> components = new ArrayList<Component>();
+     
+     public HierarchyInfo(Circuit circ) { mainCircuit = circ; }
+     
+     public void addComponent(Component comp) { components.add(comp); }
+     
+     public void registerCircuitListener(CircuitListener l) {
+       if (mainCircuit != null) mainCircuit.addCircuitListener(l);
+       for (Component c : components) {
+         if (c.getFactory() instanceof SubcircuitFactory) {
+           SubcircuitFactory f = (SubcircuitFactory) c.getFactory();
+           f.getSubcircuit().addCircuitListener(l);
+         }
+       }
+     }
+     
+     public void deregisterCircuitListener(CircuitListener l) {
+       if (mainCircuit != null) mainCircuit.addCircuitListener(l);
+       for (Component c : components) {
+         if (c.getFactory() instanceof SubcircuitFactory) {
+           SubcircuitFactory f = (SubcircuitFactory) c.getFactory();
+           f.getSubcircuit().removeCircuitListener(l);
+         }
+       }
+     }
+     
+     public void registerComponentListener(ComponentListener l) {
+       for (Component c : components) c.addComponentListener(l);
+     }
+     
+     public void deregisterComponentListener(ComponentListener l) {
+       for (Component c : components) c.addComponentListener(l);
+     }
+     
+     public String getName() {
+       StringBuffer s = new StringBuffer();
+       if (mainCircuit != null) s.append(mainCircuit.getName());
+       for (Component c: components) {
+         if (s.length()!=0) s.append(":");
+         s.append(SocSupport.getComponentName(c));
+       }
+       return s.toString();
+     }
+     
+     public HierarchyInfo getCopy() {
+        HierarchyInfo copy = new HierarchyInfo(mainCircuit);
+        for (Component c : components) copy.addComponent(c);
+        return copy;
+     }
+   }
+   
    public void setCircuitState(CircuitState state);
+   public void setHierarchyName(HierarchyInfo csh);
 }

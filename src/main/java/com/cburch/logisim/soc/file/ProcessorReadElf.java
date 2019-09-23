@@ -111,6 +111,21 @@ public class ProcessorReadElf {
     }
     if (!elfHeader.is32Bit()) {
       status = NOT_SUPPORTED_YET_ERROR;
+      return;
+    }
+    if (!open()) return;
+    sectionHeader.readSectionNames(elfFileStream, elfHeader);
+    close();
+    if (!sectionHeader.isValid()) {
+      status = SECTION_HEADER_INVALID;
+      return;
+    }
+    if (!open()) return;
+    sectionHeader.readSymbolTable(elfFileStream, elfHeader);
+    close();
+    if (!sectionHeader.isValid()) {
+      status = SECTION_HEADER_INVALID;
+      return;
     }
   }
   
@@ -140,7 +155,7 @@ public class ProcessorReadElf {
 	}
     return "BUG: Should not happen";
   }
-
+  
   public boolean execute(CircuitState cState) {
     for (int i = 0 ; i < programHeader.getNrOfHeaders() ; i++) {
       ProgramHeader h = programHeader.getHeader(i);
@@ -186,7 +201,8 @@ public class ProcessorReadElf {
         }
       }
     }
-    cpu.setEntryPointandReset(ElfHeader.getLongValue(elfHeader.getValue(ElfHeader.E_ENTRY)));
+    cpu.setEntryPointandReset(cState,ElfHeader.getLongValue(elfHeader.getValue(ElfHeader.E_ENTRY)), 
+    		programHeader, sectionHeader);
     return true;
   }
   

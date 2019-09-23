@@ -40,19 +40,19 @@ import java.awt.event.WindowListener;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
-import com.cburch.logisim.instance.InstanceComponent;
+import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.soc.data.SocBusStateInfo;
 import com.cburch.logisim.soc.data.SocBusTransaction;
 import com.cburch.logisim.util.LocaleListener;
 import com.cburch.logisim.util.LocaleManager;
 
-public class BusTransactionInsertionGui extends JDialog implements WindowListener,ActionListener,LocaleListener {
+public class BusTransactionInsertionGui extends JFrame implements WindowListener,ActionListener,LocaleListener {
 
   private static final long serialVersionUID = 1L;
   private SocBusStateInfo myBus;
@@ -69,9 +69,10 @@ public class BusTransactionInsertionGui extends JDialog implements WindowListene
   private JTextArea result = new JTextArea(2,1);
   private JCheckBox wordTrans = new JCheckBox(); 
   private JCheckBox halfTrans = new JCheckBox(); 
-  private JCheckBox byteTrans = new JCheckBox(); 
+  private JCheckBox byteTrans = new JCheckBox();
+  private CircuitState circuitState;
   
-  public BusTransactionInsertionGui(SocBusStateInfo bus, String BusId) {
+  public BusTransactionInsertionGui(SocBusStateInfo bus, String BusId, CircuitState state) {
     myBus = bus;
     myBusId = BusId;
     LocaleManager.addLocaleListener(this);
@@ -126,6 +127,8 @@ public class BusTransactionInsertionGui extends JDialog implements WindowListene
     c.gridy++;
     add(result,c);
     localeChanged();
+    circuitState = state;
+    pack();
   }
   
   private void insertAction() {
@@ -160,8 +163,7 @@ public class BusTransactionInsertionGui extends JDialog implements WindowListene
 	if (writeAction.isSelected()) type |= SocBusTransaction.WRITETransaction;
 	if (atomicAction.isSelected()) type |= SocBusTransaction.ATOMICTransaction;
     SocBusTransaction trans = new SocBusTransaction(type,addr,data,action,S.get("SocTransInsManual"));
-    InstanceComponent comp = (InstanceComponent) myBus.getComponent();
-    myBus.getSocSimulationManager().initializeTransaction(trans, myBusId,comp.getInstanceStateImpl().getProject().getCircuitState());
+    myBus.getSocSimulationManager().initializeTransaction(trans, myBusId,circuitState);
     String line1 = trans.getShortErrorMessage()+"\n";
     String line2 = (trans.isReadTransaction()&&!trans.hasError()) ? S.get("SocTransInsReadData")+String.format("0x%08X", trans.getReadData()) : " ";
     result.setText(line1+line2);
@@ -171,7 +173,7 @@ public class BusTransactionInsertionGui extends JDialog implements WindowListene
   public void windowOpened(WindowEvent e) {}
 
   @Override
-  public void windowClosing(WindowEvent e) { setVisible(false); }
+  public void windowClosing(WindowEvent e) { this.dispose(); }
 
   @Override
   public void windowClosed(WindowEvent e) {}

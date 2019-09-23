@@ -175,75 +175,76 @@ public class PioAttributes extends AbstractAttributeSet {
 
   @Override
   public <V> void setValue(Attribute<V> attr, V value) {
-    if (attr == SocMemoryAttributes.START_ADDRESS) {
+	V oldValue = getValue(attr);
+   if (attr == SocMemoryAttributes.START_ADDRESS) {
       if (state.setStartAddress((Integer)value))
-        fireAttributeValueChanged(attr, value, null);
+        fireAttributeValueChanged(attr, value, oldValue);
       return;
     }
     if (attr == StdAttr.WIDTH) {
       if (state.setNrOfIOs((BitWidth) value))
-        fireAttributeValueChanged(attr, value, null);
+        fireAttributeValueChanged(attr, value, oldValue);
       return;
     }
     if (attr == PIO_DIRECTION) {
       if (state.setPortDirection((AttributeOption) value)) {
         if (updateAttributeList())
           fireAttributeListChanged();
-        fireAttributeValueChanged(attr, value, null);
+        fireAttributeValueChanged(attr, value, oldValue);
       }
       return;
     }
     if (attr == PIO_OUT_RESET) {
       if (state.setOutputResetValue((Integer) value))
-    	fireAttributeValueChanged(attr, value, null);
+    	fireAttributeValueChanged(attr, value, oldValue);
       return;
     }
     if (attr == PIO_OUT_BIT) {
       if (state.setOutputBitManupulations((Boolean) value))
-        fireAttributeValueChanged(attr, value, null);
+        fireAttributeValueChanged(attr, value, oldValue);
       return;
     }
     if (attr == PIO_SYNC_CAPT) {
       if (state.setInputSynchronousCapture((Boolean)value)) {
         if (updateAttributeList())
             fireAttributeListChanged();
-        fireAttributeValueChanged(attr, value, null);
+        fireAttributeValueChanged(attr, value, oldValue);
       }
       return;
     }
     if (attr == PIO_CAPT_TYPE) {
       if (state.setInputCaptureEdge((AttributeOption) value))
-        fireAttributeValueChanged(attr, value, null);
+        fireAttributeValueChanged(attr, value, oldValue);
       return;
     }
     if (attr == PIO_CAPT_BIT) {
       if (state.setInputCaptureBitClearing((Boolean) value))
-        fireAttributeValueChanged(attr, value, null);
+        fireAttributeValueChanged(attr, value, oldValue);
       return;
     }
     if (attr == PIO_GEN_IRQ) {
       if (state.setIrqGeneration((Boolean) value)) {
         if (updateAttributeList())
           fireAttributeListChanged();
-        fireAttributeValueChanged(attr, value, null);
+        fireAttributeValueChanged(attr, value, oldValue);
       }
       return;
     }
     if (attr == PIO_IRQ_TYPE) {
       if (state.setIrqType((AttributeOption) value))
-        fireAttributeValueChanged(attr, value, null);
+        fireAttributeValueChanged(attr, value, oldValue);
       return;
     }
     if (attr == StdAttr.LABEL) {
       if (state.setLabel((String) value))
-        fireAttributeValueChanged(attr, value, null);
+        fireAttributeValueChanged(attr, value, oldValue);
       return;
     }
     if (attr == StdAttr.LABEL_FONT) {
       Font f = (Font) value;
       if (labelFont != f) {
         labelFont = f;
-        fireAttributeValueChanged(attr, value, null);
+        fireAttributeValueChanged(attr, value, oldValue);
       }
       return;
     }
@@ -251,13 +252,13 @@ public class PioAttributes extends AbstractAttributeSet {
       Boolean b = (Boolean) value;
       if (b != labelVisible) {
         labelVisible = b;
-        fireAttributeValueChanged(attr, value, null);
+        fireAttributeValueChanged(attr, value, oldValue);
       }
       return;
     }
     if (attr == SocSimulationManager.SOC_BUS_SELECT) {
       if (state.setAttachedBus((SocBusInfo) value))
-        fireAttributeValueChanged(attr, value, null);
+        fireAttributeValueChanged(attr, value, oldValue);
       return;
     }
   }

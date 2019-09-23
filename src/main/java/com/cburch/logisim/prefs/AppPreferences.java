@@ -382,6 +382,11 @@ public class AppPreferences {
     return (int) ((float) value / scale);
   }
 
+  public static double getDownScaled(double value) {
+    getPrefs();
+    return value / SCALE_FACTOR.get();
+  }
+
   public static int getScaled(int value, float ExtScale) {
     getPrefs();
     float scale = ((float) ((int) (SCALE_FACTOR.get() * 10))) / (float) 10.0;

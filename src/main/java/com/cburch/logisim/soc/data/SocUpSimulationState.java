@@ -48,6 +48,7 @@ public class SocUpSimulationState {
   
   private int simulationState = SimulationRunning;
   private ArrayList<SocUpSimulationStateListener> listeners = new ArrayList<SocUpSimulationStateListener>();
+  private boolean canContinueAfterBreak = false;
   
   public String getStateString() {
     switch (simulationState) {
@@ -63,6 +64,12 @@ public class SocUpSimulationState {
     listeners.add(l);
   }
   
+  public void reset() { 
+    canContinueAfterBreak = false; 
+    simulationState = SimulationHaltedByStop;
+    fireChange();
+  }
+  
   public boolean canExecute() {
     return simulationState == SimulationRunning;
   }
@@ -72,16 +79,23 @@ public class SocUpSimulationState {
     fireChange();
   }
   
-  public void breakPointReached() {
-	  simulationState = SimulationHaltedByBreakpoint;
+  public boolean breakPointReached() {
+	if (canContinueAfterBreak) {
+      canContinueAfterBreak = false;
+	  return false;
+	}
+    simulationState = SimulationHaltedByBreakpoint;
     fireChange();
+    return true;
   }
   
   public void buttonPressed() {
     if (simulationState == SimulationRunning) 
       simulationState = SimulationHaltedByStop;
-    else 
+    else {
+      if (simulationState == SimulationHaltedByBreakpoint) canContinueAfterBreak = true;
       simulationState = SimulationRunning;
+    }
     fireChange();
   }
   

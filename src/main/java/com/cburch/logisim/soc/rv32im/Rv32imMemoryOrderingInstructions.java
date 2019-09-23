@@ -30,6 +30,8 @@ package com.cburch.logisim.soc.rv32im;
 
 import static com.cburch.logisim.soc.Strings.S;
 
+import java.util.ArrayList;
+
 import javax.swing.JOptionPane;
 
 import com.cburch.logisim.circuit.CircuitState;
@@ -46,7 +48,7 @@ public class Rv32imMemoryOrderingInstructions implements RV32imExecutionUnitInte
   private static final int INSTR_FENCE = 0;
   private static final int INSTR_FENCE_TSO = 1;
   
-  private static final String[] AsmOpcodes = {"FENCE","FENCE.TSO"};
+  private final static String[] AsmOpcodes = {"FENCE","FENCE.TSO"};
 
   private int instruction = 0;
   private boolean valid = false;
@@ -55,6 +57,13 @@ public class Rv32imMemoryOrderingInstructions implements RV32imExecutionUnitInte
   private int fm;
   private int operation;
   
+  public ArrayList<String> getInstructions() {
+    ArrayList<String> opcodes = new ArrayList<String>();
+    for (int i = 0 ; i < AsmOpcodes.length ; i++)
+      opcodes.add(AsmOpcodes[i]);
+    return opcodes;
+  };
+
   public boolean execute(RV32im_state.ProcessorState state, CircuitState cState) {
     if (!valid)
       return false;

@@ -120,36 +120,37 @@ public class RV32imAttributes extends AbstractAttributeSet {
 
   @Override
   public <V> void setValue(Attribute<V> attr, V value) {
+	V oldValue = getValue(attr);
     if (attr == RESET_VECTOR) {
       if (upState.setResetVector((int) value))
-        fireAttributeValueChanged(attr, value, null);
+        fireAttributeValueChanged(attr, value, oldValue);
       return;
     }
     if (attr == EXCEPTION_VECTOR) {
       if (upState.setExceptionVector((int) value))
-        fireAttributeValueChanged(attr, value, null);
+        fireAttributeValueChanged(attr, value, oldValue);
       return;
     }
     if (attr == NR_OF_IRQS) {
       if (upState.setNrOfIrqs(((BitWidth)value).getWidth()))
-        fireAttributeValueChanged(attr, value, null);
+        fireAttributeValueChanged(attr, value, oldValue);
       return;
     }
     if (attr == SocSimulationManager.SOC_BUS_SELECT) {
       if (upState.setAttachedBus((SocBusInfo)value)) 
-    	fireAttributeValueChanged(attr, value, null);
+    	fireAttributeValueChanged(attr, value, oldValue);
       return;
     }
     if (attr == StdAttr.LABEL) {
       if (upState.setLabel((String) value))
-        fireAttributeValueChanged(attr, value, null);
+        fireAttributeValueChanged(attr, value, oldValue);
       return;
     }
     if (attr == StdAttr.LABEL_FONT) {
       Font f = (Font) value;
       if (!labelFont.equals(f)) {
         labelFont = f;
-        fireAttributeValueChanged(attr, value, null);
+        fireAttributeValueChanged(attr, value, oldValue);
       }
       return;
     }
@@ -157,7 +158,7 @@ public class RV32imAttributes extends AbstractAttributeSet {
       Boolean v = (Boolean) value;
       if (v != labelVisable) {
         labelVisable = v;
-        fireAttributeValueChanged(attr, value, null);
+        fireAttributeValueChanged(attr, value, oldValue);
       }
       return;
     }
@@ -165,7 +166,7 @@ public class RV32imAttributes extends AbstractAttributeSet {
       Boolean v = (Boolean) value;
       if (stateVisable != v) {
         stateVisable = v;
-        fireAttributeValueChanged(attr, value, null);
+        fireAttributeValueChanged(attr, value, oldValue);
       }
       return;
     }
