@@ -108,20 +108,21 @@ public class RV32imDecoder {
     return info;
   }
   
-  private static void getData(boolean lookForStrings, Integer[] contents, long startAddress,
-          HashMap<Integer,String> labels, int maxLabelSize, StringBuffer s) {
+  private static int getData(boolean lookForStrings, Integer[] contents, long startAddress,
+          HashMap<Integer,String> labels, int maxLabelSize, StringBuffer lines, int lineNum) {
     int nrBytesWritten = 0;
     int size = contents.length<<2;
     int i = 0;
+    int newLineNum = lineNum;
     while (i < size) {
       boolean stringFound = false;
       boolean zerosFound = false;
       if (labels.containsKey(SocSupport.convUnsignedLong(startAddress+i))) {
         StringBuffer label = new StringBuffer();
-      label.append(labels.get(SocSupport.convUnsignedLong(startAddress+i))+":");
-      while (label.length() < maxLabelSize) label.append(" ");
-      if (nrBytesWritten != 0)  s.append("\n");
-      s.append(label.toString());
+        label.append(labels.get(SocSupport.convUnsignedLong(startAddress+i))+":");
+        while (label.length() < maxLabelSize) label.append(" ");
+        if (nrBytesWritten != 0)  newLineNum = addLine(lines,"\n",newLineNum,true);
+        newLineNum = addLine(lines,label.toString(),newLineNum,false);
         nrBytesWritten = -1;
       } 
       int kar = getByte(contents,i); 
@@ -139,10 +140,10 @@ public class RV32imDecoder {
           if (str.length()>2) {
             stringFound = true;
             i = j;
-            if (nrBytesWritten > 0) s.append("\n");
+            if (nrBytesWritten > 0) newLineNum = addLine(lines,"\n",newLineNum,true);
             if (nrBytesWritten >= 0) 
-              for (int sp = 0 ; sp < maxLabelSize ; sp++) s.append(" ");
-            s.append(" .string \""+str.toString()+"\"\n");
+              for (int sp = 0 ; sp < maxLabelSize ; sp++) newLineNum = addLine(lines," ",newLineNum,false);
+            newLineNum = addLine(lines," .string \""+str.toString()+"\"\n",newLineNum,true);
             nrBytesWritten = 0;
           }
         }
@@ -157,10 +158,10 @@ public class RV32imDecoder {
         }
         if ((j-i) > 1) {
           zerosFound = true;
-          if (nrBytesWritten > 0) s.append("\n");
+          if (nrBytesWritten > 0) newLineNum = addLine(lines,"\n",newLineNum,true);
           if (nrBytesWritten >= 0) 
-            for (int sp = 0 ; sp < maxLabelSize ; sp++) s.append(" ");
-          s.append(" .zero "+(j-i)+"\n");
+            for (int sp = 0 ; sp < maxLabelSize ; sp++) newLineNum = addLine(lines," ",newLineNum,false);
+          newLineNum = addLine(lines," .zero "+(j-i)+"\n",newLineNum,true);
           i = j;
           nrBytesWritten = 0;
         }
@@ -169,23 +170,30 @@ public class RV32imDecoder {
         if (nrBytesWritten <= 0 || nrBytesWritten >= NR_OF_BYTES_PER_LINE) {
           StringBuffer label = new StringBuffer();
           while (label.length() < maxLabelSize) label.append(" ");
-          if (nrBytesWritten >= NR_OF_BYTES_PER_LINE) s.append("\n");
-          if (nrBytesWritten == 0 || nrBytesWritten >= NR_OF_BYTES_PER_LINE) s.append(label.toString());
-          if (nrBytesWritten <= 0 || nrBytesWritten >= NR_OF_BYTES_PER_LINE) s.append(" .byte ");
+          if (nrBytesWritten >= NR_OF_BYTES_PER_LINE) newLineNum = addLine(lines,"\n",newLineNum,true);
+          if (nrBytesWritten == 0 || nrBytesWritten >= NR_OF_BYTES_PER_LINE) newLineNum = addLine(lines,label.toString(),newLineNum,false);
+          if (nrBytesWritten <= 0 || nrBytesWritten >= NR_OF_BYTES_PER_LINE) newLineNum = addLine(lines," .byte ",newLineNum,false);
           nrBytesWritten = 0;
         }
-        if (nrBytesWritten > 0) s.append(", ");
-        s.append(String.format("0x%02X", getByte(contents,i)));
+        if (nrBytesWritten > 0) newLineNum = addLine(lines,", ",newLineNum,false);
+        newLineNum = addLine(lines,String.format("0x%02X", getByte(contents,i)),newLineNum,false);
         nrBytesWritten++;
         i++;
       }
     }
-    if (nrBytesWritten != 0) s.append("\n");
+    if (nrBytesWritten != 0) newLineNum = addLine(lines,"\n",newLineNum,true);
+    return newLineNum;
+  }
+  
+  private static int addLine(StringBuffer s, String val, int lineNum, boolean completedLine) {
+    s.append(val);
+    return completedLine ? lineNum+1 : lineNum;
   }
   
   public static String getProgram(CircuitState state, ProcessorState pstate, ElfProgramHeader header,
-		  ElfSectionHeader sections ) {
-    StringBuffer s = new StringBuffer();
+		  ElfSectionHeader sections, HashMap<Integer,Integer> ValidDebugLines) {
+    StringBuffer lines = new StringBuffer();
+    int lineNum = 1;
     if (sections != null && sections.isValid()) {
       /* The section header gives more information on the program, so we prefer this one over the
        * program header.
@@ -224,8 +232,9 @@ public class RV32imDecoder {
       for (SectionHeader sh : sortedList) {
         long startAddress = SocSupport.convUnsignedInt((int)sh.getValue(ElfSectionHeader.SH_ADDR));
         long size = SocSupport.convUnsignedInt((int)sh.getValue(ElfSectionHeader.SH_SIZE));
-        if (s.length()!= 0) s.append("\n");
-        s.append(".section "+sh.getName()+"\n.org "+String.format("0x%08X\n", startAddress));
+        if (lines.length()!= 0) lineNum = addLine(lines,"\n",lineNum,true);
+        lineNum = addLine(lines,".section "+sh.getName()+"\n",lineNum,true);
+        lineNum = addLine(lines,".org "+String.format("0x%08X\n", startAddress),lineNum,true);
         int toBeRead = ((int)size%4)!=0 ? (int)(size>>2)+1 : (int)(size>>2);
         Integer[] contents = new Integer[toBeRead];
         for (int i = 0 ; i < toBeRead ; i++) {
@@ -235,8 +244,8 @@ public class RV32imDecoder {
           contents[i] = trans.getReadData();
         }
         if (sh.isExecutable()) {
-          int labelindex = 0;
           /* first pass, we are going to insert labels where we can find them */
+          ArrayList<Integer> newLabels = new ArrayList<Integer>();
           for (int pc = 0 ; pc < (size>>2) ; pc++) {
             RV32im_state.DECODER.decode(contents[pc]);
             RV32imExecutionUnitInterface exe = RV32im_state.DECODER.getExeUnit();
@@ -245,21 +254,35 @@ public class RV32imDecoder {
               if (jump.isPcRelative) {
                 long addr = startAddress+((long)pc<<2);
                 long target = addr+jump.getOffset();
-                if (!labels.containsKey(SocSupport.convUnsignedLong(target))) {
-                  labelindex++;
-                  String label = "logisim_label_"+labelindex;
-                  labels.put(SocSupport.convUnsignedLong(target), label);
-                  if (label.length() > maxLabelSize) maxLabelSize = label.length();
+                Integer labelLoc = SocSupport.convUnsignedLong(target);
+                if (!labels.containsKey(labelLoc) && !newLabels.contains(labelLoc)) {
+                  if (newLabels.isEmpty()) newLabels.add(labelLoc);
+                  else {
+                    boolean inserted = false;
+                    for (int j = 0 ; j < newLabels.size() ; j++) {
+                      if (newLabels.get(j)>labelLoc) {
+                        newLabels.add(j, labelLoc);
+                        inserted = true;
+                        break;
+                      }
+                    }
+                    if (!inserted) newLabels.add(labelLoc);
+                  }
                 }
               }
             }
+          }
+          for (int i = 0 ; i < newLabels.size(); i++) {
+            String label = "logisim_label_"+i;
+            labels.put(newLabels.get(i), label);
+            if (label.length() > maxLabelSize) maxLabelSize = label.length();
           }
           /* second pass, we are going to insert the code into the buffer */
           StringBuffer remark = new StringBuffer();
           int remarkOffset = (2*maxLabelSize)+23 < 60 ? 60 : (2*maxLabelSize)+23;
           for (int i = 0 ; i <  remarkOffset ; i++) remark.append(" ");
           remark.append("#    pc:       opcode:\n");
-          s.append(remark.toString());
+          lineNum = addLine(lines,remark.toString(),lineNum,true);
           for (int pc = 0 ; pc < (size>>2) ; pc++) {
           StringBuffer line = new StringBuffer();
           long addr = startAddress+(((long)pc)<<2);
@@ -282,9 +305,10 @@ public class RV32imDecoder {
             while (line.length() < remarkOffset) line.append(" ");
             line.append("# "+String.format("0x%08X", SocSupport.convUnsignedLong(startAddress+((long)pc<<2))));
             line.append(" "+String.format("0x%08X", contents[pc]));
-            s.append(line.toString()+"\n");
+            ValidDebugLines.put(lineNum, SocSupport.convUnsignedLong(startAddress+((long)pc<<2)));
+            lineNum = addLine(lines,line.toString()+"\n",lineNum,true);
           }
-        } else getData(!sh.isWritable(),contents,startAddress,labels,maxLabelSize,s);
+        } else lineNum = getData(!sh.isWritable(),contents,startAddress,labels,maxLabelSize,lines,lineNum);
       }
     } else if (header != null && header.isValid()) {
       for (int i = 0 ; i < header.getNrOfHeaders() ; i++) {
@@ -292,7 +316,7 @@ public class RV32imDecoder {
         if (((int)p.getValue(ElfProgramHeader.P_FLAGS)&ElfProgramHeader.PF_X) != 0) {
           long start = SocSupport.convUnsignedInt((int)p.getValue(ElfProgramHeader.P_PADDR));
           long size = SocSupport.convUnsignedInt((int)p.getValue(ElfProgramHeader.P_MEMSZ));
-          s.append(String.format(".org 0x%08X\n", start));
+          lineNum = addLine(lines,String.format(".org 0x%08X\n", start),lineNum,true);
           for (long pc = 0 ; pc < size ; pc += 4) {
           long addr = start+pc;
             SocBusTransaction trans = new SocBusTransaction(SocBusTransaction.READTransaction,
@@ -300,23 +324,24 @@ public class RV32imDecoder {
             pstate.insertTransaction(trans, true, state);
             if (!trans.hasError()) {
               int instr = trans.getReadData();
-              s.append(String.format("0x%08X ", addr));
-              s.append(String.format("0x%08X", instr));
+              lineNum = addLine(lines,String.format("0x%08X ", addr),lineNum,false);
+              lineNum = addLine(lines,String.format("0x%08X ", instr),lineNum,false);
               if (addr == pstate.getEntryPoint())
-                s.append("__start: ");
+               lineNum = addLine(lines,"_start: ",lineNum,false);
               else
-                s.append("         ");
+                lineNum = addLine(lines,"       ",lineNum,false);
               RV32im_state.DECODER.decode(instr);
               if (RV32im_state.DECODER.getExeUnit()!= null) {
-                 s.append(RV32im_state.DECODER.getExeUnit().getAsmInstruction());
-              } else s.append("unknown");
-              s.append("\n");
+                lineNum = addLine(lines,RV32im_state.DECODER.getExeUnit().getAsmInstruction(),lineNum,false);
+                ValidDebugLines.put(lineNum, SocSupport.convUnsignedLong(addr));
+              } else lineNum = addLine(lines,"????",lineNum,false);
+              lineNum = addLine(lines,"\n",lineNum,true);
             }
           }
         }
       }
     }
-    return s.toString();
+    return lines.toString();
   }
 
 }

@@ -30,22 +30,36 @@ package com.cburch.logisim.soc.rv32im;
 
 import static com.cburch.logisim.soc.Strings.S;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.util.HashMap;
 import java.util.LinkedList;
 
+import javax.swing.Icon;
+import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
+import javax.swing.event.CaretEvent;
+import javax.swing.event.CaretListener;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Element;
 
 import org.fife.ui.rsyntaxtextarea.AbstractTokenMakerFactory;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.TokenMakerFactory;
+import org.fife.ui.rtextarea.GutterIconInfo;
+import org.fife.ui.rtextarea.RTextScrollPane;
 
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.circuit.ComponentDataGuiProvider;
@@ -54,6 +68,7 @@ import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
+import com.cburch.logisim.gui.icons.BreakpointIcon;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceComponent;
 import com.cburch.logisim.instance.InstanceData;
@@ -68,13 +83,16 @@ import com.cburch.logisim.soc.data.SocUpSimulationStateListener;
 import com.cburch.logisim.soc.file.ElfProgramHeader;
 import com.cburch.logisim.soc.file.ElfSectionHeader;
 import com.cburch.logisim.util.GraphicsUtil;
+import com.cburch.logisim.util.LocaleListener;
+import com.cburch.logisim.util.LocaleManager;
 
 public class RV32im_state implements SocUpSimulationStateListener,SocProcessorInterface {
 
   public class ProcessorState extends JPanel implements InstanceData,Cloneable,ComponentDataGuiProvider,
-                                                        WindowListener {
-	private static final long serialVersionUID = 1L;
-	private int[] registers;
+                                                        WindowListener,CaretListener,LocaleListener,
+                                                        ActionListener,KeyListener {
+    private static final long serialVersionUID = 1L;
+    private int[] registers;
     private Boolean[] registers_valid;
     private int pc;
     private int lastRegisterWritten = -1;
@@ -86,7 +104,17 @@ public class RV32im_state implements SocUpSimulationStateListener,SocProcessorIn
     private Integer entryPoint;
     private RSyntaxTextArea asmWindow;
     private boolean programLoaded;
-    private JScrollPane asmScrollWindow;
+    private JPanel asmScrollWindow;
+    private RTextScrollPane debugScrollPane;
+    private JLabel lineIndicator;
+    private int oldCaretPos;
+    private HashMap<Integer,Integer> debugLines;
+    private HashMap<Integer,Integer> breakPoints;
+    private HashMap<Integer,GutterIconInfo> breakPointIcons;
+    private JButton addBreakPoint;
+    private JButton removeBreakPoint;
+    private int currentLine;
+    private int maxLines;
     
     public ProcessorState(Instance inst) {
       registers = new int[32];
@@ -105,9 +133,35 @@ public class RV32im_state implements SocUpSimulationStateListener,SocProcessorIn
       atmf.putMapping("asm/riscv", "com.cburch.logisim.soc.rv32im.RV32imSyntaxHighlighter");
       asmWindow.setSyntaxEditingStyle("asm/riscv");
       asmWindow.setEditable(false);
-      asmScrollWindow = new JScrollPane(asmWindow);
+      asmWindow.setPopupMenu(null);
+      asmWindow.addCaretListener(this);
+      asmWindow.addKeyListener(this);
+      debugScrollPane = new RTextScrollPane(asmWindow);
+      debugScrollPane.setLineNumbersEnabled(false);
+      debugScrollPane.setIconRowHeaderEnabled(true);
+      JPanel info = new JPanel();
+      info.setLayout(new BorderLayout());
+      lineIndicator = new JLabel();
+      lineIndicator.setHorizontalAlignment(JLabel.CENTER);
+      addBreakPoint = new JButton();
+      addBreakPoint.addActionListener(this);
+      removeBreakPoint = new JButton();
+      removeBreakPoint.addActionListener(this);
+      info.add(addBreakPoint,BorderLayout.WEST);
+      info.add(lineIndicator,BorderLayout.CENTER);
+      info.add(removeBreakPoint,BorderLayout.EAST);
+      asmScrollWindow = new JPanel();
+      asmScrollWindow.setLayout(new BorderLayout());
+      asmScrollWindow.add(info,BorderLayout.NORTH);
+      asmScrollWindow.add(debugScrollPane);
       programLoaded = false;
+      oldCaretPos = -1;
+      debugLines = new HashMap<Integer,Integer>();
+      breakPoints = new HashMap<Integer,Integer>();
+      breakPointIcons = new HashMap<Integer,GutterIconInfo>();
       reset();
+      localeChanged();
+      LocaleManager.addLocaleListener(this);
     }
     
     @Override
@@ -120,7 +174,11 @@ public class RV32im_state implements SocUpSimulationStateListener,SocProcessorIn
     public void reset(CircuitState state,Integer entry,ElfProgramHeader progInfo,ElfSectionHeader sectInfo) {
       if (entry != null) entryPoint = entry;
       if (progInfo != null || sectInfo != null) {
-        asmWindow.setText(RV32imDecoder.getProgram(state, this, progInfo, sectInfo));
+        debugLines.clear();
+        breakPoints.clear();
+        breakPointIcons.clear();
+        debugScrollPane.getGutter().removeAllTrackingIcons();
+        asmWindow.setText(RV32imDecoder.getProgram(state, this, progInfo, sectInfo, debugLines));
         asmWindow.setCaretPosition(0);
         programLoaded = true;
       }
@@ -131,11 +189,12 @@ public class RV32im_state implements SocUpSimulationStateListener,SocProcessorIn
       lastRegisterWritten = -1;
       instrTrace.clear();
       if (visible) repaint();
+      simState.reset();
     }
     
     public int getEntryPoint() { return entryPoint; }
     public boolean programLoaded() { return programLoaded; }
-    public JScrollPane getAsmWindow() { return asmScrollWindow; }
+    public JPanel getAsmWindow() { return asmScrollWindow; }
     
     public void setClock(Value clock, CircuitState cState) {
       if (lastClock == Value.FALSE && clock == Value.TRUE)
@@ -163,6 +222,7 @@ public class RV32im_state implements SocUpSimulationStateListener,SocProcessorIn
     public int getRegisterValue(int index) {
       if (index == 0 || index > 31)
         return 0;
+      /* TODO: handle correctly undefined registers instead of returning 0 */
       return registers[index-1];
     }
       
@@ -201,10 +261,22 @@ public class RV32im_state implements SocUpSimulationStateListener,SocProcessorIn
       /* check the simulation state */
       if (!simState.canExecute())
         return;
+      if (breakPoints.containsKey(pc)) {
+        if (simState.breakPointReached()) {
+          int line = breakPoints.get(pc)-1;
+          Element root = asmWindow.getDocument().getDefaultRootElement();
+          int curetPos = 0;
+          while (root.getElementIndex(curetPos) != line && curetPos < root.getEndOffset()) curetPos++;
+          asmWindow.setCaretPosition(curetPos);
+          JOptionPane.showMessageDialog(null,S.get("RV32imBreakPointReached"),
+                  SocSupport.getMasterName(cState,RV32im_state.this.getName()),JOptionPane.INFORMATION_MESSAGE);
+          return;
+        }
+      }
       /* TODO: check interrupts */
       /* fetch an instruction */
       SocBusTransaction trans = new SocBusTransaction(SocBusTransaction.READTransaction,
-      		pc,0,SocBusTransaction.WordAccess,attachedBus.getComponent());
+              pc,0,SocBusTransaction.WordAccess,attachedBus.getComponent());
       attachedBus.getSocSimulationManager().initializeTransaction(trans, attachedBus.getBusId(),cState);
       if (trans.hasError()) {
         JOptionPane.showMessageDialog(null,trans.getErrorMessage(),
@@ -288,7 +360,7 @@ public class RV32im_state implements SocUpSimulationStateListener,SocProcessorIn
       bds = RV32im_state.getBounds(0,0,160,495,scale);
       g2.drawRect(bds.getX(), bds.getY(), bds.getWidth(), bds.getHeight());
       for (int i = 0 ; i < 32 ; i++) {
-    	bds = RV32im_state.getBounds(20,21+i*15,0,0,scale);
+        bds = RV32im_state.getBounds(20,21+i*15,0,0,scale);
         GraphicsUtil.drawCenteredText(g2, "x"+i, bds.getX(), bds.getY());
         g2.setColor(i==lastRegisterWritten ? Color.BLUE : Color.WHITE);
         bds = RV32im_state.getBounds(blockX, 16+i*15, blockWidth, 13,scale);
@@ -399,27 +471,89 @@ public class RV32im_state implements SocUpSimulationStateListener,SocProcessorIn
       Rv32im_riscv.MENU_PROVIDER.deregisterCpuState(this, myInstance);
     }
 
-	@Override
-	public void windowOpened(WindowEvent e) {repaint(); visible = true;}
+    @Override
+    public void windowOpened(WindowEvent e) {repaint(); visible = true;}
 
-	@Override
-	public void windowClosing(WindowEvent e) {visible = false;}
+    @Override
+    public void windowClosing(WindowEvent e) {visible = false;}
 
-	@Override
-	public void windowClosed(WindowEvent e) {}
+    @Override
+    public void windowClosed(WindowEvent e) {}
 
-	@Override
-	public void windowIconified(WindowEvent e) {visible = false;}
+    @Override
+    public void windowIconified(WindowEvent e) {visible = false;}
 
-	@Override
-	public void windowDeiconified(WindowEvent e) {repaint(); visible = true;}
+    @Override
+    public void windowDeiconified(WindowEvent e) {repaint(); visible = true;}
 
-	@Override
-	public void windowActivated(WindowEvent e) {visible = true;}
+    @Override
+    public void windowActivated(WindowEvent e) {visible = true;}
 
-	@Override
-	public void windowDeactivated(WindowEvent e) {}
-      
+    @Override
+    public void windowDeactivated(WindowEvent e) {}
+
+    @Override
+    public void caretUpdate(CaretEvent e) {
+      int caretPos = e.getDot();
+      if (caretPos != oldCaretPos) {
+        oldCaretPos = caretPos;
+        Element root = asmWindow.getDocument().getDefaultRootElement();
+        currentLine = root.getElementIndex(caretPos)+1;
+        maxLines = root.getElementCount();
+        localeChanged();
+        if (!debugLines.containsKey(currentLine)) {
+          addBreakPoint.setEnabled(false);
+          removeBreakPoint.setEnabled(false);
+        } else if (breakPoints.containsKey(debugLines.get(currentLine))) {
+          removeBreakPoint.setEnabled(true);
+          addBreakPoint.setEnabled(false);
+        } else {
+          removeBreakPoint.setEnabled(false);
+          addBreakPoint.setEnabled(true);
+        }
+      }
+    }
+
+    @Override
+    public void localeChanged() {
+      lineIndicator.setText(S.fmt("RV32imAsmLineIndicator", currentLine, maxLines));
+      addBreakPoint.setText(S.get("RV32imSetBreakpoint"));
+      removeBreakPoint.setText(S.get("RV32imRemoveBreakPoint"));
+    }
+    
+    private void updateBreakpoint() {
+      if (breakPoints.containsKey(debugLines.get(currentLine))) {
+        breakPoints.remove(debugLines.get(currentLine));
+        debugScrollPane.getGutter().removeTrackingIcon(breakPointIcons.get(currentLine));
+        addBreakPoint.setEnabled(true);
+        removeBreakPoint.setEnabled(false);
+      } else {
+        Icon ico = new BreakpointIcon();
+        try {
+          breakPointIcons.put(currentLine, debugScrollPane.getGutter().addLineTrackingIcon(currentLine-1, ico));
+        } catch (BadLocationException e1) { return; }
+        breakPoints.put(debugLines.get(currentLine),currentLine);
+        addBreakPoint.setEnabled(false);
+        removeBreakPoint.setEnabled(true);
+      }
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+      if (e.getSource() == addBreakPoint || e.getSource() == removeBreakPoint) updateBreakpoint();
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e) { }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+      if (e.getKeyChar() == 'b' && debugLines.containsKey(currentLine)) updateBreakpoint();
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {}
+
   }
 
   private int resetVector;
@@ -430,9 +564,9 @@ public class RV32im_state implements SocUpSimulationStateListener,SocProcessorIn
   
   public static final RV32imDecoder DECODER = new RV32imDecoder(); 
   public static String[] registerABINames = {"zero","ra","sp","gp","tp","t0","t1","t2",
-		                                      "s0","s1","a0","a1","a2","a3","a4","a5",
-		                                      "a6","a7","s2","s3","s4","s5","s6","s7","s8","s9",
-		                                      "s10","s11","t3","t4","t5","t6"};
+                                              "s0","s1","a0","a1","a2","a3","a4","a5",
+                                              "a6","a7","s2","s3","s4","s5","s6","s7","s8","s9",
+                                              "s10","s11","t3","t4","t5","t6"};
   private static final int NrOfTraces = 21;
   private static final int TRACEHEIGHT = 20;
   
@@ -609,7 +743,7 @@ public class RV32im_state implements SocUpSimulationStateListener,SocProcessorIn
 
   @Override
   public void setEntryPointandReset(CircuitState state, long entryPoint, ElfProgramHeader progInfo,
-		                            ElfSectionHeader sectInfo) {
+                                    ElfSectionHeader sectInfo) {
     int entry = (int) entryPoint;
     if (attachedBus != null && attachedBus.getComponent() != null) {
       InstanceComponent comp = (InstanceComponent)attachedBus.getComponent();
@@ -623,7 +757,7 @@ public class RV32im_state implements SocUpSimulationStateListener,SocProcessorIn
 
   @Override
   public void insertTransaction(SocBusTransaction trans, boolean hidden, CircuitState cState) {
-	if (hidden) trans.setAsHiddenTransaction();
+    if (hidden) trans.setAsHiddenTransaction();
     if (cState == null) {
       InstanceComponent comp = (InstanceComponent) attachedBus.getComponent();
       if (comp == null)
@@ -633,7 +767,7 @@ public class RV32im_state implements SocUpSimulationStateListener,SocProcessorIn
         return;
       cState = state.getProject().getCircuitState();
     }
-	attachedBus.getSocSimulationManager().initializeTransaction(trans, attachedBus.getBusId(),cState);
+    attachedBus.getSocSimulationManager().initializeTransaction(trans, attachedBus.getBusId(),cState);
   }
 
 }

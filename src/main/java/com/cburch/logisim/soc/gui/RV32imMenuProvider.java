@@ -38,6 +38,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 
 import com.cburch.logisim.circuit.CircuitState;
@@ -45,7 +46,6 @@ import com.cburch.logisim.data.Location;
 import com.cburch.logisim.gui.main.Frame;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.StdAttr;
-import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.soc.file.ElfHeader;
 import com.cburch.logisim.soc.file.ProcessorReadElf;
@@ -256,10 +256,11 @@ public class RV32imMenuProvider implements ActionListener {
           return;
         }
       ListeningFrame frame = new ListeningFrame(S.getter("RV32imMenuCpuProgramWindowTitle"),csh);
-      frame.setSize(AppPreferences.getScaled(320),AppPreferences.getScaled(240));
       parrentFrame.addWindowListener(frame);
-      frame.add(data.getAsmWindow());
+      JPanel pan = data.getAsmWindow(); 
+      frame.add(pan);
       frame.setVisible(true);
+      frame.pack();
       frame.addWindowListener(data);
       myPrograms.put(data, frame);
     }
