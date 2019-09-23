@@ -32,8 +32,9 @@ import java.util.ArrayList;
 
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.soc.file.ElfHeader;
+import com.cburch.logisim.soc.util.AssemblerExecutionInterface;
 
-public class RV32imIntegerRegisterImmediateInstructions implements RV32imExecutionUnitInterface {
+public class RV32imIntegerRegisterImmediateInstructions implements AssemblerExecutionInterface {
 
   private static final int OP_IMM = 0x13;
   private static final int LUI = 0x37;
@@ -84,11 +85,12 @@ public class RV32imIntegerRegisterImmediateInstructions implements RV32imExecuti
     return opcodes;
   };
 
-  public boolean execute(RV32im_state.ProcessorState state, CircuitState cState) {
+  public boolean execute(Object state, CircuitState cState) {
     if (!valid)
       return false;
+    RV32im_state.ProcessorState cpuState = (RV32im_state.ProcessorState) state;
     int result = 0;
-    int regVal = state.getRegisterValue(source);
+    int regVal = cpuState.getRegisterValue(source);
     switch (operation) {
       case INSTR_LI   : 
       case INSTR_NOP  : 
@@ -117,12 +119,12 @@ public class RV32imIntegerRegisterImmediateInstructions implements RV32imExecuti
                         break;
       case INSTR_LUI  : result = immediate;
                         break;
-      case INSTR_AUIPC: long pc = Long.parseUnsignedLong(String.format("%08X", state.getProgramCounter()),16);
+      case INSTR_AUIPC: long pc = Long.parseUnsignedLong(String.format("%08X", cpuState.getProgramCounter()),16);
     	                result = ElfHeader.getIntValue(pc+immediate);
     	                break;
       default         : return false;
     }
-    state.writeRegister(destination, result);
+    cpuState.writeRegister(destination, result);
     return true;
   }
 

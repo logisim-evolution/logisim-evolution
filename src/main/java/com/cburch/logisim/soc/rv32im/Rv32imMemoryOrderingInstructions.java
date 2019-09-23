@@ -35,8 +35,9 @@ import java.util.ArrayList;
 import javax.swing.JOptionPane;
 
 import com.cburch.logisim.circuit.CircuitState;
+import com.cburch.logisim.soc.util.AssemblerExecutionInterface;
 
-public class Rv32imMemoryOrderingInstructions implements RV32imExecutionUnitInterface {
+public class Rv32imMemoryOrderingInstructions implements AssemblerExecutionInterface {
   
   private static final int FENCE = 0xF;
   
@@ -64,7 +65,7 @@ public class Rv32imMemoryOrderingInstructions implements RV32imExecutionUnitInte
     return opcodes;
   };
 
-  public boolean execute(RV32im_state.ProcessorState state, CircuitState cState) {
+  public boolean execute(Object state, CircuitState cState) {
     if (!valid)
       return false;
     JOptionPane.showMessageDialog(null, S.get("Rv32imMOINotImplmented"));

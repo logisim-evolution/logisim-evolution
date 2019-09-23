@@ -26,20 +26,11 @@
  *     http://www.heig-vd.ch/
  */
 
-package com.cburch.logisim.soc.rv32im;
+package com.cburch.logisim.soc.util;
 
-import java.util.ArrayList;
+public abstract class AbstractExecutionUnitWithLabelSupport implements AssemblerExecutionInterface {
 
-import com.cburch.logisim.circuit.CircuitState;
-
-public interface RV32imExecutionUnitInterface {
-  public boolean execute(RV32im_state.ProcessorState state, CircuitState cstate);
-  public String getAsmInstruction();
-  public int getBinInstruction();
-  public boolean setAsmInstruction(String instr);
-  public boolean setBinInstruction(int instr);
-  public boolean performedJump();
-  public boolean isValid();
-  public String getErrorMessage();
-  public ArrayList<String> getInstructions();
+  public abstract boolean isPcRelative();
+  public abstract int getPcOffset();
+  public abstract String getAsmInstruction(String label);
 }

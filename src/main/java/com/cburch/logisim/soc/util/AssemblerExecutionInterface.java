@@ -26,16 +26,20 @@
  *     http://www.heig-vd.ch/
  */
 
-package com.cburch.logisim.soc.data;
+package com.cburch.logisim.soc.util;
+
+import java.util.ArrayList;
 
 import com.cburch.logisim.circuit.CircuitState;
-import com.cburch.logisim.soc.file.ElfProgramHeader;
-import com.cburch.logisim.soc.file.ElfSectionHeader;
 
-public interface SocProcessorInterface {
-
-  public void setEntryPointandReset(CircuitState state, long entryPoint, ElfProgramHeader progInfo, 
-                                    ElfSectionHeader sectInfo);
-  public void insertTransaction(SocBusTransaction trans, boolean hidden, CircuitState cState);
-  public int getEntryPoint(CircuitState cState);
+public interface AssemblerExecutionInterface {
+  public boolean execute(Object processorState, CircuitState circuitState);
+  public String getAsmInstruction();
+  public int getBinInstruction();
+  public boolean setAsmInstruction(String instr);
+  public boolean setBinInstruction(int instr);
+  public boolean performedJump();
+  public boolean isValid();
+  public String getErrorMessage();
+  public ArrayList<String> getInstructions();
 }

@@ -26,59 +26,25 @@
  *     http://www.heig-vd.ch/
  */
 
-package com.cburch.logisim.soc.rv32im;
+package com.cburch.logisim.soc.util;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.soc.data.SocBusTransaction;
+import com.cburch.logisim.soc.data.SocProcessorInterface;
 import com.cburch.logisim.soc.data.SocSupport;
 import com.cburch.logisim.soc.file.ElfProgramHeader;
-import com.cburch.logisim.soc.file.ElfProgramHeader.ProgramHeader;
 import com.cburch.logisim.soc.file.ElfSectionHeader;
+import com.cburch.logisim.soc.file.ElfProgramHeader.ProgramHeader;
 import com.cburch.logisim.soc.file.ElfSectionHeader.SectionHeader;
 import com.cburch.logisim.soc.file.ElfSectionHeader.SymbolTable;
-import com.cburch.logisim.soc.rv32im.RV32im_state.ProcessorState;
 
-public class RV32imDecoder {
-  
+public abstract class AbstractAssembler implements AssemblerInterface {
+
   private static final int NR_OF_BYTES_PER_LINE = 16;
-  
-  private ArrayList<RV32imExecutionUnitInterface> exeUnits;
-  
-  public RV32imDecoder() {
-    exeUnits = new ArrayList<RV32imExecutionUnitInterface>();
-    /* Here we add the RV32I base integer instruction set */
-    exeUnits.add(new RV32imIntegerRegisterImmediateInstructions());
-    exeUnits.add(new RV32imIntegerRegisterRegisterOperations());
-    exeUnits.add(new RV32imControlTransferInstructions());
-    exeUnits.add(new RV32imLoadAndStoreInstructions());
-    exeUnits.add(new Rv32imMemoryOrderingInstructions());
-    exeUnits.add(new RV32imEnvironmentCallAndBreakpoints());
-    /* Here we add the "M" standard extension for integer multiplication and Division */
-    exeUnits.add(new RV32im_M_ExtensionInstructions());
-  }
-  
-  public void decode(int instruction) {
-    for (RV32imExecutionUnitInterface exe : exeUnits)
-      exe.setBinInstruction(instruction);
-  }
-  
-  public RV32imExecutionUnitInterface getExeUnit() {
-    for (RV32imExecutionUnitInterface exe : exeUnits)
-      if (exe.isValid())
-        return exe;
-    return null;
-  }
-  
-  public ArrayList<String> getOpcodes() {
-    ArrayList<String> opcodes = new ArrayList<String>();
-    for (RV32imExecutionUnitInterface exe : exeUnits)
-      opcodes.addAll(exe.getInstructions());
-    return opcodes;
-  }
-  
+
   private static int addLabels(SectionHeader sh, HashMap<Integer,String> labels) {
     int maxSize = 0;
     for (SymbolTable st : sh.getSymbols()) {
@@ -190,18 +156,20 @@ public class RV32imDecoder {
     return completedLine ? lineNum+1 : lineNum;
   }
   
-  public static String getProgram(CircuitState state, ProcessorState pstate, ElfProgramHeader header,
-		  ElfSectionHeader sections, HashMap<Integer,Integer> ValidDebugLines) {
+  public static String getProgram(CircuitState circuitState, SocProcessorInterface processorInterface, 
+          ElfProgramHeader elfHeader, ElfSectionHeader elfSections, 
+          HashMap<Integer,Integer> validDebugLines,AssemblerInterface assembler) {
+
     StringBuffer lines = new StringBuffer();
     int lineNum = 1;
-    if (sections != null && sections.isValid()) {
+    if (elfSections != null && elfSections.isValid()) {
       /* The section header gives more information on the program, so we prefer this one over the
        * program header.
        */
       HashMap<Integer,String> labels = new HashMap<Integer,String>();
       int maxLabelSize = 0;
       ArrayList<SectionHeader> sortedList = new ArrayList<SectionHeader>();
-      for (SectionHeader sh : sections.getHeaders()) {
+      for (SectionHeader sh : elfSections.getHeaders()) {
         if (sh.isAllocated()) {
           if (sortedList.isEmpty()) {
             sortedList.add(sh);
@@ -239,21 +207,21 @@ public class RV32imDecoder {
         Integer[] contents = new Integer[toBeRead];
         for (int i = 0 ; i < toBeRead ; i++) {
           SocBusTransaction trans = new SocBusTransaction( SocBusTransaction.READTransaction,
-            SocSupport.convUnsignedLong(startAddress+((long)i<<2)),0,SocBusTransaction.WordAccess,pstate.getMasterComponent());
-          pstate.insertTransaction(trans, true, state);
+            SocSupport.convUnsignedLong(startAddress+((long)i<<2)),0,SocBusTransaction.WordAccess,"assembler");
+          processorInterface.insertTransaction(trans, true, circuitState);
           contents[i] = trans.getReadData();
         }
         if (sh.isExecutable()) {
           /* first pass, we are going to insert labels where we can find them */
           ArrayList<Integer> newLabels = new ArrayList<Integer>();
           for (int pc = 0 ; pc < (size>>2) ; pc++) {
-            RV32im_state.DECODER.decode(contents[pc]);
-            RV32imExecutionUnitInterface exe = RV32im_state.DECODER.getExeUnit();
-            if (exe instanceof RV32imControlTransferInstructions) {
-              RV32imControlTransferInstructions jump = (RV32imControlTransferInstructions) exe;
-              if (jump.isPcRelative) {
+        	assembler.decode(contents[pc]);
+        	AssemblerExecutionInterface exe = assembler.getExeUnit();
+            if (exe instanceof AbstractExecutionUnitWithLabelSupport) {
+            	AbstractExecutionUnitWithLabelSupport jump = (AbstractExecutionUnitWithLabelSupport) exe;
+              if (jump.isPcRelative()) {
                 long addr = startAddress+((long)pc<<2);
-                long target = addr+jump.getOffset();
+                long target = addr+jump.getPcOffset();
                 Integer labelLoc = SocSupport.convUnsignedLong(target);
                 if (!labels.containsKey(labelLoc) && !newLabels.contains(labelLoc)) {
                   if (newLabels.isEmpty()) newLabels.add(labelLoc);
@@ -290,12 +258,12 @@ public class RV32imDecoder {
             if (labels.containsKey(SocSupport.convUnsignedLong(addr))) label.append(labels.get(SocSupport.convUnsignedLong(addr))+":");
             while (label.length() <= maxLabelSize) label.append(" ");
             line.append(label.toString()+" ");
-            RV32im_state.DECODER.decode(contents[pc]);
-            RV32imExecutionUnitInterface exe = RV32im_state.DECODER.getExeUnit();
-            if (exe instanceof RV32imControlTransferInstructions) {
-                RV32imControlTransferInstructions jump = (RV32imControlTransferInstructions) exe;
-                if (jump.isPcRelative) {
-                  long target = addr+jump.getOffset();
+            assembler.decode(contents[pc]);
+            AssemblerExecutionInterface exe = assembler.getExeUnit();
+            if (exe instanceof AbstractExecutionUnitWithLabelSupport) {
+            	AbstractExecutionUnitWithLabelSupport jump = (AbstractExecutionUnitWithLabelSupport) exe;
+                if (jump.isPcRelative()) {
+                  long target = addr+jump.getPcOffset();
                   if (labels.containsKey(SocSupport.convUnsignedLong(target))) 
                     line.append(jump.getAsmInstruction(labels.get(SocSupport.convUnsignedLong(target))));
                   else
@@ -305,14 +273,14 @@ public class RV32imDecoder {
             while (line.length() < remarkOffset) line.append(" ");
             line.append("# "+String.format("0x%08X", SocSupport.convUnsignedLong(startAddress+((long)pc<<2))));
             line.append(" "+String.format("0x%08X", contents[pc]));
-            ValidDebugLines.put(lineNum, SocSupport.convUnsignedLong(startAddress+((long)pc<<2)));
+            validDebugLines.put(lineNum, SocSupport.convUnsignedLong(startAddress+((long)pc<<2)));
             lineNum = addLine(lines,line.toString()+"\n",lineNum,true);
           }
         } else lineNum = getData(!sh.isWritable(),contents,startAddress,labels,maxLabelSize,lines,lineNum);
       }
-    } else if (header != null && header.isValid()) {
-      for (int i = 0 ; i < header.getNrOfHeaders() ; i++) {
-        ProgramHeader p = header.getHeader(i);
+    } else if (elfHeader != null && elfHeader.isValid()) {
+      for (int i = 0 ; i < elfHeader.getNrOfHeaders() ; i++) {
+        ProgramHeader p = elfHeader.getHeader(i);
         if (((int)p.getValue(ElfProgramHeader.P_FLAGS)&ElfProgramHeader.PF_X) != 0) {
           long start = SocSupport.convUnsignedInt((int)p.getValue(ElfProgramHeader.P_PADDR));
           long size = SocSupport.convUnsignedInt((int)p.getValue(ElfProgramHeader.P_MEMSZ));
@@ -320,20 +288,20 @@ public class RV32imDecoder {
           for (long pc = 0 ; pc < size ; pc += 4) {
           long addr = start+pc;
             SocBusTransaction trans = new SocBusTransaction(SocBusTransaction.READTransaction,
-                    SocSupport.convUnsignedLong(addr),0,SocBusTransaction.WordAccess,pstate.getMasterComponent());
-            pstate.insertTransaction(trans, true, state);
+                    SocSupport.convUnsignedLong(addr),0,SocBusTransaction.WordAccess,"assembler");
+            processorInterface.insertTransaction(trans, true, circuitState);
             if (!trans.hasError()) {
               int instr = trans.getReadData();
               lineNum = addLine(lines,String.format("0x%08X ", addr),lineNum,false);
               lineNum = addLine(lines,String.format("0x%08X ", instr),lineNum,false);
-              if (addr == pstate.getEntryPoint())
+              if (addr == processorInterface.getEntryPoint(circuitState))
                lineNum = addLine(lines,"_start: ",lineNum,false);
               else
                 lineNum = addLine(lines,"       ",lineNum,false);
-              RV32im_state.DECODER.decode(instr);
-              if (RV32im_state.DECODER.getExeUnit()!= null) {
-                lineNum = addLine(lines,RV32im_state.DECODER.getExeUnit().getAsmInstruction(),lineNum,false);
-                ValidDebugLines.put(lineNum, SocSupport.convUnsignedLong(addr));
+              assembler.decode(instr);
+              if (assembler.getExeUnit()!= null) {
+                lineNum = addLine(lines,assembler.getExeUnit().getAsmInstruction(),lineNum,false);
+                validDebugLines.put(lineNum, SocSupport.convUnsignedLong(addr));
               } else lineNum = addLine(lines,"????",lineNum,false);
               lineNum = addLine(lines,"\n",lineNum,true);
             }
@@ -343,5 +311,4 @@ public class RV32imDecoder {
     }
     return lines.toString();
   }
-
 }

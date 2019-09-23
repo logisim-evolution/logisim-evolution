@@ -32,8 +32,9 @@ import java.util.ArrayList;
 
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.soc.file.ElfHeader;
+import com.cburch.logisim.soc.util.AbstractExecutionUnitWithLabelSupport;
 
-public class RV32imControlTransferInstructions implements RV32imExecutionUnitInterface {
+public class RV32imControlTransferInstructions extends AbstractExecutionUnitWithLabelSupport {
     
   private static final int JAL = 0x6F;
   private static final int JALR = 0x67;
@@ -82,58 +83,59 @@ public class RV32imControlTransferInstructions implements RV32imExecutionUnitInt
     return opcodes;
   };
 
-  public boolean execute(RV32im_state.ProcessorState state, CircuitState cState) {
+  public boolean execute(Object state, CircuitState cState) {
     if (!valid)
       return false;
+    RV32im_state.ProcessorState cpuState = (RV32im_state.ProcessorState) state;
     jumped = false;
-    int target = state.getProgramCounter()+immediate;
-    int nextPc = state.getProgramCounter()+4;
-    int reg1 = state.getRegisterValue(source1);
-    int reg2 = state.getRegisterValue(source2);
+    int target = cpuState.getProgramCounter()+immediate;
+    int nextPc = cpuState.getProgramCounter()+4;
+    int reg1 = cpuState.getRegisterValue(source1);
+    int reg2 = cpuState.getRegisterValue(source2);
     switch (operation) {
       case INSTR_JAL  :
-      case INSTR_J    : state.setProgramCounter(target);
+      case INSTR_J    : cpuState.setProgramCounter(target);
                         jumped = true;
-                        state.writeRegister(destination, nextPc);
+                        cpuState.writeRegister(destination, nextPc);
                         return true;
       case INSTR_RET  :
       case INSTR_JR   :
-      case INSTR_JALR : target = state.getRegisterValue(source1)+immediate;
+      case INSTR_JALR : target = cpuState.getRegisterValue(source1)+immediate;
                         target = (target >>1)<<1;
-                        state.setProgramCounter(target);
+                        cpuState.setProgramCounter(target);
                         jumped = true;
-                        state.writeRegister(destination, nextPc);
+                        cpuState.writeRegister(destination, nextPc);
                         return true;
       case INSTR_BEQZ :
       case INSTR_BEQ  : if (reg1 == reg2) {
                           jumped = true;
-                          state.setProgramCounter(target);
+                          cpuState.setProgramCounter(target);
                         }
                         return true;
       case INSTR_BNEZ :
       case INSTR_BNE  : if (reg1 != reg2) {
                           jumped = true;
-                          state.setProgramCounter(target);
+                          cpuState.setProgramCounter(target);
                         }
                         return true;
       case INSTR_BLT  : if (reg1 < reg2) {
                           jumped = true;
-                          state.setProgramCounter(target);
+                          cpuState.setProgramCounter(target);
                         }
                         return true;
       case INSTR_BGE  : if (reg1 >= reg2) {
                           jumped = true;
-                          state.setProgramCounter(target);
+                          cpuState.setProgramCounter(target);
                         }
                         return true;
       case INSTR_BLTU : if (ElfHeader.getLongValue((Integer)reg1) < ElfHeader.getLongValue((Integer)reg2)) {
                           jumped = true;
-                          state.setProgramCounter(target);
+                          cpuState.setProgramCounter(target);
                         }
                         return true;
       case INSTR_BGEU : if (ElfHeader.getLongValue((Integer)reg1) >= ElfHeader.getLongValue((Integer)reg2)) {
                           jumped = true;
-                          state.setProgramCounter(target);
+                          cpuState.setProgramCounter(target);
                         }
                         return true;
     }
@@ -209,7 +211,7 @@ public class RV32imControlTransferInstructions implements RV32imExecutionUnitInt
     return valid;
   }
   
-  public int getOffset() { return immediate; }
+  public int getPcOffset() { return immediate; }
 
   public boolean performedJump() {return valid&jumped;}
 
@@ -249,5 +251,5 @@ public class RV32imControlTransferInstructions implements RV32imExecutionUnitInt
   }
 
   public String getErrorMessage() { return null; }
-  
+
 }

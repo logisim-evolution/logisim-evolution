@@ -35,8 +35,9 @@ import java.util.ArrayList;
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.soc.data.SocBusTransaction;
 import com.cburch.logisim.soc.file.ElfHeader;
+import com.cburch.logisim.soc.util.AssemblerExecutionInterface;
 
-public class RV32imLoadAndStoreInstructions implements RV32imExecutionUnitInterface {
+public class RV32imLoadAndStoreInstructions implements AssemblerExecutionInterface {
 
   private static final int LOAD = 0x3;
   private static final int STORE = 0x23;
@@ -72,12 +73,13 @@ public class RV32imLoadAndStoreInstructions implements RV32imExecutionUnitInterf
     return opcodes;
   };
 
-  public boolean execute(RV32im_state.ProcessorState state, CircuitState cState) {
+  public boolean execute(Object state, CircuitState cState) {
     if (!valid)
       return false;
+    RV32im_state.ProcessorState cpuState = (RV32im_state.ProcessorState) state;
     errorMessage = null;
-    int toBeStored = state.getRegisterValue(destination);
-    long address = ElfHeader.getLongValue((Integer)state.getRegisterValue(base))+immediate;
+    int toBeStored = cpuState.getRegisterValue(destination);
+    long address = ElfHeader.getLongValue((Integer)cpuState.getRegisterValue(base))+immediate;
     int transType = -1;
     switch (operation) {
       case INSTR_SB : toBeStored &= 0xFF;
@@ -87,8 +89,8 @@ public class RV32imLoadAndStoreInstructions implements RV32imExecutionUnitInterf
       case INSTR_SW : if (transType < 0) transType = SocBusTransaction.WordAccess;
                       SocBusTransaction trans = new SocBusTransaction(SocBusTransaction.WRITETransaction,
                           ElfHeader.getIntValue((Long)address),toBeStored,transType,
-                          state.getMasterComponent());
-                      state.insertTransaction(trans, false, cState);
+                          cpuState.getMasterComponent());
+                      cpuState.insertTransaction(trans, false, cState);
                       return !transactionHasError(trans);
       case INSTR_LB :
       case INSTR_LBU: transType = SocBusTransaction.ByteAccess;
@@ -96,8 +98,8 @@ public class RV32imLoadAndStoreInstructions implements RV32imExecutionUnitInterf
       case INSTR_LHU: if (transType < 0 ) transType = SocBusTransaction.HalfWordAccess;
       case INSTR_LW : if (transType < 0) transType = SocBusTransaction.WordAccess;
                       trans = new SocBusTransaction(SocBusTransaction.READTransaction,
-                          ElfHeader.getIntValue((Long)address),0,transType,state.getMasterComponent());
-                      state.insertTransaction(trans, false, cState);
+                          ElfHeader.getIntValue((Long)address),0,transType,cpuState.getMasterComponent());
+                      cpuState.insertTransaction(trans, false, cState);
                       if (transactionHasError(trans)) return false;
                       int toBeLoaded = trans.getReadData();
                       switch (operation) {
@@ -112,7 +114,7 @@ public class RV32imLoadAndStoreInstructions implements RV32imExecutionUnitInterf
                                          toBeLoaded >>= 16;
                                          break;
                       }
-                      state.writeRegister(destination, toBeLoaded);
+                      cpuState.writeRegister(destination, toBeLoaded);
                       return true;
     }
     return false;

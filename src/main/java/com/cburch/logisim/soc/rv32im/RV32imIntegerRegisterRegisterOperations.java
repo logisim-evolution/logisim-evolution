@@ -32,8 +32,9 @@ import java.util.ArrayList;
 
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.soc.file.ElfHeader;
+import com.cburch.logisim.soc.util.AssemblerExecutionInterface;
 
-public class RV32imIntegerRegisterRegisterOperations implements RV32imExecutionUnitInterface {
+public class RV32imIntegerRegisterRegisterOperations implements AssemblerExecutionInterface {
 
   private static final int OP = 0x33;
   private static final int ADD_SUB = 0;
@@ -70,11 +71,12 @@ public class RV32imIntegerRegisterRegisterOperations implements RV32imExecutionU
     return opcodes;
   };
 
-  public boolean execute(RV32im_state.ProcessorState state, CircuitState cState) {
+  public boolean execute(Object state, CircuitState cState) {
     if (!valid)
       return false;
-    int opp1 = state.getRegisterValue(source1);
-    int opp2 = state.getRegisterValue(source2);
+    RV32im_state.ProcessorState cpuState = (RV32im_state.ProcessorState) state;
+    int opp1 = cpuState.getRegisterValue(source1);
+    int opp2 = cpuState.getRegisterValue(source2);
     int result = 0;
     switch (operation) {
       case INSTR_ADD  : result = opp1 + opp2;
@@ -102,7 +104,7 @@ public class RV32imIntegerRegisterRegisterOperations implements RV32imExecutionU
                         break;
       default         : return false;
     }
-    state.writeRegister(destination, result);
+    cpuState.writeRegister(destination, result);
     return true;
   }
 
