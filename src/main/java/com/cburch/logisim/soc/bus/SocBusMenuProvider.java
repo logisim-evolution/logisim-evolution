@@ -26,7 +26,7 @@
  *     http://www.heig-vd.ch/
  */
 
-package com.cburch.logisim.soc.gui;
+package com.cburch.logisim.soc.bus;
 
 import static com.cburch.logisim.soc.Strings.S;
 
@@ -51,9 +51,11 @@ import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
-import com.cburch.logisim.soc.bus.SocBusAttributes;
 import com.cburch.logisim.soc.data.SocBusInfo;
 import com.cburch.logisim.soc.data.SocBusStateInfo;
+import com.cburch.logisim.soc.gui.BusTransactionInsertionGui;
+import com.cburch.logisim.soc.gui.ListeningFrame;
+import com.cburch.logisim.soc.gui.TraceWindowTableModel;
 import com.cburch.logisim.tools.CircuitStateHolder;
 import com.cburch.logisim.tools.MenuExtender;
 

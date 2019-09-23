@@ -47,6 +47,7 @@ import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.comp.ComponentEvent;
 import com.cburch.logisim.comp.ComponentListener;
 import com.cburch.logisim.prefs.AppPreferences;
+import com.cburch.logisim.soc.bus.SocBusMenuProvider;
 import com.cburch.logisim.soc.data.SocBusStateInfo;
 import com.cburch.logisim.soc.data.SocBusStateInfo.SocBusState;
 import com.cburch.logisim.tools.CircuitStateHolder;
