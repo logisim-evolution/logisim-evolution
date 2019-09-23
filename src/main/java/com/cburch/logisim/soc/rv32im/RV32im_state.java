@@ -42,10 +42,10 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 
-import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -109,8 +109,6 @@ public class RV32im_state implements SocUpSimulationStateListener,SocProcessorIn
     private JLabel lineIndicator;
     private int oldCaretPos;
     private HashMap<Integer,Integer> debugLines;
-    private HashMap<Integer,Integer> breakPoints;
-    private HashMap<Integer,GutterIconInfo> breakPointIcons;
     private JButton addBreakPoint;
     private JButton removeBreakPoint;
     private int currentLine;
@@ -139,6 +137,8 @@ public class RV32im_state implements SocUpSimulationStateListener,SocProcessorIn
       debugScrollPane = new RTextScrollPane(asmWindow);
       debugScrollPane.setLineNumbersEnabled(false);
       debugScrollPane.setIconRowHeaderEnabled(true);
+      debugScrollPane.getGutter().setBookmarkIcon(new BreakpointIcon());
+      debugScrollPane.getGutter().setBookmarkingEnabled(true);
       JPanel info = new JPanel();
       info.setLayout(new BorderLayout());
       lineIndicator = new JLabel();
@@ -157,8 +157,6 @@ public class RV32im_state implements SocUpSimulationStateListener,SocProcessorIn
       programLoaded = false;
       oldCaretPos = -1;
       debugLines = new HashMap<Integer,Integer>();
-      breakPoints = new HashMap<Integer,Integer>();
-      breakPointIcons = new HashMap<Integer,GutterIconInfo>();
       reset();
       localeChanged();
       LocaleManager.addLocaleListener(this);
@@ -175,8 +173,6 @@ public class RV32im_state implements SocUpSimulationStateListener,SocProcessorIn
       if (entry != null) entryPoint = entry;
       if (progInfo != null || sectInfo != null) {
         debugLines.clear();
-        breakPoints.clear();
-        breakPointIcons.clear();
         debugScrollPane.getGutter().removeAllTrackingIcons();
         asmWindow.setText(RV32imDecoder.getProgram(state, this, progInfo, sectInfo, debugLines));
         asmWindow.setCaretPosition(0);
@@ -261,6 +257,8 @@ public class RV32im_state implements SocUpSimulationStateListener,SocProcessorIn
       /* check the simulation state */
       if (!simState.canExecute())
         return;
+      HashMap<Integer,Integer> breakPoints = new HashMap<Integer,Integer>();
+      for (int i : getBreakpointLines()) breakPoints.put(debugLines.get(i),i);
       if (breakPoints.containsKey(pc)) {
         if (simState.breakPointReached()) {
           int line = breakPoints.get(pc)-1;
@@ -501,10 +499,11 @@ public class RV32im_state implements SocUpSimulationStateListener,SocProcessorIn
         currentLine = root.getElementIndex(caretPos)+1;
         maxLines = root.getElementCount();
         localeChanged();
+        ArrayList<Integer> dlines = getBreakpointLines();
         if (!debugLines.containsKey(currentLine)) {
           addBreakPoint.setEnabled(false);
           removeBreakPoint.setEnabled(false);
-        } else if (breakPoints.containsKey(debugLines.get(currentLine))) {
+        } else if (dlines.contains(currentLine)) {
           removeBreakPoint.setEnabled(true);
           addBreakPoint.setEnabled(false);
         } else {
@@ -521,18 +520,34 @@ public class RV32im_state implements SocUpSimulationStateListener,SocProcessorIn
       removeBreakPoint.setText(S.get("RV32imRemoveBreakPoint"));
     }
     
+    private ArrayList<Integer> getBreakpointLines() {
+      ArrayList<Integer> lines = new ArrayList<Integer>();
+      GutterIconInfo[] bookmarks = debugScrollPane.getGutter().getBookmarks();
+      Element root = asmWindow.getDocument().getDefaultRootElement();
+      for (int i = 0; i < bookmarks.length ; i++) {
+        int pos = bookmarks[i].getMarkedOffset();
+        int line = root.getElementIndex(pos)+1;
+        if (debugLines.containsKey(line))
+          lines.add(line);
+        else
+          try { 
+            debugScrollPane.getGutter().toggleBookmark(line-1);
+          } catch (BadLocationException e) {  }
+      }
+      return lines;
+    }
+    
     private void updateBreakpoint() {
-      if (breakPoints.containsKey(debugLines.get(currentLine))) {
-        breakPoints.remove(debugLines.get(currentLine));
-        debugScrollPane.getGutter().removeTrackingIcon(breakPointIcons.get(currentLine));
+      if (getBreakpointLines().contains(currentLine)) {
+        try { 
+          debugScrollPane.getGutter().toggleBookmark(currentLine-1);
+		} catch (BadLocationException e) { return; }
         addBreakPoint.setEnabled(true);
         removeBreakPoint.setEnabled(false);
       } else {
-        Icon ico = new BreakpointIcon();
-        try {
-          breakPointIcons.put(currentLine, debugScrollPane.getGutter().addLineTrackingIcon(currentLine-1, ico));
-        } catch (BadLocationException e1) { return; }
-        breakPoints.put(debugLines.get(currentLine),currentLine);
+        try { 
+          debugScrollPane.getGutter().toggleBookmark(currentLine-1);
+        } catch (BadLocationException e) { return; }
         addBreakPoint.setEnabled(false);
         removeBreakPoint.setEnabled(true);
       }
