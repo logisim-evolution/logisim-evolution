@@ -26,21 +26,23 @@
  *     http://www.heig-vd.ch/
  */
 
-package com.cburch.logisim.soc.util;
+package com.cburch.logisim.gui.icons;
 
-import java.util.ArrayList;
+import java.awt.Color;
+import java.awt.Graphics2D;
 
-import com.cburch.logisim.circuit.CircuitState;
+import com.cburch.logisim.prefs.AppPreferences;
 
-public interface AssemblerExecutionInterface {
-  public boolean execute(Object processorState, CircuitState circuitState);
-  public String getAsmInstruction();
-  public int getBinInstruction();
-  public boolean setAsmInstruction(AssemblerAsmInstruction instruction);
-  public boolean setBinInstruction(int instr);
-  public boolean performedJump();
-  public boolean isValid();
-  public String getErrorMessage();
-  public ArrayList<String> getInstructions();
-  public int getInstructionSizeInBytes(String instruction);
+public class RunIcon extends AbstractIcon {
+
+  @Override
+  protected void paintIcon(Graphics2D g2) {
+    g2.setColor(Color.GREEN.darker());
+    g2.fillOval(AppPreferences.getScaled(2), AppPreferences.getScaled(2), AppPreferences.getScaled(13), AppPreferences.getScaled(13));
+    int[] xpos = new int[] {AppPreferences.getScaled(6),AppPreferences.getScaled(11),AppPreferences.getScaled(6)};
+    int[] ypos = new int[] {AppPreferences.getScaled(5),AppPreferences.getScaled(8),AppPreferences.getScaled(11)};
+    g2.setColor(Color.WHITE);
+    g2.fillPolygon(xpos, ypos, 3);
+  }
+
 }

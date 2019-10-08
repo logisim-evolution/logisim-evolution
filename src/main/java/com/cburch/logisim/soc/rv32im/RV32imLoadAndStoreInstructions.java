@@ -32,10 +32,14 @@ import static com.cburch.logisim.soc.Strings.S;
 
 import java.util.ArrayList;
 
+import javax.swing.JOptionPane;
+
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.soc.data.SocBusTransaction;
 import com.cburch.logisim.soc.file.ElfHeader;
+import com.cburch.logisim.soc.util.AssemblerAsmInstruction;
 import com.cburch.logisim.soc.util.AssemblerExecutionInterface;
+import com.cburch.logisim.soc.util.AssemblerToken;
 
 public class RV32imLoadAndStoreInstructions implements AssemblerExecutionInterface {
 
@@ -150,11 +154,6 @@ public class RV32imLoadAndStoreInstructions implements AssemblerExecutionInterfa
     return instruction;
   }
 
-  public boolean setAsmInstruction(String instr) {
-    valid = false;
-    return valid;
-  }
-
   public boolean setBinInstruction(int instr) {
     instruction = instr;
     valid = decodeBin();
@@ -197,5 +196,85 @@ public class RV32imLoadAndStoreInstructions implements AssemblerExecutionInterfa
   }
 
   public String getErrorMessage() { return errorMessage; }
+
+  public int getInstructionSizeInBytes(String instruction) {
+    if (getInstructions().contains(instruction.toUpperCase())) return 4;
+    return -1;
+  }
+
+  public boolean setAsmInstruction(AssemblerAsmInstruction instr) {
+    int operation = -1;
+    for (int i = 0 ; i < AsmOpcodes.length ; i++) 
+      if (AsmOpcodes[i].equals(instr.getOpcode().toUpperCase())) operation = i;
+    if (operation < 0) {
+      valid = false;
+      return false;
+    }
+    if (instr.getNrOfParameters() != 2) {
+      instr.setError(instr.getInstruction(), S.getter("Rv32imAssemblerExpectedTwoArguments"));
+      valid = false;
+      return true;
+    }
+    AssemblerToken[] param1,param2;
+    valid = true;
+    param1 = instr.getParameter(0);
+    if (param1.length != 1 || param1[0].getType() != AssemblerToken.REGISTER) {
+      instr.setError(param1[0], S.getter("RV32imAssemblerExpectedRegister"));
+      valid = false;
+    }
+    param2 = instr.getParameter(1);
+    if (param2.length != 2) {
+      instr.setError(param2[0], S.getter("RV32imAssemblerExpectedImmediateIndexedRegister"));
+      valid = false;
+      return true;
+    }
+    if (!param2[0].isNumber()) {
+      instr.setError(param2[0], S.getter("RV32imAssemblerExpectedImmediateValue"));
+      valid = false;
+    }
+    if (param2[1].getType() != AssemblerToken.BRACKETED_REGISTER) {
+      instr.setError(param2[1], S.getter("RV32imAssemblerExpectedBracketedRegister"));
+      valid = false;
+    }
+    if (!valid) return true;
+    destination = RV32im_state.getRegisterIndex(param1[0].getValue());
+    if (destination < 0 || destination > 31) {
+      instr.setError(param1[0], S.getter("RV32imAssemblerUnknownRegister"));
+      valid = false;
+    }
+    base = RV32im_state.getRegisterIndex(param2[1].getValue());
+    if (base < 0 || base > 31) {
+      instr.setError(param2[1], S.getter("RV32imAssemblerUnknownRegister"));
+      valid = false;
+    }
+    immediate = param2[0].getNumberValue();
+    if (immediate >= (1<<11) || immediate < -(1<<11)) {
+      instr.setError(param2[0], S.getter("RV32imAssemblerImmediateOutOfRange"));
+      valid = false;
+    }
+    if (!valid) return true;
+    switch (operation) {
+      case INSTR_SB :
+      case INSTR_SH :
+      case INSTR_SW : int funct3 = operation-INSTR_SB;
+                      instruction = RV32imSupport.getSTypeInstruction(STORE, base, destination, funct3, immediate);
+                      break;
+      case INSTR_LB :
+      case INSTR_LBU:
+      case INSTR_LH :
+      case INSTR_LHU:
+      case INSTR_LW : funct3 = (operation == INSTR_LBU || operation == INSTR_LHU) ? operation+1 : operation;
+    	              instruction = RV32imSupport.getITypeInstruction(LOAD, destination, funct3, base, immediate);
+    	              break;
+      default       : valid = false;
+                      JOptionPane.showMessageDialog(null, "Severe Bug in RV32imLoadAndStoreInstructions.java");
+                      break;
+    }
+    if (valid) {
+      instr.setInstructionByteCode(instruction, 4);
+      // DEBUG: System.out.println(String.format("0x%08X 0x%08X", instr.getProgramCounter(), instruction));
+    }
+    return true;
+  }
 
 }

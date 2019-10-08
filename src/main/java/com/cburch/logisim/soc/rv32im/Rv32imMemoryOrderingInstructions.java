@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import javax.swing.JOptionPane;
 
 import com.cburch.logisim.circuit.CircuitState;
+import com.cburch.logisim.soc.util.AssemblerAsmInstruction;
 import com.cburch.logisim.soc.util.AssemblerExecutionInterface;
 
 public class Rv32imMemoryOrderingInstructions implements AssemblerExecutionInterface {
@@ -91,11 +92,6 @@ public class Rv32imMemoryOrderingInstructions implements AssemblerExecutionInter
     return instruction;
   }
 
-  public boolean setAsmInstruction(String instr) {
-    valid = false;
-    return valid;
-  }
-
   public boolean setBinInstruction(int instr) {
     instruction = instr;
     valid = decodeBin();
@@ -135,4 +131,23 @@ public class Rv32imMemoryOrderingInstructions implements AssemblerExecutionInter
   }
 
   public String getErrorMessage() { return null; }
+
+  public int getInstructionSizeInBytes(String instruction) {
+	if (getInstructions().contains(instruction.toUpperCase())) return 4;
+	return -1;
+  }
+
+  public boolean setAsmInstruction(AssemblerAsmInstruction instr) {
+	int operation = -1;
+	for (int i = 0 ; i < AsmOpcodes.length ; i++) 
+	  if (AsmOpcodes[i].equals(instr.getOpcode().toUpperCase())) operation = i;
+	if (operation < 0) {
+	  valid = false;
+	  return false;
+	}
+	instr.setError(instr.getInstruction(), S.getter("RV32imAssemblerNotSupportedYet"));
+	valid = false;
+	return true;
+  }
+
 }

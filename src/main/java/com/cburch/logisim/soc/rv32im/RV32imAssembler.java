@@ -28,8 +28,11 @@
 
 package com.cburch.logisim.soc.rv32im;
 
+import static com.cburch.logisim.soc.Strings.S;
+
 import java.util.ArrayList;
 
+import com.cburch.logisim.soc.util.AssemblerAsmInstruction;
 import com.cburch.logisim.soc.util.AssemblerExecutionInterface;
 import com.cburch.logisim.soc.util.AssemblerInterface;
 
@@ -68,6 +71,24 @@ public class RV32imAssembler implements AssemblerInterface {
       opcodes.addAll(exe.getInstructions());
     return opcodes;
   }
-  
 
+  public boolean usesRoundedBrackets() { return true; }
+
+  public int getInstructionSize(String opcode) {
+    for (AssemblerExecutionInterface exe : exeUnits) {
+      int size = exe.getInstructionSizeInBytes(opcode);
+      if (size > 0) return size;
+    }
+    return 1; /* to make sure that instructions are not overwritten */
+  }
+
+  public boolean assemble(AssemblerAsmInstruction instruction) {
+	boolean found = false;
+    for (AssemblerExecutionInterface exe : exeUnits) {
+      found |= exe.setAsmInstruction(instruction);
+    }
+    if (!found)
+      instruction.setError(instruction.getInstruction(), S.getter("RV32imAssemblerUnknownOpcode"));
+    return !instruction.hasErrors();
+  }
 }

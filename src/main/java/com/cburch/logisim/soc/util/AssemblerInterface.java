@@ -32,6 +32,9 @@ import java.util.ArrayList;
 
 public interface AssemblerInterface {
   public void decode(int instruction);
+  public boolean assemble(AssemblerAsmInstruction instruction);
   public AssemblerExecutionInterface getExeUnit();
   public ArrayList<String> getOpcodes();
+  public int getInstructionSize(String opcode);
+  public boolean usesRoundedBrackets();
 }

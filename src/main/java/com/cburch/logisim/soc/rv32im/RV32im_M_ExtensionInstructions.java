@@ -28,12 +28,16 @@
 
 package com.cburch.logisim.soc.rv32im;
 
+import static com.cburch.logisim.soc.Strings.S;
+
 import java.math.BigInteger;
 import java.util.ArrayList;
 
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.soc.file.ElfHeader;
+import com.cburch.logisim.soc.util.AssemblerAsmInstruction;
 import com.cburch.logisim.soc.util.AssemblerExecutionInterface;
+import com.cburch.logisim.soc.util.AssemblerToken;
 
 public class RV32im_M_ExtensionInstructions implements AssemblerExecutionInterface {
 
@@ -121,11 +125,6 @@ public class RV32im_M_ExtensionInstructions implements AssemblerExecutionInterfa
     return instruction;
   }
 
-  public boolean setAsmInstruction(String instr) {
-    valid = false;
-    return valid;
-  }
-
   public boolean setBinInstruction(int instr) {
     instruction = instr;
     valid = decodeBin();
@@ -150,5 +149,63 @@ public class RV32im_M_ExtensionInstructions implements AssemblerExecutionInterfa
   }
 
   public String getErrorMessage() { return null; }
+
+  public int getInstructionSizeInBytes(String instruction) {
+    if (getInstructions().contains(instruction.toUpperCase())) return 4;
+    return -1;
+  }
+
+  public boolean setAsmInstruction(AssemblerAsmInstruction instr) {
+    int operation = -1;
+    valid = true;
+    for (int i = 0 ; i < AsmOpcodes.length ; i++) 
+      if (AsmOpcodes[i].equals(instr.getOpcode().toUpperCase())) operation = i;
+    if (operation < 0) {
+      valid = false;
+      return false;
+    }
+    if (instr.getNrOfParameters() != 3) {
+      instr.setError(instr.getInstruction(), S.getter("Rv32imAssemblerExpectedThreeArguments"));
+      valid = false;
+      return true;
+    }
+    AssemblerToken[] param1 = instr.getParameter(0);
+    AssemblerToken[] param2 = instr.getParameter(1);
+    AssemblerToken[] param3 = instr.getParameter(2);
+    boolean errors = false;
+    if (param1.length != 1 || param1[0].getType() != AssemblerToken.REGISTER) {
+      instr.setError(param1[0], S.getter("RV32imAssemblerExpectedRegister"));
+      errors = true;
+    }
+    if (param2.length != 1 || param2[0].getType() != AssemblerToken.REGISTER) {
+      instr.setError(param2[0], S.getter("RV32imAssemblerExpectedRegister"));
+      errors = true;
+    }
+    if (param3.length != 1 || param3[0].getType() != AssemblerToken.REGISTER) {
+      instr.setError(param3[0], S.getter("RV32imAssemblerExpectedRegister"));
+      errors = true;
+    }
+    destination = RV32im_state.getRegisterIndex(param1[0].getValue());
+    if (destination < 0 || destination > 31) {
+      instr.setError(param1[0], S.getter("RV32imAssemblerUnknownRegister"));
+      errors = true;
+    }
+    source1 = RV32im_state.getRegisterIndex(param2[0].getValue());
+    if (source1 < 0 || source1 > 31) {
+      instr.setError(param2[0], S.getter("RV32imAssemblerUnknownRegister"));
+      errors = true;
+    }
+    source2 = RV32im_state.getRegisterIndex(param3[0].getValue());
+    if (source2 < 0 || source2 > 31) {
+      instr.setError(param3[0], S.getter("RV32imAssemblerUnknownRegister"));
+      errors = true;
+    }
+    valid = !errors;
+    if (valid) {
+      instruction = RV32imSupport.getRTypeInstruction(OP, destination, operation, source1, source2, 1);
+      instr.setInstructionByteCode(instruction, 4);
+    }
+    return true;
+  }
 
 }

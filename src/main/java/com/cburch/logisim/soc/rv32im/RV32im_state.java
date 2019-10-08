@@ -122,9 +122,8 @@ public class RV32im_state implements SocUpSimulationStateListener,SocProcessorIn
         bPanel.loadProgram(state, myInstance.getAttributeValue(RV32imAttributes.RV32IM_STATE), progInfo, sectInfo, ASSEMBLER);;
       }
       pc = entryPoint != null ? entryPoint : resetVector;
-      for (int i = 1 ; i < 31 ; i++)
+      for (int i = 0 ; i < 31 ; i++)
         registers_valid[i] = false;
-      registers_valid[0] = true;
       lastRegisterWritten = -1;
       instrTrace.clear();
       if (visible) repaint();
@@ -444,6 +443,19 @@ public class RV32im_state implements SocUpSimulationStateListener,SocProcessorIn
   private static final int NrOfTraces = 21;
   private static final int TRACEHEIGHT = 20;
   
+  public static int getRegisterIndex(String name) {
+    String regName = name.toLowerCase();
+    for (int i = 0 ; i < registerABINames.length ; i++)
+      if (registerABINames[i].equals(regName)) return i;
+    if (regName.startsWith("x")&&regName.length()<4) {
+      int index;
+      try {index = Integer.parseUnsignedInt(regName.substring(1));} 
+        catch (NumberFormatException e) {index = -1;}
+      return index;
+    }
+    return -1;
+  }
+    
   private class TraceInfo {
     private int pc;
     private int instruction;

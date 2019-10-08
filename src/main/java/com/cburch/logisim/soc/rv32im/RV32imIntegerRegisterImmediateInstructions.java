@@ -28,11 +28,15 @@
 
 package com.cburch.logisim.soc.rv32im;
 
+import static com.cburch.logisim.soc.Strings.S;
+
 import java.util.ArrayList;
 
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.soc.file.ElfHeader;
+import com.cburch.logisim.soc.util.AssemblerAsmInstruction;
 import com.cburch.logisim.soc.util.AssemblerExecutionInterface;
+import com.cburch.logisim.soc.util.AssemblerToken;
 
 public class RV32imIntegerRegisterImmediateInstructions implements AssemblerExecutionInterface {
 
@@ -157,11 +161,6 @@ public class RV32imIntegerRegisterImmediateInstructions implements AssemblerExec
     return instruction;
   }
 
-  public boolean setAsmInstruction(String instr) {
-	valid = false;
-    return false;
-  }
-
   public boolean setBinInstruction(int instr) {
 	instruction = instr;
 	decodeBin();
@@ -230,4 +229,202 @@ public class RV32imIntegerRegisterImmediateInstructions implements AssemblerExec
   }
 
   public String getErrorMessage() { return null; }
+
+  public int getInstructionSizeInBytes(String instruction) {
+	if (getInstructions().contains(instruction.toUpperCase())) return 4;
+	return -1;
+  }
+
+  public boolean setAsmInstruction(AssemblerAsmInstruction instr) {
+	int operation = -1;
+	for (int i = 0 ; i < AsmOpcodes.length ; i++) 
+	  if (AsmOpcodes[i].equals(instr.getOpcode().toUpperCase())) operation = i;
+	if (operation < 0) {
+	  valid = false;
+	  return false;
+	}
+	boolean errors = false;
+	AssemblerToken[] param1,param2,param3;
+    switch (operation) {
+      case INSTR_NOP  : if (instr.getNrOfParameters() != 0) {
+    	                   instr.setError(instr.getInstruction(), S.getter("Rv32imAssemblerExpectedNoArguments"));
+    	                   errors = true;
+    	                   break;
+                        }
+                        operation = INSTR_ADDI;
+                        destination = source = immediate = 0;
+                        break;
+      case INSTR_LUI  :
+      case INSTR_AUIPC: 
+      case INSTR_LI   : /* format opcode rd,#imm */ 
+                        if (instr.getNrOfParameters() != 2) {
+                          instr.setError(instr.getInstruction(), S.getter("Rv32imAssemblerExpectedTwoArguments"));
+                          errors = true;
+                          break;
+                        }
+                        param1 = instr.getParameter(0);
+                        param2 = instr.getParameter(1);
+                        if (param1.length != 1 || param1[0].getType() != AssemblerToken.REGISTER) {
+                          for (int i = 0 ; i < param1.length ; i++)
+                            instr.setError(param1[i], S.getter("RV32imAssemblerExpectedRegister"));
+                          errors = true;
+                          break;
+                        }
+                        if (param2.length != 1 || !param2[0].isNumber()) {
+                          for (int i = 0 ; i < param2.length ; i++)
+                            instr.setError(param2[i], S.getter("RV32imAssemblerExpectedImmediateValue"));
+                          errors = true;
+                          break;
+                        }
+                        if (operation == INSTR_LI) operation = INSTR_ADDI;
+                        source = 0;
+                        destination = RV32im_state.getRegisterIndex(param1[0].getValue());
+                        if (destination < 0 || destination > 31) {
+                          errors = true;
+                          instr.setError(param1[0], S.getter("RV32imAssemblerUnknownRegister"));
+                        }
+                        immediate = param2[0].getNumberValue();
+                        if (operation == INSTR_LUI && param2[0].isLabel())
+                          immediate = (immediate >>12)&0xFFFFF;
+                        if (operation == INSTR_AUIPC && param2[0].isLabel()) {
+                          long imm = immediate;
+                          imm -= instr.getProgramCounter();
+                          immediate = (int) imm;
+                          immediate = (immediate >>12)&0xFFFFF;
+                        }
+                        break;
+      case INSTR_MV   :
+      case INSTR_NOT  :
+      case INSTR_SEQZ : /* format opcode rd,rs */
+                        if (instr.getNrOfParameters() != 2) {
+                          instr.setError(instr.getInstruction(), S.getter("Rv32imAssemblerExpectedTwoArguments"));
+                          errors = true;
+                          break;
+                        }
+                        param1 = instr.getParameter(0);
+                        param2 = instr.getParameter(1);
+                        if (param1.length != 1 || param1[0].getType() != AssemblerToken.REGISTER) {
+                          for (int i = 0 ; i < param1.length ; i++)
+                            instr.setError(param1[i], S.getter("RV32imAssemblerExpectedRegister"));
+                          errors = true;
+                          break;
+                        }
+                        if (param2.length != 1 || param2[0].getType() != AssemblerToken.REGISTER) {
+                          for (int i = 0 ; i < param2.length ; i++)
+                            instr.setError(param2[i], S.getter("RV32imAssemblerExpectedRegister"));
+                          errors = true;
+                          break;
+                        }
+                        immediate = -1;
+                        source = RV32im_state.getRegisterIndex(param2[0].getValue());
+                        if (source < 0 || source > 31) {
+                          errors = true;
+                          instr.setError(param2[0], S.getter("RV32imAssemblerUnknownRegister"));
+                        }
+                        destination = RV32im_state.getRegisterIndex(param1[0].getValue());
+                        if (destination < 0 || destination > 31) {
+                          errors = true;
+                          instr.setError(param1[0], S.getter("RV32imAssemblerUnknownRegister"));
+                        }
+                        switch(operation) {
+                          case INSTR_MV  : immediate = 0;
+                        	               operation = INSTR_ADDI;
+                                           break;
+                          case INSTR_NOT : operation = INSTR_XORI;
+                                           break;
+                          default        : operation = INSTR_SLTIU;
+                                           immediate = 1;
+                                           break;
+                        }
+                        break;
+	  default         : /* format: opcode rd,rs,#imm */
+                        if (instr.getNrOfParameters() != 3) {
+                          instr.setError(instr.getInstruction(), S.getter("Rv32imAssemblerExpectedThreeArguments"));
+                          errors = true;
+                          break;
+                        }
+                        param1 = instr.getParameter(0);
+                        param2 = instr.getParameter(1);
+                        param3 = instr.getParameter(2);
+                        if (param1.length != 1 || param1[0].getType() != AssemblerToken.REGISTER) {
+                          for (int i = 0 ; i < param1.length ; i++)
+                            instr.setError(param1[i], S.getter("RV32imAssemblerExpectedRegister"));
+                          errors = true;
+                          break;
+                        }
+                        if (param2.length != 1 || param2[0].getType() != AssemblerToken.REGISTER) {
+                          for (int i = 0 ; i < param2.length ; i++)
+                            instr.setError(param2[i], S.getter("RV32imAssemblerExpectedRegister"));
+                          errors = true;
+                          break;
+                        }
+                        if (param3.length != 1 || !param3[0].isNumber()) {
+                          for (int i = 0 ; i < param3.length ; i++)
+                            instr.setError(param3[i], S.getter("RV32imAssemblerExpectedImmediateValue"));
+                          errors = true;
+                          break;
+                        }
+                        immediate = param3[0].getNumberValue();
+                        source = RV32im_state.getRegisterIndex(param2[0].getValue());
+                        if (source < 0 || source > 31) {
+                          errors = true;
+                          instr.setError(param2[0], S.getter("RV32imAssemblerUnknownRegister"));
+                        }
+                        destination = RV32im_state.getRegisterIndex(param1[0].getValue());
+                        if (destination < 0 || destination > 31) {
+                          errors = true;
+                          instr.setError(param1[0], S.getter("RV32imAssemblerUnknownRegister"));
+                        }
+                        break;
+	}
+    if (!errors) {
+      switch (operation) {
+        case INSTR_ADDI  :
+        case INSTR_SLTI  :
+        case INSTR_SLTIU :
+        case INSTR_ANDI  :
+        case INSTR_ORI   :
+        case INSTR_XORI  : if (immediate > 2047 || immediate < -2048) {
+        	                 errors = true;
+        	                 instr.setError(instr.getParameter(instr.getNrOfParameters()-1)[0],
+        	                   S.getter("RV32imAssemblerImmediateOutOfRange"));
+        	                 break;
+                           }
+                           instruction = RV32imSupport.getITypeInstruction(OP_IMM, destination, operation, source, immediate);
+                           break;
+        case INSTR_SLLI  :
+        case INSTR_SRLI  :
+        case INSTR_SRAI  : if (immediate > 31 || immediate < 0) {
+        	                 errors = true;
+        	                 instr.setError(instr.getParameter(instr.getNrOfParameters()-1)[0],
+                               S.getter("RV32imAssemblerImmediateOutOfRange"));
+        	                 break;
+                           }
+                           if (operation == INSTR_SRAI) {
+                             immediate |= 1 << 10;
+                             operation = INSTR_SRLI;
+                           }
+                           instruction = RV32imSupport.getITypeInstruction(OP_IMM, destination, operation, source, immediate);
+                           break;
+        case INSTR_LUI   :
+        case INSTR_AUIPC : if (immediate < 0 || immediate >= (1<<20)) {
+        	                 errors = true;
+                             instr.setError(instr.getParameter(instr.getNrOfParameters()-1)[0],
+                               S.getter("RV32imAssemblerImmediateOutOfRange"));
+                             break;
+                           }
+                           int opcode = operation == INSTR_LUI ? LUI : AUIPC;
+                           instruction = RV32imSupport.getUTypeInstruction(opcode, destination, immediate);
+                           break;
+        default          : errors = true;
+                           instr.setError(instr.getInstruction(), S.getter("RV32imAssemblerBUG"));
+                           break;
+      }
+    }
+	valid = !errors;
+    if (valid)
+      instr.setInstructionByteCode(instruction, 4);
+    return true;
+  }
+
 }

@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import javax.swing.JOptionPane;
 
 import com.cburch.logisim.circuit.CircuitState;
+import com.cburch.logisim.soc.util.AssemblerAsmInstruction;
 import com.cburch.logisim.soc.util.AssemblerExecutionInterface;
 
 public class RV32imEnvironmentCallAndBreakpoints implements AssemblerExecutionInterface {
@@ -74,11 +75,6 @@ public class RV32imEnvironmentCallAndBreakpoints implements AssemblerExecutionIn
     return instruction;
   }
 
-  public boolean setAsmInstruction(String instr) {
-    valid = false;
-    return valid;
-  }
-
   public boolean setBinInstruction(int instr) {
     instruction = instr;
     valid = decodeBin();
@@ -101,4 +97,30 @@ public class RV32imEnvironmentCallAndBreakpoints implements AssemblerExecutionIn
   }
 
   public String getErrorMessage() { return null; }
+  
+  public int getInstructionSizeInBytes(String instruction) {
+	if (getInstructions().contains(instruction.toUpperCase())) return 4;
+	return -1;
+  }
+  public boolean setAsmInstruction(AssemblerAsmInstruction instr) {
+	int operation = -1;
+	for (int i = 0 ; i < AsmOpcodes.length ; i++) 
+	  if (AsmOpcodes[i].equals(instr.getOpcode().toUpperCase())) operation = i;
+	if (operation < 0) {
+	  valid = false;
+	  return false;
+	}
+	if (instr.getNrOfParameters() != 0) {
+	  instr.setError(instr.getInstruction(), S.getter("Rv32imAssemblerExpectedNoArguments"));
+	  valid = false;
+	  return true;
+	}
+	instruction = RV32imSupport.getITypeInstruction(SYSTEM, 0, 0, 0, operation);
+    valid = true;
+    instr.setInstructionByteCode(instruction, 4);
+    return true;
+  }
+
+
+
 }

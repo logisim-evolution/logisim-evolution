@@ -65,6 +65,64 @@ public class RV32imSupport {
     return result;
   }
   
+  public static int getITypeInstruction(int opcode, int rd, int func3, int rs, int imm) {
+    int instruction = opcode&0x7F;
+    instruction |= (rd&0x1F)<<7;
+    instruction |= (func3&0x7)<<12;
+    instruction |= (rs&0x1F)<<15;
+    instruction |= (imm&0xFFF)<<20;
+    return instruction;
+  }
+  
+  public static int getRTypeInstruction(int opcode, int rd, int func3, int rs1, int rs2, int funct7) {
+    int instruction = opcode&0x7F;
+    instruction |= (rd&0x1F)<<7;
+    instruction |= (func3&0x7)<<12;
+    instruction |= (rs1&0x1F)<<15;
+    instruction |= (rs2&0x1F)<<20;
+    instruction |= (funct7&0x7F)<<25;
+    return instruction;
+  }
+  
+  public static int getSTypeInstruction(int opcode , int rs1 , int rs2 , int funct3, int imm) {
+    int instruction = opcode&0x7F;
+    instruction |= (funct3 & 0x7) << 12;
+    instruction |= (rs1 & 0x1F) << 15;
+    instruction |= (rs2 & 0x1F) << 20;
+    instruction |= (imm & 0x1F) << 7;
+    instruction |= ((imm >> 5) & 0x7F) << 25;
+    return instruction;
+  }
+  
+  public static int getJTypeInstruction(int opcode , int rd, int imm) {
+    int instruction = opcode&0x7F;
+    instruction |= (rd&0x1F)<<7;
+    instruction |= ((imm >> 12)&0xFF) << 12;
+    instruction |= ((imm >> 11)&1) << 20;
+    instruction |= ((imm >> 1)&0x3FF) << 21;
+    instruction |= ((imm >> 20)&1) << 31;
+    return instruction;
+  }
+  
+  public static int getBTypeInstruction(int opcode, int funct3, int rs1 , int rs2 , int imm) {
+    int instruction = opcode&0x7F;
+    instruction |= (funct3 & 0x7) << 12;
+    instruction |= (rs1 & 0x1F) << 15;
+    instruction |= (rs2 & 0x1F) << 20;
+    instruction |= ((imm >> 11) & 1) << 7;
+    instruction |= ((imm >> 1) & 0xF) << 8;
+    instruction |= ((imm >> 5) & 0x3F) << 25;
+    instruction |= ((imm >> 12) & 1) << 31;
+    return instruction;
+  }
+	  
+  public static int getUTypeInstruction(int opcode, int rd , int imm) {
+    int instruction = opcode&0x7F;
+    instruction |= (rd&0x1F)<<7;
+    instruction |= (imm&0xFFFFF) << 12;
+    return instruction;
+  }
+  
   public static int getOpcode(int instruction) {
     return instruction&0x7F;
   }
