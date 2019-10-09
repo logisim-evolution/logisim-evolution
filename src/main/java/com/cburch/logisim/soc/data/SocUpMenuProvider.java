@@ -47,7 +47,6 @@ import com.cburch.logisim.gui.main.Frame;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.proj.Project;
-import com.cburch.logisim.soc.file.ElfHeader;
 import com.cburch.logisim.soc.file.ProcessorReadElf;
 import com.cburch.logisim.soc.gui.AssemblerPanel;
 import com.cburch.logisim.soc.gui.ListeningFrame;
@@ -151,7 +150,7 @@ public class SocUpMenuProvider  implements ActionListener {
       menu.add(ReadElf);
       if (circuitState != null) {
         InstanceMenuItem showState = new InstanceMenuItem(instance,instName+" : "+S.get("SocUpMenuShowState"),
-        SHOW_STATE_FUNCTION,data,hierarchy);
+            SHOW_STATE_FUNCTION,data,hierarchy);
         showState.addActionListener(parrent);
         showState.setEnabled(true);
         menu.add(showState);
@@ -201,7 +200,8 @@ public class SocUpMenuProvider  implements ActionListener {
       int retVal = fc.showOpenDialog(parrentFrame);
       if (retVal != JFileChooser.APPROVE_OPTION)
         return;
-      ProcessorReadElf reader = new ProcessorReadElf(fc.getSelectedFile(),instance,ElfHeader.EM_RISCV,true);
+      SocUpStateInterface data = (SocUpStateInterface) circuitState.getData(instance.getComponent());
+      ProcessorReadElf reader = new ProcessorReadElf(fc.getSelectedFile(),instance,data.getElfType(),true);
       if (!reader.canExecute()||!reader.execute(circuitState)) {
         JOptionPane.showMessageDialog(parrentFrame, reader.getErrorMessage(), S.get("SocUpMenuErrorReadingElfTitle"), JOptionPane.ERROR_MESSAGE);
         return;

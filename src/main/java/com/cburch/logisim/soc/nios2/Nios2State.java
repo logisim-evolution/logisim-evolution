@@ -64,6 +64,7 @@ import com.cburch.logisim.soc.data.SocUpSimulationState;
 import com.cburch.logisim.soc.data.SocUpSimulationStateListener;
 import com.cburch.logisim.soc.data.SocUpStateInterface;
 import com.cburch.logisim.soc.data.TraceInfo;
+import com.cburch.logisim.soc.file.ElfHeader;
 import com.cburch.logisim.soc.file.ElfProgramHeader;
 import com.cburch.logisim.soc.file.ElfSectionHeader;
 import com.cburch.logisim.soc.gui.BreakpointPanel;
@@ -104,10 +105,8 @@ public class Nios2State implements SocUpSimulationStateListener,SocProcessorInte
       entryPoint = null;
       programLoaded = false;
       AbstractTokenMakerFactory atmf = (AbstractTokenMakerFactory) TokenMakerFactory.getDefaultInstance();
-      /* TODO : */
-      atmf.putMapping("asm/riscv", "com.cburch.logisim.soc.rv32im.RV32imSyntaxHighlighter");
-      /* TODO : */
-      bPanel = new BreakpointPanel("asm/riscv");
+      atmf.putMapping(ASSEMBLER.getHighlightStringIdentifier(), "com.cburch.logisim.soc.nios2.Nios2SyntaxHighlighter");
+      bPanel = new BreakpointPanel(ASSEMBLER.getHighlightStringIdentifier());
       reset();
     }
 
@@ -283,8 +282,8 @@ public class Nios2State implements SocUpSimulationStateListener,SocProcessorInte
     public JPanel getStatePanel() { return this; }
     public String getProcessorType() { return "Nios2s"; }
     public AssemblerInterface getAssembler() { return ASSEMBLER; }
-    /* TODO : */
-	public SocProcessorInterface getProcessorInterface() { return null; }
+	public SocProcessorInterface getProcessorInterface() { return myInstance.getAttributeValue(Nios2Attributes.NIOS2_STATE); }
+    public int getElfType() { return ElfHeader.EM_INTEL_NIOS2; }
 
   }
 
@@ -298,7 +297,7 @@ public class Nios2State implements SocUpSimulationStateListener,SocProcessorInte
   public static String[] registerABINames = {"zero","at","r2","r3","r4","r5","r6","r7",
                                              "r8","r9","r10","r11","r12","r13","r14","r15",
                                              "r16","r17","r18","r19","r20","r21","r22","r23","et","bt",
-                                             "gp","sp","fp","ea","sstatus","ra"};
+                                             "gp","sp","fp","ea","sstat","ra"};
 
   public static int getRegisterIndex(String name) {
     String regName = name.toLowerCase();

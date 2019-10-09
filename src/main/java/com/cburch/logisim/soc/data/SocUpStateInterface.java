@@ -51,4 +51,5 @@ public interface SocUpStateInterface {
   public AssemblerInterface getAssembler();
   public SocProcessorInterface getProcessorInterface();
   public String getProcessorType();
+  public int getElfType();
 }

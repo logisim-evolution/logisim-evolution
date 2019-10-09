@@ -36,6 +36,12 @@ import com.cburch.logisim.soc.util.AssemblerInterface;
 
 public class Nios2Assembler implements AssemblerInterface {
 
+  private ArrayList<AssemblerExecutionInterface> exeUnits;
+  
+  public Nios2Assembler() {
+    exeUnits = new ArrayList<AssemblerExecutionInterface>();
+  }
+
   @Override
   public void decode(int instruction) {
     // TODO Auto-generated method stub
@@ -57,25 +63,18 @@ public class Nios2Assembler implements AssemblerInterface {
   @Override
   public ArrayList<String> getOpcodes() {
     // TODO Auto-generated method stub
-    return null;
+    return new ArrayList<String>();
   }
 
-  @Override
-  public int getInstructionSize(String opcode) {
-    // TODO Auto-generated method stub
-    return 0;
+  public int getInstructionSize(String opcode) { 
+    for (AssemblerExecutionInterface exe : exeUnits) {
+      int size = exe.getInstructionSizeInBytes(opcode);
+      if (size > 0) return size;
+    }
+    return 1; /* to make sure that instructions are not overwritten */
   }
-
-  @Override
-  public boolean usesRoundedBrackets() {
-    // TODO Auto-generated method stub
-    return false;
-  }
-
-  @Override
-  public String getHighlightStringIdentifier() {
-    // TODO Auto-generated method stub
-    return null;
-  }
+  
+  public boolean usesRoundedBrackets() { return true; }
+  public String getHighlightStringIdentifier() { return "asm/nios2"; }
 
 }

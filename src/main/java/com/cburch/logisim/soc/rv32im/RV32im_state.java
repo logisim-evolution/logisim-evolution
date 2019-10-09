@@ -64,6 +64,7 @@ import com.cburch.logisim.soc.data.SocUpSimulationState;
 import com.cburch.logisim.soc.data.SocUpSimulationStateListener;
 import com.cburch.logisim.soc.data.SocUpStateInterface;
 import com.cburch.logisim.soc.data.TraceInfo;
+import com.cburch.logisim.soc.file.ElfHeader;
 import com.cburch.logisim.soc.file.ElfProgramHeader;
 import com.cburch.logisim.soc.file.ElfSectionHeader;
 import com.cburch.logisim.soc.gui.BreakpointPanel;
@@ -104,8 +105,8 @@ public class RV32im_state implements SocUpSimulationStateListener,SocProcessorIn
       entryPoint = null;
       programLoaded = false;
       AbstractTokenMakerFactory atmf = (AbstractTokenMakerFactory) TokenMakerFactory.getDefaultInstance();
-      atmf.putMapping("asm/riscv", "com.cburch.logisim.soc.rv32im.RV32imSyntaxHighlighter");
-      bPanel = new BreakpointPanel("asm/riscv");
+      atmf.putMapping(ASSEMBLER.getHighlightStringIdentifier(), "com.cburch.logisim.soc.rv32im.RV32imSyntaxHighlighter");
+      bPanel = new BreakpointPanel(ASSEMBLER.getHighlightStringIdentifier());
       reset();
     }
     
@@ -295,6 +296,7 @@ public class RV32im_state implements SocUpSimulationStateListener,SocProcessorIn
 	public AssemblerInterface getAssembler() { return ASSEMBLER; }
 	public SocProcessorInterface getProcessorInterface() { return myInstance.getAttributeValue(RV32imAttributes.RV32IM_STATE); }
     public String getProcessorType() { return "RV32im (RISC V)"; }
+    public int getElfType() { return ElfHeader.EM_RISCV; }
   }
 
   private int resetVector;
