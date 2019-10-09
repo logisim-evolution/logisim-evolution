@@ -38,8 +38,8 @@ import com.cburch.logisim.soc.data.SocSupport;
 import com.cburch.logisim.soc.file.ElfProgramHeader;
 import com.cburch.logisim.soc.file.ElfSectionHeader;
 import com.cburch.logisim.soc.file.ElfProgramHeader.ProgramHeader;
-import com.cburch.logisim.soc.file.ElfSectionHeader.SectionHeader;
-import com.cburch.logisim.soc.file.ElfSectionHeader.SymbolTable;
+import com.cburch.logisim.soc.file.SectionHeader;
+import com.cburch.logisim.soc.file.SymbolTable;
 
 public abstract class AbstractAssembler implements AssemblerInterface {
 
@@ -50,7 +50,7 @@ public abstract class AbstractAssembler implements AssemblerInterface {
     for (SymbolTable st : sh.getSymbols()) {
       String stName = st.getName();
       if (stName != null && !stName.isEmpty()) {
-      int addr = st.getValue(ElfSectionHeader.ST_VALUE);
+      int addr = st.getValue(SymbolTable.ST_VALUE);
       if (!labels.containsKey(addr)) {
           if (stName.length() > maxSize) maxSize = stName.length();
           labels.put(addr, stName);
@@ -74,10 +74,11 @@ public abstract class AbstractAssembler implements AssemblerInterface {
     return info;
   }
   
-  private static int getData(boolean lookForStrings, Integer[] contents, long startAddress,
-          HashMap<Integer,String> labels, int maxLabelSize, StringBuffer lines, int lineNum) {
+  private static int getData(boolean lookForStrings, Integer[] contents, 
+          long sizeInBytes, long startAddress, HashMap<Integer,String> labels, 
+          int maxLabelSize, StringBuffer lines, int lineNum) {
     int nrBytesWritten = 0;
-    int size = contents.length<<2;
+    int size = (int)sizeInBytes;
     int i = 0;
     int newLineNum = lineNum;
     while (i < size) {
@@ -95,12 +96,14 @@ public abstract class AbstractAssembler implements AssemblerInterface {
       if (lookForStrings) {
         if (kar >= 32 && kar <= 127) {
           StringBuffer str = new StringBuffer();
-          str.append((char)getByte(contents,i));
+          if (kar == 34) str.append('\\');
+          str.append((char)kar);
           int j = i+1;
           while (j < size) {
             kar = getByte(contents,j);
             if (kar < 32 || kar >= 127) break;
-            str.append((char)getByte(contents,j));
+            if (kar == 34) str.append('\\');
+            str.append((char)kar);
             j++;
           }
           if (str.length()>2) {
@@ -177,9 +180,9 @@ public abstract class AbstractAssembler implements AssemblerInterface {
             if (size > maxLabelSize) maxLabelSize = size;
           } else {
             boolean inserted = false;
-            long shStart = SocSupport.convUnsignedInt((int)sh.getValue(ElfSectionHeader.SH_ADDR));
+            long shStart = SocSupport.convUnsignedInt((int)sh.getValue(SectionHeader.SH_ADDR));
             for (int i = 0 ; i < sortedList.size() ; i++) {
-              long start = SocSupport.convUnsignedInt((int)sortedList.get(i).getValue(ElfSectionHeader.SH_ADDR));
+              long start = SocSupport.convUnsignedInt((int)sortedList.get(i).getValue(SectionHeader.SH_ADDR));
               if (shStart < start) {
                 inserted = true;
                 sortedList.add(i, sh);
@@ -198,8 +201,8 @@ public abstract class AbstractAssembler implements AssemblerInterface {
       }
       maxLabelSize++; // Account for the ":"
       for (SectionHeader sh : sortedList) {
-        long startAddress = SocSupport.convUnsignedInt((int)sh.getValue(ElfSectionHeader.SH_ADDR));
-        long size = SocSupport.convUnsignedInt((int)sh.getValue(ElfSectionHeader.SH_SIZE));
+        long startAddress = SocSupport.convUnsignedInt((int)sh.getValue(SectionHeader.SH_ADDR));
+        long size = SocSupport.convUnsignedInt((int)sh.getValue(SectionHeader.SH_SIZE));
         if (lines.length()!= 0) lineNum = addLine(lines,"\n",lineNum,true);
         lineNum = addLine(lines,".section "+sh.getName()+"\n",lineNum,true);
         lineNum = addLine(lines,".org "+String.format("0x%08X\n", startAddress),lineNum,true);
@@ -276,7 +279,7 @@ public abstract class AbstractAssembler implements AssemblerInterface {
             validDebugLines.put(lineNum, SocSupport.convUnsignedLong(startAddress+((long)pc<<2)));
             lineNum = addLine(lines,line.toString()+"\n",lineNum,true);
           }
-        } else lineNum = getData(!sh.isWritable(),contents,startAddress,labels,maxLabelSize,lines,lineNum);
+        } else lineNum = getData(!sh.isWritable(),contents,size,startAddress,labels,maxLabelSize,lines,lineNum);
       }
     } else if (elfHeader != null && elfHeader.isValid()) {
       for (int i = 0 ; i < elfHeader.getNrOfHeaders() ; i++) {

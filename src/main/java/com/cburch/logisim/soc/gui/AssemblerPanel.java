@@ -66,11 +66,13 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rtextarea.RTextScrollPane;
 
+import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.gui.icons.CompileIcon;
 import com.cburch.logisim.gui.icons.ErrorIcon;
 import com.cburch.logisim.gui.icons.OpenSaveIcon;
 import com.cburch.logisim.gui.icons.RunIcon;
 import com.cburch.logisim.prefs.AppPreferences;
+import com.cburch.logisim.soc.data.SocProcessorInterface;
 import com.cburch.logisim.soc.util.Assembler;
 import com.cburch.logisim.soc.util.AssemblerInterface;
 import com.cburch.logisim.util.LocaleListener;
@@ -99,10 +101,15 @@ public class AssemblerPanel extends JPanel implements MouseListener,LocaleListen
   private boolean documentChanged = false;
   private ListeningFrame parent;
   private File textFile;
+  private SocProcessorInterface cpu;
+  private CircuitState circuitState;
 
-  public AssemblerPanel(ListeningFrame parent , String highLiter , AssemblerInterface assembler) {
+  public AssemblerPanel(ListeningFrame parent , String highLiter , AssemblerInterface assembler,
+                        SocProcessorInterface cpu, CircuitState state) {
 	parent.addWindowListener(this);
 	this.parent = parent;
+	this.cpu = cpu;
+	circuitState = state;
 	textFile = null;
     asmWindow = new RSyntaxTextArea(20,60);
     asmWindow.setSyntaxEditingStyle(highLiter);
@@ -233,7 +240,14 @@ public class AssemblerPanel extends JPanel implements MouseListener,LocaleListen
   
   private void runProgram() {
     if (!Assemble(false)) return;
-    System.out.println("Run");
+    long entryPoint = assembler.getEntryPoint();
+    if (entryPoint < 0) return;
+    if (!assembler.download(cpu, circuitState)) {
+      JOptionPane.showMessageDialog(parent, S.get("AssemblerUnableToDownload"), S.get("AsmPanRun"), JOptionPane.ERROR_MESSAGE);
+      return;
+    }
+    cpu.setEntryPointandReset(circuitState, entryPoint, null, assembler.getSectionHeader());
+    JOptionPane.showMessageDialog(parent, S.get("AssemblerRunSuccess"), S.get("AsmPanRun"), JOptionPane.INFORMATION_MESSAGE);
   }
   
   private void updateLineNumber() {

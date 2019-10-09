@@ -36,6 +36,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
 
+import javax.swing.JOptionPane;
 import javax.swing.text.BadLocationException;
 
 import org.fife.ui.rsyntaxtextarea.RSyntaxDocument;
@@ -49,7 +50,10 @@ import org.fife.ui.rtextarea.GutterIconInfo;
 import org.fife.ui.rtextarea.RTextArea;
 import org.fife.ui.rtextarea.RTextScrollPane;
 
+import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.gui.icons.ErrorIcon;
+import com.cburch.logisim.soc.data.SocProcessorInterface;
+import com.cburch.logisim.soc.file.ElfSectionHeader;
 import com.cburch.logisim.util.LocaleListener;
 import com.cburch.logisim.util.LocaleManager;
 import com.cburch.logisim.util.StringGetter;
@@ -60,17 +64,20 @@ public class Assembler extends AbstractParser implements LocaleListener {
   private HashMap<GutterIconInfo,StringGetter> errorMarkers;
   private RTextScrollPane pane;
   private AssemblerInfo assemblerInfo;
+  private long EntryPoint;
   
   public Assembler(AssemblerInterface assembler, RTextScrollPane pane) {
     this.assembler = assembler;
     errorMarkers = new HashMap<GutterIconInfo,StringGetter>();
     this.pane = pane;
     LocaleManager.addLocaleListener(this);
+    reset();
   }
   
   public void reset() {
     errorMarkers.clear();
     pane.getGutter().removeAllTrackingIcons();
+    EntryPoint = -1;
   }
   
   public ArrayList<Integer> getErrorPositions() {
@@ -177,6 +184,8 @@ public class Assembler extends AbstractParser implements LocaleListener {
     assemblerInfo.assemble(assemblerTokens,labels);
     for (AssemblerToken error : assemblerInfo.getErrors().keySet()) 
       addError(error.getoffset(),assemblerInfo.getErrors().get(error),errorMarkers.keySet());
+    if (labels.containsKey("_start"))
+      EntryPoint = labels.get("_start");
     return errorMarkers.isEmpty();
   }
   
@@ -302,6 +311,23 @@ public class Assembler extends AbstractParser implements LocaleListener {
     }
     return lineTokens;
   }
+  
+  public long getEntryPoint() {
+    long result = -1;
+    if (EntryPoint >= 0) return EntryPoint;
+    result = assemblerInfo.getEntryPoint();
+    if (result < 0) 
+      JOptionPane.showMessageDialog(pane, S.get("AssemblerNoExecutableSection"), S.get("AsmPanRun"), JOptionPane.ERROR_MESSAGE);
+    else
+      JOptionPane.showMessageDialog(pane, S.get("AssemblerAssumingEntryPoint"), S.get("AsmPanRun"), JOptionPane.WARNING_MESSAGE);
+    return result;
+  }
+  
+  public boolean download(SocProcessorInterface cpu, CircuitState state) { 
+    return assemblerInfo.download(cpu, state);
+  }
+  
+  public ElfSectionHeader getSectionHeader() { return assemblerInfo.getSectionHeader(); }
 
   @Override
   public void localeChanged() { 

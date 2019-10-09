@@ -47,6 +47,7 @@ import com.cburch.logisim.gui.main.Frame;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.proj.Project;
+import com.cburch.logisim.soc.data.SocProcessorInterface;
 import com.cburch.logisim.soc.file.ElfHeader;
 import com.cburch.logisim.soc.file.ProcessorReadElf;
 import com.cburch.logisim.soc.gui.AssemblerPanel;
@@ -282,7 +283,7 @@ public class RV32imMenuProvider implements ActionListener {
       myPrograms.put(data, frame);
     }
     
-    public void showAsmWindow(RV32im_state.ProcessorState data, CircuitStateHolder.HierarchyInfo csh, CircuitState state) {
+    public void showAsmWindow(Instance inst, RV32im_state.ProcessorState data, CircuitStateHolder.HierarchyInfo csh, CircuitState state) {
       if (parrentFrame == null || data == null)
         return;
       if (myAsmWindows.containsKey(data))
@@ -296,7 +297,8 @@ public class RV32imMenuProvider implements ActionListener {
         }
       ListeningFrame frame = new ListeningFrame(S.getter("RV32imMenuCpuAsmWindowTitle"),csh);
       parrentFrame.addWindowListener(frame);
-      JPanel pan = new AssemblerPanel(frame,"asm/riscv",RV32im_state.ASSEMBLER); 
+      SocProcessorInterface cpu = inst.getAttributeValue(RV32imAttributes.RV32IM_STATE);
+      JPanel pan = new AssemblerPanel(frame,"asm/riscv",RV32im_state.ASSEMBLER,cpu,state); 
       frame.add(pan);
       frame.setVisible(true);
       frame.pack();
@@ -338,7 +340,7 @@ public class RV32imMenuProvider implements ActionListener {
                                      return;
           case SHOW_PROGRAM        : myInfo.get(inst).showProgram(info.getState(), info.getHierarchyInfo(),info.getCircuitState());
                                      return;
-          case SHOW_ASM            : myInfo.get(inst).showAsmWindow(info.getState(), info.getHierarchyInfo(),info.getCircuitState());
+          case SHOW_ASM            : myInfo.get(inst).showAsmWindow(inst,info.getState(), info.getHierarchyInfo(),info.getCircuitState());
                                      return;
         }
       }

@@ -37,35 +37,53 @@ import java.util.LinkedList;
 
 import javax.swing.JOptionPane;
 
+import com.cburch.logisim.circuit.CircuitState;
+import com.cburch.logisim.soc.data.SocBusTransaction;
+import com.cburch.logisim.soc.data.SocProcessorInterface;
 import com.cburch.logisim.soc.data.SocSupport;
+import com.cburch.logisim.soc.file.ElfSectionHeader;
+import com.cburch.logisim.soc.file.SectionHeader;
+import com.cburch.logisim.soc.file.SymbolTable;
 import com.cburch.logisim.util.StringGetter;
 
 public class AssemblerInfo {
 
-  private class AssemblerSectionInfo {
+  private class AssemblerSectionInfo extends SectionHeader {
     /* In his class, all locations between sectionStart and sectionEnd that have no value associated
      * are filled in with 0.
      */
     private long sectionStart;
     private long sectionEnd;
-    private String sectionName;
     private HashMap<Long,Byte> data;
     private HashMap<Long,AssemblerAsmInstruction> instructions;
     
     public AssemblerSectionInfo() {
-      init(0,"NoName");
+      super("NoName");
+      init(0);
     }
     
     public AssemblerSectionInfo(String name) {
-      init(0,name); 
+      super(name);
+      init(0); 
     }
     
     public AssemblerSectionInfo(long start, String name) {
-      init(start,name); 
+      super(name);
+      init(start); 
     }
       
-    public String getSectionName() { return sectionName; }
+    public String getSectionName() { return super.getName(); }
     public long getSectionEnd() { return sectionEnd; }
+    public boolean hasInstructions() { return !instructions.isEmpty(); }
+    
+    public long getEntryPoint() {
+      if (instructions.isEmpty()) return -1;
+      long result = -1;
+      for (Long x : instructions.keySet()) {
+        if (result < 0 || x < result) result = x;
+      }
+      return result;
+    }
     
     public void setOrgInfo( long address ) {
       if (sectionStart == sectionEnd) {
@@ -106,6 +124,13 @@ public class AssemblerInfo {
         if (!instructions.get(addr).replaceLabels(labels))
           errors.add(instructions.get(addr).getInstruction());
       }
+      for (String label : labels.keySet()) {
+        long addr = labels.get(label);
+        if (addr >= sectionStart && addr < sectionEnd) {
+          SymbolTable st = new SymbolTable(label,SocSupport.convUnsignedLong(addr));
+          super.addSymbol(st);
+        }
+      }
       return errors;
     }
     
@@ -125,22 +150,53 @@ public class AssemblerInfo {
       return errors;
     }
     
-    private void init(long start ,String name) {
+    public boolean Download(SocProcessorInterface cpu, CircuitState state) {
+      for (long i = sectionStart ; i < sectionEnd ; i++) {
+    	byte datab = data.containsKey(i) ? data.get(i) : 0; 
+        SocBusTransaction trans = new SocBusTransaction(SocBusTransaction.WRITETransaction,
+        		SocSupport.convUnsignedLong(i),datab,SocBusTransaction.ByteAccess,"Assembler");
+        cpu.insertTransaction(trans, true, state);
+        if (hasInstructions()) super.addExecutableFlag();
+        super.setSize(sectionEnd-sectionStart);
+        super.setStartAddress(sectionStart);
+        if (trans.hasError()) return false;
+      }
+      return true;
+    }
+    
+    private void init(long start) {
       sectionStart = start;
       sectionEnd = start;
-      sectionName = name;
       data = new HashMap<Long,Byte>();
       instructions = new HashMap<Long,AssemblerAsmInstruction>();
     }
   }
   
-  private ArrayList<AssemblerSectionInfo> sections;
+  public class SectionHeaders extends ElfSectionHeader {
+    public AssemblerSectionInfo get(int index) {
+      return (AssemblerSectionInfo) super.getHeader(index);
+    }
+    
+    public void add(AssemblerSectionInfo obj) {
+      super.addHeader(obj);
+    }
+    
+    public ArrayList<AssemblerSectionInfo> getAll() {
+      ArrayList<AssemblerSectionInfo> ret = new ArrayList<AssemblerSectionInfo>();
+      for (SectionHeader hdr : super.getHeaders()) 
+        if (hdr instanceof AssemblerSectionInfo) 
+          ret.add((AssemblerSectionInfo)hdr);
+      return ret;
+    }
+  }
+  
+  private SectionHeaders sections;
   private HashMap<AssemblerToken,StringGetter> errors;
   private int currentSection;
   private AssemblerInterface assembler;
 
   public AssemblerInfo(AssemblerInterface assembler) {
-    sections = new ArrayList<AssemblerSectionInfo>();
+    sections = new SectionHeaders();
     errors = new HashMap<AssemblerToken,StringGetter>();
     currentSection = -1;
     this.assembler = assembler;
@@ -176,7 +232,7 @@ public class AssemblerInfo {
       }
     }
     ArrayList<AssemblerToken> labelErrors = new ArrayList<AssemblerToken>(); 
-    for (AssemblerSectionInfo section : sections) labelErrors.addAll(section.replaceLabels(labels));
+    for (AssemblerSectionInfo section : sections.getAll()) labelErrors.addAll(section.replaceLabels(labels));
     if (!labelErrors.isEmpty()) {
       for (AssemblerToken error : labelErrors) {
         errors.put(error, S.getter("AssemblerCouldNotFindAddressForLabel"));
@@ -184,8 +240,27 @@ public class AssemblerInfo {
       return;
     }
     /* last pass: transform instructions to bytes */
-    for (AssemblerSectionInfo section : sections) errors.putAll(section.replaceInstructions(assembler));
+    for (AssemblerSectionInfo section : sections.getAll()) errors.putAll(section.replaceInstructions(assembler));
   }
+  
+  public boolean download(SocProcessorInterface cpu, CircuitState state) {
+    for (AssemblerSectionInfo section : sections.getAll())
+      if (!section.Download(cpu, state)) return false;
+    return true;
+  }
+  
+  public long getEntryPoint() {
+	long entry = -1;
+    for (AssemblerSectionInfo section : sections.getAll()) {
+      if (section.hasInstructions()) {
+        long sentry = section.getEntryPoint();
+        if (entry < 0 || sentry < entry) entry = sentry;
+      }
+    }
+    return entry;
+  }
+  
+  public ElfSectionHeader getSectionHeader() { return sections; }
   
   private int handleInstruction(LinkedList<AssemblerToken> tokens, int index , AssemblerToken current) {
     AssemblerAsmInstruction instruction = new AssemblerAsmInstruction(current, assembler.getInstructionSize(current.getValue()));
@@ -364,7 +439,7 @@ public class AssemblerInfo {
   
   private boolean addSection(String name) {
     /* first check if a section with this name exists */
-    for (AssemblerSectionInfo section : sections) {
+    for (AssemblerSectionInfo section : sections.getAll()) {
       if (section.getSectionName().equals(name)) return false;
     }
     if (currentSection < 0) {
