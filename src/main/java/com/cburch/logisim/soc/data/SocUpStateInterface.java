@@ -26,16 +26,29 @@
  *     http://www.heig-vd.ch/
  */
 
-package com.cburch.logisim.soc.util;
+package com.cburch.logisim.soc.data;
 
-import java.util.ArrayList;
+import java.awt.event.WindowListener;
+import java.util.LinkedList;
 
-public interface AssemblerInterface {
-  public void decode(int instruction);
-  public boolean assemble(AssemblerAsmInstruction instruction);
-  public AssemblerExecutionInterface getExeUnit();
-  public ArrayList<String> getOpcodes();
-  public int getInstructionSize(String opcode);
-  public boolean usesRoundedBrackets();
-  public String getHighlightStringIdentifier();
+import javax.swing.JPanel;
+
+import com.cburch.logisim.soc.util.AssemblerInterface;
+
+public interface SocUpStateInterface {
+  public int getLastRegisterWritten();
+  public String getRegisterValueHex(int index);
+  public String getRegisterAbiName(int index);
+  public String getRegisterNormalName(int index);
+  public int getProgramCounter();
+  public LinkedList<TraceInfo> getTraces();
+  public void SimButtonPressed();
+  public SocUpSimulationState getSimState();
+  public boolean programLoaded();
+  public WindowListener getWindowListener();
+  public JPanel getAsmWindow();
+  public JPanel getStatePanel();
+  public AssemblerInterface getAssembler();
+  public SocProcessorInterface getProcessorInterface();
+  public String getProcessorType();
 }

@@ -96,13 +96,13 @@ public abstract class AbstractAssembler implements AssemblerInterface {
       if (lookForStrings) {
         if (kar >= 32 && kar <= 127) {
           StringBuffer str = new StringBuffer();
-          if (kar == 34) str.append('\\');
+          if (kar == 34 || kar == 92) str.append('\\');
           str.append((char)kar);
           int j = i+1;
           while (j < size) {
             kar = getByte(contents,j);
             if (kar < 32 || kar >= 127) break;
-            if (kar == 34) str.append('\\');
+            if (kar == 34 || kar == 92) str.append('\\');
             str.append((char)kar);
             j++;
           }

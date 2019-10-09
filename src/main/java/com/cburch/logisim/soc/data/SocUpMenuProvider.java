@@ -26,7 +26,7 @@
  *     http://www.heig-vd.ch/
  */
 
-package com.cburch.logisim.soc.rv32im;
+package com.cburch.logisim.soc.data;
 
 import static com.cburch.logisim.soc.Strings.S;
 
@@ -47,15 +47,17 @@ import com.cburch.logisim.gui.main.Frame;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.proj.Project;
-import com.cburch.logisim.soc.data.SocProcessorInterface;
 import com.cburch.logisim.soc.file.ElfHeader;
 import com.cburch.logisim.soc.file.ProcessorReadElf;
 import com.cburch.logisim.soc.gui.AssemblerPanel;
 import com.cburch.logisim.soc.gui.ListeningFrame;
+import com.cburch.logisim.soc.util.AssemblerInterface;
 import com.cburch.logisim.tools.CircuitStateHolder;
 import com.cburch.logisim.tools.MenuExtender;
 
-public class RV32imMenuProvider implements ActionListener {
+public class SocUpMenuProvider  implements ActionListener {
+	
+  public static final SocUpMenuProvider SOCUPMENUPROVIDER = new SocUpMenuProvider();
 
   private static final int LOAD_ELF_FUNCTION = 1;
   private static final int SHOW_STATE_FUNCTION = 2;
@@ -66,7 +68,7 @@ public class RV32imMenuProvider implements ActionListener {
     private static final long serialVersionUID = 1L;
     private Instance instance;
     private int function;
-    private RV32im_state.ProcessorState data;
+    private SocUpStateInterface data;
     private CircuitState circuitState;
     private CircuitStateHolder.HierarchyInfo csh;
     
@@ -74,7 +76,7 @@ public class RV32imMenuProvider implements ActionListener {
       super(label);
       instance = inst;
       this.function = function;
-      this.data = (RV32im_state.ProcessorState)data;
+      this.data = (SocUpStateInterface)data;
       circuitState = null;
       this.csh = csh;
     }
@@ -83,7 +85,7 @@ public class RV32imMenuProvider implements ActionListener {
       super(label);
       instance = inst;
       this.function = function;
-      this.data = (RV32im_state.ProcessorState)data;
+      this.data = (SocUpStateInterface)data;
       circuitState = state;
       this.csh = csh;
     }
@@ -99,7 +101,7 @@ public class RV32imMenuProvider implements ActionListener {
       
     public Instance getInstance() { return instance; }
     public int getFunction() { return function; }
-    public RV32im_state.ProcessorState getState() { return data; }
+    public SocUpStateInterface getState() { return data; }
     public CircuitState getCircuitState() { return circuitState; }
     public CircuitStateHolder.HierarchyInfo getHierarchyInfo() { return csh; }
   }
@@ -109,12 +111,12 @@ public class RV32imMenuProvider implements ActionListener {
   private class MenuProvider implements MenuExtender, CircuitStateHolder {
 
     private Instance instance;
-    private RV32imMenuProvider parrent;
-    RV32im_state.ProcessorState data;
+    private SocUpMenuProvider parrent;
+    SocUpStateInterface data;
     CircuitState circuitState;
     HierarchyInfo hierarchy;
 
-    public MenuProvider(Instance inst, RV32imMenuProvider parrent) {
+    public MenuProvider(Instance inst, SocUpMenuProvider parrent) {
       this.instance = inst;
       this.parrent = parrent;
       circuitState = null;
@@ -130,7 +132,7 @@ public class RV32imMenuProvider implements ActionListener {
         Location loc = instance.getLocation();
         instName = instance.getFactory().getHDLName(instance.getAttributeSet())+"@"+loc.getX()+","+loc.getY();
       }
-      String name = circuitState != null ? instName+" : "+S.get("Rv32imAsmWindow") : S.get("Rv32imAsmWindow");
+      String name = circuitState != null ? instName+" : "+S.get("SocUpMenuAsmWindow") : S.get("SocUpMenuAsmWindow");
       CircuitState state = circuitState == null ? proj.getCircuitState() : circuitState;
       menu.addSeparator();
       HierarchyInfo hinfo;
@@ -138,27 +140,27 @@ public class RV32imMenuProvider implements ActionListener {
         hinfo = new HierarchyInfo(proj.getCurrentCircuit());
         hinfo.addComponent(instance.getComponent());
       } else hinfo = hierarchy;
-      InstanceMenuItem Asm = new InstanceMenuItem(instance,name,SHOW_ASM,(RV32im_state.ProcessorState)instance.getData(state),state,hinfo);
+      InstanceMenuItem Asm = new InstanceMenuItem(instance,name,SHOW_ASM,(SocUpStateInterface)instance.getData(state),state,hinfo);
       Asm.addActionListener(parrent);
       Asm.setEnabled(true);
       menu.add(Asm);
-      name = circuitState != null ? instName+" : "+S.get("Rv32imReadElf") : S.get("Rv32imReadElf");
+      name = circuitState != null ? instName+" : "+S.get("SocUpMenuReadElf") : S.get("SocUpMenuReadElf");
       InstanceMenuItem ReadElf = new InstanceMenuItem(instance,name,LOAD_ELF_FUNCTION,state);
       ReadElf.addActionListener(parrent);
       ReadElf.setEnabled(true);
       menu.add(ReadElf);
       if (circuitState != null) {
-        InstanceMenuItem showState = new InstanceMenuItem(instance,instName+" : "+S.get("Rv32imShowState"),
-        		SHOW_STATE_FUNCTION,data,hierarchy);
+        InstanceMenuItem showState = new InstanceMenuItem(instance,instName+" : "+S.get("SocUpMenuShowState"),
+        SHOW_STATE_FUNCTION,data,hierarchy);
         showState.addActionListener(parrent);
         showState.setEnabled(true);
         menu.add(showState);
       }
-      name = circuitState != null ? instName+" : "+S.get("Rv32imShowProgram") : S.get("Rv32imShowProgram");
+      name = circuitState != null ? instName+" : "+S.get("SocUpMenuShowProgram") : S.get("SocUpMenuShowProgram");
       if (state != null)
-        if (((RV32im_state.ProcessorState)instance.getData(state)).programLoaded()) {
+        if (((SocUpStateInterface)instance.getData(state)).programLoaded()) {
           InstanceMenuItem showProg = new InstanceMenuItem(instance,name,SHOW_PROGRAM,
-                  (RV32im_state.ProcessorState)instance.getData(state),state,hinfo);
+                  (SocUpStateInterface)instance.getData(state),state,hinfo);
           showProg.addActionListener(parrent);
           showProg.setEnabled(true);
           menu.add(showProg);
@@ -170,7 +172,7 @@ public class RV32imMenuProvider implements ActionListener {
       if (state == null)
         return;
       circuitState = state;
-      data = (RV32im_state.ProcessorState)state.getData(instance.getComponent());
+      data = (SocUpStateInterface)state.getData(instance.getComponent());
     }
 
     @Override
@@ -182,32 +184,32 @@ public class RV32imMenuProvider implements ActionListener {
   
   private class InstanceInformation {
     private Frame parrentFrame;
-    private HashMap<RV32im_state.ProcessorState,ListeningFrame> myStates;
-    private HashMap<RV32im_state.ProcessorState,ListeningFrame> myPrograms;
-    private HashMap<RV32im_state.ProcessorState,ListeningFrame> myAsmWindows;
+    private HashMap<SocUpStateInterface,ListeningFrame> myStates;
+    private HashMap<SocUpStateInterface,ListeningFrame> myPrograms;
+    private HashMap<SocUpStateInterface,ListeningFrame> myAsmWindows;
     
-    public InstanceInformation(Instance inst, RV32imMenuProvider parrent) {
+    public InstanceInformation(Instance inst, SocUpMenuProvider parrent) {
       parrentFrame = null;
-      myStates = new HashMap<RV32im_state.ProcessorState,ListeningFrame>();
-      myPrograms = new HashMap<RV32im_state.ProcessorState,ListeningFrame>();
-      myAsmWindows = new HashMap<RV32im_state.ProcessorState,ListeningFrame>();
+      myStates = new HashMap<SocUpStateInterface,ListeningFrame>();
+      myPrograms = new HashMap<SocUpStateInterface,ListeningFrame>();
+      myAsmWindows = new HashMap<SocUpStateInterface,ListeningFrame>();
     }
     
     public void readElf(Instance instance, CircuitState circuitState) {
       JFileChooser fc = new JFileChooser();
-      fc.setDialogTitle(S.get("Rv32imSelectElfFile"));
+      fc.setDialogTitle(S.get("SocUpMenuSelectElfFile"));
       int retVal = fc.showOpenDialog(parrentFrame);
       if (retVal != JFileChooser.APPROVE_OPTION)
         return;
       ProcessorReadElf reader = new ProcessorReadElf(fc.getSelectedFile(),instance,ElfHeader.EM_RISCV,true);
       if (!reader.canExecute()||!reader.execute(circuitState)) {
-        JOptionPane.showMessageDialog(parrentFrame, reader.getErrorMessage(), S.get("Rv32imErrorReadingElfTitle"), JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(parrentFrame, reader.getErrorMessage(), S.get("SocUpMenuErrorReadingElfTitle"), JOptionPane.ERROR_MESSAGE);
         return;
       }
       JOptionPane.showMessageDialog(parrentFrame, S.get("ProcReadElfLoadedAndEntrySet"));
     }
     
-    public void registerCpuState(RV32im_state.ProcessorState data) {
+    public void registerCpuState(SocUpStateInterface data) {
       if (!myStates.containsKey(data))
         myStates.put(data, null);
       if (!myPrograms.containsKey(data))
@@ -216,7 +218,7 @@ public class RV32imMenuProvider implements ActionListener {
         myAsmWindows.put(data, null);
     }
     
-    public void destroyCpuState(RV32im_state.ProcessorState data) {
+    public void destroyCpuState(SocUpStateInterface data) {
       if (myStates.containsKey(data)) {
         if (myStates.get(data) != null) {
           myStates.get(data).setVisible(false);
@@ -239,7 +241,7 @@ public class RV32imMenuProvider implements ActionListener {
       }
     }
     
-    public void showState(RV32im_state.ProcessorState data, CircuitStateHolder.HierarchyInfo csh) {
+    public void showState(SocUpStateInterface data, CircuitStateHolder.HierarchyInfo csh) {
       if (parrentFrame == null || data == null)
         return;
       if (myStates.containsKey(data))
@@ -251,17 +253,18 @@ public class RV32imMenuProvider implements ActionListener {
           frame.setExtendedState(state);
           return;
         }
-      ListeningFrame frame = new ListeningFrame(S.getter("RV32imMenuCpuStateWindowTitle"),csh);
-      frame.setSize(data.getSize());
+      ListeningFrame frame = new ListeningFrame(data.getProcessorType(),S.getter("SocUpMenuCpuStateWindowTitle"),csh);
+      JPanel statePanel = data.getStatePanel();
+      frame.setSize(statePanel.getSize());
       frame.setResizable(false);
       parrentFrame.addWindowListener(frame);
       frame.setVisible(true);
-      frame.getContentPane().add(data);
-      frame.addWindowListener(data);
+      frame.getContentPane().add(statePanel);
+      frame.addWindowListener(data.getWindowListener());
       myStates.put(data, frame);
     }
 
-    public void showProgram(RV32im_state.ProcessorState data, CircuitStateHolder.HierarchyInfo csh, CircuitState state) {
+    public void showProgram(SocUpStateInterface data, CircuitStateHolder.HierarchyInfo csh, CircuitState state) {
       if (parrentFrame == null || data == null)
         return;
       if (myPrograms.containsKey(data))
@@ -273,17 +276,17 @@ public class RV32imMenuProvider implements ActionListener {
           frame.setExtendedState(fstate);
           return;
         }
-      ListeningFrame frame = new ListeningFrame(S.getter("RV32imMenuCpuProgramWindowTitle"),csh);
+      ListeningFrame frame = new ListeningFrame(data.getProcessorType(),S.getter("SocUpMenuCpuProgramWindowTitle"),csh);
       parrentFrame.addWindowListener(frame);
-      JPanel pan = data.getAsmWindow(); 
+      JPanel pan = data.getAsmWindow();
       frame.add(pan);
       frame.setVisible(true);
       frame.pack();
-      frame.addWindowListener(data);
+      frame.addWindowListener(data.getWindowListener());
       myPrograms.put(data, frame);
     }
     
-    public void showAsmWindow(Instance inst, RV32im_state.ProcessorState data, CircuitStateHolder.HierarchyInfo csh, CircuitState state) {
+    public void showAsmWindow(Instance inst, SocUpStateInterface data, CircuitStateHolder.HierarchyInfo csh, CircuitState state) {
       if (parrentFrame == null || data == null)
         return;
       if (myAsmWindows.containsKey(data))
@@ -295,14 +298,15 @@ public class RV32imMenuProvider implements ActionListener {
           frame.setExtendedState(fstate);
           return;
         }
-      ListeningFrame frame = new ListeningFrame(S.getter("RV32imMenuCpuAsmWindowTitle"),csh);
+      ListeningFrame frame = new ListeningFrame(data.getProcessorType(),S.getter("SocUpMenuCpuAsmWindowTitle"),csh);
       parrentFrame.addWindowListener(frame);
-      SocProcessorInterface cpu = inst.getAttributeValue(RV32imAttributes.RV32IM_STATE);
-      JPanel pan = new AssemblerPanel(frame,"asm/riscv",RV32im_state.ASSEMBLER,cpu,state); 
+      AssemblerInterface assembler = data.getAssembler();
+      JPanel pan = new AssemblerPanel(frame, assembler.getHighlightStringIdentifier(), assembler,
+        data.getProcessorInterface(),state); 
       frame.add(pan);
       frame.setVisible(true);
       frame.pack();
-      frame.addWindowListener(data);
+      frame.addWindowListener(data.getWindowListener());
       myAsmWindows.put(data, frame);
     }
     
@@ -314,7 +318,7 @@ public class RV32imMenuProvider implements ActionListener {
   
   private HashMap<Instance,InstanceInformation> myInfo;
   
-  public RV32imMenuProvider() {
+  public SocUpMenuProvider() {
     myInfo = new HashMap<Instance,InstanceInformation>();
   }
   
@@ -352,13 +356,13 @@ public class RV32imMenuProvider implements ActionListener {
       myInfo.get(inst).setParrentFrame(frame);
   }
   
-  public void registerCpuState(RV32im_state.ProcessorState data, Instance inst) {
+  public void registerCpuState(SocUpStateInterface data, Instance inst) {
     if (!myInfo.containsKey(inst)) 
       myInfo.put(inst, new InstanceInformation(inst,this));
     myInfo.get(inst).registerCpuState(data);
   }
   
-  public void deregisterCpuState(RV32im_state.ProcessorState data, Instance inst) {
+  public void deregisterCpuState(SocUpStateInterface data, Instance inst) {
     if (myInfo.containsKey(inst))
       myInfo.get(inst).destroyCpuState(data);
   }

@@ -26,16 +26,56 @@
  *     http://www.heig-vd.ch/
  */
 
-package com.cburch.logisim.soc.util;
+package com.cburch.logisim.soc.nios2;
 
 import java.util.ArrayList;
 
-public interface AssemblerInterface {
-  public void decode(int instruction);
-  public boolean assemble(AssemblerAsmInstruction instruction);
-  public AssemblerExecutionInterface getExeUnit();
-  public ArrayList<String> getOpcodes();
-  public int getInstructionSize(String opcode);
-  public boolean usesRoundedBrackets();
-  public String getHighlightStringIdentifier();
+import com.cburch.logisim.soc.util.AssemblerAsmInstruction;
+import com.cburch.logisim.soc.util.AssemblerExecutionInterface;
+import com.cburch.logisim.soc.util.AssemblerInterface;
+
+public class Nios2Assembler implements AssemblerInterface {
+
+  @Override
+  public void decode(int instruction) {
+    // TODO Auto-generated method stub
+    
+  }
+
+  @Override
+  public boolean assemble(AssemblerAsmInstruction instruction) {
+    // TODO Auto-generated method stub
+    return false;
+  }
+
+  @Override
+  public AssemblerExecutionInterface getExeUnit() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public ArrayList<String> getOpcodes() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public int getInstructionSize(String opcode) {
+    // TODO Auto-generated method stub
+    return 0;
+  }
+
+  @Override
+  public boolean usesRoundedBrackets() {
+    // TODO Auto-generated method stub
+    return false;
+  }
+
+  @Override
+  public String getHighlightStringIdentifier() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
 }

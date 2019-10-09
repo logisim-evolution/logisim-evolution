@@ -32,7 +32,6 @@ import static com.cburch.logisim.soc.Strings.S;
 
 import java.awt.Font;
 import java.awt.Graphics2D;
-import java.awt.event.MouseEvent;
 
 import com.cburch.logisim.circuit.appear.DynamicElement;
 import com.cburch.logisim.circuit.appear.DynamicElement.Path;
@@ -46,7 +45,6 @@ import com.cburch.logisim.data.Value;
 import com.cburch.logisim.gui.icons.ArithmeticIcon;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstancePainter;
-import com.cburch.logisim.instance.InstancePoker;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.InstanceStateImpl;
 import com.cburch.logisim.instance.Port;
@@ -56,34 +54,19 @@ import com.cburch.logisim.soc.data.SocBusSnifferInterface;
 import com.cburch.logisim.soc.data.SocInstanceFactory;
 import com.cburch.logisim.soc.data.SocProcessorInterface;
 import com.cburch.logisim.soc.data.SocSimulationManager;
-import com.cburch.logisim.soc.data.SocUpSimulationState;
+import com.cburch.logisim.soc.data.SocUpMenuProvider;
+import com.cburch.logisim.soc.gui.CpuDrawSupport;
+import com.cburch.logisim.soc.gui.SocCPUShape;
 import com.cburch.logisim.tools.MenuExtender;
 import com.cburch.logisim.util.GraphicsUtil;
 
 public class Rv32im_riscv extends SocInstanceFactory implements DynamicElementProvider {
 
-  public static final RV32imMenuProvider MENU_PROVIDER = new RV32imMenuProvider();
-  
-  public static class SimStatePoker extends InstancePoker {
-    @Override
-    public void mousePressed(InstanceState state, MouseEvent e) {
-      Location loc = state.getInstance().getLocation();
-      Bounds bloc = SocUpSimulationState.getButtonLocation(loc.getX(), loc.getY(), simStateBounds);
-      if (bloc.contains(e.getX(), e.getY())) {
-        ((RV32im_state.ProcessorState)state.getData()).SimButtonPressed();
-      }
-    }
-  }
-  
-  private static Bounds busConBounds = Bounds.create(50, 600, 280 , 20);
-  public static Bounds simStateBounds = Bounds.create(340, 600, 270, 20);
-  public static Bounds upStateBounds = Bounds.create(50,10,590,590);
-
   public Rv32im_riscv() {
     super("Rv32im",S.getter("Rv32imComponent"),SocMaster);
     setIcon(new ArithmeticIcon("uP",2));
     setOffsetBounds(Bounds.create(0, 0, 640, 640));
-    setInstancePoker(SimStatePoker.class);
+    setInstancePoker(CpuDrawSupport.SimStatePoker.class);
   }
 
   @Override
@@ -99,7 +82,7 @@ public class Rv32im_riscv extends SocInstanceFactory implements DynamicElementPr
   @Override
   protected Object getInstanceFeature(Instance instance, Object key) {
     if (key == MenuExtender.class) {
-      return MENU_PROVIDER.getMenu(instance);
+      return SocUpMenuProvider.SOCUPMENUPROVIDER.getMenu(instance);
     }
     return super.getInstanceFeature(instance, key);
   }
@@ -160,8 +143,8 @@ public class Rv32im_riscv extends SocInstanceFactory implements DynamicElementPr
     g2.setFont(f);
     if (painter.isPrintView()) return;
     painter.getAttributeValue(SocSimulationManager.SOC_BUS_SELECT).paint(g2, 
-    		Bounds.create(loc.getX()+busConBounds.getX(), loc.getY()+busConBounds.getY(), 
-    				busConBounds.getWidth(), busConBounds.getHeight()));
+    		Bounds.create(loc.getX()+CpuDrawSupport.busConBounds.getX(), loc.getY()+CpuDrawSupport.busConBounds.getY(), 
+    				CpuDrawSupport.busConBounds.getWidth(), CpuDrawSupport.busConBounds.getHeight()));
     RV32im_state state = painter.getAttributeValue(RV32imAttributes.RV32IM_STATE);
     state.paint(loc.getX(), loc.getY(), g2,painter.getInstance(),painter.getAttributeValue(RV32imAttributes.RV32IM_STATE_VISABLE), painter.getData());
   }
@@ -191,8 +174,6 @@ public class Rv32im_riscv extends SocInstanceFactory implements DynamicElementPr
   }
 
   @Override
-  public DynamicElement createDynamicElement(int x, int y, Path path) {
-    return new RV32imShape(x,y,path);
-  }
+  public DynamicElement createDynamicElement(int x, int y, Path path) { return new SocCPUShape(x,y,path); }
   
 }

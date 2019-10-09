@@ -91,4 +91,7 @@ public class RV32imAssembler implements AssemblerInterface {
       instruction.setError(instruction.getInstruction(), S.getter("RV32imAssemblerUnknownOpcode"));
     return !instruction.hasErrors();
   }
+
+  @Override
+  public String getHighlightStringIdentifier() { return "asm/riscv"; }
 }

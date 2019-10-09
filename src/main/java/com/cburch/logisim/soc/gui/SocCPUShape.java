@@ -26,7 +26,7 @@
  *     http://www.heig-vd.ch/
  */
 
-package com.cburch.logisim.soc.rv32im;
+package com.cburch.logisim.soc.gui;
 
 import static com.cburch.logisim.soc.Strings.S;
 
@@ -44,18 +44,19 @@ import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.soc.data.SocUpStateInterface;
 import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.UnmodifiableList;
 
-public class RV32imShape extends DynamicElementWithPoker {
+public class SocCPUShape extends DynamicElementWithPoker {
 
-  public RV32imShape(int x , int y , DynamicElement.Path p) {
-    super(p, Bounds.create(x, y, Rv32im_riscv.simStateBounds.getWidth(), Rv32im_riscv.simStateBounds.getHeight()));
+  public SocCPUShape(int x , int y , DynamicElement.Path p) {
+    super(p, Bounds.create(x, y, CpuDrawSupport.simStateBounds.getWidth(), CpuDrawSupport.simStateBounds.getHeight()));
   }
-
+  
   @Override
   public void paintDynamic(Graphics g, CircuitState state) {
-    RV32im_state.ProcessorState data = state == null ? null : (RV32im_state.ProcessorState) getData(state);
+    SocUpStateInterface data = state == null ? null : (SocUpStateInterface) getData(state);
     if (state == null || data == null || data.getSimState() == null) {
       g.drawRect(bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight());
       GraphicsUtil.drawCenteredText(g, S.get("RV32ShapeSimControl"), bounds.getCenterX(), bounds.getCenterY());
@@ -70,19 +71,19 @@ public class RV32imShape extends DynamicElementWithPoker {
 
   @Override
   public String getDisplayName() {
-    return S.get("Rv32imComponent");
+    return "SocCpu";
   }
 
   @Override
   public Element toSvgElement(Document doc) {
-	return toSvgElement(doc.createElement("visible-riscv"));
+return toSvgElement(doc.createElement("visible-soc-cpu"));
   }
 
   @Override
   public void performClickAction(InstanceState state, MouseEvent e) {
     if (mouseInside(state, e)) {
       CircuitState cstate = (CircuitState) state.getData();
-      RV32im_state.ProcessorState data = state == null ? null : (RV32im_state.ProcessorState) getData(cstate);
+      SocUpStateInterface data = state == null ? null : (SocUpStateInterface) getData(cstate);
       if (data != null) data.getSimState().buttonPressed();
     }
   }
