@@ -26,20 +26,21 @@
  *     http://www.heig-vd.ch/
  */
 
-package com.cburch.logisim.soc.rv32im;
+package com.cburch.logisim.soc.util;
 
 import java.util.ArrayList;
 
 import com.cburch.logisim.circuit.CircuitState;
 
-public interface RV32imExecutionUnitInterface {
-  public boolean execute(RV32im_state.ProcessorState state, CircuitState cstate);
+public interface AssemblerExecutionInterface {
+  public boolean execute(Object processorState, CircuitState circuitState);
   public String getAsmInstruction();
   public int getBinInstruction();
-  public boolean setAsmInstruction(String instr);
+  public boolean setAsmInstruction(AssemblerAsmInstruction instruction);
   public boolean setBinInstruction(int instr);
   public boolean performedJump();
   public boolean isValid();
   public String getErrorMessage();
   public ArrayList<String> getInstructions();
+  public int getInstructionSizeInBytes(String instruction);
 }

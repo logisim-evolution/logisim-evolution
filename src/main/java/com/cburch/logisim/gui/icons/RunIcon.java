@@ -26,16 +26,23 @@
  *     http://www.heig-vd.ch/
  */
 
-package com.cburch.logisim.soc.data;
+package com.cburch.logisim.gui.icons;
 
-import com.cburch.logisim.circuit.CircuitState;
-import com.cburch.logisim.soc.file.ElfProgramHeader;
-import com.cburch.logisim.soc.file.ElfSectionHeader;
+import java.awt.Color;
+import java.awt.Graphics2D;
 
-public interface SocProcessorInterface {
+import com.cburch.logisim.prefs.AppPreferences;
 
-  public void setEntryPointandReset(CircuitState state, long entryPoint, ElfProgramHeader progInfo, 
-                                    ElfSectionHeader sectInfo);
-  public void insertTransaction(SocBusTransaction trans, boolean hidden, CircuitState cState);
-  public int getEntryPoint(CircuitState cState);
+public class RunIcon extends AbstractIcon {
+
+  @Override
+  protected void paintIcon(Graphics2D g2) {
+    g2.setColor(Color.GREEN.darker());
+    g2.fillOval(AppPreferences.getScaled(2), AppPreferences.getScaled(2), AppPreferences.getScaled(13), AppPreferences.getScaled(13));
+    int[] xpos = new int[] {AppPreferences.getScaled(6),AppPreferences.getScaled(11),AppPreferences.getScaled(6)};
+    int[] ypos = new int[] {AppPreferences.getScaled(5),AppPreferences.getScaled(8),AppPreferences.getScaled(11)};
+    g2.setColor(Color.WHITE);
+    g2.fillPolygon(xpos, ypos, 3);
+  }
+
 }

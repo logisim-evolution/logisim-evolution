@@ -36,7 +36,6 @@ import java.awt.Graphics2D;
 
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.data.Bounds;
-import com.cburch.logisim.data.Location;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.GraphicsUtil;

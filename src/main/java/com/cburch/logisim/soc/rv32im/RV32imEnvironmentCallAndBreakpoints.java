@@ -35,8 +35,10 @@ import java.util.ArrayList;
 import javax.swing.JOptionPane;
 
 import com.cburch.logisim.circuit.CircuitState;
+import com.cburch.logisim.soc.util.AssemblerAsmInstruction;
+import com.cburch.logisim.soc.util.AssemblerExecutionInterface;
 
-public class RV32imEnvironmentCallAndBreakpoints implements RV32imExecutionUnitInterface {
+public class RV32imEnvironmentCallAndBreakpoints implements AssemblerExecutionInterface {
 
   private final static int SYSTEM = 0x73;
   
@@ -56,7 +58,7 @@ public class RV32imEnvironmentCallAndBreakpoints implements RV32imExecutionUnitI
     return opcodes;
   };
 
-  public boolean execute(RV32im_state.ProcessorState state, CircuitState cState) {
+  public boolean execute(Object state, CircuitState cState) {
     if (!valid)
       return false;
     JOptionPane.showMessageDialog(null, S.get("Rv32imECABNotImplmented"));
@@ -71,11 +73,6 @@ public class RV32imEnvironmentCallAndBreakpoints implements RV32imExecutionUnitI
 
   public int getBinInstruction() {
     return instruction;
-  }
-
-  public boolean setAsmInstruction(String instr) {
-    valid = false;
-    return valid;
   }
 
   public boolean setBinInstruction(int instr) {
@@ -100,4 +97,30 @@ public class RV32imEnvironmentCallAndBreakpoints implements RV32imExecutionUnitI
   }
 
   public String getErrorMessage() { return null; }
+  
+  public int getInstructionSizeInBytes(String instruction) {
+	if (getInstructions().contains(instruction.toUpperCase())) return 4;
+	return -1;
+  }
+  public boolean setAsmInstruction(AssemblerAsmInstruction instr) {
+	int operation = -1;
+	for (int i = 0 ; i < AsmOpcodes.length ; i++) 
+	  if (AsmOpcodes[i].equals(instr.getOpcode().toUpperCase())) operation = i;
+	if (operation < 0) {
+	  valid = false;
+	  return false;
+	}
+	if (instr.getNrOfParameters() != 0) {
+	  instr.setError(instr.getInstruction(), S.getter("Rv32imAssemblerExpectedNoArguments"));
+	  valid = false;
+	  return true;
+	}
+	instruction = RV32imSupport.getITypeInstruction(SYSTEM, 0, 0, 0, operation);
+    valid = true;
+    instr.setInstructionByteCode(instruction, 4);
+    return true;
+  }
+
+
+
 }

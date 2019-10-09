@@ -28,12 +28,19 @@
 
 package com.cburch.logisim.soc.rv32im;
 
+import static com.cburch.logisim.soc.Strings.S;
+
 import java.util.ArrayList;
+
+import javax.swing.JOptionPane;
 
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.soc.file.ElfHeader;
+import com.cburch.logisim.soc.util.AbstractExecutionUnitWithLabelSupport;
+import com.cburch.logisim.soc.util.AssemblerAsmInstruction;
+import com.cburch.logisim.soc.util.AssemblerToken;
 
-public class RV32imControlTransferInstructions implements RV32imExecutionUnitInterface {
+public class RV32imControlTransferInstructions extends AbstractExecutionUnitWithLabelSupport {
     
   private static final int JAL = 0x6F;
   private static final int JALR = 0x67;
@@ -55,7 +62,7 @@ public class RV32imControlTransferInstructions implements RV32imExecutionUnitInt
   
   /* pseudo instructions:
    * J pc+imm => JAL x0,pc+imm
-   * JR rs => JALR x0,rx+imm  
+   * JR rs => JALR x0,rs+0  
    * RET  => JALR x0,x1+0
    * BNEZ rs,pc+imm => BNE r0,rs,pc+imm 
    * BEQZ rs,pc+imm => BEQ r0,rs,pc+imm 
@@ -82,58 +89,59 @@ public class RV32imControlTransferInstructions implements RV32imExecutionUnitInt
     return opcodes;
   };
 
-  public boolean execute(RV32im_state.ProcessorState state, CircuitState cState) {
+  public boolean execute(Object state, CircuitState cState) {
     if (!valid)
       return false;
+    RV32im_state.ProcessorState cpuState = (RV32im_state.ProcessorState) state;
     jumped = false;
-    int target = state.getProgramCounter()+immediate;
-    int nextPc = state.getProgramCounter()+4;
-    int reg1 = state.getRegisterValue(source1);
-    int reg2 = state.getRegisterValue(source2);
+    int target = cpuState.getProgramCounter()+immediate;
+    int nextPc = cpuState.getProgramCounter()+4;
+    int reg1 = cpuState.getRegisterValue(source1);
+    int reg2 = cpuState.getRegisterValue(source2);
     switch (operation) {
       case INSTR_JAL  :
-      case INSTR_J    : state.setProgramCounter(target);
+      case INSTR_J    : cpuState.setProgramCounter(target);
                         jumped = true;
-                        state.writeRegister(destination, nextPc);
+                        cpuState.writeRegister(destination, nextPc);
                         return true;
       case INSTR_RET  :
       case INSTR_JR   :
-      case INSTR_JALR : target = state.getRegisterValue(source1)+immediate;
+      case INSTR_JALR : target = cpuState.getRegisterValue(source1)+immediate;
                         target = (target >>1)<<1;
-                        state.setProgramCounter(target);
+                        cpuState.setProgramCounter(target);
                         jumped = true;
-                        state.writeRegister(destination, nextPc);
+                        cpuState.writeRegister(destination, nextPc);
                         return true;
       case INSTR_BEQZ :
       case INSTR_BEQ  : if (reg1 == reg2) {
                           jumped = true;
-                          state.setProgramCounter(target);
+                          cpuState.setProgramCounter(target);
                         }
                         return true;
       case INSTR_BNEZ :
       case INSTR_BNE  : if (reg1 != reg2) {
                           jumped = true;
-                          state.setProgramCounter(target);
+                          cpuState.setProgramCounter(target);
                         }
                         return true;
       case INSTR_BLT  : if (reg1 < reg2) {
                           jumped = true;
-                          state.setProgramCounter(target);
+                          cpuState.setProgramCounter(target);
                         }
                         return true;
       case INSTR_BGE  : if (reg1 >= reg2) {
                           jumped = true;
-                          state.setProgramCounter(target);
+                          cpuState.setProgramCounter(target);
                         }
                         return true;
       case INSTR_BLTU : if (ElfHeader.getLongValue((Integer)reg1) < ElfHeader.getLongValue((Integer)reg2)) {
                           jumped = true;
-                          state.setProgramCounter(target);
+                          cpuState.setProgramCounter(target);
                         }
                         return true;
       case INSTR_BGEU : if (ElfHeader.getLongValue((Integer)reg1) >= ElfHeader.getLongValue((Integer)reg2)) {
                           jumped = true;
-                          state.setProgramCounter(target);
+                          cpuState.setProgramCounter(target);
                         }
                         return true;
     }
@@ -191,16 +199,11 @@ public class RV32imControlTransferInstructions implements RV32imExecutionUnitInt
     }
     return s.toString();
   }
-	  
+      
   
 
   public int getBinInstruction() { return instruction; }
   public boolean isPcRelative() { return isPcRelative; }
-
-  public boolean setAsmInstruction(String instr) {
-    valid = false;
-    return valid;
-  }
 
   public boolean setBinInstruction(int instr) {
     instruction = instr;
@@ -209,7 +212,7 @@ public class RV32imControlTransferInstructions implements RV32imExecutionUnitInt
     return valid;
   }
   
-  public int getOffset() { return immediate; }
+  public int getPcOffset() { return immediate; }
 
   public boolean performedJump() {return valid&jumped;}
 
@@ -249,5 +252,181 @@ public class RV32imControlTransferInstructions implements RV32imExecutionUnitInt
   }
 
   public String getErrorMessage() { return null; }
-  
+
+  public int getInstructionSizeInBytes(String instruction) {
+    if (getInstructions().contains(instruction.toUpperCase())) return 4;
+    return -1;
+  }
+
+  public boolean setAsmInstruction(AssemblerAsmInstruction instr) {
+    int operation = -1;
+    for (int i = 0 ; i < AsmOpcodes.length ; i++) 
+      if (AsmOpcodes[i].equals(instr.getOpcode().toUpperCase())) operation = i;
+    if (operation < 0) {
+      valid = false;
+      return false;
+    }
+    boolean errors = false;
+    AssemblerToken[] param1,param2,param3;
+    switch (operation) {
+      case INSTR_RET  : if (instr.getNrOfParameters() != 0) {
+                          instr.setError(instr.getInstruction(), S.getter("Rv32imAssemblerExpectedNoArguments"));
+                          errors = true;
+                          break;
+                        }
+                        destination = 0;
+                        operation = INSTR_JALR;
+                        immediate = 0;
+                        source1 = source2 = 1;
+                        break;
+      case INSTR_BEQZ :
+      case INSTR_BNEZ :
+      case INSTR_JR   :
+      case INSTR_JAL  : if (instr.getNrOfParameters() == 0 || instr.getNrOfParameters()>2) {
+                          instr.setError(instr.getInstruction(), S.getter("Rv32imAssemblerExpectedOneOrTwoArguments"));
+                          errors = true;
+                          break;
+                        }
+                        param1 = instr.getParameter(0);
+                        if (param1.length != 1 || param1[0].getType() != AssemblerToken.REGISTER) {
+                          instr.setError(param1[0], S.getter("RV32imAssemblerExpectedRegister"));
+                          errors = true;
+                          break;
+                        }
+                        destination = RV32im_state.getRegisterIndex(param1[0].getValue());
+                        if (destination < 0 || destination > 31) {
+                          instr.setError(param1[0], S.getter("RV32imAssemblerUnknownRegister"));
+                          errors = true;
+                          break;
+                        }
+                        source1 = source2 = 0;
+                        immediate = 0;
+                        if (instr.getNrOfParameters() == 2) {
+                          param2 = instr.getParameter(1);
+                          if (param2.length != 1 || !param2[0].isNumber()) {
+                            instr.setError(param2[0], S.getter("RV32imAssemblerExpectedImmediateValue"));
+                            errors = true;
+                            break;
+                          }
+                          immediate = param2[0].getNumberValue();
+                        }
+                        if (operation == INSTR_JR) {
+                          source1 = source2 = destination;
+                          destination = 0;
+                          operation = INSTR_JALR;
+                        }
+                        if (operation == INSTR_BEQZ || operation == INSTR_BNEZ) {
+                          source1 = destination;
+                          source2 = destination = 0;
+                          operation = (operation == INSTR_BEQZ) ? INSTR_BEQ : INSTR_BNE;
+                        }
+                        break;
+      case INSTR_J    : if (instr.getNrOfParameters() != 1) {
+                          instr.setError(instr.getInstruction(), S.getter("Rv32imAssemblerExpectedOneArgument"));
+                          errors = true;
+                          break;
+                        }
+                        param1 = instr.getParameter(0);
+                        if (param1.length != 1 || !param1[0].isNumber()) {
+                          instr.setError(param1[0], S.getter("RV32imAssemblerExpectedImmediateValue"));
+                        }
+                        immediate = param1[0].getNumberValue();
+                        destination = source1 = source2 = 0;
+                        operation = INSTR_JAL;
+                        break;
+      default         : if (instr.getNrOfParameters() < 2 || instr.getNrOfParameters()>3) {
+                          instr.setError(instr.getInstruction(), S.getter("Rv32imAssemblerExpectedTwoOrThreeArguments"));
+                          errors = true;
+                          break;
+                        }
+                        param1 = instr.getParameter(0);
+                        if (param1.length != 1 || param1[0].getType() != AssemblerToken.REGISTER) {
+                          instr.setError(param1[0], S.getter("RV32imAssemblerExpectedRegister"));
+                          errors = true;
+                          break;
+                        }
+                        destination = RV32im_state.getRegisterIndex(param1[0].getValue());
+                        if (destination < 0 || destination > 31) {
+                          instr.setError(param1[0], S.getter("RV32imAssemblerUnknownRegister"));
+                          errors = true;
+                          break;
+                        }
+                        param2 = instr.getParameter(1);
+                        if (param2.length != 1 || param2[0].getType() != AssemblerToken.REGISTER) {
+                          instr.setError(param2[0], S.getter("RV32imAssemblerExpectedRegister"));
+                          errors = true;
+                          break;
+                        }
+                        source1 = source2 = RV32im_state.getRegisterIndex(param2[0].getValue());
+                        if (source1 < 0 || source1 > 31) {
+                          instr.setError(param1[0], S.getter("RV32imAssemblerUnknownRegister"));
+                          errors = true;
+                          break;
+                        }
+                        immediate = 0;
+                        if (instr.getNrOfParameters() == 3) {
+                          param3 = instr.getParameter(2);
+                          if (param3.length != 1 || !param3[0].isNumber()) {
+                            instr.setError(param3[0], S.getter("RV32imAssemblerExpectedImmediateValue"));
+                            errors = true;
+                            break;
+                          }
+                          immediate = param3[0].getNumberValue();
+                        }
+                        if (operation != INSTR_JALR) {
+                          source2 = destination;
+                          destination = 0;
+                        }
+                        break;
+    }
+    if (!errors) {
+      switch (operation) {
+         case INSTR_JAL : long imm = immediate;
+                          imm -= instr.getProgramCounter();
+                          immediate = (int) imm;
+                          if (immediate >= (1<<19) || immediate < -(1<<19)) {
+                            instr.setError(instr.getParameter(instr.getNrOfParameters()-1)[0], 
+                                S.getter("RV32imAssemblerImmediateOutOfRange"));
+                            errors = true;
+                            break;
+                          }
+                          instruction = RV32imSupport.getJTypeInstruction(JAL, destination, immediate);
+                          break;
+         case INSTR_JALR: if (immediate >= (1<<10) || immediate < -(1<<10)) {
+        	                instr.setError(instr.getParameter(instr.getNrOfParameters()-1)[0], 
+                                S.getter("RV32imAssemblerImmediateOutOfRange"));
+        	                errors = true;
+        	                break;
+                          }
+                          instruction = RV32imSupport.getITypeInstruction(JALR, destination, 0, source1, immediate);
+                          break;
+         case INSTR_BEQ :
+         case INSTR_BNE :
+         case INSTR_BLT :
+         case INSTR_BGE :
+         case INSTR_BLTU:
+         case INSTR_BGEU: imm = immediate;
+                          imm -= instr.getProgramCounter();
+                          immediate = (int) imm;
+                          if (immediate >= (1<<11) || immediate < -(1<<11)) {
+                            instr.setError(instr.getParameter(instr.getNrOfParameters()-1)[0], 
+                                S.getter("RV32imAssemblerImmediateOutOfRange"));
+                            errors = true;
+                            break;
+                          }
+                          instruction = RV32imSupport.getBTypeInstruction(BRANCH, operation, source1, source2, immediate);
+                          break;
+         default        : errors = true;
+                          JOptionPane.showMessageDialog(null, "Severe bug in RV32imControlTransferInstructions.java");
+                          break;
+      }
+    }
+    valid = !errors;
+    if (valid) {
+      instr.setInstructionByteCode(instruction, 4);
+      // DEBUG: System.out.println(String.format("0x%08X 0x%08X", instr.getProgramCounter() , instruction));
+    }
+    return true;
+  }
+
 }

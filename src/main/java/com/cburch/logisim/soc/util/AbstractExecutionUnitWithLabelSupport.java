@@ -26,16 +26,11 @@
  *     http://www.heig-vd.ch/
  */
 
-package com.cburch.logisim.soc.data;
+package com.cburch.logisim.soc.util;
 
-import com.cburch.logisim.circuit.CircuitState;
-import com.cburch.logisim.soc.file.ElfProgramHeader;
-import com.cburch.logisim.soc.file.ElfSectionHeader;
+public abstract class AbstractExecutionUnitWithLabelSupport implements AssemblerExecutionInterface {
 
-public interface SocProcessorInterface {
-
-  public void setEntryPointandReset(CircuitState state, long entryPoint, ElfProgramHeader progInfo, 
-                                    ElfSectionHeader sectInfo);
-  public void insertTransaction(SocBusTransaction trans, boolean hidden, CircuitState cState);
-  public int getEntryPoint(CircuitState cState);
+  public abstract boolean isPcRelative();
+  public abstract int getPcOffset();
+  public abstract String getAsmInstruction(String label);
 }

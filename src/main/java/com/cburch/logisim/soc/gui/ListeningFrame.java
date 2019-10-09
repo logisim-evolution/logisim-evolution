@@ -29,6 +29,7 @@ public class ListeningFrame extends JFrame implements WindowListener,LocaleListe
       h.registerComponentListener(this);
     }
     updateTitle();
+    this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
   }
   
   public ListeningFrame(StringGetter t) {
@@ -42,12 +43,14 @@ public class ListeningFrame extends JFrame implements WindowListener,LocaleListe
     if (hierInfo == null) setTitle(title.toString());
     else setTitle(title+" "+hierInfo.getName());
   }
+  
+  public String getParentTitle() { return title+" "+hierInfo.getName(); }
 
   @Override
   public void windowOpened(WindowEvent e) {}
 
   @Override
-  public void windowClosing(WindowEvent e) { setVisible(false); }
+  public void windowClosing(WindowEvent e) { setVisible(false); dispose(); }
 
   @Override
   public void windowClosed(WindowEvent e) {}

@@ -57,7 +57,6 @@ import com.cburch.logisim.soc.data.SocInstanceFactory;
 import com.cburch.logisim.soc.data.SocProcessorInterface;
 import com.cburch.logisim.soc.data.SocSimulationManager;
 import com.cburch.logisim.soc.data.SocUpSimulationState;
-import com.cburch.logisim.soc.gui.RV32imMenuProvider;
 import com.cburch.logisim.tools.MenuExtender;
 import com.cburch.logisim.util.GraphicsUtil;
 

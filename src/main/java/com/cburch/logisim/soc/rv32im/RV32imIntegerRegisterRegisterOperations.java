@@ -28,12 +28,17 @@
 
 package com.cburch.logisim.soc.rv32im;
 
+import static com.cburch.logisim.soc.Strings.S;
+
 import java.util.ArrayList;
 
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.soc.file.ElfHeader;
+import com.cburch.logisim.soc.util.AssemblerAsmInstruction;
+import com.cburch.logisim.soc.util.AssemblerExecutionInterface;
+import com.cburch.logisim.soc.util.AssemblerToken;
 
-public class RV32imIntegerRegisterRegisterOperations implements RV32imExecutionUnitInterface {
+public class RV32imIntegerRegisterRegisterOperations implements AssemblerExecutionInterface {
 
   private static final int OP = 0x33;
   private static final int ADD_SUB = 0;
@@ -62,7 +67,7 @@ public class RV32imIntegerRegisterRegisterOperations implements RV32imExecutionU
   private int source2;
   private int operation;
   private boolean valid = false;
-	  
+      
   public ArrayList<String> getInstructions() {
     ArrayList<String> opcodes = new ArrayList<String>();
     for (int i = 0 ; i < AsmOpcodes.length ; i++)
@@ -70,11 +75,12 @@ public class RV32imIntegerRegisterRegisterOperations implements RV32imExecutionU
     return opcodes;
   };
 
-  public boolean execute(RV32im_state.ProcessorState state, CircuitState cState) {
+  public boolean execute(Object state, CircuitState cState) {
     if (!valid)
       return false;
-    int opp1 = state.getRegisterValue(source1);
-    int opp2 = state.getRegisterValue(source2);
+    RV32im_state.ProcessorState cpuState = (RV32im_state.ProcessorState) state;
+    int opp1 = cpuState.getRegisterValue(source1);
+    int opp2 = cpuState.getRegisterValue(source2);
     int result = 0;
     switch (operation) {
       case INSTR_ADD  : result = opp1 + opp2;
@@ -102,7 +108,7 @@ public class RV32imIntegerRegisterRegisterOperations implements RV32imExecutionU
                         break;
       default         : return false;
     }
-    state.writeRegister(destination, result);
+    cpuState.writeRegister(destination, result);
     return true;
   }
 
@@ -121,11 +127,6 @@ public class RV32imIntegerRegisterRegisterOperations implements RV32imExecutionU
 
   public int getBinInstruction() {
     return instruction;
-  }
-
-  public boolean setAsmInstruction(String instr) {
-    valid = false;
-    return valid;
   }
 
   public boolean setBinInstruction(int instr) {
@@ -166,7 +167,7 @@ public class RV32imIntegerRegisterRegisterOperations implements RV32imExecutionU
                       }
                       return false;
        default      : if (funct7 != 0)
-    	                return false;
+                        return false;
                       operation = funct3;
                       break;
     }
@@ -176,4 +177,73 @@ public class RV32imIntegerRegisterRegisterOperations implements RV32imExecutionU
   }
 
   public String getErrorMessage() { return null; }
+
+  public int getInstructionSizeInBytes(String instruction) {
+    if (getInstructions().contains(instruction.toUpperCase())) return 4;
+    return -1;
+  }
+
+  public boolean setAsmInstruction(AssemblerAsmInstruction instr) {
+    int operation = -1;
+    for (int i = 0 ; i < AsmOpcodes.length ; i++) 
+      if (AsmOpcodes[i].equals(instr.getOpcode().toUpperCase())) operation = i;
+    if (operation < 0) {
+      valid = false;
+      return false;
+    }
+    boolean errors = false;
+    AssemblerToken[] param1,param2,param3;
+    if (instr.getNrOfParameters() != (operation == INSTR_SNEZ ? 2 : 3)) {
+      instr.setError(instr.getInstruction(), S.getter("Rv32imAssemblerExpectedThreeArguments"));
+      valid = false;
+      return true;
+    }
+    param1 = instr.getParameter(0);
+    param2 = instr.getParameter(1);
+    if (operation != INSTR_SNEZ)
+      param3 = instr.getParameter(2);
+    else
+      param3 = param2;
+    if (param1.length != 1 || param1[0].getType() != AssemblerToken.REGISTER) {
+      errors = true;
+      instr.setError(param1[0], S.getter("RV32imAssemblerExpectedRegister"));
+    }
+    if (param2.length != 1 || param2[0].getType() != AssemblerToken.REGISTER) {
+      errors = true;
+      instr.setError(param2[0], S.getter("RV32imAssemblerExpectedRegister"));
+    }
+    if (param3 != param2 && (param3.length != 1 || param3[0].getType() != AssemblerToken.REGISTER)) {
+      errors = true;
+      instr.setError(param3[0], S.getter("RV32imAssemblerExpectedRegister"));
+    }
+    destination = RV32im_state.getRegisterIndex(param1[0].getValue());
+    source1 = RV32im_state.getRegisterIndex(param2[0].getValue());
+    source2 = RV32im_state.getRegisterIndex(param3[0].getValue());
+    if (destination < 0 || destination > 31) {
+      errors = true;
+      instr.setError(param1[0], S.getter("RV32imAssemblerUnknownRegister"));
+    }
+    if (source1 < 0 || source1 > 31) {
+      errors = true;
+      instr.setError(param2[0], S.getter("RV32imAssemblerUnknownRegister"));
+    }
+    if (param3 != param2 && (source2 < 0 || source2 > 31)) {
+      errors = true;
+      instr.setError(param3[0], S.getter("RV32imAssemblerUnknownRegister"));
+    }
+    if (operation == INSTR_SNEZ) {
+      source1 = 0;
+      operation = INSTR_SLTU;
+    }
+    valid = !errors;
+    if (valid) {
+      int funct7 = (operation == INSTR_SUB || operation == INSTR_SRA) ? 0x20 : 0;
+      int funct3 = operation == INSTR_SUB ? ADD_SUB : operation == INSTR_SRA ? SRL_SRA : operation;
+      instruction = RV32imSupport.getRTypeInstruction(OP, destination, funct3, source1, source2, funct7);
+      instr.setInstructionByteCode(instruction, 4);
+      // DEBUG : System.out.println(String.format("0x%08X 0x%08X", instr.getProgramCounter(), instruction));
+    }
+    return true;
+  }
+
 }
