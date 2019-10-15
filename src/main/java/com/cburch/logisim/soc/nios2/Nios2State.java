@@ -242,7 +242,7 @@ public class Nios2State implements SocUpSimulationStateListener,SocProcessorInte
     
     public void endofInterrupt() {
       status = estatus;
-      pc = registers[29];
+      pc = getRegisterValue(29);
       repaint();
     }
     
@@ -250,25 +250,20 @@ public class Nios2State implements SocUpSimulationStateListener,SocProcessorInte
       bstatus = status;
       status &= (STATUS_PIE ^ -1);
       long nextPc = SocSupport.convUnsignedInt(pc)+4L;
-      registers[30] = SocSupport.convUnsignedLong(nextPc);
+      writeRegister(30, SocSupport.convUnsignedLong(nextPc));
       pc = breakVector;
       repaint();
     }
     
     public void breakRet() {
       status = bstatus;
-      pc = registers[30];
+      pc = getRegisterValue(30);
       repaint();
     }
 
     public Component getMasterComponent() { return attachedBus.getComponent(); }
 
     public void execute(CircuitState cState) {
-      /* update the ipending register */
-      ipending = 0;
-      for (int i = 0 ; i < nrOfIrqs ; i++) {
-        
-      }
       /* check the simulation state */
       if (!simState.canExecute())
         return;

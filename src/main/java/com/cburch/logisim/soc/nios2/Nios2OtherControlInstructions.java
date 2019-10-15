@@ -131,7 +131,8 @@ public class Nios2OtherControlInstructions implements AssemblerExecutionInterfac
       case INSTR_INITD   :
       case INSTR_INITDA  :
       case INSTR_FLUSHDA :
-      case INSTR_FLUSHD  : s.append(immediate+"("+Nios2State.registerABINames[sourceA]+")");
+      case INSTR_FLUSHD  : int imm = ((immediate<<16)>>16);
+    	                   s.append(imm+"("+Nios2State.registerABINames[sourceA]+")");
                            break;
       case INSTR_INITI   :
       case INSTR_FLUSHI  : s.append(Nios2State.registerABINames[sourceA]);
