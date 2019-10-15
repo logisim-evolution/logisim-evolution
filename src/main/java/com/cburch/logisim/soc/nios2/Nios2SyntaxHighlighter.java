@@ -43,6 +43,7 @@ public class Nios2SyntaxHighlighter extends AssemblerHighlighter {
     for (int i = 0 ; i < 32 ; i++) {
       map.put("r"+i, Token.OPERATOR);
       map.put("c"+i, Token.OPERATOR);
+      map.put("ctl"+i, Token.OPERATOR);
     }
     for (String opcode : Nios2State.ASSEMBLER.getOpcodes())
       map.put(opcode.toLowerCase(), Token.RESERVED_WORD);

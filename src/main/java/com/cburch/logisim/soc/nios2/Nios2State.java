@@ -77,10 +77,17 @@ public class Nios2State implements SocUpSimulationStateListener,SocProcessorInte
 
   public class ProcessorState extends JPanel implements InstanceData,Cloneable,ComponentDataGuiProvider,
       WindowListener,SocUpStateInterface {
+	private static final int STATUS_RSIE = 1<<23;
+	private static final int STATUS_PIE = 1;
     private static final long serialVersionUID = 1L;
     private int[] registers;
     private Boolean[] registers_valid;
     private int pc;
+    private int status;
+    private int estatus;
+    private int bstatus;
+    private int ienable;
+    private int ipending;
     private int lastRegisterWritten = -1;
     private LinkedList<TraceInfo> instrTrace;
     private Value lastClock;
@@ -99,7 +106,7 @@ public class Nios2State implements SocUpSimulationStateListener,SocProcessorInte
       simState = new SocUpSimulationState();
       myInstance = inst;
       this.setSize(AppPreferences.getScaled(CpuDrawSupport.upStateBounds.getWidth()), 
-      AppPreferences.getScaled(CpuDrawSupport.upStateBounds.getHeight()));
+        AppPreferences.getScaled(CpuDrawSupport.upStateBounds.getHeight()));
       SocUpMenuProvider.SOCUPMENUPROVIDER.registerCpuState(this, inst);
       visible = false;
       entryPoint = null;
@@ -125,6 +132,11 @@ public class Nios2State implements SocUpSimulationStateListener,SocProcessorInte
       for (int i = 0 ; i < 31 ; i++)
         registers_valid[i] = false;
       lastRegisterWritten = -1;
+      status = STATUS_RSIE;
+      estatus = 0;
+      bstatus = 0;
+      ienable = 0;
+      ipending = 0;
       instrTrace.clear();
       if (visible) repaint();
       simState.reset();
@@ -133,7 +145,49 @@ public class Nios2State implements SocUpSimulationStateListener,SocProcessorInte
     public int getEntryPoint() { return entryPoint; }
     public boolean programLoaded() { return programLoaded; }
     public JPanel getAsmWindow() { return bPanel; }
-
+    
+    public int getStatus() { return status; }
+    public void setStatus(int value) {
+      status = value&STATUS_PIE;
+      status |= STATUS_RSIE;
+    }
+    public int getIenable() { return ienable; }
+    public void setIenable(int value) {
+      if (ienable == value) return;
+      ienable = value;
+      repaint();
+    }
+    public int getIpending() { return ipending; };
+    public void setIpending(int value) {
+      if (ipending == value) return;
+      ipending = value;
+      repaint();
+    }
+    
+    public int getControlRegister(int index) {
+      switch (index) {
+        case 0 : return status;
+        case 1 : return estatus;
+        case 2 : return bstatus;
+        case 3 : return ienable;
+        case 4 : return ipending;
+        default: return 0;
+      }
+    }
+    
+    public void setControlRegister(int index, int value) {
+      switch (index) {
+        case 0 : setStatus(value);
+                 break;
+        case 1 : estatus = value;
+                 break;
+        case 2 : bstatus = value;
+                 break;
+        case 3 : ienable = value;
+                 break;
+      }
+    }
+    
     public void setClock(Value clock, CircuitState cState) {
       if (lastClock == Value.FALSE && clock == Value.TRUE)
         execute(cState);
@@ -180,12 +234,41 @@ public class Nios2State implements SocUpSimulationStateListener,SocProcessorInte
     }
 
     public void interrupt() {
+      estatus = status;
+      status &= (STATUS_PIE ^ -1);
       pc = exceptionVector;
+      repaint();
+    }
+    
+    public void endofInterrupt() {
+      status = estatus;
+      pc = registers[29];
+      repaint();
+    }
+    
+    public void breakReq() {
+      bstatus = status;
+      status &= (STATUS_PIE ^ -1);
+      long nextPc = SocSupport.convUnsignedInt(pc)+4L;
+      registers[30] = SocSupport.convUnsignedLong(nextPc);
+      pc = breakVector;
+      repaint();
+    }
+    
+    public void breakRet() {
+      status = bstatus;
+      pc = registers[30];
+      repaint();
     }
 
     public Component getMasterComponent() { return attachedBus.getComponent(); }
 
     public void execute(CircuitState cState) {
+      /* update the ipending register */
+      ipending = 0;
+      for (int i = 0 ; i < nrOfIrqs ; i++) {
+        
+      }
       /* check the simulation state */
       if (!simState.canExecute())
         return;
@@ -203,7 +286,15 @@ public class Nios2State implements SocUpSimulationStateListener,SocProcessorInte
           return;
         }
       }
-      /* TODO: check interrupts */
+      /* check interrupts */
+      if ((status & STATUS_PIE) != 0) {
+        int maskedIrqs = ienable&ipending;
+        if (maskedIrqs != 0) {
+          writeRegister(29, pc);
+          interrupt();
+          repaint();
+        }
+      }
       /* fetch an instruction */
       SocBusTransaction trans = new SocBusTransaction(SocBusTransaction.READTransaction,
               pc,0,SocBusTransaction.WordAccess,attachedBus.getComponent());
@@ -267,8 +358,13 @@ public class Nios2State implements SocUpSimulationStateListener,SocProcessorInte
 
     public void draw(Graphics2D g, boolean scale) {
       CpuDrawSupport.drawRegisters(g,0,0,scale,this);
-      CpuDrawSupport.drawProgramCounter(g,170,0,scale,this);
+      CpuDrawSupport.drawHexReg(g,170,0,scale,pc,S.get("Rv32imProgramCounter"),true);
+      CpuDrawSupport.drawHexReg(g,275,0,scale,status,S.get("Nios2Status"),true);
+      CpuDrawSupport.drawHexReg(g,380,0,scale,estatus,S.get("Nios2Estatus"),true);
+      CpuDrawSupport.drawHexReg(g,485,0,scale,bstatus,S.get("Nios2Bstatus"),true);
       CpuDrawSupport.drawTrace(g,170,40,scale,this);
+      if (nrOfIrqs > 0)
+        CpuDrawSupport.drawIRQs(g, 0, 500, scale, nrOfIrqs, ipending, ienable);
     }
 
     @Override
@@ -295,6 +391,7 @@ public class Nios2State implements SocUpSimulationStateListener,SocProcessorInte
 
   private int resetVector;
   private int exceptionVector;
+  private int breakVector;
   private int nrOfIrqs;
   private String label;
   private SocBusInfo attachedBus;
@@ -314,8 +411,12 @@ public class Nios2State implements SocUpSimulationStateListener,SocProcessorInte
       try {index = Integer.parseUnsignedInt(regName.substring(1));} 
         catch (NumberFormatException e) {index = -1;}
       return index;
-    }
-    if (regName.startsWith("c")&&regName.length()<4) {
+    } else if (regName.startsWith("ctl") && regName.length() < 6) {
+      int index;
+      try {index = Integer.parseUnsignedInt(regName.substring(3));} 
+        catch (NumberFormatException e) {index = -1;}
+      return index;
+    } else  if (regName.startsWith("c")&&regName.length()<4) {
       int index;
       try {index = Integer.parseUnsignedInt(regName.substring(1));} 
         catch (NumberFormatException e) {index = -1;}
@@ -326,12 +427,18 @@ public class Nios2State implements SocUpSimulationStateListener,SocProcessorInte
   
   public static boolean isCustomRegister(String name) {
     String regName = name.toLowerCase();
-    return regName.startsWith("c")&&regName.length()<4;
+    return regName.startsWith("c")&&regName.length()<4&&!regName.startsWith("ctl");
+  }
+
+  public static boolean isControlRegister(String name) {
+    String regName = name.toLowerCase();
+    return regName.startsWith("ctl")&&regName.length()<6;
   }
 
   public Nios2State() {
     resetVector = 0;
     exceptionVector = 0x14;
+    breakVector = 0x30;
     nrOfIrqs = 0;
     label = "";
     attachedBus = new SocBusInfo("");
@@ -340,6 +447,7 @@ public class Nios2State implements SocUpSimulationStateListener,SocProcessorInte
   public void copyInto(Nios2State dest) {
     dest.resetVector = resetVector;
     dest.exceptionVector = exceptionVector;
+    dest.breakVector = breakVector;
     dest.nrOfIrqs = nrOfIrqs;
     dest.label = label;
     dest.attachedBus.setBusId(attachedBus.getBusId());
@@ -371,6 +479,14 @@ public class Nios2State implements SocUpSimulationStateListener,SocProcessorInte
   }
 
   public Integer getExceptionVector() { return exceptionVector; }
+  
+  public boolean setBreakVector(int value) {
+    if (breakVector == value) return false;
+    breakVector = value;
+    return true;
+  }
+  
+  public Integer getBreakVector() { return breakVector; }
 
   public boolean setNrOfIrqs(int value) {
     if (nrOfIrqs == value) return false;

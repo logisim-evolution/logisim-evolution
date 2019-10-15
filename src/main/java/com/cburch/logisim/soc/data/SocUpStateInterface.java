@@ -52,4 +52,5 @@ public interface SocUpStateInterface {
   public SocProcessorInterface getProcessorInterface();
   public String getProcessorType();
   public int getElfType();
+  public void repaint();
 }

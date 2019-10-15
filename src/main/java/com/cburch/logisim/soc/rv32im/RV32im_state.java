@@ -274,7 +274,7 @@ public class RV32im_state implements SocUpSimulationStateListener,SocProcessorIn
     
     public void draw(Graphics2D g, boolean scale) {
       CpuDrawSupport.drawRegisters(g,0,0,scale,this);
-      CpuDrawSupport.drawProgramCounter(g,170,0,scale,this);
+      CpuDrawSupport.drawHexReg(g,170,0,scale,pc,S.get("Rv32imProgramCounter"),true);
       CpuDrawSupport.drawTrace(g,170,40,scale,this);
     }
 

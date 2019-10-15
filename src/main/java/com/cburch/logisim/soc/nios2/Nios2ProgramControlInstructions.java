@@ -167,6 +167,7 @@ public class Nios2ProgramControlInstructions extends AbstractExecutionUnitWithLa
     StringBuffer s = new StringBuffer();
     s.append(Opcodes.get(operation));
     while (s.length() < Nios2Support.ASM_FIELD_SIZE) s.append(" ");
+    int imm = ((immediate << 16) >> 16)+4;
     switch (operation) {
       case INSTR_RET     : break;
       case INSTR_CALLR   : 
@@ -175,11 +176,11 @@ public class Nios2ProgramControlInstructions extends AbstractExecutionUnitWithLa
       case INSTR_JMPI    :
       case INSTR_CALL    : s.append(Integer.toString(immediate<<2));
                            break;
-      case INSTR_BR      : s.append("pc+4"+(immediate >= 0 ? "+":"")+immediate);
+      case INSTR_BR      : s.append("pc"+(imm >= 0 ? "+":"")+imm);
                            break;
       default            : s.append(Nios2State.registerABINames[sourceA]+",");
                            s.append(Nios2State.registerABINames[sourceB]+",");
-                           s.append("pc+4"+(immediate >= 0 ? "+":"")+immediate);
+                           s.append("pc"+(imm >= 0 ? "+":"")+imm);
                            break;
     }
     return s.toString();
@@ -302,7 +303,7 @@ public class Nios2ProgramControlInstructions extends AbstractExecutionUnitWithLa
         case INSTR_JMP   : instruction = Nios2Support.getRTypeInstructionCode(sourceA, 0, 0, 0x0d);
                            break;
         case INSTR_CALL  :
-        case INSTR_JMPI  : instruction = Nios2Support.getJTypeInstructionCode(immediate, OpxCodes.get(operation));
+        case INSTR_JMPI  : instruction = Nios2Support.getJTypeInstructionCode(immediate, OpcCodes.get(operation));
                            break;
         default          : instruction = Nios2Support.getITypeInstructionCode(sourceA, sourceB, immediate, 
                                          OpcCodes.get(operation));

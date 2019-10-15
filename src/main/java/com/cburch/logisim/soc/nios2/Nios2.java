@@ -162,9 +162,11 @@ public class Nios2 extends SocInstanceFactory implements DynamicElementProvider 
   protected void instanceAttributeChanged(Instance instance, Attribute<?> attr) {
     if (attr == Nios2Attributes.NR_OF_IRQS) {
       updatePorts(instance);
+      SocUpMenuProvider.SOCUPMENUPROVIDER.repaintStates(instance);
     }
     if (attr == SocSimulationManager.SOC_BUS_SELECT) {
       instance.fireInvalidated();
+      SocUpMenuProvider.SOCUPMENUPROVIDER.repaintStates(instance);
     }
     super.instanceAttributeChanged(instance, attr);
   }
@@ -205,6 +207,12 @@ public class Nios2 extends SocInstanceFactory implements DynamicElementProvider 
 	  data.reset();
 	else
 	  data.setClock(state.getPortValue(CLOCK), ((InstanceStateImpl)state).getCircuitState());
+	/* update Irqs */
+	int irqs = 0;
+	for (int i = 0 ; i < state.getAttributeValue(Nios2Attributes.NR_OF_IRQS).getWidth() ; i++) {
+	  if (state.getPortValue(i+IRQSTART) == Value.TRUE) irqs |= 1<<i;
+	}
+	data.setIpending(irqs);
   }
 
   @Override

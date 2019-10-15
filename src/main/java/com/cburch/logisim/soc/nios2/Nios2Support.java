@@ -148,6 +148,10 @@ public class Nios2Support {
       instr.setError(tok[0], S.getter("Nios2CannotUseCustomRegister"));
       return false;
     }
+    if (tok[0].getType() == Nios2Assembler.CONTROL_REGISTER) {
+        instr.setError(tok[0], S.getter("Nios2CannotUseControlRegister"));
+        return false;
+      }
     if (tok[0].getType() != AssemblerToken.REGISTER) {
       instr.setError(tok[0], S.getter("AssemblerExpectedRegister"));
       return false;

@@ -201,6 +201,10 @@ public class Nios2DataTransferInstructions implements AssemblerExecutionInterfac
       valid = false;
       instr.setError(param2[1], S.getter("Nios2CannotUseCustomRegister"));
     }
+    if (Nios2State.isControlRegister(param2[1].getValue())) {
+        valid = false;
+        instr.setError(param2[1], S.getter("Nios2CannotUseControlRegister"));
+      }
     base = Nios2State.getRegisterIndex(param2[1].getValue());
     if (base < 0 || base > 31) {
       valid = false;

@@ -36,10 +36,12 @@ import com.cburch.logisim.soc.util.AssemblerToken;
 public class Nios2Assembler extends AbstractAssembler {
 
   public static final int CUSTOM_REGISTER = 256;
+  public static final int CONTROL_REGISTER = 257;
 
   public Nios2Assembler() {
 	super();
     super.AddAcceptedParameterType(CUSTOM_REGISTER);
+    super.AddAcceptedParameterType(CONTROL_REGISTER);
 	/* Add the custom instructions */
     super.addAssemblerExecutionUnit(new Nios2CustomInstructions());
     /* Add all other instructions */
@@ -48,6 +50,7 @@ public class Nios2Assembler extends AbstractAssembler {
     super.addAssemblerExecutionUnit(new Nios2ComparisonInstructions());
     super.addAssemblerExecutionUnit(new Nios2ShiftAndRotateInstructions());
     super.addAssemblerExecutionUnit(new Nios2ProgramControlInstructions());
+    super.addAssemblerExecutionUnit(new Nios2OtherControlInstructions());
   }
 
   public boolean usesRoundedBrackets() { return true; }
@@ -56,7 +59,9 @@ public class Nios2Assembler extends AbstractAssembler {
   public void performUpSpecificOperationsOnTokens(LinkedList<AssemblerToken> tokens) {
     for (AssemblerToken token : tokens) {
       if (token.getType() == AssemblerToken.REGISTER) {
-        if (token.getValue().toLowerCase().startsWith("c"))
+    	if (token.getValue().toLowerCase().startsWith("ctl"))
+    	  token.setType(CONTROL_REGISTER);
+    	else if (token.getValue().toLowerCase().startsWith("c"))
           token.setType(CUSTOM_REGISTER);
       }
     }

@@ -314,6 +314,10 @@ public class SocUpMenuProvider  implements ActionListener {
       parrentFrame = frame;
     }
     
+    public void repaintStates() {
+      for (SocUpStateInterface data : myStates.keySet()) data.repaint();
+    }
+    
   }
   
   private HashMap<Instance,InstanceInformation> myInfo;
@@ -367,4 +371,7 @@ public class SocUpMenuProvider  implements ActionListener {
       myInfo.get(inst).destroyCpuState(data);
   }
   
+  public void repaintStates(Instance inst) {
+    if (myInfo.containsKey(inst)) myInfo.get(inst).repaintStates();
+  }
 }

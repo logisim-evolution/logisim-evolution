@@ -154,8 +154,8 @@ public class Nios2ShiftAndRotateInstructions implements AssemblerExecutionInterf
       sourceB = Nios2Support.getRegisterIndex(instr, 2);
     }
     if (valid) {
-      instruction = Nios2Support.getRTypeInstructionCode(sourceA, sourceB, sourceC, 
-              OpxCodes.get(operation) << 5, immediate);
+      instruction = Nios2Support.getRTypeInstructionCode(sourceA, sourceB, sourceC, OpxCodes.get(operation), 
+                                                         immediate);
       instr.setInstructionByteCode(instruction, 4);
     }
     return true;

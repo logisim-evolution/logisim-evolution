@@ -57,6 +57,7 @@ public class Nios2Attributes extends AbstractAttributeSet {
   public static final Attribute<BitWidth> NR_OF_IRQS = Attributes.forBitWidth("irqWidth", S.getter("rv32imIrqWidth"),0,32);
   public static final Attribute<Integer> RESET_VECTOR = Attributes.forHexInteger("resetVector", S.getter("rv32ResetVector"));
   public static final Attribute<Integer> EXCEPTION_VECTOR  = Attributes.forHexInteger("exceptionVector", S.getter("rv32ExceptionVector"));
+  public static final Attribute<Integer> BREAK_VECTOR  = Attributes.forHexInteger("breakVector", S.getter("nios2BreakVector"));
   public static final Attribute<Boolean> NIOS_STATE_VISIBLE = Attributes.forBoolean("stateVisable", S.getter("rv32StateVisable"));
 
   private Font labelFont = StdAttr.DEFAULT_LABEL_FONT;
@@ -69,6 +70,7 @@ public class Nios2Attributes extends AbstractAttributeSet {
             new Attribute<?>[] {
               RESET_VECTOR,
               EXCEPTION_VECTOR,
+              BREAK_VECTOR,
               NR_OF_IRQS,
               NIOS_STATE_VISIBLE,
               StdAttr.LABEL,
@@ -98,6 +100,7 @@ public class Nios2Attributes extends AbstractAttributeSet {
   public <V> V getValue(Attribute<V> attr) {
     if (attr == RESET_VECTOR) return (V) upState.getResetVector();
     if (attr == EXCEPTION_VECTOR) return (V) upState.getExceptionVector();
+    if (attr == BREAK_VECTOR) return (V) upState.getBreakVector();
     if (attr == NR_OF_IRQS) return (V) BitWidth.create(upState.getNrOfIrqs());
     if (attr == StdAttr.LABEL) return (V) upState.getLabel();
     if (attr == StdAttr.LABEL_FONT) return (V) labelFont;
@@ -128,6 +131,11 @@ public class Nios2Attributes extends AbstractAttributeSet {
     }
     if (attr == EXCEPTION_VECTOR) {
       if (upState.setExceptionVector((int) value))
+        fireAttributeValueChanged(attr, value, oldValue);
+      return;
+    }
+    if (attr == BREAK_VECTOR) {
+      if (upState.setBreakVector((int) value))
         fireAttributeValueChanged(attr, value, oldValue);
       return;
     }
