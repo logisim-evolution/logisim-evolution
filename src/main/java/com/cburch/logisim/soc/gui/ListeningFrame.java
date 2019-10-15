@@ -18,12 +18,14 @@ public class ListeningFrame extends JFrame implements WindowListener,LocaleListe
 
   private static final long serialVersionUID = 1L;
   private StringGetter title;
+  private String upName;
   private CircuitStateHolder.HierarchyInfo hierInfo;
   
-  public ListeningFrame(StringGetter t, CircuitStateHolder.HierarchyInfo h) {
+  public ListeningFrame(String upName, StringGetter t, CircuitStateHolder.HierarchyInfo h) {
     LocaleManager.addLocaleListener(this);
     title = t;
     hierInfo = h;
+    this.upName = upName+" ";
     if (h != null) {
       h.registerCircuitListener(this);
       h.registerComponentListener(this);
@@ -35,16 +37,17 @@ public class ListeningFrame extends JFrame implements WindowListener,LocaleListe
   public ListeningFrame(StringGetter t) {
     LocaleManager.addLocaleListener(this);
     title = t;
+    this.upName = "";
     hierInfo = null;
     updateTitle();
   }
 
   private void updateTitle() {
-    if (hierInfo == null) setTitle(title.toString());
-    else setTitle(title+" "+hierInfo.getName());
+    if (hierInfo == null) setTitle(upName+title.toString());
+    else setTitle(upName+title+" "+hierInfo.getName());
   }
   
-  public String getParentTitle() { return title+" "+hierInfo.getName(); }
+  public String getParentTitle() { return upName+title+" "+hierInfo.getName(); }
 
   @Override
   public void windowOpened(WindowEvent e) {}

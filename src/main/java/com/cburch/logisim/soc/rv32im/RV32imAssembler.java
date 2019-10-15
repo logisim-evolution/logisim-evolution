@@ -28,67 +28,28 @@
 
 package com.cburch.logisim.soc.rv32im;
 
-import static com.cburch.logisim.soc.Strings.S;
+import java.util.LinkedList;
 
-import java.util.ArrayList;
+import com.cburch.logisim.soc.util.AbstractAssembler;
+import com.cburch.logisim.soc.util.AssemblerToken;
 
-import com.cburch.logisim.soc.util.AssemblerAsmInstruction;
-import com.cburch.logisim.soc.util.AssemblerExecutionInterface;
-import com.cburch.logisim.soc.util.AssemblerInterface;
+public class RV32imAssembler extends AbstractAssembler {
 
-public class RV32imAssembler implements AssemblerInterface {
-
-  private ArrayList<AssemblerExecutionInterface> exeUnits;
   
   public RV32imAssembler() {
-    exeUnits = new ArrayList<AssemblerExecutionInterface>();
+	super();
     /* Here we add the RV32I base integer instruction set */
-    exeUnits.add(new RV32imIntegerRegisterImmediateInstructions());
-    exeUnits.add(new RV32imIntegerRegisterRegisterOperations());
-    exeUnits.add(new RV32imControlTransferInstructions());
-    exeUnits.add(new RV32imLoadAndStoreInstructions());
-    exeUnits.add(new Rv32imMemoryOrderingInstructions());
-    exeUnits.add(new RV32imEnvironmentCallAndBreakpoints());
+    super.addAssemblerExecutionUnit(new RV32imIntegerRegisterImmediateInstructions());
+    super.addAssemblerExecutionUnit(new RV32imIntegerRegisterRegisterOperations());
+    super.addAssemblerExecutionUnit(new RV32imControlTransferInstructions());
+    super.addAssemblerExecutionUnit(new RV32imLoadAndStoreInstructions());
+    super.addAssemblerExecutionUnit(new Rv32imMemoryOrderingInstructions());
+    super.addAssemblerExecutionUnit(new RV32imEnvironmentCallAndBreakpoints());
     /* Here we add the "M" standard extension for integer multiplication and Division */
-    exeUnits.add(new RV32im_M_ExtensionInstructions());
+    super.addAssemblerExecutionUnit(new RV32im_M_ExtensionInstructions());
   }
   
-  public void decode(int instruction) {
-    for (AssemblerExecutionInterface exe : exeUnits)
-      exe.setBinInstruction(instruction);
-  }
-  
-  public AssemblerExecutionInterface getExeUnit() {
-    for (AssemblerExecutionInterface exe : exeUnits)
-      if (exe.isValid())
-        return exe;
-    return null;
-  }
-  
-  public ArrayList<String> getOpcodes() {
-    ArrayList<String> opcodes = new ArrayList<String>();
-    for (AssemblerExecutionInterface exe : exeUnits)
-      opcodes.addAll(exe.getInstructions());
-    return opcodes;
-  }
-
   public boolean usesRoundedBrackets() { return true; }
-
-  public int getInstructionSize(String opcode) {
-    for (AssemblerExecutionInterface exe : exeUnits) {
-      int size = exe.getInstructionSizeInBytes(opcode);
-      if (size > 0) return size;
-    }
-    return 1; /* to make sure that instructions are not overwritten */
-  }
-
-  public boolean assemble(AssemblerAsmInstruction instruction) {
-	boolean found = false;
-    for (AssemblerExecutionInterface exe : exeUnits) {
-      found |= exe.setAsmInstruction(instruction);
-    }
-    if (!found)
-      instruction.setError(instruction.getInstruction(), S.getter("RV32imAssemblerUnknownOpcode"));
-    return !instruction.hasErrors();
-  }
+  public String getHighlightStringIdentifier() { return "asm/riscv"; }
+  public void performUpSpecificOperationsOnTokens(LinkedList<AssemblerToken> tokens) { }
 }

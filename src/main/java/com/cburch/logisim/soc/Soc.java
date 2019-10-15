@@ -42,6 +42,8 @@ public class Soc  extends Library {
     new FactoryDescription(
         "Rv32im", S.getter("Rv32imComponent"), "Rv32im.gif", "rv32im.Rv32im_riscv"),
     new FactoryDescription(
+        "Nios2", S.getter("Nios2Component"), "Nios2.gif", "nios2.Nios2"),
+    new FactoryDescription(
         "SocBus", S.getter("SocBusComponent"), "" , "bus.SocBus" ),
     new FactoryDescription(
          "Socmem", S.getter("SocMemoryComponent"), "" , "memory.SocMemory" ),

@@ -111,7 +111,7 @@ public class RV32imEnvironmentCallAndBreakpoints implements AssemblerExecutionIn
 	  return false;
 	}
 	if (instr.getNrOfParameters() != 0) {
-	  instr.setError(instr.getInstruction(), S.getter("Rv32imAssemblerExpectedNoArguments"));
+	  instr.setError(instr.getInstruction(), S.getter("AssemblerExpectedNoArguments"));
 	  valid = false;
 	  return true;
 	}

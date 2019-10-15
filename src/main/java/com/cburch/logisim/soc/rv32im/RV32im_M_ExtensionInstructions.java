@@ -165,7 +165,7 @@ public class RV32im_M_ExtensionInstructions implements AssemblerExecutionInterfa
       return false;
     }
     if (instr.getNrOfParameters() != 3) {
-      instr.setError(instr.getInstruction(), S.getter("Rv32imAssemblerExpectedThreeArguments"));
+      instr.setError(instr.getInstruction(), S.getter("AssemblerExpectedThreeArguments"));
       valid = false;
       return true;
     }
@@ -174,30 +174,30 @@ public class RV32im_M_ExtensionInstructions implements AssemblerExecutionInterfa
     AssemblerToken[] param3 = instr.getParameter(2);
     boolean errors = false;
     if (param1.length != 1 || param1[0].getType() != AssemblerToken.REGISTER) {
-      instr.setError(param1[0], S.getter("RV32imAssemblerExpectedRegister"));
+      instr.setError(param1[0], S.getter("AssemblerExpectedRegister"));
       errors = true;
     }
     if (param2.length != 1 || param2[0].getType() != AssemblerToken.REGISTER) {
-      instr.setError(param2[0], S.getter("RV32imAssemblerExpectedRegister"));
+      instr.setError(param2[0], S.getter("AssemblerExpectedRegister"));
       errors = true;
     }
     if (param3.length != 1 || param3[0].getType() != AssemblerToken.REGISTER) {
-      instr.setError(param3[0], S.getter("RV32imAssemblerExpectedRegister"));
+      instr.setError(param3[0], S.getter("AssemblerExpectedRegister"));
       errors = true;
     }
     destination = RV32im_state.getRegisterIndex(param1[0].getValue());
     if (destination < 0 || destination > 31) {
-      instr.setError(param1[0], S.getter("RV32imAssemblerUnknownRegister"));
+      instr.setError(param1[0], S.getter("AssemblerUnknownRegister"));
       errors = true;
     }
     source1 = RV32im_state.getRegisterIndex(param2[0].getValue());
     if (source1 < 0 || source1 > 31) {
-      instr.setError(param2[0], S.getter("RV32imAssemblerUnknownRegister"));
+      instr.setError(param2[0], S.getter("AssemblerUnknownRegister"));
       errors = true;
     }
     source2 = RV32im_state.getRegisterIndex(param3[0].getValue());
     if (source2 < 0 || source2 > 31) {
-      instr.setError(param3[0], S.getter("RV32imAssemblerUnknownRegister"));
+      instr.setError(param3[0], S.getter("AssemblerUnknownRegister"));
       errors = true;
     }
     valid = !errors;

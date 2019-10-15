@@ -69,6 +69,14 @@ public class AssemblerAsmInstruction {
     }
   }
   
+  public void setInstructionByteCode(int[] instruction, int nrOfBytes) {
+    if (bytes == null) bytes = new Byte[size];
+    for (int j = 0 ; j < instruction.length ; j++)
+      for (int i = 0 ; i < nrOfBytes && i < size ; i++) {
+        bytes[j*nrOfBytes+i] = (byte)((instruction[j] >> (i*8))&0xFF);
+      }
+  }
+	  
   public AssemblerToken[] getParameter(int index) {
     if (index < 0 || index >= parameters.size()) return null;
     return parameters.get(index);

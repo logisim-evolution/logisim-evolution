@@ -55,7 +55,6 @@ import com.cburch.logisim.gui.icons.BreakpointIcon;
 import com.cburch.logisim.soc.data.SocProcessorInterface;
 import com.cburch.logisim.soc.file.ElfProgramHeader;
 import com.cburch.logisim.soc.file.ElfSectionHeader;
-import com.cburch.logisim.soc.util.AbstractAssembler;
 import com.cburch.logisim.soc.util.AssemblerInterface;
 import com.cburch.logisim.util.LocaleListener;
 import com.cburch.logisim.util.LocaleManager;
@@ -109,7 +108,7 @@ public class BreakpointPanel extends JPanel implements CaretListener,LocaleListe
 		  ElfProgramHeader progInfo,ElfSectionHeader sectInfo, AssemblerInterface assembler) {
       debugLines.clear();
       debugScrollPane.getGutter().removeAllTrackingIcons();
-      asmWindow.setText(AbstractAssembler.getProgram(state, pIf, progInfo, sectInfo, debugLines,assembler));
+      asmWindow.setText(assembler.getProgram(state, pIf, progInfo, sectInfo, debugLines));
       asmWindow.setCaretPosition(0);
   }
   

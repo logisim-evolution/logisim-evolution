@@ -45,6 +45,9 @@ public class AssemblerToken {
   public static final int MATH_SUBTRACT = 14;
   public static final int MATH_ADD = 15;
   public static final int PARAMETER_LABEL = 16;
+  /* all numbers below 256 are reserved for internal usage, the numbers starting from 256 can
+   * be used for custom purposes.
+   */
    
   private int type;
   private String value;

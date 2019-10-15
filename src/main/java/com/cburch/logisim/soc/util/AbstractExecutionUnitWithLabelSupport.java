@@ -30,7 +30,7 @@ package com.cburch.logisim.soc.util;
 
 public abstract class AbstractExecutionUnitWithLabelSupport implements AssemblerExecutionInterface {
 
-  public abstract boolean isPcRelative();
-  public abstract int getPcOffset();
+  public abstract boolean isLabelSupported();
+  public abstract long getLabelAddress(long pc);
   public abstract String getAsmInstruction(String label);
 }

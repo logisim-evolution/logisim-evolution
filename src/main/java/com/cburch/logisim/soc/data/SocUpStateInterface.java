@@ -26,23 +26,31 @@
  *     http://www.heig-vd.ch/
  */
 
-package com.cburch.logisim.soc.rv32im;
+package com.cburch.logisim.soc.data;
 
-import org.fife.ui.rsyntaxtextarea.Token;
-import org.fife.ui.rsyntaxtextarea.TokenMap;
+import java.awt.event.WindowListener;
+import java.util.LinkedList;
 
-import com.cburch.logisim.soc.data.AssemblerHighlighter;
+import javax.swing.JPanel;
 
-public class RV32imSyntaxHighlighter extends AssemblerHighlighter {
-  @Override
-  public TokenMap getWordsToHighlight() {
-    TokenMap map = super.getWordsToHighlight();
-    for (int i = 0 ; i < RV32im_state.registerABINames.length ; i++)
-      map.put(RV32im_state.registerABINames[i], Token.OPERATOR);
-    map.put("pc", Token.OPERATOR);
-    for (int i = 0 ; i < 32 ; i++) map.put("x"+i, Token.OPERATOR);
-    for (String opcode : RV32im_state.ASSEMBLER.getOpcodes())
-      map.put(opcode.toLowerCase(), Token.RESERVED_WORD);
-    return map;
-  }
+import com.cburch.logisim.soc.util.AssemblerInterface;
+
+public interface SocUpStateInterface {
+  public int getLastRegisterWritten();
+  public String getRegisterValueHex(int index);
+  public String getRegisterAbiName(int index);
+  public String getRegisterNormalName(int index);
+  public int getProgramCounter();
+  public LinkedList<TraceInfo> getTraces();
+  public void SimButtonPressed();
+  public SocUpSimulationState getSimState();
+  public boolean programLoaded();
+  public WindowListener getWindowListener();
+  public JPanel getAsmWindow();
+  public JPanel getStatePanel();
+  public AssemblerInterface getAssembler();
+  public SocProcessorInterface getProcessorInterface();
+  public String getProcessorType();
+  public int getElfType();
+  public void repaint();
 }
