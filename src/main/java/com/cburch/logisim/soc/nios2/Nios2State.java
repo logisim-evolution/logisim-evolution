@@ -113,6 +113,7 @@ public class Nios2State implements SocUpSimulationStateListener,SocProcessorInte
     @Override
     public void paint(Graphics g) { draw( (Graphics2D) g, true); }
     public void reset() { reset(null,null,null,null); }
+    public Instance getInstance() { return myInstance; }
     
     public void reset(CircuitState state,Integer entry,ElfProgramHeader progInfo,ElfSectionHeader sectInfo) {
       if (entry != null) entryPoint = entry;
@@ -188,6 +189,11 @@ public class Nios2State implements SocUpSimulationStateListener,SocProcessorInte
       /* check the simulation state */
       if (!simState.canExecute())
         return;
+      /* here we handle the custom instructions */
+      if (ASSEMBLER.getExeUnit() != null && ASSEMBLER.getExeUnit() instanceof Nios2CustomInstructions) {
+        Nios2CustomInstructions cust = (Nios2CustomInstructions)ASSEMBLER.getExeUnit();
+        if (cust.isValid() && cust.waitingOnReady(this, cState)) return;
+      }
       HashMap<Integer,Integer> breakPoints = bPanel.getBreakPoints();
       if (breakPoints.containsKey(pc)) {
         if (simState.breakPointReached()) {
@@ -309,7 +315,18 @@ public class Nios2State implements SocUpSimulationStateListener,SocProcessorInte
         catch (NumberFormatException e) {index = -1;}
       return index;
     }
+    if (regName.startsWith("c")&&regName.length()<4) {
+      int index;
+      try {index = Integer.parseUnsignedInt(regName.substring(1));} 
+        catch (NumberFormatException e) {index = -1;}
+      return index;
+    }
     return -1;
+  }
+  
+  public static boolean isCustomRegister(String name) {
+    String regName = name.toLowerCase();
+    return regName.startsWith("c")&&regName.length()<4;
   }
 
   public Nios2State() {

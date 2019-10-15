@@ -58,7 +58,9 @@ public class CpuDrawSupport {
     @Override
     public void mousePressed(InstanceState state, MouseEvent e) {
       Location loc = state.getInstance().getLocation();
-      Bounds bloc = SocUpSimulationState.getButtonLocation(loc.getX(), loc.getY(), simStateBounds);
+      Bounds bds = state.getInstance().getBounds();
+      Bounds simButton = Bounds.create(bds.getWidth()-300,bds.getHeight()-40,simStateBounds.getWidth(),simStateBounds.getHeight());
+      Bounds bloc = SocUpSimulationState.getButtonLocation(loc.getX(), loc.getY(), simButton);
       if (bloc.contains(e.getX(), e.getY())) { ((SocUpStateInterface)state.getData()).SimButtonPressed();
       }
     }

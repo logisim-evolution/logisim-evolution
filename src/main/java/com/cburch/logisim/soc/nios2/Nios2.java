@@ -62,21 +62,21 @@ import com.cburch.logisim.util.GraphicsUtil;
 
 public class Nios2 extends SocInstanceFactory implements DynamicElementProvider {
 
-  private static int CLOCK = 0;
-  private static int RESET = 1;
-  private static int DATAA = 2;
-  private static int DATAB = 3;
-  private static int START = 4;
-  private static int N = 5;
-  private static int A = 6;
-  private static int READRA = 7;
-  private static int B = 8;
-  private static int READRB = 9;
-  private static int C = 10;
-  private static int WRITERC = 11;
-  private static int RESULT = 12;
-  private static int DONE = 13;
-  private static int IRQSTART = 14;
+  public static int CLOCK = 0;
+  public static int RESET = 1;
+  public static int DATAA = 2;
+  public static int DATAB = 3;
+  public static int START = 4;
+  public static int N = 5;
+  public static int A = 6;
+  public static int READRA = 7;
+  public static int B = 8;
+  public static int READRB = 9;
+  public static int C = 10;
+  public static int WRITERC = 11;
+  public static int RESULT = 12;
+  public static int DONE = 13;
+  public static int IRQSTART = 14;
   
   private static String[] pinName = {"clock","reset","dataa","datab","start","n","a","readra","b","readrb",
                                      "c","writerc","result","done"};
@@ -126,11 +126,11 @@ public class Nios2 extends SocInstanceFactory implements DynamicElementProvider 
     ps[READRA] = new Port(280,0,Port.OUTPUT,1);
     ps[READRA].setToolTip(S.getter("Nios2ReadRa"));
     ps[B] = new Port(330,0,Port.OUTPUT,5);
-    ps[B].setToolTip(S.getter("Nios2A"));
+    ps[B].setToolTip(S.getter("Nios2B"));
     ps[READRB] = new Port(380,0,Port.OUTPUT,1);
     ps[READRB].setToolTip(S.getter("Nios2ReadRb"));
     ps[C] = new Port(430,0,Port.OUTPUT,5);
-    ps[C].setToolTip(S.getter("Nios2A"));
+    ps[C].setToolTip(S.getter("Nios2C"));
     ps[WRITERC] = new Port(480,0,Port.OUTPUT,1);
     ps[WRITERC].setToolTip(S.getter("Nios2WriteRc"));
     ps[DONE] = new Port(560,0,Port.INPUT,1);
@@ -205,17 +205,6 @@ public class Nios2 extends SocInstanceFactory implements DynamicElementProvider 
 	  data.reset();
 	else
 	  data.setClock(state.getPortValue(CLOCK), ((InstanceStateImpl)state).getCircuitState());
-	/* TODO: Implement correctly the CI of the NIOS2 */
-	state.setPort(DATAA, Value.createKnown(32, 0), 5);
-	state.setPort(DATAB, Value.createKnown(32, 0), 5);
-	state.setPort(START, Value.createKnown(1, 0), 5);
-	state.setPort(N, Value.createKnown(8, 0), 5);
-	state.setPort(A, Value.createKnown(5, 0), 5);
-	state.setPort(READRA, Value.createKnown(1, 0), 5);
-	state.setPort(B, Value.createKnown(5, 0), 5);
-	state.setPort(READRB, Value.createKnown(1, 0), 5);
-	state.setPort(C, Value.createKnown(5, 0), 5);
-	state.setPort(WRITERC, Value.createKnown(1, 0), 5);
   }
 
   @Override

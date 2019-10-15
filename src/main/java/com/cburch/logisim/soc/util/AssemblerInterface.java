@@ -29,6 +29,14 @@
 package com.cburch.logisim.soc.util;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+
+import com.cburch.logisim.circuit.CircuitState;
+import com.cburch.logisim.soc.data.SocProcessorInterface;
+import com.cburch.logisim.soc.file.ElfProgramHeader;
+import com.cburch.logisim.soc.file.ElfSectionHeader;
 
 public interface AssemblerInterface {
   public void decode(int instruction);
@@ -37,5 +45,10 @@ public interface AssemblerInterface {
   public ArrayList<String> getOpcodes();
   public int getInstructionSize(String opcode);
   public boolean usesRoundedBrackets();
+  public String getProgram(CircuitState circuitState, SocProcessorInterface processorInterface, 
+                           ElfProgramHeader elfHeader, ElfSectionHeader elfSections, 
+                           HashMap<Integer,Integer> validDebugLines);
   public String getHighlightStringIdentifier();
+  public void performUpSpecificOperationsOnTokens(LinkedList<AssemblerToken> tokens);
+  public HashSet<Integer> getAcceptedParameterTypes();
 }

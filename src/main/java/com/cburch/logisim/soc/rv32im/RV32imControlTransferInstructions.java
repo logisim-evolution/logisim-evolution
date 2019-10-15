@@ -203,7 +203,6 @@ public class RV32imControlTransferInstructions extends AbstractExecutionUnitWith
   
 
   public int getBinInstruction() { return instruction; }
-  public boolean isPcRelative() { return isPcRelative; }
 
   public boolean setBinInstruction(int instr) {
     instruction = instr;
@@ -212,8 +211,6 @@ public class RV32imControlTransferInstructions extends AbstractExecutionUnitWith
     return valid;
   }
   
-  public int getPcOffset() { return immediate; }
-
   public boolean performedJump() {return valid&jumped;}
 
   public boolean isValid() { return valid; }
@@ -228,7 +225,7 @@ public class RV32imControlTransferInstructions extends AbstractExecutionUnitWith
                     return true;
       case JALR   : if (RV32imSupport.getFunct3(instruction)!=0)
                       return false;
-                    isPcRelative = true;
+                    isPcRelative = false;
                     destination = RV32imSupport.getDestinationRegisterIndex(instruction);
                     operation = (destination == 0) ? INSTR_JR : INSTR_JALR;
                     source1 = RV32imSupport.getSourceRegister1Index(instruction);
@@ -270,7 +267,7 @@ public class RV32imControlTransferInstructions extends AbstractExecutionUnitWith
     AssemblerToken[] param1,param2,param3;
     switch (operation) {
       case INSTR_RET  : if (instr.getNrOfParameters() != 0) {
-                          instr.setError(instr.getInstruction(), S.getter("Rv32imAssemblerExpectedNoArguments"));
+                          instr.setError(instr.getInstruction(), S.getter("AssemblerExpectedNoArguments"));
                           errors = true;
                           break;
                         }
@@ -289,13 +286,13 @@ public class RV32imControlTransferInstructions extends AbstractExecutionUnitWith
                         }
                         param1 = instr.getParameter(0);
                         if (param1.length != 1 || param1[0].getType() != AssemblerToken.REGISTER) {
-                          instr.setError(param1[0], S.getter("RV32imAssemblerExpectedRegister"));
+                          instr.setError(param1[0], S.getter("AssemblerExpectedRegister"));
                           errors = true;
                           break;
                         }
                         destination = RV32im_state.getRegisterIndex(param1[0].getValue());
                         if (destination < 0 || destination > 31) {
-                          instr.setError(param1[0], S.getter("RV32imAssemblerUnknownRegister"));
+                          instr.setError(param1[0], S.getter("AssemblerUnknownRegister"));
                           errors = true;
                           break;
                         }
@@ -304,7 +301,7 @@ public class RV32imControlTransferInstructions extends AbstractExecutionUnitWith
                         if (instr.getNrOfParameters() == 2) {
                           param2 = instr.getParameter(1);
                           if (param2.length != 1 || !param2[0].isNumber()) {
-                            instr.setError(param2[0], S.getter("RV32imAssemblerExpectedImmediateValue"));
+                            instr.setError(param2[0], S.getter("AssemblerExpectedImmediateValue"));
                             errors = true;
                             break;
                           }
@@ -322,13 +319,13 @@ public class RV32imControlTransferInstructions extends AbstractExecutionUnitWith
                         }
                         break;
       case INSTR_J    : if (instr.getNrOfParameters() != 1) {
-                          instr.setError(instr.getInstruction(), S.getter("Rv32imAssemblerExpectedOneArgument"));
+                          instr.setError(instr.getInstruction(), S.getter("AssemblerExpectedOneArgument"));
                           errors = true;
                           break;
                         }
                         param1 = instr.getParameter(0);
                         if (param1.length != 1 || !param1[0].isNumber()) {
-                          instr.setError(param1[0], S.getter("RV32imAssemblerExpectedImmediateValue"));
+                          instr.setError(param1[0], S.getter("AssemblerExpectedImmediateValue"));
                         }
                         immediate = param1[0].getNumberValue();
                         destination = source1 = source2 = 0;
@@ -341,25 +338,25 @@ public class RV32imControlTransferInstructions extends AbstractExecutionUnitWith
                         }
                         param1 = instr.getParameter(0);
                         if (param1.length != 1 || param1[0].getType() != AssemblerToken.REGISTER) {
-                          instr.setError(param1[0], S.getter("RV32imAssemblerExpectedRegister"));
+                          instr.setError(param1[0], S.getter("AssemblerExpectedRegister"));
                           errors = true;
                           break;
                         }
                         destination = RV32im_state.getRegisterIndex(param1[0].getValue());
                         if (destination < 0 || destination > 31) {
-                          instr.setError(param1[0], S.getter("RV32imAssemblerUnknownRegister"));
+                          instr.setError(param1[0], S.getter("AssemblerUnknownRegister"));
                           errors = true;
                           break;
                         }
                         param2 = instr.getParameter(1);
                         if (param2.length != 1 || param2[0].getType() != AssemblerToken.REGISTER) {
-                          instr.setError(param2[0], S.getter("RV32imAssemblerExpectedRegister"));
+                          instr.setError(param2[0], S.getter("AssemblerExpectedRegister"));
                           errors = true;
                           break;
                         }
                         source1 = source2 = RV32im_state.getRegisterIndex(param2[0].getValue());
                         if (source1 < 0 || source1 > 31) {
-                          instr.setError(param1[0], S.getter("RV32imAssemblerUnknownRegister"));
+                          instr.setError(param1[0], S.getter("AssemblerUnknownRegister"));
                           errors = true;
                           break;
                         }
@@ -367,7 +364,7 @@ public class RV32imControlTransferInstructions extends AbstractExecutionUnitWith
                         if (instr.getNrOfParameters() == 3) {
                           param3 = instr.getParameter(2);
                           if (param3.length != 1 || !param3[0].isNumber()) {
-                            instr.setError(param3[0], S.getter("RV32imAssemblerExpectedImmediateValue"));
+                            instr.setError(param3[0], S.getter("AssemblerExpectedImmediateValue"));
                             errors = true;
                             break;
                           }
@@ -386,7 +383,7 @@ public class RV32imControlTransferInstructions extends AbstractExecutionUnitWith
                           immediate = (int) imm;
                           if (immediate >= (1<<19) || immediate < -(1<<19)) {
                             instr.setError(instr.getParameter(instr.getNrOfParameters()-1)[0], 
-                                S.getter("RV32imAssemblerImmediateOutOfRange"));
+                                S.getter("AssemblerImmediateOutOfRange"));
                             errors = true;
                             break;
                           }
@@ -394,7 +391,7 @@ public class RV32imControlTransferInstructions extends AbstractExecutionUnitWith
                           break;
          case INSTR_JALR: if (immediate >= (1<<10) || immediate < -(1<<10)) {
         	                instr.setError(instr.getParameter(instr.getNrOfParameters()-1)[0], 
-                                S.getter("RV32imAssemblerImmediateOutOfRange"));
+                                S.getter("AssemblerImmediateOutOfRange"));
         	                errors = true;
         	                break;
                           }
@@ -410,7 +407,7 @@ public class RV32imControlTransferInstructions extends AbstractExecutionUnitWith
                           immediate = (int) imm;
                           if (immediate >= (1<<11) || immediate < -(1<<11)) {
                             instr.setError(instr.getParameter(instr.getNrOfParameters()-1)[0], 
-                                S.getter("RV32imAssemblerImmediateOutOfRange"));
+                                S.getter("AssemblerImmediateOutOfRange"));
                             errors = true;
                             break;
                           }
@@ -428,5 +425,8 @@ public class RV32imControlTransferInstructions extends AbstractExecutionUnitWith
     }
     return true;
   }
+
+  public boolean isLabelSupported() { return isPcRelative; }
+  public long getLabelAddress(long pc) { return pc+immediate; }
 
 }

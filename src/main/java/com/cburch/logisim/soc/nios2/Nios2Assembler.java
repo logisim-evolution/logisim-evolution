@@ -28,53 +28,38 @@
 
 package com.cburch.logisim.soc.nios2;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 
-import com.cburch.logisim.soc.util.AssemblerAsmInstruction;
-import com.cburch.logisim.soc.util.AssemblerExecutionInterface;
-import com.cburch.logisim.soc.util.AssemblerInterface;
+import com.cburch.logisim.soc.util.AbstractAssembler;
+import com.cburch.logisim.soc.util.AssemblerToken;
 
-public class Nios2Assembler implements AssemblerInterface {
+public class Nios2Assembler extends AbstractAssembler {
 
-  private ArrayList<AssemblerExecutionInterface> exeUnits;
-  
+  public static final int CUSTOM_REGISTER = 256;
+
   public Nios2Assembler() {
-    exeUnits = new ArrayList<AssemblerExecutionInterface>();
+	super();
+    super.AddAcceptedParameterType(CUSTOM_REGISTER);
+	/* Add the custom instructions */
+    super.addAssemblerExecutionUnit(new Nios2CustomInstructions());
+    /* Add all other instructions */
+    super.addAssemblerExecutionUnit(new Nios2DataTransferInstructions());
+    super.addAssemblerExecutionUnit(new Nios2ArithmeticAndLogicalInstructions());
+    super.addAssemblerExecutionUnit(new Nios2ComparisonInstructions());
+    super.addAssemblerExecutionUnit(new Nios2ShiftAndRotateInstructions());
+    super.addAssemblerExecutionUnit(new Nios2ProgramControlInstructions());
   }
 
-  @Override
-  public void decode(int instruction) {
-    // TODO Auto-generated method stub
-    
-  }
-
-  @Override
-  public boolean assemble(AssemblerAsmInstruction instruction) {
-    // TODO Auto-generated method stub
-    return false;
-  }
-
-  @Override
-  public AssemblerExecutionInterface getExeUnit() {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  @Override
-  public ArrayList<String> getOpcodes() {
-    // TODO Auto-generated method stub
-    return new ArrayList<String>();
-  }
-
-  public int getInstructionSize(String opcode) { 
-    for (AssemblerExecutionInterface exe : exeUnits) {
-      int size = exe.getInstructionSizeInBytes(opcode);
-      if (size > 0) return size;
-    }
-    return 1; /* to make sure that instructions are not overwritten */
-  }
-  
   public boolean usesRoundedBrackets() { return true; }
   public String getHighlightStringIdentifier() { return "asm/nios2"; }
+
+  public void performUpSpecificOperationsOnTokens(LinkedList<AssemblerToken> tokens) {
+    for (AssemblerToken token : tokens) {
+      if (token.getType() == AssemblerToken.REGISTER) {
+        if (token.getValue().toLowerCase().startsWith("c"))
+          token.setType(CUSTOM_REGISTER);
+      }
+    }
+  }
 
 }

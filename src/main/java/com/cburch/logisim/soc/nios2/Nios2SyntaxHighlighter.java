@@ -40,7 +40,10 @@ public class Nios2SyntaxHighlighter extends AssemblerHighlighter {
     for (int i = 0 ; i < Nios2State.registerABINames.length ; i++)
       map.put(Nios2State.registerABINames[i], Token.OPERATOR);
     map.put("pc", Token.OPERATOR);
-    for (int i = 0 ; i < 32 ; i++) map.put("r"+i, Token.OPERATOR);
+    for (int i = 0 ; i < 32 ; i++) {
+      map.put("r"+i, Token.OPERATOR);
+      map.put("c"+i, Token.OPERATOR);
+    }
     for (String opcode : Nios2State.ASSEMBLER.getOpcodes())
       map.put(opcode.toLowerCase(), Token.RESERVED_WORD);
     return map;

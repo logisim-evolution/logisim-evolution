@@ -264,13 +264,7 @@ public class AssemblerInfo {
   
   private int handleInstruction(LinkedList<AssemblerToken> tokens, int index , AssemblerToken current) {
     AssemblerAsmInstruction instruction = new AssemblerAsmInstruction(current, assembler.getInstructionSize(current.getValue()));
-    HashSet<Integer> acceptedParameters = new HashSet<Integer>();
-    acceptedParameters.add(AssemblerToken.BRACKETED_REGISTER);
-    acceptedParameters.add(AssemblerToken.DEC_NUMBER);
-    acceptedParameters.add(AssemblerToken.HEX_NUMBER);
-    acceptedParameters.add(AssemblerToken.PARAMETER_LABEL);
-    acceptedParameters.add(AssemblerToken.REGISTER);
-    acceptedParameters.add(AssemblerToken.SEPERATOR);
+    HashSet<Integer> acceptedParameters = assembler.getAcceptedParameterTypes();
     int skip = 0;
     if (index+1 < tokens.size()) {
       ArrayList<AssemblerToken> params = new ArrayList<AssemblerToken>();

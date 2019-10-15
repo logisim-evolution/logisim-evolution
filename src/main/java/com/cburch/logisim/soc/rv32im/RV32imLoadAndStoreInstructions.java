@@ -128,9 +128,9 @@ public class RV32imLoadAndStoreInstructions implements AssemblerExecutionInterfa
     if (trans.hasError()) {
       StringBuffer s = new StringBuffer();
       if (trans.isReadTransaction())
-        s.append(S.get("RV32imLoadStoreErrorInReadTransaction")+"\n");
+        s.append(S.get("LoadStoreErrorInReadTransaction")+"\n");
       else
-        s.append(S.get("RV32imLoadStoreErrorInWriteTransaction")+"\n");
+        s.append(S.get("LoadStoreErrorInWriteTransaction")+"\n");
       s.append(trans.getErrorMessage());
       errorMessage = s.toString();
     }
@@ -211,7 +211,7 @@ public class RV32imLoadAndStoreInstructions implements AssemblerExecutionInterfa
       return false;
     }
     if (instr.getNrOfParameters() != 2) {
-      instr.setError(instr.getInstruction(), S.getter("Rv32imAssemblerExpectedTwoArguments"));
+      instr.setError(instr.getInstruction(), S.getter("AssemblerExpectedTwoArguments"));
       valid = false;
       return true;
     }
@@ -219,7 +219,7 @@ public class RV32imLoadAndStoreInstructions implements AssemblerExecutionInterfa
     valid = true;
     param1 = instr.getParameter(0);
     if (param1.length != 1 || param1[0].getType() != AssemblerToken.REGISTER) {
-      instr.setError(param1[0], S.getter("RV32imAssemblerExpectedRegister"));
+      instr.setError(param1[0], S.getter("AssemblerExpectedRegister"));
       valid = false;
     }
     param2 = instr.getParameter(1);
@@ -229,7 +229,7 @@ public class RV32imLoadAndStoreInstructions implements AssemblerExecutionInterfa
       return true;
     }
     if (!param2[0].isNumber()) {
-      instr.setError(param2[0], S.getter("RV32imAssemblerExpectedImmediateValue"));
+      instr.setError(param2[0], S.getter("AssemblerExpectedImmediateValue"));
       valid = false;
     }
     if (param2[1].getType() != AssemblerToken.BRACKETED_REGISTER) {
@@ -239,17 +239,17 @@ public class RV32imLoadAndStoreInstructions implements AssemblerExecutionInterfa
     if (!valid) return true;
     destination = RV32im_state.getRegisterIndex(param1[0].getValue());
     if (destination < 0 || destination > 31) {
-      instr.setError(param1[0], S.getter("RV32imAssemblerUnknownRegister"));
+      instr.setError(param1[0], S.getter("AssemblerUnknownRegister"));
       valid = false;
     }
     base = RV32im_state.getRegisterIndex(param2[1].getValue());
     if (base < 0 || base > 31) {
-      instr.setError(param2[1], S.getter("RV32imAssemblerUnknownRegister"));
+      instr.setError(param2[1], S.getter("AssemblerUnknownRegister"));
       valid = false;
     }
     immediate = param2[0].getNumberValue();
     if (immediate >= (1<<11) || immediate < -(1<<11)) {
-      instr.setError(param2[0], S.getter("RV32imAssemblerImmediateOutOfRange"));
+      instr.setError(param2[0], S.getter("AssemblerImmediateOutOfRange"));
       valid = false;
     }
     if (!valid) return true;

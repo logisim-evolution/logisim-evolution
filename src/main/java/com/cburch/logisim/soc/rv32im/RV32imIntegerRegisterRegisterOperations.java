@@ -194,7 +194,7 @@ public class RV32imIntegerRegisterRegisterOperations implements AssemblerExecuti
     boolean errors = false;
     AssemblerToken[] param1,param2,param3;
     if (instr.getNrOfParameters() != (operation == INSTR_SNEZ ? 2 : 3)) {
-      instr.setError(instr.getInstruction(), S.getter("Rv32imAssemblerExpectedThreeArguments"));
+      instr.setError(instr.getInstruction(), S.getter("AssemblerExpectedThreeArguments"));
       valid = false;
       return true;
     }
@@ -206,30 +206,30 @@ public class RV32imIntegerRegisterRegisterOperations implements AssemblerExecuti
       param3 = param2;
     if (param1.length != 1 || param1[0].getType() != AssemblerToken.REGISTER) {
       errors = true;
-      instr.setError(param1[0], S.getter("RV32imAssemblerExpectedRegister"));
+      instr.setError(param1[0], S.getter("AssemblerExpectedRegister"));
     }
     if (param2.length != 1 || param2[0].getType() != AssemblerToken.REGISTER) {
       errors = true;
-      instr.setError(param2[0], S.getter("RV32imAssemblerExpectedRegister"));
+      instr.setError(param2[0], S.getter("AssemblerExpectedRegister"));
     }
     if (param3 != param2 && (param3.length != 1 || param3[0].getType() != AssemblerToken.REGISTER)) {
       errors = true;
-      instr.setError(param3[0], S.getter("RV32imAssemblerExpectedRegister"));
+      instr.setError(param3[0], S.getter("AssemblerExpectedRegister"));
     }
     destination = RV32im_state.getRegisterIndex(param1[0].getValue());
     source1 = RV32im_state.getRegisterIndex(param2[0].getValue());
     source2 = RV32im_state.getRegisterIndex(param3[0].getValue());
     if (destination < 0 || destination > 31) {
       errors = true;
-      instr.setError(param1[0], S.getter("RV32imAssemblerUnknownRegister"));
+      instr.setError(param1[0], S.getter("AssemblerUnknownRegister"));
     }
     if (source1 < 0 || source1 > 31) {
       errors = true;
-      instr.setError(param2[0], S.getter("RV32imAssemblerUnknownRegister"));
+      instr.setError(param2[0], S.getter("AssemblerUnknownRegister"));
     }
     if (param3 != param2 && (source2 < 0 || source2 > 31)) {
       errors = true;
-      instr.setError(param3[0], S.getter("RV32imAssemblerUnknownRegister"));
+      instr.setError(param3[0], S.getter("AssemblerUnknownRegister"));
     }
     if (operation == INSTR_SNEZ) {
       source1 = 0;

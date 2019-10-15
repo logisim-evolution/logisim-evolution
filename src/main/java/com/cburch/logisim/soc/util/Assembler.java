@@ -180,6 +180,10 @@ public class Assembler extends AbstractParser implements LocaleListener {
       }
     }
     for (AssemblerToken asm : toBeRemoved) assemblerTokens.remove(asm);
+    /* fifth pass: perform up specific operations */
+    assembler.performUpSpecificOperationsOnTokens(assemblerTokens);
+    for (AssemblerToken error : assemblerInfo.getErrors().keySet()) 
+        addError(error.getoffset(),assemblerInfo.getErrors().get(error),errorMarkers.keySet());
     /* here the real work starts */
     assemblerInfo.assemble(assemblerTokens,labels);
     for (AssemblerToken error : assemblerInfo.getErrors().keySet()) 
