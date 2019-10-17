@@ -96,4 +96,19 @@ public class AssemblerAsmInstruction {
 	}
     return true;
   }
+  
+  public boolean replaceDefines(HashMap<String,Integer> defines) {
+	for (AssemblerToken[] parameter : parameters) {
+      for (int i = 0 ; i < parameter.length ; i++) {
+        if (parameter[i].getType() == AssemblerToken.MAYBE_LABEL) {
+          String Name = parameter[i].getValue();
+            if (!defines.containsKey(Name))
+              return false;
+            parameter[i].setType(AssemblerToken.HEX_NUMBER);
+            parameter[i].setValue(String.format("0x%08X", defines.get(Name)));
+        }
+      }
+ 	}
+    return true;
+  }
 }

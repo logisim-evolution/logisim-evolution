@@ -124,39 +124,74 @@ public class Assembler extends AbstractParser implements LocaleListener {
     }
     /* Fourth pass: calculate all resulting numbers, merge multi-line strings and determine
      *              the bracketed registers */
+    
+    /* IMPORTANT: the math functions are evaluated always left to right (can be improved), hence:
+     * 5+10*2 => (5+10)*2 = 30
+     * 10*2+5 => (10*2)+5 = 25
+     */
     ArrayList<AssemblerToken> toBeRemoved = new ArrayList<AssemblerToken>();
     for (int i = 0 ; i < assemblerTokens.size() ; i++) {
       AssemblerToken asm = assemblerTokens.get(i);
-      if (asm.getType() == AssemblerToken.MATH_ADD || asm.getType() == AssemblerToken.MATH_SUBTRACT) {
-        if (i == 0) { 
-          addError(asm.getoffset(),S.getter("AssemblerReguiresNumberBeforeMath"),errorMarkers.keySet());
-          continue;
-        }
+      if (AssemblerToken.MATH_OPERATORS.contains(asm.getType())) {
         if ((i+1) >= assemblerTokens.size()) {
           addError(asm.getoffset(),S.getter("AssemblerReguiresNumberAfterMath"),errorMarkers.keySet());
           continue;
         }
-        AssemblerToken before = assemblerTokens.get(i-1);
+        AssemblerToken before = (i==0) ? null :assemblerTokens.get(i-1);
         AssemblerToken after = assemblerTokens.get(i+1);
-        if (!before.isNumber()) {
-          addError(asm.getoffset(),S.getter("AssemblerReguiresNumberBeforeMath"),errorMarkers.keySet());
-          continue;
-        }
+        if (before == null || !before.isNumber()) 
+          before = null;
         if (!after.isNumber()) {
           addError(asm.getoffset(),S.getter("AssemblerReguiresNumberAfterMath"),errorMarkers.keySet());
           continue;
         }
+        int beforeValue = before == null ? 0 : before.getNumberValue();
         switch (asm.getType()) {
-          case AssemblerToken.MATH_ADD : after.setValue(before.getNumberValue()+after.getNumberValue());
-                                         toBeRemoved.add(before);
-                                         toBeRemoved.add(asm);
-                                         i++;
-                                         break;
-          case AssemblerToken.MATH_SUBTRACT : after.setValue(before.getNumberValue()-after.getNumberValue());
-                                              toBeRemoved.add(before);
-                                              toBeRemoved.add(asm);
-                                              i++;
-                                              break;
+          case AssemblerToken.MATH_ADD        : after.setValue(beforeValue+after.getNumberValue());
+                                                if (before != null) toBeRemoved.add(before);
+                                                toBeRemoved.add(asm);
+                                                i++;
+                                                break;
+          case AssemblerToken.MATH_SHIFT_LEFT : after.setValue(beforeValue<<after.getNumberValue());
+                                                if (before != null) toBeRemoved.add(before);
+                                                toBeRemoved.add(asm);
+                                                i++;
+                                                break;
+          case AssemblerToken.MATH_SHIFT_RIGHT: after.setValue(beforeValue>>after.getNumberValue());
+                                                if (before != null) toBeRemoved.add(before);
+                                                toBeRemoved.add(asm);
+                                                i++;
+                                                break;
+          case AssemblerToken.MATH_SUBTRACT   : after.setValue(beforeValue-after.getNumberValue());
+                                                if (before != null) toBeRemoved.add(before);
+                                                toBeRemoved.add(asm);
+                                                i++;
+                                                break;
+          case AssemblerToken.MATH_MUL        : after.setValue(beforeValue*after.getNumberValue());
+                                                if (before != null) toBeRemoved.add(before);
+                                                toBeRemoved.add(asm);
+                                                i++;
+                                                break;
+          case AssemblerToken.MATH_DIV        : if (after.getNumberValue() == 0) {
+        	                                      addError(after.getoffset(),S.getter("AssemblerDivZero"), errorMarkers.keySet());
+        	                                      i++;
+        	                                      break;
+                                                }
+        	                                    after.setValue(beforeValue/after.getNumberValue());
+                                                if (before != null) toBeRemoved.add(before);
+                                                toBeRemoved.add(asm);
+                                                i++;
+                                                break;
+          case AssemblerToken.MATH_REM        : if (after.getNumberValue() == 0) {
+                                                  addError(after.getoffset(),S.getter("AssemblerDivZero"), errorMarkers.keySet());
+                                                  i++;
+                                                  break;
+                                                }
+                                                after.setValue(beforeValue%after.getNumberValue());
+                                                if (before != null) toBeRemoved.add(before);
+                                                toBeRemoved.add(asm);
+                                                i++;
+                                                break;
         }
       } else if (asm.getType() == AssemblerToken.STRING && (i+1) < assemblerTokens.size()) {
         AssemblerToken next;
@@ -180,10 +215,10 @@ public class Assembler extends AbstractParser implements LocaleListener {
       }
     }
     for (AssemblerToken asm : toBeRemoved) assemblerTokens.remove(asm);
-    /* fifth pass: perform up specific operations */
-    assembler.performUpSpecificOperationsOnTokens(assemblerTokens);
     for (AssemblerToken error : assemblerInfo.getErrors().keySet()) 
         addError(error.getoffset(),assemblerInfo.getErrors().get(error),errorMarkers.keySet());
+    /* fifth pass: perform cpu specific operations */
+    assembler.performUpSpecificOperationsOnTokens(assemblerTokens);
     /* here the real work starts */
     assemblerInfo.assemble(assemblerTokens,labels);
     for (AssemblerToken error : assemblerInfo.getErrors().keySet()) 
@@ -264,6 +299,16 @@ public class Assembler extends AbstractParser implements LocaleListener {
         	lineTokens.add(new AssemblerToken(AssemblerToken.MATH_SUBTRACT,null,offset));
           else if (name.equals("+"))
         	lineTokens.add(new AssemblerToken(AssemblerToken.MATH_ADD,null,offset));
+          else if (name.equals("*"))
+        	lineTokens.add(new AssemblerToken(AssemblerToken.MATH_MUL,null,offset));
+          else if (name.equals("%"))
+        	lineTokens.add(new AssemblerToken(AssemblerToken.MATH_REM,null,offset));
+          else if (name.equals("/"))
+        	lineTokens.add(new AssemblerToken(AssemblerToken.MATH_DIV,null,offset));
+          else if (name.equals("<<"))
+        	lineTokens.add(new AssemblerToken(AssemblerToken.MATH_SHIFT_LEFT,null,offset));
+          else if (name.equals(">>"))
+        	lineTokens.add(new AssemblerToken(AssemblerToken.MATH_SHIFT_RIGHT,null,offset));
           else addError(offset,S.getter("AssemblerUnknowCharacter"),lineErrorMarkers);
         } else
           switch (type) {

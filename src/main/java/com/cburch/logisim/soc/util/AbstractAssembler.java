@@ -58,6 +58,7 @@ public abstract class AbstractAssembler implements AssemblerInterface {
     acceptedParameterTypes.add(AssemblerToken.PARAMETER_LABEL);
     acceptedParameterTypes.add(AssemblerToken.REGISTER);
     acceptedParameterTypes.add(AssemblerToken.SEPERATOR);
+    acceptedParameterTypes.add(AssemblerToken.MAYBE_LABEL);
   }
   
   public void AddAcceptedParameterType(int type) { acceptedParameterTypes.add(type); }
@@ -158,18 +159,42 @@ public abstract class AbstractAssembler implements AssemblerInterface {
           int j = i+1;
           while (j < size) {
             kar = getByte(contents,j);
+            switch (kar) {
+              case  8 : str.append("\\");
+                        kar = 'b';
+                        break;
+              case  9 : str.append("\\");
+                        kar = 't';
+                        break;
+              case 10 : str.append("\\");
+                        kar = 'n';
+                        break;
+              case 12 : str.append("\\");
+                        kar = 'f';
+                        break;
+              case 13 : str.append("\\");
+                        kar = 'r';
+                        break;
+              case 34 :
+              case 92 : str.append("\\");
+                        break;
+            }
             if (kar < 32 || kar >= 127) break;
-            if (kar == 34 || kar == 92) str.append('\\');
             str.append((char)kar);
             j++;
           }
           if (str.length()>2) {
             stringFound = true;
             i = j;
+            String type = ".ascii";
+            if (i < size && getByte(contents,i) == 0) {
+              i++;
+              type = ".string";
+            }
             if (nrBytesWritten > 0) newLineNum = addLine(lines,"\n",newLineNum,true);
             if (nrBytesWritten >= 0) 
               for (int sp = 0 ; sp < maxLabelSize ; sp++) newLineNum = addLine(lines," ",newLineNum,false);
-            newLineNum = addLine(lines," .string \""+str.toString()+"\"\n",newLineNum,true);
+            newLineNum = addLine(lines," "+type+" \""+str.toString()+"\"\n",newLineNum,true);
             nrBytesWritten = 0;
           }
         }
