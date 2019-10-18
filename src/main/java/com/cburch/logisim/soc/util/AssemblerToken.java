@@ -52,6 +52,7 @@ public class AssemblerToken {
   public static final int MATH_REM = 19;
   public static final int MATH_SHIFT_LEFT = 20;
   public static final int MATH_SHIFT_RIGHT = 21;
+  public static final int PROGRAM_COUNTER = 22;
   /* all numbers below 256 are reserved for internal usage, the numbers starting from 256 can
    * be used for custom purposes.
    */

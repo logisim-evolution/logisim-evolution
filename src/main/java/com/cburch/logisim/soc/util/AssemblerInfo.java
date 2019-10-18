@@ -130,6 +130,8 @@ public class AssemblerInfo {
     }
     
     public void addInstruction(AssemblerAsmInstruction instr) {
+      /* in the case we have a pc related parameter we can now replace it by a value */
+      instr.replacePcAndDoCalc(sectionEnd,errors);
       instructions.put(sectionEnd, instr);
       sectionEnd += instr.getSizeInBytes();
     }

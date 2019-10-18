@@ -115,7 +115,7 @@ public class Assembler extends AbstractParser implements LocaleListener {
       if (asm.getType() == AssemblerToken.LABEL)
         labels.put(asm.getValue(), -1L);
     }
-    /* Third pass, we are going to mark all known labels */
+    /* Third pass, we are going to mark all known labels and references to the pc*/
     for (AssemblerToken asm : assemblerTokens) {
         if (asm.getType() == AssemblerToken.MAYBE_LABEL) {
           if (labels.containsKey(asm.getValue())) 
@@ -139,14 +139,16 @@ public class Assembler extends AbstractParser implements LocaleListener {
         }
         AssemblerToken before = (i==0) ? null :assemblerTokens.get(i-1);
         AssemblerToken after = assemblerTokens.get(i+1);
-        if (before == null || !before.isNumber()) 
+        if (before == null || (!before.isNumber() && before.getType()!=AssemblerToken.PROGRAM_COUNTER)) 
           before = null;
-        if (!after.isNumber()) {
+        if (!after.isNumber() && after.getType() != AssemblerToken.PROGRAM_COUNTER) {
           addError(asm.getoffset(),S.getter("AssemblerReguiresNumberAfterMath"),errorMarkers.keySet());
           continue;
         }
         int beforeValue = before == null ? 0 : before.getNumberValue();
-        switch (asm.getType()) {
+        if (after.getType() == AssemblerToken.PROGRAM_COUNTER || (before != null && before.getType() == AssemblerToken.PROGRAM_COUNTER)) {
+          i++;
+        } else switch (asm.getType()) {
           case AssemblerToken.MATH_ADD        : after.setValue(beforeValue+after.getNumberValue());
                                                 if (before != null) toBeRemoved.add(before);
                                                 toBeRemoved.add(asm);
@@ -193,7 +195,7 @@ public class Assembler extends AbstractParser implements LocaleListener {
                                                 i++;
                                                 break;
         }
-      } else if (asm.getType() == AssemblerToken.STRING && (i+1) < assemblerTokens.size()) {
+    } else if (asm.getType() == AssemblerToken.STRING && (i+1) < assemblerTokens.size()) {
         AssemblerToken next;
         do {
           next = assemblerTokens.get(i+1);
@@ -322,7 +324,8 @@ public class Assembler extends AbstractParser implements LocaleListener {
                 lineTokens.add(new AssemblerToken(AssemblerToken.ASM_INSTRUCTION,name,offset));
                 break;
             case Token.OPERATOR :
-                lineTokens.add(new AssemblerToken(AssemblerToken.REGISTER,name,offset));
+                lineTokens.add(new AssemblerToken(name.equals("pc") ? AssemblerToken.PROGRAM_COUNTER :
+                                                  AssemblerToken.REGISTER,name,offset));
                 break;
             case Token.RESERVED_WORD :
                 lineTokens.add(new AssemblerToken(AssemblerToken.INSTRUCTION,name,offset));

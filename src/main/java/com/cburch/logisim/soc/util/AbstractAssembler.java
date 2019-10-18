@@ -59,6 +59,8 @@ public abstract class AbstractAssembler implements AssemblerInterface {
     acceptedParameterTypes.add(AssemblerToken.REGISTER);
     acceptedParameterTypes.add(AssemblerToken.SEPERATOR);
     acceptedParameterTypes.add(AssemblerToken.MAYBE_LABEL);
+    acceptedParameterTypes.add(AssemblerToken.PROGRAM_COUNTER);
+    acceptedParameterTypes.addAll(AssemblerToken.MATH_OPERATORS);
   }
   
   public void AddAcceptedParameterType(int type) { acceptedParameterTypes.add(type); }
