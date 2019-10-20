@@ -327,8 +327,20 @@ public abstract class AbstractAssembler implements AssemblerInterface {
               }
             }
           }
+          /* when we already have labels with the given name, lets determine the offset */
+          int offset = 0;
+          for (Integer addr : labels.keySet()) {
+            String label = labels.get(addr);
+            if (label != null && label.startsWith("logisim_label_")) {
+              int index = 0;
+              try { index = Integer.parseUnsignedInt(label.substring(14)); }
+              catch (NumberFormatException e) {};
+              if (index > offset) offset = index+1;
+            }
+          }
+
           for (int i = 0 ; i < newLabels.size(); i++) {
-            String label = "logisim_label_"+i;
+            String label = "logisim_label_"+(i+offset);
             labels.put(newLabels.get(i), label);
             if (label.length() > maxLabelSize) maxLabelSize = label.length();
           }

@@ -57,25 +57,30 @@ public class AssemblerInfo {
     private long sectionEnd;
     private HashMap<Long,Byte> data;
     private HashMap<Long,AssemblerAsmInstruction> instructions;
+    private AssemblerToken identifier;
     
     public AssemblerSectionInfo() {
       super("NoName");
+      identifier = null;
       init(0);
     }
     
-    public AssemblerSectionInfo(String name) {
+    public AssemblerSectionInfo(String name, AssemblerToken identifier) {
       super(name);
+      this.identifier = identifier;
       init(0); 
     }
     
-    public AssemblerSectionInfo(long start, String name) {
+    public AssemblerSectionInfo(long start, String name, AssemblerToken identifier) {
       super(name);
+      this.identifier = identifier;
       init(start); 
     }
       
     public String getSectionName() { return super.getName(); }
     public long getSectionEnd() { return sectionEnd; }
     public boolean hasInstructions() { return !instructions.isEmpty(); }
+    public AssemblerToken getIdentifier() { return identifier; }
     
     public long getEntryPoint() {
       if (instructions.isEmpty()) return -1;
@@ -136,12 +141,9 @@ public class AssemblerInfo {
       sectionEnd += instr.getSizeInBytes();
     }
     
-    public ArrayList<AssemblerToken> replaceLabels(HashMap<String,Long> labels) {
-      ArrayList<AssemblerToken> errors = new ArrayList<AssemblerToken>();
-      for (long addr : instructions.keySet()) {
-        if (!instructions.get(addr).replaceLabels(labels))
-          errors.add(instructions.get(addr).getInstruction());
-      }
+    public boolean replaceLabels(HashMap<String,Long> labels, HashMap<AssemblerToken,StringGetter> errors) {
+      boolean hasError = false;
+      for (long addr : instructions.keySet()) hasError |= !instructions.get(addr).replaceLabels(labels,errors);
       for (String label : labels.keySet()) {
         long addr = labels.get(label);
         if (addr >= sectionStart && addr < sectionEnd) {
@@ -149,16 +151,14 @@ public class AssemblerInfo {
           super.addSymbol(st);
         }
       }
-      return errors;
+      return !hasError;
     }
     
-    public ArrayList<AssemblerToken> replaceDefines(HashMap<String,Integer> defines) {
-      ArrayList<AssemblerToken> errors = new ArrayList<AssemblerToken>();
-      for (long addr : instructions.keySet()) {
-        if (!instructions.get(addr).replaceDefines(defines))
-          errors.add(instructions.get(addr).getInstruction());
-      }
-      return errors;
+    public boolean replaceDefines(HashMap<String,Integer> defines, HashMap<AssemblerToken,StringGetter> errors) {
+      boolean errorsFound = false;
+      for (long addr : instructions.keySet())
+    	errorsFound |= !instructions.get(addr).replaceDefines(defines,errors);
+      return !errorsFound;
     }
       
     public HashMap<AssemblerToken,StringGetter> replaceInstructions(AssemblerInterface assembler) {
@@ -215,6 +215,8 @@ public class AssemblerInfo {
           ret.add((AssemblerSectionInfo)hdr);
       return ret;
     }
+    
+    public int size() { return super.getHeaders().size(); }
   }
   
   private SectionHeaders sections;
@@ -231,7 +233,8 @@ public class AssemblerInfo {
   
   public HashMap<AssemblerToken,StringGetter> getErrors() { return errors; }
   
-  public void assemble(LinkedList<AssemblerToken> tokens, HashMap<String,Long> labels) {
+  public void assemble(LinkedList<AssemblerToken> tokens, HashMap<String,Long> labels,
+                       HashMap<String,AssemblerMacro> macros) {
     errors.clear();
     sections.clear();
     HashMap<String,Integer> defines = new HashMap<String,Integer>(); 
@@ -246,6 +249,8 @@ public class AssemblerInfo {
                                               continue;
         case AssemblerToken.INSTRUCTION     : i += handleInstruction(tokens,i,asm);
                                               continue;
+        case AssemblerToken.MACRO           : i += handleMacros(tokens,i,asm,macros);
+                                              continue;
         default                             : errors.put(asm, S.getter("AssemblerUnknownIdentifier"));
                                               continue;
       }
@@ -259,21 +264,26 @@ public class AssemblerInfo {
     	return;
       }
     }
-    ArrayList<AssemblerToken> labelErrors = new ArrayList<AssemblerToken>(); 
-    for (AssemblerSectionInfo section : sections.getAll()) labelErrors.addAll(section.replaceLabels(labels));
-    if (!labelErrors.isEmpty()) {
-      for (AssemblerToken error : labelErrors) {
-        errors.put(error, S.getter("AssemblerCouldNotFindAddressForLabel"));
+    boolean errorsFound = false;
+    for (AssemblerSectionInfo section : sections.getAll()) errorsFound |= !section.replaceLabels(labels,errors);
+    if (errorsFound) return;
+    errorsFound = false;
+    for (AssemblerSectionInfo section : sections.getAll()) errorsFound |= !section.replaceDefines(defines,errors);
+    if (errorsFound) return;
+    /* third pass: Check for overlapping sections and mark them */
+    for (int i = 0 ; i < sections.size() ; i++) {
+      AssemblerSectionInfo section = sections.get(i);
+      for (int j = i+1 ; j < sections.size() ; j++) {
+    	AssemblerSectionInfo check = sections.get(j);
+        if ((section.sectionStart > check.sectionStart && section.sectionStart < check.sectionEnd)||
+            (section.sectionEnd > check.sectionStart && section.sectionEnd < check.sectionEnd)) {
+          errorsFound = true;
+          if (section.getIdentifier() != null) errors.put(section.getIdentifier(), S.getter("AssemblerOverlappingSections"));
+          if (check.getIdentifier() != null) errors.put(section.getIdentifier(), S.getter("AssemblerOverlappingSections"));
+        }
       }
-      return;
     }
-    for (AssemblerSectionInfo section : sections.getAll()) labelErrors.addAll(section.replaceDefines(defines));
-    if (!labelErrors.isEmpty()) {
-      for (AssemblerToken error : labelErrors) {
-        errors.put(error, S.getter("AssemblerCouldNotFindValueForDefine"));
-      }
-      return;
-    }
+    if (errorsFound) return;
     /* last pass: transform instructions to bytes */
     for (AssemblerSectionInfo section : sections.getAll()) errors.putAll(section.replaceInstructions(assembler));
   }
@@ -296,6 +306,60 @@ public class AssemblerInfo {
   }
   
   public ElfSectionHeader getSectionHeader() { return sections; }
+  
+  private int handleMacros(LinkedList<AssemblerToken> tokens, int index, AssemblerToken current,
+                           HashMap<String,AssemblerMacro> macros) {
+    if (!macros.containsKey(current.getValue())) return 0;
+    AssemblerMacro macro = macros.get(current.getValue());
+    macro.clearParameters();
+    HashSet<Integer> acceptedParameters = assembler.getAcceptedParameterTypes();
+    int skip = 0;
+    if (index+1 < tokens.size()) {
+      ArrayList<AssemblerToken> params = new ArrayList<AssemblerToken>();
+      AssemblerToken next;
+      do {
+    	next = tokens.get(index+skip+1);
+    	if (acceptedParameters.contains(next.getType())) {
+    	  skip++;
+    	  if (next.getType() == AssemblerToken.SEPERATOR) {
+    	    if (params.isEmpty()) {
+    	      errors.put(next, S.getter("AssemblerExpectedParameter"));
+    	      return tokens.size();
+    	    }
+    	    AssemblerToken[] set = new AssemblerToken[params.size()];
+    	    for (int i = 0 ; i < params.size() ; i++) set[i] = params.get(i);
+    	    params.clear();
+    	    macro.addParameter(set);
+    	  } else {
+    	    params.add(next);
+    	  }
+    	}
+      } while (index+skip+1 < tokens.size() && acceptedParameters.contains(next.getType()));
+      if (!params.isEmpty()) {
+  	    AssemblerToken[] set = new AssemblerToken[params.size()];
+  	    for (int i = 0 ; i < params.size() ; i++) set[i] = params.get(i);
+  	    params.clear();
+  	    macro.addParameter(set);
+      }
+    }
+    if (!macro.hasCorrectNumberOfParameters()) {
+      errors.put(current, S.getter("AssemblerMacroIncorrectNumberOfParameters"));
+      return tokens.size();
+    }
+    LinkedList<AssemblerToken> macroTokens = macro.getMacroTokens();
+    for (int i = 0 ; i < macroTokens.size() ; i++) {
+      AssemblerToken asm = macroTokens.get(i);
+      switch (asm.getType()) {
+        case AssemblerToken.INSTRUCTION     : i += handleInstruction(macroTokens,i,asm);
+                                              continue;
+        case AssemblerToken.MACRO           : i += handleMacros(macroTokens,i,asm,macros);
+                                              continue;
+        default                             : errors.put(asm, S.getter("AssemblerUnknownIdentifier"));
+                                              continue;
+      }
+    }
+    return skip;
+  }
   
   private int handleInstruction(LinkedList<AssemblerToken> tokens, int index , AssemblerToken current) {
     AssemblerAsmInstruction instruction = new AssemblerAsmInstruction(current, assembler.getInstructionSize(current.getValue()));
@@ -362,7 +426,7 @@ public class AssemblerInfo {
         errors.put(current, S.getter("AssemblerExpectingSectionName"));
         return 0;
       }
-      if (!addSection(next.getValue())) {
+      if (!addSection(next.getValue(), next)) {
         errors.put(next, S.getter("AssemblerDuplicatedSectionError"));
         return tokens.size();
       }
@@ -370,7 +434,7 @@ public class AssemblerInfo {
     }
     if (current.getValue().equals(".text") || current.getValue().equals(".data") ||
         current.getValue().equals(".rodata") || current.getValue().equals(".bss")) {
-      if (!addSection(current.getValue())) {
+      if (!addSection(current.getValue(), current)) {
         errors.put(current, S.getter("AssemblerDuplicatedSectionError"));
         return tokens.size();
       }
@@ -507,17 +571,17 @@ public class AssemblerInfo {
     }
   }
   
-  private boolean addSection(String name) {
+  private boolean addSection(String name, AssemblerToken identifier) {
     /* first check if a section with this name exists */
     for (AssemblerSectionInfo section : sections.getAll()) {
       if (section.getSectionName().equals(name)) return false;
     }
     if (currentSection < 0) {
-      sections.add(new AssemblerSectionInfo(name));
+      sections.add(new AssemblerSectionInfo(name,identifier));
       currentSection = 0;
     } else {
       long start = sections.get(currentSection).getSectionEnd();
-      AssemblerSectionInfo si = new AssemblerSectionInfo(start,name);
+      AssemblerSectionInfo si = new AssemblerSectionInfo(start,name,identifier);
       sections.add(si);
       currentSection = sections.indexOf(si);
     }

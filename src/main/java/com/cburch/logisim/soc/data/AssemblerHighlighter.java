@@ -48,8 +48,7 @@ public class AssemblerHighlighter extends AbstractTokenMaker {
   private final static String[] directives = {".ascii",".align",".file",".globl",".local",".comm",".common",".ident",
           ".section",".size",".text",".data",".rodata",".bss",".string",".p2align",".asciz",".equ",
           ".macro",".endm",".type",".option",".byte",".2byte",".half",".short",".4byte",".word",".long",
-          ".8byte",".dword",".quad",".dtprelword",".dtpreldword",".sleb128",".uleb128",".balign",".zero",
-          ".org"};
+          ".8byte",".dword",".quad",".balign",".zero",".org"};
   
   @SuppressWarnings("serial")
   public static final HashSet<String> BYTES = new HashSet<String>() {{add(".byte");}};
@@ -122,6 +121,9 @@ public class AssemblerHighlighter extends AbstractTokenMaker {
                     addToken(text,start,index,currentTokenType,newStart);
                     return SHIFT_END;
                   }
+      case '@'  : if (currentTokenType != Token.NULL)
+                    addToken(text,start,index-1,currentTokenType,newStart);
+                  return currentTokenType == Token.PREPROCESSOR ? REPEAT_LAST : Token.PREPROCESSOR;
       case '('  : 
       case ')'  : 
       case '{'  :
@@ -144,6 +146,7 @@ public class AssemblerHighlighter extends AbstractTokenMaker {
     }
     if (currentTokenType == Token.IDENTIFIER) return Token.IDENTIFIER;
     if (RSyntaxUtilities.isDigit(kar)) {
+      if (currentTokenType == Token.PREPROCESSOR) return Token.PREPROCESSOR;
       if (currentTokenType != Token.NULL && currentTokenType != Token.LITERAL_NUMBER_DECIMAL_INT && 
           currentTokenType != Token.LITERAL_NUMBER_HEXADECIMAL)
         addToken(text,start,index-1,currentTokenType,newStart);

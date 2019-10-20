@@ -85,13 +85,15 @@ public class AssemblerAsmInstruction {
     return parameters.get(index);
   }
   
-  public boolean replaceLabels(HashMap<String,Long> labels) {
+  public boolean replaceLabels(HashMap<String,Long> labels, HashMap<AssemblerToken,StringGetter> errors) {
 	for (AssemblerToken[] parameter : parameters) {
 	  for (int i = 0 ; i < parameter.length ; i++) {
 	    if (parameter[i].getType() == AssemblerToken.PARAMETER_LABEL) {
 	      String Name = parameter[i].getValue();
-	      if (!labels.containsKey(Name))
+	      if (!labels.containsKey(Name)) {
+	    	errors.put(parameter[i], S.getter("AssemblerCouldNotFindAddressForLabel"));
 	        return false;
+	      }
           parameter[i].setType(AssemblerToken.HEX_NUMBER);
           parameter[i].setValue(String.format("0x%08X", labels.get(Name)));
 	    }
@@ -100,13 +102,15 @@ public class AssemblerAsmInstruction {
     return true;
   }
   
-  public boolean replaceDefines(HashMap<String,Integer> defines) {
+  public boolean replaceDefines(HashMap<String,Integer> defines, HashMap<AssemblerToken,StringGetter> errors) {
 	for (AssemblerToken[] parameter : parameters) {
       for (int i = 0 ; i < parameter.length ; i++) {
         if (parameter[i].getType() == AssemblerToken.MAYBE_LABEL) {
           String Name = parameter[i].getValue();
-            if (!defines.containsKey(Name))
+            if (!defines.containsKey(Name)) {
+              errors.put(parameter[i], S.getter("AssemblerCouldNotFindValueForDefine"));
               return false;
+            }
             parameter[i].setType(AssemblerToken.HEX_NUMBER);
             parameter[i].setValue(String.format("0x%08X", defines.get(Name)));
         }

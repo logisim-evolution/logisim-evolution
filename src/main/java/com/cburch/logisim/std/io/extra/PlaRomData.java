@@ -140,7 +140,7 @@ public class PlaRomData implements InstanceData {
         JOptionPane.showOptionDialog(
             null,
             panel,
-            S.getter("Logisim: Pla Rom " + getSizeString() + " Edit Window").toString(),
+            S.fmt("PlaEditWindowTitel",getSizeString()),
             JOptionPane.OK_CANCEL_OPTION,
             JOptionPane.PLAIN_MESSAGE,
             null,

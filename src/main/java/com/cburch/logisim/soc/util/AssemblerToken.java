@@ -53,6 +53,8 @@ public class AssemblerToken {
   public static final int MATH_SHIFT_LEFT = 20;
   public static final int MATH_SHIFT_RIGHT = 21;
   public static final int PROGRAM_COUNTER = 22;
+  public static final int MACRO = 23;
+  public static final int MACRO_PARAMETER = 24;
   /* all numbers below 256 are reserved for internal usage, the numbers starting from 256 can
    * be used for custom purposes.
    */
@@ -121,6 +123,11 @@ public class AssemblerToken {
         value = split[1];
       }
       return Integer.parseUnsignedInt(value, 16);
+    } else if (type == MACRO_PARAMETER) {
+      if (value.length() > 0)
+        return Integer.parseUnsignedInt(value.substring(1));
+      else
+    	return 0;
     }
     else return 0;
   }
