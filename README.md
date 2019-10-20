@@ -13,6 +13,9 @@ The project is currently maintained by the [REDS Institute](http://reds.heig-vd.
 
 We have decided to release this new Logisim version under the name logisim-evolution, to highlight the large number of changes that occurred in these years, and **we actively seek the contribution of the community**.
 
+## Languages
+
+Logisim supports many languages. Many of them are automatically translated by deepl. If you detect bizar translations please do not hesitate to correct them in the corresponding property files and ask for a pull-request.
 
 ## What's new in logisim-evolution
 

@@ -28,6 +28,8 @@
 
 package com.cburch.logisim.soc.util;
 
+import java.util.HashSet;
+
 public class AssemblerToken {
   public static final int LABEL = 1;
   public static final int INSTRUCTION = 2;
@@ -45,10 +47,24 @@ public class AssemblerToken {
   public static final int MATH_SUBTRACT = 14;
   public static final int MATH_ADD = 15;
   public static final int PARAMETER_LABEL = 16;
+  public static final int MATH_MUL = 17;
+  public static final int MATH_DIV = 18;
+  public static final int MATH_REM = 19;
+  public static final int MATH_SHIFT_LEFT = 20;
+  public static final int MATH_SHIFT_RIGHT = 21;
+  public static final int PROGRAM_COUNTER = 22;
+  public static final int MACRO = 23;
+  public static final int MACRO_PARAMETER = 24;
   /* all numbers below 256 are reserved for internal usage, the numbers starting from 256 can
    * be used for custom purposes.
    */
-   
+  
+  public static final HashSet<Integer> MATH_OPERATORS = new HashSet<Integer>() {
+    private static final long serialVersionUID = 1L;
+    {add(MATH_ADD); add (MATH_SUBTRACT); add(MATH_MUL); add(MATH_DIV); add(MATH_REM); 
+     add(MATH_SHIFT_LEFT); add(MATH_SHIFT_RIGHT);} 
+  };
+  
   private int type;
   private String value;
   private int offset;
@@ -107,6 +123,27 @@ public class AssemblerToken {
         value = split[1];
       }
       return Integer.parseUnsignedInt(value, 16);
+    } else if (type == MACRO_PARAMETER) {
+      if (value.length() > 0)
+        return Integer.parseUnsignedInt(value.substring(1));
+      else
+    	return 0;
+    }
+    else return 0;
+  }
+
+  public long getLongValue() {
+    if (type == DEC_NUMBER) return Long.parseLong(value);
+    else if (type == HEX_NUMBER) {
+      if (value.toUpperCase().contains("X")) {
+        String[] split = value.toUpperCase().split("X");
+        if (split.length != 2) {
+          valid = false;
+          return 0;
+        }
+        value = split[1];
+      }
+      return Long.parseUnsignedLong(value, 16);
     }
     else return 0;
   }

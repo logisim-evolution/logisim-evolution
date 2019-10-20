@@ -28,6 +28,8 @@
 
 package com.cburch.logisim.soc.data;
 
+import java.util.HashSet;
+
 import javax.swing.text.Segment;
 
 import org.fife.ui.rsyntaxtextarea.AbstractTokenMaker;
@@ -38,15 +40,27 @@ import org.fife.ui.rsyntaxtextarea.TokenMap;
 public class AssemblerHighlighter extends AbstractTokenMaker {
   public final static int REPEAT_LAST = -1;
   public final static int DOUBLE_QUOTE_END = -2;
-  public final static int MAYBE_NEG_NUMBER = -3;
-  public final static int REPEAT_NEG_NUMBER = -4;
+  public final static int MAYBE_SHIFT_LEFT = -3;
+  public final static int MAYBE_SHIFT_RIGHT = -4;
+  public final static int SHIFT_END = -5;
   private boolean escape = false;
 
-  private final static String[] directives = {".align",".file",".globl",".local",".comm",".common",".ident",
+  private final static String[] directives = {".ascii",".align",".file",".globl",".local",".comm",".common",".ident",
           ".section",".size",".text",".data",".rodata",".bss",".string",".p2align",".asciz",".equ",
           ".macro",".endm",".type",".option",".byte",".2byte",".half",".short",".4byte",".word",".long",
-          ".8byte",".dword",".quad",".dtprelword",".dtpreldword",".sleb128",".uleb128",".balign",".zero",
-          ".org"};
+          ".8byte",".dword",".quad",".balign",".zero",".org"};
+  
+  @SuppressWarnings("serial")
+  public static final HashSet<String> BYTES = new HashSet<String>() {{add(".byte");}};
+  @SuppressWarnings("serial")
+  public static final HashSet<String> SHORTS = new HashSet<String>() {{add(".half"); add(".2byte"); add(".short");}};
+  @SuppressWarnings("serial")
+  public static final HashSet<String> INTS = new HashSet<String>() {{add(".word"); add(".4byte"); add(".long");}};
+  @SuppressWarnings("serial")
+  public static final HashSet<String> LONGS = new HashSet<String>() {{add(".dword"); add(".8byte"); add(".quad");}};
+  @SuppressWarnings("serial")
+  public static final HashSet<String> STRINGS = new HashSet<String>() {{add(".ascii"); add(".asciz"); add(".string");}};
+  
   
   @Override
   public TokenMap getWordsToHighlight() {
@@ -91,13 +105,25 @@ public class AssemblerHighlighter extends AbstractTokenMaker {
       case '#'  : if (currentTokenType != Token.NULL)
                     addToken(text,start,index-1,currentTokenType,newStart);
                   return Token.COMMENT_EOL;
-      case '-'  : if (currentToken == MAYBE_NEG_NUMBER || currentToken == REPEAT_NEG_NUMBER) {
-                    addToken(text,start,index-1,currentTokenType,newStart);
-                    return REPEAT_NEG_NUMBER;
+      case '<'  : if (currentToken != MAYBE_SHIFT_LEFT) {
+                    if (currentTokenType != Token.NULL)
+        	          addToken(text,start,index-1,currentTokenType,newStart);
+                    return MAYBE_SHIFT_LEFT;
+                  } else {
+                    addToken(text,start,index,currentTokenType,newStart);
+                    return SHIFT_END;
                   }
-    	          if (currentToken != Token.NULL) 
+      case '>'  : if (currentToken != MAYBE_SHIFT_RIGHT) {
+                    if (currentTokenType != Token.NULL)
+	                  addToken(text,start,index-1,currentTokenType,newStart);
+                    return MAYBE_SHIFT_RIGHT;
+                  } else {
+                    addToken(text,start,index,currentTokenType,newStart);
+                    return SHIFT_END;
+                  }
+      case '@'  : if (currentTokenType != Token.NULL)
                     addToken(text,start,index-1,currentTokenType,newStart);
-                  return MAYBE_NEG_NUMBER;
+                  return currentTokenType == Token.PREPROCESSOR ? REPEAT_LAST : Token.PREPROCESSOR;
       case '('  : 
       case ')'  : 
       case '{'  :
@@ -106,17 +132,23 @@ public class AssemblerHighlighter extends AbstractTokenMaker {
       case ','  : 
       case ':'  :
       case '+'  :
+      case '-'  :
+      case '*'  :
+      case '/'  :
+      case '%'  :
       case ']'  : if (currentTokenType != Token.NULL)
                     addToken(text,start,index-1,currentTokenType,newStart);
                   return currentTokenType == Token.LITERAL_CHAR ? REPEAT_LAST : Token.LITERAL_CHAR;
       case 'x'  :
-      case 'X'  : if (currentTokenType == Token.LITERAL_NUMBER_DECIMAL_INT) return Token.LITERAL_NUMBER_HEXADECIMAL;
+      case 'X'  : if (currentTokenType == Token.LITERAL_NUMBER_DECIMAL_INT) {
+    	            return Token.LITERAL_NUMBER_HEXADECIMAL;
+                  }
     }
     if (currentTokenType == Token.IDENTIFIER) return Token.IDENTIFIER;
     if (RSyntaxUtilities.isDigit(kar)) {
+      if (currentTokenType == Token.PREPROCESSOR) return Token.PREPROCESSOR;
       if (currentTokenType != Token.NULL && currentTokenType != Token.LITERAL_NUMBER_DECIMAL_INT && 
-          currentTokenType != Token.LITERAL_NUMBER_HEXADECIMAL && currentToken != MAYBE_NEG_NUMBER &&
-          currentToken != REPEAT_NEG_NUMBER)
+          currentTokenType != Token.LITERAL_NUMBER_HEXADECIMAL)
         addToken(text,start,index-1,currentTokenType,newStart);
       return currentTokenType != Token.LITERAL_NUMBER_HEXADECIMAL ? Token.LITERAL_NUMBER_DECIMAL_INT : currentTokenType; 
     }
@@ -144,17 +176,14 @@ public class AssemblerHighlighter extends AbstractTokenMaker {
     for (int i = offset; i < end ; i++) {
       char c = array[i];
       int newTokenType = check(arg0,c,currentTokenType,currentTokenStart,i,newStartOffset+currentTokenStart);
-      if (newTokenType != currentTokenType && 
-          !(newTokenType == Token.LITERAL_NUMBER_HEXADECIMAL && currentTokenType == Token.LITERAL_NUMBER_DECIMAL_INT) && 
-          !(newTokenType == Token.LITERAL_NUMBER_DECIMAL_INT && 
-             (currentTokenType == MAYBE_NEG_NUMBER || currentTokenType == REPEAT_NEG_NUMBER))
-         )
+      if (newTokenType != currentTokenType &&
+          !(newTokenType == Token.LITERAL_NUMBER_HEXADECIMAL && currentTokenType == Token.LITERAL_NUMBER_DECIMAL_INT))
         currentTokenStart = i;
-     if (newTokenType == DOUBLE_QUOTE_END) {
+      if (newTokenType == DOUBLE_QUOTE_END || newTokenType == SHIFT_END) {
         currentTokenStart = i+1;
         currentTokenType = Token.NULL;
-      }  
-      else if (newTokenType == REPEAT_LAST || newTokenType == REPEAT_NEG_NUMBER)
+      }
+      else if (newTokenType == REPEAT_LAST)
         currentTokenStart = i;
       else
         currentTokenType = newTokenType;
@@ -166,9 +195,6 @@ public class AssemblerHighlighter extends AbstractTokenMaker {
       case Token.NULL :
           addNullToken();
           break;
-      case MAYBE_NEG_NUMBER :
-          addToken(arg0, currentTokenStart, end-1, Token.LITERAL_CHAR, newStartOffset+currentTokenStart);
-          addNullToken();
       default:
           addToken(arg0, currentTokenStart, end-1, currentTokenType, newStartOffset+currentTokenStart);
           addNullToken();

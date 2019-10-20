@@ -491,11 +491,11 @@ public abstract class AbstractTtlGate extends InstanceFactory {
       } else { // input port
         if (hasvccgnd && i == this.pinnumber - 1) { // Vcc
           ps[ps.length - 1] = new Port(dx, dy, Port.INPUT, 1);
-          ps[ps.length - 1].setToolTip(S.getter("Vcc: " + this.pinnumber));
+          ps[ps.length - 1].setToolTip(S.getter("VCCPin", Integer.toString(this.pinnumber)));
         } else if (i == this.pinnumber / 2 - 1) { // GND
           if (hasvccgnd) {
             ps[ps.length - 2] = new Port(dx, dy, Port.INPUT, 1);
-            ps[ps.length - 2].setToolTip(S.getter("GND: " + this.pinnumber / 2));
+            ps[ps.length - 2].setToolTip(S.getter("GNDPin",Integer.toString(this.pinnumber / 2)));
           }
           portindex--;
         } else if (i != this.pinnumber - 1 && i != this.pinnumber / 2 - 1) { // normal output

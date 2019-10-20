@@ -33,6 +33,7 @@ import static com.cburch.logisim.soc.Strings.S;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Set;
 
@@ -111,11 +112,19 @@ public class Assembler extends AbstractParser implements LocaleListener {
     }
     /* second pass, we are going to collect all labels */
     HashMap<String,Long> labels = new HashMap<String,Long>();
+    HashMap<String,AssemblerToken> labelToken = new HashMap<String,AssemblerToken>();
     for (AssemblerToken asm : assemblerTokens) {
       if (asm.getType() == AssemblerToken.LABEL)
-        labels.put(asm.getValue(), -1L);
+    	if (labels.containsKey(asm.getValue())) {
+    	  addError(asm.getoffset(),S.getter("AssemblerDuplicatedLabelNotSupported"),errorMarkers.keySet());
+    	  addError(labelToken.get(asm.getValue()).getoffset(),S.getter("AssemblerDuplicatedLabelNotSupported"),errorMarkers.keySet());
+    	} else {
+          labels.put(asm.getValue(), -1L);
+          labelToken.put(asm.getValue(), asm);
+    	}
     }
-    /* Third pass, we are going to mark all known labels */
+    labelToken.clear();
+    /* Third pass, we are going to mark all known labels and references to the pc*/
     for (AssemblerToken asm : assemblerTokens) {
         if (asm.getType() == AssemblerToken.MAYBE_LABEL) {
           if (labels.containsKey(asm.getValue())) 
@@ -124,41 +133,78 @@ public class Assembler extends AbstractParser implements LocaleListener {
     }
     /* Fourth pass: calculate all resulting numbers, merge multi-line strings and determine
      *              the bracketed registers */
+    
+    /* IMPORTANT: the math functions are evaluated always left to right (can be improved), hence:
+     * 5+10*2 => (5+10)*2 = 30
+     * 10*2+5 => (10*2)+5 = 25
+     */
     ArrayList<AssemblerToken> toBeRemoved = new ArrayList<AssemblerToken>();
     for (int i = 0 ; i < assemblerTokens.size() ; i++) {
       AssemblerToken asm = assemblerTokens.get(i);
-      if (asm.getType() == AssemblerToken.MATH_ADD || asm.getType() == AssemblerToken.MATH_SUBTRACT) {
-        if (i == 0) { 
-          addError(asm.getoffset(),S.getter("AssemblerReguiresNumberBeforeMath"),errorMarkers.keySet());
-          continue;
-        }
+      if (AssemblerToken.MATH_OPERATORS.contains(asm.getType())) {
         if ((i+1) >= assemblerTokens.size()) {
           addError(asm.getoffset(),S.getter("AssemblerReguiresNumberAfterMath"),errorMarkers.keySet());
           continue;
         }
-        AssemblerToken before = assemblerTokens.get(i-1);
+        AssemblerToken before = (i==0) ? null :assemblerTokens.get(i-1);
         AssemblerToken after = assemblerTokens.get(i+1);
-        if (!before.isNumber()) {
-          addError(asm.getoffset(),S.getter("AssemblerReguiresNumberBeforeMath"),errorMarkers.keySet());
-          continue;
-        }
-        if (!after.isNumber()) {
+        if (before == null || (!before.isNumber() && before.getType()!=AssemblerToken.PROGRAM_COUNTER)) 
+          before = null;
+        if (!after.isNumber() && after.getType() != AssemblerToken.PROGRAM_COUNTER) {
           addError(asm.getoffset(),S.getter("AssemblerReguiresNumberAfterMath"),errorMarkers.keySet());
           continue;
         }
-        switch (asm.getType()) {
-          case AssemblerToken.MATH_ADD : after.setValue(before.getNumberValue()+after.getNumberValue());
-                                         toBeRemoved.add(before);
-                                         toBeRemoved.add(asm);
-                                         i++;
-                                         break;
-          case AssemblerToken.MATH_SUBTRACT : after.setValue(before.getNumberValue()-after.getNumberValue());
-                                              toBeRemoved.add(before);
-                                              toBeRemoved.add(asm);
-                                              i++;
-                                              break;
+        int beforeValue = before == null ? 0 : before.getNumberValue();
+        if (after.getType() == AssemblerToken.PROGRAM_COUNTER || (before != null && before.getType() == AssemblerToken.PROGRAM_COUNTER)) {
+          i++;
+        } else switch (asm.getType()) {
+          case AssemblerToken.MATH_ADD        : after.setValue(beforeValue+after.getNumberValue());
+                                                if (before != null) toBeRemoved.add(before);
+                                                toBeRemoved.add(asm);
+                                                i++;
+                                                break;
+          case AssemblerToken.MATH_SHIFT_LEFT : after.setValue(beforeValue<<after.getNumberValue());
+                                                if (before != null) toBeRemoved.add(before);
+                                                toBeRemoved.add(asm);
+                                                i++;
+                                                break;
+          case AssemblerToken.MATH_SHIFT_RIGHT: after.setValue(beforeValue>>after.getNumberValue());
+                                                if (before != null) toBeRemoved.add(before);
+                                                toBeRemoved.add(asm);
+                                                i++;
+                                                break;
+          case AssemblerToken.MATH_SUBTRACT   : after.setValue(beforeValue-after.getNumberValue());
+                                                if (before != null) toBeRemoved.add(before);
+                                                toBeRemoved.add(asm);
+                                                i++;
+                                                break;
+          case AssemblerToken.MATH_MUL        : after.setValue(beforeValue*after.getNumberValue());
+                                                if (before != null) toBeRemoved.add(before);
+                                                toBeRemoved.add(asm);
+                                                i++;
+                                                break;
+          case AssemblerToken.MATH_DIV        : if (after.getNumberValue() == 0) {
+        	                                      addError(after.getoffset(),S.getter("AssemblerDivZero"), errorMarkers.keySet());
+        	                                      i++;
+        	                                      break;
+                                                }
+        	                                    after.setValue(beforeValue/after.getNumberValue());
+                                                if (before != null) toBeRemoved.add(before);
+                                                toBeRemoved.add(asm);
+                                                i++;
+                                                break;
+          case AssemblerToken.MATH_REM        : if (after.getNumberValue() == 0) {
+                                                  addError(after.getoffset(),S.getter("AssemblerDivZero"), errorMarkers.keySet());
+                                                  i++;
+                                                  break;
+                                                }
+                                                after.setValue(beforeValue%after.getNumberValue());
+                                                if (before != null) toBeRemoved.add(before);
+                                                toBeRemoved.add(asm);
+                                                i++;
+                                                break;
         }
-      } else if (asm.getType() == AssemblerToken.STRING && (i+1) < assemblerTokens.size()) {
+    } else if (asm.getType() == AssemblerToken.STRING && (i+1) < assemblerTokens.size()) {
         AssemblerToken next;
         do {
           next = assemblerTokens.get(i+1);
@@ -179,13 +225,100 @@ public class Assembler extends AbstractParser implements LocaleListener {
         }
       }
     }
-    for (AssemblerToken asm : toBeRemoved) assemblerTokens.remove(asm);
-    /* fifth pass: perform up specific operations */
-    assembler.performUpSpecificOperationsOnTokens(assemblerTokens);
+    assemblerTokens.removeAll(toBeRemoved);
     for (AssemblerToken error : assemblerInfo.getErrors().keySet()) 
         addError(error.getoffset(),assemblerInfo.getErrors().get(error),errorMarkers.keySet());
+    /* fifth pass: perform cpu specific operations */
+    assembler.performUpSpecificOperationsOnTokens(assemblerTokens);
+    /* sixth pass: We are going to detect and remove the macros */
+    toBeRemoved.clear();
+    boolean errors = false;
+    Iterator<AssemblerToken> iter = assemblerTokens.iterator();
+    HashMap<String,AssemblerMacro> macros = new HashMap<String,AssemblerMacro>();
+    while (iter.hasNext()) {
+      AssemblerToken asm = iter.next();
+      if (asm.getType() == AssemblerToken.ASM_INSTRUCTION && asm.getValue().equals(".macro")) {
+        toBeRemoved.add(asm);
+        if (!iter.hasNext()) {
+          addError(asm.getoffset(),S.getter("AssemblerExpectedMacroName"),errorMarkers.keySet());
+          break;
+        }
+        AssemblerToken name = iter.next();
+        toBeRemoved.add(name);
+        if (name.getType() != AssemblerToken.MAYBE_LABEL) {
+          addError(asm.getoffset(),S.getter("AssemblerExpectedMacroName"),errorMarkers.keySet());
+          break;
+        }
+        if (!iter.hasNext()) {
+          addError(asm.getoffset(),S.getter("AssemblerExpectedMacroNrOfParameters"),errorMarkers.keySet());
+          break;
+        }
+        AssemblerToken nrParameters = iter.next();
+        toBeRemoved.add(nrParameters);
+        if (!nrParameters.isNumber()) {
+          addError(asm.getoffset(),S.getter("AssemblerExpectedMacroNrOfParameters"),errorMarkers.keySet());
+          break;
+        }
+        AssemblerMacro macro = new AssemblerMacro(name.getValue(),nrParameters.getNumberValue());
+        boolean endOfMacro = false;
+        while (!endOfMacro && iter.hasNext()) {
+          AssemblerToken macroAsm = iter.next();
+          if (macroAsm.getType() == AssemblerToken.ASM_INSTRUCTION) {
+            if (macroAsm.getValue().equals(".endm"))
+              endOfMacro = true;
+            else {
+              addError(macroAsm.getoffset(),S.getter("AssemblerCannotUseInsideMacro"),errorMarkers.keySet());
+              errors = true;
+            }
+          } else {
+            macro.addToken(macroAsm);
+            if (macroAsm.getType() == AssemblerToken.LABEL) {
+              /* labels are local to the macro */
+              labels.remove(macroAsm.getValue());
+              macro.addLabel(macroAsm.getValue());
+            }
+          }
+          toBeRemoved.add(macroAsm);
+        }
+        if (!endOfMacro) {
+          addError(asm.getoffset(),S.getter("AssemblerEndOfMacroNotFound"),errorMarkers.keySet());
+          errors = true;
+        } else {
+          HashMap<AssemblerToken,StringGetter> markers = new HashMap<AssemblerToken,StringGetter>(); 
+          if (macro.checkParameters(markers))
+            macros.put(macro.getName(), macro);
+          else {
+        	for (AssemblerToken marker : markers.keySet()) 
+        	  addError(marker.getoffset(),markers.get(marker),errorMarkers.keySet());
+            errors = true;
+          };
+        }
+      }
+    }
+    if (errors) return errorMarkers.isEmpty();
+    assemblerTokens.removeAll(toBeRemoved);
+    /* go trough the remaining tokens and the macros and mark the macros */
+    for (AssemblerToken asm : assemblerTokens)
+      if (asm.getType() == AssemblerToken.MAYBE_LABEL) 
+        if (macros.containsKey(asm.getValue())) {
+          asm.setType(AssemblerToken.MACRO);
+        }
+    HashMap<AssemblerToken,StringGetter> markers = new HashMap<AssemblerToken,StringGetter>();
+    for (String name : macros.keySet()) {
+      macros.get(name).checkForMacros(markers, macros.keySet());
+    }
+    /* finally replace the local labels; this has to be done at this point as before the macros inside
+     * a macro were not yet marked as being macro */
+    for (String name : macros.keySet()) {
+      macros.get(name).replaceLabels(labels, markers, assembler, macros);
+    }
+    if (!markers.isEmpty()) {
+      for (AssemblerToken marker : markers.keySet())
+        addError(marker.getoffset(),markers.get(marker),errorMarkers.keySet());
+      return errorMarkers.isEmpty();
+    }
     /* here the real work starts */
-    assemblerInfo.assemble(assemblerTokens,labels);
+    assemblerInfo.assemble(assemblerTokens,labels,macros);
     for (AssemblerToken error : assemblerInfo.getErrors().keySet()) 
       addError(error.getoffset(),assemblerInfo.getErrors().get(error),errorMarkers.keySet());
     if (labels.containsKey("_start"))
@@ -196,8 +329,7 @@ public class Assembler extends AbstractParser implements LocaleListener {
   public void addError(int location, StringGetter sg, Set<GutterIconInfo> known) {
     /* first search for the known icons */
     for (GutterIconInfo knownError : known) {
-      if (knownError.getMarkedOffset() == location && sg.toString().equals(errorMarkers.get(knownError).toString())) {
-        known.remove(knownError);
+      if (knownError.getMarkedOffset() == location) {
         return;
       }
     }
@@ -264,6 +396,16 @@ public class Assembler extends AbstractParser implements LocaleListener {
         	lineTokens.add(new AssemblerToken(AssemblerToken.MATH_SUBTRACT,null,offset));
           else if (name.equals("+"))
         	lineTokens.add(new AssemblerToken(AssemblerToken.MATH_ADD,null,offset));
+          else if (name.equals("*"))
+        	lineTokens.add(new AssemblerToken(AssemblerToken.MATH_MUL,null,offset));
+          else if (name.equals("%"))
+        	lineTokens.add(new AssemblerToken(AssemblerToken.MATH_REM,null,offset));
+          else if (name.equals("/"))
+        	lineTokens.add(new AssemblerToken(AssemblerToken.MATH_DIV,null,offset));
+          else if (name.equals("<<"))
+        	lineTokens.add(new AssemblerToken(AssemblerToken.MATH_SHIFT_LEFT,null,offset));
+          else if (name.equals(">>"))
+        	lineTokens.add(new AssemblerToken(AssemblerToken.MATH_SHIFT_RIGHT,null,offset));
           else addError(offset,S.getter("AssemblerUnknowCharacter"),lineErrorMarkers);
         } else
           switch (type) {
@@ -277,7 +419,8 @@ public class Assembler extends AbstractParser implements LocaleListener {
                 lineTokens.add(new AssemblerToken(AssemblerToken.ASM_INSTRUCTION,name,offset));
                 break;
             case Token.OPERATOR :
-                lineTokens.add(new AssemblerToken(AssemblerToken.REGISTER,name,offset));
+                lineTokens.add(new AssemblerToken(name.equals("pc") ? AssemblerToken.PROGRAM_COUNTER :
+                                                  AssemblerToken.REGISTER,name,offset));
                 break;
             case Token.RESERVED_WORD :
                 lineTokens.add(new AssemblerToken(AssemblerToken.INSTRUCTION,name,offset));
@@ -287,6 +430,9 @@ public class Assembler extends AbstractParser implements LocaleListener {
                 break;
             case Token.IDENTIFIER :
                 lineTokens.add(new AssemblerToken(AssemblerToken.MAYBE_LABEL,name,offset));
+                break;
+            case Token.PREPROCESSOR :
+                lineTokens.add(new AssemblerToken(AssemblerToken.MACRO_PARAMETER,name,offset));
                 break;
           }
       }

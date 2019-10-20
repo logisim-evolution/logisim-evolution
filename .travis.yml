@@ -5,6 +5,7 @@ jdk:
   - openjdk10
   - openjdk11
   - openjdk12
+  - openjdk13
 before_install:
   - chmod +x gradlew
   - chmod +x gradle/wrapper/gradle-wrapper.jar
