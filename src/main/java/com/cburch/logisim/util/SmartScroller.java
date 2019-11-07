@@ -156,10 +156,11 @@ public class SmartScroller implements AdjustmentListener {
 
     // Check if the user has manually repositioned the scrollbar
 
+   /*
     if (valueChanged && !maximumChanged) {
       if (viewportPosition == START) adjustScrollBar = value != 0;
       else adjustScrollBar = value + extent >= maximum;
-    }
+    }*/
 
     // Reset the "value" so we can reposition the viewport and
     // distinguish between a user scroll and a program scroll.
@@ -169,7 +170,7 @@ public class SmartScroller implements AdjustmentListener {
       // Scroll the viewport to the end.
       scrollBar.removeAdjustmentListener(this);
       value = maximum - extent;
-      scrollBar.setValue(value);
+      //scrollBar.setValue(value);
       scrollBar.addAdjustmentListener(this);
     }
 
@@ -177,7 +178,7 @@ public class SmartScroller implements AdjustmentListener {
       // Keep the viewport at the same relative viewportPosition
       scrollBar.removeAdjustmentListener(this);
       value = value + maximum - previousMaximum;
-      scrollBar.setValue(value);
+     // scrollBar.setValue(value);
       scrollBar.addAdjustmentListener(this);
     }
 
