@@ -151,9 +151,9 @@ public class Startup implements AWTEventListener {
       int Result =
           JOptionPane.showConfirmDialog(
               null,
-              "This is the first time you run logisim\nLogisim provides the means to look for newer versions.\n"
-                  + "Your choice can always be changed in window->preferences->software in logisim.\n"
-                  + "Would you like to enable this feature?",
+              "Logisim can automatically check for new updates and versions.\n"
+                  + "Would you like to enable this feature?\n"
+                  + "(This feature can be disabled in Window -> Preferences -> Software)\n",
               "Autoupdate",
               JOptionPane.YES_NO_OPTION);
       if (Result == JOptionPane.YES_OPTION) AppPreferences.AutomaticUpdateCheck.setBoolean(true);
