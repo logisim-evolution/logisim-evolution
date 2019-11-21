@@ -141,19 +141,12 @@
 	<mapID target="io_hexdig" url="en/html/libs/io/hexdig.html" />
 	<mapID target="io_dotmat" url="en/html/libs/io/dotmat.html" />
 	<mapID target="io_tty" url="en/html/libs/io/tty.html" />
-	<mapID target="hdl" url="en/html/libs/hdl/index.html" />
-	<mapID target="hdl_vhdlentity" url="en/html/libs/hdl/vhdlentity.html" />
-	<mapID target="base" url="en/html/libs/base/index.html" />
-	<mapID target="base_poke" url="en/html/libs/base/poke.html" />
-	<mapID target="base_edit" url="en/html/libs/base/edit.html" />
-	<mapID target="base_select" url="en/html/libs/base/select.html" />
-	<mapID target="base_wiring" url="en/html/libs/base/wiring.html" />
-	<mapID target="base_text" url="en/html/libs/base/text.html" />
-	<mapID target="base_menu" url="en/html/libs/base/menu.html" />
-    <mapID target="base_label" url="en/html/libs/base/label.html" />
     <mapID target="tcl" url="en/html/libs/tcl/index.html" />
     <mapID target="tcl_reds_console" url="en/html/libs/tcl/reds_console.html" />
     <mapID target="tcl_generic" url="en/html/libs/tcl/generic.html" />
+    <mapID target="soc" url="en/html/libs/soc/index.html" />
+    <mapID target="nios2_sim" url="en/html/libs/soc/nios2.html" />
+    <mapID target="socbus" url="en/html/libs/soc/socbus.html" />
 
 	<mapID target="icon_poke" url="icons/poke.gif" />
 	<mapID target="icon_edit" url="icons/select.gif" />
@@ -210,4 +203,6 @@
 	<mapID target="icon_tty" url="icons/tty.gif" />
 	<mapID target="icon_vhdl" url="icons/vhdl.gif" />
 	<mapID target="test_hml_css" url="testhtml/index.html" />
+        <mapID target="up_icon" url="icons/up.png"/>
+        <mapID target="socbus_icon" url="icons/socbus.png"/>
 </map>
