@@ -30,6 +30,9 @@ package com.cburch.logisim.std.io;
 
 import static com.cburch.logisim.std.Strings.S;
 
+import com.cburch.logisim.circuit.appear.DynamicElement;
+import com.cburch.logisim.circuit.appear.DynamicElement.Path;
+import com.cburch.logisim.circuit.appear.DynamicElementProvider;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Attributes;
@@ -49,7 +52,7 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 
-public class Tty extends InstanceFactory {
+public class Tty extends InstanceFactory  implements DynamicElementProvider {
   private static int getColumnCount(Object val) {
     if (val instanceof Integer) return ((Integer) val).intValue();
     else return 16;
@@ -65,8 +68,8 @@ public class Tty extends InstanceFactory {
 
   private static final int WE = 2;
   private static final int IN = 3;
-  private static final int BORDER = 5;
-  private static final int ROW_HEIGHT = 15;
+  public static final int BORDER = 5;
+  public static final int ROW_HEIGHT = 15;
 
   private static final int COL_WIDTH = 7;
 
@@ -240,5 +243,10 @@ public class Tty extends InstanceFactory {
   public void sendToStdout(InstanceState state) {
     TtyState tty = getTtyState(state);
     tty.setSendStdout(true);
+  }
+
+  @Override
+  public DynamicElement createDynamicElement(int x, int y, Path path) {
+    return new TtyShape(x, y, path);
   }
 }
