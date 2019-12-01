@@ -164,18 +164,10 @@
 		<tocitem target="io_dotmat" text="LED Matrix" image="icon_dotmat" />
 		<tocitem target="io_tty" text="TTY" image="icon_tty" />
 	  </tocitem>
-	  <tocitem target="hdl" text="HDL-IP">
-		<tocitem target="hdl_vhdlentity" text="VHDL Entity" image="icon_vhdl" />
-      </tocitem>
-	  <tocitem target="base" text="Base library">
-		<tocitem target="base_poke" text="Poke Tool" image="icon_poke" />
-		<tocitem target="base_edit" text="Edit Tool" image="icon_edit" />
-		<tocitem target="base_select" text="Select Tool" image="icon_select" />
-		<tocitem target="base_wiring" text="Wiring Tool" image="icon_wiring" />
-		<tocitem target="base_text" text="Text Tool" image="icon_text" />
-		<tocitem target="base_menu" text="Menu Tool" image="icon_menu" />
-		<tocitem target="base_label" text="Text" image="icon_label" />
-	  </tocitem>
+          <tocitem target="soc" text = "SOC library">
+            <tocitem target="nios2_sim" text ="Nios2 simulator" image="up_icon" />
+            <tocitem target="socbus" text ="SOC bus interconnect" image="socbus_icon" />
+          </tocitem>
       <tocitem target="tcl" text="TCL library">
           <tocitem target="tcl_reds_console" text="REDS console" image="icon_reds_console" />
           <tocitem target="tcl_generic" text="Generic" image="icon_generic" />

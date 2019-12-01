@@ -128,6 +128,14 @@ class TtyState implements InstanceData, Cloneable {
   public void setSendStdout(boolean value) {
     sendStdout = value;
   }
+  
+  public int getNrRows() {
+    return rowData.length + 1;
+  }
+  
+  public int getNrCols() {
+    return colCount;
+  }
 
   public void updateSize(int rows, int cols) {
     int oldRows = rowData.length + 1;

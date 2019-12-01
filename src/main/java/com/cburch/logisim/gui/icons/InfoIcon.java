@@ -28,7 +28,6 @@
 
 package com.cburch.logisim.gui.icons;
 
-import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;

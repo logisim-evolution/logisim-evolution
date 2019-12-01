@@ -419,16 +419,17 @@ public class TikZInfo implements Cloneable {
       public String getTikZCommand() {
         StringBuffer contents = new StringBuffer();
         if (closePath) {
-          contents.append("      \\pgfpathclose\n");
+          contents.append("-- cycle ");
         } else if (startPoint != null) {
-          contents.append("      \\pgfpathmoveto{"+getPgfPoint(startPoint)+"}\n");
+          contents.append(getPoint(startPoint));
         } else {
           if (controlPoint1 == null && controlPoint2 == null) {
-            contents.append("      \\pgfpathlineto{"+getPgfPoint(endPoint)+"}\n");
+        	contents.append("-- "+getPoint(endPoint));
           } else {
-            contents.append("      \\pgfpathcurveto{"+getPgfPoint(controlPoint1)+"}");
-            contents.append("{"+getPgfPoint(controlPoint2 == null ? controlPoint1 : controlPoint2)+"}");
-            contents.append("{"+getPgfPoint(endPoint)+"}\n");
+        	contents.append(".. controls "+getPoint(controlPoint1)+" ");
+        	if (controlPoint2 != null)
+        	  contents.append(" and "+getPoint(controlPoint2)+" ");
+        	contents.append(".. "+getPoint(endPoint));
           }
         }
         return contents.toString();
@@ -525,19 +526,17 @@ public class TikZInfo implements Cloneable {
   @Override
   public String getTikZCommand() {
     StringBuffer contents = new StringBuffer();
-    contents.append("\\begin{pgfpicture}\n");
-    contents.append("   \\begin{pgfmagnify}{1pt}{-1pt}\n");
-    contents.append("      \\pgfsetrectcap\n"); 
-    contents.append("      \\pgfseteorule\n"); 
-    contents.append("      \\pgfsetlinewidth{"+strokeWidth+"}\n"); 
-    contents.append("      \\color{"+color+"}\n"); 
-    contents.append("      \\pgfsetfillopacity{"+alpha+"}\n");
+    contents.append(filled ? "\\fill " : "\\draw ");
+    contents.append("[line width=");
+    double width = strokeWidth*BASIC_STROKE_WIDTH;
+    contents.append(rounded(width)+"pt, "+color);
+    if (filled && alpha != 1.0)
+      contents.append(", fill opacity="+rounded(alpha));
+    contents.append(" ] ");
     for (BezierInfo point : myPath) {
       contents.append(point.getTikZCommand());
     }
-    contents.append("      \\pgfusepath{"+(filled?"fill":"stroke")+"}\n");
-    contents.append("   \\end{pgfmagnify}\n");
-    contents.append("\\end{pgfpicture}");
+    contents.append(";");
     return contents.toString();
   }
 
@@ -638,6 +637,7 @@ public class TikZInfo implements Cloneable {
         contents.append(getPoint(end));
         contents.append(";");
       } else {
+    	/* TODO : change to tikz command as pgfpicture causes sometimes troubles */
         contents.append("\\begin{pgfpicture}\n");
         contents.append("   \\begin{pgfmagnify}{1pt}{-1pt}\n");
         contents.append("      \\pgfsetrectcap\n"); 

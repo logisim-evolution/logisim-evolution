@@ -40,6 +40,7 @@ import com.cburch.logisim.std.io.HexDigitShape;
 import com.cburch.logisim.std.io.LedShape;
 import com.cburch.logisim.std.io.RGBLedShape;
 import com.cburch.logisim.std.io.SevenSegmentShape;
+import com.cburch.logisim.std.io.TtyShape;
 import com.cburch.logisim.std.memory.CounterShape;
 import com.cburch.logisim.std.memory.RegisterShape;
 import java.util.Map;
@@ -95,6 +96,8 @@ public class AppearanceSvgReader {
         shape = new SocVgaShape(x,y,path);
       } else if (name.equals("visible-soc-cpu")) {
         shape = new SocCPUShape(x,y,path);
+      } else if (name.equals("visible-tty")) {
+        shape = new TtyShape(x,y,path);
       } else {
         return null;
       }
