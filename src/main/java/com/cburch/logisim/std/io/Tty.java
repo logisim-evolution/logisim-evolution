@@ -71,7 +71,7 @@ public class Tty extends InstanceFactory  implements DynamicElementProvider {
   public static final int BORDER = 5;
   public static final int ROW_HEIGHT = 15;
 
-  private static final int COL_WIDTH = 7;
+  public static final int COL_WIDTH = 7;
 
   private static final Color DEFAULT_BACKGROUND = new Color(0, 0, 0, 64);
   public static final Font DEFAULT_FONT = new Font("monospaced", Font.PLAIN, 12);

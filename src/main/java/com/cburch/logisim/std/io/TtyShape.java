@@ -59,6 +59,15 @@ public class TtyShape extends DynamicElement {
   @Override
   public void paintDynamic(Graphics g, CircuitState state) {
     TtyState data = state == null ? null : (TtyState) getData(state);
+    if (data != null) {
+      int rows = data.getNrRows();
+      int cols = data.getNrCols();
+      int width = 2 * Tty.BORDER + cols * Tty.COL_WIDTH;
+      int height = 2 * Tty.BORDER + rows * Tty.ROW_HEIGHT;
+      if (width < 30) width = 30;
+      if (height < 30) height = 30;
+      setBounds(width,height);
+    }
     GraphicsUtil.switchToWidth(g, 2);
     g.setColor(Color.YELLOW);
     g.fillRoundRect(bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight(),

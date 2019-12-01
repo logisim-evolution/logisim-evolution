@@ -51,6 +51,8 @@ public class Soc  extends Library {
             "SocPio", S.getter("SocPioComponent"), "" , "pio.SocPio" ),
     new FactoryDescription(
             "SocVga", S.getter("SocVgaComponent"), "" , "vga.SocVga" ),
+    new FactoryDescription(
+            "SocJtagUart", S.getter("SocJtagUartComponent"), "" , "jtaguart.JtagUart" ),
   };
   
   private List<Tool> tools = null;
