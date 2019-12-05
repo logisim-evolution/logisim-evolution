@@ -46,6 +46,8 @@ import com.cburch.logisim.util.LocaleManager;
 import com.cburch.logisim.util.StringUtil;
 import com.cburch.logisim.util.WindowMenuItemManager;
 import java.awt.BorderLayout;
+import java.awt.event.KeyListener;
+import java.awt.event.KeyEvent;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.util.HashMap;
@@ -53,7 +55,7 @@ import java.util.Map;
 import javax.swing.JFrame;
 import javax.swing.JTabbedPane;
 
-public class LogFrame extends LFrame {
+public class LogFrame extends LFrame implements KeyListener{
   private class MyListener
       implements 
           ProjectListener,
@@ -159,6 +161,7 @@ public class LogFrame extends LFrame {
        // chrono goes here
         };
     tabbedPane = new JTabbedPane();
+    tabbedPane.addKeyListener(this);
     for (int index = 0; index < panels.length; index++) {
       LogPanel panel = panels[index];
       tabbedPane.addTab(panel.getTitle(), null, panel, panel.getToolTipText());
@@ -227,5 +230,23 @@ public class LogFrame extends LFrame {
       windowManager.frameOpened(this);
     }
     super.setVisible(value);
+  }
+
+  @Override
+  public void keyPressed(KeyEvent ke) {
+    int keyCode = ke.getKeyCode();
+    if (keyCode == KeyEvent.VK_F2) {
+      curSimulator.tick(2);
+    }
+  }
+
+  @Override
+  public void keyReleased(KeyEvent ke) {
+    // throw new UnsupportedOperationException("Not supported yet.");
+  }
+
+  @Override
+  public void keyTyped(KeyEvent ke) {
+    // throw new UnsupportedOperationException("Not supported yet.");
   }
 }
