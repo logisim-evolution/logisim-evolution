@@ -165,7 +165,9 @@ public class Canvas extends JPanel
     public void mouseDragged(MouseEvent e) {
       if (drag_tool != null) {
        drag_tool.mouseDragged(Canvas.this, getGraphics(), e);
-        Rectangle r = new Rectangle(e.getX(), e.getY(), 1, 1);
+        ZoomModel zoomModel = proj.getFrame().getZoomModel();
+        double ZoomFactor = zoomModel.getZoomFactor();
+        Rectangle r = new Rectangle((int) (e.getX()*ZoomFactor), (int) (e.getY()*ZoomFactor), 1, 1);
         scrollRectToVisible(r);
       }
     }
