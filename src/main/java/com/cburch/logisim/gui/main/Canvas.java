@@ -164,7 +164,11 @@ public class Canvas extends JPanel
     @Override
     public void mouseDragged(MouseEvent e) {
       if (drag_tool != null) {
-        drag_tool.mouseDragged(Canvas.this, getGraphics(), e);
+       drag_tool.mouseDragged(Canvas.this, getGraphics(), e);
+        ZoomModel zoomModel = proj.getFrame().getZoomModel();
+        double ZoomFactor = zoomModel.getZoomFactor();
+        Rectangle r = new Rectangle((int) (e.getX()*ZoomFactor), (int) (e.getY()*ZoomFactor), 1, 1);
+        scrollRectToVisible(r);
       }
     }
 
@@ -194,13 +198,14 @@ public class Canvas extends JPanel
 
     @Override
     public void mouseMoved(MouseEvent e) {
-      if ((e.getModifiersEx() & BUTTONS_MASK) != 0) {
+     if ((e.getModifiersEx() & BUTTONS_MASK) != 0) {
         // If the control key is down while the mouse is being
         // dragged, mouseMoved is called instead. This may well be
         // an issue specific to the MacOS Java implementation,
         // but it exists there in the 1.4 and 5.0 versions.
         mouseDragged(e);
         return;
+
       }
 
       Tool tool = getToolFor(e);
