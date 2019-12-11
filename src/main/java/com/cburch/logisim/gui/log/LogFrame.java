@@ -164,6 +164,7 @@ public class LogFrame extends LFrame implements KeyListener{
     tabbedPane.addKeyListener(this);
     for (int index = 0; index < panels.length; index++) {
       LogPanel panel = panels[index];
+      panels[index].addKeyListener((this));
       tabbedPane.addTab(panel.getTitle(), null, panel, panel.getToolTipText());
     }
 
