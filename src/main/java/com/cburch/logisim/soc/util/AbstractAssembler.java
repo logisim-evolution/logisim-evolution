@@ -335,7 +335,7 @@ public abstract class AbstractAssembler implements AssemblerInterface {
               int index = 0;
               try { index = Integer.parseUnsignedInt(label.substring(14)); }
               catch (NumberFormatException e) {};
-              if (index > offset) offset = index+1;
+              if (index >= offset) offset = index+1;
             }
           }
 
