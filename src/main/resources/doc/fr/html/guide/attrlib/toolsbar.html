@@ -31,14 +31,7 @@
       <center>
         La barre dans le mode "édition de l'apparence"
       </center>
-      <p>
-        Une seconde barre d'outils pilote l'affichage du panneau de navigation et de la zone de dessins.
-      </p>
-      <center>
-        <img class="notscal" src="../../../../img-guide/tools2.png" alt="#########">
-      </center>
-      <p>
-        Et enfin deux autres barres apparaissent selon l'état du panneau de navigation. Elles sont présentées ci-dessous.
+        Et enfin deux autres barres apparaissent selon l'onglet du panneau de navigation. Elles sont présentées ci-dessous.
       </p>
       <center>
         <img class="notscal" src="../../../../img-guide/tools31.png" alt="#########">&nbsp;&nbsp;<img class="notscal" src="../../../../img-guide/tools32.png" alt="#########">
@@ -53,41 +46,47 @@
         La barre dans le mode "édition du dessin"
       </h3>
       <p>
-        Dans le mode "édition du dessin", elle est personnalisable à l'aide du menu <b class="menu">|&nbsp;Projet&nbsp;|</b>→<b class="menu">|&nbsp;Options&nbsp;|</b> onglet <b class="menu">|&nbsp;Barre&nbsp;d'outils&nbsp;|</b> Le processus  est en présentée par la page sur les <a href="../opts/toolbar.html">L'onglet Outils.</a> Ci-dessous nous présentons brièvement les outils présents par défaut dans la barre. Il existe beaucoup d'autres composant pour construire des circuits. Vous trouverez beaucoup plus d'information sur l'ensemble des outils dans la <a href="../../libs/index.html">Référence de la bibliothèque</a>.
+        Dans le mode "édition du dessin", elle est personnalisable à l'aide du menu <b class="menu">|&nbsp;Projet&nbsp;|</b>→<b class="menu">|&nbsp;Options&nbsp;|</b> onglet <b class="menu">|&nbsp;Barre&nbsp;d'outils&nbsp;|</b> Le processus  est en présentée par la page <a href="../opts/toolbar.html">L'onglet Outils.</a> Ci-dessous nous présentons brièvement les outils présents par défaut dans la barre. Il existe beaucoup d'autres composant pour construire des circuits. Vous trouverez beaucoup plus d'information sur l'ensemble des outils dans la <a href="../../libs/index.html">Référence de la bibliothèque</a>.
       </p>
 	  <table class="toolslist">
         <tbody>
           <tr>
             <td class="toolslist" valign="top">
-			  <a href="../../libs/base/poke.html"><img class="intxt" src="../../../../icons/poke.gif" border="1" alt="#########"></a>
+			  <a href="../../libs/base/poke.html"><img class="intxt" src="../../../../img-guide/poke.png" border="1" alt="#########"></a>
 			</td>
 			<td><strong>Outil Pousser :</strong> <b class="tkeybd">Ctrl-1</b> Cet outil permet d'interagir avec les composants de simulation. Par exemple si vous <q>poussez</q> sur une connexion du circuit celle-ci basculera d'un état à l'autre ou si vous <q>poussez</q> sur un câble vous pourrez connaitre la valeur des signaux transportés. Plus d'information sur le lien <a href="../../libs/base/poke.html">pousser</a> de la librairie <b class="propertie">base</b>
 			</td>
 		  </tr>
 		  <tr>
             <td class="toolslist" valign="top">
-			<a href="../../libs/base/select.html"><img class="intxt" src="../../../../icons/select.gif" border="1" alt="#########"></a>
+			<a href="../../libs/base/select.html"><img class="intxt" src="../../../../img-guide/select.png" border="1" alt="#########"></a>
 			</td>
 			<td><strong>L'outil Sélection :</strong> <b class="tkeybd">Ctrl-2</b> Cet outil est particulièrement utile au moment de la conception des circuits, il permet de poser,déplacer ou sélectionner les éléments. Il sert aussi à câbler le circuit. Plus d'information sur le lien <a href="../../libs/base/select.html">sélect</a> de la librairie <b class="propertie">base</b>.
 			</td>
 		  </tr>
 		  <tr>
-            <td class="toolslist" valign="top"><a href="../../libs/base/text.html"><img class="intxt" src="../../../../icons/text.gif" border="1" alt="#########"></a>
+            <td class="toolslist" valign="top"><a href="../../libs/base/text.html"><img class="intxt" src="../../../../img-guide/cabel.png" border="1" alt="#########"></a>
 			</td>
-			<td><strong>Outil Text :</strong> <b class="tkeybd">Ctrl-3</b> Cet outil permet de placer du text sur les dessins et de modifier les labels des composants.Plus d'information sur le lien <a href="../../libs/base/text.html">text</a> de la librairie <b class="propertie">base</b>
+			<td><strong>Outil câblage :</strong> <b class="tkeybd">Ctrl-3</b> Cet outil permet de placer des câble sur le schema .Plus d'information sur le lien <a href="../../libs/base/text.html">text</a> de la librairie <b class="propertie">base</b>
+			</td>
+		  </tr>
+		  <tr>
+            <td class="toolslist" valign="top"><a href="../../libs/base/text.html"><img class="intxt" src="../../../../img-guide/text.png" border="1" alt="#########"></a>
+			</td>
+			<td><strong>Outil Text :</strong> <b class="tkeybd">Ctrl-4</b> Cet outil permet de placer du text sur les dessins et de modifier les labels des composants.Plus d'information sur le lien <a href="../../libs/base/text.html">text</a> de la librairie <b class="propertie">base</b>
 			</td>
 		  </tr>
 		   <tr>
-            <td class="toolslist" valign="top"><a href="../../libs/wiring/pin.html"><img class="intxt" src="../../../../icons/pinInput.gif" border="1" alt="#########">&nbsp;<img class="intxt" src="../../../../icons/pinOutput.gif" border="1" alt="#########"></a>
+            <td class="toolslist" valign="top"><a href="../../libs/wiring/pin.html"><img class="intxt" src="../../../../img-guide/pinInput1.png" border="1" alt="#########"><img class="intxt" src="../../../../img-guide/pinOutput1.png" border="1" alt="#########"></a>
 			</td>
-			<td><strong>Outil broche :</strong> <b class="tkeybd">Ctrl-4 / 5</b> Cet outil permet de placer des broches de connexion sur le schéma. Les connexions sont de deux types : entrée ou sortie. Elles sont présentées dans cette page <a href="../../libs/wiring/pin.html">Broche</a> de la librairie <b class="propertie">câblage</b>.
+			<td><strong>Outil broche :</strong> <b class="tkeybd">Ctrl-5 / 6</b> Cet outil permet de placer des broches de connexion sur le schéma. Les connexions sont de deux types : entrée ou sortie. Elles sont présentées dans cette page <a href="../../libs/wiring/pin.html">Broche</a> de la librairie <b class="propertie">câblage</b>.
 			</td>
 		  </tr>
 		  </tr>
 		   <tr>
-            <td class="toolslist" valign="top"><a href="../../libs/gate/not.html"><img class="intxt" src="../../../../icons/notGate.gif" border="1" alt="#########">&nbsp;<a href="../../libs/gate/basic.html"><img class="intxt" src="../../../../icons/andGate.gif" border="1" alt="#########"></a>
+            <td class="toolslist" valign="top"><a href="../../libs/gate/not.html"><img class="intxt" src="../../../../img-guide/notGate.png" border="1" alt="#########"><a href="../../libs/gate/basic.html"><img class="intxt" src="../../../../img-guide/andGate.png" border="1" alt="#########"></a>
 			</td>
-			<td><strong>Outils Not,And,Or :</strong> <b class="tkeybd">Ctrl-6 / 7 / 8</b> Ces outils permettent de placer les portes logique de base sur le dessin. Les portes logiques sont présentées dans la <a href="../../libs/gates/index.html">librairie Portes logiques</a>.
+			<td><strong>Outils Not,And,Or :</strong> <b class="tkeybd">Ctrl-7 / 8 / 9 / 0</b> Ces outils permettent de placer les portes logique de base sur le dessin. Les portes logiques sont présentées dans la <a href="../../libs/gates/index.html">librairie Portes logiques</a>.
 			</td>
 		  </tr>
 		 </tbody>
