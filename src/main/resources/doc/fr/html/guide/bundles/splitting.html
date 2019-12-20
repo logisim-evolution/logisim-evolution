@@ -21,16 +21,12 @@
       </p>
       <p>
         Supposons par exemple que vous vouliez un circuit qui réalise la fonction AND entre les deux quartets d'un bus de huit bits (les quatre bits de poids fort et les quatre bits de poids faible). Nous aurons une valeur à huit bits venant bus d'entrée et nous voulons séparer ceci en deux bus à quatre bits. Dans le circuit ci-dessous, nous avons utilisé un répartiteur pour réaliser cela. L'entrée huit bits est connectée à l'entrée du bus, qui la divise en deux nappes d’un quartet, qui sont connectées à la porte logique AND et le résultat est présenté en sortie dans un quartet.
-      </p>
-      <center>
+      <p align="center">
         <img class="notscal" src="../../../../img-guide/bundles-splitter-circ.png" alt="#########">
-      </center>
       <p>
         Dans l'exemple précédent, le répartiteur <b>divise</b> une nappe de plusieurs fils en entrée en deux nappes de plusieurs fils en sortie. Mais les terminaisons de bus peuvent aussi travailler d'une autre façon: elles peuvent <b>regrouper</b> plusieurs valeurs en une seule. Les terminaisons de bus simulent parfaitement une nappe de câble et elles n'ont pas de direction. Elles peuvent envoyer une valeur dans une direction à un moment et dans une autre plus tard. Elles font même faire les deux en même temps, comme dans l'exemple ci-dessous ou une valeur voyage vers l'est à travers les deux terminaisons, ensuite elle est redirigée vers l'ouest à travers les terminaisons à nouveau, et ensuite de nouveau vers l'Est ou elle atteint sa sortie.
-      </p>
-      <center>
+      <p align="center">
         <img class="notscal" src="../../../../img-guide/bundles-splitter-2way.png" alt="#########">
-      </center>
       <p>
         La clé pour comprendre les terminaisons de bus tient dans leurs attributs. Dans ce qui suit, le terme <b>terminaison</b> fait référence à l'un des multiples câbles d'un côté, tandis que <b>bus</b> fait référence au regroupement de ces câbles en un seul de l'autre côté. (voir figure ci-dessous)
       </p>

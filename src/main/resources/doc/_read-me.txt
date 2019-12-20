@@ -9,6 +9,6 @@ The folder img-guide contains the pictures of the guide without translation requ
 
 The folder img-libs contains the pictures of the library without translation required
 
-The folders de, el,en,fr,pt,ru are the linguistic parts of the documentation 
+The folders de, el,en,fr,pt,ru,it,nl are the linguistic parts of the documentation 
 
 in each of these language folders we find a folder img-guide contains the pictures of the library with translation required.

@@ -21,26 +21,20 @@
       </p>
       <p>
         La saisie d'écran ci-dessous illustre un circuit simple pour trouver la combinaison d'un groupe AND d'une largeur de trois bits. Notez comment la sortie à trois bits représente la combinaison AND des deux entrées de trois bits. Tous les composants du schéma ont été réglés via l'attribut <b class="propertie">Largeur donnée</b> pour gérer des données trois bits.
-      </p>
-      <center>
+      <p align="center">
         <img src="../../../img-guide/bundles-create.png" alt="#########">
-      </center>
       <p>
         Tous les composants dans Logisim définissent une largeur en bit pour chaque entrée et sortie. Par contraste, la largeur d'un câble est non définie: par contre, la largeur du câble s'adapte automatiquement aux composants auxquels il est attaché. Si un câble relie deux composants avec des largeurs en bits différentes, Logisim affiche une erreur "Largeur incompatible" et indique l'emplacement du conflit avec des câbles orange. Dans l'exemple ci-dessous, la largeur en bits de la connexion de sortie a été modifiée à 1, et Logisim signale l'erreur et indique la largeur des données de chaque côté de la connexion.
         Tous les composants dans Logisim définissent une largeur en bit pour chaque entrée et sortie. Par contraste, la largeur d'un câble est non définie: par contre, la largeur du câble s'adapte automatiquement aux composants auxquels il est attaché. Si un câble relie deux composants avec des largeurs en bits différentes, Logisim affiche une erreur "Largeur incompatible" et indique l'emplacement du conflit avec des câbles orange. Dans l'exemple ci-dessous, la largeur en bits de la connexion de sortie a été modifiée à 1, et Logisim signale l'erreur et indique la largeur des données de chaque côté de la connexion.
-      </p>
-      <center>
+      <p align="center">
         <img class="notscal" src="../../../img-guide/bundles-error.png" alt="#########">
-      </center>
       <p>
         Les câbles qui relient des points incompatibles (représenté en orange) ne transportent aucune valeur.
       </p>
       <p>
         Pour les câbles à un seul bit, vous pouvez voir d'un seul coup d'oeil quelle valeur est transportée par le câble. Logisim les colorise avec du vert clair ou foncé en fonction de la valeur. Ce n'est pas le cas pour des câbles multibits: ils sont simplement noirs. Vous pouvez malgré tout sonder le câble en cliquant dessus avec l'outil <b class="propertie">"pousser"</b>. (<img class="intxt" src="../../../../icons/poke.gif" alt="#########">).
-      </p>
-      <center>
+      <p align="center">
         <img src="../../../../img-guide/bundles-probe.png" alt="#########">
-      </center>
       <p>
         Cet affichage de la sonde est utile pour déboguer les circuits utilisant des nappes de câbles.
       </p>

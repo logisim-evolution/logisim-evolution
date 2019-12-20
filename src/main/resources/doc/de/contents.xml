@@ -15,13 +15,13 @@
 			<tocitem target="tutorial_test" text="Schritt 4: Testen der Schaltung" />
 			<tocitem target="tutorial_step" text="Step 5: Step by step mode"/>			
 		</tocitem>
-		<tocitem target="attrlib" text="Bibliotheken und Attribute">
-			<tocitem target="attrlib_canvas" text="The canvas"/>
-			<tocitem target="attrlib_menu" text="The menus"/>
-			<tocitem target="attrlib_explore" text="Das Übersichtsfenster" />
-			<tocitem target="attrlib_toolsbar" text="The tools bars"/>
-			<tocitem target="attrlib_attr" text="Die Attribut-Tabelle" />
-			<tocitem target="attrlib_tool" text="Werkzeug- und Bauelementattribute" />
+		<tocitem target="gui" text="Bibliotheken und Attribute">
+			<tocitem target="gui_canvas" text="The canvas"/>
+			<tocitem target="gui_menu" text="The menus"/>
+			<tocitem target="gui_explore" text="Das Übersichtsfenster" />
+			<tocitem target="gui_toolsbar" text="The tools bars"/>
+			<tocitem target="gui_attr" text="Die Attribut-Tabelle" />
+			<tocitem target="gui_tool" text="Werkzeug- und Bauelementattribute" />
 		</tocitem>
 		<tocitem target="subcirc" text="Teilschaltungen">
 			<tocitem target="subcirc_creating" text="Erstellen von Schaltungen" />

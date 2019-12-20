@@ -15,13 +15,13 @@
   <mapID target="tutorial_text" url="fr/html/guide/tutorial/tutor-text.html"/>
   <mapID target="tutorial_test" url="fr/html/guide/tutorial/tutor-test.html"/>
   <mapID target="tutorial_step" url="fr/html/guide/tutorial/tutor-step.html"/>
-  <mapID target="attrlib" url="fr/html/guide/attrlib/index.html"/>
-  <mapID target="attrlib_canvas" url="fr/html/guide/attrlib/canvas.html"/>  
-  <mapID target="attrlib_menu" url="fr/html/guide/attrlib/menu.html"/>
-  <mapID target="attrlib_explore" url="fr/html/guide/attrlib/explore.html"/>
-  <mapID target="attrlib_toolsbar" url="fr/html/guide/attrlib/toolsbar.html"/>
-  <mapID target="attrlib_attr" url="fr/html/guide/attrlib/attr.html"/>
-  <mapID target="attrlib_tool" url="fr/html/guide/attrlib/tool.html"/>
+  <mapID target="gui" url="fr/html/guide/gui/index.html"/>
+  <mapID target="gui_canvas" url="fr/html/guide/gui/gui-canvas.html"/>  
+  <mapID target="gui_menu" url="fr/html/guide/gui/gui-menu.html"/>
+  <mapID target="gui_explore" url="fr/html/guide/gui/gui-explore.html"/>
+  <mapID target="gui_toolsbar" url="fr/html/guide/gui/gui-toolsbar.html"/>
+  <mapID target="gui_attr" url="fr/html/guide/gui/gui-attribut.html"/>
+  <mapID target="gui_tool" url="fr/html/guide/gui/gui-attrcomp.html"/>
   <mapID target="subcirc" url="fr/html/guide/subcirc/index.html"/>
   <mapID target="subcirc_creating" url="fr/html/guide/subcirc/creating.html"/>
   <mapID target="subcirc_using" url="fr/html/guide/subcirc/using.html"/>

@@ -15,13 +15,13 @@
 	<mapID target="tutorial_text" url="es/html/guide/tutorial/tutor-text.html" />
 	<mapID target="tutorial_test" url="es/html/guide/tutorial/tutor-test.html" />
 	<mapID target="tutorial_step" url="es/html/guide/tutorial/tutor-step.html" />
-	<mapID target="attrlib" url="es/html/guide/attrlib/index.html" />
-    <mapID target="attrlib_canvas" url="es/html/guide/attrlib/canvas.html"/> 
-    <mapID target="attrlib_menu" url="es/html/guide/attrlib/menu.html"/>	
-	<mapID target="attrlib_explore" url="es/html/guide/attrlib/explore.html" />
-    <mapID target="attrlib_toolsbar" url="es/html/guide/attrlib/toolsbar.html"/>
-	<mapID target="attrlib_attr" url="es/html/guide/attrlib/attr.html" />
-	<mapID target="attrlib_tool" url="es/html/guide/attrlib/tool.html" />
+	<mapID target="gui" url="es/html/guide/gui/index.html" />
+    <mapID target="gui_canvas" url="es/html/guide/gui/gui-canvas.html"/> 
+    <mapID target="gui_menu" url="es/html/guide/gui/gui-menu.html"/>	
+	<mapID target="gui_explore" url="es/html/guide/gui/gui-gui-explore.html" />
+    <mapID target="gui_toolsbar" url="es/html/guide/gui/toolsbar.html"/>
+	<mapID target="gui_attr" url="es/html/guide/gui/gui-attribut.html" />
+	<mapID target="gui_tool" url="es/html/guide/gui/gui-attrcomp.html" />
 	<mapID target="subcirc" url="es/html/guide/subcirc/index.html" />
 	<mapID target="subcirc_creating" url="es/html/guide/subcirc/creating.html" />
 	<mapID target="subcirc_using" url="es/html/guide/subcirc/using.html" />
@@ -34,7 +34,7 @@
 	<mapID target="bundles_colors" url="es/html/guide/bundles/colors.html" />
 	<mapID target="mem_guide" url="es/html/guide/mem/index.html" />
 	<mapID target="mem_poke" url="es/html/guide/mem/poke.html" /> <!-- obsolete -->
-	<mapID target="mem_menu" url="es/html/guide/mem/menu.html" />
+	<mapID target="mem_menu" url="es/html/guide/mem/gui-menu.html" />
 	<mapID target="mem_hex" url="es/html/guide/mem/hex.html" />
 	<mapID target="analyze" url="es/html/guide/analyze/index.html" />
 	<mapID target="analyze_open" url="es/html/guide/analyze/open.html" />
@@ -149,7 +149,7 @@
 	<mapID target="base_select" url="es/html/libs/base/select.html" />
 	<mapID target="base_wiring" url="es/html/libs/base/wiring.html" />
 	<mapID target="base_text" url="es/html/libs/base/text.html" />
-	<mapID target="base_menu" url="es/html/libs/base/menu.html" />
+	<mapID target="base_menu" url="es/html/libs/base/gui-menu.html" />
 	<mapID target="base_label" url="es/html/libs/base/label.html" />
     <mapID target="tcl" url="es/html/libs/tcl/index.html" />
     <mapID target="tcl_reds_console" url="es/html/libs/tcl/reds_console.html" />
