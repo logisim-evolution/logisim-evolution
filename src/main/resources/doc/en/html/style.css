@@ -1,23 +1,30 @@
-/* 
+﻿/* 
 This CSS document is suitable for use in java help v2.0
 There is a compromise between css rules and html properties for it to work
 */
-/* For img */
-img {
-	width:86%;
-	max-width:100%;
-}
+
+
 /* For img icone in the text */
+img {
+    height:auto;
+	width:90%;
+}
+
 img.intxt {
 	height:auto;
 	width:auto;
 	vertical-align:middle;
+	margin:2;
 }
 /* For Img not scal */
 img.notscal {
 	height:auto;
 	width:auto;
 	vertical-align:middle;
+}
+img.iconlibs{
+	height:32;
+	width:32;
 }
 /* For spaces, page background */
 div.maindiv {
@@ -163,6 +170,11 @@ span.evalue {
 	text-align :center;
 }
 
+/* To mark the areas to translate */ 
+span.totranslate {
+	color:##DA81F5;
+}
+
 /* Définition pour la table présentation de lib */
 
 /* Définition pour la table des composant de lib */
@@ -173,4 +185,8 @@ margin-top: 5px;
 }
 li  {
 margin-top: 5px; 
+}
+
+p.blue {
+  color:#008000;
 }

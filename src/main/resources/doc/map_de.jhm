@@ -14,13 +14,14 @@
 	<mapID target="tutorial_wires" url="de/html/guide/tutorial/tutor-wires.html" />
 	<mapID target="tutorial_text" url="de/html/guide/tutorial/tutor-text.html" />
 	<mapID target="tutorial_test" url="de/html/guide/tutorial/tutor-test.html" />
+	<mapID target="tutorial_step" url="de/html/guide/tutorial/tutor-step.html" />
 	<mapID target="gui" url="de/html/guide/gui/index.html" />
 	<mapID target="gui_canvas" url="de/html/guide/gui/gui-canvas.html"/>
     <mapID target="gui_menu" url="de/html/guide/gui/gui-menu.html"/>
-	<mapID target="gui_explore" url="de/html/guide/gui/gui-gui-explore.html" />
-    <mapID target="gui_toolsbar" url="de/html/guide/gui/toolsbar.html"/> 
-	<mapID target="gui_attr" url="de/html/guide/gui/gui-attribut.html" />
-	<mapID target="gui_tool" url="de/html/guide/gui/gui-attrcomp.html" />
+	<mapID target="gui_explore" url="de/html/guide/gui/gui-explore.html" />
+    <mapID target="gui_toolsbar" url="de/html/guide/gui/gui-toolsbar.html"/> 
+	<mapID target="gui-attribut" url="de/html/guide/gui/gui-attribut.html" />
+	<mapID target="gui-attrcomp" url="de/html/guide/gui/gui-attrcomp.html" />
 	<mapID target="subcirc" url="de/html/guide/subcirc/index.html" />
 	<mapID target="subcirc_creating" url="de/html/guide/subcirc/creating.html" />
 	<mapID target="subcirc_using" url="de/html/guide/subcirc/using.html" />

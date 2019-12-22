@@ -2,13 +2,14 @@
 This CSS document is suitable for use in java help v2.0
 There is a compromise between css rules and html properties for it to work
 */
-/* For img */
-img {
-  	width: 86%;
-	max-width: 100%;
-}
+
 
 /* For img icone in the text */
+img {
+    height:auto;
+	width:90%;
+}
+
 img.intxt {
 	height:auto;
 	width:auto;
@@ -184,4 +185,8 @@ margin-top: 5px;
 }
 li  {
 margin-top: 5px; 
+}
+
+p.blue {
+  color:#008000;
 }

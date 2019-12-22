@@ -18,10 +18,10 @@
 	<mapID target="gui" url="en/html/guide/gui/index.html" />
     <mapID target="gui_canvas" url="en/html/guide/gui/gui-canvas.html"/> 
     <mapID target="gui_menu" url="en/html/guide/gui/gui-menu.html"/>
-	<mapID target="gui_explore" url="en/html/guide/gui/gui-gui-explore.html" /> 
-    <mapID target="gui_toolsbar" url="en/html/guide/gui/toolsbar.html"/>
-	<mapID target="gui_attr" url="en/html/guide/gui/gui-attribut.html" />
-	<mapID target="gui_tool" url="en/html/guide/gui/gui-attrcomp.html" />
+	<mapID target="gui_explore" url="en/html/guide/gui/gui-explore.html" /> 
+    <mapID target="gui_toolsbar" url="en/html/guide/gui/gui-toolsbar.html"/>
+	<mapID target="gui-attribut" url="en/html/guide/gui/gui-attribut.html" />
+	<mapID target="gui-attrcomp" url="en/html/guide/gui/gui-attrcomp.html" />
 	<mapID target="subcirc" url="en/html/guide/subcirc/index.html" />
 	<mapID target="subcirc_creating" url="en/html/guide/subcirc/creating.html" />
 	<mapID target="subcirc_using" url="en/html/guide/subcirc/using.html" />

@@ -20,8 +20,8 @@
 			<tocitem target="gui_menu" text="The menus"/>
 			<tocitem target="gui_explore" text="Das Übersichtsfenster" />
 			<tocitem target="gui_toolsbar" text="The tools bars"/>
-			<tocitem target="gui_attr" text="Die Attribut-Tabelle" />
-			<tocitem target="gui_tool" text="Werkzeug- und Bauelementattribute" />
+			<tocitem target="gui-attribut" text="Die Attribut-Tabelle" />
+			<tocitem target="gui-attrcomp" text="Werkzeug- und Bauelementattribute" />
 		</tocitem>
 		<tocitem target="subcirc" text="Teilschaltungen">
 			<tocitem target="subcirc_creating" text="Erstellen von Schaltungen" />

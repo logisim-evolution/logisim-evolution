@@ -20,8 +20,8 @@
 			<tocitem target="gui_menu" text="The menus"/>
 			<tocitem target="gui_explore" text="Панель проводника" />
 			<tocitem target="gui_toolsbar" text="The tools bars"/>
-			<tocitem target="gui_attr" text="Таблица атрибутов" />
-			<tocitem target="gui_tool" text="Атрибуты инструментов и компонентов" />
+			<tocitem target="gui-attribut" text="Таблица атрибутов" />
+			<tocitem target="gui-attrcomp" text="Атрибуты инструментов и компонентов" />
 		</tocitem>
 		<tocitem target="subcirc" text="Подсхемы">
 			<tocitem target="subcirc_creating" text="Создание схем" />

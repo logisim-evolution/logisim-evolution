@@ -20,8 +20,8 @@
 			<tocitem target="gui_menu" text="The menus"/>
 			<tocitem target="gui_explore" text="The explorer pane" />
 			<tocitem target="gui_toolsbar" text="The tools bars"/>
-			<tocitem target="gui_attr" text="The attribute table" />
-			<tocitem target="gui_tool" text="Tool and component attributes" />
+			<tocitem target="gui-attribut" text="The attribute table" />
+			<tocitem target="gui-attrcomp" text="Tool and component attributes" />
 		</tocitem>
 		<tocitem target="subcirc" text="Subcircuits">
 			<tocitem target="subcirc_creating" text="Creating circuits" />
