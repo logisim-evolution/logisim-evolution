@@ -29,16 +29,19 @@
         The second way you can enter a subcircuit is to bring up its popup menu by <b class="tkeybd">right-clic</b> or <b class="tkeybd">control-click</b> it, and then choosing the option <b class="menu">|&nbsp;View&nbsp;<i>"circuit_name"</i>&nbsp;|</b>.
       </p>
       <center>
-        <img src="../../../img-guide/subcirc-4-delve.png" alt="#########">
+        <img src="../../../img-guide/subcirc-8-delve.png" alt="#########">
       </center>
       <p>
         And the third way is to first ensure the Poke Tool (<img class="intxt" src="../../../../icons/poke.gif" alt="#########">) is selected and then <b class="tkeybd">click</b> the subcircuit you want to enter; a magnifying glass will appear over the subcircuit's center, and <b class="tkeybd">double-clicking</b> the magnifying glass will enter the subcircuit's state.
       </p>
+	  <center>
+        <img class="notscal" src="../../../../img-guide/subcirc-delve.png" alt="#########">
+      </center>
       <p>
         In any case, once you enter the subcircuit, you'll see that the pins' values in the subcircuit match the values being sent through them from the containing circuit.
       </p>
       <center>
-        <img src="../../../img-guide/subcirc-2-delve.png" alt="#########">
+        <img src="../../../../img-guide/subcirc-delve2.png" alt="#########">
       </center>
       <p>
         While in the subcircuit, you are allowed to alter the circuit. If the changes affect any of the subcircuit's outputs, they are propagated into the containing circuit. One exception: The subcircuit inputs are determined based on the values coming into the circuit from the supercircuit, so it doesn't make sense to toggle those values. If you attempt to poke a subcircuit's input, a dialog will pop up asking, <b class="refquest">The pin is tied to the supercircuit state. Create a new circuit state?</b> Clicking No will cancel the toggle request, while clicking Yes will create a copy of the viewed state, divorced from the outer circuit, with the input pin toggled.

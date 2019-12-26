@@ -26,7 +26,8 @@
 		<tocitem target="subcirc" text="Design hiérarchique">
 			<tocitem target="subcirc_creating" text="Créer des circuits"/>
 			<tocitem target="subcirc_using" text="Utiliser des sous-circuits"/>
-			<tocitem target="subcirc_appear" text="Editer l'apparence d'un sous-circuit"/>
+			<tocitem target="subcirc_appear" text="Sélectionner l'apparence d'un sous-circuit "/>
+			<tocitem target="subcirc_personalise" text="Personnaliser l'apparence"/>
 			<tocitem target="subcirc_debug" text="Déboguer un sous-circuit"/>
 			<tocitem target="subcirc_library" text="Librairies Logisim"/>
 		</tocitem>

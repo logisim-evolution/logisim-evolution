@@ -26,7 +26,8 @@
 		<tocitem target="subcirc" text="Subcircuitos">
 			<tocitem target="subcirc_creating" text="Para criar circuitos" />
 			<tocitem target="subcirc_using" text="Para usar subcircuitos" />
-			<tocitem target="subcirc_appear" text="Para editar a aparência de subcircuito" />
+			<tocitem target="subcirc_appear" text="Selecção do aspecto de um subcircuito" />
+			<tocitem target="subcirc_personalise" text="Personalizar a aparência"/>
 			<tocitem target="subcirc_debug" text="Para depurar subcircuitos" />
 			<tocitem target="subcirc_library" text="Bibliotecas do Logisim" />
 		</tocitem>

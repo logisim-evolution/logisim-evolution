@@ -27,6 +27,7 @@
 			<tocitem target="subcirc_creating" text="Erstellen von Schaltungen" />
 			<tocitem target="subcirc_using" text="Verwendung von Teilschaltungen" />
 			<tocitem target="subcirc_appear" text="Aussehen von Teilschaltungen bearbeiten" />
+			<tocitem target="subcirc_personalise" text="Anpassen des Erscheinungsbildes"/>
 			<tocitem target="subcirc_debug" text="Fehlersuche in Teilschaltungen" />
 			<tocitem target="subcirc_library" text="Bibliotheken von Logisim" />
 		</tocitem>

@@ -23,11 +23,12 @@
   <mapID target="gui-attribut" url="nl/html/guide/gui/gui-attribut.html"/>
   <mapID target="gui-attrcomp" url="nl/html/guide/gui/gui-attrcomp.html"/>
   <mapID target="subcirc" url="nl/html/guide/subcirc/index.html"/>
-  <mapID target="subcirc_creating" url="nl/html/guide/subcirc/creating.html"/>
-  <mapID target="subcirc_using" url="nl/html/guide/subcirc/using.html"/>
-  <mapID target="subcirc_appear" url="nl/html/guide/subcirc/appear.html"/>
-  <mapID target="subcirc_debug" url="nl/html/guide/subcirc/debug.html"/>
-  <mapID target="subcirc_library" url="nl/html/guide/subcirc/library.html"/>
+  <mapID target="subcirc_creating" url="nl/html/guide/subcirc/sub-creating.html"/>
+  <mapID target="subcirc_using" url="nl/html/guide/subcirc/sub-using.html"/>
+  <mapID target="subcirc_appear" url="nl/html/guide/subcirc/sub-appear.html"/>
+  <mapID target="subcirc_personalise" url="nl/html/guide/subcirc/sub-personalise.html"/>
+  <mapID target="subcirc_debug" url="nl/html/guide/subcirc/sub-debug.html"/>
+  <mapID target="subcirc_library" url="nl/html/guide/subcirc/sub-library.html"/>
   <mapID target="bundles" url="nl/html/guide/bundles/index.html"/>
   <mapID target="bundles_creating" url="nl/html/guide/bundles/creating.html"/>
   <mapID target="bundles_splitting" url="nl/html/guide/bundles/splitting.html"/>

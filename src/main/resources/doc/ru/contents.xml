@@ -26,7 +26,8 @@
 		<tocitem target="subcirc" text="Подсхемы">
 			<tocitem target="subcirc_creating" text="Создание схем" />
 			<tocitem target="subcirc_using" text="Использование подсхем" />
-			<tocitem target="subcirc_appear" text="Изменение внешнего вида подсхемы" />
+			<tocitem target="subcirc_appear" text="Выбор внешнего вида подсхемы" />
+			<tocitem target="subcirc_personalise" text="Настроить внешний вид"/>
 			<tocitem target="subcirc_debug" text="Отладка подсхем" />
 			<tocitem target="subcirc_library" text="Библиотеки Logisim" />
 		</tocitem>
