@@ -101,8 +101,7 @@
 			<tocitem target="jar_guide" text="Guidelines" />
 		</tocitem>
 		<tocitem target="about" text="About the program">
-			<tocitem target="about_gpl" text="GNU General Public License" />
-			
+			<tocitem target="about_gpl" text="GNU General Public License" />		
 		</tocitem>
 	</tocitem>
 

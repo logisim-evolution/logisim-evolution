@@ -17,46 +17,47 @@
         Verwendung von Teilschaltungen
       </h1>
       <p>
-        Now suppose we want to build a 4-to-1 multiplexer using instances of our 2-to-1 multiplexer. Of course, we would first create a new circuit, which we'll call <b class="reffig">Mux_4to1</b> To add 2-to-1 multiplexers into our circuit, we click the <b class="reffig">Mux_2to1</b> circuit <b>once</b> in the explorer pane to select it as a tool, and then we can add copies of it, represented as boxes, by clicking within the canvas.
+        Nun nehmen wir an, wir wollen einen 4-to-1 Multiplexer bauen, indem wir Instanzen unseres 2-to-1 Multiplexers verwenden. Natürlich würden wir zuerst eine neue Schaltung erstellen, die wir <b class="reffig">Mux_4to1</b> nennen. Um unserer Schaltung 2-to-1-Multiplexer hinzuzufügen, klicken wir einmal auf die <b class="reffig">Mux_2to1</b>-Schaltung im Explorer-Fenster, um sie als Werkzeug auszuwählen, und dann können wir Kopien davon, dargestellt als Boxen, durch Klicken innerhalb der Leinwand hinzufügen. 
       </p>
-      <center>
+      <p align="center">
         <img src="../../../img-guide/subcirc-3-add.png" alt="#########">
-      </center>
-      <p>
-        If you were to double-click the <b class="reffig">Mux_2to1</b> circuit in the explorer pane, then the window would switch to editing the <b class="reffig">Mux_2to1</b> circuit instead.
       </p>
       <p>
-        After building up the circuit, we end up with the following.
+        Wenn Sie im Projektexplorer auf die <b class="reffig">Mux_2to1</b>-Schaltung doppelklicken, dann zeigt die Seite die Ausgabe der <b class="reffig">Mux_2to1</b>-Schaltung.
       </p>
-      <center>
+      <p>
+       Nachdem die neue Schaltung entworfen wurde, kann sie so aussehen.
+      </p>
+      <p align="center">
         <img src="../../../img-guide/subcirc-4-done.png" alt="#########">
-      </center>
-      <p>
-        Our circuit for a 4-to-1 multiplexer uses three copies of the 2-to-1 multiplexer,each is drawn in a box with pins on the left and right sides. The pins on this box correspond to the input and output pins in the <b class="reffig">Mux_2to1</b> circuit. The two pins on the east face of the box correspond to the inputs of the circuit and on the west face they correspond to the output. They are read from the diagram of the sub-circuit from right to left and from top to bottom and they will be placed on the sub-circuit symbol from top to bottom.
       </p>
       <p>
-        If labels have been associated with these pins in the diagram they will be included in the symbol. In addition, they are also displayed as a <b>tooltip</b> when you fly over the pin with the mouse. You can disable this feature through the <a href="../prefs/layout.html">preferences panel</a> .)
+	    Unsere Schaltung für einen 4-zu-1-Multiplexer verwendet drei Kopien des 2-zu-1-Multiplexers, die jeweils in einer Box mit Pins auf der linken und rechten Seite gezeichnet sind. Die Pins dieser Box entsprechen den Ein- und Ausgangspins der <b class="reffig">Mux_2to1</b>-Schaltung. Sie werden aus dem Schaltplan des Unter-Schaltungen von rechts nach links und von oben nach unten gelesen und von oben nach unten auf das Unter-Schaltungen gesetzt.
       </p>
-      <center>
+      <p>
+		Sind diesen Pins im Diagramm Beschriftungen zugeordnet, so werden diese in das Symbol übernommen. Zusätzlich werden sie auch als <b>Tooltip</b> angezeigt, wenn Sie mit der Maus über den Pin fliegen. Sie können diese Funktion über das <a href="../prefs/layout.html">AttributTabelle</a> deaktivieren.
+      </p>
+      <p align="center">
         <img class="notscal" src="../../../img-guide/subcirc-4-tip.png" alt="#########">
-      </center>
-      <p>
-        Several other components will display these tips, too: For some of the pins of a built-in <a href="../../libs/mem/flipflops.html">flip-flop</a>, for example, hovering over it explains what that pin does.
       </p>
       <p>
-        Incidentally, every pin to a circuit must be either an input or an output. Many manufactured chips have pins that behave as an input in some situations and as an output in others; you cannot construct such chips within Logisim (at least, in the current version).
+		Verschiedene andere Komponenten zeigen diese Tipps ebenfalls an. Bei einigen der Pins eines eingebauten <a href="../../libs/mem/flipflops.html">Flipflop</a> zum Beispiel erklärt das Schweben darüber, was dieser Pin macht. 
+
       </p>
       <p>
-        Logisim will maintain different state information for all subcircuits appearing in a circuit. For example, if a circuit contains a flip-flop, and that circuit is used as a subcircuit several times, then each subcircuit's flip-flop will have its own value when simulating the larger circuit.
+        Übrigens muss jeder Pin einer Schaltung entweder ein Eingang oder ein Ausgang sein. Viele gefertigte Chips haben Pins, die sich in manchen Situationen als Eingang und in anderen als Ausgang verhalten. solche Chips kann man in Logisim (zumindest in der aktuellen Version) nicht konstruieren.
       </p>
       <p>
-        Now that we have the 4-to-1 multiplexer defined, we can now use it in other circuits. Logisim has no limits on how deeply circuits can be nested - though it will object to nesting circuits within themselves!
+        Logisim wird verschiedene Zustandsinformationen für alle in einem Schaltkreis auftretenden Teilschaltungen pflegen. Wenn eine Schaltung beispielsweise ein Flip-Flop enthält und diese Schaltung mehrmals als Teilschaltung verwendet wird, dann hat das Flip-Flop jeder Instanz Teilschaltung einen eigenen Wert, wenn die größere Schaltung simuliert wird.
       </p>
       <p>
-        <b class="note">Note:</b> There's nothing wrong with editing a circuit that is being used as a subcircuit; in fact, this is quite common. Be aware, though, that any changes to a circuit's pins (adding, deleting, or moving them) will rearrange them also in the containing circuit. Thus, if you change any pins in a circuit, you will also need to edit any circuits using it as a subcircuit.
+        Jetzt, wo wir den 4-zu-1-Multiplexer definiert haben, können wir ihn nun auch in anderen Schaltkreisen einsetzen. Logisim hat keine Grenzen, wie Schaltungen Verschachtelungstiefe werden können - allerdings wird es sich gegen die Verschachtelung von Schaltungen in sich selbst wehren!
       </p>
       <p>
-        <b>Next:</b> <a href="sub-appear.html">Aussehen von Teilschaltungen bearbeiten </a>.
+		<b class="note">Hinweis:</b> Es ist nichts falsch daran, eine Schaltung zu editieren, die als Subcircuit verwendet wird; dies ist sogar ziemlich üblich. Beachten Sie jedoch, dass jede Änderung an den Pins einer Schaltung (Hinzufügen, Löschen oder Verschieben) diese auch in der enthaltenden Schaltung neu anordnet. Wenn Sie also Pins in einer Schaltung ändern, müssen Sie auch alle Schaltungen bearbeiten, die diese Schaltung als Unter-Schaltkreis verwenden. 
+      </p>
+      <p>
+        <b>Nächste:</b> <a href="sub-appear.html">Aussehen von Teilschaltungen bearbeiten </a>.
       </p>
     </div>
   </body>

@@ -26,7 +26,7 @@
 	<mapID target="subcirc_creating" url="en/html/guide/subcirc/sub-creating.html" />
 	<mapID target="subcirc_using" url="en/html/guide/subcirc/sub-using.html" />
 	<mapID target="subcirc_appear" url="en/html/guide/subcirc/sub-appear.html" />
-  <mapID target="subcirc_personalise" url="en/html/guide/subcirc/sub-personalise.html"/>
+    <mapID target="subcirc_personalise" url="en/html/guide/subcirc/sub-personalise.html"/>
 	<mapID target="subcirc_debug" url="en/html/guide/subcirc/sub-debug.html" />
 	<mapID target="subcirc_library" url="en/html/guide/subcirc/sub-library.html" />
 	<mapID target="bundles" url="en/html/guide/bundles/index.html" />
@@ -84,8 +84,8 @@
 	<mapID target="menu_project" url="en/html/guide/menu/project.html" />
 	<mapID target="menu_simulate" url="en/html/guide/menu/simulate.html" />
 	<mapID target="menu_winhelp" url="en/html/guide/menu/winhelp.html" />
-	<mapID  target="menu_exportab" url="en/html/guide/menu/exportab.html" />
-	<mapID  target="menu_printertab" url="en/html/guide/menu/printertab.html" />
+	<mapID target="menu_exportab" url="en/html/guide/menu/exportab.html" />
+	<mapID target="menu_printertab" url="en/html/guide/menu/printertab.html" />
 	<mapID target="about" url="en/html/guide/about/index.html" />
 	<mapID target="about_gpl" url="en/html/guide/about/gpl.html" />
 	
@@ -204,6 +204,8 @@
 	<mapID target="icon_tty" url="icons/tty.gif" />
 	<mapID target="icon_vhdl" url="icons/vhdl.gif" />
 	<mapID target="test_hml_css" url="testhtml/index.html" />
-        <mapID target="up_icon" url="icons/up.png"/>
-        <mapID target="socbus_icon" url="icons/socbus.png"/>
+    <mapID target="up_icon" url="icons/up.png"/>
+    <mapID target="socbus_icon" url="icons/socbus.png"/>
+	
+	<mapID target="test_hml_css" url="en/testhtml/index.html" />
 </map>
