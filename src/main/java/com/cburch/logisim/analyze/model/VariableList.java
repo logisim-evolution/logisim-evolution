@@ -55,6 +55,8 @@ public class VariableList {
 	  others.add(var);
   }
   
+  public ArrayList<String> getNames() { return names; }
+  
   public boolean containsDuplicate(VariableList data, Var oldVar, String name) {
 	  boolean found = false;
       for (int i = 0, n = vars.size(); i < n && !found; i++) {
