@@ -29,6 +29,7 @@
 package com.cburch.logisim.std.base;
 
 import static com.cburch.logisim.std.Strings.S;
+
 import com.cburch.logisim.tools.AddTool;
 import com.cburch.logisim.tools.EditTool;
 import com.cburch.logisim.tools.Library;
@@ -42,7 +43,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class Base extends Library {
-  private List<Tool> tools = null;
+  private List<Tool> tools;
 
   public Base() {
     setHidden();
@@ -58,7 +59,7 @@ public class Base extends Library {
               wiring,
               new TextTool(),
               new MenuTool(),
-              new AddTool(new Text(true)),
+              new AddTool(Text.FACTORY),
             });
   }
 
@@ -80,4 +81,5 @@ public class Base extends Library {
   public boolean removeLibrary(String Name) {
     return false;
   }
+
 }
