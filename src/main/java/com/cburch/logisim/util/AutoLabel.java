@@ -82,7 +82,7 @@ public class AutoLabel {
   public String GetCurrent(Circuit circ, ComponentFactory me) {
     if (circ == null || !CurrentLabel.containsKey(circ) || CurrentLabel.get(circ).isEmpty())
       return "";
-    if (Circuit.IsCorrectLabel(CurrentLabel.get(circ), circ.getNonWires(), null, me, false))
+    if (Circuit.IsCorrectLabel(circ.getName(),CurrentLabel.get(circ), circ.getNonWires(), null, me, false))
       return CurrentLabel.get(circ);
     else if (hasNext(circ)) {
       return GetNext(circ, me);
@@ -111,7 +111,7 @@ public class AutoLabel {
     if (circ == null || !CurrentLabel.containsKey(circ) || CurrentLabel.get(circ).isEmpty())
       return "";
     Label = Common.concat("_X" + Integer.toString(x) + "_Y" + Integer.toString(y));
-    if (Circuit.IsCorrectLabel(Label, circ.getNonWires(), null, me, false)
+    if (Circuit.IsCorrectLabel(circ.getName(),Label, circ.getNonWires(), null, me, false)
         & SyntaxChecker.isVariableNameAcceptable(Label, false)) return Label;
     return "";
   }
@@ -131,7 +131,7 @@ public class AutoLabel {
       NewLabel = BaseLab;
       if (Undescore) NewLabel = NewLabel.concat("_");
       NewLabel = NewLabel.concat(Integer.toString(CurIdx));
-    } while (!Circuit.IsCorrectLabel(NewLabel, circ.getNonWires(), null, me, false));
+    } while (!Circuit.IsCorrectLabel(circ.getName(),NewLabel, circ.getNonWires(), null, me, false));
     CurrentIndex.put(circ, CurIdx);
     CurrentLabel.put(circ, NewLabel);
     return NewLabel;
@@ -239,7 +239,7 @@ public class AutoLabel {
                   null,
                   OldLabel);
       if (NewLabel != null) {
-        if (Circuit.IsCorrectLabel(NewLabel, circ.getNonWires(), attrs, compfac, true)
+        if (Circuit.IsCorrectLabel(circ.getName(),NewLabel, circ.getNonWires(), attrs, compfac, true)
             && SyntaxChecker.isVariableNameAcceptable(NewLabel, true)
             && !CorrectLabel.IsKeyword(NewLabel, true)) {
           if (CreateAction) act.set(comp, StdAttr.LABEL, NewLabel);
