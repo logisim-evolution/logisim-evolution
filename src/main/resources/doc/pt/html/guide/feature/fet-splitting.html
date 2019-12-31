@@ -3,7 +3,7 @@
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="created" content="2018-10-23T06:18:10.521000000">
-    <meta name="changed" content="2018-10-23T06:18:42.262000000">
+    <meta name="changed" content="2019-12-31T06:18:42.262000000">
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <meta http-equiv="Content-Language" content="pt">
     <title>
@@ -32,20 +32,84 @@
         <img class="notscal" src="../../../../img-guide/bundles-splitter-2way.png" alt="#########">
       <p>
       <p>
-        A chave para o entendimento dos distribuidores são seus atributos. A seguir, o termo <em>terminações (split end)</em> refere-se às múltiplas conexões de um lado, enquanto o termo <em>combinada (combined)</em> refere-se à extremidade do único fio do outro lado.
+        A chave para o entendimento dos distribuidores são seus atributos. A seguir, o termo <b>terminações (split end)</b> refere-se às múltiplas conexões de um lado, enquanto o termo <b>feixe (combined)</b> refere-se à extremidade do único fio do outro lado.
       </p>
       <ul>
-        <li>O atributo <strong>Direção (Facing)</strong> dirá a posição relativa das terminações considerando-se a extremidade combinada.
+        <li>O atributo <b class="propertie">Direção (Facing)</b> dirá a posição relativa das terminações considerando-se a extremidade combinada.
+		<div>
+            <table>
+              <tbody>
+                <tr>
+                  <td valign="top">
+                    feixe 
+                  </td>
+                  <td>
+                    <br>
+                    <img class=notscal src="../../../../img-libs/splitter-right.png" align="middle" alt="#########">
+                  </td>
+                  <td>
+                    Terminações
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </li>
-        <li>O atributo <strong>Distribuição (Fan Out)</strong> especificará quantas terminações existem.
+        <li>O atributo <b class="propertie">Nbr. Terminações</b> especificará quantas terminações existem.
         </li>
-        <li>O atributo <strong>Largura em Bits à Entrada (Bit Width In)</strong> especificará a quantidade de bits combinados.
+        <li>O atributo <b class="propertie">Largura feixe</b> especificará a quantidade de bits combinados.
         </li>
-        <li>O atributo <var>Bit <strong>x</strong></var> dirá qual a terminação correspondente ao <em>bit x</em> na extremidade combinada. Se vários bits corresponderem à mesma terminação, então a sua ordem relativa também será a mesma na extremidade combinada. Os distribuidores do Logisim não poderão ter um bit na parte combinada que não possua equivalente na parte com múltiplas terminações.
+		<li>L'attribut <b class="propertie">Forma</b> define como o componente é desenhado em relação ao seu feixe.<br>
+          <div class="twodiv">
+            <table>
+              <tbody>
+                <tr>
+                  <td>
+                    <img class="notscal" src="../../../../img-guide/splitter-right.png" align="middle" alt="#########">
+                  </td>
+                  <td>
+                    <img class="notscal" src="../../../../img-guide/splitter-left.png" align="middle" alt="#########">
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    A esquerda
+                  </td>
+                  <td>
+                    A direita
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="twodiv">
+            <table>
+              <tbody>
+                <tr>
+                  <td>
+                    <img class="notscal" src="../../../../img-guide/splitter-center.png" align="middle" alt="#########">
+                  </td>
+                  <td>
+                    <img class="notscal" src="../../../../img-guide/splitter-legacy.png" align="middle" alt="#########">
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    central
+                  </td>
+                  <td>
+                    Legacy
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+		  </li>
+        <li>O atributo <b class="propertie">bit <var>x</var></b> na extremidade combinada. Se vários bits corresponderem à mesma terminação, então a sua ordem relativa também será a mesma na feixe. Os distribuidores do Logisim não poderão ter um bit na parte combinada que não possua equivalente na parte com múltiplas terminações.
         </li>
       </ul>
       <p>
-        Observar que qualquer alteração nos atributos multiplicidade ou largura de bit irá recompor todas os atributos <var>Bit x</var> de modo que eles possam distribuir os bits combinados da maneira mais uniforme possível entre as terminações.
+        Observar que qualquer alteração nos atributos <b class="propertie">Nbr. Terminações</b> ou <b class="propertie">Largura feixe</b> irá recompor todas os atributos <var>Bit x</var> de modo que eles possam distribuir os bits combinados da maneira mais uniforme possível entre as terminações.
       </p>
       <p>
         <strong>Próximo:</strong> <a href="fet-colors.html">Cores das conexões</a>.
