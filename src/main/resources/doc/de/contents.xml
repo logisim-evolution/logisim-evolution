@@ -13,7 +13,7 @@
 			<tocitem target="tutorial_wires" text="Schritt 2: Leitungen hinzufügen" />
 			<tocitem target="tutorial_text" text="Schritt 3: Text hinzufügen" />
 			<tocitem target="tutorial_test" text="Schritt 4: Testen der Schaltung" />
-			<tocitem target="tutorial_step" text="Step 5: Step by step mode"/>			
+			<tocitem target="tutorial_step" text="Schritt 5: Der Einzelschrittmodus"/>			
 		</tocitem>
 		<tocitem target="gui" text="Bibliotheken und Attribute">
 			<tocitem target="gui_canvas" text="The canvas"/>
@@ -31,10 +31,12 @@
 			<tocitem target="subcirc_debug" text="Fehlersuche in Teilschaltungen" />
 			<tocitem target="subcirc_library" text="Bibliotheken von Logisim" />
 		</tocitem>
-		<tocitem target="bundles" text="Leitungsbündel">
-			<tocitem target="bundles_creating" text="Erstellen von Leitungsbündeln" />
-			<tocitem target="bundles_splitting" text="Verteiler" />
-			<tocitem target="bundles_colors" text="Farben der Leitungen" />
+		<tocitem target="features" text="Leitungsbündel">
+			<tocitem target="features_creating" text="Erstellen von Leitungsbündeln" />
+			<tocitem target="features_splitting" text="Verteiler" />
+			<tocitem target="features_colors" text="Farben der Leitungen" />
+			<tocitem target="features_autolabel" text="Self-numbered labels " />
+			<tocitem target="features_matrix" text="Komponenten in einer Matrix platzieren" />
 		</tocitem>
 		<tocitem target="mem_guide" text="Speicherbauelemente">
 			<tocitem target="mem_poke" text="Speicherinhalte bearbeiten" />

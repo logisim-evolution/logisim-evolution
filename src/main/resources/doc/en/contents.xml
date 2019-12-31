@@ -31,10 +31,12 @@
 			<tocitem target="subcirc_debug" text="Debugging subcircuits" />
 			<tocitem target="subcirc_library" text="Logisim libraries" />
 		</tocitem>
-		<tocitem target="bundles" text="Wire bundles">
-			<tocitem target="bundles_creating" text="Creating bundles" />
-			<tocitem target="bundles_splitting" text="Splitters" />
-			<tocitem target="bundles_colors" text="Wire colors" />
+		<tocitem target="features" text="Additional features">
+			<tocitem target="features_creating" text="Creating bundles" />
+			<tocitem target="features_splitting" text="Splitters" />
+			<tocitem target="features_colors" text="Wire colors" />
+			<tocitem target="features_autolabel" text="Self-numbered labels " />
+			<tocitem target="features_matrix" text="Placing components in a matrix" />
 		</tocitem>
 		<tocitem target="mem_guide" text="Memory components">
 <!--			<tocitem target="mem_poke" Memory poke" /> -->

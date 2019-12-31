@@ -31,10 +31,12 @@
 			<tocitem target="subcirc_debug" text="Déboguer un sous-circuit"/>
 			<tocitem target="subcirc_library" text="Librairies Logisim"/>
 		</tocitem>
-		<tocitem target="bundles" text="Nappe de câbles">
-			<tocitem target="bundles_creating" text="Créer une nappe"/>
-			<tocitem target="bundles_splitting" text="Répartiteur"/>
-			<tocitem target="bundles_colors" text="Couleur des câbles"/>
+		<tocitem target="features" text="Nappe de câbles">
+			<tocitem target="features_creating" text="Créer une nappe"/>
+			<tocitem target="features_splitting" text="Répartiteur"/>
+			<tocitem target="features_colors" text="Couleur des câbles"/>
+			<tocitem target="features_autolabel" text="Étiquettes auto-numérotées "/>
+			<tocitem target="features_matrix" text="Placer des composants en matrice "/>
 		</tocitem>
 	<tocitem target="mem_guide" text="Composant mémoire">
 <!--			<tocitem target="mem_poke" Memory poke" /> -->

@@ -27,6 +27,10 @@ img.iconlibs{
 	height:32;
 	width:32;
 }
+img.icontxt{
+	height:16;
+	width:16;
+}
 /* For spaces, page background */
 div.maindiv {
 	max-width:560px;
@@ -83,6 +87,7 @@ b.menu {
 	font-weight:bold;
 	font-size:12px;
 }
+
 /* for reference to button, tabs */
 b.button {
 	color: black;
@@ -91,6 +96,7 @@ b.button {
 	font-weight:bold;
     font-size:12px;	
 }
+
 /* for reference to properties /library */
 b.propertie {
 	color:#00008B;
