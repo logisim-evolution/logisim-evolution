@@ -31,10 +31,12 @@
 			<tocitem target="subcirc_debug" text="Отладка подсхем" />
 			<tocitem target="subcirc_library" text="Библиотеки Logisim" />
 		</tocitem>
-		<tocitem target="bundles" text="Пучки проводов">
-			<tocitem target="bundles_creating" text="Создание пучков" />
-			<tocitem target="bundles_splitting" text="Разветвители" />
-			<tocitem target="bundles_colors" text="Цвета проводов" />
+		<tocitem target="features" text="Дополнительные особенности">
+			<tocitem target="features_creating" text="Создайте кабельные пучка" />
+			<tocitem target="features_splitting" text="Разветвители" />
+			<tocitem target="features_colors" text="Цвета проводов" />
+			<tocitem target="features_autolabel" text="лейбл автоматически пронумерованный" />
+			<tocitem target="features_matrix" text="Размещение компонентов в матрице " />
 		</tocitem>
 		<tocitem target="mem_guide" text="Компоненты памяти">
 <!--			<tocitem target="mem_poke" text="Нажатие на память" /> -->

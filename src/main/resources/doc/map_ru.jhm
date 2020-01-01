@@ -29,10 +29,12 @@
   <mapID target="subcirc_personalise" url="ru/html/guide/subcirc/sub-personalise.html"/>
 	<mapID target="subcirc_debug" url="ru/html/guide/subcirc/sub-debug.html" />
 	<mapID target="subcirc_library" url="ru/html/guide/subcirc/sub-library.html" />
-	<mapID target="bundles" url="ru/html/guide/bundles/index.html" />
-	<mapID target="bundles_creating" url="ru/html/guide/bundles/creating.html" />
-	<mapID target="bundles_splitting" url="ru/html/guide/bundles/splitting.html" />
-	<mapID target="bundles_colors" url="ru/html/guide/bundles/colors.html" />
+	<mapID target="features" url="ru/html/guide/feature/index.html" />
+	<mapID target="features_creating" url="ru/html/guide/feature/fet-creating.html" />
+	<mapID target="features_splitting" url="ru/html/guide/feature/fet-splitting.html" />
+	<mapID target="features_colors" url="ru/html/guide/feature/fet-colors.html" />
+	<mapID target="features_autolabel" url="ru/html/guide/feature/fet-autolabel.html" />
+	<mapID target="features_matrix" url="ru/html/guide/feature/fet-matrix.html" />
 	<mapID target="mem_guide" url="ru/html/guide/mem/index.html" />
 	<mapID target="mem_poke" url="ru/html/guide/mem/poke.html" />  <!-- obsolete -->
 	<mapID target="mem_menu" url="ru/html/guide/mem/gui-menu.html" />
