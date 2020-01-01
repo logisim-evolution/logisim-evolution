@@ -32,23 +32,23 @@
         <img class="notscal" src="../../../../img-guide/bundles-splitter-2way.png" alt="#########">
       </center>
       <p>
-        The key to understanding splitters is their attributes. In the following, the term <b>split end</b> refers to one of the multiple wires on one side, while the term <b>combined end</b> refers to the single wire on the other side.
+        The key to understanding splitters is their attributes. In the following, the term <b>Split End</b> refers to one of the multiple wires on one side, while the term <b>data bus</b> refers to the single wire on the other side.
       </p>
       <ul>
-        <li>The <b class="propertie">Facing</b> attribute tells where the split ends should be relative to the combined end.
+        <li>The <b class="propertie">Facing</b> attribute tells where the split ends should be relative to the Fan Out.
           <div>
             <table>
               <tbody>
                 <tr>
                   <td valign="top">
-                    combined end
+                    Data bus
                   </td>
                   <td>
                     <br>
                     <img class="notscal" src="../../../../img-guide/splitter-right.png" align="middle" alt="#########">
                   </td>
                   <td>
-                    split end
+                    Split End
                   </td>
                 </tr>
               </tbody>
@@ -57,7 +57,7 @@
         </li>
         <li>The <b class="propertie">Fan Out</b> attribute specifies how many split ends there are.
         </li>
-        <li>Th <b class="propertie">Appearence</b> defines how the split end is drawn relative to its combined end.<br>
+        <li>The <b class="propertie">Appearence</b> defines how the split end is drawn relative to its data bus.<br>
           <div class="twodiv">
             <table>
               <tbody>
@@ -105,7 +105,8 @@
         </li>
         <li>The <b class="propertie">Bit Width In</b> attribute specifies the bit width of the combined end.
         </li>
-        <li>The <b class="propertie">Bit <var>x</var></b> attribute says which split end corresponds to bit <em>x</em> of the combined end. If multiple bits correspond to the same split end, then their relative ordering will be the same as in the combined end. Logisim splitters cannot have a bit from the combined end correspond to multiple split ends.
+        <li>
+		The <b class="propertie">Bit <var>x</var></b> attributes define which separate split end corresponds to which bit <b>x</b> of the data bus. It is modifiable and allows you to organize the order of split end by hand. If several bits correspond to the same split end (first example above), then the relative order will be the same as in the bus. Logisim distributors cannot have a bus bit linked to more than one split end.
         </li>
       </ul>
       <p>

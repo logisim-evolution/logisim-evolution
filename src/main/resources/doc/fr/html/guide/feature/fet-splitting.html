@@ -28,7 +28,7 @@
       <p align="center">
         <img class="notscal" src="../../../../img-guide/bundles-splitter-2way.png" alt="#########">
       <p>
-        La clé pour comprendre les terminaisons de bus tient dans leurs attributs. Dans ce qui suit, le terme <b>terminaison</b> fait référence à l'un des multiples câbles d'un côté, tandis que <b>faisceau</b> fait référence au regroupement de ces câbles en un seul de l'autre côté. (voir figure ci-dessous)
+        La clé pour comprendre les terminaisons de bus tient dans leurs attributs. Dans ce qui suit, le terme <b>branche</b> fait référence à l'un des multiples câbles d'un côté, tandis que <b>bus de donné</b> fait référence au regroupement de ces câbles en un seul de l'autre côté. (voir figure ci-dessous)
       </p>
       <ul>
         <li>L'attribut <b class="propertie">orientation</b> définit la direction ou vont se dessiner les terminaisons.
@@ -37,25 +37,25 @@
               <tbody>
                 <tr>
                   <td valign="top">
-                    faisceau
+                    Bus
                   </td>
                   <td>
                     <br>
                     <img class=notscal src="../../../../img-libs/splitter-right.png" align="middle" alt="#########">
                   </td>
                   <td>
-                    Terminaisons
+                    branche
                   </td>
                 </tr>
               </tbody>
             </table>
           </div>
         </li>
-        <li>L'attribut <b class="propertie">Nbr Terminaisons</b> définit combien de terminaisons séparées il doit y avoir.
+        <li>L'attribut <b class="propertie">Nbr branche</b> définit combien de terminaisons séparées il doit y avoir.
         </li>
-		<li>L'attribut <b class="propertie">Largeur faisceau</b> spécifie la largeur en bit du bus, c'est-à-dire le nombre de conducteurs de celui-ci.
+		<li>L'attribut <b class="propertie">Largeur bus</b> spécifie la largeur en bit du bus, c'est-à-dire le nombre de conducteurs de celui-ci.
         </li>
-        <li>L'attribut <b class="propertie">Apparence</b> définit la manière dont le composant est dessiné par rapport à son Bus.<br>
+        <li>L'attribut <b class="propertie">Apparence</b> définit la manière dont le composant est dessiné par rapport à son bus.<br>
           <div class="twodiv">
             <table>
               <tbody>
@@ -101,12 +101,12 @@
             </table>
           </div>
         </li>
-       
-        <li>L'attribut <b class="propertie">Bit <var>x</var></b> définit quelle terminaison séparée correspond à quel bit <b>x</b> du bus. Il est modifiable et permet d'organiser à la main l'ordre des terminaisons. Si plusieurs bits correspondent à la même terminaison (premier exemple ci-dessus), alors l'ordre relatif sera le même que dans le bus. Les répartiteur Logisim ne peuvent pas avoir un bit du bus relié à plusieurs terminaisons.
+        <li>
+         Les attributs du <b class="propertie">Bit <var>x</var></b> définissent quelle terminaison séparée correspond à quel bit <var>x</var> du bus de données. Ils peuvent être modifiés et permettent de classer manuellement la séquence des terminaisons. Si plusieurs bits correspondent à la même branche (premier exemple ci-dessus), l'ordre relatif est le même que sur le bus. Les distributeurs Logisim ne peuvent pas relier un bit de bus à plusieurs liens.
         </li>
       </ul>
       <p>
-        Notez que chaque changement des attributs <b class="propertie">Nbr Terminaisons</b> ou de la <b class="propertie">Largeur faisceau</b> va remettre à zéro les attributs de tous les bits <var>x</var> de façon à distribuer les bits du bus aussi régulièrement que possible selon les terminaisons séparées.
+        Notez que chaque changement des attributs <b class="propertie">Nbr terminaison</b> ou de la <b class="propertie">Largeur bus</b> va remettre à zéro les attributs de tous les bits <var>x</var> de façon à distribuer les bits du bus aussi régulièrement que possible selon les terminaisons séparées.
       </p>
       <p>
         <b>Suite:</b> <a href="fet-colors.html">Couleurs des câbles</a>.

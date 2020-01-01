@@ -32,7 +32,7 @@
         <img class="notscal" src="../../../../img-guide/bundles-splitter-2way.png" alt="#########">
       <p>
       <p>
-        A chave para o entendimento dos distribuidores são seus atributos. A seguir, o termo <b>terminações (split end)</b> refere-se às múltiplas conexões de um lado, enquanto o termo <b>feixe (combined)</b> refere-se à extremidade do único fio do outro lado.
+        A chave para o entendimento dos distribuidores são seus atributos. A seguir, o termo <b>ramificações</b> refere-se às múltiplas conexões de um lado, enquanto o termo <b>barramento de dados</b> refere-se à extremidade do único fio do outro lado.
       </p>
       <ul>
         <li>O atributo <b class="propertie">Direção (Facing)</b> dirá a posição relativa das terminações considerando-se a extremidade combinada.
@@ -41,14 +41,14 @@
               <tbody>
                 <tr>
                   <td valign="top">
-                    feixe 
+                    Barramento de dados 
                   </td>
                   <td>
                     <br>
                     <img class=notscal src="../../../../img-libs/splitter-right.png" align="middle" alt="#########">
                   </td>
                   <td>
-                    Terminações
+                    Ramificações
                   </td>
                 </tr>
               </tbody>
@@ -59,7 +59,7 @@
         </li>
         <li>O atributo <b class="propertie">Largura feixe</b> especificará a quantidade de bits combinados.
         </li>
-		<li>L'attribut <b class="propertie">Forma</b> define como o componente é desenhado em relação ao seu feixe.<br>
+		<li>L'attribut <b class="propertie">Forma</b> define como o componente é desenhado em relação ao seu barramento de dados .<br>
           <div class="twodiv">
             <table>
               <tbody>
@@ -105,11 +105,12 @@
             </table>
           </div>
 		  </li>
-        <li>O atributo <b class="propertie">bit <var>x</var></b> na extremidade combinada. Se vários bits corresponderem à mesma terminação, então a sua ordem relativa também será a mesma na feixe. Os distribuidores do Logisim não poderão ter um bit na parte combinada que não possua equivalente na parte com múltiplas terminações.
+        <li>
+		 Os atributos <b class="propertie">bit <var>x</var></b> definem que terminação separada corresponde a que bit <var>x</var> do barramento de dados. Ele pode ser alterado e permite que a ordem das terminações seja disposta manualmente. Se vários bits correspondem à mesma Ramificações (primeiro exemplo acima), então a ordem relativa será a mesma que no ônibus. Os distribuidores Logisim não podem ter um só pedaço do autocarro ligado a vários Ramificações. 
         </li>
       </ul>
       <p>
-        Observar que qualquer alteração nos atributos <b class="propertie">Nbr. Terminações</b> ou <b class="propertie">Largura feixe</b> irá recompor todas os atributos <var>Bit x</var> de modo que eles possam distribuir os bits combinados da maneira mais uniforme possível entre as terminações.
+        Observar que qualquer alteração nos atributos <b class="propertie">Nbr. ramificações</b> ou <b class="propertie">Largura feixe</b> irá recompor todas os atributos <var>Bit x</var> de modo que eles possam distribuir os bits combinados da maneira mais uniforme possível entre as ramificações.
       </p>
       <p>
         <strong>Próximo:</strong> <a href="fet-colors.html">Cores das conexões</a>.
