@@ -26,15 +26,15 @@
   <mapID target="subcirc_creating" url="fr/html/guide/subcirc/sub-creating.html"/>
   <mapID target="subcirc_using" url="fr/html/guide/subcirc/sub-using.html"/>
   <mapID target="subcirc_appear" url="fr/html/guide/subcirc/sub-appear.html"/>
-  <mapID target="subcirc_personalise" url="fr/html/guide/subcirc/sub-personalise.html"/  
+  <mapID target="subcirc_personalise" url="fr/html/guide/subcirc/sub-personalise.html"/>  
   <mapID target="subcirc_debug" url="fr/html/guide/subcirc/sub-debug.html"/>
   <mapID target="subcirc_library" url="fr/html/guide/subcirc/sub-library.html"/>
-  <mapID target="features" url="fr/html/guide/feature/index.html"/>
-  <mapID target="features_creating" url="fr/html/guide/feature/fet-creating.html"/>
-  <mapID target="features_splitting" url="fr/html/guide/feature/fet-splitting.html"/>
-  <mapID target="features_colors" url="fr/html/guide/feature/fet-colors.html"/>
-  <mapID target="features_autolabel" url="fr/html/guide/feature/fet-autolabel.html"/>
-  <mapID target="features_matrix" url="fr/html/guide/feature/fet-matrix.html"/>  
+  <mapID target="features" url="fr/html/guide/feature/index.html" />
+  <mapID target="features_creating" url="fr/html/guide/feature/fet-creating.html" />
+  <mapID target="features_splitting" url="fr/html/guide/feature/fet-splitting.html" />
+  <mapID target="features_colors" url="fr/html/guide/feature/fet-colors.html" />
+  <mapID target="features_autolabel" url="fr/html/guide/feature/fet-autolabel.html" />	
+  <mapID target="features_matrix" url="fr/html/guide/feature/fet-matrix.html" />
   <mapID target="mem_guide" url="fr/html/guide/mem/index.html"/>
   <mapID target="mem_poke" url="fr/html/guide/mem/poke.html" />  <!-- obsolete -->
   <mapID target="mem_menu" url="fr/html/guide/mem/menu.html"/>
