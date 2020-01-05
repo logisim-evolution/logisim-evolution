@@ -40,7 +40,7 @@ import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
 import java.awt.Font;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.WeakHashMap;
 
@@ -75,20 +75,10 @@ public class RamAttributes extends AbstractAttributeSet {
           "byteenables",
           S.getter("ramByteEnables"),
           new AttributeOption[] {BUS_WITH_BYTEENABLES, BUS_WITHOUT_BYTEENABLES});
-  private static List<Attribute<?>> ATTRIBUTES =
-      Arrays.asList(
-          new Attribute<?>[] {
-            Mem.ADDR_ATTR,
-            Mem.DATA_ATTR,
-            StdAttr.TRIGGER,
-            ATTR_DBUS,
-            ATTR_ByteEnables,
-            Ram.CONTENTS_ATTR,
-            StdAttr.LABEL,
-            StdAttr.LABEL_FONT,
-            StdAttr.LABEL_VISIBILITY,
-            StdAttr.APPEARANCE
-          });
+  
+  static final Attribute<Boolean> CLEAR_PIN = Attributes.forBoolean("clearpin", S.getter("RamClearPin"));
+  private ArrayList<Attribute<?>> myAttributes = new ArrayList<Attribute<?>>();
+
 
   private static WeakHashMap<MemContents, HexFrame> windowRegistry =
       new WeakHashMap<MemContents, HexFrame>();
@@ -97,15 +87,61 @@ public class RamAttributes extends AbstractAttributeSet {
   private MemContents contents;
   private String Label = "";
   private AttributeOption Trigger = StdAttr.TRIG_RISING;
-  private AttributeOption BusStyle = BUS_BIDIR;
+  private AttributeOption BusStyle = BUS_SEP;
   private Font LabelFont = StdAttr.DEFAULT_LABEL_FONT;
   private Boolean LabelVisable = false;
   private AttributeOption ByteEnables = BUS_WITHOUT_BYTEENABLES;
-  private boolean SupportsByteEnables = false;
+  private Boolean AsynchronousRead = false;
   private AttributeOption Appearance = AppPreferences.getDefaultAppearance();
+  private AttributeOption RWBehavior = Mem.READAFTERWRITE;
+  private Boolean ClearPin = false;
+  private AttributeOption lineSize = Mem.SINGLE;
+  private AttributeOption typeOfEnables = Mem.USEBYTEENABLES;
 
   RamAttributes() {
     contents = MemContents.create(addrBits.getWidth(), dataBits.getWidth(), false);
+    updateAttributes();
+  }
+  
+  private boolean updateAttributes() {
+    ArrayList<Attribute<?>>newList = new ArrayList<Attribute<?>>();
+    boolean changes = false;
+    newList.add(Mem.ADDR_ATTR);
+    newList.add(Mem.DATA_ATTR);
+    newList.add(Mem.ENABLES_ATTR);
+    newList.add(CLEAR_PIN);
+    if (typeOfEnables.equals(Mem.USEBYTEENABLES)) {
+      newList.add(StdAttr.TRIGGER);
+      if (Trigger.equals(StdAttr.TRIG_RISING) || Trigger.equals(StdAttr.TRIG_FALLING)) {
+        changes |= !myAttributes.contains(Mem.ASYNC_READ);
+        newList.add(Mem.ASYNC_READ);
+        if (!AsynchronousRead) {
+          changes |= !myAttributes.contains(Mem.READ_ATTR);
+          newList.add(Mem.READ_ATTR);
+        } else changes |= myAttributes.contains(Mem.READ_ATTR);
+        if (dataBits.getWidth() > 8) {
+          changes |= !myAttributes.contains(ATTR_ByteEnables);
+          newList.add(ATTR_ByteEnables);
+        } else changes |= myAttributes.contains(ATTR_ByteEnables);
+      } else changes |= myAttributes.contains(Mem.ASYNC_READ);
+      newList.add(ATTR_DBUS);
+      newList.add(Ram.CONTENTS_ATTR);
+      changes |= myAttributes.contains(Mem.LINE_ATTR);
+    } else {
+      newList.add(Mem.LINE_ATTR);
+      newList.add(StdAttr.TRIGGER);
+      newList.add(ATTR_DBUS);
+      changes = myAttributes.contains(Ram.CONTENTS_ATTR);
+    }
+    newList.add(StdAttr.LABEL);
+    newList.add(StdAttr.LABEL_FONT);
+    newList.add(StdAttr.LABEL_VISIBILITY);
+    newList.add(StdAttr.APPEARANCE);
+    if (changes) {
+      myAttributes.clear();
+      myAttributes.addAll(newList);
+    }
+    return changes;
   }
 
   @Override
@@ -119,12 +155,16 @@ public class RamAttributes extends AbstractAttributeSet {
     d.Appearance = Appearance;
     d.ByteEnables = ByteEnables;
     d.contents = contents.clone();
-    d.SupportsByteEnables = SupportsByteEnables;
+    d.AsynchronousRead = AsynchronousRead;
+    d.RWBehavior = RWBehavior;
+    d.ClearPin = ClearPin;
+    d.lineSize = lineSize;
+    d.typeOfEnables = typeOfEnables;
   }
 
   @Override
   public List<Attribute<?>> getAttributes() {
-    return ATTRIBUTES;
+    return myAttributes;
   }
 
   @SuppressWarnings("unchecked")
@@ -145,6 +185,12 @@ public class RamAttributes extends AbstractAttributeSet {
     if (attr == StdAttr.TRIGGER) {
       return (V) Trigger;
     }
+    if (attr == Mem.ASYNC_READ) {
+      return (V) AsynchronousRead;
+    }
+    if (attr == Mem.READ_ATTR) {
+      return (V) RWBehavior;
+    }
     if (attr == ATTR_DBUS) {
       return (V) BusStyle;
     }
@@ -160,29 +206,21 @@ public class RamAttributes extends AbstractAttributeSet {
     if (attr == StdAttr.APPEARANCE) {
       return (V) Appearance;
     }
-    return null;
-  }
-
-  @Override
-  public boolean isReadOnly(Attribute<?> attr) {
-    if (attr.equals(ATTR_ByteEnables)) {
-      return !SupportsByteEnables;
+    if (attr == Mem.LINE_ATTR) {
+      return (V) lineSize;
     }
-    return false;
+    if (attr == CLEAR_PIN) {
+      return (V) ClearPin;
+    }
+    if (attr == Mem.ENABLES_ATTR) {
+      return (V) typeOfEnables;
+    }
+    return null;
   }
 
   @Override
   public boolean isToSave(Attribute<?> attr) {
     return !attr.equals(Ram.CONTENTS_ATTR);
-  }
-
-  @Override
-  public void setReadOnly(Attribute<?> attr, boolean value) {
-    if (attr.equals(ATTR_ByteEnables)) {
-      SupportsByteEnables = !value;
-    } else {
-      throw new UnsupportedOperationException();
-    }
   }
 
   @Override
@@ -202,7 +240,16 @@ public class RamAttributes extends AbstractAttributeSet {
       }
       dataBits = newData;
       contents.setDimensions(addrBits.getWidth(), dataBits.getWidth(), false);
+      if (typeOfEnables.equals(Mem.USEBYTEENABLES) && updateAttributes())
+        fireAttributeListChanged();
       fireAttributeValueChanged(attr, value, null);
+    } else if (attr == Mem.ENABLES_ATTR) {
+      AttributeOption val = (AttributeOption) value;
+      if (!typeOfEnables.equals(val)) {
+        typeOfEnables = val;
+        if (updateAttributes()) fireAttributeListChanged();
+        fireAttributeValueChanged(attr, value, null);
+      }
     } else if (attr == Ram.CONTENTS_ATTR) {
       MemContents newContents = (MemContents) value;
       if (contents.equals(newContents)) {
@@ -229,7 +276,22 @@ public class RamAttributes extends AbstractAttributeSet {
         return;
       }
       Trigger = newTrigger;
+      if (typeOfEnables.equals(Mem.USEBYTEENABLES) && updateAttributes())
+        fireAttributeListChanged();
       fireAttributeValueChanged(attr, value, null);
+    } else if (attr == Mem.ASYNC_READ) {
+      Boolean val = (Boolean) value;
+      if (AsynchronousRead != val) {
+        AsynchronousRead = val;
+        if (updateAttributes()) fireAttributeListChanged();
+        fireAttributeValueChanged(attr,value,null);
+      }
+    } else if (attr == Mem.READ_ATTR) {
+      AttributeOption val = (AttributeOption) value;
+      if (!RWBehavior.equals(val)) {
+        RWBehavior = val;
+        fireAttributeValueChanged(attr,value,null);
+      }
     } else if (attr == ATTR_DBUS) {
       AttributeOption NewStyle = (AttributeOption) value;
       if (BusStyle.equals(NewStyle)) {
@@ -259,6 +321,18 @@ public class RamAttributes extends AbstractAttributeSet {
       }
       ByteEnables = NewBE;
       fireAttributeValueChanged(attr, value, null);
+    } else if (attr == CLEAR_PIN) {
+      Boolean val = (Boolean) value;
+      if (ClearPin != val) {
+        ClearPin = val;
+        fireAttributeValueChanged(attr, value, null);
+      }
+    } else if (attr == Mem.LINE_ATTR) {
+      AttributeOption val = (AttributeOption) value;
+      if (!lineSize.equals(val)) {
+        lineSize = val;
+        fireAttributeValueChanged(attr, value, null);
+      }
     } else if (attr == StdAttr.APPEARANCE) {
       AttributeOption NewAppearance = (AttributeOption) value;
       if (Appearance.equals(NewAppearance)) return;

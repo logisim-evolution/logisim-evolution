@@ -42,7 +42,6 @@ public class RamState extends MemState implements InstanceData, AttributeListene
   private Instance parent;
   private MemListener listener;
   private ClockState clockState;
-  private int CurrentData = 0;
 
   RamState(Instance parent, MemContents contents, MemListener listener) {
     super(contents);
@@ -56,10 +55,7 @@ public class RamState extends MemState implements InstanceData, AttributeListene
   }
 
   @Override
-  public void attributeListChanged(AttributeEvent e) {
-    // TODO Auto-generated method stub
-
-  }
+  public void attributeListChanged(AttributeEvent e) {}
 
   @Override
   public void attributeValueChanged(AttributeEvent e) {
@@ -78,16 +74,8 @@ public class RamState extends MemState implements InstanceData, AttributeListene
     return ret;
   }
 
-  int GetCurrentData() {
-    return CurrentData;
-  }
-
   public boolean setClock(Value newClock, Object trigger) {
     return clockState.updateClock(newClock, trigger);
-  }
-
-  void SetCurrentData(int data) {
-    CurrentData = data;
   }
 
   void setRam(Instance value) {

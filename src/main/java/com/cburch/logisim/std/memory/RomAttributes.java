@@ -83,6 +83,7 @@ class RomAttributes extends AbstractAttributeSet {
   private BitWidth addrBits = BitWidth.create(8);
   private BitWidth dataBits = BitWidth.create(8);
   private MemContents contents;
+  private AttributeOption lineSize = Mem.SINGLE;
   private String Label = "";
   private Font LabelFont = StdAttr.DEFAULT_LABEL_FONT;
   private Boolean LabelVisable = false;

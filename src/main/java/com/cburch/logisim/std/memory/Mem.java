@@ -55,7 +55,6 @@ import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.StringGetter;
 import com.cburch.logisim.util.StringUtil;
 import java.awt.Font;
-import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.io.File;
 import java.io.IOException;
@@ -105,6 +104,22 @@ public abstract class Mem extends InstanceFactory {
   public static final Attribute<AttributeOption> ATTR_SELECTION =
       Attributes.forOption(
           "Select", S.getter("ramSelAttr"), new AttributeOption[] {SEL_HIGH, SEL_LOW});
+  
+  static final AttributeOption SINGLE = new AttributeOption("single",S.getter("memSingle"));
+  static final AttributeOption DUAL = new AttributeOption("dual",S.getter("memDual"));
+  static final AttributeOption QUAD = new AttributeOption("quad",S.getter("memQuad"));
+  static final Attribute<AttributeOption> LINE_ATTR = Attributes.forOption("line", S.getter("memLineSize"),
+               new AttributeOption[] {SINGLE,DUAL,QUAD});
+  static final AttributeOption WRITEAFTERREAD = new AttributeOption("war",S.getter("memWar"));
+  static final AttributeOption READAFTERWRITE = new AttributeOption("raw",S.getter("memRaw"));
+  static final Attribute<AttributeOption> READ_ATTR = Attributes.forOption("readbehav", S.getter("memReadBehav"), 
+               new AttributeOption[] {WRITEAFTERREAD,READAFTERWRITE});
+  static final AttributeOption USEBYTEENABLES = new AttributeOption("byte",S.getter("memByte"));
+  static final AttributeOption USELINEENABLES = new AttributeOption("line",S.getter("memLine"));
+  static final Attribute<AttributeOption> ENABLES_ATTR = Attributes.forOption("enables", S.getter("memEnables"), 
+               new AttributeOption[] {USEBYTEENABLES,USELINEENABLES});
+  static final Attribute<Boolean> ASYNC_READ = Attributes.forBoolean("asyncread", S.getter("memAsyncRead"));
+  
   // port-related constants
   static final int DATA = 0;
   static final int ADDR = 1;
@@ -141,51 +156,6 @@ public abstract class Mem extends InstanceFactory {
   @Override
   public abstract AttributeSet createAttributeSet();
 
-  protected void DrawAddress(InstancePainter painter, int xpos, int ypos, int NrAddressBits) {
-    Graphics g = painter.getGraphics();
-    GraphicsUtil.switchToWidth(g, 2);
-    g.drawLine(xpos + 10, ypos + 10, xpos + 19, ypos + 10);
-    g.drawLine(xpos + 5, ypos + 5, xpos + 10, ypos + 10);
-    g.drawLine(xpos + 10, ypos + 30, xpos + 19, ypos + 30);
-    g.drawLine(xpos + 5, ypos + 25, xpos + 10, ypos + 30);
-    if (NrAddressBits > 2) {
-      for (int i = 0; i < 3; i++) {
-        g.drawLine(xpos + 15, ypos + 13 + i * 6, xpos + 15, ypos + 15 + i * 6);
-      }
-    }
-    GraphicsUtil.switchToWidth(g, 5);
-    g.drawLine(xpos, ypos, xpos + 5, ypos + 5);
-    g.drawLine(xpos + 5, ypos + 5, xpos + 5, ypos + 25);
-    GraphicsUtil.switchToWidth(g, 1);
-    GraphicsUtil.drawText(g, "0", xpos + 22, ypos + 10, GraphicsUtil.H_LEFT, GraphicsUtil.V_CENTER);
-    GraphicsUtil.drawText(
-        g,
-        Integer.toString(NrAddressBits - 1),
-        xpos + 22,
-        ypos + 30,
-        GraphicsUtil.H_LEFT,
-        GraphicsUtil.V_CENTER);
-    GraphicsUtil.drawText(g, "A", xpos + 50, ypos + 20, GraphicsUtil.H_LEFT, GraphicsUtil.V_CENTER);
-    g.drawLine(xpos + 40, ypos + 5, xpos + 45, ypos + 10);
-    g.drawLine(xpos + 45, ypos + 10, xpos + 45, ypos + 17);
-    g.drawLine(xpos + 45, ypos + 17, xpos + 48, ypos + 20);
-    g.drawLine(xpos + 48, ypos + 20, xpos + 45, ypos + 23);
-    g.drawLine(xpos + 45, ypos + 23, xpos + 45, ypos + 30);
-    g.drawLine(xpos + 40, ypos + 35, xpos + 45, ypos + 30);
-    String size = Integer.toString((1 << NrAddressBits) - 1);
-    Font font = g.getFont();
-    FontMetrics fm = g.getFontMetrics(font);
-    int StrSize = fm.stringWidth(size);
-    g.drawLine(xpos + 60, ypos + 20, xpos + 60 + StrSize, ypos + 20);
-    GraphicsUtil.drawText(
-        g, "0", xpos + 60 + (StrSize / 2), ypos + 19, GraphicsUtil.H_CENTER, GraphicsUtil.V_BOTTOM);
-    GraphicsUtil.drawText(
-        g, size, xpos + 60 + (StrSize / 2), ypos + 21, GraphicsUtil.H_CENTER, GraphicsUtil.V_TOP);
-    painter.drawPort(ADDR);
-  }
-
-  public abstract int getControlHeight(AttributeSet attrs);
-
   File getCurrentImage(Instance instance) {
     return currentInstanceFiles.get(instance);
   }
@@ -200,7 +170,7 @@ public abstract class Mem extends InstanceFactory {
     return super.getInstanceFeature(instance, key);
   }
 
-  protected String GetSizeLabel(int NrAddressBits) {
+  protected static String GetSizeLabel(int NrAddressBits) {
     String[] Labels = {"", "k", "M", "G"};
     int pass = 0;
     int AddrBits = NrAddressBits;
@@ -270,7 +240,7 @@ public abstract class Mem extends InstanceFactory {
       int bytes = 1 << addrBits;
       String label;
       if (addrBits >= 30) {
-        label = StringUtil.format(S.get(mem + "GigabyteLabel"), "" + (bytes >>> 30));
+        label = StringUtil.format(S.get(mem + "GigabyteLabel"), "" + (bytes >> 30));
       } else if (addrBits >= 20) {
         label = StringUtil.format(S.get(mem + "MegabyteLabel"), "" + (bytes >> 20));
       } else if (addrBits >= 10) {

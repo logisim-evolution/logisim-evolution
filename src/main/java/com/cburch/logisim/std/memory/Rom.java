@@ -237,7 +237,7 @@ public class Rom extends Mem {
         xpos + (SymbolWidth / 2) + 20,
         ypos + 6);
     GraphicsUtil.switchToWidth(g, 1);
-    DrawAddress(painter, xpos, ypos + 10, painter.getAttributeValue(Mem.ADDR_ATTR).getWidth());
+    //DrawAddress(painter, xpos, ypos + 10, painter.getAttributeValue(Mem.ADDR_ATTR).getWidth());
   }
 
   private void DrawDataBlock(InstancePainter painter, int xpos, int ypos, int bit, int NrOfBits) {
@@ -367,7 +367,6 @@ public class Rom extends Mem {
     if (painter.getAttributeValue(StdAttr.APPEARANCE) == StdAttr.APPEAR_CLASSIC) {
       DrawRomClassic(painter);
     } else {
-      Graphics g = painter.getGraphics();
       Bounds bds = painter.getBounds();
 
       painter.drawLabel();
@@ -405,7 +404,14 @@ public class Rom extends Mem {
     Value addrValue = state.getPortValue(ADDR);
 
     int addr = addrValue.toIntValue();
-    if (!addrValue.isFullyDefined() || addr < 0) return;
+    if (addrValue.isErrorValue() || (addrValue.isFullyDefined() && addr < 0)) {
+      state.setPort(DATA, Value.createError(dataBits), DELAY);
+      return;
+    }
+    if (!addrValue.isFullyDefined()) {
+      state.setPort(DATA, Value.createUnknown(dataBits), DELAY);
+      return;
+    }
     if (addr != myState.getCurrent()) {
       myState.setCurrent(addr);
       myState.scrollToShow(addr);

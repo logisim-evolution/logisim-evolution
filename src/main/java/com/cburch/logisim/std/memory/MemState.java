@@ -214,12 +214,12 @@ class MemState implements InstanceData, Cloneable, HexModelListener {
       classicAppearance = classic;
       CalculateDisplayParameters(g, offsetX, offsetY, DisplayWidth, DisplayHeight);
     }
-    int BlockHeigt = NrOfLines * (CharHeight + 2);
+    int BlockHeight = NrOfLines * (CharHeight + 2);
     int TotalNrOfEntries = (1 << getAddrBits());
     g.setColor(Color.LIGHT_GRAY);
-    g.fillRect(leftX + xOffset, topY + yOffset, DataBlockSize + AddrBlockSize, BlockHeigt);
+    g.fillRect(leftX + xOffset, topY + yOffset, DataBlockSize + AddrBlockSize, BlockHeight);
     g.setColor(Color.DARK_GRAY);
-    g.drawRect(leftX + xOffset + AddrBlockSize, topY + yOffset, DataBlockSize, BlockHeigt);
+    g.drawRect(leftX + xOffset + AddrBlockSize, topY + yOffset, DataBlockSize, BlockHeight);
     g.setColor(Color.BLACK);
     /* draw the addresses */
     int addr = (int) curScroll;
