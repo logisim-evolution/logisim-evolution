@@ -32,6 +32,7 @@ import static com.cburch.logisim.circuit.Strings.S;
 
 import com.cburch.logisim.circuit.appear.CircuitAppearanceEvent;
 import com.cburch.logisim.circuit.appear.CircuitAppearanceListener;
+import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.data.AbstractAttributeSet;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeEvent;
@@ -44,6 +45,7 @@ import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
+import com.cburch.logisim.std.wiring.Pin;
 import com.cburch.logisim.util.SyntaxChecker;
 import java.awt.Font;
 import java.util.Arrays;
@@ -106,6 +108,18 @@ public class CircuitAttributes extends AbstractAttributeSet {
             source.fireEvent(CircuitEvent.ACTION_SET_NAME, OldName);
             return;
           } else {
+            for (Component c : source.getNonWires()) {
+              if (c.getFactory() instanceof Pin) {
+                String label = c.getAttributeSet().getValue(StdAttr.LABEL).toUpperCase();
+                if (label != null && !label.isEmpty() && label.equals(NewName.toUpperCase())) {
+                  String msg = S.get("CircuitSameInputOutputLabel");
+                  JOptionPane.showMessageDialog(null, "\"" + NewName + "\" : " + msg);
+                  e.getSource().setValue(NAME_ATTR, OldName);
+                  source.fireEvent(CircuitEvent.ACTION_SET_NAME, OldName);
+                  return;
+                }
+              }
+            }
             source.fireEvent(CircuitEvent.ACTION_CHECK_NAME, OldName);
             source.fireEvent(CircuitEvent.ACTION_SET_NAME, NewName);
           }

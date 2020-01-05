@@ -42,7 +42,6 @@ import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceFactory;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
-import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.StringUtil;
 import java.awt.Color;
@@ -94,19 +93,12 @@ public class Text extends InstanceFactory {
           });
 
   public static final Text FACTORY = new Text();
-  private boolean isLabel;
 
   private Text() {
     super("Text", S.getter("textComponent"));
     setShouldSnap(false);
   }
   
-  public Text(boolean isLabel) {
-    super("Text", S.getter("textComponent"));
-    setShouldSnap(false);
-    this.isLabel = isLabel;
-  }
-
   private void configureLabel(Instance instance) {
     TextAttributes attrs = (TextAttributes) instance.getAttributeSet();
     Location loc = instance.getLocation();
@@ -213,8 +205,6 @@ public class Text extends InstanceFactory {
   @Override
   public void paintIcon(InstancePainter painter) {
     Graphics2D g2 = (Graphics2D) painter.getGraphics().create();
-    if (isLabel)
-      g2.setColor(StdAttr.DEFAULT_LABEL_COLOR);
     TextIcon t = new TextIcon();
     t.paintIcon(null, g2, 0, 0);
     g2.dispose();

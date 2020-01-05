@@ -170,8 +170,8 @@ public class Circuit {
       String oldLabel = attre.getOldValue() != null ? (String) attre.getOldValue() : "";
       @SuppressWarnings("unchecked")
       Attribute<String> lattr = (Attribute<String>) attre.getAttribute();
-      if (!IsCorrectLabel(newLabel, comps, attre.getSource(), e.getSource().getFactory(), true)) {
-        if (IsCorrectLabel(oldLabel, comps, attre.getSource(), e.getSource().getFactory(), false))
+      if (!IsCorrectLabel(getName(),newLabel, comps, attre.getSource(), e.getSource().getFactory(), true)) {
+        if (IsCorrectLabel(getName(),oldLabel, comps, attre.getSource(), e.getSource().getFactory(), false))
           attre.getSource().setValue(lattr, oldLabel);
         else attre.getSource().setValue(lattr, "");
       }
@@ -179,12 +179,21 @@ public class Circuit {
   }
 
   public static boolean IsCorrectLabel(
+      String CircuitName,
       String Name,
       Set<Component> components,
       AttributeSet me,
       ComponentFactory myFactory,
       Boolean ShowDialog) {
     if (myFactory instanceof Tunnel) return true;
+    if (CircuitName != null && !CircuitName.isEmpty() && CircuitName.toUpperCase().equals(Name.toUpperCase())&&
+        myFactory instanceof Pin) {
+      if (ShowDialog) {
+        String msg = S.get("ComponentLabelEqualCircuitName");
+        JOptionPane.showMessageDialog(null, "\"" + Name + "\" : " + msg);
+      }
+      return false;
+    }
     return !(IsExistingLabel(Name, me, components, ShowDialog)
         || IsComponentName(Name, components, ShowDialog));
   }
@@ -807,6 +816,8 @@ public class Circuit {
         	    labels.add(label.toUpperCase());
           }
         }
+        /* we also have to check for the entity name */
+        if (getName() != null && !getName().isEmpty()) labels.add(getName());
         String label = c.getAttributeSet().getValue(StdAttr.LABEL);
         if (label != null && !label.isEmpty() && labels.contains(label.toUpperCase()))
           c.getAttributeSet().setValue(StdAttr.LABEL, "");

@@ -46,6 +46,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.HashSet;
 import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -181,6 +182,19 @@ class BuildCircuitButton extends JButton {
         }
 
         if (!SyntaxChecker.isVariableNameAcceptable(name, true)) continue;
+        
+        /* Check for name collisions with input and output names */
+        HashSet<String> labels = new HashSet<String>();
+        for (String label : model.getInputs().getNames()) labels.add(label.toUpperCase());
+        for (String label : model.getOutputs().getNames()) labels.add(label.toUpperCase());
+        if (labels.contains(name.toUpperCase())) {
+          JOptionPane.showMessageDialog(
+                parent,
+                S.get("buildDuplicatedNameError"),
+                S.get("buildDialogErrorTitle"),
+                JOptionPane.ERROR_MESSAGE);
+          continue;
+        }
 
         if (dest != null) {
           /* prevent upper-case lower-case mismatch */
