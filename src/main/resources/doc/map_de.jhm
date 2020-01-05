@@ -14,25 +14,29 @@
 	<mapID target="tutorial_wires" url="de/html/guide/tutorial/tutor-wires.html" />
 	<mapID target="tutorial_text" url="de/html/guide/tutorial/tutor-text.html" />
 	<mapID target="tutorial_test" url="de/html/guide/tutorial/tutor-test.html" />
-	<mapID target="attrlib" url="de/html/guide/attrlib/index.html" />
-	<mapID target="attrlib_canvas" url="en/html/guide/attrlib/canvas.html"/>
-    <mapID target="attrlib_menu" url="en/html/guide/attrlib/menu.html"/>
-	<mapID target="attrlib_explore" url="de/html/guide/attrlib/explore.html" />
-    <mapID target="attrlib_toolsbar" url="en/html/guide/attrlib/toolsbar.html"/> 
-	<mapID target="attrlib_attr" url="de/html/guide/attrlib/attr.html" />
-	<mapID target="attrlib_tool" url="de/html/guide/attrlib/tool.html" />
+	<mapID target="tutorial_step" url="de/html/guide/tutorial/tutor-step.html" />
+	<mapID target="gui" url="de/html/guide/gui/index.html" />
+	<mapID target="gui_canvas" url="de/html/guide/gui/gui-canvas.html"/>
+    <mapID target="gui_menu" url="de/html/guide/gui/gui-menu.html"/>
+	<mapID target="gui_explore" url="de/html/guide/gui/gui-explore.html" />
+    <mapID target="gui_toolsbar" url="de/html/guide/gui/gui-toolsbar.html"/> 
+	<mapID target="gui-attribut" url="de/html/guide/gui/gui-attribut.html" />
+	<mapID target="gui-attrcomp" url="de/html/guide/gui/gui-attrcomp.html" />
 	<mapID target="subcirc" url="de/html/guide/subcirc/index.html" />
-	<mapID target="subcirc_creating" url="de/html/guide/subcirc/creating.html" />
-	<mapID target="subcirc_using" url="de/html/guide/subcirc/using.html" />
-	<mapID target="subcirc_appear" url="de/html/guide/subcirc/appear.html" />
-	<mapID target="subcirc_debug" url="de/html/guide/subcirc/debug.html" />
-	<mapID target="subcirc_library" url="de/html/guide/subcirc/library.html" />
-	<mapID target="bundles" url="de/html/guide/bundles/index.html" />
-	<mapID target="bundles_creating" url="de/html/guide/bundles/creating.html" />
-	<mapID target="bundles_splitting" url="de/html/guide/bundles/splitting.html" />
-	<mapID target="bundles_colors" url="de/html/guide/bundles/colors.html" />
+	<mapID target="subcirc_creating" url="de/html/guide/subcirc/sub-creating.html" />
+	<mapID target="subcirc_using" url="de/html/guide/subcirc/sub-using.html" />
+	<mapID target="subcirc_appear" url="de/html/guide/subcirc/sub-appear.html" />
+    <mapID target="subcirc_personalise" url="de/html/guide/subcirc/sub-personalise.html"/>
+	<mapID target="subcirc_debug" url="de/html/guide/subcirc/sub-debug.html" />
+	<mapID target="subcirc_library" url="de/html/guide/subcirc/sub-library.html" />
+	<mapID target="features" url="de/html/guide/feature/index.html" />
+	<mapID target="features_creating" url="de/html/guide/feature/fet-creating.html" />
+	<mapID target="features_splitting" url="de/html/guide/feature/fet-splitting.html" />
+	<mapID target="features_colors" url="de/html/guide/feature/fet-colors.html" />
+	<mapID target="features_autolabel" url="de/html/guide/feature/fet-autolabel.html" />
+	<mapID target="features_matrix" url="de/html/guide/feature/fet-matrix.html" />
 	<mapID target="mem_guide" url="de/html/guide/mem/index.html" />
-	<mapID target="mem_menu" url="de/html/guide/mem/menu.html" />
+	<mapID target="mem_menu" url="de/html/guide/mem/gui-menu.html" />
 	<mapID target="mem_hex" url="de/html/guide/mem/hex.html" />
 	<mapID target="analyze" url="de/html/guide/analyze/index.html" />
 	<mapID target="analyze_open" url="de/html/guide/analyze/open.html" />
@@ -47,7 +51,7 @@
 	<mapID target="verify_sub" url="de/html/guide/verify/sub.html" />
 	<mapID target="verify_other" url="de/html/guide/verify/other.html" />
 	<mapID target="verify_multi" url="de/html/guide/verify/multi.html" />
-    <mapID target="verify_test" url="en/html/guide/verify/test.html"/>
+    <mapID target="verify_test" url="de/html/guide/verify/test.html"/>
 	<mapID target="prefs" url="de/html/guide/prefs/index.html" />
 	<mapID target="prefs_template" url="de/html/guide/prefs/template.html" />
 	<mapID target="prefs_intl" url="de/html/guide/prefs/intl.html" />
@@ -146,7 +150,7 @@
 	<mapID target="base_select" url="de/html/libs/base/select.html" />
 	<mapID target="base_wiring" url="de/html/libs/base/wiring.html" />
 	<mapID target="base_text" url="de/html/libs/base/text.html" />
-	<mapID target="base_menu" url="de/html/libs/base/menu.html" />
+	<mapID target="base_menu" url="de/html/libs/base/gui-menu.html" />
 	<mapID target="base_label" url="de/html/libs/base/label.html" />
     <mapID target="tcl" url="de/html/libs/tcl/index.html" />
     <mapID target="tcl_reds_console" url="de/html/libs/tcl/reds_console.html" />

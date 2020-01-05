@@ -15,26 +15,29 @@
 	<mapID target="tutorial_text" url="en/html/guide/tutorial/tutor-text.html" />
 	<mapID target="tutorial_test" url="en/html/guide/tutorial/tutor-test.html" />
 	<mapID target="tutorial_step" url="en/html/guide/tutorial/tutor-step.html" />	
-	<mapID target="attrlib" url="en/html/guide/attrlib/index.html" />
-    <mapID target="attrlib_canvas" url="en/html/guide/attrlib/canvas.html"/> 
-    <mapID target="attrlib_menu" url="en/html/guide/attrlib/menu.html"/>
-	<mapID target="attrlib_explore" url="en/html/guide/attrlib/explore.html" /> 
-    <mapID target="attrlib_toolsbar" url="en/html/guide/attrlib/toolsbar.html"/>
-	<mapID target="attrlib_attr" url="en/html/guide/attrlib/attr.html" />
-	<mapID target="attrlib_tool" url="en/html/guide/attrlib/tool.html" />
+	<mapID target="gui" url="en/html/guide/gui/index.html" />
+    <mapID target="gui_canvas" url="en/html/guide/gui/gui-canvas.html"/> 
+    <mapID target="gui_menu" url="en/html/guide/gui/gui-menu.html"/>
+	<mapID target="gui_explore" url="en/html/guide/gui/gui-explore.html" /> 
+    <mapID target="gui_toolsbar" url="en/html/guide/gui/gui-toolsbar.html"/>
+	<mapID target="gui-attribut" url="en/html/guide/gui/gui-attribut.html" />
+	<mapID target="gui-attrcomp" url="en/html/guide/gui/gui-attrcomp.html" />
 	<mapID target="subcirc" url="en/html/guide/subcirc/index.html" />
-	<mapID target="subcirc_creating" url="en/html/guide/subcirc/creating.html" />
-	<mapID target="subcirc_using" url="en/html/guide/subcirc/using.html" />
-	<mapID target="subcirc_appear" url="en/html/guide/subcirc/appear.html" />
-	<mapID target="subcirc_debug" url="en/html/guide/subcirc/debug.html" />
-	<mapID target="subcirc_library" url="en/html/guide/subcirc/library.html" />
-	<mapID target="bundles" url="en/html/guide/bundles/index.html" />
-	<mapID target="bundles_creating" url="en/html/guide/bundles/creating.html" />
-	<mapID target="bundles_splitting" url="en/html/guide/bundles/splitting.html" />
-	<mapID target="bundles_colors" url="en/html/guide/bundles/colors.html" />
+	<mapID target="subcirc_creating" url="en/html/guide/subcirc/sub-creating.html" />
+	<mapID target="subcirc_using" url="en/html/guide/subcirc/sub-using.html" />
+	<mapID target="subcirc_appear" url="en/html/guide/subcirc/sub-appear.html" />
+    <mapID target="subcirc_personalise" url="en/html/guide/subcirc/sub-personalise.html"/>
+	<mapID target="subcirc_debug" url="en/html/guide/subcirc/sub-debug.html" />
+	<mapID target="subcirc_library" url="en/html/guide/subcirc/sub-library.html" />
+	<mapID target="features" url="en/html/guide/feature/index.html" />
+	<mapID target="features_creating" url="en/html/guide/feature/fet-creating.html" />
+	<mapID target="features_splitting" url="en/html/guide/feature/fet-splitting.html" />
+	<mapID target="features_colors" url="en/html/guide/feature/fet-colors.html" />
+	<mapID target="features_autolabel" url="en/html/guide/feature/fet-autolabel.html" />	
+	<mapID target="features_matrix" url="en/html/guide/feature/fet-matrix.html" />
 	<mapID target="mem_guide" url="en/html/guide/mem/index.html" />
 	<mapID target="mem_poke" url="en/html/guide/mem/poke.html" /> <!-- obsolete -->
-	<mapID target="mem_menu" url="en/html/guide/mem/menu.html" />
+	<mapID target="mem_menu" url="en/html/guide/mem/gui-menu.html" />
 	<mapID target="mem_hex" url="en/html/guide/mem/hex.html" />
 	<mapID target="analyze" url="en/html/guide/analyze/index.html" />
 	<mapID target="analyze_open" url="en/html/guide/analyze/open.html" />
@@ -83,8 +86,8 @@
 	<mapID target="menu_project" url="en/html/guide/menu/project.html" />
 	<mapID target="menu_simulate" url="en/html/guide/menu/simulate.html" />
 	<mapID target="menu_winhelp" url="en/html/guide/menu/winhelp.html" />
-	<mapID  target="menu_exportab" url="en/html/guide/menu/exportab.html" />
-	<mapID  target="menu_printertab" url="en/html/guide/menu/printertab.html" />
+	<mapID target="menu_exportab" url="en/html/guide/menu/exportab.html" />
+	<mapID target="menu_printertab" url="en/html/guide/menu/printertab.html" />
 	<mapID target="about" url="en/html/guide/about/index.html" />
 	<mapID target="about_gpl" url="en/html/guide/about/gpl.html" />
 	
@@ -203,6 +206,8 @@
 	<mapID target="icon_tty" url="icons/tty.gif" />
 	<mapID target="icon_vhdl" url="icons/vhdl.gif" />
 	<mapID target="test_hml_css" url="testhtml/index.html" />
-        <mapID target="up_icon" url="icons/up.png"/>
-        <mapID target="socbus_icon" url="icons/socbus.png"/>
+    <mapID target="up_icon" url="icons/up.png"/>
+    <mapID target="socbus_icon" url="icons/socbus.png"/>
+	
+	<mapID target="test_hml_css" url="en/testhtml/index.html" />
 </map>

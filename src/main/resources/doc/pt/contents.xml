@@ -15,18 +15,19 @@
 			<tocitem target="tutorial_test" text="Passo 4: Para testar seu circuito" />
 			<tocitem target="tutorial_step" text="Step 5: Step by step mode"/>
 		</tocitem>
-		<tocitem target="attrlib" text="Bibliotecas e atributos">
-			<tocitem target="attrlib_canvas" text="The canvas"/>
-			<tocitem target="attrlib_menu" text="The menus"/>		
-			<tocitem target="attrlib_explore" text="O painel explorador" />
-			<tocitem target="attrlib_toolsbar" text="The tools bars"/>			
-			<tocitem target="attrlib_attr" text="A tabela de atributos" />
-			<tocitem target="attrlib_tool" text="Atributos de ferramenta e componente" />
+		<tocitem target="gui" text="Bibliotecas e atributos">
+			<tocitem target="gui_canvas" text="The canvas"/>
+			<tocitem target="gui_menu" text="The menus"/>		
+			<tocitem target="gui_explore" text="O painel explorador" />
+			<tocitem target="gui_toolsbar" text="The tools bars"/>			
+			<tocitem target="gui-attribut" text="A tabela de atributos" />
+			<tocitem target="gui-attrcomp" text="Atributos de ferramenta e componente" />
 		</tocitem>
 		<tocitem target="subcirc" text="Subcircuitos">
 			<tocitem target="subcirc_creating" text="Para criar circuitos" />
 			<tocitem target="subcirc_using" text="Para usar subcircuitos" />
-			<tocitem target="subcirc_appear" text="Para editar a aparência de subcircuito" />
+			<tocitem target="subcirc_appear" text="Selecção do aspecto de um subcircuito" />
+			<tocitem target="subcirc_personalise" text="Personalizar a aparência"/>
 			<tocitem target="subcirc_debug" text="Para depurar subcircuitos" />
 			<tocitem target="subcirc_library" text="Bibliotecas do Logisim" />
 		</tocitem>

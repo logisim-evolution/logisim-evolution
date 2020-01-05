@@ -15,23 +15,26 @@
   <mapID target="tutorial_text" url="fr/html/guide/tutorial/tutor-text.html"/>
   <mapID target="tutorial_test" url="fr/html/guide/tutorial/tutor-test.html"/>
   <mapID target="tutorial_step" url="fr/html/guide/tutorial/tutor-step.html"/>
-  <mapID target="attrlib" url="fr/html/guide/attrlib/index.html"/>
-  <mapID target="attrlib_canvas" url="fr/html/guide/attrlib/canvas.html"/>  
-  <mapID target="attrlib_menu" url="fr/html/guide/attrlib/menu.html"/>
-  <mapID target="attrlib_explore" url="fr/html/guide/attrlib/explore.html"/>
-  <mapID target="attrlib_toolsbar" url="fr/html/guide/attrlib/toolsbar.html"/>
-  <mapID target="attrlib_attr" url="fr/html/guide/attrlib/attr.html"/>
-  <mapID target="attrlib_tool" url="fr/html/guide/attrlib/tool.html"/>
+  <mapID target="gui" url="fr/html/guide/gui/index.html"/>
+  <mapID target="gui_canvas" url="fr/html/guide/gui/gui-canvas.html"/>  
+  <mapID target="gui_menu" url="fr/html/guide/gui/gui-menu.html"/>
+  <mapID target="gui_explore" url="fr/html/guide/gui/gui-explore.html"/>
+  <mapID target="gui_toolsbar" url="fr/html/guide/gui/gui-toolsbar.html"/>
+  <mapID target="gui-attribut" url="fr/html/guide/gui/gui-attribut.html"/>
+  <mapID target="gui-attrcomp" url="fr/html/guide/gui/gui-attrcomp.html"/>
   <mapID target="subcirc" url="fr/html/guide/subcirc/index.html"/>
-  <mapID target="subcirc_creating" url="fr/html/guide/subcirc/creating.html"/>
-  <mapID target="subcirc_using" url="fr/html/guide/subcirc/using.html"/>
-  <mapID target="subcirc_appear" url="fr/html/guide/subcirc/appear.html"/>
-  <mapID target="subcirc_debug" url="fr/html/guide/subcirc/debug.html"/>
-  <mapID target="subcirc_library" url="fr/html/guide/subcirc/library.html"/>
-  <mapID target="bundles" url="fr/html/guide/bundles/index.html"/>
-  <mapID target="bundles_creating" url="fr/html/guide/bundles/creating.html"/>
-  <mapID target="bundles_splitting" url="fr/html/guide/bundles/splitting.html"/>
-  <mapID target="bundles_colors" url="fr/html/guide/bundles/colors.html"/>
+  <mapID target="subcirc_creating" url="fr/html/guide/subcirc/sub-creating.html"/>
+  <mapID target="subcirc_using" url="fr/html/guide/subcirc/sub-using.html"/>
+  <mapID target="subcirc_appear" url="fr/html/guide/subcirc/sub-appear.html"/>
+  <mapID target="subcirc_personalise" url="fr/html/guide/subcirc/sub-personalise.html"/>  
+  <mapID target="subcirc_debug" url="fr/html/guide/subcirc/sub-debug.html"/>
+  <mapID target="subcirc_library" url="fr/html/guide/subcirc/sub-library.html"/>
+  <mapID target="features" url="fr/html/guide/feature/index.html" />
+  <mapID target="features_creating" url="fr/html/guide/feature/fet-creating.html" />
+  <mapID target="features_splitting" url="fr/html/guide/feature/fet-splitting.html" />
+  <mapID target="features_colors" url="fr/html/guide/feature/fet-colors.html" />
+  <mapID target="features_autolabel" url="fr/html/guide/feature/fet-autolabel.html" />	
+  <mapID target="features_matrix" url="fr/html/guide/feature/fet-matrix.html" />
   <mapID target="mem_guide" url="fr/html/guide/mem/index.html"/>
   <mapID target="mem_poke" url="fr/html/guide/mem/poke.html" />  <!-- obsolete -->
   <mapID target="mem_menu" url="fr/html/guide/mem/menu.html"/>

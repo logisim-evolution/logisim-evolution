@@ -1,13 +1,16 @@
-/* 
+﻿/* 
 This CSS document is suitable for use in java help v2.0
 There is a compromise between css rules and html properties for it to work
+java-help supports version 1 of CSS
 */
-/* For img */
+
+
+/* For img icone in the text  */
 img {
-	width:86%;
-	max-width:100%;
+    height:auto;
+	width:90%;
 }
-/* For img icone in the text */
+
 img.intxt {
 	height:auto;
 	width:auto;
@@ -23,6 +26,10 @@ img.notscal {
 img.iconlibs{
 	height:32;
 	width:32;
+}
+img.icontxt{
+	height:16;
+	width:16;
 }
 /* For spaces, page background */
 div.maindiv {
@@ -80,14 +87,16 @@ b.menu {
 	font-weight:bold;
 	font-size:12px;
 }
+
 /* for reference to button, tabs */
 b.button {
 	color: black;
 	background-color :#e0e0e0;
 	font-family:arial;
-	font-weight:normal;
+	font-weight:bold;
     font-size:12px;	
 }
+
 /* for reference to properties /library */
 b.propertie {
 	color:#00008B;
@@ -107,17 +116,18 @@ b.note {
 /* for reference to the elements of the figures */
 b.reffig {
 	color: #00137f;
-	
 }
 
 /* for reference to the part of guide */
 b.refguide {
 	color:#00137f;
 }
+
 /* For reference to question or answer of the pgm */
 b.refquest {
 	color:#00137f;
 }
+
 /* For tables tools list */
 table.toolslist {
 	border-spacing :2px 8px;
@@ -183,4 +193,8 @@ margin-top: 5px;
 }
 li  {
 margin-top: 5px; 
+}
+
+p.blue {
+  color:#008000;
 }
