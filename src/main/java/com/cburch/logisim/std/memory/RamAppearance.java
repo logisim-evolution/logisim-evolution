@@ -240,8 +240,7 @@ public class RamAppearance {
             30,
             15,
             bds.getWidth() - 60,
-            bds.getHeight() - 20,
-            true);
+            bds.getHeight() - 20);
     }
   }
 
@@ -282,8 +281,7 @@ public class RamAppearance {
             50,
             getControlHeight(attrs)+5,
             bds.getWidth() - 100,
-            bds.getHeight() - 10 - getControlHeight(attrs),
-            true);
+            bds.getHeight() - 10 - getControlHeight(attrs));
     }
   }
   

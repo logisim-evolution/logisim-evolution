@@ -390,8 +390,7 @@ public class Rom extends Mem {
             25,
             getControlHeight(painter.getAttributeSet()) + 5,
             Mem.SymbolWidth - 20,
-            20 * NrOfBits - 10,
-            false);
+            20 * NrOfBits - 10);
       }
     }
   }
