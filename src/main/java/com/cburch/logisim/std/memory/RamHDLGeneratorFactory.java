@@ -291,7 +291,7 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     boolean asynch = trigger.equals(StdAttr.TRIG_HIGH) || trigger.equals(StdAttr.TRIG_LOW);
     Object be = attrs.getValue(RamAttributes.ATTR_ByteEnables);
     boolean byteEnables = be == null ? false : be.equals(RamAttributes.BUS_WITH_BYTEENABLES);
-    PortMap.putAll(GetNetMap("Address", true, ComponentInfo, Mem.ADDR, Reporter, HDLType, Nets));
+    PortMap.putAll(GetNetMap("Address", true, ComponentInfo, RamAppearance.getAddrIndex(0, attrs), Reporter, HDLType, Nets));
     int DinPin = RamAppearance.getDataInIndex(0, attrs);
     PortMap.putAll(GetNetMap("DataIn", true, ComponentInfo, DinPin, Reporter, HDLType, Nets));
     PortMap.putAll(GetNetMap("WE", true, ComponentInfo, RamAppearance.getWEIndex(0, attrs), Reporter, HDLType, Nets));
@@ -350,7 +350,7 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
                 Nets));
       }
     }
-    PortMap.putAll(GetNetMap("DataOut", true, ComponentInfo, Mem.DATA, Reporter, HDLType, Nets));
+    PortMap.putAll(GetNetMap("DataOut", true, ComponentInfo, RamAppearance.getDataOutIndex(0, attrs), Reporter, HDLType, Nets));
     return PortMap;
   }
 
@@ -459,6 +459,12 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     boolean separate = busVal == null ? false : busVal.equals(RamAttributes.BUS_SEP);
     Object trigger = attrs.getValue(StdAttr.TRIGGER);
     boolean asynch = trigger.equals(StdAttr.TRIG_HIGH) || trigger.equals(StdAttr.TRIG_LOW);
-    return HDLType.equals(VHDL) && separate && !asynch;
+    boolean byteEnabled = RamAppearance.getNrLEPorts(attrs)==0;
+    boolean syncRead = !attrs.containsAttribute(Mem.ASYNC_READ) || !attrs.getValue(Mem.ASYNC_READ);
+    boolean clearPin = attrs.getValue(RamAttributes.CLEAR_PIN);
+    boolean writeAfterRead = !attrs.containsAttribute(Mem.READ_ATTR) ||
+    		                 attrs.getValue(Mem.READ_ATTR).equals(Mem.WRITEAFTERREAD) || 
+                             attrs.getValue(Mem.ENABLES_ATTR).equals(Mem.USELINEENABLES);
+    return HDLType.equals(VHDL) && separate && !asynch && byteEnabled && syncRead && !clearPin && writeAfterRead;
   }
 }

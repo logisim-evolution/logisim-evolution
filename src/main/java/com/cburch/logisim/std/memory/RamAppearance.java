@@ -58,7 +58,8 @@ public class RamAppearance {
     return getNrDataOutPorts(attrs);
   }
   public static int getNrDataOutPorts(AttributeSet attrs) {
-    if (attrs.getValue(Mem.ENABLES_ATTR).equals(Mem.USELINEENABLES)) {
+    if (!attrs.containsAttribute(Mem.ENABLES_ATTR) ||
+         attrs.getValue(Mem.ENABLES_ATTR).equals(Mem.USELINEENABLES)) {
       if (attrs.getValue(Mem.LINE_ATTR).equals(Mem.DUAL)) return 2;
       if (attrs.getValue(Mem.LINE_ATTR).equals(Mem.QUAD)) return 4;
     }
@@ -68,19 +69,23 @@ public class RamAppearance {
     return getNrDataInPorts(attrs)+getNrDataOutPorts(attrs);
   }
   public static int getNrOEPorts(AttributeSet attrs) {
+	if (!attrs.containsAttribute(Mem.ENABLES_ATTR)) return 0;
     if (!seperatedBus(attrs)||
         (seperatedBus(attrs) && attrs.getValue(Mem.ENABLES_ATTR).equals(Mem.USEBYTEENABLES))) return 1;
     else return 0;
   }
   public static int getNrWEPorts(AttributeSet attrs) {
+	if (!attrs.containsAttribute(Mem.ENABLES_ATTR)) return 0;
     return 1;
   }
   public static int getNrClkPorts(AttributeSet attrs) {
+	if (!attrs.containsAttribute(Mem.ENABLES_ATTR)) return 0;
     boolean async = !synchronous(attrs);
     if (async && attrs.getValue(Mem.ENABLES_ATTR).equals(Mem.USEBYTEENABLES)) return 0;
     else return 1;
   }
   public static int getNrLEPorts(AttributeSet attrs) {
+	if (!attrs.containsAttribute(Mem.ENABLES_ATTR)) return 0;
     if (attrs.getValue(Mem.ENABLES_ATTR).equals(Mem.USELINEENABLES)) {
       if (attrs.getValue(Mem.LINE_ATTR).equals(Mem.DUAL)) return 2;
       if (attrs.getValue(Mem.LINE_ATTR).equals(Mem.QUAD)) return 4;
@@ -88,6 +93,7 @@ public class RamAppearance {
     return 0;
   }
   public static int getNrBEPorts(AttributeSet attrs) {
+    if (!attrs.containsAttribute(Mem.ENABLES_ATTR)) return 0;
     boolean async = !synchronous(attrs);
     if (attrs.getValue(Mem.ENABLES_ATTR).equals(Mem.USEBYTEENABLES) &&
         attrs.getValue(RamAttributes.ATTR_ByteEnables).equals(RamAttributes.BUS_WITH_BYTEENABLES)&&
@@ -99,7 +105,7 @@ public class RamAppearance {
     return 0;
   }
   public static int getNrClrPorts(AttributeSet attrs) {
-    if (attrs.getValue(RamAttributes.CLEAR_PIN)) return 1;
+    if (attrs.containsAttribute(RamAttributes.CLEAR_PIN) && attrs.getValue(RamAttributes.CLEAR_PIN)) return 1;
     return 0;
   }
   public static int getNrOfPorts(AttributeSet attrs) {
@@ -222,9 +228,9 @@ public class RamAppearance {
     /* draw connections */
     DrawConnections(inst,attrs,painter);
     /* draw the size */
+    String type = inst.getFactory() instanceof Ram ? "RAM " : "ROM ";
     GraphicsUtil.drawCenteredText( g,
-            "RAM "
-                + Mem.GetSizeLabel(painter.getAttributeValue(Mem.ADDR_ATTR).getWidth())
+            type+ Mem.GetSizeLabel(painter.getAttributeValue(Mem.ADDR_ATTR).getWidth())
                 + " x "
                 + Integer.toString(painter.getAttributeValue(Mem.DATA_ATTR).getWidth()),
             bds.getX() + (Mem.SymbolWidth / 2) + 20,
@@ -241,7 +247,7 @@ public class RamAppearance {
             15,
             bds.getWidth() - 60,
             bds.getHeight() - 20,
-            Math.max(1, getNrLEPorts(attrs)));
+            getNrToHighlight(attrs));
     }
   }
 
@@ -264,9 +270,9 @@ public class RamAppearance {
     /* draw connections */
     DrawConnections(inst,attrs,painter);
     /* draw the size */
-    GraphicsUtil.drawCenteredText( g,
-            "RAM "
-                + Mem.GetSizeLabel(painter.getAttributeValue(Mem.ADDR_ATTR).getWidth())
+    String type = inst.getFactory() instanceof Ram ? "RAM " : "ROM ";
+   GraphicsUtil.drawCenteredText( g,
+            type+ Mem.GetSizeLabel(painter.getAttributeValue(Mem.ADDR_ATTR).getWidth())
                 + " x "
                 + Integer.toString(painter.getAttributeValue(Mem.DATA_ATTR).getWidth()),
             bds.getX() + (Mem.SymbolWidth / 2) + 20,
@@ -283,16 +289,17 @@ public class RamAppearance {
             getControlHeight(attrs)+5,
             bds.getWidth() - 100,
             bds.getHeight() - 10 - getControlHeight(attrs),
-            Math.max(1, getNrLEPorts(attrs)));
+            getNrToHighlight(attrs));
     }
   }
   
   public static int getControlHeight(AttributeSet attrs) {
     int result = 60;
-    if (attrs.getValue(Mem.ENABLES_ATTR).equals(Mem.USELINEENABLES)) {
+    if (attrs.containsAttribute(Mem.ENABLES_ATTR) &&
+        attrs.getValue(Mem.ENABLES_ATTR).equals(Mem.USELINEENABLES)) {
       if (!classicAppearance(attrs)) result += 30;
       result += getNrLEPorts(attrs)*10;
-    } else {
+    } else if (attrs.containsAttribute(StdAttr.TRIGGER)){
       boolean async = !synchronous(attrs);
       result += 20;
       if (!async) result += 10;
@@ -302,15 +309,25 @@ public class RamAppearance {
   }
 
   /* here all private handles are defined */
+  private static int getNrToHighlight(AttributeSet attrs) {
+    if (attrs.containsAttribute(Mem.ENABLES_ATTR) && 
+    	attrs.getValue(Mem.ENABLES_ATTR).equals(Mem.USEBYTEENABLES))
+      return 1;
+    if (attrs.getValue(Mem.LINE_ATTR).equals(Mem.DUAL)) return 2;
+    if (attrs.getValue(Mem.LINE_ATTR).equals(Mem.QUAD)) return 4;
+    return 1;
+  }
   private static int getDataOffset(int portOffset, int portIndex, AttributeSet attrs) {
     switch (portIndex) {
       case 0  : return portOffset;
-      case 1  : if (attrs.getValue(Mem.ENABLES_ATTR).equals(Mem.USELINEENABLES)&&
-          !attrs.getValue(Mem.LINE_ATTR).equals(Mem.SINGLE)) return portOffset+1;
+      case 1  : if ((!attrs.containsAttribute(Mem.ENABLES_ATTR) ||
+    		         attrs.getValue(Mem.ENABLES_ATTR).equals(Mem.USELINEENABLES))&&
+                    !attrs.getValue(Mem.LINE_ATTR).equals(Mem.SINGLE)) return portOffset+1;
                 else return -1;
       case 2  : 
-      case 3  : if (attrs.getValue(Mem.ENABLES_ATTR).equals(Mem.USELINEENABLES)&&
-            attrs.getValue(Mem.LINE_ATTR).equals(Mem.QUAD)) return portOffset+portIndex;
+      case 3  : if ((!attrs.containsAttribute(Mem.ENABLES_ATTR) ||
+		             attrs.getValue(Mem.ENABLES_ATTR).equals(Mem.USELINEENABLES))&&
+                    attrs.getValue(Mem.LINE_ATTR).equals(Mem.QUAD)) return portOffset+portIndex;
                 else return -1;
       default : return -1;
     }
@@ -351,7 +368,7 @@ public class RamAppearance {
     int ypos = getControlHeight(attrs);
     int xpos = Mem.SymbolWidth+40;
     String portType = Port.OUTPUT;
-    if (!seperatedBus(attrs)) {
+    if (!seperatedBus(attrs)&&attrs.containsAttribute(Mem.ENABLES_ATTR)) {
       xpos += 10;
       portType = Port.INOUT;
     }
@@ -459,8 +476,9 @@ public class RamAppearance {
     return (bus != null && bus.equals(RamAttributes.BUS_SEP));
   }
   private static boolean synchronous(AttributeSet attrs) {
-    return attrs.getValue(StdAttr.TRIGGER).equals(StdAttr.TRIG_RISING) ||
-           attrs.getValue(StdAttr.TRIGGER).equals(StdAttr.TRIG_FALLING);
+    return attrs.containsAttribute(StdAttr.TRIGGER) && 
+    	   (attrs.getValue(StdAttr.TRIGGER).equals(StdAttr.TRIG_RISING) ||
+            attrs.getValue(StdAttr.TRIGGER).equals(StdAttr.TRIG_FALLING));
   }
   
   private static void DrawConnections(Instance inst, AttributeSet attrs, InstancePainter painter) {
@@ -538,7 +556,7 @@ public class RamAppearance {
       label = !classic ? "" : getNrDataOutPorts(attrs) == 1 ? "D" : "D"+i;
       int idx = getDataOutIndex(i,attrs);
       if (!classic) {
-        boolean seperate = seperatedBus(attrs);
+        boolean seperate = seperatedBus(attrs) || !attrs.containsAttribute(RamAttributes.ATTR_DBUS);
         Location loc = inst.getPortLocation(idx);
         int x = loc.getX();
         int y = loc.getY();
@@ -768,7 +786,8 @@ public class RamAppearance {
     int cidx = 1;
     boolean async = !synchronous(attrs) || 
     		        (attrs.containsAttribute(Mem.ASYNC_READ) && attrs.getValue(Mem.ASYNC_READ));
-    boolean seperate = seperatedBus(attrs);
+    boolean drawDin = attrs.containsAttribute(RamAttributes.ATTR_DBUS);
+    boolean seperate = seperatedBus(attrs) || !drawDin;
     for (int i = 0 ; i < getNrClkPorts(attrs) ; i++) {
       if (!async) doutLabel.append(","+cidx);
       dinLabel.append(","+cidx);
@@ -813,7 +832,8 @@ public class RamAppearance {
         int beIdx = cidx+(i>>3);
         BEIndex = ","+beIdx;
       }
-      GraphicsUtil.drawText(
+      if (drawDin)
+        GraphicsUtil.drawText(
               g,
               dinLabel.toString()+BEIndex,
               x + (seperate ? 3 :  Mem.SymbolWidth-3),

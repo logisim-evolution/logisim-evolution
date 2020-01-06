@@ -39,12 +39,10 @@ import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Attributes;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
-import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.gui.hex.HexFile;
 import com.cburch.logisim.gui.hex.HexFrame;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceFactory;
-import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.proj.Project;
@@ -53,9 +51,6 @@ import com.cburch.logisim.tools.key.BitWidthConfigurator;
 import com.cburch.logisim.tools.key.JoinedConfigurator;
 import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.StringGetter;
-import com.cburch.logisim.util.StringUtil;
-import java.awt.Font;
-import java.awt.Graphics;
 import java.io.File;
 import java.io.IOException;
 import java.util.WeakHashMap;
@@ -120,10 +115,6 @@ public abstract class Mem extends InstanceFactory {
                new AttributeOption[] {USEBYTEENABLES,USELINEENABLES});
   static final Attribute<Boolean> ASYNC_READ = Attributes.forBoolean("asyncread", S.getter("memAsyncRead"));
   
-  // port-related constants
-  static final int DATA = 0;
-  static final int ADDR = 1;
-  static final int MEM_INPUTS = 2;
   // other constants
   public static final int DELAY = 10;
 
@@ -199,71 +190,4 @@ public abstract class Mem extends InstanceFactory {
     currentInstanceFiles.put(instance, value);
   }
 
-  public void DrawMemClassic(InstancePainter painter) {
-    Graphics g = painter.getGraphics();
-    Bounds bds = painter.getBounds();
-
-    // Draw Label
-    String Label = painter.getAttributeValue(StdAttr.LABEL);
-    if (Label != null && painter.getAttributeValue(StdAttr.LABEL_VISIBILITY)) {
-      Font font = g.getFont();
-      g.setFont(painter.getAttributeValue(StdAttr.LABEL_FONT));
-      GraphicsUtil.drawCenteredText(
-          g, Label, bds.getX() + bds.getWidth() / 2, bds.getY() - g.getFont().getSize());
-      g.setFont(font);
-    }
-
-    // draw boundary
-    painter.drawBounds();
-
-    String mem = "ram", MEM = "RAM";
-    if (this instanceof Rom) {
-      mem = "rom";
-      MEM = "ROM";
-    }
-
-    // draw contents
-    if (painter.getShowState()) {
-      MemState state = getState(painter);
-      state.paint(
-          painter.getGraphics(),
-          bds.getX(),
-          bds.getY(),
-          15,
-          15,
-          bds.getWidth() - 30,
-          bds.getHeight() - 20,
-          1);
-    } else {
-      BitWidth addr = painter.getAttributeValue(ADDR_ATTR);
-      int addrBits = addr.getWidth();
-      int bytes = 1 << addrBits;
-      String label;
-      if (addrBits >= 30) {
-        label = StringUtil.format(S.get(mem + "GigabyteLabel"), "" + (bytes >> 30));
-      } else if (addrBits >= 20) {
-        label = StringUtil.format(S.get(mem + "MegabyteLabel"), "" + (bytes >> 20));
-      } else if (addrBits >= 10) {
-        label = StringUtil.format(S.get(mem + "KilobyteLabel"), "" + (bytes >> 10));
-      } else {
-        label = StringUtil.format(S.get(mem + "ByteLabel"), "" + bytes);
-      }
-      GraphicsUtil.drawCenteredText(
-          g, label, bds.getX() + bds.getWidth() / 2, bds.getY() + bds.getHeight() / 2);
-    }
-
-    GraphicsUtil.drawCenteredText(
-        g,
-        MEM
-            + " "
-            + GetSizeLabel(painter.getAttributeValue(Mem.ADDR_ATTR).getWidth())
-            + " x "
-            + Integer.toString(painter.getAttributeValue(Mem.DATA_ATTR).getWidth()),
-        bds.getX() + (SymbolWidth / 2) + 20,
-        bds.getY() + 6);
-
-    // draw input and output ports
-    painter.drawPort(DATA, S.get("ramDataLabel"), Direction.WEST);
-    painter.drawPort(ADDR, S.get("ramAddrLabel"), Direction.EAST);
-  }
 }
