@@ -45,7 +45,6 @@ import com.cburch.logisim.data.Value;
 import com.cburch.logisim.gui.main.Canvas;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
-import com.cburch.logisim.util.Icons;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -58,8 +57,6 @@ import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.geom.GeneralPath;
-
-import javax.swing.Icon;
 
 public class PokeTool extends Tool {
   private class Listener implements CircuitListener {

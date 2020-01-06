@@ -168,6 +168,7 @@ public class MemPoker extends InstancePoker {
     @Override
     public void paint(InstancePainter painter) {
       Bounds bds = getBounds(painter);
+      if (bds == null) return;
       Graphics g = painter.getGraphics();
       g.setColor(Color.RED);
       g.drawRect(bds.getX(), bds.getY(), bds.getWidth(), bds.getHeight());

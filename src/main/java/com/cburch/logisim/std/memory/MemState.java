@@ -157,7 +157,8 @@ class MemState implements InstanceData, Cloneable, HexModelListener {
     int curAddr = (int) curScroll;
     for (int row = 0 ; row < NrOfLines ; row++) {
       for (int column = 0 ; column < NrDataSymbolsEachLine ; column++) {
-        if ((curAddr+column) == addr) return getDataBound(bds.getX(),bds.getY(),row,column);
+        if ((curAddr+column) == addr && isValidAddr(curAddr+column)) 
+          return getDataBound(bds.getX(),bds.getY(),row,column);
       }
       curAddr += NrDataSymbolsEachLine;
     }
@@ -224,7 +225,8 @@ class MemState implements InstanceData, Cloneable, HexModelListener {
       int offsetX,
       int offsetY,
       int DisplayWidth,
-      int DisplayHeight) {
+      int DisplayHeight,
+      int nrItemsToHighlight) {
     if (RecalculateParameters || windowChanged(offsetX,offsetY,DisplayWidth,DisplayHeight))
       CalculateDisplayParameters(g, offsetX, offsetY, DisplayWidth, DisplayHeight);
     int BlockHeight = NrOfLines * (CharHeight + 2);
@@ -258,7 +260,8 @@ class MemState implements InstanceData, Cloneable, HexModelListener {
       for (int j = 0; j < NrDataSymbolsEachLine; j++) {
         int value = contents.get(addr + j);
         if (isValidAddr(addr + j)) {
-          if ((addr + j) == curAddr) {
+          
+          if (highLight((addr + j), nrItemsToHighlight)) {
         	Bounds dataBounds = getDataBound(leftX,topY,i,j);
             g.setColor(Color.DARK_GRAY);
             g.fillRect(dataBounds.getX(),dataBounds.getY(),dataBounds.getWidth(),dataBounds.getHeight());
@@ -284,6 +287,14 @@ class MemState implements InstanceData, Cloneable, HexModelListener {
       }
       addr += NrDataSymbolsEachLine;
     }
+  }
+  
+  private boolean highLight(int addr, int nrItemsToHighlight) {
+	long mask = -1L;
+	mask *= nrItemsToHighlight;
+	long leftAddr = curAddr & mask;
+	long rightAddr = leftAddr+nrItemsToHighlight;
+	return (addr >= curAddr)&&(addr < rightAddr);
   }
   
   private Bounds getDataBound(int xoff, int yoff, int line, int column) {

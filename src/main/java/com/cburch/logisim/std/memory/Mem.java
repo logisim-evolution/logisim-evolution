@@ -232,7 +232,8 @@ public abstract class Mem extends InstanceFactory {
           15,
           15,
           bds.getWidth() - 30,
-          bds.getHeight() - 20);
+          bds.getHeight() - 20,
+          1);
     } else {
       BitWidth addr = painter.getAttributeValue(ADDR_ATTR);
       int addrBits = addr.getWidth();

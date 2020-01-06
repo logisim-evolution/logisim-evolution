@@ -240,7 +240,8 @@ public class RamAppearance {
             30,
             15,
             bds.getWidth() - 60,
-            bds.getHeight() - 20);
+            bds.getHeight() - 20,
+            Math.max(1, getNrLEPorts(attrs)));
     }
   }
 
@@ -281,7 +282,8 @@ public class RamAppearance {
             50,
             getControlHeight(attrs)+5,
             bds.getWidth() - 100,
-            bds.getHeight() - 10 - getControlHeight(attrs));
+            bds.getHeight() - 10 - getControlHeight(attrs),
+            Math.max(1, getNrLEPorts(attrs)));
     }
   }
   
@@ -872,6 +874,5 @@ public class RamAppearance {
     GraphicsUtil.drawText(
         g, size, xpos + 60 + (StrSize / 2), ypos + 21, GraphicsUtil.H_CENTER, GraphicsUtil.V_TOP);
   }
-
 
 }
