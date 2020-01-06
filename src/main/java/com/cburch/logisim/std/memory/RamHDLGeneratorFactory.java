@@ -462,9 +462,8 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     boolean byteEnabled = RamAppearance.getNrLEPorts(attrs)==0;
     boolean syncRead = !attrs.containsAttribute(Mem.ASYNC_READ) || !attrs.getValue(Mem.ASYNC_READ);
     boolean clearPin = attrs.getValue(RamAttributes.CLEAR_PIN);
-    boolean writeAfterRead = !attrs.containsAttribute(Mem.READ_ATTR) ||
-    		                 attrs.getValue(Mem.READ_ATTR).equals(Mem.WRITEAFTERREAD) || 
-                             attrs.getValue(Mem.ENABLES_ATTR).equals(Mem.USELINEENABLES);
-    return HDLType.equals(VHDL) && separate && !asynch && byteEnabled && syncRead && !clearPin && writeAfterRead;
+    boolean ReadAfterWrite = !attrs.containsAttribute(Mem.READ_ATTR) ||
+    		                 attrs.getValue(Mem.READ_ATTR).equals(Mem.READAFTERWRITE);
+    return HDLType.equals(VHDL) && separate && !asynch && byteEnabled && syncRead && !clearPin && ReadAfterWrite;
   }
 }
