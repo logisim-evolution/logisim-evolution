@@ -103,7 +103,7 @@ public class RamAttributes extends AbstractAttributeSet {
     updateAttributes();
   }
   
-  private boolean updateAttributes() {
+  public boolean updateAttributes() {
     ArrayList<Attribute<?>>newList = new ArrayList<Attribute<?>>();
     boolean changes = false;
     newList.add(Mem.ADDR_ATTR);

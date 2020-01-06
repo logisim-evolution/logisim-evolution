@@ -100,18 +100,18 @@ public abstract class Mem extends InstanceFactory {
       Attributes.forOption(
           "Select", S.getter("ramSelAttr"), new AttributeOption[] {SEL_HIGH, SEL_LOW});
   
-  static final AttributeOption SINGLE = new AttributeOption("single",S.getter("memSingle"));
-  static final AttributeOption DUAL = new AttributeOption("dual",S.getter("memDual"));
-  static final AttributeOption QUAD = new AttributeOption("quad",S.getter("memQuad"));
-  static final Attribute<AttributeOption> LINE_ATTR = Attributes.forOption("line", S.getter("memLineSize"),
+  public static final AttributeOption SINGLE = new AttributeOption("single",S.getter("memSingle"));
+  public static final AttributeOption DUAL = new AttributeOption("dual",S.getter("memDual"));
+  public static final AttributeOption QUAD = new AttributeOption("quad",S.getter("memQuad"));
+  public static final Attribute<AttributeOption> LINE_ATTR = Attributes.forOption("line", S.getter("memLineSize"),
                new AttributeOption[] {SINGLE,DUAL,QUAD});
   static final AttributeOption WRITEAFTERREAD = new AttributeOption("war",S.getter("memWar"));
   static final AttributeOption READAFTERWRITE = new AttributeOption("raw",S.getter("memRaw"));
   static final Attribute<AttributeOption> READ_ATTR = Attributes.forOption("readbehav", S.getter("memReadBehav"), 
                new AttributeOption[] {WRITEAFTERREAD,READAFTERWRITE});
-  static final AttributeOption USEBYTEENABLES = new AttributeOption("byte",S.getter("memByte"));
-  static final AttributeOption USELINEENABLES = new AttributeOption("line",S.getter("memLine"));
-  static final Attribute<AttributeOption> ENABLES_ATTR = Attributes.forOption("enables", S.getter("memEnables"), 
+  public static final AttributeOption USEBYTEENABLES = new AttributeOption("byte",S.getter("memByte"));
+  public static final AttributeOption USELINEENABLES = new AttributeOption("line",S.getter("memLine"));
+  public static final Attribute<AttributeOption> ENABLES_ATTR = Attributes.forOption("enables", S.getter("memEnables"), 
                new AttributeOption[] {USEBYTEENABLES,USELINEENABLES});
   static final Attribute<Boolean> ASYNC_READ = Attributes.forBoolean("asyncread", S.getter("memAsyncRead"));
   
