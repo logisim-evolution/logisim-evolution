@@ -157,6 +157,12 @@ public class HexFrame extends LFrame {
       close.setText(S.get("closeButton"));
     }
   }
+  
+  public void closeAndDispose() {
+    WindowEvent e = new WindowEvent(this, WindowEvent.WINDOW_CLOSING);
+    processWindowEvent(e);
+    dispose();
+  }
 
   private class WindowMenuManager extends WindowMenuItemManager implements LocaleListener {
     WindowMenuManager() {
@@ -186,10 +192,12 @@ public class HexFrame extends LFrame {
   private JButton close = new JButton();
 
   public HexFrame(Project proj, HexModel model) {
-    super(false,proj);
-    menubar.disableFile();
-    menubar.disableProject();
+	super(false,proj);
+	setDefaultCloseOperation(HIDE_ON_CLOSE);
 
+	LogisimMenuBar menubar = new LogisimMenuBar(this, proj);
+    setJMenuBar(menubar);
+    
     this.model = model;
     this.editor = new HexEditor(model);
 
@@ -228,6 +236,7 @@ public class HexFrame extends LFrame {
     editor.getCaret().addChangeListener(editListener);
     editor.getCaret().setDot(0, false);
     editListener.register(menubar);
+    setLocationRelativeTo(proj.getFrame());
   }
 
   @Override
