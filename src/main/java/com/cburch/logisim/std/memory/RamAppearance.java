@@ -806,6 +806,7 @@ public class RamAppearance {
       cidx++;
     }
     boolean appendBE = getNrBEPorts(attrs) > 0;
+    String DLabel = seperate ? "" : "D";
     for (int i = 0 ; i < nrOfBits ; i++) {
       g.setStroke(new BasicStroke(2));
       g.drawRect(x, y, width, height);
@@ -835,7 +836,7 @@ public class RamAppearance {
       if (drawDin)
         GraphicsUtil.drawText(
               g,
-              dinLabel.toString()+BEIndex,
+              dinLabel.toString()+BEIndex+DLabel,
               x + (seperate ? 3 :  Mem.SymbolWidth-3),
               y + (seperate ? 10 : 13),
               seperate ? GraphicsUtil.H_LEFT : GraphicsUtil.H_RIGHT,
