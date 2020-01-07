@@ -68,6 +68,7 @@ class RomAttributes extends AbstractAttributeSet {
           new Attribute<?>[] {
             Mem.ADDR_ATTR,
             Mem.DATA_ATTR,
+            Mem.LINE_ATTR,
             Rom.CONTENTS_ATTR,
             StdAttr.LABEL,
             StdAttr.LABEL_FONT,
@@ -83,6 +84,7 @@ class RomAttributes extends AbstractAttributeSet {
   private BitWidth addrBits = BitWidth.create(8);
   private BitWidth dataBits = BitWidth.create(8);
   private MemContents contents;
+  private AttributeOption lineSize = Mem.SINGLE;
   private String Label = "";
   private Font LabelFont = StdAttr.DEFAULT_LABEL_FONT;
   private Boolean LabelVisable = false;
@@ -97,6 +99,7 @@ class RomAttributes extends AbstractAttributeSet {
     RomAttributes d = (RomAttributes) dest;
     d.addrBits = addrBits;
     d.dataBits = dataBits;
+    d.lineSize = lineSize;
     d.contents = contents.clone();
     d.LabelFont = LabelFont;
     d.LabelVisable = LabelVisable;
@@ -116,6 +119,9 @@ class RomAttributes extends AbstractAttributeSet {
     }
     if (attr == Mem.DATA_ATTR) {
       return (V) dataBits;
+    }
+    if (attr == Mem.LINE_ATTR) {
+      return (V) lineSize;
     }
     if (attr == Rom.CONTENTS_ATTR) {
       return (V) contents;
@@ -152,6 +158,11 @@ class RomAttributes extends AbstractAttributeSet {
       if (newData == dataBits) return;
       dataBits = newData;
       contents.setDimensions(addrBits.getWidth(), dataBits.getWidth(), true);
+      fireAttributeValueChanged(attr, value, null);
+    } else if (attr == Mem.LINE_ATTR) {
+      AttributeOption val = (AttributeOption) value;
+      if (lineSize.equals(val)) return;
+      lineSize = val;
       fireAttributeValueChanged(attr, value, null);
     } else if (attr == Rom.CONTENTS_ATTR) {
       MemContents newContents = (MemContents) value;

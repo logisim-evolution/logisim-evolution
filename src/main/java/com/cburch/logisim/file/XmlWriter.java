@@ -38,6 +38,7 @@ import com.cburch.logisim.comp.ComponentFactory;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeDefaultProvider;
 import com.cburch.logisim.data.AttributeSet;
+import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.tools.Tool;
 import com.cburch.logisim.util.InputEventUtil;
@@ -232,7 +233,7 @@ class XmlWriter {
       Object val = attrs.getValue(attr);
       if (attrs.isToSave(attr) && val != null) {
         Object dflt = source == null ? null : source.getDefaultAttributeValue(attr, ver);
-        if (dflt == null || !dflt.equals(val)) {
+        if (dflt == null || !dflt.equals(val) || attr.equals(StdAttr.APPEARANCE)) {
           Element a = doc.createElement("a");
           a.setAttribute("name", attr.getName());
           String value = attr.toStandardString(val);

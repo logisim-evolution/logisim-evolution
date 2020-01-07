@@ -61,6 +61,7 @@ import com.cburch.logisim.tools.key.DirectionConfigurator;
 import com.cburch.logisim.tools.key.JoinedConfigurator;
 import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.LocaleListener;
+
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -556,7 +557,7 @@ public class Pin extends InstanceFactory {
       return Value.createKnown(expectedWidth, 0);
     }
   }
-
+  
   public static final Attribute<Boolean> ATTR_TRISTATE =
       Attributes.forBoolean("tristate", S.getter("pinThreeStateAttr"));
   public static final Attribute<Boolean> ATTR_TYPE =

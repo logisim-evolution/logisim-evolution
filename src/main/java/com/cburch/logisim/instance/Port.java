@@ -128,7 +128,7 @@ public class Port {
   public Attribute<BitWidth> getWidthAttribute() {
     return widthAttr;
   }
-
+  
   public void setToolTip(StringGetter value) {
     toolTip = value;
   }

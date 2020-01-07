@@ -42,6 +42,9 @@ import com.cburch.logisim.comp.ComponentFactory;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Location;
+import com.cburch.logisim.std.memory.Mem;
+import com.cburch.logisim.std.memory.Ram;
+import com.cburch.logisim.std.memory.RamAttributes;
 import com.cburch.logisim.tools.AddTool;
 import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.tools.Tool;
@@ -93,7 +96,12 @@ public class XmlCircuitReader extends CircuitTransaction {
     // Determine attributes
     String loc_str = elt.getAttribute("loc");
     AttributeSet attrs = source.createAttributeSet();
-    reader.initAttributeSet(elt, attrs, source, IsHolyCross, IsEvolution);
+    if (source instanceof Ram && IsHolyCross) {
+      RamAttributes rattrs = (RamAttributes) attrs; 
+      rattrs.setValue(Mem.ENABLES_ATTR, Mem.USELINEENABLES);
+      rattrs.updateAttributes();
+      reader.initAttributeSet(elt, attrs, null, IsHolyCross, IsEvolution);
+    } else reader.initAttributeSet(elt, attrs, source, IsHolyCross, IsEvolution);
 
     // Create component if location known
     if (loc_str == null || loc_str.equals("")) {
