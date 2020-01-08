@@ -31,6 +31,8 @@ package com.cburch.logisim.std.memory;
 import static com.cburch.logisim.std.Strings.S;
 
 import com.cburch.logisim.circuit.CircuitState;
+import com.cburch.logisim.file.Loader;
+import com.cburch.logisim.file.LogisimFile;
 import com.cburch.logisim.gui.hex.HexFile;
 import com.cburch.logisim.gui.hex.HexFrame;
 import com.cburch.logisim.instance.Instance;
@@ -125,9 +127,8 @@ class MemMenu implements ActionListener, MenuExtender {
   }
 
   private void doLoad() {
-    JFileChooser chooser = proj.createChooser();
     File oldSelected = factory.getCurrentImage(instance);
-    if (oldSelected != null) chooser.setSelectedFile(oldSelected);
+    JFileChooser chooser = HexFile.createFileOpenChooser(oldSelected);
     chooser.setDialogTitle(S.get("ramLoadDialogTitle"));
     int choice = chooser.showOpenDialog(frame);
     if (choice == JFileChooser.APPROVE_OPTION) {
@@ -144,15 +145,18 @@ class MemMenu implements ActionListener, MenuExtender {
   private void doSave() {
     MemState s = factory.getState(instance, circState);
 
-    JFileChooser chooser = proj.createChooser();
     File oldSelected = factory.getCurrentImage(instance);
-    if (oldSelected != null) chooser.setSelectedFile(oldSelected);
-    chooser.setDialogTitle(S.get("ramSaveDialogTitle"));
+    if (oldSelected == null) {
+      LogisimFile lf = proj.getLogisimFile();
+      Loader ld = (lf == null ? null : lf.getLoader());
+      oldSelected = (ld == null ? null : ld.getCurrentDirectory());
+    }
+    JFileChooser chooser = HexFile.createFileSaveChooser(oldSelected, (MemContents)s.getContents());   chooser.setDialogTitle(S.get("ramSaveDialogTitle"));
     int choice = chooser.showSaveDialog(frame);
     if (choice == JFileChooser.APPROVE_OPTION) {
       File f = chooser.getSelectedFile();
       try {
-        HexFile.save(f, s.getContents());
+        HexFile.save(f, (MemContents)s.getContents(), chooser.getFileFilter());
         factory.setCurrentImage(instance, f);
       } catch (IOException e) {
         JOptionPane.showMessageDialog(

@@ -30,6 +30,8 @@ package com.cburch.logisim.std.memory;
 
 import static com.cburch.logisim.std.Strings.S;
 
+import java.util.WeakHashMap;
+
 import com.cburch.logisim.LogisimVersion;
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.data.Attribute;
@@ -40,115 +42,16 @@ import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
-import com.cburch.logisim.gui.hex.HexFile;
 import com.cburch.logisim.gui.hex.HexFrame;
 import com.cburch.logisim.gui.icons.ArithmeticIcon;
-import com.cburch.logisim.gui.main.Frame;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceLogger;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.proj.Project;
-import java.awt.Window;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.io.IOException;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.util.NoSuchElementException;
-import java.util.StringTokenizer;
-import javax.swing.JLabel;
 
 public class Ram extends Mem {
-
-  static class ContentsAttribute extends Attribute<MemContents> {
-
-    public ContentsAttribute() {
-      super("contents", S.getter("ramContentsAttr"));
-    }
-
-    @Override
-    public java.awt.Component getCellEditor(Window source, MemContents value) {
-      ContentsCell ret = new ContentsCell(source, value);
-      ret.mouseClicked(null);
-      return ret;
-    }
-
-    public MemContents parse(String value) {
-      int lineBreak = value.indexOf('\n');
-      String first = lineBreak < 0 ? value : value.substring(0, lineBreak);
-      String rest = lineBreak < 0 ? "" : value.substring(lineBreak + 1);
-      StringTokenizer toks = new StringTokenizer(first);
-      try {
-        String header = toks.nextToken();
-        if (!header.equals("addr/data:")) {
-          return null;
-        }
-        int addr = Integer.parseInt(toks.nextToken());
-        int data = Integer.parseInt(toks.nextToken());
-        MemContents ret = MemContents.create(addr, data, false);
-        HexFile.open(ret, new StringReader(rest));
-        return ret;
-      } catch (IOException e) {
-        return null;
-      } catch (NumberFormatException e) {
-        return null;
-      } catch (NoSuchElementException e) {
-        return null;
-      }
-    }
-
-    @Override
-    public String toDisplayString(MemContents value) {
-      return S.get("romContentsValue");
-    }
-
-    @Override
-    public String toStandardString(MemContents state) {
-      int addr = state.getLogLength();
-      int data = state.getWidth();
-      StringWriter ret = new StringWriter();
-      ret.write("addr/data: " + addr + " " + data + "\n");
-      try {
-        HexFile.save(ret, state);
-      } catch (IOException e) {
-      }
-      return ret.toString();
-    }
-  }
-
-  @SuppressWarnings("serial")
-  private static class ContentsCell extends JLabel implements MouseListener {
-
-    Window source;
-    MemContents contents;
-
-    ContentsCell(Window source, MemContents contents) {
-      super(S.get("romContentsValue"));
-      this.source = source;
-      this.contents = contents;
-      addMouseListener(this);
-    }
-
-    public void mouseClicked(MouseEvent e) {
-      if (contents == null) {
-        return;
-      }
-      Project proj = source instanceof Frame ? ((Frame) source).getProject() : null;
-      HexFrame frame = RamAttributes.getHexFrame(contents, proj);
-      frame.setVisible(true);
-      frame.toFront();
-    }
-
-    public void mouseEntered(MouseEvent e) {}
-
-    public void mouseExited(MouseEvent e) {}
-
-    public void mousePressed(MouseEvent e) {}
-
-    public void mouseReleased(MouseEvent e) {}
-  }
 
   public static class Logger extends InstanceLogger {
 
@@ -198,8 +101,8 @@ public class Ram extends Mem {
     }
   }
 
-  public static Attribute<MemContents> CONTENTS_ATTR = new ContentsAttribute();
   private static Object[][] logOptions = new Object[9][];
+  private static WeakHashMap<MemContents, HexFrame> windowRegistry = new WeakHashMap<MemContents, HexFrame>();
 
   public Ram() {
     super("RAM", S.getter("ramComponent"), 3);
@@ -241,12 +144,49 @@ public class Ram extends Mem {
       return "RAMCONTENTS_" + Label;
     }
   }
+  
+  private MemContents getNewContents(AttributeSet attrs) {
+    MemContents contents = MemContents.create(attrs.getValue(Mem.ADDR_ATTR).getWidth(), 
+                                             attrs.getValue(Mem.DATA_ATTR).getWidth()); 
+    contents.condFillRandom();
+    return contents;
+  }
+
+  private static HexFrame getHexFrame(MemContents value, Project proj) {
+    synchronized (windowRegistry) {
+      HexFrame ret = windowRegistry.get(value);
+      if (ret == null) {
+        ret = new HexFrame(proj, value);
+        windowRegistry.put(value, ret);
+      }
+      return ret;
+    }
+  }
+  
+  public static void closeHexFrame(RamState state) {
+    MemContents contents = state.getContents();
+    HexFrame ret;
+    synchronized (windowRegistry) {
+      ret = windowRegistry.remove(contents);
+    }
+    if (ret == null) return;
+    ret.closeAndDispose();
+  }
 
   @Override
-  HexFrame getHexFrame(Project proj, Instance instance, CircuitState circState) {
+  public HexFrame getHexFrame(Project proj, Instance instance, CircuitState circState) {
     RamState ret = (RamState) instance.getData(circState);
-    return RamAttributes.getHexFrame(
-        (ret == null) ? instance.getAttributeValue(CONTENTS_ATTR) : ret.getContents(), proj);
+    return getHexFrame((ret == null) ? getNewContents(instance.getAttributeSet()) : ret.getContents(), proj);
+  }
+  
+  public boolean reset(CircuitState state, Instance instance) {
+    RamState ret = (RamState) instance.getData(state);
+    if (ret == null) return true;
+    MemContents contents = ret.getContents();
+    if (instance.getAttributeValue(RamAttributes.ATTR_TYPE).equals(RamAttributes.VOLATILE)) {
+      contents.condClear();
+    }
+    return false;
   }
 
   @Override
@@ -256,24 +196,15 @@ public class Ram extends Mem {
 
   @Override
   MemState getState(Instance instance, CircuitState state) {
-    RamState ret = (RamState) instance.getData(state);
-    if (ret == null) {
-      MemContents contents = instance.getAttributeValue(Ram.CONTENTS_ATTR);
-      ret = new RamState(instance, contents.clone(), new MemListener(instance));
-      instance.setData(state, ret);
-    } else {
-      ret.setRam(instance);
-    }
-    return ret;
+	return getState(state.getInstanceState(instance));
   }
 
   @Override
   MemState getState(InstanceState state) {
     RamState ret = (RamState) state.getData();
     if (ret == null) {
-      MemContents contents = state.getInstance().getAttributeValue(Ram.CONTENTS_ATTR);
       Instance instance = state.getInstance();
-      ret = new RamState(instance, contents.clone(), new MemListener(instance));
+      ret = new RamState(instance, getNewContents(instance.getAttributeSet()), new MemListener(instance));
       state.setData(ret);
     } else {
       ret.setRam(state.getInstance());

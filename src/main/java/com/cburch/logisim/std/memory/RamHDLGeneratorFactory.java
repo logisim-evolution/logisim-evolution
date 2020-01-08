@@ -458,7 +458,7 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     Object busVal = attrs.getValue(RamAttributes.ATTR_DBUS);
     boolean separate = busVal == null ? false : busVal.equals(RamAttributes.BUS_SEP);
     Object trigger = attrs.getValue(StdAttr.TRIGGER);
-    boolean asynch = trigger.equals(StdAttr.TRIG_HIGH) || trigger.equals(StdAttr.TRIG_LOW);
+    boolean asynch = trigger == null || trigger.equals(StdAttr.TRIG_HIGH) || trigger.equals(StdAttr.TRIG_LOW);
     boolean byteEnabled = RamAppearance.getNrLEPorts(attrs)==0;
     boolean syncRead = !attrs.containsAttribute(Mem.ASYNC_READ) || !attrs.getValue(Mem.ASYNC_READ);
     boolean clearPin = attrs.getValue(RamAttributes.CLEAR_PIN);

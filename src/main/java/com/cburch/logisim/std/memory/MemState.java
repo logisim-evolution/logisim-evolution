@@ -162,7 +162,7 @@ class MemState implements InstanceData, Cloneable, HexModelListener {
       }
       curAddr += NrDataSymbolsEachLine;
     }
-    return getDataBound(bds.getX(),bds.getY(),0,0);
+    return Bounds.EMPTY_BOUNDS;
   }
 
   public MemContents getContents() {
@@ -337,9 +337,9 @@ class MemState implements InstanceData, Cloneable, HexModelListener {
   private void setBits(int addrBits, int dataBits) {
     RecalculateParameters = true;
     if (contents == null) {
-      contents = MemContents.create(addrBits, dataBits, false);
+      contents = MemContents.create(addrBits, dataBits);
     } else {
-      contents.setDimensions(addrBits, dataBits, false);
+      contents.setDimensions(addrBits, dataBits);
     }
     cursorLoc = -1;
     curAddr = -1;

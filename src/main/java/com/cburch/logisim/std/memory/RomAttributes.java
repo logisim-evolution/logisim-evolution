@@ -53,6 +53,14 @@ class RomAttributes extends AbstractAttributeSet {
       return ret;
     }
   }
+  
+  static void closeHexFrame(MemContents value) {
+    HexFrame ret;
+    synchronized (windowRegistry) {
+      ret = windowRegistry.remove(value);
+    }
+    if (ret != null) ret.closeAndDispose();
+  }
 
   static void register(MemContents value, Project proj) {
     if (proj == null || listenerRegistry.containsKey(value)) {
@@ -91,7 +99,7 @@ class RomAttributes extends AbstractAttributeSet {
   private AttributeOption Appearance = AppPreferences.getDefaultAppearance();
 
   RomAttributes() {
-    contents = MemContents.create(addrBits.getWidth(), dataBits.getWidth(), true);
+    contents = MemContents.create(addrBits.getWidth(), dataBits.getWidth());
   }
 
   @Override
@@ -151,13 +159,13 @@ class RomAttributes extends AbstractAttributeSet {
       BitWidth newAddr = (BitWidth) value;
       if (newAddr == addrBits) return;
       addrBits = newAddr;
-      contents.setDimensions(addrBits.getWidth(), dataBits.getWidth(), true);
+      contents.setDimensions(addrBits.getWidth(), dataBits.getWidth());
       fireAttributeValueChanged(attr, value, null);
     } else if (attr == Mem.DATA_ATTR) {
       BitWidth newData = (BitWidth) value;
       if (newData == dataBits) return;
       dataBits = newData;
-      contents.setDimensions(addrBits.getWidth(), dataBits.getWidth(), true);
+      contents.setDimensions(addrBits.getWidth(), dataBits.getWidth());
       fireAttributeValueChanged(attr, value, null);
     } else if (attr == Mem.LINE_ATTR) {
       AttributeOption val = (AttributeOption) value;
