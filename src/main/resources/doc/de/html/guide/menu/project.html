@@ -3,116 +3,185 @@
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="created" content="2018-10-23T06:18:10.521000000">
-    <meta name="changed" content="2018-10-23T06:18:42.262000000">
+    <meta name="changed" content="2020-01-07T06:18:42.262000000">
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <meta http-equiv="Content-Language" content="de">
-    <title>Das Projektmenü
+    <title>
+      Das Projektmenü
     </title>
     <link rel="stylesheet" type="text/css" href="../../style.css">
   </head>
   <body>
     <div class="maindiv">
-
-<h1>Das Projektmenü</h1>
-
-<dl>
-
-<dt><strong>Add Circuit...</strong></dt>
-<dd><p>Adds a new circuit into the current project. Logisim will
-insist that you name the new circuit. The name must not match
-any existing circuits in the project.</p></dd>
-
-<dt><strong>Load Library</strong></dt>
-<dd><p>Loads <a href="../gui/gui-explore.html">a library</a> into the
-project. You can load three types of libraries, as explained <a
-href="../gui/qui-explore.html">elsewhere in the <em>User's
-Guide</em></a>.</p></dd>
-
-<dt><strong>Unload Libraries...</strong></dt>
-<dd><p>Unloads current libraries from the project. Logisim will
-not permit you to unload any libraries currently being used,
-including libraries containing components appearing in any
-project circuits, as well as those with tools that appear in
-the toolbar or that are mapped to the mouse.</p></dd>
-
-<dt><strong>Move Circuit Up</strong></dt>
-<dd><p>Moves the currently displayed circuit one step up the list of
-circuits within the project, as displayed in the explorer pane.</p></dd></dd>
-
-<dt><strong>Move Circuit Down</strong></dt>
-<dd><p>Moves the currently displayed circuit one step down the list of
-circuits within the project, as displayed in the explorer pane.</p></dd></dd>
-
-<dt><strong>Set As Main Circuit</strong></dt>
-<dd><p>Sets the currently displayed circuit to be the project's
-<q>main circuit.</q> (This menu item will be grayed out if the
-current circuit is already the project's main circuit.)
-The only significance of the main circuit is that it is the
-circuit that first appears when a project file is opened.</p></dd>
-
-<dt><strong>Edit Circuit Layout</strong></dt>
-<dd><p>Switches to allow you to edit how the layout of components that
-determines how the circuit works. This is what the program does when it starts,
-and you will edit circuit layouts most often using Logisim, so this menu item
-is normally disabled.</p></dd>
-
-<dt><strong>Edit Circuit Appearance</strong></dt>
-<dd><p>Switches to allow you to edit how the circuit will be represented
-when it is used as a subcircuit within another circuit. By default, the circuit
-is represented as a rectangle with a gray <q>notch</q> on its north end, but
-this menu option allows you to draw a different appearance for the
-subcircuit.</p></dd>
-
-<dt><strong>Revert To Default Appearance</strong></dt>
-<dd><p>If you've edited the circuit's appearance, this menu item reverts
-the appearance back to the default rectangle-with-notch appearance.
-The menu item is enabled only when editing the circuit's appearance.</p></dd>
-
-<dt><strong>Remove Circuit</strong></dt>
-<dd><p>Removes the currently displayed circuit from the project. 
-Logisim will prevent you from removing circuits that are used as
-subcircuits, and it will prevent you from removing the final
-circuit in a project.</p></dd>
-
-<dt><strong>Analyze Circuit</strong></dt>
-<dd><p>Computes a truth table and Boolean expressions corresponding
-to the current circuit, displaying them in
-<a href="../analyze/index.html">the Combinational Analysis window</a>.
-The analysis process will only be valid for combinational circuits.
-A full description of the analysis process is described
-<a href="../analyze/open.html">in the
-Combinational Analysis section</a>.</p></dd>
-
-<dt><strong>Get Circuit Statistics</strong></dt>
-<dd><p>Shows a dialog containing statistics about components used by the
-currently viewed circuit. The dialog includes a table with five columns:</p>
-<ul>
-<li>Component: The name of the component.</li>
-<li>Library: The name of the library from which the component came.</li>
-<li>Simple: The number of times that component appears directly within the viewed circuit.</li>
-<li>Unique: The number of times that component appears in the circuit's hierarchy,
-where each subcircuit within the hierarchy is counted only once.</li>
-<li>Recursive: The number of times that component appears in the circuit's hierarchy,
-where we count each subcircuit as many times as it appears in the hierarchy.</li>
-</ul>
-<p>The distinction between <q>Unique</q> and <q>Recursive</q> is easiest to
-explain by considering the 4:1 multiplexer built using three 2:1 multiplexers
-as in the <q><a href="../subcirc/sub-using.html">Using subcircuits</a></q> section.
-The 2:1 multiplexer contains two AND gates (and the 4:1 circuit includes none),
-so the <q>Unique</q> count
-of AND gates would be 2; but if you were to build the 4:1 multiplexer using this
-diagram, you would actually need 2 AND gates for each of the three 2:1 multiplexers,
-so the <q>Recursive</q> count is 6.</p>
-
-<p>If you are using circuits from a loaded Logisim library, those components are
-considered to be <q>black boxes</q>: The contents of the library's circuits are
-not included in the unique and recursive counts.</p></dd>
-
-<dt><strong>Options...</strong></dt>
-<dd><p>Opens the <a href="../opts/index.html">Project Options
-window</a>.</p></dd>
-
-</dl>
-
-<p><strong>Next:</strong> <a href="simulate.html">The Simulate menu</a>.</p>
-</div></body></html>
+      <h1>
+        Das Projektmenü
+      </h1>
+      <dl>
+        <dt>
+          <strong>Schaltung hinzufügen...</strong>
+        </dt>
+        <dd>
+          <p>
+            Fügt eine neue Schaltung in das aktuelle Projekt ein. Logisim wird darauf bestehen, dass Sie einen Namen für die neue Schaltung angeben. Der Name darf nicht mit einer im Projekt vorhandenen Schaltung übereinstimmen.
+          </p>
+        </dd>
+		<dt>
+          <strong>VHDL-Einheit hinzufügen...</strong>
+        </dt>
+        <dd>
+          <p>
+            --
+          </p>
+        </dd>
+		<dt>
+          <strong>VHDL-Einheit importieren...</strong>
+        </dt>
+        <dd>
+          <p>
+            --
+          </p>
+        </dd>
+        <dt>
+          <strong>Bibliothek laden</strong>
+        </dt>
+        <dd>
+          <p>
+		    Laden Sie eine  <a href="../gui/gui-explore.html">Bibliothek</a> in das Projekt. Sie können drei Arten von Bibliotheken laden, wie an anderer Stelle im <a href="../gui/gui-explore.html">Benutzerhandbuch</a> erklärt wird.
+          </p>
+        </dd>
+        <dt>
+          <strong>Bibliotheken entfernen...</strong>
+        </dt>
+        <dd>
+          <p>
+            Entfernen Sie die aktuellen Buchhandlungen aus dem Projekt. Logisim erlaubt es nicht, die vom Projekt verwendeten Bibliotheken zu entladen, einschließlich der Bibliotheken mit Komponenten, die in den Schaltkreisen des Projekts erscheinen, sowie der Bibliotheken mit Werkzeugen, die in der Symbolleiste erscheinen oder mit der Maus abgebildet werden.
+          </p>
+        </dd>
+        <dt>
+          <strong>Schaltung nach oben</strong>
+        </dt>
+        <dd>
+          <p>
+            Déplace le circuit actuellement affiché dans la liste des circuits du projet d'un niveau supérieur, comme indiqué dans la fenêtre d'exploration.
+          </p>
+        </dd>
+        <dt>
+          <strong>Schaltung nach unten</strong>
+        </dt>
+        <dd>
+          <p>
+            Verschiebt den aktuell angezeigten Schaltkreis in der Liste der im Explorerfenster sichtbaren Projektschaltkreise um eine Zeile nach unten.
+          </p>
+        </dd>
+        <dt>
+          <strong>Als Hauptschaltung festlegen</strong>
+        </dt>
+        <dd>
+          <p>
+            Definieren Sie den aktuell angezeigten Schaltkreis als <b>Hauptkreis</b> des Projektes. Dieser Menüpunkt wird ausgegraut, wenn der aktuelle Schaltkreis bereits der Hauptschaltkreis des Projekts ist. Hauptschaltkreis: Bedeutet einfach, dass er beim Öffnen des Projekts zuerst angezeigt wird.
+        </dd>
+		<dt>
+          <strong>Schaltung entfernen</strong>
+        </dt>
+        <dd>
+          <p>
+            Entfernt den aktuell angezeigten Schaltkreis aus dem Projekt. Logisim verhindert das Löschen von Schaltkreisen, die als Unter-Schaltkreise verwendet werden und verhindert das Löschen des letzten Schaltkreises eines Projektes.
+          </p>
+        </dd>
+        <dt>
+          <strong>Aussehen wiederherstellen</strong>
+        </dt>
+        <dd>
+          <p>
+		    Wenn Sie das Erscheinungsbild der Schaltung verändert haben, kehrt dieser Menüpunkt zum Standarddesign zurück. Der Menüpunkt ist nur bei der Bearbeitung des Erscheinungsbildes der Schaltung aktiviert. Das Erscheinungsbild des Standarddesigns kann über die Eigenschaft <b class="propertie">Neues Aussehen</b> der Bibliothek geändert werden.
+          </p>
+        </dd>
+        <!--
+		<dt>
+          <strong>View Toolbox</strong>
+        </dt>
+        <dd>
+          <p>
+            Changes the explorer pane to displaying a list of the project's circuits and the libraries that have been loaded.
+          </p>
+        </dd>
+		-->
+		<!--
+        <dt>
+          <strong>View Simulation Tree</strong>
+        </dt>
+        <dd>
+          <p>
+            Changes the explorer pane to displaying the hierarchy of subcircuits in the current simulation.
+          </p>
+        </dd>
+		-->
+        <dt>
+          <strong>Schaltungslayout bearbeiten</strong>
+        </dt>
+        <dd>
+          <p>
+            Wechselt den Arbeitsbereich zur Anzeige der Schaltplanbearbeitung. Dieser Menüpunkt wird aktiviert, wenn der Arbeitsbereich den Erscheinungsbild-Editor anzeigt.
+          </p>
+        </dd>
+        <dt>
+          <strong>Schaltungsaussehen bearbeiten</strong>
+        </dt>
+        <dd>
+          <p>
+            Ermöglicht es Ihnen, die Darstellung der Schaltung zu ändern, wenn sie als Teilschaltung in einer anderen Schaltung verwendet wird. Mit diesem Menüpunkt können Sie ein anderes Erscheinungsbild für den Subcircuit zeichnen. Ändert den Arbeitsbereich so, dass <a href="../subcirc/sub-appear.html">Erscheinungseditor.</a> angezeigt wird.
+          </p>
+        </dd>
+        <dt>
+          <strong>Schaltung analysieren</strong>
+        </dt>
+        <dd>
+          <p>
+		    <b class="note">Hinweis:</b> Dieses Menü kann in einigen Versionen von logisim-evolution deaktiviert werden. Sie kann durch Kommandozeilenoptionen wieder aktiviert werden.<br>
+			Berechnet eine Wahrheitstabelle und boolesche Ausdrücke entsprechend der aktuellen Schaltung und zeigt sie im Fenster <a href="../analyze/index.html">kombinatorische Analyse</a> an. Der Analyseprozess ist nur für kombinatorische Schaltungen gültig. Eine vollständige Beschreibung des Analyseprozesses ist im Abschnitt <a href="../analyze/open.html">Kombinatorische Analyse</a> beschrieben.
+          </p>
+        </dd>
+        <dt>
+          <strong>Schaltungsstatistik ermitteln</strong>
+        </dt>
+        <dd>
+          <p>
+            Zeigt ein Dialogfeld mit Statistiken über die von der aktuell angezeigten Schaltung verwendeten Komponenten an. Der Dialog enthält eine fünfspaltige Tabelle:
+          </p>
+          <center>
+            <img src="../../../img-guide/project-stat.png" alt="#########">
+          </center>
+          <ul>
+            <li>Bauteil: der Name der Komponente.
+            </li>
+            <li>Bibliothek: Name der Bibliothek, aus der die Komponente präsentiert wird.
+            </li>
+            <li>Einfach: die Anzahl, wie oft diese Komponente direkt in der angezeigten Schaltung erscheint.
+            </li>
+            <li>Eindeutig: Anzahl der Auftritte dieses Bauteils in der Schaltungshierarchie, wobei jeder Teilschaltkreis in der Hierarchie nur einmal gezählt wird.
+            </li>
+            <li>Rekursiv: Anzahl der Auftritte dieses Bauteils in der Schaltungshierarchie, wobei wir jeden Teilschaltkreis so oft zählen, wie er in der Hierarchie auftaucht.
+            </li>
+          </ul>
+          <p>
+		    Die Unterscheidung zwischen "Einfach" und "Rekursiv" ist einfacher zu erklären, wenn man den 4:1-Multiplexer betrachtet, der mit drei 2:1-Multiplexern aufgebaut ist, wie in Abschnitt <a href="../subcirc/sub-using.html">User Sub-Circuits</a>. Der 2:1-Multiplexer enthält zwei UND-Gatter (und die 4:1-Schaltung enthält keine), so dass die "eindeutige" Zahl, die die UND-Gatter zählt, 2 wäre; aber wenn Sie den 4:1-Multiplexer nach diesem Diagramm bauen würden, bräuchten Sie tatsächlich 2 UND-Gatter für jeden der drei 2:1-Multiplexer, so dass die "rekursive" Zahl 6 wäre.
+          </p>
+          <p>
+            Wenn Sie Schaltungen aus einer geladenen Logisim-Bibliothek verwenden, werden diese Komponenten als <q>"Black Boxes"</q> betrachtet: der Inhalt der Schaltungen der Bibliothek wird nicht in die eindeutigen und rekursiven Konten aufgenommen.
+          </p>
+        </dd>
+        <dt>
+          <strong>Optionen...</strong>
+        </dt>
+        <dd>
+          <p>
+		    Öffnet das Fenster von <a href="../opts/index.html">Projektoptionen</a>.
+          </p>
+        </dd>
+      </dl>
+      <p>
+        <b>Nächste:</b> <a href="simulate.html">Das Menü Simulieren</a>.
+      </p>
+    </div>
+  </body>
+</html>

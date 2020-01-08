@@ -7,30 +7,30 @@
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <meta http-equiv="Content-Language" content="fr">
     <title>
-      Imprimer
+      Drucken
     </title>
     <link rel="stylesheet" type="text/css" href="../../style.css">
   </head>
   <body>
     <div class="maindiv">
       <h1>
-        Imprimer
+        Drucken
       </h1>
       <p>
-        Lorsque vous choisissez <b class="menu">|&nbsp;Imprimer ...&nbsp;|</b>, Logisim affiche une boîte de dialogue permettant de configurer ce qui est imprimé.
+		Wenn Sie den Punkt <b class="menu">|&nbsp;Drucken...nbsp;|</b> aufrufen, öffnet Logisim ein Dialogfenster zur Konfiguration des Ausdrucks.
       </p>
       <center>
         <img src="../../../img-guide/menu-4-printertab.png" alt="#########">
       </center>
       <h2>
-        Configuration de l'impression
+        Drucken konfigurieren
       </h2>
       <ul>
         <li>
-          <b>Circuits:</b> Une liste où vous pouvez sélectionner un ou plusieurs circuits à imprimer. (Les circuits vides ne sont pas affichés comme options.) Logisim imprimera un circuit par page. Si le circuit est trop grand pour la page, l'image sera réduite pour s'adapter.
+          <b>Schaltungen:</b> Eine Liste, aus der Sie eine oder mehrere Schaltungen auswählen können, deren Bild gedruckt werden soll. (Leere Schaltungen erscheinen nicht in dieser Liste.) Logisim druckt eine Schaltung pro Druckseite. Wenn die Schaltung zu groß für die Seite ist, wird das Bild passend verkleinert werden.
         </li>
         <li>
-          <b>Entête:</b> Texte qui devrait apparaître centré en haut de chaque page. Les substitutions suivantes seront apportées au texte.
+          <b>Titel:</b> Der Text, der zentriert oben auf jeder einzelnen Seite erscheinen soll. Die folgenden Substitutionen werden im Text vorgenommen.
           <blockquote>
             <table>
               <tbody>
@@ -39,7 +39,7 @@
                     <tt>%n</tt>
                   </td>
                   <td>
-                    Nom du circuit sur la page
+                     Name der Schaltung auf der Seite
                   </td>
                 </tr>
                 <tr>
@@ -47,7 +47,7 @@
                     <tt>%p</tt>
                   </td>
                   <td>
-                    Numéro de page
+                     Seitennummer
                   </td>
                 </tr>
                 <tr>
@@ -55,7 +55,7 @@
                     <tt>%P</tt>
                   </td>
                   <td>
-                    Nombre de page total
+                    Gesamtseitenzahl
                   </td>
                 </tr>
                 <tr>
@@ -63,7 +63,7 @@
                     <tt>%%</tt>
                   </td>
                   <td>
-                    Un seul signe de pourcentage ('%')
+                    Ein einzelnes Prozentzeichen ('%')
                   </td>
                 </tr>
               </tbody>
@@ -71,18 +71,19 @@
           </blockquote>
         </li>
         <li>
-          <b>Faire pivoter pour s'adapter:</b> Si cette case est cochée, lorsque le circuit est trop grand pour tenir sur la page, Logisim fera pivoter chaque circuit de 90 degrés afin de réduire le besoin de réduction de l'image.
+          <b>Drehen zum Anpassen:</b> Wenn angekreuzt wird Logisim das Druckbild um 90 Grad drehen, wenn dies eine bessere Ausnutzung der Druckseite erlaubt.
         </li>
         <li>
-          <b>Vue de l'impression:</b> Modifie le style de l'image produite avec les informations d'état ou seulement le schéma.
+          <b>Druckeransicht:</b> Ändert den Stil des mit den Statusinformationen erzeugten Bildes oder nur den Schaltplan.
 		  <center>
           <img src="../../../../img-guide/exportex0.png" alt="#########">
         </center>
-		<p>Cette option est aussi disponible dans les "<a href="../prefs/layout.html">préférences d'application</a>" dans l'onglet disposition. Cela modifiera l'affichage dans l'espace de travail.</p>
+		<p>Diese Option ist auch in den <a href="../prefs/layout.html">Voreinstellungen</a> im Layouteditor-Tab verfügbar. Dadurch wird die Anzeige im Arbeitsbereich geändert.
+		</p>
         </li>
       </ul>
       <p>
-        Après avoir cliqué sur <b class="button">&nbsp;D'accord&nbsp;</b>, Logisim affichera la boîte de dialogue standard de mise en page avant d’imprimer les circuits.
+        Nach dem Anklicken der Schaltfläche <b class="button">&nbsp;In Ordnung&nbsp;</b> wird Logisim den Standard-Dialog zum Einrichten der Seite vor dem Druck der Schaltungen anzeigen.
       </p>
     </div>
   </body>
