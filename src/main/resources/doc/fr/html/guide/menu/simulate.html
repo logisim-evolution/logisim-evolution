@@ -29,19 +29,19 @@
           </p>
         </dd>
         <dt>
-          <strong>Redémarrer la simulation</strong>&nbsp;&nbsp;<b class="tkeybd">Ctrl-R</b>
-        </dt>
-        <dd>
-          <p>
-            Efface tout ce qui concerne l’état du circuit actuel, comme si vous veniez d’ouvrir à nouveau le fichier. Si vous visualisez l'état d'un sous-circuit, tous les états de la hiérarchie sont effacés.
-          </p>
-        </dd>
-        <dt>
           <strong>Simulation pas-à-pas</strong>&nbsp;&nbsp;<b class="tkeybd">Ctrl-I</b>
         </dt>
         <dd>
           <p>
             Avance <a href="../tutorial/tutor-step.html">la simulation d'une étape</a>. Par exemple,au cours d'une étape, un signal peut entrer dans une porte , mais la sortie de la porte n'affichera pas de changement de signal avant la prochaine étape de simulation. Pour aider à identifier les points du circuit global qui ont changé, tous les points dont les valeurs changent sont indiqués par un cercle bleu. Si un sous-circuit contient des points qui ont été modifiés (ou ses sous-circuits, récursivement), alors il sera entouré avec une ligne bleue.
+          </p>
+        </dd>
+		<dt>
+          <strong>Redémarrer la simulation</strong>&nbsp;&nbsp;<b class="tkeybd">Ctrl-R</b>
+        </dt>
+        <dd>
+          <p>
+            Efface tout ce qui concerne l’état du circuit actuel, comme si vous veniez d’ouvrir à nouveau le fichier. Si vous visualisez l'état d'un sous-circuit, tous les états de la hiérarchie sont effacés.
           </p>
         </dd>
         <dt>
@@ -77,19 +77,20 @@
           </p>
         </dd>
         <dt>
-          <strong>Un seul tic</strong>&nbsp;&nbsp;<b class="tkeybd">Ctrl-T</b>
+          <strong>Tic demi-cycle</strong>&nbsp;&nbsp;<b class="tkeybd">Ctrl-T</b>
         </dt>
         <dd>
           <p>
-            Avance d'un tic les horloges dans la simulation quand on utilise le mode pas à pas. Cela peut être utile lorsque vous souhaitez faire avancer les horloges manuellement, en particulier lorsque l’horloge ne se trouve pas dans le même circuit que celui que vous consultez actuellement.
+            Avance d'un tic les horloges dans la simulation quand on utilise le mode pas à pas. Une horloge paramètrée avec une durée haute/basse de 1 tic avancera alors d'un demi-cycle.<br>  
+			Cela peut être utile lorsque vous souhaitez faire avancer les horloges manuellement, en particulier lorsque l’horloge ne se trouve pas dans le même circuit que celui que vous consultez actuellement.
           </p>
         </dd>
         <dt>
-          <strong>'Clk' un pas</strong>&nbsp;&nbsp;<b class="tkeybd">F2</b>
+          <strong>Tic cycle complet</strong>&nbsp;&nbsp;<b class="tkeybd">F2</b>
         </dt>
         <dd>
           <p>
-            Même fonction que précédèrent, mais si l'horloge nommée clk existe, avance d'une période ou demi-période selon l'option du projet définie dans la fenêtre <a href="../opts/simulate.html">option</a>. Les autres horloges du projet avancent simultanément proportionnellement à leurs paramètres.
+            Même fonction que précédèrent, mais avance de deux tic. Une horloge paramètrée avec une durée haute/basse de 1 tic avancera alors d'un cycle complet.<br> Les autres horloges du projet avancent simultanément proportionnellement à leurs paramètres.
           </p>
         </dd>
         <dt>
