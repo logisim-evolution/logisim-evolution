@@ -35,6 +35,7 @@ import com.cburch.hex.HexModel;
 import com.cburch.logisim.gui.generic.LFrame;
 import com.cburch.logisim.gui.menu.LogisimMenuBar;
 import com.cburch.logisim.proj.Project;
+import com.cburch.logisim.std.memory.MemContents;
 import com.cburch.logisim.util.JFileChoosers;
 import com.cburch.logisim.util.LocaleListener;
 import com.cburch.logisim.util.LocaleManager;
@@ -117,7 +118,7 @@ public class HexFrame extends LFrame {
         if (choice == JFileChooser.APPROVE_OPTION) {
           File f = chooser.getSelectedFile();
           try {
-            HexFile.open(model, f);
+            HexFile.open((MemContents)model, f);
             lastFile = f;
           } catch (IOException e) {
             JOptionPane.showMessageDialog(
@@ -128,13 +129,13 @@ public class HexFrame extends LFrame {
           }
         }
       } else if (src == save) {
-        JFileChooser chooser = JFileChoosers.createSelected(lastFile);
+        JFileChooser chooser = HexFile.createFileSaveChooser(lastFile, (MemContents)model);
         chooser.setDialogTitle(S.get("saveButton"));
         int choice = chooser.showSaveDialog(HexFrame.this);
         if (choice == JFileChooser.APPROVE_OPTION) {
           File f = chooser.getSelectedFile();
           try {
-            HexFile.save(f, model);
+            HexFile.save(f, (MemContents)model, chooser.getFileFilter());
             lastFile = f;
           } catch (IOException e) {
             JOptionPane.showMessageDialog(

@@ -57,6 +57,9 @@ import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.soc.data.SocSimulationManager;
+import com.cburch.logisim.std.memory.Ram;
+import com.cburch.logisim.std.memory.RamState;
+import com.cburch.logisim.std.memory.Rom;
 import com.cburch.logisim.std.wiring.Clock;
 import com.cburch.logisim.std.wiring.Pin;
 import com.cburch.logisim.std.wiring.Tunnel;
@@ -826,6 +829,8 @@ public class Circuit {
       ComponentFactory factory = c.getFactory();
       if (factory instanceof Clock) {
         clocks.add(c);
+      } else if (factory instanceof Rom) {
+        Rom.closeHexFrame(c);
       } else if (factory instanceof SubcircuitFactory) {
         SubcircuitFactory subcirc = (SubcircuitFactory) factory;
         subcirc.getSubcircuit().circuitsUsingThis.put(c, this);
@@ -856,6 +861,11 @@ public class Circuit {
       } else if (comp.getFactory() instanceof VhdlEntity) {
         VhdlEntity vhdl = (VhdlEntity) comp.getFactory();
         vhdl.removeCircuitUsing(comp);
+      } else if (comp.getFactory() instanceof Rom) {
+        Rom.closeHexFrame(comp);
+      } else if (comp.getFactory() instanceof Ram) {
+        CircuitState state = proj.getCircuitState(this);
+        if (state != null) Ram.closeHexFrame((RamState)state.getData(comp));
       }
     }
     fireEvent(CircuitEvent.ACTION_CLEAR, oldComps);
@@ -883,6 +893,11 @@ public class Circuit {
       } else if (factory instanceof VhdlEntity) {
         VhdlEntity vhdl = (VhdlEntity) factory;
         vhdl.removeCircuitUsing(c);
+      } else if (factory instanceof Rom) {
+        Rom.closeHexFrame(c);
+      } else if (factory instanceof Ram) {
+        CircuitState state = proj.getCircuitState(this);
+        if (state != null) Ram.closeHexFrame((RamState)state.getData(c));
       } else if (factory instanceof DynamicElementProvider && c instanceof InstanceComponent) {
         // TODO: remove stale appearance dynamic elements in
         // CircuitTransaction.execute() instead?

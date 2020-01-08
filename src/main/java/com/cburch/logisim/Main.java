@@ -95,6 +95,8 @@ public class Main {
   public static final int COPYRIGHT_YEAR = 2019;
 
   public static boolean ANALYZE = true;
+  /* TODO ktt1 : for the moment dummy for the hex-reader, have to look into details */
+  public static boolean headless = false;
 
   /** URL for the automatic updater */
   public static final String UPDATE_URL =

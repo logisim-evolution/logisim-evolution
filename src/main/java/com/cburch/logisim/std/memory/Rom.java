@@ -32,6 +32,7 @@ import static com.cburch.logisim.std.Strings.S;
 
 import com.cburch.logisim.LogisimVersion;
 import com.cburch.logisim.circuit.CircuitState;
+import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.BitWidth;
@@ -43,6 +44,7 @@ import com.cburch.logisim.gui.hex.HexFrame;
 import com.cburch.logisim.gui.icons.ArithmeticIcon;
 import com.cburch.logisim.gui.main.Frame;
 import com.cburch.logisim.instance.Instance;
+import com.cburch.logisim.instance.InstanceComponent;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.StdAttr;
@@ -51,8 +53,6 @@ import java.awt.Window;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.IOException;
-import java.io.StringReader;
-import java.io.StringWriter;
 import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
 import java.util.WeakHashMap;
@@ -86,9 +86,7 @@ public class Rom extends Mem {
         if (!header.equals("addr/data:")) return null;
         int addr = Integer.parseInt(toks.nextToken());
         int data = Integer.parseInt(toks.nextToken());
-        MemContents ret = MemContents.create(addr, data, true);
-        HexFile.open(ret, new StringReader(rest));
-        return ret;
+        return HexFile.parse(rest, "v2.0 raw", addr, data).model;
       } catch (IOException e) {
         return null;
       } catch (NumberFormatException e) {
@@ -107,13 +105,8 @@ public class Rom extends Mem {
     public String toStandardString(MemContents state) {
       int addr = state.getLogLength();
       int data = state.getWidth();
-      StringWriter ret = new StringWriter();
-      ret.write("addr/data: " + addr + " " + data + "\n");
-      try {
-        HexFile.save(ret, state);
-      } catch (IOException e) {
-      }
-      return ret.toString();
+      String contents = HexFile.saveToString(state, null, -1);
+      return "addr/data: " + addr + " " + data + "\n" + contents;
     }
   }
 
@@ -202,9 +195,14 @@ public class Rom extends Mem {
     return RomAttributes.getHexFrame(getMemContents(instance), proj);
   }
 
-  // TODO - maybe delete this method?
-  MemContents getMemContents(Instance instance) {
+  public static MemContents getMemContents(Instance instance) {
     return instance.getAttributeValue(CONTENTS_ATTR);
+  }
+  
+  public static void closeHexFrame(Component c) {
+    if (!(c instanceof InstanceComponent)) return;
+    Instance inst =((InstanceComponent)c).getInstance();
+    RomAttributes.closeHexFrame(getMemContents(inst));
   }
 
   @Override

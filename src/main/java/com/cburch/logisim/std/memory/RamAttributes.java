@@ -35,56 +35,33 @@ import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.Attributes;
 import com.cburch.logisim.data.BitWidth;
-import com.cburch.logisim.gui.hex.HexFrame;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
-import com.cburch.logisim.proj.Project;
 import java.awt.Font;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.WeakHashMap;
 
 public class RamAttributes extends AbstractAttributeSet {
 
-  static HexFrame getHexFrame(MemContents value, Project proj) {
-    synchronized (windowRegistry) {
-      HexFrame ret = windowRegistry.get(value);
-      if (ret == null) {
-        ret = new HexFrame(proj, value);
-        windowRegistry.put(value, ret);
-      }
-      return ret;
-    }
-  }
-
   /* here the rest is defined */
-  static final AttributeOption BUS_BIDIR =
-      new AttributeOption("bidir", S.getter("ramBidirDataBus"));
-  static final AttributeOption BUS_SEP =
-      new AttributeOption("bibus", S.getter("ramSeparateDataBus"));
-  static final Attribute<AttributeOption> ATTR_DBUS =
-      Attributes.forOption(
+  static final AttributeOption VOLATILE = new AttributeOption("volatile",S.getter("ramTypeVolatile"));
+  static final AttributeOption NONVOLATILE = new AttributeOption("nonvolatile",S.getter("ramTypeNonVolatile"));
+  static final Attribute<AttributeOption> ATTR_TYPE = Attributes.forOption(
+         "type", S.getter("ramTypeAttr"), new AttributeOption[] {VOLATILE, NONVOLATILE });
+  static final AttributeOption BUS_BIDIR = new AttributeOption("bidir", S.getter("ramBidirDataBus"));
+  static final AttributeOption BUS_SEP = new AttributeOption("bibus", S.getter("ramSeparateDataBus"));
+  static final Attribute<AttributeOption> ATTR_DBUS = Attributes.forOption(
           "databus", S.getter("ramDataAttr"), new AttributeOption[] {BUS_BIDIR, BUS_SEP});
-  static final AttributeOption BUS_WITH_BYTEENABLES =
-      new AttributeOption("byteEnables", S.getter("ramWithByteEnables"));
-  static final AttributeOption BUS_WITHOUT_BYTEENABLES =
-      new AttributeOption("NobyteEnables", S.getter("ramNoByteEnables"));
-
-  static final Attribute<AttributeOption> ATTR_ByteEnables =
-      Attributes.forOption(
-          "byteenables",
-          S.getter("ramByteEnables"),
-          new AttributeOption[] {BUS_WITH_BYTEENABLES, BUS_WITHOUT_BYTEENABLES});
-  
+  static final AttributeOption BUS_WITH_BYTEENABLES = new AttributeOption("byteEnables", S.getter("ramWithByteEnables"));
+  static final AttributeOption BUS_WITHOUT_BYTEENABLES = new AttributeOption("NobyteEnables", S.getter("ramNoByteEnables"));
+  static final Attribute<AttributeOption> ATTR_ByteEnables = Attributes.forOption(
+          "byteenables", S.getter("ramByteEnables"), new AttributeOption[] {BUS_WITH_BYTEENABLES, BUS_WITHOUT_BYTEENABLES});
   static final Attribute<Boolean> CLEAR_PIN = Attributes.forBoolean("clearpin", S.getter("RamClearPin"));
   private ArrayList<Attribute<?>> myAttributes = new ArrayList<Attribute<?>>();
 
 
-  private static WeakHashMap<MemContents, HexFrame> windowRegistry =
-      new WeakHashMap<MemContents, HexFrame>();
   private BitWidth addrBits = BitWidth.create(8);
   private BitWidth dataBits = BitWidth.create(8);
-  private MemContents contents;
   private String Label = "";
   private AttributeOption Trigger = StdAttr.TRIG_RISING;
   private AttributeOption BusStyle = BUS_SEP;
@@ -97,11 +74,9 @@ public class RamAttributes extends AbstractAttributeSet {
   private Boolean ClearPin = false;
   private AttributeOption lineSize = Mem.SINGLE;
   private AttributeOption typeOfEnables = Mem.USEBYTEENABLES;
+  private AttributeOption ramType = VOLATILE;
 
-  RamAttributes() {
-    contents = MemContents.create(addrBits.getWidth(), dataBits.getWidth(), false);
-    updateAttributes();
-  }
+  RamAttributes() { updateAttributes(); }
   
   public boolean updateAttributes() {
     ArrayList<Attribute<?>>newList = new ArrayList<Attribute<?>>();
@@ -109,6 +84,7 @@ public class RamAttributes extends AbstractAttributeSet {
     newList.add(Mem.ADDR_ATTR);
     newList.add(Mem.DATA_ATTR);
     newList.add(Mem.ENABLES_ATTR);
+    newList.add(ATTR_TYPE);
     newList.add(CLEAR_PIN);
     if (typeOfEnables.equals(Mem.USEBYTEENABLES)) {
       newList.add(StdAttr.TRIGGER);
@@ -125,13 +101,12 @@ public class RamAttributes extends AbstractAttributeSet {
         } else changes |= myAttributes.contains(ATTR_ByteEnables);
       } else changes |= myAttributes.contains(Mem.ASYNC_READ);
       newList.add(ATTR_DBUS);
-      newList.add(Ram.CONTENTS_ATTR);
       changes |= myAttributes.contains(Mem.LINE_ATTR);
     } else {
       newList.add(Mem.LINE_ATTR);
       newList.add(StdAttr.TRIGGER);
       newList.add(ATTR_DBUS);
-      changes = myAttributes.contains(Ram.CONTENTS_ATTR);
+      changes = !myAttributes.contains(Mem.LINE_ATTR);
     }
     newList.add(StdAttr.LABEL);
     newList.add(StdAttr.LABEL_FONT);
@@ -154,12 +129,12 @@ public class RamAttributes extends AbstractAttributeSet {
     d.LabelFont = LabelFont;
     d.Appearance = Appearance;
     d.ByteEnables = ByteEnables;
-    d.contents = contents.clone();
     d.AsynchronousRead = AsynchronousRead;
     d.RWBehavior = RWBehavior;
     d.ClearPin = ClearPin;
     d.lineSize = lineSize;
     d.typeOfEnables = typeOfEnables;
+    d.ramType = ramType;
   }
 
   @Override
@@ -176,8 +151,8 @@ public class RamAttributes extends AbstractAttributeSet {
     if (attr == Mem.DATA_ATTR) {
       return (V) dataBits;
     }
-    if (attr == Ram.CONTENTS_ATTR) {
-      return (V) contents;
+    if (attr == ATTR_TYPE) {
+      return (V) ramType;
     }
     if (attr == StdAttr.LABEL) {
       return (V) Label;
@@ -219,11 +194,6 @@ public class RamAttributes extends AbstractAttributeSet {
   }
 
   @Override
-  public boolean isToSave(Attribute<?> attr) {
-    return !attr.equals(Ram.CONTENTS_ATTR);
-  }
-
-  @Override
   public <V> void setValue(Attribute<V> attr, V value) {
     if (attr == Mem.ADDR_ATTR) {
       BitWidth newAddr = (BitWidth) value;
@@ -231,7 +201,6 @@ public class RamAttributes extends AbstractAttributeSet {
         return;
       }
       addrBits = newAddr;
-      contents.setDimensions(addrBits.getWidth(), dataBits.getWidth(), false);
       fireAttributeValueChanged(attr, value, null);
     } else if (attr == Mem.DATA_ATTR) {
       BitWidth newData = (BitWidth) value;
@@ -239,7 +208,6 @@ public class RamAttributes extends AbstractAttributeSet {
         return;
       }
       dataBits = newData;
-      contents.setDimensions(addrBits.getWidth(), dataBits.getWidth(), false);
       if (typeOfEnables.equals(Mem.USEBYTEENABLES) && updateAttributes())
         fireAttributeListChanged();
       fireAttributeValueChanged(attr, value, null);
@@ -250,17 +218,12 @@ public class RamAttributes extends AbstractAttributeSet {
         if (updateAttributes()) fireAttributeListChanged();
         fireAttributeValueChanged(attr, value, null);
       }
-    } else if (attr == Ram.CONTENTS_ATTR) {
-      MemContents newContents = (MemContents) value;
-      if (contents.equals(newContents)) {
-        return;
+    } else if (attr == ATTR_TYPE) {
+      AttributeOption val = (AttributeOption) value;
+      if (!ramType.equals(val)) {
+        ramType = val;
+        fireAttributeValueChanged(attr, value, null);
       }
-      if ((newContents.getLogLength() != addrBits.getWidth())
-          || (newContents.getValueWidth() != dataBits.getWidth())) {
-        newContents.setDimensions(addrBits.getWidth(), dataBits.getWidth(), false);
-      }
-      contents = newContents;
-      fireAttributeValueChanged(attr, value, null);
     } else if (attr == StdAttr.LABEL) {
       String NewLabel = (String) value;
       if (Label.equals(NewLabel)) {
