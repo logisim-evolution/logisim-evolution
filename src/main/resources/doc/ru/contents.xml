@@ -15,25 +15,28 @@
 			<tocitem target="tutorial_test" text="Шаг 4: Проверка вашей схемы" />
 			<tocitem target="tutorial_step" text="Step 5: Step by step mode"/>
 		</tocitem>
-		<tocitem target="attrlib" text="Библиотеки и атрибуты">
-			<tocitem target="attrlib_canvas" text="The canvas"/>
-			<tocitem target="attrlib_menu" text="The menus"/>
-			<tocitem target="attrlib_explore" text="Панель проводника" />
-			<tocitem target="attrlib_toolsbar" text="The tools bars"/>
-			<tocitem target="attrlib_attr" text="Таблица атрибутов" />
-			<tocitem target="attrlib_tool" text="Атрибуты инструментов и компонентов" />
+		<tocitem target="gui" text="Библиотеки и атрибуты">
+			<tocitem target="gui_canvas" text="The canvas"/>
+			<tocitem target="gui_menu" text="The menus"/>
+			<tocitem target="gui_explore" text="Панель проводника" />
+			<tocitem target="gui_toolsbar" text="The tools bars"/>
+			<tocitem target="gui-attribut" text="Таблица атрибутов" />
+			<tocitem target="gui-attrcomp" text="Атрибуты инструментов и компонентов" />
 		</tocitem>
 		<tocitem target="subcirc" text="Подсхемы">
 			<tocitem target="subcirc_creating" text="Создание схем" />
 			<tocitem target="subcirc_using" text="Использование подсхем" />
-			<tocitem target="subcirc_appear" text="Изменение внешнего вида подсхемы" />
+			<tocitem target="subcirc_appear" text="Выбор внешнего вида подсхемы" />
+			<tocitem target="subcirc_personalise" text="Настроить внешний вид"/>
 			<tocitem target="subcirc_debug" text="Отладка подсхем" />
 			<tocitem target="subcirc_library" text="Библиотеки Logisim" />
 		</tocitem>
-		<tocitem target="bundles" text="Пучки проводов">
-			<tocitem target="bundles_creating" text="Создание пучков" />
-			<tocitem target="bundles_splitting" text="Разветвители" />
-			<tocitem target="bundles_colors" text="Цвета проводов" />
+		<tocitem target="features" text="Дополнительные особенности">
+			<tocitem target="features_creating" text="Создайте кабельные пучка" />
+			<tocitem target="features_splitting" text="Разветвители" />
+			<tocitem target="features_colors" text="Цвета проводов" />
+			<tocitem target="features_autolabel" text="лейбл автоматически пронумерованный" />
+			<tocitem target="features_matrix" text="Размещение компонентов в матрице " />
 		</tocitem>
 		<tocitem target="mem_guide" text="Компоненты памяти">
 <!--			<tocitem target="mem_poke" text="Нажатие на память" /> -->

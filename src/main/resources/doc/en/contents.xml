@@ -15,25 +15,28 @@
 			<tocitem target="tutorial_test" text="Step 4: Testing your circuit" />
 			<tocitem target="tutorial_step" text="Step 5: Step by step mode"/>
 		</tocitem>
-		<tocitem target="attrlib" text="The graphical interfaces">
-			<tocitem target="attrlib_canvas" text="The canvas"/>
-			<tocitem target="attrlib_menu" text="The menus"/>
-			<tocitem target="attrlib_explore" text="The explorer pane" />
-			<tocitem target="attrlib_toolsbar" text="The tools bars"/>
-			<tocitem target="attrlib_attr" text="The attribute table" />
-			<tocitem target="attrlib_tool" text="Tool and component attributes" />
+		<tocitem target="gui" text="The graphical interfaces">
+			<tocitem target="gui_canvas" text="The canvas"/>
+			<tocitem target="gui_menu" text="The menus"/>
+			<tocitem target="gui_explore" text="The explorer pane" />
+			<tocitem target="gui_toolsbar" text="The tools bars"/>
+			<tocitem target="gui-attribut" text="The attribute table" />
+			<tocitem target="gui-attrcomp" text="Tool and component attributes" />
 		</tocitem>
 		<tocitem target="subcirc" text="Subcircuits">
 			<tocitem target="subcirc_creating" text="Creating circuits" />
 			<tocitem target="subcirc_using" text="Using subcircuits" />
-			<tocitem target="subcirc_appear" text="Editing subcircuit appearance" />
+			<tocitem target="subcirc_appear" text="Selecting the appearance of a subcircuit " />
+			<tocitem target="subcirc_personalise" text="Customize the appearance"/>
 			<tocitem target="subcirc_debug" text="Debugging subcircuits" />
 			<tocitem target="subcirc_library" text="Logisim libraries" />
 		</tocitem>
-		<tocitem target="bundles" text="Wire bundles">
-			<tocitem target="bundles_creating" text="Creating bundles" />
-			<tocitem target="bundles_splitting" text="Splitters" />
-			<tocitem target="bundles_colors" text="Wire colors" />
+		<tocitem target="features" text="Additional features">
+			<tocitem target="features_creating" text="Creating bundles" />
+			<tocitem target="features_splitting" text="Splitters" />
+			<tocitem target="features_colors" text="Wire colors" />
+			<tocitem target="features_autolabel" text="Self-numbered labels " />
+			<tocitem target="features_matrix" text="Placing components in a matrix" />
 		</tocitem>
 		<tocitem target="mem_guide" text="Memory components">
 <!--			<tocitem target="mem_poke" Memory poke" /> -->
@@ -100,8 +103,7 @@
 			<tocitem target="jar_guide" text="Guidelines" />
 		</tocitem>
 		<tocitem target="about" text="About the program">
-			<tocitem target="about_gpl" text="GNU General Public License" />
-			
+			<tocitem target="about_gpl" text="GNU General Public License" />		
 		</tocitem>
 	</tocitem>
 
@@ -164,18 +166,10 @@
 		<tocitem target="io_dotmat" text="LED Matrix" image="icon_dotmat" />
 		<tocitem target="io_tty" text="TTY" image="icon_tty" />
 	  </tocitem>
-	  <tocitem target="hdl" text="HDL-IP">
-		<tocitem target="hdl_vhdlentity" text="VHDL Entity" image="icon_vhdl" />
-      </tocitem>
-	  <tocitem target="base" text="Base library">
-		<tocitem target="base_poke" text="Poke Tool" image="icon_poke" />
-		<tocitem target="base_edit" text="Edit Tool" image="icon_edit" />
-		<tocitem target="base_select" text="Select Tool" image="icon_select" />
-		<tocitem target="base_wiring" text="Wiring Tool" image="icon_wiring" />
-		<tocitem target="base_text" text="Text Tool" image="icon_text" />
-		<tocitem target="base_menu" text="Menu Tool" image="icon_menu" />
-		<tocitem target="base_label" text="Text" image="icon_label" />
-	  </tocitem>
+          <tocitem target="soc" text = "SOC library">
+            <tocitem target="nios2_sim" text ="Nios2 simulator" image="up_icon" />
+            <tocitem target="socbus" text ="SOC bus interconnect" image="socbus_icon" />
+          </tocitem>
       <tocitem target="tcl" text="TCL library">
           <tocitem target="tcl_reds_console" text="REDS console" image="icon_reds_console" />
           <tocitem target="tcl_generic" text="Generic" image="icon_generic" />

@@ -3,45 +3,45 @@
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="created" content="2018-10-23T06:18:10.521000000">
-    <meta name="changed" content="2018-10-23T06:18:42.262000000">
+    <meta name="changed" content="2020-01-08T06:18:42.262000000">
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
-    <meta http-equiv="Content-Language" content="fr">
+    <meta http-equiv="Content-Language" content="pt">
     <title>
-      Erreurs oscillatoires
+      Erros de oscilação
     </title>
-    <link rel="stylesheet" type="text/css" href="../../style.css">
+    <link rel="stylesheet" type="text/css" href="..\..\style.css">
   </head>
   <body>
     <div class="maindiv">
       <h1>
-        Erreurs oscillatoires
+        Erros de oscilação
       </h1>
       <p>
-        L'algorithme de propagation, qui fonctionne normalement sans aucun problème, deviendra très sensible lorsque vous créerez un circuit qui oscille.
+        O algoritmo de propagação, que normalmente trabalha silenciosamente, sem qualquer problemas, vai se tornar mair visível quando você criar um circuito que oscile.
       </p>
       <center>
-        <img src="../../../img-guide/prop-oscillate-before.png" alt="#########">
+         <img class=notscal src="../../../../img-guide/prop-oscillate-before.png" alt="#########">
       </center>
       <p>
-        Ce circuit est actuellement dans un état stable. Mais si vous changez l'entrée sur 1, le circuit entrera effectivement dans une boucle infinie. Au bout d'un moment, Logisim stoppera simplement et affichera un message "Oscillation apparente" vous indiquant qu'il croit que le circuit oscille.
+        Esse circuito está em condição estável. Mas se você mudar a entrada para 1, o circuito irá efetivamente entrar em um <i>loop</i> infinito. Depois um tempo, o Logisim simplesmente desistirá e mostrará a mensagem "oscilação aparente" dizendo que ele acredita que o circuito esteja oscilando.
       </p>
       <center>
-        <img src="../../../img-guide/prop-oscillate-error.png" alt="#########">
+        <img class=notscal src="../../../img-guide/prop-oscillate-error.png" alt="#########">
       </center>
       <p>
-        Il affichera les valeurs dont il dispose au moment où il abandonne. Ces valeurs seront fausses - dans cette capture d'écran, la porte ET à une sortie à 1 bien que l'une de ses entrées soit à 0, mais il se peut aussi que la porte NOT ait une entrée à 1 et une sortie à 1.
+        Ele irá exibir os valores que tiver no momento em que desistir. Esses valores parecerão errados - nessa tela, a porta AND estará emitindo 1 apesar de uma de suas entradas serem 0, mas poderia ser porque a porta NOT tem uma entrada em 1 e uma saída em um 1.
       </p>
       <p>
-        Logisim entoure en rouge chaque endroit qui semble être impliqué dans l'oscillation. Si un point impliqué se trouve dans un sous-circuit, Logisim dessinera le contour de ce sous-circuit en rouge.
+        O Logisim prestativamente exibirá círculos em vermelho em cada local que possa estar envolvido na oscilação. Se um ponto envolvido estiver em um subcircuito, o Logisim irá colocar todo o contorno do subcircuito em vermelho.
       </p>
       <p>
-        Lorsque Logisim détecte une oscillation, il arrête toute autre simulation. Vous pouvez réactiver la simulation à l'aide de l'option Simulation enclanchée du menu Simuler.
+        Quando Logisim detectar oscilação, ele desligará todas as simulações. Você poderá reativar a simulação usando o menu Simulação e a opção Simulação Ativada.
       </p>
       <p>
-        Logisim détecte les oscillations en utilisant une technique assez simple: si la simulation de circuit semble avoir beaucoup d'itérations, après un seuil elle va simplement abandonner et signaler les oscillations. (Les points qu'il identifie comme étant impliqués sont ceux qui ont été modifiés dans les dernières itérations 25%.) Ainsi, il pourrait signaler à tort des oscillations, en particulier si vous travaillez avec un circuit exceptionnellement grand; mais ce serait plus grand que tout ce que j'ai construit avec Logisim. Dans tous les cas, si vous êtes certain que le rapport est erroné, vous pouvez configurer le nombre d’itérations à effectuer pour modifier le seuil de détection des oscillations via <a href="../opts/index.html">Options de projet</a> <a href="../opts/simulate.html">Onglet Simulation</a>.
+        O Logisim detecta oscilações usando uma técnica bastante simples: se a simulação dos circuitos aparecer em muitas iterações, então ele irá simplesmente desistir e reportará oscilação. (Os pontos que identificar como envolvidos serão aqueles que forem afetados nos últimos 25% do total das iterações.) Assim, ele poderia erroneamente relatar oscilação, especialmente se você estiver trabalhando com um circuito excepcionalmente grande, mas isso seria um bem maior do que qualquer outro que eu já tenha construído com o Logisim. Em qualquer caso, se você estiver confiante de que a mensagem seja um erro, você poderá configurar o número de iterações concluídas antes da oscilação ocorra através da janela <a href="../opts/index.html">Opções de projeto</a> em <a href="../opts/simulate.html">Guia da simulação</a>.
       </p>
       <p>
-        <b>Suite:</b> <a href="shortcome.html">Limitations</a>.
+        <strong>Próximo:</strong> <a href="shortcome.html">Deficiências</a>.
       </p>
     </div>
   </body>

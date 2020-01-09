@@ -209,4 +209,14 @@ font.p140 {
 	font-size: 140%;
 }
 
+/* for img test */
+img {
+    height:auto;
+	width:60%;
+}
+
+div.test {
+	width=80%
+}
+
 

@@ -42,8 +42,7 @@
      *  a home button that has a user-defined image.
    -->
    <presentation default=true>
-       <name>main window</name>
-       <size width="900" height="700" /> 
+       <name>main window</name> 
        <location x="200" y="10" />
        <toolbar>
            <helpaction>javax.help.BackAction</helpaction>

@@ -43,7 +43,6 @@
    -->
    <presentation default=true>
        <name>main window</name>
-       <size width="900" height="700" /> 
        <location x="200" y="10" />
        <toolbar>
            <helpaction>javax.help.BackAction</helpaction>

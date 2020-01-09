@@ -1,39 +1,34 @@
-/*******************************************************************************
+/**
  * This file is part of logisim-evolution.
  *
- *   logisim-evolution is free software: you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation, either version 3 of the License, or
- *   (at your option) any later version.
+ * Logisim-evolution is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by the
+ * Free Software Foundation, either version 3 of the License, or (at your
+ * option) any later version.
  *
- *   logisim-evolution is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *   GNU General Public License for more details.
+ * Logisim-evolution is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+ * for more details.
  *
- *   You should have received a copy of the GNU General Public License
- *   along with logisim-evolution.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along 
+ * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
- *   Original code by Carl Burch (http://www.cburch.com), 2011.
- *   Subsequent modifications by :
- *     + Haute École Spécialisée Bernoise
- *       http://www.bfh.ch
- *     + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *       http://hepia.hesge.ch/
- *     + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *       http://www.heig-vd.ch/
- *   The project is currently maintained by :
- *     + REDS Institute - HEIG-VD
- *       Yverdon-les-Bains, Switzerland
- *       http://reds.heig-vd.ch
- *******************************************************************************/
-
-/**
- * Code taken from Cornell's version of Logisim:
- * http://www.cs.cornell.edu/courses/cs3410/2015sp/
+ * Original code by Carl Burch (http://www.cburch.com), 2011.
+ * Subsequent modifications by:
+ *   + College of the Holy Cross
+ *     http://www.holycross.edu
+ *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
+ *     http://www.bfh.ch
+ *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
+ *     http://hepia.hesge.ch/
+ *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
+ *     http://www.heig-vd.ch/
  */
 
 package com.cburch.logisim.gui.test;
+
+import static com.cburch.logisim.gui.Strings.S;
 
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitEvent;
@@ -53,164 +48,153 @@ import com.cburch.logisim.util.UniquelyNamedThread;
 
 public class TestThread extends UniquelyNamedThread implements CircuitListener {
 
-	// used only for automated testing via command line arguments
-	public static int doTestVector(Project proj, Circuit circuit,
-			String vectorname) {
-		System.out.println(StringUtil.format(Strings.get("testLoadingVector"),
-				vectorname));
-		TestVector vec;
-		try {
-			vec = new TestVector(vectorname);
-		} catch (Exception e) {
-			System.err.println(StringUtil.format(
-					Strings.get("testLoadingFailed"), e.getMessage()));
-			return -1;
-		}
+  // used only for automated testing via command line arguments
+  public static int doTestVector(Project proj, Circuit circuit, String vectorname) {
+    System.out.println(StringUtil.format(S.get("testLoadingVector"), vectorname));
+    TestVector vec;
+    try {
+      vec = new TestVector(vectorname);
+    } catch (Exception e) {
+      System.err.println(StringUtil.format(S.get("testLoadingFailed"), e.getMessage()));
+      return -1;
+    }
 
-		TestThread tester;
-		try {
-			tester = new TestThread(proj, circuit, vec);
-		} catch (TestException e) {
-			System.err.println(StringUtil.format(
-					Strings.get("testSetupFailed"), e.getMessage()));
-			return -1;
-		}
+    TestThread tester;
+    try {
+      tester = new TestThread(proj, circuit, vec);
+    } catch (TestException e) {
+      System.err.println(StringUtil.format(S.get("testSetupFailed"), e.getMessage()));
+      return -1;
+    }
 
-		System.out.println(StringUtil.format(Strings.get("testRunning"),
-				Integer.toString(vec.data.size())));
+    System.out.println(StringUtil.format(S.get("testRunning"), Integer.toString(vec.data.size())));
 
-		int numPass = 0, numFail = 0;
-		for (int i = 0; i < vec.data.size(); i++) {
-			try {
-				System.out.print((i + 1) + " \r");
-				tester.test(i);
-				numPass++;
-			} catch (FailException e) {
-				System.out.println();
-				System.err.println(StringUtil.format(Strings.get("testFailed"),
-						Integer.toString(i + 1)));
-				for (; e != null; e = e.getMore())
-					System.out.println("  " + e.getMessage());
-				numFail++;
-				continue;
-			} catch (TestException e) {
-				System.out.println();
-				System.err.println(StringUtil.format(Strings.get("testFailed"),
-						Integer.toString(i + 1) + " " + e.getMessage()));
-				numFail++;
-				continue;
-			}
-		}
-		System.out.println();
-		System.out.println(StringUtil.format(Strings.get("testResults"),
-				Integer.toString(numPass), Integer.toString(numFail)));
-		return 0;
-	}
-	private Instance[] pin;
-	private Project project;
-	private Circuit circuit;
+    int numPass = 0, numFail = 0;
+    for (int i = 0; i < vec.data.size(); i++) {
+      try {
+        System.out.print((i + 1) + " \r");
+        tester.test(i);
+        numPass++;
+      } catch (FailException e) {
+        System.out.println();
+        System.err.println(StringUtil.format(S.get("testFailed"), Integer.toString(i + 1)));
+        for (FailException e1 : e.getAll()) System.out.println("  " + e1.getMessage());
+        numFail++;
+        continue;
+      } catch (TestException e) {
+        System.out.println();
+        System.err.println(
+            StringUtil.format(S.get("testFailed"), Integer.toString(i + 1) + " " + e.getMessage()));
+        numFail++;
+        continue;
+      }
+    }
+    System.out.println();
+    System.out.println(
+        StringUtil.format(
+            S.get("testResults"), Integer.toString(numPass), Integer.toString(numFail)));
+    return 0;
+  }
 
-	private TestVector vector;
-	private Model model;
+  private Instance[] pin;
+  private Project project;
+  private Circuit circuit;
 
-	private boolean canceled = false, paused = false;
+  private TestVector vector;
+  private Model model;
 
-	public TestThread(Model model) throws TestException {
-		super("TestThread-Model");
-		this.model = model;
+  private boolean canceled = false, paused = false;
 
-		this.project = model.getProject();
-		this.circuit = model.getCircuit();
-		this.vector = model.getVector();
+  public TestThread(Model model) throws TestException {
+    super("TestThread-Model");
+    this.model = model;
 
-		matchPins();
+    this.project = model.getProject();
+    this.circuit = model.getCircuit();
+    this.vector = model.getVector();
 
-		model.getCircuit().addCircuitListener(this);
-	}
+    matchPins();
 
-	// used only for automated testing via command line arguments
-	private TestThread(Project proj, Circuit circuit, TestVector vec)
-			throws TestException {
-		super("TestThread-Project");
-		this.project = proj;
-		this.circuit = circuit;
-		this.vector = vec;
+    model.getCircuit().addCircuitListener(this);
+  }
 
-		matchPins();
-	}
+  // used only for automated testing via command line arguments
+  private TestThread(Project proj, Circuit circuit, TestVector vec) throws TestException {
+    super("TestThread-Project");
+    this.project = proj;
+    this.circuit = circuit;
+    this.vector = vec;
 
-	public void cancel() {
-		canceled = true;
-	}
+    matchPins();
+  }
 
-	public void circuitChanged(CircuitEvent event) {
-		int action = event.getAction();
-		if (action == CircuitEvent.ACTION_SET_NAME)
-			return;
-		else
-			model.clearResults();
-	}
+  public void cancel() {
+    canceled = true;
+  }
 
-	void matchPins() throws TestException {
-		int n = vector.columnName.length;
-		pin = new Instance[n];
-		CircuitState state = new CircuitState(this.project, this.circuit);
+  public void circuitChanged(CircuitEvent event) {
+    int action = event.getAction();
+    if (action == CircuitEvent.ACTION_SET_NAME) return;
+    else model.clearResults();
+  }
 
-		for (int i = 0; i < n; i++) {
-			String columnName = vector.columnName[i];
-			for (Component comp : circuit.getNonWires()) {
-				if (!(comp.getFactory() instanceof Pin))
-					continue;
-				Instance inst = Instance.getInstanceFor(comp);
-				InstanceState pinState = state.getInstanceState(comp);
-				String label = pinState.getAttributeValue(StdAttr.LABEL);
-				if (label == null || !label.equals(columnName))
-					continue;
-				if (Pin.FACTORY.getWidth(inst).getWidth() != vector.columnWidth[i]
-						.getWidth())
-					throw new TestException("test vector column '" + columnName
-							+ "' has width " + vector.columnWidth[i]
-							+ ", but pin has width "
-							+ Pin.FACTORY.getWidth(inst));
-				pin[i] = inst;
-				break;
-			}
-			if (pin[i] == null)
-				throw new TestException("test vector column '" + columnName
-						+ "' has no matching pin");
-		}
-	}
+  void matchPins() throws TestException {
+    int n = vector.columnName.length;
+    pin = new Instance[n];
+    CircuitState state = new CircuitState(this.project, this.circuit);
 
-	public void run() {
-		try {
-			for (int i = 0; i < vector.data.size() && !canceled; i++) {
-				while (paused) {
-					if (canceled)
-						return;
-					try {
-						Thread.sleep(1000);
-					} catch (InterruptedException e) {
-					}
-				}
-				try {
-					test(i);
-					canceled = canceled || !model.setResult(vector, i, null);
-				} catch (TestException e) {
-					canceled = canceled || !model.setResult(vector, i, e);
-				}
-				Thread.yield();
-			}
-		} finally {
-			model.stop();
-		}
-	}
+    for (int i = 0; i < n; i++) {
+      String columnName = vector.columnName[i];
+      for (Component comp : circuit.getNonWires()) {
+        if (!(comp.getFactory() instanceof Pin)) continue;
+        Instance inst = Instance.getInstanceFor(comp);
+        InstanceState pinState = state.getInstanceState(comp);
+        String label = pinState.getAttributeValue(StdAttr.LABEL);
+        if (label == null || !label.equals(columnName)) continue;
+        if (Pin.FACTORY.getWidth(inst).getWidth() != vector.columnWidth[i].getWidth())
+          throw new TestException(
+              "test vector column '"
+                  + columnName
+                  + "' has width "
+                  + vector.columnWidth[i]
+                  + ", but pin has width "
+                  + Pin.FACTORY.getWidth(inst));
+        pin[i] = inst;
+        break;
+      }
+      if (pin[i] == null)
+        throw new TestException("test vector column '" + columnName + "' has no matching pin");
+    }
+  }
 
-	public void setPaused(boolean paused) {
-		this.paused = paused;
-	}
+  public void run() {
+    try {
+      for (int i = 0; i < vector.data.size() && !canceled; i++) {
+        while (paused) {
+          if (canceled) return;
+          try {
+            Thread.sleep(1000);
+          } catch (InterruptedException e) {
+          }
+        }
+        try {
+          test(i);
+          canceled = canceled || !model.setResult(vector, i, null);
+        } catch (TestException e) {
+          canceled = canceled || !model.setResult(vector, i, e);
+        }
+        Thread.yield();
+      }
+    } finally {
+      model.stop();
+    }
+  }
 
-	private void test(int idx) throws TestException {
-		circuit.doTestVector(project, pin, vector.data.get(idx));
-	}
+  public void setPaused(boolean paused) {
+    this.paused = paused;
+  }
 
+  private void test(int idx) throws TestException {
+    circuit.doTestVector(project, pin, vector.data.get(idx));
+  }
 }

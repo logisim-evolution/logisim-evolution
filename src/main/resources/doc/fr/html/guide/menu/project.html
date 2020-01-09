@@ -3,7 +3,7 @@
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="created" content="2018-10-23T06:18:10.521000000">
-    <meta name="changed" content="2018-10-23T06:18:42.262000000">
+    <meta name="changed" content="2020-01-07T07:26:01.212000000">
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <meta http-equiv="Content-Language" content="fr">
     <title>
@@ -25,12 +25,28 @@
             Ajoute un nouveau circuit dans le projet en cours. Logisim insistera pour que vous spécifiiez un nom pour le nouveau circuit. Le nom ne doit correspondre à aucun circuit existant dans le projet.
           </p>
         </dd>
-        <dt>
+		<dt>
+          <strong>Ajouter une entité VHDL..</strong>
+        </dt>
+        <dd>
+          <p>
+            --
+          </p>
+        </dd>
+		<dt>
+          <strong>Importer une entité VHDL..</strong>
+        </dt>
+        <dd>
+          <p>
+            --
+          </p>
+        </dd>
+		<dt>
           <strong>Charger une librairie</strong>
         </dt>
         <dd>
           <p>
-            Charge <a href="../attrlib/explore.html">une librairie</a> dans le projet. Vous pouvez charger trois types de librairies, comme expliqué ailleurs dans le <a href="../attrlib/explore.html">Guide de l'utilisateur.</a>.
+            Charge <a href="../gui/gui-explore.html">une librairie</a> dans le projet. Vous pouvez charger trois types de librairies, comme expliqué ailleurs dans le <a href="../gui/gui-explore.html#lib">Guide de l'utilisateur.</a>.
           </p>
         </dd>
         <dt>
@@ -54,7 +70,7 @@
         </dt>
         <dd>
           <p>
-            Déplace le circuit actuellement affiché d'une ligne ver le bas dans la liste des circuits du projet visible dans le volet de l'explorateur.
+            Déplace le circuit actuellement affiché d'une ligne vers le bas dans la liste des circuits du projet visible dans le volet de l'explorateur.
           </p>
         </dd>
         <dt>
@@ -70,7 +86,7 @@
         </dt>
         <dd>
           <p>
-            Supprime le circuit actuellement affiché du projet. Logisim vous empêchera de supprimer des circuits utilisés comme sous-circuits et vous empêchera de supprimer le circuit final d'un projet.
+            Supprime le circuit actuellement affiché du projet. Logisim vous empêchera de supprimer des circuits utilisés comme sous-circuits et vous empêchera de supprimer le dernier circuit d'un projet.
           </p>
         </dd>
         <dt>
@@ -78,10 +94,11 @@
         </dt>
         <dd>
           <p>
-            Si vous avez modifié l'apparence du circuit, cet élément de menu ramène l'apparence par défaut. L'élément de menu est activé uniquement lors de l'édition de l'apparence du circuit. L'aspect de l'apparence par défaut peut être modifié par la propriété "Nouvelle apparence" de la librairie.
+            Si vous avez modifié l'apparence du circuit, cet élément de menu ramène l'apparence par défaut. L'élément de menu est activé uniquement lors de l'édition de l'apparence du circuit. L'aspect de l'apparence par défaut peut être modifié par la propriété <b class="propertie">Nouvelle apparence</b> de la librairie.
           </p>
         </dd>
-        <dt>
+        <!--
+		<dt>
           <strong>Afficher la barre d'outils</strong>
         </dt>
         <dd>
@@ -97,6 +114,7 @@
             Modifie le volet de l'explorateur pour afficher la hiérarchie des sous-circuits dans la simulation en cours.
           </p>
         </dd>
+		-->
         <dt>
           <strong>Editer le dessin du Circuit</strong>
         </dt>
@@ -110,15 +128,15 @@
         </dt>
         <dd>
           <p>
-            Permets de modifier la représentation du circuit lorsqu'il est utilisé comme sous-circuit dans un autre circuit. Par défaut, le circuit est représenté sous la forme d'un rectangle avec son nom sur fond noir en bas. Cette option de menu vous permet de dessiner une apparence différente pour le sous-circuit. Modifie l'espace de travail pour qu'il affiche <a href="../subcirc/appear.html">l'éditeur d'apparence.</a>
+            Permets de modifier la représentation du circuit lorsqu'il est utilisé comme sous-circuit dans un autre circuit. Cette option de menu vous permet de dessiner une apparence différente pour le sous-circuit. Modifie l'espace de travail pour qu'il affiche <a href="../subcirc/sub-appear.html">l'éditeur d'apparence.</a>
           </p>
         </dd>
         <dt>
-          <strong>Analyse combinatoire</strong>
+          <strong>Analyser le circuit</strong>
         </dt>
         <dd>
           <p>
-            <b class="note">Note:</b>Ce menu est désactivé par défaut dans la version courante de logisim-evolution. Il peut être réactivé par des options de la ligne de commande.<br>
+            <b class="note">Note:</b> Ce menu peut être désactivé dans certaines versions de logisim-evolution. Il peut être réactivé par des options de la ligne de commande.<br>
             <br>
             Calcule une table de vérité et des expressions booléennes correspondant au circuit en cours, en les affichant dans la fenêtre <a href="../analyze/index.html">d'analyse combinatoire</a>. Le processus d'analyse ne sera valable que pour les circuits combinatoires. Une description complète du processus d’analyse est décrite dans la section <a href="../analyze/open.html">Analyse combinatoire</a>.
           </p>
@@ -146,7 +164,7 @@
             </li>
           </ul>
           <p>
-            La distinction entre "Unique" et "Recursive" est plus facile à expliquer en considérant le multiplexeur 4:1 construit avec trois multiplexeurs 2:1 comme dans la section <a href="../subcirc/using.html">Utiliser des sous-circuits</a> . Le multiplexeur 2:1 contient deux portes ET (et le circuit 4:1 n'en contient aucune), de sorte que le nombre "Unique" dénombrant les portes ET serait 2; mais si vous deviez construire le multiplexeur 4:1 en utilisant ce diagramme, vous auriez réellement besoin de 2 portes ET pour chacun des trois multiplexeurs 2:1, donc le nombre "récursif" est 6.
+            La distinction entre "Unique" et "Recursive" est plus facile à expliquer en considérant le multiplexeur 4:1 construit avec trois multiplexeurs 2:1 comme dans la section <a href="../subcirc/sub-using.html">Utiliser des sous-circuits</a> . Le multiplexeur 2:1 contient deux portes ET (et le circuit 4:1 n'en contient aucune), de sorte que le nombre "Unique" dénombrant les portes ET serait 2; mais si vous deviez construire le multiplexeur 4:1 en utilisant ce diagramme, vous auriez réellement besoin de 2 portes ET pour chacun des trois multiplexeurs 2:1, donc le nombre "récursif" est 6.
           </p>
           <p>
             Si vous utilisez des circuits d'une bibliothèque Logisim chargée, ces composants sont considérés comme des "boîtes noires": le contenu des circuits de la bibliothèque n'est pas inclus dans les comptes uniques et récursifs.
