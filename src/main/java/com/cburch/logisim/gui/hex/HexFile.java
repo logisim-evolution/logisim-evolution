@@ -487,13 +487,13 @@ public class HexFile {
       warnings = new JTextArea();
       warnings.setEditable(false);
       p.add(new JScrollPane(warnings) {
-    public Dimension getMinimumSize() {
+      public Dimension getMinimumSize() {
       Dimension d = super.getMaximumSize();
       d.height = scaled(60);
       return d;
     }
-private static final long serialVersionUID = 1L;
-public Dimension getPreferredSize() {
+    private static final long serialVersionUID = 1L;
+    public Dimension getPreferredSize() {
           Dimension d = super.getPreferredSize();
           d.height = scaled(80);
           return d;        
