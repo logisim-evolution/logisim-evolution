@@ -152,11 +152,11 @@ public class Ram extends Mem {
     return contents;
   }
 
-  private static HexFrame getHexFrame(MemContents value, Project proj) {
+  private static HexFrame getHexFrame(MemContents value, Project proj, Instance instance) {
     synchronized (windowRegistry) {
       HexFrame ret = windowRegistry.get(value);
       if (ret == null) {
-        ret = new HexFrame(proj, value);
+        ret = new HexFrame(proj, instance, value);
         windowRegistry.put(value, ret);
       }
       return ret;
@@ -176,7 +176,7 @@ public class Ram extends Mem {
   @Override
   public HexFrame getHexFrame(Project proj, Instance instance, CircuitState circState) {
     RamState ret = (RamState) instance.getData(circState);
-    return getHexFrame((ret == null) ? getNewContents(instance.getAttributeSet()) : ret.getContents(), proj);
+    return getHexFrame((ret == null) ? getNewContents(instance.getAttributeSet()) : ret.getContents(), proj, instance);
   }
   
   public boolean reset(CircuitState state, Instance instance) {
@@ -192,6 +192,10 @@ public class Ram extends Mem {
   @Override
   public Bounds getOffsetBounds(AttributeSet attrs) {
     return RamAppearance.getBounds(attrs);
+  }
+
+  public MemContents getContents(InstanceState ramState) {
+    return (MemContents)getState(ramState).getContents();
   }
 
   @Override

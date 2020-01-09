@@ -30,18 +30,23 @@ package com.cburch.logisim.gui.hex;
 
 import static com.cburch.logisim.gui.Strings.S;
 
-import com.cburch.hex.HexModel;
 import com.cburch.logisim.Main;
+import com.cburch.logisim.file.Loader;
+import com.cburch.logisim.file.LogisimFile;
+import com.cburch.logisim.instance.Instance;
+import com.cburch.logisim.prefs.AppPreferences;
+import com.cburch.logisim.proj.Project;
+import com.cburch.logisim.std.memory.Mem;
 import com.cburch.logisim.std.memory.MemContents;
 import com.cburch.logisim.util.JDialogOk;
 import com.cburch.logisim.util.JFileChoosers;
+import com.cburch.logisim.util.LocaleManager;
 import com.cburch.logisim.util.OutputStreamBinarySanitizer;
 import com.cburch.logisim.util.OutputStreamEscaper;
 import com.cburch.logisim.util.TextLineNumber;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Frame;
@@ -51,21 +56,16 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.io.Reader;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.StringTokenizer;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -74,6 +74,7 @@ import javax.swing.ButtonGroup;
 import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
@@ -234,10 +235,11 @@ public class HexFile {
   //  | 0x0003: 004 005 006 # more data       |  | 008 009 00a 00b   |
   //  |  ...                                  |  |  ...              |
   //  +---------------------------------------+  +-------------------+
+  static final int MAX_PREVIEW_SIZE = 10*1024; // 10KB max size for displaying files
 
   static class HexFormatDialog extends JDialogOk {
-	private static final long serialVersionUID = 1L;
-	JRadioButton raw, hex, bin, asc;
+    private static final long serialVersionUID = 1L;
+    JRadioButton raw, hex, bin, asc;
     JCheckBox hex_words, hex_bytes;
     JCheckBox hex_addr, hex_plain, hex_auto;
     JCheckBox hex_big, hex_little;
@@ -248,13 +250,8 @@ public class HexFile {
     JTabbedPane tabs;
     HexReader r;
 
-    public HexFormatDialog(Dialog parent, String msg, HexReader reader) {
-      super(parent, S.get("hexFormatTitle"), true);
-      configure(msg, reader);
-    }
-    
-    public HexFormatDialog(Frame parent, String msg, HexReader reader) {
-      super(parent, S.get("hexFormatTitle"), true);
+    public HexFormatDialog(String msg, HexReader reader) {
+      super(S.get("hexFormatTitle"));
       configure(msg, reader);
     }
 
@@ -262,7 +259,8 @@ public class HexFile {
       r = reader;
       JPanel p = new JPanel();
       p.setLayout(new BoxLayout(p, BoxLayout.Y_AXIS));
-      p.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+      int sTen = scaled(10);
+      p.setBorder(BorderFactory.createEmptyBorder(sTen, sTen, 0, sTen));
 
       JLabel m = new JLabel("<html>" + msg +"<br><br>" 
           + "Please select an appropriate file format to load"
@@ -270,7 +268,7 @@ public class HexFile {
       Font f = m.getFont();
       m.setFont(f.deriveFont(f.getStyle() & ~Font.BOLD));
       m.setAlignmentX(CENTER_ALIGNMENT);
-      m.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
+      m.setBorder(BorderFactory.createEmptyBorder(0, 0, sTen, 0));
       p.add(m);
 
       GridBagLayout grid = new GridBagLayout();
@@ -299,7 +297,7 @@ public class HexFile {
       pos.gridy = 2;
       pos.gridx = 0;
       pos.gridwidth = 1;
-      Component strut = Box.createHorizontalStrut(20);
+      Component strut = Box.createHorizontalStrut(scaled(20));
       grid.setConstraints(strut, pos);
       opts.add(strut);
 
@@ -403,7 +401,7 @@ public class HexFile {
       preview_hdr = new JLabel("words...");
       preview_mem = new JTextArea();
       preview_mem.setEditable(false);
-      preview_mem.setFont(new Font("monospaced", Font.PLAIN, 10));
+      preview_mem.setFont(new Font("monospaced", Font.PLAIN, sTen));
       JPanel preview = new JPanel();
       preview.setLayout(new BoxLayout(preview, BoxLayout.Y_AXIS));
       preview.add(preview_hdr);
@@ -412,7 +410,7 @@ public class HexFile {
       original_hdr = new JLabel(r.in.byteLength() + " bytes");
       original_txt = new JTextArea();
       original_txt.setEditable(false);
-      original_txt.setFont(new Font("monospaced", Font.PLAIN, 10));
+      original_txt.setFont(new Font("monospaced", Font.PLAIN, sTen));
       JPanel original = new JPanel();
       original.setLayout(new BoxLayout(original, BoxLayout.Y_AXIS));
       original.add(original_hdr);
@@ -424,12 +422,18 @@ public class HexFile {
         char[] buf = new char[1024];
         r.in.reset();
         int n = r.in.readUtf8(buf, 0, 1024);
+        int count = 0;
         if (n < 0) {
           original_txt.setText("(error reading data)");
         } else {
           StringWriter b = new StringWriter();
           do {
             b.write(buf, 0, n);
+            count += n;
+            if (count >= MAX_PREVIEW_SIZE) {
+              b.write("..\n(rest of fole omitted)\n");
+              break;
+            }
             n = r.in.readUtf8(buf, 0, 1024);
           } while (n > 0);
           original_txt.setText(b.toString());
@@ -439,6 +443,7 @@ public class HexFile {
           byte[] buf = new byte[1024];
           r.in.reset();
           int n = r.in.readBytes(buf, 0, 1024);
+          int count = 0;
           if (n < 0) {
             original_txt.setText("(error reading data)");
           } else {
@@ -446,6 +451,11 @@ public class HexFile {
             OutputStreamBinarySanitizer sanitizer = new OutputStreamBinarySanitizer(b);
             do {
               sanitizer.write(buf, 0, n);
+              count += n;
+              if (count >= MAX_PREVIEW_SIZE) {
+                b.write("..\n(rest of fole omitted)\n");
+                break;
+              }
               n = r.in.readBytes(buf, 0, 1024);
             } while (n > 0);
             sanitizer.flush();
@@ -459,8 +469,8 @@ public class HexFile {
       original_txt.setCaretPosition(0);
 
       tabs = new JTabbedPane();
-      tabs.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
-      tabs.setFont(new Font("Dialog", Font.BOLD, 9));
+      tabs.setBorder(BorderFactory.createEmptyBorder(0, sTen, 0, 0));
+      tabs.setFont(new Font("Dialog", Font.BOLD, scaled(9)));
       tabs.addTab("Decoded", preview);
       tabs.addTab("Original", original);
 
@@ -471,21 +481,26 @@ public class HexFile {
       optp.add(opts);
       split.add(optp, BorderLayout.WEST);
       split.add(tabs, BorderLayout.CENTER);
-      split.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
+      split.setBorder(BorderFactory.createEmptyBorder(0, 0, sTen, 0));
       p.add(split);
 
       warnings = new JTextArea();
       warnings.setEditable(false);
       p.add(new JScrollPane(warnings) {
-		private static final long serialVersionUID = 1L;
-		public Dimension getPreferredSize() {
+    public Dimension getMinimumSize() {
+      Dimension d = super.getMaximumSize();
+      d.height = scaled(60);
+      return d;
+    }
+private static final long serialVersionUID = 1L;
+public Dimension getPreferredSize() {
           Dimension d = super.getPreferredSize();
-          d.height = 80;
+          d.height = scaled(80);
           return d;        
         }
         public Dimension getMaximumSize() {
           Dimension d = super.getMaximumSize();
-          d.height = 80;
+          d.height = scaled(120);
           return d;
         }
       });
@@ -510,7 +525,7 @@ public class HexFile {
       listener.actionPerformed(null); // initialize preview, in case needed
 
       getContentPane().add(p, BorderLayout.CENTER);
-      setMinimumSize(new Dimension(600, 400));
+      setMinimumSize(new Dimension(scaled(600), scaled(400)));
       opts.setMaximumSize(opts.getMinimumSize());
       pack();
     }
@@ -580,7 +595,7 @@ public class HexFile {
 
     void setPreview() {
       int n = r.decodedWordCount;
-      preview_hdr.setText("decoded " + n + " of " + (r.mEnd+1) + " words, " + r.mWidth +" bits each");
+      preview_hdr.setText(String.format("decoded %d of %d words, %d bits each", n, r.mEnd+1, r.mWidth));
       if (n > 0)
         preview_mem.setText(saveToString(r.dst, "v3.0 hex words addressed", n));
       else
@@ -712,7 +727,7 @@ public class HexFile {
     }
   }
 
-  static class HexReader extends FormatOptions {
+  private static class HexReader extends FormatOptions {
 
     BufferedLineReader in;
     MemContents dst;
@@ -742,7 +757,7 @@ public class HexFile {
         System.out.println("Warnings:\n" + warnings.toString());
         return null;
       }
-      HexFormatDialog d = new HexFormatDialog((Dialog)null, errmsg, this);
+      HexFormatDialog d = new HexFormatDialog(errmsg, this);
       d.setVisible(true);
       if (!d.ok())
         return null;
@@ -826,7 +841,6 @@ public class HexFile {
       mMaxAddr = 0;
       mEnd = dst.getLastOffset();
       mWidth = dst.getWidth();
-      bEnd = ((mEnd+1)*mWidth + 7)/8;
       bigEndian = bigEndian();
     }
 
@@ -976,7 +990,7 @@ public class HexFile {
     int bLen;
     long mAddr, mMaxAddr;
     long mAddrFrac; // portion of the next address already set
-    long bEnd, mEnd;
+    long mEnd;
     int mWidth;
     boolean bigEndian;
 
@@ -994,7 +1008,7 @@ public class HexFile {
       //   System.out.printf("warn: overflow addr = %x\n", addr);
     }
 
-    void deliver() {
+    boolean deliver() {
       if (bigEndian) {
         long val = get(mAddr) >>> (mWidth - mAddrFrac);
         long nbits = mAddrFrac;
@@ -1038,12 +1052,11 @@ public class HexFile {
         }
       }
       bLen = 0; // all bytes consumed and put into dst
-    }
-
-    void reposition(long byteAddr) {
-      deliver();
-      mAddr = (byteAddr * 8) / mWidth;
-      mAddrFrac = (byteAddr * 8) % mWidth;
+      if (mAddr > mEnd + 100) {
+        warn("Halting decoding early, since plenty of words have been decoded.");
+        return false;
+      }
+      return true;
     }
 
     void decodeHexAuto() throws IOException {
@@ -1089,8 +1102,8 @@ public class HexFile {
           else
             bytes[bLen-1] |= (byte)d;
           left = !left;
-          if (left && bLen >= 4096)
-            deliver();
+          if (left && bLen >= 4096 && !deliver())
+            return;
         }
       }
       if (!left)
@@ -1148,7 +1161,9 @@ public class HexFile {
             warn("\"%s\" is not a valid hex address.", addr);
             // Continue on with previous address, I guess?
           } else {
-            reposition(boffs);
+            if (!deliver()) return;
+            mAddr = (boffs * 8) / mWidth;
+            mAddrFrac = (boffs * 8) % mWidth;
           }
           int i = 1, n = curWords.length;
           if (!foundColon && n >= 2 && curWords[1].equals(":"))
@@ -1171,14 +1186,14 @@ public class HexFile {
               else
                 bytes[bLen-1] |= (byte)d;
               left = !left;
-              if (left && bLen >= 4096)
-                deliver();
+              if (left && bLen >= 4096 && !deliver())
+                return;
             }
             if (!left)
               warn("Odd number of hex digits found in line.");
           }
-          if (bLen > 0)
-            deliver();
+          if (bLen > 0 && !deliver())
+            return;
           findNonemptyLine(false);
         }
       }
@@ -1229,7 +1244,7 @@ public class HexFile {
         int n = in.readBytes(bytes, 0, 4096);
         while (n > 0) {
           bLen += n;
-          deliver();
+          if (!deliver()) return;
           n = in.readBytes(bytes, bLen, 4096 - bLen);
         }
       }
@@ -1311,7 +1326,7 @@ public class HexFile {
             } // else silently ignore
           }
           // deliver the bytes, move remaining to front of array
-          deliver();
+          if (!deliver()) return;
           // get more data, but not too much that bytes[] might overflow
           n = in.readBytes(buf, 0, 4096 - bLen);
         }
@@ -1320,11 +1335,35 @@ public class HexFile {
       }
     }
 
+  public static void open(MemContents dst,
+                          Frame parent, // for window positioning
+                          Project proj, Instance instance) { // for recent file access
+    Mem mem = instance == null ? null : (Mem)instance.getFactory();
+    File recent = getRecent(proj, mem, instance);
+
+    JFileChooser chooser = createFileOpenChooser(recent);
+    chooser.setDialogTitle(S.get("ramLoadDialogTitle"));
+    int choice = chooser.showOpenDialog(parent);
+    if (choice == JFileChooser.APPROVE_OPTION) {
+      File f = chooser.getSelectedFile();
+      try {
+        open(dst, f);
+        mem.setCurrentImage(instance, f);
+      } catch (IOException e) {
+        JOptionPane.showMessageDialog(parent,
+            e.getMessage(),
+            S.get("ramLoadErrorTitle"),
+            JOptionPane.ERROR_MESSAGE);
+      }
+    }
+  }
+
+
     public static boolean open(MemContents dst, File src) throws IOException {
       return open(dst, src, null);
     }
     
-    static boolean open(MemContents dst, File src, String desc) throws IOException {
+    private static boolean open(MemContents dst, File src, String desc) throws IOException {
       BufferedLineReader in = BufferedLineReader.forFile(src);
       try {
         HexReader r = new HexReader(in, dst.getLogLength(), dst.getValueWidth());
@@ -1349,20 +1388,32 @@ public class HexFile {
       public MemContents model;
       public int numWords;
 
-      public ParseResult(MemContents m, int n) {
+      ParseResult(MemContents m, int n) {
         model = m;
         numWords = n;
       }
     }
 
-    public static ParseResult parse(String src, String desc, int addrSize, int wordSize) throws IOException {
+
+    public static ParseResult parseFromClipboard(String src, int addrSize, int wordSize)
+        throws IOException {
+      return parse(true, src, "v3.0 hex plain words", addrSize, wordSize);
+    }
+
+    public static MemContents parseFromCircFile(String src, int addrSize, int wordSize)
+        throws IOException {
+      return parse(false, src, "v2.0 raw", addrSize, wordSize).model;
+    }
+
+   private static ParseResult parse(boolean interactive, String src, String desc, 
+                                    int addrSize, int wordSize) throws IOException {
       BufferedLineReader in = BufferedLineReader.forString(src);
       try {
         HexReader r = new HexReader(in, addrSize, wordSize);
         r.parseFormat(desc);
-        MemContents loaded = r.decodeOrWarn();
+        MemContents loaded = interactive ? r.decodeOrWarn() : r.decode();
         if (loaded == null)
-          throw new IOException("Could not parse data.");
+          throw new IOException("Could not parse memory image data.");
         return new ParseResult(loaded, (int)(r.mMaxAddr + 1));
       } finally {
         try { in.close(); }
@@ -1370,13 +1421,7 @@ public class HexFile {
       }
     }     
     
-    public static void save(File f, MemContents src, FileFilter filter) throws IOException {
-      save(f, src, filter.getDescription());
-    }
-
-      // todo: confirm overwrite
-      // todo: move code here for common gui stuff
-    public static void save(File f, MemContents src, String desc) throws IOException {
+    private static void save(File f, MemContents src, String desc) throws IOException {
       OutputStream out;    
       try {
         out = new FileOutputStream(f);
@@ -1387,13 +1432,17 @@ public class HexFile {
       new HexWriter(out, src, desc).save();
     }
 
-    final static Logger logger = LoggerFactory.getLogger(HexFile.class);
+    private final static Logger logger = LoggerFactory.getLogger(HexFile.class);
+    
+    public static String saveToString(MemContents src) {
+      return saveToString(src, null, -1);
+    }
 
     // No header is output. As a special, if desc is null, v2.0 raw will be used.
     // For binary format, this uses binary sanitizer (non-ascii printable bytes
     // will appear as unicode error placeholder chars), otherwise only plain
     // ascii will be output, with whitespace preserved.
-    public static String saveToString(MemContents src, String desc, int limit) {
+    private static String saveToString(MemContents src, String desc, int limit) {
       try {
         StringWriter out = new StringWriter();
         OutputStream stream;
@@ -1415,9 +1464,8 @@ public class HexFile {
       }
     }
 
-    static class HexWriter extends FormatOptions {
+    private static class HexWriter extends FormatOptions {
       MemContents src;
-      long end;
       byte[] bytes = new byte[4096];
       int bLen, mWidth;
       long mAddr, mEnd;
@@ -1501,7 +1549,7 @@ public class HexFile {
           else if (tagged("style", "plain"))
             saveHexPlain();
           else
-            saveHexAddressed();   	  
+            saveHexAddressed();     
         } catch (IOException e) {
           try {
             if (cOut != null) {
@@ -1651,15 +1699,15 @@ public class HexFile {
         }
       }
 
-      static FileFilter getFilter(String desc) {
+      private static FileFilter getFilter(String desc) {
         return new FileFilter() {
           public String getDescription() { return desc; }
           public boolean accept(File f) { return true; }
         };
       }
 
-      static final String autoFormat = "Any data file (auto-detects format)";
-      static final String[] formatDescriptions = {
+      private static final String autoFormat = "Any data file (auto-detects format)";
+      private static final String[] formatDescriptions = {
         "v3.0 hex words addressed",                  // header = desc
         "v3.0 hex words plain",                      // header = desc
         "v3.0 hex bytes addressed big-endian",       // header = desc
@@ -1673,7 +1721,7 @@ public class HexFile {
         "ASCII bytes, with escapes, little-endian"   // no header
       };
 
-      static String headerForFormat(String desc) {
+      private static String headerForFormat(String desc) {
         if (desc.startsWith("Binary") || desc.startsWith("ASCII"))
           return "";
         else if (desc.startsWith("v2.0 raw"))
@@ -1682,17 +1730,59 @@ public class HexFile {
           return desc + "\n";
       }
 
-      public static JFileChooser createFileSaveChooser(File lastFile, MemContents preview) {
-        JFileChooser chooser = createFileChooser(lastFile, false);
+      private static File getRecent(Project proj, Mem mem, Instance instance) {
+        File recent = mem == null ? null : mem.getCurrentImage(instance);
+        if (recent == null) {
+          LogisimFile lf = (proj == null ? null : proj.getLogisimFile());
+          Loader ld = (lf == null ? null : lf.getLoader());
+          recent = (ld == null ? null : ld.getCurrentDirectory());
+        }
+        return recent;
+      }
+
+      public static void save(MemContents src,
+        Frame parent, // for window positioning
+        Project proj, Instance instance) { // for recent file access
+        LocaleManager S = com.cburch.logisim.std.Strings.S;
+        Mem mem = instance == null ? null : (Mem)instance.getFactory();
+        File recent = getRecent(proj, mem, instance);
+
+        JFileChooser chooser = createFileSaveChooser(recent, src);
+        chooser.setDialogTitle(S.get("ramSaveDialogTitle"));
+        int choice = chooser.showSaveDialog(parent);
+        if (choice == JFileChooser.APPROVE_OPTION) {
+          File f = chooser.getSelectedFile();
+          if (f.exists()) {
+            int confirm = JOptionPane.showConfirmDialog(parent,
+                S.fmt("confirmOverwriteMessage", f.getName()),
+                S.get("confirmOverwriteTitle"),
+                JOptionPane.YES_NO_OPTION);
+            if (confirm != JOptionPane.YES_OPTION)
+              return;
+          }
+          try {
+            save(f, src, chooser.getFileFilter().getDescription());
+            if (mem != null)
+              mem.setCurrentImage(instance, f);
+          } catch (IOException e) {
+            JOptionPane.showMessageDialog(parent,
+                e.getMessage(),
+                S.get("ramSaveErrorTitle"),
+                JOptionPane.ERROR_MESSAGE);
+          }
+        }
+      }
+
+      private static JFileChooser createFileSaveChooser(File lastFile, MemContents preview) {       JFileChooser chooser = createFileChooser(lastFile, false);
         chooser.setAccessory(new Preview(chooser, preview));
         return chooser;
       }
 
-      public static JFileChooser createFileOpenChooser(File lastFile) {
+      private static JFileChooser createFileOpenChooser(File lastFile) {
         return createFileChooser(lastFile, true);
       }
 
-      public static JFileChooser createFileChooser(File lastFile, boolean auto) {
+      private static JFileChooser createFileChooser(File lastFile, boolean auto) {
         JFileChooser chooser = JFileChoosers.createSelected(lastFile);
         if (auto) {
           chooser.addChoosableFileFilter(getFilter(autoFormat));
@@ -1705,9 +1795,9 @@ public class HexFile {
       }        
           
 
-      static class Preview extends JPanel implements PropertyChangeListener {
-		private static final long serialVersionUID = 1L;
-		JFileChooser chooser;
+      private static class Preview extends JPanel implements PropertyChangeListener {
+        private static final long serialVersionUID = 1L;
+        JFileChooser chooser;
         JTextArea preview;
         MemContents m;
 
@@ -1718,15 +1808,15 @@ public class HexFile {
 
           preview = new JTextArea();
           preview.setEditable(false);
-          preview.setFont(new Font("monospaced", Font.PLAIN, 10));
+          preview.setFont(new Font("monospaced", Font.PLAIN, scaled(10)));
           JTabbedPane tabs = new JTabbedPane();
-          tabs.setBorder(BorderFactory.createEmptyBorder(0, 8, 0, 0));
-          tabs.setFont(new Font("Dialog", Font.BOLD, 9));
+          tabs.setBorder(BorderFactory.createEmptyBorder(0, scaled(8), 0, 0));
+          tabs.setFont(new Font("Dialog", Font.BOLD, scaled(9)));
           tabs.addTab("Preview", new JScrollPane(preview));
           add(tabs, BorderLayout.CENTER);
 
           chooser.addPropertyChangeListener(this);
-          setPreferredSize(new Dimension(240, 220));
+          setPreferredSize(new Dimension(scaled(240), scaled(220)));
 
           refresh();
         }
@@ -1741,7 +1831,7 @@ public class HexFile {
         void refresh() {
           String desc = chooser.getFileFilter().getDescription();
           String hdr = headerForFormat(desc);
-          preview.setText(hdr + saveToString(m, desc, 0));
+          preview.setText(hdr + saveToString(m, desc, -1));
           preview.setCaretPosition(0);
         }
       }
@@ -1749,7 +1839,7 @@ public class HexFile {
       private HexFile() { }
 
 
-      static MemContents compare(boolean autodetect, String desc, File tmp, int addrSize, int wordSize, HashMap<Long, Integer> vals)
+      private static MemContents compare(boolean autodetect, String desc, File tmp, int addrSize, int wordSize, HashMap<Long, Integer> vals)
           throws Exception {
         MemContents dst = MemContents.create(addrSize, wordSize);
         if (desc.startsWith("Binary") || desc.startsWith("ASCII") || !autodetect) {
@@ -1789,98 +1879,100 @@ public class HexFile {
         return dst;
       }
           
-      static void randomTests(java.util.Random rng) throws Exception {
-	    Main.headless = true;
-	    int addrSize = rng.nextInt(14)+1;
-	    int wordSize = rng.nextInt(32)+1;
-	    System.out.printf("Testing addrSize = %d, wordSize = %d\n", addrSize, wordSize);
+      private static void randomTests(java.util.Random rng) throws Exception {
+    Main.headless = true;
+    int addrSize = rng.nextInt(14)+1;
+    int wordSize = rng.nextInt(32)+1;
+    System.out.printf("Testing addrSize = %d, wordSize = %d\n", addrSize, wordSize);
 
-	    MemContents m = MemContents.create(addrSize, wordSize);
+    MemContents m = MemContents.create(addrSize, wordSize);
 
-	    HashMap<Long, Integer> vals = new HashMap<>();
-	    int count = rng.nextInt(1<<addrSize);
-	    long mask = (1L<<wordSize) - 1;
-	    for (int i = 0; i < count; i++) {
-	      long a = rng.nextInt(1<<addrSize);
-	      int v = (int)(rng.nextLong() & mask);
-	      vals.put(a, v);
-	      m.set(a, v);
-	    }         
-	    File orig = File.createTempFile("hexfile-orig-", ".dat");
-	    save(orig, m, formatDescriptions[0]);
-	    for (int i = 0; i < 30; i++) {
-	        String desc = formatDescriptions[rng.nextInt(formatDescriptions.length)];
-	        File tmp = File.createTempFile("hexfile-"+i+"-", ".dat");
-	        save(tmp, m, desc);
+    HashMap<Long, Integer> vals = new HashMap<>();
+    int count = rng.nextInt(1<<addrSize);
+    long mask = (1L<<wordSize) - 1;
+    for (int i = 0; i < count; i++) {
+      long a = rng.nextInt(1<<addrSize);
+      int v = (int)(rng.nextLong() & mask);
+      vals.put(a, v);
+      m.set(a, v);
+    }         
+    File orig = File.createTempFile("hexfile-orig-", ".dat");
+    save(orig, m, formatDescriptions[0]);
+    for (int i = 0; i < 30; i++) {
+        String desc = formatDescriptions[rng.nextInt(formatDescriptions.length)];
+        File tmp = File.createTempFile("hexfile-"+i+"-", ".dat");
+        save(tmp, m, desc);
 
-	        MemContents dst = compare(true, desc, tmp, addrSize, wordSize, vals);
+        MemContents dst = compare(true, desc, tmp, addrSize, wordSize, vals);
 
-	        if (desc.startsWith("Binary")) {
-	          String endian = desc.endsWith("big-endian") ? "big-endian" : "little-endian";
+        if (desc.startsWith("Binary")) {
+          String endian = desc.endsWith("big-endian") ? "big-endian" : "little-endian";
 
-	          File other = new File(tmp.toString() + ".xxd");
-	          Runtime.getRuntime().exec(String.format("xxd %s %s", tmp, other)).waitFor();
-	          compare(false, "v3.0 hex bytes addressed "+endian, other, addrSize, wordSize, vals);
+          File other = new File(tmp.toString() + ".xxd");
+          Runtime.getRuntime().exec(String.format("xxd %s %s", tmp, other)).waitFor();
+          compare(false, "v3.0 hex bytes addressed "+endian, other, addrSize, wordSize, vals);
 
-	          File plain = new File(tmp.toString() + ".xxd-plain");
-	          Runtime.getRuntime().exec(String.format("xxd -p %s %s", tmp, plain)).waitFor();
-	          compare(false, "v3.0 hex bytes plain "+endian, plain, addrSize, wordSize, vals);
-	        }
+          File plain = new File(tmp.toString() + ".xxd-plain");
+          Runtime.getRuntime().exec(String.format("xxd -p %s %s", tmp, plain)).waitFor();
+          compare(false, "v3.0 hex bytes plain "+endian, plain, addrSize, wordSize, vals);
+        }
 
-	        if (i % 3 == 0 && dst != null)
-	          m = dst;
-	      }
+        if (i % 3 == 0 && dst != null)
+          m = dst;
+      }
 
-	    }
+    }
 
-	    public static void main(String args[]) {
-	      try {
-	        java.util.Random rng = new java.util.Random(1234L);
-	        if (args.length == 0) {
-	          randomTests(rng);
-	        } else if (args.length == 1) {
-	          int n = Integer.parseInt(args[0]);
-	          for (int i = 0; i < n; i++)
-	            randomTests(rng);
-	        } else {
-	          int addrSize = Integer.parseInt(args[0]);
-	          int wordSize = Integer.parseInt(args[1]);
+    public static void main(String args[]) {
+      try {
+        java.util.Random rng = new java.util.Random(1234L);
+        if (args.length == 0) {
+          randomTests(rng);
+        } else if (args.length == 1) {
+          int n = Integer.parseInt(args[0]);
+          for (int i = 0; i < n; i++)
+            randomTests(rng);
+        } else {
+          int addrSize = Integer.parseInt(args[0]);
+          int wordSize = Integer.parseInt(args[1]);
 
-	          MemContents m = MemContents.create(addrSize, wordSize);
+          MemContents m = MemContents.create(addrSize, wordSize);
 
-	          // open file
-	          File f;
-	          if (args.length >= 3) {
-	            f = new File(args[2]);
-	          } else {
-	            JFileChooser chooser = createFileOpenChooser(null);
-	            chooser.setDialogTitle("Open Data File");
-	            int choice = chooser.showSaveDialog(null);
-	            if (choice != JFileChooser.APPROVE_OPTION) {
-	              System.out.println("cancelled");
-	              return;
-	            }
-	            f = chooser.getSelectedFile();
-	          }
-	          boolean b = open(m, f);
-	          if (!b) {
-	            System.out.println("cancelled");
-	            return;
-	          }
+          // open file
+          File f;
+          if (args.length >= 3) {
+            f = new File(args[2]);
+          } else {
+            JFileChooser chooser = createFileOpenChooser(null);
+            chooser.setDialogTitle("Open Data File");
+            int choice = chooser.showSaveDialog(null);
+            if (choice != JFileChooser.APPROVE_OPTION) {
+              System.out.println("cancelled");
+              return;
+            }
+            f = chooser.getSelectedFile();
+          }
+          boolean b = open(m, f);
+          if (!b) {
+            System.out.println("cancelled");
+            return;
+          }
 
-	          // save file
-	          JFileChooser chooser = createFileSaveChooser(null, m);
-	          chooser.setDialogTitle("Save Data File");
-	          int choice = chooser.showOpenDialog(null);
-	          if (choice != JFileChooser.APPROVE_OPTION) {
-	            System.out.println("cancelled");
-	            return;
-	          }
-	          f = chooser.getSelectedFile();
-	          HexFile.save(f, m, chooser.getFileFilter());
-	        }
-	      } catch (Exception e) {
-	        e.printStackTrace();
-	      }
-	    }
+          // save file
+          JFileChooser chooser = createFileSaveChooser(null, m);
+          chooser.setDialogTitle("Save Data File");
+          int choice = chooser.showOpenDialog(null);
+          if (choice != JFileChooser.APPROVE_OPTION) {
+            System.out.println("cancelled");
+            return;
+          }
+          f = chooser.getSelectedFile();
+          save(f, m, chooser.getFileFilter().getDescription());
+        }
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    }
+
+  private static int scaled(int i) { return AppPreferences.getScaled(i); };
 }
