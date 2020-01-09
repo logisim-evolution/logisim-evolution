@@ -28,6 +28,14 @@
             The menu option will be automatically unchecked if <a href="../prop/oscillate.html">circuit oscillation</a> is detected.
           </p>
         </dd>
+		<dt>
+          <strong>Step Simulation</strong>&nbsp;&nbsp;<b class="tkeybd">Ctrl-I</b>
+        </dt>
+        <dd>
+          <p>
+            Advances the <a href="../tutorial/tutor-step.html">simulation one step</a> forward. For example, a signal may end up entering a gate during one step, but the gate won't show a different signal until the next simulation step. To help identify which points in the overall circuit have changed, any points whose values change are indicated with a blue circle; if a subcircuit contains any points that have changed in it (or its subcircuits, recursively), then it will be drawn with a blue outline.
+          </p>
+        </dd>
         <dt>
           <strong>Reset Simulation</strong>&nbsp;&nbsp;<b class="tkeybd">Ctrl-R</b>
         </dt>
@@ -36,14 +44,7 @@
             Clears everything about the current circuit's state, so that it is as if you have just opened the file again. If you are viewing a subcircuit's state, the entire hierarchy is cleared.
           </p>
         </dd>
-        <dt>
-          <strong>Step Simulation</strong>&nbsp;&nbsp;<b class="tkeybd">Ctrl-I</b>
-        </dt>
-        <dd>
-          <p>
-            Advances the <a href="../tutorial/tutor-step.html">simulation one step</a> forward. For example, a signal may end up entering a gate during one step, but the gate won't show a different signal until the next simulation step. To help identify which points in the overall circuit have changed, any points whose values change are indicated with a blue circle; if a subcircuit contains any points that have changed in it (or its subcircuits, recursively), then it will be drawn with a blue outline.
-          </p>
-        </dd>
+      
         <dt>
           <strong>VHDL Simulation Enabled</strong>
         </dt>
@@ -77,23 +78,24 @@
           </p>
         </dd>
         <dt>
-          <strong>Tick Once</strong>&nbsp;&nbsp;<b class="tkeybd">Ctrl-T</b>
+          <strong>Tick half cycle</strong>&nbsp;&nbsp;<b class="tkeybd">Ctrl-T</b>
         </dt>
         <dd>
           <p>
-            Steps one tick forward into the simulation. This can be useful when you want to step the clocks manually, particularly when the clock is not in the same circuit that you are currently viewing.
+			Advances the clocks in the simulation by one tick when using the step-by-step mode. A clock set with a high/low duration of 1 tick will then advance by half a cycle.<br>  
+			This can be useful when you want to advance the clocks manually, especially when the clock is not in the same circuit as the one you are currently viewing.
           </p>
         </dd>
         <dt>
-          <strong>'Clk' un pas</strong>&nbsp;&nbsp;<b class="tkeybd">F2</b>
+          <strong>Tick full cycle</strong>&nbsp;&nbsp;<b class="tkeybd">F2</b>
         </dt>
         <dd>
           <p>
-            Même fonction que précédèrent, mais si l'horloge nommée clk existe, avance d'une période ou demi-période selon l'option du projet définie dans la fenêtre <a href="../opts/simulate.html">option</a>. Les autres horloges du projet avancent simultanément proportionnellement à leurs paramètres.
+            Same function as before, but advances by two ticks. A clock set with a high/low duration of 1 tick will then advance one complete cycle.<br> The other clocks of the project advance simultaneously in proportion to their parameters.
           </p>
         </dd>
         <dt>
-          <strong>Ticks Enabled</strong>&nbsp;&nbsp;<b class="tkeybd">Ctrl-T</b>
+          <strong>Ticks Enabled</strong>&nbsp;&nbsp;<b class="tkeybd">Ctrl-K</b>
         </dt>
         <dd>
           <p>
@@ -101,7 +103,7 @@
           </p>
         </dd>
         <dt>
-          <strong>Tick Frequency</strong>
+        <strong>Tick Frequency</strong>
         </dt>
         <dd>
           <p>
@@ -123,6 +125,9 @@
           </p>
         </dd>
         <dd>
+		<dt>
+		   <strong>Vector of tests</strong>
+		 </dt>
           <p>
             <a href="../verify/test.html">The window Vector of tests</a> Allows you to check your circuits thanks to a test vector file that presents the inputs and outputs of the circuit.
           </p>
