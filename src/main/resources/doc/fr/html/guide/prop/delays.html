@@ -3,7 +3,7 @@
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="created" content="2018-10-23T06:18:10.521000000">
-    <meta name="changed" content="2019-01-16T07:15:22.134000000">
+    <meta name="changed" content="2020-01-08T07:15:22.134000000">
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <meta http-equiv="Content-Language" content="fr">
     <title>
@@ -20,13 +20,13 @@
         À titre d’exemple du niveau de sophistication de l’algorithme de Logisim, considérons le circuit suivant.
       </p>
       <center>
-        <img class="notscal" src="../../../../img-guide/prop-const0.png" alt="#########">
+        <img src="../../../../img-guide/prop-const0.png" alt="#########">
       </center>
       <p>
         Ce circuit "évidemment" génère toujours 0. Mais dans la réalité les sorties des portes ne réagissent pas instantanément à leurs entrées, et elles ne le font pas non plus dans Logisim. Par conséquent, lorsque l'entrée de ce circuit passe de 0 à 1, le retard introduit par la porte NOT fait que la porte ET verra brièvement deux entrées 1 et émettra brièvement 1. Vous ne le verrez pas à l'écran. Mais l'effet est observable lorsque nous utilisons la sortie de la porte AND comme entrée de l'horloge d'une bascule D.
       </p>
       <center>
-        <img class="notscal" src="../../../../img-guide/prop-using-const0.png" alt="#########">
+        <img src="../../../../img-guide/prop-using-const0.png" alt="#########">
       </center>
       <p>
         La bascule D changera à chaque impulsion de la sortie de la porte AND soit quand l'entrée du circuit passe de 0 à 1. Le déroulement détaillé peut aussi s'observer grâce au <a href="../tutorial/tutor-step.html">mode pas à pas</a> de la simulation.
