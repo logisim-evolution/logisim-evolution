@@ -39,7 +39,6 @@ import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Attributes;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
-import com.cburch.logisim.gui.hex.HexFile;
 import com.cburch.logisim.gui.hex.HexFrame;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceFactory;
@@ -52,7 +51,6 @@ import com.cburch.logisim.tools.key.JoinedConfigurator;
 import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.StringGetter;
 import java.io.File;
-import java.io.IOException;
 import java.util.WeakHashMap;
 
 public abstract class Mem extends InstanceFactory {
@@ -147,7 +145,7 @@ public abstract class Mem extends InstanceFactory {
   @Override
   public abstract AttributeSet createAttributeSet();
 
-  File getCurrentImage(Instance instance) {
+  public File getCurrentImage(Instance instance) {
     return currentInstanceFiles.get(instance);
   }
 
@@ -177,16 +175,10 @@ public abstract class Mem extends InstanceFactory {
 
   abstract MemState getState(InstanceState state);
 
-  public void loadImage(InstanceState instanceState, File imageFile) throws IOException {
-    MemState s = this.getState(instanceState);
-    HexFile.open((MemContents)s.getContents(), imageFile);
-    this.setCurrentImage(instanceState.getInstance(), imageFile);
-  }
-
   @Override
   public abstract void propagate(InstanceState state);
 
-  void setCurrentImage(Instance instance, File value) {
+  public void setCurrentImage(Instance instance, File value) {
     currentInstanceFiles.put(instance, value);
   }
 

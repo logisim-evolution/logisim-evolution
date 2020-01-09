@@ -34,9 +34,9 @@ import com.cburch.hex.HexEditor;
 import com.cburch.hex.HexModel;
 import com.cburch.logisim.gui.generic.LFrame;
 import com.cburch.logisim.gui.menu.LogisimMenuBar;
+import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.std.memory.MemContents;
-import com.cburch.logisim.util.JFileChoosers;
 import com.cburch.logisim.util.LocaleListener;
 import com.cburch.logisim.util.LocaleManager;
 import com.cburch.logisim.util.WindowMenuItemManager;
@@ -46,12 +46,8 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
-import java.io.File;
-import java.io.IOException;
 import javax.swing.JButton;
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.event.ChangeEvent;
@@ -107,44 +103,12 @@ public class HexFrame extends LFrame {
   }
 
   private class MyListener implements ActionListener, LocaleListener {
-    private File lastFile = null;
-
     public void actionPerformed(ActionEvent event) {
       Object src = event.getSource();
       if (src == open) {
-        JFileChooser chooser = JFileChoosers.createSelected(lastFile);
-        chooser.setDialogTitle(S.get("openButton"));
-        int choice = chooser.showOpenDialog(HexFrame.this);
-        if (choice == JFileChooser.APPROVE_OPTION) {
-          File f = chooser.getSelectedFile();
-          try {
-            HexFile.open((MemContents)model, f);
-            lastFile = f;
-          } catch (IOException e) {
-            JOptionPane.showMessageDialog(
-                HexFrame.this,
-                e.getMessage(),
-                S.get("hexOpenErrorTitle"),
-                JOptionPane.ERROR_MESSAGE);
-          }
-        }
+        HexFile.open((MemContents)model, HexFrame.this, proj, instance);
       } else if (src == save) {
-        JFileChooser chooser = HexFile.createFileSaveChooser(lastFile, (MemContents)model);
-        chooser.setDialogTitle(S.get("saveButton"));
-        int choice = chooser.showSaveDialog(HexFrame.this);
-        if (choice == JFileChooser.APPROVE_OPTION) {
-          File f = chooser.getSelectedFile();
-          try {
-            HexFile.save(f, (MemContents)model, chooser.getFileFilter());
-            lastFile = f;
-          } catch (IOException e) {
-            JOptionPane.showMessageDialog(
-                HexFrame.this,
-                e.getMessage(),
-                S.get("hexSaveErrorTitle"),
-                JOptionPane.ERROR_MESSAGE);
-          }
-        }
+        HexFile.save((MemContents)model, HexFrame.this, proj, instance);
       } else if (src == close) {
         WindowEvent e = new WindowEvent(HexFrame.this, WindowEvent.WINDOW_CLOSING);
         HexFrame.this.processWindowEvent(e);
@@ -191,8 +155,10 @@ public class HexFrame extends LFrame {
   private JButton open = new JButton();
   private JButton save = new JButton();
   private JButton close = new JButton();
+  private Instance instance;
+  private Project proj;
 
-  public HexFrame(Project proj, HexModel model) {
+  public HexFrame(Project proj, Instance instance, HexModel model) {
 	super(false,proj);
 	setDefaultCloseOperation(HIDE_ON_CLOSE);
 
@@ -201,6 +167,8 @@ public class HexFrame extends LFrame {
     
     this.model = model;
     this.editor = new HexEditor(model);
+    this.instance = instance;
+    this.proj = proj;
 
     JPanel buttonPanel = new JPanel();
     buttonPanel.add(open);

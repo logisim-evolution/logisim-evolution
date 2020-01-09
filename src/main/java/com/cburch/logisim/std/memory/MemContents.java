@@ -402,6 +402,7 @@ public class MemContents implements Cloneable, HexModel {
         sp++;
       }
     } while (count > 0); // (dp <= dstPageEnd || di <= dstEndOffs)
+    fireBytesChanged(0,1<<addrBits,null); /* update my listeners */
   }
 
   public void setDimensions(int addrBits, int width) {

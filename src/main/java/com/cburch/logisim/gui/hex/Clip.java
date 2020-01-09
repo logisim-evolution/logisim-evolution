@@ -158,7 +158,7 @@ class Clip implements ClipboardOwner {
       }
 
       try {
-        HexFile.ParseResult r = HexFile.parse(buf, "v3.0 hex plain words", model.getLogLength(), model.getValueWidth());
+        HexFile.ParseResult r = HexFile.parseFromClipboard(buf, model.getLogLength(), model.getValueWidth());
         pasted = r.model;
         numWords = r.numWords;
       } catch (IOException e) {
