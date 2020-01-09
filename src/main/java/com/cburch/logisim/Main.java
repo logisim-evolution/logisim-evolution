@@ -92,7 +92,7 @@ public class Main {
       LogisimVersion.get(3, 2, 0, LogisimVersion.FINAL_REVISION);
 
   public static final String VERSION_NAME = VERSION.toString();
-  public static final int COPYRIGHT_YEAR = 2019;
+  public static final int COPYRIGHT_YEAR = 2020;
 
   public static boolean ANALYZE = true;
   /* TODO ktt1 : for the moment dummy for the hex-reader, have to look into details */
