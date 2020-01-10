@@ -32,6 +32,7 @@ import static com.cburch.logisim.std.Strings.S;
 
 import com.cburch.logisim.LogisimVersion;
 import com.cburch.logisim.circuit.CircuitState;
+import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.BitWidth;
@@ -43,20 +44,15 @@ import com.cburch.logisim.gui.hex.HexFrame;
 import com.cburch.logisim.gui.icons.ArithmeticIcon;
 import com.cburch.logisim.gui.main.Frame;
 import com.cburch.logisim.instance.Instance;
+import com.cburch.logisim.instance.InstanceComponent;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
-import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.proj.Project;
-import com.cburch.logisim.util.GraphicsUtil;
-import java.awt.Font;
-import java.awt.Graphics;
 import java.awt.Window;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.IOException;
-import java.io.StringReader;
-import java.io.StringWriter;
 import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
 import java.util.WeakHashMap;
@@ -90,9 +86,7 @@ public class Rom extends Mem {
         if (!header.equals("addr/data:")) return null;
         int addr = Integer.parseInt(toks.nextToken());
         int data = Integer.parseInt(toks.nextToken());
-        MemContents ret = MemContents.create(addr, data, true);
-        HexFile.open(ret, new StringReader(rest));
-        return ret;
+        return HexFile.parseFromCircFile(rest, addr, data);
       } catch (IOException e) {
         return null;
       } catch (NumberFormatException e) {
@@ -111,13 +105,8 @@ public class Rom extends Mem {
     public String toStandardString(MemContents state) {
       int addr = state.getLogLength();
       int data = state.getWidth();
-      StringWriter ret = new StringWriter();
-      ret.write("addr/data: " + addr + " " + data + "\n");
-      try {
-        HexFile.save(ret, state);
-      } catch (IOException e) {
-      }
-      return ret.toString();
+      String contents = HexFile.saveToString(state);
+      return "addr/data: " + addr + " " + data + "\n" + contents;
     }
   }
 
@@ -136,7 +125,7 @@ public class Rom extends Mem {
     public void mouseClicked(MouseEvent e) {
       if (contents == null) return;
       Project proj = source instanceof Frame ? ((Frame) source).getProject() : null;
-      HexFrame frame = RomAttributes.getHexFrame(contents, proj);
+      HexFrame frame = RomAttributes.getHexFrame(contents, proj, null);
       frame.setVisible(true);
       frame.toFront();
     }
@@ -174,16 +163,7 @@ public class Rom extends Mem {
 
   @Override
   void configurePorts(Instance instance) {
-    Port[] ps = new Port[MEM_INPUTS];
-    ps[ADDR] = new Port(0, 10, Port.INPUT, ADDR_ATTR);
-    ps[ADDR].setToolTip(S.getter("memAddrTip"));
-    int ypos =
-        (instance.getAttributeValue(Mem.DATA_ATTR).getWidth() == 1)
-            ? getControlHeight(instance.getAttributeSet()) + 10
-            : getControlHeight(instance.getAttributeSet());
-    ps[DATA] = new Port(SymbolWidth + 40, ypos, Port.OUTPUT, DATA_ATTR);
-    ps[DATA].setToolTip(S.getter("memDataTip"));
-    instance.setPorts(ps);
+    RamAppearance.configurePorts(instance);
   }
 
   @Override
@@ -200,98 +180,6 @@ public class Rom extends Mem {
     return new RomAttributes();
   }
 
-  private void DrawControlBlock(InstancePainter painter, int xpos, int ypos) {
-    Graphics g = painter.getGraphics();
-    GraphicsUtil.switchToWidth(g, 2);
-    AttributeSet attrs = painter.getAttributeSet();
-    g.drawLine(xpos + 20, ypos, xpos + 20 + SymbolWidth, ypos);
-    g.drawLine(xpos + 20, ypos, xpos + 20, ypos + getControlHeight(attrs) - 10);
-    g.drawLine(
-        xpos + 20 + SymbolWidth,
-        ypos,
-        xpos + 20 + SymbolWidth,
-        ypos + getControlHeight(attrs) - 10);
-    g.drawLine(
-        xpos + 20,
-        ypos + getControlHeight(attrs) - 10,
-        xpos + 30,
-        ypos + getControlHeight(attrs) - 10);
-    g.drawLine(
-        xpos + 20 + SymbolWidth - 10,
-        ypos + getControlHeight(attrs) - 10,
-        xpos + 20 + SymbolWidth,
-        ypos + getControlHeight(attrs) - 10);
-    g.drawLine(
-        xpos + 30, ypos + getControlHeight(attrs) - 10, xpos + 30, ypos + getControlHeight(attrs));
-    g.drawLine(
-        xpos + 20 + SymbolWidth - 10,
-        ypos + getControlHeight(attrs) - 10,
-        xpos + 20 + SymbolWidth - 10,
-        ypos + getControlHeight(attrs));
-    GraphicsUtil.drawCenteredText(
-        g,
-        "ROM "
-            + GetSizeLabel(painter.getAttributeValue(Mem.ADDR_ATTR).getWidth())
-            + " x "
-            + Integer.toString(painter.getAttributeValue(Mem.DATA_ATTR).getWidth()),
-        xpos + (SymbolWidth / 2) + 20,
-        ypos + 6);
-    GraphicsUtil.switchToWidth(g, 1);
-    DrawAddress(painter, xpos, ypos + 10, painter.getAttributeValue(Mem.ADDR_ATTR).getWidth());
-  }
-
-  private void DrawDataBlock(InstancePainter painter, int xpos, int ypos, int bit, int NrOfBits) {
-    int realypos = ypos + getControlHeight(painter.getAttributeSet()) + bit * 20;
-    int realxpos = xpos + 20;
-    boolean FirstBlock = bit == 0;
-    boolean LastBlock = bit == (NrOfBits - 1);
-    Graphics g = painter.getGraphics();
-    Font font = g.getFont();
-    GraphicsUtil.switchToWidth(g, 2);
-    g.drawRect(realxpos, realypos, SymbolWidth, 20);
-    GraphicsUtil.drawText(
-        g,
-        "A",
-        realxpos + SymbolWidth - 3,
-        realypos + 10,
-        GraphicsUtil.H_RIGHT,
-        GraphicsUtil.V_CENTER);
-    if (FirstBlock && LastBlock) {
-      GraphicsUtil.switchToWidth(g, 3);
-      g.drawLine(
-          realxpos + SymbolWidth + 1, realypos + 10, realxpos + SymbolWidth + 20, realypos + 10);
-      painter.drawPort(DATA);
-      return;
-    }
-    g.drawLine(realxpos + SymbolWidth, realypos + 10, realxpos + SymbolWidth + 10, realypos + 10);
-    g.drawLine(
-        realxpos + SymbolWidth + 10, realypos + 10, realxpos + SymbolWidth + 15, realypos + 5);
-    g.setFont(font.deriveFont(7.0f));
-    GraphicsUtil.drawText(
-        g,
-        Integer.toString(bit),
-        realxpos + SymbolWidth + 3,
-        realypos + 7,
-        GraphicsUtil.H_LEFT,
-        GraphicsUtil.V_BASELINE);
-    g.setFont(font);
-    GraphicsUtil.switchToWidth(g, 5);
-    if (FirstBlock) {
-      g.drawLine(
-          realxpos + SymbolWidth + 15, realypos + 5, realxpos + SymbolWidth + 15, realypos + 20);
-      g.drawLine(realxpos + SymbolWidth + 15, realypos + 5, realxpos + SymbolWidth + 20, realypos);
-      painter.drawPort(DATA);
-    } else if (LastBlock) {
-      g.drawLine(realxpos + SymbolWidth + 15, realypos, realxpos + SymbolWidth + 15, realypos + 10);
-    } else
-      g.drawLine(realxpos + SymbolWidth + 15, realypos, realxpos + SymbolWidth + 15, realypos + 20);
-    GraphicsUtil.switchToWidth(g, 1);
-  }
-
-  public int getControlHeight(AttributeSet attrs) {
-    return 60;
-  }
-
   @Override
   public String getHDLName(AttributeSet attrs) {
     String Label = CorrectLabel.getCorrectLabel(attrs.getValue(StdAttr.LABEL));
@@ -304,12 +192,17 @@ public class Rom extends Mem {
 
   @Override
   HexFrame getHexFrame(Project proj, Instance instance, CircuitState state) {
-    return RomAttributes.getHexFrame(getMemContents(instance), proj);
+    return RomAttributes.getHexFrame(getMemContents(instance), proj, instance);
   }
 
-  // TODO - maybe delete this method?
-  MemContents getMemContents(Instance instance) {
+  public static MemContents getMemContents(Instance instance) {
     return instance.getAttributeValue(CONTENTS_ATTR);
+  }
+  
+  public static void closeHexFrame(Component c) {
+    if (!(c instanceof InstanceComponent)) return;
+    Instance inst =((InstanceComponent)c).getInstance();
+    RomAttributes.closeHexFrame(getMemContents(inst));
   }
 
   @Override
@@ -318,7 +211,7 @@ public class Rom extends Mem {
     if (attrs.getValue(StdAttr.APPEARANCE) == StdAttr.APPEAR_CLASSIC) {
       return Bounds.create(0, 0, SymbolWidth + 40, 140);
     } else {
-      return Bounds.create(0, 0, SymbolWidth + 40, getControlHeight(attrs) + 20 * len);
+      return Bounds.create(0, 0, SymbolWidth + 40, RamAppearance.getControlHeight(attrs) + 20 * len);
     }
   }
 
@@ -352,48 +245,18 @@ public class Rom extends Mem {
 
   @Override
   protected void instanceAttributeChanged(Instance instance, Attribute<?> attr) {
-    if (attr == Mem.DATA_ATTR || attr == StdAttr.APPEARANCE) {
+    if (attr == Mem.DATA_ATTR || attr == StdAttr.APPEARANCE || attr == Mem.LINE_ATTR) {
       instance.recomputeBounds();
       configurePorts(instance);
     }
   }
 
-  public void DrawRomClassic(InstancePainter painter) {
-    DrawMemClassic(painter);
-  }
-
   @Override
   public void paintInstance(InstancePainter painter) {
     if (painter.getAttributeValue(StdAttr.APPEARANCE) == StdAttr.APPEAR_CLASSIC) {
-      DrawRomClassic(painter);
+    	RamAppearance.DrawRamClassic(painter);
     } else {
-      Graphics g = painter.getGraphics();
-      Bounds bds = painter.getBounds();
-
-      painter.drawLabel();
-
-      int xpos = bds.getX();
-      int ypos = bds.getY();
-      int NrOfBits = painter.getAttributeValue(Mem.DATA_ATTR).getWidth();
-      /* draw control */
-      DrawControlBlock(painter, xpos, ypos);
-      /* draw body */
-      for (int i = 0; i < NrOfBits; i++) {
-        DrawDataBlock(painter, xpos, ypos, i, NrOfBits);
-      }
-      /* Draw contents */
-      if (painter.getShowState()) {
-        MemState state = getState(painter);
-        state.paint(
-            painter.getGraphics(),
-            bds.getX(),
-            bds.getY(),
-            25,
-            getControlHeight(painter.getAttributeSet()) + 5,
-            Mem.SymbolWidth - 20,
-            20 * NrOfBits - 10,
-            false);
-      }
+    	RamAppearance.DrawRamEvolution(painter);
     }
   }
 
@@ -401,18 +264,34 @@ public class Rom extends Mem {
   public void propagate(InstanceState state) {
     MemState myState = getState(state);
     BitWidth dataBits = state.getAttributeValue(DATA_ATTR);
+    AttributeSet attrs = state.getAttributeSet();
 
-    Value addrValue = state.getPortValue(ADDR);
+    Value addrValue = state.getPortValue(RamAppearance.getAddrIndex(0, attrs));
+    int nrDataLines = RamAppearance.getNrDataOutPorts(attrs);
 
     int addr = addrValue.toIntValue();
-    if (!addrValue.isFullyDefined() || addr < 0) return;
+    if (addrValue.isErrorValue() || (addrValue.isFullyDefined() && addr < 0)) {
+      for (int i = 0 ; i < nrDataLines ; i++)
+        state.setPort(RamAppearance.getDataOutIndex(i, attrs), Value.createError(dataBits), DELAY);
+      return;
+    }
+    if (!addrValue.isFullyDefined()) {
+      for (int i = 0 ; i < nrDataLines ; i++)
+        state.setPort(RamAppearance.getDataOutIndex(i, attrs), Value.createUnknown(dataBits), DELAY);
+      return;
+    }
     if (addr != myState.getCurrent()) {
       myState.setCurrent(addr);
       myState.scrollToShow(addr);
     }
-
-    int val = myState.getContents().get(addr);
-    state.setPort(DATA, Value.createKnown(dataBits, val), DELAY);
+    
+    boolean misaligned = addr%nrDataLines != 0; 
+    
+    for (int i = 0 ; i < nrDataLines ; i++) {
+      int val = myState.getContents().get(addr+i);
+      state.setPort(RamAppearance.getDataOutIndex(i, attrs), 
+                    misaligned ? Value.createError(dataBits) : Value.createKnown(dataBits, val), DELAY);
+    }
   }
 
   @Override

@@ -115,7 +115,7 @@ public class MemPoker extends InstancePoker {
     public Bounds getBounds(InstancePainter painter) {
       MemState data = (MemState) painter.getData();
       Bounds inBounds = painter.getInstance().getBounds();
-      return data.getBounds(data.getCursor(), inBounds);
+      return data.getDataBounds(data.getCursor(), inBounds);
     }
 
     @Override
@@ -168,6 +168,7 @@ public class MemPoker extends InstancePoker {
     @Override
     public void paint(InstancePainter painter) {
       Bounds bds = getBounds(painter);
+      if (bds == null || bds == Bounds.EMPTY_BOUNDS) return;
       Graphics g = painter.getGraphics();
       g.setColor(Color.RED);
       g.drawRect(bds.getX(), bds.getY(), bds.getWidth(), bds.getHeight());

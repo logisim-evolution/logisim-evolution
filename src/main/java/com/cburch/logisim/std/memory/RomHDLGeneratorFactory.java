@@ -138,8 +138,9 @@ public class RomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   public SortedMap<String, String> GetPortMap(
       Netlist Nets, NetlistComponent ComponentInfo, FPGAReport Reporter, String HDLType) {
     SortedMap<String, String> PortMap = new TreeMap<String, String>();
-    PortMap.putAll(GetNetMap("Address", true, ComponentInfo, Mem.ADDR, Reporter, HDLType, Nets));
-    PortMap.putAll(GetNetMap("Data", true, ComponentInfo, Mem.DATA, Reporter, HDLType, Nets));
+    AttributeSet attrs = ComponentInfo.GetComponent().getAttributeSet();
+    PortMap.putAll(GetNetMap("Address", true, ComponentInfo, RamAppearance.getAddrIndex(0, attrs), Reporter, HDLType, Nets));
+    PortMap.putAll(GetNetMap("Data", true, ComponentInfo, RamAppearance.getDataOutIndex(0, attrs), Reporter, HDLType, Nets));
     return PortMap;
   }
 
@@ -150,6 +151,6 @@ public class RomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public boolean HDLTargetSupported(String HDLType, AttributeSet attrs) {
-    return true;
+    return attrs.getValue(Mem.LINE_ATTR).equals(Mem.SINGLE);
   }
 }

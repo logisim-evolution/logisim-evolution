@@ -33,6 +33,7 @@ import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.gui.hex.HexFrame;
+import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
@@ -43,15 +44,23 @@ import java.util.WeakHashMap;
 
 class RomAttributes extends AbstractAttributeSet {
 
-  static HexFrame getHexFrame(MemContents value, Project proj) {
+  static HexFrame getHexFrame(MemContents value, Project proj, Instance instance) {
     synchronized (windowRegistry) {
       HexFrame ret = windowRegistry.get(value);
       if (ret == null) {
-        ret = new HexFrame(proj, value);
+        ret = new HexFrame(proj, instance, value);
         windowRegistry.put(value, ret);
       }
       return ret;
     }
+  }
+  
+  static void closeHexFrame(MemContents value) {
+    HexFrame ret;
+    synchronized (windowRegistry) {
+      ret = windowRegistry.remove(value);
+    }
+    if (ret != null) ret.closeAndDispose();
   }
 
   static void register(MemContents value, Project proj) {
@@ -68,6 +77,7 @@ class RomAttributes extends AbstractAttributeSet {
           new Attribute<?>[] {
             Mem.ADDR_ATTR,
             Mem.DATA_ATTR,
+            Mem.LINE_ATTR,
             Rom.CONTENTS_ATTR,
             StdAttr.LABEL,
             StdAttr.LABEL_FONT,
@@ -83,13 +93,14 @@ class RomAttributes extends AbstractAttributeSet {
   private BitWidth addrBits = BitWidth.create(8);
   private BitWidth dataBits = BitWidth.create(8);
   private MemContents contents;
+  private AttributeOption lineSize = Mem.SINGLE;
   private String Label = "";
   private Font LabelFont = StdAttr.DEFAULT_LABEL_FONT;
   private Boolean LabelVisable = false;
   private AttributeOption Appearance = AppPreferences.getDefaultAppearance();
 
   RomAttributes() {
-    contents = MemContents.create(addrBits.getWidth(), dataBits.getWidth(), true);
+    contents = MemContents.create(addrBits.getWidth(), dataBits.getWidth());
   }
 
   @Override
@@ -97,6 +108,7 @@ class RomAttributes extends AbstractAttributeSet {
     RomAttributes d = (RomAttributes) dest;
     d.addrBits = addrBits;
     d.dataBits = dataBits;
+    d.lineSize = lineSize;
     d.contents = contents.clone();
     d.LabelFont = LabelFont;
     d.LabelVisable = LabelVisable;
@@ -116,6 +128,9 @@ class RomAttributes extends AbstractAttributeSet {
     }
     if (attr == Mem.DATA_ATTR) {
       return (V) dataBits;
+    }
+    if (attr == Mem.LINE_ATTR) {
+      return (V) lineSize;
     }
     if (attr == Rom.CONTENTS_ATTR) {
       return (V) contents;
@@ -145,13 +160,18 @@ class RomAttributes extends AbstractAttributeSet {
       BitWidth newAddr = (BitWidth) value;
       if (newAddr == addrBits) return;
       addrBits = newAddr;
-      contents.setDimensions(addrBits.getWidth(), dataBits.getWidth(), true);
+      contents.setDimensions(addrBits.getWidth(), dataBits.getWidth());
       fireAttributeValueChanged(attr, value, null);
     } else if (attr == Mem.DATA_ATTR) {
       BitWidth newData = (BitWidth) value;
       if (newData == dataBits) return;
       dataBits = newData;
-      contents.setDimensions(addrBits.getWidth(), dataBits.getWidth(), true);
+      contents.setDimensions(addrBits.getWidth(), dataBits.getWidth());
+      fireAttributeValueChanged(attr, value, null);
+    } else if (attr == Mem.LINE_ATTR) {
+      AttributeOption val = (AttributeOption) value;
+      if (lineSize.equals(val)) return;
+      lineSize = val;
       fireAttributeValueChanged(attr, value, null);
     } else if (attr == Rom.CONTENTS_ATTR) {
       MemContents newContents = (MemContents) value;
