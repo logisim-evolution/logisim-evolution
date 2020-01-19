@@ -360,13 +360,17 @@ public class MemContents implements Cloneable, HexModel {
   }
 
   public void copyFrom(long start, MemContents src, long offs, int count) {
-    count = (int)Math.max(count, getLastOffset() - start + 1);
+    count = (int)Math.min(count, getLastOffset() - start + 1);
     if (count <= 0)
       return;
-    if (src.addrBits != addrBits)
-      throw new IllegalArgumentException("memory width mismatch");
+    if (src.addrBits != width)
+      throw new IllegalArgumentException(String.format(
+              "memory width mismatch: src is %d bits wide, dest is %d bits wide",
+              src.addrBits, addrBits));
     if (offs + count - 1 > src.getLastOffset())
-      throw new IllegalArgumentException("memory offset out of range");
+      throw new IllegalArgumentException(String.format(
+    		  "memory offset out of range: offset 0x%x count 0x%x exceeds last valid offset 0x%x",
+    		  offs, count, src.getLastOffset()));
 
     int dp = (int) (start >>> PAGE_SIZE_BITS);
     int di = (int) (start & PAGE_MASK);

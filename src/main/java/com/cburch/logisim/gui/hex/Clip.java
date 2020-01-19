@@ -41,7 +41,6 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
-import java.io.StringReader;
 import javax.swing.JOptionPane;
 
 class Clip implements ClipboardOwner {
@@ -195,16 +194,26 @@ class Clip implements ClipboardOwner {
         p1 = t;
       }
       p1++;
-
-      if (p1 - p0 == numWords) {
-        ((MemContents)model).copyFrom(p0, pasted, 0, numWords);
-      } else {
-        JOptionPane.showMessageDialog(
-            editor.getRootPane(),
-            S.get("hexPasteSizeError"),
+      if (p1 - p0 > numWords) {
+          int action = JOptionPane.showConfirmDialog(editor.getRootPane(),
+              S.fmt("hexPasteTooSmall", numWords, p1 - p0),
             S.get("hexPasteErrorTitle"),
-            JOptionPane.ERROR_MESSAGE);
+            JOptionPane.OK_CANCEL_OPTION,
+            JOptionPane.QUESTION_MESSAGE);
+        if (action != JOptionPane.OK_OPTION)
+          return;
+        p1 = p0 + numWords;
+      } else if (p1 - p0 < numWords) {
+        int action = JOptionPane.showConfirmDialog(editor.getRootPane(),
+            S.fmt("hexPasteTooSmall", numWords, p1 - p0),
+            S.get("hexPasteErrorTitle"),
+            JOptionPane.OK_CANCEL_OPTION,
+            JOptionPane.QUESTION_MESSAGE);
+        if (action != JOptionPane.OK_OPTION)
+          return;
+        numWords = (int)(p1 - p0);
       }
+      ((MemContents)model).copyFrom(p0, pasted, 0, numWords);
     }
   }
 }
