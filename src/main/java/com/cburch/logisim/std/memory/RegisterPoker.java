@@ -100,7 +100,7 @@ public class RegisterPoker extends InstancePoker {
 
     Graphics g = painter.getGraphics();
     g.setColor(Color.RED);
-    int wid = 7 * len + 2;
+    int wid = 8 * len + 2;
     g.drawRect(bds.getX() + (bds.getWidth() - wid) / 2, bds.getY(), wid, 16);
     g.setColor(Color.BLACK);
   }

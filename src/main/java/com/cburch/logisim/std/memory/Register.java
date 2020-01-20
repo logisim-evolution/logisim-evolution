@@ -82,7 +82,7 @@ public class Register extends InstanceFactory implements DynamicElementProvider 
       Value value) {
     int dq_width = (nr_of_bits == 1) ? 3 : 5;
     int len = (nr_of_bits + 3) / 4;
-    int wid = 7 * len + 2;
+    int wid = 8 * len + 2;
     int xoff = (60 - wid) / 2;
     Graphics g = painter.getGraphics();
     if (painter.getShowState() && (value != null)) {
