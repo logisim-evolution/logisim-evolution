@@ -75,7 +75,7 @@ public abstract class Mem extends InstanceFactory {
       this.instance = instance;
     }
 
-    public void bytesChanged(HexModel source, long start, long numBytes, int[] values) {
+    public void bytesChanged(HexModel source, long start, long numBytes, long[] values) {
       instance.fireInvalidated();
     }
 
@@ -160,7 +160,7 @@ public abstract class Mem extends InstanceFactory {
   }
 
   protected static String GetSizeLabel(int NrAddressBits) {
-    String[] Labels = {"", "k", "M", "G"};
+    String[] Labels = {"", "K", "M", "G", "T", "P", "E"};
     int pass = 0;
     int AddrBits = NrAddressBits;
     while (AddrBits > 9) {

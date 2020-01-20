@@ -51,8 +51,8 @@ import java.awt.Graphics2D;
 public class Power extends InstanceFactory {
   private class PowerHDLGeneratorFactory extends AbstractConstantHDLGeneratorFactory {
     @Override
-    public int GetConstant(AttributeSet attrs) {
-      int ConstantValue = 0;
+    public long GetConstant(AttributeSet attrs) {
+      long ConstantValue = 0;
       for (int bit = 0; bit < attrs.getValue(StdAttr.WIDTH).getWidth(); bit++) {
         ConstantValue <<= 1;
         ConstantValue |= 1;

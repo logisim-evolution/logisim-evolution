@@ -217,7 +217,7 @@ public class SplitterAttributes extends AbstractAttributeSet {
       Attributes.forBitWidth("incoming", S.getter("splitterBitWidthAttr"));
 
   public static final Attribute<Integer> ATTR_FANOUT =
-      Attributes.forIntegerRange("fanout", S.getter("splitterFanOutAttr"), 1, 32);
+      Attributes.forIntegerRange("fanout", S.getter("splitterFanOutAttr"), 1, 64);
 
   private static final List<Attribute<?>> INIT_ATTRIBUTES =
       Arrays.asList(

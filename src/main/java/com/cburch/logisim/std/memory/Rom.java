@@ -269,7 +269,7 @@ public class Rom extends Mem {
     Value addrValue = state.getPortValue(RamAppearance.getAddrIndex(0, attrs));
     int nrDataLines = RamAppearance.getNrDataOutPorts(attrs);
 
-    int addr = addrValue.toIntValue();
+    long addr = addrValue.toLongValue();
     if (addrValue.isErrorValue() || (addrValue.isFullyDefined() && addr < 0)) {
       for (int i = 0 ; i < nrDataLines ; i++)
         state.setPort(RamAppearance.getDataOutIndex(i, attrs), Value.createError(dataBits), DELAY);
@@ -288,7 +288,7 @@ public class Rom extends Mem {
     boolean misaligned = addr%nrDataLines != 0; 
     
     for (int i = 0 ; i < nrDataLines ; i++) {
-      int val = myState.getContents().get(addr+i);
+      long val = myState.getContents().get(addr+i);
       state.setPort(RamAppearance.getDataOutIndex(i, attrs), 
                     misaligned ? Value.createError(dataBits) : Value.createKnown(dataBits, val), DELAY);
     }

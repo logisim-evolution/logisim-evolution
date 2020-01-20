@@ -59,17 +59,17 @@ public class Divider extends InstanceFactory {
     int w = width.getWidth();
     if (upper == Value.NIL || upper.isUnknown()) upper = Value.createKnown(width, 0);
     if (a.isFullyDefined() && b.isFullyDefined() && upper.isFullyDefined()) {
-      BigInteger uu = BigInteger.valueOf(Multiplier.extend(w, upper.toIntValue(), unsigned));
-      BigInteger aa = BigInteger.valueOf(Multiplier.extend(w, a.toIntValue(), unsigned));
-      BigInteger bb = BigInteger.valueOf(Multiplier.extend(w, b.toIntValue(), unsigned));
+      BigInteger uu = BigInteger.valueOf(Multiplier.extend(w, upper.toLongValue(), unsigned));
+      BigInteger aa = BigInteger.valueOf(Multiplier.extend(w, a.toLongValue(), unsigned));
+      BigInteger bb = BigInteger.valueOf(Multiplier.extend(w, b.toLongValue(), unsigned));
 
       BigInteger num = uu.shiftLeft(w).or(aa);
       BigInteger den = bb.equals(BigInteger.ZERO) ? BigInteger.valueOf(1) : bb;
 
       BigInteger res[] = num.divideAndRemainder(den);
       long mask = (1L << w) - 1;
-      int result = res[0].and(BigInteger.valueOf(mask)).intValue();
-      int rem = res[1].and(BigInteger.valueOf(mask)).intValue();
+      long result = res[0].and(BigInteger.valueOf(mask)).longValue();
+      long rem = res[1].and(BigInteger.valueOf(mask)).longValue();
       return new Value[] {Value.createKnown(width, result), Value.createKnown(width, rem)};
     } else if (a.isErrorValue() || b.isErrorValue() || upper.isErrorValue()) {
       return new Value[] {Value.createError(width), Value.createError(width)};

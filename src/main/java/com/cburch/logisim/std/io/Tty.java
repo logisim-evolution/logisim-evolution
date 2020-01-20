@@ -235,7 +235,7 @@ public class Tty extends InstanceFactory  implements DynamicElementProvider {
         } else {
           go = lastClock == Value.FALSE && clock == Value.TRUE;
         }
-        if (go) state.add(in.isFullyDefined() ? (char) in.toIntValue() : '?');
+        if (go) state.add(in.isFullyDefined() ? (char) in.toLongValue() : '?');
       }
     }
   }

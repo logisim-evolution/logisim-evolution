@@ -238,7 +238,7 @@ abstract class AbstractGate extends InstanceFactory {
     Direction facing = attrs.facing;
     int size = ((Integer) attrs.size.getValue()).intValue();
     int axisLength = size + bonusWidth + (negateOutput ? 10 : 0);
-    int negated = attrs.negated;
+    long negated = attrs.negated;
 
     int skipStart;
     int skipDist;
@@ -277,7 +277,7 @@ abstract class AbstractGate extends InstanceFactory {
     }
 
     int dx = axisLength;
-    int negatedBit = (negated >> index) & 1;
+    int negatedBit = (int)(negated >> index) & 1;
     if (negatedBit == 1) {
       dx += 10;
     }
@@ -307,7 +307,7 @@ abstract class AbstractGate extends InstanceFactory {
         public void computeExpression(ExpressionComputer.Map expressionMap) {
           GateAttributes attrs = (GateAttributes) instance.getAttributeSet();
           int inputCount = attrs.inputs;
-          int negated = attrs.negated;
+          long negated = attrs.negated;
           int width = attrs.width.getWidth();
 
           for (int b = 0; b < width; b++) {
@@ -316,7 +316,7 @@ abstract class AbstractGate extends InstanceFactory {
             for (int i = 1; i <= inputCount; i++) {
               Expression e = expressionMap.get(instance.getPortLocation(i), b);
               if (e != null) {
-                int negatedBit = (negated >> (i - 1)) & 1;
+                int negatedBit = (int)(negated >> (i - 1)) & 1;
                 if (negatedBit == 1) {
                   e = Expressions.not(e);
                 }
@@ -344,7 +344,7 @@ abstract class AbstractGate extends InstanceFactory {
     if (inputs % 2 == 0) {
       inputs++;
     }
-    int negated = attrs.negated;
+    long negated = attrs.negated;
 
     int width = size + bonusWidth + (negateOutput ? 10 : 0);
     if (negated != 0) {
@@ -391,7 +391,7 @@ abstract class AbstractGate extends InstanceFactory {
     GateAttributes attrs = (GateAttributes) painter.getAttributeSet();
     Direction facing = attrs.facing;
     int inputs = attrs.inputs;
-    int negated = attrs.negated;
+    long negated = attrs.negated;
 
     Object shape = painter.getGateShape();
     Location loc = painter.getLocation();
@@ -413,7 +413,7 @@ abstract class AbstractGate extends InstanceFactory {
       PainterShaped.paintInputLines(painter, this);
     } else if (negated != 0) {
       for (int i = 0; i < inputs; i++) {
-        int negatedBit = (negated >> i) & 1;
+        int negatedBit = (int)(negated >> i) & 1;
         if (negatedBit == 1) {
           Location in = getInputOffset(attrs, i);
           Location cen = in.translate(facing, 5);
@@ -566,7 +566,7 @@ abstract class AbstractGate extends InstanceFactory {
   public void propagate(InstanceState state) {
     GateAttributes attrs = (GateAttributes) state.getAttributeSet();
     int inputCount = attrs.inputs;
-    int negated = attrs.negated;
+    long negated = attrs.negated;
     AttributeSet opts = state.getProject().getOptions().getAttributeSet();
     boolean errorIfUndefined =
         opts.getValue(Options.ATTR_GATE_UNDEFINED).equals(Options.GATE_UNDEFINED_ERROR);
@@ -576,7 +576,7 @@ abstract class AbstractGate extends InstanceFactory {
     boolean error = false;
     for (int i = 1; i <= inputCount; i++) {
       if (state.isPortConnected(i)) {
-        int negatedBit = (negated >> (i - 1)) & 1;
+        int negatedBit = (int)(negated >> (i - 1)) & 1;
         if (negatedBit == 1) {
           inputs[numInputs] = state.getPortValue(i).not();
         } else {

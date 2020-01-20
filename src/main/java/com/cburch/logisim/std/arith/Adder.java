@@ -54,17 +54,21 @@ public class Adder extends InstanceFactory {
     int w = width.getWidth();
     if (c_in == Value.UNKNOWN || c_in == Value.NIL) c_in = Value.FALSE;
     if (a.isFullyDefined() && b.isFullyDefined() && c_in.isFullyDefined()) {
-      if (w >= 32) {
-        long mask = (1L << w) - 1;
-        long ax = (long) a.toIntValue() & mask;
-        long bx = (long) b.toIntValue() & mask;
-        long cx = (long) c_in.toIntValue() & mask;
-        long sum = ax + bx + cx;
+      if (w == 64) {
+        long ax = a.toLongValue();
+        long bx = b.toLongValue();
+        long cx = c_in.toLongValue();
+        long mask = ~(1L << 63);
+        boolean a_last = (ax < 0);
+        boolean b_last = (bx < 0);
+        boolean cin_last = (((ax & mask) + (bx & mask) + cx) < 0);
+        boolean cout = (a_last && b_last) || (a_last && cin_last) || (b_last && cin_last);
+        long sum = a.toLongValue() + b.toLongValue() + c_in.toLongValue();
         return new Value[] {
-          Value.createKnown(width, (int) sum), ((sum >> w) & 1) == 0 ? Value.FALSE : Value.TRUE
+          Value.createKnown(width, sum), cout ? Value.TRUE : Value.FALSE
         };
       } else {
-        int sum = a.toIntValue() + b.toIntValue() + c_in.toIntValue();
+        long sum = a.toLongValue() + b.toLongValue() + c_in.toLongValue();
         return new Value[] {
           Value.createKnown(width, sum), ((sum >> w) & 1) == 0 ? Value.FALSE : Value.TRUE
         };

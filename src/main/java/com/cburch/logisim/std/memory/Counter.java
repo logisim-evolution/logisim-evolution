@@ -78,8 +78,8 @@ public class Counter extends InstanceFactory implements DynamicElementProvider {
 
   static final AttributeOption ON_GOAL_LOAD =
       new AttributeOption("load", "load", S.getter("counterGoalLoad"));
-  static final Attribute<Integer> ATTR_MAX =
-      Attributes.forHexInteger("max", S.getter("counterMaxAttr"));
+  static final Attribute<Long> ATTR_MAX =
+      Attributes.forHexLong("max", S.getter("counterMaxAttr"));
 
   static final Attribute<AttributeOption> ATTR_ON_GOAL =
       Attributes.forOption(
@@ -195,14 +195,14 @@ public class Counter extends InstanceFactory implements DynamicElementProvider {
     painter.drawClockSymbol(xpos + 20, ypos + 80);
     painter.drawClockSymbol(xpos + 20, ypos + 90);
     /* Draw Label */
-    int max = painter.getAttributeValue(ATTR_MAX).intValue();
+    long max = painter.getAttributeValue(ATTR_MAX).longValue();
     boolean IsCTRm = (max == painter.getAttributeValue(StdAttr.WIDTH).getMask());
     Object onGoal = painter.getAttributeValue(ATTR_ON_GOAL);
     IsCTRm |= onGoal == ON_GOAL_CONT;
     String Label =
         (IsCTRm)
             ? "CTR" + Integer.toString(painter.getAttributeValue(StdAttr.WIDTH).getWidth())
-            : "CTR DIV0x" + Integer.toHexString(max);
+            : "CTR DIV0x" + Long.toHexString(max);
     GraphicsUtil.drawCenteredText(g, Label, xpos + (SymbolWidth(width) / 2) + 20, ypos + 5);
     GraphicsUtil.switchToWidth(g, 2);
     /* Draw Reset Input */
@@ -262,7 +262,7 @@ public class Counter extends InstanceFactory implements DynamicElementProvider {
     g.fillOval(xpos + 32 + SymbolWidth(width), ypos + 47, 6, 6);
     String MaxVal =
         "3CT=0x"
-            + Integer.toHexString(painter.getAttributeValue(ATTR_MAX).intValue()).toUpperCase();
+            + Long.toHexString(painter.getAttributeValue(ATTR_MAX).longValue()).toUpperCase();
     GraphicsUtil.drawText(
         g,
         MaxVal,
@@ -292,10 +292,10 @@ public class Counter extends InstanceFactory implements DynamicElementProvider {
       String Value = "";
       if (val.isFullyDefined()) {
         g.setColor(Color.DARK_GRAY);
-        Value = StringUtil.toHexString(width, val.toIntValue()).toUpperCase();
+        Value = StringUtil.toHexString(width, val.toLongValue()).toUpperCase();
       } else {
         g.setColor(Color.YELLOW);
-        for (int i = 0; i < StringUtil.toHexString(width, val.toIntValue()).length(); i++)
+        for (int i = 0; i < StringUtil.toHexString(width, val.toLongValue()).length(); i++)
           Value = (val.isUnknown()) ? Value.concat("?") : Value.concat("!");
       }
       GraphicsUtil.drawText(
@@ -409,7 +409,7 @@ public class Counter extends InstanceFactory implements DynamicElementProvider {
       String value = "";
       if (val.isFullyDefined()) {
         g.setColor(Color.LIGHT_GRAY);
-        value = ((1 << BitNr) & val.toIntValue()) != 0 ? "1" : "0";
+        value = ((1 << BitNr) & val.toLongValue()) != 0 ? "1" : "0";
       } else if (val.isUnknown()) {
         g.setColor(Color.BLUE);
         value = "?";
@@ -473,7 +473,7 @@ public class Counter extends InstanceFactory implements DynamicElementProvider {
     String a;
     String b = null;
     if (painter.getShowState()) {
-      int val = state == null ? 0 : state.value.toIntValue();
+      long val = state == null ? 0 : state.value.toLongValue();
       String str = StringUtil.toHexString(width, val);
       if (str.length() <= 4) {
         a = str;
@@ -548,7 +548,7 @@ public class Counter extends InstanceFactory implements DynamicElementProvider {
 
     BitWidth dataWidth = state.getAttributeValue(StdAttr.WIDTH);
     Object triggerType = state.getAttributeValue(StdAttr.EDGE_TRIGGER);
-    int max = state.getAttributeValue(ATTR_MAX).intValue();
+    long max = state.getAttributeValue(ATTR_MAX).intValue();
     Value clock = state.getPortValue(CK);
     boolean triggered = data.updateClock(clock, triggerType);
 
@@ -568,13 +568,13 @@ public class Counter extends InstanceFactory implements DynamicElementProvider {
       } else if (ld) {
         Value in = state.getPortValue(IN);
         newVal = in;
-        if (newVal.toIntValue() > max)
-          newVal = Value.createKnown(dataWidth, newVal.toIntValue() & max);
+        if (newVal.toLongValue() > max)
+          newVal = Value.createKnown(dataWidth, newVal.toLongValue() & max);
       } else if (!oldVal.isFullyDefined()) {
         newVal = oldVal;
       } else if (en) {
-        int goal = (UpCount) ? max : 0;
-        if (oldVal.toIntValue() == goal) {
+        long goal = (UpCount) ? max : 0;
+        if (oldVal.toLongValue() == goal) {
           Object onGoal = state.getAttributeValue(ATTR_ON_GOAL);
           if (onGoal == ON_GOAL_WRAP) {
             newVal = Value.createKnown(dataWidth, (UpCount) ? 0 : max);
@@ -583,12 +583,12 @@ public class Counter extends InstanceFactory implements DynamicElementProvider {
           } else if (onGoal == ON_GOAL_LOAD) {
             Value in = state.getPortValue(IN);
             newVal = in;
-            if (newVal.toIntValue() > max)
-              newVal = Value.createKnown(dataWidth, newVal.toIntValue() & max);
+            if (newVal.toLongValue() > max)
+              newVal = Value.createKnown(dataWidth, newVal.toLongValue() & max);
           } else if (onGoal == ON_GOAL_CONT) {
             newVal =
                 Value.createKnown(
-                    dataWidth, (UpCount) ? oldVal.toIntValue() + 1 : oldVal.toIntValue() - 1);
+                    dataWidth, (UpCount) ? oldVal.toLongValue() + 1 : oldVal.toLongValue() - 1);
           } else {
             logger.error("Invalid goal attribute {}", onGoal);
             newVal = Value.createKnown(dataWidth, ld ? max : 0);
@@ -596,13 +596,13 @@ public class Counter extends InstanceFactory implements DynamicElementProvider {
         } else {
           newVal =
               Value.createKnown(
-                  dataWidth, (UpCount) ? oldVal.toIntValue() + 1 : oldVal.toIntValue() - 1);
+                  dataWidth, (UpCount) ? oldVal.toLongValue() + 1 : oldVal.toLongValue() - 1);
         }
       } else {
         newVal = oldVal;
       }
       newValue = newVal;
-      carry = newVal.toIntValue() == (UpCount ? max : 0);
+      carry = newVal.toLongValue() == (UpCount ? max : 0);
       /*
        * I would want this if I were worried about the carry signal
        * outrunning the clock. But the component's delay should be enough

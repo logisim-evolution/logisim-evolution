@@ -135,7 +135,7 @@ public class BitSelector extends InstanceFactory {
     if (!select.isFullyDefined()) {
       group = Value.createUnknown(groupBits);
     } else {
-      int shift = select.toIntValue() * groupBits.getWidth();
+      int shift = (int)select.toLongValue() * groupBits.getWidth();
       if (shift >= data.getWidth()) {
         group = Value.createKnown(groupBits, 0);
       } else if (groupBits.getWidth() == 1) {

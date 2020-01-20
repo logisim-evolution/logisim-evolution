@@ -33,9 +33,9 @@ import com.cburch.logisim.prefs.AppPreferences;
 class MemContentsSub {
   private static class BytePage extends MemContents.Page {
     private byte[] data;
-    private int mask;
+    private long mask;
 
-    public BytePage(int size, int mask) {
+    public BytePage(int size, long mask) {
       this.mask = mask;
       data = new byte[size];
       if (AppPreferences.Memory_Startup_Unknown.get()) {
@@ -55,8 +55,8 @@ class MemContentsSub {
     }
 
     @Override
-    int get(int addr) {
-      return addr >= 0 && addr < data.length ? data[addr] : 0;
+    long get(long addr) {
+      return addr >= 0 && addr < data.length ? data[(int)addr] : 0;
     }
 
     //
@@ -68,19 +68,19 @@ class MemContentsSub {
     }
 
     @Override
-    void load(int start, int[] values, int mask) {
-      int n = Math.min(values.length, data.length - start);
+    void load(long start, long[] values, long mask) {
+      int n = Math.min(values.length, data.length - (int)start);
       for (int i = 0; i < n; i++) {
-        data[start + i] = (byte) (values[i] & mask);
+        data[(int)start + i] = (byte) (values[i] & mask);
       }
     }
 
     @Override
-    void set(int addr, int value) {
+    void set(long addr, long value) {
       if (addr >= 0 && addr < data.length) {
-        byte oldValue = data[addr];
+        byte oldValue = (byte)data[(int)addr];
         if (value != oldValue) {
-          data[addr] = (byte) value;
+          data[(int)addr] = (byte) value;
         }
       }
     }
@@ -88,14 +88,14 @@ class MemContentsSub {
 
   private static class IntPage extends MemContents.Page {
     private int[] data;
-    private int mask;
+    private long mask;
 
-    public IntPage(int size, int mask) {
+    public IntPage(int size, long mask) {
       this.mask = mask;
       data = new int[size];
       if (AppPreferences.Memory_Startup_Unknown.get()) {
         java.util.Random generator = new java.util.Random();
-        for (int i = 0; i < size; i++) data[i] = (int) generator.nextInt() & mask;
+        for (int i = 0; i < size; i++) data[i] = (int) (generator.nextInt() & mask);
       }
     }
 
@@ -108,8 +108,8 @@ class MemContentsSub {
     }
 
     @Override
-    int get(int addr) {
-      return addr >= 0 && addr < data.length ? data[addr] : 0;
+    long get(long addr) {
+      return addr >= 0 && addr < data.length ? data[(int)addr] : 0;
     }
 
     //
@@ -121,19 +121,19 @@ class MemContentsSub {
     }
 
     @Override
-    void load(int start, int[] values, int mask) {
-      int n = Math.min(values.length, data.length - start);
+    void load(long start, long[] values, long mask) {
+      int n = Math.min(values.length, data.length - (int)start);
       for (int i = 0; i < n; i++) {
-        data[start+i] = values[i] & mask;
+        data[(int)start+i] = (int)(values[i] & mask);
       }
     }
 
     @Override
-    void set(int addr, int value) {
+    void set(long addr, long value) {
       if (addr >= 0 && addr < data.length) {
-        int oldValue = data[addr];
+        int oldValue = (int)data[(int)addr];
         if (value != oldValue) {
-          data[addr] = value;
+          data[(int)addr] = (int)value;
         }
       }
     }
@@ -141,9 +141,9 @@ class MemContentsSub {
 
   private static class ShortPage extends MemContents.Page {
     private short[] data;
-    private int mask;
+    private long mask;
 
-    public ShortPage(int size, int mask) {
+    public ShortPage(int size, long mask) {
       data = new short[size];
       this.mask = mask;
       if (AppPreferences.Memory_Startup_Unknown.get()) {
@@ -161,8 +161,8 @@ class MemContentsSub {
     }
 
     @Override
-    int get(int addr) {
-      return addr >= 0 && addr < data.length ? data[addr] : 0;
+    long get(long addr) {
+      return addr >= 0 && addr < data.length ? data[(int)addr] : 0;
     }
 
     //
@@ -174,33 +174,87 @@ class MemContentsSub {
     }
 
     @Override
-    void load(int start, int[] values, int mask) {
-      int n = Math.min(values.length, data.length - start);
+    void load(long start, long[] values, long mask) {
+      int n = Math.min(values.length, data.length - (int)start);
       /*
        * Bugfix in memory writing (by Roy77)
        * https://github.com/roy77
        */
-      for (int i = start; i < n; i++) {
-        data[start + i] = (short) (values[i] & mask);
+      for (int i = (int)start; i < n; i++) {
+        data[(int)start + i] = (short) (values[i] & mask);
       }
     }
 
     @Override
-    void set(int addr, int value) {
+    void set(long addr, long value) {
       if (addr >= 0 && addr < data.length) {
-        short oldValue = data[addr];
+        short oldValue = data[(int)addr];
         if (value != oldValue) {
-          data[addr] = (short) value;
+          data[(int)addr] = (short) value;
+        }
+      }
+    }
+  }
+
+  private static class LongPage extends MemContents.Page {
+    private long[] data;
+    private long mask;
+
+    public LongPage(int size, long mask) {
+      this.mask = mask;
+      data = new long[size];
+      if (AppPreferences.Memory_Startup_Unknown.get()) {
+        java.util.Random generator = new java.util.Random();
+        for (int i = 0; i < size; i++) data[i] = (int) generator.nextLong() & mask;
+      }
+    }
+
+    @Override
+    public LongPage clone() {
+      LongPage ret = (LongPage) super.clone();
+      ret.data = new long[this.data.length];
+      System.arraycopy(this.data, 0, ret.data, 0, this.data.length);
+      return ret;
+    }
+
+    @Override
+    long get(long addr) {
+      return addr >= 0 && addr < data.length ? data[(int)addr] : 0;
+    }
+
+    //
+    // methods for accessing data within memory
+    //
+    @Override
+    int getLength() {
+      return data.length;
+    }
+
+    @Override
+    void load(long start, long[] values, long mask) {
+      int n = Math.min(values.length, data.length - (int)start);
+      for (int i = 0; i < n; i++) {
+        data[(int)start+i] = (values[i] & mask);
+      }
+    }
+
+    @Override
+    void set(long addr, long value) {
+      if (addr >= 0 && addr < data.length) {
+        long oldValue = data[(int)addr];
+        if (value != oldValue) {
+          data[(int)addr] = value;
         }
       }
     }
   }
 
   static MemContents.Page createPage(int size, int bits) {
-    int mask = (bits == 32) ? 0xffffffff : (1 << bits) - 1;
+    long mask = (bits == 64) ? 0xffffffffffffffffL : (1L << bits) - 1;
     if (bits <= 8) return new BytePage(size, mask);
     else if (bits <= 16) return new ShortPage(size, mask);
-    else return new IntPage(size, mask);
+    else if (bits <= 32) return new IntPage(size, mask);
+    else return new LongPage(size, mask);
   }
 
   private MemContentsSub() {}

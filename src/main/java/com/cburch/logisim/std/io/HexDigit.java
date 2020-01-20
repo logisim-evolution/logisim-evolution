@@ -180,7 +180,7 @@ public class HexDigit extends InstanceFactory implements DynamicElementProvider 
     Value baseVal = state.getPortValue(HEX);
     if (baseVal == null) baseVal = Value.createUnknown(BitWidth.create(4));
     Value dpVal = state.getPortValue(DP);
-    int segs = getSegs(baseVal.toIntValue());
+    int segs = getSegs((int)baseVal.toLongValue());
     if ((segs & SEG_C_MASK) != 0) summary |= 4; // vertical seg in bottom right
     if ((segs & SEG_B_MASK) != 0) summary |= 2; // vertical seg in top right
     if ((segs & SEG_D_MASK) != 0) summary |= 8; // horizontal seg at bottom
@@ -188,7 +188,7 @@ public class HexDigit extends InstanceFactory implements DynamicElementProvider 
     if ((segs & SEG_A_MASK) != 0) summary |= 1; // horizontal seg at top
     if ((segs & SEG_E_MASK) != 0) summary |= 16; // vertical seg at bottom left
     if ((segs & SEG_F_MASK) != 0) summary |= 32; // vertical seg at top left
-    if (dpVal != null && dpVal.toIntValue() == 1) summary |= 128; // decimal point
+    if (dpVal != null && (int)dpVal.toLongValue() == 1) summary |= 128; // decimal point
 
     Object value = Integer.valueOf(summary);
     InstanceDataSingleton data = (InstanceDataSingleton) state.getData();

@@ -33,10 +33,10 @@ public interface HexModel {
   public void addHexModelListener(HexModelListener l);
 
   /** Fills a series of values with the same value. */
-  public void fill(long start, long length, int value);
+  public void fill(long start, long length, long value);
 
   /** Returns the value at the given address. */
-  public int get(long address);
+  public long get(long address);
 
   /** Returns the offset of the initial value to be displayed. */
   public long getFirstOffset();
@@ -51,8 +51,8 @@ public interface HexModel {
   public void removeHexModelListener(HexModelListener l);
 
   /** Changes the value at the given address. */
-  public void set(long address, int value);
+  public void set(long address, long value);
 
   /** Changes a series of values at the given addresses. */
-  public void set(long start, int[] values);
+  public void set(long start, long[] values);
 }
