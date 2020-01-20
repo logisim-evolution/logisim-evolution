@@ -167,7 +167,9 @@ public class RegTabContent extends JScrollPane implements LocaleListener, Simula
                 mainCircState, circuitName, selReg.getEnd(0).getLocation()); // Get Q port location
 
         if (val != null) {
-          panel.add(new MyLabel(val.toHexString()), c);
+          MyLabel hexLabel = new MyLabel(val.toHexString());
+          hexLabel.setFont(new Font(Font.MONOSPACED, Font.PLAIN, hexLabel.getFont().getSize()));
+          panel.add(hexLabel, c);
         } else {
           panel.add(new MyLabel("-"), c);
         }
