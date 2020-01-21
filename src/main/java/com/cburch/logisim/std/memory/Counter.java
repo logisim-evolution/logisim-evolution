@@ -58,6 +58,8 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
+import java.math.BigInteger;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -548,7 +550,7 @@ public class Counter extends InstanceFactory implements DynamicElementProvider {
 
     BitWidth dataWidth = state.getAttributeValue(StdAttr.WIDTH);
     Object triggerType = state.getAttributeValue(StdAttr.EDGE_TRIGGER);
-    long max = state.getAttributeValue(ATTR_MAX).intValue();
+    BigInteger max = new BigInteger(Long.toUnsignedString(state.getAttributeValue(ATTR_MAX).longValue()));
     Value clock = state.getPortValue(CK);
     boolean triggered = data.updateClock(clock, triggerType);
 
@@ -562,47 +564,44 @@ public class Counter extends InstanceFactory implements DynamicElementProvider {
       boolean en = state.getPortValue(EN) != Value.FALSE;
       boolean UpCount = state.getPortValue(UD) != Value.FALSE;
       Value oldVal = data.value;
-      Value newVal;
+      BigInteger oldValue = new BigInteger(Long.toUnsignedString(oldVal.toLongValue()));
+      BigInteger loadValue = new BigInteger(Long.toUnsignedString(state.getPortValue(IN).toLongValue()));
+      BigInteger newVal;
       if (!triggered) {
-        newVal = oldVal;
+        newVal = new BigInteger(Long.toUnsignedString(oldVal.toLongValue()));
       } else if (ld) {
-        Value in = state.getPortValue(IN);
-        newVal = in;
-        if (newVal.toLongValue() > max)
-          newVal = Value.createKnown(dataWidth, newVal.toLongValue() & max);
+        newVal = loadValue;
+        if (newVal.compareTo(max) > 0)
+          newVal = newVal.and(max);
       } else if (!oldVal.isFullyDefined()) {
-        newVal = oldVal;
+        newVal = null;
       } else if (en) {
-        long goal = (UpCount) ? max : 0;
-        if (oldVal.toLongValue() == goal) {
+    	BigInteger goal = (UpCount) ? max : BigInteger.ZERO;
+        if (oldValue.compareTo(goal) == 0) {
           Object onGoal = state.getAttributeValue(ATTR_ON_GOAL);
           if (onGoal == ON_GOAL_WRAP) {
-            newVal = Value.createKnown(dataWidth, (UpCount) ? 0 : max);
+            newVal = (UpCount) ? BigInteger.ZERO : max;
           } else if (onGoal == ON_GOAL_STAY) {
-            newVal = oldVal;
+            newVal = oldValue;
           } else if (onGoal == ON_GOAL_LOAD) {
-            Value in = state.getPortValue(IN);
-            newVal = in;
-            if (newVal.toLongValue() > max)
-              newVal = Value.createKnown(dataWidth, newVal.toLongValue() & max);
+            newVal = loadValue;
+            if (newVal.compareTo(max)>0)
+              newVal = newVal.and(max);
           } else if (onGoal == ON_GOAL_CONT) {
-            newVal =
-                Value.createKnown(
-                    dataWidth, (UpCount) ? oldVal.toLongValue() + 1 : oldVal.toLongValue() - 1);
+            newVal = (UpCount) ? oldValue.add(BigInteger.ONE) : oldValue.subtract(BigInteger.ONE);
           } else {
             logger.error("Invalid goal attribute {}", onGoal);
-            newVal = Value.createKnown(dataWidth, ld ? max : 0);
+            newVal = ld ? max : BigInteger.ZERO;
           }
         } else {
-          newVal =
-              Value.createKnown(
-                  dataWidth, (UpCount) ? oldVal.toLongValue() + 1 : oldVal.toLongValue() - 1);
+          newVal = UpCount ? oldValue.add(BigInteger.ONE) : oldValue.subtract(BigInteger.ONE);
         }
       } else {
-        newVal = oldVal;
+        newVal = oldValue;
       }
-      newValue = newVal;
-      carry = newVal.toLongValue() == (UpCount ? max : 0);
+      newValue = newVal == null ? Value.createError(dataWidth) : Value.createKnown(dataWidth, newVal.longValue());
+      BigInteger compVal = (UpCount) ? max : BigInteger.ZERO;
+      carry = newVal.compareTo(compVal) == 0;
       /*
        * I would want this if I were worried about the carry signal
        * outrunning the clock. But the component's delay should be enough

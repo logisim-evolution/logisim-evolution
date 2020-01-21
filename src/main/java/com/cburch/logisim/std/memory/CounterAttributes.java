@@ -57,7 +57,7 @@ class CounterAttributes extends AbstractAttributeSet {
             },
             new Object[] {
               BitWidth.create(8),
-              Integer.valueOf(0xFF),
+              Long.valueOf(0xFF),
               Counter.ON_GOAL_WRAP,
               StdAttr.TRIG_RISING,
               "",
