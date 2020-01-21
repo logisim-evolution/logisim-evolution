@@ -42,11 +42,14 @@ import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.std.memory.Register;
 import com.cburch.logisim.util.LocaleListener;
+import com.cburch.logisim.util.AlphanumComparator;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 import java.util.HashMap;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -145,18 +148,17 @@ public class RegTabContent extends JScrollPane implements LocaleListener, Simula
     y++;
 
     if (!registers.isEmpty()) {
-      Object[] objArr = registers.keySet().toArray();
-      Arrays.sort(objArr);
-      for (Object name : objArr) {
+      List<String> keys = registers.keySet().stream().sorted(new AlphanumComparator()).collect(Collectors.toList());
+      for (String key : keys) {
         c.gridy = y;
         c.gridx = 0;
-        String circuitName = name.toString().split("/")[0];
+        String circuitName = key.split("/")[0];
         panel.add(new MyLabel(circuitName, Font.ITALIC, true), c);
         c.gridx++;
-        String registerName = name.toString().split("/")[1];
+        String registerName = key.split("/")[1];
         panel.add(new MyLabel(registerName), c);
         c.gridx++;
-        Component selReg = registers.get(name.toString());
+        Component selReg = registers.get(key);
         CircuitState mainCircState = proj.getCircuitState();
         while (mainCircState.getParentState() != null) { // Get the main
           // circuit
@@ -167,7 +169,9 @@ public class RegTabContent extends JScrollPane implements LocaleListener, Simula
                 mainCircState, circuitName, selReg.getEnd(0).getLocation()); // Get Q port location
 
         if (val != null) {
-          panel.add(new MyLabel(val.toHexString()), c);
+          MyLabel hexLabel = new MyLabel(val.toHexString());
+          hexLabel.setFont(new Font(Font.MONOSPACED, Font.PLAIN, hexLabel.getFont().getSize()));
+          panel.add(hexLabel, c);
         } else {
           panel.add(new MyLabel("-"), c);
         }
