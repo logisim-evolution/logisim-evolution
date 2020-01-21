@@ -458,9 +458,13 @@ public class Value {
       if (width < 64 && (value >> (width - 1)) != 0) {
         value |= (-1) << width;
       }
-      return "" + value;
+      return Long.toString(value);
     } else {
-      return "" + (value & 0xFFFFFFFFFFFFFFFFL);
+      if (width < 64) {
+        long mask = (-1 << width)^0xFFFFFFFFFFFFFFFFL;
+        value &= mask;
+      }
+      return Long.toUnsignedString(value);
     }
   }
 

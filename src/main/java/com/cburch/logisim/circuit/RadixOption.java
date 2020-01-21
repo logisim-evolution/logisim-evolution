@@ -126,6 +126,7 @@ public abstract class RadixOption extends AttributeOption {
         case 61:
         case 62:
         case 63:
+        case 64:
           return 20; // 1E..4E
         default:
           return 1;

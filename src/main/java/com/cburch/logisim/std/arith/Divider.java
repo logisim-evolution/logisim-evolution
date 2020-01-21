@@ -38,6 +38,7 @@ import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.gui.icons.ArithmeticIcon;
+import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceFactory;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
@@ -59,15 +60,16 @@ public class Divider extends InstanceFactory {
     int w = width.getWidth();
     if (upper == Value.NIL || upper.isUnknown()) upper = Value.createKnown(width, 0);
     if (a.isFullyDefined() && b.isFullyDefined() && upper.isFullyDefined()) {
-      BigInteger uu = BigInteger.valueOf(Multiplier.extend(w, upper.toLongValue(), unsigned));
-      BigInteger aa = BigInteger.valueOf(Multiplier.extend(w, a.toLongValue(), unsigned));
-      BigInteger bb = BigInteger.valueOf(Multiplier.extend(w, b.toLongValue(), unsigned));
+      BigInteger uu = Multiplier.extend(w, upper.toLongValue(), unsigned);
+      BigInteger aa = Multiplier.extend(w, a.toLongValue(), unsigned);
+      BigInteger bb = Multiplier.extend(w, b.toLongValue(), unsigned);
 
       BigInteger num = uu.shiftLeft(w).or(aa);
       BigInteger den = bb.equals(BigInteger.ZERO) ? BigInteger.valueOf(1) : bb;
 
       BigInteger res[] = num.divideAndRemainder(den);
-      long mask = (1L << w) - 1;
+  	  long mask = w == 64 ? 0 : (-1L) << w;
+  	  mask ^= 0xFFFFFFFFFFFFFFFFL;
       long result = res[0].and(BigInteger.valueOf(mask)).longValue();
       long rem = res[1].and(BigInteger.valueOf(mask)).longValue();
       return new Value[] {Value.createKnown(width, result), Value.createKnown(width, rem)};
@@ -107,6 +109,16 @@ public class Divider extends InstanceFactory {
     ps[REM].setToolTip(S.getter("dividerRemainderTip"));
     setPorts(ps);
   }
+
+  @Override
+  protected void configureNewInstance(Instance instance) {
+    instance.addAttributeListener();
+  }
+  
+  @Override
+  protected void instanceAttributeChanged(Instance instance, Attribute<?> attr) {
+    if (attr == MODE_ATTR) instance.fireInvalidated();
+  }  
 
   @Override
   public void paintInstance(InstancePainter painter) {
