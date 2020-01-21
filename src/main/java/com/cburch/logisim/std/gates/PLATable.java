@@ -312,18 +312,18 @@ public class PLATable {
       return ret;
     }
 
-    boolean matches(int input) {
+    boolean matches(long input) {
       for (char bit : inBits) {
-        int b = input & 1;
+        long b = input & 1;
         if ((bit == ONE && b != 1) || (bit == ZERO && b != 0)) return false;
         input = (input >> 1);
       }
       return true;
     }
 
-    int getOutput() {
-      int out = 0;
-      int bit = 1;
+    long getOutput() {
+      long out = 0;
+      long bit = 1;
       for (char c : outBits) {
         if (c == ONE) out |= bit;
         bit = bit << 1;
@@ -332,12 +332,12 @@ public class PLATable {
     }
   }
 
-  public int valueFor(int input) {
+  public long valueFor(long input) {
     for (Row row : rows) if (row.matches(input)) return row.getOutput();
     return 0;
   }
 
-  public String commentFor(int input) {
+  public String commentFor(long input) {
     for (Row row : rows) if (row.matches(input)) return row.comment;
     return "n/a";
   }

@@ -290,7 +290,7 @@ public class Demultiplexer extends InstanceFactory {
     } else {
       Value sel = state.getPortValue(outputs);
       if (sel.isFullyDefined()) {
-        outIndex = sel.toIntValue();
+        outIndex = (int)sel.toLongValue();
         out = state.getPortValue(outputs + (enable ? 2 : 1));
       } else if (sel.isErrorValue()) {
         others = Value.createError(data);

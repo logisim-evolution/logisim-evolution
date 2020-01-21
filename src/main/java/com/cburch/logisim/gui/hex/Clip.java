@@ -45,9 +45,9 @@ import javax.swing.JOptionPane;
 
 class Clip implements ClipboardOwner {
   private static class Data implements Transferable {
-    private int[] data;
+    private long[] data;
 
-    Data(int[] data) {
+    Data(long[] data) {
       this.data = data;
     }
 
@@ -58,7 +58,7 @@ class Clip implements ClipboardOwner {
       } else if (flavor == DataFlavor.stringFlavor) {
         int bits = 1;
         for (int i = 0; i < data.length; i++) {
-          int k = data[i] >> bits;
+          long k = data[i] >> bits;
           while (k != 0 && bits < 32) {
             bits++;
             k >>= 1;
@@ -71,7 +71,7 @@ class Clip implements ClipboardOwner {
           if (i > 0) {
             buf.append(i % 8 == 0 ? '\n' : ' ');
           }
-          String s = Integer.toHexString(data[i]);
+          String s = Long.toHexString(data[i]);
           while (s.length() < chars) s = "0" + s;
           buf.append(s);
         }
@@ -90,7 +90,7 @@ class Clip implements ClipboardOwner {
     }
   }
 
-  private static final DataFlavor binaryFlavor = new DataFlavor(int[].class, "Binary data");
+  private static final DataFlavor binaryFlavor = new DataFlavor(long[].class, "Binary data");
 
   private HexEditor editor;
 
@@ -116,7 +116,7 @@ class Clip implements ClipboardOwner {
     }
     p1++;
 
-    int[] data = new int[(int) (p1 - p0)];
+    long[] data = new long[(int) (p1 - p0)];
     HexModel model = editor.getModel();
     for (long i = p0; i < p1; i++) {
       data[(int) (i - p0)] = model.get(i);
@@ -136,7 +136,7 @@ class Clip implements ClipboardOwner {
     int numWords = 0;
     if (xfer.isDataFlavorSupported(binaryFlavor)) {
       try {
-        int[] data = (int[]) xfer.getTransferData(binaryFlavor);
+        long[] data = (long[]) xfer.getTransferData(binaryFlavor);
         numWords = data.length;
         int addrBits = 32 - Integer.numberOfLeadingZeros(numWords);
         pasted = MemContents.create(addrBits, model.getValueWidth());

@@ -66,7 +66,7 @@ public class CounterPoker extends InstancePoker {
 
     // compute the next value
     CounterData cur = CounterData.get(state, width);
-    int newVal = (cur.getValue().toIntValue() * 16 + val) & width.getMask();
+    long newVal = (cur.getValue().toLongValue() * 16 + val) & width.getMask();
     Value newValue = Value.createKnown(width, newVal);
     cur.setValue(newValue);
     state.fireInvalidated();

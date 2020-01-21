@@ -61,7 +61,7 @@ public class Ram extends Mem {
       if (Label.equals("")) {
         Label = null;
       }
-      if (option instanceof Integer) {
+      if (option instanceof Long) {
         String disp = S.get("ramComponent");
         Location loc = state.getInstance().getLocation();
         return (Label == null) ? disp + loc + "[" + option + "]" : Label + "[" + option + "]";
@@ -81,8 +81,8 @@ public class Ram extends Mem {
         if (ret == null) {
           ret = new Object[1 << addrBits];
           logOptions[addrBits] = ret;
-          for (int i = 0; i < ret.length; i++) {
-            ret[i] = Integer.valueOf(i);
+          for (long i = 0; i < ret.length; i++) {
+            ret[(int) i] = Long.valueOf(i);
           }
         }
         return ret;
@@ -91,9 +91,9 @@ public class Ram extends Mem {
 
     @Override
     public Value getLogValue(InstanceState state, Object option) {
-      if (option instanceof Integer) {
+      if (option instanceof Long) {
         MemState s = (MemState) state.getData();
-        int addr = ((Integer) option).intValue();
+        long addr = ((Long) option).longValue();
         return Value.createKnown(BitWidth.create(s.getDataBits()), s.getContents().get(addr));
       } else {
         return Value.NIL;
@@ -273,7 +273,7 @@ public class Ram extends Mem {
 
     // next we get the address and the mem value currently stored
     Value addrValue = state.getPortValue(RamAppearance.getAddrIndex(0, attrs));
-    int addr = addrValue.toIntValue();
+    long addr = addrValue.toLongValue();
     boolean goodAddr = addrValue.isFullyDefined() && addr >= 0 ;
     if (goodAddr && addr != myState.getCurrent()) {
       myState.setCurrent(addr);
@@ -288,7 +288,7 @@ public class Ram extends Mem {
     }
   }
   
-  private void propagateLineEnables(InstanceState state, int addr, boolean goodAddr, boolean errorValue) {
+  private void propagateLineEnables(InstanceState state, long addr, boolean goodAddr, boolean errorValue) {
     AttributeSet attrs = state.getAttributeSet();
     RamState myState = (RamState) getState(state);
     boolean separate = isSeparate(attrs);
@@ -306,7 +306,7 @@ public class Ram extends Mem {
           if (le != null && le.equals(Value.FALSE))
             continue;
         }
-        int dataValue = state.getPortValue(RamAppearance.getDataInIndex(i, attrs)).toIntValue();
+        long dataValue = state.getPortValue(RamAppearance.getDataInIndex(i, attrs)).toLongValue();
         myState.getContents().set(addr+i, dataValue);
       }
     }
@@ -316,7 +316,7 @@ public class Ram extends Mem {
     boolean outputEnabled = separate || !state.getPortValue(RamAppearance.getOEIndex(0, attrs)).equals(Value.FALSE);
     if (outputEnabled && goodAddr && (addr % dataLines == 0)) {
       for (int i = 0; i < dataLines; i++) {
-        int val = myState.getContents().get(addr+i);
+        long val = myState.getContents().get(addr+i);
         state.setPort(RamAppearance.getDataOutIndex(i, attrs), Value.createKnown(width, val), DELAY);
       }
     } else if (outputEnabled && (errorValue || (goodAddr && (addr % dataLines != 0)))) {
@@ -328,12 +328,12 @@ public class Ram extends Mem {
     }
   }
   
-  private void propagateByteEnables(InstanceState state, int addr, boolean goodAddr, boolean errorValue) {
+  private void propagateByteEnables(InstanceState state, long addr, boolean goodAddr, boolean errorValue) {
     AttributeSet attrs = state.getAttributeSet();
     RamState myState = (RamState) getState(state);
     boolean separate = isSeparate(attrs);
-    int oldMemValue = myState.getContents().get(myState.getCurrent());
-    int newMemValue = oldMemValue;
+    long oldMemValue = myState.getContents().get(myState.getCurrent());
+    long newMemValue = oldMemValue;
     // perform writes
     Object trigger = state.getAttributeValue(StdAttr.TRIGGER);
     Value weValue = state.getPortValue(RamAppearance.getWEIndex(0, attrs));
@@ -343,13 +343,13 @@ public class Ram extends Mem {
                       (trigger.equals(StdAttr.TRIG_LOW) && weValue.equals(Value.FALSE));
     boolean weTriggered = (async && weAsync) || (edge && weValue.equals(Value.TRUE));
     if (goodAddr && weTriggered) {
-      int dataInValue = state.getPortValue(RamAppearance.getDataInIndex(0, attrs)).toIntValue();
+      long dataInValue = state.getPortValue(RamAppearance.getDataInIndex(0, attrs)).toLongValue();
       if (RamAppearance.getNrBEPorts(attrs) == 0) {
         newMemValue = dataInValue;
       } else {
         for (int i = 0 ; i < RamAppearance.getNrBEPorts(attrs) ; i++) {
-          int mask = 0xFF << (i*8);
-          int andMask = mask ^ (-1);
+          long mask = 0xFF << (i*8);
+          long andMask = mask ^ (-1L);
           if (state.getPortValue(RamAppearance.getBEIndex(i, attrs)).equals(Value.TRUE)) {
             newMemValue &= andMask;
             newMemValue |= (dataInValue & mask);

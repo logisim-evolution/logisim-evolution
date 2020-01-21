@@ -115,9 +115,9 @@ public class SplitterFactory extends AbstractComponentFactory {
           ParallelConfigurator.create(
               new BitWidthConfigurator(SplitterAttributes.ATTR_WIDTH),
               new IntegerConfigurator(
-                  SplitterAttributes.ATTR_FANOUT, 1, 32, InputEvent.ALT_DOWN_MASK));
+                  SplitterAttributes.ATTR_FANOUT, 1, 64, InputEvent.ALT_DOWN_MASK));
       return JoinedConfigurator.create(
-          new IntegerConfigurator(SplitterAttributes.ATTR_FANOUT, 1, 32, 0), altConfig);
+          new IntegerConfigurator(SplitterAttributes.ATTR_FANOUT, 1, 64, 0), altConfig);
     }
     return super.getFeature(key, attrs);
   }

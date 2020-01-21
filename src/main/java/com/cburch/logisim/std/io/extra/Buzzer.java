@@ -230,13 +230,13 @@ public class Buzzer extends InstanceFactory {
     }
     d.is_on.set(active);
 
-    int freq = state.getPortValue(FREQ).toIntValue();
+    int freq = (int)state.getPortValue(FREQ).toLongValue();
     if (freq >= 0) {
       if (state.getAttributeValue(FREQUENCY_MEASURE) == dHz) freq /= 10;
       d.hz = freq;
     }
     if (state.getPortValue(VOL).isFullyDefined()) {
-      int vol = state.getPortValue(VOL).toIntValue();
+      int vol = (int)state.getPortValue(VOL).toLongValue();
       byte VolumeWidth = (byte) state.getAttributeValue(VOLUME_WIDTH).getWidth();
       d.vol = ((vol & 0xffffffffL) * 127) / (Math.pow(2, VolumeWidth) - 1);
     }

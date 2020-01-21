@@ -56,24 +56,24 @@ public class Multiplier extends InstanceFactory {
   public static final AttributeOption UNSIGNED_OPTION = Comparator.UNSIGNED_OPTION;
   public static final Attribute<AttributeOption> MODE_ATTR = Comparator.MODE_ATTRIBUTE;
 
-  static long extend(int w, int v, boolean unsigned) {
+  static long extend(int w, long v, boolean unsigned) {
     long mask = (1L << w) - 1;
     if (unsigned) return v & mask;
-    else if ((v & (1 << (w - 1))) != 0) return (long) v | ~mask;
-    else return (long) v;
+    else if ((v & (1 << (w - 1))) != 0) return v | ~mask;
+    else return v;
   }
 
   static Value[] computeProduct(BitWidth width, Value a, Value b, Value c_in, boolean unsigned) {
     int w = width.getWidth();
     if (c_in == Value.NIL || c_in.isUnknown()) c_in = Value.createKnown(width, 0);
     if (a.isFullyDefined() && b.isFullyDefined() && c_in.isFullyDefined()) {
-      BigInteger aa = BigInteger.valueOf(extend(w, a.toIntValue(), unsigned));
-      BigInteger bb = BigInteger.valueOf(extend(w, b.toIntValue(), unsigned));
-      BigInteger cc = BigInteger.valueOf(extend(w, c_in.toIntValue(), unsigned));
+      BigInteger aa = BigInteger.valueOf(extend(w, a.toLongValue(), unsigned));
+      BigInteger bb = BigInteger.valueOf(extend(w, b.toLongValue(), unsigned));
+      BigInteger cc = BigInteger.valueOf(extend(w, c_in.toLongValue(), unsigned));
       BigInteger rr = aa.multiply(bb).add(cc);
       long mask = (1L << w) - 1;
-      int lo = rr.and(BigInteger.valueOf(mask)).intValue();
-      int hi = rr.shiftRight(w).and(BigInteger.valueOf(mask)).intValue();
+      long lo = rr.and(BigInteger.valueOf(mask)).longValue();
+      long hi = rr.shiftRight(w).and(BigInteger.valueOf(mask)).longValue();
       return new Value[] {Value.createKnown(width, lo), Value.createKnown(width, hi)};
     } else {
       Value[] avals = a.getAll();
@@ -132,7 +132,7 @@ public class Multiplier extends InstanceFactory {
   private static int getKnown(Value[] vals) {
     int ret = 0;
     for (int i = 0; i < vals.length; i++) {
-      int val = vals[i].toIntValue();
+      int val = (int)vals[i].toLongValue();
       if (val < 0) return ret;
       ret |= val << i;
     }

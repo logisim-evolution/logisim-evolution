@@ -40,16 +40,16 @@ class RomContentsListener implements HexModelListener {
     private RomContentsListener source;
     private MemContents contents;
     private long start;
-    private int[] oldValues;
-    private int[] newValues;
+    private long[] oldValues;
+    private long[] newValues;
     private boolean completed = true;
 
     Change(
         RomContentsListener source,
         MemContents contents,
         long start,
-        int[] oldValues,
-        int[] newValues) {
+        long[] oldValues,
+        long[] newValues) {
       this.source = source;
       this.contents = contents;
       this.start = start;
@@ -66,8 +66,8 @@ class RomContentsListener implements HexModelListener {
         if (oEnd >= start && end >= o.start) {
           long nStart = Math.min(start, o.start);
           long nEnd = Math.max(end, oEnd);
-          int[] nOld = new int[(int) (nEnd - nStart)];
-          int[] nNew = new int[(int) (nEnd - nStart)];
+          long[] nOld = new long[(int) (nEnd - nStart)];
+          long[] nNew = new long[(int) (nEnd - nStart)];
           System.arraycopy(o.oldValues, 0, nOld, (int) (o.start - nStart), o.oldValues.length);
           System.arraycopy(oldValues, 0, nOld, (int) (start - nStart), oldValues.length);
           System.arraycopy(newValues, 0, nNew, (int) (start - nStart), newValues.length);
@@ -128,10 +128,10 @@ class RomContentsListener implements HexModelListener {
     this.proj = proj;
   }
 
-  public void bytesChanged(HexModel source, long start, long numBytes, int[] oldValues) {
+  public void bytesChanged(HexModel source, long start, long numBytes, long[] oldValues) {
     if (enabled && proj != null && oldValues != null) {
       // this change needs to be logged in the undo log
-      int[] newValues = new int[oldValues.length];
+      long[] newValues = new long[oldValues.length];
       for (int i = 0; i < newValues.length; i++) {
         newValues[i] = source.get(start + i);
       }

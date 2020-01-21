@@ -108,32 +108,32 @@ class CounterAttributes extends AbstractAttributeSet {
     Object oldValue = base.getValue(attr);
     if (oldValue == null ? value == null : oldValue.equals(value)) return;
 
-    Integer newMax = null;
+    Long newMax = null;
     if (attr == StdAttr.WIDTH) {
       BitWidth oldWidth = base.getValue(StdAttr.WIDTH);
       BitWidth newWidth = (BitWidth) value;
       int oldW = oldWidth.getWidth();
       int newW = newWidth.getWidth();
-      Integer oldValObj = base.getValue(Counter.ATTR_MAX);
-      int oldVal = oldValObj.intValue();
+      Long oldValObj = base.getValue(Counter.ATTR_MAX);
+      long oldVal = oldValObj.longValue();
       base.setValue(StdAttr.WIDTH, newWidth);
       if (newW > oldW) {
-        newMax = Integer.valueOf(newWidth.getMask());
+        newMax = Long.valueOf(newWidth.getMask());
       } else {
-        int v = oldVal & newWidth.getMask();
+        long v = oldVal & newWidth.getMask();
         if (v != oldVal) {
-          Integer newValObj = Integer.valueOf(v);
+          Long newValObj = Long.valueOf(v);
           base.setValue(Counter.ATTR_MAX, newValObj);
           fireAttributeValueChanged(Counter.ATTR_MAX, newValObj, null);
         }
       }
       fireAttributeValueChanged(StdAttr.WIDTH, newWidth, null);
     } else if (attr == Counter.ATTR_MAX) {
-      int oldVal = base.getValue(Counter.ATTR_MAX).intValue();
+      long oldVal = base.getValue(Counter.ATTR_MAX).longValue();
       BitWidth width = base.getValue(StdAttr.WIDTH);
-      int newVal = ((Integer) value).intValue() & width.getMask();
+      long newVal = ((Long) value).longValue() & width.getMask();
       if (newVal != oldVal) {
-        V val = (V) Integer.valueOf(newVal);
+        V val = (V) Long.valueOf(newVal);
         value = val;
       }
     }

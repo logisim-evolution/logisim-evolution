@@ -183,18 +183,18 @@ public class Shifter extends InstanceFactory {
     Value vd = state.getPortValue(IN1);
     Value vy; // y will by x shifted by d
     if (vd.isFullyDefined() && vx.getWidth() == bits) {
-      int d = vd.toIntValue();
+      int d = (int)vd.toLongValue();
       Object shift = state.getAttributeValue(ATTR_SHIFT);
       if (d == 0) {
         vy = vx;
       } else if (vx.isFullyDefined()) {
-        int x = vx.toIntValue();
-        int y;
+        long x = vx.toLongValue();
+        long y;
         if (shift == SHIFT_LOGICAL_RIGHT) {
           y = x >>> d;
         } else if (shift == SHIFT_ARITHMETIC_RIGHT) {
           if (d >= bits) d = bits - 1;
-          y = x >> d | ((x << (32 - bits)) >> (32 - bits + d));
+          y = x >> d | ((x << (64 - bits)) >> (64 - bits + d));
         } else if (shift == SHIFT_ROLL_RIGHT) {
           if (d >= bits) d -= bits;
           y = (x >>> d) | (x << (bits - d));

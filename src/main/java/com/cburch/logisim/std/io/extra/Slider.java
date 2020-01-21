@@ -70,8 +70,8 @@ public class Slider extends InstanceFactory {
         if (sliderPosition < 0) sliderPosition = 0;
         else if (sliderPosition > SliderWidth) sliderPosition = SliderWidth;
         if (data.right_to_left) sliderPosition = (byte) (SliderWidth - sliderPosition);
-        int value =
-            (int) Math.round(sliderPosition * (Math.pow(2, b.getWidth()) - 1) / SliderWidth);
+        long value =
+            (long) Math.round(sliderPosition * (Math.pow(2, b.getWidth()) - 1) / SliderWidth);
         data.setCurrentValue(value);
         data.setCurrentX(sliderPosition);
         state.getAttributeSet().setValue(ATTR_VALUE, value);
@@ -98,7 +98,7 @@ public class Slider extends InstanceFactory {
   }
 
   public static class SliderValue implements InstanceData, Cloneable {
-    private int currentvalue = 0;
+    private long currentvalue = 0;
     private byte bitwidth = 8, currentx = 0;
     private boolean right_to_left = false;
 
@@ -111,7 +111,7 @@ public class Slider extends InstanceFactory {
       }
     }
 
-    public int getCurrentValue() {
+    public long getCurrentValue() {
       return this.currentvalue;
     }
 
@@ -126,7 +126,7 @@ public class Slider extends InstanceFactory {
       }
     }
 
-    public void setCurrentValue(int x) {
+    public void setCurrentValue(long x) {
       if (x != this.currentvalue) {
         this.currentvalue = x;
         setCurrentX();
@@ -164,8 +164,8 @@ public class Slider extends InstanceFactory {
           new LocaleManager("resources/logisim", "circuit").getter("wireDirectionAttr"),
           new AttributeOption[] {RIGHT_TO_LEFT, LEFT_TO_RIGHT});
 
-  private static final Attribute<Integer> ATTR_VALUE =
-      Attributes.forHexInteger("value", S.getter("constantValueAttr"));
+  private static final Attribute<Long> ATTR_VALUE =
+      Attributes.forHexLong("value", S.getter("constantValueAttr"));
 
   private static final byte SliderWidth = 100;
 
@@ -176,8 +176,8 @@ public class Slider extends InstanceFactory {
       state.setData(ret);
     } else {
       byte width = (byte) state.getAttributeValue(StdAttr.WIDTH).getWidth();
-      int value = state.getAttributeValue(ATTR_VALUE);
-      int maxvalue = (int) (Math.pow(2, width) - 1);
+      long value = state.getAttributeValue(ATTR_VALUE);
+      long maxvalue = (long) (Math.pow(2, width) - 1);
       // if old value is bigger than the max value for the selected bitwidth, set
       // value to its max value
       if (value > maxvalue) {
@@ -298,7 +298,7 @@ public class Slider extends InstanceFactory {
   @Override
   public void propagate(InstanceState state) {
     BitWidth b = state.getAttributeValue(StdAttr.WIDTH);
-    int value = state.getAttributeValue(ATTR_VALUE);
+    long value = state.getAttributeValue(ATTR_VALUE);
     state.setPort(0, Value.createKnown(b, value), 1);
   }
 

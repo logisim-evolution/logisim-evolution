@@ -41,8 +41,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 
 public class RegisterPoker extends InstancePoker {
-  private int initValue;
-  private int curValue;
+  private long initValue;
+  private long curValue;
 
   @Override
   public boolean init(InstanceState state, MouseEvent e) {
@@ -51,7 +51,7 @@ public class RegisterPoker extends InstancePoker {
       data = new RegisterData(state.getAttributeValue(StdAttr.WIDTH));
       state.setData(data);
     }
-    initValue = (data.value.isFullyDefined()) ? data.value.toIntValue() : 0;
+    initValue = (data.value.isFullyDefined()) ? data.value.toLongValue() : 0;
     curValue = initValue;
     return true;
   }
@@ -74,7 +74,7 @@ public class RegisterPoker extends InstancePoker {
     BitWidth dataWidth = state.getAttributeValue(StdAttr.WIDTH);
     if (dataWidth == null) dataWidth = BitWidth.create(8);
     if (e.getKeyCode() == KeyEvent.VK_UP) {
-      int maxVal = dataWidth.getMask();
+      long maxVal = dataWidth.getMask();
       if (curValue != maxVal) {
         curValue = curValue + 1;
         RegisterData data = (RegisterData) state.getData();
@@ -100,7 +100,7 @@ public class RegisterPoker extends InstancePoker {
 
     Graphics g = painter.getGraphics();
     g.setColor(Color.RED);
-    int wid = 7 * len + 2;
+    int wid = 8 * len + 2;
     g.drawRect(bds.getX() + (bds.getWidth() - wid) / 2, bds.getY(), wid, 16);
     g.setColor(Color.BLACK);
   }

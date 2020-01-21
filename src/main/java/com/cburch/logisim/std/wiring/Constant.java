@@ -80,7 +80,7 @@ public class Constant extends InstanceFactory {
     public <V> V getValue(Attribute<V> attr) {
       if (attr == StdAttr.FACING) return (V) facing;
       if (attr == StdAttr.WIDTH) return (V) width;
-      if (attr == ATTR_VALUE) return (V) Integer.valueOf(value.toIntValue());
+      if (attr == ATTR_VALUE) return (V) Long.valueOf(value.toLongValue());
       return null;
     }
 
@@ -93,7 +93,7 @@ public class Constant extends InstanceFactory {
         this.value =
             this.value.extendWidth(width.getWidth(), this.value.get(this.value.getWidth() - 1));
       } else if (attr == ATTR_VALUE) {
-        int val = ((Integer) value).intValue();
+        long val = ((Long) value).longValue();
         this.value = Value.createKnown(width, val);
       } else {
         throw new IllegalArgumentException("unknown attribute " + attr);
@@ -114,20 +114,20 @@ public class Constant extends InstanceFactory {
       int width = attrs.getValue(StdAttr.WIDTH).getWidth();
       Value v = Value.createKnown(BitWidth.create(width), attrs.getValue(ATTR_VALUE));
       for (int b = 0; b < width; b++) {
-        expressionMap.put(instance.getLocation(), b, Expressions.constant(v.get(b).toIntValue()));
+        expressionMap.put(instance.getLocation(), b, Expressions.constant((int)v.get(b).toLongValue()));
       }
     }
   }
 
   private class ConstantHDLGeneratorFactory extends AbstractConstantHDLGeneratorFactory {
     @Override
-    public int GetConstant(AttributeSet attrs) {
+    public long GetConstant(AttributeSet attrs) {
       return attrs.getValue(Constant.ATTR_VALUE);
     }
   }
 
-  public static final Attribute<Integer> ATTR_VALUE =
-      Attributes.forHexInteger("value", S.getter("constantValueAttr"));
+  public static final Attribute<Long> ATTR_VALUE =
+      Attributes.forHexLong("value", S.getter("constantValueAttr"));
 
   public static InstanceFactory FACTORY = new Constant();
 
@@ -195,8 +195,8 @@ public class Constant extends InstanceFactory {
 
   @Override
   public void paintGhost(InstancePainter painter) {
-    int v = painter.getAttributeValue(ATTR_VALUE).intValue();
-    String vStr = Integer.toHexString(v);
+    long v = painter.getAttributeValue(ATTR_VALUE).longValue();
+    String vStr = Long.toHexString(v);
     Bounds bds = getOffsetBounds(painter.getAttributeSet());
 
     Graphics g = painter.getGraphics();
@@ -230,8 +230,8 @@ public class Constant extends InstanceFactory {
 
     Graphics g = painter.getGraphics();
     if (w == 1) {
-      int v = painter.getAttributeValue(ATTR_VALUE).intValue();
-      Value val = v == 1 ? Value.TRUE : Value.FALSE;
+      long v = painter.getAttributeValue(ATTR_VALUE).longValue();
+      Value val = v == 1L ? Value.TRUE : Value.FALSE;
       g.setColor(val.getColor());
       GraphicsUtil.drawCenteredText(g, "" + v, 10, 9);
     } else {
@@ -245,8 +245,8 @@ public class Constant extends InstanceFactory {
   public void paintInstance(InstancePainter painter) {
     Bounds bds = painter.getOffsetBounds();
     BitWidth width = painter.getAttributeValue(StdAttr.WIDTH);
-    int intValue = painter.getAttributeValue(ATTR_VALUE).intValue();
-    Value v = Value.createKnown(width, intValue);
+    long longValue = painter.getAttributeValue(ATTR_VALUE).intValue();
+    Value v = Value.createKnown(width, longValue);
     Location loc = painter.getLocation();
     int x = loc.getX();
     int y = loc.getY();
@@ -279,7 +279,7 @@ public class Constant extends InstanceFactory {
   @Override
   public void propagate(InstanceState state) {
     BitWidth width = state.getAttributeValue(StdAttr.WIDTH);
-    int value = state.getAttributeValue(ATTR_VALUE).intValue();
+    long value = state.getAttributeValue(ATTR_VALUE).longValue();
     state.setPort(0, Value.createKnown(width, value), 1);
   }
 
