@@ -35,10 +35,15 @@
 	<mapID target="features_colors" url="en/html/guide/feature/fet-colors.html" />
 	<mapID target="features_autolabel" url="en/html/guide/feature/fet-autolabel.html" />	
 	<mapID target="features_matrix" url="en/html/guide/feature/fet-matrix.html" />
-	<mapID target="mem_guide" url="en/html/guide/mem/index.html" />
-	<mapID target="mem_poke" url="en/html/guide/mem/poke.html" /> <!-- obsolete -->
-	<mapID target="mem_menu" url="en/html/guide/mem/gui-menu.html" />
-	<mapID target="mem_hex" url="en/html/guide/mem/hex.html" />
+	
+    <mapID target="mem_guide" url="fr/html/guide/mem/index.html"/>
+    <mapID target="mem_poke" url="fr/html/guide/mem/mem-poke.html" />
+    <mapID target="mem_menu" url="fr/html/guide/mem/mem-menu.html"/>
+    <mapID target="mem_hex" url="fr/html/guide/mem/mem-hex.html"/>  
+    <mapID target="mem_v2raw" url="fr/html/guide/mem/mem-v2raw.html"/>  
+    <mapID target="mem_v3word" url="fr/html/guide/mem/mem-v3word.html"/> 
+    <mapID target="mem_v3byte" url="fr/html/guide/mem/mem-v3byte.html"/> 
+	
 	<mapID target="analyze" url="en/html/guide/analyze/index.html" />
 	<mapID target="analyze_open" url="en/html/guide/analyze/open.html" />
 	<mapID target="analyze_table" url="en/html/guide/analyze/table.html" />
@@ -90,6 +95,7 @@
 	<mapID target="menu_printertab" url="en/html/guide/menu/printertab.html" />
 	<mapID target="about" url="en/html/guide/about/index.html" />
 	<mapID target="about_gpl" url="en/html/guide/about/gpl.html" />
+
 	
 	<mapID target="libs" url="en/html/libs/index.html" />
 	<mapID target="wiring" url="en/html/libs/wiring/index.html" />

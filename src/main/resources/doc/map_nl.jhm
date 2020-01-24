@@ -29,14 +29,21 @@
   <mapID target="subcirc_personalise" url="nl/html/guide/subcirc/sub-personalise.html"/>
   <mapID target="subcirc_debug" url="nl/html/guide/subcirc/sub-debug.html"/>
   <mapID target="subcirc_library" url="nl/html/guide/subcirc/sub-library.html"/>
-  <mapID target="bundles" url="nl/html/guide/bundles/index.html"/>
-  <mapID target="bundles_creating" url="nl/html/guide/bundles/creating.html"/>
-  <mapID target="bundles_splitting" url="nl/html/guide/bundles/splitting.html"/>
-  <mapID target="bundles_colors" url="nl/html/guide/bundles/colors.html"/>
+  <mapID target="features" url="nl/html/guide/feature/index.html" />
+  <mapID target="features_creating" url="nl/html/guide/feature/fet-creating.html" />
+  <mapID target="features_splitting" url="nl/html/guide/feature/fet-splitting.html" />
+  <mapID target="features_colors" url="nl/html/guide/feature/fet-colors.html" />
+  <mapID target="features_autolabel" url="nl/html/guide/feature/fet-autolabel.html" />	
+  <mapID target="features_matrix" url="nl/html/guide/feature/fet-matrix.html" />
+  
   <mapID target="mem_guide" url="nl/html/guide/mem/index.html"/>
-  <mapID target="mem_poke" url="nl/html/guide/mem/poke.html" />  <!-- obsolete -->
-  <mapID target="mem_menu" url="nl/html/guide/mem/gui-menu.html"/>
-  <mapID target="mem_hex" url="nl/html/guide/mem/hex.html"/>
+  <mapID target="mem_poke" url="nl/html/guide/mem/mem-poke.html" />
+  <mapID target="mem_menu" url="nl/html/guide/mem/mem-menu.html"/>
+  <mapID target="mem_hex" url="nl/html/guide/mem/mem-hex.html"/>  
+  <mapID target="mem_v2raw" url="nl/html/guide/mem/mem-v2raw.html"/>  
+  <mapID target="mem_v3word" url="nl/html/guide/mem/mem-v3word.html"/> 
+  <mapID target="mem_v3byte" url="nl/html/guide/mem/mem-v3byte.html"/> 
+  
   <mapID target="analyze" url="nl/html/guide/analyze/index.html"/>
   <mapID target="analyze_open" url="nl/html/guide/analyze/open.html"/>
   <mapID target="analyze_table" url="nl/html/guide/analyze/table.html"/>
@@ -89,6 +96,7 @@
   <mapID target="about" url="nl/html/guide/about/index.html"/>
   <mapID target="about_gpl" url="nl/html/guide/about/gpl.html"/>
   <mapID target="about_gpl_fr" url="nl/html/guide/about/gpl.html"/>
+  <mapID target="about_gpl_tr" url="nl/html/guide/about/gpl-nl.html"/>
   
   <mapID target="libs" url="nl/html/libs/index.html"/>  
   <mapID target="wiring" url="nl/html/libs/wiring/index.html"/>
