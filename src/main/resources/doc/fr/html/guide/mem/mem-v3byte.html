@@ -39,7 +39,7 @@ a7eb2d655343913e6b7d39db17730c77
         Si longueur de l'ensemble des données du fichier est plus courte que l'espace mémoire les cellules restantes seront initialisées à 0 pour les ROM et pour les RAM à 0 ou aléatoirement selon les paramètres dans <a href="../opts/index.html">Les options de projet</a>.
       </p>
 	   <center>
-        <img  src="../../../../img-guide/membyteplainbe.png" alt="#########">
+        <img  src="../../../../img-guide/membyteplainbe.png" alt="#########" height=348 width=480>
       </center>
       <p>
         Dans le mode big-endian la mémoire est considérée comme une suite d'octet indépendamment de la dimension de ses mots, avec de gauche à droite les bytes de poids fort puis les bytes de poids faible. Dans la figure ci-dessus, les signes hexadécimaux sont représentés dans leur valeur binaire dans la zone bleu/vert et on peut observer que les octets du fichier (en haut) sont recopiés dans la mémoire en séquence avec des exemples pour des mémoires avec des mots de 4bits,7bits et 12bits. Observez le décalage d'alignement pour les mots non multiples de 8 par exemple dans la mémoire de mot de 7 bits.
@@ -61,7 +61,7 @@ a7eb2d655343913e6b7d39db17730c77
       </blockquote>
       
 	   <center>
-        <img  src="../../../../img-guide/membyteplainle.png" alt="#########">
+        <img  src="../../../../img-guide/membyteplainle.png" alt="#########" height=348 width=480>
       </center>
       <p>
         Dans le mode little-endian la mémoire est considérée comme une suite d'octet avec de droite à gauche les bits de faible faible puis les bits de poids fort. Dans la figure ci-dessus on peut observer que les octets du fichier (en haut) sont recopiés dans la mémoire en séquence avec des exemples pour des mémoires avec des mots de 4bits,7bits et 12bits. Vous pouvez observer le décalage d'alignement par exemple pour la mémoire de mot de 7 bits.
