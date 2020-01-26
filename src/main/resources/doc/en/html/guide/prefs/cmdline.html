@@ -3,7 +3,7 @@
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="created" content="2019-03-16T06:18:10.521000000">
-    <meta name="changed" content="2019-03-16T06:18:42.262000000">
+    <meta name="changed" content="2020-01-26T07:25:23.245000000">
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <meta http-equiv="Content-Language" content="en">
     <title>
@@ -33,7 +33,7 @@
         The following example starts Logisim in its basic configuration.
       </p>
       <blockquote>
-        <pre>java -jar <i><b>jarFileName</b></i> -plain -gates shaped -locale en
+        <pre>java -jar <i><b>jarFileName</b> <b> -plain -gates shaped -locale en</b></i>
 </pre>
       </blockquote>
       <p>
@@ -69,52 +69,55 @@
           <p>
             Configures which translation to use. As of this writing, the supported locales include:
           </p>
-
-            <table>
-              <tbody>
-                <tr>
-                  <td>
-                    <tt>de  </tt>German
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <tt>el  </tt>Greek
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <tt>en  </tt>English
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <tt>es  </tt>Spanish
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <tt>fr  </tt>French
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <tt>pt  </tt>Portugais
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <tt>ru  </tt>Russian
-                  </td>
-                </tr>
-				<tr>
-                  <td>
-                    <tt>it  </tt> Italian
-                  </td>
-                </tr>				
-              </tbody>
-            </table>
-
+          <table>
+            <tbody>
+              <tr>
+                <td>
+                  <tt>de</tt> German
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <tt>el</tt> Greek
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <tt>en</tt> English
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <tt>es</tt> Spanish
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <tt>fr</tt> French
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <tt>pt</tt> Portugais
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <tt>ru</tt> Russian
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <tt>it</tt> Italian
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <tt>ne</tt> Dutch
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </dd>
         <dt>
           <tt>-accents <i>[<b>yes</b>|<b>no</b>]</i></tt>
@@ -196,15 +199,28 @@
             Run without GUI. More information in <a href="../verify/other.html">Other verification</a>
           </p>
         </dd>
-		<dt>
-          <tt>-testvector <i><b>circuitname</b> <b>vectorfile</b> <b>projectfile</b></i> </tt>
+        <dt>
+          <tt>-testvector <i><b>circuitname</b> <b>vectorfile</b> <b>projectfile</b></i></tt>
         </dt>
         <dd>
-		<p>Run the <b>circuitname</b> tests in <b>projectfile</b> based on vectors in <b>vectorfile</b>. More information in <a href="../verify/test.html">Window Text Vector</a> 
-		</p></dd>
-        </dl>
-		<h2>Undocumented Options</h2>
-		<dl>
+          <p>
+            Run the <b>circuitname</b> tests in <b>projectfile</b> based on vectors in <b>vectorfile</b>. More information in <a href="../verify/test.html">Window Text Vector</a>
+          </p>
+        </dd>
+        <dt>
+          <tt>-geom <i><b>WxH</b>|<b>WxH+X+Y</b></i></tt>
+        </dt>
+        <dd>
+          <p>
+            Opens Logisim with a window dimensioned according to the parameters W (width) and H (height) or with the upper left corner positioned according to the parameters X,Y.<br>
+            Example: -geom 600x400+100+100
+          </p>
+        </dd>
+      </dl>
+      <h2>
+        Undocumented Options
+      </h2>
+      <dl>
         <dt>
           <tt>-test-circuit <b>testCircuitPathInput</b></tt>
         </dt>

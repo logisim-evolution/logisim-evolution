@@ -3,7 +3,7 @@
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="created" content="2018-10-23T06:18:10.521000000">
-    <meta name="changed" content="2019-01-15T07:25:23.245000000">
+    <meta name="changed" content="2020-01-26T07:25:23.245000000">
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <meta http-equiv="Content-Language" content="fr">
     <title>
@@ -33,30 +33,23 @@
         L'exemple suivant démarre Logisim dans sa configuration de base.
       </p>
       <blockquote>
-        <pre>java -jar <i><b>jarFileName</b></i> -plain -gates shaped -locale fr
+        <pre>java -jar <i><b>jarFileName</b> </i><b>-plain -gates shaped -locale en</b>
 </pre>
       </blockquote>
       <p>
         Les options prises en charge sont les suivantes.
       </p>
       <dl>
-        <dd>
-          <dt>
-            <tt>-plain</tt>
-          </dt>
-          <pre>
-</pre>
-          <dt>
-            <tt>-empty</tt>
-          </dt>
-          <pre>
-</pre>
-          <dt>
-            <tt>-template <b><i>templateFile</i></b></tt>
-          </dt>
-          <pre>
-</pre>
-        </dd>
+        <dd></dd>
+        <dt>
+          <tt>-plain</tt>
+        </dt>
+        <dt>
+          <tt>-empty</tt>
+        </dt>
+        <dt>
+          <tt>-template <b><i>templateFile</i></b></tt>
+        </dt>
         <dd>
           <p>
             Configure le modèle à utiliser par Logisim.<br>
@@ -82,42 +75,47 @@
             <tbody>
               <tr>
                 <td>
-                  <tt>de  </tt>Allemand
+                  <tt>de</tt> Allemand
                 </td>
               </tr>
               <tr>
                 <td>
-                  <tt>el  </tt>Grec
+                  <tt>el</tt> Grec
                 </td>
               </tr>
               <tr>
                 <td>
-                  <tt>en  </tt>Anglais
+                  <tt>en</tt> Anglais
                 </td>
               </tr>
               <tr>
                 <td>
-                  <tt>es  </tt>Espagnol
-                </td>
-              </tr>
-              <tr>
-                <ts>
-                  <tt>fr  </tt>Français
+                  <tt>es</tt> Espagnol
                 </td>
               </tr>
               <tr>
                 <td>
-                  <tt>pt  </tt>Portugais
+                  <tt>fr</tt> Français
                 </td>
               </tr>
               <tr>
                 <td>
-                  <tt>ru  </tt>Russe
+                  <tt>pt</tt> Portugais
                 </td>
               </tr>
-			  <tr>
+              <tr>
                 <td>
-                  <tt>it  </tt>Italien
+                  <tt>ru</tt> Russe
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <tt>it</tt> Italien
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <tt>ne</tt> Néerlandais
                 </td>
               </tr>
             </tbody>
@@ -197,22 +195,33 @@
           </p>
         </dd>
         <dt>
-          <tt>-tty</tt> [<b>table</b>|<b>speed</b>|<b>tty</b>|<b>halt</b>|<b>stats</b>]
+          <tt>-tty</tt> <i>[<b>table</b>|<b>speed</b>|<b>tty</b>|<b>halt</b>|<b>stats</b>]</i>
         </dt>
         <dd>
           <p>
             Exécuter sans interface graphique. Plus d'information dans <a href="../verify/other.html">Autres options de vérifications</a>
           </p>
         </dd>
-		<dt>
-          <tt>-testvector <i><b>circuitname</b> <b>vectorfile</b> <b>projectfile</b></i> </tt>
-		</dt>
+        <dt>
+          <tt>-testvector <i><b>circuitname</b> <b>vectorfile</b> <b>projectfile</b></i></tt>
+        </dt>
         <dd>
-		  Exécute les tests de <b>circuitname</b> dans <b>projectfile</b> en focntion des vecteurs dans <b>vectorfile</b>. Plus d'information dans <a href="../verify/test.html">Fenêtre Vecteur de test</a> 
-		</dd>
-		</dl>
-		<h2>Options non documentées</h2>
-		<dl>
+          Exécute les tests de <b>circuitname</b> dans <b>projectfile</b> en focntion des vecteurs dans <b>vectorfile</b>. Plus d'information dans <a href="../verify/test.html">Fenêtre Vecteur de test</a>
+        </dd>
+        <dt>
+          <tt>-geom <i><b>WxH</b>|<b>WxH+X+Y</b></i></tt>
+        </dt>
+        <dd>
+          <p>
+            Ouvre Logisim avec une fenêtre dimensionnée selon les paramètres W (largeur) et H (hauteur) ou avec l'angle supérieur gauche positioné selon les paramètres X,Y.<br>
+            Exemple : -geom 600x400+100+100
+          </p>
+        </dd>
+      </dl>
+      <h2>
+        Options non documentées
+      </h2>
+      <dl>
         <dt>
           <tt>-test-circuit <b>testCircuitPathInput</b></tt>
         </dt>
@@ -228,7 +237,6 @@
         <dt>
           <tt>-questa<em>[<b>yes</b>|<b>no</b>]</em></tt>
         </dt>
-        <dd></dd>
       </dl>
       <p>
         <b>Suite:</b> <a href="../index.html">Guide de l'utilisateur</a>.
