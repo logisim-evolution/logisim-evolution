@@ -26,17 +26,24 @@
 	<mapID target="subcirc_creating" url="el/html/guide/subcirc/sub-creating.html" />
 	<mapID target="subcirc_using" url="el/html/guide/subcirc/sub-using.html" />
 	<mapID target="subcirc_appear" url="el/html/guide/subcirc/sub-appear.html" />
-  <mapID target="subcirc_personalise" url="el/html/guide/subcirc/sub-personalise.html"/>
+    <mapID target="subcirc_personalise" url="el/html/guide/subcirc/sub-personalise.html"/>
 	<mapID target="subcirc_debug" url="el/html/guide/subcirc/sub-debug.html" />
 	<mapID target="subcirc_library" url="el/html/guide/subcirc/sub-library.html" />
-	<mapID target="bundles" url="el/html/guide/bundles/index.html" />
-	<mapID target="bundles_creating" url="el/html/guide/bundles/creating.html" />
-	<mapID target="bundles_splitting" url="el/html/guide/bundles/splitting.html" />
-	<mapID target="bundles_colors" url="el/html/guide/bundles/colors.html" />
-	<mapID target="mem_guide" url="el/html/guide/mem/index.html" />
-	<mapID target="mem_poke" url="el/html/guide/mem/poke.html" />  <!-- obsolete -->
-	<mapID target="mem_menu" url="el/html/guide/mem/gui-menu.html" />
-	<mapID target="mem_hex" url="el/html/guide/mem/hex.html" />
+    <mapID target="features" url="el/html/guide/feature/index.html" />
+    <mapID target="features_creating" url="el/html/guide/feature/fet-creating.html" />
+    <mapID target="features_splitting" url="el/html/guide/feature/fet-splitting.html" />
+    <mapID target="features_colors" url="el/html/guide/feature/fet-colors.html" />
+    <mapID target="features_autolabel" url="el/html/guide/feature/fet-autolabel.html" />	
+    <mapID target="features_matrix" url="el/html/guide/feature/fet-matrix.html" />
+	
+    <mapID target="mem_guide" url="el/html/guide/mem/index.html"/>
+    <mapID target="mem_poke" url="el/html/guide/mem/mem-poke.html" />
+    <mapID target="mem_menu" url="el/html/guide/mem/mem-menu.html"/>
+    <mapID target="mem_hex" url="el/html/guide/mem/mem-hex.html"/>  
+    <mapID target="mem_v2raw" url="el/html/guide/mem/mem-v2raw.html"/>  
+    <mapID target="mem_v3word" url="el/html/guide/mem/mem-v3word.html"/> 
+    <mapID target="mem_v3byte" url="el/html/guide/mem/mem-v3byte.html"/> 
+	
 	<mapID target="analyze" url="el/html/guide/analyze/index.html" />
 	<mapID target="analyze_open" url="el/html/guide/analyze/open.html" />
 	<mapID target="analyze_table" url="el/html/guide/analyze/table.html" />
@@ -88,6 +95,7 @@
 	<mapID  target="menu_printertab" url="el/html/guide/menu/printertab.html" />
 	<mapID target="about" url="el/html/guide/about/index.html" />
 	<mapID target="about_gpl" url="el/html/guide/about/gpl.html" />
+    <mapID target="about_gpl_tr" url="el/html/guide/about/gpl-el.html"/>
 
 	<mapID target="libs" url="el/html/libs/index.html" />
 	<mapID target="wiring" url="el/html/libs/wiring/index.html" />

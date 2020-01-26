@@ -35,9 +35,15 @@
 	<mapID target="features_colors" url="de/html/guide/feature/fet-colors.html" />
 	<mapID target="features_autolabel" url="de/html/guide/feature/fet-autolabel.html" />
 	<mapID target="features_matrix" url="de/html/guide/feature/fet-matrix.html" />
-	<mapID target="mem_guide" url="de/html/guide/mem/index.html" />
-	<mapID target="mem_menu" url="de/html/guide/mem/gui-menu.html" />
-	<mapID target="mem_hex" url="de/html/guide/mem/hex.html" />
+	
+  <mapID target="mem_guide" url="de/html/guide/mem/index.html"/>
+  <mapID target="mem_poke" url="de/html/guide/mem/mem-poke.html" />
+  <mapID target="mem_menu" url="de/html/guide/mem/mem-menu.html"/>
+  <mapID target="mem_hex" url="de/html/guide/mem/mem-hex.html"/> 
+  <mapID target="mem_v2raw" url="de/html/guide/mem/mem-v2raw.html"/>  
+  <mapID target="mem_v3word" url="de/html/guide/mem/mem-v3word.html"/> 
+  <mapID target="mem_v3byte" url="de/html/guide/mem/mem-v3byte.html"/> 	
+	
 	<mapID target="analyze" url="de/html/guide/analyze/index.html" />
 	<mapID target="analyze_open" url="de/html/guide/analyze/open.html" />
 	<mapID target="analyze_table" url="de/html/guide/analyze/table.html" />
@@ -45,13 +51,15 @@
 	<mapID target="analyze_gen" url="de/html/guide/analyze/gen.html" />
 	<mapID target="log" url="de/html/guide/log/index.html" />
 	<mapID target="log_selection" url="de/html/guide/log/selection.html" />
-	<mapID target="log_table" url="de/html/guide/log/table.html" />
-	<mapID target="log_file" url="de/html/guide/log/file.html" />
+    <mapID target="log_timetable" url="de/html/guide/log/timetable.html"/>  
+	<mapID target="log_table" url="de/html/guide/log/table.html" /> <!-- obsolete -->
+	<mapID target="log_file" url="de/html/guide/log/file.html" /> <!-- obsolete -->
 	<mapID target="verify" url="de/html/guide/verify/index.html" />
 	<mapID target="verify_sub" url="de/html/guide/verify/sub.html" />
 	<mapID target="verify_other" url="de/html/guide/verify/other.html" />
 	<mapID target="verify_multi" url="de/html/guide/verify/multi.html" />
     <mapID target="verify_test" url="de/html/guide/verify/test.html"/>
+	
 	<mapID target="prefs" url="de/html/guide/prefs/index.html" />
 	<mapID target="prefs_template" url="de/html/guide/prefs/template.html" />
 	<mapID target="prefs_intl" url="de/html/guide/prefs/intl.html" />
@@ -88,6 +96,7 @@
     <mapID target="menu_printertab" url="de/html/guide/menu/printertab.html" />	
 	<mapID target="about" url="de/html/guide/about/index.html" />
 	<mapID target="about_gpl" url="de/html/guide/about/gpl.html" />
+    <mapID target="about_gpl_tr" url="de/html/guide/about/gpl-de.html"/>
 	
 	<mapID target="libs" url="de/html/libs/index.html" />	
 	<mapID target="wiring" url="de/html/libs/wiring/index.html" />

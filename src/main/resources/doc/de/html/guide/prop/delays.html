@@ -20,13 +20,13 @@
         Als ein Beispiel für den Grad der Verfeinerung des Logisim-Algorithmus, betrachten Sie die folgende Schaltung. 
       </p>
       <center>
-        <img src="../../../../img-guide/prop-const0.png" alt="#########">
+        <img class=notscal src="../../../../img-guide/prop-const0.png" alt="#########">
       </center>
       <p>
         Diese "offensichtlich" immer 0 ausgeben. Aber NICHT Gatter reagieren in der Realität nicht sofort auf ihre Eingänge, und auch nicht in Logisim. Wenn der Eingang dieser Schaltung von 0 auf 1 wechselt, sieht das UND-Gatter daher kurzzeitig zwei Eingänge 1 und gibt kurzzeitig eine 1 aus. Auf dem Bildschirm wird man sie nicht sehen. Aber der Effekt ist zu beobachten, wenn wir den Ausgang des UND-Gatters als Eingang in den Takt eines D-Flip-Flops verwenden.
       </p>
       <center>
-        <img src="../../../../img-guide/prop-using-const0.png" alt="#########">
+        <img class=notscal src="../../../../img-guide/prop-using-const0.png" alt="#########">
       </center>
       <p>
         Wenn der Eingang 0 zu einer 1 wird, führt dies zu einer momentanen 1 im D-Flip-Flop, so dass der Wert des Flip-Flops jedes Mal umschaltet, wenn der Eingang der Schaltung von 0 auf 1 wechselt.
@@ -34,6 +34,12 @@
       <p>
         Jede Komponente hat eine Verzögerung, die mit ihr verbunden ist. Komplexere Komponenten, die in Logisim eingebaut sind, haben in der Regel größere Verzögerungen, aber diese Verzögerungen sind etwas willkürlich und spiegeln möglicherweise nicht die Realität wider.
       </p>
+	  <center>
+        <img class=notscal src="../../../../img-guide/propagat.gif" alt="#########"><br>
+		Logisim world<br><br>
+		<img class=notscal src="../../../../img-guide/reallife2.png" alt="#########"><br>
+		Real world
+      </center>
       <p>
         Aus technischer Sicht ist es relativ einfach, diesen Grad an Raffinesse in einer einzigen Schaltung zu bewältigen. Der Umgang mit Gate-Verzögerungen über Teilschaltungen hinweg ist allerdings etwas komplexer. Logisim versucht, dies korrekt zu lösen, indem alle primitiven Ausbreitungswerte der Komponenten in einem einzigen Schema zusammengefasst werden, unabhängig davon, in welcher Teilschaltung die Komponente liegt.
       </p>

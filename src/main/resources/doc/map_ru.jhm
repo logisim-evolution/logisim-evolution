@@ -26,7 +26,7 @@
 	<mapID target="subcirc_creating" url="ru/html/guide/subcirc/sub-creating.html" />
 	<mapID target="subcirc_using" url="ru/html/guide/subcirc/sub-using.html" />
 	<mapID target="subcirc_appear" url="ru/html/guide/subcirc/sub-appear.html" />
-  <mapID target="subcirc_personalise" url="ru/html/guide/subcirc/sub-personalise.html"/>
+    <mapID target="subcirc_personalise" url="ru/html/guide/subcirc/sub-personalise.html"/>
 	<mapID target="subcirc_debug" url="ru/html/guide/subcirc/sub-debug.html" />
 	<mapID target="subcirc_library" url="ru/html/guide/subcirc/sub-library.html" />
 	<mapID target="features" url="ru/html/guide/feature/index.html" />
@@ -35,10 +35,15 @@
 	<mapID target="features_colors" url="ru/html/guide/feature/fet-colors.html" />
 	<mapID target="features_autolabel" url="ru/html/guide/feature/fet-autolabel.html" />
 	<mapID target="features_matrix" url="ru/html/guide/feature/fet-matrix.html" />
-	<mapID target="mem_guide" url="ru/html/guide/mem/index.html" />
-	<mapID target="mem_poke" url="ru/html/guide/mem/poke.html" />  <!-- obsolete -->
-	<mapID target="mem_menu" url="ru/html/guide/mem/gui-menu.html" />
-	<mapID target="mem_hex" url="ru/html/guide/mem/hex.html" />
+ 
+    <mapID target="mem_guide" url="ru/html/guide/mem/index.html"/>
+    <mapID target="mem_poke" url="ru/html/guide/mem/mem-poke.html" />
+    <mapID target="mem_menu" url="ru/html/guide/mem/mem-menu.html"/>
+    <mapID target="mem_hex" url="ru/html/guide/mem/mem-hex.html"/>  
+    <mapID target="mem_v2raw" url="ru/html/guide/mem/mem-v2raw.html"/>  
+    <mapID target="mem_v3word" url="ru/html/guide/mem/mem-v3word.html"/> 
+    <mapID target="mem_v3byte" url="ru/html/guide/mem/mem-v3byte.html"/> 
+
 	<mapID target="analyze" url="ru/html/guide/analyze/index.html" />
 	<mapID target="analyze_open" url="ru/html/guide/analyze/open.html" />
 	<mapID target="analyze_table" url="ru/html/guide/analyze/table.html" />
@@ -48,7 +53,7 @@
 	<mapID target="log_selection" url="ru/html/guide/log/selection.html" />
 	<mapID target="log_Timetable" url="ru/html/guide/log/timetable.html" />
 	<mapID target="log_table" url="ru/html/guide/log/table.html" />  <!-- obsolete -->
-	<mapID target="log_file" url="ru/html/guide/log/file.html" />  
+	<mapID target="log_file" url="ru/html/guide/log/file.html" /> <!-- obsolete --> 
 	<mapID target="verify" url="ru/html/guide/verify/index.html" />
 	<mapID target="verify_sub" url="ru/html/guide/verify/sub.html" />
 	<mapID target="verify_other" url="ru/html/guide/verify/other.html" />
@@ -90,7 +95,8 @@
     <mapID target="menu_printertab" url="ru/html/guide/menu/printertab.html" />
 	<mapID target="about" url="ru/html/guide/about/index.html" />
 	<mapID target="about_gpl" url="ru/html/guide/about/gpl.html" />
-
+    <mapID target="about_gpl_tr" url="ru/html/guide/about/gpl-ru.html"/>
+  
 	<mapID target="libs" url="ru/html/libs/index.html" />
 	<mapID target="wiring" url="ru/html/libs/wiring/index.html" />
 	<mapID target="wiring_splitter" url="ru/html/libs/wiring/splitter.html" />
