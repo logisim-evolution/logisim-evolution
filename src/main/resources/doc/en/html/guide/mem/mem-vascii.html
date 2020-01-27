@@ -3,9 +3,9 @@
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="created" content="2020-01-24T06:18:10.521000000">
-    <meta name="changed" content="2020-01-24T07:26:01.212000000">
+    <meta name="changed" content="2020-01-26T07:26:01.212000000">
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
-    <meta http-equiv="Content-Language" content="fr">
+    <meta http-equiv="Content-Language" content="en">
     <title>
       Ascii byte escape
     </title>
@@ -17,25 +17,22 @@
     </h1>
     <div class="maindiv">
       <p>
-	     Encodage ASCII avec code d'échappement, les données seront enregistré octet par octet à l'exception des caractères non imprimable et non standard. Les caractères en dehors de la plage 0x20 - 0x7E seront ignorés.<br>
-		 Pour les caratères de ce type vous devez utiliser le code d'échapement hexadécimale \x.. ou un des codes commun \0 \a \b \t \n \v \f \r.
-	  </p>	
-	    <blockquote>
-        <pre>
-\0\0hello world\r\nGood morning!\r\n
+        ASCII encoding with escape code, data will be recorded byte by byte except for non-printable and non-standard characters. Characters outside the range 0x20 - 0x7E will be ignored. For characters of this type you must use the hexadecimal escape code \x... or one of the common codes \0 \a \b \t \n \v \f \r.
+      </p>
+      <blockquote>
+        <pre>\0\0hello world\r\nGood morning!\r\n
 \xCD\xCD\xCD\xCD\xCD\0\0\0\0</pre>
-        </blockquote>
-      <p>Dans le mode big-endian la mémoire est considérée comme une suite d'octet indépendamment de la dimension de ses mots, avec de gauche à droite les bytes de poids fort puis les bytes de poids faible.<br>
-		 Vous pouvez trouvez des illustrations dans <a href="mem-v3byte.html#little">v3.0 hex bytes addressed big-endian</a>
-      </p>	  
-	  <h1 id='addr'>
+      </blockquote>
+      <p>
+        In the big-endian mode the memory is considered as a sequence of bytes regardless of the size of its words, with left to right the high bytes and then the low bytes. You can find illustrations in <a href="mem-v3byte.html#little">v3.0 hex bytes addressed big-endian</a>
+      </p>
+      <h1 id="addr">
         Ascii byte escape little-endian
       </h1>
       <p>
-        Ce format est identique au précédent avec les mêmes caractéristiques.<br>
-		Dans le mode little-endian la mémoire est considérée comme une suite d'octet avec de droite à gauche les bits de poids faible puis les bits de poids fort. Vous pouvez trouvez des illustrations dans <a href="mem-v3byte.html#little">v3.0 hex bytes addressed little-endian</a> 
+        This format is identical to the previous one with the same characteristics. In the little-endian mode, the memory is considered as a sequence of bytes with from right to left the least significant bits and then the most significant bits. You can find illustrations in <a href="mem-v3byte.html#little">v3.0 hex bytes addressed little-endian</a>
       </p>
-	  <p>
+      <p>
         <b>Suite:</b> <a href="mem-menu.html">Le menu contextuel et les fichiers</a>.
       </p>
     </div>
