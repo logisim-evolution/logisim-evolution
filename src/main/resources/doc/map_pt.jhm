@@ -60,12 +60,12 @@
 	<mapID target="verify_multi" url="pt/html/guide/verify/multi.html" />
     <mapID target="verify_test" url="pt/html/guide/verify/test.html"/>	
 	<mapID target="prefs" url="pt/html/guide/prefs/index.html" />
-	<mapID target="prefs_template" url="pt/html/guide/prefs/template.html" />
-	<mapID target="prefs_intl" url="pt/html/guide/prefs/intl.html" />
-	<mapID target="prefs_window" url="pt/html/guide/prefs/window.html" />
-	<mapID target="prefs_layout" url="pt/html/guide/prefs/layout.html" />
-	<mapID target="prefs_exp" url="pt/html/guide/prefs/exp.html" />
-	<mapID target="prefs_cmdline" url="pt/html/guide/prefs/cmdline.html" />
+	<mapID target="prefs_template" url="pt/html/guide/prefs/pref-template.html" />
+	<mapID target="prefs_intl" url="pt/html/guide/prefs/pref-intl.html" />
+	<mapID target="prefs_window" url="pt/html/guide/prefs/pref-window.html" />
+	<mapID target="prefs_layout" url="pt/html/guide/prefs/pref-layout.html" />
+	<mapID target="prefs_exp" url="pt/html/guide/prefs/pref-exp.html" />
+	<mapID target="prefs_cmdline" url="pt/html/guide/prefs/pref-cmdline.html" />
 	<mapID target="opts" url="pt/html/guide/opts/index.html" />
 	<mapID target="opts_simulate" url="pt/html/guide/opts/simulate.html" />
 	<mapID target="opts_toolbar" url="pt/html/guide/opts/toolbar.html" />
