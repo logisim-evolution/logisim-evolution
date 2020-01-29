@@ -251,7 +251,7 @@ public class HdlContentEditor extends JDialog implements JInputDialog {
     validate.addActionListener(frameListener);
 
     AbstractTokenMakerFactory atmf = (AbstractTokenMakerFactory)TokenMakerFactory.getDefaultInstance();
-    atmf.putMapping("text/vhdl","com.cburch.logisim.vhdl.syntax.VhdlSyntax");
+    atmf.putMapping("text/vhdl", "com.cburch.logisim.vhdl.syntax.VhdlSyntax");
     editor = new RSyntaxTextArea(ROWS, COLUMNS);
     editor.setSyntaxEditingStyle("text/vhdl");
     editor.setCodeFoldingEnabled(true);
