@@ -25,7 +25,6 @@ dependencies {
     implementation("com.fifesoft:rsyntaxtextarea:3.0.8")
     implementation("net.sf.nimrod:nimrod-laf:1.2")
     implementation("org.drjekyll:colorpicker:1.3")
-//    implementation("io.github.dheid:fontchooser:1.2")
     implementation("org.drjekyll:fontchooser:2.4")
     implementation("org.slf4j:slf4j-api:1.7.8")
     implementation("org.slf4j:slf4j-simple:1.7.8")
