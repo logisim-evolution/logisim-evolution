@@ -30,7 +30,7 @@ package com.cburch.logisim.data;
 
 import static com.cburch.logisim.data.Strings.S;
 
-import com.bric.swing.ColorPicker;
+import com.bric.colorpicker.ColorPicker;
 import com.cburch.logisim.gui.generic.ComboBox;
 import com.cburch.logisim.util.FontUtil;
 import com.cburch.logisim.util.JInputComponent;
