@@ -67,9 +67,9 @@
   <mapID target="prefs_exp" url="fr/html/guide/prefs/pref-exp.html"/>
   <mapID target="prefs_cmdline" url="fr/html/guide/prefs/pref-cmdline.html"/>
   <mapID target="opts" url="fr/html/guide/opts/index.html"/>
-  <mapID target="opts_simulate" url="fr/html/guide/opts/simulate.html"/>
-  <mapID target="opts_toolbar" url="fr/html/guide/opts/toolbar.html"/>
-  <mapID target="opts_mouse" url="fr/html/guide/opts/mouse.html"/>
+  <mapID target="opts_simulate" url="fr/html/guide/opts/opts-simulate.html"/>
+  <mapID target="opts_toolbar" url="fr/html/guide/opts/opts-toolbar.html"/>
+  <mapID target="opts_mouse" url="fr/html/guide/opts/opts-mouse.html"/>
   <mapID target="prop" url="fr/html/guide/prop/index.html"/>
   <mapID target="prop_delays" url="fr/html/guide/prop/delays.html"/>
   <mapID target="prop_oscillate" url="fr/html/guide/prop/oscillate.html"/>
