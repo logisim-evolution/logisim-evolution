@@ -24,7 +24,7 @@
       </p>
       <ul>
 	    <li>
-		<p><b>Utiliser l'Anticrénelage :</b> Active l'effet anticrénelage de la carte graphique. Les tracés en courbe ou des diagonals apparaitrons plus lisse à l'écran ou à l'impression. 
+		<p><b>Utiliser l'antialiasing :</b> Active l'effet anticrénelage de la carte graphique. Les tracés en courbe ou des diagonales apparaîtront plus lisses à l'écran ou à l'impression. 
 		</p>
 		</li>
         <li>
@@ -35,6 +35,9 @@
             <img src="../../../../img-guide/exportex0.png" alt="#########">
           </center>
         </li>
+		<li>
+		  <b>Utilise un jeu de couleurs daltonien</b>La couleur des fils sera modifié pour s'adapter aux personnes avec des difficultés de perception de couleur.
+		</li>
         <li>
           <p>
             <b>Montrer l'ombre de l'attribut:</b> spécifie s'il faut dessiner le marqueur de couleur autour du composant ou de l'outil dont les attributs sont actuellement affichés dans la table des attributs.
@@ -43,9 +46,12 @@
             <img class="notscal" src="../../../../img-guide/layouttab0.png" alt="#########">
           </center>
         </li>
+		<li>
+		  <b>Utilise des icônes animées</b>
+		</li>
         <li>
           <p>
-            <b>Afficher les astuces sur les composants:</b> indique s’il faut afficher les "infobulles" qui apparaîtront temporairement lorsque la souris survole les composants qui les prennent en charge. Par exemple, si vous survolez la broche d'un composant de sous-circuit, celle-ci affichera l'étiquette de la broche correspondante dans le sous-circuit. En survolant l'une des extrémités d'un séparateur, vous verrez les bits auxquels cette extrémité correspond. De plus, tous les composants des bibliothèques De/Multiplexeurs, Arithmétique et Mémoire fourniront des informations sur leurs entrées et sorties via des "infobulles".
+            <b>Montrer les astuces sur les composants:</b> indique s’il faut afficher les "infobulles" qui apparaîtront temporairement lorsque la souris survole les composants qui les prennent en charge. Par exemple, si vous survolez la broche d'un composant de sous-circuit, celle-ci affichera l'étiquette de la broche correspondante dans le sous-circuit. En survolant l'une des extrémités d'un séparateur, vous verrez les bits auxquels cette extrémité correspond. De plus, tous les composants des bibliothèques De/Multiplexeurs, Arithmétique et Mémoire fourniront des informations sur leurs entrées et sorties via des "infobulles".
           </p>
         </li>
         <li>
@@ -59,17 +65,23 @@
           </p>
         </li>
 		<li>
-		<p><b>Afficher les labels des pins dans la boite du composant:</b> 
-		</p>
+		  <b>Utiliser des boîtes de circuit de taille fixe:</b> L'apparence par défaut des sous-circuit dans les nouveaux projets logisim-evolution sera proposée avec une dimension standard et si non adaptée selon le circuit. Il est aussi possible de le faire au cas par cas avec la propriété des sous-circuits  <b class="propertie">Taille de boîte fixe</b>		  
 		</li>
-        <li>
+		<li>
+		  <b>Utiliser le nouveau symbole d'entrée et de sortie:</b> Les nouveaux symboles 
+		  <img class=icontxt src="../../../../img-guide/pininput1.png"> <img class=icontxt src="../../../../img-guide/pinoutput1.png" alt="#########" > d'entrée et de sortie seront utilisés et sinon les anciens <img class=icontxt src="../../../../img-guide/pininput.png" alt="#########"> <img class=icontxt  src="../../../../img-guide/pinoutput.png" alt="#########">. Une fenêtre pop-up vous demandera s’il faut les convertir dans le schéma du circuit courant.
+		</li>
+		<li>
+		  <b>Apparence par défaut fournie par:</b> L'apparence de certains circuits, par exemple les mémoires, sera proposée selon les versions de logisism : Logisim- Classique, Logisim-HolyCross ,Logisim-Evolution 
+		</li>
+		<li>
           <p>
-            <b>Après l'ajout du composant:</b> Par défaut, après avoir ajouté chaque composant, Logisim revient à l'outil d'édition pour vous permettre de déplacer des composants et d'ajouter des câbles. La liste déroulante vous permet de modifier ce comportement afin que Logisim reste dans le même outil pour ajouter d'autre composant du même type, jusqu'à ce que vous choisissiez vous-même de choisir l'outil d'<b class="propertie">"édition"</b>. (C'était le comportement par défaut de Logisim avant Logisim 2.3.0. Bien que plus intuitif, ce comportement nécessite plus de mouvements de la souris pour passer d'un outil à l'autre.)
+            <b>Après l'ajout du composant:</b> Par défaut, après avoir ajouté chaque composant, Logisim revient à l'outil de sélection pour vous permettre de déplacer des composants et d'ajouter des câbles. La liste déroulante vous permets de modifier ce comportement afin que Logisim reste dans le même outil pour ajouter d'autre composant du même type, jusqu'à ce que vous choisissiez vous-même d'utiliser  l'outil d'<b class="propertie">Sélection</b> (<img class=icontxt src="../../../../img-guide/select.png" alt="#########">). (C'était le comportement par défaut de Logisim avant Logisim 2.3.0. Bien que plus intuitif, ce comportement nécessite plus de mouvements de la souris pour passer d'un outil à l'autre.)
           </p>
         </li>
         <li>
           <p>
-            <b>Première base lorsque le câble est poussé:</b> Configure la manière dont les valeurs sont affichées lorsqu'un clic est effectué sur un fil à l'aide de l'outil <b class="propertie">"pousser"</b>. En cliquant sur un fil, vous affichez temporairement la valeur, jusqu'à ce que vous cliquiez ailleurs dans le circuit.
+            <b>Première base lorsque le câble est poussé:</b> Configure la manière dont les valeurs sont affichées lorsqu'un clic est effectué sur un fil à l'aide de l'outil <b class="propertie">Pousser</b> (<img class=icontxt src="../../../../img-guide/poke.png" alt="#########">). En cliquant sur un fil, vous affichez temporairement la valeur, jusqu'à ce que vous cliquiez ailleurs dans le circuit.
           </p>
           <center>
             <img class="notscal" src="../../../../img-guide/layouttab1.png" alt="#########">
