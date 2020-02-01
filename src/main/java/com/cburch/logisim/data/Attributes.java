@@ -30,12 +30,12 @@ package com.cburch.logisim.data;
 
 import static com.cburch.logisim.data.Strings.S;
 
-import com.bric.swing.ColorPicker;
+import com.bric.colorpicker.ColorPicker;
 import com.cburch.logisim.gui.generic.ComboBox;
 import com.cburch.logisim.util.FontUtil;
 import com.cburch.logisim.util.JInputComponent;
 import com.cburch.logisim.util.StringGetter;
-import com.connectina.swing.fontchooser.JFontChooser;
+import org.drjekyll.fontchooser.FontChooser;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
@@ -178,7 +178,7 @@ public class Attributes {
 
     @Override
     public java.awt.Component getCellEditor(Font value) {
-      return new FontChooser(value);
+      return new LFontChooser(value);
     }
 
     @Override
@@ -198,11 +198,11 @@ public class Attributes {
     }
   }
 
-  private static class FontChooser extends JFontChooser implements JInputComponent {
+  private static class LFontChooser extends FontChooser implements JInputComponent {
     /** */
     private static final long serialVersionUID = 1L;
 
-    FontChooser(Font initial) {
+    LFontChooser(Font initial) {
       super(initial);
     }
 
