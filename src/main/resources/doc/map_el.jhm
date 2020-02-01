@@ -85,7 +85,7 @@
 	<mapID target="jar_simpctr" url="el/html/guide/jar/simpctr.html" />
 	<mapID target="jar_counter" url="el/html/guide/jar/counter.html" />
 	<mapID target="jar_guide" url="el/html/guide/jar/guide.html" />
-	<mapID target="menu" url="el/html/guide/menu/index.html" />
+	<mapID target=menu url="el/html/guide/menu/index.html" />
 	<mapID target="menu_file" url="el/html/guide/menu/file.html" />
 	<mapID target="menu_edit" url="el/html/guide/menu/edit.html" />
 	<mapID target="menu_project" url="el/html/guide/menu/project.html" />
@@ -94,7 +94,7 @@
 	<mapID  target="menu_exportab" url="el/html/guide/menu/exportab.html" />
 	<mapID  target="menu_printertab" url="el/html/guide/menu/printertab.html" />
 	<mapID target="about" url="el/html/guide/about/index.html" />
-	<mapID target="about_gpl" url="el/html/guide/about/gpl.html" />
+	<mapID target="about_gpl" url="gpl.html" />
     <mapID target="about_gpl_tr" url="el/html/guide/about/gpl-el.html"/>
 
 	<mapID target="libs" url="el/html/libs/index.html" />

@@ -64,7 +64,7 @@
 			<tocitem target="verify_multi" text="Tester plusieurs fichiers"/>
 		<tocitem target="verify_test" text="Vecteurs de test"/>
 		</tocitem>
-		<tocitem target="menu" text="Référence des menus">
+		<tocitem target=menu text="Référence des menus">
 			<tocitem target="menu_file" text="Menu fichier"/>
 			<tocitem target="menu_edit" text="Menu éditer"/>
 			<tocitem target="menu_project" text="Menu projet"/>
@@ -161,7 +161,7 @@
 			<tocitem target="mem_rom" image="icon_rom" text="ROM"/>
 		</tocitem>
 		<tocitem target="io" text="Input/Output library">
-			<tocitem target="io_button" image="icon_button" text="Button"/>
+			<tocitem target="io_button" image="icon_button" text=button/>
 			<tocitem target="io_joystick" image="icon_joystick" text="Joystick"/>
 			<tocitem target="io_keyboard" image="icon_keyboard" text="Keyboard"/>
 			<tocitem target="io_led" image="icon_led" text="LED"/>

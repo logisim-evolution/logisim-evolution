@@ -12,18 +12,18 @@
     <link rel="stylesheet" type="text/css" href="../../style.css">
   </head>
   <body>
-    <div class="maindiv">
+    <div class=maindiv>
       <h1>
         Verwendung von Teilschaltungen
       </h1>
       <p>
-        Nun nehmen wir an, wir wollen einen 4-to-1 Multiplexer bauen, indem wir Instanzen unseres 2-to-1 Multiplexers verwenden. Natürlich würden wir zuerst eine neue Schaltung erstellen, die wir <b class="reffig">Mux_4to1</b> nennen. Um unserer Schaltung 2-to-1-Multiplexer hinzuzufügen, klicken wir einmal auf die <b class="reffig">Mux_2to1</b>-Schaltung im Explorer-Fenster, um sie als Werkzeug auszuwählen, und dann können wir Kopien davon, dargestellt als Boxen, durch Klicken innerhalb der Leinwand hinzufügen. 
+        Nun nehmen wir an, wir wollen einen 4-to-1 Multiplexer bauen, indem wir Instanzen unseres 2-to-1 Multiplexers verwenden. Natürlich würden wir zuerst eine neue Schaltung erstellen, die wir <b class=reffig>Mux_4to1</b> nennen. Um unserer Schaltung 2-to-1-Multiplexer hinzuzufügen, klicken wir einmal auf die <b class=reffig>Mux_2to1</b>-Schaltung im Explorer-Fenster, um sie als Werkzeug auszuwählen, und dann können wir Kopien davon, dargestellt als Boxen, durch Klicken innerhalb der Leinwand hinzufügen. 
       </p>
       <p align="center">
         <img src="../../../img-guide/subcirc-3-add.png" alt="#########">
       </p>
       <p>
-        Wenn Sie im Projektexplorer auf die <b class="reffig">Mux_2to1</b>-Schaltung doppelklicken, dann zeigt die Seite die Ausgabe der <b class="reffig">Mux_2to1</b>-Schaltung.
+        Wenn Sie im Projektexplorer auf die <b class=reffig>Mux_2to1</b>-Schaltung doppelklicken, dann zeigt die Seite die Ausgabe der <b class=reffig>Mux_2to1</b>-Schaltung.
       </p>
       <p>
        Nachdem die neue Schaltung entworfen wurde, kann sie so aussehen.
@@ -32,13 +32,13 @@
         <img src="../../../img-guide/subcirc-4-done.png" alt="#########">
       </p>
       <p>
-	    Unsere Schaltung für einen 4-zu-1-Multiplexer verwendet drei Kopien des 2-zu-1-Multiplexers, die jeweils in einer Box mit Pins auf der linken und rechten Seite gezeichnet sind. Die Pins dieser Box entsprechen den Ein- und Ausgangspins der <b class="reffig">Mux_2to1</b>-Schaltung. Sie werden aus dem Schaltplan des Unter-Schaltungen von rechts nach links und von oben nach unten gelesen und von oben nach unten auf das Unter-Schaltungen gesetzt.
+	    Unsere Schaltung für einen 4-zu-1-Multiplexer verwendet drei Kopien des 2-zu-1-Multiplexers, die jeweils in einer Box mit Pins auf der linken und rechten Seite gezeichnet sind. Die Pins dieser Box entsprechen den Ein- und Ausgangspins der <b class=reffig>Mux_2to1</b>-Schaltung. Sie werden aus dem Schaltplan des Unter-Schaltungen von rechts nach links und von oben nach unten gelesen und von oben nach unten auf das Unter-Schaltungen gesetzt.
       </p>
       <p>
 		Sind diesen Pins im Diagramm Beschriftungen zugeordnet, so werden diese in das Symbol übernommen. Zusätzlich werden sie auch als <b>Tooltip</b> angezeigt, wenn Sie mit der Maus über den Pin fliegen. Sie können diese Funktion über das <a href="../prefs/pref-layout.html">AttributTabelle</a> deaktivieren.
       </p>
       <p align="center">
-        <img class="notscal" src="../../../img-guide/subcirc-4-tip.png" alt="#########">
+        <img class=notscal src="../../../img-guide/subcirc-4-tip.png" alt="#########">
       </p>
       <p>
 		Verschiedene andere Komponenten zeigen diese Tipps ebenfalls an. Bei einigen der Pins eines eingebauten <a href="../../libs/mem/flipflops.html">Flipflop</a> zum Beispiel erklärt das Schweben darüber, was dieser Pin macht. 
@@ -54,7 +54,7 @@
         Jetzt, wo wir den 4-zu-1-Multiplexer definiert haben, können wir ihn nun auch in anderen Schaltkreisen einsetzen. Logisim hat keine Grenzen, wie Schaltungen Verschachtelungstiefe werden können - allerdings wird es sich gegen die Verschachtelung von Schaltungen in sich selbst wehren!
       </p>
       <p>
-		<b class="note">Hinweis:</b> Es ist nichts falsch daran, eine Schaltung zu editieren, die als Subcircuit verwendet wird; dies ist sogar ziemlich üblich. Beachten Sie jedoch, dass jede Änderung an den Pins einer Schaltung (Hinzufügen, Löschen oder Verschieben) diese auch in der enthaltenden Schaltung neu anordnet. Wenn Sie also Pins in einer Schaltung ändern, müssen Sie auch alle Schaltungen bearbeiten, die diese Schaltung als Unter-Schaltkreis verwenden. 
+		<b class=note>Hinweis:</b> Es ist nichts falsch daran, eine Schaltung zu editieren, die als Subcircuit verwendet wird; dies ist sogar ziemlich üblich. Beachten Sie jedoch, dass jede Änderung an den Pins einer Schaltung (Hinzufügen, Löschen oder Verschieben) diese auch in der enthaltenden Schaltung neu anordnet. Wenn Sie also Pins in einer Schaltung ändern, müssen Sie auch alle Schaltungen bearbeiten, die diese Schaltung als Unter-Schaltkreis verwenden. 
       </p>
       <p>
         <b>Nächste:</b> <a href="sub-appear.html">Aussehen von Teilschaltungen bearbeiten </a>.
