@@ -30,6 +30,7 @@ img.iconlibs{
 img.icontxt{
 	height:16;
 	width:16;
+	vertical-align:middle;
 }
 /* For spaces, page background */
 div.maindiv {

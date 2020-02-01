@@ -67,9 +67,9 @@
 	<mapID target="prefs_exp" url="es/html/guide/prefs/pref-exp.html" />
 	<mapID target="prefs_cmdline" url="es/html/guide/prefs/pref-cmdline.html" />
 	<mapID target="opts" url="es/html/guide/opts/index.html" />
-	<mapID target="opts_simulate" url="es/html/guide/opts/simulate.html" />
-	<mapID target="opts_toolbar" url="es/html/guide/opts/toolbar.html" />
-	<mapID target="opts_mouse" url="es/html/guide/opts/mouse.html" />
+	<mapID target="opts_simulate" url="es/html/guide/opts/opts-simulate.html" />
+	<mapID target="opts_toolbar" url="es/html/guide/opts/opts-toolbar.html" />
+	<mapID target="opts_mouse" url="es/html/guide/opts/opts-mouse.html" />
 	<mapID target="prop" url="es/html/guide/prop/index.html" />
 	<mapID target="prop_delays" url="es/html/guide/prop/delays.html" />
 	<mapID target="prop_oscillate" url="es/html/guide/prop/oscillate.html" />
@@ -164,11 +164,11 @@
     <mapID target="tcl_reds_console" url="es/html/libs/tcl/reds_console.html" />
     <mapID target="tcl_generic" url="es/html/libs/tcl/generic.html" />
 
-	<mapID target="icon_poke" url="icons/poke.gif" />
-	<mapID target="icon_edit" url="icons/select.gif" />
-	<mapID target="icon_select" url="icons/select.gif" />
+	<mapID target="icon_poke" url="img-guide/poke.png" />
+	<mapID target="icon_edit" url="img-guide/select.png" />
+	<mapID target="icon_select" url="img-guide/select.png" />
 	<mapID target="icon_wiring" url="icons/wiring.gif" />
-	<mapID target="icon_text" url="icons/text.gif" />
+	<mapID target="icon_text" url="img-guide/text.png" />
 	<mapID target="icon_menu" url="icons/menu.gif" />
 	<mapID target="icon_splitter" url="icons/splitter.gif" />
 	<mapID target="icon_pin" url="icons/pinInput.gif" />
@@ -178,7 +178,7 @@
 	<mapID target="icon_clock" url="icons/clock.gif" />
     <mapID target="icon_por" url="icons/por.png"/>
 	<mapID target="icon_extender" url="icons/extender.gif" />
-	<mapID target="icon_label" url="icons/text.gif" />
+	<mapID target="icon_label" url="img-guide/text.png" />
 	<mapID target="icon_constant" url="icons/constant.gif" />
 	<mapID target="icon_const01" url="icons/ground.gif" />
 	<mapID target="icon_transist" url="icons/trans0.gif" />
