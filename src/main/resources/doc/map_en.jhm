@@ -85,7 +85,7 @@
 	<mapID target="jar_simpctr" url="en/html/guide/jar/simpctr.html" />
 	<mapID target="jar_counter" url="en/html/guide/jar/counter.html" />
 	<mapID target="jar_guide" url="en/html/guide/jar/guide.html" />
-	<mapID target=menu url="en/html/guide/menu/index.html" />
+	<mapID target="menu" url="en/html/guide/menu/index.html" />
 	<mapID target="menu_file" url="en/html/guide/menu/file.html" />
 	<mapID target="menu_edit" url="en/html/guide/menu/edit.html" />
 	<mapID target="menu_project" url="en/html/guide/menu/project.html" />
@@ -214,4 +214,5 @@
     <mapID target="socbus_icon" url="icons/socbus.png"/>
 	
 	<mapID target="test_hml_css" url="en/testhtml/index.html" />
+	<mapID target="Translation_status" url="index.html" />
 </map>

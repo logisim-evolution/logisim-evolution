@@ -64,7 +64,7 @@
 			<tocitem target="verify_multi" text="Tester plusieurs fichiers"/>
 		<tocitem target="verify_test" text="Vecteurs de test"/>
 		</tocitem>
-		<tocitem target=menu text="Référence des menus">
+		<tocitem target="menu" text="Référence des menus">
 			<tocitem target="menu_file" text="Menu fichier"/>
 			<tocitem target="menu_edit" text="Menu éditer"/>
 			<tocitem target="menu_project" text="Menu projet"/>

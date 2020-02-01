@@ -85,7 +85,7 @@
   <mapID target="jar_simpctr" url="fr/html/guide/jar/simpctr.html"/>
   <mapID target="jar_counter" url="fr/html/guide/jar/counter.html"/>
   <mapID target="jar_guide" url="fr/html/guide/jar/guide.html"/>
-  <mapID target=menu url="fr/html/guide/menu/index.html"/>
+  <mapID target="menu" url="fr/html/guide/menu/index.html"/>
   <mapID target="menu_file" url="fr/html/guide/menu/file.html"/>
   <mapID target="menu_edit" url="fr/html/guide/menu/edit.html"/>
   <mapID target="menu_project" url="fr/html/guide/menu/project.html"/>

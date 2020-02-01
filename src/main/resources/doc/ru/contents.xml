@@ -61,7 +61,7 @@
 			<tocitem target="verify_multi" text="Проверка нескольких файлов" />
 			<tocitem target="verify_test" text="Test Vectors" />			
 		</tocitem>
-		<tocitem target=menu text="Справка по меню">
+		<tocitem target="menu" text="Справка по меню">
 			<tocitem target="menu_file" text="Меню Файл" />
 			<tocitem target="menu_edit" text="Меню Правка" />
 			<tocitem target="menu_project" text="Меню Проект" />

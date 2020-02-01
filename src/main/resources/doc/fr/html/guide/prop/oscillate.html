@@ -19,15 +19,15 @@
       <p>
         O algoritmo de propagação, que normalmente trabalha silenciosamente, sem qualquer problemas, vai se tornar mair visível quando você criar um circuito que oscile.
       </p>
-      <center>
+      <p align="center">
          <img class=notscal src="../../../../img-guide/prop-oscillate-before.png" alt="#########">
-      </center>
+      </p>
       <p>
         Esse circuito está em condição estável. Mas se você mudar a entrada para 1, o circuito irá efetivamente entrar em um <i>loop</i> infinito. Depois um tempo, o Logisim simplesmente desistirá e mostrará a mensagem "oscilação aparente" dizendo que ele acredita que o circuito esteja oscilando.
       </p>
-      <center>
+      <p align="center">
         <img class=notscal src="../../../img-guide/prop-oscillate-error.png" alt="#########">
-      </center>
+      </p>
       <p>
         Ele irá exibir os valores que tiver no momento em que desistir. Esses valores parecerão errados - nessa tela, a porta AND estará emitindo 1 apesar de uma de suas entradas serem 0, mas poderia ser porque a porta NOT tem uma entrada em 1 e uma saída em um 1.
       </p>

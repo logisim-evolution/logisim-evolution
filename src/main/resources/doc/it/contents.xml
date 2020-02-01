@@ -178,9 +178,5 @@
           <tocitem target="tcl_generic" text="Generic" image="icon_generic" />
       </tocitem>
 	</tocitem>
-	<tocitem target="Tests_for_doc" text="Tests for documentation">
-	    <tocitem target="test_hml_css" text="test_hml_css" />
-		<tocitem target="Translation_status" text="Translation status" />
-	</tocitem>
 </tocitem>
 </toc>

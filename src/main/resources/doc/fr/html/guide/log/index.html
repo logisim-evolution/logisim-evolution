@@ -24,18 +24,18 @@
       <p>
         Pour comprendre ou débugger un circuit, il est souvent très utile de pouvoir observer les différents signaux de manière visuels, c'est le but du chronogramme. Ce module permet l'enregistrement des signaux sous forme graphique ou dans un tableau de valeur dans un fichier text.
       </p>
-      <center>
+      <p align="center">
         <img src="../../../img-guide/log-graph1.png" alt="#########">
-      </center>
+      </p>
       <p>
         Vous pouvez entrer dans le module de journalisation via le menu <b class=menu>|&nbsp;Simulation&nbsp;|</b>→<b class=menu>|&nbsp;Chronogramme&nbsp;|</b>. Il fait apparaître la fenêtre de sélection des signaux.
       </p>
       <p>
         Le circuit ci-dessous est un exemple d'illustration pour le module chronogramme.
       </p>
-      <center>
+      <p align="center">
         <img class=notscal src="../../../../img-guide/log-counter.png" alt="#########">
-      </center>
+      </p>
       <p>
         Il y a deux signaux nommés qui servent de pilote à l'affichage des chronogrammes. Un est impératif et il est nommé <var>sysclk</var>  et l'autre une horloge optionnelle nommée <var>clk</var>. <var>sysclk</var> est très souvent une horloge, mais pas nécessairement, cela peut aussi être une entrée ou une sortie.
 		L'horloge <var>clk</var> en association avec une horloge <var>sysclk</var> permet d'enregistrer un chronogramme sur une période déterminée. Selon le paramètre de simulation "Duration of main tick" l'enregistrement sera arrêté en fonction de l'évolution de <var>clk</var>.
