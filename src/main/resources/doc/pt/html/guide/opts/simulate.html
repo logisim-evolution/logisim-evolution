@@ -1,0 +1,71 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2018-10-23T06:18:42.262000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="pt">
+    <title>A guia Simulação (Simulation)</title>
+    <link rel="stylesheet" type="text/css" href="..\..\style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+
+<h1>A guia Simulação (Simulation)</h1>
+
+<p> A guia de simulação permite configurar o algoritmo usado para
+simulação de circuitos. Esses parâmetros são aplicáveis a todos os circuitos 
+que estejam simulados na mesma janela, mesmo que os circuitos estejam em outras
+bibliotecas carregadas pelo projeto.
+</p>
+
+<center><img src="../../../img-guide/opts-simulate.png" width="376" height="334"></center>
+
+<ul>
+
+<li> As <strong> Iterações Até Oscilação </strong> serve para especificar 
+por quanto tempo deverá simular um circuito antes de decidir que é oscilante. 
+O número representa a quantidade de cliques no relógio interno oculto
+(um porta simples, leva apenas um clique). O valor padrão 1000 é suficiente para
+quase todos os fins, inclusive para os circuitos de grande porte. Mas você
+poderá aumentar o número de iterações, caso estiver trabalhando com um
+circuito onde o Logisim reporte oscilações falsas. É pouco provável que isso seja 
+um problema na prática; uma dessas circunstâncias é a de um circuito que incorpora
+muitos <i>latches</i> que podem travar quando a opção ruído aleatório é habilitada.
+Você poderá querer diminuir o número de iterações, se estiver trabalhando com um 
+circuito que é propenso a oscilar e estiver usando um processador extremamente lento. 
+</p> </li>
+
+<li> A <strong> Saída da Porta Quando Indefinida </strong> serve para configurar
+como as portas lógicas internas se comportarão quando algumas entradas não estiverem
+ligadas ou forem flutuantes. Por padrão, o Logisim ignora tais entradas, permitindo 
+uma porta trabalhar sobre menos entradas do que aquelas para as quais foi projetado. 
+No entanto, na vida real, uma porta irá se comportar imprevisivelmente em tal situação, 
+e por isso esse menu <i>drop-down</i> permitirá que se mudem as portas para tratar
+as entradas desconectadas como erros.
+</p> </li>
+
+<li> O <strong> Adicionar Ruído Aos Atrasos de Componente </strong>
+permitirá ativar ou desativar o ruído aleatório a ser adicionado aos
+atrasos de componentes. A simulação interna usa um relógio oculto para
+sua simulação, e para fornecer maior verossimilhança, cada
+componente (excluindo conexões e distribuidores) tem um atraso entre o momento em que
+recebe uma entrada e quando ele emitirá uma saída. Se esta opção for
+habilitada, o Logisim ocasionalmente (uma vez a cada 16
+reações do componente) fará com que ele tenha um clique a mais que
+normal. Essa aleatoriedade é adicionada especificamente para se lidar com a trava
+circuito (conforme abaixo): sem o ruído aleatório, o circuito oscila,
+uma vez que as duas portas vão trabalhar em sintonia, mas com ruído aleatório 
+acrescentado, um porta finalmente ultrapassará a outra. 
+</p>
+<p> Recomendo manter essa opção, já que esta técnica implica na introdução de
+erros raros em circuitos normais.
+</p> </li>
+
+</ul>
+
+<p><strong>Próximo:</strong> <a href="toolbar.html">A guia Barra de Ferramentas (Toolbar)</a>.</p>
+</div>
+</body>
+</html>

@@ -97,8 +97,7 @@
 			<tocitem target="hdl-ip_simulation" text="Simulateur VHDL" />
 			<tocitem target="hdl-ip_testbenchs" text="Simuler en bancs d'essai" />
 		</tocitem>
-	  <tocitem target="users" text="Users" />
-		<tocitem target="jar" text="Librairies JAR">
+  	  <tocitem target="jar" text="Librairies JAR">
 			<tocitem target="jar_incr" text="Ajout en codage de Gray"/>
 			<tocitem target="jar_library" text="Classe librairie"/>
 			<tocitem target="jar_simpctr" text="Conteur simple en codage de Gray"/>
