@@ -1,0 +1,66 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2020-01-31T06:18:42.262000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="pt">
+    <title>
+      Editar a tabela-verdade
+    </title>
+    <link rel="stylesheet" type="text/css" href="..\..\style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        Editar a tabela-verdade
+      </h1>
+      <p>
+        Ao abrir a janela da Análise Combinacional, você irá ver que é composto de cinco guias.
+      </p>
+      <p>
+        Esta página descreve as três primeiras guias: <b class=button>Entradas</b>, <b class=button>Saídas</b> e <b class=button>Tabela</b>. A próxima página do manual descreverá as duas últimas guias: Expressão e Minimizada.
+      </p>
+      <h2>
+        As guias Entradas e Saídas
+      </h2>
+      <p align="center">
+        <img src="../../../img-guide/analyze-inout.png" alt="#########">
+	  </p>
+      <p>
+        A guia <b class=button>Entradas</b> permitirá visualizar e editar a lista de entradas. Para adicionar novas entradas, digite-as no campo apropriado na parte inferior do painel, e clique em <b class=button>Adicionar</b>. Se você quiser mudar o nome de uma entrada existente, selecione-a na lista que aparecer na parte superior do painel à esquerda, em seguida, digite o nome e clique em <b class=button>Renomear</b>.
+      </p>
+      <p>
+        Para remover uma entrada, selecione-a na lista e clique em <b class=button>Remover</b>. Você também poderá reordenar as entradas (isso afetará a ordem das colunas na tabela-verdade e no circuito gerado), utilizando os botões para mover <b class=button>para cima</b> ou <b class=button>para baixo</b> sobre uma entrada selecionada.
+      </p>
+      <p>
+        Todas as ações afetarão a tabela verdade imediatamente.
+      </p>
+      <p>
+        A guia <b class=button>Saídas</b> funciona exatamente da mesma maneira como a guia Entradas, exceto, claro, que funcionará com a lista de saídas.
+      </p>
+      <h2>
+        A guia Tabela
+      </h2>
+      <p>
+        O único item nessa guia é a <b class=button>tabela</b>-verdade corrente, diagramado na ordem convencional, com as entradas nas colunas à esquerda e as saídas nas colunas à direita.
+      </p>
+      <p align="center">
+        <img src="../../../img-guide/analyze-table.png" alt="#########">
+      </p>
+      <p>
+        Você poderá editar os valores atuais nas colunas de saída clicando sobre eles. Os valores irão variar de <var>0</var>,<var>1</var> e <var>x</var> (que representará um "don't care"). Como veremos na próxima página, esses valores "don't care" permitirão calcular expressões minimizadas com alguma flexibilidade.
+      </p>
+      <p>
+        Você também poderá navegar e editar a tabela-verdade usando o teclado. E poderá copiar e colar valores usando a área de transferência. A área de transferência poderá ser transferida para qualquer aplicação que suporte texto delimitado por tabulação (como em uma planilha).
+      </p>
+      <p>
+        Se a tabela-verdade for baseada em um circuito existente, você poderá ver alguns quadrados róseos nas colunas das saídas marcados com "!!". Eles corresponderão a erros que ocorrerem enquanto for feito o cálculo do valor para aquela linha - ou quando o circuito estiver oscilando, ou ainda quando resultar em erro (o que será retratado como uma conexão vermelha no circuito Logisim). Ao passar o mouse sobre a entrada isso deverá trazer uma dica descrevendo o tipo de erro gerado. Uma vez que você tenha clicado sobre uma entrada de erro, você entrará no ciclo <var>0</var>-<var>1</var>-<var>_</var>; não haverá como voltar.
+      </p>
+      <p>
+        <b>Próximo:</b> <a href="ana-expr.html">Criar expressões</a>.
+      </p>
+    </div>
+  </body>
+</html>

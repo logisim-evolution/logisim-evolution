@@ -1,0 +1,65 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2020-01-31T06:18:42.262000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="de">
+    <title>
+      Bearbeiten der Wahrheitstabelle
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        Bearbeiten der Wahrheitstabelle
+      </h1>
+      <p>
+        Wenn Sie das Kombinatorikfenster öffnen, werden Sie sehen, daß es fünf Registerkarten enthält.
+      </p>
+      <center>
+        <img src="../../../img-guide/analyze-inout.png" alt="#########">
+      </center>
+	  <p>
+	    Diese Seite wird die ersten drei Registerkarten beschreiben: <b class=button>Eingänge</b>, <b class=button>Ausgänge</b> und <b class=button>Tabelle</b>. Die nächste Seite des Leitfadens beschreibt die letzten zwei Registerkarten: Ausdruck und Kleinstmöglich.
+      <h2>
+        Die Registerkarten Eingänge und Ausgänge
+      </h2>
+      <p>
+        Die Registerkarte der <b class=button>Eingänge</b> erlaubt es Ihnen, sich die Liste der Eingänge anzusehen, und diese zu bearbeiten. Um neue Eingänge <b class=button>hinzuzufügen</b>, tragen Sie den gewünschten Namen im Eingabefeld unten im Fensterbereich ein, und klicken dann auf Hinzufügen. Wenn Sie einen bereits definierten Eingang umbenennen möchten, so markieren Sie diesen in der Liste im oberen Bereich, dann tragen Sie den neuen Namen in das Eingabefeld ein, und klicken auf <b class=button>Umbenennen</b>.
+      </p>
+      <p>
+        Um einen Eingang zu entfernen, wählen Sie diesen in der Liste aus, und klicken auf <b class=button>Entfernen</b>. Sie können auch die Reihenfolge der Eingänge in der Tabelle ändern (was sich auf die Reihenfolge der Spalten in der Wahrheitstabelle und auf die erzeugte Schaltung auswirken wird), indem Sie die Schaltflächen <b class=button>Nach oben</b> und <b class=button>Nach unten</b> benutzen, nachdem Sie einen Eingang in der Liste markiert haben.
+      </p>
+      <p>
+        Alle Aktionen wirken sich unmittelbar auf die Wahrheitstabelle aus.
+      </p>
+      <p>
+        Die Registerkarte der <b class=button>Ausgänge</b> verwenden Sie auf genau dieselbe Weise, nur bezieht sich diese natürlich auf die Ausgänge.
+      </p>
+      <h2>
+        Die Registerkarte "Tabelle"
+      </h2>
+      <p>
+        Das einzige Element auf der Registerkarte der <b class=button>Tabelle</b> ist die aktuelle Wahrheitstabelle. Diese wird auf gängige Art dargestellt, mit den Spalten, die die Eingänge repräsentieren, auf der linken Seite und den Ausgängen auf der rechten Seite.
+      </p>
+	  <p align="center">
+        <img src="../../../img-guide/analyze-table.png" alt="#########">
+      </p>
+      <p>
+        Sie können die einzelnen Werte in den Ausgangsspalten durch Anklicken mit der Maus ändern. Die angeklickten Positionen rotieren durch die Werte <var>0</var>,<var>1</var> und <var>x</var> (für einen beliebigen Zustand, "don't care"). Wie wir auf der nächsten Seite sehen werden, so geben beliebige Zustände eine gewisse Flexibilität bei der Berechnung der kleinstmöglichen Ausdrücke.
+      </p>
+      <p>
+        Sie können auch mit der Tastatur durch die Wahrheitstabelle navigieren. Und Sie können Werte über die Zwischenablage kopieren und einfügen. Die Zwischenablage kann mit jedem anderen Programm ausgetauscht werden, das durch Tabulatoren getrennten Text unterstützt (wie z.B. eine Tabellenkalkulation).
+      </p>
+      <p>
+        Wenn die Wahrheitstabelle aus der Analyse einer existierenden Schaltung stammt, dann werden Sie eventuell rosa Felder mit "!!" in einigen Feldern der Ausgangsspalten vorfinden. Diese entsprechen Fehlern, die bei der Berechnung der Ausgangswerte der entsprechenden Zeile aufgetreten sind - entweder, weil die Schaltung offenbar oszillierte, oder weil der Ausgang einen fehlerhaften Wert aufgewiesen hat (was im Schaltbild durch eine rote Leitung angezeigt wird). Wenn Sie den Mauszeiger über das entsprechende Feld schieben, wird Ihnen in einem Hinweis angezeigt, um was für einen Fehler es sich tatsächlich gehandelt hat. Wenn Sie ein solches, fehlerbehaftetes Feld einmal angeklickt haben, kommen Sie automatisch in die <var>0</var>-<var>1</var>-<var>_</var>-Folge, und es gibt keinen Weg mehr zurück.
+      </p>
+      <p>
+        <b>Weiter:</b> <a href="ana-expr.html">Erstellen von Ausdrücken</a> .
+      </p>
+    </div>
+  </body>
+</html>
