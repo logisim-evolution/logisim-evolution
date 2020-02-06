@@ -17,47 +17,58 @@
         Bearbeiten der Wahrheitstabelle
       </h1>
       <p>
-        Wenn Sie das Kombinatorikfenster öffnen, werden Sie sehen, daß es fünf Registerkarten enthält.
+        Wenn Sie das Kombinatorikfenster öffnen, werden Sie sehen, daß es vier Registerkarten enthält. 
       </p>
       <center>
         <img src="../../../img-guide/analyze-inout.png" alt="#########">
       </center>
 	  <p>
-	    Diese Seite wird die ersten drei Registerkarten beschreiben: <b class=button>Eingänge</b>, <b class=button>Ausgänge</b> und <b class=button>Tabelle</b>. Die nächste Seite des Leitfadens beschreibt die letzten zwei Registerkarten: Ausdruck und Kleinstmöglich.
+	    Diese Seite wird die ersten tzwei Registerkarten beschreiben: <b class=button>Eingänge und Ausgänge</b> und <b class=button>Tabelle</b>. Die nächste Seite des Leitfadens beschreibt die letzten zwei Registerkarten:  <b class=button>Ausdruck</b> und  <b class=button>Minimierung</b>.
       <h2>
         Die Registerkarten Eingänge und Ausgänge
       </h2>
+	  <p>
+	    Die Registerkarte <b class=button>Input & Output</b> ermöglicht es Ihnen, die Listen der Ein- und/oder Ausgänge anzuzeigen und zu editieren und die Breite ihrer Daten zu präzisieren.
+	  </p>
+	  <p>
+	  Um Elemente zur Liste hinzuzufügen, wählen Sie einfach die Zeile mit <b class="tkeybd">Auf-Pfeiltasten</b> oder <b class="tkeybd">Ab-Pfeiltasten</b> aus oder klicken Sie auf "Klicken sie..." und geben Sie den gewünschten Namen ein. Sie können über der Zeile "c_out" sehen, die in die Liste der Ausgangs eingefügt wurde. Dann können Sie die Datenbreite dieser Linie (rechts) mit der Maus definieren. Mit der <b class="tkeybd">Eingabe-</b> oder <b class="tkeybd">Tabulatortaste</b> wird die Eingabe beendet.
+	  </p>
+	  <p>
+	  Wenn Sie eine der bestehenden Zeilen umbenennen wollen, können Sie mit einem <b class="tkeybd">doppelten Klick</b> den Text ändern
+	  </p>
       <p>
-        Die Registerkarte der <b class=button>Eingänge</b> erlaubt es Ihnen, sich die Liste der Eingänge anzusehen, und diese zu bearbeiten. Um neue Eingänge <b class=button>hinzuzufügen</b>, tragen Sie den gewünschten Namen im Eingabefeld unten im Fensterbereich ein, und klicken dann auf Hinzufügen. Wenn Sie einen bereits definierten Eingang umbenennen möchten, so markieren Sie diesen in der Liste im oberen Bereich, dann tragen Sie den neuen Namen in das Eingabefeld ein, und klicken auf <b class=button>Umbenennen</b>.
+       Um eine Linie zu unterdrücken, wählen Sie sie wie zuvor aus, mit der Maus oder den Tasten <b class="tkeybd">Auf-Pfeiltasten</b> oder <b class="tkeybd">Ab-Pfeiltasten</b>, und verwenden Sie dann die <b class="tkeybd">Delete-Taste</b>.
       </p>
-      <p>
-        Um einen Eingang zu entfernen, wählen Sie diesen in der Liste aus, und klicken auf <b class=button>Entfernen</b>. Sie können auch die Reihenfolge der Eingänge in der Tabelle ändern (was sich auf die Reihenfolge der Spalten in der Wahrheitstabelle und auf die erzeugte Schaltung auswirken wird), indem Sie die Schaltflächen <b class=button>Nach oben</b> und <b class=button>Nach unten</b> benutzen, nachdem Sie einen Eingang in der Liste markiert haben.
-      </p>
+	  <p>
+	    Um die Reihenfolge der Zeilen neu anzuordnen, wählen Sie sie wie oben beschrieben aus und verwenden Sie dann die Kombination <b class="tkeybd">Strg-Auf-Pfeil</b> oder <b class="tkeybd">Strg-Ab-Pfeil</b>, um sie in der Liste nach oben oder unten zu verschieben. 
+	  </p>
       <p>
         Alle Aktionen wirken sich unmittelbar auf die Wahrheitstabelle aus.
-      </p>
-      <p>
-        Die Registerkarte der <b class=button>Ausgänge</b> verwenden Sie auf genau dieselbe Weise, nur bezieht sich diese natürlich auf die Ausgänge.
       </p>
       <h2>
         Die Registerkarte "Tabelle"
       </h2>
       <p>
-        Das einzige Element auf der Registerkarte der <b class=button>Tabelle</b> ist die aktuelle Wahrheitstabelle. Diese wird auf gängige Art dargestellt, mit den Spalten, die die Eingänge repräsentieren, auf der linken Seite und den Ausgängen auf der rechten Seite.
+        In der Registerkarte <b class=button>Tabelle</b> finden Sie eine Reihe von Schaltflächen und die aktuelle Wahrheitstabelle. Diese wird auf gängige Art dargestellt, mit den Spalten, die die Eingänge repräsentieren, auf der linken Seite und den Ausgängen auf der rechten Seite.
       </p>
 	  <p align="center">
         <img src="../../../img-guide/analyze-table.png" alt="#########">
       </p>
       <p>
-        Sie können die einzelnen Werte in den Ausgangsspalten durch Anklicken mit der Maus ändern. Die angeklickten Positionen rotieren durch die Werte <var>0</var>,<var>1</var> und <var>x</var> (für einen beliebigen Zustand, "don't care"). Wie wir auf der nächsten Seite sehen werden, so geben beliebige Zustände eine gewisse Flexibilität bei der Berechnung der kleinstmöglichen Ausdrücke.
+        Sie können die aktuellen Werte in den Ausgabespalten ändern, indem Sie auf den gewünschten Wert klicken und die Tastaturtasten <b class="tkeybd">0,1</b> und <b class="tkeybd">-</b> (die einen undefinierten Wert darstellen) oder die Schaltflächen <b class="button">-</b> ,<b class="button">1</b> , <b class="button">0</b> oben verwenden. Nach der Eingabe des Wertes bewegt sich der Cursor in der Spalte eine Zeile nach unten.
+        Die Tastenkombinationen <b class="tkeybd">Strg-Auf/Ab-Pfeil</b> oder <b class="tkeybd">Strg-Links/Rechts-Pfeil</b> werden zum Verschieben der Auswahl verwendet.
       </p>
       <p>
-        Sie können auch mit der Tastatur durch die Wahrheitstabelle navigieren. Und Sie können Werte über die Zwischenablage kopieren und einfügen. Die Zwischenablage kann mit jedem anderen Programm ausgetauscht werden, das durch Tabulatoren getrennten Text unterstützt (wie z.B. eine Tabellenkalkulation).
+        Ebenso können Sie die Daten in den Eingabespalten ändern, indem Sie unbestimmte Werte (-) einfügen oder sie löschen und durch 0 oder 1 ersetzen. Wie wir auf der nächsten Seite sehen werden, erlaubt ein unbestimmter Wert die Ausarbeitung von Mindestausdrücken mit einer gewissen Flexibilität. 
       </p>
       <p>
-        Wenn die Wahrheitstabelle aus der Analyse einer existierenden Schaltung stammt, dann werden Sie eventuell rosa Felder mit "!!" in einigen Feldern der Ausgangsspalten vorfinden. Diese entsprechen Fehlern, die bei der Berechnung der Ausgangswerte der entsprechenden Zeile aufgetreten sind - entweder, weil die Schaltung offenbar oszillierte, oder weil der Ausgang einen fehlerhaften Wert aufgewiesen hat (was im Schaltbild durch eine rote Leitung angezeigt wird). Wenn Sie den Mauszeiger über das entsprechende Feld schieben, wird Ihnen in einem Hinweis angezeigt, um was für einen Fehler es sich tatsächlich gehandelt hat. Wenn Sie ein solches, fehlerbehaftetes Feld einmal angeklickt haben, kommen Sie automatisch in die <var>0</var>-<var>1</var>-<var>_</var>-Folge, und es gibt keinen Weg mehr zurück.
+       In diesem Rahmen vereinfacht die Schaltfläche <b class="button">Duplizierte Zeilen Komprimieren</b> die Darstellung der Tabelle und <b class="button">Alle Zeilen anzeigen</b> um sie in ihrer Gesamtheit zu präsentieren.  
       </p>
       <p>
+	    Wenn die Wahrheitstabelle auf einer vorhandenen Schaltung basiert, sehen Sie in den Ausgabespalten möglicherweise rote Quadrate mit einem "E" darin. Dies entspricht Fehlern bei der Berechnung der Werte für diese Zeile. Entweder schien die Schaltung zu oszillieren, oder der Ausgang selbst war ein Fehler (was durch ein rotes Kabel in der Logisim-Schaltung dargestellt werden sollte). 
+	  </p>
+	  <p>
+	  
         <b>Weiter:</b> <a href="ana-expr.html">Erstellen von Ausdrücken</a> .
       </p>
     </div>
