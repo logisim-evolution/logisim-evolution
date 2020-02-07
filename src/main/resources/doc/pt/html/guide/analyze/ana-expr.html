@@ -3,7 +3,7 @@
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="created" content="2018-10-23T06:18:10.521000000">
-    <meta name="changed" content="2018-10-23T06:18:42.262000000">
+    <meta name="changed" content="2020-02-07T06:18:42.262000000">
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <meta http-equiv="Content-Language" content="pt">
     <title>
@@ -23,32 +23,32 @@
         Como veremos a seguir, as expressões lógicas (ou booleanas) são particularmente úteis, pois a janela Análise Combinacional as usará quando for construir um circuito que corresponda ao estado atual.
       </p>
       <p>
-        Você poderá visualizar e editar as expressões usando as duas últimas guias da janela: a Expressão (Expression) e a Minimizada (Minimized).
+        Você poderá visualizar e editar as expressões usando as duas últimas guias da janela: a  <b class=button>Expressão</b> e a <b class=button>Minimizada</b>.
       </p>
       <h2>
-        A guia Expressão (Expression)
+        A guia Expressão
       </h2>
       <p align="center">
         <img src="../../../img-guide/analyze-expression.png" alt="#########">
       </p>
-      <h5>
-        (Figura do original em inglês)
-      </h5>
       <p>
-        A guia Expression permite visualizar e editar as expressões correntes associadas a cada variável de saída. Você poderá selecionar a expressão de saída que desejar visualizar e editá-la usando o seletor rotulado como "Saída:" ("Output:") na parte superior do painel.
+        A guia <b class=button>Expressão</b> permite visualizar e editar as expressões correntes associadas a cada variável de saída. Possui um seletor <b class=button>Notação:</b> e uma lista de expressões matemáticas para o circuito.
       </p>
-      <p>
-        Logo abaixo do seletor aparecerá a expressão formatada em uma notação particularmente comum, onde uma porta OR será representada como adição, uma porta AND será representada como multiplicação, e porta NOT é denotada com uma barra acima da parte afetada pela negação.
-      </p>
-      <p>
-        O painel de texto embaixo mostra a mesma informação em formato ASCII. Aqui, uma porta NOT será representada por um til ('~').
-      </p>
-      <p>
-        Você poderá editar a expressão no painel de texto e clicar no botão Entrar (Enter) para torná-la efetiva; isso também irá atualizar a tabela-verdade para mantê-la coerente. O botão Limpar (Clear) apagará o painel de texto, e botão Restaurar (Revert) fará o painel voltar a representar a expressão atual.
-      </p>
-      <p>
-        Observar que as expressões editadas serão perdidas se você editar a tabela-verdade.
-      </p>
+	  <p>
+	    O selector <b class=b button id=not>Notação :</b> altera o modo de notação das expressões de saída. Permite-lhe cinco tipos de notação :
+	  <dl>
+	  <dt><b class=button>Matemática </b> :</dt><dd>   A barra acima representa a negação, o - a função AND e o + a função OR.</dd>
+	  <dt><b class=button>Lógico </b> :</dt><dd> O ¬ representa a negação, o ˄ a função AND e o ˅ a função OR</dd>
+	  <dt><b class=button>Lógica Alternativa </b> :</dt><dd> O ~ representa a negação, o ˄ a função AND e o ˅ a função OR.</dd>
+	  <dt><b class=button>Programação com booleans </b> :</dt><dd> O ! representa a negação, o && a função AND e o || a função OR.</dd>
+	  <dt><b class=button>Programação com bits </b> :</dt><dd> O ~ representa a negação, o & a função AND e o | a função OR.</dd>
+	  </dl>
+	  </p>
+       Logo abaixo do seletor, as expressões são exibidas em uma lista. Você pode editar a expressão no painel de texto, clicando duas vezes na linha da expressão.
+	  </p>
+	  <p>
+		Note que sua tabela de verdade será irremediavelmente alterada se você editar as expressões e vice versae recipro.
+	  </p>
       <p>
         Além dos sinais de multiplicação e adição em lugar das portas AND e OR, uma expressão poderá conter qualquer tipo de operadores lógicos em C/Java, bem como as próprias palavras (AND, OR, NOT).
       </p>
@@ -129,18 +129,57 @@
       <p align="center">
         <img src="../../../img-guide/analyze-minimized.png" alt="#########">
       </p>
-      <h5>
-        (Figura do original em inglês)
-      </h5>
       <p>
-        A última guia exibe uma soma de produtos minimizada correspondente a uma coluna da tabela-verdade. Você poderá selecionar qual a expressão minimizada de saída deverá ser exibida usando o seletor na parte superior.
+       O último guia exibe a expressão mínima de uma das colunas da tabela da verdade. Neste painel são apresentados quatro selectores, a mesa karnaught e a expressão mínima.
       </p>
       <p>
-        Se houver quatro entradas ou menos, um mapa de Karnaugh correspondente à variável irá aparecer abaixo do seletor. Você poderá clicar no mapa de Karnaugh para alterar os valores na tabela-verdade. O mapa de Karnaugh também apresentará os termos selecionados para a expressão minimizada por meio de retângulos arredondados, sólidos, semitransparentes.
+        Com o seletor superior <b class=button>Saida:</b>, você pode selecionar a saída minimizada de uma coluna da tabela que você deseja exibir.
       </p>
       <p>
-        Embaixo estará a expressão minimizada, formatada como mostrado na guia Expressão (Expression). Se houver mais de quatro entradas, o mapa de Karnaugh não aparecerá, mas a expressão minimizada ainda será calculada. (O Logisim usa o algoritmo de Quine-McCluskey para calcular a expressão minimizada. Isso é equivalente a um mapa de Karnaugh, mas se aplica a qualquer número de variáveis de entrada.)
+       O seguinte selector <<b class=button>Formato:</b> permite-lhe indicar se pretende produzir uma <b>  soma de produtos </b> ou uma <b> produtos de somas</b>.
       </p>
+	  <p>
+	    o selector <b class=button>Estilo:</b> modifica a apresentação das variáveis nas margens da tabela. Seja com valores binários ou com linhas sobre valores verdadeiros
+	  </p>
+	  	  <div class=twodiv>
+            <table>
+              <tbody>
+                <tr>
+                  <td>
+                     <img class=notscal src="../../../../img-guide/analyze-numline1.png" align="middle" alt="#########">
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                   Numerado
+                  </td>
+              </tbody>
+            </table>
+          </div>
+		  <div class=twodiv>
+            <table>
+              <tbody>
+                <tr>
+                  <td>
+                     <img class=notscal src="../../../../img-guide/analyze-numline2.png" align="middle" alt="#########">
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                   Forradas
+                  </td>
+              </tbody>
+            </table>
+          </div>
+	  <p>
+	   o selector <b class=button>Notação:</b> tem a mesma propriedade do painel <a href="#not">Expressão (ver acima)</a>
+	  </p>
+	  <p>
+		Se houver quatro entradas ou menos, um mapa de Karnaugh correspondente à variável irá aparecer abaixo do seletor. Você poderá clicar no mapa de Karnaugh para alterar os valores na tabela-verdade. O mapa de Karnaugh também apresentará os termos selecionados para a expressão minimizada por meio de retângulos arredondados, sólidos, semitransparentes. 
+	  </p>
+	  <p>
+	    Embaixo estará a expressão minimizada, formatada como mostrado na guia Expressão (Expression). O Logisim usa o algoritmo de Quine-McCluskey para calcular a expressão minimizada. Isso é equivalente a um mapa de Karnaugh, mas se aplica a qualquer número de variáveis de entrada.
+	  </p>
       <p>
         O botão Definir Como Expressão (Set As Expression) permitirá selecionar a expressão minimizada como aquela correspondente à variável. Isso geralmente não será necessário, já que editar a tabela-verdade resultará no uso da expressão minimizada para a coluna alterada, mas se você digitar uma expressão através da guia apropriada, esta também poderá ser uma maneira conveniente para se alterar a expressão minimizada correspondente.
       </p>

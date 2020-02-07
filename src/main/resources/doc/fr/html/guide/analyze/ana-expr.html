@@ -3,7 +3,7 @@
   <head>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta name="created" content="2018-10-23T06:18:10.521000000">
-	<meta name="changed" content="2019-01-05T07:12:22.242000000">
+	<meta name="changed" content="2020-02-07T07:12:22.242000000">
 	<meta http-equiv="content-type" content="text/html; charset=utf-8">
 	<meta http-equiv="Content-Language" content="fr">
 	<title>
@@ -26,23 +26,21 @@
 		Vous pouvez voir et éditer les expressions en utilisant les deux derniers onglets de la fenêtre: l'onglet <b class=button>expressions</b> et l'onglet <b class=button>Karnaugh</b>.
 	  </p>
 	  <h2>
-		L'onglet expression
+		L'onglet Expression
 	  </h2>
 	  <p align="center">
 		<img src="../../../img-guide/analyze-expression.png" alt="#########">
-	  <p>Le sélecteur <b class=button>Notation :</b> vous permet de choisir le mode de rprésentation des expressions. 
 	  </p>
-	  </p>
-		L'onglet <b class=button>Expressions</b> vous permet de visualiser et éditer l'expression courante pour chaque variable de sortie. Il présente un sélecteur "Notation : " et une liste des expressions matématique du circuit.
+		L'onglet <b class=button>Expressions</b> vous permet de visualiser et éditer l'expression courante pour chaque variable de sortie. Il présente un sélecteur <b class=button>Notation : </b> et une liste des expressions mathématiques du circuit.
 	  </p>
 	  <p>
-	  Le sélecteur <b class=button  id=not>Notation :</b> modifie la notation des expressions de sortie. Il vous permet cinq types de notation :
+	  Le sélecteur <b class=button  id=not>Notation :</b> modifie le mode de notation des expressions de sortie. Il vous permet cinq types de notation :
 	  <dl>
-	  <dt><b class=button>Mathématique </b> :</dt><dd> Le surligné représente la négation, Le . la fonction ET et le + la fonction OR.</dd>
+	  <dt><b class=button>Mathématique </b> :</dt><dd> Le surligné représente la négation, Le · la fonction ET et le + la fonction OR.</dd>
 	  <dt><b class=button>Logique </b> :</dt><dd> Le ¬ représente la négation, Le ˄ la fonction ET et le ˅ la fonction OR.</dd>
 	  <dt><b class=button>Logique alternative </b> :</dt><dd> Le ~ représente la négation, Le ˄ la fonction ET et le ˅ la fonction OR.</dd>
-	  <dt><b class=button>Programation avec des booléens </b> :</dt><dd> Le ! représente la négation, Le && la fonction ET et le || la fonction OR.</dd>
-	  <dt><b class=button>Programation avec des bits </b> :</dt><dd> Le ~ représente la négation, Le & la fonction ET et le | la fonction OR.</dd>
+	  <dt><b class=button>Programmation avec des booléens </b> :</dt><dd> Le ! représente la négation, Le && la fonction ET et le || la fonction OR.</dd>
+	  <dt><b class=button>Programmation avec des bits </b> :</dt><dd> Le ~ représente la négation, Le & la fonction ET et le | la fonction OR.</dd>
 	  </dl>
 	  </p>
 	  <p>
@@ -52,7 +50,7 @@
 		Notez que votre table de vérité sera modifiée de manière irrémédiable si vous éditez les expressions et vice versa.
 	  </p>
 	  <p>
-		En plus des + et . représentant des AND et des OR, une expression entrée peut contenir des opérateurs logiques C/JAVA ainsi que des mots.
+		En plus des + et · représentant des AND et des OR, une expression entrée peut contenir des opérateurs logiques C/JAVA ainsi que des mots.
 	  <p align="center">
 		<table>
 		  <tbody>
@@ -130,16 +128,16 @@
 		<img src="../../../img-guide/analyze-minimized.png" alt="#########">
 	  </p>
 	  <p>
-		Le dernier onglet affiche l'expression minimale d'une des colonnes de la table de vérité. Ce panneau présente quatre sélecteurs, la table de karnaught et et l'expression minimal.
+		Le dernier onglet affiche l'expression minimale d'une des colonnes de la table de vérité. Sur ce panneau on trouve présenté quatre sélecteurs, la table de karnaught et l'expression minimale.
 	  </p>
 	  <p>
 		Le sélecteur du haut <b class=button>Sortie:</b>, vous pouvez sélectionner la sortie minimisée d'une colonne de la table que vous souhaitez afficher.
 	  </p>
 	  <p>
-	   Le sélecteur suivant <b class=button>Format::</b> permet d'indiquer si vous souhaitez produire une <b>somme des produits</b> ou un <b>produit des sommes</b>.
+	   Le sélecteur suivant <b class=button>Format:</b> permets d'indiquer si vous souhaitez produire une <b> somme des produits </b> ou un <b> produit des sommes</b>.
 	  </p>
 	  <p>
-	   le sélecteur <b class=button>Style:</b> modidie la présentation des variable sur les bord de la table. Soit avec des valeurs binaire soit avec des lignes sur les valeurs vraie.
+	   le sélecteur <b class=button>Style:</b> modifie la présentation des variables sur les bords de la table. Soit avec des valeurs binaires soit avec des lignes sur les valeurs vraies.
 	  </p>
 	  <div class=twodiv>
             <table>
@@ -171,9 +169,8 @@
               </tbody>
             </table>
           </div>
-	  </p>
 	   <p>
-	   le sélecteur <b class=button>Notation:</b> à la la mêmes propriétés que celui du panneau <a href="#not">Expression (voir plus haut)</a>
+	   le sélecteur <b class=button>Notation:</b> à la la même propriété que celui du panneau <a href="#not">Expression (voir plus haut)</a>
 	  </p>
 	  <p>
 		la table de Karnaugh apparaîtra au centre du panneau. Vous pouvez cliquer la table de Karnaugh pour changer les valeurs correspondantes dans la table de vérité.  La table de Karnaugh affichera également les termes sélectionnés pour l'expression minimisée avec un rectangle arrondi superposé semi-transparent.
