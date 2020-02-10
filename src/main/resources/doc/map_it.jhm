@@ -45,10 +45,10 @@
     <mapID target="mem_v3word"          url="it/html/guide/mem/mem-v3word.html"/> 
     <mapID target="mem_v3byte"          url="it/html/guide/mem/mem-v3byte.html"/> 
 	<mapID target="analyze"             url="it/html/guide/analyze/index.html" />
-	<mapID target="analyze_open"        url="it/html/guide/analyze/open.html" />
-	<mapID target="analyze_table"       url="it/html/guide/analyze/table.html" />
-	<mapID target="analyze_expr"        url="it/html/guide/analyze/expr.html" />
-	<mapID target="analyze_gen"         url="it/html/guide/analyze/gen.html" />
+	<mapID target="analyze_open"        url="it/html/guide/analyze/ana-open.html" />
+	<mapID target="analyze_table"       url="it/html/guide/analyze/ana-table.html" />
+	<mapID target="analyze_expr"        url="it/html/guide/analyze/ana-expr.html" />
+	<mapID target="analyze_gen"         url="it/html/guide/analyze/ana-gen.html" />
 	<mapID target="log"                 url="it/html/guide/log/index.html" />
 	<mapID target="log_selection"       url="it/html/guide/log/selection.html" />
 	<mapID target="log_timetable"       url="it/html/guide/log/timetable.html" />
