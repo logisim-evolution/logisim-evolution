@@ -15,7 +15,7 @@
     <h1>
       v3.0 hex byte plain big-endian
     </h1>
-    <div class="maindiv">
+    <div class=maindiv>
       <p>
         This file is structured as in previous versions, the first line indicates the type of structure and then the following lines represent the sequence of bits in the memory. They are in ASCII with only hexadecimal symbols (two digits) without the 0x tag. 
       </p>
@@ -38,9 +38,9 @@ a7eb2d655343913e6b7d39db17730c77
       <p>
         If the length of the data set of the file is shorter than the memory space the remaining cells will be initialized to 0 for ROM and for RAM to 0 or randomly according to the parameters in <a href="../opts/index.html">Project options</a>.
       </p>
-	   <center>
+	   <p align="center">
         <img  src="../../../../img-guide/membyteplainbe.png" alt="#########" height=348 width=480>
-      </center>
+      </p>
       <p>
          In the big-endian mode the memory is considered as a sequence of bytes regardless of the size of its words, with left to right the high bytes and then the low bytes. In the figure above, the hexadecimal signs are represented in their binary value in the blue/green area and it can be observed that the bytes of the file (top) are copied into the memory in sequence with examples for memories with 4bits, 7bits and 12bits words. Observe the alignment offset for words not multiple of 8 for example in the 7-bit word memory.
       </p>
@@ -48,7 +48,7 @@ a7eb2d655343913e6b7d39db17730c77
 	      <h1 id='little'>
       v3.0 hex byte plain little-endian
     </h1>
-    <div class="maindiv">
+    <div class=maindiv>
       <p>
        This format follows the same rules as previous formats. Unlike the reading direction, in the little-endian mode it is read from right to left.
       </p>
@@ -60,14 +60,14 @@ a7eb2d655343913e6b7d39db17730c77
 058ea8ae931cbe211d218d412c76a495</pre>
       </blockquote>
       
-	   <center>
+	   <p align="center">
         <img  src="../../../../img-guide/membyteplainle.png" alt="#########" height=348 width=480>
-      </center>
+      </p>
       <p>
         In the little-endian mode the memory is considered as a sequence of bytes with from right to left the low low bits and then the high bits. In the figure above we can see that the bytes of the file (top) are copied into the memory in sequence with examples for memories with 4bits, 7bits and 12bits words. You can observe the alignment offset for example for the 7-bit word memory.
-		<center>
+		<p align="center">
         <img  class=notscal src="../../../../img-guide/memelitle.png" alt="#########">
-        </center>
+        </p>
 		The same examples are displayed in the component.
       </p>
       <h1 id='addr'>
@@ -86,9 +86,9 @@ a7eb2d655343913e6b7d39db17730c77
       <p>
         In this example the 8 words at address 0x10 are not specified. These cells will be initialized to 0 and for RAM according to the parameters in <a href="../opts/index.html">Project options</a>, to 0 or randomly.
       </p>
-      <center>
-        <img class="notscal" src="../../../../img-guide/membytepleinadrbig.png" alt="#########">
-      </center>
+      <p align="center">
+        <img class=notscal src="../../../../img-guide/membytepleinadrbig.png" alt="#########">
+      </p>
       <h1 id='addr'>
         v3.0 hex bytes addressed little-endian
       </h1>

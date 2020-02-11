@@ -97,8 +97,7 @@
 			<tocitem target="hdl-ip_simulation" text="Simulateur VHDL" />
 			<tocitem target="hdl-ip_testbenchs" text="Simuler en bancs d'essai" />
 		</tocitem>
-	  <tocitem target="users" text="Users" />
-		<tocitem target="jar" text="Librairies JAR">
+  	  <tocitem target="jar" text="Librairies JAR">
 			<tocitem target="jar_incr" text="Ajout en codage de Gray"/>
 			<tocitem target="jar_library" text="Classe librairie"/>
 			<tocitem target="jar_simpctr" text="Conteur simple en codage de Gray"/>
@@ -161,7 +160,7 @@
 			<tocitem target="mem_rom" image="icon_rom" text="ROM"/>
 		</tocitem>
 		<tocitem target="io" text="Input/Output library">
-			<tocitem target="io_button" image="icon_button" text="Button"/>
+			<tocitem target="io_button" image="icon_button" text=button/>
 			<tocitem target="io_joystick" image="icon_joystick" text="Joystick"/>
 			<tocitem target="io_keyboard" image="icon_keyboard" text="Keyboard"/>
 			<tocitem target="io_led" image="icon_led" text="LED"/>

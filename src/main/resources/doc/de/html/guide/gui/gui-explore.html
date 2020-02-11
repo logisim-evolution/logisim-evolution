@@ -3,7 +3,7 @@
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="created" content="2018-10-23T06:18:10.521000000">
-    <meta name="changed" content="2018-10-23T06:18:42.262000000">
+    <meta name="changed" content="2020-02-07T06:18:42.262000000">
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <meta http-equiv="Content-Language" content="de">
     <title>
@@ -12,7 +12,7 @@
     <link rel="stylesheet" type="text/css" href="../../style.css">
   </head>
   <body>
-    <div class="maindiv">
+    <div class=maindiv>
       <h1>
         Das Übersichtsfenster
       </h1>
@@ -20,10 +20,10 @@
         <tbody>
           <tr>
             <td width="40%">
-              <img src="../../../img-guide/attrib-explor.png" alt="#########">
+              <img src="../../../img-guide/gui-0-explor.png" alt="#########">
             </td>
             <td valign="top">
-              The navigation panel has two functions. It can present the circuits being simulated in the view <a href="../subcirc/sub-debug.html">simulation</a> or as here the circuits in the top and the lower the libraries represented by folders. These libraries include tools you can use in your projects.
+			  Das Navigationspanel hat zwei Funktionen. Sie kann die aktuell simulierten Schaltkreise in der <a href="../subcirc/sub-debug.html">Simulationsansicht</a> anzeigen oder, wie hier, die Schaltkreise oben in der Liste und die Bibliotheken unten durch Ordnersymbole darstellen. Diese Bibliotheken fassen die Werkzeuge zusammen, die Sie in Ihren Realisierungen verwenden können.
             </td>
           </tr>
         </tbody>
@@ -42,28 +42,30 @@
       </p>
       <ul>
 	    <li>
-          <b>Câblage:</b> Les composants qui ont directement avoir avec le câblage.
+          <b>Câblage :</b> Les composants qui ont directement avoir avec le câblage.
         </li>
-        <li><b>Basis</b>: Werkzeuge, die fester Bestandteil von Logisim sind.
+       <!--
+	   <li><b>Basis :</b> Werkzeuge, die fester Bestandteil von Logisim sind.
         </li>
-        <li><b>Gatter</b>: Bauelemente, die einfache logische Funktionen durchführen.
+	    -->
+        <li><b>Gatter :</b> Bauelemente, die einfache logische Funktionen durchführen.
         </li>
-        <li><b>Auswahlschaltungen</b>: komplexere kombinatorische Bauelemente, wie Multiplexer und Dekoder.
+        <li><b>Auswahlschaltungen :</b> komplexere kombinatorische Bauelemente, wie Multiplexer und Dekoder.
         </li>
-        <li><b>Arithmetik</b>: Bauelemente, die arithmetische Funktionen ausführen.
+        <li><b>Arithmetik :</b> Bauelemente, die arithmetische Funktionen ausführen.
         </li>
-        <li><b>Speicher</b>: Bauelemente, die Daten speichern können, wie Flip-Flops, Register und RAM.
+        <li><b>Speicher :</b> Bauelemente, die Daten speichern können, wie Flip-Flops, Register und RAM.
         </li>
-        <li><b>Eingabe/Ausgabe</b>: Bauelemente zur Interaktion mit dem Anwender.
+        <li><b>Eingabe/Ausgabe :</b> Bauelemente zur Interaktion mit dem Anwender.
         </li>
 		 <li>
-          <b>TCL:</b>
+          <b>TCL :</b>
         </li>
         <li>
-          <b>HDL-IP:</b>
+          <b>HDL-IP :</b>
         </li>
         <li>
-          <b>BFH mega function:</b>
+          <b>BFH mega function :</b>
         </li>
       </ul>
 	  <h2 ID=lib>
@@ -80,20 +82,21 @@
           <strong>Logisim-Bibliotheken</strong> sind in Logisim entwickelte Projekte, die als Logisim-Projekte gespeichert wurden. Sie können eine Reihe von Schaltungen in einem einzelnen Projekt aufbauen (wie im Abschnitt <a href="../subcirc/index.html">Teilschaltungen</a> dieses Leitfadens beschrieben), und diese dann später als Bibliothek für andere Projekte benutzen.
         </li>
         <li>
-          <strong>JAR-Bibliotheken</strong> sind Bibliotheken, die in Java erstellt werden, aber nicht fester Bestandteil von Logisim sind. Sie können fertige JAR-Bibliotheken von anderen Autoren herunterladen, oder Ihre eigenen erstellen, wie im Abschnitt <a href="../jar/index.html">JAR-Bibliotheken</a> dieses Leitfadens beschrieben. Die Entwicklung einer JAR-Bibliothek ist aufwendiger, als die Erstellung einer Logisim-Bibliothek, aber die damit erstellten Bauelemente sind flexibler und erlauben sowohl die Vergabe von Attributen, als auch die Interaktion mit dem Anwender. Die eingebauten Bibliotheken (mit Ausnahme der <b class="propertie">Basis-Bibliothek</b>) sind mit demselben API entwickelt worden, das auch die JAR-Bibliotheken benutzen können. Hieran können Sie den Umfang der Funktionen erkennen, die mit JAR-Bibliotheken verwirklicht werden können.
+          <strong>JAR-Bibliotheken</strong> sind Bibliotheken, die in Java erstellt werden, aber nicht fester Bestandteil von Logisim sind. Sie können fertige JAR-Bibliotheken von anderen Autoren herunterladen, oder Ihre eigenen erstellen, wie im Abschnitt <a href="../jar/index.html">JAR-Bibliotheken</a> dieses Leitfadens beschrieben. Die Entwicklung einer JAR-Bibliothek ist aufwendiger, als die Erstellung einer Logisim-Bibliothek, aber die damit erstellten Bauelemente sind flexibler und erlauben sowohl die Vergabe von Attributen, als auch die Interaktion mit dem Anwender. Die eingebauten Bibliotheken (mit Ausnahme der <b class=propertie>Basis-Bibliothek</b>) sind mit demselben API entwickelt worden, das auch die JAR-Bibliotheken benutzen können. Hieran können Sie den Umfang der Funktionen erkennen, die mit JAR-Bibliotheken verwirklicht werden können.
           <p>
             Einige JAR-Bibliotheken enthalten keinen Hinweis darauf, welche Java-Klasse der Bibliothek gestartet werden soll. Wenn Sie eine solche JAR-Bibliothek laden, wird Logisim Sie zur Eingabe des Namens der entsprechenden Klasse auffrodern. Der Name dieser Klasse sollte Ihnen vom Ersteller der JAR-Bibliothek mitgeteilt werden.
           </p>
         </li>
       </ul>
       <p>
-        Um eine Bibliothek wieder zu entfernen, wählen Sie den menü <b class="menu">|&nbsp;Projekt&nbsp;|</b>→<b class="menu">|&nbsp;Bibliotheken entfernen...&nbsp;|</b>. Logisim erlaubt es Ihnen nicht, Bibliotheken zu entfernen, deren Bauelemente in einer Schaltung verwendet werden, die auf der Werkzeugleiste angezeigt wird, oder einer Maustaste zugeordnet ist.
+        Um eine Bibliothek wieder zu entfernen, wählen Sie den menü <b class=menu>|&nbsp;Projekt&nbsp;|</b>→<b class=menu>|&nbsp;Bibliotheken entfernen...&nbsp;|</b>. Logisim erlaubt es Ihnen nicht, Bibliotheken zu entfernen, deren Bauelemente in einer Schaltung verwendet werden, die auf der Werkzeugleiste angezeigt wird, oder einer Maustaste zugeordnet ist.
        </p>
       <center>
-        <img class="notscal" src="../../../img-guide/gui-2-remlib.png" alt="#########">
+        <img class=notscal src="../../../img-guide/gui-2-remlib.png" alt="#########">
       </center>
       <p>
-        Streng genommen enthält eine Bibliothek übrigens Werkzeuge, keine Bauelemente. So finden Sie in der Basis-Bibliothek das <b class="propertie">Schaltwerkzeug</b>(<img class=icontxt src="../../../../img-guide/poke.png" alt="#########">), das <b class="propertie">Bearbeitungswerkzeug</b>(<img class=icontxt src="../../../../img-guide/select.png" alt="#########">) und andere Werkzeuge, die keinen direkten Bezug zu einem spezifischen Bauelement aufweisen. Die meisten Bibliotheken enthalten aber Werkzeuge zum Hinzufügen individueller Bauelemente. Alle eingebauten Bibliotheken mit Ausnahme der Basis-Bibliothek sind auf diese Weise aufgebaut.
+        Streng genommen enthält eine Bibliothek übrigens Werkzeuge, keine Bauelemente. So finden Sie in der Basis-Bibliothek das <b class=propertie>Schaltwerkzeug</b>(<img class=icontxt src="../../../../img-guide/poke1.png" alt="#########">), das <b class=propertie>Bearbeitungswerkzeug</b>(<img class=icontxt src="../../../../img-guide/select1.png" alt="#########">) und andere Werkzeuge, die keinen direkten Bezug zu einem spezifischen Bauelement aufweisen. Die meisten Bibliotheken enthalten aber Werkzeuge zum Hinzufügen individueller Bauelemente. 
+		<!--Alle eingebauten Bibliotheken mit Ausnahme der Basis-Bibliothek sind auf diese Weise aufgebaut.-->
       </p>
       <p>
         <strong>Weiter:</strong> <a href="gui-toolsbar.html">Werkzeugleisten</a>.

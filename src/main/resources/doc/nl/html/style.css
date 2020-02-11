@@ -15,7 +15,7 @@ img.intxt {
 	height:auto;
 	width:auto;
 	vertical-align:middle;
-	margin:2;
+	margin:2px;
 }
 /* For Img not scal */
 img.notscal {
@@ -24,19 +24,19 @@ img.notscal {
 	vertical-align:middle;
 }
 img.iconlibs{
-	height:32;
-	width:32;
+	height:32px;
+	width:32px;
 }
 img.icontxt{
-	height:16;
-	width:16;
+	height:16px;
+	width:16px;
 	vertical-align:middle;
 }
 /* For spaces, page background */
 div.maindiv {
 	max-width:560px;
 	border:solid 0px;
-	background-color:$808080;
+	background-color:#FFFFFF;
 }
 div.codediv {
 	max-width:660px;
@@ -64,16 +64,16 @@ a:hover{
 
 /* for titles */
 h1 {
-	color: #00137f;
+	color:#00137f;
 }
 h2 {
-	color: #00137f;
+	color:#00137f;
 }
 h3{
-	color: #00137f;
+	color:#00137f;
 }
 var {
-	color: #0025ff;
+	color:#0025ff;
 	font-weight:bold;
 }
 tt {
@@ -82,7 +82,7 @@ tt {
 
 /* for reference to menu */
 b.menu {
-	color: black;
+	color:black;
 	background-color :#b0b0b0;
 	font-family:arial;
 	font-weight:bold;
@@ -92,7 +92,7 @@ b.menu {
 /* for reference to button, tabs */
 b.button {
 	color: black;
-	background-color :#e0e0e0;
+	background-color:#e0e0e0;
 	font-family:arial;
 	font-weight:bold;
     font-size:12px;	
@@ -116,7 +116,7 @@ b.note {
 
 /* for reference to the elements of the figures */
 b.reffig {
-	color: #00137f;
+	color:#00137f;
 }
 
 /* for reference to the part of guide */
@@ -134,7 +134,7 @@ table.toolslist {
 	border-spacing :2px 8px;
 }
 td.toolslist {
-	width:40;
+	width:40px;
 	text-align:center;
 	vertical-align:top;
 }
@@ -142,10 +142,10 @@ td.toolslist {
 
 /* For tables of truth tables */
 table.tblver {
-	text-align :center;
-	border-spacing: 2px;
-	border-style: dotted;
-	border-width: 0px;
+	text-align:center;
+	border-spacing:2px;
+	border-style:dotted;
+	border-width:0px;
 }
 
 tr.tblvertitl{
@@ -181,7 +181,7 @@ span.evalue {
 
 /* To mark the areas to translate */ 
 span.totranslate {
-	color:##DA81F5;
+	color:#DA81F5;
 }
 
 /* Définition pour la table présentation de lib */
@@ -190,10 +190,10 @@ span.totranslate {
 
 /* For list items */
 dt {
-margin-top: 5px;
+margin-top:5px;
 }
 li  {
-margin-top: 5px; 
+margin-top:5px; 
 }
 
 p.blue {

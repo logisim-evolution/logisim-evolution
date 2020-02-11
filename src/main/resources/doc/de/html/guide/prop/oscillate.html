@@ -12,7 +12,7 @@
     <link rel="stylesheet" type="text/css" href="../../style.css">
   </head>
   <body>
-    <div class="maindiv">
+    <div class=maindiv>
       <h1>
         Oscillation errors
       </h1>
@@ -35,7 +35,7 @@
         Logisim helpfully circles in red each location that seems to be involved in the oscillation. If an involved point lies within a subcircuit, Logisim will draw that subcircuit's outline in red.
       </p>
       <p>
-        When Logisim detects oscillation, it shuts down all further simulation. You can re-enable simulation using the menu <b class="menu">|&nbsp;Simulate&nbsp;|</b>→<b class="menu">|&nbsp;Simulation Enabled&nbsp;|</b>.
+        When Logisim detects oscillation, it shuts down all further simulation. You can re-enable simulation using the menu <b class=menu>|&nbsp;Simulate&nbsp;|</b>→<b class=menu>|&nbsp;Simulation Enabled&nbsp;|</b>.
       </p>
       <p>
         Logisim detects oscillation using a fairly simple technique: If the circuit simulation seems to many iterations, then it will simply give up and report oscillation. (The points it identifies as being involved are those that were touched in the last 25% of the iterations.) Thus, it could erroneously report oscillation, particularly if you are working with an exceptionally large circuit; but it would be one that is larger than any I have built using Logisim. In any case, if you are confident that the reporting is in error, you can configure the number of iterations completed before oscillation occurs via the <a href="../opts/index.html">Project Options</a> window's <a href="../opts/opts-simulate.html">Simulation tab</a>.

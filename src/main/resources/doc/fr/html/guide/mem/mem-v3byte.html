@@ -15,7 +15,7 @@
     <h1>
       v3.0 hex byte plain big-endian
     </h1>
-    <div class="maindiv">
+    <div class=maindiv>
       <p>
         Ce fichier est structuré comme dans les versions précédentes, la première ligne indique le type de structure et ensuite les lignes suivantes représentent la suite des bits de la mémoire. Ils sont en ASCII avec seulement des symboles hexadécimaux (deux digits) sans la balise 0x.
       </p>
@@ -38,9 +38,9 @@ a7eb2d655343913e6b7d39db17730c77
       <p>
         Si longueur de l'ensemble des données du fichier est plus courte que l'espace mémoire les cellules restantes seront initialisées à 0 pour les ROM et pour les RAM à 0 ou aléatoirement selon les paramètres dans <a href="../opts/index.html">Les options de projet</a>.
       </p>
-	   <center>
+	   <p align="center">
         <img  src="../../../../img-guide/membyteplainbe.png" alt="#########" height=348 width=480>
-      </center>
+      </p>
       <p>
         Dans le mode big-endian la mémoire est considérée comme une suite d'octet indépendamment de la dimension de ses mots, avec de gauche à droite les bytes de poids fort puis les bytes de poids faible. Dans la figure ci-dessus, les signes hexadécimaux sont représentés dans leur valeur binaire dans la zone bleu/vert et on peut observer que les octets du fichier (en haut) sont recopiés dans la mémoire en séquence avec des exemples pour des mémoires avec des mots de 4bits,7bits et 12bits. Observez le décalage d'alignement pour les mots non multiples de 8 par exemple dans la mémoire de mot de 7 bits.
       </p>
@@ -48,7 +48,7 @@ a7eb2d655343913e6b7d39db17730c77
 	      <h1 id='little'>
       v3.0 hex byte plain little-endian
     </h1>
-    <div class="maindiv">
+    <div class=maindiv>
       <p>
        Ce format suit les mêmes règles que dans les formats précédents. A la différence qu'il est lut dans le mode little-endian, de la droite vers la gauche.
       </p>
@@ -59,15 +59,14 @@ a7eb2d655343913e6b7d39db17730c77
 a7eb2d655343913e6b7d39db17730c77
 058ea8ae931cbe211d218d412c76a495</pre>
       </blockquote>
-      
-	   <center>
+      <p align="center">nter>
         <img  src="../../../../img-guide/membyteplainle.png" alt="#########" height=348 width=480>
-      </center>
+      </p>
       <p>
         Dans le mode little-endian la mémoire est considérée comme une suite d'octet avec de droite à gauche les bits de faible faible puis les bits de poids fort. Dans la figure ci-dessus on peut observer que les octets du fichier (en haut) sont recopiés dans la mémoire en séquence avec des exemples pour des mémoires avec des mots de 4bits,7bits et 12bits. Vous pouvez observer le décalage d'alignement par exemple pour la mémoire de mot de 7 bits.
-		<center>
+		<p align="center">
         <img  class=notscal src="../../../../img-guide/memelitle.png" alt="#########">
-        </center>
+        </p>
 		Ces mêmes exemples affichés dans le composant.
       </p>
       <h1 id='addr'>
@@ -86,9 +85,9 @@ a7eb2d655343913e6b7d39db17730c77
       <p>
         Dans cet exemple les 8 mots a l'adresse 0x10 ne sont pas précisés. Ces cellules seront initialisées à 0 et pour les RAM selon les paramètres dans <a href="../opts/index.html">Les options de projet</a>, à 0 ou aléatoirement.
       </p>
-      <center>
-        <img class="notscal" src="../../../../img-guide/membytepleinadrbig.png" alt="#########">
-      </center>
+      <p align="center">
+        <img class=notscal src="../../../../img-guide/membytepleinadrbig.png" alt="#########">
+      </p>
       <h1 id='addr'>
         v3.0 hex bytes addressed little-endian
       </h1>

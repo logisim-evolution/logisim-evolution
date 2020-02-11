@@ -97,7 +97,6 @@
 			<tocitem target="hdl-ip_simulation" text="VHDL simulator" />
 			<tocitem target="hdl-ip_testbenchs" text="Simulating test benchs" />
 		</tocitem>
-		<tocitem target="users" text="Users" />
 		<tocitem target="jar" text="JAR libraries">
 			<tocitem target="jar_incr" text="Gray Code Incrementer" />
 			<tocitem target="jar_library" text="Library Class" />
@@ -121,6 +120,7 @@
 		<tocitem target="wiring_por" image="icon_por" text="Power On Reset"/>
 		<tocitem target="wiring_constant" text="Constant" image="icon_constant" />
 		<tocitem target="wiring_const01" text="Power/Ground" image="icon_const01" />
+		<tocitem target="wiring_notconnect" text="Do not connect" image="icon_notconnect" />		
 		<tocitem target="wiring_transist" text="Transistor" image="icon_transist" />
 		<tocitem target="wiring_transmis" text="Transmission Gate" image="icon_transmis" />
 		<tocitem target="wiring_extender" text="Bit Extender" image="icon_extender" />
@@ -131,6 +131,7 @@
 		<tocitem target="gates_basic" text="AND/OR/NAND/NOR Gate" image="icon_basic" />
 		<tocitem target="gates_xor" text="XOR/XNOR/Even/Odd Gate" image="icon_xor" />
 		<tocitem target="gates_controlled" text="Controlled Buffer/Inverter" image="icon_controlled" />
+		<tocitem target="gates_PLA" text="Programmable logic array" image="icon_pla" />
 	  </tocitem>
 	  <tocitem target="plexers" text="Plexers library">
 		<tocitem target="plexers_mux" text="Multiplexer" image="icon_mux" />
@@ -161,25 +162,51 @@
 	  </tocitem>
 	  <tocitem target="io" text="Input/Output library">
 		<tocitem target="io_button" text="Button" image="icon_button" />
+		<tocitem target="io_DIP" text="DIP Switch" image="icon_DIP" />
 		<tocitem target="io_joystick" text="Joystick" image="icon_joystick" />
 		<tocitem target="io_keyboard" text="Keyboard" image="icon_keyboard" />
 		<tocitem target="io_led" text="LED" image="icon_led" />
+		<tocitem target="io_ledRVB" text="LED rVB" image="icon_ledRVB" />
 		<tocitem target="io_7seg" text="7-Segment Display" image="icon_7seg" />
 		<tocitem target="io_hexdig" text="Hex Digit Display" image="icon_hexdig" />
 		<tocitem target="io_dotmat" text="LED Matrix" image="icon_dotmat" />
 		<tocitem target="io_tty" text="TTY" image="icon_tty" />
+		<tocitem target="io_Port_IO" text="Port I/O" image="icon_Port_IO" />
+		<tocitem target="io_Repetar" text="Reptar Local Bus" image="icon_repetar" />
+		<tocitem target="io_videorvb" text="Video RVB" image="icon_videorvb" />
 	  </tocitem>
-          <tocitem target="soc" text = "SOC library">
-            <tocitem target="nios2_sim" text ="Nios2 simulator" image="up_icon" />
-            <tocitem target="socbus" text ="SOC bus interconnect" image="socbus_icon" />
-          </tocitem>
-      <tocitem target="tcl" text="TCL library">
+	  <!-- TTL mega functions 
+	  <tocitem target="ttl" text="TTL">
+		<tocitem target="ttl_xxxx" text=button image="ttl_xxxx" />
+	  -->
+	  <tocitem target="tcl" text="TCL library">
           <tocitem target="tcl_reds_console" text="REDS console" image="icon_reds_console" />
           <tocitem target="tcl_generic" text="Generic" image="icon_generic" />
       </tocitem>
-	</tocitem>
+	  <!-- BFH mega functions 
+	  <tocitem target="bfh" text="BFH mega functions">
+          <tocitem target="bfh-BinairyBCD" text="Binairy to BCD" image="bfh_*******" />
+          <tocitem target="bfh-BCDsevenseg" text="BCD to seven segment" image="bfh_***********" />
+	  </tocitem>
+	  -->
+	  <!-- Input/output-Extra
+	  <tocitem target="ioex" text="Input/Output-Extra">
+          <tocitem target="ioex_proggen" text="Progr. generator" image="ioex_***********" />
+          <tocitem target="ioex_switch" text="switch" image="ioex_***********" />
+          <tocitem target="ioex_buzzer" text="Buzzer" image="ioex_***********" />
+          <tocitem target="ioex_slider" text="Slider" image="ioex_***********" />
+          <tocitem target="ioex_digitalscop" text="Digital oscilloscope" image="ioex_***********" />
+          <tocitem target="ioex_plarom" text="Programmable logic array ROM" image="ioex_***********" />
+      </tocitem>
+	  -->
+      <tocitem target="soc" text = "SOC library">
+          <tocitem target="nios2_sim" text ="Nios2 simulator" image="up_icon" />
+          <tocitem target="socbus" text ="SOC bus interconnect" image="socbus_icon" />
+      </tocitem>
+ 	</tocitem>
 	<tocitem target="Tests_for_doc" text="Tests for documentation">
 	    <tocitem target="test_hml_css" text="test_hml_css" />
+		<tocitem target="Translation_status" text="Translation status" />
 	</tocitem>
 </tocitem>
 </toc>

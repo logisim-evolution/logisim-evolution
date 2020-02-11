@@ -12,34 +12,34 @@
     <link rel="stylesheet" type="text/css" href="../../style.css">
   </head>
   <body>
-    <div class="maindiv">
+    <div class=maindiv>
       <h1>
         Délais sur les portes logiques
       </h1>
       <p>
         À titre d’exemple du niveau de sophistication de l’algorithme de Logisim, considérons le circuit suivant.
       </p>
-      <center>
+      <p align="center">
         <img class=notscal src="../../../../img-guide/prop-const0.png" alt="#########">
-      </center>
+      </p>
       <p>
         Ce circuit "évidemment" génère toujours 0. Mais dans la réalité les sorties des portes ne réagissent pas instantanément à leurs entrées, et elles ne le font pas non plus dans Logisim. Par conséquent, lorsque l'entrée de ce circuit passe de 0 à 1, le retard introduit par la porte NOT fait que la porte ET verra brièvement deux entrées 1 et émettra brièvement 1. Vous ne le verrez pas à l'écran. Mais l'effet est observable lorsque nous utilisons la sortie de la porte AND comme entrée de l'horloge d'une bascule D.
       </p>
-      <center>
+      <p align="center">
         <img class=notscal src="../../../../img-guide/prop-using-const0.png" alt="#########">
-      </center>
+      </p>
       <p>
         La bascule D changera à chaque impulsion de la sortie de la porte AND soit quand l'entrée du circuit passe de 0 à 1. Le déroulement détaillé peut aussi s'observer grâce au <a href="../tutorial/tutor-step.html">mode pas à pas</a> de la simulation.
       </p>
       <p>
         Chaque composant est associé à un délai. Les composants plus sophistiqués intégrés dans Logisim ont tendance à avoir des retards plus importants, mais ces retards sont quelque peu arbitraires et peuvent ne pas refléter la réalité.
       </p>
-	  <center>
+	  <p align="center">
         <img class=notscal src="../../../../img-guide/propagat.gif" alt="#########"><br>
 		Logisim world<br><br>
 		<img class=notscal src="../../../../img-guide/reallife2.png" alt="#########"><br>
 		Real world
-      </center>
+      </p>
       <p>
         D'un point de vue technique, il est relativement facile de gérer ce niveau de sophistication dans un seul circuit. Traiter les retards de porte entre les sous-circuits est cependant un peu plus complexe. Logisim tente de résoudre ce problème correctement en plaçant toutes les valeurs de propagation des composants primitifs dans un seul planning, quel que soit le sous-circuit dans lequel se trouve le composant.
       </p>

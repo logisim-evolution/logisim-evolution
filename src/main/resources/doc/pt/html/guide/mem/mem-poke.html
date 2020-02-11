@@ -3,69 +3,86 @@
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="created" content="2018-10-23T06:18:10.521000000">
-    <meta name="changed" content="2018-10-23T06:18:42.262000000">
+    <meta name="changed" content="2020-02-09T06:18:42.262000000">
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <meta http-equiv="Content-Language" content="pt">
-    <title>Testar memória</title>
+    <title>
+      Testar memória
+    </title>
     <link rel="stylesheet" type="text/css" href="..\..\style.css">
   </head>
   <body>
-    <div class="maindiv">
-
-<h1>Testar memória</h1>
-
-<p> Você poderá manipular o conteúdo da memória usando a ferramenta Testar (Poke),
-mas a interface para isso é severamente limitada por restrições de espaço:
-Por mais que a simples edição, você provavelmente irá
-<a href="mem-hex.html"> achar o editor hexadecimal integrado </a> muito mais
-conveniente.
-</p>
-
-<p> No entanto, para visualizar e editar os valores dentro do circuito,
-a ferramenta Testar (Poke) tem dois modos de operação:
-você poderá editar o endereço exibido, e também poderá editar um valor individual.
-</p>
-
-<p> Para editar o endereço exibido, clicar fora do retângulo mostrado.
-O Logisim irá desenhar um retângulo vermelho em torno do endereço.
-</p>
-
-<ul>
-
-<li> <p> Se entrar com dígitos hexadecimais irá mudar o endereço de acordo.
-</p> </li>
-
-<li> <p> Se digitar a tecla Enter irá rolar para baixo uma linha.
-</p> </li>
-
-<li> <p> Se digitar a tecla Backspace irá rolar uma linha para cima.
-</p> </li>
-
-<li> <p> Se digitar a barra de espaço irá rolar uma página (quatro linhas).
-</p> </li>
-
-</ul>
-
-<p> Para editar determinado conteúdo, clicar no valor dentro do
-retângulo mostrado. Logisim irá desenhar um retângulo vermelho em torno desse endereço.
-<ul>
-
-<li> <p> Se entrar com dígitos hexadecimais irá mudar o valor do endereço atual de acordo.
-</p> </li>
-
-<li> <p> Se apertar a tecla Enter irá editar o valor mostrado logo abaixo
-(uma linha para baixo).
-</p> </li>
-
-<li> <p> Se apertar a tecla Backspace irá editar o valor na endereço anterior.
-</p> </li>
-
-<li> <p> Se apertar a barra de espaço irá editar o valor no endereço seguinte.
-</p> </li>
-
-</ul>
-
-<p><strong>Próximo:</strong> <a href="mem-menu.html">Menus <i>pop-up</i> menus e arquivos</a>.</p>
-</div>
-</body>
+    <div class=maindiv>
+      <h1>
+        Testar memória
+      </h1>
+      <p>
+        Você poderá manipular o conteúdo da memória usando a ferramenta <b class=propertie>Testar</b> (Poke), mas a interface para isso é severamente limitada por restrições de espaço: Por mais que a simples edição, você provavelmente irá <a href="mem-hex.html">achar o editor hexadecimal integrado</a> muito mais conveniente.
+      </p>
+	  <h2>
+	    Seleção de endereço
+	  </h2>
+      <p>
+        No entanto, para visualizar e editar os valores dentro do circuito, a ferramenta Testar (Poke) tem dois modos de operação: você poderá editar o endereço exibido, e também poderá editar um valor individual.
+      </p>
+      <p>
+        Para editar o endereço exibido, clicar fora do retângulo mostrado. O Logisim irá desenhar um retângulo vermelho em torno do endereço.
+      </p>
+      <p align="center">
+        <img class=notscal src="../../../../img-guide/pokememadr.png" alt="pokememadr">
+      </p>	  
+      <ul>
+        <li>
+            Se entrar com dígitos hexadecimais irá mudar o endereço de acordo.
+        </li>
+        <li>
+            Se digitar a tecla <b class=tkeybd>Enter</b> o <b class=tkeybd>Ctrl-Setas para baixo</b> irá rolar para baixo uma linha.
+        </li>
+        <li>
+            Se digitar a tecla <b class=tkeybd>Retrocesso</b> ou <b class=tkeybd>Ctrl-Seta para cima</b> irá rolar uma linha para cima.
+        </li>
+		<li>La <b class=tkeybd>Roda do rato. </b> permite esta mesma rolagem.
+        </li>
+        <li>
+            Se digitar a barra de <b class=tkeybd>Espaço</b> irá rolar uma página (quatro linhas).
+        </li>
+      </ul>
+	  <h2>
+        Modificação de dados
+      </h2>
+      <p>
+        Para editar determinado conteúdo, clicar no valor dentro do retângulo mostrado. Logisim irá desenhar um retângulo vermelho em torno desse endereço.
+      </p>
+	   <p align="center">
+        <img class=notscal src="../../../../img-guide/pokememdata.png" alt="pokememdata">
+      </p>
+	  <ul>
+        <li>
+          <p>
+            Se entrar com dígitos hexadecimais irá mudar o valor do endereço atual de acordo.
+          </p>
+        </li>
+        <li>
+          <p>
+            Se apertar a tecla <b class=tkeybd>Enter</b> ou <b class=tkeybd>Ctrl+Setas para baixo</b> irá editar o valor mostrado logo abaixo (uma linha para baixo).
+          </p>
+        </li>
+        <li>
+          <p>
+            Se apertar a tecla <b class=tkeybd>Retrocesso</b> ou <b class=tkeybd>Ctrl-Seta para cima</b> irá editar o valor na endereço anterior.
+          </p>
+        </li>
+		<li>La <b class=tkeybd>Roda do rato. </b> ou <b class=tkeybd>Ctrl-Seta para cima</b>, <b class=tkeybd>Ctrl-Setas para baixo</b> permite subir/baixar uma linha.
+        </li>
+        <li>
+          <p>
+            Se apertar a barra de <b class=tkeybd>Espaço</b> irá editar o valor no endereço seguinte.
+          </p>
+        </li>
+      </ul>
+      <p>
+        <strong>Próximo:</strong> <a href="mem-menu.html">Menus contextual e arquivos </a>.
+      </p>
+    </div>
+  </body>
 </html>
