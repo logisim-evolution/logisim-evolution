@@ -123,7 +123,7 @@ public class PainterShaped {
     GateAttributes attrs = (GateAttributes) painter.getAttributeSet();
     Direction facing = attrs.facing;
     int inputs = attrs.inputs;
-    int negated = attrs.negated;
+    long negated = attrs.negated;
 
     int[] lengths = getInputLineLengths(attrs, factory);
     if (painter.getInstance() == null) { // drawing ghost - negation bubbles

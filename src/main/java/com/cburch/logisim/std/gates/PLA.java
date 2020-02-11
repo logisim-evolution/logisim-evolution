@@ -248,7 +248,7 @@ class PLA extends InstanceFactory {
     BitWidth outWidth = state.getAttributeValue(ATTR_OUT_WIDTH);
     PLATable tt = state.getAttributeValue(ATTR_TABLE);
     Value input = state.getPortValue(IN_PORT);
-    int val = tt.valueFor(input.toIntValue());
+    long val = tt.valueFor(input.toLongValue());
     state.setPort(1, Value.createKnown(outWidth, val), 1);
   }
 
@@ -292,7 +292,7 @@ class PLA extends InstanceFactory {
       if (painter.getShowState()) {
         PLATable tt = painter.getAttributeValue(ATTR_TABLE);
         Value input = painter.getPortValue(IN_PORT);
-        String comment = tt.commentFor(input.toIntValue());
+        String comment = tt.commentFor(input.toLongValue());
         int jj = comment.indexOf("#"); // don't display secondary comment
         if (jj >= 0) comment = comment.substring(0, jj).trim();
         GraphicsUtil.drawCenteredText(g, comment, x + w / 2, y + 2 * h / 3);

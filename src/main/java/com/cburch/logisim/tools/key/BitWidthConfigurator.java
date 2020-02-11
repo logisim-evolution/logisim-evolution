@@ -47,7 +47,7 @@ public class BitWidthConfigurator extends NumericConfigurator<BitWidth> {
   }
 
   @Override
-  protected BitWidth createValue(int val) {
-    return BitWidth.create(val);
+  protected BitWidth createValue(long val) {
+    return BitWidth.create((int) val);
   }
 }

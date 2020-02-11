@@ -37,7 +37,7 @@ import java.util.Arrays;
 
 public class Value {
 
-  private static Value create(int width, int error, int unknown, int value) {
+  private static Value create(int width, long error, long unknown, long value) {
     if (width == 0) {
       return Value.NIL;
     } else if (width == 1) {
@@ -46,12 +46,15 @@ public class Value {
       else if ((value & 1) != 0) return Value.TRUE;
       else return Value.FALSE;
     } else {
-      int mask = (width == 32 ? -1 : ~(-1 << width));
+      long mask = (width == 64 ? -1L : ~(-1L << width));
       error = error & mask;
       unknown = unknown & mask & ~error;
       value = value & mask & ~unknown & ~error;
 
-      int hashCode = 31 * (31 * (31 * width + error) + unknown) + value;
+      int hashCode = width;
+      hashCode = 31 * hashCode + (int) (error ^ (error >>> 32));
+      hashCode = 31 * hashCode + (int) (unknown ^ (unknown >>> 32));
+      hashCode = 31 * hashCode + (int) (value ^ (value >>> 32));
       Object cached = cache.get(hashCode);
       if (cached != null) {
         Value val = (Value) cached;
@@ -73,11 +76,11 @@ public class Value {
       throw new RuntimeException("Cannot have more than " + MAX_WIDTH + " bits in a value");
 
     int width = values.length;
-    int value = 0;
-    int unknown = 0;
-    int error = 0;
+    long value = 0;
+    long unknown = 0;
+    long error = 0;
     for (int i = 0; i < values.length; i++) {
-      int mask = 1 << i;
+      long mask = 1L << i;
       if (values[i] == TRUE) value |= mask;
       else if (values[i] == FALSE) /* do nothing */ ;
       else if (values[i] == UNKNOWN) unknown |= mask;
@@ -93,7 +96,7 @@ public class Value {
     return Value.create(bits.getWidth(), -1, 0, 0);
   }
 
-  public static Value createKnown(BitWidth bits, int value) {
+  public static Value createKnown(BitWidth bits, long value) {
     return Value.create(bits.getWidth(), 0, 0, value);
   }
 
@@ -102,7 +105,7 @@ public class Value {
   }
 
   /* Added to test */
-  public static Value createKnown(int bits, int value) {
+  public static Value createKnown(int bits, long value) {
     return Value.create(bits, 0, 0, value);
   }
 
@@ -155,17 +158,15 @@ public class Value {
     }
     if (radix == 10 && t.charAt(0) == '-') value = -value;
 
-    if (w == 32) {
-      if (((value & 0x7FFFFFFF) >> (w - 1)) != 0)
+    if (w == 64) {
+      if (((value & 0x7FFFFFFFFFFFFFFFL) >> (w - 1)) != 0)
         throw new Exception("too many bits in \"" + t + "\"");
     } else {
       if ((value >> w) != 0) throw new Exception("too many bits in \"" + t + "\"");
     }
 
     unknown &= ((1L << w) - 1);
-    int v = (int) (value & 0x00000000ffffffff);
-    int u = (int) (unknown & 0x00000000ffffffff);
-    return create(w, 0, u, v);
+    return create(w, 0, unknown, value);
   }
 
   /**
@@ -198,7 +199,7 @@ public class Value {
   public static final Value UNKNOWN = new Value(1, 0, 1, 0);
   public static final Value ERROR = new Value(1, 1, 0, 0);
   public static final Value NIL = new Value(0, 0, 0, 0);
-  public static final int MAX_WIDTH = 32;
+  public static final int MAX_WIDTH = 64;
   public static final Color NIL_COLOR = Color.GRAY;
   public static Color FALSE_COLOR;
 
@@ -219,11 +220,11 @@ public class Value {
 
   private final int width;
 
-  private final int error;
-  private final int unknown;
-  private final int value;
+  private final long error;
+  private final long unknown;
+  private final long value;
 
-  private Value(int width, int error, int unknown, int value) {
+  private Value(int width, long error, long unknown, long value) {
     // To ensure that the one-bit values are unique, this should be called
     // only
     // for the one-bit values and by the private create method
@@ -240,9 +241,9 @@ public class Value {
       if (this == TRUE && other == TRUE) return TRUE;
       return ERROR;
     } else {
-      int false0 = ~this.value & ~this.error & ~this.unknown;
-      int false1 = ~other.value & ~other.error & ~other.unknown;
-      int falses = false0 | false1;
+      long false0 = ~this.value & ~this.error & ~this.unknown;
+      long false1 = ~other.value & ~other.error & ~other.unknown;
+      long falses = false0 | false1;
       return Value.create(
           Math.max(this.width, other.width),
           (this.error | other.error | this.unknown | other.unknown) & ~falses,
@@ -261,7 +262,7 @@ public class Value {
       if (other == UNKNOWN) return this;
       return ERROR;
     } else {
-      int disagree = (this.value ^ other.value) & ~(this.unknown | other.unknown);
+      long disagree = (this.value ^ other.value) & ~(this.unknown | other.unknown);
       return Value.create(
           Math.max(this.width, other.width),
           this.error | other.error | disagree,
@@ -297,7 +298,7 @@ public class Value {
 
   public Value extendWidth(int newWidth, Value others) {
     if (width == newWidth) return this;
-    int maskInverse = (width == 32 ? 0 : (-1 << width));
+    long maskInverse = (width == 64 ? 0 : (-1L << width));
     if (others == Value.ERROR) {
       return Value.create(newWidth, error | maskInverse, unknown, value);
     } else if (others == Value.FALSE) {
@@ -311,7 +312,7 @@ public class Value {
 
   public Value get(int which) {
     if (which < 0 || which >= width) return ERROR;
-    int mask = 1 << which;
+    long mask = 1L << which;
     if ((error & mask) != 0) return ERROR;
     else if ((unknown & mask) != 0) return UNKNOWN;
     else if ((value & mask) != 0) return TRUE;
@@ -362,9 +363,9 @@ public class Value {
   @Override
   public int hashCode() {
     int ret = width;
-    ret = 31 * ret + error;
-    ret = 31 * ret + unknown;
-    ret = 31 * ret + value;
+    ret = 31 * ret + (int) (error ^ (error >>> 32));
+    ret = 31 * ret + (int) (unknown ^ (unknown >>> 32));
+    ret = 31 * ret + (int) (value ^ (value >>> 32));
     return ret;
   }
 
@@ -377,10 +378,10 @@ public class Value {
   }
 
   public boolean isUnknown() {
-    if (width == 32) {
-      return error == 0 && unknown == -1;
+    if (width == 64) {
+      return error == 0 && unknown == -1L;
     } else {
-      return error == 0 && unknown == ((1 << width) - 1);
+      return error == 0 && unknown == ((1L << width) - 1);
     }
   }
 
@@ -401,9 +402,9 @@ public class Value {
       if (this == FALSE && other == FALSE) return FALSE;
       return ERROR;
     } else {
-      int true0 = this.value & ~this.error & ~this.unknown;
-      int true1 = other.value & ~other.error & ~other.unknown;
-      int trues = true0 | true1;
+      long true0 = this.value & ~this.error & ~this.unknown;
+      long true1 = other.value & ~other.error & ~other.unknown;
+      long trues = true0 | true1;
       return Value.create(
           Math.max(this.width, other.width),
           (this.error | other.error | this.unknown | other.unknown) & ~trues,
@@ -420,7 +421,7 @@ public class Value {
     } else if (width == 1) {
       return val;
     } else {
-      int mask = ~(1 << which);
+      long mask = ~(1L << which);
       return Value.create(
           this.width,
           (this.error & mask) | (val.error << which),
@@ -452,14 +453,18 @@ public class Value {
     if (isErrorValue()) return S.get("valueError");
     if (!isFullyDefined()) return S.get("valueUnknown");
 
-    int value = toIntValue();
+    long value = toLongValue();
     if (signed) {
-      if (width < 32 && (value >> (width - 1)) != 0) {
+      if (width < 64 && (value >> (width - 1)) != 0) {
         value |= (-1) << width;
       }
-      return "" + value;
+      return Long.toString(value);
     } else {
-      return "" + (value & 0xFFFFFFFFL);
+      if (width < 64) {
+        long mask = (-1 << width)^0xFFFFFFFFFFFFFFFFL;
+        value &= mask;
+      }
+      return Long.toUnsignedString(value);
     }
   }
 
@@ -494,7 +499,7 @@ public class Value {
         if (width == 0) return "-";
         if (isErrorValue()) return S.get("valueError");
         if (!isFullyDefined()) return S.get("valueUnknown");
-        return Integer.toString(toIntValue(), radix);
+        return Long.toString(toLongValue(), radix);
     }
   }
 
@@ -528,9 +533,9 @@ public class Value {
     }
   }
 
-  public int toIntValue() {
-    if (error != 0) return -1;
-    if (unknown != 0) return -1;
+  public long toLongValue() {
+    if (error != 0) return -1L;
+    if (unknown != 0) return -1L;
     return value;
   }
 

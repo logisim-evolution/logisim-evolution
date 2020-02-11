@@ -885,7 +885,7 @@ public class RamAppearance {
     g.drawLine(xpos + 48, ypos + 20, xpos + 45, ypos + 23);
     g.drawLine(xpos + 45, ypos + 23, xpos + 45, ypos + 30);
     g.drawLine(xpos + 40, ypos + 35, xpos + 45, ypos + 30);
-    String size = Integer.toString((1 << NrAddressBits) - 1);
+    String size = Long.toString((1 << NrAddressBits) - 1);
     Font font = g.getFont();
     FontMetrics fm = g.getFontMetrics(font);
     int StrSize = fm.stringWidth(size);

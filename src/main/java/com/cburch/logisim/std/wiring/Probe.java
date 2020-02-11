@@ -92,8 +92,12 @@ public class Probe extends InstanceFactory {
             : radix.getMaxLength(width);
     int bwidth, bheight, x, y;
     if (radix == RadixOption.RADIX_2) {
-      bwidth = (len < 2) ? 20 : (len >= 8) ? 80 : len * 10;
-      bheight = (len > 24) ? 80 : (len > 16) ? 60 : (len > 8) ? 40 : 20;
+      int maxBitsPerRow = 8;
+      int maxRows = 8;
+      int rows = len / maxBitsPerRow;
+      if (len > rows * maxBitsPerRow) rows++;
+      bwidth = (len < 2) ? 20 : (len >= maxBitsPerRow) ? maxBitsPerRow * 10 : len * 10;
+      bheight = (rows < 2) ? 20 : (rows >= maxRows) ? maxRows * 20 : rows * 20;
     } else {
       if (len < 2) bwidth = 20;
       else bwidth = len * Pin.DIGIT_WIDTH;

@@ -37,20 +37,20 @@ import java.util.ArrayList;
 
 public class AbstractConstantHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
-  public int GetConstant(AttributeSet attrs) {
+  public long GetConstant(AttributeSet attrs) {
     return 0;
   }
 
-  private String GetConvertOperator(int value, int nr_of_bits, String HDLType) {
+  private String GetConvertOperator(long value, int nr_of_bits, String HDLType) {
     if (HDLType.equals(VHDL)) {
-      if (nr_of_bits == 1) return "'" + Integer.toString(value) + "'";
+      if (nr_of_bits == 1) return "'" + Long.toString(value) + "'";
       return "std_logic_vector(to_unsigned("
-          + Integer.toString(value)
+          + Long.toString(value)
           + ","
           + Integer.toString(nr_of_bits)
           + "))";
     } else {
-      return Integer.toString(nr_of_bits) + "'d" + Integer.toString(value);
+      return Integer.toString(nr_of_bits) + "'d" + Long.toString(value);
     }
   }
 
@@ -67,7 +67,7 @@ public class AbstractConstantHDLGeneratorFactory extends AbstractHDLGeneratorFac
     String AssignOperator = (HDLType.equals(VHDL)) ? " <= " : " = ";
     int NrOfBits = ComponentInfo.GetComponent().getEnd(0).getWidth().getWidth();
     if (ComponentInfo.EndIsConnected(0)) {
-      int ConstantValue = GetConstant(ComponentInfo.GetComponent().getAttributeSet());
+      long ConstantValue = GetConstant(ComponentInfo.GetComponent().getAttributeSet());
       if (ComponentInfo.GetComponent().getEnd(0).getWidth().getWidth() == 1) {
         /* Single Port net */
         Contents.add(
@@ -91,7 +91,7 @@ public class AbstractConstantHDLGeneratorFactory extends AbstractHDLGeneratorFac
           Contents.add("");
         } else {
           /* we have to enumerate all bits */
-          int mask = 1;
+          long mask = 1;
           String ConstValue = (HDLType.equals(VHDL)) ? "'0'" : "1'b0";
           for (byte bit = 0; bit < NrOfBits; bit++) {
             if ((mask & ConstantValue) != 0) ConstValue = (HDLType.equals(VHDL)) ? "'1'" : "1'b1";

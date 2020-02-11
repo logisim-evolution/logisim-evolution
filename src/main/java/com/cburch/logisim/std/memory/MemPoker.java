@@ -94,8 +94,8 @@ public class MemPoker extends InstancePoker {
   }
 
   private static class DataPoker extends MemPoker {
-    int initValue;
-    int curValue;
+    long initValue;
+    long curValue;
 
     private DataPoker(InstanceState state, MemState data, long addr) {
       data.setCursor(addr);

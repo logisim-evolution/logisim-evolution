@@ -74,7 +74,7 @@ class SimpleGrayCounter extends InstanceFactory {
       Bounds bds = painter.getBounds();
       GraphicsUtil.drawCenteredText(
           painter.getGraphics(),
-          StringUtil.toHexString(BIT_WIDTH.getWidth(), state.getValue().toIntValue()),
+          StringUtil.toHexString(BIT_WIDTH.getWidth(), state.getValue().toLongValue()),
           bds.getX() + bds.getWidth() / 2,
           bds.getY() + bds.getHeight() / 2);
     }

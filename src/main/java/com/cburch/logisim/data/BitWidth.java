@@ -86,7 +86,7 @@ public class BitWidth implements Comparable<BitWidth> {
 
   private static void ensurePrefab() {
     if (prefab == null) {
-      prefab = new BitWidth[Math.min(32, Value.MAX_WIDTH)];
+      prefab = new BitWidth[Math.min(64, Value.MAX_WIDTH)];
       prefab[0] = ONE;
       for (int i = 1; i < prefab.length; i++) {
         prefab[i] = new BitWidth(i + 1);
@@ -125,10 +125,10 @@ public class BitWidth implements Comparable<BitWidth> {
     return this.width == other.width;
   }
 
-  public int getMask() {
+  public long getMask() {
     if (width == 0) return 0;
-    else if (width == 32) return -1;
-    else return (1 << width) - 1;
+    else if (width == 64) return -1L;
+    else return (1L << width) - 1;
   }
 
   public int getWidth() {

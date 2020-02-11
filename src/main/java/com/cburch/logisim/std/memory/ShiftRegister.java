@@ -57,7 +57,7 @@ import java.awt.Graphics;
 
 public class ShiftRegister extends InstanceFactory {
   static final Attribute<Integer> ATTR_LENGTH =
-      Attributes.forIntegerRange("length", S.getter("shiftRegLengthAttr"), 1, 32);
+      Attributes.forIntegerRange("length", S.getter("shiftRegLengthAttr"), 1, 64);
   static final Attribute<Boolean> ATTR_LOAD =
       Attributes.forBoolean("parallel", S.getter("shiftRegParallelAttr"));
 
@@ -92,7 +92,7 @@ public class ShiftRegister extends InstanceFactory {
         });
     setKeyConfigurator(
         JoinedConfigurator.create(
-            new IntegerConfigurator(ATTR_LENGTH, 1, 32, 0),
+            new IntegerConfigurator(ATTR_LENGTH, 1, 64, 0),
             new BitWidthConfigurator(StdAttr.WIDTH)));
 
     setIcon(new ShifterIcon());
@@ -341,7 +341,7 @@ public class ShiftRegister extends InstanceFactory {
       String Value;
       if (data_value.isFullyDefined()) {
         g.setColor(Color.DARK_GRAY);
-        Value = StringUtil.toHexString(nr_of_bits, data_value.toIntValue());
+        Value = StringUtil.toHexString(nr_of_bits, data_value.toLongValue());
       } else {
         g.setColor(Color.YELLOW);
         Value = (data_value.isUnknown()) ? "?" : "!";

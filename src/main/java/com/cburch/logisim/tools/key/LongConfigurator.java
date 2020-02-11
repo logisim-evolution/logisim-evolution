@@ -26,36 +26,22 @@
  *     http://www.heig-vd.ch/
  */
 
-package com.cburch.logisim.std.wiring;
+package com.cburch.logisim.tools.key;
 
-import com.cburch.logisim.data.AttributeSet;
-import com.cburch.logisim.data.BitWidth;
-import com.cburch.logisim.instance.StdAttr;
-import com.cburch.logisim.tools.key.LongConfigurator;
+import com.cburch.logisim.data.Attribute;
 
-class ConstantConfigurator extends LongConfigurator {
-  public ConstantConfigurator() {
-    super(Constant.ATTR_VALUE, 0, 0, 0, 16);
+public class LongConfigurator extends NumericConfigurator<Long> {
+  public LongConfigurator(Attribute<Long> attr, long min, long max, int modifiersEx) {
+    super(attr, min, max, modifiersEx);
+  }
+
+  public LongConfigurator(
+      Attribute<Long> attr, long min, long max, int modifiersEx, int radix) {
+    super(attr, min, max, modifiersEx, radix);
   }
 
   @Override
-  public long getMaximumValue(AttributeSet attrs) {
-    BitWidth width = attrs.getValue(StdAttr.WIDTH);
-    long ret = width.getMask();
-    if (ret >= 0) {
-      return ret;
-    } else {
-      return Integer.MAX_VALUE;
-    }
-  }
-
-  @Override
-  public long getMinimumValue(AttributeSet attrs) {
-    BitWidth width = attrs.getValue(StdAttr.WIDTH);
-    if (width.getWidth() < 64) {
-      return 0;
-    } else {
-      return Long.MIN_VALUE;
-    }
+  protected Long createValue(long val) {
+    return Long.valueOf(val);
   }
 }

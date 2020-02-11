@@ -77,6 +77,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
 import java.awt.font.TextLayout;
+import java.math.BigInteger;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -199,8 +200,15 @@ public class Pin extends InstanceFactory {
           newVal = Value.createUnknown(BitWidth.create(bitWidth));
         } else {
           try {
-            int n = (int) Long.parseLong(s);
-            newVal = Value.createKnown(BitWidth.create(bitWidth), n);
+            BigInteger n = new BigInteger(s);
+            BigInteger signedMax = new BigInteger("1").shiftLeft(bitWidth-1);
+            if (radix == RadixOption.RADIX_10_SIGNED || n.compareTo(signedMax) < 0) {
+              newVal = Value.createKnown(BitWidth.create(bitWidth), n.longValue());
+            } else {
+              BigInteger max = new BigInteger("1").shiftLeft(bitWidth);
+              BigInteger newValue = n.subtract(max);
+              newVal = Value.createKnown(BitWidth.create(bitWidth), newValue.longValue());
+            }
           } catch (NumberFormatException exception) {
             return;
           }
@@ -217,10 +225,15 @@ public class Pin extends InstanceFactory {
       if (s.equals("")) return false;
       if (tristate && (s.equals("x") || s.equals("X") || s.equals("???"))) return true;
       try {
-        long n = Long.parseLong(s);
-        if (radix == RadixOption.RADIX_10_SIGNED)
-          return (n >= -(1L << (bitWidth - 1)) && n < (1L << bitWidth - 1));
-        else return (n >= 0 && n < (1L << bitWidth));
+    	BigInteger n = new BigInteger(s);
+        if (radix == RadixOption.RADIX_10_SIGNED) {
+          BigInteger min = new BigInteger("-1").shiftLeft(bitWidth-1);
+          BigInteger max = new BigInteger("1").shiftLeft(bitWidth-1);
+          return (n.compareTo(min) >= 0) && (n.compareTo(max) < 0);
+        } else {
+          BigInteger max = new BigInteger("1").shiftLeft(bitWidth);
+          return (n.compareTo(BigInteger.ZERO) >= 0) && (n.compareTo(max) < 0);
+        }
       } catch (NumberFormatException e) {
         return false;
       }
