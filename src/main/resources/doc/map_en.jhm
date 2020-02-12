@@ -95,6 +95,7 @@
 	<mapID target="menu_printertab"     url="en/html/guide/menu/printertab.html" />
 	<mapID target="about"               url="en/html/guide/about/index.html" />
 	<mapID target="about_gpl"           url="gpl.html" />	
+
 <!-- Librairie -->
 	<mapID target="libs"                url="en/html/libs/index.html" />
 	<mapID target="wiring"              url="en/html/libs/wiring/index.html" />
@@ -154,25 +155,16 @@
     <mapID target="io_Port_IO"          url="en/html/libs/io/Port_io.html" />	
 	<mapID target="io_Repetar"          url="en/html/libs/io/repetar.html" />	
 	<mapID target="io_videorvb"         url="en/html/libs/io/videorvb.html" />
-    <!-- TTL -->
-	
-
-    <mapID target="tcl"                 url="en/html/libs/tcl/index.html" />
+	<mapID target="tcl"                 url="en/html/libs/tcl/index.html" />
     <mapID target="tcl_reds_console"    url="en/html/libs/tcl/reds_console.html" />
     <mapID target="tcl_generic"         url="en/html/libs/tcl/generic.html" />
-    <!-- BFH mega functions -->
-
-    <mapID target="mem_guide" url="en/html/guide/mem/index.html"/>
-    <mapID target="mem_poke" url="en/html/guide/mem/mem-poke.html" />
-    <mapID target="mem_menu" url="en/html/guide/mem/mem-menu.html"/>
-    <mapID target="mem_hex" url="en/html/guide/mem/mem-hex.html"/>  
-    <mapID target="mem_v2raw" url="en/html/guide/mem/mem-v2raw.html"/>  
-    <mapID target="mem_v3word" url="en/html/guide/mem/mem-v3word.html"/> 
-    <mapID target="mem_v3byte" url="en/html/guide/mem/mem-v3byte.html"/> 
-
-	
-    <!-- Input/Output-Extra -->
-	
+    <mapID target="mem_guide"           url="en/html/guide/mem/index.html"/>
+    <mapID target="mem_poke"            url="en/html/guide/mem/mem-poke.html" />
+    <mapID target="mem_menu"            url="en/html/guide/mem/mem-menu.html"/>
+    <mapID target="mem_hex"             url="en/html/guide/mem/mem-hex.html"/>  
+    <mapID target="mem_v2raw"           url="en/html/guide/mem/mem-v2raw.html"/>  
+    <mapID target="mem_v3word"          url="en/html/guide/mem/mem-v3word.html"/> 
+    <mapID target="mem_v3byte"          url="en/html/guide/mem/mem-v3byte.html"/> 
     <mapID target="soc"                 url="en/html/libs/soc/index.html" />
     <mapID target="nios2_sim"           url="en/html/libs/soc/nios2.html" />
     <mapID target="socbus"              url="en/html/libs/soc/socbus.html" />

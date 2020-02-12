@@ -149,19 +149,12 @@
 	<mapID target="io_hexdig"           url="fr/html/libs/io/hexdig.html" />
 	<mapID target="io_dotmat"           url="fr/html/libs/io/dotmat.html" />
 	<mapID target="io_tty"              url="fr/html/libs/io/tty.html" />
-    <!-- TTL -->
-	
     <mapID target="tcl"                 url="fr/html/libs/tcl/index.html" />
     <mapID target="tcl_reds_console"    url="fr/html/libs/tcl/reds_console.html" />
     <mapID target="tcl_generic"         url="fr/html/libs/tcl/generic.html" />
-    <!-- BFH mega functions -->
-	
-    <!-- Input/Output-Extra -->
-	
     <mapID target="soc"                 url="fr/html/libs/soc/index.html" />
     <mapID target="nios2_sim"           url="fr/html/libs/soc/nios2.html" />
     <mapID target="socbus"              url="fr/html/libs/soc/socbus.html" />
-
 <!-- for testing and validation -->	
 	<mapID target="test_hml_css"        url="fr/testhtml/index.html" />
 	<mapID target="Translation_status"  url="index.html" />
