@@ -1,6 +1,6 @@
 Organization of these folders
 
-Th file  doc_xx.hs it is the configuration for java help by language.
+Th file doc_xx.hs it is the configuration for java help by language.
 
 Th file map_xx.jhm there are the configuration of the help tree in conjunction with the .\xx\contents.xml file...
 (xx = abbreviated language (fr/en/it...)

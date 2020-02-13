@@ -35,7 +35,7 @@
 	<mapID target="features_creating"   url="pt/html/guide/feature/fet-creating.html" />
 	<mapID target="features_splitting"  url="pt/html/guide/feature/fet-splitting.html" />
 	<mapID target="features_colors"     url="pt/html/guide/feature/fet-colors.html" />
-	<mapID target="features_autolabel"  url="pt/html/guide/feature/fet-autolabel.html" />	
+	<mapID target="features_autolabel"  url="pt/html/guide/feature/fet-autolabel.html" />
 	<mapID target="features_matrix"     url="pt/html/guide/feature/fet-matrix.html" />
     <mapID target="mem_guide"           url="pt/html/guide/mem/index.html"/>
     <mapID target="mem_poke"            url="pt/html/guide/mem/mem-poke.html" />
@@ -95,6 +95,7 @@
 	<mapID target="menu_printertab"     url="pt/html/guide/menu/printertab.html" />
 	<mapID target="about"               url="pt/html/guide/about/index.html" />
 	<mapID target="about_gpl"           url="gpl.html" />	
+
 <!-- Librairie -->
 	<mapID target="libs"                url="pt/html/libs/index.html" />
 	<mapID target="wiring"              url="pt/html/libs/wiring/index.html" />
@@ -107,6 +108,7 @@
     <mapID target="wiring_por"          url="pt/html/libs/wiring/poweronreset.html"/>	
 	<mapID target="wiring_constant"     url="pt/html/libs/wiring/constant.html" />
 	<mapID target="wiring_const01"      url="pt/html/libs/wiring/const01.html" />
+	<mapID target="wiring_notconnect"   url="pt/html/libs/wiring/notcon.html" />
 	<mapID target="wiring_transist"     url="pt/html/libs/wiring/transist.html" />
 	<mapID target="wiring_transmis"     url="pt/html/libs/wiring/transmis.html" />
 	<mapID target="wiring_extender"     url="pt/html/libs/wiring/extender.html" />
@@ -116,6 +118,7 @@
 	<mapID target="gates_basic"         url="pt/html/libs/gates/basic.html" />
 	<mapID target="gates_xor"           url="pt/html/libs/gates/xor.html" />
 	<mapID target="gates_controlled"    url="pt/html/libs/gates/controlled.html" />
+	<mapID target="gates_PLA"           url="pt/html/libs/gates/pla.html" />
 	<mapID target="plexers"             url="pt/html/libs/plexers/index.html" />
 	<mapID target="plexers_mux"         url="pt/html/libs/plexers/mux.html" />
 	<mapID target="plexers_demux"       url="pt/html/libs/plexers/demux.html" />
@@ -148,14 +151,20 @@
 	<mapID target="io_7seg"             url="pt/html/libs/io/7seg.html" />
 	<mapID target="io_hexdig"           url="pt/html/libs/io/hexdig.html" />
 	<mapID target="io_dotmat"           url="pt/html/libs/io/dotmat.html" />
-	<mapID target="io_tty"              url="pt/html/libs/io/tty.html" />
-    <mapID target="tcl"                 url="pt/html/libs/tcl/index.html" />
+	<mapID target="io_tty"              url="pt/html/libs/io/tty.html" />	
+    <mapID target="io_Port_IO"          url="pt/html/libs/io/Port_io.html" />	
+	<mapID target="io_Repetar"          url="pt/html/libs/io/repetar.html" />	
+	<mapID target="io_videorvb"         url="pt/html/libs/io/videorvb.html" />
+	<mapID target="tcl"                 url="pt/html/libs/tcl/index.html" />
     <mapID target="tcl_reds_console"    url="pt/html/libs/tcl/reds_console.html" />
     <mapID target="tcl_generic"         url="pt/html/libs/tcl/generic.html" />
     <mapID target="soc"                 url="pt/html/libs/soc/index.html" />
     <mapID target="nios2_sim"           url="pt/html/libs/soc/nios2.html" />
     <mapID target="socbus"              url="pt/html/libs/soc/socbus.html" />
-
+    <mapID target="assembler"           url="pt/html/libs/soc/assembler.html" />
+    <mapID target="disassembler"        url="pt/html/libs/soc/disassembler.html" />
+    <mapID target="socsimcontrol"       url="pt/html/libs/soc/socsimcontrol.html" />
+	
 <!-- for testing and validation -->	
 	<mapID target="test_hml_css"        url="pt/testhtml/index.html" />
 	<mapID target="Translation_status"  url="index.html" />
