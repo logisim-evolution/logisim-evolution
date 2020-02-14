@@ -41,6 +41,7 @@
 	    <tocitem target="mem_guide" text="Composant mémoire">
 			<tocitem target="mem_poke" text="Memory poke" />
 			<tocitem target="mem_menu" text="Menus Pop-up et fichiers"/>
+			<tocitem target="mem_filetabel" text="Panneau du fichier mémoire "/>
 			<tocitem target="mem_hex" text="Editeur Hexadecimal"/>
 			<tocitem target="mem_v2raw" text="Fichier v2raw" />
 			<tocitem target="mem_v3word" text="Fichier v3word"/>

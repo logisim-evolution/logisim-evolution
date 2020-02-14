@@ -25,8 +25,9 @@ img.notscal {
 }
 
 img.iconlibs{
-	height:32px;
-	width:32px;
+	height:16px;
+	width:16px;
+	vertical-align:middle;
 }
 /* For icon in the text */
 img.icontxt{

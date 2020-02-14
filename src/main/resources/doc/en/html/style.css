@@ -24,8 +24,9 @@ img.notscal {
 	vertical-align:middle;
 }
 img.iconlibs{
-	height:32px;
-	width:32px;
+	height:16px;
+	width:16px;
+	vertical-align:middle;
 }
 img.icontxt{
 	height:16px;
