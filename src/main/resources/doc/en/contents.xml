@@ -110,7 +110,7 @@
 			<!-- <tocitem target="about_gpl_en" text="GNU General Public License (en)"/> -->
 		</tocitem>
 	</tocitem>
-
+	
 	<tocitem target="libs" text="Library Reference">
 		<tocitem target="wiring" text="Wiring library">
 			<tocitem target="wiring_splitter" text="Splitter" image="icon_splitter" />
@@ -182,7 +182,7 @@
 		</tocitem>
 		<!-- TTL mega functions 
 		<tocitem target="ttl" text="TTL">
-			<tocitem target="ttl_xxxx" text=button image="ttl_xxxx" />
+			<tocitem target="ttl_xxxx" text="button" image="ttl_xxxx" />
 		</tocitem>
 		-->
 		<tocitem target="tcl" text="TCL library">
@@ -209,10 +209,7 @@
 			<tocitem target="nios2_sim" text ="Nios2 simulator" image="up_icon" />
 			<tocitem target="socbus" text ="SOC bus interconnect" image="socbus_icon" />
 		</tocitem>
-		<tocitem target="Tests_for_doc" text="Tests for documentation">
-			<tocitem target="test_hml_css" text="test_hml_css" />
-			<tocitem target="Translation_status" text="Translation status" />
-		</tocitem>
+		
 <!--
 		<tocitem target="base" text="Base library">
 			<tocitem target="base_poke" text="Poke Tool" image="icon_poke" />
@@ -224,7 +221,10 @@
 			<tocitem target="base_label" text="Text" image="icon_label" />
 		</tocitem>
 -->
-      <tocitem targ
 	</tocitem>
-</tocitem>
+	<tocitem target="Tests_for_doc" text="Tests for documentation">
+		<tocitem target="test_hmlcss" text="test_hml_css" />
+		<tocitem target="Translation_status" text="Translation status" />
+	</tocitem>
+  </tocitem>
 </toc>

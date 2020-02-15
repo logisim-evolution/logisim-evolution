@@ -40,6 +40,7 @@
     <mapID target="mem_guide"           url="de/html/guide/mem/index.html"/>
     <mapID target="mem_poke"            url="de/html/guide/mem/mem-poke.html" />
     <mapID target="mem_menu"            url="de/html/guide/mem/mem-menu.html"/>
+    <mapID target="mem_filetabel"       url="de/html/guide/mem/mem-filepanel.html"/>
     <mapID target="mem_hex"             url="de/html/guide/mem/mem-hex.html"/>  
     <mapID target="mem_v2raw"           url="de/html/guide/mem/mem-v2raw.html"/>  
     <mapID target="mem_v3word"          url="de/html/guide/mem/mem-v3word.html"/> 

@@ -41,6 +41,7 @@
 		<tocitem target="mem_guide" text="Speicherbauelemente">
 			<tocitem target="mem_poke" text="Speicherinhalte bearbeiten" />
 			<tocitem target="mem_menu" text="Kontextmenüs und Dateien" />
+			<tocitem target="mem_filetabel" text="Memory file panel"/>
 			<tocitem target="mem_hex" text="Hex-Editor" />
 			<tocitem target="mem_v2raw" text="File v2raw" />
 			<tocitem target="mem_v3word" text="File v3word"/>
@@ -208,10 +209,22 @@
 			<tocitem target="nios2_sim" text ="Nios2 simulator" image="up_icon" />
 			<tocitem target="socbus" text ="SOC bus interconnect" image="socbus_icon" />
 		</tocitem>
-		<tocitem target="Tests_for_doc" text="Tests for documentation">
-			<tocitem target="test_hml_css" text="test_hml_css" />
-			<tocitem target="Translation_status" text="Translation status" />
+		
+<!--
+		<tocitem target="base" text="Base library">
+			<tocitem target="base_poke" text="Poke Tool" image="icon_poke" />
+			<tocitem target="base_edit" text="Edit Tool" image="icon_edit" />
+			<tocitem target="base_select" text="Select Tool" image="icon_select" />
+			<tocitem target="base_wiring" text="Wiring Tool" image="icon_wiring" />
+			<tocitem target="base_text" text="Text Tool" image="icon_text" />
+			<tocitem target="base_menu" text="Menu Tool" image="icon_menu" />
+			<tocitem target="base_label" text="Text" image="icon_label" />
 		</tocitem>
+-->
 	</tocitem>
-</tocitem>
+	<tocitem target="Tests_for_doc" text="Tests zur Dokumentation">
+		<tocitem target="test_hmlcss" text="test_hml_css" />
+		<tocitem target="Translation_status" text="Status der Übersetzung" />
+	</tocitem>
+  </tocitem>
 </toc>

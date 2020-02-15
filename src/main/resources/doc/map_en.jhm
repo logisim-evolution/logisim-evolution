@@ -40,7 +40,7 @@
     <mapID target="mem_guide"           url="en/html/guide/mem/index.html"/>
     <mapID target="mem_poke"            url="en/html/guide/mem/mem-poke.html" />
     <mapID target="mem_menu"            url="en/html/guide/mem/mem-menu.html"/>
-    <mapID target="mem_filetabel"            url="en/html/guide/mem/mem-filetabel.html"/>
+    <mapID target="mem_filetabel"       url="en/html/guide/mem/mem-filepanel.html"/>
     <mapID target="mem_hex"             url="en/html/guide/mem/mem-hex.html"/>  
     <mapID target="mem_v2raw"           url="en/html/guide/mem/mem-v2raw.html"/>  
     <mapID target="mem_v3word"          url="en/html/guide/mem/mem-v3word.html"/> 
@@ -95,7 +95,11 @@
 	<mapID target="menu_exportab"       url="en/html/guide/menu/exportab.html" />
 	<mapID target="menu_printertab"     url="en/html/guide/menu/printertab.html" />
 	<mapID target="about"               url="en/html/guide/about/index.html" />
-	<mapID target="about_gpl"           url="gpl.html" />	
+	<mapID target="about_gpl"           url="gpl.html" />
+	
+<!-- for testing and validation -->	
+	<mapID target="test_hmlcss"         url="en/testhtml/index.html" />
+	<mapID target="Translation_status"  url="index.html" />
 
 <!-- Librairie -->
 	<mapID target="libs"                url="en/html/libs/index.html" />
@@ -166,10 +170,6 @@
     <mapID target="disassembler"        url="en/html/libs/soc/disassembler.html" />
     <mapID target="socsimcontrol"       url="en/html/libs/soc/socsimcontrol.html" />
 	
-<!-- for testing and validation -->	
-	<mapID target="test_hml_css"        url="en/testhtml/index.html" />
-	<mapID target="Translation_status"  url="index.html" />
-
 <!-- Icon help tree -->
 	<mapID target="icon_poke"        url="img-guide/poke.png" />
 	<mapID target="icon_edit"        url="img-guide/select.png" />
