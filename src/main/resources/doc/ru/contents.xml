@@ -39,9 +39,12 @@
 			<tocitem target="features_matrix" text="Размещение компонентов в матрице " />
 		</tocitem>
 		<tocitem target="mem_guide" text="Компоненты памяти">
-<!--			<tocitem target="mem_poke" text="Нажатие на память" /> -->
+			<tocitem target="mem_poke" text="Нажатие на память" />
 			<tocitem target="mem_menu" text="Всплывающие меню и файлы" />
 			<tocitem target="mem_hex" text="Шестнадцатеричный редактор" />
+			<tocitem target="mem_v2raw" text="File v2raw" />
+			<tocitem target="mem_v3word" text="File v3word"/>
+			<tocitem target="mem_v3byte" text="File v3byte"/>
 		</tocitem>
 		<tocitem target="analyze" text="Комбинационный анализ">
 			<tocitem target="analyze_open" text="Открытие окна Комбинационный анализ" />
@@ -94,7 +97,6 @@
 			<tocitem target="hdl-ip_simulation" text="VHDL simulator" />
 			<tocitem target="hdl-ip_testbenchs" text="Simulating test benchs" />
 		</tocitem>
-		<tocitem target="users" text="Users" />
 		<tocitem target="jar" text="Библиотеки JAR">
 			<tocitem target="jar_incr" text="Инкрементатор кода Грея" />
 			<tocitem target="jar_library" text="Класс Library" />
@@ -109,83 +111,118 @@
 	</tocitem>
 
 	<tocitem target="libs" text="Справка по библиотеке">
-	  <tocitem target="wiring" text="Библиотека Проводка">
-		<tocitem target="wiring_splitter" text="Разветвитель" image="icon_splitter" />
-		<tocitem target="wiring_pin" text="Контакт" image="icon_pin" />
-		<tocitem target="wiring_probe" text="Датчик" image="icon_probe" />
-		<tocitem target="wiring_tunnel" text="Тоннель" image="icon_tunnel" />
-		<tocitem target="wiring_pull" text="Согласующий резистор" image="icon_pull" />
-		<tocitem target="wiring_clock" text="Тактовый генератор" image="icon_clock" />
-		<tocitem target="wiring_por" image="icon_por" text="Power On Reset"/>
-		<tocitem target="wiring_constant" text="Константа" image="icon_constant" />
-		<tocitem target="wiring_const01" text="Питание/Земля" image="icon_const01" />
-		<tocitem target="wiring_transist" text="Транзистор" image="icon_transist" />
-		<tocitem target="wiring_transmis" text="Передаточный вентиль" image="icon_transmis" />
-		<tocitem target="wiring_extender" text="Расширитель битов" image="icon_extender" />
-	  </tocitem>
-	  <tocitem target="gates" text="Библиотека Элементы">
-		<tocitem target="gates_not" text="Элемент НЕ" image="icon_not" />
-		<tocitem target="gates_buffer" text="Буфер" image="icon_buffer" />
-		<tocitem target="gates_basic" text="Элементы И/ИЛИ/И-НЕ/ИЛИ-НЕ" image="icon_basic" />
-		<tocitem target="gates_xor" text="Элементы Исключающее ИЛИ/Исключающее ИЛИ-НЕ/Нечётность/Чётность" image="icon_xor" />
-		<tocitem target="gates_controlled" text="Управляемый буфер/инвертор" image="icon_controlled" />
+		<tocitem target="wiring" text="Библиотека Проводка">
+			<tocitem target="wiring_splitter" text="Разветвитель" image="icon_splitter" />
+			<tocitem target="wiring_pin" text="Контакт" image="icon_pin" />
+			<tocitem target="wiring_probe" text="Датчик" image="icon_probe" />
+			<tocitem target="wiring_tunnel" text="Тоннель" image="icon_tunnel" />
+			<tocitem target="wiring_pull" text="Согласующий резистор" image="icon_pull" />
+			<tocitem target="wiring_clock" text="Тактовый генератор" image="icon_clock" />
+			<tocitem target="wiring_por" image="icon_por" text="Power On Reset"/>
+			<tocitem target="wiring_constant" text="Константа" image="icon_constant" />
+			<tocitem target="wiring_const01" text="Питание/Земля" image="icon_const01" />
+			<tocitem target="wiring_notconnect" text="Не подключать" image="icon_notconnect" />
+			<tocitem target="wiring_transist" text="Транзистор" image="icon_transist" />
+			<tocitem target="wiring_transmis" text="Передаточный вентиль" image="icon_transmis" />
+			<tocitem target="wiring_extender" text="Расширитель битов" image="icon_extender" />
+		</tocitem>
+		<tocitem target="gates" text="Библиотека Элементы">
+			<tocitem target="gates_not" text="Элемент НЕ" image="icon_not" />
+			<tocitem target="gates_buffer" text="Буфер" image="icon_buffer" />
+			<tocitem target="gates_basic" text="Элементы И/ИЛИ/И-НЕ/ИЛИ-НЕ" image="icon_basic" />
+			<tocitem target="gates_xor" text="Элементы Исключающее ИЛИ/Исключающее ИЛИ-НЕ/Нечётность/Чётность" image="icon_xor" />
+			<tocitem target="gates_controlled" text="Управляемый буфер/инвертор" image="icon_controlled" />
+			<tocitem target="gates_PLA" text="Programmable logic array" image="icon_pla" />
 	  </tocitem>
 	  <tocitem target="plexers" text="Библиотека Плексоры">
-		<tocitem target="plexers_mux" text="Мультиплексор" image="icon_mux" />
-		<tocitem target="plexers_demux" text="Демультиплексор" image="icon_demux" />
-		<tocitem target="plexers_decoder" text="Декодер" image="icon_decoder" />
-		<tocitem target="plexers_priencod" text="Шифратор приоритетов" image="icon_priencod" />
-		<tocitem target="plexers_selector" text="Селектор битов" image="icon_selector" />
+			<tocitem target="plexers_mux" text="Мультиплексор" image="icon_mux" />
+			<tocitem target="plexers_demux" text="Демультиплексор" image="icon_demux" />
+			<tocitem target="plexers_decoder" text="Декодер" image="icon_decoder" />
+			<tocitem target="plexers_priencod" text="Шифратор приоритетов" image="icon_priencod" />
+			<tocitem target="plexers_selector" text="Селектор битов" image="icon_selector" />
 	  </tocitem>
 	  <tocitem target="arith" text="Библиотека Арифметика">
-		<tocitem target="arith_adder" text="Сумматор" image="icon_adder" />
-		<tocitem target="arith_subtractor" text="Вычитатель" image="icon_subtractor" />
-		<tocitem target="arith_multiplier" text="Множитель" image="icon_multiplier" />
-		<tocitem target="arith_divider" text="Делитель" image="icon_divider" />
-		<tocitem target="arith_negator" text="Отрицатель" image="icon_negator" />
-		<tocitem target="arith_comparator" text="Компаратор" image="icon_comparator" />
-		<tocitem target="arith_shifter" text="Сдвигатель" image="icon_shifter" />
-		<tocitem target="arith_bitadder" text="Сумматор битов" image="icon_bitadder" />
-		<tocitem target="arith_bitfinder" text="Искатель битов" image="icon_bitfinder" />
+			<tocitem target="arith_adder" text="Сумматор" image="icon_adder" />
+			<tocitem target="arith_subtractor" text="Вычитатель" image="icon_subtractor" />
+			<tocitem target="arith_multiplier" text="Множитель" image="icon_multiplier" />
+			<tocitem target="arith_divider" text="Делитель" image="icon_divider" />
+			<tocitem target="arith_negator" text="Отрицатель" image="icon_negator" />
+			<tocitem target="arith_comparator" text="Компаратор" image="icon_comparator" />
+			<tocitem target="arith_shifter" text="Сдвигатель" image="icon_shifter" />
+			<tocitem target="arith_bitadder" text="Сумматор битов" image="icon_bitadder" />
+			<tocitem target="arith_bitfinder" text="Искатель битов" image="icon_bitfinder" />
 	  </tocitem>
 	  <tocitem target="mem" text="Библиотека Память">
-		<tocitem target="mem_flipflops" text="D/T/J-K/S-R триггеры" image="icon_flipflops" />
-		<tocitem target="mem_register" text="Регистр" image="icon_register" />
-		<tocitem target="mem_counter" text="Счётчик" image="icon_counter" />
-		<tocitem target="mem_shiftreg" text="Сдвиговый регистр" image="icon_shiftreg" />
-		<tocitem target="mem_random" text="Генератор случайных чисел" image="icon_random" />
-		<tocitem target="mem_ram" text="ОЗУ" image="icon_ram" />
-		<tocitem target="mem_rom" text="ПЗУ" image="icon_rom" />
+			<tocitem target="mem_flipflops" text="D/T/J-K/S-R триггеры" image="icon_flipflops" />
+			<tocitem target="mem_register" text="Регистр" image="icon_register" />
+			<tocitem target="mem_counter" text="Счётчик" image="icon_counter" />
+			<tocitem target="mem_shiftreg" text="Сдвиговый регистр" image="icon_shiftreg" />
+			<tocitem target="mem_random" text="Генератор случайных чисел" image="icon_random" />
+			<tocitem target="mem_ram" text="ОЗУ" image="icon_ram" />
+			<tocitem target="mem_rom" text="ПЗУ" image="icon_rom" />
 	  </tocitem>
 	  <tocitem target="io" text="Библиотека Ввод/вывод">
-		<tocitem target="io_button" text="Кнопка" image="icon_button" />
-		<tocitem target="io_joystick" text="Джойстик" image="icon_joystick" />
-		<tocitem target="io_keyboard" text="Клавиатура" image="icon_keyboard" />
-		<tocitem target="io_led" text="Светодиод" image="icon_led" />
-		<tocitem target="io_7seg" text="7-сегментный индикатор" image="icon_7seg" />
-		<tocitem target="io_hexdig" text="Шестнадцатеричный индикатор" image="icon_hexdig" />
-		<tocitem target="io_dotmat" text="Светодиодная матрица" image="icon_dotmat" />
-		<tocitem target="io_tty" text="Терминал" image="icon_tty" />
-	  </tocitem>
-	  <tocitem target="hdl" text="HDL-IP">
-		<tocitem target="hdl_vhdlentity" text="VHDL Entity" image="icon_vhdl" />
-      </tocitem>
+			<tocitem target="io_button" text="Кнопка" image="icon_button" />
+			<tocitem target="io_DIP" text="DIP Switch" image="icon_DIP" />
+			<tocitem target="io_joystick" text="Джойстик" image="icon_joystick" />
+			<tocitem target="io_keyboard" text="Клавиатура" image="icon_keyboard" />
+			<tocitem target="io_led" text="Светодиод" image="icon_led" />
+			<tocitem target="io_ledRVB" text="светодиод RGB" image="icon_ledRVB" />
+			<tocitem target="io_7seg" text="7-сегментный индикатор" image="icon_7seg" />
+			<tocitem target="io_hexdig" text="Шестнадцатеричный индикатор" image="icon_hexdig" />
+			<tocitem target="io_dotmat" text="Светодиодная матрица" image="icon_dotmat" />
+			<tocitem target="io_tty" text="Терминал" image="icon_tty" />
+			<tocitem target="io_Port_IO" text="Port I/O" image="icon_Port_IO" />
+			<tocitem target="io_Repetar" text="Reptar Local Bus" image="icon_repetar" />
+			<tocitem target="io_videorvb" text="Video RVB" image="icon_videorvb" />
+		</tocitem>
+		<tocitem target="hdl" text="HDL-IP">
+			<tocitem target="hdl_vhdlentity" text="VHDL Entity" image="icon_vhdl" />
+		</tocitem>
+		<!-- TTL mega functions 
+		<tocitem target="ttl" text="TTL">
+			<tocitem target="ttl_xxxx" text=button image="ttl_xxxx" />
+		</tocitem>
+		-->
+		<tocitem target="tcl" text="TCL library">
+			<tocitem target="tcl_reds_console" text="REDS console" image="icon_reds_console" />
+			<tocitem target="tcl_generic" text="Generic" image="icon_generic" />
+		</tocitem>
+		<!-- BFH mega functions 
+		<tocitem target="bfh" text="BFH mega functions">
+			<tocitem target="bfh-BinairyBCD" text="Binairy to BCD" image="bfh_*******" />
+			<tocitem target="bfh-BCDsevenseg" text="BCD to seven segment" image="bfh_***********" />
+		</tocitem>
+		-->
+		<!-- Input/output-Extra
+		<tocitem target="ioex" text="Input/Output-Extra">
+			<tocitem target="ioex_proggen" text="Progr. generator" image="ioex_***********" />
+			<tocitem target="ioex_switch" text="switch" image="ioex_***********" />
+			<tocitem target="ioex_buzzer" text="Buzzer" image="ioex_***********" />
+			<tocitem target="ioex_slider" text="Slider" image="ioex_***********" />
+			<tocitem target="ioex_digitalscop" text="Digital oscilloscope" image="ioex_***********" />
+			<tocitem target="ioex_plarom" text="Programmable logic array ROM" image="ioex_***********" />
+		</tocitem>
+		-->
+		<tocitem target="soc" text = "SOC library">
+			<tocitem target="nios2_sim" text ="Nios2 simulator" image="up_icon" />
+			<tocitem target="socbus" text ="SOC bus interconnect" image="socbus_icon" />
+		</tocitem>
+		<tocitem target="Tests_for_doc" text="Tests for documentation">
+			<tocitem target="test_hml_css" text="test_hml_css" />
+			<tocitem target="Translation_status" text="Translation status" />
+		</tocitem>
+<!--
 	  <tocitem target="base" text="Библиотека Базовые">
-		<tocitem target="base_poke" text="Инструмент Нажатие" image="icon_poke" />
-		<tocitem target="base_edit" text="Инструмент Правка" image="icon_edit" />
-		<tocitem target="base_select" text="Инструмент Выбор" image="icon_select" />
-		<tocitem target="base_wiring" text="Инструмент Проводка" image="icon_wiring" />
-		<tocitem target="base_text" text="Инструмент Текст" image="icon_text" />
-		<tocitem target="base_menu" text="Инструмент Меню" image="icon_menu" />
-		<tocitem target="base_label" text="Текст" image="icon_label" />
+			<tocitem target="base_poke" text="Инструмент Нажатие" image="icon_poke" />
+			<tocitem target="base_edit" text="Инструмент Правка" image="icon_edit" />
+			<tocitem target="base_select" text="Инструмент Выбор" image="icon_select" />
+			<tocitem target="base_wiring" text="Инструмент Проводка" image="icon_wiring" />
+			<tocitem target="base_text" text="Инструмент Текст" image="icon_text" />
+			<tocitem target="base_menu" text="Инструмент Меню" image="icon_menu" />
+			<tocitem target="base_label" text="Текст" image="icon_label" />
 	  </tocitem>
+-->
 	</tocitem>
-      <tocitem target="tcl" text="TCL library">
-          <tocitem target="tcl_reds_console" text="REDS console" image="icon_reds_console" />
-          <tocitem target="tcl_generic" text="Generic" image="icon_generic" />
-      </tocitem>
-	  
-	  
-	  
 </tocitem>
 </toc>

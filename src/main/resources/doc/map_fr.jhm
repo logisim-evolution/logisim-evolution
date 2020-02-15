@@ -40,6 +40,7 @@
     <mapID target="mem_guide"           url="fr/html/guide/mem/index.html"/>
     <mapID target="mem_poke"            url="fr/html/guide/mem/mem-poke.html" />
     <mapID target="mem_menu"            url="fr/html/guide/mem/mem-menu.html"/>
+    <mapID target="mem_filetabel"       url="fr/html/guide/mem/mem-filepanel.html"/>
     <mapID target="mem_hex"             url="fr/html/guide/mem/mem-hex.html"/>  
     <mapID target="mem_v2raw"           url="fr/html/guide/mem/mem-v2raw.html"/>  
     <mapID target="mem_v3word"          url="fr/html/guide/mem/mem-v3word.html"/> 
@@ -95,6 +96,11 @@
 	<mapID target="menu_printertab"     url="fr/html/guide/menu/printertab.html" />
 	<mapID target="about"               url="fr/html/guide/about/index.html" />
 	<mapID target="about_gpl"           url="gpl.html" />	
+	
+<!-- for testing and validation -->	
+	<mapID target="test_hmlcss"         url="en/testhtml/index.html" />
+	<mapID target="Translation_status"  url="index.html" />
+
 <!-- Librairie -->
 	<mapID target="libs"                url="fr/html/libs/index.html" />
 	<mapID target="wiring"              url="fr/html/libs/wiring/index.html" />
@@ -107,6 +113,7 @@
     <mapID target="wiring_por"          url="fr/html/libs/wiring/poweronreset.html"/>	
 	<mapID target="wiring_constant"     url="fr/html/libs/wiring/constant.html" />
 	<mapID target="wiring_const01"      url="fr/html/libs/wiring/const01.html" />
+	<mapID target="wiring_notconnect"   url="fr/html/libs/wiring/notcon.html" />
 	<mapID target="wiring_transist"     url="fr/html/libs/wiring/transist.html" />
 	<mapID target="wiring_transmis"     url="fr/html/libs/wiring/transmis.html" />
 	<mapID target="wiring_extender"     url="fr/html/libs/wiring/extender.html" />
@@ -116,6 +123,7 @@
 	<mapID target="gates_basic"         url="fr/html/libs/gates/basic.html" />
 	<mapID target="gates_xor"           url="fr/html/libs/gates/xor.html" />
 	<mapID target="gates_controlled"    url="fr/html/libs/gates/controlled.html" />
+	<mapID target="gates_PLA"           url="fr/html/libs/gates/pla.html" />
 	<mapID target="plexers"             url="fr/html/libs/plexers/index.html" />
 	<mapID target="plexers_mux"         url="fr/html/libs/plexers/mux.html" />
 	<mapID target="plexers_demux"       url="fr/html/libs/plexers/demux.html" />
@@ -149,22 +157,18 @@
 	<mapID target="io_hexdig"           url="fr/html/libs/io/hexdig.html" />
 	<mapID target="io_dotmat"           url="fr/html/libs/io/dotmat.html" />
 	<mapID target="io_tty"              url="fr/html/libs/io/tty.html" />
-    <!-- TTL -->
-	
+    <mapID target="io_Port_IO"          url="fr/html/libs/io/Port_io.html" />	
+	<mapID target="io_Repetar"          url="fr/html/libs/io/repetar.html" />	
+	<mapID target="io_videorvb"         url="fr/html/libs/io/videorvb.html" />	
     <mapID target="tcl"                 url="fr/html/libs/tcl/index.html" />
     <mapID target="tcl_reds_console"    url="fr/html/libs/tcl/reds_console.html" />
     <mapID target="tcl_generic"         url="fr/html/libs/tcl/generic.html" />
-    <!-- BFH mega functions -->
-	
-    <!-- Input/Output-Extra -->
-	
     <mapID target="soc"                 url="fr/html/libs/soc/index.html" />
     <mapID target="nios2_sim"           url="fr/html/libs/soc/nios2.html" />
     <mapID target="socbus"              url="fr/html/libs/soc/socbus.html" />
-
-<!-- for testing and validation -->	
-	<mapID target="test_hml_css"        url="fr/testhtml/index.html" />
-	<mapID target="Translation_status"  url="index.html" />
+    <mapID target="assembler"           url="fr/html/libs/soc/assembler.html" />
+    <mapID target="disassembler"        url="fr/html/libs/soc/disassembler.html" />
+    <mapID target="socsimcontrol"       url="fr/html/libs/soc/socsimcontrol.html" />
 
 <!-- Icon help tree -->
 	<mapID target="icon_poke"        url="img-guide/poke.png" />

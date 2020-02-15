@@ -35,11 +35,12 @@
 	<mapID target="features_creating"   url="ru/html/guide/feature/fet-creating.html" />
 	<mapID target="features_splitting"  url="ru/html/guide/feature/fet-splitting.html" />
 	<mapID target="features_colors"     url="ru/html/guide/feature/fet-colors.html" />
-	<mapID target="features_autolabel"  url="ru/html/guide/feature/fet-autolabel.html" />	
+	<mapID target="features_autolabel"  url="ru/html/guide/feature/fet-autolabel.html" />
 	<mapID target="features_matrix"     url="ru/html/guide/feature/fet-matrix.html" />
     <mapID target="mem_guide"           url="ru/html/guide/mem/index.html"/>
     <mapID target="mem_poke"            url="ru/html/guide/mem/mem-poke.html" />
     <mapID target="mem_menu"            url="ru/html/guide/mem/mem-menu.html"/>
+    <mapID target="mem_filetabel"       url="ru/html/guide/mem/mem-filepanel.html"/>
     <mapID target="mem_hex"             url="ru/html/guide/mem/mem-hex.html"/>  
     <mapID target="mem_v2raw"           url="ru/html/guide/mem/mem-v2raw.html"/>  
     <mapID target="mem_v3word"          url="ru/html/guide/mem/mem-v3word.html"/> 
@@ -95,6 +96,7 @@
 	<mapID target="menu_printertab"     url="ru/html/guide/menu/printertab.html" />
 	<mapID target="about"               url="ru/html/guide/about/index.html" />
 	<mapID target="about_gpl"           url="gpl.html" />	
+
 <!-- Librairie -->
 	<mapID target="libs"                url="ru/html/libs/index.html" />
 	<mapID target="wiring"              url="ru/html/libs/wiring/index.html" />
@@ -107,6 +109,7 @@
     <mapID target="wiring_por"          url="ru/html/libs/wiring/poweronreset.html"/>	
 	<mapID target="wiring_constant"     url="ru/html/libs/wiring/constant.html" />
 	<mapID target="wiring_const01"      url="ru/html/libs/wiring/const01.html" />
+	<mapID target="wiring_notconnect"   url="ru/html/libs/wiring/notcon.html" />
 	<mapID target="wiring_transist"     url="ru/html/libs/wiring/transist.html" />
 	<mapID target="wiring_transmis"     url="ru/html/libs/wiring/transmis.html" />
 	<mapID target="wiring_extender"     url="ru/html/libs/wiring/extender.html" />
@@ -116,6 +119,7 @@
 	<mapID target="gates_basic"         url="ru/html/libs/gates/basic.html" />
 	<mapID target="gates_xor"           url="ru/html/libs/gates/xor.html" />
 	<mapID target="gates_controlled"    url="ru/html/libs/gates/controlled.html" />
+	<mapID target="gates_PLA"           url="ru/html/libs/gates/pla.html" />
 	<mapID target="plexers"             url="ru/html/libs/plexers/index.html" />
 	<mapID target="plexers_mux"         url="ru/html/libs/plexers/mux.html" />
 	<mapID target="plexers_demux"       url="ru/html/libs/plexers/demux.html" />
@@ -148,14 +152,20 @@
 	<mapID target="io_7seg"             url="ru/html/libs/io/7seg.html" />
 	<mapID target="io_hexdig"           url="ru/html/libs/io/hexdig.html" />
 	<mapID target="io_dotmat"           url="ru/html/libs/io/dotmat.html" />
-	<mapID target="io_tty"              url="ru/html/libs/io/tty.html" />
-    <mapID target="tcl"                 url="ru/html/libs/tcl/index.html" />
+	<mapID target="io_tty"              url="ru/html/libs/io/tty.html" />	
+    <mapID target="io_Port_IO"          url="ru/html/libs/io/Port_io.html" />	
+	<mapID target="io_Repetar"          url="ru/html/libs/io/repetar.html" />	
+	<mapID target="io_videorvb"         url="ru/html/libs/io/videorvb.html" />
+	<mapID target="tcl"                 url="ru/html/libs/tcl/index.html" />
     <mapID target="tcl_reds_console"    url="ru/html/libs/tcl/reds_console.html" />
     <mapID target="tcl_generic"         url="ru/html/libs/tcl/generic.html" />
     <mapID target="soc"                 url="ru/html/libs/soc/index.html" />
     <mapID target="nios2_sim"           url="ru/html/libs/soc/nios2.html" />
     <mapID target="socbus"              url="ru/html/libs/soc/socbus.html" />
-
+    <mapID target="assembler"           url="ru/html/libs/soc/assembler.html" />
+    <mapID target="disassembler"        url="ru/html/libs/soc/disassembler.html" />
+    <mapID target="socsimcontrol"       url="ru/html/libs/soc/socsimcontrol.html" />
+	
 <!-- for testing and validation -->	
 	<mapID target="test_hml_css"        url="ru/testhtml/index.html" />
 	<mapID target="Translation_status"  url="index.html" />

@@ -17,9 +17,9 @@
 		</tocitem>
 		<tocitem target="gui" text="Bibliotecas e atributos">
 			<tocitem target="gui_canvas" text="The canvas"/>
-			<tocitem target="gui_menu" text="The menus"/>		
+			<tocitem target="gui_menu" text="The menus"/>
 			<tocitem target="gui_explore" text="O painel explorador" />
-			<tocitem target="gui_toolsbar" text="The tools bars"/>			
+			<tocitem target="gui_toolsbar" text="The tools bars"/>
 			<tocitem target="gui-attribut" text="A tabela de atributos" />
 			<tocitem target="gui-attrcomp" text="Atributos de ferramenta e componente" />
 		</tocitem>
@@ -31,15 +31,20 @@
 			<tocitem target="subcirc_debug" text="Para depurar subcircuitos" />
 			<tocitem target="subcirc_library" text="Bibliotecas do Logisim" />
 		</tocitem>
-		<tocitem target="bundles" text="Conexões">
+		<tocitem target="features" text="Características adicionais">
 			<tocitem target="bundles_creating" text="Para criar conexões" />
 			<tocitem target="bundles_splitting" text="Distribuidores" />
 			<tocitem target="bundles_colors" text="Cores das conexões" />
+			<tocitem target="features_autolabel" text="Etiquetas auto-numeradas" />
+			<tocitem target="features_matrix" text="Colocando componentes em uma matriz" />
 		</tocitem>
 		<tocitem target="mem_guide" text="Componentes de memória">
-<!--			<tocitem target="mem_poke" text="Para testar memória" /> -->
+			<tocitem target="mem_poke" text="Para testar memória" />
 			<tocitem target="mem_menu" text="Menus pop-up e arquivos" />
 			<tocitem target="mem_hex" text="Editor hexadecimal" />
+			<tocitem target="mem_v2raw" text="File v2raw" />
+			<tocitem target="mem_v3word" text="File v3word"/>
+			<tocitem target="mem_v3byte" text="File v3byte"/>
 		</tocitem>
 		<tocitem target="analyze" text="Análise combinacional">
 			<tocitem target="analyze_open" text="Para abrir a Análise Combinacional" />
@@ -92,7 +97,6 @@
 			<tocitem target="hdl-ip_simulation" text="VHDL simulator" />
 			<tocitem target="hdl-ip_testbenchs" text="Simulating test benchs" />
 		</tocitem>
-		<tocitem target="users" text="Users" />
 		<tocitem target="jar" text="Bibliotecas JAR">
 			<tocitem target="jar_incr" text="Incrementador em código de Gray" />
 			<tocitem target="jar_library" text="Classe Biblioteca" />
@@ -102,88 +106,112 @@
 		</tocitem>
 		<tocitem target="about" text="Sobre o programa">
 			<tocitem target="about_gpl" text="GNU General Public License" />
-			<tocitem target="about_gpl-tr" text="GNU General Public License (PR)" />			
+			<tocitem target="about_gpl-tr" text="GNU General Public License (PR)" />
 		</tocitem>
 	</tocitem>
 
 	<tocitem target="libs" text="Referências para bibliotecas">
-	  <tocitem target="wiring" text="Biblioteca Conexão">
-		<tocitem target="wiring_splitter" text="Distribuidor" image="icon_splitter" />
-		<tocitem target="wiring_pin" text="Pino" image="icon_pin" />
-		<tocitem target="wiring_probe" text="Ponta de prova" image="icon_probe" />
-		<tocitem target="wiring_tunnel" text="Túnel" image="icon_tunnel" />
-		<tocitem target="wiring_pull" text="Resistor para ajuste" image="icon_pull" />
-		<tocitem target="wiring_clock" text="Clock" image="icon_clock" />
-		<tocitem target="wiring_por" image="icon_por" text="Power On Reset"/>
-		<tocitem target="wiring_constant" text="Constante" image="icon_constant" />
-		<tocitem target="wiring_const01" text="Fonte/Terra" image="icon_const01" />
-		<tocitem target="wiring_transist" text="Transistor" image="icon_transist" />
-		<tocitem target="wiring_transmis" text="Transmissor" image="icon_transmis" />
-		<tocitem target="wiring_extender" text="Extensor de Bit" image="icon_extender" />
+		<tocitem target="wiring" text="Biblioteca Conexão">
+			<tocitem target="wiring_splitter" text="Distribuidor" image="icon_splitter" />
+			<tocitem target="wiring_pin" text="Pino" image="icon_pin" />
+			<tocitem target="wiring_probe" text="Ponta de prova" image="icon_probe" />
+			<tocitem target="wiring_tunnel" text="Túnel" image="icon_tunnel" />
+			<tocitem target="wiring_pull" text="Resistor para ajuste" image="icon_pull" />
+			<tocitem target="wiring_clock" text="Clock" image="icon_clock" />
+			<tocitem target="wiring_por" image="icon_por" text="Power On Reset"/>
+			<tocitem target="wiring_constant" text="Constante" image="icon_constant" />
+			<tocitem target="wiring_const01" text="Fonte/Terra" image="icon_const01" />
+			<tocitem target="wiring_notconnect" text="Não conecte" image="icon_notconnect" />
+			<tocitem target="wiring_transist" text="Transistor" image="icon_transist" />
+			<tocitem target="wiring_transmis" text="Transmissor" image="icon_transmis" />
+			<tocitem target="wiring_extender" text="Extensor de Bit" image="icon_extender" />
 	  </tocitem>
 	  <tocitem target="gates" text="Biblioteca Portas">
-		<tocitem target="gates_not" text="Porta NOT" image="icon_not" />
-		<tocitem target="gates_buffer" text="Buffer" image="icon_buffer" />
-		<tocitem target="gates_basic" text="Portas AND/OR/NAND/NOR" image="icon_basic" />
-		<tocitem target="gates_xor" text="Portas XOR/XNOR/Paridade par/ímpar" image="icon_xor" />
-		<tocitem target="gates_controlled" text="Buffer/Inversor controlado" image="icon_controlled" />
+			<tocitem target="gates_not" text="Porta NOT" image="icon_not" />
+			<tocitem target="gates_buffer" text="Buffer" image="icon_buffer" />
+			<tocitem target="gates_basic" text="Portas AND/OR/NAND/NOR" image="icon_basic" />
+			<tocitem target="gates_xor" text="Portas XOR/XNOR/Paridade par/ímpar" image="icon_xor" />
+			<tocitem target="gates_controlled" text="Buffer/Inversor controlado" image="icon_controlled" />
+			<tocitem target="gates_PLA" text="Programmable logic array" image="icon_pla" />
 	  </tocitem>
 	  <tocitem target="plexers" text="Biblioteca Plexers">
-		<tocitem target="plexers_mux" text="Multiplexador" image="icon_mux" />
-		<tocitem target="plexers_demux" text="Demultiplexador" image="icon_demux" />
-		<tocitem target="plexers_decoder" text="Decodificador" image="icon_decoder" />
-		<tocitem target="plexers_priencod" text="Codificador de prioridades" image="icon_priencod" />
-		<tocitem target="plexers_selector" text="Seletor de bits" image="icon_selector" />
-	  </tocitem>
-	  <tocitem target="arith" text="Biblioteca Aritmética">
-		<tocitem target="arith_adder" text="Somador" image="icon_adder" />
-		<tocitem target="arith_subtractor" text="Subtrator" image="icon_subtractor" />
-		<tocitem target="arith_multiplier" text="Multiplicador" image="icon_multiplier" />
-		<tocitem target="arith_divider" text="Divisor" image="icon_divider" />
-		<tocitem target="arith_negator" text="Negador" image="icon_negator" />
-		<tocitem target="arith_comparator" text="Comparador" image="icon_comparator" />
-		<tocitem target="arith_shifter" text="Deslocador" image="icon_shifter" />
-		<tocitem target="arith_bitadder" text="Contador de bits" image="icon_bitadder" />
-		<tocitem target="arith_bitfinder" text="Indexador de bits" image="icon_bitfinder" />
-	  </tocitem>
-	  <tocitem target="mem" text="Biblioteca Memória">
-		<tocitem target="mem_flipflops" text="Flip-Flop D/T/J-K/S-R" image="icon_flipflops" />
-		<tocitem target="mem_register" text="Registrador" image="icon_register" />
-		<tocitem target="mem_counter" text="Contador" image="icon_counter" />
-		<tocitem target="mem_shiftreg" text="Registrador de deslocamento" image="icon_shiftreg" />
-		<tocitem target="mem_random" text="Gerador aleatório" image="icon_random" />
-		<tocitem target="mem_ram" text="RAM" image="icon_ram" />
-		<tocitem target="mem_rom" text="ROM" image="icon_rom" />
+			<tocitem target="plexers_mux" text="Multiplexador" image="icon_mux" />
+			<tocitem target="plexers_demux" text="Demultiplexador" image="icon_demux" />
+			<tocitem target="plexers_decoder" text="Decodificador" image="icon_decoder" />
+			<tocitem target="plexers_priencod" text="Codificador de prioridades" image="icon_priencod" />
+			<tocitem target="plexers_selector" text="Seletor de bits" image="icon_selector" />
+		</tocitem>
+		<tocitem target="arith" text="Biblioteca Aritmética">
+			<tocitem target="arith_adder" text="Somador" image="icon_adder" />
+			<tocitem target="arith_subtractor" text="Subtrator" image="icon_subtractor" />
+			<tocitem target="arith_multiplier" text="Multiplicador" image="icon_multiplier" />
+			<tocitem target="arith_divider" text="Divisor" image="icon_divider" />
+			<tocitem target="arith_negator" text="Negador" image="icon_negator" />
+			<tocitem target="arith_comparator" text="Comparador" image="icon_comparator" />
+			<tocitem target="arith_shifter" text="Deslocador" image="icon_shifter" />
+			<tocitem target="arith_bitadder" text="Contador de bits" image="icon_bitadder" />
+			<tocitem target="arith_bitfinder" text="Indexador de bits" image="icon_bitfinder" />
+		</tocitem>
+		<tocitem target="mem" text="Biblioteca Memória">
+			<tocitem target="mem_flipflops" text="Flip-Flop D/T/J-K/S-R" image="icon_flipflops" />
+			<tocitem target="mem_register" text="Registrador" image="icon_register" />
+			<tocitem target="mem_counter" text="Contador" image="icon_counter" />
+			<tocitem target="mem_shiftreg" text="Registrador de deslocamento" image="icon_shiftreg" />
+			<tocitem target="mem_random" text="Gerador aleatório" image="icon_random" />
+			<tocitem target="mem_ram" text="RAM" image="icon_ram" />
+			<tocitem target="mem_rom" text="ROM" image="icon_rom" />
 	  </tocitem>
 	  <tocitem target="io" text="Biblioteca Entrada/Saída">
-		<tocitem target="io_button" text="Botão" image="icon_button" />
-		<tocitem target="io_joystick" text="Joystick" image="icon_joystick" />
-		<tocitem target="io_keyboard" text="Teclado" image="icon_keyboard" />
-		<tocitem target="io_led" text="LED" image="icon_led" />
-		<tocitem target="io_7seg" text="Display de 7-segmentos" image="icon_7seg" />
-		<tocitem target="io_hexdig" text="Display hexadecimal" image="icon_hexdig" />
-		<tocitem target="io_dotmat" text="Matriz de LEDs" image="icon_dotmat" />
-		<tocitem target="io_tty" text="TTY" image="icon_tty" />
-	  </tocitem>
-	  <tocitem target="hdl" text="HDL-IP">
-		<tocitem target="hdl_vhdlentity" text="VHDL Entity" image="icon_vhdl" />
-      </tocitem>
-	  <tocitem target="base" text="Biblioteca Base">
-		<tocitem target="base_poke" text="Ferramenta Testar" image="icon_poke" />
-		<tocitem target="base_edit" text="Ferramenta Editar" image="icon_edit" />
-		<tocitem target="base_select" text="Ferramenta Selecionar" image="icon_select" />
-		<tocitem target="base_wiring" text="Ferramenta Conectar" image="icon_wiring" />
-		<tocitem target="base_text" text="Ferramenta Texto" image="icon_text" />
-		<tocitem target="base_menu" text="Ferramenta Menu" image="icon_menu" />
-		<tocitem target="base_label" text="Texto" image="icon_label" />
-	  </tocitem>
-      <tocitem target="tcl" text="TCL library">
-          <tocitem target="tcl_reds_console" text="REDS console" image="icon_reds_console" />
-          <tocitem target="tcl_generic" text="Generic" image="icon_generic" />
-      </tocitem>
+			<tocitem target="io_button" text="Botão" image="icon_button" />
+			<tocitem target="io_DIP" text="DIP Switch" image="icon_DIP" />
+			<tocitem target="io_joystick" text="Joystick" image="icon_joystick" />
+			<tocitem target="io_keyboard" text="Teclado" image="icon_keyboard" />
+			<tocitem target="io_led" text="LED" image="icon_led" />
+			<tocitem target="io_ledRVB" text="LED rVB" image="icon_ledRVB" />
+			<tocitem target="io_7seg" text="Display de 7-segmentos" image="icon_7seg" />
+			<tocitem target="io_hexdig" text="Display hexadecimal" image="icon_hexdig" />
+			<tocitem target="io_dotmat" text="Matriz de LEDs" image="icon_dotmat" />
+			<tocitem target="io_tty" text="TTY" image="icon_tty" />
+			<tocitem target="io_Port_IO" text="Port I/O" image="icon_Port_IO" />
+			<tocitem target="io_Repetar" text="Reptar Local Bus" image="icon_repetar" />
+			<tocitem target="io_videorvb" text="Video RVB" image="icon_videorvb" />
+		</tocitem>
+		<tocitem target="hdl" text="HDL-IP">
+			<tocitem target="hdl_vhdlentity" text="VHDL Entity" image="icon_vhdl" />
+		</tocitem>
+		<!-- TTL mega functions 
+		<tocitem target="ttl" text="TTL">
+			<tocitem target="ttl_xxxx" text=button image="ttl_xxxx" />
+		</tocitem>
+		-->
+		<tocitem target="tcl" text="TCL library">
+			<tocitem target="tcl_reds_console" text="REDS console" image="icon_reds_console" />
+			<tocitem target="tcl_generic" text="Generic" image="icon_generic" />
+		</tocitem>
+		<!-- BFH mega functions 
+		<tocitem target="bfh" text="BFH mega functions">
+			<tocitem target="bfh-BinairyBCD" text="Binairy to BCD" image="bfh_*******" />
+			<tocitem target="bfh-BCDsevenseg" text="BCD to seven segment" image="bfh_***********" />
+		</tocitem>
+		-->
+		<!-- Input/output-Extra
+		<tocitem target="ioex" text="Input/Output-Extra">
+			<tocitem target="ioex_proggen" text="Progr. generator" image="ioex_***********" />
+			<tocitem target="ioex_switch" text="switch" image="ioex_***********" />
+			<tocitem target="ioex_buzzer" text="Buzzer" image="ioex_***********" />
+			<tocitem target="ioex_slider" text="Slider" image="ioex_***********" />
+			<tocitem target="ioex_digitalscop" text="Digital oscilloscope" image="ioex_***********" />
+			<tocitem target="ioex_plarom" text="Programmable logic array ROM" image="ioex_***********" />
+		</tocitem>
+		-->
+		<tocitem target="soc" text = "SOC library">
+			<tocitem target="nios2_sim" text ="Nios2 simulator" image="up_icon" />
+			<tocitem target="socbus" text ="SOC bus interconnect" image="socbus_icon" />
+		</tocitem>
+		<tocitem target="Tests_for_doc" text="Tests for documentation">
+			<tocitem target="test_hml_css" text="test_hml_css" />
+			<tocitem target="Translation_status" text="Translation status" />
+		</tocitem>
 	</tocitem>
-	
-	
-	
 </tocitem>
 </toc>
