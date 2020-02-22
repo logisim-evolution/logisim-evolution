@@ -209,7 +209,7 @@ public class Value {
 
   public static final Color ERROR_COLOR = new Color(192, 0, 0);
 
-  public static Color WIDTH_ERROR_COLOR;
+  public static Color WIDTH_ERROR_COLOR = new Color(255, 123, 0);
   public static final Color WIDTH_ERROR_CAPTION_COLOR = new Color(85, 0, 0);
   public static final Color WIDTH_ERROR_HIGHLIGHT_COLOR = new Color(255, 255, 0);
   public static final Color WIDTH_ERROR_CAPTION_BGCOLOR = new Color(255, 230, 210);
