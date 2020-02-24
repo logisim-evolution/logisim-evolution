@@ -861,11 +861,10 @@ public class Startup implements AWTEventListener {
     if (isTty) {
       try {
         TtyInterface.run(this);
-        return;
+        System.exit(0);
       } catch (Exception t) {
         t.printStackTrace();
         System.exit(-1);
-        return;
       }
     }
 
