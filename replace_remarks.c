@@ -61,7 +61,7 @@ int main( int argc, char *argv[] ) {
    int remarkRemoved = 0;
    
    while (!feof(ifile)&& (index<10000)) {
-      int nrOfChars = fscanf(ifile,"%[^\n]", line);
+      size_t nrOfChars = fscanf(ifile,"%[^\n]", line);
       fgetc(ifile);
       if (strstr(line,"/**")!=NULL && nrOfChars >0 && remarkRemoved == 0) {
          remarkRemoved = removeRemark(ifile);
