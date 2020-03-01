@@ -53,9 +53,11 @@ void printHeader( FILE *ifile ) {
 int main( int argc, char *argv[] ) {
    FILE *ifile;
    char line[256];
-   ifile = fopen(argv[1],"r");
+   if (argc>1){
+      ifile = fopen(argv[1],"r");
+   }
    if (!ifile) {
-       exit(1);
+      exit(1);
    }
    int index = 0;
    int remarkRemoved = 0;
