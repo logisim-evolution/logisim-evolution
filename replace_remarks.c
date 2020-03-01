@@ -54,7 +54,7 @@ int main( int argc, char *argv[] ) {
    FILE *ifile;
    char line[256];
    ifile = fopen(argv[1],"r");
-   if (ifile==NULL) {
+   if (!ifile) {
        exit(1);
    }
    int index = 0;
