@@ -54,6 +54,9 @@ int main( int argc, char *argv[] ) {
    FILE *ifile;
    char line[256];
    ifile = fopen(argv[1],"r");
+   if (ifile==NULL) {
+       exit(1);
+   }
    int index = 0;
    int remarkRemoved = 0;
    
