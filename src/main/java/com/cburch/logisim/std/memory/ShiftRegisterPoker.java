@@ -100,7 +100,7 @@ public class ShiftRegisterPoker extends InstancePoker {
         BitWidth widObj = state.getAttributeValue(StdAttr.WIDTH);
         ShiftRegisterData data = (ShiftRegisterData) state.getData();
         int i = data.getLength() - 1 - loc;
-        int value = data.get(i).toIntValue();
+        long value = data.get(i).toLongValue();
         value = ((value * 16) + val) & widObj.getMask();
         Value valObj = Value.createKnown(widObj, value);
         data.set(i, valObj);
@@ -119,9 +119,9 @@ public class ShiftRegisterPoker extends InstancePoker {
     if (dataWidth == null) dataWidth = BitWidth.create(8);
     ShiftRegisterData data = (ShiftRegisterData) state.getData();
     int i = data.getLength() - 1 - loc;
-    int curValue = data.get(i).toIntValue();
+    long curValue = data.get(i).toLongValue();
     if (e.getKeyCode() == KeyEvent.VK_UP) {
-      int maxVal = dataWidth.getMask();
+      long maxVal = dataWidth.getMask();
       if (curValue != maxVal) {
         curValue = curValue + 1;
         data.set(i, Value.createKnown(dataWidth, curValue));

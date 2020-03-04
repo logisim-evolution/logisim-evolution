@@ -1,0 +1,239 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2018-10-23T06:18:42.262000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="ru">
+    <title>
+      Параметры командной строки
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class=maindiv>
+      <h1>
+        Параметры командной строки
+      </h1>
+      <p>
+        Вы можете изменять многие настройки приложения Logisim через параметры командной строки. Это может быть особенно полезным в лаборатории с одним компьютером на учащегося, где вы хотите запускать Logisim каждый раз одинаково, вне зависимости от того, как предыдущие студенты могли настроить программу.
+      </p>
+      <p>
+        Общий синтаксис командной строки выглядит следующим образом.
+      </p>
+      <blockquote>
+        <pre>java -jar <i><b>имяJarФайла</b></i> <i>[параметры]</i> <i>[именаФайлов]</i>
+</pre>
+      </blockquote>
+      <p>
+        Необязательные дополнительные файлы, указанные в командной строке, будут открыты как отдельные окна в Logisim.
+      </p>
+      <p>
+        Следующий пример запускает Logisim в его базовой конфигурации.
+      </p>
+      <blockquote>
+        <pre>java -jar <i><b>имяJarФайла</b></i> <b>-plain -gates shaped -locale en</b>
+</pre>
+      </blockquote>
+      <p>
+        Поддерживаемые параметры следующие.
+      </p>
+      <dl>
+        <dt>
+          <tt>-plain</tt>
+        </dt>
+        <dt>
+          <tt>-empty</tt>
+        </dt>
+        <dt>
+          <tt>-template <b><em>файлШаблона</em></b></tt>
+        </dt>
+        <dd>
+          <p>
+            Задаёт шаблон для использования в Logisim.<br>
+            Использует стандартную модель, пустую модель, пользовательскую модель.
+          </p>
+        </dd>
+        <dt>
+          <tt>-gates <em>[<b>shaped</b>|<b>rectangular</b>]</em></tt>
+        </dt>
+        <dd>
+          <p>
+            Задаёт какой использовать тип логических элементов.
+          </p>
+        </dd>
+        <dt>
+          <tt>-locale <em><b>идентификаторЯзыка</b></em></tt>
+        </dt>
+        <dd>
+          <p>
+            Задаёт какой перевод использовать. На момент написания поддерживаются следующие языки:
+          </p>
+          <table>
+            <tbody>
+              <tr>
+                <td>
+                  <tt>de</tt> Немецкий
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <tt>el</tt> Греческий
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <tt>en</tt> Английский
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <tt>es</tt> Испанский
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <tt>fr</tt> французский
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <tt>ru</tt> Русский
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <tt>it</tt> итальянский
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <tt>nl</tt> голландский
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </dd>
+        <dt>
+          <tt>-accents <em>[<b>yes</b>|<b>no</b>]</em></tt>
+        </dt>
+        <dd>
+          <p>
+            Это имеет смысл только для языков, которые используют символы вне 7-битного набора символов ASCII; сюда относятся языки, использующие специфичные символы; английский сюда не входит. При <em>no</em> символы вне 7-битного набора символов ASCII заменяются эквивалентами соответственно языку; это будет полезно для комбинаций Java/ОС, где такие символы не поддерживаются хорошо.
+          </p>
+        </dd>
+        <dt>
+          <tt>-clearprops</tt>
+        </dt>
+        <dd>
+          <p>
+            Очистить все настройки приложения при запуске, так что Logisim будет вести себя так, как будто он запущен в данной системе первый раз.
+          </p>
+        </dd>
+        <dt>
+          <tt>-nosplash</tt>
+        </dt>
+        <dd>
+          <p>
+            Скрывает стартовое окно заставки Logisim.
+          </p>
+        </dd>
+        <dt>
+          <tt>-help</tt>
+        </dt>
+        <dd>
+          <p>
+            Отображает список параметров командной строки.
+          </p>
+        </dd>
+        <dt>
+          <tt>-version</tt>
+        </dt>
+        <dd>
+          <p>
+            Отображает номер версии Logisim.
+          </p>
+        </dd>
+        <dt>
+          <tt>-noupdates</tt>
+        </dt>
+        <dd>
+          <p>
+            Не обновляйте программное обеспечение.
+          </p>
+        </dd>
+        <dt>
+          <tt>-analyze</tt>
+        </dt>
+        <dd>
+          <p>
+            Отображает меню комбинаторного анализа.
+          </p>
+        </dd>
+        <dt>
+          <tt>-load <i><b>filename</b></i></tt>
+        </dt>
+        <dd>
+          <p>
+            Загружает изображение в оперативную память (работает только с -tty). Дополнительная информация в <a href="../verify/other.html">Другие опции верификации</a>.
+          </p>
+        </dd>
+        <dt>
+          <tt>-sub <i><b>file1</b> <b>file2</b></i></tt>
+        </dt>
+        <dd>
+          <p>
+            Загрузите файл, заменив файл библиотеки (file1) на файл библиотеки (file2). Дополнительная информация в <a href="../verify/sub.html">Библиотеки-заменители</a>.
+          </p>
+        </dd>
+        <dt>
+          <tt>-tty</tt> <i>[<b>table</b>|<b>speed</b>|<b>tty</b>|<b>halt</b>|<b>stats</b>]</i>
+        </dt>
+        <dd>
+          <p>
+            Работает без графического интерфейса пользователя. Дополнительная информация в <a href="../verify/other.html">Другие опции верификации</a>.
+          </p>
+        </dd>
+        <dt>
+          <tt>-testvector <i><b>circuitname</b> <b>vectorfile</b> <b>projectfile</b></i></tt>
+        </dt>
+        <dd>
+          Выполняет тесты <b>имя_схемы</b> в <b>проектном профиле</b> в функции векторов в <b>векторном профиле</b>. Дополнительная информация в <a href="../verify/test.html">Test Vector Window</a>.
+        </dd>
+        <dt>
+          <tt>-geom <i><b>WxH</b>|<b>WxH+X+Y</b></i></tt>
+        </dt>
+        <dd>
+          <p>
+            Открывает Logisim с окном, размер которого соответствует параметрам W (ширина) и H (высота) или с верхним левым углом, расположенным согласно параметрам X,Y.<br>
+            . Пример: -gеом 600x400+100+100
+          </p>
+        </dd>
+      </dl>
+      <h2>
+        Недокументированные варианты
+      </h2>
+      <dl>
+        <dt>
+          <tt>-test-circuit <b>testCircuitPathInput</b></tt>
+        </dt>
+        <dd></dd>
+        <dt>
+          <tt>-test-fpga-implementation <b>inputpath</b> <b>Circuitimapfile</b> <b>cicuitimpname</b> <b>cicuitimpboard</b></tt>
+        </dt>
+        <dd></dd>
+        <dt>
+          <tt>-test-circ-gen <b>testCircPathInput</b> <b>testCircPathOutput</b></tt>
+        </dt>
+        <dd></dd>
+        <dt>
+          <tt>-questa<em>[<b>yes</b>|<b>no</b>]</em></tt>
+        </dt>
+      </dl>
+      <p>
+        <strong>Далее:</strong> <a href="../index.html">Руководство пользователя</a>.
+      </p>
+    </div>
+  </body>
+</html>

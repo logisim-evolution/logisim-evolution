@@ -122,7 +122,7 @@ public class RegisterShape extends DynamicElement {
       BitWidth widthVal = path.leaf().getAttributeSet().getValue(StdAttr.WIDTH);
       int width = (widthVal == null ? 8 : widthVal.getWidth());
       RegisterData data = (RegisterData) getData(state);
-      int val = data == null ? 0 : data.value.toIntValue();
+      long val = data == null ? 0 : data.value.toLongValue();
       label.setText(StringUtil.toHexString(width, val));
     }
     label.paint(g);

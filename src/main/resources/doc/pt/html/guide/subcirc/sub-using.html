@@ -12,18 +12,18 @@
     <link rel="stylesheet" type="text/css" href="..\..\style.css">
   </head>
   <body>
-    <div class="maindiv">
+    <div class=maindiv>
       <h1>
         Usar subcircuitos
       </h1>
       <p>
-        Agora, suponha que queiramos construir um multiplexador 4:1, utilizando instâncias de nosso multiplexador 2:1. É claro que gostaríamos de criar, primeiro, um novo circuito, que chamaremos de <b class="reffig">Mux_4To1</b>. Para adicionar multiplexadores 2:1 em nosso circuito, clicar no circuito <b class="reffig">Mux_2To1</b> <b>uma vez</b> no painel do Explorador para selecioná-lo como uma ferramenta, e depois poderemos juntar cópias disso, representadas como caixas, clicando na área de desenho.
+        Agora, suponha que queiramos construir um multiplexador 4:1, utilizando instâncias de nosso multiplexador 2:1. É claro que gostaríamos de criar, primeiro, um novo circuito, que chamaremos de <b class=reffig>Mux_4To1</b>. Para adicionar multiplexadores 2:1 em nosso circuito, clicar no circuito <b class=reffig>Mux_2To1</b> <b>uma vez</b> no painel do Explorador para selecioná-lo como uma ferramenta, e depois poderemos juntar cópias disso, representadas como caixas, clicando na área de desenho.
       </p>
       <p align="center">
         <img src="../../../img-guide/subcirc-3-add.png" alt="#########">
       </p>
       <p>
-        Se você clicar duas vezes no circuito <b class="reffig">Mux_2To1</b> no painel do explorador, então a janela mudará para a edição do circuito <b class="reffig">Mux_2To1</b>.
+        Se você clicar duas vezes no circuito <b class=reffig>Mux_2To1</b> no painel do explorador, então a janela mudará para a edição do circuito <b class=reffig>Mux_2To1</b>.
       </p>
       <p>
         Depois de construir o circuito, obteremos o seguinte.
@@ -32,13 +32,13 @@
         <img src="../../../img-guide/subcirc-4-done.png" alt="#########">
       </p>
       <p>
-        Nosso multiplexador 4-to-1 utiliza três cópias do multiplexador 2-to-1, cada uma desenhada em um retângulo com pinos nos lados esquerdo e direito. Estas linhas representam as entradas e saídas do circuito <b class="reffig">Mux_2to1</b>. Os pinos no lado leste do retângulo correspondem às entradas do circuito e no lado oeste correspondem às saídas. Eles são lidos do diagrama de sub-circuito da direita para a esquerda e de cima para baixo e serão colocados no símbolo do sub-circuito de cima para baixo.
+        Nosso multiplexador 4-to-1 utiliza três cópias do multiplexador 2-to-1, cada uma desenhada em um retângulo com pinos nos lados esquerdo e direito. Estas linhas representam as entradas e saídas do circuito <b class=reffig>Mux_2to1</b>. Os pinos no lado leste do retângulo correspondem às entradas do circuito e no lado oeste correspondem às saídas. Eles são lidos do diagrama de sub-circuito da direita para a esquerda e de cima para baixo e serão colocados no símbolo do sub-circuito de cima para baixo.
       </p>
       <p>
-        Se os pinos no layout do subcircuito tiverem rótulos associados eles, então Logisim irá mostrar a etiqueta como uma dica (isto é, uma caixa de texto temporária) quando o usuário passar o mouse sobre o localização correspondente do componente no subcircuito. Se você encontrar essas dicas irritantes, poderá desativá-las através da aba Preferências da <a href="../prefs/layout.html">Janela de Layout</a>.
+        Se os pinos no layout do subcircuito tiverem rótulos associados eles, então Logisim irá mostrar a etiqueta como uma dica (isto é, uma caixa de texto temporária) quando o usuário passar o mouse sobre o localização correspondente do componente no subcircuito. Se você encontrar essas dicas irritantes, poderá desativá-las através da aba Preferências da <a href="../prefs/pref-layout.html">Janela de Layout</a>.
       </p>
       <p align="center">
-        <img class="notscal" src="../../../img-guide/subcirc-4-tip.png" alt="#########">
+        <img class=notscal src="../../../img-guide/subcirc-4-tip.png" alt="#########">
       </p>
       <p>
         Vários outros componentes irão mostrar essas dicas também: para alguns dos pinos de um <a href="../../libs/mem/flipflops.html">flip-flop</a> predefinido, por exemplo, ao passar sobre ele explicará a função do que faz o pino.
@@ -51,7 +51,7 @@
       </p>
       <p>
         Um vez que tenhamos o multiplexador 4:1 definido, poderemos usá-lo em outros circuitos. O Logisim não tem limites em quão profundo os circuitos possam ser aninhados - embora ele irá opor-se à colocação desses dentro de si próprios!
-      </p><b class="note">Nota:</b> Não há nada de errado com a edição de um circuito que estiver sendo usado como um subcircuito, na verdade, isso é muito comum. Esteja ciente, no entanto, que quaisquer alterações nos pinos de um circuito (adicionando, excluindo ou movendo-os) irá reorganizá-los também naquele que o contiver. Assim, se você alterar os pinos em um circuito, você também terá necessidade de editar qualquer circuito que usá-lo como um subcircuito.
+      </p><b class=note>Nota:</b> Não há nada de errado com a edição de um circuito que estiver sendo usado como um subcircuito, na verdade, isso é muito comum. Esteja ciente, no entanto, que quaisquer alterações nos pinos de um circuito (adicionando, excluindo ou movendo-os) irá reorganizá-los também naquele que o contiver. Assim, se você alterar os pinos em um circuito, você também terá necessidade de editar qualquer circuito que usá-lo como um subcircuito.
       <p>
         <strong>Próximo:</strong> <a href="sub-appear.html">Editar a forma do subcircuito</a>.
       </p>

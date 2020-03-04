@@ -63,7 +63,7 @@ class MemState implements InstanceData, Cloneable, HexModelListener {
     contents.addHexModelListener(this);
   }
 
-  public void bytesChanged(HexModel source, long start, long numBytes, int[] oldValues) {}
+  public void bytesChanged(HexModel source, long start, long numBytes, long[] oldValues) {}
 
   private void CalculateDisplayParameters(
       Graphics g, int offsetX, int offsetY, int DisplayWidth, int DisplayHeight) {
@@ -77,6 +77,7 @@ class MemState implements InstanceData, Cloneable, HexModelListener {
     DataSize = fm.stringWidth(StringUtil.toHexString(dataBits, 0) + " ");
     SpaceSize = fm.stringWidth(" ");
     NrDataSymbolsEachLine = (DisplayWidth - AddrBlockSize) / DataSize;
+    if (NrDataSymbolsEachLine == 0) NrDataSymbolsEachLine++;
     if (NrDataSymbolsEachLine > 3 && NrDataSymbolsEachLine % 2 != 0) NrDataSymbolsEachLine--;
     NrOfLines =
         DisplayHeight
@@ -258,7 +259,7 @@ class MemState implements InstanceData, Cloneable, HexModelListener {
           GraphicsUtil.V_CENTER);
       /* Draw data */
       for (int j = 0; j < NrDataSymbolsEachLine; j++) {
-        int value = contents.get(addr + j);
+        long value = contents.get(addr + j);
         if (isValidAddr(addr + j)) {
           
           if (highLight((addr + j), nrItemsToHighlight)) {

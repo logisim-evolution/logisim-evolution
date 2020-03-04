@@ -31,17 +31,17 @@ package com.cburch.logisim.std.wiring;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.instance.StdAttr;
-import com.cburch.logisim.tools.key.IntegerConfigurator;
+import com.cburch.logisim.tools.key.LongConfigurator;
 
-class ConstantConfigurator extends IntegerConfigurator {
+class ConstantConfigurator extends LongConfigurator {
   public ConstantConfigurator() {
     super(Constant.ATTR_VALUE, 0, 0, 0, 16);
   }
 
   @Override
-  public int getMaximumValue(AttributeSet attrs) {
+  public long getMaximumValue(AttributeSet attrs) {
     BitWidth width = attrs.getValue(StdAttr.WIDTH);
-    int ret = width.getMask();
+    long ret = width.getMask();
     if (ret >= 0) {
       return ret;
     } else {
@@ -50,12 +50,12 @@ class ConstantConfigurator extends IntegerConfigurator {
   }
 
   @Override
-  public int getMinimumValue(AttributeSet attrs) {
+  public long getMinimumValue(AttributeSet attrs) {
     BitWidth width = attrs.getValue(StdAttr.WIDTH);
-    if (width.getWidth() < 32) {
+    if (width.getWidth() < 64) {
       return 0;
     } else {
-      return Integer.MIN_VALUE;
+      return Long.MIN_VALUE;
     }
   }
 }

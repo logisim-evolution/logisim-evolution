@@ -12,7 +12,7 @@
     <link rel="stylesheet" type="text/css" href="../../style.css">
   </head>
   <body>
-    <div class="maindiv">
+    <div class=maindiv>
       <h1>
         Autres options de vérifications
       </h1>
@@ -26,12 +26,12 @@
         Un circuit plus complexe pourrait inclure un composant RAM qui doit être chargé avec un programme pour que le circuit fonctionne. Vous pouvez spécifier un fichier image mémoire sur la ligne de commande, qui sera chargé dans tout composant RAM du circuit avant que la simulation ne commence. Cela fonctionne uniquement avec l'exécution en ligne de commande.
       </p>
       <blockquote>
-	  <div class="forcode">
+	  <div class=forcode>
         <tt>java -jar logisim-filename.jar cpu.circ -tty table -load mem-image.txt</tt>
 	  </div> 
       </blockquote>
       <p>
-        L'ordre des paramètres n'est pas important (sauf que le paramètre <tt>table</tt> doit être immédiatement après <tt>-tty</tt> et le nom de fichier de l'image mémoire doit être immédiatement après <tt>-load</tt> ). Le fichier image de la mémoire doit se trouver dans <a href="../mem/menu.html">le format d'image mémoire de Logisim</a> .
+        L'ordre des paramètres n'est pas important (sauf que le paramètre <tt>table</tt> doit être immédiatement après <tt>-tty</tt> et le nom de fichier de l'image mémoire doit être immédiatement après <tt>-load</tt> ). Le fichier image de la mémoire doit se trouver dans <a href="../mem/mem-menu.html">le format d'image mémoire de Logisim</a> .
       </p>
       <p>
         Logisim recherche la RAM de manière récursive, donc cela fonctionnera toujours si la RAM est imbriquée dans un sous-circuit. Cependant, il n'y a aucun moyen de distinguer différents composants de la RAM: Logisim tentera de charger le même fichier dans chaque mémoire vive qu'il peut trouver.

@@ -43,7 +43,7 @@ import javax.swing.SwingConstants;
 
 public class HexEditor extends JComponent implements Scrollable {
   private class Listener implements HexModelListener {
-    public void bytesChanged(HexModel source, long start, long numBytes, int[] oldValues) {
+    public void bytesChanged(HexModel source, long start, long numBytes, long[] oldValues) {
       repaint(
           0,
           measures.toY(start),

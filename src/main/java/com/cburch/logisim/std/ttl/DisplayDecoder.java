@@ -255,7 +255,7 @@ public class DisplayDecoder extends InstanceFactory {
           powval |= 1 << i;
       decval += (byte) (powval + 1);
     } else if (multibit && state.getPortValue(MultibitInputIndex) != Value.UNKNOWN)
-      decval = (byte) state.getPortValue(MultibitInputIndex).toIntValue();
+      decval = (byte) state.getPortValue(MultibitInputIndex).toLongValue();
     return decval;
   }
 

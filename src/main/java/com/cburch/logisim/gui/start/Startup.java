@@ -51,7 +51,7 @@ import com.cburch.logisim.util.ArgonXML;
 import com.cburch.logisim.util.LocaleManager;
 import com.cburch.logisim.util.MacCompatibility;
 import com.cburch.logisim.util.StringUtil;
-import com.connectina.swing.fontchooser.JFontChooser;
+import org.drjekyll.fontchooser.FontChooser;
 import java.awt.AWTEvent;
 import java.awt.Component;
 import java.awt.Toolkit;
@@ -861,11 +861,10 @@ public class Startup implements AWTEventListener {
     if (isTty) {
       try {
         TtyInterface.run(this);
-        return;
+        System.exit(0);
       } catch (Exception t) {
         t.printStackTrace();
         System.exit(-1);
-        return;
       }
     }
 
@@ -1040,7 +1039,7 @@ public class Startup implements AWTEventListener {
             || (container instanceof JHelp)
             || (container instanceof JFileChooser)
             || ((container instanceof JScrollPane) && (!(container instanceof CanvasPane)))
-            || (container instanceof JFontChooser)
+            || (container instanceof FontChooser)
             || (container instanceof JCheckBoxMenuItem)) {
           AppPreferences.setScaledFonts(((JComponent) container).getComponents());
           try {

@@ -297,7 +297,7 @@ public class Multiplexer extends InstanceFactory {
     } else {
       Value sel = state.getPortValue(inputs);
       if (sel.isFullyDefined()) {
-        out = state.getPortValue(sel.toIntValue());
+        out = state.getPortValue((int)sel.toLongValue());
       } else if (sel.isErrorValue()) {
         out = Value.createError(data);
       } else {

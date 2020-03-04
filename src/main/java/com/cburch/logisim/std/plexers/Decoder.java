@@ -291,7 +291,7 @@ public class Decoder extends InstanceFactory {
     } else {
       Value sel = state.getPortValue(outputs);
       if (sel.isFullyDefined()) {
-        outIndex = sel.toIntValue();
+        outIndex = (int)sel.toLongValue();
         out = Value.TRUE;
       } else if (sel.isErrorValue()) {
         others = Value.createError(data);

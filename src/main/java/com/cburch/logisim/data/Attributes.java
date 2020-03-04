@@ -30,12 +30,12 @@ package com.cburch.logisim.data;
 
 import static com.cburch.logisim.data.Strings.S;
 
-import com.bric.swing.ColorPicker;
+import com.bric.colorpicker.ColorPicker;
 import com.cburch.logisim.gui.generic.ComboBox;
 import com.cburch.logisim.util.FontUtil;
 import com.cburch.logisim.util.JInputComponent;
 import com.cburch.logisim.util.StringGetter;
-import com.connectina.swing.fontchooser.JFontChooser;
+import org.drjekyll.fontchooser.FontChooser;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
@@ -178,7 +178,7 @@ public class Attributes {
 
     @Override
     public java.awt.Component getCellEditor(Font value) {
-      return new FontChooser(value);
+      return new LFontChooser(value);
     }
 
     @Override
@@ -198,11 +198,11 @@ public class Attributes {
     }
   }
 
-  private static class FontChooser extends JFontChooser implements JInputComponent {
+  private static class LFontChooser extends FontChooser implements JInputComponent {
     /** */
     private static final long serialVersionUID = 1L;
 
-    FontChooser(Font initial) {
+    LFontChooser(Font initial) {
       super(initial);
     }
 
@@ -223,17 +223,33 @@ public class Attributes {
     @Override
     public Integer parse(String value) {
       value = value.toLowerCase();
-      if (value.startsWith("0x")) {
-        value = value.substring(2);
-        return Integer.valueOf((int) Long.parseLong(value, 16));
-      } else if (value.startsWith("0b")) {
-        value = value.substring(2);
-        return Integer.valueOf((int) Long.parseLong(value, 2));
-      } else if (value.startsWith("0") && value.length() > 1) {
+      if (value.startsWith("-")) {
         value = value.substring(1);
-        return Integer.valueOf((int) Long.parseLong(value, 8));
+        if (value.startsWith("0x")) {
+          value = value.substring(2);
+          return Integer.valueOf(Integer.parseInt("-" + value, 16));
+        } else if (value.startsWith("0b")) {
+          value = value.substring(2);
+          return Integer.valueOf(Integer.parseInt("-" + value, 2));
+        } else if (value.startsWith("0") && value.length() > 1) {
+          value = value.substring(1);
+          return Integer.valueOf(Integer.parseInt("-" + value, 8));
+        } else {
+          return Integer.valueOf(Integer.parseInt("-" + value, 10));
+        }
       } else {
-        return Integer.valueOf((int) Long.parseLong(value, 10));
+        if (value.startsWith("0x")) {
+          value = value.substring(2);
+          return Integer.valueOf(Integer.parseUnsignedInt(value, 16));
+        } else if (value.startsWith("0b")) {
+          value = value.substring(2);
+          return Integer.valueOf(Integer.parseUnsignedInt(value, 2));
+        } else if (value.startsWith("0") && value.length() > 1) {
+          value = value.substring(1);
+          return Integer.valueOf(Integer.parseUnsignedInt(value, 8));
+        } else {
+          return Integer.valueOf(Integer.parseUnsignedInt(value, 10));
+        }
       }
     }
 
@@ -245,6 +261,56 @@ public class Attributes {
 
     @Override
     public String toStandardString(Integer value) {
+      return toDisplayString(value);
+    }
+  }
+
+  private static class HexLongAttribute extends Attribute<Long> {
+    private HexLongAttribute(String name, StringGetter disp) {
+      super(name, disp);
+    }
+
+    @Override
+    public Long parse(String value) {
+      value = value.toLowerCase();
+      if (value.startsWith("-")) {
+        value = value.substring(1);
+        if (value.startsWith("0x")) {
+          value = value.substring(2);
+          return Long.valueOf(Long.parseLong("-" + value, 16));
+        } else if (value.startsWith("0b")) {
+          value = value.substring(2);
+          return Long.valueOf(Long.parseLong("-" + value, 2));
+        } else if (value.startsWith("0") && value.length() > 1) {
+          value = value.substring(1);
+          return Long.valueOf(Long.parseLong("-" + value, 8));
+        } else {
+          return Long.valueOf(Long.parseLong("-" + value, 10));
+        }
+      } else {
+        if (value.startsWith("0x")) {
+          value = value.substring(2);
+          return Long.valueOf(Long.parseUnsignedLong(value, 16));
+        } else if (value.startsWith("0b")) {
+          value = value.substring(2);
+          return Long.valueOf(Long.parseUnsignedLong(value, 2));
+        } else if (value.startsWith("0") && value.length() > 1) {
+          value = value.substring(1);
+          return Long.valueOf(Long.parseUnsignedLong(value, 8));
+        } else {
+          return Long.valueOf(Long.parseUnsignedLong(value, 10));
+        }
+      }
+    }
+
+    @Override
+    public String toDisplayString(Long value) {
+      long val = value.longValue();
+      return "0x" + Long.toHexString(val);
+    }
+
+    @Override
+    public String toStandardString(Long value) {
       return toDisplayString(value);
     }
   }
@@ -457,8 +523,16 @@ public class Attributes {
     return forHexInteger(name, getter(name));
   }
 
+  public static Attribute<Long> forHexLong(String name) {
+    return forHexLong(name, getter(name));
+  }
+
   public static Attribute<Integer> forHexInteger(String name, StringGetter disp) {
     return new HexIntegerAttribute(name, disp);
+  }
+
+  public static Attribute<Long> forHexLong(String name, StringGetter disp) {
+    return new HexLongAttribute(name, disp);
   }
 
   public static Attribute<Integer> forInteger(String name) {

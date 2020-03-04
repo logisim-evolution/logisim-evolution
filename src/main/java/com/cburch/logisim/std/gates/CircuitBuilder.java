@@ -328,7 +328,7 @@ public class CircuitBuilder {
       }
       ComponentFactory factory = Constant.FACTORY;
       AttributeSet attrs = factory.createAttributeSet();
-      attrs.setValue(Constant.ATTR_VALUE, Integer.valueOf(value.getValue()));
+      attrs.setValue(Constant.ATTR_VALUE, Long.valueOf(value.getValue()));
       Bounds bds = factory.getOffsetBounds(attrs);
       return new Layout(
           bds.getWidth(), bds.getHeight(), -bds.getY(), factory, attrs, new Layout[0], 0);
@@ -499,10 +499,10 @@ public class CircuitBuilder {
       Object factory = parent.getFactory();
       if (factory instanceof AbstractGate) {
         Value val = ((AbstractGate) factory).getIdentity();
-        Integer valInt = Integer.valueOf(val.toIntValue());
+        Long valLong = Long.valueOf(val.toLongValue());
         Location loc = parent.getEnd(index).getLocation();
         AttributeSet attrs = Constant.FACTORY.createAttributeSet();
-        attrs.setValue(Constant.ATTR_VALUE, valInt);
+        attrs.setValue(Constant.ATTR_VALUE, valLong);
         result.add(Constant.FACTORY.createComponent(loc, attrs));
       }
     }
@@ -602,7 +602,7 @@ public class CircuitBuilder {
     if (!inputData.getInputLocs("0", false).ys.isEmpty()) {
       AttributeSet attrs = fact.createAttributeSet();
       attrs.setValue(StdAttr.FACING, Direction.SOUTH);
-      attrs.setValue(Constant.ATTR_VALUE, 0);
+      attrs.setValue(Constant.ATTR_VALUE, 0L);
       Location loc = Location.create(inputData.getSpineX("0", false), inputData.startY - 10);
       result.add(fact.createComponent(loc, attrs));
       inputData.registerConnection("0", loc, false);
@@ -611,7 +611,7 @@ public class CircuitBuilder {
     if (!inputData.getInputLocs("1", false).ys.isEmpty()) {
       AttributeSet attrs = fact.createAttributeSet();
       attrs.setValue(StdAttr.FACING, Direction.SOUTH);
-      attrs.setValue(Constant.ATTR_VALUE, 1);
+      attrs.setValue(Constant.ATTR_VALUE, 1L);
       Location loc = Location.create(inputData.getSpineX("1", false), inputData.startY - 10);
       result.add(fact.createComponent(loc, attrs));
       inputData.registerConnection("1", loc, false);

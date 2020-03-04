@@ -59,8 +59,9 @@ class GrayIncrementer extends InstanceFactory {
   static Value nextGray(Value prev) {
     BitWidth bits = prev.getBitWidth();
     if (!prev.isFullyDefined()) return Value.createError(bits);
-    int x = prev.toIntValue();
-    int ct = (x >> 16) ^ x; // compute parity of x
+    long x = prev.toLongValue();
+    long ct = (x >> 32) ^ x; // compute parity of x
+    ct = (ct >> 16) ^ ct;
     ct = (ct >> 8) ^ ct;
     ct = (ct >> 4) ^ ct;
     ct = (ct >> 2) ^ ct;
@@ -68,7 +69,7 @@ class GrayIncrementer extends InstanceFactory {
     if ((ct & 1) == 0) { // if parity is even, flip 1's bit
       x = x ^ 1;
     } else { // else flip bit just above last 1
-      int y = x ^ (x & (x - 1)); // first compute the last 1
+      long y = x ^ (x & (x - 1)); // first compute the last 1
       y = (y << 1) & bits.getMask();
       x = (y == 0 ? 0 : x ^ y);
     }

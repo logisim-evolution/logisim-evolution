@@ -41,7 +41,7 @@ import java.awt.Font;
 import java.util.List;
 
 class GateAttributes extends AbstractAttributeSet {
-  static final int MAX_INPUTS = 32;
+  static final int MAX_INPUTS = 64;
   static final int DELAY = 1;
 
   static final AttributeOption SIZE_NARROW =
@@ -78,7 +78,7 @@ class GateAttributes extends AbstractAttributeSet {
   BitWidth width = BitWidth.ONE;
   AttributeOption size = SIZE_MEDIUM;
   int inputs = 2;
-  int negated = 0;
+  long negated = 0;
   AttributeOption out = OUTPUT_01;
   AttributeOption xorBehave;
   String label = "";
@@ -111,7 +111,7 @@ class GateAttributes extends AbstractAttributeSet {
     if (attr == ATTR_XOR) return (V) xorBehave;
     if (attr instanceof NegateAttribute) {
       int index = ((NegateAttribute) attr).index;
-      int bit = (negated >> index) & 1;
+      int bit = (int)(negated >> index) & 1;
       return (V) Boolean.valueOf(bit == 1);
     }
     return null;
@@ -124,7 +124,7 @@ class GateAttributes extends AbstractAttributeSet {
     if (attr == StdAttr.WIDTH) {
       width = (BitWidth) value;
       int bits = width.getWidth();
-      int mask = bits >= 32 ? -1 : ((1 << inputs) - 1);
+      long mask = bits >= 64 ? -1L : ((1L << inputs) - 1);
       negated &= mask;
     } else if (attr == StdAttr.FACING) {
       facing = (Direction) value;

@@ -886,10 +886,10 @@ public class HexFile {
       return curWords != null;
     }
 
-    private int[] subarray(int[] a, int n) {
+    private long[] subarray(long[] a, int n) {
       if (n >= a.length)
         return a;
-      int[] s = new int[n];
+      long[] s = new long[n];
       System.arraycopy(a, 0, s, 0, n);
       return s;
     }
@@ -897,7 +897,7 @@ public class HexFile {
     ////////////////////////////////////////////////////////
     // old "v2.0 raw" run-length-endoded hex nonsense format
 
-    private int[] data = new int[4096];
+    private long[] data = new long[4096];
     private long rleCount;
     private long rleValue;
 
@@ -907,7 +907,7 @@ public class HexFile {
       long offs = 0;
       findNonemptyLine(true);
       while (rleHasNextVals()) {
-        int[] v = rleNextVals();
+        long[] v = rleNextVals();
         long end = offs + v.length - 1;
         if (end > mMaxAddr)
           mMaxAddr = end;
@@ -928,7 +928,7 @@ public class HexFile {
       return rleCount > 0 || hasNextWord();
     }
 
-    public int[] rleNextVals() throws IOException {
+    public long[] rleNextVals() throws IOException {
     int pos = 0;
     if (rleCount > 0) {
       int n = (int) Math.min(data.length - pos, rleCount);
@@ -1577,7 +1577,7 @@ public class HexFile {
         int tokens = 0;
         long offs = 0;
         while (offs <= mEnd) {
-          int val = src.get(offs);
+          long val = src.get(offs);
           long start = offs;
           offs++;
           while (offs <= mEnd && src.get(offs) == val)
@@ -1591,7 +1591,7 @@ public class HexFile {
             cOut.write(tokens % 8 == 0 ? '\n' : ' ');
           if (offs != start + 1)
             cOut.write((offs - start) + "*");
-          cOut.write(Integer.toHexString(val));
+          cOut.write(Long.toHexString(val));
           tokens++;
         }
         if (tokens > 0)
@@ -1862,7 +1862,7 @@ public class HexFile {
         long mEnd = dst.getLastOffset();
         for (long a = 0; a < mEnd; a++) {
           int v = vals.getOrDefault(a, 0);
-          int v2 = dst.get(a);
+          long v2 = dst.get(a);
           if (v2 != v) {
             if (errs == 0)
               System.out.printf("  Decoding: %s\n", tmp);

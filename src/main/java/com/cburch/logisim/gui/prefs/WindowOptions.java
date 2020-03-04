@@ -48,12 +48,17 @@ import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.JTextArea;
 
 class WindowOptions extends OptionsPanel {
   private static final long serialVersionUID = 1L;
   private PrefBoolean[] checks;
   private PrefOptionList toolbarPlacement;
   private ZoomSlider ZoomValue;
+  private JLabel lookfeelLabel;
+  private JLabel ZoomLabel;
+  private JLabel Importanta;
+  private JTextArea Importantb;
 
   private class ZoomChange implements ChangeListener, ActionListener {
 
@@ -88,8 +93,7 @@ class WindowOptions extends OptionsPanel {
 
   public WindowOptions(PreferencesFrame window) {
     super(window);
-    JLabel ZoomLabel = new JLabel();
-
+ 
     checks =
         new PrefBoolean[] {
           new PrefBoolean(AppPreferences.SHOW_TICK_RATE, S.getter("windowTickRate")),
@@ -106,30 +110,40 @@ class WindowOptions extends OptionsPanel {
               new PrefOption(Direction.WEST.toString(), Direction.WEST.getDisplayGetter()),
               new PrefOption(AppPreferences.TOOLBAR_HIDDEN, S.getter("windowToolbarHidden"))
             });
-
+   
     JPanel panel = new JPanel(new TableLayout(2));
     panel.add(toolbarPlacement.getJLabel());
     panel.add(toolbarPlacement.getJComboBox());
-
-    ZoomLabel.setText("Zoom factor:");
+  
+    panel.add(new JLabel(" "));
+    panel.add(new JLabel(" "));
+    
+    Importanta = new JLabel(S.get("windowToolbarPleaserestart"));
+    Importanta.setFont(Importanta.getFont().deriveFont(Font.ITALIC));
+    panel.add(Importanta);
+    
+    Importantb = new JTextArea(S.get("windowToolbarImportant"));
+    Importantb.setFont(Importantb.getFont().deriveFont(Font.ITALIC));
+    panel.add(Importantb);
+    
+    ZoomLabel = new JLabel(S.get("windowToolbarZoomfactor"));
     ZoomValue =
         new ZoomSlider(
             JSlider.HORIZONTAL, 100, 300, (int) (AppPreferences.SCALE_FACTOR.get() * 100));
 
-    panel.add(new JLabel(" "));
-    panel.add(new JLabel(" "));
-    JLabel important = new JLabel(S.get("windowToolbarPleaserestart"));
-    important.setFont(important.getFont().deriveFont(Font.ITALIC));
-    panel.add(important);
-    important = new JLabel(S.get("windowToolbarImportant"));
-    important.setFont(important.getFont().deriveFont(Font.ITALIC));
-    panel.add(important);
     panel.add(ZoomLabel);
     panel.add(ZoomValue);
+    
     ZoomChange Listener = new ZoomChange();
     ZoomValue.addChangeListener(Listener);
+    
+    panel.add(new JLabel(" "));
+    panel.add(new JLabel(" "));
+    
     int index = 0;
     LookAndFeel = new JComboBox<String>();
+    LookAndFeel.setSize(50, 20);
+    
     LFInfos = UIManager.getInstalledLookAndFeels();
     for (LookAndFeelInfo info : LFInfos) {
       LookAndFeel.insertItemAt(info.getName(), index);
@@ -138,8 +152,9 @@ class WindowOptions extends OptionsPanel {
         Index = index;
       }
       index++;
-    }
-    panel.add(new JLabel(S.get("windowToolbarLookandfeel")));
+    }    
+    lookfeelLabel = new JLabel(S.get("windowToolbarLookandfeel"));
+    panel.add(lookfeelLabel);
     panel.add(LookAndFeel);
     LookAndFeel.addActionListener(Listener);
 
@@ -166,5 +181,9 @@ class WindowOptions extends OptionsPanel {
       checks[i].localeChanged();
     }
     toolbarPlacement.localeChanged();
+    ZoomLabel.setText(S.get("windowToolbarZoomfactor"));
+    lookfeelLabel.setText(S.get("windowToolbarLookandfeel"));
+    Importanta.setText(S.get("windowToolbarPleaserestart"));
+    Importantb.setText(S.get("windowToolbarImportant"));
   }
 }

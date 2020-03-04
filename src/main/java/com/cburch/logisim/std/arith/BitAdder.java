@@ -52,7 +52,7 @@ import java.awt.Graphics;
 
 public class BitAdder extends InstanceFactory {
   static final Attribute<Integer> NUM_INPUTS =
-      Attributes.forIntegerRange("inputs", S.getter("gateInputsAttr"), 1, 32);
+      Attributes.forIntegerRange("inputs", S.getter("gateInputsAttr"), 1, 64);
 
   public BitAdder() {
     super("BitAdder", S.getter("bitAdderComponent"));
@@ -61,7 +61,7 @@ public class BitAdder extends InstanceFactory {
         new Object[] {BitWidth.create(8), Integer.valueOf(1)});
     setKeyConfigurator(
         JoinedConfigurator.create(
-            new IntegerConfigurator(NUM_INPUTS, 1, 32, 0),
+            new IntegerConfigurator(NUM_INPUTS, 1, 64, 0),
             new BitWidthConfigurator(StdAttr.WIDTH)));
     setIcon(new ArithmeticIcon("#"));
   }

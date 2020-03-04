@@ -282,7 +282,7 @@ public class JtagUartState  implements SocBusSlaveInterface {
       }
       if (state.getPortValue(JtagUart.AvailablePin) == Value.TRUE && state.getPortValue(JtagUart.ReadEnablePin) == Value.FALSE) {
         instState.setAcBit();
-        instState.pushReadFifo(state.getPortValue(JtagUart.DataInPin).toIntValue());
+        instState.pushReadFifo((int) state.getPortValue(JtagUart.DataInPin).toLongValue());
         state.setPort(JtagUart.ReadEnablePin, Value.TRUE, 5);
       } else {
         state.setPort(JtagUart.ReadEnablePin, Value.FALSE, 5);

@@ -12,7 +12,7 @@
     <link rel="stylesheet" type="text/css" href="../../style.css">
   </head>
   <body>
-    <div class="maindiv">
+    <div class=maindiv>
       <h1>
         Other verification options
       </h1>
@@ -26,12 +26,12 @@
         A more complex circuit might include a RAM component that needs to be loaded with a program in order for the circuit to have anything to do. You can specify a memory image file at the command line, which will be loaded into any RAM component in the circuit before simulation begins. (This does not work when loading the GUI - it is only for command-line execution.)
       </p>
       <blockquote>
-	  <div class="forcode">
+	  <div class=forcode>
         <tt>java -jar logisim-filename.jar cpu.circ -tty table -load mem-image.txt</tt>
 		</div>
       </blockquote>
       <p>
-        The order of the parameters is not important (except the <tt>table</tt> parameter must be immediately after <tt>-tty</tt>, and the memory image's filename must be immediately after <tt>-load</tt>). The memory image file should be in <a href="../mem/menu.html">Logisim's memory image format</a>.
+        The order of the parameters is not important (except the <tt>table</tt> parameter must be immediately after <tt>-tty</tt>, and the memory image's filename must be immediately after <tt>-load</tt>). The memory image file should be in <a href="../mem/mem-menu.html">Logisim's memory image format</a>.
       </p>
       <p>
         Logisim searches for RAM recursively, so this will still work if RAM is nested within a subcircuit. There is no way, though, to distinguish different RAM components: Logisim will attempt to load the same file into every RAM that it can find.

@@ -39,6 +39,7 @@ import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.gui.icons.ArithmeticIcon;
+import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceFactory;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
@@ -56,24 +57,27 @@ public class Multiplier extends InstanceFactory {
   public static final AttributeOption UNSIGNED_OPTION = Comparator.UNSIGNED_OPTION;
   public static final Attribute<AttributeOption> MODE_ATTR = Comparator.MODE_ATTRIBUTE;
 
-  static long extend(int w, int v, boolean unsigned) {
-    long mask = (1L << w) - 1;
-    if (unsigned) return v & mask;
-    else if ((v & (1 << (w - 1))) != 0) return (long) v | ~mask;
-    else return (long) v;
+  static BigInteger extend(int w, long v, boolean unsigned) {
+	long mask = w == 64 ? 0 : (-1L) << w;
+	mask ^= 0xFFFFFFFFFFFFFFFFL;
+	long value = v & mask;
+	if (!unsigned && (value >> (w-1)) != 0) value |= ~mask;
+	if (unsigned) return new BigInteger(Long.toUnsignedString(value));
+	return new BigInteger(Long.toString(value));
   }
 
   static Value[] computeProduct(BitWidth width, Value a, Value b, Value c_in, boolean unsigned) {
     int w = width.getWidth();
     if (c_in == Value.NIL || c_in.isUnknown()) c_in = Value.createKnown(width, 0);
     if (a.isFullyDefined() && b.isFullyDefined() && c_in.isFullyDefined()) {
-      BigInteger aa = BigInteger.valueOf(extend(w, a.toIntValue(), unsigned));
-      BigInteger bb = BigInteger.valueOf(extend(w, b.toIntValue(), unsigned));
-      BigInteger cc = BigInteger.valueOf(extend(w, c_in.toIntValue(), unsigned));
+      BigInteger aa = extend(w, a.toLongValue(), unsigned);
+      BigInteger bb = extend(w, b.toLongValue(), unsigned);
+      BigInteger cc = extend(w, c_in.toLongValue(), unsigned);
       BigInteger rr = aa.multiply(bb).add(cc);
-      long mask = (1L << w) - 1;
-      int lo = rr.and(BigInteger.valueOf(mask)).intValue();
-      int hi = rr.shiftRight(w).and(BigInteger.valueOf(mask)).intValue();
+  	  long mask = w == 64 ? 0 : (-1L) << w;
+  	  mask ^= 0xFFFFFFFFFFFFFFFFL;
+      long lo = rr.and(BigInteger.valueOf(mask)).longValue();
+      long hi = rr.shiftRight(w).and(BigInteger.valueOf(mask)).longValue();
       return new Value[] {Value.createKnown(width, lo), Value.createKnown(width, hi)};
     } else {
       Value[] avals = a.getAll();
@@ -93,9 +97,9 @@ public class Multiplier extends InstanceFactory {
       int error = Math.min(Math.min(aErr, bErr), cErr);
 
       // fixme: this is probably wrong, but the inputs were bad anyway
-      BigInteger aa = BigInteger.valueOf(extend(w, ax, unsigned));
-      BigInteger bb = BigInteger.valueOf(extend(w, bx, unsigned));
-      BigInteger cc = BigInteger.valueOf(extend(w, cx, unsigned));
+      BigInteger aa = extend(w, ax, unsigned);
+      BigInteger bb = extend(w, bx, unsigned);
+      BigInteger cc = extend(w, cx, unsigned);
       BigInteger rr = aa.multiply(bb).add(cc);
       long ret = rr.longValue();
 
@@ -132,7 +136,7 @@ public class Multiplier extends InstanceFactory {
   private static int getKnown(Value[] vals) {
     int ret = 0;
     for (int i = 0; i < vals.length; i++) {
-      int val = vals[i].toIntValue();
+      int val = (int)vals[i].toLongValue();
       if (val < 0) return ret;
       ret |= val << i;
     }
@@ -179,6 +183,16 @@ public class Multiplier extends InstanceFactory {
     return MyHDLGenerator.HDLTargetSupported(HDLIdentifier, attrs);
   }
 
+  @Override
+  protected void configureNewInstance(Instance instance) {
+    instance.addAttributeListener();
+  }
+  
+  @Override
+  protected void instanceAttributeChanged(Instance instance, Attribute<?> attr) {
+    if (attr == MODE_ATTR) instance.fireInvalidated();
+  }  
+  
   @Override
   public void paintInstance(InstancePainter painter) {
     Graphics g = painter.getGraphics();

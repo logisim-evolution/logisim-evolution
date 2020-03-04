@@ -109,7 +109,7 @@ class GrayCounter extends InstanceFactory {
       Bounds bds = painter.getBounds();
       GraphicsUtil.drawCenteredText(
           painter.getGraphics(),
-          StringUtil.toHexString(width.getWidth(), state.getValue().toIntValue()),
+          StringUtil.toHexString(width.getWidth(), state.getValue().toLongValue()),
           bds.getX() + bds.getWidth() / 2,
           bds.getY() + bds.getHeight() / 2);
     }

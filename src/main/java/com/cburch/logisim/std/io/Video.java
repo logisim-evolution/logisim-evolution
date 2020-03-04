@@ -188,7 +188,7 @@ class Video extends ManagedComponent implements ToolTipMaker, AttributeListener 
   }
 
   int addr(CircuitState s, int pin) {
-    return val(s, pin).toIntValue();
+    return (int)val(s, pin).toLongValue();
   }
 
   public void propagate(CircuitState circuitState) {
