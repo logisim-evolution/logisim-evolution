@@ -1833,7 +1833,7 @@ public class Netlist implements CircuitListener {
     if (thisNet.hasBitSource(bitIndex)) {
       List<ConnectionPoint> sources = thisNet.GetBitSources(bitIndex);
       if (sources.size() != 1) {
-        Reporter.AddFatalError(
+        if (Reporter != null) Reporter.AddFatalError(
             "BUG: Found multiple sources\n ==> "
                 + this.getClass().getName().replaceAll("\\.", "/")
                 + ":"
@@ -2197,6 +2197,45 @@ public class Netlist implements CircuitListener {
           error.AddMarkComponents(net.getWires());
           Reporter.AddError(error);
           ret = true;
+        } else if (net.BitWidth() == 1 && net.hasBitSinks(0) && net.GetSourceNets(0).size() > 1) {
+          /* We have to check if the net is connected to multiple drivers */
+          ArrayList<ConnectionPoint> sourceNets = net.GetSourceNets(0);
+          HashMap<Component,Integer> sourceConnections = new HashMap<Component,Integer>();
+          HashSet<Wire> segments = new HashSet<Wire>();
+          segments.addAll(net.getWires());
+          boolean foundShortCrcuit = false;
+          SimpleDRCContainer error =
+              new SimpleDRCContainer(
+                  MyCircuit,
+                  S.get("NetList_ShortCircuit"),
+                  SimpleDRCContainer.LEVEL_FATAL,
+                  SimpleDRCContainer.MARK_WIRE|SimpleDRCContainer.MARK_INSTANCE);
+          for (int i = 0 ; i < sourceNets.size() ; i++) {
+            Net connectedNet = sourceNets.get(i).GetParrentNet();
+            byte bitIndex = sourceNets.get(i).GetParrentNetBitIndex();
+            if (HasHiddenSource(connectedNet, bitIndex, MyComplexSplitters, null, new HashSet<String>())) {
+              SourceInfo source = GetHiddenSource(connectedNet, bitIndex, 
+                  MyComplexSplitters, null, new HashSet<String>(), segments, Reporter);
+              if (source == null) {
+            	 /* this should never happen */
+                 return true;
+              }
+              Component comp = source.getSource().GetComp();
+              int index = source.getIndex();
+              if (sourceConnections.containsKey(comp)) {
+                if (sourceConnections.get(comp) != index) {
+                  for (Wire seg : segments)
+          	        error.AddMarkComponent(seg);
+          	      error.AddMarkComponent(comp);
+          	      foundShortCrcuit = true;
+                }
+              } else  sourceConnections.put(comp, index);
+            }
+          }
+          if (foundShortCrcuit) {
+            ret = true;
+            Reporter.AddError(error);
+          } else net.CleanupSourceNets(0);
         }
       }
     }
