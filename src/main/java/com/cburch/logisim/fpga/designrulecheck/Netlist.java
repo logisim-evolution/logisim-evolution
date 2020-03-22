@@ -35,6 +35,7 @@ import com.cburch.logisim.circuit.CircuitAttributes;
 import com.cburch.logisim.circuit.CircuitEvent;
 import com.cburch.logisim.circuit.CircuitListener;
 import com.cburch.logisim.circuit.Splitter;
+import com.cburch.logisim.circuit.SplitterAttributes;
 import com.cburch.logisim.circuit.SplitterFactory;
 import com.cburch.logisim.circuit.SubcircuitFactory;
 import com.cburch.logisim.circuit.Wire;
@@ -564,8 +565,7 @@ public class Netlist implements CircuitListener {
         DRCStatus = DRC_ERROR;
         return DRCStatus | CommonDRCStatus;
       }
-      ConstructHierarchyTree(
-          null, new ArrayList<String>(), new Integer(0), new Integer(0), new Integer(0));
+      ConstructHierarchyTree(null, new ArrayList<String>(), 0, 0, 0);
       int ports =
           NumberOfInputPorts()
               + NumberOfOutputPorts()
@@ -1107,9 +1107,13 @@ public class Netlist implements CircuitListener {
         Connections.add(ConnectedNet);
       }
       boolean unconnectedEnds = false;
+      boolean connectedUnknownEnds = false;
+      SplitterAttributes sattrs = (SplitterAttributes)com.getAttributeSet();
       for (int i = 1; i < ends.size(); i++) {
         int ConnectedNet = Connections.get(i - 1);
         if (ConnectedNet >= 0) {
+          /* Has this end a connection to the root bus? */
+          connectedUnknownEnds |= sattrs.isNoConnect(i);
           /* There is a net connected to this splitter's end point */
           if (!MyNets.get(ConnectedNet).setParent(MyNets.get(RootNet))) {
             MyNets.get(ConnectedNet).ForceRootNet();
@@ -1134,6 +1138,16 @@ public class Netlist implements CircuitListener {
                 SimpleDRCContainer.MARK_INSTANCE);
         warn.AddMarkComponent(com);
         Reporter.AddWarning(warn);
+      }
+      if (connectedUnknownEnds) {
+        SimpleDRCContainer warn =
+            new SimpleDRCContainer(
+                MyCircuit,
+                S.get("NetList_NoEndSplitterConnections"),
+                SimpleDRCContainer.LEVEL_SEVERE,
+                SimpleDRCContainer.MARK_INSTANCE);
+         warn.AddMarkComponent(com);
+         Reporter.AddWarning(warn);
       }
     }
     progres.setValue(5);
@@ -1200,6 +1214,7 @@ public class Netlist implements CircuitListener {
             List<EndData> ends = comp.getEnds();
             EndData CombinedEnd = ends.get(0);
             int ConnectedBus = -1;
+            SplitterAttributes sattrs = (SplitterAttributes)comp.getAttributeSet();
             /* We search for the root net in the list of nets */
             for (int i = 0; i < MyNets.size() && ConnectedBus < 0; i++) {
               if (MyNets.get(i).contains(CombinedEnd.getLocation())) {
@@ -1222,6 +1237,11 @@ public class Netlist implements CircuitListener {
               return false;
             }
             for (int endid = 1; endid < ends.size(); endid++) {
+              /*
+               * If this is an end that is not connected to the root bus
+               * we can continue we already warned severly before.
+               */
+              if (sattrs.isNoConnect(endid)) continue;
               /*
                * we iterate through all bits to see if the current
                * net is connected to this splitter
@@ -1468,7 +1488,10 @@ public class Netlist implements CircuitListener {
         }
       }
       List<EndData> ends = currentSplitter.getEnds();
+      SplitterAttributes sattrs = (SplitterAttributes)currentSplitter.getAttributeSet();
       for (byte end = 0; end < ends.size(); end++) {
+    	/* prevent the search for ends that are not connected to the root bus */
+    	if (end > 0 && sattrs.isNoConnect(end)) continue;
         if (thisNet.contains(ends.get(end).getLocation())) {
           /* Here we have to process the inherited bits of the parent */
           byte[] BusBitConnection = ((Splitter) currentSplitter).GetEndpoints();
@@ -1810,7 +1833,7 @@ public class Netlist implements CircuitListener {
     if (thisNet.hasBitSource(bitIndex)) {
       List<ConnectionPoint> sources = thisNet.GetBitSources(bitIndex);
       if (sources.size() != 1) {
-        Reporter.AddFatalError(
+        if (Reporter != null) Reporter.AddFatalError(
             "BUG: Found multiple sources\n ==> "
                 + this.getClass().getName().replaceAll("\\.", "/")
                 + ":"
@@ -2174,6 +2197,45 @@ public class Netlist implements CircuitListener {
           error.AddMarkComponents(net.getWires());
           Reporter.AddError(error);
           ret = true;
+        } else if (net.BitWidth() == 1 && net.hasBitSinks(0) && net.GetSourceNets(0).size() > 1) {
+          /* We have to check if the net is connected to multiple drivers */
+          ArrayList<ConnectionPoint> sourceNets = net.GetSourceNets(0);
+          HashMap<Component,Integer> sourceConnections = new HashMap<Component,Integer>();
+          HashSet<Wire> segments = new HashSet<Wire>();
+          segments.addAll(net.getWires());
+          boolean foundShortCrcuit = false;
+          SimpleDRCContainer error =
+              new SimpleDRCContainer(
+                  MyCircuit,
+                  S.get("NetList_ShortCircuit"),
+                  SimpleDRCContainer.LEVEL_FATAL,
+                  SimpleDRCContainer.MARK_WIRE|SimpleDRCContainer.MARK_INSTANCE);
+          for (int i = 0 ; i < sourceNets.size() ; i++) {
+            Net connectedNet = sourceNets.get(i).GetParrentNet();
+            byte bitIndex = sourceNets.get(i).GetParrentNetBitIndex();
+            if (HasHiddenSource(connectedNet, bitIndex, MyComplexSplitters, null, new HashSet<String>())) {
+              SourceInfo source = GetHiddenSource(connectedNet, bitIndex, 
+                  MyComplexSplitters, null, new HashSet<String>(), segments, Reporter);
+              if (source == null) {
+            	 /* this should never happen */
+                 return true;
+              }
+              Component comp = source.getSource().GetComp();
+              int index = source.getIndex();
+              if (sourceConnections.containsKey(comp)) {
+                if (sourceConnections.get(comp) != index) {
+                  for (Wire seg : segments)
+          	        error.AddMarkComponent(seg);
+          	      error.AddMarkComponent(comp);
+          	      foundShortCrcuit = true;
+                }
+              } else  sourceConnections.put(comp, index);
+            }
+          }
+          if (foundShortCrcuit) {
+            ret = true;
+            Reporter.AddError(error);
+          } else net.CleanupSourceNets(0);
         }
       }
     }

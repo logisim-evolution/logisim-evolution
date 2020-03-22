@@ -811,7 +811,7 @@ public class Circuit {
       if (c.getAttributeSet().containsAttribute(StdAttr.LABEL) && !(c.getFactory() instanceof Tunnel)) {
         HashSet<String> labels = new HashSet<String>();
         for (Component comp : comps) {
-          if (comp.equals(c))
+          if (comp.equals(c) || comp.getFactory() instanceof Tunnel)
             continue;
           if (comp.getAttributeSet().containsAttribute(StdAttr.LABEL)) {
             String label = comp.getAttributeSet().getValue(StdAttr.LABEL);
