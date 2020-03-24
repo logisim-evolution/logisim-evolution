@@ -103,6 +103,8 @@ public abstract class Mem extends InstanceFactory {
   public static final AttributeOption QUAD = new AttributeOption("quad",S.getter("memQuad"));
   public static final Attribute<AttributeOption> LINE_ATTR = Attributes.forOption("line", S.getter("memLineSize"),
                new AttributeOption[] {SINGLE,DUAL,QUAD});
+  public static final Attribute<Boolean> ALLOW_MISALIGNED =
+          Attributes.forBoolean("misaligned", S.getter("memMisaligned"));
   static final AttributeOption WRITEAFTERREAD = new AttributeOption("war",S.getter("memWar"));
   static final AttributeOption READAFTERWRITE = new AttributeOption("raw",S.getter("memRaw"));
   static final Attribute<AttributeOption> READ_ATTR = Attributes.forOption("readbehav", S.getter("memReadBehav"), 

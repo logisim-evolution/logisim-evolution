@@ -291,11 +291,7 @@ class MemState implements InstanceData, Cloneable, HexModelListener {
   }
   
   private boolean highLight(int addr, int nrItemsToHighlight) {
-	long mask = -1L;
-	mask *= nrItemsToHighlight;
-	long leftAddr = curAddr & mask;
-	long rightAddr = leftAddr+nrItemsToHighlight;
-	return (addr >= curAddr)&&(addr < rightAddr);
+	return (addr >= curAddr)&&(addr < curAddr+nrItemsToHighlight);
   }
   
   private Bounds getDataBound(int xoff, int yoff, int line, int column) {

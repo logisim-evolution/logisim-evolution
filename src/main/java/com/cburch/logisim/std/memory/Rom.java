@@ -286,11 +286,12 @@ public class Rom extends Mem {
     }
     
     boolean misaligned = addr%nrDataLines != 0; 
-    
+    boolean misalignError = misaligned && !state.getAttributeValue(ALLOW_MISALIGNED);
+
     for (int i = 0 ; i < nrDataLines ; i++) {
       long val = myState.getContents().get(addr+i);
-      state.setPort(RamAppearance.getDataOutIndex(i, attrs), 
-                    misaligned ? Value.createError(dataBits) : Value.createKnown(dataBits, val), DELAY);
+      state.setPort(RamAppearance.getDataOutIndex(i, attrs),
+              misalignError ? Value.createError(dataBits) : Value.createKnown(dataBits, val), DELAY);
     }
   }
 
