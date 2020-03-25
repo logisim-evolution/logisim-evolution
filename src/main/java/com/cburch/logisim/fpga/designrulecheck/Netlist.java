@@ -558,6 +558,40 @@ public class Netlist implements CircuitListener {
         Reporter.AddWarning(warn);
       }
     }
+    /* Check for unconnected input pins in my circuit and generate warnings */
+    for (NetlistComponent comp : MyInputPorts) {
+      boolean openInputs = false;
+      for (int j = 0; j < comp.NrOfEnds(); j++) {
+        if (!comp.EndIsConnected(j)) openInputs = true;
+      }
+      if (openInputs) {
+        SimpleDRCContainer warn =
+            new SimpleDRCContainer(
+                MyCircuit,
+                S.get("NetList_UnconnectedInput"),
+                SimpleDRCContainer.LEVEL_NORMAL,
+                SimpleDRCContainer.MARK_INSTANCE);
+        warn.AddMarkComponent(comp.GetComponent());
+        Reporter.AddWarning(warn);
+      }
+    }
+    /* Check for unconnected output pins in my circuit and generate warnings */
+    for (NetlistComponent comp : MyOutputPorts) {
+      boolean openOutputs = false;
+      for (int j = 0; j < comp.NrOfEnds(); j++) {
+        if (!comp.EndIsConnected(j)) openOutputs = true;
+      }
+      if (openOutputs) {
+        SimpleDRCContainer warn =
+            new SimpleDRCContainer(
+                MyCircuit,
+                S.get("NetList_UnconnectedOutput"),
+                SimpleDRCContainer.LEVEL_NORMAL,
+                SimpleDRCContainer.MARK_INSTANCE);
+        warn.AddMarkComponent(comp.GetComponent());
+        Reporter.AddWarning(warn);
+      }
+    }
 
     /* Only if we are on the top-level we are going to build the clock-tree */
     if (IsTopLevel) {
@@ -2200,7 +2234,7 @@ public class Netlist implements CircuitListener {
           error.AddMarkComponents(net.getWires());
           Reporter.AddError(error);
           ret = true;
-        } else if (net.BitWidth() == 1 && net.hasBitSinks(0) && net.GetSourceNets(0).size() > 1) {
+        } else if (net.BitWidth() == 1 && net.GetSourceNets(0).size() > 1) {
           /* We have to check if the net is connected to multiple drivers */
           ArrayList<ConnectionPoint> sourceNets = net.GetSourceNets(0);
           HashMap<Component,Integer> sourceConnections = new HashMap<Component,Integer>();
@@ -2224,15 +2258,14 @@ public class Netlist implements CircuitListener {
                  return true;
               }
               Component comp = source.getSource().GetComp();
+              for (Wire seg : segments)
+                error.AddMarkComponent(seg);
+              error.AddMarkComponent(comp);
               int index = source.getIndex();
-              if (sourceConnections.containsKey(comp)) {
-                if (sourceConnections.get(comp) != index) {
-                  for (Wire seg : segments)
-          	        error.AddMarkComponent(seg);
-          	      error.AddMarkComponent(comp);
-          	      foundShortCrcuit = true;
-                }
-              } else  sourceConnections.put(comp, index);
+              foundShortCrcuit |= (sourceConnections.containsKey(comp) &&
+                                   sourceConnections.get(comp) != index) ||
+                                  (sourceConnections.keySet().size() > 0);
+              sourceConnections.put(comp, index);
             }
           }
           if (foundShortCrcuit) {
