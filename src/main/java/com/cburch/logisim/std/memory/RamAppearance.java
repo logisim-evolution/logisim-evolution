@@ -62,6 +62,7 @@ public class RamAppearance {
          attrs.getValue(Mem.ENABLES_ATTR).equals(Mem.USELINEENABLES)) {
       if (attrs.getValue(Mem.LINE_ATTR).equals(Mem.DUAL)) return 2;
       if (attrs.getValue(Mem.LINE_ATTR).equals(Mem.QUAD)) return 4;
+      if (attrs.getValue(Mem.LINE_ATTR).equals(Mem.OCTO)) return 8;
     }
     return 1;  
   }
@@ -89,6 +90,7 @@ public class RamAppearance {
     if (attrs.getValue(Mem.ENABLES_ATTR).equals(Mem.USELINEENABLES)) {
       if (attrs.getValue(Mem.LINE_ATTR).equals(Mem.DUAL)) return 2;
       if (attrs.getValue(Mem.LINE_ATTR).equals(Mem.QUAD)) return 4;
+      if (attrs.getValue(Mem.LINE_ATTR).equals(Mem.OCTO)) return 8;
     }
     return 0;
   }
@@ -315,6 +317,7 @@ public class RamAppearance {
       return 1;
     if (attrs.getValue(Mem.LINE_ATTR).equals(Mem.DUAL)) return 2;
     if (attrs.getValue(Mem.LINE_ATTR).equals(Mem.QUAD)) return 4;
+    if (attrs.getValue(Mem.LINE_ATTR).equals(Mem.OCTO)) return 8;
     return 1;
   }
   private static int getDataOffset(int portOffset, int portIndex, AttributeSet attrs) {
@@ -327,7 +330,15 @@ public class RamAppearance {
       case 2  : 
       case 3  : if ((!attrs.containsAttribute(Mem.ENABLES_ATTR) ||
 		             attrs.getValue(Mem.ENABLES_ATTR).equals(Mem.USELINEENABLES))&&
-                    attrs.getValue(Mem.LINE_ATTR).equals(Mem.QUAD)) return portOffset+portIndex;
+                    (attrs.getValue(Mem.LINE_ATTR).equals(Mem.QUAD) ||
+                     attrs.getValue(Mem.LINE_ATTR).equals(Mem.OCTO))) return portOffset+portIndex;
+                else return -1;
+      case 4  :
+      case 5  :
+      case 6  :
+      case 7  :  if ((!attrs.containsAttribute(Mem.ENABLES_ATTR) ||
+		             attrs.getValue(Mem.ENABLES_ATTR).equals(Mem.USELINEENABLES))&&
+		             attrs.getValue(Mem.LINE_ATTR).equals(Mem.OCTO)) return portOffset+portIndex;
                 else return -1;
       default : return -1;
     }
