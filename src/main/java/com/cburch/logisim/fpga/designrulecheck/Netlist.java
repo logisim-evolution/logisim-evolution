@@ -1279,7 +1279,6 @@ public class Netlist implements CircuitListener {
                       Rootbus,
                       ConnectedBusIndex,
                       MyComplexSplitters,
-                      comp,
                       new HashSet<String>())) {
                     IsSink = false;
                   }
@@ -1465,7 +1464,6 @@ public class Netlist implements CircuitListener {
       Net thisNet,
       Byte bitIndex,
       ArrayList<Component> SplitterList,
-      Component ActiveSplitter,
       Set<String> HandledNets,
       Boolean isSourceNet) {
     ArrayList<ConnectionPoint> result = new ArrayList<ConnectionPoint>();
@@ -1484,11 +1482,6 @@ public class Netlist implements CircuitListener {
     }
     /* Check if we have a connection to another splitter */
     for (Component currentSplitter : SplitterList) {
-      if (ActiveSplitter != null) {
-        if (currentSplitter.equals(ActiveSplitter)) {
-          continue;
-        }
-      }
       List<EndData> ends = currentSplitter.getEnds();
       SplitterAttributes sattrs = (SplitterAttributes)currentSplitter.getAttributeSet();
       for (byte end = 0; end < ends.size(); end++) {
@@ -1519,14 +1512,13 @@ public class Netlist implements CircuitListener {
                 /* Trace down the slavenet */
                 result.addAll(
                     GetHiddenSinks(
-                        SlaveNet, Netindex, SplitterList, currentSplitter, HandledNets, false));
+                        SlaveNet, Netindex, SplitterList, HandledNets, false));
               } else {
                 result.addAll(
                     GetHiddenSinks(
                         SlaveNet.getParent(),
                         SlaveNet.getBit(Netindex),
                         SplitterList,
-                        currentSplitter,
                         HandledNets,
                         false));
               }
@@ -1551,7 +1543,6 @@ public class Netlist implements CircuitListener {
                         RootNet,
                         Rootindices.get(bitIndex),
                         SplitterList,
-                        currentSplitter,
                         HandledNets,
                         false));
               } else {
@@ -1560,7 +1551,6 @@ public class Netlist implements CircuitListener {
                         RootNet.getParent(),
                         RootNet.getBit(Rootindices.get(bitIndex)),
                         SplitterList,
-                        currentSplitter,
                         HandledNets,
                         false));
               }
@@ -1814,13 +1804,25 @@ public class Netlist implements CircuitListener {
   }
 
   private SourceInfo GetHiddenSource(
-      Net thisNet,
+     Net sourceNet,
+     Byte sourceBitIndex,
+     Net thisNet,
       Byte bitIndex,
       List<Component> SplitterList,
-      Component ActiveSplitter,
       Set<String> HandledNets,
       Set<Wire> Segments,
       FPGAReport Reporter) {
+	/* If the source net not is null add it to the set of visited nets to
+	 * prevent back-search on this net
+	 */
+	if (sourceNet != null) {
+      String NetId = Integer.toString(MyNets.indexOf(sourceNet)) + "-" + Byte.toString(sourceBitIndex);
+      if (HandledNets.contains(NetId)) {
+        return null;
+      } else {
+        HandledNets.add(NetId);
+      }
+	}
     /*
      * to prevent deadlock situations we check if we already looked at this
      * net
@@ -1847,9 +1849,6 @@ public class Netlist implements CircuitListener {
     }
     /* Check if we have a connection to another splitter */
     for (Component currentSplitter : SplitterList) {
-      if (currentSplitter.equals(ActiveSplitter)) {
-        continue;
-      }
       List<EndData> ends = currentSplitter.getEnds();
       for (byte end = 0; end < ends.size(); end++) {
         if (thisNet.contains(ends.get(end).getLocation())) {
@@ -1876,22 +1875,20 @@ public class Netlist implements CircuitListener {
               if (SlaveNet.IsRootNet()) {
                 /* Trace down the slavenet */
                 SourceInfo ret =
-                    GetHiddenSource(
+                    GetHiddenSource(null, (byte) 0,
                         SlaveNet,
                         Netindex,
                         SplitterList,
-                        currentSplitter,
                         HandledNets,
                         Segments,
                         Reporter);
                 if (ret != null) return ret;
               } else {
                 SourceInfo ret =
-                    GetHiddenSource(
+                    GetHiddenSource(null, (byte) 0,
                         SlaveNet.getParent(),
                         SlaveNet.getBit(Netindex),
                         SplitterList,
-                        currentSplitter,
                         HandledNets,
                         Segments,
                         Reporter);
@@ -1914,22 +1911,20 @@ public class Netlist implements CircuitListener {
             if (RootNet != null) {
               if (RootNet.IsRootNet()) {
                 SourceInfo ret =
-                    GetHiddenSource(
+                    GetHiddenSource(null, (byte) 0,
                         RootNet,
                         Rootindices.get(bitIndex),
                         SplitterList,
-                        currentSplitter,
                         HandledNets,
                         Segments,
                         Reporter);
                 if (ret != null) return ret;
               } else {
                 SourceInfo ret =
-                    GetHiddenSource(
+                    GetHiddenSource(null, (byte) 0,
                         RootNet.getParent(),
                         RootNet.getBit(Rootindices.get(bitIndex)),
                         SplitterList,
-                        currentSplitter,
                         HandledNets,
                         Segments,
                         Reporter);
@@ -1949,7 +1944,6 @@ public class Netlist implements CircuitListener {
       Net thisNet,
       Byte bitIndex,
       List<Component> SplitterList,
-      Component ActiveSplitter,
       Set<String> HandledNets) {
 	/* If the source net not is null add it to the set of visited nets to
 	 * prevent back-search on this net
@@ -2003,7 +1997,7 @@ public class Netlist implements CircuitListener {
               if (SlaveNet.IsRootNet()) {
                 /* Trace down the slavenet */
                 if (HasHiddenSource(null,(byte) 0,
-                    SlaveNet, Netindex, SplitterList, currentSplitter, HandledNets)) {
+                    SlaveNet, Netindex, SplitterList, HandledNets)) {
                   return true;
                 }
               } else {
@@ -2011,7 +2005,6 @@ public class Netlist implements CircuitListener {
                     SlaveNet.getParent(),
                     SlaveNet.getBit(Netindex),
                     SplitterList,
-                    currentSplitter,
                     HandledNets)) {
                   return true;
                 }
@@ -2036,7 +2029,6 @@ public class Netlist implements CircuitListener {
                     RootNet,
                     Rootindices.get(bitIndex),
                     SplitterList,
-                    currentSplitter,
                     HandledNets)) {
                   return true;
                 }
@@ -2045,7 +2037,6 @@ public class Netlist implements CircuitListener {
                     RootNet.getParent(),
                     RootNet.getBit(Rootindices.get(bitIndex)),
                     SplitterList,
-                    currentSplitter,
                     HandledNets)) {
                   return true;
                 }
@@ -2225,9 +2216,9 @@ public class Netlist implements CircuitListener {
           for (int i = 0 ; i < sourceNets.size() ; i++) {
             Net connectedNet = sourceNets.get(i).GetParrentNet();
             byte bitIndex = sourceNets.get(i).GetParrentNetBitIndex();
-            if (HasHiddenSource(net,(byte) 0,connectedNet, bitIndex, MyComplexSplitters, null, new HashSet<String>())) {
-              SourceInfo source = GetHiddenSource(connectedNet, bitIndex, 
-                  MyComplexSplitters, null, new HashSet<String>(), segments, Reporter);
+            if (HasHiddenSource(net,(byte) 0,connectedNet, bitIndex, MyComplexSplitters, new HashSet<String>())) {
+              SourceInfo source = GetHiddenSource(net,(byte) 0,connectedNet, bitIndex, 
+                  MyComplexSplitters, new HashSet<String>(), segments, Reporter);
               if (source == null) {
             	 /* this should never happen */
                  return true;
@@ -2273,7 +2264,7 @@ public class Netlist implements CircuitListener {
             MySinks.removeAll(Sinks);
             ArrayList<ConnectionPoint> HiddenSinkNets =
                 GetHiddenSinks(
-                    ThisNet, (byte) i, MyComplexSplitters, null, new HashSet<String>(), true);
+                    ThisNet, (byte) i, MyComplexSplitters, new HashSet<String>(), true);
             HasSink |= !HiddenSinkNets.isEmpty();
             MySinks.removeAll(HiddenSinkNets);
             if (!HasSink) {
@@ -2849,10 +2840,11 @@ public class Netlist implements CircuitListener {
             }
           SourceInfo SourceList =
               GetHiddenSource(
+            	  null,
+            	  (byte) 0,
                   connectedNet,
                   connectedNetindex,
                   MyComplexSplitters,
-                  null,
                   new HashSet<String>(),
                   Segments,
                   Reporter);
@@ -2998,10 +2990,11 @@ public class Netlist implements CircuitListener {
         Set<Wire> Segments = new HashSet<Wire>();
         SourceInfo source =
             SubNetList.GetHiddenSource(
+                null,
+                (byte) 0,
                 NewNet,
                 NewNetIndex,
                 SubNetList.MyComplexSplitters,
-                null,
                 new HashSet<String>(),
                 Segments,
                 Reporter);
@@ -3045,7 +3038,6 @@ public class Netlist implements CircuitListener {
       }
     }
     if (comp.getFactory() instanceof SubcircuitFactory) {
-      /* TODO */
       SubcircuitFactory sub = (SubcircuitFactory) comp.getFactory();
       if (Source.getChildsPortIndex() < 0) {
         Reporter.AddFatalError(
@@ -3109,10 +3101,11 @@ public class Netlist implements CircuitListener {
         Set<Wire> Segments = new HashSet<Wire>();
         SourceInfo source =
             SubNetList.GetHiddenSource(
+            	null,
+            	(byte) 0,
                 NewNet,
                 NewNetIndex,
                 SubNetList.MyComplexSplitters,
-                null,
                 new HashSet<String>(),
                 Segments,
                 Reporter);
