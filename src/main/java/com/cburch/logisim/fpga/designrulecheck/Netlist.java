@@ -1402,7 +1402,7 @@ public class Netlist implements CircuitListener {
     } else {
       HandledNets.add(NetId);
     }
-    if (thisNet.hasBitSinks(bitIndex) && !isSourceNet) {
+    if (thisNet.hasBitSinks(bitIndex) && !isSourceNet && thisNet.IsRootNet()) {
       ConnectionPoint SolderPoint = new ConnectionPoint(null);
       SolderPoint.SetParrentNet(thisNet, bitIndex);
       result.add(SolderPoint);
@@ -1437,21 +1437,8 @@ public class Netlist implements CircuitListener {
               }
             }
             if (SlaveNet != null) {
-              if (SlaveNet.IsRootNet()) {
-                /* Trace down the slavenet */
-                result.addAll(
-                    GetHiddenSinkNets(
+                result.addAll(GetHiddenSinkNets(
                         SlaveNet, Netindex, SplitterList, currentSplitter, HandledNets, false));
-              } else {
-                result.addAll(
-                    GetHiddenSinkNets(
-                        SlaveNet.getParent(),
-                        SlaveNet.getBit(Netindex),
-                        SplitterList,
-                        currentSplitter,
-                        HandledNets,
-                        false));
-              }
             }
           } else {
             ArrayList<Byte> Rootindices = new ArrayList<Byte>();
@@ -1467,7 +1454,6 @@ public class Netlist implements CircuitListener {
               }
             }
             if (RootNet != null) {
-              if (RootNet.IsRootNet()) {
                 result.addAll(
                     GetHiddenSinkNets(
                         RootNet,
@@ -1476,16 +1462,6 @@ public class Netlist implements CircuitListener {
                         currentSplitter,
                         HandledNets,
                         false));
-              } else {
-                result.addAll(
-                    GetHiddenSinkNets(
-                        RootNet.getParent(),
-                        RootNet.getBit(Rootindices.get(bitIndex)),
-                        SplitterList,
-                        currentSplitter,
-                        HandledNets,
-                        false));
-              }
             }
           }
         }
@@ -1511,7 +1487,7 @@ public class Netlist implements CircuitListener {
     } else {
       HandledNets.add(NetId);
     }
-    if (thisNet.hasBitSinks(bitIndex) && !isSourceNet) {
+    if (thisNet.hasBitSinks(bitIndex) && !isSourceNet && thisNet.IsRootNet()) {
       result.addAll(thisNet.GetBitSinks(bitIndex));
     }
     /* Check if we have a connection to another splitter */
@@ -1542,20 +1518,7 @@ public class Netlist implements CircuitListener {
               }
             }
             if (SlaveNet != null) {
-              if (SlaveNet.IsRootNet()) {
-                /* Trace down the slavenet */
-                result.addAll(
-                    GetHiddenSinks(
-                        SlaveNet, Netindex, SplitterList, HandledNets, false));
-              } else {
-                result.addAll(
-                    GetHiddenSinks(
-                        SlaveNet.getParent(),
-                        SlaveNet.getBit(Netindex),
-                        SplitterList,
-                        HandledNets,
-                        false));
-              }
+              result.addAll(GetHiddenSinks(SlaveNet, Netindex, SplitterList, HandledNets, false));
             }
           } else {
             ArrayList<Byte> Rootindices = new ArrayList<Byte>();
@@ -1571,23 +1534,12 @@ public class Netlist implements CircuitListener {
               }
             }
             if (RootNet != null) {
-              if (RootNet.IsRootNet()) {
-                result.addAll(
-                    GetHiddenSinks(
+              result.addAll(GetHiddenSinks(
                         RootNet,
                         Rootindices.get(bitIndex),
                         SplitterList,
                         HandledNets,
                         false));
-              } else {
-                result.addAll(
-                    GetHiddenSinks(
-                        RootNet.getParent(),
-                        RootNet.getBit(Rootindices.get(bitIndex)),
-                        SplitterList,
-                        HandledNets,
-                        false));
-              }
             }
           }
         }
@@ -1906,28 +1858,15 @@ public class Netlist implements CircuitListener {
               }
             }
             if (SlaveNet != null) {
-              if (SlaveNet.IsRootNet()) {
-                /* Trace down the slavenet */
-                SourceInfo ret =
-                    GetHiddenSource(null, (byte) 0,
-                        SlaveNet,
-                        Netindex,
-                        SplitterList,
-                        HandledNets,
-                        Segments,
-                        Reporter);
-                if (ret != null) return ret;
-              } else {
-                SourceInfo ret =
-                    GetHiddenSource(null, (byte) 0,
-                        SlaveNet.getParent(),
-                        SlaveNet.getBit(Netindex),
-                        SplitterList,
-                        HandledNets,
-                        Segments,
-                        Reporter);
-                if (ret != null) return ret;
-              }
+              SourceInfo ret =
+                  GetHiddenSource(null, (byte) 0,
+                      SlaveNet,
+                      Netindex,
+                      SplitterList,
+                      HandledNets,
+                      Segments,
+                      Reporter);
+              if (ret != null) return ret;
             }
           } else {
             ArrayList<Byte> Rootindices = new ArrayList<Byte>();
@@ -1943,27 +1882,15 @@ public class Netlist implements CircuitListener {
               }
             }
             if (RootNet != null) {
-              if (RootNet.IsRootNet()) {
-                SourceInfo ret =
-                    GetHiddenSource(null, (byte) 0,
-                        RootNet,
-                        Rootindices.get(bitIndex),
-                        SplitterList,
-                        HandledNets,
-                        Segments,
-                        Reporter);
-                if (ret != null) return ret;
-              } else {
-                SourceInfo ret =
-                    GetHiddenSource(null, (byte) 0,
-                        RootNet.getParent(),
-                        RootNet.getBit(Rootindices.get(bitIndex)),
-                        SplitterList,
-                        HandledNets,
-                        Segments,
-                        Reporter);
-                if (ret != null) return ret;
-              }
+              SourceInfo ret =
+                  GetHiddenSource(null, (byte) 0,
+                      RootNet,
+                      Rootindices.get(bitIndex),
+                      SplitterList,
+                      HandledNets,
+                      Segments,
+                      Reporter);
+              if (ret != null) return ret;
             }
           }
         }
@@ -2028,20 +1955,9 @@ public class Netlist implements CircuitListener {
               }
             }
             if (SlaveNet != null) {
-              if (SlaveNet.IsRootNet()) {
-                /* Trace down the slavenet */
-                if (HasHiddenSource(null,(byte) 0,
-                    SlaveNet, Netindex, SplitterList, HandledNets)) {
-                  return true;
-                }
-              } else {
-                if (HasHiddenSource(null,(byte) 0,
-                    SlaveNet.getParent(),
-                    SlaveNet.getBit(Netindex),
-                    SplitterList,
-                    HandledNets)) {
-                  return true;
-                }
+              if (HasHiddenSource(null,(byte) 0,
+                  SlaveNet, Netindex, SplitterList, HandledNets)) {
+                return true;
               }
             }
           } else {
@@ -2058,22 +1974,12 @@ public class Netlist implements CircuitListener {
               }
             }
             if (RootNet != null) {
-              if (RootNet.IsRootNet()) {
-                if (HasHiddenSource(null,(byte) 0,
-                    RootNet,
-                    Rootindices.get(bitIndex),
-                    SplitterList,
-                    HandledNets)) {
-                  return true;
-                }
-              } else {
-                if (HasHiddenSource(null,(byte) 0,
-                    RootNet.getParent(),
-                    RootNet.getBit(Rootindices.get(bitIndex)),
-                    SplitterList,
-                    HandledNets)) {
-                  return true;
-                }
+              if (HasHiddenSource(null,(byte) 0,
+                  RootNet,
+                  Rootindices.get(bitIndex),
+                  SplitterList,
+                  HandledNets)) {
+                return true;
               }
             }
           }
