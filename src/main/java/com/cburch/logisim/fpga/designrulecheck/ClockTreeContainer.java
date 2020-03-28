@@ -36,13 +36,16 @@ public class ClockTreeContainer {
   private ArrayList<ConnectionPoint> ClockNets;
   private int ClockSourceId;
   private ArrayList<String> HierarchyId;
+  private boolean isPinClockSource;
 
-  public ClockTreeContainer(ArrayList<String> Hierarchy, int sourceId) {
+  public ClockTreeContainer(ArrayList<String> Hierarchy, int sourceId,
+		                    boolean pinClockSource) {
     ClockSources = new ArrayList<ConnectionPoint>();
     ClockNets = new ArrayList<ConnectionPoint>();
     ClockSourceId = sourceId;
     HierarchyId = new ArrayList<String>();
     HierarchyId.addAll(Hierarchy);
+    isPinClockSource = pinClockSource;
   }
 
   public void addNet(ConnectionPoint NetInfo) {
@@ -56,6 +59,14 @@ public class ClockTreeContainer {
   public void clear() {
     ClockSources.clear();
     ClockNets.clear();
+  }
+  
+  public void setPinClock() {
+    isPinClockSource = true;
+  }
+  
+  public boolean IsPinClockSource() {
+    return isPinClockSource;
   }
 
   public boolean equals(ArrayList<String> Hierarchy, int sourceId) {
