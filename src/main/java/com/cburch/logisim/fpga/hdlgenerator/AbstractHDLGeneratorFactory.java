@@ -38,6 +38,8 @@ import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.fpgaboardeditor.FPGAIOInformationContainer;
 import com.cburch.logisim.fpga.fpgagui.FPGAReport;
 import com.cburch.logisim.fpga.fpgagui.MappableResourcesContainer;
+import com.cburch.logisim.instance.StdAttr;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -577,12 +579,12 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
       Long ComponentId,
       NetlistComponent ComponentInfo,
       FPGAReport Reporter,
-      String CircuitName,
+      String Name,
       String HDLType) {
     ArrayList<String> Contents = new ArrayList<String>();
     Map<String, Integer> ParameterMap = GetParameterMap(Nets, ComponentInfo, Reporter);
     Map<String, String> PortMap = GetPortMap(Nets, ComponentInfo, Reporter, HDLType);
-    String CompName =
+    String CompName = (Name != null && !Name.isEmpty()) ? Name :
         (ComponentInfo == null)
             ? this.getComponentStringIdentifier()
             : ComponentInfo.GetComponent()

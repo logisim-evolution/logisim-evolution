@@ -245,7 +245,7 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         Contents.addAll(
             Clockgen.getFactory()
                 .getHDLGenerator(HDLType, ThisClock.GetComponent().getAttributeSet())
-                .GetComponentMap(TheNetlist, index++, ThisClock, Reporter, "Bla", HDLType));
+                .GetComponentMap(TheNetlist, index++, ThisClock, Reporter, "", HDLType));
       }
     }
     Contents.add("");

@@ -63,11 +63,22 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public boolean GenerateAllHDLDescriptions(
+	      Set<String> HandledComponents,
+	      String WorkingDir,
+	      ArrayList<String> Hierarchy,
+	      FPGAReport Reporter,
+	      String HDLType) {
+	  return GenerateAllHDLDescriptions(HandledComponents, WorkingDir, Hierarchy,
+         Reporter, HDLType, false);
+  }
+  
+  public boolean GenerateAllHDLDescriptions(
       Set<String> HandledComponents,
       String WorkingDir,
       ArrayList<String> Hierarchy,
       FPGAReport Reporter,
-      String HDLType) {
+      String HDLType,
+      boolean gatedInstance) {
     if (MyCircuit == null) {
       return false;
     }
@@ -133,7 +144,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     }
     /* Now we go down the hierarchy to get all other components */
     for (NetlistComponent ThisCircuit : MyNetList.GetSubCircuits()) {
-      HDLGeneratorFactory Worker =
+       CircuitHDLGeneratorFactory Worker = (CircuitHDLGeneratorFactory)
           ThisCircuit.GetComponent()
               .getFactory()
               .getHDLGenerator(HDLType, ThisCircuit.GetComponent().getAttributeSet());
@@ -148,13 +159,14 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           CorrectLabel.getCorrectLabel(
               ThisCircuit.GetComponent().getAttributeSet().getValue(StdAttr.LABEL)));
       if (!Worker.GenerateAllHDLDescriptions(
-          HandledComponents, WorkingDir, Hierarchy, Reporter, HDLType)) {
+          HandledComponents, WorkingDir, Hierarchy, Reporter, HDLType,ThisCircuit.IsGatedInstance())) {
         return false;
       }
       Hierarchy.remove(Hierarchy.size() - 1);
     }
     /* I also have to generate myself */
     String ComponentName = CorrectLabel.getCorrectLabel(MyCircuit.getName());
+    if (gatedInstance) ComponentName = ComponentName.concat("_gated");
     if (!HandledComponents.contains(ComponentName)) {
       if (!WriteEntity(
           WorkPath + GetRelativeDirectory(HDLType),
@@ -238,6 +250,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     for (NetlistComponent Gate : TheNetlist.GetSubCircuits()) {
       String CompName =
           Gate.GetComponent().getFactory().getHDLName(Gate.GetComponent().getAttributeSet());
+      if (Gate.IsGatedInstance()) CompName = CompName.concat("_gated");
       if (!InstantiatedComponents.contains(CompName)) {
         InstantiatedComponents.add(CompName);
         HDLGeneratorFactory Worker =
@@ -251,10 +264,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
                   sub.getSubcircuit().getNetList(),
                   Gate.GetComponent().getAttributeSet(),
                   CompName,
-                  VHDL /*
-                        * ,
-                        * false
-                        */));
+                  VHDL));
         }
       }
     }
@@ -529,20 +539,6 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
                 TheNetlist));
       }
     }
-    // /* Now we define all inout signals; hence InOut port -> Internal Net
-    // */
-    // FirstLine = true;
-    // for (int i = 0; i < TheNetlist.NumberOfInOutPorts(); i++) {
-    // if (FirstLine) {
-    // Contents.add("");
-    // Contents.addAll(MakeRemarkBlock("Here all inout connections are defined",
-    // 3, HDLType));
-    // FirstLine = false;
-    // }
-    // NetlistComponent MyInOut = TheNetlist.GetInOutPin(i);
-    // Contents.add(GetSignalMap(CorrectLabel.getCorrectLabel(MyInOut.GetComponent().getAttributeSet().getValue(StdAttr.LABEL)),
-    // MyInOut, 0, 3, Reporter, HDLType, TheNetlist));
-    // }
     /* Now we define all output signals; hence Internal Net -> Input port */
     FirstLine = true;
     for (int i = 0; i < TheNetlist.NumberOfOutputPorts(); i++) {
@@ -640,6 +636,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       if (Worker != null) {
         String CompName =
             comp.GetComponent().getFactory().getHDLName(comp.GetComponent().getAttributeSet());
+        if (comp.IsGatedInstance())  CompName = CompName.concat("_gated");
         String CompId = Worker.getComponentStringIdentifier();
         Long id;
         if (CompIds.containsKey(CompId)) {

@@ -83,7 +83,7 @@ public interface HDLGeneratorFactory {
       Long ComponentId,
       NetlistComponent ComponentInfo,
       FPGAReport Reporter,
-      String CircuitName,
+      String Name,
       String HDLType);
 
   public String getComponentStringIdentifier();

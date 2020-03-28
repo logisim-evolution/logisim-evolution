@@ -52,8 +52,10 @@ public class NetlistComponent {
   private Map<ArrayList<String>, Boolean> AlternateMapEnabled;
   private Map<ArrayList<String>, Boolean> AlternateMapLocked;
   private Map<String, String> CurrentMapType;
+  private boolean IsGatedInstance;
 
   public NetlistComponent(Component Ref) {
+    IsGatedInstance = false;
     nr_of_ends = Ref.getEnds().size();
     CompReference = Ref;
     Ends = new ArrayList<ConnectionEnd>();
@@ -371,4 +373,7 @@ public class NetlistComponent {
       AlternateMapLocked.put(key, false);
     }
   }
+  
+  public boolean IsGatedInstance() { return IsGatedInstance; }
+  public void SetIsGatedInstance() { IsGatedInstance = true; }
 }
