@@ -39,6 +39,7 @@ import com.cburch.logisim.std.wiring.Pin;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class NetlistComponent {
 
@@ -279,6 +280,10 @@ public class NetlistComponent {
 
   public BoardRectangle getMap(String MapName) {
     return BoardMaps.get(MapName);
+  }
+  
+  public Set<String> getMaps() {
+    return BoardMaps.keySet();
   }
 
   public String getMapType(String MapName) {

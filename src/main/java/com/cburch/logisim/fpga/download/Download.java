@@ -243,7 +243,7 @@ public class Download extends FPGACommanderBase implements Runnable, WindowListe
     MyReporter.ClsScr();
     if (!DownloadOnly || !Downloader.readyForDownload()) {
       for (int stages = 0; stages < Downloader.GetNumberOfStages(); stages++) {
-        if (StopRequested) return "Interrupted";
+        if (StopRequested) return S.get("FPGAInterrupted");
         ProcessBuilder CurrentStage = Downloader.PerformStep(stages);
         if (CurrentStage != null) {
           String result = execute(Downloader.GetStageMessage(stages), CurrentStage);
@@ -254,6 +254,7 @@ public class Download extends FPGACommanderBase implements Runnable, WindowListe
     }
     if (UseGui) MyProgress.setValue(Downloader.GetNumberOfStages() + BasicSteps - 1);
     if (!DownloadBitstream) return null;
+    if (StopRequested) return S.get("FPGAInterrupted");
     Object[] options = {S.get("FPGADownloadOk"), S.get("FPGADownloadCancel")};
     if (UseGui)
       if (JOptionPane.showOptionDialog(
@@ -268,7 +269,6 @@ public class Download extends FPGACommanderBase implements Runnable, WindowListe
           != JOptionPane.YES_OPTION) {
         return S.get("FPGADownloadAborted");
       }
-    if (StopRequested) return "Interrupted";
     if (!Downloader.BoardConnected()) return S.get("FPGABoardNotConnected");
     ProcessBuilder DownloadBitfile = Downloader.DownloadToBoard();
     if (DownloadBitfile != null) return execute(S.get("FPGADownloadBitfile"), DownloadBitfile);

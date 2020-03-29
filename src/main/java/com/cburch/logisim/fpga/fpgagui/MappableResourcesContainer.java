@@ -28,13 +28,14 @@
 
 package com.cburch.logisim.fpga.fpgagui;
 
-import com.cburch.logisim.fpga.designrulecheck.Netlist;
+import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.fpgaboardeditor.BoardInformation;
 import com.cburch.logisim.fpga.fpgaboardeditor.BoardRectangle;
 import com.cburch.logisim.fpga.fpgaboardeditor.FPGAIOInformationContainer;
 import com.cburch.logisim.fpga.fpgaboardeditor.FPGAIOInformationContainer.IOComponentTypes;
 import com.cburch.logisim.fpga.fpgaboardeditor.PinActivity;
+import com.cburch.logisim.proj.ProjectActions;
 import com.cburch.logisim.std.io.DipSwitch;
 import com.cburch.logisim.std.io.PortIO;
 import com.cburch.logisim.std.wiring.Pin;
@@ -58,13 +59,13 @@ public class MappableResourcesContainer {
   public String currentBoardName;
   private BoardInformation currentUsedBoard;
   private Map<String, BoardRectangle> mappedList;
-  private String toplevelName;
   private Map<String, Integer> fpgaInputsList;
   private Map<String, Integer> fpgaInOutsList;
   private Map<String, Integer> fpgaOutputsList;
   private Integer nrOfFPGAInputPins = 0;
   private Integer nrOfFPGAInOutPins = 0;
   private Integer nrOfFPGAOutputPins = 0;
+  private Circuit myCircuit;
 
   /*
    * We differentiate two notation for each component, namely: 1) The display
@@ -76,15 +77,26 @@ public class MappableResourcesContainer {
    *
    * The MappedList keeps track of the display names.
    */
-  public MappableResourcesContainer(BoardInformation CurrentBoard, Netlist RootNetlist) {
-    ArrayList<String> Toplevel = new ArrayList<String>();
-    Toplevel.add(CurrentBoard.getBoardName());
-    myMappableResources = RootNetlist.GetMappableResources(Toplevel, true);
+  public MappableResourcesContainer(BoardInformation CurrentBoard, 
+                                    Circuit circ) {
     currentBoardName = CurrentBoard.getBoardName();
     currentUsedBoard = CurrentBoard;
-    toplevelName = RootNetlist.getCircuitName();
     mappedList = new HashMap<String, BoardRectangle>();
+    myCircuit = circ;
+    ArrayList<String> BoardId = new ArrayList<String>();
+    BoardId.add(currentBoardName);
+    myMappableResources = myCircuit.getNetList().
+        GetMappableResources(BoardId, true);
     rebuildMappedLists();
+    circ.setBoardMap(currentBoardName, this);
+  }
+  
+  public void save() {
+    ProjectActions.doSave(myCircuit.getProject());
+  }
+  
+  public void markChanged() {
+    myCircuit.getProject().setForcedDirty();
   }
 
   public void BuildIOMappingInformation() {
@@ -368,7 +380,7 @@ public class MappableResourcesContainer {
   }
 
   public String GetToplevelName() {
-    return toplevelName;
+    return myCircuit.getName();
   }
 
   public boolean hasMappedComponents() {
@@ -474,6 +486,7 @@ public class MappableResourcesContainer {
       return;
     }
     MapComp.addMap(DisplayNametoMapName(comp), item, Maptype);
+    markChanged();
     rebuildMappedLists();
   }
 
@@ -507,6 +520,23 @@ public class MappableResourcesContainer {
 
   public void rebuildMappedLists() {
     mappedList.clear();
+    ArrayList<String> BoardId = new ArrayList<String>();
+    BoardId.add(currentBoardName);
+    Map<ArrayList<String>, NetlistComponent> newMappableResources = 
+       myCircuit.getNetList().GetMappableResources(BoardId, true);
+    /* we are going to copy the mappings if present */
+    for (ArrayList<String> key : myMappableResources.keySet()) {
+      if (key.get(0).equals(currentBoardName)) {
+        if (newMappableResources.containsKey(key)) {
+          NetlistComponent old = myMappableResources.get(key);
+          NetlistComponent cur = newMappableResources.get(key);
+          for (String map : old.getMaps())
+            cur.addMap(map, old.getMap(map), old.getMapType(map));
+        }
+      }
+    }
+    myMappableResources.clear();
+    myMappableResources = newMappableResources;
     for (ArrayList<String> key : myMappableResources.keySet()) {
       if (key.get(0).equals(currentBoardName)) {
         NetlistComponent comp = myMappableResources.get(key);
@@ -595,6 +625,8 @@ public class MappableResourcesContainer {
     if (!myMappableResources.containsKey(key)) {
       return;
     }
+    if (Maptype.equals(FPGAIOInformationContainer.IOComponentTypes.Unknown.toString()))
+      return;
     if (UnmappedList().contains(DisplayName)) {
       Map(DisplayName, rect, Maptype);
       return;
