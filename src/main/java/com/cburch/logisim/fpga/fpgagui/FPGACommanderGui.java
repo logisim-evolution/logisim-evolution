@@ -45,6 +45,9 @@ import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.proj.ProjectEvent;
 import com.cburch.logisim.proj.ProjectListener;
+import com.cburch.logisim.util.LocaleListener;
+import com.cburch.logisim.util.StringGetter;
+
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.GridBagConstraints;
@@ -64,6 +67,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JProgressBar;
 
 public class FPGACommanderGui extends FPGACommanderBase
     implements ActionListener,
@@ -72,6 +76,7 @@ public class FPGACommanderGui extends FPGACommanderBase
         SimulatorListener,
         CircuitListener,
         WindowListener,
+        LocaleListener,
         PreferenceChangeListener {
 
   @Override
@@ -138,27 +143,28 @@ public class FPGACommanderGui extends FPGACommanderBase
   public static final int FONT_SIZE = 12;
   private JFrame panel;
   private CustomFrequencySelDialog CustFreqPannel;
-  private JLabel textMainCircuit = new JLabel("Choose main circuit ");
-  private JLabel textTargetBoard = new JLabel("Choose target board ");
-  private JLabel textTargetFreq = new JLabel("Choose tick frequency ");
-  private JLabel textAnnotation = new JLabel("Annotation method");
+  private JLabel textMainCircuit = new JLabel();
+  private JLabel textTargetBoard = new JLabel();
+  private JLabel textTargetFreq = new JLabel();
+  private JLabel textAnnotation = new JLabel();
   private JLabel boardPic = new JLabel();
   private BoardIcon boardIcon = null;
   private JButton annotateButton = new JButton();
   private JButton validateButton = new JButton();
-  private JCheckBox writeToFlash = new JCheckBox("Write to flash?");
+  private JCheckBox writeToFlash = new JCheckBox();
   private JComboBox<String> circuitsList = new JComboBox<>();
   private JComboBox<String> frequenciesList = new JComboBox<>();
-  private JComboBox<String> annotationList = new JComboBox<>();
+  private JComboBox<StringGetter> annotationList = new JComboBox<>();
   private JLabel HDLType = new JLabel();
   private JLabel HDLOnly = new JLabel();
   private JButton ToolPath = new JButton();
   private JButton Workspace = new JButton();
-  private JCheckBox skipHDL = new JCheckBox("Skip VHDL generation?");
-  private static final String SelectToolPathMessage = "Select Toolpath to Download";
-  private static final String OnlyHDLMessage = "Generate HDL only";
-  private static final String HDLandDownloadMessage = "Download to board";
+  private JCheckBox skipHDL = new JCheckBox();
+  private JButton StopButton = new JButton();
+  private JProgressBar Progress = new JProgressBar();
   private FPGAReportTabbedPane ReporterGui;
+  private Download Downloader;
+  public static final String StopRequested = "stop";
 
   @SuppressWarnings("unused")
   private static final Integer VerilogSourcePath = 0;
@@ -179,7 +185,7 @@ public class FPGACommanderGui extends FPGACommanderBase
 
   public FPGACommanderGui(Project Main) {
     MyProject = Main;
-    panel = new JFrame("FPGA Commander : " + MyProject.getLogisimFile().getName());
+    panel = new JFrame();
     panel.setResizable(false);
     panel.setAlwaysOnTop(false);
     panel.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
@@ -221,8 +227,8 @@ public class FPGACommanderGui extends FPGACommanderBase
     c.gridy = 5;
     textAnnotation.setEnabled(true);
     panel.add(textAnnotation, c);
-    annotationList.addItem("Relabel all components");
-    annotationList.addItem("Label only the components without a label");
+    annotationList.addItem(S.getter("FpgaGuiRelabelAll"));
+    annotationList.addItem(S.getter("FpgaGuiRelabelEmpty"));
     annotationList.setSelectedIndex(1);
     c.gridwidth = 2;
     c.gridx = 1;
@@ -264,7 +270,6 @@ public class FPGACommanderGui extends FPGACommanderBase
 
     // validate button
     validateButton.setActionCommand("Download");
-    validateButton.setText("Download");
     validateButton.addActionListener(this);
     c.gridwidth = 1;
     c.gridx = 1;
@@ -280,7 +285,6 @@ public class FPGACommanderGui extends FPGACommanderBase
 
     // annotate button
     annotateButton.setActionCommand("annotate");
-    annotateButton.setText("Annotate");
     annotateButton.addActionListener(this);
     c.gridwidth = 1;
     c.gridx = 0;
@@ -307,7 +311,6 @@ public class FPGACommanderGui extends FPGACommanderBase
     panel.add(HDLOnly, c);
 
     // Tool Path
-    ToolPath.setText("Toolpath");
     ToolPath.setActionCommand("ToolPath");
     ToolPath.addActionListener(this);
     c.gridwidth = 1;
@@ -316,21 +319,32 @@ public class FPGACommanderGui extends FPGACommanderBase
     panel.add(ToolPath, c);
 
     // Workspace
-    Workspace.setText("Workspace");
     Workspace.setActionCommand("Workspace");
     Workspace.addActionListener(this);
     c.gridx = 4;
     c.gridy = 0;
     panel.add(Workspace, c);
+    
+    // Progress bar
+    Progress.setStringPainted(true);
+    c.gridx = 0;
+    c.gridy = 7;
+    c.gridwidth = 4;
+    panel.add(Progress, c);
+    StopButton.setEnabled(false);
+    StopButton.setActionCommand(StopRequested);
+    StopButton.addActionListener(this);
+    c.gridx = 4;
+    c.gridy = 7;
+    c.gridwidth = 1;
+    panel.add(StopButton, c);
 
     // FPGAReporter GUI
     ReporterGui = new FPGAReportTabbedPane(MyProject);
     c.gridx = 0;
-    c.gridy = 7;
+    c.gridy = 8;
     c.gridwidth = 5;
     panel.add(ReporterGui, c);
-
-    panel.pack();
     panel.setLocationRelativeTo(null);
     panel.setVisible(false);
 
@@ -338,6 +352,7 @@ public class FPGACommanderGui extends FPGACommanderBase
         new CustomFrequencySelDialog(panel, MyBoardInformation.fpga.getClockFrequency());
     AppPreferences.getPrefs().addPreferenceChangeListener(this);
     MyReporter = new FPGAReportGui(this);
+    localeChanged();
   }
 
   public FPGAReportTabbedPane getReporterGui() {
@@ -345,14 +360,14 @@ public class FPGACommanderGui extends FPGACommanderBase
   }
 
   private void HandleHDLOnly() {
-    if (!VendorSoftware.toolsPresent(
+    if (MyBoardInformation!= null && !VendorSoftware.toolsPresent(
         MyBoardInformation.fpga.getVendor(),
         VendorSoftware.GetToolPath(MyBoardInformation.fpga.getVendor()))) {
-      HDLOnly.setText(SelectToolPathMessage);
+      HDLOnly.setText(S.get("FpgaGuiSelectToolpath"));
     } else if (!AppPreferences.DownloadToBoard.get()) {
-      HDLOnly.setText(OnlyHDLMessage);
+      HDLOnly.setText(S.get("FpgaGuiGenOnlyHDL"));
     } else {
-      HDLOnly.setText(HDLandDownloadMessage);
+      HDLOnly.setText(S.get("FpgaGuiDownload"));
     }
   }
 
@@ -365,10 +380,15 @@ public class FPGACommanderGui extends FPGACommanderBase
     } else if (e.getActionCommand().equals("ToolPath")) {
       selectToolPath(MyBoardInformation.fpga.getVendor());
       HandleHDLOnly();
+    } else if (e.getActionCommand().equals(StopRequested)) {
+      if (Downloader != null)
+        Downloader.stop();
+      StopButton.setEnabled(false);
     } else if (e.getActionCommand().equals("Download")) {
       validateButton.setEnabled(false);
+      StopButton.setEnabled(true);
       ReporterGui.clearAllMessages();
-      Download Downloader =
+      Downloader =
           new Download(
               MyProject,
               circuitsList.getSelectedItem().toString(),
@@ -378,11 +398,14 @@ public class FPGACommanderGui extends FPGACommanderBase
               "",
               writeToFlash.isSelected(),
               skipHDL.isSelected(),
-              true);
+              Progress);
       Downloader.AddListener(this);
       Downloader.DoDownload();
     } else if (e.getSource() instanceof Download) {
       validateButton.setEnabled(true);
+      StopButton.setEnabled(false);
+      Progress.setString(S.get("FpgaGuiIdle"));
+      Progress.setValue(0);
     }
   }
 
@@ -426,7 +449,7 @@ public class FPGACommanderGui extends FPGACommanderBase
         root.ClearAnnotationLevel();
       }
       root.Annotate(ClearExistingLabels, MyReporter, false);
-      MyReporter.AddInfo("Annotation done");
+      MyReporter.AddInfo(S.get("FpgaGuiAnnotationDone"));
       /* TODO: Dirty hack, see Circuit.java function Annotate for details */
       MyProject.repaintCanvas();
       MyProject.getLogisimFile().setDirty(true);
@@ -447,7 +470,7 @@ public class FPGACommanderGui extends FPGACommanderBase
 
   private void RebuildCircuitSelection() {
     circuitsList.removeAllItems();
-    panel.setTitle("FPGA Commander : " + MyProject.getLogisimFile().getName());
+    localeChanged();
     int i = 0;
     for (Circuit thisone : MyProject.getLogisimFile().getCircuits()) {
       circuitsList.addItem(thisone.getName());
@@ -470,7 +493,7 @@ public class FPGACommanderGui extends FPGACommanderBase
     if (test.exists()) {
       fc.setSelectedFile(test);
     }
-    fc.setDialogTitle(VendorSoftware.Vendors[vendor] + " Design Suite Path Selection");
+    fc.setDialogTitle(VendorSoftware.Vendors[vendor] + " " + S.get("FpgaGuiSoftwareSelect"));
     int retval;
     boolean ok = false;
     do {
@@ -486,8 +509,8 @@ public class FPGACommanderGui extends FPGACommanderBase
         } else {
           JOptionPane.showMessageDialog(
               null,
-              "Required tools not found in Directory \"" + ToolPath + "\"!",
-              "Toolpath Selection",
+              S.fmt("FpgaToolsNotFound", ToolPath),
+              S.get("FpgaGuiSoftwareSelect"),
               JOptionPane.ERROR_MESSAGE);
         }
       } else ok = true;
@@ -501,7 +524,7 @@ public class FPGACommanderGui extends FPGACommanderBase
     if (test.exists()) {
       fc.setSelectedFile(test);
     }
-    fc.setDialogTitle("Workspace Directory Selection");
+    fc.setDialogTitle(S.get("FpgaGuiWorkspacePath"));
     boolean ValidWorkpath = false;
     while (!ValidWorkpath) {
       int retval = fc.showOpenDialog(null);
@@ -509,8 +532,8 @@ public class FPGACommanderGui extends FPGACommanderBase
       if (fc.getSelectedFile().getAbsolutePath().contains(" ")) {
         JOptionPane.showMessageDialog(
             parentComponent,
-            "Workspace directory may not contain spaces!",
-            "Workspace Directory Selection",
+            S.get("FpgaGuiWorkspaceError"),
+            S.get("FpgaGuiWorkspacePath"),
             JOptionPane.ERROR_MESSAGE);
       } else {
         ValidWorkpath = true;
@@ -565,4 +588,24 @@ public class FPGACommanderGui extends FPGACommanderBase
 
   @Override
   public void windowDeactivated(WindowEvent e) {}
+
+  @Override
+  public void localeChanged() {
+    textMainCircuit.setText(S.get("FpgaGuiMainCircuit"));
+    textTargetBoard.setText(S.get("FpgaGuiTargetBoard"));
+    textTargetFreq.setText(S.get("FpgaGuiTickFrequency"));
+    textAnnotation.setText(S.get("FpgaGuiAnnotationMethod"));
+    writeToFlash.setText(S.get("FpgaGuiWriteFlash"));
+    skipHDL.setText(S.get("FpgaGuiSkipHdl"));
+    panel.setTitle(S.get("FpgaGuiTitle")+" " + MyProject.getLogisimFile().getName());
+    HandleHDLOnly();
+    annotationList.repaint();
+    validateButton.setText(S.get("FpgaGuiDownload"));
+    annotateButton.setText(S.get("FpgaGuiAnnotate"));
+    ToolPath.setText(S.get("FpgaGuiToolpath"));
+    Workspace.setText(S.get("FpgaGuiWorkspace"));
+    StopButton.setText(S.get("FpgaGuiStop"));
+    Progress.setString(S.get("FpgaGuiIdle"));
+    panel.pack();
+  }
 }
