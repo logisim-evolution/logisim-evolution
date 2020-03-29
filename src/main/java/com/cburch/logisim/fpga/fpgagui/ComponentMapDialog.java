@@ -30,10 +30,8 @@ package com.cburch.logisim.fpga.fpgagui;
 
 import static com.cburch.logisim.fpga.Strings.S;
 
-import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
 import com.cburch.logisim.fpga.fpgaboardeditor.BoardInformation;
 import com.cburch.logisim.fpga.fpgaboardeditor.BoardRectangle;
-import com.cburch.logisim.fpga.fpgaboardeditor.FPGAIOInformationContainer;
 import com.cburch.logisim.fpga.fpgaboardeditor.ZoomSlider;
 import com.cburch.logisim.prefs.AppPreferences;
 import java.awt.Color;
@@ -60,6 +58,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSlider;
@@ -69,23 +68,8 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileFilter;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Result;
-import javax.xml.transform.Source;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Attr;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 public class ComponentMapDialog implements ActionListener, ListSelectionListener, WindowListener {
 
@@ -395,7 +379,6 @@ public class ComponentMapDialog implements ActionListener, ListSelectionListener
   private BoardInformation BoardInfo;
   private ArrayList<BoardRectangle> SelectableItems = new ArrayList<BoardRectangle>();
   private String OldDirectory = "";
-  private String[] MapSectionStrings = {"Key", "LocationX", "LocationY", "Width", "Height"};
 
   private MappedComponentIdContainer Note;
 
@@ -658,12 +641,15 @@ public class ComponentMapDialog implements ActionListener, ListSelectionListener
       }
     } else if (e.getActionCommand().equals("UnMapAll")) {
       UnMapAll();
+      MappableComponents.markChanged();
     } else if (e.getActionCommand().equals("UnMap")) {
       UnMapOne();
+      MappableComponents.markChanged();
     } else if (e.getActionCommand().equals("Save")) {
       Save();
     } else if (e.getActionCommand().equals("Load")) {
       Load();
+      MappableComponents.markChanged();
     } else if (e.getActionCommand().equals("Cancel")) {
       synchronized (lock) {
         lock.notify();
@@ -681,41 +667,6 @@ public class ComponentMapDialog implements ActionListener, ListSelectionListener
     SelectableItems.clear();
   }
 
-  private String getFileName(String window_name, String SuggestedFileName) {
-    JFileChooser fc = new JFileChooser(OldDirectory);
-    fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
-    fc.setDialogTitle(window_name);
-    File SelFile = new File(OldDirectory, SuggestedFileName);
-    fc.setSelectedFile(SelFile);
-    FileFilter ff =
-        new FileFilter() {
-          @Override
-          public boolean accept(File f) {
-            return true;
-          }
-
-          @Override
-          public String getDescription() {
-            return "Select Filename";
-          }
-        };
-    fc.setFileFilter(ff);
-    fc.setAcceptAllFileFilterUsed(false);
-    int retval = fc.showSaveDialog(null);
-    if (retval == JFileChooser.APPROVE_OPTION) {
-      File file = fc.getSelectedFile();
-      if (file.getParent() != null) {
-        OldDirectory = file.getParent();
-        if (OldDirectory == null) OldDirectory = "";
-        else if (OldDirectory.length() != 0 && !OldDirectory.endsWith(File.separator))
-          OldDirectory += File.separator;
-      }
-      return file.getPath();
-    } else {
-      return "";
-    }
-  }
-
   private void Load() {
     JFileChooser fc = new JFileChooser(OldDirectory);
     fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
@@ -730,90 +681,14 @@ public class ComponentMapDialog implements ActionListener, ListSelectionListener
       String FileName = file.getName();
       String AbsoluteFileName = file.getPath();
       OldDirectory = AbsoluteFileName.substring(0, AbsoluteFileName.length() - FileName.length());
-      try {
-        // Create instance of DocumentBuilderFactory
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        // Get the DocumentBuilder
-        DocumentBuilder parser = factory.newDocumentBuilder();
-        // Create blank DOM Document
-        File xml = new File(AbsoluteFileName);
-        Document MapDoc = parser.parse(xml);
-        NodeList Elements = MapDoc.getElementsByTagName("LogisimGoesFPGABoardMapInformation");
-        Node CircuitInfo = Elements.item(0);
-        NodeList CircuitInfoDetails = CircuitInfo.getChildNodes();
-        for (int i = 0; i < CircuitInfoDetails.getLength(); i++) {
-          if (CircuitInfoDetails.item(i).getNodeName().equals("GlobalMapInformation")) {
-            NamedNodeMap Attrs = CircuitInfoDetails.item(i).getAttributes();
-            for (int j = 0; j < Attrs.getLength(); j++) {
-              if (Attrs.item(j).getNodeName().equals("BoardName")) {
-                if (!BoardInfo.getBoardName().equals(Attrs.item(j).getNodeValue())) {
-                  MessageLine.setForeground(Color.RED);
-                  MessageLine.setText(
-                      "LOAD ERROR: The selected Map file is not for the selected target board!");
-                  panel.setVisible(true);
-                  return;
-                }
-              } else if (Attrs.item(j).getNodeName().equals("ToplevelCircuitName")) {
-                if (!MappableComponents.GetToplevelName().equals(Attrs.item(j).getNodeValue())) {
-                  MessageLine.setForeground(Color.RED);
-                  MessageLine.setText(
-                      "LOAD ERROR: The selected Map file is not for the selected toplevel circuit!");
-                  panel.setVisible(true);
-                  return;
-                }
-              }
-            }
-            break;
-          }
-        }
-        /* cleanup the current map */
-        UnMapAll();
-        for (int i = 0; i < CircuitInfoDetails.getLength(); i++) {
-          if (CircuitInfoDetails.item(i).getNodeName().startsWith("MAPPEDCOMPONENT")) {
-            int x = -1, y = -1, width = -1, height = -1;
-            String key = "";
-            NamedNodeMap Attrs = CircuitInfoDetails.item(i).getAttributes();
-            for (int j = 0; j < Attrs.getLength(); j++) {
-              if (Attrs.item(j).getNodeName().equals(MapSectionStrings[0])) {
-                key = Attrs.item(j).getNodeValue();
-              }
-              if (Attrs.item(j).getNodeName().equals(MapSectionStrings[1])) {
-                x = Integer.parseInt(Attrs.item(j).getNodeValue());
-              }
-              if (Attrs.item(j).getNodeName().equals(MapSectionStrings[2])) {
-                y = Integer.parseInt(Attrs.item(j).getNodeValue());
-              }
-              if (Attrs.item(j).getNodeName().equals(MapSectionStrings[3])) {
-                width = Integer.parseInt(Attrs.item(j).getNodeValue());
-              }
-              if (Attrs.item(j).getNodeName().equals(MapSectionStrings[4])) {
-                height = Integer.parseInt(Attrs.item(j).getNodeValue());
-              }
-            }
-            if (!key.isEmpty() && (x > 0) && (y > 0) && (width > 0) && (height > 0)) {
-              BoardRectangle rect = null;
-              for (FPGAIOInformationContainer comp : BoardInfo.GetAllComponents()) {
-                if ((comp.GetRectangle().getXpos() == x)
-                    && (comp.GetRectangle().getYpos() == y)
-                    && (comp.GetRectangle().getWidth() == width)
-                    && (comp.GetRectangle().getHeight() == height)) {
-                  rect = comp.GetRectangle();
-                  break;
-                }
-              }
-              if (rect != null) {
-                MappableComponents.TryMap(key, rect, BoardInfo.GetComponentType(rect));
-              }
-            }
-          }
-        }
-        ClearSelections();
-        RebuildSelectionLists();
-        BoardPic.paintImmediately(0, 0, BoardPic.getWidth(), BoardPic.getHeight());
-      } catch (Exception e) {
-        /* TODO: handle exceptions */
-        logger.error(
-            "Exceptions not handled yet in Load(), but got an exception: {}", e.getMessage());
+      ComponentMapParser parse = new ComponentMapParser(file,MappableComponents,BoardInfo);
+      int result = parse.parseFile();
+      if (result == 0) {
+          ClearSelections();
+          RebuildSelectionLists();
+          BoardPic.paintImmediately(0, 0, BoardPic.getWidth(), BoardPic.getHeight());
+      } else {
+    	 JOptionPane.showMessageDialog(null, parse.getError(result), "Error", JOptionPane.ERROR_MESSAGE);
       }
     }
     panel.setVisible(true);
@@ -857,65 +732,10 @@ public class ComponentMapDialog implements ActionListener, ListSelectionListener
   }
 
   private void Save() {
-    panel.setVisible(false);
-    String suggestedName =
-        CorrectLabel.getCorrectLabel(MappableComponents.GetToplevelName())
-            + "-"
-            + BoardInfo.getBoardName()
-            + "-MAP.xml";
-    String SaveFileName = getFileName("Select filename to save the current map", suggestedName);
-    if (!SaveFileName.isEmpty()) {
-      if (!SaveFileName.endsWith(".xml")) SaveFileName = SaveFileName.concat(".xml");
-      try {
-        // Create instance of DocumentBuilderFactory
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        // Get the DocumentBuilder
-        DocumentBuilder parser = factory.newDocumentBuilder();
-        // Create blank DOM Document
-        Document MapInfo = parser.newDocument();
-
-        Element root = MapInfo.createElement("LogisimGoesFPGABoardMapInformation");
-        MapInfo.appendChild(root);
-        Element CircuitInfo = MapInfo.createElement("GlobalMapInformation");
-        CircuitInfo.setAttribute("BoardName", BoardInfo.getBoardName());
-        Attr circ = MapInfo.createAttribute("ToplevelCircuitName");
-        circ.setNodeValue(MappableComponents.GetToplevelName());
-        CircuitInfo.setAttributeNode(circ);
-        root.appendChild(CircuitInfo);
-        int count = 1;
-        for (String key : MappableComponents.MappedList()) {
-          Element Map = MapInfo.createElement("MAPPEDCOMPONENT_" + Integer.toHexString(count++));
-          BoardRectangle rect = MappableComponents.GetMap(key);
-          Map.setAttribute(MapSectionStrings[0], key);
-          Attr xpos = MapInfo.createAttribute(MapSectionStrings[1]);
-          xpos.setValue(Integer.toString(rect.getXpos()));
-          Map.setAttributeNode(xpos);
-          Attr ypos = MapInfo.createAttribute(MapSectionStrings[2]);
-          ypos.setValue(Integer.toString(rect.getYpos()));
-          Map.setAttributeNode(ypos);
-          Attr width = MapInfo.createAttribute(MapSectionStrings[3]);
-          width.setValue(Integer.toString(rect.getWidth()));
-          Map.setAttributeNode(width);
-          Attr height = MapInfo.createAttribute(MapSectionStrings[4]);
-          height.setValue(Integer.toString(rect.getHeight()));
-          Map.setAttributeNode(height);
-          root.appendChild(Map);
-        }
-        TransformerFactory tranFactory = TransformerFactory.newInstance();
-        tranFactory.setAttribute("indent-number", 3);
-        Transformer aTransformer = tranFactory.newTransformer();
-        aTransformer.setOutputProperty(OutputKeys.INDENT, "yes");
-        Source src = new DOMSource(MapInfo);
-        File file = new File(SaveFileName);
-        Result dest = new StreamResult(file);
-        aTransformer.transform(src, dest);
-      } catch (Exception e) {
-        /* TODO: handle exceptions */
-        logger.error(
-            "Exceptions not handled yet in Save(), but got an exception: {}", e.getMessage());
-      }
-    }
-    panel.setVisible(true);
+	panel.setVisible(false);
+    MappableComponents.save();
+    JOptionPane.showMessageDialog(null, S.get("BoarMapFileSaved"), "", JOptionPane.INFORMATION_MESSAGE);
+	panel.setVisible(true);
   }
 
   public void SetBoardInformation(BoardInformation Board) {

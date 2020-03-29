@@ -40,6 +40,7 @@ import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeDefaultProvider;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Location;
+import com.cburch.logisim.fpga.fpgaboardeditor.BoardRectangle;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
@@ -285,6 +286,26 @@ class XmlReader {
       }
       return known;
     }
+    
+    void loadMap(Element board, String boardName, Circuit circ) {
+      HashMap<String,BoardRectangle> map = new HashMap<String,BoardRectangle>();
+      for (Element cmap : XmlIterator.forChildElements(board, "mc")) {
+        int x,y,w,h;
+        String key = cmap.getAttribute("key");
+        if (key == null || key.isEmpty()) continue;
+        try {
+          x = Integer.parseUnsignedInt(cmap.getAttribute("valx"));
+          y = Integer.parseUnsignedInt(cmap.getAttribute("valy"));
+          w = Integer.parseUnsignedInt(cmap.getAttribute("valw"));
+          h = Integer.parseUnsignedInt(cmap.getAttribute("valh"));
+        } catch (NumberFormatException e) {
+          continue;
+        }
+        BoardRectangle br = new BoardRectangle(x,y,w,h);
+        map.put(key, br);
+      }
+      if (!map.isEmpty()) circ.addLoadedMap(boardName, map);
+    }
 
     void loadAppearance(Element appearElt, XmlReader.CircuitData circData, String context) {
       Map<Location, Instance> pins = new HashMap<Location, Instance>();
@@ -419,6 +440,11 @@ class XmlReader {
             circData.knownComponents = loadKnownComponents(circElt, HolyCrossFile, IsEvolutionFile);
             for (Element appearElt : XmlIterator.forChildElements(circElt, "appear")) {
               loadAppearance(appearElt, circData, name + ".appear");
+            }
+            for (Element boardMap :  XmlIterator.forChildElements(circElt, "boardmap")) {
+              String BoardName = boardMap.getAttribute("boardname");
+              if (BoardName == null || BoardName.isEmpty()) continue;
+              loadMap(boardMap,BoardName,circData.circuit);
             }
             circuitsData.add(circData);
           default:

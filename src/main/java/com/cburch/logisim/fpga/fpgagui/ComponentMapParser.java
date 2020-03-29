@@ -28,6 +28,8 @@
 
 package com.cburch.logisim.fpga.fpgagui;
 
+import static com.cburch.logisim.fpga.Strings.S;
+
 import com.cburch.logisim.fpga.fpgaboardeditor.BoardInformation;
 import com.cburch.logisim.fpga.fpgaboardeditor.BoardRectangle;
 import com.cburch.logisim.fpga.fpgaboardeditor.FPGAIOInformationContainer;
@@ -48,6 +50,10 @@ public class ComponentMapParser {
   private MappableResourcesContainer MappableComponents = null;
   private BoardInformation BoardInfo = null;
   private String[] MapSectionStrings = {"Key", "LocationX", "LocationY", "Width", "Height"};
+  private final static int WrongCircuit = -1;
+  private final static int WrongBoard = -2;
+  private final static int ErrorCreatingDocument = -3;
+  private final static int ErrorParsingFile = -4;
 
   public ComponentMapParser(
       File file, MappableResourcesContainer mapResContainer, BoardInformation brdInfo) {
@@ -61,8 +67,17 @@ public class ComponentMapParser {
     MappableComponents.UnmapAll();
     MappableComponents.rebuildMappedLists();
   }
+  
+  public String getError(int error) {
+	switch (error) {
+	   case WrongCircuit : return S.get("BoardMapWrongCircuit");
+	   case WrongBoard   : return S.get("BoardMapWrongBoard");
+	   case ErrorCreatingDocument : return S.get("BoardMapErrorCD");
+	   case ErrorParsingFile : return S.get("BoardMapErrorPF");
+	   default           : return S.get("BoardMapUnknown");
+	}
+  }
 
-  @SuppressWarnings("finally")
   public int parseFile() {
     NodeList Elements = null;
     String AbsoluteFileName = fileToPase.getPath();
@@ -75,8 +90,7 @@ public class ComponentMapParser {
     try {
       parser = factory.newDocumentBuilder();
     } catch (ParserConfigurationException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+      return ErrorCreatingDocument;
     }
 
     // Create blank DOM Document
@@ -85,11 +99,9 @@ public class ComponentMapParser {
     try {
       MapDoc = parser.parse(xml);
     } catch (SAXException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+      return ErrorParsingFile;
     } catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+      return ErrorParsingFile;
     }
 
     Elements = MapDoc.getElementsByTagName("LogisimGoesFPGABoardMapInformation");
@@ -102,13 +114,11 @@ public class ComponentMapParser {
         for (int j = 0; j < Attrs.getLength(); j++) {
           if (Attrs.item(j).getNodeName().equals("BoardName")) {
             if (!BoardInfo.getBoardName().equals(Attrs.item(j).getNodeValue())) {
-              /* TODO ERROR MESSAGE */
-              return -1;
+              return WrongBoard;
             }
           } else if (Attrs.item(j).getNodeName().equals("ToplevelCircuitName")) {
             if (!MappableComponents.GetToplevelName().equals(Attrs.item(j).getNodeValue())) {
-              /* TODO ERROR MESSAGE */
-              return -1;
+              return WrongCircuit;
             }
           }
         }

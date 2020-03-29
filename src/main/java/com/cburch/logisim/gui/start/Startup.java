@@ -81,11 +81,13 @@ import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 import javax.swing.JRadioButton;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollPane;
@@ -1028,10 +1030,12 @@ public class Startup implements AWTEventListener {
             || (container instanceof JComboBox)
             || (container instanceof JToolTip)
             || (container instanceof JLabel)
+            || (container instanceof JFrame)
             || (container instanceof JMenu)
             || (container instanceof JMenuItem)
             || (container instanceof JRadioButton)
             || (container instanceof JRadioButtonMenuItem)
+            || (container instanceof JProgressBar)
             || (container instanceof JSpinner)
             || (container instanceof JTabbedPane)
             || (container instanceof JTextField)
