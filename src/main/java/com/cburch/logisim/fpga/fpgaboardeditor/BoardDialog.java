@@ -34,7 +34,11 @@ import com.cburch.logisim.fpga.fpgaboardeditor.FPGAIOInformationContainer.IOComp
 import com.cburch.logisim.fpga.settings.VendorSoftware;
 import com.cburch.logisim.gui.icons.ErrorIcon;
 import com.cburch.logisim.gui.icons.WarningIcon;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Projects;
+import com.cburch.logisim.util.LocaleListener;
+
+import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Toolkit;
@@ -42,9 +46,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.util.ArrayList;
 import java.io.File;
 import java.util.Iterator;
 import java.util.LinkedList;
+
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -52,6 +59,7 @@ import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
@@ -59,7 +67,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileFilter;
 
-public class BoardDialog implements ActionListener, ComponentListener {
+public class BoardDialog implements ActionListener, ComponentListener, LocaleListener {
 
   private static class XMLFileFilter extends FileFilter {
     @Override
@@ -69,7 +77,7 @@ public class BoardDialog implements ActionListener, ComponentListener {
 
     @Override
     public String getDescription() {
-      return S.get("XMLFileFilter"); // TODO: language adaptation
+      return S.get("XMLFileFilter");
     }
   }
 
@@ -101,27 +109,32 @@ public class BoardDialog implements ActionListener, ComponentListener {
   boolean abort;
   private BoardInformation TheBoard = new BoardInformation();
   private JTextField BoardNameInput;
-  private JButton saveButton;
-  private JButton loadButton;
+  private JButton saveButton = new JButton();
+  private JButton loadButton = new JButton();
+  private JButton importButton = new JButton();
+  private JButton cancelButton = new JButton();
+  private JButton fpgaButton = new JButton();
+  private JLabel LocText = new JLabel();
   private BoardPanel picturepanel;
   private ZoomSlider zoomslide;
   public static final String XML_EXTENSION = ".xml";
   public static final FileFilter XML_FILTER = new XMLFileFilter();
-  private String CancelStr = "cancel";
-  private String FPGAStr = "fpgainfo";
+  private static final String CancelStr = "cancel";
+  private static final String FPGAStr = "fpgainfo";
   private int DefaultStandard = 0;
   private int DefaultDriveStrength = 0;
   private int DefaultPullSelection = 0;
 
   private int DefaultActivity = 0;
   private int MaxZoom;
+  public BoardRectangle highlight = null;
 
   /* BIg TODO: Add all language strings */
 
   public BoardDialog() {
     GridBagConstraints gbc = new GridBagConstraints();
 
-    panel = new JFrame(S.get("FPGABoardEditor"));
+    panel = new JFrame();
     panel.setResizable(false);
     panel.addComponentListener(this);
     panel.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
@@ -136,26 +149,31 @@ public class BoardDialog implements ActionListener, ComponentListener {
     GridBagLayout ButtonLayout = new GridBagLayout();
     ButtonPanel.setLayout(ButtonLayout);
 
-    JLabel LocText = new JLabel("Board Name:  ");
     gbc.gridx = 1;
     gbc.gridy = 0;
     gbc.fill = GridBagConstraints.HORIZONTAL;
     ButtonPanel.add(LocText, gbc);
 
-    BoardNameInput = new JTextField(25);
+    BoardNameInput = new JTextField(22);
     BoardNameInput.setEnabled(false);
     gbc.gridx = 2;
     gbc.gridy = 0;
     gbc.fill = GridBagConstraints.HORIZONTAL;
     ButtonPanel.add(BoardNameInput, gbc);
 
-    JButton cancelButton = new JButton("Cancel");
-    gbc.gridx = 1;
+    gbc.gridx = 4;
     gbc.gridy = 1;
     gbc.fill = GridBagConstraints.HORIZONTAL;
     cancelButton.setActionCommand(CancelStr);
     cancelButton.addActionListener(this);
     ButtonPanel.add(cancelButton, gbc);
+    
+    gbc.gridx = 1;
+    gbc.gridy = 1;
+    fpgaButton.setActionCommand(FPGAStr);
+    fpgaButton.addActionListener(this);
+    fpgaButton.setEnabled(false);
+    ButtonPanel.add(fpgaButton,gbc);
 
     zoomslide = new ZoomSlider();
     zoomslide.addChangeListener(new ZoomChange(picturepanel));
@@ -164,7 +182,6 @@ public class BoardDialog implements ActionListener, ComponentListener {
     gbc.fill = GridBagConstraints.HORIZONTAL;
     ButtonPanel.add(zoomslide, gbc);
 
-    loadButton = new JButton("Load");
     gbc.gridx = 3;
     gbc.gridy = 0;
     gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -172,8 +189,12 @@ public class BoardDialog implements ActionListener, ComponentListener {
     loadButton.addActionListener(this);
     loadButton.setEnabled(true);
     ButtonPanel.add(loadButton, gbc);
+    
+    gbc.gridx = 4;
+    importButton.setActionCommand("internal");
+    importButton.addActionListener(this);
+    ButtonPanel.add(importButton, gbc);
 
-    saveButton = new JButton("Done and save");
     gbc.gridx = 3;
     gbc.gridy = 1;
     gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -191,11 +212,6 @@ public class BoardDialog implements ActionListener, ComponentListener {
     gbc.fill = GridBagConstraints.HORIZONTAL;
     panel.add(picturepanel, gbc);
 
-    panel.pack();
-    /*
-     * panel.setLocation(Projects.getCenteredLoc(panel.getWidth(),
-     * panel.getHeight()));
-     */
     panel.setLocationRelativeTo(null);
     panel.setVisible(true);
     int ScreenWidth = (int) Toolkit.getDefaultToolkit().getScreenSize().getWidth();
@@ -209,6 +225,7 @@ public class BoardDialog implements ActionListener, ComponentListener {
     int zoomX = (ScreenWidth * 100) / ImageWidth;
     int zoomY = (ScreenHeight * 100) / ImageHeight;
     MaxZoom = (zoomY > zoomX) ? zoomX : zoomY;
+    localeChanged();
   }
 
   @Override
@@ -218,7 +235,7 @@ public class BoardDialog implements ActionListener, ComponentListener {
     } else if (e.getActionCommand().equals("save")) {
       panel.setVisible(false);
       TheBoard.setBoardName(BoardNameInput.getText());
-      String filename = getDirName("", "Select directory to save board file:");
+      String filename = getDirName("", S.get("FpgaBoardSaveDir"));
       filename += TheBoard.getBoardName() + ".xml";
       BoardWriterClass xmlwriter =
           new BoardWriterClass(
@@ -228,7 +245,7 @@ public class BoardDialog implements ActionListener, ComponentListener {
       xmlwriter.PrintXml(filename);
       this.clear();
     } else if (e.getActionCommand().equals("load")) {
-      JFileChooser fc = new JFileChooser("Choose XML board description file to use");
+      JFileChooser fc = new JFileChooser(S.get("FpgaBoardLoadFile"));
       fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
       fc.setFileFilter(XML_FILTER);
       fc.setAcceptAllFileFilterUsed(false);
@@ -238,15 +255,38 @@ public class BoardDialog implements ActionListener, ComponentListener {
         SetBoardName(file.getName());
         String FileName = file.getPath();
         BoardReaderClass reader = new BoardReaderClass(FileName);
-        TheBoard = reader.GetBoardInformation();
-        picturepanel.SetImage(TheBoard.GetImage());
-        for (FPGAIOInformationContainer comp : TheBoard.GetAllComponents())
-          defined_components.add(comp.GetRectangle());
-        if ((TheBoard.GetNrOfDefinedComponents() > 0) && TheBoard.fpga.FpgaInfoPresent())
+        UpdateInfo(reader);
+      }
+    } else if (e.getActionCommand().equals(FPGAStr)) {
+      getFpgaInformation();
+      if ((TheBoard.GetNrOfDefinedComponents() > 0) && TheBoard.fpga.FpgaInfoPresent())
           saveButton.setEnabled(true);
-        picturepanel.repaint();
+    } else if (e.getActionCommand().equals("internal")) {
+      String Board = getInternalBoardName();
+      if (Board != null) {
+        SetBoardName(Board);
+        BoardReaderClass reader = new BoardReaderClass(AppPreferences.Boards.GetBoardFilePath(Board));
+        UpdateInfo(reader);
       }
     }
+  }
+  
+  private void UpdateInfo(BoardReaderClass reader) {
+defined_components.clear();
+    TheBoard = reader.GetBoardInformation();
+    picturepanel.SetImage(TheBoard.GetImage());
+    for (FPGAIOInformationContainer comp : TheBoard.GetAllComponents())
+      defined_components.add(comp.GetRectangle());
+    if ((TheBoard.GetNrOfDefinedComponents() > 0) && TheBoard.fpga.FpgaInfoPresent())
+      saveButton.setEnabled(true);
+    picturepanel.repaint();
+  }
+  
+  private String getInternalBoardName() {
+    ArrayList<String> boards = AppPreferences.Boards.GetBoardNames();
+    return (String)JOptionPane.showInputDialog(panel,S.get("FpgaBoardSelect"),
+        S.get("FpgaBoardLoadInternal"), JOptionPane.PLAIN_MESSAGE, null,
+        boards.toArray(),boards.get(0));
   }
 
   private String checkIfEndsWithSlash(String path) {
@@ -263,7 +303,9 @@ public class BoardDialog implements ActionListener, ComponentListener {
     TheBoard.clear();
     BoardNameInput.setText("");
     saveButton.setEnabled(false);
+    fpgaButton.setEnabled(false);
     loadButton.setEnabled(true);
+    importButton.setEnabled(true);
   }
 
   @Override
@@ -307,9 +349,9 @@ public class BoardDialog implements ActionListener, ComponentListener {
     }
     return old;
   }
-
+  
   private void getFpgaInformation() {
-    final JDialog selWindow = new JDialog(panel, "FPGA properties");
+    final JDialog selWindow = new JDialog(panel, S.get("FpgaBoardFpgaProp"));
     /* here the action listener is defined */
     ActionListener actionListener =
         new ActionListener() {
@@ -320,16 +362,14 @@ public class BoardDialog implements ActionListener, ComponentListener {
             selWindow.setVisible(false);
           }
         };
-    GridBagLayout dialogLayout = new GridBagLayout();
     GridBagConstraints c = new GridBagConstraints();
-    selWindow.setLayout(dialogLayout);
-    abort = false;
-
+    /* Here the clock related settings are defined */    
     JPanel ClockPanel = new JPanel();
-    GridBagLayout ClockLayout = new GridBagLayout();
-    ClockPanel.setLayout(ClockLayout);
+    ClockPanel.setLayout(new GridBagLayout());
+    ClockPanel.setBorder(BorderFactory.createTitledBorder(
+      BorderFactory.createLineBorder(Color.BLACK, 2, true), S.get("FpgaBoardClkProp")));
 
-    JLabel FreqText = new JLabel("Specify Clock frequency:");
+    JLabel FreqText = new JLabel(S.get("FpgaBoardClkFreq"));
     c.gridx = 0;
     c.gridy = 0;
     c.fill = GridBagConstraints.HORIZONTAL;
@@ -351,98 +391,53 @@ public class BoardDialog implements ActionListener, ComponentListener {
     JComboBox<String> StandardInput = new JComboBox<>(freqStrs);
     StandardInput.setSelectedIndex(2);
     c.gridx = 1;
-    c.gridy = 0;
-    c.fill = GridBagConstraints.HORIZONTAL;
     if (TheBoard.fpga.FpgaInfoPresent())
       StandardInput.setSelectedIndex(getFrequencyIndex(TheBoard.fpga.getClockFrequency()));
     FreqPanel.add(StandardInput, c);
 
-    c.gridx = 0;
-    c.gridy = 1;
-    c.fill = GridBagConstraints.HORIZONTAL;
     ClockPanel.add(FreqPanel, c);
 
-    JLabel LocText = new JLabel("Specify Clock pin location:");
+    JLabel LocText = new JLabel(S.get("FpgaBoardClkLoc"));
+    c.gridy = 1;
     c.gridx = 0;
-    c.gridy = 2;
-    c.fill = GridBagConstraints.HORIZONTAL;
     ClockPanel.add(LocText, c);
 
     JTextField LocInput = new JTextField();
     if (TheBoard.fpga.FpgaInfoPresent()) LocInput.setText(TheBoard.fpga.getClockPinLocation());
-    c.gridx = 0;
-    c.gridy = 3;
-    c.fill = GridBagConstraints.HORIZONTAL;
+    c.gridx = 1;
     ClockPanel.add(LocInput, c);
 
-    JLabel PullText = new JLabel("Specify clock pin pull behavior:");
+    JLabel PullText = new JLabel(S.get("FpgaBoardClkPul"));
+    c.gridy = 2;
     c.gridx = 0;
-    c.gridy = 4;
-    c.fill = GridBagConstraints.HORIZONTAL;
     ClockPanel.add(PullText, c);
 
     JComboBox<String> PullInput = new JComboBox<>(PullBehaviors.Behavior_strings);
     if (TheBoard.fpga.FpgaInfoPresent()) {
       PullInput.setSelectedIndex(TheBoard.fpga.getClockPull());
     } else PullInput.setSelectedIndex(0);
-    c.gridx = 0;
-    c.gridy = 5;
-    c.fill = GridBagConstraints.HORIZONTAL;
+    c.gridx = 1;
     ClockPanel.add(PullInput, c);
 
-    JLabel StandardText = new JLabel("Specify clock pin standard:");
+    JLabel StandardText = new JLabel(S.get("FpgaBoardClkStd"));
+    c.gridy = 3;
     c.gridx = 0;
-    c.gridy = 6;
-    c.fill = GridBagConstraints.HORIZONTAL;
     ClockPanel.add(StandardText, c);
 
     JComboBox<String> StdInput = new JComboBox<>(IoStandards.Behavior_strings);
     if (TheBoard.fpga.FpgaInfoPresent()) {
       StdInput.setSelectedIndex(TheBoard.fpga.getClockStandard());
     } else StdInput.setSelectedIndex(0);
-    c.gridx = 0;
-    c.gridy = 7;
-    c.fill = GridBagConstraints.HORIZONTAL;
+    c.gridx = 1;
     ClockPanel.add(StdInput, c);
 
-    JLabel UnusedPinsText = new JLabel("Unused FPGA pin behavior:");
-    c.gridx = 0;
-    c.gridy = 8;
-    c.fill = GridBagConstraints.HORIZONTAL;
-    ClockPanel.add(UnusedPinsText, c);
-
-    JComboBox<String> UnusedPinsInput = new JComboBox<>(PullBehaviors.Behavior_strings);
-    if (TheBoard.fpga.FpgaInfoPresent()) {
-      UnusedPinsInput.setSelectedIndex(TheBoard.fpga.getUnusedPinsBehavior());
-    } else UnusedPinsInput.setSelectedIndex(0);
-    c.gridx = 0;
-    c.gridy = 9;
-    c.fill = GridBagConstraints.HORIZONTAL;
-    ClockPanel.add(UnusedPinsInput, c);
-
-    JLabel PosText = new JLabel("Specify FPGA location in JTAG chain:");
-    c.gridx = 0;
-    c.gridy = 10;
-    c.fill = GridBagConstraints.HORIZONTAL;
-    ClockPanel.add(PosText, c);
-    JTextField PosInput = new JTextField("1");
-    if (TheBoard.fpga.FpgaInfoPresent())
-      PosInput.setText(Integer.toString(TheBoard.fpga.getFpgaJTAGChainPosition()));
-    c.gridx = 0;
-    c.gridy = 11;
-    c.fill = GridBagConstraints.HORIZONTAL;
-    ClockPanel.add(PosInput, c);
-
-    c.gridx = 0;
-    c.gridy = 0;
-    c.fill = GridBagConstraints.NORTH;
-    selWindow.add(ClockPanel, c);
-
+    /* Here the FPGA related settings are defined */
     JPanel FPGAPanel = new JPanel();
-    GridBagLayout FPGALayout = new GridBagLayout();
-    FPGAPanel.setLayout(FPGALayout);
+    FPGAPanel.setLayout(new GridBagLayout());
+    FPGAPanel.setBorder(BorderFactory.createTitledBorder(
+      BorderFactory.createLineBorder(Color.BLACK, 2, true), S.get("FpgaBoardFpgaProp")));
 
-    JLabel VendorText = new JLabel("Specify FPGA vendor:");
+    JLabel VendorText = new JLabel(S.get("FpgaBoardFpgaVend"));
     c.gridx = 0;
     c.gridy = 0;
     c.fill = GridBagConstraints.HORIZONTAL;
@@ -452,102 +447,135 @@ public class BoardDialog implements ActionListener, ComponentListener {
     if (TheBoard.fpga.FpgaInfoPresent()) {
       VendorInput.setSelectedIndex(TheBoard.fpga.getVendor());
     } else VendorInput.setSelectedIndex(0);
-    c.gridx = 0;
-    c.gridy = 1;
-    c.fill = GridBagConstraints.HORIZONTAL;
+    c.gridx = 1;
     FPGAPanel.add(VendorInput, c);
 
-    JLabel FamilyText = new JLabel("Specify FPGA family:");
+    JLabel FamilyText = new JLabel(S.get("FpgaBoardFpgaFam"));
+    c.gridy = 1;
     c.gridx = 0;
-    c.gridy = 2;
-    c.fill = GridBagConstraints.HORIZONTAL;
     FPGAPanel.add(FamilyText, c);
 
     JTextField FamilyInput = new JTextField();
     if (TheBoard.fpga.FpgaInfoPresent()) FamilyInput.setText(TheBoard.fpga.getTechnology());
-    c.gridx = 0;
-    c.gridy = 3;
-    c.fill = GridBagConstraints.HORIZONTAL;
+    c.gridx = 1;
     FPGAPanel.add(FamilyInput, c);
 
-    JLabel PartText = new JLabel("Specify FPGA part:");
+    JLabel PartText = new JLabel(S.get("FpgaBoardFpgaPart"));
+    c.gridy = 2;
     c.gridx = 0;
-    c.gridy = 4;
-    c.fill = GridBagConstraints.HORIZONTAL;
     FPGAPanel.add(PartText, c);
 
     JTextField PartInput = new JTextField();
     if (TheBoard.fpga.FpgaInfoPresent()) PartInput.setText(TheBoard.fpga.getPart());
-    c.gridx = 0;
-    c.gridy = 5;
-    c.fill = GridBagConstraints.HORIZONTAL;
+    c.gridx = 1;
     FPGAPanel.add(PartInput, c);
 
-    JLabel BoxText = new JLabel("Specify FPGA package:");
+    JLabel BoxText = new JLabel(S.get("FpgaBoardFpgaPack"));
+    c.gridy = 3;
     c.gridx = 0;
-    c.gridy = 6;
-    c.fill = GridBagConstraints.HORIZONTAL;
     FPGAPanel.add(BoxText, c);
 
     JTextField BoxInput = new JTextField();
     if (TheBoard.fpga.FpgaInfoPresent()) BoxInput.setText(TheBoard.fpga.getPackage());
-    c.gridx = 0;
-    c.gridy = 7;
-    c.fill = GridBagConstraints.HORIZONTAL;
+    c.gridx = 1;
     FPGAPanel.add(BoxInput, c);
 
-    JLabel SpeedText = new JLabel("Specify FPGA speed grade:");
+    JLabel SpeedText = new JLabel(S.get("FpgaBoardFpgaSG"));
+    c.gridy = 4;
     c.gridx = 0;
-    c.gridy = 8;
-    c.fill = GridBagConstraints.HORIZONTAL;
     FPGAPanel.add(SpeedText, c);
 
     JTextField SpeedInput = new JTextField();
     if (TheBoard.fpga.FpgaInfoPresent()) SpeedInput.setText(TheBoard.fpga.getSpeedGrade());
-    c.gridx = 0;
-    c.gridy = 9;
-    c.fill = GridBagConstraints.HORIZONTAL;
+    c.gridx = 1;
     FPGAPanel.add(SpeedInput, c);
 
-    JLabel FlashName = new JLabel("Specify flash name:");
+    JLabel UnusedPinsText = new JLabel(S.get("FpgaBoardPinUnused"));
+    c.gridy = 5;
     c.gridx = 0;
-    c.gridy = 10;
-    c.fill = GridBagConstraints.HORIZONTAL;
-    FPGAPanel.add(FlashName, c);
-    JTextField FlashNameInput = new JTextField("");
-    if (TheBoard.fpga.FpgaInfoPresent()) FlashNameInput.setText(TheBoard.fpga.getFlashName());
-    c.gridx = 0;
-    c.gridy = 11;
-    c.fill = GridBagConstraints.HORIZONTAL;
-    FPGAPanel.add(FlashNameInput, c);
+    FPGAPanel.add(UnusedPinsText, c);
 
-    JLabel FlashPosText = new JLabel("Specify flash location in JTAG chain:");
+    JComboBox<String> UnusedPinsInput = new JComboBox<>(PullBehaviors.Behavior_strings);
+    if (TheBoard.fpga.FpgaInfoPresent()) {
+      UnusedPinsInput.setSelectedIndex(TheBoard.fpga.getUnusedPinsBehavior());
+    } else UnusedPinsInput.setSelectedIndex(0);
+    c.gridx = 1;
+    FPGAPanel.add(UnusedPinsInput, c);
+
+    /* JTAG related Settings */
+    JPanel JTAGPanel = new JPanel();
+    JTAGPanel.setLayout(new GridBagLayout());
+    JTAGPanel.setBorder(BorderFactory.createTitledBorder(
+      BorderFactory.createLineBorder(Color.BLACK, 2, true), S.get("FpgaBoardJtagProp")));
+
+    JLabel PosText = new JLabel(S.get("FpgaBoardJtagLoc"));
+    c.gridy = 0;
     c.gridx = 0;
-    c.gridy = 12;
     c.fill = GridBagConstraints.HORIZONTAL;
-    FPGAPanel.add(FlashPosText, c);
-    JTextField FlashPosInput = new JTextField("2");
+    JTAGPanel.add(PosText, c);
+
+    JTextField PosInput = new JTextField(5);
+    PosInput.setText("1");
+    if (TheBoard.fpga.FpgaInfoPresent())
+      PosInput.setText(Integer.toString(TheBoard.fpga.getFpgaJTAGChainPosition()));
+    c.gridx = 1;
+    JTAGPanel.add(PosInput, c);
+
+    JLabel FlashPosText = new JLabel(S.get("FpgaBoardFlashLoc"));
+    c.gridy = 1;
+    c.gridx = 0;
+    JTAGPanel.add(FlashPosText, c);
+    
+    JTextField FlashPosInput = new JTextField(5);
+    FlashPosInput.setText("2");
     if (TheBoard.fpga.FpgaInfoPresent())
       FlashPosInput.setText(Integer.toString(TheBoard.fpga.getFlashJTAGChainPosition()));
-    c.gridx = 0;
-    c.gridy = 13;
-    c.fill = GridBagConstraints.HORIZONTAL;
-    FPGAPanel.add(FlashPosInput, c);
-
     c.gridx = 1;
-    c.gridy = 0;
-    c.fill = GridBagConstraints.NORTH;
-    selWindow.add(FPGAPanel, c);
+    c.fill = GridBagConstraints.HORIZONTAL;
+    JTAGPanel.add(FlashPosInput, c);
 
-    JCheckBox UsbTmc = new JCheckBox("USBTMC Download");
+    /* misc settings */
+    JPanel MiscPanel = new JPanel();
+    MiscPanel.setLayout(new GridBagLayout());
+    MiscPanel.setBorder(BorderFactory.createTitledBorder(
+      BorderFactory.createLineBorder(Color.BLACK, 2, true), S.get("FpgaBoardMiscProp")));
+
+    JLabel FlashName = new JLabel(S.get("FpgaBoardFlashType"));
+    c.gridx = 0;
+    c.gridy = 0;
+    c.fill = GridBagConstraints.HORIZONTAL;
+    MiscPanel.add(FlashName, c);
+    
+    JTextField FlashNameInput = new JTextField("");
+    if (TheBoard.fpga.FpgaInfoPresent()) FlashNameInput.setText(TheBoard.fpga.getFlashName());
+    c.gridx = 1;
+    MiscPanel.add(FlashNameInput, c);
+
+    JCheckBox UsbTmc = new JCheckBox(S.get("FpgaBoardUSBTMC"));
     UsbTmc.setSelected(false);
     if (TheBoard.fpga.FpgaInfoPresent()) UsbTmc.setSelected(TheBoard.fpga.USBTMCDownloadRequired());
     c.gridx = 0;
     c.gridy = 1;
-    c.fill = GridBagConstraints.HORIZONTAL;
-    selWindow.add(UsbTmc, c);
+    c.gridwidth = 2;
+    MiscPanel.add(UsbTmc, c);
 
-    JButton CancelButton = new JButton("Cancel");
+    GridBagLayout dialogLayout = new GridBagLayout();
+    selWindow.setLayout(dialogLayout);
+    abort = false;
+    c.gridx = 0;
+    c.gridy = 0;
+    c.gridwidth = 1;
+    c.fill = GridBagConstraints.HORIZONTAL;
+    selWindow.add(ClockPanel, c);
+    c.gridx = 1;
+    selWindow.add(FPGAPanel, c);
+    c.gridx = 0;
+    c.gridy = 1;
+    selWindow.add(JTAGPanel,c);
+    c.gridx = 1;
+    selWindow.add(MiscPanel, c);
+
+    JButton CancelButton = new JButton(S.get("FpgaBoardCancel"));
     CancelButton.addActionListener(actionListener);
     CancelButton.setActionCommand(CancelStr);
     c.gridx = 0;
@@ -555,7 +583,7 @@ public class BoardDialog implements ActionListener, ComponentListener {
     c.fill = GridBagConstraints.HORIZONTAL;
     selWindow.add(CancelButton, c);
 
-    JButton SaveButton = new JButton("Done and Store");
+    JButton SaveButton = new JButton(S.get("FpgaBoardDone"));
     SaveButton.addActionListener(actionListener);
     SaveButton.setActionCommand("save");
     c.gridx = 1;
@@ -564,68 +592,51 @@ public class BoardDialog implements ActionListener, ComponentListener {
     selWindow.add(SaveButton, c);
 
     selWindow.pack();
-    selWindow.setLocation(Projects.getCenteredLoc(selWindow.getWidth(), selWindow.getHeight()));
-    // PointerInfo mouseloc = MouseInfo.getPointerInfo();
-    // Point mlocation = mouseloc.getLocation();
-    // selWindow.setLocation(mlocation.x,mlocation.y);
     selWindow.setModal(true);
     selWindow.setResizable(false);
     selWindow.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
     selWindow.setAlwaysOnTop(true);
+    selWindow.setLocationRelativeTo(panel);
     boolean save_settings = false;
     while ((!abort) && (!save_settings)) {
       selWindow.setVisible(true);
       if (!abort) {
         save_settings = true;
-        switch ((int)
-            getFrequency(FreqInput.getText(), StandardInput.getSelectedItem().toString())) {
+        switch ((int)getFrequency(FreqInput.getText(), StandardInput.getSelectedItem().toString())) {
           case -2:
             save_settings = false;
-            showDialogNotification(
-                selWindow,
-                "Error",
-                "<html>The clock frequency should only contain the chars</BR>"
-                    + "'0'..'9' and '.'!</html>");
+            showDialogNotification( selWindow, "Error", S.get("FpgaBoardFreqError"));
             break;
           case -1:
             save_settings = false;
-            showDialogNotification(
-                selWindow,
-                "Error",
-                "<html>The clock frequency cannot be a fraction of a Hz</html>");
+            showDialogNotification(selWindow, "Error", S.get("FpgaBoardFracError"));
             break;
           case 0:
             save_settings = false;
-            showDialogNotification(
-                selWindow, "Error", "<html>You have to specify the clock frequency!</html>");
+            showDialogNotification(selWindow, "Error", S.get("FpgaBoardClkReq"));
             break;
           default:
             break;
         }
         if (save_settings && LocInput.getText().isEmpty()) {
           save_settings = false;
-          showDialogNotification(
-              selWindow, "Error", "<html>You have to specify the clock-pin location!</html>");
+          showDialogNotification(selWindow, "Error", S.get("FpgaBoardClkPin"));
         }
         if (save_settings && FamilyInput.getText().isEmpty()) {
           save_settings = false;
-          showDialogNotification(
-              selWindow, "Error", "<html>You have to specify the FPGA family!</html>");
+          showDialogNotification(selWindow, "Error", S.get("FpgaBoardFpgaFamMis"));
         }
         if (save_settings && PartInput.getText().isEmpty()) {
           save_settings = false;
-          showDialogNotification(
-              selWindow, "Error", "<html>You have to specify the FPGA part!</html>");
+          showDialogNotification(selWindow, "Error", S.get("FpgaBoardFpgaPartMis"));
         }
         if (save_settings && BoxInput.getText().isEmpty()) {
           save_settings = false;
-          showDialogNotification(
-              selWindow, "Error", "<html>You have to specify the FPGA package!</html>");
+          showDialogNotification(selWindow, "Error", S.get("FpgaBoardFpgaPacMis"));
         }
         if (save_settings && SpeedInput.getText().isEmpty()) {
           save_settings = false;
-          showDialogNotification(
-              selWindow, "Error", "<html>You have to specify the FPGA speed-grade!</html>");
+          showDialogNotification(selWindow, "Error", S.get("FpgaBoardFpgaSpeedMis"));
         }
         if (save_settings) {
           TheBoard.fpga.Set(
@@ -696,23 +707,32 @@ public class BoardDialog implements ActionListener, ComponentListener {
   public boolean isActive() {
     return panel.isVisible();
   }
-
-  public void EditDialog(int xpos, int ypos) {
-    Iterator<BoardRectangle> iter = defined_components.iterator();
-    boolean found = false;
-    while (iter.hasNext()) {
-      BoardRectangle rect = iter.next();
+  
+  public boolean isDefinedComponent(int xpos, int ypos) {
+    for (BoardRectangle rect : defined_components)
       if (rect.PointInside(xpos, ypos)) {
-        /* TODO: Edit pin/led/etc. */
-        TheBoard.GetComponent(rect).edit(this);
-        found = true;
+    if (highlight== null || !highlight.equals(rect)) {
+          highlight = rect;
+          picturepanel.repaint();
+    }
+        return true;
       }
+    if (highlight != null) {
+      highlight = null;
+      picturepanel.repaint();
     }
-    if (!found) {
-      getFpgaInformation();
-      if ((TheBoard.GetNrOfDefinedComponents() > 0) && TheBoard.fpga.FpgaInfoPresent())
-        saveButton.setEnabled(true);
-    }
+    return false;
+  }
+  
+  public void EditDialog() {
+    if (highlight == null) return;
+    FPGAIOInformationContainer comp = TheBoard.GetComponent(highlight);
+    if (!comp.IsKnownComponent()) return;
+	try {
+      FPGAIOInformationContainer edit = (FPGAIOInformationContainer) comp.clone();
+      edit.edit(this);
+      if (edit.IsKnownComponent()) TheBoard.ReplaceComponent(comp, edit);
+    } catch (CloneNotSupportedException e) {}
   }
 
   public void SelectDialog(BoardRectangle rect) {
@@ -728,26 +748,18 @@ public class BoardDialog implements ActionListener, ComponentListener {
       overlap |= iter.next().Overlap(rect);
     }
     if (overlap) {
-      showDialogNotification(
-          this, "Error", "<html>Found Overlapping regions!<br>Cannot process!</html>");
+      showDialogNotification(this, "Error", S.get("FpgaBoardOverlap"));
       return;
     }
     String res = ShowItemSelectWindow();
     if (res.equals(CancelStr)) return;
-    if (res.equals(FPGAStr)) {
-      getFpgaInformation();
+    FPGAIOInformationContainer comp =
+        new FPGAIOInformationContainer(IOComponentTypes.valueOf(res), rect, this);
+    if (comp.IsKnownComponent()) {
+      TheBoard.AddComponent(comp);
+      defined_components.add(rect);
       if ((TheBoard.GetNrOfDefinedComponents() > 0) && TheBoard.fpga.FpgaInfoPresent())
         saveButton.setEnabled(true);
-      if (TheBoard.fpga.FpgaInfoPresent()) defined_components.add(rect);
-    } else {
-      FPGAIOInformationContainer comp =
-          new FPGAIOInformationContainer(IOComponentTypes.valueOf(res), rect, this);
-      if (comp.IsKnownComponent()) {
-        TheBoard.AddComponent(comp);
-        defined_components.add(rect);
-        if ((TheBoard.GetNrOfDefinedComponents() > 0) && TheBoard.fpga.FpgaInfoPresent())
-          saveButton.setEnabled(true);
-      }
     }
   }
 
@@ -764,6 +776,8 @@ public class BoardDialog implements ActionListener, ComponentListener {
     BoardNameInput.setText(comps);
     TheBoard.setBoardName(comps);
     loadButton.setEnabled(false);
+    importButton.setEnabled(false);
+    fpgaButton.setEnabled(true);
   }
 
   public void SetDefaultActivity(int value) {
@@ -794,11 +808,10 @@ public class BoardDialog implements ActionListener, ComponentListener {
     dialog.setLayout(dialogLayout);
     GridBagConstraints c = new GridBagConstraints();
     JLabel message = new JLabel(string);
-    JButton close = new JButton("close");
+    JButton close = new JButton(S.get("FpgaBoardClose"));
     ActionListener actionListener =
         new ActionListener() {
           public void actionPerformed(ActionEvent e) {
-            // panel.setAlwaysOnTop(true);
             dialog.dispose();
           }
         };
@@ -817,7 +830,7 @@ public class BoardDialog implements ActionListener, ComponentListener {
     c.gridy = 1;
     dialog.add(close, c);
     dialog.pack();
-    dialog.setLocationRelativeTo(panel);
+    dialog.setLocationRelativeTo(parent);
     dialog.setAlwaysOnTop(true);
     dialog.setVisible(true);
   }
@@ -834,11 +847,10 @@ public class BoardDialog implements ActionListener, ComponentListener {
     dialog.setLayout(dialogLayout);
     GridBagConstraints c = new GridBagConstraints();
     JLabel message = new JLabel(string);
-    JButton close = new JButton("close");
+    JButton close = new JButton(S.get("FpgaBoardClose"));
     ActionListener actionListener =
         new ActionListener() {
           public void actionPerformed(ActionEvent e) {
-            // panel.setAlwaysOnTop(true);
             dialog.dispose();
           }
         };
@@ -866,7 +878,7 @@ public class BoardDialog implements ActionListener, ComponentListener {
 
   private String ShowItemSelectWindow() {
     action_id = CancelStr;
-    final JDialog selWindow = new JDialog(panel, "Action Select Window");
+    final JDialog selWindow = new JDialog(panel, S.get("FpgaBoardIOResources"));
     /* here the action listener is defined */
     ActionListener actionListener =
         new ActionListener() {
@@ -877,38 +889,41 @@ public class BoardDialog implements ActionListener, ComponentListener {
         };
     GridBagLayout dialogLayout = new GridBagLayout();
     GridBagConstraints c = new GridBagConstraints();
-    selWindow.setLayout(dialogLayout);
-    JButton fpga = new JButton("Define the FPGA parameters");
-    fpga.setActionCommand(FPGAStr);
-    fpga.addActionListener(actionListener);
-    fpga.setEnabled(!TheBoard.fpga.FpgaInfoPresent());
-    c.gridx = 0;
-    c.gridy = 0;
     c.fill = GridBagConstraints.HORIZONTAL;
-    selWindow.add(fpga, c);
+    c.gridx = 0;
+    selWindow.setLayout(dialogLayout);
     JButton button;
     for (String comp : FPGAIOInformationContainer.GetComponentTypes()) {
-      button = new JButton("Define a " + comp);
+      button = new JButton(S.fmt("FpgaBoardDefine", comp));
       button.setActionCommand(comp);
       button.addActionListener(actionListener);
       c.gridy++;
       selWindow.add(button, c);
     }
-    JButton cancel = new JButton("Cancel");
+    JButton cancel = new JButton(S.get("FpgaBoardCancel"));
     cancel.setActionCommand(CancelStr);
     cancel.addActionListener(actionListener);
     c.gridy++;
     selWindow.add(cancel, c);
     selWindow.pack();
     selWindow.setLocation(Projects.getCenteredLoc(selWindow.getWidth(), selWindow.getHeight()));
-    // PointerInfo mouseloc = MouseInfo.getPointerInfo();
-    // Point mlocation = mouseloc.getLocation();
-    // selWindow.setLocation(mlocation.x,mlocation.y);
     selWindow.setModal(true);
     selWindow.setResizable(false);
     selWindow.setAlwaysOnTop(true);
     selWindow.setVisible(true);
     selWindow.dispose();
     return action_id;
+  }
+
+  @Override
+  public void localeChanged() {
+    panel.setTitle(S.get("FPGABoardEditor"));
+    LocText.setText(S.get("FpgaBoardName"));
+    cancelButton.setText(S.get("FpgaBoardCancel"));
+    loadButton.setText(S.get("FpgaBoardLoadExternal"));
+    importButton.setText(S.get("FpgaBoardLoadInternal"));
+    saveButton.setText(S.get("FpgaBoardSave"));
+    fpgaButton.setText(S.get("FpgaBoardFpgaParam"));
+    panel.pack();
   }
 }

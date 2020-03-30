@@ -178,18 +178,21 @@ public class BoardPanel extends JPanel implements MouseListener, MouseMotionList
 
   public void mouseExited(MouseEvent e) {}
 
-  public void mouseMoved(MouseEvent e) {}
+  public void mouseMoved(MouseEvent e) {
+    if (EditMode && ImageLoaded()) {
+      edit_parent.isDefinedComponent(
+        AppPreferences.getDownScaled(e.getX(), scale),
+        AppPreferences.getDownScaled(e.getY(), scale));
+    }
+  }
 
   public void mousePressed(MouseEvent e) {
-    if (e.getClickCount() > 1) {
-      this.set_start(0, 0);
-      edit_parent.EditDialog(
-          AppPreferences.getDownScaled(e.getX(), scale),
-          AppPreferences.getDownScaled(e.getY(), scale));
-    } else
-      this.set_start(
-          AppPreferences.getDownScaled(e.getX(), scale),
-          AppPreferences.getDownScaled(e.getY(), scale));
+    if (edit_parent.highlight != null) {
+      set_start(0,0);
+      edit_parent.EditDialog();
+    } else  this.set_start(
+        AppPreferences.getDownScaled(e.getX(), scale),
+        AppPreferences.getDownScaled(e.getY(), scale));
   }
 
   public void mouseReleased(MouseEvent e) {
@@ -221,9 +224,12 @@ public class BoardPanel extends JPanel implements MouseListener, MouseMotionList
       if (EditMode && (edit_parent.defined_components != null)) {
         LinkedList<BoardRectangle> comps = edit_parent.defined_components;
         Iterator<BoardRectangle> iter = comps.iterator();
-        g.setColor(Color.red);
         while (iter.hasNext()) {
           BoardRectangle thisone = iter.next();
+          if (edit_parent.highlight != null && thisone.equals(edit_parent.highlight))
+            g.setColor(Color.green);
+          else
+            g.setColor(Color.red);
           g.fillRect(
               AppPreferences.getScaled(thisone.getXpos(), scale),
               AppPreferences.getScaled(thisone.getYpos(), scale),
