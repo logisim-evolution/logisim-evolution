@@ -28,6 +28,8 @@
 
 package com.cburch.logisim.fpga.fpgagui;
 
+import javax.swing.JProgressBar;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,21 +40,26 @@ public class FPGAReport {
 
   private static final Logger logger = LoggerFactory.getLogger(FPGAReport.class);
   private FPGAReportTabbedPane myCommander = null;
+  private JProgressBar progress = null;
 
   public FPGAReport() {
     if (!Main.headless) {
       /* This should never happen, but just to prevent a crash we initialize
        * myCommander
        */
+      logger.error("BUG: This should never happen");
       myCommander = new FPGAReportTabbedPane(null);
     }
   }
-
-  public FPGAReport(FPGACommanderGui parent) {
+  
+  public FPGAReport(FPGACommanderGui parent, JProgressBar prog) {
     myCommander = parent.getReporterGui();
+    progress = prog;
   }
 
- public void AddErrorIncrement(String Message) {
+  public JProgressBar getProgressBar() { return progress; }
+
+  public void AddErrorIncrement(String Message) {
 	if (Main.headless)
       logger.error(Message);
 	else

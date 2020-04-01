@@ -374,7 +374,7 @@ public class Download extends FPGACommanderBase implements Runnable, WindowListe
         ComponentMapParser cmp =
             new ComponentMapParser(MapFile, MyMappableResources, MyBoardInformation);
         cmp.parseFile();
-      } else return false;
+      }
     }
     if (!MapDesignCheckIOs()) {
       MyReporter.AddError(S.fmt("FPGAMapNotComplete", MyBoardInformation.getBoardName()));

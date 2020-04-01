@@ -351,7 +351,7 @@ public class FPGACommanderGui extends FPGACommanderBase
     CustFreqPannel =
         new CustomFrequencySelDialog(panel, MyBoardInformation.fpga.getClockFrequency());
     AppPreferences.getPrefs().addPreferenceChangeListener(this);
-    MyReporter = new FPGAReport(this);
+    MyReporter = new FPGAReport(this,Progress);
     localeChanged();
   }
 

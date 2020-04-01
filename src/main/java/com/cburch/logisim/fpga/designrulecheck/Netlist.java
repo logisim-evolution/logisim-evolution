@@ -45,17 +45,10 @@ import com.cburch.logisim.comp.EndData;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.fpga.fpgagui.FPGAReport;
-import com.cburch.logisim.fpga.gui.FPGACliGuiFabric;
-import com.cburch.logisim.fpga.gui.IFPGAFrame;
-import com.cburch.logisim.fpga.gui.IFPGAGrid;
-import com.cburch.logisim.fpga.gui.IFPGAGridLayout;
-import com.cburch.logisim.fpga.gui.IFPGALabel;
-import com.cburch.logisim.fpga.gui.IFPGAProgressBar;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceComponent;
 import com.cburch.logisim.instance.StdAttr;
-import com.cburch.logisim.proj.Projects;
 import com.cburch.logisim.std.io.DipSwitch;
 import com.cburch.logisim.std.io.ReptarLocalBus;
 import com.cburch.logisim.std.wiring.Clock;
@@ -63,8 +56,6 @@ import com.cburch.logisim.std.wiring.Pin;
 import com.cburch.logisim.std.wiring.Probe;
 import com.cburch.logisim.std.wiring.Tunnel;
 import java.awt.Color;
-import java.awt.GridBagConstraints;
-import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -72,7 +63,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import javax.swing.JFrame;
+import javax.swing.JProgressBar;
 
 public class Netlist implements CircuitListener {
 
@@ -691,31 +682,19 @@ public class Netlist implements CircuitListener {
   private boolean GenerateNetlist(FPGAReport Reporter, String HDLIdentifier) {
     ArrayList<SimpleDRCContainer> drc = new ArrayList<SimpleDRCContainer>();
     boolean errors = false;
-    IFPGAGrid gbc = FPGACliGuiFabric.getFPGAGrid();
-    IFPGAFrame panel =
-        FPGACliGuiFabric.getFPGAFrame(S.fmt("NetlistLabelString", MyCircuit.getName()));
-    panel.setResizable(false);
-    panel.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-    IFPGAGridLayout thisLayout = FPGACliGuiFabric.getFPGAGridLayout();
-    panel.setLayout(thisLayout);
-    IFPGALabel LocText =
-        FPGACliGuiFabric.getFPGALabel(S.fmt("NetlistInfoString", MyCircuit.getName()));
-    gbc.setGridx(0);
-    gbc.setGridy(1);
-    gbc.setFill(GridBagConstraints.HORIZONTAL);
-    panel.add(LocText, gbc);
-    IFPGAProgressBar progres = FPGACliGuiFabric.getFPGAProgressBar(0, 7);
-    progres.setValue(0);
-    progres.setStringPainted(true);
-    gbc.setGridx(0);
-    gbc.setGridy(2);
-    gbc.setFill(GridBagConstraints.HORIZONTAL);
-    panel.add(progres, gbc);
-    panel.pack();
-    panel.setLocation(Projects.getCenteredLoc(panel.getWidth(), panel.getHeight()));
-    panel.setVisible(true);
-
     CircuitName = MyCircuit.getName();
+    JProgressBar progress = Reporter.getProgressBar();
+    int curMax = 0;
+    int curVal = 0;
+    String curStr = ""; 
+    if (progress != null) {
+      curMax = progress.getMaximum();
+      curVal = progress.getValue();
+      curStr = progress.getString();
+      progress.setMaximum(7);
+      progress.setString(S.fmt("NetListBuild", CircuitName,1));
+    }
+
     wires.clear();
     wires.addAll(MyCircuit.getWires());
     /*
@@ -821,14 +800,12 @@ public class Netlist implements CircuitListener {
       }
     }
     if (errors) {
-      panel.dispose();
       return false;
     }
-    progres.setValue(1);
-    Rectangle ProgRect = progres.getBounds();
-    ProgRect.x = 0;
-    ProgRect.y = 0;
-    progres.paintImmediately(ProgRect);
+    if (progress != null) {
+      progress.setValue(1);
+      progress.setString(S.fmt("NetListBuild", CircuitName,2));
+    }
     /*
      * Now we check if an input pin is connected to an output and in case of
      * a Splitter if it is connected to either of them
@@ -862,15 +839,13 @@ public class Netlist implements CircuitListener {
     }
     if (drc.get(0).DRCInfoPresent()) {
       Reporter.AddError(drc.get(0));
-      panel.dispose();
       return false;
     }
 
-    progres.setValue(2);
-    ProgRect = progres.getBounds();
-    ProgRect.x = 0;
-    ProgRect.y = 0;
-    progres.paintImmediately(ProgRect);
+    if (progress != null) {
+      progress.setValue(2);
+      progress.setString(S.fmt("NetListBuild", CircuitName,3));
+    }
     /*
      * Here we are going to process the tunnels and possible merging of the
      * tunneled nets
@@ -921,14 +896,12 @@ public class Netlist implements CircuitListener {
     }
     if (drc.get(0).DRCInfoPresent()) {
       Reporter.AddError(drc.get(0));
-      panel.dispose();
       return false;
     }
-    progres.setValue(3);
-    ProgRect = progres.getBounds();
-    ProgRect.x = 0;
-    ProgRect.y = 0;
-    progres.paintImmediately(ProgRect);
+    if (progress != null) {
+      progress.setValue(3);
+      progress.setString(S.fmt("NetListBuild", CircuitName,4));
+    }
 
     /* At this point all net segments are build. All tunnels have been removed. There is still the processing of
      * the splitters and the determination of the direction of the nets.
@@ -1028,7 +1001,6 @@ public class Netlist implements CircuitListener {
                       + ":"
                       + Thread.currentThread().getStackTrace()[2].getLineNumber()
                       + "\n");
-              panel.dispose();
               return false;
             } else {
               busnet = CurrentNet;
@@ -1042,7 +1014,6 @@ public class Netlist implements CircuitListener {
                       + ":"
                       + Thread.currentThread().getStackTrace()[2].getLineNumber()
                       + "\n");
-              panel.dispose();
               return false;
             } else {
               connectedNet = CurrentNet;
@@ -1059,7 +1030,6 @@ public class Netlist implements CircuitListener {
                       + ":"
                       + Thread.currentThread().getStackTrace()[2].getLineNumber()
                       + "\n");
-              panel.dispose();
               return false;
             } else {
               MyNets.remove(MyNets.indexOf(connectedNet));
@@ -1084,11 +1054,10 @@ public class Netlist implements CircuitListener {
       }
     }
 
-    progres.setValue(4);
-    ProgRect = progres.getBounds();
-    ProgRect.x = 0;
-    ProgRect.y = 0;
-    progres.paintImmediately(ProgRect);
+    if (progress != null) {
+      progress.setValue(4);
+      progress.setString(S.fmt("NetListBuild", CircuitName,5));
+    }
     /*
      * Finally we have to process the splitters to determine the bus
      * hierarchy (if any)
@@ -1121,7 +1090,6 @@ public class Netlist implements CircuitListener {
                 + Thread.currentThread().getStackTrace()[2].getLineNumber()
                 + "\n");
         this.clear();
-        panel.dispose();
         return false;
       }
       /*
@@ -1184,11 +1152,10 @@ public class Netlist implements CircuitListener {
          Reporter.AddWarning(warn);
       }
     }
-    progres.setValue(5);
-    ProgRect = progres.getBounds();
-    ProgRect.x = 0;
-    ProgRect.y = 0;
-    progres.paintImmediately(ProgRect);
+    if (progress != null) {
+      progress.setValue(5);
+      progress.setString(S.fmt("NetListBuild", CircuitName,6));
+    }
     /*
      * Now the complete netlist is created, we have to check that each
      * net/bus entry has only 1 source and 1 or more sinks. If there exist
@@ -1211,7 +1178,6 @@ public class Netlist implements CircuitListener {
       if (comp.getFactory() instanceof SubcircuitFactory) {
         if (!ProcessSubcircuit(comp, Reporter)) {
           this.clear();
-          panel.dispose();
           return false;
         }
       } else if ((comp.getFactory() instanceof Pin)
@@ -1219,16 +1185,14 @@ public class Netlist implements CircuitListener {
           || (comp.getFactory().getHDLGenerator(HDLIdentifier, comp.getAttributeSet()) != null)) {
         if (!ProcessNormalComponent(comp, Reporter)) {
           this.clear();
-          panel.dispose();
           return false;
         }
       }
     }
-    progres.setValue(6);
-    ProgRect = progres.getBounds();
-    ProgRect.x = 0;
-    ProgRect.y = 0;
-    progres.paintImmediately(ProgRect);
+    if (progress != null) {
+      progress.setValue(6);
+      progress.setString(S.fmt("NetListBuild", CircuitName,7));
+    }
 
     /*
      * Here we are going to process the complex splitters, note that in the
@@ -1267,7 +1231,6 @@ public class Netlist implements CircuitListener {
                       + Thread.currentThread().getStackTrace()[2].getLineNumber()
                       + "\n");
               this.clear();
-              panel.dispose();
               return false;
             }
             for (int endid = 1; endid < ends.size(); endid++) {
@@ -1328,12 +1291,11 @@ public class Netlist implements CircuitListener {
         }
       }
     }
-    progres.setValue(7);
-    ProgRect = progres.getBounds();
-    ProgRect.x = 0;
-    ProgRect.y = 0;
-    progres.paintImmediately(ProgRect);
-    panel.dispose();
+    if (progress != null) {
+      progress.setMaximum(curMax);
+      progress.setValue(curVal);
+      progress.setString(curStr);
+    }
     /* So now we have all information we need! */
     return true;
   }

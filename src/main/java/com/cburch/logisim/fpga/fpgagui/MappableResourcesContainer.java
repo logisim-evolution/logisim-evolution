@@ -96,7 +96,8 @@ public class MappableResourcesContainer {
   }
   
   public void markChanged() {
-    myCircuit.getProject().setForcedDirty();
+	if (myCircuit != null && myCircuit.getProject() != null)
+      myCircuit.getProject().setForcedDirty();
   }
 
   public void BuildIOMappingInformation() {
