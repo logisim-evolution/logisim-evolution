@@ -96,8 +96,7 @@ public class MappableResourcesContainer {
   }
   
   public void markChanged() {
-	if (myCircuit != null && myCircuit.getProject() != null)
-      myCircuit.getProject().setForcedDirty();
+    myCircuit.getProject().setForcedDirty();
   }
 
   public void BuildIOMappingInformation() {
@@ -487,7 +486,6 @@ public class MappableResourcesContainer {
       return;
     }
     MapComp.addMap(DisplayNametoMapName(comp), item, Maptype);
-    markChanged();
     rebuildMappedLists();
   }
 
