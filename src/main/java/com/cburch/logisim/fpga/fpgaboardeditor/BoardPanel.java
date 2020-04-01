@@ -66,9 +66,9 @@ public class BoardPanel extends JPanel implements MouseListener, MouseMotionList
   }
 
   /** */
-  private int image_width = 740;
+  public static int image_width = 740;
 
-  private int image_height = 400;
+  public static int image_height = 400;
   private BufferedImage image;
   private int xs, ys, w, h;
   private Boolean EditMode;
@@ -77,6 +77,9 @@ public class BoardPanel extends JPanel implements MouseListener, MouseMotionList
 
   private BoardDialog edit_parent;
   private float scale = (float) 1.0;
+  private boolean moveMode = false;
+  private boolean resizeMode = false;
+  private int moveX,moveY;
 
   public BoardPanel(BoardDialog parent) {
     xs = ys = w = h = 0;
@@ -166,7 +169,17 @@ public class BoardPanel extends JPanel implements MouseListener, MouseMotionList
   }
 
   public void mouseDragged(MouseEvent e) {
-    if (EditMode && this.ImageLoaded()) {
+    if (moveMode || resizeMode) {
+      int oldMoveX = moveX;
+      int oldMoveY = moveY;
+      moveX = AppPreferences.getDownScaled(e.getX(), scale);
+      moveY = AppPreferences.getDownScaled(e.getY(), scale);
+      if (moveMode) 
+        edit_parent.moveRect(moveX-oldMoveX, moveY-oldMoveY);
+      else
+        edit_parent.resizeRect(moveX-oldMoveX, moveY-oldMoveY);
+      repaint();
+    } else if (EditMode && this.ImageLoaded()) {
       this.set_drag(
           AppPreferences.getDownScaled(e.getX(), scale),
           AppPreferences.getDownScaled(e.getY(), scale));
@@ -178,18 +191,34 @@ public class BoardPanel extends JPanel implements MouseListener, MouseMotionList
 
   public void mouseExited(MouseEvent e) {}
 
-  public void mouseMoved(MouseEvent e) {}
+  public void mouseMoved(MouseEvent e) {
+    if (EditMode && ImageLoaded()) {
+      edit_parent.isDefinedComponent(
+        AppPreferences.getDownScaled(e.getX(), scale),
+        AppPreferences.getDownScaled(e.getY(), scale));
+    }
+  }
 
   public void mousePressed(MouseEvent e) {
-    if (e.getClickCount() > 1) {
-      this.set_start(0, 0);
-      edit_parent.EditDialog(
-          AppPreferences.getDownScaled(e.getX(), scale),
-          AppPreferences.getDownScaled(e.getY(), scale));
-    } else
-      this.set_start(
-          AppPreferences.getDownScaled(e.getX(), scale),
-          AppPreferences.getDownScaled(e.getY(), scale));
+    if (edit_parent.highlight != null) {
+      if (e.getClickCount() > 1) {
+        set_start(0,0);
+        edit_parent.EditDialog();
+        repaint();
+      } else {
+        moveX = AppPreferences.getDownScaled(e.getX(), scale);
+        moveY = AppPreferences.getDownScaled(e.getY(), scale);
+        BoardRectangle rect = new BoardRectangle(
+          edit_parent.highlight.getXpos()+edit_parent.highlight.getWidth()-2,
+          edit_parent.highlight.getYpos()+edit_parent.highlight.getHeight()-2,
+          2,2);
+        resizeMode = rect.PointInside(moveX, moveY);
+        moveMode = !resizeMode;
+        repaint();
+      }
+    } else  this.set_start(
+        AppPreferences.getDownScaled(e.getX(), scale),
+        AppPreferences.getDownScaled(e.getY(), scale));
   }
 
   public void mouseReleased(MouseEvent e) {
@@ -198,6 +227,14 @@ public class BoardPanel extends JPanel implements MouseListener, MouseMotionList
       edit_parent.SelectDialog(rect);
       this.set_start(0, 0);
       this.repaint();
+    }
+    if (resizeMode) {
+      resizeMode = false;
+      repaint();
+    }
+    if (moveMode) {
+      moveMode = false;
+      repaint();
     }
   }
 
@@ -221,9 +258,17 @@ public class BoardPanel extends JPanel implements MouseListener, MouseMotionList
       if (EditMode && (edit_parent.defined_components != null)) {
         LinkedList<BoardRectangle> comps = edit_parent.defined_components;
         Iterator<BoardRectangle> iter = comps.iterator();
-        g.setColor(Color.red);
         while (iter.hasNext()) {
           BoardRectangle thisone = iter.next();
+          if (edit_parent.highlight != null && thisone.equals(edit_parent.highlight)) {
+            if (moveMode)
+              g.setColor(Color.magenta);
+        	else if (resizeMode)
+        	  g.setColor(Color.cyan);
+        	else
+              g.setColor(Color.green);
+          } else
+            g.setColor(Color.red);
           g.fillRect(
               AppPreferences.getScaled(thisone.getXpos(), scale),
               AppPreferences.getScaled(thisone.getYpos(), scale),

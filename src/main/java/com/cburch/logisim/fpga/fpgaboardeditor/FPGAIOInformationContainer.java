@@ -28,30 +28,23 @@
 
 package com.cburch.logisim.fpga.fpgaboardeditor;
 
+import static com.cburch.logisim.fpga.Strings.S;
+
+import com.cburch.logisim.fpga.gui.FPGAIOInformationSettingsDialog;
 import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
 import com.cburch.logisim.fpga.settings.VendorSoftware;
-import com.cburch.logisim.gui.icons.ErrorIcon;
-import com.cburch.logisim.gui.icons.WarningIcon;
-import com.cburch.logisim.proj.Projects;
 import com.cburch.logisim.std.io.DipSwitch;
 import com.cburch.logisim.std.io.PortIO;
 import com.cburch.logisim.std.io.RGBLed;
 import com.cburch.logisim.std.io.ReptarLocalBus;
 import com.cburch.logisim.std.io.SevenSegment;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JTextField;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Attr;
@@ -60,7 +53,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
-public class FPGAIOInformationContainer {
+public class FPGAIOInformationContainer implements Cloneable {
 
   public static enum IOComponentTypes {
     LED,
@@ -72,6 +65,7 @@ public class FPGAIOInformationContainer {
     PortIO,
     LocalBus,
     Bus,
+    Open,
     Unknown;
 
     public static IOComponentTypes getEnumFromString(String str) {
@@ -171,9 +165,12 @@ public class FPGAIOInformationContainer {
 
     private static int nbSwitch = 8;
 
-    private void setNbSwitch(int nb) {
+    public void setNbPins(int nb) {
       nbSwitch = nb;
     }
+    
+    public int getNbPins() { return nbSwitch; }
+    
   }
 
   /*
@@ -202,8 +199,6 @@ public class FPGAIOInformationContainer {
   private char MyDriveStrength;
   private String MyLabel;
 
-  private boolean abort = false;
-
   public FPGAIOInformationContainer() {
     MyType = IOComponentTypes.Unknown;
     MyIdentifier = -1;
@@ -231,10 +226,7 @@ public class FPGAIOInformationContainer {
     MyLabel = null;
     if (rect != null) rect.SetLabel(null);
     if (IOComponentTypes.SimpleInputSet.contains(Type)) {
-      if (MyType.equals(IOComponentTypes.DIPSwitch) || MyType.equals(IOComponentTypes.PortIO)) {
-        GetSizeInformationDialog(parent);
-      }
-      GetSimpleInformationDialog(parent);
+    	FPGAIOInformationSettingsDialog.GetSimpleInformationDialog(parent,this);
       return;
     }
 
@@ -334,7 +326,7 @@ public class FPGAIOInformationContainer {
       return;
     }
     if (MyType.equals(IOComponentTypes.DIPSwitch) || MyType.equals(IOComponentTypes.PortIO)) {
-      MyType.setNbSwitch(NrOfPins);
+      MyType.setNbPins(NrOfPins);
     }
     if (MyType.equals(IOComponentTypes.Pin)) MyActivityLevel = PinActivity.ActiveHigh;
     MyRectangle = new BoardRectangle(x, y, width, height);
@@ -343,10 +335,7 @@ public class FPGAIOInformationContainer {
 
   public void edit(BoardDialog parent) {
     if (!defined()) return;
-    if (MyType.equals(IOComponentTypes.DIPSwitch) || MyType.equals(IOComponentTypes.PortIO)) {
-      GetSizeInformationDialog(parent);
-    }
-    GetSimpleInformationDialog(parent);
+    FPGAIOInformationSettingsDialog.GetSimpleInformationDialog(parent,this);
   }
 
   public Boolean defined() {
@@ -355,6 +344,24 @@ public class FPGAIOInformationContainer {
 
   public char GetActivityLevel() {
     return MyActivityLevel;
+  }
+  
+  public void setActivityLevel(char activity ) {
+    MyActivityLevel = activity;
+  }
+  
+  public Object clone() throws CloneNotSupportedException {
+    return super.clone();
+  }
+  
+  public String getPinLocation(int index) {
+    if (MyPinLocations.containsKey(index))
+      return MyPinLocations.get(index);
+    return "";
+  }
+  
+  public void setPinLocation(int index, String Value) {
+    MyPinLocations.put(index, Value);
   }
 
   private ArrayList<String> GetAlteraPinStrings(String direction, int StartId) {
@@ -372,11 +379,6 @@ public class FPGAIOInformationContainer {
       } else {
         NetName = HDLGeneratorFactory.FPGAOutputPinName + "_" + Integer.toString(StartId + i);
       }
-      // String NetName = (InputPins) ?
-      // HDLGeneratorFactory.FPGAInputPinName + "_" +
-      // Integer.toString(StartId + i)
-      // : HDLGeneratorFactory.FPGAOutputPinName + "_" +
-      // Integer.toString(StartId + i);
       Contents.add("    set_location_assignment " + MyPinLocations.get(i) + " -to " + NetName);
       if (MyPullBehavior == PullBehaviors.PullUp) {
         Contents.add("    set_instance_assignment -name WEAK_PULL_UP_RESISTOR ON -to " + NetName);
@@ -455,9 +457,17 @@ public class FPGAIOInformationContainer {
   public String GetLabel() {
     return MyLabel;
   }
+  
+  public void setLabel(String label) {
+    MyLabel = label;
+  }
 
   public char GetDrive() {
     return MyDriveStrength;
+  }
+  
+  public void setDrive(char drive) {
+    MyDriveStrength = drive;
   }
 
   public long GetId() {
@@ -466,6 +476,10 @@ public class FPGAIOInformationContainer {
 
   public char GetIOStandard() {
     return MyIOStandard;
+  }
+  
+  public void setIOStandard(char IOStandard) {
+    MyIOStandard = IOStandard;
   }
 
   public int getNrOfPins() {
@@ -488,277 +502,53 @@ public class FPGAIOInformationContainer {
   public char GetPullBehavior() {
     return MyPullBehavior;
   }
+  
+  public void setPullBehavior( char pull ) {
+    MyPullBehavior = pull;
+  }
 
   public BoardRectangle GetRectangle() {
     return MyRectangle;
   }
-
-  private void GetSimpleInformationDialog(BoardDialog parent) {
-    int NrOfDevicePins = IOComponentTypes.GetNrOfFPGAPins(MyType);
-    final JDialog selWindow = new JDialog(parent.GetPanel(), MyType + " properties");
-    JComboBox<String> DriveInput = new JComboBox<>(DriveStrength.Behavior_strings);
-    JComboBox<String> PullInput = new JComboBox<>(PullBehaviors.Behavior_strings);
-    JComboBox<String> ActiveInput = new JComboBox<>(PinActivity.Behavior_strings);
-    ActionListener actionListener =
-        new ActionListener() {
-          @Override
-          public void actionPerformed(ActionEvent e) {
-            if (e.getActionCommand().equals("cancel")) {
-              MyType = IOComponentTypes.Unknown;
-              abort = true;
-            }
-            selWindow.setVisible(false);
-          }
-        };
-    GridBagLayout dialogLayout = new GridBagLayout();
-    GridBagConstraints c = new GridBagConstraints();
-    selWindow.setLayout(dialogLayout);
-    c.fill = GridBagConstraints.HORIZONTAL;
-    c.gridy = -1;
-    ArrayList<JTextField> LocInputs = new ArrayList<JTextField>();
-    ArrayList<String> PinLabels;
+  
+  public static ArrayList<String> getPinLabels(FPGAIOInformationContainer info) {
+    IOComponentTypes MyType = info.GetType();
+    int NrOfDevicePins = MyType.getNbPins();
+    ArrayList<String> PinLabels = new ArrayList<String>();
     switch (MyType) {
       case SevenSegment:
-        PinLabels = SevenSegment.GetLabels();
+        PinLabels.addAll(SevenSegment.GetLabels());
         break;
       case RGBLED:
-        PinLabels = RGBLed.GetLabels();
+        PinLabels.addAll(RGBLed.GetLabels());
         break;
       case DIPSwitch:
-        PinLabels = DipSwitch.GetLabels(NrOfDevicePins);
+        PinLabels.addAll(DipSwitch.GetLabels(NrOfDevicePins));
         break;
       case PortIO:
-        PinLabels = PortIO.GetLabels(NrOfDevicePins);
+        PinLabels.addAll(PortIO.GetLabels(NrOfDevicePins));
         break;
       case LocalBus:
-        PinLabels = ReptarLocalBus.GetLabels();
+        PinLabels.addAll(ReptarLocalBus.GetLabels());
         break;
       default:
-        PinLabels = new ArrayList<String>();
         if (NrOfDevicePins == 1) {
-          PinLabels.add("FPGA pin");
+          PinLabels.add(S.get("FpgaIoPin"));
         } else {
           for (int i = 0; i < NrOfDevicePins; i++) {
-            PinLabels.add("pin " + i);
+            PinLabels.add(S.fmt("FpgaIoPins", i));
           }
         }
     }
-    int offset = 0;
-    int oldY = c.gridy;
-    int maxY = -1;
-    for (int i = 0; i < NrOfDevicePins; i++) {
-      if (i % 32 == 0) {
-        offset = (i / 32) * 2;
-        c.gridy = oldY;
-      }
-      JLabel LocText = new JLabel("Specify " + PinLabels.get(i) + " location:");
-      c.gridx = 0 + offset;
-      c.gridy++;
-      selWindow.add(LocText, c);
-      JTextField txt = new JTextField(6);
-      if (defined()) {
-        txt.setText(MyPinLocations.get(i));
-      }
-      LocInputs.add(txt);
-      c.gridx = 1 + offset;
-      selWindow.add(LocInputs.get(i), c);
-      maxY = c.gridy > maxY ? c.gridy : maxY;
-    }
-    c.gridy = maxY;
-
-    JLabel LabText = new JLabel("Optional pin label:");
-    c.gridy++;
-    c.gridx = 0;
-    selWindow.add(LabText, c);
-    JTextField LabelInput = new JTextField(6);
-    c.gridx = 1;
-    selWindow.add(LabelInput, c);
-
-    JLabel StandardText = new JLabel("Specify FPGA pin standard:");
-    c.gridy++;
-    c.gridx = 0;
-    selWindow.add(StandardText, c);
-    JComboBox<String> StandardInput = new JComboBox<>(IoStandards.Behavior_strings);
-    if (defined()) StandardInput.setSelectedIndex(MyIOStandard);
-    else StandardInput.setSelectedIndex(parent.GetDefaultStandard());
-    c.gridx = 1;
-    selWindow.add(StandardInput, c);
-
-    if (IOComponentTypes.OutputComponentSet.contains(MyType)) {
-      JLabel DriveText = new JLabel("Specify FPGA pin drive strength:");
-      c.gridy++;
-      c.gridx = 0;
-      selWindow.add(DriveText, c);
-      if (defined()) DriveInput.setSelectedIndex(MyDriveStrength);
-      else DriveInput.setSelectedIndex(parent.GetDefaultDriveStrength());
-      c.gridx = 1;
-      selWindow.add(DriveInput, c);
-    }
-
-    if (IOComponentTypes.InputComponentSet.contains(MyType)) {
-      JLabel PullText = new JLabel("Specify FPGA pin pull behavior:");
-      c.gridy++;
-      c.gridx = 0;
-      selWindow.add(PullText, c);
-      if (defined()) PullInput.setSelectedIndex(MyPullBehavior);
-      else PullInput.setSelectedIndex(parent.GetDefaultPullSelection());
-      c.gridx = 1;
-      selWindow.add(PullInput, c);
-    }
-
-    if (!IOComponentTypes.InOutComponentSet.contains(MyType)) {
-      JLabel ActiveText = new JLabel("Specify " + MyType + " activity:");
-      c.gridy++;
-      c.gridx = 0;
-      selWindow.add(ActiveText, c);
-      if (defined()) ActiveInput.setSelectedIndex(MyActivityLevel);
-      else ActiveInput.setSelectedIndex(parent.GetDefaultActivity());
-      c.gridx = 1;
-      selWindow.add(ActiveInput, c);
-    }
-
-    JButton OkayButton = new JButton("Done and Store");
-    OkayButton.setActionCommand("done");
-    OkayButton.addActionListener(actionListener);
-    c.gridx = 0;
-    c.gridy++;
-    selWindow.add(OkayButton, c);
-
-    JButton CancelButton = new JButton("Cancel");
-    CancelButton.setActionCommand("cancel");
-    CancelButton.addActionListener(actionListener);
-    c.gridx = 1;
-    selWindow.add(CancelButton, c);
-    selWindow.pack();
-    selWindow.setLocation(Projects.getCenteredLoc(selWindow.getWidth(), selWindow.getHeight()));
-    // PointerInfo mouseloc = MouseInfo.getPointerInfo();
-    // Point mlocation = mouseloc.getLocation();
-    // selWindow.setLocation(mlocation.x, mlocation.y);
-    selWindow.setModal(true);
-    selWindow.setResizable(false);
-    selWindow.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
-    selWindow.setAlwaysOnTop(true);
-    abort = false;
-    while (!abort) {
-      selWindow.setVisible(true);
-      if (!abort) {
-        boolean correct = true;
-        for (int i = 0; i < NrOfDevicePins; i++) {
-          if (LocInputs.get(i).getText().isEmpty()) {
-            correct = false;
-            showDialogNotification(
-                selWindow,
-                "Error",
-                "<html>You have to specify a location for " + PinLabels.get(i) + "!</html>");
-            continue;
-          }
-        }
-        if (correct) {
-          parent.SetDefaultStandard(StandardInput.getSelectedIndex());
-          NrOfPins = NrOfDevicePins;
-          for (int i = 0; i < NrOfDevicePins; i++) {
-            MyPinLocations.put(i, LocInputs.get(i).getText());
-          }
-          if (LabelInput.getText() != null && LabelInput.getText().length() != 0)
-            MyLabel = LabelInput.getText();
-          else MyLabel = null;
-          MyIOStandard = IoStandards.getId(StandardInput.getSelectedItem().toString());
-          if (IOComponentTypes.OutputComponentSet.contains(MyType)) {
-            parent.SetDefaultDriveStrength(DriveInput.getSelectedIndex());
-            MyDriveStrength = DriveStrength.getId(DriveInput.getSelectedItem().toString());
-          }
-          if (IOComponentTypes.InputComponentSet.contains(MyType)) {
-            parent.SetDefaultPullSelection(PullInput.getSelectedIndex());
-            MyPullBehavior = PullBehaviors.getId(PullInput.getSelectedItem().toString());
-          }
-          if (!IOComponentTypes.InOutComponentSet.contains(MyType)) {
-            parent.SetDefaultActivity(ActiveInput.getSelectedIndex());
-            MyActivityLevel = PinActivity.getId(ActiveInput.getSelectedItem().toString());
-          }
-          abort = true;
-        }
-      }
-    }
-    selWindow.dispose();
+    return PinLabels;
   }
-
-  @SuppressWarnings({"rawtypes", "unchecked"})
-  private void GetSizeInformationDialog(BoardDialog parent) {
-    int NrOfDevicePins = IOComponentTypes.GetNrOfFPGAPins(MyType);
-    int min = 1;
-    int max = 1;
-    String text = "null";
-
-    switch (MyType) {
-      case DIPSwitch:
-        min = DipSwitch.MIN_SWITCH;
-        max = DipSwitch.MAX_SWITCH;
-        text = "switch";
-        break;
-      case PortIO:
-        min = PortIO.MIN_IO;
-        max = PortIO.MAX_IO;
-        text = "pins";
-        break;
-      default:
-        break;
-    }
-
-    final JDialog selWindow = new JDialog(parent.GetPanel(), MyType + " number of " + text);
-    ActionListener actionListener =
-        new ActionListener() {
-          @Override
-          public void actionPerformed(ActionEvent e) {
-            if (e.getActionCommand().equals("next")) {
-              MyType.setNbSwitch(
-                  Integer.valueOf(
-                      ((JComboBox) (selWindow.getContentPane().getComponents()[1]))
-                          .getSelectedItem()
-                          .toString()));
-              // setNrOfPins(Integer.valueOf(((JComboBox)(selWindow.getContentPane().getComponents()[1])).getSelectedItem().toString()));
-              selWindow.dispose();
-            }
-            selWindow.setVisible(false);
-          }
-        };
-
-    JComboBox size = new JComboBox<>();
-    for (int i = min; i <= max; i++) {
-      size.addItem(i);
-    }
-    size.setSelectedItem(NrOfDevicePins);
-    GridBagLayout dialogLayout = new GridBagLayout();
-    GridBagConstraints c = new GridBagConstraints();
-    selWindow.setLayout(dialogLayout);
-    c.fill = GridBagConstraints.HORIZONTAL;
-
-    JLabel sizeText = new JLabel("Specify number of " + text + ": ");
-    c.gridx = 0;
-    c.gridy = 0;
-    selWindow.add(sizeText, c);
-
-    c.gridx = 1;
-    selWindow.add(size, c);
-
-    JButton nextButton = new JButton("Next");
-    nextButton.setActionCommand("next");
-    nextButton.addActionListener(actionListener);
-    c.gridy++;
-    selWindow.add(nextButton, c);
-    selWindow.pack();
-    selWindow.setLocation(Projects.getCenteredLoc(selWindow.getWidth(), selWindow.getHeight()));
-    // PointerInfo mouseloc = MouseInfo.getPointerInfo();
-    // Point mlocation = mouseloc.getLocation();
-    // selWindow.setLocation(mlocation.x, mlocation.y);
-    selWindow.setModal(true);
-    selWindow.setResizable(false);
-    selWindow.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
-    selWindow.setAlwaysOnTop(true);
-    selWindow.setVisible(true);
-  }
-
+  
   public IOComponentTypes GetType() {
     return MyType;
+  }
+  
+  public void setType(IOComponentTypes type) {
+    MyType = type;
   }
 
   private ArrayList<String> GetXilinxUCFStrings(String direction, int StartId) {
@@ -824,11 +614,6 @@ public class FPGAIOInformationContainer {
         NetName =
             HDLGeneratorFactory.FPGAOutputPinName + "_" + Integer.toString(StartId + i - start);
       }
-      // String NetName = (InputPins) ?
-      // HDLGeneratorFactory.FPGAInputPinName + "_" +
-      // Integer.toString(StartId + i)
-      // : HDLGeneratorFactory.FPGAOutputPinName + "_" +
-      // Integer.toString(StartId + i);
       Contents.add("NET \"" + NetName + "\" " + Temp.toString());
     }
     return Contents;
@@ -912,49 +697,7 @@ public class FPGAIOInformationContainer {
   }
 
   public void setNrOfPins(int count) {
-    if (GetType().equals(IOComponentTypes.DIPSwitch) || GetType().equals(IOComponentTypes.PortIO)) {
-      NrOfPins = count;
-    }
+    NrOfPins = count;
   }
 
-  private void showDialogNotification(JDialog parent, String type, String string) {
-    final JDialog dialog = new JDialog(parent, type);
-    JLabel pic = new JLabel();
-    if (type.equals("Warning")) {
-      pic.setIcon(new WarningIcon());
-    } else {
-      pic.setIcon(new ErrorIcon());
-    }
-    GridBagLayout dialogLayout = new GridBagLayout();
-    dialog.setLayout(dialogLayout);
-    GridBagConstraints c = new GridBagConstraints();
-    JLabel message = new JLabel(string);
-    JButton close = new JButton("close");
-    ActionListener actionListener =
-        new ActionListener() {
-          @Override
-          public void actionPerformed(ActionEvent e) {
-            // panel.setAlwaysOnTop(true);
-            dialog.dispose();
-          }
-        };
-    close.addActionListener(actionListener);
-
-    c.gridx = 0;
-    c.gridy = 0;
-    c.ipadx = 20;
-    dialog.add(pic, c);
-
-    c.gridx = 1;
-    c.gridy = 0;
-    dialog.add(message, c);
-
-    c.gridx = 1;
-    c.gridy = 1;
-    dialog.add(close, c);
-    dialog.pack();
-    dialog.setLocationRelativeTo(parent);
-    dialog.setAlwaysOnTop(true);
-    dialog.setVisible(true);
-  }
 }
