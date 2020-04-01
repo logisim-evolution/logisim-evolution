@@ -31,48 +31,98 @@ package com.cburch.logisim.fpga.fpgagui;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/* TODO: Add FPGA-REPORTER to console or log file */
-public abstract class FPGAReport {
+import com.cburch.logisim.Main;
+import com.cburch.logisim.fpga.designrulecheck.SimpleDRCContainer;
 
-  static final Logger logger = LoggerFactory.getLogger(FPGAReport.class);
+public class FPGAReport {
 
-  public FPGAReport() {}
+  private static final Logger logger = LoggerFactory.getLogger(FPGAReport.class);
+  private FPGAReportTabbedPane myCommander = null;
 
-  public void AddErrorIncrement(String Message) {
-    logger.error(Message);
+  public FPGAReport() {
+    if (!Main.headless) {
+      /* This should never happen, but just to prevent a crash we initialize
+       * myCommander
+       */
+      myCommander = new FPGAReportTabbedPane(null);
+    }
+  }
+
+  public FPGAReport(FPGACommanderGui parent) {
+    myCommander = parent.getReporterGui();
+  }
+
+ public void AddErrorIncrement(String Message) {
+	if (Main.headless)
+      logger.error(Message);
+	else
+      myCommander.AddErrors(new SimpleDRCContainer(Message, SimpleDRCContainer.LEVEL_NORMAL, true));
   }
 
   public void AddError(Object Message) {
-    if (Message instanceof String) logger.error((String) Message);
+    if (Main.headless) {
+      if (Message instanceof String) logger.error((String) Message);
+    } else {
+      if (Message instanceof String)
+        myCommander.AddErrors(new SimpleDRCContainer(Message, SimpleDRCContainer.LEVEL_NORMAL));
+      else myCommander.AddErrors(Message);
+    }
   }
 
   public void AddFatalError(String Message) {
-    logger.error(Message);
+    if (Main.headless)
+      logger.error(Message);
+    else
+      myCommander.AddErrors(new SimpleDRCContainer(Message, SimpleDRCContainer.LEVEL_FATAL));
   }
 
   public void AddSevereError(String Message) {
-    logger.warn(Message);
+    if (Main.headless)
+      logger.error(Message);
+    else
+      myCommander.AddErrors(new SimpleDRCContainer(Message, SimpleDRCContainer.LEVEL_SEVERE));
   }
 
   public void AddInfo(String Message) {
-    logger.info(Message);
+    if (Main.headless)
+      logger.info(Message);
+    else
+      myCommander.AddInfo(Message);
   }
 
   public void AddSevereWarning(String Message) {
-    logger.error(Message);
+    if (Main.headless)
+      logger.warn(Message);
+    else
+      myCommander.AddWarning(new SimpleDRCContainer(Message, SimpleDRCContainer.LEVEL_SEVERE));
   }
 
   public void AddWarningIncrement(String Message) {
-    logger.warn(Message);
+    if (Main.headless)
+      logger.warn(Message);
+    else
+      myCommander.AddWarning(new SimpleDRCContainer(Message, SimpleDRCContainer.LEVEL_NORMAL, true));
   }
 
   public void AddWarning(Object Message) {
-    if (Message instanceof String) logger.warn((String) Message);
+    if (Main.headless) {
+      if (Message instanceof String) logger.warn((String) Message);
+    } else {
+      if (Message instanceof String)
+        myCommander.AddWarning(new SimpleDRCContainer(Message, SimpleDRCContainer.LEVEL_NORMAL));
+      else myCommander.AddWarning(Message);
+    }
   }
 
-  public void ClsScr() {}
+  public void ClsScr() {
+    if (!Main.headless)
+      myCommander.ClearConsole();
+  }
 
   public void print(String Message) {
-    logger.info(Message);
+    if (Main.headless)
+      logger.info(Message);
+    else
+      myCommander.AddConsole(Message);
   }
 }

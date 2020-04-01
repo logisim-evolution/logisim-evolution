@@ -351,7 +351,7 @@ public class FPGACommanderGui extends FPGACommanderBase
     CustFreqPannel =
         new CustomFrequencySelDialog(panel, MyBoardInformation.fpga.getClockFrequency());
     AppPreferences.getPrefs().addPreferenceChangeListener(this);
-    MyReporter = new FPGAReportGui(this);
+    MyReporter = new FPGAReport(this);
     localeChanged();
   }
 
@@ -398,6 +398,7 @@ public class FPGACommanderGui extends FPGACommanderBase
               "",
               writeToFlash.isSelected(),
               skipHDL.isSelected(),
+              false, //TODO HDL-only
               Progress);
       Downloader.AddListener(this);
       Downloader.DoDownload();

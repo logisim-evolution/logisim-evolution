@@ -124,6 +124,7 @@ public class Startup implements AWTEventListener {
     for (int i = 0; i < args.length; i++) {
       if (args[i].equals("-tty")) {
         isTty = true;
+        Main.headless = true;
       } else if (args[i].equals("-clearprefs") || args[i].equals("-clearprops")) {
         isClearPreferences = true;
       }
@@ -358,10 +359,12 @@ public class Startup implements AWTEventListener {
         ret.testCircuitImpPath = args[i];
         i++;
         if (i >= args.length) printUsage();
-
-        ret.testCircuitImpMapFile = args[i];
-        i++;
-        if (i >= args.length) printUsage();
+        
+        if (args[i].toUpperCase().endsWith("MAP.xml")) {
+          ret.testCircuitImpMapFile = args[i];
+          i++;
+          if (i >= args.length) printUsage();
+        }
 
         ret.testCircuitImpName = args[i];
         i++;
@@ -371,13 +374,26 @@ public class Startup implements AWTEventListener {
         ret.testCircuitImpBoard = args[i];
         i++;
         if (i < args.length) {
-          if (!args[i].startsWith("-")) ret.testTickFrequency = (double) Integer.valueOf(args[i]);
-          else i--;
+          if (!args[i].startsWith("-")) {
+            try {
+              int freq = Integer.parseUnsignedInt(args[i]);
+              ret.testTickFrequency = (double) freq;
+              i++;
+            } catch (NumberFormatException e) {}
+            if (i < args.length) {
+              if (!args[i].startsWith("-")) {
+                if (args[i].toUpperCase().equals("HDLONLY"))
+                  ret.testCircuitHdlOnly = true;
+                else printUsage();
+              } else i--;
+            }
+          } else i--;
         }
 
         ret.filesToOpen.add(new File(ret.testCircuitImpPath));
         ret.showSplash = false;
         ret.exitAfterStartup = true;
+        Main.headless = true;
       } else if (arg.equals("-test-circuit")) {
         // already handled above
         i++;
@@ -534,6 +550,8 @@ public class Startup implements AWTEventListener {
   private String testCircuitImpBoard = null;
   /* Path folder containing Map file */
   private String testCircuitImpMapFile = null;
+  /* Indicate if only the HDL should be generated */
+  private Boolean testCircuitHdlOnly = false;
 
   /* Testing Xml (circ file) Variable */
   private String testCircPathInput = null;
@@ -973,7 +991,8 @@ public class Startup implements AWTEventListener {
                     testCircuitImpMapFile,
                     testCircuitImpName,
                     testCircuitImpBoard,
-                    testTickFrequency);
+                    testTickFrequency,
+                    testCircuitHdlOnly);
 
             if (testImpFpga.StartTests()) {
               System.exit(0);

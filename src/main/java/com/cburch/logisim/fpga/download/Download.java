@@ -30,6 +30,7 @@ package com.cburch.logisim.fpga.download;
 
 import static com.cburch.logisim.fpga.Strings.S;
 
+import com.cburch.logisim.Main;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.fpga.fpgaboardeditor.BoardInformation;
 import com.cburch.logisim.fpga.fpgagui.ComponentMapDialog;
@@ -60,6 +61,7 @@ public class Download extends FPGACommanderBase implements Runnable, WindowListe
 
   private boolean DownloadBitstream;
   private boolean DownloadOnly;
+  private boolean HdlOnly;
   private char Vendor;
   private boolean UseGui;
   private JProgressBar MyProgress;
@@ -85,10 +87,11 @@ public class Download extends FPGACommanderBase implements Runnable, WindowListe
 	      String MapFileName,
 	      boolean writeToFlash,
 	      boolean DownloadOnly,
+	      boolean gegerateHdlOnly,
 	      JProgressBar Progress) {
     MyProgress = Progress;
     SetUpDownload(MyProject, TopLevelSheet, TickFrequency, MyReporter,
-       MyBoardInformation, MapFileName, writeToFlash, DownloadOnly, true);  
+       MyBoardInformation, MapFileName, writeToFlash, DownloadOnly,gegerateHdlOnly);  
   }
 
   public Download(
@@ -100,9 +103,9 @@ public class Download extends FPGACommanderBase implements Runnable, WindowListe
       String MapFileName,
       boolean writeToFlash,
       boolean DownloadOnly,
-      boolean UseGui) {
+      boolean gegerateHdlOnly) {
     SetUpDownload(MyProject, TopLevelSheet, TickFrequency, MyReporter,
-        MyBoardInformation, MapFileName, writeToFlash, DownloadOnly, UseGui);  
+        MyBoardInformation, MapFileName, writeToFlash, DownloadOnly,gegerateHdlOnly);  
   }
   
   private void SetUpDownload(
@@ -114,17 +117,18 @@ public class Download extends FPGACommanderBase implements Runnable, WindowListe
       String MapFileName,
       boolean writeToFlash,
       boolean DownloadOnly,
-      boolean UseGui) {
+      boolean gegerateHdlOnly) {
     this.MyProject = MyProject;
     this.MyReporter = MyReporter;
     this.MyBoardInformation = MyBoardInformation;
     this.DownloadBitstream = AppPreferences.DownloadToBoard.get();
     this.DownloadOnly = DownloadOnly;
     this.Vendor = MyBoardInformation.fpga.getVendor();
-    this.UseGui = UseGui;
+    this.UseGui = !Main.headless;
     this.TopLevelSheet = TopLevelSheet;
     this.TickFrequency = TickFrequency;
     this.MapFileName = MapFileName;
+    this.HdlOnly = gegerateHdlOnly;
     Circuit RootSheet = MyProject.getLogisimFile().getCircuit(TopLevelSheet);
     int steps = BasicSteps;
     switch (Vendor) {
@@ -220,6 +224,7 @@ public class Download extends FPGACommanderBase implements Runnable, WindowListe
 
   public boolean runtty() {
     if (!PrepareDownLoad()) return false;
+    if (HdlOnly) return true;
     if (!VendorSoftwarePresent()) return true;
     if (!AppPreferences.DownloadToBoard.get()) return true;
     try {
@@ -336,14 +341,6 @@ public class Download extends FPGACommanderBase implements Runnable, WindowListe
       MyReporter.AddFatalError(S.fmt("FPGANameContainsSpaces", Name));
       return false;
     }
-    /* Is this test really required...... */
-    //		if (MyProject.getLogisimFile().getLoader().getMainFile() != null) {
-    //			String Dir = MyProject.getLogisimFile().getLoader().getMainFile().toString();
-    //			if (Dir.contains(" ")) {
-    //				MyReporter.AddFatalError(S.fmt("FPGADirContainsSpaces", Dir));
-    //				return false;
-    //			}
-    //		}
     /* Stage 1 Is design map able on Board */
     if (UseGui) {
       MyProgress.setValue(1);
