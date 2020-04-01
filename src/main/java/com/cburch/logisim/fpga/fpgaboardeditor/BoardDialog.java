@@ -30,6 +30,7 @@ package com.cburch.logisim.fpga.fpgaboardeditor;
 
 import static com.cburch.logisim.fpga.Strings.S;
 
+import com.cburch.draw.shapes.Rectangle;
 import com.cburch.logisim.fpga.fpgaboardeditor.FPGAIOInformationContainer.IOComponentTypes;
 import com.cburch.logisim.fpga.settings.VendorSoftware;
 import com.cburch.logisim.gui.icons.ErrorIcon;
@@ -272,7 +273,7 @@ public class BoardDialog implements ActionListener, ComponentListener, LocaleLis
   }
   
   private void UpdateInfo(BoardReaderClass reader) {
-defined_components.clear();
+    defined_components.clear();
     TheBoard = reader.GetBoardInformation();
     picturepanel.SetImage(TheBoard.GetImage());
     for (FPGAIOInformationContainer comp : TheBoard.GetAllComponents())
@@ -728,11 +729,52 @@ defined_components.clear();
     if (highlight == null) return;
     FPGAIOInformationContainer comp = TheBoard.GetComponent(highlight);
     if (!comp.IsKnownComponent()) return;
-	try {
+    try {
       FPGAIOInformationContainer edit = (FPGAIOInformationContainer) comp.clone();
       edit.edit(this);
       if (edit.IsKnownComponent()) TheBoard.ReplaceComponent(comp, edit);
     } catch (CloneNotSupportedException e) {}
+  }
+  
+  public void resizeRect(int deltax , int deltay) {
+    if (highlight == null || (deltax == 0 && deltay == 0)) return;
+    Rectangle update = new Rectangle(highlight.getXpos(),
+                                     highlight.getYpos(),
+                                     highlight.getWidth()+deltax,
+                                     highlight.getHeight()+deltay);
+    Boolean overlap = false;
+    for (BoardRectangle test : defined_components)
+      if (!test.equals(highlight)) overlap |= test.Overlap(update);
+    if (overlap) return;
+    if (update.getWidth() < 4) return;
+    if (update.getHeight() < 4) return;
+    if ((update.getX()+update.getWidth()) >= BoardPanel.image_width) return;
+    if ((update.getY()+update.getHeight()) >= BoardPanel.image_height) return;
+    highlight.updateRectangle(update);
+  }
+  
+  public void moveRect(int deltax , int deltay) {
+    if (highlight == null || (deltax == 0 && deltay == 0)) return;
+    Rectangle update = new Rectangle(highlight.getXpos()+deltax,
+                                     highlight.getYpos()+deltay,
+                                     highlight.getWidth(),
+                                     highlight.getHeight());
+    Boolean overlap = false;
+    for (BoardRectangle test : defined_components)
+      if (!test.equals(highlight)) overlap |= test.Overlap(update);
+    if (overlap) return;
+    if (update.getX() < 0) return;
+    if (update.getY() < 0) return;
+    if ((update.getX()+update.getWidth()) >= BoardPanel.image_width) return;
+    if ((update.getY()+update.getHeight()) >= BoardPanel.image_height) return;
+    highlight.updateRectangle(update);
+  }
+  
+  public boolean hasOverlap(BoardRectangle orig , BoardRectangle update) {
+    boolean overlap = false;
+    for (BoardRectangle test : defined_components)
+        if (!test.equals(orig)) overlap |= test.Overlap(update);
+    return overlap;
   }
 
   public void SelectDialog(BoardRectangle rect) {
