@@ -486,7 +486,6 @@ public class MappableResourcesContainer {
       return;
     }
     MapComp.addMap(DisplayNametoMapName(comp), item, Maptype);
-    markChanged();
     rebuildMappedLists();
   }
 

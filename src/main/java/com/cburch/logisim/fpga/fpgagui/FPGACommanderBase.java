@@ -74,10 +74,6 @@ public abstract class FPGACommanderBase {
         VendorSoftware.GetToolPath(MyBoardInformation.fpga.getVendor()));
   }
 
-  protected boolean GenerateHDLOnlySelected() {
-    return !AppPreferences.DownloadToBoard.get();
-  }
-
   protected boolean MapDesign(String CircuitName) {
     LogisimFile myfile = MyProject.getLogisimFile();
     Circuit RootSheet = myfile.getCircuit(CircuitName);

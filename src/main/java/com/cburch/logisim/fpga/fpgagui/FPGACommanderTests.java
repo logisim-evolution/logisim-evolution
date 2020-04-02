@@ -38,10 +38,11 @@ public class FPGACommanderTests extends FPGACommanderBase {
   private String circuitPathMap = null;
   private boolean writeToFlash = false;
   private double TickFrequency;
+  private boolean HDLOnly = false;
 
   public FPGACommanderTests(
-      Project project, String pathMap, String circuit, String boardName, double frequency) {
-    MyReporter = new FPGAReportNoGui();
+      Project project, String pathMap, String circuit, String boardName, double frequency, boolean HDLOnly) {
+    MyReporter = new FPGAReport();
     MyProject = project;
     circuitTestName = circuit;
     circuitPathMap = pathMap;
@@ -50,6 +51,7 @@ public class FPGACommanderTests extends FPGACommanderBase {
         new BoardReaderClass("url:resources/logisim/boards/" + boardName + ".xml")
             .GetBoardInformation();
     MyBoardInformation.setBoardName(boardName);
+    this.HDLOnly = HDLOnly;
   }
 
   public boolean StartTests() {
@@ -63,7 +65,7 @@ public class FPGACommanderTests extends FPGACommanderBase {
             circuitPathMap,
             writeToFlash,
             false,
-            false);
+            HDLOnly);
     return Downloader.runtty();
   }
 }

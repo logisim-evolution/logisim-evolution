@@ -699,12 +699,14 @@ public class ComponentMapDialog implements ActionListener, ListSelectionListener
       String key = UnmappedList.getSelectedValue().toString();
       if (HighlightItem != null) {
         MappableComponents.Map(key, HighlightItem, BoardInfo.GetComponentType(HighlightItem));
+        MappableComponents.markChanged();
         RebuildSelectionLists();
       }
     } else if (MappedList.getSelectedIndex() >= 0) {
       String key = MappedList.getSelectedValue().toString();
       if (HighlightItem != null) {
         MappableComponents.Map(key, HighlightItem, BoardInfo.GetComponentType(HighlightItem));
+        MappableComponents.markChanged();
       }
     }
     ClearSelections();
