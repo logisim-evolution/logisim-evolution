@@ -496,8 +496,6 @@ public class AppPreferences {
               "afterAdd",
               new String[] {HDLGeneratorFactory.VHDL, HDLGeneratorFactory.VERILOG},
               HDLGeneratorFactory.VHDL));
-  public static final PrefMonitor<Boolean> DownloadToBoard =
-      create(new PrefMonitorBoolean("DownloadToBoard", true));
   public static final PrefMonitor<String> SelectedBoard =
       create(new PrefMonitorString("SelectedBoard", null));
 

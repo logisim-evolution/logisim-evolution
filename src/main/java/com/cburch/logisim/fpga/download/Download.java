@@ -59,7 +59,6 @@ public class Download extends FPGACommanderBase implements Runnable, WindowListe
 
   private boolean StopRequested = false;
 
-  private boolean DownloadBitstream;
   private boolean DownloadOnly;
   private boolean HdlOnly;
   private char Vendor;
@@ -121,7 +120,6 @@ public class Download extends FPGACommanderBase implements Runnable, WindowListe
     this.MyProject = MyProject;
     this.MyReporter = MyReporter;
     this.MyBoardInformation = MyBoardInformation;
-    this.DownloadBitstream = AppPreferences.DownloadToBoard.get();
     this.DownloadOnly = DownloadOnly;
     this.Vendor = MyBoardInformation.fpga.getVendor();
     this.UseGui = !Main.headless;
@@ -208,7 +206,7 @@ public class Download extends FPGACommanderBase implements Runnable, WindowListe
 
   @Override
   public void run() {
-    if (PrepareDownLoad() && VendorSoftwarePresent() && AppPreferences.DownloadToBoard.get()) {
+    if (PrepareDownLoad() && VendorSoftwarePresent() && !HdlOnly) {
       try {
         String error = download();
         if (error != null) MyReporter.AddFatalError(error);
@@ -226,7 +224,6 @@ public class Download extends FPGACommanderBase implements Runnable, WindowListe
     if (!PrepareDownLoad()) return false;
     if (HdlOnly) return true;
     if (!VendorSoftwarePresent()) return true;
-    if (!AppPreferences.DownloadToBoard.get()) return true;
     try {
       String error = download();
       if (error != null) {
@@ -258,7 +255,7 @@ public class Download extends FPGACommanderBase implements Runnable, WindowListe
       }
     }
     if (UseGui) MyProgress.setValue(Downloader.GetNumberOfStages() + BasicSteps - 1);
-    if (!DownloadBitstream) return null;
+    if (HdlOnly) return null;
     if (StopRequested) return S.get("FPGAInterrupted");
     Object[] options = {S.get("FPGADownloadOk"), S.get("FPGADownloadCancel")};
     if (UseGui)
@@ -326,11 +323,7 @@ public class Download extends FPGACommanderBase implements Runnable, WindowListe
   }
 
   private boolean PrepareDownLoad() {
-    if (!AppPreferences.DownloadToBoard.get() && DownloadOnly) {
-      MyReporter.AddError(S.get("FPGASettingSkipGenerateInvalid"));
-      return false;
-    }
-    if (DownloadOnly) return true;
+    if (DownloadOnly && Downloader.readyForDownload()) return true;
     /* Stage 0 DRC */
     if (UseGui) MyProgress.setString(S.get("FPGAState0"));
     if (!performDRC(TopLevelSheet, AppPreferences.HDL_Type.get())) {

@@ -30,18 +30,22 @@ package com.cburch.logisim.gui.prefs;
 
 import static com.cburch.logisim.gui.Strings.S;
 
-import com.cburch.logisim.fpga.fpgagui.FPGACommanderGui;
 import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
 import com.cburch.logisim.prefs.AppPreferences;
+
+import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
 @SuppressWarnings("serial")
@@ -54,7 +58,7 @@ public class FPGAOptions extends OptionsPanel {
       Object source = ae.getSource();
 
       if (source == WorkSpaceButton) {
-        FPGACommanderGui.selectWorkSpace(frame);
+        selectWorkSpace(frame);
       }
     }
 
@@ -74,7 +78,6 @@ public class FPGAOptions extends OptionsPanel {
   private JButton WorkSpaceButton;
   private PreferencesFrame frame;
   private PrefOptionList HDL_Used;
-  private PrefBoolean Download;
 
   public FPGAOptions(PreferencesFrame frame) {
     super(frame);
@@ -96,7 +99,6 @@ public class FPGAOptions extends OptionsPanel {
               new PrefOption(HDLGeneratorFactory.VHDL, S.getter("VHDL")),
               new PrefOption(HDLGeneratorFactory.VERILOG, S.getter("Verilog"))
             });
-    Download = new PrefBoolean(AppPreferences.DownloadToBoard, S.getter("FPGADownload"));
 
     GridBagLayout layout = new GridBagLayout();
     GridBagConstraints c = new GridBagConstraints();
@@ -126,10 +128,6 @@ public class FPGAOptions extends OptionsPanel {
     c.gridwidth = 1;
     add(HDL_Used.getJComboBox(), c);
     c.gridx = 0;
-    c.gridy = 2;
-    c.gridwidth = 3;
-    add(Download, c);
-    c.gridx = 0;
     c.gridy = 3;
     c.gridwidth = 3;
     add(AppPreferences.Boards.AddRemovePanel(), c);
@@ -150,4 +148,35 @@ public class FPGAOptions extends OptionsPanel {
     WorkspaceLabel.setText(S.get("FPGAWorkSpace"));
     WorkSpaceButton.setText(S.get("Browse"));
   }
+  
+  private void selectWorkSpace(Component parentComponent) {
+    JFileChooser fc = new JFileChooser(AppPreferences.FPGA_Workspace.get());
+    fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+    File test = new File(AppPreferences.FPGA_Workspace.get());
+    if (test.exists()) {
+      fc.setSelectedFile(test);
+    }
+    fc.setDialogTitle(S.get("FpgaGuiWorkspacePath"));
+    boolean ValidWorkpath = false;
+    while (!ValidWorkpath) {
+      int retval = fc.showOpenDialog(null);
+      if (retval != JFileChooser.APPROVE_OPTION) return;
+      if (fc.getSelectedFile().getAbsolutePath().contains(" ")) {
+        JOptionPane.showMessageDialog(
+            parentComponent,
+            S.get("FpgaGuiWorkspaceError"),
+            S.get("FpgaGuiWorkspacePath"),
+            JOptionPane.ERROR_MESSAGE);
+      } else {
+        ValidWorkpath = true;
+      }
+    }
+    File file = fc.getSelectedFile();
+    if (file.getPath().endsWith(File.separator)) {
+      AppPreferences.FPGA_Workspace.set(file.getPath());
+    } else {
+      AppPreferences.FPGA_Workspace.set(file.getPath() + File.separator);
+    }
+  }
+
 }
