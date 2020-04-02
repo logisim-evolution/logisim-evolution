@@ -178,8 +178,9 @@ public class FPGAClockPanel extends JPanel implements ActionListener,LocaleListe
     double divider = FPGAClockFrequency/freq;
     long longDivider = (long) divider;
     if (longDivider <= 1) longDivider = 2;
+    if ((longDivider&1) != 0) longDivider++;
     double corfreq = FPGAClockFrequency/longDivider;
-    this.divider.setText(Long.toString((longDivider+1)>>1));
+    this.divider.setText(Long.toString((longDivider)>>1));
     setSelectedFrequency(corfreq);
   }
   
