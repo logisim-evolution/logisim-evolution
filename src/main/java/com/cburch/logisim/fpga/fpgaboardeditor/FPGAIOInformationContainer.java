@@ -198,6 +198,7 @@ public class FPGAIOInformationContainer implements Cloneable {
   private char MyIOStandard;
   private char MyDriveStrength;
   private String MyLabel;
+  private boolean toBeDeleted = false;
 
   public FPGAIOInformationContainer() {
     MyType = IOComponentTypes.Unknown;
@@ -226,7 +227,7 @@ public class FPGAIOInformationContainer implements Cloneable {
     MyLabel = null;
     if (rect != null) rect.SetLabel(null);
     if (IOComponentTypes.SimpleInputSet.contains(Type)) {
-    	FPGAIOInformationSettingsDialog.GetSimpleInformationDialog(parent,this);
+    	FPGAIOInformationSettingsDialog.GetSimpleInformationDialog(false,parent,this);
       return;
     }
 
@@ -333,10 +334,13 @@ public class FPGAIOInformationContainer implements Cloneable {
     if (MyLabel != null) MyRectangle.SetLabel(MyLabel);
   }
 
-  public void edit(BoardDialog parent) {
+  public void edit(Boolean deleteButton, BoardDialog parent) {
     if (!defined()) return;
-    FPGAIOInformationSettingsDialog.GetSimpleInformationDialog(parent,this);
+    FPGAIOInformationSettingsDialog.GetSimpleInformationDialog(deleteButton,parent,this);
   }
+  
+  public void setToBeDeleted() { toBeDeleted = true; }
+  public boolean isToBeDeleted() { return toBeDeleted; }
 
   public Boolean defined() {
     return MyIdentifier != -1;

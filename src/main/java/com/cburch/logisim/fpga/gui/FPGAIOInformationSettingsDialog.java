@@ -156,7 +156,7 @@ public class FPGAIOInformationSettingsDialog {
     dialog.setVisible(true);
   }
 
-  public static void GetSimpleInformationDialog(BoardDialog parent, FPGAIOInformationContainer info) {
+  public static void GetSimpleInformationDialog(Boolean deleteButton, BoardDialog parent, FPGAIOInformationContainer info) {
     IOComponentTypes MyType = info.GetType();
     BoardRectangle MyRectangle = info.GetRectangle();
     MyType.setNbPins(info.getNrOfPins() == 0 ? IOComponentTypes.GetNrOfFPGAPins(MyType) : info.getNrOfPins());
@@ -174,17 +174,19 @@ public class FPGAIOInformationSettingsDialog {
         new ActionListener() {
           @Override
           public void actionPerformed(ActionEvent e) {
-        if (e.getActionCommand().equals("size")) {
+            if (e.getActionCommand().equals("size")) {
               int nr = (int) size.getSelectedItem();
               MyType.setNbPins(nr);
               buildPinTable(info,pinPanel,LocInputs,PinLabels);
               selWindow.pack();
               return;
-        }
-            if (e.getActionCommand().equals("cancel")) {
+            } else  if (e.getActionCommand().equals("cancel")) {
               info.setType(IOComponentTypes.Unknown);
-            } 
+            } else if (e.getActionCommand().equals("delete")) {
+              info.setToBeDeleted();
+            }
             selWindow.setVisible(false);
+            selWindow.dispose();
           }
         };
     selWindow.setLayout(new GridBagLayout());
@@ -302,7 +304,17 @@ public class FPGAIOInformationSettingsDialog {
       c.gridx = 1;
       selWindow.add(ActiveInput, c);
     }
-
+    if (deleteButton) {
+      JButton delButton = new JButton();
+      delButton.setActionCommand("delete");
+      delButton.addActionListener(actionListener);
+      delButton.setText(S.get("FpgaIoDelete"));
+      c.gridwidth = 2;
+      c.gridx = 0;
+      c.gridy++;
+      selWindow.add(delButton,c);
+      c.gridwidth = 1;
+    }
     JButton OkayButton = new JButton(S.get("FpgaBoardDone"));
     OkayButton.setActionCommand("done");
     OkayButton.addActionListener(actionListener);
