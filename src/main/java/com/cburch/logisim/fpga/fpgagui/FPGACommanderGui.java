@@ -141,7 +141,6 @@ public class FPGACommanderGui extends FPGACommanderBase
   public static final int FONT_SIZE = 12;
   private JFrame panel;
   private JLabel textMainCircuit = new JLabel();
-  private JLabel textTargetBoard = new JLabel();
   private JLabel boardPic = new JLabel();
   private BoardIcon boardIcon = null;
   private JButton annotateButton = new JButton();
@@ -518,7 +517,6 @@ public class FPGACommanderGui extends FPGACommanderBase
   @Override
   public void localeChanged() {
     textMainCircuit.setText(S.get("FpgaGuiMainCircuit"));
-    textTargetBoard.setText(S.get("FpgaGuiTargetBoard"));
     panel.setTitle(S.get("FpgaGuiTitle")+" " + MyProject.getLogisimFile().getName());
     annotationList.repaint();
     validateButton.setText(S.get("FpgaGuiExecute"));
