@@ -358,7 +358,6 @@ public class ComponentMapDialog implements ActionListener, ListSelectionListener
   private JButton CancelButton = new JButton();
   private JButton LoadButton = new JButton();
   private ZoomSlider ScaleButton = new ZoomSlider();
-  private JLabel MessageLine = new JLabel();
   private JScrollPane UnMappedPane;
   private JScrollPane MappedPane;
 
@@ -560,26 +559,14 @@ public class ComponentMapDialog implements ActionListener, ListSelectionListener
     c.gridheight = 8;
     panel.add(MappedPane, c);
 
-    /* Add the message line */
-    MessageLine.setForeground(Color.BLUE);
-    MessageLine.setText("No messages");
-    MessageLine.setEnabled(true);
     c.gridx = 0;
-    c.gridy = 9;
-    c.gridwidth = 3;
     c.gridheight = 1;
-    panel.add(MessageLine, c);
-
-    c.gridy = 10;
+    c.gridy = 9;
     c.gridwidth = 3;
     c.fill = GridBagConstraints.CENTER;
     panel.add(BoardPic, c);
 
     panel.pack();
-    /*
-     * panel.setLocation(Projects.getCenteredLoc(panel.getWidth(),
-     * panel.getHeight()));
-     */
     panel.setLocationRelativeTo(null);
     UnMappedPane.setPreferredSize(
         new Dimension(
@@ -604,8 +591,6 @@ public class ComponentMapDialog implements ActionListener, ListSelectionListener
   }
 
   public boolean run() {
-    MessageLine.setForeground(Color.BLUE);
-    MessageLine.setText("No messages");
     Thread t =
         new Thread() {
           public void run() {

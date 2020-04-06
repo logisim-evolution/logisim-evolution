@@ -130,8 +130,6 @@ public class BoardDialog implements ActionListener, ComponentListener, LocaleLis
   private int MaxZoom;
   public BoardRectangle highlight = null;
 
-  /* BIg TODO: Add all language strings */
-
   public BoardDialog() {
     GridBagConstraints gbc = new GridBagConstraints();
 
@@ -731,8 +729,14 @@ public class BoardDialog implements ActionListener, ComponentListener, LocaleLis
     if (!comp.IsKnownComponent()) return;
     try {
       FPGAIOInformationContainer edit = (FPGAIOInformationContainer) comp.clone();
-      edit.edit(this);
+      edit.edit(true,this);
       if (edit.IsKnownComponent()) TheBoard.ReplaceComponent(comp, edit);
+      if (edit.isToBeDeleted()) {
+    	TheBoard.deleteComponent(comp);
+    	defined_components.remove(highlight);
+    	highlight = null;
+    	picturepanel.repaint();
+      }
     } catch (CloneNotSupportedException e) {}
   }
   
