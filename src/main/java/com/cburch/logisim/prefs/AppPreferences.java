@@ -685,6 +685,12 @@ public class AppPreferences {
               ((!GraphicsEnvironment.isHeadless())
                   ? Toolkit.getDefaultToolkit().getScreenSize().height
                   : 0)));
+  
+  public static final void resetWindow() {
+	  WINDOW_MAIN_SPLIT.set(0.251);
+	  WINDOW_LEFT_SPLIT.set(0.51);
+	  WINDOW_RIGHT_SPLIT.set(0.751);
+  }
 
   public static final PrefMonitor<String> WINDOW_LOCATION =
       create(new PrefMonitorString("windowLocation", "0,0"));
