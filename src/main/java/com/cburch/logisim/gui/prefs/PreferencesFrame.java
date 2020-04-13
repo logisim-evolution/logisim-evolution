@@ -110,6 +110,7 @@ public class PreferencesFrame extends LFrame {
           new IntlOptions(this),
           new WindowOptions(this),
           new LayoutOptions(this),
+          new SimOptions(this),
           new ExperimentalOptions(this),
           new SoftwaresOptions(this),
           new FPGAOptions(this), // Should be last as setFpgaTab depends on it

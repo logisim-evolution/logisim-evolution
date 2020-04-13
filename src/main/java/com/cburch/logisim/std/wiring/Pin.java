@@ -196,7 +196,9 @@ public class Pin extends InstanceFactory {
       String s = text.getText();
       if (isEditValid(s)) {
         Value newVal;
-        if (s.equals("x") || s.equals("X") || s.equals("???")) {
+        if (s.equals(Character.toString(Value.UNKNOWNCHAR).toLowerCase()) || 
+            s.equals(Character.toString(Value.UNKNOWNCHAR).toUpperCase()) || 
+            s.equals("???")) {
           newVal = Value.createUnknown(BitWidth.create(bitWidth));
         } else {
           try {
@@ -223,7 +225,8 @@ public class Pin extends InstanceFactory {
       if (s == null) return false;
       s = s.trim();
       if (s.equals("")) return false;
-      if (tristate && (s.equals("x") || s.equals("X") || s.equals("???"))) return true;
+      if (tristate && (s.equals(Character.toString(Value.UNKNOWNCHAR).toLowerCase()) || 
+          s.equals(Character.toString(Value.UNKNOWNCHAR).toUpperCase()) || s.equals("???"))) return true;
       try {
     	BigInteger n = new BigInteger(s);
         if (radix == RadixOption.RADIX_10_SIGNED) {
@@ -392,7 +395,8 @@ public class Pin extends InstanceFactory {
             carry = s / 2;
           }
         }
-      } else if (tristate && (ch == 'x' || ch == 'X')) {
+      } else if (tristate && (ch == Character.toLowerCase(Value.UNKNOWNCHAR) || 
+                 ch == Character.toUpperCase(Value.UNKNOWNCHAR))) {
         for (int b = bit; b < bit + r; b++) val[b] = Value.UNKNOWN;
       } else {
         int d;
