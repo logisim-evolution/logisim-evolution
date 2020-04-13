@@ -208,6 +208,7 @@ public class Value {
   public static Color UNKNOWN_COLOR = new Color(AppPreferences.UNKNOWN_COLOR.get());
   public static Color ERROR_COLOR = new Color(AppPreferences.ERROR_COLOR.get());
   public static Color NIL_COLOR = new Color(AppPreferences.NIL_COLOR.get());
+  public static Color STROKE_COLOR = new Color(AppPreferences.STROKE_COLOR.get());
   public static Color MULTI_COLOR = new Color(AppPreferences.BUS_COLOR.get());
   public static Color WIDTH_ERROR_COLOR = new Color(AppPreferences.WIDTH_ERROR_COLOR.get());
   public static Color WIDTH_ERROR_CAPTION_COLOR = new Color(AppPreferences.WIDTH_ERROR_CAPTION_COLOR.get());

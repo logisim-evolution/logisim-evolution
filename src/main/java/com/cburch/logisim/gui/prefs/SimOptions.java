@@ -80,6 +80,8 @@ public class SimOptions extends OptionsPanel {
   private SymbolChooser DontCareChar = new SymbolChooser(AppPreferences.DONTCARE_CHAR,"-X");
   private JLabel BusColorTitle = new JLabel();
   private JButton BusColor = new JButton();
+  private JLabel HighlightColorTitle = new JLabel();
+  private JButton HighlightColor = new JButton();
   private JLabel WidthErrorColorTitle = new JLabel();
   private JButton WidthErrorColor = new JButton();
   private JLabel WidthErrorCaptionColorTitle = new JLabel();
@@ -163,6 +165,9 @@ public class SimOptions extends OptionsPanel {
       } else if (evt.getKey().equals(AppPreferences.BUS_COLOR.getIdentifier())) {
         Value.MULTI_COLOR = new Color(AppPreferences.BUS_COLOR.get());
         update = true;
+      } else if (evt.getKey().equals(AppPreferences.STROKE_COLOR.getIdentifier())) {
+        Value.STROKE_COLOR = new Color(AppPreferences.STROKE_COLOR.get());
+        update = true;
       } else if (evt.getKey().equals(AppPreferences.WIDTH_ERROR_COLOR.getIdentifier())) {
         Value.WIDTH_ERROR_COLOR = new Color(AppPreferences.WIDTH_ERROR_COLOR.get());
         update = true;
@@ -170,12 +175,12 @@ public class SimOptions extends OptionsPanel {
         Value.WIDTH_ERROR_CAPTION_COLOR = new Color(AppPreferences.WIDTH_ERROR_CAPTION_COLOR.get());
         update = true;
       } else if (evt.getKey().equals(AppPreferences.WIDTH_ERROR_HIGHLIGHT_COLOR.getIdentifier())) {
-          Value.WIDTH_ERROR_HIGHLIGHT_COLOR = new Color(AppPreferences.WIDTH_ERROR_HIGHLIGHT_COLOR.get());
-          update = true;
-        } else if (evt.getKey().equals(AppPreferences.WIDTH_ERROR_BACKGROUND_COLOR.getIdentifier())) {
-          Value.WIDTH_ERROR_CAPTION_BGCOLOR = new Color(AppPreferences.WIDTH_ERROR_BACKGROUND_COLOR.get());
-          update = true;
-        }
+        Value.WIDTH_ERROR_HIGHLIGHT_COLOR = new Color(AppPreferences.WIDTH_ERROR_HIGHLIGHT_COLOR.get());
+        update = true;
+      } else if (evt.getKey().equals(AppPreferences.WIDTH_ERROR_BACKGROUND_COLOR.getIdentifier())) {
+        Value.WIDTH_ERROR_CAPTION_BGCOLOR = new Color(AppPreferences.WIDTH_ERROR_BACKGROUND_COLOR.get());
+        update = true;
+      }
       if (update) {
         for (Project proj : Projects.getOpenProjects())
           proj.getFrame().repaint();
@@ -335,6 +340,12 @@ public class SimOptions extends OptionsPanel {
     BusColor.addActionListener(mcol);
     BusColor.setIcon(new ColorIcon(AppPreferences.BUS_COLOR));
     add(BusColor,c);
+    c.gridx++;
+    add(HighlightColorTitle,c);
+    c.gridx++;
+    HighlightColor.addActionListener(mcol);
+    HighlightColor.setIcon(new ColorIcon(AppPreferences.STROKE_COLOR));
+    add(HighlightColor,c);
     
     c.gridx = 0;
     c.gridy++;
@@ -521,6 +532,7 @@ public class SimOptions extends OptionsPanel {
     NilColorTitle.setText(S.get("simNilColTitle"));
     DontCareCharTitle.setText(S.get("simDontCareCharTitle"));
     BusColorTitle.setText(S.get("simBusColTitle"));
+    HighlightColorTitle.setText(S.get("simStrokeColTitle"));
     WidthErrorColorTitle.setText(S.get("simWidthErrorTitle"));
     WidthErrorCaptionColorTitle.setText(S.get("simWidthErrorCaptionTitle"));
     WidthErrorHighlightColorTitle.setText(S.get("simWidthErrorHighlightTitle"));
@@ -553,6 +565,7 @@ public class SimOptions extends OptionsPanel {
     AppPreferences.ERROR_COLOR.set(0x00C10000);
     AppPreferences.NIL_COLOR.set(0x818181);
     AppPreferences.BUS_COLOR.set(1);
+    AppPreferences.STROKE_COLOR.set(0xFE00FF);
     AppPreferences.WIDTH_ERROR_COLOR.set(0xFF7A00);
     AppPreferences.WIDTH_ERROR_CAPTION_COLOR.set(0x560000);
     AppPreferences.WIDTH_ERROR_HIGHLIGHT_COLOR.set(0xFFFE00);
@@ -583,6 +596,7 @@ public class SimOptions extends OptionsPanel {
     AppPreferences.ERROR_COLOR.set(0x00C10000);
     AppPreferences.NIL_COLOR.set(0x818181);
     AppPreferences.BUS_COLOR.set(1);
+    AppPreferences.STROKE_COLOR.set(0xBBBBBB);
     AppPreferences.WIDTH_ERROR_COLOR.set(0xC413DB);
     AppPreferences.WIDTH_ERROR_CAPTION_COLOR.set(0x560000);
     AppPreferences.WIDTH_ERROR_HIGHLIGHT_COLOR.set(0xFFFE00);
