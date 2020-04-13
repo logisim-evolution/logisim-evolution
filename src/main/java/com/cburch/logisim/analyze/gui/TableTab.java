@@ -35,6 +35,7 @@ import com.cburch.logisim.analyze.model.TruthTable;
 import com.cburch.logisim.analyze.model.TruthTableEvent;
 import com.cburch.logisim.analyze.model.TruthTableListener;
 import com.cburch.logisim.analyze.model.Var;
+import com.cburch.logisim.data.Value;
 import com.cburch.logisim.gui.menu.EditHandler;
 import com.cburch.logisim.gui.menu.LogisimMenuBar;
 import com.cburch.logisim.gui.menu.PrintHandler;
@@ -72,8 +73,7 @@ import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 
-class TableTab extends AnalyzerTab {
-  public static final Color ERROR_COLOR = new Color(255, 128, 128);
+class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
   private class MyListener implements TruthTableListener, LocaleListener {
     public void rowsChanged(TruthTableEvent event) {
       updateTable();
@@ -90,7 +90,7 @@ class TableTab extends AnalyzerTab {
     void updateTable() {
       computePreferredSize();
       expand.setEnabled(getRowCount() < table.getRowCount());
-      count.setText(String.format("%d of %d rows shown", getRowCount(), table.getRowCount()));
+      count.setText(S.fmt("tableRowsShown", getRowCount(), table.getRowCount()));
       body.setSize(new Dimension(body.getWidth(), table.getRowCount() * cellHeight));
       repaint();
     }
@@ -239,14 +239,11 @@ class TableTab extends AnalyzerTab {
                   ? table.getVisibleInputEntry(row, col++)
                   : table.getVisibleOutputEntry(row, col++);
           if (entry.isError()) {
-            g.setColor(ERROR_COLOR);
+            g.setColor(Value.ERROR_COLOR);
             g.fillRect(x, y, cellWidth, cellHeight);
             g.setColor(Color.BLACK);
           }
-          g.setColor(
-              entry == Entry.ZERO || entry == Entry.DONT_CARE
-                  ? Color.DARK_GRAY
-                  : entry == Entry.BUS_ERROR ? Color.RED : Color.BLACK);
+          g.setColor( entry == Entry.BUS_ERROR ? Value.ERROR_COLOR : Color.BLACK);
           String label = entry.getDescription();
           int width = fm.stringWidth(label);
           g.drawString(label, x + (cellWidth - width) / 2, cy);
@@ -257,9 +254,9 @@ class TableTab extends AnalyzerTab {
     }
   };
 
-  private JButton one = new SquareButton(Entry.ONE.getDescription());
-  private JButton zero = new SquareButton(Entry.ZERO.getDescription());
-  private JButton dontcare = new SquareButton(Entry.DONT_CARE.getDescription());
+  private SquareButton one = new SquareButton(Entry.ONE);
+  private SquareButton zero = new SquareButton(Entry.ZERO);
+  private SquareButton dontcare = new SquareButton(Entry.DONT_CARE);
   private TightButton expand = new TightButton(S.get("tableExpand"));
   private TightButton compact = new TightButton(S.get("tableCompact"));
   private JLabel count = new JLabel(S.fmt("tableRowsShown", 0, 0), SwingConstants.CENTER);
@@ -274,12 +271,15 @@ class TableTab extends AnalyzerTab {
     }
   }
 
-  private class SquareButton extends TightButton {
+  private class SquareButton extends TightButton implements Entry.EntryChangedListener {
     /** */
     private static final long serialVersionUID = 1L;
+    
+    Entry myEntry;
 
-    SquareButton(String s) {
-      super(s);
+    SquareButton(Entry e) {
+      super(e.getDescription());
+      myEntry = e;
     }
 
     @Override
@@ -288,6 +288,12 @@ class TableTab extends AnalyzerTab {
       int s = (int) d.getHeight();
       return new Dimension(s, s);
     }
+
+	@Override
+	public void EntryDesriptionChanged() {
+	  setText(myEntry.getDescription());
+	  repaint();
+	}
   }
 
   public TableTab(TruthTable table) {
@@ -334,6 +340,12 @@ class TableTab extends AnalyzerTab {
 
     JPanel toolbar = new JPanel();
     toolbar.setLayout(new FlowLayout());
+    Entry.DONT_CARE.addListener(dontcare);
+    Entry.ZERO.addListener(zero);
+    Entry.ONE.addListener(one);
+    Entry.DONT_CARE.addListener(this);
+    Entry.ZERO.addListener(this);
+    Entry.ONE.addListener(this);
     toolbar.add(dontcare);
     toolbar.add(one);
     toolbar.add(zero);
@@ -804,4 +816,7 @@ class TableTab extends AnalyzerTab {
       return Printable.PAGE_EXISTS;
     }
   };
+
+  @Override
+  public void EntryDesriptionChanged() { this.repaint(); }
 }

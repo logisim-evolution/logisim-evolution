@@ -40,7 +40,6 @@ import com.cburch.logisim.gui.main.Canvas;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Action;
 import com.cburch.logisim.util.GraphicsUtil;
-import com.cburch.logisim.util.Icons;
 import com.cburch.logisim.util.StringGetter;
 
 import java.awt.BasicStroke;
@@ -54,7 +53,6 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Set;
-import javax.swing.Icon;
 
 public class WiringTool extends Tool {
   private static Cursor cursor = Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR);
