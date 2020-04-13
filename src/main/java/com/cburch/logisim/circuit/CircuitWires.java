@@ -468,7 +468,7 @@ class CircuitWires {
 
           Stroke oldStroke = g.getStroke();
           g.setStroke(Wire.HIGHLIGHTED_STROKE);
-          g.setColor(Color.MAGENTA);
+          g.setColor(Value.STROKE_COLOR);
           g.drawLine(s.getX(), s.getY(), t.getX(), t.getY());
           g.setStroke(oldStroke);
         } else {

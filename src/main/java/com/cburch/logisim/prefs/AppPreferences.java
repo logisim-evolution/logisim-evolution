@@ -647,6 +647,8 @@ public class AppPreferences {
 		  create(new PrefMonitorString("SimDontCareChar","- "));
   public static final PrefMonitor<Integer> BUS_COLOR =
 	      create(new PrefMonitorInt("SimBusColor",0));
+  public static final PrefMonitor<Integer> STROKE_COLOR =
+	      create(new PrefMonitorInt("SimStrokeColor",0xff00ff));
   public static final PrefMonitor<Integer> WIDTH_ERROR_COLOR =
 	      create(new PrefMonitorInt("SimWidthErrorColor",0xFF7B00));
   public static final PrefMonitor<Integer> WIDTH_ERROR_CAPTION_COLOR =
