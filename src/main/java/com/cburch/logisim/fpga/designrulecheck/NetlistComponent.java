@@ -61,9 +61,8 @@ public class NetlistComponent {
     CompReference = Ref;
     Ends = new ArrayList<ConnectionEnd>();
     for (int i = 0; i < Ref.getEnds().size(); i++) {
-      Ends.add(
-          new ConnectionEnd(
-              Ref.getEnd(i).isOutput(), (byte) Ref.getEnd(i).getWidth().getWidth(), Ref));
+      Ends.add( new ConnectionEnd( Ref.getEnd(i).isOutput(), 
+                (byte) Ref.getEnd(i).getWidth().getWidth(), Ref));
     }
     if (Ref.getFactory().getIOInformation() != null) {
       MyIOInformation = Ref.getFactory().getIOInformation().clone();
@@ -147,11 +146,9 @@ public class NetlistComponent {
 
   public boolean AlternateMappingEnabled(ArrayList<String> key) {
     if (!AlternateMapEnabled.containsKey(key)) {
-      AlternateMapEnabled.put(
-          key,
+      AlternateMapEnabled.put( key,
           MyIOInformation.GetMainMapType().equals(FPGAIOInformationContainer.IOComponentTypes.Bus));
-      AlternateMapLocked.put(
-          key,
+      AlternateMapLocked.put( key,
           MyIOInformation.GetMainMapType().equals(FPGAIOInformationContainer.IOComponentTypes.Bus));
     }
     return AlternateMapEnabled.get(key);
@@ -159,8 +156,7 @@ public class NetlistComponent {
 
   public boolean AlternateMappingIsLocked(ArrayList<String> key) {
     if (!AlternateMapLocked.containsKey(key)) {
-      AlternateMapLocked.put(
-          key,
+      AlternateMapLocked.put( key,
           MyIOInformation.GetMainMapType().equals(FPGAIOInformationContainer.IOComponentTypes.Bus));
     }
     return AlternateMapLocked.get(key);

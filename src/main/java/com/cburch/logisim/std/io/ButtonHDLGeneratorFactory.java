@@ -53,8 +53,7 @@ public class ButtonHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     String CloseBracket = (HDLType.equals(VHDL)) ? ")" : "]";
     for (int i = 0; i < ComponentInfo.NrOfEnds(); i++) {
       if (ComponentInfo.EndIsConnected(i)) {
-        Contents.add(
-            "   "
+        String map = "   "
                 + Preamble
                 + GetNetName(ComponentInfo, i, true, HDLType, Nets)
                 + AssignOperator
@@ -62,7 +61,8 @@ public class ButtonHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
                 + OpenBracket
                 + Integer.toString(ComponentInfo.GetLocalBubbleInputStartId() + i)
                 + CloseBracket
-                + ";");
+                + ";";
+        Contents.add(map);
       }
     }
     return Contents;

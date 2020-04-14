@@ -66,6 +66,7 @@ public class FPGAIOInformationContainer implements Cloneable {
     LocalBus,
     Bus,
     Open,
+    Constant,
     Unknown;
 
     public static IOComponentTypes getEnumFromString(String str) {
@@ -213,8 +214,7 @@ public class FPGAIOInformationContainer implements Cloneable {
     MyLabel = null;
   }
 
-  public FPGAIOInformationContainer(
-      IOComponentTypes Type, BoardRectangle rect, BoardDialog parent) {
+  public FPGAIOInformationContainer(IOComponentTypes Type, BoardRectangle rect, BoardDialog parent) {
     MyType = Type;
     MyIdentifier = -1;
     MyRectangle = rect;
@@ -230,7 +230,6 @@ public class FPGAIOInformationContainer implements Cloneable {
     	FPGAIOInformationSettingsDialog.GetSimpleInformationDialog(false,parent,this);
       return;
     }
-
     MyType = IOComponentTypes.Unknown;
   }
 

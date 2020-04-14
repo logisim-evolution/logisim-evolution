@@ -34,6 +34,7 @@ import com.cburch.draw.model.AbstractCanvasObject;
 import com.cburch.logisim.LogisimVersion;
 import com.cburch.logisim.Main;
 import com.cburch.logisim.circuit.Circuit;
+import com.cburch.logisim.circuit.CircuitMapInfo;
 import com.cburch.logisim.circuit.appear.AppearanceSvgReader;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.data.Attribute;
@@ -288,21 +289,33 @@ class XmlReader {
     }
     
     void loadMap(Element board, String boardName, Circuit circ) {
-      HashMap<String,BoardRectangle> map = new HashMap<String,BoardRectangle>();
+      HashMap<String,CircuitMapInfo> map = new HashMap<String,CircuitMapInfo>();
       for (Element cmap : XmlIterator.forChildElements(board, "mc")) {
         int x,y,w,h;
         String key = cmap.getAttribute("key");
         if (key == null || key.isEmpty()) continue;
-        try {
-          x = Integer.parseUnsignedInt(cmap.getAttribute("valx"));
-          y = Integer.parseUnsignedInt(cmap.getAttribute("valy"));
-          w = Integer.parseUnsignedInt(cmap.getAttribute("valw"));
-          h = Integer.parseUnsignedInt(cmap.getAttribute("valh"));
-        } catch (NumberFormatException e) {
-          continue;
+        if (cmap.hasAttribute("open")) {
+          map.put(key, new CircuitMapInfo());
+        } else if (cmap.hasAttribute("vconst")) {
+          Long v;
+          try {
+            v = Long.parseLong(cmap.getAttribute("vconst"));
+          } catch (NumberFormatException e) {
+            continue;
+          }
+          map.put(key, new CircuitMapInfo(v));
+        } else {
+          try {
+            x = Integer.parseUnsignedInt(cmap.getAttribute("valx"));
+            y = Integer.parseUnsignedInt(cmap.getAttribute("valy"));
+            w = Integer.parseUnsignedInt(cmap.getAttribute("valw"));
+            h = Integer.parseUnsignedInt(cmap.getAttribute("valh"));
+          } catch (NumberFormatException e) {
+            continue;
+          }
+          BoardRectangle br = new BoardRectangle(x,y,w,h);
+          map.put(key, new CircuitMapInfo(br));
         }
-        BoardRectangle br = new BoardRectangle(x,y,w,h);
-        map.put(key, br);
       }
       if (!map.isEmpty()) circ.addLoadedMap(boardName, map);
     }
