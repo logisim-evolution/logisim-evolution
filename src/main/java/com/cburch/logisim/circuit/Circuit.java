@@ -49,9 +49,6 @@ import com.cburch.logisim.data.TestException;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.file.LogisimFile;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import com.cburch.logisim.fpga.fpgaboardeditor.BoardInformation;
-import com.cburch.logisim.fpga.fpgaboardeditor.BoardReaderClass;
-import com.cburch.logisim.fpga.fpgaboardeditor.BoardRectangle;
 import com.cburch.logisim.fpga.fpgagui.FPGAReport;
 import com.cburch.logisim.fpga.fpgagui.MappableResourcesContainer;
 import com.cburch.logisim.instance.Instance;
@@ -268,7 +265,7 @@ public class Circuit {
   private WeakHashMap<Component, Circuit> circuitsUsingThis;
   private Netlist MyNetList;
   private HashMap<String,MappableResourcesContainer> MyMappableResources;
-  private HashMap<String,HashMap<String,BoardRectangle>> LoadedMaps;
+  private HashMap<String,HashMap<String,CircuitMapInfo>> LoadedMaps;
   private boolean Annotated;
   private Project proj;
   private SocSimulationManager socSim = new SocSimulationManager();
@@ -283,7 +280,7 @@ public class Circuit {
     circuitsUsingThis = new WeakHashMap<Component, Circuit>();
     MyNetList = new Netlist(this);
     MyMappableResources = new HashMap<String,MappableResourcesContainer>();
-    LoadedMaps = new HashMap<String,HashMap<String,BoardRectangle>>();
+    LoadedMaps = new HashMap<String,HashMap<String,CircuitMapInfo>>();
     addCircuitListener(MyNetList);
     Annotated = false;
     logiFile = file;
@@ -734,7 +731,7 @@ public class Circuit {
     return MyNetList;
   }
   
-  public void addLoadedMap(String BoardName, HashMap<String,BoardRectangle> map) {
+  public void addLoadedMap(String BoardName, HashMap<String,CircuitMapInfo> map) {
     LoadedMaps.put(BoardName, map);
   }
   
@@ -745,26 +742,24 @@ public class Circuit {
     return ret;
   }
   
-  public Map<String,BoardRectangle> getMapInfo(String BoardName) {
+  public Map<String,CircuitMapInfo> getMapInfo(String BoardName) {
     if (MyMappableResources.containsKey(BoardName)) {
-      HashMap<String,BoardRectangle> ret = new HashMap<String,BoardRectangle>();
+      HashMap<String,CircuitMapInfo> ret = new HashMap<String,CircuitMapInfo>();
       for (String key : MyMappableResources.get(BoardName).MappedList()) {
-        ret.put(key, MyMappableResources.get(BoardName).GetMap(key));
+        ret.put(key, MyMappableResources.get(BoardName).getCircuitMap(key));
       }
       return ret;
     }
     if (LoadedMaps.containsKey(BoardName))
       return LoadedMaps.get(BoardName);
-    return new HashMap<String,BoardRectangle>();
+    return new HashMap<String,CircuitMapInfo>();
   }
   
   public void setBoardMap(String BoardName, MappableResourcesContainer map) {
 	if (LoadedMaps.containsKey(BoardName)) {
-      BoardInformation boardInfo = new BoardReaderClass(AppPreferences.Boards.GetBoardFilePath(BoardName)).GetBoardInformation();
       for (String key : LoadedMaps.get(BoardName).keySet()) {
-        BoardRectangle rect = LoadedMaps.get(BoardName).get(key);
-        String type = boardInfo.GetComponentType(rect);
-        map.TryMap(key, rect, type);
+    	CircuitMapInfo cmap = LoadedMaps.get(BoardName).get(key);
+        map.TryMap(key, cmap);
       }
       LoadedMaps.remove(BoardName);
 	}

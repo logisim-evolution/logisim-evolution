@@ -161,14 +161,13 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           int InputId = MyIOComponents.GetFPGAInputPinId(map);
           int OutputId = MyIOComponents.GetFPGAOutputPinId(map);
           int NrOfPins = MyIOComponents.GetNrOfPins(map);
+          Long ConstValue = MyIOComponents.GetConstantValue(map);
           boolean Invert = MyIOComponents.RequiresToplevelInversion(CompId, map);
           for (int PinId = 0; PinId < NrOfPins; PinId++) {
             Temp.setLength(0);
             Temp.append("   " + Preamble);
             if (InputId >= 0) {
-              Temp.append(
-                  "s_"
-                      + CorrectLabel.getCorrectLabel(
+              Temp.append("s_" + CorrectLabel.getCorrectLabel(
                           ThisPin.getAttributeSet().getValue(StdAttr.LABEL)));
               if (ThisPin.getEnd(0).getWidth().getWidth() > 1) {
                 Temp.append(BracketOpen + PinPinId + BracketClose);
@@ -201,6 +200,23 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
               Temp.append(";");
               Contents.add(Temp.toString());
             }
+            if (ConstValue != null) {
+              Temp.append("s_" + CorrectLabel.getCorrectLabel(
+                          ThisPin.getAttributeSet().getValue(StdAttr.LABEL)));
+              if (ThisPin.getEnd(0).getWidth().getWidth() > 1) {
+                  Temp.append(BracketOpen + PinPinId + BracketClose);
+              }
+              Temp.append(AssignOperator);
+              long mask = 1L<<PinPinId;
+              if ((ConstValue&mask) == 0) {
+                Temp.append((HDLType.equals(VHDL)) ? "'0'" : "1'b0");  
+              } else {
+                Temp.append((HDLType.equals(VHDL)) ? "'1'" : "1'b1");
+              }
+              PinPinId++;
+              Temp.append(";");
+              Contents.add(Temp.toString());
+            }
           }
         }
       }
@@ -210,8 +226,7 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     for (ArrayList<String> CompId : MyIOComponents.GetComponents()) {
       if (!(MyIOComponents.GetComponent(CompId).GetComponent().getFactory() instanceof Pin)
           && !(MyIOComponents.GetComponent(CompId).GetComponent().getFactory() instanceof PortIO)
-          && !(MyIOComponents.GetComponent(CompId).GetComponent().getFactory()
-              instanceof ReptarLocalBus)) {
+          && !(MyIOComponents.GetComponent(CompId).GetComponent().getFactory() instanceof ReptarLocalBus)) {
         HDLGeneratorFactory Generator =
             MyIOComponents.GetComponent(CompId)
                 .GetComponent()
