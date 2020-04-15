@@ -85,7 +85,6 @@ public class FPGACommanderGui extends FPGACommanderBase
   @Override
   public void preferenceChange(PreferenceChangeEvent pce) {
     String property = pce.getKey();
-    HandleHDLOnly();
     if (property.equals(AppPreferences.SelectedBoard.getIdentifier())) {
       MyBoardInformation =
           new BoardReaderClass(AppPreferences.Boards.GetSelectedBoardFileName())
@@ -95,8 +94,8 @@ public class FPGACommanderGui extends FPGACommanderBase
       boardPic.setIcon(boardIcon);
       boardPic.repaint();
       FrequencyPanel.setFpgaClockFrequency(MyBoardInformation.fpga.getClockFrequency());;
-      HandleHDLOnly();
     }
+    HandleHDLOnly();
   }
 
   @Override

@@ -162,6 +162,9 @@ public class FPGABoards implements ActionListener {
     } else if (e.getSource().equals(RemoveButton)) {
       String Board = BoardNamesList.getSelectedValue();
       if (RemoveBoard(Board)) {
+      	if (AppPreferences.SelectedBoard.get().equals(Board)) {
+            AppPreferences.SelectedBoard.set(BoardSelector.getItemAt(1));
+        }
         if ((BoardNamesList.getSelectedIndex() >= BoardNamesList.getModel().getSize())
             && (BoardNamesList.getModel().getSize() > 0)) {
           BoardNamesList.setSelectedIndex(BoardNamesList.getModel().getSize() - 1);

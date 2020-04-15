@@ -488,12 +488,9 @@ public class ComponentMapDialog implements ActionListener, ListSelectionListener
     this.scale = scale;
     BoardPic.setPreferredSize(new Dimension(BoardPic.getWidth(), BoardPic.getHeight()));
     BoardPic.setSize(new Dimension(BoardPic.getWidth(), BoardPic.getHeight()));
-    UnMappedPane.setPreferredSize(
-        new Dimension(
-            BoardPic.getWidth() / 3, 6 * DoneButton.getHeight() + ScaleButton.getHeight()));
-    MappedPane.setPreferredSize(
-        new Dimension(
-            BoardPic.getWidth() / 3, 6 * DoneButton.getHeight() + ScaleButton.getHeight()));
+    UnmappedText.setPreferredSize(new Dimension(BoardPic.getWidth() / 3, AppPreferences.getScaled(25)));
+    MappedText.setPreferredSize(new Dimension(BoardPic.getWidth() / 3, AppPreferences.getScaled(25)));
+    CommandText.setPreferredSize(new Dimension(BoardPic.getWidth() / 3, AppPreferences.getScaled(25)));
     panel.pack();
   }
 
@@ -520,71 +517,68 @@ public class ComponentMapDialog implements ActionListener, ListSelectionListener
     c.gridx = 0;
 
     /* Add some text */
-    UnmappedText.setHorizontalTextPosition(JLabel.CENTER);
+    UnmappedText.setHorizontalAlignment(JLabel.CENTER);
     UnmappedText.setPreferredSize(new Dimension(BoardPic.getWidth() / 3, AppPreferences.getScaled(25)));
     c.gridx = 0;
     c.gridy = 0;
     c.fill = GridBagConstraints.HORIZONTAL;
     c.gridwidth = 1;
     panel.add(UnmappedText, c);
-    MappedText.setHorizontalTextPosition(JLabel.CENTER);
-    MappedText.setPreferredSize(
-        new Dimension(BoardPic.getWidth() / 3, AppPreferences.getScaled(25)));
+    MappedText.setHorizontalAlignment(JLabel.CENTER);
+    MappedText.setPreferredSize(new Dimension(BoardPic.getWidth() / 3, AppPreferences.getScaled(25)));
     c.gridx = 1;
     panel.add(MappedText, c);
-    CommandText.setHorizontalTextPosition(JLabel.CENTER);
-    CommandText.setPreferredSize(
-        new Dimension(BoardPic.getWidth() / 3, AppPreferences.getScaled(25)));
+    CommandText.setHorizontalAlignment(JLabel.CENTER);
+    CommandText.setPreferredSize(new Dimension(BoardPic.getWidth() / 3, AppPreferences.getScaled(25)));
     c.gridx = 2;
     panel.add(CommandText, c);
-
-    /* Add the Zoom button */
-    c.gridx = 2;
-    c.gridy = 8;
-    panel.add(ScaleButton, c);
-    ScaleButton.addChangeListener(new ZoomChange(this));
 
     UnMapButton.setActionCommand("UnMap");
     UnMapButton.addActionListener(this);
     UnMapButton.setEnabled(false);
-    c.gridx = 2;
-    c.gridy = 2;
+    c.gridy = 1;
     panel.add(UnMapButton, c);
 
     /* Add the UnMapAll button */
     UnMapAllButton.setActionCommand("UnMapAll");
     UnMapAllButton.addActionListener(this);
     UnMapAllButton.setEnabled(false);
-    c.gridy = 3;
+    c.gridy = 2;
     panel.add(UnMapAllButton, c);
 
     /* Add the Load button */
     LoadButton.setActionCommand("Load");
     LoadButton.addActionListener(this);
     LoadButton.setEnabled(true);
-    c.gridy = 4;
+    c.gridy = 3;
     panel.add(LoadButton, c);
 
     /* Add the Save button */
     SaveButton.setActionCommand("Save");
     SaveButton.addActionListener(this);
     SaveButton.setEnabled(false);
-    c.gridy = 5;
+    c.gridy = 4;
     panel.add(SaveButton, c);
 
     /* Add the Cancel button */
     CancelButton.setActionCommand("Cancel");
     CancelButton.addActionListener(this);
     CancelButton.setEnabled(false);
-    c.gridy = 6;
+    c.gridy = 5;
     panel.add(CancelButton, c);
 
     /* Add the Done button */
     DoneButton.setActionCommand("Done");
     DoneButton.addActionListener(this);
     DoneButton.setEnabled(false);
-    c.gridy = 7;
+    c.gridy = 6;
     panel.add(DoneButton, c);
+
+    /* Add the Zoom button */
+    c.gridy = 7;
+    panel.add(ScaleButton, c);
+    ScaleButton.addChangeListener(new ZoomChange(this));
+
 
     /* Add the unmapped list */
     UnmappedList = new JList();
@@ -592,9 +586,10 @@ public class ComponentMapDialog implements ActionListener, ListSelectionListener
     UnmappedList.addListSelectionListener(this);
     UnmappedList.addMouseListener(mouseListener);
     UnMappedPane = new JScrollPane(UnmappedList);
+    c.fill = GridBagConstraints.BOTH;
     c.gridx = 0;
     c.gridy = 1;
-    c.gridheight = 8;
+    c.gridheight = 7;
     panel.add(UnMappedPane, c);
     ComponentSelectionMode = false;
 
@@ -604,25 +599,17 @@ public class ComponentMapDialog implements ActionListener, ListSelectionListener
     MappedList.addListSelectionListener(this);
     MappedPane = new JScrollPane(MappedList);
     c.gridx = 1;
-    c.gridy = 1;
-    c.gridheight = 8;
+    c.gridheight = 7;
     panel.add(MappedPane, c);
 
     c.gridx = 0;
     c.gridheight = 1;
-    c.gridy = 9;
+    c.gridy = 8;
     c.gridwidth = 3;
-    c.fill = GridBagConstraints.CENTER;
+    c.fill = GridBagConstraints.BOTH;
     panel.add(BoardPic, c);
     panel.setLocationRelativeTo(null);
     localeChanged();
-    UnMappedPane.setPreferredSize(
-        new Dimension(
-            BoardPic.getWidth() / 3, 6 * DoneButton.getHeight() + ScaleButton.getHeight()));
-    MappedPane.setPreferredSize(
-        new Dimension(
-            BoardPic.getWidth() / 3, 6 * DoneButton.getHeight() + ScaleButton.getHeight()));
-    panel.pack();
     panel.setVisible(true);
     int ScreenWidth = (int) Toolkit.getDefaultToolkit().getScreenSize().getWidth();
     int ScreenHeight = (int) Toolkit.getDefaultToolkit().getScreenSize().getHeight();
@@ -646,8 +633,7 @@ public class ComponentMapDialog implements ActionListener, ListSelectionListener
               try {
                 lock.wait();
               } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                logger.error("Bug: unable to wait for lock");
               }
             }
           }
@@ -657,8 +643,7 @@ public class ComponentMapDialog implements ActionListener, ListSelectionListener
     try {
       t.join();
     } catch (InterruptedException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+      logger.error("Bug: unable to join");
     }
     panel.setVisible(false);
     panel.dispose();

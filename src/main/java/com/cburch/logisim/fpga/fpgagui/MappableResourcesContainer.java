@@ -598,7 +598,10 @@ public class MappableResourcesContainer {
         constantsList.put(DisplayNametoMapName(comp), info);
         MapComp.addMap(DisplayNametoMapName(comp), item, FPGAIOInformationContainer.IOComponentTypes.Constant.toString());
       }
-    } else MapComp.addMap(DisplayNametoMapName(comp), item, Maptype);
+    } else {
+      MapComp.addMap(DisplayNametoMapName(comp), item, Maptype);
+      constantsList.remove(DisplayNametoMapName(comp));
+    }
     rebuildMappedLists();
   }
   
