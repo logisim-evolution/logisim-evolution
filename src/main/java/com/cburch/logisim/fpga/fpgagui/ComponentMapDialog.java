@@ -646,8 +646,7 @@ public class ComponentMapDialog implements ActionListener, ListSelectionListener
               try {
                 lock.wait();
               } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                logger.error("Bug: unable to wait for lock");
               }
             }
           }
@@ -657,8 +656,7 @@ public class ComponentMapDialog implements ActionListener, ListSelectionListener
     try {
       t.join();
     } catch (InterruptedException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+      logger.error("Bug: unable to join");
     }
     panel.setVisible(false);
     panel.dispose();
