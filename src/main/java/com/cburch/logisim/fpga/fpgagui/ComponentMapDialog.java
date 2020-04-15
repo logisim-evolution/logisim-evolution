@@ -763,6 +763,8 @@ public class ComponentMapDialog implements ActionListener, ListSelectionListener
 
   public void SetBoardInformation(BoardInformation Board) {
     BoardInfo = Board;
+    panel.pack();
+    panel.repaint();
   }
 
   public void SetMappebleComponents(MappableResourcesContainer mappable) {
