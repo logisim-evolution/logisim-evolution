@@ -35,6 +35,7 @@ import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.comp.ComponentDrawContext;
 import com.cburch.logisim.data.Bounds;
+import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.util.StringUtil;
 import java.awt.FontMetrics;
@@ -55,7 +56,6 @@ import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
@@ -231,22 +231,22 @@ public class Print {
     CircuitJList list = new CircuitJList(proj, true);
     Frame frame = proj.getFrame();
     if (list.getModel().getSize() == 0) {
-      JOptionPane.showMessageDialog(
+      OptionPane.showMessageDialog(
           proj.getFrame(),
           S.get("printEmptyCircuitsMessage"),
           S.get("printEmptyCircuitsTitle"),
-          JOptionPane.YES_NO_OPTION);
+          OptionPane.YES_NO_OPTION);
       return;
     }
     ParmsPanel parmsPanel = new ParmsPanel(list);
     int action =
-        JOptionPane.showConfirmDialog(
+        OptionPane.showConfirmDialog(
             frame,
             parmsPanel,
             S.get("printParmsTitle"),
-            JOptionPane.OK_CANCEL_OPTION,
-            JOptionPane.QUESTION_MESSAGE);
-    if (action != JOptionPane.OK_OPTION) return;
+            OptionPane.OK_CANCEL_OPTION,
+            OptionPane.QUESTION_MESSAGE);
+    if (action != OptionPane.OK_OPTION) return;
     List<Circuit> circuits = list.getSelectedCircuits();
     if (circuits.isEmpty()) return;
 
@@ -265,11 +265,11 @@ public class Print {
     try {
       job.print();
     } catch (PrinterException e) {
-      JOptionPane.showMessageDialog(
+      OptionPane.showMessageDialog(
           proj.getFrame(),
           StringUtil.format(S.get("printError"), e.toString()),
           S.get("printErrorTitle"),
-          JOptionPane.ERROR_MESSAGE);
+          OptionPane.ERROR_MESSAGE);
     }
   }
 

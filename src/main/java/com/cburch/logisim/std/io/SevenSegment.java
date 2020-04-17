@@ -37,7 +37,7 @@ import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Value;
-import com.cburch.logisim.fpga.fpgaboardeditor.FPGAIOInformationContainer;
+import com.cburch.logisim.fpga.data.IOComponentTypes;
 import com.cburch.logisim.fpga.hdlgenerator.IOComponentInformationContainer;
 import com.cburch.logisim.gui.icons.SevenSegmentIcon;
 import com.cburch.logisim.instance.Instance;
@@ -187,9 +187,9 @@ public class SevenSegment extends InstanceFactory implements DynamicElementProvi
             null,
             GetLabels(),
             null,
-            FPGAIOInformationContainer.IOComponentTypes.SevenSegment);
-    MyIOInformation.AddAlternateMapType(FPGAIOInformationContainer.IOComponentTypes.LED);
-    MyIOInformation.AddAlternateMapType(FPGAIOInformationContainer.IOComponentTypes.Pin);
+            IOComponentTypes.SevenSegment);
+    MyIOInformation.AddAlternateMapType(IOComponentTypes.LED);
+    MyIOInformation.AddAlternateMapType(IOComponentTypes.Pin);
     setPorts(ps);
   }
 

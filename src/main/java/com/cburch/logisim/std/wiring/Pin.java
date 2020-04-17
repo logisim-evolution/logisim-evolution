@@ -44,6 +44,7 @@ import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
+import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.gui.main.Canvas;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceData;
@@ -83,7 +84,6 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFormattedTextField;
-import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -356,13 +356,13 @@ public class Pin extends InstanceFactory {
         CircuitState circState = canvas.getCircuitState();
         java.awt.Component frame = SwingUtilities.getRoot(canvas);
         int choice =
-            JOptionPane.showConfirmDialog(
+            OptionPane.showConfirmDialog(
                 frame,
                 S.get("pinFrozenQuestion"),
                 S.get("pinFrozenTitle"),
-                JOptionPane.OK_CANCEL_OPTION,
-                JOptionPane.WARNING_MESSAGE);
-        if (choice == JOptionPane.OK_OPTION) {
+                OptionPane.OK_CANCEL_OPTION,
+                OptionPane.WARNING_MESSAGE);
+        if (choice == OptionPane.OK_OPTION) {
           circState = circState.cloneState();
           canvas.getProject().setCircuitState(circState);
           state = circState.getInstanceState(state.getInstance());

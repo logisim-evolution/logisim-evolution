@@ -39,7 +39,7 @@ import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
-import com.cburch.logisim.fpga.fpgaboardeditor.FPGAIOInformationContainer;
+import com.cburch.logisim.fpga.data.IOComponentTypes;
 import com.cburch.logisim.fpga.hdlgenerator.IOComponentInformationContainer;
 import com.cburch.logisim.gui.icons.DipswitchIcon;
 import com.cburch.logisim.instance.Instance;
@@ -174,9 +174,9 @@ public class DipSwitch extends InstanceFactory {
             GetLabels(dipSize),
             null,
             null,
-            FPGAIOInformationContainer.IOComponentTypes.DIPSwitch);
-    MyIOInformation.AddAlternateMapType(FPGAIOInformationContainer.IOComponentTypes.Button);
-    MyIOInformation.AddAlternateMapType(FPGAIOInformationContainer.IOComponentTypes.Pin);
+            IOComponentTypes.DIPSwitch);
+    MyIOInformation.AddAlternateMapType(IOComponentTypes.Button);
+    MyIOInformation.AddAlternateMapType(IOComponentTypes.Pin);
   }
 
   @Override

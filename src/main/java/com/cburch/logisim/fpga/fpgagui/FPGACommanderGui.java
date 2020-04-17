@@ -41,6 +41,7 @@ import com.cburch.logisim.fpga.download.Download;
 import com.cburch.logisim.fpga.fpgaboardeditor.BoardReaderClass;
 import com.cburch.logisim.fpga.gui.FPGAClockPanel;
 import com.cburch.logisim.fpga.settings.VendorSoftware;
+import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.gui.icons.ProjectAddIcon;
 import com.cburch.logisim.gui.prefs.PreferencesFrame;
 import com.cburch.logisim.prefs.AppPreferences;
@@ -68,7 +69,6 @@ import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 
@@ -461,11 +461,11 @@ public class FPGACommanderGui extends FPGACommanderBase
         if (VendorSoftware.setToolPath(vendor, ToolPath)) {
           ok = true;
         } else {
-          JOptionPane.showMessageDialog(
+          OptionPane.showMessageDialog(
               null,
               S.fmt("FpgaToolsNotFound", ToolPath),
               S.get("FpgaGuiSoftwareSelect"),
-              JOptionPane.ERROR_MESSAGE);
+              OptionPane.ERROR_MESSAGE);
         }
       } else ok = true;
     } while (!ok);

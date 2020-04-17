@@ -31,8 +31,9 @@ package com.cburch.logisim.fpga.fpgaboardeditor;
 import static com.cburch.logisim.fpga.Strings.S;
 
 import com.cburch.draw.shapes.Rectangle;
-import com.cburch.logisim.fpga.fpgaboardeditor.FPGAIOInformationContainer.IOComponentTypes;
+import com.cburch.logisim.fpga.data.IOComponentTypes;
 import com.cburch.logisim.fpga.settings.VendorSoftware;
+import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.gui.icons.ErrorIcon;
 import com.cburch.logisim.gui.icons.WarningIcon;
 import com.cburch.logisim.prefs.AppPreferences;
@@ -60,7 +61,6 @@ import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
@@ -283,8 +283,8 @@ public class BoardDialog implements ActionListener, ComponentListener, LocaleLis
   
   private String getInternalBoardName() {
     ArrayList<String> boards = AppPreferences.Boards.GetBoardNames();
-    return (String)JOptionPane.showInputDialog(panel,S.get("FpgaBoardSelect"),
-        S.get("FpgaBoardLoadInternal"), JOptionPane.PLAIN_MESSAGE, null,
+    return (String)OptionPane.showInputDialog(panel,S.get("FpgaBoardSelect"),
+        S.get("FpgaBoardLoadInternal"), OptionPane.PLAIN_MESSAGE, null,
         boards.toArray(),boards.get(0));
   }
 

@@ -32,11 +32,13 @@ import static com.cburch.logisim.fpga.Strings.S;
 
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.fpgaboardeditor.BoardInformation;
+import com.cburch.logisim.fpga.fpgaboardeditor.FPGAIOInformationContainer;
 import com.cburch.logisim.fpga.fpgaboardeditor.IoStandards;
 import com.cburch.logisim.fpga.fpgagui.FPGACommanderBase;
 import com.cburch.logisim.fpga.fpgagui.FPGAReport;
 import com.cburch.logisim.fpga.fpgagui.MappableResourcesContainer;
 import com.cburch.logisim.fpga.hdlgenerator.FileWriter;
+import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.TickComponentHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.ToplevelHDLGeneratorFactory;
 import com.cburch.logisim.fpga.settings.VendorSoftware;
@@ -286,5 +288,39 @@ public class VivadoDownload implements VendorDownload {
     // TODO Detect if a board is connected, and in case of multiple boards select the one that
     // should be used
     return true;
+  }
+
+  public static ArrayList<String> GetPinlocStrings(String direction, int StartId, FPGAIOInformationContainer info) {
+    ArrayList<String> contents = new ArrayList<String>();
+    for (int i = 0; i < info.getNrOfPins(); i++) {
+      String netName = "";
+      if (direction.equals("in")) {
+        netName = HDLGeneratorFactory.FPGAInputPinName + "_" + Integer.toString(StartId + i);
+      } else if (direction.equals("inout")) {
+        netName = HDLGeneratorFactory.FPGAInOutPinName + "_" + Integer.toString(StartId + i);
+      } else {
+        netName = HDLGeneratorFactory.FPGAOutputPinName + "_" + Integer.toString(StartId + i);
+      }
+      contents.add(
+          "set_property PACKAGE_PIN " + info.getPinLocation(i) + " [get_ports {" + netName + "}]");
+
+      if (info.GetIOStandard() != IoStandards.Unknown && info.GetIOStandard() != IoStandards.DefaulStandard) {
+        contents.add(
+            "    set_property IOSTANDARD "
+                + IoStandards.GetConstraintedIoStandard(info.GetIOStandard())
+                + " [get_ports {"
+                + netName
+                + "}]");
+      }
+      if (info.GetIOStandard() != IoStandards.Unknown && info.GetIOStandard() != IoStandards.DefaulStandard) {
+        contents.add(
+            "    set_property IOSTANDARD "
+                + IoStandards.GetConstraintedIoStandard(info.GetIOStandard())
+                + " [get_ports {"
+                + netName
+                + "}]");
+      }
+    }
+    return contents;
   }
 }

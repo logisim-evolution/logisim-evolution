@@ -36,6 +36,7 @@ import com.cburch.logisim.comp.ComponentFactory;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
+import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.tools.SetAttributeAction;
 import java.awt.event.KeyEvent;
@@ -46,7 +47,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import javax.swing.JOptionPane;
 
 public class AutoLabel {
 
@@ -230,11 +230,11 @@ public class AutoLabel {
     while (!correct) {
       NewLabel =
           (String)
-              JOptionPane.showInputDialog(
+              OptionPane.showInputDialog(
                   null,
                   S.get("editLabelQuestion") + " " + ComponentName,
                   S.get("editLabelDialog"),
-                  JOptionPane.QUESTION_MESSAGE,
+                  OptionPane.QUESTION_MESSAGE,
                   null,
                   null,
                   OldLabel);

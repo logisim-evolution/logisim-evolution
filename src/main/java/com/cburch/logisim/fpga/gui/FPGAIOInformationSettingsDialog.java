@@ -54,7 +54,7 @@ import com.cburch.logisim.fpga.fpgaboardeditor.FPGAIOInformationContainer;
 import com.cburch.logisim.fpga.fpgaboardeditor.IoStandards;
 import com.cburch.logisim.fpga.fpgaboardeditor.PinActivity;
 import com.cburch.logisim.fpga.fpgaboardeditor.PullBehaviors;
-import com.cburch.logisim.fpga.fpgaboardeditor.FPGAIOInformationContainer.IOComponentTypes;
+import com.cburch.logisim.fpga.data.IOComponentTypes;
 import com.cburch.logisim.gui.icons.ErrorIcon;
 import com.cburch.logisim.gui.icons.WarningIcon;
 import com.cburch.logisim.proj.Projects;

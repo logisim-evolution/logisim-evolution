@@ -37,7 +37,7 @@ import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Value;
-import com.cburch.logisim.fpga.fpgaboardeditor.FPGAIOInformationContainer;
+import com.cburch.logisim.fpga.data.IOComponentTypes;
 import com.cburch.logisim.fpga.hdlgenerator.IOComponentInformationContainer;
 import com.cburch.logisim.gui.icons.LEDIcon;
 import com.cburch.logisim.instance.Instance;
@@ -102,8 +102,8 @@ public class Led extends InstanceFactory implements DynamicElementProvider {
     setInstanceLogger(Logger.class);
     MyIOInformation =
         new IOComponentInformationContainer(
-            0, 1, 0, FPGAIOInformationContainer.IOComponentTypes.LED);
-    MyIOInformation.AddAlternateMapType(FPGAIOInformationContainer.IOComponentTypes.Pin);
+            0, 1, 0, IOComponentTypes.LED);
+    MyIOInformation.AddAlternateMapType(IOComponentTypes.Pin);
   }
 
   @Override

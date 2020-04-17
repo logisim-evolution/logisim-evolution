@@ -40,6 +40,7 @@ import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.file.LogisimFile;
 import com.cburch.logisim.file.LogisimFileActions;
 import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
+import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.proj.Project;
@@ -66,8 +67,8 @@ import javax.swing.JTextField;
 
 public class ProjectCircuitActions {
   private static void analyzeError(Project proj, String message) {
-    JOptionPane.showMessageDialog(
-        proj.getFrame(), message, S.get("analyzeErrorTitle"), JOptionPane.ERROR_MESSAGE);
+    OptionPane.showMessageDialog(
+        proj.getFrame(), message, S.get("analyzeErrorTitle"), OptionPane.ERROR_MESSAGE);
     return;
   }
 
@@ -92,11 +93,11 @@ public class ProjectCircuitActions {
       analyzer.setSelectedTab(Analyzer.EXPRESSION_TAB);
       return;
     } catch (AnalyzeException ex) {
-      JOptionPane.showMessageDialog(
+      OptionPane.showMessageDialog(
           proj.getFrame(),
           ex.getMessage(),
           S.get("analyzeNoExpressionTitle"),
-          JOptionPane.INFORMATION_MESSAGE);
+          OptionPane.INFORMATION_MESSAGE);
     }
 
     // As a backup measure, we compute a truth table.
@@ -119,8 +120,8 @@ public class ProjectCircuitActions {
         error = new JLabel("\"" + name + "\": " + S.get("circuitNameExists"));
       }
       if (error != null) {
-        JOptionPane.showMessageDialog(
-            proj.getFrame(), error, S.get("circuitCreateTitle"), JOptionPane.ERROR_MESSAGE);
+        OptionPane.showMessageDialog(
+            proj.getFrame(), error, S.get("circuitCreateTitle"), OptionPane.ERROR_MESSAGE);
       } else {
         Circuit circuit = new Circuit(name, proj.getLogisimFile(), proj);
         proj.doAction(LogisimFileActions.addCircuit(circuit));
@@ -225,17 +226,17 @@ public class ProjectCircuitActions {
 
   public static void doRemoveCircuit(Project proj, Circuit circuit) {
     if (proj.getLogisimFile().getCircuits().size() == 1) {
-      JOptionPane.showMessageDialog(
+      OptionPane.showMessageDialog(
           proj.getFrame(),
           S.get("circuitRemoveLastError"),
           S.get("circuitRemoveErrorTitle"),
-          JOptionPane.ERROR_MESSAGE);
+          OptionPane.ERROR_MESSAGE);
     } else if (!proj.getDependencies().canRemove(circuit)) {
-      JOptionPane.showMessageDialog(
+      OptionPane.showMessageDialog(
           proj.getFrame(),
           S.get("circuitRemoveUsedError"),
           S.get("circuitRemoveErrorTitle"),
-          JOptionPane.ERROR_MESSAGE);
+          OptionPane.ERROR_MESSAGE);
     } else {
       proj.doAction(LogisimFileActions.removeCircuit(circuit));
     }
@@ -243,11 +244,11 @@ public class ProjectCircuitActions {
 
   public static void doRemoveVhdl(Project proj, VhdlContent vhdl) {
     if (!proj.getDependencies().canRemove(vhdl)) {
-      JOptionPane.showMessageDialog(
+      OptionPane.showMessageDialog(
           proj.getFrame(),
           S.get("circuitRemoveUsedError"),
           S.get("circuitRemoveErrorTitle"),
-          JOptionPane.ERROR_MESSAGE);
+          OptionPane.ERROR_MESSAGE);
     } else {
       proj.doAction(LogisimFileActions.removeVhdl(vhdl));
     }
@@ -311,7 +312,7 @@ public class ProjectCircuitActions {
     gb.setConstraints(strut, gc);
     panel.add(strut);
     JOptionPane pane =
-        new JOptionPane(panel, JOptionPane.QUESTION_MESSAGE, JOptionPane.OK_CANCEL_OPTION);
+        new JOptionPane(panel, OptionPane.QUESTION_MESSAGE, OptionPane.OK_CANCEL_OPTION);
     pane.setInitialValue(field);
     JDialog dlog = pane.createDialog(frame, title);
     dlog.addWindowFocusListener(
@@ -330,7 +331,7 @@ public class ProjectCircuitActions {
     Object action = pane.getValue();
     if (action == null
         || !(action instanceof Integer)
-        || ((Integer) action).intValue() != JOptionPane.OK_OPTION) {
+        || ((Integer) action).intValue() != OptionPane.OK_OPTION) {
       return null;
     }
 

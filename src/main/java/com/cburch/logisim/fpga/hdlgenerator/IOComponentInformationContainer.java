@@ -28,7 +28,7 @@
 
 package com.cburch.logisim.fpga.hdlgenerator;
 
-import com.cburch.logisim.fpga.fpgaboardeditor.FPGAIOInformationContainer;
+import com.cburch.logisim.fpga.data.IOComponentTypes;
 import java.util.ArrayList;
 
 public class IOComponentInformationContainer {
@@ -39,8 +39,8 @@ public class IOComponentInformationContainer {
   private ArrayList<String> InputBubbleLabels;
   private ArrayList<String> InOutBubbleLabels;
   private ArrayList<String> OutputBubbleLabels;
-  private FPGAIOInformationContainer.IOComponentTypes MainMapType;
-  private ArrayList<FPGAIOInformationContainer.IOComponentTypes> AlternateMapTypes;
+  private IOComponentTypes MainMapType;
+  private ArrayList<IOComponentTypes> AlternateMapTypes;
 
   public IOComponentInformationContainer(
       int inports,
@@ -49,7 +49,7 @@ public class IOComponentInformationContainer {
       ArrayList<String> inportLabels,
       ArrayList<String> outportLabels,
       ArrayList<String> inoutportLabels,
-      FPGAIOInformationContainer.IOComponentTypes MapType) {
+      IOComponentTypes MapType) {
     NrOfInputBubbles = inports;
     NrOfOutputBubbles = outports;
     NrOfInOutBubbles = inoutports;
@@ -57,14 +57,14 @@ public class IOComponentInformationContainer {
     OutputBubbleLabels = outportLabels;
     InOutBubbleLabels = inoutportLabels;
     MainMapType = MapType;
-    AlternateMapTypes = new ArrayList<FPGAIOInformationContainer.IOComponentTypes>();
+    AlternateMapTypes = new ArrayList<IOComponentTypes>();
   }
 
   public IOComponentInformationContainer(
       int inports,
       int outports,
       int inoutport,
-      FPGAIOInformationContainer.IOComponentTypes MapType) {
+      IOComponentTypes MapType) {
     NrOfInputBubbles = inports;
     NrOfOutputBubbles = outports;
     NrOfInOutBubbles = inoutport;
@@ -72,10 +72,10 @@ public class IOComponentInformationContainer {
     OutputBubbleLabels = null;
     InOutBubbleLabels = null;
     MainMapType = MapType;
-    AlternateMapTypes = new ArrayList<FPGAIOInformationContainer.IOComponentTypes>();
+    AlternateMapTypes = new ArrayList<IOComponentTypes>();
   }
 
-  public void AddAlternateMapType(FPGAIOInformationContainer.IOComponentTypes map) {
+  public void AddAlternateMapType(IOComponentTypes map) {
     AlternateMapTypes.add(map);
   }
 
@@ -89,15 +89,15 @@ public class IOComponentInformationContainer {
             OutputBubbleLabels,
             InOutBubbleLabels,
             MainMapType);
-    for (FPGAIOInformationContainer.IOComponentTypes Alt : AlternateMapTypes) {
+    for (IOComponentTypes Alt : AlternateMapTypes) {
       Myclone.AddAlternateMapType(Alt);
     }
     return Myclone;
   }
 
-  public FPGAIOInformationContainer.IOComponentTypes GetAlternateMapType(int id) {
+  public IOComponentTypes GetAlternateMapType(int id) {
     if (id >= AlternateMapTypes.size()) {
-      return FPGAIOInformationContainer.IOComponentTypes.Unknown;
+      return IOComponentTypes.Unknown;
     } else {
       return AlternateMapTypes.get(id);
     }
@@ -123,7 +123,7 @@ public class IOComponentInformationContainer {
     return InputBubbleLabels.get(inputNr);
   }
 
-  public FPGAIOInformationContainer.IOComponentTypes GetMainMapType() {
+  public IOComponentTypes GetMainMapType() {
     return MainMapType;
   }
 

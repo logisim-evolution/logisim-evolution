@@ -37,7 +37,7 @@ import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Value;
-import com.cburch.logisim.fpga.fpgaboardeditor.FPGAIOInformationContainer;
+import com.cburch.logisim.fpga.data.IOComponentTypes;
 import com.cburch.logisim.fpga.hdlgenerator.IOComponentInformationContainer;
 import com.cburch.logisim.gui.icons.LEDIcon;
 import com.cburch.logisim.instance.Instance;
@@ -111,9 +111,9 @@ public class RGBLed extends InstanceFactory implements DynamicElementProvider {
     setInstanceLogger(Logger.class);
     MyIOInformation =
         new IOComponentInformationContainer(
-            0, 3, 0, null, GetLabels(), null, FPGAIOInformationContainer.IOComponentTypes.RGBLED);
-    MyIOInformation.AddAlternateMapType(FPGAIOInformationContainer.IOComponentTypes.Pin);
-    MyIOInformation.AddAlternateMapType(FPGAIOInformationContainer.IOComponentTypes.LED);
+            0, 3, 0, null, GetLabels(), null, IOComponentTypes.RGBLED);
+    MyIOInformation.AddAlternateMapType(IOComponentTypes.Pin);
+    MyIOInformation.AddAlternateMapType(IOComponentTypes.LED);
   }
 
   private void updatePorts(Instance instance) {

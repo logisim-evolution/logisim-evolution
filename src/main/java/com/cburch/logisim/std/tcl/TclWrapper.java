@@ -28,6 +28,7 @@
 
 package com.cburch.logisim.std.tcl;
 
+import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.tools.MessageBox;
 import java.io.BufferedReader;
 import java.io.File;
@@ -39,7 +40,6 @@ import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-import javax.swing.JOptionPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -195,7 +195,7 @@ public class TclWrapper {
 
                   MessageBox userInfoBox =
                       new MessageBox(
-                          "Error starting TCL wrapper", errorMessage, JOptionPane.ERROR_MESSAGE);
+                          "Error starting TCL wrapper", errorMessage, OptionPane.ERROR_MESSAGE);
                   userInfoBox.show();
 
                 } catch (IOException e) {

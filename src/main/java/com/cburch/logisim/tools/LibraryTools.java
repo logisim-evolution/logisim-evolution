@@ -33,19 +33,20 @@ import static com.cburch.logisim.tools.Strings.S;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.file.LoadedLibrary;
 import com.cburch.logisim.file.LogisimFile;
+import com.cburch.logisim.gui.generic.OptionPane;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import javax.swing.JOptionPane;
 
 public class LibraryTools {
   public static void ShowErrors(String LibName, HashMap<String, String> Messages) {
-    JOptionPane.showMessageDialog(
+    OptionPane.showMessageDialog(
         null,
         Message(LibName, Messages),
         S.get("LibLoadErrors") + " " + LibName + " !",
-        JOptionPane.ERROR_MESSAGE);
+        OptionPane.ERROR_MESSAGE);
   }
 
   private static String Message(String LibName, HashMap<String, String> Messages) {

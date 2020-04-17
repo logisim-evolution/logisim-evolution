@@ -38,13 +38,13 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.Location;
+import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.gui.main.Frame;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.StdAttr;
@@ -76,8 +76,8 @@ public class SocSimulationManager implements SocBusMasterInterface {
         return;
       SocSimulationManager socMan = myCirc.getSocSimulationManager();
       if (!socMan.hasSocBusses()) {
-        JOptionPane.showMessageDialog(null, S.get("SocManagerNoBusses"),
-        		S.get("SocBusSelectAttr"),JOptionPane.ERROR_MESSAGE);
+        OptionPane.showMessageDialog(null, S.get("SocManagerNoBusses"),
+        		S.get("SocBusSelectAttr"),OptionPane.ERROR_MESSAGE);
         return;
       }
       String id = socMan.getGuiBusId();
@@ -237,10 +237,10 @@ public class SocSimulationManager implements SocBusMasterInterface {
 	  if (socBusses.get(id).getComponent() != null)
 	    busses.put(getSocBusDisplayString(id), id);
 	}
-    String res = (String) JOptionPane.showInputDialog(null,
+    String res = (String) OptionPane.showInputDialog(null,
     		S.get("SocBusManagerSelectBus"),
     		S.get("SocBusSelectAttr"),
-    		JOptionPane.PLAIN_MESSAGE,
+    		OptionPane.PLAIN_MESSAGE,
     		null,
     		busses.keySet().toArray(),
     		"");

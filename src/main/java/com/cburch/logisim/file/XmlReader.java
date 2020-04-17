@@ -42,6 +42,7 @@ import com.cburch.logisim.data.AttributeDefaultProvider;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.fpga.fpgaboardeditor.BoardRectangle;
+import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
@@ -64,7 +65,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import javax.swing.JOptionPane;
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -411,13 +411,13 @@ class XmlReader {
       // circuits...
       if (sourceVersion.compareTo(LogisimVersion.get(2, 7, 2)) < 0) {
         IsEvolutionFile = true;
-        JOptionPane.showMessageDialog(
+        OptionPane.showMessageDialog(
             null,
             "You are opening a file created with original Logisim code.\n"
                 + "You might encounter some problems in the execution, since some components evolved since then.\n"
                 + "Moreover, labels will be converted to match VHDL limitations for variable names.",
             "Old file format -- compatibility mode",
-            JOptionPane.WARNING_MESSAGE);
+            OptionPane.WARNING_MESSAGE);
       }
 
       // first, load the sublibraries

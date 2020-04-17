@@ -28,6 +28,7 @@
 
 package com.cburch.logisim.vhdl.sim;
 
+import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.tools.MessageBox;
 import com.cburch.logisim.util.FileUtil;
 import com.cburch.logisim.util.Softwares;
@@ -41,7 +42,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
-import javax.swing.JOptionPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -168,7 +168,7 @@ public class VhdlSimulatorTclBinder {
 
                   MessageBox userInfoBox =
                       new MessageBox(
-                          "Error starting VHDL simulator", errorMessage, JOptionPane.ERROR_MESSAGE);
+                          "Error starting VHDL simulator", errorMessage, OptionPane.ERROR_MESSAGE);
                   userInfoBox.show();
                   vsim.setState(State.ENABLED);
 

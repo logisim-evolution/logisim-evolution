@@ -28,7 +28,7 @@
 
 package com.cburch.logisim.fpga.fpgaboardeditor;
 
-import com.cburch.logisim.fpga.fpgaboardeditor.FPGAIOInformationContainer.IOComponentTypes;
+import com.cburch.logisim.fpga.data.IOComponentTypes;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -121,7 +121,7 @@ public class BoardInformation {
         return comp.GetType().toString();
       }
     }
-    return FPGAIOInformationContainer.IOComponentTypes.Unknown.toString();
+    return IOComponentTypes.Unknown.toString();
   }
 
   public String getDriveStrength(BoardRectangle rect) {
@@ -138,7 +138,7 @@ public class BoardInformation {
   }
 
   public ArrayList<BoardRectangle> GetIoComponentsOfType(
-      FPGAIOInformationContainer.IOComponentTypes type, int nrOfPins) {
+      IOComponentTypes type, int nrOfPins) {
     ArrayList<BoardRectangle> result = new ArrayList<BoardRectangle>();
     for (FPGAIOInformationContainer comp : MyComponents) {
       if (comp.GetType().equals(type)) {

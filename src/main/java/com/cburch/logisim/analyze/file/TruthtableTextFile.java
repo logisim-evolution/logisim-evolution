@@ -36,6 +36,8 @@ import com.cburch.logisim.analyze.model.TruthTable;
 import com.cburch.logisim.analyze.model.Var;
 import com.cburch.logisim.analyze.model.VariableList;
 import com.cburch.logisim.circuit.Circuit;
+import com.cburch.logisim.gui.generic.OptionPane;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
@@ -45,7 +47,6 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 
 public class TruthtableTextFile {
@@ -327,12 +328,12 @@ public class TruthtableTextFile {
         table.setVisibleRows(rows, false);
       } catch (IllegalArgumentException e) {
         int confirm =
-            JOptionPane.showConfirmDialog(
+            OptionPane.showConfirmDialog(
                 parent,
                 new String[] {e.getMessage(), S.get("tableParseErrorMessage")},
                 S.get("tableParseErrorTitle"),
-                JOptionPane.YES_NO_OPTION);
-        if (confirm != JOptionPane.YES_OPTION) return;
+                OptionPane.YES_NO_OPTION);
+        if (confirm != OptionPane.YES_OPTION) return;
         try {
           table.setVisibleRows(rows, true);
         } catch (IllegalArgumentException ex) {

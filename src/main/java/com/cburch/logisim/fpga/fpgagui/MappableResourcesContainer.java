@@ -37,8 +37,9 @@ import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.fpgaboardeditor.BoardInformation;
 import com.cburch.logisim.fpga.fpgaboardeditor.BoardRectangle;
 import com.cburch.logisim.fpga.fpgaboardeditor.FPGAIOInformationContainer;
-import com.cburch.logisim.fpga.fpgaboardeditor.FPGAIOInformationContainer.IOComponentTypes;
+import com.cburch.logisim.fpga.data.IOComponentTypes;
 import com.cburch.logisim.fpga.fpgaboardeditor.PinActivity;
+import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.proj.ProjectActions;
 import com.cburch.logisim.std.io.DipSwitch;
 import com.cburch.logisim.std.io.PortIO;
@@ -52,8 +53,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
-
-import javax.swing.JOptionPane;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -560,7 +559,7 @@ public class MappableResourcesContainer {
     }
     if (FixedConnectButtons.contains(item)) {
       if (item.equals(Open)) {
-        MapComp.addMap(DisplayNametoMapName(comp), item, FPGAIOInformationContainer.IOComponentTypes.Open.toString());
+        MapComp.addMap(DisplayNametoMapName(comp), item, IOComponentTypes.Open.toString());
       } else {
         Long[] info = new Long[2];
         info[1] = (long) item.getNrBits();
@@ -575,7 +574,7 @@ public class MappableResourcesContainer {
             boolean correct = true;
             do {
               correct = true;
-              String Value = JOptionPane.showInputDialog(S.get("FpgaMapSpecConst"));
+              String Value = OptionPane.showInputDialog(S.get("FpgaMapSpecConst"));
               if (Value == null) return;
               if (Value.startsWith("0x")) {
                 try {
@@ -590,13 +589,13 @@ public class MappableResourcesContainer {
                   correct = false;
                 }
               }
-              if (!correct) JOptionPane.showMessageDialog(null, S.get("FpgaMapSpecErr"));
+              if (!correct) OptionPane.showMessageDialog(null, S.get("FpgaMapSpecErr"));
             } while (!correct);
             info[0] = v;
           } else return;
         }
         constantsList.put(DisplayNametoMapName(comp), info);
-        MapComp.addMap(DisplayNametoMapName(comp), item, FPGAIOInformationContainer.IOComponentTypes.Constant.toString());
+        MapComp.addMap(DisplayNametoMapName(comp), item, IOComponentTypes.Constant.toString());
       }
     } else {
       MapComp.addMap(DisplayNametoMapName(comp), item, Maptype);
@@ -745,10 +744,10 @@ public class MappableResourcesContainer {
     String MapType = "";
     if (cmap.isOpen()) {
       rect = Open;
-      MapType = FPGAIOInformationContainer.IOComponentTypes.Open.toString();
+      MapType = IOComponentTypes.Open.toString();
     } else if (cmap.isConst()) {
       Long val = cmap.getConstValue();
-      MapType = FPGAIOInformationContainer.IOComponentTypes.Constant.toString();
+      MapType = IOComponentTypes.Constant.toString();
       NetlistComponent comp = myMappableResources.get(key);
       int pinNeeded =
           comp.GetIOInformationContainer().GetNrOfInOutports()
@@ -784,7 +783,7 @@ public class MappableResourcesContainer {
     if (!myMappableResources.containsKey(key)) {
       return;
     }
-    if (Maptype.equals(FPGAIOInformationContainer.IOComponentTypes.Unknown.toString()))
+    if (Maptype.equals(IOComponentTypes.Unknown.toString()))
       return;
     if (UnmappedList().contains(DisplayName)) {
       Map(DisplayName, rect, Maptype);

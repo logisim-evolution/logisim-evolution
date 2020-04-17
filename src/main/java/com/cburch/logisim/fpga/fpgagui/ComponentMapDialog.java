@@ -34,6 +34,7 @@ import com.cburch.logisim.data.Value;
 import com.cburch.logisim.fpga.fpgaboardeditor.BoardInformation;
 import com.cburch.logisim.fpga.fpgaboardeditor.BoardRectangle;
 import com.cburch.logisim.fpga.fpgaboardeditor.ZoomSlider;
+import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.LocaleListener;
@@ -65,7 +66,6 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSlider;
@@ -706,7 +706,7 @@ public class ComponentMapDialog implements ActionListener, ListSelectionListener
           RebuildSelectionLists();
           BoardPic.paintImmediately(0, 0, BoardPic.getWidth(), BoardPic.getHeight());
       } else {
-    	 JOptionPane.showMessageDialog(null, parse.getError(result), "Error", JOptionPane.ERROR_MESSAGE);
+    	 OptionPane.showMessageDialog(null, parse.getError(result), "Error", OptionPane.ERROR_MESSAGE);
       }
     }
     panel.setVisible(true);
@@ -757,7 +757,7 @@ public class ComponentMapDialog implements ActionListener, ListSelectionListener
   private void Save() {
 	panel.setVisible(false);
     MappableComponents.save();
-    JOptionPane.showMessageDialog(null, S.get("BoarMapFileSaved"), "", JOptionPane.INFORMATION_MESSAGE);
+    OptionPane.showMessageDialog(null, S.get("BoarMapFileSaved"), "", OptionPane.INFORMATION_MESSAGE);
 	panel.setVisible(true);
   }
 

@@ -33,11 +33,13 @@ import static com.cburch.logisim.fpga.Strings.S;
 import com.cburch.logisim.Main;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.fpga.fpgaboardeditor.BoardInformation;
+import com.cburch.logisim.fpga.fpgaboardeditor.FPGAIOInformationContainer;
 import com.cburch.logisim.fpga.fpgagui.ComponentMapDialog;
 import com.cburch.logisim.fpga.fpgagui.ComponentMapParser;
 import com.cburch.logisim.fpga.fpgagui.FPGACommanderBase;
 import com.cburch.logisim.fpga.fpgagui.FPGAReport;
 import com.cburch.logisim.fpga.settings.VendorSoftware;
+import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.proj.Projects;
@@ -175,6 +177,16 @@ public class Download extends FPGACommanderBase implements Runnable, WindowListe
       MyProgress.setString(S.get("FpgaDownloadInfo"));
     }
   }
+  
+  public static ArrayList<String> GetPinlocStrings(int Vendor, 
+    String direction, int StartId, FPGAIOInformationContainer info) {
+    switch(Vendor) {
+      case VendorSoftware.VendorAltera : return AlteraDownload.GetPinlocStrings(direction, StartId, info);
+      case VendorSoftware.VendorXilinx : return XilinxDownload.GetPinlocStrings(direction, StartId, info);
+      case VendorSoftware.VendorVivado : return VivadoDownload.GetPinlocStrings(direction, StartId, info);
+      default : return new ArrayList<String>();
+    }
+  }
 
   public void DoDownload() {
     new Thread(this).start();
@@ -259,16 +271,16 @@ public class Download extends FPGACommanderBase implements Runnable, WindowListe
     if (StopRequested) return S.get("FPGAInterrupted");
     Object[] options = {S.get("FPGADownloadOk"), S.get("FPGADownloadCancel")};
     if (UseGui)
-      if (JOptionPane.showOptionDialog(
+      if (OptionPane.showOptionDialog(
               null,
               S.get("FPGAVerifyMsg1"),
               S.get("FPGAVerifyMsg2"),
-              JOptionPane.YES_NO_OPTION,
-              JOptionPane.WARNING_MESSAGE,
+              OptionPane.YES_NO_OPTION,
+              OptionPane.WARNING_MESSAGE,
               null,
               options,
               options[0])
-          != JOptionPane.YES_OPTION) {
+          != OptionPane.YES_OPTION) {
         return S.get("FPGADownloadAborted");
       }
     if (!Downloader.BoardConnected()) return S.get("FPGABoardNotConnected");
@@ -439,16 +451,16 @@ public class Download extends FPGACommanderBase implements Runnable, WindowListe
 
   public static String ChooseBoard(List<String> devices) {
     /* This code is based on the version of Kevin Walsh */
-    if (Projects.getTopFrame() != null) {
+    if (Main.hasGui()) {
       String[] choices = new String[devices.size()];
       for (int i = 0; i < devices.size(); i++) choices[i] = devices.get(i);
       String choice =
           (String)
-              JOptionPane.showInputDialog(
+              OptionPane.showInputDialog(
                   null,
                   S.fmt("FPGAMultipleBoards", devices.size()),
                   S.get("FPGABoardSelection"),
-                  JOptionPane.QUESTION_MESSAGE,
+                  OptionPane.QUESTION_MESSAGE,
                   null,
                   choices,
                   choices[0]);

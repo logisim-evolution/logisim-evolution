@@ -30,9 +30,9 @@ package com.cburch.logisim.fpga.fpgaboardeditor;
 
 import static com.cburch.logisim.fpga.Strings.S;
 
+import com.cburch.logisim.fpga.data.IOComponentTypes;
+import com.cburch.logisim.fpga.download.Download;
 import com.cburch.logisim.fpga.gui.FPGAIOInformationSettingsDialog;
-import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
-import com.cburch.logisim.fpga.settings.VendorSoftware;
 import com.cburch.logisim.std.io.DipSwitch;
 import com.cburch.logisim.std.io.PortIO;
 import com.cburch.logisim.std.io.RGBLed;
@@ -40,7 +40,6 @@ import com.cburch.logisim.std.io.ReptarLocalBus;
 import com.cburch.logisim.std.io.SevenSegment;
 
 import java.util.ArrayList;
-import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -54,130 +53,6 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
 public class FPGAIOInformationContainer implements Cloneable {
-
-  public static enum IOComponentTypes {
-    LED,
-    Button,
-    Pin,
-    SevenSegment,
-    DIPSwitch,
-    RGBLED,
-    PortIO,
-    LocalBus,
-    Bus,
-    Open,
-    Constant,
-    Unknown;
-
-    public static IOComponentTypes getEnumFromString(String str) {
-      for (IOComponentTypes elem : KnownComponentSet) {
-        if (elem.name().equalsIgnoreCase(str)) {
-          return elem;
-        }
-      }
-      return IOComponentTypes.Unknown;
-    }
-
-    /* AMX: Localbus / Port IO / Pin led buton information about the number of input pins.
-     * This is the wrong way to do it. It should be taken from the Xml file!! */
-    public static final int GetFPGAInOutRequirement(IOComponentTypes comp) {
-      switch (comp) {
-        case PortIO:
-          return nbSwitch;
-        case LocalBus:
-          return 16;
-        default:
-          return 0;
-      }
-    }
-
-    /* AMX: Localbus / Port IO / Pin led buton information about the number of input pins.
-     * This is the wrong way to do it. It should be taken from the Xml file!! */
-    public static final int GetFPGAInputRequirement(IOComponentTypes comp) {
-      switch (comp) {
-        case Button:
-          return 1;
-        case DIPSwitch:
-          return nbSwitch;
-        case LocalBus:
-          return 13;
-        default:
-          return 0;
-      }
-    }
-
-    /* AMX: Localbus / Port IO / Pin led buton information about the number of output pins.
-     * This is the wrong way to do it. It should be taken from the Xml file!! */
-    public static final int GetFPGAOutputRequirement(IOComponentTypes comp) {
-      switch (comp) {
-        case LED:
-          return 1;
-        case SevenSegment:
-          return 8;
-        case RGBLED:
-          return 3;
-        case LocalBus:
-          return 2;
-        default:
-          return 0;
-      }
-    }
-
-    /* AMX: Localbus / Port IO / Pin led buton information about the total of pins pins.
-     * This is the wrong way to do it. It should be taken from the Xml file!! */
-    public static final int GetNrOfFPGAPins(IOComponentTypes comp) {
-      switch (comp) {
-        case LED:
-        case Button:
-        case Pin:
-          return 1;
-        case DIPSwitch:
-        case PortIO:
-          return nbSwitch;
-        case SevenSegment:
-          return 8;
-        case RGBLED:
-          return 3;
-        case LocalBus:
-          return 31;
-        default:
-          return 0;
-      }
-    }
-
-    public static final EnumSet<IOComponentTypes> KnownComponentSet =
-        EnumSet.range(IOComponentTypes.LED, IOComponentTypes.LocalBus);
-
-    public static final EnumSet<IOComponentTypes> SimpleInputSet =
-        EnumSet.range(IOComponentTypes.LED, IOComponentTypes.LocalBus);
-
-    public static final EnumSet<IOComponentTypes> InputComponentSet =
-        EnumSet.of(IOComponentTypes.Button, IOComponentTypes.Pin, IOComponentTypes.DIPSwitch);
-
-    public static final EnumSet<IOComponentTypes> OutputComponentSet =
-        EnumSet.of(
-            IOComponentTypes.LED,
-            IOComponentTypes.Pin,
-            IOComponentTypes.RGBLED,
-            IOComponentTypes.SevenSegment);
-
-    public static final EnumSet<IOComponentTypes> InOutComponentSet =
-        EnumSet.of(IOComponentTypes.Pin, IOComponentTypes.PortIO);
-
-    private static int nbSwitch = 8;
-
-    public void setNbPins(int nb) {
-      nbSwitch = nb;
-    }
-    
-    public int getNbPins() { return nbSwitch; }
-    
-  }
-
-  /*
-   * Bus is just a placeholder for a multi-bit pin. It should not be used for
-   * mappable components
-   */
 
   public static LinkedList<String> GetComponentTypes() {
     LinkedList<String> result = new LinkedList<String>();
@@ -200,13 +75,14 @@ public class FPGAIOInformationContainer implements Cloneable {
   private char MyDriveStrength;
   private String MyLabel;
   private boolean toBeDeleted = false;
+  private ArrayList<Boolean> pinIsMapped;
 
   public FPGAIOInformationContainer() {
     MyType = IOComponentTypes.Unknown;
     MyIdentifier = -1;
     MyRectangle = null;
     MyPinLocations = new HashMap<Integer, String>();
-    NrOfPins = 0;
+    setNrOfPins(0);
     MyPullBehavior = PullBehaviors.Unknown;
     MyActivityLevel = PinActivity.Unknown;
     MyIOStandard = IoStandards.Unknown;
@@ -219,7 +95,7 @@ public class FPGAIOInformationContainer implements Cloneable {
     MyIdentifier = -1;
     MyRectangle = rect;
     MyPinLocations = new HashMap<Integer, String>();
-    NrOfPins = 0;
+    setNrOfPins(0);
     MyPullBehavior = PullBehaviors.Unknown;
     MyActivityLevel = PinActivity.Unknown;
     MyIOStandard = IoStandards.Unknown;
@@ -254,7 +130,7 @@ public class FPGAIOInformationContainer implements Cloneable {
     MyIdentifier = -1;
     MyRectangle = null;
     MyPinLocations = new HashMap<Integer, String>();
-    NrOfPins = 0;
+    setNrOfPins(0);
     MyPullBehavior = PullBehaviors.Unknown;
     MyActivityLevel = PinActivity.Unknown;
     MyIOStandard = IoStandards.Unknown;
@@ -283,11 +159,11 @@ public class FPGAIOInformationContainer implements Cloneable {
         height = Integer.parseInt(ThisAttr.getNodeValue());
       }
       if (ThisAttr.getNodeName().equals(BoardWriterClass.PinLocationString)) {
-        NrOfPins = 1;
+        setNrOfPins(1);
         MyPinLocations.put(0, ThisAttr.getNodeValue());
       }
       if (ThisAttr.getNodeName().equals(BoardWriterClass.MultiPinInformationString)) {
-        NrOfPins = Integer.parseInt(ThisAttr.getNodeValue());
+        setNrOfPins(Integer.parseInt(ThisAttr.getNodeValue()));
       }
       if (ThisAttr.getNodeName().startsWith(BoardWriterClass.MultiPinPrefixString)) {
         String Id =
@@ -367,28 +243,6 @@ public class FPGAIOInformationContainer implements Cloneable {
     MyPinLocations.put(index, Value);
   }
 
-  private ArrayList<String> GetAlteraPinStrings(String direction, int StartId) {
-    /*
-     * for the time being we ignore the InputPins variable. It has to be
-     * implemented for more complex components
-     */
-    ArrayList<String> Contents = new ArrayList<String>();
-    for (int i = 0; i < NrOfPins; i++) {
-      String NetName = "";
-      if (direction == "in") {
-        NetName = HDLGeneratorFactory.FPGAInputPinName + "_" + Integer.toString(StartId + i);
-      } else if (direction == "inout") {
-        NetName = HDLGeneratorFactory.FPGAInOutPinName + "_" + Integer.toString(StartId + i);
-      } else {
-        NetName = HDLGeneratorFactory.FPGAOutputPinName + "_" + Integer.toString(StartId + i);
-      }
-      Contents.add("    set_location_assignment " + MyPinLocations.get(i) + " -to " + NetName);
-      if (MyPullBehavior == PullBehaviors.PullUp) {
-        Contents.add("    set_instance_assignment -name WEAK_PULL_UP_RESISTOR ON -to " + NetName);
-      }
-    }
-    return Contents;
-  }
 
   public Element GetDocumentElement(Document doc) {
     if (MyType.equals(IOComponentTypes.Unknown)) {
@@ -490,16 +344,7 @@ public class FPGAIOInformationContainer implements Cloneable {
   }
 
   public ArrayList<String> GetPinlocStrings(int Vendor, String direction, int StartId) {
-    if (Vendor == VendorSoftware.VendorXilinx) {
-      return GetXilinxUCFStrings(direction, StartId);
-    }
-    if (Vendor == VendorSoftware.VendorAltera) {
-      return GetAlteraPinStrings(direction, StartId);
-    }
-    if (Vendor == VendorSoftware.VendorVivado) {
-      return GetVivadoXDCStrings(direction, StartId);
-    }
-    return new ArrayList<String>();
+    return Download.GetPinlocStrings(Vendor, direction, StartId, this);
   }
 
   public char GetPullBehavior() {
@@ -554,108 +399,6 @@ public class FPGAIOInformationContainer implements Cloneable {
     MyType = type;
   }
 
-  private ArrayList<String> GetXilinxUCFStrings(String direction, int StartId) {
-    ArrayList<String> Contents = new ArrayList<String>();
-    StringBuffer Temp = new StringBuffer();
-    Integer start = 0;
-    Integer end = NrOfPins;
-    ArrayList<String> labels = null;
-    if (MyType.equals(IOComponentTypes.PortIO)) {
-      labels = PortIO.GetLabels(IOComponentTypes.GetNrOfFPGAPins(MyType));
-    } else if (MyType.equals(IOComponentTypes.LocalBus)) {
-      labels = ReptarLocalBus.GetLabels();
-      if (direction.equals("in")) {
-        end = IOComponentTypes.GetFPGAInputRequirement(MyType);
-      } else if (direction.equals("out")) {
-        // TODO: YSY
-        Contents.add(
-            "NET \"FPGA_LB_OUT_0\" LOC = \"R24\" | IOSTANDARD = LVCMOS18 ; # SP6_LB_WAIT3_o");
-        Contents.add("NET \"FPGA_LB_OUT_1\" LOC = \"AB30\" | IOSTANDARD = LVCMOS18 ; # IRQ_o");
-        return Contents;
-        // start = IOComponentTypes.GetFPGAInputRequirement(MyType);
-        // end = start +
-        // IOComponentTypes.GetFPGAOutputRequirement(MyType);
-      } else if (direction.equals("inout")) {
-        start =
-            IOComponentTypes.GetFPGAInputRequirement(MyType)
-                + IOComponentTypes.GetFPGAOutputRequirement(MyType);
-        end = start + IOComponentTypes.GetFPGAInOutRequirement(MyType);
-      }
-    } else if (MyType.equals(IOComponentTypes.DIPSwitch)) {
-      labels = DipSwitch.GetLabels(IOComponentTypes.GetNrOfFPGAPins(MyType));
-    } else if (MyType.equals(IOComponentTypes.SevenSegment)) {
-      labels = SevenSegment.GetLabels();
-    } else if (MyType.equals(IOComponentTypes.RGBLED)) {
-      labels = RGBLed.GetLabels();
-    }
-    for (int i = start; i < end; i++) {
-      Temp.setLength(0);
-      Temp.append("LOC = \"" + MyPinLocations.get(i) + "\" ");
-      if (MyPullBehavior != PullBehaviors.Unknown && MyPullBehavior != PullBehaviors.Float) {
-        Temp.append("| " + PullBehaviors.getContraintedPullString(MyPullBehavior) + " ");
-      }
-      if (MyDriveStrength != DriveStrength.Unknown
-          && MyDriveStrength != DriveStrength.DefaulStength) {
-        Temp.append(
-            "| DRIVE = " + DriveStrength.GetContraintedDriveStrength(MyDriveStrength) + " ");
-      }
-      if (MyIOStandard != IoStandards.Unknown && MyIOStandard != IoStandards.DefaulStandard) {
-        Temp.append("| IOSTANDARD = " + IoStandards.GetConstraintedIoStandard(MyIOStandard) + " ");
-      }
-      Temp.append(";");
-      if (labels != null) {
-        Temp.append(" # " + labels.get(i));
-      }
-      String NetName = "";
-      if (direction == "in") {
-        NetName =
-            HDLGeneratorFactory.FPGAInputPinName + "_" + Integer.toString(StartId + i - start);
-      } else if (direction == "inout") {
-        NetName =
-            HDLGeneratorFactory.FPGAInOutPinName + "_" + Integer.toString(StartId + i - start);
-      } else {
-        NetName =
-            HDLGeneratorFactory.FPGAOutputPinName + "_" + Integer.toString(StartId + i - start);
-      }
-      Contents.add("NET \"" + NetName + "\" " + Temp.toString());
-    }
-    return Contents;
-  }
-
-  private ArrayList<String> GetVivadoXDCStrings(String direction, int StartId) {
-    ArrayList<String> contents = new ArrayList<String>();
-    for (int i = 0; i < NrOfPins; i++) {
-      String netName = "";
-      if (direction.equals("in")) {
-        netName = HDLGeneratorFactory.FPGAInputPinName + "_" + Integer.toString(StartId + i);
-      } else if (direction.equals("inout")) {
-        netName = HDLGeneratorFactory.FPGAInOutPinName + "_" + Integer.toString(StartId + i);
-      } else {
-        netName = HDLGeneratorFactory.FPGAOutputPinName + "_" + Integer.toString(StartId + i);
-      }
-      contents.add(
-          "set_property PACKAGE_PIN " + MyPinLocations.get(i) + " [get_ports {" + netName + "}]");
-
-      if (MyIOStandard != IoStandards.Unknown && MyIOStandard != IoStandards.DefaulStandard) {
-        contents.add(
-            "    set_property IOSTANDARD "
-                + IoStandards.GetConstraintedIoStandard(MyIOStandard)
-                + " [get_ports {"
-                + netName
-                + "}]");
-      }
-      if (MyIOStandard != IoStandards.Unknown && MyIOStandard != IoStandards.DefaulStandard) {
-        contents.add(
-            "    set_property IOSTANDARD "
-                + IoStandards.GetConstraintedIoStandard(MyIOStandard)
-                + " [get_ports {"
-                + netName
-                + "}]");
-      }
-    }
-    return contents;
-  }
-
   public boolean IsInput() {
     return IOComponentTypes.InputComponentSet.contains(MyType);
   }
@@ -671,6 +414,11 @@ public class FPGAIOInformationContainer implements Cloneable {
   public boolean IsOutput() {
     return IOComponentTypes.OutputComponentSet.contains(MyType);
   }
+  
+  public boolean pinIsMapped(int index) {
+    if (index < 0 || index >= NrOfPins) return true;
+    return pinIsMapped.get(index);
+  }
 
   public void Set(
       IOComponentTypes Type,
@@ -684,7 +432,7 @@ public class FPGAIOInformationContainer implements Cloneable {
     MyType = Type;
     MyRectangle = rect;
     rect.SetActiveOnHigh(active.equals(PinActivity.Behavior_strings[PinActivity.ActiveHigh]));
-    NrOfPins = 1;
+    setNrOfPins(0);
     MyPinLocations.put(0, loc);
     MyPullBehavior = PullBehaviors.getId(pull);
     MyActivityLevel = PinActivity.getId(active);
@@ -700,7 +448,15 @@ public class FPGAIOInformationContainer implements Cloneable {
   }
 
   public void setNrOfPins(int count) {
+	if (pinIsMapped == null) pinIsMapped = new ArrayList<Boolean>();
     NrOfPins = count;
+    if (count > pinIsMapped.size()) {
+      for (int i = pinIsMapped.size(); i < count ; i++)
+        pinIsMapped.add(false);
+    } else if (count < pinIsMapped.size()) {
+      for (int i = pinIsMapped.size()-1 ; i >= count ; i--) 
+        pinIsMapped.remove(i);
+    }
   }
 
 }

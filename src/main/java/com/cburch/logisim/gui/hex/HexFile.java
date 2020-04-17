@@ -33,6 +33,7 @@ import static com.cburch.logisim.gui.Strings.S;
 import com.cburch.logisim.Main;
 import com.cburch.logisim.file.Loader;
 import com.cburch.logisim.file.LogisimFile;
+import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
@@ -74,7 +75,6 @@ import javax.swing.ButtonGroup;
 import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
@@ -1350,10 +1350,10 @@ public class HexFile {
         open(dst, f);
         mem.setCurrentImage(instance, f);
       } catch (IOException e) {
-        JOptionPane.showMessageDialog(parent,
+        OptionPane.showMessageDialog(parent,
             e.getMessage(),
             S.get("ramLoadErrorTitle"),
-            JOptionPane.ERROR_MESSAGE);
+            OptionPane.ERROR_MESSAGE);
       }
     }
   }
@@ -1753,11 +1753,11 @@ public class HexFile {
         if (choice == JFileChooser.APPROVE_OPTION) {
           File f = chooser.getSelectedFile();
           if (f.exists()) {
-            int confirm = JOptionPane.showConfirmDialog(parent,
+            int confirm = OptionPane.showConfirmDialog(parent,
                 S.fmt("confirmOverwriteMessage", f.getName()),
                 S.get("confirmOverwriteTitle"),
-                JOptionPane.YES_NO_OPTION);
-            if (confirm != JOptionPane.YES_OPTION)
+                OptionPane.YES_NO_OPTION);
+            if (confirm != OptionPane.YES_OPTION)
               return;
           }
           try {
@@ -1765,10 +1765,10 @@ public class HexFile {
             if (mem != null)
               mem.setCurrentImage(instance, f);
           } catch (IOException e) {
-            JOptionPane.showMessageDialog(parent,
+            OptionPane.showMessageDialog(parent,
                 e.getMessage(),
                 S.get("ramSaveErrorTitle"),
-                JOptionPane.ERROR_MESSAGE);
+                OptionPane.ERROR_MESSAGE);
           }
         }
       }

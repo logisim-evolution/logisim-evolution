@@ -35,6 +35,7 @@ import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.file.LogisimFile;
 import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
+import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.Softwares;
 import java.awt.Dimension;
@@ -242,8 +243,8 @@ public class VhdlContent extends HdlContent {
     } else {
       return false;
     }
-    JOptionPane.showMessageDialog(
-        null, label + ": " + err, S.get("validationParseError"), JOptionPane.ERROR_MESSAGE);
+    OptionPane.showMessageDialog(
+        null, label + ": " + err, S.get("validationParseError"), OptionPane.ERROR_MESSAGE);
     return true;
   }
 
@@ -279,21 +280,21 @@ public class VhdlContent extends HdlContent {
       JScrollPane sp = new JScrollPane(message);
       sp.setPreferredSize(new Dimension(700, 400));
 
-      JOptionPane.showOptionDialog(
+      OptionPane.showOptionDialog(
           null,
           sp,
           errTitle.toString(),
-          JOptionPane.OK_OPTION,
-          JOptionPane.ERROR_MESSAGE,
+          OptionPane.OK_OPTION,
+          OptionPane.ERROR_MESSAGE,
           null,
           new String[] {S.get("validationErrorButton")},
           S.get("validationErrorButton"));
     } else if (errCode == Softwares.ABORD) {
-      JOptionPane.showMessageDialog(
-          null, errMessage.toString(), errTitle.toString(), JOptionPane.INFORMATION_MESSAGE);
+      OptionPane.showMessageDialog(
+          null, errMessage.toString(), errTitle.toString(), OptionPane.INFORMATION_MESSAGE);
     } else {
-      JOptionPane.showMessageDialog(
-          null, errMessage.toString(), errTitle.toString(), JOptionPane.ERROR_MESSAGE);
+      OptionPane.showMessageDialog(
+          null, errMessage.toString(), errTitle.toString(), OptionPane.ERROR_MESSAGE);
     }
   }
 

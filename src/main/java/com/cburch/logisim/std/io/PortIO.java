@@ -35,8 +35,8 @@ import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Attributes;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
+import com.cburch.logisim.fpga.data.IOComponentTypes;
 import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
-import com.cburch.logisim.fpga.fpgaboardeditor.FPGAIOInformationContainer;
 import com.cburch.logisim.fpga.fpgagui.MappableResourcesContainer;
 import com.cburch.logisim.fpga.hdlgenerator.IOComponentInformationContainer;
 import com.cburch.logisim.instance.Instance;
@@ -117,9 +117,9 @@ public class PortIO extends InstanceFactory {
             null,
             null,
             GetLabels(portSize),
-            FPGAIOInformationContainer.IOComponentTypes.PortIO);
-    // MyIOInformation.AddAlternateMapType(FPGAIOInformationContainer.IOComponentTypes.Button);
-    MyIOInformation.AddAlternateMapType(FPGAIOInformationContainer.IOComponentTypes.Pin);
+            IOComponentTypes.PortIO);
+    // MyIOInformation.AddAlternateMapType(IOComponentTypes.Button);
+    MyIOInformation.AddAlternateMapType(IOComponentTypes.Pin);
   }
 
   private void computeTextField(Instance instance) {

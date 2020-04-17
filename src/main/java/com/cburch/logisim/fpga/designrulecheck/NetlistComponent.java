@@ -31,8 +31,8 @@ package com.cburch.logisim.fpga.designrulecheck;
 import static com.cburch.logisim.std.io.PortIO.ATTR_SIZE;
 
 import com.cburch.logisim.comp.Component;
+import com.cburch.logisim.fpga.data.IOComponentTypes;
 import com.cburch.logisim.fpga.fpgaboardeditor.BoardRectangle;
-import com.cburch.logisim.fpga.fpgaboardeditor.FPGAIOInformationContainer;
 import com.cburch.logisim.fpga.hdlgenerator.IOComponentInformationContainer;
 import com.cburch.logisim.std.io.PortIO;
 import com.cburch.logisim.std.wiring.Pin;
@@ -74,28 +74,28 @@ public class NetlistComponent {
     } else {
       if (Ref.getFactory() instanceof Pin) {
         int NrOfBits = Ref.getEnd(0).getWidth().getWidth();
-        FPGAIOInformationContainer.IOComponentTypes MainType =
+        IOComponentTypes MainType =
             (NrOfBits > 1)
-                ? FPGAIOInformationContainer.IOComponentTypes.Bus
-                : FPGAIOInformationContainer.IOComponentTypes.Pin;
+                ? IOComponentTypes.Bus
+                : IOComponentTypes.Pin;
         if (Ref.getEnd(0).isInput() && Ref.getEnd(0).isOutput()) {
           MyIOInformation = new IOComponentInformationContainer(0, 0, NrOfBits, MainType);
           if (NrOfBits > 1) {
-            MyIOInformation.AddAlternateMapType(FPGAIOInformationContainer.IOComponentTypes.Pin);
+            MyIOInformation.AddAlternateMapType(IOComponentTypes.Pin);
           }
-          MyIOInformation.AddAlternateMapType(FPGAIOInformationContainer.IOComponentTypes.PortIO);
+          MyIOInformation.AddAlternateMapType(IOComponentTypes.PortIO);
         } else if (Ref.getEnd(0).isInput()) {
           MyIOInformation = new IOComponentInformationContainer(0, NrOfBits, 0, MainType);
           if (NrOfBits > 1) {
-            MyIOInformation.AddAlternateMapType(FPGAIOInformationContainer.IOComponentTypes.Pin);
+            MyIOInformation.AddAlternateMapType(IOComponentTypes.Pin);
           }
-          MyIOInformation.AddAlternateMapType(FPGAIOInformationContainer.IOComponentTypes.LED);
+          MyIOInformation.AddAlternateMapType(IOComponentTypes.LED);
         } else {
           MyIOInformation = new IOComponentInformationContainer(NrOfBits, 0, 0, MainType);
           if (NrOfBits > 1) {
-            MyIOInformation.AddAlternateMapType(FPGAIOInformationContainer.IOComponentTypes.Pin);
+            MyIOInformation.AddAlternateMapType(IOComponentTypes.Pin);
           }
-          MyIOInformation.AddAlternateMapType(FPGAIOInformationContainer.IOComponentTypes.Button);
+          MyIOInformation.AddAlternateMapType(IOComponentTypes.Button);
         }
       } else {
         MyIOInformation = null;
@@ -147,9 +147,9 @@ public class NetlistComponent {
   public boolean AlternateMappingEnabled(ArrayList<String> key) {
     if (!AlternateMapEnabled.containsKey(key)) {
       AlternateMapEnabled.put( key,
-          MyIOInformation.GetMainMapType().equals(FPGAIOInformationContainer.IOComponentTypes.Bus));
+          MyIOInformation.GetMainMapType().equals(IOComponentTypes.Bus));
       AlternateMapLocked.put( key,
-          MyIOInformation.GetMainMapType().equals(FPGAIOInformationContainer.IOComponentTypes.Bus));
+          MyIOInformation.GetMainMapType().equals(IOComponentTypes.Bus));
     }
     return AlternateMapEnabled.get(key);
   }
@@ -157,7 +157,7 @@ public class NetlistComponent {
   public boolean AlternateMappingIsLocked(ArrayList<String> key) {
     if (!AlternateMapLocked.containsKey(key)) {
       AlternateMapLocked.put( key,
-          MyIOInformation.GetMainMapType().equals(FPGAIOInformationContainer.IOComponentTypes.Bus));
+          MyIOInformation.GetMainMapType().equals(IOComponentTypes.Bus));
     }
     return AlternateMapLocked.get(key);
   }
@@ -346,7 +346,7 @@ public class NetlistComponent {
 
   public void ToggleAlternateMapping(ArrayList<String> key) {
     boolean newIsLocked =
-        MyIOInformation.GetMainMapType().equals(FPGAIOInformationContainer.IOComponentTypes.Bus);
+        MyIOInformation.GetMainMapType().equals(IOComponentTypes.Bus);
     if (AlternateMapLocked.containsKey(key)) {
       if (AlternateMapLocked.get(key)) {
         return;
@@ -370,7 +370,7 @@ public class NetlistComponent {
   }
 
   public void UnlockAlternateMapping(ArrayList<String> key) {
-    if (!MyIOInformation.GetMainMapType().equals(FPGAIOInformationContainer.IOComponentTypes.Bus)) {
+    if (!MyIOInformation.GetMainMapType().equals(IOComponentTypes.Bus)) {
       AlternateMapLocked.put(key, false);
     }
   }

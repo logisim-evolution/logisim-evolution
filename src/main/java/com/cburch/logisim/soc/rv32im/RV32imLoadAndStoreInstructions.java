@@ -32,9 +32,8 @@ import static com.cburch.logisim.soc.Strings.S;
 
 import java.util.ArrayList;
 
-import javax.swing.JOptionPane;
-
 import com.cburch.logisim.circuit.CircuitState;
+import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.soc.data.SocBusTransaction;
 import com.cburch.logisim.soc.file.ElfHeader;
 import com.cburch.logisim.soc.util.AssemblerAsmInstruction;
@@ -267,7 +266,7 @@ public class RV32imLoadAndStoreInstructions implements AssemblerExecutionInterfa
     	              instruction = RV32imSupport.getITypeInstruction(LOAD, destination, funct3, base, immediate);
     	              break;
       default       : valid = false;
-                      JOptionPane.showMessageDialog(null, "Severe Bug in RV32imLoadAndStoreInstructions.java");
+                      OptionPane.showMessageDialog(null, "Severe Bug in RV32imLoadAndStoreInstructions.java");
                       break;
     }
     if (valid) {

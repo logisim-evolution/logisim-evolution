@@ -32,6 +32,7 @@ import static com.cburch.logisim.analyze.Strings.S;
 
 import com.cburch.logisim.analyze.data.CsvInterpretor;
 import com.cburch.logisim.analyze.data.CsvParameter;
+import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.prefs.AppPreferences;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -49,7 +50,6 @@ import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.Border;
 
@@ -148,11 +148,11 @@ public class CsvReadParameterDialog extends JDialog implements ActionListener {
       }
       scan.close();
     } catch (FileNotFoundException e) {
-      JOptionPane.showMessageDialog(
+      OptionPane.showMessageDialog(
           this,
           S.fmt("cantReadMessage", file.getName()),
           S.get("openButton"),
-          JOptionPane.ERROR_MESSAGE);
+          OptionPane.ERROR_MESSAGE);
       setVisable = false;
       if (this.isVisible()) {
         setVisible(false);

@@ -37,6 +37,7 @@ import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Location;
+import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.proj.Action;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.proj.ProjectActions;
@@ -55,7 +56,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
-import javax.swing.JOptionPane;
 
 public class LogisimFileActions {
   private static class AddCircuit extends Action {
@@ -177,20 +177,20 @@ public class LogisimFileActions {
             if (cancontinue) {
               Circuit circ1 = LibraryTools.getCircuitFromLibs(source, CircName);
               if (circ1 == null) {
-                JOptionPane.showMessageDialog(
+                OptionPane.showMessageDialog(
                     null,
                     "Fatal internal error: Cannot find a referenced circuit",
                     "LogosimFileAction:",
-                    JOptionPane.ERROR_MESSAGE);
+                    OptionPane.ERROR_MESSAGE);
                 cancontinue = false;
               } else if (!CircuitsAreEqual(circ1, circ)) {
                 int Reponse =
-                    JOptionPane.showConfirmDialog(
+                    OptionPane.showConfirmDialog(
                         null,
                         S.fmt("FileMergeQuestion", circ.getName()),
                         S.get("FileMergeTitle"),
-                        JOptionPane.YES_NO_OPTION);
-                if (Reponse == JOptionPane.YES_OPTION) {
+                        OptionPane.YES_NO_OPTION);
+                if (Reponse == OptionPane.YES_OPTION) {
                   MergedCircuits.add(circ);
                 }
               }
@@ -278,11 +278,11 @@ public class LogisimFileActions {
         // if the class name was not found, go back to the good old dialog
         if (className == null) {
           className =
-              JOptionPane.showInputDialog(
+              OptionPane.showInputDialog(
                   proj.getFrame(),
                   S.get("jarClassNamePrompt"),
                   S.get("jarClassNameTitle"),
-                  JOptionPane.QUESTION_MESSAGE);
+                  OptionPane.QUESTION_MESSAGE);
           // if user canceled selection, abort
           if (className == null) continue;
         }
@@ -385,11 +385,11 @@ public class LogisimFileActions {
       LibraryTools.BuildToolList(source, ToolList);
       for (int i = 0; i < libs.length; i++) {
         if (LibNames.keySet().contains(libs[i].getName().toUpperCase())) {
-          JOptionPane.showMessageDialog(
+          OptionPane.showMessageDialog(
               null,
               "\"" + libs[i].getName() + "\": " + S.get("LibraryAlreadyLoaded"),
               S.get("LibLoadErrors") + " " + libs[i].getName() + " !",
-              JOptionPane.WARNING_MESSAGE);
+              OptionPane.WARNING_MESSAGE);
         } else {
           LibraryTools.RemovePresentLibraries(libs[i], LibNames, false);
           if (LibraryTools.LibraryIsConform(

@@ -45,6 +45,7 @@ import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Location;
+import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.gui.icons.AnnimatedIcon;
 import com.cburch.logisim.gui.main.Canvas;
 import com.cburch.logisim.gui.main.SelectionActions;
@@ -72,7 +73,6 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import javax.swing.Icon;
-import javax.swing.JOptionPane;
 
 public class AddTool extends Tool implements PropertyChangeListener {
   private class MyAttributeListener implements AttributeListener {
@@ -556,11 +556,11 @@ public class AddTool extends Tool implements PropertyChangeListener {
                     matrix.getNrOfYCopies());
             AutoLabler.SetLabel(Label, canvas.getCircuit(), source);
             if (!okay) {
-              JOptionPane.showMessageDialog(
+              OptionPane.showMessageDialog(
                   null,
                   "Base label either has wrong syntax or is contained in circuit",
                   "Matrixplacer",
-                  JOptionPane.ERROR_MESSAGE);
+                  OptionPane.ERROR_MESSAGE);
               matrix.UndoLabel();
             }
           } else matrix.UndoLabel();
@@ -609,7 +609,7 @@ public class AddTool extends Tool implements PropertyChangeListener {
         lastAddition = action;
         canvas.repaint();
       } catch (CircuitException ex) {
-        JOptionPane.showMessageDialog(canvas.getProject().getFrame(), ex.getMessage());
+        OptionPane.showMessageDialog(canvas.getProject().getFrame(), ex.getMessage());
         added.clear();
       }
       setState(canvas, SHOW_GHOST);

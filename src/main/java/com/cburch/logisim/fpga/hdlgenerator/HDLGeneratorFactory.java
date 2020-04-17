@@ -29,9 +29,9 @@
 package com.cburch.logisim.fpga.hdlgenerator;
 
 import com.cburch.logisim.data.AttributeSet;
+import com.cburch.logisim.fpga.data.IOComponentTypes;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
-import com.cburch.logisim.fpga.fpgaboardeditor.FPGAIOInformationContainer;
 import com.cburch.logisim.fpga.fpgagui.FPGAReport;
 import com.cburch.logisim.fpga.fpgagui.MappableResourcesContainer;
 import java.util.ArrayList;
@@ -115,5 +115,5 @@ public interface HDLGeneratorFactory {
 
   public boolean IsOnlyInlined(String HDLType);
 
-  public boolean IsOnlyInlined(String HDLType, FPGAIOInformationContainer.IOComponentTypes map);
+  public boolean IsOnlyInlined(String HDLType, IOComponentTypes map);
 }

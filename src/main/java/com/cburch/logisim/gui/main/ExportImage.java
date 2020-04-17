@@ -35,6 +35,7 @@ import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.comp.ComponentDrawContext;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.file.Loader;
+import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.gui.generic.TikZWriter;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
@@ -60,7 +61,6 @@ import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
@@ -126,7 +126,7 @@ public class ExportImage {
         ((Graphics2D) g).scale(scale, scale);
         ((Graphics2D) g).translate(-bds.getX(), -bds.getY());
       } else {
-        JOptionPane.showMessageDialog(frame, S.get("couldNotCreateImage"));
+        OptionPane.showMessageDialog(frame, S.get("couldNotCreateImage"));
         monitor.close();
       }
 
@@ -163,7 +163,7 @@ public class ExportImage {
             break;
         }
       } catch (Exception e) {
-        JOptionPane.showMessageDialog(frame, S.get("couldNotCreateFile"));
+        OptionPane.showMessageDialog(frame, S.get("couldNotCreateFile"));
         e.printStackTrace();
         monitor.close();
         return;
@@ -364,22 +364,22 @@ public class ExportImage {
     Frame frame = proj.getFrame();
     CircuitJList list = new CircuitJList(proj, true);
     if (list.getModel().getSize() == 0) {
-      JOptionPane.showMessageDialog(
+      OptionPane.showMessageDialog(
           proj.getFrame(),
           S.get("exportEmptyCircuitsMessage"),
           S.get("exportEmptyCircuitsTitle"),
-          JOptionPane.YES_NO_OPTION);
+          OptionPane.YES_NO_OPTION);
       return;
     }
     OptionsPanel options = new OptionsPanel(list);
     int action =
-        JOptionPane.showConfirmDialog(
+        OptionPane.showConfirmDialog(
             frame,
             options,
             S.get("exportImageSelect"),
-            JOptionPane.OK_CANCEL_OPTION,
-            JOptionPane.QUESTION_MESSAGE);
-    if (action != JOptionPane.OK_OPTION) return;
+            OptionPane.OK_CANCEL_OPTION,
+            OptionPane.QUESTION_MESSAGE);
+    if (action != OptionPane.OK_OPTION) return;
     List<Circuit> circuits = list.getSelectedCircuits();
     double scale = options.getScale();
     boolean printerView = options.getPrinterView();
@@ -410,22 +410,22 @@ public class ExportImage {
     if (dest.exists()) {
       if (!dest.isDirectory()) {
         int confirm =
-            JOptionPane.showConfirmDialog(
+            OptionPane.showConfirmDialog(
                 proj.getFrame(),
                 S.get("confirmOverwriteMessage"),
                 S.get("confirmOverwriteTitle"),
-                JOptionPane.YES_NO_OPTION);
-        if (confirm != JOptionPane.YES_OPTION) return;
+                OptionPane.YES_NO_OPTION);
+        if (confirm != OptionPane.YES_OPTION) return;
       }
     } else {
       if (circuits.size() > 1) {
         boolean created = dest.mkdir();
         if (!created) {
-          JOptionPane.showMessageDialog(
+          OptionPane.showMessageDialog(
               proj.getFrame(),
               S.get("exportNewDirectoryErrorMessage"),
               S.get("exportNewDirectoryErrorTitle"),
-              JOptionPane.YES_NO_OPTION);
+              OptionPane.YES_NO_OPTION);
           return;
         }
       }

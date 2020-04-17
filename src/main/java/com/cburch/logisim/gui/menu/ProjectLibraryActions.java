@@ -33,6 +33,7 @@ import static com.cburch.logisim.gui.Strings.S;
 import com.cburch.logisim.file.Loader;
 import com.cburch.logisim.file.LogisimFile;
 import com.cburch.logisim.file.LogisimFileActions;
+import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.tools.Library;
 import java.io.File;
@@ -43,7 +44,6 @@ import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 import javax.swing.JFileChooser;
 import javax.swing.JList;
-import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 
 public class ProjectLibraryActions {
@@ -93,23 +93,23 @@ public class ProjectLibraryActions {
     ArrayList<Library> builtins = new ArrayList<Library>(baseBuilt);
     builtins.removeAll(file.getLibraries());
     if (builtins.isEmpty()) {
-      JOptionPane.showMessageDialog(
+      OptionPane.showMessageDialog(
           proj.getFrame(),
           S.get("loadBuiltinNoneError"),
           S.get("loadBuiltinErrorTitle"),
-          JOptionPane.INFORMATION_MESSAGE);
+          OptionPane.INFORMATION_MESSAGE);
       return;
     }
     LibraryJList list = new LibraryJList(builtins);
     JScrollPane listPane = new JScrollPane(list);
     int action =
-        JOptionPane.showConfirmDialog(
+        OptionPane.showConfirmDialog(
             proj.getFrame(),
             listPane,
             S.get("loadBuiltinDialogTitle"),
-            JOptionPane.OK_CANCEL_OPTION,
-            JOptionPane.QUESTION_MESSAGE);
-    if (action == JOptionPane.OK_OPTION) {
+            OptionPane.OK_CANCEL_OPTION,
+            OptionPane.QUESTION_MESSAGE);
+    if (action == OptionPane.OK_OPTION) {
       Library[] libs = list.getSelectedLibraries();
       if (libs != null)
         proj.doAction(LogisimFileActions.loadLibraries(libs, proj.getLogisimFile()));
@@ -148,11 +148,11 @@ public class ProjectLibraryActions {
       // if the class name was not found, go back to the good old dialog
       if (className == null) {
         className =
-            JOptionPane.showInputDialog(
+            OptionPane.showInputDialog(
                 proj.getFrame(),
                 S.get("jarClassNamePrompt"),
                 S.get("jarClassNameTitle"),
-                JOptionPane.QUESTION_MESSAGE);
+                OptionPane.QUESTION_MESSAGE);
         // if user canceled selection, abort
         if (className == null) return;
       }
@@ -187,23 +187,23 @@ public class ProjectLibraryActions {
       if (message == null) canUnload.add(lib);
     }
     if (canUnload.isEmpty()) {
-      JOptionPane.showMessageDialog(
+      OptionPane.showMessageDialog(
           proj.getFrame(),
           S.get("unloadNoneError"),
           S.get("unloadErrorTitle"),
-          JOptionPane.INFORMATION_MESSAGE);
+          OptionPane.INFORMATION_MESSAGE);
       return;
     }
     LibraryJList list = new LibraryJList(canUnload);
     JScrollPane listPane = new JScrollPane(list);
     int action =
-        JOptionPane.showConfirmDialog(
+        OptionPane.showConfirmDialog(
             proj.getFrame(),
             listPane,
             S.get("unloadLibrariesDialogTitle"),
-            JOptionPane.OK_CANCEL_OPTION,
-            JOptionPane.QUESTION_MESSAGE);
-    if (action == JOptionPane.OK_OPTION) {
+            OptionPane.OK_CANCEL_OPTION,
+            OptionPane.QUESTION_MESSAGE);
+    if (action == OptionPane.OK_OPTION) {
       Library[] libs = list.getSelectedLibraries();
       if (libs != null) proj.doAction(LogisimFileActions.unloadLibraries(libs));
     }
@@ -212,8 +212,8 @@ public class ProjectLibraryActions {
   public static void doUnloadLibrary(Project proj, Library lib) {
     String message = proj.getLogisimFile().getUnloadLibraryMessage(lib);
     if (message != null) {
-      JOptionPane.showMessageDialog(
-          proj.getFrame(), message, S.get("unloadErrorTitle"), JOptionPane.ERROR_MESSAGE);
+      OptionPane.showMessageDialog(
+          proj.getFrame(), message, S.get("unloadErrorTitle"), OptionPane.ERROR_MESSAGE);
     } else {
       proj.doAction(LogisimFileActions.unloadLibrary(lib));
     }

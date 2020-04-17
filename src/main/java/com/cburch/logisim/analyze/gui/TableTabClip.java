@@ -32,6 +32,8 @@ import static com.cburch.logisim.analyze.Strings.S;
 
 import com.cburch.logisim.analyze.model.Entry;
 import com.cburch.logisim.analyze.model.TruthTable;
+import com.cburch.logisim.gui.generic.OptionPane;
+
 import java.awt.Rectangle;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.ClipboardOwner;
@@ -41,7 +43,6 @@ import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.StringTokenizer;
-import javax.swing.JOptionPane;
 
 class TableTabClip implements ClipboardOwner {
   private static class Data implements Transferable, Serializable {
@@ -138,11 +139,11 @@ class TableTabClip implements ClipboardOwner {
       // I don't know - the above was observed to throw an odd
       // ArrayIndexOutOfBounds
       // exception on a Linux computer using Sun's Java 5 JVM
-      JOptionPane.showMessageDialog(
+      OptionPane.showMessageDialog(
           table.getRootPane(),
           S.get("clipPasteSupportedError"),
           S.get("clipPasteErrorTitle"),
-          JOptionPane.ERROR_MESSAGE);
+          OptionPane.ERROR_MESSAGE);
       return;
     }
     Entry[][] entries;
@@ -201,11 +202,11 @@ class TableTabClip implements ClipboardOwner {
         return;
       }
     } else {
-      JOptionPane.showMessageDialog(
+      OptionPane.showMessageDialog(
           table.getRootPane(),
           S.get("clipPasteSupportedError"),
           S.get("clipPasteErrorTitle"),
-          JOptionPane.ERROR_MESSAGE);
+          OptionPane.ERROR_MESSAGE);
       return;
     }
     Rectangle s = table.getCaret().getSelection();
@@ -216,20 +217,20 @@ class TableTabClip implements ClipboardOwner {
     int outputs = model.getOutputColumnCount();
     if (s.width == 1 && s.height == 1) {
       if (s.y + entries.length > rows || s.x + entries[0].length > inputs + outputs) {
-        JOptionPane.showMessageDialog(
+        OptionPane.showMessageDialog(
             table.getRootPane(),
             S.get("clipPasteEndError"),
             S.get("clipPasteErrorTitle"),
-            JOptionPane.ERROR_MESSAGE);
+            OptionPane.ERROR_MESSAGE);
         return;
       }
     } else {
       if (s.height != entries.length || s.width != entries[0].length) {
-        JOptionPane.showMessageDialog(
+        OptionPane.showMessageDialog(
             table.getRootPane(),
             S.get("clipPasteSizeError"),
             S.get("clipPasteErrorTitle"),
-            JOptionPane.ERROR_MESSAGE);
+            OptionPane.ERROR_MESSAGE);
         return;
       }
     }

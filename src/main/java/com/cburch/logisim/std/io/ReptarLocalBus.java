@@ -37,7 +37,7 @@ import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.fpga.fpgaboardeditor.FPGAIOInformationContainer;
-import com.cburch.logisim.fpga.fpgaboardeditor.FPGAIOInformationContainer.IOComponentTypes;
+import com.cburch.logisim.fpga.data.IOComponentTypes;
 import com.cburch.logisim.fpga.fpgagui.MappableResourcesContainer;
 import com.cburch.logisim.fpga.hdlgenerator.IOComponentInformationContainer;
 import com.cburch.logisim.instance.InstanceFactory;
@@ -132,7 +132,7 @@ public class ReptarLocalBus extends InstanceFactory {
     // From FPGA pin view
     MyIOInformation =
         new IOComponentInformationContainer(
-            13, 2, 16, FPGAIOInformationContainer.IOComponentTypes.LocalBus);
+            13, 2, 16, IOComponentTypes.LocalBus);
   }
 
   @Override

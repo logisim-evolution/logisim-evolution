@@ -32,6 +32,7 @@ import static com.cburch.logisim.fpga.Strings.S;
 
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.fpgaboardeditor.BoardInformation;
+import com.cburch.logisim.fpga.fpgaboardeditor.FPGAIOInformationContainer;
 import com.cburch.logisim.fpga.fpgaboardeditor.PullBehaviors;
 import com.cburch.logisim.fpga.fpgagui.FPGACommanderBase;
 import com.cburch.logisim.fpga.fpgagui.FPGAReport;
@@ -549,5 +550,28 @@ public class AlteraDownload implements VendorDownload {
     Element NamedElement = doc.createElement(ElementName);
     NamedElement.appendChild(doc.createTextNode(ElementValue));
     root.appendChild(NamedElement);
+  }
+
+  public static ArrayList<String> GetPinlocStrings(String direction, int StartId, FPGAIOInformationContainer info) {
+    /*
+     * for the time being we ignore the InputPins variable. It has to be
+     * implemented for more complex components
+     */
+    ArrayList<String> Contents = new ArrayList<String>();
+    for (int i = 0; i < info.getNrOfPins(); i++) {
+      String NetName = "";
+      if (direction == "in") {
+        NetName = HDLGeneratorFactory.FPGAInputPinName + "_" + Integer.toString(StartId + i);
+      } else if (direction == "inout") {
+        NetName = HDLGeneratorFactory.FPGAInOutPinName + "_" + Integer.toString(StartId + i);
+      } else {
+        NetName = HDLGeneratorFactory.FPGAOutputPinName + "_" + Integer.toString(StartId + i);
+      }
+      Contents.add("    set_location_assignment " + info.getPinLocation(i) + " -to " + NetName);
+      if (info.GetPullBehavior() == PullBehaviors.PullUp) {
+        Contents.add("    set_instance_assignment -name WEAK_PULL_UP_RESISTOR ON -to " + NetName);
+      }
+    }
+    return Contents;
   }
 }

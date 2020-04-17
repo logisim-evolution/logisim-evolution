@@ -32,9 +32,8 @@ import static com.cburch.logisim.soc.Strings.S;
 
 import java.util.ArrayList;
 
-import javax.swing.JOptionPane;
-
 import com.cburch.logisim.circuit.CircuitState;
+import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.soc.file.ElfHeader;
 import com.cburch.logisim.soc.util.AbstractExecutionUnitWithLabelSupport;
 import com.cburch.logisim.soc.util.AssemblerAsmInstruction;
@@ -414,7 +413,7 @@ public class RV32imControlTransferInstructions extends AbstractExecutionUnitWith
                           instruction = RV32imSupport.getBTypeInstruction(BRANCH, operation, source1, source2, immediate);
                           break;
          default        : errors = true;
-                          JOptionPane.showMessageDialog(null, "Severe bug in RV32imControlTransferInstructions.java");
+                          OptionPane.showMessageDialog(null, "Severe bug in RV32imControlTransferInstructions.java");
                           break;
       }
     }

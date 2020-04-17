@@ -29,6 +29,7 @@
 package com.cburch.logisim.circuit;
 
 import com.cburch.logisim.comp.ComponentDrawContext;
+import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.UniquelyNamedThread;
 import java.util.ArrayList;
@@ -172,7 +173,7 @@ public class Simulator {
           javax.swing.SwingUtilities.invokeLater(
               new Runnable() {
                 public void run() {
-                  javax.swing.JOptionPane.showMessageDialog(
+                  OptionPane.showMessageDialog(
                       null, "The simulator has crashed. Save your work and restart Logisim.");
                 }
               });

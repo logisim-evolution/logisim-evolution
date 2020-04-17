@@ -31,6 +31,7 @@ package com.cburch.logisim.gui.menu;
 import static com.cburch.logisim.gui.Strings.S;
 
 import com.cburch.logisim.gui.generic.LFrame;
+import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.gui.start.About;
 import com.cburch.logisim.util.MacCompatibility;
 import java.awt.Dimension;
@@ -41,10 +42,8 @@ import java.net.URL;
 import java.util.Locale;
 import javax.help.HelpSet;
 import javax.help.JHelp;
-import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 
 class MenuHelp extends JMenu implements ActionListener {
 
@@ -106,7 +105,7 @@ class MenuHelp extends JMenu implements ActionListener {
         URL hsURL = HelpSet.findHelpSet(loader, helpUrl);
         if (hsURL == null) {
           disableHelp();
-          JOptionPane.showMessageDialog(menubar.getParentWindow(), S.get("helpNotFoundError"));
+          OptionPane.showMessageDialog(menubar.getParentWindow(), S.get("helpNotFoundError"));
           return;
         }
         helpSetUrl = helpUrl;
@@ -129,7 +128,7 @@ class MenuHelp extends JMenu implements ActionListener {
       } catch (Exception e) {
         disableHelp();
         e.printStackTrace();
-        JOptionPane.showMessageDialog(menubar.getParentWindow(), S.get("helpUnavailableError"));
+        OptionPane.showMessageDialog(menubar.getParentWindow(), S.get("helpUnavailableError"));
         return;
       }
     }
@@ -159,7 +158,7 @@ class MenuHelp extends JMenu implements ActionListener {
     } catch (Exception e) {
       disableHelp();
       e.printStackTrace();
-      JOptionPane.showMessageDialog(menubar.getParentWindow(), S.get("helpDisplayError"));
+      OptionPane.showMessageDialog(menubar.getParentWindow(), S.get("helpDisplayError"));
     }
   }
 }

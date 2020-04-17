@@ -31,6 +31,7 @@ package com.cburch.logisim.gui.prefs;
 import static com.cburch.logisim.gui.Strings.S;
 
 import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
+import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.prefs.AppPreferences;
 
 import java.awt.Component;
@@ -45,7 +46,6 @@ import java.util.prefs.PreferenceChangeListener;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
 @SuppressWarnings("serial")
@@ -162,11 +162,11 @@ public class FPGAOptions extends OptionsPanel {
       int retval = fc.showOpenDialog(null);
       if (retval != JFileChooser.APPROVE_OPTION) return;
       if (fc.getSelectedFile().getAbsolutePath().contains(" ")) {
-        JOptionPane.showMessageDialog(
+        OptionPane.showMessageDialog(
             parentComponent,
             S.get("FpgaGuiWorkspaceError"),
             S.get("FpgaGuiWorkspacePath"),
-            JOptionPane.ERROR_MESSAGE);
+            OptionPane.ERROR_MESSAGE);
       } else {
         ValidWorkpath = true;
       }
