@@ -64,9 +64,8 @@ public class SimpleRectangle {
     y = AppPreferences.getScaled(rect.getYpos(), scale);
     width = AppPreferences.getScaled(rect.getWidth(), scale);
     height = AppPreferences.getScaled(rect.getHeight(), scale);
-    int offset = AppPreferences.getScaled(4,scale);
-    BoardRectangle test = new BoardRectangle(x+width-offset,y+height-offset,
-               offset<<1,offset<<1);
+    int offset = AppPreferences.getScaled(5,scale);
+    BoardRectangle test = new BoardRectangle(x+width-offset,y+height-offset, offset,offset);
     show = true;
     fill = true;
     movemode = !test.PointInside(e.getX(), e.getY());
@@ -106,8 +105,8 @@ public class SimpleRectangle {
     int xmax = Math.max( x, x+width );
     int ymin = Math.min( y, y+height );
     int ymax = Math.max( y, y+height );
-    int width = xmax - xmin;
-    int height = ymax -ymin;
+    int width = Math.max(AppPreferences.getScaled(5,scale), xmax - xmin);
+    int height = Math.max(AppPreferences.getScaled(5,scale), ymax -ymin);
     return new BoardRectangle( AppPreferences.getDownScaled(xmin, scale),
     		                   AppPreferences.getDownScaled(ymin, scale),
     		                   AppPreferences.getDownScaled(width, scale),

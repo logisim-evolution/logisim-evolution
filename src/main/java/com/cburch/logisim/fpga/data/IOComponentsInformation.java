@@ -90,6 +90,7 @@ public class IOComponentsInformation {
   public void addComponent(FPGAIOInformationContainer comp, float scale) {
     if (!IOcomps.contains(comp)) {
       IOcomps.add(comp);
+      comp.SetId(IOcomps.indexOf(comp));
       BoardRectangle rect = comp.GetRectangle();
       for (int x = rect.getXpos() ; x < rect.getXpos()+rect.getWidth() ; x++)
         for (int y = rect.getYpos() ; y < rect.getYpos()+rect.getHeight() ; y++)
@@ -103,6 +104,7 @@ public class IOComponentsInformation {
     if (IOcomps.contains(comp)) {
       if (highlighted == comp) highlighted = null;
       IOcomps.remove(comp);
+      for (int i = 0 ; i < IOcomps.size() ; i++) IOcomps.get(i).SetId(i);
       BoardRectangle rect = comp.GetRectangle();
       for (int x = rect.getXpos() ; x < rect.getXpos()+rect.getWidth() ; x++)
         for (int y = rect.getYpos() ; y < rect.getYpos()+rect.getHeight() ; y++)

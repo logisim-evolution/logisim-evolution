@@ -288,15 +288,17 @@ public class BoardManipulator extends JPanel implements MouseListener,
      if (!mapMode && image != null) {
        if (IOcomps.hasHighlighted()) {
     	 /* Edit the current highligted component */
-         if (e.getClickCount() > 1) try {
-           FPGAIOInformationContainer clone = (FPGAIOInformationContainer) IOcomps.getHighligted().clone();
-           clone.edit(true, IOcomps);
-           if (clone.isToBeDeleted()) 
-             IOcomps.removeComponent(IOcomps.getHighligted(), scale);
-           else if (clone.IsKnownComponent())
-             IOcomps.replaceComponent(IOcomps.getHighligted(), clone, e, scale);
-         } catch (CloneNotSupportedException err) {
-           OptionPane.showMessageDialog(IOcomps.getParrentFram(), "INTERNAL BUG: Unable to clone!", "FATAL!", OptionPane.ERROR_MESSAGE);
+         if (e.getClickCount() > 1) {
+           try {
+             FPGAIOInformationContainer clone = (FPGAIOInformationContainer) IOcomps.getHighligted().clone();
+             clone.edit(true, IOcomps);
+             if (clone.isToBeDeleted()) 
+               IOcomps.removeComponent(IOcomps.getHighligted(), scale);
+             else if (clone.IsKnownComponent())
+               IOcomps.replaceComponent(IOcomps.getHighligted(), clone, e, scale);
+           } catch (CloneNotSupportedException err) {
+             OptionPane.showMessageDialog(IOcomps.getParrentFram(), "INTERNAL BUG: Unable to clone!", "FATAL!", OptionPane.ERROR_MESSAGE);
+           }
          }
        } else {
     	 /* define a new component */
