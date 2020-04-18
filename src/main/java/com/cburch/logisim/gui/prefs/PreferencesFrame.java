@@ -30,6 +30,8 @@ package com.cburch.logisim.gui.prefs;
 
 import static com.cburch.logisim.gui.Strings.S;
 
+import com.cburch.logisim.fpga.prefs.FPGAOptions;
+import com.cburch.logisim.fpga.prefs.SoftwaresOptions;
 import com.cburch.logisim.gui.generic.LFrame;
 import com.cburch.logisim.util.LocaleListener;
 import com.cburch.logisim.util.LocaleManager;
@@ -39,6 +41,7 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import javax.swing.JFrame;
+import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 
 public class PreferencesFrame extends LFrame {
@@ -124,11 +127,7 @@ public class PreferencesFrame extends LFrame {
     }
 
     Container contents = getContentPane();
-    tabbedPane.setPreferredSize(
-        new Dimension(
-            Toolkit.getDefaultToolkit().getScreenSize().width / 2,
-            Toolkit.getDefaultToolkit().getScreenSize().height / 2));
-    contents.add(tabbedPane, BorderLayout.CENTER);
+    contents.add(new JScrollPane(tabbedPane), BorderLayout.CENTER);
 
     if (intlIndex >= 0) tabbedPane.setSelectedIndex(intlIndex);
 

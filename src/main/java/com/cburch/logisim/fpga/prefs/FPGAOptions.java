@@ -26,17 +26,20 @@
  *     http://www.heig-vd.ch/
  */
 
-package com.cburch.logisim.gui.prefs;
+package com.cburch.logisim.fpga.prefs;
 
 import static com.cburch.logisim.gui.Strings.S;
 
 import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.gui.icons.ColorIcon;
+import com.cburch.logisim.gui.prefs.OptionsPanel;
+import com.cburch.logisim.gui.prefs.PrefOption;
+import com.cburch.logisim.gui.prefs.PrefOptionList;
+import com.cburch.logisim.gui.prefs.PreferencesFrame;
 import com.cburch.logisim.prefs.AppPreferences;
 
 import java.awt.Component;
-import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
