@@ -26,7 +26,7 @@
  *     http://www.heig-vd.ch/
  */
 
-package com.cburch.logisim.fpga.fpgamenu;
+package com.cburch.logisim.fpga.menu;
 
 import static com.cburch.logisim.fpga.Strings.S;
 

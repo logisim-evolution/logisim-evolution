@@ -33,6 +33,7 @@ import static com.cburch.logisim.fpga.Strings.S;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.fpga.data.BoardInformation;
 import com.cburch.logisim.fpga.data.BoardRectangle;
+import com.cburch.logisim.fpga.data.MappableResourcesContainer;
 import com.cburch.logisim.fpga.gui.ZoomSlider;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.prefs.AppPreferences;

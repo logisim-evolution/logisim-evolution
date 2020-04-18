@@ -38,7 +38,7 @@ import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.fpga.data.FPGAIOInformationContainer;
 import com.cburch.logisim.fpga.data.IOComponentTypes;
-import com.cburch.logisim.fpga.fpgagui.MappableResourcesContainer;
+import com.cburch.logisim.fpga.data.MappableResourcesContainer;
 import com.cburch.logisim.fpga.hdlgenerator.IOComponentInformationContainer;
 import com.cburch.logisim.instance.InstanceFactory;
 import com.cburch.logisim.instance.InstancePainter;

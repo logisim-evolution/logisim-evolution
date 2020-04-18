@@ -33,6 +33,7 @@ import static com.cburch.logisim.fpga.Strings.S;
 import com.cburch.logisim.fpga.data.BoardInformation;
 import com.cburch.logisim.fpga.data.BoardRectangle;
 import com.cburch.logisim.fpga.data.FPGAIOInformationContainer;
+import com.cburch.logisim.fpga.data.MappableResourcesContainer;
 
 import java.io.File;
 import java.io.IOException;

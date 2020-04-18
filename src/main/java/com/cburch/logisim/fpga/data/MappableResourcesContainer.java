@@ -26,7 +26,7 @@
  *     http://www.heig-vd.ch/
  */
 
-package com.cburch.logisim.fpga.fpgagui;
+package com.cburch.logisim.fpga.data;
 
 import static com.cburch.logisim.fpga.Strings.S;
 
@@ -34,11 +34,8 @@ import com.cburch.logisim.Main;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitMapInfo;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
-import com.cburch.logisim.fpga.data.BoardInformation;
-import com.cburch.logisim.fpga.data.BoardRectangle;
-import com.cburch.logisim.fpga.data.FPGAIOInformationContainer;
-import com.cburch.logisim.fpga.data.IOComponentTypes;
-import com.cburch.logisim.fpga.data.PinActivity;
+import com.cburch.logisim.fpga.fpgagui.ComponentMapDialog;
+import com.cburch.logisim.fpga.fpgagui.FPGAReport;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.proj.ProjectActions;
 import com.cburch.logisim.std.io.DipSwitch;

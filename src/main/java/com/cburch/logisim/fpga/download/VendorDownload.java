@@ -28,7 +28,7 @@
 
 package com.cburch.logisim.fpga.download;
 
-import com.cburch.logisim.fpga.fpgagui.MappableResourcesContainer;
+import com.cburch.logisim.fpga.data.MappableResourcesContainer;
 
 public interface VendorDownload {
 

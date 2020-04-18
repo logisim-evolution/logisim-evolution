@@ -30,11 +30,11 @@ package com.cburch.logisim.std.io;
 
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.data.AttributeSet;
+import com.cburch.logisim.fpga.data.MappableResourcesContainer;
 import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.fpgagui.FPGAReport;
-import com.cburch.logisim.fpga.fpgagui.MappableResourcesContainer;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.FileWriter;
 import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
