@@ -46,7 +46,6 @@ import javax.swing.SwingConstants;
 
 import com.cburch.logisim.Main;
 import com.cburch.logisim.data.Value;
-import com.cburch.logisim.gui.icons.ColorIcon;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.prefs.PrefMonitor;
 import com.cburch.logisim.proj.Project;
@@ -57,37 +56,37 @@ public class SimOptions extends OptionsPanel {
   private static final long serialVersionUID = 1L;
   private MyColorListener mcol = new MyColorListener();
   private JLabel TrueColorTitle = new JLabel();
-  private JButton TrueColor = new JButton();
+  private ColorChooserButton TrueColor;
   private JLabel TrueCharTitle = new JLabel();
   private SymbolChooser TrueChar = new SymbolChooser(AppPreferences.TRUE_CHAR,"1T");
   private JLabel FalseColorTitle = new JLabel();
-  private JButton FalseColor = new JButton();
+  private ColorChooserButton FalseColor;
   private JLabel FalseCharTitle = new JLabel();
   private SymbolChooser FalseChar = new SymbolChooser(AppPreferences.FALSE_CHAR,"0F");
   private JLabel UnknownColorTitle = new JLabel();
-  private JButton UnknownColor = new JButton();
+  private ColorChooserButton UnknownColor;
   private JLabel UnknownCharTitle = new JLabel();
   private SymbolChooser UnknownChar = new SymbolChooser(AppPreferences.UNKNOWN_CHAR,"U?Z");
   private JLabel ErrorColorTitle = new JLabel();
-  private JButton ErrorColor = new JButton();
+  private ColorChooserButton ErrorColor;
   private JLabel ErrorCharTitle = new JLabel();
   private SymbolChooser ErrorChar = new SymbolChooser(AppPreferences.ERROR_CHAR,"E!X");
   private JLabel NilColorTitle = new JLabel();
-  private JButton NilColor = new JButton();
+  private ColorChooserButton NilColor;
   private JLabel DontCareCharTitle = new JLabel();
   private SymbolChooser DontCareChar = new SymbolChooser(AppPreferences.DONTCARE_CHAR,"-X");
   private JLabel BusColorTitle = new JLabel();
-  private JButton BusColor = new JButton();
+  private ColorChooserButton BusColor;
   private JLabel HighlightColorTitle = new JLabel();
-  private JButton HighlightColor = new JButton();
+  private ColorChooserButton HighlightColor;
   private JLabel WidthErrorColorTitle = new JLabel();
-  private JButton WidthErrorColor = new JButton();
+  private ColorChooserButton WidthErrorColor;
   private JLabel WidthErrorCaptionColorTitle = new JLabel();
-  private JButton WidthErrorCaptionColor = new JButton();
+  private ColorChooserButton WidthErrorCaptionColor;
   private JLabel WidthErrorHighlightColorTitle = new JLabel();
-  private JButton WidthErrorHighlightColor = new JButton();
+  private ColorChooserButton WidthErrorHighlightColor;
   private JLabel WidthErrorBackgroundColorTitle = new JLabel();
-  private JButton WidthErrorBackgroundColor = new JButton();
+  private ColorChooserButton WidthErrorBackgroundColor;
   private JButton DefaultButton = new JButton();
   private JButton ColorBlindButton = new JButton();
   private JLabel Kmap1ColorTitle = new JLabel();
@@ -107,23 +106,22 @@ public class SimOptions extends OptionsPanel {
   private JLabel Kmap15ColorTitle = new JLabel();
   private JLabel Kmap16ColorTitle = new JLabel();
   private JLabel KmapColorsTitle = new JLabel("",SwingConstants.CENTER);
-  private JButton Kmap1Color = new JButton();
-  private JButton Kmap2Color = new JButton();
-  private JButton Kmap3Color = new JButton();
-  private JButton Kmap4Color = new JButton();
-  private JButton Kmap5Color = new JButton();
-  private JButton Kmap6Color = new JButton();
-  private JButton Kmap7Color = new JButton();
-  private JButton Kmap8Color = new JButton();
-  private JButton Kmap9Color = new JButton();
-  private JButton Kmap10Color = new JButton();
-  private JButton Kmap11Color = new JButton();
-  private JButton Kmap12Color = new JButton();
-  private JButton Kmap13Color = new JButton();
-  private JButton Kmap14Color = new JButton();
-  private JButton Kmap15Color = new JButton();
-  private JButton Kmap16Color = new JButton();
-  private PreferencesFrame frame;
+  private ColorChooserButton Kmap1Color;
+  private ColorChooserButton Kmap2Color;
+  private ColorChooserButton Kmap3Color;
+  private ColorChooserButton Kmap4Color;
+  private ColorChooserButton Kmap5Color;
+  private ColorChooserButton Kmap6Color;
+  private ColorChooserButton Kmap7Color;
+  private ColorChooserButton Kmap8Color;
+  private ColorChooserButton Kmap9Color;
+  private ColorChooserButton Kmap10Color;
+  private ColorChooserButton Kmap11Color;
+  private ColorChooserButton Kmap12Color;
+  private ColorChooserButton Kmap13Color;
+  private ColorChooserButton Kmap14Color;
+  private ColorChooserButton Kmap15Color;
+  private ColorChooserButton Kmap16Color;
   
   private class MyListener implements PreferenceChangeListener {
 
@@ -195,12 +193,6 @@ public class SimOptions extends OptionsPanel {
         setDefaults();
       } else if (e.getActionCommand().equals("colorblind")) {
         setColorBlind();
-      } else if (e.getSource() instanceof JButton) {
-        JButton but = (JButton) e.getSource();
-        if (but.getIcon() instanceof ColorIcon) {
-          ColorIcon i = (ColorIcon) but.getIcon();
-          i.update(frame);
-        }
       }
     }
       
@@ -238,7 +230,6 @@ public class SimOptions extends OptionsPanel {
 
   public SimOptions(PreferencesFrame window) {
     super(window); 
-    frame = window;
     AppPreferences.getPrefs().addPreferenceChangeListener(new MyListener());
     GridBagConstraints c = new GridBagConstraints();
     setLayout(new GridBagLayout());
@@ -249,8 +240,7 @@ public class SimOptions extends OptionsPanel {
     c.fill = GridBagConstraints.HORIZONTAL;
     add(TrueColorTitle,c);
     c.gridx++;
-    TrueColor.addActionListener(mcol);
-    TrueColor.setIcon(new ColorIcon(AppPreferences.TRUE_COLOR));
+    TrueColor = new ColorChooserButton(window, AppPreferences.TRUE_COLOR);
     add(TrueColor,c);
     c.gridx++;
     add(TrueCharTitle,c);
@@ -261,8 +251,7 @@ public class SimOptions extends OptionsPanel {
     c.gridy++;
     add(FalseColorTitle,c);
     c.gridx++;
-    FalseColor.addActionListener(mcol);
-    FalseColor.setIcon(new ColorIcon(AppPreferences.FALSE_COLOR));
+    FalseColor = new ColorChooserButton(window, AppPreferences.FALSE_COLOR);
     add(FalseColor,c);
     c.gridx++;
     add(FalseCharTitle,c);
@@ -273,8 +262,7 @@ public class SimOptions extends OptionsPanel {
     c.gridy++;
     add(UnknownColorTitle,c);
     c.gridx++;
-    UnknownColor.addActionListener(mcol);
-    UnknownColor.setIcon(new ColorIcon(AppPreferences.UNKNOWN_COLOR));
+    UnknownColor = new ColorChooserButton(window, AppPreferences.UNKNOWN_COLOR);
     add(UnknownColor,c);
     c.gridx++;
     add(UnknownCharTitle,c);
@@ -285,8 +273,7 @@ public class SimOptions extends OptionsPanel {
     c.gridy++;
     add(ErrorColorTitle,c);
     c.gridx++;
-    ErrorColor.addActionListener(mcol);
-    ErrorColor.setIcon(new ColorIcon(AppPreferences.ERROR_COLOR));
+    ErrorColor = new ColorChooserButton(window, AppPreferences.ERROR_COLOR);
     add(ErrorColor,c);
     c.gridx++;
     add(ErrorCharTitle,c);
@@ -297,8 +284,7 @@ public class SimOptions extends OptionsPanel {
     c.gridy++;
     add(NilColorTitle,c);
     c.gridx++;
-    NilColor.addActionListener(mcol);
-    NilColor.setIcon(new ColorIcon(AppPreferences.NIL_COLOR));
+    NilColor = new ColorChooserButton(window, AppPreferences.NIL_COLOR);
     add(NilColor,c);
     c.gridx++;
     add(DontCareCharTitle,c);
@@ -309,42 +295,36 @@ public class SimOptions extends OptionsPanel {
     c.gridy++;
     add(BusColorTitle,c);
     c.gridx++;
-    BusColor.addActionListener(mcol);
-    BusColor.setIcon(new ColorIcon(AppPreferences.BUS_COLOR));
+    BusColor = new ColorChooserButton(window, AppPreferences.BUS_COLOR);
     add(BusColor,c);
     c.gridx++;
     add(HighlightColorTitle,c);
     c.gridx++;
-    HighlightColor.addActionListener(mcol);
-    HighlightColor.setIcon(new ColorIcon(AppPreferences.STROKE_COLOR));
+    HighlightColor = new ColorChooserButton(window, AppPreferences.STROKE_COLOR);
     add(HighlightColor,c);
     
     c.gridx = 0;
     c.gridy++;
     add(WidthErrorColorTitle,c);
     c.gridx++;
-    WidthErrorColor.addActionListener(mcol);
-    WidthErrorColor.setIcon(new ColorIcon(AppPreferences.WIDTH_ERROR_COLOR));
+    WidthErrorColor = new ColorChooserButton(window, AppPreferences.WIDTH_ERROR_COLOR);
     add(WidthErrorColor,c);
     c.gridx++;
     add(WidthErrorCaptionColorTitle,c);
     c.gridx++;
-    WidthErrorCaptionColor.addActionListener(mcol);
-    WidthErrorCaptionColor.setIcon(new ColorIcon(AppPreferences.WIDTH_ERROR_CAPTION_COLOR));
+    WidthErrorCaptionColor = new ColorChooserButton(window, AppPreferences.WIDTH_ERROR_CAPTION_COLOR);
     add(WidthErrorCaptionColor,c);
 
     c.gridx = 0;
     c.gridy++;
     add(WidthErrorHighlightColorTitle,c);
     c.gridx++;
-    WidthErrorHighlightColor.addActionListener(mcol);
-    WidthErrorHighlightColor.setIcon(new ColorIcon(AppPreferences.WIDTH_ERROR_HIGHLIGHT_COLOR));
+    WidthErrorHighlightColor = new ColorChooserButton(window, AppPreferences.WIDTH_ERROR_HIGHLIGHT_COLOR);
     add(WidthErrorHighlightColor,c);
     c.gridx++;
     add(WidthErrorBackgroundColorTitle,c);
     c.gridx++;
-    WidthErrorBackgroundColor.addActionListener(mcol);
-    WidthErrorBackgroundColor.setIcon(new ColorIcon(AppPreferences.WIDTH_ERROR_BACKGROUND_COLOR));
+    WidthErrorBackgroundColor = new ColorChooserButton(window, AppPreferences.WIDTH_ERROR_BACKGROUND_COLOR);
     add(WidthErrorBackgroundColor,c);
     
     if (Main.ANALYZE) {
@@ -357,112 +337,96 @@ public class SimOptions extends OptionsPanel {
        c.gridwidth = 1;
        add(Kmap1ColorTitle,c);
        c.gridx++;
-       Kmap1Color.addActionListener(mcol);
-       Kmap1Color.setIcon(new ColorIcon(AppPreferences.KMAP1_COLOR));
+       Kmap1Color = new ColorChooserButton(window, AppPreferences.KMAP1_COLOR);
        add(Kmap1Color,c);
        c.gridx++;
        add(Kmap2ColorTitle,c);
        c.gridx++;
-       Kmap2Color.addActionListener(mcol);
-       Kmap2Color.setIcon(new ColorIcon(AppPreferences.KMAP2_COLOR));
+       Kmap2Color = new ColorChooserButton(window, AppPreferences.KMAP2_COLOR);
        add(Kmap2Color,c);
 
        c.gridx = 0;
        c.gridy++;
        add(Kmap3ColorTitle,c);
        c.gridx++;
-       Kmap3Color.addActionListener(mcol);
-       Kmap3Color.setIcon(new ColorIcon(AppPreferences.KMAP3_COLOR));
+       Kmap3Color = new ColorChooserButton(window, AppPreferences.KMAP3_COLOR);
        add(Kmap3Color,c);
        c.gridx++;
        add(Kmap4ColorTitle,c);
        c.gridx++;
-       Kmap4Color.addActionListener(mcol);
-       Kmap4Color.setIcon(new ColorIcon(AppPreferences.KMAP4_COLOR));
+       Kmap4Color = new ColorChooserButton(window, AppPreferences.KMAP4_COLOR);
        add(Kmap4Color,c);
 
        c.gridx = 0;
        c.gridy++;
        add(Kmap5ColorTitle,c);
        c.gridx++;
-       Kmap5Color.addActionListener(mcol);
-       Kmap5Color.setIcon(new ColorIcon(AppPreferences.KMAP5_COLOR));
+       Kmap5Color = new ColorChooserButton(window, AppPreferences.KMAP5_COLOR);
        add(Kmap5Color,c);
        c.gridx++;
        add(Kmap6ColorTitle,c);
        c.gridx++;
-       Kmap6Color.addActionListener(mcol);
-       Kmap6Color.setIcon(new ColorIcon(AppPreferences.KMAP6_COLOR));
+       Kmap6Color = new ColorChooserButton(window, AppPreferences.KMAP6_COLOR);
        add(Kmap6Color,c);
 
        c.gridx = 0;
        c.gridy++;
        add(Kmap7ColorTitle,c);
        c.gridx++;
-       Kmap7Color.addActionListener(mcol);
-       Kmap7Color.setIcon(new ColorIcon(AppPreferences.KMAP7_COLOR));
+       Kmap7Color = new ColorChooserButton(window, AppPreferences.KMAP7_COLOR);
        add(Kmap7Color,c);
        c.gridx++;
        add(Kmap8ColorTitle,c);
        c.gridx++;
-       Kmap8Color.addActionListener(mcol);
-       Kmap8Color.setIcon(new ColorIcon(AppPreferences.KMAP8_COLOR));
+       Kmap8Color = new ColorChooserButton(window, AppPreferences.KMAP8_COLOR);
        add(Kmap8Color,c);
 
        c.gridx = 0;
        c.gridy++;
        add(Kmap9ColorTitle,c);
        c.gridx++;
-       Kmap9Color.addActionListener(mcol);
-       Kmap9Color.setIcon(new ColorIcon(AppPreferences.KMAP9_COLOR));
+       Kmap9Color = new ColorChooserButton(window, AppPreferences.KMAP9_COLOR);
        add(Kmap9Color,c);
        c.gridx++;
        add(Kmap10ColorTitle,c);
        c.gridx++;
-       Kmap10Color.addActionListener(mcol);
-       Kmap10Color.setIcon(new ColorIcon(AppPreferences.KMAP10_COLOR));
+       Kmap10Color = new ColorChooserButton(window, AppPreferences.KMAP10_COLOR);
        add(Kmap10Color,c);
 
        c.gridx = 0;
        c.gridy++;
        add(Kmap11ColorTitle,c);
        c.gridx++;
-       Kmap11Color.addActionListener(mcol);
-       Kmap11Color.setIcon(new ColorIcon(AppPreferences.KMAP11_COLOR));
+       Kmap11Color = new ColorChooserButton(window, AppPreferences.KMAP11_COLOR);
        add(Kmap11Color,c);
        c.gridx++;
        add(Kmap12ColorTitle,c);
        c.gridx++;
-       Kmap12Color.addActionListener(mcol);
-       Kmap12Color.setIcon(new ColorIcon(AppPreferences.KMAP12_COLOR));
+       Kmap12Color = new ColorChooserButton(window, AppPreferences.KMAP12_COLOR);
        add(Kmap12Color,c);
 
        c.gridx = 0;
        c.gridy++;
        add(Kmap13ColorTitle,c);
        c.gridx++;
-       Kmap13Color.addActionListener(mcol);
-       Kmap13Color.setIcon(new ColorIcon(AppPreferences.KMAP13_COLOR));
+       Kmap13Color = new ColorChooserButton(window, AppPreferences.KMAP13_COLOR);
        add(Kmap13Color,c);
        c.gridx++;
        add(Kmap14ColorTitle,c);
        c.gridx++;
-       Kmap14Color.addActionListener(mcol);
-       Kmap14Color.setIcon(new ColorIcon(AppPreferences.KMAP14_COLOR));
+       Kmap14Color = new ColorChooserButton(window, AppPreferences.KMAP14_COLOR);
        add(Kmap14Color,c);
 
        c.gridx = 0;
        c.gridy++;
        add(Kmap15ColorTitle,c);
        c.gridx++;
-       Kmap15Color.addActionListener(mcol);
-       Kmap15Color.setIcon(new ColorIcon(AppPreferences.KMAP15_COLOR));
+       Kmap15Color = new ColorChooserButton(window, AppPreferences.KMAP15_COLOR);
        add(Kmap15Color,c);
        c.gridx++;
        add(Kmap16ColorTitle,c);
        c.gridx++;
-       Kmap16Color.addActionListener(mcol);
-       Kmap16Color.setIcon(new ColorIcon(AppPreferences.KMAP16_COLOR));
+       Kmap16Color = new ColorChooserButton(window, AppPreferences.KMAP16_COLOR);
        add(Kmap16Color,c);
     }
     

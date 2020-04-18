@@ -95,8 +95,8 @@ public class FPGACommanderGui extends FPGACommanderBase
       boardPic.setIcon(boardIcon);
       boardPic.repaint();
       FrequencyPanel.setFpgaClockFrequency(MyBoardInformation.fpga.getClockFrequency());;
+      HandleHDLOnly();
     }
-    HandleHDLOnly();
   }
 
   @Override

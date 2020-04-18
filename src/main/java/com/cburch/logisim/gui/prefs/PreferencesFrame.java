@@ -38,8 +38,6 @@ import com.cburch.logisim.util.LocaleManager;
 import com.cburch.logisim.util.WindowMenuItemManager;
 import java.awt.BorderLayout;
 import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.Toolkit;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
@@ -104,6 +102,7 @@ public class PreferencesFrame extends LFrame {
   private MyListener myListener = new MyListener();
   private OptionsPanel[] panels;
   private JTabbedPane tabbedPane;
+  private int FpgaTabIdx = -1; 
 
   private PreferencesFrame() {
     super(false,null);
@@ -116,7 +115,7 @@ public class PreferencesFrame extends LFrame {
           new SimOptions(this),
           new ExperimentalOptions(this),
           new SoftwaresOptions(this),
-          new FPGAOptions(this), // Should be last as setFpgaTab depends on it
+          new FPGAOptions(this),
         };
     tabbedPane = new JTabbedPane();
     int intlIndex = -1;
@@ -124,6 +123,7 @@ public class PreferencesFrame extends LFrame {
       OptionsPanel panel = panels[index];
       tabbedPane.addTab(panel.getTitle(), null, panel, panel.getToolTipText());
       if (panel instanceof IntlOptions) intlIndex = index;
+      if (panel instanceof FPGAOptions) FpgaTabIdx = index;
     }
 
     Container contents = getContentPane();
@@ -137,6 +137,7 @@ public class PreferencesFrame extends LFrame {
   }
   
   public void setFpgaTab() {
-    tabbedPane.setSelectedIndex(tabbedPane.getTabCount()-1);
+	if (FpgaTabIdx < 0) return;
+    tabbedPane.setSelectedIndex(FpgaTabIdx);
   }
 }

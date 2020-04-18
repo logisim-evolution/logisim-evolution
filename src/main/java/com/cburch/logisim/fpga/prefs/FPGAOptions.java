@@ -32,7 +32,7 @@ import static com.cburch.logisim.gui.Strings.S;
 
 import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
 import com.cburch.logisim.gui.generic.OptionPane;
-import com.cburch.logisim.gui.icons.ColorIcon;
+import com.cburch.logisim.gui.prefs.ColorChooserButton;
 import com.cburch.logisim.gui.prefs.OptionsPanel;
 import com.cburch.logisim.gui.prefs.PrefOption;
 import com.cburch.logisim.gui.prefs.PrefOptionList;
@@ -78,32 +78,18 @@ public class FPGAOptions extends OptionsPanel {
     }
   }
 
-  private class MyColorListener implements ActionListener {
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-      if (e.getSource() instanceof JButton) {
-        JButton but = (JButton) e.getSource();
-        if (but.getIcon() instanceof ColorIcon) {
-          ColorIcon i = (ColorIcon) but.getIcon();
-          i.update(frame);
-        }
-      }
-    }
-  }
   private MyListener myListener = new MyListener();
-  private MyColorListener mcol = new MyColorListener();
   private JLabel WorkspaceLabel = new JLabel();
   private JTextField WorkSpacePath;
   private JButton WorkSpaceButton;
   private JLabel EditSelectLabel = new JLabel();
-  private JButton EditSelectColor = new JButton();
+  private ColorChooserButton EditSelectColor;
   private JLabel EditHighligtLabel = new JLabel();
-  private JButton EditHighligtColor = new JButton();
+  private ColorChooserButton EditHighligtColor;
   private JLabel EditMoveLabel = new JLabel();
-  private JButton EditMoveColor = new JButton();
+  private ColorChooserButton EditMoveColor;
   private JLabel EditResizeLabel = new JLabel();
-  private JButton EditResizeColor = new JButton();
+  private ColorChooserButton EditResizeColor;
   private JPanel editPan;
   private PreferencesFrame frame;
   private PrefOptionList HDL_Used;
@@ -172,26 +158,22 @@ public class FPGAOptions extends OptionsPanel {
     c.fill = GridBagConstraints.HORIZONTAL;
     editPan.add(EditSelectLabel,c);
     c.gridx++;
-    EditSelectColor.addActionListener(mcol);
-    EditSelectColor.setIcon(new ColorIcon(AppPreferences.FPGA_DEFINE_COLOR));
+    EditSelectColor = new ColorChooserButton(frame, AppPreferences.FPGA_DEFINE_COLOR);
     editPan.add(EditSelectColor,c);
     c.gridx++;
     editPan.add(EditHighligtLabel,c);
-    EditHighligtColor.addActionListener(mcol);
-    EditHighligtColor.setIcon(new ColorIcon(AppPreferences.FPGA_DEFINE_HIGHLIGHT_COLOR));
+    EditHighligtColor = new ColorChooserButton(frame, AppPreferences.FPGA_DEFINE_HIGHLIGHT_COLOR);
     c.gridx++;
     editPan.add(EditHighligtColor,c);
     c.gridy++;
     c.gridx=0;
     editPan.add(EditMoveLabel,c);
-    EditMoveColor.addActionListener(mcol);
-    EditMoveColor.setIcon(new ColorIcon(AppPreferences.FPGA_DEFINE_MOVE_COLOR));
+    EditMoveColor = new ColorChooserButton(frame, AppPreferences.FPGA_DEFINE_MOVE_COLOR);
     c.gridx++;
     editPan.add(EditMoveColor,c);
     c.gridx++;
     editPan.add(EditResizeLabel,c);
-    EditResizeColor.addActionListener(mcol);
-    EditResizeColor.setIcon(new ColorIcon(AppPreferences.FPGA_DEFINE_RESIZE_COLOR));
+    EditResizeColor = new ColorChooserButton(frame, AppPreferences.FPGA_DEFINE_RESIZE_COLOR);
     c.gridx++;
     editPan.add(EditResizeColor,c);
     return editPan;
