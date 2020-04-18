@@ -29,7 +29,7 @@
 package com.cburch.logisim.fpga.fpgagui;
 
 import com.cburch.logisim.fpga.download.Download;
-import com.cburch.logisim.fpga.fpgaboardeditor.BoardReaderClass;
+import com.cburch.logisim.fpga.file.BoardReaderClass;
 import com.cburch.logisim.proj.Project;
 
 public class FPGACommanderTests extends FPGACommanderBase {

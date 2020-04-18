@@ -26,7 +26,7 @@
  *     http://www.heig-vd.ch/
  */
 
-package com.cburch.logisim.fpga.fpgaboardeditor;
+package com.cburch.logisim.fpga.data;
 
 import com.cburch.draw.shapes.Rectangle;
 
@@ -85,13 +85,20 @@ public class BoardRectangle {
   public int getNrBits() {return NrBits;}
   public void setNrBits(int nr) { NrBits = nr; }
   
+  public void updateRectangle(BoardRectangle other) {
+    xPosition = other.getXpos();
+    yPosition = other.getYpos();
+    Width = other.getWidth();
+    Height = other.getHeight();
+  }
+  
   public void updateRectangle(Rectangle other) {
     xPosition = other.getX();
     yPosition = other.getY();
     Width = other.getWidth();
     Height = other.getHeight();
   }
-  
+	  
   public Boolean Overlap(Rectangle rect) {
     return Overlap(new BoardRectangle(rect));
   }

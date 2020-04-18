@@ -30,9 +30,10 @@ package com.cburch.logisim.fpga.fpgagui;
 
 import static com.cburch.logisim.fpga.Strings.S;
 
-import com.cburch.logisim.fpga.fpgaboardeditor.BoardInformation;
-import com.cburch.logisim.fpga.fpgaboardeditor.BoardRectangle;
-import com.cburch.logisim.fpga.fpgaboardeditor.FPGAIOInformationContainer;
+import com.cburch.logisim.fpga.data.BoardInformation;
+import com.cburch.logisim.fpga.data.BoardRectangle;
+import com.cburch.logisim.fpga.data.FPGAIOInformationContainer;
+
 import java.io.File;
 import java.io.IOException;
 import javax.xml.parsers.DocumentBuilder;

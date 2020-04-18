@@ -32,8 +32,8 @@ import static com.cburch.logisim.fpga.Strings.S;
 
 import com.cburch.logisim.Main;
 import com.cburch.logisim.circuit.Circuit;
-import com.cburch.logisim.fpga.fpgaboardeditor.BoardInformation;
-import com.cburch.logisim.fpga.fpgaboardeditor.FPGAIOInformationContainer;
+import com.cburch.logisim.fpga.data.BoardInformation;
+import com.cburch.logisim.fpga.data.FPGAIOInformationContainer;
 import com.cburch.logisim.fpga.fpgagui.ComponentMapDialog;
 import com.cburch.logisim.fpga.fpgagui.ComponentMapParser;
 import com.cburch.logisim.fpga.fpgagui.FPGACommanderBase;

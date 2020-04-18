@@ -26,32 +26,26 @@
  *     http://www.heig-vd.ch/
  */
 
-package com.cburch.logisim.circuit;
+package com.cburch.logisim.fpga.file;
 
-import com.cburch.logisim.fpga.data.BoardRectangle;
+import static com.cburch.logisim.fpga.Strings.S;
 
-public class CircuitMapInfo {
+import java.io.File;
 
-    private BoardRectangle rect;
-    private Long constValue;
-    
-    public CircuitMapInfo() {
-      rect = null;
-      constValue = null;
-    }
-    
-    public CircuitMapInfo(BoardRectangle rect) {
-      this.rect = rect;
-      constValue = null;
-    }
-    
-    public CircuitMapInfo(Long val) {
-      this.rect = null;
-      constValue = val;
-    }
-    
-    public BoardRectangle getRectangle() { return rect; }
-    public Long getConstValue() { return constValue; }
-    public boolean isOpen() { return rect==null && constValue == null; }
-    public boolean isConst() { return rect==null && constValue != null; }
+import javax.swing.filechooser.FileFilter;
+
+public class XMLFileFilter extends FileFilter {
+
+  public static final FileFilter XML_FILTER = new XMLFileFilter();
+
+  public static final String XML_EXTENSION = ".xml";
+
+  public boolean accept(File f) {
+    return f.isDirectory() || f.getName().endsWith(XML_EXTENSION);
+  }
+
+  @Override
+  public String getDescription() {
+    return S.get("XMLFileFilter");
+  }
 }

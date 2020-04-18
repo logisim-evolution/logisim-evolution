@@ -26,7 +26,7 @@
  *     http://www.heig-vd.ch/
  */
 
-package com.cburch.logisim.fpga.fpgaboardeditor;
+package com.cburch.logisim.fpga.data;
 
 import java.util.Iterator;
 import java.util.LinkedList;

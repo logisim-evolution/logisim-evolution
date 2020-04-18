@@ -30,7 +30,7 @@ package com.cburch.logisim.fpga.fpgamenu;
 
 import static com.cburch.logisim.fpga.Strings.S;
 
-import com.cburch.logisim.fpga.fpgaboardeditor.BoardDialog;
+import com.cburch.logisim.fpga.gui.BoardEditor;
 import com.cburch.logisim.fpga.fpgagui.FPGACommanderGui;
 import com.cburch.logisim.gui.main.Frame;
 import com.cburch.logisim.gui.menu.LogisimMenuBar;
@@ -46,7 +46,7 @@ public class MenuFPGA extends JMenu implements ActionListener {
   private Project ThisCircuit;
   private JMenuItem BoardEditor = new JMenuItem();
   private JMenuItem FPGACommander = new JMenuItem();
-  private BoardDialog Editor = null;
+  private BoardEditor Editor = null;
   private FPGACommanderGui Commander = null;
 
   public MenuFPGA(JFrame parent, LogisimMenuBar menubar, Project proj) {
@@ -64,7 +64,7 @@ public class MenuFPGA extends JMenu implements ActionListener {
     Object src = e.getSource();
     if (src == BoardEditor) {
       if (Editor == null) {
-        Editor = new BoardDialog();
+        Editor = new BoardEditor();
       } else {
         if (!Editor.isActive()) {
           Editor.setActive();

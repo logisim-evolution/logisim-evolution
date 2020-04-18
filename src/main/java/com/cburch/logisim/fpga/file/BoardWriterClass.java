@@ -26,8 +26,12 @@
  *     http://www.heig-vd.ch/
  */
 
-package com.cburch.logisim.fpga.fpgaboardeditor;
+package com.cburch.logisim.fpga.file;
 
+import com.cburch.logisim.fpga.data.BoardInformation;
+import com.cburch.logisim.fpga.data.FPGAIOInformationContainer;
+import com.cburch.logisim.fpga.data.IoStandards;
+import com.cburch.logisim.fpga.data.PullBehaviors;
 import com.cburch.logisim.fpga.settings.VendorSoftware;
 import java.awt.Image;
 import java.io.File;
@@ -48,7 +52,7 @@ import org.w3c.dom.Comment;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-class BoardWriterClass {
+public class BoardWriterClass {
 
   static final Logger logger = LoggerFactory.getLogger(BoardWriterClass.class);
 

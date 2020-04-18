@@ -26,7 +26,7 @@
  *     http://www.heig-vd.ch/
  */
 
-package com.cburch.logisim.fpga.fpgaboardeditor;
+package com.cburch.logisim.fpga.file;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -39,6 +39,11 @@ import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import com.cburch.logisim.fpga.data.BoardInformation;
+import com.cburch.logisim.fpga.data.FPGAClass;
+import com.cburch.logisim.fpga.data.FPGAIOInformationContainer;
+import com.cburch.logisim.fpga.gui.DialogNotification;
 
 public class BoardReaderClass {
 
@@ -116,22 +121,23 @@ public class BoardReaderClass {
         }
       }
       if (CodeTable == null) {
-        BoardDialog.showDialogNotification(
-            this, "Error", "The selected xml file does not contain a compression code table");
+        DialogNotification.showDialogNotification(
+            null, "Error", "The selected xml file does not contain a compression code table");
         return null;
       }
       if ((PictureWidth == 0) || (PictureHeight == 0)) {
-        BoardDialog.showDialogNotification(
-            this, "Error", "The selected xml file does not contain the picture dimensions");
+        DialogNotification.showDialogNotification(
+            null, "Error", "The selected xml file does not contain the picture dimensions");
         return null;
       }
       if (PixelData == null) {
-        BoardDialog.showDialogNotification(
-            this, "Error", "The selected xml file does not contain the picture data");
+        DialogNotification.showDialogNotification(
+            null, "Error", "The selected xml file does not contain the picture data");
         return null;
       }
 
       BoardInformation result = new BoardInformation();
+      result.setBoardName(BoardDoc.getDocumentElement().getNodeName());
       BufferedImage Picture = CreateImage(PictureWidth, PictureHeight, CodeTable, PixelData);
       if (Picture == null) return null;
       result.SetImage(Picture);
@@ -240,8 +246,8 @@ public class BoardReaderClass {
         || (family == null)
         || (Package == null)
         || (Speed == null)) {
-      BoardDialog.showDialogNotification(
-          this, "Error", "The selected xml file does not contain the required FPGA parameters");
+      DialogNotification.showDialogNotification(
+          null, "Error", "The selected xml file does not contain the required FPGA parameters");
       return null;
     }
     if (UsbTmc == null) UsbTmc = Boolean.toString(false);

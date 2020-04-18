@@ -30,7 +30,7 @@ package com.cburch.logisim.prefs;
 
 import static com.cburch.logisim.proj.Strings.S;
 
-import com.cburch.logisim.fpga.fpgaboardeditor.BoardReaderClass;
+import com.cburch.logisim.fpga.file.BoardReaderClass;
 import com.cburch.logisim.fpga.settings.BoardList;
 import com.cburch.logisim.gui.generic.OptionPane;
 

@@ -30,10 +30,10 @@ package com.cburch.logisim.fpga.download;
 
 import static com.cburch.logisim.fpga.Strings.S;
 
+import com.cburch.logisim.fpga.data.BoardInformation;
+import com.cburch.logisim.fpga.data.FPGAIOInformationContainer;
+import com.cburch.logisim.fpga.data.IoStandards;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import com.cburch.logisim.fpga.fpgaboardeditor.BoardInformation;
-import com.cburch.logisim.fpga.fpgaboardeditor.FPGAIOInformationContainer;
-import com.cburch.logisim.fpga.fpgaboardeditor.IoStandards;
 import com.cburch.logisim.fpga.fpgagui.FPGACommanderBase;
 import com.cburch.logisim.fpga.fpgagui.FPGAReport;
 import com.cburch.logisim.fpga.fpgagui.MappableResourcesContainer;

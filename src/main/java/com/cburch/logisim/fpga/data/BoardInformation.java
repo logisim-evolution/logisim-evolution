@@ -26,13 +26,13 @@
  *     http://www.heig-vd.ch/
  */
 
-package com.cburch.logisim.fpga.fpgaboardeditor;
+package com.cburch.logisim.fpga.data;
 
-import com.cburch.logisim.fpga.data.IOComponentTypes;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 public class BoardInformation {
@@ -52,27 +52,16 @@ public class BoardInformation {
     MyComponents.add(comp);
   }
 
-  public void ReplaceComponent(FPGAIOInformationContainer orig,
-    FPGAIOInformationContainer repl) {
-    int index = MyComponents.indexOf(orig);
-    if (index < 0) return;
-    MyComponents.remove(index);
-    MyComponents.add(index, repl);
-  }
-  
-  public void deleteComponent(FPGAIOInformationContainer comp) {
-    if (MyComponents.contains(comp)) {
-      MyComponents.remove(comp);
-      for (FPGAIOInformationContainer c : MyComponents)
-        c.SetId(MyComponents.indexOf(c));
-    }
-  }
-
   public void clear() {
     MyComponents.clear();
     boardname = null;
     fpga.clear();
     BoardPicture = null;
+  }
+  
+  public void setComponents(List<FPGAIOInformationContainer> comps) {
+    MyComponents.clear();
+    MyComponents.addAll(comps);  
   }
 
   public LinkedList<FPGAIOInformationContainer> GetAllComponents() {

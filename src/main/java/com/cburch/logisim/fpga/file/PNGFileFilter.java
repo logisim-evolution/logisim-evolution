@@ -26,32 +26,26 @@
  *     http://www.heig-vd.ch/
  */
 
-package com.cburch.logisim.circuit;
+package com.cburch.logisim.fpga.file;
 
-import com.cburch.logisim.fpga.data.BoardRectangle;
+import static com.cburch.logisim.fpga.Strings.S;
 
-public class CircuitMapInfo {
+import java.io.File;
 
-    private BoardRectangle rect;
-    private Long constValue;
-    
-    public CircuitMapInfo() {
-      rect = null;
-      constValue = null;
-    }
-    
-    public CircuitMapInfo(BoardRectangle rect) {
-      this.rect = rect;
-      constValue = null;
-    }
-    
-    public CircuitMapInfo(Long val) {
-      this.rect = null;
-      constValue = val;
-    }
-    
-    public BoardRectangle getRectangle() { return rect; }
-    public Long getConstValue() { return constValue; }
-    public boolean isOpen() { return rect==null && constValue == null; }
-    public boolean isConst() { return rect==null && constValue != null; }
+import javax.swing.filechooser.FileFilter;
+
+public class PNGFileFilter  extends FileFilter {
+
+  public static final String PNG_EXTENSION = ".png";
+  public static final PNGFileFilter PNG_FILTER = new PNGFileFilter();
+  
+  @Override
+  public boolean accept(File f) {
+    return f.isDirectory() || f.getName().endsWith(PNG_EXTENSION);
+  }
+
+  @Override
+  public String getDescription() {
+    return S.get("FpgaFilePng");
+  }
 }

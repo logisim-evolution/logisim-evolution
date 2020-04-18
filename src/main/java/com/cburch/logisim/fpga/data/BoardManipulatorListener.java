@@ -26,32 +26,10 @@
  *     http://www.heig-vd.ch/
  */
 
-package com.cburch.logisim.circuit;
+package com.cburch.logisim.fpga.data;
 
-import com.cburch.logisim.fpga.data.BoardRectangle;
+public interface BoardManipulatorListener {
 
-public class CircuitMapInfo {
-
-    private BoardRectangle rect;
-    private Long constValue;
-    
-    public CircuitMapInfo() {
-      rect = null;
-      constValue = null;
-    }
-    
-    public CircuitMapInfo(BoardRectangle rect) {
-      this.rect = rect;
-      constValue = null;
-    }
-    
-    public CircuitMapInfo(Long val) {
-      this.rect = null;
-      constValue = val;
-    }
-    
-    public BoardRectangle getRectangle() { return rect; }
-    public Long getConstValue() { return constValue; }
-    public boolean isOpen() { return rect==null && constValue == null; }
-    public boolean isConst() { return rect==null && constValue != null; }
+   public void boardNameChanged(String newBoardName);
+   public void componentsChanged(IOComponentsInformation IOcomps);
 }

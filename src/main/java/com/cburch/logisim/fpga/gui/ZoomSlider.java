@@ -26,7 +26,7 @@
  *     http://www.heig-vd.ch/
  */
 
-package com.cburch.logisim.gui.prefs;
+package com.cburch.logisim.fpga.gui;
 
 import com.cburch.logisim.prefs.AppPreferences;
 import java.awt.Dimension;
@@ -36,8 +36,25 @@ import javax.swing.JSlider;
 
 @SuppressWarnings("serial")
 public class ZoomSlider extends JSlider {
-
+  
+  private int minzoom;
+  private int maxzoom;
+  
+  public int getMaxZoom() { return maxzoom; }
+  public int getMinZoom() { return minzoom; }
+  
   public ZoomSlider(int orientation, int min, int max, int value) {
+    setup(orientation,min,max,value);
+  }
+
+  public ZoomSlider() {
+    setup(JSlider.HORIZONTAL,100,200,100);
+  }
+  
+  private void setup(int orientation, int min, int max, int value) {
+    minzoom = min;
+    maxzoom = max;
+    int midvalue = min+((max-min)>>1);
     JLabel label;
     super.setOrientation(orientation);
     super.setMinimum(min);
@@ -47,20 +64,26 @@ public class ZoomSlider extends JSlider {
     orig.height = AppPreferences.getScaled(orig.height);
     orig.width = AppPreferences.getScaled(orig.width);
     super.setSize(orig);
-    setMajorTickSpacing(100);
+    setMajorTickSpacing(50);
     setMinorTickSpacing(10);
     setPaintTicks(true);
     Hashtable<Integer, JLabel> labelTable = new Hashtable<Integer, JLabel>();
-    label = new JLabel("1.0x");
+    label = new JLabel(getId(min));
     label.setFont(AppPreferences.getScaledFont(label.getFont()));
-    labelTable.put(new Integer(100), label);
-    label = new JLabel("2.0x");
+    labelTable.put(min, label);
+    label = new JLabel(getId(midvalue));
     label.setFont(AppPreferences.getScaledFont(label.getFont()));
-    labelTable.put(new Integer(200), label);
-    label = new JLabel("3.0x");
+    labelTable.put(midvalue, label);
+    label = new JLabel(getId(max));
     label.setFont(AppPreferences.getScaledFont(label.getFont()));
-    labelTable.put(new Integer(300), label);
+    labelTable.put(max, label);
     setLabelTable(labelTable);
     setPaintLabels(true);
+  }
+  
+  private String getId(int value) {
+    int hun = value/100;
+    int tens = (value%100)/10;
+    return String.format("%d.%dx", hun,tens);
   }
 }

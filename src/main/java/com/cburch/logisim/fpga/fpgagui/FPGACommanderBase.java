@@ -30,9 +30,9 @@ package com.cburch.logisim.fpga.fpgagui;
 
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.file.LogisimFile;
+import com.cburch.logisim.fpga.data.BoardInformation;
 import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import com.cburch.logisim.fpga.fpgaboardeditor.BoardInformation;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.FileWriter;
 import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;

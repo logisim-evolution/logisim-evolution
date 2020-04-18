@@ -31,7 +31,6 @@ package com.cburch.logisim.gui.prefs;
 import static com.cburch.logisim.gui.Strings.S;
 
 import java.awt.Color;
-import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -45,10 +44,9 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 
-import com.bric.colorpicker.ColorPickerDialog;
 import com.cburch.logisim.Main;
 import com.cburch.logisim.data.Value;
-import com.cburch.logisim.gui.icons.AbstractIcon;
+import com.cburch.logisim.gui.icons.ColorIcon;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.prefs.PrefMonitor;
 import com.cburch.logisim.proj.Project;
@@ -201,37 +199,11 @@ public class SimOptions extends OptionsPanel {
         JButton but = (JButton) e.getSource();
         if (but.getIcon() instanceof ColorIcon) {
           ColorIcon i = (ColorIcon) but.getIcon();
-          i.update();
+          i.update(frame);
         }
       }
     }
       
-  }
-  
-  private class ColorIcon extends AbstractIcon {
-
-    private PrefMonitor<Integer> myPref;
-
-    public ColorIcon(PrefMonitor<Integer> myPref) {
-      super();
-      this.myPref = myPref;
-    }
-
-    @Override
-    protected void paintIcon(Graphics2D g2) {
-       g2.setColor(new Color(myPref.get()));
-       g2.fillRect(0, 0, this.getIconWidth(), this.getIconHeight());
-    }
-    
-    public void update() {
-      Color col = new Color(myPref.get());
-      Color newCol = ColorPickerDialog.showDialog(frame, col, false);
-      if (newCol == null) return;
-      if (!newCol.equals(col)) {
-        col = newCol;
-        myPref.set(col.getRGB());
-      }
-    }
   }
   
   private class SymbolChooser extends JComboBox<Character> {

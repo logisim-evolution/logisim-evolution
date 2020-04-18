@@ -26,38 +26,10 @@
  *     http://www.heig-vd.ch/
  */
 
-package com.cburch.logisim.fpga.fpgaboardeditor;
+package com.cburch.logisim.fpga.data;
 
-import java.util.Iterator;
-import java.util.LinkedList;
+import java.awt.Rectangle;
 
-public class PinActivity {
-  public static char getId(String identifier) {
-    char result = 0;
-    LinkedList<String> thelist = PinActivity.getStrings();
-    Iterator<String> iter = thelist.iterator();
-    result = 0;
-    while (iter.hasNext()) {
-      if (iter.next().equals(identifier)) return result;
-      result++;
-    }
-    return Unknown;
-  }
-
-  public static LinkedList<String> getStrings() {
-    LinkedList<String> result = new LinkedList<String>();
-
-    result.add(Behavior_strings[0]);
-    result.add(Behavior_strings[1]);
-
-    return result;
-  }
-
-  public static String ActivityAttributeString = "ActivityLevel";
-  public static char ActiveLow = 0;
-  public static char ActiveHigh = 1;
-
-  public static char Unknown = 255;
-
-  public static String[] Behavior_strings = {"Active low", "Active high"};
+public interface IOComponentsListener {
+   public void repaintRequest(Rectangle rect);
 }

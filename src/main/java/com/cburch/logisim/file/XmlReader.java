@@ -41,7 +41,7 @@ import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeDefaultProvider;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Location;
-import com.cburch.logisim.fpga.fpgaboardeditor.BoardRectangle;
+import com.cburch.logisim.fpga.data.BoardRectangle;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.StdAttr;

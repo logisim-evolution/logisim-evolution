@@ -26,19 +26,23 @@
  *     http://www.heig-vd.ch/
  */
 
-package com.cburch.logisim.fpga.fpgaboardeditor;
+package com.cburch.logisim.fpga.data;
 
 import static com.cburch.logisim.fpga.Strings.S;
 
-import com.cburch.logisim.fpga.data.IOComponentTypes;
 import com.cburch.logisim.fpga.download.Download;
+import com.cburch.logisim.fpga.file.BoardWriterClass;
+import com.cburch.logisim.fpga.gui.BoardManipulator;
 import com.cburch.logisim.fpga.gui.FPGAIOInformationSettingsDialog;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.std.io.DipSwitch;
 import com.cburch.logisim.std.io.PortIO;
 import com.cburch.logisim.std.io.RGBLed;
 import com.cburch.logisim.std.io.ReptarLocalBus;
 import com.cburch.logisim.std.io.SevenSegment;
 
+import java.awt.Color;
+import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -76,6 +80,7 @@ public class FPGAIOInformationContainer implements Cloneable {
   private String MyLabel;
   private boolean toBeDeleted = false;
   private ArrayList<Boolean> pinIsMapped;
+  private int paintColor = BoardManipulator.TRANSPARENT_ID;
 
   public FPGAIOInformationContainer() {
     MyType = IOComponentTypes.Unknown;
@@ -90,7 +95,8 @@ public class FPGAIOInformationContainer implements Cloneable {
     MyLabel = null;
   }
 
-  public FPGAIOInformationContainer(IOComponentTypes Type, BoardRectangle rect, BoardDialog parent) {
+  public FPGAIOInformationContainer(IOComponentTypes Type, BoardRectangle rect, 
+                                    IOComponentsInformation iocomps) {
     MyType = Type;
     MyIdentifier = -1;
     MyRectangle = rect;
@@ -103,7 +109,7 @@ public class FPGAIOInformationContainer implements Cloneable {
     MyLabel = null;
     if (rect != null) rect.SetLabel(null);
     if (IOComponentTypes.SimpleInputSet.contains(Type)) {
-    	FPGAIOInformationSettingsDialog.GetSimpleInformationDialog(false,parent,this);
+    	FPGAIOInformationSettingsDialog.GetSimpleInformationDialog(false,iocomps,this);
       return;
     }
     MyType = IOComponentTypes.Unknown;
@@ -209,9 +215,9 @@ public class FPGAIOInformationContainer implements Cloneable {
     if (MyLabel != null) MyRectangle.SetLabel(MyLabel);
   }
 
-  public void edit(Boolean deleteButton, BoardDialog parent) {
+  public void edit(Boolean deleteButton, IOComponentsInformation IOcomps) {
     if (!defined()) return;
-    FPGAIOInformationSettingsDialog.GetSimpleInformationDialog(deleteButton,parent,this);
+    FPGAIOInformationSettingsDialog.GetSimpleInformationDialog(deleteButton,IOcomps,this);
   }
   
   public void setToBeDeleted() { toBeDeleted = true; }
@@ -457,6 +463,21 @@ public class FPGAIOInformationContainer implements Cloneable {
       for (int i = pinIsMapped.size()-1 ; i >= count ; i--) 
         pinIsMapped.remove(i);
     }
+  }
+  
+  public void setPaintColor( int colid ) {
+    paintColor = colid;
+  }
+  
+  public void paint(Graphics2D g , float scale) {
+	Color PaintColor = BoardManipulator.getColor(paintColor);
+    Color c = g.getColor();
+    g.setColor(PaintColor);
+    g.fillRect(AppPreferences.getScaled(MyRectangle.getXpos(),scale), 
+               AppPreferences.getScaled(MyRectangle.getYpos(),scale), 
+               AppPreferences.getScaled(MyRectangle.getWidth(),scale), 
+               AppPreferences.getScaled(MyRectangle.getHeight(),scale));
+    g.setColor(c);
   }
 
 }

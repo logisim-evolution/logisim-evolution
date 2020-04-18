@@ -31,8 +31,8 @@ package com.cburch.logisim.fpga.designrulecheck;
 import static com.cburch.logisim.std.io.PortIO.ATTR_SIZE;
 
 import com.cburch.logisim.comp.Component;
+import com.cburch.logisim.fpga.data.BoardRectangle;
 import com.cburch.logisim.fpga.data.IOComponentTypes;
-import com.cburch.logisim.fpga.fpgaboardeditor.BoardRectangle;
 import com.cburch.logisim.fpga.hdlgenerator.IOComponentInformationContainer;
 import com.cburch.logisim.std.io.PortIO;
 import com.cburch.logisim.std.wiring.Pin;

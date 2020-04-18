@@ -26,29 +26,33 @@
  *     http://www.heig-vd.ch/
  */
 
-package com.cburch.logisim.fpga.fpgaboardeditor;
+package com.cburch.logisim.fpga.data;
 
 import java.util.Iterator;
 import java.util.LinkedList;
 
-public class DriveStrength {
-  public static String GetContraintedDriveStrength(char id) {
-    if ((id > DefaulStength) && (id <= Drive_24)) {
-      return Behavior_strings[id].replace(" mA", " ");
+public class PullBehaviors {
+  public static String getContraintedPullString(char id) {
+    switch (id) {
+      case PullUp:
+        return "PULLUP";
+      case PullDown:
+        return "PULLDOWN";
+      default:
+        return "";
     }
-    return "";
   }
 
   public static char getId(String identifier) {
     char result = 0;
-    LinkedList<String> thelist = DriveStrength.getStrings();
+    LinkedList<String> thelist = PullBehaviors.getStrings();
     Iterator<String> iter = thelist.iterator();
     result = 0;
     while (iter.hasNext()) {
       if (iter.next().equals(identifier)) return result;
       result++;
     }
-    return Unknown;
+    return PullBehaviors.Unknown;
   }
 
   public static LinkedList<String> getStrings() {
@@ -57,22 +61,17 @@ public class DriveStrength {
     result.add(Behavior_strings[0]);
     result.add(Behavior_strings[1]);
     result.add(Behavior_strings[2]);
-    result.add(Behavior_strings[3]);
-    result.add(Behavior_strings[4]);
-    result.add(Behavior_strings[5]);
 
     return result;
   }
 
-  public static String DriveAttributeString = "FPGAPinDriveStrength";
-  public static char DefaulStength = 0;
-  public static char Drive_2 = 1;
-  public static char Drive_4 = 2;
-  public static char Drive_8 = 3;
-  public static char Drive_16 = 4;
-  public static char Drive_24 = 5;
+  public static String PullAttributeString = "FPGAPinPullBehavior";
+  public static final char Float = 0;
+  public static final char PullUp = 1;
 
-  public static char Unknown = 255;
+  public static final char PullDown = 2;
 
-  public static String[] Behavior_strings = {"Default", "2 mA", "4 mA", "8 mA", "16 mA", "24 mA"};
+  public static final char Unknown = 255;
+
+  public static String[] Behavior_strings = {"Float", "Pull Up", "Pull Down"};
 }
