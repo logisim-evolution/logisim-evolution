@@ -26,11 +26,10 @@
  *     http://www.heig-vd.ch/
  */
 
-package com.cburch.logisim.fpga.fpgagui;
+package com.cburch.logisim.fpga.data;
 
 import com.cburch.logisim.fpga.designrulecheck.SimpleDRCContainer;
 import com.cburch.logisim.fpga.gui.ListModelCellRenderer;
-import com.cburch.logisim.gui.main.Frame;
 
 import java.util.ArrayList;
 import java.util.HashSet;

@@ -40,6 +40,7 @@ import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeDefaultProvider;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.data.BoardRectangle;
+import com.cburch.logisim.fpga.data.MapComponent;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.tools.Tool;
@@ -320,18 +321,28 @@ class XmlWriter {
     ret.setAttribute("boardname", boardName);
     for (String key : circ.getMapInfo(boardName).keySet()) {
       Element Map = doc.createElement("mc");
-      Map.setAttribute("key", key);
       CircuitMapInfo map = circ.getMapInfo(boardName).get(key);
-      if (map.isOpen()) {
-        Map.setAttribute("open", "open");
-      } else if (map.isConst()) {
-        Map.setAttribute("vconst", Long.toString(map.getConstValue()));
+      if (map.isOldFormat()) {
+        Map.setAttribute("key", key);
+        if (map.isOpen()) {
+          Map.setAttribute(MapComponent.OPEN_KEY, MapComponent.OPEN_KEY);
+        } else if (map.isConst()) {
+          Map.setAttribute(MapComponent.CONSTANT_KEY, Long.toString(map.getConstValue()));
+        } else {
+          BoardRectangle rect = map.getRectangle();
+          Map.setAttribute("valx", Integer.toString(rect.getXpos()));
+          Map.setAttribute("valy", Integer.toString(rect.getYpos()));
+          Map.setAttribute("valw", Integer.toString(rect.getWidth()));
+          Map.setAttribute("valh", Integer.toString(rect.getHeight()));
+        }
       } else {
-        BoardRectangle rect = map.getRectangle();
-        Map.setAttribute("valx", Integer.toString(rect.getXpos()));
-        Map.setAttribute("valy", Integer.toString(rect.getYpos()));
-        Map.setAttribute("valw", Integer.toString(rect.getWidth()));
-        Map.setAttribute("valh", Integer.toString(rect.getHeight()));
+        MapComponent nmap = map.getMap();
+        if (nmap != null)
+          nmap.getMapElement(Map);
+        else {
+          Map.setAttribute("key", key);
+          MapComponent.getComplexMap(Map, map);
+        }
       }
       ret.appendChild(Map);
     }

@@ -37,8 +37,7 @@ import java.util.Map;
 
 public class BoardInformation {
 
-  private LinkedList<FPGAIOInformationContainer> MyComponents =
-      new LinkedList<FPGAIOInformationContainer>();
+  private LinkedList<FPGAIOInformationContainer> MyComponents;
   private String boardname;
   private BufferedImage BoardPicture;
   public FPGAClass fpga = new FPGAClass();
@@ -48,12 +47,14 @@ public class BoardInformation {
   }
 
   public void AddComponent(FPGAIOInformationContainer comp) {
-    comp.SetId(MyComponents.size() + 1);
     MyComponents.add(comp);
   }
 
   public void clear() {
-    MyComponents.clear();
+	if (MyComponents == null)
+	  MyComponents = new LinkedList<FPGAIOInformationContainer>();
+	else
+      MyComponents.clear();
     boardname = null;
     fpga.clear();
     BoardPicture = null;

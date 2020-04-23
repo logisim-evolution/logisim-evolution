@@ -26,7 +26,7 @@
  *     http://www.heig-vd.ch/
  */
 
-package com.cburch.logisim.fpga.fpgagui;
+package com.cburch.logisim.fpga.gui;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -38,6 +38,8 @@ import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
+
+import com.cburch.logisim.fpga.data.FPGACommanderListModel;
 
 @SuppressWarnings("serial")
 public class FPGACommanderListWindow extends JFrame implements WindowListener, ListDataListener {

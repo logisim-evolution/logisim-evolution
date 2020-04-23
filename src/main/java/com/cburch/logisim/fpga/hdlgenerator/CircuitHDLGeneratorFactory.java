@@ -39,7 +39,7 @@ import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
 import com.cburch.logisim.fpga.designrulecheck.Net;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
-import com.cburch.logisim.fpga.fpgagui.FPGAReport;
+import com.cburch.logisim.fpga.gui.FPGAReport;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.std.io.PortIO;
 import com.cburch.logisim.std.io.ReptarLocalBus;
@@ -426,7 +426,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           Inputs.put(
               CorrectLabel.getCorrectLabel(
                   selected.GetComponent().getAttributeSet().getValue(StdAttr.LABEL) + "_i"),
-              selected.GetIOInformationContainer().GetNrOfInports());
+              selected.GetMapInformationContainer().GetNrOfInports());
         }
       }
     }
@@ -687,7 +687,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           Outputs.put(
               CorrectLabel.getCorrectLabel(
                   selected.GetComponent().getAttributeSet().getValue(StdAttr.LABEL) + "_o"),
-              selected.GetIOInformationContainer().GetNrOfOutports());
+              selected.GetMapInformationContainer().GetNrOfOutports());
         }
       }
     }
@@ -817,7 +817,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
                   ((ReptarLocalBus) selected.GetComponent().getFactory()).getMapInfo();
               int start =
                   mapInfo.GetFPGAInputPinId(
-                      mapInfo.currentBoardName
+                      mapInfo.getBoardInformation().getBoardName()
                           + ":/"
                           + selected.GetComponent().getAttributeSet().getValue(StdAttr.LABEL));
               for (int j = 0; j < 13; j++) {
@@ -847,7 +847,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
                   ((PortIO) selected.GetComponent().getFactory()).getMapInfo();
               int start =
                   mapInfo.GetFPGAInOutPinId(
-                      mapInfo.currentBoardName
+                          mapInfo.getBoardInformation().getBoardName()
                           + ":/"
                           + selected.GetComponent().getAttributeSet().getValue(StdAttr.LABEL));
               int k = 0;
@@ -868,7 +868,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
                   ((ReptarLocalBus) selected.GetComponent().getFactory()).getMapInfo();
               int start =
                   mapInfo.GetFPGAInOutPinId(
-                      mapInfo.currentBoardName
+                          mapInfo.getBoardInformation().getBoardName()
                           + ":/"
                           + selected.GetComponent().getAttributeSet().getValue(StdAttr.LABEL));
               name.add(selected.GetComponent().getAttributeSet().getValue(StdAttr.LABEL));
@@ -908,14 +908,6 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
                     "FPGA_LB_OUT_" + k);
                 k++;
               }
-              // for (int j =
-              // selected.GetGlobalBubbleId(name).GetOutputStartIndex();
-              // j <=
-              // selected.GetGlobalBubbleId(name).GetOutputEndIndex();
-              // j++) {
-              // PortMap.put(selected.GetComponent().getAttributeSet().getValue(StdAttr.LABEL)
-              // + "_o", FPGAOutputPinName + "_" + j);
-              // }
             } else {
               String PinLabel =
                   CorrectLabel.getCorrectLabel(

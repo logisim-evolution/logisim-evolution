@@ -56,13 +56,17 @@ public class BoardWriterClass {
 
   static final Logger logger = LoggerFactory.getLogger(BoardWriterClass.class);
 
-  public static String BoardInformationSectionString = "BoardInformation";
-  public static String ClockInformationSectionString = "ClockInformation";
-  public static String[] ClockSectionStrings = {
+  public static final String BoardInformationSectionString = "BoardInformation";
+  public static final String ClockInformationSectionString = "ClockInformation";
+  public static final String InputSetString = "InputPinSet";
+  public static final String OutputSetString = "OutputPinSet";
+  public static final String IOSetString = "BiDirPinSet";
+  public static final String RectSetString = "Rect_x_y_w_h";
+  public static final String[] ClockSectionStrings = {
     "Frequency", "FPGApin", "PullBehavior", "IOStandard"
   };
-  public static String FPGAInformationSectionString = "FPGAInformation";
-  public static String[] FPGASectionStrings = {
+  public static final String FPGAInformationSectionString = "FPGAInformation";
+  public static final String[] FPGASectionStrings = {
     "Vendor",
     "Part",
     "Family",
@@ -73,17 +77,17 @@ public class BoardWriterClass {
     "FlashName",
     "FlashPos"
   };
-  public static String UnusedPinsString = "UnusedPins";
-  public static String ComponentsSectionString = "IOComponents";
-  public static String LocationXString = "LocationX";
-  public static String LocationYString = "LocationY";
-  public static String WidthString = "Width";
-  public static String HeightString = "Height";
-  public static String PinLocationString = "FPGAPinName";
-  public static String ImageInformationString = "BoardPicture";
-  public static String MultiPinInformationString = "NrOfPins";
-  public static String MultiPinPrefixString = "FPGAPin_";
-  public static String LabelString = "Label";
+  public static final String UnusedPinsString = "UnusedPins";
+  public static final String ComponentsSectionString = "IOComponents";
+  public static final String LocationXString = "LocationX";
+  public static final String LocationYString = "LocationY";
+  public static final String WidthString = "Width";
+  public static final String HeightString = "Height";
+  public static final String PinLocationString = "FPGAPinName";
+  public static final String ImageInformationString = "BoardPicture";
+  public static final String MultiPinInformationString = "NrOfPins";
+  public static final String MultiPinPrefixString = "FPGAPin_";
+  public static final String LabelString = "Label";
   private DocumentBuilderFactory factory;
   private DocumentBuilder parser;
   private Document boardInfo;

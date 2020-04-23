@@ -26,14 +26,9 @@
  *     http://www.heig-vd.ch/
  */
 
-package com.cburch.logisim.fpga.fpgagui;
+package com.cburch.logisim.fpga.data;
 
 import static com.cburch.logisim.fpga.Strings.S;
-
-import com.cburch.logisim.fpga.data.BoardInformation;
-import com.cburch.logisim.fpga.data.BoardRectangle;
-import com.cburch.logisim.fpga.data.FPGAIOInformationContainer;
-import com.cburch.logisim.fpga.data.MappableResourcesContainer;
 
 import java.io.File;
 import java.io.IOException;
@@ -66,8 +61,8 @@ public class ComponentMapParser {
   }
 
   private void UnMapAll() {
-    MappableComponents.UnmapAll();
-    MappableComponents.rebuildMappedLists();
+    MappableComponents.unMapAll();
+    MappableComponents.updateMapableComponents();
   }
   
   public String getError(int error) {
@@ -119,7 +114,7 @@ public class ComponentMapParser {
               return WrongBoard;
             }
           } else if (Attrs.item(j).getNodeName().equals("ToplevelCircuitName")) {
-            if (!MappableComponents.GetToplevelName().equals(Attrs.item(j).getNodeValue())) {
+            if (!MappableComponents.getToplevelName().equals(Attrs.item(j).getNodeValue())) {
               return WrongCircuit;
             }
           }
@@ -164,7 +159,7 @@ public class ComponentMapParser {
             }
           }
           if (rect != null) {
-            MappableComponents.TryMap(key, rect, BoardInfo.GetComponentType(rect));
+            MappableComponents.tryMap(key, rect);
           }
         }
       }

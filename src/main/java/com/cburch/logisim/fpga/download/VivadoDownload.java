@@ -35,8 +35,7 @@ import com.cburch.logisim.fpga.data.FPGAIOInformationContainer;
 import com.cburch.logisim.fpga.data.IoStandards;
 import com.cburch.logisim.fpga.data.MappableResourcesContainer;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import com.cburch.logisim.fpga.fpgagui.FPGACommanderBase;
-import com.cburch.logisim.fpga.fpgagui.FPGAReport;
+import com.cburch.logisim.fpga.gui.FPGAReport;
 import com.cburch.logisim.fpga.hdlgenerator.FileWriter;
 import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.TickComponentHDLGeneratorFactory;
@@ -75,11 +74,9 @@ public class VivadoDownload implements VendorDownload {
       BoardInformation BoardInfo,
       ArrayList<String> Entities,
       ArrayList<String> Architectures) {
-    this.SandboxPath =
-        FPGACommanderBase.GetDirectoryLocation(ProjectPath, FPGACommanderBase.SandboxPath);
-    this.ScriptPath =
-        FPGACommanderBase.GetDirectoryLocation(ProjectPath, FPGACommanderBase.ScriptPath);
-    this.xdcPath = FPGACommanderBase.GetDirectoryLocation(ProjectPath, FPGACommanderBase.XDCPath);
+    this.SandboxPath = DownloadBase.GetDirectoryLocation(ProjectPath, DownloadBase.SandboxPath);
+    this.ScriptPath = DownloadBase.GetDirectoryLocation(ProjectPath, DownloadBase.ScriptPath);
+    this.xdcPath = DownloadBase.GetDirectoryLocation(ProjectPath, DownloadBase.XDCPath);
     this.Reporter = Reporter;
     this.RootNetList = RootNetList;
     this.BoardInfo = BoardInfo;

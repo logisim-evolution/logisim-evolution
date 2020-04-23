@@ -26,7 +26,7 @@
  *     http://www.heig-vd.ch/
  */
 
-package com.cburch.logisim.fpga.fpgagui;
+package com.cburch.logisim.fpga.gui;
 
 import static com.cburch.logisim.fpga.Strings.S;
 
@@ -37,10 +37,9 @@ import com.cburch.logisim.circuit.SimulatorEvent;
 import com.cburch.logisim.circuit.SimulatorListener;
 import com.cburch.logisim.file.LibraryEvent;
 import com.cburch.logisim.file.LibraryListener;
+import com.cburch.logisim.fpga.data.BoardInformation;
 import com.cburch.logisim.fpga.download.Download;
 import com.cburch.logisim.fpga.file.BoardReaderClass;
-import com.cburch.logisim.fpga.gui.BoardIcon;
-import com.cburch.logisim.fpga.gui.FPGAClockPanel;
 import com.cburch.logisim.fpga.settings.VendorSoftware;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.gui.icons.ProjectAddIcon;
@@ -73,7 +72,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 
-public class FPGACommanderGui extends FPGACommanderBase
+public class FPGACommander
     implements ActionListener,
         LibraryListener,
         ProjectListener,
@@ -83,6 +82,30 @@ public class FPGACommanderGui extends FPGACommanderBase
         LocaleListener,
         PreferenceChangeListener {
 
+  public static final int FONT_SIZE = 12;
+  private JFrame panel;
+  private JLabel textMainCircuit = new JLabel();
+  private JLabel boardPic = new JLabel();
+  private BoardIcon boardIcon = null;
+  private JButton annotateButton = new JButton();
+  private JButton validateButton = new JButton();
+  private JComboBox<String> circuitsList = new JComboBox<>();
+  private JComboBox<StringGetter> annotationList = new JComboBox<>();
+  private JComboBox<StringGetter> actionCommands = new JComboBox<>();
+  private JButton ToolPath = new JButton();
+  private JButton Settings = new JButton();
+  private JButton StopButton = new JButton();
+  private JProgressBar Progress = new JProgressBar();
+  private FPGAReportTabbedPane ReporterGui;
+  private Download Downloader;
+  public static final String StopRequested = "stop";
+  private JPanel BoardSelectionPanel = new JPanel();
+  private FPGAClockPanel FrequencyPanel;
+  private Project MyProject;
+  private FPGAReport MyReporter;
+  private BoardInformation MyBoardInformation = null;
+
+  
   @Override
   public void preferenceChange(PreferenceChangeEvent pce) {
     String property = pce.getKey();
@@ -122,7 +145,7 @@ public class FPGACommanderGui extends FPGACommanderBase
 
   @Override
   public void simulatorStateChanged(SimulatorEvent e) {
-	  FrequencyPanel.setSelectedFrequency();
+  FrequencyPanel.setSelectedFrequency();
   }
 
   @Override
@@ -137,29 +160,6 @@ public class FPGACommanderGui extends FPGACommanderBase
     }
     ReporterGui.clearDRCTrace();
   }
-
-  public static final int FONT_SIZE = 12;
-  private JFrame panel;
-  private JLabel textMainCircuit = new JLabel();
-  private JLabel boardPic = new JLabel();
-  private BoardIcon boardIcon = null;
-  private JButton annotateButton = new JButton();
-  private JButton validateButton = new JButton();
-  private JComboBox<String> circuitsList = new JComboBox<>();
-  private JComboBox<StringGetter> annotationList = new JComboBox<>();
-  private JComboBox<StringGetter> actionCommands = new JComboBox<>();
-  private JButton ToolPath = new JButton();
-  private JButton Settings = new JButton();
-  private JButton StopButton = new JButton();
-  private JProgressBar Progress = new JProgressBar();
-  private FPGAReportTabbedPane ReporterGui;
-  private Download Downloader;
-  public static final String StopRequested = "stop";
-  private JPanel BoardSelectionPanel = new JPanel();
-  private FPGAClockPanel FrequencyPanel;
-
-  @SuppressWarnings("unused")
-  private static final Integer VerilogSourcePath = 0;
 
   private void rebuildBoardSelectionPanel() {
     BoardSelectionPanel.removeAll();
@@ -264,7 +264,7 @@ public class FPGACommanderGui extends FPGACommanderBase
     validateButton.setEnabled(enabled);
   }
 
-  public FPGACommanderGui(Project Main) {
+  public FPGACommander(Project Main) {
     MyProject = Main;
     FrequencyPanel = new FPGAClockPanel(Main);
     rebuildBoardSelectionPanel();
@@ -338,7 +338,7 @@ public class FPGACommanderGui extends FPGACommanderBase
     actionCommands.removeAllItems();
     actionCommands.addItem(S.getter("FpgaGuiHdlOnly"));
     ToolPath.setText(S.fmt("FpgaGuiToolpath",
-    	      VendorSoftware.getVendorString(MyBoardInformation.fpga.getVendor())));
+          VendorSoftware.getVendorString(MyBoardInformation.fpga.getVendor())));
     if (MyBoardInformation!= null && VendorSoftware.toolsPresent(
         MyBoardInformation.fpga.getVendor(),
         VendorSoftware.GetToolPath(MyBoardInformation.fpga.getVendor()))) {
@@ -361,7 +361,7 @@ public class FPGACommanderGui extends FPGACommanderBase
     if (e.getActionCommand().equals("annotate")) {
       Annotate(annotationList.getSelectedIndex() == 0);
     } else if (e.getActionCommand().equals("Settings")) {
-    	PreferencesFrame.showFPGAPreferences();
+      PreferencesFrame.showFPGAPreferences();
     } else if (e.getActionCommand().equals("ToolPath")) {
       selectToolPath(MyBoardInformation.fpga.getVendor());
       HandleHDLOnly();

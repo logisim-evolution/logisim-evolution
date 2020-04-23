@@ -30,58 +30,41 @@ package com.cburch.logisim.fpga.fpgagui;
 
 import static com.cburch.logisim.fpga.Strings.S;
 
-import com.cburch.logisim.data.Value;
 import com.cburch.logisim.fpga.data.BoardInformation;
-import com.cburch.logisim.fpga.data.BoardRectangle;
+import com.cburch.logisim.fpga.data.ComponentMapParser;
 import com.cburch.logisim.fpga.data.MappableResourcesContainer;
-import com.cburch.logisim.fpga.gui.ZoomSlider;
+import com.cburch.logisim.fpga.file.XMLFileFilter;
+import com.cburch.logisim.fpga.gui.BoardManipulator;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.prefs.AppPreferences;
-import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.LocaleListener;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Set;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JSlider;
-import javax.swing.ListSelectionModel;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.filechooser.FileFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ComponentMapDialog implements ActionListener, ListSelectionListener, WindowListener, LocaleListener {
+public class ComponentMapDialog implements ActionListener, ListSelectionListener, WindowListener, 
+        LocaleListener, ComponentListener {
 
-  private class MappedComponentIdContainer {
+/*  private class MappedComponentIdContainer {
 
     private String key;
     private BoardRectangle rect;
@@ -161,7 +144,6 @@ public class ComponentMapDialog implements ActionListener, ListSelectionListener
           }
         }
         BoardRectangle NewItem = null;
-        /* TODO: Optimize, SLOW! */
         for (BoardRectangle Item : SelectableItems) {
           if (Item.PointInside(
               AppPreferences.getDownScaled(e.getX(), scale),
@@ -206,7 +188,6 @@ public class ComponentMapDialog implements ActionListener, ListSelectionListener
         }
         BoardRectangle NewItem = null;
         String newKey = "";
-        /* TODO: This makes the things very slow optimize! */
         for (BoardRectangle ThisItem : MappableComponents.GetMappedRectangles()) {
           if (ThisItem.PointInside(
               AppPreferences.getDownScaled(e.getX(), scale),
@@ -256,55 +237,6 @@ public class ComponentMapDialog implements ActionListener, ListSelectionListener
       }
     }
     
-    private void paintConstantButton(Graphics2D g, int xpos , int ypos,
-    		     boolean constant, int value) {
-      int width = AppPreferences.getScaled(barwidth-2, scale);
-      int height = AppPreferences.getScaled(barheight-2, scale);
-      int ydif2 = height-(height>>2);
-      g.setColor(Color.BLACK);
-      g.setStroke(new BasicStroke(AppPreferences.getScaled(2, scale)));
-      g.drawRect(xpos,ypos,width,height);
-      String val = constant ? S.get("BoardMapValue") : Integer.toString(value); 
-      String txt = S.fmt("BoardMapConstant", val); 
-      g.setFont(AppPreferences.getScaledFont(g.getFont().deriveFont(Font.BOLD),scale));
-      g.setColor(Color.BLUE);
-      g.drawString(txt, xpos+height+(height>>2), ypos+ydif2);
-      g.setColor(value == 0 ? Value.FALSE_COLOR : value == 1 ? Value.TRUE_COLOR : Value.UNKNOWN_COLOR);
-      g.fillOval(xpos+(height>>3), ypos+(height>>3), height-(height>>2), height-(height>>2));
-      g.setColor(Color.WHITE);
-      if (!constant) GraphicsUtil.drawCenteredText((Graphics)g, Integer.toString(value), xpos+(height>>1), ypos+(height>>1));
-      else GraphicsUtil.drawCenteredText((Graphics)g, "C", xpos+(height>>1), ypos+(height>>1));
-    }
-    
-    private void paintOpenButton(Graphics2D g, int xpos , int ypos) {
-      int width = AppPreferences.getScaled(barwidth-2, scale);
-      int height = AppPreferences.getScaled(barheight-2, scale);
-      int ydif2 = height-(height>>2);
-      g.setColor(Color.BLACK);
-      g.setStroke(new BasicStroke(AppPreferences.getScaled(2, scale)));
-      g.drawRect(xpos,ypos,width,height);
-      g.setFont(AppPreferences.getScaledFont(g.getFont().deriveFont(Font.BOLD),scale));
-      g.setColor(Color.BLUE);
-      g.drawString(S.get("BoardMapOpen"), xpos+height+(height>>2), ypos+ydif2);
-      g.setColor(Color.RED);
-      g.setStroke(new BasicStroke(AppPreferences.getScaled(3, scale)));
-      g.drawLine(xpos+(height>>2), ypos+(height>>2), xpos+height-(height>>2), ypos+height-(height>>2));
-      g.drawLine(xpos+height-(height>>2), ypos+(height>>2), xpos+(height>>2), ypos+height-(height>>2));
-    }
-    
-    private void paintBar(Graphics g) {
-      Graphics2D g2 = (Graphics2D) g.create();
-      int yoffset = AppPreferences.getScaled(image_height+2, scale);
-      int skip = AppPreferences.getScaled(barwidth,scale);
-      int xoffset = AppPreferences.getScaled(1, scale);
-      g2.setColor(Color.BLACK);
-      g2.setStroke(new BasicStroke(AppPreferences.getScaled(2, scale)));
-      for (int i = 0 ; i < 3 ; i++)
-        paintConstantButton(g2,xoffset+i*skip, yoffset, i==2 , i);
-      paintOpenButton(g2,xoffset+3*skip, yoffset);
-      g2.dispose();
-    }
-
     @Override
     public void paint(Graphics g) {
       super.paint(g);
@@ -316,7 +248,7 @@ public class ComponentMapDialog implements ActionListener, ListSelectionListener
                   Image.SCALE_SMOOTH);
       if (image != null) {
         g.drawImage(image, 0, 0, null);
-        paintBar(g);
+        BoardPainter.paintConstantOpenBar(g, scale);
       }
       ArrayList<BoardRectangle> painted = new ArrayList<BoardRectangle>();
       for (BoardRectangle rect : MappableComponents.GetMappedRectangles()) {
@@ -378,43 +310,8 @@ public class ComponentMapDialog implements ActionListener, ListSelectionListener
       }
     }
   }
-
-  private static class XMLFileFilter extends FileFilter {
-
-    @Override
-    public boolean accept(File f) {
-      return f.isDirectory() || f.getName().endsWith(".xml") || f.getName().endsWith(".XML");
-    }
-
-    @Override
-    public String getDescription() {
-      return S.get("BoardMapXml");
-    }
-  }
-
+*/
   static final Logger logger = LoggerFactory.getLogger(ComponentMapDialog.class);
-
-  private class ZoomChange implements ChangeListener {
-
-    private ComponentMapDialog parent;
-
-    public ZoomChange(ComponentMapDialog parent) {
-      this.parent = parent;
-    }
-
-    @Override
-    public void stateChanged(ChangeEvent e) {
-      JSlider source = (JSlider) e.getSource();
-      if (!source.getValueIsAdjusting()) {
-        int value = source.getValue();
-        if (value > MaxZoom) {
-          source.setValue(MaxZoom);
-          value = MaxZoom;
-        }
-        parent.SetScale(value / (float) 100.0);
-      }
-    }
-  }
 
   private JDialog panel;
   private JButton UnMapButton = new JButton();
@@ -423,86 +320,32 @@ public class ComponentMapDialog implements ActionListener, ListSelectionListener
   private JButton SaveButton = new JButton();
   private JButton CancelButton = new JButton();
   private JButton LoadButton = new JButton();
-  private ZoomSlider ScaleButton = new ZoomSlider();
   private JLabel UnmappedText = new JLabel();
   private JLabel MappedText = new JLabel();
   private JLabel CommandText = new JLabel();
   private JScrollPane UnMappedPane;
   private JScrollPane MappedPane;
 
-  @SuppressWarnings("rawtypes")
-  private JList UnmappedList;
-
-  @SuppressWarnings("rawtypes")
-  private JList MappedList;
-
-  private SelectionWindow BoardPic;
-  private boolean ComponentSelectionMode;
-  private BoardRectangle HighlightItem = null;
-  private BoardRectangle MappedHighlightItem = null;
-  public static final int image_width = 740;
-  public static final int image_height = 400;
-  public static final int barheight = 30;
-  public static final int barwidth = 185;
-  private float scale = 1;
-  private int MaxZoom;
+  private BoardManipulator BoardPic;
   private BoardInformation BoardInfo;
-  private ArrayList<BoardRectangle> SelectableItems = new ArrayList<BoardRectangle>();
   private String OldDirectory = "";
-
-  private MappedComponentIdContainer Note;
 
   private MappableResourcesContainer MappableComponents;
 
   private Object lock = new Object();
   private boolean canceled = true;
 
-  private MouseListener mouseListener =
-      new MouseListener() {
-        @Override
-        public void mouseClicked(MouseEvent e) {
-          if ((e.getClickCount() == 2)
-              && (e.getButton() == MouseEvent.BUTTON1)
-              && (UnmappedList.getSelectedValue() != null)) {
-            int idx = UnmappedList.getSelectedIndex();
-            String item = UnmappedList.getSelectedValue().toString();
-            MappableComponents.ToggleAlternateMapping(item);
-            RebuildSelectionLists();
-            UnmappedList.setSelectedIndex(idx);
-          }
-        }
-
-        @Override
-        public void mouseEntered(MouseEvent e) {}
-
-        @Override
-        public void mouseExited(MouseEvent e) {}
-
-        @Override
-        public void mousePressed(MouseEvent e) {}
-
-        @Override
-        public void mouseReleased(MouseEvent e) {}
-      };
-
-  public void SetScale(float scale) {
-    this.scale = scale;
-    BoardPic.setPreferredSize(new Dimension(BoardPic.getWidth(), BoardPic.getHeight()));
-    BoardPic.setSize(new Dimension(BoardPic.getWidth(), BoardPic.getHeight()));
-    UnmappedText.setPreferredSize(new Dimension(BoardPic.getWidth() / 3, AppPreferences.getScaled(25)));
-    MappedText.setPreferredSize(new Dimension(BoardPic.getWidth() / 3, AppPreferences.getScaled(25)));
-    CommandText.setPreferredSize(new Dimension(BoardPic.getWidth() / 3, AppPreferences.getScaled(25)));
-    panel.pack();
-  }
-
-  @SuppressWarnings("rawtypes")
-  public ComponentMapDialog(JFrame parrentFrame, String projectPath) {
+  public ComponentMapDialog(JFrame parentFrame, String projectPath, BoardInformation Board,
+                            MappableResourcesContainer mappable) {
     OldDirectory = new File(projectPath).getParent();
     if (OldDirectory == null) OldDirectory = "";
     else if (OldDirectory.length() != 0 && !OldDirectory.endsWith(File.separator))
       OldDirectory += File.separator;
+    
+    BoardInfo = Board;
+    MappableComponents = mappable;
 
-    panel = new JDialog(parrentFrame);
+    panel = new JDialog(parentFrame);
     panel.addWindowListener(this);
     panel.setResizable(false);
     panel.setAlwaysOnTop(true);
@@ -513,8 +356,8 @@ public class ComponentMapDialog implements ActionListener, ListSelectionListener
     panel.setLayout(thisLayout);
 
     /* Add the board Picture */
-    BoardPic = new SelectionWindow();
-    BoardPic.setPreferredSize(new Dimension(BoardPic.getWidth(), BoardPic.getHeight()));
+    BoardPic = new BoardManipulator(panel,parentFrame, mappable);
+    BoardPic.addComponentListener(this);
     c.gridx = 0;
 
     /* Add some text */
@@ -557,14 +400,14 @@ public class ComponentMapDialog implements ActionListener, ListSelectionListener
     /* Add the Save button */
     SaveButton.setActionCommand("Save");
     SaveButton.addActionListener(this);
-    SaveButton.setEnabled(false);
+    SaveButton.setEnabled(true);
     c.gridy = 4;
     panel.add(SaveButton, c);
 
     /* Add the Cancel button */
     CancelButton.setActionCommand("Cancel");
     CancelButton.addActionListener(this);
-    CancelButton.setEnabled(false);
+    CancelButton.setEnabled(true);
     c.gridy = 5;
     panel.add(CancelButton, c);
 
@@ -577,28 +420,19 @@ public class ComponentMapDialog implements ActionListener, ListSelectionListener
 
     /* Add the Zoom button */
     c.gridy = 7;
-    panel.add(ScaleButton, c);
-    ScaleButton.addChangeListener(new ZoomChange(this));
+    panel.add(BoardPic.getZoomSlider(), c);
 
 
     /* Add the unmapped list */
-    UnmappedList = new JList();
-    UnmappedList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-    UnmappedList.addListSelectionListener(this);
-    UnmappedList.addMouseListener(mouseListener);
-    UnMappedPane = new JScrollPane(UnmappedList);
+    UnMappedPane = new JScrollPane(BoardPic.getUnmappedList());
     c.fill = GridBagConstraints.BOTH;
     c.gridx = 0;
     c.gridy = 1;
     c.gridheight = 7;
     panel.add(UnMappedPane, c);
-    ComponentSelectionMode = false;
 
     /* Add the mapped list */
-    MappedList = new JList();
-    MappedList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-    MappedList.addListSelectionListener(this);
-    MappedPane = new JScrollPane(MappedList);
+    MappedPane = new JScrollPane(BoardPic.getMappedList());
     c.gridx = 1;
     c.gridheight = 7;
     panel.add(MappedPane, c);
@@ -610,8 +444,8 @@ public class ComponentMapDialog implements ActionListener, ListSelectionListener
     c.fill = GridBagConstraints.BOTH;
     panel.add(BoardPic, c);
     panel.setLocationRelativeTo(null);
-    localeChanged();
     panel.setVisible(true);
+    localeChanged();
     int ScreenWidth = (int) Toolkit.getDefaultToolkit().getScreenSize().getWidth();
     int ScreenHeight = (int) Toolkit.getDefaultToolkit().getScreenSize().getHeight();
     int ImageWidth = BoardPic.getWidth();
@@ -622,8 +456,7 @@ public class ComponentMapDialog implements ActionListener, ListSelectionListener
     ScreenHeight -= (ImageYBorder + (ImageYBorder >> 2));
     int zoomX = (ScreenWidth * 100) / ImageWidth;
     int zoomY = (ScreenHeight * 100) / ImageHeight;
-    MaxZoom = (zoomY > zoomX) ? zoomX : zoomY;
-    if (MaxZoom < 100) MaxZoom = 100;
+    BoardPic.setMaxZoom( Math.min( zoomX, zoomY ) );
   }
 
   public boolean run() {
@@ -648,6 +481,7 @@ public class ComponentMapDialog implements ActionListener, ListSelectionListener
     }
     panel.setVisible(false);
     panel.dispose();
+    BoardPic.cleanup();
     return !canceled;
   }
 
@@ -676,22 +510,11 @@ public class ComponentMapDialog implements ActionListener, ListSelectionListener
     }
   }
 
-  private void ClearSelections() {
-    MappedHighlightItem = null;
-    HighlightItem = null;
-    UnMapButton.setEnabled(false);
-    MappedList.clearSelection();
-    UnmappedList.clearSelection();
-    ComponentSelectionMode = false;
-    SelectableItems.clear();
-  }
-
   private void Load() {
     JFileChooser fc = new JFileChooser(OldDirectory);
     fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
     fc.setDialogTitle("Choose XML board description file to use");
-    FileFilter XML_FILTER = new XMLFileFilter();
-    fc.setFileFilter(XML_FILTER);
+    fc.setFileFilter(XMLFileFilter.XML_FILTER);
     fc.setAcceptAllFileFilterUsed(false);
     panel.setVisible(false);
     int retval = fc.showOpenDialog(null);
@@ -703,56 +526,13 @@ public class ComponentMapDialog implements ActionListener, ListSelectionListener
       ComponentMapParser parse = new ComponentMapParser(file,MappableComponents,BoardInfo);
       int result = parse.parseFile();
       if (result == 0) {
-          ClearSelections();
-          RebuildSelectionLists();
-          BoardPic.paintImmediately(0, 0, BoardPic.getWidth(), BoardPic.getHeight());
+        panel.setVisible(true);
+        BoardPic.update();
       } else {
     	 OptionPane.showMessageDialog(null, parse.getError(result), "Error", OptionPane.ERROR_MESSAGE);
+         panel.setVisible(true);
       }
     }
-    panel.setVisible(true);
-  }
-
-  private void MapOne() {
-    if (HighlightItem == null) return;
-    String Identifier = BoardInfo.GetComponentType(HighlightItem);
-    if (UnmappedList.getSelectedIndex() >= 0) {
-      String key = UnmappedList.getSelectedValue().toString();
-      int sel = UnmappedList.getSelectedIndex();
-      MappableComponents.Map(key, HighlightItem, Identifier);
-      MappableComponents.markChanged();
-      RebuildSelectionLists();
-      ClearSelections();
-      BoardPic.paintImmediately(0, 0, BoardPic.getWidth(), BoardPic.getHeight());
-      while (sel >= UnmappedList.getModel().getSize()) sel--;
-      if (sel < 0) sel = 0;
-      UnmappedList.setSelectedIndex(sel);
-    } else if (MappedList.getSelectedIndex() >= 0) {
-      String key = MappedList.getSelectedValue().toString();
-      MappableComponents.Map(key, HighlightItem, Identifier);
-      MappableComponents.markChanged();
-      ClearSelections();
-      BoardPic.paintImmediately(0, 0, BoardPic.getWidth(), BoardPic.getHeight());
-    }
-  }
-
-  @SuppressWarnings({"unchecked", "rawtypes"})
-  private void RebuildSelectionLists() {
-    UnmappedList.clearSelection();
-    MappedList.clearSelection();
-    Set<String> Unmapped = MappableComponents.UnmappedList();
-    Set<String> Mapped = MappableComponents.MappedList();
-    JList unmapped = new JList(Unmapped.toArray());
-    UnmappedList.setModel(unmapped.getModel());
-    JList mapped = new JList(Mapped.toArray());
-    MappedList.setModel(mapped.getModel());
-    UnmappedList.paintImmediately(
-        0, 0, UnmappedList.getBounds().width, UnmappedList.getBounds().height);
-    MappedList.paintImmediately(0, 0, MappedList.getBounds().width, MappedList.getBounds().height);
-    UnMapAllButton.setEnabled(!Mapped.isEmpty());
-    CancelButton.setEnabled(true);
-    DoneButton.setEnabled(Unmapped.isEmpty());
-    SaveButton.setEnabled(!Mapped.isEmpty());
   }
 
   private void Save() {
@@ -762,74 +542,17 @@ public class ComponentMapDialog implements ActionListener, ListSelectionListener
 	panel.setVisible(true);
   }
 
-  public void SetBoardInformation(BoardInformation Board) {
-    BoardInfo = Board;
-    panel.pack();
-    panel.repaint();
-  }
-
-  public void SetMappebleComponents(MappableResourcesContainer mappable) {
-    MappableComponents = mappable;
-    RebuildSelectionLists();
-    ClearSelections();
-  }
-
   private void UnMapAll() {
-    ClearSelections();
-    MappableComponents.UnmapAll();
-    MappableComponents.rebuildMappedLists();
+    MappableComponents.unMapAll();
+    MappableComponents.updateMapableComponents();
     BoardPic.paintImmediately(0, 0, BoardPic.getWidth(), BoardPic.getHeight());
-    RebuildSelectionLists();
   }
 
   private void UnMapOne() {
-    if (MappedList.getSelectedIndex() >= 0) {
-      String key = MappedList.getSelectedValue().toString();
-      MappableComponents.UnMap(key);
-      ClearSelections();
-      RebuildSelectionLists();
-      BoardPic.paintImmediately(0, 0, BoardPic.getWidth(), BoardPic.getHeight());
-    }
   }
 
   @Override
   public void valueChanged(ListSelectionEvent e) {
-    if (e.getSource() == MappedList) {
-      if (MappedList.getSelectedIndex() >= 0) {
-        UnmappedList.clearSelection();
-        UnMapButton.setEnabled(true);
-        MappedHighlightItem = MappableComponents.GetMap(MappedList.getSelectedValue().toString());
-        BoardPic.paintImmediately(0, 0, BoardPic.getWidth(), BoardPic.getHeight());
-        ComponentSelectionMode = true;
-        SelectableItems.clear();
-        String DisplayName = MappedList.getSelectedValue().toString();
-        SelectableItems = MappableComponents.GetSelectableItemsList(DisplayName, BoardInfo);
-        BoardPic.paintImmediately(0, 0, BoardPic.getWidth(), BoardPic.getHeight());
-      } else {
-        ComponentSelectionMode = false;
-        SelectableItems.clear();
-        Note = null;
-        MappedHighlightItem = null;
-        HighlightItem = null;
-      }
-    } else if (e.getSource() == UnmappedList) {
-      if (UnmappedList.getSelectedIndex() < 0) {
-        ComponentSelectionMode = false;
-        SelectableItems.clear();
-        Note = null;
-        HighlightItem = null;
-      } else {
-        MappedList.clearSelection();
-        ComponentSelectionMode = true;
-        SelectableItems.clear();
-        String DisplayName = UnmappedList.getSelectedValue().toString();
-        SelectableItems = MappableComponents.GetSelectableItemsList(DisplayName, BoardInfo);
-      }
-      MappedHighlightItem = null;
-      UnMapButton.setEnabled(false);
-      CancelButton.setEnabled(true);
-      BoardPic.paintImmediately(0, 0, BoardPic.getWidth(), BoardPic.getHeight());
-    }
   }
 
   @Override
@@ -872,4 +595,21 @@ public class ComponentMapDialog implements ActionListener, ListSelectionListener
     DoneButton.setText(S.get("FpgaBoardDone"));
     panel.pack();
   }
+
+  @Override
+  public void componentResized(ComponentEvent e) {
+    UnmappedText.setPreferredSize(new Dimension(BoardPic.getWidth() / 3, AppPreferences.getScaled(25)));
+    MappedText.setPreferredSize(new Dimension(BoardPic.getWidth() / 3, AppPreferences.getScaled(25)));
+    CommandText.setPreferredSize(new Dimension(BoardPic.getWidth() / 3, AppPreferences.getScaled(25)));
+    panel.pack();
+  }
+
+  @Override
+  public void componentMoved(ComponentEvent e) { }
+
+  @Override
+  public void componentShown(ComponentEvent e) { }
+
+  @Override
+  public void componentHidden(ComponentEvent e) { }
 }

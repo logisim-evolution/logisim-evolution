@@ -35,7 +35,7 @@ import com.cburch.logisim.fpga.data.MappableResourcesContainer;
 import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
-import com.cburch.logisim.fpga.fpgagui.FPGAReport;
+import com.cburch.logisim.fpga.gui.FPGAReport;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.std.io.PortIO;
 import com.cburch.logisim.std.io.ReptarLocalBus;
@@ -90,13 +90,6 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
               VHDL /* , false */));
     }
     CircuitHDLGeneratorFactory Worker = new CircuitHDLGeneratorFactory(MyCircuit);
-    // boolean hasLB = false;
-    // for(NetlistComponent comp : TheNetlist.GetNormalComponents()){
-    // if(comp.GetComponent().getFactory() instanceof ReptarLocalBus){
-    // hasLB = true;
-    // break;
-    // }
-    // }
     Components.addAll(
         Worker.GetComponentInstantiation(
             TheNetlist,
@@ -285,13 +278,13 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     for (int NrOfOutputs = 0;
         NrOfOutputs < MyIOComponents.GetNrOfToplevelOutputPins();
         NrOfOutputs++) {
-      if (MyIOComponents.GetFPGAOutputPinId(MyIOComponents.currentBoardName + ":/LocalBus") > -1
+      if (MyIOComponents.GetFPGAOutputPinId(MyIOComponents.getBoardInformation().getBoardName() + ":/LocalBus") > -1
           && (NrOfOutputs
                   == MyIOComponents.GetFPGAOutputPinId(
-                      MyIOComponents.currentBoardName + ":/LocalBus")
+                      MyIOComponents.getBoardInformation().getBoardName() + ":/LocalBus")
               || NrOfOutputs
                   == MyIOComponents.GetFPGAOutputPinId(
-                          MyIOComponents.currentBoardName + ":/LocalBus")
+                          MyIOComponents.getBoardInformation().getBoardName() + ":/LocalBus")
                       + 1)) {
         Outputs.put("FPGA_LB_OUT_" + Integer.toString(k), 1);
         k++;

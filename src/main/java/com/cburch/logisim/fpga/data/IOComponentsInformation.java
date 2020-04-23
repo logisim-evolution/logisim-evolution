@@ -39,34 +39,37 @@ import com.cburch.logisim.prefs.AppPreferences;
 
 public class IOComponentsInformation {
   
-  private Frame parrent;
+  private Frame parent;
   private ArrayList<FPGAIOInformationContainer> IOcomps;
   private int DefaultStandard = 0;
   private int DefaultDriveStrength = 0;
   private int DefaultPullSelection = 0;
   private int DefaultActivity = 0;
   private boolean mapMode;
+  private int imageHeight;
   private FPGAIOInformationContainer[][] lookup;
   private FPGAIOInformationContainer highlighted;
   private ArrayList<IOComponentsListener> listeners;
 
-  public IOComponentsInformation(Frame parrentFrame) {
-    parrent = parrentFrame;
+  public IOComponentsInformation(Frame parrentFrame, boolean mapMode) {
+    parent = parrentFrame;
+    imageHeight = mapMode ? BoardManipulator.IMAGE_HEIGHT+BoardManipulator.CONSTANT_BAR_HEIGHT : BoardManipulator.IMAGE_HEIGHT;
     IOcomps = new ArrayList<FPGAIOInformationContainer>();
-    mapMode = false;
-    lookup = new FPGAIOInformationContainer[BoardManipulator.IMAGE_WIDTH][BoardManipulator.IMAGE_HEIGHT];
+    lookup = new FPGAIOInformationContainer[BoardManipulator.IMAGE_WIDTH][imageHeight];
+    this.mapMode = mapMode;
     clear();
   }
   
   public void clear() {
     IOcomps.clear();
     for (int x = 0 ; x < BoardManipulator.IMAGE_WIDTH ; x++)
-      for (int y = 0 ; y < BoardManipulator.IMAGE_HEIGHT ; y++)
+      for (int y = 0 ; y < imageHeight ; y++)
         lookup[x][y] = null;
     highlighted = null;
   }
   
-  public Frame getParrentFram() { return parrent; }
+  public Frame getParentFrame() { return parent; }
+  public void setParentFrame(Frame parent) { this.parent = parent; }
   
   public boolean hasOverlap(BoardRectangle rect) {
     boolean overlap = false;
@@ -87,15 +90,33 @@ public class IOComponentsInformation {
   public boolean hasHighlighted() { return highlighted != null; }
   public FPGAIOInformationContainer getHighligted() { return highlighted; }
   
+  public boolean tryMap() {
+	if (!mapMode) return false;
+    if (highlighted != null) return highlighted.tryMap();
+    return false;
+  }
+  
+  public void setSelectable(MapListModel.MapInfo comp, float scale) {
+    for (FPGAIOInformationContainer io : IOcomps) {
+      if (io.setSelectable(comp)) this.fireRedraw(io.GetRectangle(), scale);
+    }
+  }
+  
+  public void removeSelectable(float scale) {
+    for (FPGAIOInformationContainer io : IOcomps) {
+      if (io.removeSelectable()) this.fireRedraw(io.GetRectangle(), scale);
+    }
+  }
+  
   public void addComponent(FPGAIOInformationContainer comp, float scale) {
     if (!IOcomps.contains(comp)) {
       IOcomps.add(comp);
-      comp.SetId(IOcomps.indexOf(comp));
       BoardRectangle rect = comp.GetRectangle();
       for (int x = rect.getXpos() ; x < rect.getXpos()+rect.getWidth() ; x++)
         for (int y = rect.getYpos() ; y < rect.getYpos()+rect.getHeight() ; y++)
-          lookup[x][y] = comp;
-      comp.setPaintColor(BoardManipulator.DEFINE_COLOR_ID);
+          if (x < BoardManipulator.IMAGE_WIDTH && y < imageHeight) 
+            lookup[x][y] = comp;
+      if (mapMode) return;
       fireRedraw(comp.GetRectangle(),scale);
     }
   }
@@ -104,7 +125,6 @@ public class IOComponentsInformation {
     if (IOcomps.contains(comp)) {
       if (highlighted == comp) highlighted = null;
       IOcomps.remove(comp);
-      for (int i = 0 ; i < IOcomps.size() ; i++) IOcomps.get(i).SetId(i);
       BoardRectangle rect = comp.GetRectangle();
       for (int x = rect.getXpos() ; x < rect.getXpos()+rect.getWidth() ; x++)
         for (int y = rect.getYpos() ; y < rect.getYpos()+rect.getHeight() ; y++)
@@ -129,15 +149,15 @@ public class IOComponentsInformation {
     xpos = Math.max(xpos, 0);
     xpos = Math.min(xpos, BoardManipulator.IMAGE_WIDTH-1);
     ypos = Math.max(ypos, 0);
-    ypos = Math.min(ypos, BoardManipulator.IMAGE_HEIGHT-1);
+    ypos = Math.min(ypos, imageHeight-1);
     FPGAIOInformationContainer selected = lookup[xpos][ypos];
     if (selected == highlighted) return;
     if (highlighted != null) {
-      highlighted.setPaintColor(BoardManipulator.DEFINE_COLOR_ID);
+      highlighted.unsetHighlighted();
       fireRedraw(highlighted.GetRectangle(),scale);
     }
     if (selected != null) {
-      selected.setPaintColor(BoardManipulator.HIGHLIGHT_COLOR_ID);
+      selected.setHighlighted();
       fireRedraw(selected.GetRectangle(),scale);
     }
     highlighted = selected;
@@ -145,10 +165,10 @@ public class IOComponentsInformation {
   
   public void mouseExited(float scale) {
     if (highlighted != null) {
-      highlighted.setPaintColor(BoardManipulator.DEFINE_COLOR_ID);
+      highlighted.unsetHighlighted();
       fireRedraw(highlighted.GetRectangle(),scale);
+      highlighted = null;
     }
-    highlighted = null;
   }
   
   public void addListener(IOComponentsListener l) {

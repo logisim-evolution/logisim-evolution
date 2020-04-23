@@ -38,8 +38,7 @@ import com.cburch.logisim.fpga.data.IoStandards;
 import com.cburch.logisim.fpga.data.MappableResourcesContainer;
 import com.cburch.logisim.fpga.data.PullBehaviors;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import com.cburch.logisim.fpga.fpgagui.FPGACommanderBase;
-import com.cburch.logisim.fpga.fpgagui.FPGAReport;
+import com.cburch.logisim.fpga.gui.FPGAReport;
 import com.cburch.logisim.fpga.hdlgenerator.FileWriter;
 import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.TickComponentHDLGeneratorFactory;
@@ -97,11 +96,9 @@ public class XilinxDownload implements VendorDownload {
       String HDLType,
       boolean WriteToFlash) {
     this.ProjectPath = ProjectPath;
-    this.SandboxPath =
-        FPGACommanderBase.GetDirectoryLocation(ProjectPath, FPGACommanderBase.SandboxPath);
-    this.ScriptPath =
-        FPGACommanderBase.GetDirectoryLocation(ProjectPath, FPGACommanderBase.ScriptPath);
-    this.UcfPath = FPGACommanderBase.GetDirectoryLocation(ProjectPath, FPGACommanderBase.UCFPath);
+    this.SandboxPath = DownloadBase.GetDirectoryLocation(ProjectPath, DownloadBase.SandboxPath);
+    this.ScriptPath = DownloadBase.GetDirectoryLocation(ProjectPath, DownloadBase.ScriptPath);
+    this.UcfPath = DownloadBase.GetDirectoryLocation(ProjectPath, DownloadBase.UCFPath);
     this.Reporter = Reporter;
     this.RootNetList = RootNetList;
     this.BoardInfo = BoardInfo;
@@ -481,7 +478,7 @@ public class XilinxDownload implements VendorDownload {
     if (MyType.equals(IOComponentTypes.PortIO)) {
       labels = PortIO.GetLabels(IOComponentTypes.GetNrOfFPGAPins(MyType));
     } else if (MyType.equals(IOComponentTypes.LocalBus)) {
-      labels = ReptarLocalBus.GetLabels();
+//      labels = ReptarLocalBus.GetLabels(); /* ktt1: TO be fixed */
       if (direction.equals("in")) {
         end = IOComponentTypes.GetFPGAInputRequirement(MyType);
       } else if (direction.equals("out")) {
@@ -490,9 +487,6 @@ public class XilinxDownload implements VendorDownload {
             "NET \"FPGA_LB_OUT_0\" LOC = \"R24\" | IOSTANDARD = LVCMOS18 ; # SP6_LB_WAIT3_o");
         Contents.add("NET \"FPGA_LB_OUT_1\" LOC = \"AB30\" | IOSTANDARD = LVCMOS18 ; # IRQ_o");
         return Contents;
-        // start = IOComponentTypes.GetFPGAInputRequirement(MyType);
-        // end = start +
-        // IOComponentTypes.GetFPGAOutputRequirement(MyType);
       } else if (direction.equals("inout")) {
         start =
             IOComponentTypes.GetFPGAInputRequirement(MyType)

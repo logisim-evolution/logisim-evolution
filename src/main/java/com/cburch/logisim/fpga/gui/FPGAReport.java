@@ -26,7 +26,7 @@
  *     http://www.heig-vd.ch/
  */
 
-package com.cburch.logisim.fpga.fpgagui;
+package com.cburch.logisim.fpga.gui;
 
 import javax.swing.JProgressBar;
 
@@ -52,7 +52,7 @@ public class FPGAReport {
     }
   }
   
-  public FPGAReport(FPGACommanderGui parent, JProgressBar prog) {
+  public FPGAReport(FPGACommander parent, JProgressBar prog) {
     myCommander = parent.getReporterGui();
     progress = prog;
   }

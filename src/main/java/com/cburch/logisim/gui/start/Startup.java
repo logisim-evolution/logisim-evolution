@@ -34,7 +34,9 @@ import com.cburch.logisim.LogisimVersion;
 import com.cburch.logisim.Main;
 import com.cburch.logisim.file.LoadFailedException;
 import com.cburch.logisim.file.Loader;
-import com.cburch.logisim.fpga.fpgagui.FPGACommanderTests;
+import com.cburch.logisim.fpga.download.Download;
+import com.cburch.logisim.fpga.file.BoardReaderClass;
+import com.cburch.logisim.fpga.gui.FPGAReport;
 import com.cburch.logisim.gui.generic.CanvasPane;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.gui.icons.ErrorIcon;
@@ -843,15 +845,18 @@ public class Startup implements AWTEventListener {
   
   boolean FpgaDownload(Project proj) {
     /* Testing synthesis */
-    FPGACommanderTests testImpFpga =
-      new FPGACommanderTests(
-          proj,
-          testCircuitImpMapFile,
-          testCircuitImpName,
-          testCircuitImpBoard,
-          testTickFrequency,
-          testCircuitHdlOnly);
-    return testImpFpga.StartTests();
+    Download Downloader =
+        new Download(
+        	proj,
+        	testCircuitImpName,
+        	testTickFrequency,
+        	new FPGAReport(),
+        	new BoardReaderClass(AppPreferences.Boards.GetBoardFilePath(testCircuitImpBoard)).GetBoardInformation(),
+        	testCircuitImpMapFile,
+            false,
+            false,
+            testCircuitHdlOnly);
+    return Downloader.runtty();
   }
 
   private void loadTemplate(Loader loader, File templFile, boolean templEmpty) {

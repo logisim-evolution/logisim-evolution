@@ -28,7 +28,7 @@
 
 package com.cburch.logisim.fpga.prefs;
 
-import static com.cburch.logisim.gui.Strings.S;
+import static com.cburch.logisim.fpga.Strings.S;
 
 import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
 import com.cburch.logisim.gui.generic.OptionPane;
@@ -90,7 +90,16 @@ public class FPGAOptions extends OptionsPanel {
   private ColorChooserButton EditMoveColor;
   private JLabel EditResizeLabel = new JLabel();
   private ColorChooserButton EditResizeColor;
+  private JLabel MappedLabel = new JLabel();
+  private ColorChooserButton MappedColor;
+  private JLabel SelMapLabel = new JLabel();
+  private ColorChooserButton SelMapColor;
+  private JLabel SelectMapLabel = new JLabel();
+  private ColorChooserButton SelectMapColor;
+  private JLabel SelectLabel = new JLabel();
+  private ColorChooserButton SelectColor;
   private JPanel editPan;
+  private JPanel mapPan;
   private PreferencesFrame frame;
   private PrefOptionList HDL_Used;
 
@@ -146,6 +155,8 @@ public class FPGAOptions extends OptionsPanel {
     add(AppPreferences.Boards.AddRemovePanel(), c);
     c.gridy = 4;
     add(getEditCols(),c);
+    c.gridy++;
+    add(getMapCols(),c);
     localeChanged();
   }
   
@@ -179,6 +190,36 @@ public class FPGAOptions extends OptionsPanel {
     return editPan;
   }
   
+  private JPanel getMapCols() {
+    mapPan = new JPanel();
+    mapPan.setLayout(new GridBagLayout());
+    GridBagConstraints c = new GridBagConstraints();
+    c.gridx = 0;
+    c.gridy = 0;
+    c.fill = GridBagConstraints.HORIZONTAL;
+    mapPan.add(MappedLabel);
+    c.gridx++;
+    MappedColor = new ColorChooserButton(frame, AppPreferences.FPGA_MAPPED_COLOR);
+    mapPan.add(MappedColor);
+    c.gridx++;
+    mapPan.add(SelMapLabel);
+    c.gridx++;
+    SelMapColor = new ColorChooserButton(frame, AppPreferences.FPGA_SELECTED_MAPPED_COLOR);
+    mapPan.add(SelMapColor);
+    c.gridx = 0;
+    c.gridy++;
+    mapPan.add(SelectMapLabel,c);
+    c.gridx++;
+    SelectMapColor = new ColorChooserButton(frame, AppPreferences.FPGA_SELECTABLE_MAPPED_COLOR);
+    mapPan.add(SelectMapColor,c);
+    c.gridx++;
+    mapPan.add(SelectLabel,c);
+    c.gridx++;
+    SelectColor = new ColorChooserButton(frame, AppPreferences.FPGA_SELECT_COLOR);
+    mapPan.add(SelectColor,c);
+    return mapPan;
+  }
+  
   @Override
   public String getHelpText() {
     return S.get("FPGAHelp");
@@ -197,7 +238,12 @@ public class FPGAOptions extends OptionsPanel {
     EditHighligtLabel.setText(S.get("EditColHighlight"));
     EditMoveLabel.setText(S.get("EditColMove"));
     EditResizeLabel.setText(S.get("EditColResize"));
+    MappedLabel.setText(S.get("MapColor"));
+    SelMapLabel.setText(S.get("SelMapCol"));
+    SelectMapLabel.setText(S.get("SelectMapCol"));
+    SelectLabel.setText(S.get("SelectCol"));
     editPan.setBorder(BorderFactory.createTitledBorder(S.get("EditColors")));
+    mapPan.setBorder(BorderFactory.createTitledBorder(S.get("MapColors")));
   }
   
   private void selectWorkSpace(Component parentComponent) {

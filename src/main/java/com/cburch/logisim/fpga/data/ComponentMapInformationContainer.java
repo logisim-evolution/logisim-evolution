@@ -26,12 +26,11 @@
  *     http://www.heig-vd.ch/
  */
 
-package com.cburch.logisim.fpga.hdlgenerator;
+package com.cburch.logisim.fpga.data;
 
-import com.cburch.logisim.fpga.data.IOComponentTypes;
 import java.util.ArrayList;
 
-public class IOComponentInformationContainer {
+public class ComponentMapInformationContainer {
 
   private int NrOfInputBubbles;
   private int NrOfInOutBubbles;
@@ -39,68 +38,44 @@ public class IOComponentInformationContainer {
   private ArrayList<String> InputBubbleLabels;
   private ArrayList<String> InOutBubbleLabels;
   private ArrayList<String> OutputBubbleLabels;
-  private IOComponentTypes MainMapType;
-  private ArrayList<IOComponentTypes> AlternateMapTypes;
 
-  public IOComponentInformationContainer(
+  public ComponentMapInformationContainer(
       int inports,
       int outports,
       int inoutports,
       ArrayList<String> inportLabels,
       ArrayList<String> outportLabels,
-      ArrayList<String> inoutportLabels,
-      IOComponentTypes MapType) {
+      ArrayList<String> inoutportLabels) {
     NrOfInputBubbles = inports;
     NrOfOutputBubbles = outports;
     NrOfInOutBubbles = inoutports;
     InputBubbleLabels = inportLabels;
     OutputBubbleLabels = outportLabels;
     InOutBubbleLabels = inoutportLabels;
-    MainMapType = MapType;
-    AlternateMapTypes = new ArrayList<IOComponentTypes>();
   }
 
-  public IOComponentInformationContainer(
+  public ComponentMapInformationContainer(
       int inports,
       int outports,
-      int inoutport,
-      IOComponentTypes MapType) {
+      int inoutport) {
     NrOfInputBubbles = inports;
     NrOfOutputBubbles = outports;
     NrOfInOutBubbles = inoutport;
     InputBubbleLabels = null;
     OutputBubbleLabels = null;
     InOutBubbleLabels = null;
-    MainMapType = MapType;
-    AlternateMapTypes = new ArrayList<IOComponentTypes>();
   }
 
-  public void AddAlternateMapType(IOComponentTypes map) {
-    AlternateMapTypes.add(map);
-  }
-
-  public IOComponentInformationContainer clone() {
-    IOComponentInformationContainer Myclone =
-        new IOComponentInformationContainer(
+  public ComponentMapInformationContainer clone() {
+    ComponentMapInformationContainer Myclone =
+        new ComponentMapInformationContainer(
             NrOfInputBubbles,
             NrOfOutputBubbles,
             NrOfInOutBubbles,
             InputBubbleLabels,
             OutputBubbleLabels,
-            InOutBubbleLabels,
-            MainMapType);
-    for (IOComponentTypes Alt : AlternateMapTypes) {
-      Myclone.AddAlternateMapType(Alt);
-    }
+            InOutBubbleLabels);
     return Myclone;
-  }
-
-  public IOComponentTypes GetAlternateMapType(int id) {
-    if (id >= AlternateMapTypes.size()) {
-      return IOComponentTypes.Unknown;
-    } else {
-      return AlternateMapTypes.get(id);
-    }
   }
 
   public String GetInOutportLabel(int inoutNr) {
@@ -115,16 +90,12 @@ public class IOComponentInformationContainer {
 
   public String GetInportLabel(int inputNr) {
     if (InputBubbleLabels == null) {
-      return AlternateMapTypes.get(0).name() + Integer.toString(inputNr);
+      return Integer.toString(inputNr);
     }
     if (InputBubbleLabels.size() <= inputNr) {
       return Integer.toString(inputNr);
     }
     return InputBubbleLabels.get(inputNr);
-  }
-
-  public IOComponentTypes GetMainMapType() {
-    return MainMapType;
   }
 
   public int GetNrOfInOutports() {
@@ -141,16 +112,12 @@ public class IOComponentInformationContainer {
 
   public String GetOutportLabel(int outputNr) {
     if (OutputBubbleLabels == null) {
-      return AlternateMapTypes.get(0).name() + Integer.toString(outputNr);
+      return Integer.toString(outputNr);
     }
     if (OutputBubbleLabels.size() <= outputNr) {
       return Integer.toString(outputNr);
     }
     return OutputBubbleLabels.get(outputNr);
-  }
-
-  public boolean HasAlternateMapTypes() {
-    return !AlternateMapTypes.isEmpty();
   }
 
   public void setNrOfInOutports(int nb, ArrayList<String> labels) {

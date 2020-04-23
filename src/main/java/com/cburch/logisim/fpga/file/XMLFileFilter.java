@@ -41,11 +41,11 @@ public class XMLFileFilter extends FileFilter {
   public static final String XML_EXTENSION = ".xml";
 
   public boolean accept(File f) {
-    return f.isDirectory() || f.getName().endsWith(XML_EXTENSION);
+    return f.isDirectory() || f.getName().toLowerCase().endsWith(XML_EXTENSION);
   }
 
   @Override
   public String getDescription() {
-    return S.get("XMLFileFilter");
+    return S.get("BoardMapXml");
   }
 }

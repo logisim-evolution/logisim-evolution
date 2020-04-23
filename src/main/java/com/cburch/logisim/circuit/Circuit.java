@@ -50,7 +50,7 @@ import com.cburch.logisim.data.Value;
 import com.cburch.logisim.file.LogisimFile;
 import com.cburch.logisim.fpga.data.MappableResourcesContainer;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import com.cburch.logisim.fpga.fpgagui.FPGAReport;
+import com.cburch.logisim.fpga.gui.FPGAReport;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceComponent;
@@ -743,13 +743,8 @@ public class Circuit {
   }
   
   public Map<String,CircuitMapInfo> getMapInfo(String BoardName) {
-    if (MyMappableResources.containsKey(BoardName)) {
-      HashMap<String,CircuitMapInfo> ret = new HashMap<String,CircuitMapInfo>();
-      for (String key : MyMappableResources.get(BoardName).MappedList()) {
-        ret.put(key, MyMappableResources.get(BoardName).getCircuitMap(key));
-      }
-      return ret;
-    }
+    if (MyMappableResources.containsKey(BoardName))
+      return MyMappableResources.get(BoardName).getCircuitMap();
     if (LoadedMaps.containsKey(BoardName))
       return LoadedMaps.get(BoardName);
     return new HashMap<String,CircuitMapInfo>();
@@ -759,7 +754,7 @@ public class Circuit {
 	if (LoadedMaps.containsKey(BoardName)) {
       for (String key : LoadedMaps.get(BoardName).keySet()) {
     	CircuitMapInfo cmap = LoadedMaps.get(BoardName).get(key);
-        map.TryMap(key, cmap);
+        map.tryMap(key, cmap);
       }
       LoadedMaps.remove(BoardName);
 	}

@@ -30,7 +30,7 @@ package com.cburch.logisim.gui.generic;
 
 import static com.cburch.logisim.gui.Strings.S;
 
-import com.cburch.logisim.fpga.hdlgenerator.HDLColorRenderer;
+import com.cburch.logisim.fpga.gui.HDLColorRenderer;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.JDialogOk;
 import com.cburch.logisim.util.JInputComponent;

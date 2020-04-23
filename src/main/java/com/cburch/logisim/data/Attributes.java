@@ -31,6 +31,7 @@ package com.cburch.logisim.data;
 import static com.cburch.logisim.data.Strings.S;
 
 import com.bric.colorpicker.ColorPicker;
+import com.cburch.logisim.fpga.data.ComponentMapInformationContainer;
 import com.cburch.logisim.gui.generic.ComboBox;
 import com.cburch.logisim.util.FontUtil;
 import com.cburch.logisim.util.JInputComponent;
@@ -62,6 +63,18 @@ public class Attributes {
       if (value.booleanValue()) return S.get("booleanTrueOption");
       else return S.get("booleanFalseOption");
     }
+  }
+  
+  private static class IOMapAttribute extends Attribute<ComponentMapInformationContainer> {
+
+	@Override
+	public ComponentMapInformationContainer parse(String value) {
+		return null;
+	}
+	
+	@Override
+	public boolean isHidden() {return true;}
+	  
   }
 
   private static class ColorAttribute extends Attribute<Color> {
@@ -493,6 +506,10 @@ public class Attributes {
 
   public static Attribute<Color> forColor(String name, StringGetter disp) {
     return new ColorAttribute(name, disp);
+  }
+  
+  public static Attribute<ComponentMapInformationContainer> forMap() {
+    return new IOMapAttribute();
   }
 
   public static Attribute<Direction> forDirection(String name) {

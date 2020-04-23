@@ -34,7 +34,7 @@ import com.cburch.logisim.fpga.data.MappableResourcesContainer;
 import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
-import com.cburch.logisim.fpga.fpgagui.FPGAReport;
+import com.cburch.logisim.fpga.gui.FPGAReport;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.FileWriter;
 import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
@@ -124,17 +124,16 @@ public class ReptarLocalBusHDLGeneratorFactory extends AbstractHDLGeneratorFacto
 																	 */) {
     ArrayList<String> Contents = new ArrayList<String>();
     Contents.add("   COMPONENT LocalBus");
-    Contents.add("      PORT ( SP6_LB_WAIT3_i            : IN  std_logic;");
-    Contents.add("             IRQ_i                     : IN  std_logic;");
-    Contents.add(
-        "             Addr_Data_LB_io           : INOUT  std_logic_vector( 15 DOWNTO 0 );");
-    Contents.add("             Addr_LB_o                 : OUT std_logic_vector( 8 DOWNTO 0 );");
-    Contents.add("             SP6_LB_RE_nOE_o           : OUT std_logic;");
-    Contents.add("             SP6_LB_nADV_ALE_o         : OUT std_logic;");
-    Contents.add("             SP6_LB_nCS3_o             : OUT std_logic;");
-    Contents.add("             SP6_LB_nWE_o              : OUT std_logic;");
-    Contents.add("          FPGA_in             : IN std_logic_vector(12 downto 0);");
-    Contents.add("          FPGA_out            : OUT std_logic_vector(1 downto 0);");
+    Contents.add("      PORT ( SP6_LB_WAIT3_i     : IN  std_logic;");
+    Contents.add("             IRQ_i              : IN  std_logic;");
+    Contents.add("             Addr_Data_LB_io    : INOUT  std_logic_vector( 15 DOWNTO 0 );");
+    Contents.add("             Addr_LB_o          : OUT std_logic_vector( 8 DOWNTO 0 );");
+    Contents.add("             SP6_LB_RE_nOE_o    : OUT std_logic;");
+    Contents.add("             SP6_LB_nADV_ALE_o  : OUT std_logic;");
+    Contents.add("             SP6_LB_nCS3_o      : OUT std_logic;");
+    Contents.add("             SP6_LB_nWE_o       : OUT std_logic;");
+    Contents.add("             FPGA_in            : IN std_logic_vector(12 downto 0);");
+    Contents.add("             FPGA_out           : OUT std_logic_vector(1 downto 0);");
     Contents.add("            Addr_Data_LB_i      : IN std_logic_vector(15 downto 0);");
     Contents.add("            Addr_Data_LB_o      : OUT std_logic_vector(15 downto 0);");
     Contents.add("            Addr_Data_LB_tris_i : IN std_logic);");

@@ -42,6 +42,7 @@ import com.cburch.logisim.data.AttributeDefaultProvider;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.fpga.data.BoardRectangle;
+import com.cburch.logisim.fpga.data.MapComponent;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.StdAttr;
@@ -304,7 +305,9 @@ class XmlReader {
             continue;
           }
           map.put(key, new CircuitMapInfo(v));
-        } else {
+        } else if (cmap.hasAttribute("valx") && cmap.hasAttribute("valy") &&
+              cmap.hasAttribute("valw") && cmap.hasAttribute("valh")) {
+          /* Backward compatibility: */
           try {
             x = Integer.parseUnsignedInt(cmap.getAttribute("valx"));
             y = Integer.parseUnsignedInt(cmap.getAttribute("valy"));
@@ -315,6 +318,10 @@ class XmlReader {
           }
           BoardRectangle br = new BoardRectangle(x,y,w,h);
           map.put(key, new CircuitMapInfo(br));
+        } else {
+          CircuitMapInfo cmapi = MapComponent.getMapInfo(cmap);
+          if (cmapi != null)
+            map.put(key, cmapi);
         }
       }
       if (!map.isEmpty()) circ.addLoadedMap(boardName, map);

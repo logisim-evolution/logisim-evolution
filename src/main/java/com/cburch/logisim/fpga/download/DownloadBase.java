@@ -26,7 +26,7 @@
  *     http://www.heig-vd.ch/
  */
 
-package com.cburch.logisim.fpga.fpgagui;
+package com.cburch.logisim.fpga.download;
 
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.file.LogisimFile;
@@ -34,6 +34,7 @@ import com.cburch.logisim.fpga.data.BoardInformation;
 import com.cburch.logisim.fpga.data.MappableResourcesContainer;
 import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
+import com.cburch.logisim.fpga.gui.FPGAReport;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.FileWriter;
 import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
@@ -48,7 +49,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public abstract class FPGACommanderBase {
+public abstract class DownloadBase {
 
   protected Project MyProject;
   protected FPGAReport MyReporter;
@@ -104,10 +105,7 @@ public abstract class FPGACommanderBase {
     if (MyMappableResources == null) 
       MyMappableResources = new MappableResourcesContainer(MyBoardInformation, RootSheet);
     else
-      MyMappableResources.rebuildMappedLists();
-    if (!MyMappableResources.IsMappable(BoardComponents, MyReporter)) {
-      return false;
-    }
+      MyMappableResources.updateMapableComponents();
 
     return true;
   }

@@ -31,7 +31,7 @@ package com.cburch.logisim.fpga.menu;
 import static com.cburch.logisim.fpga.Strings.S;
 
 import com.cburch.logisim.fpga.gui.BoardEditor;
-import com.cburch.logisim.fpga.fpgagui.FPGACommanderGui;
+import com.cburch.logisim.fpga.gui.FPGACommander;
 import com.cburch.logisim.gui.main.Frame;
 import com.cburch.logisim.gui.menu.LogisimMenuBar;
 import com.cburch.logisim.proj.Project;
@@ -47,7 +47,7 @@ public class MenuFPGA extends JMenu implements ActionListener {
   private JMenuItem BoardEditor = new JMenuItem();
   private JMenuItem FPGACommander = new JMenuItem();
   private BoardEditor Editor = null;
-  private FPGACommanderGui Commander = null;
+  private FPGACommander Commander = null;
 
   public MenuFPGA(JFrame parent, LogisimMenuBar menubar, Project proj) {
     ThisCircuit = proj;
@@ -71,7 +71,7 @@ public class MenuFPGA extends JMenu implements ActionListener {
         }
       }
     } else if (src == FPGACommander) {
-      if (Commander == null) Commander = new FPGACommanderGui(ThisCircuit);
+      if (Commander == null) Commander = new FPGACommander(ThisCircuit);
       Commander.ShowGui();
     }
   }

@@ -28,9 +28,9 @@
 
 package com.cburch.logisim.fpga.prefs;
 
-import static com.cburch.logisim.gui.Strings.S;
+import static com.cburch.logisim.fpga.Strings.S;
 
-import com.cburch.logisim.fpga.fpgagui.FPGACommanderGui;
+import com.cburch.logisim.fpga.gui.FPGACommander;
 import com.cburch.logisim.fpga.settings.VendorSoftware;
 import com.cburch.logisim.gui.prefs.OptionsPanel;
 import com.cburch.logisim.gui.prefs.PreferencesFrame;
@@ -65,11 +65,11 @@ public class SoftwaresOptions extends OptionsPanel {
       } else if (source == questaValidationCheckBox) {
         AppPreferences.QUESTA_VALIDATION.setBoolean(questaValidationCheckBox.isSelected());
       } else if (source == QuartusPathButton) {
-        FPGACommanderGui.selectToolPath(VendorSoftware.VendorAltera);
+        FPGACommander.selectToolPath(VendorSoftware.VendorAltera);
       } else if (source == ISEPathButton) {
-        FPGACommanderGui.selectToolPath(VendorSoftware.VendorXilinx);
+        FPGACommander.selectToolPath(VendorSoftware.VendorXilinx);
       } else if (source == VivadoPathButton) {
-        FPGACommanderGui.selectToolPath(VendorSoftware.VendorVivado);
+        FPGACommander.selectToolPath(VendorSoftware.VendorVivado);
       }
     }
 

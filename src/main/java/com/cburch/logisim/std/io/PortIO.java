@@ -35,10 +35,9 @@ import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Attributes;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
-import com.cburch.logisim.fpga.data.IOComponentTypes;
+import com.cburch.logisim.fpga.data.ComponentMapInformationContainer;
 import com.cburch.logisim.fpga.data.MappableResourcesContainer;
 import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
-import com.cburch.logisim.fpga.hdlgenerator.IOComponentInformationContainer;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceFactory;
 import com.cburch.logisim.instance.InstancePainter;
@@ -91,7 +90,8 @@ public class PortIO extends InstanceFactory {
           StdAttr.LABEL_COLOR,
           StdAttr.LABEL_VISIBILITY,
           ATTR_SIZE,
-          ATTR_BUS
+          ATTR_BUS,
+          StdAttr.MAPINFO
         },
         new Object[] {
           "",
@@ -100,7 +100,8 @@ public class PortIO extends InstanceFactory {
           StdAttr.DEFAULT_LABEL_COLOR,
           false,
           portSize,
-          BUSES
+          BUSES,
+          new ComponentMapInformationContainer( 0, 0, portSize, null, null, GetLabels(portSize) ) 
         });
     setFacingAttribute(StdAttr.FACING);
     setIconName("pio.gif");
@@ -109,17 +110,6 @@ public class PortIO extends InstanceFactory {
             new IntegerConfigurator(ATTR_SIZE, MIN_IO, MAX_IO, KeyEvent.ALT_DOWN_MASK),
             new DirectionConfigurator(StdAttr.LABEL_LOC, KeyEvent.ALT_DOWN_MASK)));
     // setInstancePoker(Poker.class);
-    MyIOInformation =
-        new IOComponentInformationContainer(
-            0,
-            0,
-            portSize,
-            null,
-            null,
-            GetLabels(portSize),
-            IOComponentTypes.PortIO);
-    // MyIOInformation.AddAlternateMapType(IOComponentTypes.Button);
-    MyIOInformation.AddAlternateMapType(IOComponentTypes.Pin);
   }
 
   private void computeTextField(Instance instance) {
@@ -162,8 +152,11 @@ public class PortIO extends InstanceFactory {
     instance.addAttributeListener();
     configurePorts(instance);
     computeTextField(instance);
-    MyIOInformation.setNrOfInOutports(
-        instance.getAttributeValue(ATTR_SIZE), GetLabels(instance.getAttributeValue(ATTR_SIZE)));
+    ComponentMapInformationContainer map = instance.getAttributeValue(StdAttr.MAPINFO);
+    if (map != null) {
+      map.setNrOfInOutports( instance.getAttributeValue(ATTR_SIZE), 
+          GetLabels(instance.getAttributeValue(ATTR_SIZE)));
+    }
   }
 
   private void configurePorts(Instance instance) {
@@ -252,8 +245,11 @@ public class PortIO extends InstanceFactory {
       instance.recomputeBounds();
       configurePorts(instance);
       computeTextField(instance);
-      MyIOInformation.setNrOfInOutports(
-          instance.getAttributeValue(ATTR_SIZE), GetLabels(instance.getAttributeValue(ATTR_SIZE)));
+      ComponentMapInformationContainer map = instance.getAttributeValue(StdAttr.MAPINFO);
+      if (map != null) {
+        map.setNrOfInOutports( instance.getAttributeValue(ATTR_SIZE), 
+            GetLabels(instance.getAttributeValue(ATTR_SIZE)));
+      }
     }
   }
 

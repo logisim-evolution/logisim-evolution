@@ -26,7 +26,7 @@
  *     http://www.heig-vd.ch/
  */
 
-package com.cburch.logisim.fpga.hdlgenerator;
+package com.cburch.logisim.fpga.gui;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -36,6 +36,8 @@ import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.border.Border;
 import javax.swing.table.TableCellRenderer;
+
+import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
 
 @SuppressWarnings("serial")
 public class HDLColorRenderer extends JLabel implements TableCellRenderer {

@@ -44,12 +44,11 @@ import com.cburch.logisim.comp.ComponentFactory;
 import com.cburch.logisim.comp.EndData;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Location;
-import com.cburch.logisim.fpga.fpgagui.FPGAReport;
+import com.cburch.logisim.fpga.gui.FPGAReport;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceComponent;
 import com.cburch.logisim.instance.StdAttr;
-import com.cburch.logisim.std.io.DipSwitch;
 import com.cburch.logisim.std.io.ReptarLocalBus;
 import com.cburch.logisim.std.wiring.Clock;
 import com.cburch.logisim.std.wiring.Pin;
@@ -294,19 +293,15 @@ public class Netlist implements CircuitListener {
      * we have to process the IO components
      */
     for (NetlistComponent comp : MyComponents) {
-      if (comp.GetIOInformationContainer() != null) {
+      if (comp.GetMapInformationContainer() != null) {
         ArrayList<String> MyHierarchyName = new ArrayList<String>();
         MyHierarchyName.addAll(HierarchyName);
         MyHierarchyName.add(
             CorrectLabel.getCorrectLabel(
                 comp.GetComponent().getAttributeSet().getValue(StdAttr.LABEL).toString()));
-        int subInputBubbles = comp.GetIOInformationContainer().GetNrOfInports();
-        if (comp.GetComponent().getFactory() instanceof DipSwitch) {
-          subInputBubbles =
-              comp.GetComponent().getAttributeSet().getValue(DipSwitch.ATTR_SIZE).getWidth();
-        }
-        int subInOutBubbles = comp.GetIOInformationContainer().GetNrOfInOutports();
-        int subOutputBubbles = comp.GetIOInformationContainer().GetNrOfOutports();
+        int subInputBubbles = comp.GetMapInformationContainer().GetNrOfInports();
+        int subInOutBubbles = comp.GetMapInformationContainer().GetNrOfInOutports();
+        int subOutputBubbles = comp.GetMapInformationContainer().GetNrOfOutports();
         comp.SetLocalBubbleID(
             LocalNrOfInportBubles,
             subInputBubbles,
@@ -649,15 +644,15 @@ public class Netlist implements CircuitListener {
               StartInOutID + comp.GetLocalBubbleInOutStartId());
     }
     for (NetlistComponent comp : MyComponents) {
-      if (comp.GetIOInformationContainer() != null) {
+      if (comp.GetMapInformationContainer() != null) {
         ArrayList<String> MyHierarchyName = new ArrayList<String>();
         MyHierarchyName.addAll(HierarchyName);
         MyHierarchyName.add(
             CorrectLabel.getCorrectLabel(
                 comp.GetComponent().getAttributeSet().getValue(StdAttr.LABEL).toString()));
-        int subInputBubbles = comp.GetIOInformationContainer().GetNrOfInports();
-        int subInOutBubbles = comp.GetIOInformationContainer().GetNrOfInOutports();
-        int subOutputBubbles = comp.GetIOInformationContainer().GetNrOfOutports();
+        int subInputBubbles = comp.GetMapInformationContainer().GetNrOfInports();
+        int subInOutBubbles = comp.GetMapInformationContainer().GetNrOfInOutports();
+        int subOutputBubbles = comp.GetMapInformationContainer().GetNrOfOutports();
         comp.AddGlobalBubbleID(
             MyHierarchyName,
             StartInputID + comp.GetLocalBubbleInputStartId(),
@@ -760,11 +755,6 @@ public class Netlist implements CircuitListener {
         TunnelList.add(com);
         Ignore = true;
       }
-
-      //	if (com.getFactory() instanceof PortIO) {
-      //		//TunnelList.add(com);
-      //		Ignore = false;
-      //	}
 
       List<EndData> ends = com.getEnds();
       for (EndData end : ends) {
@@ -1181,7 +1171,7 @@ public class Netlist implements CircuitListener {
           return false;
         }
       } else if ((comp.getFactory() instanceof Pin)
-          || (comp.getFactory().getIOInformation() != null)
+          || comp.getAttributeSet().containsAttribute(StdAttr.MAPINFO)
           || (comp.getFactory().getHDLGenerator(HDLIdentifier, comp.getAttributeSet()) != null)) {
         if (!ProcessNormalComponent(comp, Reporter)) {
           this.clear();
@@ -1469,7 +1459,7 @@ public class Netlist implements CircuitListener {
     }
     /* Now we search for all local IO components */
     for (NetlistComponent comp : MyComponents) {
-      if (comp.GetIOInformationContainer() != null) {
+      if (comp.GetMapInformationContainer() != null) {
         ArrayList<String> MyHierarchyName = new ArrayList<String>();
         MyHierarchyName.addAll(Hierarchy);
         MyHierarchyName.add(

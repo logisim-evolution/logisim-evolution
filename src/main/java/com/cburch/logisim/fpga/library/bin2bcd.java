@@ -145,4 +145,5 @@ public class bin2bcd extends InstanceFactory {
     if (MyHDLGenerator == null) MyHDLGenerator = new bin2bcdHDLGeneratorFactory();
     return MyHDLGenerator.HDLTargetSupported(HDLIdentifier, attrs);
   }
+
 }
