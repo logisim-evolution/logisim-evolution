@@ -73,7 +73,7 @@ import javax.swing.border.Border;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellEditor;
-import org.jdesktop.xswingx.BuddySupport;
+import org.jdesktop.swingx.prompt.BuddySupport;
 
 import com.cburch.logisim.analyze.model.ParserException;
 import com.cburch.logisim.analyze.model.Var;

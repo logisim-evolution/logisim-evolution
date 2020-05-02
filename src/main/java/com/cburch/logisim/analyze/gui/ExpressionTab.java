@@ -93,7 +93,7 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellEditor;
 
-import org.jdesktop.xswingx.BuddySupport;
+import org.jdesktop.swingx.prompt.BuddySupport;
 
 class ExpressionTab extends AnalyzerTab {
   private static final long serialVersionUID = 1L;
