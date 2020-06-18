@@ -31,7 +31,7 @@ package com.cburch.logisim.gui.prefs;
 import com.cburch.logisim.util.StringGetter;
 import javax.swing.JComboBox;
 
-class PrefOption {
+public class PrefOption {
   static void setSelected(JComboBox<PrefOption> combo, Object value) {
     for (int i = combo.getItemCount() - 1; i >= 0; i--) {
       PrefOption opt = (PrefOption) combo.getItemAt(i);
@@ -47,7 +47,7 @@ class PrefOption {
 
   private StringGetter getter;
 
-  PrefOption(String value, StringGetter getter) {
+  public PrefOption(String value, StringGetter getter) {
     this.value = value;
     this.getter = getter;
   }

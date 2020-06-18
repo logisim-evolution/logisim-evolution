@@ -33,6 +33,7 @@ import static com.cburch.logisim.gui.Strings.S;
 import com.cburch.logisim.file.Loader;
 import com.cburch.logisim.file.LoaderException;
 import com.cburch.logisim.file.LogisimFile;
+import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.prefs.Template;
 import com.cburch.logisim.util.JFileChoosers;
@@ -51,7 +52,6 @@ import java.io.InputStream;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
@@ -79,11 +79,11 @@ class TemplateOptions extends OptionsPanel {
             AppPreferences.setTemplateType(AppPreferences.TEMPLATE_CUSTOM);
           } catch (LoaderException ex) {
           } catch (IOException ex) {
-            JOptionPane.showMessageDialog(
+            OptionPane.showMessageDialog(
                 getPreferencesFrame(),
                 StringUtil.format(S.get("templateErrorMessage"), ex.toString()),
                 S.get("templateErrorTitle"),
-                JOptionPane.ERROR_MESSAGE);
+                OptionPane.ERROR_MESSAGE);
           } finally {
             try {
               if (reader != null) reader.close();

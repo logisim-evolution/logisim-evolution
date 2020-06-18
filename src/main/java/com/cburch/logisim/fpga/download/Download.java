@@ -32,15 +32,14 @@ import static com.cburch.logisim.fpga.Strings.S;
 
 import com.cburch.logisim.Main;
 import com.cburch.logisim.circuit.Circuit;
-import com.cburch.logisim.fpga.fpgaboardeditor.BoardInformation;
-import com.cburch.logisim.fpga.fpgagui.ComponentMapDialog;
-import com.cburch.logisim.fpga.fpgagui.ComponentMapParser;
-import com.cburch.logisim.fpga.fpgagui.FPGACommanderBase;
-import com.cburch.logisim.fpga.fpgagui.FPGAReport;
+import com.cburch.logisim.fpga.data.BoardInformation;
+import com.cburch.logisim.fpga.data.ComponentMapParser;
+import com.cburch.logisim.fpga.gui.ComponentMapDialog;
+import com.cburch.logisim.fpga.gui.FPGAReport;
 import com.cburch.logisim.fpga.settings.VendorSoftware;
+import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
-import com.cburch.logisim.proj.Projects;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
@@ -52,10 +51,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 
-public class Download extends FPGACommanderBase implements Runnable, WindowListener {
+public class Download extends DownloadBase implements Runnable, WindowListener {
 
   private boolean StopRequested = false;
 
@@ -175,7 +173,7 @@ public class Download extends FPGACommanderBase implements Runnable, WindowListe
       MyProgress.setString(S.get("FpgaDownloadInfo"));
     }
   }
-
+  
   public void DoDownload() {
     new Thread(this).start();
   }
@@ -223,7 +221,7 @@ public class Download extends FPGACommanderBase implements Runnable, WindowListe
   public boolean runtty() {
     if (!PrepareDownLoad()) return false;
     if (HdlOnly) return true;
-    if (!VendorSoftwarePresent()) return true;
+    if (!VendorSoftwarePresent()) return false;
     try {
       String error = download();
       if (error != null) {
@@ -259,16 +257,16 @@ public class Download extends FPGACommanderBase implements Runnable, WindowListe
     if (StopRequested) return S.get("FPGAInterrupted");
     Object[] options = {S.get("FPGADownloadOk"), S.get("FPGADownloadCancel")};
     if (UseGui)
-      if (JOptionPane.showOptionDialog(
+      if (OptionPane.showOptionDialog(
               null,
               S.get("FPGAVerifyMsg1"),
               S.get("FPGAVerifyMsg2"),
-              JOptionPane.YES_NO_OPTION,
-              JOptionPane.WARNING_MESSAGE,
+              OptionPane.YES_NO_OPTION,
+              OptionPane.WARNING_MESSAGE,
               null,
               options,
               options[0])
-          != JOptionPane.YES_OPTION) {
+          != OptionPane.YES_OPTION) {
         return S.get("FPGADownloadAborted");
       }
     if (!Downloader.BoardConnected()) return S.get("FPGABoardNotConnected");
@@ -343,19 +341,17 @@ public class Download extends FPGACommanderBase implements Runnable, WindowListe
       return false;
     }
     if (UseGui) {
-      ComponentMapDialog MapPannel;
-      if (MyProject.getLogisimFile().getLoader().getMainFile() != null) {
-        MapPannel =
-            new ComponentMapDialog(
-                null, MyProject.getLogisimFile().getLoader().getMainFile().getAbsolutePath());
-      } else {
-        MapPannel = new ComponentMapDialog(null, "");
-      }
       /* Stage 2 Map design on board */
       MyProgress.setValue(2);
       MyProgress.setString(S.get("FPGAState3"));
-      MapPannel.SetBoardInformation(MyBoardInformation);
-      MapPannel.SetMappebleComponents(MyMappableResources);
+      ComponentMapDialog MapPannel;
+      if (MyProject.getLogisimFile().getLoader().getMainFile() != null) {
+        MapPannel = new ComponentMapDialog( null, 
+                MyProject.getLogisimFile().getLoader().getMainFile().getAbsolutePath(),
+                MyBoardInformation, MyMappableResources);
+      } else {
+        MapPannel = new ComponentMapDialog(null, "", MyBoardInformation, MyMappableResources);
+      }
       if (!MapPannel.run()) {
         MyReporter.AddError(S.get("FPGADownloadAborted"));
         return false;
@@ -364,8 +360,7 @@ public class Download extends FPGACommanderBase implements Runnable, WindowListe
       if (MapFileName != null) {
         File MapFile = new File(MapFileName);
         if (!MapFile.exists()) return false;
-        ComponentMapParser cmp =
-            new ComponentMapParser(MapFile, MyMappableResources, MyBoardInformation);
+        ComponentMapParser cmp = new ComponentMapParser(MapFile, MyMappableResources, MyBoardInformation);
         cmp.parseFile();
       }
     }
@@ -439,16 +434,16 @@ public class Download extends FPGACommanderBase implements Runnable, WindowListe
 
   public static String ChooseBoard(List<String> devices) {
     /* This code is based on the version of Kevin Walsh */
-    if (Projects.getTopFrame() != null) {
+    if (Main.hasGui()) {
       String[] choices = new String[devices.size()];
       for (int i = 0; i < devices.size(); i++) choices[i] = devices.get(i);
       String choice =
           (String)
-              JOptionPane.showInputDialog(
+              OptionPane.showInputDialog(
                   null,
                   S.fmt("FPGAMultipleBoards", devices.size()),
                   S.get("FPGABoardSelection"),
-                  JOptionPane.QUESTION_MESSAGE,
+                  OptionPane.QUESTION_MESSAGE,
                   null,
                   choices,
                   choices[0]);

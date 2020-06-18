@@ -39,6 +39,7 @@ package com.cburch.logisim.std.gates;
 import static com.cburch.logisim.std.Strings.S;
 
 import com.cburch.logisim.file.Loader;
+import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.JFileChoosers;
 import com.cburch.logisim.util.JInputDialog;
@@ -72,7 +73,6 @@ import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
@@ -164,8 +164,8 @@ public class PLATable {
       try {
         tt = parseOneLine(tt, line);
       } catch (IOException e) {
-        JOptionPane.showMessageDialog(
-            null, e.getMessage(), "Error in PLA Table", JOptionPane.ERROR_MESSAGE);
+        OptionPane.showMessageDialog(
+            null, e.getMessage(), "Error in PLA Table", OptionPane.ERROR_MESSAGE);
       }
     }
     if (tt == null) tt = new PLATable(2, 2, "PLA");
@@ -476,8 +476,8 @@ public class PLATable {
           newTable.copyFrom(loaded);
           reset(false);
         } catch (IOException e) {
-          JOptionPane.showMessageDialog(
-              null, e.getMessage(), S.get("plaLoadErrorTitle"), JOptionPane.ERROR_MESSAGE);
+          OptionPane.showMessageDialog(
+              null, e.getMessage(), S.get("plaLoadErrorTitle"), OptionPane.ERROR_MESSAGE);
         }
       }
     }
@@ -493,8 +493,8 @@ public class PLATable {
         try {
           newTable.save(f);
         } catch (IOException e) {
-          JOptionPane.showMessageDialog(
-              null, e.getMessage(), S.get("plaSaveErrorTitle"), JOptionPane.ERROR_MESSAGE);
+          OptionPane.showMessageDialog(
+              null, e.getMessage(), S.get("plaSaveErrorTitle"), OptionPane.ERROR_MESSAGE);
         }
       }
     }

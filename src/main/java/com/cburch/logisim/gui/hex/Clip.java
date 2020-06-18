@@ -33,6 +33,7 @@ import static com.cburch.logisim.gui.Strings.S;
 import com.cburch.hex.Caret;
 import com.cburch.hex.HexEditor;
 import com.cburch.hex.HexModel;
+import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.std.memory.MemContents;
 
 import java.awt.datatransfer.Clipboard;
@@ -41,7 +42,6 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
-import javax.swing.JOptionPane;
 
 class Clip implements ClipboardOwner {
   private static class Data implements Transferable {
@@ -161,19 +161,19 @@ class Clip implements ClipboardOwner {
         pasted = r.model;
         numWords = r.numWords;
       } catch (IOException e) {
-        JOptionPane.showMessageDialog(
+        OptionPane.showMessageDialog(
             editor.getRootPane(),
             e.getMessage(),
             S.get("hexPasteErrorTitle"),
-            JOptionPane.ERROR_MESSAGE);
+            OptionPane.ERROR_MESSAGE);
         return;
       }
     } else {
-      JOptionPane.showMessageDialog(
+      OptionPane.showMessageDialog(
           editor.getRootPane(),
           S.get("hexPasteSupportedError"),
           S.get("hexPasteErrorTitle"),
-          JOptionPane.ERROR_MESSAGE);
+          OptionPane.ERROR_MESSAGE);
       return;
     }
 
@@ -195,21 +195,21 @@ class Clip implements ClipboardOwner {
       }
       p1++;
       if (p1 - p0 > numWords) {
-          int action = JOptionPane.showConfirmDialog(editor.getRootPane(),
+          int action = OptionPane.showConfirmDialog(editor.getRootPane(),
               S.fmt("hexPasteTooSmall", numWords, p1 - p0),
             S.get("hexPasteErrorTitle"),
-            JOptionPane.OK_CANCEL_OPTION,
-            JOptionPane.QUESTION_MESSAGE);
-        if (action != JOptionPane.OK_OPTION)
+            OptionPane.OK_CANCEL_OPTION,
+            OptionPane.QUESTION_MESSAGE);
+        if (action != OptionPane.OK_OPTION)
           return;
         p1 = p0 + numWords;
       } else if (p1 - p0 < numWords) {
-        int action = JOptionPane.showConfirmDialog(editor.getRootPane(),
+        int action = OptionPane.showConfirmDialog(editor.getRootPane(),
             S.fmt("hexPasteTooSmall", numWords, p1 - p0),
             S.get("hexPasteErrorTitle"),
-            JOptionPane.OK_CANCEL_OPTION,
-            JOptionPane.QUESTION_MESSAGE);
-        if (action != JOptionPane.OK_OPTION)
+            OptionPane.OK_CANCEL_OPTION,
+            OptionPane.QUESTION_MESSAGE);
+        if (action != OptionPane.OK_OPTION)
           return;
         numWords = (int)(p1 - p0);
       }

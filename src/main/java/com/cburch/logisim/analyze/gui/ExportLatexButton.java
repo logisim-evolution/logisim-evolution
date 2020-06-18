@@ -33,6 +33,7 @@ import static com.cburch.logisim.analyze.Strings.S;
 import com.cburch.logisim.analyze.file.AnalyzerTexWriter;
 import com.cburch.logisim.analyze.model.AnalyzerModel;
 import com.cburch.logisim.circuit.Circuit;
+import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.util.JFileChoosers;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -41,7 +42,6 @@ import java.io.IOException;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 
 public class ExportLatexButton extends JButton {
 
@@ -84,36 +84,36 @@ public class ExportLatexButton extends JButton {
     if (choice == JFileChooser.APPROVE_OPTION) {
       File file = chooser.getSelectedFile();
       if (file.isDirectory()) {
-        JOptionPane.showMessageDialog(
+        OptionPane.showMessageDialog(
             parent,
             S.fmt("notFileMessage", file.getName()),
             S.get("saveErrorTitle"),
-            JOptionPane.OK_OPTION);
+            OptionPane.OK_OPTION);
         return;
       }
       if (file.exists() && !file.canWrite()) {
-        JOptionPane.showMessageDialog(
+        OptionPane.showMessageDialog(
             parent,
             S.fmt("cantWriteMessage", file.getName()),
             S.get("saveErrorTitle"),
-            JOptionPane.OK_OPTION);
+            OptionPane.OK_OPTION);
         return;
       }
       if (file.exists()) {
         int confirm =
-            JOptionPane.showConfirmDialog(
+            OptionPane.showConfirmDialog(
                 parent,
                 S.fmt("confirmOverwriteMessage", file.getName()),
                 S.get("confirmOverwriteTitle"),
-                JOptionPane.YES_NO_OPTION);
-        if (confirm != JOptionPane.YES_OPTION) return;
+                OptionPane.YES_NO_OPTION);
+        if (confirm != OptionPane.YES_OPTION) return;
       }
       try {
         AnalyzerTexWriter.doSave(file, model);
         lastFile = file;
       } catch (IOException e) {
-        JOptionPane.showMessageDialog(
-            parent, e.getMessage(), S.get("saveErrorTitle"), JOptionPane.ERROR_MESSAGE);
+        OptionPane.showMessageDialog(
+            parent, e.getMessage(), S.get("saveErrorTitle"), OptionPane.ERROR_MESSAGE);
       }
     }
   }

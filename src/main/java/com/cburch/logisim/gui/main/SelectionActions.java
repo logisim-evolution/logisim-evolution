@@ -42,6 +42,7 @@ import com.cburch.logisim.comp.ComponentFactory;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.file.LogisimFile;
+import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.proj.Action;
 import com.cburch.logisim.proj.Dependencies;
 import com.cburch.logisim.proj.JoinedAction;
@@ -56,7 +57,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
@@ -538,12 +538,12 @@ public class SelectionActions {
             S.get("pasteCloneReplace"), S.get("pasteCloneIgnore"), S.get("pasteCloneCancel")
           };
           int select =
-              JOptionPane.showOptionDialog(
+              OptionPane.showOptionDialog(
                   proj.getFrame(),
                   msg,
                   S.get("pasteCloneTitle"),
                   0,
-                  JOptionPane.QUESTION_MESSAGE,
+                  OptionPane.QUESTION_MESSAGE,
                   null,
                   opts,
                   opts[0]);
@@ -598,8 +598,8 @@ public class SelectionActions {
       area.setText(droppedStr.toString());
       area.setCaretPosition(0);
       JScrollPane areaPane = new JScrollPane(area);
-      JOptionPane.showMessageDialog(
-          proj.getFrame(), areaPane, S.get("pasteDropTitle"), JOptionPane.WARNING_MESSAGE);
+      OptionPane.showMessageDialog(
+          proj.getFrame(), areaPane, S.get("pasteDropTitle"), OptionPane.WARNING_MESSAGE);
     }
 
     return replMap;

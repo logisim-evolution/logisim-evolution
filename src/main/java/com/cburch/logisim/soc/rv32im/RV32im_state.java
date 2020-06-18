@@ -38,7 +38,6 @@ import java.awt.event.WindowListener;
 import java.util.HashMap;
 import java.util.LinkedList;
 
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import org.fife.ui.rsyntaxtextarea.AbstractTokenMakerFactory;
@@ -50,6 +49,7 @@ import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
+import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceComponent;
 import com.cburch.logisim.instance.InstanceData;
@@ -205,8 +205,8 @@ public class RV32im_state implements SocUpSimulationStateListener,SocProcessorIn
       if (breakPoints.containsKey(pc)) {
         if (simState.breakPointReached()) {
           bPanel.gotoLine(breakPoints.get(pc)-1);
-          JOptionPane.showMessageDialog(null,S.get("RV32imBreakPointReached"),
-                  SocSupport.getMasterName(cState,RV32im_state.this.getName()),JOptionPane.INFORMATION_MESSAGE);
+          OptionPane.showMessageDialog(null,S.get("RV32imBreakPointReached"),
+                  SocSupport.getMasterName(cState,RV32im_state.this.getName()),OptionPane.INFORMATION_MESSAGE);
           return;
         }
       }
@@ -216,8 +216,8 @@ public class RV32im_state implements SocUpSimulationStateListener,SocProcessorIn
               pc,0,SocBusTransaction.WordAccess,attachedBus.getComponent());
       attachedBus.getSocSimulationManager().initializeTransaction(trans, attachedBus.getBusId(),cState);
       if (trans.hasError()) {
-        JOptionPane.showMessageDialog(null,trans.getErrorMessage(),
-              SocSupport.getMasterName(cState,RV32im_state.this.getName())+S.get("RV32imFetchTransaction"),JOptionPane.ERROR_MESSAGE);
+        OptionPane.showMessageDialog(null,trans.getErrorMessage(),
+              SocSupport.getMasterName(cState,RV32im_state.this.getName())+S.get("RV32imFetchTransaction"),OptionPane.ERROR_MESSAGE);
         simState.errorInExecution();
         return;
       }
@@ -230,8 +230,8 @@ public class RV32im_state implements SocUpSimulationStateListener,SocProcessorIn
       while (instrTrace.size() >= CpuDrawSupport.NrOfTraces)
         instrTrace.removeLast();
       if (exe == null) {
-        JOptionPane.showMessageDialog(null,S.get("RV32imFetchInvalidInstruction"),
-              SocSupport.getMasterName(cState,RV32im_state.this.getName())+S.get("RV32imFetchTransaction"),JOptionPane.ERROR_MESSAGE);
+        OptionPane.showMessageDialog(null,S.get("RV32imFetchInvalidInstruction"),
+              SocSupport.getMasterName(cState,RV32im_state.this.getName())+S.get("RV32imFetchTransaction"),OptionPane.ERROR_MESSAGE);
         simState.errorInExecution();
         instrTrace.addFirst(new TraceInfo(pc,instruction,S.get("RV32imFetchInvInstrAsm"),true));
         pc = pc + 4;
@@ -244,8 +244,8 @@ public class RV32im_state implements SocUpSimulationStateListener,SocProcessorIn
         s.append(S.get("RV32imFetchExecutionError"));
         if (exe.getErrorMessage() != null)
           s.append("\n"+exe.getErrorMessage());
-        JOptionPane.showMessageDialog(null,s.toString(),
-              SocSupport.getMasterName(cState,RV32im_state.this.getName())+S.get("RV32imFetchTransaction"),JOptionPane.ERROR_MESSAGE);
+        OptionPane.showMessageDialog(null,s.toString(),
+              SocSupport.getMasterName(cState,RV32im_state.this.getName())+S.get("RV32imFetchTransaction"),OptionPane.ERROR_MESSAGE);
         simState.errorInExecution();
         trace.setError();
         instrTrace.addFirst(trace);

@@ -37,8 +37,8 @@ import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Value;
-import com.cburch.logisim.fpga.fpgaboardeditor.FPGAIOInformationContainer;
-import com.cburch.logisim.fpga.hdlgenerator.IOComponentInformationContainer;
+import com.cburch.logisim.fpga.data.ComponentMapInformationContainer;
+import com.cburch.logisim.fpga.data.IOComponentTypes;
 import com.cburch.logisim.gui.icons.SevenSegmentIcon;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceDataSingleton;
@@ -121,6 +121,11 @@ public class SevenSegment extends InstanceFactory implements DynamicElementProvi
     LabelNames.set(DP, "DecimalPoint");
     return LabelNames;
   }
+  
+  public static final String getOutputLabel(int id) {
+    if (id < 0 || id > GetLabels().size()) return "Undefined";
+    return GetLabels().get(id);
+  }
 
   public static final int Segment_A = 0;
   public static final int Segment_B = 1;
@@ -147,7 +152,8 @@ public class SevenSegment extends InstanceFactory implements DynamicElementProvi
           StdAttr.LABEL,
           StdAttr.LABEL_LOC,
           StdAttr.LABEL_FONT,
-          StdAttr.LABEL_VISIBILITY
+          StdAttr.LABEL_VISIBILITY,
+          StdAttr.MAPINFO
         },
         new Object[] {
           new Color(240, 0, 0),
@@ -157,7 +163,8 @@ public class SevenSegment extends InstanceFactory implements DynamicElementProvi
           "",
           Direction.EAST,
           StdAttr.DEFAULT_LABEL_FONT,
-          false
+          false,
+          new ComponentMapInformationContainer( 0, 8, 0, null, GetLabels(), null )
         });
     setOffsetBounds(Bounds.create(-5, 0, 40, 60));
     setIcon(new SevenSegmentIcon(false));
@@ -179,17 +186,6 @@ public class SevenSegment extends InstanceFactory implements DynamicElementProvi
     ps[Segment_F].setToolTip(S.getter("Segment_F"));
     ps[Segment_G].setToolTip(S.getter("Segment_G"));
     ps[DP].setToolTip(S.getter("DecimalPoint"));
-    MyIOInformation =
-        new IOComponentInformationContainer(
-            0,
-            8,
-            0,
-            null,
-            GetLabels(),
-            null,
-            FPGAIOInformationContainer.IOComponentTypes.SevenSegment);
-    MyIOInformation.AddAlternateMapType(FPGAIOInformationContainer.IOComponentTypes.LED);
-    MyIOInformation.AddAlternateMapType(FPGAIOInformationContainer.IOComponentTypes.Pin);
     setPorts(ps);
   }
 

@@ -38,7 +38,6 @@ import com.cburch.logisim.data.Value;
 import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
-import com.cburch.logisim.fpga.hdlgenerator.IOComponentInformationContainer;
 import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.Icons;
 import com.cburch.logisim.util.StringGetter;
@@ -52,12 +51,10 @@ public abstract class AbstractComponentFactory implements ComponentFactory {
 
   private AttributeSet defaultSet;
   protected HDLGeneratorFactory MyHDLGenerator;
-  protected IOComponentInformationContainer MyIOInformation;
 
   protected AbstractComponentFactory() {
     defaultSet = null;
     MyHDLGenerator = null;
-    MyIOInformation = null;
   }
 
   public boolean ActiveOnHigh(AttributeSet attrs) {
@@ -122,10 +119,6 @@ public abstract class AbstractComponentFactory implements ComponentFactory {
 
   public int[] ClockPinIndex(NetlistComponent comp) {
     return new int[] {0};
-  }
-
-  public IOComponentInformationContainer getIOInformation() {
-    return MyIOInformation;
   }
 
   public abstract String getName();

@@ -43,6 +43,7 @@ import com.cburch.logisim.data.AttributeEvent;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.gui.generic.AttrTableSetException;
 import com.cburch.logisim.gui.generic.AttributeSetTableModel;
+import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.gui.main.Selection.Event;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.proj.Action;
@@ -53,7 +54,6 @@ import com.cburch.logisim.vhdl.base.VhdlContent;
 import java.util.Comparator;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import javax.swing.JOptionPane;
 
 class AttrTableSelectionModel extends AttributeSetTableModel implements Selection.Listener {
   private Project project;
@@ -182,7 +182,7 @@ class AttrTableSelectionModel extends AttributeSetTableModel implements Selectio
                 Action action = mutation.toAction(null);
                 project.doAction(action);
               } catch (CircuitException ex) {
-                JOptionPane.showMessageDialog(project.getFrame(), ex.getMessage());
+                OptionPane.showMessageDialog(project.getFrame(), ex.getMessage());
               }
               return;
             }

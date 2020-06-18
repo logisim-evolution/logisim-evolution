@@ -38,8 +38,7 @@ import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Value;
-import com.cburch.logisim.fpga.fpgaboardeditor.FPGAIOInformationContainer;
-import com.cburch.logisim.fpga.hdlgenerator.IOComponentInformationContainer;
+import com.cburch.logisim.fpga.data.ComponentMapInformationContainer;
 import com.cburch.logisim.gui.icons.SevenSegmentIcon;
 import com.cburch.logisim.instance.InstanceDataSingleton;
 import com.cburch.logisim.instance.InstanceFactory;
@@ -66,7 +65,8 @@ public class HexDigit extends InstanceFactory implements DynamicElementProvider 
           StdAttr.LABEL,
           StdAttr.LABEL_LOC,
           StdAttr.LABEL_FONT,
-          StdAttr.LABEL_VISIBILITY
+          StdAttr.LABEL_VISIBILITY,
+          StdAttr.MAPINFO
         },
         new Object[] {
           new Color(240, 0, 0),
@@ -75,7 +75,8 @@ public class HexDigit extends InstanceFactory implements DynamicElementProvider 
           "",
           Direction.EAST,
           StdAttr.DEFAULT_LABEL_FONT,
-          false
+          false,
+          new ComponentMapInformationContainer(0, 8, 0, null, SevenSegment.GetLabels(), null) 
         });
     Port[] ps = new Port[2];
     ps[HEX] = new Port(0, 0, Port.INPUT, 4);
@@ -86,17 +87,6 @@ public class HexDigit extends InstanceFactory implements DynamicElementProvider 
     setOffsetBounds(Bounds.create(-15, -60, 40, 60));
     setIcon(new SevenSegmentIcon(true));
     setKeyConfigurator(new DirectionConfigurator(StdAttr.LABEL_LOC, KeyEvent.ALT_DOWN_MASK));
-    MyIOInformation =
-        new IOComponentInformationContainer(
-            0,
-            8,
-            0,
-            null,
-            SevenSegment.GetLabels(),
-            null,
-            FPGAIOInformationContainer.IOComponentTypes.SevenSegment);
-    MyIOInformation.AddAlternateMapType(FPGAIOInformationContainer.IOComponentTypes.LED);
-    MyIOInformation.AddAlternateMapType(FPGAIOInformationContainer.IOComponentTypes.Pin);
   }
 
   @Override

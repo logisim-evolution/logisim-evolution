@@ -28,13 +28,14 @@
 
 package com.cburch.logisim.fpga.hdlgenerator;
 
-import com.cburch.logisim.fpga.fpgagui.FPGAReport;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+
+import com.cburch.logisim.fpga.gui.FPGAReport;
 
 public class FileWriter {
 

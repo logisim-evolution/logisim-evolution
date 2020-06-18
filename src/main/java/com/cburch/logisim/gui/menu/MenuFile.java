@@ -30,6 +30,7 @@ package com.cburch.logisim.gui.menu;
 
 import static com.cburch.logisim.gui.Strings.S;
 
+import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.gui.main.Frame;
 import com.cburch.logisim.gui.opts.OptionsFrame;
 import com.cburch.logisim.gui.prefs.PreferencesFrame;
@@ -43,7 +44,6 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.util.List;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
 class MenuFile extends Menu implements ActionListener {
@@ -134,12 +134,12 @@ class MenuFile extends Menu implements ActionListener {
             "What should happen to your unsaved changes to " + proj.getLogisimFile().getName();
         String[] options = {"Save", "Discard", "Cancel"};
         result =
-            JOptionPane.showOptionDialog(
-                JOptionPane.getFrameForComponent(this),
+            OptionPane.showOptionDialog(
+                OptionPane.getFrameForComponent(this),
                 message,
                 "Confirm Close",
                 0,
-                JOptionPane.QUESTION_MESSAGE,
+                OptionPane.QUESTION_MESSAGE,
                 null,
                 options,
                 options[0]);

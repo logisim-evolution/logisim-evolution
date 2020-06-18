@@ -30,8 +30,10 @@ package com.cburch.logisim.prefs;
 
 import static com.cburch.logisim.proj.Strings.S;
 
-import com.cburch.logisim.fpga.fpgaboardeditor.BoardReaderClass;
+import com.cburch.logisim.fpga.file.BoardReaderClass;
 import com.cburch.logisim.fpga.settings.BoardList;
+import com.cburch.logisim.gui.generic.OptionPane;
+
 import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -48,7 +50,6 @@ import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
@@ -368,24 +369,24 @@ public class FPGABoards implements ActionListener {
 
   private boolean AddBoard(boolean UpdateSelection) {
     if (ExtBoardModel.getSize() >= MaxBoards) {
-      JOptionPane.showMessageDialog(
-          null, S.get("MaxBoardsReached"), S.get("AddExternalBoards"), JOptionPane.ERROR_MESSAGE);
+      OptionPane.showMessageDialog(
+          null, S.get("MaxBoardsReached"), S.get("AddExternalBoards"), OptionPane.ERROR_MESSAGE);
       return false;
     }
     String BoardFileName = GetBoardFile();
     if (BoardFileName == null) return false;
     BoardReaderClass test = new BoardReaderClass(BoardFileName);
     if (test.GetBoardInformation() == null) {
-      JOptionPane.showMessageDialog(
-          null, S.get("InvalidFileFormat"), S.get("AddExternalBoards"), JOptionPane.ERROR_MESSAGE);
+      OptionPane.showMessageDialog(
+          null, S.get("InvalidFileFormat"), S.get("AddExternalBoards"), OptionPane.ERROR_MESSAGE);
       return false;
     }
     if (BuildInBoards.GetBoardNames().contains(BoardList.getBoardName(BoardFileName))) {
-      JOptionPane.showMessageDialog(
+      OptionPane.showMessageDialog(
           null,
           S.get("BoardPreset") + "\"" + BoardList.getBoardName(BoardFileName) + "\"",
           S.get("AddExternalBoards"),
-          JOptionPane.ERROR_MESSAGE);
+          OptionPane.ERROR_MESSAGE);
       return false;
     }
     if (!AddExternalBoard(BoardFileName)) return false;

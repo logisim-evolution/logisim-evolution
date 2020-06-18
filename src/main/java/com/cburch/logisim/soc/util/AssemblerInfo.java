@@ -35,9 +35,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 
-import javax.swing.JOptionPane;
-
 import com.cburch.logisim.circuit.CircuitState;
+import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.soc.data.AssemblerHighlighter;
 import com.cburch.logisim.soc.data.SocBusTransaction;
 import com.cburch.logisim.soc.data.SocProcessorInterface;
@@ -260,7 +259,7 @@ public class AssemblerInfo {
     for (String label : labels.keySet()) {
       if (labels.get(label) < 0) {
         /* this should never happen */
-    	JOptionPane.showMessageDialog(null, "Severe bug in AssemblerInfo.java");
+    	OptionPane.showMessageDialog(null, "Severe bug in AssemblerInfo.java");
     	return;
       }
     }

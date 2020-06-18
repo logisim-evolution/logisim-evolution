@@ -49,6 +49,7 @@ import com.cburch.logisim.gui.generic.BasicZoomModel;
 import com.cburch.logisim.gui.generic.CanvasPane;
 import com.cburch.logisim.gui.generic.CardPanel;
 import com.cburch.logisim.gui.generic.LFrame;
+import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.gui.generic.RegTabContent;
 import com.cburch.logisim.gui.generic.ZoomControl;
 import com.cburch.logisim.gui.generic.ZoomModel;
@@ -88,7 +89,6 @@ import java.beans.PropertyChangeListener;
 import java.util.Timer;
 
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.WindowConstants;
@@ -464,8 +464,8 @@ public class Frame extends LFrame implements LocaleListener {
     toFront();
     String[] options = {S.get("saveOption"), S.get("discardOption"), S.get("cancelOption")};
     int result =
-        JOptionPane.showOptionDialog(
-            this, message, title, 0, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+        OptionPane.showOptionDialog(
+            this, message, title, 0, OptionPane.QUESTION_MESSAGE, null, options, options[0]);
     boolean ret;
     if (result == 0) {
       ret = ProjectActions.doSave(proj);

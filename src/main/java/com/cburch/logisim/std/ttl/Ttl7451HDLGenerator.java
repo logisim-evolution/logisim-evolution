@@ -31,7 +31,7 @@ package com.cburch.logisim.std.ttl;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
-import com.cburch.logisim.fpga.fpgagui.FPGAReport;
+import com.cburch.logisim.fpga.gui.FPGAReport;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
 import java.util.ArrayList;
@@ -78,8 +78,10 @@ public class Ttl7451HDLGenerator extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, String> GetPortMap(
-      Netlist Nets, NetlistComponent ComponentInfo, FPGAReport Reporter, String HDLType) {
+      Netlist Nets, Object MapInfo, FPGAReport Reporter, String HDLType) {
     SortedMap<String, String> PortMap = new TreeMap<String, String>();
+    if (!(MapInfo instanceof NetlistComponent)) return PortMap;
+    NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
     PortMap.putAll(GetNetMap("A1", true, ComponentInfo, 0, Reporter, HDLType, Nets));
     PortMap.putAll(GetNetMap("B1", true, ComponentInfo, 9, Reporter, HDLType, Nets));
     PortMap.putAll(GetNetMap("C1", true, ComponentInfo, 7, Reporter, HDLType, Nets));

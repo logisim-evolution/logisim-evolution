@@ -31,6 +31,7 @@ package com.cburch.logisim.std.hdl;
 import static com.cburch.logisim.vhdl.Strings.S;
 
 import com.cburch.hdl.HdlModel;
+import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.util.Softwares;
 import java.awt.Dimension;
@@ -42,7 +43,6 @@ import java.io.InputStreamReader;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
@@ -180,8 +180,8 @@ public class VhdlContentComponent extends HdlContent {
     try {
       parser.parse();
     } catch (Exception ex) {
-      JOptionPane.showMessageDialog(
-          null, ex.getMessage(), S.get("validationParseError"), JOptionPane.ERROR_MESSAGE);
+      OptionPane.showMessageDialog(
+          null, ex.getMessage(), S.get("validationParseError"), OptionPane.ERROR_MESSAGE);
       return false;
     }
 
@@ -238,19 +238,19 @@ public class VhdlContentComponent extends HdlContent {
         JScrollPane sp = new JScrollPane(message);
         sp.setPreferredSize(new Dimension(700, 400));
 
-        JOptionPane.showOptionDialog(
+        OptionPane.showOptionDialog(
             null,
             sp,
             title.toString(),
-            JOptionPane.OK_OPTION,
-            JOptionPane.ERROR_MESSAGE,
+            OptionPane.OK_OPTION,
+            OptionPane.ERROR_MESSAGE,
             null,
             new String[] {S.get("validationErrorButton")},
             S.get("validationErrorButton"));
         return false;
       case Softwares.ABORD:
-        JOptionPane.showMessageDialog(
-            null, result.toString(), title.toString(), JOptionPane.INFORMATION_MESSAGE);
+        OptionPane.showMessageDialog(
+            null, result.toString(), title.toString(), OptionPane.INFORMATION_MESSAGE);
         return false;
       case Softwares.SUCCESS:
         return parseContent(content);

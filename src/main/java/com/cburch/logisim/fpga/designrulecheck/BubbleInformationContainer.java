@@ -38,9 +38,11 @@ public class BubbleInformationContainer {
 
   public void BubbleInformation() {
     MyInBubblesStartIndex =
-        MyInBubblesEndIndex =
-            MyOutBubblesStartIndex =
-                MyOutBubblesEndIndex = MyInOutBubblesStartIndex = MyInOutBubblesEndIndex = -1;
+    MyInBubblesEndIndex =
+    MyOutBubblesStartIndex =
+    MyOutBubblesEndIndex = 
+    MyInOutBubblesStartIndex = 
+    MyInOutBubblesEndIndex = -1;
   }
 
   public int GetInOutEndIndex() {

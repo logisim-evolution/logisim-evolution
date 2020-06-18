@@ -32,10 +32,9 @@ import static com.cburch.logisim.soc.Strings.S;
 
 import java.util.ArrayList;
 
-import javax.swing.JOptionPane;
-
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.data.Value;
+import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.soc.util.AssemblerAsmInstruction;
@@ -83,7 +82,7 @@ public class Nios2CustomInstructions implements AssemblerExecutionInterface {
     istate.setPort(Nios2.START, Value.createKnown(1, 0), 0);
     if (!done.equals(Value.TRUE) && !done.equals(Value.FALSE)) {
       custActive = false;
-      JOptionPane.showMessageDialog(null, S.get("Nios2DonePinError"), "Nios2s", JOptionPane.ERROR_MESSAGE);
+      OptionPane.showMessageDialog(null, S.get("Nios2DonePinError"), "Nios2s", OptionPane.ERROR_MESSAGE);
       state.getSimState().errorInExecution();
       return true;
     }

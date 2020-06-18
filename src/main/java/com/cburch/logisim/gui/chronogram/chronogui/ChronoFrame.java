@@ -31,7 +31,6 @@ package com.cburch.logisim.gui.chronogram.chronogui;
 import static com.cburch.logisim.gui.Strings.S;
 
 import com.cburch.logisim.circuit.Simulator;
-import com.cburch.logisim.file.Options;
 import com.cburch.logisim.gui.chronogram.chronodata.ChronoData;
 import com.cburch.logisim.gui.chronogram.chronodata.ChronoDataWriter;
 import com.cburch.logisim.gui.chronogram.chronodata.ChronoModelEventHandler;
@@ -39,12 +38,10 @@ import com.cburch.logisim.gui.chronogram.chronodata.NoSysclkException;
 import com.cburch.logisim.gui.chronogram.chronodata.SignalDataBus;
 import com.cburch.logisim.gui.chronogram.chronodata.TimelineParam;
 import com.cburch.logisim.gui.generic.LFrame;
+import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.gui.icons.SimulationIcon;
 import com.cburch.logisim.gui.log.LogFrame;
-import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.proj.Project;
-import com.cburch.logisim.std.wiring.Clock;
-import com.cburch.logisim.util.Icons;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -66,7 +63,6 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
@@ -367,7 +363,7 @@ public class ChronoFrame extends LFrame implements KeyListener, ActionListener, 
    * @param err Error message
    */
   public void errorMessage(String err) {
-    JOptionPane.showMessageDialog(mainPanel, err, "", JOptionPane.ERROR_MESSAGE);
+    OptionPane.showMessageDialog(mainPanel, err, "", OptionPane.ERROR_MESSAGE);
   }
 
   /** Export the current chronogram to file */

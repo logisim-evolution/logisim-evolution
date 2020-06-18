@@ -34,8 +34,11 @@ import com.cburch.logisim.LogisimVersion;
 import com.cburch.logisim.Main;
 import com.cburch.logisim.file.LoadFailedException;
 import com.cburch.logisim.file.Loader;
-import com.cburch.logisim.fpga.fpgagui.FPGACommanderTests;
+import com.cburch.logisim.fpga.download.Download;
+import com.cburch.logisim.fpga.file.BoardReaderClass;
+import com.cburch.logisim.fpga.gui.FPGAReport;
 import com.cburch.logisim.gui.generic.CanvasPane;
+import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.gui.icons.ErrorIcon;
 import com.cburch.logisim.gui.icons.InfoIcon;
 import com.cburch.logisim.gui.icons.QuestionIcon;
@@ -153,14 +156,14 @@ public class Startup implements AWTEventListener {
     if (AppPreferences.FirstTimeStartup.getBoolean() & !isTty) {
       System.out.println("First time startup");
       int Result =
-          JOptionPane.showConfirmDialog(
+          OptionPane.showConfirmDialog(
               null,
               "Logisim can automatically check for new updates and versions.\n"
                   + "Would you like to enable this feature?\n"
                   + "(This feature can be disabled in Window -> Preferences -> Software)\n",
               "Autoupdate",
-              JOptionPane.YES_NO_OPTION);
-      if (Result == JOptionPane.YES_OPTION) AppPreferences.AutomaticUpdateCheck.setBoolean(true);
+              OptionPane.YES_NO_OPTION);
+      if (Result == OptionPane.YES_OPTION) AppPreferences.AutomaticUpdateCheck.setBoolean(true);
       AppPreferences.FirstTimeStartup.set(false);
     }
 
@@ -621,14 +624,14 @@ public class Startup implements AWTEventListener {
     Monitor.setProgress(3);
     if (remoteVersion.compareTo(Main.VERSION) > 0) {
       int answer =
-          JOptionPane.showConfirmDialog(
+          OptionPane.showConfirmDialog(
               null,
               "A new Logisim-evolution version ("
                   + remoteVersion
                   + ") is available!\nWould you like to update?",
               "Update",
-              JOptionPane.YES_NO_OPTION,
-              JOptionPane.INFORMATION_MESSAGE);
+              OptionPane.YES_NO_OPTION,
+              OptionPane.INFORMATION_MESSAGE);
 
       if (answer == 1) {
         // User refused to update -- we just hope he gets sufficiently
@@ -646,11 +649,11 @@ public class Startup implements AWTEventListener {
         logger.error(
             "Error in the syntax of the URI for the path of the executed Logisim-evolution JAR file!");
         e.printStackTrace();
-        JOptionPane.showMessageDialog(
+        OptionPane.showMessageDialog(
             null,
             "An error occurred while updating to the new Logisim-evolution version.\nPlease check the console for log information.",
             "Update failed",
-            JOptionPane.ERROR_MESSAGE);
+            OptionPane.ERROR_MESSAGE);
         Monitor.close();
         return (false);
       }
@@ -661,21 +664,21 @@ public class Startup implements AWTEventListener {
       boolean updateOk = downloadInstallUpdatedVersion(remoteJar, jarFile.getAbsolutePath());
 
       if (updateOk) {
-        JOptionPane.showMessageDialog(
+        OptionPane.showMessageDialog(
             null,
             "The new Logisim-evolution version ("
                 + remoteVersion
                 + ") has been correctly installed.\nPlease restart Logisim-evolution for the changes to take effect.",
             "Update succeeded",
-            JOptionPane.INFORMATION_MESSAGE);
+            OptionPane.INFORMATION_MESSAGE);
         Monitor.close();
         return (true);
       } else {
-        JOptionPane.showMessageDialog(
+        OptionPane.showMessageDialog(
             null,
             "An error occurred while updating to the new Logisim-evolution version.\nPlease check the console for log information.",
             "Update failed",
-            JOptionPane.ERROR_MESSAGE);
+            OptionPane.ERROR_MESSAGE);
         Monitor.close();
         return (false);
       }
@@ -842,15 +845,18 @@ public class Startup implements AWTEventListener {
   
   boolean FpgaDownload(Project proj) {
     /* Testing synthesis */
-    FPGACommanderTests testImpFpga =
-      new FPGACommanderTests(
-          proj,
-          testCircuitImpMapFile,
-          testCircuitImpName,
-          testCircuitImpBoard,
-          testTickFrequency,
-          testCircuitHdlOnly);
-    return testImpFpga.StartTests();
+    Download Downloader =
+        new Download(
+        	proj,
+        	testCircuitImpName,
+        	testTickFrequency,
+        	new FPGAReport(),
+        	new BoardReaderClass(AppPreferences.Boards.GetBoardFilePath(testCircuitImpBoard)).GetBoardInformation(),
+        	testCircuitImpMapFile,
+            false,
+            false,
+            testCircuitHdlOnly);
+    return Downloader.runtty();
   }
 
   private void loadTemplate(Loader loader, File templFile, boolean templEmpty) {
@@ -1075,16 +1081,16 @@ public class Startup implements AWTEventListener {
           JOptionPane pane = (JOptionPane) container;
           if (HasIcon(pane)) {
             switch (pane.getMessageType()) {
-              case JOptionPane.ERROR_MESSAGE:
+              case OptionPane.ERROR_MESSAGE:
                 pane.setIcon(new ErrorIcon());
                 break;
-              case JOptionPane.QUESTION_MESSAGE:
+              case OptionPane.QUESTION_MESSAGE:
                 pane.setIcon(new QuestionIcon());
                 break;
-              case JOptionPane.INFORMATION_MESSAGE:
+              case OptionPane.INFORMATION_MESSAGE:
                 pane.setIcon(new InfoIcon());
                 break;
-              case JOptionPane.WARNING_MESSAGE:
+              case OptionPane.WARNING_MESSAGE:
                 pane.setIcon(new WarningIcon());
                 break;
             }

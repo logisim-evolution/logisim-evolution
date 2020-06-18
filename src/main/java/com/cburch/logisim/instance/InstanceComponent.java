@@ -47,6 +47,7 @@ import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
+import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.tools.TextEditable;
 import com.cburch.logisim.tools.ToolTipMaker;
 import com.cburch.logisim.util.EventSourceWeakSupport;
@@ -61,7 +62,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import javax.swing.JOptionPane;
 
 public class InstanceComponent implements Component, AttributeListener, ToolTipMaker {
   private EventSourceWeakSupport<ComponentListener> listeners;
@@ -156,10 +156,10 @@ public class InstanceComponent implements Component, AttributeListener, ToolTipM
         if (!SyntaxChecker.isVariableNameAcceptable(value, true)) {
           e.getSource().setValue(lattr, Oldvalue);
         } else if (getFactory().getName().toUpperCase().equals(value.toUpperCase())) {
-          JOptionPane.showMessageDialog(null, S.get("MatchedLabelNameError"));
+          OptionPane.showMessageDialog(null, S.get("MatchedLabelNameError"));
           e.getSource().setValue(lattr, Oldvalue);
         } else if (CorrectLabel.IsKeyword(value, false)) {
-          JOptionPane.showMessageDialog(null, "\"" + value + "\": " + S.get("KeywordNameError"));
+          OptionPane.showMessageDialog(null, "\"" + value + "\": " + S.get("KeywordNameError"));
           e.getSource().setValue(lattr, Oldvalue);
         } else {
           fireLabelChanged(e);

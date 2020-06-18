@@ -36,7 +36,7 @@ import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeEvent;
 import com.cburch.logisim.data.AttributeListener;
 import com.cburch.logisim.data.AttributeSet;
-import com.cburch.logisim.fpga.hdlgenerator.HDLColorRenderer;
+import com.cburch.logisim.fpga.gui.HDLColorRenderer;
 import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
 import java.awt.Component;
 import java.awt.Window;

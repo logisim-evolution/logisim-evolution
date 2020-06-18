@@ -34,9 +34,9 @@ import com.cburch.logisim.data.AttributeDefaultProvider;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Location;
+import com.cburch.logisim.fpga.data.ComponentMapInformationContainer;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
-import com.cburch.logisim.fpga.hdlgenerator.IOComponentInformationContainer;
 import com.cburch.logisim.util.StringGetter;
 import java.awt.Color;
 
@@ -88,8 +88,6 @@ public interface ComponentFactory extends AttributeDefaultProvider {
   public String getHDLName(AttributeSet attrs);
 
   public String getHDLTopName(AttributeSet attrs);
-
-  public IOComponentInformationContainer getIOInformation();
 
   public String getName();
 

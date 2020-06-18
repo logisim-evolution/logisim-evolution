@@ -38,7 +38,7 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-class PrefOptionList implements ActionListener, PropertyChangeListener {
+public class PrefOptionList implements ActionListener, PropertyChangeListener {
   private PrefMonitor<String> pref;
   private StringGetter labelStr;
 
@@ -72,11 +72,11 @@ class PrefOptionList implements ActionListener, PropertyChangeListener {
     return ret;
   }
 
-  JComboBox<PrefOption> getJComboBox() {
+  public JComboBox<PrefOption> getJComboBox() {
     return combo;
   }
 
-  JLabel getJLabel() {
+  public JLabel getJLabel() {
     return label;
   }
 

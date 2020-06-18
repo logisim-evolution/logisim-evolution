@@ -48,9 +48,10 @@ import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.TestException;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.file.LogisimFile;
+import com.cburch.logisim.fpga.data.MappableResourcesContainer;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import com.cburch.logisim.fpga.fpgagui.FPGAReport;
-import com.cburch.logisim.fpga.fpgagui.MappableResourcesContainer;
+import com.cburch.logisim.fpga.gui.FPGAReport;
+import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceComponent;
 import com.cburch.logisim.instance.InstanceState;
@@ -88,7 +89,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.TreeSet;
 import java.util.WeakHashMap;
-import javax.swing.JOptionPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -194,7 +194,7 @@ public class Circuit {
         myFactory instanceof Pin) {
       if (ShowDialog) {
         String msg = S.get("ComponentLabelEqualCircuitName");
-        JOptionPane.showMessageDialog(null, "\"" + Name + "\" : " + msg);
+        OptionPane.showMessageDialog(null, "\"" + Name + "\" : " + msg);
       }
       return false;
     }
@@ -208,7 +208,7 @@ public class Circuit {
       if (comp.getFactory().getName().toUpperCase().equals(Name.toUpperCase())) {
         if (ShowDialog) {
           String msg = S.get("ComponentLabelNameError");
-          JOptionPane.showMessageDialog(null, "\"" + Name + "\" : " + msg);
+          OptionPane.showMessageDialog(null, "\"" + Name + "\" : " + msg);
         }
         return true;
       }
@@ -229,7 +229,7 @@ public class Circuit {
         if (Label.toUpperCase().equals(Name.toUpperCase())) {
           if (ShowDialog) {
             String msg = S.get("UsedLabelNameError");
-            JOptionPane.showMessageDialog(null, "\"" + Name + "\" : " + msg);
+            OptionPane.showMessageDialog(null, "\"" + Name + "\" : " + msg);
           }
           return true;
         }
@@ -743,13 +743,8 @@ public class Circuit {
   }
   
   public Map<String,CircuitMapInfo> getMapInfo(String BoardName) {
-    if (MyMappableResources.containsKey(BoardName)) {
-      HashMap<String,CircuitMapInfo> ret = new HashMap<String,CircuitMapInfo>();
-      for (String key : MyMappableResources.get(BoardName).MappedList()) {
-        ret.put(key, MyMappableResources.get(BoardName).getCircuitMap(key));
-      }
-      return ret;
-    }
+    if (MyMappableResources.containsKey(BoardName))
+      return MyMappableResources.get(BoardName).getCircuitMap();
     if (LoadedMaps.containsKey(BoardName))
       return LoadedMaps.get(BoardName);
     return new HashMap<String,CircuitMapInfo>();
@@ -759,7 +754,7 @@ public class Circuit {
 	if (LoadedMaps.containsKey(BoardName)) {
       for (String key : LoadedMaps.get(BoardName).keySet()) {
     	CircuitMapInfo cmap = LoadedMaps.get(BoardName).get(key);
-        map.TryMap(key, cmap);
+        map.tryMap(key, cmap);
       }
       LoadedMaps.remove(BoardName);
 	}
@@ -983,7 +978,7 @@ public class Circuit {
     }
     /* we do not have to check the wires as (1) Wire is a reserved keyword, and (2) they cannot have a label */
     if (HaveAChange)
-      JOptionPane.showMessageDialog(
+      OptionPane.showMessageDialog(
           null, "\"" + Label + "\" : " + S.get("ComponentLabelCollisionError"));
   }
 
