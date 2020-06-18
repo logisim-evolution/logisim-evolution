@@ -417,12 +417,13 @@ public class PortHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     return Outputs;
   }
 
-  // #9,12
   @Override
   public SortedMap<String, String> GetPortMap(
-      Netlist Nets, NetlistComponent ComponentInfo, FPGAReport Reporter, String HDLType) {
-    String ComponentName = ComponentInfo.GetComponent().getAttributeSet().getValue(StdAttr.LABEL);
+	      Netlist Nets, Object MapInfo, FPGAReport Reporter, String HDLType) {
     SortedMap<String, String> PortMap = new TreeMap<String, String>();
+    if (!(MapInfo instanceof NetlistComponent)) return PortMap;
+    NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
+    String ComponentName = ComponentInfo.GetComponent().getAttributeSet().getValue(StdAttr.LABEL);
 
     for (int i = 0; i < compMap.get(ComponentName).size(); i++) {
       String key = null;

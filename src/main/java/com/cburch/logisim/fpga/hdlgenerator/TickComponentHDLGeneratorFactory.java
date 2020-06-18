@@ -169,7 +169,7 @@ public class TickComponentHDLGeneratorFactory extends AbstractHDLGeneratorFactor
 
   @Override
   public SortedMap<String, String> GetPortMap(
-      Netlist Nets, NetlistComponent ComponentInfo, FPGAReport Reporter, String HDLType) {
+      Netlist Nets, Object MapInfo, FPGAReport Reporter, String HDLType) {
     SortedMap<String, String> PortMap = new TreeMap<String, String>();
     PortMap.put("FPGAClock", TickComponentHDLGeneratorFactory.FPGAClock);
     PortMap.put("FPGATick", TickComponentHDLGeneratorFactory.FPGATick);

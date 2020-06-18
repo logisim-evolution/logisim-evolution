@@ -271,8 +271,10 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, String> GetPortMap(
-      Netlist Nets, NetlistComponent ComponentInfo, FPGAReport Reporter, String HDLType) {
+	      Netlist Nets, Object MapInfo, FPGAReport Reporter, String HDLType) {
     SortedMap<String, String> PortMap = new TreeMap<String, String>();
+    if (!(MapInfo instanceof NetlistComponent)) return PortMap;
+    NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
     String ZeroBit = (HDLType.equals(VHDL)) ? "'0'" : "1'b0";
     String SetBit = (HDLType.equals(VHDL)) ? "'1'" : "1'b1";
     String BracketOpen = (HDLType.equals(VHDL)) ? "(" : "[";

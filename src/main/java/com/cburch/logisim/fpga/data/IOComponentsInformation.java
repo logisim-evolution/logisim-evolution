@@ -34,6 +34,8 @@ import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
+import javax.swing.JPanel;
+
 import com.cburch.logisim.fpga.gui.BoardManipulator;
 import com.cburch.logisim.prefs.AppPreferences;
 
@@ -90,9 +92,9 @@ public class IOComponentsInformation {
   public boolean hasHighlighted() { return highlighted != null; }
   public FPGAIOInformationContainer getHighligted() { return highlighted; }
   
-  public boolean tryMap() {
+  public boolean tryMap(JPanel parent) {
 	if (!mapMode) return false;
-    if (highlighted != null) return highlighted.tryMap();
+    if (highlighted != null) return highlighted.tryMap(parent);
     return false;
   }
   

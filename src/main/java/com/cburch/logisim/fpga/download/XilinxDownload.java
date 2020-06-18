@@ -33,22 +33,16 @@ import static com.cburch.logisim.fpga.Strings.S;
 import com.cburch.logisim.fpga.data.BoardInformation;
 import com.cburch.logisim.fpga.data.DriveStrength;
 import com.cburch.logisim.fpga.data.FPGAIOInformationContainer;
-import com.cburch.logisim.fpga.data.IOComponentTypes;
 import com.cburch.logisim.fpga.data.IoStandards;
+import com.cburch.logisim.fpga.data.MapComponent;
 import com.cburch.logisim.fpga.data.MappableResourcesContainer;
 import com.cburch.logisim.fpga.data.PullBehaviors;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.gui.FPGAReport;
 import com.cburch.logisim.fpga.hdlgenerator.FileWriter;
-import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.TickComponentHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.ToplevelHDLGeneratorFactory;
 import com.cburch.logisim.fpga.settings.VendorSoftware;
-import com.cburch.logisim.std.io.DipSwitch;
-import com.cburch.logisim.std.io.PortIO;
-import com.cburch.logisim.std.io.RGBLed;
-import com.cburch.logisim.std.io.ReptarLocalBus;
-import com.cburch.logisim.std.io.SevenSegment;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -315,8 +309,41 @@ public class XilinxDownload implements VendorDownload {
               + " HIGH 50 % ;");
       Contents.add("");
     }
-    Contents.addAll(MapInfo.GetFPGAPinLocs(VendorSoftware.VendorXilinx));
+    Contents.addAll(GetPinLocStrings());
     return FileWriter.WriteContents(UcfFile, Contents, Reporter);
+  }
+  
+  private ArrayList<String> GetPinLocStrings() {
+    ArrayList<String> Contents = new ArrayList<String>();
+    StringBuffer Temp = new StringBuffer();
+    for (ArrayList<String> key : MapInfo.getMappableResources().keySet()) {
+      MapComponent map = MapInfo.getMappableResources().get(key);
+      for (int i = 0 ; i < map.getNrOfPins() ; i++) {
+        if (map.isMapped(i) && !map.IsOpenMapped(i) && !map.IsConstantMapped(i)) {
+          Temp.setLength(0);
+          Temp.append("NET \"");
+          if (map.isExternalInverted(i)) Temp.append("n_");
+          Temp.append(map.getHdlString(i)+"\" ");
+          Temp.append("LOC = \""+map.getPinLocation(i)+"\" ");
+          FPGAIOInformationContainer info = map.getFpgaInfo(i);
+          if (info != null) {
+            if (info.GetPullBehavior() != PullBehaviors.Unknown && info.GetPullBehavior() != PullBehaviors.Float) {
+              Temp.append("| " + PullBehaviors.getContraintedPullString(info.GetPullBehavior()) + " ");
+            }
+            if (info.GetDrive() != DriveStrength.Unknown
+                && info.GetDrive() != DriveStrength.DefaulStength) {
+              Temp.append("| DRIVE = " + DriveStrength.GetContraintedDriveStrength(info.GetDrive()) + " ");
+            }
+            if (info.GetIOStandard() != IoStandards.Unknown && info.GetIOStandard() != IoStandards.DefaulStandard) {
+              Temp.append("| IOSTANDARD = " + IoStandards.GetConstraintedIoStandard(info.GetIOStandard()) + " ");
+            }
+          }
+          Temp.append(";");
+          Contents.add(Temp.toString());
+        }
+      }
+    }
+    return Contents;
   }
 
   @Override
@@ -468,69 +495,4 @@ public class XilinxDownload implements VendorDownload {
     return true;
   }
   
-  public static ArrayList<String> GetPinlocStrings(String direction, int StartId, FPGAIOInformationContainer info) {
-    ArrayList<String> Contents = new ArrayList<String>();
-    StringBuffer Temp = new StringBuffer();
-    Integer start = 0;
-    Integer end = info.getNrOfPins();
-    ArrayList<String> labels = null;
-    IOComponentTypes MyType = info.GetType();
-    if (MyType.equals(IOComponentTypes.PortIO)) {
-      labels = PortIO.GetLabels(IOComponentTypes.GetNrOfFPGAPins(MyType));
-    } else if (MyType.equals(IOComponentTypes.LocalBus)) {
-//      labels = ReptarLocalBus.GetLabels(); /* ktt1: TO be fixed */
-      if (direction.equals("in")) {
-        end = IOComponentTypes.GetFPGAInputRequirement(MyType);
-      } else if (direction.equals("out")) {
-        // TODO: YSY
-        Contents.add(
-            "NET \"FPGA_LB_OUT_0\" LOC = \"R24\" | IOSTANDARD = LVCMOS18 ; # SP6_LB_WAIT3_o");
-        Contents.add("NET \"FPGA_LB_OUT_1\" LOC = \"AB30\" | IOSTANDARD = LVCMOS18 ; # IRQ_o");
-        return Contents;
-      } else if (direction.equals("inout")) {
-        start =
-            IOComponentTypes.GetFPGAInputRequirement(MyType)
-                + IOComponentTypes.GetFPGAOutputRequirement(MyType);
-        end = start + IOComponentTypes.GetFPGAInOutRequirement(MyType);
-      }
-    } else if (MyType.equals(IOComponentTypes.DIPSwitch)) {
-      labels = DipSwitch.GetLabels(IOComponentTypes.GetNrOfFPGAPins(MyType));
-    } else if (MyType.equals(IOComponentTypes.SevenSegment)) {
-      labels = SevenSegment.GetLabels();
-    } else if (MyType.equals(IOComponentTypes.RGBLED)) {
-      labels = RGBLed.GetLabels();
-    }
-    for (int i = start; i < end; i++) {
-      Temp.setLength(0);
-      Temp.append("LOC = \"" + info.getPinLocation(i) + "\" ");
-      if (info.GetPullBehavior() != PullBehaviors.Unknown && info.GetPullBehavior() != PullBehaviors.Float) {
-        Temp.append("| " + PullBehaviors.getContraintedPullString(info.GetPullBehavior()) + " ");
-      }
-      if (info.GetDrive() != DriveStrength.Unknown
-          && info.GetDrive() != DriveStrength.DefaulStength) {
-        Temp.append(
-            "| DRIVE = " + DriveStrength.GetContraintedDriveStrength(info.GetDrive()) + " ");
-      }
-      if (info.GetIOStandard() != IoStandards.Unknown && info.GetIOStandard() != IoStandards.DefaulStandard) {
-        Temp.append("| IOSTANDARD = " + IoStandards.GetConstraintedIoStandard(info.GetIOStandard()) + " ");
-      }
-      Temp.append(";");
-      if (labels != null) {
-        Temp.append(" # " + labels.get(i));
-      }
-      String NetName = "";
-      if (direction == "in") {
-        NetName =
-            HDLGeneratorFactory.FPGAInputPinName + "_" + Integer.toString(StartId + i - start);
-      } else if (direction == "inout") {
-        NetName =
-            HDLGeneratorFactory.FPGAInOutPinName + "_" + Integer.toString(StartId + i - start);
-      } else {
-        NetName =
-            HDLGeneratorFactory.FPGAOutputPinName + "_" + Integer.toString(StartId + i - start);
-      }
-      Contents.add("NET \"" + NetName + "\" " + Temp.toString());
-    }
-    return Contents;
-  }
 }

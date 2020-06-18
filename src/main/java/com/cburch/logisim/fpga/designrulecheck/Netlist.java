@@ -49,7 +49,6 @@ import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceComponent;
 import com.cburch.logisim.instance.StdAttr;
-import com.cburch.logisim.std.io.ReptarLocalBus;
 import com.cburch.logisim.std.wiring.Clock;
 import com.cburch.logisim.std.wiring.Pin;
 import com.cburch.logisim.std.wiring.Probe;
@@ -2199,11 +2198,6 @@ public class Netlist implements CircuitListener {
       } else {
         MyInputPorts.add(NormalComponent);
       }
-    } else if (comp.getFactory() instanceof ReptarLocalBus) {
-      MyInOutPorts.add(NormalComponent);
-      MyInputPorts.add(NormalComponent);
-      MyOutputPorts.add(NormalComponent);
-      MyComponents.add(NormalComponent);
     } else {
       MyComponents.add(NormalComponent);
     }

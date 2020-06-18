@@ -123,8 +123,10 @@ public class VhdlHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, String> GetPortMap(
-      Netlist Nets, NetlistComponent ComponentInfo, FPGAReport Reporter, String HDLType) {
+      Netlist Nets, Object MapInfo, FPGAReport Reporter, String HDLType) {
     SortedMap<String, String> PortMap = new TreeMap<String, String>();
+    if (!(MapInfo instanceof NetlistComponent)) return PortMap;
+    NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
 
     AttributeSet attrs = ComponentInfo.GetComponent().getAttributeSet();
     VhdlContent content = ((VhdlEntityAttributes) attrs).getContent();

@@ -28,10 +28,10 @@
 
 package com.cburch.logisim.fpga.data;
 
-import com.cburch.logisim.fpga.download.Download;
 import com.cburch.logisim.fpga.file.BoardWriterClass;
 import com.cburch.logisim.fpga.gui.BoardManipulator;
 import com.cburch.logisim.fpga.gui.FPGAIOInformationSettingsDialog;
+import com.cburch.logisim.fpga.gui.PartialMapDialog;
 import com.cburch.logisim.prefs.AppPreferences;
 
 import java.awt.BasicStroke;
@@ -42,6 +42,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
+
+import javax.swing.JPanel;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -306,7 +308,7 @@ public class FPGAIOInformationContainer implements Cloneable {
     if (MyIOPins == null) return 0;
     return MyIOPins.size();
   }
-
+  
   public void edit(Boolean deleteButton, IOComponentsInformation IOcomps) {
     FPGAIOInformationSettingsDialog.GetSimpleInformationDialog(deleteButton,IOcomps,this);
   }
@@ -447,6 +449,10 @@ public class FPGAIOInformationContainer implements Cloneable {
     return MyLabel;
   }
   
+  public String GetDisplayString() {
+    return MyLabel == null ? MyType.name() : MyLabel;
+  }
+  
   public void setLabel(String label) {
     MyLabel = label;
   }
@@ -469,10 +475,6 @@ public class FPGAIOInformationContainer implements Cloneable {
 
   public int getNrOfPins() {
     return NrOfPins;
-  }
-
-  public ArrayList<String> GetPinlocStrings(int Vendor, String direction, int StartId) {
-    return Download.GetPinlocStrings(Vendor, direction, StartId, this);
   }
 
   public char GetPullBehavior() {
@@ -645,6 +647,22 @@ public class FPGAIOInformationContainer implements Cloneable {
   public int nrInputs() { return MyInputPins == null ? 0 : MyInputPins.size(); }
   public int nrOutputs() { return MyOutputPins == null ? 0 : MyOutputPins.size(); }
   public int nrIOs() { return MyIOPins == null ? 0 : MyIOPins.size(); }
+  public HashSet<Integer> getInputs() { return MyInputPins; }
+  public HashSet<Integer> getOutputs() { return MyOutputPins; }
+  public HashSet<Integer> getIOs() { return MyIOPins; }
+  public String getPinName(int index) {
+    if (MyInputPins != null && MyInputPins.contains(index)) {
+      return IOComponentTypes.getInputLabel(NrOfPins, index, MyType);
+    }
+    if (MyOutputPins != null && MyOutputPins.contains(index)) {
+      return IOComponentTypes.getOutputLabel(NrOfPins, index, MyType);
+    }
+    if (MyIOPins != null && MyIOPins.contains(index)) {
+      return IOComponentTypes.getIOLabel(NrOfPins, index, MyType);
+    }
+    return ""+index;
+  }
+
   
   public boolean setSelectable(MapListModel.MapInfo comp) {
     selComp = comp;
@@ -703,18 +721,23 @@ public class FPGAIOInformationContainer implements Cloneable {
     return false;
   }
   
-  public boolean tryMap() {
+  public boolean tryMap(JPanel parent) {
 	if (!selectable) return false;
 	if (selComp == null) return false;
 	MapComponent map = selComp.getMap();
+	if (selComp.getPin() >= 0 && NrOfPins == 1) {
+      /* single pin only */
+      return map.tryMap(selComp.getPin(), this, 0);
+	} 
 	if (map.nrInputs() == nrInputs() && 
         map.nrOutputs() == nrOutputs() &&
-        map.nrIOs() == nrIOs()) {
+        map.nrIOs() == nrIOs()&&
+        selComp.getPin() < 0) {
 	  /* complete map */
 	  return map.tryMap(this);
 	}
-	/* TODO: partial map */
-    return false;
+	PartialMapDialog diag = new PartialMapDialog(selComp,this,parent);
+    return diag.doit();
   }
   
   private void paintmapped(Graphics2D g, float scale, int nrOfMaps) {

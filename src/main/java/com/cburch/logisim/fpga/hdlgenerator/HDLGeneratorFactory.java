@@ -83,6 +83,7 @@ public interface HDLGeneratorFactory {
       Netlist Nets,
       Long ComponentId,
       NetlistComponent ComponentInfo,
+      MappableResourcesContainer MapInfo,
       FPGAReport Reporter,
       String Name,
       String HDLType);
@@ -103,12 +104,6 @@ public interface HDLGeneratorFactory {
       FPGAReport Reporter,
       String CircuitName,
       String HDLType);
-
-  public ArrayList<String> GetInlinedCode(
-      String HDLType,
-      ArrayList<String> ComponentIdentifier,
-      FPGAReport Reporter,
-      MappableResourcesContainer MapInfo);
 
   public String GetRelativeDirectory(String HDLType);
 

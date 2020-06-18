@@ -80,8 +80,10 @@ public class Ttl7464HDLGenerator extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, String> GetPortMap(
-      Netlist Nets, NetlistComponent ComponentInfo, FPGAReport Reporter, String HDLType) {
+      Netlist Nets, Object MapInfo, FPGAReport Reporter, String HDLType) {
     SortedMap<String, String> PortMap = new TreeMap<String, String>();
+    if (!(MapInfo instanceof NetlistComponent)) return PortMap;
+    NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
     PortMap.putAll(GetNetMap("A", true, ComponentInfo, 0, Reporter, HDLType, Nets));
     PortMap.putAll(GetNetMap("B", true, ComponentInfo, 11, Reporter, HDLType, Nets));
     PortMap.putAll(GetNetMap("C", true, ComponentInfo, 10, Reporter, HDLType, Nets));

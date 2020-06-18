@@ -37,6 +37,8 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -50,6 +52,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
+import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JList;
@@ -75,10 +78,11 @@ import com.cburch.logisim.fpga.data.SimpleRectangle;
 import com.cburch.logisim.fpga.file.PNGFileFilter;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.prefs.AppPreferences;
+import com.cburch.logisim.util.LocaleListener;
 
 public class BoardManipulator extends JPanel implements MouseListener, 
      MouseMotionListener, ChangeListener , PropertyChangeListener , IOComponentsListener ,
-     ListSelectionListener, WindowListener {
+     ListSelectionListener, WindowListener, LocaleListener, ActionListener {
   private static final long serialVersionUID = 1L;
 
   public static final int IMAGE_WIDTH = 740;
@@ -117,6 +121,9 @@ public class BoardManipulator extends JPanel implements MouseListener,
   private MappableResourcesContainer MapInfo;
   private JList<MapListModel.MapInfo> unmappedList;
   private JList<MapListModel.MapInfo> mappedList;
+  private JButton UnMapButton;
+  private JButton UnMapAllButton;
+
   
   public BoardManipulator(Frame parentFrame) {
     mapMode = false;
@@ -185,6 +192,8 @@ public class BoardManipulator extends JPanel implements MouseListener,
     }
     if (unmappedList != null) unmappedList = null;
     if (mappedList != null) mappedList = null;
+    if (UnMapButton != null) UnMapButton = null;
+    if (UnMapAllButton != null) UnMapAllButton = null;
   }
   
   public ZoomSlider getZoomSlider() { return zoom; }
@@ -194,15 +203,38 @@ public class BoardManipulator extends JPanel implements MouseListener,
   }
   
   public void update() {
-    if (unmappedList != null) ((MapListModel)unmappedList.getModel()).rebuild();
-    if (mappedList != null) ((MapListModel)mappedList.getModel()).rebuild();
-    unmappedList.clearSelection();
-    mappedList.clearSelection();
-    
+    if (unmappedList != null) {
+      ((MapListModel)unmappedList.getModel()).rebuild();
+      unmappedList.clearSelection();
+    }
+    if (mappedList != null) {
+      ((MapListModel)mappedList.getModel()).rebuild();
+      mappedList.clearSelection();
+    }
+    if (UnMapButton != null) UnMapButton.setEnabled(false);
+    if (UnMapAllButton != null) UnMapAllButton.setEnabled(false);
   }
   
   public int getHeight() { 
     return AppPreferences.getScaled(IMAGE_HEIGHT+(mapMode ? CONSTANT_BAR_HEIGHT : 0), scale); 
+  }
+  
+  public JButton getUnmapOneButton() {
+    if (UnMapButton == null) UnMapButton = new JButton();
+    UnMapButton.setEnabled(false);
+    UnMapButton.setActionCommand("unmapone");
+    UnMapButton.addActionListener(this);
+    localeChanged();
+    return UnMapButton;
+  }
+  
+  public JButton getUnmapAllButton() {
+    if (UnMapAllButton == null) UnMapAllButton = new JButton();
+    UnMapAllButton.setActionCommand("unmapall");
+    UnMapAllButton.addActionListener(this);
+    UnMapAllButton.setEnabled(false);
+    localeChanged();
+    return UnMapAllButton;
   }
   
   private int getPictureHeight() { 
@@ -378,7 +410,7 @@ public class BoardManipulator extends JPanel implements MouseListener,
           S.get("BoardManipLoad"), OptionPane.ERROR_MESSAGE);
         }
       }
-    } else if (mapMode && IOcomps.tryMap()) {
+    } else if (mapMode && IOcomps.tryMap(this)) {
         this.repaint();
         int sel = unmappedList.getSelectedIndex();
         update();
@@ -386,6 +418,7 @@ public class BoardManipulator extends JPanel implements MouseListener,
         if (sel >= 0) {
           unmappedList.setSelectedIndex(sel);
         }
+        MapInfo.markChanged();
       };
   }
 
@@ -453,13 +486,20 @@ public class BoardManipulator extends JPanel implements MouseListener,
     if (e.getSource().equals(unmappedList)) {
       if (unmappedList.getSelectedIndex() >= 0) {
         mappedList.clearSelection();
+        if (UnMapButton != null) UnMapButton.setEnabled(false);
         IOcomps.setSelectable(unmappedList.getSelectedValue(), scale);
       } else IOcomps.removeSelectable(scale);
 	} else if (e.getSource().equals(mappedList)) {
       if (mappedList.getSelectedIndex() >= 0) {
         unmappedList.clearSelection();
+        if (UnMapButton != null) UnMapButton.setEnabled(true);
         IOcomps.setSelectable(mappedList.getSelectedValue(), scale);
       } else IOcomps.removeSelectable(scale);
+      if (mappedList.getModel().getSize() > 0) {
+        if (UnMapAllButton != null) UnMapAllButton.setEnabled(true);
+      } else {
+        if (UnMapAllButton != null) UnMapAllButton.setEnabled(false);
+      }
     }
   }
 
@@ -485,5 +525,32 @@ public class BoardManipulator extends JPanel implements MouseListener,
   @Override
   public void windowDeactivated(WindowEvent e) { 
     IOcomps.removeSelectable(scale);
+    if (UnMapButton != null) UnMapButton.setEnabled(false);
+  }
+
+  @Override
+  public void localeChanged() {
+    if (UnMapButton != null) UnMapButton.setText(S.get("BoardMapRelease"));
+    if (UnMapAllButton != null) UnMapAllButton.setText(S.get("BoardMapRelAll"));
+  }
+
+  @Override
+  public void actionPerformed(ActionEvent e) {
+    if (e.getActionCommand().equals("unmapone")) {
+      if (mappedList.getSelectedIndex() >= 0) {
+        MapListModel.MapInfo map = mappedList.getSelectedValue();
+        if (map.getPin() < 0) map.getMap().unmap();
+        else map.getMap().unmap(map.getPin());
+        IOcomps.removeSelectable(scale);
+        update();
+        MapInfo.markChanged();
+      }
+    } else if (e.getActionCommand().contentEquals("unmapall")) {
+      IOcomps.removeSelectable(scale);
+      MapInfo.unMapAll();
+      update();
+      repaint();
+      MapInfo.markChanged();
+    }
   }
 }

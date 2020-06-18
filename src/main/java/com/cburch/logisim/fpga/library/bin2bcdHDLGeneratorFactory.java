@@ -94,8 +94,10 @@ public class bin2bcdHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, String> GetPortMap(
-      Netlist Nets, NetlistComponent ComponentInfo, FPGAReport Reporter, String HDLType) {
+	      Netlist Nets, Object MapInfo, FPGAReport Reporter, String HDLType) {
     SortedMap<String, String> PortMap = new TreeMap<String, String>();
+	if (!(MapInfo instanceof NetlistComponent)) return PortMap;
+	NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
     int BinBits = ComponentInfo.GetComponent().getEnd(0).getWidth().getWidth();
     int NrOfPorts = (int) (Math.log10(1 << BinBits) + 1.0);
     PortMap.putAll(GetNetMap("BinValue", true, ComponentInfo, 0, Reporter, HDLType, Nets));

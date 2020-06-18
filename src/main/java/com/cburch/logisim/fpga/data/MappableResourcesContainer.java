@@ -118,7 +118,7 @@ public class MappableResourcesContainer {
     ArrayList<String> BoardId = new ArrayList<String>();
     BoardId.add(currentUsedBoard.getBoardName());
     Map<ArrayList<String>, NetlistComponent> newMappableResources = 
-    	       myCircuit.getNetList().GetMappableResources(BoardId, true);
+           myCircuit.getNetList().GetMappableResources(BoardId, true);
     for (ArrayList<String> key : newMappableResources.keySet()) {
       if (cur.contains(key)) {
         MapComponent comp = myMappableResources.get(key);
@@ -153,8 +153,8 @@ public class MappableResourcesContainer {
   }
   
   public Map<String,CircuitMapInfo> getCircuitMap() {
-	int id = 0;
-	HashMap<String,CircuitMapInfo> result = new HashMap<String,CircuitMapInfo>(); 
+    int id = 0;
+    HashMap<String,CircuitMapInfo> result = new HashMap<String,CircuitMapInfo>(); 
     for (ArrayList<String> key : myMappableResources.keySet()) {
       result.put(Integer.toString(id++), new CircuitMapInfo(myMappableResources.get(key)));
     }
@@ -176,8 +176,69 @@ public class MappableResourcesContainer {
       if (!key.isEmpty()) result.add(key);
     return result;
   }
-	  
+  
   public void markChanged() {
     myCircuit.getProject().setForcedDirty();
+  }
+  
+  public boolean isCompletelyMapped() {
+boolean result = true;
+    for (ArrayList<String> key : myMappableResources.keySet()) {
+      MapComponent map = myMappableResources.get(key);
+      for (int i = 0 ; i < map.getNrOfPins() ; i++)
+        result &= map.isMapped(i);
+    }
+    return result;
+  }
+  
+  public ArrayList<String> GetMappedIOPinNames() {
+    ArrayList<String> result = new ArrayList<String>();
+    for (ArrayList<String> key : myMappableResources.keySet()) {
+      MapComponent map = myMappableResources.get(key);
+      for (int i = 0 ; i < map.getNrOfPins() ; i++) {
+        if (!map.isIO(i)) continue;
+        if (map.isBoardMapped(i)) {
+          StringBuffer sb = new StringBuffer();
+          if (map.isExternalInverted(i)) sb.append("n_");
+          sb.append(map.getHdlString(i));
+          result.add(sb.toString());
+        }
+      }
+    }
+    return result;
+  }
+
+  public ArrayList<String> GetMappedInputPinNames() {
+    ArrayList<String> result = new ArrayList<String>();
+    for (ArrayList<String> key : myMappableResources.keySet()) {
+      MapComponent map = myMappableResources.get(key);
+      for (int i = 0 ; i < map.getNrOfPins() ; i++) {
+        if (!map.isInput(i)) continue;
+        if (map.isBoardMapped(i)) {
+          StringBuffer sb = new StringBuffer();
+          if (map.isExternalInverted(i)) sb.append("n_");
+          sb.append(map.getHdlString(i));
+          result.add(sb.toString());
+        }
+      }
+    }
+    return result;
+  }
+
+  public ArrayList<String> GetMappedOutputPinNames() {
+    ArrayList<String> result = new ArrayList<String>();
+    for (ArrayList<String> key : myMappableResources.keySet()) {
+      MapComponent map = myMappableResources.get(key);
+      for (int i = 0 ; i < map.getNrOfPins() ; i++) {
+        if (!map.isOutput(i)) continue;
+        if (map.isBoardMapped(i)) {
+          StringBuffer sb = new StringBuffer();
+          if (map.isExternalInverted(i)) sb.append("n_");
+          sb.append(map.getHdlString(i));
+          result.add(sb.toString());
+        }
+      }
+    }
+    return result;
   }
 }

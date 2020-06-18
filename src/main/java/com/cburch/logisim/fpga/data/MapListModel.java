@@ -75,19 +75,23 @@ public class MapListModel extends DefaultListModel<MapListModel.MapInfo> {
       MapComponent map = myMappableResources.get(key);
       if (mappedList) {
         if (map.isCompleteMap(false)) {
-          myItems.add(new MapInfo(-1,map));
+          int idx = getInsertionPoint(map);
+          myItems.add(idx,new MapInfo(-1,map));
         } else {
-          for (int i = 0 ; i < map.getNrOfPins() ; i++) {
-            if (map.isMapped(i)) myItems.add(new MapInfo(i,map));
+          int idx = getInsertionPoint(map);
+          for (int i = map.getNrOfPins()-1 ; i >= 0  ; i--) {
+            if (map.isMapped(i)) myItems.add(idx,new MapInfo(i,map));
           }
         }
       } else {
         if (map.isNotMapped()) {
-          myItems.add(new MapInfo(-1,map));
+          int idx = getInsertionPoint(map);
+          myItems.add(idx,new MapInfo(-1,map));
         } else {
-          for (int i = 0 ; i < map.getNrOfPins() ; i++) {
+          int idx = getInsertionPoint(map);
+          for (int i = map.getNrOfPins()-1 ; i >= 0  ; i--) {
             if (!map.isMapped(i)) {
-              myItems.add(new MapInfo(i,map));
+              myItems.add(idx,new MapInfo(i,map));
             }
           }
         }
@@ -96,6 +100,14 @@ public class MapListModel extends DefaultListModel<MapListModel.MapInfo> {
     if (oldsize > 0 || !myItems.isEmpty()) {
       fireContentsChanged(this, 0, Math.max(oldsize, myItems.size()));
     }
+  }
+  
+  private int getInsertionPoint(MapComponent map) {
+    if (myItems.isEmpty()) return 0;
+    int idx = 0;
+    while (idx < myItems.size() && myItems.get(idx).getMap().getDisplayString(-1).
+            compareToIgnoreCase(map.getDisplayString(-1)) < 0) idx++;
+    return idx;
   }
   
   @Override

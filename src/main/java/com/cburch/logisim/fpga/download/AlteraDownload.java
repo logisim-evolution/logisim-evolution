@@ -31,7 +31,7 @@ package com.cburch.logisim.fpga.download;
 import static com.cburch.logisim.fpga.Strings.S;
 
 import com.cburch.logisim.fpga.data.BoardInformation;
-import com.cburch.logisim.fpga.data.FPGAIOInformationContainer;
+import com.cburch.logisim.fpga.data.MapComponent;
 import com.cburch.logisim.fpga.data.MappableResourcesContainer;
 import com.cburch.logisim.fpga.data.PullBehaviors;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
@@ -266,7 +266,7 @@ public class AlteraDownload implements VendorDownload {
               + " -to "
               + TickComponentHDLGeneratorFactory.FPGAClock);
     }
-    Contents.addAll(MapInfo.GetFPGAPinLocs(VendorSoftware.VendorAltera));
+    Contents.addAll(GetPinLocStrings());
     Contents.add("    # Commit assignments");
     Contents.add("    export_assignments");
     Contents.add("");
@@ -276,6 +276,32 @@ public class AlteraDownload implements VendorDownload {
     Contents.add("    }");
     Contents.add("}");
     return FileWriter.WriteContents(ScriptFile, Contents, Reporter);
+  }
+  
+  private ArrayList<String> GetPinLocStrings() {
+    ArrayList<String> Contents = new ArrayList<String>();
+    StringBuffer Temp = new StringBuffer();
+    for (ArrayList<String> key : MapInfo.getMappableResources().keySet()) {
+      MapComponent map = MapInfo.getMappableResources().get(key);
+      for (int i = 0 ; i < map.getNrOfPins() ; i++) {
+        Temp.setLength(0);
+        Temp.append("    set_location_assignment ");
+        if (map.isMapped(i) && !map.IsOpenMapped(i) && !map.IsConstantMapped(i)) {
+          Temp.append(map.getPinLocation(i)+" -to ");
+          if (map.isExternalInverted(i)) Temp.append("n_");
+          Temp.append(map.getHdlString(i));
+          Contents.add(Temp.toString());
+          if (map.requiresPullup(i)) {
+            Temp.setLength(0);
+            Temp.append("    set_instance_assignment -name WEAK_PULL_UP_RESISTOR ON -to ");
+            if (map.isExternalInverted(i)) Temp.append("n_");
+            Temp.append(map.getHdlString(i));
+            Contents.add(Temp.toString());
+          }
+        }
+      }
+    }
+    return Contents;
   }
 
   private static ArrayList<String> GetAlteraAssignments(BoardInformation CurrentBoard) {
@@ -549,26 +575,4 @@ public class AlteraDownload implements VendorDownload {
     root.appendChild(NamedElement);
   }
 
-  public static ArrayList<String> GetPinlocStrings(String direction, int StartId, FPGAIOInformationContainer info) {
-    /*
-     * for the time being we ignore the InputPins variable. It has to be
-     * implemented for more complex components
-     */
-    ArrayList<String> Contents = new ArrayList<String>();
-    for (int i = 0; i < info.getNrOfPins(); i++) {
-      String NetName = "";
-      if (direction == "in") {
-        NetName = HDLGeneratorFactory.FPGAInputPinName + "_" + Integer.toString(StartId + i);
-      } else if (direction == "inout") {
-        NetName = HDLGeneratorFactory.FPGAInOutPinName + "_" + Integer.toString(StartId + i);
-      } else {
-        NetName = HDLGeneratorFactory.FPGAOutputPinName + "_" + Integer.toString(StartId + i);
-      }
-      Contents.add("    set_location_assignment " + info.getPinLocation(i) + " -to " + NetName);
-      if (info.GetPullBehavior() == PullBehaviors.PullUp) {
-        Contents.add("    set_instance_assignment -name WEAK_PULL_UP_RESISTOR ON -to " + NetName);
-      }
-    }
-    return Contents;
-  }
 }

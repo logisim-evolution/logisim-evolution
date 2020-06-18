@@ -691,8 +691,6 @@ public class Pin extends InstanceFactory {
      * We ignore for the moment the three-state property of the pin, as it
      * is not an active component, just wiring
      */
-    // PinAttributes myattrs = (PinAttributes) attrs;
-    // return myattrs.getValue(Pin.ATTR_TRISTATE);
     return false;
   }
 

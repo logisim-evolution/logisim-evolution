@@ -41,6 +41,7 @@ import com.cburch.logisim.circuit.CircuitMapInfo;
 import com.cburch.logisim.comp.ComponentFactory;
 import com.cburch.logisim.fpga.designrulecheck.BubbleInformationContainer;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
+import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
 import com.cburch.logisim.std.io.SevenSegment;
 
 public class MapComponent {
@@ -98,7 +99,9 @@ public class MapComponent {
     myFactory = comp.GetComponent().getFactory();
     myName = name;
     ComponentMapInformationContainer mapInfo = comp.GetMapInformationContainer();
-    BubbleInformationContainer BubbleInfo = comp.GetGlobalBubbleId(name);
+    ArrayList<String> bName = new ArrayList<String>();
+    for (int i = 1 ; i < name.size() ; i++) bName.add(name.get(i));
+    BubbleInformationContainer BubbleInfo = comp.GetGlobalBubbleId(bName);
     NrOfPins = 0;
     for (int i = 0 ; i < mapInfo.GetNrOfInports() ; i++) {
       maps.add(null);
@@ -137,12 +140,51 @@ public class MapComponent {
   public int nrOutputs() { return MyOutputBubles.keySet().size(); }
   public int nrIOs() { return MyIOBubles.keySet().size(); }
   
+  public int getIOBublePinId(int id) {
+	for (int key : MyIOBubles.keySet())
+	  if (MyIOBubles.get(key) == id) return key;
+    return -1;
+  }
+  
+  public String getPinLocation(int pin) {
+    if (pin < 0 || pin >= NrOfPins) return null;
+    if (maps.get(pin) == null) return null;
+    int iopin = maps.get(pin).getIOPin();
+    return maps.get(pin).getIOComp().getPinLocation(iopin);
+  }
+  
   public boolean isMapped(int pin) {
     if (pin < 0 || pin >= NrOfPins) return false;
     if (maps.get(pin)!= null) return true;
     if (opens.get(pin)) return true;
     if (constants.get(pin) >= 0) return true;
     return false;
+  }
+  
+  public boolean isBoardMapped(int pin) {
+    if (pin < 0 || pin >= NrOfPins) return false;
+    if (maps.get(pin)!= null) return true;
+    return false;
+  }
+  
+  public boolean isExternalInverted(int pin) {
+    if (pin < 0 || pin >= NrOfPins) return false;
+    if (maps.get(pin) == null) return false;
+    if (maps.get(pin).getIOComp().GetActivityLevel()==PinActivity.ActiveLow) return true;
+    return false;
+  }
+  
+  public boolean requiresPullup(int pin) {
+    if (pin < 0 || pin >= NrOfPins) return false;
+    if (maps.get(pin) == null) return false;
+    if (maps.get(pin).getIOComp().GetPullBehavior() == PullBehaviors.PullUp) return true;
+    return false;
+  }
+  
+  public FPGAIOInformationContainer getFpgaInfo(int pin) {
+    if (pin < 0 || pin >= NrOfPins) return null;
+    if (maps.get(pin) == null) return null;
+    return maps.get(pin).getIOComp();
   }
   
   public boolean equalsType(NetlistComponent comp) {
@@ -417,6 +459,21 @@ public class MapComponent {
     return true;
   }
   
+  public boolean IsOpenMapped(int pin) {
+    if (pin < 0 || pin >= NrOfPins) return true;
+    return opens.get(pin);
+  }
+  
+  public boolean IsConstantMapped(int pin) {
+    if (pin < 0 || pin >= NrOfPins) return false;
+    return (constants.get(pin) >= 0);
+  }
+  
+  public boolean isZeroConstantMap(int pin) {
+    if (pin < 0 || pin >= NrOfPins) return true;
+    return constants.get(pin) == 0;
+  }
+  
   public boolean isCompleteMap(boolean bothSides) {
 	FPGAIOInformationContainer io = null;
 	int nrConstants = 0;
@@ -435,6 +492,34 @@ public class MapComponent {
     if (nrConstants != 0 && nrConstants == NrOfPins) return true;
     if (nrMaps != 0 && nrMaps == NrOfPins) return bothSides ? io.isCompletelyMappedBy(this) : true;
     return false;
+  }
+  
+  public String getHdlString(int pin) {
+	if (pin < 0 || pin >= NrOfPins) return null;
+    StringBuffer s = new StringBuffer();
+    /* The first element is the BoardName, so we skip */
+    for (int i = 1 ; i < myName.size() ; i++) s.append((i==1?"":"_")+myName.get(i).toLowerCase());
+    s.append((s.length()==0 ? "" : "_")+pinLabels.get(pin));
+    return s.toString();
+  }
+  
+  public String getHdlSignalName(int pin, String HDLType) {
+	if (pin < 0 || pin >= NrOfPins) return null;
+    String BracketOpen = (HDLType.equals(HDLGeneratorFactory.VHDL)) ? "(" : "[";
+    String BracketClose = (HDLType.equals(HDLGeneratorFactory.VHDL)) ? ")" : "]";
+    if (MyInputBubles.containsKey(pin) && MyInputBubles.get(pin) >= 0) {
+      return "s_"+HDLGeneratorFactory.LocalInputBubbleBusname+BracketOpen+Integer.toString(MyInputBubles.get(pin))+BracketClose;
+    }
+    if (MyOutputBubles.containsKey(pin) && MyOutputBubles.get(pin) >= 0) {
+      return "s_"+HDLGeneratorFactory.LocalOutputBubbleBusname+BracketOpen+Integer.toString(MyOutputBubles.get(pin))+BracketClose;
+    }
+    StringBuffer s = new StringBuffer();
+    s.append("s_");
+    /* The first element is the BoardName, so we skip */
+    for (int i = 1 ; i < myName.size() ; i++) s.append((i==1?"":"_")+myName.get(i).toLowerCase());
+    if (NrOfPins > 1)
+      s.append(BracketOpen+Integer.toString(pin)+BracketClose);
+    return s.toString();
   }
   
   public String getDisplayString(int pin) {

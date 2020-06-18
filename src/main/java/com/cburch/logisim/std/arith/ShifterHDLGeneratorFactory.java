@@ -184,8 +184,10 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, String> GetPortMap(
-      Netlist Nets, NetlistComponent ComponentInfo, FPGAReport Reporter, String HDLType) {
+	      Netlist Nets, Object MapInfo, FPGAReport Reporter, String HDLType) {
     SortedMap<String, String> PortMap = new TreeMap<String, String>();
+    if (!(MapInfo instanceof NetlistComponent)) return PortMap;
+    NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
     PortMap.putAll(GetNetMap("DataA", true, ComponentInfo, Shifter.IN0, Reporter, HDLType, Nets));
     PortMap.putAll(
         GetNetMap("ShiftAmount", true, ComponentInfo, Shifter.IN1, Reporter, HDLType, Nets));

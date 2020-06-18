@@ -171,8 +171,10 @@ public class PriorityEncoderHDLGeneratorFactory extends AbstractHDLGeneratorFact
 
   @Override
   public SortedMap<String, String> GetPortMap(
-      Netlist Nets, NetlistComponent ComponentInfo, FPGAReport Reporter, String HDLType) {
+      Netlist Nets, Object MapInfo, FPGAReport Reporter, String HDLType) {
     SortedMap<String, String> PortMap = new TreeMap<String, String>();
+    if (!(MapInfo instanceof NetlistComponent)) return PortMap;
+    NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
     int nr_of_bits = ComponentInfo.NrOfEnds() - 4;
     PortMap.putAll(
         GetNetMap(

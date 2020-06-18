@@ -34,8 +34,7 @@ import com.cburch.logisim.Main;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.fpga.data.BoardInformation;
 import com.cburch.logisim.fpga.data.ComponentMapParser;
-import com.cburch.logisim.fpga.data.FPGAIOInformationContainer;
-import com.cburch.logisim.fpga.fpgagui.ComponentMapDialog;
+import com.cburch.logisim.fpga.gui.ComponentMapDialog;
 import com.cburch.logisim.fpga.gui.FPGAReport;
 import com.cburch.logisim.fpga.settings.VendorSoftware;
 import com.cburch.logisim.gui.generic.OptionPane;
@@ -175,16 +174,6 @@ public class Download extends DownloadBase implements Runnable, WindowListener {
     }
   }
   
-  public static ArrayList<String> GetPinlocStrings(int Vendor, 
-    String direction, int StartId, FPGAIOInformationContainer info) {
-    switch(Vendor) {
-      case VendorSoftware.VendorAltera : return AlteraDownload.GetPinlocStrings(direction, StartId, info);
-      case VendorSoftware.VendorXilinx : return XilinxDownload.GetPinlocStrings(direction, StartId, info);
-      case VendorSoftware.VendorVivado : return VivadoDownload.GetPinlocStrings(direction, StartId, info);
-      default : return new ArrayList<String>();
-    }
-  }
-
   public void DoDownload() {
     new Thread(this).start();
   }

@@ -47,8 +47,10 @@ public class Ttl74377 extends AbstractOctalFlops {
 
     @Override
     public SortedMap<String, String> GetPortMap(
-        Netlist Nets, NetlistComponent ComponentInfo, FPGAReport Reporter, String HDLType) {
+          Netlist Nets, Object MapInfo, FPGAReport Reporter, String HDLType) {
       SortedMap<String, String> PortMap = new TreeMap<String, String>();
+      if (!(MapInfo instanceof NetlistComponent)) return PortMap;
+      NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
       PortMap.putAll(super.GetPortMap(Nets, ComponentInfo, Reporter, HDLType));
       PortMap.put("nCLR", "'1'");
       PortMap.putAll(GetNetMap("nCLKEN", false, ComponentInfo, 0, Reporter, HDLType, Nets));

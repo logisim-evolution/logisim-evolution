@@ -28,6 +28,8 @@
 
 package com.cburch.logisim.fpga.download;
 
+import static com.cburch.logisim.fpga.Strings.S;
+
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.file.LogisimFile;
 import com.cburch.logisim.fpga.data.BoardInformation;
@@ -41,6 +43,7 @@ import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.TickComponentHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.ToplevelHDLGeneratorFactory;
 import com.cburch.logisim.fpga.settings.VendorSoftware;
+import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
 import java.io.File;
@@ -111,12 +114,10 @@ public abstract class DownloadBase {
   }
 
   protected boolean MapDesignCheckIOs() {
-    if (MyMappableResources.UnmappedList().isEmpty()) {
-      MyMappableResources.BuildIOMappingInformation();
-      return true;
-    }
-
-    return false;
+	if (MyMappableResources.isCompletelyMapped()) return true;
+	int confirm = OptionPane.showConfirmDialog(MyProject.getFrame(), S.get("FpgaNotCompleteMap"), 
+      S.get("FpgaIncompleteMap"), OptionPane.YES_NO_OPTION);
+    return confirm == OptionPane.YES_OPTION;
   }
 
   protected boolean performDRC(String CircuitName, String HDLType) {
