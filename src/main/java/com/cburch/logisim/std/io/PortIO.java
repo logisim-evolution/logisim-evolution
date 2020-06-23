@@ -152,11 +152,8 @@ public class PortIO extends InstanceFactory {
     instance.addAttributeListener();
     configurePorts(instance);
     computeTextField(instance);
-    ComponentMapInformationContainer map = instance.getAttributeValue(StdAttr.MAPINFO);
-    if (map != null) {
-      map.setNrOfInOutports( instance.getAttributeValue(ATTR_SIZE), 
-          GetLabels(instance.getAttributeValue(ATTR_SIZE)));
-    }
+    int portSize = instance.getAttributeValue(ATTR_SIZE);
+    instance.getAttributeSet().setValue(StdAttr.MAPINFO, new ComponentMapInformationContainer( 0, 0, portSize, null, null, GetLabels(portSize) ));
   }
 
   private void configurePorts(Instance instance) {

@@ -177,12 +177,8 @@ public class DipSwitch extends InstanceFactory {
     instance.addAttributeListener();
     updatePorts(instance);
     instance.computeLabelTextField(Instance.AVOID_LEFT);
-    ComponentMapInformationContainer map = (ComponentMapInformationContainer) 
-            instance.getAttributeValue(StdAttr.MAPINFO);
-    if (map != null) {
-      map.setNrOfInports(instance.getAttributeValue(ATTR_SIZE).getWidth(), 
-          GetLabels(instance.getAttributeValue(ATTR_SIZE).getWidth()));
-    }
+    int dipSize = instance.getAttributeValue(ATTR_SIZE).getWidth();
+    instance.getAttributeSet().setValue(StdAttr.MAPINFO, new ComponentMapInformationContainer(dipSize, 0, 0, GetLabels(dipSize), null, null));
   }
 
   private void updatePorts(Instance instance) {

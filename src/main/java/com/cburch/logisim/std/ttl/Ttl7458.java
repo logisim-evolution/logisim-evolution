@@ -50,7 +50,7 @@ public class Ttl7458 extends AbstractTtlGate {
   public void paintInternal(InstancePainter painter, int x, int y, int height, boolean up) {
     super.paintBase(painter, false, false);
     Graphics g = painter.getGraphics();
-    Drawgates.paintOr(g, x + 107, y + 39, 10, 10, false);
+    Drawgates.paintOr(g, x + 107, y + 39, 10, 10, false, false);
     Drawgates.paintAnd(g, x + 86, y + 34, 10, 10, false);
     Drawgates.paintAnd(g, x + 86, y + 44, 10, 10, false);
     int OrOffset =
@@ -72,7 +72,7 @@ public class Ttl7458 extends AbstractTtlGate {
     ypos = new int[] {y + 47, y + 47, y + 51, y + 51, y + height - AbstractTtlGate.pinheight};
     g.drawPolyline(xpos, ypos, 5);
 
-    Drawgates.paintOr(g, x + 127, y + 21, 10, 10, false);
+    Drawgates.paintOr(g, x + 127, y + 21, 10, 10, false, false);
     Drawgates.paintAnd(g, x + 106, y + 16, 10, 10, false);
     Drawgates.paintAnd(g, x + 106, y + 26, 10, 10, false);
     xpos = new int[] {x + 106, x + 110, x + 110, x + 113 + OrOffset};

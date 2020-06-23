@@ -971,7 +971,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
     String OneValue = (HDLType.equals(VHDL)) ? "'1'" : "1'b1";
     String BracketOpen = (HDLType.equals(VHDL)) ? "(" : "[";
     String BracketClose = (HDLType.equals(VHDL)) ? ")" : "]";
-    String Unconnected = (HDLType.equals(VHDL)) ? "OPEN" : "";
+    String Unconnected = (HDLType.equals(VHDL)) ? "OPEN" : "open";
     String FloatingValue = (FloatingNetTiedToGround) ? ZeroValue : OneValue;
     if ((EndIndex >= 0) && (EndIndex < comp.NrOfEnds())) {
       ConnectionEnd ThisEnd = comp.getEnd(EndIndex);

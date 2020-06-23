@@ -53,11 +53,11 @@ public class Ttl7451 extends AbstractTtlGate {
     Graphics g = painter.getGraphics();
     Drawgates.paintAnd(g, x + 50, y + 24, 10, 10, false);
     Drawgates.paintAnd(g, x + 50, y + 36, 10, 10, false);
-    Drawgates.paintOr(g, x + 70, y + 30, 10, 10, true);
+    Drawgates.paintOr(g, x + 70, y + 30, 10, 10, true, false);
 
     Drawgates.paintAnd(g, x + 100, y + 24, 10, 10, false);
     Drawgates.paintAnd(g, x + 100, y + 36, 10, 10, false);
-    Drawgates.paintOr(g, x + 120, y + 30, 10, 10, true);
+    Drawgates.paintOr(g, x + 120, y + 30, 10, 10, true, false);
 
     int offset = (AppPreferences.GATE_SHAPE.get().equals(AppPreferences.SHAPE_RECTANGULAR)) ? 4 : 0;
 
