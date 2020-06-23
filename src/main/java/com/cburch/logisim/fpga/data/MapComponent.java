@@ -498,7 +498,7 @@ public class MapComponent {
 	if (pin < 0 || pin >= NrOfPins) return null;
     StringBuffer s = new StringBuffer();
     /* The first element is the BoardName, so we skip */
-    for (int i = 1 ; i < myName.size() ; i++) s.append((i==1?"":"_")+myName.get(i).toLowerCase());
+    for (int i = 1 ; i < myName.size() ; i++) s.append((i==1?"":"_")+myName.get(i));
     s.append((s.length()==0 ? "" : "_")+pinLabels.get(pin));
     return s.toString();
   }
@@ -516,7 +516,7 @@ public class MapComponent {
     StringBuffer s = new StringBuffer();
     s.append("s_");
     /* The first element is the BoardName, so we skip */
-    for (int i = 1 ; i < myName.size() ; i++) s.append((i==1?"":"_")+myName.get(i).toLowerCase());
+    for (int i = 1 ; i < myName.size() ; i++) s.append((i==1?"":"_")+myName.get(i));
     if (NrOfPins > 1)
       s.append(BracketOpen+Integer.toString(pin)+BracketClose);
     return s.toString();

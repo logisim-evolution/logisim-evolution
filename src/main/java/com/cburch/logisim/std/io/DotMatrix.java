@@ -34,8 +34,11 @@ import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Attributes;
+import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
+import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Value;
+import com.cburch.logisim.fpga.data.ComponentMapInformationContainer;
 import com.cburch.logisim.gui.icons.LedMatrixIcon;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceData;
@@ -43,10 +46,12 @@ import com.cburch.logisim.instance.InstanceFactory;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
+import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.std.wiring.DurationAttribute;
 import com.cburch.logisim.util.GraphicsUtil;
 import java.awt.Color;
 import java.awt.Graphics;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 // TODO repropagate when rows/cols change
@@ -175,10 +180,10 @@ public class DotMatrix extends InstanceFactory {
           "inputtype",
           S.getter("ioMatrixInput"),
           new AttributeOption[] {INPUT_COLUMN, INPUT_ROW, INPUT_SELECT});
-  static final Attribute<Integer> ATTR_MATRIX_COLS =
-      Attributes.forIntegerRange("matrixcols", S.getter("ioMatrixCols"), 1, Value.MAX_WIDTH);
-  static final Attribute<Integer> ATTR_MATRIX_ROWS =
-      Attributes.forIntegerRange("matrixrows", S.getter("ioMatrixRows"), 1, Value.MAX_WIDTH);
+  static final Attribute<BitWidth> ATTR_MATRIX_COLS =
+      Attributes.forBitWidth("matrixcols", S.getter("ioMatrixCols"), 1, Value.MAX_WIDTH);
+  static final Attribute<BitWidth> ATTR_MATRIX_ROWS =
+      Attributes.forBitWidth("matrixrows", S.getter("ioMatrixRows"), 1, Value.MAX_WIDTH);
   static final Attribute<AttributeOption> ATTR_DOT_SHAPE =
       Attributes.forOption(
           "dotshape",
@@ -188,6 +193,14 @@ public class DotMatrix extends InstanceFactory {
   static final Attribute<Integer> ATTR_PERSIST =
       new DurationAttribute(
           "persist", S.getter("ioMatrixPersistenceAttr"), 0, Integer.MAX_VALUE, true);
+  
+  private static ArrayList<String> GetLabels(int rows , int cols) {
+    ArrayList<String> result = new ArrayList<String>();
+    for (int r = 0 ; r < rows ; r++)
+      for (int c = 0 ; c < cols ; c++)
+        result.add("Row"+r+"Col"+c);
+    return result;
+  }
 
   public DotMatrix() {
     super("DotMatrix", S.getter("dotMatrixComponent"));
@@ -199,31 +212,47 @@ public class DotMatrix extends InstanceFactory {
           Io.ATTR_ON_COLOR,
           Io.ATTR_OFF_COLOR,
           ATTR_PERSIST,
-          ATTR_DOT_SHAPE
+          ATTR_DOT_SHAPE,
+          StdAttr.LABEL,
+          StdAttr.LABEL_LOC,
+          StdAttr.LABEL_FONT,
+          StdAttr.LABEL_COLOR,
+          StdAttr.LABEL_VISIBILITY,
+          StdAttr.MAPINFO
         },
         new Object[] {
           INPUT_COLUMN,
-          Integer.valueOf(5),
-          Integer.valueOf(7),
+          BitWidth.create(5),
+          BitWidth.create(7),
           Color.GREEN,
           Color.DARK_GRAY,
           Integer.valueOf(0),
-          SHAPE_SQUARE
+          SHAPE_SQUARE,
+          "",
+          Direction.NORTH,
+          StdAttr.DEFAULT_LABEL_FONT,
+          StdAttr.DEFAULT_LABEL_COLOR,
+          true,
+          new ComponentMapInformationContainer(0, 5*7, 0, null, GetLabels(7,5), null)
         });
     setIcon(new LedMatrixIcon());
   }
 
   @Override
   protected void configureNewInstance(Instance instance) {
+    instance.computeLabelTextField(Instance.AVOID_LEFT);
     instance.addAttributeListener();
     updatePorts(instance);
+    int rows = instance.getAttributeValue(ATTR_MATRIX_ROWS).getWidth();
+    int cols = instance.getAttributeValue(ATTR_MATRIX_COLS).getWidth();
+    instance.getAttributeSet().setValue(StdAttr.MAPINFO, new ComponentMapInformationContainer(0, rows*cols, 0, null, GetLabels(rows,cols), null));
   }
 
   @Override
   public Bounds getOffsetBounds(AttributeSet attrs) {
     Object input = attrs.getValue(ATTR_INPUT_TYPE);
-    int cols = attrs.getValue(ATTR_MATRIX_COLS).intValue();
-    int rows = attrs.getValue(ATTR_MATRIX_ROWS).intValue();
+    int cols = attrs.getValue(ATTR_MATRIX_COLS).getWidth();
+    int rows = attrs.getValue(ATTR_MATRIX_ROWS).getWidth();
     if (input == INPUT_COLUMN) {
       return Bounds.create(-5, -10 * rows, 10 * cols, 10 * rows);
     } else if (input == INPUT_ROW) {
@@ -238,8 +267,8 @@ public class DotMatrix extends InstanceFactory {
   }
 
   private State getState(InstanceState state) {
-    int rows = state.getAttributeValue(ATTR_MATRIX_ROWS).intValue();
-    int cols = state.getAttributeValue(ATTR_MATRIX_COLS).intValue();
+    int rows = state.getAttributeValue(ATTR_MATRIX_ROWS).getWidth();
+    int cols = state.getAttributeValue(ATTR_MATRIX_COLS).getWidth();
     long clock = state.getTickCount();
 
     State data = (State) state.getData();
@@ -254,9 +283,18 @@ public class DotMatrix extends InstanceFactory {
 
   @Override
   protected void instanceAttributeChanged(Instance instance, Attribute<?> attr) {
-    if (attr == ATTR_MATRIX_ROWS || attr == ATTR_MATRIX_COLS || attr == ATTR_INPUT_TYPE) {
+    if (attr == StdAttr.LABEL_LOC) {
+      instance.computeLabelTextField(Instance.AVOID_LEFT);
+    } else if (attr == ATTR_MATRIX_ROWS || attr == ATTR_MATRIX_COLS || attr == ATTR_INPUT_TYPE) {
       instance.recomputeBounds();
+      instance.computeLabelTextField(Instance.AVOID_LEFT);
       updatePorts(instance);
+      if (attr == ATTR_MATRIX_ROWS || attr == ATTR_MATRIX_COLS) {
+        int rows = instance.getAttributeValue(ATTR_MATRIX_ROWS).getWidth();
+        int cols = instance.getAttributeValue(ATTR_MATRIX_COLS).getWidth();
+        ComponentMapInformationContainer cm = instance.getAttributeValue(StdAttr.MAPINFO);
+        cm.setNrOfOutports(rows*cols, GetLabels(rows,cols));
+      }
     }
   }
 
@@ -297,14 +335,15 @@ public class DotMatrix extends InstanceFactory {
     GraphicsUtil.switchToWidth(g, 2);
     g.drawRect(bds.getX(), bds.getY(), bds.getWidth(), bds.getHeight());
     GraphicsUtil.switchToWidth(g, 1);
+    painter.drawLabel();
     painter.drawPorts();
   }
 
   @Override
   public void propagate(InstanceState state) {
     Object type = state.getAttributeValue(ATTR_INPUT_TYPE);
-    int rows = state.getAttributeValue(ATTR_MATRIX_ROWS).intValue();
-    int cols = state.getAttributeValue(ATTR_MATRIX_COLS).intValue();
+    int rows = state.getAttributeValue(ATTR_MATRIX_ROWS).getWidth();
+    int cols = state.getAttributeValue(ATTR_MATRIX_COLS).getWidth();
     long clock = state.getTickCount();
     long persist = clock + state.getAttributeValue(ATTR_PERSIST).intValue();
 
@@ -326,8 +365,8 @@ public class DotMatrix extends InstanceFactory {
 
   private void updatePorts(Instance instance) {
     Object input = instance.getAttributeValue(ATTR_INPUT_TYPE);
-    int rows = instance.getAttributeValue(ATTR_MATRIX_ROWS).intValue();
-    int cols = instance.getAttributeValue(ATTR_MATRIX_COLS).intValue();
+    int rows = instance.getAttributeValue(ATTR_MATRIX_ROWS).getWidth();
+    int cols = instance.getAttributeValue(ATTR_MATRIX_COLS).getWidth();
     Port[] ps;
     if (input == INPUT_COLUMN) {
       ps = new Port[cols];
@@ -350,4 +389,16 @@ public class DotMatrix extends InstanceFactory {
     }
     instance.setPorts(ps);
   }
+
+  @Override
+  public boolean RequiresNonZeroLabel() {
+    return true;
+  }
+
+  @Override
+  public boolean HDLSupportedComponent(String HDLIdentifier, AttributeSet attrs) {
+    if (MyHDLGenerator == null) MyHDLGenerator = new DotMatrixHDLGeneratorFactory();
+    return MyHDLGenerator.HDLTargetSupported(HDLIdentifier, attrs);
+  }
+
 }

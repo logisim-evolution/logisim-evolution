@@ -84,7 +84,7 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
                   .get(0)
                   .getFactory()
                   .getHDLName(TheNetlist.GetAllClockSources().get(0).getAttributeSet()),
-              VHDL /* , false */));
+              VHDL ));
     }
     CircuitHDLGeneratorFactory Worker = new CircuitHDLGeneratorFactory(MyCircuit);
     Components.addAll(
@@ -92,7 +92,7 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
             TheNetlist,
             null,
             CorrectLabel.getCorrectLabel(MyCircuit.getName()),
-            VHDL /* , hasLB */));
+            VHDL ));
     return Components;
   }
 

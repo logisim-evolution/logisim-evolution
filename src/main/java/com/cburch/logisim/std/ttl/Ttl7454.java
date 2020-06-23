@@ -51,7 +51,7 @@ public class Ttl7454 extends AbstractTtlGate {
   public void paintInternal(InstancePainter painter, int x, int y, int height, boolean up) {
     super.paintBase(painter, false, false);
     Graphics g = painter.getGraphics();
-    Drawgates.paintOr(g, x + 125, y + 30, 10, 10, true);
+    Drawgates.paintOr(g, x + 125, y + 30, 10, 10, true, false);
     Drawgates.paintAnd(g, x + 105, y + 20, 10, 10, false);
     Drawgates.paintAnd(g, x + 105, y + 40, 10, 10, false);
     Drawgates.paintAnd(g, x + 65, y + 20, 10, 10, false);

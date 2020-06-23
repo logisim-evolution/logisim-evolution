@@ -67,14 +67,15 @@ public class ComponentMapInformationContainer {
   }
 
   public ComponentMapInformationContainer clone() {
-    ComponentMapInformationContainer Myclone =
+    @SuppressWarnings("unchecked")
+	ComponentMapInformationContainer Myclone =
         new ComponentMapInformationContainer(
             NrOfInputBubbles,
             NrOfOutputBubbles,
             NrOfInOutBubbles,
-            InputBubbleLabels,
-            OutputBubbleLabels,
-            InOutBubbleLabels);
+            InputBubbleLabels == null ? null : (ArrayList<String>)InputBubbleLabels.clone(),
+            OutputBubbleLabels == null ? null : (ArrayList<String>)OutputBubbleLabels.clone(),
+            InOutBubbleLabels == null ? null : (ArrayList<String>)InOutBubbleLabels.clone());
     return Myclone;
   }
 
@@ -128,5 +129,10 @@ public class ComponentMapInformationContainer {
   public void setNrOfInports(int nb, ArrayList<String> labels) {
     NrOfInputBubbles = nb;
     InputBubbleLabels = labels;
+  }
+  
+  public void setNrOfOutports(int nb , ArrayList<String> labels) {
+    NrOfOutputBubbles = nb;
+    OutputBubbleLabels = labels;
   }
 }

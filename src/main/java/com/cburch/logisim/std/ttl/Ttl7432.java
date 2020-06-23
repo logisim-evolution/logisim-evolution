@@ -81,12 +81,12 @@ public class Ttl7432 extends AbstractTtlGate {
     Graphics g = painter.getGraphics();
     int portwidth = 14, portheight = 15;
     int youtput = y + (up ? 20 : 40);
-    Drawgates.paintOr(g, x + 40, youtput, portwidth, portheight, false);
+    Drawgates.paintOr(g, x + 40, youtput, portwidth, portheight, false, false);
     // output line
     Drawgates.paintOutputgate(g, x + 50, y, x + 40, youtput, up, height);
     // input lines
     Drawgates.paintDoubleInputgate(
-        g, x + 30, y, x + 40 - portwidth, youtput, portheight, up, height);
+        g, x + 30, y, x + 40 - portwidth, youtput, portheight, up, false, height);
   }
 
   @Override

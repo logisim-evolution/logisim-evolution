@@ -263,7 +263,6 @@ public class Register extends InstanceFactory implements DynamicElementProvider 
   protected void configureNewInstance(Instance instance) {
     instance.addAttributeListener();
     updatePorts(instance);
-    Bounds bds = instance.getBounds();
     instance.computeLabelTextField(Instance.AVOID_SIDES);
   }
 
