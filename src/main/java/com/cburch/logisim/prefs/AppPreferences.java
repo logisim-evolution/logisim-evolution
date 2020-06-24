@@ -514,6 +514,10 @@ public class AppPreferences {
 
   public static final String External_Boards = "ExternalBoards";
   public static final FPGABoards Boards = new FPGABoards();
+  public static final PrefMonitor<Boolean> SupressGatedClockWarnings =
+    create(new PrefMonitorBoolean("NoGatedClockWarnings",false));
+  public static final PrefMonitor<Boolean> SupressOpenPinWarnings =
+    create(new PrefMonitorBoolean("NoOpenPinWarnings",false));
 
   // Window preferences
   public static final String TOOLBAR_HIDDEN = "hidden";

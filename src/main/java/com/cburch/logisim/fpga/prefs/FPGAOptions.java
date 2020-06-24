@@ -38,6 +38,7 @@ import com.cburch.logisim.gui.prefs.PrefOption;
 import com.cburch.logisim.gui.prefs.PrefOptionList;
 import com.cburch.logisim.gui.prefs.PreferencesFrame;
 import com.cburch.logisim.prefs.AppPreferences;
+import com.cburch.logisim.prefs.PrefMonitorBoolean;
 
 import java.awt.Component;
 import java.awt.GridBagConstraints;
@@ -51,6 +52,7 @@ import java.util.prefs.PreferenceChangeListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -100,6 +102,9 @@ public class FPGAOptions extends OptionsPanel {
   private ColorChooserButton SelectColor;
   private JPanel editPan;
   private JPanel mapPan;
+  private JPanel ReportPan;
+  private JCheckBox SupressGated;
+  private JCheckBox SupressOpen;
   private PreferencesFrame frame;
   private PrefOptionList HDL_Used;
 
@@ -153,11 +158,28 @@ public class FPGAOptions extends OptionsPanel {
     c.gridy = 3;
     c.gridwidth = 3;
     add(AppPreferences.Boards.AddRemovePanel(), c);
-    c.gridy = 4;
+    c.gridy++;
+    add(getReporterOptions(),c);
+    c.gridy++;
     add(getEditCols(),c);
     c.gridy++;
     add(getMapCols(),c);
     localeChanged();
+  }
+  
+  private JPanel getReporterOptions() {
+    ReportPan = new JPanel();
+    ReportPan.setLayout(new GridBagLayout());
+    GridBagConstraints c = new GridBagConstraints();
+    c.gridx = 0;
+    c.gridy = 0;
+    c.fill = GridBagConstraints.HORIZONTAL;
+    SupressGated = ((PrefMonitorBoolean)AppPreferences.SupressGatedClockWarnings).getCheckBox();
+    ReportPan.add(SupressGated,c);
+    c.gridy++;
+    SupressOpen = ((PrefMonitorBoolean)AppPreferences.SupressOpenPinWarnings).getCheckBox();
+    ReportPan.add(SupressOpen, c);
+    return ReportPan;
   }
   
   private JPanel getEditCols() {
@@ -242,8 +264,11 @@ public class FPGAOptions extends OptionsPanel {
     SelMapLabel.setText(S.get("SelMapCol"));
     SelectMapLabel.setText(S.get("SelectMapCol"));
     SelectLabel.setText(S.get("SelectCol"));
+    SupressGated.setText(S.get("SupressGatedClock"));
+    SupressOpen.setText(S.get("SupressOpenInput"));
     editPan.setBorder(BorderFactory.createTitledBorder(S.get("EditColors")));
     mapPan.setBorder(BorderFactory.createTitledBorder(S.get("MapColors")));
+    ReportPan.setBorder(BorderFactory.createTitledBorder(S.get("ReporterOptions")));
   }
   
   private void selectWorkSpace(Component parentComponent) {
