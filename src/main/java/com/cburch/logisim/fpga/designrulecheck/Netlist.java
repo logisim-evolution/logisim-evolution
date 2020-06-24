@@ -49,6 +49,7 @@ import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceComponent;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.std.wiring.Clock;
 import com.cburch.logisim.std.wiring.Pin;
 import com.cburch.logisim.std.wiring.Probe;
@@ -515,7 +516,7 @@ public class Netlist implements CircuitListener {
       for (int j = 0; j < comp.NrOfEnds(); j++) {
         if (comp.EndIsInput(j) && !comp.EndIsConnected(j)) openInputs = true;
       }
-      if (openInputs) {
+      if (openInputs&&!AppPreferences.SupressOpenPinWarnings.get()) {
         SimpleDRCContainer warn =
             new SimpleDRCContainer(
                 MyCircuit,
@@ -532,7 +533,7 @@ public class Netlist implements CircuitListener {
       for (int j = 0; j < comp.NrOfEnds(); j++) {
         if (comp.EndIsInput(j) && !comp.EndIsConnected(j)) openInputs = true;
       }
-      if (openInputs) {
+      if (openInputs&&!AppPreferences.SupressOpenPinWarnings.get()) {
         SimpleDRCContainer warn =
             new SimpleDRCContainer(
                 MyCircuit,
@@ -549,7 +550,7 @@ public class Netlist implements CircuitListener {
       for (int j = 0; j < comp.NrOfEnds(); j++) {
         if (!comp.EndIsConnected(j)) openInputs = true;
       }
-      if (openInputs) {
+      if (openInputs&&!AppPreferences.SupressOpenPinWarnings.get()) {
         SimpleDRCContainer warn =
             new SimpleDRCContainer(
                 MyCircuit,
@@ -566,7 +567,7 @@ public class Netlist implements CircuitListener {
       for (int j = 0; j < comp.NrOfEnds(); j++) {
         if (!comp.EndIsConnected(j)) openOutputs = true;
       }
-      if (openOutputs) {
+      if (openOutputs&&!AppPreferences.SupressOpenPinWarnings.get()) {
         SimpleDRCContainer warn =
             new SimpleDRCContainer(
                 MyCircuit,
@@ -2445,16 +2446,16 @@ public class Netlist implements CircuitListener {
     /* First Pass: We gather a complete information tree about components with clock inputs and their connected nets in
      * case it is not a clock net. The moment we call this function the clock tree has been marked already !*/
     ArrayList<Netlist> root = new ArrayList<Netlist>();
+    boolean suppress = AppPreferences.SupressGatedClockWarnings.getBoolean();
     root.add(this);
     Map<String, Map<NetlistComponent, Circuit>> NotGatedSet =
         new HashMap<String, Map<NetlistComponent, Circuit>>();
     Map<String, Map<NetlistComponent, Circuit>> GatedSet =
         new HashMap<String, Map<NetlistComponent, Circuit>>();
     SetCurrentHierarchyLevel(new ArrayList<String>());
-    GetGatedClockComponents(
-        root, null, NotGatedSet, GatedSet, new HashSet<NetlistComponent>(), Reporter);
+    GetGatedClockComponents(root, null, NotGatedSet, GatedSet, new HashSet<NetlistComponent>(), Reporter);
     for (String key : NotGatedSet.keySet()) {
-      if (GatedSet.keySet().contains(key)) {
+      if (GatedSet.keySet().contains(key) && !suppress) {
         /* big Problem, we have a component that is used with and without gated clocks */
         Reporter.AddSevereWarning(S.get("NetList_CircuitGatedNotGated"));
         Reporter.AddWarningIncrement(S.get("NetList_TraceListBegin"));
@@ -2561,7 +2562,7 @@ public class Netlist implements CircuitListener {
             S.get("NetList_GatedClock"));
       }
 
-      if (GatedClock && !PinSources.isEmpty()) {
+      if (GatedClock && !PinSources.isEmpty()&&!AppPreferences.SupressGatedClockWarnings.getBoolean()) {
         for (int i = 0; i < PinSources.size(); i++) {
           Reporter.AddSevereWarning(S.get("NetList_GatedClock"));
           Reporter.AddWarningIncrement(S.get("NetList_TraceListBegin"));
@@ -2930,6 +2931,7 @@ public class Netlist implements CircuitListener {
       ArrayList<Netlist> HierarchyNetlists,
       FPGAReport Reporter,
       String Warning) {
+	if (AppPreferences.SupressGatedClockWarnings.getBoolean()) return;
     for (int i = 0; i < Sources.size(); i++) {
       boolean AlreadyWarned = false;
       for (NetlistComponent comp : Components.get(i))
