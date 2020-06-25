@@ -41,6 +41,7 @@ public enum IOComponentTypes {
   Button,
   Pin,
   SevenSegment,
+  SevenSegmentNoDp,
   DIPSwitch,
   RGBLED,
   PortIO,
@@ -102,6 +103,8 @@ public enum IOComponentTypes {
       return 1;
     case SevenSegment:
       return 8;
+    case SevenSegmentNoDp:
+      return 7;
     case RGBLED:
       return 3;
     case LocalBus:
@@ -133,10 +136,11 @@ public enum IOComponentTypes {
   
   public static final String getOutputLabel(int nrPins, int id, IOComponentTypes comp) {
     switch (comp) {
-      case SevenSegment : return com.cburch.logisim.std.io.SevenSegment.getOutputLabel(id);
-      case RGBLED       : return RGBLed.getLabel(id);
-      case LocalBus     : return ReptarLocalBus.getOutputLabel(id);
-      default           : return (nrPins > 1) ? S.fmt("FpgaIoPins", id) : S.get("FpgaIoPin");
+      case SevenSegmentNoDp : 
+      case SevenSegment     : return com.cburch.logisim.std.io.SevenSegment.getOutputLabel(id);
+      case RGBLED           : return RGBLed.getLabel(id);
+      case LocalBus         : return ReptarLocalBus.getOutputLabel(id);
+      default               : return (nrPins > 1) ? S.fmt("FpgaIoPins", id) : S.get("FpgaIoPin");
     }
   }
   
@@ -165,7 +169,8 @@ public enum IOComponentTypes {
       IOComponentTypes.LED,
       IOComponentTypes.Pin,
       IOComponentTypes.RGBLED,
-      IOComponentTypes.SevenSegment);
+      IOComponentTypes.SevenSegment,
+      IOComponentTypes.SevenSegmentNoDp);
 
   public static final EnumSet<IOComponentTypes> InOutComponentSet =
     EnumSet.of(IOComponentTypes.Pin, IOComponentTypes.PortIO);

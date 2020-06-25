@@ -95,7 +95,7 @@ public class AlteraDownload implements VendorDownload {
     this.Architectures = Architectures;
     this.HDLType = HDLType;
     this.WriteToFlash = WriteToFlash;
-    cablename = "usb-blaster";
+    cablename = "";
   }
 
   public void SetMapableResources(MappableResourcesContainer resources) {
@@ -158,9 +158,11 @@ public class AlteraDownload implements VendorDownload {
     command.add("-o");
     // if there is no .sof generated, try with the .pof
     if (new File(SandboxPath + ToplevelHDLGeneratorFactory.FPGAToplevelName + ".sof").exists()) {
-      command.add("P;" + ToplevelHDLGeneratorFactory.FPGAToplevelName + ".sof");
+      command.add("P;" + ToplevelHDLGeneratorFactory.FPGAToplevelName + ".sof"+
+                  "@"+BoardInfo.fpga.getFpgaJTAGChainPosition());
     } else {
-      command.add("P;" + ToplevelHDLGeneratorFactory.FPGAToplevelName + ".pof");
+      command.add("P;" + ToplevelHDLGeneratorFactory.FPGAToplevelName + ".pof"+
+                  "@"+BoardInfo.fpga.getFpgaJTAGChainPosition());
     }
     ProcessBuilder Down = new ProcessBuilder(command);
     Down.directory(new File(SandboxPath));
@@ -347,7 +349,10 @@ public class AlteraDownload implements VendorDownload {
     }
     ArrayList<String> Devices = Devices(response);
     if (Devices == null) return false;
-    if (Devices.size() == 1) return true;
+    if (Devices.size() == 1) {
+      cablename = Devices.get(0);
+      return true;
+    }
     String selection = Download.ChooseBoard(Devices);
     if (selection == null) return false;
     cablename = selection;
