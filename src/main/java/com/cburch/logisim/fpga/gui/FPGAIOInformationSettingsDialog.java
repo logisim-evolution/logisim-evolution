@@ -134,7 +134,7 @@ public class FPGAIOInformationSettingsDialog {
     BoardRectangle MyRectangle = info.GetRectangle();
     if (info.getNrOfPins() == 0) {
       NrOfPins.put(INPUT_ID, IOComponentTypes.GetFPGAInputRequirement(MyType));
-      NrOfPins.put(OUTPUT_ID, IOComponentTypes.GetFPGAInOutRequirement(MyType));
+      NrOfPins.put(OUTPUT_ID, IOComponentTypes.GetFPGAOutputRequirement(MyType));
       NrOfPins.put(IO_ID, IOComponentTypes.GetFPGAInOutRequirement(MyType));
     } else {
       NrOfPins.put(INPUT_ID, info.getNrOfInputPins());
