@@ -105,6 +105,9 @@ public class BitWidth implements Comparable<BitWidth> {
   public static final BitWidth UNKNOWN = new BitWidth(0);
 
   public static final BitWidth ONE = new BitWidth(1);
+  
+  public static final int MAXWIDTH = 64;
+  public static final int MINWIDTH = 1;
 
   private static BitWidth[] prefab = null;
 
@@ -127,7 +130,7 @@ public class BitWidth implements Comparable<BitWidth> {
 
   public long getMask() {
     if (width == 0) return 0;
-    else if (width == 64) return -1L;
+    else if (width == MAXWIDTH) return -1L;
     else return (1L << width) - 1;
   }
 
