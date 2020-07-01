@@ -149,10 +149,6 @@ public class ReptarLocalBus extends InstanceFactory {
     return attrs.getValue(StdAttr.LABEL);
   }
 
-  public MappableResourcesContainer getMapInfo() {
-    return mapInfo;
-  }
-
   @Override
   public boolean HDLSupportedComponent(String HDLIdentifier, AttributeSet attrs) {
     // return false;
@@ -214,7 +210,4 @@ public class ReptarLocalBus extends InstanceFactory {
     return true;
   }
 
-  public void setMapInfo(MappableResourcesContainer mapInfo) {
-    this.mapInfo = mapInfo;
-  }
 }

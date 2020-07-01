@@ -252,6 +252,27 @@ public class Value {
     }
   }
 
+  public Value controls(Value other) { // e.g. tristate buffer
+    if (other == null)
+      return null;
+    if (this.width == 1) {
+      if (this == FALSE)
+        return Value.create(other.width, 0, -1, 0);
+      if (this == TRUE || this == UNKNOWN)
+        return other;
+      return Value.create(other.width, -1, 0, 0);
+    } else if (this.width != other.width) {
+      return Value.create(other.width, -1, 0, 0);
+    } else {
+      long enabled = (this.value | this.unknown) & ~this.error;
+      long disabled = ~this.value & ~this.unknown & ~this.error;
+      return Value.create(other.width,
+          (this.error | (other.error & ~disabled)),
+          (disabled | other.unknown),
+          (enabled & other.value));
+    }
+  }
+
   public Value combine(Value other) {
     if (other == null) return this;
     if (this == NIL) return other;

@@ -164,7 +164,13 @@ public class FPGABoards implements ActionListener {
       String Board = BoardNamesList.getSelectedValue();
       if (RemoveBoard(Board)) {
       	if (AppPreferences.SelectedBoard.get().equals(Board)) {
-            AppPreferences.SelectedBoard.set(BoardSelector.getItemAt(1));
+      		if (BoardSelector != null && BoardSelector.getItemCount() >= 2)
+              AppPreferences.SelectedBoard.set(BoardSelector.getItemAt(1));
+      		else {
+      	      BoardSelector = new JComboBox<String>();
+      	      RebuildBoardSelector(false, null);
+              AppPreferences.SelectedBoard.set(BoardSelector.getItemAt(1));
+      		}
         }
         if ((BoardNamesList.getSelectedIndex() >= BoardNamesList.getModel().getSize())
             && (BoardNamesList.getModel().getSize() > 0)) {

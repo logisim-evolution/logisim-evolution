@@ -706,7 +706,8 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       }
       if (NrOfIOBubbles > 0) {
         if (topLevel) {
-          for (int i = 0 ; i < NrOfIOBubbles ; i++) {
+          StringBuffer vector = new StringBuffer();
+          for (int i = NrOfIOBubbles-1 ; i >= 0 ; i--) {
             /* first pass find the component which is connected to this io */
             int compPin = -1;
             MapComponent map = null;
@@ -725,12 +726,25 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
               Reporter.AddError("BUG: did not find IOpin");
               continue;
             }
-            if (!map.isMapped(compPin) || map.IsOpenMapped(compPin))
-              PortMap.put(HDLGeneratorFactory.LocalInOutBubbleBusname+BracketOpen+i+BracketClose,Open);
-            else
-              PortMap.put(HDLGeneratorFactory.LocalInOutBubbleBusname+BracketOpen+i+BracketClose,
-                (map.isExternalInverted(compPin)?"n_":"")+map.getHdlString(compPin));
+            if (!map.isMapped(compPin) || map.IsOpenMapped(compPin)) {
+              if (HDLType.equals(VHDL))
+                PortMap.put(HDLGeneratorFactory.LocalInOutBubbleBusname+BracketOpen+i+BracketClose,Open);
+              else {
+                if (vector.length() != 0) vector.append(",");
+                vector.append("OPEN"); // still not found the correct method but this seems to work
+              }
+            } else {
+              if (HDLType.equals(VHDL))
+                PortMap.put(HDLGeneratorFactory.LocalInOutBubbleBusname+BracketOpen+i+BracketClose,
+                  (map.isExternalInverted(compPin)?"n_":"")+map.getHdlString(compPin));
+              else {
+                if (vector.length() != 0) vector.append(",");
+                vector.append((map.isExternalInverted(compPin)?"n_":"")+map.getHdlString(compPin));
+              }
+            }
           }
+          if (HDLType.equals(VERILOG))
+            PortMap.put(HDLGeneratorFactory.LocalInOutBubbleBusname, vector.toString());
         } else {
           PortMap.put(HDLGeneratorFactory.LocalInOutBubbleBusname, 
         		  HDLGeneratorFactory.LocalInOutBubbleBusname + GetBubbleIndex(ComponentInfo, HDLType, 2));
