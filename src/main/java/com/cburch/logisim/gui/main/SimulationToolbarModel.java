@@ -95,10 +95,20 @@ class SimulationToolbarModel extends AbstractToolbarModel implements ChangeListe
     Simulator sim = project.getSimulator();
     boolean running = sim != null && sim.isRunning();
     boolean ticking = sim != null && sim.isTicking();
-    RunToggleIcon.setType(running ? SimulationIcon.SIM_PAUSE : SimulationIcon.SIM_PLAY);
-    simRunToggle.setToolTip(S.getter(running ? "simulateStopTip" : "simulateRunTip"));
-    EnableDisableIcon.setType(ticking ? SimulationIcon.SIM_DISABLE : SimulationIcon.SIM_ENABLE);
-    tickEnable.setToolTip(S.getter(ticking ? "simulateDisableTicksTip" : "simulateEnableTicksTip"));
+    if (running) {
+      RunToggleIcon.setType(SimulationIcon.SIM_PAUSE);
+      simRunToggle.setToolTip(S.getter("simulateStopTip"));
+    } else {
+      RunToggleIcon.setType(SimulationIcon.SIM_PLAY);
+      simRunToggle.setToolTip(S.getter("simulateRunTip"));
+    }
+    if (ticking) {
+      EnableDisableIcon.setType(SimulationIcon.SIM_DISABLE);    
+      tickEnable.setToolTip(S.getter("simulateDisableTicksTip"));
+    } else {
+      EnableDisableIcon.setType(SimulationIcon.SIM_ENABLE);    
+      tickEnable.setToolTip(S.getter("simulateEnableTicksTip"));
+    }
     fireToolbarAppearanceChanged();
   }
 }
