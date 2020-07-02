@@ -37,7 +37,6 @@ import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.fpga.data.ComponentMapInformationContainer;
-import com.cburch.logisim.fpga.data.MappableResourcesContainer;
 import com.cburch.logisim.instance.InstanceFactory;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
@@ -85,8 +84,6 @@ public class ReptarLocalBus extends InstanceFactory {
   public static final int Addr_LB_o = 8;
   public static final int IRQ_i = 9;
 
-  // private static final int Addr_Data_LB_io = 9;
-  private MappableResourcesContainer mapInfo;
   /* Default Name. Very important for the genration of the VDHL Code */
   private String defaultLocalBusName = "LocalBus";
 
