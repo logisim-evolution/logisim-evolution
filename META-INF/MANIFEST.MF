@@ -14,7 +14,7 @@ Bundle-ClassPath: gradle/wrapper/gradle-wrapper.jar,
  lib-emf/slf4j-simple-1.7.8.jar,
  lib-emf/jfxrt.jar,
  lib-emf/jh.jar
-Export-Package: .,
+Export-Package: ., 
  com.cburch.logisim.statemachine,
  com.cburch.logisim.statemachine.fSMDSL,
  com.cburch.logisim.statemachine.fSMDSL.impl,
@@ -25,7 +25,8 @@ Export-Package: .,
  com.cburch.logisim.statemachine.scoping,
  com.cburch.logisim.statemachine.serializer,
  com.cburch.logisim.statemachine.services,
- com.cburch.logisim.statemachine.validation
+ com.cburch.logisim.statemachine.validation,
+ com.cburch.logisim.statemachine.formatting2
 Require-Bundle: org.eclipse.xtext,
  org.eclipse.xtext.xbase,
  org.eclipse.equinox.common;bundle-version="3.5.0",
