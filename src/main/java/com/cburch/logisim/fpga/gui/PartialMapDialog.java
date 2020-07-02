@@ -386,7 +386,7 @@ public class PartialMapDialog extends JDialog implements LocaleListener,ActionLi
     for (int i = 0 ; IOMultipleMultiple != null && i < IOMultipleMultiple.size() ; i++) {
       if (source.equals(IOMultipleMultiple.get(i)) || 
           IOMultipleMultiple.get(i).getSelectedIndex() == 0) continue;
-      int selId = OutputMapSet.get(IOMultipleMultiple.get(i).getSelectedIndex()-1);
+      int selId = IOMapSet.get(IOMultipleMultiple.get(i).getSelectedIndex()-1);
       if (pinid == selId) IOMultipleMultiple.get(i).setSelectedIndex(0);
     }
   }
