@@ -109,6 +109,8 @@ class ControlledBuffer extends InstanceFactory {
     setFacingAttribute(StdAttr.FACING);
     setKeyConfigurator(new BitWidthConfigurator(StdAttr.WIDTH));
   }
+  
+  public boolean isInverter() { return isInverter; }
 
   //
   // methods for instances
@@ -248,7 +250,6 @@ class ControlledBuffer extends InstanceFactory {
       int[] xp = new int[] {-d, -19 - d, -19 - d, -d};
       int[] yp = new int[] {0, -7, 7, 0};
       g.drawPolyline(xp, yp, 4);
-      // if (isInverter) g.drawOval(-9, -4, 9, 9);
     }
 
     if (rotate != 0.0) {
@@ -280,5 +281,11 @@ class ControlledBuffer extends InstanceFactory {
       }
       state.setPort(0, out, GateAttributes.DELAY);
     }
+  }
+  
+  @Override
+  public boolean HDLSupportedComponent(String HDLIdentifier, AttributeSet attrs) {
+    if (MyHDLGenerator == null) MyHDLGenerator = new ControlledBufferHDLGenerator();
+    return MyHDLGenerator.HDLTargetSupported(HDLIdentifier, attrs);
   }
 }
