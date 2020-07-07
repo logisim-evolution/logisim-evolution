@@ -59,6 +59,7 @@ import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.soc.data.SocSimulationManager;
+import com.cburch.logisim.std.io.extra.Buzzer;
 import com.cburch.logisim.std.memory.Ram;
 import com.cburch.logisim.std.memory.RamState;
 import com.cburch.logisim.std.memory.Rom;
@@ -932,6 +933,8 @@ public class Circuit {
       ComponentFactory factory = c.getFactory();
       if (factory instanceof Clock) {
         clocks.remove(c);
+      } else if (factory instanceof Buzzer) {
+        Buzzer.StopBuzzerSound(c, proj.getCircuitState(this));
       } else if (factory instanceof SubcircuitFactory) {
         SubcircuitFactory subcirc = (SubcircuitFactory) factory;
         subcirc.getSubcircuit().circuitsUsingThis.remove(c);
