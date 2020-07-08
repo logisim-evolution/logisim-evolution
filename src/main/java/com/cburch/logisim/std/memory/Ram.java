@@ -33,7 +33,9 @@ import static com.cburch.logisim.std.Strings.S;
 import java.util.WeakHashMap;
 
 import com.cburch.logisim.LogisimVersion;
+import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitState;
+import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.BitWidth;
@@ -391,6 +393,11 @@ public class Ram extends Mem {
       else
         state.setPort(RamAppearance.getDataOutIndex(0, attrs), Value.createKnown(dataBits, oldMemValue), DELAY);
     }
+  }
+  
+  @Override
+  public void removeComponent(Circuit circ, Component c , CircuitState state) {
+    if (state != null) closeHexFrame((RamState)state.getData(c));  
   }
   
   public static boolean isSeparate(AttributeSet attrs) {

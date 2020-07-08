@@ -51,6 +51,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.swing.JFrame;
 import javax.swing.JProgressBar;
 
 public class Download extends DownloadBase implements Runnable, WindowListener {
@@ -72,7 +74,9 @@ public class Download extends DownloadBase implements Runnable, WindowListener {
 
   private Process Executable;
   private Object lock = new Object();
+  private JFrame parent;
 
+  
   private ArrayList<ActionListener> Listeners = new ArrayList<ActionListener>();
 
   public Download(
@@ -85,8 +89,10 @@ public class Download extends DownloadBase implements Runnable, WindowListener {
 	      boolean writeToFlash,
 	      boolean DownloadOnly,
 	      boolean gegerateHdlOnly,
-	      JProgressBar Progress) {
+	      JProgressBar Progress,
+	      JFrame myParent) {
     MyProgress = Progress;
+    parent = myParent;
     SetUpDownload(MyProject, TopLevelSheet, TickFrequency, MyReporter,
        MyBoardInformation, MapFileName, writeToFlash, DownloadOnly,gegerateHdlOnly);  
   }
@@ -346,11 +352,11 @@ public class Download extends DownloadBase implements Runnable, WindowListener {
       MyProgress.setString(S.get("FPGAState3"));
       ComponentMapDialog MapPannel;
       if (MyProject.getLogisimFile().getLoader().getMainFile() != null) {
-        MapPannel = new ComponentMapDialog( null, 
+        MapPannel = new ComponentMapDialog( parent, 
                 MyProject.getLogisimFile().getLoader().getMainFile().getAbsolutePath(),
                 MyBoardInformation, MyMappableResources);
       } else {
-        MapPannel = new ComponentMapDialog(null, "", MyBoardInformation, MyMappableResources);
+        MapPannel = new ComponentMapDialog( parent , "", MyBoardInformation, MyMappableResources);
       }
       if (!MapPannel.run()) {
         MyReporter.AddError(S.get("FPGADownloadAborted"));

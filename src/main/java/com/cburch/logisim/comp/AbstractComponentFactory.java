@@ -29,6 +29,8 @@
 package com.cburch.logisim.comp;
 
 import com.cburch.logisim.LogisimVersion;
+import com.cburch.logisim.circuit.Circuit;
+import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.AttributeSets;
@@ -64,6 +66,8 @@ public abstract class AbstractComponentFactory implements ComponentFactory {
   public AttributeSet createAttributeSet() {
     return AttributeSets.EMPTY;
   }
+  
+  public void removeComponent(Circuit circ, Component c , CircuitState state) {}
 
   public abstract Component createComponent(Location loc, AttributeSet attrs);
 

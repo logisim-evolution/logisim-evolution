@@ -53,15 +53,11 @@ import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.gui.FPGAReport;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.instance.Instance;
-import com.cburch.logisim.instance.InstanceComponent;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.soc.data.SocSimulationManager;
-import com.cburch.logisim.std.io.extra.Buzzer;
-import com.cburch.logisim.std.memory.Ram;
-import com.cburch.logisim.std.memory.RamState;
 import com.cburch.logisim.std.memory.Rom;
 import com.cburch.logisim.std.wiring.Clock;
 import com.cburch.logisim.std.wiring.Pin;
@@ -81,7 +77,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -700,6 +695,10 @@ public class Circuit {
   public Collection<Circuit> getCircuitsUsingThis() {
     return circuitsUsingThis.values();
   }
+  
+  public void removeComponent(Component c) {
+    circuitsUsingThis.remove(c);
+  }
 
   public ArrayList<Component> getClocks() {
     return clocks;
@@ -901,18 +900,8 @@ public class Circuit {
     Annotated = false;
     for (Component comp : oldComps) {
       socSim.removeComponent(comp);
-      if (comp.getFactory() instanceof SubcircuitFactory) {
-        SubcircuitFactory sub = (SubcircuitFactory) comp.getFactory();
-        sub.getSubcircuit().circuitsUsingThis.remove(comp);
-      } else if (comp.getFactory() instanceof VhdlEntity) {
-        VhdlEntity vhdl = (VhdlEntity) comp.getFactory();
-        vhdl.removeCircuitUsing(comp);
-      } else if (comp.getFactory() instanceof Rom) {
-        Rom.closeHexFrame(comp);
-      } else if (comp.getFactory() instanceof Ram) {
-        CircuitState state = proj.getCircuitState(this);
-        if (state != null) Ram.closeHexFrame((RamState)state.getData(comp));
-      }
+      ComponentFactory factory = comp.getFactory();
+      factory.removeComponent(this, comp, proj.getCircuitState(this));
     }
     fireEvent(CircuitEvent.ACTION_CLEAR, oldComps);
   }
@@ -931,36 +920,11 @@ public class Circuit {
       comps.remove(c);
       socSim.removeComponent(c);
       ComponentFactory factory = c.getFactory();
+      factory.removeComponent(this, c, proj.getCircuitState(this));
       if (factory instanceof Clock) {
         clocks.remove(c);
-      } else if (factory instanceof Buzzer) {
-        Buzzer.StopBuzzerSound(c, proj.getCircuitState(this));
-      } else if (factory instanceof SubcircuitFactory) {
-        SubcircuitFactory subcirc = (SubcircuitFactory) factory;
-        subcirc.getSubcircuit().circuitsUsingThis.remove(c);
-      } else if (factory instanceof VhdlEntity) {
-        VhdlEntity vhdl = (VhdlEntity) factory;
-        vhdl.removeCircuitUsing(c);
-      } else if (factory instanceof Rom) {
-        Rom.closeHexFrame(c);
-      } else if (factory instanceof Ram) {
-        CircuitState state = proj.getCircuitState(this);
-        if (state != null) Ram.closeHexFrame((RamState)state.getData(c));
-      } else if (factory instanceof DynamicElementProvider && c instanceof InstanceComponent) {
-        // TODO: remove stale appearance dynamic elements in
-        // CircuitTransaction.execute() instead?
-        HashSet<Circuit> allAffected = new HashSet<>();
-        LinkedList<Circuit> todo = new LinkedList<>();
-        todo.add(this);
-        while (!todo.isEmpty()) {
-          Circuit circ = todo.remove();
-          if (allAffected.contains(circ)) continue;
-          allAffected.add(circ);
-          for (Circuit other : circ.circuitsUsingThis.values())
-            if (!allAffected.contains(other)) todo.add(other);
-        }
-        for (Circuit circ : allAffected)
-          circ.appearance.removeDynamicElement((InstanceComponent) c);
+      } else if (factory instanceof DynamicElementProvider) {
+        DynamicElementProvider.removeDynamicElements(this, c);
       }
       c.removeComponentListener(myComponentListener);
     }

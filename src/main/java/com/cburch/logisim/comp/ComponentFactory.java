@@ -29,6 +29,8 @@
 package com.cburch.logisim.comp;
 
 import com.cburch.logisim.LogisimVersion;
+import com.cburch.logisim.circuit.Circuit;
+import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeDefaultProvider;
 import com.cburch.logisim.data.AttributeSet;
@@ -55,6 +57,8 @@ public interface ComponentFactory extends AttributeDefaultProvider {
   public AttributeSet createAttributeSet();
 
   public Component createComponent(Location loc, AttributeSet attrs);
+  
+  public void removeComponent(Circuit circ, Component c , CircuitState state);
 
   public void drawGhost(
       ComponentDrawContext context, Color color, int x, int y, AttributeSet attrs);
