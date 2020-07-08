@@ -74,10 +74,10 @@ public interface HDLGeneratorFactory {
       String HDLType);
 
   public ArrayList<String> GetComponentInstantiation(
-      Netlist TheNetlist, AttributeSet attrs, String ComponentName, String HDLType /*
-																	 * , boolean
-																	 * hasLB
-																	 */);
+      Netlist TheNetlist, 
+      AttributeSet attrs, 
+      String ComponentName, 
+      String HDLType );
 
   public ArrayList<String> GetComponentMap(
       Netlist Nets,
