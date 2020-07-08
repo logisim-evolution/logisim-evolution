@@ -30,6 +30,7 @@ package com.cburch.logisim.std.io.extra;
 
 import static com.cburch.logisim.std.Strings.S;
 
+import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.circuit.SubcircuitFactory;
 import com.cburch.logisim.comp.Component;
@@ -73,7 +74,7 @@ public class Buzzer extends InstanceFactory {
     public Object clone() {
       return new Data();
     }
-
+    
     public void StartThread() {
       // avoid crash (for example if you connect a clock at 4KHz to the enable pin)
       if (Thread.activeCount() > 100) return;
@@ -260,4 +261,10 @@ public class Buzzer extends InstanceFactory {
     p[VOL].setToolTip(S.getter("buzzerVolume"));
     instance.setPorts(p);
   }
+
+  @Override
+  public void removeComponent(Circuit circ, Component c , CircuitState state) {
+    StopBuzzerSound(c, state);
+  }
+
 }

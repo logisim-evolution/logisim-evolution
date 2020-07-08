@@ -271,6 +271,7 @@ public class FPGACommander
     ToolPath.setActionCommand("ToolPath");
     ToolPath.addActionListener(this);
     MyProject.getSimulator().addSimulatorListener(this);
+    MyProject.getFrame().addWindowListener(this);
 
     panel = new JFrame();
     panel.setResizable(false);
@@ -392,7 +393,8 @@ public class FPGACommander
               writeFlash,
               DownloadOnly,
               HdlOnly,
-              Progress);
+              Progress,
+              panel);
       Downloader.AddListener(this);
       Downloader.DoDownload();
     } else if (e.getSource() instanceof Download) {
@@ -497,6 +499,9 @@ public class FPGACommander
   @Override
   public void windowClosing(WindowEvent e) {
     ReporterGui.CloseOpenWindows();
+    if (e.getSource().equals(MyProject.getFrame())&&panel.isVisible()) {
+      panel.setVisible(false);
+    }
   }
 
   @Override

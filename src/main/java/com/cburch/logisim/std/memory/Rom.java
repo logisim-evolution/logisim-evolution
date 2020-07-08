@@ -31,6 +31,7 @@ package com.cburch.logisim.std.memory;
 import static com.cburch.logisim.std.Strings.S;
 
 import com.cburch.logisim.LogisimVersion;
+import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.data.Attribute;
@@ -293,6 +294,11 @@ public class Rom extends Mem {
       state.setPort(RamAppearance.getDataOutIndex(i, attrs),
               misalignError ? Value.createError(dataBits) : Value.createKnown(dataBits, val), DELAY);
     }
+  }
+  
+  @Override
+  public void removeComponent(Circuit circ, Component c , CircuitState state) {
+    closeHexFrame(c);
   }
 
   @Override

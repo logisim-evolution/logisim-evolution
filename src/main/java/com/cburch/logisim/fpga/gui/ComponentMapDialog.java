@@ -64,6 +64,7 @@ public class ComponentMapDialog implements ActionListener, WindowListener,
   static final Logger logger = LoggerFactory.getLogger(ComponentMapDialog.class);
 
   private JDialog panel;
+  private JFrame parent;
   private JButton DoneButton = new JButton();
   private JButton SaveButton = new JButton();
   private JButton CancelButton = new JButton();
@@ -89,6 +90,9 @@ public class ComponentMapDialog implements ActionListener, WindowListener,
     if (OldDirectory == null) OldDirectory = "";
     else if (OldDirectory.length() != 0 && !OldDirectory.endsWith(File.separator))
       OldDirectory += File.separator;
+    
+    parent = parentFrame;
+    if (parent != null) parent.addWindowListener(this);
     
     BoardInfo = Board;
     MappableComponents = mappable;

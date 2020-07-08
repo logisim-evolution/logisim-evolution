@@ -519,4 +519,9 @@ public class SubcircuitFactory extends InstanceFactory {
     l.draw(g2, (float)(AppPreferences.getIconSize()/2-l.getBounds().getCenterX()), 
            (float)((7*AppPreferences.getIconSize())/8-l.getBounds().getCenterY()));
   }
+  
+  @Override
+  public void removeComponent(Circuit circ, Component c , CircuitState state) {
+    getSubcircuit().removeComponent(c);
+  }
 }
