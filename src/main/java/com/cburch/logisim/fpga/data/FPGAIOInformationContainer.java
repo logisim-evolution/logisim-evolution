@@ -566,7 +566,8 @@ public class FPGAIOInformationContainer implements Cloneable {
     MapResultClass result = new MapResultClass();
     result.mapResult = false;
     result.pinId = inpPin;
-    if (MyInputPins == null || !MyInputPins.contains(result.pinId)) return result;
+    if (MyInputPins == null || !MyInputPins.contains(result.pinId))
+      return this.tryIOMap(comp, compPin, inpPin);
     unmap(result.pinId);
     mapType map = new mapType(comp,compPin);
     pinIsMapped.set(result.pinId, map);
@@ -578,7 +579,8 @@ public class FPGAIOInformationContainer implements Cloneable {
     MapResultClass result = new MapResultClass();
     result.mapResult = false;
     result.pinId = outpPin+(MyInputPins == null ? 0 : MyInputPins.size());
-    if (MyOutputPins == null || !MyOutputPins.contains(result.pinId)) return result;
+    if (MyOutputPins == null || !MyOutputPins.contains(result.pinId)) 
+      return this.tryIOMap(comp, compPin, outpPin); 
     unmap(result.pinId);
     mapType map = new mapType(comp,compPin);
     pinIsMapped.set(result.pinId, map);
