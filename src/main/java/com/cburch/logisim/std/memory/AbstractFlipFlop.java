@@ -146,7 +146,8 @@ abstract class AbstractFlipFlop extends InstanceFactory {
 
   private Attribute<AttributeOption> triggerAttribute;
 
-  protected AbstractFlipFlop(String name, String iconName, StringGetter desc, int numInputs, boolean allowLevelTriggers) {
+  protected AbstractFlipFlop(
+      String name, String iconName, StringGetter desc, int numInputs, boolean allowLevelTriggers) {
     super(name, desc);
     this.numInputs = numInputs;
     setIconName(iconName);
@@ -160,19 +161,20 @@ abstract class AbstractFlipFlop extends InstanceFactory {
     setInstanceLogger(Logger.class);
   }
 
-  protected AbstractFlipFlop(String name, Icon icon, StringGetter desc, int numInputs, boolean allowLevelTriggers) {
-	    super(name, desc);
-	    this.numInputs = numInputs;
-	    setIcon(icon);
-	    triggerAttribute = allowLevelTriggers ? StdAttr.TRIGGER : StdAttr.EDGE_TRIGGER;
-	    setAttributes(
-	        new Attribute[] {triggerAttribute, StdAttr.LABEL, StdAttr.LABEL_FONT, StdAttr.APPEARANCE},
-	        new Object[] {
-	          StdAttr.TRIG_RISING, "", StdAttr.DEFAULT_LABEL_FONT, AppPreferences.getDefaultAppearance()
-	        });
-	    setInstancePoker(Poker.class);
-	    setInstanceLogger(Logger.class);
-	  }
+  protected AbstractFlipFlop(
+      String name, Icon icon, StringGetter desc, int numInputs, boolean allowLevelTriggers) {
+    super(name, desc);
+    this.numInputs = numInputs;
+    setIcon(icon);
+    triggerAttribute = allowLevelTriggers ? StdAttr.TRIGGER : StdAttr.EDGE_TRIGGER;
+    setAttributes(
+        new Attribute[] {triggerAttribute, StdAttr.LABEL, StdAttr.LABEL_FONT, StdAttr.APPEARANCE},
+        new Object[] {
+          StdAttr.TRIG_RISING, "", StdAttr.DEFAULT_LABEL_FONT, AppPreferences.getDefaultAppearance()
+        });
+    setInstancePoker(Poker.class);
+    setInstanceLogger(Logger.class);
+  }
 
   private void updatePorts(Instance instance) {
     Port[] ps = new Port[numInputs + STD_PORTS];
@@ -345,9 +347,9 @@ abstract class AbstractFlipFlop extends InstanceFactory {
     painter.drawPort(n + 4, "S", Direction.NORTH);
     g.setColor(Color.BLACK);
     for (int i = 0; i < n; i++) {
-        GraphicsUtil.switchToWidth(g, 2);
-        g.drawLine(x - 10, y + 10 + i * 20, x - 1, y + 10 + i * 20);
-        GraphicsUtil.switchToWidth(g, 1);
+      GraphicsUtil.switchToWidth(g, 2);
+      g.drawLine(x - 10, y + 10 + i * 20, x - 1, y + 10 + i * 20);
+      GraphicsUtil.switchToWidth(g, 1);
       painter.drawPort(i);
       GraphicsUtil.drawCenteredText(g, getInputName(i), x + 8, y + 8 + i * 20);
     }

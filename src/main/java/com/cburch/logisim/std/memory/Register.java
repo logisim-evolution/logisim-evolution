@@ -134,7 +134,7 @@ public class Register extends InstanceFactory implements DynamicElementProvider 
       GraphicsUtil.switchToWidth(g, 1);
     }
     if (!isLatch) {
-    	painter.drawClockSymbol(x + 10, y + 70);
+      painter.drawClockSymbol(x + 10, y + 70);
     } else {
       GraphicsUtil.drawCenteredText(g, "E", x + 18, y + 68);
     }

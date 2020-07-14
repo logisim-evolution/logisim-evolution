@@ -316,7 +316,10 @@ public class ShiftRegister extends InstanceFactory {
     if (LastBlock) {
       GraphicsUtil.switchToWidth(g, DataWidth);
       g.drawLine(
-          real_xpos + blockwidth + line_fix, real_ypos + 10, real_xpos + blockwidth + 10, real_ypos + 10);
+          real_xpos + blockwidth + line_fix,
+          real_ypos + 10,
+          real_xpos + blockwidth + 10,
+          real_ypos + 10);
       painter.drawPort(OUT);
       GraphicsUtil.switchToWidth(g, 1);
     }
@@ -324,10 +327,16 @@ public class ShiftRegister extends InstanceFactory {
       GraphicsUtil.switchToWidth(g, DataWidth);
       if (current_stage == 0)
         g.drawLine(
-            real_xpos + blockwidth + line_fix, real_ypos + 20, real_xpos + blockwidth + 10, real_ypos + 20);
+            real_xpos + blockwidth + line_fix,
+            real_ypos + 20,
+            real_xpos + blockwidth + 10,
+            real_ypos + 20);
       else
         g.drawLine(
-            real_xpos + blockwidth + line_fix, real_ypos + 10, real_xpos + blockwidth + 10, real_ypos + 10);
+            real_xpos + blockwidth + line_fix,
+            real_ypos + 10,
+            real_xpos + blockwidth + 10,
+            real_ypos + 10);
       painter.drawPort(6 + 2 * current_stage + 1);
       GraphicsUtil.switchToWidth(g, 1);
     }
