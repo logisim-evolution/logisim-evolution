@@ -312,20 +312,20 @@ public class Simulator {
     }
   }
 
-  //TODO: convert half-cycle frequency to full-cycle frequency
+  // TODO: convert half-cycle frequency to full-cycle frequency
   public void setTickFrequency(double freq) {
     if (tickFrequency != freq) {
-      int millis = (int) Math.round(1000 / freq);
+      long nanos = (long) Math.round(1e9 / freq);
       int ticks;
-      if (millis > 0) {
+      if (nanos > 0) {
         ticks = 1;
       } else {
-        millis = 1;
-        ticks = (int) Math.round(freq / 1000);
+        nanos = 1;
+        ticks = (int) Math.round(freq / 1e9);
       }
 
       tickFrequency = freq;
-      ticker.setTickFrequency(millis, ticks);
+      ticker.setTickFrequency(nanos, ticks);
       renewTickerAwake();
       fireSimulatorStateChanged();
     }
