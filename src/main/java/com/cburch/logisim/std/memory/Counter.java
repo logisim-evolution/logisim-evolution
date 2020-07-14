@@ -322,30 +322,26 @@ public class Counter extends InstanceFactory implements DynamicElementProvider {
     g.drawRect(xpos + 20, RealYpos, SymbolWidth(NrOfBits), 20);
     /* Input Line */
     if (NrOfBits > 1) {
-      g.drawLine(xpos + 10, RealYpos + 10, xpos + 20, RealYpos + 10);
-      g.drawLine(xpos + 5, RealYpos + 5, xpos + 10, RealYpos + 10);
+    	// Input Line
+    	int[] ixPoints = {xpos + 5, xpos + 10, xpos + 20};
+    	int[] iyPoints = {RealYpos + 5, RealYpos + 10, RealYpos + 10};
+    	g.drawPolyline(ixPoints, iyPoints, 3);
+    	
+    	// Output Line
+    	int[] oxPoints = {xpos + 20 + SymbolWidth(NrOfBits), xpos + 30 + SymbolWidth(NrOfBits), xpos + 35 + SymbolWidth(NrOfBits)};
+    	int[] oyPoints = {RealYpos + 10, RealYpos + 10, RealYpos + 5};
+    	g.drawPolyline(oxPoints, oyPoints, 3);
     } else {
+    	// Input Line
       g.drawLine(xpos, RealYpos + 10, xpos + 20, RealYpos + 10);
-    }
-    /* Ouput Line */
-    if (NrOfBits > 1) {
-      g.drawLine(
-          xpos + 20 + SymbolWidth(NrOfBits),
-          RealYpos + 10,
-          xpos + 30 + SymbolWidth(NrOfBits),
-          RealYpos + 10);
-      g.drawLine(
-          xpos + 30 + SymbolWidth(NrOfBits),
-          RealYpos + 10,
-          xpos + 35 + SymbolWidth(NrOfBits),
-          RealYpos + 5);
-    } else {
+      // Output Line
       g.drawLine(
           xpos + 20 + SymbolWidth(NrOfBits),
           RealYpos + 10,
           xpos + 40 + SymbolWidth(NrOfBits),
           RealYpos + 10);
     }
+    
     g.setColor(Color.BLACK);
     if (NrOfBits > 1) {
       GraphicsUtil.drawText(
@@ -372,18 +368,15 @@ public class Counter extends InstanceFactory implements DynamicElementProvider {
       painter.drawPort(IN);
       painter.drawPort(OUT);
       if (NrOfBits > 1) {
-        g.drawLine(xpos, RealYpos, xpos + 5, RealYpos + 5);
-        g.drawLine(
-            xpos + 35 + SymbolWidth(NrOfBits),
-            RealYpos + 5,
-            xpos + 40 + SymbolWidth(NrOfBits),
-            RealYpos);
-        g.drawLine(xpos + 5, RealYpos + 5, xpos + 5, RealYpos + 20);
-        g.drawLine(
-            xpos + 35 + SymbolWidth(NrOfBits),
-            RealYpos + 5,
-            xpos + 35 + SymbolWidth(NrOfBits),
-            RealYpos + 20);
+    	  // Input Line
+      	int[] ixPoints = {xpos, xpos + 5, xpos + 5};
+      	int[] iyPoints = {RealYpos, RealYpos + 5, RealYpos + 20};
+      	g.drawPolyline(ixPoints, iyPoints, 3);
+      	
+      	// Output Line
+      	int[] oxPoints = {xpos + 35 + SymbolWidth(NrOfBits), xpos + 35 + SymbolWidth(NrOfBits), xpos + 40 + SymbolWidth(NrOfBits)};
+      	int[] oyPoints = {RealYpos + 20, RealYpos + 5, RealYpos};
+      	g.drawPolyline(oxPoints, oyPoints, 3);
       }
     } else if (last) {
       g.drawLine(xpos + 5, RealYpos, xpos + 5, RealYpos + 5);

@@ -334,7 +334,7 @@ abstract class AbstractFlipFlop extends InstanceFactory {
         g.setColor(myState.curValue.getColor());
         g.fillOval(x + 13, y + 23, 14, 14);
         g.setColor(Color.WHITE);
-        GraphicsUtil.drawCenteredText(g, myState.curValue.toDisplayString(), x + 21, y + 29);
+        GraphicsUtil.drawCenteredText(g, myState.curValue.toDisplayString(), x + 19, y + 28);
         g.setColor(Color.BLACK);
       }
     }
@@ -345,18 +345,22 @@ abstract class AbstractFlipFlop extends InstanceFactory {
     painter.drawPort(n + 4, "S", Direction.NORTH);
     g.setColor(Color.BLACK);
     for (int i = 0; i < n; i++) {
-      g.fillRect(x - 10, y + 9 + i * 20, 10, 3);
+        GraphicsUtil.switchToWidth(g, 2);
+        g.drawLine(x - 10, y + 10 + i * 20, x - 1, y + 10 + i * 20);
+        GraphicsUtil.switchToWidth(g, 1);
       painter.drawPort(i);
-      GraphicsUtil.drawCenteredText(g, getInputName(i), x + 8, y + 10 + i * 20);
+      GraphicsUtil.drawCenteredText(g, getInputName(i), x + 8, y + 8 + i * 20);
     }
     Object Trigger = painter.getAttributeValue(triggerAttribute);
     if (Trigger.equals(StdAttr.TRIG_RISING) || Trigger.equals(StdAttr.TRIG_FALLING)) {
       painter.drawClockSymbol(x, y + 50);
     } else {
-      GraphicsUtil.drawCenteredText(g, "E", x + 8, y + 50);
+      GraphicsUtil.drawCenteredText(g, "E", x + 8, y + 48);
     }
     if (Trigger.equals(StdAttr.TRIG_RISING) || Trigger.equals(StdAttr.TRIG_HIGH)) {
-      g.fillRect(x - 10, y + 49, 10, 3);
+      GraphicsUtil.switchToWidth(g, 2);
+      g.drawLine(x - 10, y + 50, x - 1, y + 50);
+      GraphicsUtil.switchToWidth(g, 1);
     } else {
       GraphicsUtil.switchToWidth(g, 2);
       g.drawOval(x - 10, y + 45, 10, 10);
@@ -364,8 +368,10 @@ abstract class AbstractFlipFlop extends InstanceFactory {
     }
     painter.drawPort(n);
 
-    g.fillRect(x + 40, y + 9, 10, 3);
-    GraphicsUtil.drawCenteredText(g, "Q", x + 31, y + 10);
+    GraphicsUtil.switchToWidth(g, 2);
+    g.drawLine(x + 41, y + 10, x + 50, y + 10);
+    GraphicsUtil.switchToWidth(g, 1);
+    GraphicsUtil.drawCenteredText(g, "Q", x + 31, y + 8);
     painter.drawPort(n + 1);
     GraphicsUtil.switchToWidth(g, 2);
     g.drawOval(x + 40, y + 45, 10, 10);

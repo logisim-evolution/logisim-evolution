@@ -245,7 +245,8 @@ public class ShiftRegister extends InstanceFactory {
     int real_ypos = ypos + 70 + current_stage * 20;
     if (current_stage > 0) real_ypos += 10;
     int real_xpos = xpos + 10;
-    int DataWidth = (nr_of_bits == 1) ? 3 : 5;
+    int DataWidth = (nr_of_bits == 1) ? 2 : 5;
+    int line_fix = (nr_of_bits == 1) ? 1 : 2;
     int height = (current_stage == 0) ? 30 : 20;
     boolean LastBlock = (current_stage == (nr_of_stages - 1));
     int blockwidth = SymbolWidth;
@@ -292,14 +293,13 @@ public class ShiftRegister extends InstanceFactory {
     /* Draw the Inputs */
     if (current_stage == 0 || has_load) {
       GraphicsUtil.switchToWidth(g, DataWidth);
-      g.drawLine(real_xpos - 10, real_ypos + 10, real_xpos - 1, real_ypos + 10);
-      if (has_load) painter.drawPort(6 + 2 * current_stage);
+      g.drawLine(real_xpos - 10, real_ypos + 10, real_xpos - line_fix, real_ypos + 10);
       if (current_stage == 0) {
         painter.drawPort(IN);
         GraphicsUtil.drawText(
             g, "1,3D", real_xpos + 1, real_ypos + 10, GraphicsUtil.H_LEFT, GraphicsUtil.V_CENTER);
         if (has_load) {
-          g.drawLine(real_xpos - 10, real_ypos + 20, real_xpos - 1, real_ypos + 20);
+          g.drawLine(real_xpos - 10, real_ypos + 20, real_xpos - line_fix, real_ypos + 20);
           GraphicsUtil.drawText(
               g, "2,3D", real_xpos + 1, real_ypos + 20, GraphicsUtil.H_LEFT, GraphicsUtil.V_CENTER);
         }
@@ -307,6 +307,8 @@ public class ShiftRegister extends InstanceFactory {
         GraphicsUtil.drawText(
             g, "2,3D", real_xpos + 1, real_ypos + 10, GraphicsUtil.H_LEFT, GraphicsUtil.V_CENTER);
       }
+
+      if (has_load) painter.drawPort(6 + 2 * current_stage);
       GraphicsUtil.switchToWidth(g, 1);
     }
     GraphicsUtil.switchToWidth(g, 1);
@@ -314,7 +316,7 @@ public class ShiftRegister extends InstanceFactory {
     if (LastBlock) {
       GraphicsUtil.switchToWidth(g, DataWidth);
       g.drawLine(
-          real_xpos + blockwidth, real_ypos + 10, real_xpos + blockwidth + 10, real_ypos + 10);
+          real_xpos + blockwidth + line_fix, real_ypos + 10, real_xpos + blockwidth + 10, real_ypos + 10);
       painter.drawPort(OUT);
       GraphicsUtil.switchToWidth(g, 1);
     }
@@ -322,10 +324,10 @@ public class ShiftRegister extends InstanceFactory {
       GraphicsUtil.switchToWidth(g, DataWidth);
       if (current_stage == 0)
         g.drawLine(
-            real_xpos + blockwidth, real_ypos + 20, real_xpos + blockwidth + 10, real_ypos + 20);
+            real_xpos + blockwidth + line_fix, real_ypos + 20, real_xpos + blockwidth + 10, real_ypos + 20);
       else
         g.drawLine(
-            real_xpos + blockwidth, real_ypos + 10, real_xpos + blockwidth + 10, real_ypos + 10);
+            real_xpos + blockwidth + line_fix, real_ypos + 10, real_xpos + blockwidth + 10, real_ypos + 10);
       painter.drawPort(6 + 2 * current_stage + 1);
       GraphicsUtil.switchToWidth(g, 1);
     }
