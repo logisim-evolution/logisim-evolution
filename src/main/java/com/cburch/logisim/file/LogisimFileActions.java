@@ -429,43 +429,19 @@ public class LogisimFileActions {
       if (lib instanceof LogisimFile) {
         LogisimFile ThisLib = (LogisimFile) lib;
         Iterator<Circuit> iter = ThisLib.getCircuits().iterator();
-        ArrayList<Circuit> added = new ArrayList<Circuit>();
         while (iter.hasNext()) {
           Circuit circ = iter.next();
-          Circuit NewCirc = new Circuit(circ.getName(), ThisLib, proj);
-          CircuitMutation result = new CircuitMutation(NewCirc);
           for (Component tool : circ.getNonWires()) {
             if (AvailableTools.keySet().contains(tool.getFactory().getName().toUpperCase())) {
               AddTool current = AvailableTools.get(tool.getFactory().getName().toUpperCase());
               if (current != null) {
-                Component NewComp =
-                    current
-                        .getFactory()
-                        .createComponent(
-                            tool.getLocation(), (AttributeSet) tool.getAttributeSet().clone());
-                result.add(NewComp);
+                tool.setFactory(current.getFactory());
               } else if (tool.getFactory().getName().equals("Text")) {
-                Component NewComp =
-                    Text.FACTORY.createComponent(
-                        tool.getLocation(), (AttributeSet) tool.getAttributeSet().clone());
-                result.add(NewComp);
+                Component NewComp = Text.FACTORY.createComponent(tool.getLocation(),
+                     (AttributeSet) tool.getAttributeSet().clone());
+                tool.setFactory(NewComp.getFactory());
               } else System.out.println("Not found:" + tool.getFactory().getName());
-            } else {
-              result.add(tool);
             }
-          }
-          result.addAll(circ.getWires());
-          result.execute();
-          added.add(NewCirc);
-        }
-        for (int i = 0; i < added.size(); i++) {
-          Circuit NewCirc = added.get(i);
-          Circuit OldCirc = ThisLib.getCircuit(NewCirc.getName());
-          if (OldCirc != null) {
-            ThisLib.addCircuit(added.get(i));
-            ThisLib.removeCircuit(OldCirc);
-          } else {
-            System.out.println("Horrible error");
           }
         }
       }

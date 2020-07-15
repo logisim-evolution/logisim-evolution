@@ -195,6 +195,8 @@ public class Splitter extends ManagedComponent
   public ComponentFactory getFactory() {
     return SplitterFactory.instance;
   }
+  
+  public void setFactory(ComponentFactory fact) {}; 
 
   @Override
   public Object getFeature(Object key) {

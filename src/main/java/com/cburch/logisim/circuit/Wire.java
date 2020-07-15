@@ -253,6 +253,8 @@ public final class Wire implements Component, AttributeSet, CustomHandles, Itera
   public ComponentFactory getFactory() {
     return WireFactory.instance;
   }
+  
+  public void setFactory(ComponentFactory fact) {}
 
   public Object getFeature(Object key) {
     if (key == CustomHandles.class) return this;

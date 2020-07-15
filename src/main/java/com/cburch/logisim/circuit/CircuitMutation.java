@@ -64,7 +64,7 @@ public final class CircuitMutation extends CircuitTransaction {
     changes.add(CircuitChange.addAll(primary, new ArrayList<Component>(comps)));
   }
 
-  void change(CircuitChange change) {
+  public void change(CircuitChange change) {
     changes.add(change);
   }
 

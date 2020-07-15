@@ -365,6 +365,10 @@ public class InstanceComponent implements Component, AttributeListener, ToolTipM
   public ComponentFactory getFactory() {
     return factory;
   }
+  
+  public void setFactory(ComponentFactory fact) {
+    factory = (InstanceFactory)fact;
+  }
 
   public Object getFeature(Object key) {
     Object ret = factory.getInstanceFeature(instance, key);
