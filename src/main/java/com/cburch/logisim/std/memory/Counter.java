@@ -184,16 +184,19 @@ public class Counter extends InstanceFactory implements DynamicElementProvider {
     GraphicsUtil.switchToWidth(g, 2);
     BitWidth widthVal = painter.getAttributeValue(StdAttr.WIDTH);
     int width = widthVal == null ? 8 : widthVal.getWidth();
-    g.drawLine(xpos + 20, ypos, xpos + 20 + SymbolWidth(width), ypos);
-    g.drawLine(xpos + 20, ypos, xpos + 20, ypos + 100);
-    g.drawLine(xpos + 20 + SymbolWidth(width), ypos, xpos + 20 + SymbolWidth(width), ypos + 100);
-    g.drawLine(xpos + 20, ypos + 100, xpos + 30, ypos + 100);
-    g.drawLine(
-        xpos + 10 + SymbolWidth(width), ypos + 100, xpos + 20 + SymbolWidth(width), ypos + 100);
-    g.drawLine(xpos + 30, ypos + 100, xpos + 30, ypos + 110);
-    g.drawLine(
-        xpos + 10 + SymbolWidth(width), ypos + 100, xpos + 10 + SymbolWidth(width), ypos + 110);
-    /* Draw clock entry symbols */
+    int symbolWidth = SymbolWidth(width);
+    // Draw top
+    int[] controlTopx = new int[8];
+    controlTopx[0] = controlTopx[1] = xpos + 30;
+    controlTopx[2] = controlTopx[3] = xpos + 20;
+    controlTopx[4] = controlTopx[5] = xpos + 20 + symbolWidth;
+    controlTopx[6] = controlTopx[7] = xpos + 10 + symbolWidth;
+    int[] controlTopy = new int[8];
+    controlTopy[0] = controlTopy[7] = ypos + 110;
+    controlTopy[1] = controlTopy[2] = controlTopy[5] = controlTopy[6] = ypos + 100;
+    controlTopy[3] = controlTopy[4] = ypos;
+    g.drawPolyline(controlTopx, controlTopy, controlTopx.length);
+    // These are up here because they reset the width to 1 when done.
     painter.drawClockSymbol(xpos + 20, ypos + 80);
     painter.drawClockSymbol(xpos + 20, ypos + 90);
     /* Draw Label */
@@ -206,7 +209,7 @@ public class Counter extends InstanceFactory implements DynamicElementProvider {
             ? "CTR" + Integer.toString(painter.getAttributeValue(StdAttr.WIDTH).getWidth())
             : "CTR DIV0x" + Long.toHexString(max);
     GraphicsUtil.drawCenteredText(g, Label, xpos + (SymbolWidth(width) / 2) + 20, ypos + 5);
-    GraphicsUtil.switchToWidth(g, 2);
+    GraphicsUtil.switchToWidth(g, GraphicsUtil.CONTROL_WIDTH);
     /* Draw Reset Input */
     g.drawLine(xpos, ypos + 20, xpos + 20, ypos + 20);
     GraphicsUtil.drawText(g, "R", xpos + 30, ypos + 20, GraphicsUtil.H_LEFT, GraphicsUtil.V_CENTER);
@@ -280,7 +283,6 @@ public class Counter extends InstanceFactory implements DynamicElementProvider {
         GraphicsUtil.H_RIGHT,
         GraphicsUtil.V_CENTER);
     painter.drawPort(CARRY);
-    GraphicsUtil.switchToWidth(g, 1);
     /* Draw counter Value */
     RegisterData state = (RegisterData) painter.getData();
     if (painter.getShowState() && (state != null)) {
@@ -362,7 +364,7 @@ public class Counter extends InstanceFactory implements DynamicElementProvider {
     g.setFont(font);
     GraphicsUtil.drawText(
         g, "1,6D", xpos + 21, RealYpos + 10, GraphicsUtil.H_LEFT, GraphicsUtil.V_CENTER);
-    int LineWidth = (NrOfBits == 1) ? 2 : 5;
+    int LineWidth = (NrOfBits == 1) ? GraphicsUtil.DATA_SINGLE_WIDTH : GraphicsUtil.DATA_MULTI_WIDTH;
     GraphicsUtil.switchToWidth(g, LineWidth);
     if (first) {
       painter.drawPort(IN);

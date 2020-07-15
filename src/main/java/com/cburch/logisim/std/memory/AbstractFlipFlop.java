@@ -328,15 +328,19 @@ abstract class AbstractFlipFlop extends InstanceFactory {
     Location loc = painter.getLocation();
     int x = loc.getX();
     int y = loc.getY();
+    
+    // Draw outer rectangle
     GraphicsUtil.switchToWidth(g, 2);
     g.drawRect(x, y, 40, 60);
+    
+    // Draw info circle
     if (painter.getShowState()) {
       StateData myState = (StateData) painter.getData();
       if (myState != null) {
         g.setColor(myState.curValue.getColor());
         g.fillOval(x + 13, y + 23, 14, 14);
         g.setColor(Color.WHITE);
-        GraphicsUtil.drawCenteredText(g, myState.curValue.toDisplayString(), x + 19, y + 28);
+        GraphicsUtil.drawCenteredText(g, myState.curValue.toDisplayString(), x + 20, y + 28);
         g.setColor(Color.BLACK);
       }
     }
@@ -346,39 +350,44 @@ abstract class AbstractFlipFlop extends InstanceFactory {
     painter.drawPort(n + 3, "R", Direction.SOUTH);
     painter.drawPort(n + 4, "S", Direction.NORTH);
     g.setColor(Color.BLACK);
+    
+    // Draw input ports (J/K, S/R, D, T)
     for (int i = 0; i < n; i++) {
-      GraphicsUtil.switchToWidth(g, 2);
+      GraphicsUtil.switchToWidth(g, GraphicsUtil.DATA_SINGLE_WIDTH);
       g.drawLine(x - 10, y + 10 + i * 20, x - 1, y + 10 + i * 20);
-      GraphicsUtil.switchToWidth(g, 1);
       painter.drawPort(i);
       GraphicsUtil.drawCenteredText(g, getInputName(i), x + 8, y + 8 + i * 20);
     }
+
     Object Trigger = painter.getAttributeValue(triggerAttribute);
+    // Draw clock or enable symbol
     if (Trigger.equals(StdAttr.TRIG_RISING) || Trigger.equals(StdAttr.TRIG_FALLING)) {
       painter.drawClockSymbol(x, y + 50);
     } else {
       GraphicsUtil.drawCenteredText(g, "E", x + 8, y + 48);
     }
+    
+    // Draw regular/negated input
     if (Trigger.equals(StdAttr.TRIG_RISING) || Trigger.equals(StdAttr.TRIG_HIGH)) {
-      GraphicsUtil.switchToWidth(g, 2);
+      GraphicsUtil.switchToWidth(g, GraphicsUtil.CONTROL_WIDTH);
       g.drawLine(x - 10, y + 50, x - 1, y + 50);
-      GraphicsUtil.switchToWidth(g, 1);
     } else {
-      GraphicsUtil.switchToWidth(g, 2);
+      GraphicsUtil.switchToWidth(g, GraphicsUtil.NEGATED_WIDTH);
       g.drawOval(x - 10, y + 45, 10, 10);
-      GraphicsUtil.switchToWidth(g, 1);
     }
     painter.drawPort(n);
 
-    GraphicsUtil.switchToWidth(g, 2);
+    // Draw output ports
+    GraphicsUtil.switchToWidth(g, GraphicsUtil.DATA_SINGLE_WIDTH);
     g.drawLine(x + 41, y + 10, x + 50, y + 10);
-    GraphicsUtil.switchToWidth(g, 1);
     GraphicsUtil.drawCenteredText(g, "Q", x + 31, y + 8);
     painter.drawPort(n + 1);
-    GraphicsUtil.switchToWidth(g, 2);
+    GraphicsUtil.switchToWidth(g, GraphicsUtil.NEGATED_WIDTH);
     g.drawOval(x + 40, y + 45, 10, 10);
-    GraphicsUtil.switchToWidth(g, 1);
     painter.drawPort(n + 2);
+
+    // Reset width
+    GraphicsUtil.switchToWidth(g, 1);
   }
 
   @Override
