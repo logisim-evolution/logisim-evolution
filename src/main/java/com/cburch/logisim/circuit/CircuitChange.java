@@ -35,7 +35,7 @@ import com.cburch.logisim.std.wiring.Pin;
 import com.cburch.logisim.vhdl.base.VhdlEntity;
 import java.util.Collection;
 
-class CircuitChange {
+public class CircuitChange {
   public static CircuitChange add(Circuit circuit, Component comp) {
     return new CircuitChange(circuit, ADD, comp);
   }

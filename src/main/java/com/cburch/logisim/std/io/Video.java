@@ -178,6 +178,8 @@ class Video extends ManagedComponent implements ToolTipMaker, AttributeListener 
   public ComponentFactory getFactory() {
     return factory;
   }
+  
+  public void setFactory(ComponentFactory fact) {}
 
   Location loc(int pin) {
     return getEndLocation(pin);
