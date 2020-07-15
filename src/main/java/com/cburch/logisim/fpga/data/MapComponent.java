@@ -416,7 +416,7 @@ public class MapComponent {
         success &= res.mapResult;
         newMap.setIOPin(res.pinId);
       } else {
-        success = false;
+    	success = false;
         break;
       }
       if (success) {
@@ -427,8 +427,8 @@ public class MapComponent {
     }
     if (!success) {
       /* restore the old situation */
-      for (int i = 0 ; i < NrOfPins; i++) {
-    	maps.get(i).unmap();
+      for (int i = 0 ; i < NrOfPins && maps != null; i++) {
+    	if (maps != null && maps.get(i) != null) maps.get(i).unmap();
         MapClass map = oldmaps.get(i);
         if (map != null) {
           if (tryMap(i,map.getIOComp(),map.getIOPin()))
