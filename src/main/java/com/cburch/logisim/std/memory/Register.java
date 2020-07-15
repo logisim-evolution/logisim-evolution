@@ -80,7 +80,7 @@ public class Register extends InstanceFactory implements DynamicElementProvider 
       boolean neg_active,
       boolean has_we,
       Value value) {
-    int dq_width = (nr_of_bits == 1) ? 3 : 5;
+    int dq_width = (nr_of_bits == 1) ? 2 : 5;
     int len = (nr_of_bits + 3) / 4;
     int wid = 8 * len + 2;
     int xoff = (60 - wid) / 2;
@@ -119,31 +119,28 @@ public class Register extends InstanceFactory implements DynamicElementProvider 
     g.drawLine(x, y + 30, x + 8, y + 30);
     g.drawLine(x + 52, y + 30, x + 60, y + 30);
     GraphicsUtil.switchToWidth(g, 1);
-    GraphicsUtil.drawCenteredText(g, "D", x + 18, y + 30);
-    GraphicsUtil.drawCenteredText(g, "Q", x + 41, y + 30);
-    GraphicsUtil.switchToWidth(g, 3);
+    GraphicsUtil.drawCenteredText(g, "D", x + 18, y + 28);
+    GraphicsUtil.drawCenteredText(g, "Q", x + 41, y + 28);
+    GraphicsUtil.switchToWidth(g, 2);
     g.drawLine(x + 30, y + 81, x + 30, y + 90);
     GraphicsUtil.switchToWidth(g, 1);
     g.setColor(Color.GRAY);
-    GraphicsUtil.drawCenteredText(g, "R", x + 30, y + 70);
+    GraphicsUtil.drawCenteredText(g, "R", x + 30, y + 68);
     g.setColor(Color.BLACK);
     if (has_we) {
-      GraphicsUtil.drawCenteredText(g, "WE", x + 22, y + 50);
-      GraphicsUtil.switchToWidth(g, 3);
-      g.drawLine(x, y + 50, x + 10, y + 50);
+      GraphicsUtil.drawCenteredText(g, "WE", x + 22, y + 48);
+      GraphicsUtil.switchToWidth(g, 2);
+      g.drawLine(x, y + 50, x + 9, y + 50);
       GraphicsUtil.switchToWidth(g, 1);
     }
     if (!isLatch) {
-      GraphicsUtil.switchToWidth(g, 2);
-      g.drawLine(x + 10, y + 65, x + 20, y + 70);
-      g.drawLine(x + 10, y + 75, x + 20, y + 70);
-      GraphicsUtil.switchToWidth(g, 1);
+      painter.drawClockSymbol(x + 10, y + 70);
     } else {
-      GraphicsUtil.drawCenteredText(g, "E", x + 18, y + 70);
+      GraphicsUtil.drawCenteredText(g, "E", x + 18, y + 68);
     }
     if (!neg_active) {
-      GraphicsUtil.switchToWidth(g, 3);
-      g.drawLine(x, y + 70, x + 10, y + 70);
+      GraphicsUtil.switchToWidth(g, 2);
+      g.drawLine(x, y + 70, x + 9, y + 70);
       GraphicsUtil.switchToWidth(g, 1);
     } else {
       GraphicsUtil.switchToWidth(g, 2);

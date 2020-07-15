@@ -736,7 +736,7 @@ public class RamAppearance {
     ypos[0] = ypos[7] = y+getControlHeight(attrs);
     ypos[1] = ypos[2] = ypos[5] = ypos[6] = ypos[0]-10;
     ypos[3] = ypos[4] = y;
-    g.setStroke(new BasicStroke(2));
+    GraphicsUtil.switchToWidth(g, 2);
     g.drawPolyline(xpos, ypos, 8);
     for (int i = 0 ; i < getNrAddrPorts(attrs) ; i++) {
       int idx = getAddrIndex(i,attrs);
