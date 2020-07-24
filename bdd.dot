@@ -1,5 +1,0 @@
-digraph G {
-root[label="root"]
-root->n1
-n1[label="1"]
-}
