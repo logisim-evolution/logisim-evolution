@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="fSMDSL" nsURI="http://www.cburch.com/logisim/statemachine/FSMDSL"
+    nsPrefix="fSMDSL">
+  <eClassifiers xsi:type="ecore:EClass" name="TOP"/>
+  <eClassifiers xsi:type="ecore:EClass" name="CommandStmt" eSuperTypes="#//TOP">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="cst" upperBound="-1" eType="#//ConstantDef"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="in" upperBound="-1" eType="#//Port"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="out" upperBound="-1" eType="#//Port"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="commands" upperBound="-1"
+        eType="#//Command" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ConstantDefList" eSuperTypes="#//TOP">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="constants" upperBound="-1"
+        eType="#//ConstantDef" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="PredicateStmt" eSuperTypes="#//TOP">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="cst" upperBound="-1" eType="#//ConstantDef"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="in" upperBound="-1" eType="#//Port"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="predicate" eType="#//BoolExpr"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="EQNSpec" eSuperTypes="#//TOP">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="in" upperBound="-1" eType="#//Port"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="outNames" unique="false"
+        upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="eqns" upperBound="-1" eType="#//EQNAssignement"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="EQNAssignement">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="lhs" eType="#//Port" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="rhs" eType="#//BoolExpr"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="BoolExpr"/>
+  <eClassifiers xsi:type="ecore:EClass" name="FSM" eSuperTypes="#//TOP #//FSMElement">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="constants" upperBound="-1"
+        eType="#//ConstantDef" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="in" upperBound="-1" eType="#//Port"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="out" upperBound="-1" eType="#//Port"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="width" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="start" eType="#//State"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="states" upperBound="-1"
+        eType="#//State" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="FSMElement">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="layout" eType="#//LayoutInfo"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Port" eSuperTypes="#//FSMElement">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="width" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="CommandList" eSuperTypes="#//FSMElement">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="commands" upperBound="-1"
+        eType="#//Command" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="LayoutInfo">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="x" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="y" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="width" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="height" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="State" eSuperTypes="#//FSMElement">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="code" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="commandList" eType="#//CommandList"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="transition" upperBound="-1"
+        eType="#//Transition" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Transition" eSuperTypes="#//FSMElement">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="dst" eType="#//State"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="predicate" eType="#//BoolExpr"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="src" eType="#//State"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Command">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="name" eType="#//OutputPort"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="value" eType="#//BoolExpr"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Range">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="ub" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="lb" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ConstantDef">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="value" eType="#//BoolExpr"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="OrExpr" eSuperTypes="#//BoolExpr">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="args" upperBound="-1" eType="#//BoolExpr"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="AndExpr" eSuperTypes="#//BoolExpr">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="args" upperBound="-1" eType="#//BoolExpr"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="NotExpr" eSuperTypes="#//BoolExpr">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="args" upperBound="-1" eType="#//BoolExpr"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="PortRef" eSuperTypes="#//BoolExpr">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="port" eType="#//Port"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="range" eType="#//Range"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="InputPort" eSuperTypes="#//Port"/>
+  <eClassifiers xsi:type="ecore:EClass" name="OutputPort" eSuperTypes="#//Port"/>
+  <eClassifiers xsi:type="ecore:EClass" name="TemporayPort" eSuperTypes="#//Port"/>
+  <eClassifiers xsi:type="ecore:EClass" name="ConcatExpr" eSuperTypes="#//BoolExpr">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="args" upperBound="-1" eType="#//BoolExpr"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ConstRef" eSuperTypes="#//BoolExpr">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="const" eType="#//ConstantDef"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="DefaultPredicate" eSuperTypes="#//BoolExpr"/>
+  <eClassifiers xsi:type="ecore:EClass" name="CmpExpr" eSuperTypes="#//BoolExpr">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="args" upperBound="-1" eType="#//BoolExpr"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="op" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Constant" eSuperTypes="#//BoolExpr">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+</ecore:EPackage>

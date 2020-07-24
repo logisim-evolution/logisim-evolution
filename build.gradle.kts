@@ -3,7 +3,7 @@ plugins {
     id("com.github.ben-manes.versions") version "0.28.0"
     java
     application
-    id("com.github.johnrengelman.shadow") version "5.2.0"
+    id("org.xtext.xtend") version "2.0.2"
     id("edu.sc.seis.macAppBundle") version "2.3.0"
 }
 
@@ -16,10 +16,15 @@ application {
     mainClassName = "com.cburch.logisim.Main"
 }
 
+sourceSets.getByName("main") {
+    java.srcDir(mutableListOf("src-gen", "src"))
+}
+
 dependencies {
     implementation(fileTree("lib") {
         include("**/*.jar")
     })
+    compile("org.eclipse.xtend:org.eclipse.xtend.lib:2.16.0")
     implementation("org.hamcrest:hamcrest:2.2")
     implementation("javax.help:javahelp:2.0.05")
     implementation("com.fifesoft:rsyntaxtextarea:3.1.0")
@@ -45,7 +50,6 @@ task<Jar>("sourcesJar") {
     description = "Creates a source jar archive."
     dependsOn.add("classes")
     classifier = "src"
-
     from(sourceSets.main.get().allSource)
 }
 
