@@ -1,0 +1,54 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2018-10-23T06:18:42.262000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="en">
+    <title>
+      Creating bundles
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class=maindiv>
+      <h1>
+        Creating bundles
+      </h1>
+	   <p>
+        In simple Logisim circuits, most wires carry only one bit; but Logisim also allows you to create wires that bundle together multiple bits. The number of bits traveling along a wire is that wire's <strong>bit width</strong>.
+      </p>
+      <p>
+        Every input and output on every component in the circuit has a bit width associated with it. Often the bit width is 1, and there is no way of changing that, but many of Logisim's built-in components include attributes allowing you to customize the bit widths of their inputs and outputs.
+      </p>
+      <p>
+        The below screen shot illustrates a simple circuit for finding the bitwise AND of two three-bit inputs. Notice how the three-bit output is the bitwise AND of the two inputs. All components have been customized to deal with three-bit data via its <b class=propertie>Data Bits</b> attribute; the screen shot shows the AND gate attributes, including the Data Bits attribute of 3.
+      </p>
+      <p align="center">
+        <img src="../../../img-guide/feature-2-bundles-create.png" alt="#########">
+      </p>
+      <p>
+        All components in Logisim define a bit width for each of input and output. In contrast, a wire's bit width is undefined: Instead, the wire's width adapts to the components to which it is attached. If a wire connects two components demanding different bit widths, Logisim will complain of "Incompatible widths" and indicate the offending locations in orange. In the below, the output pin's Data Bits attribute has been changed to 1, and so Logisim complains that the wire cannot connect a three-bit value to a one-bit value.
+      </p>
+      <p align="center">
+        <img class=notscal src="../../../img-guide/feature-3-bundles-error.png" alt="#########">
+      </p>
+      <p>
+        Wires that connect incompatible locations (drawn in orange) do not carry values.
+      </p>
+      <p>
+        For single-bit wires, you can see at a glance what value the wire carries because Logisim colors the wire light or dark green depending the value. It does not display values for multi-bit wires: They are simply black. You can, though, probe a wire by clicking it using the <b class=propertie>"poke"</b> tool (<img class=icontxt src="../../../../img-guide/poke.png" alt="#########">).
+      </p>
+      <p align="center">
+        <img  src="../../../../img-guide/feature-4-bundles-probe.png" alt="#########">
+      </p>
+      <p>
+        This probing feature is helpful for debugging circuits using wire bundles.
+      </p>
+      <p>
+        <b>Next:</b> <a href="fet-splitting.html">Splitters</a>.
+      </p>
+    </div>
+  </body>
+</html>

@@ -1,10 +1,9 @@
 
 plugins {
-    id("com.github.ben-manes.versions") version "0.20.0"
+    id("com.github.ben-manes.versions") version "0.28.0"
     java
     application
     id("org.xtext.xtend") version "2.0.2"
-    id("com.github.johnrengelman.shadow") version "4.0.1"
     id("edu.sc.seis.macAppBundle") version "2.3.0"
 }
 
@@ -26,15 +25,19 @@ dependencies {
         include("**/*.jar")
     })
     compile("org.eclipse.xtend:org.eclipse.xtend.lib:2.16.0")
-    implementation("org.hamcrest:hamcrest-core:1.3")
+    implementation("org.hamcrest:hamcrest:2.2")
     implementation("javax.help:javahelp:2.0.05")
-//  implementation("com.fifesoft:rsyntaxtextarea:2.6.1") // Currently using 3.0.0-SNAPSHOT
-    implementation("org.slf4j:slf4j-api:1.7.8")
-    implementation("org.slf4j:slf4j-simple:1.7.8")
+    implementation("com.fifesoft:rsyntaxtextarea:3.1.0")
+    implementation("net.sf.nimrod:nimrod-laf:1.2")
+    implementation("org.drjekyll:colorpicker:1.3")
+    implementation("org.drjekyll:fontchooser:2.4")
+    implementation("at.swimmesberger:swingx-core:1.6.8")
+    implementation("org.slf4j:slf4j-api:1.7.30")
+    implementation("org.slf4j:slf4j-simple:1.7.30")
 
-    testImplementation("ch.qos.logback:logback-classic:1.1.2")
-    testImplementation("ch.qos.logback:logback-core:1.1.2")
-    testImplementation("junit:junit:4.12")
+    testImplementation("ch.qos.logback:logback-classic:1.2.3")
+    testImplementation("ch.qos.logback:logback-core:1.2.3")
+    testImplementation("junit:junit:4.13")
 }
 
 java {
@@ -55,7 +58,7 @@ tasks {
         manifest {
             attributes.putAll(mapOf(
                     "Implementation-Title" to name,
-                    "Implementation-Version" to version
+                    "Implementation-Version" to archiveVersion
             ))
         }
 
@@ -103,6 +106,7 @@ tasks {
                     "UTTypeIdentifier" to "com.cburch.logisim.circ",
                     "UTTypeDescription" to "Logisim-evolution circuit file",
                     "UTTypeConformsTo" to arrayOf("public.data"),
+                    "UTTypeIconFile" to "Logisim-evolution.icns",
                     "UTTypeTagSpecification" to
                     mapOf(
                         "public.filename-extension" to arrayOf("circ"),
@@ -112,7 +116,7 @@ tasks {
             )
         )
         bundleExtras.put("LSApplicationCategoryType", "public.app-category.education")
-        bundleExtras.put("NSHumanReadableCopyright", "Copyright © 2001–2019 Carl Burch, BFH, HEIG-VD, HEPIA, et al.")
+        bundleExtras.put("NSHumanReadableCopyright", "Copyright © 2001–2020 Carl Burch, BFH, HEIG-VD, HEPIA, Holy Cross, et al.")
         bundleExtras.put("NSSupportsAutomaticGraphicsSwitching", "true")
     }
 }

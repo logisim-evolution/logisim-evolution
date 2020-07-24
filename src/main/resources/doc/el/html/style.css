@@ -1,17 +1,21 @@
-/* 
+﻿/* 
 This CSS document is suitable for use in java help v2.0
 There is a compromise between css rules and html properties for it to work
+java-help supports version 1 of CSS
 */
-/* For img */
+
+
+/* For img icone in the text  */
 img {
-	width:86%;
-	max-width:100%;
+    height:auto;
+	width:90%;
 }
-/* For img icone in the text */
+
 img.intxt {
 	height:auto;
 	width:auto;
 	vertical-align:middle;
+	margin:2px;
 }
 /* For Img not scal */
 img.notscal {
@@ -19,11 +23,20 @@ img.notscal {
 	width:auto;
 	vertical-align:middle;
 }
+img.iconlibs{
+	height:32px;
+	width:32px;
+}
+img.icontxt{
+	height:16px;
+	width:16px;
+	vertical-align:middle;
+}
 /* For spaces, page background */
 div.maindiv {
 	max-width:560px;
 	border:solid 0px;
-	background-color:$808080;
+	background-color:#FFFFFF;
 }
 div.codediv {
 	max-width:660px;
@@ -51,16 +64,16 @@ a:hover{
 
 /* for titles */
 h1 {
-	color: #00137f;
+	color:#00137f;
 }
 h2 {
-	color: #00137f;
+	color:#00137f;
 }
 h3{
-	color: #00137f;
+	color:#00137f;
 }
 var {
-	color: #0025ff;
+	color:#0025ff;
 	font-weight:bold;
 }
 tt {
@@ -69,20 +82,22 @@ tt {
 
 /* for reference to menu */
 b.menu {
-	color: black;
+	color:black;
 	background-color :#b0b0b0;
 	font-family:arial;
 	font-weight:bold;
 	font-size:12px;
 }
+
 /* for reference to button, tabs */
 b.button {
 	color: black;
-	background-color :#e0e0e0;
+	background-color:#e0e0e0;
 	font-family:arial;
-	font-weight:normal;
+	font-weight:bold;
     font-size:12px;	
 }
+
 /* for reference to properties /library */
 b.propertie {
 	color:#00008B;
@@ -101,24 +116,25 @@ b.note {
 
 /* for reference to the elements of the figures */
 b.reffig {
-	color: #00137f;
-	
+	color:#00137f;
 }
 
 /* for reference to the part of guide */
 b.refguide {
 	color:#00137f;
 }
+
 /* For reference to question or answer of the pgm */
 b.refquest {
 	color:#00137f;
 }
+
 /* For tables tools list */
 table.toolslist {
 	border-spacing :2px 8px;
 }
 td.toolslist {
-	width:40;
+	width:40px;
 	text-align:center;
 	vertical-align:top;
 }
@@ -126,10 +142,10 @@ td.toolslist {
 
 /* For tables of truth tables */
 table.tblver {
-	text-align :center;
-	border-spacing: 2px;
-	border-style: dotted;
-	border-width: 0px;
+	text-align:center;
+	border-spacing:2px;
+	border-style:dotted;
+	border-width:0px;
 }
 
 tr.tblvertitl{
@@ -163,14 +179,23 @@ span.evalue {
 	text-align :center;
 }
 
+/* To mark the areas to translate */ 
+span.totranslate {
+	color:#DA81F5;
+}
+
 /* Définition pour la table présentation de lib */
 
 /* Définition pour la table des composant de lib */
 
 /* For list items */
 dt {
-margin-top: 5px;
+margin-top:5px;
 }
 li  {
-margin-top: 5px; 
+margin-top:5px; 
+}
+
+p.blue {
+  color:#008000;
 }

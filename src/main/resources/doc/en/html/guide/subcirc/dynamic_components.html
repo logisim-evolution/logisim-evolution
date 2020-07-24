@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>dynamic_components</title>
+  </head>
+  <body>
+    <h1>Dynamic components</h1>
+    <p>The dynamic components provides the means of observing/manipulating
+      components that are hidden in a sub-circuit on a higher level. Example:
+      You have placed a led in a circuit named <strong>MyNiceCircuit</strong>.
+      Now you use <strong>MyNiceCircuit</strong> as sub-circuit in the circuit
+      named <strong>MyToplevel</strong>. Simulating in <strong>MyToplevel</strong>
+      will hide your led, hence you have no means to see if the led in <strong>MyNiceCircuit</strong>
+      is lighting up or not. The dynamic components help here by providing the
+      possibility of putting an image of the led on the sub-circuit symbol of <strong>MyNiceCircuit</strong>.
+      To add dynamic components to the sub-circuit symbol of <strong>MyNiceCircuit</strong>,
+      you have first to open the&nbsp;<a href="../subcirc/sub-appear.html">appearance editor</a>
+      of the circuit <strong>MyNiceCircuit</strong>. Than you click on the <img
+        src="../../../../icons/dynamic_component.png" alt="dyncomp" title="dyncomp">-tool
+      icon. A window will open listing all the available dynamic components, and
+      you can select which one to show in the appearance of your sub-circuit
+      symbol. Note that the dynamic components feature is a recursive property.
+      This means that if you have a hierarchical structure, it will show all
+      possible dynamic components available down from the current sub-circuit.</p>
+    <p>Currently following tools support dynamic components:</p>
+    <table style="width: 232px; height: 72px;" border="0">
+      <tbody>
+        <tr>
+          <td style="text-align: center;"><img src="../../../../icons/led.gif" alt="led"
+              title="led"><br>
+          </td>
+          <td><a href="../../libs/io/led.html">LED-tool</a></td>
+        </tr>
+        <tr>
+          <td style="width: 37.1333px; text-align: center;"><img src="../../../../icons/rgbled.gif"
+              alt="rgb" title="rgb"><br>
+          </td>
+          <td style="width: 184.867px;"><a href="../../libs/io/led.html">RGB-LED-tool</a></td>
+        </tr>
+        <tr>
+          <td><br>
+          </td>
+          <td>to be completed</td>
+        </tr>
+      </tbody>
+    </table>
+    <p><br>
+    </p>
+    <p><br>
+    </p>
+  </body>
+</html>

@@ -2,8 +2,8 @@
 <html>
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="created" content="2018-10-23T06:18:10.521000000">
-    <meta name="changed" content="2018-10-23T06:18:42.262000000">
+    <meta name="created" content="2019-03-16T06:18:10.521000000">
+    <meta name="changed" content="2019-03-16T06:18:42.262000000">
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <meta http-equiv="Content-Language" content="en">
     <title>
@@ -12,21 +12,21 @@
     <link rel="stylesheet" type="text/css" href="../../style.css">
   </head>
   <body>
-    <div class="maindiv">
+    <div class=maindiv>
       <h1>
         The File menu
       </h1>
       <dl>
         <dt>
-          <strong>New</strong>&nbsp;&nbsp;<b class="tkeybd">Ctrl-N</b>
+          <strong>New</strong>&nbsp;&nbsp;<b class=tkeybd>Ctrl-N</b>
         </dt>
         <dd>
           <p>
-            Opens a new project in a new window. The project will initially be a copy of <a href="../prefs/template.html">the currently selected template</a>.
+            Opens a new project in a new window. The project will initially be a copy of <a href="../prefs/pref-template.html">the currently selected template</a>.
           </p>
         </dd>
         <dt>
-          <strong>Merge</strong>&nbsp;&nbsp;<b class="tkeybd">Ctrl-M</b>
+          <strong>Merge</strong>&nbsp;&nbsp;<b class=tkeybd>Ctrl-M</b>
         </dt>
         <dd>
           <p>
@@ -34,7 +34,7 @@
           </p>
         </dd>
         <dt>
-          <strong>Open...</strong>&nbsp;&nbsp;<b class="tkeybd">Ctrl-O</b>
+          <strong>Open...</strong>&nbsp;&nbsp;<b class=tkeybd>Ctrl-O</b>
         </dt>
         <dd>
           <p>
@@ -50,7 +50,7 @@
           </p>
         </dd>
         <dt>
-          <strong>Close</strong>&nbsp;&nbsp;<b class="tkeybd">Ctrl-Maj-W</b>
+          <strong>Close</strong>&nbsp;&nbsp;<b class=tkeybd>Ctrl-Shift-W</b>
         </dt>
         <dd>
           <p>
@@ -58,7 +58,7 @@
           </p>
         </dd>
         <dt>
-          <strong>Save</strong>&nbsp;&nbsp;<b class="tkeybd">Ctrl-S</b>
+          <strong>Save</strong>&nbsp;&nbsp;<b class=tkeybd>Ctrl-S</b>
         </dt>
         <dd>
           <p>
@@ -66,7 +66,7 @@
           </p>
         </dd>
         <dt>
-          <strong>Save As...</strong>&nbsp;&nbsp;<b class="tkeybd">Ctrl-Maj-S</b>
+          <strong>Save As...</strong>&nbsp;&nbsp;<b class=tkeybd>Ctrl-Shift-S</b>
         </dt>
         <dd>
           <p>
@@ -78,15 +78,15 @@
         </dt>
         <dd>
           <p>
-            Creates image file(s) corresponding to circuits. The configuration dialog box is described below.
+            Creates image file(s) corresponding to circuits. The configuration dialog box is described in <a href="exportab.html">Export of images..</a>
           </p>
         </dd>
         <dt>
-          <strong>Print...</strong>&nbsp;&nbsp;<b class="tkeybd">Ctrl-P</b>
+          <strong>Print...</strong>&nbsp;&nbsp;<b class=tkeybd>Ctrl-P</b>
         </dt>
         <dd>
           <p>
-            Sends circuit(s) to a printer. The configuration dialog box is described below.
+            Sends circuit(s) to a printer. The configuration dialog box is described in <a href="printertab.html">Printing</a>.
           </p>
         </dd>
         <dt>
@@ -98,101 +98,14 @@
           </p>
         </dd>
         <dt>
-          <strong>Exit</strong>&nbsp;&nbsp;<b class="tkeybd">Ctrl-Q</b>
+          <strong>Exit</strong>&nbsp;&nbsp;<b class=tkeybd>Ctrl-Q</b>
         </dt>
         <dd>
           <p>
             Closes all currently open projects and terminates Logisim. (On Mac OS systems, this will appear as Quit in the Logisim menu.)
           </p>
         </dd>
-      </dl>
-      <h2>
-        Configuring Export
-      </h2>
-      <p>
-        When you select Export Image..., Logisim displays a dialog box with four options.
-      </p>
-      <ul>
-        <li>
-          <b>Circuits:</b> A list where you can select one or more circuits that should be exported into image files. (Empty circuits are not displayed as options.)
-        </li>
-        <li>
-          <b>Image Format:</b> You can create PNG, GIF, and JPEG files. I would recommend PNG files: The GIF format is quite dated, and the JPEG format will introduce artifacts into the image, as the JPEG format is really meant for photographic images.
-        </li>
-        <li>
-          <b>Scale Factor:</b> You can scale the images as they are dumped into image files using this slider.
-        </li>
-        <li>
-          <b>Printer View:</b> Whether to use "<a href="../prefs/layout.html">printer view</a>" in exporting the circuits.
-        </li>
-      </ul>
-      <p>
-        After clicking OK, Logisim will display a file selection dialog box. If you have selected one circuit, select the file into which the image should be placed. If you have selected multiple circuits, select a directory where the files should be placed; Logisim will name the images based on the circuits' names (<tt>main.png</tt>, for example).
-      </p>
-      <h2>
-        Configuring Print
-      </h2>
-      <p>
-        When you choose Print..., Logisim displays a dialog box for configuring what is printed.
-      </p>
-      <ul>
-        <li>
-          <b>Circuits:</b> A list where you can select one or more circuits to be printed. (Empty circuits are not displayed as options.) Logisim will print one circuit per page. If the circuit is too large for the page, the image will be scaled down to fit.
-        </li>
-        <li>
-          <b>Header:</b> Text that should appear centered at the top of each page. The following substitutions will be made into the text.
-          <center>
-            <table>
-              <tbody>
-                <tr>
-                  <td>
-                    <tt>%n</tt>
-                  </td>
-                  <td>
-                    Name of circuit on page
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <tt>%p</tt>
-                  </td>
-                  <td>
-                    Page number
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <tt>%P</tt>
-                  </td>
-                  <td>
-                    Total page count
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <tt>%%</tt>
-                  </td>
-                  <td>
-                    A single percent sign ('%')
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </center>
-        </li>
-        <li>
-          <b>Rotate To Fit:</b> If checked, then Logisim will rotate each circuit by 90 degrees when the circuit is too large to fit onto the page and it does not need to be scaled as small when rotated 90 degrees.
-        </li>
-        <li>
-          <b>Printer View:</b> Whether to use "<a href="../prefs/layout.html">printer view</a>" in printing the circuits.
-        </li>
-      </ul>
-      <p>
-        After clicking OK, Logisim will display the standard page setup dialog box before printing the circuits.
-      </p>
-      <p>
-        <b>Next:</b> <a href="edit.html">The Edit menu</a>.
-      </p>
+      </dl><b>Next:</b> <a href="edit.html">The Edit menu</a>.
     </div>
   </body>
 </html>

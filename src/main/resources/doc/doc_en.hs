@@ -42,8 +42,7 @@
      *  a home button that has a user-defined image.
    -->
    <presentation default=true>
-       <name>main window</name>
-       <size width="900" height="700" /> 
+       <name>main window</name> 
        <location x="200" y="10" />
        <toolbar>
            <helpaction>javax.help.BackAction</helpaction>
@@ -56,10 +55,10 @@
 
    <!-- implementation section -->
    <impl>
-      <helpsetregistry helpbrokerclass="javax.help.DefaultHelpBroker" />
-      <viewerregistry viewertype="text/html" 
-         viewerclass="com.sun.java.help.impl.CustomKit" />
-      <viewerregistry viewertype="text/xml" 
-         viewerclass="com.sun.java.help.impl.CustomXMLKit" />
+      <helpsetregistry> helpbrokerclass="javax.help.DefaultHelpBroker" </helpsetregistry>
+      <viewerregistry> viewertype="text/html" 
+         viewerclass="com.sun.java.help.impl.CustomKit" </viewerregistry>
+      <viewerregistry> viewertype="text/xml" 
+         viewerclass="com.sun.java.help.impl.CustomXMLKit" </viewerregistry>
    </impl>
 </helpset>

@@ -9,10 +9,11 @@ After this date the author focused on other projects, and recently the developme
 
 In the meantime, people from a group of swiss institutes ([Haute École Spécialisée Bernoise](http://www.bfh.ch), [Haute École du paysage, d'ingénierie et d'architecture de Genève](http://hepia.hesge.ch), and [Haute École d'Ingénierie et de Gestion du Canton de Vaud](http://www.heig-vd.ch)) started developing a version of Logisim that fitted their courses, integrating several tools -- for instance a chronogram, the possibility to test the schematics directly on an electronic board, TCL/TK consoles, ...
 
-The project is currently maintained by the [REDS Institute](http://reds.heig-vd.ch), which is part of the [Haute École d'Ingénierie et de Gestion du Canton de Vaud](http://www.heig-vd.ch), Yverdon-les-Bains, Switzerland.
-
 We have decided to release this new Logisim version under the name logisim-evolution, to highlight the large number of changes that occurred in these years, and **we actively seek the contribution of the community**.
 
+## Languages
+
+Logisim supports many languages. Many of them are automatically translated by deepl. If you detect bizar translations please do not hesitate to correct them in the corresponding property files and ask for a pull-request.
 
 ## What's new in logisim-evolution
 
@@ -28,7 +29,6 @@ We have decided to release this new Logisim version under the name logisim-evolu
 * automatic updates
 * code refactoring
 * ...
-
 
 ## Running logisim-evolution
 
@@ -77,12 +77,14 @@ Users who are willing test new features should checkout the testing branch. The 
 
 Then every semester, the testing branch will be merged in the master for a new release.
 
+## Code style
+All logisim java files have been converted using google-java-format. If you are using eclipse there is a plugin available to adhere to this standard. More information on the google java format can be found [here](https://github.com/google/google-java-format). At the moment version 1.6 is used.
 
 ## Documentation
 
 [Here](http://reds-data.heig-vd.ch/logisim-evolution/IntroToLogisimEnglish.pdf) you can find a tutorial (French version [here](http://reds-data.heig-vd.ch/logisim-evolution/tutoLogisim.pdf)) that explains some basic usage of Logisim. The electronic card referenced in the tutorial is a small card we use in our laboratories -- you won't be able to buy it in a store -- but the descriptions should be good enough to be used for another generic board.
 
-Another good reference is [this book](http://www.lulu.com/shop/george-self/exploring-digital-logic-with-logisim-ebook/ebook/product-21118223.html), where basic electronics is explained with the help of Logisim.
+Another good reference is [this book](https://github.com/grself/CIS221_Text/raw/master/dl.pdf), the accompanying [lab manual](https://github.com/grself/CIS221_Lab_Manual/raw/master/dl_lab.pdf), and [YouTube channel](http://bit.ly/2KLMcoc), where basic electronics is explained with the help of Logisim.
 
 
 ## Development
@@ -133,17 +135,19 @@ The code is licensed under [GPLv3](https://www.gnu.org/licenses/gpl-3.0.en.html)
 The following institutions/people actively contributed to logisim-evolution:
 
 * Carl Burch - Hendrix College - USA
+* Kevin Walsh [College of the Holy Cross](http://www.holycross.edu) - USA
 * [Haute École Spécialisée Bernoise](http://www.bfh.ch) - Switzerland
 * [Haute École du paysage, d'ingénierie et d'architecture de Genève](http://hepia.hesge.ch) - Switzerland
 * [Haute École d'Ingénierie et de Gestion du Canton de Vaud](http://www.heig-vd.ch) - Switzerland
 * Theldo Cruz Franqueira - Pontifícia Universidade Católica de Minas Gerais - Brasil
 * Moshe Berman - Brooklyn College
 
-If you feel that your name should be in this list, please feel free to send us a [mail](mailto:roberto.rigamonti@heig-vd.ch)!
+If you feel that your name should be in this list, please feel free to send us a [mail](mailto:ktt1@bfh.ch)!
 
 
 ## Other Logisim forks available on the net
 
+* [Logisim holycross](https://github.com/kevinawalsh/logisim-evolution) - a branch from logisim evolution(2.13.14) with several great enhancements made by Kevin Walsh. Currently there is an effort ongoing to merge these features in evolution.
 * [Logisim by Joseph Lawrance et al.](https://github.com/lawrancej/logisim) - they have started from Burch's original code and integrated it in several open-source development frameworks, cleaning up the code. We have taken a few code cleanups and the redo functionality from their code.
 * [logisim-iitd](https://code.google.com/p/logisim-iitd) - IIT Delhi version of Logisim, it integrates the floating-point components within the arithmetic unit.
 * [Logisim for the CS3410 course, Cornell University](http://www.cs.cornell.edu/courses/cs3410/2015sp/) - they have a very interesting test vector feature, that was only recently integrated into logisim-evolution.

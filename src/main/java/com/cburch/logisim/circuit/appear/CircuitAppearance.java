@@ -1,35 +1,48 @@
-/*******************************************************************************
+/**
  * This file is part of logisim-evolution.
  *
- *   logisim-evolution is free software: you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation, either version 3 of the License, or
- *   (at your option) any later version.
+ * Logisim-evolution is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by the
+ * Free Software Foundation, either version 3 of the License, or (at your
+ * option) any later version.
  *
- *   logisim-evolution is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *   GNU General Public License for more details.
+ * Logisim-evolution is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+ * for more details.
  *
- *   You should have received a copy of the GNU General Public License
- *   along with logisim-evolution.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along 
+ * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
- *   Original code by Carl Burch (http://www.cburch.com), 2011.
- *   Subsequent modifications by :
- *     + Haute École Spécialisée Bernoise
- *       http://www.bfh.ch
- *     + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *       http://hepia.hesge.ch/
- *     + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *       http://www.heig-vd.ch/
- *   The project is currently maintained by :
- *     + REDS Institute - HEIG-VD
- *       Yverdon-les-Bains, Switzerland
- *       http://reds.heig-vd.ch
- *******************************************************************************/
+ * Original code by Carl Burch (http://www.cburch.com), 2011.
+ * Subsequent modifications by:
+ *   + College of the Holy Cross
+ *     http://www.holycross.edu
+ *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
+ *     http://www.bfh.ch
+ *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
+ *     http://hepia.hesge.ch/
+ *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
+ *     http://www.heig-vd.ch/
+ */
 
 package com.cburch.logisim.circuit.appear;
 
+import com.cburch.draw.model.CanvasModelEvent;
+import com.cburch.draw.model.CanvasModelListener;
+import com.cburch.draw.model.CanvasObject;
+import com.cburch.draw.model.Drawing;
+import com.cburch.logisim.circuit.Circuit;
+import com.cburch.logisim.circuit.CircuitAttributes;
+import com.cburch.logisim.circuit.CircuitState;
+import com.cburch.logisim.data.AttributeOption;
+import com.cburch.logisim.data.Bounds;
+import com.cburch.logisim.data.Direction;
+import com.cburch.logisim.data.Location;
+import com.cburch.logisim.instance.Instance;
+import com.cburch.logisim.instance.InstanceComponent;
+import com.cburch.logisim.instance.InstancePainter;
+import com.cburch.logisim.util.EventSourceWeakSupport;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
@@ -39,352 +52,378 @@ import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import com.cburch.draw.model.CanvasModelEvent;
-import com.cburch.draw.model.CanvasModelListener;
-import com.cburch.draw.model.CanvasObject;
-import com.cburch.draw.model.Drawing;
-import com.cburch.logisim.circuit.Circuit;
-import com.cburch.logisim.circuit.CircuitAttributes;
-import com.cburch.logisim.data.Bounds;
-import com.cburch.logisim.data.Direction;
-import com.cburch.logisim.data.Location;
-import com.cburch.logisim.instance.Instance;
-import com.cburch.logisim.util.EventSourceWeakSupport;
-
 public class CircuitAppearance extends Drawing {
-	public static final int PINLENGTH = 10;
-	
-	private class MyListener implements CanvasModelListener {
-		public void modelChanged(CanvasModelEvent event) {
-			if (!suppressRecompute) {
-				setDefaultAppearance(false);
-				fireCircuitAppearanceChanged(CircuitAppearanceEvent.ALL_TYPES);
-			}
-		}
-	}
+  public static final int PINLENGTH = 10;
 
-	private Circuit circuit;
-	private EventSourceWeakSupport<CircuitAppearanceListener> listeners;
-	private PortManager portManager;
-	private CircuitPins circuitPins;
-	private MyListener myListener;
-	private boolean isDefault;
-	private boolean suppressRecompute;
+  private class MyListener implements CanvasModelListener {
+    public void modelChanged(CanvasModelEvent event) {
+      if (!suppressRecompute) {
+        setDefaultAppearance(false);
+        fireCircuitAppearanceChanged(CircuitAppearanceEvent.ALL_TYPES);
+      }
+    }
+  }
 
-	public CircuitAppearance(Circuit circuit) {
-		this.circuit = circuit;
-		listeners = new EventSourceWeakSupport<CircuitAppearanceListener>();
-		portManager = new PortManager(this);
-		circuitPins = new CircuitPins(portManager);
-		myListener = new MyListener();
-		suppressRecompute = false;
-		addCanvasModelListener(myListener);
-		setDefaultAppearance(true);
-	}
-	
-	public String getName() {
-		return circuit.getName();
-	}
-	
-	public Graphics GetGraphics() {
-		return circuit.GetGraphics();
-	}
-	
-	public CircuitPins GetCircuitPin() {
-		return circuitPins;
-	}
+  private Circuit circuit;
+  private EventSourceWeakSupport<CircuitAppearanceListener> listeners;
+  private PortManager portManager;
+  private CircuitPins circuitPins;
+  private MyListener myListener;
+  private boolean isDefault;
+  private boolean suppressRecompute;
 
-	public void addCircuitAppearanceListener(CircuitAppearanceListener l) {
-		listeners.add(l);
-	}
-	
-	public void sortPinsList(List<Instance> pins, Direction facing) {
-		DefaultAppearance.sortPinList(pins, facing);
-	}
+  public CircuitAppearance(Circuit circuit) {
+    this.circuit = circuit;
+    listeners = new EventSourceWeakSupport<CircuitAppearanceListener>();
+    portManager = new PortManager(this);
+    circuitPins = new CircuitPins(portManager);
+    myListener = new MyListener();
+    suppressRecompute = false;
+    addCanvasModelListener(myListener);
+    setDefaultAppearance(true);
+  }
 
-	@Override
-	public void addObjects(int index, Collection<? extends CanvasObject> shapes) {
-		super.addObjects(index, shapes);
-		checkToFirePortsChanged(shapes);
-	}
+  public String getName() {
+    if (circuit == null || circuit.getStaticAttributes() == null) return null;
+    else return circuit.getStaticAttributes().getValue(CircuitAttributes.NAME_ATTR);
+  }
 
-	@Override
-	public void addObjects(Map<? extends CanvasObject, Integer> shapes) {
-		super.addObjects(shapes);
-		checkToFirePortsChanged(shapes.keySet());
-	}
+  public CircuitPins GetCircuitPin() {
+    return circuitPins;
+  }
 
-	private boolean affectsPorts(Collection<? extends CanvasObject> shapes) {
-		for (CanvasObject o : shapes) {
-			if (o instanceof AppearanceElement) {
-				return true;
-			}
-		}
-		return false;
-	}
+  public void addCircuitAppearanceListener(CircuitAppearanceListener l) {
+    listeners.add(l);
+  }
 
-	private void checkToFirePortsChanged(
-			Collection<? extends CanvasObject> shapes) {
-		if (affectsPorts(shapes)) {
-			recomputePorts();
-		}
-	}
+  public void sortPinsList(List<Instance> pins, Direction facing) {
+    DefaultAppearance.sortPinList(pins, facing);
+  }
 
-	/**
-	 * Code taken from Cornell's version of Logisim:
-	 * http://www.cs.cornell.edu/courses/cs3410/2015sp/
-	 */
-	public boolean contains(Location loc) {
-		Location query;
-		AppearanceAnchor anchor = findAnchor();
+  @Override
+  public void addObjects(int index, Collection<? extends CanvasObject> shapes) {
+    super.addObjects(index, shapes);
+    checkToFirePortsChanged(shapes);
+  }
 
-		if (anchor == null) {
-			query = loc;
-		} else {
-			Location anchorLoc = anchor.getLocation();
-			query = loc.translate(anchorLoc.getX(), anchorLoc.getY());
-		}
+  @Override
+  public void addObjects(Map<? extends CanvasObject, Integer> shapes) {
+    super.addObjects(shapes);
+    checkToFirePortsChanged(shapes.keySet());
+  }
 
-		for (CanvasObject o : getObjectsFromBottom()) {
-			if (!(o instanceof AppearanceElement) && o.contains(query, true)) {
-				return true;
-			}
-		}
+  private boolean affectsPorts(Collection<? extends CanvasObject> shapes) {
+    for (CanvasObject o : shapes) {
+      if (o instanceof AppearanceElement) {
+        return true;
+      }
+    }
+    return false;
+  }
 
-		return false;
-	}
+  private void checkToFirePortsChanged(Collection<? extends CanvasObject> shapes) {
+    if (affectsPorts(shapes)) {
+      recomputePorts();
+    }
+  }
 
-	private AppearanceAnchor findAnchor() {
-		for (CanvasObject shape : getObjectsFromBottom()) {
-			if (shape instanceof AppearanceAnchor) {
-				return (AppearanceAnchor) shape;
-			}
-		}
-		return null;
-	}
+  /**
+   * Code taken from Cornell's version of Logisim: http://www.cs.cornell.edu/courses/cs3410/2015sp/
+   */
+  public boolean contains(Location loc) {
+    Location query;
+    AppearanceAnchor anchor = findAnchor();
 
-	private Location findAnchorLocation() {
-		AppearanceAnchor anchor = findAnchor();
-		if (anchor == null) {
-			return Location.create(100, 100);
-		} else {
-			return anchor.getLocation();
-		}
-	}
+    if (anchor == null) {
+      query = loc;
+    } else {
+      Location anchorLoc = anchor.getLocation();
+      query = loc.translate(anchorLoc.getX(), anchorLoc.getY());
+    }
 
-	void fireCircuitAppearanceChanged(int affected) {
-		CircuitAppearanceEvent event;
-		event = new CircuitAppearanceEvent(circuit, affected);
-		for (CircuitAppearanceListener listener : listeners) {
-			listener.circuitAppearanceChanged(event);
-		}
-	}
+    for (CanvasObject o : getObjectsFromBottom()) {
+      if (!(o instanceof AppearanceElement) && o.contains(query, true)) {
+        return true;
+      }
+    }
 
-	public Bounds getAbsoluteBounds() {
-		return getBounds(false);
-	}
+    return false;
+  }
 
-	private Bounds getBounds(boolean relativeToAnchor) {
-		Bounds ret = null;
-		Location offset = null;
-		for (CanvasObject o : getObjectsFromBottom()) {
-			if (o instanceof AppearanceElement) {
-				Location loc = ((AppearanceElement) o).getLocation();
-				if (o instanceof AppearanceAnchor) {
-					offset = loc;
-				}
-				if (ret == null) {
-					ret = Bounds.create(loc);
-				} else {
-					ret = ret.add(loc);
-				}
-			} else {
-				if (ret == null) {
-					ret = o.getBounds();
-				} else {
-					ret = ret.add(o.getBounds());
-				}
-			}
-		}
-		if (ret == null) {
-			return Bounds.EMPTY_BOUNDS;
-		} else if (relativeToAnchor && offset != null) {
-			return ret.translate(-offset.getX(), -offset.getY());
-		} else {
-			return ret;
-		}
-	}
+  private AppearanceAnchor findAnchor() {
+    for (CanvasObject shape : getObjectsFromBottom()) {
+      if (shape instanceof AppearanceAnchor) {
+        return (AppearanceAnchor) shape;
+      }
+    }
+    return null;
+  }
 
-	public CircuitPins getCircuitPins() {
-		return circuitPins;
-	}
+  private Location findAnchorLocation() {
+    AppearanceAnchor anchor = findAnchor();
+    if (anchor == null) {
+      return Location.create(100, 100);
+    } else {
+      return anchor.getLocation();
+    }
+  }
 
-	public Direction getFacing() {
-		AppearanceAnchor anchor = findAnchor();
-		if (anchor == null) {
-			return Direction.EAST;
-		} else {
-			return anchor.getFacing();
-		}
-	}
+  void fireCircuitAppearanceChanged(int affected) {
+    CircuitAppearanceEvent event;
+    event = new CircuitAppearanceEvent(circuit, affected);
+    for (CircuitAppearanceListener listener : listeners) {
+      listener.circuitAppearanceChanged(event);
+    }
+  }
 
-	public Bounds getOffsetBounds() {
-		return getBounds(true);
-	}
+  public Bounds getAbsoluteBounds() {
+    return getBounds(false);
+  }
 
-	public SortedMap<Location, Instance> getPortOffsets(Direction facing) {
-		Location anchor = null;
-		Direction defaultFacing = Direction.EAST;
-		List<AppearancePort> ports = new ArrayList<AppearancePort>();
-		for (CanvasObject shape : getObjectsFromBottom()) {
-			if (shape instanceof AppearancePort) {
-				ports.add((AppearancePort) shape);
-			} else if (shape instanceof AppearanceAnchor) {
-				AppearanceAnchor o = (AppearanceAnchor) shape;
-				anchor = o.getLocation();
-				defaultFacing = o.getFacing();
-			}
-		}
+  private Bounds getBounds(boolean relativeToAnchor) {
+    Bounds ret = null;
+    Location offset = null;
+    for (CanvasObject o : getObjectsFromBottom()) {
+      if (o instanceof AppearanceElement) {
+        Location loc = ((AppearanceElement) o).getLocation();
+        if (o instanceof AppearanceAnchor) {
+          offset = loc;
+        }
+        if (ret == null) {
+          ret = Bounds.create(loc);
+        } else {
+          ret = ret.add(loc);
+        }
+      } else {
+        if (ret == null) {
+          ret = o.getBounds();
+        } else {
+          ret = ret.add(o.getBounds());
+        }
+      }
+    }
+    if (ret == null) {
+      return Bounds.EMPTY_BOUNDS;
+    } else if (relativeToAnchor && offset != null) {
+      return ret.translate(-offset.getX(), -offset.getY());
+    } else {
+      return ret;
+    }
+  }
 
-		SortedMap<Location, Instance> ret = new TreeMap<Location, Instance>();
-		for (AppearancePort port : ports) {
-			Location loc = port.getLocation();
-			if (anchor != null) {
-				loc = loc.translate(-anchor.getX(), -anchor.getY());
-			}
-			if (facing != defaultFacing) {
-				loc = loc.rotate(defaultFacing, facing, 0, 0);
-			}
-			ret.put(loc, port.getPin());
-		}
-		return ret;
-	}
+  public CircuitPins getCircuitPins() {
+    return circuitPins;
+  }
 
-	public boolean isDefaultAppearance() {
-		return isDefault;
-	}
+  public AttributeOption getCircuitAppearance() {
+    if (circuit == null || circuit.getStaticAttributes() == null) return null;
+    else return circuit.getStaticAttributes().getValue(CircuitAttributes.APPEARANCE_ATTR);
+  }
 
-	public void paintSubcircuit(Graphics g, Direction facing) {
-		Direction defaultFacing = getFacing();
-		double rotate = 0.0;
-		if (facing != defaultFacing && g instanceof Graphics2D) {
-			rotate = defaultFacing.toRadians() - facing.toRadians();
-			((Graphics2D) g).rotate(rotate);
-		}
-		Location offset = findAnchorLocation();
-		g.translate(-offset.getX(), -offset.getY());
-		for (CanvasObject shape : getObjectsFromBottom()) {
-			if (!(shape instanceof AppearanceElement)) {
-				Graphics dup = g.create();
-				shape.paint(dup, null);
-				dup.dispose();
-			}
-		}
-		g.translate(offset.getX(), offset.getY());
-		if (rotate != 0.0) {
-			((Graphics2D) g).rotate(-rotate);
-		}
-	}
-	
-	public boolean IsNamedBoxShaped() {
-		return circuit.getStaticAttributes().getValue(CircuitAttributes.NAMED_CIRCUIT_BOX);
-	}
+  public Direction getFacing() {
+    AppearanceAnchor anchor = findAnchor();
+    if (anchor == null) {
+      return Direction.EAST;
+    } else {
+      return anchor.getFacing();
+    }
+  }
 
-	public boolean IsNamedBoxShapedFixedSize() {
-		return circuit.getStaticAttributes().getValue(CircuitAttributes.NAMED_CIRCUIT_BOX_FIXED_SIZE);
-	}
+  public Bounds getOffsetBounds() {
+    return getBounds(true);
+  }
 
-	public void recomputeDefaultAppearance() {
-		if (isDefault) {
-			List<CanvasObject> shapes;
-			shapes = DefaultAppearance.build(circuitPins.getPins(),this.IsNamedBoxShaped(),this.IsNamedBoxShapedFixedSize(),this.getName(),circuit.GetGraphics());
-			setObjectsForce(shapes);
-		}
-	}
+  public SortedMap<Location, Instance> getPortOffsets(Direction facing) {
+    Location anchor = null;
+    Direction defaultFacing = Direction.EAST;
+    List<AppearancePort> ports = new ArrayList<AppearancePort>();
+    for (CanvasObject shape : getObjectsFromBottom()) {
+      if (shape instanceof AppearancePort) {
+        ports.add((AppearancePort) shape);
+      } else if (shape instanceof AppearanceAnchor) {
+        AppearanceAnchor o = (AppearanceAnchor) shape;
+        anchor = o.getLocation();
+        defaultFacing = o.getFacing();
+      }
+    }
 
-	void recomputePorts() {
-		if (isDefault) {
-			recomputeDefaultAppearance();
-		} else {
-			fireCircuitAppearanceChanged(CircuitAppearanceEvent.ALL_TYPES);
-		}
-	}
+    SortedMap<Location, Instance> ret = new TreeMap<Location, Instance>();
+    for (AppearancePort port : ports) {
+      Location loc = port.getLocation();
+      if (anchor != null) {
+        loc = loc.translate(-anchor.getX(), -anchor.getY());
+      }
+      if (facing != defaultFacing) {
+        loc = loc.rotate(defaultFacing, facing, 0, 0);
+      }
+      ret.put(loc, port.getPin());
+    }
+    return ret;
+  }
 
-	public void removeCircuitAppearanceListener(CircuitAppearanceListener l) {
-		listeners.remove(l);
-	}
+  public boolean isDefaultAppearance() {
+    return isDefault;
+  }
+  
+  public void paintSubcircuit(InstancePainter painter, Graphics g, Direction facing) {
+    Direction defaultFacing = getFacing();
+    double rotate = 0.0;
+    if (facing != defaultFacing && g instanceof Graphics2D) {
+      rotate = defaultFacing.toRadians() - facing.toRadians();
+      ((Graphics2D) g).rotate(rotate);
+    }
+    Location offset = findAnchorLocation();
+    g.translate(-offset.getX(), -offset.getY());
+    CircuitState state = null;
+    if (painter.getShowState()) {
+      try {
+        state = (CircuitState) painter.getData();
+      } catch (UnsupportedOperationException e) {
+      }
+    }
+    for (CanvasObject shape : getObjectsFromBottom()) {
+      if (!(shape instanceof AppearanceElement)) {
+        Graphics dup = g.create();
+        if (shape instanceof DynamicElement) {
+          ((DynamicElement) shape).paintDynamic(dup, state);
+          if (shape instanceof DynamicElementWithPoker)
+            ((DynamicElementWithPoker)shape).setAnchor(offset);
+        }
+        else shape.paint(dup, null);
+        dup.dispose();
+      }
+    }
+    g.translate(offset.getX(), offset.getY());
+    if (rotate != 0.0) {
+      ((Graphics2D) g).rotate(-rotate);
+    }
+  }
 
-	@Override
-	public void removeObjects(Collection<? extends CanvasObject> shapes) {
-		super.removeObjects(shapes);
-		checkToFirePortsChanged(shapes);
-	}
+  public boolean IsNamedBoxShapedFixedSize() {
+    if (circuit == null || circuit.getStaticAttributes() == null) return true;
+    if (circuit
+        .getStaticAttributes()
+        .containsAttribute(CircuitAttributes.NAMED_CIRCUIT_BOX_FIXED_SIZE))
+      return circuit.getStaticAttributes().getValue(CircuitAttributes.NAMED_CIRCUIT_BOX_FIXED_SIZE);
+    else return true;
+  }
 
-	void replaceAutomatically(List<AppearancePort> removes,
-			List<AppearancePort> adds) {
-		// this should be called only when substituting ports via PortManager
-		boolean oldSuppress = suppressRecompute;
-		try {
-			suppressRecompute = true;
-			removeObjects(removes);
-			addObjects(getObjectsFromBottom().size() - 1, adds);
-			recomputeDefaultAppearance();
-		} finally {
-			suppressRecompute = oldSuppress;
-		}
-		fireCircuitAppearanceChanged(CircuitAppearanceEvent.ALL_TYPES);
-	}
+  public void recomputeDefaultAppearance() {
+    if (isDefault) {
+      List<CanvasObject> shapes;
+      shapes =
+          DefaultAppearance.build(
+              circuitPins.getPins(),
+              getCircuitAppearance(),
+              IsNamedBoxShapedFixedSize(),
+              getName());
+      setObjectsForce(shapes);
+    }
+  }
 
-	public void setDefaultAppearance(boolean value) {
-		if (isDefault != value) {
-			isDefault = value;
-			if (value) {
-				recomputeDefaultAppearance();
-			}
-		}
-	}
+  void recomputePorts() {
+    if (isDefault) {
+      recomputeDefaultAppearance();
+    } else {
+      fireCircuitAppearanceChanged(CircuitAppearanceEvent.ALL_TYPES);
+    }
+  }
 
-	public void setObjectsForce(List<? extends CanvasObject> shapesBase) {
-		// This shouldn't ever be an issue, but just to make doubly sure, we'll
-		// check that the anchor and all ports are in their proper places.
-		List<CanvasObject> shapes = new ArrayList<CanvasObject>(shapesBase);
-		int n = shapes.size();
-		int ports = 0;
-		for (int i = n - 1; i >= 0; i--) { // count ports, move anchor to end
-			CanvasObject o = shapes.get(i);
-			if (o instanceof AppearanceAnchor) {
-				if (i != n - 1) {
-					shapes.remove(i);
-					shapes.add(o);
-				}
-			} else if (o instanceof AppearancePort) {
-				ports++;
-			}
-		}
-		for (int i = (n - ports - 1) - 1; i >= 0; i--) { // move ports to top
-			CanvasObject o = shapes.get(i);
-			if (o instanceof AppearancePort) {
-				shapes.remove(i);
-				shapes.add(n - ports - 1, o);
-				i--;
-			}
-		}
+  public void removeCircuitAppearanceListener(CircuitAppearanceListener l) {
+    listeners.remove(l);
+  }
 
-		try {
-			suppressRecompute = true;
-			super.removeObjects(new ArrayList<CanvasObject>(
-					getObjectsFromBottom()));
-			super.addObjects(0, shapes);
-		} finally {
-			suppressRecompute = false;
-		}
-		fireCircuitAppearanceChanged(CircuitAppearanceEvent.ALL_TYPES);
-	}
+  @Override
+  public void removeObjects(Collection<? extends CanvasObject> shapes) {
+    super.removeObjects(shapes);
+    checkToFirePortsChanged(shapes);
+  }
 
-	@Override
-	public void translateObjects(Collection<? extends CanvasObject> shapes,
-			int dx, int dy) {
-		super.translateObjects(shapes, dx, dy);
-		checkToFirePortsChanged(shapes);
-	}
+  public void removeDynamicElement(InstanceComponent c) {
+    ArrayList<CanvasObject> toRemove = new ArrayList<>();
+    for (CanvasObject o : getObjectsFromBottom()) {
+      if (o instanceof DynamicElement) {
+        if (((DynamicElement) o).getPath().contains(c)) toRemove.add(o);
+      }
+    }
+    if (toRemove.isEmpty()) return;
+    boolean oldSuppress = suppressRecompute;
+    try {
+      suppressRecompute = true;
+      removeObjects(toRemove);
+      recomputeDefaultAppearance();
+    } finally {
+      suppressRecompute = oldSuppress;
+    }
+    fireCircuitAppearanceChanged(CircuitAppearanceEvent.ALL_TYPES);
+  }
+
+  void replaceAutomatically(List<AppearancePort> removes, List<AppearancePort> adds) {
+    // this should be called only when substituting ports via PortManager
+    boolean oldSuppress = suppressRecompute;
+    try {
+      suppressRecompute = true;
+      removeObjects(removes);
+      addObjects(getObjectsFromBottom().size() - 1, adds);
+      recomputeDefaultAppearance();
+    } finally {
+      suppressRecompute = oldSuppress;
+    }
+    fireCircuitAppearanceChanged(CircuitAppearanceEvent.ALL_TYPES);
+  }
+
+  public void setDefaultAppearance(boolean value) {
+    if (isDefault != value) {
+      isDefault = value;
+      if (value) {
+        recomputeDefaultAppearance();
+      } else {
+        circuit
+            .getStaticAttributes()
+            .setValue(CircuitAttributes.APPEARANCE_ATTR, CircuitAttributes.APPEAR_CUSTOM);
+      }
+    }
+  }
+
+  public void setObjectsForce(List<? extends CanvasObject> shapesBase) {
+    // This shouldn't ever be an issue, but just to make doubly sure, we'll
+    // check that the anchor and all ports are in their proper places.
+    List<CanvasObject> shapes = new ArrayList<CanvasObject>(shapesBase);
+    int n = shapes.size();
+    int ports = 0;
+    for (int i = n - 1; i >= 0; i--) { // count ports, move anchor to end
+      CanvasObject o = shapes.get(i);
+      if (o instanceof AppearanceAnchor) {
+        if (i != n - 1) {
+          shapes.remove(i);
+          shapes.add(o);
+        }
+      } else if (o instanceof AppearancePort) {
+        ports++;
+      }
+    }
+    for (int i = (n - ports - 1) - 1; i >= 0; i--) { // move ports to top
+      CanvasObject o = shapes.get(i);
+      if (o instanceof AppearancePort) {
+        shapes.remove(i);
+        shapes.add(n - ports - 1, o);
+        i--;
+      }
+    }
+
+    try {
+      suppressRecompute = true;
+      super.removeObjects(new ArrayList<CanvasObject>(getObjectsFromBottom()));
+      super.addObjects(0, shapes);
+    } finally {
+      suppressRecompute = false;
+    }
+    fireCircuitAppearanceChanged(CircuitAppearanceEvent.ALL_TYPES);
+  }
+
+  @Override
+  public void translateObjects(Collection<? extends CanvasObject> shapes, int dx, int dy) {
+    super.translateObjects(shapes, dx, dy);
+    checkToFirePortsChanged(shapes);
+  }
 }
