@@ -230,6 +230,7 @@ public class Ram extends Mem {
   protected void instanceAttributeChanged(Instance instance, Attribute<?> attr) {
     super.instanceAttributeChanged(instance, attr);
     if ((attr == Mem.DATA_ATTR)
+    	|| (attr == Mem.ADDR_ATTR)
         || (attr == RamAttributes.ATTR_DBUS)
         || (attr == StdAttr.TRIGGER)
         || (attr == RamAttributes.ATTR_ByteEnables)
