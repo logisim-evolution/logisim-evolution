@@ -463,18 +463,18 @@ public class Value {
     if (isErrorValue()) return Character.toString(ERRORCHAR);
     if (!isFullyDefined()) return Character.toString(UNKNOWNCHAR);
 
-    long value = toLongValue();
+    long val = toLongValue();
     if (signed) {
-      if (width < 64 && (value >> (width - 1)) != 0) {
-        value |= (-1) << width;
+      if (width < 64 && (val >> (width - 1)) != 0) {
+        val |= (-1L) << width;
       }
-      return Long.toString(value);
+      return Long.toString(val);
     } else {
       if (width < 64) {
-        long mask = (-1 << width)^0xFFFFFFFFFFFFFFFFL;
-        value &= mask;
+        long mask = (-1L << width)^0xFFFFFFFFFFFFFFFFL;
+        val &= mask;
       }
-      return Long.toUnsignedString(value);
+      return Long.toUnsignedString(val);
     }
   }
 
