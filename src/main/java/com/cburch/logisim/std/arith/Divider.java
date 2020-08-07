@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -32,6 +32,7 @@ import static com.cburch.logisim.std.Strings.S;
 
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeOption;
+import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
@@ -114,11 +115,17 @@ public class Divider extends InstanceFactory {
   protected void configureNewInstance(Instance instance) {
     instance.addAttributeListener();
   }
-  
+
+  @Override
+  public boolean HDLSupportedComponent(String HDLIdentifier, AttributeSet attrs) {
+    if (MyHDLGenerator == null) MyHDLGenerator = new DividerHDLGeneratorFactory();
+    return MyHDLGenerator.HDLTargetSupported(HDLIdentifier, attrs);
+  }
+
   @Override
   protected void instanceAttributeChanged(Instance instance, Attribute<?> attr) {
     if (attr == MODE_ATTR) instance.fireInvalidated();
-  }  
+  }
 
   @Override
   public void paintInstance(InstancePainter painter) {
