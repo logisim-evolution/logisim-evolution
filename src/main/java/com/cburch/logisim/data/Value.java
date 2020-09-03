@@ -463,17 +463,18 @@ public class Value {
     if (isErrorValue()) return Character.toString(ERRORCHAR);
     if (!isFullyDefined()) return Character.toString(UNKNOWNCHAR);
 
-    long val = toLongValue();
+    // Keep only valid bits, zeroing bits above value width.
+    long mask = (-1L) >>> (Long.SIZE - width);
+    long val = toLongValue() & mask;
+
     if (signed) {
-      if (width < 64 && (val >> (width - 1)) != 0) {
-        val |= (-1L) << width;
+      // Copy sign bit into upper bits.
+      boolean isNegative = (val >> (width - 1)) != 0;
+      if (isNegative) {
+        val |= ~mask;
       }
       return Long.toString(val);
     } else {
-      if (width < 64) {
-        long mask = (-1L << width)^0xFFFFFFFFFFFFFFFFL;
-        val &= mask;
-      }
       return Long.toUnsignedString(val);
     }
   }
