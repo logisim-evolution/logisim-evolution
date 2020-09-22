@@ -72,7 +72,7 @@ public class DemultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactor
       }
       String binValue = IntToBin(i, nr_of_select_bits, HDLType);
       if (HDLType.equals(VHDL)) {
-        Contents.add("   DemuxOut_" + i + Space + "<= DemuxIn WHEN sel = " + binValue + " AND");
+        Contents.add("   DemuxOut_" + i + Space + "<= DemuxIn WHEN Sel = " + binValue + " AND");
         if (attrs.getValue(StdAttr.WIDTH).getWidth() > 1) {
           Contents.add("                               Enable = '1' ELSE (OTHERS => '0');");
         } else {
@@ -83,7 +83,7 @@ public class DemultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactor
             "   assign DemuxOut_"
                 + Integer.toString(i)
                 + Space
-                + " = (Enable&(sel == "
+                + " = (Enable&(Sel == "
                 + binValue
                 + " )) ? DemuxIn : 0;");
       }
