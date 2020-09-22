@@ -282,7 +282,7 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
         Lines.add("   genvar n;");
         Lines.add("   generate");
         Lines.add("      for (n = 0 ; n < " + BitWidthString + " ; n = n + 1)");
-        Lines.add("         begin: bit");
+        Lines.add("         begin: bits");
         Spaces += "         ";
         IndexString = "[n]";
       }
