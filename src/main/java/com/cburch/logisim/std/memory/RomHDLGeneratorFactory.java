@@ -39,22 +39,6 @@ import java.util.TreeMap;
 
 public class RomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
-  private String GetBin(int value, int nr_of_bits) {
-    StringBuffer Bits = new StringBuffer();
-    long mask = (1L << (nr_of_bits - 1));
-    int count;
-    if (nr_of_bits == 1) Bits.append("'");
-    else Bits.append("\"");
-    for (count = 0; count < nr_of_bits; count++) {
-      if ((value & mask) != 0) Bits.append("1");
-      else Bits.append("0");
-      mask >>= 1;
-    }
-    if (nr_of_bits == 1) Bits.append("'");
-    else Bits.append("\"");
-    return Bits.toString();
-  }
-
   private String GetBin(long value, int nr_of_bits) {
     StringBuffer Bits = new StringBuffer();
     long mask = (1L << (nr_of_bits - 1));
@@ -153,6 +137,7 @@ public class RomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public boolean HDLTargetSupported(String HDLType, AttributeSet attrs) {
+	if (attrs == null) return false;
     return attrs.getValue(Mem.LINE_ATTR).equals(Mem.SINGLE);
   }
 }

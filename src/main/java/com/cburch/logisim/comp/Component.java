@@ -63,6 +63,8 @@ public interface Component {
   // basic information methods
 
   public ComponentFactory getFactory();
+  
+  public void setFactory(ComponentFactory fact);
 
   /**
    * Retrieves information about a special-purpose feature for this component. This technique allows
