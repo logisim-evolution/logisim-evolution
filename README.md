@@ -32,8 +32,8 @@ Logisim supports many languages. Many of them are automatically translated by de
 
 ## Running logisim-evolution
 
-You can find an already compiled **stable** version of the code [here](http://reds-data.heig-vd.ch/logisim-evolution/logisim-evolution.jar).
-To execute it, run the downloaded file or type in a console/terminal:
+You can find an already compiled versions of the code [here](https://github.com/reds-heig/logisim-evolution/releases).
+To execute it, run the downloaded jar file or type in a console/terminal:
 ```bash
 java -jar logisim-evolution.jar
 ```
