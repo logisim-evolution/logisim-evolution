@@ -31,6 +31,7 @@ package com.cburch.logisim.std.memory;
 import static com.cburch.logisim.std.Strings.S;
 
 import com.cburch.logisim.LogisimVersion;
+import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.data.Attribute;
@@ -245,7 +246,7 @@ public class Rom extends Mem {
 
   @Override
   protected void instanceAttributeChanged(Instance instance, Attribute<?> attr) {
-    if (attr == Mem.DATA_ATTR || attr == StdAttr.APPEARANCE || attr == Mem.LINE_ATTR) {
+    if (attr == Mem.DATA_ATTR || attr == Mem.ADDR_ATTR || attr == StdAttr.APPEARANCE || attr == Mem.LINE_ATTR) {
       instance.recomputeBounds();
       configurePorts(instance);
     }
@@ -286,12 +287,18 @@ public class Rom extends Mem {
     }
     
     boolean misaligned = addr%nrDataLines != 0; 
-    
+    boolean misalignError = misaligned && !state.getAttributeValue(ALLOW_MISALIGNED);
+
     for (int i = 0 ; i < nrDataLines ; i++) {
       long val = myState.getContents().get(addr+i);
-      state.setPort(RamAppearance.getDataOutIndex(i, attrs), 
-                    misaligned ? Value.createError(dataBits) : Value.createKnown(dataBits, val), DELAY);
+      state.setPort(RamAppearance.getDataOutIndex(i, attrs),
+              misalignError ? Value.createError(dataBits) : Value.createKnown(dataBits, val), DELAY);
     }
+  }
+  
+  @Override
+  public void removeComponent(Circuit circ, Component c , CircuitState state) {
+    closeHexFrame(c);
   }
 
   @Override

@@ -32,12 +32,15 @@ import com.cburch.draw.model.AbstractCanvasObject;
 import com.cburch.logisim.LogisimVersion;
 import com.cburch.logisim.Main;
 import com.cburch.logisim.circuit.Circuit;
+import com.cburch.logisim.circuit.CircuitMapInfo;
 import com.cburch.logisim.circuit.Wire;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.comp.ComponentFactory;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeDefaultProvider;
 import com.cburch.logisim.data.AttributeSet;
+import com.cburch.logisim.fpga.data.BoardRectangle;
+import com.cburch.logisim.fpga.data.MapComponent;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.tools.Tool;
@@ -298,6 +301,10 @@ class XmlWriter {
       Element elt = fromComponent(comp);
       if (elt != null) ret.appendChild(elt);
     }
+    for (String board : circuit.getBoardMapNamestoSave()) {
+      Element elt = fromMap(circuit,board);
+      if (elt != null) ret.appendChild(elt);
+    }
     return ret;
   }
 
@@ -306,6 +313,39 @@ class XmlWriter {
     Element ret = doc.createElement("vhdl");
     ret.setAttribute("name", vhdl.getName());
     ret.setTextContent(vhdl.getContent());
+    return ret;
+  }
+  
+  Element fromMap(Circuit circ, String boardName) {
+    Element ret = doc.createElement("boardmap");
+    ret.setAttribute("boardname", boardName);
+    for (String key : circ.getMapInfo(boardName).keySet()) {
+      Element Map = doc.createElement("mc");
+      CircuitMapInfo map = circ.getMapInfo(boardName).get(key);
+      if (map.isOldFormat()) {
+        Map.setAttribute("key", key);
+        if (map.isOpen()) {
+          Map.setAttribute(MapComponent.OPEN_KEY, MapComponent.OPEN_KEY);
+        } else if (map.isConst()) {
+          Map.setAttribute(MapComponent.CONSTANT_KEY, Long.toString(map.getConstValue()));
+        } else {
+          BoardRectangle rect = map.getRectangle();
+          Map.setAttribute("valx", Integer.toString(rect.getXpos()));
+          Map.setAttribute("valy", Integer.toString(rect.getYpos()));
+          Map.setAttribute("valw", Integer.toString(rect.getWidth()));
+          Map.setAttribute("valh", Integer.toString(rect.getHeight()));
+        }
+      } else {
+        MapComponent nmap = map.getMap();
+        if (nmap != null)
+          nmap.getMapElement(Map);
+        else {
+          Map.setAttribute("key", key);
+          MapComponent.getComplexMap(Map, map);
+        }
+      }
+      ret.appendChild(Map);
+    }
     return ret;
   }
 

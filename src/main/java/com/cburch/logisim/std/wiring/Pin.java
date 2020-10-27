@@ -44,6 +44,7 @@ import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
+import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.gui.main.Canvas;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceData;
@@ -83,7 +84,6 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFormattedTextField;
-import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -196,7 +196,9 @@ public class Pin extends InstanceFactory {
       String s = text.getText();
       if (isEditValid(s)) {
         Value newVal;
-        if (s.equals("x") || s.equals("X") || s.equals("???")) {
+        if (s.equals(Character.toString(Value.UNKNOWNCHAR).toLowerCase()) || 
+            s.equals(Character.toString(Value.UNKNOWNCHAR).toUpperCase()) || 
+            s.equals("???")) {
           newVal = Value.createUnknown(BitWidth.create(bitWidth));
         } else {
           try {
@@ -223,7 +225,8 @@ public class Pin extends InstanceFactory {
       if (s == null) return false;
       s = s.trim();
       if (s.equals("")) return false;
-      if (tristate && (s.equals("x") || s.equals("X") || s.equals("???"))) return true;
+      if (tristate && (s.equals(Character.toString(Value.UNKNOWNCHAR).toLowerCase()) || 
+          s.equals(Character.toString(Value.UNKNOWNCHAR).toUpperCase()) || s.equals("???"))) return true;
       try {
     	BigInteger n = new BigInteger(s);
         if (radix == RadixOption.RADIX_10_SIGNED) {
@@ -353,13 +356,13 @@ public class Pin extends InstanceFactory {
         CircuitState circState = canvas.getCircuitState();
         java.awt.Component frame = SwingUtilities.getRoot(canvas);
         int choice =
-            JOptionPane.showConfirmDialog(
+            OptionPane.showConfirmDialog(
                 frame,
                 S.get("pinFrozenQuestion"),
                 S.get("pinFrozenTitle"),
-                JOptionPane.OK_CANCEL_OPTION,
-                JOptionPane.WARNING_MESSAGE);
-        if (choice == JOptionPane.OK_OPTION) {
+                OptionPane.OK_CANCEL_OPTION,
+                OptionPane.WARNING_MESSAGE);
+        if (choice == OptionPane.OK_OPTION) {
           circState = circState.cloneState();
           canvas.getProject().setCircuitState(circState);
           state = circState.getInstanceState(state.getInstance());
@@ -392,7 +395,8 @@ public class Pin extends InstanceFactory {
             carry = s / 2;
           }
         }
-      } else if (tristate && (ch == 'x' || ch == 'X')) {
+      } else if (tristate && (ch == Character.toLowerCase(Value.UNKNOWNCHAR) || 
+                 ch == Character.toUpperCase(Value.UNKNOWNCHAR))) {
         for (int b = bit; b < bit + r; b++) val[b] = Value.UNKNOWN;
       } else {
         int d;
@@ -687,8 +691,6 @@ public class Pin extends InstanceFactory {
      * We ignore for the moment the three-state property of the pin, as it
      * is not an active component, just wiring
      */
-    // PinAttributes myattrs = (PinAttributes) attrs;
-    // return myattrs.getValue(Pin.ATTR_TRISTATE);
     return false;
   }
 

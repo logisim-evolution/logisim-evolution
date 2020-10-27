@@ -31,16 +31,14 @@ package com.cburch.logisim.fpga.hdlgenerator;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.data.AttributeSet;
+import com.cburch.logisim.fpga.data.MapComponent;
+import com.cburch.logisim.fpga.data.MappableResourcesContainer;
 import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
-import com.cburch.logisim.fpga.fpgagui.FPGAReport;
-import com.cburch.logisim.fpga.fpgagui.MappableResourcesContainer;
+import com.cburch.logisim.fpga.gui.FPGAReport;
 import com.cburch.logisim.instance.StdAttr;
-import com.cburch.logisim.std.io.PortIO;
-import com.cburch.logisim.std.io.ReptarLocalBus;
 import com.cburch.logisim.std.wiring.ClockHDLGeneratorFactory;
-import com.cburch.logisim.std.wiring.Pin;
 import java.util.ArrayList;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -52,7 +50,6 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   private Circuit MyCircuit;
   private MappableResourcesContainer MyIOComponents;
 
-  // private boolean useFPGAClock;
 
   public ToplevelHDLGeneratorFactory(
       long FPGAClock, double TickClock, Circuit TopLevel, MappableResourcesContainer IOComponents) {
@@ -87,22 +84,15 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
                   .get(0)
                   .getFactory()
                   .getHDLName(TheNetlist.GetAllClockSources().get(0).getAttributeSet()),
-              VHDL /* , false */));
+              VHDL ));
     }
     CircuitHDLGeneratorFactory Worker = new CircuitHDLGeneratorFactory(MyCircuit);
-    // boolean hasLB = false;
-    // for(NetlistComponent comp : TheNetlist.GetNormalComponents()){
-    // if(comp.GetComponent().getFactory() instanceof ReptarLocalBus){
-    // hasLB = true;
-    // break;
-    // }
-    // }
     Components.addAll(
         Worker.GetComponentInstantiation(
             TheNetlist,
             null,
             CorrectLabel.getCorrectLabel(MyCircuit.getName()),
-            VHDL /* , hasLB */));
+            VHDL ));
     return Components;
   }
 
@@ -114,10 +104,19 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   @Override
   public SortedMap<String, Integer> GetInOutList(Netlist TheNetlist, AttributeSet attrs) {
     SortedMap<String, Integer> InOut = new TreeMap<String, Integer>();
-    for (int NrOfInOut = 0; NrOfInOut < MyIOComponents.GetNrOfToplevelInOutPins(); NrOfInOut++) {
-      InOut.put(HDLGeneratorFactory.FPGAInOutPinName + "_" + Integer.toString(NrOfInOut), 1);
+    for (String io : MyIOComponents.GetMappedIOPinNames()) {
+      InOut.put(io, 1);
     }
     return InOut;
+  }
+
+  @Override
+  public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
+    SortedMap<String, Integer> Outputs = new TreeMap<String, Integer>();
+    for (String io : MyIOComponents.GetMappedOutputPinNames()) {
+      Outputs.put(io, 1);
+    }
+    return Outputs;
   }
 
   @Override
@@ -128,8 +127,8 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     if (NrOfClockTrees > 0 || TheNetlist.RequiresGlobalClockConnection()) {
       Inputs.put(TickComponentHDLGeneratorFactory.FPGAClock, 1);
     }
-    for (int NrOfInputs = 0; NrOfInputs < MyIOComponents.GetNrOfToplevelInputPins(); NrOfInputs++) {
-      Inputs.put(HDLGeneratorFactory.FPGAInputPinName + "_" + Integer.toString(NrOfInputs), 1);
+    for (String in : MyIOComponents.GetMappedInputPinNames()) {
+      Inputs.put(in, 1);
     }
     return Inputs;
   }
@@ -139,113 +138,26 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       Netlist TheNetlist, AttributeSet attrs, FPGAReport Reporter, String HDLType) {
     ArrayList<String> Contents = new ArrayList<String>();
     int NrOfClockTrees = TheNetlist.NumberOfClockTrees();
-    String Preamble = (HDLType.equals(VHDL)) ? "" : "assign ";
-    String BracketOpen = (HDLType.equals(VHDL)) ? "(" : "[";
-    String BracketClose = (HDLType.equals(VHDL)) ? ")" : "]";
-    String AssignOperator = (HDLType.equals(VHDL)) ? " <= " : " = ";
-    String NotOperator = (HDLType.equals(VHDL)) ? "NOT " : "~";
-    StringBuffer Temp = new StringBuffer();
-    /* First we process all pins */
+    /* First we process all components */
     Contents.addAll(MakeRemarkBlock("Here all signal adaptations are performed", 3, HDLType));
-    for (ArrayList<String> CompId : MyIOComponents.GetComponents()) {
-      if (MyIOComponents.GetComponent(CompId).GetComponent().getFactory() instanceof Pin) {
-        Component ThisPin = MyIOComponents.GetComponent(CompId).GetComponent();
-        ArrayList<String> MyMaps = MyIOComponents.GetMapNamesList(CompId);
-        if (MyMaps == null) {
-          Reporter.AddFatalError("Component has no map information, bizar! " + CompId.toString());
-          return Contents;
-        }
-        int PinPinId = 0;
-        for (int MapOffset = 0; MapOffset < MyMaps.size(); MapOffset++) {
-          String map = MyMaps.get(MapOffset);
-          int InputId = MyIOComponents.GetFPGAInputPinId(map);
-          int OutputId = MyIOComponents.GetFPGAOutputPinId(map);
-          int NrOfPins = MyIOComponents.GetNrOfPins(map);
-          boolean Invert = MyIOComponents.RequiresToplevelInversion(CompId, map);
-          for (int PinId = 0; PinId < NrOfPins; PinId++) {
-            Temp.setLength(0);
-            Temp.append("   " + Preamble);
-            if (InputId >= 0) {
-              Temp.append(
-                  "s_"
-                      + CorrectLabel.getCorrectLabel(
-                          ThisPin.getAttributeSet().getValue(StdAttr.LABEL)));
-              if (ThisPin.getEnd(0).getWidth().getWidth() > 1) {
-                Temp.append(BracketOpen + PinPinId + BracketClose);
-              }
-              PinPinId++;
-              Temp.append(AssignOperator);
-              if (Invert) {
-                Temp.append(NotOperator);
-              }
-              Temp.append(HDLGeneratorFactory.FPGAInputPinName);
-              Temp.append("_" + Integer.toString(InputId + PinId));
-              Temp.append(";");
-              Contents.add(Temp.toString());
-            }
-            if (OutputId >= 0) {
-              Temp.append(HDLGeneratorFactory.FPGAOutputPinName);
-              Temp.append("_" + Integer.toString(OutputId + PinId));
-              Temp.append(AssignOperator);
-              if (Invert) {
-                Temp.append(NotOperator);
-              }
-              Temp.append(
-                  "s_"
-                      + CorrectLabel.getCorrectLabel(
-                          ThisPin.getAttributeSet().getValue(StdAttr.LABEL)));
-              if (ThisPin.getEnd(0).getWidth().getWidth() > 1) {
-                Temp.append(BracketOpen + PinPinId + BracketClose);
-              }
-              PinPinId++;
-              Temp.append(";");
-              Contents.add(Temp.toString());
-            }
-          }
-        }
-      }
+    for (ArrayList<String> key : MyIOComponents.getMappableResources().keySet()) {
+      MapComponent comp = MyIOComponents.getMappableResources().get(key);
+      Contents.addAll(AbstractHDLGeneratorFactory.GetToplevelCode(HDLType, Reporter, comp));
     }
-    /* Now we process the bubbles */
-    Contents.addAll(MakeRemarkBlock("Here all inlined adaptations are performed", 3, HDLType));
-    for (ArrayList<String> CompId : MyIOComponents.GetComponents()) {
-      if (!(MyIOComponents.GetComponent(CompId).GetComponent().getFactory() instanceof Pin)
-          && !(MyIOComponents.GetComponent(CompId).GetComponent().getFactory() instanceof PortIO)
-          && !(MyIOComponents.GetComponent(CompId).GetComponent().getFactory()
-              instanceof ReptarLocalBus)) {
-        HDLGeneratorFactory Generator =
-            MyIOComponents.GetComponent(CompId)
-                .GetComponent()
-                .getFactory()
-                .getHDLGenerator(
-                    HDLType, MyIOComponents.GetComponent(CompId).GetComponent().getAttributeSet());
-        if (Generator == null) {
-          Reporter.AddError("No generator for component " + CompId.toString());
-        } else {
-          Contents.addAll(Generator.GetInlinedCode(HDLType, CompId, Reporter, MyIOComponents));
-        }
-      } else if (MyIOComponents.GetComponent(CompId).GetComponent().getFactory()
-          instanceof ReptarLocalBus) {
-        ((ReptarLocalBus) MyIOComponents.GetComponent(CompId).GetComponent().getFactory())
-            .setMapInfo(MyIOComponents);
-      } else if (MyIOComponents.GetComponent(CompId).GetComponent().getFactory()
-          instanceof PortIO) {
-        ((PortIO) MyIOComponents.GetComponent(CompId).GetComponent().getFactory())
-            .setMapInfo(MyIOComponents);
-      }
-    }
+    /* now we peocess the clock tree components */
     if (NrOfClockTrees > 0) {
       Contents.addAll(MakeRemarkBlock("Here the clock tree components are defined", 3, HDLType));
       TickComponentHDLGeneratorFactory Ticker =
           new TickComponentHDLGeneratorFactory(
-              FpgaClockFrequency, TickFrequency /* , useFPGAClock */);
-      Contents.addAll(Ticker.GetComponentMap(null, (long) 0, null, Reporter, "", HDLType));
+              FpgaClockFrequency, TickFrequency);
+      Contents.addAll(Ticker.GetComponentMap(null, (long) 0, null, null, Reporter, "", HDLType));
       long index = 0;
       for (Component Clockgen : TheNetlist.GetAllClockSources()) {
         NetlistComponent ThisClock = new NetlistComponent(Clockgen);
         Contents.addAll(
             Clockgen.getFactory()
                 .getHDLGenerator(HDLType, ThisClock.GetComponent().getAttributeSet())
-                .GetComponentMap(TheNetlist, index++, ThisClock, Reporter, "Bla", HDLType));
+                .GetComponentMap(TheNetlist, index++, ThisClock, null, Reporter, "", HDLType));
       }
     }
     Contents.add("");
@@ -257,34 +169,11 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
             TheNetlist,
             (long) 0,
             null,
+            MyIOComponents,
             Reporter,
             CorrectLabel.getCorrectLabel(MyCircuit.getName()),
             HDLType));
     return Contents;
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Outputs = new TreeMap<String, Integer>();
-    int k = 0;
-    for (int NrOfOutputs = 0;
-        NrOfOutputs < MyIOComponents.GetNrOfToplevelOutputPins();
-        NrOfOutputs++) {
-      if (MyIOComponents.GetFPGAOutputPinId(MyIOComponents.currentBoardName + ":/LocalBus") > -1
-          && (NrOfOutputs
-                  == MyIOComponents.GetFPGAOutputPinId(
-                      MyIOComponents.currentBoardName + ":/LocalBus")
-              || NrOfOutputs
-                  == MyIOComponents.GetFPGAOutputPinId(
-                          MyIOComponents.currentBoardName + ":/LocalBus")
-                      + 1)) {
-        Outputs.put("FPGA_LB_OUT_" + Integer.toString(k), 1);
-        k++;
-      } else {
-        Outputs.put(HDLGeneratorFactory.FPGAOutputPinName + "_" + Integer.toString(NrOfOutputs), 1);
-      }
-    }
-    return Outputs;
   }
 
   @Override
@@ -301,7 +190,6 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     SortedMap<String, Integer> Wires = new TreeMap<String, Integer>();
     int NrOfClockTrees = Nets.NumberOfClockTrees();
     int NrOfInputBubbles = Nets.NumberOfInputBubbles();
-    int NrOfInOutBubbles = Nets.NumberOfInOutBubbles();
     int NrOfOutputBubbles = Nets.NumberOfOutputBubbles();
     int NrOfInputPorts = Nets.NumberOfInputPorts();
     int NrOfInOutPorts = Nets.NumberOfInOutPorts();
@@ -319,13 +207,6 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         Wires.put("s_LOGISIM_INPUT_BUBBLES", NrOfInputBubbles);
       } else {
         Wires.put("s_LOGISIM_INPUT_BUBBLES", 0);
-      }
-    }
-    if (NrOfInOutBubbles > 0) {
-      if (NrOfInOutBubbles > 1) {
-        Wires.put("s_LOGISIM_INOUT_BUBBLES", NrOfInOutBubbles);
-      } else {
-        Wires.put("s_LOGISIM_INOUT_BUBBLES", 0);
       }
     }
     if (NrOfOutputBubbles > 0) {

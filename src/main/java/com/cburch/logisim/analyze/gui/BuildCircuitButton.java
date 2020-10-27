@@ -36,6 +36,7 @@ import com.cburch.logisim.analyze.model.VariableList;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitMutation;
 import com.cburch.logisim.file.LogisimFileActions;
+import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.proj.ProjectActions;
 import com.cburch.logisim.proj.Projects;
@@ -53,7 +54,6 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
@@ -152,32 +152,32 @@ class BuildCircuitButton extends JButton {
       while (!ok) {
         DialogPanel dlog = new DialogPanel();
         int action =
-            JOptionPane.showConfirmDialog(
+            OptionPane.showConfirmDialog(
                 parent,
                 dlog,
                 S.get("buildDialogTitle"),
-                JOptionPane.OK_CANCEL_OPTION,
-                JOptionPane.QUESTION_MESSAGE);
-        if (action != JOptionPane.OK_OPTION) return;
+                OptionPane.OK_CANCEL_OPTION,
+                OptionPane.QUESTION_MESSAGE);
+        if (action != OptionPane.OK_OPTION) return;
 
         ProjectItem projectItem = (ProjectItem) dlog.project.getSelectedItem();
         if (projectItem == null) {
-          JOptionPane.showMessageDialog(
+          OptionPane.showMessageDialog(
               parent,
               S.get("buildNeedProjectError"),
               S.get("buildDialogErrorTitle"),
-              JOptionPane.ERROR_MESSAGE);
+              OptionPane.ERROR_MESSAGE);
           continue;
         }
         dest = projectItem.project;
 
         name = dlog.name.getText().trim();
         if (name.equals("")) {
-          JOptionPane.showMessageDialog(
+          OptionPane.showMessageDialog(
               parent,
               S.get("buildNeedCircuitError"),
               S.get("buildDialogErrorTitle"),
-              JOptionPane.ERROR_MESSAGE);
+              OptionPane.ERROR_MESSAGE);
           continue;
         }
 
@@ -188,11 +188,11 @@ class BuildCircuitButton extends JButton {
         for (String label : model.getInputs().getNames()) labels.add(label.toUpperCase());
         for (String label : model.getOutputs().getNames()) labels.add(label.toUpperCase());
         if (labels.contains(name.toUpperCase())) {
-          JOptionPane.showMessageDialog(
+          OptionPane.showMessageDialog(
                 parent,
                 S.get("buildDuplicatedNameError"),
                 S.get("buildDialogErrorTitle"),
-                JOptionPane.ERROR_MESSAGE);
+                OptionPane.ERROR_MESSAGE);
           continue;
         }
 
@@ -205,12 +205,12 @@ class BuildCircuitButton extends JButton {
 
         if (dest != null && dest.getLogisimFile().getCircuit(name) != null) {
           int choice =
-              JOptionPane.showConfirmDialog(
+              OptionPane.showConfirmDialog(
                   parent,
                   StringUtil.format(S.get("buildConfirmReplaceMessage"), name),
                   S.get("buildConfirmReplaceTitle"),
-                  JOptionPane.YES_NO_OPTION);
-          if (choice != JOptionPane.YES_OPTION) {
+                  OptionPane.YES_NO_OPTION);
+          if (choice != OptionPane.YES_OPTION) {
             continue;
           }
           replace = true;
@@ -261,11 +261,11 @@ class BuildCircuitButton extends JButton {
     if (replace) {
       final Circuit circuit = dest.getLogisimFile().getCircuit(name);
       if (circuit == null) {
-        JOptionPane.showMessageDialog(
+        OptionPane.showMessageDialog(
             parent,
             "Internal error prevents replacing circuit.",
             "Internal Error",
-            JOptionPane.ERROR_MESSAGE);
+            OptionPane.ERROR_MESSAGE);
         return;
       }
 

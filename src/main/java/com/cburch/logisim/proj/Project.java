@@ -129,6 +129,7 @@ public class Project {
   private Dependencies depends;
   private MyListener myListener = new MyListener();
   private boolean startupScreen = false;
+  private boolean forcedDirty = false;
 
   public Project(LogisimFile file) {
     addLibraryListener(myListener);
@@ -409,7 +410,7 @@ public class Project {
   }
 
   public boolean isFileDirty() {
-    return (undoMods > 0);
+    return (undoMods > 0)||forcedDirty;
   }
 
   // We track whether this project is the empty project opened
@@ -419,6 +420,8 @@ public class Project {
   public boolean isStartupScreen() {
     return startupScreen;
   }
+  
+  public void setForcedDirty() {forcedDirty = true; file.setDirty(true);}
 
   /** Redo actions that were previously undone */
   public void redoAction() {
@@ -533,6 +536,7 @@ public class Project {
 
   public void setFileAsClean() {
     undoMods = 0;
+    forcedDirty=false;
     file.setDirty(isFileDirty());
   }
 

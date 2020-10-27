@@ -28,7 +28,9 @@
 
 package com.cburch.logisim.gui.icons;
 
+import java.awt.AlphaComposite;
 import java.awt.Color;
+import java.awt.Composite;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.font.TextLayout;
@@ -40,6 +42,7 @@ public class ProjectAddIcon  extends AbstractIcon{
 
   private boolean removeIcon = false;
   private boolean vhdl = false;
+  private boolean deselect = false;
   private static int[] points = {2,6,6,6,6,2,9,2,9,6,13,6,13,9,9,9,9,13,6,13,6,9,2,9};
   
   public ProjectAddIcon() {
@@ -49,8 +52,14 @@ public class ProjectAddIcon  extends AbstractIcon{
   public ProjectAddIcon(boolean removeSymbol) {
     removeIcon = removeSymbol;
   }
+  
+  public void setDeselect(boolean val) {deselect = val;}
 
   protected void paintIcon(Graphics2D g2) {
+	if (deselect) {
+      Composite c = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3f);
+      g2.setComposite(c);
+	}
     if (vhdl) {
       g2.setColor(Color.GREEN.darker().darker());
       Font f = g2.getFont().deriveFont((float)AppPreferences.getIconSize()/(float)1.6).deriveFont(Font.BOLD);

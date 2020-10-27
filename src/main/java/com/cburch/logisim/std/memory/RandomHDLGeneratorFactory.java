@@ -31,7 +31,7 @@ package com.cburch.logisim.std.memory;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
-import com.cburch.logisim.fpga.fpgagui.FPGAReport;
+import com.cburch.logisim.fpga.gui.FPGAReport;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.std.wiring.ClockHDLGeneratorFactory;
@@ -163,10 +163,10 @@ public class RandomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       Contents.add("   assign s_InitSeed = (" + SeedStr + ") ? " + SeedStr + " : 48'h5DEECE66D;");
       Contents.add("   assign s_reset = (s_reset_reg==3'b010) ? 1'b1 : 1'b0;");
       Contents.add("   assign s_reset_next = (((s_reset_reg == 3'b101)|");
-      Contents.add("                           (s_reset_reg == 3'b010))&~clear) ? 3'b010 :");
+      Contents.add("                           (s_reset_reg == 3'b010))&clear) ? 3'b010 :");
       Contents.add("                         (s_reset_reg==3'b001) ? 3'b101 : 3'b001;");
       Contents.add(
-          "   assign s_start = ((ClockEnable&enable)|((s_reset_reg == 3'b101)&~clear)) ? 1'b1 : 1'b0;");
+          "   assign s_start = ((ClockEnable&enable)|((s_reset_reg == 3'b101)&clear)) ? 1'b1 : 1'b0;");
       Contents.add("   assign s_mult_shift_next = (s_reset) ? 36'd0 :");
       Contents.add(
           "                              (s_start_reg) ? 36'h5DEECE66D : {1'b0,s_mult_shift_reg[35:1]};");
@@ -246,8 +246,10 @@ public class RandomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, String> GetPortMap(
-      Netlist Nets, NetlistComponent ComponentInfo, FPGAReport Reporter, String HDLType) {
+	      Netlist Nets, Object MapInfo, FPGAReport Reporter, String HDLType) {
     SortedMap<String, String> PortMap = new TreeMap<String, String>();
+    if (!(MapInfo instanceof NetlistComponent)) return PortMap;
+    NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
     Boolean GatedClock = false;
     Boolean HasClock = true;
     Boolean ActiveLow = false;

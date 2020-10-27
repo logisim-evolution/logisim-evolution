@@ -32,9 +32,10 @@ import static com.cburch.logisim.util.Strings.S;
 
 import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
 import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
+import com.cburch.logisim.gui.generic.OptionPane;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javax.swing.JOptionPane;
 
 public class SyntaxChecker {
 	
@@ -77,7 +78,7 @@ public class SyntaxChecker {
   public static boolean isVariableNameAcceptable(String val, Boolean ShowDialog) {
     String Message = getErrorMessage(val);
     if (Message != null && ShowDialog) {
-        JOptionPane.showMessageDialog(
+        OptionPane.showMessageDialog(
                 null, Message.concat("\n" + S.get("variableNameNotAcceptable")));
     }
     return Message == null;

@@ -67,9 +67,9 @@ public class Ttl7410 extends AbstractTtlGate {
       Drawgates.paintAnd(g, x + 125, y + 20, 10, 10, inverted);
       Drawgates.paintAnd(g, x + 105, y + 40, 10, 10, inverted);
     } else {
-      Drawgates.paintOr(g, x + 45, y + 20, 10, 10, inverted);
-      Drawgates.paintOr(g, x + 125, y + 20, 10, 10, inverted);
-      Drawgates.paintOr(g, x + 105, y + 40, 10, 10, inverted);
+      Drawgates.paintOr(g, x + 45, y + 20, 10, 10, inverted, false);
+      Drawgates.paintOr(g, x + 125, y + 20, 10, 10, inverted, false);
+      Drawgates.paintOr(g, x + 105, y + 40, 10, 10, inverted, false);
     }
     int offset = inverted ? 0 : -4;
     int[] xpos = new int[] {x + 49 + offset, x + 50, x + 50};

@@ -38,9 +38,9 @@ import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Value;
-import com.cburch.logisim.fpga.fpgaboardeditor.FPGAIOInformationContainer;
-import com.cburch.logisim.fpga.hdlgenerator.IOComponentInformationContainer;
+import com.cburch.logisim.fpga.data.ComponentMapInformationContainer;
 import com.cburch.logisim.gui.icons.SevenSegmentIcon;
+import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceDataSingleton;
 import com.cburch.logisim.instance.InstanceFactory;
 import com.cburch.logisim.instance.InstancePainter;
@@ -63,45 +63,62 @@ public class HexDigit extends InstanceFactory implements DynamicElementProvider 
           Io.ATTR_ON_COLOR,
           Io.ATTR_OFF_COLOR,
           Io.ATTR_BACKGROUND,
+          SevenSegment.ATTR_DP,
           StdAttr.LABEL,
           StdAttr.LABEL_LOC,
           StdAttr.LABEL_FONT,
-          StdAttr.LABEL_VISIBILITY
+          StdAttr.LABEL_VISIBILITY,
+          StdAttr.MAPINFO
         },
         new Object[] {
           new Color(240, 0, 0),
           SevenSegment.DEFAULT_OFF,
           Io.DEFAULT_BACKGROUND,
+          Boolean.TRUE,
           "",
           Direction.EAST,
           StdAttr.DEFAULT_LABEL_FONT,
-          false
+          false,
+          new ComponentMapInformationContainer(0, 8, 0, null, SevenSegment.GetLabels(), null) 
         });
-    Port[] ps = new Port[2];
-    ps[HEX] = new Port(0, 0, Port.INPUT, 4);
-    ps[DP] = new Port(20, 0, Port.INPUT, 1);
-    ps[HEX].setToolTip(S.getter("hexDigitDataTip"));
-    ps[DP].setToolTip(S.getter("hexDigitDPTip"));
-    setPorts(ps);
     setOffsetBounds(Bounds.create(-15, -60, 40, 60));
     setIcon(new SevenSegmentIcon(true));
     setKeyConfigurator(new DirectionConfigurator(StdAttr.LABEL_LOC, KeyEvent.ALT_DOWN_MASK));
-    MyIOInformation =
-        new IOComponentInformationContainer(
-            0,
-            8,
-            0,
-            null,
-            SevenSegment.GetLabels(),
-            null,
-            FPGAIOInformationContainer.IOComponentTypes.SevenSegment);
-    MyIOInformation.AddAlternateMapType(FPGAIOInformationContainer.IOComponentTypes.LED);
-    MyIOInformation.AddAlternateMapType(FPGAIOInformationContainer.IOComponentTypes.Pin);
+  }
+  
+  private void updatePorts(Instance instance) {
+    int nrPorts = instance.getAttributeValue(SevenSegment.ATTR_DP) ? 2 : 1;
+    Port[] ps = new Port[nrPorts];
+    ps[HEX] = new Port(0, 0, Port.INPUT, 4);
+    ps[HEX].setToolTip(S.getter("hexDigitDataTip"));
+    if (nrPorts > 1) {
+      ps[DP] = new Port(20, 0, Port.INPUT, 1);
+      ps[DP].setToolTip(S.getter("hexDigitDPTip"));
+    }
+    instance.setPorts(ps);
+    instance.getAttributeValue(StdAttr.MAPINFO).setNrOfOutports(6+nrPorts, SevenSegment.GetLabels());
   }
 
   @Override
+  protected void configureNewInstance(Instance instance) {
+	instance.getAttributeSet().setValue(StdAttr.MAPINFO, new ComponentMapInformationContainer( 0, 8, 0, null, SevenSegment.GetLabels(), null ));
+    instance.addAttributeListener();
+    updatePorts(instance);
+    SevenSegment.computeTextField(instance);
+  }
+  
+  @Override
+  protected void instanceAttributeChanged(Instance instance, Attribute<?> attr) {
+    if (attr == StdAttr.LABEL_LOC) {
+      SevenSegment.computeTextField(instance);
+    } else if (attr == SevenSegment.ATTR_DP) {
+      updatePorts(instance);
+    }
+  }
+  
+  @Override
   public void paintInstance(InstancePainter painter) {
-    SevenSegment.drawBase(painter, true);
+    SevenSegment.drawBase(painter, painter.getAttributeValue(SevenSegment.ATTR_DP));
   }
   
   public static int getSegs(int value) {
@@ -179,7 +196,6 @@ public class HexDigit extends InstanceFactory implements DynamicElementProvider 
     int summary = 0;
     Value baseVal = state.getPortValue(HEX);
     if (baseVal == null) baseVal = Value.createUnknown(BitWidth.create(4));
-    Value dpVal = state.getPortValue(DP);
     int segs = getSegs((int)baseVal.toLongValue());
     if ((segs & SEG_C_MASK) != 0) summary |= 4; // vertical seg in bottom right
     if ((segs & SEG_B_MASK) != 0) summary |= 2; // vertical seg in top right
@@ -188,7 +204,11 @@ public class HexDigit extends InstanceFactory implements DynamicElementProvider 
     if ((segs & SEG_A_MASK) != 0) summary |= 1; // horizontal seg at top
     if ((segs & SEG_E_MASK) != 0) summary |= 16; // vertical seg at bottom left
     if ((segs & SEG_F_MASK) != 0) summary |= 32; // vertical seg at top left
-    if (dpVal != null && (int)dpVal.toLongValue() == 1) summary |= 128; // decimal point
+
+    if (state.getAttributeValue(SevenSegment.ATTR_DP)) {
+      Value dpVal = state.getPortValue(DP);
+      if (dpVal != null && (int)dpVal.toLongValue() == 1) summary |= 128; // decimal point
+    }
 
     Object value = Integer.valueOf(summary);
     InstanceDataSingleton data = (InstanceDataSingleton) state.getData();

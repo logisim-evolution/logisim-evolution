@@ -48,17 +48,16 @@ import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.TestException;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.file.LogisimFile;
+import com.cburch.logisim.fpga.data.MappableResourcesContainer;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import com.cburch.logisim.fpga.fpgagui.FPGAReport;
+import com.cburch.logisim.fpga.gui.FPGAReport;
+import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.instance.Instance;
-import com.cburch.logisim.instance.InstanceComponent;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.soc.data.SocSimulationManager;
-import com.cburch.logisim.std.memory.Ram;
-import com.cburch.logisim.std.memory.RamState;
 import com.cburch.logisim.std.memory.Rom;
 import com.cburch.logisim.std.wiring.Clock;
 import com.cburch.logisim.std.wiring.Pin;
@@ -78,7 +77,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -87,7 +85,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.TreeSet;
 import java.util.WeakHashMap;
-import javax.swing.JOptionPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -193,7 +190,7 @@ public class Circuit {
         myFactory instanceof Pin) {
       if (ShowDialog) {
         String msg = S.get("ComponentLabelEqualCircuitName");
-        JOptionPane.showMessageDialog(null, "\"" + Name + "\" : " + msg);
+        OptionPane.showMessageDialog(null, "\"" + Name + "\" : " + msg);
       }
       return false;
     }
@@ -207,7 +204,7 @@ public class Circuit {
       if (comp.getFactory().getName().toUpperCase().equals(Name.toUpperCase())) {
         if (ShowDialog) {
           String msg = S.get("ComponentLabelNameError");
-          JOptionPane.showMessageDialog(null, "\"" + Name + "\" : " + msg);
+          OptionPane.showMessageDialog(null, "\"" + Name + "\" : " + msg);
         }
         return true;
       }
@@ -228,7 +225,7 @@ public class Circuit {
         if (Label.toUpperCase().equals(Name.toUpperCase())) {
           if (ShowDialog) {
             String msg = S.get("UsedLabelNameError");
-            JOptionPane.showMessageDialog(null, "\"" + Name + "\" : " + msg);
+            OptionPane.showMessageDialog(null, "\"" + Name + "\" : " + msg);
           }
           return true;
         }
@@ -263,6 +260,8 @@ public class Circuit {
 
   private WeakHashMap<Component, Circuit> circuitsUsingThis;
   private Netlist MyNetList;
+  private HashMap<String,MappableResourcesContainer> MyMappableResources;
+  private HashMap<String,HashMap<String,CircuitMapInfo>> LoadedMaps;
   private boolean Annotated;
   private Project proj;
   private SocSimulationManager socSim = new SocSimulationManager();
@@ -276,6 +275,8 @@ public class Circuit {
     locker = new CircuitLocker();
     circuitsUsingThis = new WeakHashMap<Component, Circuit>();
     MyNetList = new Netlist(this);
+    MyMappableResources = new HashMap<String,MappableResourcesContainer>();
+    LoadedMaps = new HashMap<String,HashMap<String,CircuitMapInfo>>();
     addCircuitListener(MyNetList);
     Annotated = false;
     logiFile = file;
@@ -694,6 +695,10 @@ public class Circuit {
   public Collection<Circuit> getCircuitsUsingThis() {
     return circuitsUsingThis.values();
   }
+  
+  public void removeComponent(Component c) {
+    circuitsUsingThis.remove(c);
+  }
 
   public ArrayList<Component> getClocks() {
     return clocks;
@@ -724,6 +729,46 @@ public class Circuit {
 
   public Netlist getNetList() {
     return MyNetList;
+  }
+  
+  public void addLoadedMap(String BoardName, HashMap<String,CircuitMapInfo> map) {
+    LoadedMaps.put(BoardName, map);
+  }
+  
+  public Set<String> getBoardMapNamestoSave() {
+    HashSet<String> ret = new HashSet<String>();
+    ret.addAll(LoadedMaps.keySet());
+    ret.addAll(MyMappableResources.keySet());
+    return ret;
+  }
+  
+  public Map<String,CircuitMapInfo> getMapInfo(String BoardName) {
+    if (MyMappableResources.containsKey(BoardName))
+      return MyMappableResources.get(BoardName).getCircuitMap();
+    if (LoadedMaps.containsKey(BoardName))
+      return LoadedMaps.get(BoardName);
+    return new HashMap<String,CircuitMapInfo>();
+  }
+  
+  public void setBoardMap(String BoardName, MappableResourcesContainer map) {
+	if (LoadedMaps.containsKey(BoardName)) {
+      for (String key : LoadedMaps.get(BoardName).keySet()) {
+    	CircuitMapInfo cmap = LoadedMaps.get(BoardName).get(key);
+        map.tryMap(key, cmap);
+      }
+      LoadedMaps.remove(BoardName);
+	}
+    MyMappableResources.put(BoardName,map);
+  }
+  
+  public MappableResourcesContainer getBoardMap(String BoardName) {
+    if (MyMappableResources.containsKey(BoardName))
+      return MyMappableResources.get(BoardName);
+    return null;
+  }
+  
+  public Set<String> getMapableBoards() {
+    return MyMappableResources.keySet();
   }
 
   public Set<Component> getNonWires() {
@@ -855,18 +900,8 @@ public class Circuit {
     Annotated = false;
     for (Component comp : oldComps) {
       socSim.removeComponent(comp);
-      if (comp.getFactory() instanceof SubcircuitFactory) {
-        SubcircuitFactory sub = (SubcircuitFactory) comp.getFactory();
-        sub.getSubcircuit().circuitsUsingThis.remove(comp);
-      } else if (comp.getFactory() instanceof VhdlEntity) {
-        VhdlEntity vhdl = (VhdlEntity) comp.getFactory();
-        vhdl.removeCircuitUsing(comp);
-      } else if (comp.getFactory() instanceof Rom) {
-        Rom.closeHexFrame(comp);
-      } else if (comp.getFactory() instanceof Ram) {
-        CircuitState state = proj.getCircuitState(this);
-        if (state != null) Ram.closeHexFrame((RamState)state.getData(comp));
-      }
+      ComponentFactory factory = comp.getFactory();
+      factory.removeComponent(this, comp, proj.getCircuitState(this));
     }
     fireEvent(CircuitEvent.ACTION_CLEAR, oldComps);
   }
@@ -885,34 +920,11 @@ public class Circuit {
       comps.remove(c);
       socSim.removeComponent(c);
       ComponentFactory factory = c.getFactory();
+      factory.removeComponent(this, c, proj.getCircuitState(this));
       if (factory instanceof Clock) {
         clocks.remove(c);
-      } else if (factory instanceof SubcircuitFactory) {
-        SubcircuitFactory subcirc = (SubcircuitFactory) factory;
-        subcirc.getSubcircuit().circuitsUsingThis.remove(c);
-      } else if (factory instanceof VhdlEntity) {
-        VhdlEntity vhdl = (VhdlEntity) factory;
-        vhdl.removeCircuitUsing(c);
-      } else if (factory instanceof Rom) {
-        Rom.closeHexFrame(c);
-      } else if (factory instanceof Ram) {
-        CircuitState state = proj.getCircuitState(this);
-        if (state != null) Ram.closeHexFrame((RamState)state.getData(c));
-      } else if (factory instanceof DynamicElementProvider && c instanceof InstanceComponent) {
-        // TODO: remove stale appearance dynamic elements in
-        // CircuitTransaction.execute() instead?
-        HashSet<Circuit> allAffected = new HashSet<>();
-        LinkedList<Circuit> todo = new LinkedList<>();
-        todo.add(this);
-        while (!todo.isEmpty()) {
-          Circuit circ = todo.remove();
-          if (allAffected.contains(circ)) continue;
-          allAffected.add(circ);
-          for (Circuit other : circ.circuitsUsingThis.values())
-            if (!allAffected.contains(other)) todo.add(other);
-        }
-        for (Circuit circ : allAffected)
-          circ.appearance.removeDynamicElement((InstanceComponent) c);
+      } else if (factory instanceof DynamicElementProvider) {
+        DynamicElementProvider.removeDynamicElements(this, c);
       }
       c.removeComponentListener(myComponentListener);
     }
@@ -933,7 +945,7 @@ public class Circuit {
     }
     /* we do not have to check the wires as (1) Wire is a reserved keyword, and (2) they cannot have a label */
     if (HaveAChange)
-      JOptionPane.showMessageDialog(
+      OptionPane.showMessageDialog(
           null, "\"" + Label + "\" : " + S.get("ComponentLabelCollisionError"));
   }
 

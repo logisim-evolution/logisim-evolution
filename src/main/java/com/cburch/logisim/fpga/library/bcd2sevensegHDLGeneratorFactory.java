@@ -31,7 +31,7 @@ package com.cburch.logisim.fpga.library;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
-import com.cburch.logisim.fpga.fpgagui.FPGAReport;
+import com.cburch.logisim.fpga.gui.FPGAReport;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import java.util.ArrayList;
 import java.util.SortedMap;
@@ -103,8 +103,10 @@ public class bcd2sevensegHDLGeneratorFactory extends AbstractHDLGeneratorFactory
 
   @Override
   public SortedMap<String, String> GetPortMap(
-      Netlist Nets, NetlistComponent ComponentInfo, FPGAReport Reporter, String HDLType) {
+      Netlist Nets, Object MapInfo, FPGAReport Reporter, String HDLType) {
     SortedMap<String, String> PortMap = new TreeMap<String, String>();
+	if (!(MapInfo instanceof NetlistComponent)) return PortMap;
+	NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
     PortMap.putAll(
         GetNetMap("BCDin", true, ComponentInfo, bcd2sevenseg.BCDin, Reporter, HDLType, Nets));
     PortMap.putAll(

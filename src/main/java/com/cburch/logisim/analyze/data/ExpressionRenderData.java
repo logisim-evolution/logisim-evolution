@@ -111,6 +111,8 @@ public class ExpressionRenderData {
   }
   
   public void setSubExpression(Expression subExpr) {
+	if (expr == null) return;
+	if (subExpr == null) return;
     expr.toString(notation, true, subExpr);
     lineMarks = computeLineAttribs(expr.marks);
     lineStyled = null;

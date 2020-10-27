@@ -45,7 +45,7 @@ class ConstantConfigurator extends LongConfigurator {
     if (ret >= 0) {
       return ret;
     } else {
-      return Integer.MAX_VALUE;
+      return Long.MAX_VALUE;
     }
   }
 

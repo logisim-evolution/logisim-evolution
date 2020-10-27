@@ -34,6 +34,7 @@ import com.cburch.logisim.analyze.file.TruthtableCsvFile;
 import com.cburch.logisim.analyze.file.TruthtableTextFile;
 import com.cburch.logisim.analyze.model.AnalyzerModel;
 import com.cburch.logisim.circuit.Circuit;
+import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.util.JFileChoosers;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -42,7 +43,6 @@ import java.io.IOException;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 
 public class ImportTableButton extends JButton {
 
@@ -83,19 +83,19 @@ public class ImportTableButton extends JButton {
     if (choice == JFileChooser.APPROVE_OPTION) {
       File file = chooser.getSelectedFile();
       if (file.isDirectory()) {
-        JOptionPane.showMessageDialog(
+        OptionPane.showMessageDialog(
             parent,
             S.fmt("notFileMessage", file.getName()),
             S.get("openErrorTitle"),
-            JOptionPane.OK_OPTION);
+            OptionPane.OK_OPTION);
         return;
       }
       if (!file.exists() || !file.canRead()) {
-        JOptionPane.showMessageDialog(
+        OptionPane.showMessageDialog(
             parent,
             S.fmt("cantReadMessage", file.getName()),
             S.get("openErrorTitle"),
-            JOptionPane.OK_OPTION);
+            OptionPane.OK_OPTION);
         return;
       }
       try {
@@ -105,17 +105,17 @@ public class ImportTableButton extends JButton {
         if (ext.equals("txt")) TruthtableTextFile.doLoad(file, model, parent);
         else if (ext.equals("csv")) TruthtableCsvFile.doLoad(file, model, parent);
         else {
-          JOptionPane.showMessageDialog(
+          OptionPane.showMessageDialog(
               parent,
               S.fmt("DoNotKnowHowto", FileName),
               S.get("openErrorTitle"),
-              JOptionPane.ERROR_MESSAGE);
+              OptionPane.ERROR_MESSAGE);
           return;
         }
         lastFile = file;
       } catch (IOException e) {
-        JOptionPane.showMessageDialog(
-            parent, e.getMessage(), S.get("openErrorTitle"), JOptionPane.ERROR_MESSAGE);
+        OptionPane.showMessageDialog(
+            parent, e.getMessage(), S.get("openErrorTitle"), OptionPane.ERROR_MESSAGE);
       }
     }
   }

@@ -34,11 +34,11 @@ import com.cburch.logisim.circuit.appear.DynamicElement;
 import com.cburch.logisim.circuit.appear.DynamicElementProvider;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeSet;
+import com.cburch.logisim.data.Attributes;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Value;
-import com.cburch.logisim.fpga.fpgaboardeditor.FPGAIOInformationContainer;
-import com.cburch.logisim.fpga.hdlgenerator.IOComponentInformationContainer;
+import com.cburch.logisim.fpga.data.ComponentMapInformationContainer;
 import com.cburch.logisim.gui.icons.SevenSegmentIcon;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceDataSingleton;
@@ -121,6 +121,11 @@ public class SevenSegment extends InstanceFactory implements DynamicElementProvi
     LabelNames.set(DP, "DecimalPoint");
     return LabelNames;
   }
+  
+  public static final String getOutputLabel(int id) {
+    if (id < 0 || id > GetLabels().size()) return "Undefined";
+    return GetLabels().get(id);
+  }
 
   public static final int Segment_A = 0;
   public static final int Segment_B = 1;
@@ -135,6 +140,9 @@ public class SevenSegment extends InstanceFactory implements DynamicElementProvi
   static Bounds[] SEGMENTS = null;
 
   static Color DEFAULT_OFF = new Color(220, 220, 220);
+  
+  public static final Attribute<Boolean> ATTR_DP = 
+    Attributes.forBoolean("decimalPoint", S.getter("SevenSegDP"));
 
   public SevenSegment() {
     super("7-Segment Display", S.getter("sevenSegmentComponent"));
@@ -144,25 +152,33 @@ public class SevenSegment extends InstanceFactory implements DynamicElementProvi
           Io.ATTR_OFF_COLOR,
           Io.ATTR_BACKGROUND,
           Io.ATTR_ACTIVE,
+          ATTR_DP,
           StdAttr.LABEL,
           StdAttr.LABEL_LOC,
           StdAttr.LABEL_FONT,
-          StdAttr.LABEL_VISIBILITY
+          StdAttr.LABEL_VISIBILITY,
+          StdAttr.MAPINFO
         },
         new Object[] {
           new Color(240, 0, 0),
           DEFAULT_OFF,
           Io.DEFAULT_BACKGROUND,
           Boolean.TRUE,
+          Boolean.TRUE,
           "",
           Direction.EAST,
           StdAttr.DEFAULT_LABEL_FONT,
-          false
+          false,
+          new ComponentMapInformationContainer( 0, 8, 0, null, GetLabels(), null )
         });
     setOffsetBounds(Bounds.create(-5, 0, 40, 60));
     setIcon(new SevenSegmentIcon(false));
     setKeyConfigurator(new DirectionConfigurator(StdAttr.LABEL_LOC, KeyEvent.ALT_DOWN_MASK));
-    Port[] ps = new Port[8];
+  }
+  
+  private void updatePorts(Instance instance) {
+	boolean hasDp = instance.getAttributeValue(ATTR_DP);
+    Port[] ps = new Port[hasDp ? 8 : 7];
     ps[Segment_A] = new Port(20, 0, Port.INPUT, 1);
     ps[Segment_B] = new Port(30, 0, Port.INPUT, 1);
     ps[Segment_C] = new Port(20, 60, Port.INPUT, 1);
@@ -170,7 +186,6 @@ public class SevenSegment extends InstanceFactory implements DynamicElementProvi
     ps[Segment_E] = new Port(0, 60, Port.INPUT, 1);
     ps[Segment_F] = new Port(10, 0, Port.INPUT, 1);
     ps[Segment_G] = new Port(0, 0, Port.INPUT, 1);
-    ps[DP] = new Port(30, 60, Port.INPUT, 1);
     ps[Segment_A].setToolTip(S.getter("Segment_A"));
     ps[Segment_B].setToolTip(S.getter("Segment_B"));
     ps[Segment_C].setToolTip(S.getter("Segment_C"));
@@ -178,19 +193,12 @@ public class SevenSegment extends InstanceFactory implements DynamicElementProvi
     ps[Segment_E].setToolTip(S.getter("Segment_E"));
     ps[Segment_F].setToolTip(S.getter("Segment_F"));
     ps[Segment_G].setToolTip(S.getter("Segment_G"));
-    ps[DP].setToolTip(S.getter("DecimalPoint"));
-    MyIOInformation =
-        new IOComponentInformationContainer(
-            0,
-            8,
-            0,
-            null,
-            GetLabels(),
-            null,
-            FPGAIOInformationContainer.IOComponentTypes.SevenSegment);
-    MyIOInformation.AddAlternateMapType(FPGAIOInformationContainer.IOComponentTypes.LED);
-    MyIOInformation.AddAlternateMapType(FPGAIOInformationContainer.IOComponentTypes.Pin);
-    setPorts(ps);
+    if (hasDp) {
+      ps[DP] = new Port(30, 60, Port.INPUT, 1);
+      ps[DP].setToolTip(S.getter("DecimalPoint"));
+    }
+    instance.setPorts(ps);
+    instance.getAttributeValue(StdAttr.MAPINFO).setNrOfOutports(hasDp ? 8 : 7, GetLabels());
   }
 
   @Override
@@ -198,7 +206,7 @@ public class SevenSegment extends InstanceFactory implements DynamicElementProvi
     return attrs.getValue(Io.ATTR_ACTIVE);
   }
 
-  private void computeTextField(Instance instance) {
+  public static final void computeTextField(Instance instance) {
     Direction facing = instance.getAttributeValue(StdAttr.FACING);
     Object labelLoc = instance.getAttributeValue(StdAttr.LABEL_LOC);
 
@@ -235,7 +243,9 @@ public class SevenSegment extends InstanceFactory implements DynamicElementProvi
 
   @Override
   protected void configureNewInstance(Instance instance) {
+	instance.getAttributeSet().setValue(StdAttr.MAPINFO, new ComponentMapInformationContainer( 0, 8, 0, null, GetLabels(), null ));
     instance.addAttributeListener();
+    updatePorts(instance);
     computeTextField(instance);
   }
 
@@ -252,18 +262,21 @@ public class SevenSegment extends InstanceFactory implements DynamicElementProvi
       computeTextField(instance);
     } else if (attr == StdAttr.LABEL_LOC) {
       computeTextField(instance);
+    } else if (attr == ATTR_DP) {
+      updatePorts(instance);
     }
   }
 
   @Override
   public void paintInstance(InstancePainter painter) {
-    drawBase(painter, true);
+    drawBase(painter, painter.getAttributeValue(ATTR_DP).booleanValue());
   }
 
   @Override
   public void propagate(InstanceState state) {
     int summary = 0;
-    for (int i = 0; i < 8; i++) {
+    int max = state.getAttributeValue(ATTR_DP) ? 8 : 7;
+    for (int i = 0; i < max; i++) {
       Value val = state.getPortValue(i);
       if (val == Value.TRUE) summary |= 1 << i;
     }

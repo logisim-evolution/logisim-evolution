@@ -30,12 +30,12 @@ package com.cburch.logisim.fpga.download;
 
 import static com.cburch.logisim.fpga.Strings.S;
 
+import com.cburch.logisim.fpga.data.BoardInformation;
+import com.cburch.logisim.fpga.data.MapComponent;
+import com.cburch.logisim.fpga.data.MappableResourcesContainer;
+import com.cburch.logisim.fpga.data.PullBehaviors;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import com.cburch.logisim.fpga.fpgaboardeditor.BoardInformation;
-import com.cburch.logisim.fpga.fpgaboardeditor.PullBehaviors;
-import com.cburch.logisim.fpga.fpgagui.FPGACommanderBase;
-import com.cburch.logisim.fpga.fpgagui.FPGAReport;
-import com.cburch.logisim.fpga.fpgagui.MappableResourcesContainer;
+import com.cburch.logisim.fpga.gui.FPGAReport;
 import com.cburch.logisim.fpga.hdlgenerator.FileWriter;
 import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.TickComponentHDLGeneratorFactory;
@@ -86,10 +86,8 @@ public class AlteraDownload implements VendorDownload {
       String HDLType,
       boolean WriteToFlash) {
     this.ProjectPath = ProjectPath;
-    this.SandboxPath =
-        FPGACommanderBase.GetDirectoryLocation(ProjectPath, FPGACommanderBase.SandboxPath);
-    this.ScriptPath =
-        FPGACommanderBase.GetDirectoryLocation(ProjectPath, FPGACommanderBase.ScriptPath);
+    this.SandboxPath = DownloadBase.GetDirectoryLocation(ProjectPath, DownloadBase.SandboxPath);
+    this.ScriptPath = DownloadBase.GetDirectoryLocation(ProjectPath, DownloadBase.ScriptPath);
     this.Reporter = Reporter;
     this.RootNetList = RootNetList;
     this.BoardInfo = BoardInfo;
@@ -97,7 +95,7 @@ public class AlteraDownload implements VendorDownload {
     this.Architectures = Architectures;
     this.HDLType = HDLType;
     this.WriteToFlash = WriteToFlash;
-    cablename = "usb-blaster";
+    cablename = "";
   }
 
   public void SetMapableResources(MappableResourcesContainer resources) {
@@ -160,9 +158,11 @@ public class AlteraDownload implements VendorDownload {
     command.add("-o");
     // if there is no .sof generated, try with the .pof
     if (new File(SandboxPath + ToplevelHDLGeneratorFactory.FPGAToplevelName + ".sof").exists()) {
-      command.add("P;" + ToplevelHDLGeneratorFactory.FPGAToplevelName + ".sof");
+      command.add("P;" + ToplevelHDLGeneratorFactory.FPGAToplevelName + ".sof"+
+                  "@"+BoardInfo.fpga.getFpgaJTAGChainPosition());
     } else {
-      command.add("P;" + ToplevelHDLGeneratorFactory.FPGAToplevelName + ".pof");
+      command.add("P;" + ToplevelHDLGeneratorFactory.FPGAToplevelName + ".pof"+
+                  "@"+BoardInfo.fpga.getFpgaJTAGChainPosition());
     }
     ProcessBuilder Down = new ProcessBuilder(command);
     Down.directory(new File(SandboxPath));
@@ -268,7 +268,7 @@ public class AlteraDownload implements VendorDownload {
               + " -to "
               + TickComponentHDLGeneratorFactory.FPGAClock);
     }
-    Contents.addAll(MapInfo.GetFPGAPinLocs(VendorSoftware.VendorAltera));
+    Contents.addAll(GetPinLocStrings());
     Contents.add("    # Commit assignments");
     Contents.add("    export_assignments");
     Contents.add("");
@@ -278,6 +278,32 @@ public class AlteraDownload implements VendorDownload {
     Contents.add("    }");
     Contents.add("}");
     return FileWriter.WriteContents(ScriptFile, Contents, Reporter);
+  }
+  
+  private ArrayList<String> GetPinLocStrings() {
+    ArrayList<String> Contents = new ArrayList<String>();
+    StringBuffer Temp = new StringBuffer();
+    for (ArrayList<String> key : MapInfo.getMappableResources().keySet()) {
+      MapComponent map = MapInfo.getMappableResources().get(key);
+      for (int i = 0 ; i < map.getNrOfPins() ; i++) {
+        Temp.setLength(0);
+        Temp.append("    set_location_assignment ");
+        if (map.isMapped(i) && !map.IsOpenMapped(i) && !map.IsConstantMapped(i)) {
+          Temp.append(map.getPinLocation(i)+" -to ");
+          if (map.isExternalInverted(i)) Temp.append("n_");
+          Temp.append(map.getHdlString(i));
+          Contents.add(Temp.toString());
+          if (map.requiresPullup(i)) {
+            Temp.setLength(0);
+            Temp.append("    set_instance_assignment -name WEAK_PULL_UP_RESISTOR ON -to ");
+            if (map.isExternalInverted(i)) Temp.append("n_");
+            Temp.append(map.getHdlString(i));
+            Contents.add(Temp.toString());
+          }
+        }
+      }
+    }
+    return Contents;
   }
 
   private static ArrayList<String> GetAlteraAssignments(BoardInformation CurrentBoard) {
@@ -323,7 +349,10 @@ public class AlteraDownload implements VendorDownload {
     }
     ArrayList<String> Devices = Devices(response);
     if (Devices == null) return false;
-    if (Devices.size() == 1) return true;
+    if (Devices.size() == 1) {
+      cablename = Devices.get(0);
+      return true;
+    }
     String selection = Download.ChooseBoard(Devices);
     if (selection == null) return false;
     cablename = selection;
@@ -550,4 +579,5 @@ public class AlteraDownload implements VendorDownload {
     NamedElement.appendChild(doc.createTextNode(ElementValue));
     root.appendChild(NamedElement);
   }
+
 }

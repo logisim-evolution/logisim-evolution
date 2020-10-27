@@ -31,6 +31,7 @@ package com.cburch.logisim.vhdl.gui;
 import static com.cburch.logisim.vhdl.Strings.S;
 
 import com.cburch.draw.toolbar.ToolbarModel;
+import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.proj.Action;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.util.FileUtil;
@@ -46,7 +47,6 @@ import java.awt.FlowLayout;
 import java.io.File;
 import java.io.IOException;
 import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -126,11 +126,11 @@ public class HdlContentView extends JPanel implements DocumentListener, HdlModel
       try {
         HdlFile.save(f, editor.getText());
       } catch (IOException e) {
-        JOptionPane.showMessageDialog(
+        OptionPane.showMessageDialog(
             HdlContentView.this,
             e.getMessage(),
             S.get("hexSaveErrorTitle"),
-            JOptionPane.ERROR_MESSAGE);
+            OptionPane.ERROR_MESSAGE);
       }
     }
   }
@@ -151,12 +151,12 @@ public class HdlContentView extends JPanel implements DocumentListener, HdlModel
 
   public static boolean confirmImport(Component parent) {
     String[] options = {S.get("importOption"), S.get("cancelOption")};
-    return JOptionPane.showOptionDialog(
+    return OptionPane.showOptionDialog(
             parent,
             S.get("importMessage"),
             S.get("importTitle"),
             0,
-            JOptionPane.QUESTION_MESSAGE,
+            OptionPane.QUESTION_MESSAGE,
             null,
             options,
             options[0])
@@ -231,23 +231,6 @@ public class HdlContentView extends JPanel implements DocumentListener, HdlModel
         compFolder.mkdir();
       return new File(
           FileUtil.correctPath(compFolder.getCanonicalPath()) + model.getName() + ".vhd");
-    } catch (IOException ex) {
-      return defaultFile;
-    }
-  }
-
-  private File getDefaultImportFile(File defaultFile) {
-    File projectFile = project.getLogisimFile().getLoader().getMainFile();
-    if (projectFile == null) return defaultFile;
-
-    File compFolder;
-    try {
-      compFolder =
-          new File(
-              FileUtil.correctPath(projectFile.getParentFile().getCanonicalPath()) + EXPORT_DIR);
-      if (!compFolder.exists() || (compFolder.exists() && !compFolder.isDirectory()))
-        compFolder.mkdir();
-      return new File(FileUtil.correctPath(compFolder.getCanonicalPath()));
     } catch (IOException ex) {
       return defaultFile;
     }

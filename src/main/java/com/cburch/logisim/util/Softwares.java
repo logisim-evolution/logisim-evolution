@@ -30,6 +30,7 @@ package com.cburch.logisim.util;
 
 import static com.cburch.logisim.util.Strings.S;
 
+import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.prefs.AppPreferences;
 import java.awt.Component;
 import java.io.BufferedReader;
@@ -42,7 +43,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
 
 public final class Softwares {
 
@@ -126,22 +126,22 @@ public final class Softwares {
       try {
         path = file.getCanonicalPath();
       } catch (IOException ex) {
-        JOptionPane.showMessageDialog(
+        OptionPane.showMessageDialog(
             parent,
             S.get("questaIoErrorMessage"),
             S.get("questaErrorTitle"),
-            JOptionPane.ERROR_MESSAGE);
+            OptionPane.ERROR_MESSAGE);
         return null;
       }
 
       if (validatePath(path, QUESTA)) {
         AppPreferences.QUESTA_PATH.set(path);
       } else {
-        JOptionPane.showMessageDialog(
+        OptionPane.showMessageDialog(
             parent,
             S.get("questaErrorMessage"),
             S.get("questaErrorTitle"),
-            JOptionPane.ERROR_MESSAGE);
+            OptionPane.ERROR_MESSAGE);
         return null;
       }
     }

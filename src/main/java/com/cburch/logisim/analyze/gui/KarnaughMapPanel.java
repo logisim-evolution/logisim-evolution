@@ -30,7 +30,6 @@ package com.cburch.logisim.analyze.gui;
 
 import static com.cburch.logisim.analyze.Strings.S;
 
-import com.cburch.draw.model.ColorBlindColors;
 import com.cburch.logisim.analyze.data.ExpressionRenderData;
 import com.cburch.logisim.analyze.data.KMapGroups;
 import com.cburch.logisim.analyze.model.AnalyzerModel;
@@ -43,6 +42,7 @@ import com.cburch.logisim.analyze.model.TruthTable;
 import com.cburch.logisim.analyze.model.TruthTableEvent;
 import com.cburch.logisim.analyze.model.TruthTableListener;
 import com.cburch.logisim.data.Bounds;
+import com.cburch.logisim.data.Value;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.GraphicsUtil;
 import java.awt.BasicStroke;
@@ -70,8 +70,7 @@ import java.util.List;
 import javax.swing.JPanel;
 
 public class KarnaughMapPanel extends JPanel
-    implements MouseMotionListener, MouseListener {
-  public static final Color ERROR_COLOR = new Color(0xa0, 0x20, 0x20);
+    implements MouseMotionListener, MouseListener, Entry.EntryChangedListener {
   private class MyListener implements OutputExpressionsListener, TruthTableListener {
 
     public void rowsChanged(TruthTableEvent event) {}
@@ -202,6 +201,9 @@ public class KarnaughMapPanel extends JPanel
       }
     };
     addFocusListener(f);
+    Entry.ZERO.addListener(this);
+    Entry.ONE.addListener(this);
+    Entry.DONT_CARE.addListener(this);
   }
 
   private void computePreferredSize() {
@@ -898,7 +900,7 @@ public class KarnaughMapPanel extends JPanel
         if (provisionalValue != null && row == provisionalY && outputColumn == provisionalX)
           entry = provisionalValue;
         if (entry.isError()) {
-          g.setColor(ERROR_COLOR);
+          g.setColor(Value.ERROR_COLOR);
           g.fillRect(x + j * cellWidth, y + i * cellHeight, cellWidth, cellHeight);
           g.setColor(Color.BLACK);
         } else if (hover.x == j && hover.y == i) {
@@ -913,7 +915,7 @@ public class KarnaughMapPanel extends JPanel
     if (outputColumn < 0) return;
 
     kMapGroups.paint(g, x, y, cellWidth, cellHeight);
-    g.setColor(ColorBlindColors.COMMON_BLUE);
+    g.setColor(Color.BLUE);
     for (int i = 0; i < rows; i++) {
       for (int j = 0; j < cols; j++) {
         int row = getTableRow(i, j, rows, cols);
@@ -924,7 +926,7 @@ public class KarnaughMapPanel extends JPanel
               text,
               x + j * cellWidth + (cellWidth - fm.stringWidth(text)) / 2,
               y + i * cellHeight + dy);
-          g.setColor(ColorBlindColors.COMMON_BLUE);
+          g.setColor(Color.BLUE);
         } else {
           Entry entry = table.getOutputEntry(row, outputColumn);
           String text = entry.getDescription();
@@ -1056,4 +1058,7 @@ public class KarnaughMapPanel extends JPanel
   public void mouseEntered(MouseEvent e) {}
 
   public void mouseExited(MouseEvent e) {}
+
+  @Override
+  public void EntryDesriptionChanged() { repaint(); }
 }

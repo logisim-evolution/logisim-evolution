@@ -31,29 +31,34 @@ package com.cburch.logisim.std.io;
 import static com.cburch.logisim.std.Strings.S;
 
 import com.cburch.logisim.data.Attribute;
+import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Attributes;
+import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
-import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
-import com.cburch.logisim.fpga.fpgaboardeditor.FPGAIOInformationContainer;
-import com.cburch.logisim.fpga.fpgagui.MappableResourcesContainer;
-import com.cburch.logisim.fpga.hdlgenerator.IOComponentInformationContainer;
+import com.cburch.logisim.data.Location;
+import com.cburch.logisim.data.Value;
+import com.cburch.logisim.fpga.data.ComponentMapInformationContainer;
 import com.cburch.logisim.instance.Instance;
+import com.cburch.logisim.instance.InstanceData;
 import com.cburch.logisim.instance.InstanceFactory;
 import com.cburch.logisim.instance.InstancePainter;
+import com.cburch.logisim.instance.InstancePoker;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.tools.key.BitWidthConfigurator;
 import com.cburch.logisim.tools.key.DirectionConfigurator;
-import com.cburch.logisim.tools.key.IntegerConfigurator;
 import com.cburch.logisim.tools.key.JoinedConfigurator;
 import com.cburch.logisim.util.GraphicsUtil;
-import com.cburch.logisim.util.StringUtil;
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class PortIO extends InstanceFactory {
 
@@ -65,277 +70,431 @@ public class PortIO extends InstanceFactory {
     return LabelNames;
   }
 
+  private static class PortState implements InstanceData, Cloneable {
+
+    Value pin[]; // pindata = usrdata + indata
+    Value usr[]; // usrdata
+    int size;
+
+    public PortState(int size) {
+      this.size = size;
+      int nBus = (((size - 1) / BitWidth.MAXWIDTH) + 1);
+      pin = new Value[nBus];
+      usr = new Value[nBus];
+      for (int i = 0; i < nBus; i++) {
+        int n = (size > BitWidth.MAXWIDTH ? BitWidth.MAXWIDTH : size);
+        pin[i] = Value.createUnknown(BitWidth.create(n));
+        usr[i] = Value.createUnknown(BitWidth.create(n));
+        size -= n;
+      }
+    }
+
+    public void resize(int sz) {
+      int nBus = (((sz - 1) / BitWidth.MAXWIDTH) + 1);
+      if (nBus != (((size - 1) / BitWidth.MAXWIDTH) + 1)) {
+        pin = Arrays.copyOf(pin, nBus);
+        usr = Arrays.copyOf(usr, nBus);
+      }
+      for (int i = 0; i < nBus; i++) {
+        int n = (sz > BitWidth.MAXWIDTH ? BitWidth.MAXWIDTH : sz);
+        if (pin[i] == null)
+          pin[i] = Value.createUnknown(BitWidth.create(n));
+        else
+          pin[i] = pin[i].extendWidth(n, Value.UNKNOWN);
+        if (usr[i] == null)
+          usr[i] = Value.createUnknown(BitWidth.create(n));
+        else
+          usr[i] = usr[i].extendWidth(n, Value.UNKNOWN);
+      }
+      size = sz;
+    }
+
+    public void toggle(int i) {
+      int n = i / BitWidth.MAXWIDTH;
+      i = i % BitWidth.MAXWIDTH;
+      Value v = usr[n].get(i);
+      if (v == Value.UNKNOWN)
+        v = Value.FALSE;
+      else if (v == Value.FALSE)
+        v = Value.TRUE;
+      else
+        v = Value.UNKNOWN;
+      usr[n] = usr[n].set(i, v);
+    }
+
+    public Value get(int i) {
+      return pin[i/BitWidth.MAXWIDTH].get(i%BitWidth.MAXWIDTH);
+    }
+
+    public Color getColor(int i) {
+      Value v = get(i);
+      return (v == Value.UNKNOWN ? Color.LIGHT_GRAY : v.getColor());
+    }
+
+    @Override
+    public Object clone() {
+      try {
+        PortState other = (PortState)super.clone();
+        other.pin = Arrays.copyOf(pin, pin.length);
+        other.usr = Arrays.copyOf(usr, usr.length);
+        return other;
+      }
+      catch (CloneNotSupportedException e) { return null; }
+    }
+  }
+
+  public static class PortPoker extends InstancePoker {
+    @Override
+    public void mouseReleased(InstanceState state, MouseEvent e) {
+      Location loc = state.getInstance().getLocation();
+      int cx = e.getX() - loc.getX() - 7 + 2;
+      int cy = e.getY() - loc.getY() - 25 + 2;
+      if (cx < 0 || cy < 0)
+        return;
+      int i = cx / 10;
+      int j = cy / 10;
+      if (j > 1)
+        return;
+      int n = 2*i + j;
+      PortState data = getState(state);
+      if (n < 0 || n >= data.size)
+        return;
+      data.toggle(n);
+      state.getInstance().fireInvalidated();
+    }
+  }
+
   public static final int MAX_IO = 128;
   public static final int MIN_IO = 2;
-  public static final Attribute<Integer> ATTR_SIZE =
-      Attributes.forIntegerRange("number", S.getter("pioNumber"), MIN_IO, MAX_IO);
-  // public static final Attribute<Boolean> ATTR_BUS =
-  // Attributes.forBoolean("showBus", S.getter("pioShowBus"));
-  public static final String BUSES = S.getter("pioBuses").toString();
-  public static final String PINS = S.getter("pioPins").toString();
-  public static final String[] OPTIONS = {BUSES, PINS};
+  private static final int INITPORTSIZE = 8;
+  public static final Attribute<BitWidth> ATTR_SIZE =
+      Attributes.forBitWidth("number", S.getter("pioNumber"), MIN_IO, MAX_IO);
+  
+  public static final AttributeOption INPUT =
+     new AttributeOption("onlyinput", S.getter("pioInput"));
+  public static final AttributeOption OUTPUT =
+     new AttributeOption("onlyOutput", S.getter("pioOutput"));
+  public static final AttributeOption INOUTSE =
+     new AttributeOption("IOSingleEnable", S.getter("pioIOSingle"));
+  public static final AttributeOption INOUTME =
+     new AttributeOption("IOMultiEnable", S.getter("pioIOMultiple"));
+  
+  public static final Attribute<AttributeOption> ATTR_DIR =
+     Attributes.forOption("direction", S.getter("pioDirection"), 
+         new AttributeOption[] {INPUT, OUTPUT, INOUTSE, INOUTME});
 
-  public static final Attribute<String> ATTR_BUS =
-      Attributes.forOption("showBus", S.getter("pioShowBus"), OPTIONS);
-
-  private MappableResourcesContainer mapInfo;
+  protected static final int DELAY = 1;
 
   public PortIO() {
     super("PortIO", S.getter("pioComponent"));
-    int portSize = 8;
     setAttributes(
         new Attribute[] {
+          StdAttr.FACING,
           StdAttr.LABEL,
           StdAttr.LABEL_LOC,
           StdAttr.LABEL_FONT,
           StdAttr.LABEL_COLOR,
           StdAttr.LABEL_VISIBILITY,
           ATTR_SIZE,
-          ATTR_BUS
+          ATTR_DIR,
+          StdAttr.MAPINFO
         },
         new Object[] {
+          Direction.EAST,
           "",
           Direction.EAST,
           StdAttr.DEFAULT_LABEL_FONT,
           StdAttr.DEFAULT_LABEL_COLOR,
           false,
-          portSize,
-          BUSES
+          BitWidth.create(INITPORTSIZE),
+          INOUTSE,
+          new ComponentMapInformationContainer( 0, 0, INITPORTSIZE, null, null, GetLabels(INITPORTSIZE) ) 
         });
     setFacingAttribute(StdAttr.FACING);
     setIconName("pio.gif");
-    setKeyConfigurator(
-        JoinedConfigurator.create(
-            new IntegerConfigurator(ATTR_SIZE, MIN_IO, MAX_IO, KeyEvent.ALT_DOWN_MASK),
+    setKeyConfigurator(JoinedConfigurator.create(
+            new BitWidthConfigurator(ATTR_SIZE, MIN_IO, MAX_IO, KeyEvent.ALT_DOWN_MASK),
             new DirectionConfigurator(StdAttr.LABEL_LOC, KeyEvent.ALT_DOWN_MASK)));
-    // setInstancePoker(Poker.class);
-    MyIOInformation =
-        new IOComponentInformationContainer(
-            0,
-            0,
-            portSize,
-            null,
-            null,
-            GetLabels(portSize),
-            FPGAIOInformationContainer.IOComponentTypes.PortIO);
-    // MyIOInformation.AddAlternateMapType(FPGAIOInformationContainer.IOComponentTypes.Button);
-    MyIOInformation.AddAlternateMapType(FPGAIOInformationContainer.IOComponentTypes.Pin);
-  }
-
-  private void computeTextField(Instance instance) {
-    Direction facing = Direction.NORTH;
-    Object labelLoc = instance.getAttributeValue(StdAttr.LABEL_LOC);
-
-    Bounds bds = instance.getBounds();
-    int x = bds.getX() + bds.getWidth() / 2;
-    int y = bds.getY() + bds.getHeight() / 2;
-    int halign = GraphicsUtil.H_CENTER;
-    int valign = GraphicsUtil.V_CENTER;
-    if (labelLoc == Direction.NORTH) {
-      y = bds.getY() - 2;
-      valign = GraphicsUtil.V_BOTTOM;
-    } else if (labelLoc == Direction.SOUTH) {
-      y = bds.getY() + bds.getHeight() + 2;
-      valign = GraphicsUtil.V_TOP;
-    } else if (labelLoc == Direction.EAST) {
-      x = bds.getX() + bds.getWidth() + 2;
-      halign = GraphicsUtil.H_LEFT;
-    } else if (labelLoc == Direction.WEST) {
-      x = bds.getX() - 2;
-      halign = GraphicsUtil.H_RIGHT;
-    }
-    if (labelLoc == facing) {
-      if (labelLoc == Direction.NORTH || labelLoc == Direction.SOUTH) {
-        x += 2;
-        halign = GraphicsUtil.H_LEFT;
-      } else {
-        y -= 2;
-        valign = GraphicsUtil.V_BOTTOM;
-      }
-    }
-
-    instance.setTextField(StdAttr.LABEL, StdAttr.LABEL_FONT, x, y, halign, valign);
+    setInstancePoker(PortPoker.class);
   }
 
   @Override
   protected void configureNewInstance(Instance instance) {
     instance.addAttributeListener();
-    configurePorts(instance);
-    computeTextField(instance);
-    MyIOInformation.setNrOfInOutports(
-        instance.getAttributeValue(ATTR_SIZE), GetLabels(instance.getAttributeValue(ATTR_SIZE)));
+    updatePorts(instance);
+    instance.computeLabelTextField(Instance.AVOID_BOTTOM);
+    ComponentMapInformationContainer map = instance.getAttributeSet().getValue(StdAttr.MAPINFO);
+    if (map == null) {
+      map = new ComponentMapInformationContainer( 0, 0, INITPORTSIZE, null, null, GetLabels(INITPORTSIZE) );
+      instance.getAttributeSet().setValue(ATTR_SIZE, BitWidth.create(INITPORTSIZE));
+      instance.getAttributeSet().setValue(ATTR_DIR, INOUTSE);
+    }
+    instance.getAttributeSet().setValue(StdAttr.MAPINFO, map.clone());
   }
 
-  private void configurePorts(Instance instance) {
-    if (instance.getAttributeValue(ATTR_BUS).equals(PINS)) {
-      // TODO YSY PINS
-      // Port[] ps = new Port[instance.getAttributeValue(ATTR_SIZE)];
-      // for (int i = 0; i < instance.getAttributeValue(ATTR_SIZE); i++) {
-      //
-      // ps[i] = new Port((i + 1) * 10, 0, Port.OUTPUT, 1);
-      // ps[i].setToolTip(StringUtil.constantGetter(String.valueOf(i+1)));
-      // }
-      // instance.setPorts(ps);
-    } else {
-      int nbPorts = instance.getAttributeValue(ATTR_SIZE);
-      Port[] ps = new Port[((nbPorts - 1) / 32) + 1];
-      int i = 0;
-      while (nbPorts > 0) {
-        ps[i] = new Port((i + 1) * 10, 0, Port.INOUT, (nbPorts > 32) ? 32 : nbPorts);
-        ps[i].setToolTip(
-            StringUtil.constantGetter(
-                String.valueOf((32 * i))
-                    + " to "
-                    + String.valueOf(32 * i + (nbPorts > 32 ? 32 : nbPorts) - 1)));
-        i++;
-        nbPorts -= (nbPorts > 32) ? 32 : nbPorts;
+  private void updatePorts(Instance instance) {
+    Direction facing = instance.getAttributeValue(StdAttr.FACING);
+    AttributeOption dir = instance.getAttributeValue(ATTR_DIR);
+    int size = instance.getAttributeValue(ATTR_SIZE).getWidth();
+    // logisim max bus size is BitWidth.MAXWIDTH, so use multiple buses if needed
+    int nBus = (((size - 1) / BitWidth.MAXWIDTH) + 1);
+    int nPorts = -1;
+    if (dir == INPUT || dir == OUTPUT)
+      nPorts = nBus;
+    else if (dir == INOUTME)
+      nPorts = 3*nBus;
+    else if (dir == INOUTSE)
+      nPorts = 2*nBus + 1;
+    Port[] ps = new Port[nPorts];
+    int p = 0;
+
+    int x = 0, y = 0, dx = 0, dy = 0;
+    if (facing == Direction.NORTH)
+      dy = -10;
+    else if (facing == Direction.SOUTH)
+      dy = 10;
+    else if (facing == Direction.WEST)
+      dx = -10;
+    else
+      dx = 10;
+    if (dir == INPUT || dir == OUTPUT) {
+      x += dx; y += dy;
+    }
+    if (dir == INOUTSE) {
+      ps[p] = new Port(x-dy, y+dx, Port.INPUT, 1);
+      ps[p].setToolTip(S.getter("pioOutEnable"));
+      p++;
+      x += dx; y += dy;
+    }
+    int n = size;
+    int i = 0;
+    while (n > 0) {
+      int e = (n > BitWidth.MAXWIDTH ? BitWidth.MAXWIDTH : n);
+      String range = "[" + i + "..." + (i + e - 1) +"]";
+      if (dir == INOUTME) {
+        ps[p] = new Port(x-dy, y+dx, Port.INPUT, e);
+        ps[p].setToolTip(S.getter("pioOutEnables", range));
+        p++;
+        x += dx; y += dy;
       }
-      instance.setPorts(ps);
+      if (dir == OUTPUT || dir == INOUTSE || dir == INOUTME) {
+        ps[p] = new Port(x, y, Port.INPUT, e);
+        ps[p].setToolTip(S.getter("pioOutputs", range));
+        p++;
+        x += dx; y += dy;
+      }
+      i += BitWidth.MAXWIDTH;
+      n -= e;
     }
-  }
-
-  @Override
-  public String getHDLName(AttributeSet attrs) {
-    StringBuffer CompleteName = new StringBuffer();
-    CompleteName.append(CorrectLabel.getCorrectLabel(attrs.getValue(StdAttr.LABEL)));
-    if (CompleteName.length() == 0) {
-      CompleteName.append("PORTIO");
+    n = size;
+    i = 0;
+    while (n > 0) {
+      int e = (n > BitWidth.MAXWIDTH ? BitWidth.MAXWIDTH : n);
+      String range = "[" + i + "..." + (i + e - 1) +"]";
+      if (dir == INPUT || dir == INOUTSE || dir == INOUTME) {
+        ps[p] = new Port(x, y, Port.OUTPUT, e);
+        ps[p].setToolTip(S.getter("pioInputs", range));
+        p++;
+        x += dx; y += dy;
+      }
+      i += BitWidth.MAXWIDTH;
+      n -= e;
     }
-    return CompleteName.toString();
-  }
-
-  public MappableResourcesContainer getMapInfo() {
-    return mapInfo;
+    instance.setPorts(ps);
   }
 
   @Override
   public Bounds getOffsetBounds(AttributeSet attrs) {
-    if (attrs.getValue(ATTR_BUS).equals(PINS)) {
-      return Bounds.create(0, 0, 10 + attrs.getValue(ATTR_SIZE).intValue() * 10, 40)
-          .rotate(Direction.NORTH, Direction.NORTH, 0, 0);
-    } else {
-      return Bounds.create(0, 0, 100, 40).rotate(Direction.NORTH, Direction.NORTH, 0, 0);
-    }
+    Direction facing = attrs.getValue(StdAttr.FACING);
+    int n = attrs.getValue(ATTR_SIZE).getWidth();
+    if (n < 8)
+      n = 8;
+    return Bounds.create(0, 0, 10 + n/2 * 10, 50).rotate(Direction.EAST, facing, 0, 0);
   }
-
-  /*
-   * private static class State implements InstanceData, Cloneable {
-   *
-   * private int Value; private int size;
-   *
-   * public State(int value, int size) { Value = value; this.size = size; }
-   *
-   * public boolean BitSet(int bitindex) { if (bitindex >= size) { return
-   * false; } int mask = 1 << bitindex; return (Value & mask) != 0; }
-   *
-   * public void ToggleBit(int bitindex) { if ((bitindex < 0) || (bitindex >=
-   * size)) { return; } int mask = 1 << bitindex; Value ^= mask; }
-   *
-   * @Override public Object clone() { try { return super.clone(); } catch
-   * (CloneNotSupportedException e) { return null; } } }
-   */
-
-  //	@Override
-  //	public boolean HDLSupportedComponent(String HDLIdentifier,
-  //			AttributeSet attrs) {
-  //		if (MyHDLGenerator == null) {
-  //			MyHDLGenerator = new PortHDLGeneratorFactory();
-  //		}
-  //		return MyHDLGenerator.HDLTargetSupported(HDLIdentifier, attrs);
-  //	}
 
   @Override
   protected void instanceAttributeChanged(Instance instance, Attribute<?> attr) {
     if (attr == StdAttr.LABEL_LOC) {
-      computeTextField(instance);
-    } else if (attr == ATTR_SIZE) {
+      instance.computeLabelTextField(Instance.AVOID_BOTTOM);
+    } else if (attr == ATTR_SIZE || attr == ATTR_DIR) {
       instance.recomputeBounds();
-      configurePorts(instance);
-      computeTextField(instance);
-      MyIOInformation.setNrOfInOutports(
-          instance.getAttributeValue(ATTR_SIZE), GetLabels(instance.getAttributeValue(ATTR_SIZE)));
+      updatePorts(instance);
+      instance.computeLabelTextField(Instance.AVOID_BOTTOM);
+      ComponentMapInformationContainer map = instance.getAttributeValue(StdAttr.MAPINFO);
+      if (map != null) {
+        int nrPins = instance.getAttributeValue(ATTR_SIZE).getWidth();
+        int inputs = 0;
+        int outputs = 0;
+        int ios = 0;
+        ArrayList<String> labels = GetLabels(nrPins); 
+        if (instance.getAttributeValue(ATTR_DIR)==INPUT) {
+          inputs = nrPins;
+        } else if (instance.getAttributeValue(ATTR_DIR)==OUTPUT) {
+          outputs = nrPins;
+        } else {
+          ios = nrPins;
+        }
+        map.setNrOfInports(inputs, labels);
+        map.setNrOfOutports(outputs, labels);
+        map.setNrOfInOutports( ios, labels );
+      }
     }
   }
 
   @Override
   public void paintInstance(InstancePainter painter) {
-    /*
-     * State state = (State) painter.getData(); if (state == null) { state =
-     * new State(0,painter.getAttributeValue(ATTR_SIZE));
-     * painter.setData(state); }
-     */
-    Bounds bds = painter.getBounds().expand(-1);
+    Direction facing = painter.getAttributeValue(StdAttr.FACING);
 
+    Bounds bds = painter.getBounds().rotate(Direction.EAST, facing, 0, 0);
+    int w = bds.getWidth();
+    int h = bds.getHeight();
+    int x = painter.getLocation().getX();
+    int y = painter.getLocation().getY();
     Graphics g = painter.getGraphics();
+    g.translate(x, y);
+    double rotate = 0.0;
+    if (facing != Direction.EAST) {
+      rotate = -facing.toRadians();
+      ((Graphics2D) g).rotate(rotate);
+    }
+
     GraphicsUtil.switchToWidth(g, 2);
-    g.setColor(Color.darkGray);
-    g.fillRect(bds.getX(), bds.getY(), bds.getWidth(), bds.getHeight());
+    g.setColor(Color.DARK_GRAY);
+    int bx[] = {1, 1, 5, w-6, w-2, w-2, 1};
+    int by[] = {20, h-8, h-4, h-4, h-8, 20, 20};
+    g.fillPolygon(bx, by, 6);
+    g.setColor(Color.BLACK);
     GraphicsUtil.switchToWidth(g, 1);
-    if (painter.getAttributeValue(ATTR_BUS).equals(PINS)) {
-      // TODO YSY PINS
-      g.setColor(Color.white);
-      g.setFont(
-          StdAttr.DEFAULT_LABEL_FONT.deriveFont(StdAttr.DEFAULT_LABEL_FONT.getSize2D() * 0.6f));
-      for (int i = 0; i < painter.getAttributeValue(ATTR_SIZE); i++) {
-        g.fillRect(bds.getX() + 6 + (i * 10), bds.getY() + 15, 6, 6);
-        if (i == 0 || i == painter.getAttributeValue(ATTR_SIZE) - 1) {
-          g.drawChars(
-              Integer.toString(i).toCharArray(),
-              0,
-              Integer.toString(i).toCharArray().length,
-              bds.getX() + 6 + (i < 10 ? 0 : -2) + i * 10,
-              bds.getY() + 12);
+    g.drawPolyline(bx, by, 7);
+
+    int size = painter.getAttributeValue(ATTR_SIZE).getWidth();
+    int nBus = (((size - 1) / BitWidth.MAXWIDTH) + 1);
+    if (!painter.getShowState()) {
+      g.setColor(Color.LIGHT_GRAY);
+      for (int i = 0; i < size; i++)
+        g.fillRect(7 + ((i/2) * 10),  25 + (i%2)*10, 6, 6);
+    }  else {
+      PortState data = getState(painter);
+      for (int i = 0; i < size; i++) {
+        g.setColor(data.getColor(i));
+        g.fillRect(7 + ((i/2) * 10),  25 + (i%2)*10, 6, 6);
+      }
+    }
+    g.setColor(Color.BLACK);
+    AttributeOption dir = painter.getAttributeValue(ATTR_DIR);
+    int px = ((dir == INOUTSE || dir == INOUTME) ? 0 : 10);
+    int py = 0;
+    for (int p = 0; p < nBus; p++) {
+      if (dir == INOUTSE) {
+        GraphicsUtil.switchToWidth(g, 3);
+        if (p == 0) {
+          g.drawLine(px, py+10, px+6, py+10);
+          px += 10;
+        } else {
+          g.drawLine(px-6, py+10, px-4, py+10);
         }
       }
-    } else {
-      g.setColor(Color.LIGHT_GRAY);
-      for (int i = 0; i < 9; i++) {
-        g.fillRect(bds.getX() + 6 + (i * 10), bds.getY() + 15, 6, 6);
-        g.fillRect(bds.getX() + 6 + (i * 10), bds.getY() + 25, 6, 6);
+      if (dir == INOUTME) {
+        GraphicsUtil.switchToWidth(g, 3);
+        g.drawLine(px, py+10, px+6, py+10);
+        px += 10;
       }
-      g.setColor(Color.WHITE);
-      g.setFont(StdAttr.DEFAULT_LABEL_FONT);
-      String text = painter.getAttributeValue(ATTR_SIZE).toString() + " PIN";
-      g.drawChars(
-          text.toCharArray(), 0, text.toCharArray().length, bds.getX() + 6, bds.getY() + 12);
+      if (dir == OUTPUT || dir == INOUTSE || dir == INOUTME) {
+        GraphicsUtil.switchToWidth(g, 3);
+        g.drawLine(px, py, px, py+4);
+        g.drawLine(px, py+15, px, py+20);
+        GraphicsUtil.switchToWidth(g, 2);
+        int[] xp = {px, px-4, px+4, px};
+        int[] yp = {py+15, py+5, py+5, py+15};
+        g.drawPolyline(xp, yp, 4);
+        px += 10;
+      }
     }
-    painter.drawLabel();
+
+    for (int p = 0; p < nBus; p++) {
+      if (dir == INPUT || dir == INOUTSE || dir == INOUTME) {
+        GraphicsUtil.switchToWidth(g, 3);
+        g.drawLine(px, py, px, py+5);
+        g.drawLine(px, py+16, px, py+20);
+        GraphicsUtil.switchToWidth(g, 2);
+        int[] xp = {px, px-4, px+4, px};
+        int[] yp = {py+6, py+16, py+16, py+6};
+        g.drawPolyline(xp, yp, 4);
+        px += 10;
+      }
+    }
+
+    GraphicsUtil.switchToWidth(g, 1);
+    ((Graphics2D) g).rotate(-rotate);
+    g.translate(-x, -y);
+
     painter.drawPorts();
+    g.setColor(painter.getAttributeValue(StdAttr.LABEL_COLOR));
+    painter.drawLabel();
+  }
+
+  private static PortState getState(InstanceState state) {
+    int size = state.getAttributeValue(ATTR_SIZE).getWidth();
+    PortState data = (PortState) state.getData();
+    if (data == null) {
+      data = new PortState(size);
+      state.setData(data);
+      return data;
+    }
+    if (data.size != size)
+      data.resize(size);
+    return data;
   }
 
   @Override
   public void propagate(InstanceState state) {
-    throw new UnsupportedOperationException("PortIO simulation not implemented");
-    // State pins = (State) state.getData();
-    // if (pins == null) {
-    // pins = new State(0, state.getAttributeValue(ATTR_SIZE));
-    // state.setData(pins);
-    // }
-    // for (int i = 0; i < state.getAttributeValue(ATTR_SIZE); i++) {
-    // Value pinstate = (pins.BitSet(i)) ? Value.TRUE : Value.FALSE;
-    // state.setPort(i, pinstate, 1);
-    // }
+    AttributeOption dir = state.getAttributeValue(ATTR_DIR);
+    int size = state.getAttributeValue(ATTR_SIZE).getWidth();
+    int nBus = (((size - 1) / BitWidth.MAXWIDTH) + 1);
+
+    PortState data = getState(state);
+
+    if (dir == OUTPUT) {
+      for (int i = 0; i < nBus; i++) {
+        data.pin[i] = state.getPortValue(i);
+      }
+    } else if (dir == INPUT) {
+      for (int i = 0; i < nBus; i++) {
+        data.pin[i] = data.usr[i];
+        state.setPort(i, data.pin[i], DELAY);
+      }
+    } else if (dir == INOUTSE) {
+      Value en = state.getPortValue(0);
+      // pindata = usrdata + en.controls(indata)
+      // where "+" resolves like:
+      //     Z 0 1 E
+      //     -------
+      // Z | Z 0 1 E
+      // 0 | 0 0 E E
+      // 1 | 1 E 1 E
+      for (int i = 0; i < nBus; i++) {
+        Value in = state.getPortValue(i+1);
+        data.pin[i] = data.usr[i].combine(en.controls(in));
+        state.setPort(1+nBus+i, data.pin[i], DELAY);
+      }
+    } else if (dir == INOUTME) {
+      for (int i = 0; i < nBus; i++) {
+        Value en = state.getPortValue(i*2);
+        Value in = state.getPortValue(i*2+1);
+        data.pin[i] = data.usr[i].combine(en.controls(in));
+        state.setPort(2*nBus+i, data.pin[i], DELAY);
+      }
+    }
   }
 
-  // public static class Poker extends InstancePoker {
-  //
-  // @Override
-  // public void mousePressed(InstanceState state, MouseEvent e) {
-  // State val = (State) state.getData();
-  // Location loc = state.getInstance().getLocation();
-  // int cx = e.getX() - loc.getX() - 5;
-  // int i = cx / 10;
-  // val.ToggleBit(i);
-  // state.getInstance().fireInvalidated();
-  // }
-  // }
-  //
   @Override
   public boolean RequiresNonZeroLabel() {
     return true;
   }
 
-  public void setMapInfo(MappableResourcesContainer mapInfo) {
-    this.mapInfo = mapInfo;
+  @Override
+  public boolean HDLSupportedComponent(String HDLIdentifier, AttributeSet attrs) {
+    if (MyHDLGenerator == null) MyHDLGenerator = new PortHDLGeneratorFactory();
+    return MyHDLGenerator.HDLTargetSupported(HDLIdentifier, attrs);
   }
 }

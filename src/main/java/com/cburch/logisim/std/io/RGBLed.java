@@ -37,8 +37,7 @@ import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Value;
-import com.cburch.logisim.fpga.fpgaboardeditor.FPGAIOInformationContainer;
-import com.cburch.logisim.fpga.hdlgenerator.IOComponentInformationContainer;
+import com.cburch.logisim.fpga.data.ComponentMapInformationContainer;
 import com.cburch.logisim.gui.icons.LEDIcon;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceDataSingleton;
@@ -79,6 +78,11 @@ public class RGBLed extends InstanceFactory implements DynamicElementProvider {
     LabelNames.set(BLUE, "BLUE");
     return LabelNames;
   }
+  
+  public static final String getLabel(int id) {
+    if (id < 0 || id > GetLabels().size()) return "Undefined";
+    return GetLabels().get(id);
+  }
 
   public static final int RED = 0;
   public static final int GREEN = 1;
@@ -94,7 +98,8 @@ public class RGBLed extends InstanceFactory implements DynamicElementProvider {
           StdAttr.LABEL_LOC,
           StdAttr.LABEL_FONT,
           StdAttr.LABEL_COLOR,
-          StdAttr.LABEL_VISIBILITY
+          StdAttr.LABEL_VISIBILITY,
+          StdAttr.MAPINFO
         },
         new Object[] {
           Direction.WEST,
@@ -103,17 +108,13 @@ public class RGBLed extends InstanceFactory implements DynamicElementProvider {
           Direction.EAST,
           StdAttr.DEFAULT_LABEL_FONT,
           StdAttr.DEFAULT_LABEL_COLOR,
-          true
+          true,
+          new ComponentMapInformationContainer( 0, 3, 0, null, GetLabels(), null ) 
         });
     setFacingAttribute(StdAttr.FACING);
     setIcon(new LEDIcon(true));
     setKeyConfigurator(new DirectionConfigurator(StdAttr.LABEL_LOC, KeyEvent.ALT_DOWN_MASK));
     setInstanceLogger(Logger.class);
-    MyIOInformation =
-        new IOComponentInformationContainer(
-            0, 3, 0, null, GetLabels(), null, FPGAIOInformationContainer.IOComponentTypes.RGBLED);
-    MyIOInformation.AddAlternateMapType(FPGAIOInformationContainer.IOComponentTypes.Pin);
-    MyIOInformation.AddAlternateMapType(FPGAIOInformationContainer.IOComponentTypes.LED);
   }
 
   private void updatePorts(Instance instance) {

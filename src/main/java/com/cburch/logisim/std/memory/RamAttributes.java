@@ -73,6 +73,7 @@ public class RamAttributes extends AbstractAttributeSet {
   private AttributeOption RWBehavior = Mem.READAFTERWRITE;
   private Boolean ClearPin = false;
   private AttributeOption lineSize = Mem.SINGLE;
+  private Boolean allowMisaligned = false;
   private AttributeOption typeOfEnables = Mem.USEBYTEENABLES;
   private AttributeOption ramType = VOLATILE;
 
@@ -102,11 +103,14 @@ public class RamAttributes extends AbstractAttributeSet {
       } else changes |= myAttributes.contains(Mem.ASYNC_READ);
       newList.add(ATTR_DBUS);
       changes |= myAttributes.contains(Mem.LINE_ATTR);
+      changes |= myAttributes.contains(Mem.ALLOW_MISALIGNED);
     } else {
       newList.add(Mem.LINE_ATTR);
+      newList.add(Mem.ALLOW_MISALIGNED);
       newList.add(StdAttr.TRIGGER);
       newList.add(ATTR_DBUS);
-      changes = !myAttributes.contains(Mem.LINE_ATTR);
+      changes |= !myAttributes.contains(Mem.LINE_ATTR);
+      changes |= !myAttributes.contains(Mem.ALLOW_MISALIGNED);
     }
     newList.add(StdAttr.LABEL);
     newList.add(StdAttr.LABEL_FONT);
@@ -133,6 +137,7 @@ public class RamAttributes extends AbstractAttributeSet {
     d.RWBehavior = RWBehavior;
     d.ClearPin = ClearPin;
     d.lineSize = lineSize;
+    d.allowMisaligned = allowMisaligned;
     d.typeOfEnables = typeOfEnables;
     d.ramType = ramType;
   }
@@ -183,6 +188,9 @@ public class RamAttributes extends AbstractAttributeSet {
     }
     if (attr == Mem.LINE_ATTR) {
       return (V) lineSize;
+    }
+    if (attr == Mem.ALLOW_MISALIGNED) {
+      return (V) allowMisaligned;
     }
     if (attr == CLEAR_PIN) {
       return (V) ClearPin;
@@ -294,6 +302,12 @@ public class RamAttributes extends AbstractAttributeSet {
       AttributeOption val = (AttributeOption) value;
       if (!lineSize.equals(val)) {
         lineSize = val;
+        fireAttributeValueChanged(attr, value, null);
+      }
+    } else if (attr == Mem.ALLOW_MISALIGNED) {
+      Boolean val = (Boolean) value;
+      if (allowMisaligned != val) {
+        allowMisaligned = val;
         fireAttributeValueChanged(attr, value, null);
       }
     } else if (attr == StdAttr.APPEARANCE) {

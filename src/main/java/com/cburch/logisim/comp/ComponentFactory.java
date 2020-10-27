@@ -29,6 +29,8 @@
 package com.cburch.logisim.comp;
 
 import com.cburch.logisim.LogisimVersion;
+import com.cburch.logisim.circuit.Circuit;
+import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeDefaultProvider;
 import com.cburch.logisim.data.AttributeSet;
@@ -36,7 +38,6 @@ import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
-import com.cburch.logisim.fpga.hdlgenerator.IOComponentInformationContainer;
 import com.cburch.logisim.util.StringGetter;
 import java.awt.Color;
 
@@ -56,6 +57,8 @@ public interface ComponentFactory extends AttributeDefaultProvider {
   public AttributeSet createAttributeSet();
 
   public Component createComponent(Location loc, AttributeSet attrs);
+  
+  public void removeComponent(Circuit circ, Component c , CircuitState state);
 
   public void drawGhost(
       ComponentDrawContext context, Color color, int x, int y, AttributeSet attrs);
@@ -88,8 +91,6 @@ public interface ComponentFactory extends AttributeDefaultProvider {
   public String getHDLName(AttributeSet attrs);
 
   public String getHDLTopName(AttributeSet attrs);
-
-  public IOComponentInformationContainer getIOInformation();
 
   public String getName();
 

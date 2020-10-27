@@ -37,8 +37,7 @@ import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Value;
-import com.cburch.logisim.fpga.fpgaboardeditor.FPGAIOInformationContainer;
-import com.cburch.logisim.fpga.hdlgenerator.IOComponentInformationContainer;
+import com.cburch.logisim.fpga.data.ComponentMapInformationContainer;
 import com.cburch.logisim.gui.icons.LEDIcon;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceDataSingleton;
@@ -82,7 +81,8 @@ public class Led extends InstanceFactory implements DynamicElementProvider {
           StdAttr.LABEL_LOC,
           StdAttr.LABEL_FONT,
           StdAttr.LABEL_COLOR,
-          StdAttr.LABEL_VISIBILITY
+          StdAttr.LABEL_VISIBILITY,
+          StdAttr.MAPINFO
         },
         new Object[] {
           Direction.WEST,
@@ -93,17 +93,14 @@ public class Led extends InstanceFactory implements DynamicElementProvider {
           Direction.EAST,
           StdAttr.DEFAULT_LABEL_FONT,
           StdAttr.DEFAULT_LABEL_COLOR,
-          true
+          true,
+          new ComponentMapInformationContainer( 0, 1, 0 ) 
         });
     setFacingAttribute(StdAttr.FACING);
     setIcon(new LEDIcon(false));
     setKeyConfigurator(new DirectionConfigurator(StdAttr.LABEL_LOC, KeyEvent.ALT_DOWN_MASK));
     setPorts(new Port[] {new Port(0, 0, Port.INPUT, 1)});
     setInstanceLogger(Logger.class);
-    MyIOInformation =
-        new IOComponentInformationContainer(
-            0, 1, 0, FPGAIOInformationContainer.IOComponentTypes.LED);
-    MyIOInformation.AddAlternateMapType(FPGAIOInformationContainer.IOComponentTypes.Pin);
   }
 
   @Override

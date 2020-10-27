@@ -31,12 +31,12 @@ package com.cburch.logisim.std.io.extra;
 import static com.cburch.logisim.std.Strings.S;
 
 import com.cburch.logisim.data.Value;
+import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.instance.InstanceData;
 import com.cburch.logisim.util.LocaleManager;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.util.Arrays;
-import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
 
@@ -137,12 +137,12 @@ public class PlaRomData implements InstanceData {
           new Dimension(
               (int) panel.getPreferredSize().getWidth(), (int) (screenSize.height * 0.75)));
     int ret =
-        JOptionPane.showOptionDialog(
+        OptionPane.showOptionDialog(
             null,
             panel,
             S.fmt("PlaEditWindowTitel",getSizeString()),
-            JOptionPane.OK_CANCEL_OPTION,
-            JOptionPane.PLAIN_MESSAGE,
+            OptionPane.OK_CANCEL_OPTION,
+            OptionPane.PLAIN_MESSAGE,
             null,
             this.options,
             null);

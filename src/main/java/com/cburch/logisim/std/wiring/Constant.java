@@ -245,7 +245,7 @@ public class Constant extends InstanceFactory {
   public void paintInstance(InstancePainter painter) {
     Bounds bds = painter.getOffsetBounds();
     BitWidth width = painter.getAttributeValue(StdAttr.WIDTH);
-    long longValue = painter.getAttributeValue(ATTR_VALUE).intValue();
+    long longValue = painter.getAttributeValue(ATTR_VALUE).longValue();
     Value v = Value.createKnown(width, longValue);
     Location loc = painter.getLocation();
     int x = loc.getX();

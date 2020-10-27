@@ -31,6 +31,7 @@ package com.cburch.logisim.vhdl.base;
 import static com.cburch.logisim.vhdl.Strings.S;
 
 import com.cburch.logisim.circuit.Circuit;
+import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeOption;
@@ -404,5 +405,10 @@ public class VhdlEntity extends InstanceFactory implements HdlModelListener {
 
   public void removeCircuitUsing(Component comp) {
     circuitsUsingThis.remove(comp);
+  }
+  
+  @Override
+  public void removeComponent(Circuit circ, Component c , CircuitState state) {
+    removeCircuitUsing(c);
   }
 }

@@ -30,12 +30,13 @@ package com.cburch.logisim.fpga.download;
 
 import static com.cburch.logisim.fpga.Strings.S;
 
+import com.cburch.logisim.fpga.data.BoardInformation;
+import com.cburch.logisim.fpga.data.FPGAIOInformationContainer;
+import com.cburch.logisim.fpga.data.IoStandards;
+import com.cburch.logisim.fpga.data.MapComponent;
+import com.cburch.logisim.fpga.data.MappableResourcesContainer;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import com.cburch.logisim.fpga.fpgaboardeditor.BoardInformation;
-import com.cburch.logisim.fpga.fpgaboardeditor.IoStandards;
-import com.cburch.logisim.fpga.fpgagui.FPGACommanderBase;
-import com.cburch.logisim.fpga.fpgagui.FPGAReport;
-import com.cburch.logisim.fpga.fpgagui.MappableResourcesContainer;
+import com.cburch.logisim.fpga.gui.FPGAReport;
 import com.cburch.logisim.fpga.hdlgenerator.FileWriter;
 import com.cburch.logisim.fpga.hdlgenerator.TickComponentHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.ToplevelHDLGeneratorFactory;
@@ -73,11 +74,9 @@ public class VivadoDownload implements VendorDownload {
       BoardInformation BoardInfo,
       ArrayList<String> Entities,
       ArrayList<String> Architectures) {
-    this.SandboxPath =
-        FPGACommanderBase.GetDirectoryLocation(ProjectPath, FPGACommanderBase.SandboxPath);
-    this.ScriptPath =
-        FPGACommanderBase.GetDirectoryLocation(ProjectPath, FPGACommanderBase.ScriptPath);
-    this.xdcPath = FPGACommanderBase.GetDirectoryLocation(ProjectPath, FPGACommanderBase.XDCPath);
+    this.SandboxPath = DownloadBase.GetDirectoryLocation(ProjectPath, DownloadBase.SandboxPath);
+    this.ScriptPath = DownloadBase.GetDirectoryLocation(ProjectPath, DownloadBase.ScriptPath);
+    this.xdcPath = DownloadBase.GetDirectoryLocation(ProjectPath, DownloadBase.XDCPath);
     this.Reporter = Reporter;
     this.RootNetList = RootNetList;
     this.BoardInfo = BoardInfo;
@@ -220,7 +219,7 @@ public class VivadoDownload implements VendorDownload {
       contents.add("");
     }
 
-    contents.addAll(MapInfo.GetFPGAPinLocs(VendorSoftware.VendorVivado));
+    contents.addAll(GetPinLocStrings());
     if (!FileWriter.WriteContents(xdcFile, contents, Reporter)) return false;
     contents.clear();
 
@@ -250,6 +249,39 @@ public class VivadoDownload implements VendorDownload {
     contents.add("close_hw");
     contents.add("exit");
     return FileWriter.WriteContents(loadBitstreamFile, contents, Reporter);
+  }
+  
+  private ArrayList<String> GetPinLocStrings() {
+    ArrayList<String> contents = new ArrayList<String>();
+    for (ArrayList<String> key : MapInfo.getMappableResources().keySet()) {
+      MapComponent map = MapInfo.getMappableResources().get(key);
+      for (int i = 0 ; i < map.getNrOfPins() ; i++) {
+        if (map.isMapped(i) && !map.IsOpenMapped(i) && !map.IsConstantMapped(i)) {
+          String netName = (map.isExternalInverted(i) ? "n_" : "")+map.getHdlString(i);
+          contents.add("set_property PACKAGE_PIN " + map.getPinLocation(i) + " [get_ports {" + netName + "}]");
+          FPGAIOInformationContainer info = map.getFpgaInfo(i);
+          if (info != null) {
+            if (info.GetIOStandard() != IoStandards.Unknown && info.GetIOStandard() != IoStandards.DefaulStandard) {
+              contents.add(
+                  "    set_property IOSTANDARD "
+                      + IoStandards.GetConstraintedIoStandard(info.GetIOStandard())
+                      + " [get_ports {"
+                      + netName
+                      + "}]");
+            }
+            if (info.GetIOStandard() != IoStandards.Unknown && info.GetIOStandard() != IoStandards.DefaulStandard) {
+              contents.add(
+                  "    set_property IOSTANDARD "
+                      + IoStandards.GetConstraintedIoStandard(info.GetIOStandard())
+                      + " [get_ports {"
+                      + netName
+                      + "}]");
+            }
+          }
+        }
+      }
+    }
+    return contents;
   }
 
   @Override
@@ -287,4 +319,5 @@ public class VivadoDownload implements VendorDownload {
     // should be used
     return true;
   }
+
 }

@@ -240,4 +240,9 @@ public class GraphicsUtil {
   public static final int V_BOTTOM = 2;
 
   public static final int V_CENTER_OVERALL = 3;
+
+  public static final int CONTROL_WIDTH = 2;
+  public static final int NEGATED_WIDTH = 2;
+  public static final int DATA_SINGLE_WIDTH = 3;
+  public static final int DATA_MULTI_WIDTH = 4;
 }

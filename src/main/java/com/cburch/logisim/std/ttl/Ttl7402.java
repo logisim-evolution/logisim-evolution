@@ -73,11 +73,11 @@ public class Ttl7402 extends AbstractTtlGate {
   }
 
   public Ttl7402() {
-    super("7402", (byte) 14, new byte[] {3, 6, 8, 11}, true);
+    super("7402", (byte) 14, new byte[] {1, 4, 10, 13}, true);
   }
 
   public Ttl7402(String name) {
-    super(name, (byte) 14, new byte[] {3, 6, 8, 11}, true);
+    super(name, (byte) 14, new byte[] {1, 4, 10, 13}, true);
   }
 
   @Override
@@ -85,21 +85,21 @@ public class Ttl7402 extends AbstractTtlGate {
     Graphics g = painter.getGraphics();
     int portwidth = 18, portheight = 15;
     int youtput = y + (up ? 20 : 40);
-    Drawgates.paintOr(g, x + 40, youtput, portwidth - 4, portheight, true);
+    Drawgates.paintOr(g, x + 20, youtput, portwidth - 4, portheight, true, true);
     // output line
-    Drawgates.paintOutputgate(g, x + 50, y, x + 44, youtput, up, height);
+    Drawgates.paintOutputgate(g, x + 10, y, x + 16, youtput, up, height);
     // input lines
     Drawgates.paintDoubleInputgate(
-        g, x + 30, y, x + 44 - portwidth, youtput, portheight, up, height);
+        g, x + 50, y, x + 16 + portwidth, youtput, portheight, up, true, height);
   }
 
   @Override
   public void ttlpropagate(InstanceState state) {
-    for (byte i = 2; i < 6; i += 3) {
-      state.setPort(i, (state.getPortValue(i - 1).or(state.getPortValue(i - 2)).not()), 1);
-    }
-    for (byte i = 6; i < 12; i += 3) {
+    for (byte i = 0; i < 6; i += 3) {
       state.setPort(i, (state.getPortValue(i + 1).or(state.getPortValue(i + 2)).not()), 1);
+    }
+    for (byte i = 8; i < 12; i += 3) {
+      state.setPort(i, (state.getPortValue(i - 1).or(state.getPortValue(i - 2)).not()), 1);
     }
   }
 

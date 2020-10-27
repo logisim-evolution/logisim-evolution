@@ -62,6 +62,7 @@ public class RamAppearance {
          attrs.getValue(Mem.ENABLES_ATTR).equals(Mem.USELINEENABLES)) {
       if (attrs.getValue(Mem.LINE_ATTR).equals(Mem.DUAL)) return 2;
       if (attrs.getValue(Mem.LINE_ATTR).equals(Mem.QUAD)) return 4;
+      if (attrs.getValue(Mem.LINE_ATTR).equals(Mem.OCTO)) return 8;
     }
     return 1;  
   }
@@ -89,6 +90,7 @@ public class RamAppearance {
     if (attrs.getValue(Mem.ENABLES_ATTR).equals(Mem.USELINEENABLES)) {
       if (attrs.getValue(Mem.LINE_ATTR).equals(Mem.DUAL)) return 2;
       if (attrs.getValue(Mem.LINE_ATTR).equals(Mem.QUAD)) return 4;
+      if (attrs.getValue(Mem.LINE_ATTR).equals(Mem.OCTO)) return 8;
     }
     return 0;
   }
@@ -315,6 +317,7 @@ public class RamAppearance {
       return 1;
     if (attrs.getValue(Mem.LINE_ATTR).equals(Mem.DUAL)) return 2;
     if (attrs.getValue(Mem.LINE_ATTR).equals(Mem.QUAD)) return 4;
+    if (attrs.getValue(Mem.LINE_ATTR).equals(Mem.OCTO)) return 8;
     return 1;
   }
   private static int getDataOffset(int portOffset, int portIndex, AttributeSet attrs) {
@@ -327,7 +330,15 @@ public class RamAppearance {
       case 2  : 
       case 3  : if ((!attrs.containsAttribute(Mem.ENABLES_ATTR) ||
 		             attrs.getValue(Mem.ENABLES_ATTR).equals(Mem.USELINEENABLES))&&
-                    attrs.getValue(Mem.LINE_ATTR).equals(Mem.QUAD)) return portOffset+portIndex;
+                    (attrs.getValue(Mem.LINE_ATTR).equals(Mem.QUAD) ||
+                     attrs.getValue(Mem.LINE_ATTR).equals(Mem.OCTO))) return portOffset+portIndex;
+                else return -1;
+      case 4  :
+      case 5  :
+      case 6  :
+      case 7  :  if ((!attrs.containsAttribute(Mem.ENABLES_ATTR) ||
+		             attrs.getValue(Mem.ENABLES_ATTR).equals(Mem.USELINEENABLES))&&
+		             attrs.getValue(Mem.LINE_ATTR).equals(Mem.OCTO)) return portOffset+portIndex;
                 else return -1;
       default : return -1;
     }
@@ -725,7 +736,7 @@ public class RamAppearance {
     ypos[0] = ypos[7] = y+getControlHeight(attrs);
     ypos[1] = ypos[2] = ypos[5] = ypos[6] = ypos[0]-10;
     ypos[3] = ypos[4] = y;
-    g.setStroke(new BasicStroke(2));
+    GraphicsUtil.switchToWidth(g, 2);
     g.drawPolyline(xpos, ypos, 8);
     for (int i = 0 ; i < getNrAddrPorts(attrs) ; i++) {
       int idx = getAddrIndex(i,attrs);

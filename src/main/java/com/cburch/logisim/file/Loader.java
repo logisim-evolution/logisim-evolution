@@ -30,6 +30,7 @@ package com.cburch.logisim.file;
 
 import static com.cburch.logisim.file.Strings.S;
 
+import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.std.Builtin;
 import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.util.JFileChoosers;
@@ -47,7 +48,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
 import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.filechooser.FileFilter;
@@ -201,7 +201,7 @@ public class Loader implements LibraryLoader {
     }
     while (!file.canRead()) {
       // It doesn't exist. Figure it out from the user.
-      JOptionPane.showMessageDialog(
+      OptionPane.showMessageDialog(
           parent, StringUtil.format(S.get("fileLibraryMissingError"), file.getName()));
       JFileChooser chooser = createChooser();
       chooser.setFileFilter(filter);
@@ -343,11 +343,11 @@ public class Loader implements LibraryLoader {
   public boolean save(LogisimFile file, File dest) {
     Library reference = LibraryManager.instance.findReference(file, dest);
     if (reference != null) {
-      JOptionPane.showMessageDialog(
+      OptionPane.showMessageDialog(
           parent,
           StringUtil.format(S.get("fileCircularError"), reference.getDisplayName()),
           S.get("fileSaveErrorTitle"),
-          JOptionPane.ERROR_MESSAGE);
+          OptionPane.ERROR_MESSAGE);
       return false;
     }
 
@@ -366,11 +366,11 @@ public class Loader implements LibraryLoader {
     } catch (IOException e) {
       if (backupCreated) recoverBackup(backup, dest);
       if (dest.exists() && dest.length() == 0) dest.delete();
-      JOptionPane.showMessageDialog(
+      OptionPane.showMessageDialog(
           parent,
           StringUtil.format(S.get("fileSaveError"), e.toString()),
           S.get("fileSaveErrorTitle"),
-          JOptionPane.ERROR_MESSAGE);
+          OptionPane.ERROR_MESSAGE);
       return false;
     } finally {
       if (fwrite != null) {
@@ -379,11 +379,11 @@ public class Loader implements LibraryLoader {
         } catch (IOException e) {
           if (backupCreated) recoverBackup(backup, dest);
           if (dest.exists() && dest.length() == 0) dest.delete();
-          JOptionPane.showMessageDialog(
+          OptionPane.showMessageDialog(
               parent,
               StringUtil.format(S.get("fileSaveCloseError"), e.toString()),
               S.get("fileSaveErrorTitle"),
-              JOptionPane.ERROR_MESSAGE);
+              OptionPane.ERROR_MESSAGE);
           return false;
         }
       }
@@ -395,11 +395,11 @@ public class Loader implements LibraryLoader {
       } else {
         dest.delete();
       }
-      JOptionPane.showMessageDialog(
+      OptionPane.showMessageDialog(
           parent,
           S.get("fileSaveZeroError"),
           S.get("fileSaveErrorTitle"),
-          JOptionPane.ERROR_MESSAGE);
+          OptionPane.ERROR_MESSAGE);
       return false;
     }
 
@@ -444,11 +444,11 @@ public class Loader implements LibraryLoader {
 
       JScrollPane scrollPane = new JScrollPane(textArea);
       scrollPane.setPreferredSize(new Dimension(350, 150));
-      JOptionPane.showMessageDialog(
-          parent, scrollPane, S.get("fileErrorTitle"), JOptionPane.ERROR_MESSAGE);
+      OptionPane.showMessageDialog(
+          parent, scrollPane, S.get("fileErrorTitle"), OptionPane.ERROR_MESSAGE);
     } else {
-      JOptionPane.showMessageDialog(
-          parent, description, S.get("fileErrorTitle"), JOptionPane.ERROR_MESSAGE);
+      OptionPane.showMessageDialog(
+          parent, description, S.get("fileErrorTitle"), OptionPane.ERROR_MESSAGE);
     }
   }
 
@@ -456,8 +456,8 @@ public class Loader implements LibraryLoader {
     if (source == null) return;
     String message = source.getMessage();
     while (message != null) {
-      JOptionPane.showMessageDialog(
-          parent, message, S.get("fileMessageTitle"), JOptionPane.INFORMATION_MESSAGE);
+      OptionPane.showMessageDialog(
+          parent, message, S.get("fileMessageTitle"), OptionPane.INFORMATION_MESSAGE);
       message = source.getMessage();
     }
   }
@@ -483,8 +483,8 @@ public class Loader implements LibraryLoader {
       String vhdl = HdlFile.load(selected);
       return vhdl;
     } catch (IOException e) {
-      JOptionPane.showMessageDialog(
-          window, e.getMessage(), S.get("hexOpenErrorTitle"), JOptionPane.ERROR_MESSAGE);
+      OptionPane.showMessageDialog(
+          window, e.getMessage(), S.get("hexOpenErrorTitle"), OptionPane.ERROR_MESSAGE);
       return null;
     }
   }

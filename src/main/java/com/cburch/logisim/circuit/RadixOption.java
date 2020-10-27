@@ -46,10 +46,13 @@ public abstract class RadixOption extends AttributeOption {
     @Override
     public int getMaxLength(BitWidth width) {
       switch (width.getWidth()) {
+        case 0:
+          return 1;
+        case 1:
         case 2:
         case 3:
         case 4:
-          return 2; // 2..8
+          return 2; // 1..8
         case 5:
         case 6:
         case 7:
@@ -129,7 +132,7 @@ public abstract class RadixOption extends AttributeOption {
         case 64:
           return 20; // 1E..4E
         default:
-          return 1;
+          throw new AssertionError("unexpected bit width: "+ width);
       }
     }
 
@@ -152,86 +155,93 @@ public abstract class RadixOption extends AttributeOption {
     @Override
     public int getMaxLength(BitWidth width) {
       switch (width.getWidth()) {
+        case 0:
+        case 1:
+        case 2:
+        case 3:
+          return 1; // 0..7
         case 4:
         case 5:
         case 6:
-          return 2;
+          return 2; // 8..63
         case 7:
         case 8:
         case 9:
-          return 3;
+          return 3; // 64..511
         case 10:
         case 11:
         case 12:
         case 13:
-          return 4;
+          return 4; // 512..8K-1
         case 14:
         case 15:
         case 16:
-          return 5;
+          return 5; // 8K..64K-1
         case 17:
         case 18:
         case 19:
-          return 6;
+          return 6; // 64K..512K-1
         case 20:
         case 21:
         case 22:
         case 23:
-          return 7;
+          return 7; // 512K..8M-1
         case 24:
         case 25:
         case 26:
-          return 8;
+          return 8; // 8M..64M-1
         case 27:
         case 28:
         case 29:
-          return 9;
+          return 9; // 64M..512M-1
         case 30:
         case 31:
         case 32:
         case 33:
-          return 10;
+          return 10; // 512M..8G-1
         case 34:
         case 35:
         case 36:
-          return 11;
+          return 11; // 8G..64G-1
         case 37:
         case 38:
         case 39:
-          return 12;
+          return 12; // 64G..512G-1
         case 40:
         case 41:
         case 42:
         case 43:
-          return 13;
+          return 13; // 512G..8T-1
         case 44:
         case 45:
         case 46:
-          return 14;
+          return 14; // 8T..64T-1
         case 47:
         case 48:
         case 49:
-          return 15;
+          return 15; // 64T..512T-1
         case 50:
         case 51:
         case 52:
         case 53:
-          return 16;
+          return 16; // 512T..8P-1
         case 54:
         case 55:
         case 56:
-          return 17;
+          return 17; // 8P..64P-1
         case 57:
         case 58:
         case 59:
-          return 18;
+          return 18; // 64P..512P-1
         case 60:
         case 61:
         case 62:
         case 63:
-          return 19;
+          return 19; // 512P..8E-1
+        case 64:
+          return 20; // 8E..16E-1
         default:
-          return 19;
+          throw new AssertionError("unexpected bit width: "+ width);
       }
     }
 

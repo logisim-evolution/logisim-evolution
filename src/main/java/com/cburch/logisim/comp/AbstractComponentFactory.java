@@ -29,6 +29,8 @@
 package com.cburch.logisim.comp;
 
 import com.cburch.logisim.LogisimVersion;
+import com.cburch.logisim.circuit.Circuit;
+import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.AttributeSets;
@@ -38,7 +40,6 @@ import com.cburch.logisim.data.Value;
 import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
-import com.cburch.logisim.fpga.hdlgenerator.IOComponentInformationContainer;
 import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.Icons;
 import com.cburch.logisim.util.StringGetter;
@@ -52,12 +53,10 @@ public abstract class AbstractComponentFactory implements ComponentFactory {
 
   private AttributeSet defaultSet;
   protected HDLGeneratorFactory MyHDLGenerator;
-  protected IOComponentInformationContainer MyIOInformation;
 
   protected AbstractComponentFactory() {
     defaultSet = null;
     MyHDLGenerator = null;
-    MyIOInformation = null;
   }
 
   public boolean ActiveOnHigh(AttributeSet attrs) {
@@ -67,6 +66,8 @@ public abstract class AbstractComponentFactory implements ComponentFactory {
   public AttributeSet createAttributeSet() {
     return AttributeSets.EMPTY;
   }
+  
+  public void removeComponent(Circuit circ, Component c , CircuitState state) {}
 
   public abstract Component createComponent(Location loc, AttributeSet attrs);
 
@@ -122,10 +123,6 @@ public abstract class AbstractComponentFactory implements ComponentFactory {
 
   public int[] ClockPinIndex(NetlistComponent comp) {
     return new int[] {0};
-  }
-
-  public IOComponentInformationContainer getIOInformation() {
-    return MyIOInformation;
   }
 
   public abstract String getName();

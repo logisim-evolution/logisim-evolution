@@ -30,7 +30,7 @@ package com.cburch.logisim.gui.generic;
 
 import static com.cburch.logisim.gui.Strings.S;
 
-import com.cburch.logisim.fpga.hdlgenerator.HDLColorRenderer;
+import com.cburch.logisim.fpga.gui.HDLColorRenderer;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.JDialogOk;
 import com.cburch.logisim.util.JInputComponent;
@@ -55,7 +55,6 @@ import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -212,11 +211,11 @@ public class AttrTable extends JPanel implements LocaleListener {
           try {
             row.setValue(parent, retval);
           } catch (AttrTableSetException e) {
-            JOptionPane.showMessageDialog(
+            OptionPane.showMessageDialog(
                 parent,
                 e.getMessage(),
                 S.get("attributeChangeInvalidTitle"),
-                JOptionPane.WARNING_MESSAGE);
+                OptionPane.WARNING_MESSAGE);
           }
           editor = null;
         } else if (editor instanceof JInputComponent) {
@@ -227,11 +226,11 @@ public class AttrTable extends JPanel implements LocaleListener {
           try {
             row.setValue(parent, retval);
           } catch (AttrTableSetException e) {
-            JOptionPane.showMessageDialog(
+            OptionPane.showMessageDialog(
                 parent,
                 e.getMessage(),
                 S.get("attributeChangeInvalidTitle"),
-                JOptionPane.WARNING_MESSAGE);
+                OptionPane.WARNING_MESSAGE);
           }
           editor = null;
         } else {
@@ -468,11 +467,11 @@ public class AttrTable extends JPanel implements LocaleListener {
         try {
           attrModel.getRow(rowIndex).setValue(parent, value);
         } catch (AttrTableSetException e) {
-          JOptionPane.showMessageDialog(
+          OptionPane.showMessageDialog(
               parent,
               e.getMessage(),
               S.get("attributeChangeInvalidTitle"),
-              JOptionPane.WARNING_MESSAGE);
+              OptionPane.WARNING_MESSAGE);
         }
       }
     }

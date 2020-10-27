@@ -29,11 +29,12 @@
 package com.cburch.logisim.fpga.hdlgenerator;
 
 import com.cburch.logisim.data.AttributeSet;
+import com.cburch.logisim.fpga.data.IOComponentTypes;
+import com.cburch.logisim.fpga.data.MappableResourcesContainer;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
-import com.cburch.logisim.fpga.fpgaboardeditor.FPGAIOInformationContainer;
-import com.cburch.logisim.fpga.fpgagui.FPGAReport;
-import com.cburch.logisim.fpga.fpgagui.MappableResourcesContainer;
+import com.cburch.logisim.fpga.gui.FPGAReport;
+
 import java.util.ArrayList;
 import java.util.Set;
 
@@ -73,17 +74,18 @@ public interface HDLGeneratorFactory {
       String HDLType);
 
   public ArrayList<String> GetComponentInstantiation(
-      Netlist TheNetlist, AttributeSet attrs, String ComponentName, String HDLType /*
-																	 * , boolean
-																	 * hasLB
-																	 */);
+      Netlist TheNetlist, 
+      AttributeSet attrs, 
+      String ComponentName, 
+      String HDLType );
 
   public ArrayList<String> GetComponentMap(
       Netlist Nets,
       Long ComponentId,
       NetlistComponent ComponentInfo,
+      MappableResourcesContainer MapInfo,
       FPGAReport Reporter,
-      String CircuitName,
+      String Name,
       String HDLType);
 
   public String getComponentStringIdentifier();
@@ -103,17 +105,11 @@ public interface HDLGeneratorFactory {
       String CircuitName,
       String HDLType);
 
-  public ArrayList<String> GetInlinedCode(
-      String HDLType,
-      ArrayList<String> ComponentIdentifier,
-      FPGAReport Reporter,
-      MappableResourcesContainer MapInfo);
-
   public String GetRelativeDirectory(String HDLType);
 
   public boolean HDLTargetSupported(String HDLType, AttributeSet attrs);
 
   public boolean IsOnlyInlined(String HDLType);
 
-  public boolean IsOnlyInlined(String HDLType, FPGAIOInformationContainer.IOComponentTypes map);
+  public boolean IsOnlyInlined(String HDLType, IOComponentTypes map);
 }

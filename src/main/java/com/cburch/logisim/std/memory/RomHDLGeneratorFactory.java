@@ -31,29 +31,13 @@ package com.cburch.logisim.std.memory;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
-import com.cburch.logisim.fpga.fpgagui.FPGAReport;
+import com.cburch.logisim.fpga.gui.FPGAReport;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import java.util.ArrayList;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
 public class RomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
-
-  private String GetBin(int value, int nr_of_bits) {
-    StringBuffer Bits = new StringBuffer();
-    long mask = (1L << (nr_of_bits - 1));
-    int count;
-    if (nr_of_bits == 1) Bits.append("'");
-    else Bits.append("\"");
-    for (count = 0; count < nr_of_bits; count++) {
-      if ((value & mask) != 0) Bits.append("1");
-      else Bits.append("0");
-      mask >>= 1;
-    }
-    if (nr_of_bits == 1) Bits.append("'");
-    else Bits.append("\"");
-    return Bits.toString();
-  }
 
   private String GetBin(long value, int nr_of_bits) {
     StringBuffer Bits = new StringBuffer();
@@ -136,8 +120,10 @@ public class RomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, String> GetPortMap(
-      Netlist Nets, NetlistComponent ComponentInfo, FPGAReport Reporter, String HDLType) {
+	      Netlist Nets, Object MapInfo, FPGAReport Reporter, String HDLType) {
     SortedMap<String, String> PortMap = new TreeMap<String, String>();
+    if (!(MapInfo instanceof NetlistComponent)) return PortMap;
+    NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
     AttributeSet attrs = ComponentInfo.GetComponent().getAttributeSet();
     PortMap.putAll(GetNetMap("Address", true, ComponentInfo, RamAppearance.getAddrIndex(0, attrs), Reporter, HDLType, Nets));
     PortMap.putAll(GetNetMap("Data", true, ComponentInfo, RamAppearance.getDataOutIndex(0, attrs), Reporter, HDLType, Nets));
@@ -151,6 +137,7 @@ public class RomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public boolean HDLTargetSupported(String HDLType, AttributeSet attrs) {
+	if (attrs == null) return false;
     return attrs.getValue(Mem.LINE_ATTR).equals(Mem.SINGLE);
   }
 }

@@ -74,10 +74,14 @@ public class Drawgates {
       int youtput,
       int portheight,
       boolean up,
+      boolean rightToLeft,
       int height) {
     int[] yPoints, xPoints;
     // rightmost input
-    xPoints = new int[] {xrightpin, xrightpin, xrightpin - 10, xrightpin - 10, xinput};
+    if (!rightToLeft)
+      xPoints = new int[] { xrightpin, xrightpin, xrightpin - 10, xrightpin - 10, xinput };
+    else // leftmost input if !rightToLeft
+      xPoints = new int[] { xrightpin - 20, xrightpin - 20, xrightpin - 10, xrightpin - 10, xinput };   
     if (!up)
       yPoints =
           new int[] {
@@ -98,7 +102,10 @@ public class Drawgates {
           };
     g.drawPolyline(xPoints, yPoints, 5);
     // leftmost input
-    xPoints = new int[] {xrightpin - 20, xrightpin - 20, xinput};
+    if (!rightToLeft)
+      xPoints = new int[] { xrightpin - 20, xrightpin - 20, xinput };
+    else // rightmost input if rightToLeft
+      xPoints = new int[] { xrightpin, xrightpin, xinput };
     if (!up)
       yPoints =
           new int[] {
@@ -138,15 +145,27 @@ public class Drawgates {
     }
   }
 
-  static void paintOr(Graphics g, int x, int y, int width, int height, boolean negated) {
-    if (negated) paintNegatedOutput(g, x, y);
+  static void paintOr(Graphics g, int x, int y, int width, int height, boolean negated, boolean rightToLeft) {
+    int offset = rightToLeft ? -4 : 0;
+    if (negated) paintNegatedOutput(g, x+offset, y);
     if (AppPreferences.GATE_SHAPE.get().equals(AppPreferences.SHAPE_RECTANGULAR)) {
-      g.drawRect(x - width, y - height / 2, width, height);
-      GraphicsUtil.drawCenteredText(g, "\u2265" + "1", x - width / 2, y);
+      if (!rightToLeft) {
+        g.drawRect(x - width, y - height / 2, width, height);
+        GraphicsUtil.drawCenteredText(g, "\u2265" + "1", x - width / 2, y);
+      } else {
+        g.drawRect(x, y - height / 2, width, height);
+        GraphicsUtil.drawCenteredText(g, "\u2265" + "1", x + width / 2, y);
+      }
     } else {
-      GraphicsUtil.drawCenteredArc(g, x - 14, y - 10, 17, -90, 54);
-      GraphicsUtil.drawCenteredArc(g, x - 14, y + 10, 17, 90, -54);
-      GraphicsUtil.drawCenteredArc(g, x - 28, y, 15, -27, 54);
+      if (!rightToLeft) {
+        GraphicsUtil.drawCenteredArc(g, x - 14, y - 10, 17, -90, 54);
+        GraphicsUtil.drawCenteredArc(g, x - 14, y + 10, 17, 90, -54);
+        GraphicsUtil.drawCenteredArc(g, x - 28, y, 15, -27, 54);
+      } else {
+        GraphicsUtil.drawCenteredArc(g, x + 14, y - 10, 17, -90, -54);
+        GraphicsUtil.drawCenteredArc(g, x + 14, y + 10, 17, 90, 54);
+        GraphicsUtil.drawCenteredArc(g, x + 28, y, 15, 153, 54);
+      }
     }
   }
 
@@ -197,7 +216,7 @@ public class Drawgates {
       g.drawRect(x - width, y - height / 2, width, height);
       GraphicsUtil.drawCenteredText(g, "=1", x - width / 2, y);
     } else {
-      paintOr(g, x, y, width, height, negated);
+      paintOr(g, x, y, width, height, negated, false);
       GraphicsUtil.drawCenteredArc(g, x - 32, y, 15, -27, 54);
     }
   }

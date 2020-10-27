@@ -28,7 +28,30 @@
 
 package com.cburch.logisim.circuit.appear;
 
+import java.util.HashSet;
+import java.util.LinkedList;
+
+import com.cburch.logisim.circuit.Circuit;
+import com.cburch.logisim.comp.Component;
+import com.cburch.logisim.instance.InstanceComponent;
+
 public interface DynamicElementProvider {
 
   public DynamicElement createDynamicElement(int x, int y, DynamicElement.Path path);
+  
+  public static void removeDynamicElements(Circuit circuit, Component c){
+	if (!(c instanceof InstanceComponent)) return;
+    HashSet<Circuit> allAffected = new HashSet<Circuit>();
+    LinkedList<Circuit> todo = new LinkedList<Circuit>();
+    todo.add(circuit);
+    while (!todo.isEmpty()) {
+      Circuit circ = todo.remove();
+      if (allAffected.contains(circ)) continue;
+      allAffected.add(circ);
+      for (Circuit other : circ.getCircuitsUsingThis())
+        if (!allAffected.contains(other)) todo.add(other);
+    }
+    for (Circuit circ : allAffected)
+      circ.getAppearance().removeDynamicElement((InstanceComponent) c);
+  }
 }

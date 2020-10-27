@@ -29,15 +29,16 @@
 package com.cburch.logisim.fpga.hdlgenerator;
 
 import com.cburch.logisim.data.AttributeSet;
-import com.cburch.logisim.fpga.designrulecheck.BubbleInformationContainer;
+import com.cburch.logisim.fpga.data.IOComponentTypes;
+import com.cburch.logisim.fpga.data.MapComponent;
+import com.cburch.logisim.fpga.data.MappableResourcesContainer;
 import com.cburch.logisim.fpga.designrulecheck.ConnectionEnd;
 import com.cburch.logisim.fpga.designrulecheck.ConnectionPoint;
 import com.cburch.logisim.fpga.designrulecheck.Net;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
-import com.cburch.logisim.fpga.fpgaboardeditor.FPGAIOInformationContainer;
-import com.cburch.logisim.fpga.fpgagui.FPGAReport;
-import com.cburch.logisim.fpga.fpgagui.MappableResourcesContainer;
+import com.cburch.logisim.fpga.gui.FPGAReport;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -140,12 +141,9 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
       FPGAReport Reporter,
       String HDLType) {
     ArrayList<String> Contents = new ArrayList<String>();
-    Map<String, Integer> InputsList = GetInputList(TheNetlist, attrs); // For
-    // verilog
-    // Map<String, Integer> InOutsList = GetInOutList(TheNetlist, attrs);
-    // //For verilog
-    Map<String, Integer> OutputsList = GetOutputList(TheNetlist, attrs); // For
-    // verilog
+    Map<String, Integer> InputsList = GetInputList(TheNetlist, attrs); 
+    Map<String, Integer> InOutsList = GetInOutList(TheNetlist, attrs);
+    Map<String, Integer> OutputsList = GetOutputList(TheNetlist, attrs);
     Map<Integer, String> ParameterList = GetParameterList(attrs);
     Map<String, Integer> WireList = GetWireList(attrs, TheNetlist);
     Map<String, Integer> RegList = GetRegList(attrs, HDLType);
@@ -256,7 +254,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
       while (Indenting.length() < Preamble.length()) {
         Indenting.append(" ");
       }
-      if (InputsList.isEmpty() && OutputsList.isEmpty()) {
+      if (InputsList.isEmpty() && OutputsList.isEmpty() && InOutsList.isEmpty()) {
         Contents.add(Preamble + " );");
       } else {
         StringBuffer ThisLine = new StringBuffer();
@@ -277,6 +275,15 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
             ThisLine.setLength(0);
             ThisLine.append(Indenting.toString() + outp);
           }
+        }
+        for (String io : InOutsList.keySet()) {
+          if (ThisLine.length() == 0) {
+            ThisLine.append(Preamble.toString() + io);
+          } else {
+            Contents.add(ThisLine.toString() + ",");
+            ThisLine.setLength(0);
+            ThisLine.append(Indenting.toString() + io);
+           }
         }
         if (ThisLine.length() != 0) {
           Contents.add(ThisLine.toString() + ");");
@@ -354,6 +361,37 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
           firstline = false;
           Contents.add("");
           Contents.addAll(MakeRemarkBlock("Here the outputs are defined", 3, HDLType));
+        }
+        Contents.add(OneLine.toString());
+      }
+      firstline = true;
+      for (String io : InOutsList.keySet()) {
+        OneLine.setLength(0);
+        OneLine.append("   inout");
+        nr_of_bits = InOutsList.get(io);
+        if (nr_of_bits < 0) {
+          /* we have a parameterized array */
+          if (!ParameterList.containsKey(nr_of_bits)) {
+            Reporter.AddFatalError(
+                "Internal Error, Parameter not present in HDL generation, your HDL code will not work!");
+            Contents.clear();
+            return Contents;
+          }
+          OneLine.append("[" + ParameterList.get(nr_of_bits).toString() + "-1:0]");
+        } else {
+          if (nr_of_bits > 1) {
+            OneLine.append("[" + Integer.toString(nr_of_bits - 1) + ":0]");
+          } else {
+            if (nr_of_bits == 0) {
+              OneLine.append("[0:0]");
+            }
+          }
+        }
+        OneLine.append(" " + io + ";");
+        if (firstline) {
+          firstline = false;
+          Contents.add("");
+          Contents.addAll(MakeRemarkBlock("Here the ios are defined", 3, HDLType));
         }
         Contents.add(OneLine.toString());
       }
@@ -561,13 +599,10 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
   }
 
   public ArrayList<String> GetComponentInstantiation(
-      Netlist TheNetlist, AttributeSet attrs, String ComponentName, String HDLType /*
-																	 * , boolean
-																	 * hasLB
-																	 */) {
+      Netlist TheNetlist, AttributeSet attrs, String ComponentName, String HDLType ) {
     ArrayList<String> Contents = new ArrayList<String>();
     if (HDLType.equals(HDLGeneratorFactory.VHDL)) {
-      Contents.addAll(GetVHDLBlackBox(TheNetlist, attrs, ComponentName, false /* , hasLB */));
+      Contents.addAll(GetVHDLBlackBox(TheNetlist, attrs, ComponentName, false));
     }
     return Contents;
   }
@@ -576,13 +611,14 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
       Netlist Nets,
       Long ComponentId,
       NetlistComponent ComponentInfo,
+      MappableResourcesContainer MapInfo,
       FPGAReport Reporter,
-      String CircuitName,
+      String Name,
       String HDLType) {
     ArrayList<String> Contents = new ArrayList<String>();
     Map<String, Integer> ParameterMap = GetParameterMap(Nets, ComponentInfo, Reporter);
-    Map<String, String> PortMap = GetPortMap(Nets, ComponentInfo, Reporter, HDLType);
-    String CompName =
+    Map<String, String> PortMap = GetPortMap(Nets, ComponentInfo == null ? MapInfo : ComponentInfo, Reporter, HDLType);
+    String CompName = (Name != null && !Name.isEmpty()) ? Name :
         (ComponentInfo == null)
             ? this.getComponentStringIdentifier()
             : ComponentInfo.GetComponent()
@@ -764,87 +800,6 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
     return Contents;
   }
 
-  public ArrayList<String> GetInlinedCode(
-      String HDLType,
-      ArrayList<String> ComponentIdentifier,
-      FPGAReport Reporter,
-      MappableResourcesContainer MapInfo) {
-    ArrayList<String> Contents = new ArrayList<String>();
-    String Preamble = (HDLType.equals(HDLGeneratorFactory.VHDL)) ? "" : "assign ";
-    String AssignOperator = (HDLType.equals(HDLGeneratorFactory.VHDL)) ? " <= " : " = ";
-    String OpenBracket = (HDLType.equals(HDLGeneratorFactory.VHDL)) ? "(" : "[";
-    String CloseBracket = (HDLType.equals(HDLGeneratorFactory.VHDL)) ? ")" : "]";
-    String Inversion = (HDLType.equals(HDLGeneratorFactory.VHDL)) ? "NOT " : "~";
-    StringBuffer Temp = new StringBuffer();
-    NetlistComponent comp = MapInfo.GetComponent(ComponentIdentifier);
-    if (comp == null) {
-      Reporter.AddFatalError("Component not found, bizar");
-      return Contents;
-    }
-    ArrayList<String> bla = new ArrayList<String>();
-    bla.addAll(ComponentIdentifier);
-    bla.remove(0);
-    BubbleInformationContainer BubbleInfo = comp.GetGlobalBubbleId(bla);
-    if (BubbleInfo == null) {
-      Reporter.AddFatalError("Component has no bubble information, bizar! " + bla.toString());
-      return Contents;
-    }
-    /* The button is simple as it has only 1 pin */
-    /*
-     * The bubble information presents the internal pin location, we now
-     * need to know the input pin index
-     */
-    ArrayList<String> MyMaps = MapInfo.GetMapNamesList(ComponentIdentifier);
-    if (MyMaps == null) {
-      Reporter.AddFatalError(
-          "Component has no map information, bizar! " + ComponentIdentifier.toString());
-      return Contents;
-    }
-    int BubbleOffset = 0;
-    for (int MapOffset = 0; MapOffset < MyMaps.size(); MapOffset++) {
-      String map = MyMaps.get(MapOffset);
-      int InputId = MapInfo.GetFPGAInputPinId(map);
-      int OutputId = MapInfo.GetFPGAOutputPinId(map);
-      int NrOfPins = MapInfo.GetNrOfPins(map);
-      boolean Invert = MapInfo.RequiresToplevelInversion(ComponentIdentifier, map);
-      for (int PinId = 0; PinId < NrOfPins; PinId++) {
-        Temp.setLength(0);
-        Temp.append("   " + Preamble);
-        if (InputId >= 0
-            && ((BubbleInfo.GetInputStartIndex() + BubbleOffset)
-                <= BubbleInfo.GetInputEndIndex())) {
-          Temp.append("s_" + HDLGeneratorFactory.LocalInputBubbleBusname + OpenBracket);
-          Temp.append(BubbleInfo.GetInputStartIndex() + BubbleOffset);
-          BubbleOffset++;
-          Temp.append(CloseBracket + AssignOperator);
-          if (Invert) {
-            Temp.append(Inversion);
-          }
-          Temp.append(HDLGeneratorFactory.FPGAInputPinName);
-          Temp.append("_" + Integer.toString(InputId + PinId) + ";");
-          Contents.add(Temp.toString());
-        }
-        Temp.setLength(0);
-        Temp.append("   " + Preamble);
-        if (OutputId >= 0
-            && ((BubbleInfo.GetOutputStartIndex() + BubbleOffset)
-                <= BubbleInfo.GetOutputEndIndex())) {
-          Temp.append(HDLGeneratorFactory.FPGAOutputPinName);
-          Temp.append("_" + Integer.toString(OutputId + PinId) + AssignOperator);
-          if (Invert) {
-            Temp.append(Inversion);
-          }
-          Temp.append("s_" + HDLGeneratorFactory.LocalOutputBubbleBusname + OpenBracket);
-          Temp.append(BubbleInfo.GetOutputStartIndex() + BubbleOffset);
-          BubbleOffset++;
-          Temp.append(CloseBracket + ";");
-          Contents.add(Temp.toString());
-        }
-      }
-    }
-    return Contents;
-  }
-
   public SortedMap<String, Integer> GetInOutList(Netlist TheNetlist, AttributeSet attrs) {
     /*
      * This method returns a map list of all the INOUT of a black-box. The
@@ -997,7 +952,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
               if (SolderPoint.GetParrentNet() == null) {
                 /* this entry is not connected */
                 if (IsOutput) {
-                  SeperateSignals.add("1'bz");
+                  SeperateSignals.add("1'bZ");
                 } else {
                   SeperateSignals.add(GetZeroVector(1, FloatingPinTiedToGround, HDLType));
                 }
@@ -1050,7 +1005,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
     String OneValue = (HDLType.equals(VHDL)) ? "'1'" : "1'b1";
     String BracketOpen = (HDLType.equals(VHDL)) ? "(" : "[";
     String BracketClose = (HDLType.equals(VHDL)) ? ")" : "]";
-    String Unconnected = (HDLType.equals(VHDL)) ? "OPEN" : "";
+    String Unconnected = (HDLType.equals(VHDL)) ? "OPEN" : "open";
     String FloatingValue = (FloatingNetTiedToGround) ? ZeroValue : OneValue;
     if ((EndIndex >= 0) && (EndIndex < comp.NrOfEnds())) {
       ConnectionEnd ThisEnd = comp.getEnd(EndIndex);
@@ -1128,7 +1083,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
   }
 
   public SortedMap<String, String> GetPortMap(
-      Netlist Nets, NetlistComponent ComponentInfo, FPGAReport Reporter, String HDLType) {
+      Netlist Nets, Object MapInfo, FPGAReport Reporter, String HDLType) {
     /*
      * This method returns the assigned input/outputs of the component, the
      * key is the name of the input/output (bit), and the value represent
@@ -1183,10 +1138,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
   }
 
   private ArrayList<String> GetVHDLBlackBox(
-      Netlist TheNetlist, AttributeSet attrs, String ComponentName, Boolean IsEntity /*
-																	 * , boolean
-																	 * hasLB
-																	 */) {
+      Netlist TheNetlist, AttributeSet attrs, String ComponentName, Boolean IsEntity ) {
     ArrayList<String> Contents = new ArrayList<String>();
     Map<String, Integer> InputsList = GetInputList(TheNetlist, attrs);
     Map<String, Integer> InOutsList = GetInOutList(TheNetlist, attrs);
@@ -1336,13 +1288,6 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
           }
         }
       }
-      // if(hasLB){
-      // OneLine.append(";");
-      // Contents.add(OneLine.toString());
-      // OneLine.setLength(0);
-      // OneLine.append("             LOGISIM_INOUT_BUBBLES     : INOUT  std_logic_vector( 15 DOWNTO
-      // 0 )");
-      // }
       OneLine.append(");");
       Contents.add(OneLine.toString());
     }
@@ -1414,7 +1359,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
     return false;
   }
 
-  public boolean IsOnlyInlined(String HDLType, FPGAIOInformationContainer.IOComponentTypes map) {
+  public boolean IsOnlyInlined(String HDLType, IOComponentTypes map) {
     return true;
   }
 
@@ -1524,5 +1469,65 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
     }
     Contents.add(OneLine.toString());
     return Contents;
+  }
+
+  public static ArrayList<String> GetToplevelCode(String HDLType, FPGAReport Reporter, MapComponent Component) {
+    String Preamble = (HDLType.equals(VHDL)) ? "" : "assign ";
+    String AssignOperator = (HDLType.equals(VHDL)) ? " <= " : " = ";
+    String NotOperator = (HDLType.equals(VHDL)) ? "NOT " : "~";
+    String ZeroValue = (HDLType.equals(VHDL)) ? "'0'" : "1'b0";
+    String OneValue = (HDLType.equals(VHDL)) ? "'1'" : "1'b1";
+    StringBuffer Temp = new StringBuffer();
+    ArrayList<String> contents = new ArrayList<String>();
+    if (Component.getNrOfPins() <= 0) {
+      Reporter.AddError("BUG: Found a component with not pins");
+      return contents;
+    }
+    for (int i = 0 ; i < Component.getNrOfPins() ; i++) {
+      Temp.setLength(0);
+      Temp.append("   "+Preamble);
+      /* IO-pins need to be mapped directly to the top-level component and cannot be
+       * passed by signals, so we skip them.
+       */
+      if (Component.isIO(i)) continue;
+      if (!Component.isMapped(i)) {
+        /* unmapped output pins we leave unconnected */
+        if (Component.isOutput(i)) continue;
+        Temp.append(Component.getHdlSignalName(i,HDLType));
+        allign(Temp);
+        Temp.append(AssignOperator);
+        Temp.append(ZeroValue+";");
+        contents.add(Temp.toString());
+        continue;
+      }
+      if (Component.isInput(i)) {
+        Temp.append(Component.getHdlSignalName(i, HDLType));
+        allign(Temp);
+        Temp.append(AssignOperator);
+        if (Component.IsConstantMapped(i)) {
+          Temp.append(Component.isZeroConstantMap(i) ? ZeroValue : OneValue);
+        } else {
+          if (Component.isExternalInverted(i)) Temp.append(NotOperator+"n_");
+          Temp.append(Component.getHdlString(i));
+        }
+        Temp.append(";");
+        contents.add(Temp.toString());
+        continue;
+      }
+      if (Component.IsOpenMapped(i)) continue;
+      if (Component.isExternalInverted(i)) Temp.append("n_");
+      Temp.append(Component.getHdlString(i));
+      allign(Temp);
+      Temp.append(AssignOperator);
+      if (Component.isExternalInverted(i)) Temp.append(NotOperator);
+      Temp.append(Component.getHdlSignalName(i, HDLType)+";");
+      contents.add(Temp.toString());
+    }
+    contents.add(" ");
+    return contents;
+  }
+  
+  private static void allign(StringBuffer s) {
+    while (s.length() < 40) s.append(" ");
   }
 }

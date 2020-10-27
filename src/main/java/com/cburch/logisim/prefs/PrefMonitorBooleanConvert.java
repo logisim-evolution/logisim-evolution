@@ -30,12 +30,12 @@ package com.cburch.logisim.prefs;
 
 import static com.cburch.logisim.gui.Strings.S;
 
+import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.std.wiring.ProbeAttributes;
 import java.util.ArrayList;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.Preferences;
-import javax.swing.JOptionPane;
 
 public class PrefMonitorBooleanConvert extends PrefMonitorBoolean {
 
@@ -70,16 +70,16 @@ public class PrefMonitorBooleanConvert extends PrefMonitorBoolean {
                   newValue ? ProbeAttributes.APPEAR_EVOLUTION_NEW : StdAttr.APPEAR_CLASSIC);
           Object[] options = {S.get("OptionYes"), S.get("OptionNo")};
           int ret =
-              JOptionPane.showOptionDialog(
+              OptionPane.showOptionDialog(
                   null,
                   S.fmt("OptionConvertAllPinsProbes", e.GetValue().getDisplayGetter().toString()),
                   S.get("OptionConvertAll"),
-                  JOptionPane.YES_NO_OPTION,
-                  JOptionPane.QUESTION_MESSAGE,
+                  OptionPane.YES_NO_OPTION,
+                  OptionPane.QUESTION_MESSAGE,
                   null,
                   options,
                   options[0]);
-          if (ret == JOptionPane.YES_OPTION) {
+          if (ret == OptionPane.YES_OPTION) {
             fireConvertAction(e);
           }
         }

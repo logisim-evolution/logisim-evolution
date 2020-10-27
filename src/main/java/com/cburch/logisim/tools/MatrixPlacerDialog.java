@@ -34,9 +34,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+
+import com.cburch.logisim.gui.generic.OptionPane;
 
 public class MatrixPlacerDialog extends JPanel implements ActionListener {
 
@@ -181,16 +182,16 @@ public class MatrixPlacerDialog extends JPanel implements ActionListener {
   public boolean execute() {
     Label.setText(MatrixInfo.GetLabel());
     boolean ret =
-        JOptionPane.showOptionDialog(
+        OptionPane.showOptionDialog(
                 null,
                 this,
                 "Matrix Place component \"" + compName + "\"",
-                JOptionPane.OK_CANCEL_OPTION,
-                JOptionPane.PLAIN_MESSAGE,
+                OptionPane.OK_CANCEL_OPTION,
+                OptionPane.PLAIN_MESSAGE,
                 null,
                 null,
                 null)
-            == JOptionPane.OK_OPTION;
+            == OptionPane.OK_OPTION;
     MatrixInfo.SetLabel(Label.getText());
     return ret;
   }

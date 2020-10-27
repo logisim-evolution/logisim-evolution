@@ -68,4 +68,5 @@ public class ConnectionPoint {
     MyOwnNet = ConnectedNet;
     MyOwnNetBitIndex = BitIndex;
   }
+  
 }

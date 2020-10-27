@@ -30,6 +30,7 @@ package com.cburch.logisim.gui.start;
 
 import com.cburch.logisim.Main;
 import com.cburch.logisim.data.Value;
+import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.UniquelyNamedThread;
 import java.awt.BasicStroke;
@@ -42,7 +43,6 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
@@ -292,8 +292,8 @@ public class About {
     panel.add(imgPanel);
     panel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
 
-    JOptionPane.showMessageDialog(
-        owner, panel, "Logisim-evolution " + Main.VERSION_NAME, JOptionPane.PLAIN_MESSAGE);
+    OptionPane.showMessageDialog(
+        owner, panel, "Logisim-evolution " + Main.VERSION_NAME, OptionPane.PLAIN_MESSAGE);
   }
 
   static final int IMAGE_BORDER = 30;

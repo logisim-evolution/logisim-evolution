@@ -28,6 +28,7 @@
 
 package com.cburch.logisim;
 
+import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.gui.start.Startup;
 import com.cburch.logisim.prefs.AppPreferences;
 
@@ -37,7 +38,6 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
 
-import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.plaf.FontUIResource;
@@ -75,11 +75,7 @@ public class Main {
           Writer result = new StringWriter();
           PrintWriter printWriter = new PrintWriter(result);
           e.printStackTrace(printWriter);
-          if (GraphicsEnvironment.isHeadless()) {
-            System.out.println(result.toString());
-          } else {
-            JOptionPane.showMessageDialog(null, result.toString());
-          }
+          OptionPane.showMessageDialog(null, result.toString());
           System.exit(-1);
         }
       }
@@ -89,14 +85,14 @@ public class Main {
   static final Logger logger = LoggerFactory.getLogger(Main.class);
 
   public static final LogisimVersion VERSION =
-      LogisimVersion.get(3, 3, 1, LogisimVersion.FINAL_REVISION);
+      LogisimVersion.get(3, 3, 6, LogisimVersion.FINAL_REVISION);
 
   public static final String VERSION_NAME = VERSION.toString();
   public static final int COPYRIGHT_YEAR = 2020;
 
   public static boolean ANALYZE = true;
-  /* TODO ktt1 : for the moment dummy for the hex-reader, have to look into details */
   public static boolean headless = false;
+  public static boolean hasGui() { return !headless; }
 
   /** URL for the automatic updater */
   public static final String UPDATE_URL =
