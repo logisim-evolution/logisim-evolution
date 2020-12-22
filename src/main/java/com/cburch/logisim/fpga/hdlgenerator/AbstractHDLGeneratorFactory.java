@@ -563,8 +563,9 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
       return "";
     }
     Net ConnectedNet = ConnectionInformation.GetConnection((byte) 0).GetParrentNet();
-    Result = BusName + Integer.toString(TheNets.GetNetId(ConnectedNet));
-    return Result;
+    if (ConnectedNet.BitWidth() != NrOfBits)
+      return GetBusNameContinues(comp,EndIndex,HDLType,TheNets);
+    return BusName + Integer.toString(TheNets.GetNetId(ConnectedNet));
   }
 
   public static String GetClockNetName(NetlistComponent comp, int EndIndex, Netlist TheNets) {
