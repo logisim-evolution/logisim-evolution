@@ -550,7 +550,6 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
 
   public static String GetBusName(
       NetlistComponent comp, int EndIndex, String HDLType, Netlist TheNets) {
-    String Result;
     if ((EndIndex < 0) || (EndIndex >= comp.NrOfEnds())) {
       return "";
     }
