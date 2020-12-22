@@ -370,6 +370,7 @@ public class BoardManipulator extends JPanel implements MouseListener,
   
   @Override
   public void mouseDragged(MouseEvent e) {
+    if (mapMode) return;
     if (defineRectangle != null) {
       repaint(defineRectangle.resizeAndGetUpdate(e));
     } else if (IOcomps.hasHighlighted()) {
@@ -424,7 +425,8 @@ public class BoardManipulator extends JPanel implements MouseListener,
 
   @Override
   public void mousePressed(MouseEvent e) {
-     if (!mapMode && image != null) {
+	 if (mapMode) return;
+     if (image != null) {
        if (IOcomps.hasHighlighted()) {
          /* Edit the current highligted component */
          if (e.getClickCount() > 1) {
@@ -449,7 +451,7 @@ public class BoardManipulator extends JPanel implements MouseListener,
 
   @Override
   public void mouseReleased(MouseEvent e) {
-    if (defineRectangle != null) {
+    if (defineRectangle != null && !mapMode) {
       Rectangle toBeRepainted = defineRectangle.resizeRemoveAndgetUpdate(e); 
       defineIOComponent();
       defineRectangle = null;

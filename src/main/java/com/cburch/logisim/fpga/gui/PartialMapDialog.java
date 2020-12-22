@@ -77,6 +77,7 @@ public class PartialMapDialog extends JDialog implements LocaleListener,ActionLi
     setModal(true);
     setResizable(false);
     setLocationRelativeTo(parent);
+    setAlwaysOnTop(true);
     MapTo = new ArrayList<JLabel>();
     GridBagConstraints cs = new GridBagConstraints();
     cs.gridx = 0;
