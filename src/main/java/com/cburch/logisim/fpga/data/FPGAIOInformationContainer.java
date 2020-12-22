@@ -738,6 +738,14 @@ public class FPGAIOInformationContainer implements Cloneable {
 	  /* complete map */
 	  return map.tryMap(this);
 	}
+	if (nrInputs() == 0 && nrOutputs() == 0 && map.nrIOs() == 0 &&
+        map.nrInputs() == nrIOs() && map.nrOutputs() == 0 && selComp.getPin() < 0) {
+	  return map.tryMap(this);
+	}
+	if (nrInputs() == 0 && nrOutputs() == 0 && map.nrIOs() == 0 &&
+        map.nrOutputs() == nrIOs() && map.nrInputs() == 0 && selComp.getPin() < 0) {
+	  return map.tryMap(this);
+	}
 	PartialMapDialog diag = new PartialMapDialog(selComp,this,parent);
     return diag.doit();
   }
