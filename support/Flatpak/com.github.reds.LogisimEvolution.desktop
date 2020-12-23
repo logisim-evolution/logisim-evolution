@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=Logisim Evolution
+GenericName=Logisim Logic Circuit Simulator
+Comment=Digital Logic Circuit Simulator
+Exec=LogisimEvolution.sh
+Icon=com.github.reds.LogisimEvolution
+Terminal=false
+Type=Application
+Categories=Electronics
+MimeType=application/x-logisim-circuit;
+X-Desktop-File-Install-Version=0.24
