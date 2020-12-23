@@ -30,10 +30,10 @@ package com.cburch.logisim.fpga.designrulecheck;
 
 import static com.cburch.logisim.fpga.Strings.S;
 
-import com.cburch.logisim.fpga.fpgagui.FPGAReport;
-import com.cburch.logisim.fpga.gui.FPGACliGuiFabric;
-import com.cburch.logisim.fpga.gui.IFPGAOptionPanel;
+import com.cburch.logisim.fpga.gui.FPGAReport;
 import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
+import com.cburch.logisim.gui.generic.OptionPane;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -139,12 +139,11 @@ public class CorrectLabel {
   public static boolean IsKeyword(String Label, Boolean ShowDialog) {
     boolean ret = false;
 
-    IFPGAOptionPanel optionPanel = FPGACliGuiFabric.getFPGAOptionPanel();
     if (VHDLKeywords.contains(Label.toLowerCase())) {
       ret = true;
-      if (ShowDialog) optionPanel.doshowMessageDialog(null, S.get("VHDLKeywordNameError"));
+      if (ShowDialog) OptionPane.showMessageDialog(null, S.get("VHDLKeywordNameError"));
     } else if (VerilogKeywords.contains(Label.toLowerCase())) {
-      if (ShowDialog) optionPanel.doshowMessageDialog(null, S.get("VerilogKeywordNameError"));
+      if (ShowDialog) OptionPane.showMessageDialog(null, S.get("VerilogKeywordNameError"));
       ret = true;
     }
     return ret;

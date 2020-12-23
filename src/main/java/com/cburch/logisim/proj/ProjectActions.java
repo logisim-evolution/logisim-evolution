@@ -30,13 +30,13 @@ package com.cburch.logisim.proj;
 
 import static com.cburch.logisim.proj.Strings.S;
 
-import com.cburch.logisim.LogisimRuntimeSettings;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.file.LoadFailedException;
 import com.cburch.logisim.file.LoadedLibrary;
 import com.cburch.logisim.file.Loader;
 import com.cburch.logisim.file.LogisimFile;
 import com.cburch.logisim.file.LogisimFileActions;
+import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.gui.main.Frame;
 import com.cburch.logisim.gui.start.SplashScreen;
 import com.cburch.logisim.prefs.AppPreferences;
@@ -92,7 +92,7 @@ public class ProjectActions {
         Writer result = new StringWriter();
         PrintWriter printWriter = new PrintWriter(result);
         e.printStackTrace(printWriter);
-        JOptionPane.showMessageDialog(null, result.toString());
+        OptionPane.showMessageDialog(null, result.toString());
         System.exit(-1);
       }
     }
@@ -188,7 +188,7 @@ public class ProjectActions {
   private static void displayException(Component parent, Exception ex) {
     String msg = StringUtil.format(S.get("templateOpenError"), ex.toString());
     String ttl = S.get("templateOpenErrorTitle");
-    JOptionPane.showMessageDialog(parent, msg, ttl, JOptionPane.ERROR_MESSAGE);
+    OptionPane.showMessageDialog(parent, msg, ttl, OptionPane.ERROR_MESSAGE);
   }
 
   public static Project doNew(Project baseProject) {
@@ -252,11 +252,11 @@ public class ProjectActions {
       if (mergelib == null) return;
     } catch (LoadFailedException ex) {
       if (!ex.isShown()) {
-        JOptionPane.showMessageDialog(
+        OptionPane.showMessageDialog(
             parent,
             StringUtil.format(S.get("fileMergeError"), ex.toString()),
             S.get("FileMergeErrorItem"),
-            JOptionPane.ERROR_MESSAGE);
+            OptionPane.ERROR_MESSAGE);
       }
       return;
     }
@@ -298,14 +298,12 @@ public class ProjectActions {
       doOpen(parent, baseProject, selected);
     }
 
-    LogisimRuntimeSettings.setIsGui(LogisimRuntimeSettings.GUI);
     return true;
   }
 
   public static Project doOpen(Component parent, Project baseProject, File f) {
     Project proj = Projects.findProjectFor(f);
     Loader loader = null;
-    LogisimRuntimeSettings.setIsGui(LogisimRuntimeSettings.GUI);
     if (proj != null) {
       proj.getFrame().toFront();
       loader = proj.getLogisimFile().getLoader();
@@ -318,12 +316,12 @@ public class ProjectActions {
           S.get("openAlreadyCancelOption"),
         };
         int result =
-            JOptionPane.showOptionDialog(
+            OptionPane.showOptionDialog(
                 proj.getFrame(),
                 message,
                 S.get("openAlreadyTitle"),
                 0,
-                JOptionPane.QUESTION_MESSAGE,
+                OptionPane.QUESTION_MESSAGE,
                 null,
                 options,
                 options[2]);
@@ -358,11 +356,11 @@ public class ProjectActions {
       }
     } catch (LoadFailedException ex) {
       if (!ex.isShown()) {
-        JOptionPane.showMessageDialog(
+        OptionPane.showMessageDialog(
             parent,
             StringUtil.format(S.get("fileOpenError"), ex.toString()),
             S.get("fileOpenErrorTitle"),
-            JOptionPane.ERROR_MESSAGE);
+            OptionPane.ERROR_MESSAGE);
       }
       return null;
     }
@@ -385,7 +383,6 @@ public class ProjectActions {
     LogisimFile file = loader.openLogisimFile(source, substitutions);
     AppPreferences.updateRecentFile(source);
 
-    LogisimRuntimeSettings.setIsGui(LogisimRuntimeSettings.GUI);
     return completeProject(monitor, loader, file, false);
   }
 
@@ -395,7 +392,6 @@ public class ProjectActions {
     LogisimFile file = loader.openLogisimFile(source);
     Project ret = new Project(file);
     updatecircs(file, ret);
-    LogisimRuntimeSettings.setIsGui(LogisimRuntimeSettings.CLI);
     return ret;
   }
 
@@ -461,8 +457,8 @@ public class ProjectActions {
           String error = S.get(Error.get(key));
           Message = Message.concat("=> " + error + "\n");
         }
-        JOptionPane.showMessageDialog(
-            chooser, Message, S.get("FileSaveAsItem"), JOptionPane.ERROR_MESSAGE);
+        OptionPane.showMessageDialog(
+            chooser, Message, S.get("FileSaveAsItem"), OptionPane.ERROR_MESSAGE);
       }
     } while (!validFilename);
 
@@ -483,7 +479,7 @@ public class ProjectActions {
           S.get("replaceExtensionKeepOpt")
         };
         JOptionPane dlog = new JOptionPane(msg);
-        dlog.setMessageType(JOptionPane.QUESTION_MESSAGE);
+        dlog.setMessageType(OptionPane.QUESTION_MESSAGE);
         dlog.setOptions(options);
         dlog.createDialog(proj.getFrame(), ttl).setVisible(true);
 
@@ -499,12 +495,12 @@ public class ProjectActions {
 
     if (f.exists()) {
       int confirm =
-          JOptionPane.showConfirmDialog(
+          OptionPane.showConfirmDialog(
               proj.getFrame(),
               S.get("confirmOverwriteMessage"),
               S.get("confirmOverwriteTitle"),
-              JOptionPane.YES_NO_OPTION);
-      if (confirm != JOptionPane.YES_OPTION) return false;
+              OptionPane.YES_NO_OPTION);
+      if (confirm != OptionPane.YES_OPTION) return false;
     }
     return doSave(proj, f);
   }

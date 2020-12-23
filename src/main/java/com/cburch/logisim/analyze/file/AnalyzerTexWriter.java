@@ -30,8 +30,8 @@ package com.cburch.logisim.analyze.file;
 
 import static com.cburch.logisim.analyze.Strings.S;
 
+import com.cburch.logisim.analyze.data.CoverColor;
 import com.cburch.logisim.analyze.data.KMapGroups;
-import com.cburch.logisim.analyze.data.KMapGroups.CoverColor;
 import com.cburch.logisim.analyze.data.KMapGroups.CoverInfo;
 import com.cburch.logisim.analyze.data.KMapGroups.KMapGroupInfo;
 import com.cburch.logisim.analyze.gui.KarnaughMapPanel;
@@ -357,13 +357,12 @@ public class AnalyzerTexWriter {
     if (table.getInputColumnCount() > KarnaughMapPanel.MAX_VARS) return content.toString();
     KMapGroups groups = new KMapGroups(model);
     groups.setOutput(name);
-    CoverColor colors = new CoverColor();
     DecimalFormat df = (DecimalFormat) NumberFormat.getNumberInstance(Locale.ENGLISH);
     int idx = 0;
     int kmapRows = 1 << KarnaughMapPanel.ROW_VARS[table.getInputColumnCount()];
     for (KMapGroupInfo group : groups.getCovers()) {
       for (CoverInfo thiscover : group.getAreas()) {
-        content.append("   \\node[grp={" + colors.getColorName(group.getColor()) + "}");
+        content.append("   \\node[grp={" + CoverColor.COVERCOLOR.getColorName(group.getColor()) + "}");
         double width = thiscover.getWidth() - OFFSET;
         double height = thiscover.getHeight() - OFFSET;
         content.append("{" + df.format(width) + "}{" + df.format(height) + "}]");
@@ -432,7 +431,7 @@ public class AnalyzerTexWriter {
       /*
        * Here we define our own colors
        */
-      CoverColor cols = new CoverColor();
+      CoverColor cols = CoverColor.COVERCOLOR;
       for (int i = 0; i < cols.nrOfColors(); i++) {
         Color col = cols.getColor(i);
         out.println(

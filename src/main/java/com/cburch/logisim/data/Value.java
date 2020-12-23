@@ -28,8 +28,6 @@
 
 package com.cburch.logisim.data;
 
-import static com.cburch.logisim.data.Strings.S;
-
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.Cache;
 import java.awt.Color;
@@ -193,28 +191,30 @@ public class Value {
     }
   }
 
+  public static char TRUECHAR = AppPreferences.TRUE_CHAR.get().charAt(0);
+  public static char FALSECHAR = AppPreferences.FALSE_CHAR.get().charAt(0);
+  public static char UNKNOWNCHAR = AppPreferences.UNKNOWN_CHAR.get().charAt(0);
+  public static char ERRORCHAR = AppPreferences.ERROR_CHAR.get().charAt(0);
+  public static char DONTCARECHAR = AppPreferences.DONTCARE_CHAR.get().charAt(0);
   public static final Value FALSE = new Value(1, 0, 0, 0);
-
   public static final Value TRUE = new Value(1, 0, 0, 1);
   public static final Value UNKNOWN = new Value(1, 0, 1, 0);
   public static final Value ERROR = new Value(1, 1, 0, 0);
   public static final Value NIL = new Value(0, 0, 0, 0);
   public static final int MAX_WIDTH = 64;
-  public static final Color NIL_COLOR = Color.GRAY;
-  public static Color FALSE_COLOR;
 
-  public static Color TRUE_COLOR;
+  public static Color FALSE_COLOR = new Color(AppPreferences.FALSE_COLOR.get());
+  public static Color TRUE_COLOR = new Color(AppPreferences.TRUE_COLOR.get());
+  public static Color UNKNOWN_COLOR = new Color(AppPreferences.UNKNOWN_COLOR.get());
+  public static Color ERROR_COLOR = new Color(AppPreferences.ERROR_COLOR.get());
+  public static Color NIL_COLOR = new Color(AppPreferences.NIL_COLOR.get());
+  public static Color STROKE_COLOR = new Color(AppPreferences.STROKE_COLOR.get());
+  public static Color MULTI_COLOR = new Color(AppPreferences.BUS_COLOR.get());
+  public static Color WIDTH_ERROR_COLOR = new Color(AppPreferences.WIDTH_ERROR_COLOR.get());
+  public static Color WIDTH_ERROR_CAPTION_COLOR = new Color(AppPreferences.WIDTH_ERROR_CAPTION_COLOR.get());
+  public static Color WIDTH_ERROR_HIGHLIGHT_COLOR = new Color(AppPreferences.WIDTH_ERROR_HIGHLIGHT_COLOR.get());
+  public static Color WIDTH_ERROR_CAPTION_BGCOLOR = new Color(AppPreferences.WIDTH_ERROR_BACKGROUND_COLOR.get());
 
-  public static Color UNKNOWN_COLOR;
-
-  public static final Color ERROR_COLOR = new Color(192, 0, 0);
-
-  public static Color WIDTH_ERROR_COLOR = new Color(255, 123, 0);
-  public static final Color WIDTH_ERROR_CAPTION_COLOR = new Color(85, 0, 0);
-  public static final Color WIDTH_ERROR_HIGHLIGHT_COLOR = new Color(255, 255, 0);
-  public static final Color WIDTH_ERROR_CAPTION_BGCOLOR = new Color(255, 230, 210);
-
-  public static final Color MULTI_COLOR = Color.BLACK;
 
   private static final Cache cache = new Cache();
 
@@ -249,6 +249,27 @@ public class Value {
           (this.error | other.error | this.unknown | other.unknown) & ~falses,
           0,
           this.value & other.value);
+    }
+  }
+
+  public Value controls(Value other) { // e.g. tristate buffer
+    if (other == null)
+      return null;
+    if (this.width == 1) {
+      if (this == FALSE)
+        return Value.create(other.width, 0, -1, 0);
+      if (this == TRUE || this == UNKNOWN)
+        return other;
+      return Value.create(other.width, -1, 0, 0);
+    } else if (this.width != other.width) {
+      return Value.create(other.width, -1, 0, 0);
+    } else {
+      long enabled = (this.value | this.unknown) & ~this.error;
+      long disabled = ~this.value & ~this.unknown & ~this.error;
+      return Value.create(other.width,
+          (this.error | (other.error & ~disabled)),
+          (disabled | other.unknown),
+          (enabled & other.value));
     }
   }
 
@@ -332,17 +353,6 @@ public class Value {
   }
 
   public Color getColor() {
-    if (AppPreferences.COLORBLIND_MODE.getBoolean()) {
-      WIDTH_ERROR_COLOR = new Color(196, 19, 219); // pink is new width error
-      UNKNOWN_COLOR = new Color(1, 188, 157); // green is new unknown
-      TRUE_COLOR = new Color(244, 235, 66); // yellow is new True
-      FALSE_COLOR = new Color(32, 59, 232); // blue is new False
-    } else {
-      WIDTH_ERROR_COLOR = new Color(255, 123, 0);
-      UNKNOWN_COLOR = new Color(40, 40, 255);
-      TRUE_COLOR = new Color(0, 210, 0);
-      FALSE_COLOR = new Color(0, 100, 0);
-    }
     if (error != 0) {
       return ERROR_COLOR;
     } else if (width == 0) {
@@ -433,12 +443,12 @@ public class Value {
   public String toBinaryString() {
     switch (width) {
       case 0:
-        return "-";
+        return Character.toString(DONTCARECHAR);
       case 1:
-        if (error != 0) return "E";
-        else if (unknown != 0) return "x";
-        else if (value != 0) return "1";
-        else return "0";
+        if (error != 0) return Character.toString(ERRORCHAR);
+        else if (unknown != 0) return Character.toString(UNKNOWNCHAR);
+        else if (value != 0) return Character.toString(TRUECHAR);
+        else return Character.toString(FALSECHAR);
       default:
         StringBuilder ret = new StringBuilder();
         for (int i = width - 1; i >= 0; i--) {
@@ -449,34 +459,35 @@ public class Value {
   }
 
   public String toDecimalString(boolean signed) {
-    if (width == 0) return "-";
-    if (isErrorValue()) return S.get("valueError");
-    if (!isFullyDefined()) return S.get("valueUnknown");
+    if (width == 0) return Character.toString(DONTCARECHAR);
+    if (isErrorValue()) return Character.toString(ERRORCHAR);
+    if (!isFullyDefined()) return Character.toString(UNKNOWNCHAR);
 
-    long value = toLongValue();
+    // Keep only valid bits, zeroing bits above value width.
+    long mask = (-1L) >>> (Long.SIZE - width);
+    long val = toLongValue() & mask;
+
     if (signed) {
-      if (width < 64 && (value >> (width - 1)) != 0) {
-        value |= (-1) << width;
+      // Copy sign bit into upper bits.
+      boolean isNegative = (val >> (width - 1)) != 0;
+      if (isNegative) {
+        val |= ~mask;
       }
-      return Long.toString(value);
+      return Long.toString(val);
     } else {
-      if (width < 64) {
-        long mask = (-1 << width)^0xFFFFFFFFFFFFFFFFL;
-        value &= mask;
-      }
-      return Long.toUnsignedString(value);
+      return Long.toUnsignedString(val);
     }
   }
 
   public String toDisplayString() {
     switch (width) {
       case 0:
-        return "-";
+        return Character.toString(DONTCARECHAR);
       case 1:
-        if (error != 0) return S.get("valueErrorSymbol");
-        else if (unknown != 0) return S.get("valueUnknownSymbol");
-        else if (value != 0) return "1";
-        else return "0";
+        if (error != 0) return Character.toString(ERRORCHAR);
+        else if (unknown != 0) return Character.toString(UNKNOWNCHAR);
+        else if (value != 0) return Character.toString(TRUECHAR);
+        else return Character.toString(FALSECHAR);
       default:
         StringBuilder ret = new StringBuilder();
         for (int i = width - 1; i >= 0; i--) {
@@ -496,9 +507,9 @@ public class Value {
       case 16:
         return toHexString();
       default:
-        if (width == 0) return "-";
-        if (isErrorValue()) return S.get("valueError");
-        if (!isFullyDefined()) return S.get("valueUnknown");
+        if (width == 0) return Character.toString(DONTCARECHAR);
+        if (isErrorValue()) return Character.toString(ERRORCHAR);
+        if (!isFullyDefined()) return Character.toString(UNKNOWNCHAR);
         return Long.toString(toLongValue(), radix);
     }
   }
@@ -514,20 +525,20 @@ public class Value {
         int frst = 4 * k;
         int last = Math.min(vals.length, 4 * (k + 1));
         int v = 0;
-        c[i] = '?';
+        c[i] = ' ';
         for (int j = last - 1; j >= frst; j--) {
           if (vals[j] == Value.ERROR) {
-            c[i] = 'E';
+            c[i] = ERRORCHAR;
             break;
           }
           if (vals[j] == Value.UNKNOWN) {
-            c[i] = 'x';
+            c[i] = UNKNOWNCHAR;
             break;
           }
           v = 2 * v;
           if (vals[j] == Value.TRUE) v++;
         }
-        if (c[i] == '?') c[i] = Character.forDigit(v, 16);
+        if (c[i] == ' ') c[i] = Character.forDigit(v, 16);
       }
       return new String(c);
     }
@@ -550,20 +561,20 @@ public class Value {
         int frst = 3 * k;
         int last = Math.min(vals.length, 3 * (k + 1));
         int v = 0;
-        c[i] = '?';
+        c[i] = ' ';
         for (int j = last - 1; j >= frst; j--) {
           if (vals[j] == Value.ERROR) {
-            c[i] = 'E';
+            c[i] = ERRORCHAR;
             break;
           }
           if (vals[j] == Value.UNKNOWN) {
-            c[i] = 'x';
+            c[i] = UNKNOWNCHAR;
             break;
           }
           v = 2 * v;
           if (vals[j] == Value.TRUE) v++;
         }
-        if (c[i] == '?') c[i] = Character.forDigit(v, 8);
+        if (c[i] == ' ') c[i] = Character.forDigit(v, 8);
       }
       return new String(c);
     }
@@ -573,12 +584,12 @@ public class Value {
   public String toString() {
     switch (width) {
       case 0:
-        return "-";
+        return Character.toString(DONTCARECHAR);
       case 1:
-        if (error != 0) return "E";
-        else if (unknown != 0) return "x";
-        else if (value != 0) return "1";
-        else return "0";
+        if (error != 0) return Character.toString(ERRORCHAR);
+        else if (unknown != 0) return Character.toString(UNKNOWNCHAR);
+        else if (value != 0) return Character.toString(TRUECHAR);
+        else return Character.toString(FALSECHAR);
       default:
         StringBuilder ret = new StringBuilder();
         for (int i = width - 1; i >= 0; i--) {

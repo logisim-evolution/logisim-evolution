@@ -31,7 +31,7 @@ package com.cburch.logisim.std.arith;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
-import com.cburch.logisim.fpga.fpgagui.FPGAReport;
+import com.cburch.logisim.fpga.gui.FPGAReport;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.instance.StdAttr;
 import java.util.ArrayList;
@@ -122,8 +122,10 @@ public class DividerHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, String> GetPortMap(
-      Netlist Nets, NetlistComponent ComponentInfo, FPGAReport Reporter, String HDLType) {
+	      Netlist Nets, Object MapInfo, FPGAReport Reporter, String HDLType) {
     SortedMap<String, String> PortMap = new TreeMap<String, String>();
+	if (!(MapInfo instanceof NetlistComponent)) return PortMap;
+	NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
     PortMap.putAll(GetNetMap("INP_A", true, ComponentInfo, Divider.IN0, Reporter, HDLType, Nets));
     PortMap.putAll(GetNetMap("INP_B", true, ComponentInfo, Divider.IN1, Reporter, HDLType, Nets));
     PortMap.putAll(GetNetMap("Upper", true, ComponentInfo, Divider.UPPER, Reporter, HDLType, Nets));

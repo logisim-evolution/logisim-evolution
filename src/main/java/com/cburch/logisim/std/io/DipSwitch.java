@@ -39,8 +39,7 @@ import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
-import com.cburch.logisim.fpga.fpgaboardeditor.FPGAIOInformationContainer;
-import com.cburch.logisim.fpga.hdlgenerator.IOComponentInformationContainer;
+import com.cburch.logisim.fpga.data.ComponentMapInformationContainer;
 import com.cburch.logisim.gui.icons.DipswitchIcon;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceData;
@@ -125,13 +124,16 @@ public class DipSwitch extends InstanceFactory {
   public static final ArrayList<String> GetLabels(int size) {
     ArrayList<String> LabelNames = new ArrayList<String>();
     for (int i = 0; i < size; i++) {
-      LabelNames.add("sw_" + Integer.toString(i + 1));
+      LabelNames.add(getInputLabel(i));
     }
     return LabelNames;
   }
+  
+  public static final String getInputLabel(int id) {
+    return "sw_" + Integer.toString(id + 1);
+  }
 
   public static final int MAX_SWITCH = 32;
-
   public static final int MIN_SWITCH = 2;
 
   public static final Attribute<BitWidth> ATTR_SIZE =
@@ -148,7 +150,8 @@ public class DipSwitch extends InstanceFactory {
           StdAttr.LABEL_FONT,
           StdAttr.LABEL_COLOR,
           StdAttr.LABEL_VISIBILITY,
-          ATTR_SIZE
+          ATTR_SIZE,
+          StdAttr.MAPINFO
         },
         new Object[] {
           Direction.NORTH,
@@ -157,7 +160,8 @@ public class DipSwitch extends InstanceFactory {
           StdAttr.DEFAULT_LABEL_FONT,
           StdAttr.DEFAULT_LABEL_COLOR,
           true,
-          BitWidth.create(dipSize)
+          BitWidth.create(dipSize),
+          new ComponentMapInformationContainer(dipSize, 0, 0, GetLabels(dipSize), null, null)
         });
     setFacingAttribute(StdAttr.FACING);
     setIcon(new DipswitchIcon());
@@ -166,17 +170,6 @@ public class DipSwitch extends InstanceFactory {
             new BitWidthConfigurator(ATTR_SIZE),
             new DirectionConfigurator(StdAttr.LABEL_LOC, KeyEvent.ALT_DOWN_MASK)));
     setInstancePoker(Poker.class);
-    MyIOInformation =
-        new IOComponentInformationContainer(
-            dipSize,
-            0,
-            0,
-            GetLabels(dipSize),
-            null,
-            null,
-            FPGAIOInformationContainer.IOComponentTypes.DIPSwitch);
-    MyIOInformation.AddAlternateMapType(FPGAIOInformationContainer.IOComponentTypes.Button);
-    MyIOInformation.AddAlternateMapType(FPGAIOInformationContainer.IOComponentTypes.Pin);
   }
 
   @Override
@@ -184,9 +177,8 @@ public class DipSwitch extends InstanceFactory {
     instance.addAttributeListener();
     updatePorts(instance);
     instance.computeLabelTextField(Instance.AVOID_LEFT);
-    MyIOInformation.setNrOfInports(
-        instance.getAttributeValue(ATTR_SIZE).getWidth(),
-        GetLabels(instance.getAttributeValue(ATTR_SIZE).getWidth()));
+    int dipSize = instance.getAttributeValue(ATTR_SIZE).getWidth();
+    instance.getAttributeSet().setValue(StdAttr.MAPINFO, new ComponentMapInformationContainer(dipSize, 0, 0, GetLabels(dipSize), null, null));
   }
 
   private void updatePorts(Instance instance) {
@@ -236,9 +228,12 @@ public class DipSwitch extends InstanceFactory {
       instance.recomputeBounds();
       updatePorts(instance);
       instance.computeLabelTextField(Instance.AVOID_LEFT);
-      MyIOInformation.setNrOfInports(
-          instance.getAttributeValue(ATTR_SIZE).getWidth(),
-          GetLabels(instance.getAttributeValue(ATTR_SIZE).getWidth()));
+      ComponentMapInformationContainer map = (ComponentMapInformationContainer) 
+         instance.getAttributeValue(StdAttr.MAPINFO);
+      if (map != null) {
+        map.setNrOfInports(instance.getAttributeValue(ATTR_SIZE).getWidth(), 
+            GetLabels(instance.getAttributeValue(ATTR_SIZE).getWidth()));
+      }
     } else if (attr == StdAttr.FACING) {
       instance.recomputeBounds();
       updatePorts(instance);

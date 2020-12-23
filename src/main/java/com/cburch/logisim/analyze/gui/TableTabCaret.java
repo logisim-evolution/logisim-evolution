@@ -88,7 +88,8 @@ class TableTabCaret {
         final TruthTable tt = table.getTruthTable();
         if (tt.getRowCount() > 4096) {
           (new Analyzer.PleaseWait<Void>(S.get("tabcaretCompactRows"), table) {
-                @Override
+                private static final long serialVersionUID = 1L;
+				@Override
                 public Void doInBackground() throws Exception {
                   tt.compactVisibleRows();
                   return null;
@@ -207,9 +208,13 @@ class TableTabCaret {
           }
           break;
         case '0':
+        case 'f':
+        case 'F':
           newEntry = Entry.ZERO;
           break;
         case '1':
+        case 't':
+        case 'T':
           newEntry = Entry.ONE;
           break;
         case '-':

@@ -33,6 +33,8 @@ import static com.cburch.logisim.gui.Strings.S;
 import com.cburch.logisim.gui.chronogram.chronodata.ChronoData;
 import com.cburch.logisim.gui.chronogram.chronodata.SignalData;
 import com.cburch.logisim.gui.chronogram.chronodata.SignalDataBus;
+import com.cburch.logisim.gui.generic.OptionPane;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -55,7 +57,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.KeyStroke;
@@ -122,11 +123,11 @@ public class ImageExporter extends javax.swing.JFrame implements ActionListener 
       createLeftPanel();
       cropImage();
     } else { // error message
-      JOptionPane.showMessageDialog(
+      OptionPane.showMessageDialog(
           leftPanel,
           "The chronogram is empty. Can't save it as an image.",
           "",
-          JOptionPane.ERROR_MESSAGE);
+          OptionPane.ERROR_MESSAGE);
     }
   }
 
@@ -336,7 +337,7 @@ public class ImageExporter extends javax.swing.JFrame implements ActionListener 
       /*ChronoData chrdata, String name, SignalData sigData,*/ ArrayList<String> valList,
       String name) {
     String prec, suiv;
-    int busCrossingPosition = tickWidth - 5 < 1 ? 0 : 5;
+    int busCrossingPosition = (tickWidth - 5) < 1 ? 0 : 5;
     JPanel mRightPanel = new JPanel();
 
     int posX = 0;

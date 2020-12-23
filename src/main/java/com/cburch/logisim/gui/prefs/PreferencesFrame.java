@@ -30,15 +30,16 @@ package com.cburch.logisim.gui.prefs;
 
 import static com.cburch.logisim.gui.Strings.S;
 
+import com.cburch.logisim.fpga.prefs.FPGAOptions;
+import com.cburch.logisim.fpga.prefs.SoftwaresOptions;
 import com.cburch.logisim.gui.generic.LFrame;
 import com.cburch.logisim.util.LocaleListener;
 import com.cburch.logisim.util.LocaleManager;
 import com.cburch.logisim.util.WindowMenuItemManager;
 import java.awt.BorderLayout;
 import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.Toolkit;
 import javax.swing.JFrame;
+import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 
 public class PreferencesFrame extends LFrame {
@@ -87,6 +88,12 @@ public class PreferencesFrame extends LFrame {
     JFrame frame = MENU_MANAGER.getJFrame(true, null);
     frame.setVisible(true);
   }
+  
+  public static void showFPGAPreferences() {
+	PreferencesFrame frame = (PreferencesFrame) MENU_MANAGER.getJFrame(true, null);
+	frame.setFpgaTab();
+    frame.setVisible(true);
+  }
 
   private static final long serialVersionUID = 1L;
 
@@ -95,6 +102,7 @@ public class PreferencesFrame extends LFrame {
   private MyListener myListener = new MyListener();
   private OptionsPanel[] panels;
   private JTabbedPane tabbedPane;
+  private int FpgaTabIdx = -1; 
 
   private PreferencesFrame() {
     super(false,null);
@@ -104,6 +112,7 @@ public class PreferencesFrame extends LFrame {
           new IntlOptions(this),
           new WindowOptions(this),
           new LayoutOptions(this),
+          new SimOptions(this),
           new ExperimentalOptions(this),
           new SoftwaresOptions(this),
           new FPGAOptions(this),
@@ -114,19 +123,21 @@ public class PreferencesFrame extends LFrame {
       OptionsPanel panel = panels[index];
       tabbedPane.addTab(panel.getTitle(), null, panel, panel.getToolTipText());
       if (panel instanceof IntlOptions) intlIndex = index;
+      if (panel instanceof FPGAOptions) FpgaTabIdx = index;
     }
 
     Container contents = getContentPane();
-    tabbedPane.setPreferredSize(
-        new Dimension(
-            Toolkit.getDefaultToolkit().getScreenSize().width / 2,
-            Toolkit.getDefaultToolkit().getScreenSize().height / 2));
-    contents.add(tabbedPane, BorderLayout.CENTER);
+    contents.add(new JScrollPane(tabbedPane), BorderLayout.CENTER);
 
     if (intlIndex >= 0) tabbedPane.setSelectedIndex(intlIndex);
 
     LocaleManager.addLocaleListener(myListener);
     myListener.localeChanged();
     pack();
+  }
+  
+  public void setFpgaTab() {
+	if (FpgaTabIdx < 0) return;
+    tabbedPane.setSelectedIndex(FpgaTabIdx);
   }
 }

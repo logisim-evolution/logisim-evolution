@@ -242,6 +242,14 @@ public class SplitterAttributes extends AbstractAttributeSet {
     configureDefaults();
     parameters = new SplitterParameters(this);
   }
+  
+  public boolean isNoConnect(int index) {
+    for (int i = 0; i < bit_end.length; i++) {
+      if (bit_end[i] == index)
+        return false;
+    }
+    return true;
+  }
 
   private void configureDefaults() {
     int offs = INIT_ATTRIBUTES.size();

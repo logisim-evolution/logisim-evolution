@@ -31,6 +31,7 @@ package com.cburch.logisim.std.memory;
 import static com.cburch.logisim.std.Strings.S;
 
 import com.cburch.logisim.circuit.CircuitState;
+import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.gui.hex.HexFile;
 import com.cburch.logisim.gui.hex.HexFrame;
 import com.cburch.logisim.instance.Instance;
@@ -40,7 +41,6 @@ import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 
 class MemMenu implements ActionListener, MenuExtender {
@@ -103,12 +103,12 @@ class MemMenu implements ActionListener, MenuExtender {
     if (isAllZero) return;
 
     int choice =
-        JOptionPane.showConfirmDialog(
+        OptionPane.showConfirmDialog(
             frame,
             S.get("ramConfirmClearMsg"),
             S.get("ramConfirmClearTitle"),
-            JOptionPane.YES_NO_OPTION);
-    if (choice == JOptionPane.YES_OPTION) {
+            OptionPane.YES_NO_OPTION);
+    if (choice == OptionPane.YES_OPTION) {
       s.getContents().clear();
     }
   }

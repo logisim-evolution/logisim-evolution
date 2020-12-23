@@ -30,7 +30,7 @@ package com.cburch.logisim.gui.menu;
 
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.circuit.Simulator;
-import com.cburch.logisim.fpga.fpgamenu.MenuFPGA;
+import com.cburch.logisim.fpga.menu.MenuFPGA;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.util.LocaleListener;
 import com.cburch.logisim.util.LocaleManager;

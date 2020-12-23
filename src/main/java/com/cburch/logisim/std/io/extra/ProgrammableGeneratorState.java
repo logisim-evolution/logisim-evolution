@@ -31,6 +31,7 @@ package com.cburch.logisim.std.io.extra;
 import static com.cburch.logisim.std.Strings.S;
 
 import com.cburch.logisim.data.Value;
+import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.instance.InstanceData;
 import com.cburch.logisim.util.LocaleManager;
 import java.awt.Color;
@@ -41,7 +42,6 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.util.Arrays;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
@@ -170,12 +170,12 @@ public class ProgrammableGeneratorState implements InstanceData, Cloneable {
     scrollable.setBorder(null);
     scrollable.getVerticalScrollBar().setUnitIncrement(13);
     int option =
-        JOptionPane.showOptionDialog(
+        OptionPane.showOptionDialog(
             null,
             scrollable,
             S.getter("ProgrammableGeneratorComponent").toString(),
-            JOptionPane.OK_CANCEL_OPTION,
-            JOptionPane.PLAIN_MESSAGE,
+            OptionPane.OK_CANCEL_OPTION,
+            OptionPane.PLAIN_MESSAGE,
             null,
             options,
             null);

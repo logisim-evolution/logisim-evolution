@@ -31,6 +31,7 @@ package com.cburch.logisim.gui.prefs;
 import static com.cburch.logisim.gui.Strings.S;
 
 import com.cburch.logisim.data.Direction;
+import com.cburch.logisim.fpga.gui.ZoomSlider;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.proj.Projects;
@@ -40,6 +41,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 
+import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -82,6 +84,14 @@ class WindowOptions extends OptionsPanel {
         if (LookAndFeel.getSelectedIndex() != Index) {
           Index = LookAndFeel.getSelectedIndex();
           AppPreferences.LookAndFeel.set(LFInfos[Index].getClassName());
+        }
+      } else if (e.getActionCommand().equals("reset")) {
+        AppPreferences.resetWindow();
+        List<Project> nowOpen = Projects.getOpenProjects();
+        for (Project proj : nowOpen) {
+          proj.getFrame().resetLayout();
+          proj.getFrame().revalidate();
+          proj.getFrame().repaint();
         }
       }
     }
@@ -159,6 +169,11 @@ class WindowOptions extends OptionsPanel {
     LookAndFeel.addActionListener(Listener);
 
     setLayout(new TableLayout(1));
+    JButton but = new JButton();
+    but.addActionListener(Listener);
+    but.setActionCommand("reset");
+    but.setText(S.get("windowToolbarReset"));
+    add(but);
     for (int i = 0; i < checks.length; i++) {
       add(checks[i]);
     }

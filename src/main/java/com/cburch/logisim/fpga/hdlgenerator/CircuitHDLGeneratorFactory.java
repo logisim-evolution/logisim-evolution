@@ -32,17 +32,16 @@ import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitAttributes;
 import com.cburch.logisim.circuit.SubcircuitFactory;
 import com.cburch.logisim.data.AttributeSet;
+import com.cburch.logisim.fpga.data.MapComponent;
+import com.cburch.logisim.fpga.data.MappableResourcesContainer;
 import com.cburch.logisim.fpga.designrulecheck.ConnectionEnd;
 import com.cburch.logisim.fpga.designrulecheck.ConnectionPoint;
 import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
 import com.cburch.logisim.fpga.designrulecheck.Net;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
-import com.cburch.logisim.fpga.fpgagui.FPGAReport;
-import com.cburch.logisim.fpga.fpgagui.MappableResourcesContainer;
+import com.cburch.logisim.fpga.gui.FPGAReport;
 import com.cburch.logisim.instance.StdAttr;
-import com.cburch.logisim.std.io.PortIO;
-import com.cburch.logisim.std.io.ReptarLocalBus;
 import com.cburch.logisim.std.wiring.ClockHDLGeneratorFactory;
 import java.io.File;
 import java.util.ArrayList;
@@ -63,11 +62,22 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public boolean GenerateAllHDLDescriptions(
+	      Set<String> HandledComponents,
+	      String WorkingDir,
+	      ArrayList<String> Hierarchy,
+	      FPGAReport Reporter,
+	      String HDLType) {
+	  return GenerateAllHDLDescriptions(HandledComponents, WorkingDir, Hierarchy,
+         Reporter, HDLType, false);
+  }
+  
+  public boolean GenerateAllHDLDescriptions(
       Set<String> HandledComponents,
       String WorkingDir,
       ArrayList<String> Hierarchy,
       FPGAReport Reporter,
-      String HDLType) {
+      String HDLType,
+      boolean gatedInstance) {
     if (MyCircuit == null) {
       return false;
     }
@@ -133,7 +143,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     }
     /* Now we go down the hierarchy to get all other components */
     for (NetlistComponent ThisCircuit : MyNetList.GetSubCircuits()) {
-      HDLGeneratorFactory Worker =
+       CircuitHDLGeneratorFactory Worker = (CircuitHDLGeneratorFactory)
           ThisCircuit.GetComponent()
               .getFactory()
               .getHDLGenerator(HDLType, ThisCircuit.GetComponent().getAttributeSet());
@@ -148,13 +158,14 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           CorrectLabel.getCorrectLabel(
               ThisCircuit.GetComponent().getAttributeSet().getValue(StdAttr.LABEL)));
       if (!Worker.GenerateAllHDLDescriptions(
-          HandledComponents, WorkingDir, Hierarchy, Reporter, HDLType)) {
+          HandledComponents, WorkingDir, Hierarchy, Reporter, HDLType,ThisCircuit.IsGatedInstance())) {
         return false;
       }
       Hierarchy.remove(Hierarchy.size() - 1);
     }
     /* I also have to generate myself */
     String ComponentName = CorrectLabel.getCorrectLabel(MyCircuit.getName());
+    if (gatedInstance) ComponentName = ComponentName.concat("_gated");
     if (!HandledComponents.contains(ComponentName)) {
       if (!WriteEntity(
           WorkPath + GetRelativeDirectory(HDLType),
@@ -190,23 +201,28 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   /* here the private handles are defined */
-  private String GetBubbleIndex(NetlistComponent comp, String HDLType, boolean inputBubbles) {
+  private String GetBubbleIndex(NetlistComponent comp, String HDLType, int type) {
     String BracketOpen = (HDLType.equals(VHDL)) ? "( " : "[";
     String BracketClose = (HDLType.equals(VHDL)) ? " )" : "]";
     String RangeKeyword = (HDLType.equals(VHDL)) ? " DOWNTO " : ":";
-    if (inputBubbles) {
-      return BracketOpen
-          + Integer.toString(comp.GetLocalBubbleInputEndId())
-          + RangeKeyword
-          + Integer.toString(comp.GetLocalBubbleInputStartId())
-          + BracketClose;
-    } else {
-      return BracketOpen
-          + Integer.toString(comp.GetLocalBubbleOutputEndId())
-          + RangeKeyword
-          + Integer.toString(comp.GetLocalBubbleOutputStartId())
-          + BracketClose;
+    switch (type) {
+      case 0 : return BracketOpen
+                      + Integer.toString(comp.GetLocalBubbleInputEndId())
+                      + RangeKeyword
+                      + Integer.toString(comp.GetLocalBubbleInputStartId())
+                      + BracketClose;
+      case 1 : return BracketOpen
+                      + Integer.toString(comp.GetLocalBubbleOutputEndId())
+                      + RangeKeyword
+                      + Integer.toString(comp.GetLocalBubbleOutputStartId())
+                      + BracketClose; 
+      case 2 : return BracketOpen
+                      + Integer.toString(comp.GetLocalBubbleInOutEndId())
+                      + RangeKeyword
+                      + Integer.toString(comp.GetLocalBubbleInOutStartId())
+                      + BracketClose; 
     }
+    return "";
   }
 
   @Override
@@ -238,6 +254,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     for (NetlistComponent Gate : TheNetlist.GetSubCircuits()) {
       String CompName =
           Gate.GetComponent().getFactory().getHDLName(Gate.GetComponent().getAttributeSet());
+      if (Gate.IsGatedInstance()) CompName = CompName.concat("_gated");
       if (!InstantiatedComponents.contains(CompName)) {
         InstantiatedComponents.add(CompName);
         HDLGeneratorFactory Worker =
@@ -251,10 +268,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
                   sub.getSubcircuit().getNetList(),
                   Gate.GetComponent().getAttributeSet(),
                   CompName,
-                  VHDL /*
-                        * ,
-                        * false
-                        */));
+                  VHDL));
         }
       }
     }
@@ -362,13 +376,6 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   @Override
   public SortedMap<String, Integer> GetInOutList(Netlist MyNetList, AttributeSet attrs) {
     SortedMap<String, Integer> InOuts = new TreeMap<String, Integer>();
-    // for (int i = 0; i < MyNetList.NumberOfClockTrees(); i++) {
-    // InOuts.put(ClockTreeName + Integer.toString(i),
-    // ClockHDLGeneratorFactory.NrOfClockBits);
-    // }
-    // if (MyNetList.RequiresGlobalClockConnection()) {
-    // InOuts.put(TickComponentHDLGeneratorFactory.FPGAClock, 1);
-    // }
     int InOutBubbles = MyNetList.NumberOfInOutBubbles();
     if (InOutBubbles > 0) {
       if (InOutBubbles > 1) {
@@ -377,13 +384,6 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         InOuts.put(HDLGeneratorFactory.LocalInOutBubbleBusname, 0);
       }
     }
-    // for (int i = 0; i < MyNetList.NumberOfInOutPorts(); i++) {
-    // NetlistComponent selected = MyNetList.GetInputPin(i);
-    // if (selected != null) {
-    // InOuts.put(CorrectLabel.getCorrectLabel(selected.GetComponent().getAttributeSet().getValue(StdAttr.LABEL)),
-    // selected.GetComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth());
-    // }
-    // }
     return InOuts;
   }
 
@@ -407,17 +407,8 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     for (int i = 0; i < MyNetList.NumberOfInputPorts(); i++) {
       NetlistComponent selected = MyNetList.GetInputPin(i);
       if (selected != null) {
-        if (!(selected.GetComponent().getFactory() instanceof ReptarLocalBus)) {
-          Inputs.put(
-              CorrectLabel.getCorrectLabel(
-                  selected.GetComponent().getAttributeSet().getValue(StdAttr.LABEL)),
+        Inputs.put( CorrectLabel.getCorrectLabel( selected.GetComponent().getAttributeSet().getValue(StdAttr.LABEL)),
               selected.GetComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth());
-        } else {
-          Inputs.put(
-              CorrectLabel.getCorrectLabel(
-                  selected.GetComponent().getAttributeSet().getValue(StdAttr.LABEL) + "_i"),
-              selected.GetIOInformationContainer().GetNrOfInports());
-        }
       }
     }
     return Inputs;
@@ -516,7 +507,6 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         FirstLine = false;
       }
       NetlistComponent MyInput = TheNetlist.GetInputPin(i);
-      if (!(MyInput.GetComponent().getFactory() instanceof ReptarLocalBus)) {
         Contents.add(
             GetSignalMap(
                 CorrectLabel.getCorrectLabel(
@@ -527,22 +517,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
                 Reporter,
                 HDLType,
                 TheNetlist));
-      }
     }
-    // /* Now we define all inout signals; hence InOut port -> Internal Net
-    // */
-    // FirstLine = true;
-    // for (int i = 0; i < TheNetlist.NumberOfInOutPorts(); i++) {
-    // if (FirstLine) {
-    // Contents.add("");
-    // Contents.addAll(MakeRemarkBlock("Here all inout connections are defined",
-    // 3, HDLType));
-    // FirstLine = false;
-    // }
-    // NetlistComponent MyInOut = TheNetlist.GetInOutPin(i);
-    // Contents.add(GetSignalMap(CorrectLabel.getCorrectLabel(MyInOut.GetComponent().getAttributeSet().getValue(StdAttr.LABEL)),
-    // MyInOut, 0, 3, Reporter, HDLType, TheNetlist));
-    // }
     /* Now we define all output signals; hence Internal Net -> Input port */
     FirstLine = true;
     for (int i = 0; i < TheNetlist.NumberOfOutputPorts(); i++) {
@@ -552,18 +527,16 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         FirstLine = false;
       }
       NetlistComponent MyOutput = TheNetlist.GetOutputPin(i);
-      if (!(MyOutput.GetComponent().getFactory() instanceof ReptarLocalBus)) {
-        Contents.add(
-            GetSignalMap(
-                CorrectLabel.getCorrectLabel(
-                    MyOutput.GetComponent().getAttributeSet().getValue(StdAttr.LABEL)),
-                MyOutput,
-                0,
-                3,
-                Reporter,
-                HDLType,
-                TheNetlist));
-      }
+      Contents.add(
+          GetSignalMap(
+              CorrectLabel.getCorrectLabel(
+                  MyOutput.GetComponent().getAttributeSet().getValue(StdAttr.LABEL)),
+              MyOutput,
+              0,
+              3,
+              Reporter,
+              HDLType,
+              TheNetlist));
     }
     /* Here all in-lined components are generated */
     FirstLine = true;
@@ -622,7 +595,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
             FirstLine = false;
           }
           Contents.addAll(
-              Worker.GetComponentMap(TheNetlist, id++, comp, Reporter, CompName, HDLType));
+              Worker.GetComponentMap(TheNetlist, id++, comp, null, Reporter, CompName, HDLType));
           if (CompIds.containsKey(CompId)) {
             CompIds.remove(CompId);
           }
@@ -640,6 +613,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       if (Worker != null) {
         String CompName =
             comp.GetComponent().getFactory().getHDLName(comp.GetComponent().getAttributeSet());
+        if (comp.IsGatedInstance())  CompName = CompName.concat("_gated");
         String CompId = Worker.getComponentStringIdentifier();
         Long id;
         if (CompIds.containsKey(CompId)) {
@@ -648,7 +622,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           id = (long) 1;
         }
         ArrayList<String> CompMap =
-            Worker.GetComponentMap(TheNetlist, id++, comp, Reporter, CompName, HDLType);
+            Worker.GetComponentMap(TheNetlist, id++, comp, null, Reporter, CompName, HDLType);
         if (!CompMap.isEmpty()) {
           if (FirstLine) {
             Contents.add("");
@@ -681,17 +655,10 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     for (int i = 0; i < MyNetList.NumberOfOutputPorts(); i++) {
       NetlistComponent selected = MyNetList.GetOutputPin(i);
       if (selected != null) {
-        if (!(selected.GetComponent().getFactory() instanceof ReptarLocalBus)) {
           Outputs.put(
               CorrectLabel.getCorrectLabel(
                   selected.GetComponent().getAttributeSet().getValue(StdAttr.LABEL)),
               selected.GetComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth());
-        } else {
-          Outputs.put(
-              CorrectLabel.getCorrectLabel(
-                  selected.GetComponent().getAttributeSet().getValue(StdAttr.LABEL) + "_o"),
-              selected.GetIOInformationContainer().GetNrOfOutports());
-        }
       }
     }
     return Outputs;
@@ -699,20 +666,28 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, String> GetPortMap(
-      Netlist Nets, NetlistComponent ComponentInfo, FPGAReport Reporter, String HDLType) {
+      Netlist Nets, Object MapInfo, FPGAReport Reporter, String HDLType) {
+    String BracketOpen = (HDLType.equals(VHDL)) ? "(" : "[";
+    String BracketClose = (HDLType.equals(VHDL)) ? ")" : "]";
+    String Open = (HDLType.equals(VHDL)) ? "OPEN" : " ";
     SortedMap<String, String> PortMap = new TreeMap<String, String>();
-    if (ComponentInfo != null) {
-      SubcircuitFactory sub = (SubcircuitFactory) ComponentInfo.GetComponent().getFactory();
-      Netlist MyNetList = sub.getSubcircuit().getNetList();
+    if (MapInfo == null) return null;
+    boolean topLevel = MapInfo instanceof MappableResourcesContainer;
+    NetlistComponent ComponentInfo = topLevel ? null : (NetlistComponent) MapInfo;
+    MappableResourcesContainer mapInfo = topLevel ? (MappableResourcesContainer) MapInfo : null;
+    String Preamble = topLevel ? "s_" : "";
+      SubcircuitFactory sub = topLevel ? null : (SubcircuitFactory) ComponentInfo.GetComponent().getFactory();
+      Netlist MyNetList = topLevel ? Nets : sub.getSubcircuit().getNetList();
       int NrOfClockTrees = MyNetList.NumberOfClockTrees();
       int NrOfInputBubbles = MyNetList.NumberOfInputBubbles();
       int NrOfOutputBubbles = MyNetList.NumberOfOutputBubbles();
+      int NrOfIOBubbles = MyNetList.NumberOfInOutBubbles();
       int NrOfInputPorts = MyNetList.NumberOfInputPorts();
       int NrOfInOutPorts = MyNetList.NumberOfInOutPorts();
       int NrOfOutputPorts = MyNetList.NumberOfOutputPorts();
       /* First we instantiate the Clock tree busses when present */
       for (int i = 0; i < NrOfClockTrees; i++) {
-        PortMap.put(ClockTreeName + Integer.toString(i), ClockTreeName + Integer.toString(i));
+        PortMap.put(ClockTreeName + Integer.toString(i), Preamble + ClockTreeName + Integer.toString(i));
       }
       if (MyNetList.RequiresGlobalClockConnection()) {
         PortMap.put(
@@ -720,15 +695,60 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       }
       if (NrOfInputBubbles > 0) {
         PortMap.put(
-            HDLGeneratorFactory.LocalInputBubbleBusname,
+            HDLGeneratorFactory.LocalInputBubbleBusname, topLevel ? Preamble+HDLGeneratorFactory.LocalInputBubbleBusname :
             HDLGeneratorFactory.LocalInputBubbleBusname
-                + GetBubbleIndex(ComponentInfo, HDLType, true));
+                + GetBubbleIndex(ComponentInfo, HDLType, 0));
       }
       if (NrOfOutputBubbles > 0) {
         PortMap.put(
-            HDLGeneratorFactory.LocalOutputBubbleBusname,
-            HDLGeneratorFactory.LocalOutputBubbleBusname
-                + GetBubbleIndex(ComponentInfo, HDLType, false));
+            HDLGeneratorFactory.LocalOutputBubbleBusname, topLevel ? Preamble+HDLGeneratorFactory.LocalOutputBubbleBusname :
+            HDLGeneratorFactory.LocalOutputBubbleBusname + GetBubbleIndex(ComponentInfo, HDLType, 1));
+      }
+      if (NrOfIOBubbles > 0) {
+        if (topLevel) {
+          StringBuffer vector = new StringBuffer();
+          for (int i = NrOfIOBubbles-1 ; i >= 0 ; i--) {
+            /* first pass find the component which is connected to this io */
+            int compPin = -1;
+            MapComponent map = null;
+            for (ArrayList<String> key : mapInfo.getMappableResources().keySet()) {
+              MapComponent comp = mapInfo.getMappableResources().get(key);
+              if (comp.hasIOs()) {
+                int id =  comp.getIOBublePinId(i);
+                if (id >= 0) {
+                  compPin = id;
+                  map = comp;
+                  break;
+                }
+              }
+            }
+            if (map == null || compPin < 0) {
+              Reporter.AddError("BUG: did not find IOpin");
+              continue;
+            }
+            if (!map.isMapped(compPin) || map.IsOpenMapped(compPin)) {
+              if (HDLType.equals(VHDL))
+                PortMap.put(HDLGeneratorFactory.LocalInOutBubbleBusname+BracketOpen+i+BracketClose,Open);
+              else {
+                if (vector.length() != 0) vector.append(",");
+                vector.append("OPEN"); // still not found the correct method but this seems to work
+              }
+            } else {
+              if (HDLType.equals(VHDL))
+                PortMap.put(HDLGeneratorFactory.LocalInOutBubbleBusname+BracketOpen+i+BracketClose,
+                  (map.isExternalInverted(compPin)?"n_":"")+map.getHdlString(compPin));
+              else {
+                if (vector.length() != 0) vector.append(",");
+                vector.append((map.isExternalInverted(compPin)?"n_":"")+map.getHdlString(compPin));
+              }
+            }
+          }
+          if (HDLType.equals(VERILOG))
+            PortMap.put(HDLGeneratorFactory.LocalInOutBubbleBusname, vector.toString());
+        } else {
+          PortMap.put(HDLGeneratorFactory.LocalInOutBubbleBusname, 
+        		  HDLGeneratorFactory.LocalInOutBubbleBusname + GetBubbleIndex(ComponentInfo, HDLType, 2));
+        }
       }
       if (NrOfInputPorts > 0) {
         for (int i = 0; i < NrOfInputPorts; i++) {
@@ -737,15 +757,18 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
             String PinLabel =
                 CorrectLabel.getCorrectLabel(
                     selected.GetComponent().getAttributeSet().getValue(StdAttr.LABEL));
-            int endid = Nets.GetEndIndex(ComponentInfo, PinLabel, false);
-            if (endid < 0) {
-              Reporter.AddFatalError(
-                  "INTERNAL ERROR! Could not find the end-index of a sub-circuit component : '"
+            if (topLevel) {
+              PortMap.put(PinLabel, Preamble+PinLabel);
+            } else {
+              int endid = Nets.GetEndIndex(ComponentInfo, PinLabel, false);
+              if (endid < 0) {
+                Reporter.AddFatalError("INTERNAL ERROR! Could not find the end-index of a sub-circuit component : '"
                       + PinLabel
                       + "'");
-            } else {
-              PortMap.putAll(
-                  GetNetMap(PinLabel, true, ComponentInfo, endid, Reporter, HDLType, Nets));
+            
+              } else {
+                PortMap.putAll(GetNetMap(PinLabel, true, ComponentInfo, endid, Reporter, HDLType, Nets));
+              }
             }
           }
         }
@@ -757,15 +780,19 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
             String PinLabel =
                 CorrectLabel.getCorrectLabel(
                     selected.GetComponent().getAttributeSet().getValue(StdAttr.LABEL));
-            int endid = Nets.GetEndIndex(ComponentInfo, PinLabel, false);
-            if (endid < 0) {
-              Reporter.AddFatalError(
-                  "INTERNAL ERROR! Could not find the end-index of a sub-circuit component : '"
-                      + PinLabel
-                      + "'");
+            if (topLevel) {
+              /* Do not exist yet in logisim */
+              /* TODO: implement by going over each bit */
             } else {
-              PortMap.putAll(
-                  GetNetMap(PinLabel, true, ComponentInfo, endid, Reporter, HDLType, Nets));
+              int endid = Nets.GetEndIndex(ComponentInfo, PinLabel, false);
+              if (endid < 0) {
+                Reporter.AddFatalError(
+                    "INTERNAL ERROR! Could not find the end-index of a sub-circuit component : '"
+                        + PinLabel
+                        + "'");
+              } else {
+                PortMap.putAll(GetNetMap(PinLabel, true, ComponentInfo, endid, Reporter, HDLType, Nets));
+              }
             }
           }
         }
@@ -777,158 +804,22 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
             String PinLabel =
                 CorrectLabel.getCorrectLabel(
                     selected.GetComponent().getAttributeSet().getValue(StdAttr.LABEL));
-            int endid = Nets.GetEndIndex(ComponentInfo, PinLabel, true);
-            if (endid < 0) {
-              Reporter.AddFatalError(
-                  "INTERNAL ERROR! Could not find the end-index of a sub-circuit component : '"
-                      + PinLabel
-                      + "'");
+            if (topLevel) {
+              PortMap.put(PinLabel, Preamble+PinLabel);	
             } else {
-              PortMap.putAll(
-                  GetNetMap(PinLabel, true, ComponentInfo, endid, Reporter, HDLType, Nets));
+              int endid = Nets.GetEndIndex(ComponentInfo, PinLabel, true);
+              if (endid < 0) {
+                Reporter.AddFatalError(
+                    "INTERNAL ERROR! Could not find the end-index of a sub-circuit component : '"
+                        + PinLabel
+                        + "'");
+              } else {
+                PortMap.putAll(GetNetMap(PinLabel, true, ComponentInfo, endid, Reporter, HDLType, Nets));
+              }
             }
           }
         }
       }
-    } else {
-      int NrOfClockTrees = Nets.NumberOfClockTrees();
-      int NrOfInputBubbles = Nets.NumberOfInputBubbles();
-      int NrOfOutputBubbles = Nets.NumberOfOutputBubbles();
-      int NrOfInputPorts = Nets.NumberOfInputPorts();
-      int NrOfInOutPorts = Nets.NumberOfInOutPorts();
-      int NrOfOutputPorts = Nets.NumberOfOutputPorts();
-      for (int i = 0; i < NrOfClockTrees; i++) {
-        PortMap.put(
-            ClockTreeName + Integer.toString(i), "s_" + ClockTreeName + Integer.toString(i));
-      }
-      if (Nets.RequiresGlobalClockConnection()) {
-        PortMap.put(
-            TickComponentHDLGeneratorFactory.FPGAClock, TickComponentHDLGeneratorFactory.FPGAClock);
-      }
-      if (NrOfInputBubbles > 0) {
-        PortMap.put(HDLGeneratorFactory.LocalInputBubbleBusname, "s_LOGISIM_INPUT_BUBBLES");
-      }
-      if (NrOfOutputBubbles > 0) {
-        PortMap.put(HDLGeneratorFactory.LocalOutputBubbleBusname, "s_LOGISIM_OUTPUT_BUBBLES");
-      }
-      if (NrOfInputPorts > 0) {
-        for (int i = 0; i < NrOfInputPorts; i++) {
-          NetlistComponent selected = Nets.GetInputPin(i);
-          if (selected != null) {
-            if (selected.GetComponent().getFactory() instanceof ReptarLocalBus) {
-              MappableResourcesContainer mapInfo =
-                  ((ReptarLocalBus) selected.GetComponent().getFactory()).getMapInfo();
-              int start =
-                  mapInfo.GetFPGAInputPinId(
-                      mapInfo.currentBoardName
-                          + ":/"
-                          + selected.GetComponent().getAttributeSet().getValue(StdAttr.LABEL));
-              for (int j = 0; j < 13; j++) {
-                PortMap.put(
-                    selected.GetComponent().getAttributeSet().getValue(StdAttr.LABEL)
-                        + "_i("
-                        + j
-                        + ")",
-                    FPGAInputPinName + "_" + (start + j));
-              }
-            } else {
-              String PinLabel =
-                  CorrectLabel.getCorrectLabel(
-                      selected.GetComponent().getAttributeSet().getValue(StdAttr.LABEL));
-              PortMap.put(PinLabel, "s_" + PinLabel);
-            }
-          }
-        }
-      }
-      if (NrOfInOutPorts > 0) {
-        for (int i = 0; i < NrOfInOutPorts; i++) {
-          NetlistComponent selected = Nets.GetInOutPin(i);
-          if (selected != null) {
-            if (selected.GetComponent().getFactory() instanceof PortIO) {
-              ArrayList<String> name = new ArrayList<String>();
-              MappableResourcesContainer mapInfo =
-                  ((PortIO) selected.GetComponent().getFactory()).getMapInfo();
-              int start =
-                  mapInfo.GetFPGAInOutPinId(
-                      mapInfo.currentBoardName
-                          + ":/"
-                          + selected.GetComponent().getAttributeSet().getValue(StdAttr.LABEL));
-              int k = 0;
-              name.add(selected.GetComponent().getAttributeSet().getValue(StdAttr.LABEL));
-              for (int j = selected.GetGlobalBubbleId(name).GetInOutStartIndex();
-                  j <= selected.GetGlobalBubbleId(name).GetInOutEndIndex();
-                  j++) {
-                PortMap.put(
-                    LocalInOutBubbleBusname + "(" + j + ")",
-                    FPGAInOutPinName
-                        + "_"
-                        + (start + k)); /* AMX Bug generation Localbus + PortIO */
-                k++;
-              }
-            } else if (selected.GetComponent().getFactory() instanceof ReptarLocalBus) {
-              ArrayList<String> name = new ArrayList<String>();
-              MappableResourcesContainer mapInfo =
-                  ((ReptarLocalBus) selected.GetComponent().getFactory()).getMapInfo();
-              int start =
-                  mapInfo.GetFPGAInOutPinId(
-                      mapInfo.currentBoardName
-                          + ":/"
-                          + selected.GetComponent().getAttributeSet().getValue(StdAttr.LABEL));
-              name.add(selected.GetComponent().getAttributeSet().getValue(StdAttr.LABEL));
-              int k = 0;
-              for (int j = selected.GetGlobalBubbleId(name).GetInOutStartIndex();
-                  j <= selected.GetGlobalBubbleId(name).GetInOutEndIndex();
-                  j++) {
-                PortMap.put(
-                    LocalInOutBubbleBusname + "(" + j + ")", FPGAInOutPinName + "_" + (start + k));
-                k++;
-              }
-            } else {
-              String PinLabel =
-                  CorrectLabel.getCorrectLabel(
-                      selected.GetComponent().getAttributeSet().getValue(StdAttr.LABEL));
-              PortMap.put(PinLabel, "s_" + PinLabel);
-            }
-          }
-        }
-      }
-      if (NrOfOutputPorts > 0) {
-        for (int i = 0; i < NrOfOutputPorts; i++) {
-          NetlistComponent selected = Nets.GetOutputPin(i);
-          if (selected != null) {
-            if (selected.GetComponent().getFactory() instanceof ReptarLocalBus) {
-              ArrayList<String> name = new ArrayList<String>();
-              name.add(selected.GetComponent().getAttributeSet().getValue(StdAttr.LABEL));
-              int k = 0;
-              for (int j = selected.GetGlobalBubbleId(name).GetOutputStartIndex();
-                  j <= selected.GetGlobalBubbleId(name).GetOutputEndIndex();
-                  j++) {
-                PortMap.put(
-                    selected.GetComponent().getAttributeSet().getValue(StdAttr.LABEL)
-                        + "_o("
-                        + k
-                        + ")",
-                    "FPGA_LB_OUT_" + k);
-                k++;
-              }
-              // for (int j =
-              // selected.GetGlobalBubbleId(name).GetOutputStartIndex();
-              // j <=
-              // selected.GetGlobalBubbleId(name).GetOutputEndIndex();
-              // j++) {
-              // PortMap.put(selected.GetComponent().getAttributeSet().getValue(StdAttr.LABEL)
-              // + "_o", FPGAOutputPinName + "_" + j);
-              // }
-            } else {
-              String PinLabel =
-                  CorrectLabel.getCorrectLabel(
-                      selected.GetComponent().getAttributeSet().getValue(StdAttr.LABEL));
-              PortMap.put(PinLabel, "s_" + PinLabel);
-            }
-          }
-        }
-      }
-    }
     return PortMap;
   }
 

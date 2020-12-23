@@ -86,7 +86,7 @@ public class Ttl74266 extends AbstractTtlGate {
     Drawgates.paintOutputgate(g, x + 50, y, x + 48, youtput, up, height);
     // input lines
     Drawgates.paintDoubleInputgate(
-        g, x + 30, y, x + 44 - portwidth, youtput, portheight, up, height);
+        g, x + 30, y, x + 44 - portwidth, youtput, portheight, up, false, height);
   }
 
   @Override

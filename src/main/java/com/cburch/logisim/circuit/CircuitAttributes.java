@@ -42,6 +42,7 @@ import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.AttributeSets;
 import com.cburch.logisim.data.Attributes;
 import com.cburch.logisim.data.Direction;
+import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
@@ -50,7 +51,6 @@ import com.cburch.logisim.util.SyntaxChecker;
 import java.awt.Font;
 import java.util.Arrays;
 import java.util.List;
-import javax.swing.JOptionPane;
 
 public class CircuitAttributes extends AbstractAttributeSet {
   private class MyListener implements AttributeListener, CircuitAppearanceListener {
@@ -98,8 +98,8 @@ public class CircuitAttributes extends AbstractAttributeSet {
         String OldName = e.getOldValue() == null ? "ThisShouldNotHappen" : (String) e.getOldValue();
         if (!NewName.equals(OldName)) {
           if (NewName.isEmpty()) {
-            JOptionPane.showMessageDialog(
-                null, S.get("EmptyNameError"), "", JOptionPane.ERROR_MESSAGE);
+            OptionPane.showMessageDialog(
+                null, S.get("EmptyNameError"), "", OptionPane.ERROR_MESSAGE);
             e.getSource().setValue(NAME_ATTR, OldName);
             source.fireEvent(CircuitEvent.ACTION_SET_NAME, OldName);
             return;
@@ -113,7 +113,7 @@ public class CircuitAttributes extends AbstractAttributeSet {
                 String label = c.getAttributeSet().getValue(StdAttr.LABEL).toUpperCase();
                 if (label != null && !label.isEmpty() && label.equals(NewName.toUpperCase())) {
                   String msg = S.get("CircuitSameInputOutputLabel");
-                  JOptionPane.showMessageDialog(null, "\"" + NewName + "\" : " + msg);
+                  OptionPane.showMessageDialog(null, "\"" + NewName + "\" : " + msg);
                   e.getSource().setValue(NAME_ATTR, OldName);
                   source.fireEvent(CircuitEvent.ACTION_SET_NAME, OldName);
                   return;

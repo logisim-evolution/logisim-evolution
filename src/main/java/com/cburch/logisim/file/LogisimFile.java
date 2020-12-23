@@ -39,6 +39,7 @@ import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.comp.ComponentFactory;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeSet;
+import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.proj.Projects;
 import com.cburch.logisim.tools.AddTool;
@@ -62,7 +63,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import javax.swing.JOptionPane;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
@@ -77,11 +77,11 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
       String oldname = (String) event.getData();
       String newname = event.getCircuit().getName();
       if (NameIsInUse(newname, event.getCircuit())) {
-        JOptionPane.showMessageDialog(
+        OptionPane.showMessageDialog(
             null,
             "\"" + newname + "\": " + S.get("circuitNameExists"),
             "",
-            JOptionPane.ERROR_MESSAGE);
+            OptionPane.ERROR_MESSAGE);
         event.getCircuit().getStaticAttributes().setValue(CircuitAttributes.NAME_ATTR, oldname);
       }
     }

@@ -53,7 +53,7 @@ public class Ttl7464 extends AbstractTtlGate {
     boolean isIEC = AppPreferences.GATE_SHAPE.get().equals(AppPreferences.SHAPE_RECTANGULAR);
     int AndOffset = isIEC ? 10 : 0;
     Graphics g = painter.getGraphics();
-    Drawgates.paintOr(g, x + 125, y + 35, 10, isIEC ? 40 : 10, true);
+    Drawgates.paintOr(g, x + 125, y + 35, 10, isIEC ? 40 : 10, true, false);
     Drawgates.paintAnd(g, x + 105 + AndOffset, y + 20, 10, 10, false);
     Drawgates.paintAnd(g, x + 105 + AndOffset, y + 30, 10, 10, false);
     Drawgates.paintAnd(g, x + 105 + AndOffset, y + 40, 10, 10, false);

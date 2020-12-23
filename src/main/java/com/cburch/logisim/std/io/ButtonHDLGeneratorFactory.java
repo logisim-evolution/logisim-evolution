@@ -31,7 +31,7 @@ package com.cburch.logisim.std.io;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
-import com.cburch.logisim.fpga.fpgagui.FPGAReport;
+import com.cburch.logisim.fpga.gui.FPGAReport;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
 import java.util.ArrayList;
@@ -53,8 +53,7 @@ public class ButtonHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     String CloseBracket = (HDLType.equals(VHDL)) ? ")" : "]";
     for (int i = 0; i < ComponentInfo.NrOfEnds(); i++) {
       if (ComponentInfo.EndIsConnected(i)) {
-        Contents.add(
-            "   "
+        String map = "   "
                 + Preamble
                 + GetNetName(ComponentInfo, i, true, HDLType, Nets)
                 + AssignOperator
@@ -62,7 +61,8 @@ public class ButtonHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
                 + OpenBracket
                 + Integer.toString(ComponentInfo.GetLocalBubbleInputStartId() + i)
                 + CloseBracket
-                + ";");
+                + ";";
+        Contents.add(map);
       }
     }
     return Contents;

@@ -31,7 +31,7 @@ package com.cburch.logisim.gui.prefs;
 import java.awt.LayoutManager;
 import javax.swing.JPanel;
 
-abstract class OptionsPanel extends JPanel {
+public abstract class OptionsPanel extends JPanel {
   private static final long serialVersionUID = 1L;
   private PreferencesFrame optionsFrame;
 
@@ -47,7 +47,7 @@ abstract class OptionsPanel extends JPanel {
 
   public abstract String getHelpText();
 
-  PreferencesFrame getPreferencesFrame() {
+  public PreferencesFrame getPreferencesFrame() {
     return optionsFrame;
   }
 

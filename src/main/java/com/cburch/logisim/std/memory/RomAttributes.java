@@ -78,6 +78,7 @@ class RomAttributes extends AbstractAttributeSet {
             Mem.ADDR_ATTR,
             Mem.DATA_ATTR,
             Mem.LINE_ATTR,
+            Mem.ALLOW_MISALIGNED,
             Rom.CONTENTS_ATTR,
             StdAttr.LABEL,
             StdAttr.LABEL_FONT,
@@ -94,6 +95,7 @@ class RomAttributes extends AbstractAttributeSet {
   private BitWidth dataBits = BitWidth.create(8);
   private MemContents contents;
   private AttributeOption lineSize = Mem.SINGLE;
+  private Boolean allowMisaligned = false;
   private String Label = "";
   private Font LabelFont = StdAttr.DEFAULT_LABEL_FONT;
   private Boolean LabelVisable = false;
@@ -109,6 +111,7 @@ class RomAttributes extends AbstractAttributeSet {
     d.addrBits = addrBits;
     d.dataBits = dataBits;
     d.lineSize = lineSize;
+    d.allowMisaligned = allowMisaligned;
     d.contents = contents.clone();
     d.LabelFont = LabelFont;
     d.LabelVisable = LabelVisable;
@@ -131,6 +134,9 @@ class RomAttributes extends AbstractAttributeSet {
     }
     if (attr == Mem.LINE_ATTR) {
       return (V) lineSize;
+    }
+    if (attr == Mem.ALLOW_MISALIGNED) {
+      return (V) allowMisaligned;
     }
     if (attr == Rom.CONTENTS_ATTR) {
       return (V) contents;
@@ -172,6 +178,11 @@ class RomAttributes extends AbstractAttributeSet {
       AttributeOption val = (AttributeOption) value;
       if (lineSize.equals(val)) return;
       lineSize = val;
+      fireAttributeValueChanged(attr, value, null);
+    } else if (attr == Mem.ALLOW_MISALIGNED) {
+      Boolean val = (Boolean) value;
+      if (allowMisaligned.equals(val)) return;
+      allowMisaligned = val;
       fireAttributeValueChanged(attr, value, null);
     } else if (attr == Rom.CONTENTS_ATTR) {
       MemContents newContents = (MemContents) value;

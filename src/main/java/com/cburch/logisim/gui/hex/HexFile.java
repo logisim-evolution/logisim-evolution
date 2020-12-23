@@ -33,6 +33,7 @@ import static com.cburch.logisim.gui.Strings.S;
 import com.cburch.logisim.Main;
 import com.cburch.logisim.file.Loader;
 import com.cburch.logisim.file.LogisimFile;
+import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
@@ -74,7 +75,6 @@ import javax.swing.ButtonGroup;
 import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
@@ -937,7 +937,7 @@ public class HexFile {
         pos++;
         rleCount--;
       } else {
-        Arrays.fill(data, pos, pos + n, (int) rleValue);
+        Arrays.fill(data, pos, pos + n, rleValue);
         pos += n;
         rleCount -= n;
       }
@@ -975,7 +975,7 @@ public class HexFile {
         }
       }
       int n = (int) Math.min(data.length - pos, rleCount);
-      Arrays.fill(data, pos, pos + n, (int) rleValue);
+      Arrays.fill(data, pos, pos + n, rleValue);
       pos += n;
       rleCount -= n;
       if (pos >= data.length) return data;
@@ -1003,7 +1003,7 @@ public class HexFile {
       if (addr > mMaxAddr)
         mMaxAddr = addr;
       if (addr <= mEnd)
-        dst.set(addr, (int)val);
+        dst.set(addr, val);
       // else
       //   System.out.printf("warn: overflow addr = %x\n", addr);
     }
@@ -1350,10 +1350,10 @@ public class HexFile {
         open(dst, f);
         mem.setCurrentImage(instance, f);
       } catch (IOException e) {
-        JOptionPane.showMessageDialog(parent,
+        OptionPane.showMessageDialog(parent,
             e.getMessage(),
             S.get("ramLoadErrorTitle"),
-            JOptionPane.ERROR_MESSAGE);
+            OptionPane.ERROR_MESSAGE);
       }
     }
   }
@@ -1753,11 +1753,11 @@ public class HexFile {
         if (choice == JFileChooser.APPROVE_OPTION) {
           File f = chooser.getSelectedFile();
           if (f.exists()) {
-            int confirm = JOptionPane.showConfirmDialog(parent,
+            int confirm = OptionPane.showConfirmDialog(parent,
                 S.fmt("confirmOverwriteMessage", f.getName()),
                 S.get("confirmOverwriteTitle"),
-                JOptionPane.YES_NO_OPTION);
-            if (confirm != JOptionPane.YES_OPTION)
+                OptionPane.YES_NO_OPTION);
+            if (confirm != OptionPane.YES_OPTION)
               return;
           }
           try {
@@ -1765,10 +1765,10 @@ public class HexFile {
             if (mem != null)
               mem.setCurrentImage(instance, f);
           } catch (IOException e) {
-            JOptionPane.showMessageDialog(parent,
+            OptionPane.showMessageDialog(parent,
                 e.getMessage(),
                 S.get("ramSaveErrorTitle"),
-                JOptionPane.ERROR_MESSAGE);
+                OptionPane.ERROR_MESSAGE);
           }
         }
       }
@@ -1839,7 +1839,7 @@ public class HexFile {
       private HexFile() { }
 
 
-      private static MemContents compare(boolean autodetect, String desc, File tmp, int addrSize, int wordSize, HashMap<Long, Integer> vals)
+      private static MemContents compare(boolean autodetect, String desc, File tmp, int addrSize, int wordSize, HashMap<Long, Long> vals)
           throws Exception {
         MemContents dst = MemContents.create(addrSize, wordSize);
         if (desc.startsWith("Binary") || desc.startsWith("ASCII") || !autodetect) {
@@ -1861,7 +1861,7 @@ public class HexFile {
         int errs = 0;
         long mEnd = dst.getLastOffset();
         for (long a = 0; a < mEnd; a++) {
-          int v = vals.getOrDefault(a, 0);
+          long v = vals.getOrDefault(a, 0L);
           long v2 = dst.get(a);
           if (v2 != v) {
             if (errs == 0)
@@ -1882,17 +1882,17 @@ public class HexFile {
       private static void randomTests(java.util.Random rng) throws Exception {
     Main.headless = true;
     int addrSize = rng.nextInt(14)+1;
-    int wordSize = rng.nextInt(32)+1;
+    int wordSize = rng.nextInt(64)+1;
     System.out.printf("Testing addrSize = %d, wordSize = %d\n", addrSize, wordSize);
 
     MemContents m = MemContents.create(addrSize, wordSize);
 
-    HashMap<Long, Integer> vals = new HashMap<>();
+    HashMap<Long, Long> vals = new HashMap<>();
     int count = rng.nextInt(1<<addrSize);
     long mask = (1L<<wordSize) - 1;
     for (int i = 0; i < count; i++) {
       long a = rng.nextInt(1<<addrSize);
-      int v = (int)(rng.nextLong() & mask);
+      long v = (rng.nextLong() & mask);
       vals.put(a, v);
       m.set(a, v);
     }         

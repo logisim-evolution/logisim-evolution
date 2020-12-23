@@ -34,12 +34,16 @@ import com.cburch.draw.model.AbstractCanvasObject;
 import com.cburch.logisim.LogisimVersion;
 import com.cburch.logisim.Main;
 import com.cburch.logisim.circuit.Circuit;
+import com.cburch.logisim.circuit.CircuitMapInfo;
 import com.cburch.logisim.circuit.appear.AppearanceSvgReader;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeDefaultProvider;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Location;
+import com.cburch.logisim.fpga.data.BoardRectangle;
+import com.cburch.logisim.fpga.data.MapComponent;
+import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
@@ -62,7 +66,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import javax.swing.JOptionPane;
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -285,6 +288,44 @@ class XmlReader {
       }
       return known;
     }
+    
+    void loadMap(Element board, String boardName, Circuit circ) {
+      HashMap<String,CircuitMapInfo> map = new HashMap<String,CircuitMapInfo>();
+      for (Element cmap : XmlIterator.forChildElements(board, "mc")) {
+        int x,y,w,h;
+        String key = cmap.getAttribute("key");
+        if (key == null || key.isEmpty()) continue;
+        if (cmap.hasAttribute("open")) {
+          map.put(key, new CircuitMapInfo());
+        } else if (cmap.hasAttribute("vconst")) {
+          Long v;
+          try {
+            v = Long.parseLong(cmap.getAttribute("vconst"));
+          } catch (NumberFormatException e) {
+            continue;
+          }
+          map.put(key, new CircuitMapInfo(v));
+        } else if (cmap.hasAttribute("valx") && cmap.hasAttribute("valy") &&
+              cmap.hasAttribute("valw") && cmap.hasAttribute("valh")) {
+          /* Backward compatibility: */
+          try {
+            x = Integer.parseUnsignedInt(cmap.getAttribute("valx"));
+            y = Integer.parseUnsignedInt(cmap.getAttribute("valy"));
+            w = Integer.parseUnsignedInt(cmap.getAttribute("valw"));
+            h = Integer.parseUnsignedInt(cmap.getAttribute("valh"));
+          } catch (NumberFormatException e) {
+            continue;
+          }
+          BoardRectangle br = new BoardRectangle(x,y,w,h);
+          map.put(key, new CircuitMapInfo(br));
+        } else {
+          CircuitMapInfo cmapi = MapComponent.getMapInfo(cmap);
+          if (cmapi != null)
+            map.put(key, cmapi);
+        }
+      }
+      if (!map.isEmpty()) circ.addLoadedMap(boardName, map);
+    }
 
     void loadAppearance(Element appearElt, XmlReader.CircuitData circData, String context) {
       Map<Location, Instance> pins = new HashMap<Location, Instance>();
@@ -377,13 +418,13 @@ class XmlReader {
       // circuits...
       if (sourceVersion.compareTo(LogisimVersion.get(2, 7, 2)) < 0) {
         IsEvolutionFile = true;
-        JOptionPane.showMessageDialog(
+        OptionPane.showMessageDialog(
             null,
             "You are opening a file created with original Logisim code.\n"
                 + "You might encounter some problems in the execution, since some components evolved since then.\n"
                 + "Moreover, labels will be converted to match VHDL limitations for variable names.",
             "Old file format -- compatibility mode",
-            JOptionPane.WARNING_MESSAGE);
+            OptionPane.WARNING_MESSAGE);
       }
 
       // first, load the sublibraries
@@ -419,6 +460,11 @@ class XmlReader {
             circData.knownComponents = loadKnownComponents(circElt, HolyCrossFile, IsEvolutionFile);
             for (Element appearElt : XmlIterator.forChildElements(circElt, "appear")) {
               loadAppearance(appearElt, circData, name + ".appear");
+            }
+            for (Element boardMap :  XmlIterator.forChildElements(circElt, "boardmap")) {
+              String BoardName = boardMap.getAttribute("boardname");
+              if (BoardName == null || BoardName.isEmpty()) continue;
+              loadMap(boardMap,BoardName,circData.circuit);
             }
             circuitsData.add(circData);
           default:

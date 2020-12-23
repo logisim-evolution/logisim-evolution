@@ -35,12 +35,17 @@ import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.Attributes;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Direction;
+import com.cburch.logisim.fpga.data.ComponentMapInformationContainer;
+
 import java.awt.Color;
 import java.awt.Font;
 
 public interface StdAttr {
   public static final Attribute<Direction> FACING =
       Attributes.forDirection("facing", S.getter("stdFacingAttr"));
+  
+  public static final Attribute<ComponentMapInformationContainer> MAPINFO =
+      Attributes.forMap();
 
   public static final Attribute<BitWidth> WIDTH =
       Attributes.forBitWidth("width", S.getter("stdDataWidthAttr"));

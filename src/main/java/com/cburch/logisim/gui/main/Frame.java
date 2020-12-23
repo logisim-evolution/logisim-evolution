@@ -49,6 +49,7 @@ import com.cburch.logisim.gui.generic.BasicZoomModel;
 import com.cburch.logisim.gui.generic.CanvasPane;
 import com.cburch.logisim.gui.generic.CardPanel;
 import com.cburch.logisim.gui.generic.LFrame;
+import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.gui.generic.RegTabContent;
 import com.cburch.logisim.gui.generic.ZoomControl;
 import com.cburch.logisim.gui.generic.ZoomModel;
@@ -88,7 +89,6 @@ import java.beans.PropertyChangeListener;
 import java.util.Timer;
 
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.WindowConstants;
@@ -284,7 +284,6 @@ public class Frame extends LFrame implements LocaleListener {
   private Toolbox toolbox;
   private SimulationExplorer simExplorer;
   private AttrTable attrTable;
-  private RegTabContent regPanel;
   private ZoomControl zoom;
   // for the Layout view
   private LayoutToolbarModel layoutToolbarModel;
@@ -346,7 +345,7 @@ public class Frame extends LFrame implements LocaleListener {
     bottomTab = new JTabbedPane();
     bottomTab.setFont(AppPreferences.getScaledFont(new Font("Dialog", Font.BOLD, 9)));
     bottomTab.addTab("Properties", attrTable = new AttrTable(this));
-    bottomTab.addTab("State", regPanel = new RegTabContent(this));
+    bottomTab.addTab("State", new RegTabContent(this));
 
     zoom = new ZoomControl(layoutZoomModel, layoutCanvas);
 
@@ -427,6 +426,12 @@ public class Frame extends LFrame implements LocaleListener {
     }
   }
   
+  public void resetLayout() {
+    mainRegion.setFraction(0.25);
+    leftRegion.setFraction(0.5);
+    rightRegion.setFraction(1.0);
+  }
+  
   public Toolbar getToolbar() {
     return toolbar;
   }
@@ -459,8 +464,8 @@ public class Frame extends LFrame implements LocaleListener {
     toFront();
     String[] options = {S.get("saveOption"), S.get("discardOption"), S.get("cancelOption")};
     int result =
-        JOptionPane.showOptionDialog(
-            this, message, title, 0, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+        OptionPane.showOptionDialog(
+            this, message, title, 0, OptionPane.QUESTION_MESSAGE, null, options, options[0]);
     boolean ret;
     if (result == 0) {
       ret = ProjectActions.doSave(proj);
@@ -552,11 +557,12 @@ public class Frame extends LFrame implements LocaleListener {
     if (loc != null) {
       AppPreferences.WINDOW_LOCATION.set(loc.x + "," + loc.y);
     }
-    AppPreferences.WINDOW_LEFT_SPLIT.set(Double.valueOf(leftRegion.getFraction()));
-
+    if (leftRegion.getFraction() > 0)
+      AppPreferences.WINDOW_LEFT_SPLIT.set(Double.valueOf(leftRegion.getFraction()));
     if (Double.valueOf(rightRegion.getFraction()) < 1.0)
       AppPreferences.WINDOW_RIGHT_SPLIT.set(Double.valueOf(rightRegion.getFraction()));
-    AppPreferences.WINDOW_MAIN_SPLIT.set(Double.valueOf(mainRegion.getFraction()));
+    if (mainRegion.getFraction() > 0)
+      AppPreferences.WINDOW_MAIN_SPLIT.set(Double.valueOf(mainRegion.getFraction()));
     AppPreferences.DIALOG_DIRECTORY.set(JFileChoosers.getCurrentDirectory());
   }
 

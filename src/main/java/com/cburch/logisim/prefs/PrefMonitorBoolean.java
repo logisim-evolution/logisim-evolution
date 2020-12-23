@@ -28,12 +28,17 @@
 
 package com.cburch.logisim.prefs;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.Preferences;
 
-class PrefMonitorBoolean extends AbstractPrefMonitor<Boolean> {
+import javax.swing.JCheckBox;
+
+public class PrefMonitorBoolean extends AbstractPrefMonitor<Boolean> implements ActionListener {
   protected boolean dflt;
   protected boolean value;
+  private JCheckBox box;
 
   PrefMonitorBoolean(String name, boolean dflt) {
     super(name);
@@ -72,5 +77,18 @@ class PrefMonitorBoolean extends AbstractPrefMonitor<Boolean> {
     if (value != newVal) {
       AppPreferences.getPrefs().putBoolean(getIdentifier(), newVal);
     }
+  }
+  
+  public JCheckBox getCheckBox() {
+    box = new JCheckBox();
+    box.setSelected(value);
+    box.addActionListener(this);
+    return box;
+  }
+
+  @Override
+  public void actionPerformed(ActionEvent e) {
+    if (e.getSource() == box)
+      set(box.isSelected());
   }
 }

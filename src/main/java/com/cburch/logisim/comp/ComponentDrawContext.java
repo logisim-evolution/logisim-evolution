@@ -127,8 +127,9 @@ public class ComponentDrawContext {
 
   public void drawClockSymbol(Component comp, int xpos, int ypos) {
     GraphicsUtil.switchToWidth(g, 2);
-    g.drawLine(xpos, ypos - 4, xpos + 8, ypos);
-    g.drawLine(xpos, ypos + 4, xpos + 8, ypos);
+    int[] xcoords = {xpos + 1, xpos + 8, xpos + 1};
+    int[] ycoords = {ypos - 4, ypos, ypos + 4};
+    g.drawPolyline(xcoords, ycoords, 3);
     GraphicsUtil.switchToWidth(g, 1);
   }
 

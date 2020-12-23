@@ -37,12 +37,12 @@ import java.util.HashMap;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.data.Location;
+import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.gui.main.Frame;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.StdAttr;
@@ -203,10 +203,10 @@ public class SocUpMenuProvider  implements ActionListener {
       SocUpStateInterface data = (SocUpStateInterface) circuitState.getData(instance.getComponent());
       ProcessorReadElf reader = new ProcessorReadElf(fc.getSelectedFile(),instance,data.getElfType(),true);
       if (!reader.canExecute()||!reader.execute(circuitState)) {
-        JOptionPane.showMessageDialog(parrentFrame, reader.getErrorMessage(), S.get("SocUpMenuErrorReadingElfTitle"), JOptionPane.ERROR_MESSAGE);
+        OptionPane.showMessageDialog(parrentFrame, reader.getErrorMessage(), S.get("SocUpMenuErrorReadingElfTitle"), OptionPane.ERROR_MESSAGE);
         return;
       }
-      JOptionPane.showMessageDialog(parrentFrame, S.get("ProcReadElfLoadedAndEntrySet"));
+      OptionPane.showMessageDialog(parrentFrame, S.get("ProcReadElfLoadedAndEntrySet"));
     }
     
     public void registerCpuState(SocUpStateInterface data) {

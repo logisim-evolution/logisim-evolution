@@ -28,13 +28,9 @@
 
 package com.cburch.logisim.fpga.designrulecheck;
 
-import static com.cburch.logisim.std.io.PortIO.ATTR_SIZE;
-
 import com.cburch.logisim.comp.Component;
-import com.cburch.logisim.fpga.fpgaboardeditor.BoardRectangle;
-import com.cburch.logisim.fpga.fpgaboardeditor.FPGAIOInformationContainer;
-import com.cburch.logisim.fpga.hdlgenerator.IOComponentInformationContainer;
-import com.cburch.logisim.std.io.PortIO;
+import com.cburch.logisim.fpga.data.ComponentMapInformationContainer;
+import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.std.wiring.Pin;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -45,66 +41,38 @@ public class NetlistComponent {
   private int nr_of_ends;
   private Component CompReference;
   private ArrayList<ConnectionEnd> Ends;
-  IOComponentInformationContainer MyIOInformation;
+  ComponentMapInformationContainer MyMapInformation;
   private Map<ArrayList<String>, BubbleInformationContainer> GlobalIds;
   private BubbleInformationContainer LocalId;
-  private Map<String, BoardRectangle> BoardMaps;
-  private Map<ArrayList<String>, Boolean> AlternateMapEnabled;
-  private Map<ArrayList<String>, Boolean> AlternateMapLocked;
-  private Map<String, String> CurrentMapType;
+  private boolean IsGatedInstance;
 
   public NetlistComponent(Component Ref) {
+    IsGatedInstance = false;
     nr_of_ends = Ref.getEnds().size();
     CompReference = Ref;
     Ends = new ArrayList<ConnectionEnd>();
     for (int i = 0; i < Ref.getEnds().size(); i++) {
-      Ends.add(
-          new ConnectionEnd(
-              Ref.getEnd(i).isOutput(), (byte) Ref.getEnd(i).getWidth().getWidth(), Ref));
+      Ends.add( new ConnectionEnd( Ref.getEnd(i).isOutput(), 
+                (byte) Ref.getEnd(i).getWidth().getWidth(), Ref));
     }
-    if (Ref.getFactory().getIOInformation() != null) {
-      MyIOInformation = Ref.getFactory().getIOInformation().clone();
-      if (Ref.getFactory() instanceof PortIO) {
-        MyIOInformation.setNrOfInOutports(
-            Ref.getAttributeSet().getValue(ATTR_SIZE),
-            PortIO.GetLabels(Ref.getAttributeSet().getValue(ATTR_SIZE)));
-      }
+    if (Ref.getAttributeSet().containsAttribute(StdAttr.MAPINFO)) {
+      MyMapInformation = Ref.getAttributeSet().getValue(StdAttr.MAPINFO).clone();
     } else {
       if (Ref.getFactory() instanceof Pin) {
         int NrOfBits = Ref.getEnd(0).getWidth().getWidth();
-        FPGAIOInformationContainer.IOComponentTypes MainType =
-            (NrOfBits > 1)
-                ? FPGAIOInformationContainer.IOComponentTypes.Bus
-                : FPGAIOInformationContainer.IOComponentTypes.Pin;
         if (Ref.getEnd(0).isInput() && Ref.getEnd(0).isOutput()) {
-          MyIOInformation = new IOComponentInformationContainer(0, 0, NrOfBits, MainType);
-          if (NrOfBits > 1) {
-            MyIOInformation.AddAlternateMapType(FPGAIOInformationContainer.IOComponentTypes.Pin);
-          }
-          MyIOInformation.AddAlternateMapType(FPGAIOInformationContainer.IOComponentTypes.PortIO);
+          MyMapInformation = new ComponentMapInformationContainer(0, 0, NrOfBits);
         } else if (Ref.getEnd(0).isInput()) {
-          MyIOInformation = new IOComponentInformationContainer(0, NrOfBits, 0, MainType);
-          if (NrOfBits > 1) {
-            MyIOInformation.AddAlternateMapType(FPGAIOInformationContainer.IOComponentTypes.Pin);
-          }
-          MyIOInformation.AddAlternateMapType(FPGAIOInformationContainer.IOComponentTypes.LED);
+          MyMapInformation = new ComponentMapInformationContainer(0, NrOfBits, 0);
         } else {
-          MyIOInformation = new IOComponentInformationContainer(NrOfBits, 0, 0, MainType);
-          if (NrOfBits > 1) {
-            MyIOInformation.AddAlternateMapType(FPGAIOInformationContainer.IOComponentTypes.Pin);
-          }
-          MyIOInformation.AddAlternateMapType(FPGAIOInformationContainer.IOComponentTypes.Button);
+          MyMapInformation = new ComponentMapInformationContainer(NrOfBits, 0, 0);
         }
       } else {
-        MyIOInformation = null;
+        MyMapInformation = null;
       }
     }
     GlobalIds = null;
     LocalId = null;
-    BoardMaps = new HashMap<String, BoardRectangle>();
-    AlternateMapEnabled = new HashMap<ArrayList<String>, Boolean>();
-    AlternateMapLocked = new HashMap<ArrayList<String>, Boolean>();
-    CurrentMapType = new HashMap<String, String>();
   }
 
   public void AddGlobalBubbleID(
@@ -135,32 +103,6 @@ public class NetlistComponent {
           OutputBubblesStartId, OutputBubblesStartId + NrOfOutputBubbles - 1);
     }
     GlobalIds.put(HierarchyName, thisInfo);
-  }
-
-  public void addMap(String MapName, BoardRectangle map, String MapType) {
-    BoardMaps.put(MapName, map);
-    CurrentMapType.put(MapName, MapType);
-  }
-
-  public boolean AlternateMappingEnabled(ArrayList<String> key) {
-    if (!AlternateMapEnabled.containsKey(key)) {
-      AlternateMapEnabled.put(
-          key,
-          MyIOInformation.GetMainMapType().equals(FPGAIOInformationContainer.IOComponentTypes.Bus));
-      AlternateMapLocked.put(
-          key,
-          MyIOInformation.GetMainMapType().equals(FPGAIOInformationContainer.IOComponentTypes.Bus));
-    }
-    return AlternateMapEnabled.get(key);
-  }
-
-  public boolean AlternateMappingIsLocked(ArrayList<String> key) {
-    if (!AlternateMapLocked.containsKey(key)) {
-      AlternateMapLocked.put(
-          key,
-          MyIOInformation.GetMainMapType().equals(FPGAIOInformationContainer.IOComponentTypes.Bus));
-    }
-    return AlternateMapLocked.get(key);
   }
 
   public boolean EndIsConnected(int index) {
@@ -222,6 +164,7 @@ public class NetlistComponent {
   }
 
   public BubbleInformationContainer GetGlobalBubbleId(ArrayList<String> HierarchyName) {
+	if (GlobalIds == null) return null;
     if (GlobalIds.containsKey(HierarchyName)) {
       return GlobalIds.get(HierarchyName);
     } else {
@@ -229,8 +172,8 @@ public class NetlistComponent {
     }
   }
 
-  public IOComponentInformationContainer GetIOInformationContainer() {
-    return MyIOInformation;
+  public ComponentMapInformationContainer GetMapInformationContainer() {
+    return MyMapInformation;
   }
 
   public int GetLocalBubbleInOutEndId() {
@@ -275,14 +218,6 @@ public class NetlistComponent {
     return LocalId.GetOutputStartIndex();
   }
 
-  public BoardRectangle getMap(String MapName) {
-    return BoardMaps.get(MapName);
-  }
-
-  public String getMapType(String MapName) {
-    return CurrentMapType.get(MapName);
-  }
-
   public boolean hasConnection(Net RootNet, byte BitIndex) {
     for (ConnectionEnd search : Ends) {
       for (byte bit = 0; bit < search.NrOfBits(); bit++) {
@@ -296,17 +231,8 @@ public class NetlistComponent {
     return false;
   }
 
-  public void LockAlternateMapping(ArrayList<String> key) {
-    AlternateMapLocked.put(key, true);
-  }
-
   public int NrOfEnds() {
     return nr_of_ends;
-  }
-
-  public void removeMap(String MapName) {
-    BoardMaps.remove(MapName);
-    CurrentMapType.remove(MapName);
   }
 
   public boolean setEnd(int index, ConnectionEnd End) {
@@ -341,34 +267,6 @@ public class NetlistComponent {
     }
   }
 
-  public void ToggleAlternateMapping(ArrayList<String> key) {
-    boolean newIsLocked =
-        MyIOInformation.GetMainMapType().equals(FPGAIOInformationContainer.IOComponentTypes.Bus);
-    if (AlternateMapLocked.containsKey(key)) {
-      if (AlternateMapLocked.get(key)) {
-        return;
-      }
-    } else {
-      AlternateMapLocked.put(key, newIsLocked);
-      if (newIsLocked) {
-        return;
-      }
-    }
-    if (!AlternateMapEnabled.containsKey(key)) {
-      AlternateMapEnabled.put(key, true);
-    }
-    if (AlternateMapEnabled.get(key)) {
-      AlternateMapEnabled.put(key, false);
-    } else {
-      if (MyIOInformation.HasAlternateMapTypes()) {
-        AlternateMapEnabled.put(key, true);
-      }
-    }
-  }
-
-  public void UnlockAlternateMapping(ArrayList<String> key) {
-    if (!MyIOInformation.GetMainMapType().equals(FPGAIOInformationContainer.IOComponentTypes.Bus)) {
-      AlternateMapLocked.put(key, false);
-    }
-  }
+  public boolean IsGatedInstance() { return IsGatedInstance; }
+  public void SetIsGatedInstance() { IsGatedInstance = true; }
 }

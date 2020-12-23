@@ -46,9 +46,9 @@ import java.io.File;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 
+import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.gui.generic.TikZWriter;
 import com.cburch.logisim.gui.main.ExportImage;
 import com.cburch.logisim.gui.main.ExportImage.ImageFileFilter;
@@ -84,10 +84,10 @@ public abstract class PrintHandler implements Printable {
     try {
       job.print();
     } catch (PrinterException e) {
-      JOptionPane.showMessageDialog(
+      OptionPane.showMessageDialog(
           KeyboardFocusManager.getCurrentKeyboardFocusManager().getActiveWindow(),
           S.fmt("printError", e.toString()),
-          S.get("printErrorTitle"), JOptionPane.ERROR_MESSAGE);
+          S.get("printErrorTitle"), OptionPane.ERROR_MESSAGE);
     }
   }
 
@@ -128,12 +128,12 @@ public abstract class PrintHandler implements Printable {
     }
     setLastExported(dest);
     if (dest.exists()) {
-      int confirm = JOptionPane.showConfirmDialog(
+      int confirm = OptionPane.showConfirmDialog(
           KeyboardFocusManager.getCurrentKeyboardFocusManager().getActiveWindow(),
           S.get("confirmOverwriteMessage"),
           S.get("confirmOverwriteTitle"),
-          JOptionPane.YES_NO_OPTION);
-      if (confirm != JOptionPane.YES_OPTION)
+          OptionPane.YES_NO_OPTION);
+      if (confirm != OptionPane.YES_OPTION)
         return;
     }
     int fmt = (ff == filters[0] ? ExportImage.FORMAT_PNG
@@ -162,7 +162,7 @@ public abstract class PrintHandler implements Printable {
   private boolean showErr(String key) {
     Component parent = KeyboardFocusManager.getCurrentKeyboardFocusManager().getActiveWindow();
     String msg = S.get("couldNotCreateImage");
-    JOptionPane.showMessageDialog(parent, msg);
+    OptionPane.showMessageDialog(parent, msg);
     return true;
   }
 

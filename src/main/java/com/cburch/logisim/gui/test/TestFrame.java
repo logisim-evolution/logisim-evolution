@@ -37,7 +37,7 @@ import com.cburch.logisim.circuit.SimulatorListener;
 import com.cburch.logisim.data.TestException;
 import com.cburch.logisim.data.TestVector;
 import com.cburch.logisim.gui.generic.LFrame;
-import com.cburch.logisim.gui.menu.LogisimMenuBar;
+import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.proj.ProjectEvent;
 import com.cburch.logisim.proj.ProjectListener;
@@ -50,7 +50,6 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -59,7 +58,6 @@ import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 public class TestFrame extends LFrame {
@@ -76,11 +74,11 @@ public class TestFrame extends LFrame {
         if (result != JFileChooser.APPROVE_OPTION) return;
         File file = chooser.getSelectedFile();
         if (!file.exists() || !file.canRead() || file.isDirectory()) {
-          JOptionPane.showMessageDialog(
+          OptionPane.showMessageDialog(
               TestFrame.this,
               StringUtil.format(S.get("fileCannotReadMessage"), file.getName()),
               S.get("fileCannotReadTitle"),
-              JOptionPane.OK_OPTION);
+              OptionPane.OK_OPTION);
           return;
         }
         try {
@@ -92,27 +90,27 @@ public class TestFrame extends LFrame {
           getModel().setPaused(true);
           getModel().start();
         } catch (IOException e) {
-          JOptionPane.showMessageDialog(
+          OptionPane.showMessageDialog(
               TestFrame.this,
               StringUtil.format(S.get("fileCannotParseMessage"), file.getName(), e.getMessage()),
               S.get("fileCannotReadTitle"),
-              JOptionPane.OK_OPTION);
+              OptionPane.OK_OPTION);
         } catch (TestException e) {
-          JOptionPane.showMessageDialog(
+          OptionPane.showMessageDialog(
               TestFrame.this,
               StringUtil.format(S.get("fileWrongPinsMessage"), file.getName(), e.getMessage()),
               S.get("fileWrongPinsTitle"),
-              JOptionPane.OK_OPTION);
+              OptionPane.OK_OPTION);
         }
       } else if (src == run) {
         try {
           getModel().start();
         } catch (TestException e) {
-          JOptionPane.showMessageDialog(
+          OptionPane.showMessageDialog(
               TestFrame.this,
               StringUtil.format(S.get("fileWrongPinsMessage"), curFile.getName(), e.getMessage()),
               S.get("fileWrongPinsTitle"),
-              JOptionPane.OK_OPTION);
+              OptionPane.OK_OPTION);
         }
       } else if (src == stop) {
         getModel().setPaused(true);

@@ -30,6 +30,7 @@ package com.cburch.logisim.vhdl.gui;
 
 import static com.cburch.logisim.vhdl.Strings.S;
 
+import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.util.FileUtil;
 import com.cburch.logisim.util.JFileChoosers;
@@ -56,7 +57,6 @@ import java.util.WeakHashMap;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -104,11 +104,11 @@ public class HdlContentEditor extends JDialog implements JInputDialog {
           try {
             HdlFile.save(f, getText());
           } catch (IOException e) {
-            JOptionPane.showMessageDialog(
+            OptionPane.showMessageDialog(
                 HdlContentEditor.this,
                 e.getMessage(),
                 S.get("hexSaveErrorTitle"),
-                JOptionPane.ERROR_MESSAGE);
+                OptionPane.ERROR_MESSAGE);
           }
         }
       }
@@ -154,12 +154,12 @@ public class HdlContentEditor extends JDialog implements JInputDialog {
 
   public static boolean confirmImport(Component parent) {
     String[] options = {S.get("importOption"), S.get("cancelOption")};
-    return JOptionPane.showOptionDialog(
+    return OptionPane.showOptionDialog(
             parent,
             S.get("importMessage"),
             S.get("importTitle"),
             0,
-            JOptionPane.QUESTION_MESSAGE,
+            OptionPane.QUESTION_MESSAGE,
             null,
             options,
             options[0])
@@ -213,21 +213,21 @@ public class HdlContentEditor extends JDialog implements JInputDialog {
       S.get("confirmCloseYes"), S.get("confirmCloseNo"), S.get("confirmCloseBackup")
     };
     int n =
-        JOptionPane.showOptionDialog(
+        OptionPane.showOptionDialog(
             this,
             S.get("confirmCloseMessage"),
             S.get("confirmCloseTitle"),
-            JOptionPane.YES_NO_CANCEL_OPTION,
-            JOptionPane.QUESTION_MESSAGE,
+            OptionPane.YES_NO_CANCEL_OPTION,
+            OptionPane.QUESTION_MESSAGE,
             null,
             options,
             options[0]);
 
     switch (n) {
-      case JOptionPane.YES_OPTION:
+      case OptionPane.YES_OPTION:
         dispose();
         break;
-      case JOptionPane.CANCEL_OPTION:
+      case OptionPane.CANCEL_OPTION:
         save.doClick();
         dispose();
         break;
@@ -293,23 +293,6 @@ public class HdlContentEditor extends JDialog implements JInputDialog {
         compFolder.mkdir();
       return new File(
           FileUtil.correctPath(compFolder.getCanonicalPath()) + model.getName() + ".vhd");
-    } catch (IOException ex) {
-      return defaultFile;
-    }
-  }
-
-  private File getDefaultImportFile(File defaultFile) {
-    File projectFile = project.getLogisimFile().getLoader().getMainFile();
-    if (projectFile == null) return defaultFile;
-
-    File compFolder;
-    try {
-      compFolder =
-          new File(
-              FileUtil.correctPath(projectFile.getParentFile().getCanonicalPath()) + EXPORT_DIR);
-      if (!compFolder.exists() || (compFolder.exists() && !compFolder.isDirectory()))
-        compFolder.mkdir();
-      return new File(FileUtil.correctPath(compFolder.getCanonicalPath()));
     } catch (IOException ex) {
       return defaultFile;
     }

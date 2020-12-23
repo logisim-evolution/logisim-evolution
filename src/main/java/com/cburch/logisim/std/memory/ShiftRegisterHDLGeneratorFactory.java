@@ -31,7 +31,7 @@ package com.cburch.logisim.std.memory;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
-import com.cburch.logisim.fpga.fpgagui.FPGAReport;
+import com.cburch.logisim.fpga.gui.FPGAReport;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.FileWriter;
 import com.cburch.logisim.instance.StdAttr;
@@ -137,11 +137,11 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
               + ActiveLevelStr
               + ") ? {s_state_reg["
               + NrOfStagesStr
-              + "-2:1],ShiftIn} :");
+              + "-2:0],ShiftIn} :");
       Contents.add(
           "                                                {s_state_reg_neg_edge["
               + NrOfStagesStr
-              + "-2:1],ShiftIn};");
+              + "-2:0],ShiftIn};");
       Contents.add("");
       Contents.add("   always @(posedge Clock or posedge Reset)");
       Contents.add("   begin");
@@ -270,7 +270,7 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
     } else {
       Contents.add("   genvar n;");
       Contents.add("   generate");
-      Contents.add("      for (n = 0 ; n < " + NrOfBitsStr + "-1 ; n =n+1)");
+      Contents.add("      for (n = 0 ; n < " + NrOfBitsStr + "; n =n+1)");
       Contents.add("      begin:Bit");
       Contents.add("         SingleBitShiftReg #(." + ActiveLevelStr + "(" + ActiveLevelStr + "),");
       Contents.add("                             ." + NrOfStagesStr + "(" + NrOfStagesStr + "))");
@@ -336,8 +336,10 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
 
   @Override
   public SortedMap<String, String> GetPortMap(
-      Netlist Nets, NetlistComponent ComponentInfo, FPGAReport Reporter, String HDLType) {
+        Netlist Nets, Object MapInfo, FPGAReport Reporter, String HDLType) {
     SortedMap<String, String> PortMap = new TreeMap<String, String>();
+    if (!(MapInfo instanceof NetlistComponent)) return PortMap;
+    NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
     Boolean GatedClock = false;
     Boolean HasClock = true;
     Boolean ActiveLow = false;
@@ -459,17 +461,17 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
                 "Q" + BracketOpen + Integer.toString(NrOfStages - 1) + BracketClose, "OPEN");
           }
         } else {
-          for (int i = 0; i < NrOfStages; i++) {
+          for (int i = NrOfStages-1; i >= 0; i--) {
             if (Vector.length() != 0) Vector.append(",");
             Vector.append(GetNetName(ComponentInfo, 6 + 2 * i, true, HDLType, Nets));
           }
           PortMap.put("D", Vector.toString());
           Vector.setLength(0);
-          for (int i = 0; i < NrOfStages - 1; i++) {
+          Vector.append("open");
+          for (int i = NrOfStages-2; i >= 0; i--) {
             if (Vector.length() != 0) Vector.append(",");
             Vector.append(GetNetName(ComponentInfo, 7 + 2 * i, true, HDLType, Nets));
           }
-          Vector.append(", ");
           PortMap.put("Q", Vector.toString());
         }
       } else {
@@ -493,20 +495,21 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
           }
         } else {
           Vector.setLength(0);
-          for (int bit = 0; bit < NrOfBits; bit++) {
-            for (int i = 0; i < NrOfStages; i++) {
+          for (int bit = NrOfBits-1 ; bit >= 0; bit--) {
+            for (int i = NrOfStages-1 ; i >= 0 ; i--) {
               if (Vector.length() != 0) Vector.append(",");
               Vector.append(GetBusEntryName(ComponentInfo, 6 + 2 * i, true, bit, HDLType, Nets));
             }
           }
           PortMap.put("D", Vector.toString());
           Vector.setLength(0);
-          for (int bit = 0; bit < NrOfBits; bit++) {
-            for (int i = 0; i < NrOfStages - 1; i++) {
+          for (int bit = NrOfBits-1; bit >= 0 ; bit--) {
+            if (Vector.length() != 0) Vector.append(",");
+            Vector.append("open");
+            for (int i = NrOfStages-2; i >= 0; i--) {
               if (Vector.length() != 0) Vector.append(",");
               Vector.append(GetBusEntryName(ComponentInfo, 7 + 2 * i, true, bit, HDLType, Nets));
             }
-            Vector.append(", ");
           }
           PortMap.put("Q", Vector.toString());
         }

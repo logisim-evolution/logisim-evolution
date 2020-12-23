@@ -54,7 +54,6 @@ import javax.swing.Box;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.event.CaretEvent;
@@ -67,6 +66,7 @@ import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rtextarea.RTextScrollPane;
 
 import com.cburch.logisim.circuit.CircuitState;
+import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.gui.icons.CompileIcon;
 import com.cburch.logisim.gui.icons.ErrorIcon;
 import com.cburch.logisim.gui.icons.InfoIcon;
@@ -179,10 +179,10 @@ public class AssemblerPanel extends JPanel implements MouseListener,LocaleListen
   
   private void openFile() {
     if (documentChanged) {
-      int ret = JOptionPane.showConfirmDialog(parent, S.get("AsmPanDocumentChangedSave"),parent.getParentTitle() , JOptionPane.YES_NO_OPTION);
-      if (ret == JOptionPane.YES_OPTION) {
+      int ret = OptionPane.showConfirmDialog(parent, S.get("AsmPanDocumentChangedSave"),parent.getParentTitle() , OptionPane.YES_NO_OPTION);
+      if (ret == OptionPane.YES_OPTION) {
         if (textFile == null) {
-        	JOptionPane.showMessageDialog(parent, S.get("AsmPanSaveFirstBeforeOpen"));
+        	OptionPane.showMessageDialog(parent, S.get("AsmPanSaveFirstBeforeOpen"));
         	return;
         } else saveFile(false);
       }
@@ -202,7 +202,7 @@ public class AssemblerPanel extends JPanel implements MouseListener,LocaleListen
       reader.close();
       asmWindow.setText(s.toString());
     } catch ( IOException e) {
-      JOptionPane.showMessageDialog(parent, S.fmt("AsmPanErrorReadingFile",textFile.getName()), parent.getParentTitle(), JOptionPane.ERROR_MESSAGE);
+      OptionPane.showMessageDialog(parent, S.fmt("AsmPanErrorReadingFile",textFile.getName()), parent.getParentTitle(), OptionPane.ERROR_MESSAGE);
       textFile = null;
       return;
 	}
@@ -231,7 +231,7 @@ public class AssemblerPanel extends JPanel implements MouseListener,LocaleListen
       writer.write(asmWindow.getText());
       writer.close();
     } catch (IOException e) {
-      JOptionPane.showMessageDialog(parent, S.fmt("AsmPanErrorCreateFile",textFile.getName()), parent.getParentTitle(), JOptionPane.ERROR_MESSAGE);
+      OptionPane.showMessageDialog(parent, S.fmt("AsmPanErrorCreateFile",textFile.getName()), parent.getParentTitle(), OptionPane.ERROR_MESSAGE);
     }
     documentChanged = false;
     updateLineNumber();
@@ -240,7 +240,7 @@ public class AssemblerPanel extends JPanel implements MouseListener,LocaleListen
   private boolean Assemble(boolean showWindow) {
 	boolean result = assembler.assemble();
 	if (!result) asmWindow.setCaretPosition(assembler.getErrorPositions().get(0));
-	else if (showWindow) JOptionPane.showMessageDialog(parent, S.get("AssemblerAssembleSuccess"));
+	else if (showWindow) OptionPane.showMessageDialog(parent, S.get("AssemblerAssembleSuccess"));
     return result;
   }
   
@@ -249,11 +249,11 @@ public class AssemblerPanel extends JPanel implements MouseListener,LocaleListen
     long entryPoint = assembler.getEntryPoint();
     if (entryPoint < 0) return;
     if (!assembler.download(cpu, circuitState)) {
-      JOptionPane.showMessageDialog(parent, S.get("AssemblerUnableToDownload"), S.get("AsmPanRun"), JOptionPane.ERROR_MESSAGE);
+      OptionPane.showMessageDialog(parent, S.get("AssemblerUnableToDownload"), S.get("AsmPanRun"), OptionPane.ERROR_MESSAGE);
       return;
     }
     cpu.setEntryPointandReset(circuitState, entryPoint, null, assembler.getSectionHeader());
-    JOptionPane.showMessageDialog(parent, S.get("AssemblerRunSuccess"), S.get("AsmPanRun"), JOptionPane.INFORMATION_MESSAGE);
+    OptionPane.showMessageDialog(parent, S.get("AssemblerRunSuccess"), S.get("AsmPanRun"), OptionPane.INFORMATION_MESSAGE);
   }
   
   private void updateLineNumber() {
@@ -377,8 +377,8 @@ public class AssemblerPanel extends JPanel implements MouseListener,LocaleListen
   public void windowClosed(WindowEvent e) { 
     if (documentChanged) {
       parent.setVisible(true);
-      int ret = JOptionPane.showConfirmDialog(parent, S.get("AsmPanDocumentChangedSave"),parent.getParentTitle() , JOptionPane.YES_NO_OPTION);
-      if (ret == JOptionPane.YES_OPTION) saveFile(false);
+      int ret = OptionPane.showConfirmDialog(parent, S.get("AsmPanDocumentChangedSave"),parent.getParentTitle() , OptionPane.YES_NO_OPTION);
+      if (ret == OptionPane.YES_OPTION) saveFile(false);
       documentChanged = false;
       parent.setVisible(false);
     }

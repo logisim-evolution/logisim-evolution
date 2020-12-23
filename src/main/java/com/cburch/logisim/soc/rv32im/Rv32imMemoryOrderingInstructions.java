@@ -32,9 +32,8 @@ import static com.cburch.logisim.soc.Strings.S;
 
 import java.util.ArrayList;
 
-import javax.swing.JOptionPane;
-
 import com.cburch.logisim.circuit.CircuitState;
+import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.soc.util.AssemblerAsmInstruction;
 import com.cburch.logisim.soc.util.AssemblerExecutionInterface;
 
@@ -69,7 +68,7 @@ public class Rv32imMemoryOrderingInstructions implements AssemblerExecutionInter
   public boolean execute(Object state, CircuitState cState) {
     if (!valid)
       return false;
-    JOptionPane.showMessageDialog(null, S.get("Rv32imMOINotImplmented"));
+    OptionPane.showMessageDialog(null, S.get("Rv32imMOINotImplmented"));
     return true;
   }
 

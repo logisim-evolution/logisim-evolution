@@ -37,7 +37,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Set;
 
-import javax.swing.JOptionPane;
 import javax.swing.text.BadLocationException;
 
 import org.fife.ui.rsyntaxtextarea.RSyntaxDocument;
@@ -52,6 +51,7 @@ import org.fife.ui.rtextarea.RTextArea;
 import org.fife.ui.rtextarea.RTextScrollPane;
 
 import com.cburch.logisim.circuit.CircuitState;
+import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.gui.icons.ErrorIcon;
 import com.cburch.logisim.soc.data.SocProcessorInterface;
 import com.cburch.logisim.soc.file.ElfSectionHeader;
@@ -467,9 +467,9 @@ public class Assembler extends AbstractParser implements LocaleListener {
     if (EntryPoint >= 0) return EntryPoint;
     result = assemblerInfo.getEntryPoint();
     if (result < 0) 
-      JOptionPane.showMessageDialog(pane, S.get("AssemblerNoExecutableSection"), S.get("AsmPanRun"), JOptionPane.ERROR_MESSAGE);
+      OptionPane.showMessageDialog(pane, S.get("AssemblerNoExecutableSection"), S.get("AsmPanRun"), OptionPane.ERROR_MESSAGE);
     else
-      JOptionPane.showMessageDialog(pane, S.get("AssemblerAssumingEntryPoint"), S.get("AsmPanRun"), JOptionPane.WARNING_MESSAGE);
+      OptionPane.showMessageDialog(pane, S.get("AssemblerAssumingEntryPoint"), S.get("AsmPanRun"), OptionPane.WARNING_MESSAGE);
     return result;
   }
   

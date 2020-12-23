@@ -319,9 +319,13 @@ public class TtyInterface {
       file = loader.openLogisimFile(fileToOpen, args.getSubstitutions());
     } catch (LoadFailedException e) {
       logger.error("{}", S.fmt("ttyLoadError", fileToOpen.getName()));
-
       System.exit(-1);
       return;
+    }
+    Project proj = new Project(file);
+    if (args.isFpgaDownload()) {
+      if (!args.FpgaDownload(proj))
+        System.exit(-1);
     }
 
     int format = args.getTtyFormat();
@@ -333,7 +337,6 @@ public class TtyInterface {
       System.exit(0);
     }
 
-    Project proj = new Project(file);
     Circuit circuit;
     String circuitToTest = args.getCircuitToTest();
     if (circuitToTest == null || circuitToTest.length() == 0) {
@@ -465,7 +468,6 @@ public class TtyInterface {
           BitWidth width = pin.getAttributeValue(StdAttr.WIDTH);
           valueMap.put(pin, Value.createError(width));
         } else {
-          int width = pin.getAttributeValue(StdAttr.WIDTH).getWidth();
           InstanceState pinState = circuitState.getInstanceState(pin);
           Value outValue = Pin.FACTORY.getValue(pinState);
           valueMap.put(pin, outValue);

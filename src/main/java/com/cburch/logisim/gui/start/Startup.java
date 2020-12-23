@@ -34,8 +34,11 @@ import com.cburch.logisim.LogisimVersion;
 import com.cburch.logisim.Main;
 import com.cburch.logisim.file.LoadFailedException;
 import com.cburch.logisim.file.Loader;
-import com.cburch.logisim.fpga.fpgagui.FPGACommanderTests;
+import com.cburch.logisim.fpga.download.Download;
+import com.cburch.logisim.fpga.file.BoardReaderClass;
+import com.cburch.logisim.fpga.gui.FPGAReport;
 import com.cburch.logisim.gui.generic.CanvasPane;
+import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.gui.icons.ErrorIcon;
 import com.cburch.logisim.gui.icons.InfoIcon;
 import com.cburch.logisim.gui.icons.QuestionIcon;
@@ -81,11 +84,13 @@ import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 import javax.swing.JRadioButton;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollPane;
@@ -120,8 +125,9 @@ public class Startup implements AWTEventListener {
     boolean isTty = false;
     boolean isClearPreferences = false;
     for (int i = 0; i < args.length; i++) {
-      if (args[i].equals("-tty")) {
+      if (args[i].equals("-tty")||args[i].equals("-test-fpga-implementation")) {
         isTty = true;
+        Main.headless = true;
       } else if (args[i].equals("-clearprefs") || args[i].equals("-clearprops")) {
         isClearPreferences = true;
       }
@@ -150,14 +156,14 @@ public class Startup implements AWTEventListener {
     if (AppPreferences.FirstTimeStartup.getBoolean() & !isTty) {
       System.out.println("First time startup");
       int Result =
-          JOptionPane.showConfirmDialog(
+          OptionPane.showConfirmDialog(
               null,
               "Logisim can automatically check for new updates and versions.\n"
                   + "Would you like to enable this feature?\n"
                   + "(This feature can be disabled in Window -> Preferences -> Software)\n",
               "Autoupdate",
-              JOptionPane.YES_NO_OPTION);
-      if (Result == JOptionPane.YES_OPTION) AppPreferences.AutomaticUpdateCheck.setBoolean(true);
+              OptionPane.YES_NO_OPTION);
+      if (Result == OptionPane.YES_OPTION) AppPreferences.AutomaticUpdateCheck.setBoolean(true);
       AppPreferences.FirstTimeStartup.set(false);
     }
 
@@ -356,10 +362,12 @@ public class Startup implements AWTEventListener {
         ret.testCircuitImpPath = args[i];
         i++;
         if (i >= args.length) printUsage();
-
-        ret.testCircuitImpMapFile = args[i];
-        i++;
-        if (i >= args.length) printUsage();
+        
+        if (args[i].toUpperCase().endsWith("MAP.xml")) {
+          ret.testCircuitImpMapFile = args[i];
+          i++;
+          if (i >= args.length) printUsage();
+        }
 
         ret.testCircuitImpName = args[i];
         i++;
@@ -369,13 +377,24 @@ public class Startup implements AWTEventListener {
         ret.testCircuitImpBoard = args[i];
         i++;
         if (i < args.length) {
-          if (!args[i].startsWith("-")) ret.testTickFrequency = (double) Integer.valueOf(args[i]);
-          else i--;
+          if (!args[i].startsWith("-")) {
+            try {
+              int freq = Integer.parseUnsignedInt(args[i]);
+              ret.testTickFrequency = (double) freq;
+              i++;
+            } catch (NumberFormatException e) {}
+            if (i < args.length) {
+              if (!args[i].startsWith("-")) {
+                if (args[i].toUpperCase().equals("HDLONLY"))
+                  ret.testCircuitHdlOnly = true;
+                else printUsage();
+              } else i--;
+            }
+          } else i--;
         }
-
-        ret.filesToOpen.add(new File(ret.testCircuitImpPath));
+        ret.doFpgaDownload = true;
         ret.showSplash = false;
-        ret.exitAfterStartup = true;
+        ret.filesToOpen.add(new File(ret.testCircuitImpPath));
       } else if (arg.equals("-test-circuit")) {
         // already handled above
         i++;
@@ -525,6 +544,7 @@ public class Startup implements AWTEventListener {
 
   /* Test implementation */
   private String testCircuitImpPath = null;
+  private boolean doFpgaDownload = false;
   private double testTickFrequency = 1;
   /* Name of the circuit withing logisim */
   private String testCircuitImpName = null;
@@ -532,6 +552,8 @@ public class Startup implements AWTEventListener {
   private String testCircuitImpBoard = null;
   /* Path folder containing Map file */
   private String testCircuitImpMapFile = null;
+  /* Indicate if only the HDL should be generated */
+  private Boolean testCircuitHdlOnly = false;
 
   /* Testing Xml (circ file) Variable */
   private String testCircPathInput = null;
@@ -602,14 +624,14 @@ public class Startup implements AWTEventListener {
     Monitor.setProgress(3);
     if (remoteVersion.compareTo(Main.VERSION) > 0) {
       int answer =
-          JOptionPane.showConfirmDialog(
+          OptionPane.showConfirmDialog(
               null,
               "A new Logisim-evolution version ("
                   + remoteVersion
                   + ") is available!\nWould you like to update?",
               "Update",
-              JOptionPane.YES_NO_OPTION,
-              JOptionPane.INFORMATION_MESSAGE);
+              OptionPane.YES_NO_OPTION,
+              OptionPane.INFORMATION_MESSAGE);
 
       if (answer == 1) {
         // User refused to update -- we just hope he gets sufficiently
@@ -627,11 +649,11 @@ public class Startup implements AWTEventListener {
         logger.error(
             "Error in the syntax of the URI for the path of the executed Logisim-evolution JAR file!");
         e.printStackTrace();
-        JOptionPane.showMessageDialog(
+        OptionPane.showMessageDialog(
             null,
             "An error occurred while updating to the new Logisim-evolution version.\nPlease check the console for log information.",
             "Update failed",
-            JOptionPane.ERROR_MESSAGE);
+            OptionPane.ERROR_MESSAGE);
         Monitor.close();
         return (false);
       }
@@ -642,21 +664,21 @@ public class Startup implements AWTEventListener {
       boolean updateOk = downloadInstallUpdatedVersion(remoteJar, jarFile.getAbsolutePath());
 
       if (updateOk) {
-        JOptionPane.showMessageDialog(
+        OptionPane.showMessageDialog(
             null,
             "The new Logisim-evolution version ("
                 + remoteVersion
                 + ") has been correctly installed.\nPlease restart Logisim-evolution for the changes to take effect.",
             "Update succeeded",
-            JOptionPane.INFORMATION_MESSAGE);
+            OptionPane.INFORMATION_MESSAGE);
         Monitor.close();
         return (true);
       } else {
-        JOptionPane.showMessageDialog(
+        OptionPane.showMessageDialog(
             null,
             "An error occurred while updating to the new Logisim-evolution version.\nPlease check the console for log information.",
             "Update failed",
-            JOptionPane.ERROR_MESSAGE);
+            OptionPane.ERROR_MESSAGE);
         Monitor.close();
         return (false);
       }
@@ -816,6 +838,26 @@ public class Startup implements AWTEventListener {
   int getTtyFormat() {
     return ttyFormat;
   }
+  
+  boolean isFpgaDownload() {
+    return doFpgaDownload;
+  }
+  
+  boolean FpgaDownload(Project proj) {
+    /* Testing synthesis */
+    Download Downloader =
+        new Download(
+        	proj,
+        	testCircuitImpName,
+        	testTickFrequency,
+        	new FPGAReport(),
+        	new BoardReaderClass(AppPreferences.Boards.GetBoardFilePath(testCircuitImpBoard)).GetBoardInformation(),
+        	testCircuitImpMapFile,
+            false,
+            false,
+            testCircuitHdlOnly);
+    return Downloader.runtty();
+  }
 
   private void loadTemplate(Loader loader, File templFile, boolean templEmpty) {
     if (showSplash) {
@@ -962,22 +1004,6 @@ public class Startup implements AWTEventListener {
               System.out.println("Test bench fail\n");
               System.exit(-1);
             }
-          } else if (testCircuitImpPath != null) {
-            /* Testing synthesis */
-            proj = ProjectActions.doOpenNoWindow(monitor, fileToOpen);
-            FPGACommanderTests testImpFpga =
-                new FPGACommanderTests(
-                    proj,
-                    testCircuitImpMapFile,
-                    testCircuitImpName,
-                    testCircuitImpBoard,
-                    testTickFrequency);
-
-            if (testImpFpga.StartTests()) {
-              System.exit(0);
-            } else {
-              System.exit(-1);
-            }
           } else {
             ProjectActions.doOpen(monitor, fileToOpen, substitutions);
           }
@@ -1028,10 +1054,12 @@ public class Startup implements AWTEventListener {
             || (container instanceof JComboBox)
             || (container instanceof JToolTip)
             || (container instanceof JLabel)
+            || (container instanceof JFrame)
             || (container instanceof JMenu)
             || (container instanceof JMenuItem)
             || (container instanceof JRadioButton)
             || (container instanceof JRadioButtonMenuItem)
+            || (container instanceof JProgressBar)
             || (container instanceof JSpinner)
             || (container instanceof JTabbedPane)
             || (container instanceof JTextField)
@@ -1053,16 +1081,16 @@ public class Startup implements AWTEventListener {
           JOptionPane pane = (JOptionPane) container;
           if (HasIcon(pane)) {
             switch (pane.getMessageType()) {
-              case JOptionPane.ERROR_MESSAGE:
+              case OptionPane.ERROR_MESSAGE:
                 pane.setIcon(new ErrorIcon());
                 break;
-              case JOptionPane.QUESTION_MESSAGE:
+              case OptionPane.QUESTION_MESSAGE:
                 pane.setIcon(new QuestionIcon());
                 break;
-              case JOptionPane.INFORMATION_MESSAGE:
+              case OptionPane.INFORMATION_MESSAGE:
                 pane.setIcon(new InfoIcon());
                 break;
-              case JOptionPane.WARNING_MESSAGE:
+              case OptionPane.WARNING_MESSAGE:
                 pane.setIcon(new WarningIcon());
                 break;
             }

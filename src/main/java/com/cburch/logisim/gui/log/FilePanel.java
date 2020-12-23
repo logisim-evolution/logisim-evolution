@@ -32,6 +32,7 @@ import static com.cburch.logisim.gui.Strings.S;
 
 import com.cburch.logisim.data.TestVector;
 import com.cburch.logisim.data.Value;
+import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.util.JFileChoosers;
 import com.cburch.logisim.util.StringUtil;
 import java.awt.GridBagConstraints;
@@ -46,7 +47,6 @@ import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
@@ -61,11 +61,11 @@ class FilePanel extends LogPanel {
         if (result != JFileChooser.APPROVE_OPTION) return;
         File file = chooser.getSelectedFile();
         if (file.exists() && (!file.canWrite() || file.isDirectory())) {
-          JOptionPane.showMessageDialog(
+          OptionPane.showMessageDialog(
               getLogFrame(),
               StringUtil.format(S.get("fileCannotWriteMessage"), file.getName()),
               S.get("fileCannotWriteTitle"),
-              JOptionPane.OK_OPTION);
+              OptionPane.OK_OPTION);
           return;
         }
         if (file.exists() && file.length() > 0) {
@@ -73,12 +73,12 @@ class FilePanel extends LogPanel {
             S.get("fileOverwriteOption"), S.get("fileAppendOption"), S.get("fileCancelOption"),
           };
           int option =
-              JOptionPane.showOptionDialog(
+              OptionPane.showOptionDialog(
                   getLogFrame(),
                   StringUtil.format(S.get("fileExistsMessage"), file.getName()),
                   S.get("fileExistsTitle"),
                   0,
-                  JOptionPane.QUESTION_MESSAGE,
+                  OptionPane.QUESTION_MESSAGE,
                   null,
                   options,
                   options[0]);

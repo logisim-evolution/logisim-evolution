@@ -162,6 +162,17 @@ public class Net {
       return new ArrayList<ConnectionPoint>();
     return SourceNetsList.get(bitIndex).GetConnections();
   }
+  
+  public void CleanupSourceNets(int bitIndex) {
+    if ((bitIndex < 0) || (bitIndex >= SourceNetsList.size())) return;
+    ArrayList<ConnectionPoint> oldconns = SourceNetsList.get(bitIndex).GetConnections();
+    if (oldconns.size() > 1) {
+      ConnectionPoint point = oldconns.get(0);
+      SourceNetsList.get(bitIndex).ClearConnections();
+      SourceNetsList.get(bitIndex).AddConnection(point);
+    }
+    return;
+  }
 
   public boolean hasBitSinks(int bitid) {
     if (bitid < 0 || bitid >= SinkList.size()) return false;

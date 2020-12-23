@@ -40,9 +40,9 @@ import java.io.PrintWriter;
 
 import javax.swing.JFileChooser;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 
+import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.soc.data.SocSupport;
@@ -97,7 +97,7 @@ public class VgaMenu implements ActionListener, MenuExtender {
         cFile = null;
       }
       if (headerFile == null || cFile == null) {
-        JOptionPane.showMessageDialog(frame, S.get("ErrorCreatingHeaderAndOrCFile"), S.get("ExportC"), JOptionPane.ERROR_MESSAGE);
+        OptionPane.showMessageDialog(frame, S.get("ErrorCreatingHeaderAndOrCFile"), S.get("ExportC"), OptionPane.ERROR_MESSAGE);
         return;
       }
       PrintWriter headerWriter = new PrintWriter(headerFile);
@@ -119,7 +119,7 @@ public class VgaMenu implements ActionListener, MenuExtender {
       headerWriter.println("#endif");
       headerWriter.close();
       cWriter.close();
-      JOptionPane.showMessageDialog(frame, S.fmt("SuccesCreatingHeaderAndCFile", headerFileName, cFileName));
+      OptionPane.showMessageDialog(frame, S.fmt("SuccesCreatingHeaderAndCFile", headerFileName, cFileName));
     }
   }
 }
