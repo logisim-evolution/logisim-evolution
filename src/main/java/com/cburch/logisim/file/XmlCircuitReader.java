@@ -42,6 +42,7 @@ import com.cburch.logisim.comp.ComponentFactory;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Location;
+import com.cburch.logisim.std.base.Text;
 import com.cburch.logisim.std.memory.Mem;
 import com.cburch.logisim.std.memory.Ram;
 import com.cburch.logisim.std.memory.RamAttributes;
@@ -221,6 +222,12 @@ public class XmlCircuitReader extends CircuitTransaction {
             comp = getComponent(sub_elt, reader, IsHolyCross, IsEvolution);
           }
           if (comp != null) {
+            /* filter out empty text boxes */
+            if (comp.getFactory() instanceof Text) {
+              if (comp.getAttributeSet().getValue(Text.ATTR_TEXT).isEmpty()) {
+                continue;
+              }
+            }
             Bounds bds = comp.getBounds();
             Component conflict = componentsAt.get(bds);
             if (conflict != null) {
@@ -246,11 +253,20 @@ public class XmlCircuitReader extends CircuitTransaction {
       }
     }
     for (Component comp : overlapComponents) {
-      Bounds bds = comp.getBounds();
+      Bounds newbds,bds = comp.getBounds();
       int d = 0;
       do {
         d += 10;
-      } while (componentsAt.get(bds.translate(d, d)) != null);
+        newbds = bds.translate(d, d);
+      } while (componentsAt.get(newbds) != null && !newbds.equals(bds));
+      /* something went wrong, ignore component */
+      if (newbds.equals(bds)) {
+        reader.addError(S.fmt("fileComponentOverlapError", 
+            componentsAt.get(newbds).getFactory().getName()+componentsAt.get(newbds).getLocation(),
+            comp.getFactory().getName()+comp.getLocation()),
+            circData.circuit.getName());
+        continue;
+      }
       Location loc = comp.getLocation().translate(d, d);
       AttributeSet attrs = (AttributeSet) comp.getAttributeSet().clone();
       comp = comp.getFactory().createComponent(loc, attrs);
