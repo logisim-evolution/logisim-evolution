@@ -42,6 +42,7 @@ import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.data.BoardRectangle;
 import com.cburch.logisim.fpga.data.MapComponent;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.std.base.Text;
 import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.tools.Tool;
 import com.cburch.logisim.util.InputEventUtil;
@@ -364,6 +365,11 @@ class XmlWriter {
         loader.showError("unknown library within file");
         return null;
       }
+    }
+    if (source.getName().equals("Text")) {
+      /* check if the text element is empty, in this case we do not save */
+      String value = comp.getAttributeSet().getValue(Text.ATTR_TEXT);
+      if (value.isEmpty()) return null;
     }
 
     Element ret = doc.createElement("comp");
