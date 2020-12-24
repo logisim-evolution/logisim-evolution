@@ -253,20 +253,12 @@ public class XmlCircuitReader extends CircuitTransaction {
       }
     }
     for (Component comp : overlapComponents) {
-      Bounds newbds,bds = comp.getBounds();
+      Bounds bds = comp.getBounds();
+      if (bds.getHeight() == 0 || bds.getWidth() == 0) continue; // ignore empty boxes
       int d = 0;
       do {
         d += 10;
-        newbds = bds.translate(d, d);
-      } while (componentsAt.get(newbds) != null && !newbds.equals(bds));
-      /* something went wrong, ignore component */
-      if (newbds.equals(bds)) {
-        reader.addError(S.fmt("fileComponentOverlapError", 
-            componentsAt.get(newbds).getFactory().getName()+componentsAt.get(newbds).getLocation(),
-            comp.getFactory().getName()+comp.getLocation()),
-            circData.circuit.getName());
-        continue;
-      }
+      } while ((componentsAt.get(bds.translate(d, d))) != null && (d < 100000)) ;
       Location loc = comp.getLocation().translate(d, d);
       AttributeSet attrs = (AttributeSet) comp.getAttributeSet().clone();
       comp = comp.getFactory().createComponent(loc, attrs);
