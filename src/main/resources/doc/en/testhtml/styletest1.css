@@ -1,0 +1,64 @@
+/* 
+This CSS documenet is suitable for use in java help v2.0
+It is not suitable for the web and hijacks some CSS rules
+*/
+
+/* For spaces, page background */
+div.maindiv {
+	max-width:560px;
+	border:solid 1px;
+}
+
+/* for titles */
+h1 {
+	color: #00137f;
+}
+h2 {
+	color: #00137f;
+}
+h3{
+	color: #00137f;
+}
+
+/* Text Enhancement */
+var { /* variable */
+	color: #0025ff;
+	font-weight:bold;
+}
+
+prop { /* property */
+	color:#00008B;
+	font-weight:bold;
+}
+
+key { /* keyboard mouse action */
+    color:#007F0E;
+}
+
+men { /* menu */
+	color: black;
+	background-color :#b0b0b0;
+	font-family:arial;
+	font-weight:bold;
+}
+
+not { /* note */
+   color:#007F0E;
+}
+
+/* for reference to the elements of the figures */
+fig {
+	color:#007F0E;
+}
+
+
+
+
+
+tt {
+	font-size:110%;
+}
+
+
+
+

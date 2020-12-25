@@ -1,2 +1,2 @@
-This path is for recipient the illustrations of the doc lib.
+This path contains the images of the library part of the guide without translation
 Which does not require translation for all.

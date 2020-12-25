@@ -1,1 +1,2 @@
-This path is for recipient the icons of the doc.
+This path is the documentation icon repository.
+The "todelete" path is for obsolete icons.
