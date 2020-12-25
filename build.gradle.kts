@@ -62,7 +62,7 @@ tasks.register("jpackage") {
     }
     doLast {
       val parameters = ArrayList<String>();
-      val javaHome = System.getProperty("java.home") ?: throw RuntimeException("java.home is not set")
+      val javaHome = System.getProperty("java.home") ?: throw GradleException("java.home is not set")
       val cmd = javaHome + File.separator + "bin" + File.separator + "jpackage"
       parameters.add(if (cmd.contains(" ")) "\"" + cmd + "\"" else cmd)
       parameters.add("--input")
@@ -123,7 +123,8 @@ tasks.register("jpackage") {
          parameters.add("--icon")
          parameters.add("support/jpackage/macos/Logisim-evolution.icns")
          parameters.add("--type")
-         parameters.add("msi")
+         parameters.add("dmg")
+println(parameters)
          val processBuilder1 = ProcessBuilder()
          processBuilder1.command(parameters)
          val process1 = processBuilder1.start()
