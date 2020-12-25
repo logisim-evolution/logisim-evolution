@@ -117,6 +117,19 @@ tasks.register("jpackage") {
          if (process1.waitFor() != 0) {
             throw GradleException("Error while executing jpackage")
          }
+      } else if (OperatingSystem.current().isMacOsX) {
+         parameters.add("--file-associations")
+         parameters.add("support/jpackage/macos/file.jpackage")
+         parameters.add("--icon")
+         parameters.add("support/jpackage/macos/Logisim-evolution.icns")
+         parameters.add("--type")
+         parameters.add("msi")
+         val processBuilder1 = ProcessBuilder()
+         processBuilder1.command(parameters)
+         val process1 = processBuilder1.start()
+         if (process1.waitFor() != 0) {
+            throw GradleException("Error while executing jpackage")
+         }
       }
     }
 }
