@@ -1,0 +1,4 @@
+extension=circ
+mime-type=application/octet-stream
+icon=support/jpackage/linux/logisim-icon-128.png
+description=Logisim circuit file

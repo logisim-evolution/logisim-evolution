@@ -1,3 +1,4 @@
+import org.gradle.internal.os.OperatingSystem
 
 plugins {
     id("com.github.ben-manes.versions") version "0.28.0"
@@ -5,7 +6,7 @@ plugins {
     application
     id("com.github.johnrengelman.shadow") version "5.2.0"
     id("edu.sc.seis.macAppBundle") version "2.3.0"
-}
+} 
 
 repositories {
     jcenter()
@@ -47,6 +48,90 @@ task<Jar>("sourcesJar") {
     classifier = "src"
 
     from(sourceSets.main.get().allSource)
+}
+
+tasks.register("jpackage") {
+    group = "build"
+    description = "Makes the platform specific packages"
+    dependsOn("shadowJar");
+    doFirst {
+      val folder = File("$buildDir/dist");
+      if (!folder.exists()) {
+        if (!folder.mkdirs()) throw GradleException("Unable to create directory \"$buildDir/dist\"")
+      }
+    }
+    doLast {
+      val parameters = ArrayList<String>();
+      val javaHome = System.getProperty("java.home") ?: throw GradleException("java.home is not set")
+      val cmd = javaHome + File.separator + "bin" + File.separator + "jpackage"
+      parameters.add(if (cmd.contains(" ")) "\"" + cmd + "\"" else cmd)
+      parameters.add("--input")
+      parameters.add("build/libs")
+      parameters.add("--main-class")
+      parameters.add("com.cburch.logisim.Main")
+      parameters.add("--main-jar")
+      parameters.add(project.name + '-' + project.version + "-all.jar")
+      parameters.add("--name")
+      parameters.add(project.name)
+      parameters.add("--app-version")
+      parameters.add(project.version as String)
+      parameters.add("--dest")
+      parameters.add("build/dist")
+      if (OperatingSystem.current().isLinux) {
+         parameters.add("--file-associations")
+         parameters.add("support/jpackage/linux/file.jpackage")
+         parameters.add("--icon")
+         parameters.add("support/jpackage/linux/logisim-icon-128.png")
+         parameters.add("--install-dir")
+         parameters.add("/opt")
+         parameters.add("--linux-shortcut")
+         val processBuilder1 = ProcessBuilder()
+         processBuilder1.command(parameters)
+         val process1 = processBuilder1.start()
+         if (process1.waitFor() != 0) {
+            throw GradleException("Error while executing jpackage")
+         }
+         parameters.add("--type")
+         parameters.add("rpm")
+         val processBuilder2 = ProcessBuilder()
+         processBuilder2.command(parameters)
+         val process2 = processBuilder2.start()
+         if (process2.waitFor() != 0) {
+            throw GradleException("Error while executing jpackage")
+         }
+      } else if (OperatingSystem.current().isWindows) {
+         parameters.add("--file-associations")
+         parameters.add("support/jpackage/windows/file.jpackage")
+         parameters.add("--icon")
+         parameters.add("support/jpackage/windows/Logisim-evolution.ico")
+         parameters.add("--type")
+         parameters.add("msi")
+         parameters.add("--win-menu-group")
+         parameters.add("logisim")
+         parameters.add("--win-shortcut")
+         parameters.add("--win-dir-chooser")
+         parameters.add("--win-menu")
+         val processBuilder1 = ProcessBuilder()
+         processBuilder1.command(parameters)
+         val process1 = processBuilder1.start()
+         if (process1.waitFor() != 0) {
+            throw GradleException("Error while executing jpackage")
+         }
+      } else if (OperatingSystem.current().isMacOsX) {
+         parameters.add("--file-associations")
+         parameters.add("support/jpackage/macos/file.jpackage")
+         parameters.add("--icon")
+         parameters.add("support/jpackage/macos/Logisim-evolution.icns")
+         parameters.add("--type")
+         parameters.add("dmg")
+         val processBuilder1 = ProcessBuilder()
+         processBuilder1.command(parameters)
+         val process1 = processBuilder1.start()
+         if (process1.waitFor() != 0) {
+            throw GradleException("Error while executing jpackage")
+         }
+      }
+    }
 }
 
 tasks {
@@ -116,3 +201,4 @@ tasks {
         bundleExtras.put("NSSupportsAutomaticGraphicsSwitching", "true")
     }
 }
+

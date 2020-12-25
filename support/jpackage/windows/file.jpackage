@@ -1,0 +1,4 @@
+extension=circ
+mime-type=application/octet-stream
+icon=support/jpackage/windows/Logisim-evolution.ico
+description=Logisim circuit file
