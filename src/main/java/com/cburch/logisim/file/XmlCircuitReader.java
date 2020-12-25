@@ -42,6 +42,7 @@ import com.cburch.logisim.comp.ComponentFactory;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Location;
+import com.cburch.logisim.std.base.Text;
 import com.cburch.logisim.std.memory.Mem;
 import com.cburch.logisim.std.memory.Ram;
 import com.cburch.logisim.std.memory.RamAttributes;
@@ -221,6 +222,12 @@ public class XmlCircuitReader extends CircuitTransaction {
             comp = getComponent(sub_elt, reader, IsHolyCross, IsEvolution);
           }
           if (comp != null) {
+            /* filter out empty text boxes */
+            if (comp.getFactory() instanceof Text) {
+              if (comp.getAttributeSet().getValue(Text.ATTR_TEXT).isEmpty()) {
+                continue;
+              }
+            }
             Bounds bds = comp.getBounds();
             Component conflict = componentsAt.get(bds);
             if (conflict != null) {
@@ -247,10 +254,11 @@ public class XmlCircuitReader extends CircuitTransaction {
     }
     for (Component comp : overlapComponents) {
       Bounds bds = comp.getBounds();
+      if (bds.getHeight() == 0 || bds.getWidth() == 0) continue; // ignore empty boxes
       int d = 0;
       do {
         d += 10;
-      } while (componentsAt.get(bds.translate(d, d)) != null);
+      } while ((componentsAt.get(bds.translate(d, d))) != null && (d < 100000)) ;
       Location loc = comp.getLocation().translate(d, d);
       AttributeSet attrs = (AttributeSet) comp.getAttributeSet().clone();
       comp = comp.getFactory().createComponent(loc, attrs);
