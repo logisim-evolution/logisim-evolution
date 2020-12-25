@@ -1,0 +1,15 @@
+translation state 12.2020
+                    DE    EL     FR     ES     PT     RU     IT     NL     PL
+analyze.properties 100%   30%   100%   100%   100%   100%   100%   100%   100%
+circuit.properties 100%   58%   100%   100%   100%   100%   100%   100%   100%
+data.properties    100%  100%   100%   100%   100%   100%   100%   100%   100%
+draw.properties      ?     ?      ?      ?      ?      ?      ?      ?    100%
+file.properties    100%   69%   100%   100%   100%   100%   100%   100%   100%
+fpga.properties    100%    0    100%    98%   100%   100%   100%   100%   100%
+gui.properties     100%   72%   100%   100%   100%   100%   100%   100%   100%
+hdl.properties     100%    0%   100%   100%   100%   100%   100%   100%   100%
+proj.properties    100%   54%   100%   100%   100%   100%   100%   100%   100%
+soc.properties     100%    0    100%   100%   100%   100%   100%   100%   100%
+std.properties     100%   62%   100%   100%   100%   100%   100%   100%   100%
+tools.properties   100%   85%   100%   100%   100%   100%   100%   100%   100%
+util.properties      ?     ?      ?      ?      ?      ?      ?      ?    100%
