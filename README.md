@@ -34,10 +34,10 @@ Logisim supports many languages. Many of them are automatically translated by de
 
 You can find an already compiled versions of the code [here](https://github.com/reds-heig/logisim-evolution/releases).
 Starting from V3.4.1 following compiled versions are available:
-* logisim-evolution_`<version>`-1_amd64.deb : Self contained debian installer (also ubuntu).
-* logisim-evolution_`<version>`-1_amd64.rpm : Self contained Redhat installer.
-* logisim-evolution_`<version>`.dmg         : Self contained Mac OsX installer.
-* logisim-evolution_`<version>`.msi         : Self contained Windows installer.
+* logisim-evolution_`<version>`-1_amd64.deb  : Self contained debian installer (also ubuntu).
+* logisim-evolution_`<version>`-1.x86_64.rpm : Self contained Redhat installer.
+* logisim-evolution_`<version>`.dmg          : Self contained Mac OsX installer.
+* logisim-evolution_`<version>`.msi          : Self contained Windows installer.
 
 Note that the jar-file is not any more available on the release page. You can build it yourself by cloning the repository on your local machine and making sure that at least [OpenJDK](https://adoptopenjdk.net/) 9 is installed.
 Once this is done, enter the directory and execute:
@@ -69,7 +69,7 @@ which you will afterwards find in the folder `build/macApp/`. This has the advan
 ```
 which you will find in the folder `build/distribution`.
 
-For all platforms you can now generate the platform specific installer by running (you need at least V14.0 of a Java JRE):
+For all platforms you can now generate the platform specific installer, saved in `build/dist`, by running (you need at least V14.0 of a Java JRE):
 ```bash
 ./gradlew jpackage
 ```
