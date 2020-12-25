@@ -124,7 +124,6 @@ tasks.register("jpackage") {
          parameters.add("support/jpackage/macos/Logisim-evolution.icns")
          parameters.add("--type")
          parameters.add("dmg")
-println(parameters)
          val processBuilder1 = ProcessBuilder()
          processBuilder1.command(parameters)
          val process1 = processBuilder1.start()
