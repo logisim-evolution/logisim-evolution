@@ -1,4 +1,6 @@
 import org.gradle.internal.os.OperatingSystem
+import java.util.Date
+import java.text.SimpleDateFormat
 
 plugins {
     id("com.github.ben-manes.versions") version "0.28.0"
@@ -61,6 +63,8 @@ tasks.register("jpackage") {
       }
     }
     doLast {
+      val df = SimpleDateFormat("yyyy");
+      val year = df.format(Date());
       val parameters = ArrayList<String>();
       val javaHome = System.getProperty("java.home") ?: throw GradleException("java.home is not set")
       val cmd = javaHome + File.separator + "bin" + File.separator + "jpackage"
@@ -75,6 +79,8 @@ tasks.register("jpackage") {
       parameters.add(project.name)
       parameters.add("--app-version")
       parameters.add(project.version as String)
+      parameters.add("--copyright")
+      parameters.add("Copyright © 2001–" + year + " Carl Burch, BFH, HEIG-VD, HEPIA, Holy Cross, et al.")
       parameters.add("--dest")
       parameters.add("build/dist")
       if (OperatingSystem.current().isLinux) {
@@ -118,6 +124,8 @@ tasks.register("jpackage") {
             throw GradleException("Error while executing jpackage")
          }
       } else if (OperatingSystem.current().isMacOsX) {
+         parameters.add("--resource-dir")
+         parameters.add("support/jpackage/macos")
          parameters.add("--file-associations")
          parameters.add("support/jpackage/macos/file.jpackage")
          parameters.add("--icon")
