@@ -3,7 +3,7 @@
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="created" content="2018-10-23T06:18:10.521000000">
-    <meta name="changed" content="2019-01-15T06:18:42.262000000">
+    <meta name="changed" content="2020-03-02T06:18:42.262000000">
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <meta http-equiv="Content-Language" content="fr">
     <title>
@@ -18,17 +18,18 @@
       </h1>
       <blockquote>
         <em>Sous-sections:</em><br>
-        <a href="selection.html">Sélection des signaux</a><br>
-        <a href="timetable.html">Fenêtre chronogramme</a>
+          <a href="timetable.html">Fenêtre chronogramme</a><br>
+		  <a href="selection.html">Options</a><br>
+		  <a href="selection.html">Sélection des signaux</a>
       </blockquote>
       <p>
-        Pour comprendre ou débugger un circuit, il est souvent très utile de pouvoir observer les différents signaux de manière visuels, c'est le but du chronogramme. Ce module permet l'enregistrement des signaux sous forme graphique ou dans un tableau de valeur dans un fichier text.
+        Pour comprendre ou débugger un circuit, il est souvent très utile de pouvoir observer les différents signaux de manière visuels, c'est le but du chronogramme. Ce module permet la présentation et l'enregistrement des signaux sous forme graphique.
       </p>
       <p align="center">
         <img src="../../../img-guide/log-graph1.png" alt="#########">
       </p>
       <p>
-        Vous pouvez entrer dans le module de journalisation via le menu <b class=menu>|&nbsp;Simulation&nbsp;|</b>→<b class=menu>|&nbsp;Chronogramme&nbsp;|</b>. Il fait apparaître la fenêtre de sélection des signaux.
+        Vous pouvez entrer dans le module de journalisation via le menu <b class=menu>|&nbsp;Simulation&nbsp;|</b>→<b class=menu>|&nbsp;Chronogramme&nbsp;|</b>. Il fait apparaître la fenêtre Chronogramme.
       </p>
       <p>
         Le circuit ci-dessous est un exemple d'illustration pour le module chronogramme.
@@ -37,12 +38,9 @@
         <img class=notscal src="../../../../img-guide/log-counter.png" alt="#########">
       </p>
       <p>
-        Il y a deux signaux nommés qui servent de pilote à l'affichage des chronogrammes. Un est impératif et il est nommé <var>sysclk</var>  et l'autre une horloge optionnelle nommée <var>clk</var>. <var>sysclk</var> est très souvent une horloge, mais pas nécessairement, cela peut aussi être une entrée ou une sortie.
-		L'horloge <var>clk</var> en association avec une horloge <var>sysclk</var> permet d'enregistrer un chronogramme sur une période déterminée. Selon le paramètre de simulation "Duration of main tick" l'enregistrement sera arrêté en fonction de l'évolution de <var>clk</var>.
+        Ce circuit est composé d'un compteur count3 et d'une porte and. Il est piloté par deux entrées clk0 et cl0.
       </p>
-	  <p>
-	  <b class=note>Note:</b> il est impératif qu'un signal nommé <var>sysclk</var> apparaisse dans votre circuit. Il sera utilisé comme base de temps par le module chronogramme. Il n'est pas nécessaire qu'il soit connecté à votre circuit. Si c'est une horloge, elle est en principe la plus rapide.
-	  </p>
+	 
       <p>
         <b>Suite:</b> <a href="selection.html">Sélection des signaux</a>.
       </p>

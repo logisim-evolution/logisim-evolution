@@ -1,2 +1,2 @@
-This path is for recipient the illustrations of the guide.
+This path contains the images of the user manual part of the guide without translation
 Which does not require translation for all
