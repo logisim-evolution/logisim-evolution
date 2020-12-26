@@ -39,7 +39,7 @@ Starting from V3.4.1 following compiled versions are available:
 * logisim-evolution_`<version>`.dmg          : Self contained Mac OsX installer.
 * logisim-evolution_`<version>`.msi          : Self contained Windows installer.
 
-Note that the jar-file is not any more available on the release page. You can build it yourself by cloning the repository on your local machine and making sure that at least [OpenJDK](https://adoptopenjdk.net/) 9 is installed.
+If you want to have the latest development version you can build/run it by cloning the repository on your local machine and making sure that at least [OpenJDK](https://adoptopenjdk.net/) 9 is installed.
 Once this is done, enter the directory and execute:
 ```bash
 ./gradlew run
@@ -81,11 +81,25 @@ gradlew jpackage
 
 ## Testing logisim-evolution
 
-As logisim-evolution needs updates (new features and patches) and currently lacks unit tests, the *testing* branch was created.
+As logisim-evolution needs updates (new features and patches) and currently lacks unit tests, the *development* branch was created.
 The goal of this branch is to add new features/patches without affecting the release on branch master.
-Users who are willing test new features should checkout the testing branch. The feedback from users is really appreciated as it makes logisim-evolution better. Feel free to use the issue tab to report bugs and suggest features.
+Users who are willing test new features should checkout the development branch. The feedback from users is really appreciated as it makes logisim-evolution better. Feel free to use the issue tab to report bugs and suggest features.
 
-Then every semester, the testing branch will be merged in the master for a new release.
+## Contributing to logisim-evolution
+
+If you want to contribute to logisim-evolution, this is how to do it:
+* Make a local *fork* of logisim-evolution by applying the *Fork* button.
+* Fix the bugs you want to fix on your local fork.
+* Add the features you want to add on your local fork.
+* Add/modify the documentation/language support on your local fork.
+
+Once it is running without bugs on your local fork request a *Pull request* by:
+* Go to the *Pull request*-tab and push the button *New pull request*
+* Click on *compare across forks*
+* On the right hand side select your fork, for example: *head repository: BFH-ktt1/logisim-evolution*
+* On the right hand side select your branch, for example: *base: bugfixes*
+* On the left hand side select the development branch *base : develop* (important: all push request must be on the develop-branch as the master branch only holds the code of the latest release).
+* Make sure that there are no conflicts reported.
 
 ## Code style
 All logisim java files have been converted using google-java-format. If you are using eclipse there is a plugin available to adhere to this standard. More information on the google java format can be found [here](https://github.com/google/google-java-format). At the moment version 1.6 is used.
