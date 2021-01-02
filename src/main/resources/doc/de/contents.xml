@@ -191,7 +191,7 @@
 		</tocitem>
 		<!-- BFH mega functions 
 		<tocitem target="bfh" text="BFH mega functions">
-			<tocitem target="bfh-BinairyBCD" text="Binairy to BCD" image="bfh_*******" />
+			<tocitem target="bfh-BinaryBCD" text="Binairy to BCD" image="bfh_*******" />
 			<tocitem target="bfh-BCDsevenseg" text="BCD to seven segment" image="bfh_***********" />
 		</tocitem>
 		-->

@@ -54,10 +54,10 @@ public class bin2bcd extends InstanceFactory {
   private static final int InnerDistance = 60;
 
   public static final Attribute<BitWidth> ATTR_BinBits =
-      Attributes.forBitWidth("binvalue", S.getter("Binairy data bits"), 4, 13);
+      Attributes.forBitWidth("binvalue", S.getter("Binary data bits"), 4, 13);
 
   public bin2bcd() {
-    super("Binairy_to_BCD_converter", S.getter("Bin2BCD"));
+    super("Binary_to_BCD_converter", S.getter("Bin2BCD"));
     setAttributes(new Attribute[] {bin2bcd.ATTR_BinBits}, new Object[] {BitWidth.create(9)});
     setKeyConfigurator(new BitWidthConfigurator(bin2bcd.ATTR_BinBits, 4, 13, 0));
   }
@@ -121,7 +121,7 @@ public class bin2bcd extends InstanceFactory {
     int NrOfPorts = (int) (Math.log10(1 << nrofbits.getWidth()) + 1.0);
     Port[] ps = new Port[NrOfPorts + 1];
     ps[BINin] = new Port((int) (-0.5 * InnerDistance), 0, Port.INPUT, bin2bcd.ATTR_BinBits);
-    ps[BINin].setToolTip(S.getter("BinairyInputTip"));
+    ps[BINin].setToolTip(S.getter("BinaryInputTip"));
     for (int i = NrOfPorts; i > 0; i--) {
       ps[i] = new Port((NrOfPorts - i) * InnerDistance, -20, Port.OUTPUT, 4);
       int value = (int) Math.pow(10.0, i - 1);

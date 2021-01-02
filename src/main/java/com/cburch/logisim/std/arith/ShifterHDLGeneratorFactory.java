@@ -202,7 +202,7 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     Contents.add(
         "    ** Here stage "
             + StageNumber
-            + " of the binairy shift tree is defined                     **");
+            + " of the binary shift tree is defined                     **");
     Contents.add(
         "    ***************************************************************************/");
     Contents.add("");
@@ -306,7 +306,7 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     Contents.add(
         "   --- Here stage "
             + StageNumber
-            + " of the binairy shift tree is defined                     ---");
+            + " of the binary shift tree is defined                     ---");
     Contents.add(
         "   -----------------------------------------------------------------------------");
     Contents.add("");
