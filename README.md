@@ -78,7 +78,7 @@ See Java's [jpackage documentation](https://docs.oracle.com/en/java/javase/14/jp
 
 As logisim-evolution is often updated, the development branch, *develop*, was created.
 The goal of this branch is to add new features/patches without affecting the release on branch master.
-Users who are willing test new features should checkout the develop branch.
+Users who are willing to test new features should checkout the develop branch.
 The feedback from users is really appreciated as it makes logisim-evolution better.
 Feel free to use the issue tab to report bugs and suggest features.
 
