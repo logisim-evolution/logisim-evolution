@@ -4,16 +4,16 @@ logisim-evolution
 Branch master : [![Build Status](https://travis-ci.org/reds-heig/logisim-evolution.svg?branch=master)](https://travis-ci.org/reds-heig/logisim-evolution)
 
 Logisim is an educational tool for designing and simulating digital logic circuits.
-It has been originally created by [Dr. Carl Burch](http://www.cburch.com/logisim/) and actively developed until 2011.
-After this date the author focused on other projects, and recently the development has been officially stopped  [(see his message here)](http://www.cburch.com/logisim/retire-note.html).
+It was originally created by [Dr. Carl Burch](http://www.cburch.com/logisim/) and actively developed until 2011.
+After this date the author focused on other projects, and the development has been officially stopped  [(see his message here)](http://www.cburch.com/logisim/retire-note.html).
 
 In the meantime, people from a group of swiss institutes ([Haute École Spécialisée Bernoise](http://www.bfh.ch), [Haute École du paysage, d'ingénierie et d'architecture de Genève](http://hepia.hesge.ch), and [Haute École d'Ingénierie et de Gestion du Canton de Vaud](http://www.heig-vd.ch)) started developing a version of Logisim that fitted their courses, integrating several tools -- for instance a chronogram, the possibility to test the schematics directly on an electronic board, TCL/TK consoles, ...
 
-We have decided to release this new Logisim version under the name logisim-evolution, to highlight the large number of changes that occurred in these years, and **we actively seek the contribution of the community**.
+We have decided to release this new Logisim version under the name logisim-evolution, to highlight the large number of changes that were made, and **we actively seek the contribution of the community**.
 
 ## Languages
 
-Logisim supports many languages. Many of them are automatically translated by deepl. If you detect bizar translations please do not hesitate to correct them in the corresponding property files and ask for a pull-request.
+Logisim supports many languages. Many of them are automatically translated by deepl. If you detect bizarre translations please do not hesitate to correct them in the corresponding property files and ask for a pull-request.
 
 ## What's new in logisim-evolution
 
@@ -32,8 +32,8 @@ Logisim supports many languages. Many of them are automatically translated by de
 
 ## Running logisim-evolution
 
-You can find an already compiled versions of the code [here](https://github.com/reds-heig/logisim-evolution/releases).
-Starting from V3.4.1 following compiled versions are available:
+You can find already compiled versions of the code [here](https://github.com/reds-heig/logisim-evolution/releases).
+Starting with V3.4.1 the following compiled versions are available:
 * logisim-evolution_`<version>`-1_amd64.deb  : Self contained debian installer (also ubuntu).
 * logisim-evolution_`<version>`-1.x86_64.rpm : Self contained Redhat installer.
 * logisim-evolution_`<version>`.dmg          : Self contained Mac OsX installer.
@@ -57,19 +57,9 @@ or on windows:
 ```bash
 gradlew shadowJar
 ```
-which will create a new jar file in `build/libs` called `logisim-evolution-<version>-all.jar` you can distribute freely.
+which will create a new jar file in `build/libs` called `logisim-evolution-<version>-all.jar` that you can distribute freely.
 
-On macOS, you can build a native app bundle `Logisim-evolution.app` using:
-```bash
-./gradlew createApp
-```
-which you will afterwards find in the folder `build/macApp/`. This has the advantage that `.circ` files get automatically associated to the `Logisim-evolution.app` so that you can open them directly in the Finder. *Note:* Curently, the app needs a separately installed compatible JDK/JRE to execute. You may also build a DMG image `logisim-evolution-<version>.dmg` containing `Logisim-evolution.app` for distribution:
-```
-./gradlew createDmg
-```
-which you will find in the folder `build/distribution`.
-
-For all platforms you can now generate the platform specific installer, saved in `build/dist`, by running (you need at least V14.0 of a Java JRE):
+For all platforms you can now generate the platform specific installer, saved in `build/dist`, by using JDK 14 or later and running:
 ```bash
 ./gradlew jpackage
 ```
@@ -79,11 +69,18 @@ or on windows:
 gradlew jpackage
 ```
 
+Note that *jpackage* creates the installer for the platform that builds it.
+Building cross-platform installers is not supported by Java's jpackage facility.
+You may need to have developer tools for the platform in order to build the installer.
+See Java's [jpackage documentation](https://docs.oracle.com/en/java/javase/14/jpackage/packaging-overview.html) for more details of tool requirements.
+
 ## Testing logisim-evolution
 
-As logisim-evolution needs updates (new features and patches) and currently lacks unit tests, the *development* branch was created.
+As logisim-evolution is often updated, the development branch, *develop*, was created.
 The goal of this branch is to add new features/patches without affecting the release on branch master.
-Users who are willing test new features should checkout the development branch. The feedback from users is really appreciated as it makes logisim-evolution better. Feel free to use the issue tab to report bugs and suggest features.
+Users who are willing to test new features should checkout the develop branch.
+The feedback from users is really appreciated as it makes logisim-evolution better.
+Feel free to use the issue tab to report bugs and suggest features.
 
 ## Contributing to logisim-evolution
 
@@ -98,7 +95,7 @@ Once it is running without bugs on your local fork request a *Pull request* by:
 * Click on *compare across forks*
 * On the right hand side select your fork, for example: *head repository: BFH-ktt1/logisim-evolution*
 * On the right hand side select your branch, for example: *base: bugfixes*
-* On the left hand side select the development branch *base : develop* (important: all push request must be on the develop-branch as the master branch only holds the code of the latest release).
+* On the left hand side select the development branch *base : develop* (important: all pull requests must be on the develop branch as the master branch only holds the code of the latest release).
 * Make sure that there are no conflicts reported.
 
 ## Code style
@@ -124,14 +121,14 @@ Instructions on how to import a gradle project into IntelliJ IDEA can be found [
 
 We cannot assure retro-compatibility of logisim-evolution with files created with the original Logisim.
 We have incorporated a parser that alters the name of the components to satisfy VHDL requirements for variable names,
-but components evolved in shape since then (e.g. RAM and counters).
-You might need to rework a bit your circuits when opening them with logisim-evolution -- but the changes will be stored
+but components have evolved in shape since original Logisim (e.g. RAM and counters).
+You might need to rework your circuits a bit when opening them with logisim-evolution -- but the changes will be stored
 in the new format, therefore you have to do your work only once.
 
 
 ## Wish-list
 
-Logisim-evolution is a continuously-growing software, and we have several ideas we would like to implement. In particular, we would like to have
+Logisim-evolution is continuously growing and we have several ideas we would like to implement. In particular, we would like to have
 
 * unit tests for the code
 * extensive documentation
