@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>index</title>
+  </head>
+  <body>
+    <h1>System On Chip components library</h1>
+    <p>The system on chip components library contain all components required to
+      perform a functional simulation of a system on chip.</p>
+    <table>
+      <tbody>
+        <tr>
+          <td align="right"><a href="fnios2.html" style="text-decoration: none">
+              <img src="../../../../icons/up.png" alt="nios2" title="nios2"> <br>
+            </a></td>
+          <td><a href="nios2.html">nios2 simulator</a></td>
+        </tr>
+        <tr>
+          <td align="right"><img src="../../../../icons/up.png"
+              alt="riscv" title="riscv"><br>
+          </td>
+          <td>bla</td>
+        </tr>
+      </tbody>
+    </table>
+    <h2>Minimal requirements for a successful simulation</h2>
+    <p>To be able to perform a System On Chip (SOC) simulation you require to
+      have in your sheet at least:</p>
+    <ol>
+      <li>One of the processors marked with the <img src="../../../../icons/up.png"
+          alt="up" title="up">-icon.</li>
+      <li>One bus marked with the <img src="../../../../icons/socbus.png" alt="socbus"
+          title="socbus">-icon.</li>
+      <li>One memory simulator marked with the <img src="../../../../icons/socmem.png"
+          alt="socmem" title="socmem">-icon.</li>
+    </ol>
+    <p>Furthermore, both the memory simulator and the processor need to be
+      connected to the bus. This can be achieved by defining the <em><strong>Connected
+          bus</strong></em> attribute of the respective components.</p>
+    <h2>Restrictions</h2>
+    <p>A SOC system can only be local on one sheet, meaning that a given bus
+      component is only visible on the sheet it is placed. Building hierarchical
+      systems is only possible when having the base system on one sheet and the
+      extensions, for example VHDL-extentions or circuits, connected through the
+      base system by means of input- and output pins.</p>
+    <h2>Simulation speed</h2>
+    <p>One has to realize that this library is intended to visualize what is
+      going on in a SOC. Hence it provides in no way the means to perform (near)
+      real-time simulations of your SOC. For this purpose more adequate systems
+      are for example <a href="https://www.qemu.org" target="_blank">QEMU</a>.
+    </p>
+    <p>On the test system with all parts of the system visible a maximum of 3 Hz
+      tick-frequency was measured. Disabling some of the details for faster
+      simulation improved the speed to 8 Hz. The best simulation speed can be
+      achieved to use super-circuits with dynamic elements. Here the simulation
+      speed went up to approx. 3kHz.</p>
+    <p><a href="../index.html">Back to <em>Library reference</em></a></p>
+    <p></p>
+  </body>
+</html>

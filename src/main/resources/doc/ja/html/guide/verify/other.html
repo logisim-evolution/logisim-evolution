@@ -1,0 +1,114 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2018-10-23T06:18:42.262000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="en">
+    <title>
+      Other verification options
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class=maindiv>
+      <h1>
+        Other verification options
+      </h1>
+      <p>
+        There are a some additional options related to command-line execution.
+      </p>
+      <h2>
+        The <tt>-load</tt> command-line parameter
+      </h2>
+      <p>
+        A more complex circuit might include a RAM component that needs to be loaded with a program in order for the circuit to have anything to do. You can specify a memory image file at the command line, which will be loaded into any RAM component in the circuit before simulation begins. (This does not work when loading the GUI - it is only for command-line execution.)
+      </p>
+      <blockquote>
+	  <div class=forcode>
+        <tt>java -jar logisim-filename.jar cpu.circ -tty table -load mem-image.txt</tt>
+		</div>
+      </blockquote>
+      <p>
+        The order of the parameters is not important (except the <tt>table</tt> parameter must be immediately after <tt>-tty</tt>, and the memory image's filename must be immediately after <tt>-load</tt>). The memory image file should be in <a href="../mem/mem-menu.html">Logisim's memory image format</a>.
+      </p>
+      <p>
+        Logisim searches for RAM recursively, so this will still work if RAM is nested within a subcircuit. There is no way, though, to distinguish different RAM components: Logisim will attempt to load the same file into every RAM that it can find.
+      </p>
+      <h2>
+        Options for the <tt>-tty</tt> parameter
+      </h2>
+      <p>
+        In our examples thus far, we've always used <tt><b>-tty&nbsp;table</b></tt> to indicate that a table of output values should be displayed. You can customize the behavior in other ways by listing one or more options, separated by commas. For instance, you might write <q><tt>-tty&nbsp;table,halt,speed</tt></q>, and the program will perform all three behaviors listed below. (The order in which they are listed does not matter.)
+      </p>
+      <dl>
+        <dt>
+          <tt>halt</tt>
+        </dt>
+        <dd>
+          <p>
+            After the simulation ends, a one-line message is displayed explaining why the simulation ended. Error conditions - such as a detected oscillation - are displayed in any case.
+          </p>
+        </dd>
+        <dt>
+          <tt>speed</tt>
+        </dt>
+        <dd>
+          <p>
+            If you use <tt>speed</tt> in conjunction with <tt>-tty</tt>, then after completing the simulation Logisim will display a summary of how quickly the circuit was simulated, such as:
+          </p>
+          <blockquote>
+            <tt>714 Hz (509 ticks in 712 milliseconds)</tt>&lt; /blockquote&gt;
+            <p>
+              Note that displaying information during the simulation makes the simulation go much slower. As just one comparison, the same circuit and image ran at 714&nbsp;Hz above with just the <tt>speed</tt> option but 490&nbsp;Hz with the <tt>table</tt> option as well.
+            </p>
+          </blockquote>
+        </dd>
+        <dt>
+          <tt>stats</tt>
+        </dt>
+        <dd>
+          <p>
+            Shows a tab-delimited table containing statistics about components used by the top-level "main" circuit in the project. The table includes four columns:
+          </p>
+          <ul>
+            <li>Unique: The number of times that component appears in the circuit's hierarchy, where each subcircuit within the hierarchy is counted only once.
+            </li>
+            <li>Recursive: The number of times that component appears in the circuit's hierarchy, where we count each subcircuit as many times as it appears in the hierarchy.
+            </li>
+            <li>Component: The name of the component.
+            </li>
+            <li>Library: The name of the library from which the component came.
+            </li>
+          </ul>
+          <p>
+            The distinction between "Unique" and "Recursive" is explained further under <q><a href="../menu/project.html">Project menu</a></q> section. If the file uses circuits from a loaded Logisim library, those components are considered to be "black boxes": The contents of the library's circuits are not included in the unique and recursive counts.
+          </p>
+          <p>
+            (This feature can be useful for instructors who assign students to build projects using a subset of Logisim's libraries.)
+          </p>
+        </dd>
+        <dt>
+          <tt>table</tt>
+        </dt>
+        <dd>
+          <p>
+            (as already discussed)
+          </p>
+        </dd>
+        <dt>
+          <tt>tty</tt>
+        </dt>
+        <dd>
+          <p>
+            Any TTY components send their output to the display (standard output), and any information typed at the keyboard is sent to all Keyboard components in the circuit. These components are included even if they are nested deeply in the subcircuit hierarchy.
+          </p>
+        </dd>
+        </dl>
+        <p>
+            <b>Next:</b> <a href="multi.html">Testing multiple files</a>.
+        </p>
+    </div>
+  </body>
+</html>

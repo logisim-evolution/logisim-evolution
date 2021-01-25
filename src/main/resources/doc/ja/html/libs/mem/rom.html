@@ -1,0 +1,99 @@
+<html>
+<head>
+<title>ROM</title>
+</head>
+
+<body bgcolor="FFFFFF">
+
+<h1><img align="center" src="../../../../icons/rom.gif" width="32" height="32">
+<em>ROM</em></h1>
+
+<p><table>
+<tr><td><strong>Library:</strong></td>
+	<td><a href="index.html">Memory</a></td></tr>
+<tr><td><strong>Introduced:</strong></td>
+	<td>2.1.0</td></tr>
+<tr><td valign="top"><strong>Appearance:</strong></td>
+	<td valign="top"><img src="../../../../img-libs/rom.png" width="145" height="84"></td></tr>
+</table></p>
+
+<h2>Behavior</h2>
+
+<p>The ROM component stores up to 16,777,216 values (specified in the Address
+Bit Width attribute), each of which can include up to to 32 bits
+(specified in the Data Bit Width attribute). A circuit can access
+the current values in ROM, but it cannot change them. The user can modify individual values
+interactively via the Poke Tool, or the user can modify the entire
+contents via the Menu Tool.</p>
+
+<p>Unlike the RAM component, the ROM component's current contents are
+stored as an attribute of the component. Thus, if a circuit containing
+a ROM component is used twice, then both ROM components will hold the
+same values. Also because of this behavior, the current ROM contents are
+stored in files created by Logisim.</p>
+
+<p>Current values are displayed in the component. Addresses displayed
+are listed in gray to the left of the display area. Inside, each value
+is listed using hexadecimal. The value at the currently selected address
+will be displayed in inverse text (white on black).</p>
+
+<h2>Pins</h2>
+
+<dl>
+
+<dt><var>A</var> on west edge (input, bit width matches Address Bit Width attribute)</dt>
+<dd>Selects which of the values are currently being accessed by the
+circuit.</dd>
+
+<dt><var>D</var> on east edge (input/output, bit width matches Data Bit Width attribute)</dt>
+<dd>Outputs the value at the currently selected address at the
+<var>D</var> pin if <var>sel</var> is 1 or floating. If <var>sel</var>
+is 0, then <var>D</var> will be floating.</dd>
+
+<dt><var>sel</var> on south edge (input, bit width 1)</dt>
+<dd>If you have just one ROM module, ignore this input.
+If you have multiple ROM modules in parallel, you can use this input
+to enable or disable the entire ROM module, based on whether the value is
+1 or 0. In other words, when this is 0, no value is emitted on
+the <var>D</var> output.</dd>
+
+</dl>
+
+<h2>Attributes</h2>
+
+<p>When the component is selected or being added,
+the digits '0' through '9' alter its <q>Address Bit Width</q> attribute
+and Alt-0 through Alt-9 alter its <q>Data Bit Width</q> attribute.</p>
+
+<dl>
+
+<dt>Address Bit Width</dt>
+<dd>The bit width of the address bits. The number of values stored in
+ROM is 2<sup><var>addrBitWidth</var></sup>.</dd>
+
+<dt>Data Bit Width</dt>
+<dd>The bit width of each individual value in memory.</dd>
+
+<dt>Contents</dt>
+<dd>Stores the contents of memory.</dd>
+
+</dl>
+
+<h2>Poke Tool Behavior</h2>
+
+<p>See <a href="../../guide/mem/mem-poke.html">poking memory</a>
+in the <em>User's Guide</em>.</p>
+
+<h2>Text Tool Behavior</h2>
+
+<p>None.</p>
+
+<h2>Menu Tool Behavior</h2>
+
+<p>See <a href="../../guide/mem/mem-menu.html">pop-up menus and files</a>
+in the <em>User's Guide</em>.</p>
+
+<p><a href="../index.html">Back to <em>Library Reference</em></a></p>
+
+</body>
+</html>

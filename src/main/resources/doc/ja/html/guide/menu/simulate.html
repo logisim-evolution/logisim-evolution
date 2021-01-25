@@ -1,0 +1,150 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2018-10-23T06:18:42.262000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="en">
+    <title>
+      The Simulate menu
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class=maindiv>
+      <h1>
+        The Simulate menu
+      </h1>
+      <dl>
+        <dt>
+          <strong>Simulation Enabled</strong>&nbsp;&nbsp;<b class=tkeybd>Ctrl-E</b>
+        </dt>
+        <dd>
+          <p>
+            If checked, circuits viewed will be "live:" That is, the values propagating through the circuit will be updated with each poke or change to the circuit.
+          </p>
+          <p>
+            The menu option will be automatically unchecked if <a href="../prop/oscillate.html">circuit oscillation</a> is detected.
+          </p>
+        </dd>
+		<dt>
+          <strong>Step Simulation</strong>&nbsp;&nbsp;<b class=tkeybd>Ctrl-I</b>
+        </dt>
+        <dd>
+          <p>
+            Advances the <a href="../tutorial/tutor-step.html">simulation one step</a> forward. For example, a signal may end up entering a gate during one step, but the gate won't show a different signal until the next simulation step. To help identify which points in the overall circuit have changed, any points whose values change are indicated with a blue circle; if a subcircuit contains any points that have changed in it (or its subcircuits, recursively), then it will be drawn with a blue outline.
+          </p>
+        </dd>
+        <dt>
+          <strong>Reset Simulation</strong>&nbsp;&nbsp;<b class=tkeybd>Ctrl-R</b>
+        </dt>
+        <dd>
+          <p>
+            Clears everything about the current circuit's state, so that it is as if you have just opened the file again. If you are viewing a subcircuit's state, the entire hierarchy is cleared.
+          </p>
+        </dd>
+      
+        <dt>
+          <strong>VHDL Simulation Enabled</strong>
+        </dt>
+        <dd>
+          <p>
+            not documented yet
+          </p>
+        </dd>
+        <dt>
+          <strong>Restart VHDL simulatior</strong>
+        </dt>
+        <dd>
+          <p>
+            not documented yet
+          </p>
+        </dd>
+        <dt>
+          <strong>Go Out To State</strong>
+        </dt>
+        <dd>
+          <p>
+            When you <a href="../subcirc/sub-debug.html">delve into a subcircuit's state</a> via its pop-up menu, the <b class=menu>|&nbsp;Go Out To State&nbsp;|</b> submenu lists the circuits above the currently viewed circuit's state. Selecting one displays the corresponding circuit.
+          </p>
+        </dd>
+        <dt>
+          <strong>Go In To State</strong>
+        </dt>
+        <dd>
+          <p>
+            If you have delved into a subcircuit's state and then moved back out, this submenu <b class=menu>|&nbsp;Go In To State&nbsp;|</b> lists the subcircuits below the current circuit. Selecting one of the circuits displays the corresponding circuit.
+          </p>
+        </dd>
+        <dt>
+          <strong>Tick half cycle</strong>&nbsp;&nbsp;<b class=tkeybd>Ctrl-T</b>
+        </dt>
+        <dd>
+          <p>
+			Advances the clocks in the simulation by one tick when using the step-by-step mode. A clock set with a high/low duration of 1 tick will then advance by half a cycle.<br>  
+			This can be useful when you want to advance the clocks manually, especially when the clock is not in the same circuit as the one you are currently viewing.
+          </p>
+        </dd>
+        <dt>
+          <strong>Tick full cycle</strong>&nbsp;&nbsp;<b class=tkeybd>F2</b>
+        </dt>
+        <dd>
+          <p>
+            Same function as before, but advances by two ticks. A clock set with a high/low duration of 1 tick will then advance one complete cycle.<br> The other clocks of the project advance simultaneously in proportion to their parameters.
+          </p>
+        </dd>
+        <dt>
+          <strong>Ticks Enabled</strong>&nbsp;&nbsp;<b class=tkeybd>Ctrl-K</b>
+        </dt>
+        <dd>
+          <p>
+            Starts automatically ticking the clock. This will have an effect only if the circuit contains any clock devices (in the Wiring library). The option is disabled by default.
+          </p>
+        </dd>
+        <dt>
+        <strong>Tick Frequency</strong>
+        </dt>
+        <dd>
+          <p>
+            Allows you to select how often ticks occur. For example, 8 Hz means that ticks will occur eight times a second. A tick is the base unit of measurement for the speed of clocks.
+          </p>
+          <p align="center">
+            <img class=notscal src="../../../../img-guide/clock.png" alt="#########">
+          </p>
+		  <b class=note>Example:</b> Tic hight = 2, Tic low = 2, Clock = tic frequency / ( 2 + 2)
+          <p>
+            <b class=note>Note:</b> that the clock cycle speed will be slower than the tick speed: The fastest possible clock will have a one-tick up cycle and a one-tick down cycle; such a clock would have up/down cycle rate of 4 Hz if the ticks occur at 8 Hz.
+          </p>
+        </dd>
+        <dt>
+          <strong>Logging...</strong>
+        </dt>
+        <dd>
+          <p>
+            Enters the <a href="../log/index.html">logging module</a>, which facilitates automatically noting and saving values in a circuit as a simulation progresses.
+          </p>
+        </dd>
+        <dd>
+		<dt>
+		   <strong>Vector of tests</strong>
+		 </dt>
+          <p>
+            <a href="../verify/test.html">The window Vector of tests</a> Allows you to check your circuits thanks to a test vector file that presents the inputs and outputs of the circuit.
+          </p>
+        </dd>
+        <dt>
+          <strong>Assembly viewer</strong>
+        </dt>
+        <dd>
+          <p>
+            not documented yet
+          </p>
+        </dd>
+      </dl>
+      <p>
+        <b>Next:</b> <a href="winhelp.html">The Window and Help menus</a>.
+      </p>
+    </div>
+  </body>
+</html>

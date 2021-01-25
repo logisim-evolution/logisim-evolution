@@ -1,0 +1,87 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html>
+<head>
+	<META name="viewport" content="width=device-width, initial-scale=1.0"> 
+	<meta name="created" content="2018-10-23T06:18:10.521000000"/>
+	<meta name="changed" content="2018-10-23T06:18:42.262000000"/>
+	<META http-equiv="content-type" content="text/html; charset=UTF-8">
+	<META http-equiv="Content-Language" content="en">
+	<title>VHDL simulator</title>
+	<LINK rel="stylesheet" type="text/css" href="../../style.css">
+</head>
+
+<body>
+<div class=maindiv>
+        <h1>VHDL simulator</h1>
+
+        <p>Logisim cannot directly perform VHDL content simulation. Instead,
+           QuestaSim is used as a background task.
+        </p>
+        
+        <h2>Enable simulator</h2>
+        
+        <p>You can enable the simulator through the <i>Simulate</i> > <i>VHDL 
+           Simulation Enabled</i> menu. When you do this, the simulator console 
+           log appears on the bottom of the drawing pane. At the bottom bar of 
+           the simulator log, you have the simulator status indicator. The 
+           states are :
+        
+            <p align="center"><img src="../../../img-guide/hdl-ip-sim-log.png" /></p>
+            
+            <ul>
+                <li><img class=intxt src="../../../../img-guide/hdl-ip-state-disabled.png" />
+                    Disabled (console disappears)
+                </li>
+                <li><img class=intxt  src="../../../../img-guide/hdl-ip-state-enabled.png" />
+                    Enabled (but inactive)
+                </li>
+                <li><img class=intxt  src="../../../../img-guide/hdl-ip-state-starting.png" />
+                    Starting
+                </li>
+                <li><img class=intxt  src="../../../../img-guide/hdl-ip-state-active.png" />
+                    Active
+                </li>
+            </ul>
+        </p>
+    
+        <p>The simulator starts automatically when it's enabled and the circuit 
+           contains VHDL components. It is not possible to start the simulator 
+           when there aren't any VHDL components in the circuit.
+        </p>
+    
+        <h2>Restart</h2>
+        
+        <p>The VHDL simulation is restarted when you reset the Logisim
+           simulation. This concerns only the simulation state, it does not
+           reload the simulation (and the source files).
+        </p>
+        
+        <p>If you have changed the content of some VHDL component you have to 
+           restart the VHDL simulator. This is never done automatically. You can
+           restart the simulator through the <i>Simulate</i> menu.
+        </p>
+    
+        <h2>Time</h2>
+        
+        <p>The QuestaSim simulation step time has to be considered
+           unpredictable, as it depends on the number of VHDL components in the 
+           circuit. The absolute minimum step is 100ns. Therefore, usage of 
+           time-based simulation events must be avoided (like <i>wait for 
+           10ns</i>). You must only have signal-based events.
+        </p>
+    
+
+        <h2>Multiple instances</h2>
+        
+        <p>Actually, you can only have a single instance of VHDL simulator. 
+            That means that you have to disable it on the first project if you 
+            want to have it enabled on a second one. If you try to enable it on 
+            two projects it will fail and show you an error message.
+        </p>
+
+        <p><b>Next:</b> <a href="testbenchs.html">Simulating test
+           benchs</a>.
+        </p>
+		</div>
+    </body>
+</html>

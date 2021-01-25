@@ -1,0 +1,76 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2019-03-16T06:18:10.521000000">
+    <meta name="changed" content="2020-01-31T06:18:42.262000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="en">
+    <title>
+      Editing the truth table
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class=maindiv>
+      <h1>
+        Editing the truth table
+      </h1>
+      <p>
+        On opening the Combinational Analysis window, you will see that it consists of four tabs.
+	  </p>
+	  <p>
+		This page describes the first two tabs, <b class=button>Inputs & Outputs</b>, and <b class=button>Table</b>. The next page of the guide describes the last two tabs, Expression and Minimized.
+      </p>
+      <h2>
+        The Inputs & Outputs tabs
+      </h2>
+      <p align="center">
+        <img src="../../../img-guide/analyze-inout.png" alt="#########">
+      </p>
+      <p>
+	    The <b class=button>Inputs & Outputs</b> tab allows you to display and edit lists of inputs and/or outputs and to specify the width of their data.
+      </p>
+	  <p>To add items to the list, simply select the line with <b class=tkeybd>Up Arrow</b> or <b class=tkeybd>Down Arrow</b> or click on "Click to..." and enter the desired name. You can see above the line "c_out" inserted in the list of outputs. Then you can define the data width of this line (on the right) with the mouse. The <b class=tkeybd>Enter</b> or <b class=tkeybd>Tab</b> key will end the input. 
+	  </p>
+      <p>
+	  If you want to rename one of the existing lines, a double click on the text will allow you to modify it.
+	  </p>
+	  <p>
+        To delete a line, select it as before with the mouse or the <b class=tkeybd>Up Arrow</b> or <b class=tkeybd>Down Arrow</b> and then use the <b class=tkeybd>Delete</b> key.
+      </p>
+	  <p>To rearrange the order of the rows, select it as above, then use the <b class=tkeybd>Ctrl+Up Arrow</b> or <b class=tkeybd>Ctrl+Down Arrow</b> combination to move it up or down in the list.
+	  </p>
+      <p>
+        All actions affect the truth table immediately.
+      </p>
+      <h2>
+        The Table tab
+      </h2>
+      <p>
+        In the <b class=button>Table</b> tab you will find a series of buttons and the current truth table., diagrammed in the conventional order, with inputs constituting the columns on the left and outputs constituting the columns on the right.
+      </p>
+      <p align="center">
+        <img src="../../../img-guide/analyze-table.png" alt="#########">
+      </p>
+      <p>
+        You can edit the current values appearing in the output columns by clicking on the value of interest. You can change the current values in the output columns by clicking on the value you are interested in and using the keyboard keys <b class=tkeybd>0,1</b> and <b class=tkeybd>-</b> (representing an undefined value) or in the top the buttons  <b class=button>-</b> ,  <b class=button>1</b> ,  <b class=button>0</b> . After entering the value, the cursor moves down one line in the column.
+	    The key combinations <b class=tkeybd>Ctrl+Up/Down Arrow</b> or <b class=tkeybd>Ctrl+Left/Right Arrow</b> are used to move the selection.
+      </p>
+	  <p>In the same way, you can modify the data in the input columns by inserting indeterminate values (-) or to delete them and replace them with 0 or 1.
+	  </p>
+	  <p>
+	    In this context the button<b class=button>Collapse duplicate rows</b> simplifies the representation of the table and <b class=button>Show all rows</b> in its entirety. 
+	  </p>
+      <p>
+        You can copy and paste values using the clipboard. The clipboard can be transferred to any application supporting tab-delimited text (such as a spreadsheet).
+      </p>
+      <p>
+        If the truth table is based on an existing circuit, you may see some red squares in the output columns with "E" in them. These correspond to errors that occurred while calculating the value for that row - either the circuit seemed to be oscillating, or the output value was an error value (which would be pictured as a red wire in the Logisim circuit).
+      </p>
+      <p>
+        <b>Next:</b> <a href="ana-expr.html">Creating expressions</a>.
+      </p>
+    </div>
+  </body>
+</html>

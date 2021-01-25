@@ -1,0 +1,110 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html>
+<head>
+	<META http-equiv="content-type" content="text/html; charset=UTF-8">
+	<META http-equiv="Content-Language" content="fr">
+	<title>Tests and effect CSS & HTML</title> 
+	<LINK rel="stylesheet" type="text/css" href="styletest.css">
+</head>
+
+<body>
+<div class=maindiv>
+
+<h1>Tests and effect CSS & HTML</h1>
+<p>These pages to present the CSS style used for this documentation in relation with Sun javahelp V2.   and CSS V 1.x<br>
+These pages are related to the file css .\styletest.css<br>
+They make it possible to check the appearance on the different systems.
+</p>
+<p>
+Test Encoding<br>
+ <a href="utf8.html">UTF-8 encoding test</a><br>
+ <a href="notutf8.html">ISO-8859-1 encoding test</a><br>
+</p>
+<p>
+Test Font<br>
+<a href="font.html">Font test</a><br>
+</p>
+<p>
+Test UTF-8<br>
+ <a href="UTF8.html">UTF-8 test</a><br>
+</p>
+<p>
+Test Tag<br>
+ <a href="tag.html">Tag test</a><br>
+</p>
+<p>
+Test Color<br>
+ <a href="color.html">Color test</a><br>
+</p>
+<p>
+Test img<br>
+ <a href="img.html">Img test</a><br>
+</p>
+
+<h2>Css for JAVA HELP</h2>
+<p>
+<table>
+<tr>
+<th>Reference to</th>
+<th>Tag</th>
+<th>Result</th>
+</tr>
+<tr>
+<td>The guide<br>The guide's page :</td>
+<td></td>
+<td><i>Beginner's Guide</i></td>
+</tr>
+<tr>
+<td>Variables :</td>
+<td><b>&lsaquo;var&rsaquo;&nbsp;</b></td>
+<td><var>variable</var></td>
+</tr>
+<tr>
+<td>Property :</td>
+<td><b>&lsaquo;b class=propertie&rsaquo;&nbsp;</b></td>
+<td><b class=propertie>orientation</b></td>
+</tr>
+<tr>
+<td>Buttons :</td>
+<td><b>&lsaquo;b class=tkeybd&rsaquo;&nbsp;</b></td>
+<td><b class=tkeybd>Ctrl-A  Right click</b></td>
+</tr>
+<tr>
+<td>Menu :</td>
+<td><b>&lsaquo;b class=menu&rsaquo;&nbsp;</b></td>
+<td><b class=menu>|&nbsp;Simulation&nbsp;|</b> &rarr; <b class=menu>|&nbsp;Ticks Enabled&nbsp;|</b></td>
+</tr>
+<tr>
+<td>KBD :</td>
+<td><b>&lsaquo;b class=kbd&rsaquo;&nbsp;</b></td>
+<td><kbd>Space</kbd>   <kbd>CTRL</kbd></td>
+</tr>
+</table>
+
+<br>
+<p>
+<dfn>dfn truc dfn machin dfn</dfn> kljasd flaskjdalskjd hf <br> <cite>cite le machin chose cite</cite> kljasd flaskjdalskjd hf<br>
+<samp>samp C:\SP\BIN\NSGMLSU.EXE:test.html:4:7:E: element "FOOBAR" undefined samp
+</samp> fin samp kljasd flaskjdalskjd hf<br>
+<pre></code>
+RUN_TEST="java -jar logisim-filename.jar adder-test.circ -tty table"<br>
+${RUN_TEST} > output-master.txt
+for QUERY_FILE in adder-query*.circ
+do
+  if ${RUN_TEST} -sub adder-master.circ ${QUERY_FILE} | cmp -s output-master.txt
+  then
+    echo "${QUERY_FILE} OK"
+  else
+    echo "${QUERY_FILE} different"
+  fi
+done
+</code></pre> fin code<br>
+<kbd> kbd enter
+</kbd>fin kbd<br>
+
+
+<p>
+</p>
+</div>
+</body>
+</html>

@@ -1,0 +1,171 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2018-10-23T06:18:42.262000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="en">
+    <title>
+      Simple Gray Code Counter
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class=codediv>
+      <h1>
+        Simple Gray Code Counter
+      </h1>
+      <p>
+        Often we want components that aren't exclusively combinational in nature - that is, we want the component to have some memory. There is an important subtlety in defining such components: You can't have the component itself store the state, because an individual component can appear many times in the same circuit. It can't appear directly within a circuit multiple times, but it can appear multiple times if it appears in a subcircuit that is used several times.
+      </p>
+      <p>
+        The solution is to create a new class for representing the object's current state, and to associate instances of this with the component through the parent circuit's state. In this example, which implements an edge-triggered 4-bit Gray code counter, we define a <code>CounterData</code> class to represent the counter's state, in addition to the <code>InstanceFactory</code> subclass as illustrated previously. The <code>CounterData</code> object remembers both the counter's current value, as well as the last clock input seen (to detect rising edges).
+      </p>
+      <h2>
+        CounterData
+      </h2>
+      <pre>package com.cburch.gray;
+
+import com.cburch.logisim.data.BitWidth;
+import com.cburch.logisim.data.Value;
+import com.cburch.logisim.instance.InstanceData;
+import com.cburch.logisim.instance.InstanceState;
+
+/** Represents the state of a counter. */
+class CounterData implements InstanceData, Cloneable {
+    /** Retrieves the state associated with this counter in the circuit state,
+     * generating the state if necessary.
+     */
+    public static CounterData get(InstanceState state, BitWidth width) {
+        CounterData ret = (CounterData) state.getData();
+        if(ret == null) {
+            // If it doesn't yet exist, then we'll set it up with our default
+            // values and put it into the circuit state so it can be retrieved
+            // in future propagations.
+            ret = new CounterData(null, Value.createKnown(width, 0));
+            state.setData(ret);
+        } else if(!ret.value.getBitWidth().equals(width)) {
+            ret.value = ret.value.extendWidth(width.getWidth(), Value.FALSE);
+        }
+        return ret;
+    }
+
+    /** The last clock input value observed. */
+    private Value lastClock;
+    
+    /** The current value emitted by the counter. */
+    private Value value;
+
+    /** Constructs a state with the given values. */
+    public CounterData(Value lastClock, Value value) {
+        this.lastClock = lastClock;
+        this.value = value;
+    }
+
+    /** Returns a copy of this object. */
+    public Object clone() {
+        // We can just use what super.clone() returns: The only instance variables are
+        // Value objects, which are immutable, so we don't care that both the copy
+        // and the copied refer to the same Value objects. If we had mutable instance
+        // variables, then of course we would need to clone them.
+        try { return super.clone(); }
+        catch(CloneNotSupportedException e) { return null; }
+    }
+    
+    /** Updates the last clock observed, returning true if triggered. */
+    public boolean updateClock(Value value) {
+        Value old = lastClock;
+        lastClock = value;
+        return old == Value.FALSE &amp;&amp; value == Value.TRUE;
+    }
+    
+    /** Returns the current value emitted by the counter. */
+    public Value getValue() {
+        return value;
+    }
+    
+    /** Updates the current value emitted by the counter. */
+    public void setValue(Value value) {
+        this.value = value;
+    }
+}
+</pre>
+      <h2>
+        SimpleCounter
+      </h2>
+      <pre>package com.cburch.gray;
+
+import com.cburch.logisim.data.BitWidth;
+import com.cburch.logisim.data.Bounds;
+import com.cburch.logisim.data.Direction;
+import com.cburch.logisim.instance.InstanceFactory;
+import com.cburch.logisim.instance.InstancePainter;
+import com.cburch.logisim.instance.InstanceState;
+import com.cburch.logisim.instance.Port;
+import com.cburch.logisim.util.GraphicsUtil;
+import com.cburch.logisim.util.StringUtil;
+
+/** Manufactures a simple counter that iterates over the 4-bit Gray Code. This
+ * example illustrates how a component can maintain its own internal state. All
+ * of the code relevant to state, though, appears in CounterData class. */
+class SimpleGrayCounter extends InstanceFactory {
+    private static final BitWidth BIT_WIDTH = BitWidth.create(4);
+    
+    // Again, notice how we don't have any instance variables related to an
+    // individual instance's state. We can't put that here, because only one
+    // SimpleGrayCounter object is ever created, and its job is to manage all
+    // instances that appear in any circuits.
+    
+    public SimpleGrayCounter() {
+        super("Gray Counter (Simple)");
+        setOffsetBounds(Bounds.create(-30, -15, 30, 30));
+        setPorts(new Port[] {
+                new Port(-30, 0, Port.INPUT, 1),
+                new Port(  0, 0, Port.OUTPUT, BIT_WIDTH.getWidth()),
+        });
+    }
+
+    public void propagate(InstanceState state) {
+        // Here I retrieve the state associated with this component via a helper
+        // method. In this case, the state is in a CounterData object, which is
+        // also where the helper method is defined. This helper method will end
+        // up creating a CounterData object if one doesn't already exist.
+        CounterData cur = CounterData.get(state, BIT_WIDTH);
+
+        boolean trigger = cur.updateClock(state.getPort(0));
+        if(trigger) cur.setValue(GrayIncrementer.nextGray(cur.getValue()));
+        state.setPort(1, cur.getValue(), 9);
+        
+        // (You might be tempted to determine the counter's current value
+        // via state.getPort(1). This is erroneous, though, because another
+        // component may be pushing a value onto the same point, which would
+        // "corrupt" the value found there. We really do need to store the
+        // current value in the instance.)
+    }
+
+    public void paintInstance(InstancePainter painter) {
+        painter.drawBounds();
+        painter.drawClock(0, Direction.EAST); // draw a triangle on port 0
+        painter.drawPort(1); // draw port 1 as just a dot
+        
+        // Display the current counter value centered within the rectangle.
+        // However, if the context says not to show state (as when generating
+        // printer output), then skip this.
+        if(painter.getShowState()) {
+            CounterData state = CounterData.get(painter, BIT_WIDTH);
+            Bounds bds = painter.getBounds();
+            GraphicsUtil.drawCenteredText(painter.getGraphics(),
+                    StringUtil.toHexString(BIT_WIDTH.getWidth(), state.getValue().toIntValue()),
+                    bds.getX() + bds.getWidth() / 2,
+                    bds.getY() + bds.getHeight() / 2);
+        }
+    }
+}
+</pre>
+      <p>
+        <b>Next:</b> <a href="counter.html">Gray Code Counter</a>.
+      </p>
+    </div>
+  </body>
+</html>
