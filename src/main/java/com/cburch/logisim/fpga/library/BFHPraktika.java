@@ -48,7 +48,7 @@ public class BFHPraktika extends Library {
 
   @Override
   public String getDisplayName() {
-    return S.get("BFH mega functions");
+    return S.get("BFHMegaFunctions");
   }
 
   @Override

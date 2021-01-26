@@ -76,7 +76,7 @@ public class bcd2sevenseg extends InstanceFactory {
     ps[Segment_E].setToolTip(S.getter("Segment_E"));
     ps[Segment_F].setToolTip(S.getter("Segment_F"));
     ps[Segment_G].setToolTip(S.getter("Segment_G"));
-    ps[BCDin].setToolTip(S.getter("BCD Value"));
+    ps[BCDin].setToolTip(S.getter("BCDValue"));
     setPorts(ps);
   }
 

@@ -278,7 +278,7 @@ public class ChronoFrame extends LFrame implements KeyListener, ActionListener, 
     exportDataInFile.setPreferredSize(buttonSize);
     exportDataInFile.setFocusable(false);
 
-    exportDataToImage = new JButton(S.get("Export as image"));
+    exportDataToImage = new JButton(S.get("ButtonExportAsImage"));
     exportDataToImage.setActionCommand("exportImg");
     exportDataToImage.addActionListener(myListener);
     exportDataToImage.setPreferredSize(buttonSize);
