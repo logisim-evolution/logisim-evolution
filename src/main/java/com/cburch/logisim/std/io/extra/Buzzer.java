@@ -119,7 +119,7 @@ public class Buzzer extends InstanceFactory {
       Attributes.forBitWidth("vol_width", S.getter("buzzerVolumeBitWidth"));
 
   private static final AttributeOption Hz = new AttributeOption("Hz", S.getter("Hz"));
-  private static final AttributeOption dHz = new AttributeOption("dHz", S.getter("dHz (0.1Hz)"));
+  private static final AttributeOption dHz = new AttributeOption("dHz", S.getter("buzzerUnitDhz"));
   private static final Attribute<AttributeOption> FREQUENCY_MEASURE =
       Attributes.forOption(
           "freq_measure", S.getter("buzzerFrequecy"), new AttributeOption[] {Hz, dHz});

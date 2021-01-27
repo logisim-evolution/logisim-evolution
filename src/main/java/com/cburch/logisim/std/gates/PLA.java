@@ -73,9 +73,9 @@ class PLA extends InstanceFactory {
   static final int OUT_PORT = 1;
 
   static final Attribute<BitWidth> ATTR_IN_WIDTH =
-      Attributes.forBitWidth("in_width", S.getter("Bit Width In"));
+      Attributes.forBitWidth("in_width", S.getter("plaBitWidthIn"));
   static final Attribute<BitWidth> ATTR_OUT_WIDTH =
-      Attributes.forBitWidth("out_width", S.getter("Bit Width Out"));
+      Attributes.forBitWidth("out_width", S.getter("plaBitWidthOut"));
   static Attribute<PLATable> ATTR_TABLE = new TruthTableAttribute();
 
   public static InstanceFactory FACTORY = new PLA();

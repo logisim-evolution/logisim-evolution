@@ -54,7 +54,7 @@ public class bin2bcd extends InstanceFactory {
   private static final int InnerDistance = 60;
 
   public static final Attribute<BitWidth> ATTR_BinBits =
-      Attributes.forBitWidth("binvalue", S.getter("Binary data bits"), 4, 13);
+      Attributes.forBitWidth("binvalue", S.getter("BinaryDataBits"), 4, 13);
 
   public bin2bcd() {
     super("Binary_to_BCD_converter", S.getter("Bin2BCD"));
