@@ -288,17 +288,7 @@ public class LocaleManager {
     try {
       ret = locale.getString(key);
     } catch (MissingResourceException e) {
-      ResourceBundle backup = dflt_locale;
-      if (backup == null) {
-        Locale backup_loc = Locale.US;
-        backup = ResourceBundle.getBundle(dir_name + "/en/" + file_start, backup_loc);
-        dflt_locale = backup;
-      }
-      try {
-        ret = backup.getString(key);
-      } catch (MissingResourceException e2) {
-        ret = key;
-      }
+      ret = key;
     }
     HashMap<Character, String> repl = LocaleManager.repl;
     if (repl != null) ret = replaceAccents(ret, repl);
@@ -378,7 +368,7 @@ public class LocaleManager {
   }
 
   private void loadLocale(Locale loc) {
-    String bundleName = dir_name + "/" + loc.getLanguage() + "/" + file_start;
+    String bundleName = dir_name + "/strings/" + file_start + "/" + file_start;
     locale = ResourceBundle.getBundle(bundleName, loc);
   }
 }
