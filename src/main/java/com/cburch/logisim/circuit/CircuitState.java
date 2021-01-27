@@ -40,6 +40,7 @@ import com.cburch.logisim.instance.InstanceData;
 import com.cburch.logisim.instance.InstanceFactory;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.proj.Project;
+import com.cburch.logisim.std.io.extra.Buzzer;
 import com.cburch.logisim.std.memory.Ram;
 import com.cburch.logisim.std.memory.RamState;
 import com.cburch.logisim.std.wiring.Clock;
@@ -432,6 +433,8 @@ public class CircuitState implements InstanceData {
         Ram ram = (Ram) comp.getFactory();
         boolean remove = ram.reset(this, Instance.getInstanceFor(comp));
         if (remove) componentData.put(comp, null);
+      } else if (comp.getFactory() instanceof Buzzer) {
+        Buzzer.StopBuzzerSound(comp, this);
       } else if (!(comp.getFactory() instanceof SubcircuitFactory)) {
         if (componentData.get(comp) instanceof ComponentDataGuiProvider)
           ((ComponentDataGuiProvider)componentData.get(comp)).destroy();
