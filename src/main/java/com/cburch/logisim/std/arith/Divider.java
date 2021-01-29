@@ -67,7 +67,7 @@ public class Divider extends InstanceFactory {
       BigInteger num = uu.shiftLeft(w).or(aa);
       BigInteger den = bb.equals(BigInteger.ZERO) ? BigInteger.valueOf(1) : bb;
 
-      BigInteger res[] = num.divideAndRemainder(den);
+      BigInteger[] res = num.divideAndRemainder(den);
   	  long mask = w == 64 ? 0 : (-1L) << w;
   	  mask ^= 0xFFFFFFFFFFFFFFFFL;
       long result = res[0].and(BigInteger.valueOf(mask)).longValue();

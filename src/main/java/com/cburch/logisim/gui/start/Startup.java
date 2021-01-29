@@ -262,7 +262,7 @@ public class Startup implements AWTEventListener {
         if (i >= args.length) {
           printUsage();
         }
-        String wxh[] = args[i].split("[xX]");
+        String[] wxh = args[i].split("[xX]");
         if (wxh.length != 2 || wxh[0].length() < 1 || wxh[1].length() < 1) {
           logger.error("{}", S.get("argGeometryError"));
           System.exit(1);
@@ -273,7 +273,7 @@ public class Startup implements AWTEventListener {
         if (p >= 0) {
           loc = wxh[1].substring(p + 1);
           wxh[1] = wxh[1].substring(0, p);
-          String xy[] = loc.split("\\+");
+          String[] xy = loc.split("\\+");
           if (xy.length != 2 || xy[0].length() < 1 || xy[0].length() < 1) {
             logger.error("{}", S.get("argGeometryError"));
             System.exit(1);

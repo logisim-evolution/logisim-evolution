@@ -71,7 +71,7 @@ public class ImageXmlFactory {
   };
   private char V2_Identifier = '@';
 
-  private String[] CreateCodeTable(byte stream[]) {
+  private String[] CreateCodeTable(byte[] stream) {
     String[] result = new String[256];
     Long[] ocurances = new Long[256];
     int[] index = new int[256];
@@ -152,7 +152,7 @@ public class ImageXmlFactory {
       // TODO Auto-generated catch block
       logger.error("JPEG Writer exception: {}", e.getMessage());
     }
-    byte data[] = blaat.toByteArray();
+    byte[] data = blaat.toByteArray();
     CodeTable = CreateCodeTable(data);
     AsciiStream = new StringBuffer();
     AsciiStream.append(V2_Identifier);

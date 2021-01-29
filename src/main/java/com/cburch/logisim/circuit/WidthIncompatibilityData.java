@@ -82,7 +82,7 @@ public class WidthIncompatibilityData {
   }
 
   public BitWidth getCommonBitWidth() {
-    int hist[] = new int[65];
+    int[] hist = new int[65];
     BitWidth maxwidth = null;
     int maxcount = 0;
     for (BitWidth bw : widths) {

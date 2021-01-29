@@ -820,7 +820,7 @@ public class HexFile {
     
     private int curLineNo;
     private String curLine;
-    private String curWords[];
+    private String[] curWords;
     private int curWordIdx;
     private boolean skipDoubleSpaces;
 
@@ -1923,7 +1923,7 @@ public class HexFile {
 
     }
 
-    public static void main(String args[]) {
+    public static void main(String[] args) {
       try {
         java.util.Random rng = new java.util.Random(1234L);
         if (args.length == 0) {

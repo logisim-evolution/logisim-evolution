@@ -287,7 +287,7 @@ public abstract class TclComponent extends InstanceFactory {
        * If the received value is not wide enough, complete with X on
        * the MSB
        */
-      Value vector_values[] = new Value[width];
+      Value[] vector_values = new Value[width];
       for (int i = width - 1; i >= busValue.length(); i--) {
         vector_values[i] = Value.UNKNOWN;
       }

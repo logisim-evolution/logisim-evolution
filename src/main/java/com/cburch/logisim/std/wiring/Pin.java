@@ -374,7 +374,7 @@ public class Pin extends InstanceFactory {
       PinState pinState = getState(state);
       int r = (radix == RadixOption.RADIX_16 ? 4 : (radix == RadixOption.RADIX_8 ? 3 : 1));
       if (bit + r > width.getWidth()) r = width.getWidth() - bit;
-      Value val[] = pinState.intendedValue.getAll();
+      Value[] val = pinState.intendedValue.getAll();
       boolean tristate = (attrs.threeState && attrs.pull == PULL_NONE);
       if (ch == 0) {
         boolean ones = true, defined = true;
@@ -388,7 +388,7 @@ public class Pin extends InstanceFactory {
           for (int b = bit; b < bit + r; b++) val[b] = Value.UNKNOWN;
         } else {
           int carry = 1;
-          Value v[] = new Value[] {Value.FALSE, Value.TRUE};
+          Value[] v = new Value[] {Value.FALSE, Value.TRUE};
           for (int b = bit; b < bit + r; b++) {
             int s = (val[b] == Value.TRUE ? 1 : 0) + carry;
             val[b] = v[(s % 2)];

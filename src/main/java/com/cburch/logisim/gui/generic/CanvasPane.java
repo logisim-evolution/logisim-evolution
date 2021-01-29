@@ -83,7 +83,7 @@ public class CanvasPane extends JScrollPane {
     public void mouseWheelMoved(MouseWheelEvent mwe) {
       if (mwe.isControlDown()) {
         double zoom = zoomModel.getZoomFactor();
-        double opts[] = zoomModel.getZoomOptions();
+        double[] opts = zoomModel.getZoomOptions();
         if (mwe.getWheelRotation() < 0) { // ZOOM IN
           zoom += 0.1;
           double max = opts[opts.length - 1] / 100.0;

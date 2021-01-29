@@ -339,8 +339,8 @@ public class PlaRomData implements InstanceData {
       this.inputs = inputs;
       this.outputs = outputs;
       this.and = and;
-      boolean oldInputAnd[][] = Arrays.copyOf(InputAnd, InputAnd.length);
-      boolean oldAndOutput[][] = Arrays.copyOf(AndOutput, AndOutput.length);
+      boolean[][] oldInputAnd = Arrays.copyOf(InputAnd, InputAnd.length);
+      boolean[][] oldAndOutput = Arrays.copyOf(AndOutput, AndOutput.length);
       InputAnd = new boolean[getAnd()][getInputs() * 2];
       AndOutput = new boolean[getAnd()][getOutputs()];
       InputValue = new Value[getInputs()];

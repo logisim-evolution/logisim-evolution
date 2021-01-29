@@ -51,7 +51,7 @@ public class PLAHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     return Inputs;
   }
 
-  private static String bits(char b[]) {
+  private static String bits(char[] b) {
     String s = "";
     for (char c : b) s = ((c == '0' || c == '1') ? c : '-') + s;
     if (b.length == 1) return "'" + s + "'";

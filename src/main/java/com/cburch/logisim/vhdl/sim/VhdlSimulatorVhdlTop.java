@@ -93,7 +93,7 @@ public class VhdlSimulatorVhdlTop {
     map.append(System.getProperty("line.separator"));
 
     firstPort = firstComp = firstMap = true;
-    String type[] = {Port.INOUT, Port.INPUT, Port.OUTPUT};
+    String[] type = {Port.INOUT, Port.INPUT, Port.OUTPUT};
 
     /* For each vhdl entity */
     for (Component comp : comps) {

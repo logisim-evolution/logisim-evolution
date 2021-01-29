@@ -296,7 +296,7 @@ public class ValueTable extends JPanel {
 
   private int rowCount;
 
-  private int columnWidth[];
+  private int[] columnWidth;
   private int cellHeight;
   private int tableWidth;
 

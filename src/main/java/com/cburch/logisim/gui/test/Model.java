@@ -54,7 +54,7 @@ class Model {
   private int numPass = 0, numFail = 0;
   private TestVector vec = null;
 
-  private TestException results[];
+  private TestException[] results;
 
   private UpdateResultSort myUpdateResultSort = new UpdateResultSort();
 

@@ -110,7 +110,7 @@ public class TruthtableTextFile {
       out.println();
       VariableList inputs = model.getInputs();
       VariableList outputs = model.getOutputs();
-      int colwidth[] = new int[inputs.vars.size() + outputs.vars.size()];
+      int[] colwidth = new int[inputs.vars.size() + outputs.vars.size()];
       int i;
       i = 0;
       for (Var var : inputs.vars) colwidth[i++] = Math.max(var.toString().length(), var.width);
@@ -168,7 +168,7 @@ public class TruthtableTextFile {
 
   static void validateHeader(String line, VariableList inputs, VariableList outputs, int lineno)
       throws IOException {
-    String s[] = line.split("\\s+");
+    String[] s = line.split("\\s+");
     VariableList cur = inputs;
     for (int i = 0; i < s.length; i++) {
       if (s[i].equals("|")) {
@@ -274,7 +274,7 @@ public class TruthtableTextFile {
       throws IOException {
     Entry[] row = new Entry[inputs.bits.size() + outputs.bits.size()];
     int col = 0;
-    String s[] = line.split("\\s+");
+    String[] s = line.split("\\s+");
     int ix = 0;
     for (Var var : inputs.vars) {
       if (ix >= s.length || s[ix].equals("|"))

@@ -127,7 +127,7 @@ class TestPanel extends JPanel implements ValueTable.Model {
     int numFail = model.getFail();
     TestVector vec = model.getVector();
     int columns = vec.columnName.length;
-    String msg[] = new String[columns];
+    String[] msg = new String[columns];
     Value[] altdata = new Value[columns];
     String passMsg = S.get("passStatus");
     String failMsg = S.get("failStatus");

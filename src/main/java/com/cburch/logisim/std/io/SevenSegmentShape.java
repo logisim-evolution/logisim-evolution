@@ -95,7 +95,7 @@ public class SevenSegmentShape extends DynamicElement {
     drawLabel(g);
   }
 
-  static final int SEGMENTS[][] =
+  static final int[][] SEGMENTS =
       new int[][] {
         new int[] {3, 1, 6, 2},
         new int[] {9, 3, 2, 6},

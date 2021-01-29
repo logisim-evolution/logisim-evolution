@@ -283,7 +283,7 @@ public class Canvas extends JPanel
       if (mwe.isControlDown()) {
         ZoomModel zoomModel = proj.getFrame().getZoomModel();
         double zoom = zoomModel.getZoomFactor();
-        double opts[] = zoomModel.getZoomOptions();
+        double[] opts = zoomModel.getZoomOptions();
         if (mwe.getWheelRotation() < 0) { // ZOOM IN
           zoom += 0.1;
           double max = opts[opts.length - 1] / 100.0;

@@ -464,7 +464,7 @@ public class Circuit {
    * Once the Simulation is done (pin[0] to 1) the value of pin[1]
    * will be checked and if the value of pin[1] is 1 the function return true.
    * It will return zero otherwise  */
-  public boolean doTestBench(Project project, Instance pin[], Value[] val) {
+  public boolean doTestBench(Project project, Instance[] pin, Value[] val) {
     CircuitState state = project.getCircuitState();
     /* This is introduced in order to not block in case both the signal never happend*/
     InstanceState[] pinsState = new InstanceState[pin.length];
@@ -501,7 +501,7 @@ public class Circuit {
   /**
    * Code taken from Cornell's version of Logisim: http://www.cs.cornell.edu/courses/cs3410/2015sp/
    */
-  public void doTestVector(Project project, Instance pin[], Value[] val) throws TestException {
+  public void doTestVector(Project project, Instance[] pin, Value[] val) throws TestException {
     CircuitState state = project.getCircuitState();
     state.reset();
 

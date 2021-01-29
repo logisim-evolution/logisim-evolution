@@ -444,7 +444,7 @@ public class TtyInterface {
       for (int j = 0; j < inputPins.size(); j++) {
         Instance pin = inputPins.get(j);
         int width = pin.getAttributeValue(StdAttr.WIDTH).getWidth();
-        Value v[] = new Value[width];
+        Value[] v = new Value[width];
         for (int b = width - 1; b >= 0; b--) {
           boolean value = TruthTable.isInputSet(i, incol++, inputCount);
           v[b] = value ? Value.TRUE : Value.FALSE;

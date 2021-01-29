@@ -182,7 +182,7 @@ abstract class BufferedLineReader {
   public abstract void close() throws IOException;
 
 
-  public int readBytes(byte bbuf[], int off, int len) throws IOException {
+  public int readBytes(byte[] bbuf, int off, int len) throws IOException {
     if (buf == null)
       throw new IOException("stream closed");
     if (len <= 0)
