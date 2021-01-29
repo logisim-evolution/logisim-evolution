@@ -84,7 +84,7 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
     String AssignmentOperator = (HDLType.equals(VHDL)) ? " <= " : " = ";
     String NotOperator = (HDLType.equals(VHDL)) ? "NOT" : "~";
     String SelectOperator = (HDLType.equals(VHDL)) ? "" : "[" + ActivityLevelStr + "]";
-    Contents.addAll(MakeRemarkBlock("Here the ouput signals are defined", 3, HDLType));
+    Contents.addAll(MakeRemarkBlock("Here the output signals are defined", 3, HDLType));
     Contents.add(
         "   "
             + Preamble

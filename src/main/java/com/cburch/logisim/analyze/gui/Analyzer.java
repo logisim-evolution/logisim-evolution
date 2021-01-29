@@ -236,7 +236,7 @@ public class Analyzer extends LFrame {
 
   private void addTab(int index, final JComponent comp) {
     if (comp instanceof TableTab || comp instanceof VariableTab || comp instanceof ExpressionTab) {
-        tabbedPane.insertTab("Untitled", null, comp, null, index);
+        tabbedPane.insertTab(S.get("untitled"), null, comp, null, index);
         return;
     }
     final JScrollPane pane = new JScrollPane(comp,
@@ -248,7 +248,7 @@ public class Analyzer extends LFrame {
         comp.setSize(new Dimension(width, comp.getHeight()));
       }
     });
-    tabbedPane.insertTab("Untitled", null, pane, null, index);
+    tabbedPane.insertTab(S.get("untitled"), null, pane, null, index);
   }
 
   public AnalyzerModel getModel() {
