@@ -155,8 +155,8 @@ public class Caret {
             if (model != null
                 && cursor >= model.getFirstOffset()
                 && cursor <= model.getLastOffset()) {
-              int curValue = (int) model.get(cursor);
-              int newValue = 16 * curValue + digit;
+              long curValue = (long) model.get(cursor);
+              long newValue = 16 * curValue + digit;
               model.set(cursor, newValue);
             }
           }
