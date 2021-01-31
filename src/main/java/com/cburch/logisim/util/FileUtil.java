@@ -46,17 +46,11 @@ public class FileUtil {
   public static File createTmpFile(String content, String prefix, String suffix)
       throws IOException {
     File tmp = File.createTempFile(prefix, suffix);
-    BufferedWriter out = null;
 
-    try {
-      out = new BufferedWriter(new FileWriter(tmp));
+    try (BufferedWriter out = new BufferedWriter(new FileWriter(tmp))) {
       out.write(content, 0, content.length());
     } catch (IOException ex) {
       throw ex;
-    } finally {
-      if (out != null) {
-        out.close();
-      }
     }
 
     return tmp;

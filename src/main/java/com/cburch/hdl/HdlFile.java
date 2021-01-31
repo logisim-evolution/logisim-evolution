@@ -41,10 +41,8 @@ import java.io.IOException;
 public class HdlFile {
 
   public static void open(File file, HdlContentEditor editor) throws IOException {
-    BufferedReader in = null;
 
-    try {
-      in = new BufferedReader(new FileReader(file));
+    try (BufferedReader in = new BufferedReader(new FileReader(file))) {
 
       StringBuilder content = new StringBuilder();
       String l;
@@ -56,26 +54,16 @@ public class HdlFile {
       editor.setText(content.toString());
     } catch (IOException ex) {
       throw new IOException(S.get("hdlFileReaderError"));
-    } finally {
-      if (in != null) {
-        in.close();
-      }
     }
   }
 
   public static void save(File file, HdlContentEditor editor) throws IOException {
-    BufferedWriter out = null;
 
-    try {
-      out = new BufferedWriter(new FileWriter(file));
+    try (BufferedWriter out = new BufferedWriter(new FileWriter(file))) {
       String data = editor.getText();
       out.write(data, 0, data.length());
     } catch (IOException ex) {
       throw new IOException(S.get("hdlFileWriterError"));
-    } finally {
-      if (out != null) {
-        out.close();
-      }
     }
   }
 }

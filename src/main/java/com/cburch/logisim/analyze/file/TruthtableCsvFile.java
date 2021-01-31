@@ -55,15 +55,15 @@ public class TruthtableCsvFile {
     VariableList inputs = model.getInputs();
     VariableList outputs = model.getOutputs();
     if (inputs.vars.isEmpty() || outputs.vars.isEmpty()) return;
-    PrintStream out = new PrintStream(file);
-    try {
+    try (PrintStream out = new PrintStream(file)) {
       TruthTable tt = model.getTruthTable();
       tt.compactVisibleRows();
       for (int i = 0; i < inputs.vars.size(); i++) {
         Var cur = inputs.vars.get(i);
         String Name = cur.width == 1 ? cur.name : cur.name + "[" + (cur.width - 1) + "..0]";
         out.print(DEFAULT_QUOTE + Name + DEFAULT_QUOTE + DEFAULT_SEPARATOR);
-        for (int j = 1; j < cur.width; j++) out.print(DEFAULT_SEPARATOR);
+        for (int j = 1; j < cur.width; j++)
+          out.print(DEFAULT_SEPARATOR);
       }
       out.print(DEFAULT_QUOTE + "|" + DEFAULT_QUOTE);
       for (int i = 0; i < outputs.vars.size(); i++) {
@@ -71,7 +71,8 @@ public class TruthtableCsvFile {
         Var cur = outputs.vars.get(i);
         String Name = cur.width == 1 ? cur.name : cur.name + "[" + (cur.width - 1) + "..0]";
         out.print(DEFAULT_QUOTE + Name + DEFAULT_QUOTE);
-        for (int j = 1; j < cur.width; j++) out.print(DEFAULT_SEPARATOR);
+        for (int j = 1; j < cur.width; j++)
+          out.print(DEFAULT_SEPARATOR);
       }
       out.println();
       for (int row = 0; row < tt.getVisibleRowCount(); row++) {
@@ -87,8 +88,6 @@ public class TruthtableCsvFile {
         }
         out.println();
       }
-    } finally {
-      out.close();
     }
   }
 

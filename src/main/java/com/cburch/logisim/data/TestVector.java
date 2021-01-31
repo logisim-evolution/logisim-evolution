@@ -149,13 +149,10 @@ public class TestVector {
   public ArrayList<Value[]> data;
 
   public TestVector(File src) throws IOException {
-    BufferedReader in = new BufferedReader(new FileReader(src));
 
-    try {
+    try (BufferedReader in = new BufferedReader(new FileReader(src))) {
       TestVectorReader r = new TestVectorReader(in);
       r.parse();
-    } finally {
-      in.close();
     }
   }
 

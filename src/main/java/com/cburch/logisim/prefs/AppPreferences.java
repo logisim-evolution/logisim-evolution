@@ -188,22 +188,13 @@ public class AppPreferences {
         customTemplate = null;
         customTemplateFile = null;
       } else {
-        FileInputStream reader = null;
-        try {
-          reader = new FileInputStream(toRead);
+        try (FileInputStream reader = new FileInputStream(toRead)) {
           customTemplate = Template.create(reader);
           customTemplateFile = templateFile;
         } catch (Exception t) {
           setTemplateFile(null);
           customTemplate = null;
           customTemplateFile = null;
-        } finally {
-          if (reader != null) {
-            try {
-              reader.close();
-            } catch (IOException e) {
-            }
-          }
         }
       }
     }
@@ -223,10 +214,8 @@ public class AppPreferences {
         plainTemplate = getEmptyTemplate();
       } else {
         try {
-          try {
+          try (in) {
             plainTemplate = Template.create(in);
-          } finally {
-            in.close();
           }
         } catch (Exception e) {
           plainTemplate = getEmptyTemplate();

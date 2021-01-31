@@ -404,8 +404,7 @@ public class AnalyzerTexWriter {
     /* make sure the model is up to date */
     boolean modelIsUpdating = model.getOutputExpressions().UpdatesEnabled();
     model.getOutputExpressions().enableUpdates();
-    PrintStream out = new PrintStream(file);
-    try {
+    try (PrintStream out = new PrintStream(file)) {
       /*
        * We start to create the document header section with all required packages
        */
@@ -502,7 +501,7 @@ public class AnalyzerTexWriter {
         out.println("\\section{" + S.get("latexKarnaugh") + "}");
         if (tt.getRowCount() > MAX_TRUTH_TABLE_ROWS) {
           out.println(S.fmt("latexKarnaughToBig",
-                  (int) Math.ceil(Math.log(MAX_TRUTH_TABLE_ROWS) / Math.log(2))));
+              (int) Math.ceil(Math.log(MAX_TRUTH_TABLE_ROWS) / Math.log(2))));
         } else {
           out.println(S.get("latexKarnaughText"));
           out.println(SUB_SECTION_SEP);
@@ -546,7 +545,8 @@ public class AnalyzerTexWriter {
               for (int idx = outp.width - 1; idx >= 0; idx--) {
                 String func = "$" + outp.name + "_{" + idx + "}$";
                 out.println(
-                    getKarnaughGroups(outp.name + "[" + idx + "]", func, linedStyle, outcol++, model));
+                    getKarnaughGroups(outp.name + "[" + idx + "]", func, linedStyle, outcol++,
+                        model));
               }
             }
           }
@@ -560,13 +560,13 @@ public class AnalyzerTexWriter {
             if (outp.width == 1) {
               Expression exp = Expressions.eq(Expressions.variable(outp.name),
                   model.getOutputExpressions().getMinimalExpression(outp.name));
-              out.println(exp.toString(Notation.LaTeX)+ "~\\\\");
+              out.println(exp.toString(Notation.LaTeX) + "~\\\\");
             } else {
               for (int idx = outp.width - 1; idx >= 0; idx--) {
                 String name = outp.bitName(idx);
                 Expression exp = Expressions.eq(Expressions.variable(name),
                     model.getOutputExpressions().getMinimalExpression(name));
-                out.println(exp.toString(Notation.LaTeX)+ "~\\\\");
+                out.println(exp.toString(Notation.LaTeX) + "~\\\\");
               }
             }
           }
@@ -576,8 +576,6 @@ public class AnalyzerTexWriter {
        * That was all folks
        */
       out.println("\\end{document}");
-    } finally {
-      out.close();
     }
     if (!modelIsUpdating)
     	model.getOutputExpressions().disableUpdates();

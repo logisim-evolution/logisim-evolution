@@ -260,20 +260,11 @@ public class LogisimFileActions {
       /* first we are going to merge the jar libraries */
       for (int i = 0; i < JarLibs.size(); i++) {
         String className = null;
-        JarFile jarFile = null;
-        try {
-          jarFile = new JarFile(JarLibs.get(i));
+        try (JarFile jarFile = new JarFile(JarLibs.get(i))) {
           Manifest manifest = jarFile.getManifest();
           className = manifest.getMainAttributes().getValue("Library-Class");
         } catch (IOException e) {
           // if opening the JAR file failed, do nothing
-        } finally {
-          if (jarFile != null) {
-            try {
-              jarFile.close();
-            } catch (IOException e) {
-            }
-          }
         }
         // if the class name was not found, go back to the good old dialog
         if (className == null) {
