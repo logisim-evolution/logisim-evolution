@@ -63,7 +63,7 @@ public class PropertyChangeWeakSupport {
     listeners.add(new ListenerData(property, listener));
   }
 
-  public void firePropertyChange(String property, boolean oldValue, boolean newValue) {
+  public <T> void firePropertyChange(String property, T oldValue, T newValue) {
     PropertyChangeEvent e = null;
     for (Iterator<ListenerData> it = listeners.iterator(); it.hasNext(); ) {
       ListenerData data = it.next();
@@ -75,40 +75,6 @@ public class PropertyChangeWeakSupport {
           e =
               new PropertyChangeEvent(
                   source, property, oldValue, newValue);
-        }
-        l.propertyChange(e);
-      }
-    }
-  }
-
-  public void firePropertyChange(String property, int oldValue, int newValue) {
-    PropertyChangeEvent e = null;
-    for (Iterator<ListenerData> it = listeners.iterator(); it.hasNext(); ) {
-      ListenerData data = it.next();
-      PropertyChangeListener l = data.listener.get();
-      if (l == null) {
-        it.remove();
-      } else if (data.property.equals(ALL_PROPERTIES) || data.property.equals(property)) {
-        if (e == null) {
-          e =
-              new PropertyChangeEvent(
-                  source, property, oldValue, newValue);
-        }
-        l.propertyChange(e);
-      }
-    }
-  }
-
-  public void firePropertyChange(String property, Object oldValue, Object newValue) {
-    PropertyChangeEvent e = null;
-    for (Iterator<ListenerData> it = listeners.iterator(); it.hasNext(); ) {
-      ListenerData data = it.next();
-      PropertyChangeListener l = data.listener.get();
-      if (l == null) {
-        it.remove();
-      } else if (data.property.equals(ALL_PROPERTIES) || data.property.equals(property)) {
-        if (e == null) {
-          e = new PropertyChangeEvent(source, property, oldValue, newValue);
         }
         l.propertyChange(e);
       }
