@@ -64,7 +64,7 @@ public class PowerOnReset extends InstanceFactory {
           new DurationAttribute("PorHighDuration", S.getter("porHighAttr"), 1, 10, false),
         },
         new Object[] {
-          Direction.EAST, Integer.valueOf(2),
+          Direction.EAST, 2,
         });
     setFacingAttribute(StdAttr.FACING);
     setIconName("por.png");

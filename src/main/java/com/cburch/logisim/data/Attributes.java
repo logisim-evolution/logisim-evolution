@@ -240,28 +240,28 @@ public class Attributes {
         value = value.substring(1);
         if (value.startsWith("0x")) {
           value = value.substring(2);
-          return Integer.valueOf(Integer.parseInt("-" + value, 16));
+          return Integer.parseInt("-" + value, 16);
         } else if (value.startsWith("0b")) {
           value = value.substring(2);
-          return Integer.valueOf(Integer.parseInt("-" + value, 2));
+          return Integer.parseInt("-" + value, 2);
         } else if (value.startsWith("0") && value.length() > 1) {
           value = value.substring(1);
-          return Integer.valueOf(Integer.parseInt("-" + value, 8));
+          return Integer.parseInt("-" + value, 8);
         } else {
-          return Integer.valueOf(Integer.parseInt("-" + value, 10));
+          return Integer.parseInt("-" + value, 10);
         }
       } else {
         if (value.startsWith("0x")) {
           value = value.substring(2);
-          return Integer.valueOf(Integer.parseUnsignedInt(value, 16));
+          return Integer.parseUnsignedInt(value, 16);
         } else if (value.startsWith("0b")) {
           value = value.substring(2);
-          return Integer.valueOf(Integer.parseUnsignedInt(value, 2));
+          return Integer.parseUnsignedInt(value, 2);
         } else if (value.startsWith("0") && value.length() > 1) {
           value = value.substring(1);
-          return Integer.valueOf(Integer.parseUnsignedInt(value, 8));
+          return Integer.parseUnsignedInt(value, 8);
         } else {
-          return Integer.valueOf(Integer.parseUnsignedInt(value, 10));
+          return Integer.parseUnsignedInt(value, 10);
         }
       }
     }
@@ -290,28 +290,28 @@ public class Attributes {
         value = value.substring(1);
         if (value.startsWith("0x")) {
           value = value.substring(2);
-          return Long.valueOf(Long.parseLong("-" + value, 16));
+          return Long.parseLong("-" + value, 16);
         } else if (value.startsWith("0b")) {
           value = value.substring(2);
-          return Long.valueOf(Long.parseLong("-" + value, 2));
+          return Long.parseLong("-" + value, 2);
         } else if (value.startsWith("0") && value.length() > 1) {
           value = value.substring(1);
-          return Long.valueOf(Long.parseLong("-" + value, 8));
+          return Long.parseLong("-" + value, 8);
         } else {
-          return Long.valueOf(Long.parseLong("-" + value, 10));
+          return Long.parseLong("-" + value, 10);
         }
       } else {
         if (value.startsWith("0x")) {
           value = value.substring(2);
-          return Long.valueOf(Long.parseUnsignedLong(value, 16));
+          return Long.parseUnsignedLong(value, 16);
         } else if (value.startsWith("0b")) {
           value = value.substring(2);
-          return Long.valueOf(Long.parseUnsignedLong(value, 2));
+          return Long.parseUnsignedLong(value, 2);
         } else if (value.startsWith("0") && value.length() > 1) {
           value = value.substring(1);
-          return Long.valueOf(Long.parseUnsignedLong(value, 8));
+          return Long.parseUnsignedLong(value, 8);
         } else {
-          return Long.valueOf(Long.parseUnsignedLong(value, 10));
+          return Long.parseUnsignedLong(value, 10);
         }
       }
     }
@@ -359,7 +359,7 @@ public class Attributes {
         if (options == null) {
           options = new Integer[end - start + 1];
           for (int i = start; i <= end; i++) {
-            options[i - start] = Integer.valueOf(i);
+            options[i - start] = i;
           }
         }
         ComboBox combo = new ComboBox<>(options);
@@ -374,7 +374,7 @@ public class Attributes {
       int v = (int) Long.parseLong(value);
       if (v < start) throw new NumberFormatException("integer too small");
       if (v > end) throw new NumberFormatException("integer too large");
-      return Integer.valueOf(v);
+      return v;
     }
   }
 

@@ -191,7 +191,7 @@ public class GridPainter {
     if (oldValue != value) {
       zoomFactor = value;
       updateGridImage(gridSize, value);
-      support.firePropertyChange(ZOOM_PROPERTY, Double.valueOf(oldValue), Double.valueOf(value));
+      support.firePropertyChange(ZOOM_PROPERTY, oldValue, value);
     }
   }
 

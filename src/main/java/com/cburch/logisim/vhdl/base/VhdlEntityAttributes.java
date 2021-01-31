@@ -78,7 +78,7 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
       long v = (long) Long.parseLong(value);
       if (v < start) throw new NumberFormatException("integer too small");
       if (v > end) throw new NumberFormatException("integer too large");
-      return Integer.valueOf((int) v);
+      return (int) v;
     }
 
     @Override
@@ -130,7 +130,7 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
     value[6] = "";
     for (int i = 0; i < g.length; i++) {
       attrs[6 + i] = a.get(i);
-      value[6 + i] = new Integer(g[i].getDefaultValue());
+      value[6 + i] = g[i].getDefaultValue();
     }
     AttributeSet ret = AttributeSets.fixedSet(attrs, value);
     return ret;

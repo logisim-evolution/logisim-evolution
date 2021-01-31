@@ -138,7 +138,7 @@ public class FPGAClockPanel extends JPanel implements ActionListener,LocaleListe
         extention = TickIndex.charAt(i);
       i++;
     }
-    ret = Double.valueOf(number.toString());
+    ret = Double.parseDouble(number.toString());
     switch (extention) {
       case 'K' : ret *= 1000;
                  break;

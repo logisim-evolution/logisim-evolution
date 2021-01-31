@@ -335,7 +335,7 @@ public class ProgrammableGenerator extends InstanceFactory {
           CONTENTS_ATTR
         },
         new Object[] {
-          Direction.EAST, Integer.valueOf(4), "", Direction.WEST, StdAttr.DEFAULT_LABEL_FONT, ""
+          Direction.EAST, 4, "", Direction.WEST, StdAttr.DEFAULT_LABEL_FONT, ""
         });
     setFacingAttribute(StdAttr.FACING);
     setInstanceLogger(ClockLogger.class);

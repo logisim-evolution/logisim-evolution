@@ -147,7 +147,7 @@ public class Random extends InstanceFactory {
         },
         new Object[] {
           BitWidth.create(8),
-          Integer.valueOf(0),
+            0,
           StdAttr.TRIG_RISING,
           "",
           StdAttr.DEFAULT_LABEL_FONT,

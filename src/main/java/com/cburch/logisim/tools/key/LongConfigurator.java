@@ -42,6 +42,6 @@ public class LongConfigurator extends NumericConfigurator<Long> {
 
   @Override
   protected Long createValue(long val) {
-    return Long.valueOf(val);
+    return val;
   }
 }

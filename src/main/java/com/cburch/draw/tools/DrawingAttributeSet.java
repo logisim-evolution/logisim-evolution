@@ -128,8 +128,8 @@ public class DrawingAttributeSet implements AttributeSet, Cloneable {
       Arrays.asList(
           new Object[] {
             DrawAttr.DEFAULT_FONT, DrawAttr.HALIGN_CENTER, DrawAttr.VALIGN_MIDDLE,
-            DrawAttr.PAINT_STROKE, Integer.valueOf(1), Color.BLACK,
-            Color.WHITE, Color.BLACK, Integer.valueOf(10)
+            DrawAttr.PAINT_STROKE, 1, Color.BLACK,
+            Color.WHITE, Color.BLACK, 10
           });
 
   private EventSourceWeakSupport<AttributeListener> listeners;

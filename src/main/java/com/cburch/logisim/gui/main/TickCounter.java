@@ -140,7 +140,7 @@ class TickCounter implements SimulatorListener {
     if (i >= 0) { // nothing after decimal point
       return "" + (int) Math.round(a * Math.round(bv));
     } else { // keep some after decimal point
-      return String.format("%." + (-i) + "f", Double.valueOf(a * bv));
+      return String.format("%." + (-i) + "f", a * bv);
     }
   }
 

@@ -219,7 +219,7 @@ public class RGBLed extends InstanceFactory implements DynamicElementProvider {
       Value val = state.getPortValue(i);
       if (val == Value.TRUE) summary |= 1 << i;
     }
-    Object value = Integer.valueOf(summary);
+    Object value = summary;
     InstanceDataSingleton data = (InstanceDataSingleton) state.getData();
     if (data == null) {
       state.setData(new InstanceDataSingleton(value));

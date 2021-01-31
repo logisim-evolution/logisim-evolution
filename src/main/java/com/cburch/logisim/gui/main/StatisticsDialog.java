@@ -158,11 +158,11 @@ public class StatisticsDialog extends JDialog implements ActionListener {
             return "";
           }
         case 2:
-          return Integer.valueOf(count.getSimpleCount());
+          return count.getSimpleCount();
         case 3:
-          return Integer.valueOf(count.getUniqueCount());
+          return count.getUniqueCount();
         case 4:
-          return Integer.valueOf(count.getRecursiveCount());
+          return count.getRecursiveCount();
         default:
           return ""; // should never happen
       }

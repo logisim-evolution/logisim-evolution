@@ -42,6 +42,6 @@ public class IntegerConfigurator extends NumericConfigurator<Integer> {
 
   @Override
   protected Integer createValue(long val) {
-    return Integer.valueOf((int) val);
+    return (int) val;
   }
 }

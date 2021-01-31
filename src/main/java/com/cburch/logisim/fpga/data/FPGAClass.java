@@ -178,9 +178,9 @@ public class FPGAClass {
     FPGADefined = true;
     UnusedPinsBehavior = PullBehaviors.getId(unused);
     USBTMCDownload = UsbTmc;
-    this.JTAGPos = Integer.valueOf(JTAGPos);
+    this.JTAGPos = Integer.parseInt(JTAGPos);
     this.FlashName = flashName;
-    this.FlashPos = Integer.valueOf(flashPos);
+    this.FlashPos = Integer.parseInt(flashPos);
     this.FlashDefined = (flashName != null) && (!flashName.isEmpty()) && (this.FlashPos != 0);
   }
 

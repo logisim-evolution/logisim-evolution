@@ -52,7 +52,7 @@ public class AppearanceEditPopup extends EditPopup implements EditHandler.Listen
   }
 
   public void enableChanged(EditHandler handler, LogisimMenuItem action, boolean value) {
-    enabled.put(action, Boolean.valueOf(value));
+    enabled.put(action, value);
   }
 
   @Override

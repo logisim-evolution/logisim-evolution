@@ -45,11 +45,11 @@ class GateAttributes extends AbstractAttributeSet {
   static final int DELAY = 1;
 
   static final AttributeOption SIZE_NARROW =
-      new AttributeOption(Integer.valueOf(30), S.getter("gateSizeNarrowOpt"));
+      new AttributeOption(30, S.getter("gateSizeNarrowOpt"));
   static final AttributeOption SIZE_MEDIUM =
-      new AttributeOption(Integer.valueOf(50), S.getter("gateSizeNormalOpt"));
+      new AttributeOption(50, S.getter("gateSizeNormalOpt"));
   static final AttributeOption SIZE_WIDE =
-      new AttributeOption(Integer.valueOf(70), S.getter("gateSizeWideOpt"));
+      new AttributeOption(70, S.getter("gateSizeWideOpt"));
   public static final Attribute<AttributeOption> ATTR_SIZE =
       Attributes.forOption(
           "size",

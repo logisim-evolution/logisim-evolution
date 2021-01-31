@@ -98,7 +98,7 @@ public class Demultiplexer extends InstanceFactory {
   public Object getDefaultAttributeValue(Attribute<?> attr, LogisimVersion ver) {
     if (attr == Plexers.ATTR_ENABLE) {
       int newer = ver.compareTo(LogisimVersion.get(2, 6, 4));
-      return Boolean.valueOf(newer >= 0);
+      return newer >= 0;
     } else {
       return super.getDefaultAttributeValue(attr, ver);
     }

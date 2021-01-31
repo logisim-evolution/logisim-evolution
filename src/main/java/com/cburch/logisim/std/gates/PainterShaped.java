@@ -69,7 +69,7 @@ public class PainterShaped {
   private static int[] getInputLineLengths(GateAttributes attrs, AbstractGate factory) {
     int inputs = attrs.inputs;
     int mainHeight = ((Integer) attrs.size.getValue()).intValue();
-    Integer key = Integer.valueOf(inputs * 31 + mainHeight);
+    Integer key = inputs * 31 + mainHeight;
     Object ret = INPUT_LENGTHS.get(key);
     if (ret != null) {
       return (int[]) ret;

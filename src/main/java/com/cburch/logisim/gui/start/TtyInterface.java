@@ -155,21 +155,21 @@ public class TtyInterface {
       String libName = lib == null ? "-" : lib.getDisplayName();
       System.out.printf(
           fmtNormal, // OK
-          Integer.valueOf(count.getUniqueCount()),
-          Integer.valueOf(count.getRecursiveCount()),
+          count.getUniqueCount(),
+          count.getRecursiveCount(),
           count.getFactory().getDisplayName(),
           libName);
     }
     FileStatistics.Count totalWithout = stats.getTotalWithoutSubcircuits();
     System.out.printf(
         fmt + "%s\n", // OK
-        Integer.valueOf(totalWithout.getUniqueCount()),
-        Integer.valueOf(totalWithout.getRecursiveCount()),
+        totalWithout.getUniqueCount(),
+        totalWithout.getRecursiveCount(),
         S.get("statsTotalWithout"));
     System.out.printf(
         fmt + "%s\n", // OK
-        Integer.valueOf(total.getUniqueCount()),
-        Integer.valueOf(total.getRecursiveCount()),
+        total.getUniqueCount(),
+        total.getRecursiveCount(),
         S.get("statsTotalWith"));
   }
 

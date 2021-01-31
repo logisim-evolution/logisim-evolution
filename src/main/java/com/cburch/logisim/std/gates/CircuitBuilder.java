@@ -328,7 +328,7 @@ public class CircuitBuilder {
       }
       ComponentFactory factory = Constant.FACTORY;
       AttributeSet attrs = factory.createAttributeSet();
-      attrs.setValue(Constant.ATTR_VALUE, Long.valueOf(value.getValue()));
+      attrs.setValue(Constant.ATTR_VALUE, (long) value.getValue());
       Bounds bds = factory.getOffsetBounds(attrs);
       return new Layout(
           bds.getWidth(), bds.getHeight(), -bds.getY(), factory, attrs, new Layout[0], 0);
@@ -350,7 +350,7 @@ public class CircuitBuilder {
 
         AttributeSet attrs = factory.createAttributeSet();
         attrs.setValue(GateAttributes.ATTR_SIZE, GateAttributes.SIZE_NARROW);
-        attrs.setValue(GateAttributes.ATTR_INPUTS, Integer.valueOf(2));
+        attrs.setValue(GateAttributes.ATTR_INPUTS, 2);
 
         // determine layout's width
         Bounds bds = factory.getOffsetBounds(attrs);
@@ -404,7 +404,7 @@ public class CircuitBuilder {
       attrs.setValue(GateAttributes.ATTR_SIZE, GateAttributes.SIZE_NARROW);
 
       int ins = sub.length;
-      attrs.setValue(GateAttributes.ATTR_INPUTS, Integer.valueOf(ins));
+      attrs.setValue(GateAttributes.ATTR_INPUTS, ins);
     }
 
     // determine layout's width
@@ -499,7 +499,7 @@ public class CircuitBuilder {
       Object factory = parent.getFactory();
       if (factory instanceof AbstractGate) {
         Value val = ((AbstractGate) factory).getIdentity();
-        Long valLong = Long.valueOf(val.toLongValue());
+        Long valLong = val.toLongValue();
         Location loc = parent.getEnd(index).getLocation();
         AttributeSet attrs = Constant.FACTORY.createAttributeSet();
         attrs.setValue(Constant.ATTR_VALUE, valLong);

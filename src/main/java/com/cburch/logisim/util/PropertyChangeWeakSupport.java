@@ -74,7 +74,7 @@ public class PropertyChangeWeakSupport {
         if (e == null) {
           e =
               new PropertyChangeEvent(
-                  source, property, Boolean.valueOf(oldValue), Boolean.valueOf(newValue));
+                  source, property, oldValue, newValue);
         }
         l.propertyChange(e);
       }
@@ -92,7 +92,7 @@ public class PropertyChangeWeakSupport {
         if (e == null) {
           e =
               new PropertyChangeEvent(
-                  source, property, Integer.valueOf(oldValue), Integer.valueOf(newValue));
+                  source, property, oldValue, newValue);
         }
         l.propertyChange(e);
       }

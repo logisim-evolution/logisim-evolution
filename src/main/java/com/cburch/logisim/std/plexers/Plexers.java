@@ -106,9 +106,9 @@ public class Plexers extends Library {
   }
 
   static final AttributeOption SIZE_NARROW =
-      new AttributeOption(Integer.valueOf(20), S.getter("gateSizeNarrowOpt"));
+      new AttributeOption(20, S.getter("gateSizeNarrowOpt"));
   static final AttributeOption SIZE_WIDE =
-      new AttributeOption(Integer.valueOf(40), S.getter("gateSizeWideOpt")); /* 30 for 2-to-1 */
+      new AttributeOption(40, S.getter("gateSizeWideOpt")); /* 30 for 2-to-1 */
   public static final Attribute<AttributeOption> ATTR_SIZE =
       Attributes.forOption(
           "size", S.getter("gateSizeAttr"), new AttributeOption[] {SIZE_NARROW, SIZE_WIDE});

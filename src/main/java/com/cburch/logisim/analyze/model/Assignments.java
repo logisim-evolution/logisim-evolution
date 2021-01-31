@@ -42,6 +42,6 @@ class Assignments {
   }
 
   public void put(String variable, boolean value) {
-    map.put(variable, Boolean.valueOf(value));
+    map.put(variable, value);
   }
 }

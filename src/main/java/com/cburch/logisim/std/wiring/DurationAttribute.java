@@ -72,13 +72,13 @@ public class DurationAttribute extends Attribute<Integer> {
   @Override
   public String toDisplayString(Integer value) {
     if (TickUnits) {
-      if (value.equals(Integer.valueOf(1))) {
+      if (value.equals(1)) {
         return S.get("clockDurationOneValue");
       } else {
         return StringUtil.format(S.get("clockDurationValue"), value.toString());
       }
     } else {
-      if (value.equals(Integer.valueOf(1))) {
+      if (value.equals(1)) {
         return S.get("PORDurationOneValue");
       } else {
         return StringUtil.format(S.get("PORDurationValue"), value.toString());

@@ -63,7 +63,7 @@ public class Drawing implements CanvasModel {
     indexes = new LinkedHashMap<CanvasObject, Integer>();
     int i = index;
     for (CanvasObject shape : shapes) {
-      indexes.put(shape, Integer.valueOf(i));
+      indexes.put(shape, i);
       i++;
     }
     addObjectsHelp(indexes);

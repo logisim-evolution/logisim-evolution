@@ -34,8 +34,8 @@ import java.util.Map;
 import java.util.concurrent.locks.Lock;
 
 public abstract class CircuitTransaction {
-  public static final Integer READ_ONLY = Integer.valueOf(1);
-  public static final Integer READ_WRITE = Integer.valueOf(2);
+  public static final Integer READ_ONLY = 1;
+  public static final Integer READ_WRITE = 2;
 
   public final CircuitTransactionResult execute() {
     CircuitMutatorImpl mutator = new CircuitMutatorImpl();

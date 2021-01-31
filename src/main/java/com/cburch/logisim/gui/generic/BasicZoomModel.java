@@ -88,7 +88,7 @@ public class BasicZoomModel implements ZoomModel {
     double oldValue = zoomFactor;
     if (value != oldValue) {
       zoomFactor = value;
-      support.firePropertyChange(ZoomModel.ZOOM, Double.valueOf(oldValue), Double.valueOf(value));
+      support.firePropertyChange(ZoomModel.ZOOM, oldValue, value);
     }
   }
 
@@ -108,7 +108,7 @@ public class BasicZoomModel implements ZoomModel {
       double ey = canvas.getVerticalScrollBar().getVisibleAmount();
       int ry = e.getY() - vy;
       zoomFactor = value;
-      support.firePropertyChange(ZoomModel.ZOOM, Double.valueOf(oldValue), Double.valueOf(value));
+      support.firePropertyChange(ZoomModel.ZOOM, oldValue, value);
       double nmx = mx * value / oldValue;
       double px = (vx / mx) + (ex / mx - ex / nmx) * (rx / ex);
       int nvx = (int) (nmx * px);
@@ -125,13 +125,13 @@ public class BasicZoomModel implements ZoomModel {
     double oldValue = zoomFactor;
     if (value != oldValue) {
       zoomFactor = value;
-      support.firePropertyChange(ZoomModel.ZOOM, Double.valueOf(oldValue), Double.valueOf(value));
+      support.firePropertyChange(ZoomModel.ZOOM, oldValue, value);
       SwingUtilities.invokeLater(
           new Runnable() {
             @Override
             public void run() {
               support.firePropertyChange(
-                  ZoomModel.CENTER, Double.valueOf(oldValue), Double.valueOf(value));
+                  ZoomModel.CENTER, oldValue, value);
             }
           });
     }

@@ -163,8 +163,8 @@ public class Clock extends InstanceFactory {
         },
         new Object[] {
           Direction.EAST,
-          Integer.valueOf(1),
-          Integer.valueOf(1),
+            1,
+            1,
           "",
           Direction.WEST,
           StdAttr.DEFAULT_LABEL_FONT

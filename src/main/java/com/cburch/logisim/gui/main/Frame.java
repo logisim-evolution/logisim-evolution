@@ -119,7 +119,7 @@ public class Frame extends LFrame implements LocaleListener {
     private void enableSave() {
       Project proj = getProject();
       boolean ok = proj.isFileDirty();
-      getRootPane().putClientProperty("windowModified", Boolean.valueOf(ok));
+      getRootPane().putClientProperty("windowModified", ok);
     }
 
     @Override
@@ -538,19 +538,19 @@ public class Frame extends LFrame implements LocaleListener {
   }
 
   public void savePreferences() {
-    AppPreferences.TICK_FREQUENCY.set(Double.valueOf(proj.getSimulator().getTickFrequency()));
+    AppPreferences.TICK_FREQUENCY.set(proj.getSimulator().getTickFrequency());
     AppPreferences.LAYOUT_SHOW_GRID.setBoolean(layoutZoomModel.getShowGrid());
-    AppPreferences.LAYOUT_ZOOM.set(Double.valueOf(layoutZoomModel.getZoomFactor()));
+    AppPreferences.LAYOUT_ZOOM.set(layoutZoomModel.getZoomFactor());
     if (appearance != null) {
       ZoomModel aZoom = appearance.getZoomModel();
       AppPreferences.APPEARANCE_SHOW_GRID.setBoolean(aZoom.getShowGrid());
-      AppPreferences.APPEARANCE_ZOOM.set(Double.valueOf(aZoom.getZoomFactor()));
+      AppPreferences.APPEARANCE_ZOOM.set(aZoom.getZoomFactor());
     }
     int state = getExtendedState() & ~JFrame.ICONIFIED;
-    AppPreferences.WINDOW_STATE.set(Integer.valueOf(state));
+    AppPreferences.WINDOW_STATE.set(state);
     Dimension dim = getSize();
-    AppPreferences.WINDOW_WIDTH.set(Integer.valueOf(dim.width));
-    AppPreferences.WINDOW_HEIGHT.set(Integer.valueOf(dim.height));
+    AppPreferences.WINDOW_WIDTH.set(dim.width);
+    AppPreferences.WINDOW_HEIGHT.set(dim.height);
     Point loc;
     try {
       loc = getLocationOnScreen();
@@ -561,11 +561,11 @@ public class Frame extends LFrame implements LocaleListener {
       AppPreferences.WINDOW_LOCATION.set(loc.x + "," + loc.y);
     }
     if (leftRegion.getFraction() > 0)
-      AppPreferences.WINDOW_LEFT_SPLIT.set(Double.valueOf(leftRegion.getFraction()));
-    if (Double.valueOf(rightRegion.getFraction()) < 1.0)
-      AppPreferences.WINDOW_RIGHT_SPLIT.set(Double.valueOf(rightRegion.getFraction()));
+      AppPreferences.WINDOW_LEFT_SPLIT.set(leftRegion.getFraction());
+    if (rightRegion.getFraction() < 1.0)
+      AppPreferences.WINDOW_RIGHT_SPLIT.set(rightRegion.getFraction());
     if (mainRegion.getFraction() > 0)
-      AppPreferences.WINDOW_MAIN_SPLIT.set(Double.valueOf(mainRegion.getFraction()));
+      AppPreferences.WINDOW_MAIN_SPLIT.set(mainRegion.getFraction());
     AppPreferences.DIALOG_DIRECTORY.set(JFileChoosers.getCurrentDirectory());
   }
 

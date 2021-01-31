@@ -198,7 +198,7 @@ public class DefaultHolyCrossAppearance {
     int ry = OFFS + (9 - (ay + 9) % 10);
 
     Rectangle rect = new Rectangle(rx, ry, width, height);
-    rect.setValue(DrawAttr.STROKE_WIDTH, Integer.valueOf(2));
+    rect.setValue(DrawAttr.STROKE_WIDTH, 2);
     List<CanvasObject> ret = new ArrayList<CanvasObject>();
     ret.add(rect);
 

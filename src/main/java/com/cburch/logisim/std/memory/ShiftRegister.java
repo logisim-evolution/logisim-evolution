@@ -83,7 +83,7 @@ public class ShiftRegister extends InstanceFactory {
         },
         new Object[] {
           BitWidth.ONE,
-          Integer.valueOf(8),
+            8,
           Boolean.TRUE,
           StdAttr.TRIG_RISING,
           "",

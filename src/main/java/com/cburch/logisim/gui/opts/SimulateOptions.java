@@ -119,14 +119,14 @@ class SimulateOptions extends OptionsPanel {
   private final JComboBox simLimit =
       new JComboBox(
           new Integer[] {
-            Integer.valueOf(200),
-            Integer.valueOf(500),
-            Integer.valueOf(1000),
-            Integer.valueOf(2000),
-            Integer.valueOf(5000),
-            Integer.valueOf(10000),
-            Integer.valueOf(20000),
-            Integer.valueOf(50000),
+              200,
+              500,
+              1000,
+              2000,
+              5000,
+              10000,
+              20000,
+              50000,
           });
 
   private final JCheckBox simRandomness = new JCheckBox();

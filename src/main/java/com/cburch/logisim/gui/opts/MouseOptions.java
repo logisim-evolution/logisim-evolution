@@ -220,7 +220,7 @@ class MouseOptions extends OptionsPanel {
     public void mousePressed(MouseEvent e) {
       if (e.getSource() == addArea && curTool != null) {
         Tool t = curTool.cloneTool();
-        Integer mods = Integer.valueOf(e.getModifiersEx());
+        Integer mods = e.getModifiersEx();
         getProject().doAction(OptionsActions.setMapping(getOptions().getMouseMappings(), mods, t));
         setSelectedRow(model.getRow(mods));
       }

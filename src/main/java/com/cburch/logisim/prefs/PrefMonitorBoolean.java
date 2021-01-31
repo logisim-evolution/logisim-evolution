@@ -45,12 +45,12 @@ public class PrefMonitorBoolean extends AbstractPrefMonitor<Boolean> implements 
     this.dflt = dflt;
     this.value = dflt;
     Preferences prefs = AppPreferences.getPrefs();
-    set(Boolean.valueOf(prefs.getBoolean(name, dflt)));
+    set(prefs.getBoolean(name, dflt));
     prefs.addPreferenceChangeListener(this);
   }
 
   public Boolean get() {
-    return Boolean.valueOf(value);
+    return value;
   }
 
   @Override

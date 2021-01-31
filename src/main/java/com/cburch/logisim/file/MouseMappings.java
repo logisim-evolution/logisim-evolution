@@ -108,7 +108,7 @@ public class MouseMappings {
     if (mods == cache_mods) {
       return cache_tool;
     } else {
-      Tool ret = map.get(Integer.valueOf(mods));
+      Tool ret = map.get(mods);
       cache_mods = mods;
       cache_tool = ret;
       return ret;
@@ -176,10 +176,10 @@ public class MouseMappings {
     if (mods == cache_mods) cache_mods = -1;
 
     if (tool == null) {
-      Object old = map.remove(Integer.valueOf(mods));
+      Object old = map.remove(mods);
       if (old != null) fireMouseMappingsChanged();
     } else {
-      Object old = map.put(Integer.valueOf(mods), tool);
+      Object old = map.put(mods, tool);
       if (old != tool) fireMouseMappingsChanged();
     }
   }

@@ -84,7 +84,7 @@ public class Ram extends Mem {
           ret = new Object[1 << addrBits];
           logOptions[addrBits] = ret;
           for (long i = 0; i < ret.length; i++) {
-            ret[(int) i] = Long.valueOf(i);
+            ret[(int) i] = i;
           }
         }
         return ret;

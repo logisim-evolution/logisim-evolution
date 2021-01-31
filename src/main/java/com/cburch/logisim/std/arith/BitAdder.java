@@ -58,7 +58,7 @@ public class BitAdder extends InstanceFactory {
     super("BitAdder", S.getter("bitAdderComponent"));
     setAttributes(
         new Attribute[] {StdAttr.WIDTH, NUM_INPUTS},
-        new Object[] {BitWidth.create(8), Integer.valueOf(1)});
+        new Object[] {BitWidth.create(8), 1});
     setKeyConfigurator(
         JoinedConfigurator.create(
             new IntegerConfigurator(NUM_INPUTS, 1, 64, 0),

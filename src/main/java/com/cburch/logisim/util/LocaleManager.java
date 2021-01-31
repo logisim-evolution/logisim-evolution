@@ -114,7 +114,7 @@ public class LocaleManager {
       }
       if (s != null) {
         if (ret == null) ret = new HashMap<Character, String>();
-        ret.put(new Character(c), s);
+        ret.put(c, s);
       }
     }
     return ret;
@@ -154,7 +154,7 @@ public class LocaleManager {
     for (int j = i; j < cs.length; j++) {
       char cj = cs[j];
       if (cj < 32 || cj >= 127) {
-        String out = repl.get(Character.valueOf(cj));
+        String out = repl.get(cj);
         if (out != null) {
           ret.append(out);
         } else {

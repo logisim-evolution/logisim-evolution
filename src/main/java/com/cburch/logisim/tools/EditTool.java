@@ -484,7 +484,7 @@ public class EditTool extends Tool {
       Location oldWireLoc = wireLoc;
       boolean ret = isEligible && isWiringPoint(canvas, snap, mods);
       wireLoc = ret ? snap : NULL_LOCATION;
-      cache.put(snap, Boolean.valueOf(ret));
+      cache.put(snap, ret);
       int toRemove = cache.size() - CACHE_MAX_SIZE;
       Iterator<Location> it = cache.keySet().iterator();
       while (it.hasNext() && toRemove > 0) {

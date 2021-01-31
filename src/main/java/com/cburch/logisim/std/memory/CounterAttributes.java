@@ -57,7 +57,7 @@ class CounterAttributes extends AbstractAttributeSet {
             },
             new Object[] {
               BitWidth.create(8),
-              Long.valueOf(0xFF),
+                0xFFL,
               Counter.ON_GOAL_WRAP,
               StdAttr.TRIG_RISING,
               "",
@@ -118,11 +118,11 @@ class CounterAttributes extends AbstractAttributeSet {
       long oldVal = oldValObj.longValue();
       base.setValue(StdAttr.WIDTH, newWidth);
       if (newW > oldW) {
-        newMax = Long.valueOf(newWidth.getMask());
+        newMax = newWidth.getMask();
       } else {
         long v = oldVal & newWidth.getMask();
         if (v != oldVal) {
-          Long newValObj = Long.valueOf(v);
+          Long newValObj = v;
           base.setValue(Counter.ATTR_MAX, newValObj);
           fireAttributeValueChanged(Counter.ATTR_MAX, newValObj, null);
         }

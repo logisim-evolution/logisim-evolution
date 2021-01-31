@@ -110,7 +110,7 @@ class PainterDin {
     // draw state if appropriate
     // ignore lines if in print view
     int r = Math.min(height / 2, width);
-    Integer hash = Integer.valueOf(r << 4 | inputs);
+    Integer hash = r << 4 | inputs;
     int[] lens = orLenArrays.get(hash);
     if (lens == null) {
       lens = new int[inputs];

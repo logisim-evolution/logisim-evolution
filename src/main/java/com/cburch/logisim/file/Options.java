@@ -52,10 +52,10 @@ public class Options {
           S.getter("gateUndefinedOption"),
           new AttributeOption[] {GATE_UNDEFINED_IGNORE, GATE_UNDEFINED_ERROR});
 
-  public static final Integer sim_rand_dflt = Integer.valueOf(32);
+  public static final Integer sim_rand_dflt = 32;
 
   private static final Attribute<?>[] ATTRIBUTES = {ATTR_GATE_UNDEFINED, ATTR_SIM_LIMIT, ATTR_SIM_RAND};
-  private static final Object[] DEFAULTS = {GATE_UNDEFINED_IGNORE, Integer.valueOf(1000), Integer.valueOf(0)};
+  private static final Object[] DEFAULTS = {GATE_UNDEFINED_IGNORE, 1000, 0};
 
   private final AttributeSet attrs;
   private final MouseMappings mmappings;

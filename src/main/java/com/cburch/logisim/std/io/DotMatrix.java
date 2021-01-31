@@ -226,7 +226,7 @@ public class DotMatrix extends InstanceFactory {
           BitWidth.create(7),
           Color.GREEN,
           Color.DARK_GRAY,
-          Integer.valueOf(0),
+            0,
           SHAPE_SQUARE,
           "",
           Direction.NORTH,

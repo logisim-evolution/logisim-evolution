@@ -178,7 +178,7 @@ public class Keyboard extends InstanceFactory {
     super("Keyboard", S.getter("keyboardComponent"));
     setAttributes(
         new Attribute[] {ATTR_BUFFER, StdAttr.EDGE_TRIGGER},
-        new Object[] {Integer.valueOf(32), StdAttr.TRIG_RISING});
+        new Object[] {32, StdAttr.TRIG_RISING});
     setOffsetBounds(Bounds.create(0, -15, WIDTH, HEIGHT));
     setIcon(new ButtonIcon(S.getter("keyboardComponent")));
     setInstancePoker(Poker.class);
@@ -333,7 +333,7 @@ public class Keyboard extends InstanceFactory {
         str = state.toString();
         for (int i = state.getNextSpecial(0); i >= 0; i = state.getNextSpecial(i + 1)) {
           char c = state.getChar(i);
-          specials.add(Integer.valueOf(c << 16 | i));
+          specials.add(c << 16 | i);
         }
         if (!state.isDisplayValid()) {
           fm = g.getFontMetrics(DEFAULT_FONT);
