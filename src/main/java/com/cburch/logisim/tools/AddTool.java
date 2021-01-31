@@ -163,7 +163,7 @@ public class AddTool extends Tool implements PropertyChangeListener {
   @Override
   public void registerParrent(java.awt.Component parrent) {
     ComponentFactory fac = getFactory();
-    if (fac != null && fac instanceof InstanceFactory) {
+    if (fac instanceof InstanceFactory) {
       InstanceFactory f = (InstanceFactory) fac;
       if (f.getIcon() instanceof AnnimatedIcon) {
         AnnimatedIcon i = (AnnimatedIcon) f.getIcon();

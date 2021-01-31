@@ -90,7 +90,7 @@ public abstract class AttributeSetTableModel implements AttrTableModel, Attribut
     }
 
     public boolean multiEditCompatible(AttrTableModelRow other) {
-      if (other == null || !(other instanceof AttrRow)) return false;
+      if (!(other instanceof AttrRow)) return false;
       AttrRow o = (AttrRow) other;
       if (!(((Object) attr) instanceof SplitterAttributes.BitOutAttribute)) return false;
       if (!(((Object) o.attr) instanceof SplitterAttributes.BitOutAttribute)) return false;

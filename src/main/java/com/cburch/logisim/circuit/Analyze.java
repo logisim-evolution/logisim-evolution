@@ -67,7 +67,7 @@ public class Analyze {
 
     @Override
     public boolean equals(Object other) {
-      if (other == null || !(other instanceof LocationBit)) return false;
+      if (!(other instanceof LocationBit)) return false;
       LocationBit that = (LocationBit) other;
       return (that.loc.equals(this.loc) && that.bit == this.bit);
     }

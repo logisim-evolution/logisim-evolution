@@ -633,24 +633,24 @@ public abstract class Expression {
   }
  
   public static boolean isAssignment(Expression expr) {
-    if (expr == null || !(expr instanceof Expressions.Eq))
+    if (!(expr instanceof Expressions.Eq))
       return false;
     Expressions.Eq eq = (Expressions.Eq)expr;
-    return (eq.a != null && (eq.a instanceof Expressions.Variable));
+    return ((eq.a instanceof Expressions.Variable));
   }
 
   public static String getAssignmentVariable(Expression expr) {
-    if (expr == null || !(expr instanceof Expressions.Eq))
+    if (!(expr instanceof Expressions.Eq))
       return null;
     Expressions.Eq eq = (Expressions.Eq)expr;
-    return (eq.a != null && (eq.a instanceof Expressions.Variable)) ? eq.a.toString() : null;
+    return ((eq.a instanceof Expressions.Variable)) ? eq.a.toString() : null;
   }
 
   public static Expression getAssignmentExpression(Expression expr) {
-    if (expr == null || !(expr instanceof Expressions.Eq))
+    if (!(expr instanceof Expressions.Eq))
       return null;
     Expressions.Eq eq = (Expressions.Eq)expr;
-    return (eq.a != null && (eq.a instanceof Expressions.Variable)) ? eq.b : null;
+    return ((eq.a instanceof Expressions.Variable)) ? eq.b : null;
   }
 
   public abstract <T> T visit(Visitor<T> visitor);

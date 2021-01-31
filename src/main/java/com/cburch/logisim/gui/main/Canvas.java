@@ -293,7 +293,7 @@ public class Canvas extends JPanel
           double min = opts[0] / 100.0;
           zoomModel.setZoomFactor(zoom <= min ? min : zoom, mwe);
         }
-      } else if (tool != null && tool instanceof PokeTool && ((PokeTool) tool).isScrollable()) {
+      } else if (tool instanceof PokeTool && ((PokeTool) tool).isScrollable()) {
         int id = (mwe.getWheelRotation() < 0) ? KeyEvent.VK_UP : KeyEvent.VK_DOWN;
         KeyEvent e =
             new KeyEvent(mwe.getComponent(), KeyEvent.KEY_PRESSED, mwe.getWhen(), 0, id, '\0');
@@ -1062,7 +1062,7 @@ public class Canvas extends JPanel
       ComponentUserEvent e = null;
       for (Component comp : getCircuit().getAllContaining(loc)) {
         Object makerObj = comp.getFeature(ToolTipMaker.class);
-        if (makerObj != null && makerObj instanceof ToolTipMaker) {
+        if (makerObj instanceof ToolTipMaker) {
           ToolTipMaker maker = (ToolTipMaker) makerObj;
           if (e == null) {
             e = new ComponentUserEvent(this, loc.getX(), loc.getY());

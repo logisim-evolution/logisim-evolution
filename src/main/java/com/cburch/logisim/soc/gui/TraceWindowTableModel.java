@@ -146,7 +146,7 @@ public class TraceWindowTableModel extends AbstractTableModel implements MouseLi
     if (info != null && info.getTransaction() != null) {
       SocBusTransaction trans = info.getTransaction();
       Object master = trans.getTransactionInitiator();
-      if (master != null && master instanceof Component) ((Component)master).addComponentListener(this);
+      if (master instanceof Component) ((Component)master).addComponentListener(this);
       if (trans.getTransactionResponder() != null) trans.getTransactionResponder().addComponentListener(this);
     }
     return info;

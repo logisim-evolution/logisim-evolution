@@ -140,7 +140,7 @@ class TestPanel extends JPanel implements ValueTable.Model {
       boolean failed = false;
       if (row < numPass + numFail) {
         TestException err = results[row];
-        if (err != null && err instanceof FailException) {
+        if (err instanceof FailException) {
           failed = true;
           for (FailException e : ((FailException) err).getAll()) {
             int col = e.getColumn();

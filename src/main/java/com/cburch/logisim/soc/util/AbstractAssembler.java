@@ -359,7 +359,7 @@ public abstract class AbstractAssembler implements AssemblerInterface {
             line.append(label.toString()+" ");
             decode(contents[pc]);
             AssemblerExecutionInterface exe = getExeUnit();
-            if (exe != null && exe instanceof AbstractExecutionUnitWithLabelSupport) {
+            if (exe instanceof AbstractExecutionUnitWithLabelSupport) {
               AbstractExecutionUnitWithLabelSupport jump = (AbstractExecutionUnitWithLabelSupport) exe;
               if (jump.isLabelSupported()) {
                 long target = jump.getLabelAddress(addr);

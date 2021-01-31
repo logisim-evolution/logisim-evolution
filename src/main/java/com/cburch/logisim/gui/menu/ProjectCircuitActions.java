@@ -329,8 +329,7 @@ public class ProjectCircuitActions {
     dlog.setVisible(true);
     field.requestFocusInWindow();
     Object action = pane.getValue();
-    if (action == null
-        || !(action instanceof Integer)
+    if (!(action instanceof Integer)
         || ((Integer) action).intValue() != OptionPane.OK_OPTION) {
       return null;
     }

@@ -1055,7 +1055,6 @@ public class Startup implements AWTEventListener {
             || (container instanceof JToolTip)
             || (container instanceof JLabel)
             || (container instanceof JFrame)
-            || (container instanceof JMenu)
             || (container instanceof JMenuItem)
             || (container instanceof JRadioButton)
             || (container instanceof JRadioButtonMenuItem)

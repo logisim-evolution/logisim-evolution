@@ -129,7 +129,7 @@ class ExpressionTab extends AnalyzerTab {
     @Override
     public void setValueAt(Object o, int row, int column) {
       NamedExpression ne = listCopy[row];
-      if (o == null || !(o instanceof NamedExpression))
+      if (!(o instanceof NamedExpression))
         return;
       NamedExpression e = (NamedExpression)o;
       if (ne != e && !ne.name.equals(e.name))
