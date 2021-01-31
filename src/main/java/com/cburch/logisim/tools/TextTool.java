@@ -127,10 +127,10 @@ public class TextTool extends Tool {
     }
   }
 
-  private static Cursor cursor = Cursor.getPredefinedCursor(Cursor.TEXT_CURSOR);
+  private static final Cursor cursor = Cursor.getPredefinedCursor(Cursor.TEXT_CURSOR);
 
-  private MyListener listener = new MyListener();
-  private AttributeSet attrs;
+  private final MyListener listener = new MyListener();
+  private final AttributeSet attrs;
   private Caret caret = null;
   private boolean caretCreatingText = false;
   private Canvas caretCanvas = null;

@@ -104,7 +104,7 @@ class ToolbarList extends JList {
   }
 
   private static class ToolIcon implements Icon {
-    private Tool tool;
+    private final Tool tool;
 
     ToolIcon(Tool tool) {
       this.tool = tool;
@@ -125,8 +125,8 @@ class ToolbarList extends JList {
     }
   }
 
-  private ToolbarData base;
-  private Model model;
+  private final ToolbarData base;
+  private final Model model;
 
   @SuppressWarnings("unchecked")
   public ToolbarList(ToolbarData base) {

@@ -29,10 +29,10 @@
 package com.cburch.logisim.data;
 
 public class AttributeEvent {
-  private AttributeSet source;
-  private Attribute<?> attr;
-  private Object value;
-  private Object oldvalue;
+  private final AttributeSet source;
+  private final Attribute<?> attr;
+  private final Object value;
+  private final Object oldvalue;
 
   public AttributeEvent(AttributeSet source) {
     this(source, null, null, null);

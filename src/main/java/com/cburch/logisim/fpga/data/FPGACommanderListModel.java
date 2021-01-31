@@ -42,10 +42,10 @@ import javax.swing.event.ListDataListener;
 @SuppressWarnings("serial")
 public class FPGACommanderListModel extends AbstractListModel<Object> {
 
-  private ArrayList<Object> myData;
-  private Set<ListDataListener> myListeners;
+  private final ArrayList<Object> myData;
+  private final Set<ListDataListener> myListeners;
   private int count = 0;
-  private ListModelCellRenderer MyRender;
+  private final ListModelCellRenderer MyRender;
 
   public FPGACommanderListModel(boolean CountLines) {
     myData = new ArrayList<Object>();

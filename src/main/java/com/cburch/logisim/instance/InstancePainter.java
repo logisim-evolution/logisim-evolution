@@ -43,7 +43,7 @@ import java.awt.Color;
 import java.awt.Graphics;
 
 public class InstancePainter implements InstanceState {
-  private ComponentDrawContext context;
+  private final ComponentDrawContext context;
   private InstanceComponent comp;
   private InstanceFactory factory;
   private AttributeSet attrs;

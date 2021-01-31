@@ -43,9 +43,9 @@ public class PrefOption {
     combo.setSelectedItem(combo.getItemAt(0));
   }
 
-  private Object value;
+  private final Object value;
 
-  private StringGetter getter;
+  private final StringGetter getter;
 
   public PrefOption(String value, StringGetter getter) {
     this.value = value;

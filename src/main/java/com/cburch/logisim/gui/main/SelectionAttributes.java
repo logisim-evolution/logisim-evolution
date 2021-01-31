@@ -178,9 +178,9 @@ class SelectionAttributes extends AbstractAttributeSet {
 
   private static final Attribute<?>[] EMPTY_ATTRIBUTES = new Attribute<?>[0];
   private static final Object[] EMPTY_VALUES = new Object[0];
-  private Canvas canvas;
-  private Selection selection;
-  private Listener listener;
+  private final Canvas canvas;
+  private final Selection selection;
+  private final Listener listener;
   private boolean listening;
 
   private Set<Component> selected;

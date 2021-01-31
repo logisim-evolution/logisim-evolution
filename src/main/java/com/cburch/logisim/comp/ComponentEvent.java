@@ -29,9 +29,9 @@
 package com.cburch.logisim.comp;
 
 public class ComponentEvent {
-  private Component source;
-  private Object oldData;
-  private Object newData;
+  private final Component source;
+  private final Object oldData;
+  private final Object newData;
 
   public ComponentEvent(Component source) {
     this(source, null, null);

@@ -331,16 +331,16 @@ public class ZoomControl extends JPanel implements LocaleListener {
   private static final long serialVersionUID = 1L;
 
   private ZoomModel model;
-  private ZoomLabel label;
+  private final ZoomLabel label;
   private SliderModel sliderModel;
-  private JSlider slider;
+  private final JSlider slider;
   public AutoZoomButton ZoomButton;
   public ResetZoomButton ResetButton;
-  private JLabel zoomText;
-  private GridIcon grid;
-  private Canvas canvas;
-  private JButton plus;
-  private JButton minus;
+  private final JLabel zoomText;
+  private final GridIcon grid;
+  private final Canvas canvas;
+  private final JButton plus;
+  private final JButton minus;
 
   public ZoomControl(ZoomModel model, Canvas canvas) {
     super(new BorderLayout());

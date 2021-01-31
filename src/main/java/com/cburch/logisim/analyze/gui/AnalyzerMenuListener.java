@@ -58,7 +58,7 @@ public class AnalyzerMenuListener extends MenuListener {
     }
   }
 
-  private FileListener fileListener = new FileListener();
+  private final FileListener fileListener = new FileListener();
   private PrintHandler printer;
 
   public AnalyzerMenuListener(LogisimMenuBar menubar) {

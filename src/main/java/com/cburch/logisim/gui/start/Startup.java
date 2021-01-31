@@ -528,13 +528,13 @@ public class Startup implements AWTEventListener {
   private File templFile = null;
   private boolean templEmpty = false;
   private boolean templPlain = false;
-  private ArrayList<File> filesToOpen = new ArrayList<File>();
+  private final ArrayList<File> filesToOpen = new ArrayList<File>();
   private String testVector = null;
   private String circuitToTest = null;
   private boolean exitAfterStartup = false;
   private boolean showSplash;
   private File loadFile;
-  private HashMap<File, File> substitutions = new HashMap<File, File>();
+  private final HashMap<File, File> substitutions = new HashMap<File, File>();
   private int ttyFormat = 0;
   // from other sources
   private boolean initialized = false;
@@ -558,7 +558,7 @@ public class Startup implements AWTEventListener {
   /* Testing Xml (circ file) Variable */
   private String testCircPathInput = null;
   private String testCircPathOutput = null;
-  private ArrayList<File> filesToPrint = new ArrayList<File>();
+  private final ArrayList<File> filesToPrint = new ArrayList<File>();
 
   private Startup(boolean isTty) {
     this.isTty = isTty;

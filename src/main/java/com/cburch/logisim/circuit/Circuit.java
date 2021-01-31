@@ -90,9 +90,9 @@ import org.slf4j.LoggerFactory;
 
 public class Circuit {
   private class EndChangedTransaction extends CircuitTransaction {
-    private Component comp;
-    private Map<Location, EndData> toRemove;
-    private Map<Location, EndData> toAdd;
+    private final Component comp;
+    private final Map<Location, EndData> toRemove;
+    private final Map<Location, EndData> toAdd;
 
     EndChangedTransaction(
         Component comp, Map<Location, EndData> toRemove, Map<Location, EndData> toAdd) {
@@ -242,31 +242,31 @@ public class Circuit {
     return comp.getEnd(0).getType() != EndData.INPUT_ONLY;
   }
 
-  private int maxTimeoutTestBenchSec = 60000;
-  private MyComponentListener myComponentListener = new MyComponentListener();
-  private CircuitAppearance appearance;
-  private AttributeSet staticAttrs;
-  private SubcircuitFactory subcircuitFactory;
-  private EventSourceWeakSupport<CircuitListener> listeners =
+  private final int maxTimeoutTestBenchSec = 60000;
+  private final MyComponentListener myComponentListener = new MyComponentListener();
+  private final CircuitAppearance appearance;
+  private final AttributeSet staticAttrs;
+  private final SubcircuitFactory subcircuitFactory;
+  private final EventSourceWeakSupport<CircuitListener> listeners =
       new EventSourceWeakSupport<CircuitListener>();
   private LinkedHashSet<Component> comps = new LinkedHashSet<Component>(); // doesn't
   // include
   // wires
   CircuitWires wires = new CircuitWires();
-  private ArrayList<Component> clocks = new ArrayList<Component>();
-  private CircuitLocker locker;
+  private final ArrayList<Component> clocks = new ArrayList<Component>();
+  private final CircuitLocker locker;
 
   static final Logger logger = LoggerFactory.getLogger(Circuit.class);
 
-  private WeakHashMap<Component, Circuit> circuitsUsingThis;
-  private Netlist MyNetList;
-  private HashMap<String,MappableResourcesContainer> MyMappableResources;
-  private HashMap<String,HashMap<String,CircuitMapInfo>> LoadedMaps;
+  private final WeakHashMap<Component, Circuit> circuitsUsingThis;
+  private final Netlist MyNetList;
+  private final HashMap<String,MappableResourcesContainer> MyMappableResources;
+  private final HashMap<String,HashMap<String,CircuitMapInfo>> LoadedMaps;
   private boolean Annotated;
   private Project proj;
-  private SocSimulationManager socSim = new SocSimulationManager();
+  private final SocSimulationManager socSim = new SocSimulationManager();
 
-  private LogisimFile logiFile;
+  private final LogisimFile logiFile;
 
   public Circuit(String name, LogisimFile file, Project proj) {
     staticAttrs = CircuitAttributes.createBaseAttrs(this, name);

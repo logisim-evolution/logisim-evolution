@@ -47,8 +47,8 @@ class CircuitPoints {
     // these lists are parallel - ends corresponding to wires are null
   }
 
-  private HashMap<Location, LocationData> map = new HashMap<Location, LocationData>();
-  private HashMap<Location, WidthIncompatibilityData> incompatibilityData =
+  private final HashMap<Location, LocationData> map = new HashMap<Location, LocationData>();
+  private final HashMap<Location, WidthIncompatibilityData> incompatibilityData =
       new HashMap<Location, WidthIncompatibilityData>();
 
   public CircuitPoints() {}

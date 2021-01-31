@@ -59,22 +59,22 @@ import org.w3c.dom.Element;
 
 public class AlteraDownload implements VendorDownload {
 
-  private VendorSoftware alteraVendor = VendorSoftware.getSoftware(VendorSoftware.VendorAltera);
-  private String ScriptPath;
-  private String ProjectPath;
-  private String SandboxPath;
-  private FPGAReport Reporter;
-  private Netlist RootNetList;
+  private final VendorSoftware alteraVendor = VendorSoftware.getSoftware(VendorSoftware.VendorAltera);
+  private final String ScriptPath;
+  private final String ProjectPath;
+  private final String SandboxPath;
+  private final FPGAReport Reporter;
+  private final Netlist RootNetList;
   private MappableResourcesContainer MapInfo;
-  private BoardInformation BoardInfo;
-  private ArrayList<String> Entities;
-  private ArrayList<String> Architectures;
-  private String HDLType;
+  private final BoardInformation BoardInfo;
+  private final ArrayList<String> Entities;
+  private final ArrayList<String> Architectures;
+  private final String HDLType;
   private String cablename;
-  private boolean WriteToFlash;
+  private final boolean WriteToFlash;
 
-  private static String AlteraTclFile = "AlteraDownload.tcl";
-  private static String AlteraCofFile = "AlteraFlash.cof";
+  private static final String AlteraTclFile = "AlteraDownload.tcl";
+  private static final String AlteraCofFile = "AlteraFlash.cof";
 
   public AlteraDownload(
       String ProjectPath,

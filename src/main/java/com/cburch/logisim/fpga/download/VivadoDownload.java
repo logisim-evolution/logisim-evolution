@@ -48,17 +48,17 @@ import java.util.Locale;
 
 public class VivadoDownload implements VendorDownload {
 
-  private VendorSoftware vivadoVendor = VendorSoftware.getSoftware(VendorSoftware.VendorVivado);
-  private String ScriptPath;
-  private String SandboxPath;
-  private String xdcPath;
-  private String vivadoProjectPath;
-  private FPGAReport Reporter;
-  private Netlist RootNetList;
+  private final VendorSoftware vivadoVendor = VendorSoftware.getSoftware(VendorSoftware.VendorVivado);
+  private final String ScriptPath;
+  private final String SandboxPath;
+  private final String xdcPath;
+  private final String vivadoProjectPath;
+  private final FPGAReport Reporter;
+  private final Netlist RootNetList;
   private MappableResourcesContainer MapInfo;
-  private BoardInformation BoardInfo;
-  private ArrayList<String> Entities;
-  private ArrayList<String> Architectures;
+  private final BoardInformation BoardInfo;
+  private final ArrayList<String> Entities;
+  private final ArrayList<String> Architectures;
 
   private static String _bitStreamPath;
   private static final String CREATE_PROJECT_TCL = "vivadoCreateProject.tcl";

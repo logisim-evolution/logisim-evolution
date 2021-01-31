@@ -48,8 +48,8 @@ import java.util.Collections;
 import java.util.List;
 
 class AppearanceToolbarModel extends AbstractToolbarModel implements PropertyChangeListener {
-  private Canvas canvas;
-  private List<ToolbarItem> items;
+  private final Canvas canvas;
+  private final List<ToolbarItem> items;
 
   public AppearanceToolbarModel(AbstractTool selectTool, ShowStateTool ssTool, Canvas canvas, DrawingAttributeSet attrs) {
     this.canvas = canvas;

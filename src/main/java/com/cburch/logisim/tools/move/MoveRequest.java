@@ -29,9 +29,9 @@
 package com.cburch.logisim.tools.move;
 
 class MoveRequest {
-  private MoveGesture gesture;
-  private int dx;
-  private int dy;
+  private final MoveGesture gesture;
+  private final int dx;
+  private final int dy;
 
   public MoveRequest(MoveGesture gesture, int dx, int dy) {
     this.gesture = gesture;

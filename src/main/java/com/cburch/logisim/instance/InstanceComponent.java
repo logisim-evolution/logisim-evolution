@@ -66,15 +66,15 @@ import java.util.List;
 public class InstanceComponent implements Component, AttributeListener, ToolTipMaker {
   private EventSourceWeakSupport<ComponentListener> listeners;
   private InstanceFactory factory;
-  private Instance instance;
-  private Location loc;
+  private final Instance instance;
+  private final Location loc;
   private Bounds bounds;
   private List<Port> portList;
   private EndData[] endArray;
   private List<EndData> endList;
   private boolean hasToolTips;
   private HashSet<Attribute<BitWidth>> widthAttrs;
-  private AttributeSet attrs;
+  private final AttributeSet attrs;
   private boolean attrListenRequested;
   private InstanceTextField textField;
   private InstanceStateImpl instanceState;

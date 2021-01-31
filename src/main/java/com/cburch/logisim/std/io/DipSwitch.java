@@ -88,7 +88,7 @@ public class DipSwitch extends InstanceFactory {
   private static class State implements InstanceData, Cloneable {
 
     private int Value;
-    private int size;
+    private final int size;
 
     public State(int value, int size) {
       Value = value;

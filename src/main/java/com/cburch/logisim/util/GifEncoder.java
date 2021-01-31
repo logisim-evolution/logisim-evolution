@@ -419,7 +419,8 @@ public class GifEncoder {
     out.close();
   }
 
-  private short width_, height_;
+  private final short width_;
+  private final short height_;
 
   private int numColors_;
 

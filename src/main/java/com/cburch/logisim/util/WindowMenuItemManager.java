@@ -66,12 +66,12 @@ public abstract class WindowMenuItemManager {
     public void windowOpened(WindowEvent event) {}
   }
 
-  private MyListener myListener = new MyListener();
+  private final MyListener myListener = new MyListener();
   private String text;
-  private boolean persistent;
+  private final boolean persistent;
   private boolean listenerAdded = false;
   private boolean inManager = false;
-  private HashMap<WindowMenu, JRadioButtonMenuItem> menuItems =
+  private final HashMap<WindowMenu, JRadioButtonMenuItem> menuItems =
       new HashMap<WindowMenu, JRadioButtonMenuItem>();
 
   public WindowMenuItemManager(String text, boolean persistent) {

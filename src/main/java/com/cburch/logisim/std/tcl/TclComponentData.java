@@ -57,13 +57,13 @@ public class TclComponentData implements InstanceData {
     return ret;
   }
 
-  private SocketClient tclClient;
+  private final SocketClient tclClient;
 
   private TclWrapperListenerThread tclWrapperListenerThread;
 
-  private TclWrapper tclWrapper;
+  private final TclWrapper tclWrapper;
 
-  private InstanceState instanceState;
+  private final InstanceState instanceState;
 
   private Value prevClockValue = Value.UNKNOWN;
 

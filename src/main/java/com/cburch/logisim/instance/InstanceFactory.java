@@ -64,8 +64,8 @@ public abstract class InstanceFactory extends AbstractComponentFactory {
 
   static final Logger logger = LoggerFactory.getLogger(InstanceFactory.class);
 
-  private String name;
-  private StringGetter displayName;
+  private final String name;
+  private final StringGetter displayName;
   private StringGetter defaultToolTip;
   private String iconName;
   private Icon icon;

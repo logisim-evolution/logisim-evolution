@@ -37,11 +37,11 @@ import com.cburch.logisim.proj.Project;
 
 class RomContentsListener implements HexModelListener {
   private static class Change extends Action {
-    private RomContentsListener source;
-    private MemContents contents;
-    private long start;
-    private long[] oldValues;
-    private long[] newValues;
+    private final RomContentsListener source;
+    private final MemContents contents;
+    private final long start;
+    private final long[] oldValues;
+    private final long[] newValues;
     private boolean completed = true;
 
     Change(

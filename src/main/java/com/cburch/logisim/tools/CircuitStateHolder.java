@@ -40,8 +40,8 @@ import com.cburch.logisim.soc.data.SocSupport;
 
 public interface CircuitStateHolder {
    public class HierarchyInfo {
-     private Circuit mainCircuit;
-     private ArrayList<Component> components = new ArrayList<Component>();
+     private final Circuit mainCircuit;
+     private final ArrayList<Component> components = new ArrayList<Component>();
      
      public HierarchyInfo(Circuit circ) { mainCircuit = circ; }
      

@@ -65,14 +65,14 @@ public class Port {
   public static final String INOUT = "inout";
   public static final String EXCLUSIVE = "exclusive";
   public static final String SHARED = "shared";
-  private int dx;
-  private int dy;
-  private int type;
-  private BitWidth widthFixed;
+  private final int dx;
+  private final int dy;
+  private final int type;
+  private final BitWidth widthFixed;
 
-  private Attribute<BitWidth> widthAttr;
+  private final Attribute<BitWidth> widthAttr;
 
-  private boolean exclude;
+  private final boolean exclude;
 
   private StringGetter toolTip;
 

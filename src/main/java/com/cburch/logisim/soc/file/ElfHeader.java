@@ -114,20 +114,20 @@ public class ElfHeader {
   public final static int INTMASK = Integer.parseUnsignedInt("00FFFFFF", 16);
 
   private class EInfo {
-    private Integer e_type;
-    private Integer e_machine;
-    private Integer e_version;
-    private Long e_entry;
-    private Long e_phoff;
-    private Long e_shoff;
-    private Integer e_flags;
-    private Integer e_ehsize;
-    private Integer e_phentsize;
-    private Integer e_phnum;
-    private Integer e_shentsize;
-    private Integer e_shnum;
-    private Integer e_shstrndx;
-    private boolean is32Bit;
+    private final Integer e_type;
+    private final Integer e_machine;
+    private final Integer e_version;
+    private final Long e_entry;
+    private final Long e_phoff;
+    private final Long e_shoff;
+    private final Integer e_flags;
+    private final Integer e_ehsize;
+    private final Integer e_phentsize;
+    private final Integer e_phnum;
+    private final Integer e_shentsize;
+    private final Integer e_shnum;
+    private final Integer e_shstrndx;
+    private final boolean is32Bit;
     
     
     public EInfo (byte[] buffer , boolean is32Bit, boolean isLittleEndian) {
@@ -184,7 +184,7 @@ public class ElfHeader {
   
   private int status = ELF_HEADER_CORRECT;
   private EInfo eInfo;
-  private byte[] e_ident = new byte[E_IDENT_SIZE];
+  private final byte[] e_ident = new byte[E_IDENT_SIZE];
   
   public ElfHeader(FileInputStream file) {
     int nrRead = -1;

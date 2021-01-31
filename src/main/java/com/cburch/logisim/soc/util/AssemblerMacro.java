@@ -40,11 +40,11 @@ import com.cburch.logisim.util.StringGetter;
 
 public class AssemblerMacro {
 
-  private String name;
-  private int nrOfParameters;
-  private LinkedList<AssemblerToken> tokens;
-  private HashMap<String,Long> localLabels;
-  private ArrayList<AssemblerToken[]> parameters;
+  private final String name;
+  private final int nrOfParameters;
+  private final LinkedList<AssemblerToken> tokens;
+  private final HashMap<String,Long> localLabels;
+  private final ArrayList<AssemblerToken[]> parameters;
   private boolean sizeDeterminationActive;
   private long macroSize;
   

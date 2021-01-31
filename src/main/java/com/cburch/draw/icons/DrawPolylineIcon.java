@@ -38,7 +38,7 @@ import com.cburch.logisim.prefs.AppPreferences;
 
 public class DrawPolylineIcon extends AnnimatedIcon {
 
-  private static int[] points = {1,14,1,1,7,8,13,4,10,13};
+  private static final int[] points = {1,14,1,1,7,8,13,4,10,13};
   private boolean closed = false;
   private int state = points.length;
   

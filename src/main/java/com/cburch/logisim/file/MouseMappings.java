@@ -44,8 +44,8 @@ public class MouseMappings {
     public void mouseMappingsChanged();
   }
 
-  private ArrayList<MouseMappingsListener> listeners;
-  private HashMap<Integer, Tool> map;
+  private final ArrayList<MouseMappingsListener> listeners;
+  private final HashMap<Integer, Tool> map;
   private int cache_mods;
   private Tool cache_tool;
 

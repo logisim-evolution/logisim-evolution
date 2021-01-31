@@ -39,7 +39,7 @@ import java.util.prefs.Preferences;
 
 public class PrefMonitorBooleanConvert extends PrefMonitorBoolean {
 
-  private ArrayList<ConvertEventListener> MyListeners = new ArrayList<ConvertEventListener>();
+  private final ArrayList<ConvertEventListener> MyListeners = new ArrayList<ConvertEventListener>();
 
   PrefMonitorBooleanConvert(String name, boolean dflt) {
     super(name, dflt);

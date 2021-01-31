@@ -58,7 +58,7 @@ public class MenuSimulate extends Menu {
 
   private class CircuitStateMenuItem extends JMenuItem implements CircuitListener, ActionListener {
 
-    private CircuitState circuitState;
+    private final CircuitState circuitState;
 
     public CircuitStateMenuItem(CircuitState circuitState) {
       this.circuitState = circuitState;
@@ -202,7 +202,7 @@ public class MenuSimulate extends Menu {
 
   private class TickFrequencyChoice extends JRadioButtonMenuItem implements ActionListener {
 
-    private double freq;
+    private final double freq;
 
     public TickFrequencyChoice(double value) {
       freq = value;
@@ -270,28 +270,28 @@ public class MenuSimulate extends Menu {
     32000.0, 16000.0, 8000.0, 4000.0, 2000.0, 1000.0,
     512.0, 256.0, 128.0, 64.0, 32.0, 16.0, 8.0, 4.0, 2.0, 1.0, 0.5, 0.25
   };
-  private LogisimMenuBar menubar;
-  private MyListener myListener = new MyListener();
+  private final LogisimMenuBar menubar;
+  private final MyListener myListener = new MyListener();
   private CircuitState currentState = null;
   private CircuitState bottomState = null;
   private Simulator currentSim = null;
-  private MenuItemCheckImpl runToggle;
-  private JMenuItem reset = new JMenuItem();
-  private MenuItemImpl step;
-  private MenuItemImpl vhdl_sim_files;
-  private MenuItemCheckImpl simulate_vhdl_enable;
-  private MenuItemCheckImpl ticksEnabled;
-  private MenuItemImpl tickHalf;
-  private MenuItemImpl tickFull;
-  private JMenu tickFreq = new JMenu();
-  private TickFrequencyChoice[] tickFreqs = new TickFrequencyChoice[SupportedTickFrequencies.length];
-  private JMenu downStateMenu = new JMenu();
-  private ArrayList<CircuitStateMenuItem> downStateItems = new ArrayList<CircuitStateMenuItem>();
-  private JMenu upStateMenu = new JMenu();
-  private ArrayList<CircuitStateMenuItem> upStateItems = new ArrayList<CircuitStateMenuItem>();
-  private JMenuItem log = new JMenuItem();
-  private JMenuItem test = new JMenuItem();
-  private JMenuItem assemblyWindow = new JMenuItem();
+  private final MenuItemCheckImpl runToggle;
+  private final JMenuItem reset = new JMenuItem();
+  private final MenuItemImpl step;
+  private final MenuItemImpl vhdl_sim_files;
+  private final MenuItemCheckImpl simulate_vhdl_enable;
+  private final MenuItemCheckImpl ticksEnabled;
+  private final MenuItemImpl tickHalf;
+  private final MenuItemImpl tickFull;
+  private final JMenu tickFreq = new JMenu();
+  private final TickFrequencyChoice[] tickFreqs = new TickFrequencyChoice[SupportedTickFrequencies.length];
+  private final JMenu downStateMenu = new JMenu();
+  private final ArrayList<CircuitStateMenuItem> downStateItems = new ArrayList<CircuitStateMenuItem>();
+  private final JMenu upStateMenu = new JMenu();
+  private final ArrayList<CircuitStateMenuItem> upStateItems = new ArrayList<CircuitStateMenuItem>();
+  private final JMenuItem log = new JMenuItem();
+  private final JMenuItem test = new JMenuItem();
+  private final JMenuItem assemblyWindow = new JMenuItem();
 
   AssemblyWindow assWin = null;
 

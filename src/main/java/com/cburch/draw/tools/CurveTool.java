@@ -53,7 +53,7 @@ public class CurveTool extends AbstractTool {
   private static final int ENDPOINT_DRAG = 1;
   private static final int CONTROL_DRAG = 2;
 
-  private DrawingAttributeSet attrs;
+  private final DrawingAttributeSet attrs;
   private int state;
   private Location end0;
   private Location end1;

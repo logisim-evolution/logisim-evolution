@@ -38,7 +38,7 @@ import com.cburch.logisim.prefs.AppPreferences;
 
 public class ShowStateIcon extends AnnimatedIcon {
 
-  private boolean pressed;
+  private final boolean pressed;
   private int state;
   
   public ShowStateIcon( boolean pressed ) {

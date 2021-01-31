@@ -234,7 +234,7 @@ public class Projects {
   private static final PropertyChangeWeakSupport propertySupport =
       new PropertyChangeWeakSupport(Projects.class);
 
-  private static ArrayList<Project> openProjects = new ArrayList<Project>();
+  private static final ArrayList<Project> openProjects = new ArrayList<Project>();
 
   private static Frame mostRecentFrame = null;
 

@@ -36,9 +36,10 @@ import java.util.ArrayList;
 public class FailException extends TestException {
 
   private static final long serialVersionUID = 1L;
-  private int column;
-  private Value expected, computed;
-  private ArrayList<FailException> more = new ArrayList<FailException>();
+  private final int column;
+  private final Value expected;
+  private final Value computed;
+  private final ArrayList<FailException> more = new ArrayList<FailException>();
 
   public FailException(int column, String columnName, Value expected, Value computed) {
     super(

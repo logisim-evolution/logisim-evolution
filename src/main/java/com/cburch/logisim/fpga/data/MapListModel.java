@@ -36,8 +36,8 @@ import javax.swing.DefaultListModel;
 public class MapListModel extends DefaultListModel<MapListModel.MapInfo> {
 	
   public class MapInfo extends Object {
-    private int pinNr;
-    private MapComponent map;
+    private final int pinNr;
+    private final MapComponent map;
     
     public MapInfo(int pin , MapComponent map) {
       pinNr = pin;
@@ -55,7 +55,7 @@ public class MapListModel extends DefaultListModel<MapListModel.MapInfo> {
 
   private static final long serialVersionUID = 1L;
   private boolean mappedList = false;
-  private Map<ArrayList<String>, MapComponent> myMappableResources;
+  private final Map<ArrayList<String>, MapComponent> myMappableResources;
   private ArrayList<MapInfo> myItems;
   
   public MapListModel(boolean mappedList , Map<ArrayList<String>, MapComponent> myMappableResources) {

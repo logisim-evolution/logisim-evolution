@@ -125,7 +125,7 @@ public class PlaRom extends InstanceFactory {
     /** */
     private static final long serialVersionUID = -53754819096800664L;
 
-    private PlaRomData data;
+    private final PlaRomData data;
 
     ContentsCell(PlaRomData data) {
       super(S.get("romContentsValue"));
@@ -167,7 +167,7 @@ public class PlaRom extends InstanceFactory {
 
   private static class PlaMenu implements ActionListener, MenuExtender {
     private JMenuItem edit, clear;
-    private Instance instance;
+    private final Instance instance;
     private CircuitState circState;
 
     public PlaMenu(Instance instance) {

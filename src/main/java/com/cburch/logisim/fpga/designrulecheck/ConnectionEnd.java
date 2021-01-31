@@ -33,9 +33,9 @@ import java.util.ArrayList;
 
 public class ConnectionEnd {
 
-  private boolean IsOutput;
-  private Byte nr_of_bits;
-  private ArrayList<ConnectionPoint> MyConnections;
+  private final boolean IsOutput;
+  private final Byte nr_of_bits;
+  private final ArrayList<ConnectionPoint> MyConnections;
 
   public ConnectionEnd(boolean OutputEnd, Byte nr_of_bits, Component comp) {
     IsOutput = OutputEnd;

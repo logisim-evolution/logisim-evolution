@@ -72,7 +72,7 @@ class RomAttributes extends AbstractAttributeSet {
     listenerRegistry.put(value, l);
   }
 
-  private static List<Attribute<?>> ATTRIBUTES =
+  private static final List<Attribute<?>> ATTRIBUTES =
       Arrays.asList(
           new Attribute<?>[] {
             Mem.ADDR_ATTR,
@@ -86,10 +86,10 @@ class RomAttributes extends AbstractAttributeSet {
             StdAttr.APPEARANCE
           });
 
-  private static WeakHashMap<MemContents, RomContentsListener> listenerRegistry =
+  private static final WeakHashMap<MemContents, RomContentsListener> listenerRegistry =
       new WeakHashMap<MemContents, RomContentsListener>();
 
-  private static WeakHashMap<MemContents, HexFrame> windowRegistry =
+  private static final WeakHashMap<MemContents, HexFrame> windowRegistry =
       new WeakHashMap<MemContents, HexFrame>();
   private BitWidth addrBits = BitWidth.create(8);
   private BitWidth dataBits = BitWidth.create(8);

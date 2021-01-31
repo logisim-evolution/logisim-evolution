@@ -117,8 +117,8 @@ public class Netlist implements CircuitListener {
   }
 
   private class SourceInfo {
-    private ConnectionPoint source;
-    private byte index;
+    private final ConnectionPoint source;
+    private final byte index;
 
     public SourceInfo(ConnectionPoint source, byte index) {
       this.source = source;
@@ -136,8 +136,8 @@ public class Netlist implements CircuitListener {
 
   public class NetInfo {
 
-    private Net TheNet;
-    private byte BitIndex;
+    private final Net TheNet;
+    private final byte BitIndex;
 
     public NetInfo(Net ConcernedNet, byte Index) {
       TheNet = ConcernedNet;
@@ -154,22 +154,22 @@ public class Netlist implements CircuitListener {
   }
 
   private String CircuitName;
-  private ArrayList<Net> MyNets = new ArrayList<Net>();
-  private Map<Circuit, Integer> MySubCircuitMap = new HashMap<Circuit, Integer>();
-  private ArrayList<NetlistComponent> MySubCircuits = new ArrayList<NetlistComponent>();
-  private ArrayList<NetlistComponent> MyComponents = new ArrayList<NetlistComponent>();
-  private ArrayList<NetlistComponent> MyClockGenerators = new ArrayList<NetlistComponent>();
-  private ArrayList<NetlistComponent> MyInOutPorts = new ArrayList<NetlistComponent>();
-  private ArrayList<NetlistComponent> MyInputPorts = new ArrayList<NetlistComponent>();
-  private ArrayList<NetlistComponent> MyOutputPorts = new ArrayList<NetlistComponent>();
-  private ArrayList<Component> MyComplexSplitters = new ArrayList<Component>();
+  private final ArrayList<Net> MyNets = new ArrayList<Net>();
+  private final Map<Circuit, Integer> MySubCircuitMap = new HashMap<Circuit, Integer>();
+  private final ArrayList<NetlistComponent> MySubCircuits = new ArrayList<NetlistComponent>();
+  private final ArrayList<NetlistComponent> MyComponents = new ArrayList<NetlistComponent>();
+  private final ArrayList<NetlistComponent> MyClockGenerators = new ArrayList<NetlistComponent>();
+  private final ArrayList<NetlistComponent> MyInOutPorts = new ArrayList<NetlistComponent>();
+  private final ArrayList<NetlistComponent> MyInputPorts = new ArrayList<NetlistComponent>();
+  private final ArrayList<NetlistComponent> MyOutputPorts = new ArrayList<NetlistComponent>();
+  private final ArrayList<Component> MyComplexSplitters = new ArrayList<Component>();
   private Integer LocalNrOfInportBubles;
   private Integer LocalNrOfOutportBubles;
   private Integer LocalNrOfInOutBubles;
-  private ClockTreeFactory MyClockInformation = new ClockTreeFactory();
-  private Circuit MyCircuit;
+  private final ClockTreeFactory MyClockInformation = new ClockTreeFactory();
+  private final Circuit MyCircuit;
   private int DRCStatus;
-  private Set<Wire> wires = new HashSet<Wire>();
+  private final Set<Wire> wires = new HashSet<Wire>();
   private ArrayList<String> CurrentHierarchyLevel;
   public static final int DRC_REQUIRED = 4;
   public static final int DRC_PASSED = 0;

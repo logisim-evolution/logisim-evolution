@@ -42,12 +42,12 @@ class SearchNode implements Comparable<SearchNode> {
 
   private final Location loc;
   private final Direction dir;
-  private ConnectionData conn;
+  private final ConnectionData conn;
   private final Location dest;
-  private int dist;
-  private int heur;
-  private boolean extendsWire;
-  private SearchNode prev;
+  private final int dist;
+  private final int heur;
+  private final boolean extendsWire;
+  private final SearchNode prev;
 
   public SearchNode(ConnectionData conn, Location src, Direction srcDir, Location dst) {
     this(src, srcDir, conn, dst, 0, srcDir != null, null);

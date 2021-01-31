@@ -49,9 +49,9 @@ import javax.swing.tree.TreePath;
 
 class ComponentSelector extends JTree {
   private class CircuitNode implements TreeNode, CircuitListener, Comparator<Component> {
-    private CircuitNode parent;
-    private CircuitState circuitState;
-    private Component subcircComp;
+    private final CircuitNode parent;
+    private final CircuitState circuitState;
+    private final Component subcircComp;
     private ArrayList<TreeNode> children;
 
     public CircuitNode(CircuitNode parent, CircuitState circuitState, Component subcircComp) {
@@ -205,8 +205,8 @@ class ComponentSelector extends JTree {
   }
 
   private class ComponentNode implements TreeNode {
-    private CircuitNode parent;
-    private Component comp;
+    private final CircuitNode parent;
+    private final Component comp;
     private OptionNode[] opts;
 
     public ComponentNode(CircuitNode parent, Component comp) {
@@ -296,8 +296,8 @@ class ComponentSelector extends JTree {
   }
 
   private class OptionNode implements TreeNode {
-    private ComponentNode parent;
-    private Object option;
+    private final ComponentNode parent;
+    private final Object option;
 
     public OptionNode(ComponentNode parent, Object option) {
       this.parent = parent;

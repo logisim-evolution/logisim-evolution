@@ -137,13 +137,13 @@ class TablePanel extends LogPanel {
 
   private static final int HEADER_SEP = 4;
 
-  private MyListener myListener = new MyListener();
+  private final MyListener myListener = new MyListener();
   private int cellWidth = 25; // reasonable start values
   private int cellHeight = 15;
   private int rowCount = 0;
   private int tableWidth;
   private int tableHeight;
-  private VerticalScrollBar vsb;
+  private final VerticalScrollBar vsb;
 
   public TablePanel(LogFrame frame) {
     super(frame);

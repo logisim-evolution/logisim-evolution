@@ -33,7 +33,7 @@ import com.cburch.logisim.prefs.AppPreferences;
 class MemContentsSub {
   private static class BytePage extends MemContents.Page {
     private byte[] data;
-    private long mask;
+    private final long mask;
 
     public BytePage(int size, long mask) {
       this.mask = mask;
@@ -88,7 +88,7 @@ class MemContentsSub {
 
   private static class IntPage extends MemContents.Page {
     private int[] data;
-    private long mask;
+    private final long mask;
 
     public IntPage(int size, long mask) {
       this.mask = mask;
@@ -141,7 +141,7 @@ class MemContentsSub {
 
   private static class ShortPage extends MemContents.Page {
     private short[] data;
-    private long mask;
+    private final long mask;
 
     public ShortPage(int size, long mask) {
       data = new short[size];
@@ -198,7 +198,7 @@ class MemContentsSub {
 
   private static class LongPage extends MemContents.Page {
     private long[] data;
-    private long mask;
+    private final long mask;
 
     public LongPage(int size, long mask) {
       this.mask = mask;

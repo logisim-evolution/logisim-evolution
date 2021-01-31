@@ -37,10 +37,10 @@ import java.util.HashSet;
 import com.cburch.logisim.util.StringGetter;
 
 public class AssemblerAsmInstruction {
-  private AssemblerToken instruction;
-  private ArrayList<AssemblerToken[]> parameters;
-  private int size;
-  private HashMap<AssemblerToken,StringGetter> errors;
+  private final AssemblerToken instruction;
+  private final ArrayList<AssemblerToken[]> parameters;
+  private final int size;
+  private final HashMap<AssemblerToken,StringGetter> errors;
   private Byte[] bytes;
   private long programCounter;
    

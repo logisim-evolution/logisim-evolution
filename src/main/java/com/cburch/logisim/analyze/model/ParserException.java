@@ -32,9 +32,9 @@ import com.cburch.logisim.util.StringGetter;
 
 public class ParserException extends Exception {
   private static final long serialVersionUID = 1L;
-  private StringGetter message;
-  private int start;
-  private int length;
+  private final StringGetter message;
+  private final int start;
+  private final int length;
   
   public ParserException(StringGetter message, int start) {
     this(message, start, 1);

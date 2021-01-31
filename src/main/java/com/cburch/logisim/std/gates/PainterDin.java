@@ -157,7 +157,7 @@ class PainterDin {
 
   static final int XNOR = 3;
 
-  private static HashMap<Integer, int[]> orLenArrays = new HashMap<Integer, int[]>();
+  private static final HashMap<Integer, int[]> orLenArrays = new HashMap<Integer, int[]>();
 
   private PainterDin() {}
 }

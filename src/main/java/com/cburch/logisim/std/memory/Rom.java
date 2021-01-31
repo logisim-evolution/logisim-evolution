@@ -144,7 +144,7 @@ public class Rom extends Mem {
 
   // The following is so that instance's MemListeners aren't freed by the
   // garbage collector until the instance itself is ready to be freed.
-  private WeakHashMap<Instance, MemListener> memListeners;
+  private final WeakHashMap<Instance, MemListener> memListeners;
 
   public Rom() {
     super("ROM", S.getter("romComponent"), 0);

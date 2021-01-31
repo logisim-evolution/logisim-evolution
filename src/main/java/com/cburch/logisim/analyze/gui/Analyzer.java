@@ -64,7 +64,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 public class Analyzer extends LFrame {
-  private AnalyzerMenuListener menuListener;
+  private final AnalyzerMenuListener menuListener;
 
   private class MyChangeListener implements ChangeListener {
     public void stateChanged(ChangeEvent e) {
@@ -173,21 +173,21 @@ public class Analyzer extends LFrame {
   public static final int EXPRESSION_TAB = 2;
   public static final int MINIMIZED_TAB = 3;
   
-  private MyLocaleListener myLocaleListener = new MyLocaleListener();
-  private MyChangeListener myChangeListener = new MyChangeListener();
-  private TableListener tableListener = new TableListener();
-  private AnalyzerModel model = new AnalyzerModel();
+  private final MyLocaleListener myLocaleListener = new MyLocaleListener();
+  private final MyChangeListener myChangeListener = new MyChangeListener();
+  private final TableListener tableListener = new TableListener();
+  private final AnalyzerModel model = new AnalyzerModel();
 
   private JTabbedPane tabbedPane = new JTabbedPane();
-  private VariableTab ioPanel;
-  private TableTab truthTablePanel;
-  private ExpressionTab expressionPanel;
-  private MinimizedTab minimizedPanel;
+  private final VariableTab ioPanel;
+  private final TableTab truthTablePanel;
+  private final ExpressionTab expressionPanel;
+  private final MinimizedTab minimizedPanel;
 
-  private BuildCircuitButton buildCircuit;
-  private ImportTableButton importTable;
-  private ExportTableButton exportTable;
-  private ExportLatexButton exportTex;
+  private final BuildCircuitButton buildCircuit;
+  private final ImportTableButton importTable;
+  private final ExportTableButton exportTable;
+  private final ExportLatexButton exportTex;
 
   Analyzer() {
     super(true,null);
@@ -270,8 +270,8 @@ public class Analyzer extends LFrame {
     /** */
     private static final long serialVersionUID = 1L;
 
-    private SwingWorker<T, Void> worker;
-    private java.awt.Component parent;
+    private final SwingWorker<T, Void> worker;
+    private final java.awt.Component parent;
 
     public abstract T doInBackground() throws Exception;
 

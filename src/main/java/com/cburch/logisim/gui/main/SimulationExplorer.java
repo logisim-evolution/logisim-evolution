@@ -52,9 +52,9 @@ class SimulationExplorer extends JPanel implements ProjectListener, MouseListene
   }
 
   private static final long serialVersionUID = 1L;
-  private Project project;
-  private SimulationTreeModel model;
-  private JTree tree;
+  private final Project project;
+  private final SimulationTreeModel model;
+  private final JTree tree;
 
   SimulationExplorer(Project proj, MenuListener menu) {
     super(new BorderLayout());

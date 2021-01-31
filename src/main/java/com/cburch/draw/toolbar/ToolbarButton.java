@@ -41,8 +41,8 @@ class ToolbarButton extends JComponent implements MouseListener {
 
   private static final int BORDER = 2;
 
-  private Toolbar toolbar;
-  private ToolbarItem item;
+  private final Toolbar toolbar;
+  private final ToolbarItem item;
 
   ToolbarButton(Toolbar toolbar, ToolbarItem item) {
     this.toolbar = toolbar;

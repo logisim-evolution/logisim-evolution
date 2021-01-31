@@ -71,7 +71,7 @@ public class Selection extends SelectionBase {
   }
 
   private class MyListener implements ProjectListener, CircuitListener {
-    private WeakHashMap<Action, SelectionSave> savedSelections;
+    private final WeakHashMap<Action, SelectionSave> savedSelections;
 
     MyListener() {
       savedSelections = new WeakHashMap<Action, SelectionSave>();
@@ -150,9 +150,9 @@ public class Selection extends SelectionBase {
 
   static final Logger logger = LoggerFactory.getLogger(Selection.class);
 
-  private MyListener myListener;
-  private boolean isVisible = true;
-  private SelectionAttributes attrs;
+  private final MyListener myListener;
+  private final boolean isVisible = true;
+  private final SelectionAttributes attrs;
 
   public Selection(Project proj, Canvas canvas) {
     super(proj);

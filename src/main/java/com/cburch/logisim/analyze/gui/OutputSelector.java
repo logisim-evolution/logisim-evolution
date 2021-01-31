@@ -118,7 +118,7 @@ class OutputSelector {
 
     private static final long serialVersionUID = 1L;
     private String selected;
-    private AttributedJLabel MyRenderer = new AttributedJLabel();
+    private final AttributedJLabel MyRenderer = new AttributedJLabel();
 
     public ListCellRenderer<Object> getMyRenderer() {
       return MyRenderer;
@@ -153,9 +153,9 @@ class OutputSelector {
     }
   }
 
-  private VariableList source;
-  private JLabel label = new JLabel();
-  private JComboBox<String> select = new JComboBox<String>();
+  private final VariableList source;
+  private final JLabel label = new JLabel();
+  private final JComboBox<String> select = new JComboBox<String>();
 
   public OutputSelector(AnalyzerModel model) {
     this.source = model.getOutputs();

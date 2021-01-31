@@ -78,7 +78,7 @@ public class TextMetrics {
     height = ascent + descent + leading;
   }
 
-  private static Canvas canvas = new Canvas();
+  private static final Canvas canvas = new Canvas();
 
   public TextMetrics(Component c, Font font, String text) {
     if (c == null) c = canvas;

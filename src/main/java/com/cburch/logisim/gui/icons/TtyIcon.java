@@ -37,7 +37,7 @@ import com.cburch.logisim.std.io.Tty;
 
 public class TtyIcon extends AnnimatedIcon {
 
-  private static String display = "__Hello World!__";
+  private static final String display = "__Hello World!__";
   private int index = 0;
 
   @Override

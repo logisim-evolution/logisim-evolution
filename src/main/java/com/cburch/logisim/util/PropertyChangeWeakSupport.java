@@ -47,8 +47,8 @@ public class PropertyChangeWeakSupport {
 
   private static final String ALL_PROPERTIES = "ALL PROPERTIES";
 
-  private Object source;
-  private ConcurrentLinkedQueue<ListenerData> listeners;
+  private final Object source;
+  private final ConcurrentLinkedQueue<ListenerData> listeners;
 
   public PropertyChangeWeakSupport(Object source) {
     this.source = source;

@@ -32,7 +32,7 @@ import com.cburch.logisim.data.Bounds;
 
 public class MatrixPlacerInfo {
 
-  private String OldLabel;
+  private final String OldLabel;
   private String SharedLabel;
   private int NrOfXCopies = 1;
   private int NrOfYCopies = 1;

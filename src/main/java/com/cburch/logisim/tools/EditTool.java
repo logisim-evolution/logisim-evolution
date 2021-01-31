@@ -83,11 +83,11 @@ public class EditTool extends Tool {
   private static final Location NULL_LOCATION =
       Location.create(Integer.MIN_VALUE, Integer.MIN_VALUE);
 
-  private Listener listener;
-  private SelectTool select;
-  private WiringTool wiring;
+  private final Listener listener;
+  private final SelectTool select;
+  private final WiringTool wiring;
   private Tool current;
-  private LinkedHashMap<Location, Boolean> cache;
+  private final LinkedHashMap<Location, Boolean> cache;
   private Canvas lastCanvas;
   private int lastRawX;
   private int lastRawY;

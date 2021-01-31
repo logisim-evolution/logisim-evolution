@@ -60,7 +60,7 @@ import javax.sound.sampled.SourceDataLine;
 
 public class Buzzer extends InstanceFactory {
   private static class Data implements InstanceData {
-    private AtomicBoolean is_on = new AtomicBoolean(false);
+    private final AtomicBoolean is_on = new AtomicBoolean(false);
     private final int SAMPLE_RATE = 44100;
     private double hz = 523;
     private double vol = 12;

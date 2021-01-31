@@ -43,7 +43,7 @@ import javax.swing.JRadioButtonMenuItem;
 
 class PopupContents extends JPopupMenu implements ActionListener {
   private static final long serialVersionUID = 1L;
-  private DrawAreaEventManager mDrawAreaEventManager;
+  private final DrawAreaEventManager mDrawAreaEventManager;
   private SignalDataBus signalDataBus;
   private JRadioButtonMenuItem expandBus;
 
@@ -97,8 +97,8 @@ class PopupContents extends JPopupMenu implements ActionListener {
 /** Popup that appears when right click on a Signal (only a bus for now) */
 public class PopupMenu extends MouseAdapter {
 
-  private SignalData signalData;
-  private DrawAreaEventManager mDrawAreaEventManager;
+  private final SignalData signalData;
+  private final DrawAreaEventManager mDrawAreaEventManager;
 
   public PopupMenu(DrawAreaEventManager drawAreaEventManager, SignalData signalData) {
     this.signalData = signalData;

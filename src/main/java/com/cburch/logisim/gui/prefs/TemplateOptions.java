@@ -134,13 +134,13 @@ class TemplateOptions extends OptionsPanel {
 
   private static final long serialVersionUID = 1L;
 
-  private MyListener myListener = new MyListener();
+  private final MyListener myListener = new MyListener();
 
-  private JRadioButton plain = new JRadioButton();
-  private JRadioButton empty = new JRadioButton();
-  private JRadioButton custom = new JRadioButton();
-  private JTextField templateField = new JTextField(40);
-  private JButton templateButton = new JButton();
+  private final JRadioButton plain = new JRadioButton();
+  private final JRadioButton empty = new JRadioButton();
+  private final JRadioButton custom = new JRadioButton();
+  private final JTextField templateField = new JTextField(40);
+  private final JButton templateButton = new JButton();
 
   public TemplateOptions(PreferencesFrame window) {
     super(window);

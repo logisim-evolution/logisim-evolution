@@ -128,14 +128,14 @@ class FilePanel extends LogPanel {
 
   private static final long serialVersionUID = 1L;
 
-  private Listener listener = new Listener();
-  private JLabel enableLabel = new JLabel();
-  private JButton enableButton = new JButton();
-  private JLabel fileLabel = new JLabel();
-  private JTextField fileField = new JTextField();
-  private JButton selectButton = new JButton();
-  private JCheckBox headerCheckBox = new JCheckBox();
-  private JFileChooser chooser = JFileChoosers.create();
+  private final Listener listener = new Listener();
+  private final JLabel enableLabel = new JLabel();
+  private final JButton enableButton = new JButton();
+  private final JLabel fileLabel = new JLabel();
+  private final JTextField fileField = new JTextField();
+  private final JButton selectButton = new JButton();
+  private final JCheckBox headerCheckBox = new JCheckBox();
+  private final JFileChooser chooser = JFileChoosers.create();
 
   public FilePanel(LogFrame frame) {
     super(frame);

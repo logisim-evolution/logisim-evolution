@@ -69,7 +69,7 @@ class Clipboard {
 
   public static final String contentsProperty = "appearance";
   private static ClipboardContents current = ClipboardContents.EMPTY;
-  private static PropertyChangeWeakSupport propertySupport =
+  private static final PropertyChangeWeakSupport propertySupport =
       new PropertyChangeWeakSupport(Clipboard.class);
 
   private Clipboard() {}

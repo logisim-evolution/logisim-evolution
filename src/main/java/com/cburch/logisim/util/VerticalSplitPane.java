@@ -113,9 +113,9 @@ public class VerticalSplitPane extends JPanel {
 
   private static final long serialVersionUID = 1L;
 
-  private JComponent comp0;
-  private JComponent comp1;
-  private MyDragbar dragbar;
+  private final JComponent comp0;
+  private final JComponent comp1;
+  private final MyDragbar dragbar;
   private double fraction;
 
   public VerticalSplitPane(JComponent comp0, JComponent comp1) {

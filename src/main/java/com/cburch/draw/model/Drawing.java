@@ -44,9 +44,9 @@ import java.util.Map;
 import java.util.Set;
 
 public class Drawing implements CanvasModel {
-  private EventSourceWeakSupport<CanvasModelListener> listeners;
-  private ArrayList<CanvasObject> canvasObjects;
-  private DrawingOverlaps overlaps;
+  private final EventSourceWeakSupport<CanvasModelListener> listeners;
+  private final ArrayList<CanvasObject> canvasObjects;
+  private final DrawingOverlaps overlaps;
 
   public Drawing() {
     listeners = new EventSourceWeakSupport<CanvasModelListener>();

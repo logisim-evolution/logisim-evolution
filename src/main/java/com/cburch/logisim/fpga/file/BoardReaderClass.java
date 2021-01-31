@@ -49,7 +49,7 @@ public class BoardReaderClass {
 
   static final Logger logger = LoggerFactory.getLogger(BoardReaderClass.class);
 
-  private String myfilename;
+  private final String myfilename;
   private DocumentBuilderFactory factory;
   private DocumentBuilder parser;
   private Document BoardDoc;

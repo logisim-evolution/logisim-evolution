@@ -329,7 +329,7 @@ class PLA extends InstanceFactory {
   }
 
   class PLAMenu implements ActionListener, MenuExtender {
-    private Instance instance;
+    private final Instance instance;
     private Frame frame;
     private JMenuItem edit;
 

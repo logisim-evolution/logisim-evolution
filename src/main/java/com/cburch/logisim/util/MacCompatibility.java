@@ -33,7 +33,7 @@ import javax.swing.JMenuBar;
 
 public class MacCompatibility {
 
-  private static boolean runningOnMac =
+  private static final boolean runningOnMac =
       System.getProperty("os.name").toLowerCase().indexOf("mac") >= 0;
   private static boolean usingScreenMenuBar = runningOnMac;
 

@@ -57,7 +57,7 @@ public class FPGAIOInformationContainer implements Cloneable {
 
   private class mapType {
     private MapComponent map;
-    private int pin;
+    private final int pin;
     
     public mapType(MapComponent map , int pin) {
       this.map = map;

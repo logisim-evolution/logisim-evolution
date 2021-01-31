@@ -49,11 +49,11 @@ public class PlaRomData implements InstanceData {
   private Value[] InputValue;
   private Value[] AndValue;
   private Value[] OutputValue;
-  private String[] options =
+  private final String[] options =
       new String[] {
         new LocaleManager("resources/logisim", "gui").get("saveOption"), S.get("ramClearMenuItem")
       };
-  private Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+  private final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
   private JScrollPane panel;
   private PlaRomPanel drawing;
 

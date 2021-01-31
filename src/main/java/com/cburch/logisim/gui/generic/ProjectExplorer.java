@@ -389,10 +389,10 @@ public class ProjectExplorer extends JTree implements LocaleListener {
 
   public static final Color MAGNIFYING_INTERIOR = new Color(200, 200, 255, 64);
 
-  private Project proj;
-  private MyListener myListener = new MyListener();
-  private MyCellRenderer renderer = new MyCellRenderer();
-  private DeleteAction deleteAction = new DeleteAction();
+  private final Project proj;
+  private final MyListener myListener = new MyListener();
+  private final MyCellRenderer renderer = new MyCellRenderer();
+  private final DeleteAction deleteAction = new DeleteAction();
   private ProjectExplorerListener listener = null;
   private Tool haloedTool = null;
 

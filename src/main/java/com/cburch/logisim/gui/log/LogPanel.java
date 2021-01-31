@@ -34,7 +34,7 @@ import javax.swing.JPanel;
 
 abstract class LogPanel extends JPanel {
   private static final long serialVersionUID = 1L;
-  private LogFrame logFrame;
+  private final LogFrame logFrame;
 
   public LogPanel(LogFrame frame) {
     super();

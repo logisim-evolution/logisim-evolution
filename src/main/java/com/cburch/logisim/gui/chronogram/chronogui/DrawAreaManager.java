@@ -37,7 +37,7 @@ import com.cburch.logisim.gui.chronogram.chronodata.SignalDataBus;
  */
 public class DrawAreaManager implements IDrawAreaEvents {
 
-  private ChronoFrame mChronoFrame;
+  private final ChronoFrame mChronoFrame;
 
   public DrawAreaManager(ChronoFrame chronoFrame) {
     mChronoFrame = chronoFrame;

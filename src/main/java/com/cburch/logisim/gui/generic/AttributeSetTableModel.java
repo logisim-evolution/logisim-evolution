@@ -46,7 +46,7 @@ import java.util.HashSet;
 
 public abstract class AttributeSetTableModel implements AttrTableModel, AttributeListener {
   private class AttrRow implements AttrTableModelRow {
-    private Attribute<Object> attr;
+    private final Attribute<Object> attr;
 
     AttrRow(Attribute<?> attr) {
       @SuppressWarnings("unchecked")
@@ -154,9 +154,9 @@ public abstract class AttributeSetTableModel implements AttrTableModel, Attribut
     }
   }
 
-  private ArrayList<AttrTableModelListener> listeners;
+  private final ArrayList<AttrTableModelListener> listeners;
   private AttributeSet attrs;
-  private HashMap<Attribute<?>, AttrRow> rowMap;
+  private final HashMap<Attribute<?>, AttrRow> rowMap;
   private ArrayList<AttrRow> rows;
   private ComponentFactory CompInst = null;
 

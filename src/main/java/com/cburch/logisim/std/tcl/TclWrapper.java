@@ -68,7 +68,7 @@ public class TclWrapper {
   private static boolean fileExists = false;
 
   private Process process;
-  private TclComponentData tclConsole;
+  private final TclComponentData tclConsole;
   private File tclContentFile;
 
   private TclWrapperState state = TclWrapperState.STOPPED;

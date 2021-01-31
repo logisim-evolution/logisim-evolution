@@ -56,8 +56,8 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 class AttrTableSelectionModel extends AttributeSetTableModel implements Selection.Listener {
-  private Project project;
-  private Frame frame;
+  private final Project project;
+  private final Frame frame;
 
   public AttrTableSelectionModel(Project project, Frame frame) {
     super(frame.getCanvas().getSelection().getAttributeSet());

@@ -54,7 +54,7 @@ import java.util.List;
 
 public class CircuitAttributes extends AbstractAttributeSet {
   private class MyListener implements AttributeListener, CircuitAppearanceListener {
-    private Circuit source;
+    private final Circuit source;
 
     private MyListener(Circuit s) {
       source = s;
@@ -84,7 +84,7 @@ public class CircuitAttributes extends AbstractAttributeSet {
   }
 
   private static class StaticListener implements AttributeListener {
-    private Circuit source;
+    private final Circuit source;
 
     private StaticListener(Circuit s) {
       source = s;
@@ -204,7 +204,7 @@ public class CircuitAttributes extends AbstractAttributeSet {
             CIRCUIT_VHDL_PATH
           });
 
-  private Circuit source;
+  private final Circuit source;
   private Instance subcircInstance;
   private Direction facing;
   private String label;

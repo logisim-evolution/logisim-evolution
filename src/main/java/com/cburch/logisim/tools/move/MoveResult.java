@@ -37,10 +37,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 public class MoveResult {
-  private ReplacementMap replacements;
-  private Collection<ConnectionData> unsatisfiedConnections;
-  private Collection<Location> unconnectedLocations;
-  private int totalDistance;
+  private final ReplacementMap replacements;
+  private final Collection<ConnectionData> unsatisfiedConnections;
+  private final Collection<Location> unconnectedLocations;
+  private final int totalDistance;
 
   public MoveResult(
       MoveRequest request,

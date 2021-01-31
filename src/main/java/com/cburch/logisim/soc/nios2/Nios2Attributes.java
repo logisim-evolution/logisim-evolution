@@ -65,7 +65,7 @@ public class Nios2Attributes extends AbstractAttributeSet {
   private Nios2State upState = new Nios2State();
   private Boolean stateVisable = true;
 
-  private static List<Attribute<?>> ATTRIBUTES =
+  private static final List<Attribute<?>> ATTRIBUTES =
         Arrays.asList(
             new Attribute<?>[] {
               RESET_VECTOR,

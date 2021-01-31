@@ -452,7 +452,7 @@ public class AppPreferences {
   private static Preferences prefs = null;
 
   private static MyListener myListener = null;
-  private static PropertyChangeWeakSupport propertySupport =
+  private static final PropertyChangeWeakSupport propertySupport =
       new PropertyChangeWeakSupport(AppPreferences.class);
 
   // Template preferences

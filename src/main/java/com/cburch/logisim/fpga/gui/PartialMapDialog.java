@@ -51,8 +51,8 @@ import com.cburch.logisim.util.LocaleListener;
 public class PartialMapDialog extends JDialog implements LocaleListener,ActionListener {
   private static final long serialVersionUID = 1L;
   
-  private MapListModel.MapInfo mapInfo;
-  private FPGAIOInformationContainer ioComp;
+  private final MapListModel.MapInfo mapInfo;
+  private final FPGAIOInformationContainer ioComp;
   private ArrayList<Integer> InputMapSet;
   private ArrayList<Integer> OutputMapSet;
   private ArrayList<Integer> IOMapSet;
@@ -65,9 +65,9 @@ public class PartialMapDialog extends JDialog implements LocaleListener,ActionLi
   private ArrayList<JComboBox<String>> InputMultipleMultiple;
   private ArrayList<JComboBox<String>> OutputMultipleMultiple;
   private ArrayList<JComboBox<String>> IOMultipleMultiple;
-  private ArrayList<JLabel> MapTo;
-  private JButton OkButton;
-  private JButton CancelButton;
+  private final ArrayList<JLabel> MapTo;
+  private final JButton OkButton;
+  private final JButton CancelButton;
 
   public PartialMapDialog(MapListModel.MapInfo map, FPGAIOInformationContainer io, JPanel parent) {
     super();

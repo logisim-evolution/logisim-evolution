@@ -118,9 +118,9 @@ public class CanvasPane extends JScrollPane {
 
   private static final long serialVersionUID = 1L;
 
-  private CanvasPaneContents contents;
-  private Listener listener;
-  private ZoomListener zoomListener;
+  private final CanvasPaneContents contents;
+  private final Listener listener;
+  private final ZoomListener zoomListener;
   private ZoomModel zoomModel;
 
   public CanvasPane(CanvasPaneContents contents) {

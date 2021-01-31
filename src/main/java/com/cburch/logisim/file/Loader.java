@@ -145,11 +145,11 @@ public class Loader implements LibraryLoader {
 
   // fixed
   private Component parent;
-  private Builtin builtin = new Builtin();
+  private final Builtin builtin = new Builtin();
   // to be cleared with each new file
   private File mainFile = null;
 
-  private Stack<File> filesOpening = new Stack<File>();
+  private final Stack<File> filesOpening = new Stack<File>();
 
   private Map<File, File> substitutions = new HashMap<File, File>();
 

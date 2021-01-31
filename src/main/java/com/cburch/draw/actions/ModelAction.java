@@ -46,7 +46,7 @@ public abstract class ModelAction extends Action {
     }
   }
 
-  private CanvasModel model;
+  private final CanvasModel model;
 
   public ModelAction(CanvasModel model) {
     this.model = model;

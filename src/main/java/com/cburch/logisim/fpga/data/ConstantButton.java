@@ -49,7 +49,7 @@ public class ConstantButton extends FPGAIOInformationContainer {
   public static final ConstantButton VALUE_BUTTON = new ConstantButton(CONSTANT_VALUE);
   public static final ConstantButton OPEN_BUTTON = new ConstantButton(LEAVE_OPEN);
    
-  private int myType;
+  private final int myType;
   
   public ConstantButton(int type) {
     super();

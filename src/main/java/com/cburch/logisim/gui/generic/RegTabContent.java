@@ -82,11 +82,11 @@ public class RegTabContent extends JScrollPane implements LocaleListener, Simula
   }
 
   private static final long serialVersionUID = 1L;
-  private JPanel panel = new JPanel(new GridBagLayout());
-  private GridBagConstraints c = new GridBagConstraints();
-  private Project proj;
+  private final JPanel panel = new JPanel(new GridBagLayout());
+  private final GridBagConstraints c = new GridBagConstraints();
+  private final Project proj;
 
-  private static HashMap<String, Component> registers = new HashMap<String, Component>();
+  private static final HashMap<String, Component> registers = new HashMap<String, Component>();
 
   public RegTabContent(Frame frame) {
     super();

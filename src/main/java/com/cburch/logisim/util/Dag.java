@@ -47,7 +47,7 @@ public class Dag {
     }
   }
 
-  private HashMap<Object, Node> nodes = new HashMap<Object, Node>();
+  private final HashMap<Object, Node> nodes = new HashMap<Object, Node>();
 
   public Dag() {}
 

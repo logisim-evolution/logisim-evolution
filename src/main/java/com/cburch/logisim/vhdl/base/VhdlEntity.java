@@ -80,8 +80,8 @@ public class VhdlEntity extends InstanceFactory implements HdlModelListener {
 
   static final int X_PADDING = 5;
 
-  private VhdlContent content;
-  private ArrayList<Instance> MyInstances;
+  private final VhdlContent content;
+  private final ArrayList<Instance> MyInstances;
 
   public VhdlEntity(VhdlContent content) {
     super("", null);
@@ -393,7 +393,7 @@ public class VhdlEntity extends InstanceFactory implements HdlModelListener {
   @Override
   public void appearanceChanged(HdlModel source) {}
 
-  private WeakHashMap<Component, Circuit> circuitsUsingThis = new WeakHashMap<>();
+  private final WeakHashMap<Component, Circuit> circuitsUsingThis = new WeakHashMap<>();
 
   public Collection<Circuit> getCircuitsUsingThis() {
     return circuitsUsingThis.values();

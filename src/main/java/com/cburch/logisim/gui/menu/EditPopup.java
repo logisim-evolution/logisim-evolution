@@ -52,8 +52,8 @@ public abstract class EditPopup extends JPopupMenu {
 
   private static final long serialVersionUID = 1L;
 
-  private Listener listener;
-  private Map<LogisimMenuItem, JMenuItem> items;
+  private final Listener listener;
+  private final Map<LogisimMenuItem, JMenuItem> items;
 
   public EditPopup() {
     this(false);

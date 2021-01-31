@@ -77,7 +77,7 @@ public class JtagUartAttributes  extends AbstractAttributeSet {
           S.getter("UartJtagREADFifoSize"), SIZE_ARRAY);
   public static final Attribute<Integer> READ_IRQ_THRESHOLD = Attributes.forInteger("ReadThreshold", S.getter("JtagUartReadIrqThreshold"));
 
-  private static List<Attribute<?>> ATTRIBUTES =
+  private static final List<Attribute<?>> ATTRIBUTES =
         Arrays.asList(
           new Attribute<?>[] {
              START_ADDRESS,

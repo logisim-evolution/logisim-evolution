@@ -147,16 +147,16 @@ public class HexFrame extends LFrame {
 
   private static final long serialVersionUID = 1L;
 
-  private WindowMenuManager windowManager = new WindowMenuManager();
-  private EditListener editListener = new EditListener();
-  private MyListener myListener = new MyListener();
-  private HexModel model;
-  private HexEditor editor;
-  private JButton open = new JButton();
-  private JButton save = new JButton();
-  private JButton close = new JButton();
-  private Instance instance;
-  private Project proj;
+  private final WindowMenuManager windowManager = new WindowMenuManager();
+  private final EditListener editListener = new EditListener();
+  private final MyListener myListener = new MyListener();
+  private final HexModel model;
+  private final HexEditor editor;
+  private final JButton open = new JButton();
+  private final JButton save = new JButton();
+  private final JButton close = new JButton();
+  private final Instance instance;
+  private final Project proj;
 
   public HexFrame(Project proj, Instance instance, HexModel model) {
 	super(false,proj);

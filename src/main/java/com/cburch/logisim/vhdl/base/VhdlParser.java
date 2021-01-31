@@ -90,9 +90,9 @@ public class VhdlParser {
 
   public static class PortDescription {
 
-    private String name;
-    private String type;
-    private BitWidth width;
+    private final String name;
+    private final String type;
+    private final BitWidth width;
 
     public PortDescription(String name, String type, int width) {
       this.name = name;
@@ -178,10 +178,10 @@ public class VhdlParser {
   private static final Pattern GENERIC = regex("(\\w+(?: , \\w+)*) : (\\w+)");
   private static final Pattern DVALUE = regex(":= (\\w+)");
 
-  private List<PortDescription> inputs;
-  private List<PortDescription> outputs;
-  private List<GenericDescription> generics;
-  private String source;
+  private final List<PortDescription> inputs;
+  private final List<PortDescription> outputs;
+  private final List<GenericDescription> generics;
+  private final String source;
   private String name;
   private String libraries;
   private String architecture;

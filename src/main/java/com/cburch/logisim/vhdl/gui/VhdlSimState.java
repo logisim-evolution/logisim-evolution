@@ -44,8 +44,8 @@ public class VhdlSimState extends JPanel implements VhdlSimulatorListener {
   private static final long serialVersionUID = 1L;
   Ellipse2D.Double circle;
   Color color;
-  private int margin = 5;
-  private Project proj;
+  private final int margin = 5;
+  private final Project proj;
 
   public VhdlSimState(Project proj) {
     this.proj = proj;

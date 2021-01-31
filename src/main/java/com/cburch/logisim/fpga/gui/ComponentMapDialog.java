@@ -63,25 +63,25 @@ public class ComponentMapDialog implements ActionListener, WindowListener,
 
   static final Logger logger = LoggerFactory.getLogger(ComponentMapDialog.class);
 
-  private JDialog panel;
-  private JFrame parent;
-  private JButton DoneButton = new JButton();
-  private JButton SaveButton = new JButton();
-  private JButton CancelButton = new JButton();
-  private JButton LoadButton = new JButton();
-  private JLabel UnmappedText = new JLabel();
-  private JLabel MappedText = new JLabel();
-  private JLabel CommandText = new JLabel();
-  private JScrollPane UnMappedPane;
-  private JScrollPane MappedPane;
+  private final JDialog panel;
+  private final JFrame parent;
+  private final JButton DoneButton = new JButton();
+  private final JButton SaveButton = new JButton();
+  private final JButton CancelButton = new JButton();
+  private final JButton LoadButton = new JButton();
+  private final JLabel UnmappedText = new JLabel();
+  private final JLabel MappedText = new JLabel();
+  private final JLabel CommandText = new JLabel();
+  private final JScrollPane UnMappedPane;
+  private final JScrollPane MappedPane;
 
-  private BoardManipulator BoardPic;
-  private BoardInformation BoardInfo;
+  private final BoardManipulator BoardPic;
+  private final BoardInformation BoardInfo;
   private String OldDirectory = "";
 
-  private MappableResourcesContainer MappableComponents;
+  private final MappableResourcesContainer MappableComponents;
 
-  private Object lock = new Object();
+  private final Object lock = new Object();
   private boolean canceled = true;
 
   public ComponentMapDialog(JFrame parentFrame, String projectPath, BoardInformation Board,

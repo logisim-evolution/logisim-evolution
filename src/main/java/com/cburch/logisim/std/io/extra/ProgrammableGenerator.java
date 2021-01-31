@@ -156,7 +156,7 @@ public class ProgrammableGenerator extends InstanceFactory {
     /** */
     private static final long serialVersionUID = -53754819096800664L;
 
-    private ProgrammableGeneratorState data;
+    private final ProgrammableGeneratorState data;
 
     ContentsCell(ProgrammableGeneratorState data) {
       super(S.get("romContentsValue"));
@@ -207,7 +207,7 @@ public class ProgrammableGenerator extends InstanceFactory {
   private static class ProgrammableGeneratorMenu implements ActionListener, MenuExtender {
     private JMenuItem edit;
     private JMenuItem reset;
-    private Instance instance;
+    private final Instance instance;
     private CircuitState circState;
 
     public ProgrammableGeneratorMenu(Instance instance) {

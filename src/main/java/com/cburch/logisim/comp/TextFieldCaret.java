@@ -52,9 +52,9 @@ class TextFieldCaret implements Caret, TextFieldListener {
   public static final Color EDIT_BORDER = Color.DARK_GRAY;
   public static final Color SELECTION_BACKGROUND = new Color(0x99, 0xcc, 0xff);
 
-  private LinkedList<CaretListener> listeners = new LinkedList<CaretListener>();
-  private TextField field;
-  private Graphics g;
+  private final LinkedList<CaretListener> listeners = new LinkedList<CaretListener>();
+  private final TextField field;
+  private final Graphics g;
   private String oldText;
   private String curText;
   private int pos, end;

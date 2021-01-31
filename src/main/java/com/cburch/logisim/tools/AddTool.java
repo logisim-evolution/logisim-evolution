@@ -85,20 +85,20 @@ public class AddTool extends Tool implements PropertyChangeListener {
     }
   }
 
-  private static int INVALID_COORD = Integer.MIN_VALUE;
-  private static int SHOW_NONE = 0;
-  private static int SHOW_GHOST = 1;
-  private static int SHOW_ADD = 2;
+  private static final int INVALID_COORD = Integer.MIN_VALUE;
+  private static final int SHOW_NONE = 0;
+  private static final int SHOW_GHOST = 1;
+  private static final int SHOW_ADD = 2;
 
-  private static int SHOW_ADD_NO = 3;
+  private static final int SHOW_ADD_NO = 3;
 
-  private static Cursor cursor = Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR);
+  private static final Cursor cursor = Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR);
 
   private Class<? extends Library> descriptionBase;
-  private FactoryDescription description;
+  private final FactoryDescription description;
   private boolean sourceLoadAttempted;
   private ComponentFactory factory;
-  private AttributeSet attrs;
+  private final AttributeSet attrs;
   private Bounds bounds;
   private boolean shouldSnap;
   private int lastX = INVALID_COORD;
@@ -108,7 +108,7 @@ public class AddTool extends Tool implements PropertyChangeListener {
   private boolean keyHandlerTried;
   private boolean MatrixPlace = false;
   private KeyConfigurator keyHandler;
-  private AutoLabel AutoLabler = new AutoLabel();
+  private final AutoLabel AutoLabler = new AutoLabel();
 
   private AddTool(AddTool base) {
     this.descriptionBase = base.descriptionBase;

@@ -78,8 +78,8 @@ import javax.swing.Icon;
 
 public class SelectTool extends Tool {
   private static class ComputingMessage implements StringGetter {
-    private int dx;
-    private int dy;
+    private final int dx;
+    private final int dy;
 
     public ComputingMessage(int dx, int dy) {
       this.dx = dx;
@@ -98,7 +98,7 @@ public class SelectTool extends Tool {
   }
 
   private static class MoveRequestHandler implements MoveRequestListener {
-    private Canvas canvas;
+    private final Canvas canvas;
 
     MoveRequestHandler(Canvas canvas) {
       this.canvas = canvas;
@@ -142,12 +142,12 @@ public class SelectTool extends Tool {
   private boolean drawConnections;
   private MoveGesture moveGesture;
   private HashMap<Component, KeyConfigurator> keyHandlers;
-  private static SelectIcon icon = new SelectIcon();
+  private static final SelectIcon icon = new SelectIcon();
 
-  private HashSet<Selection> selectionsAdded;
-  private AutoLabel AutoLabler = new AutoLabel();
+  private final HashSet<Selection> selectionsAdded;
+  private final AutoLabel AutoLabler = new AutoLabel();
 
-  private Listener selListener;
+  private final Listener selListener;
 
   public SelectTool() {
     start = null;

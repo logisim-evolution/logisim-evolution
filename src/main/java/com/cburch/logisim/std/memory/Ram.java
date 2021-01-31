@@ -103,8 +103,8 @@ public class Ram extends Mem {
     }
   }
 
-  private static Object[][] logOptions = new Object[9][];
-  private static WeakHashMap<MemContents, HexFrame> windowRegistry = new WeakHashMap<MemContents, HexFrame>();
+  private static final Object[][] logOptions = new Object[9][];
+  private static final WeakHashMap<MemContents, HexFrame> windowRegistry = new WeakHashMap<MemContents, HexFrame>();
 
   public Ram() {
     super("RAM", S.getter("ramComponent"), 3);

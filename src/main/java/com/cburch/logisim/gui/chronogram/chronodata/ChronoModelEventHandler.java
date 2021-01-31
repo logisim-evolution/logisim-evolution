@@ -42,10 +42,10 @@ import java.util.Arrays;
 
 public class ChronoModelEventHandler implements ModelListener {
 
-  private ChronoFrame chronoFrame;
-  private ChronoData chronoData;
+  private final ChronoFrame chronoFrame;
+  private final ChronoData chronoData;
   // contains the signals order, as they are stored in the ModelListener
-  private String[] signalNamesKeepOrder;
+  private final String[] signalNamesKeepOrder;
 
   private String lastSysclk = "0";
   private int sysclkPos = -1;

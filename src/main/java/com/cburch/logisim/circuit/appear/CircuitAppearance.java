@@ -64,11 +64,11 @@ public class CircuitAppearance extends Drawing {
     }
   }
 
-  private Circuit circuit;
-  private EventSourceWeakSupport<CircuitAppearanceListener> listeners;
-  private PortManager portManager;
-  private CircuitPins circuitPins;
-  private MyListener myListener;
+  private final Circuit circuit;
+  private final EventSourceWeakSupport<CircuitAppearanceListener> listeners;
+  private final PortManager portManager;
+  private final CircuitPins circuitPins;
+  private final MyListener myListener;
   private boolean isDefault;
   private boolean suppressRecompute;
 

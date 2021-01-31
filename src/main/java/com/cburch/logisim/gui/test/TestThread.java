@@ -97,10 +97,10 @@ public class TestThread extends UniquelyNamedThread implements CircuitListener {
   }
 
   private Instance[] pin;
-  private Project project;
-  private Circuit circuit;
+  private final Project project;
+  private final Circuit circuit;
 
-  private TestVector vector;
+  private final TestVector vector;
   private Model model;
 
   private boolean canceled = false, paused = false;

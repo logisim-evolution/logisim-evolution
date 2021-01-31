@@ -31,10 +31,10 @@ package com.cburch.draw.model;
 import java.awt.event.InputEvent;
 
 public class HandleGesture {
-  private Handle handle;
-  private int dx;
-  private int dy;
-  private int modifiersEx;
+  private final Handle handle;
+  private final int dx;
+  private final int dy;
+  private final int modifiersEx;
   private Handle resultingHandle;
 
   public HandleGesture(Handle handle, int dx, int dy, int modifiersEx) {

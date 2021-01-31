@@ -38,8 +38,8 @@ import java.util.Collections;
 import java.util.List;
 
 public class ModelAddAction extends ModelAction {
-  private List<CanvasObject> added;
-  private int addIndex;
+  private final List<CanvasObject> added;
+  private final int addIndex;
 
   public ModelAddAction(CanvasModel model, CanvasObject added) {
     this(model, Collections.singleton(added));

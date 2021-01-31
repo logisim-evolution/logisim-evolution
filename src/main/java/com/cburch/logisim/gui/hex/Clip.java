@@ -45,7 +45,7 @@ import java.io.IOException;
 
 class Clip implements ClipboardOwner {
   private static class Data implements Transferable {
-    private long[] data;
+    private final long[] data;
 
     Data(long[] data) {
       this.data = data;
@@ -92,7 +92,7 @@ class Clip implements ClipboardOwner {
 
   private static final DataFlavor binaryFlavor = new DataFlavor(long[].class, "Binary data");
 
-  private HexEditor editor;
+  private final HexEditor editor;
 
   Clip(HexEditor editor) {
     this.editor = editor;

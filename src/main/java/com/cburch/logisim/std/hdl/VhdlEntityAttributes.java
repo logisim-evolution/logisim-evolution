@@ -55,7 +55,7 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
     }
   }
 
-  private static List<Attribute<?>> attributes =
+  private static final List<Attribute<?>> attributes =
       Arrays.asList(
           VhdlEntityComponent.CONTENT_ATTR,
           StdAttr.LABEL,

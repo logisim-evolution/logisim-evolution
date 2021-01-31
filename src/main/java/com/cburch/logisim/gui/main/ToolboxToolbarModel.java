@@ -42,14 +42,14 @@ import com.cburch.logisim.util.UnmodifiableList;
 import java.util.List;
 
 class ToolboxToolbarModel extends AbstractToolbarModel implements MenuListener.EnabledListener {
-  private Frame frame;
-  private LogisimToolbarItem itemAdd;
-  private LogisimToolbarItem itemAddVhdl;
-  private LogisimToolbarItem itemUp;
-  private LogisimToolbarItem itemDown;
-  private LogisimToolbarItem itemAppearance;
-  private LogisimToolbarItem itemDelete;
-  private List<ToolbarItem> items;
+  private final Frame frame;
+  private final LogisimToolbarItem itemAdd;
+  private final LogisimToolbarItem itemAddVhdl;
+  private final LogisimToolbarItem itemUp;
+  private final LogisimToolbarItem itemDown;
+  private final LogisimToolbarItem itemAppearance;
+  private final LogisimToolbarItem itemDelete;
+  private final List<ToolbarItem> items;
 
   public ToolboxToolbarModel(Frame frame, MenuListener menu) {
     this.frame = frame;

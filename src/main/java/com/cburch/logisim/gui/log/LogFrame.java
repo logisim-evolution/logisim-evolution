@@ -137,15 +137,15 @@ public class LogFrame extends LFrame implements KeyListener{
   }
 
   private static final long serialVersionUID = 1L;
-  private Project project;
+  private final Project project;
   private Simulator curSimulator = null;
   private Model curModel;
-  private Map<CircuitState, Model> modelMap = new HashMap<CircuitState, Model>();
-  private MyListener myListener = new MyListener();
+  private final Map<CircuitState, Model> modelMap = new HashMap<CircuitState, Model>();
+  private final MyListener myListener = new MyListener();
 
-  private WindowMenuManager windowManager;
-  private LogPanel[] panels;
-  private JTabbedPane tabbedPane;
+  private final WindowMenuManager windowManager;
+  private final LogPanel[] panels;
+  private final JTabbedPane tabbedPane;
 
   public LogFrame(Project project) {
     super(false,project);

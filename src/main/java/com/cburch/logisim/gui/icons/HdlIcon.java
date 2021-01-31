@@ -38,7 +38,7 @@ import com.cburch.logisim.vhdl.gui.HdlToolbarModel;
 
 public class HdlIcon extends AbstractIcon {
 
-  private String type;
+  private final String type;
 
   public HdlIcon(String type) {
     this.type = type;

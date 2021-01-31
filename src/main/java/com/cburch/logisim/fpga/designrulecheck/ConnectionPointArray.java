@@ -32,7 +32,7 @@ import java.util.ArrayList;
 
 class ConnectionPointArray {
 
-  private ArrayList<ConnectionPoint> MyConnections;
+  private final ArrayList<ConnectionPoint> MyConnections;
 
   public ConnectionPointArray() {
     MyConnections = new ArrayList<ConnectionPoint>();

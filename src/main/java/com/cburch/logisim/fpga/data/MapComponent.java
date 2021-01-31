@@ -54,7 +54,7 @@ public class MapComponent {
   public static final String NO_MAP = "u";
   
   private class MapClass {
-    private FPGAIOInformationContainer IOcomp;
+    private final FPGAIOInformationContainer IOcomp;
     private Integer pin;
     
     public MapClass(FPGAIOInformationContainer IOcomp,Integer pin) {
@@ -78,20 +78,20 @@ public class MapComponent {
   /* 
    * In the below structure the first Integer is the pin identifier, the second is the global bubble id
    */
-  private HashMap<Integer,Integer> MyInputBubles = new HashMap<Integer,Integer>();
-  private HashMap<Integer,Integer> MyOutputBubles = new HashMap<Integer,Integer>();
-  private HashMap<Integer,Integer> MyIOBubles = new HashMap<Integer,Integer>();
+  private final HashMap<Integer,Integer> MyInputBubles = new HashMap<Integer,Integer>();
+  private final HashMap<Integer,Integer> MyOutputBubles = new HashMap<Integer,Integer>();
+  private final HashMap<Integer,Integer> MyIOBubles = new HashMap<Integer,Integer>();
   /*
    * The following structure defines if the pin is mapped
    */
-  private ComponentFactory myFactory;
+  private final ComponentFactory myFactory;
   
-  private ArrayList<String> myName;
+  private final ArrayList<String> myName;
   
   private ArrayList<MapClass> maps = new ArrayList<MapClass>();
   private ArrayList<Boolean> opens = new ArrayList<Boolean>();
   private ArrayList<Integer> constants = new ArrayList<Integer>();
-  private ArrayList<String> pinLabels = new ArrayList<String>();
+  private final ArrayList<String> pinLabels = new ArrayList<String>();
   
   private int NrOfPins;
   

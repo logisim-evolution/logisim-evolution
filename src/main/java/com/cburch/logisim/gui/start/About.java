@@ -73,7 +73,7 @@ public class About {
 
     private Value lower = Value.TRUE;
 
-    private AboutCredits credits;
+    private final AboutCredits credits;
 
     private PanelThread thread = null;
 
@@ -256,7 +256,7 @@ public class About {
   }
 
   private static class PanelThread extends UniquelyNamedThread {
-    private MyPanel panel;
+    private final MyPanel panel;
     private boolean running = true;
 
     PanelThread(MyPanel panel) {

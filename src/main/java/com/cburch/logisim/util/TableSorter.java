@@ -100,9 +100,9 @@ import javax.swing.table.TableModel;
  */
 public class TableSorter extends AbstractTableModel {
   private static class Arrow implements Icon {
-    private boolean descending;
-    private int size;
-    private int priority;
+    private final boolean descending;
+    private final int size;
+    private final int priority;
 
     public Arrow(boolean descending, int size, int priority) {
       this.descending = descending;
@@ -153,8 +153,8 @@ public class TableSorter extends AbstractTableModel {
   }
 
   private static class Directive {
-    private int column;
-    private int direction;
+    private final int column;
+    private final int direction;
 
     public Directive(int column, int direction) {
       this.column = column;
@@ -186,7 +186,7 @@ public class TableSorter extends AbstractTableModel {
   }
 
   private class Row implements Comparable<Row> {
-    private int modelIndex;
+    private final int modelIndex;
 
     public Row(int index) {
       this.modelIndex = index;
@@ -223,7 +223,7 @@ public class TableSorter extends AbstractTableModel {
   }
 
   private class SortableHeaderRenderer implements TableCellRenderer {
-    private TableCellRenderer tableCellRenderer;
+    private final TableCellRenderer tableCellRenderer;
 
     public SortableHeaderRenderer(TableCellRenderer tableCellRenderer) {
       this.tableCellRenderer = tableCellRenderer;
@@ -313,7 +313,7 @@ public class TableSorter extends AbstractTableModel {
   public static final int NOT_SORTED = 0;
 
   public static final int ASCENDING = 1;
-  private static Directive EMPTY_DIRECTIVE = new Directive(-1, NOT_SORTED);
+  private static final Directive EMPTY_DIRECTIVE = new Directive(-1, NOT_SORTED);
   public static final Comparator<Object> COMPARABLE_COMPARATOR =
       new Comparator<Object>() {
         public int compare(Object o1, Object o2) {
@@ -359,14 +359,14 @@ public class TableSorter extends AbstractTableModel {
 
   private JTableHeader tableHeader;
 
-  private MouseListener mouseListener;
+  private final MouseListener mouseListener;
 
-  private TableModelListener tableModelListener;
+  private final TableModelListener tableModelListener;
 
-  private Map<Class<?>, Comparator<Object>> columnComparators =
+  private final Map<Class<?>, Comparator<Object>> columnComparators =
       new HashMap<Class<?>, Comparator<Object>>();
 
-  private List<Directive> sortingColumns = new ArrayList<Directive>();
+  private final List<Directive> sortingColumns = new ArrayList<Directive>();
 
   public TableSorter() {
     this.mouseListener = new MouseHandler();

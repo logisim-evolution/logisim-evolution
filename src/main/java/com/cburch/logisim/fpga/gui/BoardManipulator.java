@@ -113,11 +113,11 @@ public class BoardManipulator extends JPanel implements MouseListener,
   private int MaxZoom;
   private float scale;
   private BufferedImage image;
-  private boolean mapMode;
+  private final boolean mapMode;
   private String BoardName;
   private SimpleRectangle defineRectangle; /* note this one is in real coordinates */
   private ArrayList<BoardManipulatorListener> listeners;
-  private IOComponentsInformation IOcomps;
+  private final IOComponentsInformation IOcomps;
   private MappableResourcesContainer MapInfo;
   private JList<MapListModel.MapInfo> unmappedList;
   private JList<MapListModel.MapInfo> mappedList;

@@ -35,7 +35,7 @@ import java.awt.font.TextLayout;
 
 public class ArithmeticIcon extends AbstractIcon {
 
-  private String Opp;
+  private final String Opp;
   private boolean invalid;
   private int NrOfChars = 2;
 

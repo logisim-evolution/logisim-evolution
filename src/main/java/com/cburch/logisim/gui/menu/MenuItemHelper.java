@@ -34,12 +34,12 @@ import java.util.ArrayList;
 import javax.swing.JMenuItem;
 
 class MenuItemHelper implements ActionListener {
-  private JMenuItem source;
-  private LogisimMenuItem menuItem;
-  private Menu menu;
+  private final JMenuItem source;
+  private final LogisimMenuItem menuItem;
+  private final Menu menu;
   private boolean enabled;
   private boolean inActionListener;
-  private ArrayList<ActionListener> listeners;
+  private final ArrayList<ActionListener> listeners;
 
   public MenuItemHelper(JMenuItem source, Menu menu, LogisimMenuItem menuItem) {
     this.source = source;

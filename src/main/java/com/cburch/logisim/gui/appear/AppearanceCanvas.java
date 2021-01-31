@@ -92,11 +92,11 @@ public class AppearanceCanvas extends Canvas implements CanvasPaneContents, Acti
   // pixels shown in canvas beyond outermost boundaries
   private static final int THRESH_SIZE_UPDATE = 10;
   // don't bother to update the size if it hasn't changed more than this
-  private CanvasTool selectTool;
+  private final CanvasTool selectTool;
   private Project proj;
   private CircuitState circuitState;
-  private Listener listener;
-  private GridPainter grid;
+  private final Listener listener;
+  private final GridPainter grid;
   private CanvasPane canvasPane;
   private Bounds oldPreferredSize;
 

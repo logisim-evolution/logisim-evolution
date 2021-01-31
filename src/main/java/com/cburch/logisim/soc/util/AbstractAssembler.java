@@ -47,8 +47,8 @@ import com.cburch.logisim.soc.file.SymbolTable;
 public abstract class AbstractAssembler implements AssemblerInterface {
 
   private static final int NR_OF_BYTES_PER_LINE = 16;
-  private ArrayList<AssemblerExecutionInterface> exeUnits = new ArrayList<AssemblerExecutionInterface>();
-  private HashSet<Integer> acceptedParameterTypes;
+  private final ArrayList<AssemblerExecutionInterface> exeUnits = new ArrayList<AssemblerExecutionInterface>();
+  private final HashSet<Integer> acceptedParameterTypes;
   
   public AbstractAssembler() {
     acceptedParameterTypes = new HashSet<Integer>();

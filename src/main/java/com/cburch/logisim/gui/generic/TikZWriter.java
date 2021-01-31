@@ -63,7 +63,7 @@ import javax.xml.transform.TransformerException;
 
 public class TikZWriter extends Graphics2D {
   
-  private TikZInfo MyInfo;
+  private final TikZInfo MyInfo;
   
   public TikZWriter() {
     MyInfo = new TikZInfo(); 

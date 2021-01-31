@@ -37,9 +37,9 @@ import java.util.Iterator;
 import javax.swing.JFrame;
 
 public class Model {
-  private EventSourceWeakSupport<ModelListener> listeners;
-  private Selection selection;
-  private HashMap<SelectionItem, ValueLog> log;
+  private final EventSourceWeakSupport<ModelListener> listeners;
+  private final Selection selection;
+  private final HashMap<SelectionItem, ValueLog> log;
   private boolean fileEnabled = false;
   private File file = null;
   private boolean fileHeader = true;

@@ -60,28 +60,28 @@ class MenuProject extends Menu {
 
   private static final long serialVersionUID = 1L;
 
-  private LogisimMenuBar menubar;
-  private MyListener myListener = new MyListener();
+  private final LogisimMenuBar menubar;
+  private final MyListener myListener = new MyListener();
 
-  private MenuItemImpl addCircuit = new MenuItemImpl(this, LogisimMenuBar.ADD_CIRCUIT);
-  private MenuItemImpl addVhdl = new MenuItemImpl(this, LogisimMenuBar.ADD_VHDL);
-  private MenuItemImpl importVhdl = new MenuItemImpl(this, LogisimMenuBar.IMPORT_VHDL);
-  private JMenu loadLibrary = new JMenu();
-  private JMenuItem loadBuiltin = new JMenuItem();
-  private JMenuItem loadLogisim = new JMenuItem();
-  private JMenuItem loadJar = new JMenuItem();
-  private JMenuItem unload = new JMenuItem();
-  private MenuItemImpl moveUp = new MenuItemImpl(this, LogisimMenuBar.MOVE_CIRCUIT_UP);
-  private MenuItemImpl moveDown = new MenuItemImpl(this, LogisimMenuBar.MOVE_CIRCUIT_DOWN);
-  private MenuItemImpl remove = new MenuItemImpl(this, LogisimMenuBar.REMOVE_CIRCUIT);
-  private MenuItemImpl setAsMain = new MenuItemImpl(this, LogisimMenuBar.SET_MAIN_CIRCUIT);
-  private MenuItemImpl revertAppearance = new MenuItemImpl(this, LogisimMenuBar.REVERT_APPEARANCE);
-  private MenuItemImpl layout = new MenuItemImpl(this, LogisimMenuBar.EDIT_LAYOUT);
-  private MenuItemImpl appearance = new MenuItemImpl(this, LogisimMenuBar.EDIT_APPEARANCE);
-  private MenuItemImpl toggleLayoutAppearance = new MenuItemImpl(this,LogisimMenuBar.TOGGLE_APPEARANCE);
-  private MenuItemImpl analyze = new MenuItemImpl(this, LogisimMenuBar.ANALYZE_CIRCUIT);
-  private MenuItemImpl stats = new MenuItemImpl(this, LogisimMenuBar.CIRCUIT_STATS);
-  private JMenuItem options = new JMenuItem();
+  private final MenuItemImpl addCircuit = new MenuItemImpl(this, LogisimMenuBar.ADD_CIRCUIT);
+  private final MenuItemImpl addVhdl = new MenuItemImpl(this, LogisimMenuBar.ADD_VHDL);
+  private final MenuItemImpl importVhdl = new MenuItemImpl(this, LogisimMenuBar.IMPORT_VHDL);
+  private final JMenu loadLibrary = new JMenu();
+  private final JMenuItem loadBuiltin = new JMenuItem();
+  private final JMenuItem loadLogisim = new JMenuItem();
+  private final JMenuItem loadJar = new JMenuItem();
+  private final JMenuItem unload = new JMenuItem();
+  private final MenuItemImpl moveUp = new MenuItemImpl(this, LogisimMenuBar.MOVE_CIRCUIT_UP);
+  private final MenuItemImpl moveDown = new MenuItemImpl(this, LogisimMenuBar.MOVE_CIRCUIT_DOWN);
+  private final MenuItemImpl remove = new MenuItemImpl(this, LogisimMenuBar.REMOVE_CIRCUIT);
+  private final MenuItemImpl setAsMain = new MenuItemImpl(this, LogisimMenuBar.SET_MAIN_CIRCUIT);
+  private final MenuItemImpl revertAppearance = new MenuItemImpl(this, LogisimMenuBar.REVERT_APPEARANCE);
+  private final MenuItemImpl layout = new MenuItemImpl(this, LogisimMenuBar.EDIT_LAYOUT);
+  private final MenuItemImpl appearance = new MenuItemImpl(this, LogisimMenuBar.EDIT_APPEARANCE);
+  private final MenuItemImpl toggleLayoutAppearance = new MenuItemImpl(this,LogisimMenuBar.TOGGLE_APPEARANCE);
+  private final MenuItemImpl analyze = new MenuItemImpl(this, LogisimMenuBar.ANALYZE_CIRCUIT);
+  private final MenuItemImpl stats = new MenuItemImpl(this, LogisimMenuBar.CIRCUIT_STATS);
+  private final JMenuItem options = new JMenuItem();
 
   MenuProject(LogisimMenuBar menubar) {
     this.menubar = menubar;

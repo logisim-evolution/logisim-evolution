@@ -275,7 +275,7 @@ public class PainterShaped {
     SHIELD_WIDE.quadTo(-50, 0, -70, 35);
   }
 
-  private static HashMap<Integer, int[]> INPUT_LENGTHS = new HashMap<Integer, int[]>();
+  private static final HashMap<Integer, int[]> INPUT_LENGTHS = new HashMap<Integer, int[]>();
 
   private PainterShaped() {}
 }

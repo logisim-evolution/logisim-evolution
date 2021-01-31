@@ -52,7 +52,7 @@ public class Instance {
     }
   }
 
-  private InstanceComponent comp;
+  private final InstanceComponent comp;
 
   Instance(InstanceComponent comp) {
     this.comp = comp;

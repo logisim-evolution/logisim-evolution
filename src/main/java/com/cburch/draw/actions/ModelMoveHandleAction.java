@@ -38,7 +38,7 @@ import java.util.Collection;
 import java.util.Collections;
 
 public class ModelMoveHandleAction extends ModelAction {
-  private HandleGesture gesture;
+  private final HandleGesture gesture;
   private Handle newHandle;
 
   public ModelMoveHandleAction(CanvasModel model, HandleGesture gesture) {

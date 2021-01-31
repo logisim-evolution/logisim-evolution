@@ -71,7 +71,7 @@ public abstract class JDialogOk extends JDialog {
 
   private static final long serialVersionUID = 1L;
 
-  private JPanel contents = new JPanel(new BorderLayout());
+  private final JPanel contents = new JPanel(new BorderLayout());
   protected JButton ok = new JButton(S.get("dlogOkButton"));
   protected JButton cancel = new JButton(S.get("dlogCancelButton"));
   protected Window parent;

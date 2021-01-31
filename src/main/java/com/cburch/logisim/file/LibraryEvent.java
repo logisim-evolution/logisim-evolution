@@ -40,9 +40,9 @@ public class LibraryEvent {
   public static final int SET_NAME = 6;
   public static final int DIRTY_STATE = 7;
 
-  private Library source;
-  private int action;
-  private Object data;
+  private final Library source;
+  private final int action;
+  private final Object data;
 
   LibraryEvent(Library source, int action, Object data) {
     this.source = source;

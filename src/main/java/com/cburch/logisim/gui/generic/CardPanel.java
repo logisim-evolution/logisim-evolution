@@ -37,7 +37,7 @@ import javax.swing.event.ChangeListener;
 
 public class CardPanel extends JPanel {
   private static final long serialVersionUID = 1L;
-  private ArrayList<ChangeListener> listeners;
+  private final ArrayList<ChangeListener> listeners;
   private String current;
 
   public CardPanel() {

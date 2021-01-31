@@ -127,9 +127,9 @@ public class LoadedLibrary extends Library implements LibraryEventSource {
 
   private boolean dirty;
 
-  private MyListener myListener;
+  private final MyListener myListener;
 
-  private EventSourceWeakSupport<LibraryListener> listeners;
+  private final EventSourceWeakSupport<LibraryListener> listeners;
 
   LoadedLibrary(Library base) {
     dirty = false;

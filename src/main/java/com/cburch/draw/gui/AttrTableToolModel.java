@@ -35,7 +35,7 @@ import com.cburch.logisim.gui.generic.AttrTableSetException;
 import com.cburch.logisim.gui.generic.AttributeSetTableModel;
 
 class AttrTableToolModel extends AttributeSetTableModel {
-  private DrawingAttributeSet defaults;
+  private final DrawingAttributeSet defaults;
   private AbstractTool currentTool;
 
   public AttrTableToolModel(DrawingAttributeSet defaults, AbstractTool tool) {

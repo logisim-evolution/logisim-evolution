@@ -36,10 +36,10 @@ public class EndData {
   public static final int OUTPUT_ONLY = 2;
   public static final int INPUT_OUTPUT = 3;
 
-  private Location loc;
-  private BitWidth width;
-  private int i_o;
-  private boolean exclusive;
+  private final Location loc;
+  private final BitWidth width;
+  private final int i_o;
+  private final boolean exclusive;
 
   public EndData(Location loc, BitWidth width, int type) {
     this(loc, width, type, type == OUTPUT_ONLY);

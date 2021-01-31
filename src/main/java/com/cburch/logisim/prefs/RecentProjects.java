@@ -39,8 +39,8 @@ import java.util.prefs.Preferences;
 
 class RecentProjects implements PreferenceChangeListener {
   private static class FileTime {
-    private long time;
-    private File file;
+    private final long time;
+    private final File file;
 
     public FileTime(File file, long time) {
       this.time = time;
@@ -65,9 +65,9 @@ class RecentProjects implements PreferenceChangeListener {
   private static final String BASE_PROPERTY = "recent";
 
   private static final int NUM_RECENT = 10;
-  private File[] recentFiles;
+  private final File[] recentFiles;
 
-  private long[] recentTimes;
+  private final long[] recentTimes;
 
   RecentProjects() {
     recentFiles = new File[NUM_RECENT];

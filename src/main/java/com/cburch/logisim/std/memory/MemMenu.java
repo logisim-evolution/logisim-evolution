@@ -44,8 +44,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
 class MemMenu implements ActionListener, MenuExtender {
-  private Mem factory;
-  private Instance instance;
+  private final Mem factory;
+  private final Instance instance;
   private Project proj;
   private Frame frame;
   private CircuitState circState;

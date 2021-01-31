@@ -57,13 +57,13 @@ public class MatrixPlacerDialog extends JPanel implements ActionListener {
     }
   }
 
-  private MatrixPlacerInfo MatrixInfo;
-  private JComboBox<Integer> Xcopies = new JComboBox<>();
-  private JComboBox<Integer> Ycopies = new JComboBox<>();
-  private JComboBox<Integer> Xdistance = new JComboBox<>();
-  private JComboBox<Integer> Ydistance = new JComboBox<>();
-  private JTextField Label = new JTextField();
-  private String compName;
+  private final MatrixPlacerInfo MatrixInfo;
+  private final JComboBox<Integer> Xcopies = new JComboBox<>();
+  private final JComboBox<Integer> Ycopies = new JComboBox<>();
+  private final JComboBox<Integer> Xdistance = new JComboBox<>();
+  private final JComboBox<Integer> Ydistance = new JComboBox<>();
+  private final JTextField Label = new JTextField();
+  private final String compName;
 
   public MatrixPlacerDialog(MatrixPlacerInfo value, String name, boolean AutoLablerActive) {
     super();

@@ -40,10 +40,10 @@ import com.cburch.logisim.data.Value;
 import com.cburch.logisim.instance.StdAttr;
 
 public class SelectionItem implements AttributeListener, CircuitListener {
-  private Model model;
-  private Component[] path;
-  private Component comp;
-  private Object option;
+  private final Model model;
+  private final Component[] path;
+  private final Component comp;
+  private final Object option;
   private int radix = 2;
   private String shortDescriptor;
   private String longDescriptor;

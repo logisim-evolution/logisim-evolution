@@ -93,8 +93,8 @@ public class Pin extends InstanceFactory {
   @SuppressWarnings("serial")
   private static class EditDecimal extends JDialog implements KeyListener, LocaleListener {
 
-    private JFormattedTextField text;
-    private int bitWidth;
+    private final JFormattedTextField text;
+    private final int bitWidth;
     PinState pinState;
     InstanceState state;
     RadixOption radix;

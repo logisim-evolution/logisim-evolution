@@ -91,15 +91,15 @@ public class LogisimVersion {
   }
 
   public static final int FINAL_REVISION = Integer.MAX_VALUE / 4;
-  private int major;
+  private final int major;
 
-  private int minor;
+  private final int minor;
 
-  private int release;
+  private final int release;
 
-  private int revision;
+  private final int revision;
 
-  private String variant;
+  private final String variant;
 
   private String repr;
 

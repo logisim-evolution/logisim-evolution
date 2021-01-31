@@ -55,8 +55,8 @@ public class Nios2ShiftAndRotateInstructions implements AssemblerExecutionInterf
   private final static Integer[] AsmOpxs = {0x03,0x0B,0x13,0x3B,0x1B,
                                             0x02,0x12,0x3A,0x1A };
 
-  private ArrayList<String> Opcodes = new ArrayList<String>();
-  private ArrayList<Integer> OpxCodes = new ArrayList<Integer>(); 
+  private final ArrayList<String> Opcodes = new ArrayList<String>();
+  private final ArrayList<Integer> OpxCodes = new ArrayList<Integer>();
   
   private int instruction;
   private boolean valid;

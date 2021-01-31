@@ -46,7 +46,7 @@ import javax.swing.plaf.basic.BasicComboBoxRenderer;
 
 public class Attributes {
   private static class BooleanAttribute extends OptionAttribute<Boolean> {
-    private static Boolean[] vals = {Boolean.TRUE, Boolean.FALSE};
+    private static final Boolean[] vals = {Boolean.TRUE, Boolean.FALSE};
 
     private BooleanAttribute(String name, StringGetter disp) {
       super(name, disp, vals);
@@ -137,7 +137,7 @@ public class Attributes {
   }
 
   private static class ConstantGetter implements StringGetter {
-    private String str;
+    private final String str;
 
     public ConstantGetter(String str) {
       this.str = str;
@@ -154,7 +154,7 @@ public class Attributes {
   }
 
   private static class DirectionAttribute extends OptionAttribute<Direction> {
-    private static Direction[] vals = {
+    private static final Direction[] vals = {
       Direction.NORTH, Direction.SOUTH, Direction.EAST, Direction.WEST,
     };
 
@@ -390,7 +390,7 @@ public class Attributes {
   }
 
   private static class OptionAttribute<V> extends Attribute<V> {
-    private V[] vals;
+    private final V[] vals;
 
     private OptionAttribute(String name, StringGetter disp, V[] vals) {
       super(name, disp);

@@ -38,7 +38,7 @@ import com.cburch.logisim.tools.Tool;
 import java.util.List;
 
 public class TTL extends Library {
-  private static FactoryDescription[] DESCRIPTIONS = {
+  private static final FactoryDescription[] DESCRIPTIONS = {
     new FactoryDescription("7400", S.getter("TTL7400"), "ttl.gif", "Ttl7400"),
     new FactoryDescription("7402", S.getter("TTL7402"), "ttl.gif", "Ttl7402"),
     new FactoryDescription("7404", S.getter("TTL7404"), "ttl.gif", "Ttl7404"),

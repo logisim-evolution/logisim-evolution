@@ -206,15 +206,15 @@ class XmlWriter {
     tf.transform(src, dest);
   }
 
-  private LogisimFile file;
-  private Document doc;
+  private final LogisimFile file;
+  private final Document doc;
   /**
    * Path of the file which is being written on disk -- used to relativize components stored in it
    */
-  private String outFilepath;
+  private final String outFilepath;
 
-  private LibraryLoader loader;
-  private HashMap<Library, String> libs = new HashMap<Library, String>();
+  private final LibraryLoader loader;
+  private final HashMap<Library, String> libs = new HashMap<Library, String>();
 
   private XmlWriter(LogisimFile file, Document doc, LibraryLoader loader) {
     this(file, doc, loader, null);

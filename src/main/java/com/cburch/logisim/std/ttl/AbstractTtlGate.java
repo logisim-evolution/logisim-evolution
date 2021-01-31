@@ -56,11 +56,11 @@ public abstract class AbstractTtlGate extends InstanceFactory {
   protected static final int pinwidth = 10, pinheight = 7;
   private int height = 60;
   protected byte pinnumber;
-  private String name;
+  private final String name;
   private byte ngatestodraw = 0;
   protected String[] portnames = null;
-  private HashSet<Byte> outputports = new HashSet<Byte>();
-  private HashSet<Byte> unusedpins = new HashSet<Byte>();
+  private final HashSet<Byte> outputports = new HashSet<Byte>();
+  private final HashSet<Byte> unusedpins = new HashSet<Byte>();
 
   /**
    * @param name = name to display in the center of the TTl

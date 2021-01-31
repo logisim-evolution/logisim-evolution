@@ -35,12 +35,12 @@ import java.awt.event.KeyEvent;
 public abstract class NumericConfigurator<V> implements KeyConfigurator, Cloneable {
   private static final int MAX_TIME_KEY_LASTS = 800;
 
-  private Attribute<V> attr;
-  private long minValue;
-  private long maxValue;
+  private final Attribute<V> attr;
+  private final long minValue;
+  private final long maxValue;
   private long curValue;
-  private int radix;
-  private int modsEx;
+  private final int radix;
+  private final int modsEx;
   private long whenTyped;
 
   public NumericConfigurator(Attribute<V> attr, long min, long max, int modifiersEx) {

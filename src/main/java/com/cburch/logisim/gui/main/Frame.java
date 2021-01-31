@@ -98,7 +98,7 @@ import javax.swing.event.ChangeListener;
 public class Frame extends LFrame implements LocaleListener {
 
   public static final AnnimationTimer ANNIMATIONICONTIMER = new AnnimationTimer();
-  private Timer timer = new Timer();
+  private final Timer timer = new Timer();
 
   class MyProjectListener
       implements ProjectListener,
@@ -269,33 +269,36 @@ public class Frame extends LFrame implements LocaleListener {
   public static final String EDIT_LAYOUT = "layout";
   public static final String EDIT_APPEARANCE = "appearance";
   public static final String EDIT_HDL = "hdl";
-  private Project proj;
-  private MyProjectListener myProjectListener = new MyProjectListener();
+  private final Project proj;
+  private final MyProjectListener myProjectListener = new MyProjectListener();
   // GUI elements shared between views
-  private MainMenuListener menuListener;
-  private Toolbar toolbar;
-  private HorizontalSplitPane leftRegion, rightRegion, editRegion;
-  private VerticalSplitPane mainRegion;
-  private JPanel rightPanel;
-  private JPanel mainPanelSuper;
-  private CardPanel mainPanel;
+  private final MainMenuListener menuListener;
+  private final Toolbar toolbar;
+  private final HorizontalSplitPane leftRegion;
+  private final HorizontalSplitPane rightRegion;
+  private final HorizontalSplitPane editRegion;
+  private final VerticalSplitPane mainRegion;
+  private final JPanel rightPanel;
+  private final JPanel mainPanelSuper;
+  private final CardPanel mainPanel;
   // left-side elements
-  private JTabbedPane topTab, bottomTab;
-  private Toolbox toolbox;
-  private SimulationExplorer simExplorer;
-  private AttrTable attrTable;
-  private ZoomControl zoom;
+  private final JTabbedPane topTab;
+  private final JTabbedPane bottomTab;
+  private final Toolbox toolbox;
+  private final SimulationExplorer simExplorer;
+  private final AttrTable attrTable;
+  private final ZoomControl zoom;
   // for the Layout view
-  private LayoutToolbarModel layoutToolbarModel;
-  private Canvas layoutCanvas;
-  private VhdlSimulatorConsole vhdlSimulatorConsole;
-  private HdlContentView hdlEditor;
+  private final LayoutToolbarModel layoutToolbarModel;
+  private final Canvas layoutCanvas;
+  private final VhdlSimulatorConsole vhdlSimulatorConsole;
+  private final HdlContentView hdlEditor;
 
-  private ZoomModel layoutZoomModel;
+  private final ZoomModel layoutZoomModel;
 
-  private LayoutEditHandler layoutEditHandler;
+  private final LayoutEditHandler layoutEditHandler;
 
-  private AttrTableSelectionModel attrTableSelectionModel;
+  private final AttrTableSelectionModel attrTableSelectionModel;
 
   // for the Appearance view
   private AppearanceView appearance;

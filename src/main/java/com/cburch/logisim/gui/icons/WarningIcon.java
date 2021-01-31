@@ -41,7 +41,7 @@ import javax.swing.Icon;
 import com.cburch.logisim.prefs.AppPreferences;
 
 public class WarningIcon implements Icon {
-  private int wh;
+  private final int wh;
   
   public WarningIcon() {
     wh = AppPreferences.getIconSize();

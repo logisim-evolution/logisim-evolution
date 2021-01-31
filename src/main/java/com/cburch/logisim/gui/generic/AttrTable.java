@@ -487,12 +487,12 @@ public class AttrTable extends JPanel implements LocaleListener {
   }
 
   private static final AttrTableModel NULL_ATTR_MODEL = new NullAttrModel();
-  private Window parent;
+  private final Window parent;
   private boolean titleEnabled;
-  private JLabel title;
-  private JTable table;
-  private TableModelAdapter tableModel;
-  private CellEditor editor = new CellEditor();
+  private final JLabel title;
+  private final JTable table;
+  private final TableModelAdapter tableModel;
+  private final CellEditor editor = new CellEditor();
 
   public AttrTable(Window parent) {
     super(new BorderLayout());

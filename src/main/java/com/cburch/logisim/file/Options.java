@@ -57,9 +57,9 @@ public class Options {
   private static final Attribute<?>[] ATTRIBUTES = {ATTR_GATE_UNDEFINED, ATTR_SIM_LIMIT, ATTR_SIM_RAND};
   private static final Object[] DEFAULTS = {GATE_UNDEFINED_IGNORE, Integer.valueOf(1000), Integer.valueOf(0)};
 
-  private AttributeSet attrs;
-  private MouseMappings mmappings;
-  private ToolbarData toolbar;
+  private final AttributeSet attrs;
+  private final MouseMappings mmappings;
+  private final ToolbarData toolbar;
 
   public Options() {
     attrs = AttributeSets.fixedSet(ATTRIBUTES, DEFAULTS);

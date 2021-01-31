@@ -33,8 +33,8 @@ public class TableConstraints {
     return new TableConstraints(row, col);
   }
 
-  private int col;
-  private int row;
+  private final int col;
+  private final int row;
 
   private TableConstraints(int row, int col) {
     this.col = col;

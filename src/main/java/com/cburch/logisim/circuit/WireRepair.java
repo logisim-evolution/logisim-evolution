@@ -88,7 +88,7 @@ class WireRepair extends CircuitTransaction {
     }
   }
 
-  private Circuit circuit;
+  private final Circuit circuit;
 
   public WireRepair(Circuit circuit) {
     this.circuit = circuit;

@@ -23,7 +23,7 @@ package com.cburch.logisim.circuit;
 import com.cburch.logisim.util.UniquelyNamedThread;
 
 class SimulatorTicker extends UniquelyNamedThread {
-  private Simulator.PropagationManager manager;
+  private final Simulator.PropagationManager manager;
   private int ticksPerTickPhase;
   private long nanosPerTickPhase;
 

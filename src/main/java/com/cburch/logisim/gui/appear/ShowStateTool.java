@@ -38,10 +38,11 @@ import javax.swing.Icon;
 
 public class ShowStateTool implements ToolbarClickableItem {
 
-  private AppearanceView view;
-  private AppearanceCanvas canvas;
-  private DrawingAttributeSet attrs;
-  private Icon icon, pressed;
+  private final AppearanceView view;
+  private final AppearanceCanvas canvas;
+  private final DrawingAttributeSet attrs;
+  private final Icon icon;
+  private final Icon pressed;
 
   public ShowStateTool(AppearanceView view, AppearanceCanvas canvas, DrawingAttributeSet attrs) {
     this.view = view;

@@ -39,11 +39,11 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 public class PrefOptionList implements ActionListener, PropertyChangeListener {
-  private PrefMonitor<String> pref;
-  private StringGetter labelStr;
+  private final PrefMonitor<String> pref;
+  private final StringGetter labelStr;
 
-  private JLabel label;
-  private JComboBox<PrefOption> combo;
+  private final JLabel label;
+  private final JComboBox<PrefOption> combo;
 
   public PrefOptionList(PrefMonitor<String> pref, StringGetter labelStr, PrefOption[] options) {
     this.pref = pref;

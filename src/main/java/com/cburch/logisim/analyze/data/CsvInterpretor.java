@@ -96,8 +96,9 @@ public class CsvInterpretor {
 
   private ArrayList<List<String>> content;
   JFrame parent;
-  private VariableList inputs, outputs;
-  private String FileName;
+  private final VariableList inputs;
+  private final VariableList outputs;
+  private final String FileName;
 
   public CsvInterpretor(File file, CsvParameter param, JFrame parent) {
     content = new ArrayList<List<String>>();

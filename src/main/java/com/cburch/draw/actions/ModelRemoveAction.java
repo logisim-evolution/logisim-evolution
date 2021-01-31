@@ -38,7 +38,7 @@ import java.util.Collections;
 import java.util.Map;
 
 public class ModelRemoveAction extends ModelAction {
-  private Map<CanvasObject, Integer> removed;
+  private final Map<CanvasObject, Integer> removed;
 
   public ModelRemoveAction(CanvasModel model, CanvasObject removed) {
     this(model, Collections.singleton(removed));

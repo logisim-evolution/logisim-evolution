@@ -37,10 +37,10 @@ import com.cburch.logisim.prefs.AppPreferences;
 
 public class AppearEditIcon extends AbstractIcon {
 
-  private int[] tip = {0,14,1,15,0,15};
-  private int[] body = {0,13,13,0,15,2,2,15};
-  private int[] extendedtip = {0,13,1,12,3,15,2,15};
-  private int[] cleantip = {12,1,13,0,15,2,14,3};
+  private final int[] tip = {0,14,1,15,0,15};
+  private final int[] body = {0,13,13,0,15,2,2,15};
+  private final int[] extendedtip = {0,13,1,12,3,15,2,15};
+  private final int[] cleantip = {12,1,13,0,15,2,14,3};
   @Override
   protected void paintIcon(Graphics2D g2) {
     Graphics2D g = (Graphics2D)g2.create();

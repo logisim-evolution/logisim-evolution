@@ -162,10 +162,10 @@ public class CircuitState implements InstanceData {
     }
   }
 
-  private MyCircuitListener myCircuitListener = new MyCircuitListener();
+  private final MyCircuitListener myCircuitListener = new MyCircuitListener();
   private Propagator base = null; // base of tree of CircuitStates
-  private Project proj; // project where circuit liespr
-  private Circuit circuit; // circuit being simulated
+  private final Project proj; // project where circuit liespr
+  private final Circuit circuit; // circuit being simulated
 
   private CircuitState parentState = null; // parent in tree of CircuitStates
   private Component parentComp = null; // subcircuit component containing this
@@ -173,14 +173,14 @@ public class CircuitState implements InstanceData {
   private HashSet<CircuitState> substates = new HashSet<CircuitState>();
 
   private CircuitWires.State wireData = null;
-  private HashMap<Component, Object> componentData = new HashMap<Component, Object>();
-  private Map<Location, Value> values = new HashMap<Location, Value>();
+  private final HashMap<Component, Object> componentData = new HashMap<Component, Object>();
+  private final Map<Location, Value> values = new HashMap<Location, Value>();
   private CopyOnWriteArraySet<Component> dirtyComponents = new CopyOnWriteArraySet<Component>();
-  private CopyOnWriteArraySet<Location> dirtyPoints = new CopyOnWriteArraySet<Location>();
+  private final CopyOnWriteArraySet<Location> dirtyPoints = new CopyOnWriteArraySet<Location>();
   HashMap<Location, SetData> causes = new HashMap<Location, SetData>();
 
   private static int lastId = 0;
-  private int id = lastId++;
+  private final int id = lastId++;
 
   public CircuitState(Project proj, Circuit circuit) {
     this.proj = proj;

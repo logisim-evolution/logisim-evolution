@@ -55,14 +55,14 @@ import java.util.HashMap;
 
 public class CircuitBuilder {
 
-  private static int SPINE_DISTANCE = 10;
-  private static int BUS_SPINE_TO_WIRE_SPINE_DISTANCE = 20;
-  private static int MINIMAL_PIN_DISTANCE = 30;
-  private static int SPLITTER_HEIGHT = 20;
-  private static int TOP_BORDER = 40; // minimal value due to constants
-  private static int INVERTER_WIDTH = 30;
-  private static int NAND_WIDTH = 40;
-  private static int GATE_HEIGHT = 40;
+  private static final int SPINE_DISTANCE = 10;
+  private static final int BUS_SPINE_TO_WIRE_SPINE_DISTANCE = 20;
+  private static final int MINIMAL_PIN_DISTANCE = 30;
+  private static final int SPLITTER_HEIGHT = 20;
+  private static final int TOP_BORDER = 40; // minimal value due to constants
+  private static final int INVERTER_WIDTH = 30;
+  private static final int NAND_WIDTH = 40;
+  private static final int GATE_HEIGHT = 40;
 
   private static class CompareYs implements Comparator<Location> {
     public int compare(Location a, Location b) {
@@ -74,9 +74,9 @@ public class CircuitBuilder {
     int startX;
     int startY;
     int pinX;
-    private ArrayList<String> names = new ArrayList<String>();
-    private HashMap<String, SingleInput> inputs = new HashMap<String, SingleInput>();
-    private HashMap<String, SingleInput> inverted_inputs = new HashMap<String, SingleInput>();
+    private final ArrayList<String> names = new ArrayList<String>();
+    private final HashMap<String, SingleInput> inputs = new HashMap<String, SingleInput>();
+    private final HashMap<String, SingleInput> inverted_inputs = new HashMap<String, SingleInput>();
 
     InputData() {}
 

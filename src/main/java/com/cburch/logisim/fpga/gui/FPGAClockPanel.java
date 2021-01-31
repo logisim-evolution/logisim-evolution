@@ -50,11 +50,11 @@ import com.cburch.logisim.util.LocaleListener;
 public class FPGAClockPanel extends JPanel implements ActionListener,LocaleListener {
 
   private static final long serialVersionUID = 1L;
-  private Project MyProject;
-  private JLabel freqLabel = new JLabel();
-  private JLabel divLabel = new JLabel();
-  private JComboBox<String> frequenciesList = new JComboBox<>();
-  private JTextField divider = new JTextField();
+  private final Project MyProject;
+  private final JLabel freqLabel = new JLabel();
+  private final JLabel divLabel = new JLabel();
+  private final JComboBox<String> frequenciesList = new JComboBox<>();
+  private final JTextField divider = new JTextField();
   private double FPGAClockFrequency;
 
   public FPGAClockPanel(Project proj) {

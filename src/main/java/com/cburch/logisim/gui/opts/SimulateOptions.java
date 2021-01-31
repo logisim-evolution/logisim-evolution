@@ -111,12 +111,12 @@ class SimulateOptions extends OptionsPanel {
 
   private static final long serialVersionUID = 1L;
 
-  private MyListener myListener = new MyListener();
+  private final MyListener myListener = new MyListener();
 
-  private JLabel simLimitLabel = new JLabel();
+  private final JLabel simLimitLabel = new JLabel();
 
   @SuppressWarnings({"unchecked", "rawtypes"})
-  private JComboBox simLimit =
+  private final JComboBox simLimit =
       new JComboBox(
           new Integer[] {
             Integer.valueOf(200),
@@ -129,12 +129,12 @@ class SimulateOptions extends OptionsPanel {
             Integer.valueOf(50000),
           });
 
-  private JCheckBox simRandomness = new JCheckBox();
-  private JCheckBox MemUnknown = new JCheckBox();
-  private JLabel gateUndefinedLabel = new JLabel();
+  private final JCheckBox simRandomness = new JCheckBox();
+  private final JCheckBox MemUnknown = new JCheckBox();
+  private final JLabel gateUndefinedLabel = new JLabel();
 
   @SuppressWarnings({"rawtypes", "unchecked"})
-  private JComboBox gateUndefined =
+  private final JComboBox gateUndefined =
       new JComboBox(
           new Object[] {
             new ComboOption(Options.GATE_UNDEFINED_IGNORE),

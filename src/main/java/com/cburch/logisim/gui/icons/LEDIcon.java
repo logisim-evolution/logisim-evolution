@@ -36,7 +36,7 @@ import com.cburch.logisim.prefs.AppPreferences;
 
 public class LEDIcon extends AnnimatedIcon {
 
-  private boolean isRGB;
+  private final boolean isRGB;
   private int showstate;
   
   public LEDIcon(boolean RGB) {

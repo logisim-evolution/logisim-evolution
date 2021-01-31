@@ -53,7 +53,7 @@ import org.w3c.dom.Element;
 public class RegisterShape extends DynamicElement {
   static final Font DEFAULT_FONT = new Font("monospaced", Font.PLAIN, 10);
 
-  private EditableLabel label;
+  private final EditableLabel label;
 
   public RegisterShape(int x, int y, DynamicElement.Path p) {
     super(p, Bounds.create(x, y, 1, 1));

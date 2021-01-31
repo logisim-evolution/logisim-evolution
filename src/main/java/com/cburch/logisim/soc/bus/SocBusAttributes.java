@@ -76,7 +76,7 @@ public class SocBusAttributes extends AbstractAttributeSet {
   private SocBusInfo ID = new SocBusInfo(null);
   private Boolean traceVisable = true;
 
-  private static List<Attribute<?>> ATTRIBUTES =
+  private static final List<Attribute<?>> ATTRIBUTES =
         Arrays.asList(
             new Attribute<?>[] {
               NrOfTracesAttr,

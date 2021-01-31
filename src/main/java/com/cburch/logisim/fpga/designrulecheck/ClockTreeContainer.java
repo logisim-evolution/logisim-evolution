@@ -32,10 +32,10 @@ import java.util.ArrayList;
 
 public class ClockTreeContainer {
 
-  private ArrayList<ConnectionPoint> ClockSources;
-  private ArrayList<ConnectionPoint> ClockNets;
-  private int ClockSourceId;
-  private ArrayList<String> HierarchyId;
+  private final ArrayList<ConnectionPoint> ClockSources;
+  private final ArrayList<ConnectionPoint> ClockNets;
+  private final int ClockSourceId;
+  private final ArrayList<String> HierarchyId;
   private boolean isPinClockSource;
 
   public ClockTreeContainer(ArrayList<String> Hierarchy, int sourceId,

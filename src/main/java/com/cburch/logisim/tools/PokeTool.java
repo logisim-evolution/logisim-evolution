@@ -138,10 +138,10 @@ public class PokeTool extends Tool {
 
   private static final Color caretColor = new Color(255, 255, 150);
 
-  private static Cursor cursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
+  private static final Cursor cursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
   private static final Cursor move = Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR);
 
-  private Listener listener;
+  private final Listener listener;
   private Circuit pokedCircuit;
   private Component pokedComponent;
   private Caret pokeCaret;

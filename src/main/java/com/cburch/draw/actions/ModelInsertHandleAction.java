@@ -37,7 +37,7 @@ import java.util.Collection;
 import java.util.Collections;
 
 public class ModelInsertHandleAction extends ModelAction {
-  private Handle desired;
+  private final Handle desired;
 
   public ModelInsertHandleAction(CanvasModel model, Handle desired) {
     super(model);

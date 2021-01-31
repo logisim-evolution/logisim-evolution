@@ -62,13 +62,13 @@ import com.cburch.logisim.util.LocaleManager;
 public class BreakpointPanel extends JPanel implements CaretListener,LocaleListener,ActionListener,KeyListener{
 
   private static final long serialVersionUID = 1L;
-  private RSyntaxTextArea asmWindow;
-  private RTextScrollPane debugScrollPane;
-  private JLabel lineIndicator;
+  private final RSyntaxTextArea asmWindow;
+  private final RTextScrollPane debugScrollPane;
+  private final JLabel lineIndicator;
   private int oldCaretPos;
-  private HashMap<Integer,Integer> debugLines;
-  private JButton addBreakPoint;
-  private JButton removeBreakPoint;
+  private final HashMap<Integer,Integer> debugLines;
+  private final JButton addBreakPoint;
+  private final JButton removeBreakPoint;
   private int currentLine;
   private int maxLines;
 

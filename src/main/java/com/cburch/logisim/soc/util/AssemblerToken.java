@@ -67,7 +67,7 @@ public class AssemblerToken {
   
   private int type;
   private String value;
-  private int offset;
+  private final int offset;
   private Boolean valid;
   private Boolean isLabel;
    

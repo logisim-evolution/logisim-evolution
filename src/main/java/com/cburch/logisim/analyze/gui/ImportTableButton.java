@@ -48,8 +48,8 @@ public class ImportTableButton extends JButton {
 
   private static final long serialVersionUID = 1L;
 
-  private JFrame parent;
-  private AnalyzerModel model;
+  private final JFrame parent;
+  private final AnalyzerModel model;
 
   ImportTableButton(JFrame parent, AnalyzerModel model) {
     this.parent = parent;

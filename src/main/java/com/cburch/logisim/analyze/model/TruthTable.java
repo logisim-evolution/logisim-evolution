@@ -41,12 +41,12 @@ public class TruthTable {
 
   private static final Entry DEFAULT_ENTRY = Entry.DONT_CARE;
 
-  private MyListener myListener = new MyListener();
-  private List<TruthTableListener> listeners = new ArrayList<TruthTableListener>();
+  private final MyListener myListener = new MyListener();
+  private final List<TruthTableListener> listeners = new ArrayList<TruthTableListener>();
 
-  private AnalyzerModel model;
+  private final AnalyzerModel model;
   private ArrayList<Row> rows = new ArrayList<>(); // visible input rows
-  private ArrayList<Entry[]> columns = new ArrayList<>(); // output columns
+  private final ArrayList<Entry[]> columns = new ArrayList<>(); // output columns
   private static final CompareInputs sortByInputs = new CompareInputs();
 
   private class Row implements Iterable<Integer> {
@@ -125,10 +125,10 @@ public class TruthTable {
 
     public Iterator<Integer> iterator() {
       return new Iterator<Integer>() {
-        int base = baseIndex();
-        int mask = dcMask();
-        int nbits = inputs.length;
-        int count = duplicity();
+        final int base = baseIndex();
+        final int mask = dcMask();
+        final int nbits = inputs.length;
+        final int count = duplicity();
         int iter = 0;
 
         @Override

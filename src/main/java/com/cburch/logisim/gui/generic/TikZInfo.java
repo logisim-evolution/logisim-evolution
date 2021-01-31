@@ -67,7 +67,7 @@ import com.cburch.draw.shapes.DrawAttr;
 
 public class TikZInfo implements Cloneable {
 
-  private static double BASIC_STROKE_WIDTH = 1;
+  private static final double BASIC_STROKE_WIDTH = 1;
 
   private AffineTransform myTransformer = new AffineTransform();
   private Color drawColor;
@@ -470,7 +470,7 @@ public class TikZInfo implements Cloneable {
       }
     }
     
-    private ArrayList<BezierInfo> myPath = new ArrayList<BezierInfo>();
+    private final ArrayList<BezierInfo> myPath = new ArrayList<BezierInfo>();
     
     public TikZBezier() {};
     

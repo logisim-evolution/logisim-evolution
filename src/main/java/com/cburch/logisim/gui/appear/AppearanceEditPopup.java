@@ -37,9 +37,9 @@ import java.util.Map;
 
 public class AppearanceEditPopup extends EditPopup implements EditHandler.Listener {
   private static final long serialVersionUID = 1L;
-  private AppearanceCanvas canvas;
-  private EditHandler handler;
-  private Map<LogisimMenuItem, Boolean> enabled;
+  private final AppearanceCanvas canvas;
+  private final EditHandler handler;
+  private final Map<LogisimMenuItem, Boolean> enabled;
 
   public AppearanceEditPopup(AppearanceCanvas canvas) {
     super(true);

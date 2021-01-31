@@ -29,9 +29,9 @@
 package com.cburch.logisim.tools;
 
 public class CaretEvent {
-  private Caret caret;
-  private String oldtext;
-  private String newtext;
+  private final Caret caret;
+  private final String oldtext;
+  private final String newtext;
 
   public CaretEvent(Caret caret, String oldtext, String newtext) {
     this.caret = caret;

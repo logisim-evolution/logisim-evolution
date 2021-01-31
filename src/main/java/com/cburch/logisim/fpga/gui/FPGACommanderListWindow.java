@@ -44,12 +44,12 @@ import com.cburch.logisim.fpga.data.FPGACommanderListModel;
 @SuppressWarnings("serial")
 public class FPGACommanderListWindow extends JFrame implements WindowListener, ListDataListener {
 
-  private String Title;
-  private JList<Object> textArea = new JList<Object>();
+  private final String Title;
+  private final JList<Object> textArea = new JList<Object>();
   private boolean IsActive = false;
-  private boolean count;
-  private FPGACommanderListModel model;
-  private JScrollPane textMessages;
+  private final boolean count;
+  private final FPGACommanderListModel model;
+  private final JScrollPane textMessages;
 
   public FPGACommanderListWindow(
       String Title, Color fg, boolean count, FPGACommanderListModel model) {

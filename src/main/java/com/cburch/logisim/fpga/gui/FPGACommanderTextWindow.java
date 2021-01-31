@@ -45,10 +45,10 @@ import javax.swing.text.DefaultCaret;
 public class FPGACommanderTextWindow extends JFrame implements KeyListener, WindowListener {
 
   private int FontSize;
-  private String Title;
-  private JTextArea textArea;
+  private final String Title;
+  private final JTextArea textArea;
   private boolean IsActive = false;
-  private boolean count;
+  private final boolean count;
 
   public FPGACommanderTextWindow(String Title, Color fg, boolean count) {
     super((count) ? Title + " (0)" : Title);

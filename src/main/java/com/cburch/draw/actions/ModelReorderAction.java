@@ -161,9 +161,9 @@ public class ModelReorderAction extends ModelAction {
     }
   }
 
-  private List<ReorderRequest> requests;
-  private List<CanvasObject> objects;
-  private int type;
+  private final List<ReorderRequest> requests;
+  private final List<CanvasObject> objects;
+  private final int type;
 
   public ModelReorderAction(CanvasModel model, List<ReorderRequest> requests) {
     super(model);

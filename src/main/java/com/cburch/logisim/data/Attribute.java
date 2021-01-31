@@ -33,7 +33,7 @@ import java.awt.Window;
 import javax.swing.JTextField;
 
 public abstract class Attribute<V> {
-  private String name;
+  private final String name;
   private StringGetter disp;
   private boolean hidden = false;
 

@@ -63,7 +63,7 @@ public class TclGenericAttributes extends TclComponentAttributes {
     }
   }
 
-  private static List<Attribute<?>> attributes =
+  private static final List<Attribute<?>> attributes =
       Arrays.asList(
           new Attribute<?>[] {
             CONTENT_FILE_ATTR, TclGeneric.CONTENT_ATTR, StdAttr.LABEL, StdAttr.LABEL_FONT

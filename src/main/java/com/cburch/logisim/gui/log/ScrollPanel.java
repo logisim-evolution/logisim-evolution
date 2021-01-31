@@ -33,7 +33,7 @@ import javax.swing.JScrollPane;
 
 class ScrollPanel extends LogPanel {
   private static final long serialVersionUID = 1L;
-  private TablePanel table;
+  private final TablePanel table;
 
   public ScrollPanel(LogFrame frame) {
     super(frame);

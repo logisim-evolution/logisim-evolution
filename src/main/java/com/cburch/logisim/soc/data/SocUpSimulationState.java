@@ -47,7 +47,7 @@ public class SocUpSimulationState {
   public static final int SimulationHaltedByStop = 3;
   
   private int simulationState = SimulationRunning;
-  private ArrayList<SocUpSimulationStateListener> listeners = new ArrayList<SocUpSimulationStateListener>();
+  private final ArrayList<SocUpSimulationStateListener> listeners = new ArrayList<SocUpSimulationStateListener>();
   private boolean canContinueAfterBreak = false;
   
   public String getStateString() {

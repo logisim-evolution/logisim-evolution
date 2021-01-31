@@ -29,9 +29,9 @@
 package com.cburch.logisim.comp;
 
 public class TextFieldEvent {
-  private TextField field;
-  private String oldval;
-  private String newval;
+  private final TextField field;
+  private final String oldval;
+  private final String newval;
 
   public TextFieldEvent(TextField field, String old, String val) {
     this.field = field;

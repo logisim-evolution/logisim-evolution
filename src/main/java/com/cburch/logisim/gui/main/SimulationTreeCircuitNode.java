@@ -51,8 +51,8 @@ class SimulationTreeCircuitNode extends SimulationTreeNode
     }
   }
 
-  private CircuitState circuitState;
-  private Component subcircComp;
+  private final CircuitState circuitState;
+  private final Component subcircComp;
 
   public SimulationTreeCircuitNode(
       SimulationTreeModel model,

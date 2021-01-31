@@ -43,13 +43,13 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 class SimulationToolbarModel extends AbstractToolbarModel implements ChangeListener {
-  private Project project;
-  private LogisimToolbarItem simRunToggle;
-  private LogisimToolbarItem simStep;
-  private LogisimToolbarItem tickEnable;
-  private LogisimToolbarItem tickHalf;
-  private LogisimToolbarItem tickFull;
-  private List<ToolbarItem> items;
+  private final Project project;
+  private final LogisimToolbarItem simRunToggle;
+  private final LogisimToolbarItem simStep;
+  private final LogisimToolbarItem tickEnable;
+  private final LogisimToolbarItem tickHalf;
+  private final LogisimToolbarItem tickFull;
+  private final List<ToolbarItem> items;
   
   private static final SimulationIcon RunToggleIcon = new SimulationIcon(SimulationIcon.SIM_PLAY);
   private static final SimulationIcon EnableDisableIcon = new SimulationIcon(SimulationIcon.SIM_ENABLE);

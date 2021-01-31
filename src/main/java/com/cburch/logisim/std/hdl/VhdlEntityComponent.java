@@ -119,7 +119,7 @@ public class VhdlEntityComponent extends InstanceFactory {
 
   static final int X_PADDING = 5;
 
-  private WeakHashMap<Instance, VhdlEntityListener> contentListeners;
+  private final WeakHashMap<Instance, VhdlEntityListener> contentListeners;
 
   public VhdlEntityComponent() {
     super("VHDL Entity", S.getter("vhdlComponent"));

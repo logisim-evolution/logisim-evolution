@@ -73,8 +73,8 @@ public class PowerOnReset extends InstanceFactory {
   private static class PORState implements InstanceData, Cloneable, ActionListener {
 
     private boolean value;
-    private Timer tim;
-    private InstanceState state;
+    private final Timer tim;
+    private final InstanceState state;
 
     public PORState(InstanceState state) {
       value = true;

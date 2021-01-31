@@ -52,7 +52,7 @@ public class TextField {
   private int valign;
   private Font font;
   private String text = "";
-  private LinkedList<TextFieldListener> listeners = new LinkedList<TextFieldListener>();
+  private final LinkedList<TextFieldListener> listeners = new LinkedList<TextFieldListener>();
 
   public TextField(int x, int y, int halign, int valign) {
     this(x, y, halign, valign, null);

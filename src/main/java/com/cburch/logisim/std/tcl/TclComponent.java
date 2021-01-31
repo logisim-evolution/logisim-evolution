@@ -58,9 +58,9 @@ public abstract class TclComponent extends InstanceFactory {
 
   public static class PortDescription {
 
-    private String name;
-    private String type;
-    private BitWidth width;
+    private final String name;
+    private final String type;
+    private final BitWidth width;
 
     public PortDescription(String name, String type, int width) {
       this.name = name;
@@ -96,7 +96,7 @@ public abstract class TclComponent extends InstanceFactory {
   private Port[] inputs;
   private Port[] outputs;
 
-  private WeakHashMap<Instance, TclComponentListener> contentListeners;
+  private final WeakHashMap<Instance, TclComponentListener> contentListeners;
 
   public TclComponent(String name, StringGetter displayName) {
     super(name, displayName);

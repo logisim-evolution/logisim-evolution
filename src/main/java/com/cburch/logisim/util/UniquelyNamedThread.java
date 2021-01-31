@@ -32,8 +32,8 @@ import java.util.*;
 
 public class UniquelyNamedThread extends Thread {
 
-  private static Object lock = new Object();
-  private static HashMap<String, Integer> lastID = new HashMap<String, Integer>();
+  private static final Object lock = new Object();
+  private static final HashMap<String, Integer> lastID = new HashMap<String, Integer>();
 
   private static String nextName(String prefix) {
     int id = 0;

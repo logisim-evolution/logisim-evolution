@@ -88,10 +88,13 @@ import com.cburch.logisim.util.StringUtil;
 import com.cburch.logisim.util.SyntaxChecker;
 
 public class VariableTab extends AnalyzerTab {
-  private VariableList inputs, outputs;
-  private JTable inputsTable, outputsTable;
-  private JLabel error = new JLabel(" ");
-  private JLabel inputsLabel, outputsLabel;
+  private final VariableList inputs;
+  private final VariableList outputs;
+  private final JTable inputsTable;
+  private final JTable outputsTable;
+  private final JLabel error = new JLabel(" ");
+  private final JLabel inputsLabel;
+  private final JLabel outputsLabel;
 
   private JTable ioTable(VariableList data, LogisimMenuBar menubar) {
     final TableCellEditor ed1 = new SingleClickVarEditor(data);
@@ -416,10 +419,10 @@ public class VariableTab extends AnalyzerTab {
   private static class VariableTableModel
     extends AbstractTableModel implements VariableListListener {
 
-    private JTable table;
-    private VariableList list;
+    private final JTable table;
+    private final VariableList list;
     private Var[] listCopy;
-    private Var empty = new Var("", 1);
+    private final Var empty = new Var("", 1);
 
     public VariableTableModel(VariableList list, JTable table) {
       this.list = list;

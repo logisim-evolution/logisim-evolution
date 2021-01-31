@@ -105,25 +105,27 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
 
   private static final long serialVersionUID = 1L;
 
-  private Font HEAD_FONT;
-  private Font BODY_FONT;
-  private int HEADER_PADDING;
-  private int HEADER_VSEP;
-  private int COLUMNS_HSEP;
-  private int DEFAULT_CELL_PADDING;
-  private int DEFAULT_CELL_WIDTH;
-  private int DEFAULT_CELL_HEIGHT;
+  private final Font HEAD_FONT;
+  private final Font BODY_FONT;
+  private final int HEADER_PADDING;
+  private final int HEADER_VSEP;
+  private final int COLUMNS_HSEP;
+  private final int DEFAULT_CELL_PADDING;
+  private final int DEFAULT_CELL_WIDTH;
+  private final int DEFAULT_CELL_HEIGHT;
 
-  private MyListener myListener = new MyListener();
-  private TruthTable table;
-  private TableBody body;
-  private TableHeader header;
-  private JScrollPane bodyPane, headerPane;
+  private final MyListener myListener = new MyListener();
+  private final TruthTable table;
+  private final TableBody body;
+  private final TableHeader header;
+  private final JScrollPane bodyPane;
+  private final JScrollPane headerPane;
   private int cellHeight;
   private int tableWidth, headerHeight, bodyHeight;
-  private ColumnGroupDimensions inDim, outDim;
-  private TableTabCaret caret;
-  private TableTabClip clip;
+  private final ColumnGroupDimensions inDim;
+  private final ColumnGroupDimensions outDim;
+  private final TableTabCaret caret;
+  private final TableTabClip clip;
 
   List<Var> inputVars, outputVars;
 
@@ -254,12 +256,12 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
     }
   };
 
-  private SquareButton one = new SquareButton(Entry.ONE);
-  private SquareButton zero = new SquareButton(Entry.ZERO);
-  private SquareButton dontcare = new SquareButton(Entry.DONT_CARE);
-  private TightButton expand = new TightButton(S.get("tableExpand"));
-  private TightButton compact = new TightButton(S.get("tableCompact"));
-  private JLabel count = new JLabel(S.fmt("tableRowsShown", 0, 0), SwingConstants.CENTER);
+  private final SquareButton one = new SquareButton(Entry.ONE);
+  private final SquareButton zero = new SquareButton(Entry.ZERO);
+  private final SquareButton dontcare = new SquareButton(Entry.DONT_CARE);
+  private final TightButton expand = new TightButton(S.get("tableExpand"));
+  private final TightButton compact = new TightButton(S.get("tableCompact"));
+  private final JLabel count = new JLabel(S.fmt("tableRowsShown", 0, 0), SwingConstants.CENTER);
 
   private class TightButton extends JButton {
     /** */
@@ -417,7 +419,7 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
     return body;
   }
 
-  private static Canvas canvas = new Canvas();
+  private static final Canvas canvas = new Canvas();
 
   private void computePreferredSize() {
     inputVars = table.getInputVariables();

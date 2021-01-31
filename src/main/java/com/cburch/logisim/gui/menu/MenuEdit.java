@@ -82,22 +82,22 @@ class MenuEdit extends Menu {
 
   private static final long serialVersionUID = 1L;
 
-  private LogisimMenuBar menubar;
-  private JMenuItem undo = new JMenuItem();
-  private JMenuItem redo = new JMenuItem();
-  private MenuItemImpl cut = new MenuItemImpl(this, LogisimMenuBar.CUT);
-  private MenuItemImpl copy = new MenuItemImpl(this, LogisimMenuBar.COPY);
-  private MenuItemImpl paste = new MenuItemImpl(this, LogisimMenuBar.PASTE);
-  private MenuItemImpl delete = new MenuItemImpl(this, LogisimMenuBar.DELETE);
-  private MenuItemImpl dup = new MenuItemImpl(this, LogisimMenuBar.DUPLICATE);
-  private MenuItemImpl selall = new MenuItemImpl(this, LogisimMenuBar.SELECT_ALL);
-  private MenuItemImpl raise = new MenuItemImpl(this, LogisimMenuBar.RAISE);
-  private MenuItemImpl lower = new MenuItemImpl(this, LogisimMenuBar.LOWER);
-  private MenuItemImpl raiseTop = new MenuItemImpl(this, LogisimMenuBar.RAISE_TOP);
-  private MenuItemImpl lowerBottom = new MenuItemImpl(this, LogisimMenuBar.LOWER_BOTTOM);
-  private MenuItemImpl addCtrl = new MenuItemImpl(this, LogisimMenuBar.ADD_CONTROL);
-  private MenuItemImpl remCtrl = new MenuItemImpl(this, LogisimMenuBar.REMOVE_CONTROL);
-  private MyListener myListener = new MyListener();
+  private final LogisimMenuBar menubar;
+  private final JMenuItem undo = new JMenuItem();
+  private final JMenuItem redo = new JMenuItem();
+  private final MenuItemImpl cut = new MenuItemImpl(this, LogisimMenuBar.CUT);
+  private final MenuItemImpl copy = new MenuItemImpl(this, LogisimMenuBar.COPY);
+  private final MenuItemImpl paste = new MenuItemImpl(this, LogisimMenuBar.PASTE);
+  private final MenuItemImpl delete = new MenuItemImpl(this, LogisimMenuBar.DELETE);
+  private final MenuItemImpl dup = new MenuItemImpl(this, LogisimMenuBar.DUPLICATE);
+  private final MenuItemImpl selall = new MenuItemImpl(this, LogisimMenuBar.SELECT_ALL);
+  private final MenuItemImpl raise = new MenuItemImpl(this, LogisimMenuBar.RAISE);
+  private final MenuItemImpl lower = new MenuItemImpl(this, LogisimMenuBar.LOWER);
+  private final MenuItemImpl raiseTop = new MenuItemImpl(this, LogisimMenuBar.RAISE_TOP);
+  private final MenuItemImpl lowerBottom = new MenuItemImpl(this, LogisimMenuBar.LOWER_BOTTOM);
+  private final MenuItemImpl addCtrl = new MenuItemImpl(this, LogisimMenuBar.ADD_CONTROL);
+  private final MenuItemImpl remCtrl = new MenuItemImpl(this, LogisimMenuBar.REMOVE_CONTROL);
+  private final MyListener myListener = new MyListener();
 
   public MenuEdit(LogisimMenuBar menubar) {
     this.menubar = menubar;

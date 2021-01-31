@@ -72,7 +72,7 @@ public class ImageExporter extends javax.swing.JFrame implements ActionListener 
 
   private static final long serialVersionUID = 1L;
   private File fileToSave;
-  private ChronoData chronoData;
+  private final ChronoData chronoData;
   private final int tickWidth = 20;
   // Dimensions
   private final int lowPos = 32;
@@ -93,7 +93,7 @@ public class ImageExporter extends javax.swing.JFrame implements ActionListener 
   // for timeline
   private JPanel timePanel;
   private TimelineDraw td;
-  private ChronoFrame chronoFrame;
+  private final ChronoFrame chronoFrame;
   // GUI, select image export options
   private JFrame frame;
   private javax.swing.ButtonGroup buttonGroup1;

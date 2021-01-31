@@ -104,7 +104,7 @@ public class SocMemMapModel extends AbstractTableModel implements SocBusSlaveLis
 
   public class SlaveInfo {
     private boolean hasOverlap;
-    private SocBusSlaveInterface slave;
+    private final SocBusSlaveInterface slave;
     private long start;
     private long end;
     
@@ -170,7 +170,7 @@ public class SocMemMapModel extends AbstractTableModel implements SocBusSlaveLis
   }
   
   private class SlaveMap {
-    private LinkedList<SlaveInfo> slaves;
+    private final LinkedList<SlaveInfo> slaves;
     
     public SlaveMap() {
       slaves = new LinkedList<SlaveInfo>();
@@ -215,10 +215,10 @@ public class SocMemMapModel extends AbstractTableModel implements SocBusSlaveLis
     }
   }
   
-  private ArrayList<SocBusSlaveInterface> slaves;
-  private SlaveMap slaveMap;
-  private SlaveInfoRenderer slaveRenderer;
-  private memMapHeaderRenderer headRenderer;
+  private final ArrayList<SocBusSlaveInterface> slaves;
+  private final SlaveMap slaveMap;
+  private final SlaveInfoRenderer slaveRenderer;
+  private final memMapHeaderRenderer headRenderer;
   private InstanceComponent marked;
   
   public SocMemMapModel() {

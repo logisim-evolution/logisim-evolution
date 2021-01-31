@@ -36,7 +36,7 @@ import com.cburch.logisim.tools.Tool;
 import java.util.List;
 
 public class BFHPraktika extends Library {
-  private static FactoryDescription[] DESCRIPTIONS = {
+  private static final FactoryDescription[] DESCRIPTIONS = {
     new FactoryDescription("Binary_to_BCD_converter", S.getter("Bin2BCD"), "", "bin2bcd"),
     new FactoryDescription(
         "BCD_to_7_Segment_decoder", S.getter("BCD2SevenSegment"), "", "bcd2sevenseg"),

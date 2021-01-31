@@ -81,9 +81,9 @@ public class Analyze {
   private static class ExpressionMap extends HashMap<LocationBit, Expression>
       implements ExpressionComputer.Map {
     private static final long serialVersionUID = 1L;
-    private Circuit circuit;
-    private Set<LocationBit> dirtyPoints = new HashSet<LocationBit>();
-    private Map<LocationBit, Component> causes = new HashMap<LocationBit, Component>();
+    private final Circuit circuit;
+    private final Set<LocationBit> dirtyPoints = new HashSet<LocationBit>();
+    private final Map<LocationBit, Component> causes = new HashMap<LocationBit, Component>();
     private Component currentCause = null;
 
     ExpressionMap(Circuit circuit) {

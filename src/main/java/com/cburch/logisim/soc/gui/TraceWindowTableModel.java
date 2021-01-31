@@ -89,9 +89,9 @@ public class TraceWindowTableModel extends AbstractTableModel implements MouseLi
 
   private static final long serialVersionUID = 1L;
   private JTable table;
-  private SocBusMenuProvider.InstanceInformation parrent;
+  private final SocBusMenuProvider.InstanceInformation parrent;
 
-  private HashMap<SocBusStateInfo.SocBusState, CircuitStateHolder.HierarchyInfo> myTraceList;
+  private final HashMap<SocBusStateInfo.SocBusState, CircuitStateHolder.HierarchyInfo> myTraceList;
   private int BoxWidth = SocBusStateInfo.BlockWidth;
   
   public TraceWindowTableModel(HashMap<SocBusStateInfo.SocBusState, CircuitStateHolder.HierarchyInfo> traceList, 

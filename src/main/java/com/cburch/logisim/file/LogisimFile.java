@@ -230,15 +230,15 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
     return ret;
   }
 
-  private EventSourceWeakSupport<LibraryListener> listeners =
+  private final EventSourceWeakSupport<LibraryListener> listeners =
       new EventSourceWeakSupport<LibraryListener>();
   private Loader loader;
-  private LinkedList<String> messages = new LinkedList<String>();
-  private Options options = new Options();
+  private final LinkedList<String> messages = new LinkedList<String>();
+  private final Options options = new Options();
 
-  private LinkedList<AddTool> tools = new LinkedList<AddTool>();
+  private final LinkedList<AddTool> tools = new LinkedList<AddTool>();
 
-  private LinkedList<Library> libraries = new LinkedList<Library>();
+  private final LinkedList<Library> libraries = new LinkedList<Library>();
 
   private Circuit main = null;
 

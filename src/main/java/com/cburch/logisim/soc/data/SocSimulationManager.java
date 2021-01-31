@@ -57,7 +57,7 @@ public class SocSimulationManager implements SocBusMasterInterface {
     private static final long serialVersionUID = 1L;
     
     private Circuit myCirc;
-    private SocBusInfo myValue;
+    private final SocBusInfo myValue;
     
     public SocBusSelector(Window source, SocBusInfo value) {
       super(S.get("SocBusSelectAttrClick"));
@@ -141,8 +141,8 @@ public class SocSimulationManager implements SocBusMasterInterface {
   }
   
   public final static Attribute<SocBusInfo> SOC_BUS_SELECT = new SocBusSelectAttribute();
-  private HashMap<String,SocBusStateInfo> socBusses = new HashMap<String,SocBusStateInfo>();
-  private ArrayList<Component> toBeChecked = new ArrayList<Component>();
+  private final HashMap<String,SocBusStateInfo> socBusses = new HashMap<String,SocBusStateInfo>();
+  private final ArrayList<Component> toBeChecked = new ArrayList<Component>();
   private CircuitState state;
 
   public String getSocBusDisplayString(String id) {

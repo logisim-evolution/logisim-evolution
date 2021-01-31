@@ -34,9 +34,9 @@ import java.util.ArrayList;
 
 class Highlighter {
   private static class Entry {
-    private long start;
-    private long end;
-    private Color color;
+    private final long start;
+    private final long end;
+    private final Color color;
 
     Entry(long start, long end, Color color) {
       this.start = start;
@@ -45,7 +45,7 @@ class Highlighter {
     }
   }
 
-  private HexEditor hex;
+  private final HexEditor hex;
   private ArrayList<Entry> entries;
 
   Highlighter(HexEditor hex) {

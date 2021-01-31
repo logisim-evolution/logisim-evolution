@@ -43,8 +43,8 @@ import javax.swing.Icon;
 
 /** @author saugyy */
 public class SimToolbarItem implements ToolbarItem {
-  private Icon icon;
-  private StringGetter toolTip;
+  private final Icon icon;
+  private final StringGetter toolTip;
 
   public SimToolbarItem(String iconName, StringGetter toolTip) {
     this.icon = Icons.getIcon(iconName);

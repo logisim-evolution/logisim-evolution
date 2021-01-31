@@ -77,9 +77,9 @@ public class Nios2ProgramControlInstructions extends AbstractExecutionUnitWithLa
    * bleu rA, rB, label  => bgeu rB, rA, label
    */
   
-  private ArrayList<String> Opcodes = new ArrayList<String>();
-  private ArrayList<Integer> OpcCodes = new ArrayList<Integer>(); 
-  private ArrayList<Integer> OpxCodes = new ArrayList<Integer>(); 
+  private final ArrayList<String> Opcodes = new ArrayList<String>();
+  private final ArrayList<Integer> OpcCodes = new ArrayList<Integer>();
+  private final ArrayList<Integer> OpxCodes = new ArrayList<Integer>();
 
   private int instruction;
   private boolean valid;

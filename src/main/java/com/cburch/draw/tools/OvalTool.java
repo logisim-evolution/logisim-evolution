@@ -38,7 +38,7 @@ import java.util.List;
 import javax.swing.Icon;
 
 public class OvalTool extends RectangularTool {
-  private DrawingAttributeSet attrs;
+  private final DrawingAttributeSet attrs;
 
   public OvalTool(DrawingAttributeSet attrs) {
     this.attrs = attrs;

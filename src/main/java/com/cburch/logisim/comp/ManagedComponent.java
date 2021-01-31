@@ -39,12 +39,12 @@ import java.util.Collections;
 import java.util.List;
 
 public abstract class ManagedComponent extends AbstractComponent {
-  private EventSourceWeakSupport<ComponentListener> listeners =
+  private final EventSourceWeakSupport<ComponentListener> listeners =
       new EventSourceWeakSupport<ComponentListener>();
-  private Location loc;
+  private final Location loc;
   private AttributeSet attrs;
-  private ArrayList<EndData> ends;
-  private List<EndData> endsView;
+  private final ArrayList<EndData> ends;
+  private final List<EndData> endsView;
   private Bounds bounds = null;
 
   public ManagedComponent(Location loc, AttributeSet attrs, int num_ends) {

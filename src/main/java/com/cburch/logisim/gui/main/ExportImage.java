@@ -181,9 +181,9 @@ public class ExportImage {
   }
 
   public static class ImageFileFilter extends FileFilter {
-    private int type;
-    private String[] extensions;
-    private StringGetter desc;
+    private final int type;
+    private final String[] extensions;
+    private final StringGetter desc;
 
     public ImageFileFilter(int type, StringGetter desc, String[] exts) {
       this.type = type;

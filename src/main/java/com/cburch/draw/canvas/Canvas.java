@@ -47,7 +47,7 @@ public class Canvas extends JComponent {
 
   private CanvasModel model;
   private ActionDispatcher dispatcher;
-  private CanvasListener listener;
+  private final CanvasListener listener;
   private Selection selection;
 
   public Canvas() {

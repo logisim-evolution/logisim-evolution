@@ -95,13 +95,13 @@ public class CircuitChange {
 
   static final int SET_FOR_CIRCUIT = 7;
 
-  private Circuit circuit;
-  private int type;
-  private Component comp;
+  private final Circuit circuit;
+  private final int type;
+  private final Component comp;
   private Collection<? extends Component> comps;
-  private Attribute<?> attr;
-  private Object oldValue;
-  private Object newValue;
+  private final Attribute<?> attr;
+  private final Object oldValue;
+  private final Object newValue;
 
   private CircuitChange(Circuit circuit, int type, Collection<? extends Component> comps) {
     this(circuit, type, null, null, null, null);

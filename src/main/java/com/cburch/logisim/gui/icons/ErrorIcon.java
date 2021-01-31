@@ -42,7 +42,7 @@ import com.cburch.logisim.prefs.AppPreferences;
 
 public class ErrorIcon implements Icon {
 
-  private int wh;
+  private final int wh;
   private boolean forwardArrow = false;
   private boolean backwardArrow = false;
   

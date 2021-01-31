@@ -35,10 +35,10 @@ import com.cburch.logisim.data.Value;
 
 public class PlexerIcon extends AbstractIcon {
 
-  private boolean inverted;
-  private boolean singleInput;
-  private static int[] xpos = {4,4,10,10};
-  private static int[] ypos = {0,14,9,5};
+  private final boolean inverted;
+  private final boolean singleInput;
+  private static final int[] xpos = {4,4,10,10};
+  private static final int[] ypos = {0,14,9,5};
 
   public PlexerIcon(boolean demux, boolean singleInput) {
     inverted = demux;

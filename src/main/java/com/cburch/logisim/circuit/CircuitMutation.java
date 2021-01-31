@@ -44,8 +44,8 @@ import java.util.List;
 import java.util.Map;
 
 public final class CircuitMutation extends CircuitTransaction {
-  private Circuit primary;
-  private List<CircuitChange> changes;
+  private final Circuit primary;
+  private final List<CircuitChange> changes;
 
   CircuitMutation() {
     this(null);

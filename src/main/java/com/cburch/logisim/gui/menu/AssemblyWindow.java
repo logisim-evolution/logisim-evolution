@@ -76,23 +76,23 @@ import javax.swing.text.Document;
 public class AssemblyWindow
     implements ActionListener, WindowListener, SimulatorListener, KeyListener {
 
-  private Preferences prefs;
-  private LFrame windows;
-  private JMenuBar winMenuBar;
-  private JCheckBoxMenuItem ontopItem;
-  private JMenuItem openFileItem;
-  private JMenuItem reloadFileItem;
-  private JMenuItem close;
-  private JButton refresh = new JButton("Get Registers");
-  private JLabel status = new JLabel();
+  private final Preferences prefs;
+  private final LFrame windows;
+  private final JMenuBar winMenuBar;
+  private final JCheckBoxMenuItem ontopItem;
+  private final JMenuItem openFileItem;
+  private final JMenuItem reloadFileItem;
+  private final JMenuItem close;
+  private final JButton refresh = new JButton("Get Registers");
+  private final JLabel status = new JLabel();
   private final JEditorPane document = new JEditorPane();
 
   @SuppressWarnings("rawtypes")
-  private JComboBox combo = new JComboBox<>();
+  private final JComboBox combo = new JComboBox<>();
 
-  private HashMap<String, Component> entry = new HashMap<String, Component>();
+  private final HashMap<String, Component> entry = new HashMap<String, Component>();
   private Component selReg = null;
-  private Project proj;
+  private final Project proj;
   private static Circuit curCircuit;
   private static CircuitState curCircuitState;
   private File file;

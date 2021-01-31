@@ -36,7 +36,7 @@ import javax.swing.JPanel;
 
 abstract class OptionsPanel extends JPanel {
   private static final long serialVersionUID = 1L;
-  private OptionsFrame optionsFrame;
+  private final OptionsFrame optionsFrame;
 
   public OptionsPanel(OptionsFrame frame) {
     super();

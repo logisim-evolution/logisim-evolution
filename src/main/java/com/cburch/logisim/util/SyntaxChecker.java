@@ -84,8 +84,8 @@ public class SyntaxChecker {
     return Message == null;
   }
 
-  private static Pattern variablePattern = Pattern.compile("^([a-zA-Z]+\\w*)");
-  private static Pattern forbiddenPattern = Pattern.compile("__");
+  private static final Pattern variablePattern = Pattern.compile("^([a-zA-Z]+\\w*)");
+  private static final Pattern forbiddenPattern = Pattern.compile("__");
 
   private static Matcher forbiddenMatcher;
   private static Matcher variableMatcher;

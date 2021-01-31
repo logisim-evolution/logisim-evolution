@@ -39,8 +39,8 @@ import java.util.HashSet;
 
 class PropagationPoints {
   private static class Entry {
-    private CircuitState state;
-    private Location loc;
+    private final CircuitState state;
+    private final Location loc;
 
     private Entry(CircuitState state, Location loc) {
       this.state = state;
@@ -60,7 +60,7 @@ class PropagationPoints {
     }
   }
 
-  private HashSet<Entry> data;
+  private final HashSet<Entry> data;
 
   PropagationPoints() {
     this.data = new HashSet<Entry>();

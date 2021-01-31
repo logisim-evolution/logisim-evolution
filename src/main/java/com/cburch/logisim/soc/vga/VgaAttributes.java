@@ -90,7 +90,7 @@ public class VgaAttributes extends AbstractAttributeSet {
   @SuppressWarnings("serial")
   public static final ArrayList<AttributeOption> MODES = new ArrayList<AttributeOption>() {{for (AttributeOption a : MODE_ARRAY) add(a);}};
   
-  private static List<Attribute<?>> ATTRIBUTES =
+  private static final List<Attribute<?>> ATTRIBUTES =
       Arrays.asList(
         new Attribute<?>[] {
            START_ADDRESS,

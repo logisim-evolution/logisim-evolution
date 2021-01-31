@@ -148,7 +148,7 @@ public class Plexers extends Library {
 
   public static final int DELAY = 3;
 
-  private static FactoryDescription[] DESCRIPTIONS = {
+  private static final FactoryDescription[] DESCRIPTIONS = {
     new FactoryDescription(
         "Multiplexer", S.getter("multiplexerComponent"), "multiplexer.gif", "Multiplexer"),
     new FactoryDescription(

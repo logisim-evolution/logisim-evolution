@@ -45,10 +45,10 @@ import java.util.TreeMap;
 
 public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
-  private long FpgaClockFrequency;
-  private double TickFrequency;
-  private Circuit MyCircuit;
-  private MappableResourcesContainer MyIOComponents;
+  private final long FpgaClockFrequency;
+  private final double TickFrequency;
+  private final Circuit MyCircuit;
+  private final MappableResourcesContainer MyIOComponents;
 
 
   public ToplevelHDLGeneratorFactory(

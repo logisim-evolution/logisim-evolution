@@ -40,7 +40,7 @@ import com.cburch.logisim.std.memory.Mem.MemListener;
 public class RamState extends MemState implements InstanceData, AttributeListener {
 
   private Instance parent;
-  private MemListener listener;
+  private final MemListener listener;
   private ClockState clockState;
 
   RamState(Instance parent, MemContents contents, MemListener listener) {

@@ -39,7 +39,7 @@ class ComponentIcon implements Icon {
   public static final int TRIANGLE_CLOSED = 1;
   public static final int TRIANGLE_OPEN = 2;
 
-  private Component comp;
+  private final Component comp;
   private int triangleState = TRIANGLE_NONE;
 
   ComponentIcon(Component comp) {

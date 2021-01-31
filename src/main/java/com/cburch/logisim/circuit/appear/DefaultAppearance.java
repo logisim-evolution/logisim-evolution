@@ -42,7 +42,7 @@ import java.util.List;
 class DefaultAppearance {
 
   private static class CompareLocations implements Comparator<Instance> {
-    private boolean byX;
+    private final boolean byX;
 
     CompareLocations(boolean byX) {
       this.byX = byX;

@@ -41,7 +41,7 @@ public class UnmodifiableList<E> extends AbstractList<E> {
     }
   }
 
-  private E[] data;
+  private final E[] data;
 
   public UnmodifiableList(E[] data) {
     this.data = data;

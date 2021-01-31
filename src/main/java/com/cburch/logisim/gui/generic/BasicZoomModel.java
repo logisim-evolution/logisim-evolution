@@ -35,12 +35,12 @@ import java.beans.PropertyChangeSupport;
 import javax.swing.SwingUtilities;
 
 public class BasicZoomModel implements ZoomModel {
-  private double[] zoomOptions;
+  private final double[] zoomOptions;
 
-  private PropertyChangeSupport support;
+  private final PropertyChangeSupport support;
   private double zoomFactor;
   private boolean showGrid;
-  private CanvasPane canvas;
+  private final CanvasPane canvas;
 
   public BasicZoomModel(
       PrefMonitor<Boolean> gridPref,

@@ -95,22 +95,22 @@ public class SoftwaresOptions extends OptionsPanel {
 
   private static final long serialVersionUID = 1L;
 
-  private MyListener myListener = new MyListener();
+  private final MyListener myListener = new MyListener();
 
-  private JCheckBox AutoUpdateCheckbox = new JCheckBox();
-  private JCheckBox questaValidationCheckBox = new JCheckBox();
-  private JLabel questaPathLabel = new JLabel();
-  private JTextField questaPathField = new JTextField(40);
-  private JButton questaPathButton = new JButton();
-  private JLabel QuartusPathLabel = new JLabel();
-  private JTextField QuartusPathField = new JTextField(40);
-  private JButton QuartusPathButton = new JButton();
-  private JLabel ISEPathLabel = new JLabel();
-  private JTextField ISEPathField = new JTextField(40);
-  private JButton ISEPathButton = new JButton();
-  private JLabel VivadoPathLabel = new JLabel();
-  private JTextField VivadoPathField = new JTextField(40);
-  private JButton VivadoPathButton = new JButton();
+  private final JCheckBox AutoUpdateCheckbox = new JCheckBox();
+  private final JCheckBox questaValidationCheckBox = new JCheckBox();
+  private final JLabel questaPathLabel = new JLabel();
+  private final JTextField questaPathField = new JTextField(40);
+  private final JButton questaPathButton = new JButton();
+  private final JLabel QuartusPathLabel = new JLabel();
+  private final JTextField QuartusPathField = new JTextField(40);
+  private final JButton QuartusPathButton = new JButton();
+  private final JLabel ISEPathLabel = new JLabel();
+  private final JTextField ISEPathField = new JTextField(40);
+  private final JButton ISEPathButton = new JButton();
+  private final JLabel VivadoPathLabel = new JLabel();
+  private final JTextField VivadoPathField = new JTextField(40);
+  private final JButton VivadoPathButton = new JButton();
 
   public SoftwaresOptions(PreferencesFrame window) {
     super(window);

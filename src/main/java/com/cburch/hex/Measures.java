@@ -34,7 +34,7 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 
 class Measures {
-  private HexEditor hex;
+  private final HexEditor hex;
   private int headerChars;
   private int cellChars;
   private int headerWidth;

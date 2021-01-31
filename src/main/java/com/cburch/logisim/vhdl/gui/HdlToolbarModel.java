@@ -50,8 +50,8 @@ import java.util.List;
 import javax.swing.Icon;
 
 public class HdlToolbarModel extends AbstractToolbarModel implements HdlModelListener {
-  private HdlContentView editor;
-  private List<ToolbarItem> items;
+  private final HdlContentView editor;
+  private final List<ToolbarItem> items;
 
   HdlToolbarItem hdlImport, hdlExport, hdlValidate;
 

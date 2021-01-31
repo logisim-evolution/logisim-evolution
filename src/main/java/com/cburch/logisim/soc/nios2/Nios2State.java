@@ -80,8 +80,8 @@ public class Nios2State implements SocUpSimulationStateListener,SocProcessorInte
 	private static final int STATUS_RSIE = 1<<23;
 	private static final int STATUS_PIE = 1;
     private static final long serialVersionUID = 1L;
-    private int[] registers;
-    private Boolean[] registers_valid;
+    private final int[] registers;
+    private final Boolean[] registers_valid;
     private int pc;
     private int status;
     private int estatus;
@@ -89,14 +89,14 @@ public class Nios2State implements SocUpSimulationStateListener,SocProcessorInte
     private int ienable;
     private int ipending;
     private int lastRegisterWritten = -1;
-    private LinkedList<TraceInfo> instrTrace;
+    private final LinkedList<TraceInfo> instrTrace;
     private Value lastClock;
-    private SocUpSimulationState simState;
-    private Instance myInstance;
+    private final SocUpSimulationState simState;
+    private final Instance myInstance;
     private boolean visible;
     private Integer entryPoint;
     private boolean programLoaded;
-    private BreakpointPanel bPanel;
+    private final BreakpointPanel bPanel;
 
     public ProcessorState(Instance inst) {
       registers = new int[32];
@@ -389,7 +389,7 @@ public class Nios2State implements SocUpSimulationStateListener,SocProcessorInte
   private int breakVector;
   private int nrOfIrqs;
   private String label;
-  private SocBusInfo attachedBus;
+  private final SocBusInfo attachedBus;
 
   public static final AssemblerInterface ASSEMBLER = new Nios2Assembler(); 
   public static String[] registerABINames = {"zero","at","r2","r3","r4","r5","r6","r7",

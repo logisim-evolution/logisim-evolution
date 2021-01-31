@@ -45,7 +45,7 @@ import java.beans.PropertyChangeListener;
 
 public class LayoutEditHandler extends EditHandler
     implements ProjectListener, LibraryListener, PropertyChangeListener {
-  private Frame frame;
+  private final Frame frame;
 
   LayoutEditHandler(Frame frame) {
     this.frame = frame;

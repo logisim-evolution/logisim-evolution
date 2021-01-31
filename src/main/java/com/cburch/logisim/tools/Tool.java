@@ -45,7 +45,7 @@ import java.util.Set;
 // DRAWING TOOLS
 //
 public abstract class Tool implements AttributeDefaultProvider {
-  private static Cursor dflt_cursor = Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR);
+  private static final Cursor dflt_cursor = Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR);
 
   public Tool cloneTool() {
     return this;

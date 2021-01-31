@@ -77,7 +77,7 @@ class ExpressionView extends JPanel {
 
   private static final long serialVersionUID = 1L;
 
-  private MyListener myListener = new MyListener();
+  private final MyListener myListener = new MyListener();
   private Notation notation = Notation.MATHEMATICAL;
   private ExpressionRenderData renderData;
   private Expression expr;

@@ -37,7 +37,7 @@ import java.util.Collection;
 import java.util.Collections;
 
 public class ModelDeleteHandleAction extends ModelAction {
-  private Handle handle;
+  private final Handle handle;
   private Handle previous;
 
   public ModelDeleteHandleAction(CanvasModel model, Handle handle) {

@@ -897,7 +897,7 @@ public class HexFile {
     ////////////////////////////////////////////////////////
     // old "v2.0 raw" run-length-endoded hex nonsense format
 
-    private long[] data = new long[4096];
+    private final long[] data = new long[4096];
     private long rleCount;
     private long rleValue;
 

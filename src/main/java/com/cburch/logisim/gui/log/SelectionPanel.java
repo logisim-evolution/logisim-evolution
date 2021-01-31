@@ -167,28 +167,28 @@ class SelectionPanel extends LogPanel {
   }
 
   private static final long serialVersionUID = 1L;
-  private Listener listener = new Listener();
-  private ComponentSelector selector;
-  private JButton addTool;
-  private JButton changeBase;
-  private JButton moveUp;
-  private JButton moveDown;
-  private JButton remove;
-  private SelectionList list;
-  private JCheckBox enableChoosePanelCheckBox;
-  private JLabel enableChoosePanelCheckLabel;
-  private JPanel enableChoosePanelCheckPanel;
-  private JLabel chooseClkLabel;
-  private JPanel chooseClkPanel;
+  private final Listener listener = new Listener();
+  private final ComponentSelector selector;
+  private final JButton addTool;
+  private final JButton changeBase;
+  private final JButton moveUp;
+  private final JButton moveDown;
+  private final JButton remove;
+  private final SelectionList list;
+  private final JCheckBox enableChoosePanelCheckBox;
+  private final JLabel enableChoosePanelCheckLabel;
+  private final JPanel enableChoosePanelCheckPanel;
+  private final JLabel chooseClkLabel;
+  private final JPanel chooseClkPanel;
 
   @SuppressWarnings("rawtypes")
-  private JComboBox chooseClkCombo;
+  private final JComboBox chooseClkCombo;
 
-  private JLabel chooseClkFrequencyLabel;
-  private JTextField chooseClkFrequencyTF;
+  private final JLabel chooseClkFrequencyLabel;
+  private final JTextField chooseClkFrequencyTF;
 
   @SuppressWarnings("rawtypes")
-  private JComboBox chooseClkUnitCombo;
+  private final JComboBox chooseClkUnitCombo;
 
   @SuppressWarnings({"rawtypes", "unchecked"})
   public SelectionPanel(LogFrame window) {

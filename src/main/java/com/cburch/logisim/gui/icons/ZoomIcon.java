@@ -41,7 +41,7 @@ public class ZoomIcon  extends AbstractIcon {
   public static int ZOOMOUT = 1;
   public static int NOZOOM = 2;
   
-  private int zoomType;
+  private final int zoomType;
   
   public ZoomIcon() {
     zoomType = NOZOOM;

@@ -38,12 +38,12 @@ import com.cburch.logisim.prefs.AppPreferences;
 public class TreeIcon extends AbstractIcon{
 
   private boolean closed = true;
-  private Rectangle paper = new Rectangle(AppPreferences.IconBorder,AppPreferences.IconBorder,
+  private final Rectangle paper = new Rectangle(AppPreferences.IconBorder,AppPreferences.IconBorder,
       AppPreferences.IconSize-3*AppPreferences.IconBorder,AppPreferences.IconSize-2*AppPreferences.IconBorder);
-  private int[] backsheet = new int[] {0,0,4,0,7,3,13,3,13,15,0,15};
-  private int[] frontsheetClosed = new int[] {0,3,13,3,13,15,0,15};
-  private int[] frontsheetOpen = new int[] {2,11,15,11,13,15,0,15};
-  private int[] shape = new int[] {7,3,4,3,4,4,2,4,4,4,4,8,2,8,4,8,4,9,7,9};
+  private final int[] backsheet = new int[] {0,0,4,0,7,3,13,3,13,15,0,15};
+  private final int[] frontsheetClosed = new int[] {0,3,13,3,13,15,0,15};
+  private final int[] frontsheetOpen = new int[] {2,11,15,11,13,15,0,15};
+  private final int[] shape = new int[] {7,3,4,3,4,4,2,4,4,4,4,8,2,8,4,8,4,9,7,9};
 
   public TreeIcon(boolean closed) {
     this.closed = closed;

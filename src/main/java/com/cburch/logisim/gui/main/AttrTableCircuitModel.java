@@ -38,8 +38,8 @@ import com.cburch.logisim.gui.generic.AttributeSetTableModel;
 import com.cburch.logisim.proj.Project;
 
 public class AttrTableCircuitModel extends AttributeSetTableModel {
-  private Project proj;
-  private Circuit circ;
+  private final Project proj;
+  private final Circuit circ;
 
   public AttrTableCircuitModel(Project proj, Circuit circ) {
     super(circ.getStaticAttributes());

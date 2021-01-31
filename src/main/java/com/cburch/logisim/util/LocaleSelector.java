@@ -40,7 +40,7 @@ import javax.swing.event.ListSelectionListener;
 @SuppressWarnings("rawtypes")
 class LocaleSelector extends JList implements LocaleListener, ListSelectionListener {
   private static class LocaleOption implements Runnable {
-    private Locale locale;
+    private final Locale locale;
     private String text;
 
     LocaleOption(Locale locale) {
@@ -71,7 +71,7 @@ class LocaleSelector extends JList implements LocaleListener, ListSelectionListe
 
   private static final long serialVersionUID = 1L;
 
-  private LocaleOption[] items;
+  private final LocaleOption[] items;
 
   @SuppressWarnings("unchecked")
   LocaleSelector(Locale[] locales) {

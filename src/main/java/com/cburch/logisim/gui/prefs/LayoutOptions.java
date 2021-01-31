@@ -38,9 +38,9 @@ import javax.swing.JPanel;
 
 class LayoutOptions extends OptionsPanel {
   private static final long serialVersionUID = 1L;
-  private PrefBoolean[] checks;
-  private PrefOptionList afterAdd;
-  private PrefOptionList DefaultAppear;
+  private final PrefBoolean[] checks;
+  private final PrefOptionList afterAdd;
+  private final PrefOptionList DefaultAppear;
   private PrefOptionList radix1;
   private PrefOptionList radix2;
 

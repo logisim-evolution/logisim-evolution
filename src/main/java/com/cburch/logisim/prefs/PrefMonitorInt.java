@@ -32,7 +32,7 @@ import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.Preferences;
 
 class PrefMonitorInt extends AbstractPrefMonitor<Integer> {
-  private int dflt;
+  private final int dflt;
   private int value;
 
   PrefMonitorInt(String name, int dflt) {

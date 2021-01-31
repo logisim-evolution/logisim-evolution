@@ -109,10 +109,10 @@ public class BoardList {
     return ret;
   }
 
-  private static String BoardResourcePath =
+  private static final String BoardResourcePath =
       "resources" + File.separator + "logisim" + File.separator + "boards";
 
-  private ArrayList<String> DefinedBoards = new ArrayList<String>();
+  private final ArrayList<String> DefinedBoards = new ArrayList<String>();
 
   public BoardList() {
     String classPath = System.getProperty("java.class.path", File.pathSeparator);

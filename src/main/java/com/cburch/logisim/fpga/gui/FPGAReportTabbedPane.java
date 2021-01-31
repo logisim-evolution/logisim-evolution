@@ -61,36 +61,36 @@ public class FPGAReportTabbedPane extends JTabbedPane implements MouseListener, 
   private static final long serialVersionUID = 1L;
 
   private static final int FONT_SIZE = 12;
-  private static GridLayout consolesLayout = new GridLayout(1, 1);
-  private static int InfoTabIndex = 0;
-  private static int WarningsTabIndex = 1;
-  private static int ErrorsTabIndex = 2;
-  private static int ConsoleTabIndex = 3;
+  private static final GridLayout consolesLayout = new GridLayout(1, 1);
+  private static final int InfoTabIndex = 0;
+  private static final int WarningsTabIndex = 1;
+  private static final int ErrorsTabIndex = 2;
+  private static final int ConsoleTabIndex = 3;
 
-  private JTextArea textAreaInfo;
-  private JComponent panelInfos;
-  private ArrayList<String> InfoMessages;
+  private final JTextArea textAreaInfo;
+  private final JComponent panelInfos;
+  private final ArrayList<String> InfoMessages;
   private FPGACommanderTextWindow InfoWindow;
 
-  private JList<Object> Warnings;
-  private JComponent panelWarnings;
-  private FPGACommanderListModel WarningsList;
-  private FPGACommanderListWindow WarningsWindow;
+  private final JList<Object> Warnings;
+  private final JComponent panelWarnings;
+  private final FPGACommanderListModel WarningsList;
+  private final FPGACommanderListWindow WarningsWindow;
 
-  private JList<Object> Errors;
-  private JComponent panelErrors;
-  private FPGACommanderListModel ErrorsList;
-  private FPGACommanderListWindow ErrorsWindow;
+  private final JList<Object> Errors;
+  private final JComponent panelErrors;
+  private final FPGACommanderListModel ErrorsList;
+  private final FPGACommanderListWindow ErrorsWindow;
 
   private FPGACommanderTextWindow ConsoleWindow;
-  private JTextArea textAreaConsole;
-  private JComponent panelConsole;
-  private ArrayList<String> ConsoleMessages;
+  private final JTextArea textAreaConsole;
+  private final JComponent panelConsole;
+  private final ArrayList<String> ConsoleMessages;
 
   private boolean DRCTraceActive = false;
   private SimpleDRCContainer ActiveDRCContainer;
 
-  private Project MyProject;
+  private final Project MyProject;
 
   public FPGAReportTabbedPane(Project MyProject) {
     super();

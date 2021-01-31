@@ -53,12 +53,12 @@ public class SymbolTable {
   
   public static final int SYMBOL_TABLE_SIZE = 16;
 
-  private Integer st_name;
-  private Integer st_value;
-  private Integer st_size;
-  private Integer st_info;
-  private Integer st_other;
-  private Integer st_shndx;
+  private final Integer st_name;
+  private final Integer st_value;
+  private final Integer st_size;
+  private final Integer st_info;
+  private final Integer st_other;
+  private final Integer st_shndx;
   private String name;
   
   public SymbolTable(byte[] buffer , boolean isLittleEndian, int offset) {

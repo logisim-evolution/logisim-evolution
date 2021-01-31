@@ -85,7 +85,7 @@ public class ReptarLocalBus extends InstanceFactory {
   public static final int IRQ_i = 9;
 
   /* Default Name. Very important for the genration of the VDHL Code */
-  private String defaultLocalBusName = "LocalBus";
+  private final String defaultLocalBusName = "LocalBus";
 
   public ReptarLocalBus() {
     super("ReptarLB", S.getter("repLBComponent"));

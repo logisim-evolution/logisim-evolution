@@ -32,7 +32,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 abstract class AbstractPrefMonitor<E> implements PrefMonitor<E> {
-  private String name;
+  private final String name;
 
   AbstractPrefMonitor(String name) {
     this.name = name;

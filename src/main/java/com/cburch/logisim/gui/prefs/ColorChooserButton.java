@@ -46,8 +46,8 @@ public class ColorChooserButton extends JButton implements PropertyChangeListene
 
   private static final long serialVersionUID = 1L;
   
-  private PrefMonitor<Integer> myMonitor;
-  private Frame frame;
+  private final PrefMonitor<Integer> myMonitor;
+  private final Frame frame;
 
   private class ColorIcon extends AbstractIcon {
     @Override

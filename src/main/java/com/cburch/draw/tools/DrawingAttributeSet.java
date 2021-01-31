@@ -48,7 +48,7 @@ import java.util.ListIterator;
 
 public class DrawingAttributeSet implements AttributeSet, Cloneable {
   private class Restriction extends AbstractAttributeSet implements AttributeListener {
-    private AbstractTool tool;
+    private final AbstractTool tool;
     private List<Attribute<?>> selectedAttrs;
     private List<Attribute<?>> selectedView;
 
@@ -133,7 +133,7 @@ public class DrawingAttributeSet implements AttributeSet, Cloneable {
           });
 
   private EventSourceWeakSupport<AttributeListener> listeners;
-  private List<Attribute<?>> attrs;
+  private final List<Attribute<?>> attrs;
   private List<Object> values;
 
   public DrawingAttributeSet() {

@@ -54,7 +54,7 @@ import java.util.TreeMap;
 
 public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
-  private Circuit MyCircuit;
+  private final Circuit MyCircuit;
 
   public CircuitHDLGeneratorFactory(Circuit source) {
     MyCircuit = source;

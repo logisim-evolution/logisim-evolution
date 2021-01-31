@@ -46,10 +46,10 @@ import javax.swing.JComponent;
 class AboutCredits extends JComponent {
   private static class CreditsLine {
     private int y;
-    private int type;
-    private String text;
-    private Image img;
-    private int imgWidth;
+    private final int type;
+    private final String text;
+    private final Image img;
+    private final int imgWidth;
 
     public CreditsLine(int type, String text) {
       this(type, text, null, 0);
@@ -79,14 +79,14 @@ class AboutCredits extends JComponent {
 
   private static final int HENDRIX_WIDTH = 50;
 
-  private Color[] colorBase;
-  private Paint[] paintSteady;
-  private Font[] font;
+  private final Color[] colorBase;
+  private final Paint[] paintSteady;
+  private final Font[] font;
 
   private int scroll;
-  private float fadeStop;
+  private final float fadeStop;
 
-  private ArrayList<CreditsLine> lines;
+  private final ArrayList<CreditsLine> lines;
   private int initialLines; // number of lines to show in initial freeze
   private int initialHeight; // computed in code based on above
   private int linesHeight; // computed in code based on above

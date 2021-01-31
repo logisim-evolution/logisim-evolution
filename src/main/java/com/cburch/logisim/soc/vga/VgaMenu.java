@@ -50,7 +50,7 @@ import com.cburch.logisim.tools.MenuExtender;
 
 public class VgaMenu implements ActionListener, MenuExtender {
 
-  private Instance instance;
+  private final Instance instance;
   private Frame frame;
   private JMenuItem exportC;
   

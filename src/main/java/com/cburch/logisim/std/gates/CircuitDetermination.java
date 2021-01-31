@@ -292,7 +292,7 @@ abstract class CircuitDetermination {
   }
 
   static class Input extends CircuitDetermination {
-    private String name;
+    private final String name;
     private boolean inverted = false;
 
     private Input(String name) {

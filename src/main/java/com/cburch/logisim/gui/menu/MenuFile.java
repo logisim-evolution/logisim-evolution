@@ -48,18 +48,18 @@ import javax.swing.KeyStroke;
 
 class MenuFile extends Menu implements ActionListener {
   private static final long serialVersionUID = 1L;
-  private LogisimMenuBar menubar;
-  private JMenuItem newi = new JMenuItem();
-  private JMenuItem merge = new JMenuItem();
-  private JMenuItem open = new JMenuItem();
-  private OpenRecent openRecent;
-  private JMenuItem close = new JMenuItem();
-  private JMenuItem save = new JMenuItem();
-  private JMenuItem saveAs = new JMenuItem();
-  private MenuItemImpl print = new MenuItemImpl(this, LogisimMenuBar.PRINT);
-  private MenuItemImpl exportImage = new MenuItemImpl(this, LogisimMenuBar.EXPORT_IMAGE);
-  private JMenuItem prefs = new JMenuItem();
-  private JMenuItem quit = new JMenuItem();
+  private final LogisimMenuBar menubar;
+  private final JMenuItem newi = new JMenuItem();
+  private final JMenuItem merge = new JMenuItem();
+  private final JMenuItem open = new JMenuItem();
+  private final OpenRecent openRecent;
+  private final JMenuItem close = new JMenuItem();
+  private final JMenuItem save = new JMenuItem();
+  private final JMenuItem saveAs = new JMenuItem();
+  private final MenuItemImpl print = new MenuItemImpl(this, LogisimMenuBar.PRINT);
+  private final MenuItemImpl exportImage = new MenuItemImpl(this, LogisimMenuBar.EXPORT_IMAGE);
+  private final JMenuItem prefs = new JMenuItem();
+  private final JMenuItem quit = new JMenuItem();
 
   public MenuFile(LogisimMenuBar menubar) {
     this.menubar = menubar;

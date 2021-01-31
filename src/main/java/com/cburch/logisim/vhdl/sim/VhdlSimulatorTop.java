@@ -58,14 +58,14 @@ import javax.help.UnsupportedOperationException;
  */
 public class VhdlSimulatorTop implements CircuitListener {
 
-  private VhdlSimulatorVhdlTop vhdlTop = new VhdlSimulatorVhdlTop(this);
-  private VhdlSimulatorTclComp tclRun = new VhdlSimulatorTclComp(this);
+  private final VhdlSimulatorVhdlTop vhdlTop = new VhdlSimulatorVhdlTop(this);
+  private final VhdlSimulatorTclComp tclRun = new VhdlSimulatorTclComp(this);
   private VhdlSimulatorTclBinder tclBinder;
-  private SocketClient socketClient = new SocketClient();
+  private final SocketClient socketClient = new SocketClient();
 
-  private Project project;
+  private final Project project;
 
-  private static ArrayList<VhdlSimulatorListener> listeners =
+  private static final ArrayList<VhdlSimulatorListener> listeners =
       new ArrayList<VhdlSimulatorListener>();
 
   private State state = State.DISABLED;

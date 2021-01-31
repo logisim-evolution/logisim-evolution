@@ -45,10 +45,10 @@ class Model {
     }
   }
 
-  private EventSourceWeakSupport<ModelListener> listeners;
+  private final EventSourceWeakSupport<ModelListener> listeners;
   private boolean selected = false;
-  private Project project;
-  private Circuit circuit;
+  private final Project project;
+  private final Circuit circuit;
   private boolean running, paused;
   private TestThread tester;
   private int numPass = 0, numFail = 0;
@@ -56,11 +56,11 @@ class Model {
 
   private TestException[] results;
 
-  private UpdateResultSort myUpdateResultSort = new UpdateResultSort();
+  private final UpdateResultSort myUpdateResultSort = new UpdateResultSort();
 
-  private ArrayList<Integer> failed = new ArrayList<Integer>();
+  private final ArrayList<Integer> failed = new ArrayList<Integer>();
 
-  private ArrayList<Integer> passed = new ArrayList<Integer>();
+  private final ArrayList<Integer> passed = new ArrayList<Integer>();
 
   public Model(Project proj, Circuit circuit) {
     listeners = new EventSourceWeakSupport<ModelListener>();

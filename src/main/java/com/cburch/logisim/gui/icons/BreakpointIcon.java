@@ -40,7 +40,7 @@ import com.cburch.logisim.util.GraphicsUtil;
 
 public class BreakpointIcon implements Icon {
 
-  private int wh = AppPreferences.getScaled(12);
+  private final int wh = AppPreferences.getScaled(12);
 
   @Override
   public void paintIcon(Component c, Graphics g, int x, int y) {

@@ -60,9 +60,9 @@ class TestPanel extends JPanel implements ValueTable.Model {
 
   static final Color failColor = new Color(0xff9999);
 
-  private TestFrame testFrame;
-  private ValueTable table;
-  private MyListener myListener = new MyListener();
+  private final TestFrame testFrame;
+  private final ValueTable table;
+  private final MyListener myListener = new MyListener();
 
   public TestPanel(TestFrame frame) {
     this.testFrame = frame;

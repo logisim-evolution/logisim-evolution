@@ -43,7 +43,7 @@ public class ProjectAddIcon  extends AbstractIcon{
   private boolean removeIcon = false;
   private boolean vhdl = false;
   private boolean deselect = false;
-  private static int[] points = {2,6,6,6,6,2,9,2,9,6,13,6,13,9,9,9,9,13,6,13,6,9,2,9};
+  private static final int[] points = {2,6,6,6,6,2,9,2,9,6,13,6,13,9,9,9,9,13,6,13,6,9,2,9};
   
   public ProjectAddIcon() {
     vhdl = true;  

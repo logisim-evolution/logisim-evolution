@@ -53,7 +53,7 @@ import javax.swing.table.TableColumn;
 
 public class StatisticsDialog extends JDialog implements ActionListener {
   private static class CompareString implements Comparator<String> {
-    private String[] fixedAtBottom;
+    private final String[] fixedAtBottom;
 
     public CompareString(String... fixedAtBottom) {
       this.fixedAtBottom = fixedAtBottom;
@@ -96,7 +96,7 @@ public class StatisticsDialog extends JDialog implements ActionListener {
 
   private static class StatisticsTableModel extends AbstractTableModel {
     private static final long serialVersionUID = 1L;
-    private FileStatistics stats;
+    private final FileStatistics stats;
 
     StatisticsTableModel(FileStatistics stats) {
       this.stats = stats;

@@ -817,27 +817,27 @@ public class Canvas extends JPanel
   private static final Color TICK_RATE_COLOR = new Color(0, 0, 92, 92);
   private static final Font TICK_RATE_FONT = new Font("serif", Font.BOLD, 12);
   // public static BufferedImage image;
-  private Project proj;
+  private final Project proj;
   private Tool drag_tool, temp_tool;
-  private Selection selection;
+  private final Selection selection;
   private MouseMappings mappings;
   private CanvasPane canvasPane;
   private Bounds oldPreferredSize;
-  private MyListener myListener = new MyListener();
-  private MyViewport viewport = new MyViewport();
-  private MyProjectListener myProjectListener = new MyProjectListener();
+  private final MyListener myListener = new MyListener();
+  private final MyViewport viewport = new MyViewport();
+  private final MyProjectListener myProjectListener = new MyProjectListener();
 
-  private TickCounter tickCounter;
+  private final TickCounter tickCounter;
 
-  private CanvasPaintThread paintThread;
+  private final CanvasPaintThread paintThread;
 
-  private CanvasPainter painter;
+  private final CanvasPainter painter;
 
   private volatile boolean paintDirty = false; // only for within paintComponent
 
   private boolean inPaint = false; // only for within paintComponent
 
-  private Object repaintLock = new Object(); // for waitForRepaintDone
+  private final Object repaintLock = new Object(); // for waitForRepaintDone
 
   public Canvas(Project proj) {
     this.proj = proj;

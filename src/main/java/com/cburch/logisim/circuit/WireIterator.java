@@ -36,8 +36,8 @@ class WireIterator implements Iterator<Location> {
   private int curY;
   private int destX;
   private int destY;
-  private int deltaX;
-  private int deltaY;
+  private final int deltaX;
+  private final int deltaY;
   private boolean destReturned;
 
   public WireIterator(Location e0, Location e1) {

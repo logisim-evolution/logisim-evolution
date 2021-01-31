@@ -117,9 +117,9 @@ public class XmlCircuitReader extends CircuitTransaction {
     }
   }
 
-  private XmlReader.ReadContext reader;
+  private final XmlReader.ReadContext reader;
 
-  private List<XmlReader.CircuitData> circuitsData;
+  private final List<XmlReader.CircuitData> circuitsData;
   private boolean IsHolyCross = false;
   private boolean IsEvolution = false;
 

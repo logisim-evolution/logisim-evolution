@@ -39,8 +39,8 @@ import java.util.TreeMap;
 
 public class TickComponentHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
-  private long FpgaClockFrequency;
-  private double TickFrequency;
+  private final long FpgaClockFrequency;
+  private final double TickFrequency;
   // private boolean useFPGAClock;
   private static final String ReloadValueStr = "ReloadValue";
   private static final Integer ReloadValueId = -1;

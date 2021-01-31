@@ -37,7 +37,7 @@ import java.util.List;
 
 public class Tcl extends Library {
 
-  private static FactoryDescription[] DESCRIPTIONS = {
+  private static final FactoryDescription[] DESCRIPTIONS = {
     new FactoryDescription(
         "TclConsoleReds", S.getter("tclConsoleReds"), "tcl.gif", "TclConsoleReds"),
     new FactoryDescription("TclGeneric", S.getter("tclGeneric"), "tcl.gif", "TclGeneric")

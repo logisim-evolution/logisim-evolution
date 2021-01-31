@@ -73,7 +73,7 @@ public class TtyInterface {
   // but this doesn't quite work because on some systems, the keyboard input
   // is not interactively echoed until System.in.read() is invoked.
   private static class StdinThread extends UniquelyNamedThread {
-    private LinkedList<char[]> queue; // of char[]
+    private final LinkedList<char[]> queue; // of char[]
 
     public StdinThread() {
       super("TtyInterface-StdInThread");

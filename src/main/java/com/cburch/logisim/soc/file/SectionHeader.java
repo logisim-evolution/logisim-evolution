@@ -67,19 +67,19 @@ public class SectionHeader {
   public static final int SHT_HIUSER = 0xffffffff;
   
 
-  private Integer sh_name;
-  private Integer sh_type;
+  private final Integer sh_name;
+  private final Integer sh_type;
   private Long sh_flags;
   private Long sh_addr;
-  private Long sh_offset;
+  private final Long sh_offset;
   private Long sh_size;
-  private Integer sh_link;
-  private Integer sh_info;
-  private Long sh_addrAlign;
-  private Long sh_entsize;
-  private boolean is32Bit;
+  private final Integer sh_link;
+  private final Integer sh_info;
+  private final Long sh_addrAlign;
+  private final Long sh_entsize;
+  private final boolean is32Bit;
   private String name;
-  private ArrayList<SymbolTable> symbols;
+  private final ArrayList<SymbolTable> symbols;
   
   public SectionHeader(byte[] buffer , boolean is32Bit, boolean isLittleEndian, int offset) {
     this.is32Bit = is32Bit;

@@ -35,7 +35,7 @@ import javax.swing.JMenuItem;
 class MenuItemImpl extends JMenuItem implements MenuItem {
 
   private static final long serialVersionUID = 1L;
-  private MenuItemHelper helper;
+  private final MenuItemHelper helper;
 
   public MenuItemImpl(Menu menu, LogisimMenuItem menuItem) {
     helper = new MenuItemHelper(this, menu, menuItem);

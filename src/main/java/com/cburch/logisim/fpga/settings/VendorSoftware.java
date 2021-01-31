@@ -39,14 +39,14 @@ public class VendorSoftware {
   public static final char VendorVivado = 2;
   public static final char VendorUnknown = 255;
   public static String[] Vendors = {"Altera", "Xilinx", "Vivado"};
-  private static String XilinxName = "XilinxToolsPath";
-  private static String AlteraName = "AlteraToolsPath";
-  private static String VivadoName = "VivadoToolsPath";
+  private static final String XilinxName = "XilinxToolsPath";
+  private static final String AlteraName = "AlteraToolsPath";
+  private static final String VivadoName = "VivadoToolsPath";
   public static String Unknown = "Unknown";
 
-  private char vendor;
-  private String name;
-  private String[] bin;
+  private final char vendor;
+  private final String name;
+  private final String[] bin;
 
   public VendorSoftware(char vendor, String name, String[] bin) {
     this.vendor = vendor;

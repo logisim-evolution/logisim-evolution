@@ -175,18 +175,18 @@ public class HdlContentEditor extends JDialog implements JInputDialog {
 
   private static final String EXPORT_DIR = "hdl_export";
 
-  private FrameListener frameListener = new FrameListener();
-  private ModelListener modelListener = new ModelListener();
-  private EditorListener editorListener = new EditorListener();
+  private final FrameListener frameListener = new FrameListener();
+  private final ModelListener modelListener = new ModelListener();
+  private final EditorListener editorListener = new EditorListener();
 
   private RSyntaxTextArea editor;
   private HdlModel model;
   private Project project;
 
-  private JButton open = new JButton();
-  private JButton save = new JButton();
-  private JButton validate = new JButton();
-  private JButton close = new JButton();
+  private final JButton open = new JButton();
+  private final JButton save = new JButton();
+  private final JButton validate = new JButton();
+  private final JButton close = new JButton();
 
   public HdlContentEditor(Dialog parent, Project proj, HdlModel model) {
     super(parent, S.get("hdlFrameTitle"), true);

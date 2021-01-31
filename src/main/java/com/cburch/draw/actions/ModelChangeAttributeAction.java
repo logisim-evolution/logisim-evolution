@@ -40,8 +40,8 @@ import java.util.Map;
 import java.util.Set;
 
 public class ModelChangeAttributeAction extends ModelAction {
-  private Map<AttributeMapKey, Object> oldValues;
-  private Map<AttributeMapKey, Object> newValues;
+  private final Map<AttributeMapKey, Object> oldValues;
+  private final Map<AttributeMapKey, Object> newValues;
   private Attribute<?> attr;
 
   public ModelChangeAttributeAction(

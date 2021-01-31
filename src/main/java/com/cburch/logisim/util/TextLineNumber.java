@@ -84,7 +84,7 @@ public class TextLineNumber extends JPanel implements CaretListener, DocumentLis
 
   //  Text component this TextTextLineNumber component is in sync with
 
-  private JTextComponent component;
+  private final JTextComponent component;
 
   //  Properties that can be changed
 

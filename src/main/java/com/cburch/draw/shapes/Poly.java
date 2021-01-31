@@ -45,7 +45,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 public class Poly extends FillableCanvasObject {
-  private boolean closed;
+  private final boolean closed;
   // "handles" should be immutable - create a new array and change using
   // setHandles rather than changing contents
   private Handle[] handles;

@@ -57,7 +57,7 @@ public class RamAttributes extends AbstractAttributeSet {
   static final Attribute<AttributeOption> ATTR_ByteEnables = Attributes.forOption(
           "byteenables", S.getter("ramByteEnables"), new AttributeOption[] {BUS_WITH_BYTEENABLES, BUS_WITHOUT_BYTEENABLES});
   static final Attribute<Boolean> CLEAR_PIN = Attributes.forBoolean("clearpin", S.getter("RamClearPin"));
-  private ArrayList<Attribute<?>> myAttributes = new ArrayList<Attribute<?>>();
+  private final ArrayList<Attribute<?>> myAttributes = new ArrayList<Attribute<?>>();
 
 
   private BitWidth addrBits = BitWidth.create(8);

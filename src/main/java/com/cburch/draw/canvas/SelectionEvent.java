@@ -38,8 +38,8 @@ public class SelectionEvent extends EventObject {
   public static final int ACTION_REMOVED = 1;
   public static final int ACTION_HANDLE = 2;
 
-  private int action;
-  private Collection<CanvasObject> affected;
+  private final int action;
+  private final Collection<CanvasObject> affected;
 
   public SelectionEvent(Selection source, int action, Collection<CanvasObject> affected) {
     super(source);

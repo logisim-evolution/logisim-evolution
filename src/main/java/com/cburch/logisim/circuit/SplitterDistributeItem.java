@@ -38,9 +38,9 @@ import javax.swing.JMenuItem;
 
 class SplitterDistributeItem extends JMenuItem implements ActionListener {
   private static final long serialVersionUID = 1L;
-  private Project proj;
-  private Splitter splitter;
-  private int order;
+  private final Project proj;
+  private final Splitter splitter;
+  private final int order;
 
   public SplitterDistributeItem(Project proj, Splitter splitter, int order) {
     this.proj = proj;

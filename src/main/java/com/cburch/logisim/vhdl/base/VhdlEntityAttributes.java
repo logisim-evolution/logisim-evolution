@@ -99,7 +99,7 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
           "vhdl_" + name, disp, Integer.MIN_VALUE, Integer.MAX_VALUE, g);
   }
 
-  private static List<Attribute<?>> static_attributes =
+  private static final List<Attribute<?>> static_attributes =
       Arrays.asList(
           (Attribute<?>) VhdlEntity.NAME_ATTR,
           StdAttr.LABEL,

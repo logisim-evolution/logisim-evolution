@@ -61,9 +61,9 @@ import com.cburch.logisim.util.StringGetter;
 
 public class Assembler extends AbstractParser implements LocaleListener {
 
-  private AssemblerInterface assembler;
-  private HashMap<GutterIconInfo,StringGetter> errorMarkers;
-  private RTextScrollPane pane;
+  private final AssemblerInterface assembler;
+  private final HashMap<GutterIconInfo,StringGetter> errorMarkers;
+  private final RTextScrollPane pane;
   private AssemblerInfo assemblerInfo;
   private long EntryPoint;
   

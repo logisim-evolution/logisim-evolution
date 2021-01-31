@@ -34,13 +34,13 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 public class VariableList {
-  private ArrayList<VariableListListener> listeners = new ArrayList<VariableListListener>();
-  private int maxSize;
-  private ArrayList<Var> data;
-  private ArrayList<String> names;
+  private final ArrayList<VariableListListener> listeners = new ArrayList<VariableListListener>();
+  private final int maxSize;
+  private final ArrayList<Var> data;
+  private final ArrayList<String> names;
   public final List<Var> vars;
   public final List<String> bits;
-  private ArrayList<VariableList> others;
+  private final ArrayList<VariableList> others;
 
   public VariableList(int maxSize) {
     this.maxSize = maxSize;

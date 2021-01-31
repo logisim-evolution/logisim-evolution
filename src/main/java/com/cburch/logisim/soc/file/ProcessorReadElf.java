@@ -59,9 +59,9 @@ public class ProcessorReadElf {
   private static final int NOT_SUPPORTED_YET_ERROR = 12;
   private static final int MEM_LOAD_ERROR = 13;
 
-  private SocProcessorInterface cpu;
-  private int architecture;
-  private File elfFile;
+  private final SocProcessorInterface cpu;
+  private final int architecture;
+  private final File elfFile;
   private FileInputStream elfFileStream;
   private int status;
   private ElfHeader elfHeader;

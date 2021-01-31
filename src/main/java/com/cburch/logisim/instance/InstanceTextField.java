@@ -54,7 +54,7 @@ import java.awt.Graphics;
 
 public class InstanceTextField implements AttributeListener, TextFieldListener, TextEditable {
   private Canvas canvas;
-  private InstanceComponent comp;
+  private final InstanceComponent comp;
   private TextField field;
   private Attribute<String> labelAttr;
   private Attribute<Font> fontAttr;

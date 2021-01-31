@@ -53,7 +53,7 @@ public class Wiring extends Library {
           S.getter("wiringGateAttr"),
           new AttributeOption[] {GATE_TOP_LEFT, GATE_BOTTOM_RIGHT});
 
-  private static Tool[] ADD_TOOLS = {
+  private static final Tool[] ADD_TOOLS = {
     new AddTool(SplitterFactory.instance),
     new AddTool(Pin.FACTORY),
     new AddTool(Probe.FACTORY),
@@ -64,7 +64,7 @@ public class Wiring extends Library {
     new AddTool(Constant.FACTORY),
   };
 
-  private static FactoryDescription[] DESCRIPTIONS = {
+  private static final FactoryDescription[] DESCRIPTIONS = {
     new FactoryDescription("Power", S.getter("powerComponent"), "power.gif", "Power"),
     new FactoryDescription("Ground", S.getter("groundComponent"), "ground.gif", "Ground"),
     new FactoryDescription("NoConnect",S.getter("noConnectionComponent"),"noconnect.gif","DoNotConnect"),

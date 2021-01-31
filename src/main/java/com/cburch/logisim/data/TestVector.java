@@ -58,7 +58,7 @@ public class TestVector {
 
   private class TestVectorReader {
 
-    private BufferedReader in;
+    private final BufferedReader in;
     private StringTokenizer curLine;
 
     public TestVectorReader(BufferedReader in) throws IOException {

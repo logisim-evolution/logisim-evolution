@@ -67,17 +67,17 @@ public class Download extends DownloadBase implements Runnable, WindowListener {
   private VendorDownload Downloader;
   private String TopLevelSheet;
   private double TickFrequency;
-  private static int BasicSteps = 5;
+  private static final int BasicSteps = 5;
   private String MapFileName;
   ArrayList<String> Entities = new ArrayList<String>();
   ArrayList<String> Architectures = new ArrayList<String>();
 
   private Process Executable;
-  private Object lock = new Object();
+  private final Object lock = new Object();
   private JFrame parent;
 
   
-  private ArrayList<ActionListener> Listeners = new ArrayList<ActionListener>();
+  private final ArrayList<ActionListener> Listeners = new ArrayList<ActionListener>();
 
   public Download(
 	      Project MyProject,

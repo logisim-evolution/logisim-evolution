@@ -62,7 +62,7 @@ public class VhdlSimulatorVhdlTop {
   static final Logger logger = LoggerFactory.getLogger(VhdlSimulatorVhdlTop.class);
 
   private boolean valid = false;
-  private VhdlSimulatorTop vhdlSimulator;
+  private final VhdlSimulatorTop vhdlSimulator;
   private boolean firstPort;
   private boolean firstComp;
   private boolean firstMap;

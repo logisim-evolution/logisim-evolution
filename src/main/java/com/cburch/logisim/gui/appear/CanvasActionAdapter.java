@@ -41,7 +41,7 @@ import java.util.Map;
 
 public class CanvasActionAdapter extends com.cburch.logisim.proj.Action {
   private class ActionTransaction extends CircuitTransaction {
-    private boolean forward;
+    private final boolean forward;
 
     ActionTransaction(boolean forward) {
       this.forward = forward;
@@ -66,8 +66,8 @@ public class CanvasActionAdapter extends com.cburch.logisim.proj.Action {
     }
   }
 
-  private Circuit circuit;
-  private Action canvasAction;
+  private final Circuit circuit;
+  private final Action canvasAction;
 
   private boolean wasDefault;
 

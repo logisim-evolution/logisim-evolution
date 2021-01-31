@@ -103,31 +103,31 @@ public class Project {
 
   private static final int MAX_UNDO_SIZE = 64;
 
-  private Simulator simulator = new Simulator();
+  private final Simulator simulator = new Simulator();
   private VhdlSimulatorTop VhdlSimulator = null;
 
   private LogisimFile file;
   private HdlModel hdlModel;
   private CircuitState circuitState; // active sim state
-  private HashMap<Circuit, CircuitState> recentRootState = new HashMap<>(); // most recent root sim state for each circuit
-  private LinkedList<CircuitState> allRootStates = new LinkedList<>(); // all root sim states, in display order
+  private final HashMap<Circuit, CircuitState> recentRootState = new HashMap<>(); // most recent root sim state for each circuit
+  private final LinkedList<CircuitState> allRootStates = new LinkedList<>(); // all root sim states, in display order
   private Frame frame = null;
   private OptionsFrame optionsFrame = null;
   private LogFrame logFrame = null;
   private TestFrame testFrame = null;
   private ChronoFrame chronoFrame = null;
   private Tool tool = null;
-  private LinkedList<ActionData> undoLog = new LinkedList<ActionData>();
+  private final LinkedList<ActionData> undoLog = new LinkedList<ActionData>();
   private int undoMods = 0;
-  private LinkedList<ActionData> redoLog = new LinkedList<ActionData>();
-  private EventSourceWeakSupport<ProjectListener> projectListeners =
+  private final LinkedList<ActionData> redoLog = new LinkedList<ActionData>();
+  private final EventSourceWeakSupport<ProjectListener> projectListeners =
       new EventSourceWeakSupport<ProjectListener>();
-  private EventSourceWeakSupport<LibraryListener> fileListeners =
+  private final EventSourceWeakSupport<LibraryListener> fileListeners =
       new EventSourceWeakSupport<LibraryListener>();
-  private EventSourceWeakSupport<CircuitListener> circuitListeners =
+  private final EventSourceWeakSupport<CircuitListener> circuitListeners =
       new EventSourceWeakSupport<CircuitListener>();
   private Dependencies depends;
-  private MyListener myListener = new MyListener();
+  private final MyListener myListener = new MyListener();
   private boolean startupScreen = false;
   private boolean forcedDirty = false;
 

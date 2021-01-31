@@ -44,9 +44,9 @@ import java.awt.Graphics2D;
 import javax.swing.Icon;
 
 public class LogisimToolbarItem implements ToolbarItem {
-  private MenuListener menu;
+  private final MenuListener menu;
   private Icon icon;
-  private LogisimMenuItem action;
+  private final LogisimMenuItem action;
   private StringGetter toolTip;
 
   public LogisimToolbarItem(MenuListener menu, String iconName, LogisimMenuItem action, StringGetter toolTip) {

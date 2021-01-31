@@ -60,9 +60,9 @@ import javax.swing.filechooser.FileFilter;
 
 public class AnalyzerTexWriter {
 
-  private static String SECTION_SEP =
+  private static final String SECTION_SEP =
       "%===============================================================================";
-  private static String SUB_SECTION_SEP =
+  private static final String SUB_SECTION_SEP =
       "%-------------------------------------------------------------------------------";
 
   public static int MAX_TRUTH_TABLE_ROWS = 64;
@@ -349,7 +349,7 @@ public class AnalyzerTexWriter {
     return content.toString();
   }
 
-  private static double OFFSET = 0.2;
+  private static final double OFFSET = 0.2;
 
   private static String getCovers(String name, AnalyzerModel model) {
     StringBuffer content = new StringBuffer();

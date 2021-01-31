@@ -324,13 +324,13 @@ public class OutputExpressions {
     return true;
   }
 
-  private MyListener myListener = new MyListener();
+  private final MyListener myListener = new MyListener();
 
-  private AnalyzerModel model;
+  private final AnalyzerModel model;
 
-  private HashMap<String, OutputData> outputData = new HashMap<String, OutputData>();
+  private final HashMap<String, OutputData> outputData = new HashMap<String, OutputData>();
 
-  private ArrayList<OutputExpressionsListener> listeners =
+  private final ArrayList<OutputExpressionsListener> listeners =
       new ArrayList<OutputExpressionsListener>();
 
   private boolean updatingTable = false;

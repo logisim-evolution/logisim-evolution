@@ -36,9 +36,9 @@ import com.cburch.logisim.util.StringUtil;
 import javax.swing.JTextField;
 
 public class DurationAttribute extends Attribute<Integer> {
-  private int min;
-  private int max;
-  private boolean TickUnits;
+  private final int min;
+  private final int max;
+  private final boolean TickUnits;
 
   public DurationAttribute(String name, StringGetter disp, int min, int max, boolean IsTicks) {
     super(name, disp);

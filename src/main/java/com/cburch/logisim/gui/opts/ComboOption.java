@@ -45,9 +45,9 @@ class ComboOption {
     combo.setSelectedItem(combo.getItemAt(0));
   }
 
-  private Object value;
+  private final Object value;
 
-  private StringGetter getter;
+  private final StringGetter getter;
 
   ComboOption(AttributeOption value) {
     this.value = value;

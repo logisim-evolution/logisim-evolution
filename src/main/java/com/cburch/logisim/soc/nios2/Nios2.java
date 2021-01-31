@@ -78,7 +78,7 @@ public class Nios2 extends SocInstanceFactory implements DynamicElementProvider 
   public static int DONE = 13;
   public static int IRQSTART = 14;
   
-  private static String[] pinName = {"clock","reset","dataa","datab","start","n","a","readra","b","readrb",
+  private static final String[] pinName = {"clock","reset","dataa","datab","start","n","a","readra","b","readrb",
                                      "c","writerc","result","done"};
 
   public Nios2() {

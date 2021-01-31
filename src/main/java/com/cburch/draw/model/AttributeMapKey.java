@@ -31,8 +31,8 @@ package com.cburch.draw.model;
 import com.cburch.logisim.data.Attribute;
 
 public class AttributeMapKey {
-  private Attribute<?> attr;
-  private CanvasObject object;
+  private final Attribute<?> attr;
+  private final CanvasObject object;
 
   public AttributeMapKey(Attribute<?> attr, CanvasObject object) {
     this.attr = attr;

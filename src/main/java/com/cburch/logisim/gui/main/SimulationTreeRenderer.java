@@ -41,8 +41,8 @@ import javax.swing.tree.DefaultTreeCellRenderer;
 
 public class SimulationTreeRenderer extends DefaultTreeCellRenderer {
   private static class RendererIcon implements Icon {
-    private ComponentFactory factory;
-    private boolean isCurrentView;
+    private final ComponentFactory factory;
+    private final boolean isCurrentView;
 
     RendererIcon(ComponentFactory factory, boolean isCurrentView) {
       this.factory = factory;

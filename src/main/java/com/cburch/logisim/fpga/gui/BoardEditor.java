@@ -60,16 +60,16 @@ import com.cburch.logisim.util.LocaleListener;
 public class BoardEditor implements ActionListener, ComponentListener, 
         LocaleListener, BoardManipulatorListener {
 
-  private JFrame panel;
+  private final JFrame panel;
   private BoardInformation TheBoard = new BoardInformation();
-  private JTextField BoardNameInput;
-  private JButton saveButton = new JButton();
-  private JButton loadButton = new JButton();
-  private JButton importButton = new JButton();
-  private JButton cancelButton = new JButton();
-  private JButton fpgaButton = new JButton();
-  private JLabel LocText = new JLabel();
-  private BoardManipulator picturepanel;
+  private final JTextField BoardNameInput;
+  private final JButton saveButton = new JButton();
+  private final JButton loadButton = new JButton();
+  private final JButton importButton = new JButton();
+  private final JButton cancelButton = new JButton();
+  private final JButton fpgaButton = new JButton();
+  private final JLabel LocText = new JLabel();
+  private final BoardManipulator picturepanel;
   private static final String CancelStr = "cancel";
   private static final String FPGAStr = "fpgainfo";
 

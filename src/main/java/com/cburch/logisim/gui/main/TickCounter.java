@@ -37,8 +37,8 @@ import com.cburch.logisim.circuit.SimulatorListener;
 class TickCounter implements SimulatorListener {
   private static final int QUEUE_LENGTH = 1000;
 
-  private long[] queueTimes;
-  private double[] queueRates;
+  private final long[] queueTimes;
+  private final double[] queueRates;
   private int queueStart;
   private int queueSize;
   private double tickFrequency;

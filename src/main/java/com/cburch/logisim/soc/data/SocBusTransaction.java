@@ -67,8 +67,12 @@ public class SocBusTransaction {
   public static final int HalfWordAccess = 2;
   public static final int WordAccess = 3;
    
-  private int address,writeData,readData,type,access;
-  private Object master;
+  private final int address;
+  private final int writeData;
+  private int readData;
+  private final int type;
+  private final int access;
+  private final Object master;
   private Component slave;
   private int Error;
   private boolean hidden;

@@ -142,9 +142,9 @@ abstract class AbstractFlipFlop extends InstanceFactory {
   }
 
   private static final int STD_PORTS = 5;
-  private int numInputs;
+  private final int numInputs;
 
-  private Attribute<AttributeOption> triggerAttribute;
+  private final Attribute<AttributeOption> triggerAttribute;
 
   protected AbstractFlipFlop(
       String name, String iconName, StringGetter desc, int numInputs, boolean allowLevelTriggers) {

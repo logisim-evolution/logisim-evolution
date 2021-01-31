@@ -36,7 +36,7 @@ import com.cburch.logisim.prefs.AppPreferences;
 public class TTLRegisterData extends ClockState implements InstanceData {
 
   private Value value;
-  private BitWidth bits;
+  private final BitWidth bits;
 
   public TTLRegisterData(BitWidth width) {
     value =

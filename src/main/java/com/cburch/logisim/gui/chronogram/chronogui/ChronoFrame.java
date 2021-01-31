@@ -76,7 +76,7 @@ public class ChronoFrame extends LFrame implements KeyListener, ActionListener, 
   /** Listener to the button, the scrollbars, splitPane divider */
   private class MyListener implements ActionListener, AdjustmentListener {
 
-    private ChronoFrame chronoFrame;
+    private final ChronoFrame chronoFrame;
 
     public MyListener(ChronoFrame cf) {
       chronoFrame = cf;
@@ -162,17 +162,17 @@ public class ChronoFrame extends LFrame implements KeyListener, ActionListener, 
   // split pane
   private RightPanel rightPanel;
   private LeftPanel leftPanel;
-  private CommonPanelParam commonPanelParam;
+  private final CommonPanelParam commonPanelParam;
   private JScrollPane leftScroll;
   private JScrollPane rightScroll;
   private JSplitPane mainSplitPane;
   private TimelineParam timelineParam;
   // event managers
-  private MyListener myListener = new MyListener(this);
+  private final MyListener myListener = new MyListener(this);
   private DrawAreaEventManager mDrawAreaEventManager;
   private DrawAreaManager mDrawAreaManager;
   // graphical
-  private int dividerLocation = 353;
+  private final int dividerLocation = 353;
   // mode
   private boolean realTimeMode;
   private ChronoModelEventHandler chronoModelEventHandler;

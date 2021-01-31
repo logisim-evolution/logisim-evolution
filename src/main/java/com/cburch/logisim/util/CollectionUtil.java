@@ -36,8 +36,8 @@ import java.util.Set;
 
 public class CollectionUtil {
   private static class UnionList<E> extends AbstractList<E> {
-    private List<? extends E> a;
-    private List<? extends E> b;
+    private final List<? extends E> a;
+    private final List<? extends E> b;
 
     UnionList(List<? extends E> a, List<? extends E> b) {
       this.a = a;
@@ -62,8 +62,8 @@ public class CollectionUtil {
   }
 
   private static class UnionSet<E> extends AbstractSet<E> {
-    private Set<? extends E> a;
-    private Set<? extends E> b;
+    private final Set<? extends E> a;
+    private final Set<? extends E> b;
 
     UnionSet(Set<? extends E> a, Set<? extends E> b) {
       this.a = a;

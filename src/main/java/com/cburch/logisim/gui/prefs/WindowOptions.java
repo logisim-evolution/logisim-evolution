@@ -54,13 +54,13 @@ import javax.swing.JTextArea;
 
 class WindowOptions extends OptionsPanel {
   private static final long serialVersionUID = 1L;
-  private PrefBoolean[] checks;
-  private PrefOptionList toolbarPlacement;
-  private ZoomSlider ZoomValue;
-  private JLabel lookfeelLabel;
-  private JLabel ZoomLabel;
-  private JLabel Importanta;
-  private JTextArea Importantb;
+  private final PrefBoolean[] checks;
+  private final PrefOptionList toolbarPlacement;
+  private final ZoomSlider ZoomValue;
+  private final JLabel lookfeelLabel;
+  private final JLabel ZoomLabel;
+  private final JLabel Importanta;
+  private final JTextArea Importantb;
 
   private class ZoomChange implements ChangeListener, ActionListener {
 
@@ -97,9 +97,9 @@ class WindowOptions extends OptionsPanel {
     }
   }
 
-  private JComboBox<String> LookAndFeel;
+  private final JComboBox<String> LookAndFeel;
   private int Index = 0;
-  private LookAndFeelInfo[] LFInfos;
+  private final LookAndFeelInfo[] LFInfos;
 
   public WindowOptions(PreferencesFrame window) {
     super(window);

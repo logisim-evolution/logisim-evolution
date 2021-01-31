@@ -36,10 +36,10 @@ class PrefMonitorStringOpts extends AbstractPrefMonitor<String> {
     return a == null ? b == null : a.equals(b);
   }
 
-  private String[] opts;
+  private final String[] opts;
   private String value;
 
-  private String dflt;
+  private final String dflt;
 
   PrefMonitorStringOpts(String name, String[] opts, String dflt) {
     super(name);

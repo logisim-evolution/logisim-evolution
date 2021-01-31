@@ -36,7 +36,7 @@ import java.awt.Graphics;
 import com.cburch.logisim.prefs.AppPreferences;
 
 public class ToolbarSeparator implements ToolbarItem {
-  private int size;
+  private final int size;
 
   public ToolbarSeparator(int size) {
     this.size = size;

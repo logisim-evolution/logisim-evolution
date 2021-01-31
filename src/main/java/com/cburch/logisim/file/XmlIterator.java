@@ -69,7 +69,7 @@ public class XmlIterator<E extends Node> implements Iterable<E>, Iterator<E>, Cl
     return new XmlIterator<Element>(node.getElementsByTagName(tagName));
   }
 
-  private NodeList list;
+  private final NodeList list;
   private int index;
 
   public XmlIterator(NodeList nodes) {

@@ -31,7 +31,7 @@ package com.cburch.logisim.prefs;
 import com.cburch.logisim.data.AttributeOption;
 
 public class ConvertEvent {
-  private AttributeOption value;
+  private final AttributeOption value;
 
   public ConvertEvent(AttributeOption value) {
     this.value = value;

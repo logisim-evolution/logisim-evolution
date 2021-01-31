@@ -35,8 +35,8 @@ import java.awt.LayoutManager2;
 import java.util.ArrayList;
 
 public class TableLayout implements LayoutManager2 {
-  private int colCount;
-  private ArrayList<Component[]> contents;
+  private final int colCount;
+  private final ArrayList<Component[]> contents;
   private int curRow;
   private int curCol;
   private Dimension prefs;
