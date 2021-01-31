@@ -180,24 +180,23 @@ public class TruthtableTextFile {
               String.format("Line %d: Separator '|' must appear only once.", lineno));
         continue;
       }
-      String name = value;
-      if (name.matches("[a-zA-Z][a-zA-Z_0-9]*")) {
-        cur.add(new Var(name, 1));
+      if (value.matches("[a-zA-Z][a-zA-Z_0-9]*")) {
+        cur.add(new Var(value, 1));
       } else {
-        Matcher m = NAME_FORMAT.matcher(name);
+        Matcher m = NAME_FORMAT.matcher(value);
         if (!m.matches())
           throw new IOException(
-              String.format("Line %d: Invalid variable name '%s'.", lineno, name));
+              String.format("Line %d: Invalid variable name '%s'.", lineno, value));
         String n = m.group(1);
         int a, b;
         try {
           a = Integer.parseInt(m.group(2));
           b = Integer.parseInt(m.group(3));
         } catch (NumberFormatException e) {
-          throw new IOException(String.format("Line %d: Invalid bit range in '%s'.", lineno, name));
+          throw new IOException(String.format("Line %d: Invalid bit range in '%s'.", lineno, value));
         }
         if (a < 1 || b != 0)
-          throw new IOException(String.format("Line %d: Invalid bit range in '%s'.", lineno, name));
+          throw new IOException(String.format("Line %d: Invalid bit range in '%s'.", lineno, value));
         try {
           cur.add(new Var(n, a - b + 1));
         } catch (IllegalArgumentException e) {

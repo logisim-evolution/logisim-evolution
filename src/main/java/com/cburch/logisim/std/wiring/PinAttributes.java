@@ -136,9 +136,8 @@ class PinAttributes extends ProbeAttributes {
       if (type == Newtype) return;
       type = Newtype;
     } else if (attr == Pin.ATTR_PULL) {
-      Object newPull = value;
-      if (pull.equals(newPull)) return;
-      pull = newPull;
+    if (pull.equals(value)) return;
+      pull = value;
     } else if (attr == PROBEAPPEARANCE) {
       AttributeOption NewAppearance = (AttributeOption) value;
       if (Appearance.equals(NewAppearance)) return;

@@ -1583,8 +1583,7 @@ public class Netlist implements CircuitListener {
           CorrectLabel.getCorrectLabel(
               Inport.GetComponent().getAttributeSet().getValue(StdAttr.LABEL));
       if (Comp.equals(Source)) {
-        int index = MyInputPorts.indexOf(Inport);
-        return index;
+        return MyInputPorts.indexOf(Inport);
       }
     }
     for (NetlistComponent InOutport : MyInOutPorts) {
@@ -1592,8 +1591,7 @@ public class Netlist implements CircuitListener {
           CorrectLabel.getCorrectLabel(
               InOutport.GetComponent().getAttributeSet().getValue(StdAttr.LABEL));
       if (Comp.equals(Source)) {
-        int index = MyInOutPorts.indexOf(InOutport);
-        return index;
+        return MyInOutPorts.indexOf(InOutport);
       }
     }
     for (NetlistComponent Outport : MyOutputPorts) {
@@ -1601,8 +1599,7 @@ public class Netlist implements CircuitListener {
           CorrectLabel.getCorrectLabel(
               Outport.GetComponent().getAttributeSet().getValue(StdAttr.LABEL));
       if (Comp.equals(Source)) {
-        int index = MyOutputPorts.indexOf(Outport);
-        return index;
+        return MyOutputPorts.indexOf(Outport);
       }
     }
     return -1;

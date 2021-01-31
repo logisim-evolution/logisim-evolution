@@ -116,8 +116,7 @@ public abstract class InstanceFactory extends AbstractComponentFactory {
   @Override
   public AttributeSet createAttributeSet() {
     Attribute<?>[] as = attrs;
-    AttributeSet ret = as == null ? AttributeSets.EMPTY : AttributeSets.fixedSet(as, defaults);
-    return ret;
+    return as == null ? AttributeSets.EMPTY : AttributeSets.fixedSet(as, defaults);
   }
 
   @Override

@@ -480,8 +480,7 @@ public class Loader implements LibraryLoader {
     File selected = chooser.getSelectedFile();
     if (selected == null) return null;
     try {
-      String vhdl = HdlFile.load(selected);
-      return vhdl;
+      return HdlFile.load(selected);
     } catch (IOException e) {
       OptionPane.showMessageDialog(
           window, e.getMessage(), S.get("hexOpenErrorTitle"), OptionPane.ERROR_MESSAGE);

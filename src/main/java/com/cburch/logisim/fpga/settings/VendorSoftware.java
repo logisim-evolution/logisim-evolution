@@ -108,14 +108,11 @@ public class VendorSoftware {
   public static VendorSoftware getSoftware(char vendor) {
     switch (vendor) {
       case VendorAltera:
-        VendorSoftware altera = new VendorSoftware(VendorAltera, AlteraName, load(VendorAltera));
-        return altera;
+        return new VendorSoftware(VendorAltera, AlteraName, load(VendorAltera));
       case VendorXilinx:
-        VendorSoftware ise = new VendorSoftware(VendorXilinx, XilinxName, load(VendorXilinx));
-        return ise;
+        return new VendorSoftware(VendorXilinx, XilinxName, load(VendorXilinx));
       case VendorVivado:
-        VendorSoftware vivado = new VendorSoftware(VendorVivado, VivadoName, load(VendorVivado));
-        return vivado;
+        return new VendorSoftware(VendorVivado, VivadoName, load(VendorVivado));
       default:
         return null;
     }

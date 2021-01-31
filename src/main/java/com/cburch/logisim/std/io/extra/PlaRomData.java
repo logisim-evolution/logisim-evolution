@@ -86,8 +86,7 @@ public class PlaRomData implements InstanceData {
   @Override
   public PlaRomData clone() {
     try {
-      PlaRomData ret = (PlaRomData) super.clone();
-      return ret;
+      return (PlaRomData) super.clone();
     } catch (CloneNotSupportedException e) {
       return null;
     }

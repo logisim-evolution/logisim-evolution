@@ -62,8 +62,7 @@ class DiagramState implements InstanceData {
   @Override
   public DiagramState clone() {
     try {
-      DiagramState ret = (DiagramState) super.clone();
-      return ret;
+      return (DiagramState) super.clone();
     } catch (CloneNotSupportedException e) {
       return null;
     }

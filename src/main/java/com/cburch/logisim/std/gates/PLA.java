@@ -255,8 +255,7 @@ class PLA extends InstanceFactory {
   @Override
   public Bounds getOffsetBounds(AttributeSet attrs) {
     Direction dir = attrs.getValue(StdAttr.FACING);
-    Bounds ret = Bounds.create(0, -25, 50, 50).rotate(Direction.EAST, dir, 0, 0);
-    return ret;
+    return Bounds.create(0, -25, 50, 50).rotate(Direction.EAST, dir, 0, 0);
   }
 
   @Override

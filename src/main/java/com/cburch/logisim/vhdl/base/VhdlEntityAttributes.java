@@ -132,8 +132,7 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
       attrs[6 + i] = a.get(i);
       value[6 + i] = g[i].getDefaultValue();
     }
-    AttributeSet ret = AttributeSets.fixedSet(attrs, value);
-    return ret;
+    return AttributeSets.fixedSet(attrs, value);
   }
 
   private VhdlContent content;
@@ -240,8 +239,7 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
       return (V) SimName;
     }
     if (genericValues.containsKey((Attribute<Integer>) attr)) {
-      V v = (V) genericValues.get((Attribute<Integer>) attr);
-      return v;
+      return (V) genericValues.get((Attribute<Integer>) attr);
     }
     return null;
   }

@@ -100,23 +100,21 @@ public class GridPainter {
 
   public void paintGrid(Graphics g) {
     Rectangle clip = g.getClipBounds();
-    Component dest = destination;
     double zoom = zoomFactor;
-    int size = gridSize;
 
     if (!showGrid) return;
 
     Image img = gridImage;
     int w = gridImageWidth;
     if (img == null) {
-      paintGridOld(g, size, zoom, clip);
+      paintGridOld(g, gridSize, zoom, clip);
       return;
     }
     int x0 = (clip.x / w) * w; // round down to multiple of w
     int y0 = (clip.y / w) * w;
     for (int x = 0; x < clip.width + w; x += w) {
       for (int y = 0; y < clip.height + w; y += w) {
-        g.drawImage(img, x0 + x, y0 + y, dest);
+        g.drawImage(img, x0 + x, y0 + y, destination);
       }
     }
   }

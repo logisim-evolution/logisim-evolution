@@ -260,12 +260,10 @@ public class Probe extends InstanceFactory {
       }
     } else {
       String text = radix.toString(value);
-      int ypos = bds.getY() + bds.getHeight() / 2;
-      int cy = ypos;
       int cx = bds.getX() + bds.getWidth() - LabelValueXOffset - 2;
       for (int k = text.length() - 1; k >= 0; k--) {
         GraphicsUtil.drawText(
-            g, text.substring(k, k + 1), cx, cy - 1, GraphicsUtil.H_RIGHT, GraphicsUtil.H_CENTER);
+            g, text.substring(k, k + 1), cx, bds.getY() + bds.getHeight() / 2 - 1, GraphicsUtil.H_RIGHT, GraphicsUtil.H_CENTER);
         cx -= Pin.DIGIT_WIDTH;
       }
     }

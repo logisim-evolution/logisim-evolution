@@ -119,8 +119,7 @@ public class PlaRomPanel extends JPanel implements MouseListener, MouseMotionLis
 
   private int getColumn(int x) {
     x += (20 - IMAGE_BORDER);
-    int column = x / 20;
-    return column;
+    return x / 20;
   }
 
   @Override
@@ -133,8 +132,7 @@ public class PlaRomPanel extends JPanel implements MouseListener, MouseMotionLis
 
   private int getRow(int y) {
     y -= (20 + IMAGE_BORDER);
-    int row = y / 20;
-    return row;
+    return y / 20;
   }
 
   @Override

@@ -624,8 +624,7 @@ public abstract class Expression {
       }
     });
     badness = badnessList.toArray(new Integer[badnessList.size()]);
-    String result = notation.equals(Notation.LaTeX) ?"$"+text.toString()+"$" : text.toString();
-    return result;
+    return notation.equals(Notation.LaTeX) ?"$"+text.toString()+"$" : text.toString();
   }
   
   public Integer[] getBadness() {

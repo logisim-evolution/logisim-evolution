@@ -109,8 +109,7 @@ public class FPGABoards implements ActionListener {
 
     @Override
     public int getSize() {
-      int size = NrOfExternalBoards();
-      return size;
+      return NrOfExternalBoards();
     }
 
     @Override

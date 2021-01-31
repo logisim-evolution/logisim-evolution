@@ -556,8 +556,7 @@ public class VariableTab extends AnalyzerTab {
     public Object getCellEditorValue() {
       String name = field.getText().trim();
       int w = (Integer)width.getSelectedItem();
-      Var v = new Var(name, w);
-      return v;
+      return new Var(name, w);
     }
 
     @Override

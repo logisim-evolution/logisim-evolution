@@ -58,18 +58,17 @@ public class OutputExpressions {
           }
         }
       } else if (type == VariableListEvent.REPLACE) {
-        Var oldVar = v;
         Var newVar = model.getInputs().vars.get(event.getIndex());
         for (String output : outputData.keySet()) {
-          for (int b = 0; b < oldVar.width && b < newVar.width; b++) {
+          for (int b = 0; b < v.width && b < newVar.width; b++) {
             OutputData data = getOutputData(output, false);
-            if (data != null) data.replaceInput(oldVar.bitName(b), newVar.bitName(b));
+            if (data != null) data.replaceInput(v.bitName(b), newVar.bitName(b));
           }
-          for (int b = newVar.width; b < oldVar.width; b++) {
+          for (int b = newVar.width; b < v.width; b++) {
             OutputData data = getOutputData(output, false);
-            if (data != null) data.removeInput(oldVar.bitName(b));
+            if (data != null) data.removeInput(v.bitName(b));
           }
-          if (oldVar.width < newVar.width) {
+          if (v.width < newVar.width) {
             OutputData data = getOutputData(output, false);
             if (data != null) data.invalidate(false, false);
           }

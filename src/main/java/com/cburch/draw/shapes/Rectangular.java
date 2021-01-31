@@ -74,11 +74,9 @@ abstract class Rectangular extends FillableCanvasObject {
           && contains(x - tol, y - tol, w + tol2, h + tol2, loc)
           && !contains(x + tol, y + tol, w - tol2, h - tol2, loc);
     } else if (type == DrawAttr.PAINT_STROKE_FILL) {
-      int stroke = getStrokeWidth();
-      int tol2 = stroke;
-      int tol = tol2 / 2;
-      return isInRect(qx, qy, x - tol, y - tol, w + tol2, h + tol2)
-          && contains(x - tol, y - tol, w + tol2, h + tol2, loc);
+      int tol = getStrokeWidth() / 2;
+      return isInRect(qx, qy, x - tol, y - tol, w + getStrokeWidth(), h + getStrokeWidth())
+          && contains(x - tol, y - tol, w + getStrokeWidth(), h + getStrokeWidth(), loc);
     } else {
       return false;
     }

@@ -246,10 +246,9 @@ public class PioState implements SocBusSlaveInterface {
     int index = inputGeneratesIrq() ? 2 : 1;
     int nrOfBits = nrOfIOs.getWidth();
     int outputStart = index + (direction == PioAttributes.PORT_INOUT ? nrOfIOs.getWidth() : 0);
-    int inputStart = index;
     int inputs = 0;
     for (int i = 0 ; i < nrOfBits ; i++) {
-      if (state.getPortValue(inputStart+i) == Value.TRUE)
+      if (state.getPortValue(index +i) == Value.TRUE)
         inputs |= 1 << i;
     }
     if (inputGeneratesIrq()) {

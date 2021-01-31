@@ -133,8 +133,7 @@ class CounterAttributes extends AbstractAttributeSet {
       BitWidth width = base.getValue(StdAttr.WIDTH);
       long newVal = ((Long) value).longValue() & width.getMask();
       if (newVal != oldVal) {
-        V val = (V) Long.valueOf(newVal);
-        value = val;
+        value = (V) Long.valueOf(newVal);
       }
     }
     base.setValue(attr, value);

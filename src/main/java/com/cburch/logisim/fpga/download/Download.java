@@ -443,17 +443,15 @@ public class Download extends DownloadBase implements Runnable, WindowListener {
     if (Main.hasGui()) {
       String[] choices = new String[devices.size()];
       for (int i = 0; i < devices.size(); i++) choices[i] = devices.get(i);
-      String choice =
-          (String)
-              OptionPane.showInputDialog(
-                  null,
-                  S.fmt("FPGAMultipleBoards", devices.size()),
-                  S.get("FPGABoardSelection"),
-                  OptionPane.QUESTION_MESSAGE,
-                  null,
-                  choices,
-                  choices[0]);
-      return choice;
+      return (String)
+          OptionPane.showInputDialog(
+              null,
+              S.fmt("FPGAMultipleBoards", devices.size()),
+              S.get("FPGABoardSelection"),
+              OptionPane.QUESTION_MESSAGE,
+              null,
+              choices,
+              choices[0]);
     } else {
       /* TODO: add none gui selection */
       return null;

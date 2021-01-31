@@ -62,8 +62,7 @@ public class BoardReaderClass {
     ImageXmlFactory reader = new ImageXmlFactory();
     reader.SetCodeTable(CodeTable);
     reader.SetCompressedString(PixelData);
-    BufferedImage result = reader.GetPicture(width, height);
-    return result;
+    return reader.GetPicture(width, height);
   }
 
   public BoardInformation GetBoardInformation() {

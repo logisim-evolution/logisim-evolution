@@ -260,8 +260,7 @@ public class CircuitAttributes extends AbstractAttributeSet {
 
   @Override
   public boolean isToSave(Attribute<?> attr) {
-    Attribute<?>[] statics = STATIC_ATTRS;
-    for (Attribute<?> aStatic : statics) {
+    for (Attribute<?> aStatic : STATIC_ATTRS) {
       if (aStatic == attr)
         return false;
     }

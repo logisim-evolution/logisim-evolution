@@ -226,8 +226,7 @@ public class Startup implements AWTEventListener {
           if (ret.loadFile != null) {
             logger.error("{}", S.get("loadMultipleError"));
           }
-          File f = new File(args[i]);
-          ret.loadFile = f;
+          ret.loadFile = new File(args[i]);
         } else {
           logger.error("{}", S.get("loadNeedsFileError"));
           return null;

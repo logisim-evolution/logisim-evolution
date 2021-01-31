@@ -303,8 +303,7 @@ public class TruthTable {
   }
 
   public Iterable<Integer> getVisibleRowIndexes(int row) {
-    Row r = rows.get(row);
-    return r;
+    return rows.get(row);
   }
 
   public Entry getInputEntry(int idx, int col) {
@@ -562,11 +561,10 @@ public class TruthTable {
         int bitIndex = event.getBitIndex();
         for (int b = 0; b < v.width; b++) columns.remove(bitIndex - b);
       } else if (action == VariableListEvent.REPLACE) {
-        Var oldVar = v;
         int bitIndex = event.getBitIndex();
         Var newVar = getOutputVariable(event.getIndex());
-        int lost = oldVar.width - newVar.width;
-        int pos = bitIndex + 1 - oldVar.width;
+        int lost = v.width - newVar.width;
+        int pos = bitIndex + 1 - v.width;
         if (lost > 0) {
           while (lost-- != 0) columns.remove(pos);
         } else if (lost < 0) {
@@ -595,12 +593,11 @@ public class TruthTable {
           for (int b = v.width - 1; b >= 0; b--) moveInput(newIndex - delta - b, newIndex - b);
         }
       } else if (action == VariableListEvent.REPLACE) {
-        Var oldVar = v;
         int bitIndex = event.getBitIndex();
         Var newVar = getInputVariable(event.getIndex());
-        int lost = oldVar.width - newVar.width;
+        int lost = v.width - newVar.width;
         int oldCount = getInputColumnCount() + lost;
-        int pos = bitIndex + 1 - oldVar.width;
+        int pos = bitIndex + 1 - v.width;
         if (lost > 0) {
           while (lost-- != 0) removeInput(pos, oldCount--);
         } else if (lost < 0) {
@@ -706,12 +703,11 @@ public class TruthTable {
             column = moveInputForOutput(column, newIndex - delta - b, newIndex - b);
         }
       } else if (action == VariableListEvent.REPLACE) {
-        Var oldVar = v;
         int bitIndex = event.getBitIndex();
         Var newVar = getInputVariable(event.getIndex());
-        int lost = oldVar.width - newVar.width;
+        int lost = v.width - newVar.width;
         int oldCount = getInputColumnCount() + lost;
-        int pos = bitIndex + 1 - oldVar.width;
+        int pos = bitIndex + 1 - v.width;
         if (lost > 0) {
           while (lost-- != 0) column = removeInputForOutput(column, pos, oldCount--);
         } else if (lost < 0) {

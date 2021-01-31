@@ -63,9 +63,8 @@ class PrefMonitorStringOpts extends AbstractPrefMonitor<String> {
       String oldValue = value;
       String newValue = prefs.get(name, dflt);
       if (!isSame(oldValue, newValue)) {
-        String[] o = opts;
         String chosen = null;
-        for (String s : o) {
+        for (String s : opts) {
           if (isSame(s, newValue)) {
             chosen = s;
             break;

@@ -309,12 +309,10 @@ public class Value {
   public boolean equals(Object other_obj) {
     if (!(other_obj instanceof Value)) return false;
     Value other = (Value) other_obj;
-    boolean ret =
-        this.width == other.width
-            && this.error == other.error
-            && this.unknown == other.unknown
-            && this.value == other.value;
-    return ret;
+    return this.width == other.width
+        && this.error == other.error
+        && this.unknown == other.unknown
+        && this.value == other.value;
   }
 
   public Value extendWidth(int newWidth, Value others) {

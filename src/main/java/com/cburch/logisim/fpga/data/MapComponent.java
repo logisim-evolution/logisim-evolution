@@ -626,13 +626,12 @@ public class MapComponent {
         if (pinmap == null) {
           s.append(NO_MAP);
         } else {
-          CircuitMapInfo map = pinmap;
-          if (map.isConst())
-            s.append(Long.toString(map.getConstValue()));
-          else if (map.isOpen())
+          if (pinmap.isConst())
+            s.append(Long.toString(pinmap.getConstValue()));
+          else if (pinmap.isOpen())
             s.append(OPEN_KEY);
-          else if (map.isSinglePin())
-            s.append(map.getRectangle().getXpos() + "_" + map.getRectangle().getYpos() + "_" + map
+          else if (pinmap.isSinglePin())
+            s.append(pinmap.getRectangle().getXpos() + "_" + pinmap.getRectangle().getYpos() + "_" + pinmap
                 .getIOId());
           else
             s.append(NO_MAP);

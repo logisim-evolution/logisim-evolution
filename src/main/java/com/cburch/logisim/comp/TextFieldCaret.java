@@ -143,8 +143,7 @@ class TextFieldCaret implements Caret, TextFieldListener {
     int valign = field.getVAlign();
     Font font = field.getFont();
     Bounds bds = Bounds.create(GraphicsUtil.getTextBounds(g, font, curText, x, y, halign, valign));
-    Bounds box = bds.add(field.getBounds(g)).expand(3);
-    return box;
+    return bds.add(field.getBounds(g)).expand(3);
   }
 
   public void keyPressed(KeyEvent e) {

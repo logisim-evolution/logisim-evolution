@@ -353,8 +353,7 @@ public class Register extends InstanceFactory implements DynamicElementProvider 
     if (state.getPortValue(CLR) == Value.TRUE) {
       data.value = Value.createKnown(dataWidth, 0);
     } else if (triggered && state.getPortValue(EN) != Value.FALSE) {
-      Value in = state.getPortValue(IN);
-      data.value = in;
+      data.value = state.getPortValue(IN);
     }
 
     state.setPort(OUT, data.value, DELAY);

@@ -458,14 +458,14 @@ public class TikZInfo implements Cloneable {
       if (closePath)
         return true;
         boolean inside = true;
-        double x1 = x;
         double x2 = x+width;
-        double y1 = y;
         double y2 = y+height;
         if (startPoint != null)
-          inside &= (startPoint.getX() >= x1 && startPoint.getX() <= x2) && (startPoint.getY() >= y1 && startPoint.getY() <= y2);
+          inside &= (startPoint.getX() >= (double) x && startPoint.getX() <= x2) && (startPoint.getY() >= (double) y
+              && startPoint.getY() <= y2);
         if (endPoint != null)
-          inside &= (endPoint.getX() >= x1 && endPoint.getX() <= x2) && (endPoint.getY() >= y1 && endPoint.getY() <= y2);
+          inside &= (endPoint.getX() >= (double) x && endPoint.getX() <= x2) && (endPoint.getY() >= (double) y
+              && endPoint.getY() <= y2);
         return inside;
       }
     }
