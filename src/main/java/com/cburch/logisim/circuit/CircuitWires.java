@@ -614,7 +614,7 @@ class CircuitWires {
     } else {
       // Simulation thread.
       try {
-        final BundleMap ret[] = new BundleMap[1];
+        final BundleMap[] ret = new BundleMap[1];
         SwingUtilities.invokeAndWait(
             new Runnable() {
               public void run() {

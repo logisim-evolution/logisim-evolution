@@ -94,7 +94,7 @@ public class TestVector {
     }
 
     private void parseData() throws IOException {
-      Value vals[] = new Value[columnName.length];
+      Value[] vals = new Value[columnName.length];
       for (int i = 0; i < columnName.length; i++) {
         String t = curLine.nextToken();
 

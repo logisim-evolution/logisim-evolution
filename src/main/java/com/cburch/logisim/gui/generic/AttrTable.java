@@ -174,7 +174,7 @@ public class AttrTable extends JPanel implements LocaleListener {
       AttrTableModel attrModel = tableModel.attrModel;
       AttrTableModelRow row = attrModel.getRow(rowIndex);
       AttrTableModelRow[] rows = null;
-      int rowIndexes[] = null;
+      int[] rowIndexes = null;
       multiEditActive = false;
 
       if ((columnIndex == 0) || (rowIndex == 0)) {

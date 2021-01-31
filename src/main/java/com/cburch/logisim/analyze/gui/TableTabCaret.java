@@ -159,7 +159,7 @@ class TableTabCaret {
       TruthTable model = table.getTruthTable();
       int n = (indexes == null ? 0 : indexes.size());
       if (n == 0) return null;
-      int rows[] = new int[n];
+      int[] rows = new int[n];
       for (int i = 0; i < n; i++) rows[i] = model.findVisibleRowContaining(indexes.get(i));
       Arrays.sort(rows);
       return rows;
@@ -251,7 +251,7 @@ class TableTabCaret {
         if (updated) {
           // Update the cursor position
           cursor = invalid;
-          int rows[] = allRowsContaining(oldCursorIdx);
+          int[] rows = allRowsContaining(oldCursorIdx);
           if (rows != null) {
             if (newEntry != Entry.ONE) cursor = new Pt(rows[0], oldCursor.col);
             else cursor = new Pt(rows[rows.length - 1], oldCursor.col);
@@ -260,7 +260,7 @@ class TableTabCaret {
           // Update the selection
           markA = cursor;
           markB = invalid;
-          int marks[] = allRowsContaining(oldMarkIdx);
+          int[] marks = allRowsContaining(oldMarkIdx);
           if (marks != null) {
             int n = marks.length;
             if (isContiguous(marks)) {
@@ -415,7 +415,7 @@ class TableTabCaret {
   private Listener listener = new Listener();
   private TableTab table;
   private Pt cursor, markA, markB, hover, invalid, home;
-  private int hilightRows[];
+  private int[] hilightRows;
   private boolean cleanHilight;
 
   private void clearHilight() {
@@ -630,7 +630,7 @@ class TableTabCaret {
     return new Rectangle(x0 - 2, y0 - 2, (x1 - x0) + 4, (y1 - y0) + 4);
   }
 
-  private boolean isContiguous(int rows[]) {
+  private boolean isContiguous(int[] rows) {
     if (rows.length <= 1) return true;
     for (int i = 1; i < rows.length; i++) {
       if (Math.abs(rows[i] - rows[i]) > 1) return false;

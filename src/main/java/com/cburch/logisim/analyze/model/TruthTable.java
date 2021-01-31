@@ -51,7 +51,7 @@ public class TruthTable {
 
   private class Row implements Iterable<Integer> {
     // todo: probably more efficient to store this in baseIdx/dcMask format.
-    Entry inputs[];
+    Entry[] inputs;
 
     Row(int idx, int numInputs, int mask) {
       inputs = new Entry[numInputs];
@@ -62,7 +62,7 @@ public class TruthTable {
       }
     }
 
-    Row(Entry entries[], int numInputs) {
+    Row(Entry[] entries, int numInputs) {
       inputs = new Entry[numInputs];
       for (int i = 0; i < numInputs; i++) inputs[i] = entries[i];
     }
@@ -338,7 +338,7 @@ public class TruthTable {
     return true;
   }
 
-  private void mergeOutputs(int idx1, int idx2, boolean changed[]) {
+  private void mergeOutputs(int idx1, int idx2, boolean[] changed) {
     if (idx1 == idx2) return;
     for (int col = 0; col < columns.size(); col++) {
       Entry[] column = columns.get(col);
@@ -350,7 +350,7 @@ public class TruthTable {
     }
   }
 
-  private boolean setDontCare(Row r, int dc, boolean force, boolean changed[]) {
+  private boolean setDontCare(Row r, int dc, boolean force, boolean[] changed) {
     Row rNew = new Row(r.baseIndex(), r.inputs.length, r.dcMask() | dc);
     int base = rNew.baseIndex();
     if (!force) {
@@ -387,7 +387,7 @@ public class TruthTable {
     if (r.inputs[col] == value) return false;
     int dc = (1 << (r.inputs.length - 1 - col));
     if (value == Entry.DONT_CARE) {
-      boolean changed[] = new boolean[columns.size()];
+      boolean[] changed = new boolean[columns.size()];
       if (!setDontCare(r, dc, force, changed)) return false;
       fireRowsChanged();
       for (int ocol = 0; ocol < columns.size(); ocol++) {
@@ -438,13 +438,13 @@ public class TruthTable {
     int ni = getInputColumnCount();
     int no = getOutputColumnCount();
     ArrayList<Row> newRows = new ArrayList<>(newEntries.size());
-    for (Entry values[] : newEntries) {
+    for (Entry[] values : newEntries) {
       if (values.length != ni + no) throw new IllegalArgumentException("wrong column count");
       newRows.add(new Row(values, ni));
     }
     // check that newRows has no intersections
     List<Var> ivars = getInputVariables();
-    int taken[] = new int[getRowCount()];
+    int[] taken = new int[getRowCount()];
     for (int i = 0; i < newRows.size(); i++) {
       Row r = newRows.get(i);
       for (Integer idx : r) {
@@ -483,7 +483,7 @@ public class TruthTable {
     rows = newRows;
     initColumns();
 
-    for (Entry values[] : newEntries) {
+    for (Entry[] values : newEntries) {
       Row r = new Row(values, ni);
       for (int col = 0; col < no; col++) {
         Entry value = values[ni + col];
@@ -660,7 +660,7 @@ public class TruthTable {
     private void removeInput(int index, int oldCount) {
       // force an Entry column of each row.input to 'x', then remove it
       int b = (1 << (oldCount - 1 - index)); // _0001000
-      boolean changed[] = new boolean[columns.size()];
+      boolean[] changed = new boolean[columns.size()];
       for (int i = 0; i < rows.size(); i++) {
         Row r = rows.get(i);
         if (r.inputs[index] == Entry.DONT_CARE) continue;

@@ -72,8 +72,8 @@ public class PortIO extends InstanceFactory {
 
   private static class PortState implements InstanceData, Cloneable {
 
-    Value pin[]; // pindata = usrdata + indata
-    Value usr[]; // usrdata
+    Value[] pin; // pindata = usrdata + indata
+    Value[] usr; // usrdata
     int size;
 
     public PortState(int size) {
@@ -360,8 +360,8 @@ public class PortIO extends InstanceFactory {
 
     GraphicsUtil.switchToWidth(g, 2);
     g.setColor(Color.DARK_GRAY);
-    int bx[] = {1, 1, 5, w-6, w-2, w-2, 1};
-    int by[] = {20, h-8, h-4, h-4, h-8, 20, 20};
+    int[] bx = {1, 1, 5, w-6, w-2, w-2, 1};
+    int[] by = {20, h-8, h-4, h-4, h-8, 20, 20};
     g.fillPolygon(bx, by, 6);
     g.setColor(Color.BLACK);
     GraphicsUtil.switchToWidth(g, 1);

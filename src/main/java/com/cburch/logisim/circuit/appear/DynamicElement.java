@@ -113,7 +113,7 @@ public abstract class DynamicElement extends AbstractCanvasObject {
 
     public static Path fromSvgString(String s, Circuit circuit) throws IllegalArgumentException {
       if (!s.startsWith("/")) throw new IllegalArgumentException("Bad path: " + s);
-      String parts[] = s.substring(1).split("(?<!\\\\)/");
+      String[] parts = s.substring(1).split("(?<!\\\\)/");
       InstanceComponent[] elt = new InstanceComponent[parts.length];
       for (int i = 0; i < parts.length; i++) {
         String ss = parts[i];

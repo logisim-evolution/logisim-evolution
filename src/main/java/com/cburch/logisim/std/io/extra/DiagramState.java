@@ -37,7 +37,7 @@ class DiagramState implements InstanceData {
   private byte usedcell = -1;
   private Value LastClock;
   private boolean moveback = false;
-  private Boolean diagram[][];
+  private Boolean[][] diagram;
   private byte Inputs, Length; // current inputs and length (number of states)
   private byte clocknumber;
 
@@ -127,7 +127,7 @@ class DiagramState implements InstanceData {
       Length = length;
       clocknumber = (byte) (clocknumber + (Length - oldlength) / 2);
       // create a copy of old boolean matrix
-      Boolean olddiagram[][] = Arrays.copyOf(diagram, diagram.length);
+      Boolean[][] olddiagram = Arrays.copyOf(diagram, diagram.length);
       diagram = new Boolean[Inputs][Length];
       // set all to false
       clear();

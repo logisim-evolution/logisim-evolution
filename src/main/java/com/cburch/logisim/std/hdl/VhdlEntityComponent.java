@@ -301,7 +301,7 @@ public class VhdlEntityComponent extends InstanceFactory {
 
         String busValue = parameters[1];
 
-        Value vector_values[] = new Value[busValue.length()];
+        Value[] vector_values = new Value[busValue.length()];
 
         int k = busValue.length() - 1;
         for (char bit : busValue.toCharArray()) {
@@ -335,7 +335,7 @@ public class VhdlEntityComponent extends InstanceFactory {
 
         /* If it is an output */
         if (p.getType() == 2) {
-          Value vector_values[] = new Value[p.getFixedBitWidth().getWidth()];
+          Value[] vector_values = new Value[p.getFixedBitWidth().getWidth()];
           for (int k = 0; k < p.getFixedBitWidth().getWidth(); k++) {
             vector_values[k] = Value.UNKNOWN;
           }

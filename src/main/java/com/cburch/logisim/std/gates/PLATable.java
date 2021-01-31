@@ -290,9 +290,9 @@ public class PLATable {
       outBits = truncate(outBits, newOutSize);
     }
 
-    static char[] truncate(char b[], int n) {
+    static char[] truncate(char[] b, int n) {
       if (b.length == n) return b;
-      char a[] = new char[n];
+      char[] a = new char[n];
       for (int i = 0; i < n && i < b.length; i++) a[i] = b[i];
       for (int i = b.length; i < n; i++) a[i] = ZERO;
       return a;
