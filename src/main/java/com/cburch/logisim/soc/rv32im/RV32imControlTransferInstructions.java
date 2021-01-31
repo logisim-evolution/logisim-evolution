@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
