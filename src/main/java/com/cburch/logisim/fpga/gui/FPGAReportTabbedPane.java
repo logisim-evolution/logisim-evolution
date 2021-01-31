@@ -421,9 +421,9 @@ public class FPGAReportTabbedPane extends JTabbedPane implements MouseListener, 
   @Override
   public void mouseReleased(MouseEvent e) {
     boolean SourceIsWarningsWindow =
-        (WarningsWindow == null) ? false : e.getSource().equals(WarningsWindow.getListObject());
+        WarningsWindow != null && e.getSource().equals(WarningsWindow.getListObject());
     boolean SourceIsErrorsWindow =
-        (ErrorsWindow == null) ? false : e.getSource().equals(ErrorsWindow.getListObject());
+        ErrorsWindow != null && e.getSource().equals(ErrorsWindow.getListObject());
     if (e.getSource().equals(Errors) || SourceIsErrorsWindow) {
       clearDRCTrace();
       int idx = -1;

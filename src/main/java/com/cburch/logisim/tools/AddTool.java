@@ -151,7 +151,7 @@ public class AddTool extends Tool implements PropertyChangeListener {
     this.attrs = new FactoryAttributes(source);
     attrs.addAttributeListener(new MyAttributeListener());
     Boolean value = (Boolean) source.getFeature(ComponentFactory.SHOULD_SNAP, attrs);
-    this.shouldSnap = value == null ? true : value.booleanValue();
+    this.shouldSnap = value == null || value.booleanValue();
     if (this.attrs.containsAttribute(StdAttr.APPEARANCE)) {
       AppPreferences.DefaultAppearance.addPropertyChangeListener(this);
     }
@@ -344,7 +344,7 @@ public class AddTool extends Tool implements PropertyChangeListener {
       if (ret != null) {
         AttributeSet base = getBaseAttributes();
         Boolean value = (Boolean) ret.getFeature(ComponentFactory.SHOULD_SNAP, base);
-        shouldSnap = value == null ? true : value.booleanValue();
+        shouldSnap = value == null || value.booleanValue();
       }
       factory = ret;
       sourceLoadAttempted = true;

@@ -87,7 +87,7 @@ class SearchNode implements Comparable<SearchNode> {
       SearchNode o = (SearchNode) other;
 
       return (this.loc.equals(o.loc)
-          && (this.dir == null ? o.dir == null : (o.dir == null ? false : this.dir.equals(o.dir)))
+          && (this.dir == null ? o.dir == null : (o.dir != null && this.dir.equals(o.dir)))
           && this.dest.equals(o.dest));
 
       /*

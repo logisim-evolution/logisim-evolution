@@ -38,7 +38,7 @@ class Assignments {
 
   public boolean get(String variable) {
     Boolean value = map.get(variable);
-    return value != null ? value.booleanValue() : false;
+    return value != null && value.booleanValue();
   }
 
   public void put(String variable, boolean value) {

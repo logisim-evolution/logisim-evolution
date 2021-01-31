@@ -438,7 +438,7 @@ public class OutputExpressions {
 
   public boolean isExpressionMinimal(String output) {
     OutputData data = getOutputData(output, false);
-    return data == null ? true : data.isExpressionMinimal();
+    return data == null || data.isExpressionMinimal();
   }
 
   public void removeOutputExpressionsListener(OutputExpressionsListener l) {

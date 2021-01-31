@@ -343,7 +343,9 @@ public class Ram extends Mem {
     Object trigger = state.getAttributeValue(StdAttr.TRIGGER);
     Value weValue = state.getPortValue(RamAppearance.getWEIndex(0, attrs));
     boolean async = trigger.equals(StdAttr.TRIG_HIGH) || trigger.equals(StdAttr.TRIG_LOW);
-    boolean edge = async ? false :  myState.setClock(state.getPortValue(RamAppearance.getClkIndex(0, attrs)), trigger);
+    boolean edge =
+        !async && myState
+            .setClock(state.getPortValue(RamAppearance.getClkIndex(0, attrs)), trigger);
     boolean weAsync = (trigger.equals(StdAttr.TRIG_HIGH) && weValue.equals(Value.TRUE)) || 
                       (trigger.equals(StdAttr.TRIG_LOW) && weValue.equals(Value.FALSE));
     boolean weTriggered = (async && weAsync) || (edge && weValue.equals(Value.TRUE));

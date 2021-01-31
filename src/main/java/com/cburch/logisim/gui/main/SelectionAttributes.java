@@ -136,7 +136,7 @@ class SelectionAttributes extends AbstractAttributeSet {
 
   private static boolean haveSameElements(Collection<Component> a, Collection<Component> b) {
     if (a == null) {
-      return b == null ? true : b.isEmpty();
+      return b == null || b.isEmpty();
     } else if (b == null) {
       return a.isEmpty();
     } else if (a.size() != b.size()) {
@@ -265,7 +265,7 @@ class SelectionAttributes extends AbstractAttributeSet {
     } else {
       int i = findIndex(attr);
       boolean[] ro = readOnly;
-      return i >= 0 && i < ro.length ? ro[i] : true;
+      return i < 0 || i >= ro.length || ro[i];
     }
   }
 

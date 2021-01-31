@@ -74,7 +74,7 @@ class SelectionBase {
     Boolean shouldSnapValue =
         (Boolean)
             comp.getFactory().getFeature(ComponentFactory.SHOULD_SNAP, comp.getAttributeSet());
-    return shouldSnapValue == null ? true : shouldSnapValue.booleanValue();
+    return shouldSnapValue == null || shouldSnapValue.booleanValue();
   }
 
   static final Logger logger = LoggerFactory.getLogger(SelectionBase.class);

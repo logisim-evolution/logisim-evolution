@@ -490,7 +490,7 @@ public class MapComponent {
     }
     if (nrOpens != 0 && nrOpens == NrOfPins) return true;
     if (nrConstants != 0 && nrConstants == NrOfPins) return true;
-    if (nrMaps != 0 && nrMaps == NrOfPins) return bothSides ? io.isCompletelyMappedBy(this) : true;
+    if (nrMaps != 0 && nrMaps == NrOfPins) return !bothSides || io.isCompletelyMappedBy(this);
     return false;
   }
   
