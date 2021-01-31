@@ -167,10 +167,10 @@ public abstract class DownloadBase {
       MyReporter.AddFatalError("Unable to create directory: \"" + ProjectDir + "\"");
       return false;
     }
-    for (int i = 0; i < HDLPaths.length; i++) {
-      if (!GenDirectory(ProjectDir + HDLPaths[i])) {
+    for (String hdlPath : HDLPaths) {
+      if (!GenDirectory(ProjectDir + hdlPath)) {
         MyReporter.AddFatalError(
-            "Unable to create directory: \"" + ProjectDir + HDLPaths[i] + "\"");
+            "Unable to create directory: \"" + ProjectDir + hdlPath + "\"");
         return false;
       }
     }

@@ -52,8 +52,8 @@ public class RV32imEnvironmentCallAndBreakpoints implements AssemblerExecutionIn
   
   public ArrayList<String> getInstructions() {
     ArrayList<String> opcodes = new ArrayList<String>();
-    for (int i = 0 ; i < AsmOpcodes.length ; i++)
-      opcodes.add(AsmOpcodes[i]);
+    for (String asmOpcode : AsmOpcodes)
+      opcodes.add(asmOpcode);
     return opcodes;
   };
 

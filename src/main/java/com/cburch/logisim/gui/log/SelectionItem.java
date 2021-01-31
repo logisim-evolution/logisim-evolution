@@ -57,9 +57,9 @@ public class SelectionItem implements AttributeListener, CircuitListener {
 
     if (path != null) {
       model.getCircuitState().getCircuit().addCircuitListener(this);
-      for (int i = 0; i < path.length; i++) {
-        path[i].getAttributeSet().addAttributeListener(this);
-        SubcircuitFactory circFact = (SubcircuitFactory) path[i].getFactory();
+      for (Component component : path) {
+        component.getAttributeSet().addAttributeListener(this);
+        SubcircuitFactory circFact = (SubcircuitFactory) component.getFactory();
         circFact.getSubcircuit().addCircuitListener(this);
       }
     }
@@ -153,9 +153,9 @@ public class SelectionItem implements AttributeListener, CircuitListener {
 
   public Value fetchValue(CircuitState root) {
     CircuitState cur = root;
-    for (int i = 0; i < path.length; i++) {
-      SubcircuitFactory circFact = (SubcircuitFactory) path[i].getFactory();
-      cur = circFact.getSubstate(cur, path[i]);
+    for (Component component : path) {
+      SubcircuitFactory circFact = (SubcircuitFactory) component.getFactory();
+      cur = circFact.getSubstate(cur, component);
     }
     Loggable log = (Loggable) comp.getFeature(Loggable.class);
     return log == null ? Value.NIL : log.getLogValue(cur, option);

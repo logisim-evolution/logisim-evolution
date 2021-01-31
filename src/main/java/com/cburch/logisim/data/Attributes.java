@@ -409,9 +409,9 @@ public class Attributes {
 
     @Override
     public V parse(String value) {
-      for (int i = 0; i < vals.length; i++) {
-        if (value.equals(vals[i].toString())) {
-          return vals[i];
+      for (V val : vals) {
+        if (value.equals(val.toString())) {
+          return val;
         }
       }
       throw new NumberFormatException("value not among choices");

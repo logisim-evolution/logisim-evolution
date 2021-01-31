@@ -186,8 +186,7 @@ public class MenuSimulate extends Menu {
       runToggle.setSelected(sim.isRunning());
       ticksEnabled.setSelected(sim.isTicking());
       double freq = sim.getTickFrequency();
-      for (int i = 0; i < tickFreqs.length; i++) {
-        TickFrequencyChoice item = tickFreqs[i];
+      for (TickFrequencyChoice item : tickFreqs) {
         item.setSelected(freq == item.freq);
       }
     }
@@ -241,19 +240,19 @@ public class MenuSimulate extends Menu {
 
   public static ArrayList<String> getTickFrequencyStrings() {
     ArrayList<String> result = new ArrayList<String>();
-    for (int i = 0; i < SupportedTickFrequencies.length; i++) {
-      if (SupportedTickFrequencies[i] < 1000) {
+    for (Double supportedTickFrequency : SupportedTickFrequencies) {
+      if (supportedTickFrequency < 1000) {
         String hzStr;
-        if (Math.abs(SupportedTickFrequencies[i] - Math.round(SupportedTickFrequencies[i]))
+        if (Math.abs(supportedTickFrequency - Math.round(supportedTickFrequency))
             < 0.0001) {
-          hzStr = "" + (int) Math.round(SupportedTickFrequencies[i]);
+          hzStr = "" + (int) Math.round(supportedTickFrequency);
         } else {
-          hzStr = "" + SupportedTickFrequencies[i];
+          hzStr = "" + supportedTickFrequency;
         }
         result.add(StringUtil.format(S.get("simulateTickFreqItem"), hzStr));
       } else {
         String kHzStr;
-        double kf = Math.round(SupportedTickFrequencies[i] / 100) / 10.0;
+        double kf = Math.round(supportedTickFrequency / 100) / 10.0;
         if (kf == Math.round(kf)) {
           kHzStr = "" + (int) kf;
         } else {
@@ -419,8 +418,8 @@ public class MenuSimulate extends Menu {
     tickFull.setText(S.get("simulateTickFullItem"));
     ticksEnabled.setText(S.get("simulateTickItem"));
     tickFreq.setText(S.get("simulateTickFreqMenu"));
-    for (int i = 0; i < tickFreqs.length; i++) {
-      tickFreqs[i].localeChanged();
+    for (TickFrequencyChoice freq : tickFreqs) {
+      freq.localeChanged();
     }
     downStateMenu.setText(S.get("simulateDownStateMenu"));
     upStateMenu.setText(S.get("simulateUpStateMenu"));
@@ -481,8 +480,8 @@ public class MenuSimulate extends Menu {
 
     if (currentSim != oldSim) {
       double freq = currentSim == null ? 1.0 : currentSim.getTickFrequency();
-      for (int i = 0; i < tickFreqs.length; i++) {
-        tickFreqs[i].setSelected(Math.abs(tickFreqs[i].freq - freq) < 0.001);
+      for (TickFrequencyChoice tickFrequencyChoice : tickFreqs) {
+        tickFrequencyChoice.setSelected(Math.abs(tickFrequencyChoice.freq - freq) < 0.001);
       }
 
       if (oldSim != null) {

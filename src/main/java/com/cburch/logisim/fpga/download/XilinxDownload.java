@@ -222,11 +222,11 @@ public class XilinxDownload implements VendorDownload {
           && DownloadFile.exists();
     }
     ArrayList<String> Contents = new ArrayList<String>();
-    for (int i = 0; i < Entities.size(); i++) {
-      Contents.add(HDLType.toUpperCase() + " work \"" + Entities.get(i) + "\"");
+    for (String entity : Entities) {
+      Contents.add(HDLType.toUpperCase() + " work \"" + entity + "\"");
     }
-    for (int i = 0; i < Architectures.size(); i++) {
-      Contents.add(HDLType.toUpperCase() + " work \"" + Architectures.get(i) + "\"");
+    for (String architecture : Architectures) {
+      Contents.add(HDLType.toUpperCase() + " work \"" + architecture + "\"");
     }
     if (!FileWriter.WriteContents(VhdlListFile, Contents, Reporter)) return false;
     Contents.clear();

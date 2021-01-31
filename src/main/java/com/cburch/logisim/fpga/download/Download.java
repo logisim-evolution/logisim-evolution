@@ -203,8 +203,8 @@ public class Download extends DownloadBase implements Runnable, WindowListener {
   }
 
   private void fireEvent(ActionEvent e) {
-    for (int i = 0; i < Listeners.size(); i++) {
-      Listeners.get(i).actionPerformed(e);
+    for (ActionListener listener : Listeners) {
+      listener.actionPerformed(e);
     }
   }
 

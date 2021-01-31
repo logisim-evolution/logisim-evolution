@@ -249,8 +249,9 @@ public class ProjectExplorer extends JTree implements LocaleListener {
 
     private TreePath[] getValidPaths(TreePath[] paths) {
       int count = 0;
-      for (int i = 0; i < paths.length; i++) {
-        if (isPathValid(paths[i])) ++count;
+      for (TreePath treePath : paths) {
+        if (isPathValid(treePath))
+          ++count;
       }
 
       if (count == 0) {
@@ -261,8 +262,9 @@ public class ProjectExplorer extends JTree implements LocaleListener {
         TreePath[] ret = new TreePath[count];
         int j = 0;
 
-        for (int i = 0; i < paths.length; i++) {
-          if (isPathValid(paths[i])) ret[j++] = paths[i];
+        for (TreePath path : paths) {
+          if (isPathValid(path))
+            ret[j++] = path;
         }
 
         return ret;

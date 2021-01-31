@@ -57,8 +57,8 @@ class Clip implements ClipboardOwner {
         return data;
       } else if (flavor == DataFlavor.stringFlavor) {
         int bits = 1;
-        for (int i = 0; i < data.length; i++) {
-          long k = data[i] >> bits;
+        for (long datum : data) {
+          long k = datum >> bits;
           while (k != 0 && bits < 32) {
             bits++;
             k >>= 1;

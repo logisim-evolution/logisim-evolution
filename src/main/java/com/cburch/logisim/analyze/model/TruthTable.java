@@ -69,20 +69,22 @@ public class TruthTable {
 
     public int baseIndex() {
       int idx = 0;
-      for (int i = 0; i < inputs.length; i++) idx = (idx << 1) | (inputs[i] == Entry.ONE ? 1 : 0);
+      for (Entry input : inputs)
+        idx = (idx << 1) | (input == Entry.ONE ? 1 : 0);
       return idx;
     }
 
     public int dcMask() {
       int mask = 0;
-      for (int i = 0; i < inputs.length; i++)
-        mask = (mask << 1) | (inputs[i] == Entry.DONT_CARE ? 1 : 0);
+      for (Entry input : inputs)
+        mask = (mask << 1) | (input == Entry.DONT_CARE ? 1 : 0);
       return mask;
     }
 
     public int duplicity() {
       int count = 1;
-      for (int i = 0; i < inputs.length; i++) count *= (inputs[i] == Entry.DONT_CARE ? 2 : 1);
+      for (Entry input : inputs)
+        count *= (input == Entry.DONT_CARE ? 2 : 1);
       return count;
     }
 
@@ -330,10 +332,11 @@ public class TruthTable {
 
   private boolean identicalOutputs(int idx1, int idx2) {
     if (idx1 == idx2) return true;
-    for (int col = 0; col < columns.size(); col++) {
-      Entry[] column = columns.get(col);
-      if (column == null) continue;
-      if (column[idx1] != column[idx2]) return false;
+    for (Entry[] column : columns) {
+      if (column == null)
+        continue;
+      if (column[idx1] != column[idx2])
+        return false;
     }
     return true;
   }
@@ -661,9 +664,9 @@ public class TruthTable {
       // force an Entry column of each row.input to 'x', then remove it
       int b = (1 << (oldCount - 1 - index)); // _0001000
       boolean[] changed = new boolean[columns.size()];
-      for (int i = 0; i < rows.size(); i++) {
-        Row r = rows.get(i);
-        if (r.inputs[index] == Entry.DONT_CARE) continue;
+      for (Row r : rows) {
+        if (r.inputs[index] == Entry.DONT_CARE)
+          continue;
         setDontCare(r, b, true, changed);
       }
       int mask = b - 1; // _0000111

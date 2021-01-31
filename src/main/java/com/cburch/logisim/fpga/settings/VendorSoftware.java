@@ -193,9 +193,10 @@ public class VendorSoftware {
 
   public static boolean toolsPresent(char vendor, String path) {
     String[] tools = load(vendor);
-    for (int i = 0; i < tools.length; i++) {
-      File test = new File(CorrectPath(path + tools[i]));
-      if (!test.exists()) return false;
+    for (String tool : tools) {
+      File test = new File(CorrectPath(path + tool));
+      if (!test.exists())
+        return false;
     }
     return true;
   }

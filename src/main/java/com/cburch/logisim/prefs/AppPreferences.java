@@ -70,8 +70,7 @@ public class AppPreferences {
       for (int set = 0; set < 2; set++) {
         if (set == 0) check = new Locale[] {Locale.getDefault(), Locale.ENGLISH};
         else check = Locale.getAvailableLocales();
-        for (int i = 0; i < check.length; i++) {
-          Locale loc = check[i];
+        for (Locale loc : check) {
           if (loc != null && loc.getLanguage().equals(lang)) {
             return loc;
           }
@@ -340,12 +339,13 @@ public class AppPreferences {
   }
 
   public static void setScaledFonts(Component[] comp) {
-    for (int x = 0; x < comp.length; x++) {
-      if (comp[x] instanceof Container) setScaledFonts(((Container) comp[x]).getComponents());
+    for (Component component : comp) {
+      if (component instanceof Container)
+        setScaledFonts(((Container) component).getComponents());
       try {
-        comp[x].setFont(getScaledFont(comp[x].getFont()));
-        comp[x].revalidate();
-        comp[x].repaint();
+        component.setFont(getScaledFont(component.getFont()));
+        component.revalidate();
+        component.repaint();
       } catch (Exception e) {
       }
     }

@@ -289,8 +289,9 @@ public class InstanceComponent implements Component, AttributeListener, ToolTipM
 
   public boolean endsAt(Location pt) {
     EndData[] ends = endArray;
-    for (int i = 0; i < ends.length; i++) {
-      if (ends[i].getLocation().equals(pt)) return true;
+    for (EndData end : ends) {
+      if (end.getLocation().equals(pt))
+        return true;
     }
     return false;
   }

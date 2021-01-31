@@ -441,8 +441,7 @@ public class TtyInterface {
       valueMap.clear();
       CircuitState circuitState = new CircuitState(proj, circuit);
       int incol = 0;
-      for (int j = 0; j < inputPins.size(); j++) {
-        Instance pin = inputPins.get(j);
+      for (Instance pin : inputPins) {
         int width = pin.getAttributeValue(StdAttr.WIDTH).getWidth();
         Value[] v = new Value[width];
         for (int b = width - 1; b >= 0; b--) {
@@ -462,8 +461,7 @@ public class TtyInterface {
        */
       // TODO: Search for circuit state
 
-      for (int j = 0; j < outputPins.size(); j++) {
-        Instance pin = outputPins.get(j);
+      for (Instance pin : outputPins) {
         if (prop.isOscillating()) {
           BitWidth width = pin.getAttributeValue(StdAttr.WIDTH);
           valueMap.put(pin, Value.createError(width));

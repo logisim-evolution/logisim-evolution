@@ -156,10 +156,11 @@ public class BitAdder extends InstanceFactory {
     for (int i = 1; i <= inputs; i++) {
       Value v = state.getPortValue(i);
       Value[] bits = v.getAll();
-      for (int j = 0; j < bits.length; j++) {
-        Value b = bits[j];
-        if (b == Value.TRUE) minCount++;
-        if (b != Value.FALSE) maxCount++;
+      for (Value b : bits) {
+        if (b == Value.TRUE)
+          minCount++;
+        if (b != Value.FALSE)
+          maxCount++;
       }
     }
 

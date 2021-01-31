@@ -79,8 +79,8 @@ public class ImageXmlFactory {
       ocurances[i] = (long) 0;
       index[i] = i;
     }
-    for (int i = 0; i < stream.length; i++) {
-      ocurances[stream[i] + 128]++;
+    for (byte b : stream) {
+      ocurances[b + 128]++;
     }
     boolean swapped = true;
     while (swapped) {
@@ -156,8 +156,8 @@ public class ImageXmlFactory {
     CodeTable = CreateCodeTable(data);
     AsciiStream = new StringBuffer();
     AsciiStream.append(V2_Identifier);
-    for (int i = 0; i < data.length; i++) {
-      String code = CodeTable[data[i] + 128];
+    for (byte datum : data) {
+      String code = CodeTable[datum + 128];
       AsciiStream.append(code);
     }
   }

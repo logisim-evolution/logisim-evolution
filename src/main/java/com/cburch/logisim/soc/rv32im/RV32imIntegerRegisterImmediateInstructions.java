@@ -84,8 +84,8 @@ public class RV32imIntegerRegisterImmediateInstructions implements AssemblerExec
   
   public ArrayList<String> getInstructions() {
     ArrayList<String> opcodes = new ArrayList<String>();
-    for (int i = 0 ; i < AsmOpcodes.length ; i++)
-      opcodes.add(AsmOpcodes[i]);
+    for (String asmOpcode : AsmOpcodes)
+      opcodes.add(asmOpcode);
     return opcodes;
   };
 
@@ -265,14 +265,15 @@ public class RV32imIntegerRegisterImmediateInstructions implements AssemblerExec
                         param1 = instr.getParameter(0);
                         param2 = instr.getParameter(1);
                         if (param1.length != 1 || param1[0].getType() != AssemblerToken.REGISTER) {
-                          for (int i = 0 ; i < param1.length ; i++)
-                            instr.setError(param1[i], S.getter("AssemblerExpectedRegister"));
+                          for (AssemblerToken assemblerToken : param1)
+                            instr.setError(assemblerToken, S.getter("AssemblerExpectedRegister"));
                           errors = true;
                           break;
                         }
                         if (param2.length != 1 || !param2[0].isNumber()) {
-                          for (int i = 0 ; i < param2.length ; i++)
-                            instr.setError(param2[i], S.getter("AssemblerExpectedImmediateValue"));
+                          for (AssemblerToken assemblerToken : param2)
+                            instr.setError(assemblerToken,
+                                S.getter("AssemblerExpectedImmediateValue"));
                           errors = true;
                           break;
                         }
@@ -304,14 +305,14 @@ public class RV32imIntegerRegisterImmediateInstructions implements AssemblerExec
                         param1 = instr.getParameter(0);
                         param2 = instr.getParameter(1);
                         if (param1.length != 1 || param1[0].getType() != AssemblerToken.REGISTER) {
-                          for (int i = 0 ; i < param1.length ; i++)
-                            instr.setError(param1[i], S.getter("AssemblerExpectedRegister"));
+                          for (AssemblerToken assemblerToken : param1)
+                            instr.setError(assemblerToken, S.getter("AssemblerExpectedRegister"));
                           errors = true;
                           break;
                         }
                         if (param2.length != 1 || param2[0].getType() != AssemblerToken.REGISTER) {
-                          for (int i = 0 ; i < param2.length ; i++)
-                            instr.setError(param2[i], S.getter("AssemblerExpectedRegister"));
+                          for (AssemblerToken assemblerToken : param2)
+                            instr.setError(assemblerToken, S.getter("AssemblerExpectedRegister"));
                           errors = true;
                           break;
                         }
@@ -347,20 +348,21 @@ public class RV32imIntegerRegisterImmediateInstructions implements AssemblerExec
                         param2 = instr.getParameter(1);
                         param3 = instr.getParameter(2);
                         if (param1.length != 1 || param1[0].getType() != AssemblerToken.REGISTER) {
-                          for (int i = 0 ; i < param1.length ; i++)
-                            instr.setError(param1[i], S.getter("AssemblerExpectedRegister"));
+                          for (AssemblerToken assemblerToken : param1)
+                            instr.setError(assemblerToken, S.getter("AssemblerExpectedRegister"));
                           errors = true;
                           break;
                         }
                         if (param2.length != 1 || param2[0].getType() != AssemblerToken.REGISTER) {
-                          for (int i = 0 ; i < param2.length ; i++)
-                            instr.setError(param2[i], S.getter("AssemblerExpectedRegister"));
+                          for (AssemblerToken assemblerToken : param2)
+                            instr.setError(assemblerToken, S.getter("AssemblerExpectedRegister"));
                           errors = true;
                           break;
                         }
                         if (param3.length != 1 || !param3[0].isNumber()) {
-                          for (int i = 0 ; i < param3.length ; i++)
-                            instr.setError(param3[i], S.getter("AssemblerExpectedImmediateValue"));
+                          for (AssemblerToken assemblerToken : param3)
+                            instr.setError(assemblerToken,
+                                S.getter("AssemblerExpectedImmediateValue"));
                           errors = true;
                           break;
                         }

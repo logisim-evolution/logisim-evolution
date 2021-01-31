@@ -304,8 +304,7 @@ public class SelectionActions {
     private Collection<Component> computeAdditions(Collection<Component> comps) {
       HashMap<Component, Component> replMap = componentReplacements;
       ArrayList<Component> toAdd = new ArrayList<Component>(comps.size());
-      for (Iterator<Component> it = comps.iterator(); it.hasNext(); ) {
-        Component comp = it.next();
+      for (Component comp : comps) {
         if (replMap.containsKey(comp)) {
           Component repl = replMap.get(comp);
           if (repl != null) {

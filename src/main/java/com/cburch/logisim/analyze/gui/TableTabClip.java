@@ -65,10 +65,10 @@ class TableTabClip implements ClipboardOwner {
           buf.append(headers[i]);
           buf.append(i == headers.length - 1 ? '\n' : '\t');
         }
-        for (int i = 0; i < contents.length; i++) {
-          for (int j = 0; j < contents[i].length; j++) {
-            buf.append(contents[i][j]);
-            buf.append(j == contents[i].length - 1 ? '\n' : '\t');
+        for (String[] content : contents) {
+          for (int j = 0; j < content.length; j++) {
+            buf.append(content[j]);
+            buf.append(j == content.length - 1 ? '\n' : '\t');
           }
         }
         return buf.toString();

@@ -130,8 +130,8 @@ public class Keyboard extends InstanceFactory {
 
   public static void addToBuffer(InstanceState state, char[] newChars) {
     KeyboardData keyboardData = getKeyboardState(state);
-    for (int i = 0; i < newChars.length; i++) {
-      keyboardData.insert(newChars[i]);
+    for (char newChar : newChars) {
+      keyboardData.insert(newChar);
     }
   }
 

@@ -258,9 +258,9 @@ public class LogisimFileActions {
     public void doIt(Project proj) {
       Loader loader = proj.getLogisimFile().getLoader();
       /* first we are going to merge the jar libraries */
-      for (int i = 0; i < JarLibs.size(); i++) {
+      for (File jarLib : JarLibs) {
         String className = null;
-        try (JarFile jarFile = new JarFile(JarLibs.get(i))) {
+        try (JarFile jarFile = new JarFile(jarLib)) {
           Manifest manifest = jarFile.getManifest();
           className = manifest.getMainAttributes().getValue("Library-Class");
         } catch (IOException e) {
@@ -275,17 +275,18 @@ public class LogisimFileActions {
                   S.get("jarClassNameTitle"),
                   OptionPane.QUESTION_MESSAGE);
           // if user canceled selection, abort
-          if (className == null) continue;
+          if (className == null)
+            continue;
         }
-        Library lib = loader.loadJarLibrary(JarLibs.get(i), className);
+        Library lib = loader.loadJarLibrary(jarLib, className);
         if (lib != null) {
           proj.doAction(LogisimFileActions.loadLibrary(lib, proj.getLogisimFile()));
         }
       }
       JarLibs.clear();
       /* next we are going to load the logisimfile  libraries */
-      for (int i = 0; i < LogiLibs.size(); i++) {
-        Library put = loader.loadLogisimLibrary(LogiLibs.get(i));
+      for (File logiLib : LogiLibs) {
+        Library put = loader.loadLogisimLibrary(logiLib);
         if (put != null) {
           proj.doAction(LogisimFileActions.loadLibrary(put, proj.getLogisimFile()));
         }
@@ -374,27 +375,30 @@ public class LogisimFileActions {
         LibraryTools.BuildLibraryList(lib, LibNames);
       }
       LibraryTools.BuildToolList(source, ToolList);
-      for (int i = 0; i < libs.length; i++) {
-        if (LibNames.keySet().contains(libs[i].getName().toUpperCase())) {
+      for (Library lib : libs) {
+        if (LibNames.keySet().contains(lib.getName().toUpperCase())) {
           OptionPane.showMessageDialog(
               null,
-              "\"" + libs[i].getName() + "\": " + S.get("LibraryAlreadyLoaded"),
-              S.get("LibLoadErrors") + " " + libs[i].getName() + " !",
+              "\"" + lib.getName() + "\": " + S.get("LibraryAlreadyLoaded"),
+              S.get("LibLoadErrors") + " " + lib.getName() + " !",
               OptionPane.WARNING_MESSAGE);
         } else {
-          LibraryTools.RemovePresentLibraries(libs[i], LibNames, false);
+          LibraryTools.RemovePresentLibraries(lib, LibNames, false);
           if (LibraryTools.LibraryIsConform(
-              libs[i], new HashSet<String>(), new HashSet<String>(), Error)) {
+              lib, new HashSet<String>(), new HashSet<String>(), Error)) {
             HashSet<String> AddedToolList = new HashSet<String>();
-            LibraryTools.BuildToolList(libs[i], AddedToolList);
+            LibraryTools.BuildToolList(lib, AddedToolList);
             for (String tool : AddedToolList)
-              if (ToolList.contains(tool)) Error.put(tool, S.get("LibraryMultipleToolError"));
+              if (ToolList.contains(tool))
+                Error.put(tool, S.get("LibraryMultipleToolError"));
             if (Error.keySet().isEmpty()) {
-              LibraryTools.BuildLibraryList(libs[i], LibNames);
+              LibraryTools.BuildLibraryList(lib, LibNames);
               ToolList.addAll(AddedToolList);
-              MergedLibs.add(libs[i]);
-            } else LibraryTools.ShowErrors(libs[i].getName(), Error);
-          } else LibraryTools.ShowErrors(libs[i].getName(), Error);
+              MergedLibs.add(lib);
+            } else
+              LibraryTools.ShowErrors(lib.getName(), Error);
+          } else
+            LibraryTools.ShowErrors(lib.getName(), Error);
         }
       }
     }
@@ -691,8 +695,8 @@ public class LogisimFileActions {
 
     @Override
     public void undo(Project proj) {
-      for (int i = 0; i < libs.length; i++) {
-        proj.getLogisimFile().addLibrary(libs[i]);
+      for (Library lib : libs) {
+        proj.getLogisimFile().addLibrary(lib);
       }
     }
   }

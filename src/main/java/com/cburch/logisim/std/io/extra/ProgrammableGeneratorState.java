@@ -89,18 +89,18 @@ public class ProgrammableGeneratorState implements InstanceData, Cloneable {
     // information each one
     String[] data = s.split(" "), tmp;
     int value, cnt = 0;
-    for (int i = 0; i < data.length; i++) {
+    for (String datum : data) {
       // if contains a '*' it has to fill the array with the first value for x (second
       // number) cycles
-      if (data[i].contains("*")) {
-        tmp = data[i].split("\\*");
+      if (datum.contains("*")) {
+        tmp = datum.split("\\*");
         for (int j = 0; j < Integer.parseInt(tmp[1]); j++) {
           value = Integer.parseInt(tmp[0]);
           writeData(value, cnt);
           cnt++;
         }
       } else {
-        value = Integer.parseInt(data[i]);
+        value = Integer.parseInt(datum);
         writeData(value, cnt);
         cnt++;
       }

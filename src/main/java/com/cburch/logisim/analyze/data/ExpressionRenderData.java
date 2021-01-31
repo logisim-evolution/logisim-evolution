@@ -297,9 +297,10 @@ public class ExpressionRenderData {
       }
     }
     int width = 0;
-    for (int i = 0; i < lineStyled.length; i++) {
-      TextLayout test = new TextLayout(lineStyled[i].getIterator(), ctx);
-      if (test.getBounds().getWidth() > width) width = (int) test.getBounds().getWidth();
+    for (AttributedString attributedString : lineStyled) {
+      TextLayout test = new TextLayout(attributedString.getIterator(), ctx);
+      if (test.getBounds().getWidth() > width)
+        width = (int) test.getBounds().getWidth();
     }
     g.dispose();
     return width;

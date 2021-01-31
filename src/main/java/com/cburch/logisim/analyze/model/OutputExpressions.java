@@ -318,8 +318,9 @@ public class OutputExpressions {
   }
 
   private static boolean isAllUndefined(Entry[] a) {
-    for (int i = 0; i < a.length; i++) {
-      if (a[i] == Entry.ZERO || a[i] == Entry.ONE) return false;
+    for (Entry entry : a) {
+      if (entry == Entry.ZERO || entry == Entry.ONE)
+        return false;
     }
     return true;
   }

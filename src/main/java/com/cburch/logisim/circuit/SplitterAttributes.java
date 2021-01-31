@@ -244,8 +244,8 @@ public class SplitterAttributes extends AbstractAttributeSet {
   }
   
   public boolean isNoConnect(int index) {
-    for (int i = 0; i < bit_end.length; i++) {
-      if (bit_end[i] == index)
+    for (byte b : bit_end) {
+      if (b == index)
         return false;
     }
     return true;

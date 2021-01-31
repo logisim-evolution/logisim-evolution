@@ -210,9 +210,9 @@ public class ZoomControl extends JPanel implements LocaleListener {
     double zoom = model.getZoomFactor();
     double[] choices = model.getZoomOptions();
     double factor = zoom * 100.0 * 1.001;
-    for (int i = 0; i < choices.length; i++) {
-      if (choices[i] > factor) {
-        model.setZoomFactor(choices[i] / 100.0);
+    for (double choice : choices) {
+      if (choice > factor) {
+        model.setZoomFactor(choice / 100.0);
         return;
       }
     }

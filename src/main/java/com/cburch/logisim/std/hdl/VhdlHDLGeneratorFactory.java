@@ -70,8 +70,8 @@ public class VhdlHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     SortedMap<String, Integer> inputs = new TreeMap<String, Integer>();
 
     Port[] rawInputs = attrs.getValue(VhdlEntityComponent.CONTENT_ATTR).getInputs();
-    for (int i = 0; i < rawInputs.length; i++)
-      inputs.put(rawInputs[i].getToolTip(), rawInputs[i].getFixedBitWidth().getWidth());
+    for (Port rawInput : rawInputs)
+      inputs.put(rawInput.getToolTip(), rawInput.getFixedBitWidth().getWidth());
 
     return inputs;
   }
@@ -81,8 +81,8 @@ public class VhdlHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     SortedMap<String, Integer> outputs = new TreeMap<String, Integer>();
 
     Port[] rawOutputs = attrs.getValue(VhdlEntityComponent.CONTENT_ATTR).getOutputs();
-    for (int i = 0; i < rawOutputs.length; i++)
-      outputs.put(rawOutputs[i].getToolTip(), rawOutputs[i].getFixedBitWidth().getWidth());
+    for (Port rawOutput : rawOutputs)
+      outputs.put(rawOutput.getToolTip(), rawOutput.getFixedBitWidth().getWidth());
 
     return outputs;
   }

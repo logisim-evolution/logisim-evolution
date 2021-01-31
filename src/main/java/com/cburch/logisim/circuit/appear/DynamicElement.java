@@ -104,9 +104,9 @@ public abstract class DynamicElement extends AbstractCanvasObject {
 
     public String toSvgString() {
       String s = "";
-      for (int i = 0; i < elt.length; i++) {
-        Location loc = elt[i].getLocation();
-        s += "/" + escape(elt[i].getFactory().getName()) + loc;
+      for (InstanceComponent instanceComponent : elt) {
+        Location loc = instanceComponent.getLocation();
+        s += "/" + escape(instanceComponent.getFactory().getName()) + loc;
       }
       return s;
     }

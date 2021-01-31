@@ -356,8 +356,7 @@ class ComponentSelector extends JTree {
     if (sel == null || sel.length == 0) return Collections.emptyList();
 
     ArrayList<SelectionItem> ret = new ArrayList<SelectionItem>();
-    for (int i = 0; i < sel.length; i++) {
-      TreePath path = sel[i];
+    for (TreePath path : sel) {
       Object last = path.getLastPathComponent();
       ComponentNode n = null;
       Object opt = null;
@@ -367,7 +366,8 @@ class ComponentSelector extends JTree {
         opt = o.option;
       } else if (last instanceof ComponentNode) {
         n = (ComponentNode) last;
-        if (n.opts != null) n = null;
+        if (n.opts != null)
+          n = null;
       }
       if (n != null) {
         int count = 0;
@@ -390,12 +390,13 @@ class ComponentSelector extends JTree {
     TreePath[] sel = getSelectionPaths();
     if (sel == null || sel.length == 0) return false;
 
-    for (int i = 0; i < sel.length; i++) {
-      Object last = sel[i].getLastPathComponent();
+    for (TreePath treePath : sel) {
+      Object last = treePath.getLastPathComponent();
       if (last instanceof OptionNode) {
         return true;
       } else if (last instanceof ComponentNode) {
-        if (((ComponentNode) last).opts == null) return true;
+        if (((ComponentNode) last).opts == null)
+          return true;
       }
     }
     return false;

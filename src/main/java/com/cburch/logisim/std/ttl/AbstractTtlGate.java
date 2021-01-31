@@ -77,13 +77,15 @@ public abstract class AbstractTtlGate extends InstanceFactory {
     setFacingAttribute(StdAttr.FACING);
     this.name = name;
     this.pinnumber = pins;
-    for (int i = 0; i < outputports.length; i++) this.outputports.add(outputports[i]);
+    for (byte outputport : outputports)
+      this.outputports.add(outputport);
   }
 
   protected AbstractTtlGate(String name, byte pins, byte[] outputports, byte[] NotUsedPins) {
     this(name, pins, outputports);
     if (NotUsedPins == null) return;
-    for (int i = 0; i < NotUsedPins.length; i++) unusedpins.add(NotUsedPins[i]);
+    for (byte notUsedPin : NotUsedPins)
+      unusedpins.add(notUsedPin);
   }
 
   /**
@@ -120,7 +122,8 @@ public abstract class AbstractTtlGate extends InstanceFactory {
     this(name, pins, outputports);
     portnames = Ttlportnames;
     if (NotUsedPins == null) return;
-    for (int i = 0; i < NotUsedPins.length; i++) unusedpins.add(NotUsedPins[i]);
+    for (byte notUsedPin : NotUsedPins)
+      unusedpins.add(notUsedPin);
   }
 
   protected AbstractTtlGate(

@@ -92,9 +92,10 @@ class LocaleSelector extends JList implements LocaleListener, ListSelectionListe
   public void localeChanged() {
     Locale current = LocaleManager.getLocale();
     LocaleOption sel = null;
-    for (int i = 0; i < items.length; i++) {
-      items[i].update(current);
-      if (current.equals(items[i].locale)) sel = items[i];
+    for (LocaleOption item : items) {
+      item.update(current);
+      if (current.equals(item.locale))
+        sel = item;
     }
     if (sel != null) {
       setSelectedValue(sel, true);

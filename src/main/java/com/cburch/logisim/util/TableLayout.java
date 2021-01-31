@@ -158,8 +158,8 @@ public class TableLayout implements LayoutManager2 {
         height += rowHeight;
       }
       int width = 0;
-      for (int i = 0; i < prefCol.length; i++) {
-        width += prefCol[i];
+      for (int j : prefCol) {
+        width += j;
       }
       this.prefs = new Dimension(width, height);
       this.prefRow = prefRow;
@@ -169,8 +169,7 @@ public class TableLayout implements LayoutManager2 {
   }
 
   public void removeLayoutComponent(Component comp) {
-    for (int i = 0, n = contents.size(); i < n; i++) {
-      Component[] row = contents.get(i);
+    for (Component[] row : contents) {
       for (int j = 0; j < row.length; j++) {
         if (row[j] == comp) {
           row[j] = null;

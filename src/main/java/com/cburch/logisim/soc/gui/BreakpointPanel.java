@@ -159,15 +159,16 @@ public class BreakpointPanel extends JPanel implements CaretListener,LocaleListe
     ArrayList<Integer> lines = new ArrayList<Integer>();
     GutterIconInfo[] bookmarks = debugScrollPane.getGutter().getBookmarks();
     Element root = asmWindow.getDocument().getDefaultRootElement();
-    for (int i = 0; i < bookmarks.length ; i++) {
-      int pos = bookmarks[i].getMarkedOffset();
-      int line = root.getElementIndex(pos)+1;
+    for (GutterIconInfo bookmark : bookmarks) {
+      int pos = bookmark.getMarkedOffset();
+      int line = root.getElementIndex(pos) + 1;
       if (debugLines.containsKey(line))
         lines.add(line);
       else
-        try { 
-          debugScrollPane.getGutter().toggleBookmark(line-1);
-        } catch (BadLocationException e) {  }
+        try {
+          debugScrollPane.getGutter().toggleBookmark(line - 1);
+        } catch (BadLocationException e) {
+        }
     }
     return lines;
   }

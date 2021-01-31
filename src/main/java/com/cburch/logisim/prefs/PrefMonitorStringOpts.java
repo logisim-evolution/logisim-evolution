@@ -65,9 +65,9 @@ class PrefMonitorStringOpts extends AbstractPrefMonitor<String> {
       if (!isSame(oldValue, newValue)) {
         String[] o = opts;
         String chosen = null;
-        for (int i = 0; i < o.length; i++) {
-          if (isSame(o[i], newValue)) {
-            chosen = o[i];
+        for (String s : o) {
+          if (isSame(s, newValue)) {
+            chosen = s;
             break;
           }
         }

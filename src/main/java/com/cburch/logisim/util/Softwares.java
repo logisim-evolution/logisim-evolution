@@ -155,9 +155,10 @@ public final class Softwares {
     if (software.equals(QUESTA)) programs = QUESTA_BIN;
     else return false;
 
-    for (int i = 0; i < programs.length; i++) {
-      File test = new File(FileUtil.correctPath(path) + programs[i]);
-      if (!test.exists()) return false;
+    for (String program : programs) {
+      File test = new File(FileUtil.correctPath(path) + program);
+      if (!test.exists())
+        return false;
     }
 
     return true;

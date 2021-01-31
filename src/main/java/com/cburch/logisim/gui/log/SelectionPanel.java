@@ -90,8 +90,8 @@ class SelectionPanel extends LogPanel {
         Selection sel = getSelection();
         Object[] toRemove = list.getSelectedValuesList().toArray();
         boolean changed = false;
-        for (int i = 0; i < toRemove.length; i++) {
-          int index = sel.indexOf((SelectionItem) toRemove[i]);
+        for (Object o : toRemove) {
+          int index = sel.indexOf((SelectionItem) o);
           if (index >= 0) {
             sel.remove(index);
             changed = true;

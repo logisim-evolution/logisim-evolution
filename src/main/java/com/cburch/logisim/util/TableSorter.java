@@ -196,8 +196,7 @@ public class TableSorter extends AbstractTableModel {
       int row1 = modelIndex;
       int row2 = o.modelIndex;
 
-      for (Iterator<Directive> it = sortingColumns.iterator(); it.hasNext(); ) {
-        Directive directive = it.next();
+      for (Directive directive : sortingColumns) {
         int column = directive.column;
 
         Object o1 = tableModel.getValueAt(row1, column);
@@ -419,8 +418,7 @@ public class TableSorter extends AbstractTableModel {
   }
 
   private Directive getDirective(int column) {
-    for (int i = 0; i < sortingColumns.size(); i++) {
-      Directive directive = sortingColumns.get(i);
+    for (Directive directive : sortingColumns) {
       if (directive.column == column) {
         return directive;
       }

@@ -139,8 +139,8 @@ public class PartialMapDialog extends JDialog implements LocaleListener,ActionLi
       /* single input, multiple maps */
       InputSingleMultiple = new JComboBox<String>();
       InputSingleMultiple.addItem(S.get("FpgaNotMapped"));
-      for (int i = 0 ; i < InputMapSet.size() ; i++) {
-        InputSingleMultiple.addItem(ioComp.GetDisplayString()+"/"+ioComp.getPinName(InputMapSet.get(i)));
+      for (Integer integer : InputMapSet) {
+        InputSingleMultiple.addItem(ioComp.GetDisplayString() + "/" + ioComp.getPinName(integer));
       }
       InputSingleMultiple.addActionListener(this);
       gbc.gridy++;
@@ -173,8 +173,8 @@ public class PartialMapDialog extends JDialog implements LocaleListener,ActionLi
       for (int i = 0 ; i < map.nrInputs() ; i++) {
         JComboBox<String> sels = new JComboBox<String>();
         sels.addItem(S.get("FpgaNotMapped"));
-        for (int j = 0 ; j < InputMapSet.size() ; j++)
-          sels.addItem(ioComp.GetDisplayString()+"/"+ioComp.getPinName(InputMapSet.get(j)));
+        for (Integer integer : InputMapSet)
+          sels.addItem(ioComp.GetDisplayString() + "/" + ioComp.getPinName(integer));
         sels.addActionListener(this);
         InputMultipleMultiple.add(sels);
         gbc.gridx = 0;
@@ -211,8 +211,8 @@ public class PartialMapDialog extends JDialog implements LocaleListener,ActionLi
       /* single input, multiple maps */
       OutputSingleMultiple = new JComboBox<String>();
       OutputSingleMultiple.addItem(S.get("FpgaNotMapped"));
-      for (int i = 0 ; i < OutputMapSet.size() ; i++) {
-        OutputSingleMultiple.addItem(ioComp.GetDisplayString()+"/"+ioComp.getPinName(OutputMapSet.get(i)));
+      for (Integer integer : OutputMapSet) {
+        OutputSingleMultiple.addItem(ioComp.GetDisplayString() + "/" + ioComp.getPinName(integer));
       }
       OutputSingleMultiple.addActionListener(this);
       gbc.gridy++;
@@ -245,8 +245,8 @@ public class PartialMapDialog extends JDialog implements LocaleListener,ActionLi
       for (int i = 0 ; i < map.nrOutputs() ; i++) {
         JComboBox<String> sels = new JComboBox<String>();
         sels.addItem(S.get("FpgaNotMapped"));
-        for (int j = 0 ; j < OutputMapSet.size() ; j++)
-          sels.addItem(ioComp.GetDisplayString()+"/"+ioComp.getPinName(OutputMapSet.get(j)));
+        for (Integer integer : OutputMapSet)
+          sels.addItem(ioComp.GetDisplayString() + "/" + ioComp.getPinName(integer));
         sels.addActionListener(this);
         OutputMultipleMultiple.add(sels);
         gbc.gridx = 0;
@@ -282,8 +282,8 @@ public class PartialMapDialog extends JDialog implements LocaleListener,ActionLi
       /* single input, multiple maps */
       IOSingleMultiple = new JComboBox<String>();
       IOSingleMultiple.addItem(S.get("FpgaNotMapped"));
-      for (int i = 0 ; i < IOMapSet.size() ; i++) {
-        IOSingleMultiple.addItem(ioComp.GetDisplayString()+"/"+ioComp.getPinName(IOMapSet.get(i)));
+      for (Integer integer : IOMapSet) {
+        IOSingleMultiple.addItem(ioComp.GetDisplayString() + "/" + ioComp.getPinName(integer));
       }
       IOSingleMultiple.addActionListener(this);
       gbc.gridy++;
@@ -316,8 +316,8 @@ public class PartialMapDialog extends JDialog implements LocaleListener,ActionLi
       for (int i = 0 ; i < map.nrIOs() ; i++) {
         JComboBox<String> sels = new JComboBox<String>();
         sels.addItem(S.get("FpgaNotMapped"));
-        for (int j = 0 ; j < IOMapSet.size() ; j++)
-          sels.addItem(ioComp.GetDisplayString()+"/"+ioComp.getPinName(IOMapSet.get(j)));
+        for (Integer integer : IOMapSet)
+          sels.addItem(ioComp.GetDisplayString() + "/" + ioComp.getPinName(integer));
         sels.addActionListener(this);
         IOMultipleMultiple.add(sels);
         gbc.gridx = 0;
@@ -394,8 +394,8 @@ public class PartialMapDialog extends JDialog implements LocaleListener,ActionLi
 
   @Override
   public void localeChanged() {
-    for (int i = 0 ; i < MapTo.size() ; i++)
-      MapTo.get(i).setText(S.get("FpgaMapTo"));
+    for (JLabel jLabel : MapTo)
+      jLabel.setText(S.get("FpgaMapTo"));
     OkButton.setText(S.get("FpgaBoardDone"));
     CancelButton.setText(S.get("FpgaBoardCancel"));
     pack();

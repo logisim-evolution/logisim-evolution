@@ -482,8 +482,9 @@ public class Netlist implements CircuitListener {
         DRCStatus |= DRC_ERROR;
       }
     }
-    for (int i = 0; i < drc.size(); i++)
-      if (drc.get(i).DRCInfoPresent()) Reporter.AddError(drc.get(i));
+    for (SimpleDRCContainer simpleDRCContainer : drc)
+      if (simpleDRCContainer.DRCInfoPresent())
+        Reporter.AddError(simpleDRCContainer);
     drc.clear();
     /* Here we have to quit as the netlist generation needs a clean tree */
     if ((DRCStatus | CommonDRCStatus) != DRC_PASSED) {
@@ -783,10 +784,10 @@ public class Netlist implements CircuitListener {
         }
       }
     }
-    for (int i = 0; i < drc.size(); i++) {
-      if (drc.get(i).DRCInfoPresent()) {
+    for (SimpleDRCContainer simpleDRCContainer : drc) {
+      if (simpleDRCContainer.DRCInfoPresent()) {
         errors = true;
-        Reporter.AddError(drc.get(i));
+        Reporter.AddError(simpleDRCContainer);
       }
     }
     if (errors) {
@@ -1995,15 +1996,16 @@ public class Netlist implements CircuitListener {
                   S.get("NetList_ShortCircuit"),
                   SimpleDRCContainer.LEVEL_FATAL,
                   SimpleDRCContainer.MARK_WIRE|SimpleDRCContainer.MARK_INSTANCE);
-          for (int i = 0 ; i < sourceNets.size() ; i++) {
-            Net connectedNet = sourceNets.get(i).GetParrentNet();
-            byte bitIndex = sourceNets.get(i).GetParrentNetBitIndex();
-            if (HasHiddenSource(net,(byte) 0,connectedNet, bitIndex, MyComplexSplitters, new HashSet<String>())) {
-              SourceInfo source = GetHiddenSource(net,(byte) 0,connectedNet, bitIndex, 
+          for (ConnectionPoint sourceNet : sourceNets) {
+            Net connectedNet = sourceNet.GetParrentNet();
+            byte bitIndex = sourceNet.GetParrentNetBitIndex();
+            if (HasHiddenSource(net, (byte) 0, connectedNet, bitIndex, MyComplexSplitters,
+                new HashSet<String>())) {
+              SourceInfo source = GetHiddenSource(net, (byte) 0, connectedNet, bitIndex,
                   MyComplexSplitters, new HashSet<String>(), segments, Reporter);
               if (source == null) {
-            	 /* this should never happen */
-                 return true;
+                /* this should never happen */
+                return true;
               }
               Component comp = source.getSource().GetComp();
               for (Wire seg : segments)
@@ -2011,8 +2013,8 @@ public class Netlist implements CircuitListener {
               error.AddMarkComponent(comp);
               int index = source.getIndex();
               foundShortCrcuit |= (sourceConnections.containsKey(comp) &&
-                                   sourceConnections.get(comp) != index) ||
-                                  (sourceConnections.keySet().size() > 0);
+                  sourceConnections.get(comp) != index) ||
+                  (sourceConnections.keySet().size() > 0);
               sourceConnections.put(comp, index);
             }
           }
@@ -2526,11 +2528,11 @@ public class Netlist implements CircuitListener {
       ComponentFactory fact = comp.GetComponent().getFactory();
       if (fact.CheckForGatedClocks(comp)) {
         int[] clockpins = fact.ClockPinIndex(comp);
-        for (int i = 0; i < clockpins.length; i++)
+        for (int clockpin : clockpins)
           GatedClock |=
               HasGatedClock(
                   comp,
-                  clockpins[i],
+                  clockpin,
                   PinSources,
                   PinWires,
                   PinGatedComponents,

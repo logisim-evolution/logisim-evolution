@@ -83,8 +83,8 @@ public class AssemblerMacro {
       if (token.getType() == AssemblerToken.MACRO_PARAMETER) {
         int index = token.getNumberValue()-1;
         AssemblerToken[] param = parameters.get(index);
-        for (int i = 0 ; i < param.length ; i++)
-          makroTokens.add(param[i]);
+        for (AssemblerToken assemblerToken : param)
+          makroTokens.add(assemblerToken);
       } else {
         AssemblerToken copy = new AssemblerToken(token.getType(),token.getValue(),token.getoffset());
     	makroTokens.add(copy);

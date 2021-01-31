@@ -171,15 +171,16 @@ public class TruthtableTextFile {
       throws IOException {
     String[] s = line.split("\\s+");
     VariableList cur = inputs;
-    for (int i = 0; i < s.length; i++) {
-      if (s[i].equals("|")) {
-        if (cur == inputs) cur = outputs;
+    for (String value : s) {
+      if (value.equals("|")) {
+        if (cur == inputs)
+          cur = outputs;
         else
           throw new IOException(
               String.format("Line %d: Separator '|' must appear only once.", lineno));
         continue;
       }
-      String name = s[i];
+      String name = value;
       if (name.matches("[a-zA-Z][a-zA-Z_0-9]*")) {
         cur.add(new Var(name, 1));
       } else {

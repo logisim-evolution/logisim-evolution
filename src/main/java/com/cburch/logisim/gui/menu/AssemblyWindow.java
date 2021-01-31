@@ -253,8 +253,8 @@ public class AssemblyWindow
       combo.setEnabled(true);
       Object[] objArr = entry.keySet().toArray();
       Arrays.sort(objArr);
-      for (int i = 0; i < objArr.length; i++) {
-        combo.addItem(objArr[i]);
+      for (Object o : objArr) {
+        combo.addItem(o);
       }
     }
   }

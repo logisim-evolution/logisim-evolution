@@ -107,8 +107,8 @@ class LayoutOptions extends OptionsPanel {
     panel.add(radix2.getJComboBox());
 
     setLayout(new TableLayout(1));
-    for (int i = 0; i < checks.length; i++) {
-      add(checks[i]);
+    for (PrefBoolean check : checks) {
+      add(check);
     }
     add(panel);
   }
@@ -125,8 +125,8 @@ class LayoutOptions extends OptionsPanel {
 
   @Override
   public void localeChanged() {
-    for (int i = 0; i < checks.length; i++) {
-      checks[i].localeChanged();
+    for (PrefBoolean check : checks) {
+      check.localeChanged();
     }
     radix1.localeChanged();
     radix2.localeChanged();

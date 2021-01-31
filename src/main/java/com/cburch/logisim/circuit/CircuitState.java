@@ -427,20 +427,20 @@ public class CircuitState implements InstanceData {
 
   void reset() {
     wireData = null;
-    for (Iterator<Component> it = componentData.keySet().iterator(); it.hasNext(); ) {
-      Component comp = it.next();
+    for (Component comp : componentData.keySet()) {
       if (comp.getFactory() instanceof Ram) {
         Ram ram = (Ram) comp.getFactory();
         boolean remove = ram.reset(this, Instance.getInstanceFor(comp));
-        if (remove) componentData.put(comp, null);
+        if (remove)
+          componentData.put(comp, null);
       } else if (comp.getFactory() instanceof Buzzer) {
         Buzzer.StopBuzzerSound(comp, this);
       } else if (!(comp.getFactory() instanceof SubcircuitFactory)) {
         if (componentData.get(comp) instanceof ComponentDataGuiProvider)
-          ((ComponentDataGuiProvider)componentData.get(comp)).destroy();
+          ((ComponentDataGuiProvider) componentData.get(comp)).destroy();
     /*  it.remove(); ktt1: clear out the state instead of removing the key to prevent concurrent
         modification error */
-        componentData.put(comp, null); 
+        componentData.put(comp, null);
       }
     }
     values.clear();

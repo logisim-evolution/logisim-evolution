@@ -112,8 +112,7 @@ public class OptionsFrame extends LFrame {
         new ToolbarOptions(this), new MouseOptions(this),
         new RevertPanel(this)};
     tabbedPane = new JTabbedPane();
-    for (int index = 0; index < panels.length; index++) {
-      OptionsPanel panel = panels[index];
+    for (OptionsPanel panel : panels) {
       tabbedPane.addTab(panel.getTitle(), null, panel, panel.getToolTipText());
     }
 

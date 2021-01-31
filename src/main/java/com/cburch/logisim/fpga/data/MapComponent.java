@@ -618,20 +618,24 @@ public class MapComponent {
     ArrayList<CircuitMapInfo> pinmaps = cmap.getPinMaps();
     if (pinmaps != null) {
       StringBuffer s = null;
-      for (int i = 0 ; i < pinmaps.size() ; i++) {
-        if (s == null) s= new StringBuffer();
-        else s.append(",");
-        if (pinmaps.get(i) == null) {
+      for (CircuitMapInfo pinmap : pinmaps) {
+        if (s == null)
+          s = new StringBuffer();
+        else
+          s.append(",");
+        if (pinmap == null) {
           s.append(NO_MAP);
         } else {
-          CircuitMapInfo map = pinmaps.get(i);
+          CircuitMapInfo map = pinmap;
           if (map.isConst())
             s.append(Long.toString(map.getConstValue()));
-          else if (map.isOpen()) 
-        	s.append(OPEN_KEY);
+          else if (map.isOpen())
+            s.append(OPEN_KEY);
           else if (map.isSinglePin())
-            s.append(map.getRectangle().getXpos()+"_"+map.getRectangle().getYpos()+"_"+map.getIOId());
-          else s.append(NO_MAP);
+            s.append(map.getRectangle().getXpos() + "_" + map.getRectangle().getYpos() + "_" + map
+                .getIOId());
+          else
+            s.append(NO_MAP);
         }
       }
       Map.setAttribute(PIN_MAP, s.toString());
@@ -657,25 +661,26 @@ public class MapComponent {
     if (map.hasAttribute(PIN_MAP)) {
       String[] maps = map.getAttribute(PIN_MAP).split(",");
       CircuitMapInfo complexI = new CircuitMapInfo();
-      for (int i = 0 ; i < maps.length ; i++) {
-        if (maps[i].equals(NO_MAP)) {
+      for (String s : maps) {
+        if (s.equals(NO_MAP)) {
           complexI.addPinMap(null);
-        } else if (maps[i].equals(OPEN_KEY)) {
+        } else if (s.equals(OPEN_KEY)) {
           complexI.addPinMap(new CircuitMapInfo());
-        } else if (maps[i].contains("_")) {
-          String[] parts = maps[i].split("_");
-          if (parts.length != 3) return null;
+        } else if (s.contains("_")) {
+          String[] parts = s.split("_");
+          if (parts.length != 3)
+            return null;
           try {
             int x = Integer.parseUnsignedInt(parts[0]);
             int y = Integer.parseUnsignedInt(parts[1]);
             int pin = Integer.parseUnsignedInt(parts[2]);
-            complexI.addPinMap(x,y,pin);
+            complexI.addPinMap(x, y, pin);
           } catch (NumberFormatException e) {
             return null;
           }
         } else {
           try {
-            long c = Long.parseUnsignedLong(maps[i]);
+            long c = Long.parseUnsignedLong(s);
             complexI.addPinMap(new CircuitMapInfo(c));
           } catch (NumberFormatException e) {
             return null;

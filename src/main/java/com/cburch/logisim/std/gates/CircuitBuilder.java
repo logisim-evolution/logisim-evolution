@@ -432,7 +432,8 @@ public class CircuitBuilder {
       // we have to shift everything down because otherwise
       // the component will peek over the rectangle's top.
       int dy = minOutputY - outputY;
-      for (int i = 0; i < sub.length; i++) sub[i].y += dy;
+      for (Layout layout : sub)
+        layout.y += dy;
       height += dy;
       outputY += dy;
     }

@@ -65,8 +65,8 @@ public class AssemblerHighlighter extends AbstractTokenMaker {
   @Override
   public TokenMap getWordsToHighlight() {
     TokenMap map = new TokenMap();
-    for (int i = 0 ; i < directives.length ; i++)
-      map.put(directives[i], Token.FUNCTION);
+    for (String directive : directives)
+      map.put(directive, Token.FUNCTION);
     return map;
   }
         

@@ -356,8 +356,8 @@ public class Poly extends FillableCanvasObject {
     int ret = super.matchesHashCode();
     ret = ret * 3 + (closed ? 1 : 0);
     Handle[] hs = handles;
-    for (int i = 0, n = hs.length; i < n; i++) {
-      ret = ret * 31 + hs[i].hashCode();
+    for (Handle h : hs) {
+      ret = ret * 31 + h.hashCode();
     }
     return ret;
   }

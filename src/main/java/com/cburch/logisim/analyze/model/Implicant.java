@@ -184,8 +184,7 @@ public class Implicant implements Comparable<Implicant> {
     // Fix: We are first making a set that contains primes without the don't care set
     boolean ContainsDontCare;
     HashSet<Implicant> primesNoDontCare = new HashSet<Implicant>();
-    for (Iterator<Implicant> it = primes.iterator(); it.hasNext(); ) {
-      Implicant implicant = it.next();
+    for (Implicant implicant : primes) {
       ContainsDontCare = false;
       for (Implicant term : implicant.getTerms()) {
         if (table.getOutputEntry(term.getRow(), column).equals(Entry.DONT_CARE))

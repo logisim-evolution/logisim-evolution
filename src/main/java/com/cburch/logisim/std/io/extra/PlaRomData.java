@@ -101,18 +101,18 @@ public class PlaRomData implements InstanceData {
     String[] datas = s.split(" "), tmp;
     byte value;
     int cnt = 0;
-    for (int i = 0; i < datas.length; i++) {
+    for (String data : datas) {
       // if contains a '*' it has to fill the array with the first value for x (second
       // number) cycles
-      if (datas[i].contains("*")) {
-        tmp = datas[i].split("\\*");
+      if (data.contains("*")) {
+        tmp = data.split("\\*");
         for (int j = 0; j < Integer.parseInt(tmp[1]); j++) {
           value = (byte) Integer.parseInt(tmp[0]);
           writeData(value, cnt);
           cnt++;
         }
       } else {
-        value = (byte) Integer.parseInt(datas[i]);
+        value = (byte) Integer.parseInt(data);
         writeData(value, cnt);
         cnt++;
       }

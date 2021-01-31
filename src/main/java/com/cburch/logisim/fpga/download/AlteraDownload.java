@@ -252,12 +252,12 @@ public class AlteraDownload implements VendorDownload {
     Contents.add("");
     Contents.add("    # Include all entities and gates");
     Contents.add("");
-    for (int i = 0; i < Entities.size(); i++) {
-      Contents.add("    set_global_assignment -name " + FileType + " \"" + Entities.get(i) + "\"");
+    for (String entity : Entities) {
+      Contents.add("    set_global_assignment -name " + FileType + " \"" + entity + "\"");
     }
-    for (int i = 0; i < Architectures.size(); i++) {
+    for (String architecture : Architectures) {
       Contents.add(
-          "    set_global_assignment -name " + FileType + " \"" + Architectures.get(i) + "\"");
+          "    set_global_assignment -name " + FileType + " \"" + architecture + "\"");
     }
     Contents.add("");
     Contents.add("    # Map fpga_clk and ionets to fpga pins");

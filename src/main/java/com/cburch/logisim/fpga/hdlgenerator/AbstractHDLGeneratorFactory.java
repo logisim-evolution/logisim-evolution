@@ -1372,9 +1372,9 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
     StringBuffer OneLine = new StringBuffer();
     ArrayList<String> Contents = new ArrayList<String>();
     int maxWordLength = 0;
-    for (int i = 0; i < RemarkWords.length; i++) {
-      if (RemarkWords[i].length() > maxWordLength) {
-        maxWordLength = RemarkWords[i].length();
+    for (String word : RemarkWords) {
+      if (word.length() > maxWordLength) {
+        maxWordLength = word.length();
       }
     }
     if (MaxRemarkLength < maxWordLength) {
@@ -1400,8 +1400,8 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
     Contents.add(OneLine.toString());
     OneLine.setLength(0);
     /* Next we put the remark text block in 1 or multiple lines */
-    for (int word = 0; word < RemarkWords.length; word++) {
-      if ((OneLine.length() + RemarkWords[word].length() + RemarkOverhead) > (MaxLineLength - 1)) {
+    for (String remarkWord : RemarkWords) {
+      if ((OneLine.length() + remarkWord.length() + RemarkOverhead) > (MaxLineLength - 1)) {
         /* Next word does not fit, we end this line and create a new one */
         while (OneLine.length() < (MaxLineLength - RemarkOverhead)) {
           OneLine.append(" ");
@@ -1425,14 +1425,14 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
           OneLine.append(" ** ");
         }
       }
-      if (RemarkWords[word].endsWith("\\")) {
+      if (remarkWord.endsWith("\\")) {
         /* Forced new line */
-        OneLine.append(RemarkWords[word].substring(0, RemarkWords[word].length() - 1));
+        OneLine.append(remarkWord.substring(0, remarkWord.length() - 1));
         while (OneLine.length() < (MaxLineLength - RemarkOverhead)) {
           OneLine.append(" ");
         }
       } else {
-        OneLine.append(RemarkWords[word] + " ");
+        OneLine.append(remarkWord + " ");
       }
     }
     if (OneLine.length() > (NrOfIndentSpaces + RemarkOverhead)) {
