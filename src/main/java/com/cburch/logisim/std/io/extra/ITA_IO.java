@@ -57,8 +57,13 @@ public class ITA_IO extends Library {
   };
 
   @Override
-  public String getName() {
+  public String getDisplayName() {
     return S.get("input.output.extra");
+  }
+
+  @Override
+  public String getName() {
+    return "Input/Output-Extra";
   }
 
   @Override
