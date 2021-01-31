@@ -432,7 +432,7 @@ public class PartialMapDialog extends JDialog implements LocaleListener,ActionLi
     if (e.getActionCommand().equals("Ok")) {
       MapComponent map = mapInfo.getMap();
       if (InputSingleMultiple != null && InputSingleMultiple.getSelectedIndex() != 0) {
-        int pin = mapInfo.getPin() < 0 ? 0 : mapInfo.getPin();
+        int pin = Math.max(mapInfo.getPin(), 0);
         map.tryMap(pin, ioComp, InputMapSet.get(InputSingleMultiple.getSelectedIndex()-1));
       }
       if (InputMultipleSingle != null && InputMultipleSingle.getSelectedIndex() != 0) {

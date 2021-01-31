@@ -290,7 +290,7 @@ public class ProgrammableGeneratorState implements InstanceData, Cloneable {
       durationHigh = new int[newsize];
       durationLow = new int[newsize];
       clearValues();
-      int lowerlength = (oldDurationHigh.length < newsize) ? oldDurationHigh.length : newsize;
+      int lowerlength = Math.min(oldDurationHigh.length, newsize);
       for (byte i = 0; i < lowerlength; i++) {
         durationHigh[i] = oldDurationHigh[i];
         durationLow[i] = oldDurationLow[i];

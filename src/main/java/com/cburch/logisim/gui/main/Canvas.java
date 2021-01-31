@@ -287,11 +287,11 @@ public class Canvas extends JPanel
         if (mwe.getWheelRotation() < 0) { // ZOOM IN
           zoom += 0.1;
           double max = opts[opts.length - 1] / 100.0;
-          zoomModel.setZoomFactor(zoom >= max ? max : zoom, mwe);
+          zoomModel.setZoomFactor(Math.min(zoom, max), mwe);
         } else { // ZOOM OUT
           zoom -= 0.1;
           double min = opts[0] / 100.0;
-          zoomModel.setZoomFactor(zoom <= min ? min : zoom, mwe);
+          zoomModel.setZoomFactor(Math.max(zoom, min), mwe);
         }
       } else if (tool instanceof PokeTool && ((PokeTool) tool).isScrollable()) {
         int id = (mwe.getWheelRotation() < 0) ? KeyEvent.VK_UP : KeyEvent.VK_DOWN;

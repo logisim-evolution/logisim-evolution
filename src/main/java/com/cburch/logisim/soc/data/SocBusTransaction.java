@@ -340,7 +340,7 @@ public class SocBusTransaction {
   
   public int paint(Graphics2D g2, Long index, int width) {
 	BoxInfo realWidth = getRealBlockWidth(g2,true);
-	int usedWidth = realWidth.blockWidth <= width ? width : realWidth.blockWidth; 
+	int usedWidth = Math.max(realWidth.blockWidth, width);
     Bounds bds = getScaled(usedWidth/2,(SocBusStateInfo.TraceHeight-2)/4,usedWidth,SocBusStateInfo.TraceHeight>>1,true);
     g2.setColor(Color.LIGHT_GRAY);
     g2.fillRect(0, 0, bds.getWidth(), bds.getHeight()-1);

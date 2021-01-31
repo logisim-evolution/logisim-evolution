@@ -74,7 +74,7 @@ public class SignalDraw extends JPanel {
 
     @Override
     public void mousePressed(MouseEvent e) {
-      int posX = e.getX() >= 0 ? e.getX() : 0;
+      int posX = Math.max(e.getX(), 0);
       mDrawAreaEventManager.fireMousePressed(mSignalData, posX);
     }
 

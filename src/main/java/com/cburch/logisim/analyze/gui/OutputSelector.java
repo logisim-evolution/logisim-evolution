@@ -141,7 +141,7 @@ class OutputSelector {
     public void listChanged(VariableListEvent event) {
       int oldSize = select.getItemCount();
       int newSize = source.bits.size();
-      fireContentsChanged(this, 0, oldSize > newSize ? oldSize : newSize);
+      fireContentsChanged(this, 0, Math.max(oldSize, newSize));
       if (!source.bits.contains(selected)) {
         selected = (newSize == 0 ? null : source.bits.get(0));
         select.setSelectedItem(selected);

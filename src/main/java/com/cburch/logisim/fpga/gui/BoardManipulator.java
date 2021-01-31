@@ -303,11 +303,8 @@ public class BoardManipulator extends JPanel implements MouseListener,
   public void setMaxZoom(int value) {
     if (value < zoom.getMinZoom()) {
       MaxZoom = zoom.getMinZoom();
-    } else if (value > zoom.getMaxZoom()) {
-      MaxZoom = zoom.getMaxZoom();
-    } else {
-      MaxZoom = value;
-    }
+    } else
+      MaxZoom = Math.min(value, zoom.getMaxZoom());
   }
   
   private void defineIOComponent() {

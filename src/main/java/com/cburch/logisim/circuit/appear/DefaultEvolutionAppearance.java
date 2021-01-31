@@ -94,9 +94,7 @@ public class DefaultEvolutionAppearance {
     int textWidth =
         (FixedSize)
             ? 25 * DrawAttr.FixedFontCharWidth
-            : (MaxLeftLabelLength + MaxRightLabelLength + 35) < (TitleWidth + 15)
-                ? TitleWidth + 15
-                : (MaxLeftLabelLength + MaxRightLabelLength + 35);
+            : Math.max((MaxLeftLabelLength + MaxRightLabelLength + 35), (TitleWidth + 15));
     int Thight = ((DrawAttr.FixedFontHeight + 10) / 10) * 10;
     int width = (textWidth / 10) * 10 + 20;
     int height = (maxVert > 0) ? maxVert * dy + Thight : 10 + Thight;

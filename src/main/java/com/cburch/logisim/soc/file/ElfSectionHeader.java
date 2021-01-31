@@ -168,7 +168,7 @@ public class ElfSectionHeader {
     byte[] symBuffer = new byte[symTableSize];
     byte[] strBuffer = new byte[strTableSize];
     try {
-      file.skip(symTableOffset < strTableOffset ? symTableOffset : strTableOffset);
+      file.skip(Math.min(symTableOffset, strTableOffset));
     } catch (IOException e) {
       status = SYMBOL_TABLE_NOT_FOUND_ERROR;
       return false;
@@ -184,8 +184,8 @@ public class ElfSectionHeader {
       status = SYMBOL_TABLE_READ_ERROR;
       return false;
     }
-    int fileOffset = (symTableOffset < strTableOffset ? symTableOffset : strTableOffset)+nrRead;
-    int toskip = (symTableOffset > strTableOffset ? symTableOffset : strTableOffset)-fileOffset;
+    int fileOffset = (Math.min(symTableOffset, strTableOffset))+nrRead;
+    int toskip = (Math.max(symTableOffset, strTableOffset))-fileOffset;
     try {
       file.skip(toskip);
     } catch (IOException e) {

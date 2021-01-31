@@ -82,7 +82,7 @@ public class PortIO extends InstanceFactory {
       pin = new Value[nBus];
       usr = new Value[nBus];
       for (int i = 0; i < nBus; i++) {
-        int n = (size > BitWidth.MAXWIDTH ? BitWidth.MAXWIDTH : size);
+        int n = (Math.min(size, BitWidth.MAXWIDTH));
         pin[i] = Value.createUnknown(BitWidth.create(n));
         usr[i] = Value.createUnknown(BitWidth.create(n));
         size -= n;
@@ -96,7 +96,7 @@ public class PortIO extends InstanceFactory {
         usr = Arrays.copyOf(usr, nBus);
       }
       for (int i = 0; i < nBus; i++) {
-        int n = (sz > BitWidth.MAXWIDTH ? BitWidth.MAXWIDTH : sz);
+        int n = (Math.min(sz, BitWidth.MAXWIDTH));
         if (pin[i] == null)
           pin[i] = Value.createUnknown(BitWidth.create(n));
         else
@@ -269,7 +269,7 @@ public class PortIO extends InstanceFactory {
     int n = size;
     int i = 0;
     while (n > 0) {
-      int e = (n > BitWidth.MAXWIDTH ? BitWidth.MAXWIDTH : n);
+      int e = (Math.min(n, BitWidth.MAXWIDTH));
       String range = "[" + i + "..." + (i + e - 1) +"]";
       if (dir == INOUTME) {
         ps[p] = new Port(x-dy, y+dx, Port.INPUT, e);
@@ -289,7 +289,7 @@ public class PortIO extends InstanceFactory {
     n = size;
     i = 0;
     while (n > 0) {
-      int e = (n > BitWidth.MAXWIDTH ? BitWidth.MAXWIDTH : n);
+      int e = (Math.min(n, BitWidth.MAXWIDTH));
       String range = "[" + i + "..." + (i + e - 1) +"]";
       if (dir == INPUT || dir == INOUTSE || dir == INOUTME) {
         ps[p] = new Port(x, y, Port.OUTPUT, e);

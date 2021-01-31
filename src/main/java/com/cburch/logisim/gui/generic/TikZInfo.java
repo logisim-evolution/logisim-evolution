@@ -128,10 +128,10 @@ public class TikZInfo implements Cloneable {
       Point right = new Point(x+width,y+height);
       transform(left,left);
       transform(right,right);
-      int x1 = left.x < right.x ? left.x : right.x;
-      int x2 = left.x < right.x ? right.x : left.x;
-      int y1 = left.y < right.y ? left.y : right.y;
-      int y2 = left.y < right.y ? right.y : left.y;
+      int x1 = Math.min(left.x, right.x);
+      int x2 = Math.max(left.x, right.x);
+      int y1 = Math.min(left.y, right.y);
+      int y2 = Math.max(left.y, right.y);
       boolean inside = true;
       if (points.isEmpty())
         return (start.x >= x1 && start.x <= x2) &&
@@ -668,9 +668,9 @@ public class TikZInfo implements Cloneable {
         ne.setAttribute("rx", Double.toString(rad.getX()));
         ne.setAttribute("ry", Double.toString(rad.getY()));
       }
-      int xpos = (end.x < start.x) ? end.x : start.x;
+      int xpos = Math.min(end.x, start.x);
       int bwidth = Math.abs(end.x-start.x);
-      int ypos = (end.y < start.y) ? end.y : start.y;
+      int ypos = Math.min(end.y, start.y);
       int bheight = Math.abs(end.y-start.y);
       ne.setAttribute("x", Integer.toString(xpos));
       ne.setAttribute("y", Integer.toString(ypos));

@@ -289,10 +289,8 @@ public class ZoomControl extends JPanel implements LocaleListener {
         double height = (bounds.getHeight() + 2 * padding) * ZoomFactor;
         double width = (bounds.getWidth() + 2 * padding) * ZoomFactor;
         double autozoom = ZoomFactor;
-        if (canvasPane.getViewport().getSize().getWidth() / width
-            < canvasPane.getViewport().getSize().getHeight() / height) {
-          autozoom *= canvasPane.getViewport().getSize().getWidth() / width;
-        } else autozoom *= canvasPane.getViewport().getSize().getHeight() / height;
+        autozoom *= Math.min(canvasPane.getViewport().getSize().getWidth() / width,
+            canvasPane.getViewport().getSize().getHeight() / height);
         double max = MyZoom.getZoomOptions()[MyZoom.getZoomOptions().length - 1] / 100.0;
         double min = MyZoom.getZoomOptions()[0] / 100.0;
         if (autozoom > max) autozoom = max;

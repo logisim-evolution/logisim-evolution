@@ -115,9 +115,9 @@ class TextFieldCaret implements Caret, TextFieldListener {
     if (pos != end) {
       g.setColor(SELECTION_BACKGROUND);
       Rectangle p =
-          GraphicsUtil.getTextCursor(g, curText, x, y, pos < end ? pos : end, halign, valign);
+          GraphicsUtil.getTextCursor(g, curText, x, y, Math.min(pos, end), halign, valign);
       Rectangle e =
-          GraphicsUtil.getTextCursor(g, curText, x, y, pos < end ? end : pos, halign, valign);
+          GraphicsUtil.getTextCursor(g, curText, x, y, Math.max(pos, end), halign, valign);
       g.fillRect(p.x, p.y - 1, e.x - p.x + 1, e.height + 2);
     }
 
@@ -204,8 +204,8 @@ class TextFieldCaret implements Caret, TextFieldListener {
       case KeyEvent.VK_COPY:
       case KeyEvent.VK_C:
         if (end != pos) {
-          int pp = (pos < end ? pos : end);
-          int ee = (pos < end ? end : pos);
+          int pp = (Math.min(pos, end));
+          int ee = (Math.max(pos, end));
           String s = curText.substring(pp, ee);
           StringSelection sel = new StringSelection(s);
           Toolkit.getDefaultToolkit().getSystemClipboard().setContents(sel, null);

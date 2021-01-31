@@ -570,16 +570,10 @@ public class AppPreferences {
       create(
           new PrefMonitorDouble(
               "Scale",
-              (((!GraphicsEnvironment.isHeadless())
-                              ? Toolkit.getDefaultToolkit().getScreenSize().getHeight()
-                              : 0)
-                          / 1000)
-                      < 1.0
-                  ? 1.0
-                  : ((!GraphicsEnvironment.isHeadless())
-                          ? Toolkit.getDefaultToolkit().getScreenSize().getHeight()
-                          : 0)
-                      / 1000));
+              Math.max((((!GraphicsEnvironment.isHeadless())
+                  ? Toolkit.getDefaultToolkit().getScreenSize().getHeight()
+                  : 0)
+                  / 1000), 1.0)));
 
   public static final PrefMonitor<String> ADD_AFTER =
       create(

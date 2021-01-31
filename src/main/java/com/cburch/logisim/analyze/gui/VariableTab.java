@@ -542,7 +542,7 @@ public class VariableTab extends AnalyzerTab {
             BorderFactory.createEmptyBorder(1, 3, 1, 3)));
       this.data = data;
       int maxwidth = data.getMaximumSize();
-      Integer[] widths = new Integer[maxwidth > 32 ? 32 : maxwidth];
+      Integer[] widths = new Integer[Math.min(maxwidth, 32)];
       for (int i = 0; i < widths.length; i++)
         widths[i] = i+1;
       width = new JComboBox<>(widths);

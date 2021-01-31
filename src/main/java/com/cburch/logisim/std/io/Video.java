@@ -149,8 +149,8 @@ class Video extends ManagedComponent implements ToolTipMaker, AttributeListener 
       int s = attrs.getValue(SCALE_OPTION);
       int w = attrs.getValue(WIDTH_OPTION);
       int h = attrs.getValue(HEIGHT_OPTION);
-      int bw = (s * w + 14 < 100 ? 100 : s * w + 14);
-      int bh = (s * h + 14 < 20 ? 20 : s * h + 14);
+      int bw = (Math.max(s * w + 14, 100));
+      int bh = (Math.max(s * h + 14, 20));
       return Bounds.create(-30, -bh, bw, bh);
     }
 
@@ -378,8 +378,8 @@ class Video extends ManagedComponent implements ToolTipMaker, AttributeListener 
     int s = attrs.getValue(SCALE_OPTION);
     int w = attrs.getValue(WIDTH_OPTION);
     int h = attrs.getValue(HEIGHT_OPTION);
-    int bw = (s * w + 14 < 100 ? 100 : s * w + 14);
-    int bh = (s * h + 14 < 20 ? 20 : s * h + 14);
+    int bw = (Math.max(s * w + 14, 100));
+    int bh = (Math.max(s * h + 14, 20));
 
     x += -30;
     y += -bh;
