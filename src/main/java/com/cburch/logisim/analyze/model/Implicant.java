@@ -64,7 +64,7 @@ public class Implicant implements Comparable<Implicant> {
       if (diff == 0) {
         currentMask = -1;
       } else {
-        currentMask = (currentMask & ~(diff - 1)) | diff;
+        currentMask = (currentMask & -diff) | diff;
       }
       return new Implicant(0, ret);
     }

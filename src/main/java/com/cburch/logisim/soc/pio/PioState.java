@@ -333,7 +333,7 @@ public class PioState implements SocBusSlaveInterface {
       trans.setReadData(s.captureRegister);
     if (trans.isWriteTransaction()) {
       if (inputCaptureSupportsBitClearing()) {
-        int mask = trans.getWriteData() ^ -1;
+        int mask = ~trans.getWriteData();
         s.captureRegister &= mask;
       } else
         s.captureRegister = 0;

@@ -235,7 +235,7 @@ public class Nios2State implements SocUpSimulationStateListener,SocProcessorInte
 
     public void interrupt() {
       estatus = status;
-      status &= (STATUS_PIE ^ -1);
+      status &= (~STATUS_PIE);
       pc = exceptionVector;
       repaint();
     }
@@ -248,7 +248,7 @@ public class Nios2State implements SocUpSimulationStateListener,SocProcessorInte
     
     public void breakReq() {
       bstatus = status;
-      status &= (STATUS_PIE ^ -1);
+      status &= (~STATUS_PIE);
       long nextPc = SocSupport.convUnsignedInt(pc)+4L;
       writeRegister(30, SocSupport.convUnsignedLong(nextPc));
       pc = breakVector;

@@ -356,7 +356,7 @@ public class Ram extends Mem {
       } else {
         for (int i = 0 ; i < RamAppearance.getNrBEPorts(attrs) ; i++) {
           long mask = 0xFF << (i*8);
-          long andMask = mask ^ (-1L);
+          long andMask = ~mask;
           if (state.getPortValue(RamAppearance.getBEIndex(i, attrs)).equals(Value.TRUE)) {
             newMemValue &= andMask;
             newMemValue |= (dataInValue & mask);
