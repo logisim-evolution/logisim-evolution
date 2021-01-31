@@ -131,7 +131,7 @@ public class VhdlEntityComponent extends InstanceFactory {
   public void SetSimName(AttributeSet attrs, String SName) {
     if (attrs == null) return;
     VhdlEntityAttributes atrs = (VhdlEntityAttributes) attrs;
-    String Label = (attrs.getValue(StdAttr.LABEL) != "") ? getHDLTopName(attrs) : SName;
+    String Label = (!attrs.getValue(StdAttr.LABEL).equals("")) ? getHDLTopName(attrs) : SName;
     if (atrs.containsAttribute(VhdlSimConstants.SIM_NAME_ATTR))
       atrs.setValue(VhdlSimConstants.SIM_NAME_ATTR, Label);
   }
@@ -169,7 +169,7 @@ public class VhdlEntityComponent extends InstanceFactory {
 
     String label = "";
 
-    if (attrs.getValue(StdAttr.LABEL) != "")
+    if (!attrs.getValue(StdAttr.LABEL).equals(""))
       label = "_" + attrs.getValue(StdAttr.LABEL).toLowerCase();
 
     return getHDLName(attrs) + label;

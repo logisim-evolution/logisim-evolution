@@ -70,7 +70,7 @@ public class PropertyChangeWeakSupport {
       PropertyChangeListener l = data.listener.get();
       if (l == null) {
         it.remove();
-      } else if (data.property == ALL_PROPERTIES || data.property.equals(property)) {
+      } else if (data.property.equals(ALL_PROPERTIES) || data.property.equals(property)) {
         if (e == null) {
           e =
               new PropertyChangeEvent(
@@ -88,7 +88,7 @@ public class PropertyChangeWeakSupport {
       PropertyChangeListener l = data.listener.get();
       if (l == null) {
         it.remove();
-      } else if (data.property == ALL_PROPERTIES || data.property.equals(property)) {
+      } else if (data.property.equals(ALL_PROPERTIES) || data.property.equals(property)) {
         if (e == null) {
           e =
               new PropertyChangeEvent(
@@ -106,7 +106,7 @@ public class PropertyChangeWeakSupport {
       PropertyChangeListener l = data.listener.get();
       if (l == null) {
         it.remove();
-      } else if (data.property == ALL_PROPERTIES || data.property.equals(property)) {
+      } else if (data.property.equals(ALL_PROPERTIES) || data.property.equals(property)) {
         if (e == null) {
           e = new PropertyChangeEvent(source, property, oldValue, newValue);
         }

@@ -89,7 +89,7 @@ class AvoidanceMap {
         // put it into the map as if it is - and in the rare event
         // that loc isn't in the component, we can remove it.
         String prev = avoid.put(loc, Connector.ALLOW_NEITHER);
-        if (prev != Connector.ALLOW_NEITHER) {
+        if (!Connector.ALLOW_NEITHER.equals(prev)) {
           Location baseLoc = translated ? loc.translate(-dx, -dy) : loc;
           if (!comp.contains(baseLoc)) {
             if (prev == null) {

@@ -90,13 +90,21 @@ public class HdlToolbarModel extends AbstractToolbarModel implements HdlModelLis
   boolean validateEnabled = false;
 
   void doAction(String action) {
-    if (action == HDL_IMPORT) editor.doImport();
-    else if (action == HDL_EXPORT) editor.doExport();
-    else if (action == HDL_VALIDATE) editor.doValidate();
+    switch (action) {
+      case HDL_IMPORT:
+        editor.doImport();
+        break;
+      case HDL_EXPORT:
+        editor.doExport();
+        break;
+      case HDL_VALIDATE:
+        editor.doValidate();
+        break;
+    }
   }
 
   boolean isEnabled(String action) {
-    if (action == HDL_VALIDATE) return validateEnabled;
+    if (action.equals(HDL_VALIDATE)) return validateEnabled;
     else return true;
   }
 

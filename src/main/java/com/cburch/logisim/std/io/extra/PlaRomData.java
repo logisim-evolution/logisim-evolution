@@ -95,7 +95,7 @@ public class PlaRomData implements InstanceData {
 
   public void decodeSavedData(String s) {
     // if empty, all to false so don't do anything
-    if (s == null || s == "") return;
+    if (s == null || s.equals("")) return;
     // split the attribute content string in an array of strings with a single
     // information each one
     String[] datas = s.split(" "), tmp;

@@ -255,18 +255,18 @@ public class ProgrammableGeneratorState implements InstanceData, Cloneable {
   }
 
   private void SaveValues(JTextField[] inputs) {
-    String onlynumber;
+    StringBuilder onlynumber;
     int value;
     for (byte i = 0; i < inputs.length; i++) {
-      onlynumber = "";
+      onlynumber = new StringBuilder();
       value = 0;
       // create a string composed by the digits of the text field
       for (byte j = 0; j < inputs[i].getText().length(); j++) {
         if (Character.isDigit(inputs[i].getText().charAt(j)))
-          onlynumber += inputs[i].getText().charAt(j);
+          onlynumber.append(inputs[i].getText().charAt(j));
       }
       // if there are no digits the value is 0 and it isn't saved
-      if (onlynumber != "") value = Integer.parseInt(onlynumber);
+      if (onlynumber.length() != 0) value = Integer.parseInt(onlynumber.toString());
       if (value >= 1) {
         if (i % 2 == 0) setdurationHigh(i / 2, value);
         else setdurationLow(i / 2, value);

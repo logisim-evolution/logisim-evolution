@@ -97,7 +97,7 @@ public class VhdlEntity extends InstanceFactory implements HdlModelListener {
   public void SetSimName(AttributeSet attrs, String SName) {
     if (attrs == null) return;
     VhdlEntityAttributes atrs = (VhdlEntityAttributes) attrs;
-    String Label = (attrs.getValue(StdAttr.LABEL) != "") ? getHDLTopName(attrs) : SName;
+    String Label = (!attrs.getValue(StdAttr.LABEL).equals("")) ? getHDLTopName(attrs) : SName;
     if (atrs.containsAttribute(VhdlSimConstants.SIM_NAME_ATTR))
       atrs.setValue(VhdlSimConstants.SIM_NAME_ATTR, Label);
   }
@@ -148,7 +148,7 @@ public class VhdlEntity extends InstanceFactory implements HdlModelListener {
 
     String label = "";
 
-    if (attrs.getValue(StdAttr.LABEL) != "")
+    if (!attrs.getValue(StdAttr.LABEL).equals(""))
       label = "_" + attrs.getValue(StdAttr.LABEL).toLowerCase();
 
     return getHDLName(attrs) + label;
@@ -342,8 +342,8 @@ public class VhdlEntity extends InstanceFactory implements HdlModelListener {
     for (VhdlParser.PortDescription p : content.getPorts()) {
       AttributeSet a = Pin.FACTORY.createAttributeSet();
       a.setValue(StdAttr.LABEL, p.getName());
-      a.setValue(Pin.ATTR_TYPE, p.getType() != Port.INPUT);
-      a.setValue(StdAttr.FACING, p.getType() != Port.INPUT ? Direction.WEST : Direction.EAST);
+      a.setValue(Pin.ATTR_TYPE, !p.getType().equals(Port.INPUT));
+      a.setValue(StdAttr.FACING, !p.getType().equals(Port.INPUT) ? Direction.WEST : Direction.EAST);
       a.setValue(StdAttr.WIDTH, p.getWidth());
       InstanceComponent ic =
           (InstanceComponent) Pin.FACTORY.createComponent(Location.create(100, y), a);

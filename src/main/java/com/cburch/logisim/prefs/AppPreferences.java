@@ -296,16 +296,8 @@ public class AppPreferences {
   public static void handleGraphicsAcceleration() {
     String accel = GRAPHICS_ACCELERATION.get();
     try {
-      if (accel == ACCEL_NONE) {
-        System.setProperty("sun.java2d.opengl", "False");
-        System.setProperty("sun.java2d.d3d", "False");
-      } else if (accel == ACCEL_OPENGL) {
-        System.setProperty("sun.java2d.opengl", "True");
-        System.setProperty("sun.java2d.d3d", "False");
-      } else if (accel == ACCEL_D3D) {
-        System.setProperty("sun.java2d.opengl", "False");
-        System.setProperty("sun.java2d.d3d", "True");
-      }
+      System.setProperty("sun.java2d.opengl", Boolean.toString(accel.equals(ACCEL_OPENGL)));
+      System.setProperty("sun.java2d.d3d", Boolean.toString(accel.equals(ACCEL_D3D)));
     } catch (Exception t) {
     }
   }

@@ -88,9 +88,9 @@ public class Selection {
 
   public void drawSuppressed(Graphics g, CanvasObject shape) {
     String state = suppressed.get(shape);
-    if (state == MOVING_HANDLE) {
+    if (state.equals(MOVING_HANDLE)) {
       shape.paint(g, curHandleGesture);
-    } else if (state == TRANSLATING) {
+    } else if (state.equals(TRANSLATING)) {
       g.translate(moveDx, moveDy);
       shape.paint(g, null);
     }

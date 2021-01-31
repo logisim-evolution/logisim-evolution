@@ -152,7 +152,7 @@ public class LogisimVersion {
           && this.minor == o.minor
           && this.release == o.release
           && this.revision == o.revision
-          && this.variant == o.variant);
+          && this.variant.equals(o.variant));
     } else {
       return (false);
     }
@@ -186,7 +186,7 @@ public class LogisimVersion {
     if (ret == null) {
       ret = major + "." + minor + "." + release;
       if (revision != FINAL_REVISION) ret += "." + revision;
-      if (variant != "") ret += "." + variant;
+      if (!variant.equals("")) ret += "." + variant;
       repr = ret;
     }
     return (ret);

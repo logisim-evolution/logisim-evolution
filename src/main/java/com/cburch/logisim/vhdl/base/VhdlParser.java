@@ -109,10 +109,16 @@ public class VhdlParser {
     }
 
     public String getVhdlType() {
-      if (type == Port.INPUT) return "in";
-      else if (type == Port.OUTPUT) return "out";
-      else if (type == Port.INOUT) return "inout";
-      else throw new IllegalArgumentException("Not recognized port type: " + type);
+      switch (type) {
+        case Port.INPUT:
+          return "in";
+        case Port.OUTPUT:
+          return "out";
+        case Port.INOUT:
+          return "inout";
+        default:
+          throw new IllegalArgumentException("Not recognized port type: " + type);
+      }
     }
 
     public BitWidth getWidth() {
@@ -293,7 +299,7 @@ public class VhdlParser {
     }
 
     for (String name : names.split("\\s*,\\s*")) {
-      if (ptype == Port.INPUT) inputs.add(new PortDescription(name, ptype, width));
+      if (ptype.equals(Port.INPUT)) inputs.add(new PortDescription(name, ptype, width));
       else outputs.add(new PortDescription(name, ptype, width));
     }
   }

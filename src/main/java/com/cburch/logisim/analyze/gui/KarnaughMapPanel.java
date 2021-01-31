@@ -67,6 +67,7 @@ import java.awt.font.TextLayout;
 import java.text.AttributedString;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.swing.JPanel;
 
 public class KarnaughMapPanel extends JPanel
@@ -950,7 +951,7 @@ public class KarnaughMapPanel extends JPanel
   }
 
   public void setOutput(String value) {
-    boolean recompute = (output == null || value == null) && output != value;
+    boolean recompute = (output == null || value == null) && !Objects.equals(output, value);
     output = value;
     kMapGroups.setOutput(value);
     if (recompute) computePreferredSize();

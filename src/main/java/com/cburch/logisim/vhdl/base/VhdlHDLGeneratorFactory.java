@@ -103,7 +103,7 @@ public class VhdlHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
     VhdlContent content = ((VhdlEntityAttributes) attrs).getContent();
     for (VhdlParser.PortDescription p : content.getPorts()) {
-      if (p.getType() == Port.INPUT) inputs.put(p.getName(), p.getWidth().getWidth());
+      if (p.getType().equals(Port.INPUT)) inputs.put(p.getName(), p.getWidth().getWidth());
     }
 
     return inputs;
@@ -115,7 +115,7 @@ public class VhdlHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
     VhdlContent content = ((VhdlEntityAttributes) attrs).getContent();
     for (VhdlParser.PortDescription p : content.getPorts()) {
-      if (p.getType() == Port.OUTPUT) outputs.put(p.getName(), p.getWidth().getWidth());
+      if (p.getType().equals(Port.OUTPUT)) outputs.put(p.getName(), p.getWidth().getWidth());
     }
 
     return outputs;
