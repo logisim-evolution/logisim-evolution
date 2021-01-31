@@ -524,7 +524,7 @@ public class AddTool extends Tool implements PropertyChangeListener {
       if (attrs.containsAttribute(StdAttr.LABEL)) {
         Label = attrs.getValue(StdAttr.LABEL);
         /* Here we make sure to not overrride labels that have default value */
-        if (AutoLabler.IsActive(canvas.getCircuit()) & ((Label == null) | Label.isEmpty())) {
+        if (AutoLabler.IsActive(canvas.getCircuit()) && ((Label == null) || Label.isEmpty())) {
           Label = AutoLabler.GetCurrent(canvas.getCircuit(), source);
           if (AutoLabler.hasNext(canvas.getCircuit()))
             AutoLabler.GetNext(canvas.getCircuit(), source);
