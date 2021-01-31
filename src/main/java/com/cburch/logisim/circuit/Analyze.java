@@ -400,7 +400,7 @@ public class Analyze {
         WireThread t = bundle.threads[p.bit];
         for (CircuitWires.ThreadBundle tb : t.getBundles()) {
           for (Location p2 : tb.b.points) {
-            if (p2.equals(p)) continue;
+            if (p2.equals(p.loc)) continue;
             LocationBit p2b = new LocationBit(p2, tb.loc);
             Expression old = expressionMap.get(p2b);
             if (old != null) {

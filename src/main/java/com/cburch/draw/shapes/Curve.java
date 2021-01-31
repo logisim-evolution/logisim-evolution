@@ -223,15 +223,15 @@ public class Curve extends FillableCanvasObject {
   public Handle moveHandle(HandleGesture gesture) {
     Handle[] hs = getHandleArray(gesture);
     Handle ret = null;
-    if (!hs[0].equals(p0)) {
+    if (!hs[0].getLocation().equals(p0)) {
       p0 = hs[0].getLocation();
       ret = hs[0];
     }
-    if (!hs[1].equals(p1)) {
+    if (!hs[1].getLocation().equals(p1)) {
       p1 = hs[1].getLocation();
       ret = hs[1];
     }
-    if (!hs[2].equals(p2)) {
+    if (!hs[2].getLocation().equals(p2)) {
       p2 = hs[2].getLocation();
       ret = hs[2];
     }

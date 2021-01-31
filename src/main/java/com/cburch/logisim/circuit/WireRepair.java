@@ -127,7 +127,7 @@ class WireRepair extends CircuitTransaction {
         Collection<Wire> wset = Collections.singleton(wnew);
 
         for (Wire w : mergeSet) {
-          if (!w.equals(wset)) {
+          if (!w.equals(wnew)) {
             repl.put(w, wset);
           }
         }
