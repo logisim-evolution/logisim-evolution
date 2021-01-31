@@ -411,7 +411,7 @@ public class Implicant implements Comparable<Implicant> {
       }
 
       ArrayList<Implicant> sorted = new ArrayList<>(all);
-      Collections.sort(sorted, sortByGenerality);
+      sorted.sort(sortByGenerality);
       ArrayList<Implicant> chosen = new ArrayList<>();
       for (Implicant imp : sorted) {
         if (disjoint(imp, chosen)) {

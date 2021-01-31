@@ -481,7 +481,7 @@ public class TruthTable {
       }
     }
 
-    Collections.sort(newRows, sortByInputs);
+    newRows.sort(sortByInputs);
     rows.clear();
     rows = newRows;
     initColumns();
@@ -639,7 +639,7 @@ public class TruthTable {
         }
         ret.add(new Row(idx0, inputs, dc0));
       }
-      Collections.sort(ret, sortByInputs);
+      ret.sort(sortByInputs);
       rows = ret;
     }
 
@@ -656,7 +656,7 @@ public class TruthTable {
         ret.add(new Row(idx0 | 0, oldCount + 1, dc0)); // xxxx0yyy
         ret.add(new Row(idx0 | b, oldCount + 1, dc0)); // xxxx1yyy
       }
-      Collections.sort(ret, sortByInputs);
+      ret.sort(sortByInputs);
       rows = ret;
     }
 
@@ -678,7 +678,7 @@ public class TruthTable {
         int dc0 = ((dc >> 1) & ~mask) | (dc & mask); // wwww0zzz
         ret.add(new Row(idx0, oldCount - 1, dc0));
       }
-      Collections.sort(ret, sortByInputs);
+      ret.sort(sortByInputs);
       rows = ret;
     }
 

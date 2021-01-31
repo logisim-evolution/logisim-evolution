@@ -60,7 +60,7 @@ public class ModelReorderAction extends ModelAction {
     if (reqs.isEmpty()) {
       return null;
     } else {
-      Collections.sort(reqs, ReorderRequest.ASCENDING_FROM);
+      reqs.sort(ReorderRequest.ASCENDING_FROM);
       repairRequests(reqs);
       return new ModelReorderAction(model, reqs);
     }
@@ -79,7 +79,7 @@ public class ModelReorderAction extends ModelAction {
     if (reqs.isEmpty()) {
       return null;
     } else {
-      Collections.sort(reqs, ReorderRequest.ASCENDING_FROM);
+      reqs.sort(ReorderRequest.ASCENDING_FROM);
       repairRequests(reqs);
       return new ModelReorderAction(model, reqs);
     }
@@ -104,7 +104,7 @@ public class ModelReorderAction extends ModelAction {
     if (reqs.isEmpty()) {
       return null;
     } else {
-      Collections.sort(reqs, ReorderRequest.DESCENDING_FROM);
+      reqs.sort(ReorderRequest.DESCENDING_FROM);
       repairRequests(reqs);
       return new ModelReorderAction(model, reqs);
     }
@@ -123,7 +123,7 @@ public class ModelReorderAction extends ModelAction {
     if (reqs.isEmpty()) {
       return null;
     } else {
-      Collections.sort(reqs, ReorderRequest.ASCENDING_FROM);
+      reqs.sort(ReorderRequest.ASCENDING_FROM);
       repairRequests(reqs);
       return new ModelReorderAction(model, reqs);
     }

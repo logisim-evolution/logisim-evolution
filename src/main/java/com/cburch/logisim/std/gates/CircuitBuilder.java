@@ -652,7 +652,7 @@ public class CircuitBuilder {
           // search for a Y that won't intersect with others
           // (we needn't bother if the pin doesn't connect
           // with anything anyway.)
-          Collections.sort(forbiddenYs, compareYs);
+          forbiddenYs.sort(compareYs);
           while (Collections.binarySearch(forbiddenYs, spineLoc, compareYs) >= 0) {
             curY += 10;
             spineLoc = Location.create(spineX, curY);
@@ -705,7 +705,7 @@ public class CircuitBuilder {
             /* add a location for the bus entry */
             Location bloc = Location.create(spineX, busY);
             spine.add(bloc);
-            Collections.sort(forbiddenYs, compareYs);
+            forbiddenYs.sort(compareYs);
             // create spine
             createSpine(result, spine, compareYs);
           }
@@ -719,7 +719,7 @@ public class CircuitBuilder {
 
   private static void createSpine(
       CircuitMutation result, ArrayList<Location> spine, Comparator<Location> compareYs) {
-    Collections.sort(spine, compareYs);
+    spine.sort(compareYs);
     Location prev = spine.get(0);
     for (int k = 1, n = spine.size(); k < n; k++) {
       Location cur = spine.get(k);
