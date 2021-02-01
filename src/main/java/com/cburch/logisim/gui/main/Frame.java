@@ -146,7 +146,6 @@ public class Frame extends LFrame implements LocaleListener {
     proj.addProjectListener(myProjectListener);
     proj.addLibraryListener(myProjectListener);
     proj.addCircuitListener(myProjectListener);
-    computeTitle();
 
     // set up elements for the Layout view
     layoutToolbarModel = new LayoutToolbarModel(this, proj);
@@ -177,8 +176,8 @@ public class Frame extends LFrame implements LocaleListener {
     simExplorer = new SimulationExplorer(proj, menuListener);
     bottomTab = new JTabbedPane();
     bottomTab.setFont(AppPreferences.getScaledFont(new Font("Dialog", Font.BOLD, 9)));
-    bottomTab.addTab("Properties", attrTable = new AttrTable(this));
-    bottomTab.addTab("State", new RegTabContent(this));
+    bottomTab.add(attrTable = new AttrTable(this));
+    bottomTab.add(new RegTabContent(this));
 
     zoom = new ZoomControl(layoutZoomModel, layoutCanvas);
 
@@ -202,8 +201,8 @@ public class Frame extends LFrame implements LocaleListener {
 
     topTab = new JTabbedPane();
     topTab.setFont(new Font("Dialog", Font.BOLD, 9));
-    topTab.add("Design", explPanel);
-    topTab.add("Simulate", simPanel);
+    topTab.add(explPanel);
+    topTab.add(simPanel);
 
     JPanel attrFooter = new JPanel(new BorderLayout());
     attrFooter.add(zoom);
@@ -233,7 +232,7 @@ public class Frame extends LFrame implements LocaleListener {
 
     getContentPane().add(mainRegion, BorderLayout.CENTER);
 
-    computeTitle();
+    localeChanged();
 
     this.setSize(
         AppPreferences.WINDOW_WIDTH.get().intValue(),
@@ -442,6 +441,10 @@ public class Frame extends LFrame implements LocaleListener {
   @Override
   public void localeChanged() {
     computeTitle();
+    topTab.setTitleAt(0, S.get("designTab"));
+    topTab.setTitleAt(1, S.get("simulateTab"));
+    bottomTab.setTitleAt(0, S.get("propertiesTab"));
+    bottomTab.setTitleAt(1, S.get("stateTab"));
   }
 
   private void placeToolbar() {
