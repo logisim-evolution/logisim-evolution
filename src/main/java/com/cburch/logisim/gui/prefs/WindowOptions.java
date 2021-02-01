@@ -42,12 +42,15 @@ import java.awt.event.ActionListener;
 import java.util.List;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JSlider;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
+import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.JTextArea;
@@ -61,6 +64,8 @@ class WindowOptions extends OptionsPanel {
   private final JLabel ZoomLabel;
   private final JLabel Importanta;
   private final JTextArea Importantb;
+  private final JPanel previewContainer;
+  private JPanel previewPanel;
 
   private class ZoomChange implements ChangeListener, ActionListener {
 
@@ -84,6 +89,7 @@ class WindowOptions extends OptionsPanel {
         if (LookAndFeel.getSelectedIndex() != Index) {
           Index = LookAndFeel.getSelectedIndex();
           AppPreferences.LookAndFeel.set(LFInfos[Index].getClassName());
+          initThemePreviewer();
         }
       } else if (e.getActionCommand().equals("reset")) {
         AppPreferences.resetWindow();
@@ -120,7 +126,7 @@ class WindowOptions extends OptionsPanel {
               new PrefOption(Direction.WEST.toString(), Direction.WEST.getDisplayGetter()),
               new PrefOption(AppPreferences.TOOLBAR_HIDDEN, S.getter("windowToolbarHidden"))
             });
-   
+
     JPanel panel = new JPanel(new TableLayout(2));
     panel.add(toolbarPlacement.getJLabel());
     panel.add(toolbarPlacement.getJComboBox());
@@ -168,6 +174,12 @@ class WindowOptions extends OptionsPanel {
     panel.add(LookAndFeel);
     LookAndFeel.addActionListener(Listener);
 
+    JLabel previewLabel = new JLabel(S.get("windowToolbarPreview"));
+    panel.add(previewLabel);
+    previewContainer = new JPanel();
+    panel.add(previewContainer);
+    initThemePreviewer();
+
     setLayout(new TableLayout(1));
     JButton but = new JButton();
     but.addActionListener(Listener);
@@ -178,6 +190,24 @@ class WindowOptions extends OptionsPanel {
       add(check);
     }
     add(panel);
+  }
+
+  private void initThemePreviewer() {
+    if (previewPanel != null)
+      previewContainer.remove(previewPanel);
+    javax.swing.LookAndFeel previousLF = UIManager.getLookAndFeel();
+    try {
+      UIManager.setLookAndFeel(AppPreferences.LookAndFeel.get());
+      previewPanel = new JPanel();
+      previewPanel.add(new JButton("Preview"));
+      previewPanel.add(new JCheckBox("Preview"));
+      previewPanel.add(new JRadioButton("Preview"));
+      previewPanel.add(new JComboBox<String>(new String[]{"Preview 1", "Preview 2"}));
+      previewContainer.add(previewPanel);
+      UIManager.setLookAndFeel(previousLF);
+    } catch (IllegalAccessException | UnsupportedLookAndFeelException | InstantiationException | ClassNotFoundException e) {}
+    previewContainer.repaint();
+    previewContainer.revalidate();
   }
 
   @Override
