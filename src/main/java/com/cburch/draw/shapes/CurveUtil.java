@@ -31,6 +31,18 @@ package com.cburch.draw.shapes;
 import com.cburch.logisim.data.Bounds;
 
 public class CurveUtil {
+  /**
+   * getBounds and findNearestPoint are based translated from the ActionScript of Olivier Besson's
+   * Bezier class for collision detection. Code from:
+   * http://blog.gludion.com/2009/08/distance-to-quadratic-bezier-curve.html
+   */
+
+  // a value we consider "small enough" to equal it to zero:
+  // (this is used for double solutions in 2nd or 3d degree equation)
+  private static final double zeroMax = 0.0000001;
+
+  private CurveUtil() {}
+
   private static double[] computeA(double[] p0, double[] p1) {
     return new double[] {p1[0] - p0[0], p1[1] - p0[1]};
   }
@@ -235,16 +247,4 @@ public class CurveUtil {
       return null;
     }
   }
-
-  /**
-   * getBounds and findNearestPoint are based translated from the ActionScript of Olivier Besson's
-   * Bezier class for collision detection. Code from:
-   * http://blog.gludion.com/2009/08/distance-to-quadratic-bezier-curve.html
-   */
-
-  // a value we consider "small enough" to equal it to zero:
-  // (this is used for double solutions in 2nd or 3d degree equation)
-  private static final double zeroMax = 0.0000001;
-
-  private CurveUtil() {}
 }

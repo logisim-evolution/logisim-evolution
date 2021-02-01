@@ -45,14 +45,9 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 public class Curve extends FillableCanvasObject {
-  private static double[] toArray(Location loc) {
-    return new double[] {loc.getX(), loc.getY()};
-  }
-
   private Location p0;
   private Location p1;
   private Location p2;
-
   private Bounds bounds;
 
   public Curve(Location end0, Location end1, Location ctrl) {
@@ -60,6 +55,10 @@ public class Curve extends FillableCanvasObject {
     this.p1 = ctrl;
     this.p2 = end1;
     bounds = CurveUtil.getBounds(toArray(p0), toArray(p1), toArray(p2));
+  }
+
+  private static double[] toArray(Location loc) {
+    return new double[] {loc.getX(), loc.getY()};
   }
 
   @Override

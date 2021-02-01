@@ -121,6 +121,10 @@ public class Text extends AbstractCanvasObject {
     return label.getText();
   }
 
+  public void setText(String value) {
+    label.setText(value);
+  }
+
   @Override
   @SuppressWarnings("unchecked")
   public <V> V getValue(Attribute<V> attr) {
@@ -175,10 +179,6 @@ public class Text extends AbstractCanvasObject {
   @Override
   public void paint(Graphics g, HandleGesture gesture) {
     label.paint(g);
-  }
-
-  public void setText(String value) {
-    label.setText(value);
   }
 
   @Override

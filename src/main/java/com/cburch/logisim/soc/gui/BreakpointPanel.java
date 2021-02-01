@@ -30,26 +30,6 @@ package com.cburch.logisim.soc.gui;
 
 import static com.cburch.logisim.soc.Strings.S;
 
-import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.util.ArrayList;
-import java.util.HashMap;
-
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.event.CaretEvent;
-import javax.swing.event.CaretListener;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.Element;
-
-import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
-import org.fife.ui.rtextarea.GutterIconInfo;
-import org.fife.ui.rtextarea.RTextScrollPane;
-
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.gui.icons.BreakpointIcon;
 import com.cburch.logisim.soc.data.SocProcessorInterface;
@@ -58,22 +38,40 @@ import com.cburch.logisim.soc.file.ElfSectionHeader;
 import com.cburch.logisim.soc.util.AssemblerInterface;
 import com.cburch.logisim.util.LocaleListener;
 import com.cburch.logisim.util.LocaleManager;
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.util.ArrayList;
+import java.util.HashMap;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.event.CaretEvent;
+import javax.swing.event.CaretListener;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Element;
+import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
+import org.fife.ui.rtextarea.GutterIconInfo;
+import org.fife.ui.rtextarea.RTextScrollPane;
 
-public class BreakpointPanel extends JPanel implements CaretListener,LocaleListener,ActionListener,KeyListener{
+public class BreakpointPanel extends JPanel
+    implements CaretListener, LocaleListener, ActionListener, KeyListener {
 
   private static final long serialVersionUID = 1L;
   private final RSyntaxTextArea asmWindow;
   private final RTextScrollPane debugScrollPane;
   private final JLabel lineIndicator;
-  private int oldCaretPos;
-  private final HashMap<Integer,Integer> debugLines;
+  private final HashMap<Integer, Integer> debugLines;
   private final JButton addBreakPoint;
   private final JButton removeBreakPoint;
+  private int oldCaretPos;
   private int currentLine;
   private int maxLines;
 
   public BreakpointPanel(String highLiter) {
-    asmWindow = new RSyntaxTextArea(20,60);
+    asmWindow = new RSyntaxTextArea(20, 60);
     asmWindow.setSyntaxEditingStyle(highLiter);
     asmWindow.setEditable(false);
     asmWindow.setPopupMenu(null);
@@ -92,36 +90,40 @@ public class BreakpointPanel extends JPanel implements CaretListener,LocaleListe
     addBreakPoint.addActionListener(this);
     removeBreakPoint = new JButton();
     removeBreakPoint.addActionListener(this);
-    info.add(addBreakPoint,BorderLayout.WEST);
-    info.add(lineIndicator,BorderLayout.CENTER);
-    info.add(removeBreakPoint,BorderLayout.EAST);
+    info.add(addBreakPoint, BorderLayout.WEST);
+    info.add(lineIndicator, BorderLayout.CENTER);
+    info.add(removeBreakPoint, BorderLayout.EAST);
     setLayout(new BorderLayout());
-    add(info,BorderLayout.NORTH);
+    add(info, BorderLayout.NORTH);
     add(debugScrollPane);
     oldCaretPos = -1;
-    debugLines = new HashMap<Integer,Integer>();
+    debugLines = new HashMap<Integer, Integer>();
     localeChanged();
     LocaleManager.addLocaleListener(this);
   }
-  
-  public void loadProgram(CircuitState state, SocProcessorInterface pIf,
-		  ElfProgramHeader progInfo,ElfSectionHeader sectInfo, AssemblerInterface assembler) {
-      debugLines.clear();
-      debugScrollPane.getGutter().removeAllTrackingIcons();
-      asmWindow.setText(assembler.getProgram(state, pIf, progInfo, sectInfo, debugLines));
-      asmWindow.setCaretPosition(0);
+
+  public void loadProgram(
+      CircuitState state,
+      SocProcessorInterface pIf,
+      ElfProgramHeader progInfo,
+      ElfSectionHeader sectInfo,
+      AssemblerInterface assembler) {
+    debugLines.clear();
+    debugScrollPane.getGutter().removeAllTrackingIcons();
+    asmWindow.setText(assembler.getProgram(state, pIf, progInfo, sectInfo, debugLines));
+    asmWindow.setCaretPosition(0);
   }
-  
+
   public void gotoLine(int line) {
     Element root = asmWindow.getDocument().getDefaultRootElement();
     int curetPos = 0;
     while (root.getElementIndex(curetPos) != line && curetPos < root.getEndOffset()) curetPos++;
     asmWindow.setCaretPosition(curetPos);
   }
-  
-  public HashMap<Integer,Integer> getBreakPoints() {
-    HashMap<Integer,Integer> breakPoints = new HashMap<Integer,Integer>();
-    for (int i : getBreakpointLines()) breakPoints.put(debugLines.get(i),i);
+
+  public HashMap<Integer, Integer> getBreakPoints() {
+    HashMap<Integer, Integer> breakPoints = new HashMap<Integer, Integer>();
+    for (int i : getBreakpointLines()) breakPoints.put(debugLines.get(i), i);
     return breakPoints;
   }
 
@@ -131,7 +133,7 @@ public class BreakpointPanel extends JPanel implements CaretListener,LocaleListe
     if (caretPos != oldCaretPos) {
       oldCaretPos = caretPos;
       Element root = asmWindow.getDocument().getDefaultRootElement();
-      currentLine = root.getElementIndex(caretPos)+1;
+      currentLine = root.getElementIndex(caretPos) + 1;
       maxLines = root.getElementCount();
       localeChanged();
       ArrayList<Integer> dlines = getBreakpointLines();
@@ -154,7 +156,7 @@ public class BreakpointPanel extends JPanel implements CaretListener,LocaleListe
     addBreakPoint.setText(S.get("RV32imSetBreakpoint"));
     removeBreakPoint.setText(S.get("RV32imRemoveBreakPoint"));
   }
-  
+
   private ArrayList<Integer> getBreakpointLines() {
     ArrayList<Integer> lines = new ArrayList<Integer>();
     GutterIconInfo[] bookmarks = debugScrollPane.getGutter().getBookmarks();
@@ -162,8 +164,7 @@ public class BreakpointPanel extends JPanel implements CaretListener,LocaleListe
     for (GutterIconInfo bookmark : bookmarks) {
       int pos = bookmark.getMarkedOffset();
       int line = root.getElementIndex(pos) + 1;
-      if (debugLines.containsKey(line))
-        lines.add(line);
+      if (debugLines.containsKey(line)) lines.add(line);
       else
         try {
           debugScrollPane.getGutter().toggleBookmark(line - 1);
@@ -172,18 +173,22 @@ public class BreakpointPanel extends JPanel implements CaretListener,LocaleListe
     }
     return lines;
   }
-  
+
   private void updateBreakpoint() {
     if (getBreakpointLines().contains(currentLine)) {
-      try { 
-        debugScrollPane.getGutter().toggleBookmark(currentLine-1);
-		} catch (BadLocationException e) { return; }
+      try {
+        debugScrollPane.getGutter().toggleBookmark(currentLine - 1);
+      } catch (BadLocationException e) {
+        return;
+      }
       addBreakPoint.setEnabled(true);
       removeBreakPoint.setEnabled(false);
     } else {
-      try { 
-        debugScrollPane.getGutter().toggleBookmark(currentLine-1);
-      } catch (BadLocationException e) { return; }
+      try {
+        debugScrollPane.getGutter().toggleBookmark(currentLine - 1);
+      } catch (BadLocationException e) {
+        return;
+      }
       addBreakPoint.setEnabled(false);
       removeBreakPoint.setEnabled(true);
     }
@@ -195,7 +200,7 @@ public class BreakpointPanel extends JPanel implements CaretListener,LocaleListe
   }
 
   @Override
-  public void keyTyped(KeyEvent e) { }
+  public void keyTyped(KeyEvent e) {}
 
   @Override
   public void keyPressed(KeyEvent e) {
@@ -204,5 +209,4 @@ public class BreakpointPanel extends JPanel implements CaretListener,LocaleListe
 
   @Override
   public void keyReleased(KeyEvent e) {}
-
 }

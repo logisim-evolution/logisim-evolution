@@ -42,29 +42,12 @@ import javax.swing.Scrollable;
 import javax.swing.SwingConstants;
 
 public class HexEditor extends JComponent implements Scrollable {
-  private class Listener implements HexModelListener {
-    public void bytesChanged(HexModel source, long start, long numBytes, long[] oldValues) {
-      repaint(
-          0,
-          measures.toY(start),
-          getWidth(),
-          measures.toY(start + numBytes) + measures.getCellHeight());
-    }
-
-    public void metainfoChanged(HexModel source) {
-      measures.recompute();
-      repaint();
-    }
-  }
-
   private static final long serialVersionUID = 1L;
-
-  private HexModel model;
   private final Listener listener;
   private final Measures measures;
   private final Caret caret;
   private final Highlighter highlighter;
-
+  private HexModel model;
   public HexEditor(HexModel model) {
     this.model = model;
     this.listener = new Listener();
@@ -109,6 +92,16 @@ public class HexEditor extends JComponent implements Scrollable {
 
   public HexModel getModel() {
     return model;
+  }
+
+  public void setModel(HexModel value) {
+    if (model == value) return;
+    if (model != null) model.removeHexModelListener(listener);
+    model = value;
+    highlighter.clear();
+    caret.setDot(-1, false);
+    if (model != null) model.addHexModelListener(listener);
+    measures.recompute();
   }
 
   //
@@ -253,16 +246,6 @@ public class HexEditor extends JComponent implements Scrollable {
     measures.recompute();
   }
 
-  public void setModel(HexModel value) {
-    if (model == value) return;
-    if (model != null) model.removeHexModelListener(listener);
-    model = value;
-    highlighter.clear();
-    caret.setDot(-1, false);
-    if (model != null) model.addHexModelListener(listener);
-    measures.recompute();
-  }
-
   private String toHex(long value, int chars) {
     String ret = Long.toHexString(value);
     int retLen = ret.length();
@@ -276,6 +259,21 @@ public class HexEditor extends JComponent implements Scrollable {
       return ret;
     } else {
       return ret.substring(retLen - chars);
+    }
+  }
+
+  private class Listener implements HexModelListener {
+    public void bytesChanged(HexModel source, long start, long numBytes, long[] oldValues) {
+      repaint(
+          0,
+          measures.toY(start),
+          getWidth(),
+          measures.toY(start + numBytes) + measures.getCellHeight());
+    }
+
+    public void metainfoChanged(HexModel source) {
+      measures.recompute();
+      repaint();
     }
   }
 }

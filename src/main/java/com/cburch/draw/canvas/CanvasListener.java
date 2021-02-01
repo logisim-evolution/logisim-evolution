@@ -54,6 +54,20 @@ class CanvasListener
     return tool;
   }
 
+  public void setTool(CanvasTool value) {
+    CanvasTool oldValue = tool;
+    if (value != oldValue) {
+      tool = value;
+      if (oldValue != null) oldValue.toolDeselected(canvas);
+      if (value != null) {
+        value.toolSelected(canvas);
+        canvas.setCursor(value.getCursor(canvas));
+      } else {
+        canvas.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+      }
+    }
+  }
+
   private void handlePopupTrigger(MouseEvent e) {
     Location loc = Location.create(e.getX(), e.getY());
     List<CanvasObject> objects = canvas.getModel().getObjectsFromTop();
@@ -133,20 +147,6 @@ class CanvasListener
       handlePopupTrigger(e);
     } else if (e.getButton() == 1 && tool != null) {
       tool.mouseReleased(canvas, e);
-    }
-  }
-
-  public void setTool(CanvasTool value) {
-    CanvasTool oldValue = tool;
-    if (value != oldValue) {
-      tool = value;
-      if (oldValue != null) oldValue.toolDeselected(canvas);
-      if (value != null) {
-        value.toolSelected(canvas);
-        canvas.setCursor(value.getCursor(canvas));
-      } else {
-        canvas.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-      }
     }
   }
 }

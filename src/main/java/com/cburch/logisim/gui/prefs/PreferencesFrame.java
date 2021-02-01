@@ -44,70 +44,18 @@ import javax.swing.JTabbedPane;
 
 public class PreferencesFrame extends LFrame {
 
-  private class MyListener implements LocaleListener {
-    public void localeChanged() {
-      setTitle(S.get("preferencesFrameTitle"));
-      for (int i = 0; i < panels.length; i++) {
-        tabbedPane.setTitleAt(i, panels[i].getTitle());
-        tabbedPane.setToolTipTextAt(i, panels[i].getToolTipText());
-        panels[i].localeChanged();
-      }
-    }
-  }
-
-  private static class WindowMenuManager extends WindowMenuItemManager implements LocaleListener {
-    private PreferencesFrame window = null;
-
-    WindowMenuManager() {
-      super(S.get("preferencesFrameMenuItem"), true);
-      LocaleManager.addLocaleListener(this);
-    }
-
-    @Override
-    public JFrame getJFrame(boolean create, java.awt.Component parent) {
-      if (create) {
-        if (window == null) {
-          window = new PreferencesFrame();
-          window.setLocationRelativeTo(parent);
-          frameOpened(window);
-        }
-      }
-      return window;
-    }
-
-    public void localeChanged() {
-      setText(S.get("preferencesFrameMenuItem"));
-    }
-  }
-
-  public static void initializeManager() {
-    MENU_MANAGER = new WindowMenuManager();
-  }
-
-  public static void showPreferences() {
-    JFrame frame = MENU_MANAGER.getJFrame(true, null);
-    frame.setVisible(true);
-  }
-  
-  public static void showFPGAPreferences() {
-	PreferencesFrame frame = (PreferencesFrame) MENU_MANAGER.getJFrame(true, null);
-	frame.setFpgaTab();
-    frame.setVisible(true);
-  }
-
   private static final long serialVersionUID = 1L;
-
   private static WindowMenuManager MENU_MANAGER = null;
-
   private final MyListener myListener = new MyListener();
   private final OptionsPanel[] panels;
   private final JTabbedPane tabbedPane;
-  private int FpgaTabIdx = -1; 
+  private int FpgaTabIdx = -1;
 
   private PreferencesFrame() {
-    super(false,null);
+    super(false, null);
 
-    panels = new OptionsPanel[] {
+    panels =
+        new OptionsPanel[] {
           new TemplateOptions(this),
           new IntlOptions(this),
           new WindowOptions(this),
@@ -135,9 +83,60 @@ public class PreferencesFrame extends LFrame {
     myListener.localeChanged();
     pack();
   }
-  
+
+  public static void initializeManager() {
+    MENU_MANAGER = new WindowMenuManager();
+  }
+
+  public static void showPreferences() {
+    JFrame frame = MENU_MANAGER.getJFrame(true, null);
+    frame.setVisible(true);
+  }
+
+  public static void showFPGAPreferences() {
+    PreferencesFrame frame = (PreferencesFrame) MENU_MANAGER.getJFrame(true, null);
+    frame.setFpgaTab();
+    frame.setVisible(true);
+  }
+
   public void setFpgaTab() {
-	if (FpgaTabIdx < 0) return;
+    if (FpgaTabIdx < 0) return;
     tabbedPane.setSelectedIndex(FpgaTabIdx);
+  }
+
+  private static class WindowMenuManager extends WindowMenuItemManager implements LocaleListener {
+    private PreferencesFrame window = null;
+
+    WindowMenuManager() {
+      super(S.get("preferencesFrameMenuItem"), true);
+      LocaleManager.addLocaleListener(this);
+    }
+
+    @Override
+    public JFrame getJFrame(boolean create, java.awt.Component parent) {
+      if (create) {
+        if (window == null) {
+          window = new PreferencesFrame();
+          window.setLocationRelativeTo(parent);
+          frameOpened(window);
+        }
+      }
+      return window;
+    }
+
+    public void localeChanged() {
+      setText(S.get("preferencesFrameMenuItem"));
+    }
+  }
+
+  private class MyListener implements LocaleListener {
+    public void localeChanged() {
+      setTitle(S.get("preferencesFrameTitle"));
+      for (int i = 0; i < panels.length; i++) {
+        tabbedPane.setTitleAt(i, panels[i].getTitle());
+        tabbedPane.setToolTipTextAt(i, panels[i].getToolTipText());
+        panels[i].localeChanged();
+      }
+    }
   }
 }

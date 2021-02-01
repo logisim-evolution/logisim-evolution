@@ -42,46 +42,7 @@ import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
 
 class MenuEdit extends Menu {
-  private class MyListener implements ProjectListener, ActionListener {
-
-    public void actionPerformed(ActionEvent e) {
-      Object src = e.getSource();
-      Project proj = menubar.getProject();
-      if (src == undo) {
-        if (proj != null) {
-          proj.undoAction();
-        }
-      } else if (src == redo) {
-        if (proj != null) {
-          proj.redoAction();
-        }
-      }
-    }
-
-    public void projectChanged(ProjectEvent e) {
-      Project proj = menubar.getProject();
-      Action last = proj == null ? null : proj.getLastAction();
-      if (last == null) {
-        undo.setText(S.get("editCantUndoItem"));
-        undo.setEnabled(false);
-      } else {
-        undo.setText(StringUtil.format(S.get("editUndoItem"), last.getName()));
-        undo.setEnabled(true);
-      }
-      
-      Action next = (proj == null || !proj.getCanRedo()) ? null : proj.getLastRedoAction();
-      if (next != null) {
-        redo.setText(S.fmt("editRedoItem", next.getName()));
-        redo.setEnabled(true);
-      } else {
-        redo.setText(S.get("editCantRedoItem"));
-        redo.setEnabled(false);
-      }
-    }
-  }
-
   private static final long serialVersionUID = 1L;
-
   private final LogisimMenuBar menubar;
   private final JMenuItem undo = new JMenuItem();
   private final JMenuItem redo = new JMenuItem();
@@ -98,7 +59,6 @@ class MenuEdit extends Menu {
   private final MenuItemImpl addCtrl = new MenuItemImpl(this, LogisimMenuBar.ADD_CONTROL);
   private final MenuItemImpl remCtrl = new MenuItemImpl(this, LogisimMenuBar.REMOVE_CONTROL);
   private final MyListener myListener = new MyListener();
-
   public MenuEdit(LogisimMenuBar menubar) {
     this.menubar = menubar;
 
@@ -194,5 +154,43 @@ class MenuEdit extends Menu {
     lowerBottom.setText(S.get("editLowerBottomItem"));
     addCtrl.setText(S.get("editAddControlItem"));
     remCtrl.setText(S.get("editRemoveControlItem"));
+  }
+
+  private class MyListener implements ProjectListener, ActionListener {
+
+    public void actionPerformed(ActionEvent e) {
+      Object src = e.getSource();
+      Project proj = menubar.getProject();
+      if (src == undo) {
+        if (proj != null) {
+          proj.undoAction();
+        }
+      } else if (src == redo) {
+        if (proj != null) {
+          proj.redoAction();
+        }
+      }
+    }
+
+    public void projectChanged(ProjectEvent e) {
+      Project proj = menubar.getProject();
+      Action last = proj == null ? null : proj.getLastAction();
+      if (last == null) {
+        undo.setText(S.get("editCantUndoItem"));
+        undo.setEnabled(false);
+      } else {
+        undo.setText(StringUtil.format(S.get("editUndoItem"), last.getName()));
+        undo.setEnabled(true);
+      }
+
+      Action next = (proj == null || !proj.getCanRedo()) ? null : proj.getLastRedoAction();
+      if (next != null) {
+        redo.setText(S.fmt("editRedoItem", next.getName()));
+        redo.setEnabled(true);
+      } else {
+        redo.setText(S.get("editCantRedoItem"));
+        redo.setEnabled(false);
+      }
+    }
   }
 }

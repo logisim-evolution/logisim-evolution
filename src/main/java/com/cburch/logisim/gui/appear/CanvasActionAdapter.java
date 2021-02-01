@@ -40,35 +40,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class CanvasActionAdapter extends com.cburch.logisim.proj.Action {
-  private class ActionTransaction extends CircuitTransaction {
-    private final boolean forward;
-
-    ActionTransaction(boolean forward) {
-      this.forward = forward;
-    }
-
-    @Override
-    protected Map<Circuit, Integer> getAccessedCircuits() {
-      Map<Circuit, Integer> accessMap = new HashMap<Circuit, Integer>();
-      for (Circuit supercirc : circuit.getCircuitsUsingThis()) {
-        accessMap.put(supercirc, READ_WRITE);
-      }
-      return accessMap;
-    }
-
-    @Override
-    protected void run(CircuitMutator mutator) {
-      if (forward) {
-        canvasAction.doIt();
-      } else {
-        canvasAction.undo();
-      }
-    }
-  }
-
   private final Circuit circuit;
   private final Action canvasAction;
-
   private boolean wasDefault;
 
   public CanvasActionAdapter(Circuit circuit, Action action) {
@@ -112,5 +85,31 @@ public class CanvasActionAdapter extends com.cburch.logisim.proj.Action {
       canvasAction.undo();
     }
     circuit.getAppearance().setDefaultAppearance(wasDefault);
+  }
+
+  private class ActionTransaction extends CircuitTransaction {
+    private final boolean forward;
+
+    ActionTransaction(boolean forward) {
+      this.forward = forward;
+    }
+
+    @Override
+    protected Map<Circuit, Integer> getAccessedCircuits() {
+      Map<Circuit, Integer> accessMap = new HashMap<Circuit, Integer>();
+      for (Circuit supercirc : circuit.getCircuitsUsingThis()) {
+        accessMap.put(supercirc, READ_WRITE);
+      }
+      return accessMap;
+    }
+
+    @Override
+    protected void run(CircuitMutator mutator) {
+      if (forward) {
+        canvasAction.doIt();
+      } else {
+        canvasAction.undo();
+      }
+    }
   }
 }

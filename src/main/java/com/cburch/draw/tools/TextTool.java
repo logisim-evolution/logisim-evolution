@@ -56,44 +56,13 @@ import javax.swing.InputMap;
 import javax.swing.KeyStroke;
 
 public class TextTool extends AbstractTool {
-  private class CancelListener extends AbstractAction {
-    private static final long serialVersionUID = 1L;
-
-    public void actionPerformed(ActionEvent e) {
-      cancelText(curCanvas);
-    }
-  }
-
-  private class FieldListener extends AbstractAction implements AttributeListener {
-    private static final long serialVersionUID = 1L;
-
-    public void actionPerformed(ActionEvent e) {
-      commitText(curCanvas);
-    }
-
-    public void attributeListChanged(AttributeEvent e) {
-      Text cur = curText;
-      if (cur != null) {
-        double zoom = curCanvas.getZoomFactor();
-        cur.getLabel().configureTextField(field, zoom);
-        curCanvas.repaint();
-      }
-    }
-
-    public void attributeValueChanged(AttributeEvent e) {
-      attributeListChanged(e);
-    }
-  }
-
+  private static final TextIcon icon = new TextIcon();
   private final DrawingAttributeSet attrs;
   private final EditableLabelField field;
   private final FieldListener fieldListener;
-
   private Text curText;
   private Canvas curCanvas;
   private boolean isTextNew;
-  private static final TextIcon icon = new TextIcon();
-
   public TextTool(DrawingAttributeSet attrs) {
     this.attrs = attrs;
     curText = null;
@@ -224,6 +193,35 @@ public class TextTool extends AbstractTool {
     Text t = curText;
     if (t != null) {
       t.getLabel().configureTextField(field, canvas.getZoomFactor());
+    }
+  }
+
+  private class CancelListener extends AbstractAction {
+    private static final long serialVersionUID = 1L;
+
+    public void actionPerformed(ActionEvent e) {
+      cancelText(curCanvas);
+    }
+  }
+
+  private class FieldListener extends AbstractAction implements AttributeListener {
+    private static final long serialVersionUID = 1L;
+
+    public void actionPerformed(ActionEvent e) {
+      commitText(curCanvas);
+    }
+
+    public void attributeListChanged(AttributeEvent e) {
+      Text cur = curText;
+      if (cur != null) {
+        double zoom = curCanvas.getZoomFactor();
+        cur.getLabel().configureTextField(field, zoom);
+        curCanvas.repaint();
+      }
+    }
+
+    public void attributeValueChanged(AttributeEvent e) {
+      attributeListChanged(e);
     }
   }
 }

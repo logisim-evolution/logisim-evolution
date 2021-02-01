@@ -44,18 +44,10 @@ import javax.swing.tree.TreePath;
 
 class SimulationExplorer extends JPanel implements ProjectListener, MouseListener {
 
-  @SuppressWarnings("serial")
-  private class ScaledTree extends JTree {
-    public ScaledTree(TreeModel model) {
-      super(model);
-    }
-  }
-
   private static final long serialVersionUID = 1L;
   private final Project project;
   private final SimulationTreeModel model;
   private final JTree tree;
-
   SimulationExplorer(Project proj, MenuListener menu) {
     super(new BorderLayout());
     this.project = proj;
@@ -75,7 +67,8 @@ class SimulationExplorer extends JPanel implements ProjectListener, MouseListene
   }
 
   private void checkForPopup(MouseEvent e) {
-    if (e.isPopupTrigger()) {; // do nothing
+    if (e.isPopupTrigger()) {
+      ; // do nothing
     }
   }
 
@@ -115,6 +108,13 @@ class SimulationExplorer extends JPanel implements ProjectListener, MouseListene
       if (path != null) {
         tree.scrollPathToVisible(path);
       }
+    }
+  }
+
+  @SuppressWarnings("serial")
+  private class ScaledTree extends JTree {
+    public ScaledTree(TreeModel model) {
+      super(model);
     }
   }
 }

@@ -41,6 +41,40 @@ import java.util.List;
 import java.util.Map;
 
 public class ModelReorderAction extends ModelAction {
+  private final List<ReorderRequest> requests;
+  private final List<CanvasObject> objects;
+  private final int type;
+
+  public ModelReorderAction(CanvasModel model, List<ReorderRequest> requests) {
+    super(model);
+    this.requests = new ArrayList<ReorderRequest>(requests);
+    this.objects = new ArrayList<CanvasObject>(requests.size());
+    for (ReorderRequest r : requests) {
+      objects.add(r.getObject());
+    }
+    int typeIndex = 0; // 0 = mixed/unknown, -1 = to greater index, 1 = to
+    // smaller index
+    for (ReorderRequest r : requests) {
+      int thisType;
+      int from = r.getFromIndex();
+      int to = r.getToIndex();
+      if (to < from) {
+        thisType = -1;
+      } else if (to > from) {
+        thisType = 1;
+      } else {
+        thisType = 0;
+      }
+      if (typeIndex == 2) {
+        typeIndex = thisType;
+      } else if (typeIndex != thisType) {
+        typeIndex = 0;
+        break;
+      }
+    }
+    this.type = typeIndex;
+  }
+
   public static ModelReorderAction createLower(
       CanvasModel model, Collection<? extends CanvasObject> objects) {
     List<ReorderRequest> reqs = new ArrayList<ReorderRequest>();
@@ -159,40 +193,6 @@ public class ModelReorderAction extends ModelAction {
         reqs.remove(i);
       }
     }
-  }
-
-  private final List<ReorderRequest> requests;
-  private final List<CanvasObject> objects;
-  private final int type;
-
-  public ModelReorderAction(CanvasModel model, List<ReorderRequest> requests) {
-    super(model);
-    this.requests = new ArrayList<ReorderRequest>(requests);
-    this.objects = new ArrayList<CanvasObject>(requests.size());
-    for (ReorderRequest r : requests) {
-      objects.add(r.getObject());
-    }
-    int typeIndex = 0; // 0 = mixed/unknown, -1 = to greater index, 1 = to
-    // smaller index
-    for (ReorderRequest r : requests) {
-      int thisType;
-      int from = r.getFromIndex();
-      int to = r.getToIndex();
-      if (to < from) {
-        thisType = -1;
-      } else if (to > from) {
-        thisType = 1;
-      } else {
-        thisType = 0;
-      }
-      if (typeIndex == 2) {
-        typeIndex = thisType;
-      } else if (typeIndex != thisType) {
-        typeIndex = 0;
-        break;
-      }
-    }
-    this.type = typeIndex;
   }
 
   @Override

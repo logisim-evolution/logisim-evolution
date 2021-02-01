@@ -106,6 +106,626 @@ import javax.swing.event.PopupMenuListener;
 public class Canvas extends JPanel
     implements LocaleListener, CanvasPaneContents, AdjustmentListener {
 
+  public static final byte zoomButtonSize = 52, zoomButtonMargin = 30;
+  public static final Color HALO_COLOR = new Color(255, 0, 255);
+  // don't bother to update the size if it hasn't changed more than this
+  static final double SQRT_2 = Math.sqrt(2.0);
+  private static final long serialVersionUID = 1L;
+  // pixels shown in canvas beyond outermost boundaries
+  private static final int THRESH_SIZE_UPDATE = 10;
+  private static final int BUTTONS_MASK =
+      InputEvent.BUTTON1_DOWN_MASK | InputEvent.BUTTON2_DOWN_MASK | InputEvent.BUTTON3_DOWN_MASK;
+  private static final Color DEFAULT_ERROR_COLOR = new Color(192, 0, 0);
+  private static final Color TICK_RATE_COLOR = new Color(0, 0, 92, 92);
+  private static final Font TICK_RATE_FONT = new Font("serif", Font.BOLD, 12);
+  public static Color defaultzoomButtonColor = Color.WHITE;
+  // public static BufferedImage image;
+  private final Project proj;
+  private final Selection selection;
+  private final MyListener myListener = new MyListener();
+  private final MyViewport viewport = new MyViewport();
+  private final MyProjectListener myProjectListener = new MyProjectListener();
+  private final TickCounter tickCounter;
+  private final CanvasPaintThread paintThread;
+  private final CanvasPainter painter;
+  private final Object repaintLock = new Object(); // for waitForRepaintDone
+  private Tool drag_tool, temp_tool;
+  private MouseMappings mappings;
+  private CanvasPane canvasPane;
+  private Bounds oldPreferredSize;
+  private volatile boolean paintDirty = false; // only for within paintComponent
+  private boolean inPaint = false; // only for within paintComponent
+  public Canvas(Project proj) {
+    this.proj = proj;
+    this.selection = new Selection(proj, this);
+    this.painter = new CanvasPainter(this);
+    this.oldPreferredSize = null;
+    this.paintThread = new CanvasPaintThread(this);
+    this.mappings = proj.getOptions().getMouseMappings();
+    this.canvasPane = null;
+    this.tickCounter = new TickCounter();
+
+    setBackground(Color.white);
+    addMouseListener(myListener);
+    addMouseMotionListener(myListener);
+    addMouseWheelListener(myListener);
+    addKeyListener(myListener);
+
+    proj.addProjectListener(myProjectListener);
+    proj.addLibraryListener(myProjectListener);
+    proj.addCircuitListener(myProjectListener);
+    proj.getSimulator().addSimulatorListener(tickCounter);
+    selection.addListener(myProjectListener);
+    LocaleManager.addLocaleListener(this);
+
+    AttributeSet options = proj.getOptions().getAttributeSet();
+    options.addAttributeListener(myProjectListener);
+    AppPreferences.COMPONENT_TIPS.addPropertyChangeListener(myListener);
+    AppPreferences.GATE_SHAPE.addPropertyChangeListener(myListener);
+    AppPreferences.SHOW_TICK_RATE.addPropertyChangeListener(myListener);
+    loadOptions(options);
+    paintThread.start();
+  }
+
+  public static boolean AutoZoomButtonClicked(Dimension sz, double x, double y) {
+    return Point2D.distance(
+            x,
+            y,
+            sz.width - zoomButtonSize / 2 - zoomButtonMargin,
+            sz.height - zoomButtonMargin - zoomButtonSize / 2)
+        <= zoomButtonSize / 2;
+  }
+
+  public static void paintAutoZoomButton(Graphics g, Dimension sz, Color zoomButtonColor) {
+    Color oldcolor = g.getColor();
+    g.setColor(TICK_RATE_COLOR);
+    g.fillOval(
+        sz.width - zoomButtonSize - 33,
+        sz.height - zoomButtonSize - 33,
+        zoomButtonSize + 6,
+        zoomButtonSize + 6);
+    g.setColor(zoomButtonColor);
+    g.fillOval(
+        sz.width - zoomButtonSize - 30,
+        sz.height - zoomButtonSize - 30,
+        zoomButtonSize,
+        zoomButtonSize);
+    g.setColor(Value.UNKNOWN_COLOR);
+    GraphicsUtil.switchToWidth(g, 3);
+    int width = sz.width - zoomButtonMargin;
+    int height = sz.height - zoomButtonMargin;
+    g.drawOval(
+        width - zoomButtonSize * 3 / 4,
+        height - zoomButtonSize * 3 / 4,
+        zoomButtonSize / 2,
+        zoomButtonSize / 2);
+    g.drawLine(
+        width - zoomButtonSize / 4 + 4,
+        height - zoomButtonSize / 2,
+        width - zoomButtonSize * 3 / 4 - 4,
+        height - zoomButtonSize / 2);
+    g.drawLine(
+        width - zoomButtonSize / 2,
+        height - zoomButtonSize / 4 + 4,
+        width - zoomButtonSize / 2,
+        height - zoomButtonSize * 3 / 4 - 4);
+    g.setColor(oldcolor);
+  }
+
+  public static void snapToGrid(MouseEvent e) {
+    int old_x = e.getX();
+    int old_y = e.getY();
+    int new_x = snapXToGrid(old_x);
+    int new_y = snapYToGrid(old_y);
+    e.translatePoint(new_x - old_x, new_y - old_y);
+  }
+
+  //
+  // static methods
+  //
+  public static int snapXToGrid(int x) {
+    if (x < 0) {
+      return -((-x + 5) / 10) * 10;
+    } else {
+      return ((x + 5) / 10) * 10;
+    }
+  }
+
+  public static int snapYToGrid(int y) {
+    if (y < 0) {
+      return -((-y + 5) / 10) * 10;
+    } else {
+      return ((y + 5) / 10) * 10;
+    }
+  }
+
+  public CanvasPane getCanvasPane() {
+    return canvasPane;
+  }
+
+  //
+  // CanvasPaneContents methods
+  //
+  @Override
+  public void setCanvasPane(CanvasPane value) {
+    canvasPane = value;
+    canvasPane.setViewport(viewport);
+    canvasPane.getHorizontalScrollBar().addAdjustmentListener(this);
+    canvasPane.getVerticalScrollBar().addAdjustmentListener(this);
+    viewport.setView(this);
+    setOpaque(false);
+    computeSize(true);
+  }
+
+  public void center() {
+    Graphics g = getGraphics();
+    Bounds bounds;
+    if (g != null) bounds = proj.getCurrentCircuit().getBounds(getGraphics());
+    else bounds = proj.getCurrentCircuit().getBounds();
+    if (bounds.getHeight() == 0 || bounds.getWidth() == 0) {
+      setScrollBar(0, 0);
+      return;
+    }
+    int xpos =
+        (int)
+            (Math.round(
+                bounds.getX() * getZoomFactor()
+                    - (canvasPane.getViewport().getSize().getWidth()
+                            - bounds.getWidth() * getZoomFactor())
+                        / 2));
+    int ypos =
+        (int)
+            (Math.round(
+                bounds.getY() * getZoomFactor()
+                    - (canvasPane.getViewport().getSize().getHeight()
+                            - bounds.getHeight() * getZoomFactor())
+                        / 2));
+    setScrollBar(xpos, ypos);
+  }
+
+  public void closeCanvas() {
+    paintThread.requestStop();
+  }
+
+  private void completeAction() {
+    if (proj.getCurrentCircuit() == null) return;
+    computeSize(false);
+    // TODO for SimulatorPrototype: proj.getSimulator().releaseUserEvents();
+    proj.getSimulator().requestPropagate();
+    // repaint will occur after propagation completes
+  }
+
+  public void computeSize(boolean immediate) {
+    if (proj.getCurrentCircuit() == null) return;
+    Graphics g = getGraphics();
+    Bounds bounds;
+    if (g != null) bounds = proj.getCurrentCircuit().getBounds(getGraphics());
+    else bounds = proj.getCurrentCircuit().getBounds();
+    int height = 0, width = 0;
+    if (bounds != null && viewport != null) {
+      width = bounds.getX() + bounds.getWidth() + viewport.getWidth();
+      height = bounds.getY() + bounds.getHeight() + viewport.getHeight();
+    }
+    Dimension dim;
+    if (canvasPane == null) {
+      dim = new Dimension(width, height);
+    } else {
+      dim = canvasPane.supportPreferredSize(width, height);
+    }
+    if (!immediate) {
+      Bounds old = oldPreferredSize;
+      if (old != null
+          && Math.abs(old.getWidth() - dim.width) < THRESH_SIZE_UPDATE
+          && Math.abs(old.getHeight() - dim.height) < THRESH_SIZE_UPDATE) {
+        return;
+      }
+    }
+    oldPreferredSize = Bounds.create(0, 0, dim.width, dim.height);
+    setPreferredSize(dim);
+    revalidate();
+  }
+
+  public Rectangle getViewableRect() {
+    Rectangle viewableBase;
+    Rectangle viewable;
+    if (canvasPane != null) {
+      viewableBase = canvasPane.getViewport().getViewRect();
+    } else {
+      Bounds bds = proj.getCurrentCircuit().getBounds();
+      viewableBase = new Rectangle(0, 0, bds.getWidth(), bds.getHeight());
+    }
+    double zoom = getZoomFactor();
+    if (zoom == 1.0) {
+      viewable = viewableBase;
+    } else {
+      viewable =
+          new Rectangle(
+              (int) (viewableBase.x / zoom),
+              (int) (viewableBase.y / zoom),
+              (int) (viewableBase.width / zoom),
+              (int) (viewableBase.height / zoom));
+    }
+    return viewable;
+  }
+
+  private void computeViewportContents() {
+    Set<WidthIncompatibilityData> exceptions =
+        proj.getCurrentCircuit().getWidthIncompatibilityData();
+    if (exceptions == null || exceptions.size() == 0) {
+      viewport.setWidthMessage(null);
+      return;
+    }
+    viewport.setWidthMessage(
+        S.get("canvasWidthError") + (exceptions.size() == 1 ? "" : " (" + exceptions.size() + ")"));
+    for (WidthIncompatibilityData ex : exceptions) {
+      Location p = ex.getPoint(0);
+      setArrows(p.getX(), p.getY(), p.getX(), p.getY());
+    }
+  }
+
+  //
+  // access methods
+  //
+  public Circuit getCircuit() {
+    return proj.getCurrentCircuit();
+  }
+
+  public HdlModel getCurrentHdl() {
+    return proj.getCurrentHdl();
+  }
+
+  public CircuitState getCircuitState() {
+    return proj.getCircuitState();
+  }
+
+  Tool getDragTool() {
+    return drag_tool;
+  }
+
+  public StringGetter getErrorMessage() {
+    return viewport.errorMessage;
+  }
+
+  public void setErrorMessage(StringGetter message) {
+    viewport.setErrorMessage(message, null);
+  }
+
+  GridPainter getGridPainter() {
+    return painter.getGridPainter();
+  }
+
+  Component getHaloedComponent() {
+    return painter.getHaloedComponent();
+  }
+
+  public int getHorizzontalScrollBar() {
+    return canvasPane.getHorizontalScrollBar().getValue();
+  }
+
+  public int getVerticalScrollBar() {
+    return canvasPane.getVerticalScrollBar().getValue();
+  }
+
+  public void setVerticalScrollBar(int Y) {
+    canvasPane.getVerticalScrollBar().setValue(Y);
+  }
+
+  @Override
+  public Dimension getPreferredScrollableViewportSize() {
+    return getPreferredSize();
+  }
+
+  public Project getProject() {
+    return proj;
+  }
+
+  @Override
+  public int getScrollableBlockIncrement(Rectangle visibleRect, int orientation, int direction) {
+    return canvasPane.supportScrollableBlockIncrement(visibleRect, orientation, direction);
+  }
+
+  @Override
+  public boolean getScrollableTracksViewportHeight() {
+    return false;
+  }
+
+  @Override
+  public boolean getScrollableTracksViewportWidth() {
+    return false;
+  }
+
+  @Override
+  public int getScrollableUnitIncrement(Rectangle visibleRect, int orientation, int direction) {
+    return canvasPane.supportScrollableUnitIncrement(visibleRect, orientation, direction);
+  }
+
+  public Selection getSelection() {
+    return selection;
+  }
+
+  @Override
+  public String getToolTipText(MouseEvent event) {
+    boolean showTips = AppPreferences.COMPONENT_TIPS.getBoolean();
+    if (showTips) {
+      Canvas.snapToGrid(event);
+      Location loc = Location.create(event.getX(), event.getY());
+      ComponentUserEvent e = null;
+      for (Component comp : getCircuit().getAllContaining(loc)) {
+        Object makerObj = comp.getFeature(ToolTipMaker.class);
+        if (makerObj instanceof ToolTipMaker) {
+          ToolTipMaker maker = (ToolTipMaker) makerObj;
+          if (e == null) {
+            e = new ComponentUserEvent(this, loc.getX(), loc.getY());
+          }
+          String ret = maker.getToolTip(e);
+          if (ret != null) {
+            unrepairMouseEvent(event);
+            return ret;
+          }
+        }
+      }
+    }
+    return null;
+  }
+
+  //
+  // graphics methods
+  //
+  double getZoomFactor() {
+    CanvasPane pane = canvasPane;
+    return pane == null ? 1.0 : pane.getZoomFactor();
+  }
+
+  boolean ifPaintDirtyReset() {
+    if (paintDirty) {
+      paintDirty = false;
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  boolean isPopupMenuUp() {
+    return myListener.menu_on;
+  }
+
+  private void loadOptions(AttributeSet options) {
+    boolean showTips = AppPreferences.COMPONENT_TIPS.getBoolean();
+    setToolTipText(showTips ? "" : null);
+
+    proj.getSimulator().removeSimulatorListener(myProjectListener);
+    proj.getSimulator().addSimulatorListener(myProjectListener);
+  }
+
+  @Override
+  public void localeChanged() {
+    paintThread.requestRepaint();
+  }
+
+  @Override
+  public void paintComponent(Graphics g) {
+    if (AppPreferences.AntiAliassing.getBoolean()) {
+      Graphics2D g2 = (Graphics2D) g;
+      g2.setRenderingHint(
+          RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+      g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+    }
+
+    inPaint = true;
+    try {
+      super.paintComponent(g);
+      boolean clear = false;
+      do {
+        if (clear) {
+          /* Kevin Walsh:
+           * Clear the screen so we don't get
+           * artifacts due to aliasing (e.g. where
+           * semi-transparent (gray) pixels on the
+           * edges of a line turn woudl darker if
+           * painted a second time.
+           */
+          g.setColor(Color.WHITE);
+          g.fillRect(0, 0, getWidth(), getHeight());
+        }
+        clear = true;
+        painter.paintContents(g, proj);
+      } while (paintDirty);
+      if (canvasPane == null) {
+        viewport.paintContents(g);
+      }
+    } finally {
+      inPaint = false;
+      synchronized (repaintLock) {
+        repaintLock.notifyAll();
+      }
+    }
+  }
+
+  @Override
+  protected void processMouseEvent(MouseEvent e) {
+    repairMouseEvent(e);
+    super.processMouseEvent(e);
+  }
+
+  @Override
+  protected void processMouseMotionEvent(MouseEvent e) {
+    repairMouseEvent(e);
+    super.processMouseMotionEvent(e);
+  }
+
+  @Override
+  public void recomputeSize() {
+    computeSize(true);
+  }
+
+  @Override
+  public void repaint() {
+    if (inPaint) {
+      paintDirty = true;
+    } else {
+      super.repaint();
+    }
+  }
+
+  @Override
+  public void repaint(int x, int y, int width, int height) {
+    double zoom = getZoomFactor();
+    if (zoom < 1.0) {
+      int newX = (int) Math.floor(x * zoom);
+      int newY = (int) Math.floor(y * zoom);
+      width += x - newX;
+      height += y - newY;
+      x = newX;
+      y = newY;
+    } else if (zoom > 1.0) {
+      int x1 = (int) Math.ceil((x + width) * zoom);
+      int y1 = (int) Math.ceil((y + height) * zoom);
+      width = x1 - x;
+      height = y1 - y;
+    }
+    super.repaint(x, y, width, height);
+  }
+
+  @Override
+  public void repaint(Rectangle r) {
+    double zoom = getZoomFactor();
+    if (zoom == 1.0) {
+      super.repaint(r);
+    } else {
+      this.repaint(r.x, r.y, r.width, r.height);
+    }
+  }
+
+  private void repairMouseEvent(MouseEvent e) {
+    double zoom = getZoomFactor();
+    if (zoom != 1.0) {
+      zoomEvent(e, zoom);
+    }
+  }
+
+  public void updateArrows() {
+    /* Disable for VHDL content */
+    if (proj.getCurrentCircuit() == null) return;
+    Graphics g = getGraphics();
+    Bounds circBds;
+    if (g != null) circBds = proj.getCurrentCircuit().getBounds(getGraphics());
+    else circBds = proj.getCurrentCircuit().getBounds();
+    // no circuit
+    if (circBds == null || circBds.getHeight() == 0 || circBds.getWidth() == 0) return;
+    int x = circBds.getX();
+    int y = circBds.getY();
+    if (x < 0) x = 0;
+    if (y < 0) y = 0;
+    setArrows(x, y, x + circBds.getWidth(), y + circBds.getHeight());
+  }
+
+  public void setArrows(int x0, int y0, int x1, int y1) {
+    /* Disable for VHDL content */
+    if (proj.getCurrentCircuit() == null) return;
+    viewport.clearArrows();
+    Rectangle viewableBase, viewable;
+    if (canvasPane != null) {
+      viewableBase = canvasPane.getViewport().getViewRect();
+    } else {
+      Graphics g = getGraphics();
+      Bounds bds;
+      if (g != null) bds = proj.getCurrentCircuit().getBounds(getGraphics());
+      else bds = proj.getCurrentCircuit().getBounds();
+      viewableBase = new Rectangle(0, 0, bds.getWidth(), bds.getHeight());
+    }
+    double zoom = getZoomFactor();
+    if (zoom == 1.0) {
+      viewable = viewableBase;
+    } else {
+      viewable =
+          new Rectangle(
+              (int) (viewableBase.x / zoom),
+              (int) (viewableBase.y / zoom),
+              (int) (viewableBase.width / zoom),
+              (int) (viewableBase.height / zoom));
+    }
+    boolean isWest = x0 < viewable.x;
+    boolean isEast = x1 >= viewable.x + viewable.width;
+    boolean isNorth = y0 < viewable.y;
+    boolean isSouth = y1 >= viewable.y + viewable.height;
+
+    if (isNorth) {
+      if (isEast) viewport.setNortheast(true);
+      if (isWest) viewport.setNorthwest(true);
+      if (!isWest && !isEast) viewport.setNorth(true);
+    }
+    if (isSouth) {
+      if (isEast) viewport.setSoutheast(true);
+      if (isWest) viewport.setSouthwest(true);
+      if (!isWest && !isEast) viewport.setSouth(true);
+    }
+    if (isEast && !viewport.isSoutheast && !viewport.isNortheast) viewport.setEast(true);
+    if (isWest && !viewport.isSouthwest && !viewport.isNorthwest) viewport.setWest(true);
+  }
+
+  public void setErrorMessage(StringGetter message, Color color) {
+    viewport.setErrorMessage(message, color);
+  }
+
+  void setHaloedComponent(Circuit circ, Component comp) {
+    painter.setHaloedComponent(circ, comp);
+  }
+
+  public void setHighlightedWires(WireSet value) {
+    painter.setHighlightedWires(value);
+  }
+
+  public void setHorizontalScrollBar(int X) {
+    canvasPane.getHorizontalScrollBar().setValue(X);
+  }
+
+  public void setScrollBar(int X, int Y) {
+    setHorizontalScrollBar(X);
+    setVerticalScrollBar(Y);
+  }
+
+  public void showPopupMenu(JPopupMenu menu, int x, int y) {
+    double zoom = getZoomFactor();
+    if (zoom != 1.0) {
+      x = (int) Math.round(x * zoom);
+      y = (int) Math.round(y * zoom);
+    }
+    myListener.menu_on = true;
+    menu.addPopupMenuListener(myListener);
+    menu.show(this, x, y);
+  }
+
+  private void unrepairMouseEvent(MouseEvent e) {
+    double zoom = getZoomFactor();
+    if (zoom != 1.0) {
+      zoomEvent(e, 1.0 / zoom);
+    }
+  }
+
+  private void waitForRepaintDone() {
+    synchronized (repaintLock) {
+      try {
+        while (inPaint) {
+          repaintLock.wait();
+        }
+      } catch (InterruptedException e) {
+      }
+    }
+  }
+
+  private void zoomEvent(MouseEvent e, double zoom) {
+    int oldx = e.getX();
+    int oldy = e.getY();
+    int newx = (int) Math.round(e.getX() / zoom);
+    int newy = (int) Math.round(e.getY() / zoom);
+    e.translatePoint(newx - oldx, newy - oldy);
+  }
+
+  @Override
+  public void adjustmentValueChanged(AdjustmentEvent e) {
+    updateArrows();
+  }
+
   private class MyListener
       implements MouseInputListener,
           KeyListener,
@@ -167,7 +787,8 @@ public class Canvas extends JPanel
         drag_tool.mouseDragged(Canvas.this, getGraphics(), e);
         ZoomModel zoomModel = proj.getFrame().getZoomModel();
         double ZoomFactor = zoomModel.getZoomFactor();
-        Rectangle r = new Rectangle((int) (e.getX()*ZoomFactor), (int) (e.getY()*ZoomFactor), 1, 1);
+        Rectangle r =
+            new Rectangle((int) (e.getX() * ZoomFactor), (int) (e.getY() * ZoomFactor), 1, 1);
         scrollRectToVisible(r);
       }
     }
@@ -198,7 +819,7 @@ public class Canvas extends JPanel
 
     @Override
     public void mouseMoved(MouseEvent e) {
-     if ((e.getModifiersEx() & BUTTONS_MASK) != 0) {
+      if ((e.getModifiersEx() & BUTTONS_MASK) != 0) {
         // If the control key is down while the mouse is being
         // dragged, mouseMoved is called instead. This may well be
         // an issue specific to the MacOS Java implementation,
@@ -728,633 +1349,5 @@ public class Canvas extends JPanel
     void setWidthMessage(String msg) {
       widthMessage = msg;
     }
-  }
-
-  public static final byte zoomButtonSize = 52, zoomButtonMargin = 30;
-  public static Color defaultzoomButtonColor = Color.WHITE;
-
-  public static boolean AutoZoomButtonClicked(Dimension sz, double x, double y) {
-    return Point2D.distance(
-            x,
-            y,
-            sz.width - zoomButtonSize / 2 - zoomButtonMargin,
-            sz.height - zoomButtonMargin - zoomButtonSize / 2)
-        <= zoomButtonSize / 2;
-  }
-
-  public static void paintAutoZoomButton(Graphics g, Dimension sz, Color zoomButtonColor) {
-    Color oldcolor = g.getColor();
-    g.setColor(TICK_RATE_COLOR);
-    g.fillOval(
-        sz.width - zoomButtonSize - 33,
-        sz.height - zoomButtonSize - 33,
-        zoomButtonSize + 6,
-        zoomButtonSize + 6);
-    g.setColor(zoomButtonColor);
-    g.fillOval(
-        sz.width - zoomButtonSize - 30,
-        sz.height - zoomButtonSize - 30,
-        zoomButtonSize,
-        zoomButtonSize);
-    g.setColor(Value.UNKNOWN_COLOR);
-    GraphicsUtil.switchToWidth(g, 3);
-    int width = sz.width - zoomButtonMargin;
-    int height = sz.height - zoomButtonMargin;
-    g.drawOval(
-        width - zoomButtonSize * 3 / 4,
-        height - zoomButtonSize * 3 / 4,
-        zoomButtonSize / 2,
-        zoomButtonSize / 2);
-    g.drawLine(
-        width - zoomButtonSize / 4 + 4,
-        height - zoomButtonSize / 2,
-        width - zoomButtonSize * 3 / 4 - 4,
-        height - zoomButtonSize / 2);
-    g.drawLine(
-        width - zoomButtonSize / 2,
-        height - zoomButtonSize / 4 + 4,
-        width - zoomButtonSize / 2,
-        height - zoomButtonSize * 3 / 4 - 4);
-    g.setColor(oldcolor);
-  }
-
-  public static void snapToGrid(MouseEvent e) {
-    int old_x = e.getX();
-    int old_y = e.getY();
-    int new_x = snapXToGrid(old_x);
-    int new_y = snapYToGrid(old_y);
-    e.translatePoint(new_x - old_x, new_y - old_y);
-  }
-
-  //
-  // static methods
-  //
-  public static int snapXToGrid(int x) {
-    if (x < 0) {
-      return -((-x + 5) / 10) * 10;
-    } else {
-      return ((x + 5) / 10) * 10;
-    }
-  }
-
-  public static int snapYToGrid(int y) {
-    if (y < 0) {
-      return -((-y + 5) / 10) * 10;
-    } else {
-      return ((y + 5) / 10) * 10;
-    }
-  }
-
-  private static final long serialVersionUID = 1L;
-  public static final Color HALO_COLOR = new Color(255, 0, 255);
-  // don't bother to update the size if it hasn't changed more than this
-  static final double SQRT_2 = Math.sqrt(2.0);
-  // pixels shown in canvas beyond outermost boundaries
-  private static final int THRESH_SIZE_UPDATE = 10;
-  private static final int BUTTONS_MASK =
-      InputEvent.BUTTON1_DOWN_MASK | InputEvent.BUTTON2_DOWN_MASK | InputEvent.BUTTON3_DOWN_MASK;
-  private static final Color DEFAULT_ERROR_COLOR = new Color(192, 0, 0);
-  private static final Color TICK_RATE_COLOR = new Color(0, 0, 92, 92);
-  private static final Font TICK_RATE_FONT = new Font("serif", Font.BOLD, 12);
-  // public static BufferedImage image;
-  private final Project proj;
-  private Tool drag_tool, temp_tool;
-  private final Selection selection;
-  private MouseMappings mappings;
-  private CanvasPane canvasPane;
-  private Bounds oldPreferredSize;
-  private final MyListener myListener = new MyListener();
-  private final MyViewport viewport = new MyViewport();
-  private final MyProjectListener myProjectListener = new MyProjectListener();
-
-  private final TickCounter tickCounter;
-
-  private final CanvasPaintThread paintThread;
-
-  private final CanvasPainter painter;
-
-  private volatile boolean paintDirty = false; // only for within paintComponent
-
-  private boolean inPaint = false; // only for within paintComponent
-
-  private final Object repaintLock = new Object(); // for waitForRepaintDone
-
-  public Canvas(Project proj) {
-    this.proj = proj;
-    this.selection = new Selection(proj, this);
-    this.painter = new CanvasPainter(this);
-    this.oldPreferredSize = null;
-    this.paintThread = new CanvasPaintThread(this);
-    this.mappings = proj.getOptions().getMouseMappings();
-    this.canvasPane = null;
-    this.tickCounter = new TickCounter();
-
-    setBackground(Color.white);
-    addMouseListener(myListener);
-    addMouseMotionListener(myListener);
-    addMouseWheelListener(myListener);
-    addKeyListener(myListener);
-
-    proj.addProjectListener(myProjectListener);
-    proj.addLibraryListener(myProjectListener);
-    proj.addCircuitListener(myProjectListener);
-    proj.getSimulator().addSimulatorListener(tickCounter);
-    selection.addListener(myProjectListener);
-    LocaleManager.addLocaleListener(this);
-
-    AttributeSet options = proj.getOptions().getAttributeSet();
-    options.addAttributeListener(myProjectListener);
-    AppPreferences.COMPONENT_TIPS.addPropertyChangeListener(myListener);
-    AppPreferences.GATE_SHAPE.addPropertyChangeListener(myListener);
-    AppPreferences.SHOW_TICK_RATE.addPropertyChangeListener(myListener);
-    loadOptions(options);
-    paintThread.start();
-  }
-
-  public CanvasPane getCanvasPane() {
-    return canvasPane;
-  }
-
-  public void center() {
-    Graphics g = getGraphics();
-    Bounds bounds;
-    if (g != null) bounds = proj.getCurrentCircuit().getBounds(getGraphics());
-    else bounds = proj.getCurrentCircuit().getBounds();
-    if (bounds.getHeight() == 0 || bounds.getWidth() == 0) {
-      setScrollBar(0, 0);
-      return;
-    }
-    int xpos =
-        (int)
-            (Math.round(
-                bounds.getX() * getZoomFactor()
-                    - (canvasPane.getViewport().getSize().getWidth()
-                            - bounds.getWidth() * getZoomFactor())
-                        / 2));
-    int ypos =
-        (int)
-            (Math.round(
-                bounds.getY() * getZoomFactor()
-                    - (canvasPane.getViewport().getSize().getHeight()
-                            - bounds.getHeight() * getZoomFactor())
-                        / 2));
-    setScrollBar(xpos, ypos);
-  }
-
-  public void closeCanvas() {
-    paintThread.requestStop();
-  }
-
-  private void completeAction() {
-    if (proj.getCurrentCircuit() == null) return;
-    computeSize(false);
-    // TODO for SimulatorPrototype: proj.getSimulator().releaseUserEvents();
-    proj.getSimulator().requestPropagate();
-    // repaint will occur after propagation completes
-  }
-
-  public void computeSize(boolean immediate) {
-    if (proj.getCurrentCircuit() == null) return;
-    Graphics g = getGraphics();
-    Bounds bounds;
-    if (g != null) bounds = proj.getCurrentCircuit().getBounds(getGraphics());
-    else bounds = proj.getCurrentCircuit().getBounds();
-    int height = 0, width = 0;
-    if (bounds != null && viewport != null) {
-      width = bounds.getX() + bounds.getWidth() + viewport.getWidth();
-      height = bounds.getY() + bounds.getHeight() + viewport.getHeight();
-    }
-    Dimension dim;
-    if (canvasPane == null) {
-      dim = new Dimension(width, height);
-    } else {
-      dim = canvasPane.supportPreferredSize(width, height);
-    }
-    if (!immediate) {
-      Bounds old = oldPreferredSize;
-      if (old != null
-          && Math.abs(old.getWidth() - dim.width) < THRESH_SIZE_UPDATE
-          && Math.abs(old.getHeight() - dim.height) < THRESH_SIZE_UPDATE) {
-        return;
-      }
-    }
-    oldPreferredSize = Bounds.create(0, 0, dim.width, dim.height);
-    setPreferredSize(dim);
-    revalidate();
-  }
-
-  public Rectangle getViewableRect() {
-    Rectangle viewableBase;
-    Rectangle viewable;
-    if (canvasPane != null) {
-      viewableBase = canvasPane.getViewport().getViewRect();
-    } else {
-      Bounds bds = proj.getCurrentCircuit().getBounds();
-      viewableBase = new Rectangle(0, 0, bds.getWidth(), bds.getHeight());
-    }
-    double zoom = getZoomFactor();
-    if (zoom == 1.0) {
-      viewable = viewableBase;
-    } else {
-      viewable =
-          new Rectangle(
-              (int) (viewableBase.x / zoom),
-              (int) (viewableBase.y / zoom),
-              (int) (viewableBase.width / zoom),
-              (int) (viewableBase.height / zoom));
-    }
-    return viewable;
-  }
-
-  private void computeViewportContents() {
-    Set<WidthIncompatibilityData> exceptions =
-        proj.getCurrentCircuit().getWidthIncompatibilityData();
-    if (exceptions == null || exceptions.size() == 0) {
-      viewport.setWidthMessage(null);
-      return;
-    }
-    viewport.setWidthMessage(
-        S.get("canvasWidthError") + (exceptions.size() == 1 ? "" : " (" + exceptions.size() + ")"));
-    for (WidthIncompatibilityData ex : exceptions) {
-      Location p = ex.getPoint(0);
-      setArrows(p.getX(), p.getY(), p.getX(), p.getY());
-    }
-  }
-
-  //
-  // access methods
-  //
-  public Circuit getCircuit() {
-    return proj.getCurrentCircuit();
-  }
-
-  public HdlModel getCurrentHdl() {
-    return proj.getCurrentHdl();
-  }
-
-  public CircuitState getCircuitState() {
-    return proj.getCircuitState();
-  }
-
-  Tool getDragTool() {
-    return drag_tool;
-  }
-
-  public StringGetter getErrorMessage() {
-    return viewport.errorMessage;
-  }
-
-  GridPainter getGridPainter() {
-    return painter.getGridPainter();
-  }
-
-  Component getHaloedComponent() {
-    return painter.getHaloedComponent();
-  }
-
-  public int getHorizzontalScrollBar() {
-    return canvasPane.getHorizontalScrollBar().getValue();
-  }
-
-  public int getVerticalScrollBar() {
-    return canvasPane.getVerticalScrollBar().getValue();
-  }
-
-  @Override
-  public Dimension getPreferredScrollableViewportSize() {
-    return getPreferredSize();
-  }
-
-  public Project getProject() {
-    return proj;
-  }
-
-  @Override
-  public int getScrollableBlockIncrement(Rectangle visibleRect, int orientation, int direction) {
-    return canvasPane.supportScrollableBlockIncrement(visibleRect, orientation, direction);
-  }
-
-  @Override
-  public boolean getScrollableTracksViewportHeight() {
-    return false;
-  }
-
-  @Override
-  public boolean getScrollableTracksViewportWidth() {
-    return false;
-  }
-
-  @Override
-  public int getScrollableUnitIncrement(Rectangle visibleRect, int orientation, int direction) {
-    return canvasPane.supportScrollableUnitIncrement(visibleRect, orientation, direction);
-  }
-
-  public Selection getSelection() {
-    return selection;
-  }
-
-  @Override
-  public String getToolTipText(MouseEvent event) {
-    boolean showTips = AppPreferences.COMPONENT_TIPS.getBoolean();
-    if (showTips) {
-      Canvas.snapToGrid(event);
-      Location loc = Location.create(event.getX(), event.getY());
-      ComponentUserEvent e = null;
-      for (Component comp : getCircuit().getAllContaining(loc)) {
-        Object makerObj = comp.getFeature(ToolTipMaker.class);
-        if (makerObj instanceof ToolTipMaker) {
-          ToolTipMaker maker = (ToolTipMaker) makerObj;
-          if (e == null) {
-            e = new ComponentUserEvent(this, loc.getX(), loc.getY());
-          }
-          String ret = maker.getToolTip(e);
-          if (ret != null) {
-            unrepairMouseEvent(event);
-            return ret;
-          }
-        }
-      }
-    }
-    return null;
-  }
-
-  //
-  // graphics methods
-  //
-  double getZoomFactor() {
-    CanvasPane pane = canvasPane;
-    return pane == null ? 1.0 : pane.getZoomFactor();
-  }
-
-  boolean ifPaintDirtyReset() {
-    if (paintDirty) {
-      paintDirty = false;
-      return false;
-    } else {
-      return true;
-    }
-  }
-
-  boolean isPopupMenuUp() {
-    return myListener.menu_on;
-  }
-
-  private void loadOptions(AttributeSet options) {
-    boolean showTips = AppPreferences.COMPONENT_TIPS.getBoolean();
-    setToolTipText(showTips ? "" : null);
-
-    proj.getSimulator().removeSimulatorListener(myProjectListener);
-    proj.getSimulator().addSimulatorListener(myProjectListener);
-  }
-
-  @Override
-  public void localeChanged() {
-    paintThread.requestRepaint();
-  }
-
-  @Override
-  public void paintComponent(Graphics g) {
-    if (AppPreferences.AntiAliassing.getBoolean()) {
-      Graphics2D g2 = (Graphics2D) g;
-      g2.setRenderingHint(
-          RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-      g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-    }
-
-    inPaint = true;
-    try {
-      super.paintComponent(g);
-      boolean clear = false;
-      do {
-        if (clear) {
-          /* Kevin Walsh:
-           * Clear the screen so we don't get
-           * artifacts due to aliasing (e.g. where
-           * semi-transparent (gray) pixels on the
-           * edges of a line turn woudl darker if
-           * painted a second time.
-           */
-          g.setColor(Color.WHITE);
-          g.fillRect(0, 0, getWidth(), getHeight());
-        }
-        clear = true;
-        painter.paintContents(g, proj);
-      } while (paintDirty);
-      if (canvasPane == null) {
-        viewport.paintContents(g);
-      }
-    } finally {
-      inPaint = false;
-      synchronized (repaintLock) {
-        repaintLock.notifyAll();
-      }
-    }
-  }
-
-  @Override
-  protected void processMouseEvent(MouseEvent e) {
-    repairMouseEvent(e);
-    super.processMouseEvent(e);
-  }
-
-  @Override
-  protected void processMouseMotionEvent(MouseEvent e) {
-    repairMouseEvent(e);
-    super.processMouseMotionEvent(e);
-  }
-
-  @Override
-  public void recomputeSize() {
-    computeSize(true);
-  }
-
-  @Override
-  public void repaint() {
-    if (inPaint) {
-      paintDirty = true;
-    } else {
-      super.repaint();
-    }
-  }
-
-  @Override
-  public void repaint(int x, int y, int width, int height) {
-    double zoom = getZoomFactor();
-    if (zoom < 1.0) {
-      int newX = (int) Math.floor(x * zoom);
-      int newY = (int) Math.floor(y * zoom);
-      width += x - newX;
-      height += y - newY;
-      x = newX;
-      y = newY;
-    } else if (zoom > 1.0) {
-      int x1 = (int) Math.ceil((x + width) * zoom);
-      int y1 = (int) Math.ceil((y + height) * zoom);
-      width = x1 - x;
-      height = y1 - y;
-    }
-    super.repaint(x, y, width, height);
-  }
-
-  @Override
-  public void repaint(Rectangle r) {
-    double zoom = getZoomFactor();
-    if (zoom == 1.0) {
-      super.repaint(r);
-    } else {
-      this.repaint(r.x, r.y, r.width, r.height);
-    }
-  }
-
-  private void repairMouseEvent(MouseEvent e) {
-    double zoom = getZoomFactor();
-    if (zoom != 1.0) {
-      zoomEvent(e, zoom);
-    }
-  }
-
-  public void updateArrows() {
-    /* Disable for VHDL content */
-    if (proj.getCurrentCircuit() == null) return;
-    Graphics g = getGraphics();
-    Bounds circBds;
-    if (g != null) circBds = proj.getCurrentCircuit().getBounds(getGraphics());
-    else circBds = proj.getCurrentCircuit().getBounds();
-    // no circuit
-    if (circBds == null || circBds.getHeight() == 0 || circBds.getWidth() == 0) return;
-    int x = circBds.getX();
-    int y = circBds.getY();
-    if (x < 0) x = 0;
-    if (y < 0) y = 0;
-    setArrows(x, y, x + circBds.getWidth(), y + circBds.getHeight());
-  }
-
-  public void setArrows(int x0, int y0, int x1, int y1) {
-    /* Disable for VHDL content */
-    if (proj.getCurrentCircuit() == null) return;
-    viewport.clearArrows();
-    Rectangle viewableBase, viewable;
-    if (canvasPane != null) {
-      viewableBase = canvasPane.getViewport().getViewRect();
-    } else {
-      Graphics g = getGraphics();
-      Bounds bds;
-      if (g != null) bds = proj.getCurrentCircuit().getBounds(getGraphics());
-      else bds = proj.getCurrentCircuit().getBounds();
-      viewableBase = new Rectangle(0, 0, bds.getWidth(), bds.getHeight());
-    }
-    double zoom = getZoomFactor();
-    if (zoom == 1.0) {
-      viewable = viewableBase;
-    } else {
-      viewable =
-          new Rectangle(
-              (int) (viewableBase.x / zoom),
-              (int) (viewableBase.y / zoom),
-              (int) (viewableBase.width / zoom),
-              (int) (viewableBase.height / zoom));
-    }
-    boolean isWest = x0 < viewable.x;
-    boolean isEast = x1 >= viewable.x + viewable.width;
-    boolean isNorth = y0 < viewable.y;
-    boolean isSouth = y1 >= viewable.y + viewable.height;
-
-    if (isNorth) {
-      if (isEast) viewport.setNortheast(true);
-      if (isWest) viewport.setNorthwest(true);
-      if (!isWest && !isEast) viewport.setNorth(true);
-    }
-    if (isSouth) {
-      if (isEast) viewport.setSoutheast(true);
-      if (isWest) viewport.setSouthwest(true);
-      if (!isWest && !isEast) viewport.setSouth(true);
-    }
-    if (isEast && !viewport.isSoutheast && !viewport.isNortheast) viewport.setEast(true);
-    if (isWest && !viewport.isSouthwest && !viewport.isNorthwest) viewport.setWest(true);
-  }
-
-  //
-  // CanvasPaneContents methods
-  //
-  @Override
-  public void setCanvasPane(CanvasPane value) {
-    canvasPane = value;
-    canvasPane.setViewport(viewport);
-    canvasPane.getHorizontalScrollBar().addAdjustmentListener(this);
-    canvasPane.getVerticalScrollBar().addAdjustmentListener(this);
-    viewport.setView(this);
-    setOpaque(false);
-    computeSize(true);
-  }
-
-  public void setErrorMessage(StringGetter message) {
-    viewport.setErrorMessage(message, null);
-  }
-
-  public void setErrorMessage(StringGetter message, Color color) {
-    viewport.setErrorMessage(message, color);
-  }
-
-  void setHaloedComponent(Circuit circ, Component comp) {
-    painter.setHaloedComponent(circ, comp);
-  }
-
-  public void setHighlightedWires(WireSet value) {
-    painter.setHighlightedWires(value);
-  }
-
-  public void setHorizontalScrollBar(int X) {
-    canvasPane.getHorizontalScrollBar().setValue(X);
-  }
-
-  public void setScrollBar(int X, int Y) {
-    setHorizontalScrollBar(X);
-    setVerticalScrollBar(Y);
-  }
-
-  public void setVerticalScrollBar(int Y) {
-    canvasPane.getVerticalScrollBar().setValue(Y);
-  }
-
-  public void showPopupMenu(JPopupMenu menu, int x, int y) {
-    double zoom = getZoomFactor();
-    if (zoom != 1.0) {
-      x = (int) Math.round(x * zoom);
-      y = (int) Math.round(y * zoom);
-    }
-    myListener.menu_on = true;
-    menu.addPopupMenuListener(myListener);
-    menu.show(this, x, y);
-  }
-
-  private void unrepairMouseEvent(MouseEvent e) {
-    double zoom = getZoomFactor();
-    if (zoom != 1.0) {
-      zoomEvent(e, 1.0 / zoom);
-    }
-  }
-
-  private void waitForRepaintDone() {
-    synchronized (repaintLock) {
-      try {
-        while (inPaint) {
-          repaintLock.wait();
-        }
-      } catch (InterruptedException e) {
-      }
-    }
-  }
-
-  private void zoomEvent(MouseEvent e, double zoom) {
-    int oldx = e.getX();
-    int oldy = e.getY();
-    int newx = (int) Math.round(e.getX() / zoom);
-    int newy = (int) Math.round(e.getY() / zoom);
-    e.translatePoint(newx - oldx, newy - oldy);
-  }
-
-  @Override
-  public void adjustmentValueChanged(AdjustmentEvent e) {
-    updateArrows();
   }
 }

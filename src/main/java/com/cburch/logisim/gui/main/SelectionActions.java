@@ -56,369 +56,11 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
 public class SelectionActions {
-  /**
-   * Code taken from Cornell's version of Logisim: http://www.cs.cornell.edu/courses/cs3410/2015sp/
-   */
-  private static class Anchor extends Action {
-
-    private final Selection sel;
-    private final int numAnchor;
-    private final SelectionSave before;
-    private CircuitTransaction xnReverse;
-
-    Anchor(Selection sel, int numAnchor) {
-      this.sel = sel;
-      this.before = SelectionSave.create(sel);
-      this.numAnchor = numAnchor;
-    }
-
-    @Override
-    public void doIt(Project proj) {
-      Circuit circuit = proj.getCurrentCircuit();
-      CircuitMutation xn = new CircuitMutation(circuit);
-      sel.dropAll(xn);
-      CircuitTransactionResult result = xn.execute();
-      xnReverse = result.getReverseTransaction();
-    }
-
-    @Override
-    public String getName() {
-      return numAnchor == 1 ? S.get("dropComponentAction") : S.get("dropComponentsAction");
-    }
-
-    @Override
-    public boolean shouldAppendTo(Action other) {
-      Action last;
-      if (other instanceof JoinedAction) last = ((JoinedAction) other).getLastAction();
-      else last = other;
-
-      SelectionSave otherAfter = null;
-      if (last instanceof Paste) {
-        otherAfter = ((Paste) last).after;
-      } else if (last instanceof Duplicate) {
-        otherAfter = ((Duplicate) last).after;
-      }
-      return otherAfter != null && otherAfter.equals(this.before);
-    }
-
-    @Override
-    public void undo(Project proj) {
-      xnReverse.execute();
-    }
-  }
-
-  private static class Copy extends Action {
-    private final Selection sel;
-    private Clipboard oldClip;
-
-    Copy(Selection sel) {
-      this.sel = sel;
-    }
-
-    @Override
-    public void doIt(Project proj) {
-      oldClip = Clipboard.get();
-      Clipboard.set(sel, sel.getAttributeSet());
-    }
-
-    @Override
-    public String getName() {
-      return S.get("copySelectionAction");
-    }
-
-    @Override
-    public boolean isModification() {
-      return false;
-    }
-
-    @Override
-    public void undo(Project proj) {
-      Clipboard.set(oldClip);
-    }
-  }
-
-  private static class Cut extends Action {
-    private final Selection sel;
-    private Clipboard oldClip;
-    private final Action second;
-
-    Cut(Selection sel) {
-      this.sel = sel;
-      second = new Delete(sel);
-    }
-
-    @Override
-    public void doIt(Project proj) {
-      oldClip = Clipboard.get();
-      Clipboard.set(sel, sel.getAttributeSet());
-      second.doIt(proj);
-    }
-
-    @Override
-    public String getName() {
-      return S.get("cutSelectionAction");
-    }
-
-    @Override
-    public void undo(Project proj) {
-      second.undo(proj);
-      Clipboard.set(oldClip);
-    }
-  }
-
-  private static class Delete extends Action {
-    private final Selection sel;
-    private CircuitTransaction xnReverse;
-
-    Delete(Selection sel) {
-      this.sel = sel;
-    }
-
-    @Override
-    public void doIt(Project proj) {
-      Circuit circuit = proj.getCurrentCircuit();
-      CircuitMutation xn = new CircuitMutation(circuit);
-      sel.deleteAllHelper(xn);
-      CircuitTransactionResult result = xn.execute();
-      xnReverse = result.getReverseTransaction();
-    }
-
-    @Override
-    public String getName() {
-      return S.get("deleteSelectionAction");
-    }
-
-    @Override
-    public void undo(Project proj) {
-      xnReverse.execute();
-    }
-  }
-
-  /**
-   * Code taken from Cornell's version of Logisim: http://www.cs.cornell.edu/courses/cs3410/2015sp/
-   */
-  private static class Drop extends Action {
-
-    private final Selection sel;
-    private final Component[] drops;
-    private final int numDrops;
-    private final SelectionSave before;
-    private CircuitTransaction xnReverse;
-
-    Drop(Selection sel, Collection<Component> toDrop, int numDrops) {
-      this.sel = sel;
-      this.drops = new Component[toDrop.size()];
-      toDrop.toArray(this.drops);
-      this.numDrops = numDrops;
-      this.before = SelectionSave.create(sel);
-    }
-
-    @Override
-    public void doIt(Project proj) {
-      Circuit circuit = proj.getCurrentCircuit();
-      CircuitMutation xn = new CircuitMutation(circuit);
-
-      for (Component comp : drops) {
-        sel.remove(xn, comp);
-      }
-
-      CircuitTransactionResult result = xn.execute();
-      xnReverse = result.getReverseTransaction();
-    }
-
-    @Override
-    public String getName() {
-      return numDrops == 1 ? S.get("dropComponentAction") : S.get("dropComponentsAction");
-    }
-
-    @Override
-    public boolean shouldAppendTo(Action other) {
-      Action last;
-      if (other instanceof JoinedAction) last = ((JoinedAction) other).getLastAction();
-      else last = other;
-
-      SelectionSave otherAfter = null;
-
-      if (last instanceof Paste) {
-        otherAfter = ((Paste) last).after;
-      } else if (last instanceof Duplicate) {
-        otherAfter = ((Duplicate) last).after;
-      }
-
-      return otherAfter != null && otherAfter.equals(this.before);
-    }
-
-    @Override
-    public void undo(Project proj) {
-      xnReverse.execute();
-    }
-  }
-
-  private static class Duplicate extends Action {
-    private final Selection sel;
-    private CircuitTransaction xnReverse;
-    private SelectionSave after;
-
-    Duplicate(Selection sel) {
-      this.sel = sel;
-    }
-
-    @Override
-    public void doIt(Project proj) {
-      Circuit circuit = proj.getCurrentCircuit();
-      CircuitMutation xn = new CircuitMutation(circuit);
-      sel.duplicateHelper(xn);
-
-      CircuitTransactionResult result = xn.execute();
-      xnReverse = result.getReverseTransaction();
-      after = SelectionSave.create(sel);
-    }
-
-    @Override
-    public String getName() {
-      return S.get("duplicateSelectionAction");
-    }
-
-    @Override
-    public void undo(Project proj) {
-      xnReverse.execute();
-    }
-  }
-
-  private static class Paste extends Action {
-    private final Selection sel;
-    private CircuitTransaction xnReverse;
-    private SelectionSave after;
-    private final HashMap<Component, Component> componentReplacements;
-
-    Paste(Selection sel, HashMap<Component, Component> replacements) {
-      this.sel = sel;
-      this.componentReplacements = replacements;
-    }
-
-    private Collection<Component> computeAdditions(Collection<Component> comps) {
-      HashMap<Component, Component> replMap = componentReplacements;
-      ArrayList<Component> toAdd = new ArrayList<Component>(comps.size());
-      for (Component comp : comps) {
-        if (replMap.containsKey(comp)) {
-          Component repl = replMap.get(comp);
-          if (repl != null) {
-            toAdd.add(repl);
-          }
-        } else {
-          toAdd.add(comp);
-        }
-      }
-      return toAdd;
-    }
-
-    @Override
-    public void doIt(Project proj) {
-      Clipboard clip = Clipboard.get();
-      Circuit circuit = proj.getCurrentCircuit();
-      CircuitMutation xn = new CircuitMutation(circuit);
-      Collection<Component> comps = clip.getComponents();
-      Collection<Component> toAdd = computeAdditions(comps);
-
-      Canvas canvas = proj.getFrame().getCanvas();
-      Circuit circ = canvas.getCircuit();
-
-      /* Check if instantiated circuits are one of the parent circuits */
-      for (Component c : comps) {
-        ComponentFactory factory = c.getFactory();
-        if (factory instanceof SubcircuitFactory) {
-          SubcircuitFactory circFact = (SubcircuitFactory) factory;
-          Dependencies depends = canvas.getProject().getDependencies();
-          if (!depends.canAdd(circ, circFact.getSubcircuit())) {
-            canvas.setErrorMessage(com.cburch.logisim.tools.Strings.S.getter("circularError"));
-            return;
-          }
-        }
-      }
-
-      if (toAdd.size() > 0) {
-        sel.pasteHelper(xn, toAdd);
-        CircuitTransactionResult result = xn.execute();
-        xnReverse = result.getReverseTransaction();
-        after = SelectionSave.create(sel);
-      } else {
-        xnReverse = null;
-      }
-    }
-
-    @Override
-    public String getName() {
-      return S.get("pasteClipboardAction");
-    }
-
-    @Override
-    public void undo(Project proj) {
-      if (xnReverse != null) {
-        xnReverse.execute();
-      }
-    }
-  }
-
-  private static class Translate extends Action {
-    private final Selection sel;
-    private final int dx;
-    private final int dy;
-    private final ReplacementMap replacements;
-    private final SelectionSave before;
-    private CircuitTransaction xnReverse;
-
-    Translate(Selection sel, int dx, int dy, ReplacementMap replacements) {
-      this.sel = sel;
-      this.dx = dx;
-      this.dy = dy;
-      this.replacements = replacements;
-      this.before = SelectionSave.create(sel);
-    }
-
-    @Override
-    public void doIt(Project proj) {
-      Circuit circuit = proj.getCurrentCircuit();
-      CircuitMutation xn = new CircuitMutation(circuit);
-
-      sel.translateHelper(xn, dx, dy);
-      if (replacements != null) {
-        xn.replace(replacements);
-      }
-
-      CircuitTransactionResult result = xn.execute();
-      xnReverse = result.getReverseTransaction();
-    }
-
-    @Override
-    public String getName() {
-      return S.get("moveSelectionAction");
-    }
-
-    @Override
-    public boolean shouldAppendTo(Action other) {
-      Action last;
-      if (other instanceof JoinedAction) last = ((JoinedAction) other).getLastAction();
-      else last = other;
-
-      SelectionSave otherAfter = null;
-      if (last instanceof Paste) {
-        otherAfter = ((Paste) last).after;
-      } else if (last instanceof Duplicate) {
-        otherAfter = ((Duplicate) last).after;
-      }
-      return otherAfter != null && otherAfter.equals(this.before);
-    }
-
-    @Override
-    public void undo(Project proj) {
-      xnReverse.execute();
-    }
-  }
+  private SelectionActions() {}
 
   /**
    * Code taken from Cornell's version of Logisim: http://www.cs.cornell.edu/courses/cs3410/2015sp/
@@ -613,5 +255,362 @@ public class SelectionActions {
     return new Translate(sel, dx, dy, repl);
   }
 
-  private SelectionActions() {}
+  /**
+   * Code taken from Cornell's version of Logisim: http://www.cs.cornell.edu/courses/cs3410/2015sp/
+   */
+  private static class Anchor extends Action {
+
+    private final Selection sel;
+    private final int numAnchor;
+    private final SelectionSave before;
+    private CircuitTransaction xnReverse;
+
+    Anchor(Selection sel, int numAnchor) {
+      this.sel = sel;
+      this.before = SelectionSave.create(sel);
+      this.numAnchor = numAnchor;
+    }
+
+    @Override
+    public void doIt(Project proj) {
+      Circuit circuit = proj.getCurrentCircuit();
+      CircuitMutation xn = new CircuitMutation(circuit);
+      sel.dropAll(xn);
+      CircuitTransactionResult result = xn.execute();
+      xnReverse = result.getReverseTransaction();
+    }
+
+    @Override
+    public String getName() {
+      return numAnchor == 1 ? S.get("dropComponentAction") : S.get("dropComponentsAction");
+    }
+
+    @Override
+    public boolean shouldAppendTo(Action other) {
+      Action last;
+      if (other instanceof JoinedAction) last = ((JoinedAction) other).getLastAction();
+      else last = other;
+
+      SelectionSave otherAfter = null;
+      if (last instanceof Paste) {
+        otherAfter = ((Paste) last).after;
+      } else if (last instanceof Duplicate) {
+        otherAfter = ((Duplicate) last).after;
+      }
+      return otherAfter != null && otherAfter.equals(this.before);
+    }
+
+    @Override
+    public void undo(Project proj) {
+      xnReverse.execute();
+    }
+  }
+
+  private static class Copy extends Action {
+    private final Selection sel;
+    private Clipboard oldClip;
+
+    Copy(Selection sel) {
+      this.sel = sel;
+    }
+
+    @Override
+    public void doIt(Project proj) {
+      oldClip = Clipboard.get();
+      Clipboard.set(sel, sel.getAttributeSet());
+    }
+
+    @Override
+    public String getName() {
+      return S.get("copySelectionAction");
+    }
+
+    @Override
+    public boolean isModification() {
+      return false;
+    }
+
+    @Override
+    public void undo(Project proj) {
+      Clipboard.set(oldClip);
+    }
+  }
+
+  private static class Cut extends Action {
+    private final Selection sel;
+    private final Action second;
+    private Clipboard oldClip;
+
+    Cut(Selection sel) {
+      this.sel = sel;
+      second = new Delete(sel);
+    }
+
+    @Override
+    public void doIt(Project proj) {
+      oldClip = Clipboard.get();
+      Clipboard.set(sel, sel.getAttributeSet());
+      second.doIt(proj);
+    }
+
+    @Override
+    public String getName() {
+      return S.get("cutSelectionAction");
+    }
+
+    @Override
+    public void undo(Project proj) {
+      second.undo(proj);
+      Clipboard.set(oldClip);
+    }
+  }
+
+  private static class Delete extends Action {
+    private final Selection sel;
+    private CircuitTransaction xnReverse;
+
+    Delete(Selection sel) {
+      this.sel = sel;
+    }
+
+    @Override
+    public void doIt(Project proj) {
+      Circuit circuit = proj.getCurrentCircuit();
+      CircuitMutation xn = new CircuitMutation(circuit);
+      sel.deleteAllHelper(xn);
+      CircuitTransactionResult result = xn.execute();
+      xnReverse = result.getReverseTransaction();
+    }
+
+    @Override
+    public String getName() {
+      return S.get("deleteSelectionAction");
+    }
+
+    @Override
+    public void undo(Project proj) {
+      xnReverse.execute();
+    }
+  }
+
+  /**
+   * Code taken from Cornell's version of Logisim: http://www.cs.cornell.edu/courses/cs3410/2015sp/
+   */
+  private static class Drop extends Action {
+
+    private final Selection sel;
+    private final Component[] drops;
+    private final int numDrops;
+    private final SelectionSave before;
+    private CircuitTransaction xnReverse;
+
+    Drop(Selection sel, Collection<Component> toDrop, int numDrops) {
+      this.sel = sel;
+      this.drops = new Component[toDrop.size()];
+      toDrop.toArray(this.drops);
+      this.numDrops = numDrops;
+      this.before = SelectionSave.create(sel);
+    }
+
+    @Override
+    public void doIt(Project proj) {
+      Circuit circuit = proj.getCurrentCircuit();
+      CircuitMutation xn = new CircuitMutation(circuit);
+
+      for (Component comp : drops) {
+        sel.remove(xn, comp);
+      }
+
+      CircuitTransactionResult result = xn.execute();
+      xnReverse = result.getReverseTransaction();
+    }
+
+    @Override
+    public String getName() {
+      return numDrops == 1 ? S.get("dropComponentAction") : S.get("dropComponentsAction");
+    }
+
+    @Override
+    public boolean shouldAppendTo(Action other) {
+      Action last;
+      if (other instanceof JoinedAction) last = ((JoinedAction) other).getLastAction();
+      else last = other;
+
+      SelectionSave otherAfter = null;
+
+      if (last instanceof Paste) {
+        otherAfter = ((Paste) last).after;
+      } else if (last instanceof Duplicate) {
+        otherAfter = ((Duplicate) last).after;
+      }
+
+      return otherAfter != null && otherAfter.equals(this.before);
+    }
+
+    @Override
+    public void undo(Project proj) {
+      xnReverse.execute();
+    }
+  }
+
+  private static class Duplicate extends Action {
+    private final Selection sel;
+    private CircuitTransaction xnReverse;
+    private SelectionSave after;
+
+    Duplicate(Selection sel) {
+      this.sel = sel;
+    }
+
+    @Override
+    public void doIt(Project proj) {
+      Circuit circuit = proj.getCurrentCircuit();
+      CircuitMutation xn = new CircuitMutation(circuit);
+      sel.duplicateHelper(xn);
+
+      CircuitTransactionResult result = xn.execute();
+      xnReverse = result.getReverseTransaction();
+      after = SelectionSave.create(sel);
+    }
+
+    @Override
+    public String getName() {
+      return S.get("duplicateSelectionAction");
+    }
+
+    @Override
+    public void undo(Project proj) {
+      xnReverse.execute();
+    }
+  }
+
+  private static class Paste extends Action {
+    private final Selection sel;
+    private final HashMap<Component, Component> componentReplacements;
+    private CircuitTransaction xnReverse;
+    private SelectionSave after;
+
+    Paste(Selection sel, HashMap<Component, Component> replacements) {
+      this.sel = sel;
+      this.componentReplacements = replacements;
+    }
+
+    private Collection<Component> computeAdditions(Collection<Component> comps) {
+      HashMap<Component, Component> replMap = componentReplacements;
+      ArrayList<Component> toAdd = new ArrayList<Component>(comps.size());
+      for (Component comp : comps) {
+        if (replMap.containsKey(comp)) {
+          Component repl = replMap.get(comp);
+          if (repl != null) {
+            toAdd.add(repl);
+          }
+        } else {
+          toAdd.add(comp);
+        }
+      }
+      return toAdd;
+    }
+
+    @Override
+    public void doIt(Project proj) {
+      Clipboard clip = Clipboard.get();
+      Circuit circuit = proj.getCurrentCircuit();
+      CircuitMutation xn = new CircuitMutation(circuit);
+      Collection<Component> comps = clip.getComponents();
+      Collection<Component> toAdd = computeAdditions(comps);
+
+      Canvas canvas = proj.getFrame().getCanvas();
+      Circuit circ = canvas.getCircuit();
+
+      /* Check if instantiated circuits are one of the parent circuits */
+      for (Component c : comps) {
+        ComponentFactory factory = c.getFactory();
+        if (factory instanceof SubcircuitFactory) {
+          SubcircuitFactory circFact = (SubcircuitFactory) factory;
+          Dependencies depends = canvas.getProject().getDependencies();
+          if (!depends.canAdd(circ, circFact.getSubcircuit())) {
+            canvas.setErrorMessage(com.cburch.logisim.tools.Strings.S.getter("circularError"));
+            return;
+          }
+        }
+      }
+
+      if (toAdd.size() > 0) {
+        sel.pasteHelper(xn, toAdd);
+        CircuitTransactionResult result = xn.execute();
+        xnReverse = result.getReverseTransaction();
+        after = SelectionSave.create(sel);
+      } else {
+        xnReverse = null;
+      }
+    }
+
+    @Override
+    public String getName() {
+      return S.get("pasteClipboardAction");
+    }
+
+    @Override
+    public void undo(Project proj) {
+      if (xnReverse != null) {
+        xnReverse.execute();
+      }
+    }
+  }
+
+  private static class Translate extends Action {
+    private final Selection sel;
+    private final int dx;
+    private final int dy;
+    private final ReplacementMap replacements;
+    private final SelectionSave before;
+    private CircuitTransaction xnReverse;
+
+    Translate(Selection sel, int dx, int dy, ReplacementMap replacements) {
+      this.sel = sel;
+      this.dx = dx;
+      this.dy = dy;
+      this.replacements = replacements;
+      this.before = SelectionSave.create(sel);
+    }
+
+    @Override
+    public void doIt(Project proj) {
+      Circuit circuit = proj.getCurrentCircuit();
+      CircuitMutation xn = new CircuitMutation(circuit);
+
+      sel.translateHelper(xn, dx, dy);
+      if (replacements != null) {
+        xn.replace(replacements);
+      }
+
+      CircuitTransactionResult result = xn.execute();
+      xnReverse = result.getReverseTransaction();
+    }
+
+    @Override
+    public String getName() {
+      return S.get("moveSelectionAction");
+    }
+
+    @Override
+    public boolean shouldAppendTo(Action other) {
+      Action last;
+      if (other instanceof JoinedAction) last = ((JoinedAction) other).getLastAction();
+      else last = other;
+
+      SelectionSave otherAfter = null;
+      if (last instanceof Paste) {
+        otherAfter = ((Paste) last).after;
+      } else if (last instanceof Duplicate) {
+        otherAfter = ((Duplicate) last).after;
+      }
+      return otherAfter != null && otherAfter.equals(this.before);
+    }
+
+    @Override
+    public void undo(Project proj) {
+      xnReverse.execute();
+    }
+  }
 }

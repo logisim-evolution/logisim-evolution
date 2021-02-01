@@ -28,22 +28,21 @@
 
 package com.cburch.draw.icons;
 
+import com.cburch.logisim.gui.icons.AnnimatedIcon;
+import com.cburch.logisim.prefs.AppPreferences;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.GeneralPath;
 
-import com.cburch.logisim.gui.icons.AnnimatedIcon;
-import com.cburch.logisim.prefs.AppPreferences;
-
 public class DrawPolylineIcon extends AnnimatedIcon {
 
-  private static final int[] points = {1,14,1,1,7,8,13,4,10,13};
+  private static final int[] points = {1, 14, 1, 1, 7, 8, 13, 4, 10, 13};
   private boolean closed = false;
   private int state = points.length;
-  
+
   public DrawPolylineIcon(boolean closed) {
-    this.closed = closed;  
+    this.closed = closed;
   }
 
   @Override
@@ -52,29 +51,30 @@ public class DrawPolylineIcon extends AnnimatedIcon {
     g2.setColor(Color.BLUE.darker());
     GeneralPath p = new GeneralPath();
     p.moveTo(AppPreferences.getScaled(points[0]), AppPreferences.getScaled(points[1]));
-    for (int i = 2 ; i < state-1 ; i+=2)
-      p.lineTo(AppPreferences.getScaled(points[i]), AppPreferences.getScaled(points[i+1]));
-    if (closed&&state==points.length)
-      p.closePath();
+    for (int i = 2; i < state - 1; i += 2)
+      p.lineTo(AppPreferences.getScaled(points[i]), AppPreferences.getScaled(points[i + 1]));
+    if (closed && state == points.length) p.closePath();
     g2.draw(p);
     g2.setStroke(new BasicStroke(AppPreferences.getScaled(1)));
     g2.setColor(Color.GRAY);
     int wh = AppPreferences.getScaled(3);
-    for (int i = 0 ; i <= state-1 ; i+=2)
-      g2.drawRect(AppPreferences.getScaled(points[i]-1), AppPreferences.getScaled(points[i+1]-1), wh, wh);
+    for (int i = 0; i <= state - 1; i += 2)
+      g2.drawRect(
+          AppPreferences.getScaled(points[i] - 1),
+          AppPreferences.getScaled(points[i + 1] - 1),
+          wh,
+          wh);
   }
 
   @Override
   public void annimationUpdate() {
     state++;
-    if (state == 2)
-      state++;
-    state %= (points.length+1);
+    if (state == 2) state++;
+    state %= (points.length + 1);
   }
 
   @Override
   public void resetToStatic() {
     state = points.length;
   }
-
 }

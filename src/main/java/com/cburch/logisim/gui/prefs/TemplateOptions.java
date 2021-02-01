@@ -57,91 +57,13 @@ import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
 class TemplateOptions extends OptionsPanel {
-  private class MyListener implements ActionListener, PropertyChangeListener {
-    public void actionPerformed(ActionEvent event) {
-      Object src = event.getSource();
-      if (src == templateButton) {
-        JFileChooser chooser = JFileChoosers.create();
-        chooser.setDialogTitle(S.get("selectDialogTitle"));
-        chooser.setApproveButtonText(S.get("selectDialogButton"));
-        int action = chooser.showOpenDialog(getPreferencesFrame());
-        if (action == JFileChooser.APPROVE_OPTION) {
-          File file = chooser.getSelectedFile();
-          FileInputStream reader = null;
-          InputStream reader2 = null;
-          try {
-            Loader loader = new Loader(getPreferencesFrame());
-            reader = new FileInputStream(file);
-            Template template = Template.create(reader);
-            reader2 = template.createStream();
-            LogisimFile.load(reader2, loader); // to see if OK
-            AppPreferences.setTemplateFile(file, template);
-            AppPreferences.setTemplateType(AppPreferences.TEMPLATE_CUSTOM);
-          } catch (LoaderException ex) {
-          } catch (IOException ex) {
-            OptionPane.showMessageDialog(
-                getPreferencesFrame(),
-                StringUtil.format(S.get("templateErrorMessage"), ex.toString()),
-                S.get("templateErrorTitle"),
-                OptionPane.ERROR_MESSAGE);
-          } finally {
-            try {
-              if (reader != null) reader.close();
-            } catch (IOException ex) {
-            }
-            try {
-              if (reader != null) reader2.close();
-            } catch (IOException ex) {
-            }
-          }
-        }
-      } else {
-        int value = AppPreferences.TEMPLATE_UNKNOWN;
-        if (plain.isSelected()) value = AppPreferences.TEMPLATE_PLAIN;
-        else if (empty.isSelected()) value = AppPreferences.TEMPLATE_EMPTY;
-        else if (custom.isSelected()) value = AppPreferences.TEMPLATE_CUSTOM;
-        AppPreferences.setTemplateType(value);
-      }
-      computeEnabled();
-    }
-
-    private void computeEnabled() {
-      custom.setEnabled(!templateField.getText().equals(""));
-      templateField.setEnabled(custom.isSelected());
-    }
-
-    public void propertyChange(PropertyChangeEvent event) {
-      String prop = event.getPropertyName();
-      if (prop.equals(AppPreferences.TEMPLATE_TYPE)) {
-        int value = AppPreferences.getTemplateType();
-        plain.setSelected(value == AppPreferences.TEMPLATE_PLAIN);
-        empty.setSelected(value == AppPreferences.TEMPLATE_EMPTY);
-        custom.setSelected(value == AppPreferences.TEMPLATE_CUSTOM);
-      } else if (prop.equals(AppPreferences.TEMPLATE_FILE)) {
-        setTemplateField((File) event.getNewValue());
-      }
-    }
-
-    private void setTemplateField(File f) {
-      try {
-        templateField.setText(f == null ? "" : f.getCanonicalPath());
-      } catch (IOException e) {
-        templateField.setText(f.getName());
-      }
-      computeEnabled();
-    }
-  }
-
   private static final long serialVersionUID = 1L;
-
   private final MyListener myListener = new MyListener();
-
   private final JRadioButton plain = new JRadioButton();
   private final JRadioButton empty = new JRadioButton();
   private final JRadioButton custom = new JRadioButton();
   private final JTextField templateField = new JTextField(40);
   private final JButton templateButton = new JButton();
-
   public TemplateOptions(PreferencesFrame window) {
     super(window);
 
@@ -220,5 +142,80 @@ class TemplateOptions extends OptionsPanel {
     empty.setText(S.get("templateEmptyOption"));
     custom.setText(S.get("templateCustomOption"));
     templateButton.setText(S.get("templateSelectButton"));
+  }
+
+  private class MyListener implements ActionListener, PropertyChangeListener {
+    public void actionPerformed(ActionEvent event) {
+      Object src = event.getSource();
+      if (src == templateButton) {
+        JFileChooser chooser = JFileChoosers.create();
+        chooser.setDialogTitle(S.get("selectDialogTitle"));
+        chooser.setApproveButtonText(S.get("selectDialogButton"));
+        int action = chooser.showOpenDialog(getPreferencesFrame());
+        if (action == JFileChooser.APPROVE_OPTION) {
+          File file = chooser.getSelectedFile();
+          FileInputStream reader = null;
+          InputStream reader2 = null;
+          try {
+            Loader loader = new Loader(getPreferencesFrame());
+            reader = new FileInputStream(file);
+            Template template = Template.create(reader);
+            reader2 = template.createStream();
+            LogisimFile.load(reader2, loader); // to see if OK
+            AppPreferences.setTemplateFile(file, template);
+            AppPreferences.setTemplateType(AppPreferences.TEMPLATE_CUSTOM);
+          } catch (LoaderException ex) {
+          } catch (IOException ex) {
+            OptionPane.showMessageDialog(
+                getPreferencesFrame(),
+                StringUtil.format(S.get("templateErrorMessage"), ex.toString()),
+                S.get("templateErrorTitle"),
+                OptionPane.ERROR_MESSAGE);
+          } finally {
+            try {
+              if (reader != null) reader.close();
+            } catch (IOException ex) {
+            }
+            try {
+              if (reader != null) reader2.close();
+            } catch (IOException ex) {
+            }
+          }
+        }
+      } else {
+        int value = AppPreferences.TEMPLATE_UNKNOWN;
+        if (plain.isSelected()) value = AppPreferences.TEMPLATE_PLAIN;
+        else if (empty.isSelected()) value = AppPreferences.TEMPLATE_EMPTY;
+        else if (custom.isSelected()) value = AppPreferences.TEMPLATE_CUSTOM;
+        AppPreferences.setTemplateType(value);
+      }
+      computeEnabled();
+    }
+
+    private void computeEnabled() {
+      custom.setEnabled(!templateField.getText().equals(""));
+      templateField.setEnabled(custom.isSelected());
+    }
+
+    public void propertyChange(PropertyChangeEvent event) {
+      String prop = event.getPropertyName();
+      if (prop.equals(AppPreferences.TEMPLATE_TYPE)) {
+        int value = AppPreferences.getTemplateType();
+        plain.setSelected(value == AppPreferences.TEMPLATE_PLAIN);
+        empty.setSelected(value == AppPreferences.TEMPLATE_EMPTY);
+        custom.setSelected(value == AppPreferences.TEMPLATE_CUSTOM);
+      } else if (prop.equals(AppPreferences.TEMPLATE_FILE)) {
+        setTemplateField((File) event.getNewValue());
+      }
+    }
+
+    private void setTemplateField(File f) {
+      try {
+        templateField.setText(f == null ? "" : f.getCanonicalPath());
+      } catch (IOException e) {
+        templateField.setText(f.getName());
+      }
+      computeEnabled();
+    }
   }
 }

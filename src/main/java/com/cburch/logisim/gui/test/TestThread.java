@@ -48,6 +48,36 @@ import com.cburch.logisim.util.UniquelyNamedThread;
 
 public class TestThread extends UniquelyNamedThread implements CircuitListener {
 
+  private final Project project;
+  private final Circuit circuit;
+  private final TestVector vector;
+  private Instance[] pin;
+  private Model model;
+  private boolean canceled = false, paused = false;
+
+  public TestThread(Model model) throws TestException {
+    super("TestThread-Model");
+    this.model = model;
+
+    this.project = model.getProject();
+    this.circuit = model.getCircuit();
+    this.vector = model.getVector();
+
+    matchPins();
+
+    model.getCircuit().addCircuitListener(this);
+  }
+
+  // used only for automated testing via command line arguments
+  private TestThread(Project proj, Circuit circuit, TestVector vec) throws TestException {
+    super("TestThread-Project");
+    this.project = proj;
+    this.circuit = circuit;
+    this.vector = vec;
+
+    matchPins();
+  }
+
   // used only for automated testing via command line arguments
   public static int doTestVector(Project proj, Circuit circuit, String vectorname) {
     System.out.println(StringUtil.format(S.get("testLoadingVector"), vectorname));
@@ -94,38 +124,6 @@ public class TestThread extends UniquelyNamedThread implements CircuitListener {
         StringUtil.format(
             S.get("testResults"), Integer.toString(numPass), Integer.toString(numFail)));
     return 0;
-  }
-
-  private Instance[] pin;
-  private final Project project;
-  private final Circuit circuit;
-
-  private final TestVector vector;
-  private Model model;
-
-  private boolean canceled = false, paused = false;
-
-  public TestThread(Model model) throws TestException {
-    super("TestThread-Model");
-    this.model = model;
-
-    this.project = model.getProject();
-    this.circuit = model.getCircuit();
-    this.vector = model.getVector();
-
-    matchPins();
-
-    model.getCircuit().addCircuitListener(this);
-  }
-
-  // used only for automated testing via command line arguments
-  private TestThread(Project proj, Circuit circuit, TestVector vec) throws TestException {
-    super("TestThread-Project");
-    this.project = proj;
-    this.circuit = circuit;
-    this.vector = vec;
-
-    matchPins();
   }
 
   public void cancel() {

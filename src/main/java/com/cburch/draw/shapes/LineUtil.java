@@ -31,6 +31,12 @@ package com.cburch.draw.shapes;
 import com.cburch.logisim.data.Location;
 
 public class LineUtil {
+  // a value we consider "small enough" to equal it to zero:
+  // (this is used for double solutions in 2nd or 3d degree equation)
+  private static final double zeroMax = 0.0000001;
+
+  private LineUtil() {}
+
   public static double distance(double x0, double y0, double x1, double y1) {
     return Math.sqrt(distanceSquared(x0, y0, x1, y1));
   }
@@ -117,10 +123,4 @@ public class LineUtil {
     }
     return Location.create(mx, my); // should never happen
   }
-
-  // a value we consider "small enough" to equal it to zero:
-  // (this is used for double solutions in 2nd or 3d degree equation)
-  private static final double zeroMax = 0.0000001;
-
-  private LineUtil() {}
 }

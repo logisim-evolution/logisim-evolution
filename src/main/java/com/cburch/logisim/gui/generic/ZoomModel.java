@@ -40,15 +40,15 @@ public interface ZoomModel {
 
   public boolean getShowGrid();
 
+  public void setShowGrid(boolean value);
+
   public double getZoomFactor();
+
+  public void setZoomFactor(double value);
 
   public double[] getZoomOptions();
 
   public void removePropertyChangeListener(String prop, PropertyChangeListener l);
-
-  public void setShowGrid(boolean value);
-
-  public void setZoomFactor(double value);
 
   public void setZoomFactorCenter(double value);
 

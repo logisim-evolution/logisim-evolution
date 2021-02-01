@@ -42,6 +42,74 @@ import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
 
 public class CanvasPane extends JScrollPane {
+  private static final long serialVersionUID = 1L;
+  private final CanvasPaneContents contents;
+  private final Listener listener;
+  private final ZoomListener zoomListener;
+  private ZoomModel zoomModel;
+  public CanvasPane(CanvasPaneContents contents) {
+    super((Component) contents);
+    this.contents = contents;
+    this.listener = new Listener();
+    this.zoomListener = new ZoomListener();
+    this.zoomModel = null;
+    addComponentListener(listener);
+    setWheelScrollingEnabled(false);
+    addMouseWheelListener(zoomListener);
+    contents.setCanvasPane(this);
+  }
+
+  public Dimension getViewportSize() {
+    Dimension size = new Dimension();
+    getViewport().getSize(size);
+    return size;
+  }
+
+  public double getZoomFactor() {
+    ZoomModel model = zoomModel;
+    return model == null ? 1.0 : model.getZoomFactor();
+  }
+
+  public void setZoomModel(ZoomModel model) {
+    ZoomModel oldModel = zoomModel;
+    if (oldModel != null) {
+      oldModel.removePropertyChangeListener(ZoomModel.ZOOM, listener);
+      oldModel.removePropertyChangeListener(ZoomModel.CENTER, listener);
+    }
+    zoomModel = model;
+    if (model != null) {
+      model.addPropertyChangeListener(ZoomModel.ZOOM, listener);
+      model.addPropertyChangeListener(ZoomModel.CENTER, listener);
+    }
+  }
+
+  public Dimension supportPreferredSize(int width, int height) {
+    double zoom = getZoomFactor();
+    if (zoom != 1.0) {
+      width = (int) Math.ceil(width * zoom);
+      height = (int) Math.ceil(height * zoom);
+    }
+    Dimension minSize = getViewportSize();
+    if (minSize.width > width) width = minSize.width;
+    if (minSize.height > height) height = minSize.height;
+    return new Dimension(width, height);
+  }
+
+  public int supportScrollableBlockIncrement(
+      Rectangle visibleRect, int orientation, int direction) {
+    int unit = supportScrollableUnitIncrement(visibleRect, orientation, direction);
+    if (direction == SwingConstants.VERTICAL) {
+      return visibleRect.height / unit * unit;
+    } else {
+      return visibleRect.width / unit * unit;
+    }
+  }
+
+  public int supportScrollableUnitIncrement(Rectangle visibleRect, int orientation, int direction) {
+    double zoom = getZoomFactor();
+    return (int) Math.round(10 * zoom);
+  }
+
   private class Listener implements ComponentListener, PropertyChangeListener {
 
     public void componentHidden(ComponentEvent e) {}
@@ -114,75 +182,5 @@ public class CanvasPane extends JScrollPane {
       }
       return 0;
     }
-  }
-
-  private static final long serialVersionUID = 1L;
-
-  private final CanvasPaneContents contents;
-  private final Listener listener;
-  private final ZoomListener zoomListener;
-  private ZoomModel zoomModel;
-
-  public CanvasPane(CanvasPaneContents contents) {
-    super((Component) contents);
-    this.contents = contents;
-    this.listener = new Listener();
-    this.zoomListener = new ZoomListener();
-    this.zoomModel = null;
-    addComponentListener(listener);
-    setWheelScrollingEnabled(false);
-    addMouseWheelListener(zoomListener);
-    contents.setCanvasPane(this);
-  }
-
-  public Dimension getViewportSize() {
-    Dimension size = new Dimension();
-    getViewport().getSize(size);
-    return size;
-  }
-
-  public double getZoomFactor() {
-    ZoomModel model = zoomModel;
-    return model == null ? 1.0 : model.getZoomFactor();
-  }
-
-  public void setZoomModel(ZoomModel model) {
-    ZoomModel oldModel = zoomModel;
-    if (oldModel != null) {
-      oldModel.removePropertyChangeListener(ZoomModel.ZOOM, listener);
-      oldModel.removePropertyChangeListener(ZoomModel.CENTER, listener);
-    }
-    zoomModel = model;
-    if (model != null) {
-      model.addPropertyChangeListener(ZoomModel.ZOOM, listener);
-      model.addPropertyChangeListener(ZoomModel.CENTER, listener);
-    }
-  }
-
-  public Dimension supportPreferredSize(int width, int height) {
-    double zoom = getZoomFactor();
-    if (zoom != 1.0) {
-      width = (int) Math.ceil(width * zoom);
-      height = (int) Math.ceil(height * zoom);
-    }
-    Dimension minSize = getViewportSize();
-    if (minSize.width > width) width = minSize.width;
-    if (minSize.height > height) height = minSize.height;
-    return new Dimension(width, height);
-  }
-
-  public int supportScrollableBlockIncrement(
-      Rectangle visibleRect, int orientation, int direction) {
-    int unit = supportScrollableUnitIncrement(visibleRect, orientation, direction);
-    if (direction == SwingConstants.VERTICAL) {
-      return visibleRect.height / unit * unit;
-    } else {
-      return visibleRect.width / unit * unit;
-    }
-  }
-
-  public int supportScrollableUnitIncrement(Rectangle visibleRect, int orientation, int direction) {
-    double zoom = getZoomFactor();
-    return (int) Math.round(10 * zoom);
   }
 }

@@ -43,21 +43,12 @@ import java.util.Map;
 
 public class ClipboardActions extends Action {
 
-  public static Action copy(AppearanceCanvas canvas) {
-    return new ClipboardActions(false, canvas);
-  }
-
-  public static Action cut(AppearanceCanvas canvas) {
-    return new ClipboardActions(true, canvas);
-  }
-
   private final boolean remove;
   private final AppearanceCanvas canvas;
   private final CanvasModel canvasModel;
-  private ClipboardContents oldClipboard;
   private final Map<CanvasObject, Integer> affected;
   private final ClipboardContents newClipboard;
-
+  private ClipboardContents oldClipboard;
   private ClipboardActions(boolean remove, AppearanceCanvas canvas) {
     this.remove = remove;
     this.canvas = canvas;
@@ -80,6 +71,14 @@ public class ClipboardActions extends Action {
     contents.trimToSize();
     affected = ZOrder.getZIndex(aff, canvasModel);
     newClipboard = new ClipboardContents(contents, anchorLocation, anchorFacing);
+  }
+
+  public static Action copy(AppearanceCanvas canvas) {
+    return new ClipboardActions(false, canvas);
+  }
+
+  public static Action cut(AppearanceCanvas canvas) {
+    return new ClipboardActions(true, canvas);
   }
 
   @Override

@@ -38,14 +38,14 @@ public class DrcIcon extends AnnimatedIcon {
 
   public boolean empty;
   public int state = -1;
-  
-  public DrcIcon( boolean isDrcError ) {
+
+  public DrcIcon(boolean isDrcError) {
     empty = !isDrcError;
   }
 
   @Override
   public void annimationUpdate() {
-    state = (state+1)&3;
+    state = (state + 1) & 3;
   }
 
   @Override
@@ -55,29 +55,27 @@ public class DrcIcon extends AnnimatedIcon {
 
   @Override
   protected void paintIcon(Graphics2D g2) {
-    if (empty)
-      return;
+    if (empty) return;
     g2.setColor(Color.WHITE);
     g2.fillRect(0, 0, getIconWidth(), getIconHeight());
     switch (state) {
-       case -1 : 
-         paintStatic(g2);
-         break;
-       case 0 :
-         paintText(g2,"!!");
-         break;
-       case 1 :
-         paintText(g2);
-         break;
-       case 2 :
-         paintText(g2,"??");
-         break;
-       default:
-    	 SelectIcon.paint(g2);
+      case -1:
+        paintStatic(g2);
+        break;
+      case 0:
+        paintText(g2, "!!");
+        break;
+      case 1:
+        paintText(g2);
+        break;
+      case 2:
+        paintText(g2, "??");
+        break;
+      default:
+        SelectIcon.paint(g2);
     }
-    
   }
-  
+
   private void paintStatic(Graphics2D g2) {
     GeneralPath p = new GeneralPath();
     p.moveTo(scale(15), 0);
@@ -91,7 +89,8 @@ public class DrcIcon extends AnnimatedIcon {
     p = new GeneralPath();
     p.moveTo(0, scale(6));
     p.quadTo(scale(3), scale(14), scale(12), scale(11));
-    p.lineTo(scale(12), scale(9));;
+    p.lineTo(scale(12), scale(9));
+    ;
     p.lineTo(scale(15), scale(12));
     p.lineTo(scale(12), scale(15));
     p.lineTo(scale(12), scale(13));
@@ -100,19 +99,27 @@ public class DrcIcon extends AnnimatedIcon {
     g2.setColor(Color.RED.darker());
     g2.fill(p);
   }
-  
+
   private void paintText(Graphics2D g2) {
-    Font f = g2.getFont().deriveFont(scale((float)getIconWidth()/3)).deriveFont(Font.BOLD);
-    TextLayout t = new TextLayout("DRC",f,g2.getFontRenderContext());
+    Font f = g2.getFont().deriveFont(scale((float) getIconWidth() / 3)).deriveFont(Font.BOLD);
+    TextLayout t = new TextLayout("DRC", f, g2.getFontRenderContext());
     g2.setColor(Color.BLUE.darker().darker());
-    t.draw(g2, getIconWidth()/2-(float)t.getBounds().getCenterX(), getIconHeight()/2-(float)t.getBounds().getCenterY());
+    t.draw(
+        g2,
+        getIconWidth() / 2 - (float) t.getBounds().getCenterX(),
+        getIconHeight() / 2 - (float) t.getBounds().getCenterY());
   }
 
   private void paintText(Graphics2D g2, String s) {
-    Font f = g2.getFont().deriveFont(scale((float)getIconWidth()/(float)s.length())).deriveFont(Font.BOLD);
-    TextLayout t = new TextLayout(s,f,g2.getFontRenderContext());
+    Font f =
+        g2.getFont()
+            .deriveFont(scale((float) getIconWidth() / (float) s.length()))
+            .deriveFont(Font.BOLD);
+    TextLayout t = new TextLayout(s, f, g2.getFontRenderContext());
     g2.setColor(Color.RED.darker().darker());
-    t.draw(g2, getIconWidth()/2-(float)t.getBounds().getCenterX(), getIconHeight()/2-(float)t.getBounds().getCenterY());
+    t.draw(
+        g2,
+        getIconWidth() / 2 - (float) t.getBounds().getCenterX(),
+        getIconHeight() / 2 - (float) t.getBounds().getCenterY());
   }
-
 }

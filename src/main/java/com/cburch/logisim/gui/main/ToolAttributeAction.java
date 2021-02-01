@@ -50,6 +50,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ToolAttributeAction extends Action {
+  private final KeyConfigurationResult config;
+  private Map<Attribute<?>, Object> oldValues;
+
+  private ToolAttributeAction(KeyConfigurationResult config) {
+    this.config = config;
+    this.oldValues = new HashMap<Attribute<?>, Object>(2);
+  }
+
   public static Action create(KeyConfigurationResult results) {
     return new ToolAttributeAction(results);
   }
@@ -59,14 +67,6 @@ public class ToolAttributeAction extends Action {
     KeyConfigurationEvent e = new KeyConfigurationEvent(0, attrs, null, null);
     KeyConfigurationResult r = new KeyConfigurationResult(e, attr, value);
     return new ToolAttributeAction(r);
-  }
-
-  private final KeyConfigurationResult config;
-  private Map<Attribute<?>, Object> oldValues;
-
-  private ToolAttributeAction(KeyConfigurationResult config) {
-    this.config = config;
-    this.oldValues = new HashMap<Attribute<?>, Object>(2);
   }
 
   @Override

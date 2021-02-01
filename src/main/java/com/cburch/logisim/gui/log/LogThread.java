@@ -42,8 +42,8 @@ class LogThread extends UniquelyNamedThread implements ModelListener {
   private static final int IDLE_UNTIL_CLOSE = 10000;
 
   private final Model model;
-  private boolean canceled = false;
   private final Object lock = new Object();
+  private boolean canceled = false;
   private PrintWriter writer = null;
   private boolean headerDirty = true;
   private long lastWrite = 0;

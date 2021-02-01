@@ -50,20 +50,16 @@ public class DiceIcon extends AnnimatedIcon {
   protected void paintIcon(Graphics2D g2) {
     g2.setColor(Color.BLACK);
     g2.drawRoundRect(0, 0, scale(16), scale(16), scale(5), scale(5));
-    if (state == 1 || state > 2)
-      g2.fillOval(scale(2), scale(2), scale(3), scale(3));
+    if (state == 1 || state > 2) g2.fillOval(scale(2), scale(2), scale(3), scale(3));
     if (state == 5) {
       g2.fillOval(scale(2), scale(6), scale(3), scale(3));
       g2.fillOval(scale(10), scale(6), scale(3), scale(3));
     }
-    if (state == 0 || state == 4 || state == 2)
-      g2.fillOval(scale(6), scale(6), scale(3), scale(3));
+    if (state == 0 || state == 4 || state == 2) g2.fillOval(scale(6), scale(6), scale(3), scale(3));
     if (state > 1) {
       g2.fillOval(scale(2), scale(10), scale(3), scale(3));
       g2.fillOval(scale(10), scale(2), scale(3), scale(3));
     }
-    if (state > 2 || state == 1) 
-      g2.fillOval(scale(10), scale(10), scale(3), scale(3));
+    if (state > 2 || state == 1) g2.fillOval(scale(10), scale(10), scale(3), scale(3));
   }
-
 }

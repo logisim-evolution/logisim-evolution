@@ -28,23 +28,17 @@
 
 package com.cburch.logisim.gui.icons;
 
-import java.awt.Graphics2D;
-
 import com.cburch.logisim.prefs.AppPreferences;
+import java.awt.Graphics2D;
 
 public class SelectIcon extends AbstractIcon {
 
-  @Override
-  protected void paintIcon(Graphics2D g2) {
-    paint(g2);
-  }
-  
   public static void paint(Graphics2D g2) {
     int[] xp = {3, 3, 7, 10, 11, 9, 14};
     int[] yp = {0, 17, 12, 16, 16, 12, 12};
     int[] sxp = new int[xp.length];
     int[] syp = new int[yp.length];
-    for (int i = 0 ; i < xp.length ; i++) {
+    for (int i = 0; i < xp.length; i++) {
       sxp[i] = AppPreferences.getScaled(xp[i]);
       syp[i] = AppPreferences.getScaled(yp[i]);
     }
@@ -52,4 +46,8 @@ public class SelectIcon extends AbstractIcon {
     g2.fillPolygon(sxp, syp, xp.length);
   }
 
+  @Override
+  protected void paintIcon(Graphics2D g2) {
+    paint(g2);
+  }
 }

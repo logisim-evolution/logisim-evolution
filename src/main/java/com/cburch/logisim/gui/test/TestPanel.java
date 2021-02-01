@@ -43,27 +43,11 @@ import javax.swing.JPanel;
 
 class TestPanel extends JPanel implements ValueTable.Model {
 
-  private class MyListener implements ModelListener {
-
-    public void testingChanged() {}
-
-    public void testResultsChanged(int numPass, int numFail) {
-      table.dataChanged();
-    }
-
-    public void vectorChanged() {
-      table.modelChanged();
-    }
-  }
-
-  private static final long serialVersionUID = 1L;
-
   static final Color failColor = new Color(0xff9999);
-
+  private static final long serialVersionUID = 1L;
   private final TestFrame testFrame;
   private final ValueTable table;
   private final MyListener myListener = new MyListener();
-
   public TestPanel(TestFrame frame) {
     this.testFrame = frame;
     table = new ValueTable(getModel() == null ? null : this);
@@ -99,12 +83,12 @@ class TestPanel extends JPanel implements ValueTable.Model {
     return i == 0 ? S.get("statusHeader") : vec.columnName[i - 1];
   }
 
-  // ValueTable.Model implementation
-
   public int getColumnValueRadix(int i) {
     TestVector vec = getModel().getVector();
     return i == 0 ? 0 : vec.columnRadix[i - 1];
   }
+
+  // ValueTable.Model implementation
 
   public BitWidth getColumnValueWidth(int i) {
     TestVector vec = getModel().getVector();
@@ -181,5 +165,18 @@ class TestPanel extends JPanel implements ValueTable.Model {
     if (oldModel != null) oldModel.removeModelListener(myListener);
     if (newModel != null) newModel.addModelListener(myListener);
     table.setModel(newModel == null ? null : this);
+  }
+
+  private class MyListener implements ModelListener {
+
+    public void testingChanged() {}
+
+    public void testResultsChanged(int numPass, int numFail) {
+      table.dataChanged();
+    }
+
+    public void vectorChanged() {
+      table.modelChanged();
+    }
   }
 }

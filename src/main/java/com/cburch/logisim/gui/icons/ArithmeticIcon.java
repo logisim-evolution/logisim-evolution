@@ -39,17 +39,17 @@ public class ArithmeticIcon extends AbstractIcon {
   private boolean invalid;
   private int NrOfChars = 2;
 
-  public ArithmeticIcon( String Operation ) {
+  public ArithmeticIcon(String Operation) {
     Opp = Operation;
     invalid = false;
   }
-  
-  public ArithmeticIcon( String Operation, int CharsPerLine) {
+
+  public ArithmeticIcon(String Operation, int CharsPerLine) {
     Opp = Operation;
     invalid = false;
     NrOfChars = CharsPerLine;
   }
-	  
+
   public void setInvalid(boolean invalid) {
     this.invalid = invalid;
   }
@@ -58,23 +58,45 @@ public class ArithmeticIcon extends AbstractIcon {
     g2.setStroke(new BasicStroke(scale(2)));
     g2.setColor(Color.BLACK);
     float scale = Opp.length() >= NrOfChars ? NrOfChars : 1;
-    int yoff = Opp.length() > NrOfChars ? getIconHeight()>>2 : getIconHeight()>>1; 
-    Font f = g2.getFont().deriveFont((float)getIconWidth()/scale).deriveFont(Font.BOLD);
-    g2.drawRect(scale(1), scale(1), getIconWidth()-scale(2), getIconHeight()-scale(2));
-    TextLayout t = new TextLayout(Opp.length() > NrOfChars ? Opp.substring(0, NrOfChars) : Opp,f,g2.getFontRenderContext());
-    t.draw(g2, (float)(getIconWidth()/2-t.getBounds().getCenterX()),(float)(yoff-t.getBounds().getCenterY()));
+    int yoff = Opp.length() > NrOfChars ? getIconHeight() >> 2 : getIconHeight() >> 1;
+    Font f = g2.getFont().deriveFont((float) getIconWidth() / scale).deriveFont(Font.BOLD);
+    g2.drawRect(scale(1), scale(1), getIconWidth() - scale(2), getIconHeight() - scale(2));
+    TextLayout t =
+        new TextLayout(
+            Opp.length() > NrOfChars ? Opp.substring(0, NrOfChars) : Opp,
+            f,
+            g2.getFontRenderContext());
+    t.draw(
+        g2,
+        (float) (getIconWidth() / 2 - t.getBounds().getCenterX()),
+        (float) (yoff - t.getBounds().getCenterY()));
     if (Opp.length() > NrOfChars) {
-      t = new TextLayout(Opp.length() > 2*NrOfChars ? Opp.substring(NrOfChars, 2*NrOfChars) : 
-    	  Opp.substring(NrOfChars),f,g2.getFontRenderContext());
-      t.draw(g2, (float)(getIconWidth()/2-t.getBounds().getCenterX()),(float)(3*yoff-t.getBounds().getCenterY()));
+      t =
+          new TextLayout(
+              Opp.length() > 2 * NrOfChars
+                  ? Opp.substring(NrOfChars, 2 * NrOfChars)
+                  : Opp.substring(NrOfChars),
+              f,
+              g2.getFontRenderContext());
+      t.draw(
+          g2,
+          (float) (getIconWidth() / 2 - t.getBounds().getCenterX()),
+          (float) (3 * yoff - t.getBounds().getCenterY()));
     }
     if (invalid) {
       g2.setColor(Color.RED);
-      g2.fillOval(0, getIconHeight()/2, getIconWidth()/2, getIconHeight()/2);
-      f = g2.getFont().deriveFont(scale((float)getIconWidth()/(float)(2.8))).deriveFont(Font.BOLD);
-      t = new TextLayout("!",f,g2.getFontRenderContext());
+      g2.fillOval(0, getIconHeight() / 2, getIconWidth() / 2, getIconHeight() / 2);
+      f =
+          g2.getFont()
+              .deriveFont(scale((float) getIconWidth() / (float) (2.8)))
+              .deriveFont(Font.BOLD);
+      t = new TextLayout("!", f, g2.getFontRenderContext());
       g2.setColor(Color.WHITE);
-      t.draw(g2, (float)(getIconWidth()/4-t.getBounds().getCenterX()),(float)((3*getIconHeight())/4-t.getBounds().getCenterY()));
+      t.draw(
+          g2,
+          (float) (getIconWidth() / 4 - t.getBounds().getCenterX()),
+          (float) ((3 * getIconHeight()) / 4 - t.getBounds().getCenterY()));
     }
-  };
+  }
+  ;
 }

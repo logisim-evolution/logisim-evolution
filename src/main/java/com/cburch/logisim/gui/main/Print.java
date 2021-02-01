@@ -61,6 +61,86 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
 public class Print {
+  private Print() {}
+
+  public static void doPrint(Project proj) {
+    CircuitJList list = new CircuitJList(proj, true);
+    Frame frame = proj.getFrame();
+    if (list.getModel().getSize() == 0) {
+      OptionPane.showMessageDialog(
+          proj.getFrame(),
+          S.get("printEmptyCircuitsMessage"),
+          S.get("printEmptyCircuitsTitle"),
+          OptionPane.YES_NO_OPTION);
+      return;
+    }
+    ParmsPanel parmsPanel = new ParmsPanel(list);
+    int action =
+        OptionPane.showConfirmDialog(
+            frame,
+            parmsPanel,
+            S.get("printParmsTitle"),
+            OptionPane.OK_CANCEL_OPTION,
+            OptionPane.QUESTION_MESSAGE);
+    if (action != OptionPane.OK_OPTION) return;
+    List<Circuit> circuits = list.getSelectedCircuits();
+    if (circuits.isEmpty()) return;
+
+    PageFormat format = new PageFormat();
+    Printable print =
+        new MyPrintable(
+            proj,
+            circuits,
+            parmsPanel.getHeader(),
+            parmsPanel.getRotateToFit(),
+            parmsPanel.getPrinterView());
+
+    PrinterJob job = PrinterJob.getPrinterJob();
+    job.setPrintable(print, format);
+    if (job.printDialog() == false) return;
+    try {
+      job.print();
+    } catch (PrinterException e) {
+      OptionPane.showMessageDialog(
+          proj.getFrame(),
+          StringUtil.format(S.get("printError"), e.toString()),
+          S.get("printErrorTitle"),
+          OptionPane.ERROR_MESSAGE);
+    }
+  }
+
+  private static String format(String header, int index, int max, String circName) {
+    int mark = header.indexOf('%');
+    if (mark < 0) return header;
+    StringBuilder ret = new StringBuilder();
+    int start = 0;
+    for (;
+        mark >= 0 && mark + 1 < header.length();
+        start = mark + 2, mark = header.indexOf('%', start)) {
+      ret.append(header.substring(start, mark));
+      switch (header.charAt(mark + 1)) {
+        case 'n':
+          ret.append(circName);
+          break;
+        case 'p':
+          ret.append("" + index);
+          break;
+        case 'P':
+          ret.append("" + max);
+          break;
+        case '%':
+          ret.append("%");
+          break;
+        default:
+          ret.append("%" + header.charAt(mark + 1));
+      }
+    }
+    if (start < header.length()) {
+      ret.append(header.substring(start));
+    }
+    return ret.toString();
+  }
+
   private static class MyPrintable implements Printable {
     Project proj;
     List<Circuit> circuits;
@@ -226,84 +306,4 @@ public class Print {
       return rotateToFit.isSelected();
     }
   }
-
-  public static void doPrint(Project proj) {
-    CircuitJList list = new CircuitJList(proj, true);
-    Frame frame = proj.getFrame();
-    if (list.getModel().getSize() == 0) {
-      OptionPane.showMessageDialog(
-          proj.getFrame(),
-          S.get("printEmptyCircuitsMessage"),
-          S.get("printEmptyCircuitsTitle"),
-          OptionPane.YES_NO_OPTION);
-      return;
-    }
-    ParmsPanel parmsPanel = new ParmsPanel(list);
-    int action =
-        OptionPane.showConfirmDialog(
-            frame,
-            parmsPanel,
-            S.get("printParmsTitle"),
-            OptionPane.OK_CANCEL_OPTION,
-            OptionPane.QUESTION_MESSAGE);
-    if (action != OptionPane.OK_OPTION) return;
-    List<Circuit> circuits = list.getSelectedCircuits();
-    if (circuits.isEmpty()) return;
-
-    PageFormat format = new PageFormat();
-    Printable print =
-        new MyPrintable(
-            proj,
-            circuits,
-            parmsPanel.getHeader(),
-            parmsPanel.getRotateToFit(),
-            parmsPanel.getPrinterView());
-
-    PrinterJob job = PrinterJob.getPrinterJob();
-    job.setPrintable(print, format);
-    if (job.printDialog() == false) return;
-    try {
-      job.print();
-    } catch (PrinterException e) {
-      OptionPane.showMessageDialog(
-          proj.getFrame(),
-          StringUtil.format(S.get("printError"), e.toString()),
-          S.get("printErrorTitle"),
-          OptionPane.ERROR_MESSAGE);
-    }
-  }
-
-  private static String format(String header, int index, int max, String circName) {
-    int mark = header.indexOf('%');
-    if (mark < 0) return header;
-    StringBuilder ret = new StringBuilder();
-    int start = 0;
-    for (;
-        mark >= 0 && mark + 1 < header.length();
-        start = mark + 2, mark = header.indexOf('%', start)) {
-      ret.append(header.substring(start, mark));
-      switch (header.charAt(mark + 1)) {
-        case 'n':
-          ret.append(circName);
-          break;
-        case 'p':
-          ret.append("" + index);
-          break;
-        case 'P':
-          ret.append("" + max);
-          break;
-        case '%':
-          ret.append("%");
-          break;
-        default:
-          ret.append("%" + header.charAt(mark + 1));
-      }
-    }
-    if (start < header.length()) {
-      ret.append(header.substring(start));
-    }
-    return ret.toString();
-  }
-
-  private Print() {}
 }

@@ -31,6 +31,7 @@ package com.cburch.logisim.gui.generic;
 /**
  * Code taken from Cornell's version of Logisim: http://www.cs.cornell.edu/courses/cs3410/2015sp/
  */
+
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.SubcircuitFactory;
 import com.cburch.logisim.comp.ComponentDrawContext;
@@ -48,7 +49,6 @@ import com.cburch.logisim.util.LocaleListener;
 import com.cburch.logisim.util.LocaleManager;
 import com.cburch.logisim.vhdl.base.VhdlContent;
 import com.cburch.logisim.vhdl.base.VhdlEntity;
-
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -77,6 +77,75 @@ import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
 public class ProjectExplorer extends JTree implements LocaleListener {
+
+  public static final Color MAGNIFYING_INTERIOR = new Color(200, 200, 255, 64);
+  private static final long serialVersionUID = 1L;
+  private static final String DIRTY_MARKER = "*";
+  private final Project proj;
+  private final MyListener myListener = new MyListener();
+  private final MyCellRenderer renderer = new MyCellRenderer();
+  private final DeleteAction deleteAction = new DeleteAction();
+  private ProjectExplorerListener listener = null;
+  private Tool haloedTool = null;
+  public ProjectExplorer(Project proj) {
+    super();
+    this.proj = proj;
+
+    setModel(new ProjectExplorerModel(proj, this));
+    setRootVisible(true);
+    addMouseListener(myListener);
+    ToolTipManager.sharedInstance().registerComponent(this);
+
+    MySelectionModel selector = new MySelectionModel();
+    selector.setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+    setSelectionModel(selector);
+    setCellRenderer(renderer);
+    addTreeSelectionListener(myListener);
+
+    InputMap imap = getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+    imap.put(KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, 0), deleteAction);
+    ActionMap amap = getActionMap();
+    amap.put(deleteAction, deleteAction);
+
+    proj.addProjectListener(myListener);
+    AppPreferences.GATE_SHAPE.addPropertyChangeListener(myListener);
+    LocaleManager.addLocaleListener(this);
+    DefaultTreeCellRenderer renderer = (DefaultTreeCellRenderer) getCellRenderer();
+    renderer.setClosedIcon(new TreeIcon(true));
+    renderer.setOpenIcon(new TreeIcon(false));
+  }
+
+  public Tool getSelectedTool() {
+    TreePath path = getSelectionPath();
+    if (path == null) return null;
+    Object last = path.getLastPathComponent();
+
+    if (last instanceof ProjectExplorerToolNode) {
+      return ((ProjectExplorerToolNode) last).getValue();
+    } else {
+      return null;
+    }
+  }
+
+  public void updateStructure() {
+    ProjectExplorerModel model = (ProjectExplorerModel) getModel();
+    model.updateStructure();
+  }
+
+  public void localeChanged() {
+    // repaint() would work, except that names that get longer will be
+    // abbreviated with an ellipsis, even when they fit into the window.
+    final ProjectExplorerModel model = (ProjectExplorerModel) getModel();
+    model.fireStructureChanged();
+  }
+
+  public void setHaloedTool(Tool t) {
+    haloedTool = t;
+  }
+
+  public void setListener(ProjectExplorerListener value) {
+    listener = value;
+  }
 
   private class DeleteAction extends AbstractAction {
 
@@ -250,8 +319,7 @@ public class ProjectExplorer extends JTree implements LocaleListener {
     private TreePath[] getValidPaths(TreePath[] paths) {
       int count = 0;
       for (TreePath treePath : paths) {
-        if (isPathValid(treePath))
-          ++count;
+        if (isPathValid(treePath)) ++count;
       }
 
       if (count == 0) {
@@ -263,8 +331,7 @@ public class ProjectExplorer extends JTree implements LocaleListener {
         int j = 0;
 
         for (TreePath path : paths) {
-          if (isPathValid(path))
-            ret[j++] = path;
+          if (isPathValid(path)) ret[j++] = path;
         }
 
         return ret;
@@ -374,7 +441,7 @@ public class ProjectExplorer extends JTree implements LocaleListener {
             y + AppPreferences.getScaled(AppPreferences.BoxSize >> 2),
             AppPreferences.getScaled(AppPreferences.BoxSize >> 1),
             AppPreferences.getScaled(AppPreferences.BoxSize >> 1));
-        g.setColor(new Color(139,69,19));
+        g.setColor(new Color(139, 69, 19));
         g.drawOval(
             x + AppPreferences.getScaled(AppPreferences.BoxSize >> 2),
             y + AppPreferences.getScaled(AppPreferences.BoxSize >> 2),
@@ -383,78 +450,5 @@ public class ProjectExplorer extends JTree implements LocaleListener {
         g.fillPolygon(xp, yp, xp.length);
       }
     }
-  }
-  
-  private static final long serialVersionUID = 1L;
-
-  private static final String DIRTY_MARKER = "*";
-
-  public static final Color MAGNIFYING_INTERIOR = new Color(200, 200, 255, 64);
-
-  private final Project proj;
-  private final MyListener myListener = new MyListener();
-  private final MyCellRenderer renderer = new MyCellRenderer();
-  private final DeleteAction deleteAction = new DeleteAction();
-  private ProjectExplorerListener listener = null;
-  private Tool haloedTool = null;
-
-  public ProjectExplorer(Project proj) {
-    super();
-    this.proj = proj;
-
-    setModel(new ProjectExplorerModel(proj,this));
-    setRootVisible(true);
-    addMouseListener(myListener);
-    ToolTipManager.sharedInstance().registerComponent(this);
-
-    MySelectionModel selector = new MySelectionModel();
-    selector.setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-    setSelectionModel(selector);
-    setCellRenderer(renderer);
-    addTreeSelectionListener(myListener);
-
-    InputMap imap = getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-    imap.put(KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, 0), deleteAction);
-    ActionMap amap = getActionMap();
-    amap.put(deleteAction, deleteAction);
-
-    proj.addProjectListener(myListener);
-    AppPreferences.GATE_SHAPE.addPropertyChangeListener(myListener);
-    LocaleManager.addLocaleListener(this);
-    DefaultTreeCellRenderer renderer = (DefaultTreeCellRenderer) getCellRenderer();
-    renderer.setClosedIcon(new TreeIcon(true));
-    renderer.setOpenIcon(new TreeIcon(false));
-  }
-
-  public Tool getSelectedTool() {
-    TreePath path = getSelectionPath();
-    if (path == null) return null;
-    Object last = path.getLastPathComponent();
-
-    if (last instanceof ProjectExplorerToolNode) {
-      return ((ProjectExplorerToolNode) last).getValue();
-    } else {
-      return null;
-    }
-  }
-
-  public void updateStructure() {
-    ProjectExplorerModel model = (ProjectExplorerModel) getModel();
-    model.updateStructure();
-  }
-
-  public void localeChanged() {
-    // repaint() would work, except that names that get longer will be
-    // abbreviated with an ellipsis, even when they fit into the window.
-    final ProjectExplorerModel model = (ProjectExplorerModel) getModel();
-    model.fireStructureChanged();
-  }
-
-  public void setHaloedTool(Tool t) {
-    haloedTool = t;
-  }
-
-  public void setListener(ProjectExplorerListener value) {
-    listener = value;
   }
 }

@@ -192,12 +192,29 @@ public class EditableLabel implements Cloneable {
     return color;
   }
 
+  public void setColor(Color value) {
+    color = value;
+  }
+
   public Font getFont() {
     return font;
   }
 
+  public void setFont(Font value) {
+    font = value;
+    dimsKnown = false;
+  }
+
   public int getHorizontalAlignment() {
     return horzAlign;
+  }
+
+  public void setHorizontalAlignment(int value) {
+    if (value != LEFT && value != CENTER && value != RIGHT) {
+      throw new IllegalArgumentException("argument must be LEFT, CENTER, or RIGHT");
+    }
+    horzAlign = value;
+    dimsKnown = false;
   }
 
   private float getLeftX() {
@@ -217,8 +234,21 @@ public class EditableLabel implements Cloneable {
     return text;
   }
 
+  public void setText(String value) {
+    dimsKnown = false;
+    text = value;
+  }
+
   public int getVerticalAlignment() {
     return vertAlign;
+  }
+
+  public void setVerticalAlignment(int value) {
+    if (value != TOP && value != MIDDLE && value != BASELINE && value != BOTTOM) {
+      throw new IllegalArgumentException("argument must be TOP, MIDDLE, BASELINE, or BOTTOM");
+    }
+    vertAlign = value;
+    dimsKnown = false;
   }
 
   //
@@ -252,38 +282,8 @@ public class EditableLabel implements Cloneable {
     ((Graphics2D) g).drawString(text, x0, y0);
   }
 
-  public void setColor(Color value) {
-    color = value;
-  }
-
-  public void setFont(Font value) {
-    font = value;
-    dimsKnown = false;
-  }
-
-  public void setHorizontalAlignment(int value) {
-    if (value != LEFT && value != CENTER && value != RIGHT) {
-      throw new IllegalArgumentException("argument must be LEFT, CENTER, or RIGHT");
-    }
-    horzAlign = value;
-    dimsKnown = false;
-  }
-
   public void setLocation(int x, int y) {
     this.x = x;
     this.y = y;
-  }
-
-  public void setText(String value) {
-    dimsKnown = false;
-    text = value;
-  }
-
-  public void setVerticalAlignment(int value) {
-    if (value != TOP && value != MIDDLE && value != BASELINE && value != BOTTOM) {
-      throw new IllegalArgumentException("argument must be TOP, MIDDLE, BASELINE, or BOTTOM");
-    }
-    vertAlign = value;
-    dimsKnown = false;
   }
 }

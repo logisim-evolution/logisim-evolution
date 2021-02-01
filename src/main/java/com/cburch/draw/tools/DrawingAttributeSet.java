@@ -47,69 +47,6 @@ import java.util.List;
 import java.util.ListIterator;
 
 public class DrawingAttributeSet implements AttributeSet, Cloneable {
-  private class Restriction extends AbstractAttributeSet implements AttributeListener {
-    private final AbstractTool tool;
-    private List<Attribute<?>> selectedAttrs;
-    private List<Attribute<?>> selectedView;
-
-    Restriction(AbstractTool tool) {
-      this.tool = tool;
-      updateAttributes();
-    }
-
-    //
-    // AttributeListener methods
-    //
-    public void attributeListChanged(AttributeEvent e) {
-      fireAttributeListChanged();
-    }
-
-    public void attributeValueChanged(AttributeEvent e) {
-      if (selectedAttrs.contains(e.getAttribute())) {
-        @SuppressWarnings("unchecked")
-        Attribute<Object> attr = (Attribute<Object>) e.getAttribute();
-        fireAttributeValueChanged(attr, e.getValue(), e.getOldValue());
-      }
-      updateAttributes();
-    }
-
-    @Override
-    protected void copyInto(AbstractAttributeSet dest) {
-      DrawingAttributeSet.this.addAttributeListener(this);
-    }
-
-    @Override
-    public List<Attribute<?>> getAttributes() {
-      return selectedView;
-    }
-
-    @Override
-    public <V> V getValue(Attribute<V> attr) {
-      return DrawingAttributeSet.this.getValue(attr);
-    }
-
-    @Override
-    public <V> void setValue(Attribute<V> attr, V value) {
-      DrawingAttributeSet.this.setValue(attr, value);
-      updateAttributes();
-    }
-
-    private void updateAttributes() {
-      List<Attribute<?>> toolAttrs;
-      if (tool == null) {
-        toolAttrs = Collections.emptyList();
-      } else {
-        toolAttrs = tool.getAttributes();
-      }
-      if (!toolAttrs.equals(selectedAttrs)) {
-        selectedAttrs = new ArrayList<Attribute<?>>(toolAttrs);
-        selectedView = Collections.unmodifiableList(selectedAttrs);
-        DrawingAttributeSet.this.addAttributeListener(this);
-        fireAttributeListChanged();
-      }
-    }
-  }
-
   static final List<Attribute<?>> ATTRS_ALL =
       UnmodifiableList.create(
           new Attribute<?>[] {
@@ -123,7 +60,6 @@ public class DrawingAttributeSet implements AttributeSet, Cloneable {
             DrawAttr.TEXT_DEFAULT_FILL,
             DrawAttr.CORNER_RADIUS
           });
-
   static final List<Object> DEFAULTS_ALL =
       Arrays.asList(
           new Object[] {
@@ -131,11 +67,9 @@ public class DrawingAttributeSet implements AttributeSet, Cloneable {
             DrawAttr.PAINT_STROKE, 1, Color.BLACK,
             Color.WHITE, Color.BLACK, 10
           });
-
-  private EventSourceWeakSupport<AttributeListener> listeners;
   private final List<Attribute<?>> attrs;
+  private EventSourceWeakSupport<AttributeListener> listeners;
   private List<Object> values;
-
   public DrawingAttributeSet() {
     listeners = new EventSourceWeakSupport<AttributeListener>();
     attrs = ATTRS_ALL;
@@ -246,5 +180,68 @@ public class DrawingAttributeSet implements AttributeSet, Cloneable {
       }
     }
     throw new IllegalArgumentException(attr.toString());
+  }
+
+  private class Restriction extends AbstractAttributeSet implements AttributeListener {
+    private final AbstractTool tool;
+    private List<Attribute<?>> selectedAttrs;
+    private List<Attribute<?>> selectedView;
+
+    Restriction(AbstractTool tool) {
+      this.tool = tool;
+      updateAttributes();
+    }
+
+    //
+    // AttributeListener methods
+    //
+    public void attributeListChanged(AttributeEvent e) {
+      fireAttributeListChanged();
+    }
+
+    public void attributeValueChanged(AttributeEvent e) {
+      if (selectedAttrs.contains(e.getAttribute())) {
+        @SuppressWarnings("unchecked")
+        Attribute<Object> attr = (Attribute<Object>) e.getAttribute();
+        fireAttributeValueChanged(attr, e.getValue(), e.getOldValue());
+      }
+      updateAttributes();
+    }
+
+    @Override
+    protected void copyInto(AbstractAttributeSet dest) {
+      DrawingAttributeSet.this.addAttributeListener(this);
+    }
+
+    @Override
+    public List<Attribute<?>> getAttributes() {
+      return selectedView;
+    }
+
+    @Override
+    public <V> V getValue(Attribute<V> attr) {
+      return DrawingAttributeSet.this.getValue(attr);
+    }
+
+    @Override
+    public <V> void setValue(Attribute<V> attr, V value) {
+      DrawingAttributeSet.this.setValue(attr, value);
+      updateAttributes();
+    }
+
+    private void updateAttributes() {
+      List<Attribute<?>> toolAttrs;
+      if (tool == null) {
+        toolAttrs = Collections.emptyList();
+      } else {
+        toolAttrs = tool.getAttributes();
+      }
+      if (!toolAttrs.equals(selectedAttrs)) {
+        selectedAttrs = new ArrayList<Attribute<?>>(toolAttrs);
+        selectedView = Collections.unmodifiableList(selectedAttrs);
+        DrawingAttributeSet.this.addAttributeListener(this);
+        fireAttributeListChanged();
+      }
+    }
   }
 }

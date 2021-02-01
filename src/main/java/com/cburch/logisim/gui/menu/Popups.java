@@ -51,6 +51,26 @@ import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 
 public class Popups {
+  public static JPopupMenu forCircuit(Project proj, AddTool tool, Circuit circ) {
+    return new CircuitPopup(proj, tool, circ);
+  }
+
+  public static JPopupMenu forVhdl(Project proj, AddTool tool, VhdlContent vhdl) {
+    return new VhdlPopup(proj, tool, vhdl);
+  }
+
+  public static JPopupMenu forLibrary(Project proj, Library lib, boolean isTop) {
+    return new LibraryPopup(proj, lib, isTop);
+  }
+
+  public static JPopupMenu forProject(Project proj) {
+    return new ProjectPopup(proj);
+  }
+
+  public static JPopupMenu forTool(Project proj, Tool tool) {
+    return null;
+  }
+
   @SuppressWarnings("serial")
   private static class CircuitPopup extends JPopupMenu implements ActionListener {
     Project proj;
@@ -225,25 +245,5 @@ public class Popups {
         ProjectLibraryActions.doLoadJarLibrary(proj);
       }
     }
-  }
-
-  public static JPopupMenu forCircuit(Project proj, AddTool tool, Circuit circ) {
-    return new CircuitPopup(proj, tool, circ);
-  }
-
-  public static JPopupMenu forVhdl(Project proj, AddTool tool, VhdlContent vhdl) {
-    return new VhdlPopup(proj, tool, vhdl);
-  }
-
-  public static JPopupMenu forLibrary(Project proj, Library lib, boolean isTop) {
-    return new LibraryPopup(proj, lib, isTop);
-  }
-
-  public static JPopupMenu forProject(Project proj) {
-    return new ProjectPopup(proj);
-  }
-
-  public static JPopupMenu forTool(Project proj, Tool tool) {
-    return null;
   }
 }

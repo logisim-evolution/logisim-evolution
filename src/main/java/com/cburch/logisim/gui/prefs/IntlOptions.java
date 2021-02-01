@@ -41,22 +41,11 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 class IntlOptions extends OptionsPanel {
-  private static class RestrictedLabel extends JLabel {
-    private static final long serialVersionUID = 1L;
-
-    @Override
-    public Dimension getMaximumSize() {
-      return getPreferredSize();
-    }
-  }
-
   private static final long serialVersionUID = 1L;
-
   private final JLabel localeLabel = new RestrictedLabel();
   private final JComponent locale;
   private final PrefBoolean replAccents;
   private final PrefOptionList gateShape;
-
   public IntlOptions(PreferencesFrame window) {
     super(window);
 
@@ -110,5 +99,14 @@ class IntlOptions extends OptionsPanel {
     localeLabel.setText(S.get("intlLocale") + " ");
     replAccents.localeChanged();
     replAccents.setEnabled(LocaleManager.canReplaceAccents());
+  }
+
+  private static class RestrictedLabel extends JLabel {
+    private static final long serialVersionUID = 1L;
+
+    @Override
+    public Dimension getMaximumSize() {
+      return getPreferredSize();
+    }
   }
 }

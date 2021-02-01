@@ -32,6 +32,13 @@ import com.cburch.logisim.util.PropertyChangeWeakSupport;
 import java.beans.PropertyChangeListener;
 
 class Clipboard {
+  public static final String contentsProperty = "appearance";
+  private static final PropertyChangeWeakSupport propertySupport =
+      new PropertyChangeWeakSupport(Clipboard.class);
+  private static ClipboardContents current = ClipboardContents.EMPTY;
+
+  private Clipboard() {}
+
   //
   // PropertyChangeSource methods
   //
@@ -66,11 +73,4 @@ class Clipboard {
     current = value;
     propertySupport.firePropertyChange(contentsProperty, old, current);
   }
-
-  public static final String contentsProperty = "appearance";
-  private static ClipboardContents current = ClipboardContents.EMPTY;
-  private static final PropertyChangeWeakSupport propertySupport =
-      new PropertyChangeWeakSupport(Clipboard.class);
-
-  private Clipboard() {}
 }

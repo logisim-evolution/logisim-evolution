@@ -41,22 +41,20 @@ import javax.swing.SwingUtilities;
 public class RightPanel extends ChronoPanelTemplate {
 
   private static final long serialVersionUID = 1L;
+  private static final int minTickWidth = 1;
   private final ChronoFrame mChronoFrame;
   private final DrawAreaEventManager mDrawAreaEventManager;
-  private TimelineDraw mTimeLine;
   private final CommonPanelParam mCommonPanelParam;
 
   private final ArrayList<SignalDraw> allSignalDraw = new ArrayList<SignalDraw>();
+  private final int globalHeight;
+  private TimelineDraw mTimeLine;
   private Box rightBox;
   private JLayeredPane layeredPane;
   private Cursor mCursor;
-
   private int mousePosXClicked = 0;
-  private static final int minTickWidth = 1;
   private int tickWidth = 20;
   private int displayOffsetX = 0;
-
-  private final int globalHeight;
 
   /** Standard constructor */
   public RightPanel(ChronoFrame chronoFrame, DrawAreaEventManager drawAreaEventManager) {

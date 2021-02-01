@@ -51,31 +51,6 @@ class GrayIncrementer extends InstanceFactory {
    * that it works with, and so we'll have an attribute.
    */
 
-  /**
-   * Computes the next gray value in the sequence after prev. This static method just does some bit
-   * twiddling; it doesn't have much to do with Logisim except that it manipulates Value and
-   * BitWidth objects.
-   */
-  static Value nextGray(Value prev) {
-    BitWidth bits = prev.getBitWidth();
-    if (!prev.isFullyDefined()) return Value.createError(bits);
-    long x = prev.toLongValue();
-    long ct = (x >> 32) ^ x; // compute parity of x
-    ct = (ct >> 16) ^ ct;
-    ct = (ct >> 8) ^ ct;
-    ct = (ct >> 4) ^ ct;
-    ct = (ct >> 2) ^ ct;
-    ct = (ct >> 1) ^ ct;
-    if ((ct & 1) == 0) { // if parity is even, flip 1's bit
-      x = x ^ 1;
-    } else { // else flip bit just above last 1
-      long y = x ^ (x & (x - 1)); // first compute the last 1
-      y = (y << 1) & bits.getMask();
-      x = (y == 0 ? 0 : x ^ y);
-    }
-    return Value.createKnown(bits, x);
-  }
-
   /** The constructor configures the factory. */
   GrayIncrementer() {
     super("Gray Code Incrementer");
@@ -112,6 +87,31 @@ class GrayIncrementer extends InstanceFactory {
         new Port[] {
           new Port(-30, 0, Port.INPUT, StdAttr.WIDTH), new Port(0, 0, Port.OUTPUT, StdAttr.WIDTH),
         });
+  }
+
+  /**
+   * Computes the next gray value in the sequence after prev. This static method just does some bit
+   * twiddling; it doesn't have much to do with Logisim except that it manipulates Value and
+   * BitWidth objects.
+   */
+  static Value nextGray(Value prev) {
+    BitWidth bits = prev.getBitWidth();
+    if (!prev.isFullyDefined()) return Value.createError(bits);
+    long x = prev.toLongValue();
+    long ct = (x >> 32) ^ x; // compute parity of x
+    ct = (ct >> 16) ^ ct;
+    ct = (ct >> 8) ^ ct;
+    ct = (ct >> 4) ^ ct;
+    ct = (ct >> 2) ^ ct;
+    ct = (ct >> 1) ^ ct;
+    if ((ct & 1) == 0) { // if parity is even, flip 1's bit
+      x = x ^ 1;
+    } else { // else flip bit just above last 1
+      long y = x ^ (x & (x - 1)); // first compute the last 1
+      y = (y << 1) & bits.getMask();
+      x = (y == 0 ? 0 : x ^ y);
+    }
+    return Value.createKnown(bits, x);
   }
 
   /** Says how an individual instance should appear on the canvas. */

@@ -48,6 +48,27 @@ import javax.swing.ListSelectionModel;
 
 @SuppressWarnings({"serial", "rawtypes"})
 class ToolbarList extends JList {
+  private final ToolbarData base;
+  private final Model model;
+
+  @SuppressWarnings("unchecked")
+  public ToolbarList(ToolbarData base) {
+    this.base = base;
+    this.model = new Model();
+
+    setModel(model);
+    setCellRenderer(new ListRenderer());
+    setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+    AppPreferences.GATE_SHAPE.addPropertyChangeListener(model);
+    base.addToolbarListener(model);
+    base.addToolAttributeListener(model);
+  }
+
+  public void localeChanged() {
+    model.toolbarChanged();
+  }
+
   private static class ListRenderer extends DefaultListCellRenderer {
     @Override
     public Component getListCellRendererComponent(
@@ -76,6 +97,28 @@ class ToolbarList extends JList {
     }
   }
 
+  private static class ToolIcon implements Icon {
+    private final Tool tool;
+
+    ToolIcon(Tool tool) {
+      this.tool = tool;
+    }
+
+    public int getIconHeight() {
+      return 20;
+    }
+
+    public int getIconWidth() {
+      return 20;
+    }
+
+    public void paintIcon(Component comp, Graphics g, int x, int y) {
+      Graphics gNew = g.create();
+      tool.paintIcon(new ComponentDrawContext(comp, null, null, g, gNew), x + 2, y + 2);
+      gNew.dispose();
+    }
+  }
+
   private class Model extends AbstractListModel
       implements ToolbarListener, AttributeListener, PropertyChangeListener {
     public void attributeListChanged(AttributeEvent e) {}
@@ -101,48 +144,5 @@ class ToolbarList extends JList {
     public void toolbarChanged() {
       fireContentsChanged(this, 0, getSize());
     }
-  }
-
-  private static class ToolIcon implements Icon {
-    private final Tool tool;
-
-    ToolIcon(Tool tool) {
-      this.tool = tool;
-    }
-
-    public int getIconHeight() {
-      return 20;
-    }
-
-    public int getIconWidth() {
-      return 20;
-    }
-
-    public void paintIcon(Component comp, Graphics g, int x, int y) {
-      Graphics gNew = g.create();
-      tool.paintIcon(new ComponentDrawContext(comp, null, null, g, gNew), x + 2, y + 2);
-      gNew.dispose();
-    }
-  }
-
-  private final ToolbarData base;
-  private final Model model;
-
-  @SuppressWarnings("unchecked")
-  public ToolbarList(ToolbarData base) {
-    this.base = base;
-    this.model = new Model();
-
-    setModel(model);
-    setCellRenderer(new ListRenderer());
-    setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-
-    AppPreferences.GATE_SHAPE.addPropertyChangeListener(model);
-    base.addToolbarListener(model);
-    base.addToolAttributeListener(model);
-  }
-
-  public void localeChanged() {
-    model.toolbarChanged();
   }
 }

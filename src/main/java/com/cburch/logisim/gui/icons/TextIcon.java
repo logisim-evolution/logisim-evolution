@@ -28,20 +28,21 @@
 
 package com.cburch.logisim.gui.icons;
 
+import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.prefs.AppPreferences;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.font.TextLayout;
-
-import com.cburch.logisim.instance.StdAttr;
-import com.cburch.logisim.prefs.AppPreferences;
 
 public class TextIcon extends AbstractIcon {
 
   @Override
   protected void paintIcon(Graphics2D g2) {
-    Font f = StdAttr.DEFAULT_LABEL_FONT.deriveFont((float)AppPreferences.getIconSize());
-    TextLayout l = new TextLayout("A",f,g2.getFontRenderContext());
-    l.draw(g2,(float)(AppPreferences.getIconSize()/2-l.getBounds().getCenterX()),(float)(AppPreferences.getIconSize()/2-l.getBounds().getCenterY()));
+    Font f = StdAttr.DEFAULT_LABEL_FONT.deriveFont((float) AppPreferences.getIconSize());
+    TextLayout l = new TextLayout("A", f, g2.getFontRenderContext());
+    l.draw(
+        g2,
+        (float) (AppPreferences.getIconSize() / 2 - l.getBounds().getCenterX()),
+        (float) (AppPreferences.getIconSize() / 2 - l.getBounds().getCenterY()));
   }
-
 }

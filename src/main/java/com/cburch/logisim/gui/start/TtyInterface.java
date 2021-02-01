@@ -68,47 +68,17 @@ import org.slf4j.LoggerFactory;
 
 public class TtyInterface {
 
-  // It's possible to avoid using the separate thread using
-  // System.in.available(),
-  // but this doesn't quite work because on some systems, the keyboard input
-  // is not interactively echoed until System.in.read() is invoked.
-  private static class StdinThread extends UniquelyNamedThread {
-    private final LinkedList<char[]> queue; // of char[]
-
-    public StdinThread() {
-      super("TtyInterface-StdInThread");
-      queue = new LinkedList<char[]>();
-    }
-
-    public char[] getBuffer() {
-      synchronized (queue) {
-        if (queue.isEmpty()) {
-          return null;
-        } else {
-          return queue.removeFirst();
-        }
-      }
-    }
-
-    @Override
-    public void run() {
-      InputStreamReader stdin = new InputStreamReader(System.in);
-      char[] buffer = new char[32];
-      while (true) {
-        try {
-          int nbytes = stdin.read(buffer);
-          if (nbytes > 0) {
-            char[] add = new char[nbytes];
-            System.arraycopy(buffer, 0, add, 0, nbytes);
-            synchronized (queue) {
-              queue.addLast(add);
-            }
-          }
-        } catch (IOException e) {
-        }
-      }
-    }
-  }
+  public static final int FORMAT_TABLE = 1;
+  public static final int FORMAT_SPEED = 2;
+  public static final int FORMAT_TTY = 4;
+  public static final int FORMAT_HALT = 8;
+  public static final int FORMAT_STATISTICS = 16;
+  public static final int FORMAT_TABLE_TABBED = 32;
+  public static final int FORMAT_TABLE_CSV = 64;
+  public static final int FORMAT_TABLE_BIN = 128;
+  public static final int FORMAT_TABLE_HEX = 256;
+  static final Logger logger = LoggerFactory.getLogger(TtyInterface.class);
+  private static boolean lastIsNewline = true;
 
   private static int countDigits(int num) {
     int digits = 1;
@@ -324,8 +294,7 @@ public class TtyInterface {
     }
     Project proj = new Project(file);
     if (args.isFpgaDownload()) {
-      if (!args.FpgaDownload(proj))
-        System.exit(-1);
+      if (!args.FpgaDownload(proj)) System.exit(-1);
     }
 
     int format = args.getTtyFormat();
@@ -568,25 +537,45 @@ public class TtyInterface {
     System.out.print(c); // OK
   }
 
-  static final Logger logger = LoggerFactory.getLogger(TtyInterface.class);
+  // It's possible to avoid using the separate thread using
+  // System.in.available(),
+  // but this doesn't quite work because on some systems, the keyboard input
+  // is not interactively echoed until System.in.read() is invoked.
+  private static class StdinThread extends UniquelyNamedThread {
+    private final LinkedList<char[]> queue; // of char[]
 
-  public static final int FORMAT_TABLE = 1;
+    public StdinThread() {
+      super("TtyInterface-StdInThread");
+      queue = new LinkedList<char[]>();
+    }
 
-  public static final int FORMAT_SPEED = 2;
+    public char[] getBuffer() {
+      synchronized (queue) {
+        if (queue.isEmpty()) {
+          return null;
+        } else {
+          return queue.removeFirst();
+        }
+      }
+    }
 
-  public static final int FORMAT_TTY = 4;
-
-  public static final int FORMAT_HALT = 8;
-
-  public static final int FORMAT_STATISTICS = 16;
-
-  public static final int FORMAT_TABLE_TABBED = 32;
-
-  public static final int FORMAT_TABLE_CSV = 64;
-
-  public static final int FORMAT_TABLE_BIN = 128;
-
-  public static final int FORMAT_TABLE_HEX = 256;
-
-  private static boolean lastIsNewline = true;
+    @Override
+    public void run() {
+      InputStreamReader stdin = new InputStreamReader(System.in);
+      char[] buffer = new char[32];
+      while (true) {
+        try {
+          int nbytes = stdin.read(buffer);
+          if (nbytes > 0) {
+            char[] add = new char[nbytes];
+            System.arraycopy(buffer, 0, add, 0, nbytes);
+            synchronized (queue) {
+              queue.addLast(add);
+            }
+          }
+        } catch (IOException e) {
+        }
+      }
+    }
+  }
 }

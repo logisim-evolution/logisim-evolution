@@ -28,16 +28,26 @@
 
 package com.cburch.logisim.gui.icons;
 
+import com.cburch.logisim.prefs.AppPreferences;
 import java.awt.BasicStroke;
 import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-
 import javax.swing.Icon;
 
-import com.cburch.logisim.prefs.AppPreferences;
-
 public abstract class AbstractIcon implements Icon {
+
+  public static int scale(int v) {
+    return AppPreferences.getScaled(v);
+  }
+
+  public static double scale(double v) {
+    return AppPreferences.getScaled(v);
+  }
+
+  public static float scale(float v) {
+    return AppPreferences.getScaled(v);
+  }
 
   @Override
   public void paintIcon(Component c, Graphics g, int x, int y) {
@@ -59,17 +69,4 @@ public abstract class AbstractIcon implements Icon {
   public int getIconHeight() {
     return AppPreferences.getIconSize();
   }
-  
-  public static int scale(int v) {
-    return AppPreferences.getScaled(v);
-  }
-	  
-  public static double scale(double v) {
-    return AppPreferences.getScaled(v);
-  }
-		  
-  public static float scale(float v) {
-    return AppPreferences.getScaled(v);
-  }
-			  
 }

@@ -56,224 +56,12 @@ import javax.swing.event.ChangeListener;
 @SuppressWarnings("serial")
 public class MenuSimulate extends Menu {
 
-  private class CircuitStateMenuItem extends JMenuItem implements CircuitListener, ActionListener {
-
-    private final CircuitState circuitState;
-
-    public CircuitStateMenuItem(CircuitState circuitState) {
-      this.circuitState = circuitState;
-
-      Circuit circuit = circuitState.getCircuit();
-      circuit.addCircuitListener(this);
-      this.setText(circuit.getName());
-      addActionListener(this);
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-      menubar.fireStateChanged(currentSim, circuitState);
-    }
-
-    @Override
-    public void circuitChanged(CircuitEvent event) {
-      if (event.getAction() == CircuitEvent.ACTION_SET_NAME) {
-        this.setText(circuitState.getCircuit().getName());
-      }
-    }
-
-    void unregister() {
-      Circuit circuit = circuitState.getCircuit();
-      circuit.removeCircuitListener(this);
-    }
-  }
-
-  private class MyListener implements ActionListener, SimulatorListener, ChangeListener {
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-      Object src = e.getSource();
-      Project proj = menubar.getProject();
-      Simulator sim = proj == null ? null : proj.getSimulator();
-      if (src == LogisimMenuBar.SIMULATE_STOP) {
-        if (sim != null) {
-          sim.setIsRunning(false);
-          proj.repaintCanvas();
-        }
-      } else if (src == LogisimMenuBar.SIMULATE_RUN) {
-        if (sim != null) {
-          sim.setIsRunning(true);
-          proj.repaintCanvas();
-        }
-      } else if (src == runToggle || src == LogisimMenuBar.SIMULATE_RUN_TOGGLE) {
-        if (sim != null) {
-          sim.setIsRunning(!sim.isRunning());
-          proj.repaintCanvas();
-        }
-      } else if (src == reset) {
-        if (sim != null) {
-
-          /* Restart VHDL simulation (in QuestaSim) */
-          if (sim.getCircuitState().getProject().getVhdlSimulator().isRunning()) {
-            sim.getCircuitState().getProject().getVhdlSimulator().reset();
-            /*
-             * We have to wait until the restart finishes, otherwise
-             * the signal reset will be sent to the VHDL simulator
-             * before the sim is loaded and errors will occur Time
-             * (0,5s) is arbitrary
-             *
-             * FIXME: if you find a way to make a blocking reset
-             * until it's restarted, feel free to go on
-             */
-            try {
-              Thread.sleep(500);
-            } catch (InterruptedException ex) {
-              Thread.currentThread().interrupt();
-            }
-          }
-          sim.requestReset();
-        }
-      } else if (src == step || src == LogisimMenuBar.SIMULATE_STEP) {
-        if (sim != null) {
-          sim.setIsRunning(false);
-          sim.step();
-        }
-      } else if (src == tickHalf || src == LogisimMenuBar.TICK_HALF) {
-        if (sim != null) {
-          sim.tick(1);
-        }
-      } else if (src == tickFull || src == LogisimMenuBar.TICK_FULL) {
-          if (sim != null) {
-            sim.tick(2);
-          }
-      } else if (src == simulate_vhdl_enable || src == LogisimMenuBar.SIMULATE_VHDL_ENABLE) {
-        if (proj.getVhdlSimulator() != null) {
-          proj.getVhdlSimulator().setEnabled(!proj.getVhdlSimulator().isEnabled());
-        }
-      } else if (src == vhdl_sim_files || src == LogisimMenuBar.GENERATE_VHDL_SIM_FILES) {
-        if (proj.getVhdlSimulator() != null) {
-          proj.getVhdlSimulator().restart();
-        }
-      } else if (src == ticksEnabled || src == LogisimMenuBar.TICK_ENABLE) {
-        if (sim != null) {
-          sim.setIsTicking(!sim.isTicking());
-        }
-      } else if (src == log) {
-        LogFrame frame = menubar.getProject().getLogFrame();
-        frame.setVisible(true);
-      } else if (src == assemblyWindow) {
-        if (assWin == null || assWin.isVisible() == false) {
-          assWin = new AssemblyWindow(proj);
-          assWin.setVisible(true);
-        } else {
-          assWin.toFront();
-        }
-      } else if (src == test) {
-        TestFrame frame = menubar.getProject().getTestFrame(true);
-        frame.setVisible(true);
-      }
-    }
-
-    @Override
-    public void propagationCompleted(SimulatorEvent e) {}
-
-    @Override
-    public void simulatorStateChanged(SimulatorEvent e) {
-      Simulator sim = e.getSource();
-      if (sim != currentSim) {
-        return;
-      }
-      computeEnabled();
-      runToggle.setSelected(sim.isRunning());
-      ticksEnabled.setSelected(sim.isTicking());
-      double freq = sim.getTickFrequency();
-      for (TickFrequencyChoice item : tickFreqs) {
-        item.setSelected(freq == item.freq);
-      }
-    }
-
-    @Override
-    public void stateChanged(ChangeEvent e) {
-    }
-
-    @Override
-    public void tickCompleted(SimulatorEvent e) {}
-  }
-
-  private class TickFrequencyChoice extends JRadioButtonMenuItem implements ActionListener {
-
-    private final double freq;
-
-    public TickFrequencyChoice(double value) {
-      freq = value;
-      addActionListener(this);
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-      if (currentSim != null) {
-        currentSim.setTickFrequency(freq);
-      }
-    }
-
-    public void localeChanged() {
-      double f = freq;
-      if (f < 1000) {
-        String hzStr;
-        if (Math.abs(f - Math.round(f)) < 0.0001) {
-          hzStr = "" + (int) Math.round(f);
-        } else {
-          hzStr = "" + f;
-        }
-        setText(StringUtil.format(S.get("simulateTickFreqItem"), hzStr));
-      } else {
-        String kHzStr;
-        double kf = Math.round(f / 100) / 10.0;
-        if (kf == Math.round(kf)) {
-          kHzStr = "" + (int) kf;
-        } else {
-          kHzStr = "" + kf;
-        }
-        setText(StringUtil.format(S.get("simulateTickKFreqItem"), kHzStr));
-      }
-    }
-  }
-
-  public static ArrayList<String> getTickFrequencyStrings() {
-    ArrayList<String> result = new ArrayList<String>();
-    for (Double supportedTickFrequency : SupportedTickFrequencies) {
-      if (supportedTickFrequency < 1000) {
-        String hzStr;
-        if (Math.abs(supportedTickFrequency - Math.round(supportedTickFrequency))
-            < 0.0001) {
-          hzStr = "" + (int) Math.round(supportedTickFrequency);
-        } else {
-          hzStr = "" + supportedTickFrequency;
-        }
-        result.add(StringUtil.format(S.get("simulateTickFreqItem"), hzStr));
-      } else {
-        String kHzStr;
-        double kf = Math.round(supportedTickFrequency / 100) / 10.0;
-        if (kf == Math.round(kf)) {
-          kHzStr = "" + (int) kf;
-        } else {
-          kHzStr = "" + kf;
-        }
-        result.add(StringUtil.format(S.get("simulateTickKFreqItem"), kHzStr));
-      }
-    }
-    return result;
-  }
-
   public static final Double[] SupportedTickFrequencies = {
-    2048000.0 ,1024000.0, 512000.0, 256000.0, 128000.0, 64000.0,
-    32000.0, 16000.0, 8000.0, 4000.0, 2000.0, 1000.0,
-    512.0, 256.0, 128.0, 64.0, 32.0, 16.0, 8.0, 4.0, 2.0, 1.0, 0.5, 0.25
+    2048000.0, 1024000.0, 512000.0, 256000.0, 128000.0, 64000.0, 32000.0, 16000.0, 8000.0, 4000.0,
+    2000.0, 1000.0, 512.0, 256.0, 128.0, 64.0, 32.0, 16.0, 8.0, 4.0, 2.0, 1.0, 0.5, 0.25
   };
   private final LogisimMenuBar menubar;
   private final MyListener myListener = new MyListener();
-  private CircuitState currentState = null;
-  private CircuitState bottomState = null;
-  private Simulator currentSim = null;
   private final MenuItemCheckImpl runToggle;
   private final JMenuItem reset = new JMenuItem();
   private final MenuItemImpl step;
@@ -283,17 +71,21 @@ public class MenuSimulate extends Menu {
   private final MenuItemImpl tickHalf;
   private final MenuItemImpl tickFull;
   private final JMenu tickFreq = new JMenu();
-  private final TickFrequencyChoice[] tickFreqs = new TickFrequencyChoice[SupportedTickFrequencies.length];
+  private final TickFrequencyChoice[] tickFreqs =
+      new TickFrequencyChoice[SupportedTickFrequencies.length];
   private final JMenu downStateMenu = new JMenu();
-  private final ArrayList<CircuitStateMenuItem> downStateItems = new ArrayList<CircuitStateMenuItem>();
+  private final ArrayList<CircuitStateMenuItem> downStateItems =
+      new ArrayList<CircuitStateMenuItem>();
   private final JMenu upStateMenu = new JMenu();
-  private final ArrayList<CircuitStateMenuItem> upStateItems = new ArrayList<CircuitStateMenuItem>();
+  private final ArrayList<CircuitStateMenuItem> upStateItems =
+      new ArrayList<CircuitStateMenuItem>();
   private final JMenuItem log = new JMenuItem();
   private final JMenuItem test = new JMenuItem();
   private final JMenuItem assemblyWindow = new JMenuItem();
-
   AssemblyWindow assWin = null;
-
+  private CircuitState currentState = null;
+  private CircuitState bottomState = null;
+  private Simulator currentSim = null;
   public MenuSimulate(LogisimMenuBar menubar) {
     this.menubar = menubar;
     runToggle = new MenuItemCheckImpl(this, LogisimMenuBar.SIMULATE_RUN_TOGGLE);
@@ -378,6 +170,31 @@ public class MenuSimulate extends Menu {
     assemblyWindow.addActionListener(myListener);
 
     computeEnabled();
+  }
+
+  public static ArrayList<String> getTickFrequencyStrings() {
+    ArrayList<String> result = new ArrayList<String>();
+    for (Double supportedTickFrequency : SupportedTickFrequencies) {
+      if (supportedTickFrequency < 1000) {
+        String hzStr;
+        if (Math.abs(supportedTickFrequency - Math.round(supportedTickFrequency)) < 0.0001) {
+          hzStr = "" + (int) Math.round(supportedTickFrequency);
+        } else {
+          hzStr = "" + supportedTickFrequency;
+        }
+        result.add(StringUtil.format(S.get("simulateTickFreqItem"), hzStr));
+      } else {
+        String kHzStr;
+        double kf = Math.round(supportedTickFrequency / 100) / 10.0;
+        if (kf == Math.round(kf)) {
+          kHzStr = "" + (int) kf;
+        } else {
+          kHzStr = "" + kf;
+        }
+        result.add(StringUtil.format(S.get("simulateTickKFreqItem"), kHzStr));
+      }
+    }
+    return result;
   }
 
   private void clearItems(ArrayList<CircuitStateMenuItem> items) {
@@ -508,5 +325,186 @@ public class MenuSimulate extends Menu {
       cur = cur.getParentState();
     }
     recreateStateMenus();
+  }
+
+  private class CircuitStateMenuItem extends JMenuItem implements CircuitListener, ActionListener {
+
+    private final CircuitState circuitState;
+
+    public CircuitStateMenuItem(CircuitState circuitState) {
+      this.circuitState = circuitState;
+
+      Circuit circuit = circuitState.getCircuit();
+      circuit.addCircuitListener(this);
+      this.setText(circuit.getName());
+      addActionListener(this);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+      menubar.fireStateChanged(currentSim, circuitState);
+    }
+
+    @Override
+    public void circuitChanged(CircuitEvent event) {
+      if (event.getAction() == CircuitEvent.ACTION_SET_NAME) {
+        this.setText(circuitState.getCircuit().getName());
+      }
+    }
+
+    void unregister() {
+      Circuit circuit = circuitState.getCircuit();
+      circuit.removeCircuitListener(this);
+    }
+  }
+
+  private class MyListener implements ActionListener, SimulatorListener, ChangeListener {
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+      Object src = e.getSource();
+      Project proj = menubar.getProject();
+      Simulator sim = proj == null ? null : proj.getSimulator();
+      if (src == LogisimMenuBar.SIMULATE_STOP) {
+        if (sim != null) {
+          sim.setIsRunning(false);
+          proj.repaintCanvas();
+        }
+      } else if (src == LogisimMenuBar.SIMULATE_RUN) {
+        if (sim != null) {
+          sim.setIsRunning(true);
+          proj.repaintCanvas();
+        }
+      } else if (src == runToggle || src == LogisimMenuBar.SIMULATE_RUN_TOGGLE) {
+        if (sim != null) {
+          sim.setIsRunning(!sim.isRunning());
+          proj.repaintCanvas();
+        }
+      } else if (src == reset) {
+        if (sim != null) {
+
+          /* Restart VHDL simulation (in QuestaSim) */
+          if (sim.getCircuitState().getProject().getVhdlSimulator().isRunning()) {
+            sim.getCircuitState().getProject().getVhdlSimulator().reset();
+            /*
+             * We have to wait until the restart finishes, otherwise
+             * the signal reset will be sent to the VHDL simulator
+             * before the sim is loaded and errors will occur Time
+             * (0,5s) is arbitrary
+             *
+             * FIXME: if you find a way to make a blocking reset
+             * until it's restarted, feel free to go on
+             */
+            try {
+              Thread.sleep(500);
+            } catch (InterruptedException ex) {
+              Thread.currentThread().interrupt();
+            }
+          }
+          sim.requestReset();
+        }
+      } else if (src == step || src == LogisimMenuBar.SIMULATE_STEP) {
+        if (sim != null) {
+          sim.setIsRunning(false);
+          sim.step();
+        }
+      } else if (src == tickHalf || src == LogisimMenuBar.TICK_HALF) {
+        if (sim != null) {
+          sim.tick(1);
+        }
+      } else if (src == tickFull || src == LogisimMenuBar.TICK_FULL) {
+        if (sim != null) {
+          sim.tick(2);
+        }
+      } else if (src == simulate_vhdl_enable || src == LogisimMenuBar.SIMULATE_VHDL_ENABLE) {
+        if (proj.getVhdlSimulator() != null) {
+          proj.getVhdlSimulator().setEnabled(!proj.getVhdlSimulator().isEnabled());
+        }
+      } else if (src == vhdl_sim_files || src == LogisimMenuBar.GENERATE_VHDL_SIM_FILES) {
+        if (proj.getVhdlSimulator() != null) {
+          proj.getVhdlSimulator().restart();
+        }
+      } else if (src == ticksEnabled || src == LogisimMenuBar.TICK_ENABLE) {
+        if (sim != null) {
+          sim.setIsTicking(!sim.isTicking());
+        }
+      } else if (src == log) {
+        LogFrame frame = menubar.getProject().getLogFrame();
+        frame.setVisible(true);
+      } else if (src == assemblyWindow) {
+        if (assWin == null || assWin.isVisible() == false) {
+          assWin = new AssemblyWindow(proj);
+          assWin.setVisible(true);
+        } else {
+          assWin.toFront();
+        }
+      } else if (src == test) {
+        TestFrame frame = menubar.getProject().getTestFrame(true);
+        frame.setVisible(true);
+      }
+    }
+
+    @Override
+    public void propagationCompleted(SimulatorEvent e) {}
+
+    @Override
+    public void simulatorStateChanged(SimulatorEvent e) {
+      Simulator sim = e.getSource();
+      if (sim != currentSim) {
+        return;
+      }
+      computeEnabled();
+      runToggle.setSelected(sim.isRunning());
+      ticksEnabled.setSelected(sim.isTicking());
+      double freq = sim.getTickFrequency();
+      for (TickFrequencyChoice item : tickFreqs) {
+        item.setSelected(freq == item.freq);
+      }
+    }
+
+    @Override
+    public void stateChanged(ChangeEvent e) {}
+
+    @Override
+    public void tickCompleted(SimulatorEvent e) {}
+  }
+
+  private class TickFrequencyChoice extends JRadioButtonMenuItem implements ActionListener {
+
+    private final double freq;
+
+    public TickFrequencyChoice(double value) {
+      freq = value;
+      addActionListener(this);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+      if (currentSim != null) {
+        currentSim.setTickFrequency(freq);
+      }
+    }
+
+    public void localeChanged() {
+      double f = freq;
+      if (f < 1000) {
+        String hzStr;
+        if (Math.abs(f - Math.round(f)) < 0.0001) {
+          hzStr = "" + (int) Math.round(f);
+        } else {
+          hzStr = "" + f;
+        }
+        setText(StringUtil.format(S.get("simulateTickFreqItem"), hzStr));
+      } else {
+        String kHzStr;
+        double kf = Math.round(f / 100) / 10.0;
+        if (kf == Math.round(kf)) {
+          kHzStr = "" + (int) kf;
+        } else {
+          kHzStr = "" + kf;
+        }
+        setText(StringUtil.format(S.get("simulateTickKFreqItem"), kHzStr));
+      }
+    }
   }
 }

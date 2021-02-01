@@ -43,6 +43,9 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 class SimulationToolbarModel extends AbstractToolbarModel implements ChangeListener {
+  private static final SimulationIcon RunToggleIcon = new SimulationIcon(SimulationIcon.SIM_PLAY);
+  private static final SimulationIcon EnableDisableIcon =
+      new SimulationIcon(SimulationIcon.SIM_ENABLE);
   private final Project project;
   private final LogisimToolbarItem simRunToggle;
   private final LogisimToolbarItem simStep;
@@ -50,25 +53,43 @@ class SimulationToolbarModel extends AbstractToolbarModel implements ChangeListe
   private final LogisimToolbarItem tickHalf;
   private final LogisimToolbarItem tickFull;
   private final List<ToolbarItem> items;
-  
-  private static final SimulationIcon RunToggleIcon = new SimulationIcon(SimulationIcon.SIM_PLAY);
-  private static final SimulationIcon EnableDisableIcon = new SimulationIcon(SimulationIcon.SIM_ENABLE);
 
   public SimulationToolbarModel(Project project, MenuListener menu) {
     this.project = project;
 
-    simRunToggle = new LogisimToolbarItem(menu, RunToggleIcon,
-            LogisimMenuBar.SIMULATE_RUN_TOGGLE, S.getter("simulateRunTip"));
-    simStep = new LogisimToolbarItem(menu, new SimulationIcon(SimulationIcon.SIM_STEP), 
-    		LogisimMenuBar.SIMULATE_STEP, S.getter("simulateStepTip"));
-    tickEnable = new LogisimToolbarItem(menu, EnableDisableIcon, 
-    		LogisimMenuBar.TICK_ENABLE, S.getter("simulateEnableTicksTip"));
-    tickHalf = new LogisimToolbarItem(menu, new SimulationIcon(SimulationIcon.SIM_HALF_TICK),
-            LogisimMenuBar.TICK_HALF, S.getter("simulateTickHalfTip"));
-    tickFull = new LogisimToolbarItem(menu,  new SimulationIcon(SimulationIcon.SIM_FULL_TICK),
-            LogisimMenuBar.TICK_FULL, S.getter("simulateTickFullTip"));
-    
-    items = UnmodifiableList.create(new ToolbarItem[] {simRunToggle, simStep, tickEnable, tickHalf, tickFull, });
+    simRunToggle =
+        new LogisimToolbarItem(
+            menu, RunToggleIcon, LogisimMenuBar.SIMULATE_RUN_TOGGLE, S.getter("simulateRunTip"));
+    simStep =
+        new LogisimToolbarItem(
+            menu,
+            new SimulationIcon(SimulationIcon.SIM_STEP),
+            LogisimMenuBar.SIMULATE_STEP,
+            S.getter("simulateStepTip"));
+    tickEnable =
+        new LogisimToolbarItem(
+            menu,
+            EnableDisableIcon,
+            LogisimMenuBar.TICK_ENABLE,
+            S.getter("simulateEnableTicksTip"));
+    tickHalf =
+        new LogisimToolbarItem(
+            menu,
+            new SimulationIcon(SimulationIcon.SIM_HALF_TICK),
+            LogisimMenuBar.TICK_HALF,
+            S.getter("simulateTickHalfTip"));
+    tickFull =
+        new LogisimToolbarItem(
+            menu,
+            new SimulationIcon(SimulationIcon.SIM_FULL_TICK),
+            LogisimMenuBar.TICK_FULL,
+            S.getter("simulateTickFullTip"));
+
+    items =
+        UnmodifiableList.create(
+            new ToolbarItem[] {
+              simRunToggle, simStep, tickEnable, tickHalf, tickFull,
+            });
 
     menu.getMenuBar().addEnableListener(this);
     stateChanged(null);
@@ -103,10 +124,10 @@ class SimulationToolbarModel extends AbstractToolbarModel implements ChangeListe
       simRunToggle.setToolTip(S.getter("simulateRunTip"));
     }
     if (ticking) {
-      EnableDisableIcon.setType(SimulationIcon.SIM_DISABLE);    
+      EnableDisableIcon.setType(SimulationIcon.SIM_DISABLE);
       tickEnable.setToolTip(S.getter("simulateDisableTicksTip"));
     } else {
-      EnableDisableIcon.setType(SimulationIcon.SIM_ENABLE);    
+      EnableDisableIcon.setType(SimulationIcon.SIM_ENABLE);
       tickEnable.setToolTip(S.getter("simulateEnableTicksTip"));
     }
     fireToolbarAppearanceChanged();

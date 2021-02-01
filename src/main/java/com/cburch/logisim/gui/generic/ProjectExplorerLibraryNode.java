@@ -31,6 +31,7 @@ package com.cburch.logisim.gui.generic;
 /**
  * Code taken from Cornell's version of Logisim: http://www.cs.cornell.edu/courses/cs3410/2015sp/
  */
+
 import com.cburch.logisim.file.LibraryEvent;
 import com.cburch.logisim.file.LibraryListener;
 import com.cburch.logisim.file.LogisimFile;
@@ -41,7 +42,6 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.swing.JTree;
 
 public class ProjectExplorerLibraryNode extends ProjectExplorerModel.Node<Library>
@@ -66,7 +66,7 @@ public class ProjectExplorerLibraryNode extends ProjectExplorerModel.Node<Librar
     if (lib != null && !(lib.isHidden())) {
       buildChildren(new ProjectExplorerToolNode(getModel(), null), lib.getTools(), 0);
       buildChildren(
-          new ProjectExplorerLibraryNode(getModel(), null,guiElement),
+          new ProjectExplorerLibraryNode(getModel(), null, guiElement),
           lib.getLibraries(),
           lib.getTools().size());
     }
@@ -100,10 +100,9 @@ public class ProjectExplorerLibraryNode extends ProjectExplorerModel.Node<Librar
     oldPos = startIndex;
 
     for (T tool : items) {
-      if (tool instanceof Library && ((Library)tool).isHidden())
-        continue;
+      if (tool instanceof Library && ((Library) tool).isHidden()) continue;
       if (tool instanceof AddTool) {
-        AddTool a = (AddTool)tool;
+        AddTool a = (AddTool) tool;
         a.registerParrent(guiElement);
       }
       ProjectExplorerModel.Node<T> node = nodeMap.get(tool);
@@ -196,7 +195,7 @@ public class ProjectExplorerLibraryNode extends ProjectExplorerModel.Node<Librar
 
   @Override
   ProjectExplorerLibraryNode create(Library userObject) {
-    return new ProjectExplorerLibraryNode(getModel(), userObject,guiElement);
+    return new ProjectExplorerLibraryNode(getModel(), userObject, guiElement);
   }
 
   @Override

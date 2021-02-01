@@ -46,6 +46,27 @@ public class RevertAppearanceAction extends Action {
   private ArrayList<CanvasObject> old;
   private boolean wasDefault;
 
+  public RevertAppearanceAction(Circuit circuit) {
+    this.circuit = circuit;
+  }
+
+  @Override
+  public void doIt(Project proj) {
+    ActionTransaction xn = new ActionTransaction(true);
+    xn.execute();
+  }
+
+  @Override
+  public String getName() {
+    return S.get("revertAppearanceAction");
+  }
+
+  @Override
+  public void undo(Project proj) {
+    ActionTransaction xn = new ActionTransaction(false);
+    xn.execute();
+  }
+
   private class ActionTransaction extends CircuitTransaction {
     private final boolean forward;
 
@@ -75,26 +96,5 @@ public class RevertAppearanceAction extends Action {
         appear.setDefaultAppearance(wasDefault);
       }
     }
-  }
-
-  public RevertAppearanceAction(Circuit circuit) {
-    this.circuit = circuit;
-  }
-
-  @Override
-  public void doIt(Project proj) {
-    ActionTransaction xn = new ActionTransaction(true);
-    xn.execute();
-  }
-
-  @Override
-  public String getName() {
-    return S.get("revertAppearanceAction");
-  }
-
-  @Override
-  public void undo(Project proj) {
-    ActionTransaction xn = new ActionTransaction(false);
-    xn.execute();
   }
 }

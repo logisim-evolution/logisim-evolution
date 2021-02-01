@@ -66,6 +66,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 public class ProjectCircuitActions {
+  private ProjectCircuitActions() {}
+
   private static void analyzeError(Project proj, String message) {
     OptionPane.showMessageDialog(
         proj.getFrame(), message, S.get("analyzeErrorTitle"), OptionPane.ERROR_MESSAGE);
@@ -86,7 +88,7 @@ public class ProjectCircuitActions {
       analyzer.setSelectedTab(Analyzer.IO_TAB);
       return;
     }
-    
+
     // Attempt to show the corresponding expression
     try {
       Analyze.computeExpression(analyzer.getModel(), circuit, pinNames);
@@ -329,13 +331,10 @@ public class ProjectCircuitActions {
     dlog.setVisible(true);
     field.requestFocusInWindow();
     Object action = pane.getValue();
-    if (!(action instanceof Integer)
-        || ((Integer) action).intValue() != OptionPane.OK_OPTION) {
+    if (!(action instanceof Integer) || ((Integer) action).intValue() != OptionPane.OK_OPTION) {
       return null;
     }
 
     return field.getText().trim();
   }
-
-  private ProjectCircuitActions() {}
 }

@@ -33,7 +33,6 @@ import com.cburch.logisim.comp.Component;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
 import javax.swing.tree.TreeModel;
@@ -102,6 +101,19 @@ public class SimulationTreeModel implements TreeModel {
     return currentView;
   }
 
+  public void setCurrentView(CircuitState value) {
+    CircuitState oldView = currentView;
+    if (oldView != value) {
+      currentView = value;
+
+      SimulationTreeCircuitNode node1 = mapToNode(oldView);
+      if (node1 != null) fireNodeChanged(node1);
+
+      SimulationTreeCircuitNode node2 = mapToNode(value);
+      if (node2 != null) fireNodeChanged(node2);
+    }
+  }
+
   public int getIndexOfChild(Object parent, Object child) {
     if (parent instanceof TreeNode && child instanceof TreeNode) {
       return ((TreeNode) parent).getIndex((TreeNode) child);
@@ -121,9 +133,9 @@ public class SimulationTreeModel implements TreeModel {
       return true;
     }
   }
-  
+
   public void updateSimulationList(List<CircuitState> allRootStates) {
-	root.updateSimulationList(allRootStates);
+    root.updateSimulationList(allRootStates);
   }
 
   protected SimulationTreeNode mapComponentToNode(Component comp) {
@@ -178,19 +190,6 @@ public class SimulationTreeModel implements TreeModel {
 
   public void removeTreeModelListener(TreeModelListener l) {
     listeners.remove(l);
-  }
-
-  public void setCurrentView(CircuitState value) {
-    CircuitState oldView = currentView;
-    if (oldView != value) {
-      currentView = value;
-
-      SimulationTreeCircuitNode node1 = mapToNode(oldView);
-      if (node1 != null) fireNodeChanged(node1);
-
-      SimulationTreeCircuitNode node2 = mapToNode(value);
-      if (node2 != null) fireNodeChanged(node2);
-    }
   }
 
   public void valueForPathChanged(TreePath path, Object newValue) {

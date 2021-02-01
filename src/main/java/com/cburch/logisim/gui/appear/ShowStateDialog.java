@@ -54,7 +54,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import javax.swing.JButton;
@@ -112,6 +111,56 @@ public class ShowStateDialog extends JDialog implements ActionListener {
       else if (pref.height < 200) pref.height = 200;
       this.setSize(pref);
     }
+  }
+
+  private static void pickPlacement(List<CanvasObject> avoid, DynamicElement shape, Bounds bbox) {
+    while (badPosition(avoid, shape)) {
+      // move down
+      shape.translate(0, 10);
+      Location loc = shape.getLocation();
+      if (loc.getX() < bbox.getX() + bbox.getWidth()
+          && loc.getY() + shape.getBounds().getHeight() >= bbox.getY() + bbox.getHeight())
+        // if we are below the bounding box, move right and up
+        shape.translate(10, (bbox.getY() + 9) / 10 * 10 - loc.getY());
+    }
+  }
+
+  private static boolean badPosition(List<CanvasObject> avoid, CanvasObject shape) {
+    for (CanvasObject s : avoid) {
+      if (shape.overlaps(s) || s.overlaps(shape)) return true;
+    }
+    return false;
+  }
+
+  private static DynamicElement.Path toComponentPath(TreePath p) {
+    Object[] o = p.getPath();
+    InstanceComponent[] elt = new InstanceComponent[o.length - 1];
+    for (int i = 1; i < o.length; i++) {
+      Ref r = (Ref) ((DefaultMutableTreeNode) o[i]).getUserObject();
+      elt[i - 1] = r.ic;
+    }
+    return new DynamicElement.Path(elt);
+  }
+
+  private static TreePath toTreePath(DefaultMutableTreeNode root, DynamicElement.Path path) {
+    Object[] o = new Object[path.elt.length + 1];
+    o[0] = root;
+    for (int i = 1; i < o.length; i++) {
+      o[i] = findChild((DefaultMutableTreeNode) o[i - 1], path.elt[i - 1]);
+      if (o[i] == null) return null;
+    }
+    return new TreePath(o);
+  }
+
+  private static DefaultMutableTreeNode findChild(
+      DefaultMutableTreeNode node, InstanceComponent ic) {
+    for (int i = 0; i < node.getChildCount(); i++) {
+      DefaultMutableTreeNode child = (DefaultMutableTreeNode) node.getChildAt(i);
+      Ref r = (Ref) child.getUserObject();
+      if (r.ic.getLocation().equals(ic.getLocation())
+          && r.ic.getFactory().getName().equals(ic.getFactory().getName())) return child;
+    }
+    return null;
   }
 
   private TreePath[] getPaths() {
@@ -189,6 +238,32 @@ public class ShowStateDialog extends JDialog implements ActionListener {
     if (dirty) canvas.repaint();
   }
 
+  public void actionPerformed(ActionEvent e) {
+    Object src = e.getSource();
+    if (src == ok) {
+      apply();
+    }
+    this.dispose();
+  }
+
+  private DefaultMutableTreeNode enumerate(Circuit circuit, InstanceComponent ic) {
+    DefaultMutableTreeNode root = new DefaultMutableTreeNode(new CircuitRef(circuit, ic));
+    for (Component c : circuit.getNonWires()) {
+      if (c instanceof InstanceComponent) {
+        InstanceComponent child = (InstanceComponent) c;
+        ComponentFactory f = child.getFactory();
+        if (f instanceof DynamicElementProvider) {
+          root.add(new DefaultMutableTreeNode(new Ref(child)));
+        } else if (f instanceof SubcircuitFactory) {
+          DefaultMutableTreeNode node = enumerate(((SubcircuitFactory) f).getSubcircuit(), child);
+          if (node != null) root.add(node);
+        }
+      }
+    }
+    if (root.getChildCount() == 0) return null;
+    else return root;
+  }
+
   private static class CompareByLocations implements Comparator<TreePath> {
     public int compare(TreePath a, TreePath b) {
       Object[] aa = a.getPath();
@@ -203,64 +278,6 @@ public class ShowStateDialog extends JDialog implements ActionListener {
       }
       return 0;
     }
-  }
-
-  private static void pickPlacement(List<CanvasObject> avoid, DynamicElement shape, Bounds bbox) {
-    while (badPosition(avoid, shape)) {
-      // move down
-      shape.translate(0, 10);
-      Location loc = shape.getLocation();
-      if (loc.getX() < bbox.getX() + bbox.getWidth()
-          && loc.getY() + shape.getBounds().getHeight() >= bbox.getY() + bbox.getHeight())
-        // if we are below the bounding box, move right and up
-        shape.translate(10, (bbox.getY() + 9) / 10 * 10 - loc.getY());
-    }
-  }
-
-  private static boolean badPosition(List<CanvasObject> avoid, CanvasObject shape) {
-    for (CanvasObject s : avoid) {
-      if (shape.overlaps(s) || s.overlaps(shape)) return true;
-    }
-    return false;
-  }
-
-  private static DynamicElement.Path toComponentPath(TreePath p) {
-    Object[] o = p.getPath();
-    InstanceComponent[] elt = new InstanceComponent[o.length - 1];
-    for (int i = 1; i < o.length; i++) {
-      Ref r = (Ref) ((DefaultMutableTreeNode) o[i]).getUserObject();
-      elt[i - 1] = r.ic;
-    }
-    return new DynamicElement.Path(elt);
-  }
-
-  private static TreePath toTreePath(DefaultMutableTreeNode root, DynamicElement.Path path) {
-    Object[] o = new Object[path.elt.length + 1];
-    o[0] = root;
-    for (int i = 1; i < o.length; i++) {
-      o[i] = findChild((DefaultMutableTreeNode) o[i - 1], path.elt[i - 1]);
-      if (o[i] == null) return null;
-    }
-    return new TreePath(o);
-  }
-
-  private static DefaultMutableTreeNode findChild(
-      DefaultMutableTreeNode node, InstanceComponent ic) {
-    for (int i = 0; i < node.getChildCount(); i++) {
-      DefaultMutableTreeNode child = (DefaultMutableTreeNode) node.getChildAt(i);
-      Ref r = (Ref) child.getUserObject();
-      if (r.ic.getLocation().equals(ic.getLocation())
-          && r.ic.getFactory().getName().equals(ic.getFactory().getName())) return child;
-    }
-    return null;
-  }
-
-  public void actionPerformed(ActionEvent e) {
-    Object src = e.getSource();
-    if (src == ok) {
-      apply();
-    }
-    this.dispose();
   }
 
   private static class Ref {
@@ -291,23 +308,5 @@ public class ShowStateDialog extends JDialog implements ActionListener {
       if (ic == null) return S.fmt("showStateDialogNodeTitle", c.getName());
       else return super.toString();
     }
-  }
-
-  private DefaultMutableTreeNode enumerate(Circuit circuit, InstanceComponent ic) {
-    DefaultMutableTreeNode root = new DefaultMutableTreeNode(new CircuitRef(circuit, ic));
-    for (Component c : circuit.getNonWires()) {
-      if (c instanceof InstanceComponent) {
-        InstanceComponent child = (InstanceComponent) c;
-        ComponentFactory f = child.getFactory();
-        if (f instanceof DynamicElementProvider) {
-          root.add(new DefaultMutableTreeNode(new Ref(child)));
-        } else if (f instanceof SubcircuitFactory) {
-          DefaultMutableTreeNode node = enumerate(((SubcircuitFactory) f).getSubcircuit(), child);
-          if (node != null) root.add(node);
-        }
-      }
-    }
-    if (root.getChildCount() == 0) return null;
-    else return root;
   }
 }

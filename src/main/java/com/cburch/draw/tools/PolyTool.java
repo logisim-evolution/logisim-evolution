@@ -38,7 +38,6 @@ import com.cburch.draw.shapes.LineUtil;
 import com.cburch.draw.shapes.Poly;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.Location;
-import com.cburch.logisim.util.Icons;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Graphics;
@@ -55,8 +54,8 @@ public class PolyTool extends AbstractTool {
 
   private final boolean closed; // whether we are drawing polygons or polylines
   private final DrawingAttributeSet attrs;
-  private boolean active;
   private final List<Location> locations;
+  private boolean active;
   private boolean mouseDown;
   private int lastMouseX;
   private int lastMouseY;

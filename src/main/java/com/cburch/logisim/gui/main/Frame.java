@@ -87,7 +87,6 @@ import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Timer;
-
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
@@ -98,106 +97,170 @@ import javax.swing.event.ChangeListener;
 public class Frame extends LFrame implements LocaleListener {
 
   public static final AnnimationTimer ANNIMATIONICONTIMER = new AnnimationTimer();
+  public static final String EDITOR_VIEW = "editorView";
+  public static final String EXPLORER_VIEW = "explorerView";
+  public static final String EDIT_LAYOUT = "layout";
+  public static final String EDIT_APPEARANCE = "appearance";
+  public static final String EDIT_HDL = "hdl";
+  private static final long serialVersionUID = 1L;
   private final Timer timer = new Timer();
+  private final Project proj;
+  private final MyProjectListener myProjectListener = new MyProjectListener();
+  // GUI elements shared between views
+  private final MainMenuListener menuListener;
+  private final Toolbar toolbar;
+  private final HorizontalSplitPane leftRegion;
+  private final HorizontalSplitPane rightRegion;
+  private final HorizontalSplitPane editRegion;
+  private final VerticalSplitPane mainRegion;
+  private final JPanel rightPanel;
+  private final JPanel mainPanelSuper;
+  private final CardPanel mainPanel;
+  // left-side elements
+  private final JTabbedPane topTab;
+  private final JTabbedPane bottomTab;
+  private final Toolbox toolbox;
+  private final SimulationExplorer simExplorer;
+  private final AttrTable attrTable;
+  private final ZoomControl zoom;
+  // for the Layout view
+  private final LayoutToolbarModel layoutToolbarModel;
+  private final Canvas layoutCanvas;
+  private final VhdlSimulatorConsole vhdlSimulatorConsole;
+  private final HdlContentView hdlEditor;
+  private final ZoomModel layoutZoomModel;
+  private final LayoutEditHandler layoutEditHandler;
+  private final AttrTableSelectionModel attrTableSelectionModel;
+  // for the Appearance view
+  private AppearanceView appearance;
+  private Double lastFraction = AppPreferences.WINDOW_RIGHT_SPLIT.get();
 
-  class MyProjectListener
-      implements ProjectListener,
-          LibraryListener,
-          CircuitListener,
-          PropertyChangeListener,
-          ChangeListener {
+  public Frame(Project proj) {
+    super(true, proj);
+    this.proj = proj;
 
-    public void attributeListChanged(AttributeEvent e) {}
+    setBackground(Color.white);
+    setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+    addWindowListener(new MyWindowListener());
 
-    @Override
-    public void circuitChanged(CircuitEvent event) {
-      if (event.getAction() == CircuitEvent.ACTION_SET_NAME) {
-        computeTitle();
-      }
+    proj.addProjectListener(myProjectListener);
+    proj.addLibraryListener(myProjectListener);
+    proj.addCircuitListener(myProjectListener);
+    computeTitle();
+
+    // set up elements for the Layout view
+    layoutToolbarModel = new LayoutToolbarModel(this, proj);
+    layoutCanvas = new Canvas(proj);
+    CanvasPane canvasPane = new CanvasPane(layoutCanvas);
+    double[] Options = new double[49];
+    for (int i = 0; i < 49; i++) {
+      Options[i] = (double) ((i + 1) * 20);
     }
+    layoutZoomModel =
+        new BasicZoomModel(
+            AppPreferences.LAYOUT_SHOW_GRID,
+            AppPreferences.LAYOUT_ZOOM,
+            Options,
+            canvasPane); // ZOOM_OPTIONS);
 
-    private void enableSave() {
-      Project proj = getProject();
-      boolean ok = proj.isFileDirty();
-      getRootPane().putClientProperty("windowModified", ok);
+    layoutCanvas.getGridPainter().setZoomModel(layoutZoomModel);
+    layoutEditHandler = new LayoutEditHandler(this);
+    attrTableSelectionModel = new AttrTableSelectionModel(proj, this);
+
+    // set up menu bar and toolbar
+    menuListener = new MainMenuListener(this, menubar);
+    menuListener.setEditHandler(layoutEditHandler);
+    toolbar = new Toolbar(layoutToolbarModel);
+
+    // set up the left-side components
+    toolbox = new Toolbox(proj, this, menuListener);
+    simExplorer = new SimulationExplorer(proj, menuListener);
+    bottomTab = new JTabbedPane();
+    bottomTab.setFont(AppPreferences.getScaledFont(new Font("Dialog", Font.BOLD, 9)));
+    bottomTab.addTab("Properties", attrTable = new AttrTable(this));
+    bottomTab.addTab("State", new RegTabContent(this));
+
+    zoom = new ZoomControl(layoutZoomModel, layoutCanvas);
+
+    // set up the central area
+    mainPanelSuper = new JPanel(new BorderLayout());
+    canvasPane.setZoomModel(layoutZoomModel);
+    mainPanel = new CardPanel();
+    mainPanel.addView(EDIT_LAYOUT, canvasPane);
+    mainPanel.setView(EDIT_LAYOUT);
+    mainPanelSuper.add(mainPanel, BorderLayout.CENTER);
+
+    // set up the contents, split down the middle, with the canvas
+    // on the right and a split pane on the left containing the
+    // explorer and attribute values.
+    JPanel explPanel = new JPanel(new BorderLayout());
+    explPanel.add(toolbox, BorderLayout.CENTER);
+
+    JPanel simPanel = new JPanel(new BorderLayout());
+    // simPanel.add(new JButton("stuff"), BorderLayout.NORTH);
+    simPanel.add(simExplorer, BorderLayout.CENTER);
+
+    topTab = new JTabbedPane();
+    topTab.setFont(new Font("Dialog", Font.BOLD, 9));
+    topTab.add("Design", explPanel);
+    topTab.add("Simulate", simPanel);
+
+    JPanel attrFooter = new JPanel(new BorderLayout());
+    attrFooter.add(zoom);
+
+    JPanel bottomTabAndZoom = new JPanel(new BorderLayout());
+    bottomTabAndZoom.add(bottomTab, BorderLayout.CENTER);
+    bottomTabAndZoom.add(attrFooter, BorderLayout.SOUTH);
+    leftRegion =
+        new HorizontalSplitPane(
+            topTab, bottomTabAndZoom, AppPreferences.WINDOW_LEFT_SPLIT.get().doubleValue());
+
+    hdlEditor = new HdlContentView(proj);
+    vhdlSimulatorConsole = new VhdlSimulatorConsole(proj);
+    editRegion = new HorizontalSplitPane(mainPanelSuper, hdlEditor, 1.0);
+    rightRegion = new HorizontalSplitPane(editRegion, vhdlSimulatorConsole, 1.0);
+
+    rightPanel = new JPanel(new BorderLayout());
+    rightPanel.add(rightRegion, BorderLayout.CENTER);
+
+    VhdlSimState state = new VhdlSimState(proj);
+    state.stateChanged();
+    proj.getVhdlSimulator().addVhdlSimStateListener(state);
+
+    mainRegion =
+        new VerticalSplitPane(
+            leftRegion, rightPanel, AppPreferences.WINDOW_MAIN_SPLIT.get().doubleValue());
+
+    getContentPane().add(mainRegion, BorderLayout.CENTER);
+
+    computeTitle();
+
+    this.setSize(
+        AppPreferences.WINDOW_WIDTH.get().intValue(),
+        AppPreferences.WINDOW_HEIGHT.get().intValue());
+    Point prefPoint = getInitialLocation();
+    if (prefPoint != null) {
+      this.setLocation(prefPoint);
     }
+    this.setExtendedState(AppPreferences.WINDOW_STATE.get().intValue());
 
-    @Override
-    public void libraryChanged(LibraryEvent e) {
-      if (e.getAction() == LibraryEvent.SET_NAME) {
-        computeTitle();
-      } else if (e.getAction() == LibraryEvent.DIRTY_STATE) {
-        enableSave();
-      }
+    menuListener.register(mainPanel);
+    KeyboardToolSelection.register(toolbar);
+
+    proj.setFrame(this);
+    if (proj.getTool() == null) {
+      proj.setTool(proj.getOptions().getToolbarData().getFirstTool());
     }
+    mainPanel.addChangeListener(myProjectListener);
+    AppPreferences.TOOLBAR_PLACEMENT.addPropertyChangeListener(myProjectListener);
+    placeToolbar();
 
-    @Override
-    public void projectChanged(ProjectEvent event) {
-      int action = event.getAction();
-
-      if (action == ProjectEvent.ACTION_SET_FILE) {
-        computeTitle();
-        proj.setTool(proj.getOptions().getToolbarData().getFirstTool());
-        placeToolbar();
-      } else if (action == ProjectEvent.ACTION_SET_STATE) {
-        if (event.getData() instanceof CircuitState) {
-          CircuitState state = (CircuitState)event.getData();
-          if (state.getParentState() != null)
-            topTab.setSelectedIndex(1); // sim explorer view
-        }
-      } else if (action == ProjectEvent.ACTION_SET_CURRENT) {
-        if (event.getData() instanceof Circuit) {
-          setEditorView(EDIT_LAYOUT);
-          if (appearance != null) {
-            appearance.setCircuit(proj, proj.getCircuitState());
-          }
-        } else if (event.getData() instanceof HdlModel) {
-          setHdlEditorView((HdlModel) event.getData());
-        }
-        viewAttributes(proj.getTool());
-        computeTitle();
-      } else if (action == ProjectEvent.ACTION_SET_TOOL) {
-        if (attrTable == null) {
-          return; // for startup
-        }
-        Tool oldTool = (Tool) event.getOldData();
-        Tool newTool = (Tool) event.getData();
-        if (!getEditorView().equals(EDIT_APPEARANCE)) {
-          viewAttributes(oldTool, newTool, false);
-        }
-      }
-    }
-
-    @Override
-    public void propertyChange(PropertyChangeEvent event) {
-      if (AppPreferences.TOOLBAR_PLACEMENT.isSource(event)) {
-        placeToolbar();
-      }
-    }
-
-    @Override
-    public void stateChanged(ChangeEvent event) {
-      Object source = event.getSource();
-      if (source == mainPanel) {
-        firePropertyChange(EDITOR_VIEW, "???", getEditorView());
-      }
-    }
-  }
-
-  class MyWindowListener extends WindowAdapter {
-
-    @Override
-    public void windowClosing(WindowEvent e) {
-      if (confirmClose(S.get("confirmCloseTitle"))) {
-        layoutCanvas.closeCanvas();
-        timer.cancel();
-        Frame.this.dispose();
-      }
-    }
-
-    @Override
-    public void windowOpened(WindowEvent e) {
-      layoutCanvas.computeSize(true);
+    LocaleManager.addLocaleListener(this);
+    toolbox.updateStructure();
+    try {
+      timer.schedule(ANNIMATIONICONTIMER, 1000, 500);
+    } catch (IllegalStateException e) {
+      /* just continue, the timer was already running */
     }
   }
 
@@ -263,178 +326,12 @@ public class Frame extends LFrame implements LocaleListener {
     return false;
   }
 
-  private static final long serialVersionUID = 1L;
-  public static final String EDITOR_VIEW = "editorView";
-  public static final String EXPLORER_VIEW = "explorerView";
-  public static final String EDIT_LAYOUT = "layout";
-  public static final String EDIT_APPEARANCE = "appearance";
-  public static final String EDIT_HDL = "hdl";
-  private final Project proj;
-  private final MyProjectListener myProjectListener = new MyProjectListener();
-  // GUI elements shared between views
-  private final MainMenuListener menuListener;
-  private final Toolbar toolbar;
-  private final HorizontalSplitPane leftRegion;
-  private final HorizontalSplitPane rightRegion;
-  private final HorizontalSplitPane editRegion;
-  private final VerticalSplitPane mainRegion;
-  private final JPanel rightPanel;
-  private final JPanel mainPanelSuper;
-  private final CardPanel mainPanel;
-  // left-side elements
-  private final JTabbedPane topTab;
-  private final JTabbedPane bottomTab;
-  private final Toolbox toolbox;
-  private final SimulationExplorer simExplorer;
-  private final AttrTable attrTable;
-  private final ZoomControl zoom;
-  // for the Layout view
-  private final LayoutToolbarModel layoutToolbarModel;
-  private final Canvas layoutCanvas;
-  private final VhdlSimulatorConsole vhdlSimulatorConsole;
-  private final HdlContentView hdlEditor;
-
-  private final ZoomModel layoutZoomModel;
-
-  private final LayoutEditHandler layoutEditHandler;
-
-  private final AttrTableSelectionModel attrTableSelectionModel;
-
-  // for the Appearance view
-  private AppearanceView appearance;
-
-  private Double lastFraction = AppPreferences.WINDOW_RIGHT_SPLIT.get();
-
-  public Frame(Project proj) {
-    super(true,proj);
-    this.proj = proj;
-
-    setBackground(Color.white);
-    setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-    addWindowListener(new MyWindowListener());
-
-    proj.addProjectListener(myProjectListener);
-    proj.addLibraryListener(myProjectListener);
-    proj.addCircuitListener(myProjectListener);
-    computeTitle();
-
-    // set up elements for the Layout view
-    layoutToolbarModel = new LayoutToolbarModel(this, proj);
-    layoutCanvas = new Canvas(proj);
-    CanvasPane canvasPane = new CanvasPane(layoutCanvas);
-    double[] Options = new double[49];
-    for (int i = 0; i < 49; i++) {
-      Options[i] = (double) ((i + 1) * 20);
-    }
-    layoutZoomModel =
-        new BasicZoomModel(
-            AppPreferences.LAYOUT_SHOW_GRID,
-            AppPreferences.LAYOUT_ZOOM,
-            Options,
-            canvasPane); // ZOOM_OPTIONS);
-
-    layoutCanvas.getGridPainter().setZoomModel(layoutZoomModel);
-    layoutEditHandler = new LayoutEditHandler(this);
-    attrTableSelectionModel = new AttrTableSelectionModel(proj, this);
-
-    // set up menu bar and toolbar
-    menuListener = new MainMenuListener(this, menubar);
-    menuListener.setEditHandler(layoutEditHandler);
-    toolbar = new Toolbar(layoutToolbarModel);
-
-    // set up the left-side components
-    toolbox = new Toolbox(proj, this , menuListener);
-    simExplorer = new SimulationExplorer(proj, menuListener);
-    bottomTab = new JTabbedPane();
-    bottomTab.setFont(AppPreferences.getScaledFont(new Font("Dialog", Font.BOLD, 9)));
-    bottomTab.addTab("Properties", attrTable = new AttrTable(this));
-    bottomTab.addTab("State", new RegTabContent(this));
-
-    zoom = new ZoomControl(layoutZoomModel, layoutCanvas);
-
-    // set up the central area
-    mainPanelSuper = new JPanel(new BorderLayout());
-    canvasPane.setZoomModel(layoutZoomModel);
-    mainPanel = new CardPanel();
-    mainPanel.addView(EDIT_LAYOUT, canvasPane);
-    mainPanel.setView(EDIT_LAYOUT);
-    mainPanelSuper.add(mainPanel, BorderLayout.CENTER);
-
-    // set up the contents, split down the middle, with the canvas
-    // on the right and a split pane on the left containing the
-    // explorer and attribute values.
-    JPanel explPanel = new JPanel(new BorderLayout());
-    explPanel.add(toolbox, BorderLayout.CENTER);
-
-    JPanel simPanel = new JPanel(new BorderLayout());
-    // simPanel.add(new JButton("stuff"), BorderLayout.NORTH); 
-    simPanel.add(simExplorer, BorderLayout.CENTER);
-
-    topTab = new JTabbedPane();
-    topTab.setFont(new Font("Dialog", Font.BOLD, 9));
-    topTab.add("Design", explPanel);
-    topTab.add("Simulate", simPanel);
-    
-    JPanel attrFooter = new JPanel(new BorderLayout());
-    attrFooter.add(zoom);
-
-    JPanel bottomTabAndZoom = new JPanel(new BorderLayout());
-    bottomTabAndZoom.add(bottomTab, BorderLayout.CENTER);
-    bottomTabAndZoom.add(attrFooter, BorderLayout.SOUTH);
-    leftRegion = new HorizontalSplitPane(
-       topTab, bottomTabAndZoom, AppPreferences.WINDOW_LEFT_SPLIT.get().doubleValue());
-
-    hdlEditor = new HdlContentView(proj);
-    vhdlSimulatorConsole = new VhdlSimulatorConsole(proj);
-    editRegion = new HorizontalSplitPane(mainPanelSuper, hdlEditor, 1.0);
-    rightRegion = new HorizontalSplitPane(editRegion, vhdlSimulatorConsole, 1.0);
-    
-    rightPanel = new JPanel(new BorderLayout());
-    rightPanel.add(rightRegion,BorderLayout.CENTER);
-
-    VhdlSimState state = new VhdlSimState(proj);
-    state.stateChanged();
-    proj.getVhdlSimulator().addVhdlSimStateListener(state);
-
-    mainRegion = new VerticalSplitPane(leftRegion, rightPanel, AppPreferences.WINDOW_MAIN_SPLIT.get().doubleValue());
-
-    getContentPane().add(mainRegion, BorderLayout.CENTER);
-
-    computeTitle();
-
-    this.setSize(AppPreferences.WINDOW_WIDTH.get().intValue(),AppPreferences.WINDOW_HEIGHT.get().intValue());
-    Point prefPoint = getInitialLocation();
-    if (prefPoint != null) {
-      this.setLocation(prefPoint);
-    }
-    this.setExtendedState(AppPreferences.WINDOW_STATE.get().intValue());
-
-    menuListener.register(mainPanel);
-    KeyboardToolSelection.register(toolbar);
-
-    proj.setFrame(this);
-    if (proj.getTool() == null) {
-      proj.setTool(proj.getOptions().getToolbarData().getFirstTool());
-    }
-    mainPanel.addChangeListener(myProjectListener);
-    AppPreferences.TOOLBAR_PLACEMENT.addPropertyChangeListener(myProjectListener);
-    placeToolbar();
-
-    LocaleManager.addLocaleListener(this);
-    toolbox.updateStructure();
-    try {
-       timer.schedule(ANNIMATIONICONTIMER, 1000, 500);
-    } catch (IllegalStateException e) {
-      /* just continue, the timer was already running */
-    }
-  }
-  
   public void resetLayout() {
     mainRegion.setFraction(0.25);
     leftRegion.setFraction(0.5);
     rightRegion.setFraction(1.0);
   }
-  
+
   public Toolbar getToolbar() {
     return toolbar;
   }
@@ -491,6 +388,41 @@ public class Frame extends LFrame implements LocaleListener {
     return (getHdlEditorView() != null ? EDIT_HDL : mainPanel.getView());
   }
 
+  public void setEditorView(String view) {
+    String curView = mainPanel.getView();
+    if (hdlEditor.getHdlModel() == null && curView.equals(view)) {
+      return;
+    }
+    editRegion.setFraction(1.0);
+    hdlEditor.setHdlModel(null);
+
+    if (view.equals(EDIT_APPEARANCE)) { // appearance view
+      AppearanceView app = appearance;
+      if (app == null) {
+        app = new AppearanceView();
+        app.setCircuit(proj, proj.getCircuitState());
+        mainPanel.addView(EDIT_APPEARANCE, app.getCanvasPane());
+        appearance = app;
+        ANNIMATIONICONTIMER.addParrent(toolbar);
+      }
+      toolbar.setToolbarModel(app.getToolbarModel());
+      app.getAttrTableDrawManager(attrTable).attributesSelected();
+      zoom.setZoomModel(app.getZoomModel());
+      zoom.setAutoZoomButtonEnabled(false);
+      menuListener.setEditHandler(app.getEditHandler());
+      mainPanel.setView(view);
+      app.getCanvas().requestFocus();
+    } else { // layout view
+      toolbar.setToolbarModel(layoutToolbarModel);
+      zoom.setZoomModel(layoutZoomModel);
+      zoom.setAutoZoomButtonEnabled(true);
+      menuListener.setEditHandler(layoutEditHandler);
+      viewAttributes(proj.getTool(), true);
+      mainPanel.setView(view);
+      layoutCanvas.requestFocus();
+    }
+  }
+
   public Project getProject() {
     return proj;
   }
@@ -530,7 +462,7 @@ public class Frame extends LFrame implements LocaleListener {
           }
         }
       }
-      rightPanel.add(toolbar,value);
+      rightPanel.add(toolbar, value);
       boolean vertical = value == BorderLayout.WEST || value == BorderLayout.EAST;
       toolbar.setOrientation(vertical ? Toolbar.VERTICAL : Toolbar.HORIZONTAL);
     }
@@ -588,41 +520,6 @@ public class Frame extends LFrame implements LocaleListener {
     }
   }
 
-  public void setEditorView(String view) {
-    String curView = mainPanel.getView();
-    if (hdlEditor.getHdlModel() == null && curView.equals(view)) {
-      return;
-    }
-    editRegion.setFraction(1.0);
-    hdlEditor.setHdlModel(null);
-
-    if (view.equals(EDIT_APPEARANCE)) { // appearance view
-      AppearanceView app = appearance;
-      if (app == null) {
-        app = new AppearanceView();
-        app.setCircuit(proj, proj.getCircuitState());
-        mainPanel.addView(EDIT_APPEARANCE, app.getCanvasPane());
-        appearance = app;
-        ANNIMATIONICONTIMER.addParrent(toolbar);
-      }
-      toolbar.setToolbarModel(app.getToolbarModel());
-      app.getAttrTableDrawManager(attrTable).attributesSelected();
-      zoom.setZoomModel(app.getZoomModel());
-      zoom.setAutoZoomButtonEnabled(false);
-      menuListener.setEditHandler(app.getEditHandler());
-      mainPanel.setView(view);
-      app.getCanvas().requestFocus();
-    } else { // layout view
-      toolbar.setToolbarModel(layoutToolbarModel);
-      zoom.setZoomModel(layoutZoomModel);
-      zoom.setAutoZoomButtonEnabled(true);
-      menuListener.setEditHandler(layoutEditHandler);
-      viewAttributes(proj.getTool(), true);
-      mainPanel.setView(view);
-      layoutCanvas.requestFocus();
-    }
-  }
-
   public void setVhdlSimulatorConsoleStatus(boolean visible) {
     if (visible) {
       rightRegion.setFraction(lastFraction);
@@ -632,15 +529,15 @@ public class Frame extends LFrame implements LocaleListener {
     }
   }
 
+  public HdlModel getHdlEditorView() {
+    return hdlEditor.getHdlModel();
+  }
+
   private void setHdlEditorView(HdlModel hdl) {
     hdlEditor.setHdlModel(hdl);
     zoom.setZoomModel(null);
     editRegion.setFraction(0.0);
     toolbar.setToolbarModel(hdlEditor.getToolbarModel());
-  }
-
-  public HdlModel getHdlEditorView() {
-    return hdlEditor.getHdlModel();
   }
 
   void viewAttributes(Tool newTool) {
@@ -689,6 +586,106 @@ public class Frame extends LFrame implements LocaleListener {
       setAttrTableModel(null);
     } else {
       setAttrTableModel(new AttrTableComponentModel(proj, circ, comp));
+    }
+  }
+
+  class MyProjectListener
+      implements ProjectListener,
+          LibraryListener,
+          CircuitListener,
+          PropertyChangeListener,
+          ChangeListener {
+
+    public void attributeListChanged(AttributeEvent e) {}
+
+    @Override
+    public void circuitChanged(CircuitEvent event) {
+      if (event.getAction() == CircuitEvent.ACTION_SET_NAME) {
+        computeTitle();
+      }
+    }
+
+    private void enableSave() {
+      Project proj = getProject();
+      boolean ok = proj.isFileDirty();
+      getRootPane().putClientProperty("windowModified", ok);
+    }
+
+    @Override
+    public void libraryChanged(LibraryEvent e) {
+      if (e.getAction() == LibraryEvent.SET_NAME) {
+        computeTitle();
+      } else if (e.getAction() == LibraryEvent.DIRTY_STATE) {
+        enableSave();
+      }
+    }
+
+    @Override
+    public void projectChanged(ProjectEvent event) {
+      int action = event.getAction();
+
+      if (action == ProjectEvent.ACTION_SET_FILE) {
+        computeTitle();
+        proj.setTool(proj.getOptions().getToolbarData().getFirstTool());
+        placeToolbar();
+      } else if (action == ProjectEvent.ACTION_SET_STATE) {
+        if (event.getData() instanceof CircuitState) {
+          CircuitState state = (CircuitState) event.getData();
+          if (state.getParentState() != null) topTab.setSelectedIndex(1); // sim explorer view
+        }
+      } else if (action == ProjectEvent.ACTION_SET_CURRENT) {
+        if (event.getData() instanceof Circuit) {
+          setEditorView(EDIT_LAYOUT);
+          if (appearance != null) {
+            appearance.setCircuit(proj, proj.getCircuitState());
+          }
+        } else if (event.getData() instanceof HdlModel) {
+          setHdlEditorView((HdlModel) event.getData());
+        }
+        viewAttributes(proj.getTool());
+        computeTitle();
+      } else if (action == ProjectEvent.ACTION_SET_TOOL) {
+        if (attrTable == null) {
+          return; // for startup
+        }
+        Tool oldTool = (Tool) event.getOldData();
+        Tool newTool = (Tool) event.getData();
+        if (!getEditorView().equals(EDIT_APPEARANCE)) {
+          viewAttributes(oldTool, newTool, false);
+        }
+      }
+    }
+
+    @Override
+    public void propertyChange(PropertyChangeEvent event) {
+      if (AppPreferences.TOOLBAR_PLACEMENT.isSource(event)) {
+        placeToolbar();
+      }
+    }
+
+    @Override
+    public void stateChanged(ChangeEvent event) {
+      Object source = event.getSource();
+      if (source == mainPanel) {
+        firePropertyChange(EDITOR_VIEW, "???", getEditorView());
+      }
+    }
+  }
+
+  class MyWindowListener extends WindowAdapter {
+
+    @Override
+    public void windowClosing(WindowEvent e) {
+      if (confirmClose(S.get("confirmCloseTitle"))) {
+        layoutCanvas.closeCanvas();
+        timer.cancel();
+        Frame.this.dispose();
+      }
+    }
+
+    @Override
+    public void windowOpened(WindowEvent e) {
+      layoutCanvas.computeSize(true);
     }
   }
 }

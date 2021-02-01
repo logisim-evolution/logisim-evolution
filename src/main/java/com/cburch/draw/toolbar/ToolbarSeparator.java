@@ -28,12 +28,11 @@
 
 package com.cburch.draw.toolbar;
 
+import com.cburch.logisim.prefs.AppPreferences;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
-
-import com.cburch.logisim.prefs.AppPreferences;
 
 public class ToolbarSeparator implements ToolbarItem {
   private final int size;

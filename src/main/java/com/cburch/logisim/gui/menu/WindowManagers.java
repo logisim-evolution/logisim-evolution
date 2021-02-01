@@ -48,6 +48,42 @@ import java.util.List;
 import javax.swing.JFrame;
 
 public class WindowManagers {
+  private static final MyListener myListener = new MyListener();
+  private static final HashMap<Project, ProjectManager> projectMap =
+      new LinkedHashMap<Project, ProjectManager>();
+  private static boolean initialized = false;
+
+  private WindowManagers() {}
+
+  private static void computeListeners() {
+    List<Project> nowOpen = Projects.getOpenProjects();
+
+    HashSet<Project> closed = new HashSet<Project>(projectMap.keySet());
+    closed.removeAll(nowOpen);
+    for (Project proj : closed) {
+      ProjectManager manager = projectMap.get(proj);
+      manager.frameClosed(manager.getJFrame(false, null));
+      projectMap.remove(proj);
+    }
+
+    HashSet<Project> opened = new LinkedHashSet<Project>(nowOpen);
+    opened.removeAll(projectMap.keySet());
+    for (Project proj : opened) {
+      ProjectManager manager = new ProjectManager(proj);
+      projectMap.put(proj, manager);
+    }
+  }
+
+  public static void initialize() {
+    if (!initialized) {
+      initialized = true;
+      if (Main.ANALYZE) AnalyzerManager.initialize();
+      PreferencesFrame.initializeManager();
+      Projects.addPropertyChangeListener(Projects.projectListProperty, myListener);
+      computeListeners();
+    }
+  }
+
   private static class MyListener implements PropertyChangeListener {
     public void propertyChange(PropertyChangeEvent event) {
       computeListeners();
@@ -83,42 +119,4 @@ public class WindowManagers {
       }
     }
   }
-
-  private static void computeListeners() {
-    List<Project> nowOpen = Projects.getOpenProjects();
-
-    HashSet<Project> closed = new HashSet<Project>(projectMap.keySet());
-    closed.removeAll(nowOpen);
-    for (Project proj : closed) {
-      ProjectManager manager = projectMap.get(proj);
-      manager.frameClosed(manager.getJFrame(false, null));
-      projectMap.remove(proj);
-    }
-
-    HashSet<Project> opened = new LinkedHashSet<Project>(nowOpen);
-    opened.removeAll(projectMap.keySet());
-    for (Project proj : opened) {
-      ProjectManager manager = new ProjectManager(proj);
-      projectMap.put(proj, manager);
-    }
-  }
-
-  public static void initialize() {
-    if (!initialized) {
-      initialized = true;
-      if (Main.ANALYZE) AnalyzerManager.initialize();
-      PreferencesFrame.initializeManager();
-      Projects.addPropertyChangeListener(Projects.projectListProperty, myListener);
-      computeListeners();
-    }
-  }
-
-  private static boolean initialized = false;
-
-  private static final MyListener myListener = new MyListener();
-
-  private static final HashMap<Project, ProjectManager> projectMap =
-      new LinkedHashMap<Project, ProjectManager>();
-
-  private WindowManagers() {}
 }

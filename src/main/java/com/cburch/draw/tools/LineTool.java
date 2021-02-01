@@ -38,7 +38,6 @@ import com.cburch.draw.shapes.LineUtil;
 import com.cburch.draw.shapes.Poly;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.Location;
-import com.cburch.logisim.util.Icons;
 import com.cburch.logisim.util.UnmodifiableList;
 import java.awt.Color;
 import java.awt.Cursor;
@@ -50,6 +49,18 @@ import java.util.List;
 import javax.swing.Icon;
 
 public class LineTool extends AbstractTool {
+  private final DrawingAttributeSet attrs;
+  private boolean active;
+  private Location mouseStart;
+  private Location mouseEnd;
+  private int lastMouseX;
+  private int lastMouseY;
+
+  public LineTool(DrawingAttributeSet attrs) {
+    this.attrs = attrs;
+    active = false;
+  }
+
   static Location snapTo4Cardinals(Location from, int mx, int my) {
     int px = from.getX();
     int py = from.getY();
@@ -61,19 +72,6 @@ public class LineTool extends AbstractTool {
       }
     }
     return Location.create(mx, my); // should never happen
-  }
-
-  private final DrawingAttributeSet attrs;
-  private boolean active;
-  private Location mouseStart;
-  private Location mouseEnd;
-  private int lastMouseX;
-
-  private int lastMouseY;
-
-  public LineTool(DrawingAttributeSet attrs) {
-    this.attrs = attrs;
-    active = false;
   }
 
   @Override

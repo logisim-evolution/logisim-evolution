@@ -39,6 +39,7 @@ import java.awt.font.LineMetrics;
 
 public class TextMetrics {
 
+  private static final Canvas canvas = new Canvas();
   public int ascent;
   public int descent;
   public int leading;
@@ -77,8 +78,6 @@ public class TextMetrics {
     leading = (int) Math.ceil(lm.getLeading());
     height = ascent + descent + leading;
   }
-
-  private static final Canvas canvas = new Canvas();
 
   public TextMetrics(Component c, Font font, String text) {
     if (c == null) c = canvas;

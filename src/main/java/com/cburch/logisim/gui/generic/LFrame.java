@@ -43,6 +43,24 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 
 public class LFrame extends JFrame implements WindowClosable {
+  private static final long serialVersionUID = 1L;
+  private static final String PATH = "resources/logisim/img/logisim-icon-";
+  private static final int[] SIZES = {16, 20, 24, 48, 64, 128};
+  private static final int DEFAULT_SIZE = 48;
+  private static List<Image> ICONS = null;
+  private static Image DEFAULT_ICON = null;
+  protected final LogisimMenuBar menubar;
+
+  public LFrame(boolean toplevel, Project proj) {
+    LFrame.attachIcon(this);
+    if (toplevel || MacCompatibility.isRunningOnMac()) {
+      menubar = new LogisimMenuBar(this, proj);
+      setJMenuBar(menubar);
+    } else {
+      menubar = null;
+    }
+  }
+
   public static void attachIcon(Window frame) {
     if (ICONS == null) {
       List<Image> loadedIcons = new ArrayList<Image>();
@@ -72,26 +90,6 @@ public class LFrame extends JFrame implements WindowClosable {
 
     if (!success && frame instanceof JFrame && DEFAULT_ICON != null) {
       ((JFrame) frame).setIconImage(DEFAULT_ICON);
-    }
-  }
-
-  private static final long serialVersionUID = 1L;
-  private static final String PATH = "resources/logisim/img/logisim-icon-";
-  private static final int[] SIZES = {16, 20, 24, 48, 64, 128};
-  private static List<Image> ICONS = null;
-  private static final int DEFAULT_SIZE = 48;
-
-  private static Image DEFAULT_ICON = null;
-  
-  protected final LogisimMenuBar menubar;
-
-  public LFrame(boolean toplevel, Project proj) {
-    LFrame.attachIcon(this);
-    if (toplevel || MacCompatibility.isRunningOnMac()) {
-    	menubar = new LogisimMenuBar(this,proj);
-    	setJMenuBar(menubar);
-    } else {
-    	menubar = null;
     }
   }
 

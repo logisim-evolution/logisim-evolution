@@ -38,6 +38,31 @@ import javax.swing.ListSelectionModel;
 
 @SuppressWarnings("rawtypes")
 class SelectionList extends JList {
+  private static final long serialVersionUID = 1L;
+  private Selection selection;
+
+  @SuppressWarnings("unchecked")
+  public SelectionList() {
+    selection = null;
+    setModel(new Model());
+    setCellRenderer(new MyCellRenderer());
+    setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+  }
+
+  public void localeChanged() {
+    repaint();
+  }
+
+  public void setSelection(Selection value) {
+    if (selection != value) {
+      Model model = (Model) getModel();
+      if (selection != null) selection.removeModelListener(model);
+      selection = value;
+      if (selection != null) selection.addModelListener(model);
+      model.selectionChanged(null);
+    }
+  }
+
   private class Model extends AbstractListModel implements ModelListener {
     private static final long serialVersionUID = 1L;
 
@@ -74,32 +99,6 @@ class SelectionList extends JList {
         label.setText(item.toString() + " - " + item.getRadix());
       }
       return ret;
-    }
-  }
-
-  private static final long serialVersionUID = 1L;
-
-  private Selection selection;
-
-  @SuppressWarnings("unchecked")
-  public SelectionList() {
-    selection = null;
-    setModel(new Model());
-    setCellRenderer(new MyCellRenderer());
-    setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-  }
-
-  public void localeChanged() {
-    repaint();
-  }
-
-  public void setSelection(Selection value) {
-    if (selection != value) {
-      Model model = (Model) getModel();
-      if (selection != null) selection.removeModelListener(model);
-      selection = value;
-      if (selection != null) selection.addModelListener(model);
-      model.selectionChanged(null);
     }
   }
 }

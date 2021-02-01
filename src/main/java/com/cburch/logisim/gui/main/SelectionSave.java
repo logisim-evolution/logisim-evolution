@@ -33,6 +33,11 @@ import java.util.Collection;
 import java.util.HashSet;
 
 class SelectionSave {
+  private Component[] floating;
+  private Component[] anchored;
+
+  private SelectionSave() {}
+
   public static SelectionSave create(Selection sel) {
     SelectionSave save = new SelectionSave();
 
@@ -74,12 +79,6 @@ class SelectionSave {
     for (Component c : comps) ret.add(c);
     return ret;
   }
-
-  private Component[] floating;
-
-  private Component[] anchored;
-
-  private SelectionSave() {}
 
   @Override
   public boolean equals(Object other) {

@@ -36,46 +36,6 @@ import java.util.Iterator;
 import java.util.Set;
 
 public class MatchingSet<E extends CanvasObject> extends AbstractSet<E> {
-  private static class MatchIterator<E extends CanvasObject> implements Iterator<E> {
-    private final Iterator<Member<E>> it;
-
-    MatchIterator(Iterator<Member<E>> it) {
-      this.it = it;
-    }
-
-    public boolean hasNext() {
-      return it.hasNext();
-    }
-
-    public E next() {
-      return it.next().value;
-    }
-
-    public void remove() {
-      it.remove();
-    }
-  }
-
-  private static class Member<E extends CanvasObject> {
-    E value;
-
-    public Member(E value) {
-      this.value = value;
-    }
-
-    @Override
-    public boolean equals(Object other) {
-      @SuppressWarnings("unchecked")
-      Member<E> that = (Member<E>) other;
-      return this.value.matches(that.value);
-    }
-
-    @Override
-    public int hashCode() {
-      return value.matchesHashCode();
-    }
-  }
-
   private final Set<Member<E>> set;
 
   public MatchingSet() {
@@ -116,5 +76,45 @@ public class MatchingSet<E extends CanvasObject> extends AbstractSet<E> {
   @Override
   public int size() {
     return set.size();
+  }
+
+  private static class MatchIterator<E extends CanvasObject> implements Iterator<E> {
+    private final Iterator<Member<E>> it;
+
+    MatchIterator(Iterator<Member<E>> it) {
+      this.it = it;
+    }
+
+    public boolean hasNext() {
+      return it.hasNext();
+    }
+
+    public E next() {
+      return it.next().value;
+    }
+
+    public void remove() {
+      it.remove();
+    }
+  }
+
+  private static class Member<E extends CanvasObject> {
+    E value;
+
+    public Member(E value) {
+      this.value = value;
+    }
+
+    @Override
+    public boolean equals(Object other) {
+      @SuppressWarnings("unchecked")
+      Member<E> that = (Member<E>) other;
+      return this.value.matches(that.value);
+    }
+
+    @Override
+    public int hashCode() {
+      return value.matchesHashCode();
+    }
   }
 }

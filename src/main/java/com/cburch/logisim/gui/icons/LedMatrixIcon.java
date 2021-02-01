@@ -42,14 +42,14 @@ public class LedMatrixIcon extends AnnimatedIcon {
   @Override
   public void annimationUpdate() {
     x += xDir;
-    if (x<0 || x > 3.5) {
+    if (x < 0 || x > 3.5) {
       xDir = -xDir;
-      x += 2*xDir;
+      x += 2 * xDir;
     }
     y += yDir;
-    if (y<0 || y > 3.5) {
+    if (y < 0 || y > 3.5) {
       yDir = -yDir;
-      y += 2*yDir;
+      y += 2 * yDir;
     }
   }
 
@@ -61,18 +61,18 @@ public class LedMatrixIcon extends AnnimatedIcon {
 
   @Override
   protected void paintIcon(Graphics2D g2) {
-	g2.setStroke(new BasicStroke(scale(2)));
+    g2.setStroke(new BasicStroke(scale(2)));
     g2.setColor(Color.WHITE);
     g2.fillRect(0, 0, scale(16), scale(16));
     g2.setColor(Color.BLACK);
     g2.drawRect(0, 0, scale(16), scale(16));
     int xint = (int) x;
     int yint = (int) y;
-    for (int i = 0 ; i < 4 ; i++)
-      for (int j = 0 ; j < 4 ; j++) {
-    	  g2.setColor((i==xint)&&(j==yint)?Color.GREEN.darker() : Color.GREEN.brighter().brighter());
-    	  g2.fillOval(scale(2+i*3), scale(2+j*3), scale(3), scale(3));
+    for (int i = 0; i < 4; i++)
+      for (int j = 0; j < 4; j++) {
+        g2.setColor(
+            (i == xint) && (j == yint) ? Color.GREEN.darker() : Color.GREEN.brighter().brighter());
+        g2.fillOval(scale(2 + i * 3), scale(2 + j * 3), scale(3), scale(3));
       }
   }
-
 }

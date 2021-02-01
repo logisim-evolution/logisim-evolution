@@ -37,9 +37,9 @@ class MenuItemHelper implements ActionListener {
   private final JMenuItem source;
   private final LogisimMenuItem menuItem;
   private final Menu menu;
+  private final ArrayList<ActionListener> listeners;
   private boolean enabled;
   private boolean inActionListener;
-  private final ArrayList<ActionListener> listeners;
 
   public MenuItemHelper(JMenuItem source, Menu menu, LogisimMenuItem menuItem) {
     this.source = source;

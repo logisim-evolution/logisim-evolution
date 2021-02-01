@@ -89,8 +89,21 @@ public class Model {
     return file;
   }
 
+  public void setFile(File value) {
+    if (file == null ? value == null : file.equals(value)) return;
+    file = value;
+    fileEnabled = file != null;
+    fireFilePropertyChanged(new ModelEvent());
+  }
+
   public boolean getFileHeader() {
     return fileHeader;
+  }
+
+  public void setFileHeader(boolean value) {
+    if (fileHeader == value) return;
+    fileHeader = value;
+    fireFilePropertyChanged(new ModelEvent());
   }
 
   public Selection getSelection() {
@@ -108,6 +121,12 @@ public class Model {
 
   public boolean isFileEnabled() {
     return fileEnabled;
+  }
+
+  public void setFileEnabled(boolean value) {
+    if (fileEnabled == value) return;
+    fileEnabled = value;
+    fireFilePropertyChanged(new ModelEvent());
   }
 
   public boolean isSelected() {
@@ -137,25 +156,6 @@ public class Model {
 
   public void removeModelListener(ModelListener l) {
     listeners.remove(l);
-  }
-
-  public void setFile(File value) {
-    if (file == null ? value == null : file.equals(value)) return;
-    file = value;
-    fileEnabled = file != null;
-    fireFilePropertyChanged(new ModelEvent());
-  }
-
-  public void setFileEnabled(boolean value) {
-    if (fileEnabled == value) return;
-    fileEnabled = value;
-    fireFilePropertyChanged(new ModelEvent());
-  }
-
-  public void setFileHeader(boolean value) {
-    if (fileHeader == value) return;
-    fileHeader = value;
-    fireFilePropertyChanged(new ModelEvent());
   }
 
   public void setSelected(JFrame frame, boolean value) {

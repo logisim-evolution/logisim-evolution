@@ -43,9 +43,6 @@ import com.cburch.logisim.gui.main.ExportImage;
 import com.cburch.logisim.gui.main.Frame;
 import com.cburch.logisim.gui.main.Print;
 import com.cburch.logisim.gui.main.StatisticsDialog;
-import com.cburch.logisim.gui.menu.LogisimMenuBar;
-import com.cburch.logisim.gui.menu.ProjectCircuitActions;
-import com.cburch.logisim.gui.menu.SimulateListener;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.proj.ProjectEvent;
 import com.cburch.logisim.proj.ProjectListener;
@@ -56,6 +53,22 @@ import java.beans.PropertyChangeListener;
 import java.util.List;
 
 public class MainMenuListener extends MenuListener {
+
+  protected Frame frame;
+  protected FileListener fileListener = new FileListener();
+  protected ProjectMenuListener projectListener = new ProjectMenuListener();
+  protected SimulateMenuListener simulateListener = new SimulateMenuListener();
+  public MainMenuListener(Frame frame, LogisimMenuBar menubar) {
+    super(menubar);
+    this.frame = frame;
+  }
+
+  public void register(CardPanel mainPanel) {
+    fileListener.register();
+    editListener.register();
+    projectListener.register();
+    simulateListener.register();
+  }
 
   protected class FileListener implements ActionListener {
     public void actionPerformed(ActionEvent event) {
@@ -103,8 +116,8 @@ public class MainMenuListener extends MenuListener {
       } else if (src == LogisimMenuBar.EDIT_APPEARANCE) {
         frame.setEditorView(Frame.EDIT_APPEARANCE);
       } else if (src == LogisimMenuBar.TOGGLE_APPEARANCE) {
-          boolean viewAppearance = frame.getEditorView().equals(Frame.EDIT_APPEARANCE);
-          frame.setEditorView(viewAppearance ? Frame.EDIT_LAYOUT : Frame.EDIT_APPEARANCE);
+        boolean viewAppearance = frame.getEditorView().equals(Frame.EDIT_APPEARANCE);
+        frame.setEditorView(viewAppearance ? Frame.EDIT_LAYOUT : Frame.EDIT_APPEARANCE);
       } else if (src == LogisimMenuBar.REVERT_APPEARANCE) {
         proj.doAction(new RevertAppearanceAction(cur));
       } else if (src == LogisimMenuBar.ANALYZE_CIRCUIT && Main.ANALYZE) {
@@ -251,22 +264,4 @@ public class MainMenuListener extends MenuListener {
       if (state != null) frame.getProject().setCircuitState(state);
     }
   }
-
-  protected Frame frame;
-  protected FileListener fileListener = new FileListener();
-  protected ProjectMenuListener projectListener = new ProjectMenuListener();
-  protected SimulateMenuListener simulateListener = new SimulateMenuListener();
-
-  public MainMenuListener(Frame frame, LogisimMenuBar menubar) {
-    super(menubar);
-    this.frame = frame;
-  }
-
-  public void register(CardPanel mainPanel) {
-    fileListener.register();
-    editListener.register();
-    projectListener.register();
-    simulateListener.register();
-  }
-
 }

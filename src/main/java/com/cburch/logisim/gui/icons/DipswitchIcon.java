@@ -39,7 +39,7 @@ public class DipswitchIcon extends AnnimatedIcon {
 
   @Override
   public void annimationUpdate() {
-    state = (state+1)&3;
+    state = (state + 1) & 3;
   }
 
   @Override
@@ -54,34 +54,37 @@ public class DipswitchIcon extends AnnimatedIcon {
     int w = scale(8);
     int h = scale(5);
     g2.setColor(Color.WHITE);
-    Font f = g2.getFont().deriveFont((float)(getIconWidth()/2.5));
-    TextLayout t = new TextLayout("1",f,g2.getFontRenderContext());
-    t.draw(g2, (float)((3*getIconWidth())/4-t.getBounds().getCenterX()), 
-    		(float)(getIconHeight()/4-t.getBounds().getCenterY()));
-    t = new TextLayout("2",f,g2.getFontRenderContext());
-    t.draw(g2, (float)((3*getIconWidth())/4-t.getBounds().getCenterX()), 
-    		(float)((3*getIconHeight())/4-t.getBounds().getCenterY()));
+    Font f = g2.getFont().deriveFont((float) (getIconWidth() / 2.5));
+    TextLayout t = new TextLayout("1", f, g2.getFontRenderContext());
+    t.draw(
+        g2,
+        (float) ((3 * getIconWidth()) / 4 - t.getBounds().getCenterX()),
+        (float) (getIconHeight() / 4 - t.getBounds().getCenterY()));
+    t = new TextLayout("2", f, g2.getFontRenderContext());
+    t.draw(
+        g2,
+        (float) ((3 * getIconWidth()) / 4 - t.getBounds().getCenterX()),
+        (float) ((3 * getIconHeight()) / 4 - t.getBounds().getCenterY()));
     g2.fillRect(scale(2), scale(2), w, h);
     g2.fillRect(scale(2), scale(9), w, h);
     g2.setColor(Color.gray);
-    int x1,x2;
+    int x1, x2;
     switch (state) {
-      case 0 : 
+      case 0:
         x1 = x2 = scale(2);
         break;
-      case 1 :
-        x1 = scale(2)+w>>1;
+      case 1:
+        x1 = scale(2) + w >> 1;
         x2 = scale(2);
         break;
-      case 3 :
-        x2 = scale(2)+w>>1;
+      case 3:
+        x2 = scale(2) + w >> 1;
         x1 = scale(2);
         break;
       default:
-    	x1 = x2 = scale(2)+w>>1;
+        x1 = x2 = scale(2) + w >> 1;
     }
-    g2.fillRect(x1, scale(2), w>>1, h);
-    g2.fillRect(x2, scale(9), w>>1, h);
+    g2.fillRect(x1, scale(2), w >> 1, h);
+    g2.fillRect(x2, scale(9), w >> 1, h);
   }
-
 }

@@ -35,6 +35,17 @@ import com.cburch.logisim.instance.InstanceState;
 
 /** Represents the state of a counter. */
 class CounterData implements InstanceData, Cloneable {
+  /** The last clock input value observed. */
+  private Value lastClock;
+  /** The current value emitted by the counter. */
+  private Value value;
+
+  /** Constructs a state with the given values. */
+  public CounterData(Value lastClock, Value value) {
+    this.lastClock = lastClock;
+    this.value = value;
+  }
+
   /**
    * Retrieves the state associated with this counter in the circuit state, generating the state if
    * necessary.
@@ -51,18 +62,6 @@ class CounterData implements InstanceData, Cloneable {
       ret.value = ret.value.extendWidth(width.getWidth(), Value.FALSE);
     }
     return ret;
-  }
-
-  /** The last clock input value observed. */
-  private Value lastClock;
-
-  /** The current value emitted by the counter. */
-  private Value value;
-
-  /** Constructs a state with the given values. */
-  public CounterData(Value lastClock, Value value) {
-    this.lastClock = lastClock;
-    this.value = value;
   }
 
   /** Returns a copy of this object. */

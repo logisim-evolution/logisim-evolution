@@ -42,10 +42,10 @@ public class TimelineDraw extends JPanel {
 
   private static final long serialVersionUID = 1L;
   private final TimelineParam timelineParam;
+  private final int height;
   private SignalData clk = null;
   private int tickWidth;
   private int width;
-  private final int height;
 
   public TimelineDraw(ChronoFrame chronoFrame, int height, int tickWidth) {
     this.timelineParam = chronoFrame.getTimelineParam();

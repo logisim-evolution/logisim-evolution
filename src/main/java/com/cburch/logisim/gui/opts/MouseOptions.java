@@ -72,6 +72,111 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 
 class MouseOptions extends OptionsPanel {
+  private static final long serialVersionUID = 1L;
+  private final MyListener listener = new MyListener();
+  private final MappingsModel model;
+  private final ProjectExplorer explorer;
+  private final JPanel addArea = new AddArea();
+  private final JTable mappings = new JTable();
+  private final AttrTable attrTable;
+  private final JButton remove = new JButton();
+  private Tool curTool = null;
+  public MouseOptions(OptionsFrame window) {
+    super(window, new GridLayout(1, 3));
+
+    explorer = new ProjectExplorer(getProject());
+    explorer.setListener(listener);
+
+    // Area for adding mappings
+    addArea.addMouseListener(listener);
+
+    // Area for viewing current mappings
+    model = new MappingsModel();
+    mappings.setTableHeader(null);
+    mappings.setModel(model);
+    mappings.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+    mappings.getSelectionModel().addListSelectionListener(listener);
+    mappings.clearSelection();
+    JScrollPane mapPane = new JScrollPane(mappings);
+
+    // Button for removing current mapping
+    JPanel removeArea = new JPanel();
+    remove.addActionListener(listener);
+    remove.setEnabled(false);
+    removeArea.add(remove);
+
+    // Area for viewing/changing attributes
+    attrTable = new AttrTable(getOptionsFrame());
+
+    GridBagLayout gridbag = new GridBagLayout();
+    GridBagConstraints gbc = new GridBagConstraints();
+    setLayout(gridbag);
+    gbc.weightx = 1.0;
+    gbc.weighty = 1.0;
+    gbc.gridheight = 4;
+    gbc.fill = GridBagConstraints.BOTH;
+    JScrollPane explorerPane =
+        new JScrollPane(
+            explorer,
+            ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
+            ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+    gridbag.setConstraints(explorerPane, gbc);
+    add(explorerPane);
+    gbc.weightx = 0.0;
+    JPanel gap = new JPanel();
+    gap.setPreferredSize(new Dimension(10, 10));
+    gridbag.setConstraints(gap, gbc);
+    add(gap);
+    gbc.weightx = 1.0;
+    gbc.gridheight = 1;
+    gbc.gridx = 2;
+    gbc.gridy = GridBagConstraints.RELATIVE;
+    gbc.weighty = 0.0;
+    gridbag.setConstraints(addArea, gbc);
+    add(addArea);
+    gbc.weighty = 1.0;
+    gridbag.setConstraints(mapPane, gbc);
+    add(mapPane);
+    gbc.weighty = 0.0;
+    gridbag.setConstraints(removeArea, gbc);
+    add(removeArea);
+    gbc.weighty = 1.0;
+    gridbag.setConstraints(attrTable, gbc);
+    add(attrTable);
+
+    getOptions().getMouseMappings().addMouseMappingsListener(listener);
+    setCurrentTool(null);
+  }
+
+  @Override
+  public String getHelpText() {
+    return S.get("mouseHelp");
+  }
+
+  @Override
+  public String getTitle() {
+    return S.get("mouseTitle");
+  }
+
+  @Override
+  public void localeChanged() {
+    remove.setText(S.get("mouseRemoveButton"));
+    addArea.repaint();
+  }
+
+  private void setCurrentTool(Tool t) {
+    curTool = t;
+    localeChanged();
+  }
+
+  private void setSelectedRow(int row) {
+    if (row < 0) row = 0;
+    if (row >= model.getRowCount()) row = model.getRowCount() - 1;
+    if (row >= 0) {
+      mappings.getSelectionModel().setSelectionInterval(row, row);
+    }
+  }
+
   private class AddArea extends JPanel {
     private static final long serialVersionUID = 1L;
 
@@ -263,114 +368,6 @@ class MouseOptions extends OptionsPanel {
         }
         attrTable.setAttrTableModel(model);
       }
-    }
-  }
-
-  private static final long serialVersionUID = 1L;
-
-  private final MyListener listener = new MyListener();
-  private Tool curTool = null;
-  private final MappingsModel model;
-
-  private final ProjectExplorer explorer;
-  private final JPanel addArea = new AddArea();
-  private final JTable mappings = new JTable();
-  private final AttrTable attrTable;
-  private final JButton remove = new JButton();
-
-  public MouseOptions(OptionsFrame window) {
-    super(window, new GridLayout(1, 3));
-
-    explorer = new ProjectExplorer(getProject());
-    explorer.setListener(listener);
-
-    // Area for adding mappings
-    addArea.addMouseListener(listener);
-
-    // Area for viewing current mappings
-    model = new MappingsModel();
-    mappings.setTableHeader(null);
-    mappings.setModel(model);
-    mappings.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-    mappings.getSelectionModel().addListSelectionListener(listener);
-    mappings.clearSelection();
-    JScrollPane mapPane = new JScrollPane(mappings);
-
-    // Button for removing current mapping
-    JPanel removeArea = new JPanel();
-    remove.addActionListener(listener);
-    remove.setEnabled(false);
-    removeArea.add(remove);
-
-    // Area for viewing/changing attributes
-    attrTable = new AttrTable(getOptionsFrame());
-
-    GridBagLayout gridbag = new GridBagLayout();
-    GridBagConstraints gbc = new GridBagConstraints();
-    setLayout(gridbag);
-    gbc.weightx = 1.0;
-    gbc.weighty = 1.0;
-    gbc.gridheight = 4;
-    gbc.fill = GridBagConstraints.BOTH;
-    JScrollPane explorerPane =
-        new JScrollPane(
-            explorer,
-            ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
-            ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-    gridbag.setConstraints(explorerPane, gbc);
-    add(explorerPane);
-    gbc.weightx = 0.0;
-    JPanel gap = new JPanel();
-    gap.setPreferredSize(new Dimension(10, 10));
-    gridbag.setConstraints(gap, gbc);
-    add(gap);
-    gbc.weightx = 1.0;
-    gbc.gridheight = 1;
-    gbc.gridx = 2;
-    gbc.gridy = GridBagConstraints.RELATIVE;
-    gbc.weighty = 0.0;
-    gridbag.setConstraints(addArea, gbc);
-    add(addArea);
-    gbc.weighty = 1.0;
-    gridbag.setConstraints(mapPane, gbc);
-    add(mapPane);
-    gbc.weighty = 0.0;
-    gridbag.setConstraints(removeArea, gbc);
-    add(removeArea);
-    gbc.weighty = 1.0;
-    gridbag.setConstraints(attrTable, gbc);
-    add(attrTable);
-
-    getOptions().getMouseMappings().addMouseMappingsListener(listener);
-    setCurrentTool(null);
-  }
-
-  @Override
-  public String getHelpText() {
-    return S.get("mouseHelp");
-  }
-
-  @Override
-  public String getTitle() {
-    return S.get("mouseTitle");
-  }
-
-  @Override
-  public void localeChanged() {
-    remove.setText(S.get("mouseRemoveButton"));
-    addArea.repaint();
-  }
-
-  private void setCurrentTool(Tool t) {
-    curTool = t;
-    localeChanged();
-  }
-
-  private void setSelectedRow(int row) {
-    if (row < 0) row = 0;
-    if (row >= model.getRowCount()) row = model.getRowCount() - 1;
-    if (row >= 0) {
-      mappings.getSelectionModel().setSelectionInterval(row, row);
     }
   }
 }

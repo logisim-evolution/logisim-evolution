@@ -53,6 +53,117 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 public class Caret {
+  private static final Color SELECT_COLOR = new Color(192, 192, 255);
+  private static final Stroke CURSOR_STROKE = new BasicStroke(2.0f);
+  private final HexEditor hex;
+  private final List<ChangeListener> listeners;
+  private long mark;
+  private long cursor;
+  private Object highlight;
+  Caret(HexEditor hex) {
+    this.hex = hex;
+    this.listeners = new ArrayList<ChangeListener>();
+    this.cursor = -1;
+
+    Listener l = new Listener();
+    hex.addMouseListener(l);
+    hex.addMouseMotionListener(l);
+    hex.addKeyListener(l);
+    hex.addFocusListener(l);
+
+    InputMap imap = hex.getInputMap();
+    ActionMap amap = hex.getActionMap();
+    AbstractAction nullAction =
+        new AbstractAction() {
+          private static final long serialVersionUID = 1L;
+
+          public void actionPerformed(ActionEvent e) {}
+        };
+    String nullKey = "null";
+    amap.put(nullKey, nullAction);
+    imap.put(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0), nullKey);
+    imap.put(KeyStroke.getKeyStroke(KeyEvent.VK_UP, 0), nullKey);
+    imap.put(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0), nullKey);
+    imap.put(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0), nullKey);
+    imap.put(KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_DOWN, 0), nullKey);
+    imap.put(KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_UP, 0), nullKey);
+    imap.put(KeyStroke.getKeyStroke(KeyEvent.VK_HOME, 0), nullKey);
+    imap.put(KeyStroke.getKeyStroke(KeyEvent.VK_END, 0), nullKey);
+    imap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), nullKey);
+  }
+
+  public void addChangeListener(ChangeListener l) {
+    listeners.add(l);
+  }
+
+  private void expose(long loc, boolean scrollTo) {
+    if (loc >= 0) {
+      Measures measures = hex.getMeasures();
+      int x = measures.toX(loc);
+      int y = measures.toY(loc);
+      int w = measures.getCellWidth();
+      int h = measures.getCellHeight();
+      hex.repaint(x - 1, y - 1, w + 2, h + 2);
+      if (scrollTo) {
+        hex.scrollRectToVisible(new Rectangle(x, y, w, h));
+      }
+    }
+  }
+
+  public long getDot() {
+    return cursor;
+  }
+
+  public long getMark() {
+    return mark;
+  }
+
+  void paintForeground(Graphics g, long start, long end) {
+    if (cursor >= start && cursor < end && hex.isFocusOwner()) {
+      Measures measures = hex.getMeasures();
+      int x = measures.toX(cursor);
+      int y = measures.toY(cursor);
+      Graphics2D g2 = (Graphics2D) g;
+      Stroke oldStroke = g2.getStroke();
+      g2.setColor(hex.getForeground());
+      g2.setStroke(CURSOR_STROKE);
+      g2.drawRect(x, y, measures.getCellWidth() - 1, measures.getCellHeight() - 1);
+      g2.setStroke(oldStroke);
+    }
+  }
+
+  public void removeChangeListener(ChangeListener l) {
+    listeners.remove(l);
+  }
+
+  public void setDot(long value, boolean keepMark) {
+    HexModel model = hex.getModel();
+    if (model == null || value < model.getFirstOffset() || value > model.getLastOffset()) {
+      value = -1;
+    }
+    if (cursor != value) {
+      long oldValue = cursor;
+      if (highlight != null) {
+        hex.getHighlighter().remove(highlight);
+        highlight = null;
+      }
+      if (!keepMark) {
+        mark = value;
+      } else if (mark != value) {
+        highlight = hex.getHighlighter().add(mark, value, SELECT_COLOR);
+      }
+      cursor = value;
+      expose(oldValue, false);
+      expose(value, true);
+      if (!listeners.isEmpty()) {
+        ChangeEvent event = new ChangeEvent(this);
+        for (ChangeListener l : listeners) {
+          l.stateChanged(event);
+        }
+      }
+    }
+  }
+
   private class Listener implements MouseListener, MouseMotionListener, KeyListener, FocusListener {
     public void focusGained(FocusEvent e) {
       expose(cursor, false);
@@ -189,120 +300,6 @@ public class Caret {
 
     public void mouseReleased(MouseEvent e) {
       mouseDragged(e);
-    }
-  }
-
-  private static final Color SELECT_COLOR = new Color(192, 192, 255);
-
-  private static final Stroke CURSOR_STROKE = new BasicStroke(2.0f);
-
-  private final HexEditor hex;
-  private final List<ChangeListener> listeners;
-  private long mark;
-  private long cursor;
-  private Object highlight;
-
-  Caret(HexEditor hex) {
-    this.hex = hex;
-    this.listeners = new ArrayList<ChangeListener>();
-    this.cursor = -1;
-
-    Listener l = new Listener();
-    hex.addMouseListener(l);
-    hex.addMouseMotionListener(l);
-    hex.addKeyListener(l);
-    hex.addFocusListener(l);
-
-    InputMap imap = hex.getInputMap();
-    ActionMap amap = hex.getActionMap();
-    AbstractAction nullAction =
-        new AbstractAction() {
-          private static final long serialVersionUID = 1L;
-
-          public void actionPerformed(ActionEvent e) {}
-        };
-    String nullKey = "null";
-    amap.put(nullKey, nullAction);
-    imap.put(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0), nullKey);
-    imap.put(KeyStroke.getKeyStroke(KeyEvent.VK_UP, 0), nullKey);
-    imap.put(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0), nullKey);
-    imap.put(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0), nullKey);
-    imap.put(KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_DOWN, 0), nullKey);
-    imap.put(KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_UP, 0), nullKey);
-    imap.put(KeyStroke.getKeyStroke(KeyEvent.VK_HOME, 0), nullKey);
-    imap.put(KeyStroke.getKeyStroke(KeyEvent.VK_END, 0), nullKey);
-    imap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), nullKey);
-  }
-
-  public void addChangeListener(ChangeListener l) {
-    listeners.add(l);
-  }
-
-  private void expose(long loc, boolean scrollTo) {
-    if (loc >= 0) {
-      Measures measures = hex.getMeasures();
-      int x = measures.toX(loc);
-      int y = measures.toY(loc);
-      int w = measures.getCellWidth();
-      int h = measures.getCellHeight();
-      hex.repaint(x - 1, y - 1, w + 2, h + 2);
-      if (scrollTo) {
-        hex.scrollRectToVisible(new Rectangle(x, y, w, h));
-      }
-    }
-  }
-
-  public long getDot() {
-    return cursor;
-  }
-
-  public long getMark() {
-    return mark;
-  }
-
-  void paintForeground(Graphics g, long start, long end) {
-    if (cursor >= start && cursor < end && hex.isFocusOwner()) {
-      Measures measures = hex.getMeasures();
-      int x = measures.toX(cursor);
-      int y = measures.toY(cursor);
-      Graphics2D g2 = (Graphics2D) g;
-      Stroke oldStroke = g2.getStroke();
-      g2.setColor(hex.getForeground());
-      g2.setStroke(CURSOR_STROKE);
-      g2.drawRect(x, y, measures.getCellWidth() - 1, measures.getCellHeight() - 1);
-      g2.setStroke(oldStroke);
-    }
-  }
-
-  public void removeChangeListener(ChangeListener l) {
-    listeners.remove(l);
-  }
-
-  public void setDot(long value, boolean keepMark) {
-    HexModel model = hex.getModel();
-    if (model == null || value < model.getFirstOffset() || value > model.getLastOffset()) {
-      value = -1;
-    }
-    if (cursor != value) {
-      long oldValue = cursor;
-      if (highlight != null) {
-        hex.getHighlighter().remove(highlight);
-        highlight = null;
-      }
-      if (!keepMark) {
-        mark = value;
-      } else if (mark != value) {
-        highlight = hex.getHighlighter().add(mark, value, SELECT_COLOR);
-      }
-      cursor = value;
-      expose(oldValue, false);
-      expose(value, true);
-      if (!listeners.isEmpty()) {
-        ChangeEvent event = new ChangeEvent(this);
-        for (ChangeListener l : listeners) {
-          l.stateChanged(event);
-        }
-      }
     }
   }
 }

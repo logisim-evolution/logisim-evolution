@@ -48,6 +48,94 @@ import java.util.Map;
 import java.util.Set;
 
 public class SelectionAttributes extends AbstractAttributeSet {
+  private final Selection selection;
+  private Listener listener;
+  private Map<AttributeSet, CanvasObject> selected;
+  private Attribute<?>[] selAttrs;
+  private Object[] selValues;
+  private List<Attribute<?>> attrsView;
+  public SelectionAttributes(Selection selection) {
+    this.selection = selection;
+    this.listener = new Listener();
+    this.selected = Collections.emptyMap();
+    this.selAttrs = new Attribute<?>[0];
+    this.selValues = new Object[0];
+    this.attrsView = Collections.unmodifiableList(Arrays.asList(selAttrs));
+
+    selection.addSelectionListener(listener);
+    listener.selectionChanged(null);
+  }
+
+  private static Object getSelectionValue(Attribute<?> attr, Set<AttributeSet> sel) {
+    Object ret = null;
+    for (AttributeSet attrs : sel) {
+      if (attrs.containsAttribute(attr)) {
+        Object val = attrs.getValue(attr);
+        if (ret == null) {
+          ret = val;
+        } else if (val != null && val.equals(ret)) {
+          ; // keep on, making sure everything else matches
+        } else {
+          return null;
+        }
+      }
+    }
+    return ret;
+  }
+
+  //
+  // AbstractAttributeSet methods
+  //
+  @Override
+  protected void copyInto(AbstractAttributeSet dest) {
+    listener = new Listener();
+    selection.addSelectionListener(listener);
+  }
+
+  public Iterable<Map.Entry<AttributeSet, CanvasObject>> entries() {
+    Set<Map.Entry<AttributeSet, CanvasObject>> raw = selected.entrySet();
+    List<Map.Entry<AttributeSet, CanvasObject>> ret;
+    ret = new ArrayList<Map.Entry<AttributeSet, CanvasObject>>(raw);
+    return ret;
+  }
+
+  @Override
+  public List<Attribute<?>> getAttributes() {
+    return attrsView;
+  }
+
+  @Override
+  public <V> V getValue(Attribute<V> attr) {
+    Attribute<?>[] attrs = this.selAttrs;
+    Object[] values = this.selValues;
+    for (int i = 0; i < attrs.length; i++) {
+      if (attrs[i] == attr) {
+        @SuppressWarnings("unchecked")
+        V ret = (V) values[i];
+        return ret;
+      }
+    }
+    return null;
+  }
+
+  @Override
+  public <V> void setValue(Attribute<V> attr, V value) {
+    Attribute<?>[] attrs = this.selAttrs;
+    Object[] values = this.selValues;
+    for (int i = 0; i < attrs.length; i++) {
+      if (attrs[i] == attr) {
+        boolean same = value == null ? values[i] == null : value.equals(values[i]);
+        if (!same) {
+          values[i] = value;
+          for (AttributeSet objAttrs : selected.keySet()) {
+            objAttrs.setValue(attr, value);
+          }
+        }
+        break;
+      }
+    }
+  }
+
   private class Listener implements SelectionListener, AttributeListener {
     //
     // AttributeSet listener
@@ -128,96 +216,6 @@ public class SelectionAttributes extends AbstractAttributeSet {
       if (change) {
         computeAttributeList(newSel.keySet());
         fireAttributeListChanged();
-      }
-    }
-  }
-
-  private static Object getSelectionValue(Attribute<?> attr, Set<AttributeSet> sel) {
-    Object ret = null;
-    for (AttributeSet attrs : sel) {
-      if (attrs.containsAttribute(attr)) {
-        Object val = attrs.getValue(attr);
-        if (ret == null) {
-          ret = val;
-        } else if (val != null
-            && val.equals(ret)) {; // keep on, making sure everything else matches
-        } else {
-          return null;
-        }
-      }
-    }
-    return ret;
-  }
-
-  private final Selection selection;
-  private Listener listener;
-  private Map<AttributeSet, CanvasObject> selected;
-  private Attribute<?>[] selAttrs;
-  private Object[] selValues;
-
-  private List<Attribute<?>> attrsView;
-
-  public SelectionAttributes(Selection selection) {
-    this.selection = selection;
-    this.listener = new Listener();
-    this.selected = Collections.emptyMap();
-    this.selAttrs = new Attribute<?>[0];
-    this.selValues = new Object[0];
-    this.attrsView = Collections.unmodifiableList(Arrays.asList(selAttrs));
-
-    selection.addSelectionListener(listener);
-    listener.selectionChanged(null);
-  }
-
-  //
-  // AbstractAttributeSet methods
-  //
-  @Override
-  protected void copyInto(AbstractAttributeSet dest) {
-    listener = new Listener();
-    selection.addSelectionListener(listener);
-  }
-
-  public Iterable<Map.Entry<AttributeSet, CanvasObject>> entries() {
-    Set<Map.Entry<AttributeSet, CanvasObject>> raw = selected.entrySet();
-    List<Map.Entry<AttributeSet, CanvasObject>> ret;
-    ret = new ArrayList<Map.Entry<AttributeSet, CanvasObject>>(raw);
-    return ret;
-  }
-
-  @Override
-  public List<Attribute<?>> getAttributes() {
-    return attrsView;
-  }
-
-  @Override
-  public <V> V getValue(Attribute<V> attr) {
-    Attribute<?>[] attrs = this.selAttrs;
-    Object[] values = this.selValues;
-    for (int i = 0; i < attrs.length; i++) {
-      if (attrs[i] == attr) {
-        @SuppressWarnings("unchecked")
-        V ret = (V) values[i];
-        return ret;
-      }
-    }
-    return null;
-  }
-
-  @Override
-  public <V> void setValue(Attribute<V> attr, V value) {
-    Attribute<?>[] attrs = this.selAttrs;
-    Object[] values = this.selValues;
-    for (int i = 0; i < attrs.length; i++) {
-      if (attrs[i] == attr) {
-        boolean same = value == null ? values[i] == null : value.equals(values[i]);
-        if (!same) {
-          values[i] = value;
-          for (AttributeSet objAttrs : selected.keySet()) {
-            objAttrs.setValue(attr, value);
-          }
-        }
-        break;
       }
     }
   }

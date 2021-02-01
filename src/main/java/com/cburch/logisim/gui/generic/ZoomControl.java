@@ -60,6 +60,150 @@ import javax.swing.JSlider;
 import javax.swing.SwingConstants;
 
 public class ZoomControl extends JPanel implements LocaleListener {
+  private static final long serialVersionUID = 1L;
+  private final ZoomLabel label;
+  private final JSlider slider;
+  private final JLabel zoomText;
+  private final GridIcon grid;
+  private final Canvas canvas;
+  private final JButton plus;
+  private final JButton minus;
+  public AutoZoomButton ZoomButton;
+  public ResetZoomButton ResetButton;
+  private ZoomModel model;
+  private SliderModel sliderModel;
+
+  public ZoomControl(ZoomModel model, Canvas canvas) {
+    super(new BorderLayout());
+    this.model = model;
+    this.canvas = canvas;
+
+    label = new ZoomLabel();
+    sliderModel = new SliderModel(model);
+
+    plus = new ZoomButton(new ZoomIcon(ZoomIcon.ZOOMIN), false);
+    minus = new ZoomButton(new ZoomIcon(ZoomIcon.ZOOMOUT), true);
+    slider = new JSlider(sliderModel);
+
+    JPanel zoom = new JPanel(new BorderLayout());
+    zoom.add(minus, BorderLayout.WEST);
+    zoom.add(label, BorderLayout.CENTER);
+    zoom.add(plus, BorderLayout.EAST);
+    zoom.add(slider, BorderLayout.SOUTH);
+    zoomText = new JLabel(S.get("ZoomText"), SwingConstants.CENTER);
+    zoom.add(zoomText, BorderLayout.NORTH);
+
+    this.add(zoom, BorderLayout.NORTH);
+
+    grid = new GridIcon();
+    this.add(grid, BorderLayout.EAST);
+    grid.update();
+
+    ZoomButton = new AutoZoomButton(model);
+    this.add(ZoomButton, BorderLayout.WEST);
+
+    ResetButton = new ResetZoomButton(model);
+    this.add(ResetButton, BorderLayout.CENTER);
+
+    model.addPropertyChangeListener(ZoomModel.SHOW_GRID, grid);
+    model.addPropertyChangeListener(ZoomModel.ZOOM, sliderModel);
+    model.addPropertyChangeListener(ZoomModel.ZOOM, label);
+    LocaleManager.addLocaleListener(this);
+  }
+
+  private int nearestZoomOption() {
+    double[] choices = model.getZoomOptions();
+    double factor = model.getZoomFactor() * 100.0;
+    int closest = 0;
+    for (int i = 1; i < choices.length; i++) {
+      if (Math.abs(choices[i] - factor) < Math.abs(choices[closest] - factor)) closest = i;
+    }
+    return closest;
+  }
+
+  public String zoomString() {
+    double factor = model.getZoomFactor();
+    return String.format("%.0f%%", factor * 100.0);
+  }
+
+  public void zoomIn() {
+    double zoom = model.getZoomFactor();
+    double[] choices = model.getZoomOptions();
+    double factor = zoom * 100.0 * 1.001;
+    for (double choice : choices) {
+      if (choice > factor) {
+        model.setZoomFactor(choice / 100.0);
+        return;
+      }
+    }
+  }
+
+  public void zoomOut() {
+    double zoom = model.getZoomFactor();
+    double[] choices = model.getZoomOptions();
+    double factor = zoom * 100.0 * 0.999;
+    for (int i = choices.length - 1; i >= 0; i--) {
+      if (choices[i] < factor) {
+        model.setZoomFactor(choices[i] / 100.0);
+        return;
+      }
+    }
+  }
+
+  public void zoomTo(int i) {
+    double[] choices = model.getZoomOptions();
+    i = Math.max(Math.min(i, choices.length - 1), 0);
+    model.setZoomFactor(choices[i] / 100.0);
+  }
+
+  public void setAutoZoomButtonEnabled(boolean val) {
+    ZoomButton.setEnabled(val);
+    ResetButton.setEnabled(val);
+  }
+
+  public void setZoomModel(ZoomModel value) {
+    ZoomModel oldModel = model;
+    if (oldModel != value) {
+      if (oldModel != null) {
+        oldModel.removePropertyChangeListener(ZoomModel.SHOW_GRID, grid);
+        oldModel.removePropertyChangeListener(ZoomModel.ZOOM, sliderModel);
+        oldModel.removePropertyChangeListener(ZoomModel.ZOOM, label);
+      }
+      model = value;
+      if (value == null) {
+        slider.setEnabled(false);
+        ZoomButton.setEnabled(false);
+        ResetButton.setEnabled(false);
+        label.setEnabled(false);
+        plus.setEnabled(false);
+        minus.setEnabled(false);
+        zoomText.setEnabled(false);
+      } else {
+        slider.setEnabled(true);
+        ZoomButton.setEnabled(true);
+        ResetButton.setEnabled(true);
+        label.setEnabled(true);
+        plus.setEnabled(true);
+        minus.setEnabled(true);
+        zoomText.setEnabled(true);
+        sliderModel = new SliderModel(model);
+        slider.setModel(sliderModel);
+        grid.update();
+        ZoomButton.SetZoomModel(value);
+        ResetButton.SetZoomModel(value);
+        value.addPropertyChangeListener(ZoomModel.SHOW_GRID, grid);
+        value.addPropertyChangeListener(ZoomModel.ZOOM, sliderModel);
+        value.addPropertyChangeListener(ZoomModel.ZOOM, label);
+        label.setText(zoomString());
+      }
+    }
+  }
+
+  @Override
+  public void localeChanged() {
+    zoomText.setText(S.get("ZoomText"));
+  }
+
   private class GridIcon extends JComponent implements MouseListener, PropertyChangeListener {
     private static final long serialVersionUID = 1L;
     boolean state = true;
@@ -143,27 +287,17 @@ public class ZoomControl extends JPanel implements LocaleListener {
       super(nearestZoomOption(), 0, 0, model.getZoomOptions().length - 1);
     }
 
-    public void setValue(int i) {
-      zoomTo(i);
-    }
-
     public int getValue() {
       return nearestZoomOption();
+    }
+
+    public void setValue(int i) {
+      zoomTo(i);
     }
 
     public void propertyChange(PropertyChangeEvent evt) {
       fireStateChanged();
     }
-  }
-
-  private int nearestZoomOption() {
-    double[] choices = model.getZoomOptions();
-    double factor = model.getZoomFactor() * 100.0;
-    int closest = 0;
-    for (int i = 1; i < choices.length; i++) {
-      if (Math.abs(choices[i] - factor) < Math.abs(choices[closest] - factor)) closest = i;
-    }
-    return closest;
   }
 
   private class ZoomButton extends JButton {
@@ -201,41 +335,6 @@ public class ZoomControl extends JPanel implements LocaleListener {
     }
   }
 
-  public String zoomString() {
-    double factor = model.getZoomFactor();
-    return String.format("%.0f%%", factor * 100.0);
-  }
-
-  public void zoomIn() {
-    double zoom = model.getZoomFactor();
-    double[] choices = model.getZoomOptions();
-    double factor = zoom * 100.0 * 1.001;
-    for (double choice : choices) {
-      if (choice > factor) {
-        model.setZoomFactor(choice / 100.0);
-        return;
-      }
-    }
-  }
-
-  public void zoomOut() {
-    double zoom = model.getZoomFactor();
-    double[] choices = model.getZoomOptions();
-    double factor = zoom * 100.0 * 0.999;
-    for (int i = choices.length - 1; i >= 0; i--) {
-      if (choices[i] < factor) {
-        model.setZoomFactor(choices[i] / 100.0);
-        return;
-      }
-    }
-  }
-
-  public void zoomTo(int i) {
-    double[] choices = model.getZoomOptions();
-    i = Math.max(Math.min(i, choices.length - 1), 0);
-    model.setZoomFactor(choices[i] / 100.0);
-  }
-
   private class ZoomLabel extends JLabel implements PropertyChangeListener {
     private static final long serialVersionUID = 1L;
 
@@ -253,10 +352,9 @@ public class ZoomControl extends JPanel implements LocaleListener {
   }
 
   public class AutoZoomButton extends JButton implements ActionListener {
-    private ZoomModel MyZoom;
-
     /** */
     private static final long serialVersionUID = 1L;
+    private ZoomModel MyZoom;
 
     public AutoZoomButton(ZoomModel model) {
       MyZoom = model;
@@ -289,8 +387,10 @@ public class ZoomControl extends JPanel implements LocaleListener {
         double height = (bounds.getHeight() + 2 * padding) * ZoomFactor;
         double width = (bounds.getWidth() + 2 * padding) * ZoomFactor;
         double autozoom = ZoomFactor;
-        autozoom *= Math.min(canvasPane.getViewport().getSize().getWidth() / width,
-            canvasPane.getViewport().getSize().getHeight() / height);
+        autozoom *=
+            Math.min(
+                canvasPane.getViewport().getSize().getWidth() / width,
+                canvasPane.getViewport().getSize().getHeight() / height);
         double max = MyZoom.getZoomOptions()[MyZoom.getZoomOptions().length - 1] / 100.0;
         double min = MyZoom.getZoomOptions()[0] / 100.0;
         if (autozoom > max) autozoom = max;
@@ -303,10 +403,9 @@ public class ZoomControl extends JPanel implements LocaleListener {
   }
 
   public class ResetZoomButton extends JButton implements ActionListener {
-    private ZoomModel MyZoom;
-
     /** */
     private static final long serialVersionUID = 1L;
+    private ZoomModel MyZoom;
 
     public ResetZoomButton(ZoomModel model) {
       MyZoom = model;
@@ -324,105 +423,5 @@ public class ZoomControl extends JPanel implements LocaleListener {
         MyZoom.setZoomFactor(1.0);
       }
     }
-  }
-
-  private static final long serialVersionUID = 1L;
-
-  private ZoomModel model;
-  private final ZoomLabel label;
-  private SliderModel sliderModel;
-  private final JSlider slider;
-  public AutoZoomButton ZoomButton;
-  public ResetZoomButton ResetButton;
-  private final JLabel zoomText;
-  private final GridIcon grid;
-  private final Canvas canvas;
-  private final JButton plus;
-  private final JButton minus;
-
-  public ZoomControl(ZoomModel model, Canvas canvas) {
-    super(new BorderLayout());
-    this.model = model;
-    this.canvas = canvas;
-
-    label = new ZoomLabel();
-    sliderModel = new SliderModel(model);
-
-    plus = new ZoomButton(new ZoomIcon(ZoomIcon.ZOOMIN), false);
-    minus = new ZoomButton(new ZoomIcon(ZoomIcon.ZOOMOUT), true);
-    slider = new JSlider(sliderModel);
-
-    JPanel zoom = new JPanel(new BorderLayout());
-    zoom.add(minus, BorderLayout.WEST);
-    zoom.add(label, BorderLayout.CENTER);
-    zoom.add(plus, BorderLayout.EAST);
-    zoom.add(slider, BorderLayout.SOUTH);
-    zoomText = new JLabel(S.get("ZoomText"), SwingConstants.CENTER);
-    zoom.add(zoomText, BorderLayout.NORTH);
-
-    this.add(zoom, BorderLayout.NORTH);
-
-    grid = new GridIcon();
-    this.add(grid, BorderLayout.EAST);
-    grid.update();
-
-    ZoomButton = new AutoZoomButton(model);
-    this.add(ZoomButton, BorderLayout.WEST);
-
-    ResetButton = new ResetZoomButton(model);
-    this.add(ResetButton, BorderLayout.CENTER);
-
-    model.addPropertyChangeListener(ZoomModel.SHOW_GRID, grid);
-    model.addPropertyChangeListener(ZoomModel.ZOOM, sliderModel);
-    model.addPropertyChangeListener(ZoomModel.ZOOM, label);
-    LocaleManager.addLocaleListener(this);
-  }
-
-  public void setAutoZoomButtonEnabled(boolean val) {
-    ZoomButton.setEnabled(val);
-    ResetButton.setEnabled(val);
-  }
-
-  public void setZoomModel(ZoomModel value) {
-    ZoomModel oldModel = model;
-    if (oldModel != value) {
-      if (oldModel != null) {
-        oldModel.removePropertyChangeListener(ZoomModel.SHOW_GRID, grid);
-        oldModel.removePropertyChangeListener(ZoomModel.ZOOM, sliderModel);
-        oldModel.removePropertyChangeListener(ZoomModel.ZOOM, label);
-      }
-      model = value;
-      if (value == null) {
-        slider.setEnabled(false);
-        ZoomButton.setEnabled(false);
-        ResetButton.setEnabled(false);
-        label.setEnabled(false);
-        plus.setEnabled(false);
-        minus.setEnabled(false);
-        zoomText.setEnabled(false);
-      } else {
-        slider.setEnabled(true);
-        ZoomButton.setEnabled(true);
-        ResetButton.setEnabled(true);
-        label.setEnabled(true);
-        plus.setEnabled(true);
-        minus.setEnabled(true);
-        zoomText.setEnabled(true);
-        sliderModel = new SliderModel(model);
-        slider.setModel(sliderModel);
-        grid.update();
-        ZoomButton.SetZoomModel(value);
-        ResetButton.SetZoomModel(value);
-        value.addPropertyChangeListener(ZoomModel.SHOW_GRID, grid);
-        value.addPropertyChangeListener(ZoomModel.ZOOM, sliderModel);
-        value.addPropertyChangeListener(ZoomModel.ZOOM, label);
-        label.setText(zoomString());
-      }
-    }
-  }
-
-  @Override
-  public void localeChanged() {
-    zoomText.setText(S.get("ZoomText"));
   }
 }

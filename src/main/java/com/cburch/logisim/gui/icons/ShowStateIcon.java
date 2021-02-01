@@ -28,20 +28,19 @@
 
 package com.cburch.logisim.gui.icons;
 
+import com.cburch.logisim.prefs.AppPreferences;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.font.TextLayout;
 
-import com.cburch.logisim.prefs.AppPreferences;
-
 public class ShowStateIcon extends AnnimatedIcon {
 
   private final boolean pressed;
   private int state;
-  
-  public ShowStateIcon( boolean pressed ) {
+
+  public ShowStateIcon(boolean pressed) {
     this.pressed = pressed;
     state = 5;
   }
@@ -54,34 +53,35 @@ public class ShowStateIcon extends AnnimatedIcon {
       g2.fillRect(0, 0, getIconWidth(), getIconHeight());
     }
     g2.setColor(Color.BLACK);
-    g2.drawRect(0, 0, getIconWidth(), getIconHeight()/2);
-    Font f = g2.getFont().deriveFont((float)getIconWidth()/(float)2);
+    g2.drawRect(0, 0, getIconWidth(), getIconHeight() / 2);
+    Font f = g2.getFont().deriveFont((float) getIconWidth() / (float) 2);
     String str = Integer.toBinaryString(state);
-    while (str.length()<3) {
-    	str = "0"+str;
+    while (str.length() < 3) {
+      str = "0" + str;
     }
-    TextLayout l = new TextLayout(str,f,g2.getFontRenderContext());
-    l.draw(g2, (float)((double)getIconWidth()/2.0-l.getBounds().getCenterX()), 
-    		(float)((double)getIconHeight()/4.0-l.getBounds().getCenterY()));
-    int wh = AppPreferences.getScaled(AppPreferences.IconSize/2-AppPreferences.IconBorder);
+    TextLayout l = new TextLayout(str, f, g2.getFontRenderContext());
+    l.draw(
+        g2,
+        (float) ((double) getIconWidth() / 2.0 - l.getBounds().getCenterX()),
+        (float) ((double) getIconHeight() / 4.0 - l.getBounds().getCenterY()));
+    int wh = AppPreferences.getScaled(AppPreferences.IconSize / 2 - AppPreferences.IconBorder);
     int offset = AppPreferences.getScaled(AppPreferences.IconBorder);
-    g2.setColor((state&4) != 0 ? Color.RED : Color.DARK_GRAY);
-    g2.fillOval(offset, offset+getIconHeight()/2, wh, wh);
-    g2.setColor((state&1) != 0 ? Color.GREEN : Color.DARK_GRAY);
-    g2.fillOval(offset+getIconWidth()/2, offset+getIconHeight()/2, wh, wh);
+    g2.setColor((state & 4) != 0 ? Color.RED : Color.DARK_GRAY);
+    g2.fillOval(offset, offset + getIconHeight() / 2, wh, wh);
+    g2.setColor((state & 1) != 0 ? Color.GREEN : Color.DARK_GRAY);
+    g2.fillOval(offset + getIconWidth() / 2, offset + getIconHeight() / 2, wh, wh);
     g2.setColor(Color.BLACK);
-    g2.drawOval(offset, offset+getIconHeight()/2, wh, wh);
-    g2.drawOval(offset+getIconWidth()/2, offset+getIconHeight()/2, wh, wh);
+    g2.drawOval(offset, offset + getIconHeight() / 2, wh, wh);
+    g2.drawOval(offset + getIconWidth() / 2, offset + getIconHeight() / 2, wh, wh);
   }
 
   @Override
   public void annimationUpdate() {
-    state = (state+1)&7;
+    state = (state + 1) & 7;
   }
 
   @Override
   public void resetToStatic() {
     state = 5;
   }
-
 }

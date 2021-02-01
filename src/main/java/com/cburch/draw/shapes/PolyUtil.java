@@ -32,28 +32,7 @@ import com.cburch.draw.model.Handle;
 import com.cburch.logisim.data.Location;
 
 public class PolyUtil {
-  public static class ClosestResult {
-    private double dist;
-    private Location loc;
-    private Handle prevHandle;
-    private Handle nextHandle;
-
-    public double getDistanceSq() {
-      return dist;
-    }
-
-    public Location getLocation() {
-      return loc;
-    }
-
-    public Handle getNextHandle() {
-      return nextHandle;
-    }
-
-    public Handle getPreviousHandle() {
-      return prevHandle;
-    }
-  }
+  private PolyUtil() {}
 
   public static ClosestResult getClosestPoint(Location loc, boolean closed, Handle[] hs) {
     int xq = loc.getX();
@@ -91,5 +70,26 @@ public class PolyUtil {
     }
   }
 
-  private PolyUtil() {}
+  public static class ClosestResult {
+    private double dist;
+    private Location loc;
+    private Handle prevHandle;
+    private Handle nextHandle;
+
+    public double getDistanceSq() {
+      return dist;
+    }
+
+    public Location getLocation() {
+      return loc;
+    }
+
+    public Handle getNextHandle() {
+      return nextHandle;
+    }
+
+    public Handle getPreviousHandle() {
+      return prevHandle;
+    }
+  }
 }

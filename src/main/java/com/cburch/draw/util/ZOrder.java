@@ -41,6 +41,8 @@ import java.util.Map;
 import java.util.Set;
 
 public class ZOrder {
+  private ZOrder() {}
+
   private static int getIndex(CanvasObject query, List<CanvasObject> objs) {
     int index = -1;
     for (CanvasObject o : objs) {
@@ -136,6 +138,4 @@ public class ZOrder {
       return new HashSet<E>(objects);
     }
   }
-
-  private ZOrder() {}
 }

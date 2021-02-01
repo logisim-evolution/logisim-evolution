@@ -41,18 +41,18 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 public class RoundRectangle extends Rectangular {
-  private static boolean inCircle(int qx, int qy, int cx, int cy, int rx, int ry) {
-    double dx = qx - cx;
-    double dy = qy - cy;
-    double sum = (dx * dx) / (4 * rx * rx) + (dy * dy) / (4 * ry * ry);
-    return sum <= 0.25;
-  }
-
   private int radius;
 
   public RoundRectangle(int x, int y, int w, int h) {
     super(x, y, w, h);
     this.radius = 10;
+  }
+
+  private static boolean inCircle(int qx, int qy, int cx, int cy, int rx, int ry) {
+    double dx = qx - cx;
+    double dy = qy - cy;
+    double sum = (dx * dx) / (4 * rx * rx) + (dy * dy) / (4 * ry * ry);
+    return sum <= 0.25;
   }
 
   @Override

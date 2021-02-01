@@ -31,18 +31,32 @@ package com.cburch.logisim.gui.menu;
 import java.awt.event.ActionEvent;
 
 public abstract class EditHandler {
-  public void cut() { }
-  public void copy() { }
-  public void paste() { }
-  public void delete() { }
-  public void duplicate() { }
-  public void selectAll() { }
-  public void raise() { }
-  public void lower() { }
-  public void raiseTop() { }
-  public void lowerBottom() { }
-  public void addControlPoint() { }
-  public void removeControlPoint() { }
+  private Listener listener;
+
+  public void cut() {}
+
+  public void copy() {}
+
+  public void paste() {}
+
+  public void delete() {}
+
+  public void duplicate() {}
+
+  public void selectAll() {}
+
+  public void raise() {}
+
+  public void lower() {}
+
+  public void raiseTop() {}
+
+  public void lowerBottom() {}
+
+  public void addControlPoint() {}
+
+  public void removeControlPoint() {}
+
   public abstract void computeEnabled();
 
   protected void setEnabled(LogisimMenuItem action, boolean value) {
@@ -52,41 +66,27 @@ public abstract class EditHandler {
     }
   }
 
-  public static interface Listener {
-    void enableChanged(EditHandler handler, LogisimMenuItem action, boolean value);
-  }
-
-  private Listener listener;
-
   public void setListener(Listener listener) {
     this.listener = listener;
   }
-  
+
   public void actionPerformed(ActionEvent e) {
     Object src = e.getSource();
-    if (src == LogisimMenuBar.CUT)
-      cut();
-    else if (src == LogisimMenuBar.COPY)
-      copy();
-    else if (src == LogisimMenuBar.PASTE)
-      paste();
-    else if (src == LogisimMenuBar.DELETE)
-      delete();
-    else if (src == LogisimMenuBar.DUPLICATE)
-      duplicate();
-    else if (src == LogisimMenuBar.SELECT_ALL)
-      selectAll();
-    else if (src == LogisimMenuBar.RAISE)
-      raise();
-    else if (src == LogisimMenuBar.LOWER)
-      lower();
-    else if (src == LogisimMenuBar.RAISE_TOP)
-      raiseTop();
-    else if (src == LogisimMenuBar.LOWER_BOTTOM)
-      lowerBottom();
-    else if (src == LogisimMenuBar.ADD_CONTROL)
-      addControlPoint();
-    else if (src == LogisimMenuBar.REMOVE_CONTROL)
-      removeControlPoint();
+    if (src == LogisimMenuBar.CUT) cut();
+    else if (src == LogisimMenuBar.COPY) copy();
+    else if (src == LogisimMenuBar.PASTE) paste();
+    else if (src == LogisimMenuBar.DELETE) delete();
+    else if (src == LogisimMenuBar.DUPLICATE) duplicate();
+    else if (src == LogisimMenuBar.SELECT_ALL) selectAll();
+    else if (src == LogisimMenuBar.RAISE) raise();
+    else if (src == LogisimMenuBar.LOWER) lower();
+    else if (src == LogisimMenuBar.RAISE_TOP) raiseTop();
+    else if (src == LogisimMenuBar.LOWER_BOTTOM) lowerBottom();
+    else if (src == LogisimMenuBar.ADD_CONTROL) addControlPoint();
+    else if (src == LogisimMenuBar.REMOVE_CONTROL) removeControlPoint();
+  }
+
+  public static interface Listener {
+    void enableChanged(EditHandler handler, LogisimMenuItem action, boolean value);
   }
 }

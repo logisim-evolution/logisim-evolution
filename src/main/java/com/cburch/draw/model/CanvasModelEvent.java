@@ -39,6 +39,108 @@ import java.util.Map;
 import java.util.Set;
 
 public class CanvasModelEvent extends EventObject {
+  public static final int ACTION_ADDED = 0;
+  public static final int ACTION_REMOVED = 1;
+  public static final int ACTION_TRANSLATED = 2;
+  public static final int ACTION_REORDERED = 3;
+  public static final int ACTION_HANDLE_MOVED = 4;
+  public static final int ACTION_HANDLE_INSERTED = 5;
+  public static final int ACTION_HANDLE_DELETED = 6;
+  public static final int ACTION_ATTRIBUTES_CHANGED = 7;
+  public static final int ACTION_TEXT_CHANGED = 8;
+  private static final long serialVersionUID = 1L;
+  private final int action;
+  private Collection<? extends CanvasObject> affected;
+  private int deltaX;
+  private int deltaY;
+  private Map<AttributeMapKey, Object> oldValues;
+  private Map<AttributeMapKey, Object> newValues;
+  private Collection<ReorderRequest> reorderRequests;
+  private Handle handle;
+  private HandleGesture gesture;
+  private String oldText;
+  private String newText;
+  // the boolean parameter is just because the compiler insists upon it to
+  // avoid an erasure conflict with the first constructor
+  private CanvasModelEvent(
+      boolean dummy, CanvasModel source, int action, Collection<ReorderRequest> requests) {
+    this(source, action, Collections.<CanvasObject>emptySet());
+
+    List<CanvasObject> affected;
+    affected = new ArrayList<CanvasObject>(requests.size());
+    for (ReorderRequest r : requests) {
+      affected.add(r.getObject());
+    }
+    this.affected = affected;
+
+    this.reorderRequests = Collections.unmodifiableCollection(requests);
+  }
+  private CanvasModelEvent(
+      CanvasModel source, int action, Collection<? extends CanvasObject> affected) {
+    super(source);
+
+    this.action = action;
+    this.affected = affected;
+    this.deltaX = 0;
+    this.deltaY = 0;
+    this.oldValues = null;
+    this.newValues = null;
+    this.reorderRequests = null;
+    this.handle = null;
+    this.gesture = null;
+    this.oldText = null;
+    this.newText = null;
+  }
+  private CanvasModelEvent(
+      CanvasModel source, int action, Collection<? extends CanvasObject> affected, int dx, int dy) {
+    this(source, action, affected);
+
+    this.deltaX = dx;
+    this.deltaY = dy;
+  }
+  private CanvasModelEvent(
+      CanvasModel source,
+      int action,
+      Collection<? extends CanvasObject> affected,
+      String oldText,
+      String newText) {
+    this(source, action, affected);
+    this.oldText = oldText;
+    this.newText = newText;
+  }
+  private CanvasModelEvent(CanvasModel source, int action, Handle handle) {
+    this(source, action, Collections.singleton(handle.getObject()));
+
+    this.handle = handle;
+  }
+  private CanvasModelEvent(CanvasModel source, int action, HandleGesture gesture) {
+    this(source, action, gesture.getHandle());
+
+    this.gesture = gesture;
+  }
+  private CanvasModelEvent(
+      CanvasModel source,
+      int action,
+      Map<AttributeMapKey, Object> oldValues,
+      Map<AttributeMapKey, Object> newValues) {
+    this(source, action, Collections.<CanvasObject>emptySet());
+
+    Set<CanvasObject> affected;
+    affected = new HashSet<CanvasObject>(newValues.size());
+    for (AttributeMapKey key : newValues.keySet()) {
+      affected.add(key.getObject());
+    }
+    this.affected = affected;
+
+    Map<AttributeMapKey, Object> oldValuesCopy;
+    oldValuesCopy = new HashMap<AttributeMapKey, Object>(oldValues);
+    Map<AttributeMapKey, Object> newValuesCopy;
+    newValuesCopy = new HashMap<AttributeMapKey, Object>(newValues);
+
+    this.oldValues = Collections.unmodifiableMap(oldValuesCopy);
+    this.newValues = Collections.unmodifiableMap(newValuesCopy);
+  }
+
   public static CanvasModelEvent forAdd(
       CanvasModel source, Collection<? extends CanvasObject> affected) {
     return new CanvasModelEvent(source, ACTION_ADDED, affected);
@@ -82,125 +184,6 @@ public class CanvasModelEvent extends EventObject {
   public static CanvasModelEvent forTranslate(
       CanvasModel source, Collection<? extends CanvasObject> affected, int dx, int dy) {
     return new CanvasModelEvent(source, ACTION_TRANSLATED, affected, 0, 0);
-  }
-
-  private static final long serialVersionUID = 1L;
-
-  public static final int ACTION_ADDED = 0;
-
-  public static final int ACTION_REMOVED = 1;
-
-  public static final int ACTION_TRANSLATED = 2;
-
-  public static final int ACTION_REORDERED = 3;
-
-  public static final int ACTION_HANDLE_MOVED = 4;
-
-  public static final int ACTION_HANDLE_INSERTED = 5;
-
-  public static final int ACTION_HANDLE_DELETED = 6;
-
-  public static final int ACTION_ATTRIBUTES_CHANGED = 7;
-
-  public static final int ACTION_TEXT_CHANGED = 8;
-
-  private final int action;
-  private Collection<? extends CanvasObject> affected;
-  private int deltaX;
-  private int deltaY;
-  private Map<AttributeMapKey, Object> oldValues;
-  private Map<AttributeMapKey, Object> newValues;
-  private Collection<ReorderRequest> reorderRequests;
-  private Handle handle;
-  private HandleGesture gesture;
-  private String oldText;
-  private String newText;
-
-  // the boolean parameter is just because the compiler insists upon it to
-  // avoid an erasure conflict with the first constructor
-  private CanvasModelEvent(
-      boolean dummy, CanvasModel source, int action, Collection<ReorderRequest> requests) {
-    this(source, action, Collections.<CanvasObject>emptySet());
-
-    List<CanvasObject> affected;
-    affected = new ArrayList<CanvasObject>(requests.size());
-    for (ReorderRequest r : requests) {
-      affected.add(r.getObject());
-    }
-    this.affected = affected;
-
-    this.reorderRequests = Collections.unmodifiableCollection(requests);
-  }
-
-  private CanvasModelEvent(
-      CanvasModel source, int action, Collection<? extends CanvasObject> affected) {
-    super(source);
-
-    this.action = action;
-    this.affected = affected;
-    this.deltaX = 0;
-    this.deltaY = 0;
-    this.oldValues = null;
-    this.newValues = null;
-    this.reorderRequests = null;
-    this.handle = null;
-    this.gesture = null;
-    this.oldText = null;
-    this.newText = null;
-  }
-
-  private CanvasModelEvent(
-      CanvasModel source, int action, Collection<? extends CanvasObject> affected, int dx, int dy) {
-    this(source, action, affected);
-
-    this.deltaX = dx;
-    this.deltaY = dy;
-  }
-
-  private CanvasModelEvent(
-      CanvasModel source,
-      int action,
-      Collection<? extends CanvasObject> affected,
-      String oldText,
-      String newText) {
-    this(source, action, affected);
-    this.oldText = oldText;
-    this.newText = newText;
-  }
-
-  private CanvasModelEvent(CanvasModel source, int action, Handle handle) {
-    this(source, action, Collections.singleton(handle.getObject()));
-
-    this.handle = handle;
-  }
-
-  private CanvasModelEvent(CanvasModel source, int action, HandleGesture gesture) {
-    this(source, action, gesture.getHandle());
-
-    this.gesture = gesture;
-  }
-
-  private CanvasModelEvent(
-      CanvasModel source,
-      int action,
-      Map<AttributeMapKey, Object> oldValues,
-      Map<AttributeMapKey, Object> newValues) {
-    this(source, action, Collections.<CanvasObject>emptySet());
-
-    Set<CanvasObject> affected;
-    affected = new HashSet<CanvasObject>(newValues.size());
-    for (AttributeMapKey key : newValues.keySet()) {
-      affected.add(key.getObject());
-    }
-    this.affected = affected;
-
-    Map<AttributeMapKey, Object> oldValuesCopy;
-    oldValuesCopy = new HashMap<AttributeMapKey, Object>(oldValues);
-    Map<AttributeMapKey, Object> newValuesCopy;
-    newValuesCopy = new HashMap<AttributeMapKey, Object>(newValues);
-
-    this.oldValues = Collections.unmodifiableMap(oldValuesCopy);
-    this.newValues = Collections.unmodifiableMap(newValuesCopy);
   }
 
   public int getAction() {

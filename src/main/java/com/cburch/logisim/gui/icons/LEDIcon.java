@@ -28,30 +28,30 @@
 
 package com.cburch.logisim.gui.icons;
 
+import com.cburch.logisim.prefs.AppPreferences;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
-
-import com.cburch.logisim.prefs.AppPreferences;
 
 public class LEDIcon extends AnnimatedIcon {
 
   private final boolean isRGB;
   private int showstate;
-  
+
   public LEDIcon(boolean RGB) {
     super();
     isRGB = RGB;
     showstate = -1;
   }
+
   @Override
   protected void paintIcon(Graphics2D g2) {
     int xy = AppPreferences.getScaled(2);
     int wh = AppPreferences.getScaled(12);
-    int r = (showstate&1) == 1 ? 255 : 0;
-    int g = (showstate&2) == 2 ? 255 : 0;
-    int b = (showstate&4) == 4 ? 255 : 0;
-    Color c = (showstate >= 0) ? new Color(r,g,b) : Color.RED;
+    int r = (showstate & 1) == 1 ? 255 : 0;
+    int g = (showstate & 2) == 2 ? 255 : 0;
+    int b = (showstate & 4) == 4 ? 255 : 0;
+    Color c = (showstate >= 0) ? new Color(r, g, b) : Color.RED;
     g2.setColor(c);
     g2.fillOval(xy, xy, wh, wh);
     if (isRGB && showstate < 0) {
@@ -67,13 +67,12 @@ public class LEDIcon extends AnnimatedIcon {
 
   @Override
   public void annimationUpdate() {
-      showstate++;
-      showstate %= isRGB ? 8:2;
+    showstate++;
+    showstate %= isRGB ? 8 : 2;
   }
 
   @Override
   public void resetToStatic() {
     showstate = -1;
   }
-
 }

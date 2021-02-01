@@ -54,6 +54,81 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 public class HexFrame extends LFrame {
+  private static final long serialVersionUID = 1L;
+  private final WindowMenuManager windowManager = new WindowMenuManager();
+  private final EditListener editListener = new EditListener();
+  private final MyListener myListener = new MyListener();
+  private final HexModel model;
+  private final HexEditor editor;
+  private final JButton open = new JButton();
+  private final JButton save = new JButton();
+  private final JButton close = new JButton();
+  private final Instance instance;
+  private final Project proj;
+  public HexFrame(Project proj, Instance instance, HexModel model) {
+    super(false, proj);
+    setDefaultCloseOperation(HIDE_ON_CLOSE);
+
+    LogisimMenuBar menubar = new LogisimMenuBar(this, proj);
+    setJMenuBar(menubar);
+
+    this.model = model;
+    this.editor = new HexEditor(model);
+    this.instance = instance;
+    this.proj = proj;
+
+    JPanel buttonPanel = new JPanel();
+    buttonPanel.add(open);
+    buttonPanel.add(save);
+    buttonPanel.add(close);
+    open.addActionListener(myListener);
+    save.addActionListener(myListener);
+    close.addActionListener(myListener);
+
+    Dimension pref = editor.getPreferredSize();
+    JScrollPane scroll =
+        new JScrollPane(
+            editor, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+    pref.height = Math.min(pref.height, pref.width * 3 / 2);
+    scroll.setPreferredSize(pref);
+    scroll.getViewport().setBackground(editor.getBackground());
+
+    Container contents = getContentPane();
+    contents.add(scroll, BorderLayout.CENTER);
+    contents.add(buttonPanel, BorderLayout.SOUTH);
+
+    LocaleManager.addLocaleListener(myListener);
+    myListener.localeChanged();
+    pack();
+
+    Dimension size = getSize();
+    Dimension screen = getToolkit().getScreenSize();
+    if (size.width > screen.width || size.height > screen.height) {
+      size.width = Math.min(size.width, screen.width);
+      size.height = Math.min(size.height, screen.height);
+      setSize(size);
+    }
+
+    editor.getCaret().addChangeListener(editListener);
+    editor.getCaret().setDot(0, false);
+    editListener.register(menubar);
+    setLocationRelativeTo(proj.getFrame());
+  }
+
+  public void closeAndDispose() {
+    WindowEvent e = new WindowEvent(this, WindowEvent.WINDOW_CLOSING);
+    processWindowEvent(e);
+    dispose();
+  }
+
+  @Override
+  public void setVisible(boolean value) {
+    if (value && !isVisible()) {
+      windowManager.frameOpened(this);
+    }
+    super.setVisible(value);
+  }
+
   private class EditListener implements ActionListener, ChangeListener {
     private Clip clip = null;
 
@@ -106,9 +181,9 @@ public class HexFrame extends LFrame {
     public void actionPerformed(ActionEvent event) {
       Object src = event.getSource();
       if (src == open) {
-        HexFile.open((MemContents)model, HexFrame.this, proj, instance);
+        HexFile.open((MemContents) model, HexFrame.this, proj, instance);
       } else if (src == save) {
-        HexFile.save((MemContents)model, HexFrame.this, proj, instance);
+        HexFile.save((MemContents) model, HexFrame.this, proj, instance);
       } else if (src == close) {
         WindowEvent e = new WindowEvent(HexFrame.this, WindowEvent.WINDOW_CLOSING);
         HexFrame.this.processWindowEvent(e);
@@ -121,12 +196,6 @@ public class HexFrame extends LFrame {
       save.setText(S.get("saveButton"));
       close.setText(S.get("closeButton"));
     }
-  }
-  
-  public void closeAndDispose() {
-    WindowEvent e = new WindowEvent(this, WindowEvent.WINDOW_CLOSING);
-    processWindowEvent(e);
-    dispose();
   }
 
   private class WindowMenuManager extends WindowMenuItemManager implements LocaleListener {
@@ -143,76 +212,5 @@ public class HexFrame extends LFrame {
     public void localeChanged() {
       setText(S.get("hexFrameMenuItem"));
     }
-  }
-
-  private static final long serialVersionUID = 1L;
-
-  private final WindowMenuManager windowManager = new WindowMenuManager();
-  private final EditListener editListener = new EditListener();
-  private final MyListener myListener = new MyListener();
-  private final HexModel model;
-  private final HexEditor editor;
-  private final JButton open = new JButton();
-  private final JButton save = new JButton();
-  private final JButton close = new JButton();
-  private final Instance instance;
-  private final Project proj;
-
-  public HexFrame(Project proj, Instance instance, HexModel model) {
-	super(false,proj);
-	setDefaultCloseOperation(HIDE_ON_CLOSE);
-
-	LogisimMenuBar menubar = new LogisimMenuBar(this, proj);
-    setJMenuBar(menubar);
-    
-    this.model = model;
-    this.editor = new HexEditor(model);
-    this.instance = instance;
-    this.proj = proj;
-
-    JPanel buttonPanel = new JPanel();
-    buttonPanel.add(open);
-    buttonPanel.add(save);
-    buttonPanel.add(close);
-    open.addActionListener(myListener);
-    save.addActionListener(myListener);
-    close.addActionListener(myListener);
-
-    Dimension pref = editor.getPreferredSize();
-    JScrollPane scroll =
-        new JScrollPane(
-            editor, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-    pref.height = Math.min(pref.height, pref.width * 3 / 2);
-    scroll.setPreferredSize(pref);
-    scroll.getViewport().setBackground(editor.getBackground());
-
-    Container contents = getContentPane();
-    contents.add(scroll, BorderLayout.CENTER);
-    contents.add(buttonPanel, BorderLayout.SOUTH);
-
-    LocaleManager.addLocaleListener(myListener);
-    myListener.localeChanged();
-    pack();
-
-    Dimension size = getSize();
-    Dimension screen = getToolkit().getScreenSize();
-    if (size.width > screen.width || size.height > screen.height) {
-      size.width = Math.min(size.width, screen.width);
-      size.height = Math.min(size.height, screen.height);
-      setSize(size);
-    }
-
-    editor.getCaret().addChangeListener(editListener);
-    editor.getCaret().setDot(0, false);
-    editListener.register(menubar);
-    setLocationRelativeTo(proj.getFrame());
-  }
-
-  @Override
-  public void setVisible(boolean value) {
-    if (value && !isVisible()) {
-      windowManager.frameOpened(this);
-    }
-    super.setVisible(value);
   }
 }

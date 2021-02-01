@@ -63,8 +63,7 @@ public class ChronoData extends TreeMap<String, SignalData> {
     for (String s : splittedLine) {
       ArrayList<String> v = new ArrayList<String>();
       v.add(s);
-      if (s.equals("sysclk"))
-        sysclkFound = true;
+      if (s.equals("sysclk")) sysclkFound = true;
       rawData.add(v);
     }
 
@@ -156,6 +155,10 @@ public class ChronoData extends TreeMap<String, SignalData> {
     return mSignalOrder;
   }
 
+  public void setSignalOrder(ArrayList<String> order) {
+    mSignalOrder = new ArrayList<String>(order);
+  }
+
   /** Remove if the sysclk has 2 or more identical states */
   private void normalize() {
     try {
@@ -173,10 +176,6 @@ public class ChronoData extends TreeMap<String, SignalData> {
     } catch (Exception e) {
       e.printStackTrace();
     }
-  }
-
-  public void setSignalOrder(ArrayList<String> order) {
-    mSignalOrder = new ArrayList<String>(order);
   }
 
   /** In real time mode, if a bus is expanded we need to add the new data to every signal */

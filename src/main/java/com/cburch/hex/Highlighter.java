@@ -33,21 +33,8 @@ import java.awt.Graphics;
 import java.util.ArrayList;
 
 class Highlighter {
-  private static class Entry {
-    private final long start;
-    private final long end;
-    private final Color color;
-
-    Entry(long start, long end, Color color) {
-      this.start = start;
-      this.end = end;
-      this.color = color;
-    }
-  }
-
   private final HexEditor hex;
   private ArrayList<Entry> entries;
-
   Highlighter(HexEditor hex) {
     this.hex = hex;
     this.entries = new ArrayList<Entry>();
@@ -127,6 +114,18 @@ class Highlighter {
     if (entries.remove(tag)) {
       Entry entry = (Entry) tag;
       expose(entry);
+    }
+  }
+
+  private static class Entry {
+    private final long start;
+    private final long end;
+    private final Color color;
+
+    Entry(long start, long end, Color color) {
+      this.start = start;
+      this.end = end;
+      this.color = color;
     }
   }
 }

@@ -32,56 +32,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
-import com.cburch.logisim.gui.menu.LogisimMenuBar;
-import com.cburch.logisim.gui.menu.LogisimMenuItem;
-
 public class MenuListener {
-  protected class EditListener implements ActionListener, EditHandler.Listener {
-    private EditHandler handler = null;
-
-    public void actionPerformed(ActionEvent e) {
-      if (handler != null)
-        handler.actionPerformed(e);
-    }
-
-    public void enableChanged(EditHandler handler, LogisimMenuItem action, boolean value) {
-      if (handler == this.handler) {
-        menubar.setEnabled(action, value);
-        fireEnableChanged();
-      }
-    }
-
-    public void register() {
-      for (LogisimMenuItem item: LogisimMenuBar.EDIT_ITEMS)
-        menubar.addActionListener(item, this);
-      computeEnabled();
-    }
-
-    public void computeEnabled() {
-      if (handler != null) {
-        handler.computeEnabled();
-      } else {
-        for (LogisimMenuItem item: LogisimMenuBar.EDIT_ITEMS)
-          menubar.setEnabled(item, false);
-      }
-    }
-
-    private void setHandler(EditHandler value) {
-      handler = value;
-      if (handler != null)
-        handler.setListener(this);
-      computeEnabled();
-    }
-  }
-
-  public interface EnabledListener {
-    public void menuEnableChanged(MenuListener source);
-  }
-
   protected LogisimMenuBar menubar;
   protected ArrayList<EnabledListener> listeners;
   protected EditListener editListener = new EditListener();
-
   public MenuListener(LogisimMenuBar menubar) {
     this.menubar = menubar;
     this.listeners = new ArrayList<EnabledListener>();
@@ -115,5 +69,43 @@ public class MenuListener {
 
   public boolean isEnabled(LogisimMenuItem item) {
     return menubar.isEnabled(item);
+  }
+
+  public interface EnabledListener {
+    public void menuEnableChanged(MenuListener source);
+  }
+
+  protected class EditListener implements ActionListener, EditHandler.Listener {
+    private EditHandler handler = null;
+
+    public void actionPerformed(ActionEvent e) {
+      if (handler != null) handler.actionPerformed(e);
+    }
+
+    public void enableChanged(EditHandler handler, LogisimMenuItem action, boolean value) {
+      if (handler == this.handler) {
+        menubar.setEnabled(action, value);
+        fireEnableChanged();
+      }
+    }
+
+    public void register() {
+      for (LogisimMenuItem item : LogisimMenuBar.EDIT_ITEMS) menubar.addActionListener(item, this);
+      computeEnabled();
+    }
+
+    public void computeEnabled() {
+      if (handler != null) {
+        handler.computeEnabled();
+      } else {
+        for (LogisimMenuItem item : LogisimMenuBar.EDIT_ITEMS) menubar.setEnabled(item, false);
+      }
+    }
+
+    private void setHandler(EditHandler value) {
+      handler = value;
+      if (handler != null) handler.setListener(this);
+      computeEnabled();
+    }
   }
 }

@@ -48,6 +48,93 @@ import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
 class ComponentSelector extends JTree {
+  private static final long serialVersionUID = 1L;
+  private Model logModel;
+
+  public ComponentSelector(Model logModel) {
+    DefaultTreeModel model = new DefaultTreeModel(null);
+    model.setAsksAllowsChildren(false);
+    setModel(model);
+    setRootVisible(false);
+    setLogModel(logModel);
+    setCellRenderer(new MyCellRenderer());
+  }
+
+  public List<SelectionItem> getSelectedItems() {
+    TreePath[] sel = getSelectionPaths();
+    if (sel == null || sel.length == 0) return Collections.emptyList();
+
+    ArrayList<SelectionItem> ret = new ArrayList<SelectionItem>();
+    for (TreePath path : sel) {
+      Object last = path.getLastPathComponent();
+      ComponentNode n = null;
+      Object opt = null;
+      if (last instanceof OptionNode) {
+        OptionNode o = (OptionNode) last;
+        n = o.parent;
+        opt = o.option;
+      } else if (last instanceof ComponentNode) {
+        n = (ComponentNode) last;
+        if (n.opts != null) n = null;
+      }
+      if (n != null) {
+        int count = 0;
+        for (CircuitNode cur = n.parent; cur != null; cur = cur.parent) {
+          count++;
+        }
+        Component[] nPath = new Component[count - 1];
+        CircuitNode cur = n.parent;
+        for (int j = nPath.length - 1; j >= 0; j--) {
+          nPath[j] = cur.subcircComp;
+          cur = cur.parent;
+        }
+        ret.add(new SelectionItem(logModel, nPath, n.comp, opt));
+      }
+    }
+    return ret.size() == 0 ? null : ret;
+  }
+
+  public boolean hasSelectedItems() {
+    TreePath[] sel = getSelectionPaths();
+    if (sel == null || sel.length == 0) return false;
+
+    for (TreePath treePath : sel) {
+      Object last = treePath.getLastPathComponent();
+      if (last instanceof OptionNode) {
+        return true;
+      } else if (last instanceof ComponentNode) {
+        if (((ComponentNode) last).opts == null) return true;
+      }
+    }
+    return false;
+  }
+
+  public void localeChanged() {
+    repaint();
+  }
+
+  public void setLogModel(Model value) {
+    this.logModel = value;
+
+    DefaultTreeModel model = (DefaultTreeModel) getModel();
+    CircuitNode curRoot = (CircuitNode) model.getRoot();
+    CircuitState state = logModel == null ? null : logModel.getCircuitState();
+    if (state == null) {
+      if (curRoot != null) model.setRoot(null);
+      return;
+    }
+    if (curRoot == null || curRoot.circuitState != state) {
+      curRoot = new CircuitNode(null, state, null);
+      model.setRoot(curRoot);
+    }
+  }
+
+  private static class CompareByName implements Comparator<Object> {
+    public int compare(Object a, Object b) {
+      return a.toString().compareToIgnoreCase(b.toString());
+    }
+  }
+
   private class CircuitNode implements TreeNode, CircuitListener, Comparator<Component> {
     private final CircuitNode parent;
     private final CircuitState circuitState;
@@ -198,12 +285,6 @@ class ComponentSelector extends JTree {
     }
   }
 
-  private static class CompareByName implements Comparator<Object> {
-    public int compare(Object a, Object b) {
-      return a.toString().compareToIgnoreCase(b.toString());
-    }
-  }
-
   private class ComponentNode implements TreeNode {
     private final CircuitNode parent;
     private final Component comp;
@@ -335,90 +416,6 @@ class ComponentSelector extends JTree {
     @Override
     public String toString() {
       return option.toString();
-    }
-  }
-
-  private static final long serialVersionUID = 1L;
-
-  private Model logModel;
-
-  public ComponentSelector(Model logModel) {
-    DefaultTreeModel model = new DefaultTreeModel(null);
-    model.setAsksAllowsChildren(false);
-    setModel(model);
-    setRootVisible(false);
-    setLogModel(logModel);
-    setCellRenderer(new MyCellRenderer());
-  }
-
-  public List<SelectionItem> getSelectedItems() {
-    TreePath[] sel = getSelectionPaths();
-    if (sel == null || sel.length == 0) return Collections.emptyList();
-
-    ArrayList<SelectionItem> ret = new ArrayList<SelectionItem>();
-    for (TreePath path : sel) {
-      Object last = path.getLastPathComponent();
-      ComponentNode n = null;
-      Object opt = null;
-      if (last instanceof OptionNode) {
-        OptionNode o = (OptionNode) last;
-        n = o.parent;
-        opt = o.option;
-      } else if (last instanceof ComponentNode) {
-        n = (ComponentNode) last;
-        if (n.opts != null)
-          n = null;
-      }
-      if (n != null) {
-        int count = 0;
-        for (CircuitNode cur = n.parent; cur != null; cur = cur.parent) {
-          count++;
-        }
-        Component[] nPath = new Component[count - 1];
-        CircuitNode cur = n.parent;
-        for (int j = nPath.length - 1; j >= 0; j--) {
-          nPath[j] = cur.subcircComp;
-          cur = cur.parent;
-        }
-        ret.add(new SelectionItem(logModel, nPath, n.comp, opt));
-      }
-    }
-    return ret.size() == 0 ? null : ret;
-  }
-
-  public boolean hasSelectedItems() {
-    TreePath[] sel = getSelectionPaths();
-    if (sel == null || sel.length == 0) return false;
-
-    for (TreePath treePath : sel) {
-      Object last = treePath.getLastPathComponent();
-      if (last instanceof OptionNode) {
-        return true;
-      } else if (last instanceof ComponentNode) {
-        if (((ComponentNode) last).opts == null)
-          return true;
-      }
-    }
-    return false;
-  }
-
-  public void localeChanged() {
-    repaint();
-  }
-
-  public void setLogModel(Model value) {
-    this.logModel = value;
-
-    DefaultTreeModel model = (DefaultTreeModel) getModel();
-    CircuitNode curRoot = (CircuitNode) model.getRoot();
-    CircuitState state = logModel == null ? null : logModel.getCircuitState();
-    if (state == null) {
-      if (curRoot != null) model.setRoot(null);
-      return;
-    }
-    if (curRoot == null || curRoot.circuitState != state) {
-      curRoot = new CircuitNode(null, state, null);
-      model.setRoot(curRoot);
     }
   }
 }

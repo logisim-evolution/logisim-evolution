@@ -49,12 +49,12 @@ public class CommonPanelParam {
     return mHeaderHeight;
   }
 
-  public int getSignalHeight() {
-    return mSignalHeight;
-  }
-
   public void setHeaderHeight(int height) {
     mHeaderHeight = height;
+  }
+
+  public int getSignalHeight() {
+    return mSignalHeight;
   }
 
   public void setSignalHeight(int height) {

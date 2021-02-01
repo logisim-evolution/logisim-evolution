@@ -69,8 +69,7 @@ class AttrTableSelectionModel extends AttributeSetTableModel implements Selectio
   @Override
   public void attributeValueChanged(AttributeEvent e) {
     super.attributeValueChanged(e);
-    if (e.getAttribute().equals(StdAttr.LABEL))
-      fireTitleChanged();
+    if (e.getAttribute().equals(StdAttr.LABEL)) fireTitleChanged();
   }
 
   @Override
@@ -125,7 +124,10 @@ class AttrTableSelectionModel extends AttributeSetTableModel implements Selectio
       }
     } else if (factoryCount == 1) {
       SetInstance(factory);
-      return S.fmt("selectionOne", factory.getDisplayName()+((label != null && label.length() > 0)? " \"" + label + "\"":""));
+      return S.fmt(
+          "selectionOne",
+          factory.getDisplayName()
+              + ((label != null && label.length() > 0) ? " \"" + label + "\"" : ""));
     } else {
       SetInstance(factory);
       return S.fmt("selectionMultiple", factory.getDisplayName(), "" + factoryCount);
@@ -138,19 +140,6 @@ class AttrTableSelectionModel extends AttributeSetTableModel implements Selectio
     fireTitleChanged();
     if (!frame.getEditorView().equals(Frame.EDIT_APPEARANCE)) {
       frame.setAttrTableModel(this);
-    }
-  }
-
-  private class PositionComparator implements Comparator<Component> {
-
-    @Override
-    public int compare(Component o1, Component o2) {
-      if (o1 == o2) return 0;
-      Location l1 = o1.getLocation();
-      Location l2 = o2.getLocation();
-      if (l2.getY() != l1.getY()) return l1.getY() - l2.getY();
-      if (l2.getX() != l1.getX()) return l1.getX() - l2.getX();
-      return -1;
     }
   }
 
@@ -200,6 +189,19 @@ class AttrTableSelectionModel extends AttributeSetTableModel implements Selectio
         }
       }
       project.doAction(act);
+    }
+  }
+
+  private class PositionComparator implements Comparator<Component> {
+
+    @Override
+    public int compare(Component o1, Component o2) {
+      if (o1 == o2) return 0;
+      Location l1 = o1.getLocation();
+      Location l2 = o2.getLocation();
+      if (l2.getY() != l1.getY()) return l1.getY() - l2.getY();
+      if (l2.getX() != l1.getX()) return l1.getX() - l2.getX();
+      return -1;
     }
   }
 }

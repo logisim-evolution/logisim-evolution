@@ -42,6 +42,10 @@ import java.util.regex.Pattern;
 import org.w3c.dom.Element;
 
 public class SvgReader {
+  private static final Pattern PATH_REGEX = Pattern.compile("[a-zA-Z]|[-0-9.]+");
+
+  private SvgReader() {}
+
   private static AbstractCanvasObject createLine(Element elt) {
     int x0 = Integer.parseInt(elt.getAttribute("x1"));
     int y0 = Integer.parseInt(elt.getAttribute("y1"));
@@ -315,8 +319,4 @@ public class SvgReader {
     }
     return UnmodifiableList.create(ret);
   }
-
-  private static final Pattern PATH_REGEX = Pattern.compile("[a-zA-Z]|[-0-9.]+");
-
-  private SvgReader() {}
 }

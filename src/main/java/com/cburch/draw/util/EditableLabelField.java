@@ -37,8 +37,8 @@ import javax.swing.BorderFactory;
 import javax.swing.JTextField;
 
 public class EditableLabelField extends JTextField {
-  private static final long serialVersionUID = 1L;
   static final int FIELD_BORDER = 2;
+  private static final long serialVersionUID = 1L;
 
   public EditableLabelField() {
     super(10);

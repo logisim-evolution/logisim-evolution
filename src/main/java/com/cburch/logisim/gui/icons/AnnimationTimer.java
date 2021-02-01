@@ -28,6 +28,7 @@
 
 package com.cburch.logisim.gui.icons;
 
+import com.cburch.logisim.prefs.AppPreferences;
 import java.awt.Component;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -35,19 +36,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.TimerTask;
 
-import com.cburch.logisim.prefs.AppPreferences;
-
 public class AnnimationTimer extends TimerTask implements PropertyChangeListener {
 
-  public interface AnnimationListener {
-    public void annimationUpdate();
-    public void resetToStatic();
-  }
-  
   private final List<AnnimationListener> listeners;
   private final ArrayList<Component> parrents;
   private boolean animate;
-  
   public AnnimationTimer() {
     listeners = new ArrayList<>();
     parrents = new ArrayList<>();
@@ -56,35 +49,27 @@ public class AnnimationTimer extends TimerTask implements PropertyChangeListener
   }
 
   public void registerListener(AnnimationListener l) {
-    if (l != null)
-      listeners.add(l);
+    if (l != null) listeners.add(l);
   }
-  
+
   public void removeListener(AnnimationListener l) {
-    if (l == null)
-      return;
-    if (listeners.contains(l))
-      listeners.remove(l);
+    if (l == null) return;
+    if (listeners.contains(l)) listeners.remove(l);
   }
-  
+
   public void addParrent(Component parrent) {
-    if (!parrents.contains(parrent))
-      parrents.add(parrent);
+    if (!parrents.contains(parrent)) parrents.add(parrent);
   }
-  
+
   public void removeParrent(Component parrent) {
-    if (parrents.contains(parrent))
-      parrents.remove(parrent);
+    if (parrents.contains(parrent)) parrents.remove(parrent);
   }
-  
+
   @Override
   public void run() {
-	if (!animate)
-	  return;
-    for (AnnimationListener l : listeners)
-      l.annimationUpdate();
-    for (Component c : parrents)
-      c.repaint();
+    if (!animate) return;
+    for (AnnimationListener l : listeners) l.annimationUpdate();
+    for (Component c : parrents) c.repaint();
   }
 
   @Override
@@ -92,11 +77,14 @@ public class AnnimationTimer extends TimerTask implements PropertyChangeListener
     boolean lastanimate = animate;
     animate = AppPreferences.ANIMATED_ICONS.getBoolean();
     if (lastanimate && !animate) {
-        for (AnnimationListener l : listeners)
-            l.resetToStatic();
-        for (Component c : parrents)
-            c.repaint();
+      for (AnnimationListener l : listeners) l.resetToStatic();
+      for (Component c : parrents) c.repaint();
     }
   }
 
+  public interface AnnimationListener {
+    public void annimationUpdate();
+
+    public void resetToStatic();
+  }
 }

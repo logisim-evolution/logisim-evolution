@@ -42,7 +42,6 @@ import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.gui.icons.SelectIcon;
 import com.cburch.logisim.util.GraphicsUtil;
-import com.cburch.logisim.util.Icons;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Graphics;
@@ -57,24 +56,13 @@ import java.util.Set;
 import javax.swing.Icon;
 
 public class SelectTool extends AbstractTool {
-  private static CanvasObject getObjectAt(CanvasModel model, int x, int y, boolean assumeFilled) {
-    Location loc = Location.create(x, y);
-    for (CanvasObject o : model.getObjectsFromTop()) {
-      if (o.contains(loc, assumeFilled)) return o;
-    }
-    return null;
-  }
-
   private static final int IDLE = 0;
   private static final int MOVE_ALL = 1;
   private static final int RECT_SELECT = 2;
   private static final int RECT_TOGGLE = 3;
-
   private static final int MOVE_HANDLE = 4;
   private static final int DRAG_TOLERANCE = 2;
-
   private static final int HANDLE_SIZE = 8;
-
   private static final Color RECT_SELECT_BACKGROUND = new Color(0, 0, 0, 32);
   private static final SelectIcon icon = new SelectIcon();
   private int curAction;
@@ -85,7 +73,6 @@ public class SelectTool extends AbstractTool {
   private boolean dragEffective;
   private int lastMouseX;
   private int lastMouseY;
-
   private HandleGesture curGesture;
 
   public SelectTool() {
@@ -93,6 +80,14 @@ public class SelectTool extends AbstractTool {
     dragStart = Location.create(0, 0);
     dragEnd = dragStart;
     dragEffective = false;
+  }
+
+  private static CanvasObject getObjectAt(CanvasModel model, int x, int y, boolean assumeFilled) {
+    Location loc = Location.create(x, y);
+    for (CanvasObject o : model.getObjectsFromTop()) {
+      if (o.contains(loc, assumeFilled)) return o;
+    }
+    return null;
   }
 
   @Override

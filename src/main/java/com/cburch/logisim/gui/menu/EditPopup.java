@@ -38,23 +38,9 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
 public abstract class EditPopup extends JPopupMenu {
-  private class Listener implements ActionListener {
-    public void actionPerformed(ActionEvent e) {
-      Object source = e.getSource();
-      for (Map.Entry<LogisimMenuItem, JMenuItem> entry : items.entrySet()) {
-        if (entry.getValue() == source) {
-          fire(entry.getKey());
-          return;
-        }
-      }
-    }
-  }
-
   private static final long serialVersionUID = 1L;
-
   private final Listener listener;
   private final Map<LogisimMenuItem, JMenuItem> items;
-
   public EditPopup() {
     this(false);
   }
@@ -112,4 +98,16 @@ public abstract class EditPopup extends JPopupMenu {
   protected abstract boolean isEnabled(LogisimMenuItem item);
 
   protected abstract boolean shouldShow(LogisimMenuItem item);
+
+  private class Listener implements ActionListener {
+    public void actionPerformed(ActionEvent e) {
+      Object source = e.getSource();
+      for (Map.Entry<LogisimMenuItem, JMenuItem> entry : items.entrySet()) {
+        if (entry.getValue() == source) {
+          fire(entry.getKey());
+          return;
+        }
+      }
+    }
+  }
 }

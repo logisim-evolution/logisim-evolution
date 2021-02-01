@@ -30,62 +30,40 @@ package com.cburch.logisim.soc.bus;
 
 import static com.cburch.logisim.soc.Strings.S;
 
-import java.awt.Font;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-
 import com.cburch.logisim.data.AbstractAttributeSet;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.Attributes;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.soc.data.SocBusInfo;
+import java.awt.Font;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 
 public class SocBusAttributes extends AbstractAttributeSet {
 
-  public static class SocBusIdAttribute extends Attribute<SocBusInfo> {
-  
-   public SocBusIdAttribute() {
-     super("SocBusIdentifier",null);
-   }
-
-    @Override
-    public SocBusInfo parse(String value) {
-      return new SocBusInfo(value);
-    }
-
-    @Override
-    public boolean isHidden() {
-      return true;
-    }
-    
-    @Override
-    public String toStandardString(SocBusInfo value) {
-      return value.getBusId();
-    }
-  }
-  
-  public static final Attribute<BitWidth> NrOfTracesAttr = Attributes.forBitWidth("TraceSize", S.getter("SocBusTraceSize"));
+  public static final Attribute<BitWidth> NrOfTracesAttr =
+      Attributes.forBitWidth("TraceSize", S.getter("SocBusTraceSize"));
   public static final Attribute<SocBusInfo> SOC_BUS_ID = new SocBusIdAttribute();
-  public static final Attribute<Boolean> SOC_TRACE_VISABLE = Attributes.forBoolean("TraceVisible", S.getter("SocBusTraceVisable"));
+  public static final Attribute<Boolean> SOC_TRACE_VISABLE =
+      Attributes.forBoolean("TraceVisible", S.getter("SocBusTraceVisable"));
+  private static final List<Attribute<?>> ATTRIBUTES =
+      Arrays.asList(
+          new Attribute<?>[] {
+            NrOfTracesAttr,
+            SOC_TRACE_VISABLE,
+            StdAttr.LABEL,
+            StdAttr.LABEL_FONT,
+            StdAttr.LABEL_VISIBILITY,
+            SOC_BUS_ID
+          });
   private Font LabelFont = StdAttr.DEFAULT_LABEL_FONT;
   private Boolean LabelVisable = true;
   private BitWidth TraceSize = BitWidth.create(5);
   private String Label = "";
   private SocBusInfo ID = new SocBusInfo(null);
   private Boolean traceVisable = true;
-
-  private static final List<Attribute<?>> ATTRIBUTES =
-        Arrays.asList(
-            new Attribute<?>[] {
-              NrOfTracesAttr,
-              SOC_TRACE_VISABLE,
-              StdAttr.LABEL,
-              StdAttr.LABEL_FONT,
-              StdAttr.LABEL_VISIBILITY,
-              SOC_BUS_ID
-            });
 
   @Override
   protected void copyInto(AbstractAttributeSet dest) {
@@ -106,20 +84,16 @@ public class SocBusAttributes extends AbstractAttributeSet {
   @SuppressWarnings("unchecked")
   @Override
   public <V> V getValue(Attribute<V> attr) {
-    if (attr == NrOfTracesAttr)
-      return (V) TraceSize;
-    if (attr == StdAttr.LABEL)
-      return (V) Label;
-    if (attr == StdAttr.LABEL_FONT)
-      return (V) LabelFont;
-    if (attr == StdAttr.LABEL_VISIBILITY)
-      return (V) LabelVisable;
+    if (attr == NrOfTracesAttr) return (V) TraceSize;
+    if (attr == StdAttr.LABEL) return (V) Label;
+    if (attr == StdAttr.LABEL_FONT) return (V) LabelFont;
+    if (attr == StdAttr.LABEL_VISIBILITY) return (V) LabelVisable;
     if (attr == SOC_BUS_ID) {
       if (ID.getBusId() == null || ID.getBusId().isEmpty()) {
         Date date = new Date();
         String[] names = this.toString().split("@");
-          ID.setBusId(String.format("0x%016X%s", date.getTime(), names[names.length-1]));
-        }
+        ID.setBusId(String.format("0x%016X%s", date.getTime(), names[names.length - 1]));
+      }
       return (V) ID;
     }
     if (attr == SOC_TRACE_VISABLE) return (V) traceVisable;
@@ -130,7 +104,7 @@ public class SocBusAttributes extends AbstractAttributeSet {
   public boolean isReadOnly(Attribute<?> attr) {
     return attr == SOC_BUS_ID;
   }
-  
+
   @Override
   public <V> void setValue(Attribute<V> attr, V value) {
     V oldValue = getValue(attr);
@@ -177,6 +151,28 @@ public class SocBusAttributes extends AbstractAttributeSet {
         fireAttributeValueChanged(attr, value, oldValue);
       }
       return;
+    }
+  }
+
+  public static class SocBusIdAttribute extends Attribute<SocBusInfo> {
+
+    public SocBusIdAttribute() {
+      super("SocBusIdentifier", null);
+    }
+
+    @Override
+    public SocBusInfo parse(String value) {
+      return new SocBusInfo(value);
+    }
+
+    @Override
+    public boolean isHidden() {
+      return true;
+    }
+
+    @Override
+    public String toStandardString(SocBusInfo value) {
+      return value.getBusId();
     }
   }
 }

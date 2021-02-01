@@ -46,24 +46,137 @@ import com.cburch.logisim.util.LocaleManager;
 import com.cburch.logisim.util.StringUtil;
 import com.cburch.logisim.util.WindowMenuItemManager;
 import java.awt.BorderLayout;
-import java.awt.event.KeyListener;
-import java.awt.event.KeyEvent;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.JFrame;
 import javax.swing.JTabbedPane;
 
-public class LogFrame extends LFrame implements KeyListener{
-  private class MyListener
-      implements 
-          ProjectListener,
-          LibraryListener,
-          SimulatorListener,
-          LocaleListener {
+public class LogFrame extends LFrame implements KeyListener {
+  private static final long serialVersionUID = 1L;
+  private final Project project;
+  private final Map<CircuitState, Model> modelMap = new HashMap<CircuitState, Model>();
+  private final MyListener myListener = new MyListener();
+  private final WindowMenuManager windowManager;
+  private final LogPanel[] panels;
+  private final JTabbedPane tabbedPane;
+  private Simulator curSimulator = null;
+  private Model curModel;
 
-	public void libraryChanged(LibraryEvent event) {
+  public LogFrame(Project project) {
+    super(false, project);
+    this.project = project;
+    this.windowManager = new WindowMenuManager();
+    project.addProjectListener(myListener);
+    project.addLibraryListener(myListener);
+    setSimulator(project.getSimulator(), project.getCircuitState());
+
+    panels =
+        new LogPanel[] {
+          new SelectionPanel(this), new ScrollPanel(this), new FilePanel(this),
+          // chrono goes here
+        };
+    tabbedPane = new JTabbedPane();
+    tabbedPane.addKeyListener(this);
+    for (LogPanel panel : panels) {
+      panel.addKeyListener((this));
+      tabbedPane.addTab(panel.getTitle(), null, panel, panel.getToolTipText());
+    }
+
+    Container contents = getContentPane();
+    tabbedPane.setPreferredSize(new Dimension(550, 300));
+    contents.add(tabbedPane, BorderLayout.CENTER);
+
+    LocaleManager.addLocaleListener(myListener);
+    myListener.localeChanged();
+    pack();
+  }
+
+  private static String computeTitle(Model data, Project proj) {
+    String name = data == null ? "???" : data.getCircuitState().getCircuit().getName();
+    return StringUtil.format(S.get("logFrameTitle"), name, proj.getLogisimFile().getDisplayName());
+  }
+
+  public Model getModel() {
+    return curModel;
+  }
+
+  LogPanel[] getPrefPanels() {
+    return panels;
+  }
+
+  public Project getProject() {
+    return project;
+  }
+
+  public TimelineParam getTimelineParam() {
+    SelectionPanel p = (SelectionPanel) panels[0];
+    return p.getTimelineParam();
+  }
+
+  private void setSimulator(Simulator value, CircuitState state) {
+    if ((value == null) == (curModel == null)) {
+      if (value == null || value.getCircuitState() == curModel.getCircuitState()) return;
+    }
+
+    if (curSimulator != null) curSimulator.removeSimulatorListener(myListener);
+    if (curModel != null) curModel.setSelected(this, false);
+
+    Model oldModel = curModel;
+    Model data = null;
+    if (value != null) {
+      data = modelMap.get(value.getCircuitState());
+      if (data == null) {
+        data = new Model(value.getCircuitState());
+        modelMap.put(data.getCircuitState(), data);
+      }
+    }
+    curSimulator = value;
+    curModel = data;
+
+    if (curSimulator != null) curSimulator.addSimulatorListener(myListener);
+    if (curModel != null) curModel.setSelected(this, true);
+    setTitle(computeTitle(curModel, project));
+    if (panels != null) {
+      for (LogPanel panel : panels) {
+        panel.modelChanged(oldModel, curModel);
+      }
+    }
+  }
+
+  @Override
+  public void setVisible(boolean value) {
+    if (value) {
+      windowManager.frameOpened(this);
+    }
+    super.setVisible(value);
+  }
+
+  @Override
+  public void keyPressed(KeyEvent ke) {
+    int keyCode = ke.getKeyCode();
+    if (keyCode == KeyEvent.VK_F2) {
+      curSimulator.tick(2);
+    }
+  }
+
+  @Override
+  public void keyReleased(KeyEvent ke) {
+    // throw new UnsupportedOperationException("Not supported yet.");
+  }
+
+  @Override
+  public void keyTyped(KeyEvent ke) {
+    // throw new UnsupportedOperationException("Not supported yet.");
+  }
+
+  private class MyListener
+      implements ProjectListener, LibraryListener, SimulatorListener, LocaleListener {
+
+    public void libraryChanged(LibraryEvent event) {
       int action = event.getAction();
       if (action == LibraryEvent.SET_NAME) {
         setTitle(computeTitle(curModel, project));
@@ -129,124 +242,5 @@ public class LogFrame extends LFrame implements KeyListener{
         localeChanged();
       }
     }
-  }
-
-  private static String computeTitle(Model data, Project proj) {
-    String name = data == null ? "???" : data.getCircuitState().getCircuit().getName();
-    return StringUtil.format(S.get("logFrameTitle"), name, proj.getLogisimFile().getDisplayName());
-  }
-
-  private static final long serialVersionUID = 1L;
-  private final Project project;
-  private Simulator curSimulator = null;
-  private Model curModel;
-  private final Map<CircuitState, Model> modelMap = new HashMap<CircuitState, Model>();
-  private final MyListener myListener = new MyListener();
-
-  private final WindowMenuManager windowManager;
-  private final LogPanel[] panels;
-  private final JTabbedPane tabbedPane;
-
-  public LogFrame(Project project) {
-    super(false,project);
-    this.project = project;
-    this.windowManager = new WindowMenuManager();
-    project.addProjectListener(myListener);
-    project.addLibraryListener(myListener);
-    setSimulator(project.getSimulator(), project.getCircuitState());
-
-    panels =
-        new LogPanel[] {
-          new SelectionPanel(this), new ScrollPanel(this), new FilePanel(this),
-       // chrono goes here
-        };
-    tabbedPane = new JTabbedPane();
-    tabbedPane.addKeyListener(this);
-    for (LogPanel panel : panels) {
-      panel.addKeyListener((this));
-      tabbedPane.addTab(panel.getTitle(), null, panel, panel.getToolTipText());
-    }
-
-    Container contents = getContentPane();
-    tabbedPane.setPreferredSize(new Dimension(550, 300));
-    contents.add(tabbedPane, BorderLayout.CENTER);
-
-    LocaleManager.addLocaleListener(myListener);
-    myListener.localeChanged();
-    pack();
-  }
-
-  public Model getModel() {
-    return curModel;
-  }
-
-  LogPanel[] getPrefPanels() {
-    return panels;
-  }
-
-  public Project getProject() {
-    return project;
-  }
-
-  public TimelineParam getTimelineParam() {
-    SelectionPanel p = (SelectionPanel) panels[0];
-    return p.getTimelineParam();
-  }
-
-  private void setSimulator(Simulator value, CircuitState state) {
-    if ((value == null) == (curModel == null)) {
-      if (value == null || value.getCircuitState() == curModel.getCircuitState()) 
-    	  return;
-    }
-
-    if (curSimulator != null) curSimulator.removeSimulatorListener(myListener);
-    if (curModel != null) curModel.setSelected(this, false);
-
-    Model oldModel = curModel;
-    Model data = null;
-    if (value != null) {
-      data = modelMap.get(value.getCircuitState());
-      if (data == null) {
-        data = new Model(value.getCircuitState());
-        modelMap.put(data.getCircuitState(), data);
-      }
-    }
-    curSimulator = value;
-    curModel = data;
-
-    if (curSimulator != null) curSimulator.addSimulatorListener(myListener);
-    if (curModel != null) curModel.setSelected(this, true);
-    setTitle(computeTitle(curModel, project));
-    if (panels != null) {
-      for (LogPanel panel : panels) {
-        panel.modelChanged(oldModel, curModel);
-      }
-    }
-  }
-
-  @Override
-  public void setVisible(boolean value) {
-    if (value) {
-      windowManager.frameOpened(this);
-    }
-    super.setVisible(value);
-  }
-
-  @Override
-  public void keyPressed(KeyEvent ke) {
-    int keyCode = ke.getKeyCode();
-    if (keyCode == KeyEvent.VK_F2) {
-      curSimulator.tick(2);
-    }
-  }
-
-  @Override
-  public void keyReleased(KeyEvent ke) {
-    // throw new UnsupportedOperationException("Not supported yet.");
-  }
-
-  @Override
-  public void keyTyped(KeyEvent ke) {
-    // throw new UnsupportedOperationException("Not supported yet.");
   }
 }

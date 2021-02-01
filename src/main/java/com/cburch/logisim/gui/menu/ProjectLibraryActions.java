@@ -47,45 +47,7 @@ import javax.swing.JList;
 import javax.swing.JScrollPane;
 
 public class ProjectLibraryActions {
-  private static class BuiltinOption {
-    Library lib;
-
-    BuiltinOption(Library lib) {
-      this.lib = lib;
-    }
-
-    @Override
-    public String toString() {
-      return lib.getDisplayName();
-    }
-  }
-
-  @SuppressWarnings("rawtypes")
-  private static class LibraryJList extends JList {
-    private static final long serialVersionUID = 1L;
-
-    @SuppressWarnings("unchecked")
-    LibraryJList(List<Library> libraries) {
-      ArrayList<BuiltinOption> options = new ArrayList<BuiltinOption>();
-      for (Library lib : libraries) {
-        options.add(new BuiltinOption(lib));
-      }
-      setListData(options.toArray());
-    }
-
-    Library[] getSelectedLibraries() {
-      Object[] selected = getSelectedValuesList().toArray();
-      if (selected != null && selected.length > 0) {
-        Library[] libs = new Library[selected.length];
-        for (int i = 0; i < selected.length; i++) {
-          libs[i] = ((BuiltinOption) selected[i]).lib;
-        }
-        return libs;
-      } else {
-        return null;
-      }
-    }
-  }
+  private ProjectLibraryActions() {}
 
   public static void doLoadBuiltinLibrary(Project proj) {
     LogisimFile file = proj.getLogisimFile();
@@ -210,5 +172,43 @@ public class ProjectLibraryActions {
     }
   }
 
-  private ProjectLibraryActions() {}
+  private static class BuiltinOption {
+    Library lib;
+
+    BuiltinOption(Library lib) {
+      this.lib = lib;
+    }
+
+    @Override
+    public String toString() {
+      return lib.getDisplayName();
+    }
+  }
+
+  @SuppressWarnings("rawtypes")
+  private static class LibraryJList extends JList {
+    private static final long serialVersionUID = 1L;
+
+    @SuppressWarnings("unchecked")
+    LibraryJList(List<Library> libraries) {
+      ArrayList<BuiltinOption> options = new ArrayList<BuiltinOption>();
+      for (Library lib : libraries) {
+        options.add(new BuiltinOption(lib));
+      }
+      setListData(options.toArray());
+    }
+
+    Library[] getSelectedLibraries() {
+      Object[] selected = getSelectedValuesList().toArray();
+      if (selected != null && selected.length > 0) {
+        Library[] libs = new Library[selected.length];
+        for (int i = 0; i < selected.length; i++) {
+          libs[i] = ((BuiltinOption) selected[i]).lib;
+        }
+        return libs;
+      } else {
+        return null;
+      }
+    }
+  }
 }

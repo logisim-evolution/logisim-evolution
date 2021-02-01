@@ -30,9 +30,6 @@ package com.cburch.logisim.soc.bus;
 
 import static com.cburch.logisim.soc.Strings.S;
 
-import java.awt.Font;
-import java.awt.Graphics2D;
-
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Bounds;
@@ -53,50 +50,56 @@ import com.cburch.logisim.soc.data.SocInstanceFactory;
 import com.cburch.logisim.soc.data.SocProcessorInterface;
 import com.cburch.logisim.tools.MenuExtender;
 import com.cburch.logisim.util.GraphicsUtil;
+import java.awt.Font;
+import java.awt.Graphics2D;
 
 public class SocBus extends SocInstanceFactory {
-	
+
   public static final SocBusMenuProvider MENU_PROVIDER = new SocBusMenuProvider();
 
   public SocBus() {
-    super("SocBus",S.getter("SocBusComponent"),SocBus);
-    setIcon(new ArithmeticIcon("SOCBus",3));
+    super("SocBus", S.getter("SocBusComponent"), SocBus);
+    setIcon(new ArithmeticIcon("SOCBus", 3));
   }
-  
+
   @Override
   public AttributeSet createAttributeSet() {
-	return new SocBusAttributes();  
+    return new SocBusAttributes();
   }
-  
+
   @Override
   public Bounds getOffsetBounds(AttributeSet attrs) {
-    return Bounds.create(0, 0, 640, 
-    		(attrs.getValue(SocBusAttributes.NrOfTracesAttr).getWidth()+1)*SocBusStateInfo.TraceHeight);
+    return Bounds.create(
+        0,
+        0,
+        640,
+        (attrs.getValue(SocBusAttributes.NrOfTracesAttr).getWidth() + 1)
+            * SocBusStateInfo.TraceHeight);
   }
-  
+
   @Override
   protected void instanceAttributeChanged(Instance instance, Attribute<?> attr) {
     super.instanceAttributeChanged(instance, attr);
     if (attr.equals(SocBusAttributes.NrOfTracesAttr)) {
-       instance.recomputeBounds();
+      instance.recomputeBounds();
     }
   }
-  
+
   @Override
   protected void configureNewInstance(Instance instance) {
     instance.addAttributeListener();
     Port[] ps = new Port[1];
-    ps[0] = new Port(0,10,Port.INPUT,1);
+    ps[0] = new Port(0, 10, Port.INPUT, 1);
     ps[0].setToolTip(S.getter("Rv32imResetInput"));
     instance.setPorts(ps);
     Bounds bds = instance.getBounds();
     instance.setTextField(
-            StdAttr.LABEL,
-            StdAttr.LABEL_FONT,
-            bds.getX() + bds.getWidth() / 2,
-            bds.getY() - 3,
-            GraphicsUtil.H_CENTER,
-            GraphicsUtil.V_BASELINE);
+        StdAttr.LABEL,
+        StdAttr.LABEL_FONT,
+        bds.getX() + bds.getWidth() / 2,
+        bds.getY() - 3,
+        GraphicsUtil.H_CENTER,
+        GraphicsUtil.V_BASELINE);
   }
 
   @Override
@@ -108,24 +111,28 @@ public class SocBus extends SocInstanceFactory {
     Location loc = painter.getLocation();
     Font f = g2.getFont();
     g2.setFont(StdAttr.DEFAULT_LABEL_FONT);
-    GraphicsUtil.drawCenteredText(g2, "SOC Bus Interconnect", loc.getX()+320, loc.getY()+10);
+    GraphicsUtil.drawCenteredText(g2, "SOC Bus Interconnect", loc.getX() + 320, loc.getY() + 10);
     g2.setFont(f);
     if (painter.isPrintView()) return;
-    SocBusInfo info = (SocBusInfo)painter.getAttributeValue(SocBusAttributes.SOC_BUS_ID);
+    SocBusInfo info = (SocBusInfo) painter.getAttributeValue(SocBusAttributes.SOC_BUS_ID);
     SocBusStateInfo data = info.getSocSimulationManager().getSocBusState(info.getBusId());
     if (data != null)
-      data.paint(loc.getX(),loc.getY(),g2,painter.getInstance(),painter.getAttributeValue(SocBusAttributes.SOC_TRACE_VISABLE),painter.getData());
+      data.paint(
+          loc.getX(),
+          loc.getY(),
+          g2,
+          painter.getInstance(),
+          painter.getAttributeValue(SocBusAttributes.SOC_TRACE_VISABLE),
+          painter.getData());
   }
 
   @Override
   public void propagate(InstanceState state) {
-	SocBusInfo info = (SocBusInfo)state.getAttributeValue(SocBusAttributes.SOC_BUS_ID);
+    SocBusInfo info = (SocBusInfo) state.getAttributeValue(SocBusAttributes.SOC_BUS_ID);
     SocBusStateInfo data = info.getSocSimulationManager().getSocBusState(info.getBusId());
     SocBusStateInfo.SocBusState dat = (SocBusStateInfo.SocBusState) state.getData();
-    if (dat == null)
-      state.setData(data.getNewState(state.getInstance()));
-    if (state.getPortValue(0)==Value.TRUE)
-      dat.clear();
+    if (dat == null) state.setData(data.getNewState(state.getInstance()));
+    if (state.getPortValue(0) == Value.TRUE) dat.clear();
   }
 
   @Override
@@ -142,12 +149,17 @@ public class SocBus extends SocInstanceFactory {
   }
 
   @Override
-  public SocBusSlaveInterface getSlaveInterface(AttributeSet attrs) { return null; }
+  public SocBusSlaveInterface getSlaveInterface(AttributeSet attrs) {
+    return null;
+  }
 
   @Override
-  public SocBusSnifferInterface getSnifferInterface(AttributeSet attrs) { return null; }
+  public SocBusSnifferInterface getSnifferInterface(AttributeSet attrs) {
+    return null;
+  }
 
   @Override
-  public SocProcessorInterface getProcessorInterface(AttributeSet attrs) { return null; }
-  
+  public SocProcessorInterface getProcessorInterface(AttributeSet attrs) {
+    return null;
+  }
 }

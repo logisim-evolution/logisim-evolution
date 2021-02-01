@@ -47,67 +47,21 @@ import javax.swing.JPanel;
 /** Draw a single signal or bus in the chronogram right area */
 public class SignalDraw extends JPanel {
 
-  private class MyListener implements MouseListener, MouseMotionListener, MouseWheelListener {
-    @Override
-    public void mouseClicked(MouseEvent e) {}
-
-    @Override
-    public void mouseDragged(MouseEvent e) {
-      int posX = e.getX();
-      if (posX < 0) posX = 0;
-      if (posX > getWidth()) posX = getWidth() - 1;
-      mDrawAreaEventManager.fireMouseDragged(mSignalData, posX);
-    }
-
-    @Override
-    public void mouseEntered(MouseEvent e) {
-      mDrawAreaEventManager.fireMouseEntered(mSignalData);
-    }
-
-    @Override
-    public void mouseExited(MouseEvent e) {
-      mDrawAreaEventManager.fireMouseExited(mSignalData);
-    }
-
-    @Override
-    public void mouseMoved(MouseEvent e) {}
-
-    @Override
-    public void mousePressed(MouseEvent e) {
-      int posX = Math.max(e.getX(), 0);
-      mDrawAreaEventManager.fireMousePressed(mSignalData, posX);
-    }
-
-    @Override
-    public void mouseReleased(MouseEvent e) {}
-
-    @Override
-    public void mouseWheelMoved(MouseWheelEvent e) {
-      if (e.getWheelRotation() > 0) mDrawAreaEventManager.fireZoom(mSignalData, -1, e.getPoint().x);
-      else mDrawAreaEventManager.fireZoom(mSignalData, 1, e.getPoint().x);
-    }
-  }
-
   private static final long serialVersionUID = 1L;
-  private int tickWidth;
-  private int busCrossingPosition;
   private final Color lightGray = new Color(180, 180, 180, 100);
-
-  private int lineTickness = 1;
   private final int lowPos;
   private final int highPos;
-  private int width = 10;
-
-  private int height;
-  private BufferedImage signalDrawBuffered;
-
-  private boolean isBufferObsolete = true;
   private final SignalData mSignalData;
   private final DrawAreaEventManager mDrawAreaEventManager;
-
   private final RightPanel mRightPanel;
-
   private final MyListener myListener = new MyListener();
+  private int tickWidth;
+  private int busCrossingPosition;
+  private int lineTickness = 1;
+  private int width = 10;
+  private int height;
+  private BufferedImage signalDrawBuffered;
+  private boolean isBufferObsolete = true;
 
   public SignalDraw(
       RightPanel rightPanel,
@@ -274,5 +228,46 @@ public class SignalDraw extends JPanel {
     this.busCrossingPosition = computeBusCrossingPosition(tickWidth);
     int width = tickWidth * mSignalData.getSignalValues().size();
     setSignalDrawSize(width, height);
+  }
+
+  private class MyListener implements MouseListener, MouseMotionListener, MouseWheelListener {
+    @Override
+    public void mouseClicked(MouseEvent e) {}
+
+    @Override
+    public void mouseDragged(MouseEvent e) {
+      int posX = e.getX();
+      if (posX < 0) posX = 0;
+      if (posX > getWidth()) posX = getWidth() - 1;
+      mDrawAreaEventManager.fireMouseDragged(mSignalData, posX);
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+      mDrawAreaEventManager.fireMouseEntered(mSignalData);
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+      mDrawAreaEventManager.fireMouseExited(mSignalData);
+    }
+
+    @Override
+    public void mouseMoved(MouseEvent e) {}
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+      int posX = Math.max(e.getX(), 0);
+      mDrawAreaEventManager.fireMousePressed(mSignalData, posX);
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {}
+
+    @Override
+    public void mouseWheelMoved(MouseWheelEvent e) {
+      if (e.getWheelRotation() > 0) mDrawAreaEventManager.fireZoom(mSignalData, -1, e.getPoint().x);
+      else mDrawAreaEventManager.fireZoom(mSignalData, 1, e.getPoint().x);
+    }
   }
 }

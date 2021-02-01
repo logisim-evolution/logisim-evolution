@@ -28,21 +28,29 @@
 
 package com.cburch.logisim.gui.icons;
 
+import com.cburch.logisim.prefs.AppPreferences;
 import java.awt.Color;
 import java.awt.Graphics2D;
-
-import com.cburch.logisim.prefs.AppPreferences;
 
 public class RunIcon extends AbstractIcon {
 
   @Override
   protected void paintIcon(Graphics2D g2) {
     g2.setColor(Color.GREEN.darker());
-    g2.fillOval(AppPreferences.getScaled(2), AppPreferences.getScaled(2), AppPreferences.getScaled(13), AppPreferences.getScaled(13));
-    int[] xpos = new int[] {AppPreferences.getScaled(6),AppPreferences.getScaled(11),AppPreferences.getScaled(6)};
-    int[] ypos = new int[] {AppPreferences.getScaled(5),AppPreferences.getScaled(8),AppPreferences.getScaled(11)};
+    g2.fillOval(
+        AppPreferences.getScaled(2),
+        AppPreferences.getScaled(2),
+        AppPreferences.getScaled(13),
+        AppPreferences.getScaled(13));
+    int[] xpos =
+        new int[] {
+          AppPreferences.getScaled(6), AppPreferences.getScaled(11), AppPreferences.getScaled(6)
+        };
+    int[] ypos =
+        new int[] {
+          AppPreferences.getScaled(5), AppPreferences.getScaled(8), AppPreferences.getScaled(11)
+        };
     g2.setColor(Color.WHITE);
     g2.fillPolygon(xpos, ypos, 3);
   }
-
 }

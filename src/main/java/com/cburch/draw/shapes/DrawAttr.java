@@ -40,30 +40,6 @@ import java.awt.Font;
 import java.util.List;
 
 public class DrawAttr {
-  private static List<Attribute<?>> createAttributes(Attribute<?>[] values) {
-    return UnmodifiableList.create(values);
-  }
-
-  public static List<Attribute<?>> getFillAttributes(AttributeOption paint) {
-    if (paint.equals(PAINT_STROKE)) {
-      return ATTRS_FILL_STROKE;
-    } else if (paint.equals(PAINT_FILL)) {
-      return ATTRS_FILL_FILL;
-    } else {
-      return ATTRS_FILL_BOTH;
-    }
-  }
-
-  public static List<Attribute<?>> getRoundRectAttributes(AttributeOption paint) {
-    if (paint.equals(PAINT_STROKE)) {
-      return ATTRS_RRECT_STROKE;
-    } else if (paint.equals(PAINT_FILL)) {
-      return ATTRS_RRECT_FILL;
-    } else {
-      return ATTRS_RRECT_BOTH;
-    }
-  }
-
   public static final Font DEFAULT_FONT = new Font("SansSerif", Font.PLAIN, 12);
   public static final Font DEFAULT_FIXED_PICH_FONT = new Font("Courier 10 Pitch", Font.PLAIN, 12);
   public static final Font DEFAULT_NAME_FONT = new Font("Courier 10 Pitch", Font.BOLD, 14);
@@ -71,14 +47,12 @@ public class DrawAttr {
   public static final int FixedFontCharWidth = 8;
   public static final int FixedFontAscent = 9;
   public static final int FixedFontDescent = 1;
-
   public static final AttributeOption HALIGN_LEFT =
       new AttributeOption(EditableLabel.LEFT, S.getter("alignLeft"));
   public static final AttributeOption HALIGN_CENTER =
       new AttributeOption(EditableLabel.CENTER, S.getter("alignCenter"));
   public static final AttributeOption HALIGN_RIGHT =
       new AttributeOption(EditableLabel.RIGHT, S.getter("alignRight"));
-
   public static final AttributeOption VALIGN_TOP =
       new AttributeOption(EditableLabel.TOP, S.getter("alignTop"));
   public static final AttributeOption VALIGN_MIDDLE =
@@ -113,21 +87,18 @@ public class DrawAttr {
       Attributes.forIntegerRange("stroke-width", S.getter("attrStrokeWidth"), 1, 8);
   public static final Attribute<Color> STROKE_COLOR =
       Attributes.forColor("stroke", S.getter("attrStroke"));
-
   public static final Attribute<Color> FILL_COLOR =
       Attributes.forColor("fill", S.getter("attrFill"));
   public static final Attribute<Color> TEXT_DEFAULT_FILL =
       Attributes.forColor("fill", S.getter("attrFill"));
   public static final Attribute<Integer> CORNER_RADIUS =
       Attributes.forIntegerRange("rx", S.getter("attrRx"), 1, 1000);
-
   public static final List<Attribute<?>> ATTRS_TEXT // for text
       = createAttributes(new Attribute[] {FONT, HALIGNMENT, VALIGNMENT, FILL_COLOR});
   public static final List<Attribute<?>> ATTRS_TEXT_TOOL // for text tool
       = createAttributes(new Attribute[] {FONT, HALIGNMENT, VALIGNMENT, TEXT_DEFAULT_FILL});
   public static final List<Attribute<?>> ATTRS_STROKE // for line, polyline
       = createAttributes(new Attribute[] {STROKE_WIDTH, STROKE_COLOR});
-
   // attribute lists for rectangle, oval, polygon
   private static final List<Attribute<?>> ATTRS_FILL_STROKE =
       createAttributes(new Attribute[] {PAINT_TYPE, STROKE_WIDTH, STROKE_COLOR});
@@ -135,15 +106,36 @@ public class DrawAttr {
       createAttributes(new Attribute[] {PAINT_TYPE, FILL_COLOR});
   private static final List<Attribute<?>> ATTRS_FILL_BOTH =
       createAttributes(new Attribute[] {PAINT_TYPE, STROKE_WIDTH, STROKE_COLOR, FILL_COLOR});
-
   // attribute lists for rounded rectangle
   private static final List<Attribute<?>> ATTRS_RRECT_STROKE =
       createAttributes(new Attribute[] {PAINT_TYPE, STROKE_WIDTH, STROKE_COLOR, CORNER_RADIUS});
-
   private static final List<Attribute<?>> ATTRS_RRECT_FILL =
       createAttributes(new Attribute[] {PAINT_TYPE, FILL_COLOR, CORNER_RADIUS});
-
   private static final List<Attribute<?>> ATTRS_RRECT_BOTH =
       createAttributes(
           new Attribute[] {PAINT_TYPE, STROKE_WIDTH, STROKE_COLOR, FILL_COLOR, CORNER_RADIUS});
+
+  private static List<Attribute<?>> createAttributes(Attribute<?>[] values) {
+    return UnmodifiableList.create(values);
+  }
+
+  public static List<Attribute<?>> getFillAttributes(AttributeOption paint) {
+    if (paint.equals(PAINT_STROKE)) {
+      return ATTRS_FILL_STROKE;
+    } else if (paint.equals(PAINT_FILL)) {
+      return ATTRS_FILL_FILL;
+    } else {
+      return ATTRS_FILL_BOTH;
+    }
+  }
+
+  public static List<Attribute<?>> getRoundRectAttributes(AttributeOption paint) {
+    if (paint.equals(PAINT_STROKE)) {
+      return ATTRS_RRECT_STROKE;
+    } else if (paint.equals(PAINT_FILL)) {
+      return ATTRS_RRECT_FILL;
+    } else {
+      return ATTRS_RRECT_BOTH;
+    }
+  }
 }

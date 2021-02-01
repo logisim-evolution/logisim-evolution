@@ -29,7 +29,6 @@
 package com.cburch.logisim.gui.main;
 
 import com.cburch.logisim.comp.ComponentFactory;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -79,6 +78,6 @@ public class SimulationTreeNode implements TreeNode {
   }
 
   public boolean isLeaf() {
-	  return false;
+    return false;
   }
 }

@@ -34,7 +34,6 @@ import com.cburch.logisim.gui.chronogram.chronodata.ChronoData;
 import com.cburch.logisim.gui.chronogram.chronodata.SignalData;
 import com.cburch.logisim.gui.chronogram.chronodata.SignalDataBus;
 import com.cburch.logisim.gui.generic.OptionPane;
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -71,29 +70,32 @@ import javax.swing.table.JTableHeader;
 public class ImageExporter extends javax.swing.JFrame implements ActionListener {
 
   private static final long serialVersionUID = 1L;
-  private File fileToSave;
+  final int PAGE_MAX_WIDTH = 1000;
   private final ChronoData chronoData;
   private final int tickWidth = 20;
   // Dimensions
   private final int lowPos = 32;
   private final int highPos = 6;
   private final int height = 38;
-  int middleHeight = 38 / 2;
   private final Color lightGray = new Color(180, 180, 180, 100);
-  private SignalData mSignalData;
+  private final int ROWHEIGHT = 38;
+  private final ChronoFrame chronoFrame;
+  int middleHeight = 38 / 2;
   // for right panel
   JPanel rightBox;
+  Image img_single;
+  Image img_multiple;
+  private File fileToSave;
+  private SignalData mSignalData;
   // for leftPanel
   private JTable table;
   private Object[][] tableData;
   private HashMap<SignalData, Integer> signalDataPositionInTable; // to have
   private SignalData[] reverseSignalDataPositionInTable; // and the reverse
   private JPanel leftPanel;
-  private final int ROWHEIGHT = 38;
   // for timeline
   private JPanel timePanel;
   private TimelineDraw td;
-  private final ChronoFrame chronoFrame;
   // GUI, select image export options
   private JFrame frame;
   private javax.swing.ButtonGroup buttonGroup1;
@@ -101,9 +103,6 @@ public class ImageExporter extends javax.swing.JFrame implements ActionListener 
   private javax.swing.JRadioButton jRadioBtn_multiple;
   private JButton jBtnDone;
   private JLabel picture;
-  Image img_single;
-  Image img_multiple;
-  final int PAGE_MAX_WIDTH = 1000;
 
   /**
    * @param lp

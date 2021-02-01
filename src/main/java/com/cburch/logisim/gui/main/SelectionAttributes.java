@@ -49,26 +49,30 @@ import java.util.Set;
 
 class SelectionAttributes extends AbstractAttributeSet {
 
-  private class Listener implements Selection.Listener, AttributeListener {
+  private static final Attribute<?>[] EMPTY_ATTRIBUTES = new Attribute<?>[0];
+  private static final Object[] EMPTY_VALUES = new Object[0];
+  private final Canvas canvas;
+  private final Selection selection;
+  private final Listener listener;
+  private boolean listening;
+  private Set<Component> selected;
+  private Attribute<?>[] attrs;
+  private boolean[] readOnly;
+  private Object[] values;
+  private List<Attribute<?>> attrsView;
+  public SelectionAttributes(Canvas canvas, Selection selection) {
+    this.canvas = canvas;
+    this.selection = selection;
+    this.listener = new Listener();
+    this.listening = true;
+    this.selected = Collections.emptySet();
+    this.attrs = EMPTY_ATTRIBUTES;
+    this.values = EMPTY_VALUES;
+    this.attrsView = Collections.emptyList();
 
-    @Override
-    public void attributeListChanged(AttributeEvent e) {
-      if (listening) {
-        updateList(false);
-      }
-    }
-
-    @Override
-    public void attributeValueChanged(AttributeEvent e) {
-      if (listening) {
-        updateList(false);
-      }
-    }
-
-    @Override
-    public void selectionChanged(Selection.Event e) {
-      updateList(true);
-    }
+    selection.addListener(listener);
+    updateList(true);
+    setListening(true);
   }
 
   private static LinkedHashMap<Attribute<Object>, Object> computeAttributes(
@@ -174,38 +178,6 @@ class SelectionAttributes extends AbstractAttributeSet {
       }
       return true;
     }
-  }
-
-  private static final Attribute<?>[] EMPTY_ATTRIBUTES = new Attribute<?>[0];
-  private static final Object[] EMPTY_VALUES = new Object[0];
-  private final Canvas canvas;
-  private final Selection selection;
-  private final Listener listener;
-  private boolean listening;
-
-  private Set<Component> selected;
-
-  private Attribute<?>[] attrs;
-
-  private boolean[] readOnly;
-
-  private Object[] values;
-
-  private List<Attribute<?>> attrsView;
-
-  public SelectionAttributes(Canvas canvas, Selection selection) {
-    this.canvas = canvas;
-    this.selection = selection;
-    this.listener = new Listener();
-    this.listening = true;
-    this.selected = Collections.emptySet();
-    this.attrs = EMPTY_ATTRIBUTES;
-    this.values = EMPTY_VALUES;
-    this.attrsView = Collections.emptyList();
-
-    selection.addListener(listener);
-    updateList(true);
-    setListening(true);
   }
 
   @Override
@@ -378,6 +350,28 @@ class SelectionAttributes extends AbstractAttributeSet {
       } else {
         fireAttributeListChanged();
       }
+    }
+  }
+
+  private class Listener implements Selection.Listener, AttributeListener {
+
+    @Override
+    public void attributeListChanged(AttributeEvent e) {
+      if (listening) {
+        updateList(false);
+      }
+    }
+
+    @Override
+    public void attributeValueChanged(AttributeEvent e) {
+      if (listening) {
+        updateList(false);
+      }
+    }
+
+    @Override
+    public void selectionChanged(Selection.Event e) {
+      updateList(true);
     }
   }
 }
