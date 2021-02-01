@@ -28,19 +28,18 @@
 
 package com.cburch.logisim.analyze.data;
 
+import com.cburch.logisim.prefs.AppPreferences;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
 
-import com.cburch.logisim.prefs.AppPreferences;
-
 public class CoverColor implements PreferenceChangeListener {
   public static final CoverColor COVERCOLOR = new CoverColor(); 
 
   private int index;
-  private final List<Color> colors = new ArrayList<Color>();
+  private final List<Color> colors = new ArrayList<>();
 
   public CoverColor() {
     index = -1;

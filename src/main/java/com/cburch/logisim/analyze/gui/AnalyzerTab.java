@@ -28,9 +28,9 @@
 
 package com.cburch.logisim.analyze.gui;
 
-import javax.swing.JPanel;
 import com.cburch.logisim.gui.menu.EditHandler;
 import com.cburch.logisim.gui.menu.PrintHandler;
+import javax.swing.JPanel;
 
 abstract class AnalyzerTab extends JPanel {
   private static final long serialVersionUID = 1L;

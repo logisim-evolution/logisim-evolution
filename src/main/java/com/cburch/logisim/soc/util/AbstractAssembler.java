@@ -30,28 +30,27 @@ package com.cburch.logisim.soc.util;
 
 import static com.cburch.logisim.soc.Strings.S;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.soc.data.SocBusTransaction;
 import com.cburch.logisim.soc.data.SocProcessorInterface;
 import com.cburch.logisim.soc.data.SocSupport;
 import com.cburch.logisim.soc.file.ElfProgramHeader;
-import com.cburch.logisim.soc.file.ElfSectionHeader;
 import com.cburch.logisim.soc.file.ElfProgramHeader.ProgramHeader;
+import com.cburch.logisim.soc.file.ElfSectionHeader;
 import com.cburch.logisim.soc.file.SectionHeader;
 import com.cburch.logisim.soc.file.SymbolTable;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 
 public abstract class AbstractAssembler implements AssemblerInterface {
 
   private static final int NR_OF_BYTES_PER_LINE = 16;
-  private final ArrayList<AssemblerExecutionInterface> exeUnits = new ArrayList<AssemblerExecutionInterface>();
+  private final ArrayList<AssemblerExecutionInterface> exeUnits = new ArrayList<>();
   private final HashSet<Integer> acceptedParameterTypes;
   
   public AbstractAssembler() {
-    acceptedParameterTypes = new HashSet<Integer>();
+    acceptedParameterTypes = new HashSet<>();
     acceptedParameterTypes.add(AssemblerToken.BRACKETED_REGISTER);
     acceptedParameterTypes.add(AssemblerToken.DEC_NUMBER);
     acceptedParameterTypes.add(AssemblerToken.HEX_NUMBER);
@@ -81,7 +80,7 @@ public abstract class AbstractAssembler implements AssemblerInterface {
   }
   
   public ArrayList<String> getOpcodes() {
-    ArrayList<String> opcodes = new ArrayList<String>();
+    ArrayList<String> opcodes = new ArrayList<>();
     for (AssemblerExecutionInterface exe : exeUnits)
       opcodes.addAll(exe.getInstructions());
     return opcodes;
@@ -253,9 +252,9 @@ public abstract class AbstractAssembler implements AssemblerInterface {
       /* The section header gives more information on the program, so we prefer this one over the
        * program header.
        */
-      HashMap<Integer,String> labels = new HashMap<Integer,String>();
+      HashMap<Integer,String> labels = new HashMap<>();
       int maxLabelSize = 0;
-      ArrayList<SectionHeader> sortedList = new ArrayList<SectionHeader>();
+      ArrayList<SectionHeader> sortedList = new ArrayList<>();
       for (SectionHeader sh : elfSections.getHeaders()) {
         if (sh.isAllocated()) {
           if (sortedList.isEmpty()) {
@@ -300,7 +299,7 @@ public abstract class AbstractAssembler implements AssemblerInterface {
         }
         if (sh.isExecutable()) {
           /* first pass, we are going to insert labels where we can find them */
-          ArrayList<Integer> newLabels = new ArrayList<Integer>();
+          ArrayList<Integer> newLabels = new ArrayList<>();
           for (int pc = 0 ; pc < (size>>2) ; pc++) {
             decode(contents[pc]);
             AssemblerExecutionInterface exe = getExeUnit();
@@ -334,7 +333,7 @@ public abstract class AbstractAssembler implements AssemblerInterface {
             if (label != null && label.startsWith("logisim_label_")) {
               int index = 0;
               try { index = Integer.parseUnsignedInt(label.substring(14)); }
-              catch (NumberFormatException e) {};
+              catch (NumberFormatException e) {}
               if (index >= offset) offset = index+1;
             }
           }

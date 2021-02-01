@@ -39,7 +39,7 @@ public class FailException extends TestException {
   private final int column;
   private final Value expected;
   private final Value computed;
-  private final ArrayList<FailException> more = new ArrayList<FailException>();
+  private final ArrayList<FailException> more = new ArrayList<>();
 
   public FailException(int column, String columnName, Value expected, Value computed) {
     super(
@@ -81,7 +81,7 @@ public class FailException extends TestException {
   }
 
   public ArrayList<FailException> getAll() {
-    ArrayList<FailException> ret = new ArrayList<FailException>();
+    ArrayList<FailException> ret = new ArrayList<>();
     ret.add(this);
     ret.addAll(more);
     return ret;

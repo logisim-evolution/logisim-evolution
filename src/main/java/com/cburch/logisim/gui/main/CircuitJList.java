@@ -46,7 +46,7 @@ class CircuitJList extends JList {
   public CircuitJList(Project proj, boolean includeEmpty) {
     LogisimFile file = proj.getLogisimFile();
     Circuit current = proj.getCurrentCircuit();
-    Vector<Circuit> options = new Vector<Circuit>();
+    Vector<Circuit> options = new Vector<>();
     boolean currentFound = false;
     for (Circuit circ : file.getCircuits()) {
       if (!includeEmpty || circ.getBounds() != Bounds.EMPTY_BOUNDS) {
@@ -63,7 +63,7 @@ class CircuitJList extends JList {
   public List<Circuit> getSelectedCircuits() {
     Object[] selected = getSelectedValuesList().toArray();
     if (selected != null && selected.length > 0) {
-      ArrayList<Circuit> ret = new ArrayList<Circuit>(selected.length);
+      ArrayList<Circuit> ret = new ArrayList<>(selected.length);
       for (Object sel : selected) {
         if (sel instanceof Circuit) ret.add((Circuit) sel);
       }

@@ -89,10 +89,10 @@ public class SelectionActions {
 
   // clears the selection, anchoring all floating elements in selection
   public static Action drop(Selection sel, Collection<Component> comps) {
-    HashSet<Component> floating = new HashSet<Component>(sel.getFloatingComponents());
-    HashSet<Component> anchored = new HashSet<Component>(sel.getAnchoredComponents());
-    ArrayList<Component> toDrop = new ArrayList<Component>();
-    ArrayList<Component> toIgnore = new ArrayList<Component>();
+    HashSet<Component> floating = new HashSet<>(sel.getFloatingComponents());
+    HashSet<Component> anchored = new HashSet<>(sel.getAnchoredComponents());
+    ArrayList<Component> toDrop = new ArrayList<>();
+    ArrayList<Component> toIgnore = new ArrayList<>();
     for (Component comp : comps) {
       if (floating.contains(comp)) {
         toDrop.add(comp);
@@ -147,10 +147,10 @@ public class SelectionActions {
 
   private static HashMap<Component, Component> getReplacementMap(Project proj) {
     HashMap<Component, Component> replMap;
-    replMap = new HashMap<Component, Component>();
+    replMap = new HashMap<>();
 
     LogisimFile file = proj.getLogisimFile();
-    ArrayList<Library> libs = new ArrayList<Library>();
+    ArrayList<Library> libs = new ArrayList<>();
     libs.add(file);
     libs.addAll(file.getLibraries());
 
@@ -158,7 +158,7 @@ public class SelectionActions {
     Clipboard clip = Clipboard.get();
     Collection<Component> comps = clip.getComponents();
     HashMap<ComponentFactory, ComponentFactory> factoryReplacements;
-    factoryReplacements = new HashMap<ComponentFactory, ComponentFactory>();
+    factoryReplacements = new HashMap<>();
     for (Component comp : comps) {
       if (comp instanceof Wire) continue;
 
@@ -170,7 +170,7 @@ public class SelectionActions {
         ComponentFactory candidate = findComponentFactory(compFactory, libs, true);
         if (candidate == null) {
           if (dropped == null) {
-            dropped = new ArrayList<String>();
+            dropped = new ArrayList<>();
           }
           dropped.add(compFactory.getDisplayName());
         } else {
@@ -497,7 +497,7 @@ public class SelectionActions {
 
     private Collection<Component> computeAdditions(Collection<Component> comps) {
       HashMap<Component, Component> replMap = componentReplacements;
-      ArrayList<Component> toAdd = new ArrayList<Component>(comps.size());
+      ArrayList<Component> toAdd = new ArrayList<>(comps.size());
       for (Component comp : comps) {
         if (replMap.containsKey(comp)) {
           Component repl = replMap.get(comp);

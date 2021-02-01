@@ -37,7 +37,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class AbstractCaret implements Caret {
-  private final ArrayList<CaretListener> listeners = new ArrayList<CaretListener>();
+  private final ArrayList<CaretListener> listeners = new ArrayList<>();
   private final List<CaretListener> listenersView;
   private Bounds bds = Bounds.EMPTY_BOUNDS;
 

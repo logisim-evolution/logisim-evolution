@@ -54,6 +54,7 @@ public class SelectionAttributes extends AbstractAttributeSet {
   private Attribute<?>[] selAttrs;
   private Object[] selValues;
   private List<Attribute<?>> attrsView;
+
   public SelectionAttributes(Selection selection) {
     this.selection = selection;
     this.listener = new Listener();
@@ -74,7 +75,7 @@ public class SelectionAttributes extends AbstractAttributeSet {
         if (ret == null) {
           ret = val;
         } else if (val != null && val.equals(ret)) {
-          ; // keep on, making sure everything else matches
+          // keep on, making sure everything else matches
         } else {
           return null;
         }
@@ -95,7 +96,7 @@ public class SelectionAttributes extends AbstractAttributeSet {
   public Iterable<Map.Entry<AttributeSet, CanvasObject>> entries() {
     Set<Map.Entry<AttributeSet, CanvasObject>> raw = selected.entrySet();
     List<Map.Entry<AttributeSet, CanvasObject>> ret;
-    ret = new ArrayList<Map.Entry<AttributeSet, CanvasObject>>(raw);
+    ret = new ArrayList<>(raw);
     return ret;
   }
 
@@ -160,7 +161,7 @@ public class SelectionAttributes extends AbstractAttributeSet {
     }
 
     private void computeAttributeList(Set<AttributeSet> attrsSet) {
-      Set<Attribute<?>> attrSet = new LinkedHashSet<Attribute<?>>();
+      Set<Attribute<?>> attrSet = new LinkedHashSet<>();
       Iterator<AttributeSet> sit = attrsSet.iterator();
       if (sit.hasNext()) {
         AttributeSet first = sit.next();
@@ -195,7 +196,7 @@ public class SelectionAttributes extends AbstractAttributeSet {
     //
     public void selectionChanged(SelectionEvent ex) {
       Map<AttributeSet, CanvasObject> oldSel = selected;
-      Map<AttributeSet, CanvasObject> newSel = new HashMap<AttributeSet, CanvasObject>();
+      Map<AttributeSet, CanvasObject> newSel = new HashMap<>();
       for (CanvasObject o : selection.getSelected()) {
         if (o != null) newSel.put(o.getAttributeSet(), o);
       }

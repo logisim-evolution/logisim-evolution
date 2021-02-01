@@ -64,6 +64,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashMap;
 import javax.swing.BorderFactory;
@@ -333,7 +334,7 @@ public class HexFile {
     } catch (IOException e) {
       throw new IOException(S.fmt("hexFileOpenError", e.getMessage()));
     }
-    out.write(headerForFormat(desc).getBytes("UTF-8"));
+    out.write(headerForFormat(desc).getBytes(StandardCharsets.UTF_8));
     new HexWriter(out, src, desc).save();
   }
 
@@ -1904,5 +1905,4 @@ public class HexFile {
       preview.setCaretPosition(0);
     }
   }
-  ;
 }

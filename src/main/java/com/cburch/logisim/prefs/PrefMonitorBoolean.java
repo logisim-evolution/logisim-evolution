@@ -32,7 +32,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.Preferences;
-
 import javax.swing.JCheckBox;
 
 public class PrefMonitorBoolean extends AbstractPrefMonitor<Boolean> implements ActionListener {

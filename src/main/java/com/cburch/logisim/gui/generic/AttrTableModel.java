@@ -29,13 +29,13 @@
 package com.cburch.logisim.gui.generic;
 
 public interface AttrTableModel {
-  public void addAttrTableModelListener(AttrTableModelListener listener);
+  void addAttrTableModelListener(AttrTableModelListener listener);
 
-  public AttrTableModelRow getRow(int rowIndex);
+  AttrTableModelRow getRow(int rowIndex);
 
-  public int getRowCount();
+  int getRowCount();
 
-  public String getTitle();
+  String getTitle();
 
-  public void removeAttrTableModelListener(AttrTableModelListener listener);
+  void removeAttrTableModelListener(AttrTableModelListener listener);
 }

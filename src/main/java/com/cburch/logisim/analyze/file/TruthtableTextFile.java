@@ -37,7 +37,6 @@ import com.cburch.logisim.analyze.model.Var;
 import com.cburch.logisim.analyze.model.VariableList;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.gui.generic.OptionPane;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;

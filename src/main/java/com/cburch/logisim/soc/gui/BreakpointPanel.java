@@ -97,7 +97,7 @@ public class BreakpointPanel extends JPanel
     add(info, BorderLayout.NORTH);
     add(debugScrollPane);
     oldCaretPos = -1;
-    debugLines = new HashMap<Integer, Integer>();
+    debugLines = new HashMap<>();
     localeChanged();
     LocaleManager.addLocaleListener(this);
   }
@@ -122,7 +122,7 @@ public class BreakpointPanel extends JPanel
   }
 
   public HashMap<Integer, Integer> getBreakPoints() {
-    HashMap<Integer, Integer> breakPoints = new HashMap<Integer, Integer>();
+    HashMap<Integer, Integer> breakPoints = new HashMap<>();
     for (int i : getBreakpointLines()) breakPoints.put(debugLines.get(i), i);
     return breakPoints;
   }
@@ -158,7 +158,7 @@ public class BreakpointPanel extends JPanel
   }
 
   private ArrayList<Integer> getBreakpointLines() {
-    ArrayList<Integer> lines = new ArrayList<Integer>();
+    ArrayList<Integer> lines = new ArrayList<>();
     GutterIconInfo[] bookmarks = debugScrollPane.getGutter().getBookmarks();
     Element root = asmWindow.getDocument().getDefaultRootElement();
     for (GutterIconInfo bookmark : bookmarks) {

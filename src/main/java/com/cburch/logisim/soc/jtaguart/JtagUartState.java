@@ -28,9 +28,6 @@
 
 package com.cburch.logisim.soc.jtaguart;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-
 import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
@@ -43,13 +40,15 @@ import com.cburch.logisim.soc.data.SocBusSlaveListener;
 import com.cburch.logisim.soc.data.SocBusTransaction;
 import com.cburch.logisim.soc.data.SocSupport;
 import com.cburch.logisim.soc.pio.PioState.PioRegState;
+import java.util.ArrayList;
+import java.util.LinkedList;
 
 public class JtagUartState  implements SocBusSlaveInterface {
 
   public class JtagUartFifoState implements InstanceData,Cloneable {
 	
-	private final LinkedList<Integer> WriteFifo = new LinkedList<Integer>();
-	private final LinkedList<Integer> ReadFifo = new LinkedList<Integer>();
+	private final LinkedList<Integer> WriteFifo = new LinkedList<>();
+	private final LinkedList<Integer> ReadFifo = new LinkedList<>();
 	private boolean readIrqEnable = false;
 	private boolean writeIrqEnable = false;
 	private boolean acBit = false;
@@ -178,7 +177,7 @@ public class JtagUartState  implements SocBusSlaveInterface {
   private Integer writeIrqThreshold = 8;
   private AttributeOption readFifoSize = JtagUartAttributes.OPT_64;
   private Integer readIrqThreshold = 8;
-  private final ArrayList<SocBusSlaveListener> listeners = new ArrayList<SocBusSlaveListener>();
+  private final ArrayList<SocBusSlaveListener> listeners = new ArrayList<>();
 
   public String getLabel() { return label; }
   public SocBusInfo getAttachedBus() { return attachedBus; }
@@ -354,8 +353,7 @@ public class JtagUartState  implements SocBusSlaveInterface {
 
   @Override
   public void removeListener(SocBusSlaveListener l) {
-    if (listeners.contains(l))
-      listeners.remove(l);
+    listeners.remove(l);
   }
 
   @Override

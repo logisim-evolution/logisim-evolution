@@ -96,9 +96,9 @@ class AttrTableSelectionModel extends AttributeSetTableModel implements Selectio
   public void setValueRequested(Attribute<Object> attr, Object value) throws AttrTableSetException {
     SelectionAttributes attrs = (SelectionAttributes) getAttributeSet();
     Map<AttributeMapKey, Object> oldVals;
-    oldVals = new HashMap<AttributeMapKey, Object>();
+    oldVals = new HashMap<>();
     Map<AttributeMapKey, Object> newVals;
-    newVals = new HashMap<AttributeMapKey, Object>();
+    newVals = new HashMap<>();
     for (Map.Entry<AttributeSet, CanvasObject> ent : attrs.entries()) {
       AttributeMapKey key = new AttributeMapKey(attr, ent.getValue());
       oldVals.put(key, ent.getKey().getValue(attr));

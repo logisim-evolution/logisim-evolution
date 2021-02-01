@@ -44,11 +44,11 @@ import java.awt.geom.GeneralPath;
 import java.util.ArrayList;
 
 class XorGate extends AbstractGate {
-  private class XorGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
+  private static class XorGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
     @Override
     public ArrayList<String> GetLogicFunction(
         int nr_of_inputs, int bitwidth, boolean is_one_hot, String HDLType) {
-      ArrayList<String> Contents = new ArrayList<String>();
+      ArrayList<String> Contents = new ArrayList<>();
       if (is_one_hot) {
         Contents.addAll(GetOneHot(false, nr_of_inputs, bitwidth > 1, HDLType));
       } else {

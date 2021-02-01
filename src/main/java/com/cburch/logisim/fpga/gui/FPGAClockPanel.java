@@ -30,22 +30,20 @@ package com.cburch.logisim.fpga.gui;
 
 import static com.cburch.logisim.fpga.Strings.S;
 
+import com.cburch.logisim.gui.menu.MenuSimulate;
+import com.cburch.logisim.proj.Project;
+import com.cburch.logisim.util.LocaleListener;
 import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
-
 import javax.swing.BorderFactory;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-
-import com.cburch.logisim.gui.menu.MenuSimulate;
-import com.cburch.logisim.proj.Project;
-import com.cburch.logisim.util.LocaleListener;
 
 public class FPGAClockPanel extends JPanel implements ActionListener,LocaleListener {
 

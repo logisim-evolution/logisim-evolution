@@ -40,7 +40,7 @@ public class ConnectionEnd {
   public ConnectionEnd(boolean OutputEnd, Byte nr_of_bits, Component comp) {
     IsOutput = OutputEnd;
     this.nr_of_bits = nr_of_bits;
-    MyConnections = new ArrayList<ConnectionPoint>();
+    MyConnections = new ArrayList<>();
     for (byte i = 0; i < nr_of_bits; i++) MyConnections.add(new ConnectionPoint(comp));
   }
 

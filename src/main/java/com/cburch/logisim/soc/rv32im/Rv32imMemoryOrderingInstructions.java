@@ -30,12 +30,11 @@ package com.cburch.logisim.soc.rv32im;
 
 import static com.cburch.logisim.soc.Strings.S;
 
-import java.util.ArrayList;
-
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.soc.util.AssemblerAsmInstruction;
 import com.cburch.logisim.soc.util.AssemblerExecutionInterface;
+import java.util.ArrayList;
 
 public class Rv32imMemoryOrderingInstructions implements AssemblerExecutionInterface {
   
@@ -59,11 +58,11 @@ public class Rv32imMemoryOrderingInstructions implements AssemblerExecutionInter
   private int operation;
   
   public ArrayList<String> getInstructions() {
-    ArrayList<String> opcodes = new ArrayList<String>();
+    ArrayList<String> opcodes = new ArrayList<>();
     for (String asmOpcode : AsmOpcodes)
       opcodes.add(asmOpcode);
     return opcodes;
-  };
+  }
 
   public boolean execute(Object state, CircuitState cState) {
     if (!valid)

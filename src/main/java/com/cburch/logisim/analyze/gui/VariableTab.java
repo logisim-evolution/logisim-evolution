@@ -30,8 +30,17 @@ package com.cburch.logisim.analyze.gui;
 
 import static com.cburch.logisim.analyze.Strings.S;
 
-import java.util.EventObject;
-
+import com.cburch.logisim.analyze.model.ParserException;
+import com.cburch.logisim.analyze.model.Var;
+import com.cburch.logisim.analyze.model.VariableList;
+import com.cburch.logisim.analyze.model.VariableListEvent;
+import com.cburch.logisim.analyze.model.VariableListListener;
+import com.cburch.logisim.gui.menu.EditHandler;
+import com.cburch.logisim.gui.menu.LogisimMenuBar;
+import com.cburch.logisim.gui.menu.LogisimMenuItem;
+import com.cburch.logisim.prefs.AppPreferences;
+import com.cburch.logisim.util.StringUtil;
+import com.cburch.logisim.util.SyntaxChecker;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -50,7 +59,7 @@ import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-
+import java.util.EventObject;
 import javax.swing.AbstractAction;
 import javax.swing.AbstractCellEditor;
 import javax.swing.ActionMap;
@@ -74,18 +83,6 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellEditor;
 import org.jdesktop.swingx.prompt.BuddySupport;
-
-import com.cburch.logisim.analyze.model.ParserException;
-import com.cburch.logisim.analyze.model.Var;
-import com.cburch.logisim.analyze.model.VariableList;
-import com.cburch.logisim.analyze.model.VariableListEvent;
-import com.cburch.logisim.analyze.model.VariableListListener;
-import com.cburch.logisim.gui.menu.EditHandler;
-import com.cburch.logisim.gui.menu.LogisimMenuBar;
-import com.cburch.logisim.gui.menu.LogisimMenuItem;
-import com.cburch.logisim.prefs.AppPreferences;
-import com.cburch.logisim.util.StringUtil;
-import com.cburch.logisim.util.SyntaxChecker;
 
 public class VariableTab extends AnalyzerTab {
   private final VariableList inputs;
@@ -124,9 +121,9 @@ public class VariableTab extends AnalyzerTab {
 
     ActionMap actionMap = table.getActionMap();
 
-    actionMap.put(LogisimMenuBar.CUT, ccp.getCutAction());
-    actionMap.put(LogisimMenuBar.COPY, ccp.getCopyAction());
-    actionMap.put(LogisimMenuBar.PASTE, ccp.getPasteAction());
+    actionMap.put(LogisimMenuBar.CUT, TransferHandler.getCutAction());
+    actionMap.put(LogisimMenuBar.COPY, TransferHandler.getCopyAction());
+    actionMap.put(LogisimMenuBar.PASTE, TransferHandler.getPasteAction());
     actionMap.put(LogisimMenuBar.DELETE, new AbstractAction() {
       public void actionPerformed(ActionEvent e) {
         int idx = table.getSelectedRow();
@@ -327,7 +324,7 @@ public class VariableTab extends AnalyzerTab {
       else return MSBIndex;
     }
     if (pos >= length - 2) return NO_VALID_INDEX_SEP;
-    if (!index.substring(pos, pos + 2).equals("..")) return NO_VALID_INDEX_SEP;
+    if (!index.startsWith("..", pos)) return NO_VALID_INDEX_SEP;
     pos += 2;
     int curpos = pos;
     while ((pos < length) && ("0123456789".indexOf(index.charAt(pos)) >= 0)) pos++;
@@ -460,7 +457,8 @@ public class VariableTab extends AnalyzerTab {
         return null;
     }
 
-    public int getColumnCount() { return 1; };
+    public int getColumnCount() { return 1; }
+
     public String getColumnName(int column) { return ""; }
     public Class<?> getColumnClass(int columnIndex) { return Var.class; }
     public int getRowCount() { return listCopy.length + 1; }
@@ -519,7 +517,7 @@ public class VariableTab extends AnalyzerTab {
     }
   }
 
-  class BitWidthRenderer extends DefaultListCellRenderer {
+  static class BitWidthRenderer extends DefaultListCellRenderer {
     public BitWidthRenderer() {
     }
     @Override
@@ -588,7 +586,7 @@ public class VariableTab extends AnalyzerTab {
       if (text.contains("[")) {
         int idx = text.indexOf('[');
         name = text.substring(0, idx);
-        index = text.substring(idx, text.length());
+        index = text.substring(idx);
         w = checkindex(index);
         if (w <= 0) {
           String ErrorText = null;
@@ -620,8 +618,7 @@ public class VariableTab extends AnalyzerTab {
           return true; // do nothing, empty Var will be ignored in setValueAt()
         if (err == BAD_NAME || err == DUP_NAME || err == TOO_WIDE)
           return false; // prevent loss of focus
-        if (err == OK)
-          return true; // new Var will be added in setValueAt()
+        return err == OK; // new Var will be added in setValueAt()
       } else {
         // validate replacement name and width
         int err = validateInput(data, oldVar, name, w);
@@ -629,10 +626,8 @@ public class VariableTab extends AnalyzerTab {
           return false; // prevent loss of focus
         if (err == UNCHANGED)
           return true; // do nothing, unchanged Var will be ignored in setValueAt()
-        if (err == OK || err == RESIZED)
-          return true; // modified Var will be created in setValueAt()
-      }
-      return false; // should never happen
+        return err == OK || err == RESIZED; // modified Var will be created in setValueAt()
+      }// should never happen
     }
   }
 

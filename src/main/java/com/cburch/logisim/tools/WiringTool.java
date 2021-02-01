@@ -41,7 +41,6 @@ import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Action;
 import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.StringGetter;
-
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Cursor;
@@ -329,7 +328,7 @@ public class WiringTool extends Tool {
       exists = false;
       super.mouseReleased(canvas, g, e);
 
-      ArrayList<Wire> ws = new ArrayList<Wire>(2);
+      ArrayList<Wire> ws = new ArrayList<>(2);
       if (cur.getY() == start.getY() || cur.getX() == start.getX()) {
         Wire w = Wire.create(cur, start);
         w = checkForRepairs(canvas, w, w.getEnd0());

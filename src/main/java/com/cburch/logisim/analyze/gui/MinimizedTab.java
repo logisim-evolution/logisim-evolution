@@ -41,7 +41,6 @@ import com.cburch.logisim.gui.menu.LogisimMenuBar;
 import com.cburch.logisim.gui.menu.LogisimMenuItem;
 import com.cburch.logisim.gui.menu.PrintHandler;
 import com.cburch.logisim.prefs.AppPreferences;
-
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
@@ -67,7 +66,6 @@ import java.awt.image.BufferedImage;
 import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.io.IOException;
-
 import javax.swing.AbstractListModel;
 import javax.swing.ComboBoxModel;
 import javax.swing.InputMap;
@@ -349,9 +347,9 @@ class MinimizedTab extends AnalyzerTab {
       inputMap3.put(accel, item);
     }
 
-    getActionMap().put(LogisimMenuBar.COPY, ccpTab.getCopyAction());
-    karnaughMap.getActionMap().put(LogisimMenuBar.COPY, ccpKmap.getCopyAction());
-    minimizedExpr.getActionMap().put(LogisimMenuBar.COPY, ccpExpr.getCopyAction());
+    getActionMap().put(LogisimMenuBar.COPY, TransferHandler.getCopyAction());
+    karnaughMap.getActionMap().put(LogisimMenuBar.COPY, TransferHandler.getCopyAction());
+    minimizedExpr.getActionMap().put(LogisimMenuBar.COPY, TransferHandler.getCopyAction());
 
     MouseMotionAdapter m = new MouseMotionAdapter() {
       public void mouseDragged(MouseEvent e) {

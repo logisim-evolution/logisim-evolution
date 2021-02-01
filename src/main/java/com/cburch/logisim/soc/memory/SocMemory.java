@@ -30,9 +30,6 @@ package com.cburch.logisim.soc.memory;
 
 import static com.cburch.logisim.soc.Strings.S;
 
-import java.awt.Font;
-import java.awt.Graphics2D;
-
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.BitWidth;
@@ -49,6 +46,8 @@ import com.cburch.logisim.soc.data.SocInstanceFactory;
 import com.cburch.logisim.soc.data.SocProcessorInterface;
 import com.cburch.logisim.soc.data.SocSimulationManager;
 import com.cburch.logisim.util.GraphicsUtil;
+import java.awt.Font;
+import java.awt.Graphics2D;
 
 public class SocMemory extends SocInstanceFactory {
 

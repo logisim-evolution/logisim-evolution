@@ -28,13 +28,11 @@
 
 package com.cburch.logisim.fpga.gui;
 
-import javax.swing.JProgressBar;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.cburch.logisim.Main;
 import com.cburch.logisim.fpga.designrulecheck.SimpleDRCContainer;
+import javax.swing.JProgressBar;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class FPGAReport {
 

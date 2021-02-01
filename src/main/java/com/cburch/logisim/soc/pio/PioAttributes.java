@@ -30,10 +30,6 @@ package com.cburch.logisim.soc.pio;
 
 import static com.cburch.logisim.soc.Strings.S;
 
-import java.awt.Font;
-import java.util.ArrayList;
-import java.util.List;
-
 import com.cburch.logisim.data.AbstractAttributeSet;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeOption;
@@ -43,6 +39,9 @@ import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.soc.data.SocBusInfo;
 import com.cburch.logisim.soc.data.SocSimulationManager;
 import com.cburch.logisim.soc.memory.SocMemoryAttributes;
+import java.awt.Font;
+import java.util.ArrayList;
+import java.util.List;
 
 public class PioAttributes extends AbstractAttributeSet {
 
@@ -84,14 +83,14 @@ public class PioAttributes extends AbstractAttributeSet {
   private Boolean labelVisible = true;
   private PioState state = new PioState();
   
-  private ArrayList<Attribute<?>> myAttributes = new ArrayList<Attribute<?>>();
+  private ArrayList<Attribute<?>> myAttributes = new ArrayList<>();
   
   public PioAttributes() {
     updateAttributeList();
   }
   
   private boolean updateAttributeList() {
-    ArrayList<Attribute<?>>newList = new ArrayList<Attribute<?>>();
+    ArrayList<Attribute<?>>newList = new ArrayList<>();
     boolean changes = false;
     newList.add(SocMemoryAttributes.START_ADDRESS);
     newList.add(StdAttr.WIDTH);

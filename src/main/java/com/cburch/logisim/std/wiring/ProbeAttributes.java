@@ -59,14 +59,12 @@ public class ProbeAttributes extends AbstractAttributeSet implements ConvertEven
 
   private static final List<Attribute<?>> ATTRIBUTES =
       Arrays.asList(
-          new Attribute<?>[] {
-            StdAttr.FACING,
-            RadixOption.ATTRIBUTE,
-            StdAttr.LABEL,
-            StdAttr.LABEL_LOC,
-            StdAttr.LABEL_FONT,
-            PROBEAPPEARANCE
-          });
+          StdAttr.FACING,
+          RadixOption.ATTRIBUTE,
+          StdAttr.LABEL,
+          StdAttr.LABEL_LOC,
+          StdAttr.LABEL_FONT,
+          PROBEAPPEARANCE);
 
   public static AttributeOption GetDefaultProbeAppearance() {
     if (AppPreferences.NEW_INPUT_OUTPUT_SHAPES.getBoolean()) return APPEAR_EVOLUTION_NEW;
@@ -85,7 +83,7 @@ public class ProbeAttributes extends AbstractAttributeSet implements ConvertEven
 
   @Override
   protected void copyInto(AbstractAttributeSet destObj) {
-    ; // nothing to do
+    // nothing to do
   }
 
   @Override

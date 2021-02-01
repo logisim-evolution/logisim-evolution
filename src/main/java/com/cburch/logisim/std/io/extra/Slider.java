@@ -71,7 +71,7 @@ public class Slider extends InstanceFactory {
         else if (sliderPosition > SliderWidth) sliderPosition = SliderWidth;
         if (data.right_to_left) sliderPosition = (byte) (SliderWidth - sliderPosition);
         long value =
-            (long) Math.round(sliderPosition * (Math.pow(2, b.getWidth()) - 1) / SliderWidth);
+            Math.round(sliderPosition * (Math.pow(2, b.getWidth()) - 1) / SliderWidth);
         data.setCurrentValue(value);
         data.setCurrentX(sliderPosition);
         state.getAttributeSet().setValue(ATTR_VALUE, value);

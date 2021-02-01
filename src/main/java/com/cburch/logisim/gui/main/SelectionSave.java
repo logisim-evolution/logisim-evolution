@@ -75,7 +75,7 @@ class SelectionSave {
   }
 
   private static HashSet<Component> toSet(Component[] comps) {
-    HashSet<Component> ret = new HashSet<Component>(comps.length);
+    HashSet<Component> ret = new HashSet<>(comps.length);
     for (Component c : comps) ret.add(c);
     return ret;
   }

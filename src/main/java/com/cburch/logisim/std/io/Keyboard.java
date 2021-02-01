@@ -326,7 +326,7 @@ public class Keyboard extends InstanceFactory {
       String str;
       int dispStart;
       int dispEnd;
-      ArrayList<Integer> specials = new ArrayList<Integer>();
+      ArrayList<Integer> specials = new ArrayList<>();
       FontMetrics fm = null;
       KeyboardData state = getKeyboardState(painter);
       synchronized (state) {

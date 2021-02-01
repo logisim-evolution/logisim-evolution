@@ -30,13 +30,12 @@ package com.cburch.logisim.soc.util;
 
 import static com.cburch.logisim.soc.Strings.S;
 
+import com.cburch.logisim.util.StringGetter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Set;
-
-import com.cburch.logisim.util.StringGetter;
 
 public class AssemblerMacro {
 
@@ -51,9 +50,9 @@ public class AssemblerMacro {
   public AssemblerMacro(String name, int nrOfParameters) {
     this.name = name;
     this.nrOfParameters = nrOfParameters;
-    tokens = new LinkedList<AssemblerToken>();
-    localLabels = new HashMap<String,Long>();
-    parameters = new ArrayList<AssemblerToken[]>();
+    tokens = new LinkedList<>();
+    localLabels = new HashMap<>();
+    parameters = new ArrayList<>();
     sizeDeterminationActive = false;
     macroSize = -1L;
   }
@@ -61,7 +60,8 @@ public class AssemblerMacro {
   public String getName() { return name; }
   public int getNrOfParameters() { return nrOfParameters; }
   public void addToken(AssemblerToken token) {tokens.add(token);}
-  public void addLabel(String label) {localLabels.put(label, -1L); };
+  public void addLabel(String label) {localLabels.put(label, -1L); }
+
   public void clearParameters() { parameters.clear();}
   public void addParameter(AssemblerToken[] param) {parameters.add(param);}
   public boolean hasCorrectNumberOfParameters() {return nrOfParameters == parameters.size(); }
@@ -78,7 +78,7 @@ public class AssemblerMacro {
   }
   
   public LinkedList<AssemblerToken> getMacroTokens() {
-    LinkedList<AssemblerToken> makroTokens = new LinkedList<AssemblerToken>();
+    LinkedList<AssemblerToken> makroTokens = new LinkedList<>();
     for (AssemblerToken token : tokens) {
       if (token.getType() == AssemblerToken.MACRO_PARAMETER) {
         int index = token.getNumberValue()-1;
@@ -149,7 +149,7 @@ public class AssemblerMacro {
                                AssemblerInterface assembler,
                                HashMap<String,AssemblerMacro> macros) {
 	/* first pass: determine size of the macro and mark local labels */
-	ArrayList<AssemblerToken> hierarchy = new ArrayList<AssemblerToken>();
+	ArrayList<AssemblerToken> hierarchy = new ArrayList<>();
 	long msize = getMacroSize(errors, assembler, macros, hierarchy);
 	if (msize < 0) return false;
     /* second pass: replace local labels by pc-relative addresses */

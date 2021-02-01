@@ -511,7 +511,7 @@ public class AddTool extends Tool implements PropertyChangeListener {
 
   @Override
   public void mouseReleased(Canvas canvas, Graphics g, MouseEvent e) {
-    ArrayList<Component> added = new ArrayList<Component>();
+    ArrayList<Component> added = new ArrayList<>();
     if (state == SHOW_ADD) {
       Circuit circ = canvas.getCircuit();
       if (!canvas.getProject().getLogisimFile().contains(circ)) return;

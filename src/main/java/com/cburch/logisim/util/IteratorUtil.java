@@ -87,13 +87,13 @@ public class IteratorUtil {
       Iterator<E> ret = (Iterator<E>) i0;
       return ret;
     } else {
-      return new IteratorUnion<E>(i0, i1);
+      return new IteratorUnion<>(i0, i1);
     }
   }
 
   public static <E> Iterator<E> emptyIterator() {
-    return new EmptyIterator<E>();
+    return new EmptyIterator<>();
   }
 
-  public static Iterator<?> EMPTY_ITERATOR = new EmptyIterator<Object>();
+  public static Iterator<?> EMPTY_ITERATOR = new EmptyIterator<>();
 }

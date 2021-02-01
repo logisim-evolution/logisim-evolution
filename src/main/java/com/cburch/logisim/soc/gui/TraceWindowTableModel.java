@@ -149,7 +149,7 @@ public class TraceWindowTableModel extends AbstractTableModel
 
   private SocBusStateInfo.SocBusState getInfoAtColumn(int column) {
     ArrayList<SocBusStateInfo.SocBusState> sortedList =
-        new ArrayList<SocBusStateInfo.SocBusState>();
+        new ArrayList<>();
     for (SocBusStateInfo.SocBusState i : myTraceList.keySet())
       if (myTraceList.get(i) != null) {
         if (sortedList.isEmpty()) sortedList.add(i);
@@ -240,7 +240,7 @@ public class TraceWindowTableModel extends AbstractTableModel
     }
   }
 
-  private class CellRenderer extends JPanel implements TableCellRenderer {
+  private static class CellRenderer extends JPanel implements TableCellRenderer {
     private static final long serialVersionUID = 1L;
 
     @Override

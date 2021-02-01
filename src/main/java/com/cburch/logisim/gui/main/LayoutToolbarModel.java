@@ -59,6 +59,7 @@ class LayoutToolbarModel extends AbstractToolbarModel {
   private final MyListener myListener;
   private List<ToolbarItem> items;
   private Tool haloedTool;
+
   public LayoutToolbarModel(Frame frame, Project proj) {
     this.frame = frame;
     this.proj = proj;
@@ -88,13 +89,13 @@ class LayoutToolbarModel extends AbstractToolbarModel {
 
   private void buildContents() {
     List<ToolbarItem> oldItems = items;
-    List<ToolbarItem> newItems = new ArrayList<ToolbarItem>();
+    List<ToolbarItem> newItems = new ArrayList<>();
     ToolbarData data = proj.getLogisimFile().getOptions().getToolbarData();
     for (Tool tool : data.getContents()) {
       if (tool == null) {
         newItems.add(new ToolbarSeparator(4));
       } else {
-        if (tool instanceof AddTool) ((AddTool) tool).registerParrent(frame.getToolbar());
+        if (tool instanceof AddTool) tool.registerParrent(frame.getToolbar());
         ToolbarItem i = findItem(oldItems, tool);
         if (i == null) {
           newItems.add(new ToolItem(tool));

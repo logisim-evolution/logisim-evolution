@@ -72,7 +72,7 @@ public abstract class WindowMenuItemManager {
   private boolean listenerAdded = false;
   private boolean inManager = false;
   private final HashMap<WindowMenu, JRadioButtonMenuItem> menuItems =
-      new HashMap<WindowMenu, JRadioButtonMenuItem>();
+      new HashMap<>();
 
   public WindowMenuItemManager(String text, boolean persistent) {
     this.text = text;

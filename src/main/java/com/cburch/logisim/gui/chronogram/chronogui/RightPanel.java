@@ -46,7 +46,7 @@ public class RightPanel extends ChronoPanelTemplate {
   private final DrawAreaEventManager mDrawAreaEventManager;
   private final CommonPanelParam mCommonPanelParam;
 
-  private final ArrayList<SignalDraw> allSignalDraw = new ArrayList<SignalDraw>();
+  private final ArrayList<SignalDraw> allSignalDraw = new ArrayList<>();
   private final int globalHeight;
   private TimelineDraw mTimeLine;
   private Box rightBox;

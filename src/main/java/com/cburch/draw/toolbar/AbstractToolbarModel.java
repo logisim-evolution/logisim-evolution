@@ -35,7 +35,7 @@ public abstract class AbstractToolbarModel implements ToolbarModel {
   private final List<ToolbarModelListener> listeners;
 
   public AbstractToolbarModel() {
-    listeners = new ArrayList<ToolbarModelListener>();
+    listeners = new ArrayList<>();
   }
 
   public void addToolbarModelListener(ToolbarModelListener listener) {

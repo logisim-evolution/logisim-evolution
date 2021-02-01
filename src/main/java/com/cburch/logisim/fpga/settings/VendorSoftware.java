@@ -83,7 +83,7 @@ public class VendorSoftware {
   }
 
   public static LinkedList<String> getVendorStrings() {
-    LinkedList<String> result = new LinkedList<String>();
+    LinkedList<String> result = new LinkedList<>();
 
     result.add(VendorSoftware.Vendors[0]);
     result.add(VendorSoftware.Vendors[1]);

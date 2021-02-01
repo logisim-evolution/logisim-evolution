@@ -30,14 +30,13 @@ package com.cburch.logisim.soc.rv32im;
 
 import static com.cburch.logisim.soc.Strings.S;
 
-import java.math.BigInteger;
-import java.util.ArrayList;
-
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.soc.file.ElfHeader;
 import com.cburch.logisim.soc.util.AssemblerAsmInstruction;
 import com.cburch.logisim.soc.util.AssemblerExecutionInterface;
 import com.cburch.logisim.soc.util.AssemblerToken;
+import java.math.BigInteger;
+import java.util.ArrayList;
 
 public class RV32im_M_ExtensionInstructions implements AssemblerExecutionInterface {
 
@@ -62,11 +61,11 @@ public class RV32im_M_ExtensionInstructions implements AssemblerExecutionInterfa
   private int source2;
   
   public ArrayList<String> getInstructions() {
-    ArrayList<String> opcodes = new ArrayList<String>();
+    ArrayList<String> opcodes = new ArrayList<>();
     for (String asmOpcode : AsmOpcodes)
       opcodes.add(asmOpcode);
     return opcodes;
-  };
+  }
 
   public boolean execute(Object state, CircuitState cState) {
     if (!valid) return false;
@@ -84,12 +83,12 @@ public class RV32im_M_ExtensionInstructions implements AssemblerExecutionInterfa
                           result = (operation == INSTR_MUL) ? res.and(mask).intValue() : res.shiftRight(32).and(mask).intValue();
                           break;
       case INSTR_MULHSU : opp1 = BigInteger.valueOf(val1);
-                          opp2 = BigInteger.valueOf(ElfHeader.getLongValue((Integer)val2));
+                          opp2 = BigInteger.valueOf(ElfHeader.getLongValue(val2));
                           res = opp1.multiply(opp2);
                           result = res.shiftRight(32).and(mask).intValue();
                           break;
-      case INSTR_MULHU  : opp1 = BigInteger.valueOf(ElfHeader.getLongValue((Integer)val1)); 
-                          opp2 = BigInteger.valueOf(ElfHeader.getLongValue((Integer)val2));
+      case INSTR_MULHU  : opp1 = BigInteger.valueOf(ElfHeader.getLongValue(val1));
+                          opp2 = BigInteger.valueOf(ElfHeader.getLongValue(val2));
                           res = opp1.multiply(opp2);
                           result = res.shiftRight(32).and(mask).intValue();
                           break;
@@ -100,8 +99,8 @@ public class RV32im_M_ExtensionInstructions implements AssemblerExecutionInterfa
                           result = res.and(mask).intValue();
                           break;
       case INSTR_DIVU   :
-      case INSTR_REMU   : opp1 = BigInteger.valueOf(ElfHeader.getLongValue((Integer)val1));
-                          opp2 = BigInteger.valueOf(ElfHeader.getLongValue((Integer)val2));
+      case INSTR_REMU   : opp1 = BigInteger.valueOf(ElfHeader.getLongValue(val1));
+                          opp2 = BigInteger.valueOf(ElfHeader.getLongValue(val2));
                           res = (operation == INSTR_REMU) ? opp1.remainder(opp2) : opp1.divide(opp2);
                           result = res.and(mask).intValue();
                           break;

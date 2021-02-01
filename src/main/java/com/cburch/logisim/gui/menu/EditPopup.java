@@ -41,13 +41,14 @@ public abstract class EditPopup extends JPopupMenu {
   private static final long serialVersionUID = 1L;
   private final Listener listener;
   private final Map<LogisimMenuItem, JMenuItem> items;
+
   public EditPopup() {
     this(false);
   }
 
   public EditPopup(boolean waitForInitialize) {
     listener = new Listener();
-    items = new HashMap<LogisimMenuItem, JMenuItem>();
+    items = new HashMap<>();
     if (!waitForInitialize) initialize();
   }
 

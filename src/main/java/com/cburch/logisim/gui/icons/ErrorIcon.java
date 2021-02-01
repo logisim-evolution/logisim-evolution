@@ -53,7 +53,7 @@ public class ErrorIcon implements Icon {
   }
 
   public ErrorIcon(int size) {
-    wh = (int) AppPreferences.getScaled(size);
+    wh = AppPreferences.getScaled(size);
   }
 
   public ErrorIcon(boolean forward, boolean backward) {

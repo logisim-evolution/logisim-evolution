@@ -30,12 +30,11 @@ package com.cburch.logisim.analyze.model;
 
 import static com.cburch.logisim.analyze.Strings.S;
 
+import com.cburch.logisim.prefs.AppPreferences;
+import com.cburch.logisim.util.StringGetter;
 import java.util.ArrayList;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
-
-import com.cburch.logisim.prefs.AppPreferences;
-import com.cburch.logisim.util.StringGetter;
 
 public class Entry implements Comparable<Entry>,PreferenceChangeListener {
   public static Entry parse(String description) {
@@ -47,7 +46,7 @@ public class Entry implements Comparable<Entry>,PreferenceChangeListener {
   }
   
   public interface EntryChangedListener {
-    abstract void EntryDesriptionChanged();
+    void EntryDesriptionChanged();
   }
 
   public static final Entry OSCILLATE_ERROR = new Entry(-2, S.getter("oscillateError"));
@@ -63,7 +62,7 @@ public class Entry implements Comparable<Entry>,PreferenceChangeListener {
   private Entry(int sortOrder, StringGetter errorMessage) {
     this.sortOrder = sortOrder;
     this.errorMessage = errorMessage;
-    listeners = new ArrayList<EntryChangedListener>();
+    listeners = new ArrayList<>();
     AppPreferences.getPrefs().addPreferenceChangeListener(this);
   }
 
@@ -81,7 +80,7 @@ public class Entry implements Comparable<Entry>,PreferenceChangeListener {
   }
   
   public void removeListener(EntryChangedListener l) {
-    if (listeners.contains(l)) listeners.remove(l);
+    listeners.remove(l);
   }
   
   private void fireChange() {

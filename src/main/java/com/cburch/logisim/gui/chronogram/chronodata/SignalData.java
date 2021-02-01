@@ -45,7 +45,7 @@ public class SignalData {
   }
 
   public ImageIcon getIcon() {
-    return (ImageIcon) Icons.getIcon("chronoSignal.gif");
+    return Icons.getIcon("chronoSignal.gif");
   }
 
   public String getName() {

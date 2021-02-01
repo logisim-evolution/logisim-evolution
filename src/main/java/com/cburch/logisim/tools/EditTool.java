@@ -104,7 +104,7 @@ public class EditTool extends Tool {
     this.select = select;
     this.wiring = wiring;
     this.current = select;
-    this.cache = new LinkedHashMap<Location, Boolean>();
+    this.cache = new LinkedHashMap<>();
     this.lastX = -1;
     this.wireLoc = NULL_LOCATION;
     this.pressX = -1;
@@ -396,7 +396,7 @@ public class EditTool extends Tool {
       for (Wire w : circ.getWires()) {
         if (selected.contains(w)) {
           if (w.contains(oldWireLoc)) {
-            if (suppress == null) suppress = new ArrayList<Component>();
+            if (suppress == null) suppress = new ArrayList<>();
             suppress.add(w);
           }
         }

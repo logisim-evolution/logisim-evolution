@@ -40,7 +40,7 @@ import java.util.List;
 class TextAttributes extends AbstractAttributeSet {
   private static final List<Attribute<?>> ATTRIBUTES =
       Arrays.asList(
-          new Attribute<?>[] {Text.ATTR_TEXT, Text.ATTR_FONT, Text.ATTR_HALIGN, Text.ATTR_VALIGN});
+          Text.ATTR_TEXT, Text.ATTR_FONT, Text.ATTR_HALIGN, Text.ATTR_VALIGN);
 
   private String text;
   private Font font;
@@ -58,7 +58,7 @@ class TextAttributes extends AbstractAttributeSet {
 
   @Override
   protected void copyInto(AbstractAttributeSet destObj) {
-    ; // nothing to do
+    // nothing to do
   }
 
   @Override

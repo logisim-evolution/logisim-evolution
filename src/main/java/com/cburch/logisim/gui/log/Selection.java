@@ -40,7 +40,7 @@ public class Selection {
   public Selection(CircuitState root, Model model) {
     this.root = root;
     this.model = model;
-    components = new ArrayList<SelectionItem>();
+    components = new ArrayList<>();
   }
 
   public void add(SelectionItem item) {

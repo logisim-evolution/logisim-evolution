@@ -73,6 +73,7 @@ public class ValueTable extends JPanel {
   private int tableWidth;
   private int tableHeight;
   private Model model;
+
   public ValueTable(Model model) {
     header = new TableHeader();
     body = new TableBody();
@@ -237,7 +238,7 @@ public class ValueTable extends JPanel {
     modelChanged();
   }
 
-  public static interface Model {
+  public interface Model {
 
     void changeColumnValueRadix(int i);
 

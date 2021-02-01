@@ -413,7 +413,7 @@ class Video extends ManagedComponent implements ToolTipMaker, AttributeListener 
     return state;
   }
 
-  private class State implements ComponentState, Cloneable {
+  private static class State implements ComponentState, Cloneable {
     public Value lastClock = null;
     public BufferedImage img;
     public int last_x, last_y, color;

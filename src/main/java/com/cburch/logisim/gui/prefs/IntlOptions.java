@@ -46,6 +46,7 @@ class IntlOptions extends OptionsPanel {
   private final JComponent locale;
   private final PrefBoolean replAccents;
   private final PrefOptionList gateShape;
+
   public IntlOptions(PreferencesFrame window) {
     super(window);
 

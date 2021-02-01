@@ -42,7 +42,6 @@ public class ButtonIcon extends AnnimatedIcon {
   private StringGetter name = null;
 
   public ButtonIcon() {}
-  ;
 
   public ButtonIcon(StringGetter sg) {
     name = sg;

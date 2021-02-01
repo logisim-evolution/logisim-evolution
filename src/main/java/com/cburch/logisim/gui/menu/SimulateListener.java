@@ -32,5 +32,5 @@ import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.circuit.Simulator;
 
 public interface SimulateListener {
-  public void stateChangeRequested(Simulator sim, CircuitState state);
+  void stateChangeRequested(Simulator sim, CircuitState state);
 }

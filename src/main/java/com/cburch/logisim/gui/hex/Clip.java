@@ -135,9 +135,9 @@ class Clip implements ClipboardOwner {
     long p1 = caret.getDot();
     if (p0 == p1) {
       if (p0 + numWords - 1 <= model.getLastOffset()) {
-        ((MemContents) model).copyFrom(p0, pasted, 0, numWords);
+        model.copyFrom(p0, pasted, 0, numWords);
       } else {
-        ((MemContents) model).copyFrom(p0, pasted, 0, (int) (model.getLastOffset() - p0 + 1));
+        model.copyFrom(p0, pasted, 0, (int) (model.getLastOffset() - p0 + 1));
       }
     } else {
       if (p0 < 0 || p1 < 0) return;
@@ -168,7 +168,7 @@ class Clip implements ClipboardOwner {
         if (action != OptionPane.OK_OPTION) return;
         numWords = (int) (p1 - p0);
       }
-      ((MemContents) model).copyFrom(p0, pasted, 0, numWords);
+      model.copyFrom(p0, pasted, 0, numWords);
     }
   }
 

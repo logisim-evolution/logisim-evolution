@@ -247,6 +247,6 @@ public class Tunnel extends InstanceFactory {
 
   @Override
   public void propagate(InstanceState state) {
-    ; // nothing to do - handled by circuit
+    // nothing to do - handled by circuit
   }
 }

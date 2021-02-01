@@ -69,9 +69,9 @@ public class TikZInfo implements Cloneable {
   private AffineTransform myTransformer = new AffineTransform();
   private Color drawColor;
   private Color backColor;
-  private ArrayList<DrawObject> Contents = new ArrayList<DrawObject>();
-  private HashMap<String, String> customColors = new HashMap<String, String>();
-  private ArrayList<String> usedFonts = new ArrayList<String>();
+  private ArrayList<DrawObject> Contents = new ArrayList<>();
+  private HashMap<String, String> customColors = new HashMap<>();
+  private ArrayList<String> usedFonts = new ArrayList<>();
   private int fontIndex;
   private int fontSize;
   private boolean fontBold;
@@ -131,11 +131,11 @@ public class TikZInfo implements Cloneable {
             + "_"
             + Integer.toString(c.getBlue(), 16);
     String RGBCol =
-        Integer.toString(c.getRed())
+        c.getRed()
             + ", "
-            + Integer.toString(c.getGreen())
+            + c.getGreen()
             + ", "
-            + Integer.toString(c.getBlue());
+            + c.getBlue();
     customColors.put(custname, RGBCol);
     return custname;
   }
@@ -268,7 +268,7 @@ public class TikZInfo implements Cloneable {
   }
 
   public void copyArea(int x, int y, int width, int height, int dx, int dy) {
-    ArrayList<DrawObject> copyList = new ArrayList<DrawObject>();
+    ArrayList<DrawObject> copyList = new ArrayList<>();
     for (DrawObject obj : Contents) {
       if (obj.insideArea(x, y, width, height)) {
         DrawObject Clone = obj.clone();
@@ -324,7 +324,7 @@ public class TikZInfo implements Cloneable {
     StringBuffer chars = new StringBuffer();
     int repeat = i / 26;
     int charId = i % 26;
-    for (int j = 0; j <= repeat; j++) chars.append(String.valueOf((char) (charId + 'A')));
+    for (int j = 0; j <= repeat; j++) chars.append((char) (charId + 'A'));
     return chars.toString();
   }
 
@@ -405,21 +405,21 @@ public class TikZInfo implements Cloneable {
   }
 
   public interface DrawObject {
-    public String getTikZCommand();
+    String getTikZCommand();
 
-    public void getSvgCommand(Document root, Element e);
+    void getSvgCommand(Document root, Element e);
 
-    public boolean insideArea(int x, int y, int width, int height);
+    boolean insideArea(int x, int y, int width, int height);
 
-    public DrawObject clone();
+    DrawObject clone();
 
-    public void move(int dx, int dy);
+    void move(int dx, int dy);
   }
 
   private class AbstratctTikZ implements DrawObject {
     protected Point start;
     protected Point end;
-    protected ArrayList<Point> points = new ArrayList<Point>();
+    protected ArrayList<Point> points = new ArrayList<>();
     protected float strokeWidth;
     protected String color;
     protected double alpha;
@@ -427,7 +427,6 @@ public class TikZInfo implements Cloneable {
     protected boolean close;
 
     public AbstratctTikZ() {}
-    ;
 
     public AbstratctTikZ(int x1, int y1, int x2, int y2) {
       start = new Point(x1, y1);
@@ -532,8 +531,7 @@ public class TikZInfo implements Cloneable {
       if (getStartPoint().equals(l.getEndPoint())) return true;
       if (getEndPoint().equals(l.getStartPoint())) return true;
       if (getStartPoint().equals(l.getStartPoint())) return true;
-      if (getEndPoint().equals(l.getEndPoint())) return true;
-      return false;
+      return getEndPoint().equals(l.getEndPoint());
     }
 
     public void closeIfPossible() {
@@ -641,7 +639,7 @@ public class TikZInfo implements Cloneable {
   }
 
   private class TikZBezier extends AbstratctTikZ {
-    private final ArrayList<BezierInfo> myPath = new ArrayList<BezierInfo>();
+    private final ArrayList<BezierInfo> myPath = new ArrayList<>();
 
     public TikZBezier() {}
 
@@ -650,7 +648,6 @@ public class TikZInfo implements Cloneable {
       p.setLocation(0, 0);
       create(p, s, filled);
     }
-    ;
 
     public TikZBezier(Point2D orig, Shape s, boolean filled) {
       create(orig, s, filled);
@@ -710,7 +707,6 @@ public class TikZInfo implements Cloneable {
       contents.append(";");
       return contents.toString();
     }
-    ;
 
     @Override
     public void getSvgCommand(Document root, Element e) {
@@ -875,7 +871,6 @@ public class TikZInfo implements Cloneable {
     Point2D rad;
 
     public TikZRectangle() {}
-    ;
 
     public TikZRectangle(
         int x1, int y1, int x2, int y2, int arcwidth, int archeight, boolean filled) {
@@ -975,7 +970,6 @@ public class TikZInfo implements Cloneable {
     protected int rotation;
 
     public TikZElipse() {}
-    ;
 
     public TikZElipse(int x, int y, int width, int height, boolean filled) {
       super(x + (width >> 1), y + (height >> 1), 0, 0);
@@ -1079,7 +1073,6 @@ public class TikZInfo implements Cloneable {
     }
 
     public TikZArc() {}
-    ;
 
     @Override
     public DrawObject clone() {
@@ -1153,7 +1146,6 @@ public class TikZInfo implements Cloneable {
     private boolean fItalic;
 
     public TikZString() {}
-    ;
 
     public TikZString(String str, int x, int y) {
       name = str;
@@ -1286,7 +1278,7 @@ public class TikZInfo implements Cloneable {
         ne.setAttribute(
             "transform",
             "rotate("
-                + Double.toString(-this.rotation)
+                + -this.rotation
                 + ","
                 + location.getX()
                 + ","

@@ -64,7 +64,7 @@ public class TestFrame extends LFrame {
 
   private static final long serialVersionUID = 1L;
   private final Project project;
-  private final Map<Circuit, Model> modelMap = new HashMap<Circuit, Model>();
+  private final Map<Circuit, Model> modelMap = new HashMap<>();
   private final MyListener myListener = new MyListener();
   private final WindowMenuManager windowManager;
   private final JFileChooser chooser = new JFileChooser();
@@ -80,6 +80,7 @@ public class TestFrame extends LFrame {
   private Model curModel;
   private int finished, count;
   private File curFile;
+
   public TestFrame(Project project) {
     super(false, project);
     this.project = project;

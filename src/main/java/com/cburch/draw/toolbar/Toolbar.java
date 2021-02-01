@@ -42,6 +42,7 @@ public class Toolbar extends JPanel {
   private ToolbarModel model;
   private Object orientation;
   private ToolbarButton curPressed;
+
   public Toolbar(ToolbarModel model) {
     super(new BorderLayout());
     this.subpanel = new JPanel();

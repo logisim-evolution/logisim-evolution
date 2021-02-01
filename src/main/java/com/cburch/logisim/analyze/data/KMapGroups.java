@@ -40,7 +40,7 @@ import java.util.List;
 
 public class KMapGroups {
 
-  public class CoverInfo {
+  public static class CoverInfo {
     private final int startRow;
     private final int startCol;
     private int width;
@@ -78,17 +78,15 @@ public class KMapGroups {
         // 1) either also the same row-range
         if (row >= startRow && row < (startRow + height)) return true;
         // 2) maybe one down
-        if (row >= startRow && row <= (startRow + height)) return true;
+        return row >= startRow && row <= (startRow + height);
         // nope, distance too big
-        return false;
       }
       if (row >= startRow && row < (startRow + height)) {
         // same row, two possibilities:
         // 1) either also the same col-range; we do not need to check as it collides
         //    with the previous check of the same row range (see 1) above)
         // 2) maybe one to the right
-        if (col >= startCol && col <= (startCol + width)) return true;
-        return false;
+        return col >= startCol && col <= (startCol + width);
       }
       return false;
     }
@@ -118,9 +116,9 @@ public class KMapGroups {
 
     public KMapGroupInfo(Implicant imp, Color col) {
       this.color = col;
-      Areas = new ArrayList<CoverInfo>();
-      singleCoveredImplicants = new ArrayList<Implicant>();
-      List<Implicant> one = new ArrayList<Implicant>();
+      Areas = new ArrayList<>();
+      singleCoveredImplicants = new ArrayList<>();
+      List<Implicant> one = new ArrayList<>();
       one.add(imp);
       expression = Implicant.toExpression(format, model, one);
       build(imp);
@@ -135,7 +133,7 @@ public class KMapGroups {
     }
 
     public void removeSingleCover(Implicant imp) {
-      if (singleCoveredImplicants.contains(imp)) singleCoveredImplicants.remove(imp);
+      singleCoveredImplicants.remove(imp);
     }
 
     public boolean containsSingleCover(Implicant imp) {
@@ -302,7 +300,7 @@ public class KMapGroups {
 
   public void update() {
     List<Implicant> implicants = model.getOutputExpressions().getMinimalImplicants(output);
-    covers = new ArrayList<KMapGroupInfo>();
+    covers = new ArrayList<>();
     CoverColor.COVERCOLOR.reset();
     if (implicants != null) {
       for (Implicant imp : implicants) {

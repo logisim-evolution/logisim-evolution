@@ -82,7 +82,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       return false;
     }
     if (Hierarchy == null) {
-      Hierarchy = new ArrayList<String>();
+      Hierarchy = new ArrayList<>();
     }
     Netlist MyNetList = MyCircuit.getNetList();
     if (MyNetList == null) {
@@ -207,19 +207,19 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     String RangeKeyword = (HDLType.equals(VHDL)) ? " DOWNTO " : ":";
     switch (type) {
       case 0 : return BracketOpen
-                      + Integer.toString(comp.GetLocalBubbleInputEndId())
+                      + comp.GetLocalBubbleInputEndId()
                       + RangeKeyword
-                      + Integer.toString(comp.GetLocalBubbleInputStartId())
+                      + comp.GetLocalBubbleInputStartId()
                       + BracketClose;
       case 1 : return BracketOpen
-                      + Integer.toString(comp.GetLocalBubbleOutputEndId())
+                      + comp.GetLocalBubbleOutputEndId()
                       + RangeKeyword
-                      + Integer.toString(comp.GetLocalBubbleOutputStartId())
+                      + comp.GetLocalBubbleOutputStartId()
                       + BracketClose; 
       case 2 : return BracketOpen
-                      + Integer.toString(comp.GetLocalBubbleInOutEndId())
+                      + comp.GetLocalBubbleInOutEndId()
                       + RangeKeyword
-                      + Integer.toString(comp.GetLocalBubbleInOutStartId())
+                      + comp.GetLocalBubbleInOutStartId()
                       + BracketClose; 
     }
     return "";
@@ -227,8 +227,8 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public ArrayList<String> GetComponentDeclarationSection(Netlist TheNetlist, AttributeSet attrs) {
-    ArrayList<String> Components = new ArrayList<String>();
-    Set<String> InstantiatedComponents = new HashSet<String>();
+    ArrayList<String> Components = new ArrayList<>();
+    Set<String> InstantiatedComponents = new HashSet<>();
     for (NetlistComponent Gate : TheNetlist.GetNormalComponents()) {
       String CompName =
           Gate.GetComponent().getFactory().getHDLName(Gate.GetComponent().getAttributeSet());
@@ -281,7 +281,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   public ArrayList<String> GetHDLWiring(String HDLType, Netlist TheNets) {
-    ArrayList<String> Contents = new ArrayList<String>();
+    ArrayList<String> Contents = new ArrayList<>();
     StringBuffer OneLine = new StringBuffer();
     String BracketOpen = (HDLType.equals(VHDL)) ? "(" : "[";
     String BracketClose = (HDLType.equals(VHDL)) ? ")" : "]";
@@ -296,12 +296,12 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
             if (ThisNet.isBus()) {
               OneLine.append(
                   BusName
-                      + Integer.toString(TheNets.GetNetId(ThisNet))
+                      + TheNets.GetNetId(ThisNet)
                       + BracketOpen
                       + bit
                       + BracketClose);
             } else {
-              OneLine.append(NetName + Integer.toString(TheNets.GetNetId(ThisNet)));
+              OneLine.append(NetName + TheNets.GetNetId(ThisNet));
             }
             while (OneLine.length() < SallignmentSize) {
               OneLine.append(" ");
@@ -312,7 +312,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
                       + OneLine.toString()
                       + "<= "
                       + BusName
-                      + Integer.toString(TheNets.GetNetId(Source.GetParrentNet()))
+                      + TheNets.GetNetId(Source.GetParrentNet())
                       + BracketOpen
                       + Source.GetParrentNetBitIndex()
                       + BracketClose
@@ -324,7 +324,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
                       + OneLine.toString()
                       + "= "
                       + BusName
-                      + Integer.toString(TheNets.GetNetId(Source.GetParrentNet()))
+                      + TheNets.GetNetId(Source.GetParrentNet())
                       + BracketOpen
                       + Source.GetParrentNetBitIndex()
                       + BracketClose
@@ -337,7 +337,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
             OneLine.setLength(0);
             OneLine.append(
                 BusName
-                    + Integer.toString(TheNets.GetNetId(Source.GetParrentNet()))
+                    + TheNets.GetNetId(Source.GetParrentNet())
                     + BracketOpen
                     + Source.GetParrentNetBitIndex()
                     + BracketClose);
@@ -352,12 +352,12 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
             if (ThisNet.isBus()) {
               OneLine.append(
                   BusName
-                      + Integer.toString(TheNets.GetNetId(ThisNet))
+                      + TheNets.GetNetId(ThisNet)
                       + BracketOpen
                       + bit
                       + BracketClose);
             } else {
-              OneLine.append(NetName + Integer.toString(TheNets.GetNetId(ThisNet)));
+              OneLine.append(NetName + TheNets.GetNetId(ThisNet));
             }
             if (HDLType.equals(VHDL)) {
               String line = "   " + OneLine.toString() + ";";
@@ -375,7 +375,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetInOutList(Netlist MyNetList, AttributeSet attrs) {
-    SortedMap<String, Integer> InOuts = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> InOuts = new TreeMap<>();
     int InOutBubbles = MyNetList.NumberOfInOutBubbles();
     if (InOutBubbles > 0) {
       if (InOutBubbles > 1) {
@@ -389,9 +389,9 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist MyNetList, AttributeSet attrs) {
-    SortedMap<String, Integer> Inputs = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> Inputs = new TreeMap<>();
     for (int i = 0; i < MyNetList.NumberOfClockTrees(); i++) {
-      Inputs.put(ClockTreeName + Integer.toString(i), ClockHDLGeneratorFactory.NrOfClockBits);
+      Inputs.put(ClockTreeName + i, ClockHDLGeneratorFactory.NrOfClockBits);
     }
     if (MyNetList.RequiresGlobalClockConnection()) {
       Inputs.put(TickComponentHDLGeneratorFactory.FPGAClock, 1);
@@ -430,14 +430,14 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   @Override
   public ArrayList<String> GetModuleFunctionality(
       Netlist TheNetlist, AttributeSet attrs, FPGAReport Reporter, String HDLType) {
-    ArrayList<String> Contents = new ArrayList<String>();
+    ArrayList<String> Contents = new ArrayList<>();
     String Preamble = (HDLType.equals(VHDL)) ? "" : "assign ";
     String AssignmentOperator = (HDLType.equals(VHDL)) ? "<= " : "= ";
     String OpenBracket = (HDLType.equals(VHDL)) ? "(" : "[";
     String CloseBracket = (HDLType.equals(VHDL)) ? ")" : "]";
     boolean FirstLine = true;
     StringBuffer Temp = new StringBuffer();
-    Map<String, Long> CompIds = new HashMap<String, Long>();
+    Map<String, Long> CompIds = new HashMap<>();
     /* we start with the connection of the clock sources */
     for (NetlistComponent ClockSource : TheNetlist.GetClockSources()) {
       if (FirstLine) {
@@ -478,7 +478,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
                 + AssignmentOperator
                 + ClockNet
                 + OpenBracket
-                + Integer.toString(ClockHDLGeneratorFactory.DerivedClockIndex)
+                + ClockHDLGeneratorFactory.DerivedClockIndex
                 + CloseBracket
                 + ";");
       } else {
@@ -564,9 +564,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           }
           Contents.addAll(
               Worker.GetInlinedCode(TheNetlist, id++, comp, Reporter, InlinedName, HDLType));
-          if (CompIds.containsKey(InlinedId)) {
-            CompIds.remove(InlinedId);
-          }
+          CompIds.remove(InlinedId);
           CompIds.put(InlinedId, id);
         }
       }
@@ -596,9 +594,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           }
           Contents.addAll(
               Worker.GetComponentMap(TheNetlist, id++, comp, null, Reporter, CompName, HDLType));
-          if (CompIds.containsKey(CompId)) {
-            CompIds.remove(CompId);
-          }
+          CompIds.remove(CompId);
           CompIds.put(CompId, id);
         }
       }
@@ -629,9 +625,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
             Contents.addAll(MakeRemarkBlock("Here all sub-circuits are defined", 3, HDLType));
             FirstLine = false;
           }
-          if (CompIds.containsKey(CompId)) {
-            CompIds.remove(CompId);
-          }
+          CompIds.remove(CompId);
           CompIds.put(CompId, id);
           Contents.addAll(CompMap);
         }
@@ -643,7 +637,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist MyNetList, AttributeSet attrs) {
-    SortedMap<String, Integer> Outputs = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> Outputs = new TreeMap<>();
     int OutputBubbles = MyNetList.NumberOfOutputBubbles();
     if (OutputBubbles > 0) {
       if (OutputBubbles > 1) {
@@ -670,7 +664,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     String BracketOpen = (HDLType.equals(VHDL)) ? "(" : "[";
     String BracketClose = (HDLType.equals(VHDL)) ? ")" : "]";
     String Open = (HDLType.equals(VHDL)) ? "OPEN" : " ";
-    SortedMap<String, String> PortMap = new TreeMap<String, String>();
+    SortedMap<String, String> PortMap = new TreeMap<>();
     if (MapInfo == null) return null;
     boolean topLevel = MapInfo instanceof MappableResourcesContainer;
     NetlistComponent ComponentInfo = topLevel ? null : (NetlistComponent) MapInfo;
@@ -687,7 +681,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       int NrOfOutputPorts = MyNetList.NumberOfOutputPorts();
       /* First we instantiate the Clock tree busses when present */
       for (int i = 0; i < NrOfClockTrees; i++) {
-        PortMap.put(ClockTreeName + Integer.toString(i), Preamble + ClockTreeName + Integer.toString(i));
+        PortMap.put(ClockTreeName + i, Preamble + ClockTreeName + i);
       }
       if (MyNetList.RequiresGlobalClockConnection()) {
         PortMap.put(
@@ -932,9 +926,9 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
             Source.setLength(0);
             Destination.setLength(0);
             if (IsOutput) {
-              Source.append(PortName + BracketOpen + Integer.toString(bit) + BracketClose);
+              Source.append(PortName + BracketOpen + bit + BracketClose);
             } else {
-              Destination.append(PortName + BracketOpen + Integer.toString(bit) + BracketClose);
+              Destination.append(PortName + BracketOpen + bit + BracketClose);
             }
             ConnectionPoint SolderPoint = ConnectionInformation.GetConnection((byte) bit);
             if (SolderPoint.GetParrentNet() == null) {
@@ -944,7 +938,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
               } else {
                 Reporter.AddSevereWarning(
                     "Found an unconnected output bus pin, tied bit "
-                        + Integer.toString(bit)
+                        + bit
                         + " to ground!");
                 Source.append(GetZeroVector(1, true, HDLType));
               }
@@ -957,26 +951,26 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
                 /* The connection is to a Net */
                 if (IsOutput) {
                   Destination.append(
-                      NetName + Integer.toString(TheNets.GetNetId(SolderPoint.GetParrentNet())));
+                      NetName + TheNets.GetNetId(SolderPoint.GetParrentNet()));
                 } else {
                   Source.append(
-                      NetName + Integer.toString(TheNets.GetNetId(SolderPoint.GetParrentNet())));
+                      NetName + TheNets.GetNetId(SolderPoint.GetParrentNet()));
                 }
               } else {
                 /* The connection is to an entry of a bus */
                 if (IsOutput) {
                   Destination.append(
                       BusName
-                          + Integer.toString(TheNets.GetNetId(SolderPoint.GetParrentNet()))
+                          + TheNets.GetNetId(SolderPoint.GetParrentNet())
                           + BracketOpen
-                          + Integer.toString(SolderPoint.GetParrentNetBitIndex())
+                          + SolderPoint.GetParrentNetBitIndex()
                           + BracketClose);
                 } else {
                   Source.append(
                       BusName
-                          + Integer.toString(TheNets.GetNetId(SolderPoint.GetParrentNet()))
+                          + TheNets.GetNetId(SolderPoint.GetParrentNet())
                           + BracketOpen
-                          + Integer.toString(SolderPoint.GetParrentNetBitIndex())
+                          + SolderPoint.GetParrentNetBitIndex()
                           + BracketClose);
                 }
               }
@@ -1003,19 +997,19 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist Nets) {
-    SortedMap<String, Integer> SignalMap = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> SignalMap = new TreeMap<>();
 
     /* First we define the nets */
     for (Net ThisNet : Nets.GetAllNets()) {
       if (!ThisNet.isBus() && ThisNet.IsRootNet()) {
-        SignalMap.put(NetName + Integer.toString(Nets.GetNetId(ThisNet)), 1);
+        SignalMap.put(NetName + Nets.GetNetId(ThisNet), 1);
       }
     }
     /* now we define the busses */
     for (Net ThisNet : Nets.GetAllNets()) {
       if (ThisNet.isBus() && ThisNet.IsRootNet()) {
         int NrOfBits = ThisNet.BitWidth();
-        SignalMap.put(BusName + Integer.toString(Nets.GetNetId(ThisNet)), NrOfBits);
+        SignalMap.put(BusName + Nets.GetNetId(ThisNet), NrOfBits);
       }
     }
     return SignalMap;

@@ -68,6 +68,7 @@ class WindowOptions extends OptionsPanel {
   private final LookAndFeelInfo[] LFInfos;
   private JPanel previewPanel;
   private int Index = 0;
+
   public WindowOptions(PreferencesFrame window) {
     super(window);
 
@@ -118,7 +119,7 @@ class WindowOptions extends OptionsPanel {
     panel.add(new JLabel(" "));
 
     int index = 0;
-    LookAndFeel = new JComboBox<String>();
+    LookAndFeel = new JComboBox<>();
     LookAndFeel.setSize(50, 20);
 
     LFInfos = UIManager.getInstalledLookAndFeels();
@@ -162,7 +163,7 @@ class WindowOptions extends OptionsPanel {
       previewPanel.add(new JButton("Preview"));
       previewPanel.add(new JCheckBox("Preview"));
       previewPanel.add(new JRadioButton("Preview"));
-      previewPanel.add(new JComboBox<String>(new String[] {"Preview 1", "Preview 2"}));
+      previewPanel.add(new JComboBox<>(new String[]{"Preview 1", "Preview 2"}));
       previewContainer.add(previewPanel);
       UIManager.setLookAndFeel(previousLF);
     } catch (IllegalAccessException
@@ -202,7 +203,7 @@ class WindowOptions extends OptionsPanel {
     public void stateChanged(ChangeEvent e) {
       JSlider source = (JSlider) e.getSource();
       if (!source.getValueIsAdjusting()) {
-        int value = (int) source.getValue();
+        int value = source.getValue();
         AppPreferences.SCALE_FACTOR.set((double) value / 100.0);
         List<Project> nowOpen = Projects.getOpenProjects();
         for (Project proj : nowOpen) {

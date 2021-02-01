@@ -124,7 +124,7 @@ public class VhdlEntityComponent extends InstanceFactory {
   public VhdlEntityComponent() {
     super("VHDL Entity", S.getter("vhdlComponent"));
 
-    this.contentListeners = new WeakHashMap<Instance, VhdlEntityListener>();
+    this.contentListeners = new WeakHashMap<>();
     this.setIcon(new ArithmeticIcon("VHDL"));
   }
 

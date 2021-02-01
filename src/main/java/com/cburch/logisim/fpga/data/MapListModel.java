@@ -30,12 +30,11 @@ package com.cburch.logisim.fpga.data;
 
 import java.util.ArrayList;
 import java.util.Map;
-
 import javax.swing.DefaultListModel;
 
 public class MapListModel extends DefaultListModel<MapListModel.MapInfo> {
 	
-  public class MapInfo extends Object {
+  public static class MapInfo extends Object {
     private final int pinNr;
     private final MapComponent map;
     
@@ -66,7 +65,7 @@ public class MapListModel extends DefaultListModel<MapListModel.MapInfo> {
   
   public void rebuild() {
 	int oldsize = 0;
-	if (myItems == null) myItems = new ArrayList<MapInfo>();
+	if (myItems == null) myItems = new ArrayList<>();
 	else {
 	  oldsize = myItems.size();
 	  myItems.clear();
@@ -76,22 +75,22 @@ public class MapListModel extends DefaultListModel<MapListModel.MapInfo> {
       if (mappedList) {
         if (map.isCompleteMap(false)) {
           int idx = getInsertionPoint(map);
-          myItems.add(idx,new MapInfo(-1,map));
+          myItems.add(idx, new MapInfo(-1, map));
         } else {
           int idx = getInsertionPoint(map);
           for (int i = map.getNrOfPins()-1 ; i >= 0  ; i--) {
-            if (map.isMapped(i)) myItems.add(idx,new MapInfo(i,map));
+            if (map.isMapped(i)) myItems.add(idx, new MapInfo(i, map));
           }
         }
       } else {
         if (map.isNotMapped()) {
           int idx = getInsertionPoint(map);
-          myItems.add(idx,new MapInfo(-1,map));
+          myItems.add(idx, new MapInfo(-1, map));
         } else {
           int idx = getInsertionPoint(map);
           for (int i = map.getNrOfPins()-1 ; i >= 0  ; i--) {
             if (!map.isMapped(i)) {
-              myItems.add(idx,new MapInfo(i,map));
+              myItems.add(idx, new MapInfo(i, map));
             }
           }
         }

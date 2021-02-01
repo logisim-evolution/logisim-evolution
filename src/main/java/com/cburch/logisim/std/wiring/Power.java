@@ -49,7 +49,7 @@ import com.cburch.logisim.util.GraphicsUtil;
 import java.awt.Graphics2D;
 
 public class Power extends InstanceFactory {
-  private class PowerHDLGeneratorFactory extends AbstractConstantHDLGeneratorFactory {
+  private static class PowerHDLGeneratorFactory extends AbstractConstantHDLGeneratorFactory {
     @Override
     public long GetConstant(AttributeSet attrs) {
       long ConstantValue = 0;

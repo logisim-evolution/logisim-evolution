@@ -52,7 +52,7 @@ public class ProjectLibraryActions {
   public static void doLoadBuiltinLibrary(Project proj) {
     LogisimFile file = proj.getLogisimFile();
     List<Library> baseBuilt = file.getLoader().getBuiltin().getLibraries();
-    ArrayList<Library> builtins = new ArrayList<Library>(baseBuilt);
+    ArrayList<Library> builtins = new ArrayList<>(baseBuilt);
     builtins.removeAll(file.getLibraries());
     if (builtins.isEmpty()) {
       OptionPane.showMessageDialog(
@@ -134,7 +134,7 @@ public class ProjectLibraryActions {
 
   public static void doUnloadLibraries(Project proj) {
     LogisimFile file = proj.getLogisimFile();
-    ArrayList<Library> canUnload = new ArrayList<Library>();
+    ArrayList<Library> canUnload = new ArrayList<>();
     for (Library lib : file.getLibraries()) {
       String message = file.getUnloadLibraryMessage(lib);
       if (message == null) canUnload.add(lib);
@@ -191,7 +191,7 @@ public class ProjectLibraryActions {
 
     @SuppressWarnings("unchecked")
     LibraryJList(List<Library> libraries) {
-      ArrayList<BuiltinOption> options = new ArrayList<BuiltinOption>();
+      ArrayList<BuiltinOption> options = new ArrayList<>();
       for (Library lib : libraries) {
         options.add(new BuiltinOption(lib));
       }

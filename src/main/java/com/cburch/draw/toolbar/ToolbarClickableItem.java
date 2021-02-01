@@ -33,7 +33,7 @@ import java.awt.Graphics;
 
 public interface ToolbarClickableItem extends ToolbarItem {
 
-  public void clicked();
+  void clicked();
 
-  public void paintPressedIcon(Component destination, Graphics g);
+  void paintPressedIcon(Component destination, Graphics g);
 }

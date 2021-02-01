@@ -58,7 +58,7 @@ import java.util.List;
 
 public class Constant extends InstanceFactory {
   private static class ConstantAttributes extends AbstractAttributeSet {
-    private Direction facing = Direction.EAST;;
+    private Direction facing = Direction.EAST;
     private BitWidth width = BitWidth.ONE;
     private Value value = Value.TRUE;
 
@@ -119,7 +119,7 @@ public class Constant extends InstanceFactory {
     }
   }
 
-  private class ConstantHDLGeneratorFactory extends AbstractConstantHDLGeneratorFactory {
+  private static class ConstantHDLGeneratorFactory extends AbstractConstantHDLGeneratorFactory {
     @Override
     public long GetConstant(AttributeSet attrs) {
       return attrs.getValue(Constant.ATTR_VALUE);
@@ -135,7 +135,7 @@ public class Constant extends InstanceFactory {
   private static final Font DEFAULT_FONT = new Font("monospaced", Font.PLAIN, 12);
 
   private static final List<Attribute<?>> ATTRIBUTES =
-      Arrays.asList(new Attribute<?>[] {StdAttr.FACING, StdAttr.WIDTH, ATTR_VALUE});
+      Arrays.asList(StdAttr.FACING, StdAttr.WIDTH, ATTR_VALUE);
 
   public Constant() {
     super("Constant", S.getter("constantComponent"));

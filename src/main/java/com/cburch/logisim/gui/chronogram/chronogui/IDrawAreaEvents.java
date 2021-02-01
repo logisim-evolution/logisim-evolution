@@ -72,7 +72,7 @@ public interface IDrawAreaEvents extends EventListener {
    *     the bus to apply the transformation
    * @param format new coding format
    */
-  public void setCodingFormat(SignalDataBus signalDataSource, String format);
+  void setCodingFormat(SignalDataBus signalDataSource, String format);
 
   /**
    * Expand or close the selected bus

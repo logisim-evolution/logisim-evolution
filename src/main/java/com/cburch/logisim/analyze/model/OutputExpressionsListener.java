@@ -29,5 +29,5 @@
 package com.cburch.logisim.analyze.model;
 
 public interface OutputExpressionsListener {
-  public void expressionChanged(OutputExpressionsEvent event);
+  void expressionChanged(OutputExpressionsEvent event);
 }

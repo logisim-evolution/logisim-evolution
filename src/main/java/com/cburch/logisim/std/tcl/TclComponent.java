@@ -101,7 +101,7 @@ public abstract class TclComponent extends InstanceFactory {
   public TclComponent(String name, StringGetter displayName) {
     super(name, displayName);
 
-    this.contentListeners = new WeakHashMap<Instance, TclComponentListener>();
+    this.contentListeners = new WeakHashMap<>();
 
     inputs = new Port[0];
     outputs = new Port[0];

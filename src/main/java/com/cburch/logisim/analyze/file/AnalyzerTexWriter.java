@@ -38,13 +38,13 @@ import com.cburch.logisim.analyze.gui.KarnaughMapPanel;
 import com.cburch.logisim.analyze.model.AnalyzerModel;
 import com.cburch.logisim.analyze.model.Entry;
 import com.cburch.logisim.analyze.model.Expression;
+import com.cburch.logisim.analyze.model.Expression.Notation;
 import com.cburch.logisim.analyze.model.Expressions;
 import com.cburch.logisim.analyze.model.ParserException;
 import com.cburch.logisim.analyze.model.TruthTable;
 import com.cburch.logisim.analyze.model.Var;
 import com.cburch.logisim.analyze.model.Var.Bit;
 import com.cburch.logisim.analyze.model.VariableList;
-import com.cburch.logisim.analyze.model.Expression.Notation;
 import com.cburch.logisim.prefs.AppPreferences;
 import java.awt.Color;
 import java.io.File;
@@ -55,7 +55,6 @@ import java.text.NumberFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-
 import javax.swing.filechooser.FileFilter;
 
 public class AnalyzerTexWriter {
@@ -227,7 +226,7 @@ public class AnalyzerTexWriter {
 	    Bit inp = Bit.parse(model.getInputs().bits.get(reorder[i]));
         content.append("{$"+inp.name);
         if (inp.b >= 0)
-          content.append("_"+Integer.toString(inp.b));
+          content.append("_"+ inp.b);
         content.append("$}");
 	  } catch (ParserException e) {
 		// TODO Auto-generated catch block

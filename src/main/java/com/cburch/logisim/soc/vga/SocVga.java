@@ -30,9 +30,6 @@ package com.cburch.logisim.soc.vga;
 
 import static com.cburch.logisim.soc.Strings.S;
 
-import java.awt.Font;
-import java.awt.Graphics;
-
 import com.cburch.logisim.circuit.appear.DynamicElement;
 import com.cburch.logisim.circuit.appear.DynamicElement.Path;
 import com.cburch.logisim.circuit.appear.DynamicElementProvider;
@@ -51,6 +48,8 @@ import com.cburch.logisim.soc.data.SocProcessorInterface;
 import com.cburch.logisim.soc.data.SocSimulationManager;
 import com.cburch.logisim.tools.MenuExtender;
 import com.cburch.logisim.util.GraphicsUtil;
+import java.awt.Font;
+import java.awt.Graphics;
 
 public class SocVga extends SocInstanceFactory implements DynamicElementProvider {
 

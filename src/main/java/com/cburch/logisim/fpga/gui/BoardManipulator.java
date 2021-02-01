@@ -30,6 +30,21 @@ package com.cburch.logisim.fpga.gui;
 
 import static com.cburch.logisim.fpga.Strings.S;
 
+import com.cburch.logisim.fpga.data.BoardInformation;
+import com.cburch.logisim.fpga.data.BoardManipulatorListener;
+import com.cburch.logisim.fpga.data.BoardRectangle;
+import com.cburch.logisim.fpga.data.ConstantButton;
+import com.cburch.logisim.fpga.data.FPGAIOInformationContainer;
+import com.cburch.logisim.fpga.data.IOComponentTypes;
+import com.cburch.logisim.fpga.data.IOComponentsInformation;
+import com.cburch.logisim.fpga.data.IOComponentsListener;
+import com.cburch.logisim.fpga.data.MapListModel;
+import com.cburch.logisim.fpga.data.MappableResourcesContainer;
+import com.cburch.logisim.fpga.data.SimpleRectangle;
+import com.cburch.logisim.fpga.file.PNGFileFilter;
+import com.cburch.logisim.gui.generic.OptionPane;
+import com.cburch.logisim.prefs.AppPreferences;
+import com.cburch.logisim.util.LocaleListener;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Frame;
@@ -50,7 +65,6 @@ import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-
 import javax.imageio.ImageIO;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -63,22 +77,6 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-
-import com.cburch.logisim.fpga.data.IOComponentsInformation;
-import com.cburch.logisim.fpga.data.IOComponentsListener;
-import com.cburch.logisim.fpga.data.MapListModel;
-import com.cburch.logisim.fpga.data.MappableResourcesContainer;
-import com.cburch.logisim.fpga.data.BoardInformation;
-import com.cburch.logisim.fpga.data.BoardManipulatorListener;
-import com.cburch.logisim.fpga.data.BoardRectangle;
-import com.cburch.logisim.fpga.data.ConstantButton;
-import com.cburch.logisim.fpga.data.FPGAIOInformationContainer;
-import com.cburch.logisim.fpga.data.IOComponentTypes;
-import com.cburch.logisim.fpga.data.SimpleRectangle;
-import com.cburch.logisim.fpga.file.PNGFileFilter;
-import com.cburch.logisim.gui.generic.OptionPane;
-import com.cburch.logisim.prefs.AppPreferences;
-import com.cburch.logisim.util.LocaleListener;
 
 public class BoardManipulator extends JPanel implements MouseListener, 
      MouseMotionListener, ChangeListener , PropertyChangeListener , IOComponentsListener ,
@@ -169,7 +167,7 @@ public class BoardManipulator extends JPanel implements MouseListener,
   
   public JList<MapListModel.MapInfo> getUnmappedList() {
 	if (MapInfo == null) return null;
-	unmappedList = new JList<MapListModel.MapInfo>();
+	unmappedList = new JList<>();
 	unmappedList.setModel(new MapListModel(false,MapInfo.getMappableResources()));
 	unmappedList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 	unmappedList.addListSelectionListener(this);
@@ -178,7 +176,7 @@ public class BoardManipulator extends JPanel implements MouseListener,
   
   public JList<MapListModel.MapInfo> getMappedList() {
 	if (MapInfo == null) return null;
-	mappedList = new JList<MapListModel.MapInfo>();
+	mappedList = new JList<>();
 	mappedList.setModel(new MapListModel(true,MapInfo.getMappableResources()));
 	mappedList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 	mappedList.addListSelectionListener(this);
@@ -274,7 +272,7 @@ public class BoardManipulator extends JPanel implements MouseListener,
 
   public void addBoardManipulatorListener(BoardManipulatorListener l) {
     if (listeners == null) {
-      listeners = new ArrayList<BoardManipulatorListener>();
+      listeners = new ArrayList<>();
       listeners.add(l);
     } else if (!listeners.contains(l)) listeners.add(l);
   }
@@ -296,7 +294,7 @@ public class BoardManipulator extends JPanel implements MouseListener,
   }
   
   public void removeBoardManipulatorListener(BoardManipulatorListener l) {
-    if (listeners != null && listeners.contains(l))
+    if (listeners != null)
       listeners.remove(l);
   }
   
@@ -353,7 +351,7 @@ public class BoardManipulator extends JPanel implements MouseListener,
   public void stateChanged(ChangeEvent e) {
     JSlider source = (JSlider) e.getSource();
     if (!source.getValueIsAdjusting()) {
-      int value = (int) source.getValue();
+      int value = source.getValue();
       if (value > MaxZoom) {
         source.setValue(MaxZoom);
         value = MaxZoom;
@@ -417,7 +415,7 @@ public class BoardManipulator extends JPanel implements MouseListener,
           unmappedList.setSelectedIndex(sel);
         }
         MapInfo.markChanged();
-      };
+      }
   }
 
   @Override

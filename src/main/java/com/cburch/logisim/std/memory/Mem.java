@@ -123,7 +123,7 @@ public abstract class Mem extends InstanceFactory {
 
   Mem(String name, StringGetter desc, int extraPorts) {
     super(name, desc);
-    currentInstanceFiles = new WeakHashMap<Instance, File>();
+    currentInstanceFiles = new WeakHashMap<>();
     setInstancePoker(MemPoker.class);
     setKeyConfigurator(
         JoinedConfigurator.create(
@@ -171,7 +171,7 @@ public abstract class Mem extends InstanceFactory {
       AddrBits -= 10;
     }
     int size = 1 << AddrBits;
-    return Integer.toString(size) + Labels[pass];
+    return size + Labels[pass];
   }
 
   abstract MemState getState(Instance instance, CircuitState state);

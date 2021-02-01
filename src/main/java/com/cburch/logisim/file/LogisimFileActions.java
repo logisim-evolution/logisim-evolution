@@ -105,14 +105,14 @@ public class LogisimFileActions {
   }
 
   private static class MergeFile extends Action {
-    private final ArrayList<Circuit> MergedCircuits = new ArrayList<Circuit>();
-    private final ArrayList<File> JarLibs = new ArrayList<File>();
-    private final ArrayList<File> LogiLibs = new ArrayList<File>();
+    private final ArrayList<Circuit> MergedCircuits = new ArrayList<>();
+    private final ArrayList<File> JarLibs = new ArrayList<>();
+    private final ArrayList<File> LogiLibs = new ArrayList<>();
 
     MergeFile(LogisimFile mergelib, LogisimFile source) {
-      HashMap<String, Library> LibNames = new HashMap<String, Library>();
-      HashSet<String> ToolList = new HashSet<String>();
-      HashMap<String, String> Error = new HashMap<String, String>();
+      HashMap<String, Library> LibNames = new HashMap<>();
+      HashSet<String> ToolList = new HashSet<>();
+      HashMap<String, String> Error = new HashMap<>();
       boolean cancontinue = true;
       for (Library lib : source.getLibraries()) {
         LibraryTools.BuildLibraryList(lib, LibNames);
@@ -120,10 +120,10 @@ public class LogisimFileActions {
       LibraryTools.BuildToolList(source, ToolList);
       LibraryTools.RemovePresentLibraries(mergelib, LibNames, false);
       if (LibraryTools.LibraryIsConform(
-          mergelib, new HashSet<String>(), new HashSet<String>(), Error)) {
+          mergelib, new HashSet<>(), new HashSet<>(), Error)) {
         /* Okay the library is now ready for merge */
         for (Library lib : mergelib.getLibraries()) {
-          HashSet<String> NewToolList = new HashSet<String>();
+          HashSet<String> NewToolList = new HashSet<>();
           LibraryTools.BuildToolList(lib, NewToolList);
           ArrayList<String> ret = LibraryTools.LibraryCanBeMerged(ToolList, NewToolList);
           if (!ret.isEmpty()) {
@@ -159,7 +159,7 @@ public class LogisimFileActions {
         for (Circuit circ : mergelib.getCircuits()) {
           String CircName = circ.getName().toUpperCase();
           if (ToolList.contains(CircName)) {
-            ArrayList<String> ret = new ArrayList<String>();
+            ArrayList<String> ret = new ArrayList<>();
             ret.add(CircName);
             HashMap<String, String> ToolNames = LibraryTools.GetToolLocation(source, "", ret);
             for (String key : ToolNames.keySet()) {
@@ -210,8 +210,8 @@ public class LogisimFileActions {
     }
 
     private boolean CircuitsAreEqual(Circuit orig, Circuit newone) {
-      HashMap<Location, Component> origcomps = new HashMap<Location, Component>();
-      HashMap<Location, Component> newcomps = new HashMap<Location, Component>();
+      HashMap<Location, Component> origcomps = new HashMap<>();
+      HashMap<Location, Component> newcomps = new HashMap<>();
       for (Component comp : orig.getWires()) {
         origcomps.put(comp.getLocation(), comp);
       }
@@ -297,7 +297,7 @@ public class LogisimFileActions {
         Circuit NewCirc = null;
         boolean replace = false;
         for (Circuit circs : proj.getLogisimFile().getCircuits())
-          if (circs.getName().toUpperCase().equals(circ.getName().toUpperCase())) {
+          if (circs.getName().equalsIgnoreCase(circ.getName())) {
             NewCirc = circs;
             replace = true;
           }
@@ -319,7 +319,7 @@ public class LogisimFileActions {
           proj.doAction(LogisimFileActions.addCircuit(NewCirc));
         } else proj.doAction(result.toAction(S.getter("replaceCircuitAction")));
       }
-      HashMap<String, AddTool> AvailableTools = new HashMap<String, AddTool>();
+      HashMap<String, AddTool> AvailableTools = new HashMap<>();
       LibraryTools.BuildToolList(proj.getLogisimFile(), AvailableTools);
       /* in the second step we are going to add the rest of the contents */
       for (Circuit circ : MergedCircuits) {
@@ -365,18 +365,18 @@ public class LogisimFileActions {
   }
 
   private static class LoadLibraries extends Action {
-    private final ArrayList<Library> MergedLibs = new ArrayList<Library>();
+    private final ArrayList<Library> MergedLibs = new ArrayList<>();
 
     LoadLibraries(Library[] libs, LogisimFile source) {
-      HashMap<String, Library> LibNames = new HashMap<String, Library>();
-      HashSet<String> ToolList = new HashSet<String>();
-      HashMap<String, String> Error = new HashMap<String, String>();
+      HashMap<String, Library> LibNames = new HashMap<>();
+      HashSet<String> ToolList = new HashSet<>();
+      HashMap<String, String> Error = new HashMap<>();
       for (Library lib : source.getLibraries()) {
         LibraryTools.BuildLibraryList(lib, LibNames);
       }
       LibraryTools.BuildToolList(source, ToolList);
       for (Library lib : libs) {
-        if (LibNames.keySet().contains(lib.getName().toUpperCase())) {
+        if (LibNames.containsKey(lib.getName().toUpperCase())) {
           OptionPane.showMessageDialog(
               null,
               "\"" + lib.getName() + "\": " + S.get("LibraryAlreadyLoaded"),
@@ -385,8 +385,8 @@ public class LogisimFileActions {
         } else {
           LibraryTools.RemovePresentLibraries(lib, LibNames, false);
           if (LibraryTools.LibraryIsConform(
-              lib, new HashSet<String>(), new HashSet<String>(), Error)) {
-            HashSet<String> AddedToolList = new HashSet<String>();
+              lib, new HashSet<>(), new HashSet<>(), Error)) {
+            HashSet<String> AddedToolList = new HashSet<>();
             LibraryTools.BuildToolList(lib, AddedToolList);
             for (String tool : AddedToolList)
               if (ToolList.contains(tool))
@@ -419,7 +419,7 @@ public class LogisimFileActions {
     }
 
     private void repair(Project proj, Library lib) {
-      HashMap<String, AddTool> AvailableTools = new HashMap<String, AddTool>();
+      HashMap<String, AddTool> AvailableTools = new HashMap<>();
       LibraryTools.BuildToolList(proj.getLogisimFile(), AvailableTools);
       if (lib instanceof LogisimFile) {
         LogisimFile ThisLib = (LogisimFile) lib;
@@ -427,7 +427,7 @@ public class LogisimFileActions {
         while (iter.hasNext()) {
           Circuit circ = iter.next();
           for (Component tool : circ.getNonWires()) {
-            if (AvailableTools.keySet().contains(tool.getFactory().getName().toUpperCase())) {
+            if (AvailableTools.containsKey(tool.getFactory().getName().toUpperCase())) {
               AddTool current = AvailableTools.get(tool.getFactory().getName().toUpperCase());
               if (current != null) {
                 tool.setFactory(current.getFactory());
@@ -577,7 +577,7 @@ public class LogisimFileActions {
 
     RevertDefaults() {
       libraries = null;
-      attrValues = new ArrayList<RevertAttributeValue>();
+      attrValues = new ArrayList<>();
     }
 
     private void copyToolAttributes(Library srcLib, Library dstLib) {
@@ -612,7 +612,7 @@ public class LogisimFileActions {
           String desc = src.getLoader().getDescriptor(srcLib);
           dstLib = dst.getLoader().loadLibrary(desc);
           proj.getLogisimFile().addLibrary(dstLib);
-          if (libraries == null) libraries = new ArrayList<Library>();
+          if (libraries == null) libraries = new ArrayList<>();
           libraries.add(dstLib);
         }
         copyToolAttributes(srcLib, dstLib);

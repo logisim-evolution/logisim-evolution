@@ -46,14 +46,14 @@ public class bcd2sevensegHDLGeneratorFactory extends AbstractHDLGeneratorFactory
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Inputs = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> Inputs = new TreeMap<>();
     Inputs.put("BCDin", 4);
     return Inputs;
   }
 
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Outputs = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> Outputs = new TreeMap<>();
     Outputs.put("Segment_a", 1);
     Outputs.put("Segment_b", 1);
     Outputs.put("Segment_c", 1);
@@ -65,7 +65,7 @@ public class bcd2sevensegHDLGeneratorFactory extends AbstractHDLGeneratorFactory
   }
 
   public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist Nets) {
-    SortedMap<String, Integer> Wires = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> Wires = new TreeMap<>();
     Wires.put("s_output_value", 7);
     return Wires;
   }
@@ -73,7 +73,7 @@ public class bcd2sevensegHDLGeneratorFactory extends AbstractHDLGeneratorFactory
   @Override
   public ArrayList<String> GetModuleFunctionality(
       Netlist TheNetlist, AttributeSet attrs, FPGAReport Reporter, String HDLType) {
-    ArrayList<String> Contents = new ArrayList<String>();
+    ArrayList<String> Contents = new ArrayList<>();
     Contents.add("   Segment_a <= s_output_value(0);");
     Contents.add("   Segment_b <= s_output_value(1);");
     Contents.add("   Segment_c <= s_output_value(2);");
@@ -104,7 +104,7 @@ public class bcd2sevensegHDLGeneratorFactory extends AbstractHDLGeneratorFactory
   @Override
   public SortedMap<String, String> GetPortMap(
       Netlist Nets, Object MapInfo, FPGAReport Reporter, String HDLType) {
-    SortedMap<String, String> PortMap = new TreeMap<String, String>();
+    SortedMap<String, String> PortMap = new TreeMap<>();
 	if (!(MapInfo instanceof NetlistComponent)) return PortMap;
 	NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
     PortMap.putAll(

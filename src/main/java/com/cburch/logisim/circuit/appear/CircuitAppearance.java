@@ -74,7 +74,7 @@ public class CircuitAppearance extends Drawing {
 
   public CircuitAppearance(Circuit circuit) {
     this.circuit = circuit;
-    listeners = new EventSourceWeakSupport<CircuitAppearanceListener>();
+    listeners = new EventSourceWeakSupport<>();
     portManager = new PortManager(this);
     circuitPins = new CircuitPins(portManager);
     myListener = new MyListener();
@@ -236,7 +236,7 @@ public class CircuitAppearance extends Drawing {
   public SortedMap<Location, Instance> getPortOffsets(Direction facing) {
     Location anchor = null;
     Direction defaultFacing = Direction.EAST;
-    List<AppearancePort> ports = new ArrayList<AppearancePort>();
+    List<AppearancePort> ports = new ArrayList<>();
     for (CanvasObject shape : getObjectsFromBottom()) {
       if (shape instanceof AppearancePort) {
         ports.add((AppearancePort) shape);
@@ -247,7 +247,7 @@ public class CircuitAppearance extends Drawing {
       }
     }
 
-    SortedMap<Location, Instance> ret = new TreeMap<Location, Instance>();
+    SortedMap<Location, Instance> ret = new TreeMap<>();
     for (AppearancePort port : ports) {
       Location loc = port.getLocation();
       if (anchor != null) {
@@ -388,7 +388,7 @@ public class CircuitAppearance extends Drawing {
   public void setObjectsForce(List<? extends CanvasObject> shapesBase) {
     // This shouldn't ever be an issue, but just to make doubly sure, we'll
     // check that the anchor and all ports are in their proper places.
-    List<CanvasObject> shapes = new ArrayList<CanvasObject>(shapesBase);
+    List<CanvasObject> shapes = new ArrayList<>(shapesBase);
     int n = shapes.size();
     int ports = 0;
     for (int i = n - 1; i >= 0; i--) { // count ports, move anchor to end
@@ -413,7 +413,7 @@ public class CircuitAppearance extends Drawing {
 
     try {
       suppressRecompute = true;
-      super.removeObjects(new ArrayList<CanvasObject>(getObjectsFromBottom()));
+      super.removeObjects(new ArrayList<>(getObjectsFromBottom()));
       super.addObjects(0, shapes);
     } finally {
       suppressRecompute = false;

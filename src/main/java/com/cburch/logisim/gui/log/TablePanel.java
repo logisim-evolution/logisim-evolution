@@ -59,6 +59,7 @@ class TablePanel extends LogPanel {
   private int rowCount = 0;
   private int tableWidth;
   private int tableHeight;
+
   public TablePanel(LogFrame frame) {
     super(frame);
     vsb = new VerticalScrollBar();

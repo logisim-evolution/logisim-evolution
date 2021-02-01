@@ -28,13 +28,12 @@
 
 package com.cburch.logisim.circuit.appear;
 
-import java.awt.event.MouseEvent;
-
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.StdAttr;
+import java.awt.event.MouseEvent;
 
 public abstract class DynamicElementWithPoker extends DynamicElement {
   
@@ -54,8 +53,8 @@ public abstract class DynamicElementWithPoker extends DynamicElement {
     isPressed=false;
   }
   
-  public void setAnchor(Location loc) { AnchorPosition = loc; };
-  
+  public void setAnchor(Location loc) { AnchorPosition = loc; }
+
   public Bounds getScreenBounds(InstanceState state) {
     Direction dir = state.getAttributeValue(StdAttr.FACING);
     Location loc = state.getInstance().getLocation();

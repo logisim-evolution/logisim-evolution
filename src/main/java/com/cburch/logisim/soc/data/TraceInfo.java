@@ -28,14 +28,13 @@
 
 package com.cburch.logisim.soc.data;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics2D;
-
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.soc.gui.CpuDrawSupport;
 import com.cburch.logisim.util.GraphicsUtil;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics2D;
 
 public class TraceInfo {
     private final int pc;

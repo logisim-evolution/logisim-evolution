@@ -96,7 +96,7 @@ public class ZOrder {
 
     Set<? extends CanvasObject> querySet = toSet(query);
     Map<CanvasObject, Integer> ret;
-    ret = new LinkedHashMap<CanvasObject, Integer>(query.size());
+    ret = new LinkedHashMap<>(query.size());
     int z = -1;
     for (CanvasObject o : model.getObjectsFromBottom()) {
       z++;
@@ -120,7 +120,7 @@ public class ZOrder {
   private static <E extends CanvasObject> List<E> sortXFirst(
       Collection<E> objects, CanvasModel model, Collection<CanvasObject> objs) {
     Set<E> set = toSet(objects);
-    List<E> ret = new ArrayList<E>(objects.size());
+    List<E> ret = new ArrayList<>(objects.size());
     for (CanvasObject o : objs) {
       if (set.contains(o)) {
         @SuppressWarnings("unchecked")
@@ -135,7 +135,7 @@ public class ZOrder {
     if (objects instanceof Set) {
       return (Set<E>) objects;
     } else {
-      return new HashSet<E>(objects);
+      return new HashSet<>(objects);
     }
   }
 }

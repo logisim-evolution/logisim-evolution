@@ -31,5 +31,5 @@ package com.cburch.hdl;
 public interface HdlModelListener {
 
   /** Called when the content of the given model has been set. */
-  public void contentSet(HdlModel source);
+  void contentSet(HdlModel source);
 }

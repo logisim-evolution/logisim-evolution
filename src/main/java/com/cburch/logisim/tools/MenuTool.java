@@ -51,7 +51,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
 public class MenuTool extends Tool {
-  private class MenuComponent extends JPopupMenu implements ActionListener {
+  private static class MenuComponent extends JPopupMenu implements ActionListener {
     private static final long serialVersionUID = 1L;
     Project proj;
     Circuit circ;
@@ -99,7 +99,7 @@ public class MenuTool extends Tool {
     }
   }
 
-  private class MenuSelection extends JPopupMenu implements ActionListener {
+  private static class MenuSelection extends JPopupMenu implements ActionListener {
     private static final long serialVersionUID = 1L;
     Project proj;
     JMenuItem del = new JMenuItem(S.get("selDeleteItem"));

@@ -43,7 +43,7 @@ public class AbstractOctalFlopsHDLGenerator extends AbstractHDLGeneratorFactory 
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> MyInputs = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> MyInputs = new TreeMap<>();
     MyInputs.put("nCLR", 1);
     MyInputs.put("nCLKen", 1);
     MyInputs.put("CLK", 1);
@@ -61,7 +61,7 @@ public class AbstractOctalFlopsHDLGenerator extends AbstractHDLGeneratorFactory 
 
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> MyOutputs = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> MyOutputs = new TreeMap<>();
     MyOutputs.put("Q0", 1);
     MyOutputs.put("Q1", 1);
     MyOutputs.put("Q2", 1);
@@ -75,7 +75,7 @@ public class AbstractOctalFlopsHDLGenerator extends AbstractHDLGeneratorFactory 
 
   @Override
   public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist Nets) {
-    SortedMap<String, Integer> Wires = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> Wires = new TreeMap<>();
     Wires.put("state", 8);
     Wires.put("enable", 1);
     Wires.put("nexts", 8);
@@ -85,7 +85,7 @@ public class AbstractOctalFlopsHDLGenerator extends AbstractHDLGeneratorFactory 
   @Override
   public ArrayList<String> GetModuleFunctionality(
       Netlist TheNetlist, AttributeSet attrs, FPGAReport Reporter, String HDLType) {
-    ArrayList<String> Contents = new ArrayList<String>();
+    ArrayList<String> Contents = new ArrayList<>();
     Contents.add("   enable <= tick and NOT(nCLKen);");
     Contents.add("   nexts  <= D7&D6&D5&D4&D3&D2&D1&D0 WHEN enable = '1' ELSE state;");
     Contents.add("   Q0     <= state(0);");
@@ -109,7 +109,7 @@ public class AbstractOctalFlopsHDLGenerator extends AbstractHDLGeneratorFactory 
   @Override
   public SortedMap<String, String> GetPortMap(
       Netlist Nets, Object MapInfo, FPGAReport Reporter, String HDLType) {
-    SortedMap<String, String> PortMap = new TreeMap<String, String>();
+    SortedMap<String, String> PortMap = new TreeMap<>();
     if (!(MapInfo instanceof NetlistComponent)) return PortMap;
     NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
     Boolean GatedClock = false;
@@ -142,12 +142,12 @@ public class AbstractOctalFlopsHDLGenerator extends AbstractHDLGeneratorFactory 
             "tick",
             ClockNetName
                 + "("
-                + Integer.toString(ClockHDLGeneratorFactory.PositiveEdgeTickIndex)
+                + ClockHDLGeneratorFactory.PositiveEdgeTickIndex
                 + ")");
       }
       PortMap.put(
           "CLK",
-          ClockNetName + "(" + Integer.toString(ClockHDLGeneratorFactory.GlobalClockIndex) + ")");
+          ClockNetName + "(" + ClockHDLGeneratorFactory.GlobalClockIndex + ")");
     }
     PortMap.putAll(GetNetMap("D0", true, ComponentInfo, 2, Reporter, HDLType, Nets));
     PortMap.putAll(GetNetMap("D1", true, ComponentInfo, 3, Reporter, HDLType, Nets));

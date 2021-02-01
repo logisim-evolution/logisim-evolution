@@ -29,9 +29,7 @@
 package com.cburch.logisim.soc.data;
 
 import java.util.HashSet;
-
 import javax.swing.text.Segment;
-
 import org.fife.ui.rsyntaxtextarea.AbstractTokenMaker;
 import org.fife.ui.rsyntaxtextarea.RSyntaxUtilities;
 import org.fife.ui.rsyntaxtextarea.Token;

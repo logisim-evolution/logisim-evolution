@@ -149,7 +149,7 @@ public class Rom extends Mem {
   public Rom() {
     super("ROM", S.getter("romComponent"), 0);
     setIcon(new ArithmeticIcon("ROM",3));
-    memListeners = new WeakHashMap<Instance, MemListener>();
+    memListeners = new WeakHashMap<>();
   }
 
   @Override

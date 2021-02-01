@@ -60,9 +60,9 @@ import javax.swing.JFileChooser;
 import javax.swing.JPanel;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import org.fife.ui.rsyntaxtextarea.AbstractTokenMakerFactory;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.TokenMakerFactory;
-import org.fife.ui.rsyntaxtextarea.AbstractTokenMakerFactory;
 import org.fife.ui.rtextarea.RTextScrollPane;
 
 public class HdlContentEditor extends JDialog implements JInputDialog {
@@ -328,7 +328,7 @@ public class HdlContentEditor extends JDialog implements JInputDialog {
   }
 
   private static final WeakHashMap<HdlContent, HdlContentEditor> windowRegistry =
-      new WeakHashMap<HdlContent, HdlContentEditor>();
+      new WeakHashMap<>();
 
   public static HdlContentEditor getContentEditor(Window source, HdlContent value, Project proj) {
     synchronized (windowRegistry) {

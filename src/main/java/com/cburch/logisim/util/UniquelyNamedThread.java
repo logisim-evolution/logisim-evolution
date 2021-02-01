@@ -28,12 +28,12 @@
 
 package com.cburch.logisim.util;
 
-import java.util.*;
+import java.util.HashMap;
 
 public class UniquelyNamedThread extends Thread {
 
   private static final Object lock = new Object();
-  private static final HashMap<String, Integer> lastID = new HashMap<String, Integer>();
+  private static final HashMap<String, Integer> lastID = new HashMap<>();
 
   private static String nextName(String prefix) {
     int id = 0;

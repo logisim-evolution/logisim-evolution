@@ -68,7 +68,7 @@ class SelectionAction extends Action {
     this.displayName = displayName;
     this.toRemove = toRemove == null ? null : ZOrder.getZIndex(toRemove, canvasModel);
     this.toAdd = toAdd;
-    this.oldSelection = new ArrayList<CanvasObject>(canvas.getSelection().getSelected());
+    this.oldSelection = new ArrayList<>(canvas.getSelection().getSelected());
     this.newSelection = newSelection;
     this.anchorNewLocation = anchorLocation;
     this.anchorNewFacing = anchorFacing;

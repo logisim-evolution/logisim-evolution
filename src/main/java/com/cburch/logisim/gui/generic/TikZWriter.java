@@ -67,7 +67,6 @@ public class TikZWriter extends Graphics2D {
   public TikZWriter() {
     MyInfo = new TikZInfo();
   }
-  ;
 
   public TikZWriter(TikZInfo info) {
     MyInfo = info;
@@ -115,7 +114,7 @@ public class TikZWriter extends Graphics2D {
 
   @Override
   public void drawString(AttributedCharacterIterator iterator, int x, int y) {
-    MyInfo.addString(iterator, (int) x, (int) y);
+    MyInfo.addString(iterator, x, y);
   }
 
   @Override

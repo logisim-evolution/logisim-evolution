@@ -28,13 +28,12 @@
 
 package com.cburch.logisim.fpga.data;
 
+import com.cburch.logisim.fpga.gui.BoardManipulator;
+import com.cburch.logisim.prefs.AppPreferences;
 import java.awt.BasicStroke;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
-
-import com.cburch.logisim.fpga.gui.BoardManipulator;
-import com.cburch.logisim.prefs.AppPreferences;
 
 public class SimpleRectangle {
 

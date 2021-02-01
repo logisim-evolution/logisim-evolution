@@ -36,9 +36,10 @@ public class MenuListener {
   protected LogisimMenuBar menubar;
   protected ArrayList<EnabledListener> listeners;
   protected EditListener editListener = new EditListener();
+
   public MenuListener(LogisimMenuBar menubar) {
     this.menubar = menubar;
-    this.listeners = new ArrayList<EnabledListener>();
+    this.listeners = new ArrayList<>();
   }
 
   public void addEnabledListener(EnabledListener listener) {
@@ -72,7 +73,7 @@ public class MenuListener {
   }
 
   public interface EnabledListener {
-    public void menuEnableChanged(MenuListener source);
+    void menuEnableChanged(MenuListener source);
   }
 
   protected class EditListener implements ActionListener, EditHandler.Listener {

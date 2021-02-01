@@ -57,11 +57,11 @@ import java.util.ArrayList;
 
 class Buffer extends InstanceFactory {
 
-  private class BufferGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
+  private static class BufferGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
     @Override
     public ArrayList<String> GetLogicFunction(
         int nr_of_inputs, int bitwidth, boolean is_one_hot, String HDLType) {
-      ArrayList<String> Contents = new ArrayList<String>();
+      ArrayList<String> Contents = new ArrayList<>();
       if (HDLType.equals(VHDL)) Contents.add("   Result <= Input_1;");
       else Contents.add("   assign Result = Input_1;");
       Contents.add("");

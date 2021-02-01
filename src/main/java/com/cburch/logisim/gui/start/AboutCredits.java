@@ -103,7 +103,7 @@ class AboutCredits extends JComponent {
     // User's
     // Guide. Current contributors appear in both locations.
 
-    lines = new ArrayList<CreditsLine>();
+    lines = new ArrayList<>();
     linesHeight = 0; // computed in paintComponent
     lines.add(new CreditsLine(0, S.get("creditsRoleFork")));
     lines.add(new CreditsLine(1, "College of the Holy Cross"));

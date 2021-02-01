@@ -28,6 +28,7 @@
 
 package com.cburch.logisim.tools;
 
+import com.cburch.logisim.gui.generic.OptionPane;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -36,8 +37,6 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-
-import com.cburch.logisim.gui.generic.OptionPane;
 
 public class MatrixPlacerDialog extends JPanel implements ActionListener {
 

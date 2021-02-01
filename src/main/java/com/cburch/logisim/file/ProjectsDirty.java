@@ -74,7 +74,7 @@ class ProjectsDirty {
   }
 
   private static final ProjectListListener projectListListener = new ProjectListListener();
-  private static final ArrayList<DirtyListener> listeners = new ArrayList<DirtyListener>();
+  private static final ArrayList<DirtyListener> listeners = new ArrayList<>();
 
   private ProjectsDirty() {}
 }

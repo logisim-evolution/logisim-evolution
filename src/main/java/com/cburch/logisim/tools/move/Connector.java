@@ -48,18 +48,18 @@ class Connector {
     int dx = req.getDeltaX();
     int dy = req.getDeltaY();
     ArrayList<ConnectionData> baseConnects;
-    baseConnects = new ArrayList<ConnectionData>(gesture.getConnections());
+    baseConnects = new ArrayList<>(gesture.getConnections());
     ArrayList<ConnectionData> impossible =
         pruneImpossible(baseConnects, gesture.getFixedAvoidanceMap(), dx, dy);
 
     AvoidanceMap selAvoid = AvoidanceMap.create(gesture.getSelected(), dx, dy);
     HashMap<ConnectionData, Set<Location>> pathLocs;
-    pathLocs = new HashMap<ConnectionData, Set<Location>>();
+    pathLocs = new HashMap<>();
     HashMap<ConnectionData, List<SearchNode>> initNodes;
-    initNodes = new HashMap<ConnectionData, List<SearchNode>>();
+    initNodes = new HashMap<>();
     for (ConnectionData conn : baseConnects) {
-      HashSet<Location> connLocs = new HashSet<Location>();
-      ArrayList<SearchNode> connNodes = new ArrayList<SearchNode>();
+      HashSet<Location> connLocs = new HashSet<>();
+      ArrayList<SearchNode> connNodes = new ArrayList<>();
       processConnection(conn, dx, dy, connLocs, connNodes, selAvoid);
       pathLocs.put(conn, connLocs);
       initNodes.put(conn, connNodes);
@@ -89,7 +89,7 @@ class Connector {
         return null;
       }
       ArrayList<ConnectionData> connects;
-      connects = new ArrayList<ConnectionData>(baseConnects);
+      connects = new ArrayList<>(baseConnects);
       if (tryNum < 2) {
         sortConnects(connects, dx, dy);
         if (tryNum == 1) {
@@ -129,7 +129,7 @@ class Connector {
   private static ArrayList<Location> convertToPath(SearchNode last) {
     SearchNode next = last;
     SearchNode prev = last.getPrevious();
-    ArrayList<Location> ret = new ArrayList<Location>();
+    ArrayList<Location> ret = new ArrayList<>();
     ret.add(next.getLocation());
     while (prev != null) {
       if (prev.getDirection() != next.getDirection()) {
@@ -147,8 +147,8 @@ class Connector {
 
   private static SearchNode findShortestPath(
       List<SearchNode> nodes, Set<Location> pathLocs, AvoidanceMap avoid) {
-    PriorityQueue<SearchNode> q = new PriorityQueue<SearchNode>(nodes);
-    HashSet<SearchNode> visited = new HashSet<SearchNode>();
+    PriorityQueue<SearchNode> q = new PriorityQueue<>(nodes);
+    HashSet<SearchNode> visited = new HashSet<>();
     int iters = 0;
     while (!q.isEmpty() && iters < MAX_SEARCH_ITERATIONS) {
       iters++;
@@ -309,14 +309,14 @@ class Connector {
 
   private static ArrayList<ConnectionData> pruneImpossible(
       ArrayList<ConnectionData> connects, AvoidanceMap avoid, int dx, int dy) {
-    ArrayList<Wire> pathWires = new ArrayList<Wire>();
+    ArrayList<Wire> pathWires = new ArrayList<>();
     for (ConnectionData conn : connects) {
       for (Wire w : conn.getWirePath()) {
         pathWires.add(w);
       }
     }
 
-    ArrayList<ConnectionData> impossible = new ArrayList<ConnectionData>();
+    ArrayList<ConnectionData> impossible = new ArrayList<>();
     for (Iterator<ConnectionData> it = connects.iterator(); it.hasNext(); ) {
       ConnectionData conn = it.next();
       Location dest = conn.getLocation().translate(dx, dy);
@@ -368,7 +368,7 @@ class Connector {
     avoid.markAll(gesture.getSelected(), dx, dy);
 
     ReplacementMap replacements = new ReplacementMap();
-    ArrayList<ConnectionData> unconnected = new ArrayList<ConnectionData>();
+    ArrayList<ConnectionData> unconnected = new ArrayList<>();
     int totalDistance = 0;
     for (ConnectionData conn : connects) {
       if (ConnectorThread.isOverrideRequested()) {

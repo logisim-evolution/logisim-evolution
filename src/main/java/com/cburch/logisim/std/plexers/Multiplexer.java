@@ -125,7 +125,7 @@ public class Multiplexer extends InstanceFactory {
     CompleteName.append(CorrectLabel.getCorrectLabel(this.getName()));
     if (attrs.getValue(StdAttr.WIDTH).getWidth() > 1) CompleteName.append("_bus");
     CompleteName.append(
-        "_" + Integer.toString(1 << attrs.getValue(Plexers.ATTR_SELECT).getWidth()));
+        "_" + (1 << attrs.getValue(Plexers.ATTR_SELECT).getWidth()));
     return CompleteName.toString();
   }
 
@@ -212,12 +212,10 @@ public class Multiplexer extends InstanceFactory {
       dy = vertical ? 2 * selMult : 0;
     } else if (vertical) {
       dx = (facing == Direction.EAST ? 1 : -1);
-      ;
       dy = 2 * selMult;
     } else {
       dx = -2 * selMult;
       dy = (facing == Direction.SOUTH ? 1 : -1);
-      ;
     }
     if (inputs == 2 || (!wide && oddside)) { // draw select wire
       Location pt = painter.getInstance().getPortLocation(inputs);

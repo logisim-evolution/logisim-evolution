@@ -28,10 +28,9 @@
 
 package com.cburch.logisim.soc.nios2;
 
+import com.cburch.logisim.soc.data.AssemblerHighlighter;
 import org.fife.ui.rsyntaxtextarea.Token;
 import org.fife.ui.rsyntaxtextarea.TokenMap;
-
-import com.cburch.logisim.soc.data.AssemblerHighlighter;
 
 public class Nios2SyntaxHighlighter extends AssemblerHighlighter {
   @Override

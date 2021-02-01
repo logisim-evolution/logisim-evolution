@@ -39,38 +39,38 @@ public class MatchingSet<E extends CanvasObject> extends AbstractSet<E> {
   private final Set<Member<E>> set;
 
   public MatchingSet() {
-    set = new HashSet<Member<E>>();
+    set = new HashSet<>();
   }
 
   public MatchingSet(Collection<E> initialContents) {
-    set = new HashSet<Member<E>>(initialContents.size());
+    set = new HashSet<>(initialContents.size());
     for (E value : initialContents) {
-      set.add(new Member<E>(value));
+      set.add(new Member<>(value));
     }
   }
 
   @Override
   public boolean add(E value) {
-    return set.add(new Member<E>(value));
+    return set.add(new Member<>(value));
   }
 
   @Override
   public boolean contains(Object value) {
     @SuppressWarnings("unchecked")
     E eValue = (E) value;
-    return set.contains(new Member<E>(eValue));
+    return set.contains(new Member<>(eValue));
   }
 
   @Override
   public Iterator<E> iterator() {
-    return new MatchIterator<E>(set.iterator());
+    return new MatchIterator<>(set.iterator());
   }
 
   @Override
   public boolean remove(Object value) {
     @SuppressWarnings("unchecked")
     E eValue = (E) value;
-    return set.remove(new Member<E>(eValue));
+    return set.remove(new Member<>(eValue));
   }
 
   @Override

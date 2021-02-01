@@ -31,9 +31,9 @@ package com.cburch.logisim.gui.log;
 import com.cburch.logisim.data.Value;
 
 public interface ModelListener {
-  public void entryAdded(ModelEvent event, Value[] values);
+  void entryAdded(ModelEvent event, Value[] values);
 
-  public void filePropertyChanged(ModelEvent event);
+  void filePropertyChanged(ModelEvent event);
 
-  public void selectionChanged(ModelEvent event);
+  void selectionChanged(ModelEvent event);
 }

@@ -39,8 +39,8 @@ import java.util.ListIterator;
 import java.util.Map;
 
 public class ToolbarData {
-  public static interface ToolbarListener {
-    public void toolbarChanged();
+  public interface ToolbarListener {
+    void toolbarChanged();
   }
 
   private final EventSourceWeakSupport<ToolbarListener> listeners;
@@ -48,9 +48,9 @@ public class ToolbarData {
   private final ArrayList<Tool> contents;
 
   public ToolbarData() {
-    listeners = new EventSourceWeakSupport<ToolbarListener>();
-    toolListeners = new EventSourceWeakSupport<AttributeListener>();
-    contents = new ArrayList<Tool>();
+    listeners = new EventSourceWeakSupport<>();
+    toolListeners = new EventSourceWeakSupport<>();
+    contents = new ArrayList<>();
   }
 
   private void addAttributeListeners(Tool tool) {

@@ -29,9 +29,9 @@
 package com.cburch.logisim.comp;
 
 public interface ComponentListener {
-  public void componentInvalidated(ComponentEvent e);
+  void componentInvalidated(ComponentEvent e);
 
-  public void endChanged(ComponentEvent e);
+  void endChanged(ComponentEvent e);
 
-  public void LabelChanged(ComponentEvent e);
+  void LabelChanged(ComponentEvent e);
 }

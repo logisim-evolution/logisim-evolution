@@ -32,7 +32,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 class Assignments {
-  private final Map<String, Boolean> map = new HashMap<String, Boolean>();
+  private final Map<String, Boolean> map = new HashMap<>();
 
   public Assignments() {}
 

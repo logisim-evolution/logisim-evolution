@@ -75,7 +75,7 @@ public class LoadedLibrary extends Library implements LibraryEventSource {
     ArrayList<Component> toReplace = null;
     for (Component comp : circuit.getNonWires()) {
       if (compMap.containsKey(comp.getFactory())) {
-        if (toReplace == null) toReplace = new ArrayList<Component>();
+        if (toReplace == null) toReplace = new ArrayList<>();
         toReplace.add(comp);
       }
     }
@@ -134,7 +134,7 @@ public class LoadedLibrary extends Library implements LibraryEventSource {
   LoadedLibrary(Library base) {
     dirty = false;
     myListener = new MyListener();
-    listeners = new EventSourceWeakSupport<LibraryListener>();
+    listeners = new EventSourceWeakSupport<>();
 
     while (base instanceof LoadedLibrary) base = ((LoadedLibrary) base).base;
     this.base = base;
@@ -204,7 +204,7 @@ public class LoadedLibrary extends Library implements LibraryEventSource {
       fireLibraryEvent(LibraryEvent.SET_NAME, base.getDisplayName());
     }
 
-    HashSet<Library> changes = new HashSet<Library>(old.getLibraries());
+    HashSet<Library> changes = new HashSet<>(old.getLibraries());
     changes.removeAll(base.getLibraries());
     for (Library lib : changes) {
       fireLibraryEvent(LibraryEvent.REMOVE_LIBRARY, lib);
@@ -219,8 +219,8 @@ public class LoadedLibrary extends Library implements LibraryEventSource {
 
     HashMap<ComponentFactory, ComponentFactory> componentMap;
     HashMap<Tool, Tool> toolMap;
-    componentMap = new HashMap<ComponentFactory, ComponentFactory>();
-    toolMap = new HashMap<Tool, Tool>();
+    componentMap = new HashMap<>();
+    toolMap = new HashMap<>();
     for (Tool oldTool : old.getTools()) {
       Tool newTool = base.getTool(oldTool.getName());
       toolMap.put(oldTool, newTool);
@@ -236,13 +236,13 @@ public class LoadedLibrary extends Library implements LibraryEventSource {
     }
     replaceAll(componentMap, toolMap);
 
-    HashSet<Tool> toolChanges = new HashSet<Tool>(old.getTools());
+    HashSet<Tool> toolChanges = new HashSet<>(old.getTools());
     toolChanges.removeAll(toolMap.keySet());
     for (Tool tool : toolChanges) {
       fireLibraryEvent(LibraryEvent.REMOVE_TOOL, tool);
     }
 
-    toolChanges = new HashSet<Tool>(base.getTools());
+    toolChanges = new HashSet<>(base.getTools());
     toolChanges.removeAll(toolMap.values());
     for (Tool tool : toolChanges) {
       fireLibraryEvent(LibraryEvent.ADD_TOOL, tool);

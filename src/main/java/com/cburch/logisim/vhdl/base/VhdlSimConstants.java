@@ -64,7 +64,7 @@ public class VhdlSimConstants {
 
   public static List<Component> getVhdlComponents(CircuitState s, boolean newStyle) {
 
-    LinkedList<Component> vhdlComp = new LinkedList<Component>();
+    LinkedList<Component> vhdlComp = new LinkedList<>();
 
     /* Add current circuits comp */
     for (Component comp : s.getCircuit().getNonWires()) {
@@ -84,11 +84,11 @@ public class VhdlSimConstants {
     return vhdlComp;
   }
 
-  public static enum State {
+  public enum State {
     DISABLED,
     ENABLED,
     STARTING,
-    RUNNING;
+    RUNNING
   }
 
   public static final Logger logger = LoggerFactory.getLogger(VhdlSimulatorTop.class);

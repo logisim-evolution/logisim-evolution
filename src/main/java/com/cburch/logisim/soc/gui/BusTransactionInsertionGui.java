@@ -82,7 +82,6 @@ public class BusTransactionInsertionGui extends JFrame
     c.gridwidth = 1;
     c.fill = GridBagConstraints.BOTH;
     address.setHorizontalAlignment(JLabel.RIGHT);
-    ;
     add(address, c);
     c.gridy++;
     inputdata.setHorizontalAlignment(JLabel.RIGHT);
@@ -200,8 +199,7 @@ public class BusTransactionInsertionGui extends JFrame
   public void actionPerformed(ActionEvent e) {
     Object source = e.getSource();
     if (source == readAction || source == writeAction) {
-      if (readAction.isSelected() || writeAction.isSelected()) insertButton.setEnabled(true);
-      else insertButton.setEnabled(false);
+      insertButton.setEnabled(readAction.isSelected() || writeAction.isSelected());
     } else if (source == insertButton) insertAction();
     else if (source == wordTrans) {
       if (wordTrans.isSelected()) {

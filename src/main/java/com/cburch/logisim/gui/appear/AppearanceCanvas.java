@@ -138,7 +138,7 @@ public class AppearanceCanvas extends Canvas implements CanvasPaneContents, Acti
       int max = getMaxIndex(getModel());
       ModelReorderAction reorder = (ModelReorderAction) canvasAction;
       List<ReorderRequest> rs = reorder.getReorderRequests();
-      List<ReorderRequest> mod = new ArrayList<ReorderRequest>(rs.size());
+      List<ReorderRequest> mod = new ArrayList<>(rs.size());
       boolean changed = false;
       boolean movedToMax = false;
       for (ReorderRequest r : rs) {
@@ -151,7 +151,7 @@ public class AppearanceCanvas extends Canvas implements CanvasPaneContents, Acti
             changed = true;
             movedToMax = true;
             if (from == max && !movedToMax) {
-              ; // this change is ineffective - don't add it
+              // this change is ineffective - don't add it
             } else {
               mod.add(new ReorderRequest(o, from, max));
             }

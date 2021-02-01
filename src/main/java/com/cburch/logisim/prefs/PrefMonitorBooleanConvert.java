@@ -39,7 +39,7 @@ import java.util.prefs.Preferences;
 
 public class PrefMonitorBooleanConvert extends PrefMonitorBoolean {
 
-  private final ArrayList<ConvertEventListener> MyListeners = new ArrayList<ConvertEventListener>();
+  private final ArrayList<ConvertEventListener> MyListeners = new ArrayList<>();
 
   PrefMonitorBooleanConvert(String name, boolean dflt) {
     super(name, dflt);
@@ -50,7 +50,7 @@ public class PrefMonitorBooleanConvert extends PrefMonitorBoolean {
   }
 
   public void removeConvertListener(ConvertEventListener l) {
-    if (MyListeners.contains(l)) MyListeners.remove(l);
+    MyListeners.remove(l);
   }
 
   @Override

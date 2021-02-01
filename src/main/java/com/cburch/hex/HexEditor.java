@@ -48,6 +48,7 @@ public class HexEditor extends JComponent implements Scrollable {
   private final Caret caret;
   private final Highlighter highlighter;
   private HexModel model;
+
   public HexEditor(HexModel model) {
     this.model = model;
     this.listener = new Listener();

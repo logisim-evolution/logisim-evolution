@@ -98,7 +98,7 @@ class OutputSelector {
         AttributedString as;
         if (txt.contains(":")) {
           int idx = txt.indexOf(':');
-          as = new AttributedString(txt.substring(0, idx) + txt.substring(idx + 1, txt.length()));
+          as = new AttributedString(txt.substring(0, idx) + txt.substring(idx + 1));
           as.addAttribute(TextAttribute.SUPERSCRIPT, TextAttribute.SUPERSCRIPT_SUB, idx, txt.length() - 1);
         } else if (txt.contains("[")) {
           int start = txt.indexOf('[');
@@ -155,7 +155,7 @@ class OutputSelector {
 
   private final VariableList source;
   private final JLabel label = new JLabel();
-  private final JComboBox<String> select = new JComboBox<String>();
+  private final JComboBox<String> select = new JComboBox<>();
 
   public OutputSelector(AnalyzerModel model) {
     this.source = model.getOutputs();

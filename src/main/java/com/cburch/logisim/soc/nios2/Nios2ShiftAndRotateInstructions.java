@@ -30,13 +30,12 @@ package com.cburch.logisim.soc.nios2;
 
 import static com.cburch.logisim.soc.Strings.S;
 
-import java.util.ArrayList;
-
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.soc.data.SocSupport;
 import com.cburch.logisim.soc.util.AssemblerAsmInstruction;
 import com.cburch.logisim.soc.util.AssemblerExecutionInterface;
 import com.cburch.logisim.soc.util.AssemblerToken;
+import java.util.ArrayList;
 
 public class Nios2ShiftAndRotateInstructions implements AssemblerExecutionInterface {
 
@@ -55,8 +54,8 @@ public class Nios2ShiftAndRotateInstructions implements AssemblerExecutionInterf
   private final static Integer[] AsmOpxs = {0x03,0x0B,0x13,0x3B,0x1B,
                                             0x02,0x12,0x3A,0x1A };
 
-  private final ArrayList<String> Opcodes = new ArrayList<String>();
-  private final ArrayList<Integer> OpxCodes = new ArrayList<Integer>();
+  private final ArrayList<String> Opcodes = new ArrayList<>();
+  private final ArrayList<Integer> OpxCodes = new ArrayList<>();
   
   private int instruction;
   private boolean valid;
@@ -116,7 +115,7 @@ public class Nios2ShiftAndRotateInstructions implements AssemblerExecutionInterf
     if (operation < INSTR_ROLI) {
       s.append(Nios2State.registerABINames[sourceB]);
     } else {
-      s.append(Integer.toString(immediate));
+      s.append(immediate);
     }
     return s.toString();
   }

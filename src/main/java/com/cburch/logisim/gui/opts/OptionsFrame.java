@@ -123,6 +123,7 @@ public class OptionsFrame extends LFrame {
     private static final long serialVersionUID = 1L;
     private final MyListener myListener = new MyListener();
     private final JButton revert = new JButton();
+
     public RevertPanel(OptionsFrame window) {
       super(window);
       setLayout(new TableLayout(1));

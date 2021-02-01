@@ -55,21 +55,19 @@ public class Builtin extends Library {
   public Builtin() {
     libraries =
         Arrays.asList(
-            new Library[] {
-              new Base(),
-              new Gates(),
-              new Wiring(),
-              new Plexers(),
-              new Arithmetic(),
-              new Memory(),
-              new Io(),
-              new TTL(),
-              new Hdl(),
-              new Tcl(),
-              new BFHPraktika(),
-              new ITA_IO(),
-              new Soc(),
-            });
+            new Base(),
+            new Gates(),
+            new Wiring(),
+            new Plexers(),
+            new Arithmetic(),
+            new Memory(),
+            new Io(),
+            new TTL(),
+            new Hdl(),
+            new Tcl(),
+            new BFHPraktika(),
+            new ITA_IO(),
+            new Soc());
   }
 
   @Override

@@ -35,9 +35,10 @@ import java.util.ArrayList;
 class Highlighter {
   private final HexEditor hex;
   private ArrayList<Entry> entries;
+
   Highlighter(HexEditor hex) {
     this.hex = hex;
-    this.entries = new ArrayList<Entry>();
+    this.entries = new ArrayList<>();
   }
 
   public synchronized Object add(long start, long end, Color color) {
@@ -60,7 +61,7 @@ class Highlighter {
 
   public synchronized void clear() {
     ArrayList<Entry> oldEntries = entries;
-    entries = new ArrayList<Entry>();
+    entries = new ArrayList<>();
     for (int n = oldEntries.size(); n >= 0; n--) {
       expose(oldEntries.get(n));
     }

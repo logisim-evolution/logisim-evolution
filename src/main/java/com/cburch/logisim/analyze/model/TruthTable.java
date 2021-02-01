@@ -42,14 +42,14 @@ public class TruthTable {
   private static final Entry DEFAULT_ENTRY = Entry.DONT_CARE;
 
   private final MyListener myListener = new MyListener();
-  private final List<TruthTableListener> listeners = new ArrayList<TruthTableListener>();
+  private final List<TruthTableListener> listeners = new ArrayList<>();
 
   private final AnalyzerModel model;
   private ArrayList<Row> rows = new ArrayList<>(); // visible input rows
   private final ArrayList<Entry[]> columns = new ArrayList<>(); // output columns
   private static final CompareInputs sortByInputs = new CompareInputs();
 
-  private class Row implements Iterable<Integer> {
+  private static class Row implements Iterable<Integer> {
     // todo: probably more efficient to store this in baseIdx/dcMask format.
     Entry[] inputs;
 

@@ -37,6 +37,7 @@ import java.io.RandomAccessFile;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 
 /**
  * BufferedLineReader combines features of RandomAccessFile, StringReader, and BufferedReader, along
@@ -198,13 +199,9 @@ abstract class BufferedLineReader {
 
     ReaderForString(String s) {
       cin = new StringReader(s);
-      try {
-        byte[] b = s.getBytes("UTF-8");
-        bin = new ByteArrayInputStream(b);
-        bsize = b.length;
-      } catch (UnsupportedEncodingException e) {
-        throw new IllegalStateException(e.getMessage());
-      }
+      byte[] b = s.getBytes(StandardCharsets.UTF_8);
+      bin = new ByteArrayInputStream(b);
+      bsize = b.length;
       bpos = 0;
       cpos = 0;
     }
@@ -261,7 +258,7 @@ abstract class BufferedLineReader {
 
     ReaderForFile(File f) throws IOException {
       bin = new RandomAccessFile(f, "r");
-      cin = new InputStreamReader(new Adapter(bin), "UTF-8");
+      cin = new InputStreamReader(new Adapter(bin), StandardCharsets.UTF_8);
       bsize = bin.length();
       bpos = 0;
       cpos = 0;
@@ -269,7 +266,7 @@ abstract class BufferedLineReader {
 
     public void reset() throws IOException {
       bin.seek(0);
-      cin = new InputStreamReader(new Adapter(bin), "UTF-8"); // ISR buffers internally
+      cin = new InputStreamReader(new Adapter(bin), StandardCharsets.UTF_8); // ISR buffers internally
       super.reset();
     }
 

@@ -37,13 +37,12 @@ import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.gui.FPGAReport;
 import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
 import com.cburch.logisim.gui.icons.FlipFlopIcon;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 public class SRFlipFlop extends AbstractFlipFlop {
-  private class SRFFHDLGeneratorFactory extends AbstractFlipFlopHDLGeneratorFactory
+  private static class SRFFHDLGeneratorFactory extends AbstractFlipFlopHDLGeneratorFactory
       implements HDLGeneratorFactory {
     @Override
     public String ComponentName() {
@@ -53,7 +52,7 @@ public class SRFlipFlop extends AbstractFlipFlop {
     @Override
     public Map<String, String> GetInputMaps(
         NetlistComponent ComponentInfo, Netlist Nets, FPGAReport Reporter, String HDLType) {
-      Map<String, String> PortMap = new HashMap<String, String>();
+      Map<String, String> PortMap = new HashMap<>();
       PortMap.putAll(GetNetMap("S", true, ComponentInfo, 0, Reporter, HDLType, Nets));
       PortMap.putAll(GetNetMap("R", true, ComponentInfo, 1, Reporter, HDLType, Nets));
       return PortMap;
@@ -61,7 +60,7 @@ public class SRFlipFlop extends AbstractFlipFlop {
 
     @Override
     public Map<String, Integer> GetInputPorts() {
-      Map<String, Integer> Inputs = new HashMap<String, Integer>();
+      Map<String, Integer> Inputs = new HashMap<>();
       Inputs.put("S", 1);
       Inputs.put("R", 1);
       return Inputs;
@@ -69,7 +68,7 @@ public class SRFlipFlop extends AbstractFlipFlop {
 
     @Override
     public ArrayList<String> GetUpdateLogic(String HDLType) {
-      ArrayList<String> Contents = new ArrayList<String>();
+      ArrayList<String> Contents = new ArrayList<>();
       if (HDLType.endsWith(VHDL))
         Contents.add("   s_next_state <= (s_current_state_reg OR S) AND NOT(R);");
       else Contents.add("   assign s_next_state = (s_current_state_reg|S)&~(R);");

@@ -30,8 +30,6 @@ package com.cburch.logisim.soc.file;
 
 import java.util.ArrayList;
 
-import com.cburch.logisim.soc.file.SymbolTable;
-
 public class SectionHeader {
   public static final int SH_NAME = 0;
   public static final int SH_TYPE = 1;
@@ -105,11 +103,11 @@ public class SectionHeader {
     index += increment;
     sh_entsize = ElfHeader.getLongValue(buffer, index, increment, isLittleEndian);
     name = "";
-    symbols = new ArrayList<SymbolTable>();
+    symbols = new ArrayList<>();
   }
   
   public SectionHeader(String name) {
-    symbols = new ArrayList<SymbolTable>();
+    symbols = new ArrayList<>();
     this.name = name;
     is32Bit = true;
     sh_name = -1;

@@ -57,7 +57,7 @@ import javax.swing.JScrollPane;
 /** @author YSY */
 public class RegTabContent extends JScrollPane implements LocaleListener, SimulatorListener {
   private static final long serialVersionUID = 1L;
-  private static final HashMap<String, Component> registers = new HashMap<String, Component>();
+  private static final HashMap<String, Component> registers = new HashMap<>();
   private final JPanel panel = new JPanel(new GridBagLayout());
   private final GridBagConstraints c = new GridBagConstraints();
   private final Project proj;
@@ -227,7 +227,7 @@ public class RegTabContent extends JScrollPane implements LocaleListener, Simula
     // throw new UnsupportedOperationException("Not supported yet.");
   }
 
-  private class MyLabel extends JLabel {
+  private static class MyLabel extends JLabel {
     private static final long serialVersionUID = 1L;
 
     private MyLabel(String text) {

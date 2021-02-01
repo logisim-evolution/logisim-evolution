@@ -29,5 +29,5 @@
 package com.cburch.logisim.soc.data;
 
 public interface SocBusSnifferInterface {
-	public void sniffTransaction(SocBusTransaction trans);
+	void sniffTransaction(SocBusTransaction trans);
 }

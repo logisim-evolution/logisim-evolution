@@ -30,9 +30,9 @@ package com.cburch.logisim.gui.test;
 
 interface ModelListener {
 
-  public void testingChanged();
+  void testingChanged();
 
-  public void testResultsChanged(int numPass, int numFail);
+  void testResultsChanged(int numPass, int numFail);
 
-  public void vectorChanged();
+  void vectorChanged();
 }

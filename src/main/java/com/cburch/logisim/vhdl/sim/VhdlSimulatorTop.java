@@ -66,7 +66,7 @@ public class VhdlSimulatorTop implements CircuitListener {
   private final Project project;
 
   private static final ArrayList<VhdlSimulatorListener> listeners =
-      new ArrayList<VhdlSimulatorListener>();
+      new ArrayList<>();
 
   private State state = State.DISABLED;
 

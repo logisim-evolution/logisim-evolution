@@ -38,7 +38,7 @@ public class ClockSourceContainer {
   boolean RequiresFPGAGlobalClock;
 
   public ClockSourceContainer() {
-    sources = new ArrayList<Component>();
+    sources = new ArrayList<>();
     RequiresFPGAGlobalClock = false;
   }
 
@@ -52,11 +52,8 @@ public class ClockSourceContainer {
         != comp2.getAttributeSet().getValue(Clock.ATTR_HIGH).intValue()) {
       return false;
     }
-    if (comp1.getAttributeSet().getValue(Clock.ATTR_LOW).intValue()
-        != comp2.getAttributeSet().getValue(Clock.ATTR_LOW).intValue()) {
-      return false;
-    }
-    return true;
+    return comp1.getAttributeSet().getValue(Clock.ATTR_LOW).intValue() == comp2.getAttributeSet()
+        .getValue(Clock.ATTR_LOW).intValue();
   }
 
   public int getClockId(Component comp) {

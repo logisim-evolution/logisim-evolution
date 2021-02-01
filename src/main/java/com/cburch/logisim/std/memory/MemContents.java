@@ -60,7 +60,7 @@ public class MemContents implements Cloneable, HexModel {
   // HexModel methods
   //
   public void addHexModelListener(HexModelListener l) {
-    if (listeners == null) listeners = new EventSourceWeakSupport<HexModelListener>();
+    if (listeners == null) listeners = new EventSourceWeakSupport<>();
     listeners.add(l);
   }
 
@@ -76,7 +76,7 @@ public class MemContents implements Cloneable, HexModel {
     if (!AppPreferences.Memory_Startup_Unknown.getBoolean()) clear();
     else {
       for (int i = 0 ; i < pages.length ; i++) {
-        long[] oldValues = pages[i] != null ? pages[i].get(0, pages[i].getLength()) : null;;
+        long[] oldValues = pages[i] != null ? pages[i].get(0, pages[i].getLength()) : null;
         pages[i] = MemContentsSub.createPage(PAGE_SIZE, width);
         if (oldValues != null)
           fireBytesChanged(i << PAGE_SIZE_BITS, oldValues.length, oldValues);

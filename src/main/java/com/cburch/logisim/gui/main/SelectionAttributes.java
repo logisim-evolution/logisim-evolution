@@ -60,6 +60,7 @@ class SelectionAttributes extends AbstractAttributeSet {
   private boolean[] readOnly;
   private Object[] values;
   private List<Attribute<?>> attrsView;
+
   public SelectionAttributes(Canvas canvas, Selection selection) {
     this.canvas = canvas;
     this.selection = selection;
@@ -78,7 +79,7 @@ class SelectionAttributes extends AbstractAttributeSet {
   private static LinkedHashMap<Attribute<Object>, Object> computeAttributes(
       Collection<Component> newSel) {
     LinkedHashMap<Attribute<Object>, Object> attrMap;
-    attrMap = new LinkedHashMap<Attribute<Object>, Object>();
+    attrMap = new LinkedHashMap<>();
     Iterator<Component> sit = newSel.iterator();
     if (sit.hasNext()) {
       AttributeSet first = sit.next().getAttributeSet();
@@ -126,9 +127,9 @@ class SelectionAttributes extends AbstractAttributeSet {
     }
 
     if (includeWires) {
-      return new HashSet<Component>(comps);
+      return new HashSet<>(comps);
     } else {
-      HashSet<Component> ret = new HashSet<Component>();
+      HashSet<Component> ret = new HashSet<>();
       for (Component comp : comps) {
         if (!(comp instanceof Wire)) {
           ret.add(comp);
@@ -323,7 +324,7 @@ class SelectionAttributes extends AbstractAttributeSet {
         this.selected = newSel;
       }
       this.attrs = newAttrs;
-      this.attrsView = new UnmodifiableList<Attribute<?>>(newAttrs);
+      this.attrsView = new UnmodifiableList<>(newAttrs);
       this.values = newValues;
       this.readOnly = newReadOnly;
 

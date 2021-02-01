@@ -86,7 +86,7 @@ public class ModelChangeAttributeAction extends ModelAction {
 
   @Override
   public Collection<CanvasObject> getObjects() {
-    Set<CanvasObject> ret = new HashSet<CanvasObject>();
+    Set<CanvasObject> ret = new HashSet<>();
     for (AttributeMapKey key : newValues.keySet()) {
       ret.add(key.getObject());
     }

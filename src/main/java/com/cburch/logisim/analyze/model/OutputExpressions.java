@@ -328,10 +328,10 @@ public class OutputExpressions {
 
   private final AnalyzerModel model;
 
-  private final HashMap<String, OutputData> outputData = new HashMap<String, OutputData>();
+  private final HashMap<String, OutputData> outputData = new HashMap<>();
 
   private final ArrayList<OutputExpressionsListener> listeners =
-      new ArrayList<OutputExpressionsListener>();
+      new ArrayList<>();
 
   private boolean updatingTable = false;
 

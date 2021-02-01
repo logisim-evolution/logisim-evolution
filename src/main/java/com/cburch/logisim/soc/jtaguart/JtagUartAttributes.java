@@ -30,10 +30,6 @@ package com.cburch.logisim.soc.jtaguart;
 
 import static com.cburch.logisim.soc.Strings.S;
 
-import java.awt.Font;
-import java.util.Arrays;
-import java.util.List;
-
 import com.cburch.logisim.data.AbstractAttributeSet;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeOption;
@@ -41,6 +37,9 @@ import com.cburch.logisim.data.Attributes;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.soc.data.SocBusInfo;
 import com.cburch.logisim.soc.data.SocSimulationManager;
+import java.awt.Font;
+import java.util.Arrays;
+import java.util.List;
 
 public class JtagUartAttributes  extends AbstractAttributeSet {
 
@@ -79,17 +78,16 @@ public class JtagUartAttributes  extends AbstractAttributeSet {
 
   private static final List<Attribute<?>> ATTRIBUTES =
         Arrays.asList(
-          new Attribute<?>[] {
-             START_ADDRESS,
-             WRITE_FIFO_SIZE,
-             WRITE_IRQ_THRESHOLD,
-             READ_FIFO_SIZE,
-             READ_IRQ_THRESHOLD,
-             StdAttr.LABEL,
-             StdAttr.LABEL_FONT,
-             StdAttr.LABEL_VISIBILITY,
-             SocSimulationManager.SOC_BUS_SELECT,
-             JTAG_STATE});
+            START_ADDRESS,
+            WRITE_FIFO_SIZE,
+            WRITE_IRQ_THRESHOLD,
+            READ_FIFO_SIZE,
+            READ_IRQ_THRESHOLD,
+            StdAttr.LABEL,
+            StdAttr.LABEL_FONT,
+            StdAttr.LABEL_VISIBILITY,
+            SocSimulationManager.SOC_BUS_SELECT,
+            JTAG_STATE);
 
   private Font labelFont = StdAttr.DEFAULT_LABEL_FONT;
   private Boolean labelVisible = true;

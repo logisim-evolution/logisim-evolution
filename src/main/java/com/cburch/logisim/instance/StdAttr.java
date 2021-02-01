@@ -36,67 +36,66 @@ import com.cburch.logisim.data.Attributes;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.fpga.data.ComponentMapInformationContainer;
-
 import java.awt.Color;
 import java.awt.Font;
 
 public interface StdAttr {
-  public static final Attribute<Direction> FACING =
+  Attribute<Direction> FACING =
       Attributes.forDirection("facing", S.getter("stdFacingAttr"));
   
-  public static final Attribute<ComponentMapInformationContainer> MAPINFO =
+  Attribute<ComponentMapInformationContainer> MAPINFO =
       Attributes.forMap();
 
-  public static final Attribute<BitWidth> WIDTH =
+  Attribute<BitWidth> WIDTH =
       Attributes.forBitWidth("width", S.getter("stdDataWidthAttr"));
 
-  public static final AttributeOption TRIG_RISING =
+  AttributeOption TRIG_RISING =
       new AttributeOption("rising", S.getter("stdTriggerRising"));
-  public static final AttributeOption TRIG_FALLING =
+  AttributeOption TRIG_FALLING =
       new AttributeOption("falling", S.getter("stdTriggerFalling"));
-  public static final AttributeOption TRIG_HIGH =
+  AttributeOption TRIG_HIGH =
       new AttributeOption("high", S.getter("stdTriggerHigh"));
-  public static final AttributeOption TRIG_LOW =
+  AttributeOption TRIG_LOW =
       new AttributeOption("low", S.getter("stdTriggerLow"));
-  public static final Attribute<AttributeOption> TRIGGER =
+  Attribute<AttributeOption> TRIGGER =
       Attributes.forOption(
           "trigger",
           S.getter("stdTriggerAttr"),
           new AttributeOption[] {TRIG_RISING, TRIG_FALLING, TRIG_HIGH, TRIG_LOW});
-  public static final Attribute<AttributeOption> EDGE_TRIGGER =
+  Attribute<AttributeOption> EDGE_TRIGGER =
       Attributes.forOption(
           "trigger", S.getter("stdTriggerAttr"), new AttributeOption[] {TRIG_RISING, TRIG_FALLING});
 
-  public static final Attribute<String> LABEL =
+  Attribute<String> LABEL =
       Attributes.forString("label", S.getter("stdLabelAttr"));
-  public static final Attribute<Font> LABEL_FONT =
+  Attribute<Font> LABEL_FONT =
       Attributes.forFont("labelfont", S.getter("stdLabelFontAttr"));
-  public static final Font DEFAULT_LABEL_FONT = new Font("SansSerif", Font.BOLD, 16);
-  public static final Attribute<Color> LABEL_COLOR =
+  Font DEFAULT_LABEL_FONT = new Font("SansSerif", Font.BOLD, 16);
+  Attribute<Color> LABEL_COLOR =
       Attributes.forColor("labelcolor", S.getter("ioLabelColorAttr"));
-  public static final Color DEFAULT_LABEL_COLOR = Color.BLUE;
-  public static final AttributeOption LABEL_CENTER =
+  Color DEFAULT_LABEL_COLOR = Color.BLUE;
+  AttributeOption LABEL_CENTER =
       new AttributeOption("center", "center", S.getter("stdLabelCenter"));
-  public static final Attribute<Object> LABEL_LOC =
+  Attribute<Object> LABEL_LOC =
       Attributes.forOption(
           "labelloc",
           S.getter("stdLabelLocAttr"),
           new Object[] {
             LABEL_CENTER, Direction.NORTH, Direction.SOUTH, Direction.EAST, Direction.WEST
           });
-  public static final Attribute<Boolean> LABEL_VISIBILITY =
+  Attribute<Boolean> LABEL_VISIBILITY =
       Attributes.forBoolean("labelvisible", S.getter("stdLabelVisibility"));
-  public static final AttributeOption APPEAR_CLASSIC =
+  AttributeOption APPEAR_CLASSIC =
       new AttributeOption("classic", S.getter("stdClassicAppearance"));
-  public static final AttributeOption APPEAR_FPGA =
+  AttributeOption APPEAR_FPGA =
       new AttributeOption("evolution", S.getter("stdEvolutionAppearance"));
-  public static final AttributeOption APPEAR_EVOLUTION =
+  AttributeOption APPEAR_EVOLUTION =
       new AttributeOption("logisim_evolution", S.getter("stdLogisimEvolutionAppearance"));
-  public static final Attribute<AttributeOption> APPEARANCE =
+  Attribute<AttributeOption> APPEARANCE =
       Attributes.forOption(
           "appearance",
           S.getter("stdAppearanceAttr"),
           new AttributeOption[] {APPEAR_CLASSIC, APPEAR_FPGA, APPEAR_EVOLUTION});
 
-  public static final Attribute<String> DUMMY = Attributes.forHidden();
+  Attribute<String> DUMMY = Attributes.forHidden();
 }

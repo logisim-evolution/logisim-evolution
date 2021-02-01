@@ -91,7 +91,7 @@ public class VhdlEntity extends InstanceFactory implements HdlModelListener {
     icon.setInvalid(!content.isValid());
     setFacingAttribute(StdAttr.FACING);
     appearance = VhdlAppearance.create(getPins(), getName(), StdAttr.APPEAR_EVOLUTION);
-    MyInstances = new ArrayList<Instance>();
+    MyInstances = new ArrayList<>();
   }
 
   public void SetSimName(AttributeSet attrs, String SName) {
@@ -337,7 +337,7 @@ public class VhdlEntity extends InstanceFactory implements HdlModelListener {
   private VhdlAppearance appearance;
 
   private ArrayList<Instance> getPins() {
-    ArrayList<Instance> pins = new ArrayList<Instance>();
+    ArrayList<Instance> pins = new ArrayList<>();
     int y = 0;
     for (VhdlParser.PortDescription p : content.getPorts()) {
       AttributeSet a = Pin.FACTORY.createAttributeSet();

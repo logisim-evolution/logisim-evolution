@@ -50,14 +50,12 @@ public class SocBusAttributes extends AbstractAttributeSet {
       Attributes.forBoolean("TraceVisible", S.getter("SocBusTraceVisable"));
   private static final List<Attribute<?>> ATTRIBUTES =
       Arrays.asList(
-          new Attribute<?>[] {
-            NrOfTracesAttr,
-            SOC_TRACE_VISABLE,
-            StdAttr.LABEL,
-            StdAttr.LABEL_FONT,
-            StdAttr.LABEL_VISIBILITY,
-            SOC_BUS_ID
-          });
+          NrOfTracesAttr,
+          SOC_TRACE_VISABLE,
+          StdAttr.LABEL,
+          StdAttr.LABEL_FONT,
+          StdAttr.LABEL_VISIBILITY,
+          SOC_BUS_ID);
   private Font LabelFont = StdAttr.DEFAULT_LABEL_FONT;
   private Boolean LabelVisable = true;
   private BitWidth TraceSize = BitWidth.create(5);

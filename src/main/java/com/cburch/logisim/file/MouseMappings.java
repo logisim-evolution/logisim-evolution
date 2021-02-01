@@ -40,8 +40,8 @@ import java.util.Map;
 import java.util.Set;
 
 public class MouseMappings {
-  public static interface MouseMappingsListener {
-    public void mouseMappingsChanged();
+  public interface MouseMappingsListener {
+    void mouseMappingsChanged();
   }
 
   private final ArrayList<MouseMappingsListener> listeners;
@@ -50,8 +50,8 @@ public class MouseMappings {
   private Tool cache_tool;
 
   public MouseMappings() {
-    listeners = new ArrayList<MouseMappingsListener>();
-    map = new HashMap<Integer, Tool>();
+    listeners = new ArrayList<>();
+    map = new HashMap<>();
   }
 
   //

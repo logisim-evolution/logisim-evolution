@@ -32,13 +32,12 @@ import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.gui.FPGAReport;
-
 import java.util.SortedMap;
 import java.util.TreeMap;
 
 public class Ttl74377 extends AbstractOctalFlops {
 
-  public class Ttl74377HDLGenerator extends AbstractOctalFlopsHDLGenerator {
+  public static class Ttl74377HDLGenerator extends AbstractOctalFlopsHDLGenerator {
 
     @Override
     public String getComponentStringIdentifier() {
@@ -48,7 +47,7 @@ public class Ttl74377 extends AbstractOctalFlops {
     @Override
     public SortedMap<String, String> GetPortMap(
           Netlist Nets, Object MapInfo, FPGAReport Reporter, String HDLType) {
-      SortedMap<String, String> PortMap = new TreeMap<String, String>();
+      SortedMap<String, String> PortMap = new TreeMap<>();
       if (!(MapInfo instanceof NetlistComponent)) return PortMap;
       NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
       PortMap.putAll(super.GetPortMap(Nets, ComponentInfo, Reporter, HDLType));

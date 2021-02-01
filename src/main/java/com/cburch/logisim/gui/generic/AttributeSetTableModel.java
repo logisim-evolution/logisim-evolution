@@ -52,9 +52,9 @@ public abstract class AttributeSetTableModel implements AttrTableModel, Attribut
   private ComponentFactory CompInst = null;
   public AttributeSetTableModel(AttributeSet attrs) {
     this.attrs = attrs;
-    this.listeners = new ArrayList<AttrTableModelListener>();
-    this.rowMap = new HashMap<Attribute<?>, AttrRow>();
-    this.rows = new ArrayList<AttrRow>();
+    this.listeners = new ArrayList<>();
+    this.rowMap = new HashMap<>();
+    this.rows = new ArrayList<>();
     if (attrs != null) {
       /* put the vhdl/verilog row */
       HDLrow rowd = new HDLrow(null);
@@ -111,8 +111,8 @@ public abstract class AttributeSetTableModel implements AttrTableModel, Attribut
     if (match && index == rows.size()) return;
 
     // compute the new list of rows, possible adding into hash map
-    ArrayList<AttrRow> newRows = new ArrayList<AttrRow>();
-    HashSet<Attribute<?>> missing = new HashSet<Attribute<?>>(rowMap.keySet());
+    ArrayList<AttrRow> newRows = new ArrayList<>();
+    HashSet<Attribute<?>> missing = new HashSet<>(rowMap.keySet());
     /* put the vhdl/verilog row */
     HDLrow rowd = new HDLrow(null);
     newRows.add(rowd);

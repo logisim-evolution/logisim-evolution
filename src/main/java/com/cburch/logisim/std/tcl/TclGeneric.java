@@ -113,7 +113,7 @@ public class TclGeneric extends TclComponent {
   public TclGeneric() {
     super("TclGeneric", S.getter("tclGeneric"));
 
-    contentListeners = new WeakHashMap<Instance, TclGenericListener>();
+    contentListeners = new WeakHashMap<>();
   }
 
   @Override

@@ -36,13 +36,12 @@ import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
-
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 
 class NandGate extends AbstractGate {
 
-  private class NandGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
+  private static class NandGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
     @Override
     public boolean GetFloatingValue(boolean is_inverted) {
       return is_inverted;
@@ -51,7 +50,7 @@ class NandGate extends AbstractGate {
     @Override
     public ArrayList<String> GetLogicFunction(
         int nr_of_inputs, int bitwidth, boolean is_one_hot, String HDLType) {
-      ArrayList<String> Contents = new ArrayList<String>();
+      ArrayList<String> Contents = new ArrayList<>();
       String Preamble = (HDLType.equals(VHDL) ? "" : "assign ");
       String AndOperation = (HDLType.equals(VHDL) ? " AND" : " &");
       String AssignOperation = (HDLType.equals(VHDL) ? " <= " : " = ");
@@ -71,7 +70,7 @@ class NandGate extends AbstractGate {
         } else {
           first = false;
         }
-        OneLine.append("s_real_input_" + Integer.toString(i + 1));
+        OneLine.append("s_real_input_" + (i + 1));
       }
       OneLine.append(");");
       Contents.add(OneLine.toString());

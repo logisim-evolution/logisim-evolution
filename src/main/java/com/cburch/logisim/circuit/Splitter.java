@@ -196,7 +196,7 @@ public class Splitter extends ManagedComponent
     return SplitterFactory.instance;
   }
   
-  public void setFactory(ComponentFactory fact) {}; 
+  public void setFactory(ComponentFactory fact) {}
 
   @Override
   public Object getFeature(Object key) {
@@ -259,7 +259,7 @@ public class Splitter extends ManagedComponent
 
   @Override
   public void propagate(CircuitState state) {
-    ; // handled by CircuitWires, nothing to do
+    // handled by CircuitWires, nothing to do
   }
 
   public boolean shouldRepairWire(WireRepairData data) {

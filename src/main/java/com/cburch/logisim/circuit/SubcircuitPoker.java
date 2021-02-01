@@ -35,7 +35,6 @@ import com.cburch.logisim.gui.main.Canvas;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstancePoker;
 import com.cburch.logisim.instance.InstanceState;
-
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.MouseEvent;

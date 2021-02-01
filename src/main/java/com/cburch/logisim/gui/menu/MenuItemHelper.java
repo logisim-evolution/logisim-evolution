@@ -47,7 +47,7 @@ class MenuItemHelper implements ActionListener {
     this.menuItem = menuItem;
     this.enabled = true;
     this.inActionListener = false;
-    this.listeners = new ArrayList<ActionListener>();
+    this.listeners = new ArrayList<>();
   }
 
   public void actionPerformed(ActionEvent event) {

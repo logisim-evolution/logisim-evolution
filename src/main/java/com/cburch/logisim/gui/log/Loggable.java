@@ -32,9 +32,9 @@ import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.data.Value;
 
 public interface Loggable {
-  public String getLogName(Object option);
+  String getLogName(Object option);
 
-  public Object[] getLogOptions(CircuitState state);
+  Object[] getLogOptions(CircuitState state);
 
-  public Value getLogValue(CircuitState state, Object option);
+  Value getLogValue(CircuitState state, Object option);
 }

@@ -34,8 +34,8 @@ import com.cburch.logisim.soc.file.ElfSectionHeader;
 
 public interface SocProcessorInterface {
 
-  public void setEntryPointandReset(CircuitState state, long entryPoint, ElfProgramHeader progInfo, 
-                                    ElfSectionHeader sectInfo);
-  public void insertTransaction(SocBusTransaction trans, boolean hidden, CircuitState cState);
-  public int getEntryPoint(CircuitState cState);
+  void setEntryPointandReset(CircuitState state, long entryPoint, ElfProgramHeader progInfo,
+      ElfSectionHeader sectInfo);
+  void insertTransaction(SocBusTransaction trans, boolean hidden, CircuitState cState);
+  int getEntryPoint(CircuitState cState);
 }

@@ -29,5 +29,5 @@
 package com.cburch.logisim.comp;
 
 public interface ComponentState {
-  public Object clone();
+  Object clone();
 }

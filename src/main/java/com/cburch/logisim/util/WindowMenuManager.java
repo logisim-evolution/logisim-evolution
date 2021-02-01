@@ -92,9 +92,9 @@ class WindowMenuManager {
     setCurrentManager(null);
   }
 
-  private static final ArrayList<WindowMenu> menus = new ArrayList<WindowMenu>();
+  private static final ArrayList<WindowMenu> menus = new ArrayList<>();
 
-  private static final ArrayList<WindowMenuItemManager> managers = new ArrayList<WindowMenuItemManager>();
+  private static final ArrayList<WindowMenuItemManager> managers = new ArrayList<>();
 
   private static WindowMenuItemManager currentManager = null;
 

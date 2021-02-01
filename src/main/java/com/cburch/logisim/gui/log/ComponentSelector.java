@@ -64,7 +64,7 @@ class ComponentSelector extends JTree {
     TreePath[] sel = getSelectionPaths();
     if (sel == null || sel.length == 0) return Collections.emptyList();
 
-    ArrayList<SelectionItem> ret = new ArrayList<SelectionItem>();
+    ArrayList<SelectionItem> ret = new ArrayList<>();
     for (TreePath path : sel) {
       Object last = path.getLastPathComponent();
       ComponentNode n = null;
@@ -145,7 +145,7 @@ class ComponentSelector extends JTree {
       this.parent = parent;
       this.circuitState = circuitState;
       this.subcircComp = subcircComp;
-      this.children = new ArrayList<TreeNode>();
+      this.children = new ArrayList<>();
       circuitState.getCircuit().addCircuitListener(this);
       computeChildren();
     }
@@ -193,8 +193,8 @@ class ComponentSelector extends JTree {
 
     // returns true if changed
     private boolean computeChildren() {
-      ArrayList<TreeNode> newChildren = new ArrayList<TreeNode>();
-      ArrayList<Component> subcircs = new ArrayList<Component>();
+      ArrayList<TreeNode> newChildren = new ArrayList<>();
+      ArrayList<Component> subcircs = new ArrayList<>();
       for (Component comp : circuitState.getCircuit().getNonWires()) {
         if (comp.getFactory() instanceof SubcircuitFactory) {
           subcircs.add(comp);
@@ -386,7 +386,7 @@ class ComponentSelector extends JTree {
     }
 
     public Enumeration<? extends TreeNode> children() {
-      return Collections.enumeration(Collections.<TreeNode>emptySet());
+      return Collections.enumeration(Collections.emptySet());
     }
 
     public boolean getAllowsChildren() {

@@ -30,13 +30,12 @@ package com.cburch.logisim.soc.nios2;
 
 import static com.cburch.logisim.soc.Strings.S;
 
-import java.util.ArrayList;
-
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.soc.data.SocSupport;
 import com.cburch.logisim.soc.util.AssemblerAsmInstruction;
 import com.cburch.logisim.soc.util.AssemblerExecutionInterface;
 import com.cburch.logisim.soc.util.AssemblerToken;
+import java.util.ArrayList;
 
 public class Nios2OtherControlInstructions implements AssemblerExecutionInterface {
 
@@ -66,9 +65,9 @@ public class Nios2OtherControlInstructions implements AssemblerExecutionInterfac
           0x26, 0x2E, SIGN_EXTEND, SIGN_EXTEND, 0x0C, SIGN_EXTEND, SIGN_EXTEND, 0x29,
           0x04, 0x36 };
 
-  private final ArrayList<String> Opcodes = new ArrayList<String>();
-  private final ArrayList<Integer> OpcCodes = new ArrayList<Integer>();
-  private final ArrayList<Integer> OpxCodes = new ArrayList<Integer>();
+  private final ArrayList<String> Opcodes = new ArrayList<>();
+  private final ArrayList<Integer> OpcCodes = new ArrayList<>();
+  private final ArrayList<Integer> OpxCodes = new ArrayList<>();
 
   private int instruction;
   private boolean valid;
@@ -122,7 +121,7 @@ public class Nios2OtherControlInstructions implements AssemblerExecutionInterfac
     while (s.length() < Nios2Support.ASM_FIELD_SIZE) s.append(" ");
     switch (operation) {
       case INSTR_BREAK   : 
-      case INSTR_TRAP    : if (immediate != 0) s.append(Integer.toString(immediate));
+      case INSTR_TRAP    : if (immediate != 0) s.append(immediate);
                            break;
       case INSTR_RDCTL   : s.append(Nios2State.registerABINames[sourceA]+",ctl"+immediate);
                            break;

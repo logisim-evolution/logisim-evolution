@@ -62,7 +62,7 @@ public class RomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Inputs = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> Inputs = new TreeMap<>();
     Inputs.put("Address", attrs.getValue(Mem.ADDR_ATTR).getWidth());
     return Inputs;
   }
@@ -70,7 +70,7 @@ public class RomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   @Override
   public ArrayList<String> GetModuleFunctionality(
       Netlist TheNetlist, AttributeSet attrs, FPGAReport Reporter, String HDLType) {
-    ArrayList<String> Contents = new ArrayList<String>();
+    ArrayList<String> Contents = new ArrayList<>();
     long addr;
     MemContents rom = attrs.getValue(Rom.CONTENTS_ATTR);
     if (HDLType.equals(VHDL)) {
@@ -94,7 +94,7 @@ public class RomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       Contents.add("      END PROCESS MakeRom;");
     } else {
       Contents.add(
-          "   reg[" + Integer.toString(attrs.getValue(Mem.DATA_ATTR).getWidth() - 1) + ":0] Data;");
+          "   reg[" + (attrs.getValue(Mem.DATA_ATTR).getWidth() - 1) + ":0] Data;");
       Contents.add("");
       Contents.add("   always @ (Address)");
       Contents.add("   begin");
@@ -113,7 +113,7 @@ public class RomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Outputs = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> Outputs = new TreeMap<>();
     Outputs.put("Data", attrs.getValue(Mem.DATA_ATTR).getWidth());
     return Outputs;
   }
@@ -121,7 +121,7 @@ public class RomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   @Override
   public SortedMap<String, String> GetPortMap(
 	      Netlist Nets, Object MapInfo, FPGAReport Reporter, String HDLType) {
-    SortedMap<String, String> PortMap = new TreeMap<String, String>();
+    SortedMap<String, String> PortMap = new TreeMap<>();
     if (!(MapInfo instanceof NetlistComponent)) return PortMap;
     NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
     AttributeSet attrs = ComponentInfo.GetComponent().getAttributeSet();

@@ -364,7 +364,7 @@ public class SubcircuitFactory extends InstanceFactory {
 
     @Override
     protected Map<Circuit, Integer> getAccessedCircuits() {
-      Map<Circuit, Integer> accessMap = new HashMap<Circuit, Integer>();
+      Map<Circuit, Integer> accessMap = new HashMap<>();
       for (Circuit supercirc : source.getCircuitsUsingThis()) {
         accessMap.put(supercirc, READ_WRITE);
       }

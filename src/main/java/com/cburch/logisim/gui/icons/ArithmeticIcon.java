@@ -98,5 +98,4 @@ public class ArithmeticIcon extends AbstractIcon {
           (float) ((3 * getIconHeight()) / 4 - t.getBounds().getCenterY()));
     }
   }
-  ;
 }

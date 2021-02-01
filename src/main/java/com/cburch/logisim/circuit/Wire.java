@@ -97,7 +97,7 @@ public final class Wire implements Component, AttributeSet, CustomHandles, Itera
       Attributes.forInteger("length", S.getter("wireLengthAttr"));
 
   private static final List<Attribute<?>> ATTRIBUTES =
-      Arrays.asList(new Attribute<?>[] {dir_attr, len_attr});
+      Arrays.asList(dir_attr, len_attr);
 
   private static final Cache cache = new Cache();
 

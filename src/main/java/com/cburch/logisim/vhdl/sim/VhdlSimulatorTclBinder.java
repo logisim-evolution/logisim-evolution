@@ -75,7 +75,7 @@ public class VhdlSimulatorTclBinder {
   }
 
   private void Init(int serverPort) {
-    List<String> command = new ArrayList<String>();
+    List<String> command = new ArrayList<>();
 
     command.add(
         FileUtil.correctPath(Softwares.getQuestaPath()) + Softwares.QUESTA_BIN[Softwares.VSIM]);

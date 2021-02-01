@@ -52,7 +52,7 @@ class TextFieldCaret implements Caret, TextFieldListener {
   public static final Color EDIT_BORDER = Color.DARK_GRAY;
   public static final Color SELECTION_BACKGROUND = new Color(0x99, 0xcc, 0xff);
 
-  private final LinkedList<CaretListener> listeners = new LinkedList<CaretListener>();
+  private final LinkedList<CaretListener> listeners = new LinkedList<>();
   private final TextField field;
   private final Graphics g;
   private String oldText;
@@ -84,7 +84,7 @@ class TextFieldCaret implements Caret, TextFieldListener {
     curText = oldText;
     pos = curText.length();
     end = pos;
-    for (CaretListener l : new ArrayList<CaretListener>(listeners)) {
+    for (CaretListener l : new ArrayList<>(listeners)) {
       l.editingCanceled(e);
     }
     field.removeTextFieldListener(this);
@@ -245,7 +245,7 @@ class TextFieldCaret implements Caret, TextFieldListener {
         }
         e.consume();
         break;
-      default:; // ignore
+      default:// ignore
     }
   }
 
@@ -324,7 +324,7 @@ class TextFieldCaret implements Caret, TextFieldListener {
           curText = curText.substring(0, pos) + curText.substring(pos + 1);
         }
         break;
-      default:; // ignore
+      default:// ignore
     }
   }
 
@@ -384,7 +384,7 @@ class TextFieldCaret implements Caret, TextFieldListener {
   public void stopEditing() {
     CaretEvent e = new CaretEvent(this, oldText, curText);
     field.setText(curText);
-    for (CaretListener l : new ArrayList<CaretListener>(listeners)) {
+    for (CaretListener l : new ArrayList<>(listeners)) {
       l.editingStopped(e);
     }
     field.removeTextFieldListener(this);

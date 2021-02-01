@@ -221,12 +221,10 @@ public class SplitterAttributes extends AbstractAttributeSet {
 
   private static final List<Attribute<?>> INIT_ATTRIBUTES =
       Arrays.asList(
-          new Attribute<?>[] {
-            StdAttr.FACING, ATTR_FANOUT, ATTR_WIDTH, ATTR_APPEARANCE, ATTR_SPACING
-          });
+          StdAttr.FACING, ATTR_FANOUT, ATTR_WIDTH, ATTR_APPEARANCE, ATTR_SPACING);
 
   private static final String unchosen_val = "none";
-  private ArrayList<Attribute<?>> attrs = new ArrayList<Attribute<?>>(INIT_ATTRIBUTES);
+  private ArrayList<Attribute<?>> attrs = new ArrayList<>(INIT_ATTRIBUTES);
   private SplitterParameters parameters;
   AttributeOption appear = APPEAR_LEFT;
   Direction facing = Direction.EAST;
@@ -306,7 +304,7 @@ public class SplitterAttributes extends AbstractAttributeSet {
   protected void copyInto(AbstractAttributeSet destObj) {
     SplitterAttributes dest = (SplitterAttributes) destObj;
     dest.parameters = this.parameters;
-    dest.attrs = new ArrayList<Attribute<?>>(this.attrs.size());
+    dest.attrs = new ArrayList<>(this.attrs.size());
     dest.attrs.addAll(INIT_ATTRIBUTES);
     for (int i = INIT_ATTRIBUTES.size(), n = this.attrs.size(); i < n; i++) {
       BitOutAttribute attr = (BitOutAttribute) this.attrs.get(i);

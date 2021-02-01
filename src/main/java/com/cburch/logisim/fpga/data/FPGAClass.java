@@ -39,7 +39,7 @@ public class FPGAClass {
     Iterator<String> iter = thelist.iterator();
     result = 0;
     while (iter.hasNext()) {
-      if (iter.next().toUpperCase().equals(identifier.toUpperCase())) return result;
+      if (iter.next().equalsIgnoreCase(identifier)) return result;
       result++;
     }
     return VendorSoftware.VendorUnknown;

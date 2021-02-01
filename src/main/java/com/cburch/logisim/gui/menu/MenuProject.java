@@ -63,6 +63,7 @@ class MenuProject extends Menu {
   private final MenuItemImpl analyze = new MenuItemImpl(this, LogisimMenuBar.ANALYZE_CIRCUIT);
   private final MenuItemImpl stats = new MenuItemImpl(this, LogisimMenuBar.CIRCUIT_STATS);
   private final JMenuItem options = new JMenuItem();
+
   MenuProject(LogisimMenuBar menubar) {
     this.menubar = menubar;
 

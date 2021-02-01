@@ -40,11 +40,11 @@ public interface ExpressionComputer {
    * <p>If, in fact, no valid expression exists for the component, it throws <code>
    * UnsupportedOperationException</code>.
    */
-  public void computeExpression(Map expressionMap);
+  void computeExpression(Map expressionMap);
 
-  public interface Map {
-    public Expression get(Location point, int bit);
+  interface Map {
+    Expression get(Location point, int bit);
 
-    public Expression put(Location point, int bit, Expression expression);
+    Expression put(Location point, int bit, Expression expression);
   }
 }

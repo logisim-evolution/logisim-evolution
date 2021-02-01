@@ -46,7 +46,7 @@ public class AppearanceEditPopup extends EditPopup implements EditHandler.Listen
     this.canvas = canvas;
     handler = new AppearanceEditHandler(canvas);
     handler.setListener(this);
-    enabled = new HashMap<LogisimMenuItem, Boolean>();
+    enabled = new HashMap<>();
     handler.computeEnabled();
     initialize();
   }

@@ -56,7 +56,7 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Inputs = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> Inputs = new TreeMap<>();
     Inputs.put("Reset", 1);
     Inputs.put("Preset", 1);
     Inputs.put("Tick", 1);
@@ -67,17 +67,17 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
 
   public Map<String, String> GetInputMaps(
       NetlistComponent ComponentInfo, Netlist Nets, FPGAReport Reporter, String HDLType) {
-    return new HashMap<String, String>();
+    return new HashMap<>();
   }
 
   public Map<String, Integer> GetInputPorts() {
-    return new HashMap<String, Integer>();
+    return new HashMap<>();
   }
 
   @Override
   public ArrayList<String> GetModuleFunctionality(
       Netlist TheNetlist, AttributeSet attrs, FPGAReport Reporter, String HDLType) {
-    ArrayList<String> Contents = new ArrayList<String>();
+    ArrayList<String> Contents = new ArrayList<>();
     String Preamble = (HDLType.equals(VHDL)) ? "" : "assign ";
     String AssignmentOperator = (HDLType.equals(VHDL)) ? " <= " : " = ";
     String NotOperator = (HDLType.equals(VHDL)) ? "NOT" : "~";
@@ -165,7 +165,7 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
 
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Outputs = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> Outputs = new TreeMap<>();
     Outputs.put("Q", 1);
     Outputs.put("Q_bar", 1);
     return Outputs;
@@ -173,7 +173,7 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
 
   @Override
   public SortedMap<Integer, String> GetParameterList(AttributeSet attrs) {
-    SortedMap<Integer, String> Parameters = new TreeMap<Integer, String>();
+    SortedMap<Integer, String> Parameters = new TreeMap<>();
     Parameters.put(-1, ActivityLevelStr);
     return Parameters;
   }
@@ -181,7 +181,7 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
   @Override
   public SortedMap<String, Integer> GetParameterMap(
       Netlist Nets, NetlistComponent ComponentInfo, FPGAReport Reporter) {
-    SortedMap<String, Integer> ParameterMap = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> ParameterMap = new TreeMap<>();
     int ActivityLevel = 1;
     Boolean GatedClock = false;
     Boolean ActiveLow = false;
@@ -208,7 +208,7 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
   @Override
   public SortedMap<String, String> GetPortMap(
 	      Netlist Nets, Object MapInfo, FPGAReport Reporter, String HDLType) {
-    SortedMap<String, String> PortMap = new TreeMap<String, String>();
+    SortedMap<String, String> PortMap = new TreeMap<>();
     if (!(MapInfo instanceof NetlistComponent)) return PortMap;
     NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
     Boolean GatedClock = false;
@@ -251,7 +251,7 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
             "Tick",
             ClockNetName
                 + OpenBracket
-                + Integer.toString(ClockHDLGeneratorFactory.GlobalClockIndex)
+                + ClockHDLGeneratorFactory.GlobalClockIndex
                 + CloseBracket);
       } else {
         if (ActiveLow)
@@ -259,21 +259,21 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
               "Tick",
               ClockNetName
                   + OpenBracket
-                  + Integer.toString(ClockHDLGeneratorFactory.NegativeEdgeTickIndex)
+                  + ClockHDLGeneratorFactory.NegativeEdgeTickIndex
                   + CloseBracket);
         else
           PortMap.put(
               "Tick",
               ClockNetName
                   + OpenBracket
-                  + Integer.toString(ClockHDLGeneratorFactory.PositiveEdgeTickIndex)
+                  + ClockHDLGeneratorFactory.PositiveEdgeTickIndex
                   + CloseBracket);
       }
       PortMap.put(
           "Clock",
           ClockNetName
               + OpenBracket
-              + Integer.toString(ClockHDLGeneratorFactory.GlobalClockIndex)
+              + ClockHDLGeneratorFactory.GlobalClockIndex
               + CloseBracket);
     } else if (!HasClock) {
       PortMap.put("Tick", ZeroBit);
@@ -286,14 +286,14 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
               "Clock",
               ClockNetName
                   + OpenBracket
-                  + Integer.toString(ClockHDLGeneratorFactory.InvertedDerivedClockIndex)
+                  + ClockHDLGeneratorFactory.InvertedDerivedClockIndex
                   + CloseBracket);
         else
           PortMap.put(
               "Clock",
               ClockNetName
                   + OpenBracket
-                  + Integer.toString(ClockHDLGeneratorFactory.DerivedClockIndex)
+                  + ClockHDLGeneratorFactory.DerivedClockIndex
                   + CloseBracket);
       } else {
         PortMap.put(
@@ -309,7 +309,7 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
 
   @Override
   public SortedMap<String, Integer> GetRegList(AttributeSet attrs, String HDLType) {
-    SortedMap<String, Integer> Regs = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> Regs = new TreeMap<>();
     Regs.put("s_current_state_reg", (HDLType.equals(VHDL)) ? 1 : 2);
     return Regs;
   }
@@ -320,12 +320,12 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
   }
 
   public ArrayList<String> GetUpdateLogic(String HDLType) {
-    return new ArrayList<String>();
+    return new ArrayList<>();
   }
 
   @Override
   public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist Nets) {
-    SortedMap<String, Integer> Wires = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> Wires = new TreeMap<>();
     Wires.put("s_next_state", 1);
     return Wires;
   }

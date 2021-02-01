@@ -52,7 +52,7 @@ public class TextField {
   private int valign;
   private Font font;
   private String text = "";
-  private final LinkedList<TextFieldListener> listeners = new LinkedList<TextFieldListener>();
+  private final LinkedList<TextFieldListener> listeners = new LinkedList<>();
 
   public TextField(int x, int y, int halign, int valign) {
     this(x, y, halign, valign, null);
@@ -114,7 +114,7 @@ public class TextField {
   }
 
   public void fireTextChanged(TextFieldEvent e) {
-    for (TextFieldListener l : new ArrayList<TextFieldListener>(listeners)) {
+    for (TextFieldListener l : new ArrayList<>(listeners)) {
       l.textChanged(e);
     }
   }

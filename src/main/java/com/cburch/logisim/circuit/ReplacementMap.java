@@ -48,15 +48,15 @@ public class ReplacementMap {
 
   public ReplacementMap() {
     this(
-        new HashMap<Component, HashSet<Component>>(), new HashMap<Component, HashSet<Component>>());
+        new HashMap<>(), new HashMap<>());
   }
 
   public ReplacementMap(Component oldComp, Component newComp) {
     this(
-        new HashMap<Component, HashSet<Component>>(), new HashMap<Component, HashSet<Component>>());
-    HashSet<Component> oldSet = new HashSet<Component>(3);
+        new HashMap<>(), new HashMap<>());
+    HashSet<Component> oldSet = new HashSet<>(3);
     oldSet.add(oldComp);
-    HashSet<Component> newSet = new HashSet<Component>(3);
+    HashSet<Component> newSet = new HashSet<>(3);
     newSet.add(newComp);
     map.put(oldComp, newSet);
     inverse.put(newComp, oldSet);
@@ -72,7 +72,7 @@ public class ReplacementMap {
     if (frozen) {
       throw new IllegalStateException("cannot change map after frozen");
     }
-    inverse.put(comp, new HashSet<Component>(3));
+    inverse.put(comp, new HashSet<>(3));
   }
 
   void append(ReplacementMap next) {
@@ -82,14 +82,14 @@ public class ReplacementMap {
       HashSet<Component> as = this.inverse.remove(b); // what was replaced
       // to get b
       if (as == null) { // b pre-existed replacements so
-        as = new HashSet<Component>(3); // we say it replaces itself.
+        as = new HashSet<>(3); // we say it replaces itself.
         as.add(b);
       }
 
       for (Component a : as) {
         HashSet<Component> aDst = this.map.get(a);
         if (aDst == null) { // should happen when b pre-existed only
-          aDst = new HashSet<Component>(cs.size());
+          aDst = new HashSet<>(cs.size());
           this.map.put(a, aDst);
         }
         aDst.remove(b);
@@ -100,7 +100,7 @@ public class ReplacementMap {
         HashSet<Component> cSrc = this.inverse.get(c); // should always
         // be null
         if (cSrc == null) {
-          cSrc = new HashSet<Component>(as.size());
+          cSrc = new HashSet<>(as.size());
           this.inverse.put(c, cSrc);
         }
         cSrc.addAll(as);
@@ -114,7 +114,7 @@ public class ReplacementMap {
         if (!bs.isEmpty()) {
           logger.error("Internal error: component replaced but not represented");
         }
-        inverse.put(c, new HashSet<Component>(3));
+        inverse.put(c, new HashSet<>(3));
       }
     }
   }
@@ -176,7 +176,7 @@ public class ReplacementMap {
 
     HashSet<Component> repl = map.get(prev);
     if (repl == null) {
-      repl = new HashSet<Component>(next.size());
+      repl = new HashSet<>(next.size());
       map.put(prev, repl);
     }
     repl.addAll(next);
@@ -184,7 +184,7 @@ public class ReplacementMap {
     for (Component n : next) {
       repl = inverse.get(n);
       if (repl == null) {
-        repl = new HashSet<Component>(3);
+        repl = new HashSet<>(3);
         inverse.put(n, repl);
       }
       repl.add(prev);
@@ -195,7 +195,7 @@ public class ReplacementMap {
     if (frozen) {
       throw new IllegalStateException("cannot change map after frozen");
     }
-    map.put(comp, new HashSet<Component>(3));
+    map.put(comp, new HashSet<>(3));
   }
 
   public void replace(Component prev, Component next) {

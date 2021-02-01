@@ -31,9 +31,9 @@ package com.cburch.logisim.file;
 import com.cburch.logisim.tools.Library;
 
 interface LibraryLoader {
-  public String getDescriptor(Library lib);
+  String getDescriptor(Library lib);
 
-  public Library loadLibrary(String desc);
+  Library loadLibrary(String desc);
 
-  public void showError(String description);
+  void showError(String description);
 }

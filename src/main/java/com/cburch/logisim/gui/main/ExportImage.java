@@ -242,7 +242,7 @@ public class ExportImage {
       }
       if (g instanceof Graphics2D) {
         ((Graphics2D) g).scale(scale, scale);
-        ((Graphics2D) g).translate(-bds.getX(), -bds.getY());
+        g.translate(-bds.getX(), -bds.getY());
       } else {
         OptionPane.showMessageDialog(frame, S.get("couldNotCreateImage"));
         monitor.close();

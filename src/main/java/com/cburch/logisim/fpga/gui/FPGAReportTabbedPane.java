@@ -96,7 +96,7 @@ public class FPGAReportTabbedPane extends JTabbedPane implements MouseListener, 
     super();
     this.MyProject = MyProject;
     /* first we setup all info for the first tab, the Information window */
-    InfoMessages = new ArrayList<String>();
+    InfoMessages = new ArrayList<>();
     textAreaInfo = new JTextArea(10, 50);
     textAreaInfo.setForeground(Color.GRAY);
     textAreaInfo.setBackground(Color.BLACK);
@@ -116,7 +116,7 @@ public class FPGAReportTabbedPane extends JTabbedPane implements MouseListener, 
 
     /* now we setup the Warning window */
     WarningsList = new FPGACommanderListModel(true);
-    Warnings = new JList<Object>();
+    Warnings = new JList<>();
     Warnings.setBackground(Color.BLACK);
     Warnings.setForeground(Color.ORANGE);
     Warnings.setSelectionBackground(Color.ORANGE);
@@ -144,7 +144,7 @@ public class FPGAReportTabbedPane extends JTabbedPane implements MouseListener, 
 
     /* here we setup the Error window */
     ErrorsList = new FPGACommanderListModel(false);
-    Errors = new JList<Object>();
+    Errors = new JList<>();
     Errors.setBackground(Color.BLACK);
     Errors.setForeground(Color.RED);
     Errors.setSelectionBackground(Color.RED);
@@ -171,7 +171,7 @@ public class FPGAReportTabbedPane extends JTabbedPane implements MouseListener, 
     Frame.ANNIMATIONICONTIMER.addParrent(ErrorsWindow);
 
     /* finally we define the console window */
-    ConsoleMessages = new ArrayList<String>();
+    ConsoleMessages = new ArrayList<>();
     textAreaConsole = new JTextArea(10, 50);
     textAreaConsole.setForeground(Color.LIGHT_GRAY);
     textAreaConsole.setBackground(Color.BLACK);
@@ -466,7 +466,7 @@ public class FPGAReportTabbedPane extends JTabbedPane implements MouseListener, 
     }
     if (e.getSource().equals(WarningsWindow)) {
       int idx = getComponentCount();
-      HashSet<Component> comps = new HashSet<Component>(Arrays.asList(getComponents()));
+      HashSet<Component> comps = new HashSet<>(Arrays.asList(getComponents()));
       if (comps.contains(panelConsole)) idx = indexOfComponent(panelConsole);
       if (comps.contains(panelErrors)) idx = indexOfComponent(panelErrors);
       add(panelWarnings, idx);
@@ -476,7 +476,7 @@ public class FPGAReportTabbedPane extends JTabbedPane implements MouseListener, 
     }
     if (e.getSource().equals(ErrorsWindow)) {
       int idx = getComponentCount();
-      HashSet<Component> comps = new HashSet<Component>(Arrays.asList(getComponents()));
+      HashSet<Component> comps = new HashSet<>(Arrays.asList(getComponents()));
       if (comps.contains(panelConsole)) idx = indexOfComponent(panelConsole);
       add(panelErrors, idx);
       setTitleAt(idx, "Errors (" + ErrorsList.getCountNr() + ")");

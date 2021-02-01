@@ -52,7 +52,7 @@ class Clipboard {
    * Now the tunnels' labels are not cleared except if it is requested to.
    */
   private Clipboard(Selection sel, AttributeSet viewAttrs) {
-    components = new HashSet<Component>();
+    components = new HashSet<>();
     oldAttrs = null;
     newAttrs = null;
     for (Component base : sel.getComponents()) {

@@ -195,7 +195,7 @@ public class DotMatrix extends InstanceFactory {
           "persist", S.getter("ioMatrixPersistenceAttr"), 0, Integer.MAX_VALUE, true);
   
   private static ArrayList<String> GetLabels(int rows , int cols) {
-    ArrayList<String> result = new ArrayList<String>();
+    ArrayList<String> result = new ArrayList<>();
     for (int r = 0 ; r < rows ; r++)
       for (int c = 0 ; c < cols ; c++)
         result.add("Row"+r+"Col"+c);

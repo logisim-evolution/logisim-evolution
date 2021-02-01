@@ -90,7 +90,7 @@ public class Wiring extends Library {
   @Override
   public List<Tool> getTools() {
     if (tools == null) {
-      List<Tool> ret = new ArrayList<Tool>(ADD_TOOLS.length + DESCRIPTIONS.length);
+      List<Tool> ret = new ArrayList<>(ADD_TOOLS.length + DESCRIPTIONS.length);
       for (Tool a : ADD_TOOLS) {
         ret.add(a);
       }

@@ -42,7 +42,7 @@ public class SimulationTreeNode implements TreeNode {
   public SimulationTreeNode(SimulationTreeModel model, SimulationTreeNode parent) {
     this.model = model;
     this.parent = parent;
-    this.children = new ArrayList<TreeNode>();
+    this.children = new ArrayList<>();
   }
 
   public Enumeration<TreeNode> children() {

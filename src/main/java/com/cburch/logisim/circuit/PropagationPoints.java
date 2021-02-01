@@ -63,7 +63,7 @@ class PropagationPoints {
   private final HashSet<Entry> data;
 
   PropagationPoints() {
-    this.data = new HashSet<Entry>();
+    this.data = new HashSet<>();
   }
 
   void add(CircuitState state, Location loc) {
@@ -86,7 +86,7 @@ class PropagationPoints {
     if (data.isEmpty()) return;
 
     CircuitState state = context.getCircuitState();
-    HashMap<CircuitState, CircuitState> stateMap = new HashMap<CircuitState, CircuitState>();
+    HashMap<CircuitState, CircuitState> stateMap = new HashMap<>();
     for (CircuitState s : state.getSubstates()) {
       addSubstates(stateMap, s, s);
     }

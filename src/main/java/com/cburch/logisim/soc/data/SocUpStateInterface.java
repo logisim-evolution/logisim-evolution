@@ -28,29 +28,27 @@
 
 package com.cburch.logisim.soc.data;
 
+import com.cburch.logisim.soc.util.AssemblerInterface;
 import java.awt.event.WindowListener;
 import java.util.LinkedList;
-
 import javax.swing.JPanel;
 
-import com.cburch.logisim.soc.util.AssemblerInterface;
-
 public interface SocUpStateInterface {
-  public int getLastRegisterWritten();
-  public String getRegisterValueHex(int index);
-  public String getRegisterAbiName(int index);
-  public String getRegisterNormalName(int index);
-  public int getProgramCounter();
-  public LinkedList<TraceInfo> getTraces();
-  public void SimButtonPressed();
-  public SocUpSimulationState getSimState();
-  public boolean programLoaded();
-  public WindowListener getWindowListener();
-  public JPanel getAsmWindow();
-  public JPanel getStatePanel();
-  public AssemblerInterface getAssembler();
-  public SocProcessorInterface getProcessorInterface();
-  public String getProcessorType();
-  public int getElfType();
-  public void repaint();
+  int getLastRegisterWritten();
+  String getRegisterValueHex(int index);
+  String getRegisterAbiName(int index);
+  String getRegisterNormalName(int index);
+  int getProgramCounter();
+  LinkedList<TraceInfo> getTraces();
+  void SimButtonPressed();
+  SocUpSimulationState getSimState();
+  boolean programLoaded();
+  WindowListener getWindowListener();
+  JPanel getAsmWindow();
+  JPanel getStatePanel();
+  AssemblerInterface getAssembler();
+  SocProcessorInterface getProcessorInterface();
+  String getProcessorType();
+  int getElfType();
+  void repaint();
 }

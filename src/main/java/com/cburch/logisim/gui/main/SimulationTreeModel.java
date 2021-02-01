@@ -45,7 +45,7 @@ public class SimulationTreeModel implements TreeModel {
   private CircuitState currentView;
 
   public SimulationTreeModel(List<CircuitState> allRootStates) {
-    this.listeners = new ArrayList<TreeModelListener>();
+    this.listeners = new ArrayList<>();
     this.root = new SimulationTreeTopNode(this, allRootStates);
     this.currentView = null;
   }
@@ -55,7 +55,7 @@ public class SimulationTreeModel implements TreeModel {
   }
 
   private TreePath findPath(Object node) {
-    ArrayList<Object> path = new ArrayList<Object>();
+    ArrayList<Object> path = new ArrayList<>();
     Object current = node;
     while (current instanceof TreeNode) {
       path.add(0, current);
@@ -153,7 +153,7 @@ public class SimulationTreeModel implements TreeModel {
 
   public TreePath mapToPath(CircuitState state) {
     if (state == null) return null;
-    ArrayList<CircuitState> path = new ArrayList<CircuitState>();
+    ArrayList<CircuitState> path = new ArrayList<>();
     CircuitState current = state;
     CircuitState parent = current.getParentState();
     while (parent != null && parent != state) {

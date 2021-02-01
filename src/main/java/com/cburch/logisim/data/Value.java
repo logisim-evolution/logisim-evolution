@@ -135,11 +135,11 @@ public class Value {
       else if ('A' <= c && c <= 'F') d = 0xA + (c - 'A');
       else
         throw new Exception(
-            "unexpected character '" + t.substring(i, i + 1) + "' in \"" + t + "\"");
+            "unexpected character '" + t.charAt(i) + "' in \"" + t + "\"");
 
       if (d >= radix)
         throw new Exception(
-            "unexpected character '" + t.substring(i, i + 1) + "' in \"" + t + "\"");
+            "unexpected character '" + t.charAt(i) + "' in \"" + t + "\"");
 
       value *= radix;
       unknown *= radix;

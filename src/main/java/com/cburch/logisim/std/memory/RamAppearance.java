@@ -30,12 +30,6 @@ package com.cburch.logisim.std.memory;
 
 import static com.cburch.logisim.std.Strings.S;
 
-import java.awt.BasicStroke;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
@@ -46,6 +40,11 @@ import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.GraphicsUtil;
+import java.awt.BasicStroke;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 
 
 public class RamAppearance {
@@ -234,7 +233,7 @@ public class RamAppearance {
     GraphicsUtil.drawCenteredText( g,
             type+ Mem.GetSizeLabel(painter.getAttributeValue(Mem.ADDR_ATTR).getWidth())
                 + " x "
-                + Integer.toString(painter.getAttributeValue(Mem.DATA_ATTR).getWidth()),
+                + painter.getAttributeValue(Mem.DATA_ATTR).getWidth(),
             bds.getX() + (Mem.SymbolWidth / 2) + 20,
             bds.getY() + 6);
     /* draw the contents */
@@ -276,7 +275,7 @@ public class RamAppearance {
    GraphicsUtil.drawCenteredText( g,
             type+ Mem.GetSizeLabel(painter.getAttributeValue(Mem.ADDR_ATTR).getWidth())
                 + " x "
-                + Integer.toString(painter.getAttributeValue(Mem.DATA_ATTR).getWidth()),
+                + painter.getAttributeValue(Mem.DATA_ATTR).getWidth(),
             bds.getX() + (Mem.SymbolWidth / 2) + 20,
             bds.getY() + 6);
     /* draw the contents */

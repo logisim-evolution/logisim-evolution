@@ -110,7 +110,7 @@ public class Demultiplexer extends InstanceFactory {
     CompleteName.append(CorrectLabel.getCorrectLabel(this.getName()));
     if (attrs.getValue(StdAttr.WIDTH).getWidth() > 1) CompleteName.append("_bus");
     CompleteName.append(
-        "_" + Integer.toString(1 << attrs.getValue(Plexers.ATTR_SELECT).getWidth()));
+        "_" + (1 << attrs.getValue(Plexers.ATTR_SELECT).getWidth()));
     return CompleteName.toString();
   }
 

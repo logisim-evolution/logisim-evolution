@@ -137,7 +137,7 @@ public class ProjectCircuitActions {
       if (NameIsInLibraries(mylib, Name)) return true;
     }
     for (AddTool mytool : proj.getLogisimFile().getTools()) {
-      if (Name.toUpperCase().equals(mytool.getName().toUpperCase())) return true;
+      if (Name.equalsIgnoreCase(mytool.getName())) return true;
     }
     return false;
   }
@@ -147,7 +147,7 @@ public class ProjectCircuitActions {
       if (NameIsInLibraries(mylib, Name)) return true;
     }
     for (Tool mytool : lib.getTools()) {
-      if (Name.toUpperCase().equals(mytool.getName().toUpperCase())) return true;
+      if (Name.equalsIgnoreCase(mytool.getName())) return true;
     }
     return false;
   }
@@ -176,8 +176,8 @@ public class ProjectCircuitActions {
 
   public static void doAnalyze(Project proj, Circuit circuit) {
     Map<Instance, String> pinNames = Analyze.getPinLabels(circuit);
-    ArrayList<Var> inputVars = new ArrayList<Var>();
-    ArrayList<Var> outputVars = new ArrayList<Var>();
+    ArrayList<Var> inputVars = new ArrayList<>();
+    ArrayList<Var> outputVars = new ArrayList<>();
     int numInputs = 0, numOutputs = 0;
     for (Map.Entry<Instance, String> entry : pinNames.entrySet()) {
       Instance pin = entry.getKey();

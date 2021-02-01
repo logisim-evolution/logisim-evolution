@@ -59,9 +59,9 @@ public class Selection {
   private int moveDy;
 
   protected Selection() {
-    listeners = new ArrayList<SelectionListener>();
-    selected = new HashSet<CanvasObject>();
-    suppressed = new HashMap<CanvasObject, String>();
+    listeners = new ArrayList<>();
+    selected = new HashSet<>();
+    suppressed = new HashMap<>();
     selectedView = Collections.unmodifiableSet(selected);
     suppressedView = Collections.unmodifiableSet(suppressed.keySet());
   }
@@ -78,7 +78,7 @@ public class Selection {
   public void clearSelected() {
     if (!selected.isEmpty()) {
       List<CanvasObject> oldSelected;
-      oldSelected = new ArrayList<CanvasObject>(selected);
+      oldSelected = new ArrayList<>(selected);
       selected.clear();
       suppressed.clear();
       setHandleSelected(null);
@@ -217,7 +217,7 @@ public class Selection {
   public void setSelected(Collection<CanvasObject> shapes, boolean value) {
     if (value) {
       List<CanvasObject> added;
-      added = new ArrayList<CanvasObject>(shapes.size());
+      added = new ArrayList<>(shapes.size());
       for (CanvasObject shape : shapes) {
         if (selected.add(shape)) {
           added.add(shape);
@@ -228,7 +228,7 @@ public class Selection {
       }
     } else {
       List<CanvasObject> removed;
-      removed = new ArrayList<CanvasObject>(shapes.size());
+      removed = new ArrayList<>(shapes.size());
       for (CanvasObject shape : shapes) {
         if (selected.remove(shape)) {
           suppressed.remove(shape);
@@ -245,9 +245,9 @@ public class Selection {
 
   public void toggleSelected(Collection<CanvasObject> shapes) {
     List<CanvasObject> added;
-    added = new ArrayList<CanvasObject>(shapes.size());
+    added = new ArrayList<>(shapes.size());
     List<CanvasObject> removed;
-    removed = new ArrayList<CanvasObject>(shapes.size());
+    removed = new ArrayList<>(shapes.size());
     for (CanvasObject shape : shapes) {
       if (selected.contains(shape)) {
         selected.remove(shape);

@@ -84,5 +84,4 @@ public class HdlIcon extends AbstractIcon {
       g2.drawPolygon(x, y, 7);
     }
   }
-  ;
 }

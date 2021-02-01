@@ -45,7 +45,6 @@ import com.cburch.logisim.data.Value;
 import com.cburch.logisim.gui.main.Canvas;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
-
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Cursor;

@@ -46,7 +46,7 @@ public class PLAHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Inputs = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> Inputs = new TreeMap<>();
     Inputs.put("Index", attrs.getValue(PLA.ATTR_IN_WIDTH).getWidth());
     return Inputs;
   }
@@ -68,7 +68,7 @@ public class PLAHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   @Override
   public ArrayList<String> GetModuleFunctionality(
       Netlist TheNetlist, AttributeSet attrs, FPGAReport Reporter, String HDLType) {
-    ArrayList<String> Contents = new ArrayList<String>();
+    ArrayList<String> Contents = new ArrayList<>();
     PLATable tt = attrs.getValue(PLA.ATTR_TABLE);
     int outSz = attrs.getValue(PLA.ATTR_OUT_WIDTH).getWidth();
     if (HDLType.equals(VHDL)) {
@@ -92,7 +92,7 @@ public class PLAHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Outputs = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> Outputs = new TreeMap<>();
     Outputs.put("Result", attrs.getValue(PLA.ATTR_OUT_WIDTH).getWidth());
     return Outputs;
   }
@@ -100,7 +100,7 @@ public class PLAHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   @Override
   public SortedMap<String, String> GetPortMap(
 	      Netlist Nets, Object MapInfo, FPGAReport Reporter, String HDLType) {
-    SortedMap<String, String> PortMap = new TreeMap<String, String>();
+    SortedMap<String, String> PortMap = new TreeMap<>();
     if (!(MapInfo instanceof NetlistComponent)) return PortMap;
     NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
     PortMap.putAll(GetNetMap("Index", true, ComponentInfo, PLA.IN_PORT, Reporter, HDLType, Nets));

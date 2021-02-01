@@ -40,12 +40,10 @@ public class CounterIcon extends AnnimatedIcon {
   public void annimationUpdate() {
     state = (state + 1) % 100;
   }
-  ;
 
   public void resetToStatic() {
     state = 1;
   }
-  ;
 
   protected void paintIcon(Graphics2D g2) {
     g2.setColor(Color.BLACK);
@@ -74,5 +72,4 @@ public class CounterIcon extends AnnimatedIcon {
       t.draw(g2, x, y);
     }
   }
-  ;
 }

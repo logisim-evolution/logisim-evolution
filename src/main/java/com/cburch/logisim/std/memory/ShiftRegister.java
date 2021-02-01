@@ -203,7 +203,7 @@ public class ShiftRegister extends InstanceFactory {
         g.drawLine(xpos + blockwidth + 10, ypos + 70, xpos + blockwidth + 20, ypos + 70);
       }
     }
-    String Identifier = "SRG" + Integer.toString(nr_of_stages);
+    String Identifier = "SRG" + nr_of_stages;
     GraphicsUtil.drawCenteredText(g, Identifier, xpos + (SymbolWidth / 2) + 10, ypos + 5);
     /* Draw the clock input */
     painter.drawClockSymbol(xpos + 10, ypos + 50);

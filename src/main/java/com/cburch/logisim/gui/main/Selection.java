@@ -145,7 +145,7 @@ public class Selection extends SelectionBase {
   }
 
   public Collection<Component> getComponentsContaining(Location query) {
-    HashSet<Component> ret = new HashSet<Component>();
+    HashSet<Component> ret = new HashSet<>();
     for (Component comp : unionSet) {
       if (comp.contains(query)) ret.add(comp);
     }
@@ -153,7 +153,7 @@ public class Selection extends SelectionBase {
   }
 
   public Collection<Component> getComponentsContaining(Location query, Graphics g) {
-    HashSet<Component> ret = new HashSet<Component>();
+    HashSet<Component> ret = new HashSet<>();
     for (Component comp : unionSet) {
       if (comp.contains(query, g)) ret.add(comp);
     }
@@ -161,7 +161,7 @@ public class Selection extends SelectionBase {
   }
 
   public Collection<Component> getComponentsWithin(Bounds bds) {
-    HashSet<Component> ret = new HashSet<Component>();
+    HashSet<Component> ret = new HashSet<>();
     for (Component comp : unionSet) {
       if (bds.contains(comp.getBounds())) ret.add(comp);
     }
@@ -169,7 +169,7 @@ public class Selection extends SelectionBase {
   }
 
   public Collection<Component> getComponentsWithin(Bounds bds, Graphics g) {
-    HashSet<Component> ret = new HashSet<Component>();
+    HashSet<Component> ret = new HashSet<>();
     for (Component comp : unionSet) {
       if (bds.contains(comp.getBounds(g))) ret.add(comp);
     }
@@ -193,8 +193,8 @@ public class Selection extends SelectionBase {
     super.print();
   }
 
-  public static interface Listener {
-    public void selectionChanged(Selection.Event event);
+  public interface Listener {
+    void selectionChanged(Selection.Event event);
   }
 
   public static class Event {
@@ -213,7 +213,7 @@ public class Selection extends SelectionBase {
     private final WeakHashMap<Action, SelectionSave> savedSelections;
 
     MyListener() {
-      savedSelections = new WeakHashMap<Action, SelectionSave>();
+      savedSelections = new WeakHashMap<>();
     }
 
     public void circuitChanged(CircuitEvent event) {
@@ -223,7 +223,7 @@ public class Selection extends SelectionBase {
         boolean change = false;
 
         ArrayList<Component> oldAnchored;
-        oldAnchored = new ArrayList<Component>(getComponents());
+        oldAnchored = new ArrayList<>(getComponents());
         for (Component comp : oldAnchored) {
           Collection<Component> replacedBy = repl.get(comp);
           if (replacedBy != null) {

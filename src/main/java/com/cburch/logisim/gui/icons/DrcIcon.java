@@ -90,7 +90,6 @@ public class DrcIcon extends AnnimatedIcon {
     p.moveTo(0, scale(6));
     p.quadTo(scale(3), scale(14), scale(12), scale(11));
     p.lineTo(scale(12), scale(9));
-    ;
     p.lineTo(scale(15), scale(12));
     p.lineTo(scale(12), scale(15));
     p.lineTo(scale(12), scale(13));

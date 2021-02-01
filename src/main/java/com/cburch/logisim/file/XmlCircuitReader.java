@@ -269,7 +269,7 @@ public class XmlCircuitReader extends CircuitTransaction {
 
   private void buildDynamicAppearance(XmlReader.CircuitData circData, CircuitMutator mutator) {
     Circuit dest = circData.circuit;
-    List<AbstractCanvasObject> shapes = new ArrayList<AbstractCanvasObject>();
+    List<AbstractCanvasObject> shapes = new ArrayList<>();
     for (Element appearElt : XmlIterator.forChildElements(circData.circuitElement, "appear")) {
       for (Element sub : XmlIterator.forChildElements(appearElt)) {
         // Dynamic shapes are handled here. Static shapes are already done.
@@ -305,7 +305,7 @@ public class XmlCircuitReader extends CircuitTransaction {
 
   @Override
   protected Map<Circuit, Integer> getAccessedCircuits() {
-    HashMap<Circuit, Integer> access = new HashMap<Circuit, Integer>();
+    HashMap<Circuit, Integer> access = new HashMap<>();
     for (XmlReader.CircuitData data : circuitsData) {
       access.put(data.circuit, READ_WRITE);
     }

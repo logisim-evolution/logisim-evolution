@@ -82,11 +82,11 @@ public class CollectionUtil {
   }
 
   public static <E> List<E> createUnmodifiableListUnion(List<? extends E> a, List<? extends E> b) {
-    return new UnionList<E>(a, b);
+    return new UnionList<>(a, b);
   }
 
   public static <E> Set<E> createUnmodifiableSetUnion(Set<? extends E> a, Set<? extends E> b) {
-    return new UnionSet<E>(a, b);
+    return new UnionSet<>(a, b);
   }
 
   private CollectionUtil() {}

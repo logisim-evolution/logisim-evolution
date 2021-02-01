@@ -28,8 +28,6 @@
 
 package com.cburch.logisim.std.io;
 
-import java.util.ArrayList;
-
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
@@ -37,6 +35,7 @@ import com.cburch.logisim.fpga.gui.FPGAReport;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
 import com.cburch.logisim.instance.StdAttr;
+import java.util.ArrayList;
 
 public class DotMatrixHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
@@ -48,7 +47,7 @@ public class DotMatrixHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       FPGAReport Reporter,
       String CircuitName,
       String HDLType) {
-    ArrayList<String> Contents = new ArrayList<String>();
+    ArrayList<String> Contents = new ArrayList<>();
     String Label = ComponentInfo.GetComponent().getAttributeSet().getValue(StdAttr.LABEL);
     boolean colbased = ComponentInfo.GetComponent().getAttributeSet().getValue(DotMatrix.ATTR_INPUT_TYPE) == DotMatrix.INPUT_COLUMN;
     boolean rowbased = ComponentInfo.GetComponent().getAttributeSet().getValue(DotMatrix.ATTR_INPUT_TYPE) == DotMatrix.INPUT_ROW;

@@ -36,16 +36,15 @@ import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
-
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 
 class OddParityGate extends AbstractGate {
-  private class XorGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
+  private static class XorGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
     @Override
     public ArrayList<String> GetLogicFunction(
         int nr_of_inputs, int bitwidth, boolean is_one_hot, String HDLType) {
-      ArrayList<String> Contents = new ArrayList<String>();
+      ArrayList<String> Contents = new ArrayList<>();
       Contents.addAll(GetParity(false, nr_of_inputs, bitwidth > 1, HDLType));
       Contents.add("");
       return Contents;

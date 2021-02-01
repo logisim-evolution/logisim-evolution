@@ -50,7 +50,6 @@ import com.cburch.logisim.proj.ProjectEvent;
 import com.cburch.logisim.proj.ProjectListener;
 import com.cburch.logisim.util.LocaleListener;
 import com.cburch.logisim.util.StringGetter;
-
 import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -117,7 +116,7 @@ public class FPGACommander
       boardIcon = new BoardIcon(MyBoardInformation.GetImage());
       boardPic.setIcon(boardIcon);
       boardPic.repaint();
-      FrequencyPanel.setFpgaClockFrequency(MyBoardInformation.fpga.getClockFrequency());;
+      FrequencyPanel.setFpgaClockFrequency(MyBoardInformation.fpga.getClockFrequency());
       HandleHDLOnly();
     }
   }

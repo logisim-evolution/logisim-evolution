@@ -64,7 +64,6 @@ public class OptionPane {
       JOptionPane.showMessageDialog(parentComponent, message);
     } else if (message instanceof String) logger.info((String) message);
   }
-  ;
 
   public static void showMessageDialog(
       Component parentComponent, Object message, String title, int messageType) {

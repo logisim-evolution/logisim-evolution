@@ -48,6 +48,7 @@ class SimulationExplorer extends JPanel implements ProjectListener, MouseListene
   private final Project project;
   private final SimulationTreeModel model;
   private final JTree tree;
+
   SimulationExplorer(Project proj, MenuListener menu) {
     super(new BorderLayout());
     this.project = proj;
@@ -68,7 +69,7 @@ class SimulationExplorer extends JPanel implements ProjectListener, MouseListene
 
   private void checkForPopup(MouseEvent e) {
     if (e.isPopupTrigger()) {
-      ; // do nothing
+      // do nothing
     }
   }
 
@@ -112,7 +113,7 @@ class SimulationExplorer extends JPanel implements ProjectListener, MouseListene
   }
 
   @SuppressWarnings("serial")
-  private class ScaledTree extends JTree {
+  private static class ScaledTree extends JTree {
     public ScaledTree(TreeModel model) {
       super(model);
     }

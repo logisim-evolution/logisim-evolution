@@ -28,10 +28,9 @@
 
 package com.cburch.logisim.soc.rv32im;
 
+import com.cburch.logisim.soc.data.AssemblerHighlighter;
 import org.fife.ui.rsyntaxtextarea.Token;
 import org.fife.ui.rsyntaxtextarea.TokenMap;
-
-import com.cburch.logisim.soc.data.AssemblerHighlighter;
 
 public class RV32imSyntaxHighlighter extends AssemblerHighlighter {
   @Override

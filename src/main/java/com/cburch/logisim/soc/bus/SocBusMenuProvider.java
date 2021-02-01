@@ -65,7 +65,7 @@ public class SocBusMenuProvider implements ActionListener {
   private final HashMap<Instance, InstanceInformation> myInfo;
 
   public SocBusMenuProvider() {
-    myInfo = new HashMap<Instance, InstanceInformation>();
+    myInfo = new HashMap<>();
   }
 
   public MenuExtender getMenu(Instance inst) {
@@ -114,7 +114,7 @@ public class SocBusMenuProvider implements ActionListener {
     if (myInfo.containsKey(instance)) myInfo.get(instance).deregisterBusState(state);
   }
 
-  private class InstanceMenuItem extends JMenuItem {
+  private static class InstanceMenuItem extends JMenuItem {
     private static final long serialVersionUID = 1L;
     private final Instance instance;
     private final int function;
@@ -255,7 +255,7 @@ public class SocBusMenuProvider implements ActionListener {
     }
   }
 
-  public class InstanceInformation {
+  public static class InstanceInformation {
     private final HashMap<SocBusStateInfo.SocBusState, CircuitStateHolder.HierarchyInfo>
         myTraceList;
     private final HashMap<SocBusStateInfo.SocBusState, BusTransactionInsertionGui>
@@ -268,8 +268,8 @@ public class SocBusMenuProvider implements ActionListener {
       parrentFrame = null;
       myTraceFrame = null;
       traceModel = null;
-      myTraceList = new HashMap<SocBusStateInfo.SocBusState, CircuitStateHolder.HierarchyInfo>();
-      myInsertionFrames = new HashMap<SocBusStateInfo.SocBusState, BusTransactionInsertionGui>();
+      myTraceList = new HashMap<>();
+      myInsertionFrames = new HashMap<>();
     }
 
     public void showMemoryMap(Instance instance) {

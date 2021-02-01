@@ -109,7 +109,7 @@ public class SevenSegment extends InstanceFactory implements DynamicElementProvi
   }
 
   public static final ArrayList<String> GetLabels() {
-    ArrayList<String> LabelNames = new ArrayList<String>();
+    ArrayList<String> LabelNames = new ArrayList<>();
     for (int i = 0; i < 8; i++) LabelNames.add("");
     LabelNames.set(Segment_A, "Segment_A");
     LabelNames.set(Segment_B, "Segment_B");

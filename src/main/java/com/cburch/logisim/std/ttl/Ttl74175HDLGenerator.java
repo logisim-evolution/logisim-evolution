@@ -48,7 +48,7 @@ public class Ttl74175HDLGenerator extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> MyInputs = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> MyInputs = new TreeMap<>();
     MyInputs.put("nCLR", 1);
     MyInputs.put("CLK", 1);
     MyInputs.put("Tick", 1);
@@ -61,7 +61,7 @@ public class Ttl74175HDLGenerator extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> MyOutputs = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> MyOutputs = new TreeMap<>();
     MyOutputs.put("nQ1", 1);
     MyOutputs.put("Q1", 1);
     MyOutputs.put("nQ2", 1);
@@ -75,7 +75,7 @@ public class Ttl74175HDLGenerator extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist Nets) {
-    SortedMap<String, Integer> Wires = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> Wires = new TreeMap<>();
     Wires.put("CurState", 4);
     Wires.put("NextState", 4);
     return Wires;
@@ -84,7 +84,7 @@ public class Ttl74175HDLGenerator extends AbstractHDLGeneratorFactory {
   @Override
   public ArrayList<String> GetModuleFunctionality(
       Netlist TheNetlist, AttributeSet attrs, FPGAReport Reporter, String HDLType) {
-    ArrayList<String> Contents = new ArrayList<String>();
+    ArrayList<String> Contents = new ArrayList<>();
     Contents.add("   NextState <= CurState WHEN tick = '0' ELSE");
     Contents.add("                D4&D3&D2&D1;");
     Contents.add(" ");
@@ -109,7 +109,7 @@ public class Ttl74175HDLGenerator extends AbstractHDLGeneratorFactory {
 
   public SortedMap<String, String> GetPortMap(
       Netlist Nets, Object MapInfo, FPGAReport Reporter, String HDLType) {
-    SortedMap<String, String> PortMap = new TreeMap<String, String>();
+    SortedMap<String, String> PortMap = new TreeMap<>();
     if (!(MapInfo instanceof NetlistComponent)) return PortMap;
     NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
     Boolean GatedClock = false;
@@ -140,12 +140,12 @@ public class Ttl74175HDLGenerator extends AbstractHDLGeneratorFactory {
             "Tick",
             ClockNetName
                 + "("
-                + Integer.toString(ClockHDLGeneratorFactory.PositiveEdgeTickIndex)
+                + ClockHDLGeneratorFactory.PositiveEdgeTickIndex
                 + ")");
       }
       PortMap.put(
           "CLK",
-          ClockNetName + "(" + Integer.toString(ClockHDLGeneratorFactory.GlobalClockIndex) + ")");
+          ClockNetName + "(" + ClockHDLGeneratorFactory.GlobalClockIndex + ")");
     }
     PortMap.putAll(GetNetMap("nCLR", true, ComponentInfo, 0, Reporter, HDLType, Nets));
     PortMap.putAll(GetNetMap("Q1", true, ComponentInfo, 1, Reporter, HDLType, Nets));

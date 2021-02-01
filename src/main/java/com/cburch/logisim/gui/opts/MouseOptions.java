@@ -81,6 +81,7 @@ class MouseOptions extends OptionsPanel {
   private final AttrTable attrTable;
   private final JButton remove = new JButton();
   private Tool curTool = null;
+
   public MouseOptions(OptionsFrame window) {
     super(window, new GridLayout(1, 3));
 
@@ -236,7 +237,7 @@ class MouseOptions extends OptionsPanel {
     // AbstractTableModel methods
     @Override
     public void fireTableStructureChanged() {
-      cur_keys = new ArrayList<Integer>(getOptions().getMouseMappings().getMappedModifiers());
+      cur_keys = new ArrayList<>(getOptions().getMouseMappings().getMappedModifiers());
       Collections.sort(cur_keys);
       super.fireTableStructureChanged();
     }

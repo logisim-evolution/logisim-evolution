@@ -88,7 +88,7 @@ public class RevertAppearanceAction extends Action {
       if (forward) {
         CircuitAppearance appear = circuit.getAppearance();
         wasDefault = appear.isDefaultAppearance();
-        old = new ArrayList<CanvasObject>(appear.getObjectsFromBottom());
+        old = new ArrayList<>(appear.getObjectsFromBottom());
         appear.setDefaultAppearance(true);
       } else {
         CircuitAppearance appear = circuit.getAppearance();

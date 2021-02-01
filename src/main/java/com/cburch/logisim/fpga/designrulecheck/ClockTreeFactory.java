@@ -37,7 +37,7 @@ public class ClockTreeFactory {
   private final ArrayList<ClockTreeContainer> sourcetrees;
 
   public ClockTreeFactory() {
-    sourcetrees = new ArrayList<ClockTreeContainer>();
+    sourcetrees = new ArrayList<>();
   }
 
   public void AddClockNet( ArrayList<String> HierarchyNames, int clocksourceid, 

@@ -28,10 +28,9 @@
 
 package com.cburch.logisim.circuit;
 
-import java.util.ArrayList;
-
 import com.cburch.logisim.fpga.data.BoardRectangle;
 import com.cburch.logisim.fpga.data.MapComponent;
+import java.util.ArrayList;
 
 public class CircuitMapInfo {
 
@@ -76,7 +75,7 @@ public class CircuitMapInfo {
     
     public void addPinMap(CircuitMapInfo map) {
       if (pinmaps == null) {
-        pinmaps = new ArrayList<CircuitMapInfo>();
+        pinmaps = new ArrayList<>();
         oldMapFormat = false;
       }
       pinmaps.add(map);
@@ -84,7 +83,7 @@ public class CircuitMapInfo {
     
     public void addPinMap(int x , int y , int loc) {
       if (pinmaps == null) {
-        pinmaps = new ArrayList<CircuitMapInfo>();
+        pinmaps = new ArrayList<>();
         oldMapFormat = false;
       }
       int sloc = pinmaps.size();

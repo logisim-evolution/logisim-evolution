@@ -59,6 +59,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -94,7 +95,7 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
       if (NameIsInLibraries(mylib, Name)) return true;
     }
     for (Circuit mytool : this.getCircuits()) {
-      if (Name.toUpperCase().equals(mytool.getName().toUpperCase()) && !mytool.equals(changed))
+      if (Name.equalsIgnoreCase(mytool.getName()) && !mytool.equals(changed))
         return true;
     }
     return false;
@@ -106,7 +107,7 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
       if (NameIsInLibraries(mylib, Name)) return true;
     }
     for (Tool mytool : lib.getTools()) {
-      if (Name.toUpperCase().equals(mytool.getName().toUpperCase())) return true;
+      if (Name.equalsIgnoreCase(mytool.getName())) return true;
     }
     return false;
   }
@@ -159,7 +160,7 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
         lineBreak = i;
       }
     }
-    return new String(first, 0, lineBreak, "UTF-8");
+    return new String(first, 0, lineBreak, StandardCharsets.UTF_8);
   }
 
   public static LogisimFile load(File file, Loader loader) throws IOException {
@@ -231,14 +232,14 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
   }
 
   private final EventSourceWeakSupport<LibraryListener> listeners =
-      new EventSourceWeakSupport<LibraryListener>();
+      new EventSourceWeakSupport<>();
   private Loader loader;
-  private final LinkedList<String> messages = new LinkedList<String>();
+  private final LinkedList<String> messages = new LinkedList<>();
   private final Options options = new Options();
 
-  private final LinkedList<AddTool> tools = new LinkedList<AddTool>();
+  private final LinkedList<AddTool> tools = new LinkedList<>();
 
-  private final LinkedList<Library> libraries = new LinkedList<Library>();
+  private final LinkedList<Library> libraries = new LinkedList<>();
 
   private Circuit main = null;
 
@@ -441,7 +442,7 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
   }
 
   public List<Circuit> getCircuits() {
-    List<Circuit> ret = new ArrayList<Circuit>(tools.size());
+    List<Circuit> ret = new ArrayList<>(tools.size());
     for (AddTool tool : tools) {
       if (tool.getFactory() instanceof SubcircuitFactory) {
         SubcircuitFactory factory = (SubcircuitFactory) tool.getFactory();
@@ -465,7 +466,7 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
   }
 
   public List<VhdlContent> getVhdlContents() {
-    List<VhdlContent> ret = new ArrayList<VhdlContent>(tools.size());
+    List<VhdlContent> ret = new ArrayList<>(tools.size());
     for (AddTool tool : tools) {
       if (tool.getFactory() instanceof VhdlEntity) {
         VhdlEntity factory = (VhdlEntity) tool.getFactory();
@@ -533,7 +534,7 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
   }
 
   public String getUnloadLibraryMessage(Library lib) {
-    HashSet<ComponentFactory> factories = new HashSet<ComponentFactory>();
+    HashSet<ComponentFactory> factories = new HashSet<>();
     for (Tool tool : lib.getTools()) {
       if (tool instanceof AddTool) {
         factories.add(((AddTool) tool).getFactory());

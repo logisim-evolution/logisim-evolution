@@ -109,7 +109,7 @@ class RecentProjects implements PreferenceChangeListener {
     }
     Arrays.sort(toSort);
 
-    List<File> ret = new ArrayList<File>();
+    List<File> ret = new ArrayList<>();
     for (long age : toSort) {
       if (age >= 0) {
         int index = -1;

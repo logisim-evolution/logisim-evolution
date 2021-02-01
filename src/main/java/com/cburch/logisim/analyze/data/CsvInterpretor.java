@@ -101,7 +101,7 @@ public class CsvInterpretor {
   private final String FileName;
 
   public CsvInterpretor(File file, CsvParameter param, JFrame parent) {
-    content = new ArrayList<List<String>>();
+    content = new ArrayList<>();
     inputs = new VariableList(AnalyzerModel.MAX_INPUTS);
     outputs = new VariableList(AnalyzerModel.MAX_OUTPUTS);
     FileName = file.getName();
@@ -111,17 +111,17 @@ public class CsvInterpretor {
       return;
     }
     if (!getInputsOutputs() || !CheckEntries()) {
-      content = new ArrayList<List<String>>();
+      content = new ArrayList<>();
       return;
     }
   }
 
   public void getTruthTable(AnalyzerModel model) throws IOException {
     if (content.size() <= 1) return;
-    ArrayList<Entry[]> rows = new ArrayList<Entry[]>();
+    ArrayList<Entry[]> rows = new ArrayList<>();
     int NrOfEntries = inputs.bits.size() + outputs.bits.size();
     for (int row = 1; row < content.size(); row++) {
-      ArrayList<Entry> Entryrow = new ArrayList<Entry>();
+      ArrayList<Entry> Entryrow = new ArrayList<>();
       int col = 0;
       List<String> line = content.get(row);
       while (col < line.size()) {
@@ -194,7 +194,7 @@ public class CsvInterpretor {
 
   private boolean IsDuplicate(String name) {
     for (Var v : inputs.vars) {
-      if (v.name.toLowerCase().equals(name.toLowerCase())) {
+      if (v.name.equalsIgnoreCase(name)) {
         OptionPane.showMessageDialog(
             parent,
             S.fmt("CsvDuplicatedVar", 1, FileName, name),
@@ -204,7 +204,7 @@ public class CsvInterpretor {
       }
     }
     for (Var v : outputs.vars) {
-      if (v.name.toLowerCase().equals(name.toLowerCase())) {
+      if (v.name.equalsIgnoreCase(name)) {
         OptionPane.showMessageDialog(
             parent,
             S.fmt("CsvDuplicatedVar", 1, FileName, name),
@@ -242,7 +242,7 @@ public class CsvInterpretor {
         return false;
       }
     }
-    HashMap<String, ArrayList<Boolean>> bitspresent = new HashMap<String, ArrayList<Boolean>>();
+    HashMap<String, ArrayList<Boolean>> bitspresent = new HashMap<>();
     boolean ProcessingInputs = true;
     boolean InOuSepDetected = false;
     /* now read the cells */
@@ -301,7 +301,7 @@ public class CsvInterpretor {
         } else {
           if (IsDuplicate(name)) return false;
           Var var = new Var(name, BitIndex + 1);
-          ArrayList<Boolean> sels = new ArrayList<Boolean>();
+          ArrayList<Boolean> sels = new ArrayList<>();
           for (int a = 0; a < BitIndex; a++) sels.add(false);
           sels.add(true);
           bitspresent.put(name.toLowerCase(), sels);
@@ -406,7 +406,7 @@ public class CsvInterpretor {
     int nrofcontquotes = 0;
 
     StringBuffer working = new StringBuffer();
-    List<String> result = new ArrayList<String>();
+    List<String> result = new ArrayList<>();
     for (char kar : line.toCharArray()) {
       if (inQuote) {
         if (kar == quote) {

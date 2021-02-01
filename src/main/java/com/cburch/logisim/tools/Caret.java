@@ -35,34 +35,34 @@ import java.awt.event.MouseEvent;
 
 public interface Caret {
   // listener methods
-  public void addCaretListener(CaretListener e);
+  void addCaretListener(CaretListener e);
 
-  public void cancelEditing();
+  void cancelEditing();
 
   // finishing
-  public void commitText(String text);
+  void commitText(String text);
 
-  public void draw(Graphics g);
+  void draw(Graphics g);
 
-  public Bounds getBounds(Graphics g);
+  Bounds getBounds(Graphics g);
 
   // query/Graphics methods
-  public String getText();
+  String getText();
 
-  public void keyPressed(KeyEvent e);
+  void keyPressed(KeyEvent e);
 
-  public void keyReleased(KeyEvent e);
+  void keyReleased(KeyEvent e);
 
-  public void keyTyped(KeyEvent e);
+  void keyTyped(KeyEvent e);
 
-  public void mouseDragged(MouseEvent e);
+  void mouseDragged(MouseEvent e);
 
   // events to handle
-  public void mousePressed(MouseEvent e);
+  void mousePressed(MouseEvent e);
 
-  public void mouseReleased(MouseEvent e);
+  void mouseReleased(MouseEvent e);
 
-  public void removeCaretListener(CaretListener e);
+  void removeCaretListener(CaretListener e);
 
-  public void stopEditing();
+  void stopEditing();
 }

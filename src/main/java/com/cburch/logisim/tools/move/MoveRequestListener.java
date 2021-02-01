@@ -29,5 +29,5 @@
 package com.cburch.logisim.tools.move;
 
 public interface MoveRequestListener {
-  public void requestSatisfied(MoveGesture gesture, int dx, int dy);
+  void requestSatisfied(MoveGesture gesture, int dx, int dy);
 }

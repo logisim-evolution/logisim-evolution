@@ -98,7 +98,7 @@ public class ZipClassLoader extends ClassLoader {
   }
 
   private class WorkThread extends UniquelyNamedThread {
-    private final LinkedList<Request> requests = new LinkedList<Request>();
+    private final LinkedList<Request> requests = new LinkedList<>();
     private ZipFile zipFile = null;
 
     WorkThread() {
@@ -256,7 +256,7 @@ public class ZipClassLoader extends ClassLoader {
   private static final int REQUEST_LOAD = 1;
 
   private final File zipPath;
-  private final HashMap<String, Object> classes = new HashMap<String, Object>();
+  private final HashMap<String, Object> classes = new HashMap<>();
   private final Object bgLock = new Object();
   private WorkThread bgThread = null;
 

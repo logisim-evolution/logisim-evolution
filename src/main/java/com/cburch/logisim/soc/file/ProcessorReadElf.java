@@ -30,17 +30,16 @@ package com.cburch.logisim.soc.file;
 
 import static com.cburch.logisim.soc.Strings.S;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.soc.data.SocBusTransaction;
 import com.cburch.logisim.soc.data.SocInstanceFactory;
 import com.cburch.logisim.soc.data.SocProcessorInterface;
 import com.cburch.logisim.soc.file.ElfProgramHeader.ProgramHeader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
 public class ProcessorReadElf {
 

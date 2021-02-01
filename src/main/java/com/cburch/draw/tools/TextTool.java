@@ -63,6 +63,7 @@ public class TextTool extends AbstractTool {
   private Text curText;
   private Canvas curCanvas;
   private boolean isTextNew;
+
   public TextTool(DrawingAttributeSet attrs) {
     this.attrs = attrs;
     curText = null;
@@ -115,7 +116,7 @@ public class TextTool extends AbstractTool {
 
   @Override
   public void draw(Canvas canvas, Graphics g) {
-    ; // actually, there's nothing to do here - it's handled by the field
+    // actually, there's nothing to do here - it's handled by the field
   }
 
   @Override

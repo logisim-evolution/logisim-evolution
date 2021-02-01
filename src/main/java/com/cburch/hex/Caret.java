@@ -60,9 +60,10 @@ public class Caret {
   private long mark;
   private long cursor;
   private Object highlight;
+
   Caret(HexEditor hex) {
     this.hex = hex;
-    this.listeners = new ArrayList<ChangeListener>();
+    this.listeners = new ArrayList<>();
     this.cursor = -1;
 
     Listener l = new Listener();
@@ -266,7 +267,7 @@ public class Caret {
             if (model != null
                 && cursor >= model.getFirstOffset()
                 && cursor <= model.getLastOffset()) {
-              long curValue = (long) model.get(cursor);
+              long curValue = model.get(cursor);
               long newValue = 16 * curValue + digit;
               model.set(cursor, newValue);
             }

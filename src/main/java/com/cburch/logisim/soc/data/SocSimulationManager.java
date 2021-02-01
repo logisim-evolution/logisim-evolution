@@ -30,15 +30,6 @@ package com.cburch.logisim.soc.data;
 
 import static com.cburch.logisim.soc.Strings.S;
 
-import java.awt.Window;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-
-import javax.swing.JLabel;
-
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.comp.Component;
@@ -49,6 +40,13 @@ import com.cburch.logisim.gui.main.Frame;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.soc.bus.SocBusAttributes;
+import java.awt.Window;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import javax.swing.JLabel;
 
 public class SocSimulationManager implements SocBusMasterInterface {
 
@@ -141,8 +139,8 @@ public class SocSimulationManager implements SocBusMasterInterface {
   }
   
   public final static Attribute<SocBusInfo> SOC_BUS_SELECT = new SocBusSelectAttribute();
-  private final HashMap<String,SocBusStateInfo> socBusses = new HashMap<String,SocBusStateInfo>();
-  private final ArrayList<Component> toBeChecked = new ArrayList<Component>();
+  private final HashMap<String,SocBusStateInfo> socBusses = new HashMap<>();
+  private final ArrayList<Component> toBeChecked = new ArrayList<>();
   private CircuitState state;
 
   public String getSocBusDisplayString(String id) {
@@ -173,17 +171,17 @@ public class SocSimulationManager implements SocBusMasterInterface {
         socBusses.get(ID.getBusId()).setComponent(c);
       else
         socBusses.put(ID.getBusId(), new SocBusStateInfo(this,c));
-      ((SocBusInfo)c.getAttributeSet().getValue(SocBusAttributes.SOC_BUS_ID)).setSocSimulationManager(this, c);
+      c.getAttributeSet().getValue(SocBusAttributes.SOC_BUS_ID).setSocSimulationManager(this, c);
     }
     if (c.getAttributeSet().containsAttribute(SOC_BUS_SELECT)) {
-      ((SocBusInfo)c.getAttributeSet().getValue(SOC_BUS_SELECT)).setSocSimulationManager(this,c);
+      c.getAttributeSet().getValue(SOC_BUS_SELECT).setSocSimulationManager(this,c);
       if (fact.isSocSlave() || fact.isSocSniffer()) {
         toBeChecked.add(c);
         Iterator<Component> iter = toBeChecked.iterator();
         while (iter.hasNext()) {
           Component comp = iter.next();
           if (comp.getAttributeSet().containsAttribute(SOC_BUS_SELECT)) {
-            String id = ((SocBusInfo)comp.getAttributeSet().getValue(SOC_BUS_SELECT)).getBusId();
+            String id = comp.getAttributeSet().getValue(SOC_BUS_SELECT).getBusId();
             if (id != null && socBusses.containsKey(id)) {
               SocBusStateInfo binfo = socBusses.get(id);
               SocInstanceFactory factor = (SocInstanceFactory) comp.getFactory();
@@ -232,7 +230,7 @@ public class SocSimulationManager implements SocBusMasterInterface {
   }
   
   public String getGuiBusId() {
-	HashMap<String,String> busses = new HashMap<String,String>();
+	HashMap<String,String> busses = new HashMap<>();
 	for (String id : socBusses.keySet()) {
 	  if (socBusses.get(id).getComponent() != null)
 	    busses.put(getSocBusDisplayString(id), id);
@@ -269,8 +267,7 @@ public class SocSimulationManager implements SocBusMasterInterface {
       if (fact.isSocSniffer())
         binfo.registerSocBusSniffer(fact.getSnifferInterface(comp.getAttributeSet()));
     }
-    if (toBeChecked.contains(comp))
-      toBeChecked.remove(comp);
+    toBeChecked.remove(comp);
   }
   
   public Object getdata(Component comp) {
@@ -298,7 +295,7 @@ public class SocSimulationManager implements SocBusMasterInterface {
     while (iter.hasNext()) {
       Component comp = iter.next();
       if (comp.getAttributeSet().containsAttribute(SOC_BUS_SELECT)) {
-        String id = ((SocBusInfo)comp.getAttributeSet().getValue(SOC_BUS_SELECT)).getBusId();
+        String id = comp.getAttributeSet().getValue(SOC_BUS_SELECT).getBusId();
         if (id != null && socBusses.containsKey(id)) {
           SocBusStateInfo binfo = socBusses.get(id);
           SocInstanceFactory fact = (SocInstanceFactory) comp.getFactory();
@@ -307,7 +304,7 @@ public class SocSimulationManager implements SocBusMasterInterface {
           if (fact.isSocSniffer())
             binfo.registerSocBusSniffer(fact.getSnifferInterface(comp.getAttributeSet()));
         } else {
-          SocBusInfo binfo = (SocBusInfo)comp.getAttributeSet().getValue(SOC_BUS_SELECT);
+          SocBusInfo binfo = comp.getAttributeSet().getValue(SOC_BUS_SELECT);
           binfo.setBusId("");
           comp.getAttributeSet().setValue(SOC_BUS_SELECT, binfo);
         }

@@ -113,7 +113,7 @@ public class AttributeSets {
     private boolean readOnly = false;
 
     SingletonSet(Attribute<?> attr, Object initValue) {
-      this.attrs = new ArrayList<Attribute<?>>(1);
+      this.attrs = new ArrayList<>(1);
       this.attrs.add(attr);
       this.value = initValue;
     }

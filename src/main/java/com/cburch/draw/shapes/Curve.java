@@ -93,9 +93,7 @@ public class Curve extends FillableCanvasObject {
     }
     if (type != DrawAttr.PAINT_STROKE) {
       QuadCurve2D curve = getCurve(null);
-      if (curve.contains(loc.getX(), loc.getY())) {
-        return true;
-      }
+      return curve.contains(loc.getX(), loc.getY());
     }
     return false;
   }

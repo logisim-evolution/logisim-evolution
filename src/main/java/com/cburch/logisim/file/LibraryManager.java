@@ -156,8 +156,8 @@ class LibraryManager {
   private final WeakHashMap<LoadedLibrary, LibraryDescriptor> invMap;
 
   private LibraryManager() {
-    fileMap = new HashMap<LibraryDescriptor, WeakReference<LoadedLibrary>>();
-    invMap = new WeakHashMap<LoadedLibrary, LibraryDescriptor>();
+    fileMap = new HashMap<>();
+    invMap = new WeakHashMap<>();
     ProjectsDirty.initialize();
   }
 
@@ -225,7 +225,7 @@ class LibraryManager {
   }
 
   Collection<LogisimFile> getLogisimLibraries() {
-    ArrayList<LogisimFile> ret = new ArrayList<LogisimFile>();
+    ArrayList<LogisimFile> ret = new ArrayList<>();
     for (LoadedLibrary lib : invMap.keySet()) {
       if (lib.getBase() instanceof LogisimFile) {
         ret.add((LogisimFile) lib.getBase());
@@ -246,7 +246,7 @@ class LibraryManager {
       return null;
     }
 
-    fileMap.put(jarDescriptor, new WeakReference<LoadedLibrary>(ret));
+    fileMap.put(jarDescriptor, new WeakReference<>(ret));
     invMap.put(ret, jarDescriptor);
     return ret;
   }
@@ -296,7 +296,7 @@ class LibraryManager {
     }
 
     LogisimProjectDescriptor desc = new LogisimProjectDescriptor(toRead);
-    fileMap.put(desc, new WeakReference<LoadedLibrary>(ret));
+    fileMap.put(desc, new WeakReference<>(ret));
     invMap.put(ret, desc);
     return ret;
   }

@@ -59,6 +59,7 @@ class MenuEdit extends Menu {
   private final MenuItemImpl addCtrl = new MenuItemImpl(this, LogisimMenuBar.ADD_CONTROL);
   private final MenuItemImpl remCtrl = new MenuItemImpl(this, LogisimMenuBar.REMOVE_CONTROL);
   private final MyListener myListener = new MyListener();
+
   public MenuEdit(LogisimMenuBar menubar) {
     this.menubar = menubar;
 

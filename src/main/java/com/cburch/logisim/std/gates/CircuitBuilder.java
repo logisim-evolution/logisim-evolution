@@ -74,9 +74,9 @@ public class CircuitBuilder {
     int startX;
     int startY;
     int pinX;
-    private final ArrayList<String> names = new ArrayList<String>();
-    private final HashMap<String, SingleInput> inputs = new HashMap<String, SingleInput>();
-    private final HashMap<String, SingleInput> inverted_inputs = new HashMap<String, SingleInput>();
+    private final ArrayList<String> names = new ArrayList<>();
+    private final HashMap<String, SingleInput> inputs = new HashMap<>();
+    private final HashMap<String, SingleInput> inverted_inputs = new HashMap<>();
 
     InputData() {}
 
@@ -200,7 +200,7 @@ public class CircuitBuilder {
   private static class SingleInput {
     int spineX;
     int spineY;
-    ArrayList<Location> ys = new ArrayList<Location>();
+    ArrayList<Location> ys = new ArrayList<>();
 
     SingleInput(int spineX) {
       this.spineX = spineX;
@@ -625,7 +625,7 @@ public class CircuitBuilder {
   //
   private static void placeInputs(
       AnalyzerModel model, CircuitMutation result, InputData inputData, boolean UseNands) {
-    ArrayList<Location> forbiddenYs = new ArrayList<Location>();
+    ArrayList<Location> forbiddenYs = new ArrayList<>();
     Comparator<Location> compareYs = new CompareYs();
     int curX = inputData.getPinX();
     int curY = inputData.getStartY() + 20;

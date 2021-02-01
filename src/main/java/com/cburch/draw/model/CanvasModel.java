@@ -38,39 +38,39 @@ import java.util.Map;
 
 public interface CanvasModel {
   // listener methods
-  public void addCanvasModelListener(CanvasModelListener l);
+  void addCanvasModelListener(CanvasModelListener l);
 
   // methods that alter the model
-  public void addObjects(int index, Collection<? extends CanvasObject> shapes);
+  void addObjects(int index, Collection<? extends CanvasObject> shapes);
 
-  public void addObjects(Map<? extends CanvasObject, Integer> shapes);
+  void addObjects(Map<? extends CanvasObject, Integer> shapes);
 
-  public Handle deleteHandle(Handle handle);
+  Handle deleteHandle(Handle handle);
 
-  public List<CanvasObject> getObjectsFromBottom();
+  List<CanvasObject> getObjectsFromBottom();
 
-  public List<CanvasObject> getObjectsFromTop();
+  List<CanvasObject> getObjectsFromTop();
 
-  public Collection<CanvasObject> getObjectsIn(Bounds bds);
+  Collection<CanvasObject> getObjectsIn(Bounds bds);
 
-  public Collection<CanvasObject> getObjectsOverlapping(CanvasObject shape);
+  Collection<CanvasObject> getObjectsOverlapping(CanvasObject shape);
 
-  public void insertHandle(Handle desired, Handle previous);
+  void insertHandle(Handle desired, Handle previous);
 
-  public Handle moveHandle(HandleGesture gesture);
+  Handle moveHandle(HandleGesture gesture);
 
   // methods that don't change any data in the model
-  public void paint(Graphics g, Selection selection);
+  void paint(Graphics g, Selection selection);
 
-  public void removeCanvasModelListener(CanvasModelListener l);
+  void removeCanvasModelListener(CanvasModelListener l);
 
-  public void removeObjects(Collection<? extends CanvasObject> shapes);
+  void removeObjects(Collection<? extends CanvasObject> shapes);
 
-  public void reorderObjects(List<ReorderRequest> requests);
+  void reorderObjects(List<ReorderRequest> requests);
 
-  public void setAttributeValues(Map<AttributeMapKey, Object> values);
+  void setAttributeValues(Map<AttributeMapKey, Object> values);
 
-  public void setText(Text text, String value);
+  void setText(Text text, String value);
 
-  public void translateObjects(Collection<? extends CanvasObject> shapes, int dx, int dy);
+  void translateObjects(Collection<? extends CanvasObject> shapes, int dx, int dy);
 }

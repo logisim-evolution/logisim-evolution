@@ -50,9 +50,10 @@ class OpenRecent extends JMenu implements PropertyChangeListener {
   private static final int MAX_ITEM_LENGTH = 50;
   private final LogisimMenuBar menubar;
   private final List<RecentItem> recentItems;
+
   OpenRecent(LogisimMenuBar menubar) {
     this.menubar = menubar;
-    this.recentItems = new ArrayList<RecentItem>();
+    this.recentItems = new ArrayList<>();
     AppPreferences.addPropertyChangeListener(AppPreferences.RECENT_PROJECTS, this);
     renewItems();
   }

@@ -33,11 +33,11 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 
 public interface ToolbarItem {
-  public Dimension getDimension(Object orientation);
+  Dimension getDimension(Object orientation);
 
-  public String getToolTip();
+  String getToolTip();
 
-  public boolean isSelectable();
+  boolean isSelectable();
 
-  public void paintIcon(Component destination, Graphics g);
+  void paintIcon(Component destination, Graphics g);
 }

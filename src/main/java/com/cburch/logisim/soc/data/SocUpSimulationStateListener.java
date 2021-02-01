@@ -30,5 +30,5 @@ package com.cburch.logisim.soc.data;
 
 public interface SocUpSimulationStateListener {
 
-  public void SimulationStateChanged();
+  void SimulationStateChanged();
 }

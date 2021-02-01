@@ -36,13 +36,12 @@ import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.gui.FPGAReport;
 import com.cburch.logisim.gui.icons.FlipFlopIcon;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 public class DFlipFlop extends AbstractFlipFlop {
-  private class DFFHDLGeneratorFactory extends AbstractFlipFlopHDLGeneratorFactory {
+  private static class DFFHDLGeneratorFactory extends AbstractFlipFlopHDLGeneratorFactory {
     @Override
     public String ComponentName() {
       return "D Flip-Flop";
@@ -51,21 +50,21 @@ public class DFlipFlop extends AbstractFlipFlop {
     @Override
     public Map<String, String> GetInputMaps(
         NetlistComponent ComponentInfo, Netlist Nets, FPGAReport Reporter, String HDLType) {
-      Map<String, String> PortMap = new HashMap<String, String>();
+      Map<String, String> PortMap = new HashMap<>();
       PortMap.putAll(GetNetMap("D", true, ComponentInfo, 0, Reporter, HDLType, Nets));
       return PortMap;
     }
 
     @Override
     public Map<String, Integer> GetInputPorts() {
-      Map<String, Integer> Inputs = new HashMap<String, Integer>();
+      Map<String, Integer> Inputs = new HashMap<>();
       Inputs.put("D", 1);
       return Inputs;
     }
 
     @Override
     public ArrayList<String> GetUpdateLogic(String HDLType) {
-      ArrayList<String> Contents = new ArrayList<String>();
+      ArrayList<String> Contents = new ArrayList<>();
       if (HDLType.endsWith(VHDL)) Contents.add("   s_next_state <= D;");
       else Contents.add("   assign s_next_state = D;");
       return Contents;

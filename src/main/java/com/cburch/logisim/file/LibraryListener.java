@@ -29,5 +29,5 @@
 package com.cburch.logisim.file;
 
 public interface LibraryListener {
-  public void libraryChanged(LibraryEvent event);
+  void libraryChanged(LibraryEvent event);
 }

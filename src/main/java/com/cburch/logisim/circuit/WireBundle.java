@@ -40,7 +40,7 @@ class WireBundle {
   private Location widthDeterminant = null;
   private boolean isBuss = false;
   WireThread[] threads = null;
-  CopyOnWriteArraySet<Location> points = new CopyOnWriteArraySet<Location>(); // points
+  CopyOnWriteArraySet<Location> points = new CopyOnWriteArraySet<>(); // points
   // bundle
   // hits
   private WidthIncompatibilityData incompatibilityData = null;

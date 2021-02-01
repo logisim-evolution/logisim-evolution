@@ -206,7 +206,7 @@ public class ImageExporter extends javax.swing.JFrame implements ActionListener 
     fright.pack();
     BufferedImage imgright =
         new BufferedImage(rightBox.getWidth(), rightBox.getHeight(), BufferedImage.TYPE_INT_RGB);
-    Graphics2D gright = (Graphics2D) imgright.createGraphics();
+    Graphics2D gright = imgright.createGraphics();
     rightBox.paint(gright);
     gright.dispose();
     // convert jpanel names to buffered image
@@ -215,7 +215,7 @@ public class ImageExporter extends javax.swing.JFrame implements ActionListener 
     fleft.pack();
     BufferedImage imgleft =
         new BufferedImage(leftPanel.getWidth(), leftPanel.getHeight(), BufferedImage.TYPE_INT_RGB);
-    Graphics2D gleft = (Graphics2D) imgleft.createGraphics();
+    Graphics2D gleft = imgleft.createGraphics();
     leftPanel.paint(gleft);
     gleft.dispose();
 
@@ -289,10 +289,7 @@ public class ImageExporter extends javax.swing.JFrame implements ActionListener 
 
           @Override
           public boolean isCellEditable(int rowIndex, int colIndex) {
-            if (colIndex == 1) {
-              return true; // Disallow the editing of any cell
-            }
-            return false;
+            return colIndex == 1; // Disallow the editing of any cell
           }
         };
     table.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_F2, 0), "none");
@@ -421,7 +418,7 @@ public class ImageExporter extends javax.swing.JFrame implements ActionListener 
     f.pack();
     BufferedImage img =
         new BufferedImage(jp.getWidth(), jp.getHeight(), BufferedImage.TYPE_INT_RGB);
-    Graphics2D g = (Graphics2D) img.createGraphics();
+    Graphics2D g = img.createGraphics();
     jp.paint(g);
     g.dispose();
     try {

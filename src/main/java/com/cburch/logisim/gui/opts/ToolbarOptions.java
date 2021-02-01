@@ -60,6 +60,7 @@ class ToolbarOptions extends OptionsPanel {
   private final JButton moveDown;
   private final JButton remove;
   private final ToolbarList list;
+
   public ToolbarOptions(OptionsFrame window) {
     super(window);
     explorer = new ProjectExplorer(getProject());

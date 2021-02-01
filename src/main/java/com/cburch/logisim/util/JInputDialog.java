@@ -29,5 +29,5 @@
 package com.cburch.logisim.util;
 
 public interface JInputDialog extends JInputComponent {
-  public void setVisible(boolean b);
+  void setVisible(boolean b);
 }

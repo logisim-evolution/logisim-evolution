@@ -28,6 +28,7 @@
 
 package com.cburch.logisim.fpga.gui;
 
+import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
 import java.awt.Color;
 import java.awt.Component;
 import java.util.ArrayList;
@@ -37,8 +38,6 @@ import javax.swing.JTable;
 import javax.swing.border.Border;
 import javax.swing.table.TableCellRenderer;
 
-import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
-
 @SuppressWarnings("serial")
 public class HDLColorRenderer extends JLabel implements TableCellRenderer {
   public static final String VHDLSupportString = "VHDL_SUPPORTED";
@@ -46,7 +45,7 @@ public class HDLColorRenderer extends JLabel implements TableCellRenderer {
   public static final String NoSupportString = "HDL_NOT_SUPPORTED";
   public static final String UnKnownString = "HDL_UNKNOWN";
   public static final String RequiredFieldString = ">_HDL_REQUIRED_FIELD_<";
-  private static final ArrayList<String> CorrectStrings = new ArrayList<String>();
+  private static final ArrayList<String> CorrectStrings = new ArrayList<>();
 
   Border border = null;
 

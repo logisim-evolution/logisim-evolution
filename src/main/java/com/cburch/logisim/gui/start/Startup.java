@@ -108,9 +108,9 @@ public class Startup implements AWTEventListener {
 
   static final Logger logger = LoggerFactory.getLogger(Startup.class);
   private static Startup startupTemp = null;
-  private final ArrayList<File> filesToOpen = new ArrayList<File>();
-  private final HashMap<File, File> substitutions = new HashMap<File, File>();
-  private final ArrayList<File> filesToPrint = new ArrayList<File>();
+  private final ArrayList<File> filesToOpen = new ArrayList<>();
+  private final HashMap<File, File> substitutions = new HashMap<>();
+  private final ArrayList<File> filesToPrint = new ArrayList<>();
   // based on command line
   boolean isTty;
   private File templFile = null;
@@ -418,13 +418,13 @@ public class Startup implements AWTEventListener {
           if (!args[i].startsWith("-")) {
             try {
               int freq = Integer.parseUnsignedInt(args[i]);
-              ret.testTickFrequency = (double) freq;
+              ret.testTickFrequency = freq;
               i++;
             } catch (NumberFormatException e) {
             }
             if (i < args.length) {
               if (!args[i].startsWith("-")) {
-                if (args[i].toUpperCase().equals("HDLONLY")) ret.testCircuitHdlOnly = true;
+                if (args[i].equalsIgnoreCase("HDLONLY")) ret.testCircuitHdlOnly = true;
                 else printUsage();
               } else i--;
             }

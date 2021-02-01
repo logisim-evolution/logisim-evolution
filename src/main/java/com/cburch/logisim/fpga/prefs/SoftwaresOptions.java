@@ -61,7 +61,6 @@ public class SoftwaresOptions extends OptionsPanel {
         Softwares.setQuestaPath(getPreferencesFrame());
       } else if (source == AutoUpdateCheckbox) {
         AppPreferences.AutomaticUpdateCheck.setBoolean(AutoUpdateCheckbox.isSelected());
-        ;
       } else if (source == questaValidationCheckBox) {
         AppPreferences.QUESTA_VALIDATION.setBoolean(questaValidationCheckBox.isSelected());
       } else if (source == QuartusPathButton) {

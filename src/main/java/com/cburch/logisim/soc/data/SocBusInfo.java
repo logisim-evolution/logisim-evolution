@@ -30,12 +30,11 @@ package com.cburch.logisim.soc.data;
 
 import static com.cburch.logisim.soc.Strings.S;
 
-import java.awt.Color;
-import java.awt.Graphics;
-
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.util.GraphicsUtil;
+import java.awt.Color;
+import java.awt.Graphics;
 
 public class SocBusInfo {
   private String busId;

@@ -45,7 +45,7 @@ public class PinActivity {
   }
 
   public static LinkedList<String> getStrings() {
-    LinkedList<String> result = new LinkedList<String>();
+    LinkedList<String> result = new LinkedList<>();
 
     result.add(Behavior_strings[0]);
     result.add(Behavior_strings[1]);

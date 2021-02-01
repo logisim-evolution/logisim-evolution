@@ -41,6 +41,7 @@ public class AnnimationTimer extends TimerTask implements PropertyChangeListener
   private final List<AnnimationListener> listeners;
   private final ArrayList<Component> parrents;
   private boolean animate;
+
   public AnnimationTimer() {
     listeners = new ArrayList<>();
     parrents = new ArrayList<>();
@@ -54,7 +55,7 @@ public class AnnimationTimer extends TimerTask implements PropertyChangeListener
 
   public void removeListener(AnnimationListener l) {
     if (l == null) return;
-    if (listeners.contains(l)) listeners.remove(l);
+    listeners.remove(l);
   }
 
   public void addParrent(Component parrent) {
@@ -62,7 +63,7 @@ public class AnnimationTimer extends TimerTask implements PropertyChangeListener
   }
 
   public void removeParrent(Component parrent) {
-    if (parrents.contains(parrent)) parrents.remove(parrent);
+    parrents.remove(parrent);
   }
 
   @Override
@@ -83,8 +84,8 @@ public class AnnimationTimer extends TimerTask implements PropertyChangeListener
   }
 
   public interface AnnimationListener {
-    public void annimationUpdate();
+    void annimationUpdate();
 
-    public void resetToStatic();
+    void resetToStatic();
   }
 }

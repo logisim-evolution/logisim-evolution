@@ -114,7 +114,7 @@ public class SocBus extends SocInstanceFactory {
     GraphicsUtil.drawCenteredText(g2, "SOC Bus Interconnect", loc.getX() + 320, loc.getY() + 10);
     g2.setFont(f);
     if (painter.isPrintView()) return;
-    SocBusInfo info = (SocBusInfo) painter.getAttributeValue(SocBusAttributes.SOC_BUS_ID);
+    SocBusInfo info = painter.getAttributeValue(SocBusAttributes.SOC_BUS_ID);
     SocBusStateInfo data = info.getSocSimulationManager().getSocBusState(info.getBusId());
     if (data != null)
       data.paint(
@@ -128,7 +128,7 @@ public class SocBus extends SocInstanceFactory {
 
   @Override
   public void propagate(InstanceState state) {
-    SocBusInfo info = (SocBusInfo) state.getAttributeValue(SocBusAttributes.SOC_BUS_ID);
+    SocBusInfo info = state.getAttributeValue(SocBusAttributes.SOC_BUS_ID);
     SocBusStateInfo data = info.getSocSimulationManager().getSocBusState(info.getBusId());
     SocBusStateInfo.SocBusState dat = (SocBusStateInfo.SocBusState) state.getData();
     if (dat == null) state.setData(data.getNewState(state.getInstance()));

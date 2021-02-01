@@ -45,7 +45,7 @@ public class Test {
   }
 
   private static class Model implements HexModel {
-    private final ArrayList<HexModelListener> listeners = new ArrayList<HexModelListener>();
+    private final ArrayList<HexModelListener> listeners = new ArrayList<>();
     private final long[] data = new long[924];
 
     public void addHexModelListener(HexModelListener l) {

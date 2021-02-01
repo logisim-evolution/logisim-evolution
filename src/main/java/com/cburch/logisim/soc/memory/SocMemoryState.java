@@ -28,10 +28,6 @@
 
 package com.cburch.logisim.soc.memory;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Random;
-
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.instance.InstanceComponent;
@@ -41,12 +37,15 @@ import com.cburch.logisim.soc.data.SocBusSlaveInterface;
 import com.cburch.logisim.soc.data.SocBusSlaveListener;
 import com.cburch.logisim.soc.data.SocBusTransaction;
 import com.cburch.logisim.soc.data.SocSupport;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Random;
 
 public class SocMemoryState implements SocBusSlaveInterface {
 
   public class SocMemoryInfo implements InstanceData,Cloneable {
     private class SocMemoryInfoBlock {
-      private final LinkedList<Integer> contents = new LinkedList<Integer>();
+      private final LinkedList<Integer> contents = new LinkedList<>();
       private int startAddress;
       private final Random rand = new Random();
     
@@ -110,7 +109,7 @@ public class SocMemoryState implements SocBusSlaveInterface {
     private final ArrayList<SocMemoryInfoBlock> memInfo;
     
     public SocMemoryInfo() {
-      memInfo = new ArrayList<SocMemoryInfoBlock>();
+      memInfo = new ArrayList<>();
     }
 
     public SocMemoryInfo clone() {
@@ -129,7 +128,7 @@ public class SocMemoryState implements SocBusSlaveInterface {
     }
 
     public void writeWord(int address, int wdata) {
-      ArrayList<SocMemoryInfoBlock> adders = new ArrayList<SocMemoryInfoBlock>();
+      ArrayList<SocMemoryInfoBlock> adders = new ArrayList<>();
       for (SocMemoryInfoBlock info : memInfo) {
         if (info.contains(address)) {
           info.addInfo(address, wdata);
@@ -180,7 +179,7 @@ public class SocMemoryState implements SocBusSlaveInterface {
     sizeInBytes = 1024;
     attachedBus = new SocBusInfo("");
     label = "";
-    listeners = new ArrayList<SocBusSlaveListener>();
+    listeners = new ArrayList<>();
   }
   
   public Integer getStartAddress() {
@@ -255,8 +254,7 @@ public class SocMemoryState implements SocBusSlaveInterface {
   }
   
   public void removeListener(SocBusSlaveListener l) {
-    if (listeners.contains(l))
-      listeners.remove(l);
+    listeners.remove(l);
   }
   
   public SocMemoryInfo getNewState() {

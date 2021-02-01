@@ -60,6 +60,7 @@ class FilePanel extends LogPanel {
   private final JButton selectButton = new JButton();
   private final JCheckBox headerCheckBox = new JCheckBox();
   private final JFileChooser chooser = JFileChoosers.create();
+
   public FilePanel(LogFrame frame) {
     super(frame);
 

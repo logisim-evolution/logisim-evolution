@@ -30,38 +30,37 @@ package com.cburch.logisim.analyze.model;
 
 import static com.cburch.logisim.analyze.Strings.S;
 
+import com.cburch.logisim.analyze.data.Range;
+import com.cburch.logisim.analyze.model.Var.Bit;
 import java.util.ArrayList;
 import java.util.HashSet;
 
-import com.cburch.logisim.analyze.data.Range;
-import com.cburch.logisim.analyze.model.Var.Bit;
-
 public abstract class Expression {
-  public static interface Visitor<T> {
-    public default T visitVariable(String name) { return null; }
-    public default T visitConstant(int value) { return null; }
-    public default T visitNot(Expression a) { return null; }
-    public default T visitBinary(Expression a, Expression b, Op op) {
+  public interface Visitor<T> {
+    default T visitVariable(String name) { return null; }
+    default T visitConstant(int value) { return null; }
+    default T visitNot(Expression a) { return null; }
+    default T visitBinary(Expression a, Expression b, Op op) {
       a.visit(this);
       b.visit(this);
       return null;
     }
-    public default T visitAnd(Expression a, Expression b) { return visitBinary(a, b, Op.AND); }
-    public default T visitOr(Expression a, Expression b) { return visitBinary(a, b, Op.OR); }
-    public default T visitXor(Expression a, Expression b) { return visitBinary(a, b, Op.XOR); }
-    public default T visitXnor(Expression a, Expression b) { return visitBinary(a, b, Op.XNOR); }
-    public default T visitEq(Expression a, Expression b) { return visitBinary(a, b, Op.EQ); }  
+    default T visitAnd(Expression a, Expression b) { return visitBinary(a, b, Op.AND); }
+    default T visitOr(Expression a, Expression b) { return visitBinary(a, b, Op.OR); }
+    default T visitXor(Expression a, Expression b) { return visitBinary(a, b, Op.XOR); }
+    default T visitXnor(Expression a, Expression b) { return visitBinary(a, b, Op.XNOR); }
+    default T visitEq(Expression a, Expression b) { return visitBinary(a, b, Op.EQ); }
   }
   
-  protected static interface IntVisitor {
-    public int visitVariable(String name);
-    public int visitConstant(int value);
-    public int visitNot(Expression a);
-    public int visitAnd(Expression a, Expression b);
-    public int visitOr(Expression a, Expression b);
-    public int visitXor(Expression a, Expression b);
-    public int visitXnor(Expression a, Expression b);
-    public int visitEq(Expression a, Expression b);
+  protected interface IntVisitor {
+    int visitVariable(String name);
+    int visitConstant(int value);
+    int visitNot(Expression a);
+    int visitAnd(Expression a, Expression b);
+    int visitOr(Expression a, Expression b);
+    int visitXor(Expression a, Expression b);
+    int visitXnor(Expression a, Expression b);
+    int visitEq(Expression a, Expression b);
   }
 
   public boolean contains(Op o) {
@@ -122,7 +121,7 @@ public abstract class Expression {
     return (ret & 1) != 0;
   }
   
-  public static enum Notation { MATHEMATICAL(0), LOGIC(1), ALTLOGIC(2), PROGBOOLS(3), PROGBITS(4), LaTeX(5);
+  public enum Notation { MATHEMATICAL(0), LOGIC(1), ALTLOGIC(2), PROGBOOLS(3), PROGBITS(4), LaTeX(5);
 
   public final int Id;
 
@@ -162,7 +161,7 @@ public abstract class Expression {
   // all forms of equals are level 0
   public static final int EQ_PRECEDENCE = 0;
 
-  private Notation(int id) { 
+  Notation(int id) {
     Id = id;
     // Precendence level and symbol for each of { EQ, XNOR, OR, XOR, AND, NOT }
     switch (id) {
@@ -199,12 +198,12 @@ public abstract class Expression {
     }
   }
 
-  public static enum Op {
+  public enum Op {
     EQ(0,2), XNOR(1,2) , OR(2,2), XOR(3,2), AND(4,2), NOT(5,1);
 
     public final int Id, Arity;
 
-    private Op(int id, int arity) {
+    Op(int id, int arity) {
       Id = id;
       Arity = arity;
     }
@@ -219,16 +218,16 @@ public abstract class Expression {
 //  };
 
 
-  public final ArrayList<Range> nots = new ArrayList<Range>();
-  public final ArrayList<Range> subscripts = new ArrayList<Range>();
-  public final ArrayList<Range> marks = new ArrayList<Range>();
+  public final ArrayList<Range> nots = new ArrayList<>();
+  public final ArrayList<Range> subscripts = new ArrayList<>();
+  public final ArrayList<Range> marks = new ArrayList<>();
   private Integer[] badness;
 
   public abstract int getPrecedence(Notation notation);
   public abstract Op getOp();
 
   public boolean isCircular() {
-    final HashSet<Expression> visited = new HashSet<Expression>();
+    final HashSet<Expression> visited = new HashSet<>();
     visited.add(this);
     Object loop = new Object();
     return loop == visit(new Visitor<Object>() {
@@ -465,7 +464,7 @@ public abstract class Expression {
   
   public String toString(Notation notation, boolean reduce, Expression other) {
     final StringBuilder text = new StringBuilder();
-    final ArrayList<Integer> badnessList = new ArrayList<Integer>();
+    final ArrayList<Integer> badnessList = new ArrayList<>();
     if (reduce) {
       nots.clear();
       subscripts.clear();

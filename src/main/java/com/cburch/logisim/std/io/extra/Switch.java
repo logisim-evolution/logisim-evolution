@@ -72,8 +72,7 @@ public class Switch extends InstanceFactory {
     @Override
     public void mouseReleased(InstanceState state, MouseEvent e) {
       InstanceDataSingleton data = (InstanceDataSingleton) state.getData();
-      if (data != null && (Boolean) data.getValue()) setActive(state, false);
-      else setActive(state, true);
+      setActive(state, data == null || !((Boolean) data.getValue()));
     }
 
     private void setActive(InstanceState state, boolean active) {

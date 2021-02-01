@@ -103,7 +103,7 @@ public class Decoder extends InstanceFactory {
     StringBuffer CompleteName = new StringBuffer();
     CompleteName.append(CorrectLabel.getCorrectLabel(this.getName()));
     CompleteName.append(
-        "_" + Integer.toString(1 << attrs.getValue(Plexers.ATTR_SELECT).getWidth()));
+        "_" + (1 << attrs.getValue(Plexers.ATTR_SELECT).getWidth()));
     return CompleteName.toString();
   }
 

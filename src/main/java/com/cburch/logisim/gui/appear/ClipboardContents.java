@@ -37,7 +37,7 @@ import java.util.Collections;
 
 class ClipboardContents {
   static final ClipboardContents EMPTY =
-      new ClipboardContents(Collections.<CanvasObject>emptySet(), null, null);
+      new ClipboardContents(Collections.emptySet(), null, null);
 
   private final Collection<CanvasObject> onClipboard;
   private final Location anchorLocation;
@@ -45,7 +45,7 @@ class ClipboardContents {
 
   public ClipboardContents(
       Collection<CanvasObject> onClipboard, Location anchorLocation, Direction anchorFacing) {
-    this.onClipboard = Collections.unmodifiableList(new ArrayList<CanvasObject>(onClipboard));
+    this.onClipboard = Collections.unmodifiableList(new ArrayList<>(onClipboard));
     this.anchorLocation = anchorLocation;
     this.anchorFacing = anchorFacing;
   }

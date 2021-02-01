@@ -50,11 +50,9 @@ public class Components extends Library {
   public Components() {
     tools =
         Arrays.asList(
-            new AddTool[] {
-              new AddTool(new GrayIncrementer()),
-              new AddTool(new SimpleGrayCounter()),
-              new AddTool(new GrayCounter()),
-            });
+            new AddTool(new GrayIncrementer()),
+            new AddTool(new SimpleGrayCounter()),
+            new AddTool(new GrayCounter()));
   }
 
   /** Returns the name of the library that the user will see. */

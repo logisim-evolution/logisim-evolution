@@ -65,12 +65,10 @@ public class TclGenericAttributes extends TclComponentAttributes {
 
   private static final List<Attribute<?>> attributes =
       Arrays.asList(
-          new Attribute<?>[] {
-            CONTENT_FILE_ATTR, TclGeneric.CONTENT_ATTR, StdAttr.LABEL, StdAttr.LABEL_FONT
-          });
+          CONTENT_FILE_ATTR, TclGeneric.CONTENT_ATTR, StdAttr.LABEL, StdAttr.LABEL_FONT);
 
   private static final WeakHashMap<HdlContent, HdlContentEditor> windowRegistry =
-      new WeakHashMap<HdlContent, HdlContentEditor>();
+      new WeakHashMap<>();
 
   private VhdlContentComponent vhdlEntitiy;
 

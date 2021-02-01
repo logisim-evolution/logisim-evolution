@@ -135,6 +135,7 @@ public class Canvas extends JPanel
   private Bounds oldPreferredSize;
   private volatile boolean paintDirty = false; // only for within paintComponent
   private boolean inPaint = false; // only for within paintComponent
+
   public Canvas(Project proj) {
     this.proj = proj;
     this.selection = new Selection(proj, this);

@@ -51,7 +51,7 @@ public class MoveResult {
     this.unsatisfiedConnections = unsatisfiedConnections;
     this.totalDistance = totalDistance;
 
-    ArrayList<Location> unconnected = new ArrayList<Location>();
+    ArrayList<Location> unconnected = new ArrayList<>();
     for (ConnectionData conn : unsatisfiedConnections) {
       unconnected.add(conn.getLocation());
     }

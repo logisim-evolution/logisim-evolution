@@ -76,7 +76,7 @@ public class ParallelConfigurator implements KeyConfigurator, Cloneable {
         if (first == null) {
           first = result;
         } else if (map == null) {
-          map = new HashMap<Attribute<?>, Object>(first.getAttributeValues());
+          map = new HashMap<>(first.getAttributeValues());
           map.putAll(result.getAttributeValues());
         } else {
           map.putAll(result.getAttributeValues());

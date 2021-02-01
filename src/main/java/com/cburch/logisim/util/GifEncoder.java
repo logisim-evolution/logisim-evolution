@@ -250,7 +250,7 @@ public class GifEncoder {
 
   private static class LZWStringTable {
     static int Hash(short index, byte lastbyte) {
-      return ((int) ((short) (lastbyte << 8) ^ index) & 0xFFFF) % HASHSIZE;
+      return (((short) (lastbyte << 8) ^ index) & 0xFFFF) % HASHSIZE;
     }
 
     private static final int RES_CODES = 2;
@@ -473,7 +473,7 @@ public class GifEncoder {
     try {
       if (grabber.grabPixels() != true)
         throw new AWTException(S.get("grabberError") + ": " + grabber.status());
-    } catch (InterruptedException e) {;
+    } catch (InterruptedException e) {
     }
 
     byte[][] r = new byte[width_][height_];

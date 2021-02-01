@@ -37,7 +37,7 @@ import java.util.ArrayList;
 
 public class Ttl7404 extends AbstractTtlGate {
 
-  private class NotGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
+  private static class NotGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
 
     @Override
     public boolean IsInverter() {
@@ -51,20 +51,20 @@ public class Ttl7404 extends AbstractTtlGate {
 
     @Override
     public ArrayList<String> GetLogicFunction(int index, String HDLType) {
-      ArrayList<String> Contents = new ArrayList<String>();
+      ArrayList<String> Contents = new ArrayList<>();
       if (HDLType.equals(VHDL))
         Contents.add(
             "   gate_"
-                + Integer.toString(index)
+                + index
                 + "_O <= NOT(gate_"
-                + Integer.toString(index)
+                + index
                 + "_A);");
       else
         Contents.add(
             "   assign gate_"
-                + Integer.toString(index)
+                + index
                 + "_O = ~(gate_"
-                + Integer.toString(index)
+                + index
                 + "_A);");
       Contents.add("");
       return Contents;

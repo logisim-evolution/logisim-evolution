@@ -29,5 +29,5 @@
 package com.cburch.logisim.circuit;
 
 public interface ComponentDataGuiProvider {
-   public void destroy();
+   void destroy();
 }

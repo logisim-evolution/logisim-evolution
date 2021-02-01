@@ -88,9 +88,11 @@ public class AssemblyWindow
   private final JButton refresh = new JButton("Get Registers");
   private final JLabel status = new JLabel();
   private final JEditorPane document = new JEditorPane();
+
   @SuppressWarnings("rawtypes")
   private final JComboBox combo = new JComboBox<>();
-  private final HashMap<String, Component> entry = new HashMap<String, Component>();
+
+  private final HashMap<String, Component> entry = new HashMap<>();
   private final Project proj;
   private Component selReg = null;
   private File file;

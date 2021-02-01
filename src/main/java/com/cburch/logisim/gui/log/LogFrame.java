@@ -58,7 +58,7 @@ import javax.swing.JTabbedPane;
 public class LogFrame extends LFrame implements KeyListener {
   private static final long serialVersionUID = 1L;
   private final Project project;
-  private final Map<CircuitState, Model> modelMap = new HashMap<CircuitState, Model>();
+  private final Map<CircuitState, Model> modelMap = new HashMap<>();
   private final MyListener myListener = new MyListener();
   private final WindowMenuManager windowManager;
   private final LogPanel[] panels;

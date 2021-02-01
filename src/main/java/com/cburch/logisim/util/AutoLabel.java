@@ -33,15 +33,14 @@ import static com.cburch.logisim.util.Strings.S;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.comp.ComponentFactory;
+import com.cburch.logisim.comp.PositionComparator;
 import com.cburch.logisim.data.AttributeSet;
-import com.cburch.logisim.data.Location;
 import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.tools.SetAttributeAction;
 import java.awt.event.KeyEvent;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
@@ -52,14 +51,14 @@ public class AutoLabel {
 
   static final Integer[] UsedKeyStrokes =
       new Integer[] {KeyEvent.VK_L, KeyEvent.VK_T, KeyEvent.VK_V, KeyEvent.VK_H, KeyEvent.VK_A};
-  public static Set<Integer> KeyStrokes = new HashSet<Integer>(Arrays.asList(UsedKeyStrokes));
+  public static Set<Integer> KeyStrokes = new HashSet<>(Arrays.asList(UsedKeyStrokes));
 
-  private final HashMap<Circuit, String> LabelBase = new HashMap<Circuit, String>();
-  private final HashMap<Circuit, Integer> CurrentIndex = new HashMap<Circuit, Integer>();
-  private final HashMap<Circuit, Boolean> UseLabelBaseOnly = new HashMap<Circuit, Boolean>();
-  private final HashMap<Circuit, Boolean> UseUnderscore = new HashMap<Circuit, Boolean>();
-  private final HashMap<Circuit, Boolean> active = new HashMap<Circuit, Boolean>();
-  private final HashMap<Circuit, String> CurrentLabel = new HashMap<Circuit, String>();
+  private final HashMap<Circuit, String> LabelBase = new HashMap<>();
+  private final HashMap<Circuit, Integer> CurrentIndex = new HashMap<>();
+  private final HashMap<Circuit, Boolean> UseLabelBaseOnly = new HashMap<>();
+  private final HashMap<Circuit, Boolean> UseUnderscore = new HashMap<>();
+  private final HashMap<Circuit, Boolean> active = new HashMap<>();
+  private final HashMap<Circuit, String> CurrentLabel = new HashMap<>();
 
   public AutoLabel() {
     this("", null, false);
@@ -110,7 +109,7 @@ public class AutoLabel {
     if ((Common == null) | (Common.isEmpty()) | (x < 0) | (y < 0)) return "";
     if (circ == null || !CurrentLabel.containsKey(circ) || CurrentLabel.get(circ).isEmpty())
       return "";
-    Label = Common.concat("_X" + Integer.toString(x) + "_Y" + Integer.toString(y));
+    Label = Common.concat("_X" + x + "_Y" + y);
     if (Circuit.IsCorrectLabel(circ.getName(),Label, circ.getNonWires(), null, me, false)
         & SyntaxChecker.isVariableNameAcceptable(Label, false)) return Label;
     return "";
@@ -184,34 +183,21 @@ public class AutoLabel {
     UseLabelBaseOnly.put(circ, UseFirstLabel);
     if (LabelEndsWithNumber(Label)) {
       int Index = GetLabelBaseEndIndex(Label);
-      CurrentIndex.put(circ, Integer.valueOf(Label.substring(Index + 1, Label.length())));
+      CurrentIndex.put(circ, Integer.valueOf(Label.substring(Index + 1)));
       LabelBase.put(circ, Label.substring(0, Index + 1));
       UseUnderscore.put(circ, false);
       UseLabelBaseOnly.put(circ, false);
     } else {
       LabelBase.put(circ, Label);
       CurrentIndex.put(circ, 0);
-      UseUnderscore.put(circ, !Label.substring(Label.length() - 1).equals("_"));
+      UseUnderscore.put(circ, !Label.endsWith("_"));
     }
     if (UseFirstLabel) CurrentLabel.put(circ, Label);
     else CurrentLabel.put(circ, GetNext(circ, me));
   }
 
-  private static class ComponentSorter implements Comparator<Component> {
-
-    @Override
-    public int compare(Component o1, Component o2) {
-      if (o1 == o2) return 0;
-      Location l1 = o1.getLocation();
-      Location l2 = o2.getLocation();
-      if (l2.getY() != l1.getY()) return l1.getY() - l2.getY();
-      if (l2.getX() != l1.getX()) return l1.getX() - l2.getX();
-      return -1;
-    }
-  }
-
   public static SortedSet<Component> Sort(Set<Component> comps) {
-    SortedSet<Component> sorted = new TreeSet<Component>(new ComponentSorter());
+    SortedSet<Component> sorted = new TreeSet<>(new PositionComparator());
     sorted.addAll(comps);
     return sorted;
   }

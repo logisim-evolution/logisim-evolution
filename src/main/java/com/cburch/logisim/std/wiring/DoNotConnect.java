@@ -30,9 +30,6 @@ package com.cburch.logisim.std.wiring;
 
 import static com.cburch.logisim.std.Strings.S;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
-
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.BitWidth;
@@ -45,10 +42,12 @@ import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.std.gates.AbstractGateHDLGenerator;
 import com.cburch.logisim.tools.key.BitWidthConfigurator;
+import java.awt.Color;
+import java.awt.Graphics2D;
 
 public class DoNotConnect extends InstanceFactory {
 	
-  private class DoNotConnectGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
+  private static class DoNotConnectGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
 	  @Override
 	  public boolean IsOnlyInlined(String HDLType) {
 	    return true;

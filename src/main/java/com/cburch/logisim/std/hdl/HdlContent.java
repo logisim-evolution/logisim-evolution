@@ -50,7 +50,7 @@ public abstract class HdlContent implements HdlModel, Cloneable {
   @Override
   public void addHdlModelListener(HdlModelListener l) {
     if (listeners == null) {
-      listeners = new EventSourceWeakSupport<HdlModelListener>();
+      listeners = new EventSourceWeakSupport<>();
     }
     listeners.add(l);
   }

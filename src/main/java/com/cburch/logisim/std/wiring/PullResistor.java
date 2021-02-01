@@ -198,6 +198,6 @@ public class PullResistor extends InstanceFactory {
 
   @Override
   public void propagate(InstanceState state) {
-    ; // nothing to do - handled by CircuitWires
+    // nothing to do - handled by CircuitWires
   }
 }

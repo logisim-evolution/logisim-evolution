@@ -75,10 +75,10 @@ public class MenuSimulate extends Menu {
       new TickFrequencyChoice[SupportedTickFrequencies.length];
   private final JMenu downStateMenu = new JMenu();
   private final ArrayList<CircuitStateMenuItem> downStateItems =
-      new ArrayList<CircuitStateMenuItem>();
+      new ArrayList<>();
   private final JMenu upStateMenu = new JMenu();
   private final ArrayList<CircuitStateMenuItem> upStateItems =
-      new ArrayList<CircuitStateMenuItem>();
+      new ArrayList<>();
   private final JMenuItem log = new JMenuItem();
   private final JMenuItem test = new JMenuItem();
   private final JMenuItem assemblyWindow = new JMenuItem();
@@ -86,6 +86,7 @@ public class MenuSimulate extends Menu {
   private CircuitState currentState = null;
   private CircuitState bottomState = null;
   private Simulator currentSim = null;
+
   public MenuSimulate(LogisimMenuBar menubar) {
     this.menubar = menubar;
     runToggle = new MenuItemCheckImpl(this, LogisimMenuBar.SIMULATE_RUN_TOGGLE);
@@ -173,7 +174,7 @@ public class MenuSimulate extends Menu {
   }
 
   public static ArrayList<String> getTickFrequencyStrings() {
-    ArrayList<String> result = new ArrayList<String>();
+    ArrayList<String> result = new ArrayList<>();
     for (Double supportedTickFrequency : SupportedTickFrequencies) {
       if (supportedTickFrequency < 1000) {
         String hzStr;

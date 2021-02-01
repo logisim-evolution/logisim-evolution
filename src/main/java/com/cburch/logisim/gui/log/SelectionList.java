@@ -83,7 +83,7 @@ class SelectionList extends JList {
     }
   }
 
-  private class MyCellRenderer extends DefaultListCellRenderer {
+  private static class MyCellRenderer extends DefaultListCellRenderer {
     private static final long serialVersionUID = 1L;
 
     @Override

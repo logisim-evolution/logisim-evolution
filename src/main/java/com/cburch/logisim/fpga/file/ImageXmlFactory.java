@@ -182,10 +182,10 @@ public class ImageXmlFactory {
     if (CodeTable == null) return null;
     if (CodeTable.length != 256) return null;
     BufferedImage result = null;
-    Map<String, Integer> CodeLookupTable = new HashMap<String, Integer>();
+    Map<String, Integer> CodeLookupTable = new HashMap<>();
     for (int i = 0; i < CodeTable.length; i++) CodeLookupTable.put(CodeTable[i], i);
     int index = 0;
-    Set<String> TwoCodes = new HashSet<String>();
+    Set<String> TwoCodes = new HashSet<>();
     TwoCodes.add("-");
     TwoCodes.add("+");
     TwoCodes.add("=");

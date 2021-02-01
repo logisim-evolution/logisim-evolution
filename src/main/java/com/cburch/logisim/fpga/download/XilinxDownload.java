@@ -43,7 +43,6 @@ import com.cburch.logisim.fpga.hdlgenerator.FileWriter;
 import com.cburch.logisim.fpga.hdlgenerator.TickComponentHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.ToplevelHDLGeneratorFactory;
 import com.cburch.logisim.fpga.settings.VendorSoftware;
-
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -159,7 +158,7 @@ public class XilinxDownload implements VendorDownload {
   @Override
   public ProcessBuilder DownloadToBoard() {
     if (!BoardInfo.fpga.USBTMCDownloadRequired()) {
-      List<String> command = new ArrayList<String>();
+      List<String> command = new ArrayList<>();
       command.add(xilinxVendor.getBinaryPath(5));
       command.add("-batch");
       command.add(ScriptPath.replace(ProjectPath, "../") + File.separator + download_file);
@@ -221,7 +220,7 @@ public class XilinxDownload implements VendorDownload {
           && UcfFile.exists()
           && DownloadFile.exists();
     }
-    ArrayList<String> Contents = new ArrayList<String>();
+    ArrayList<String> Contents = new ArrayList<>();
     for (String entity : Entities) {
       Contents.add(HDLType.toUpperCase() + " work \"" + entity + "\"");
     }
@@ -314,7 +313,7 @@ public class XilinxDownload implements VendorDownload {
   }
   
   private ArrayList<String> GetPinLocStrings() {
-    ArrayList<String> Contents = new ArrayList<String>();
+    ArrayList<String> Contents = new ArrayList<>();
     StringBuffer Temp = new StringBuffer();
     for (ArrayList<String> key : MapInfo.getMappableResources().keySet()) {
       MapComponent map = MapInfo.getMappableResources().get(key);
@@ -352,7 +351,7 @@ public class XilinxDownload implements VendorDownload {
   }
 
   private ProcessBuilder Stage0Synth() {
-    List<String> command = new ArrayList<String>();
+    List<String> command = new ArrayList<>();
     command.add(xilinxVendor.getBinaryPath(0));
     command.add("-ifn");
     command.add(ScriptPath.replace(ProjectPath, "../") + File.separator + script_file);
@@ -364,7 +363,7 @@ public class XilinxDownload implements VendorDownload {
   }
 
   private ProcessBuilder Stage1Constraints() {
-    List<String> command = new ArrayList<String>();
+    List<String> command = new ArrayList<>();
     command.add(xilinxVendor.getBinaryPath(1));
     command.add("-intstyle");
     command.add("ise");
@@ -379,7 +378,7 @@ public class XilinxDownload implements VendorDownload {
 
   private ProcessBuilder Stage2Map() {
     if (IsCPLD) return null; /* mapping is skipped for the CPLD target*/
-    List<String> command = new ArrayList<String>();
+    List<String> command = new ArrayList<>();
     command.add(xilinxVendor.getBinaryPath(2));
     command.add("-intstyle");
     command.add("ise");
@@ -392,7 +391,7 @@ public class XilinxDownload implements VendorDownload {
   }
 
   private ProcessBuilder Stage3PAR() {
-    List<String> command = new ArrayList<String>();
+    List<String> command = new ArrayList<>();
     if (!IsCPLD) {
       command.add(xilinxVendor.getBinaryPath(3));
       command.add("-w");
@@ -435,7 +434,7 @@ public class XilinxDownload implements VendorDownload {
   }
 
   private ProcessBuilder Stage4Bit() {
-    List<String> command = new ArrayList<String>();
+    List<String> command = new ArrayList<>();
     if (!IsCPLD) {
       command.add(xilinxVendor.getBinaryPath(4));
       command.add("-w");

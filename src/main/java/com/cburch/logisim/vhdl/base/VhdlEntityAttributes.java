@@ -75,7 +75,7 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
           || value.equals("default")
           || value.equals("(default)")
           || value.equals(toDisplayString(null))) return null;
-      long v = (long) Long.parseLong(value);
+      long v = Long.parseLong(value);
       if (v < start) throw new NumberFormatException("integer too small");
       if (v > end) throw new NumberFormatException("integer too large");
       return (int) v;
@@ -101,7 +101,7 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
 
   private static final List<Attribute<?>> static_attributes =
       Arrays.asList(
-          (Attribute<?>) VhdlEntity.NAME_ATTR,
+          VhdlEntity.NAME_ATTR,
           StdAttr.LABEL,
           StdAttr.LABEL_FONT,
           StdAttr.LABEL_VISIBILITY,
@@ -172,7 +172,7 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
 
   void updateGenerics() {
     List<Attribute<Integer>> genericAttrs = content.getGenericAttributes();
-    instanceAttrs = new ArrayList<Attribute<?>>(6 + genericAttrs.size());
+    instanceAttrs = new ArrayList<>(6 + genericAttrs.size());
     instanceAttrs.add(VhdlEntity.NAME_ATTR);
     instanceAttrs.add(StdAttr.LABEL);
     instanceAttrs.add(StdAttr.LABEL_FONT);
@@ -183,8 +183,8 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
     for (Attribute<Integer> a : genericAttrs) {
       instanceAttrs.add(a);
     }
-    if (genericValues == null) genericValues = new HashMap<Attribute<Integer>, Integer>();
-    ArrayList<Attribute<Integer>> toRemove = new ArrayList<Attribute<Integer>>();
+    if (genericValues == null) genericValues = new HashMap<>();
+    ArrayList<Attribute<Integer>> toRemove = new ArrayList<>();
     for (Attribute<Integer> a : genericValues.keySet()) {
       if (!genericAttrs.contains(a)) toRemove.add(a);
     }
@@ -203,7 +203,7 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
     attr.labelVisable = labelVisable;
     attr.facing = facing;
     attr.instanceAttrs = instanceAttrs;
-    attr.genericValues = new HashMap<Attribute<Integer>, Integer>();
+    attr.genericValues = new HashMap<>();
     for (Attribute<Integer> a : genericValues.keySet())
       attr.genericValues.put(a, genericValues.get(a));
     attr.listener = null;
@@ -238,8 +238,8 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
     if (attr == VhdlSimConstants.SIM_NAME_ATTR) {
       return (V) SimName;
     }
-    if (genericValues.containsKey((Attribute<Integer>) attr)) {
-      return (V) genericValues.get((Attribute<Integer>) attr);
+    if (genericValues.containsKey(attr)) {
+      return (V) genericValues.get(attr);
     }
     return null;
   }
@@ -318,7 +318,7 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
       attrs.updateGenerics();
       attrs.vhdlInstance.fireInvalidated();
       attrs.vhdlInstance.recomputeBounds();
-      attrs.fireAttributeValueChanged(VhdlEntity.NAME_ATTR, ((VhdlContent) source).getName(), null);
+      attrs.fireAttributeValueChanged(VhdlEntity.NAME_ATTR, source.getName(), null);
     }
 
     @Override
@@ -337,9 +337,6 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
 
   @Override
   public boolean isToSave(Attribute<?> attr) {
-    if (attr == VhdlSimConstants.SIM_NAME_ATTR) {
-      return false;
-    }
-    return true;
+    return attr != VhdlSimConstants.SIM_NAME_ATTR;
   }
 }

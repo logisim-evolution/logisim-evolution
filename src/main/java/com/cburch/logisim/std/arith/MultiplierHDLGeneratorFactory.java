@@ -52,7 +52,7 @@ public class MultiplierHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Inputs = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> Inputs = new TreeMap<>();
     Inputs.put("INP_A", NrOfBitsId);
     Inputs.put("INP_B", NrOfBitsId);
     Inputs.put("Cin", NrOfBitsId);
@@ -62,7 +62,7 @@ public class MultiplierHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   @Override
   public ArrayList<String> GetModuleFunctionality(
       Netlist TheNetlist, AttributeSet attrs, FPGAReport Reporter, String HDLType) {
-    ArrayList<String> Contents = new ArrayList<String>();
+    ArrayList<String> Contents = new ArrayList<>();
     if (HDLType.equals(VHDL)) {
       Contents.add("   s_mult_result <= std_logic_vector(unsigned(INP_A)*unsigned(INP_B))");
       Contents.add("                       WHEN " + UnsignedStr + "= 1 ELSE");
@@ -119,7 +119,7 @@ public class MultiplierHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Outputs = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> Outputs = new TreeMap<>();
     Outputs.put("Mult_lo", NrOfBitsId);
     Outputs.put("Mult_hi", NrOfBitsId);
     return Outputs;
@@ -127,7 +127,7 @@ public class MultiplierHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<Integer, String> GetParameterList(AttributeSet attrs) {
-    SortedMap<Integer, String> Parameters = new TreeMap<Integer, String>();
+    SortedMap<Integer, String> Parameters = new TreeMap<>();
     Parameters.put(NrOfBitsId, NrOfBitsStr);
     Parameters.put(CalcBitsId, CalcBitsStr);
     Parameters.put(UnsignedId, UnsignedStr);
@@ -137,7 +137,7 @@ public class MultiplierHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   @Override
   public SortedMap<String, Integer> GetParameterMap(
       Netlist Nets, NetlistComponent ComponentInfo, FPGAReport Reporter) {
-    SortedMap<String, Integer> ParameterMap = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> ParameterMap = new TreeMap<>();
     int NrOfBits = ComponentInfo.GetComponent().getEnd(0).getWidth().getWidth();
     boolean isUnsigned =
         ComponentInfo.GetComponent()
@@ -153,7 +153,7 @@ public class MultiplierHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   @Override
   public SortedMap<String, String> GetPortMap(
 	      Netlist Nets, Object MapInfo, FPGAReport Reporter, String HDLType) {
-    SortedMap<String, String> PortMap = new TreeMap<String, String>();
+    SortedMap<String, String> PortMap = new TreeMap<>();
 	if (!(MapInfo instanceof NetlistComponent)) return PortMap;
 	NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
     PortMap.putAll(
@@ -175,7 +175,7 @@ public class MultiplierHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist Nets) {
-    SortedMap<String, Integer> Wires = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> Wires = new TreeMap<>();
     Wires.put("s_mult_result", CalcBitsId);
     Wires.put("s_extended_Cin", CalcBitsId);
     Wires.put("s_new_result", CalcBitsId);

@@ -36,13 +36,13 @@ import javax.swing.JPopupMenu;
 
 public interface ProjectExplorerListener {
 
-  public void deleteRequested(ProjectExplorerEvent event);
+  void deleteRequested(ProjectExplorerEvent event);
 
-  public void doubleClicked(ProjectExplorerEvent event);
+  void doubleClicked(ProjectExplorerEvent event);
 
-  public JPopupMenu menuRequested(ProjectExplorerEvent event);
+  JPopupMenu menuRequested(ProjectExplorerEvent event);
 
-  public void moveRequested(ProjectExplorerEvent event, AddTool dragged, AddTool target);
+  void moveRequested(ProjectExplorerEvent event, AddTool dragged, AddTool target);
 
-  public void selectionChanged(ProjectExplorerEvent event);
+  void selectionChanged(ProjectExplorerEvent event);
 }

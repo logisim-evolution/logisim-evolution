@@ -47,7 +47,7 @@ public class HexDigitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       FPGAReport Reporter,
       String CircuitName,
       String HDLType) {
-    ArrayList<String> Contents = new ArrayList<String>();
+    ArrayList<String> Contents = new ArrayList<>();
     String Label = ComponentInfo.GetComponent().getAttributeSet().getValue(StdAttr.LABEL);
     String BusName = GetBusName(ComponentInfo, HexDigit.HEX, HDLType, Nets);
     String DPName = GetNetName(ComponentInfo, HexDigit.DP, true, HDLType, Nets);
@@ -82,7 +82,7 @@ public class HexDigitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         Contents.add( "   "
                 + HDLGeneratorFactory.LocalOutputBubbleBusname
                 + "("
-                + Integer.toString(ComponentInfo.GetLocalBubbleOutputStartId() + 7)
+                + (ComponentInfo.GetLocalBubbleOutputStartId() + 7)
                 + ") <= "
                 + DPName
                 + ";");
@@ -121,7 +121,7 @@ public class HexDigitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       }
       if (ComponentInfo.GetComponent().getAttributeSet().getValue(SevenSegment.ATTR_DP)) {
         Contents.add("   assign "+HDLGeneratorFactory.LocalOutputBubbleBusname+"["+
-                     Integer.toString(ComponentInfo.GetLocalBubbleOutputStartId() + 7)+
+            (ComponentInfo.GetLocalBubbleOutputStartId() + 7) +
                      "] = "+DPName+";");
       }
     }

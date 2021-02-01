@@ -52,7 +52,7 @@ public class BoardInformation {
 
   public void clear() {
 	if (MyComponents == null)
-	  MyComponents = new LinkedList<FPGAIOInformationContainer>();
+	  MyComponents = new LinkedList<>();
 	else
       MyComponents.clear();
     boardname = null;
@@ -129,7 +129,7 @@ public class BoardInformation {
 
   public ArrayList<BoardRectangle> GetIoComponentsOfType(
       IOComponentTypes type, int nrOfPins) {
-    ArrayList<BoardRectangle> result = new ArrayList<BoardRectangle>();
+    ArrayList<BoardRectangle> result = new ArrayList<>();
     for (FPGAIOInformationContainer comp : MyComponents) {
       if (comp.GetType().equals(type)) {
         if ((!type.equals(IOComponentTypes.DIPSwitch))

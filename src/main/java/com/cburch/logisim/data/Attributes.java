@@ -36,13 +36,13 @@ import com.cburch.logisim.gui.generic.ComboBox;
 import com.cburch.logisim.util.FontUtil;
 import com.cburch.logisim.util.JInputComponent;
 import com.cburch.logisim.util.StringGetter;
-import org.drjekyll.fontchooser.FontChooser;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.plaf.basic.BasicComboBoxRenderer;
+import org.drjekyll.fontchooser.FontChooser;
 
 public class Attributes {
   private static class BooleanAttribute extends OptionAttribute<Boolean> {
@@ -401,7 +401,7 @@ public class Attributes {
     @Override
     public java.awt.Component getCellEditor(Object value) {
       ComboBox combo = new ComboBox<>(vals);
-      combo.setRenderer(new OptionComboRenderer<V>(this));
+      combo.setRenderer(new OptionComboRenderer<>(this));
       if (value == null) combo.setSelectedIndex(-1);
       else combo.setSelectedItem(value);
       return combo;
@@ -582,7 +582,7 @@ public class Attributes {
   }
 
   public static <V> Attribute<V> forOption(String name, StringGetter disp, V[] vals) {
-    return new OptionAttribute<V>(name, disp, vals);
+    return new OptionAttribute<>(name, disp, vals);
   }
 
   //

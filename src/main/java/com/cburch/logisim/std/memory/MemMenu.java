@@ -121,12 +121,12 @@ class MemMenu implements ActionListener, MenuExtender {
   }
 
   private void doLoad() {
-    MemContents m = (MemContents)factory.getState(instance, circState).getContents();
+    MemContents m = factory.getState(instance, circState).getContents();
     HexFile.open(m, frame, proj, instance);
   }
 
   private void doSave() {
-    MemContents m = (MemContents)factory.getState(instance, circState).getContents();
+    MemContents m = factory.getState(instance, circState).getContents();
     HexFile.save(m, frame, proj, instance);
   }
 }

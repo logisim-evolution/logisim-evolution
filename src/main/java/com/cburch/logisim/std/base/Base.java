@@ -52,15 +52,13 @@ public class Base extends Library {
 
     tools =
         Arrays.asList(
-            new Tool[] {
-              new PokeTool(),
-              new EditTool(select, wiring),
-              select,
-              wiring,
-              new TextTool(),
-              new MenuTool(),
-              new AddTool(Text.FACTORY),
-            });
+            new PokeTool(),
+            new EditTool(select, wiring),
+            select,
+            wiring,
+            new TextTool(),
+            new MenuTool(),
+            new AddTool(Text.FACTORY));
   }
 
   @Override

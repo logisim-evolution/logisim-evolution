@@ -30,11 +30,10 @@ package com.cburch.logisim.soc;
 
 import static com.cburch.logisim.soc.Strings.S;
 
-import java.util.List;
-
 import com.cburch.logisim.tools.FactoryDescription;
 import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.tools.Tool;
+import java.util.List;
 
 public class Soc  extends Library {
 

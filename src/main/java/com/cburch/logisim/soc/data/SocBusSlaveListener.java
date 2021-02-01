@@ -30,7 +30,7 @@ package com.cburch.logisim.soc.data;
 
 public interface SocBusSlaveListener {
 
-   public void labelChanged();
-   public void memoryMapChanged();
+   void labelChanged();
+   void memoryMapChanged();
    
 }

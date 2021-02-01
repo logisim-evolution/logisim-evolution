@@ -46,6 +46,7 @@ class SimulationTreeCircuitNode extends SimulationTreeNode
     implements CircuitListener, AttributeListener, Comparator<Component> {
   private final CircuitState circuitState;
   private final Component subcircComp;
+
   public SimulationTreeCircuitNode(
       SimulationTreeModel model,
       SimulationTreeCircuitNode parent,
@@ -97,8 +98,8 @@ class SimulationTreeCircuitNode extends SimulationTreeNode
 
   // returns true if changed
   private boolean computeChildren() {
-    ArrayList<TreeNode> newChildren = new ArrayList<TreeNode>();
-    ArrayList<Component> subcircs = new ArrayList<Component>();
+    ArrayList<TreeNode> newChildren = new ArrayList<>();
+    ArrayList<Component> subcircs = new ArrayList<>();
     for (Component comp : circuitState.getCircuit().getNonWires()) {
       if (comp.getFactory() instanceof SubcircuitFactory) {
         subcircs.add(comp);

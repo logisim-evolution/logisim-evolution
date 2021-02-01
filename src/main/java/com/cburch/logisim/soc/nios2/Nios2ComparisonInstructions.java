@@ -30,13 +30,12 @@ package com.cburch.logisim.soc.nios2;
 
 import static com.cburch.logisim.soc.Strings.S;
 
-import java.util.ArrayList;
-
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.soc.data.SocSupport;
 import com.cburch.logisim.soc.util.AssemblerAsmInstruction;
 import com.cburch.logisim.soc.util.AssemblerExecutionInterface;
 import com.cburch.logisim.soc.util.AssemblerToken;
+import java.util.ArrayList;
 
 public class Nios2ComparisonInstructions implements AssemblerExecutionInterface {
 
@@ -88,9 +87,9 @@ public class Nios2ComparisonInstructions implements AssemblerExecutionInterface 
    * cmpleui rB, rA, IMMED => cmpltui rB, rA, (IMMED+1)
    */
 
-  private final ArrayList<String> Opcodes = new ArrayList<String>();
-  private final ArrayList<Integer> OpcCodes = new ArrayList<Integer>();
-  private final ArrayList<Integer> OpxCodes = new ArrayList<Integer>();
+  private final ArrayList<String> Opcodes = new ArrayList<>();
+  private final ArrayList<Integer> OpcCodes = new ArrayList<>();
+  private final ArrayList<Integer> OpxCodes = new ArrayList<>();
   
   private int instruction;
   private boolean valid;
@@ -153,7 +152,7 @@ public class Nios2ComparisonInstructions implements AssemblerExecutionInterface 
     s.append(Nios2State.registerABINames[sourceA]+",");
     if (operation >= INSTR_CMPEQI) {
       int imm = OpxCodes.get(operation) != SIGN_EXTEND ? immediate &0xFFFF : ((immediate<<16)>>16);
-      s.append(Integer.toString(imm));
+      s.append(imm);
     } else {
       s.append(Nios2State.registerABINames[sourceB]);
     }

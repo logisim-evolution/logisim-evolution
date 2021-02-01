@@ -30,28 +30,7 @@ package com.cburch.logisim.fpga.gui;
 
 import static com.cburch.logisim.fpga.Strings.S;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Frame;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.HashMap;
-
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
-
 import com.cburch.draw.shapes.Rectangle;
-import com.cburch.logisim.fpga.settings.VendorSoftware;
 import com.cburch.logisim.fpga.data.BoardInformation;
 import com.cburch.logisim.fpga.data.BoardRectangle;
 import com.cburch.logisim.fpga.data.DriveStrength;
@@ -61,6 +40,25 @@ import com.cburch.logisim.fpga.data.IOComponentsInformation;
 import com.cburch.logisim.fpga.data.IoStandards;
 import com.cburch.logisim.fpga.data.PinActivity;
 import com.cburch.logisim.fpga.data.PullBehaviors;
+import com.cburch.logisim.fpga.settings.VendorSoftware;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Frame;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.HashMap;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 
 public class FPGAIOInformationSettingsDialog {
 
@@ -75,7 +73,7 @@ public class FPGAIOInformationSettingsDialog {
           txt.setText(oldLocations.get(i));
         LocInputs.add(txt);
       }
-    };
+    }
     while (LocInputs.size() < nr) {
       JTextField txt = new JTextField(6);
       LocInputs.add(txt);
@@ -129,7 +127,7 @@ public class FPGAIOInformationSettingsDialog {
 
   public static void GetSimpleInformationDialog(Boolean deleteButton, 
         IOComponentsInformation IOcomps, FPGAIOInformationContainer info) {
-    HashMap<Integer,Integer> NrOfPins = new HashMap<Integer,Integer>();
+    HashMap<Integer,Integer> NrOfPins = new HashMap<>();
     IOComponentTypes MyType = info.GetType();
     BoardRectangle MyRectangle = info.GetRectangle();
     if (info.getNrOfPins() == 0) {
@@ -146,21 +144,21 @@ public class FPGAIOInformationSettingsDialog {
     JComboBox<String> DriveInput = new JComboBox<>(DriveStrength.Behavior_strings);
     JComboBox<String> PullInput = new JComboBox<>(PullBehaviors.Behavior_strings);
     JComboBox<String> ActiveInput = new JComboBox<>(PinActivity.Behavior_strings);
-    JComboBox<Integer> Inputsize = new JComboBox<Integer>();
-    JComboBox<Integer> Outputsize = new JComboBox<Integer>();
-    JComboBox<Integer> IOsize = new JComboBox<Integer>();
-    ArrayList<JTextField> LocInputs = new ArrayList<JTextField>();
-    ArrayList<JTextField> LocOutputs = new ArrayList<JTextField>();
-    ArrayList<JTextField> LocIOs = new ArrayList<JTextField>();
-    ArrayList<String> PinLabels = new ArrayList<String>();
+    JComboBox<Integer> Inputsize = new JComboBox<>();
+    JComboBox<Integer> Outputsize = new JComboBox<>();
+    JComboBox<Integer> IOsize = new JComboBox<>();
+    ArrayList<JTextField> LocInputs = new ArrayList<>();
+    ArrayList<JTextField> LocOutputs = new ArrayList<>();
+    ArrayList<JTextField> LocIOs = new ArrayList<>();
+    ArrayList<String> PinLabels = new ArrayList<>();
     JPanel InputsPanel = new JPanel();
     JPanel OutputsPanel = new JPanel();
     JPanel IOPanel = new JPanel();
     Boolean abort = false;
-    ArrayList<JTextField> rectLocations = new ArrayList<JTextField>();
-    ArrayList<String> oldInputLocations = new ArrayList<String>(); 
-    ArrayList<String> oldOutputLocations = new ArrayList<String>(); 
-    ArrayList<String> oldIOLocations = new ArrayList<String>();
+    ArrayList<JTextField> rectLocations = new ArrayList<>();
+    ArrayList<String> oldInputLocations = new ArrayList<>();
+    ArrayList<String> oldOutputLocations = new ArrayList<>();
+    ArrayList<String> oldIOLocations = new ArrayList<>();
     for (int cnt = 0 ; cnt < info.getNrOfPins() ; cnt++) {
       if (cnt < NrOfPins.get(INPUT_ID)) oldInputLocations.add(info.getPinLocation(cnt));
       else if (cnt < NrOfPins.get(INPUT_ID)+NrOfPins.get(OUTPUT_ID))

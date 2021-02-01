@@ -51,11 +51,11 @@ public class DefaultClassicAppearance {
 
   public static List<CanvasObject> build(Collection<Instance> pins) {
     Map<Direction, List<Instance>> edge;
-    edge = new HashMap<Direction, List<Instance>>();
-    edge.put(Direction.NORTH, new ArrayList<Instance>());
-    edge.put(Direction.SOUTH, new ArrayList<Instance>());
-    edge.put(Direction.EAST, new ArrayList<Instance>());
-    edge.put(Direction.WEST, new ArrayList<Instance>());
+    edge = new HashMap<>();
+    edge.put(Direction.NORTH, new ArrayList<>());
+    edge.put(Direction.SOUTH, new ArrayList<>());
+    edge.put(Direction.EAST, new ArrayList<>());
+    edge.put(Direction.WEST, new ArrayList<>());
     for (Instance pin : pins) {
       Direction pinFacing = pin.getAttributeValue(StdAttr.FACING);
       Direction pinEdge = pinFacing.reverse();
@@ -115,7 +115,7 @@ public class DefaultClassicAppearance {
     Rectangle rect = new Rectangle(rx, ry, width, height);
     rect.setValue(DrawAttr.STROKE_WIDTH, 2);
 
-    List<CanvasObject> ret = new ArrayList<CanvasObject>();
+    List<CanvasObject> ret = new ArrayList<>();
     ret.add(notch);
     ret.add(rect);
     placePins(ret, edge.get(Direction.WEST), rx, ry + offsWest, 0, 10);

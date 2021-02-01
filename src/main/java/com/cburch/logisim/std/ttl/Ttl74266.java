@@ -37,7 +37,7 @@ import java.util.ArrayList;
 
 public class Ttl74266 extends AbstractTtlGate {
 
-  private class XNorGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
+  private static class XNorGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
 
     @Override
     public String getComponentStringIdentifier() {
@@ -46,26 +46,26 @@ public class Ttl74266 extends AbstractTtlGate {
 
     @Override
     public ArrayList<String> GetLogicFunction(int index, String HDLType) {
-      ArrayList<String> Contents = new ArrayList<String>();
+      ArrayList<String> Contents = new ArrayList<>();
       if (HDLType.equals(VHDL))
         Contents.add(
             "   gate_"
-                + Integer.toString(index)
+                + index
                 + "_O <= NOT(gate_"
-                + Integer.toString(index)
+                + index
                 + "_A"
                 + " XOR gate_"
-                + Integer.toString(index)
+                + index
                 + "_B);");
       else
         Contents.add(
             "   assign gate_"
-                + Integer.toString(index)
+                + index
                 + "_O = ~(gate_"
-                + Integer.toString(index)
+                + index
                 + "_A"
                 + " ^ gate_"
-                + Integer.toString(index)
+                + index
                 + "_B);");
       Contents.add("");
       return Contents;

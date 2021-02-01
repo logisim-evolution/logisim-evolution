@@ -71,7 +71,7 @@ public class RGBLed extends InstanceFactory implements DynamicElementProvider {
   }
 
   public static final ArrayList<String> GetLabels() {
-    ArrayList<String> LabelNames = new ArrayList<String>();
+    ArrayList<String> LabelNames = new ArrayList<>();
     for (int i = 0; i < 3; i++) LabelNames.add("");
     LabelNames.set(RED, "RED");
     LabelNames.set(GREEN, "GREEN");

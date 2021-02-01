@@ -30,7 +30,6 @@ package com.cburch.logisim.analyze.model;
 
 import static com.cburch.logisim.analyze.Strings.S;
 
-import java.text.ParseException;
 import java.util.Iterator;
 
 public class Var implements Iterable<String> {

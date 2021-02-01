@@ -34,7 +34,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 public class VariableList {
-  private final ArrayList<VariableListListener> listeners = new ArrayList<VariableListListener>();
+  private final ArrayList<VariableListListener> listeners = new ArrayList<>();
   private final int maxSize;
   private final ArrayList<Var> data;
   private final ArrayList<String> names;
@@ -44,11 +44,11 @@ public class VariableList {
 
   public VariableList(int maxSize) {
     this.maxSize = maxSize;
-    data = maxSize > 16 ? new ArrayList<Var>() : new ArrayList<Var>(maxSize);
-    names = maxSize > 16 ? new ArrayList<String>() : new ArrayList<String>(maxSize);
+    data = maxSize > 16 ? new ArrayList<>() : new ArrayList<>(maxSize);
+    names = maxSize > 16 ? new ArrayList<>() : new ArrayList<>(maxSize);
     vars = Collections.unmodifiableList(data);
     bits = Collections.unmodifiableList(names);
-    others = new ArrayList<VariableList>();
+    others = new ArrayList<>();
   }
   
   public void addCompanion(VariableList var) {

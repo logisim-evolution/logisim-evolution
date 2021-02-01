@@ -54,7 +54,7 @@ public class SignalDataBus extends SignalData {
   }
 
   public ImageIcon getIcon() {
-    return (ImageIcon) Icons.getIcon("chronoBus.gif");
+    return Icons.getIcon("chronoBus.gif");
   }
 
   public String getSelectedValue() {

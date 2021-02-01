@@ -74,10 +74,13 @@ class SelectionPanel extends LogPanel {
   private final JPanel enableChoosePanelCheckPanel;
   private final JLabel chooseClkLabel;
   private final JPanel chooseClkPanel;
+
   @SuppressWarnings("rawtypes")
   private final JComboBox chooseClkCombo;
+
   private final JLabel chooseClkFrequencyLabel;
   private final JTextField chooseClkFrequencyTF;
+
   @SuppressWarnings("rawtypes")
   private final JComboBox chooseClkUnitCombo;
 
@@ -185,7 +188,7 @@ class SelectionPanel extends LogPanel {
 
   @SuppressWarnings({"rawtypes", "unchecked"})
   private void createClkChooser(Selection selection) {
-    ArrayList<String> allSelected = new ArrayList<String>();
+    ArrayList<String> allSelected = new ArrayList<>();
     for (int i = 0; i < selection.size(); ++i) {
       String name = selection.get(i).toString();
       if (!name.equalsIgnoreCase("sysclk")) {

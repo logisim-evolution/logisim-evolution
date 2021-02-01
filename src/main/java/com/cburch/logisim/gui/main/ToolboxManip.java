@@ -66,6 +66,7 @@ class ToolboxManip implements ProjectExplorerListener {
   private final ProjectExplorer explorer;
   private final MyListener myListener = new MyListener();
   private Tool lastSelected = null;
+
   ToolboxManip(Project proj, ProjectExplorer explorer) {
     this.proj = proj;
     this.explorer = explorer;
@@ -79,7 +80,7 @@ class ToolboxManip implements ProjectExplorerListener {
     } else {
       for (Library sub : proj.getLogisimFile().getLibraries()) {
         if (sub instanceof Base) {
-          Tool tool = ((Base) sub).getTool("Edit Tool");
+          Tool tool = sub.getTool("Edit Tool");
           if (tool != null) {
             proj.setTool(tool);
             break;

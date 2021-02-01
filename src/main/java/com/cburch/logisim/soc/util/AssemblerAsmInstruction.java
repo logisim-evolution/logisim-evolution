@@ -30,11 +30,10 @@ package com.cburch.logisim.soc.util;
 
 import static com.cburch.logisim.soc.Strings.S;
 
+import com.cburch.logisim.util.StringGetter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-
-import com.cburch.logisim.util.StringGetter;
 
 public class AssemblerAsmInstruction {
   private final AssemblerToken instruction;
@@ -46,8 +45,8 @@ public class AssemblerAsmInstruction {
    
   public AssemblerAsmInstruction(AssemblerToken instruction, int size) {
     this.instruction = instruction;
-    parameters = new ArrayList<AssemblerToken[]>();
-    errors = new HashMap<AssemblerToken,StringGetter>();
+    parameters = new ArrayList<>();
+    errors = new HashMap<>();
     this.size = size;
     bytes = null;
     programCounter = -1;
@@ -132,7 +131,7 @@ public class AssemblerAsmInstruction {
       }
        if (found && parameter.length > 1) {
          int i = 0;
-         HashSet<Integer> toBeRemoved = new HashSet<Integer>();
+         HashSet<Integer> toBeRemoved = new HashSet<>();
          while (i < parameter.length) {
            if (AssemblerToken.MATH_OPERATORS.contains(parameter[i].getType())) {
              long beforeValue = -1;

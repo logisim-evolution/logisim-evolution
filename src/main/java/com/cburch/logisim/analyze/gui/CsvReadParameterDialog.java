@@ -76,9 +76,9 @@ public class CsvReadParameterDialog extends JDialog implements ActionListener {
     String[] PossibleQuotes = {"\"", "'"};
     OkBut = new JButton(S.get("ConfirmCsvParameters"));
     OkBut.addActionListener(this);
-    quotes = new JComboBox<String>(PossibleQuotes);
+    quotes = new JComboBox<>(PossibleQuotes);
     quotes.addActionListener(this);
-    seperators = new JComboBox<String>(PossibleSeperators);
+    seperators = new JComboBox<>(PossibleSeperators);
     seperators.addActionListener(this);
     setLocationRelativeTo(parrentFrame);
     this.param = sel;

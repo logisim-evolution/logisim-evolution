@@ -84,7 +84,7 @@ public class Parser {
   }
 
   private static Expression parse(ArrayList<Token> tokens) throws ParserException {
-    ArrayList<Context> stack = new ArrayList<Context>();
+    ArrayList<Context> stack = new ArrayList<>();
     Expression current = null;
     for (int i = 0; i < tokens.size(); i++) {
       Token t = tokens.get(i);
@@ -272,7 +272,7 @@ public class Parser {
   }
 
   private static ArrayList<Token> toTokens(String in, boolean includeWhite) {
-    ArrayList<Token> tokens = new ArrayList<Token>();
+    ArrayList<Token> tokens = new ArrayList<>();
 
     // Guarantee that we will stop just after reading whitespace,
     // not in the middle of a token.

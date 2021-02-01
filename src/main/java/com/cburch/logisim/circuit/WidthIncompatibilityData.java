@@ -37,8 +37,8 @@ public class WidthIncompatibilityData {
   private final ArrayList<BitWidth> widths;
 
   public WidthIncompatibilityData() {
-    points = new ArrayList<Location>();
-    widths = new ArrayList<BitWidth>();
+    points = new ArrayList<>();
+    widths = new ArrayList<>();
   }
 
   public void add(Location p, BitWidth w) {

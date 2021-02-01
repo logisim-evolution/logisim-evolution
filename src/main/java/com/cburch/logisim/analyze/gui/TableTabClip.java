@@ -33,7 +33,6 @@ import static com.cburch.logisim.analyze.Strings.S;
 import com.cburch.logisim.analyze.model.Entry;
 import com.cburch.logisim.analyze.model.TruthTable;
 import com.cburch.logisim.gui.generic.OptionPane;
-
 import java.awt.Rectangle;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.ClipboardOwner;

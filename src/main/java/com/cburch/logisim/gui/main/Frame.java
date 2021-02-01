@@ -154,7 +154,7 @@ public class Frame extends LFrame implements LocaleListener {
     CanvasPane canvasPane = new CanvasPane(layoutCanvas);
     double[] Options = new double[49];
     for (int i = 0; i < 49; i++) {
-      Options[i] = (double) ((i + 1) * 20);
+      Options[i] = (i + 1) * 20;
     }
     layoutZoomModel =
         new BasicZoomModel(

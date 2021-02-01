@@ -41,7 +41,7 @@ public class PropertyChangeWeakSupport {
 
     ListenerData(String property, PropertyChangeListener listener) {
       this.property = property;
-      this.listener = new WeakReference<PropertyChangeListener>(listener);
+      this.listener = new WeakReference<>(listener);
     }
   }
 
@@ -52,7 +52,7 @@ public class PropertyChangeWeakSupport {
 
   public PropertyChangeWeakSupport(Object source) {
     this.source = source;
-    this.listeners = new ConcurrentLinkedQueue<ListenerData>();
+    this.listeners = new ConcurrentLinkedQueue<>();
   }
 
   public void addPropertyChangeListener(PropertyChangeListener listener) {

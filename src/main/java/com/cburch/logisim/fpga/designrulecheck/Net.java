@@ -35,17 +35,17 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class Net {
-  private final Set<Location> MyPoints = new HashSet<Location>();
-  private final Set<String> TunnelNames = new HashSet<String>();
-  private final Set<Wire> Segments = new HashSet<Wire>();
+  private final Set<Location> MyPoints = new HashSet<>();
+  private final Set<String> TunnelNames = new HashSet<>();
+  private final Set<Wire> Segments = new HashSet<>();
   private int nr_of_bits;
   private Net MyParent;
   private Boolean Requires_to_be_root;
-  private final ArrayList<Byte> InheritedBits = new ArrayList<Byte>();
-  private final ArrayList<ConnectionPointArray> SourceList = new ArrayList<ConnectionPointArray>();
-  private final ArrayList<ConnectionPointArray> SinkList = new ArrayList<ConnectionPointArray>();
-  private final ArrayList<ConnectionPointArray> SourceNetsList = new ArrayList<ConnectionPointArray>();
-  private final ArrayList<ConnectionPointArray> SinkNetsList = new ArrayList<ConnectionPointArray>();
+  private final ArrayList<Byte> InheritedBits = new ArrayList<>();
+  private final ArrayList<ConnectionPointArray> SourceList = new ArrayList<>();
+  private final ArrayList<ConnectionPointArray> SinkList = new ArrayList<>();
+  private final ArrayList<ConnectionPointArray> SourceNetsList = new ArrayList<>();
+  private final ArrayList<ConnectionPointArray> SinkNetsList = new ArrayList<>();
 
   public Net() {
     cleanup();
@@ -153,13 +153,13 @@ public class Net {
 
   public ArrayList<ConnectionPoint> GetSinkNets(int bitIndex) {
     if ((bitIndex < 0) || (bitIndex >= SinkNetsList.size()))
-      return new ArrayList<ConnectionPoint>();
+      return new ArrayList<>();
     return SinkNetsList.get(bitIndex).GetConnections();
   }
 
   public ArrayList<ConnectionPoint> GetSourceNets(int bitIndex) {
     if ((bitIndex < 0) || (bitIndex >= SourceNetsList.size()))
-      return new ArrayList<ConnectionPoint>();
+      return new ArrayList<>();
     return SourceNetsList.get(bitIndex).GetConnections();
   }
   
@@ -180,9 +180,9 @@ public class Net {
   }
 
   public ArrayList<ConnectionPoint> GetBitSinks(int bitIndex) {
-    ArrayList<ConnectionPoint> sinks = new ArrayList<ConnectionPoint>();
+    ArrayList<ConnectionPoint> sinks = new ArrayList<>();
     if ((bitIndex < 0) || (bitIndex >= SourceNetsList.size()))
-      return new ArrayList<ConnectionPoint>();
+      return new ArrayList<>();
     sinks.addAll(SinkList.get(bitIndex).GetConnections());
     return sinks;
   }
@@ -210,7 +210,7 @@ public class Net {
   }
 
   public Set<ConnectionPoint> GetSinks() {
-    Set<ConnectionPoint> sinks = new HashSet<ConnectionPoint>();
+    Set<ConnectionPoint> sinks = new HashSet<>();
     for (int i = 0; i < nr_of_bits; i++) {
       sinks.addAll(SinkList.get(i).GetConnections());
     }

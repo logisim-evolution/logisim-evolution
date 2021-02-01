@@ -57,15 +57,15 @@ class SelectionBase {
 
   static final Logger logger = LoggerFactory.getLogger(SelectionBase.class);
   static final Set<Component> NO_COMPONENTS = Collections.emptySet();
-  final HashSet<Component> selected = new HashSet<Component>(); // of selected
+  final HashSet<Component> selected = new HashSet<>(); // of selected
   // Components
   // in
   // circuit
-  final HashSet<Component> lifted = new HashSet<Component>(); // of selected
-  final HashSet<Component> suppressHandles = new HashSet<Component>(); // of
+  final HashSet<Component> lifted = new HashSet<>(); // of selected
+  final HashSet<Component> suppressHandles = new HashSet<>(); // of
   // Components
   final Set<Component> unionSet = CollectionUtil.createUnmodifiableSetUnion(selected, lifted);
-  private final ArrayList<Selection.Listener> listeners = new ArrayList<Selection.Listener>();
+  private final ArrayList<Selection.Listener> listeners = new ArrayList<>();
   Project proj;
   // Components
   // removed
@@ -199,12 +199,12 @@ class SelectionBase {
 
   private HashMap<Component, Component> copyComponents(
       Collection<Component> components, int dx, int dy, boolean translate) {
-    HashMap<Component, Component> ret = new HashMap<Component, Component>();
+    HashMap<Component, Component> ret = new HashMap<>();
     for (Component comp : components) {
       Location oldLoc = comp.getLocation();
       AttributeSet attrs =
           translate | (comp.getFactory() instanceof Rom) | (comp.getFactory() instanceof Ram)
-              ? (AttributeSet) comp.getAttributeSet()
+              ? comp.getAttributeSet()
               : (AttributeSet) comp.getAttributeSet().clone();
       int newX = oldLoc.getX() + dx;
       int newY = oldLoc.getY() + dy;
@@ -238,7 +238,7 @@ class SelectionBase {
   }
 
   void duplicateHelper(CircuitMutation xn) {
-    HashSet<Component> oldSelected = new HashSet<Component>(selected);
+    HashSet<Component> oldSelected = new HashSet<>(selected);
     oldSelected.addAll(lifted);
     pasteHelper(xn, oldSelected);
   }

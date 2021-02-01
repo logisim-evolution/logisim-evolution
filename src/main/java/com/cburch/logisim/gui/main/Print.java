@@ -117,7 +117,7 @@ public class Print {
     for (;
         mark >= 0 && mark + 1 < header.length();
         start = mark + 2, mark = header.indexOf('%', start)) {
-      ret.append(header.substring(start, mark));
+      ret.append(header, start, mark);
       switch (header.charAt(mark + 1)) {
         case 'n':
           ret.append(circName);

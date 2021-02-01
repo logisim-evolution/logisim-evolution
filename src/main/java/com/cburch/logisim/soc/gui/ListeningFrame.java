@@ -94,5 +94,4 @@ public class ListeningFrame extends JFrame
   public void LabelChanged(ComponentEvent e) {
     updateTitle();
   }
-  ;
 }

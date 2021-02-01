@@ -38,6 +38,7 @@ public class ReorderRequest {
   private final CanvasObject object;
   private final int fromIndex;
   private final int toIndex;
+
   public ReorderRequest(CanvasObject object, int from, int to) {
     this.object = object;
     this.fromIndex = from;

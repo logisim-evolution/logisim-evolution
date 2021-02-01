@@ -48,7 +48,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
@@ -120,7 +119,7 @@ public class VhdlContent extends HdlContent {
   protected VhdlContent(String name, LogisimFile file) {
     logiFile = file;
     this.name = name;
-    ports = new ArrayList<VhdlParser.PortDescription>();
+    ports = new ArrayList<>();
   }
 
   public VhdlContent clone() {
@@ -172,7 +171,7 @@ public class VhdlContent extends HdlContent {
 
   public List<Attribute<Integer>> getGenericAttributes() {
     if (genericAttrs == null) {
-      genericAttrs = new ArrayList<Attribute<Integer>>();
+      genericAttrs = new ArrayList<>();
       for (Generic g : getGenerics()) {
         genericAttrs.add(VhdlEntityAttributes.forGeneric(g));
       }
@@ -226,8 +225,7 @@ public class VhdlContent extends HdlContent {
   public static boolean labelVHDLInvalid(String label) {
     if (!label.matches("^[A-Za-z][A-Za-z0-9_]*") || label.endsWith("_") || label.matches(".*__.*"))
       return (true);
-    if (CorrectLabel.VHDLKeywords.contains(label.toLowerCase())) return true;
-    return (false);
+    return CorrectLabel.VHDLKeywords.contains(label.toLowerCase());
   }
 
   public static boolean labelVHDLInvalidNotify(String label, LogisimFile file) {
@@ -341,7 +339,7 @@ public class VhdlContent extends HdlContent {
       List<Attribute<Integer>> oldAttrs = genericAttrs;
 
       generics = new Generic[parser.getGenerics().size()];
-      genericAttrs = new ArrayList<Attribute<Integer>>();
+      genericAttrs = new ArrayList<>();
       int i = 0;
       for (VhdlParser.GenericDescription g : parser.getGenerics()) {
         boolean found = false;

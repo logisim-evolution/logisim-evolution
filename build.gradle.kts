@@ -1,6 +1,8 @@
 import org.gradle.internal.os.OperatingSystem
-import java.util.Date
 import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.collections.mapOf
 
 plugins {
     id("com.github.ben-manes.versions") version "0.36.0"
@@ -55,18 +57,18 @@ task<Jar>("sourcesJar") {
 tasks.register("jpackage") {
     group = "build"
     description = "Makes the platform specific packages"
-    dependsOn("shadowJar");
+    dependsOn("shadowJar")
     doFirst {
-      val folder = File("$buildDir/dist");
-      if (!folder.exists()) {
+      val folder = File("$buildDir/dist")
+        if (!folder.exists()) {
         if (!folder.mkdirs()) throw GradleException("Unable to create directory \"$buildDir/dist\"")
       }
     }
     doLast {
-      val df = SimpleDateFormat("yyyy");
-      val year = df.format(Date());
-      val parameters = ArrayList<String>();
-      val javaHome = System.getProperty("java.home") ?: throw GradleException("java.home is not set")
+      val df = SimpleDateFormat("yyyy")
+        val year = df.format(Date())
+        val parameters = ArrayList<String>()
+        val javaHome = System.getProperty("java.home") ?: throw GradleException("java.home is not set")
       val cmd = javaHome + File.separator + "bin" + File.separator + "jpackage"
       parameters.add(if (cmd.contains(" ")) "\"" + cmd + "\"" else cmd)
       parameters.add("--input")

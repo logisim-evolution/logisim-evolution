@@ -48,7 +48,7 @@ public class BoardList {
   }
 
   private static Collection<String> getBoards(Pattern p, String Match, String Element) {
-    ArrayList<String> ret = new ArrayList<String>();
+    ArrayList<String> ret = new ArrayList<>();
     File file = new File(Element);
     if (file.isDirectory()) {
       ret.addAll(getBoardsfromDirectory(p, Match, file));
@@ -59,7 +59,7 @@ public class BoardList {
   }
 
   private static Collection<String> getBoardsfromDirectory(Pattern p, String Match, File Dir) {
-    ArrayList<String> ret = new ArrayList<String>();
+    ArrayList<String> ret = new ArrayList<>();
     File[] fileList = Dir.listFiles();
     for (File file : fileList) {
       if (file.isDirectory()) {
@@ -83,7 +83,7 @@ public class BoardList {
     // All path separators are defined with File.Separator, but when
     // browsing the .jar, java uses slash even in Windows
     Match = Match.replaceAll("\\\\", "/");
-    ArrayList<String> ret = new ArrayList<String>();
+    ArrayList<String> ret = new ArrayList<>();
     ZipFile zf;
     try {
       zf = new ZipFile(Dir);
@@ -94,7 +94,7 @@ public class BoardList {
     }
     Enumeration<? extends ZipEntry> e = zf.entries();
     while (e.hasMoreElements()) {
-      ZipEntry ze = (ZipEntry) e.nextElement();
+      ZipEntry ze = e.nextElement();
       String fileName = ze.getName();
       boolean accept = p.matcher(fileName).matches() && fileName.contains(Match);
       if (accept) {
@@ -112,7 +112,7 @@ public class BoardList {
   private static final String BoardResourcePath =
       "resources" + File.separator + "logisim" + File.separator + "boards";
 
-  private final ArrayList<String> DefinedBoards = new ArrayList<String>();
+  private final ArrayList<String> DefinedBoards = new ArrayList<>();
 
   public BoardList() {
     String classPath = System.getProperty("java.class.path", File.pathSeparator);
@@ -133,8 +133,7 @@ public class BoardList {
 
   public boolean RemoveExternalBoard(String Filename) {
     if (DefinedBoards.contains(Filename)) {
-      int index = DefinedBoards.indexOf(Filename);
-      DefinedBoards.remove(index);
+      DefinedBoards.remove(Filename);
       return true;
     }
     return false;
@@ -151,7 +150,7 @@ public class BoardList {
   }
 
   @SuppressWarnings("serial")
-  private class SortedArrayList<T> extends ArrayList<T> {
+  private static class SortedArrayList<T> extends ArrayList<T> {
 
     @SuppressWarnings("unchecked")
     public void insertSorted(T value) {
@@ -163,7 +162,7 @@ public class BoardList {
   }
 
   public ArrayList<String> GetBoardNames() {
-    SortedArrayList<String> ret = new SortedArrayList<String>();
+    SortedArrayList<String> ret = new SortedArrayList<>();
     for (String board : DefinedBoards) {
       ret.insertSorted(getBoardName(board));
     }

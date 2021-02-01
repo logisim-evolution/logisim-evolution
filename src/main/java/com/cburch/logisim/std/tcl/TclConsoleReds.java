@@ -50,8 +50,8 @@ public class TclConsoleReds extends TclComponent {
   public TclConsoleReds() {
     super("TclConsoleReds", S.getter("tclConsoleReds"));
 
-    List<PortDescription> inputsDesc = new ArrayList<PortDescription>();
-    List<PortDescription> outputsDesc = new ArrayList<PortDescription>();
+    List<PortDescription> inputsDesc = new ArrayList<>();
+    List<PortDescription> outputsDesc = new ArrayList<>();
 
     outputsDesc.add(new PortDescription("S0_sti", "output", 1));
     outputsDesc.add(new PortDescription("S1_sti", "output", 1));

@@ -244,7 +244,7 @@ public abstract class InstanceFactory extends AbstractComponentFactory {
       return false;
     }
     try {
-      sub.getConstructor(new Class[0]);
+      sub.getConstructor();
       return true;
     } catch (SecurityException e) {
       logger.error("{} needs its no-args constructor to be public", sub.getName());
@@ -342,7 +342,7 @@ public abstract class InstanceFactory extends AbstractComponentFactory {
   }
 
   public void setPorts(Port[] ports) {
-    portList = new UnmodifiableList<Port>(ports);
+    portList = new UnmodifiableList<>(ports);
   }
 
   public void setShouldSnap(boolean value) {

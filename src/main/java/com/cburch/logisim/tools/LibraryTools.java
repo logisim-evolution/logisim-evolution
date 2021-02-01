@@ -34,7 +34,6 @@ import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.file.LoadedLibrary;
 import com.cburch.logisim.file.LogisimFile;
 import com.cburch.logisim.gui.generic.OptionPane;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -104,7 +103,7 @@ public class LibraryTools {
 
   public static ArrayList<String> LibraryCanBeMerged(
       HashSet<String> SourceTools, HashSet<String> NewTools) {
-    ArrayList<String> ret = new ArrayList<String>();
+    ArrayList<String> ret = new ArrayList<>();
     Iterator<String> Iter = NewTools.iterator();
     while (Iter.hasNext()) {
       String This = Iter.next();
@@ -119,9 +118,9 @@ public class LibraryTools {
       Library lib, String Location, ArrayList<String> UpercaseNames) {
     Iterator<? extends Tool> tooliter = lib.getTools().iterator();
     String MyLocation;
-    HashMap<String, String> ret = new HashMap<String, String>();
-    if (Location.isEmpty()) MyLocation = new String(lib.getName());
-    else MyLocation = new String(Location + "->" + lib.getName());
+    HashMap<String, String> ret = new HashMap<>();
+    if (Location.isEmpty()) MyLocation = lib.getName();
+    else MyLocation = Location + "->" + lib.getName();
     while (tooliter.hasNext()) {
       Tool tool = tooliter.next();
       if (UpercaseNames.contains(tool.getName().toUpperCase())) {
@@ -171,9 +170,9 @@ public class LibraryTools {
   public static void RemovePresentLibraries(
       Library lib, HashMap<String, Library> KnownLibs, boolean AddToSet) {
     /* we work top -> down */
-    HashSet<String> ToBeRemoved = new HashSet<String>();
+    HashSet<String> ToBeRemoved = new HashSet<>();
     for (Library sublib : lib.getLibraries()) {
-      if (KnownLibs.keySet().contains(sublib.getName().toUpperCase())) {
+      if (KnownLibs.containsKey(sublib.getName().toUpperCase())) {
         ToBeRemoved.add(sublib.getName());
       } else if (AddToSet) {
         KnownLibs.put(sublib.getName().toUpperCase(), sublib);

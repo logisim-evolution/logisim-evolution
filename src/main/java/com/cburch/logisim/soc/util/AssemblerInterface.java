@@ -28,27 +28,26 @@
 
 package com.cburch.logisim.soc.util;
 
+import com.cburch.logisim.circuit.CircuitState;
+import com.cburch.logisim.soc.data.SocProcessorInterface;
+import com.cburch.logisim.soc.file.ElfProgramHeader;
+import com.cburch.logisim.soc.file.ElfSectionHeader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 
-import com.cburch.logisim.circuit.CircuitState;
-import com.cburch.logisim.soc.data.SocProcessorInterface;
-import com.cburch.logisim.soc.file.ElfProgramHeader;
-import com.cburch.logisim.soc.file.ElfSectionHeader;
-
 public interface AssemblerInterface {
-  public void decode(int instruction);
-  public boolean assemble(AssemblerAsmInstruction instruction);
-  public AssemblerExecutionInterface getExeUnit();
-  public ArrayList<String> getOpcodes();
-  public int getInstructionSize(String opcode);
-  public boolean usesRoundedBrackets();
-  public String getProgram(CircuitState circuitState, SocProcessorInterface processorInterface, 
-                           ElfProgramHeader elfHeader, ElfSectionHeader elfSections, 
-                           HashMap<Integer,Integer> validDebugLines);
-  public String getHighlightStringIdentifier();
-  public void performUpSpecificOperationsOnTokens(LinkedList<AssemblerToken> tokens);
-  public HashSet<Integer> getAcceptedParameterTypes();
+  void decode(int instruction);
+  boolean assemble(AssemblerAsmInstruction instruction);
+  AssemblerExecutionInterface getExeUnit();
+  ArrayList<String> getOpcodes();
+  int getInstructionSize(String opcode);
+  boolean usesRoundedBrackets();
+  String getProgram(CircuitState circuitState, SocProcessorInterface processorInterface,
+      ElfProgramHeader elfHeader, ElfSectionHeader elfSections,
+      HashMap<Integer, Integer> validDebugLines);
+  String getHighlightStringIdentifier();
+  void performUpSpecificOperationsOnTokens(LinkedList<AssemblerToken> tokens);
+  HashSet<Integer> getAcceptedParameterTypes();
 }

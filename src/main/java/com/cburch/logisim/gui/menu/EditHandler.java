@@ -86,7 +86,7 @@ public abstract class EditHandler {
     else if (src == LogisimMenuBar.REMOVE_CONTROL) removeControlPoint();
   }
 
-  public static interface Listener {
+  public interface Listener {
     void enableChanged(EditHandler handler, LogisimMenuItem action, boolean value);
   }
 }

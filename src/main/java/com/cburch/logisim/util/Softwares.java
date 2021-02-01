@@ -53,7 +53,7 @@ public final class Softwares {
     if (new File(FileUtil.correctPath(tmpDir.getCanonicalPath()) + "work").exists()) return true;
 
     try {
-      List<String> command = new ArrayList<String>();
+      List<String> command = new ArrayList<>();
       command.add(FileUtil.correctPath(questaPath) + QUESTA_BIN[VLIB]);
       command.add("work");
 
@@ -188,7 +188,7 @@ public final class Softwares {
         return ERROR;
       }
 
-      List<String> command = new ArrayList<String>();
+      List<String> command = new ArrayList<>();
       command.add(FileUtil.correctPath(questaPath) + QUESTA_BIN[VCOM]);
       command.add("-reportprogress");
       command.add("300");

@@ -108,8 +108,8 @@ public class VhdlParser {
 
   public VhdlParser(String source) {
     this.source = source;
-    this.inputs = new ArrayList<PortDescription>();
-    this.outputs = new ArrayList<PortDescription>();
+    this.inputs = new ArrayList<>();
+    this.outputs = new ArrayList<>();
   }
 
   public String getArchitecture() {
@@ -227,7 +227,7 @@ public class VhdlParser {
     Scanner local = new Scanner(line.substring(0, index));
     local.useDelimiter(",");
 
-    List<String> names = new ArrayList<String>();
+    List<String> names = new ArrayList<>();
     while (local.hasNext()) names.add(local.next().trim());
 
     local.close();

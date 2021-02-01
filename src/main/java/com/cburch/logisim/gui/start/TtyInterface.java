@@ -314,8 +314,8 @@ public class TtyInterface {
       circuit = file.getCircuit(circuitToTest);
     }
     Map<Instance, String> pinNames = Analyze.getPinLabels(circuit);
-    ArrayList<Instance> outputPins = new ArrayList<Instance>();
-    ArrayList<Instance> inputPins = new ArrayList<Instance>();
+    ArrayList<Instance> outputPins = new ArrayList<>();
+    ArrayList<Instance> inputPins = new ArrayList<>();
     Instance haltPin = null;
     for (Map.Entry<Instance, String> entry : pinNames.entrySet()) {
       Instance pin = entry.getKey();
@@ -358,13 +358,13 @@ public class TtyInterface {
   private static int doTableAnalysis(
       Project proj, Circuit circuit, Map<Instance, String> pinLabels, int format) {
 
-    ArrayList<Instance> inputPins = new ArrayList<Instance>();
-    ArrayList<Var> inputVars = new ArrayList<Var>();
-    ArrayList<String> inputNames = new ArrayList<String>();
-    ArrayList<Instance> outputPins = new ArrayList<Instance>();
-    ArrayList<Var> outputVars = new ArrayList<Var>();
-    ArrayList<String> outputNames = new ArrayList<String>();
-    ArrayList<String> formats = new ArrayList<String>();
+    ArrayList<Instance> inputPins = new ArrayList<>();
+    ArrayList<Var> inputVars = new ArrayList<>();
+    ArrayList<String> inputNames = new ArrayList<>();
+    ArrayList<Instance> outputPins = new ArrayList<>();
+    ArrayList<Var> outputVars = new ArrayList<>();
+    ArrayList<String> outputNames = new ArrayList<>();
+    ArrayList<String> formats = new ArrayList<>();
     for (Map.Entry<Instance, String> entry : pinLabels.entrySet()) {
       Instance pin = entry.getKey();
       int width = pin.getAttributeValue(StdAttr.WIDTH).getWidth();
@@ -461,7 +461,7 @@ public class TtyInterface {
     ArrayList<InstanceState> keyboardStates = null;
     StdinThread stdinThread = null;
     if (showTty) {
-      keyboardStates = new ArrayList<InstanceState>();
+      keyboardStates = new ArrayList<>();
       boolean ttyFound = prepareForTty(circState, keyboardStates);
       if (!ttyFound) {
         logger.error("{}", S.get("ttyNoTtyError"));
@@ -482,7 +482,7 @@ public class TtyInterface {
     ArrayList<Value> prevOutputs = null;
     Propagator prop = circState.getPropagator();
     while (true) {
-      ArrayList<Value> curOutputs = new ArrayList<Value>();
+      ArrayList<Value> curOutputs = new ArrayList<>();
       for (Instance pin : outputPins) {
         InstanceState pinState = circState.getInstanceState(pin);
         Value val = Pin.FACTORY.getValue(pinState);
@@ -546,7 +546,7 @@ public class TtyInterface {
 
     public StdinThread() {
       super("TtyInterface-StdInThread");
-      queue = new LinkedList<char[]>();
+      queue = new LinkedList<>();
     }
 
     public char[] getBuffer() {

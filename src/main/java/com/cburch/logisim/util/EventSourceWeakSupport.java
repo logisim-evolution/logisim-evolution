@@ -35,12 +35,12 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class EventSourceWeakSupport<L> implements Iterable<L> {
   private final ConcurrentLinkedQueue<WeakReference<L>> listeners =
-      new ConcurrentLinkedQueue<WeakReference<L>>();
+      new ConcurrentLinkedQueue<>();
 
   public EventSourceWeakSupport() {}
 
   public void add(L listener) {
-    listeners.add(new WeakReference<L>(listener));
+    listeners.add(new WeakReference<>(listener));
   }
 
   public boolean isEmpty() {
@@ -58,7 +58,7 @@ public class EventSourceWeakSupport<L> implements Iterable<L> {
   public Iterator<L> iterator() {
     // copy elements into another list in case any event handlers
     // want to add a listener
-    ArrayList<L> ret = new ArrayList<L>(listeners.size());
+    ArrayList<L> ret = new ArrayList<>(listeners.size());
     for (Iterator<WeakReference<L>> it = listeners.iterator(); it.hasNext(); ) {
       L l = it.next().get();
       if (l == null) {

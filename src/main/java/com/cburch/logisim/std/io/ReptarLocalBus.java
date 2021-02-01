@@ -90,9 +90,9 @@ public class ReptarLocalBus extends InstanceFactory {
   public ReptarLocalBus() {
     super("ReptarLB", S.getter("repLBComponent"));
 
-    ArrayList<String> inpLabels = new ArrayList<String>();
-    ArrayList<String> outpLabels = new ArrayList<String>();
-    ArrayList<String> ioLabels = new ArrayList<String>();
+    ArrayList<String> inpLabels = new ArrayList<>();
+    ArrayList<String> outpLabels = new ArrayList<>();
+    ArrayList<String> ioLabels = new ArrayList<>();
     for (int i = 0 ; i < 16 ; i++) {
       if (i < 13) inpLabels.add(getInputLabel(i));
       if (i < 2) outpLabels.add(getOutputLabel(i));

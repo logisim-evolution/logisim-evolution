@@ -30,26 +30,6 @@ package com.cburch.logisim.soc.data;
 
 import static com.cburch.logisim.soc.Strings.S;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
-import java.util.ArrayList;
-import java.util.LinkedList;
-
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.table.TableCellRenderer;
-
 import com.cburch.logisim.circuit.ComponentDataGuiProvider;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.data.Bounds;
@@ -65,6 +45,24 @@ import com.cburch.logisim.soc.gui.TraceWindowTableModel;
 import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.LocaleListener;
 import com.cburch.logisim.util.LocaleManager;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.table.TableCellRenderer;
 
 public class SocBusStateInfo extends JDialog implements ActionListener,LocaleListener,WindowListener {
 
@@ -74,10 +72,10 @@ public class SocBusStateInfo extends JDialog implements ActionListener,LocaleLis
   public static final int BlockWidth = 238;
   
   public interface SocBusStateListener {
-    public void fireCanged(SocBusState item);
+    void fireCanged(SocBusState item);
   }
   
-  public class SocBusState implements InstanceData,Cloneable,ComponentDataGuiProvider {
+  public static class SocBusState implements InstanceData,Cloneable,ComponentDataGuiProvider {
     
     public class SocBusStateTrace extends JPanel {
       private static final long serialVersionUID = 1L;
@@ -117,12 +115,12 @@ public class SocBusStateInfo extends JDialog implements ActionListener,LocaleLis
     private final ArrayList<SocBusStateListener> listeners;
     
     public SocBusState(SocBusStateInfo parrent, Instance instance) {
-      trace = new LinkedList<SocBusTransaction>();
+      trace = new LinkedList<>();
       startTraceIndex = 0;
       this.parrent = parrent;
       this.instance = instance;
       SocBus.MENU_PROVIDER.registerBusState(this, instance);
-      listeners = new ArrayList<SocBusStateListener>();
+      listeners = new ArrayList<>();
     }
  
     public SocBusState clone() {
@@ -167,7 +165,9 @@ public class SocBusStateInfo extends JDialog implements ActionListener,LocaleLis
     
     public int getNrOfEntires() { return trace.size(); }
     public void registerListener(SocBusStateListener l) { if (!listeners.contains(l)) listeners.add(l); }
-    public void deregisterListener(SocBusStateListener l) { if (listeners.contains(l)) listeners.remove(l); }
+    public void deregisterListener(SocBusStateListener l) {
+      listeners.remove(l);
+    }
 
     public SocBusStateTrace getEntry(int index, TraceWindowTableModel model) {
       if (index < 0 || index >= trace.size()) {
@@ -200,7 +200,7 @@ public class SocBusStateInfo extends JDialog implements ActionListener,LocaleLis
     LocaleManager.addLocaleListener(this);
     socManager = man;
     myComp = comp;
-    sniffers = new ArrayList<SocBusSnifferInterface>();
+    sniffers = new ArrayList<>();
     memMap = new SocMemMapModel();
     setTitle(S.get("SocMemMapWindowTitle")+getName());
     setLayout(new BorderLayout());
@@ -237,8 +237,7 @@ public class SocBusStateInfo extends JDialog implements ActionListener,LocaleLis
   }
   
   public void removeSocBusSniffer(SocBusSnifferInterface sniffer) {
-    if (sniffers.contains(sniffer))
-      sniffers.remove(sniffer);
+    sniffers.remove(sniffer);
   }
   
   public ArrayList<SocBusSlaveInterface> getSlaves() {
@@ -321,7 +320,7 @@ public class SocBusStateInfo extends JDialog implements ActionListener,LocaleLis
   }
   
   public SocBusState getNewState(Instance instance) {
-    return new SocBusState(this,instance);
+    return new SocBusState(this, instance);
   }
   
   public SocBusState getRegPropagateState() {

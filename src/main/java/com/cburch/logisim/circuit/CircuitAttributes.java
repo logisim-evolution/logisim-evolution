@@ -190,19 +190,17 @@ public class CircuitAttributes extends AbstractAttributeSet {
 
   private static final List<Attribute<?>> INSTANCE_ATTRS =
       Arrays.asList(
-          new Attribute<?>[] {
-            StdAttr.FACING,
-            StdAttr.LABEL,
-            LABEL_LOCATION_ATTR,
-            StdAttr.LABEL_FONT,
-            StdAttr.LABEL_VISIBILITY,
-            NAME_ATTR,
-            CIRCUIT_LABEL_ATTR,
-            CIRCUIT_LABEL_FACING_ATTR,
-            CIRCUIT_LABEL_FONT_ATTR,
-            APPEARANCE_ATTR,
-            CIRCUIT_VHDL_PATH
-          });
+          StdAttr.FACING,
+          StdAttr.LABEL,
+          LABEL_LOCATION_ATTR,
+          StdAttr.LABEL_FONT,
+          StdAttr.LABEL_VISIBILITY,
+          NAME_ATTR,
+          CIRCUIT_LABEL_ATTR,
+          CIRCUIT_LABEL_FACING_ATTR,
+          CIRCUIT_LABEL_FONT_ATTR,
+          APPEARANCE_ATTR,
+          CIRCUIT_VHDL_PATH);
 
   private final Circuit source;
   private Instance subcircInstance;

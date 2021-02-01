@@ -50,37 +50,37 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> MyInputs = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> MyInputs = new TreeMap<>();
     int NrOfGates = (IsInverter()) ? 6 : 4;
     for (int i = 0; i < NrOfGates; i++) {
-      MyInputs.put("gate_" + Integer.toString(i) + "_A", 1);
-      if (!IsInverter()) MyInputs.put("gate_" + Integer.toString(i) + "_B", 1);
+      MyInputs.put("gate_" + i + "_A", 1);
+      if (!IsInverter()) MyInputs.put("gate_" + i + "_B", 1);
     }
     return MyInputs;
   }
 
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> MyOutputs = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> MyOutputs = new TreeMap<>();
     int NrOfGates = (IsInverter()) ? 6 : 4;
     for (int i = 0; i < NrOfGates; i++) {
-      MyOutputs.put("gate_" + Integer.toString(i) + "_O", 1);
+      MyOutputs.put("gate_" + i + "_O", 1);
     }
     return MyOutputs;
   }
 
   public ArrayList<String> GetLogicFunction(int index, String HDLType) {
-    return new ArrayList<String>();
+    return new ArrayList<>();
   }
 
   @Override
   public ArrayList<String> GetModuleFunctionality(
       Netlist TheNetlist, AttributeSet attrs, FPGAReport Reporter, String HDLType) {
-    ArrayList<String> Contents = new ArrayList<String>();
+    ArrayList<String> Contents = new ArrayList<>();
     int NrOfGates = (IsInverter()) ? 6 : 4;
     for (int i = 0; i < NrOfGates; i++) {
       Contents.addAll(
-          MakeRemarkBlock("Here gate " + Integer.toString(i) + " is described", 3, HDLType));
+          MakeRemarkBlock("Here gate " + i + " is described", 3, HDLType));
       Contents.addAll(GetLogicFunction(i, HDLType));
     }
     return Contents;
@@ -89,7 +89,7 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
   @Override
   public SortedMap<String, String> GetPortMap(
       Netlist Nets, Object MapInfo, FPGAReport Reporter, String HDLType) {
-    SortedMap<String, String> PortMap = new TreeMap<String, String>();
+    SortedMap<String, String> PortMap = new TreeMap<>();
     if (!(MapInfo instanceof NetlistComponent)) return PortMap;
     NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
     int NrOfGates = (IsInverter()) ? 6 : 4;
@@ -99,7 +99,7 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
         int outindex = (i < 3) ? i * 2 + 1 : i * 2;
         PortMap.putAll(
             GetNetMap(
-                "gate_" + Integer.toString(i) + "_A",
+                "gate_" + i + "_A",
                 true,
                 ComponentInfo,
                 inindex,
@@ -108,7 +108,7 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
                 Nets));
         PortMap.putAll(
             GetNetMap(
-                "gate_" + Integer.toString(i) + "_O",
+                "gate_" + i + "_O",
                 true,
                 ComponentInfo,
                 outindex,
@@ -121,7 +121,7 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
         int outindex = (i < 2) ? i * 3 + 2 : i * 3;
         PortMap.putAll(
             GetNetMap(
-                "gate_" + Integer.toString(i) + "_A",
+                "gate_" + i + "_A",
                 true,
                 ComponentInfo,
                 inindex1,
@@ -130,7 +130,7 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
                 Nets));
         PortMap.putAll(
             GetNetMap(
-                "gate_" + Integer.toString(i) + "_B",
+                "gate_" + i + "_B",
                 true,
                 ComponentInfo,
                 inindex2,
@@ -139,7 +139,7 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
                 Nets));
         PortMap.putAll(
             GetNetMap(
-                "gate_" + Integer.toString(i) + "_O",
+                "gate_" + i + "_O",
                 true,
                 ComponentInfo,
                 outindex,

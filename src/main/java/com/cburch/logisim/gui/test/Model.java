@@ -42,8 +42,8 @@ class Model {
   private final Project project;
   private final Circuit circuit;
   private final UpdateResultSort myUpdateResultSort = new UpdateResultSort();
-  private final ArrayList<Integer> failed = new ArrayList<Integer>();
-  private final ArrayList<Integer> passed = new ArrayList<Integer>();
+  private final ArrayList<Integer> failed = new ArrayList<>();
+  private final ArrayList<Integer> passed = new ArrayList<>();
   private boolean selected = false;
   private boolean running, paused;
   private TestThread tester;
@@ -52,7 +52,7 @@ class Model {
   private TestException[] results;
 
   public Model(Project proj, Circuit circuit) {
-    listeners = new EventSourceWeakSupport<ModelListener>();
+    listeners = new EventSourceWeakSupport<>();
     this.circuit = circuit;
     this.project = proj;
   }
@@ -149,8 +149,7 @@ class Model {
   public void setSelected(boolean value) {
     if (selected == value) return;
     selected = value;
-    if (!selected) setPaused(true);
-    else setPaused(false);
+    setPaused(!selected);
   }
 
   public void removeModelListener(ModelListener l) {

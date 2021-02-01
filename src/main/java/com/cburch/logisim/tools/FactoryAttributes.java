@@ -49,7 +49,7 @@ public class FactoryAttributes implements AttributeSet, AttributeListener, Clone
     this.desc = desc;
     this.factory = null;
     this.baseAttrs = null;
-    this.listeners = new ArrayList<AttributeListener>();
+    this.listeners = new ArrayList<>();
   }
 
   public FactoryAttributes(ComponentFactory factory) {
@@ -57,7 +57,7 @@ public class FactoryAttributes implements AttributeSet, AttributeListener, Clone
     this.desc = null;
     this.factory = factory;
     this.baseAttrs = null;
-    this.listeners = new ArrayList<AttributeListener>();
+    this.listeners = new ArrayList<>();
   }
 
   public void addAttributeListener(AttributeListener l) {

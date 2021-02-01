@@ -60,7 +60,7 @@ public class Ttl7410HDLGenerator extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> MyInputs = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> MyInputs = new TreeMap<>();
     MyInputs.put("A0", 1);
     MyInputs.put("B0", 1);
     MyInputs.put("C0", 1);
@@ -75,7 +75,7 @@ public class Ttl7410HDLGenerator extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> MyOutputs = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> MyOutputs = new TreeMap<>();
     MyOutputs.put("Y0", 1);
     MyOutputs.put("Y1", 1);
     MyOutputs.put("Y2", 1);
@@ -85,7 +85,7 @@ public class Ttl7410HDLGenerator extends AbstractHDLGeneratorFactory {
   @Override
   public ArrayList<String> GetModuleFunctionality(
       Netlist TheNetlist, AttributeSet attrs, FPGAReport Reporter, String HDLType) {
-    ArrayList<String> Contents = new ArrayList<String>();
+    ArrayList<String> Contents = new ArrayList<>();
     String Inv = Inverted ? "NOT" : "";
     String Func = andgate ? "AND" : "OR";
     Contents.add("   Y0 <= " + Inv + " (A0 " + Func + " B0 " + Func + " C0);");
@@ -97,7 +97,7 @@ public class Ttl7410HDLGenerator extends AbstractHDLGeneratorFactory {
   @Override
   public SortedMap<String, String> GetPortMap(
       Netlist Nets, Object MapInfo, FPGAReport Reporter, String HDLType) {
-    SortedMap<String, String> PortMap = new TreeMap<String, String>();
+    SortedMap<String, String> PortMap = new TreeMap<>();
     if (!(MapInfo instanceof NetlistComponent)) return PortMap;
     NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
     PortMap.putAll(GetNetMap("A0", true, ComponentInfo, 0, Reporter, HDLType, Nets));

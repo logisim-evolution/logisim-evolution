@@ -33,7 +33,6 @@ import static com.cburch.logisim.fpga.Strings.S;
 import com.cburch.logisim.fpga.gui.FPGAReport;
 import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
 import com.cburch.logisim.gui.generic.OptionPane;
-
 import java.util.Arrays;
 import java.util.List;
 
@@ -99,8 +98,7 @@ public class CorrectLabel {
       }
     }
     if (VHDLKeywords.contains(Label.toLowerCase())) return false;
-    if (VerilogKeywords.contains(Label)) return false;
-    return true;
+    return !VerilogKeywords.contains(Label);
   }
 
   public static String FirstInvalidCharacter(String Label) {
@@ -123,14 +121,10 @@ public class CorrectLabel {
       }
     }
     if (HDLIdentifier.equals(HDLGeneratorFactory.VHDL)) {
-      if (VHDLKeywords.contains(Label.toLowerCase())) {
-        return false;
-      }
+      return !VHDLKeywords.contains(Label.toLowerCase());
     } else {
       if (HDLIdentifier.equals(HDLGeneratorFactory.VERILOG)) {
-        if (VerilogKeywords.contains(Label)) {
-          return false;
-        }
+        return !VerilogKeywords.contains(Label);
       }
     }
     return true;

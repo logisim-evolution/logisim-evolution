@@ -38,6 +38,7 @@ import com.cburch.logisim.comp.ComponentEvent;
 import com.cburch.logisim.comp.ComponentFactory;
 import com.cburch.logisim.comp.ComponentListener;
 import com.cburch.logisim.comp.EndData;
+import com.cburch.logisim.comp.PositionComparator;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeEvent;
 import com.cburch.logisim.data.AttributeSet;
@@ -72,7 +73,6 @@ import java.awt.Graphics;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -144,7 +144,7 @@ public class Circuit {
     }
 
     private HashMap<Location, EndData> toMap(Object val) {
-      HashMap<Location, EndData> map = new HashMap<Location, EndData>();
+      HashMap<Location, EndData> map = new HashMap<>();
       if (val instanceof List) {
         @SuppressWarnings("unchecked")
         List<EndData> valList = (List<EndData>) val;
@@ -186,7 +186,7 @@ public class Circuit {
       ComponentFactory myFactory,
       Boolean ShowDialog) {
     if (myFactory instanceof Tunnel) return true;
-    if (CircuitName != null && !CircuitName.isEmpty() && CircuitName.toUpperCase().equals(Name.toUpperCase())&&
+    if (CircuitName != null && !CircuitName.isEmpty() && CircuitName.equalsIgnoreCase(Name)&&
         myFactory instanceof Pin) {
       if (ShowDialog) {
         String msg = S.get("ComponentLabelEqualCircuitName");
@@ -201,7 +201,7 @@ public class Circuit {
   private static boolean IsComponentName(String Name, Set<Component> comps, Boolean ShowDialog) {
     if (Name.isEmpty()) return false;
     for (Component comp : comps) {
-      if (comp.getFactory().getName().toUpperCase().equals(Name.toUpperCase())) {
+      if (comp.getFactory().getName().equalsIgnoreCase(Name)) {
         if (ShowDialog) {
           String msg = S.get("ComponentLabelNameError");
           OptionPane.showMessageDialog(null, "\"" + Name + "\" : " + msg);
@@ -222,7 +222,7 @@ public class Circuit {
             (comp.getAttributeSet().containsAttribute(StdAttr.LABEL))
                 ? comp.getAttributeSet().getValue(StdAttr.LABEL)
                 : "";
-        if (Label.toUpperCase().equals(Name.toUpperCase())) {
+        if (Label.equalsIgnoreCase(Name)) {
           if (ShowDialog) {
             String msg = S.get("UsedLabelNameError");
             OptionPane.showMessageDialog(null, "\"" + Name + "\" : " + msg);
@@ -248,12 +248,12 @@ public class Circuit {
   private final AttributeSet staticAttrs;
   private final SubcircuitFactory subcircuitFactory;
   private final EventSourceWeakSupport<CircuitListener> listeners =
-      new EventSourceWeakSupport<CircuitListener>();
-  private LinkedHashSet<Component> comps = new LinkedHashSet<Component>(); // doesn't
+      new EventSourceWeakSupport<>();
+  private LinkedHashSet<Component> comps = new LinkedHashSet<>(); // doesn't
   // include
   // wires
   CircuitWires wires = new CircuitWires();
-  private final ArrayList<Component> clocks = new ArrayList<Component>();
+  private final ArrayList<Component> clocks = new ArrayList<>();
   private final CircuitLocker locker;
 
   static final Logger logger = LoggerFactory.getLogger(Circuit.class);
@@ -273,10 +273,10 @@ public class Circuit {
     appearance = new CircuitAppearance(this);
     subcircuitFactory = new SubcircuitFactory(this);
     locker = new CircuitLocker();
-    circuitsUsingThis = new WeakHashMap<Component, Circuit>();
+    circuitsUsingThis = new WeakHashMap<>();
     MyNetList = new Netlist(this);
-    MyMappableResources = new HashMap<String,MappableResourcesContainer>();
-    LoadedMaps = new HashMap<String,HashMap<String,CircuitMapInfo>>();
+    MyMappableResources = new HashMap<>();
+    LoadedMaps = new HashMap<>();
     addCircuitListener(MyNetList);
     Annotated = false;
     logiFile = file;
@@ -311,19 +311,6 @@ public class Circuit {
     }
   }
 
-  private class AnnotateComparator implements Comparator<Component> {
-
-    @Override
-    public int compare(Component o1, Component o2) {
-      if (o1 == o2) return 0;
-      Location l1 = o1.getLocation();
-      Location l2 = o2.getLocation();
-      if (l2.getY() != l1.getY()) return l1.getY() - l2.getY();
-      if (l2.getX() != l1.getX()) return l1.getX() - l2.getX();
-      return -1;
-    }
-  }
-
   private static String GetAnnotationName(Component comp) {
     String ComponentName;
     /* Pins are treated specially */
@@ -353,10 +340,10 @@ public class Circuit {
       reporter.AddInfo("Nothing to do !");
       return;
     }
-    SortedSet<Component> comps = new TreeSet<Component>(new AnnotateComparator());
-    HashMap<String, AutoLabel> lablers = new HashMap<String, AutoLabel>();
-    Set<String> LabelNames = new LinkedHashSet<String>();
-    Set<String> Subcircuits = new LinkedHashSet<String>();
+    SortedSet<Component> comps = new TreeSet<>(new PositionComparator());
+    HashMap<String, AutoLabel> lablers = new HashMap<>();
+    Set<String> LabelNames = new LinkedHashSet<>();
+    Set<String> Subcircuits = new LinkedHashSet<>();
     for (Component comp : getNonWires()) {
       if (comp.getFactory() instanceof Tunnel) continue;
       /* we are directly going to remove duplicated labels */
@@ -397,7 +384,7 @@ public class Circuit {
       /* if the current component is a sub-circuit, recurse into it */
       if (comp.getFactory() instanceof SubcircuitFactory) {
         SubcircuitFactory sub = (SubcircuitFactory) comp.getFactory();
-        if (!Subcircuits.contains(sub.getName())) Subcircuits.add(sub.getName());
+        Subcircuits.add(sub.getName());
       }
     }
     /* Now Annotate */
@@ -598,7 +585,7 @@ public class Circuit {
   }
 
   public Collection<Component> getAllContaining(Location pt) {
-    LinkedHashSet<Component> ret = new LinkedHashSet<Component>();
+    LinkedHashSet<Component> ret = new LinkedHashSet<>();
     for (Component comp : getComponents()) {
       if (comp.contains(pt)) ret.add(comp);
     }
@@ -606,7 +593,7 @@ public class Circuit {
   }
 
   public Collection<Component> getAllContaining(Location pt, Graphics g) {
-    LinkedHashSet<Component> ret = new LinkedHashSet<Component>();
+    LinkedHashSet<Component> ret = new LinkedHashSet<>();
     for (Component comp : getComponents()) {
       if (comp.contains(pt, g)) ret.add(comp);
     }
@@ -614,7 +601,7 @@ public class Circuit {
   }
 
   public Collection<Component> getAllWithin(Bounds bds) {
-    LinkedHashSet<Component> ret = new LinkedHashSet<Component>();
+    LinkedHashSet<Component> ret = new LinkedHashSet<>();
     for (Component comp : getComponents()) {
       if (bds.contains(comp.getBounds())) ret.add(comp);
     }
@@ -622,7 +609,7 @@ public class Circuit {
   }
 
   public Collection<Component> getAllWithin(Bounds bds, Graphics g) {
-    LinkedHashSet<Component> ret = new LinkedHashSet<Component>();
+    LinkedHashSet<Component> ret = new LinkedHashSet<>();
     for (Component comp : getComponents()) {
       if (bds.contains(comp.getBounds(g))) ret.add(comp);
     }
@@ -736,7 +723,7 @@ public class Circuit {
   }
   
   public Set<String> getBoardMapNamestoSave() {
-    HashSet<String> ret = new HashSet<String>();
+    HashSet<String> ret = new HashSet<>();
     ret.addAll(LoadedMaps.keySet());
     ret.addAll(MyMappableResources.keySet());
     return ret;
@@ -747,7 +734,7 @@ public class Circuit {
       return MyMappableResources.get(BoardName).getCircuitMap();
     if (LoadedMaps.containsKey(BoardName))
       return LoadedMaps.get(BoardName);
-    return new HashMap<String,CircuitMapInfo>();
+    return new HashMap<>();
   }
   
   public void setBoardMap(String BoardName, MappableResourcesContainer map) {
@@ -854,7 +841,7 @@ public class Circuit {
        * the circuit
        */
       if (c.getAttributeSet().containsAttribute(StdAttr.LABEL) && !(c.getFactory() instanceof Tunnel)) {
-        HashSet<String> labels = new HashSet<String>();
+        HashSet<String> labels = new HashSet<>();
         for (Component comp : comps) {
           if (comp.equals(c) || comp.getFactory() instanceof Tunnel)
             continue;
@@ -893,7 +880,7 @@ public class Circuit {
     locker.checkForWritePermission("clear", this);
 
     Set<Component> oldComps = comps;
-    comps = new LinkedHashSet<Component>();
+    comps = new LinkedHashSet<>();
     wires = new CircuitWires();
     clocks.clear();
     MyNetList.clear();
@@ -937,7 +924,7 @@ public class Circuit {
       AttributeSet attrs = comp.getAttributeSet();
       if (attrs.containsAttribute(StdAttr.LABEL)) {
         String CompLabel = attrs.getValue(StdAttr.LABEL);
-        if (Label.toUpperCase().equals(CompLabel.toUpperCase())) {
+        if (Label.equalsIgnoreCase(CompLabel)) {
           attrs.setValue(StdAttr.LABEL, "");
           HaveAChange = true;
         }
@@ -965,7 +952,7 @@ public class Circuit {
     return staticAttrs.getValue(CircuitAttributes.NAME_ATTR);
   }
 
-  public class TimeoutSimulation extends TimerTask {
+  public static class TimeoutSimulation extends TimerTask {
 
     /* Make it atomic */
     private volatile boolean timedOut;

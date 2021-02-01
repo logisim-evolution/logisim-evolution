@@ -29,5 +29,5 @@
 package com.cburch.logisim.util;
 
 public interface StringGetter {
-  public String toString();
+  String toString();
 }

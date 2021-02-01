@@ -28,6 +28,10 @@
 
 package com.cburch.logisim.fpga.file;
 
+import com.cburch.logisim.fpga.data.BoardInformation;
+import com.cburch.logisim.fpga.data.FPGAClass;
+import com.cburch.logisim.fpga.data.FPGAIOInformationContainer;
+import com.cburch.logisim.fpga.gui.DialogNotification;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.InputStream;
@@ -40,11 +44,6 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import com.cburch.logisim.fpga.data.BoardInformation;
-import com.cburch.logisim.fpga.data.FPGAClass;
-import com.cburch.logisim.fpga.data.FPGAIOInformationContainer;
-import com.cburch.logisim.fpga.gui.DialogNotification;
-
 public class BoardReaderClass {
 
   static final Logger logger = LoggerFactory.getLogger(BoardReaderClass.class);
@@ -55,7 +54,7 @@ public class BoardReaderClass {
   private Document BoardDoc;
 
   public BoardReaderClass(String filename) {
-    myfilename = new String(filename);
+    myfilename = filename;
   }
 
   private BufferedImage CreateImage(int width, int height, String[] CodeTable, String PixelData) {

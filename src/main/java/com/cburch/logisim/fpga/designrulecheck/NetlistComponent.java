@@ -50,7 +50,7 @@ public class NetlistComponent {
     IsGatedInstance = false;
     nr_of_ends = Ref.getEnds().size();
     CompReference = Ref;
-    Ends = new ArrayList<ConnectionEnd>();
+    Ends = new ArrayList<>();
     for (int i = 0; i < Ref.getEnds().size(); i++) {
       Ends.add( new ConnectionEnd( Ref.getEnd(i).isOutput(), 
                 (byte) Ref.getEnd(i).getWidth().getWidth(), Ref));
@@ -87,7 +87,7 @@ public class NetlistComponent {
       return;
     }
     if (GlobalIds == null) {
-      GlobalIds = new HashMap<ArrayList<String>, BubbleInformationContainer>();
+      GlobalIds = new HashMap<>();
     }
     BubbleInformationContainer thisInfo = new BubbleInformationContainer();
     if (NrOfInputBubbles > 0) {
@@ -142,7 +142,7 @@ public class NetlistComponent {
   }
 
   public ArrayList<ConnectionPoint> GetConnections(Net RootNet, byte BitIndex, boolean IsOutput) {
-    ArrayList<ConnectionPoint> Connections = new ArrayList<ConnectionPoint>();
+    ArrayList<ConnectionPoint> Connections = new ArrayList<>();
     for (ConnectionEnd search : Ends) {
       for (byte bit = 0; bit < search.NrOfBits(); bit++) {
         ConnectionPoint connection = search.GetConnection(bit);

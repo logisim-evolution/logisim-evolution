@@ -38,9 +38,9 @@ import com.cburch.logisim.circuit.SubcircuitFactory;
 import com.cburch.logisim.circuit.Wire;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.comp.ComponentFactory;
+import com.cburch.logisim.comp.PositionComparator;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeEvent;
-import com.cburch.logisim.data.Location;
 import com.cburch.logisim.gui.generic.AttrTableSetException;
 import com.cburch.logisim.gui.generic.AttributeSetTableModel;
 import com.cburch.logisim.gui.generic.OptionPane;
@@ -51,7 +51,6 @@ import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.tools.SetAttributeAction;
 import com.cburch.logisim.util.AutoLabel;
 import com.cburch.logisim.vhdl.base.VhdlContent;
-import java.util.Comparator;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -157,7 +156,7 @@ class AttrTableSelectionModel extends AttributeSetTableModel implements Selectio
       if (attr.equals(StdAttr.LABEL)) {
         labler = new AutoLabel((String) value, circuit);
       }
-      SortedSet<Component> comps = new TreeSet<Component>(new PositionComparator());
+      SortedSet<Component> comps = new TreeSet<>(new PositionComparator());
       comps.addAll(selection.getComponents());
       for (Component comp : comps) {
         if (!(comp instanceof Wire)) {
@@ -181,7 +180,7 @@ class AttrTableSelectionModel extends AttributeSetTableModel implements Selectio
               if (comps.size() > 1) {
                 act.set(comp, attr, labler.GetNext(circuit, comp.getFactory()));
               } else {
-                if (getAttributeSet().getValue(StdAttr.LABEL).equals((String) value)) return;
+                if (getAttributeSet().getValue(StdAttr.LABEL).equals(value)) return;
                 else act.set(comp, attr, labler.GetCurrent(circuit, comp.getFactory()));
               }
             } else act.set(comp, attr, "");
@@ -192,16 +191,4 @@ class AttrTableSelectionModel extends AttributeSetTableModel implements Selectio
     }
   }
 
-  private class PositionComparator implements Comparator<Component> {
-
-    @Override
-    public int compare(Component o1, Component o2) {
-      if (o1 == o2) return 0;
-      Location l1 = o1.getLocation();
-      Location l2 = o2.getLocation();
-      if (l2.getY() != l1.getY()) return l1.getY() - l2.getY();
-      if (l2.getX() != l1.getX()) return l1.getX() - l2.getX();
-      return -1;
-    }
-  }
 }

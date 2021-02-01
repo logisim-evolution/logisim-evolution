@@ -75,7 +75,7 @@ public class ITA_IO extends Library {
   @Override
   public List<? extends Tool> getTools() {
     if (tools == null) {
-      List<Tool> ret = new ArrayList<Tool>(ADD_TOOLS.length + DESCRIPTIONS.length);
+      List<Tool> ret = new ArrayList<>(ADD_TOOLS.length + DESCRIPTIONS.length);
       for (Tool a : ADD_TOOLS) ret.add(a);
       ret.addAll(FactoryDescription.getTools(ITA_IO.class, DESCRIPTIONS));
       tools = ret;

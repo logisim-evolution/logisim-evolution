@@ -60,7 +60,7 @@ public class ModelEditTextAction extends ModelAction {
 
   @Override
   public Collection<CanvasObject> getObjects() {
-    return Collections.singleton((CanvasObject) text);
+    return Collections.singleton(text);
   }
 
   @Override

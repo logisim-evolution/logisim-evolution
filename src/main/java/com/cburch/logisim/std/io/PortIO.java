@@ -63,9 +63,9 @@ import java.util.Arrays;
 public class PortIO extends InstanceFactory {
 
   public static final ArrayList<String> GetLabels(int size) {
-    ArrayList<String> LabelNames = new ArrayList<String>();
+    ArrayList<String> LabelNames = new ArrayList<>();
     for (int i = 0; i < size; i++) {
-      LabelNames.add("pin_" + Integer.toString(i + 1));
+      LabelNames.add("pin_" + (i + 1));
     }
     return LabelNames;
   }

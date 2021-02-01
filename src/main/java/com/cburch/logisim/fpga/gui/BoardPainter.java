@@ -30,16 +30,15 @@ package com.cburch.logisim.fpga.gui;
 
 import static com.cburch.logisim.fpga.Strings.S;
 
+import com.cburch.logisim.data.Value;
+import com.cburch.logisim.prefs.AppPreferences;
+import com.cburch.logisim.util.GraphicsUtil;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-
-import com.cburch.logisim.data.Value;
-import com.cburch.logisim.prefs.AppPreferences;
-import com.cburch.logisim.util.GraphicsUtil;
 
 public class BoardPainter {
 
@@ -73,13 +72,13 @@ public class BoardPainter {
     g.drawString(message, xpos, (200 + (int) (1.5 * fm.getAscent())));
     message = S.get("BoardPainterMsg4");
     xpos = (bm.getWidth() - fm.stringWidth(message)) / 2;
-    g.drawString(message, xpos, (200 + (int) (3 * fm.getAscent())));
+    g.drawString(message, xpos, (200 + (3 * fm.getAscent())));
     message = S.get("BoardPainterMsg5");
     xpos = (bm.getWidth() - fm.stringWidth(message)) / 2;
     g.drawString(message, xpos, (200 + (int) (4.5 * fm.getAscent())));
     message = S.fmt("BoardPainterMsg6", bm.getWidth(), bm.getHeight());
     xpos = (bm.getWidth() - fm.stringWidth(message)) / 2;
-    g.drawString(message, xpos, (200 + (int) (6 * fm.getAscent())));
+    g.drawString(message, xpos, (200 + (6 * fm.getAscent())));
   }
   
   public static void paintConstantOpenBar(Graphics g, float scale) {
@@ -111,8 +110,9 @@ public class BoardPainter {
     g.setColor(value == 0 ? Value.FALSE_COLOR : value == 1 ? Value.TRUE_COLOR : Value.UNKNOWN_COLOR);
     g.fillOval(xpos+(height>>3), ypos+(height>>3), height-(height>>2), height-(height>>2));
     g.setColor(Color.WHITE);
-    if (!constant) GraphicsUtil.drawCenteredText((Graphics)g, Integer.toString(value), xpos+(height>>1), ypos+(height>>1));
-    else GraphicsUtil.drawCenteredText((Graphics)g, "C", xpos+(height>>1), ypos+(height>>1));
+    if (!constant) GraphicsUtil.drawCenteredText(
+        g, Integer.toString(value), xpos+(height>>1), ypos+(height>>1));
+    else GraphicsUtil.drawCenteredText(g, "C", xpos+(height>>1), ypos+(height>>1));
   }
 
   private static void paintOpenButton(Graphics2D g, int xpos , int ypos, float scale) {

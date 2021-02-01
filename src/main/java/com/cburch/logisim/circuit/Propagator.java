@@ -69,7 +69,7 @@ public class Propagator {
     WeakReference<Propagator> prop;
 
     public Listener(Propagator propagator) {
-      prop = new WeakReference<Propagator>(propagator);
+      prop = new WeakReference<>(propagator);
     }
 
     public void attributeListChanged(AttributeEvent e) {}
@@ -151,7 +151,7 @@ public class Propagator {
    */
   private volatile int simRandomShift;
 
-  private final PriorityQueue<SetData> toProcess = new PriorityQueue<SetData>();
+  private final PriorityQueue<SetData> toProcess = new PriorityQueue<>();
   private int clock = 0;
   private boolean isOscillating = false;
   private boolean oscAdding = false;
@@ -314,7 +314,7 @@ public class Propagator {
 
   private SetData removeCause(CircuitState state, SetData head, Location loc, Component cause) {
     HashMap<Location, SetData> causes = state.causes;
-    if (head == null) {;
+    if (head == null) {
     } else if (head.cause == cause) {
       head = head.next;
       if (head == null) causes.remove(loc);
@@ -392,7 +392,7 @@ public class Propagator {
 
     // propagate all values for this clock tick
     HashMap<CircuitState, HashSet<ComponentPoint>> visited =
-        new HashMap<CircuitState, HashSet<ComponentPoint>>();
+        new HashMap<>();
     while (true) {
       SetData data = toProcess.peek();
       if (data == null || data.time != clock) break;
@@ -404,7 +404,7 @@ public class Propagator {
       if (handled != null) {
         if (!handled.add(new ComponentPoint(data.cause, data.loc))) continue;
       } else {
-        handled = new HashSet<ComponentPoint>();
+        handled = new HashSet<>();
         visited.put(state, handled);
         handled.add(new ComponentPoint(data.cause, data.loc));
       }

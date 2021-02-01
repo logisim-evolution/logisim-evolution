@@ -44,7 +44,7 @@ public class ModelTranslateAction extends ModelAction {
 
   public ModelTranslateAction(CanvasModel model, Collection<CanvasObject> moved, int dx, int dy) {
     super(model);
-    this.moved = new HashSet<CanvasObject>(moved);
+    this.moved = new HashSet<>(moved);
     this.dx = dx;
     this.dy = dy;
   }

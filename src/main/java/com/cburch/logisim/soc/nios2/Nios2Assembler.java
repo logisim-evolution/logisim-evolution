@@ -28,10 +28,9 @@
 
 package com.cburch.logisim.soc.nios2;
 
-import java.util.LinkedList;
-
 import com.cburch.logisim.soc.util.AbstractAssembler;
 import com.cburch.logisim.soc.util.AssemblerToken;
+import java.util.LinkedList;
 
 public class Nios2Assembler extends AbstractAssembler {
 

@@ -30,11 +30,10 @@ package com.cburch.logisim.fpga.data;
 
 import static com.cburch.logisim.fpga.Strings.S;
 
-import java.util.EnumSet;
-
 import com.cburch.logisim.std.io.DipSwitch;
 import com.cburch.logisim.std.io.RGBLed;
 import com.cburch.logisim.std.io.ReptarLocalBus;
+import java.util.EnumSet;
 
 public enum IOComponentTypes {
   LED,

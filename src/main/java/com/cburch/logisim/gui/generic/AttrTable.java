@@ -229,7 +229,7 @@ public class AttrTable extends JPanel implements LocaleListener {
 
   private class CellEditor implements TableCellEditor, FocusListener, ActionListener {
 
-    LinkedList<CellEditorListener> listeners = new LinkedList<CellEditorListener>();
+    LinkedList<CellEditorListener> listeners = new LinkedList<>();
     AttrTableModelRow currentRow;
     AttrTableModelRow[] currentRows;
     int[] currentRowIndexes;
@@ -267,7 +267,7 @@ public class AttrTable extends JPanel implements LocaleListener {
     public void fireEditingCanceled() {
       int col = table.getEditingColumn();
       ChangeEvent e = new ChangeEvent(AttrTable.this);
-      for (CellEditorListener l : new ArrayList<CellEditorListener>(listeners)) {
+      for (CellEditorListener l : new ArrayList<>(listeners)) {
         l.editingCanceled(e);
       }
       if (multiEditActive) {
@@ -281,7 +281,7 @@ public class AttrTable extends JPanel implements LocaleListener {
 
     public void fireEditingStopped() {
       ChangeEvent e = new ChangeEvent(AttrTable.this);
-      for (CellEditorListener l : new ArrayList<CellEditorListener>(listeners)) {
+      for (CellEditorListener l : new ArrayList<>(listeners)) {
         l.editingStopped(e);
       }
     }
@@ -445,7 +445,7 @@ public class AttrTable extends JPanel implements LocaleListener {
 
     TableModelAdapter(Window parent, AttrTableModel attrModel) {
       this.parent = parent;
-      this.listeners = new LinkedList<TableModelListener>();
+      this.listeners = new LinkedList<>();
       this.attrModel = attrModel;
     }
 
@@ -499,7 +499,7 @@ public class AttrTable extends JPanel implements LocaleListener {
 
     void fireTableChanged() {
       TableModelEvent e = new TableModelEvent(this);
-      for (TableModelListener l : new ArrayList<TableModelListener>(listeners)) {
+      for (TableModelListener l : new ArrayList<>(listeners)) {
         l.tableChanged(e);
       }
     }

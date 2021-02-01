@@ -30,6 +30,6 @@ package com.cburch.logisim.fpga.data;
 
 public interface BoardManipulatorListener {
 
-   public void boardNameChanged(String newBoardName);
-   public void componentsChanged(IOComponentsInformation IOcomps);
+   void boardNameChanged(String newBoardName);
+   void componentsChanged(IOComponentsInformation IOcomps);
 }

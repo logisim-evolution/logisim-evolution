@@ -78,7 +78,7 @@ class MemContentsSub {
     @Override
     void set(long addr, long value) {
       if (addr >= 0 && addr < data.length) {
-        byte oldValue = (byte)data[(int)addr];
+        byte oldValue = data[(int)addr];
         if (value != oldValue) {
           data[(int)addr] = (byte) value;
         }
@@ -131,7 +131,7 @@ class MemContentsSub {
     @Override
     void set(long addr, long value) {
       if (addr >= 0 && addr < data.length) {
-        int oldValue = (int)data[(int)addr];
+        int oldValue = data[(int)addr];
         if (value != oldValue) {
           data[(int)addr] = (int)value;
         }

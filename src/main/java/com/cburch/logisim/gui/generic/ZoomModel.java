@@ -32,25 +32,25 @@ import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeListener;
 
 public interface ZoomModel {
-  public static final String ZOOM = "zoom";
-  public static final String SHOW_GRID = "grid";
-  public static final String CENTER = "center";
+  String ZOOM = "zoom";
+  String SHOW_GRID = "grid";
+  String CENTER = "center";
 
-  public void addPropertyChangeListener(String prop, PropertyChangeListener l);
+  void addPropertyChangeListener(String prop, PropertyChangeListener l);
 
-  public boolean getShowGrid();
+  boolean getShowGrid();
 
-  public void setShowGrid(boolean value);
+  void setShowGrid(boolean value);
 
-  public double getZoomFactor();
+  double getZoomFactor();
 
-  public void setZoomFactor(double value);
+  void setZoomFactor(double value);
 
-  public double[] getZoomOptions();
+  double[] getZoomOptions();
 
-  public void removePropertyChangeListener(String prop, PropertyChangeListener l);
+  void removePropertyChangeListener(String prop, PropertyChangeListener l);
 
-  public void setZoomFactorCenter(double value);
+  void setZoomFactorCenter(double value);
 
-  public void setZoomFactor(double value, MouseEvent e);
+  void setZoomFactor(double value, MouseEvent e);
 }

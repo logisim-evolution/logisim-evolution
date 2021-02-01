@@ -29,7 +29,7 @@
 package com.cburch.logisim.tools;
 
 public interface CaretListener {
-  public void editingCanceled(CaretEvent e);
+  void editingCanceled(CaretEvent e);
 
-  public void editingStopped(CaretEvent e);
+  void editingStopped(CaretEvent e);
 }

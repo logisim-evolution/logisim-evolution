@@ -64,7 +64,7 @@ public class PolyTool extends AbstractTool {
     this.closed = closed;
     this.attrs = attrs;
     active = false;
-    locations = new ArrayList<Location>();
+    locations = new ArrayList<>();
   }
 
   private CanvasObject commit(Canvas canvas) {

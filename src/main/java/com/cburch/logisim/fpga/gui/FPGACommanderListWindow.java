@@ -28,6 +28,7 @@
 
 package com.cburch.logisim.fpga.gui;
 
+import com.cburch.logisim.fpga.data.FPGACommanderListModel;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.WindowEvent;
@@ -39,13 +40,11 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 
-import com.cburch.logisim.fpga.data.FPGACommanderListModel;
-
 @SuppressWarnings("serial")
 public class FPGACommanderListWindow extends JFrame implements WindowListener, ListDataListener {
 
   private final String Title;
-  private final JList<Object> textArea = new JList<Object>();
+  private final JList<Object> textArea = new JList<>();
   private boolean IsActive = false;
   private final boolean count;
   private final FPGACommanderListModel model;

@@ -54,10 +54,10 @@ public class ClipboardActions extends Action {
     this.canvas = canvas;
     this.canvasModel = canvas.getModel();
 
-    ArrayList<CanvasObject> contents = new ArrayList<CanvasObject>();
+    ArrayList<CanvasObject> contents = new ArrayList<>();
     Direction anchorFacing = null;
     Location anchorLocation = null;
-    ArrayList<CanvasObject> aff = new ArrayList<CanvasObject>();
+    ArrayList<CanvasObject> aff = new ArrayList<>();
     for (CanvasObject o : canvas.getSelection().getSelected()) {
       if (o.canRemove()) {
         aff.add(o);

@@ -33,17 +33,17 @@ import java.awt.event.ActionListener;
 import javax.swing.KeyStroke;
 
 interface MenuItem {
-  public void actionPerformed(ActionEvent event);
+  void actionPerformed(ActionEvent event);
 
-  public void addActionListener(ActionListener l);
+  void addActionListener(ActionListener l);
 
   boolean hasListeners();
 
-  public boolean isEnabled();
+  boolean isEnabled();
 
-  public void setEnabled(boolean value);
+  void setEnabled(boolean value);
 
-  public void removeActionListener(ActionListener l);
+  void removeActionListener(ActionListener l);
 
-  public KeyStroke getAccelerator();
+  KeyStroke getAccelerator();
 }

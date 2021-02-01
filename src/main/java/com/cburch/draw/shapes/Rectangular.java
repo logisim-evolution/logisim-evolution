@@ -161,7 +161,7 @@ abstract class Rectangular extends FillableCanvasObject {
           if (y0 == hy) newY1 -= dy;
           if (y1 == hy) newY0 -= dy;
         } else {
-          ; // already handled
+          // already handled
         }
       }
       return new Handle[] {

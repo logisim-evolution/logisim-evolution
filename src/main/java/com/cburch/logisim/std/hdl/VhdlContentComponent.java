@@ -176,7 +176,7 @@ public class VhdlContentComponent extends HdlContent {
   }
 
   public boolean parseContent(String content) {
-    VhdlParser parser = new VhdlParser(content.toString());
+    VhdlParser parser = new VhdlParser(content);
     try {
       parser.parse();
     } catch (Exception ex) {

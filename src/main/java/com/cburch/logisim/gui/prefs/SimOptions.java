@@ -451,7 +451,7 @@ public class SimOptions extends OptionsPanel {
     repaint();
   }
 
-  private class MyListener implements PreferenceChangeListener {
+  private static class MyListener implements PreferenceChangeListener {
 
     @Override
     public void preferenceChange(PreferenceChangeEvent evt) {
@@ -525,7 +525,7 @@ public class SimOptions extends OptionsPanel {
     }
   }
 
-  private class SymbolChooser extends JComboBox<Character> {
+  private static class SymbolChooser extends JComboBox<Character> {
     private static final long serialVersionUID = 1L;
     private final PrefMonitor<String> myPref;
 

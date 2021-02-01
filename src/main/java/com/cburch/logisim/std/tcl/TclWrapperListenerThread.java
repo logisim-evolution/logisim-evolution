@@ -44,7 +44,7 @@ public class TclWrapperListenerThread extends UniquelyNamedThread {
   TclWrapperListenerThread(SocketClient socket, Simulator simulator) {
     super("TclWrapperListenerThread");
     this.socket = socket;
-    this.messages = new LinkedList<String>();
+    this.messages = new LinkedList<>();
     this.sim = simulator;
   }
 

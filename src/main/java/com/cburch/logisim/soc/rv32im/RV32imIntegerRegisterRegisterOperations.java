@@ -30,13 +30,12 @@ package com.cburch.logisim.soc.rv32im;
 
 import static com.cburch.logisim.soc.Strings.S;
 
-import java.util.ArrayList;
-
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.soc.file.ElfHeader;
 import com.cburch.logisim.soc.util.AssemblerAsmInstruction;
 import com.cburch.logisim.soc.util.AssemblerExecutionInterface;
 import com.cburch.logisim.soc.util.AssemblerToken;
+import java.util.ArrayList;
 
 public class RV32imIntegerRegisterRegisterOperations implements AssemblerExecutionInterface {
 
@@ -69,11 +68,11 @@ public class RV32imIntegerRegisterRegisterOperations implements AssemblerExecuti
   private boolean valid = false;
       
   public ArrayList<String> getInstructions() {
-    ArrayList<String> opcodes = new ArrayList<String>();
+    ArrayList<String> opcodes = new ArrayList<>();
     for (String asmOpcode : AsmOpcodes)
       opcodes.add(asmOpcode);
     return opcodes;
-  };
+  }
 
   public boolean execute(Object state, CircuitState cState) {
     if (!valid)
@@ -92,11 +91,11 @@ public class RV32imIntegerRegisterRegisterOperations implements AssemblerExecuti
       case INSTR_SLT  : result = (opp1 < opp2) ? 1 : 0;
                         break;
       case INSTR_SNEZ :
-      case INSTR_SLTU : result = (ElfHeader.getLongValue((Integer)opp1)<ElfHeader.getLongValue((Integer)opp2)) ? 1 : 0;
+      case INSTR_SLTU : result = (ElfHeader.getLongValue(opp1)<ElfHeader.getLongValue(opp2)) ? 1 : 0;
                         break;
       case INSTR_XOR  : result = opp1 ^ opp2;
                         break;
-      case INSTR_SRL  : Long val1 = ElfHeader.getLongValue((Integer)opp1);
+      case INSTR_SRL  : Long val1 = ElfHeader.getLongValue(opp1);
                         val1 >>= (opp2&0x1F);
                         result = ElfHeader.getIntValue(val1);
                         break;

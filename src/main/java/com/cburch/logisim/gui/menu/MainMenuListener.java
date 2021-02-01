@@ -58,6 +58,7 @@ public class MainMenuListener extends MenuListener {
   protected FileListener fileListener = new FileListener();
   protected ProjectMenuListener projectListener = new ProjectMenuListener();
   protected SimulateMenuListener simulateListener = new SimulateMenuListener();
+
   public MainMenuListener(Frame frame, LogisimMenuBar menubar) {
     super(menubar);
     this.frame = frame;

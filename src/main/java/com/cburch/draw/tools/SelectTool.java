@@ -100,7 +100,7 @@ public class SelectTool extends AbstractTool {
       curAction = IDLE;
       Selection sel = canvas.getSelection();
       sel.clearDrawsSuppressed();
-      sel.setMovingShapes(Collections.<CanvasObject>emptySet(), 0, 0);
+      sel.setMovingShapes(Collections.emptySet(), 0, 0);
       sel.clearSelected();
       sel.setSelected(before, true);
       sel.setHandleSelected(handle);
@@ -265,7 +265,7 @@ public class SelectTool extends AbstractTool {
     char ch = e.getKeyChar();
     Selection selected = canvas.getSelection();
     if ((ch == '\u0008' || ch == '\u007F') && !selected.isEmpty()) {
-      ArrayList<CanvasObject> toRemove = new ArrayList<CanvasObject>();
+      ArrayList<CanvasObject> toRemove = new ArrayList<>();
       for (CanvasObject shape : selected.getSelected()) {
         if (shape.canRemove()) {
           toRemove.add(shape);
@@ -291,7 +291,7 @@ public class SelectTool extends AbstractTool {
 
   @Override
   public void mousePressed(Canvas canvas, MouseEvent e) {
-    beforePressSelection = new ArrayList<CanvasObject>(canvas.getSelection().getSelected());
+    beforePressSelection = new ArrayList<>(canvas.getSelection().getSelected());
     beforePressHandle = canvas.getSelection().getSelectedHandle();
     int mx = e.getX();
     int my = e.getY();

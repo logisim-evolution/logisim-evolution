@@ -35,7 +35,7 @@ class ConnectionPointArray {
   private final ArrayList<ConnectionPoint> MyConnections;
 
   public ConnectionPointArray() {
-    MyConnections = new ArrayList<ConnectionPoint>();
+    MyConnections = new ArrayList<>();
   }
 
   public void AddConnection(ConnectionPoint Connection) {

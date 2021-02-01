@@ -70,7 +70,7 @@ class LayoutPopupManager implements SelectionListener, MouseListener, MouseMotio
 
   // returns all the ports in the current selection
   private Set<AppearancePort> getSelectedPorts() {
-    HashSet<AppearancePort> ports = new HashSet<AppearancePort>();
+    HashSet<AppearancePort> ports = new HashSet<>();
     for (CanvasObject o : canvas.getSelection().getSelected()) {
       if (o instanceof AppearancePort) {
         ports.add((AppearancePort) o);

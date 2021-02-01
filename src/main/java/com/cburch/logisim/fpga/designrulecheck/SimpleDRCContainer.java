@@ -127,12 +127,12 @@ public class SimpleDRCContainer {
   }
 
   public void AddMarkComponent(Object comp) {
-    if (DRCComponents == null) DRCComponents = new HashSet<Object>();
+    if (DRCComponents == null) DRCComponents = new HashSet<>();
     DRCComponents.add(comp);
   }
 
   public void AddMarkComponents(Set<?> set) {
-    if (DRCComponents == null) DRCComponents = new HashSet<Object>();
+    if (DRCComponents == null) DRCComponents = new HashSet<>();
     DRCComponents.addAll(set);
   }
 

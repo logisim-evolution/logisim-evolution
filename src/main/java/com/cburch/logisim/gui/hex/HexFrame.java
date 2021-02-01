@@ -65,6 +65,7 @@ public class HexFrame extends LFrame {
   private final JButton close = new JButton();
   private final Instance instance;
   private final Project proj;
+
   public HexFrame(Project proj, Instance instance, HexModel model) {
     super(false, proj);
     setDefaultCloseOperation(HIDE_ON_CLOSE);

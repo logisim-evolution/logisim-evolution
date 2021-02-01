@@ -48,26 +48,26 @@ import java.awt.Color;
  * particular category.
  */
 public interface ComponentFactory extends AttributeDefaultProvider {
-  public static final Object SHOULD_SNAP = new Object();
-  public static final Object TOOL_TIP = new Object();
-  public static final Object FACING_ATTRIBUTE_KEY = new Object();
+  Object SHOULD_SNAP = new Object();
+  Object TOOL_TIP = new Object();
+  Object FACING_ATTRIBUTE_KEY = new Object();
 
-  public boolean ActiveOnHigh(AttributeSet attrs);
+  boolean ActiveOnHigh(AttributeSet attrs);
 
-  public AttributeSet createAttributeSet();
+  AttributeSet createAttributeSet();
 
-  public Component createComponent(Location loc, AttributeSet attrs);
+  Component createComponent(Location loc, AttributeSet attrs);
   
-  public void removeComponent(Circuit circ, Component c , CircuitState state);
+  void removeComponent(Circuit circ, Component c, CircuitState state);
 
-  public void drawGhost(
+  void drawGhost(
       ComponentDrawContext context, Color color, int x, int y, AttributeSet attrs);
 
-  public Object getDefaultAttributeValue(Attribute<?> attr, LogisimVersion ver);
+  Object getDefaultAttributeValue(Attribute<?> attr, LogisimVersion ver);
 
-  public StringGetter getDisplayGetter();
+  StringGetter getDisplayGetter();
 
-  public String getDisplayName();
+  String getDisplayName();
 
   /**
    * Retrieves special-purpose features for this factory. This technique allows for future Logisim
@@ -84,35 +84,35 @@ public interface ComponentFactory extends AttributeDefaultProvider {
    * @return an object representing information about how the component supports the feature, or
    *     <code>null</code> if it does not support the feature.
    */
-  public Object getFeature(Object key, AttributeSet attrs);
+  Object getFeature(Object key, AttributeSet attrs);
 
-  public HDLGeneratorFactory getHDLGenerator(String HDLIdentifier, AttributeSet attrs);
+  HDLGeneratorFactory getHDLGenerator(String HDLIdentifier, AttributeSet attrs);
 
-  public String getHDLName(AttributeSet attrs);
+  String getHDLName(AttributeSet attrs);
 
-  public String getHDLTopName(AttributeSet attrs);
+  String getHDLTopName(AttributeSet attrs);
 
-  public String getName();
+  String getName();
 
-  public Bounds getOffsetBounds(AttributeSet attrs);
+  Bounds getOffsetBounds(AttributeSet attrs);
 
-  public boolean HasThreeStateDrivers(AttributeSet attrs);
+  boolean HasThreeStateDrivers(AttributeSet attrs);
 
-  public boolean HDLSupportedComponent(String HDLIdentifier, AttributeSet attrs);
+  boolean HDLSupportedComponent(String HDLIdentifier, AttributeSet attrs);
 
-  public boolean isAllDefaultValues(AttributeSet attrs, LogisimVersion ver);
+  boolean isAllDefaultValues(AttributeSet attrs, LogisimVersion ver);
 
-  public boolean CheckForGatedClocks(NetlistComponent comp);
+  boolean CheckForGatedClocks(NetlistComponent comp);
 
-  public int[] ClockPinIndex(NetlistComponent comp);
+  int[] ClockPinIndex(NetlistComponent comp);
 
-  public void paintIcon(ComponentDrawContext context, int x, int y, AttributeSet attrs);
+  void paintIcon(ComponentDrawContext context, int x, int y, AttributeSet attrs);
 
-  public boolean RequiresGlobalClock();
+  boolean RequiresGlobalClock();
 
   /* Added for HDL generation */
-  public boolean RequiresNonZeroLabel();
+  boolean RequiresNonZeroLabel();
   
   /* Added for Soc simulation core */
-  public boolean isSocComponent();
+  boolean isSocComponent();
 }

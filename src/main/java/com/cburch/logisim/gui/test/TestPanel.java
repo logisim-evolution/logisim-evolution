@@ -48,6 +48,7 @@ class TestPanel extends JPanel implements ValueTable.Model {
   private final TestFrame testFrame;
   private final ValueTable table;
   private final MyListener myListener = new MyListener();
+
   public TestPanel(TestFrame frame) {
     this.testFrame = frame;
     table = new ValueTable(getModel() == null ? null : this);

@@ -28,19 +28,18 @@
 
 package com.cburch.logisim.soc.util;
 
+import com.cburch.logisim.circuit.CircuitState;
 import java.util.ArrayList;
 
-import com.cburch.logisim.circuit.CircuitState;
-
 public interface AssemblerExecutionInterface {
-  public boolean execute(Object processorState, CircuitState circuitState);
-  public String getAsmInstruction();
-  public int getBinInstruction();
-  public boolean setAsmInstruction(AssemblerAsmInstruction instruction);
-  public boolean setBinInstruction(int instr);
-  public boolean performedJump();
-  public boolean isValid();
-  public String getErrorMessage();
-  public ArrayList<String> getInstructions();
-  public int getInstructionSizeInBytes(String instruction);
+  boolean execute(Object processorState, CircuitState circuitState);
+  String getAsmInstruction();
+  int getBinInstruction();
+  boolean setAsmInstruction(AssemblerAsmInstruction instruction);
+  boolean setBinInstruction(int instr);
+  boolean performedJump();
+  boolean isValid();
+  String getErrorMessage();
+  ArrayList<String> getInstructions();
+  int getInstructionSizeInBytes(String instruction);
 }

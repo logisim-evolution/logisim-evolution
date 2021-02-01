@@ -118,7 +118,7 @@ public class TclWrapper {
 
     /* Create the TCL process */
     ProcessBuilder builder;
-    List<String> command = new ArrayList<String>();
+    List<String> command = new ArrayList<>();
 
     command.add("tclsh");
     command.add(TCL_PATH + "tcl_wrapper.tcl");

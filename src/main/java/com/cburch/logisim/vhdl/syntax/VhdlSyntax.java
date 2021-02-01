@@ -28,9 +28,12 @@
 
 package com.cburch.logisim.vhdl.syntax;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.Reader;
 import javax.swing.text.Segment;
-import org.fife.ui.rsyntaxtextarea.*;
+import org.fife.ui.rsyntaxtextarea.AbstractJFlexTokenMaker;
+import org.fife.ui.rsyntaxtextarea.Token;
+import org.fife.ui.rsyntaxtextarea.TokenImpl;
 
 public class VhdlSyntax extends AbstractJFlexTokenMaker {
 

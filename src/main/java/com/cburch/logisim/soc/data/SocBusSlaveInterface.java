@@ -32,14 +32,14 @@ import com.cburch.logisim.instance.InstanceComponent;
 
 public interface SocBusSlaveInterface {
 
-  public boolean canHandleTransaction(SocBusTransaction trans);
+  boolean canHandleTransaction(SocBusTransaction trans);
   
-  public void handleTransaction(SocBusTransaction trans);
+  void handleTransaction(SocBusTransaction trans);
   
-  public Integer getStartAddress();
-  public Integer getMemorySize();
-  public String getName();
-  public void registerListener(SocBusSlaveListener l);
-  public void removeListener(SocBusSlaveListener l);
-  public InstanceComponent getComponent();
+  Integer getStartAddress();
+  Integer getMemorySize();
+  String getName();
+  void registerListener(SocBusSlaveListener l);
+  void removeListener(SocBusSlaveListener l);
+  InstanceComponent getComponent();
 }

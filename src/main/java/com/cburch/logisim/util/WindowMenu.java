@@ -95,8 +95,8 @@ public class WindowMenu extends JMenu {
   private final JMenuItem zoom = new JMenuItem();
   private final JMenuItem close = new JMenuItem();
   private final JRadioButtonMenuItem nullItem = new JRadioButtonMenuItem();
-  private final ArrayList<WindowMenuItem> persistentItems = new ArrayList<WindowMenuItem>();
-  private final ArrayList<WindowMenuItem> transientItems = new ArrayList<WindowMenuItem>();
+  private final ArrayList<WindowMenuItem> persistentItems = new ArrayList<>();
+  private final ArrayList<WindowMenuItem> transientItems = new ArrayList<>();
 
   public WindowMenu(JFrame owner) {
     this.owner = owner;

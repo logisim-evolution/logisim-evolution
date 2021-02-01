@@ -29,9 +29,9 @@
 package com.cburch.logisim.analyze.model;
 
 public interface TruthTableListener {
-  public void rowsChanged(TruthTableEvent event);
+  void rowsChanged(TruthTableEvent event);
 
-  public void cellsChanged(TruthTableEvent event);
+  void cellsChanged(TruthTableEvent event);
 
-  public void structureChanged(TruthTableEvent event);
+  void structureChanged(TruthTableEvent event);
 }

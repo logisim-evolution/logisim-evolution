@@ -30,18 +30,16 @@ package com.cburch.logisim.fpga.gui;
 
 import static com.cburch.logisim.fpga.Strings.S;
 
+import com.cburch.logisim.gui.icons.ErrorIcon;
+import com.cburch.logisim.gui.icons.WarningIcon;
 import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
-
-import com.cburch.logisim.gui.icons.ErrorIcon;
-import com.cburch.logisim.gui.icons.WarningIcon;
 
 public class DialogNotification {
 

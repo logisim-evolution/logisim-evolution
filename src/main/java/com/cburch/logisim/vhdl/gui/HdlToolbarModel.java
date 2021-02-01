@@ -62,7 +62,7 @@ public class HdlToolbarModel extends AbstractToolbarModel implements HdlModelLis
   public HdlToolbarModel(Project proj, HdlContentView editor) {
     this.editor = editor;
 
-    ArrayList<ToolbarItem> rawItems = new ArrayList<ToolbarItem>();
+    ArrayList<ToolbarItem> rawItems = new ArrayList<>();
     hdlImport = new HdlToolbarItem(new HdlIcon(HDL_IMPORT), HDL_IMPORT, S.getter("hdlOpenButton"));
     hdlExport = new HdlToolbarItem(new HdlIcon(HDL_EXPORT), HDL_EXPORT, S.getter("hdlSaveButton"));
     hdlValidate = new HdlToolbarItem(new HdlIcon(HDL_VALIDATE), HDL_VALIDATE, S.getter("validateButton"));

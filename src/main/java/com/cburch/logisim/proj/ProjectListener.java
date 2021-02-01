@@ -29,5 +29,5 @@
 package com.cburch.logisim.proj;
 
 public interface ProjectListener {
-  public void projectChanged(ProjectEvent event);
+  void projectChanged(ProjectEvent event);
 }

@@ -28,10 +28,9 @@
 
 package com.cburch.logisim.soc.rv32im;
 
-import java.util.LinkedList;
-
 import com.cburch.logisim.soc.util.AbstractAssembler;
 import com.cburch.logisim.soc.util.AssemblerToken;
+import java.util.LinkedList;
 
 public class RV32imAssembler extends AbstractAssembler {
 

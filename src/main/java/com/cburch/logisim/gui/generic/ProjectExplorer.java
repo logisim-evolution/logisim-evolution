@@ -300,7 +300,7 @@ public class ProjectExplorer extends JTree implements LocaleListener {
     }
   }
 
-  private class MySelectionModel extends DefaultTreeSelectionModel {
+  private static class MySelectionModel extends DefaultTreeSelectionModel {
 
     private static final long serialVersionUID = 1L;
 
