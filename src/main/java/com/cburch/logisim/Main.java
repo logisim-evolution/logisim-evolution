@@ -32,6 +32,7 @@ import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.gui.start.Startup;
 import com.cburch.logisim.prefs.AppPreferences;
 
+import com.github.weisj.darklaf.LafManager;
 import java.awt.Font;
 import java.awt.GraphicsEnvironment;
 import java.io.PrintWriter;
@@ -39,6 +40,7 @@ import java.io.StringWriter;
 import java.io.Writer;
 
 import javax.swing.UIManager;
+import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.plaf.FontUIResource;
 
@@ -50,6 +52,9 @@ public class Main {
     System.setProperty("apple.awt.application.name", "Logisim-evolution");
     try {
       if (!GraphicsEnvironment.isHeadless()) {
+        for (LookAndFeelInfo themeInfo : LafManager.getRegisteredThemeInfos()) {
+          UIManager.installLookAndFeel(themeInfo);
+        }
         UIManager.setLookAndFeel(AppPreferences.LookAndFeel.get());
         UIManager.put("ToolTip.font", new FontUIResource("SansSerif", Font.BOLD, AppPreferences.getScaled(12))); 
       }
