@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -72,7 +72,7 @@ public class ImageExporter extends javax.swing.JFrame implements ActionListener 
 
   private static final long serialVersionUID = 1L;
   private File fileToSave;
-  private ChronoData chronoData;
+  private final ChronoData chronoData;
   private final int tickWidth = 20;
   // Dimensions
   private final int lowPos = 32;
@@ -93,7 +93,7 @@ public class ImageExporter extends javax.swing.JFrame implements ActionListener 
   // for timeline
   private JPanel timePanel;
   private TimelineDraw td;
-  private ChronoFrame chronoFrame;
+  private final ChronoFrame chronoFrame;
   // GUI, select image export options
   private JFrame frame;
   private javax.swing.ButtonGroup buttonGroup1;
@@ -436,17 +436,21 @@ public class ImageExporter extends javax.swing.JFrame implements ActionListener 
   // Actually not in use. For a further development with more parameters to export the image
   @Override
   public void actionPerformed(ActionEvent ae) {
-    if (ae.getActionCommand() == "Single line") {
-      picture.setIcon(new ImageIcon(img_single));
-    } else if (ae.getActionCommand() == "Multiple lines") {
-      picture.setIcon(new ImageIcon(img_multiple));
-    } else if (ae.getActionCommand() == "Done") {
-      if (jRadioBtn_multiple.isSelected()) {
-        cropImage();
-      } else {
-        doNotCropImage();
-      }
-      frame.dispose();
+    switch (ae.getActionCommand()) {
+      case "Single line":
+        picture.setIcon(new ImageIcon(img_single));
+        break;
+      case "Multiple lines":
+        picture.setIcon(new ImageIcon(img_multiple));
+        break;
+      case "Done":
+        if (jRadioBtn_multiple.isSelected()) {
+          cropImage();
+        } else {
+          doNotCropImage();
+        }
+        frame.dispose();
+        break;
     }
   }
 }

@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -45,7 +45,7 @@ import java.beans.PropertyChangeListener;
 
 public class LayoutEditHandler extends EditHandler
     implements ProjectListener, LibraryListener, PropertyChangeListener {
-  private Frame frame;
+  private final Frame frame;
 
   LayoutEditHandler(Frame frame) {
     this.frame = frame;
@@ -65,7 +65,7 @@ public class LayoutEditHandler extends EditHandler
   public void computeEnabled() {
     Project proj = frame.getProject();
     Selection sel = proj == null ? null : proj.getSelection();
-    boolean selEmpty = (sel == null ? true : sel.isEmpty());
+    boolean selEmpty = (sel == null || sel.isEmpty());
     boolean canChange = proj != null && proj.getLogisimFile().contains(proj.getCurrentCircuit());
 
     boolean selectAvailable = false;

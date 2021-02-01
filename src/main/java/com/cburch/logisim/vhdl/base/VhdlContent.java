@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -115,7 +115,7 @@ public class VhdlContent extends HdlContent {
   protected AttributeOption appearance = StdAttr.APPEAR_EVOLUTION;
   protected String libraries;
   protected String architecture;
-  private LogisimFile logiFile;
+  private final LogisimFile logiFile;
 
   protected VhdlContent(String name, LogisimFile file) {
     logiFile = file;
@@ -261,8 +261,8 @@ public class VhdlContent extends HdlContent {
     return setContent(s);
   }
 
-  private StringBuffer errTitle = new StringBuffer();
-  private StringBuffer errMessage = new StringBuffer();
+  private final StringBuffer errTitle = new StringBuffer();
+  private final StringBuffer errMessage = new StringBuffer();
   private int errCode = 0;
   private Exception errException;
 

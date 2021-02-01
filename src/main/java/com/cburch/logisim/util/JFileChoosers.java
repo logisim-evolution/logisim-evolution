@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -64,8 +64,7 @@ public class JFileChoosers {
 
   public static JFileChooser create() {
     RuntimeException first = null;
-    for (int i = 0; i < PROP_NAMES.length; i++) {
-      String prop = PROP_NAMES[i];
+    for (String prop : PROP_NAMES) {
       try {
         String dirname;
         if (prop == null) {
@@ -85,9 +84,11 @@ public class JFileChoosers {
           }
         }
       } catch (RuntimeException t) {
-        if (first == null) first = t;
+        if (first == null)
+          first = t;
         Throwable u = t.getCause();
-        if (!(u instanceof IOException)) throw t;
+        if (!(u instanceof IOException))
+          throw t;
       }
     }
     throw first;

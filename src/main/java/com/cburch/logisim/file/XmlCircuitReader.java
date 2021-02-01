@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -85,7 +85,7 @@ public class XmlCircuitReader extends CircuitTransaction {
     }
 
     Tool tool = lib.getTool(name);
-    if (tool == null || !(tool instanceof AddTool)) {
+    if (!(tool instanceof AddTool)) {
       if (libName == null || libName.equals("")) {
         throw new XmlReaderException(S.fmt("compUnknownError", name));
       } else {
@@ -117,9 +117,9 @@ public class XmlCircuitReader extends CircuitTransaction {
     }
   }
 
-  private XmlReader.ReadContext reader;
+  private final XmlReader.ReadContext reader;
 
-  private List<XmlReader.CircuitData> circuitsData;
+  private final List<XmlReader.CircuitData> circuitsData;
   private boolean IsHolyCross = false;
   private boolean IsEvolution = false;
 

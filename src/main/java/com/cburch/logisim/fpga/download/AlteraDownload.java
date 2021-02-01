@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -59,22 +59,22 @@ import org.w3c.dom.Element;
 
 public class AlteraDownload implements VendorDownload {
 
-  private VendorSoftware alteraVendor = VendorSoftware.getSoftware(VendorSoftware.VendorAltera);
-  private String ScriptPath;
-  private String ProjectPath;
-  private String SandboxPath;
-  private FPGAReport Reporter;
-  private Netlist RootNetList;
+  private final VendorSoftware alteraVendor = VendorSoftware.getSoftware(VendorSoftware.VendorAltera);
+  private final String ScriptPath;
+  private final String ProjectPath;
+  private final String SandboxPath;
+  private final FPGAReport Reporter;
+  private final Netlist RootNetList;
   private MappableResourcesContainer MapInfo;
-  private BoardInformation BoardInfo;
-  private ArrayList<String> Entities;
-  private ArrayList<String> Architectures;
-  private String HDLType;
+  private final BoardInformation BoardInfo;
+  private final ArrayList<String> Entities;
+  private final ArrayList<String> Architectures;
+  private final String HDLType;
   private String cablename;
-  private boolean WriteToFlash;
+  private final boolean WriteToFlash;
 
-  private static String AlteraTclFile = "AlteraDownload.tcl";
-  private static String AlteraCofFile = "AlteraFlash.cof";
+  private static final String AlteraTclFile = "AlteraDownload.tcl";
+  private static final String AlteraCofFile = "AlteraFlash.cof";
 
   public AlteraDownload(
       String ProjectPath,
@@ -252,12 +252,12 @@ public class AlteraDownload implements VendorDownload {
     Contents.add("");
     Contents.add("    # Include all entities and gates");
     Contents.add("");
-    for (int i = 0; i < Entities.size(); i++) {
-      Contents.add("    set_global_assignment -name " + FileType + " \"" + Entities.get(i) + "\"");
+    for (String entity : Entities) {
+      Contents.add("    set_global_assignment -name " + FileType + " \"" + entity + "\"");
     }
-    for (int i = 0; i < Architectures.size(); i++) {
+    for (String architecture : Architectures) {
       Contents.add(
-          "    set_global_assignment -name " + FileType + " \"" + Architectures.get(i) + "\"");
+          "    set_global_assignment -name " + FileType + " \"" + architecture + "\"");
     }
     Contents.add("");
     Contents.add("    # Map fpga_clk and ionets to fpga pins");

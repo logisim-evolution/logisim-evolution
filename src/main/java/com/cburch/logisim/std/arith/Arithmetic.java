@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -36,7 +36,7 @@ import com.cburch.logisim.tools.Tool;
 import java.util.List;
 
 public class Arithmetic extends Library {
-  private static FactoryDescription[] DESCRIPTIONS = {
+  private static final FactoryDescription[] DESCRIPTIONS = {
     new FactoryDescription("Adder", S.getter("adderComponent"), "adder.gif", "Adder"),
     new FactoryDescription(
         "Subtractor", S.getter("subtractorComponent"), "subtractor.gif", "Subtractor"),

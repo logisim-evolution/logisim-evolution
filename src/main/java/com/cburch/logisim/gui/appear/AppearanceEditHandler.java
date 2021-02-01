@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -61,7 +61,7 @@ import java.util.Map;
 
 public class AppearanceEditHandler extends EditHandler
     implements SelectionListener, PropertyChangeListener, CanvasModelListener {
-  private AppearanceCanvas canvas;
+  private final AppearanceCanvas canvas;
 
   AppearanceEditHandler(AppearanceCanvas canvas) {
     this.canvas = canvas;

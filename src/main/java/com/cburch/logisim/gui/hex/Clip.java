@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -45,7 +45,7 @@ import java.io.IOException;
 
 class Clip implements ClipboardOwner {
   private static class Data implements Transferable {
-    private long[] data;
+    private final long[] data;
 
     Data(long[] data) {
       this.data = data;
@@ -57,8 +57,8 @@ class Clip implements ClipboardOwner {
         return data;
       } else if (flavor == DataFlavor.stringFlavor) {
         int bits = 1;
-        for (int i = 0; i < data.length; i++) {
-          long k = data[i] >> bits;
+        for (long datum : data) {
+          long k = datum >> bits;
           while (k != 0 && bits < 32) {
             bits++;
             k >>= 1;
@@ -92,7 +92,7 @@ class Clip implements ClipboardOwner {
 
   private static final DataFlavor binaryFlavor = new DataFlavor(long[].class, "Binary data");
 
-  private HexEditor editor;
+  private final HexEditor editor;
 
   Clip(HexEditor editor) {
     this.editor = editor;

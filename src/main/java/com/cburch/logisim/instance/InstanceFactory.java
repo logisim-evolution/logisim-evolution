@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -64,8 +64,8 @@ public abstract class InstanceFactory extends AbstractComponentFactory {
 
   static final Logger logger = LoggerFactory.getLogger(InstanceFactory.class);
 
-  private String name;
-  private StringGetter displayName;
+  private final String name;
+  private final StringGetter displayName;
   private StringGetter defaultToolTip;
   private String iconName;
   private Icon icon;
@@ -116,8 +116,7 @@ public abstract class InstanceFactory extends AbstractComponentFactory {
   @Override
   public AttributeSet createAttributeSet() {
     Attribute<?>[] as = attrs;
-    AttributeSet ret = as == null ? AttributeSets.EMPTY : AttributeSets.fixedSet(as, defaults);
-    return ret;
+    return as == null ? AttributeSets.EMPTY : AttributeSets.fixedSet(as, defaults);
   }
 
   @Override
@@ -347,7 +346,7 @@ public abstract class InstanceFactory extends AbstractComponentFactory {
   }
 
   public void setShouldSnap(boolean value) {
-    shouldSnap = Boolean.valueOf(value);
+    shouldSnap = value;
   }
   
   public boolean providesSubCircuitMenu() {

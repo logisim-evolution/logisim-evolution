@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -58,7 +58,7 @@ public class TestVector {
 
   private class TestVectorReader {
 
-    private BufferedReader in;
+    private final BufferedReader in;
     private StringTokenizer curLine;
 
     public TestVectorReader(BufferedReader in) throws IOException {
@@ -149,13 +149,10 @@ public class TestVector {
   public ArrayList<Value[]> data;
 
   public TestVector(File src) throws IOException {
-    BufferedReader in = new BufferedReader(new FileReader(src));
 
-    try {
+    try (BufferedReader in = new BufferedReader(new FileReader(src))) {
       TestVectorReader r = new TestVectorReader(in);
       r.parse();
-    } finally {
-      in.close();
     }
   }
 

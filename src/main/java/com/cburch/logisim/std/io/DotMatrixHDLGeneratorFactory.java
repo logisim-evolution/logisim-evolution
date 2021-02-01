@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -111,8 +111,7 @@ public class DotMatrixHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
   @Override
   public boolean HDLTargetSupported(String HDLType, AttributeSet attrs) {
-    boolean noPersist = attrs.getValue(DotMatrix.ATTR_PERSIST) == 0;
-    return noPersist;
+    return attrs.getValue(DotMatrix.ATTR_PERSIST) == 0;
   }
 
   @Override

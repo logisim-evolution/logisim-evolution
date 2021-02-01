@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -40,7 +40,7 @@ import javax.swing.event.ListSelectionListener;
 @SuppressWarnings("rawtypes")
 class LocaleSelector extends JList implements LocaleListener, ListSelectionListener {
   private static class LocaleOption implements Runnable {
-    private Locale locale;
+    private final Locale locale;
     private String text;
 
     LocaleOption(Locale locale) {
@@ -71,7 +71,7 @@ class LocaleSelector extends JList implements LocaleListener, ListSelectionListe
 
   private static final long serialVersionUID = 1L;
 
-  private LocaleOption[] items;
+  private final LocaleOption[] items;
 
   @SuppressWarnings("unchecked")
   LocaleSelector(Locale[] locales) {
@@ -92,9 +92,10 @@ class LocaleSelector extends JList implements LocaleListener, ListSelectionListe
   public void localeChanged() {
     Locale current = LocaleManager.getLocale();
     LocaleOption sel = null;
-    for (int i = 0; i < items.length; i++) {
-      items[i].update(current);
-      if (current.equals(items[i].locale)) sel = items[i];
+    for (LocaleOption item : items) {
+      item.update(current);
+      if (current.equals(item.locale))
+        sel = item;
     }
     if (sel != null) {
       setSelectedValue(sel, true);

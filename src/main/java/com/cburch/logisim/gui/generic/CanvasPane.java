@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -87,11 +87,11 @@ public class CanvasPane extends JScrollPane {
         if (mwe.getWheelRotation() < 0) { // ZOOM IN
           zoom += 0.1;
           double max = opts[opts.length - 1] / 100.0;
-          zoomModel.setZoomFactor(zoom >= max ? max : zoom, mwe);
+          zoomModel.setZoomFactor(Math.min(zoom, max), mwe);
         } else { // ZOOM OUT
           zoom -= 0.1;
           double min = opts[0] / 100.0;
-          zoomModel.setZoomFactor(zoom <= min ? min : zoom, mwe);
+          zoomModel.setZoomFactor(Math.max(zoom, min), mwe);
         }
       } else if (mwe.isShiftDown()) {
         getHorizontalScrollBar()
@@ -118,9 +118,9 @@ public class CanvasPane extends JScrollPane {
 
   private static final long serialVersionUID = 1L;
 
-  private CanvasPaneContents contents;
-  private Listener listener;
-  private ZoomListener zoomListener;
+  private final CanvasPaneContents contents;
+  private final Listener listener;
+  private final ZoomListener zoomListener;
   private ZoomModel zoomModel;
 
   public CanvasPane(CanvasPaneContents contents) {

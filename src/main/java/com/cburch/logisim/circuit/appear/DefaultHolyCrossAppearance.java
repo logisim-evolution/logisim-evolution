@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -79,7 +79,7 @@ public class DefaultHolyCrossAppearance {
   //   6,  6,  5,  8,  4,  8, 10,      // 'x', 'y', 'z', '{', '|', '}', '~',
   // };
 
-  private static int[] asciiWidths = { // 10 point font
+  private static final int[] asciiWidths = { // 10 point font
     3, 4, 5, 8, 6, 10, 9, 3, // ' ', '!', '"', '#', '$', '%', '&', ''',
     4, 4, 5, 8, 3, 4, 3, 3, // '(', ')', '*', '+', ',', '-', '.', '/',
     6, 6, 6, 6, 6, 6, 6, 6, // '0', '1', '2', '3', '4', '5', '6', '7',
@@ -198,7 +198,7 @@ public class DefaultHolyCrossAppearance {
     int ry = OFFS + (9 - (ay + 9) % 10);
 
     Rectangle rect = new Rectangle(rx, ry, width, height);
-    rect.setValue(DrawAttr.STROKE_WIDTH, Integer.valueOf(2));
+    rect.setValue(DrawAttr.STROKE_WIDTH, 2);
     List<CanvasObject> ret = new ArrayList<CanvasObject>();
     ret.add(rect);
 

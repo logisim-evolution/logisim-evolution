@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -48,11 +48,11 @@ public class Selection {
   private static final String TRANSLATING = "translating";
   private static final String HIDDEN = "hidden";
 
-  private List<SelectionListener> listeners;
-  private Set<CanvasObject> selected;
-  private Set<CanvasObject> selectedView;
-  private Map<CanvasObject, String> suppressed;
-  private Set<CanvasObject> suppressedView;
+  private final List<SelectionListener> listeners;
+  private final Set<CanvasObject> selected;
+  private final Set<CanvasObject> selectedView;
+  private final Map<CanvasObject, String> suppressed;
+  private final Set<CanvasObject> suppressedView;
   private Handle selectedHandle;
   private HandleGesture curHandleGesture;
   private int moveDx;
@@ -88,9 +88,9 @@ public class Selection {
 
   public void drawSuppressed(Graphics g, CanvasObject shape) {
     String state = suppressed.get(shape);
-    if (state == MOVING_HANDLE) {
+    if (state.equals(MOVING_HANDLE)) {
       shape.paint(g, curHandleGesture);
-    } else if (state == TRANSLATING) {
+    } else if (state.equals(TRANSLATING)) {
       g.translate(moveDx, moveDy);
       shape.paint(g, null);
     }

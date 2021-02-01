@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -35,7 +35,7 @@ public class ConnectionPoint {
   private Net MyOwnNet;
   private Byte MyOwnNetBitIndex;
   private int MyChildsPortIndex;
-  private Component MyComp;
+  private final Component MyComp;
 
   public ConnectionPoint(Component comp) {
     MyOwnNet = null;

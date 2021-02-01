@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -57,8 +57,8 @@ import java.util.Set;
 class CanvasPainter implements PropertyChangeListener {
   private static final Set<Component> NO_COMPONENTS = Collections.emptySet();
 
-  private Canvas canvas;
-  private GridPainter grid;
+  private final Canvas canvas;
+  private final GridPainter grid;
   private Component haloedComponent = null;
   private Circuit haloedCircuit = null;
   private WireSet highlightedWires = WireSet.EMPTY;

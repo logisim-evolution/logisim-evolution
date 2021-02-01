@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -179,15 +179,15 @@ class CircuitWires {
   static final Logger logger = LoggerFactory.getLogger(CircuitWires.class);
 
   // user-given data
-  private HashSet<Wire> wires = new HashSet<Wire>();
-  private HashSet<Splitter> splitters = new HashSet<Splitter>();
-  private HashSet<Component> tunnels = new HashSet<Component>(); // of
+  private final HashSet<Wire> wires = new HashSet<Wire>();
+  private final HashSet<Splitter> splitters = new HashSet<Splitter>();
+  private final HashSet<Component> tunnels = new HashSet<Component>(); // of
   // Components
   // with
   // Tunnel
   // factory
-  private TunnelListener tunnelListener = new TunnelListener();
-  private HashSet<Component> pulls = new HashSet<Component>(); // of
+  private final TunnelListener tunnelListener = new TunnelListener();
+  private final HashSet<Component> pulls = new HashSet<Component>(); // of
   // Components
   // with
   // PullResistor

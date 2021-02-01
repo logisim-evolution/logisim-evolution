@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -48,13 +48,13 @@ import javax.swing.SwingUtilities;
 public class AppearanceView {
   private static final double[] ZOOM_OPTIONS = {100, 150, 200, 300, 400, 600, 800};
 
-  private DrawingAttributeSet attrs;
-  private AppearanceCanvas canvas;
-  private CanvasPane canvasPane;
-  private AppearanceToolbarModel toolbarModel;
+  private final DrawingAttributeSet attrs;
+  private final AppearanceCanvas canvas;
+  private final CanvasPane canvasPane;
+  private final AppearanceToolbarModel toolbarModel;
   private AttrTableDrawManager attrTableManager;
-  private ZoomModel zoomModel;
-  private AppearanceEditHandler editHandler;
+  private final ZoomModel zoomModel;
+  private final AppearanceEditHandler editHandler;
 
   public AppearanceView() {
     attrs = new DrawingAttributeSet();

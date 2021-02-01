@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -45,13 +45,13 @@ public class SimpleDRCContainer {
   public static final int MARK_LABEL = 2;
   public static final int MARK_WIRE = 4;
 
-  private String Message;
-  private int SeverityLevel;
+  private final String Message;
+  private final int SeverityLevel;
   private Set<Object> DRCComponents;
   private Circuit MyCircuit;
-  private int MarkType;
+  private final int MarkType;
   private int ListNumber;
-  private boolean SuppressCount;
+  private final boolean SuppressCount;
 
   public SimpleDRCContainer(String Message, int level) {
     this.Message = Message;

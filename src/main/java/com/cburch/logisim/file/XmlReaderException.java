@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -33,7 +33,7 @@ import java.util.List;
 
 class XmlReaderException extends Exception {
   private static final long serialVersionUID = 1L;
-  private List<String> messages;
+  private final List<String> messages;
 
   public XmlReaderException(List<String> messages) {
     this.messages = messages;

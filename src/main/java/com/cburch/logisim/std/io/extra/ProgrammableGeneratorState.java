@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -89,18 +89,18 @@ public class ProgrammableGeneratorState implements InstanceData, Cloneable {
     // information each one
     String[] data = s.split(" "), tmp;
     int value, cnt = 0;
-    for (int i = 0; i < data.length; i++) {
+    for (String datum : data) {
       // if contains a '*' it has to fill the array with the first value for x (second
       // number) cycles
-      if (data[i].contains("*")) {
-        tmp = data[i].split("\\*");
+      if (datum.contains("*")) {
+        tmp = datum.split("\\*");
         for (int j = 0; j < Integer.parseInt(tmp[1]); j++) {
           value = Integer.parseInt(tmp[0]);
           writeData(value, cnt);
           cnt++;
         }
       } else {
-        value = Integer.parseInt(data[i]);
+        value = Integer.parseInt(datum);
         writeData(value, cnt);
         cnt++;
       }
@@ -255,18 +255,18 @@ public class ProgrammableGeneratorState implements InstanceData, Cloneable {
   }
 
   private void SaveValues(JTextField[] inputs) {
-    String onlynumber;
+    StringBuilder onlynumber;
     int value;
     for (byte i = 0; i < inputs.length; i++) {
-      onlynumber = "";
+      onlynumber = new StringBuilder();
       value = 0;
       // create a string composed by the digits of the text field
       for (byte j = 0; j < inputs[i].getText().length(); j++) {
         if (Character.isDigit(inputs[i].getText().charAt(j)))
-          onlynumber += inputs[i].getText().charAt(j);
+          onlynumber.append(inputs[i].getText().charAt(j));
       }
       // if there are no digits the value is 0 and it isn't saved
-      if (onlynumber != "") value = Integer.parseInt(onlynumber);
+      if (onlynumber.length() != 0) value = Integer.parseInt(onlynumber.toString());
       if (value >= 1) {
         if (i % 2 == 0) setdurationHigh(i / 2, value);
         else setdurationLow(i / 2, value);
@@ -290,7 +290,7 @@ public class ProgrammableGeneratorState implements InstanceData, Cloneable {
       durationHigh = new int[newsize];
       durationLow = new int[newsize];
       clearValues();
-      int lowerlength = (oldDurationHigh.length < newsize) ? oldDurationHigh.length : newsize;
+      int lowerlength = Math.min(oldDurationHigh.length, newsize);
       for (byte i = 0; i < lowerlength; i++) {
         durationHigh[i] = oldDurationHigh[i];
         durationLow[i] = oldDurationLow[i];

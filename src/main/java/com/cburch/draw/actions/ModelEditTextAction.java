@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -37,9 +37,9 @@ import java.util.Collection;
 import java.util.Collections;
 
 public class ModelEditTextAction extends ModelAction {
-  private Text text;
-  private String oldValue;
-  private String newValue;
+  private final Text text;
+  private final String oldValue;
+  private final String newValue;
 
   public ModelEditTextAction(CanvasModel model, Text text, String newValue) {
     super(model);

@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -105,7 +105,7 @@ class ProjectExplorerModel extends DefaultTreeModel implements ProjectListener {
   private static final long serialVersionUID = 1L;
 
   private Project proj;
-  private JTree GuiElement;
+  private final JTree GuiElement;
 
   ProjectExplorerModel(Project proj, JTree gui) {
     super(null);

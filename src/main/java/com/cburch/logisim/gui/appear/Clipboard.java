@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -69,7 +69,7 @@ class Clipboard {
 
   public static final String contentsProperty = "appearance";
   private static ClipboardContents current = ClipboardContents.EMPTY;
-  private static PropertyChangeWeakSupport propertySupport =
+  private static final PropertyChangeWeakSupport propertySupport =
       new PropertyChangeWeakSupport(Clipboard.class);
 
   private Clipboard() {}

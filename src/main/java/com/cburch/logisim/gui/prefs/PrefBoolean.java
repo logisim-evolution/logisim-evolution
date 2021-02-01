@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -38,8 +38,8 @@ import javax.swing.JCheckBox;
 
 class PrefBoolean extends JCheckBox implements ActionListener, PropertyChangeListener {
   private static final long serialVersionUID = 1L;
-  private PrefMonitor<Boolean> pref;
-  private StringGetter title;
+  private final PrefMonitor<Boolean> pref;
+  private final StringGetter title;
 
   PrefBoolean(PrefMonitor<Boolean> pref, StringGetter title) {
     super(title.toString());

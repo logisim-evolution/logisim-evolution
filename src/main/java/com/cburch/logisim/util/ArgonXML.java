@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -80,12 +80,12 @@ public class ArgonXML {
     }
   }
 
-  private String name;
+  private final String name;
   private String content;
 
-  private Map<String, String> nameAttributes = new HashMap<String, String>();
+  private final Map<String, String> nameAttributes = new HashMap<String, String>();
 
-  private Map<String, ArrayList<ArgonXML>> nameChildren =
+  private final Map<String, ArrayList<ArgonXML>> nameChildren =
       new HashMap<String, ArrayList<ArgonXML>>();
 
   private ArgonXML(Element element) {

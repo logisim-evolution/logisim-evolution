@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -33,10 +33,10 @@ public class OutputExpressionsEvent {
   public static final int OUTPUT_EXPRESSION = 1;
   public static final int OUTPUT_MINIMAL = 2;
 
-  private AnalyzerModel model;
-  private int type;
-  private String variable;
-  private Object data;
+  private final AnalyzerModel model;
+  private final int type;
+  private final String variable;
+  private final Object data;
 
   public OutputExpressionsEvent(AnalyzerModel model, int type, String variable, Object data) {
     this.model = model;

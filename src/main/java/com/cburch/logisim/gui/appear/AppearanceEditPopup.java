@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -37,9 +37,9 @@ import java.util.Map;
 
 public class AppearanceEditPopup extends EditPopup implements EditHandler.Listener {
   private static final long serialVersionUID = 1L;
-  private AppearanceCanvas canvas;
-  private EditHandler handler;
-  private Map<LogisimMenuItem, Boolean> enabled;
+  private final AppearanceCanvas canvas;
+  private final EditHandler handler;
+  private final Map<LogisimMenuItem, Boolean> enabled;
 
   public AppearanceEditPopup(AppearanceCanvas canvas) {
     super(true);
@@ -52,7 +52,7 @@ public class AppearanceEditPopup extends EditPopup implements EditHandler.Listen
   }
 
   public void enableChanged(EditHandler handler, LogisimMenuItem action, boolean value) {
-    enabled.put(action, Boolean.valueOf(value));
+    enabled.put(action, value);
   }
 
   @Override

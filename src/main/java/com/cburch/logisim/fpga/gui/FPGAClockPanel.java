@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -50,11 +50,11 @@ import com.cburch.logisim.util.LocaleListener;
 public class FPGAClockPanel extends JPanel implements ActionListener,LocaleListener {
 
   private static final long serialVersionUID = 1L;
-  private Project MyProject;
-  private JLabel freqLabel = new JLabel();
-  private JLabel divLabel = new JLabel();
-  private JComboBox<String> frequenciesList = new JComboBox<>();
-  private JTextField divider = new JTextField();
+  private final Project MyProject;
+  private final JLabel freqLabel = new JLabel();
+  private final JLabel divLabel = new JLabel();
+  private final JComboBox<String> frequenciesList = new JComboBox<>();
+  private final JTextField divider = new JTextField();
   private double FPGAClockFrequency;
 
   public FPGAClockPanel(Project proj) {
@@ -138,7 +138,7 @@ public class FPGAClockPanel extends JPanel implements ActionListener,LocaleListe
         extention = TickIndex.charAt(i);
       i++;
     }
-    ret = Double.valueOf(number.toString());
+    ret = Double.parseDouble(number.toString());
     switch (extention) {
       case 'K' : ret *= 1000;
                  break;

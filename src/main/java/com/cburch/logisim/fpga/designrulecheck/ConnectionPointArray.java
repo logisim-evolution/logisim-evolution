@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -32,7 +32,7 @@ import java.util.ArrayList;
 
 class ConnectionPointArray {
 
-  private ArrayList<ConnectionPoint> MyConnections;
+  private final ArrayList<ConnectionPoint> MyConnections;
 
   public ConnectionPointArray() {
     MyConnections = new ArrayList<ConnectionPoint>();

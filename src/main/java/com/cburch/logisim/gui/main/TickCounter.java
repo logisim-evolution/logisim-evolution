@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -37,8 +37,8 @@ import com.cburch.logisim.circuit.SimulatorListener;
 class TickCounter implements SimulatorListener {
   private static final int QUEUE_LENGTH = 1000;
 
-  private long[] queueTimes;
-  private double[] queueRates;
+  private final long[] queueTimes;
+  private final double[] queueRates;
   private int queueStart;
   private int queueSize;
   private double tickFrequency;
@@ -140,7 +140,7 @@ class TickCounter implements SimulatorListener {
     if (i >= 0) { // nothing after decimal point
       return "" + (int) Math.round(a * Math.round(bv));
     } else { // keep some after decimal point
-      return String.format("%." + (-i) + "f", Double.valueOf(a * bv));
+      return String.format("%." + (-i) + "f", a * bv);
     }
   }
 

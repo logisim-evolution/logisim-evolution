@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -40,7 +40,7 @@ public class CoverColor implements PreferenceChangeListener {
   public static final CoverColor COVERCOLOR = new CoverColor(); 
 
   private int index;
-  private List<Color> colors = new ArrayList<Color>();
+  private final List<Color> colors = new ArrayList<Color>();
 
   public CoverColor() {
     index = -1;

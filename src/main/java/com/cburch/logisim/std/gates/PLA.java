@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -255,8 +255,7 @@ class PLA extends InstanceFactory {
   @Override
   public Bounds getOffsetBounds(AttributeSet attrs) {
     Direction dir = attrs.getValue(StdAttr.FACING);
-    Bounds ret = Bounds.create(0, -25, 50, 50).rotate(Direction.EAST, dir, 0, 0);
-    return ret;
+    return Bounds.create(0, -25, 50, 50).rotate(Direction.EAST, dir, 0, 0);
   }
 
   @Override
@@ -329,7 +328,7 @@ class PLA extends InstanceFactory {
   }
 
   class PLAMenu implements ActionListener, MenuExtender {
-    private Instance instance;
+    private final Instance instance;
     private Frame frame;
     private JMenuItem edit;
 

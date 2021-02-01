@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -60,10 +60,10 @@ public class HexEditor extends JComponent implements Scrollable {
   private static final long serialVersionUID = 1L;
 
   private HexModel model;
-  private Listener listener;
-  private Measures measures;
-  private Caret caret;
-  private Highlighter highlighter;
+  private final Listener listener;
+  private final Measures measures;
+  private final Caret caret;
+  private final Highlighter highlighter;
 
   public HexEditor(HexModel model) {
     this.model = model;

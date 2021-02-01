@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -226,7 +226,7 @@ public class DotMatrix extends InstanceFactory {
           BitWidth.create(7),
           Color.GREEN,
           Color.DARK_GRAY,
-          Integer.valueOf(0),
+            0,
           SHAPE_SQUARE,
           "",
           Direction.NORTH,

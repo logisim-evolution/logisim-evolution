@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -287,13 +287,13 @@ public class Canvas extends JPanel
         if (mwe.getWheelRotation() < 0) { // ZOOM IN
           zoom += 0.1;
           double max = opts[opts.length - 1] / 100.0;
-          zoomModel.setZoomFactor(zoom >= max ? max : zoom, mwe);
+          zoomModel.setZoomFactor(Math.min(zoom, max), mwe);
         } else { // ZOOM OUT
           zoom -= 0.1;
           double min = opts[0] / 100.0;
-          zoomModel.setZoomFactor(zoom <= min ? min : zoom, mwe);
+          zoomModel.setZoomFactor(Math.max(zoom, min), mwe);
         }
-      } else if (tool != null && tool instanceof PokeTool && ((PokeTool) tool).isScrollable()) {
+      } else if (tool instanceof PokeTool && ((PokeTool) tool).isScrollable()) {
         int id = (mwe.getWheelRotation() < 0) ? KeyEvent.VK_UP : KeyEvent.VK_DOWN;
         KeyEvent e =
             new KeyEvent(mwe.getComponent(), KeyEvent.KEY_PRESSED, mwe.getWhen(), 0, id, '\0');
@@ -817,27 +817,27 @@ public class Canvas extends JPanel
   private static final Color TICK_RATE_COLOR = new Color(0, 0, 92, 92);
   private static final Font TICK_RATE_FONT = new Font("serif", Font.BOLD, 12);
   // public static BufferedImage image;
-  private Project proj;
+  private final Project proj;
   private Tool drag_tool, temp_tool;
-  private Selection selection;
+  private final Selection selection;
   private MouseMappings mappings;
   private CanvasPane canvasPane;
   private Bounds oldPreferredSize;
-  private MyListener myListener = new MyListener();
-  private MyViewport viewport = new MyViewport();
-  private MyProjectListener myProjectListener = new MyProjectListener();
+  private final MyListener myListener = new MyListener();
+  private final MyViewport viewport = new MyViewport();
+  private final MyProjectListener myProjectListener = new MyProjectListener();
 
-  private TickCounter tickCounter;
+  private final TickCounter tickCounter;
 
-  private CanvasPaintThread paintThread;
+  private final CanvasPaintThread paintThread;
 
-  private CanvasPainter painter;
+  private final CanvasPainter painter;
 
   private volatile boolean paintDirty = false; // only for within paintComponent
 
   private boolean inPaint = false; // only for within paintComponent
 
-  private Object repaintLock = new Object(); // for waitForRepaintDone
+  private final Object repaintLock = new Object(); // for waitForRepaintDone
 
   public Canvas(Project proj) {
     this.proj = proj;
@@ -1062,7 +1062,7 @@ public class Canvas extends JPanel
       ComponentUserEvent e = null;
       for (Component comp : getCircuit().getAllContaining(loc)) {
         Object makerObj = comp.getFeature(ToolTipMaker.class);
-        if (makerObj != null && makerObj instanceof ToolTipMaker) {
+        if (makerObj instanceof ToolTipMaker) {
           ToolTipMaker maker = (ToolTipMaker) makerObj;
           if (e == null) {
             e = new ComponentUserEvent(this, loc.getX(), loc.getY());

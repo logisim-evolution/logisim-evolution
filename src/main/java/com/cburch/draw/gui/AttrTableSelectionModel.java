@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -46,7 +46,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 class AttrTableSelectionModel extends AttributeSetTableModel implements SelectionListener {
-  private Canvas canvas;
+  private final Canvas canvas;
 
   public AttrTableSelectionModel(Canvas canvas) {
     super(new SelectionAttributes(canvas.getSelection()));

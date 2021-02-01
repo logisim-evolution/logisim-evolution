@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -111,30 +111,30 @@ class SimulateOptions extends OptionsPanel {
 
   private static final long serialVersionUID = 1L;
 
-  private MyListener myListener = new MyListener();
+  private final MyListener myListener = new MyListener();
 
-  private JLabel simLimitLabel = new JLabel();
+  private final JLabel simLimitLabel = new JLabel();
 
   @SuppressWarnings({"unchecked", "rawtypes"})
-  private JComboBox simLimit =
+  private final JComboBox simLimit =
       new JComboBox(
           new Integer[] {
-            Integer.valueOf(200),
-            Integer.valueOf(500),
-            Integer.valueOf(1000),
-            Integer.valueOf(2000),
-            Integer.valueOf(5000),
-            Integer.valueOf(10000),
-            Integer.valueOf(20000),
-            Integer.valueOf(50000),
+              200,
+              500,
+              1000,
+              2000,
+              5000,
+              10000,
+              20000,
+              50000,
           });
 
-  private JCheckBox simRandomness = new JCheckBox();
-  private JCheckBox MemUnknown = new JCheckBox();
-  private JLabel gateUndefinedLabel = new JLabel();
+  private final JCheckBox simRandomness = new JCheckBox();
+  private final JCheckBox MemUnknown = new JCheckBox();
+  private final JLabel gateUndefinedLabel = new JLabel();
 
   @SuppressWarnings({"rawtypes", "unchecked"})
-  private JComboBox gateUndefined =
+  private final JComboBox gateUndefined =
       new JComboBox(
           new Object[] {
             new ComboOption(Options.GATE_UNDEFINED_IGNORE),

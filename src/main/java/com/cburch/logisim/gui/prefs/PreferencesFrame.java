@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -99,9 +99,9 @@ public class PreferencesFrame extends LFrame {
 
   private static WindowMenuManager MENU_MANAGER = null;
 
-  private MyListener myListener = new MyListener();
-  private OptionsPanel[] panels;
-  private JTabbedPane tabbedPane;
+  private final MyListener myListener = new MyListener();
+  private final OptionsPanel[] panels;
+  private final JTabbedPane tabbedPane;
   private int FpgaTabIdx = -1; 
 
   private PreferencesFrame() {

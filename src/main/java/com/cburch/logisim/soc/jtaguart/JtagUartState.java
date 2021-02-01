@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -48,8 +48,8 @@ public class JtagUartState  implements SocBusSlaveInterface {
 
   public class JtagUartFifoState implements InstanceData,Cloneable {
 	
-	private LinkedList<Integer> WriteFifo = new LinkedList<Integer>();
-	private LinkedList<Integer> ReadFifo = new LinkedList<Integer>();
+	private final LinkedList<Integer> WriteFifo = new LinkedList<Integer>();
+	private final LinkedList<Integer> ReadFifo = new LinkedList<Integer>();
 	private boolean readIrqEnable = false;
 	private boolean writeIrqEnable = false;
 	private boolean acBit = false;
@@ -172,13 +172,13 @@ public class JtagUartState  implements SocBusSlaveInterface {
   }
 
   private String label = "";
-  private SocBusInfo attachedBus = new SocBusInfo("");
+  private final SocBusInfo attachedBus = new SocBusInfo("");
   private Integer startAddress = 0;
   private AttributeOption writeFifoSize = JtagUartAttributes.OPT_64;
   private Integer writeIrqThreshold = 8;
   private AttributeOption readFifoSize = JtagUartAttributes.OPT_64;
   private Integer readIrqThreshold = 8;
-  private ArrayList<SocBusSlaveListener> listeners = new ArrayList<SocBusSlaveListener>();
+  private final ArrayList<SocBusSlaveListener> listeners = new ArrayList<SocBusSlaveListener>();
 
   public String getLabel() { return label; }
   public SocBusInfo getAttachedBus() { return attachedBus; }

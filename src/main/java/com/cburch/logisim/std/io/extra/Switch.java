@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -155,7 +155,7 @@ public class Switch extends InstanceFactory {
     boolean active = false;
     if (painter.getShowState() && !ghost) {
       InstanceDataSingleton data = (InstanceDataSingleton) painter.getData();
-      active = data == null ? false : (Boolean) data.getValue();
+      active = data != null && (Boolean) data.getValue();
     }
 
     Color color = painter.getAttributeValue(Io.ATTR_COLOR);

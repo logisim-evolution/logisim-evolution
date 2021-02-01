@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -97,9 +97,9 @@ class NotGate extends InstanceFactory {
   }
 
   public static final AttributeOption SIZE_NARROW =
-      new AttributeOption(Integer.valueOf(20), S.getter("gateSizeNarrowOpt"));
+      new AttributeOption(20, S.getter("gateSizeNarrowOpt"));
   public static final AttributeOption SIZE_WIDE =
-      new AttributeOption(Integer.valueOf(30), S.getter("gateSizeWideOpt"));
+      new AttributeOption(30, S.getter("gateSizeWideOpt"));
 
   public static final Attribute<AttributeOption> ATTR_SIZE =
       Attributes.forOption(

@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -66,15 +66,15 @@ import java.util.List;
 public class InstanceComponent implements Component, AttributeListener, ToolTipMaker {
   private EventSourceWeakSupport<ComponentListener> listeners;
   private InstanceFactory factory;
-  private Instance instance;
-  private Location loc;
+  private final Instance instance;
+  private final Location loc;
   private Bounds bounds;
   private List<Port> portList;
   private EndData[] endArray;
   private List<EndData> endList;
   private boolean hasToolTips;
   private HashSet<Attribute<BitWidth>> widthAttrs;
-  private AttributeSet attrs;
+  private final AttributeSet attrs;
   private boolean attrListenRequested;
   private InstanceTextField textField;
   private InstanceStateImpl instanceState;
@@ -289,8 +289,9 @@ public class InstanceComponent implements Component, AttributeListener, ToolTipM
 
   public boolean endsAt(Location pt) {
     EndData[] ends = endArray;
-    for (int i = 0; i < ends.length; i++) {
-      if (ends[i].getLocation().equals(pt)) return true;
+    for (EndData end : ends) {
+      if (end.getLocation().equals(pt))
+        return true;
     }
     return false;
   }

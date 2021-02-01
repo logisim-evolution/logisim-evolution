@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -67,13 +67,11 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
 
   public Map<String, String> GetInputMaps(
       NetlistComponent ComponentInfo, Netlist Nets, FPGAReport Reporter, String HDLType) {
-    Map<String, String> PortMap = new HashMap<String, String>();
-    return PortMap;
+    return new HashMap<String, String>();
   }
 
   public Map<String, Integer> GetInputPorts() {
-    Map<String, Integer> Inputs = new HashMap<String, Integer>();
-    return Inputs;
+    return new HashMap<String, Integer>();
   }
 
   @Override
@@ -322,8 +320,7 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
   }
 
   public ArrayList<String> GetUpdateLogic(String HDLType) {
-    ArrayList<String> Contents = new ArrayList<String>();
-    return Contents;
+    return new ArrayList<String>();
   }
 
   @Override

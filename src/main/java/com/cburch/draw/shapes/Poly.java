@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -45,7 +45,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 public class Poly extends FillableCanvasObject {
-  private boolean closed;
+  private final boolean closed;
   // "handles" should be immutable - create a new array and change using
   // setHandles rather than changing contents
   private Handle[] handles;
@@ -356,8 +356,8 @@ public class Poly extends FillableCanvasObject {
     int ret = super.matchesHashCode();
     ret = ret * 3 + (closed ? 1 : 0);
     Handle[] hs = handles;
-    for (int i = 0, n = hs.length; i < n; i++) {
-      ret = ret * 31 + hs[i].hashCode();
+    for (Handle h : hs) {
+      ret = ret * 31 + h.hashCode();
     }
     return ret;
   }

@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -47,8 +47,8 @@ public class PropertyChangeWeakSupport {
 
   private static final String ALL_PROPERTIES = "ALL PROPERTIES";
 
-  private Object source;
-  private ConcurrentLinkedQueue<ListenerData> listeners;
+  private final Object source;
+  private final ConcurrentLinkedQueue<ListenerData> listeners;
 
   public PropertyChangeWeakSupport(Object source) {
     this.source = source;
@@ -63,52 +63,18 @@ public class PropertyChangeWeakSupport {
     listeners.add(new ListenerData(property, listener));
   }
 
-  public void firePropertyChange(String property, boolean oldValue, boolean newValue) {
+  public <T> void firePropertyChange(String property, T oldValue, T newValue) {
     PropertyChangeEvent e = null;
     for (Iterator<ListenerData> it = listeners.iterator(); it.hasNext(); ) {
       ListenerData data = it.next();
       PropertyChangeListener l = data.listener.get();
       if (l == null) {
         it.remove();
-      } else if (data.property == ALL_PROPERTIES || data.property.equals(property)) {
+      } else if (data.property.equals(ALL_PROPERTIES) || data.property.equals(property)) {
         if (e == null) {
           e =
               new PropertyChangeEvent(
-                  source, property, Boolean.valueOf(oldValue), Boolean.valueOf(newValue));
-        }
-        l.propertyChange(e);
-      }
-    }
-  }
-
-  public void firePropertyChange(String property, int oldValue, int newValue) {
-    PropertyChangeEvent e = null;
-    for (Iterator<ListenerData> it = listeners.iterator(); it.hasNext(); ) {
-      ListenerData data = it.next();
-      PropertyChangeListener l = data.listener.get();
-      if (l == null) {
-        it.remove();
-      } else if (data.property == ALL_PROPERTIES || data.property.equals(property)) {
-        if (e == null) {
-          e =
-              new PropertyChangeEvent(
-                  source, property, Integer.valueOf(oldValue), Integer.valueOf(newValue));
-        }
-        l.propertyChange(e);
-      }
-    }
-  }
-
-  public void firePropertyChange(String property, Object oldValue, Object newValue) {
-    PropertyChangeEvent e = null;
-    for (Iterator<ListenerData> it = listeners.iterator(); it.hasNext(); ) {
-      ListenerData data = it.next();
-      PropertyChangeListener l = data.listener.get();
-      if (l == null) {
-        it.remove();
-      } else if (data.property == ALL_PROPERTIES || data.property.equals(property)) {
-        if (e == null) {
-          e = new PropertyChangeEvent(source, property, oldValue, newValue);
+                  source, property, oldValue, newValue);
         }
         l.propertyChange(e);
       }

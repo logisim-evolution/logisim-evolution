@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -210,9 +210,9 @@ public class ZoomControl extends JPanel implements LocaleListener {
     double zoom = model.getZoomFactor();
     double[] choices = model.getZoomOptions();
     double factor = zoom * 100.0 * 1.001;
-    for (int i = 0; i < choices.length; i++) {
-      if (choices[i] > factor) {
-        model.setZoomFactor(choices[i] / 100.0);
+    for (double choice : choices) {
+      if (choice > factor) {
+        model.setZoomFactor(choice / 100.0);
         return;
       }
     }
@@ -289,10 +289,8 @@ public class ZoomControl extends JPanel implements LocaleListener {
         double height = (bounds.getHeight() + 2 * padding) * ZoomFactor;
         double width = (bounds.getWidth() + 2 * padding) * ZoomFactor;
         double autozoom = ZoomFactor;
-        if (canvasPane.getViewport().getSize().getWidth() / width
-            < canvasPane.getViewport().getSize().getHeight() / height) {
-          autozoom *= canvasPane.getViewport().getSize().getWidth() / width;
-        } else autozoom *= canvasPane.getViewport().getSize().getHeight() / height;
+        autozoom *= Math.min(canvasPane.getViewport().getSize().getWidth() / width,
+            canvasPane.getViewport().getSize().getHeight() / height);
         double max = MyZoom.getZoomOptions()[MyZoom.getZoomOptions().length - 1] / 100.0;
         double min = MyZoom.getZoomOptions()[0] / 100.0;
         if (autozoom > max) autozoom = max;
@@ -331,16 +329,16 @@ public class ZoomControl extends JPanel implements LocaleListener {
   private static final long serialVersionUID = 1L;
 
   private ZoomModel model;
-  private ZoomLabel label;
+  private final ZoomLabel label;
   private SliderModel sliderModel;
-  private JSlider slider;
+  private final JSlider slider;
   public AutoZoomButton ZoomButton;
   public ResetZoomButton ResetButton;
-  private JLabel zoomText;
-  private GridIcon grid;
-  private Canvas canvas;
-  private JButton plus;
-  private JButton minus;
+  private final JLabel zoomText;
+  private final GridIcon grid;
+  private final Canvas canvas;
+  private final JButton plus;
+  private final JButton minus;
 
   public ZoomControl(ZoomModel model, Canvas canvas) {
     super(new BorderLayout());

@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -54,7 +54,7 @@ public class MapComponent {
   public static final String NO_MAP = "u";
   
   private class MapClass {
-    private FPGAIOInformationContainer IOcomp;
+    private final FPGAIOInformationContainer IOcomp;
     private Integer pin;
     
     public MapClass(FPGAIOInformationContainer IOcomp,Integer pin) {
@@ -78,20 +78,20 @@ public class MapComponent {
   /* 
    * In the below structure the first Integer is the pin identifier, the second is the global bubble id
    */
-  private HashMap<Integer,Integer> MyInputBubles = new HashMap<Integer,Integer>();
-  private HashMap<Integer,Integer> MyOutputBubles = new HashMap<Integer,Integer>();
-  private HashMap<Integer,Integer> MyIOBubles = new HashMap<Integer,Integer>();
+  private final HashMap<Integer,Integer> MyInputBubles = new HashMap<Integer,Integer>();
+  private final HashMap<Integer,Integer> MyOutputBubles = new HashMap<Integer,Integer>();
+  private final HashMap<Integer,Integer> MyIOBubles = new HashMap<Integer,Integer>();
   /*
    * The following structure defines if the pin is mapped
    */
-  private ComponentFactory myFactory;
+  private final ComponentFactory myFactory;
   
-  private ArrayList<String> myName;
+  private final ArrayList<String> myName;
   
   private ArrayList<MapClass> maps = new ArrayList<MapClass>();
   private ArrayList<Boolean> opens = new ArrayList<Boolean>();
   private ArrayList<Integer> constants = new ArrayList<Integer>();
-  private ArrayList<String> pinLabels = new ArrayList<String>();
+  private final ArrayList<String> pinLabels = new ArrayList<String>();
   
   private int NrOfPins;
   
@@ -490,7 +490,7 @@ public class MapComponent {
     }
     if (nrOpens != 0 && nrOpens == NrOfPins) return true;
     if (nrConstants != 0 && nrConstants == NrOfPins) return true;
-    if (nrMaps != 0 && nrMaps == NrOfPins) return bothSides ? io.isCompletelyMappedBy(this) : true;
+    if (nrMaps != 0 && nrMaps == NrOfPins) return !bothSides || io.isCompletelyMappedBy(this);
     return false;
   }
   
@@ -618,20 +618,23 @@ public class MapComponent {
     ArrayList<CircuitMapInfo> pinmaps = cmap.getPinMaps();
     if (pinmaps != null) {
       StringBuffer s = null;
-      for (int i = 0 ; i < pinmaps.size() ; i++) {
-        if (s == null) s= new StringBuffer();
-        else s.append(",");
-        if (pinmaps.get(i) == null) {
+      for (CircuitMapInfo pinmap : pinmaps) {
+        if (s == null)
+          s = new StringBuffer();
+        else
+          s.append(",");
+        if (pinmap == null) {
           s.append(NO_MAP);
         } else {
-          CircuitMapInfo map = pinmaps.get(i);
-          if (map.isConst())
-            s.append(Long.toString(map.getConstValue()));
-          else if (map.isOpen()) 
-        	s.append(OPEN_KEY);
-          else if (map.isSinglePin())
-            s.append(map.getRectangle().getXpos()+"_"+map.getRectangle().getYpos()+"_"+map.getIOId());
-          else s.append(NO_MAP);
+          if (pinmap.isConst())
+            s.append(Long.toString(pinmap.getConstValue()));
+          else if (pinmap.isOpen())
+            s.append(OPEN_KEY);
+          else if (pinmap.isSinglePin())
+            s.append(pinmap.getRectangle().getXpos() + "_" + pinmap.getRectangle().getYpos() + "_" + pinmap
+                .getIOId());
+          else
+            s.append(NO_MAP);
         }
       }
       Map.setAttribute(PIN_MAP, s.toString());
@@ -657,25 +660,26 @@ public class MapComponent {
     if (map.hasAttribute(PIN_MAP)) {
       String[] maps = map.getAttribute(PIN_MAP).split(",");
       CircuitMapInfo complexI = new CircuitMapInfo();
-      for (int i = 0 ; i < maps.length ; i++) {
-        if (maps[i].equals(NO_MAP)) {
+      for (String s : maps) {
+        if (s.equals(NO_MAP)) {
           complexI.addPinMap(null);
-        } else if (maps[i].equals(OPEN_KEY)) {
+        } else if (s.equals(OPEN_KEY)) {
           complexI.addPinMap(new CircuitMapInfo());
-        } else if (maps[i].contains("_")) {
-          String[] parts = maps[i].split("_");
-          if (parts.length != 3) return null;
+        } else if (s.contains("_")) {
+          String[] parts = s.split("_");
+          if (parts.length != 3)
+            return null;
           try {
             int x = Integer.parseUnsignedInt(parts[0]);
             int y = Integer.parseUnsignedInt(parts[1]);
             int pin = Integer.parseUnsignedInt(parts[2]);
-            complexI.addPinMap(x,y,pin);
+            complexI.addPinMap(x, y, pin);
           } catch (NumberFormatException e) {
             return null;
           }
         } else {
           try {
-            long c = Long.parseUnsignedLong(maps[i]);
+            long c = Long.parseUnsignedLong(s);
             complexI.addPinMap(new CircuitMapInfo(c));
           } catch (NumberFormatException e) {
             return null;

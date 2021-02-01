@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -54,12 +54,12 @@ public class AutoLabel {
       new Integer[] {KeyEvent.VK_L, KeyEvent.VK_T, KeyEvent.VK_V, KeyEvent.VK_H, KeyEvent.VK_A};
   public static Set<Integer> KeyStrokes = new HashSet<Integer>(Arrays.asList(UsedKeyStrokes));
 
-  private HashMap<Circuit, String> LabelBase = new HashMap<Circuit, String>();
-  private HashMap<Circuit, Integer> CurrentIndex = new HashMap<Circuit, Integer>();
-  private HashMap<Circuit, Boolean> UseLabelBaseOnly = new HashMap<Circuit, Boolean>();
-  private HashMap<Circuit, Boolean> UseUnderscore = new HashMap<Circuit, Boolean>();
-  private HashMap<Circuit, Boolean> active = new HashMap<Circuit, Boolean>();
-  private HashMap<Circuit, String> CurrentLabel = new HashMap<Circuit, String>();
+  private final HashMap<Circuit, String> LabelBase = new HashMap<Circuit, String>();
+  private final HashMap<Circuit, Integer> CurrentIndex = new HashMap<Circuit, Integer>();
+  private final HashMap<Circuit, Boolean> UseLabelBaseOnly = new HashMap<Circuit, Boolean>();
+  private final HashMap<Circuit, Boolean> UseUnderscore = new HashMap<Circuit, Boolean>();
+  private final HashMap<Circuit, Boolean> active = new HashMap<Circuit, Boolean>();
+  private final HashMap<Circuit, String> CurrentLabel = new HashMap<Circuit, String>();
 
   public AutoLabel() {
     this("", null, false);

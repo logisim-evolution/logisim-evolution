@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -67,17 +67,17 @@ public class Download extends DownloadBase implements Runnable, WindowListener {
   private VendorDownload Downloader;
   private String TopLevelSheet;
   private double TickFrequency;
-  private static int BasicSteps = 5;
+  private static final int BasicSteps = 5;
   private String MapFileName;
   ArrayList<String> Entities = new ArrayList<String>();
   ArrayList<String> Architectures = new ArrayList<String>();
 
   private Process Executable;
-  private Object lock = new Object();
+  private final Object lock = new Object();
   private JFrame parent;
 
   
-  private ArrayList<ActionListener> Listeners = new ArrayList<ActionListener>();
+  private final ArrayList<ActionListener> Listeners = new ArrayList<ActionListener>();
 
   public Download(
 	      Project MyProject,
@@ -203,8 +203,8 @@ public class Download extends DownloadBase implements Runnable, WindowListener {
   }
 
   private void fireEvent(ActionEvent e) {
-    for (int i = 0; i < Listeners.size(); i++) {
-      Listeners.get(i).actionPerformed(e);
+    for (ActionListener listener : Listeners) {
+      listener.actionPerformed(e);
     }
   }
 
@@ -443,17 +443,15 @@ public class Download extends DownloadBase implements Runnable, WindowListener {
     if (Main.hasGui()) {
       String[] choices = new String[devices.size()];
       for (int i = 0; i < devices.size(); i++) choices[i] = devices.get(i);
-      String choice =
-          (String)
-              OptionPane.showInputDialog(
-                  null,
-                  S.fmt("FPGAMultipleBoards", devices.size()),
-                  S.get("FPGABoardSelection"),
-                  OptionPane.QUESTION_MESSAGE,
-                  null,
-                  choices,
-                  choices[0]);
-      return choice;
+      return (String)
+          OptionPane.showInputDialog(
+              null,
+              S.fmt("FPGAMultipleBoards", devices.size()),
+              S.get("FPGABoardSelection"),
+              OptionPane.QUESTION_MESSAGE,
+              null,
+              choices,
+              choices[0]);
     } else {
       /* TODO: add none gui selection */
       return null;

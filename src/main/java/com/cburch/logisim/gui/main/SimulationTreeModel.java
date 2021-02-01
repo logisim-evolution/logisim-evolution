@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -41,8 +41,8 @@ import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
 public class SimulationTreeModel implements TreeModel {
-  private ArrayList<TreeModelListener> listeners;
-  private SimulationTreeTopNode root;
+  private final ArrayList<TreeModelListener> listeners;
+  private final SimulationTreeTopNode root;
   private CircuitState currentView;
 
   public SimulationTreeModel(List<CircuitState> allRootStates) {

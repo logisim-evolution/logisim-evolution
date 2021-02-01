@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -41,9 +41,9 @@ class LogThread extends UniquelyNamedThread implements ModelListener {
   // file will be closed after waiting this many milliseconds between writes
   private static final int IDLE_UNTIL_CLOSE = 10000;
 
-  private Model model;
+  private final Model model;
   private boolean canceled = false;
-  private Object lock = new Object();
+  private final Object lock = new Object();
   private PrintWriter writer = null;
   private boolean headerDirty = true;
   private long lastWrite = 0;

@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -41,7 +41,7 @@ import javax.swing.Icon;
 import com.cburch.logisim.prefs.AppPreferences;
 
 public class WarningIcon implements Icon {
-  private int wh;
+  private final int wh;
   
   public WarningIcon() {
     wh = AppPreferences.getIconSize();

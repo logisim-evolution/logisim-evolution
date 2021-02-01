@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -136,7 +136,7 @@ class SelectionAttributes extends AbstractAttributeSet {
 
   private static boolean haveSameElements(Collection<Component> a, Collection<Component> b) {
     if (a == null) {
-      return b == null ? true : b.isEmpty();
+      return b == null || b.isEmpty();
     } else if (b == null) {
       return a.isEmpty();
     } else if (a.size() != b.size()) {
@@ -178,9 +178,9 @@ class SelectionAttributes extends AbstractAttributeSet {
 
   private static final Attribute<?>[] EMPTY_ATTRIBUTES = new Attribute<?>[0];
   private static final Object[] EMPTY_VALUES = new Object[0];
-  private Canvas canvas;
-  private Selection selection;
-  private Listener listener;
+  private final Canvas canvas;
+  private final Selection selection;
+  private final Listener listener;
   private boolean listening;
 
   private Set<Component> selected;
@@ -265,7 +265,7 @@ class SelectionAttributes extends AbstractAttributeSet {
     } else {
       int i = findIndex(attr);
       boolean[] ro = readOnly;
-      return i >= 0 && i < ro.length ? ro[i] : true;
+      return i < 0 || i >= ro.length || ro[i];
     }
   }
 

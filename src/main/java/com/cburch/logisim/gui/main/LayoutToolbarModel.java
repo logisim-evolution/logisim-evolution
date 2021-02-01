@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -110,7 +110,7 @@ class LayoutToolbarModel extends AbstractToolbarModel {
   }
 
   private class ToolItem implements ToolbarItem {
-    private Tool tool;
+    private final Tool tool;
 
     ToolItem(Tool tool) {
       this.tool = tool;
@@ -168,9 +168,9 @@ class LayoutToolbarModel extends AbstractToolbarModel {
     return null;
   }
 
-  private Frame frame;
-  private Project proj;
-  private MyListener myListener;
+  private final Frame frame;
+  private final Project proj;
+  private final MyListener myListener;
   private List<ToolbarItem> items;
 
   private Tool haloedTool;

@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -66,9 +66,9 @@ public class SmartScroller implements AdjustmentListener {
   public static final int START = 0;
   public static final int END = 1;
 
-  private int viewportPosition;
+  private final int viewportPosition;
 
-  private JScrollBar scrollBar;
+  private final JScrollBar scrollBar;
   private boolean adjustScrollBar = true;
 
   private int previousValue = -1;

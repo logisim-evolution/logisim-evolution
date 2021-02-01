@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -69,7 +69,7 @@ public class PainterShaped {
   private static int[] getInputLineLengths(GateAttributes attrs, AbstractGate factory) {
     int inputs = attrs.inputs;
     int mainHeight = ((Integer) attrs.size.getValue()).intValue();
-    Integer key = Integer.valueOf(inputs * 31 + mainHeight);
+    Integer key = inputs * 31 + mainHeight;
     Object ret = INPUT_LENGTHS.get(key);
     if (ret != null) {
       return (int[]) ret;
@@ -83,13 +83,12 @@ public class PainterShaped {
 
     int[] lengths = new int[inputs];
     INPUT_LENGTHS.put(key, lengths);
-    int width = mainHeight;
     Location loc0 = OrGate.FACTORY.getInputOffset(attrs, 0);
     Location locn = OrGate.FACTORY.getInputOffset(attrs, inputs - 1);
     int totalHeight = 10 + loc0.manhattanDistanceTo(locn);
-    if (totalHeight < width) totalHeight = width;
+    if (totalHeight < mainHeight) totalHeight = mainHeight;
 
-    GeneralPath path = computeShield(width, totalHeight);
+    GeneralPath path = computeShield(mainHeight, totalHeight);
     for (int i = 0; i < inputs; i++) {
       Location loci = OrGate.FACTORY.getInputOffset(attrs, i);
       Point2D p = new Point2D.Float(loci.getX() + 1, loci.getY());
@@ -275,7 +274,7 @@ public class PainterShaped {
     SHIELD_WIDE.quadTo(-50, 0, -70, 35);
   }
 
-  private static HashMap<Integer, int[]> INPUT_LENGTHS = new HashMap<Integer, int[]>();
+  private static final HashMap<Integer, int[]> INPUT_LENGTHS = new HashMap<Integer, int[]>();
 
   private PainterShaped() {}
 }

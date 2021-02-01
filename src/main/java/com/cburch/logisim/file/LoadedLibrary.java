@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -127,9 +127,9 @@ public class LoadedLibrary extends Library implements LibraryEventSource {
 
   private boolean dirty;
 
-  private MyListener myListener;
+  private final MyListener myListener;
 
-  private EventSourceWeakSupport<LibraryListener> listeners;
+  private final EventSourceWeakSupport<LibraryListener> listeners;
 
   LoadedLibrary(Library base) {
     dirty = false;
@@ -226,7 +226,7 @@ public class LoadedLibrary extends Library implements LibraryEventSource {
       toolMap.put(oldTool, newTool);
       if (oldTool instanceof AddTool) {
         ComponentFactory oldFactory = ((AddTool) oldTool).getFactory();
-        if (newTool != null && newTool instanceof AddTool) {
+        if (newTool instanceof AddTool) {
           ComponentFactory newFactory = ((AddTool) newTool).getFactory();
           componentMap.put(oldFactory, newFactory);
         } else {

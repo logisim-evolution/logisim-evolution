@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -71,8 +71,8 @@ public class RV32imLoadAndStoreInstructions implements AssemblerExecutionInterfa
   
   public ArrayList<String> getInstructions() {
     ArrayList<String> opcodes = new ArrayList<String>();
-    for (int i = 0 ; i < AsmOpcodes.length ; i++)
-      opcodes.add(AsmOpcodes[i]);
+    for (String asmOpcode : AsmOpcodes)
+      opcodes.add(asmOpcode);
     return opcodes;
   };
 

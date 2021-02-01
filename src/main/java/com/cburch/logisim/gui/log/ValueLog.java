@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -33,7 +33,7 @@ import com.cburch.logisim.data.Value;
 class ValueLog {
   private static final int LOG_SIZE = 400;
 
-  private Value[] log;
+  private final Value[] log;
   private short curSize;
   private short firstIndex;
 

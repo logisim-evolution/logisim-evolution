@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -92,9 +92,9 @@ class WindowMenuManager {
     setCurrentManager(null);
   }
 
-  private static ArrayList<WindowMenu> menus = new ArrayList<WindowMenu>();
+  private static final ArrayList<WindowMenu> menus = new ArrayList<WindowMenu>();
 
-  private static ArrayList<WindowMenuItemManager> managers = new ArrayList<WindowMenuItemManager>();
+  private static final ArrayList<WindowMenuItemManager> managers = new ArrayList<WindowMenuItemManager>();
 
   private static WindowMenuItemManager currentManager = null;
 

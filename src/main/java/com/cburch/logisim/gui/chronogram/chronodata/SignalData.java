@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -35,7 +35,7 @@ import javax.swing.ImageIcon;
 /** Contains all data about one signal: signal values, the selected value, the choosed format... */
 public class SignalData {
 
-  private String name;
+  private final String name;
   protected int selectedValuePos = 0;
   protected ArrayList<String> data;
 

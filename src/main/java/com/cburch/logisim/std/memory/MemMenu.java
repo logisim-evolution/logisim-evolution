@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -44,8 +44,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
 class MemMenu implements ActionListener, MenuExtender {
-  private Mem factory;
-  private Instance instance;
+  private final Mem factory;
+  private final Instance instance;
   private Project proj;
   private Frame frame;
   private CircuitState circState;

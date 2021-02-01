@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -38,11 +38,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FactoryAttributes implements AttributeSet, AttributeListener, Cloneable {
-  private Class<? extends Library> descBase;
-  private FactoryDescription desc;
+  private final Class<? extends Library> descBase;
+  private final FactoryDescription desc;
   private ComponentFactory factory;
   private AttributeSet baseAttrs;
-  private ArrayList<AttributeListener> listeners;
+  private final ArrayList<AttributeListener> listeners;
 
   public FactoryAttributes(Class<? extends Library> descBase, FactoryDescription desc) {
     this.descBase = descBase;

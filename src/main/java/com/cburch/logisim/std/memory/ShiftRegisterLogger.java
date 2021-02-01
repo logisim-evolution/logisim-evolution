@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -55,7 +55,7 @@ public class ShiftRegisterLogger extends InstanceLogger {
     Integer stages = state.getAttributeValue(ShiftRegister.ATTR_LENGTH);
     Object[] ret = new Object[stages.intValue()];
     for (int i = 0; i < ret.length; i++) {
-      ret[i] = Integer.valueOf(i);
+      ret[i] = i;
     }
     return ret;
   }

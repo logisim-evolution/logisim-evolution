@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -85,20 +85,20 @@ public class AddTool extends Tool implements PropertyChangeListener {
     }
   }
 
-  private static int INVALID_COORD = Integer.MIN_VALUE;
-  private static int SHOW_NONE = 0;
-  private static int SHOW_GHOST = 1;
-  private static int SHOW_ADD = 2;
+  private static final int INVALID_COORD = Integer.MIN_VALUE;
+  private static final int SHOW_NONE = 0;
+  private static final int SHOW_GHOST = 1;
+  private static final int SHOW_ADD = 2;
 
-  private static int SHOW_ADD_NO = 3;
+  private static final int SHOW_ADD_NO = 3;
 
-  private static Cursor cursor = Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR);
+  private static final Cursor cursor = Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR);
 
   private Class<? extends Library> descriptionBase;
-  private FactoryDescription description;
+  private final FactoryDescription description;
   private boolean sourceLoadAttempted;
   private ComponentFactory factory;
-  private AttributeSet attrs;
+  private final AttributeSet attrs;
   private Bounds bounds;
   private boolean shouldSnap;
   private int lastX = INVALID_COORD;
@@ -108,7 +108,7 @@ public class AddTool extends Tool implements PropertyChangeListener {
   private boolean keyHandlerTried;
   private boolean MatrixPlace = false;
   private KeyConfigurator keyHandler;
-  private AutoLabel AutoLabler = new AutoLabel();
+  private final AutoLabel AutoLabler = new AutoLabel();
 
   private AddTool(AddTool base) {
     this.descriptionBase = base.descriptionBase;
@@ -151,7 +151,7 @@ public class AddTool extends Tool implements PropertyChangeListener {
     this.attrs = new FactoryAttributes(source);
     attrs.addAttributeListener(new MyAttributeListener());
     Boolean value = (Boolean) source.getFeature(ComponentFactory.SHOULD_SNAP, attrs);
-    this.shouldSnap = value == null ? true : value.booleanValue();
+    this.shouldSnap = value == null || value.booleanValue();
     if (this.attrs.containsAttribute(StdAttr.APPEARANCE)) {
       AppPreferences.DefaultAppearance.addPropertyChangeListener(this);
     }
@@ -163,7 +163,7 @@ public class AddTool extends Tool implements PropertyChangeListener {
   @Override
   public void registerParrent(java.awt.Component parrent) {
     ComponentFactory fac = getFactory();
-    if (fac != null && fac instanceof InstanceFactory) {
+    if (fac instanceof InstanceFactory) {
       InstanceFactory f = (InstanceFactory) fac;
       if (f.getIcon() instanceof AnnimatedIcon) {
         AnnimatedIcon i = (AnnimatedIcon) f.getIcon();
@@ -344,7 +344,7 @@ public class AddTool extends Tool implements PropertyChangeListener {
       if (ret != null) {
         AttributeSet base = getBaseAttributes();
         Boolean value = (Boolean) ret.getFeature(ComponentFactory.SHOULD_SNAP, base);
-        shouldSnap = value == null ? true : value.booleanValue();
+        shouldSnap = value == null || value.booleanValue();
       }
       factory = ret;
       sourceLoadAttempted = true;
@@ -524,7 +524,7 @@ public class AddTool extends Tool implements PropertyChangeListener {
       if (attrs.containsAttribute(StdAttr.LABEL)) {
         Label = attrs.getValue(StdAttr.LABEL);
         /* Here we make sure to not overrride labels that have default value */
-        if (AutoLabler.IsActive(canvas.getCircuit()) & ((Label == null) | Label.isEmpty())) {
+        if (AutoLabler.IsActive(canvas.getCircuit()) && ((Label == null) || Label.isEmpty())) {
           Label = AutoLabler.GetCurrent(canvas.getCircuit(), source);
           if (AutoLabler.hasNext(canvas.getCircuit()))
             AutoLabler.GetNext(canvas.getCircuit(), source);

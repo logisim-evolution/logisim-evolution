@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -55,7 +55,7 @@ import java.util.Collections;
 import java.util.Set;
 
 public class WiringTool extends Tool {
-  private static Cursor cursor = Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR);
+  private static final Cursor cursor = Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR);
 
   private static final int HORIZONTAL = 1;
   private static final int VERTICAL = 2;

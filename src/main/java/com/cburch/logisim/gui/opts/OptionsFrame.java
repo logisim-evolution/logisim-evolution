@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -95,13 +95,13 @@ public class OptionsFrame extends LFrame {
   }
 
   private static final long serialVersionUID = 1L;
-  private Project project;
-  private LogisimFile file;
-  private MyListener myListener = new MyListener();
+  private final Project project;
+  private final LogisimFile file;
+  private final MyListener myListener = new MyListener();
 
-  private WindowMenuManager windowManager = new WindowMenuManager();
-  private OptionsPanel[] panels;
-  private JTabbedPane tabbedPane;
+  private final WindowMenuManager windowManager = new WindowMenuManager();
+  private final OptionsPanel[] panels;
+  private final JTabbedPane tabbedPane;
 
   public OptionsFrame(Project project) {
     super(false,project);
@@ -112,8 +112,7 @@ public class OptionsFrame extends LFrame {
         new ToolbarOptions(this), new MouseOptions(this),
         new RevertPanel(this)};
     tabbedPane = new JTabbedPane();
-    for (int index = 0; index < panels.length; index++) {
-      OptionsPanel panel = panels[index];
+    for (OptionsPanel panel : panels) {
       tabbedPane.addTab(panel.getTitle(), null, panel, panel.getToolTipText());
     }
 
@@ -163,8 +162,8 @@ public class OptionsFrame extends LFrame {
       }
     }
 
-    private MyListener myListener = new MyListener();
-    private JButton revert = new JButton();
+    private final MyListener myListener = new MyListener();
+    private final JButton revert = new JButton();
 
     public RevertPanel(OptionsFrame window) {
       super(window);

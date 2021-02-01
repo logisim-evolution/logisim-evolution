@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -48,7 +48,7 @@ import javax.swing.JMenuItem;
 class OpenRecent extends JMenu implements PropertyChangeListener {
   private class RecentItem extends JMenuItem implements ActionListener {
     private static final long serialVersionUID = 1L;
-    private File file;
+    private final File file;
 
     RecentItem(File file) {
       super(getFileText(file));
@@ -90,9 +90,9 @@ class OpenRecent extends JMenu implements PropertyChangeListener {
   private static final long serialVersionUID = 1L;
 
   private static final int MAX_ITEM_LENGTH = 50;
-  private LogisimMenuBar menubar;
+  private final LogisimMenuBar menubar;
 
-  private List<RecentItem> recentItems;
+  private final List<RecentItem> recentItems;
 
   OpenRecent(LogisimMenuBar menubar) {
     this.menubar = menubar;

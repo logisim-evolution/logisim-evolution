@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -35,8 +35,8 @@ import javax.swing.JScrollPane;
 
 public class Test {
   private static class Model implements HexModel {
-    private ArrayList<HexModelListener> listeners = new ArrayList<HexModelListener>();
-    private long[] data = new long[924];
+    private final ArrayList<HexModelListener> listeners = new ArrayList<HexModelListener>();
+    private final long[] data = new long[924];
 
     public void addHexModelListener(HexModelListener l) {
       listeners.add(l);

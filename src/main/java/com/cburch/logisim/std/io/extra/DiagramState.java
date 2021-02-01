@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -62,8 +62,7 @@ class DiagramState implements InstanceData {
   @Override
   public DiagramState clone() {
     try {
-      DiagramState ret = (DiagramState) super.clone();
-      return ret;
+      return (DiagramState) super.clone();
     } catch (CloneNotSupportedException e) {
       return null;
     }

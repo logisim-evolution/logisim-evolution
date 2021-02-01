@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -138,9 +138,9 @@ class ToolboxManip implements ProjectExplorerListener {
     }
   }
 
-  private Project proj;
-  private ProjectExplorer explorer;
-  private MyListener myListener = new MyListener();
+  private final Project proj;
+  private final ProjectExplorer explorer;
+  private final MyListener myListener = new MyListener();
   private Tool lastSelected = null;
 
   ToolboxManip(Project proj, ProjectExplorer explorer) {

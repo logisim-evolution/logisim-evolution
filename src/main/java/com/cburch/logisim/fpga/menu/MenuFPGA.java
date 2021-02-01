@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -43,9 +43,9 @@ import javax.swing.JMenuItem;
 
 @SuppressWarnings("serial")
 public class MenuFPGA extends JMenu implements ActionListener {
-  private Project ThisCircuit;
-  private JMenuItem BoardEditor = new JMenuItem();
-  private JMenuItem FPGACommander = new JMenuItem();
+  private final Project ThisCircuit;
+  private final JMenuItem BoardEditor = new JMenuItem();
+  private final JMenuItem FPGACommander = new JMenuItem();
   private BoardEditor Editor = null;
   private FPGACommander Commander = null;
 

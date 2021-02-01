@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -46,9 +46,9 @@ public class SocMemoryState implements SocBusSlaveInterface {
 
   public class SocMemoryInfo implements InstanceData,Cloneable {
     private class SocMemoryInfoBlock {
-      private LinkedList<Integer> contents = new LinkedList<Integer>();
+      private final LinkedList<Integer> contents = new LinkedList<Integer>();
       private int startAddress;
-      private Random rand = new Random();
+      private final Random rand = new Random();
     
       public SocMemoryInfoBlock(int address, int data) {
         startAddress = (address>>2)<<2;
@@ -107,7 +107,7 @@ public class SocMemoryState implements SocBusSlaveInterface {
       }
     }
 
-    private ArrayList<SocMemoryInfoBlock> memInfo;
+    private final ArrayList<SocMemoryInfoBlock> memInfo;
     
     public SocMemoryInfo() {
       memInfo = new ArrayList<SocMemoryInfoBlock>();
@@ -170,10 +170,10 @@ public class SocMemoryState implements SocBusSlaveInterface {
   
   private int startAddress;
   private int sizeInBytes;
-  private Random rand = new Random();
-  private SocBusInfo attachedBus;
+  private final Random rand = new Random();
+  private final SocBusInfo attachedBus;
   private String label;
-  private ArrayList<SocBusSlaveListener> listeners;
+  private final ArrayList<SocBusSlaveListener> listeners;
   
   public SocMemoryState() {
     startAddress = 0;

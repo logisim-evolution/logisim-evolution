@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -47,7 +47,7 @@ public class Canvas extends JComponent {
 
   private CanvasModel model;
   private ActionDispatcher dispatcher;
-  private CanvasListener listener;
+  private final CanvasListener listener;
   private Selection selection;
 
   public Canvas() {

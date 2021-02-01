@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -32,7 +32,7 @@ import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.Preferences;
 
 class PrefMonitorDouble extends AbstractPrefMonitor<Double> {
-  private double dflt;
+  private final double dflt;
   private double value;
 
   PrefMonitorDouble(String name, double dflt) {
@@ -40,12 +40,12 @@ class PrefMonitorDouble extends AbstractPrefMonitor<Double> {
     this.dflt = dflt;
     this.value = dflt;
     Preferences prefs = AppPreferences.getPrefs();
-    set(Double.valueOf(prefs.getDouble(name, dflt)));
+    set(prefs.getDouble(name, dflt));
     prefs.addPreferenceChangeListener(this);
   }
 
   public Double get() {
-    return Double.valueOf(value);
+    return value;
   }
 
   public void preferenceChange(PreferenceChangeEvent event) {
@@ -57,7 +57,7 @@ class PrefMonitorDouble extends AbstractPrefMonitor<Double> {
       double newValue = prefs.getDouble(name, dflt);
       if (newValue != oldValue) {
         value = newValue;
-        AppPreferences.firePropertyChange(name, Double.valueOf(oldValue), Double.valueOf(newValue));
+        AppPreferences.firePropertyChange(name, oldValue, newValue);
       }
     }
   }

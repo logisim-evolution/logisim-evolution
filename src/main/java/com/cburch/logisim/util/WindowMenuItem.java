@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -35,7 +35,7 @@ import javax.swing.JRadioButtonMenuItem;
 
 class WindowMenuItem extends JRadioButtonMenuItem {
   private static final long serialVersionUID = 1L;
-  private WindowMenuItemManager manager;
+  private final WindowMenuItemManager manager;
 
   WindowMenuItem(WindowMenuItemManager manager) {
     this.manager = manager;

@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -56,7 +56,7 @@ public class WindowManagers {
 
   private static class ProjectManager extends WindowMenuItemManager
       implements ProjectListener, LibraryListener {
-    private Project proj;
+    private final Project proj;
 
     ProjectManager(Project proj) {
       super(proj.getLogisimFile().getName(), false);
@@ -115,9 +115,9 @@ public class WindowManagers {
 
   private static boolean initialized = false;
 
-  private static MyListener myListener = new MyListener();
+  private static final MyListener myListener = new MyListener();
 
-  private static HashMap<Project, ProjectManager> projectMap =
+  private static final HashMap<Project, ProjectManager> projectMap =
       new LinkedHashMap<Project, ProjectManager>();
 
   private WindowManagers() {}

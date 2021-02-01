@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -37,8 +37,8 @@ public class WireSet {
   private static final Set<Wire> NULL_WIRES = Collections.emptySet();
   public static final WireSet EMPTY = new WireSet(NULL_WIRES);
 
-  private Set<Wire> wires;
-  private Set<Location> points;
+  private final Set<Wire> wires;
+  private final Set<Location> points;
 
   WireSet(Set<Wire> wires) {
     if (wires.isEmpty()) {

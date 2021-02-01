@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -43,15 +43,15 @@ import java.util.Collection;
 import java.util.Map;
 
 class SelectionAction extends Action {
-  private StringGetter displayName;
-  private AppearanceCanvas canvas;
-  private CanvasModel canvasModel;
-  private Map<CanvasObject, Integer> toRemove;
-  private Collection<CanvasObject> toAdd;
-  private Collection<CanvasObject> oldSelection;
-  private Collection<CanvasObject> newSelection;
-  private Location anchorNewLocation;
-  private Direction anchorNewFacing;
+  private final StringGetter displayName;
+  private final AppearanceCanvas canvas;
+  private final CanvasModel canvasModel;
+  private final Map<CanvasObject, Integer> toRemove;
+  private final Collection<CanvasObject> toAdd;
+  private final Collection<CanvasObject> oldSelection;
+  private final Collection<CanvasObject> newSelection;
+  private final Location anchorNewLocation;
+  private final Direction anchorNewFacing;
   private Location anchorOldLocation;
   private Direction anchorOldFacing;
 

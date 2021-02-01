@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -40,7 +40,7 @@ import com.cburch.logisim.std.memory.Mem.MemListener;
 public class RamState extends MemState implements InstanceData, AttributeListener {
 
   private Instance parent;
-  private MemListener listener;
+  private final MemListener listener;
   private ClockState clockState;
 
   RamState(Instance parent, MemContents contents, MemListener listener) {

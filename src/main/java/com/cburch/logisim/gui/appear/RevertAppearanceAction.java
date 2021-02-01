@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -42,12 +42,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class RevertAppearanceAction extends Action {
-  private Circuit circuit;
+  private final Circuit circuit;
   private ArrayList<CanvasObject> old;
   private boolean wasDefault;
 
   private class ActionTransaction extends CircuitTransaction {
-    private boolean forward;
+    private final boolean forward;
 
     ActionTransaction(boolean forward) {
       this.forward = forward;

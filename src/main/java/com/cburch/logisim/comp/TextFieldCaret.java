@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -52,9 +52,9 @@ class TextFieldCaret implements Caret, TextFieldListener {
   public static final Color EDIT_BORDER = Color.DARK_GRAY;
   public static final Color SELECTION_BACKGROUND = new Color(0x99, 0xcc, 0xff);
 
-  private LinkedList<CaretListener> listeners = new LinkedList<CaretListener>();
-  private TextField field;
-  private Graphics g;
+  private final LinkedList<CaretListener> listeners = new LinkedList<CaretListener>();
+  private final TextField field;
+  private final Graphics g;
   private String oldText;
   private String curText;
   private int pos, end;
@@ -115,9 +115,9 @@ class TextFieldCaret implements Caret, TextFieldListener {
     if (pos != end) {
       g.setColor(SELECTION_BACKGROUND);
       Rectangle p =
-          GraphicsUtil.getTextCursor(g, curText, x, y, pos < end ? pos : end, halign, valign);
+          GraphicsUtil.getTextCursor(g, curText, x, y, Math.min(pos, end), halign, valign);
       Rectangle e =
-          GraphicsUtil.getTextCursor(g, curText, x, y, pos < end ? end : pos, halign, valign);
+          GraphicsUtil.getTextCursor(g, curText, x, y, Math.max(pos, end), halign, valign);
       g.fillRect(p.x, p.y - 1, e.x - p.x + 1, e.height + 2);
     }
 
@@ -143,8 +143,7 @@ class TextFieldCaret implements Caret, TextFieldListener {
     int valign = field.getVAlign();
     Font font = field.getFont();
     Bounds bds = Bounds.create(GraphicsUtil.getTextBounds(g, font, curText, x, y, halign, valign));
-    Bounds box = bds.add(field.getBounds(g)).expand(3);
-    return box;
+    return bds.add(field.getBounds(g)).expand(3);
   }
 
   public void keyPressed(KeyEvent e) {
@@ -204,8 +203,8 @@ class TextFieldCaret implements Caret, TextFieldListener {
       case KeyEvent.VK_COPY:
       case KeyEvent.VK_C:
         if (end != pos) {
-          int pp = (pos < end ? pos : end);
-          int ee = (pos < end ? end : pos);
+          int pp = (Math.min(pos, end));
+          int ee = (Math.max(pos, end));
           String s = curText.substring(pp, ee);
           StringSelection sel = new StringSelection(s);
           Toolkit.getDefaultToolkit().getSystemClipboard().setContents(sel, null);

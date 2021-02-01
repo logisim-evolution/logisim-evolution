@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -56,7 +56,7 @@ public class AssemblerInfo {
     private long sectionEnd;
     private HashMap<Long,Byte> data;
     private HashMap<Long,AssemblerAsmInstruction> instructions;
-    private AssemblerToken identifier;
+    private final AssemblerToken identifier;
     
     public AssemblerSectionInfo() {
       super("NoName");
@@ -218,10 +218,10 @@ public class AssemblerInfo {
     public int size() { return super.getHeaders().size(); }
   }
   
-  private SectionHeaders sections;
-  private HashMap<AssemblerToken,StringGetter> errors;
+  private final SectionHeaders sections;
+  private final HashMap<AssemblerToken,StringGetter> errors;
   private int currentSection;
-  private AssemblerInterface assembler;
+  private final AssemblerInterface assembler;
 
   public AssemblerInfo(AssemblerInterface assembler) {
     sections = new SectionHeaders();

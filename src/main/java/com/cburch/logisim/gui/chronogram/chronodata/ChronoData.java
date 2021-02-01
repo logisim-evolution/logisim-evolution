@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -60,10 +60,11 @@ public class ChronoData extends TreeMap<String, SignalData> {
     // The delimiter is the tabulation
     String line = lineReader.readLine();
     String[] splittedLine = line.split("\\t");
-    for (int i = 0; i < splittedLine.length; ++i) {
+    for (String s : splittedLine) {
       ArrayList<String> v = new ArrayList<String>();
-      v.add(splittedLine[i]);
-      if (splittedLine[i].equals("sysclk")) sysclkFound = true;
+      v.add(s);
+      if (s.equals("sysclk"))
+        sysclkFound = true;
       rawData.add(v);
     }
 

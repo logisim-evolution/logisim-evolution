@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -33,8 +33,8 @@ package com.cburch.logisim.util;
  * objects.
  */
 public class Cache {
-  private int mask;
-  private Object[] data;
+  private final int mask;
+  private final Object[] data;
 
   public Cache() {
     this(8);

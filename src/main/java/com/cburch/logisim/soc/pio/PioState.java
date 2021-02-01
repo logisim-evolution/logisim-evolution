@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -109,9 +109,9 @@ public class PioState implements SocBusSlaveInterface {
 
   private BitWidth nrOfIOs = BitWidth.create(1);
   private String label = "";
-  private SocBusInfo attachedBus = new SocBusInfo("");
+  private final SocBusInfo attachedBus = new SocBusInfo("");
   private Integer startAddress = 0;
-  private ArrayList<SocBusSlaveListener> listeners = new ArrayList<SocBusSlaveListener>();
+  private final ArrayList<SocBusSlaveListener> listeners = new ArrayList<SocBusSlaveListener>();
   private AttributeOption direction = PioAttributes.PORT_INPUT;
   private Integer outputResetValue = 0;
   private Boolean outputEnableBitManipulations = false;
@@ -246,10 +246,9 @@ public class PioState implements SocBusSlaveInterface {
     int index = inputGeneratesIrq() ? 2 : 1;
     int nrOfBits = nrOfIOs.getWidth();
     int outputStart = index + (direction == PioAttributes.PORT_INOUT ? nrOfIOs.getWidth() : 0);
-    int inputStart = index;
     int inputs = 0;
     for (int i = 0 ; i < nrOfBits ; i++) {
-      if (state.getPortValue(inputStart+i) == Value.TRUE)
+      if (state.getPortValue(index +i) == Value.TRUE)
         inputs |= 1 << i;
     }
     if (inputGeneratesIrq()) {
@@ -333,7 +332,7 @@ public class PioState implements SocBusSlaveInterface {
       trans.setReadData(s.captureRegister);
     if (trans.isWriteTransaction()) {
       if (inputCaptureSupportsBitClearing()) {
-        int mask = trans.getWriteData() ^ -1;
+        int mask = ~trans.getWriteData();
         s.captureRegister &= mask;
       } else
         s.captureRegister = 0;

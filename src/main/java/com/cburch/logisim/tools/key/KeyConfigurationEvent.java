@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -36,10 +36,10 @@ public class KeyConfigurationEvent {
   public static final int KEY_RELEASED = 1;
   public static final int KEY_TYPED = 2;
 
-  private int type;
-  private AttributeSet attrs;
-  private KeyEvent event;
-  private Object data;
+  private final int type;
+  private final AttributeSet attrs;
+  private final KeyEvent event;
+  private final Object data;
   private boolean consumed;
 
   public KeyConfigurationEvent(int type, AttributeSet attrs, KeyEvent event, Object data) {

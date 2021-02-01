@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -329,8 +329,7 @@ public class ProjectCircuitActions {
     dlog.setVisible(true);
     field.requestFocusInWindow();
     Object action = pane.getValue();
-    if (action == null
-        || !(action instanceof Integer)
+    if (!(action instanceof Integer)
         || ((Integer) action).intValue() != OptionPane.OK_OPTION) {
       return null;
     }

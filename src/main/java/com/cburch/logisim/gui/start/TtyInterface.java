@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -73,7 +73,7 @@ public class TtyInterface {
   // but this doesn't quite work because on some systems, the keyboard input
   // is not interactively echoed until System.in.read() is invoked.
   private static class StdinThread extends UniquelyNamedThread {
-    private LinkedList<char[]> queue; // of char[]
+    private final LinkedList<char[]> queue; // of char[]
 
     public StdinThread() {
       super("TtyInterface-StdInThread");
@@ -155,21 +155,21 @@ public class TtyInterface {
       String libName = lib == null ? "-" : lib.getDisplayName();
       System.out.printf(
           fmtNormal, // OK
-          Integer.valueOf(count.getUniqueCount()),
-          Integer.valueOf(count.getRecursiveCount()),
+          count.getUniqueCount(),
+          count.getRecursiveCount(),
           count.getFactory().getDisplayName(),
           libName);
     }
     FileStatistics.Count totalWithout = stats.getTotalWithoutSubcircuits();
     System.out.printf(
         fmt + "%s\n", // OK
-        Integer.valueOf(totalWithout.getUniqueCount()),
-        Integer.valueOf(totalWithout.getRecursiveCount()),
+        totalWithout.getUniqueCount(),
+        totalWithout.getRecursiveCount(),
         S.get("statsTotalWithout"));
     System.out.printf(
         fmt + "%s\n", // OK
-        Integer.valueOf(total.getUniqueCount()),
-        Integer.valueOf(total.getRecursiveCount()),
+        total.getUniqueCount(),
+        total.getRecursiveCount(),
         S.get("statsTotalWith"));
   }
 
@@ -441,8 +441,7 @@ public class TtyInterface {
       valueMap.clear();
       CircuitState circuitState = new CircuitState(proj, circuit);
       int incol = 0;
-      for (int j = 0; j < inputPins.size(); j++) {
-        Instance pin = inputPins.get(j);
+      for (Instance pin : inputPins) {
         int width = pin.getAttributeValue(StdAttr.WIDTH).getWidth();
         Value[] v = new Value[width];
         for (int b = width - 1; b >= 0; b--) {
@@ -462,8 +461,7 @@ public class TtyInterface {
        */
       // TODO: Search for circuit state
 
-      for (int j = 0; j < outputPins.size(); j++) {
-        Instance pin = outputPins.get(j);
+      for (Instance pin : outputPins) {
         if (prop.isOscillating()) {
           BitWidth width = pin.getAttributeValue(StdAttr.WIDTH);
           valueMap.put(pin, Value.createError(width));

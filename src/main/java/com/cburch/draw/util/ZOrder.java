@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -99,7 +99,7 @@ public class ZOrder {
     for (CanvasObject o : model.getObjectsFromBottom()) {
       z++;
       if (querySet.contains(o)) {
-        ret.put(o, Integer.valueOf(z));
+        ret.put(o, z);
       }
     }
     return ret;

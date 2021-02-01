@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -35,10 +35,11 @@ public class VariableListEvent {
   public static final int MOVE = 3;
   public static final int REPLACE = 4;
 
-  private VariableList source;
-  private int type;
-  private Var variable;
-  private Integer index, bitIndex;
+  private final VariableList source;
+  private final int type;
+  private final Var variable;
+  private final Integer index;
+  private final Integer bitIndex;
 
   public VariableListEvent(
       VariableList source, int type, Var variable, Integer index, Integer bitIndex) {

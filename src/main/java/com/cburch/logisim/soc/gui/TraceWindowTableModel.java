@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -89,9 +89,9 @@ public class TraceWindowTableModel extends AbstractTableModel implements MouseLi
 
   private static final long serialVersionUID = 1L;
   private JTable table;
-  private SocBusMenuProvider.InstanceInformation parrent;
+  private final SocBusMenuProvider.InstanceInformation parrent;
 
-  private HashMap<SocBusStateInfo.SocBusState, CircuitStateHolder.HierarchyInfo> myTraceList;
+  private final HashMap<SocBusStateInfo.SocBusState, CircuitStateHolder.HierarchyInfo> myTraceList;
   private int BoxWidth = SocBusStateInfo.BlockWidth;
   
   public TraceWindowTableModel(HashMap<SocBusStateInfo.SocBusState, CircuitStateHolder.HierarchyInfo> traceList, 
@@ -146,7 +146,7 @@ public class TraceWindowTableModel extends AbstractTableModel implements MouseLi
     if (info != null && info.getTransaction() != null) {
       SocBusTransaction trans = info.getTransaction();
       Object master = trans.getTransactionInitiator();
-      if (master != null && master instanceof Component) ((Component)master).addComponentListener(this);
+      if (master instanceof Component) ((Component)master).addComponentListener(this);
       if (trans.getTransactionResponder() != null) trans.getTransactionResponder().addComponentListener(this);
     }
     return info;

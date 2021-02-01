@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -104,7 +104,7 @@ public class CanvasModelEvent extends EventObject {
 
   public static final int ACTION_TEXT_CHANGED = 8;
 
-  private int action;
+  private final int action;
   private Collection<? extends CanvasObject> affected;
   private int deltaX;
   private int deltaY;

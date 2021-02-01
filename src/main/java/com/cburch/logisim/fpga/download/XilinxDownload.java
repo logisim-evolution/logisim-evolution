@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -56,21 +56,21 @@ import java.util.List;
 
 public class XilinxDownload implements VendorDownload {
 
-  private VendorSoftware xilinxVendor = VendorSoftware.getSoftware(VendorSoftware.VendorXilinx);
-  private String ScriptPath;
-  private String ProjectPath;
-  private String SandboxPath;
-  private String UcfPath;
-  private FPGAReport Reporter;
-  private Netlist RootNetList;
+  private final VendorSoftware xilinxVendor = VendorSoftware.getSoftware(VendorSoftware.VendorXilinx);
+  private final String ScriptPath;
+  private final String ProjectPath;
+  private final String SandboxPath;
+  private final String UcfPath;
+  private final FPGAReport Reporter;
+  private final Netlist RootNetList;
   private MappableResourcesContainer MapInfo;
-  private BoardInformation BoardInfo;
-  private ArrayList<String> Entities;
-  private ArrayList<String> Architectures;
-  private String HDLType;
-  private String BitfileExt;
-  private boolean IsCPLD;
-  private boolean writeToFlash;
+  private final BoardInformation BoardInfo;
+  private final ArrayList<String> Entities;
+  private final ArrayList<String> Architectures;
+  private final String HDLType;
+  private final String BitfileExt;
+  private final boolean IsCPLD;
+  private final boolean writeToFlash;
 
   private static final String vhdl_list_file = "XilinxVHDLList.prj";
   private static final String script_file = "XilinxScript.cmd";
@@ -222,11 +222,11 @@ public class XilinxDownload implements VendorDownload {
           && DownloadFile.exists();
     }
     ArrayList<String> Contents = new ArrayList<String>();
-    for (int i = 0; i < Entities.size(); i++) {
-      Contents.add(HDLType.toUpperCase() + " work \"" + Entities.get(i) + "\"");
+    for (String entity : Entities) {
+      Contents.add(HDLType.toUpperCase() + " work \"" + entity + "\"");
     }
-    for (int i = 0; i < Architectures.size(); i++) {
-      Contents.add(HDLType.toUpperCase() + " work \"" + Architectures.get(i) + "\"");
+    for (String architecture : Architectures) {
+      Contents.add(HDLType.toUpperCase() + " work \"" + architecture + "\"");
     }
     if (!FileWriter.WriteContents(VhdlListFile, Contents, Reporter)) return false;
     Contents.clear();

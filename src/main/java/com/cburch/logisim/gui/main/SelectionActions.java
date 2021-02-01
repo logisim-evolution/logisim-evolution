@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -66,9 +66,9 @@ public class SelectionActions {
    */
   private static class Anchor extends Action {
 
-    private Selection sel;
-    private int numAnchor;
-    private SelectionSave before;
+    private final Selection sel;
+    private final int numAnchor;
+    private final SelectionSave before;
     private CircuitTransaction xnReverse;
 
     Anchor(Selection sel, int numAnchor) {
@@ -113,7 +113,7 @@ public class SelectionActions {
   }
 
   private static class Copy extends Action {
-    private Selection sel;
+    private final Selection sel;
     private Clipboard oldClip;
 
     Copy(Selection sel) {
@@ -143,9 +143,9 @@ public class SelectionActions {
   }
 
   private static class Cut extends Action {
-    private Selection sel;
+    private final Selection sel;
     private Clipboard oldClip;
-    private Action second;
+    private final Action second;
 
     Cut(Selection sel) {
       this.sel = sel;
@@ -172,7 +172,7 @@ public class SelectionActions {
   }
 
   private static class Delete extends Action {
-    private Selection sel;
+    private final Selection sel;
     private CircuitTransaction xnReverse;
 
     Delete(Selection sel) {
@@ -204,10 +204,10 @@ public class SelectionActions {
    */
   private static class Drop extends Action {
 
-    private Selection sel;
-    private Component[] drops;
-    private int numDrops;
-    private SelectionSave before;
+    private final Selection sel;
+    private final Component[] drops;
+    private final int numDrops;
+    private final SelectionSave before;
     private CircuitTransaction xnReverse;
 
     Drop(Selection sel, Collection<Component> toDrop, int numDrops) {
@@ -260,7 +260,7 @@ public class SelectionActions {
   }
 
   private static class Duplicate extends Action {
-    private Selection sel;
+    private final Selection sel;
     private CircuitTransaction xnReverse;
     private SelectionSave after;
 
@@ -291,10 +291,10 @@ public class SelectionActions {
   }
 
   private static class Paste extends Action {
-    private Selection sel;
+    private final Selection sel;
     private CircuitTransaction xnReverse;
     private SelectionSave after;
-    private HashMap<Component, Component> componentReplacements;
+    private final HashMap<Component, Component> componentReplacements;
 
     Paste(Selection sel, HashMap<Component, Component> replacements) {
       this.sel = sel;
@@ -304,8 +304,7 @@ public class SelectionActions {
     private Collection<Component> computeAdditions(Collection<Component> comps) {
       HashMap<Component, Component> replMap = componentReplacements;
       ArrayList<Component> toAdd = new ArrayList<Component>(comps.size());
-      for (Iterator<Component> it = comps.iterator(); it.hasNext(); ) {
-        Component comp = it.next();
+      for (Component comp : comps) {
         if (replMap.containsKey(comp)) {
           Component repl = replMap.get(comp);
           if (repl != null) {
@@ -366,11 +365,11 @@ public class SelectionActions {
   }
 
   private static class Translate extends Action {
-    private Selection sel;
-    private int dx;
-    private int dy;
-    private ReplacementMap replacements;
-    private SelectionSave before;
+    private final Selection sel;
+    private final int dx;
+    private final int dy;
+    private final ReplacementMap replacements;
+    private final SelectionSave before;
     private CircuitTransaction xnReverse;
 
     Translate(Selection sel, int dx, int dy, ReplacementMap replacements) {

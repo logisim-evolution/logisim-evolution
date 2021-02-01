@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -38,9 +38,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 class CircuitMutatorImpl implements CircuitMutator {
-  private ArrayList<CircuitChange> log;
-  private HashMap<Circuit, ReplacementMap> replacements;
-  private HashSet<Circuit> modified;
+  private final ArrayList<CircuitChange> log;
+  private final HashMap<Circuit, ReplacementMap> replacements;
+  private final HashSet<Circuit> modified;
 
   public CircuitMutatorImpl() {
     log = new ArrayList<CircuitChange>();

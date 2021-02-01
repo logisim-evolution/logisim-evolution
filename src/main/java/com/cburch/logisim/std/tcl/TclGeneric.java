@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -108,7 +108,7 @@ public class TclGeneric extends TclComponent {
 
   static final Attribute<VhdlContentComponent> CONTENT_ATTR = new ContentAttribute();
 
-  private WeakHashMap<Instance, TclGenericListener> contentListeners;
+  private final WeakHashMap<Instance, TclGenericListener> contentListeners;
 
   public TclGeneric() {
     super("TclGeneric", S.getter("tclGeneric"));

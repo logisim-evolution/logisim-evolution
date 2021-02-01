@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -34,7 +34,7 @@ import java.util.ArrayList;
 public class ClockTreeFactory {
 
   private ClockSourceContainer sources;
-  private ArrayList<ClockTreeContainer> sourcetrees;
+  private final ArrayList<ClockTreeContainer> sourcetrees;
 
   public ClockTreeFactory() {
     sourcetrees = new ArrayList<ClockTreeContainer>();

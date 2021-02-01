@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -138,7 +138,7 @@ public class SvgReader {
     if (elt.hasAttribute("rx")) {
       AbstractCanvasObject ret = new RoundRectangle(x, y, w, h);
       int rx = Integer.parseInt(elt.getAttribute("rx"));
-      ret.setValue(DrawAttr.CORNER_RADIUS, Integer.valueOf(rx));
+      ret.setValue(DrawAttr.CORNER_RADIUS, rx);
       return ret;
     } else {
       return new Rectangle(x, y, w, h);

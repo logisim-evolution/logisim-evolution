@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -37,7 +37,7 @@ import com.cburch.logisim.gui.chronogram.chronodata.SignalDataBus;
  */
 public class DrawAreaManager implements IDrawAreaEvents {
 
-  private ChronoFrame mChronoFrame;
+  private final ChronoFrame mChronoFrame;
 
   public DrawAreaManager(ChronoFrame chronoFrame) {
     mChronoFrame = chronoFrame;

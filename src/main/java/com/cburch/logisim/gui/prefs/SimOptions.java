@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -54,58 +54,58 @@ import com.cburch.logisim.proj.Projects;
 public class SimOptions extends OptionsPanel {
 
   private static final long serialVersionUID = 1L;
-  private MyColorListener mcol = new MyColorListener();
-  private JLabel TrueColorTitle = new JLabel();
-  private ColorChooserButton TrueColor;
-  private JLabel TrueCharTitle = new JLabel();
-  private SymbolChooser TrueChar = new SymbolChooser(AppPreferences.TRUE_CHAR,"1T");
-  private JLabel FalseColorTitle = new JLabel();
-  private ColorChooserButton FalseColor;
-  private JLabel FalseCharTitle = new JLabel();
-  private SymbolChooser FalseChar = new SymbolChooser(AppPreferences.FALSE_CHAR,"0F");
-  private JLabel UnknownColorTitle = new JLabel();
-  private ColorChooserButton UnknownColor;
-  private JLabel UnknownCharTitle = new JLabel();
-  private SymbolChooser UnknownChar = new SymbolChooser(AppPreferences.UNKNOWN_CHAR,"U?Z");
-  private JLabel ErrorColorTitle = new JLabel();
-  private ColorChooserButton ErrorColor;
-  private JLabel ErrorCharTitle = new JLabel();
-  private SymbolChooser ErrorChar = new SymbolChooser(AppPreferences.ERROR_CHAR,"E!X");
-  private JLabel NilColorTitle = new JLabel();
-  private ColorChooserButton NilColor;
-  private JLabel DontCareCharTitle = new JLabel();
-  private SymbolChooser DontCareChar = new SymbolChooser(AppPreferences.DONTCARE_CHAR,"-X");
-  private JLabel BusColorTitle = new JLabel();
-  private ColorChooserButton BusColor;
-  private JLabel HighlightColorTitle = new JLabel();
-  private ColorChooserButton HighlightColor;
-  private JLabel WidthErrorColorTitle = new JLabel();
-  private ColorChooserButton WidthErrorColor;
-  private JLabel WidthErrorCaptionColorTitle = new JLabel();
-  private ColorChooserButton WidthErrorCaptionColor;
-  private JLabel WidthErrorHighlightColorTitle = new JLabel();
-  private ColorChooserButton WidthErrorHighlightColor;
-  private JLabel WidthErrorBackgroundColorTitle = new JLabel();
-  private ColorChooserButton WidthErrorBackgroundColor;
-  private JButton DefaultButton = new JButton();
-  private JButton ColorBlindButton = new JButton();
-  private JLabel Kmap1ColorTitle = new JLabel();
-  private JLabel Kmap2ColorTitle = new JLabel();
-  private JLabel Kmap3ColorTitle = new JLabel();
-  private JLabel Kmap4ColorTitle = new JLabel();
-  private JLabel Kmap5ColorTitle = new JLabel();
-  private JLabel Kmap6ColorTitle = new JLabel();
-  private JLabel Kmap7ColorTitle = new JLabel();
-  private JLabel Kmap8ColorTitle = new JLabel();
-  private JLabel Kmap9ColorTitle = new JLabel();
-  private JLabel Kmap10ColorTitle = new JLabel();
-  private JLabel Kmap11ColorTitle = new JLabel();
-  private JLabel Kmap12ColorTitle = new JLabel();
-  private JLabel Kmap13ColorTitle = new JLabel();
-  private JLabel Kmap14ColorTitle = new JLabel();
-  private JLabel Kmap15ColorTitle = new JLabel();
-  private JLabel Kmap16ColorTitle = new JLabel();
-  private JLabel KmapColorsTitle = new JLabel("",SwingConstants.CENTER);
+  private final MyColorListener mcol = new MyColorListener();
+  private final JLabel TrueColorTitle = new JLabel();
+  private final ColorChooserButton TrueColor;
+  private final JLabel TrueCharTitle = new JLabel();
+  private final SymbolChooser TrueChar = new SymbolChooser(AppPreferences.TRUE_CHAR,"1T");
+  private final JLabel FalseColorTitle = new JLabel();
+  private final ColorChooserButton FalseColor;
+  private final JLabel FalseCharTitle = new JLabel();
+  private final SymbolChooser FalseChar = new SymbolChooser(AppPreferences.FALSE_CHAR,"0F");
+  private final JLabel UnknownColorTitle = new JLabel();
+  private final ColorChooserButton UnknownColor;
+  private final JLabel UnknownCharTitle = new JLabel();
+  private final SymbolChooser UnknownChar = new SymbolChooser(AppPreferences.UNKNOWN_CHAR,"U?Z");
+  private final JLabel ErrorColorTitle = new JLabel();
+  private final ColorChooserButton ErrorColor;
+  private final JLabel ErrorCharTitle = new JLabel();
+  private final SymbolChooser ErrorChar = new SymbolChooser(AppPreferences.ERROR_CHAR,"E!X");
+  private final JLabel NilColorTitle = new JLabel();
+  private final ColorChooserButton NilColor;
+  private final JLabel DontCareCharTitle = new JLabel();
+  private final SymbolChooser DontCareChar = new SymbolChooser(AppPreferences.DONTCARE_CHAR,"-X");
+  private final JLabel BusColorTitle = new JLabel();
+  private final ColorChooserButton BusColor;
+  private final JLabel HighlightColorTitle = new JLabel();
+  private final ColorChooserButton HighlightColor;
+  private final JLabel WidthErrorColorTitle = new JLabel();
+  private final ColorChooserButton WidthErrorColor;
+  private final JLabel WidthErrorCaptionColorTitle = new JLabel();
+  private final ColorChooserButton WidthErrorCaptionColor;
+  private final JLabel WidthErrorHighlightColorTitle = new JLabel();
+  private final ColorChooserButton WidthErrorHighlightColor;
+  private final JLabel WidthErrorBackgroundColorTitle = new JLabel();
+  private final ColorChooserButton WidthErrorBackgroundColor;
+  private final JButton DefaultButton = new JButton();
+  private final JButton ColorBlindButton = new JButton();
+  private final JLabel Kmap1ColorTitle = new JLabel();
+  private final JLabel Kmap2ColorTitle = new JLabel();
+  private final JLabel Kmap3ColorTitle = new JLabel();
+  private final JLabel Kmap4ColorTitle = new JLabel();
+  private final JLabel Kmap5ColorTitle = new JLabel();
+  private final JLabel Kmap6ColorTitle = new JLabel();
+  private final JLabel Kmap7ColorTitle = new JLabel();
+  private final JLabel Kmap8ColorTitle = new JLabel();
+  private final JLabel Kmap9ColorTitle = new JLabel();
+  private final JLabel Kmap10ColorTitle = new JLabel();
+  private final JLabel Kmap11ColorTitle = new JLabel();
+  private final JLabel Kmap12ColorTitle = new JLabel();
+  private final JLabel Kmap13ColorTitle = new JLabel();
+  private final JLabel Kmap14ColorTitle = new JLabel();
+  private final JLabel Kmap15ColorTitle = new JLabel();
+  private final JLabel Kmap16ColorTitle = new JLabel();
+  private final JLabel KmapColorsTitle = new JLabel("",SwingConstants.CENTER);
   private ColorChooserButton Kmap1Color;
   private ColorChooserButton Kmap2Color;
   private ColorChooserButton Kmap3Color;
@@ -200,7 +200,7 @@ public class SimOptions extends OptionsPanel {
   
   private class SymbolChooser extends JComboBox<Character> {
     private static final long serialVersionUID = 1L;
-    private PrefMonitor<String> myPref;
+    private final PrefMonitor<String> myPref;
     private class MyactionListener implements ActionListener {
       @Override
       public void actionPerformed(ActionEvent e) {

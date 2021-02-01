@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -56,11 +56,11 @@ public abstract class AbstractTtlGate extends InstanceFactory {
   protected static final int pinwidth = 10, pinheight = 7;
   private int height = 60;
   protected byte pinnumber;
-  private String name;
+  private final String name;
   private byte ngatestodraw = 0;
   protected String[] portnames = null;
-  private HashSet<Byte> outputports = new HashSet<Byte>();
-  private HashSet<Byte> unusedpins = new HashSet<Byte>();
+  private final HashSet<Byte> outputports = new HashSet<Byte>();
+  private final HashSet<Byte> unusedpins = new HashSet<Byte>();
 
   /**
    * @param name = name to display in the center of the TTl
@@ -77,13 +77,15 @@ public abstract class AbstractTtlGate extends InstanceFactory {
     setFacingAttribute(StdAttr.FACING);
     this.name = name;
     this.pinnumber = pins;
-    for (int i = 0; i < outputports.length; i++) this.outputports.add(outputports[i]);
+    for (byte outputport : outputports)
+      this.outputports.add(outputport);
   }
 
   protected AbstractTtlGate(String name, byte pins, byte[] outputports, byte[] NotUsedPins) {
     this(name, pins, outputports);
     if (NotUsedPins == null) return;
-    for (int i = 0; i < NotUsedPins.length; i++) unusedpins.add(NotUsedPins[i]);
+    for (byte notUsedPin : NotUsedPins)
+      unusedpins.add(notUsedPin);
   }
 
   /**
@@ -120,7 +122,8 @@ public abstract class AbstractTtlGate extends InstanceFactory {
     this(name, pins, outputports);
     portnames = Ttlportnames;
     if (NotUsedPins == null) return;
-    for (int i = 0; i < NotUsedPins.length; i++) unusedpins.add(NotUsedPins[i]);
+    for (byte notUsedPin : NotUsedPins)
+      unusedpins.add(notUsedPin);
   }
 
   protected AbstractTtlGate(

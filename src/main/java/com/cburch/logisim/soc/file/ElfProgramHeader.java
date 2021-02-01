@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -91,15 +91,15 @@ public class ElfProgramHeader {
   private static final int PROGRAM_HEADER_SIZE_ERROR = 3;
 
   public class ProgramHeader {
-    private Integer p_type;
+    private final Integer p_type;
     private Integer p_flags;
-    private Long p_offset;
-    private Long p_vaddr;
-    private Long p_paddr;
-    private Long p_filesz;
-    private Long p_memsz;
-    private Long p_align;
-    private boolean is32Bit;
+    private final Long p_offset;
+    private final Long p_vaddr;
+    private final Long p_paddr;
+    private final Long p_filesz;
+    private final Long p_memsz;
+    private final Long p_align;
+    private final boolean is32Bit;
     
     public ProgramHeader(byte[] buffer , boolean is32Bit, boolean isLittleEndian, int offset) {
       int index = offset;

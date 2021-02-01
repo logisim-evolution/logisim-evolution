@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -70,8 +70,7 @@ public class AppPreferences {
       for (int set = 0; set < 2; set++) {
         if (set == 0) check = new Locale[] {Locale.getDefault(), Locale.ENGLISH};
         else check = Locale.getAvailableLocales();
-        for (int i = 0; i < check.length; i++) {
-          Locale loc = check[i];
+        for (Locale loc : check) {
           if (loc != null && loc.getLanguage().equals(lang)) {
             return loc;
           }
@@ -188,22 +187,13 @@ public class AppPreferences {
         customTemplate = null;
         customTemplateFile = null;
       } else {
-        FileInputStream reader = null;
-        try {
-          reader = new FileInputStream(toRead);
+        try (FileInputStream reader = new FileInputStream(toRead)) {
           customTemplate = Template.create(reader);
           customTemplateFile = templateFile;
         } catch (Exception t) {
           setTemplateFile(null);
           customTemplate = null;
           customTemplateFile = null;
-        } finally {
-          if (reader != null) {
-            try {
-              reader.close();
-            } catch (IOException e) {
-            }
-          }
         }
       }
     }
@@ -223,10 +213,8 @@ public class AppPreferences {
         plainTemplate = getEmptyTemplate();
       } else {
         try {
-          try {
+          try (in) {
             plainTemplate = Template.create(in);
-          } finally {
-            in.close();
           }
         } catch (Exception e) {
           plainTemplate = getEmptyTemplate();
@@ -307,16 +295,8 @@ public class AppPreferences {
   public static void handleGraphicsAcceleration() {
     String accel = GRAPHICS_ACCELERATION.get();
     try {
-      if (accel == ACCEL_NONE) {
-        System.setProperty("sun.java2d.opengl", "False");
-        System.setProperty("sun.java2d.d3d", "False");
-      } else if (accel == ACCEL_OPENGL) {
-        System.setProperty("sun.java2d.opengl", "True");
-        System.setProperty("sun.java2d.d3d", "False");
-      } else if (accel == ACCEL_D3D) {
-        System.setProperty("sun.java2d.opengl", "False");
-        System.setProperty("sun.java2d.d3d", "True");
-      }
+      System.setProperty("sun.java2d.opengl", Boolean.toString(accel.equals(ACCEL_OPENGL)));
+      System.setProperty("sun.java2d.d3d", Boolean.toString(accel.equals(ACCEL_D3D)));
     } catch (Exception t) {
     }
   }
@@ -359,12 +339,13 @@ public class AppPreferences {
   }
 
   public static void setScaledFonts(Component[] comp) {
-    for (int x = 0; x < comp.length; x++) {
-      if (comp[x] instanceof Container) setScaledFonts(((Container) comp[x]).getComponents());
+    for (Component component : comp) {
+      if (component instanceof Container)
+        setScaledFonts(((Container) component).getComponents());
       try {
-        comp[x].setFont(getScaledFont(comp[x].getFont()));
-        comp[x].revalidate();
-        comp[x].repaint();
+        component.setFont(getScaledFont(component.getFont()));
+        component.revalidate();
+        component.repaint();
       } catch (Exception e) {
       }
     }
@@ -452,7 +433,7 @@ public class AppPreferences {
   private static Preferences prefs = null;
 
   private static MyListener myListener = null;
-  private static PropertyChangeWeakSupport propertySupport =
+  private static final PropertyChangeWeakSupport propertySupport =
       new PropertyChangeWeakSupport(AppPreferences.class);
 
   // Template preferences
@@ -589,16 +570,10 @@ public class AppPreferences {
       create(
           new PrefMonitorDouble(
               "Scale",
-              (((!GraphicsEnvironment.isHeadless())
-                              ? Toolkit.getDefaultToolkit().getScreenSize().getHeight()
-                              : 0)
-                          / 1000)
-                      < 1.0
-                  ? 1.0
-                  : ((!GraphicsEnvironment.isHeadless())
-                          ? Toolkit.getDefaultToolkit().getScreenSize().getHeight()
-                          : 0)
-                      / 1000));
+              Math.max((((!GraphicsEnvironment.isHeadless())
+                  ? Toolkit.getDefaultToolkit().getScreenSize().getHeight()
+                  : 0)
+                  / 1000), 1.0)));
 
   public static final PrefMonitor<String> ADD_AFTER =
       create(

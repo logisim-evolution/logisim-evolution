@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -36,10 +36,10 @@ import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.util.StringUtil;
 
 class NegateAttribute extends Attribute<Boolean> {
-  private static Attribute<Boolean> BOOLEAN_ATTR = Attributes.forBoolean("negateDummy");
+  private static final Attribute<Boolean> BOOLEAN_ATTR = Attributes.forBoolean("negateDummy");
 
   int index;
-  private Direction side;
+  private final Direction side;
 
   public NegateAttribute(int index, Direction side) {
     super("negate" + index, null);

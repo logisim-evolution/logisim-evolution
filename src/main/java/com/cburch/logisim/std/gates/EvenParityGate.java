@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -53,7 +53,7 @@ class EvenParityGate extends AbstractGate {
   }
 
   public static EvenParityGate FACTORY = new EvenParityGate();
-  private String LABEL = "2k";
+  private final String LABEL = "2k";
 
   private EvenParityGate() {
     super("Even Parity", S.getter("evenParityComponent"));

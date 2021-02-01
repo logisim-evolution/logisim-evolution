@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -63,12 +63,12 @@ public class GridPainter {
 
   private static final Color GRID_ZOOMED_OUT_COLOR = new Color(210, 210, 210);
 
-  private Component destination;
-  private PropertyChangeSupport support;
+  private final Component destination;
+  private final PropertyChangeSupport support;
   private Listener listener;
   private ZoomModel zoomModel;
   private boolean showGrid;
-  private int gridSize;
+  private final int gridSize;
   private double zoomFactor;
   private Image gridImage;
   private int gridImageWidth;
@@ -100,23 +100,21 @@ public class GridPainter {
 
   public void paintGrid(Graphics g) {
     Rectangle clip = g.getClipBounds();
-    Component dest = destination;
     double zoom = zoomFactor;
-    int size = gridSize;
 
     if (!showGrid) return;
 
     Image img = gridImage;
     int w = gridImageWidth;
     if (img == null) {
-      paintGridOld(g, size, zoom, clip);
+      paintGridOld(g, gridSize, zoom, clip);
       return;
     }
     int x0 = (clip.x / w) * w; // round down to multiple of w
     int y0 = (clip.y / w) * w;
     for (int x = 0; x < clip.width + w; x += w) {
       for (int y = 0; y < clip.height + w; y += w) {
-        g.drawImage(img, x0 + x, y0 + y, dest);
+        g.drawImage(img, x0 + x, y0 + y, destination);
       }
     }
   }
@@ -191,7 +189,7 @@ public class GridPainter {
     if (oldValue != value) {
       zoomFactor = value;
       updateGridImage(gridSize, value);
-      support.firePropertyChange(ZOOM_PROPERTY, Double.valueOf(oldValue), Double.valueOf(value));
+      support.firePropertyChange(ZOOM_PROPERTY, oldValue, value);
     }
   }
 

@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -116,8 +116,8 @@ public class Dependencies {
     }
   }
 
-  private MyListener myListener = new MyListener();
-  private Dag depends = new Dag();
+  private final MyListener myListener = new MyListener();
+  private final Dag depends = new Dag();
 
   Dependencies(LogisimFile file) {
     addDependencies(file);

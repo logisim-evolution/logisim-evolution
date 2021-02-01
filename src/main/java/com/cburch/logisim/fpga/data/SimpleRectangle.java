@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -39,10 +39,10 @@ import com.cburch.logisim.prefs.AppPreferences;
 public class SimpleRectangle {
 
   private int x,y,width,height;
-  private FPGAIOInformationContainer toBeModified;
-  private boolean movemode;
+  private final FPGAIOInformationContainer toBeModified;
+  private final boolean movemode;
   private boolean show;
-  private boolean fill;
+  private final boolean fill;
   
   public SimpleRectangle(MouseEvent e) {
     toBeModified = null;

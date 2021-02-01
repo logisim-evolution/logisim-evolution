@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -46,7 +46,7 @@ import java.util.HashSet;
 
 public abstract class AttributeSetTableModel implements AttrTableModel, AttributeListener {
   private class AttrRow implements AttrTableModelRow {
-    private Attribute<Object> attr;
+    private final Attribute<Object> attr;
 
     AttrRow(Attribute<?> attr) {
       @SuppressWarnings("unchecked")
@@ -90,7 +90,7 @@ public abstract class AttributeSetTableModel implements AttrTableModel, Attribut
     }
 
     public boolean multiEditCompatible(AttrTableModelRow other) {
-      if (other == null || !(other instanceof AttrRow)) return false;
+      if (!(other instanceof AttrRow)) return false;
       AttrRow o = (AttrRow) other;
       if (!(((Object) attr) instanceof SplitterAttributes.BitOutAttribute)) return false;
       if (!(((Object) o.attr) instanceof SplitterAttributes.BitOutAttribute)) return false;
@@ -154,9 +154,9 @@ public abstract class AttributeSetTableModel implements AttrTableModel, Attribut
     }
   }
 
-  private ArrayList<AttrTableModelListener> listeners;
+  private final ArrayList<AttrTableModelListener> listeners;
   private AttributeSet attrs;
-  private HashMap<Attribute<?>, AttrRow> rowMap;
+  private final HashMap<Attribute<?>, AttrRow> rowMap;
   private ArrayList<AttrRow> rows;
   private ComponentFactory CompInst = null;
 

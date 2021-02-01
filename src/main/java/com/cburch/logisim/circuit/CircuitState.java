@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -162,10 +162,10 @@ public class CircuitState implements InstanceData {
     }
   }
 
-  private MyCircuitListener myCircuitListener = new MyCircuitListener();
+  private final MyCircuitListener myCircuitListener = new MyCircuitListener();
   private Propagator base = null; // base of tree of CircuitStates
-  private Project proj; // project where circuit liespr
-  private Circuit circuit; // circuit being simulated
+  private final Project proj; // project where circuit liespr
+  private final Circuit circuit; // circuit being simulated
 
   private CircuitState parentState = null; // parent in tree of CircuitStates
   private Component parentComp = null; // subcircuit component containing this
@@ -173,14 +173,14 @@ public class CircuitState implements InstanceData {
   private HashSet<CircuitState> substates = new HashSet<CircuitState>();
 
   private CircuitWires.State wireData = null;
-  private HashMap<Component, Object> componentData = new HashMap<Component, Object>();
-  private Map<Location, Value> values = new HashMap<Location, Value>();
+  private final HashMap<Component, Object> componentData = new HashMap<Component, Object>();
+  private final Map<Location, Value> values = new HashMap<Location, Value>();
   private CopyOnWriteArraySet<Component> dirtyComponents = new CopyOnWriteArraySet<Component>();
-  private CopyOnWriteArraySet<Location> dirtyPoints = new CopyOnWriteArraySet<Location>();
+  private final CopyOnWriteArraySet<Location> dirtyPoints = new CopyOnWriteArraySet<Location>();
   HashMap<Location, SetData> causes = new HashMap<Location, SetData>();
 
   private static int lastId = 0;
-  private int id = lastId++;
+  private final int id = lastId++;
 
   public CircuitState(Project proj, Circuit circuit) {
     this.proj = proj;
@@ -427,20 +427,20 @@ public class CircuitState implements InstanceData {
 
   void reset() {
     wireData = null;
-    for (Iterator<Component> it = componentData.keySet().iterator(); it.hasNext(); ) {
-      Component comp = it.next();
+    for (Component comp : componentData.keySet()) {
       if (comp.getFactory() instanceof Ram) {
         Ram ram = (Ram) comp.getFactory();
         boolean remove = ram.reset(this, Instance.getInstanceFor(comp));
-        if (remove) componentData.put(comp, null);
+        if (remove)
+          componentData.put(comp, null);
       } else if (comp.getFactory() instanceof Buzzer) {
         Buzzer.StopBuzzerSound(comp, this);
       } else if (!(comp.getFactory() instanceof SubcircuitFactory)) {
         if (componentData.get(comp) instanceof ComponentDataGuiProvider)
-          ((ComponentDataGuiProvider)componentData.get(comp)).destroy();
+          ((ComponentDataGuiProvider) componentData.get(comp)).destroy();
     /*  it.remove(); ktt1: clear out the state instead of removing the key to prevent concurrent
         modification error */
-        componentData.put(comp, null); 
+        componentData.put(comp, null);
       }
     }
     values.clear();

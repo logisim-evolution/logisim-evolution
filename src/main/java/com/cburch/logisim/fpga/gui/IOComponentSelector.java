@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -44,7 +44,7 @@ import com.cburch.logisim.fpga.data.FPGAIOInformationContainer;
 public class IOComponentSelector implements ActionListener{
 	
   private String action_id;
-  private JDialog diag;
+  private final JDialog diag;
   private static final String CancelStr = "cancel";
   
   public IOComponentSelector(Frame parrent) {

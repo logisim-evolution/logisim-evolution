@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -83,26 +83,26 @@ public class FPGACommander
         PreferenceChangeListener {
 
   public static final int FONT_SIZE = 12;
-  private JFrame panel;
-  private JLabel textMainCircuit = new JLabel();
-  private JLabel boardPic = new JLabel();
+  private final JFrame panel;
+  private final JLabel textMainCircuit = new JLabel();
+  private final JLabel boardPic = new JLabel();
   private BoardIcon boardIcon = null;
-  private JButton annotateButton = new JButton();
-  private JButton validateButton = new JButton();
-  private JComboBox<String> circuitsList = new JComboBox<>();
-  private JComboBox<StringGetter> annotationList = new JComboBox<>();
-  private JComboBox<StringGetter> actionCommands = new JComboBox<>();
-  private JButton ToolPath = new JButton();
-  private JButton Settings = new JButton();
-  private JButton StopButton = new JButton();
-  private JProgressBar Progress = new JProgressBar();
-  private FPGAReportTabbedPane ReporterGui;
+  private final JButton annotateButton = new JButton();
+  private final JButton validateButton = new JButton();
+  private final JComboBox<String> circuitsList = new JComboBox<>();
+  private final JComboBox<StringGetter> annotationList = new JComboBox<>();
+  private final JComboBox<StringGetter> actionCommands = new JComboBox<>();
+  private final JButton ToolPath = new JButton();
+  private final JButton Settings = new JButton();
+  private final JButton StopButton = new JButton();
+  private final JProgressBar Progress = new JProgressBar();
+  private final FPGAReportTabbedPane ReporterGui;
   private Download Downloader;
   public static final String StopRequested = "stop";
-  private JPanel BoardSelectionPanel = new JPanel();
-  private FPGAClockPanel FrequencyPanel;
-  private Project MyProject;
-  private FPGAReport MyReporter;
+  private final JPanel BoardSelectionPanel = new JPanel();
+  private final FPGAClockPanel FrequencyPanel;
+  private final Project MyProject;
+  private final FPGAReport MyReporter;
   private BoardInformation MyBoardInformation = null;
 
   

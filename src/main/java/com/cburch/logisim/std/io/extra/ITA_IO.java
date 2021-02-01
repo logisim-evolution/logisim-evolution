@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -39,7 +39,7 @@ import java.util.List;
 
 public class ITA_IO extends Library {
 
-  private static FactoryDescription[] DESCRIPTIONS = {
+  private static final FactoryDescription[] DESCRIPTIONS = {
     new FactoryDescription("Switch", S.getter("switchComponent"), "switch.gif", "Switch"),
     new FactoryDescription("Buzzer", S.getter("buzzerComponent"), "buzzer.gif", "Buzzer"),
     new FactoryDescription("Slider", S.getter("Slider"), "slider.gif", "Slider"),
@@ -52,13 +52,18 @@ public class ITA_IO extends Library {
   };
 
   private List<Tool> tools = null;
-  private Tool[] ADD_TOOLS = {
+  private final Tool[] ADD_TOOLS = {
     new AddTool(ProgrammableGenerator.FACTORY),
   };
 
   @Override
-  public String getName() {
+  public String getDisplayName() {
     return S.get("input.output.extra");
+  }
+
+  @Override
+  public String getName() {
+    return "Input/Output-Extra";
   }
 
   @Override

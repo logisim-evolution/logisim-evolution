@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -42,14 +42,14 @@ import com.cburch.logisim.prefs.AppPreferences;
 public class IOComponentsInformation {
   
   private Frame parent;
-  private ArrayList<FPGAIOInformationContainer> IOcomps;
+  private final ArrayList<FPGAIOInformationContainer> IOcomps;
   private int DefaultStandard = 0;
   private int DefaultDriveStrength = 0;
   private int DefaultPullSelection = 0;
   private int DefaultActivity = 0;
-  private boolean mapMode;
-  private int imageHeight;
-  private FPGAIOInformationContainer[][] lookup;
+  private final boolean mapMode;
+  private final int imageHeight;
+  private final FPGAIOInformationContainer[][] lookup;
   private FPGAIOInformationContainer highlighted;
   private ArrayList<IOComponentsListener> listeners;
 

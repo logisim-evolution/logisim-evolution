@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -42,6 +42,6 @@ public class LongConfigurator extends NumericConfigurator<Long> {
 
   @Override
   protected Long createValue(long val) {
-    return Long.valueOf(val);
+    return val;
   }
 }

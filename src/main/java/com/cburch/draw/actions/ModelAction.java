@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -46,7 +46,7 @@ public abstract class ModelAction extends Action {
     }
   }
 
-  private CanvasModel model;
+  private final CanvasModel model;
 
   public ModelAction(CanvasModel model) {
     this.model = model;

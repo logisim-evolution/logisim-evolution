@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -356,9 +356,9 @@ public abstract class RadixOption extends AttributeOption {
   public static final Attribute<RadixOption> ATTRIBUTE =
       Attributes.forOption("radix", S.getter("radixAttr"), OPTIONS);
 
-  private String saveName;
+  private final String saveName;
 
-  private StringGetter displayGetter;
+  private final StringGetter displayGetter;
 
   private RadixOption(String saveName, StringGetter displayGetter) {
     super(saveName, displayGetter);

@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -38,8 +38,8 @@ import javax.swing.Icon;
 
 public class BoardIcon implements Icon {
   private Image image;
-  private int icon_width = 240;
-  private int icon_height = 130;
+  private final int icon_width = 240;
+  private final int icon_height = 130;
 
   public BoardIcon(BufferedImage BoardImage) {
     if (BoardImage == null) image = null;

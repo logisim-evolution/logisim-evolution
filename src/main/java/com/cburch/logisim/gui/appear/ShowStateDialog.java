@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -158,7 +158,7 @@ public class ShowStateDialog extends JDialog implements ActionListener {
     }
 
     // sort the remaining shapes
-    Collections.sort(toAdd, new CompareByLocations());
+    toAdd.sort(new CompareByLocations());
 
     ArrayList<CanvasObject> avoid = new ArrayList<>(model.getObjectsFromBottom());
     for (int i = avoid.size() - 1; i >= 0; i--) {

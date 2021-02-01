@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -33,7 +33,7 @@ import com.cburch.logisim.util.StringGetter;
 
 public class BitWidth implements Comparable<BitWidth> {
   static class Attribute extends com.cburch.logisim.data.Attribute<BitWidth> {
-    private BitWidth[] choices;
+    private final BitWidth[] choices;
 
     public Attribute(String name, StringGetter disp) {
       super(name, disp);

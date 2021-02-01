@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -48,7 +48,7 @@ import java.util.ListIterator;
 
 public class DrawingAttributeSet implements AttributeSet, Cloneable {
   private class Restriction extends AbstractAttributeSet implements AttributeListener {
-    private AbstractTool tool;
+    private final AbstractTool tool;
     private List<Attribute<?>> selectedAttrs;
     private List<Attribute<?>> selectedView;
 
@@ -128,12 +128,12 @@ public class DrawingAttributeSet implements AttributeSet, Cloneable {
       Arrays.asList(
           new Object[] {
             DrawAttr.DEFAULT_FONT, DrawAttr.HALIGN_CENTER, DrawAttr.VALIGN_MIDDLE,
-            DrawAttr.PAINT_STROKE, Integer.valueOf(1), Color.BLACK,
-            Color.WHITE, Color.BLACK, Integer.valueOf(10)
+            DrawAttr.PAINT_STROKE, 1, Color.BLACK,
+            Color.WHITE, Color.BLACK, 10
           });
 
   private EventSourceWeakSupport<AttributeListener> listeners;
-  private List<Attribute<?>> attrs;
+  private final List<Attribute<?>> attrs;
   private List<Object> values;
 
   public DrawingAttributeSet() {

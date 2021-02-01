@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -51,12 +51,12 @@ public class ClipboardActions extends Action {
     return new ClipboardActions(true, canvas);
   }
 
-  private boolean remove;
-  private AppearanceCanvas canvas;
-  private CanvasModel canvasModel;
+  private final boolean remove;
+  private final AppearanceCanvas canvas;
+  private final CanvasModel canvasModel;
   private ClipboardContents oldClipboard;
-  private Map<CanvasObject, Integer> affected;
-  private ClipboardContents newClipboard;
+  private final Map<CanvasObject, Integer> affected;
+  private final ClipboardContents newClipboard;
 
   private ClipboardActions(boolean remove, AppearanceCanvas canvas) {
     this.remove = remove;

@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -67,7 +67,7 @@ public class Analyze {
 
     @Override
     public boolean equals(Object other) {
-      if (other == null || !(other instanceof LocationBit)) return false;
+      if (!(other instanceof LocationBit)) return false;
       LocationBit that = (LocationBit) other;
       return (that.loc.equals(this.loc) && that.bit == this.bit);
     }
@@ -81,9 +81,9 @@ public class Analyze {
   private static class ExpressionMap extends HashMap<LocationBit, Expression>
       implements ExpressionComputer.Map {
     private static final long serialVersionUID = 1L;
-    private Circuit circuit;
-    private Set<LocationBit> dirtyPoints = new HashSet<LocationBit>();
-    private Map<LocationBit, Component> causes = new HashMap<LocationBit, Component>();
+    private final Circuit circuit;
+    private final Set<LocationBit> dirtyPoints = new HashSet<LocationBit>();
+    private final Map<LocationBit, Component> causes = new HashMap<LocationBit, Component>();
     private Component currentCause = null;
 
     ExpressionMap(Circuit circuit) {
@@ -172,8 +172,7 @@ public class Analyze {
     }
 
     model.setVariables(inputVars, outputVars);
-    for (int i = 0; i < outputPins.size(); i++) {
-      Instance pin = outputPins.get(i);
+    for (Instance pin : outputPins) {
       String label = pinNames.get(pin);
       int width = pin.getAttributeValue(StdAttr.WIDTH).getWidth();
       for (int b = 0; b < width; b++) {
@@ -218,8 +217,7 @@ public class Analyze {
     for (int i = 0; i < rowCount; i++) {
       CircuitState circuitState = new CircuitState(proj, circuit);
       int incol = 0;
-      for (int j = 0; j < inputPins.size(); j++) {
-        Instance pin = inputPins.get(j);
+      for (Instance pin : inputPins) {
         int width = pin.getAttributeValue(StdAttr.WIDTH).getWidth();
         Value[] v = new Value[width];
         for (int b = width - 1; b >= 0; b--) {
@@ -244,17 +242,20 @@ public class Analyze {
         }
       } else {
         int outcol = 0;
-        for (int j = 0; j < outputPins.size(); j++) {
-          Instance pin = outputPins.get(j);
+        for (Instance pin : outputPins) {
           int width = pin.getAttributeValue(StdAttr.WIDTH).getWidth();
           InstanceState pinState = circuitState.getInstanceState(pin);
           Entry out;
           for (int b = width - 1; b >= 0; b--) {
             Value outValue = Pin.FACTORY.getValue(pinState).get(b);
-            if (outValue == Value.TRUE) out = Entry.ONE;
-            else if (outValue == Value.FALSE) out = Entry.ZERO;
-            else if (outValue == Value.ERROR) out = Entry.BUS_ERROR;
-            else out = Entry.DONT_CARE;
+            if (outValue == Value.TRUE)
+              out = Entry.ONE;
+            else if (outValue == Value.FALSE)
+              out = Entry.ZERO;
+            else if (outValue == Value.ERROR)
+              out = Entry.BUS_ERROR;
+            else
+              out = Entry.DONT_CARE;
             columns[outcol++][i] = out;
           }
         }
@@ -399,7 +400,7 @@ public class Analyze {
         WireThread t = bundle.threads[p.bit];
         for (CircuitWires.ThreadBundle tb : t.getBundles()) {
           for (Location p2 : tb.b.points) {
-            if (p2.equals(p)) continue;
+            if (p2.equals(p.loc)) continue;
             LocationBit p2b = new LocationBit(p2, tb.loc);
             Expression old = expressionMap.get(p2b);
             if (old != null) {

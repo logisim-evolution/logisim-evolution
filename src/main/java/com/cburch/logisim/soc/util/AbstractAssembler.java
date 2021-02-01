@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -47,8 +47,8 @@ import com.cburch.logisim.soc.file.SymbolTable;
 public abstract class AbstractAssembler implements AssemblerInterface {
 
   private static final int NR_OF_BYTES_PER_LINE = 16;
-  private ArrayList<AssemblerExecutionInterface> exeUnits = new ArrayList<AssemblerExecutionInterface>();
-  private HashSet<Integer> acceptedParameterTypes;
+  private final ArrayList<AssemblerExecutionInterface> exeUnits = new ArrayList<AssemblerExecutionInterface>();
+  private final HashSet<Integer> acceptedParameterTypes;
   
   public AbstractAssembler() {
     acceptedParameterTypes = new HashSet<Integer>();
@@ -346,7 +346,7 @@ public abstract class AbstractAssembler implements AssemblerInterface {
           }
           /* second pass, we are going to insert the code into the buffer */
           StringBuffer remark = new StringBuffer();
-          int remarkOffset = (2*maxLabelSize)+23 < 60 ? 60 : (2*maxLabelSize)+23;
+          int remarkOffset = Math.max((2 * maxLabelSize) + 23, 60);
           for (int i = 0 ; i <  remarkOffset ; i++) remark.append(" ");
           remark.append("#    pc:       opcode:\n");
           lineNum = addLine(lines,remark.toString(),lineNum,true);
@@ -359,7 +359,7 @@ public abstract class AbstractAssembler implements AssemblerInterface {
             line.append(label.toString()+" ");
             decode(contents[pc]);
             AssemblerExecutionInterface exe = getExeUnit();
-            if (exe != null && exe instanceof AbstractExecutionUnitWithLabelSupport) {
+            if (exe instanceof AbstractExecutionUnitWithLabelSupport) {
               AbstractExecutionUnitWithLabelSupport jump = (AbstractExecutionUnitWithLabelSupport) exe;
               if (jump.isLabelSupported()) {
                 long target = jump.getLabelAddress(addr);

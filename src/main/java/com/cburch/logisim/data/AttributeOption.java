@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -31,9 +31,9 @@ package com.cburch.logisim.data;
 import com.cburch.logisim.util.StringGetter;
 
 public class AttributeOption implements AttributeOptionInterface {
-  private Object value;
-  private String name;
-  private StringGetter desc;
+  private final Object value;
+  private final String name;
+  private final StringGetter desc;
 
   public AttributeOption(Object value, String name, StringGetter desc) {
     this.value = value;

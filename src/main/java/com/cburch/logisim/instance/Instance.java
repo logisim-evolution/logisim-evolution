@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -52,7 +52,7 @@ public class Instance {
     }
   }
 
-  private InstanceComponent comp;
+  private final InstanceComponent comp;
 
   Instance(InstanceComponent comp) {
     this.comp = comp;

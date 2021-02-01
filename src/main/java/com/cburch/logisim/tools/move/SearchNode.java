@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -42,12 +42,12 @@ class SearchNode implements Comparable<SearchNode> {
 
   private final Location loc;
   private final Direction dir;
-  private ConnectionData conn;
+  private final ConnectionData conn;
   private final Location dest;
-  private int dist;
-  private int heur;
-  private boolean extendsWire;
-  private SearchNode prev;
+  private final int dist;
+  private final int heur;
+  private final boolean extendsWire;
+  private final SearchNode prev;
 
   public SearchNode(ConnectionData conn, Location src, Direction srcDir, Location dst) {
     this(src, srcDir, conn, dst, 0, srcDir != null, null);
@@ -87,7 +87,7 @@ class SearchNode implements Comparable<SearchNode> {
       SearchNode o = (SearchNode) other;
 
       return (this.loc.equals(o.loc)
-          && (this.dir == null ? o.dir == null : (o.dir == null ? false : this.dir.equals(o.dir)))
+          && (this.dir == null ? o.dir == null : (o.dir != null && this.dir.equals(o.dir)))
           && this.dest.equals(o.dest));
 
       /*

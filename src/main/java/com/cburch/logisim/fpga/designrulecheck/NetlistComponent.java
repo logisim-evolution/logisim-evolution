@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -38,9 +38,9 @@ import java.util.Map;
 
 public class NetlistComponent {
 
-  private int nr_of_ends;
-  private Component CompReference;
-  private ArrayList<ConnectionEnd> Ends;
+  private final int nr_of_ends;
+  private final Component CompReference;
+  private final ArrayList<ConnectionEnd> Ends;
   ComponentMapInformationContainer MyMapInformation;
   private Map<ArrayList<String>, BubbleInformationContainer> GlobalIds;
   private BubbleInformationContainer LocalId;

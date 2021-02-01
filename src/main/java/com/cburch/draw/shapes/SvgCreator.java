@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -174,13 +174,13 @@ public class SvgCreator {
   public static String getColorString(Color color) {
     return String.format(
         "#%02x%02x%02x",
-        Integer.valueOf(color.getRed()),
-        Integer.valueOf(color.getGreen()),
-        Integer.valueOf(color.getBlue()));
+        color.getRed(),
+        color.getGreen(),
+        color.getBlue());
   }
 
   private static String getOpacityString(Color color) {
-    return String.format("%5.3f", Double.valueOf(color.getAlpha() / 255.0));
+    return String.format("%5.3f", color.getAlpha() / 255.0);
   }
 
   private static void populateFill(Element elt, AbstractCanvasObject shape) {

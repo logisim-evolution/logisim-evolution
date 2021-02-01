@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -35,7 +35,7 @@ import javax.swing.tree.TreePath;
 
 public class ProjectExplorerEvent {
 
-  private TreePath path;
+  private final TreePath path;
 
   public ProjectExplorerEvent(TreePath path) {
     this.path = path;

@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -67,7 +67,7 @@ import com.cburch.draw.shapes.DrawAttr;
 
 public class TikZInfo implements Cloneable {
 
-  private static double BASIC_STROKE_WIDTH = 1;
+  private static final double BASIC_STROKE_WIDTH = 1;
 
   private AffineTransform myTransformer = new AffineTransform();
   private Color drawColor;
@@ -128,10 +128,10 @@ public class TikZInfo implements Cloneable {
       Point right = new Point(x+width,y+height);
       transform(left,left);
       transform(right,right);
-      int x1 = left.x < right.x ? left.x : right.x;
-      int x2 = left.x < right.x ? right.x : left.x;
-      int y1 = left.y < right.y ? left.y : right.y;
-      int y2 = left.y < right.y ? right.y : left.y;
+      int x1 = Math.min(left.x, right.x);
+      int x2 = Math.max(left.x, right.x);
+      int y1 = Math.min(left.y, right.y);
+      int y2 = Math.max(left.y, right.y);
       boolean inside = true;
       if (points.isEmpty())
         return (start.x >= x1 && start.x <= x2) &&
@@ -458,19 +458,19 @@ public class TikZInfo implements Cloneable {
       if (closePath)
         return true;
         boolean inside = true;
-        double x1 = x;
         double x2 = x+width;
-        double y1 = y;
         double y2 = y+height;
         if (startPoint != null)
-          inside &= (startPoint.getX() >= x1 && startPoint.getX() <= x2) && (startPoint.getY() >= y1 && startPoint.getY() <= y2);
+          inside &= (startPoint.getX() >= (double) x && startPoint.getX() <= x2) && (startPoint.getY() >= (double) y
+              && startPoint.getY() <= y2);
         if (endPoint != null)
-          inside &= (endPoint.getX() >= x1 && endPoint.getX() <= x2) && (endPoint.getY() >= y1 && endPoint.getY() <= y2);
+          inside &= (endPoint.getX() >= (double) x && endPoint.getX() <= x2) && (endPoint.getY() >= (double) y
+              && endPoint.getY() <= y2);
         return inside;
       }
     }
     
-    private ArrayList<BezierInfo> myPath = new ArrayList<BezierInfo>();
+    private final ArrayList<BezierInfo> myPath = new ArrayList<BezierInfo>();
     
     public TikZBezier() {};
     
@@ -668,9 +668,9 @@ public class TikZInfo implements Cloneable {
         ne.setAttribute("rx", Double.toString(rad.getX()));
         ne.setAttribute("ry", Double.toString(rad.getY()));
       }
-      int xpos = (end.x < start.x) ? end.x : start.x;
+      int xpos = Math.min(end.x, start.x);
       int bwidth = Math.abs(end.x-start.x);
-      int ypos = (end.y < start.y) ? end.y : start.y;
+      int ypos = Math.min(end.y, start.y);
       int bheight = Math.abs(end.y-start.y);
       ne.setAttribute("x", Integer.toString(xpos));
       ne.setAttribute("y", Integer.toString(ypos));

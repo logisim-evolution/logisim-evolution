@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -40,11 +40,11 @@ import com.cburch.logisim.util.StringGetter;
 
 public class AssemblerMacro {
 
-  private String name;
-  private int nrOfParameters;
-  private LinkedList<AssemblerToken> tokens;
-  private HashMap<String,Long> localLabels;
-  private ArrayList<AssemblerToken[]> parameters;
+  private final String name;
+  private final int nrOfParameters;
+  private final LinkedList<AssemblerToken> tokens;
+  private final HashMap<String,Long> localLabels;
+  private final ArrayList<AssemblerToken[]> parameters;
   private boolean sizeDeterminationActive;
   private long macroSize;
   
@@ -83,8 +83,8 @@ public class AssemblerMacro {
       if (token.getType() == AssemblerToken.MACRO_PARAMETER) {
         int index = token.getNumberValue()-1;
         AssemblerToken[] param = parameters.get(index);
-        for (int i = 0 ; i < param.length ; i++)
-          makroTokens.add(param[i]);
+        for (AssemblerToken assemblerToken : param)
+          makroTokens.add(assemblerToken);
       } else {
         AssemblerToken copy = new AssemblerToken(token.getType(),token.getValue(),token.getoffset());
     	makroTokens.add(copy);

@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -33,8 +33,8 @@ import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.util.StringGetter;
 
 public class CircuitAction extends Action {
-  private StringGetter name;
-  private CircuitTransaction forward;
+  private final StringGetter name;
+  private final CircuitTransaction forward;
   private CircuitTransaction reverse;
 
   CircuitAction(StringGetter name, CircuitMutation forward) {

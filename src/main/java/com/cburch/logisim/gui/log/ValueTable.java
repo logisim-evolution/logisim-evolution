@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -301,11 +301,11 @@ public class ValueTable extends JPanel {
   private int tableWidth;
 
   private int tableHeight;
-  private TableHeader header;
-  private TableBody body;
-  private VerticalScrollBar vsb;
+  private final TableHeader header;
+  private final TableBody body;
+  private final VerticalScrollBar vsb;
 
-  private JScrollPane scrollPane;
+  private final JScrollPane scrollPane;
   private Model model;
 
   public ValueTable(Model model) {

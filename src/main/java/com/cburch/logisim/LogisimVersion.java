@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -91,15 +91,15 @@ public class LogisimVersion {
   }
 
   public static final int FINAL_REVISION = Integer.MAX_VALUE / 4;
-  private int major;
+  private final int major;
 
-  private int minor;
+  private final int minor;
 
-  private int release;
+  private final int release;
 
-  private int revision;
+  private final int revision;
 
-  private String variant;
+  private final String variant;
 
   private String repr;
 
@@ -152,7 +152,7 @@ public class LogisimVersion {
           && this.minor == o.minor
           && this.release == o.release
           && this.revision == o.revision
-          && this.variant == o.variant);
+          && this.variant.equals(o.variant));
     } else {
       return (false);
     }
@@ -186,7 +186,7 @@ public class LogisimVersion {
     if (ret == null) {
       ret = major + "." + minor + "." + release;
       if (revision != FINAL_REVISION) ret += "." + revision;
-      if (variant != "") ret += "." + variant;
+      if (!variant.equals("")) ret += "." + variant;
       repr = ret;
     }
     return (ret);

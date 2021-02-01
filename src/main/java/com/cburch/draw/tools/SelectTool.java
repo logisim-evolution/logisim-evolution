@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -76,7 +76,7 @@ public class SelectTool extends AbstractTool {
   private static final int HANDLE_SIZE = 8;
 
   private static final Color RECT_SELECT_BACKGROUND = new Color(0, 0, 0, 32);
-  private static SelectIcon icon = new SelectIcon();
+  private static final SelectIcon icon = new SelectIcon();
   private int curAction;
   private List<CanvasObject> beforePressSelection;
   private Handle beforePressHandle;

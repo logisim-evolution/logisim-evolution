@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -41,7 +41,7 @@ public class UnmodifiableList<E> extends AbstractList<E> {
     }
   }
 
-  private E[] data;
+  private final E[] data;
 
   public UnmodifiableList(E[] data) {
     this.data = data;

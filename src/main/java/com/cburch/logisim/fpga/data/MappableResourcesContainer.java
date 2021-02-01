@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -45,11 +45,11 @@ public class MappableResourcesContainer {
 
   static final Logger logger = LoggerFactory.getLogger(MappableResourcesContainer.class);
 
-  private Circuit myCircuit;
-  private BoardInformation currentUsedBoard;
+  private final Circuit myCircuit;
+  private final BoardInformation currentUsedBoard;
   private IOComponentsInformation IOcomps;
   private Map<ArrayList<String>, MapComponent> myMappableResources;
-  private List<FPGAIOInformationContainer> myIOComponents;
+  private final List<FPGAIOInformationContainer> myIOComponents;
 
   /*
    * We differentiate two notation for each component, namely: 1) The display

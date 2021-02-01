@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -30,7 +30,7 @@ package com.cburch.logisim.file;
 
 public class LoadFailedException extends Exception {
   private static final long serialVersionUID = 1L;
-  private boolean shown;
+  private final boolean shown;
 
   LoadFailedException(String desc) {
     this(desc, false);

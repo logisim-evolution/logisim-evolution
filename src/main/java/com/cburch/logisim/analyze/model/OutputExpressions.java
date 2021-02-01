@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -58,18 +58,17 @@ public class OutputExpressions {
           }
         }
       } else if (type == VariableListEvent.REPLACE) {
-        Var oldVar = v;
         Var newVar = model.getInputs().vars.get(event.getIndex());
         for (String output : outputData.keySet()) {
-          for (int b = 0; b < oldVar.width && b < newVar.width; b++) {
+          for (int b = 0; b < v.width && b < newVar.width; b++) {
             OutputData data = getOutputData(output, false);
-            if (data != null) data.replaceInput(oldVar.bitName(b), newVar.bitName(b));
+            if (data != null) data.replaceInput(v.bitName(b), newVar.bitName(b));
           }
-          for (int b = newVar.width; b < oldVar.width; b++) {
+          for (int b = newVar.width; b < v.width; b++) {
             OutputData data = getOutputData(output, false);
-            if (data != null) data.removeInput(oldVar.bitName(b));
+            if (data != null) data.removeInput(v.bitName(b));
           }
-          if (oldVar.width < newVar.width) {
+          if (v.width < newVar.width) {
             OutputData data = getOutputData(output, false);
             if (data != null) data.invalidate(false, false);
           }
@@ -318,19 +317,20 @@ public class OutputExpressions {
   }
 
   private static boolean isAllUndefined(Entry[] a) {
-    for (int i = 0; i < a.length; i++) {
-      if (a[i] == Entry.ZERO || a[i] == Entry.ONE) return false;
+    for (Entry entry : a) {
+      if (entry == Entry.ZERO || entry == Entry.ONE)
+        return false;
     }
     return true;
   }
 
-  private MyListener myListener = new MyListener();
+  private final MyListener myListener = new MyListener();
 
-  private AnalyzerModel model;
+  private final AnalyzerModel model;
 
-  private HashMap<String, OutputData> outputData = new HashMap<String, OutputData>();
+  private final HashMap<String, OutputData> outputData = new HashMap<String, OutputData>();
 
-  private ArrayList<OutputExpressionsListener> listeners =
+  private final ArrayList<OutputExpressionsListener> listeners =
       new ArrayList<OutputExpressionsListener>();
 
   private boolean updatingTable = false;
@@ -438,7 +438,7 @@ public class OutputExpressions {
 
   public boolean isExpressionMinimal(String output) {
     OutputData data = getOutputData(output, false);
-    return data == null ? true : data.isExpressionMinimal();
+    return data == null || data.isExpressionMinimal();
   }
 
   public void removeOutputExpressionsListener(OutputExpressionsListener l) {

@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -83,28 +83,28 @@ public class AssemblerPanel extends JPanel implements MouseListener,LocaleListen
 
   private static final long serialVersionUID = 1L;
   
-  private Assembler assembler;
-  private RSyntaxTextArea asmWindow;
-  private RTextScrollPane debugScrollPane;
-  private JLabel Compile = new JLabel();
-  private JLabel Open = new JLabel();
-  private JLabel Save = new JLabel();
-  private JLabel SaveAs = new JLabel();
-  private JLabel Run = new JLabel();
-  private JLabel Help = new JLabel();
-  private JLabel NextError = new JLabel();
-  private JLabel PrevError = new JLabel();
-  private JLabel Line = new JLabel();
-  private JMenuItem MOpen = new JMenuItem();
-  private JMenuItem MSave = new JMenuItem();
-  private JMenuItem MSaveAs = new JMenuItem();
+  private final Assembler assembler;
+  private final RSyntaxTextArea asmWindow;
+  private final RTextScrollPane debugScrollPane;
+  private final JLabel Compile = new JLabel();
+  private final JLabel Open = new JLabel();
+  private final JLabel Save = new JLabel();
+  private final JLabel SaveAs = new JLabel();
+  private final JLabel Run = new JLabel();
+  private final JLabel Help = new JLabel();
+  private final JLabel NextError = new JLabel();
+  private final JLabel PrevError = new JLabel();
+  private final JLabel Line = new JLabel();
+  private final JMenuItem MOpen = new JMenuItem();
+  private final JMenuItem MSave = new JMenuItem();
+  private final JMenuItem MSaveAs = new JMenuItem();
   private int lineNumber = 1;
   private int numberOfLines = 1;
   private boolean documentChanged = false;
-  private ListeningFrame parent;
+  private final ListeningFrame parent;
   private File textFile;
-  private SocProcessorInterface cpu;
-  private CircuitState circuitState;
+  private final SocProcessorInterface cpu;
+  private final CircuitState circuitState;
 
   public AssemblerPanel(ListeningFrame parent , String highLiter , AssemblerInterface assembler,
                         SocProcessorInterface cpu, CircuitState state) {

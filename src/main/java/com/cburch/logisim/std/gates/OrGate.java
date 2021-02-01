@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -145,7 +145,6 @@ class OrGate extends AbstractGate {
 
   @Override
   protected boolean shouldRepairWire(Instance instance, WireRepairData data) {
-    boolean ret = !data.getPoint().equals(instance.getLocation());
-    return ret;
+    return !data.getPoint().equals(instance.getLocation());
   }
 }

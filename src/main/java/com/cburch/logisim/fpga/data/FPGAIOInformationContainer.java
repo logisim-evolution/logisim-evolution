@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -57,7 +57,7 @@ public class FPGAIOInformationContainer implements Cloneable {
 
   private class mapType {
     private MapComponent map;
-    private int pin;
+    private final int pin;
     
     public mapType(MapComponent map , int pin) {
       this.map = map;

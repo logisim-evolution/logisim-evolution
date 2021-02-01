@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -74,7 +74,7 @@ public class SignalDraw extends JPanel {
 
     @Override
     public void mousePressed(MouseEvent e) {
-      int posX = e.getX() >= 0 ? e.getX() : 0;
+      int posX = Math.max(e.getX(), 0);
       mDrawAreaEventManager.fireMousePressed(mSignalData, posX);
     }
 
@@ -91,23 +91,23 @@ public class SignalDraw extends JPanel {
   private static final long serialVersionUID = 1L;
   private int tickWidth;
   private int busCrossingPosition;
-  private Color lightGray = new Color(180, 180, 180, 100);
+  private final Color lightGray = new Color(180, 180, 180, 100);
 
   private int lineTickness = 1;
-  private int lowPos;
-  private int highPos;
+  private final int lowPos;
+  private final int highPos;
   private int width = 10;
 
   private int height;
   private BufferedImage signalDrawBuffered;
 
   private boolean isBufferObsolete = true;
-  private SignalData mSignalData;
-  private DrawAreaEventManager mDrawAreaEventManager;
+  private final SignalData mSignalData;
+  private final DrawAreaEventManager mDrawAreaEventManager;
 
-  private RightPanel mRightPanel;
+  private final RightPanel mRightPanel;
 
-  private MyListener myListener = new MyListener();
+  private final MyListener myListener = new MyListener();
 
   public SignalDraw(
       RightPanel rightPanel,

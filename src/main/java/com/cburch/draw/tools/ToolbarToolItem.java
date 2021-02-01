@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -37,8 +37,8 @@ import java.awt.Graphics;
 import javax.swing.Icon;
 
 public class ToolbarToolItem implements ToolbarItem {
-  private AbstractTool tool;
-  private Icon icon;
+  private final AbstractTool tool;
+  private final Icon icon;
 
   public ToolbarToolItem(AbstractTool tool) {
     this.tool = tool;

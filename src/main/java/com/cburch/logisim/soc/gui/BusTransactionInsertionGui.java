@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -55,22 +55,22 @@ import com.cburch.logisim.util.LocaleManager;
 public class BusTransactionInsertionGui extends JFrame implements WindowListener,ActionListener,LocaleListener {
 
   private static final long serialVersionUID = 1L;
-  private SocBusStateInfo myBus;
-  private String myBusId;
-  private JLabel address = new JLabel();
-  private JTextField addrValue = new JTextField(8);
-  private JLabel inputdata = new JLabel();
-  private JTextField inputDataValue = new JTextField(8);
-  private JCheckBox readAction = new JCheckBox();
-  private JCheckBox writeAction = new JCheckBox();
-  private JCheckBox atomicAction = new JCheckBox();
-  private JButton insertButton = new JButton();
-  private JLabel resultLabel = new JLabel();
-  private JTextArea result = new JTextArea(2,1);
-  private JCheckBox wordTrans = new JCheckBox(); 
-  private JCheckBox halfTrans = new JCheckBox(); 
-  private JCheckBox byteTrans = new JCheckBox();
-  private CircuitState circuitState;
+  private final SocBusStateInfo myBus;
+  private final String myBusId;
+  private final JLabel address = new JLabel();
+  private final JTextField addrValue = new JTextField(8);
+  private final JLabel inputdata = new JLabel();
+  private final JTextField inputDataValue = new JTextField(8);
+  private final JCheckBox readAction = new JCheckBox();
+  private final JCheckBox writeAction = new JCheckBox();
+  private final JCheckBox atomicAction = new JCheckBox();
+  private final JButton insertButton = new JButton();
+  private final JLabel resultLabel = new JLabel();
+  private final JTextArea result = new JTextArea(2,1);
+  private final JCheckBox wordTrans = new JCheckBox();
+  private final JCheckBox halfTrans = new JCheckBox();
+  private final JCheckBox byteTrans = new JCheckBox();
+  private final CircuitState circuitState;
   
   public BusTransactionInsertionGui(SocBusStateInfo bus, String BusId, CircuitState state) {
     myBus = bus;

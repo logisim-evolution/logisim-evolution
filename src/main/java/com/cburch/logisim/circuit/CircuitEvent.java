@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -41,9 +41,9 @@ public class CircuitEvent {
   public static final int ACTION_CHECK_NAME = 8;
   public static final int ACTION_DISPLAY_CHANGE = 9; // viewed/haloed status change
 
-  private int action;
-  private Circuit circuit;
-  private Object data;
+  private final int action;
+  private final Circuit circuit;
+  private final Object data;
 
   CircuitEvent(int action, Circuit circuit, Object data) {
     this.action = action;

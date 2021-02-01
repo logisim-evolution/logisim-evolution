@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -93,7 +93,7 @@ class MinimizedTab extends AnalyzerTab {
 
     private static final long serialVersionUID = 1L;
 
-    private String[] choices;
+    private final String[] choices;
     private int selected;
 
     private FormatModel() {
@@ -142,7 +142,7 @@ class MinimizedTab extends AnalyzerTab {
   private static class StyleModel extends AbstractListModel implements ComboBoxModel {
     private static final long serialVersionUID = 1L;
 
-    private String[] choices;
+    private final String[] choices;
     private int selected;
 
     private StyleModel() {
@@ -188,7 +188,7 @@ class MinimizedTab extends AnalyzerTab {
   public static class NotationModel extends AbstractListModel implements ComboBoxModel {
     private static final long serialVersionUID = 1L;
     
-    private String[] choices;
+    private final String[] choices;
     private int selected;
 
     public NotationModel() {
@@ -270,27 +270,27 @@ class MinimizedTab extends AnalyzerTab {
 
   private static final long serialVersionUID = 1L;
 
-  private OutputSelector selector;
-  private KarnaughMapPanel karnaughMap;
-  private JLabel formatLabel = new JLabel();
-  private JLabel styleLabel = new JLabel();
-  private JLabel notationLabel = new JLabel();
+  private final OutputSelector selector;
+  private final KarnaughMapPanel karnaughMap;
+  private final JLabel formatLabel = new JLabel();
+  private final JLabel styleLabel = new JLabel();
+  private final JLabel notationLabel = new JLabel();
 
   @SuppressWarnings({"rawtypes", "unchecked"})
-  private JComboBox formatChoice = new JComboBox<>(new FormatModel());
+  private final JComboBox formatChoice = new JComboBox<>(new FormatModel());
 
   @SuppressWarnings({"rawtypes", "unchecked"})
-  private JComboBox formatStyle = new JComboBox<>(new StyleModel());
+  private final JComboBox formatStyle = new JComboBox<>(new StyleModel());
   
   @SuppressWarnings({ "unchecked", "rawtypes" })
-  private JComboBox notationChoice = new JComboBox<>(new NotationModel());
+  private final JComboBox notationChoice = new JComboBox<>(new NotationModel());
 
-  private ExpressionView minimizedExpr = new ExpressionView();
-  private JButton setAsExpr = new JButton();
+  private final ExpressionView minimizedExpr = new ExpressionView();
+  private final JButton setAsExpr = new JButton();
 
-  private MyListener myListener = new MyListener();
-  private AnalyzerModel model;
-  private OutputExpressions outputExprs;
+  private final MyListener myListener = new MyListener();
+  private final AnalyzerModel model;
+  private final OutputExpressions outputExprs;
 
   public MinimizedTab(AnalyzerModel model, LogisimMenuBar menubar) {
     this.model = model;

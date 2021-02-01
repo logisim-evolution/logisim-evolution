@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -99,11 +99,11 @@ public class TruthtableTextFile {
   }
 
   public static void doSave(File file, AnalyzerModel model) throws IOException {
-    PrintStream out = new PrintStream(file);
-    try {
+    try (PrintStream out = new PrintStream(file)) {
       out.println(S.get("tableRemark1"));
       Circuit c = model.getCurrentCircuit();
-      if (c != null) out.println(S.fmt("tableRemark2", c.getName()));
+      if (c != null)
+        out.println(S.fmt("tableRemark2", c.getName()));
       out.println(S.fmt("tableRemark3", new Date()));
       out.println();
       out.println(S.get("tableRemark4"));
@@ -113,8 +113,10 @@ public class TruthtableTextFile {
       int[] colwidth = new int[inputs.vars.size() + outputs.vars.size()];
       int i;
       i = 0;
-      for (Var var : inputs.vars) colwidth[i++] = Math.max(var.toString().length(), var.width);
-      for (Var var : outputs.vars) colwidth[i++] = Math.max(var.toString().length(), var.width);
+      for (Var var : inputs.vars)
+        colwidth[i++] = Math.max(var.toString().length(), var.width);
+      for (Var var : outputs.vars)
+        colwidth[i++] = Math.max(var.toString().length(), var.width);
       i = 0;
       for (Var var : inputs.vars) {
         center(out, var.toString(), colwidth[i++]);
@@ -127,7 +129,8 @@ public class TruthtableTextFile {
       }
       out.println();
       for (i = 0; i < colwidth.length; i++) {
-        for (int j = 0; j < colwidth[i] + 1; j++) out.print("~");
+        for (int j = 0; j < colwidth[i] + 1; j++)
+          out.print("~");
       }
       out.println("~");
       TruthTable table = model.getTruthTable();
@@ -158,8 +161,6 @@ public class TruthtableTextFile {
         }
         out.println();
       }
-    } finally {
-      out.close();
     }
   }
 
@@ -170,32 +171,32 @@ public class TruthtableTextFile {
       throws IOException {
     String[] s = line.split("\\s+");
     VariableList cur = inputs;
-    for (int i = 0; i < s.length; i++) {
-      if (s[i].equals("|")) {
-        if (cur == inputs) cur = outputs;
+    for (String value : s) {
+      if (value.equals("|")) {
+        if (cur == inputs)
+          cur = outputs;
         else
           throw new IOException(
               String.format("Line %d: Separator '|' must appear only once.", lineno));
         continue;
       }
-      String name = s[i];
-      if (name.matches("[a-zA-Z][a-zA-Z_0-9]*")) {
-        cur.add(new Var(name, 1));
+      if (value.matches("[a-zA-Z][a-zA-Z_0-9]*")) {
+        cur.add(new Var(value, 1));
       } else {
-        Matcher m = NAME_FORMAT.matcher(name);
+        Matcher m = NAME_FORMAT.matcher(value);
         if (!m.matches())
           throw new IOException(
-              String.format("Line %d: Invalid variable name '%s'.", lineno, name));
+              String.format("Line %d: Invalid variable name '%s'.", lineno, value));
         String n = m.group(1);
         int a, b;
         try {
           a = Integer.parseInt(m.group(2));
           b = Integer.parseInt(m.group(3));
         } catch (NumberFormatException e) {
-          throw new IOException(String.format("Line %d: Invalid bit range in '%s'.", lineno, name));
+          throw new IOException(String.format("Line %d: Invalid bit range in '%s'.", lineno, value));
         }
         if (a < 1 || b != 0)
-          throw new IOException(String.format("Line %d: Invalid bit range in '%s'.", lineno, name));
+          throw new IOException(String.format("Line %d: Invalid bit range in '%s'.", lineno, value));
         try {
           cur.add(new Var(n, a - b + 1));
         } catch (IllegalArgumentException e) {
@@ -301,23 +302,28 @@ public class TruthtableTextFile {
 
   public static void doLoad(File file, AnalyzerModel model, JFrame parent) throws IOException {
     int lineno = 0;
-    Scanner sc = new Scanner(file);
-    VariableList inputs = new VariableList(AnalyzerModel.MAX_INPUTS);
-    VariableList outputs = new VariableList(AnalyzerModel.MAX_OUTPUTS);
-    ArrayList<Entry[]> rows = new ArrayList<>();
-    try {
+    try (Scanner sc = new Scanner(file)) {
+      VariableList inputs = new VariableList(AnalyzerModel.MAX_INPUTS);
+      VariableList outputs = new VariableList(AnalyzerModel.MAX_OUTPUTS);
+      ArrayList<Entry[]> rows = new ArrayList<>();
       while (sc.hasNextLine()) {
         lineno++;
         String line = sc.nextLine();
         int ix = line.indexOf('#');
-        if (ix >= 0) line = line.substring(0, ix);
+        if (ix >= 0)
+          line = line.substring(0, ix);
         line = line.trim();
-        if (line.equals("")) continue;
-        else if (line.matches("\\s*[~_=-][ ~_=-|]*")) continue;
-        else if (inputs.vars.size() == 0) validateHeader(line, inputs, outputs, lineno);
-        else validateRow(line, inputs, outputs, rows, lineno);
+        if (line.equals(""))
+          continue;
+        else if (line.matches("\\s*[~_=-][ ~_=-|]*"))
+          continue;
+        else if (inputs.vars.size() == 0)
+          validateHeader(line, inputs, outputs, lineno);
+        else
+          validateRow(line, inputs, outputs, rows, lineno);
       }
-      if (rows.size() == 0) throw new IOException("End of file: Truth table has no rows.");
+      if (rows.size() == 0)
+        throw new IOException("End of file: Truth table has no rows.");
       try {
         model.setVariables(inputs.vars, outputs.vars);
       } catch (IllegalArgumentException e) {
@@ -330,18 +336,17 @@ public class TruthtableTextFile {
         int confirm =
             OptionPane.showConfirmDialog(
                 parent,
-                new String[] {e.getMessage(), S.get("tableParseErrorMessage")},
+                new String[]{e.getMessage(), S.get("tableParseErrorMessage")},
                 S.get("tableParseErrorTitle"),
                 OptionPane.YES_NO_OPTION);
-        if (confirm != OptionPane.YES_OPTION) return;
+        if (confirm != OptionPane.YES_OPTION)
+          return;
         try {
           table.setVisibleRows(rows, true);
         } catch (IllegalArgumentException ex) {
           throw new IOException(ex.getMessage());
         }
       }
-    } finally {
-      sc.close();
     }
   }
 

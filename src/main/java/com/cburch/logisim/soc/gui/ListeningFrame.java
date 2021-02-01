@@ -17,9 +17,9 @@ import com.cburch.logisim.util.StringGetter;
 public class ListeningFrame extends JFrame implements WindowListener,LocaleListener,CircuitListener,ComponentListener{
 
   private static final long serialVersionUID = 1L;
-  private StringGetter title;
-  private String upName;
-  private CircuitStateHolder.HierarchyInfo hierInfo;
+  private final StringGetter title;
+  private final String upName;
+  private final CircuitStateHolder.HierarchyInfo hierInfo;
   
   public ListeningFrame(String upName, StringGetter t, CircuitStateHolder.HierarchyInfo h) {
     LocaleManager.addLocaleListener(this);

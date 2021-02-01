@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -93,9 +93,9 @@ public class Nios2ArithmeticAndLogicalInstructions implements AssemblerExecution
    * movia rb,label => orhi rb,0,%hi(label); addi rb,r0,%lo(label)    
    */
   
-  private ArrayList<String> Opcodes = new ArrayList<String>();
-  private ArrayList<Integer> OpcCodes = new ArrayList<Integer>(); 
-  private ArrayList<Integer> OpxCodes = new ArrayList<Integer>(); 
+  private final ArrayList<String> Opcodes = new ArrayList<String>();
+  private final ArrayList<Integer> OpcCodes = new ArrayList<Integer>();
+  private final ArrayList<Integer> OpxCodes = new ArrayList<Integer>();
 
   private int instruction;
   private boolean valid;

@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -46,13 +46,13 @@ class ConnectorThread extends UniquelyNamedThread {
     return INSTANCE.overrideRequest;
   }
 
-  private static ConnectorThread INSTANCE = new ConnectorThread();
+  private static final ConnectorThread INSTANCE = new ConnectorThread();
 
   static {
     INSTANCE.start();
   }
 
-  private Object lock;
+  private final Object lock;
   private transient boolean overrideRequest;
   private MoveRequest nextRequest;
   private MoveRequest processingRequest;

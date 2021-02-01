@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -52,10 +52,10 @@ class IntlOptions extends OptionsPanel {
 
   private static final long serialVersionUID = 1L;
 
-  private JLabel localeLabel = new RestrictedLabel();
-  private JComponent locale;
-  private PrefBoolean replAccents;
-  private PrefOptionList gateShape;
+  private final JLabel localeLabel = new RestrictedLabel();
+  private final JComponent locale;
+  private final PrefBoolean replAccents;
+  private final PrefOptionList gateShape;
 
   public IntlOptions(PreferencesFrame window) {
     super(window);

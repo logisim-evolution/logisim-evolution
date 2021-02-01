@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -45,7 +45,7 @@ public class FlipFlopIcon extends AbstractIcon {
   public static final int SR_FLIPFLOP = 3;
   public static final int REGISTER = 4;
   
-  private int type;
+  private final int type;
   
   public FlipFlopIcon( int type ) {
     this.type = type;

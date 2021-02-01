@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -39,7 +39,7 @@ import javax.swing.JScrollPane;
 
 class Toolbox extends JPanel {
   private static final long serialVersionUID = 1L;
-  private ProjectExplorer toolbox;
+  private final ProjectExplorer toolbox;
 
   Toolbox(Project proj, Frame frame, MenuListener menu) {
     super(new BorderLayout());

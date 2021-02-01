@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -36,7 +36,7 @@ import com.cburch.logisim.prefs.AppPreferences;
 public class TTLRegisterData extends ClockState implements InstanceData {
 
   private Value value;
-  private BitWidth bits;
+  private final BitWidth bits;
 
   public TTLRegisterData(BitWidth width) {
     value =

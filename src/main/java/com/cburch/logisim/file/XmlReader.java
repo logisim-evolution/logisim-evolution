@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -94,7 +94,7 @@ class XmlReader {
     LogisimFile file;
     LogisimVersion sourceVersion;
     HashMap<String, Library> libs = new HashMap<String, Library>();
-    private ArrayList<String> messages;
+    private final ArrayList<String> messages;
 
     ReadContext(LogisimFile file) {
       this.file = file;
@@ -975,13 +975,13 @@ class XmlReader {
 
   public static final Logger logger = LoggerFactory.getLogger(XmlReader.class);
 
-  private LibraryLoader loader;
+  private final LibraryLoader loader;
 
   /**
    * Path of the source file -- it is used to make the paths of the components stored in the file
    * absolute, to prevent the system looking for them in some strange directories.
    */
-  private String srcFilePath;
+  private final String srcFilePath;
 
   XmlReader(Loader loader, File file) {
     this.loader = loader;

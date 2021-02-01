@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -65,11 +65,11 @@ public class SocUpMenuProvider  implements ActionListener {
 
   private class InstanceMenuItem extends JMenuItem {
     private static final long serialVersionUID = 1L;
-    private Instance instance;
-    private int function;
-    private SocUpStateInterface data;
-    private CircuitState circuitState;
-    private CircuitStateHolder.HierarchyInfo csh;
+    private final Instance instance;
+    private final int function;
+    private final SocUpStateInterface data;
+    private final CircuitState circuitState;
+    private final CircuitStateHolder.HierarchyInfo csh;
     
     public InstanceMenuItem(Instance inst, String label, int function, Object data, CircuitStateHolder.HierarchyInfo csh) {
       super(label);
@@ -109,8 +109,8 @@ public class SocUpMenuProvider  implements ActionListener {
   
   private class MenuProvider implements MenuExtender, CircuitStateHolder {
 
-    private Instance instance;
-    private SocUpMenuProvider parrent;
+    private final Instance instance;
+    private final SocUpMenuProvider parrent;
     SocUpStateInterface data;
     CircuitState circuitState;
     HierarchyInfo hierarchy;
@@ -183,9 +183,9 @@ public class SocUpMenuProvider  implements ActionListener {
   
   private class InstanceInformation {
     private Frame parrentFrame;
-    private HashMap<SocUpStateInterface,ListeningFrame> myStates;
-    private HashMap<SocUpStateInterface,ListeningFrame> myPrograms;
-    private HashMap<SocUpStateInterface,ListeningFrame> myAsmWindows;
+    private final HashMap<SocUpStateInterface,ListeningFrame> myStates;
+    private final HashMap<SocUpStateInterface,ListeningFrame> myPrograms;
+    private final HashMap<SocUpStateInterface,ListeningFrame> myAsmWindows;
     
     public InstanceInformation(Instance inst, SocUpMenuProvider parrent) {
       parrentFrame = null;
@@ -320,7 +320,7 @@ public class SocUpMenuProvider  implements ActionListener {
     
   }
   
-  private HashMap<Instance,InstanceInformation> myInfo;
+  private final HashMap<Instance,InstanceInformation> myInfo;
   
   public SocUpMenuProvider() {
     myInfo = new HashMap<Instance,InstanceInformation>();

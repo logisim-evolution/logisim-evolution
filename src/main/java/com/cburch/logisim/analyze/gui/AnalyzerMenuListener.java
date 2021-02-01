@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -58,7 +58,7 @@ public class AnalyzerMenuListener extends MenuListener {
     }
   }
 
-  private FileListener fileListener = new FileListener();
+  private final FileListener fileListener = new FileListener();
   private PrintHandler printer;
 
   public AnalyzerMenuListener(LogisimMenuBar menubar) {

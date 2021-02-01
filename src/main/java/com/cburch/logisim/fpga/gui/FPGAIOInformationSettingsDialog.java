@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -97,7 +97,7 @@ public class FPGAIOInformationSettingsDialog {
       pinPanel.add(LocText, c);
       c.gridx = 1 + offset;
       pinPanel.add(LocInputs.get(i), c);
-      maxY = c.gridy > maxY ? c.gridy : maxY;
+      maxY = Math.max(c.gridy, maxY);
     }
   }
   

@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -41,9 +41,9 @@ public class DrawShapeIcon extends AnnimatedIcon {
   public static final int ROUNDEDRECTANGLE = 1;
   public static final int ELIPSE = 2;
   
-  private int type;
+  private final int type;
   private int state;
-  private static int[] points = {3,2,8,4,14,8};
+  private static final int[] points = {3,2,8,4,14,8};
   
   public DrawShapeIcon( int type ) {
     this.type = type;

@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -129,20 +129,11 @@ public class ProjectLibraryActions {
       // try to retrieve the class name from the "Library-Class"
       // attribute in the manifest. This section of code was contributed
       // by Christophe Jacquet (Request Tracker #2024431).
-      JarFile jarFile = null;
-      try {
-        jarFile = new JarFile(f);
+      try (JarFile jarFile = new JarFile(f)) {
         Manifest manifest = jarFile.getManifest();
         className = manifest.getMainAttributes().getValue("Library-Class");
       } catch (IOException e) {
         // if opening the JAR file failed, do nothing
-      } finally {
-        if (jarFile != null) {
-          try {
-            jarFile.close();
-          } catch (IOException e) {
-          }
-        }
       }
 
       // if the class name was not found, go back to the good old dialog

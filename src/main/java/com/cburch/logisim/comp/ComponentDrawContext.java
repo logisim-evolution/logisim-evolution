@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -46,16 +46,16 @@ public class ComponentDrawContext {
   private static final int PIN_OFFS = 2;
   private static final int PIN_RAD = 4;
 
-  private java.awt.Component dest;
-  private Circuit circuit;
-  private CircuitState circuitState;
-  private Graphics base;
+  private final java.awt.Component dest;
+  private final Circuit circuit;
+  private final CircuitState circuitState;
+  private final Graphics base;
   private Graphics g;
   private boolean showState;
   private boolean showColor;
-  private boolean printView;
+  private final boolean printView;
   private WireSet highlightedWires;
-  private InstancePainter instancePainter;
+  private final InstancePainter instancePainter;
 
   public ComponentDrawContext(
       java.awt.Component dest,

@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -203,25 +203,25 @@ public class TestFrame extends LFrame {
   }
 
   private static final long serialVersionUID = 1L;
-  private Project project;
+  private final Project project;
   private Simulator curSimulator = null;
   private Model curModel;
-  private Map<Circuit, Model> modelMap = new HashMap<Circuit, Model>();
-  private MyListener myListener = new MyListener();
-  private WindowMenuManager windowManager;
+  private final Map<Circuit, Model> modelMap = new HashMap<Circuit, Model>();
+  private final MyListener myListener = new MyListener();
+  private final WindowMenuManager windowManager;
   private int finished, count;
 
   private File curFile;
-  private JFileChooser chooser = new JFileChooser();
-  private TestPanel panel;
-  private JButton load = new JButton();
-  private JButton run = new JButton();
-  private JButton stop = new JButton();
-  private JButton reset = new JButton();
-  private JButton close = new JButton();
-  private JLabel pass = new JLabel();
+  private final JFileChooser chooser = new JFileChooser();
+  private final TestPanel panel;
+  private final JButton load = new JButton();
+  private final JButton run = new JButton();
+  private final JButton stop = new JButton();
+  private final JButton reset = new JButton();
+  private final JButton close = new JButton();
+  private final JLabel pass = new JLabel();
 
-  private JLabel fail = new JLabel();
+  private final JLabel fail = new JLabel();
 
   public TestFrame(Project project) {
     super(false,project);

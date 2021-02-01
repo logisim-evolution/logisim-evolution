@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -63,7 +63,7 @@ import javax.xml.transform.TransformerException;
 
 public class TikZWriter extends Graphics2D {
   
-  private TikZInfo MyInfo;
+  private final TikZInfo MyInfo;
   
   public TikZWriter() {
     MyInfo = new TikZInfo(); 

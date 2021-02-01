@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -280,7 +280,7 @@ public class SevenSegment extends InstanceFactory implements DynamicElementProvi
       Value val = state.getPortValue(i);
       if (val == Value.TRUE) summary |= 1 << i;
     }
-    Object value = Integer.valueOf(summary);
+    Object value = summary;
     InstanceDataSingleton data = (InstanceDataSingleton) state.getData();
     if (data == null) {
       state.setData(new InstanceDataSingleton(value));

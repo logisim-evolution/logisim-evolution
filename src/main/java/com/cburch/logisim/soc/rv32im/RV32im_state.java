@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -78,18 +78,18 @@ public class RV32im_state implements SocUpSimulationStateListener,SocProcessorIn
   public class ProcessorState extends JPanel implements InstanceData,Cloneable,ComponentDataGuiProvider,
                                                         WindowListener,SocUpStateInterface {
     private static final long serialVersionUID = 1L;
-    private int[] registers;
-    private Boolean[] registers_valid;
+    private final int[] registers;
+    private final Boolean[] registers_valid;
     private int pc;
     private int lastRegisterWritten = -1;
-    private LinkedList<TraceInfo> instrTrace;
+    private final LinkedList<TraceInfo> instrTrace;
     private Value lastClock;
-    private SocUpSimulationState simState;
-    private Instance myInstance;
+    private final SocUpSimulationState simState;
+    private final Instance myInstance;
     private boolean visible;
     private Integer entryPoint;
     private boolean programLoaded;
-    private BreakpointPanel bPanel;
+    private final BreakpointPanel bPanel;
     
     public ProcessorState(Instance inst) {
       registers = new int[32];
@@ -303,7 +303,7 @@ public class RV32im_state implements SocUpSimulationStateListener,SocProcessorIn
   private int exceptionVector;
   private int nrOfIrqs;
   private String label;
-  private SocBusInfo attachedBus;
+  private final SocBusInfo attachedBus;
   
   public static final AssemblerInterface ASSEMBLER = new RV32imAssembler(); 
   public static String[] registerABINames = {"zero","ra","sp","gp","tp","t0","t1","t2",

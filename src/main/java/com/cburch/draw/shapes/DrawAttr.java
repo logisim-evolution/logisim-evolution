@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -73,20 +73,20 @@ public class DrawAttr {
   public static final int FixedFontDescent = 1;
 
   public static final AttributeOption HALIGN_LEFT =
-      new AttributeOption(Integer.valueOf(EditableLabel.LEFT), S.getter("alignLeft"));
+      new AttributeOption(EditableLabel.LEFT, S.getter("alignLeft"));
   public static final AttributeOption HALIGN_CENTER =
-      new AttributeOption(Integer.valueOf(EditableLabel.CENTER), S.getter("alignCenter"));
+      new AttributeOption(EditableLabel.CENTER, S.getter("alignCenter"));
   public static final AttributeOption HALIGN_RIGHT =
-      new AttributeOption(Integer.valueOf(EditableLabel.RIGHT), S.getter("alignRight"));
+      new AttributeOption(EditableLabel.RIGHT, S.getter("alignRight"));
 
   public static final AttributeOption VALIGN_TOP =
-      new AttributeOption(Integer.valueOf(EditableLabel.TOP), S.getter("alignTop"));
+      new AttributeOption(EditableLabel.TOP, S.getter("alignTop"));
   public static final AttributeOption VALIGN_MIDDLE =
-      new AttributeOption(Integer.valueOf(EditableLabel.MIDDLE), S.getter("alignMiddle"));
+      new AttributeOption(EditableLabel.MIDDLE, S.getter("alignMiddle"));
   public static final AttributeOption VALIGN_BASELINE =
-      new AttributeOption(Integer.valueOf(EditableLabel.BASELINE), S.getter("alignBaseline"));
+      new AttributeOption(EditableLabel.BASELINE, S.getter("alignBaseline"));
   public static final AttributeOption VALIGN_BOTTOM =
-      new AttributeOption(Integer.valueOf(EditableLabel.BOTTOM), S.getter("alignBottom"));
+      new AttributeOption(EditableLabel.BOTTOM, S.getter("alignBottom"));
   public static final AttributeOption PAINT_STROKE =
       new AttributeOption("stroke", S.getter("paintStroke"));
   public static final AttributeOption PAINT_FILL =

@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -70,7 +70,7 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       Inputs.put("Tick", 1);
     }
     Object be = attrs.getValue(RamAttributes.ATTR_ByteEnables);
-    boolean byteEnables = be == null ? false : be.equals(RamAttributes.BUS_WITH_BYTEENABLES);
+    boolean byteEnables = be != null && be.equals(RamAttributes.BUS_WITH_BYTEENABLES);
     if (byteEnables) {
       int NrOfByteEnables = RamAppearance.getNrBEPorts(attrs);
       for (int i = 0; i < NrOfByteEnables; i++) {
@@ -85,7 +85,7 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     SortedMap<String, Integer> Mems = new TreeMap<String, Integer>();
     if (HDLType.equals(VHDL)) {
       Object be = attrs.getValue(RamAttributes.ATTR_ByteEnables);
-      boolean byteEnables = be == null ? false : be.equals(RamAttributes.BUS_WITH_BYTEENABLES);
+      boolean byteEnables = be != null && be.equals(RamAttributes.BUS_WITH_BYTEENABLES);
       int NrOfBits = attrs.getValue(Mem.DATA_ATTR).getWidth();
       if (byteEnables) {
         boolean truncated = (NrOfBits % 8) != 0;
@@ -109,7 +109,7 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       Netlist TheNetlist, AttributeSet attrs, FPGAReport Reporter, String HDLType) {
     ArrayList<String> Contents = new ArrayList<String>();
     Object be = attrs.getValue(RamAttributes.ATTR_ByteEnables);
-    boolean byteEnables = be == null ? false : be.equals(RamAttributes.BUS_WITH_BYTEENABLES);
+    boolean byteEnables = be != null && be.equals(RamAttributes.BUS_WITH_BYTEENABLES);
     if (HDLType.equals(VHDL)) {
       Contents.addAll(MakeRemarkBlock("Here the control signals are defined", 3, HDLType));
       if (byteEnables) {
@@ -270,7 +270,7 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   @Override
   public int GetNrOfTypes(Netlist TheNetlist, AttributeSet attrs, String HDLType) {
     Object be = attrs.getValue(RamAttributes.ATTR_ByteEnables);
-    boolean byteEnables = be == null ? false : be.equals(RamAttributes.BUS_WITH_BYTEENABLES);
+    boolean byteEnables = be != null && be.equals(RamAttributes.BUS_WITH_BYTEENABLES);
     int NrOfBits = attrs.getValue(Mem.DATA_ATTR).getWidth();
     return (byteEnables) ? ((NrOfBits % 8) == 0) ? 1 : 2 : 1;
   }
@@ -292,7 +292,7 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     Object trigger = attrs.getValue(StdAttr.TRIGGER);
     boolean asynch = trigger.equals(StdAttr.TRIG_HIGH) || trigger.equals(StdAttr.TRIG_LOW);
     Object be = attrs.getValue(RamAttributes.ATTR_ByteEnables);
-    boolean byteEnables = be == null ? false : be.equals(RamAttributes.BUS_WITH_BYTEENABLES);
+    boolean byteEnables = be != null && be.equals(RamAttributes.BUS_WITH_BYTEENABLES);
     PortMap.putAll(GetNetMap("Address", true, ComponentInfo, RamAppearance.getAddrIndex(0, attrs), Reporter, HDLType, Nets));
     int DinPin = RamAppearance.getDataInIndex(0, attrs);
     PortMap.putAll(GetNetMap("DataIn", true, ComponentInfo, DinPin, Reporter, HDLType, Nets));
@@ -360,7 +360,7 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   public SortedMap<String, Integer> GetRegList(AttributeSet attrs, String HDLType) {
     SortedMap<String, Integer> Regs = new TreeMap<String, Integer>();
     Object be = attrs.getValue(RamAttributes.ATTR_ByteEnables);
-    boolean byteEnables = be == null ? false : be.equals(RamAttributes.BUS_WITH_BYTEENABLES);
+    boolean byteEnables = be != null && be.equals(RamAttributes.BUS_WITH_BYTEENABLES);
     int NrOfBits = attrs.getValue(Mem.DATA_ATTR).getWidth();
     int NrOfAddressLines = attrs.getValue(Mem.ADDR_ATTR).getWidth();
     Regs.put("s_TickDelayLine", 3);
@@ -400,7 +400,7 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     SortedSet<String> MyTypes = new TreeSet<String>();
     if (HDLType.equals(VHDL)) {
       Object be = attrs.getValue(RamAttributes.ATTR_ByteEnables);
-      boolean byteEnables = be == null ? false : be.equals(RamAttributes.BUS_WITH_BYTEENABLES);
+      boolean byteEnables = be != null && be.equals(RamAttributes.BUS_WITH_BYTEENABLES);
       int NrOfBits = attrs.getValue(Mem.DATA_ATTR).getWidth();
       int NrOfAddressLines = attrs.getValue(Mem.ADDR_ATTR).getWidth();
       int RamEntries = (1 << NrOfAddressLines);
@@ -440,7 +440,7 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     SortedMap<String, Integer> Wires = new TreeMap<String, Integer>();
     int NrOfBits = attrs.getValue(Mem.DATA_ATTR).getWidth();
     Object be = attrs.getValue(RamAttributes.ATTR_ByteEnables);
-    boolean byteEnables = be == null ? false : be.equals(RamAttributes.BUS_WITH_BYTEENABLES);
+    boolean byteEnables = be != null && be.equals(RamAttributes.BUS_WITH_BYTEENABLES);
     Wires.put("s_ram_data_out", NrOfBits);
     if (byteEnables) {
       for (int i = 0; i < RamAppearance.getNrBEPorts(attrs); i++) {
@@ -458,7 +458,7 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   public boolean HDLTargetSupported(String HDLType, AttributeSet attrs) {
     if (attrs == null) return false;
     Object busVal = attrs.getValue(RamAttributes.ATTR_DBUS);
-    boolean separate = busVal == null ? false : busVal.equals(RamAttributes.BUS_SEP);
+    boolean separate = busVal != null && busVal.equals(RamAttributes.BUS_SEP);
     Object trigger = attrs.getValue(StdAttr.TRIGGER);
     boolean asynch = trigger == null || trigger.equals(StdAttr.TRIG_HIGH) || trigger.equals(StdAttr.TRIG_LOW);
     boolean byteEnabled = RamAppearance.getNrLEPorts(attrs)==0;

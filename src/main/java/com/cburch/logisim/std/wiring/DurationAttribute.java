@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -36,9 +36,9 @@ import com.cburch.logisim.util.StringUtil;
 import javax.swing.JTextField;
 
 public class DurationAttribute extends Attribute<Integer> {
-  private int min;
-  private int max;
-  private boolean TickUnits;
+  private final int min;
+  private final int max;
+  private final boolean TickUnits;
 
   public DurationAttribute(String name, StringGetter disp, int min, int max, boolean IsTicks) {
     super(name, disp);
@@ -72,13 +72,13 @@ public class DurationAttribute extends Attribute<Integer> {
   @Override
   public String toDisplayString(Integer value) {
     if (TickUnits) {
-      if (value.equals(Integer.valueOf(1))) {
+      if (value.equals(1)) {
         return S.get("clockDurationOneValue");
       } else {
         return StringUtil.format(S.get("clockDurationValue"), value.toString());
       }
     } else {
-      if (value.equals(Integer.valueOf(1))) {
+      if (value.equals(1)) {
         return S.get("PORDurationOneValue");
       } else {
         return StringUtil.format(S.get("PORDurationValue"), value.toString());

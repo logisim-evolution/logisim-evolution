@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -29,9 +29,9 @@
 package com.cburch.logisim.tools;
 
 public class CaretEvent {
-  private Caret caret;
-  private String oldtext;
-  private String newtext;
+  private final Caret caret;
+  private final String oldtext;
+  private final String newtext;
 
   public CaretEvent(Caret caret, String oldtext, String newtext) {
     this.caret = caret;

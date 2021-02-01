@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -40,7 +40,7 @@ import com.cburch.logisim.util.GraphicsUtil;
 
 public class BreakpointIcon implements Icon {
 
-  private int wh = AppPreferences.getScaled(12);
+  private final int wh = AppPreferences.getScaled(12);
 
   @Override
   public void paintIcon(Component c, Graphics g, int x, int y) {

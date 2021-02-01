@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -42,6 +42,6 @@ public class IntegerConfigurator extends NumericConfigurator<Integer> {
 
   @Override
   protected Integer createValue(long val) {
-    return Integer.valueOf((int) val);
+    return (int) val;
   }
 }

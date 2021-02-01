@@ -31,6 +31,7 @@ dependencies {
     implementation("at.swimmesberger:swingx-core:1.6.8")
     implementation("org.slf4j:slf4j-api:1.7.30")
     implementation("org.slf4j:slf4j-simple:1.7.30")
+    implementation("com.github.weisj:darklaf-core:2.5.5")
 
     testImplementation("ch.qos.logback:logback-classic:1.2.3")
     testImplementation("ch.qos.logback:logback-core:1.2.3")

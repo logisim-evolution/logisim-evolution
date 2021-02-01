@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -72,7 +72,7 @@ public class PortHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       for (int i = 0 ; i < nBus ; i++) {
         int start = ComponentInfo.GetLocalBubbleInputStartId()+i*BitWidth.MAXWIDTH;
         int end = start-1;
-        end += (size > BitWidth.MAXWIDTH) ? BitWidth.MAXWIDTH : size;
+        end += Math.min(size, BitWidth.MAXWIDTH);
         size -= BitWidth.MAXWIDTH;
         Contents.add("   "+Preamble+GetBusName(ComponentInfo, i, HDLType, Nets)+
                      AssignOperator+HDLGeneratorFactory.LocalInputBubbleBusname+
@@ -82,7 +82,7 @@ public class PortHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       for (int i = 0 ; i < nBus ; i++) {
         int start = ComponentInfo.GetLocalBubbleOutputStartId()+i*BitWidth.MAXWIDTH;
         int end = start-1;
-        end += (size > BitWidth.MAXWIDTH) ? BitWidth.MAXWIDTH : size;
+        end += Math.min(size, BitWidth.MAXWIDTH);
         size -= BitWidth.MAXWIDTH;
         Contents.add("   "+Preamble+HDLGeneratorFactory.LocalOutputBubbleBusname+
                      AssignOperator+GetBusName(ComponentInfo, i, HDLType, Nets)+
@@ -91,7 +91,7 @@ public class PortHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     } else {
       for (int i = 0 ; i < nBus ; i++) {
         int start = ComponentInfo.GetLocalBubbleInOutStartId()+i*BitWidth.MAXWIDTH;
-        int nbits = (size > BitWidth.MAXWIDTH) ? BitWidth.MAXWIDTH : size; 
+        int nbits = Math.min(size, BitWidth.MAXWIDTH);
         int end = start-1+nbits;
         size -= nbits;
         int enableIndex = (dir == PortIO.INOUTSE) ? 0 : i*2;

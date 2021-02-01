@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -224,7 +224,7 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         ComponentInfo.GetComponent().getAttributeSet().getValue(Clock.ATTR_HIGH).intValue();
     int LowTicks =
         ComponentInfo.GetComponent().getAttributeSet().getValue(Clock.ATTR_LOW).intValue();
-    int MaxValue = (HighTicks > LowTicks) ? HighTicks : LowTicks;
+    int MaxValue = Math.max(HighTicks, LowTicks);
     int nr_of_bits = 0;
     while (MaxValue != 0) {
       nr_of_bits++;

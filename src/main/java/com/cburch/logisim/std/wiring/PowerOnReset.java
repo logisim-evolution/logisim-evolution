@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -64,7 +64,7 @@ public class PowerOnReset extends InstanceFactory {
           new DurationAttribute("PorHighDuration", S.getter("porHighAttr"), 1, 10, false),
         },
         new Object[] {
-          Direction.EAST, Integer.valueOf(2),
+          Direction.EAST, 2,
         });
     setFacingAttribute(StdAttr.FACING);
     setIconName("por.png");
@@ -73,8 +73,8 @@ public class PowerOnReset extends InstanceFactory {
   private static class PORState implements InstanceData, Cloneable, ActionListener {
 
     private boolean value;
-    private Timer tim;
-    private InstanceState state;
+    private final Timer tim;
+    private final InstanceState state;
 
     public PORState(InstanceState state) {
       value = true;

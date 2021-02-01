@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -106,9 +106,9 @@ public class Plexers extends Library {
   }
 
   static final AttributeOption SIZE_NARROW =
-      new AttributeOption(Integer.valueOf(20), S.getter("gateSizeNarrowOpt"));
+      new AttributeOption(20, S.getter("gateSizeNarrowOpt"));
   static final AttributeOption SIZE_WIDE =
-      new AttributeOption(Integer.valueOf(40), S.getter("gateSizeWideOpt")); /* 30 for 2-to-1 */
+      new AttributeOption(40, S.getter("gateSizeWideOpt")); /* 30 for 2-to-1 */
   public static final Attribute<AttributeOption> ATTR_SIZE =
       Attributes.forOption(
           "size", S.getter("gateSizeAttr"), new AttributeOption[] {SIZE_NARROW, SIZE_WIDE});
@@ -148,7 +148,7 @@ public class Plexers extends Library {
 
   public static final int DELAY = 3;
 
-  private static FactoryDescription[] DESCRIPTIONS = {
+  private static final FactoryDescription[] DESCRIPTIONS = {
     new FactoryDescription(
         "Multiplexer", S.getter("multiplexerComponent"), "multiplexer.gif", "Multiplexer"),
     new FactoryDescription(

@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -35,17 +35,17 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class Net {
-  private Set<Location> MyPoints = new HashSet<Location>();
-  private Set<String> TunnelNames = new HashSet<String>();
-  private Set<Wire> Segments = new HashSet<Wire>();
+  private final Set<Location> MyPoints = new HashSet<Location>();
+  private final Set<String> TunnelNames = new HashSet<String>();
+  private final Set<Wire> Segments = new HashSet<Wire>();
   private int nr_of_bits;
   private Net MyParent;
   private Boolean Requires_to_be_root;
-  private ArrayList<Byte> InheritedBits = new ArrayList<Byte>();
-  private ArrayList<ConnectionPointArray> SourceList = new ArrayList<ConnectionPointArray>();
-  private ArrayList<ConnectionPointArray> SinkList = new ArrayList<ConnectionPointArray>();
-  private ArrayList<ConnectionPointArray> SourceNetsList = new ArrayList<ConnectionPointArray>();
-  private ArrayList<ConnectionPointArray> SinkNetsList = new ArrayList<ConnectionPointArray>();
+  private final ArrayList<Byte> InheritedBits = new ArrayList<Byte>();
+  private final ArrayList<ConnectionPointArray> SourceList = new ArrayList<ConnectionPointArray>();
+  private final ArrayList<ConnectionPointArray> SinkList = new ArrayList<ConnectionPointArray>();
+  private final ArrayList<ConnectionPointArray> SourceNetsList = new ArrayList<ConnectionPointArray>();
+  private final ArrayList<ConnectionPointArray> SinkNetsList = new ArrayList<ConnectionPointArray>();
 
   public Net() {
     cleanup();

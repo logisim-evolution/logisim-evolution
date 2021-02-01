@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -172,9 +172,9 @@ public class HdlContentView extends JPanel implements DocumentListener, HdlModel
 
   private RSyntaxTextArea editor;
   private HdlModel model;
-  private Project project;
+  private final Project project;
 
-  private HdlToolbarModel toolbar;
+  private final HdlToolbarModel toolbar;
 
   public HdlContentView(Project proj) {
     super(new BorderLayout());

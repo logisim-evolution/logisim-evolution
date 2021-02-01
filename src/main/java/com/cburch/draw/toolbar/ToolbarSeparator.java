@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -36,7 +36,7 @@ import java.awt.Graphics;
 import com.cburch.logisim.prefs.AppPreferences;
 
 public class ToolbarSeparator implements ToolbarItem {
-  private int size;
+  private final int size;
 
   public ToolbarSeparator(int size) {
     this.size = size;

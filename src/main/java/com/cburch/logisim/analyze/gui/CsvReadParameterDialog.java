@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -55,16 +55,16 @@ import javax.swing.border.Border;
 
 public class CsvReadParameterDialog extends JDialog implements ActionListener {
 
-  private JComboBox<String> quotes;
-  private JComboBox<String> seperators;
-  private JButton OkBut;
-  private JLabel[] JLabels;
-  private File file;
+  private final JComboBox<String> quotes;
+  private final JComboBox<String> seperators;
+  private final JButton OkBut;
+  private final JLabel[] JLabels;
+  private final File file;
 
   private static final long serialVersionUID = 1L;
 
-  private CsvParameter param;
-  private String SepSpace;
+  private final CsvParameter param;
+  private final String SepSpace;
   private boolean setVisable;
 
   public CsvReadParameterDialog(CsvParameter sel, File file, JFrame parrentFrame) {

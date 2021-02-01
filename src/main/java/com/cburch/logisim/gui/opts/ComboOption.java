@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -45,9 +45,9 @@ class ComboOption {
     combo.setSelectedItem(combo.getItemAt(0));
   }
 
-  private Object value;
+  private final Object value;
 
-  private StringGetter getter;
+  private final StringGetter getter;
 
   ComboOption(AttributeOption value) {
     this.value = value;

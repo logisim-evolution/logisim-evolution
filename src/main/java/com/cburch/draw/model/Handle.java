@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -31,9 +31,9 @@ package com.cburch.draw.model;
 import com.cburch.logisim.data.Location;
 
 public class Handle {
-  private CanvasObject object;
-  private int x;
-  private int y;
+  private final CanvasObject object;
+  private final int x;
+  private final int y;
 
   public Handle(CanvasObject object, int x, int y) {
     this.object = object;

@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -99,7 +99,7 @@ public class StringUtil {
     int lines = 0;
     for (int i = 0; i < text.length(); i++) {
       if (text.charAt(i) == '\n') {
-        n = (c > n ? c : n);
+        n = (Math.max(c, n));
         c = 0;
         lines++;
       } else if (text.charAt(i) == '\t') {
@@ -109,7 +109,7 @@ public class StringUtil {
       }
     }
     if (text.charAt(text.length() - 1) != '\n') {
-      n = (c > n ? c : n);
+      n = (Math.max(c, n));
       lines++;
     }
     int size = font.getSize();

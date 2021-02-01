@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -67,8 +67,8 @@ public class Nios2DataTransferInstructions implements AssemblerExecutionInterfac
                                             0x15,0x0d,0x05,
                                             0x35,0x2d,0x25 };
 
-  private ArrayList<String> Opcodes;
-  private ArrayList<Integer> OpcCodes; 
+  private final ArrayList<String> Opcodes;
+  private final ArrayList<Integer> OpcCodes;
   
   private int instruction;
   private boolean valid;

@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -36,10 +36,10 @@ class PrefMonitorStringOpts extends AbstractPrefMonitor<String> {
     return a == null ? b == null : a.equals(b);
   }
 
-  private String[] opts;
+  private final String[] opts;
   private String value;
 
-  private String dflt;
+  private final String dflt;
 
   PrefMonitorStringOpts(String name, String[] opts, String dflt) {
     super(name);
@@ -63,11 +63,10 @@ class PrefMonitorStringOpts extends AbstractPrefMonitor<String> {
       String oldValue = value;
       String newValue = prefs.get(name, dflt);
       if (!isSame(oldValue, newValue)) {
-        String[] o = opts;
         String chosen = null;
-        for (int i = 0; i < o.length; i++) {
-          if (isSame(o[i], newValue)) {
-            chosen = o[i];
+        for (String s : opts) {
+          if (isSame(s, newValue)) {
+            chosen = s;
             break;
           }
         }

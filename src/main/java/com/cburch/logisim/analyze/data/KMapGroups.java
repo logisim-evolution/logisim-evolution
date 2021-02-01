@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -41,8 +41,8 @@ import java.util.List;
 public class KMapGroups {
 
   public class CoverInfo {
-    private int startRow;
-    private int startCol;
+    private final int startRow;
+    private final int startCol;
     private int width;
     private int height;
 
@@ -111,10 +111,10 @@ public class KMapGroups {
   }
 
   public class KMapGroupInfo {
-    private ArrayList<CoverInfo> Areas;
-    private Color color;
-    private ArrayList<Implicant> singleCoveredImplicants;
-    private Expression expression;
+    private final ArrayList<CoverInfo> Areas;
+    private final Color color;
+    private final ArrayList<Implicant> singleCoveredImplicants;
+    private final Expression expression;
 
     public KMapGroupInfo(Implicant imp, Color col) {
       this.color = col;
@@ -247,7 +247,7 @@ public class KMapGroups {
     }
   }
 
-  private AnalyzerModel model;
+  private final AnalyzerModel model;
   private String output;
   private int format;
   private ArrayList<KMapGroupInfo> covers;

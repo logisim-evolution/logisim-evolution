@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -83,15 +83,15 @@ public class SplitterAttributes extends AbstractAttributeSet {
     }
 
     public Object getDefault() {
-      return Integer.valueOf(which + 1);
+      return which + 1;
     }
 
     @Override
     public Integer parse(String value) {
       if (value.equals(unchosen_val)) {
-        return Integer.valueOf(0);
+        return 0;
       } else {
-        return Integer.valueOf(1 + Integer.parseInt(value));
+        return 1 + Integer.parseInt(value);
       }
     }
 
@@ -244,8 +244,8 @@ public class SplitterAttributes extends AbstractAttributeSet {
   }
   
   public boolean isNoConnect(int index) {
-    for (int i = 0; i < bit_end.length; i++) {
-      if (bit_end[i] == index)
+    for (byte b : bit_end) {
+      if (b == index)
         return false;
     }
     return true;
@@ -271,7 +271,7 @@ public class SplitterAttributes extends AbstractAttributeSet {
       if (bit_end[i] != dflt[i]) {
         BitOutAttribute attr = (BitOutAttribute) attrs.get(offs + i);
         bit_end[i] = dflt[i];
-        fireAttributeValueChanged(attr, Integer.valueOf(bit_end[i]), null);
+        fireAttributeValueChanged(attr, (int) bit_end[i], null);
       }
     }
 

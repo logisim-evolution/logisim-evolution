@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -63,7 +63,7 @@ public class LineTool extends AbstractTool {
     return Location.create(mx, my); // should never happen
   }
 
-  private DrawingAttributeSet attrs;
+  private final DrawingAttributeSet attrs;
   private boolean active;
   private Location mouseStart;
   private Location mouseEnd;

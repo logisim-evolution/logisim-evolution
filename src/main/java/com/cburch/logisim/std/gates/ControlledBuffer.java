@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -70,7 +70,7 @@ class ControlledBuffer extends InstanceFactory {
   public static ComponentFactory FACTORY_BUFFER = new ControlledBuffer(false);
   public static ComponentFactory FACTORY_INVERTER = new ControlledBuffer(true);
 
-  private boolean isInverter;
+  private final boolean isInverter;
 
   private ControlledBuffer(boolean isInverter) {
     super(

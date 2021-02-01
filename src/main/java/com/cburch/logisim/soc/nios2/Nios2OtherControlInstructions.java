@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -66,9 +66,9 @@ public class Nios2OtherControlInstructions implements AssemblerExecutionInterfac
           0x26, 0x2E, SIGN_EXTEND, SIGN_EXTEND, 0x0C, SIGN_EXTEND, SIGN_EXTEND, 0x29,
           0x04, 0x36 };
 
-  private ArrayList<String> Opcodes = new ArrayList<String>();
-  private ArrayList<Integer> OpcCodes = new ArrayList<Integer>(); 
-  private ArrayList<Integer> OpxCodes = new ArrayList<Integer>(); 
+  private final ArrayList<String> Opcodes = new ArrayList<String>();
+  private final ArrayList<Integer> OpcCodes = new ArrayList<Integer>();
+  private final ArrayList<Integer> OpxCodes = new ArrayList<Integer>();
 
   private int instruction;
   private boolean valid;

@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -38,9 +38,9 @@ import javax.swing.JPanel;
 
 class LayoutOptions extends OptionsPanel {
   private static final long serialVersionUID = 1L;
-  private PrefBoolean[] checks;
-  private PrefOptionList afterAdd;
-  private PrefOptionList DefaultAppear;
+  private final PrefBoolean[] checks;
+  private final PrefOptionList afterAdd;
+  private final PrefOptionList DefaultAppear;
   private PrefOptionList radix1;
   private PrefOptionList radix2;
 
@@ -107,8 +107,8 @@ class LayoutOptions extends OptionsPanel {
     panel.add(radix2.getJComboBox());
 
     setLayout(new TableLayout(1));
-    for (int i = 0; i < checks.length; i++) {
-      add(checks[i]);
+    for (PrefBoolean check : checks) {
+      add(check);
     }
     add(panel);
   }
@@ -125,8 +125,8 @@ class LayoutOptions extends OptionsPanel {
 
   @Override
   public void localeChanged() {
-    for (int i = 0; i < checks.length; i++) {
-      checks[i].localeChanged();
+    for (PrefBoolean check : checks) {
+      check.localeChanged();
     }
     radix1.localeChanged();
     radix2.localeChanged();

@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -76,7 +76,7 @@ public class SocBusAttributes extends AbstractAttributeSet {
   private SocBusInfo ID = new SocBusInfo(null);
   private Boolean traceVisable = true;
 
-  private static List<Attribute<?>> ATTRIBUTES =
+  private static final List<Attribute<?>> ATTRIBUTES =
         Arrays.asList(
             new Attribute<?>[] {
               NrOfTracesAttr,

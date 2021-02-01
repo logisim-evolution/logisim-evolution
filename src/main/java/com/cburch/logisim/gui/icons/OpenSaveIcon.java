@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -40,7 +40,7 @@ public class OpenSaveIcon extends AbstractIcon {
   public static final int FILE_SAVE = 1;
   public static final int FILE_SAVE_AS = 2;
   
-  private int myType;
+  private final int myType;
   private static final int[] Arrowup = new int[] {4,3,7,0,10,3,8,3,8,6,6,6,6,3};
   private static final int[] Arrowdown = new int[] {6,0,8,0,8,3,10,3,7,6,4,3,6,3};
   

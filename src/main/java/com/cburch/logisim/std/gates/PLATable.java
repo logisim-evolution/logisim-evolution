@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -83,7 +83,7 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.plaf.basic.BasicScrollBarUI;
 
 public class PLATable {
-  private ArrayList<Row> rows = new ArrayList<>();
+  private final ArrayList<Row> rows = new ArrayList<>();
   private int inSize, outSize;
   private String label = "";
 
@@ -348,11 +348,11 @@ public class PLATable {
 
     private final float smallFont = 9.5f;
     private final float tinyFont = 8.8f;
-    private HeaderPanel hdrPanel;
-    private TablePanel ttPanel;
-    private JPanel ttScrollPanel;
+    private final HeaderPanel hdrPanel;
+    private final TablePanel ttPanel;
+    private final JPanel ttScrollPanel;
     private PLATable oldTable, newTable;
-    private BoundedRangeModel vScrollModel;
+    private final BoundedRangeModel vScrollModel;
 
     public EditorDialog(Frame parent) {
       super(parent, S.get("plaEditorTitle"), true);
@@ -785,7 +785,7 @@ public class PLATable {
     private static final int edgeThickness = 2;
     private static final Border stdBorder = BorderFactory.createEtchedBorder();
     private static final Border clickBorder = BorderFactory.createEtchedBorder(EtchedBorder.RAISED);
-    private static Dimension buttonSize =
+    private static final Dimension buttonSize =
         new Dimension(
             AppPreferences.getScaled(bs - 2 * edgeThickness - buttonHgap),
             AppPreferences.getScaled(bs - 2 * edgeThickness));

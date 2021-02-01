@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -36,7 +36,7 @@ class PrefMonitorString extends AbstractPrefMonitor<String> {
     return a == null ? b == null : a.equals(b);
   }
 
-  private String dflt;
+  private final String dflt;
 
   private String value;
 

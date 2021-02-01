@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -41,7 +41,7 @@ public class ZoomIcon  extends AbstractIcon {
   public static int ZOOMOUT = 1;
   public static int NOZOOM = 2;
   
-  private int zoomType;
+  private final int zoomType;
   
   public ZoomIcon() {
     zoomType = NOZOOM;

@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -55,8 +55,8 @@ public class KeyboardToolSelection extends AbstractAction {
 
   private static final long serialVersionUID = 1L;
 
-  private Toolbar toolbar;
-  private int index;
+  private final Toolbar toolbar;
+  private final int index;
 
   public KeyboardToolSelection(Toolbar toolbar, int index) {
     this.toolbar = toolbar;

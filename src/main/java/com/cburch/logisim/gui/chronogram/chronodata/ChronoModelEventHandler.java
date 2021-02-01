@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -42,10 +42,10 @@ import java.util.Arrays;
 
 public class ChronoModelEventHandler implements ModelListener {
 
-  private ChronoFrame chronoFrame;
-  private ChronoData chronoData;
+  private final ChronoFrame chronoFrame;
+  private final ChronoData chronoData;
   // contains the signals order, as they are stored in the ModelListener
-  private String[] signalNamesKeepOrder;
+  private final String[] signalNamesKeepOrder;
 
   private String lastSysclk = "0";
   private int sysclkPos = -1;
@@ -63,8 +63,8 @@ public class ChronoModelEventHandler implements ModelListener {
     for (int i = 0; i < columns; i++) {
       String name = "";
       Component[] path = sel.get(i).getPath();
-      for (int k = 0; k < path.length; k++) {
-        SubcircuitFactory circFact = (SubcircuitFactory) path[k].getFactory();
+      for (Component component : path) {
+        SubcircuitFactory circFact = (SubcircuitFactory) component.getFactory();
         name += circFact.getDisplayName() + "/";
       }
       name += sel.get(i).toShortString();

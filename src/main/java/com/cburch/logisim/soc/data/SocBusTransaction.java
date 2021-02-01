@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -67,8 +67,12 @@ public class SocBusTransaction {
   public static final int HalfWordAccess = 2;
   public static final int WordAccess = 3;
    
-  private int address,writeData,readData,type,access;
-  private Object master;
+  private final int address;
+  private final int writeData;
+  private int readData;
+  private final int type;
+  private final int access;
+  private final Object master;
   private Component slave;
   private int Error;
   private boolean hidden;
@@ -336,7 +340,7 @@ public class SocBusTransaction {
   
   public int paint(Graphics2D g2, Long index, int width) {
 	BoxInfo realWidth = getRealBlockWidth(g2,true);
-	int usedWidth = realWidth.blockWidth <= width ? width : realWidth.blockWidth; 
+	int usedWidth = Math.max(realWidth.blockWidth, width);
     Bounds bds = getScaled(usedWidth/2,(SocBusStateInfo.TraceHeight-2)/4,usedWidth,SocBusStateInfo.TraceHeight>>1,true);
     g2.setColor(Color.LIGHT_GRAY);
     g2.fillRect(0, 0, bds.getWidth(), bds.getHeight()-1);

@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -113,11 +113,11 @@ public class BoardManipulator extends JPanel implements MouseListener,
   private int MaxZoom;
   private float scale;
   private BufferedImage image;
-  private boolean mapMode;
+  private final boolean mapMode;
   private String BoardName;
   private SimpleRectangle defineRectangle; /* note this one is in real coordinates */
   private ArrayList<BoardManipulatorListener> listeners;
-  private IOComponentsInformation IOcomps;
+  private final IOComponentsInformation IOcomps;
   private MappableResourcesContainer MapInfo;
   private JList<MapListModel.MapInfo> unmappedList;
   private JList<MapListModel.MapInfo> mappedList;
@@ -303,11 +303,8 @@ public class BoardManipulator extends JPanel implements MouseListener,
   public void setMaxZoom(int value) {
     if (value < zoom.getMinZoom()) {
       MaxZoom = zoom.getMinZoom();
-    } else if (value > zoom.getMaxZoom()) {
-      MaxZoom = zoom.getMaxZoom();
-    } else {
-      MaxZoom = value;
-    }
+    } else
+      MaxZoom = Math.min(value, zoom.getMaxZoom());
   }
   
   private void defineIOComponent() {

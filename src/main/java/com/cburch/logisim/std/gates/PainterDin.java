@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -110,7 +110,7 @@ class PainterDin {
     // draw state if appropriate
     // ignore lines if in print view
     int r = Math.min(height / 2, width);
-    Integer hash = Integer.valueOf(r << 4 | inputs);
+    Integer hash = r << 4 | inputs;
     int[] lens = orLenArrays.get(hash);
     if (lens == null) {
       lens = new int[inputs];
@@ -157,7 +157,7 @@ class PainterDin {
 
   static final int XNOR = 3;
 
-  private static HashMap<Integer, int[]> orLenArrays = new HashMap<Integer, int[]>();
+  private static final HashMap<Integer, int[]> orLenArrays = new HashMap<Integer, int[]>();
 
   private PainterDin() {}
 }

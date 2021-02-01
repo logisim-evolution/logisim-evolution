@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -44,7 +44,7 @@ class GateAttributeList extends AbstractList<Attribute<?>> {
     StdAttr.LABEL_FONT,
   };
 
-  private GateAttributes attrs;
+  private final GateAttributes attrs;
 
   public GateAttributeList(GateAttributes attrs) {
     this.attrs = attrs;

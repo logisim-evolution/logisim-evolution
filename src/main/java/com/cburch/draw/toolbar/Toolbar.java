@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -50,9 +50,9 @@ public class Toolbar extends JPanel {
   public static final Object HORIZONTAL = new Object();
 
   private ToolbarModel model;
-  private JPanel subpanel;
+  private final JPanel subpanel;
   private Object orientation;
-  private MyListener myListener;
+  private final MyListener myListener;
   private ToolbarButton curPressed;
 
   public Toolbar(ToolbarModel model) {

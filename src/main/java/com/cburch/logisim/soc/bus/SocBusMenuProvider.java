@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -67,11 +67,11 @@ public class SocBusMenuProvider  implements ActionListener {
 
   private class InstanceMenuItem extends JMenuItem {
     private static final long serialVersionUID = 1L;
-    private Instance instance;
-    private int function;
-    private SocBusStateInfo.SocBusState data;
-    private CircuitStateHolder.HierarchyInfo csh;
-    private CircuitState circuitState;
+    private final Instance instance;
+    private final int function;
+    private final SocBusStateInfo.SocBusState data;
+    private final CircuitStateHolder.HierarchyInfo csh;
+    private final CircuitState circuitState;
     
     public InstanceMenuItem(Instance inst, String label, int function, Object data, CircuitStateHolder.HierarchyInfo csh) {
       super(label);
@@ -109,8 +109,8 @@ public class SocBusMenuProvider  implements ActionListener {
   
   private class MenuProvider implements MenuExtender, CircuitStateHolder {
 
-    private Instance instance;
-    private SocBusMenuProvider parrent;
+    private final Instance instance;
+    private final SocBusMenuProvider parrent;
     SocBusStateInfo.SocBusState data;
     CircuitState circuitState;
     HierarchyInfo hierarchy;
@@ -177,8 +177,8 @@ public class SocBusMenuProvider  implements ActionListener {
     private Frame parrentFrame;
     private TraceWindowTableModel traceModel;
     private ListeningFrame myTraceFrame;
-    private HashMap<SocBusStateInfo.SocBusState, CircuitStateHolder.HierarchyInfo> myTraceList;
-    private HashMap<SocBusStateInfo.SocBusState,BusTransactionInsertionGui> myInsertionFrames;
+    private final HashMap<SocBusStateInfo.SocBusState, CircuitStateHolder.HierarchyInfo> myTraceList;
+    private final HashMap<SocBusStateInfo.SocBusState,BusTransactionInsertionGui> myInsertionFrames;
 	    
     public InstanceInformation(Instance inst, SocBusMenuProvider parrent) {
       parrentFrame = null;
@@ -297,7 +297,7 @@ public class SocBusMenuProvider  implements ActionListener {
     }
   }
   
-  private HashMap<Instance,InstanceInformation> myInfo;
+  private final HashMap<Instance,InstanceInformation> myInfo;
   
   public SocBusMenuProvider() {
     myInfo = new HashMap<Instance,InstanceInformation>();

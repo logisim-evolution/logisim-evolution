@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -39,7 +39,7 @@ public class Simulator {
   class PropagationManager extends UniquelyNamedThread {
 
     private Propagator propagator = null;
-    private PropagationPoints stepPoints = new PropagationPoints();
+    private final PropagationPoints stepPoints = new PropagationPoints();
     private volatile int ticksRequested = 0;
     private volatile int stepsRequested = 0;
     private volatile boolean resetRequested = false;
@@ -195,9 +195,9 @@ public class Simulator {
   private boolean isTicking = false;
   private boolean exceptionEncountered = false;
   private double tickFrequency = 1.0;
-  private PropagationManager manager;
-  private SimulatorTicker ticker;
-  private ArrayList<SimulatorListener> listeners = new ArrayList<SimulatorListener>();
+  private final PropagationManager manager;
+  private final SimulatorTicker ticker;
+  private final ArrayList<SimulatorListener> listeners = new ArrayList<SimulatorListener>();
 
   public Simulator() {
     manager = new PropagationManager();

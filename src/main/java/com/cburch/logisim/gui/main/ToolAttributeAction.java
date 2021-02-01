@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -61,7 +61,7 @@ public class ToolAttributeAction extends Action {
     return new ToolAttributeAction(r);
   }
 
-  private KeyConfigurationResult config;
+  private final KeyConfigurationResult config;
   private Map<Attribute<?>, Object> oldValues;
 
   private ToolAttributeAction(KeyConfigurationResult config) {
@@ -135,7 +135,7 @@ public class ToolAttributeAction extends Action {
   }
 
   private class ActionTransaction extends CircuitTransaction {
-    private boolean forward;
+    private final boolean forward;
 
     ActionTransaction(boolean forward) {
       this.forward = forward;

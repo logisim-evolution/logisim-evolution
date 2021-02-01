@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -220,7 +220,7 @@ class MouseOptions extends OptionsPanel {
     public void mousePressed(MouseEvent e) {
       if (e.getSource() == addArea && curTool != null) {
         Tool t = curTool.cloneTool();
-        Integer mods = Integer.valueOf(e.getModifiersEx());
+        Integer mods = e.getModifiersEx();
         getProject().doAction(OptionsActions.setMapping(getOptions().getMouseMappings(), mods, t));
         setSelectedRow(model.getRow(mods));
       }
@@ -268,15 +268,15 @@ class MouseOptions extends OptionsPanel {
 
   private static final long serialVersionUID = 1L;
 
-  private MyListener listener = new MyListener();
+  private final MyListener listener = new MyListener();
   private Tool curTool = null;
-  private MappingsModel model;
+  private final MappingsModel model;
 
-  private ProjectExplorer explorer;
-  private JPanel addArea = new AddArea();
-  private JTable mappings = new JTable();
-  private AttrTable attrTable;
-  private JButton remove = new JButton();
+  private final ProjectExplorer explorer;
+  private final JPanel addArea = new AddArea();
+  private final JTable mappings = new JTable();
+  private final AttrTable attrTable;
+  private final JButton remove = new JButton();
 
   public MouseOptions(OptionsFrame window) {
     super(window, new GridLayout(1, 3));

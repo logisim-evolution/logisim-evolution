@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -344,17 +344,15 @@ class Connector {
    * we are moving that gate northeast, we prefer to connect the inputs from the bottom up.
    */
   private static void sortConnects(ArrayList<ConnectionData> connects, final int dx, final int dy) {
-    Collections.sort(
-        connects,
-        new Comparator<ConnectionData>() {
-          public int compare(ConnectionData ac, ConnectionData bc) {
-            Location a = ac.getLocation();
-            Location b = bc.getLocation();
-            int abx = a.getX() - b.getX();
-            int aby = a.getY() - b.getY();
-            return abx * dx + aby * dy;
-          }
-        });
+    connects.sort(new Comparator<ConnectionData>() {
+      public int compare(ConnectionData ac, ConnectionData bc) {
+        Location a = ac.getLocation();
+        Location b = bc.getLocation();
+        int abx = a.getX() - b.getX();
+        int aby = a.getY() - b.getY();
+        return abx * dx + aby * dy;
+      }
+    });
   }
 
   private static MoveResult tryList(

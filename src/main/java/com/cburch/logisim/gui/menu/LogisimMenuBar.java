@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -104,12 +104,12 @@ public class LogisimMenuBar extends JMenuBar {
   public static final LogisimMenuItem TICK_HALF = new LogisimMenuItem("TickHalf");
   public static final LogisimMenuItem TICK_FULL = new LogisimMenuItem("TickFull");
 
-  private JFrame parent;
-  private MyListener listener;
-  private Project proj;
+  private final JFrame parent;
+  private final MyListener listener;
+  private final Project proj;
   private SimulateListener simulateListener = null;
-  private HashMap<LogisimMenuItem, MenuItem> menuItems = new HashMap<LogisimMenuItem, MenuItem>();
-  private ArrayList<ChangeListener> enableListeners;
+  private final HashMap<LogisimMenuItem, MenuItem> menuItems = new HashMap<LogisimMenuItem, MenuItem>();
+  private final ArrayList<ChangeListener> enableListeners;
 
   public final MenuFile file;
   public final MenuEdit edit;

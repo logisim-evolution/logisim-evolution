@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -52,7 +52,7 @@ public class VhdlSimulatorConsole extends JPanel {
     private static final long serialVersionUID = 1L;
     Ellipse2D.Double circle;
     Color color;
-    private int margin = 5;
+    private final int margin = 5;
 
     public VhdlSimState() {
       int radius = 15;
@@ -100,12 +100,12 @@ public class VhdlSimulatorConsole extends JPanel {
   }
 
   private static final long serialVersionUID = 1L;
-  private JLabel label = new JLabel();
-  private JScrollPane log = new JScrollPane();
-  private JTextArea logContent = new JTextArea();
+  private final JLabel label = new JLabel();
+  private final JScrollPane log = new JScrollPane();
+  private final JTextArea logContent = new JTextArea();
   private VhdlSimState vhdlSimState;
 
-  private Project project;
+  private final Project project;
 
   public VhdlSimulatorConsole(Project proj) {
     project = proj;

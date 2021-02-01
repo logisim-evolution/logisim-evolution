@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -118,7 +118,7 @@ class OutputSelector {
 
     private static final long serialVersionUID = 1L;
     private String selected;
-    private AttributedJLabel MyRenderer = new AttributedJLabel();
+    private final AttributedJLabel MyRenderer = new AttributedJLabel();
 
     public ListCellRenderer<Object> getMyRenderer() {
       return MyRenderer;
@@ -141,7 +141,7 @@ class OutputSelector {
     public void listChanged(VariableListEvent event) {
       int oldSize = select.getItemCount();
       int newSize = source.bits.size();
-      fireContentsChanged(this, 0, oldSize > newSize ? oldSize : newSize);
+      fireContentsChanged(this, 0, Math.max(oldSize, newSize));
       if (!source.bits.contains(selected)) {
         selected = (newSize == 0 ? null : source.bits.get(0));
         select.setSelectedItem(selected);
@@ -153,9 +153,9 @@ class OutputSelector {
     }
   }
 
-  private VariableList source;
-  private JLabel label = new JLabel();
-  private JComboBox<String> select = new JComboBox<String>();
+  private final VariableList source;
+  private final JLabel label = new JLabel();
+  private final JComboBox<String> select = new JComboBox<String>();
 
   public OutputSelector(AnalyzerModel model) {
     this.source = model.getOutputs();

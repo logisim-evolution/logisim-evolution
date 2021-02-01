@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -60,7 +60,7 @@ public class ModelReorderAction extends ModelAction {
     if (reqs.isEmpty()) {
       return null;
     } else {
-      Collections.sort(reqs, ReorderRequest.ASCENDING_FROM);
+      reqs.sort(ReorderRequest.ASCENDING_FROM);
       repairRequests(reqs);
       return new ModelReorderAction(model, reqs);
     }
@@ -79,7 +79,7 @@ public class ModelReorderAction extends ModelAction {
     if (reqs.isEmpty()) {
       return null;
     } else {
-      Collections.sort(reqs, ReorderRequest.ASCENDING_FROM);
+      reqs.sort(ReorderRequest.ASCENDING_FROM);
       repairRequests(reqs);
       return new ModelReorderAction(model, reqs);
     }
@@ -104,7 +104,7 @@ public class ModelReorderAction extends ModelAction {
     if (reqs.isEmpty()) {
       return null;
     } else {
-      Collections.sort(reqs, ReorderRequest.DESCENDING_FROM);
+      reqs.sort(ReorderRequest.DESCENDING_FROM);
       repairRequests(reqs);
       return new ModelReorderAction(model, reqs);
     }
@@ -123,7 +123,7 @@ public class ModelReorderAction extends ModelAction {
     if (reqs.isEmpty()) {
       return null;
     } else {
-      Collections.sort(reqs, ReorderRequest.ASCENDING_FROM);
+      reqs.sort(ReorderRequest.ASCENDING_FROM);
       repairRequests(reqs);
       return new ModelReorderAction(model, reqs);
     }
@@ -161,9 +161,9 @@ public class ModelReorderAction extends ModelAction {
     }
   }
 
-  private List<ReorderRequest> requests;
-  private List<CanvasObject> objects;
-  private int type;
+  private final List<ReorderRequest> requests;
+  private final List<CanvasObject> objects;
+  private final int type;
 
   public ModelReorderAction(CanvasModel model, List<ReorderRequest> requests) {
     super(model);

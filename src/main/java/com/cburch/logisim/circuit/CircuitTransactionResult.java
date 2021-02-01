@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -31,7 +31,7 @@ package com.cburch.logisim.circuit;
 import java.util.Collection;
 
 public class CircuitTransactionResult {
-  private CircuitMutatorImpl mutator;
+  private final CircuitMutatorImpl mutator;
 
   CircuitTransactionResult(CircuitMutatorImpl mutator) {
     this.mutator = mutator;

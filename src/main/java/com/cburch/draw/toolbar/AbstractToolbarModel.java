@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -32,7 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class AbstractToolbarModel implements ToolbarModel {
-  private List<ToolbarModelListener> listeners;
+  private final List<ToolbarModelListener> listeners;
 
   public AbstractToolbarModel() {
     listeners = new ArrayList<ToolbarModelListener>();

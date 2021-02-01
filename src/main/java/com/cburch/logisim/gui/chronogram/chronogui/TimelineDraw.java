@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -41,11 +41,11 @@ import javax.swing.JPanel;
 public class TimelineDraw extends JPanel {
 
   private static final long serialVersionUID = 1L;
-  private TimelineParam timelineParam;
+  private final TimelineParam timelineParam;
   private SignalData clk = null;
   private int tickWidth;
   private int width;
-  private int height;
+  private final int height;
 
   public TimelineDraw(ChronoFrame chronoFrame, int height, int tickWidth) {
     this.timelineParam = chronoFrame.getTimelineParam();

@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -60,9 +60,9 @@ import javax.swing.filechooser.FileFilter;
 
 public class AnalyzerTexWriter {
 
-  private static String SECTION_SEP =
+  private static final String SECTION_SEP =
       "%===============================================================================";
-  private static String SUB_SECTION_SEP =
+  private static final String SUB_SECTION_SEP =
       "%-------------------------------------------------------------------------------";
 
   public static int MAX_TRUTH_TABLE_ROWS = 64;
@@ -191,23 +191,17 @@ public class AnalyzerTexWriter {
   private static int[] reordered(int NrOfInputs) {
     switch (NrOfInputs) {
       case 1:
-        int[] ret1 = {0};
-        return ret1;
+        return new int[]{0};
       case 2:
-        int[] ret2 = {0, 1};
-        return ret2;
+        return new int[]{0, 1};
       case 3:
-        int[] ret3 = {1, 0, 2};
-        return ret3;
+        return new int[]{1, 0, 2};
       case 4:
-        int[] ret4 = {0, 2, 1, 3};
-        return ret4;
+        return new int[]{0, 2, 1, 3};
       case 5:
-        int[] ret5 = {2, 0, 3, 1, 4};
-        return ret5;
+        return new int[]{2, 0, 3, 1, 4};
       case 6:
-        int[] ret6 = {0, 3, 1, 4, 2, 5};
-        return ret6;
+        return new int[]{0, 3, 1, 4, 2, 5};
     }
     return null;
   }
@@ -349,7 +343,7 @@ public class AnalyzerTexWriter {
     return content.toString();
   }
 
-  private static double OFFSET = 0.2;
+  private static final double OFFSET = 0.2;
 
   private static String getCovers(String name, AnalyzerModel model) {
     StringBuffer content = new StringBuffer();
@@ -404,8 +398,7 @@ public class AnalyzerTexWriter {
     /* make sure the model is up to date */
     boolean modelIsUpdating = model.getOutputExpressions().UpdatesEnabled();
     model.getOutputExpressions().enableUpdates();
-    PrintStream out = new PrintStream(file);
-    try {
+    try (PrintStream out = new PrintStream(file)) {
       /*
        * We start to create the document header section with all required packages
        */
@@ -502,7 +495,7 @@ public class AnalyzerTexWriter {
         out.println("\\section{" + S.get("latexKarnaugh") + "}");
         if (tt.getRowCount() > MAX_TRUTH_TABLE_ROWS) {
           out.println(S.fmt("latexKarnaughToBig",
-                  (int) Math.ceil(Math.log(MAX_TRUTH_TABLE_ROWS) / Math.log(2))));
+              (int) Math.ceil(Math.log(MAX_TRUTH_TABLE_ROWS) / Math.log(2))));
         } else {
           out.println(S.get("latexKarnaughText"));
           out.println(SUB_SECTION_SEP);
@@ -546,7 +539,8 @@ public class AnalyzerTexWriter {
               for (int idx = outp.width - 1; idx >= 0; idx--) {
                 String func = "$" + outp.name + "_{" + idx + "}$";
                 out.println(
-                    getKarnaughGroups(outp.name + "[" + idx + "]", func, linedStyle, outcol++, model));
+                    getKarnaughGroups(outp.name + "[" + idx + "]", func, linedStyle, outcol++,
+                        model));
               }
             }
           }
@@ -560,13 +554,13 @@ public class AnalyzerTexWriter {
             if (outp.width == 1) {
               Expression exp = Expressions.eq(Expressions.variable(outp.name),
                   model.getOutputExpressions().getMinimalExpression(outp.name));
-              out.println(exp.toString(Notation.LaTeX)+ "~\\\\");
+              out.println(exp.toString(Notation.LaTeX) + "~\\\\");
             } else {
               for (int idx = outp.width - 1; idx >= 0; idx--) {
                 String name = outp.bitName(idx);
                 Expression exp = Expressions.eq(Expressions.variable(name),
                     model.getOutputExpressions().getMinimalExpression(name));
-                out.println(exp.toString(Notation.LaTeX)+ "~\\\\");
+                out.println(exp.toString(Notation.LaTeX) + "~\\\\");
               }
             }
           }
@@ -576,8 +570,6 @@ public class AnalyzerTexWriter {
        * That was all folks
        */
       out.println("\\end{document}");
-    } finally {
-      out.close();
     }
     if (!modelIsUpdating)
     	model.getOutputExpressions().disableUpdates();

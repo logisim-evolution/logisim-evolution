@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -83,7 +83,7 @@ public class ShiftRegister extends InstanceFactory {
         },
         new Object[] {
           BitWidth.ONE,
-          Integer.valueOf(8),
+            8,
           Boolean.TRUE,
           StdAttr.TRIG_RISING,
           "",

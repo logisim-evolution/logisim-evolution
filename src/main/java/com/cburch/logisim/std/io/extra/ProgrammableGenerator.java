@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -156,7 +156,7 @@ public class ProgrammableGenerator extends InstanceFactory {
     /** */
     private static final long serialVersionUID = -53754819096800664L;
 
-    private ProgrammableGeneratorState data;
+    private final ProgrammableGeneratorState data;
 
     ContentsCell(ProgrammableGeneratorState data) {
       super(S.get("romContentsValue"));
@@ -207,7 +207,7 @@ public class ProgrammableGenerator extends InstanceFactory {
   private static class ProgrammableGeneratorMenu implements ActionListener, MenuExtender {
     private JMenuItem edit;
     private JMenuItem reset;
-    private Instance instance;
+    private final Instance instance;
     private CircuitState circState;
 
     public ProgrammableGeneratorMenu(Instance instance) {
@@ -335,7 +335,7 @@ public class ProgrammableGenerator extends InstanceFactory {
           CONTENTS_ATTR
         },
         new Object[] {
-          Direction.EAST, Integer.valueOf(4), "", Direction.WEST, StdAttr.DEFAULT_LABEL_FONT, ""
+          Direction.EAST, 4, "", Direction.WEST, StdAttr.DEFAULT_LABEL_FONT, ""
         });
     setFacingAttribute(StdAttr.FACING);
     setInstanceLogger(ClockLogger.class);

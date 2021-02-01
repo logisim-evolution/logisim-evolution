@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -36,7 +36,7 @@ import javax.swing.JPanel;
 
 abstract class OptionsPanel extends JPanel {
   private static final long serialVersionUID = 1L;
-  private OptionsFrame optionsFrame;
+  private final OptionsFrame optionsFrame;
 
   public OptionsPanel(OptionsFrame frame) {
     super();

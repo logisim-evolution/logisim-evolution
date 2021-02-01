@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -55,14 +55,14 @@ import java.util.HashMap;
 
 public class CircuitBuilder {
 
-  private static int SPINE_DISTANCE = 10;
-  private static int BUS_SPINE_TO_WIRE_SPINE_DISTANCE = 20;
-  private static int MINIMAL_PIN_DISTANCE = 30;
-  private static int SPLITTER_HEIGHT = 20;
-  private static int TOP_BORDER = 40; // minimal value due to constants
-  private static int INVERTER_WIDTH = 30;
-  private static int NAND_WIDTH = 40;
-  private static int GATE_HEIGHT = 40;
+  private static final int SPINE_DISTANCE = 10;
+  private static final int BUS_SPINE_TO_WIRE_SPINE_DISTANCE = 20;
+  private static final int MINIMAL_PIN_DISTANCE = 30;
+  private static final int SPLITTER_HEIGHT = 20;
+  private static final int TOP_BORDER = 40; // minimal value due to constants
+  private static final int INVERTER_WIDTH = 30;
+  private static final int NAND_WIDTH = 40;
+  private static final int GATE_HEIGHT = 40;
 
   private static class CompareYs implements Comparator<Location> {
     public int compare(Location a, Location b) {
@@ -74,9 +74,9 @@ public class CircuitBuilder {
     int startX;
     int startY;
     int pinX;
-    private ArrayList<String> names = new ArrayList<String>();
-    private HashMap<String, SingleInput> inputs = new HashMap<String, SingleInput>();
-    private HashMap<String, SingleInput> inverted_inputs = new HashMap<String, SingleInput>();
+    private final ArrayList<String> names = new ArrayList<String>();
+    private final HashMap<String, SingleInput> inputs = new HashMap<String, SingleInput>();
+    private final HashMap<String, SingleInput> inverted_inputs = new HashMap<String, SingleInput>();
 
     InputData() {}
 
@@ -328,7 +328,7 @@ public class CircuitBuilder {
       }
       ComponentFactory factory = Constant.FACTORY;
       AttributeSet attrs = factory.createAttributeSet();
-      attrs.setValue(Constant.ATTR_VALUE, Long.valueOf(value.getValue()));
+      attrs.setValue(Constant.ATTR_VALUE, (long) value.getValue());
       Bounds bds = factory.getOffsetBounds(attrs);
       return new Layout(
           bds.getWidth(), bds.getHeight(), -bds.getY(), factory, attrs, new Layout[0], 0);
@@ -350,7 +350,7 @@ public class CircuitBuilder {
 
         AttributeSet attrs = factory.createAttributeSet();
         attrs.setValue(GateAttributes.ATTR_SIZE, GateAttributes.SIZE_NARROW);
-        attrs.setValue(GateAttributes.ATTR_INPUTS, Integer.valueOf(2));
+        attrs.setValue(GateAttributes.ATTR_INPUTS, 2);
 
         // determine layout's width
         Bounds bds = factory.getOffsetBounds(attrs);
@@ -404,7 +404,7 @@ public class CircuitBuilder {
       attrs.setValue(GateAttributes.ATTR_SIZE, GateAttributes.SIZE_NARROW);
 
       int ins = sub.length;
-      attrs.setValue(GateAttributes.ATTR_INPUTS, Integer.valueOf(ins));
+      attrs.setValue(GateAttributes.ATTR_INPUTS, ins);
     }
 
     // determine layout's width
@@ -432,7 +432,8 @@ public class CircuitBuilder {
       // we have to shift everything down because otherwise
       // the component will peek over the rectangle's top.
       int dy = minOutputY - outputY;
-      for (int i = 0; i < sub.length; i++) sub[i].y += dy;
+      for (Layout layout : sub)
+        layout.y += dy;
       height += dy;
       outputY += dy;
     }
@@ -499,7 +500,7 @@ public class CircuitBuilder {
       Object factory = parent.getFactory();
       if (factory instanceof AbstractGate) {
         Value val = ((AbstractGate) factory).getIdentity();
-        Long valLong = Long.valueOf(val.toLongValue());
+        Long valLong = val.toLongValue();
         Location loc = parent.getEnd(index).getLocation();
         AttributeSet attrs = Constant.FACTORY.createAttributeSet();
         attrs.setValue(Constant.ATTR_VALUE, valLong);
@@ -651,7 +652,7 @@ public class CircuitBuilder {
           // search for a Y that won't intersect with others
           // (we needn't bother if the pin doesn't connect
           // with anything anyway.)
-          Collections.sort(forbiddenYs, compareYs);
+          forbiddenYs.sort(compareYs);
           while (Collections.binarySearch(forbiddenYs, spineLoc, compareYs) >= 0) {
             curY += 10;
             spineLoc = Location.create(spineX, curY);
@@ -704,7 +705,7 @@ public class CircuitBuilder {
             /* add a location for the bus entry */
             Location bloc = Location.create(spineX, busY);
             spine.add(bloc);
-            Collections.sort(forbiddenYs, compareYs);
+            forbiddenYs.sort(compareYs);
             // create spine
             createSpine(result, spine, compareYs);
           }
@@ -718,7 +719,7 @@ public class CircuitBuilder {
 
   private static void createSpine(
       CircuitMutation result, ArrayList<Location> spine, Comparator<Location> compareYs) {
-    Collections.sort(spine, compareYs);
+    spine.sort(compareYs);
     Location prev = spine.get(0);
     for (int k = 1, n = spine.size(); k < n; k++) {
       Location cur = spine.get(k);

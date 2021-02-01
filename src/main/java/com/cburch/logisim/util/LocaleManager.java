@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -114,7 +114,7 @@ public class LocaleManager {
       }
       if (s != null) {
         if (ret == null) ret = new HashMap<Character, String>();
-        ret.put(new Character(c), s);
+        ret.put(c, s);
       }
     }
     return ret;
@@ -154,7 +154,7 @@ public class LocaleManager {
     for (int j = i; j < cs.length; j++) {
       char cj = cs[j];
       if (cj < 32 || cj >= 127) {
-        String out = repl.get(Character.valueOf(cj));
+        String out = repl.get(cj);
         if (out != null) {
           ret.append(out);
         } else {
@@ -245,13 +245,13 @@ public class LocaleManager {
   // static members
   private static final String SETTINGS_NAME = "settings";
 
-  private static ArrayList<LocaleManager> managers = new ArrayList<LocaleManager>();
+  private static final ArrayList<LocaleManager> managers = new ArrayList<LocaleManager>();
 
-  private static String DATE_FORMAT = S.get("dateFormat");
+  private static final String DATE_FORMAT = S.get("dateFormat");
 
   public static final SimpleDateFormat parserSDF = new SimpleDateFormat(LocaleManager.DATE_FORMAT);
 
-  private static ArrayList<LocaleListener> listeners = new ArrayList<LocaleListener>();
+  private static final ArrayList<LocaleListener> listeners = new ArrayList<LocaleListener>();
 
   private static boolean replaceAccents = false;
 
@@ -259,12 +259,12 @@ public class LocaleManager {
 
   private static Locale curLocale = null;
   // instance members
-  private String dir_name;
-  private String file_start;
+  private final String dir_name;
+  private final String file_start;
   private ResourceBundle settings = null;
   private ResourceBundle locale = null;
 
-  private ResourceBundle dflt_locale = null;
+  private final ResourceBundle dflt_locale = null;
 
   public LocaleManager(String dir_name, String file_start) {
     this.dir_name = dir_name;

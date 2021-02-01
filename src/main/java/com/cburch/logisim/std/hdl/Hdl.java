@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -38,7 +38,7 @@ import java.util.List;
 
 public class Hdl extends Library {
 
-  private static FactoryDescription[] DESCRIPTIONS = {
+  private static final FactoryDescription[] DESCRIPTIONS = {
     new FactoryDescription("VHDL Entity", S.getter("vhdlComponent"), new ArithmeticIcon("VHDL"), 
     		"VhdlEntityComponent"),
   };

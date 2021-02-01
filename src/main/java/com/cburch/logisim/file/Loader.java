@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -145,11 +145,11 @@ public class Loader implements LibraryLoader {
 
   // fixed
   private Component parent;
-  private Builtin builtin = new Builtin();
+  private final Builtin builtin = new Builtin();
   // to be cleared with each new file
   private File mainFile = null;
 
-  private Stack<File> filesOpening = new Stack<File>();
+  private final Stack<File> filesOpening = new Stack<File>();
 
   private Map<File, File> substitutions = new HashMap<File, File>();
 
@@ -480,8 +480,7 @@ public class Loader implements LibraryLoader {
     File selected = chooser.getSelectedFile();
     if (selected == null) return null;
     try {
-      String vhdl = HdlFile.load(selected);
-      return vhdl;
+      return HdlFile.load(selected);
     } catch (IOException e) {
       OptionPane.showMessageDialog(
           window, e.getMessage(), S.get("hexOpenErrorTitle"), OptionPane.ERROR_MESSAGE);

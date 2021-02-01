@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -156,14 +156,14 @@ public class VgaState implements SocBusSlaveInterface, SocBusSnifferInterface,So
   private Integer startAddress = 0;
   private Integer vgaBufferAddress = 0;
   private int displayMode = VgaAttributes.MODE_160_120;
-  private SocBusInfo attachedBus = new SocBusInfo("");
+  private final SocBusInfo attachedBus = new SocBusInfo("");
   private String label = "";
   private Boolean soft160x120 = true;
   private Boolean soft320x240 = true;
   private Boolean soft640x480 = true;
   private Boolean soft800x600 = false;
   private Boolean soft1024x768 = false;
-  private ArrayList<SocBusSlaveListener> listeners = new ArrayList<SocBusSlaveListener>();
+  private final ArrayList<SocBusSlaveListener> listeners = new ArrayList<SocBusSlaveListener>();
   
   public AttributeOption getInitialMode() { return VgaAttributes.MODES.get(displayMode); }
   public AttributeOption getCurrentMode() {

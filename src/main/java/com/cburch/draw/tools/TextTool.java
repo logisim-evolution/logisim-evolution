@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -85,14 +85,14 @@ public class TextTool extends AbstractTool {
     }
   }
 
-  private DrawingAttributeSet attrs;
-  private EditableLabelField field;
-  private FieldListener fieldListener;
+  private final DrawingAttributeSet attrs;
+  private final EditableLabelField field;
+  private final FieldListener fieldListener;
 
   private Text curText;
   private Canvas curCanvas;
   private boolean isTextNew;
-  private static TextIcon icon = new TextIcon();
+  private static final TextIcon icon = new TextIcon();
 
   public TextTool(DrawingAttributeSet attrs) {
     this.attrs = attrs;

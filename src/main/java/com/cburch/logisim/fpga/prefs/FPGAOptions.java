@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -80,33 +80,33 @@ public class FPGAOptions extends OptionsPanel {
     }
   }
 
-  private MyListener myListener = new MyListener();
-  private JLabel WorkspaceLabel = new JLabel();
-  private JTextField WorkSpacePath;
-  private JButton WorkSpaceButton;
-  private JLabel EditSelectLabel = new JLabel();
+  private final MyListener myListener = new MyListener();
+  private final JLabel WorkspaceLabel = new JLabel();
+  private final JTextField WorkSpacePath;
+  private final JButton WorkSpaceButton;
+  private final JLabel EditSelectLabel = new JLabel();
   private ColorChooserButton EditSelectColor;
-  private JLabel EditHighligtLabel = new JLabel();
+  private final JLabel EditHighligtLabel = new JLabel();
   private ColorChooserButton EditHighligtColor;
-  private JLabel EditMoveLabel = new JLabel();
+  private final JLabel EditMoveLabel = new JLabel();
   private ColorChooserButton EditMoveColor;
-  private JLabel EditResizeLabel = new JLabel();
+  private final JLabel EditResizeLabel = new JLabel();
   private ColorChooserButton EditResizeColor;
-  private JLabel MappedLabel = new JLabel();
+  private final JLabel MappedLabel = new JLabel();
   private ColorChooserButton MappedColor;
-  private JLabel SelMapLabel = new JLabel();
+  private final JLabel SelMapLabel = new JLabel();
   private ColorChooserButton SelMapColor;
-  private JLabel SelectMapLabel = new JLabel();
+  private final JLabel SelectMapLabel = new JLabel();
   private ColorChooserButton SelectMapColor;
-  private JLabel SelectLabel = new JLabel();
+  private final JLabel SelectLabel = new JLabel();
   private ColorChooserButton SelectColor;
   private JPanel editPan;
   private JPanel mapPan;
   private JPanel ReportPan;
   private JCheckBox SupressGated;
   private JCheckBox SupressOpen;
-  private PreferencesFrame frame;
-  private PrefOptionList HDL_Used;
+  private final PreferencesFrame frame;
+  private final PrefOptionList HDL_Used;
 
   public FPGAOptions(PreferencesFrame frame) {
     super(frame);

@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -181,9 +181,9 @@ public class ExportImage {
   }
 
   public static class ImageFileFilter extends FileFilter {
-    private int type;
-    private String[] extensions;
-    private StringGetter desc;
+    private final int type;
+    private final String[] extensions;
+    private final StringGetter desc;
 
     public ImageFileFilter(int type, StringGetter desc, String[] exts) {
       this.type = type;
@@ -197,8 +197,9 @@ public class ExportImage {
     @Override
     public boolean accept(File f) {
       String name = f.getName().toLowerCase();
-      for (int i = 0; i < extensions.length; i++) {
-        if (name.endsWith(extensions[i])) return true;
+      for (String extension : extensions) {
+        if (name.endsWith(extension))
+          return true;
       }
       return f.isDirectory();
     }

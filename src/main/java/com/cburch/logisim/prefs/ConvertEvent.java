@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -31,7 +31,7 @@ package com.cburch.logisim.prefs;
 import com.cburch.logisim.data.AttributeOption;
 
 public class ConvertEvent {
-  private AttributeOption value;
+  private final AttributeOption value;
 
   public ConvertEvent(AttributeOption value) {
     this.value = value;

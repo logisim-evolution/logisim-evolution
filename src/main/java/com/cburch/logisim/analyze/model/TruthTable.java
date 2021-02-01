@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -41,12 +41,12 @@ public class TruthTable {
 
   private static final Entry DEFAULT_ENTRY = Entry.DONT_CARE;
 
-  private MyListener myListener = new MyListener();
-  private List<TruthTableListener> listeners = new ArrayList<TruthTableListener>();
+  private final MyListener myListener = new MyListener();
+  private final List<TruthTableListener> listeners = new ArrayList<TruthTableListener>();
 
-  private AnalyzerModel model;
+  private final AnalyzerModel model;
   private ArrayList<Row> rows = new ArrayList<>(); // visible input rows
-  private ArrayList<Entry[]> columns = new ArrayList<>(); // output columns
+  private final ArrayList<Entry[]> columns = new ArrayList<>(); // output columns
   private static final CompareInputs sortByInputs = new CompareInputs();
 
   private class Row implements Iterable<Integer> {
@@ -69,20 +69,22 @@ public class TruthTable {
 
     public int baseIndex() {
       int idx = 0;
-      for (int i = 0; i < inputs.length; i++) idx = (idx << 1) | (inputs[i] == Entry.ONE ? 1 : 0);
+      for (Entry input : inputs)
+        idx = (idx << 1) | (input == Entry.ONE ? 1 : 0);
       return idx;
     }
 
     public int dcMask() {
       int mask = 0;
-      for (int i = 0; i < inputs.length; i++)
-        mask = (mask << 1) | (inputs[i] == Entry.DONT_CARE ? 1 : 0);
+      for (Entry input : inputs)
+        mask = (mask << 1) | (input == Entry.DONT_CARE ? 1 : 0);
       return mask;
     }
 
     public int duplicity() {
       int count = 1;
-      for (int i = 0; i < inputs.length; i++) count *= (inputs[i] == Entry.DONT_CARE ? 2 : 1);
+      for (Entry input : inputs)
+        count *= (input == Entry.DONT_CARE ? 2 : 1);
       return count;
     }
 
@@ -125,10 +127,10 @@ public class TruthTable {
 
     public Iterator<Integer> iterator() {
       return new Iterator<Integer>() {
-        int base = baseIndex();
-        int mask = dcMask();
-        int nbits = inputs.length;
-        int count = duplicity();
+        final int base = baseIndex();
+        final int mask = dcMask();
+        final int nbits = inputs.length;
+        final int count = duplicity();
         int iter = 0;
 
         @Override
@@ -301,8 +303,7 @@ public class TruthTable {
   }
 
   public Iterable<Integer> getVisibleRowIndexes(int row) {
-    Row r = rows.get(row);
-    return r;
+    return rows.get(row);
   }
 
   public Entry getInputEntry(int idx, int col) {
@@ -330,10 +331,11 @@ public class TruthTable {
 
   private boolean identicalOutputs(int idx1, int idx2) {
     if (idx1 == idx2) return true;
-    for (int col = 0; col < columns.size(); col++) {
-      Entry[] column = columns.get(col);
-      if (column == null) continue;
-      if (column[idx1] != column[idx2]) return false;
+    for (Entry[] column : columns) {
+      if (column == null)
+        continue;
+      if (column[idx1] != column[idx2])
+        return false;
     }
     return true;
   }
@@ -478,7 +480,7 @@ public class TruthTable {
       }
     }
 
-    Collections.sort(newRows, sortByInputs);
+    newRows.sort(sortByInputs);
     rows.clear();
     rows = newRows;
     initColumns();
@@ -559,11 +561,10 @@ public class TruthTable {
         int bitIndex = event.getBitIndex();
         for (int b = 0; b < v.width; b++) columns.remove(bitIndex - b);
       } else if (action == VariableListEvent.REPLACE) {
-        Var oldVar = v;
         int bitIndex = event.getBitIndex();
         Var newVar = getOutputVariable(event.getIndex());
-        int lost = oldVar.width - newVar.width;
-        int pos = bitIndex + 1 - oldVar.width;
+        int lost = v.width - newVar.width;
+        int pos = bitIndex + 1 - v.width;
         if (lost > 0) {
           while (lost-- != 0) columns.remove(pos);
         } else if (lost < 0) {
@@ -592,12 +593,11 @@ public class TruthTable {
           for (int b = v.width - 1; b >= 0; b--) moveInput(newIndex - delta - b, newIndex - b);
         }
       } else if (action == VariableListEvent.REPLACE) {
-        Var oldVar = v;
         int bitIndex = event.getBitIndex();
         Var newVar = getInputVariable(event.getIndex());
-        int lost = oldVar.width - newVar.width;
+        int lost = v.width - newVar.width;
         int oldCount = getInputColumnCount() + lost;
-        int pos = bitIndex + 1 - oldVar.width;
+        int pos = bitIndex + 1 - v.width;
         if (lost > 0) {
           while (lost-- != 0) removeInput(pos, oldCount--);
         } else if (lost < 0) {
@@ -636,7 +636,7 @@ public class TruthTable {
         }
         ret.add(new Row(idx0, inputs, dc0));
       }
-      Collections.sort(ret, sortByInputs);
+      ret.sort(sortByInputs);
       rows = ret;
     }
 
@@ -653,7 +653,7 @@ public class TruthTable {
         ret.add(new Row(idx0 | 0, oldCount + 1, dc0)); // xxxx0yyy
         ret.add(new Row(idx0 | b, oldCount + 1, dc0)); // xxxx1yyy
       }
-      Collections.sort(ret, sortByInputs);
+      ret.sort(sortByInputs);
       rows = ret;
     }
 
@@ -661,9 +661,9 @@ public class TruthTable {
       // force an Entry column of each row.input to 'x', then remove it
       int b = (1 << (oldCount - 1 - index)); // _0001000
       boolean[] changed = new boolean[columns.size()];
-      for (int i = 0; i < rows.size(); i++) {
-        Row r = rows.get(i);
-        if (r.inputs[index] == Entry.DONT_CARE) continue;
+      for (Row r : rows) {
+        if (r.inputs[index] == Entry.DONT_CARE)
+          continue;
         setDontCare(r, b, true, changed);
       }
       int mask = b - 1; // _0000111
@@ -675,7 +675,7 @@ public class TruthTable {
         int dc0 = ((dc >> 1) & ~mask) | (dc & mask); // wwww0zzz
         ret.add(new Row(idx0, oldCount - 1, dc0));
       }
-      Collections.sort(ret, sortByInputs);
+      ret.sort(sortByInputs);
       rows = ret;
     }
 
@@ -703,12 +703,11 @@ public class TruthTable {
             column = moveInputForOutput(column, newIndex - delta - b, newIndex - b);
         }
       } else if (action == VariableListEvent.REPLACE) {
-        Var oldVar = v;
         int bitIndex = event.getBitIndex();
         Var newVar = getInputVariable(event.getIndex());
-        int lost = oldVar.width - newVar.width;
+        int lost = v.width - newVar.width;
         int oldCount = getInputColumnCount() + lost;
-        int pos = bitIndex + 1 - oldVar.width;
+        int pos = bitIndex + 1 - v.width;
         if (lost > 0) {
           while (lost-- != 0) column = removeInputForOutput(column, pos, oldCount--);
         } else if (lost < 0) {

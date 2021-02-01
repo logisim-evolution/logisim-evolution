@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -60,12 +60,12 @@ import javax.swing.JTextField;
 class BuildCircuitButton extends JButton {
   private class DialogPanel extends JPanel {
     private static final long serialVersionUID = 1L;
-    private JLabel projectLabel = new JLabel();
-    private JComboBox<Object> project;
-    private JLabel nameLabel = new JLabel();
-    private JTextField name = new JTextField(10);
-    private JCheckBox twoInputs = new JCheckBox();
-    private JCheckBox nands = new JCheckBox();
+    private final JLabel projectLabel = new JLabel();
+    private final JComboBox<Object> project;
+    private final JLabel nameLabel = new JLabel();
+    private final JTextField name = new JTextField(10);
+    private final JCheckBox twoInputs = new JCheckBox();
+    private final JCheckBox nands = new JCheckBox();
 
     DialogPanel() {
       List<Project> projects = Projects.getOpenProjects();
@@ -241,9 +241,9 @@ class BuildCircuitButton extends JButton {
 
   private static final long serialVersionUID = 1L;
 
-  private MyListener myListener = new MyListener();
-  private JFrame parent;
-  private AnalyzerModel model;
+  private final MyListener myListener = new MyListener();
+  private final JFrame parent;
+  private final AnalyzerModel model;
 
   BuildCircuitButton(JFrame parent, AnalyzerModel model) {
     super();

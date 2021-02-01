@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -37,7 +37,7 @@ class TtyState implements InstanceData, Cloneable {
   private Value lastClock;
   private String[] rowData;
   private int colCount;
-  private StringBuffer lastRow;
+  private final StringBuffer lastRow;
   private int row;
   private boolean sendStdout;
 

@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -38,7 +38,7 @@ import com.cburch.logisim.prefs.AppPreferences;
 
 public class ShowStateIcon extends AnnimatedIcon {
 
-  private boolean pressed;
+  private final boolean pressed;
   private int state;
   
   public ShowStateIcon( boolean pressed ) {

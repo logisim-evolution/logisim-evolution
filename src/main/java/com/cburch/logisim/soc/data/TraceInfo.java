@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -38,9 +38,9 @@ import com.cburch.logisim.soc.gui.CpuDrawSupport;
 import com.cburch.logisim.util.GraphicsUtil;
 
 public class TraceInfo {
-    private int pc;
-    private int instruction;
-    private String asm;
+    private final int pc;
+    private final int instruction;
+    private final String asm;
     private boolean error;
     
     public TraceInfo(int pc , int instruction, String asm, boolean error) {

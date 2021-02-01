@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -57,7 +57,7 @@ public class VhdlSimulatorTclComp {
   static final Logger logger = LoggerFactory.getLogger(VhdlSimulatorTclComp.class);
 
   private boolean valid = false;
-  private VhdlSimulatorTop vsim;
+  private final VhdlSimulatorTop vsim;
 
   public VhdlSimulatorTclComp(VhdlSimulatorTop vs) {
     vsim = vs;

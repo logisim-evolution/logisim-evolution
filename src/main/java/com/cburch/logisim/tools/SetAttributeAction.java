@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -42,12 +42,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SetAttributeAction extends Action {
-  private StringGetter nameGetter;
-  private Circuit circuit;
-  private List<Component> comps;
-  private List<Attribute<Object>> attrs;
-  private List<Object> values;
-  private List<Object> oldValues;
+  private final StringGetter nameGetter;
+  private final Circuit circuit;
+  private final List<Component> comps;
+  private final List<Attribute<Object>> attrs;
+  private final List<Object> values;
+  private final List<Object> oldValues;
   private CircuitTransaction xnReverse;
 
   public SetAttributeAction(Circuit circuit, StringGetter nameGetter) {

@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -42,7 +42,7 @@ import java.util.List;
 
 class CanvasListener
     implements MouseListener, MouseMotionListener, KeyListener, CanvasModelListener {
-  private Canvas canvas;
+  private final Canvas canvas;
   private CanvasTool tool;
 
   public CanvasListener(Canvas canvas) {

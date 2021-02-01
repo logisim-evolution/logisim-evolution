@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -42,7 +42,7 @@ import java.util.List;
 class DefaultAppearance {
 
   private static class CompareLocations implements Comparator<Instance> {
-    private boolean byX;
+    private final boolean byX;
 
     CompareLocations(boolean byX) {
       this.byX = byX;
@@ -82,10 +82,10 @@ class DefaultAppearance {
   static void sortPinList(List<Instance> pins, Direction facing) {
     if (facing == Direction.NORTH || facing == Direction.SOUTH) {
       Comparator<Instance> sortHorizontal = new CompareLocations(true);
-      Collections.sort(pins, sortHorizontal);
+      pins.sort(sortHorizontal);
     } else {
       Comparator<Instance> sortVertical = new CompareLocations(false);
-      Collections.sort(pins, sortVertical);
+      pins.sort(sortVertical);
     }
   }
 

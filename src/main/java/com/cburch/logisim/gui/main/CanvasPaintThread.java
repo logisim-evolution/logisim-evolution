@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -34,8 +34,8 @@ import java.awt.Rectangle;
 class CanvasPaintThread extends UniquelyNamedThread {
   private static final int REPAINT_TIMESPAN = 50; // 50 ms between repaints
 
-  private Canvas canvas;
-  private Object lock;
+  private final Canvas canvas;
+  private final Object lock;
   private boolean repaintRequested;
   private long nextRepaint;
   private boolean alive;

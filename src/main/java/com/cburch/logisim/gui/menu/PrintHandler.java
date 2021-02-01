@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -113,9 +113,9 @@ public abstract class PrintHandler implements Printable {
       return;
     File dest = chooser.getSelectedFile();
     FileFilter ff = null;
-    for (int i = 0; i < filters.length ; i++) {
-      if (filters[i].accept(dest))
-        ff = filters[i];
+    for (ImageFileFilter filter : filters) {
+      if (filter.accept(dest))
+        ff = filter;
     }
     if (ff == null)
       ff = chooser.getFileFilter();

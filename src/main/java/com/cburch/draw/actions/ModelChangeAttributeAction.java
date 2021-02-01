@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -40,8 +40,8 @@ import java.util.Map;
 import java.util.Set;
 
 public class ModelChangeAttributeAction extends ModelAction {
-  private Map<AttributeMapKey, Object> oldValues;
-  private Map<AttributeMapKey, Object> newValues;
+  private final Map<AttributeMapKey, Object> oldValues;
+  private final Map<AttributeMapKey, Object> newValues;
   private Attribute<?> attr;
 
   public ModelChangeAttributeAction(

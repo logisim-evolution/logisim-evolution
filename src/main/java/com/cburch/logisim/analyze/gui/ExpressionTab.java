@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -97,12 +97,12 @@ import org.jdesktop.swingx.prompt.BuddySupport;
 
 class ExpressionTab extends AnalyzerTab {
   private static final long serialVersionUID = 1L;
-  private AnalyzerModel model;
+  private final AnalyzerModel model;
   private StringGetter errorMessage;
-  private ExpressionTableModel tableModel;
+  private final ExpressionTableModel tableModel;
 
-  private JTable table = new JTable(1, 1);
-  private JLabel error = new JLabel();
+  private final JTable table = new JTable(1, 1);
+  private final JLabel error = new JLabel();
 
   public class ExpressionTableModel extends AbstractTableModel implements VariableListListener, OutputExpressionsListener {
     private static final long serialVersionUID = 1L;
@@ -129,7 +129,7 @@ class ExpressionTab extends AnalyzerTab {
     @Override
     public void setValueAt(Object o, int row, int column) {
       NamedExpression ne = listCopy[row];
-      if (o == null || !(o instanceof NamedExpression))
+      if (!(o instanceof NamedExpression))
         return;
       NamedExpression e = (NamedExpression)o;
       if (ne != e && !ne.name.equals(e.name))
@@ -336,12 +336,12 @@ class ExpressionTab extends AnalyzerTab {
   }
   
   @SuppressWarnings({ "unchecked", "rawtypes" })
-  private JComboBox notationChoice = new JComboBox<>(new NotationModel());
-  private JLabel notationLabel = new JLabel();
-  private JLabel infoLabel = new JLabel();
+  private final JComboBox notationChoice = new JComboBox<>(new NotationModel());
+  private final JLabel notationLabel = new JLabel();
+  private final JLabel infoLabel = new JLabel();
   private Notation notation = Notation.MATHEMATICAL;
-  private MyListener myListener = new MyListener();
-  private ExpressionView prettyView = new ExpressionView();
+  private final MyListener myListener = new MyListener();
+  private final ExpressionView prettyView = new ExpressionView();
   
   public ExpressionTab(AnalyzerModel model, LogisimMenuBar menubar) {
     localeChanged();

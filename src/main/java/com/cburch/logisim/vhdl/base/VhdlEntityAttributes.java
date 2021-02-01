@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -78,7 +78,7 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
       long v = (long) Long.parseLong(value);
       if (v < start) throw new NumberFormatException("integer too small");
       if (v > end) throw new NumberFormatException("integer too large");
-      return Integer.valueOf((int) v);
+      return (int) v;
     }
 
     @Override
@@ -99,7 +99,7 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
           "vhdl_" + name, disp, Integer.MIN_VALUE, Integer.MAX_VALUE, g);
   }
 
-  private static List<Attribute<?>> static_attributes =
+  private static final List<Attribute<?>> static_attributes =
       Arrays.asList(
           (Attribute<?>) VhdlEntity.NAME_ATTR,
           StdAttr.LABEL,
@@ -130,10 +130,9 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
     value[6] = "";
     for (int i = 0; i < g.length; i++) {
       attrs[6 + i] = a.get(i);
-      value[6 + i] = new Integer(g[i].getDefaultValue());
+      value[6 + i] = g[i].getDefaultValue();
     }
-    AttributeSet ret = AttributeSets.fixedSet(attrs, value);
-    return ret;
+    return AttributeSets.fixedSet(attrs, value);
   }
 
   private VhdlContent content;
@@ -240,8 +239,7 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
       return (V) SimName;
     }
     if (genericValues.containsKey((Attribute<Integer>) attr)) {
-      V v = (V) genericValues.get((Attribute<Integer>) attr);
-      return v;
+      return (V) genericValues.get((Attribute<Integer>) attr);
     }
     return null;
   }

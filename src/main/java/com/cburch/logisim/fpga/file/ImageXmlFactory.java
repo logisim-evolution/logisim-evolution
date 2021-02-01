@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -51,7 +51,7 @@ public class ImageXmlFactory {
 
   private String[] CodeTable;
   private StringBuffer AsciiStream;
-  private String[] InitialCodeTable = {
+  private final String[] InitialCodeTable = {
     "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s",
     "t", "u", "v", "w", "x", "y", "z", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L",
     "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "0", "1", "2", "3", "4",
@@ -69,7 +69,7 @@ public class ImageXmlFactory {
     "=Q", "=R", "=S", "=T", "=U", "=V", "=W", "=X", "=Y", "=Z", "=0", "=1", "=2", "=3", "=4", "=5",
     "=6", "=7", "=8", "=9", "=(", "=)"
   };
-  private char V2_Identifier = '@';
+  private final char V2_Identifier = '@';
 
   private String[] CreateCodeTable(byte[] stream) {
     String[] result = new String[256];
@@ -79,8 +79,8 @@ public class ImageXmlFactory {
       ocurances[i] = (long) 0;
       index[i] = i;
     }
-    for (int i = 0; i < stream.length; i++) {
-      ocurances[stream[i] + 128]++;
+    for (byte b : stream) {
+      ocurances[b + 128]++;
     }
     boolean swapped = true;
     while (swapped) {
@@ -156,8 +156,8 @@ public class ImageXmlFactory {
     CodeTable = CreateCodeTable(data);
     AsciiStream = new StringBuffer();
     AsciiStream.append(V2_Identifier);
-    for (int i = 0; i < data.length; i++) {
-      String code = CodeTable[data[i] + 128];
+    for (byte datum : data) {
+      String code = CodeTable[datum + 128];
       AsciiStream.append(code);
     }
   }

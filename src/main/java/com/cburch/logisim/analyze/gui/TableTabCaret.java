@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -410,11 +410,16 @@ class TableTabCaret {
     }
   }
 
-  private static Color SELECT_COLOR = new Color(192, 192, 255);
-  private static Color HIGHLIGHT_COLOR = new Color(255, 255, 192);
-  private Listener listener = new Listener();
-  private TableTab table;
-  private Pt cursor, markA, markB, hover, invalid, home;
+  private static final Color SELECT_COLOR = new Color(192, 192, 255);
+  private static final Color HIGHLIGHT_COLOR = new Color(255, 255, 192);
+  private final Listener listener = new Listener();
+  private final TableTab table;
+  private Pt cursor;
+  private Pt markA;
+  private Pt markB;
+  private Pt hover;
+  private final Pt invalid;
+  private final Pt home;
   private int[] hilightRows;
   private boolean cleanHilight;
 

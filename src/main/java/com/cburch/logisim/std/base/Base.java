@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -43,7 +43,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class Base extends Library {
-  private List<Tool> tools;
+  private final List<Tool> tools;
 
   public Base() {
     setHidden();

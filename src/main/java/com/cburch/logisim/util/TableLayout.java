@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -35,8 +35,8 @@ import java.awt.LayoutManager2;
 import java.util.ArrayList;
 
 public class TableLayout implements LayoutManager2 {
-  private int colCount;
-  private ArrayList<Component[]> contents;
+  private final int colCount;
+  private final ArrayList<Component[]> contents;
   private int curRow;
   private int curCol;
   private Dimension prefs;
@@ -158,8 +158,8 @@ public class TableLayout implements LayoutManager2 {
         height += rowHeight;
       }
       int width = 0;
-      for (int i = 0; i < prefCol.length; i++) {
-        width += prefCol[i];
+      for (int j : prefCol) {
+        width += j;
       }
       this.prefs = new Dimension(width, height);
       this.prefRow = prefRow;
@@ -169,8 +169,7 @@ public class TableLayout implements LayoutManager2 {
   }
 
   public void removeLayoutComponent(Component comp) {
-    for (int i = 0, n = contents.size(); i < n; i++) {
-      Component[] row = contents.get(i);
+    for (Component[] row : contents) {
       for (int j = 0; j < row.length; j++) {
         if (row[j] == comp) {
           row[j] = null;

@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -57,12 +57,12 @@ public class FactoryDescription {
 
   static final Logger logger = LoggerFactory.getLogger(FactoryDescription.class);
 
-  private String name;
-  private StringGetter displayName;
+  private final String name;
+  private final StringGetter displayName;
   private String iconName;
   private boolean iconLoadAttempted;
   private Icon icon;
-  private String factoryClassName;
+  private final String factoryClassName;
   private boolean factoryLoadAttempted;
   private ComponentFactory factory;
   private StringGetter toolTip;

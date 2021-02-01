@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -61,13 +61,13 @@ public class Text extends InstanceFactory {
           S.getter("textHorzAlignAttr"),
           new AttributeOption[] {
             new AttributeOption(
-                Integer.valueOf(TextField.H_LEFT), "left", S.getter("textHorzAlignLeftOpt")),
+                TextField.H_LEFT, "left", S.getter("textHorzAlignLeftOpt")),
             new AttributeOption(
-                Integer.valueOf(TextField.H_RIGHT),
+                TextField.H_RIGHT,
                 "right",
                 S.getter("textHorzAlignRightOpt")),
             new AttributeOption(
-                Integer.valueOf(TextField.H_CENTER),
+                TextField.H_CENTER,
                 "center",
                 S.getter("textHorzAlignCenterOpt")),
           });
@@ -77,17 +77,17 @@ public class Text extends InstanceFactory {
           S.getter("textVertAlignAttr"),
           new AttributeOption[] {
             new AttributeOption(
-                Integer.valueOf(TextField.V_TOP), "top", S.getter("textVertAlignTopOpt")),
+                TextField.V_TOP, "top", S.getter("textVertAlignTopOpt")),
             new AttributeOption(
-                Integer.valueOf(TextField.V_BASELINE),
+                TextField.V_BASELINE,
                 "base",
                 S.getter("textVertAlignBaseOpt")),
             new AttributeOption(
-                Integer.valueOf(TextField.V_BOTTOM),
+                TextField.V_BOTTOM,
                 "bottom",
                 S.getter("textVertAlignBottomOpt")),
             new AttributeOption(
-                Integer.valueOf(TextField.H_CENTER),
+                TextField.H_CENTER,
                 "center",
                 S.getter("textVertAlignCenterOpt")),
           });

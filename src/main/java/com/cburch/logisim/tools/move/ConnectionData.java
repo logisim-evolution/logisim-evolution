@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -34,16 +34,16 @@ import com.cburch.logisim.data.Location;
 import java.util.List;
 
 class ConnectionData {
-  private Location loc;
+  private final Location loc;
 
-  private Direction dir;
+  private final Direction dir;
 
   /**
    * The list of wires leading up to this point - we may well want to truncate this path somewhat.
    */
-  private List<Wire> wirePath;
+  private final List<Wire> wirePath;
 
-  private Location wirePathStart;
+  private final Location wirePathStart;
 
   public ConnectionData(Location loc, Direction dir, List<Wire> wirePath, Location wirePathStart) {
     this.loc = loc;

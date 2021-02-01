@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -250,11 +250,11 @@ public class MemContents implements Cloneable, HexModel {
   }
 
   public boolean isClear() {
-    for (int i = 0; i < pages.length; i++) {
-      Page page = pages[i];
+    for (Page page : pages) {
       if (page != null) {
         for (int j = page.getLength() - 1; j >= 0; j--) {
-          if (page.get(j) != 0) return false;
+          if (page.get(j) != 0)
+            return false;
         }
       }
     }

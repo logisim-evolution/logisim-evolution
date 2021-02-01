@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -83,11 +83,11 @@ public class EditTool extends Tool {
   private static final Location NULL_LOCATION =
       Location.create(Integer.MIN_VALUE, Integer.MIN_VALUE);
 
-  private Listener listener;
-  private SelectTool select;
-  private WiringTool wiring;
+  private final Listener listener;
+  private final SelectTool select;
+  private final WiringTool wiring;
   private Tool current;
-  private LinkedHashMap<Location, Boolean> cache;
+  private final LinkedHashMap<Location, Boolean> cache;
   private Canvas lastCanvas;
   private int lastRawX;
   private int lastRawY;
@@ -484,7 +484,7 @@ public class EditTool extends Tool {
       Location oldWireLoc = wireLoc;
       boolean ret = isEligible && isWiringPoint(canvas, snap, mods);
       wireLoc = ret ? snap : NULL_LOCATION;
-      cache.put(snap, Boolean.valueOf(ret));
+      cache.put(snap, ret);
       int toRemove = cache.size() - CACHE_MAX_SIZE;
       Iterator<Location> it = cache.keySet().iterator();
       while (it.hasNext() && toRemove > 0) {

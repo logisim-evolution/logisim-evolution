@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -39,9 +39,9 @@ class ClipboardContents {
   static final ClipboardContents EMPTY =
       new ClipboardContents(Collections.<CanvasObject>emptySet(), null, null);
 
-  private Collection<CanvasObject> onClipboard;
-  private Location anchorLocation;
-  private Direction anchorFacing;
+  private final Collection<CanvasObject> onClipboard;
+  private final Location anchorLocation;
+  private final Direction anchorFacing;
 
   public ClipboardContents(
       Collection<CanvasObject> onClipboard, Location anchorLocation, Direction anchorFacing) {

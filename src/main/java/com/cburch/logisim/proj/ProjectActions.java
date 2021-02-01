@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -63,13 +63,13 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 public class ProjectActions {
-  private static String FILE_NAME_FORMAT_ERROR = "FileNameError";
-  private static String FILE_NAME_KEYWORD_ERROR = "ExistingToolName";
+  private static final String FILE_NAME_FORMAT_ERROR = "FileNameError";
+  private static final String FILE_NAME_KEYWORD_ERROR = "ExistingToolName";
 
   private static class CreateFrame implements Runnable {
-    private Loader loader;
-    private Project proj;
-    private boolean isStartupScreen;
+    private final Loader loader;
+    private final Project proj;
+    private final boolean isStartupScreen;
 
     public CreateFrame(Loader loader, Project proj, boolean isStartup) {
       this.loader = loader;

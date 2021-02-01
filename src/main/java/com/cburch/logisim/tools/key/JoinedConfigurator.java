@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -65,8 +65,8 @@ public class JoinedConfigurator implements KeyConfigurator, Cloneable {
     if (event.isConsumed()) {
       return null;
     }
-    for (int i = 0; i < hs.length; i++) {
-      KeyConfigurationResult result = hs[i].keyEventReceived(event);
+    for (KeyConfigurator h : hs) {
+      KeyConfigurationResult result = h.keyEventReceived(event);
       if (result != null || event.isConsumed()) {
         return result;
       }

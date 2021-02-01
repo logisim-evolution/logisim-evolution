@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -63,7 +63,7 @@ public class SocMemoryAttributes extends AbstractAttributeSet {
   private SocMemoryState memState = new SocMemoryState();
   private BitWidth memSize = BitWidth.create(10);
   
-  private static List<Attribute<?>> ATTRIBUTES =
+  private static final List<Attribute<?>> ATTRIBUTES =
       Arrays.asList(
     	  new Attribute<?>[] {
     	    START_ADDRESS,

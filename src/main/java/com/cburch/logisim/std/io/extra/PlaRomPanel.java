@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -52,7 +52,7 @@ public class PlaRomPanel extends JPanel implements MouseListener, MouseMotionLis
   private static final long serialVersionUID = 7182231893518001053L;
 
   private static final byte IMAGE_BORDER = 20;
-  private PlaRomData data;
+  private final PlaRomData data;
   private boolean hover = false;
 
   public PlaRomPanel(PlaRomData data) {
@@ -119,8 +119,7 @@ public class PlaRomPanel extends JPanel implements MouseListener, MouseMotionLis
 
   private int getColumn(int x) {
     x += (20 - IMAGE_BORDER);
-    int column = x / 20;
-    return column;
+    return x / 20;
   }
 
   @Override
@@ -133,8 +132,7 @@ public class PlaRomPanel extends JPanel implements MouseListener, MouseMotionLis
 
   private int getRow(int y) {
     y -= (20 + IMAGE_BORDER);
-    int row = y / 20;
-    return row;
+    return y / 20;
   }
 
   @Override

@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -50,7 +50,7 @@ import com.cburch.logisim.tools.MenuExtender;
 
 public class PioMenu implements ActionListener, MenuExtender {
 
-  private Instance instance;
+  private final Instance instance;
   private Frame frame;
   private JMenuItem exportC;
   

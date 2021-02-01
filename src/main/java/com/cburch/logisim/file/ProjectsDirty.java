@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -73,8 +73,8 @@ class ProjectsDirty {
     Projects.addPropertyChangeListener(Projects.projectListProperty, projectListListener);
   }
 
-  private static ProjectListListener projectListListener = new ProjectListListener();
-  private static ArrayList<DirtyListener> listeners = new ArrayList<DirtyListener>();
+  private static final ProjectListListener projectListListener = new ProjectListListener();
+  private static final ArrayList<DirtyListener> listeners = new ArrayList<DirtyListener>();
 
   private ProjectsDirty() {}
 }

@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -51,27 +51,27 @@ import com.cburch.logisim.util.GraphicsUtil;
 
 public class ExpressionRenderData {
 
-  private Expression expr;
-  private Notation notation;
-  private int prefWidth;
-  private int parrentWidth;
+  private final Expression expr;
+  private final Notation notation;
+  private final int prefWidth;
+  private final int parrentWidth;
   private int height;
   private String[] lineText;
-  private ArrayList<ArrayList<Range>> lineNots;
-  private ArrayList<ArrayList<Range>> lineSubscripts;
+  private final ArrayList<ArrayList<Range>> lineNots;
+  private final ArrayList<ArrayList<Range>> lineSubscripts;
   private ArrayList<ArrayList<Range>> lineMarks;
   private int[] lineY;
   private AttributedString[] lineStyled;
   private int[][] notStarts;
   private int[][] notStops;
-  private static Color MARKCOLOR = Color.BLACK; 
+  private static final Color MARKCOLOR = Color.BLACK;
 
-  private Font EXPRESSION_BASE_FONT;
-  private FontMetrics EXPRESSION_BASE_FONTMETRICS;
+  private final Font EXPRESSION_BASE_FONT;
+  private final FontMetrics EXPRESSION_BASE_FONTMETRICS;
   
-  private int NOT_SEP;
-  private int EXTRA_LEADING;
-  private int MINIMUM_HEIGHT;
+  private final int NOT_SEP;
+  private final int EXTRA_LEADING;
+  private final int MINIMUM_HEIGHT;
 
   public ExpressionRenderData(Expression expr, int width, Notation notation) {
     this.expr = expr;
@@ -297,9 +297,10 @@ public class ExpressionRenderData {
       }
     }
     int width = 0;
-    for (int i = 0; i < lineStyled.length; i++) {
-      TextLayout test = new TextLayout(lineStyled[i].getIterator(), ctx);
-      if (test.getBounds().getWidth() > width) width = (int) test.getBounds().getWidth();
+    for (AttributedString attributedString : lineStyled) {
+      TextLayout test = new TextLayout(attributedString.getIterator(), ctx);
+      if (test.getBounds().getWidth() > width)
+        width = (int) test.getBounds().getWidth();
     }
     g.dispose();
     return width;

@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -44,8 +44,8 @@ public class AnnimationTimer extends TimerTask implements PropertyChangeListener
     public void resetToStatic();
   }
   
-  private List<AnnimationListener> listeners;
-  private ArrayList<Component> parrents;
+  private final List<AnnimationListener> listeners;
+  private final ArrayList<Component> parrents;
   private boolean animate;
   
   public AnnimationTimer() {

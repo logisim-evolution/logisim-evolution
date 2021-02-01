@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -119,7 +119,7 @@ public class VhdlEntityComponent extends InstanceFactory {
 
   static final int X_PADDING = 5;
 
-  private WeakHashMap<Instance, VhdlEntityListener> contentListeners;
+  private final WeakHashMap<Instance, VhdlEntityListener> contentListeners;
 
   public VhdlEntityComponent() {
     super("VHDL Entity", S.getter("vhdlComponent"));
@@ -131,7 +131,7 @@ public class VhdlEntityComponent extends InstanceFactory {
   public void SetSimName(AttributeSet attrs, String SName) {
     if (attrs == null) return;
     VhdlEntityAttributes atrs = (VhdlEntityAttributes) attrs;
-    String Label = (attrs.getValue(StdAttr.LABEL) != "") ? getHDLTopName(attrs) : SName;
+    String Label = (!attrs.getValue(StdAttr.LABEL).equals("")) ? getHDLTopName(attrs) : SName;
     if (atrs.containsAttribute(VhdlSimConstants.SIM_NAME_ATTR))
       atrs.setValue(VhdlSimConstants.SIM_NAME_ATTR, Label);
   }
@@ -169,7 +169,7 @@ public class VhdlEntityComponent extends InstanceFactory {
 
     String label = "";
 
-    if (attrs.getValue(StdAttr.LABEL) != "")
+    if (!attrs.getValue(StdAttr.LABEL).equals(""))
       label = "_" + attrs.getValue(StdAttr.LABEL).toLowerCase();
 
     return getHDLName(attrs) + label;

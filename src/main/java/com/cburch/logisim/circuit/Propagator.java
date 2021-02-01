@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -139,10 +139,10 @@ public class Propagator {
     return ret;
   }
 
-  private CircuitState root; // root of state tree
+  private final CircuitState root; // root of state tree
 
   /** The number of clock cycles to let pass before deciding that the circuit is oscillating. */
-  private int simLimit = 1000;
+  private final int simLimit = 1000;
 
   /**
    * On average, one out of every 2**simRandomShift propagations through a component is delayed one
@@ -151,13 +151,13 @@ public class Propagator {
    */
   private volatile int simRandomShift;
 
-  private PriorityQueue<SetData> toProcess = new PriorityQueue<SetData>();
+  private final PriorityQueue<SetData> toProcess = new PriorityQueue<SetData>();
   private int clock = 0;
   private boolean isOscillating = false;
   private boolean oscAdding = false;
   private PropagationPoints oscPoints = new PropagationPoints();
   private int ticks = 0;
-  private Random noiseSource = new Random();
+  private final Random noiseSource = new Random();
   private int noiseCount = 0;
 
   private int setDataSerialNumber = 0;

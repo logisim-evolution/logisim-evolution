@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -72,7 +72,7 @@ import javax.swing.JPopupMenu;
 
 public class SubcircuitFactory extends InstanceFactory {
   private class CircuitFeature implements StringGetter, MenuExtender, ActionListener {
-    private Instance instance;
+    private final Instance instance;
     private Project proj;
 
     public CircuitFeature(Instance instance) {

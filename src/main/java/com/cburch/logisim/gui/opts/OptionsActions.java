@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -67,9 +67,9 @@ class OptionsActions {
   }
 
   private static class SetAction extends Action {
-    private AttributeSet attrs;
-    private Attribute<Object> attr;
-    private Object newval;
+    private final AttributeSet attrs;
+    private final Attribute<Object> attr;
+    private final Object newval;
     private Object oldval;
 
     SetAction(AttributeSet attrs, Attribute<?> attr, Object value) {

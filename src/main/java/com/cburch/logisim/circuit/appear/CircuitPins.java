@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -65,9 +65,9 @@ public class CircuitPins {
     }
   }
 
-  private PortManager appearanceManager;
-  private MyComponentListener myComponentListener;
-  private Set<Instance> pins;
+  private final PortManager appearanceManager;
+  private final MyComponentListener myComponentListener;
+  private final Set<Instance> pins;
 
   CircuitPins(PortManager appearanceManager) {
     this.appearanceManager = appearanceManager;

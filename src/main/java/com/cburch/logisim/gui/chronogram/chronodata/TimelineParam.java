@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -32,9 +32,9 @@ public class TimelineParam {
 
   public static String[] units = {"Hz", "kHz", "MHz", "GHz"};
 
-  private String selectedUnit;
-  private String signalClkName;
-  private int frequency;
+  private final String selectedUnit;
+  private final String signalClkName;
+  private final int frequency;
 
   public TimelineParam(String timelineString) {
     String[] elems = timelineString.split(":");

@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -249,8 +249,9 @@ public class ProjectExplorer extends JTree implements LocaleListener {
 
     private TreePath[] getValidPaths(TreePath[] paths) {
       int count = 0;
-      for (int i = 0; i < paths.length; i++) {
-        if (isPathValid(paths[i])) ++count;
+      for (TreePath treePath : paths) {
+        if (isPathValid(treePath))
+          ++count;
       }
 
       if (count == 0) {
@@ -261,8 +262,9 @@ public class ProjectExplorer extends JTree implements LocaleListener {
         TreePath[] ret = new TreePath[count];
         int j = 0;
 
-        for (int i = 0; i < paths.length; i++) {
-          if (isPathValid(paths[i])) ret[j++] = paths[i];
+        for (TreePath path : paths) {
+          if (isPathValid(path))
+            ret[j++] = path;
         }
 
         return ret;
@@ -389,10 +391,10 @@ public class ProjectExplorer extends JTree implements LocaleListener {
 
   public static final Color MAGNIFYING_INTERIOR = new Color(200, 200, 255, 64);
 
-  private Project proj;
-  private MyListener myListener = new MyListener();
-  private MyCellRenderer renderer = new MyCellRenderer();
-  private DeleteAction deleteAction = new DeleteAction();
+  private final Project proj;
+  private final MyListener myListener = new MyListener();
+  private final MyCellRenderer renderer = new MyCellRenderer();
+  private final DeleteAction deleteAction = new DeleteAction();
   private ProjectExplorerListener listener = null;
   private Tool haloedTool = null;
 

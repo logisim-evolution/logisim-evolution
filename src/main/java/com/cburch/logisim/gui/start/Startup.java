@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -124,11 +124,11 @@ public class Startup implements AWTEventListener {
     // see whether we'll be using any graphics
     boolean isTty = false;
     boolean isClearPreferences = false;
-    for (int i = 0; i < args.length; i++) {
-      if (args[i].equals("-tty")||args[i].equals("-test-fpga-implementation")) {
+    for (String value : args) {
+      if (value.equals("-tty") || value.equals("-test-fpga-implementation")) {
         isTty = true;
         Main.headless = true;
-      } else if (args[i].equals("-clearprefs") || args[i].equals("-clearprops")) {
+      } else if (value.equals("-clearprefs") || value.equals("-clearprops")) {
         isClearPreferences = true;
       }
     }
@@ -177,8 +177,8 @@ public class Startup implements AWTEventListener {
           if (fmts.length == 0) {
             logger.error("{}", S.get("ttyFormatError"));
           }
-          for (int j = 0; j < fmts.length; j++) {
-            String fmt = fmts[j].trim();
+          for (String s : fmts) {
+            String fmt = s.trim();
             if (fmt.equals("table")) {
               ret.ttyFormat |= TtyInterface.FORMAT_TABLE;
             } else if (fmt.equals("speed")) {
@@ -189,10 +189,14 @@ public class Startup implements AWTEventListener {
               ret.ttyFormat |= TtyInterface.FORMAT_HALT;
             } else if (fmt.equals("stats")) {
               ret.ttyFormat |= TtyInterface.FORMAT_STATISTICS;
-            } else if (fmt.equals("binary")) ret.ttyFormat |= TtyInterface.FORMAT_TABLE_BIN;
-            else if (fmt.equals("hex")) ret.ttyFormat |= TtyInterface.FORMAT_TABLE_HEX;
-            else if (fmt.equals("csv")) ret.ttyFormat |= TtyInterface.FORMAT_TABLE_CSV;
-            else if (fmt.equals("tabs")) ret.ttyFormat |= TtyInterface.FORMAT_TABLE_TABBED;
+            } else if (fmt.equals("binary"))
+              ret.ttyFormat |= TtyInterface.FORMAT_TABLE_BIN;
+            else if (fmt.equals("hex"))
+              ret.ttyFormat |= TtyInterface.FORMAT_TABLE_HEX;
+            else if (fmt.equals("csv"))
+              ret.ttyFormat |= TtyInterface.FORMAT_TABLE_CSV;
+            else if (fmt.equals("tabs"))
+              ret.ttyFormat |= TtyInterface.FORMAT_TABLE_TABBED;
             else {
               logger.error("{}", S.get("ttyFormatError"));
             }
@@ -222,8 +226,7 @@ public class Startup implements AWTEventListener {
           if (ret.loadFile != null) {
             logger.error("{}", S.get("loadMultipleError"));
           }
-          File f = new File(args[i]);
-          ret.loadFile = f;
+          ret.loadFile = new File(args[i]);
         } else {
           logger.error("{}", S.get("loadNeedsFileError"));
           return null;
@@ -505,17 +508,17 @@ public class Startup implements AWTEventListener {
 
   private static void setLocale(String lang) {
     Locale[] opts = S.getLocaleOptions();
-    for (int i = 0; i < opts.length; i++) {
-      if (lang.equals(opts[i].toString())) {
-        LocaleManager.setLocale(opts[i]);
+    for (Locale locale : opts) {
+      if (lang.equals(locale.toString())) {
+        LocaleManager.setLocale(locale);
         return;
       }
     }
     logger.warn("{}", S.get("invalidLocaleError"));
     logger.warn("{}", S.get("invalidLocaleOptionsHeader"));
 
-    for (int i = 0; i < opts.length; i++) {
-      logger.warn("   {}", opts[i].toString());
+    for (Locale opt : opts) {
+      logger.warn("   {}", opt.toString());
     }
     System.exit(-1);
   }
@@ -528,13 +531,13 @@ public class Startup implements AWTEventListener {
   private File templFile = null;
   private boolean templEmpty = false;
   private boolean templPlain = false;
-  private ArrayList<File> filesToOpen = new ArrayList<File>();
+  private final ArrayList<File> filesToOpen = new ArrayList<File>();
   private String testVector = null;
   private String circuitToTest = null;
   private boolean exitAfterStartup = false;
   private boolean showSplash;
   private File loadFile;
-  private HashMap<File, File> substitutions = new HashMap<File, File>();
+  private final HashMap<File, File> substitutions = new HashMap<File, File>();
   private int ttyFormat = 0;
   // from other sources
   private boolean initialized = false;
@@ -558,7 +561,7 @@ public class Startup implements AWTEventListener {
   /* Testing Xml (circ file) Variable */
   private String testCircPathInput = null;
   private String testCircPathOutput = null;
-  private ArrayList<File> filesToPrint = new ArrayList<File>();
+  private final ArrayList<File> filesToPrint = new ArrayList<File>();
 
   private Startup(boolean isTty) {
     this.isTty = isTty;
@@ -1055,7 +1058,6 @@ public class Startup implements AWTEventListener {
             || (container instanceof JToolTip)
             || (container instanceof JLabel)
             || (container instanceof JFrame)
-            || (container instanceof JMenu)
             || (container instanceof JMenuItem)
             || (container instanceof JRadioButton)
             || (container instanceof JRadioButtonMenuItem)

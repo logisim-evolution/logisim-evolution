@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -63,8 +63,8 @@ public class FPGABoards implements ActionListener {
 
   private class ExternalBoardModel implements ListModel<String> {
 
-    private SortedArrayList ExternalBoards = new SortedArrayList();
-    private ArrayList<ListDataListener> MyListeners = new ArrayList<ListDataListener>();
+    private final SortedArrayList ExternalBoards = new SortedArrayList();
+    private final ArrayList<ListDataListener> MyListeners = new ArrayList<ListDataListener>();
 
     public boolean contains(String entry) {
       return ExternalBoards.contains(entry);
@@ -109,8 +109,7 @@ public class FPGABoards implements ActionListener {
 
     @Override
     public int getSize() {
-      int size = NrOfExternalBoards();
-      return size;
+      return NrOfExternalBoards();
     }
 
     @Override
@@ -194,13 +193,13 @@ public class FPGABoards implements ActionListener {
 
   private static final String ExtBoard = "ExtBoardDescr";
   private static final int MaxBoards = 20;
-  private BoardList BuildInBoards = new BoardList();
+  private final BoardList BuildInBoards = new BoardList();
   private JScrollPane BoardPane;
   private JList<String> BoardNamesList;
   private JButton AddButton;
   private JButton RemoveButton;
   private JComboBox<String> BoardSelector;
-  private ExternalBoardModel ExtBoardModel = new ExternalBoardModel();
+  private final ExternalBoardModel ExtBoardModel = new ExternalBoardModel();
 
   FPGABoards() {
     Preferences prefs = AppPreferences.getPrefs();

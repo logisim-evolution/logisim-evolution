@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -74,7 +74,7 @@ class SelectionBase {
     Boolean shouldSnapValue =
         (Boolean)
             comp.getFactory().getFeature(ComponentFactory.SHOULD_SNAP, comp.getAttributeSet());
-    return shouldSnapValue == null ? true : shouldSnapValue.booleanValue();
+    return shouldSnapValue == null || shouldSnapValue.booleanValue();
   }
 
   static final Logger logger = LoggerFactory.getLogger(SelectionBase.class);
@@ -82,7 +82,7 @@ class SelectionBase {
   static final Set<Component> NO_COMPONENTS = Collections.emptySet();
 
   Project proj;
-  private ArrayList<Selection.Listener> listeners = new ArrayList<Selection.Listener>();
+  private final ArrayList<Selection.Listener> listeners = new ArrayList<Selection.Listener>();
   final HashSet<Component> selected = new HashSet<Component>(); // of selected
   // Components
   // in

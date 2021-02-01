@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -98,7 +98,7 @@ public class ZipClassLoader extends ClassLoader {
   }
 
   private class WorkThread extends UniquelyNamedThread {
-    private LinkedList<Request> requests = new LinkedList<Request>();
+    private final LinkedList<Request> requests = new LinkedList<Request>();
     private ZipFile zipFile = null;
 
     WorkThread() {
@@ -255,9 +255,9 @@ public class ZipClassLoader extends ClassLoader {
 
   private static final int REQUEST_LOAD = 1;
 
-  private File zipPath;
-  private HashMap<String, Object> classes = new HashMap<String, Object>();
-  private Object bgLock = new Object();
+  private final File zipPath;
+  private final HashMap<String, Object> classes = new HashMap<String, Object>();
+  private final Object bgLock = new Object();
   private WorkThread bgThread = null;
 
   public ZipClassLoader(File zipFile) {

@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -77,8 +77,7 @@ public class CpuDrawSupport {
     FontMetrics f =g2.getFontMetrics();
     int StrWidth = f.stringWidth("0x00000000")+(scale ? AppPreferences.getScaled(2) : 2);
     int blkPrefWidth = scale ? AppPreferences.getScaled(80) : 80;
-    int blockWidth = StrWidth < blkPrefWidth ? blkPrefWidth : StrWidth;
-    return blockWidth;
+    return Math.max(StrWidth, blkPrefWidth);
   }
 
   public static void drawRegisters(Graphics2D g, int x , int y, boolean scale, SocUpStateInterface cpu) {

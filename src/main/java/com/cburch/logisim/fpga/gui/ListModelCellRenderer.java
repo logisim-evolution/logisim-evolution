@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -42,12 +42,12 @@ public class ListModelCellRenderer extends JLabel implements ListCellRenderer<Ob
   /** */
   private static final long serialVersionUID = 1L;
 
-  private boolean CountLines;
+  private final boolean CountLines;
 
-  private static Color FATAL = Color.RED;
-  private static Color SEVERE = Color.yellow;
-  private static Color NORMAL = Color.LIGHT_GRAY;
-  private static Color ADDENDUM = Color.GRAY;
+  private static final Color FATAL = Color.RED;
+  private static final Color SEVERE = Color.yellow;
+  private static final Color NORMAL = Color.LIGHT_GRAY;
+  private static final Color ADDENDUM = Color.GRAY;
   
   private static final DrcIcon NoDRC = new DrcIcon(false);
   private static final DrcIcon DRCError = new DrcIcon(true);

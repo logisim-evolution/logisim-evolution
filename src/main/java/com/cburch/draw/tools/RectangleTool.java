@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -38,7 +38,7 @@ import java.util.List;
 import javax.swing.Icon;
 
 public class RectangleTool extends RectangularTool {
-  private DrawingAttributeSet attrs;
+  private final DrawingAttributeSet attrs;
 
   public RectangleTool(DrawingAttributeSet attrs) {
     this.attrs = attrs;

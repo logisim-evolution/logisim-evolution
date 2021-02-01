@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -43,8 +43,8 @@ public class ReplacementMap {
   static final Logger logger = LoggerFactory.getLogger(ReplacementMap.class);
 
   private boolean frozen;
-  private HashMap<Component, HashSet<Component>> map;
-  private HashMap<Component, HashSet<Component>> inverse;
+  private final HashMap<Component, HashSet<Component>> map;
+  private final HashMap<Component, HashSet<Component>> inverse;
 
   public ReplacementMap() {
     this(

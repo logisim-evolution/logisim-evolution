@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -81,9 +81,9 @@ public class SocBusStateInfo extends JDialog implements ActionListener,LocaleLis
     
     public class SocBusStateTrace extends JPanel {
       private static final long serialVersionUID = 1L;
-	  private SocBusTransaction action;
-      private long index;
-      private TraceWindowTableModel model;
+	  private final SocBusTransaction action;
+      private final long index;
+      private final TraceWindowTableModel model;
       
       public SocBusStateTrace(SocBusTransaction action, long index, TraceWindowTableModel model) {
         this.action = action;
@@ -110,11 +110,11 @@ public class SocBusStateInfo extends JDialog implements ActionListener,LocaleLis
     }
     
 	private static final int NR_OF_TRACES_TO_KEEP = 10000;
-    private LinkedList<SocBusTransaction> trace;
+    private final LinkedList<SocBusTransaction> trace;
     private long startTraceIndex;
-    private SocBusStateInfo parrent;
-    private Instance instance;
-    private ArrayList<SocBusStateListener> listeners;
+    private final SocBusStateInfo parrent;
+    private final Instance instance;
+    private final ArrayList<SocBusStateListener> listeners;
     
     public SocBusState(SocBusStateInfo parrent, Instance instance) {
       trace = new LinkedList<SocBusTransaction>();
@@ -187,13 +187,13 @@ public class SocBusStateInfo extends JDialog implements ActionListener,LocaleLis
     }
   }
   
-  private SocSimulationManager socManager;
+  private final SocSimulationManager socManager;
   private Component myComp;
-  private ArrayList<SocBusSnifferInterface> sniffers;
-  private JButton okButton;
-  private JLabel title;
-  private JScrollPane scroll;
-  private SocMemMapModel memMap;
+  private final ArrayList<SocBusSnifferInterface> sniffers;
+  private final JButton okButton;
+  private final JLabel title;
+  private final JScrollPane scroll;
+  private final SocMemMapModel memMap;
   
   public SocBusStateInfo(SocSimulationManager man , Component comp ) {
     super();

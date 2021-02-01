@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -149,7 +149,7 @@ public class SelectionAttributes extends AbstractAttributeSet {
     return ret;
   }
 
-  private Selection selection;
+  private final Selection selection;
   private Listener listener;
   private Map<AttributeSet, CanvasObject> selected;
   private Attribute<?>[] selAttrs;

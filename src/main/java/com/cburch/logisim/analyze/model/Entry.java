@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -56,9 +56,9 @@ public class Entry implements Comparable<Entry>,PreferenceChangeListener {
   public static final Entry DONT_CARE = new Entry(1, null);
   public static final Entry ONE = new Entry(2, null);
 
-  private int sortOrder;
-  private StringGetter errorMessage;
-  private ArrayList<EntryChangedListener> listeners; 
+  private final int sortOrder;
+  private final StringGetter errorMessage;
+  private final ArrayList<EntryChangedListener> listeners;
 
   private Entry(int sortOrder, StringGetter errorMessage) {
     this.sortOrder = sortOrder;

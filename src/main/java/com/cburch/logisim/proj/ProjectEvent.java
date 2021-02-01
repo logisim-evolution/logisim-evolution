@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -48,10 +48,10 @@ public class ProjectEvent {
   public static final int REDO_START = 11;
   public static final int REDO_COMPLETE = 12;
 
-  private int action;
-  private Project proj;
+  private final int action;
+  private final Project proj;
   private Object old_data;
-  private Object data;
+  private final Object data;
 
   ProjectEvent(int action, Project proj) {
     this.action = action;

@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -79,7 +79,7 @@ public class Expressions {
   }
 
   private static class Constant extends Expression {
-    private int value;
+    private final int value;
 
     Constant(int value) {
       this.value = value;
@@ -119,7 +119,7 @@ public class Expressions {
   }
 
   private static class Not extends Expression {
-    private Expression a;
+    private final Expression a;
 
     Not(Expression a) {
       this.a = a;
@@ -185,7 +185,7 @@ public class Expressions {
   }
 
   protected static class Variable extends Expression {
-    private String name;
+    private final String name;
 
     Variable(String name) {
       this.name = name;

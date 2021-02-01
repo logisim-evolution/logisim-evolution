@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -192,12 +192,12 @@ public class Caret {
     }
   }
 
-  private static Color SELECT_COLOR = new Color(192, 192, 255);
+  private static final Color SELECT_COLOR = new Color(192, 192, 255);
 
   private static final Stroke CURSOR_STROKE = new BasicStroke(2.0f);
 
-  private HexEditor hex;
-  private List<ChangeListener> listeners;
+  private final HexEditor hex;
+  private final List<ChangeListener> listeners;
   private long mark;
   private long cursor;
   private Object highlight;

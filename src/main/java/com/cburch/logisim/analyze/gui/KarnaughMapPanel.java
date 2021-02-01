@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -67,6 +67,7 @@ import java.awt.font.TextLayout;
 import java.text.AttributedString;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.swing.JPanel;
 
 public class KarnaughMapPanel extends JPanel
@@ -97,8 +98,10 @@ public class KarnaughMapPanel extends JPanel
   private static final long serialVersionUID = 1L;
 
   private class KMapInfo {
-    private int headWidth, headHeight;
-    private int Width, Height;
+    private final int headWidth;
+    private final int headHeight;
+    private final int Width;
+    private final int Height;
     private int xOff, yOff;
 
     public KMapInfo(int headWidth, int headHeight, int tableWidth, int tableHeight) {
@@ -148,24 +151,24 @@ public class KarnaughMapPanel extends JPanel
   private static final int CELL_HORZ_SEP = 10;
   private static final int CELL_VERT_SEP = 10;
 
-  private MyListener myListener = new MyListener();
-  private ExpressionView completeExpression;
-  private AnalyzerModel model;
+  private final MyListener myListener = new MyListener();
+  private final ExpressionView completeExpression;
+  private final AnalyzerModel model;
   private String output;
   private int cellWidth = 1;
   private int cellHeight = 1;
   private int provisionalX;
   private int provisionalY;
   private Entry provisionalValue = null;
-  private Font HeaderFont;
-  private Font EntryFont;
+  private final Font HeaderFont;
+  private final Font EntryFont;
   private boolean KMapLined;
   private Bounds KMapArea;
   private KMapInfo KLinedInfo;
   private KMapInfo KNumberedInfo;
-  private KMapGroups kMapGroups;
+  private final KMapGroups kMapGroups;
   private Bounds SelInfo;
-  private Point hover;
+  private final Point hover;
   private Notation notation = Notation.MATHEMATICAL;
   private boolean selected;
   private Dimension kMapDim;
@@ -948,7 +951,7 @@ public class KarnaughMapPanel extends JPanel
   }
 
   public void setOutput(String value) {
-    boolean recompute = (output == null || value == null) && output != value;
+    boolean recompute = (output == null || value == null) && !Objects.equals(output, value);
     output = value;
     kMapGroups.setOutput(value);
     if (recompute) computePreferredSize();

@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -38,7 +38,7 @@ import java.util.List;
 public class Memory extends Library {
   protected static final int DELAY = 5;
 
-  private static FactoryDescription[] DESCRIPTIONS = {
+  private static final FactoryDescription[] DESCRIPTIONS = {
     new FactoryDescription(
         "D Flip-Flop", S.getter("dFlipFlopComponent"), "dFlipFlop.gif", "DFlipFlop"),
     new FactoryDescription(

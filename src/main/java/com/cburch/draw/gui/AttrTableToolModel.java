@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -35,7 +35,7 @@ import com.cburch.logisim.gui.generic.AttrTableSetException;
 import com.cburch.logisim.gui.generic.AttributeSetTableModel;
 
 class AttrTableToolModel extends AttributeSetTableModel {
-  private DrawingAttributeSet defaults;
+  private final DrawingAttributeSet defaults;
   private AbstractTool currentTool;
 
   public AttrTableToolModel(DrawingAttributeSet defaults, AbstractTool tool) {

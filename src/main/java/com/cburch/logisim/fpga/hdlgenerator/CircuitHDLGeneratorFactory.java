@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -54,7 +54,7 @@ import java.util.TreeMap;
 
 public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
-  private Circuit MyCircuit;
+  private final Circuit MyCircuit;
 
   public CircuitHDLGeneratorFactory(Circuit source) {
     MyCircuit = source;

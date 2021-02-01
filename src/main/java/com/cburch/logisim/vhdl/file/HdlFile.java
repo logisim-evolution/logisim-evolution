@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -40,10 +40,8 @@ import java.io.IOException;
 public class HdlFile {
 
   public static String load(File file) throws IOException {
-    BufferedReader in = null;
 
-    try {
-      in = new BufferedReader(new FileReader(file));
+    try (BufferedReader in = new BufferedReader(new FileReader(file))) {
 
       StringBuilder content = new StringBuilder();
       String l;
@@ -55,23 +53,15 @@ public class HdlFile {
       return content.toString();
     } catch (IOException ex) {
       throw new IOException(S.get("hdlFileReaderError"));
-    } finally {
-      if (in != null) in.close();
     }
   }
 
   public static void save(File file, String text) throws IOException {
-    BufferedWriter out = null;
 
-    try {
-      out = new BufferedWriter(new FileWriter(file));
+    try (BufferedWriter out = new BufferedWriter(new FileWriter(file))) {
       out.write(text, 0, text.length());
     } catch (IOException ex) {
       throw new IOException(S.get("hdlFileWriterError"));
-    } finally {
-      if (out != null) {
-        out.close();
-      }
     }
   }
 }

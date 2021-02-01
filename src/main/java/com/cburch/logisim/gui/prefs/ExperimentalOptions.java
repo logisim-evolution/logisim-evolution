@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -40,8 +40,8 @@ import javax.swing.JPanel;
 
 class ExperimentalOptions extends OptionsPanel {
   private static final long serialVersionUID = 1L;
-  private JLabel accelRestart = new JLabel();
-  private PrefOptionList accel;
+  private final JLabel accelRestart = new JLabel();
+  private final PrefOptionList accel;
 
   public ExperimentalOptions(PreferencesFrame window) {
     super(window);

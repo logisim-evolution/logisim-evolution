@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -58,7 +58,7 @@ public class BitAdder extends InstanceFactory {
     super("BitAdder", S.getter("bitAdderComponent"));
     setAttributes(
         new Attribute[] {StdAttr.WIDTH, NUM_INPUTS},
-        new Object[] {BitWidth.create(8), Integer.valueOf(1)});
+        new Object[] {BitWidth.create(8), 1});
     setKeyConfigurator(
         JoinedConfigurator.create(
             new IntegerConfigurator(NUM_INPUTS, 1, 64, 0),
@@ -156,10 +156,11 @@ public class BitAdder extends InstanceFactory {
     for (int i = 1; i <= inputs; i++) {
       Value v = state.getPortValue(i);
       Value[] bits = v.getAll();
-      for (int j = 0; j < bits.length; j++) {
-        Value b = bits[j];
-        if (b == Value.TRUE) minCount++;
-        if (b != Value.FALSE) maxCount++;
+      for (Value b : bits) {
+        if (b == Value.TRUE)
+          minCount++;
+        if (b != Value.FALSE)
+          maxCount++;
       }
     }
 

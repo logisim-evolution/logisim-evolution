@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -49,11 +49,11 @@ public class PlaRomData implements InstanceData {
   private Value[] InputValue;
   private Value[] AndValue;
   private Value[] OutputValue;
-  private String[] options =
+  private final String[] options =
       new String[] {
         new LocaleManager("resources/logisim", "gui").get("saveOption"), S.get("ramClearMenuItem")
       };
-  private Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+  private final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
   private JScrollPane panel;
   private PlaRomPanel drawing;
 
@@ -86,8 +86,7 @@ public class PlaRomData implements InstanceData {
   @Override
   public PlaRomData clone() {
     try {
-      PlaRomData ret = (PlaRomData) super.clone();
-      return ret;
+      return (PlaRomData) super.clone();
     } catch (CloneNotSupportedException e) {
       return null;
     }
@@ -95,24 +94,24 @@ public class PlaRomData implements InstanceData {
 
   public void decodeSavedData(String s) {
     // if empty, all to false so don't do anything
-    if (s == null || s == "") return;
+    if (s == null || s.equals("")) return;
     // split the attribute content string in an array of strings with a single
     // information each one
     String[] datas = s.split(" "), tmp;
     byte value;
     int cnt = 0;
-    for (int i = 0; i < datas.length; i++) {
+    for (String data : datas) {
       // if contains a '*' it has to fill the array with the first value for x (second
       // number) cycles
-      if (datas[i].contains("*")) {
-        tmp = datas[i].split("\\*");
+      if (data.contains("*")) {
+        tmp = data.split("\\*");
         for (int j = 0; j < Integer.parseInt(tmp[1]); j++) {
           value = (byte) Integer.parseInt(tmp[0]);
           writeData(value, cnt);
           cnt++;
         }
       } else {
-        value = (byte) Integer.parseInt(datas[i]);
+        value = (byte) Integer.parseInt(data);
         writeData(value, cnt);
         cnt++;
       }

@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -594,8 +594,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
      * in the circuit. This method is only called in case of VHDL-code
      * generation.
      */
-    ArrayList<String> Components = new ArrayList<String>();
-    return Components;
+    return new ArrayList<String>();
   }
 
   public ArrayList<String> GetComponentInstantiation(
@@ -796,8 +795,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
       FPGAReport Reporter,
       String CircuitName,
       String HDLType) {
-    ArrayList<String> Contents = new ArrayList<String>();
-    return Contents;
+    return new ArrayList<String>();
   }
 
   public SortedMap<String, Integer> GetInOutList(Netlist TheNetlist, AttributeSet attrs) {
@@ -808,8 +806,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
      * vector of bits where the value is the "key" of the parameter map 0 Is
      * an invalid value and must not be used
      */
-    SortedMap<String, Integer> InOuts = new TreeMap<String, Integer>();
-    return InOuts;
+    return new TreeMap<String, Integer>();
   }
 
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
@@ -820,8 +817,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
      * vector of bits where the value is the "key" of the parameter map 0 Is
      * an invalid value and must not be used
      */
-    SortedMap<String, Integer> Inputs = new TreeMap<String, Integer>();
-    return Inputs;
+    return new TreeMap<String, Integer>();
   }
 
   public String GetInstanceIdentifier(NetlistComponent ComponentInfo, Long ComponentId) {
@@ -838,8 +834,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
      * used in the black-box. The String Parameter represents the Name, and
      * the Integer parameter represents the type definition.
      */
-    SortedMap<String, Integer> Regs = new TreeMap<String, Integer>();
-    return Regs;
+    return new TreeMap<String, Integer>();
   }
 
   public ArrayList<String> GetModuleFunctionality(
@@ -848,8 +843,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
      * In this method the functionality of the black-box is described. It is
      * used for both VHDL and VERILOG.
      */
-    ArrayList<String> Contents = new ArrayList<String>();
-    return Contents;
+    return new ArrayList<String>();
   }
 
   public Map<String, String> GetNetMap(
@@ -1056,8 +1050,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
      * vector of bits where the value is the "key" of the parameter map 0 Is
      * an invalid value and must not be used
      */
-    SortedMap<String, Integer> Outputs = new TreeMap<String, Integer>();
-    return Outputs;
+    return new TreeMap<String, Integer>();
   }
 
   public SortedMap<Integer, String> GetParameterList(AttributeSet attrs) {
@@ -1067,8 +1060,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
      * input and/or output vectors. The String is the name of the parameter.
      * In VHDL all parameters are assumed to be INTEGER.
      */
-    SortedMap<Integer, String> Parameters = new TreeMap<Integer, String>();
-    return Parameters;
+    return new TreeMap<Integer, String>();
   }
 
   public SortedMap<String, Integer> GetParameterMap(
@@ -1078,8 +1070,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
      * the given component, the key is the name of the parameter/generic,
      * and the Integer its assigned value
      */
-    SortedMap<String, Integer> ParameterMap = new TreeMap<String, Integer>();
-    return ParameterMap;
+    return new TreeMap<String, Integer>();
   }
 
   public SortedMap<String, String> GetPortMap(
@@ -1089,8 +1080,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
      * key is the name of the input/output (bit), and the value represent
      * the connected net.
      */
-    SortedMap<String, String> PortMap = new TreeMap<String, String>();
-    return PortMap;
+    return new TreeMap<String, String>();
   }
 
   public SortedMap<String, Integer> GetRegList(AttributeSet attrs, String HDLType) {
@@ -1103,8 +1093,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
      * there is no distinction between wire and reg. You can put them in
      * both GetRegList or GetWireList
      */
-    SortedMap<String, Integer> Regs = new TreeMap<String, Integer>();
-    return Regs;
+    return new TreeMap<String, Integer>();
   }
 
   public String GetRelativeDirectory(String HDLType) {
@@ -1310,8 +1299,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
      * single bit "wire" is transformed to std_logic, all the others are
      * std_logic_vectors
      */
-    SortedMap<String, Integer> Wires = new TreeMap<String, Integer>();
-    return Wires;
+    return new TreeMap<String, Integer>();
   }
 
   public String GetZeroVector(int NrOfBits, boolean FloatingPinTiedToGround, String HDLType) {
@@ -1372,9 +1360,9 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
     StringBuffer OneLine = new StringBuffer();
     ArrayList<String> Contents = new ArrayList<String>();
     int maxWordLength = 0;
-    for (int i = 0; i < RemarkWords.length; i++) {
-      if (RemarkWords[i].length() > maxWordLength) {
-        maxWordLength = RemarkWords[i].length();
+    for (String word : RemarkWords) {
+      if (word.length() > maxWordLength) {
+        maxWordLength = word.length();
       }
     }
     if (MaxRemarkLength < maxWordLength) {
@@ -1400,8 +1388,8 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
     Contents.add(OneLine.toString());
     OneLine.setLength(0);
     /* Next we put the remark text block in 1 or multiple lines */
-    for (int word = 0; word < RemarkWords.length; word++) {
-      if ((OneLine.length() + RemarkWords[word].length() + RemarkOverhead) > (MaxLineLength - 1)) {
+    for (String remarkWord : RemarkWords) {
+      if ((OneLine.length() + remarkWord.length() + RemarkOverhead) > (MaxLineLength - 1)) {
         /* Next word does not fit, we end this line and create a new one */
         while (OneLine.length() < (MaxLineLength - RemarkOverhead)) {
           OneLine.append(" ");
@@ -1425,14 +1413,14 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
           OneLine.append(" ** ");
         }
       }
-      if (RemarkWords[word].endsWith("\\")) {
+      if (remarkWord.endsWith("\\")) {
         /* Forced new line */
-        OneLine.append(RemarkWords[word].substring(0, RemarkWords[word].length() - 1));
+        OneLine.append(remarkWord.substring(0, remarkWord.length() - 1));
         while (OneLine.length() < (MaxLineLength - RemarkOverhead)) {
           OneLine.append(" ");
         }
       } else {
-        OneLine.append(RemarkWords[word] + " ");
+        OneLine.append(remarkWord + " ");
       }
     }
     if (OneLine.length() > (NrOfIndentSpaces + RemarkOverhead)) {

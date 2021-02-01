@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -29,7 +29,7 @@
 package com.cburch.logisim.circuit;
 
 public class SimulatorEvent {
-  private Simulator source;
+  private final Simulator source;
 
   public SimulatorEvent(Simulator source) {
     this.source = source;

@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -37,8 +37,8 @@ import com.cburch.logisim.prefs.AppPreferences;
 
 public class FatArrowIcon extends AbstractIcon {
 
-  private Direction dir;
-  private static int[] points = {2,7,7,2,12,7,9,7,9,12,5,12,5,7};
+  private final Direction dir;
+  private static final int[] points = {2,7,7,2,12,7,9,7,9,12,5,12,5,7};
   
   public FatArrowIcon(Direction dir) {
     this.dir = dir;

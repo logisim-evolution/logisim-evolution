@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -113,15 +113,15 @@ public class MoveGesture {
     return ret;
   }
 
-  private MoveRequestListener listener;
+  private final MoveRequestListener listener;
 
-  private Circuit circuit;
-  private HashSet<Component> selected;
+  private final Circuit circuit;
+  private final HashSet<Component> selected;
   private transient Set<ConnectionData> connections;
 
   private transient AvoidanceMap initAvoid;
 
-  private HashMap<MoveRequest, MoveResult> cachedResults;
+  private final HashMap<MoveRequest, MoveResult> cachedResults;
 
   public MoveGesture(
       MoveRequestListener listener, Circuit circuit, Collection<Component> selected) {

@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -32,7 +32,7 @@ import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.gui.main.Canvas;
 
 public class ComponentUserEvent {
-  private Canvas canvas;
+  private final Canvas canvas;
   private int x = 0;
   private int y = 0;
 

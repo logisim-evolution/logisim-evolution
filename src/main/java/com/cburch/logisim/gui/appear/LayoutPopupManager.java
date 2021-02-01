@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -51,8 +51,8 @@ import javax.swing.Popup;
 import javax.swing.PopupFactory;
 
 class LayoutPopupManager implements SelectionListener, MouseListener, MouseMotionListener {
-  private CanvasPane canvasPane;
-  private AppearanceCanvas canvas;
+  private final CanvasPane canvasPane;
+  private final AppearanceCanvas canvas;
   private Popup curPopup;
   private long curPopupTime;
   private Location dragStart;

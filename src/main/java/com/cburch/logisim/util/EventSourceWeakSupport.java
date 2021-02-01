@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -34,7 +34,7 @@ import java.util.Iterator;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class EventSourceWeakSupport<L> implements Iterable<L> {
-  private ConcurrentLinkedQueue<WeakReference<L>> listeners =
+  private final ConcurrentLinkedQueue<WeakReference<L>> listeners =
       new ConcurrentLinkedQueue<WeakReference<L>>();
 
   public EventSourceWeakSupport() {}

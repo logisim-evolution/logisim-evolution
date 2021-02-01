@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -49,7 +49,7 @@ public class BoardReaderClass {
 
   static final Logger logger = LoggerFactory.getLogger(BoardReaderClass.class);
 
-  private String myfilename;
+  private final String myfilename;
   private DocumentBuilderFactory factory;
   private DocumentBuilder parser;
   private Document BoardDoc;
@@ -62,8 +62,7 @@ public class BoardReaderClass {
     ImageXmlFactory reader = new ImageXmlFactory();
     reader.SetCodeTable(CodeTable);
     reader.SetCompressedString(PixelData);
-    BufferedImage result = reader.GetPicture(width, height);
-    return result;
+    return reader.GetPicture(width, height);
   }
 
   public BoardInformation GetBoardInformation() {

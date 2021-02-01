@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -42,8 +42,8 @@ import java.util.WeakHashMap;
 
 class LibraryManager {
   private static class JarDescriptor extends LibraryDescriptor {
-    private File file;
-    private String className;
+    private final File file;
+    private final String className;
 
     JarDescriptor(File file, String className) {
       this.file = file;
@@ -87,7 +87,7 @@ class LibraryManager {
   }
 
   private static class LogisimProjectDescriptor extends LibraryDescriptor {
-    private File file;
+    private final File file;
 
     LogisimProjectDescriptor(File file) {
       this.file = file;
@@ -150,10 +150,10 @@ class LibraryManager {
 
   public static final LibraryManager instance = new LibraryManager();
 
-  private static char desc_sep = '#';
-  private HashMap<LibraryDescriptor, WeakReference<LoadedLibrary>> fileMap;
+  private static final char desc_sep = '#';
+  private final HashMap<LibraryDescriptor, WeakReference<LoadedLibrary>> fileMap;
 
-  private WeakHashMap<LoadedLibrary, LibraryDescriptor> invMap;
+  private final WeakHashMap<LoadedLibrary, LibraryDescriptor> invMap;
 
   private LibraryManager() {
     fileMap = new HashMap<LibraryDescriptor, WeakReference<LoadedLibrary>>();

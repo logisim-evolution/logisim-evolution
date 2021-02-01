@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -84,7 +84,7 @@ public class Ram extends Mem {
           ret = new Object[1 << addrBits];
           logOptions[addrBits] = ret;
           for (long i = 0; i < ret.length; i++) {
-            ret[(int) i] = Long.valueOf(i);
+            ret[(int) i] = i;
           }
         }
         return ret;
@@ -103,8 +103,8 @@ public class Ram extends Mem {
     }
   }
 
-  private static Object[][] logOptions = new Object[9][];
-  private static WeakHashMap<MemContents, HexFrame> windowRegistry = new WeakHashMap<MemContents, HexFrame>();
+  private static final Object[][] logOptions = new Object[9][];
+  private static final WeakHashMap<MemContents, HexFrame> windowRegistry = new WeakHashMap<MemContents, HexFrame>();
 
   public Ram() {
     super("RAM", S.getter("ramComponent"), 3);
@@ -343,7 +343,9 @@ public class Ram extends Mem {
     Object trigger = state.getAttributeValue(StdAttr.TRIGGER);
     Value weValue = state.getPortValue(RamAppearance.getWEIndex(0, attrs));
     boolean async = trigger.equals(StdAttr.TRIG_HIGH) || trigger.equals(StdAttr.TRIG_LOW);
-    boolean edge = async ? false :  myState.setClock(state.getPortValue(RamAppearance.getClkIndex(0, attrs)), trigger);
+    boolean edge =
+        !async && myState
+            .setClock(state.getPortValue(RamAppearance.getClkIndex(0, attrs)), trigger);
     boolean weAsync = (trigger.equals(StdAttr.TRIG_HIGH) && weValue.equals(Value.TRUE)) || 
                       (trigger.equals(StdAttr.TRIG_LOW) && weValue.equals(Value.FALSE));
     boolean weTriggered = (async && weAsync) || (edge && weValue.equals(Value.TRUE));
@@ -354,7 +356,7 @@ public class Ram extends Mem {
       } else {
         for (int i = 0 ; i < RamAppearance.getNrBEPorts(attrs) ; i++) {
           long mask = 0xFF << (i*8);
-          long andMask = mask ^ (-1L);
+          long andMask = ~mask;
           if (state.getPortValue(RamAppearance.getBEIndex(i, attrs)).equals(Value.TRUE)) {
             newMemValue &= andMask;
             newMemValue |= (dataInValue & mask);

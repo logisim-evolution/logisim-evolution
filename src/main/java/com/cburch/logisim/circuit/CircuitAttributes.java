@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -54,7 +54,7 @@ import java.util.List;
 
 public class CircuitAttributes extends AbstractAttributeSet {
   private class MyListener implements AttributeListener, CircuitAppearanceListener {
-    private Circuit source;
+    private final Circuit source;
 
     private MyListener(Circuit s) {
       source = s;
@@ -84,7 +84,7 @@ public class CircuitAttributes extends AbstractAttributeSet {
   }
 
   private static class StaticListener implements AttributeListener {
-    private Circuit source;
+    private final Circuit source;
 
     private StaticListener(Circuit s) {
       source = s;
@@ -204,7 +204,7 @@ public class CircuitAttributes extends AbstractAttributeSet {
             CIRCUIT_VHDL_PATH
           });
 
-  private Circuit source;
+  private final Circuit source;
   private Instance subcircInstance;
   private Direction facing;
   private String label;
@@ -260,9 +260,9 @@ public class CircuitAttributes extends AbstractAttributeSet {
 
   @Override
   public boolean isToSave(Attribute<?> attr) {
-    Attribute<?>[] statics = STATIC_ATTRS;
-    for (int i = 0; i < statics.length; i++) {
-      if (statics[i] == attr) return false;
+    for (Attribute<?> aStatic : STATIC_ATTRS) {
+      if (aStatic == attr)
+        return false;
     }
     return true;
   }

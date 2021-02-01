@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -222,9 +222,10 @@ public class GifEncoder {
       strings.ClearTable(codesize);
       bitFile.WriteBits(clearcode, numbits);
 
-      for (int loop = 0; loop < toCompress.length; ++loop) {
-        c = toCompress[loop];
-        if ((index = strings.FindCharString(prefix, c)) != -1) prefix = index;
+      for (byte compress : toCompress) {
+        c = compress;
+        if ((index = strings.FindCharString(prefix, c)) != -1)
+          prefix = index;
         else {
           bitFile.WriteBits(prefix, numbits);
           if (strings.AddCharString(prefix, c) > limit) {
@@ -419,7 +420,8 @@ public class GifEncoder {
     out.close();
   }
 
-  private short width_, height_;
+  private final short width_;
+  private final short height_;
 
   private int numColors_;
 

@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -69,7 +69,7 @@ public class Template {
 
   static final Logger logger = LoggerFactory.getLogger(Template.class);
 
-  private String contents;
+  private final String contents;
 
   private Template(String contents) {
     this.contents = contents;

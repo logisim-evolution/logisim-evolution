@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -36,7 +36,7 @@ import com.cburch.logisim.std.io.HexDigit;
 
 public class SevenSegmentIcon extends AnnimatedIcon {
 
-  private boolean isHexDisplay;
+  private final boolean isHexDisplay;
   private int state;
   
   public SevenSegmentIcon( boolean HexDisplay ) {

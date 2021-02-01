@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -89,7 +89,7 @@ class AvoidanceMap {
         // put it into the map as if it is - and in the rare event
         // that loc isn't in the component, we can remove it.
         String prev = avoid.put(loc, Connector.ALLOW_NEITHER);
-        if (prev != Connector.ALLOW_NEITHER) {
+        if (!Connector.ALLOW_NEITHER.equals(prev)) {
           Location baseLoc = translated ? loc.translate(-dx, -dy) : loc;
           if (!comp.contains(baseLoc)) {
             if (prev == null) {
@@ -140,8 +140,8 @@ class AvoidanceMap {
   public void print(PrintStream stream) {
     ArrayList<Location> list = new ArrayList<Location>(avoid.keySet());
     Collections.sort(list);
-    for (int i = 0, n = list.size(); i < n; i++) {
-      stream.println(list.get(i) + ": " + avoid.get(list.get(i)));
+    for (Location location : list) {
+      stream.println(location + ": " + avoid.get(location));
     }
   }
 

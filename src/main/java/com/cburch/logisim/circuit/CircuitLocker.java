@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -96,10 +96,10 @@ public class CircuitLocker {
     }
   }
 
-  private static AtomicInteger NEXT_SERIAL_NUMBER = new AtomicInteger(0);
-  private int serialNumber;
+  private static final AtomicInteger NEXT_SERIAL_NUMBER = new AtomicInteger(0);
+  private final int serialNumber;
 
-  private ReadWriteLock circuitLock;
+  private final ReadWriteLock circuitLock;
 
   private transient Thread mutatingThread;
 
@@ -145,10 +145,10 @@ public class CircuitLocker {
 
   public static class LockException extends IllegalStateException {
     private static final long serialVersionUID = 1L;
-    private Circuit circuit;
-    private int serialNumber;
-    private transient Thread mutatingThread;
-    private CircuitMutatorImpl mutatingMutator;
+    private final Circuit circuit;
+    private final int serialNumber;
+    private final transient Thread mutatingThread;
+    private final CircuitMutatorImpl mutatingMutator;
 
     public LockException(
         String msg, Circuit circ, int serial, Thread thread, CircuitMutatorImpl mutator) {

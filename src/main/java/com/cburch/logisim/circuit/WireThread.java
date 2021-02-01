@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -32,7 +32,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
 
 class WireThread {
   private WireThread parent;
-  private CopyOnWriteArraySet<CircuitWires.ThreadBundle> bundles =
+  private final CopyOnWriteArraySet<CircuitWires.ThreadBundle> bundles =
       new CopyOnWriteArraySet<CircuitWires.ThreadBundle>();
 
   WireThread() {

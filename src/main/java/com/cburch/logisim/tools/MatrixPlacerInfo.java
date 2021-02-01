@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -32,7 +32,7 @@ import com.cburch.logisim.data.Bounds;
 
 public class MatrixPlacerInfo {
 
-  private String OldLabel;
+  private final String OldLabel;
   private String SharedLabel;
   private int NrOfXCopies = 1;
   private int NrOfYCopies = 1;

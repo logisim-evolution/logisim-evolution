@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -46,7 +46,7 @@ public class ComponentMapParser {
   private File fileToPase = null;
   private MappableResourcesContainer MappableComponents = null;
   private BoardInformation BoardInfo = null;
-  private String[] MapSectionStrings = {"Key", "LocationX", "LocationY", "Width", "Height"};
+  private final String[] MapSectionStrings = {"Key", "LocationX", "LocationY", "Width", "Height"};
   private final static int WrongCircuit = -1;
   private final static int WrongBoard = -2;
   private final static int ErrorCreatingDocument = -3;

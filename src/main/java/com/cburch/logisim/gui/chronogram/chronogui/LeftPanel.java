@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -51,9 +51,9 @@ import javax.swing.table.JTableHeader;
 public class LeftPanel extends ChronoPanelTemplate {
 
   private static final long serialVersionUID = 1L;
-  private ChronoFrame mChronoFrame;
-  private CommonPanelParam mCommonPanelParam;
-  private DrawAreaEventManager mDrawAreaEventManager;
+  private final ChronoFrame mChronoFrame;
+  private final CommonPanelParam mCommonPanelParam;
+  private final DrawAreaEventManager mDrawAreaEventManager;
   private JTable table;
   private Object[][] tableData;
   private HashMap<SignalData, Integer> signalDataPositionInTable; // to have

@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -38,9 +38,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class ModelTranslateAction extends ModelAction {
-  private Set<CanvasObject> moved;
-  private int dx;
-  private int dy;
+  private final Set<CanvasObject> moved;
+  private final int dx;
+  private final int dy;
 
   public ModelTranslateAction(CanvasModel model, Collection<CanvasObject> moved, int dx, int dy) {
     super(model);

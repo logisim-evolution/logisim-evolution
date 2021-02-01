@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -38,8 +38,8 @@ import java.util.Collections;
 import java.util.List;
 
 public class ModelAddAction extends ModelAction {
-  private List<CanvasObject> added;
-  private int addIndex;
+  private final List<CanvasObject> added;
+  private final int addIndex;
 
   public ModelAddAction(CanvasModel model, CanvasObject added) {
     this(model, Collections.singleton(added));

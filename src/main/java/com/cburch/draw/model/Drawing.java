@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -44,9 +44,9 @@ import java.util.Map;
 import java.util.Set;
 
 public class Drawing implements CanvasModel {
-  private EventSourceWeakSupport<CanvasModelListener> listeners;
-  private ArrayList<CanvasObject> canvasObjects;
-  private DrawingOverlaps overlaps;
+  private final EventSourceWeakSupport<CanvasModelListener> listeners;
+  private final ArrayList<CanvasObject> canvasObjects;
+  private final DrawingOverlaps overlaps;
 
   public Drawing() {
     listeners = new EventSourceWeakSupport<CanvasModelListener>();
@@ -63,7 +63,7 @@ public class Drawing implements CanvasModel {
     indexes = new LinkedHashMap<CanvasObject, Integer>();
     int i = index;
     for (CanvasObject shape : shapes) {
-      indexes.put(shape, Integer.valueOf(i));
+      indexes.put(shape, i);
       i++;
     }
     addObjectsHelp(indexes);

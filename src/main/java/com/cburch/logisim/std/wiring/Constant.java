@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -103,7 +103,7 @@ public class Constant extends InstanceFactory {
   }
 
   private static class ConstantExpression implements ExpressionComputer {
-    private Instance instance;
+    private final Instance instance;
 
     public ConstantExpression(Instance instance) {
       this.instance = instance;

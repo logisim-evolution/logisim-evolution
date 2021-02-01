@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -40,7 +40,7 @@ public class Components extends Library {
    * a slightly more general concept than components; practically speaking, though, you'll most
    * often want to create AddTools for new components that can be added into the circuit.
    */
-  private List<AddTool> tools;
+  private final List<AddTool> tools;
 
   /**
    * Constructs an instance of this library. This constructor is how Logisim accesses first when it

@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
@@ -88,9 +88,9 @@ public class Nios2ComparisonInstructions implements AssemblerExecutionInterface 
    * cmpleui rB, rA, IMMED => cmpltui rB, rA, (IMMED+1)
    */
 
-  private ArrayList<String> Opcodes = new ArrayList<String>();
-  private ArrayList<Integer> OpcCodes = new ArrayList<Integer>(); 
-  private ArrayList<Integer> OpxCodes = new ArrayList<Integer>(); 
+  private final ArrayList<String> Opcodes = new ArrayList<String>();
+  private final ArrayList<Integer> OpcCodes = new ArrayList<Integer>();
+  private final ArrayList<Integer> OpxCodes = new ArrayList<Integer>();
   
   private int instruction;
   private boolean valid;
