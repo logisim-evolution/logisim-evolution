@@ -2,8 +2,7 @@ language: java
 sudo: false
 jdk:
   - openjdk11
-  - openjdk12
-  - openjdk13
+  - openjdk15
 before_install:
   - chmod +x gradlew
   - chmod +x gradle/wrapper/gradle-wrapper.jar
