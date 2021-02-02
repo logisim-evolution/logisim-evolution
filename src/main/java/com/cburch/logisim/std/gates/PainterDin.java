@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -46,7 +46,7 @@ class PainterDin {
       width -= 8;
     }
     int diam = Math.min(height, 2 * width);
-    if (dinType == AND) {; // nothing to do
+    if (dinType == AND) {// nothing to do
     } else if (dinType == OR) {
       paintOrLines(painter, width, height, drawBubble);
     } else if (dinType == XOR || dinType == XNOR) {
@@ -157,7 +157,7 @@ class PainterDin {
 
   static final int XNOR = 3;
 
-  private static final HashMap<Integer, int[]> orLenArrays = new HashMap<Integer, int[]>();
+  private static final HashMap<Integer, int[]> orLenArrays = new HashMap<>();
 
   private PainterDin() {}
 }

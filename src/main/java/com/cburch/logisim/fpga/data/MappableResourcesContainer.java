@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -37,7 +37,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,9 +64,9 @@ public class MappableResourcesContainer {
                                     Circuit circ) {
     currentUsedBoard = CurrentBoard;
     myCircuit = circ;
-    ArrayList<String> BoardId = new ArrayList<String>();
+    ArrayList<String> BoardId = new ArrayList<>();
     BoardId.add(CurrentBoard.getBoardName());
-    myIOComponents = new ArrayList<FPGAIOInformationContainer>();
+    myIOComponents = new ArrayList<>();
     for (FPGAIOInformationContainer io : currentUsedBoard.GetAllComponents()) {
       try {
         FPGAIOInformationContainer clone = (FPGAIOInformationContainer) io.clone();
@@ -110,12 +109,12 @@ public class MappableResourcesContainer {
   }
   
   public void updateMapableComponents() {
-    HashSet<ArrayList<String>> cur = new HashSet<ArrayList<String>>(); 
+    HashSet<ArrayList<String>> cur = new HashSet<>();
     if (myMappableResources == null)
-      myMappableResources = new HashMap<ArrayList<String>, MapComponent>();
+      myMappableResources = new HashMap<>();
     else
       cur.addAll(myMappableResources.keySet());
-    ArrayList<String> BoardId = new ArrayList<String>();
+    ArrayList<String> BoardId = new ArrayList<>();
     BoardId.add(currentUsedBoard.getBoardName());
     Map<ArrayList<String>, NetlistComponent> newMappableResources = 
            myCircuit.getNetList().GetMappableResources(BoardId, true);
@@ -154,7 +153,7 @@ public class MappableResourcesContainer {
   
   public Map<String,CircuitMapInfo> getCircuitMap() {
     int id = 0;
-    HashMap<String,CircuitMapInfo> result = new HashMap<String,CircuitMapInfo>(); 
+    HashMap<String,CircuitMapInfo> result = new HashMap<>();
     for (ArrayList<String> key : myMappableResources.keySet()) {
       result.put(Integer.toString(id++), new CircuitMapInfo(myMappableResources.get(key)));
     }
@@ -170,7 +169,7 @@ public class MappableResourcesContainer {
     String[] split1 = mapKey.split(" ");
     String hier = split1[split1.length-1];
     String[] split2 = hier.split("#");
-    ArrayList<String> result = new ArrayList<String>();
+    ArrayList<String> result = new ArrayList<>();
     result.add(currentUsedBoard.getBoardName());
     for (String key : split2[0].split("/")) 
       if (!key.isEmpty()) result.add(key);
@@ -192,7 +191,7 @@ boolean result = true;
   }
   
   public ArrayList<String> GetMappedIOPinNames() {
-    ArrayList<String> result = new ArrayList<String>();
+    ArrayList<String> result = new ArrayList<>();
     for (ArrayList<String> key : myMappableResources.keySet()) {
       MapComponent map = myMappableResources.get(key);
       for (int i = 0 ; i < map.getNrOfPins() ; i++) {
@@ -209,7 +208,7 @@ boolean result = true;
   }
 
   public ArrayList<String> GetMappedInputPinNames() {
-    ArrayList<String> result = new ArrayList<String>();
+    ArrayList<String> result = new ArrayList<>();
     for (ArrayList<String> key : myMappableResources.keySet()) {
       MapComponent map = myMappableResources.get(key);
       for (int i = 0 ; i < map.getNrOfPins() ; i++) {
@@ -226,7 +225,7 @@ boolean result = true;
   }
 
   public ArrayList<String> GetMappedOutputPinNames() {
-    ArrayList<String> result = new ArrayList<String>();
+    ArrayList<String> result = new ArrayList<>();
     for (ArrayList<String> key : myMappableResources.keySet()) {
       MapComponent map = myMappableResources.get(key);
       for (int i = 0 ; i < map.getNrOfPins() ; i++) {

@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -26,7 +26,6 @@
  *     http://www.heig-vd.ch/
  */
 
-
 /**
  * Code taken from Cornell's version of Logisim: http://www.cs.cornell.edu/courses/cs3410/2015sp/
  */
@@ -38,7 +37,6 @@ import com.cburch.logisim.proj.ProjectEvent;
 import com.cburch.logisim.proj.ProjectListener;
 import com.cburch.logisim.tools.Tool;
 import java.util.Enumeration;
-
 import javax.swing.JTree;
 import javax.swing.SwingUtilities;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -46,6 +44,89 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 
 class ProjectExplorerModel extends DefaultTreeModel implements ProjectListener {
+
+  private static final long serialVersionUID = 1L;
+  private final JTree GuiElement;
+  private Project proj;
+  ProjectExplorerModel(Project proj, JTree gui) {
+    super(null);
+    this.proj = proj;
+    setRoot(new ProjectExplorerLibraryNode(this, proj.getLogisimFile(), gui));
+    proj.addProjectListener(this);
+    GuiElement = gui;
+  }
+
+  Node<Tool> findTool(Tool tool) {
+    final Node<?> root = (Node<?>) getRoot();
+    if (root == null || tool == null) return null;
+    Enumeration<TreeNode> en = root.depthFirstEnumeration();
+    while (en.hasMoreElements()) {
+      Node<?> node = (Node<?>) en.nextElement();
+      if (node.getValue() == tool) return (Node<Tool>) node;
+    }
+    return null;
+  }
+
+  void fireStructureChanged() {
+    final ProjectExplorerModel model = this;
+    final Node<?> root = (Node<?>) getRoot();
+    SwingUtilities.invokeLater(
+        new Runnable() {
+          @Override
+          public void run() {
+            if (root != null) {
+              model.fireTreeNodesChanged(model, root.getUserObjectPath(), null, null);
+              model.fireTreeStructureChanged(model, root.getUserObjectPath(), null, null);
+            } else {
+              model.fireTreeNodesChanged(model, null, null, null);
+              model.fireTreeStructureChanged(model, null, null, null);
+            }
+          }
+        });
+  }
+
+  // ProjectListener methods
+  public void projectChanged(ProjectEvent event) {
+    int act = event.getAction();
+    if (act == ProjectEvent.ACTION_SET_FILE) {
+      setLogisimFile(proj.getLogisimFile());
+      fireStructureChanged();
+    }
+  }
+
+  private void setLogisimFile(LogisimFile file) {
+    Node<?> oldRoot = (Node<?>) getRoot();
+    oldRoot.decommission();
+
+    if (file == null) {
+      setRoot(null);
+    } else {
+      setRoot(new ProjectExplorerLibraryNode(this, file, GuiElement));
+    }
+
+    fireStructureChanged();
+  }
+
+  public void setProject(Project value) {
+    Project old = proj;
+
+    if (old != null) {
+      old.removeProjectListener(this);
+    }
+
+    setLogisimFile(null);
+    proj = value;
+
+    if (value != null) {
+      value.addProjectListener(this);
+      setLogisimFile(value.getLogisimFile());
+    }
+    fireStructureChanged();
+  }
+
+  public void updateStructure() {
+    fireStructureChanged();
+  }
 
   abstract static class Node<T> extends DefaultMutableTreeNode {
 
@@ -100,90 +181,5 @@ class ProjectExplorerModel extends DefaultTreeModel implements ProjectListener {
       T val = (T) getUserObject();
       return val;
     }
-  }
-
-  private static final long serialVersionUID = 1L;
-
-  private Project proj;
-  private final JTree GuiElement;
-
-  ProjectExplorerModel(Project proj, JTree gui) {
-    super(null);
-    this.proj = proj;
-    setRoot(new ProjectExplorerLibraryNode(this, proj.getLogisimFile(),gui));
-    proj.addProjectListener(this);
-    GuiElement = gui;
-  }
-
-  Node<Tool> findTool(Tool tool) {
-    final Node<?> root = (Node<?>) getRoot();
-    if (root == null || tool == null) return null;
-    Enumeration<TreeNode> en = root.depthFirstEnumeration();
-    while (en.hasMoreElements()) {
-      Node<?> node = (Node<?>) en.nextElement();
-      if (node.getValue() == tool) return (Node<Tool>) node;
-    }
-    return null;
-  }
-
-  void fireStructureChanged() {
-    final ProjectExplorerModel model = this;
-    final Node<?> root = (Node<?>) getRoot();
-    SwingUtilities.invokeLater(
-        new Runnable() {
-          @Override
-          public void run() {
-            if (root != null) {
-              model.fireTreeNodesChanged(model, root.getUserObjectPath(), null, null);
-              model.fireTreeStructureChanged(model, root.getUserObjectPath(), null, null);
-            } else {
-              model.fireTreeNodesChanged(model, null, null, null);
-              model.fireTreeStructureChanged(model, null, null, null);
-            }
-          }
-        });
-  }
-
-  // ProjectListener methods
-  public void projectChanged(ProjectEvent event) {
-    int act = event.getAction();
-    if (act == ProjectEvent.ACTION_SET_FILE) {
-      setLogisimFile(proj.getLogisimFile());
-      fireStructureChanged();
-    }
-  }
-
-  private void setLogisimFile(LogisimFile file) {
-    Node<?> oldRoot = (Node<?>) getRoot();
-    oldRoot.decommission();
-
-    if (file == null) {
-      setRoot(null);
-    } else {
-      setRoot(new ProjectExplorerLibraryNode(this, file,GuiElement));
-    }
-
-    fireStructureChanged();
-  }
-
-  public void setProject(Project value) {
-    Project old = proj;
-
-    if (old != null) {
-      old.removeProjectListener(this);
-    }
-
-    setLogisimFile(null);
-    proj = value;
-
-    if (value != null) {
-      value.addProjectListener(this);
-      setLogisimFile(value.getLogisimFile());
-    }
-    fireStructureChanged();
-  }
-
-  public void updateStructure() {
-    fireStructureChanged();
   }
 }

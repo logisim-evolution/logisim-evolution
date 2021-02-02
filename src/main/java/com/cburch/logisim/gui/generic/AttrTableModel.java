@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -29,13 +29,13 @@
 package com.cburch.logisim.gui.generic;
 
 public interface AttrTableModel {
-  public void addAttrTableModelListener(AttrTableModelListener listener);
+  void addAttrTableModelListener(AttrTableModelListener listener);
 
-  public AttrTableModelRow getRow(int rowIndex);
+  AttrTableModelRow getRow(int rowIndex);
 
-  public int getRowCount();
+  int getRowCount();
 
-  public String getTitle();
+  String getTitle();
 
-  public void removeAttrTableModelListener(AttrTableModelListener listener);
+  void removeAttrTableModelListener(AttrTableModelListener listener);
 }

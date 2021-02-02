@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -39,7 +39,7 @@ import java.util.prefs.Preferences;
 
 public class PrefMonitorBooleanConvert extends PrefMonitorBoolean {
 
-  private final ArrayList<ConvertEventListener> MyListeners = new ArrayList<ConvertEventListener>();
+  private final ArrayList<ConvertEventListener> MyListeners = new ArrayList<>();
 
   PrefMonitorBooleanConvert(String name, boolean dflt) {
     super(name, dflt);
@@ -50,7 +50,7 @@ public class PrefMonitorBooleanConvert extends PrefMonitorBoolean {
   }
 
   public void removeConvertListener(ConvertEventListener l) {
-    if (MyListeners.contains(l)) MyListeners.remove(l);
+    MyListeners.remove(l);
   }
 
   @Override

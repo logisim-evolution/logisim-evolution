@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -30,7 +30,6 @@ package com.cburch.logisim.analyze.model;
 
 import static com.cburch.logisim.analyze.Strings.S;
 
-import java.text.ParseException;
 import java.util.Iterator;
 
 public class Var implements Iterable<String> {

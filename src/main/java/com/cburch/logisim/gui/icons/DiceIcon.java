@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -50,20 +50,16 @@ public class DiceIcon extends AnnimatedIcon {
   protected void paintIcon(Graphics2D g2) {
     g2.setColor(Color.BLACK);
     g2.drawRoundRect(0, 0, scale(16), scale(16), scale(5), scale(5));
-    if (state == 1 || state > 2)
-      g2.fillOval(scale(2), scale(2), scale(3), scale(3));
+    if (state == 1 || state > 2) g2.fillOval(scale(2), scale(2), scale(3), scale(3));
     if (state == 5) {
       g2.fillOval(scale(2), scale(6), scale(3), scale(3));
       g2.fillOval(scale(10), scale(6), scale(3), scale(3));
     }
-    if (state == 0 || state == 4 || state == 2)
-      g2.fillOval(scale(6), scale(6), scale(3), scale(3));
+    if (state == 0 || state == 4 || state == 2) g2.fillOval(scale(6), scale(6), scale(3), scale(3));
     if (state > 1) {
       g2.fillOval(scale(2), scale(10), scale(3), scale(3));
       g2.fillOval(scale(10), scale(2), scale(3), scale(3));
     }
-    if (state > 2 || state == 1) 
-      g2.fillOval(scale(10), scale(10), scale(3), scale(3));
+    if (state > 2 || state == 1) g2.fillOval(scale(10), scale(10), scale(3), scale(3));
   }
-
 }

@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -53,10 +53,10 @@ public class SetAttributeAction extends Action {
   public SetAttributeAction(Circuit circuit, StringGetter nameGetter) {
     this.nameGetter = nameGetter;
     this.circuit = circuit;
-    this.comps = new ArrayList<Component>();
-    this.attrs = new ArrayList<Attribute<Object>>();
-    this.values = new ArrayList<Object>();
-    this.oldValues = new ArrayList<Object>();
+    this.comps = new ArrayList<>();
+    this.attrs = new ArrayList<>();
+    this.values = new ArrayList<>();
+    this.oldValues = new ArrayList<>();
   }
 
   @Override

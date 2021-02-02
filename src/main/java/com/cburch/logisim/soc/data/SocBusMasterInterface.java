@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -31,5 +31,5 @@ package com.cburch.logisim.soc.data;
 import com.cburch.logisim.circuit.CircuitState;
 
 public interface SocBusMasterInterface {
-   public void initializeTransaction(SocBusTransaction trans, String busId, CircuitState cstate);
+   void initializeTransaction(SocBusTransaction trans, String busId, CircuitState cstate);
 }

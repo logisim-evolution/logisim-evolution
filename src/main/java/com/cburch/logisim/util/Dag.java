@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -38,7 +38,7 @@ public class Dag {
     @SuppressWarnings("unused")
     Object data;
 
-    HashSet<Node> succs = new HashSet<Node>(); // of Nodes
+    HashSet<Node> succs = new HashSet<>(); // of Nodes
     int numPreds = 0;
     boolean mark;
 
@@ -47,7 +47,7 @@ public class Dag {
     }
   }
 
-  private final HashMap<Object, Node> nodes = new HashMap<Object, Node>();
+  private final HashMap<Object, Node> nodes = new HashMap<>();
 
   public Dag() {}
 
@@ -70,7 +70,7 @@ public class Dag {
 
     // Search starting at query: If base is found, then it follows
     // the query already, and so query cannot follow base.
-    LinkedList<Node> fringe = new LinkedList<Node>();
+    LinkedList<Node> fringe = new LinkedList<>();
     fringe.add(query);
     while (!fringe.isEmpty()) {
       Node n = fringe.removeFirst();

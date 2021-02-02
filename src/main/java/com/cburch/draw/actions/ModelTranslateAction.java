@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -44,7 +44,7 @@ public class ModelTranslateAction extends ModelAction {
 
   public ModelTranslateAction(CanvasModel model, Collection<CanvasObject> moved, int dx, int dy) {
     super(model);
-    this.moved = new HashSet<CanvasObject>(moved);
+    this.moved = new HashSet<>(moved);
     this.dx = dx;
     this.dy = dy;
   }

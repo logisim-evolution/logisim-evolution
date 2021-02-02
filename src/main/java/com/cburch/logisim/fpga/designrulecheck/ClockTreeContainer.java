@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -40,10 +40,10 @@ public class ClockTreeContainer {
 
   public ClockTreeContainer(ArrayList<String> Hierarchy, int sourceId,
 		                    boolean pinClockSource) {
-    ClockSources = new ArrayList<ConnectionPoint>();
-    ClockNets = new ArrayList<ConnectionPoint>();
+    ClockSources = new ArrayList<>();
+    ClockNets = new ArrayList<>();
     ClockSourceId = sourceId;
-    HierarchyId = new ArrayList<String>();
+    HierarchyId = new ArrayList<>();
     HierarchyId.addAll(Hierarchy);
     isPinClockSource = pinClockSource;
   }
@@ -74,7 +74,7 @@ public class ClockTreeContainer {
   }
 
   public ArrayList<Byte> GetClockEntries(Net NetInfo) {
-    ArrayList<Byte> result = new ArrayList<Byte>();
+    ArrayList<Byte> result = new ArrayList<>();
     for (ConnectionPoint SolderPoint : ClockSources) {
       if (SolderPoint.GetParrentNet().equals(NetInfo))
         result.add(SolderPoint.GetParrentNetBitIndex());

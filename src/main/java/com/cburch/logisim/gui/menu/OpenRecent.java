@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -46,22 +46,16 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
 class OpenRecent extends JMenu implements PropertyChangeListener {
-  private class RecentItem extends JMenuItem implements ActionListener {
-    private static final long serialVersionUID = 1L;
-    private final File file;
+  private static final long serialVersionUID = 1L;
+  private static final int MAX_ITEM_LENGTH = 50;
+  private final LogisimMenuBar menubar;
+  private final List<RecentItem> recentItems;
 
-    RecentItem(File file) {
-      super(getFileText(file));
-      this.file = file;
-      setEnabled(file != null);
-      addActionListener(this);
-    }
-
-    public void actionPerformed(ActionEvent event) {
-      Project proj = menubar.getProject();
-      Component par = proj == null ? null : proj.getFrame().getCanvas();
-      ProjectActions.doOpen(par, proj, file);
-    }
+  OpenRecent(LogisimMenuBar menubar) {
+    this.menubar = menubar;
+    this.recentItems = new ArrayList<>();
+    AppPreferences.addPropertyChangeListener(AppPreferences.RECENT_PROJECTS, this);
+    renewItems();
   }
 
   private static String getFileText(File file) {
@@ -85,20 +79,6 @@ class OpenRecent extends JMenu implements PropertyChangeListener {
         return "..." + ret;
       }
     }
-  }
-
-  private static final long serialVersionUID = 1L;
-
-  private static final int MAX_ITEM_LENGTH = 50;
-  private final LogisimMenuBar menubar;
-
-  private final List<RecentItem> recentItems;
-
-  OpenRecent(LogisimMenuBar menubar) {
-    this.menubar = menubar;
-    this.recentItems = new ArrayList<RecentItem>();
-    AppPreferences.addPropertyChangeListener(AppPreferences.RECENT_PROJECTS, this);
-    renewItems();
   }
 
   void localeChanged() {
@@ -134,6 +114,24 @@ class OpenRecent extends JMenu implements PropertyChangeListener {
 
     for (RecentItem item : recentItems) {
       add(item);
+    }
+  }
+
+  private class RecentItem extends JMenuItem implements ActionListener {
+    private static final long serialVersionUID = 1L;
+    private final File file;
+
+    RecentItem(File file) {
+      super(getFileText(file));
+      this.file = file;
+      setEnabled(file != null);
+      addActionListener(this);
+    }
+
+    public void actionPerformed(ActionEvent event) {
+      Project proj = menubar.getProject();
+      Component par = proj == null ? null : proj.getFrame().getCanvas();
+      ProjectActions.doOpen(par, proj, file);
     }
   }
 }

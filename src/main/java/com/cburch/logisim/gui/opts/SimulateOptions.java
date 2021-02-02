@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -47,86 +47,15 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 class SimulateOptions extends OptionsPanel {
-  private class MyListener implements ActionListener, AttributeListener {
-    public void actionPerformed(ActionEvent event) {
-      Object source = event.getSource();
-      if (source == simLimit) {
-        Integer opt = (Integer) simLimit.getSelectedItem();
-        if (opt != null) {
-          AttributeSet attrs = getOptions().getAttributeSet();
-          getProject().doAction(OptionsActions.setAttribute(attrs, Options.ATTR_SIM_LIMIT, opt));
-        }
-      } else if (source == simRandomness) {
-        AttributeSet attrs = getOptions().getAttributeSet();
-        Object val = simRandomness.isSelected() ? Options.sim_rand_dflt : Integer.valueOf(0);
-        getProject().doAction(OptionsActions.setAttribute(attrs, Options.ATTR_SIM_RAND, val));
-      } else if (source == gateUndefined) {
-        ComboOption opt = (ComboOption) gateUndefined.getSelectedItem();
-        if (opt != null) {
-          AttributeSet attrs = getOptions().getAttributeSet();
-          getProject().doAction(
-                  OptionsActions.setAttribute(attrs, Options.ATTR_GATE_UNDEFINED, opt.getValue()));
-        }
-      } else if (source == MemUnknown) {
-        AppPreferences.Memory_Startup_Unknown.set(MemUnknown.isSelected());
-        Simulator sim = getProject().getSimulator();
-        if (sim != null) sim.requestReset();
-      }
-    }
-
-    public void attributeListChanged(AttributeEvent e) {}
-
-    public void attributeValueChanged(AttributeEvent e) {
-      Attribute<?> attr = e.getAttribute();
-      Object val = e.getValue();
-      if (attr == Options.ATTR_SIM_LIMIT) {
-        loadSimLimit((Integer) val);
-      } else if (attr == Options.ATTR_SIM_RAND) {
-        loadSimRandomness((Integer) val);
-      } else if (attr == Options.ATTR_GATE_UNDEFINED) {
-        loadGateUndefined(val);
-      }
-    }
-
-    private void loadGateUndefined(Object val) {
-      ComboOption.setSelected(gateUndefined, val);
-    }
-
-    @SuppressWarnings("rawtypes")
-    private void loadSimLimit(Integer val) {
-      int value = val.intValue();
-      ComboBoxModel model = simLimit.getModel();
-      for (int i = 0; i < model.getSize(); i++) {
-        Integer opt = (Integer) model.getElementAt(i);
-        if (opt.intValue() == value) {
-          simLimit.setSelectedItem(opt);
-        }
-      }
-    }
-
-    private void loadSimRandomness(Integer val) {
-      simRandomness.setSelected(val.intValue() > 0);
-    }
-  }
-
   private static final long serialVersionUID = 1L;
-
   private final MyListener myListener = new MyListener();
-
   private final JLabel simLimitLabel = new JLabel();
 
   @SuppressWarnings({"unchecked", "rawtypes"})
   private final JComboBox simLimit =
       new JComboBox(
           new Integer[] {
-              200,
-              500,
-              1000,
-              2000,
-              5000,
-              10000,
-              20000,
-              50000,
+            200, 500, 1000, 2000, 5000, 10000, 20000, 50000,
           });
 
   private final JCheckBox simRandomness = new JCheckBox();
@@ -140,7 +69,6 @@ class SimulateOptions extends OptionsPanel {
             new ComboOption(Options.GATE_UNDEFINED_IGNORE),
             new ComboOption(Options.GATE_UNDEFINED_ERROR)
           });
-
 
   public SimulateOptions(OptionsFrame window) {
     super(window);
@@ -189,5 +117,68 @@ class SimulateOptions extends OptionsPanel {
     gateUndefinedLabel.setText(S.get("gateUndefined"));
     simRandomness.setText(S.get("simulateRandomness"));
     MemUnknown.setText(S.get("MemoriesStartupUnknown"));
+  }
+
+  private class MyListener implements ActionListener, AttributeListener {
+    public void actionPerformed(ActionEvent event) {
+      Object source = event.getSource();
+      if (source == simLimit) {
+        Integer opt = (Integer) simLimit.getSelectedItem();
+        if (opt != null) {
+          AttributeSet attrs = getOptions().getAttributeSet();
+          getProject().doAction(OptionsActions.setAttribute(attrs, Options.ATTR_SIM_LIMIT, opt));
+        }
+      } else if (source == simRandomness) {
+        AttributeSet attrs = getOptions().getAttributeSet();
+        Object val = simRandomness.isSelected() ? Options.sim_rand_dflt : Integer.valueOf(0);
+        getProject().doAction(OptionsActions.setAttribute(attrs, Options.ATTR_SIM_RAND, val));
+      } else if (source == gateUndefined) {
+        ComboOption opt = (ComboOption) gateUndefined.getSelectedItem();
+        if (opt != null) {
+          AttributeSet attrs = getOptions().getAttributeSet();
+          getProject()
+              .doAction(
+                  OptionsActions.setAttribute(attrs, Options.ATTR_GATE_UNDEFINED, opt.getValue()));
+        }
+      } else if (source == MemUnknown) {
+        AppPreferences.Memory_Startup_Unknown.set(MemUnknown.isSelected());
+        Simulator sim = getProject().getSimulator();
+        if (sim != null) sim.requestReset();
+      }
+    }
+
+    public void attributeListChanged(AttributeEvent e) {}
+
+    public void attributeValueChanged(AttributeEvent e) {
+      Attribute<?> attr = e.getAttribute();
+      Object val = e.getValue();
+      if (attr == Options.ATTR_SIM_LIMIT) {
+        loadSimLimit((Integer) val);
+      } else if (attr == Options.ATTR_SIM_RAND) {
+        loadSimRandomness((Integer) val);
+      } else if (attr == Options.ATTR_GATE_UNDEFINED) {
+        loadGateUndefined(val);
+      }
+    }
+
+    private void loadGateUndefined(Object val) {
+      ComboOption.setSelected(gateUndefined, val);
+    }
+
+    @SuppressWarnings("rawtypes")
+    private void loadSimLimit(Integer val) {
+      int value = val.intValue();
+      ComboBoxModel model = simLimit.getModel();
+      for (int i = 0; i < model.getSize(); i++) {
+        Integer opt = (Integer) model.getElementAt(i);
+        if (opt.intValue() == value) {
+          simLimit.setSelectedItem(opt);
+        }
+      }
+    }
+
+    private void loadSimRandomness(Integer val) {
+      simRandomness.setSelected(val.intValue() > 0);
+    }
   }
 }

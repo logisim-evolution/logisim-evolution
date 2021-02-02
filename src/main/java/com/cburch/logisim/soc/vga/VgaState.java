@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -28,10 +28,6 @@
 
 package com.cburch.logisim.soc.vga;
 
-import java.awt.Graphics;
-import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.Bounds;
@@ -46,6 +42,9 @@ import com.cburch.logisim.soc.data.SocBusSlaveListener;
 import com.cburch.logisim.soc.data.SocBusSnifferInterface;
 import com.cburch.logisim.soc.data.SocBusTransaction;
 import com.cburch.logisim.soc.data.SocSupport;
+import java.awt.Graphics;
+import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 
 public class VgaState implements SocBusSlaveInterface, SocBusSnifferInterface,SocBusMasterInterface {
 
@@ -163,7 +162,7 @@ public class VgaState implements SocBusSlaveInterface, SocBusSnifferInterface,So
   private Boolean soft640x480 = true;
   private Boolean soft800x600 = false;
   private Boolean soft1024x768 = false;
-  private final ArrayList<SocBusSlaveListener> listeners = new ArrayList<SocBusSlaveListener>();
+  private final ArrayList<SocBusSlaveListener> listeners = new ArrayList<>();
   
   public AttributeOption getInitialMode() { return VgaAttributes.MODES.get(displayMode); }
   public AttributeOption getCurrentMode() {
@@ -387,7 +386,9 @@ public class VgaState implements SocBusSlaveInterface, SocBusSnifferInterface,So
 
   public void registerListener(SocBusSlaveListener l) { if (!listeners.contains(l)) listeners.add(l); }
 
-  public void removeListener(SocBusSlaveListener l) { if (listeners.contains(l)) listeners.remove(l); }
+  public void removeListener(SocBusSlaveListener l) {
+    listeners.remove(l);
+  }
 
   public InstanceComponent getComponent() { return (InstanceComponent) attachedBus.getComponent(); }
 

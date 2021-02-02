@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -53,7 +53,7 @@ public final class CircuitMutation extends CircuitTransaction {
 
   public CircuitMutation(Circuit circuit) {
     this.primary = circuit;
-    this.changes = new ArrayList<CircuitChange>();
+    this.changes = new ArrayList<>();
   }
 
   public void add(Component comp) {
@@ -75,7 +75,7 @@ public final class CircuitMutation extends CircuitTransaction {
   @Override
   protected Map<Circuit, Integer> getAccessedCircuits() {
     HashMap<Circuit, Integer> accessMap = new HashMap<>();
-    HashSet<Circuit> supercircsDone = new HashSet<Circuit>();
+    HashSet<Circuit> supercircsDone = new HashSet<>();
     HashSet<VhdlEntity> vhdlDone = new HashSet<>();
     HashSet<ComponentFactory> siblingsDone = new HashSet<>();
     for (CircuitChange change : changes) {

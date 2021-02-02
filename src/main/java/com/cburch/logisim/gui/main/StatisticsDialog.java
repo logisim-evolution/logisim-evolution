@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -52,6 +52,51 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumn;
 
 public class StatisticsDialog extends JDialog implements ActionListener {
+  private static final long serialVersionUID = 1L;
+
+  private StatisticsDialog(JFrame parent, String circuitName, StatisticsTableModel model) {
+    super(parent, true);
+    setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+    setTitle(S.fmt("statsDialogTitle", circuitName));
+
+    JTable table = new StatisticsTable();
+    TableSorter mySorter = new TableSorter(model, table.getTableHeader());
+    Comparator<String> comp =
+        new CompareString("", S.get("statsTotalWithout"), S.get("statsTotalWith"));
+    mySorter.setColumnComparator(String.class, comp);
+    table.setModel(mySorter);
+    JScrollPane tablePane = new JScrollPane(table);
+
+    JButton button = new JButton(S.get("statsCloseButton"));
+    button.addActionListener(this);
+    JPanel buttonPanel = new JPanel();
+    buttonPanel.add(button);
+
+    Container contents = this.getContentPane();
+    contents.setLayout(new BorderLayout());
+    contents.add(tablePane, BorderLayout.CENTER);
+    contents.add(buttonPanel, BorderLayout.PAGE_END);
+    this.pack();
+
+    Dimension pref = contents.getPreferredSize();
+    if (pref.width > 750 || pref.height > 550) {
+      if (pref.width > 750) pref.width = 750;
+      if (pref.height > 550) pref.height = 550;
+      this.setSize(pref);
+    }
+  }
+
+  public static void show(JFrame parent, LogisimFile file, Circuit circuit) {
+    FileStatistics stats = FileStatistics.compute(file, circuit);
+    StatisticsDialog dlog =
+        new StatisticsDialog(parent, circuit.getName(), new StatisticsTableModel(stats));
+    dlog.setVisible(true);
+  }
+
+  public void actionPerformed(ActionEvent e) {
+    this.dispose();
+  }
+
   private static class CompareString implements Comparator<String> {
     private final String[] fixedAtBottom;
 
@@ -167,50 +212,5 @@ public class StatisticsDialog extends JDialog implements ActionListener {
           return ""; // should never happen
       }
     }
-  }
-
-  public static void show(JFrame parent, LogisimFile file, Circuit circuit) {
-    FileStatistics stats = FileStatistics.compute(file, circuit);
-    StatisticsDialog dlog =
-        new StatisticsDialog(parent, circuit.getName(), new StatisticsTableModel(stats));
-    dlog.setVisible(true);
-  }
-
-  private static final long serialVersionUID = 1L;
-
-  private StatisticsDialog(JFrame parent, String circuitName, StatisticsTableModel model) {
-    super(parent, true);
-    setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-    setTitle(S.fmt("statsDialogTitle", circuitName));
-
-    JTable table = new StatisticsTable();
-    TableSorter mySorter = new TableSorter(model, table.getTableHeader());
-    Comparator<String> comp =
-        new CompareString("", S.get("statsTotalWithout"), S.get("statsTotalWith"));
-    mySorter.setColumnComparator(String.class, comp);
-    table.setModel(mySorter);
-    JScrollPane tablePane = new JScrollPane(table);
-
-    JButton button = new JButton(S.get("statsCloseButton"));
-    button.addActionListener(this);
-    JPanel buttonPanel = new JPanel();
-    buttonPanel.add(button);
-
-    Container contents = this.getContentPane();
-    contents.setLayout(new BorderLayout());
-    contents.add(tablePane, BorderLayout.CENTER);
-    contents.add(buttonPanel, BorderLayout.PAGE_END);
-    this.pack();
-
-    Dimension pref = contents.getPreferredSize();
-    if (pref.width > 750 || pref.height > 550) {
-      if (pref.width > 750) pref.width = 750;
-      if (pref.height > 550) pref.height = 550;
-      this.setSize(pref);
-    }
-  }
-
-  public void actionPerformed(ActionEvent e) {
-    this.dispose();
   }
 }

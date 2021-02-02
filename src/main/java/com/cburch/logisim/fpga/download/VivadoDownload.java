@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -132,7 +132,7 @@ public class VivadoDownload implements VendorDownload {
 
   @Override
   public ProcessBuilder DownloadToBoard() {
-    List<String> command = new ArrayList<String>();
+    List<String> command = new ArrayList<>();
     command.add(vivadoVendor.getBinaryPath(0));
     command.add("-mode");
     command.add("batch");
@@ -166,7 +166,7 @@ public class VivadoDownload implements VendorDownload {
     }
 
     // fill create project TCL script
-    ArrayList<String> contents = new ArrayList<String>();
+    ArrayList<String> contents = new ArrayList<>();
     contents.add(
         "create_project "
             + VIVADO_PROJECT_NAME
@@ -252,7 +252,7 @@ public class VivadoDownload implements VendorDownload {
   }
   
   private ArrayList<String> GetPinLocStrings() {
-    ArrayList<String> contents = new ArrayList<String>();
+    ArrayList<String> contents = new ArrayList<>();
     for (ArrayList<String> key : MapInfo.getMappableResources().keySet()) {
       MapComponent map = MapInfo.getMappableResources().get(key);
       for (int i = 0 ; i < map.getNrOfPins() ; i++) {
@@ -290,7 +290,7 @@ public class VivadoDownload implements VendorDownload {
   }
 
   private ProcessBuilder Stage0Project() {
-    List<String> command = new ArrayList<String>();
+    List<String> command = new ArrayList<>();
     command.add(vivadoVendor.getBinaryPath(0));
     command.add("-mode");
     command.add("batch");
@@ -302,7 +302,7 @@ public class VivadoDownload implements VendorDownload {
   }
 
   private ProcessBuilder Stage1Bit() {
-    List<String> command = new ArrayList<String>();
+    List<String> command = new ArrayList<>();
     command.add(vivadoVendor.getBinaryPath(0));
     command.add("-mode");
     command.add("batch");

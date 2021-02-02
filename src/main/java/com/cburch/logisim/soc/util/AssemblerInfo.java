@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -30,11 +30,6 @@ package com.cburch.logisim.soc.util;
 
 import static com.cburch.logisim.soc.Strings.S;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.soc.data.AssemblerHighlighter;
@@ -45,6 +40,10 @@ import com.cburch.logisim.soc.file.ElfSectionHeader;
 import com.cburch.logisim.soc.file.SectionHeader;
 import com.cburch.logisim.soc.file.SymbolTable;
 import com.cburch.logisim.util.StringGetter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
 
 public class AssemblerInfo {
 
@@ -161,7 +160,7 @@ public class AssemblerInfo {
     }
       
     public HashMap<AssemblerToken,StringGetter> replaceInstructions(AssemblerInterface assembler) {
-      HashMap<AssemblerToken,StringGetter> errors = new HashMap<AssemblerToken,StringGetter>();
+      HashMap<AssemblerToken,StringGetter> errors = new HashMap<>();
       for (long addr : instructions.keySet()) {
         AssemblerAsmInstruction asm = instructions.get(addr);
         asm.setProgramCounter(addr);
@@ -193,8 +192,8 @@ public class AssemblerInfo {
     private void init(long start) {
       sectionStart = start;
       sectionEnd = start;
-      data = new HashMap<Long,Byte>();
-      instructions = new HashMap<Long,AssemblerAsmInstruction>();
+      data = new HashMap<>();
+      instructions = new HashMap<>();
     }
   }
   
@@ -208,7 +207,7 @@ public class AssemblerInfo {
     }
     
     public ArrayList<AssemblerSectionInfo> getAll() {
-      ArrayList<AssemblerSectionInfo> ret = new ArrayList<AssemblerSectionInfo>();
+      ArrayList<AssemblerSectionInfo> ret = new ArrayList<>();
       for (SectionHeader hdr : super.getHeaders()) 
         if (hdr instanceof AssemblerSectionInfo) 
           ret.add((AssemblerSectionInfo)hdr);
@@ -225,7 +224,7 @@ public class AssemblerInfo {
 
   public AssemblerInfo(AssemblerInterface assembler) {
     sections = new SectionHeaders();
-    errors = new HashMap<AssemblerToken,StringGetter>();
+    errors = new HashMap<>();
     currentSection = -1;
     this.assembler = assembler;
   }
@@ -236,7 +235,7 @@ public class AssemblerInfo {
                        HashMap<String,AssemblerMacro> macros) {
     errors.clear();
     sections.clear();
-    HashMap<String,Integer> defines = new HashMap<String,Integer>(); 
+    HashMap<String,Integer> defines = new HashMap<>();
     currentSection = -1;
     /* first pass: go through all tokens and mark the labels */
     for (int i = 0 ; i < tokens.size() ; i++) {
@@ -314,7 +313,7 @@ public class AssemblerInfo {
     HashSet<Integer> acceptedParameters = assembler.getAcceptedParameterTypes();
     int skip = 0;
     if (index+1 < tokens.size()) {
-      ArrayList<AssemblerToken> params = new ArrayList<AssemblerToken>();
+      ArrayList<AssemblerToken> params = new ArrayList<>();
       AssemblerToken next;
       do {
     	next = tokens.get(index+skip+1);
@@ -365,7 +364,7 @@ public class AssemblerInfo {
     HashSet<Integer> acceptedParameters = assembler.getAcceptedParameterTypes();
     int skip = 0;
     if (index+1 < tokens.size()) {
-      ArrayList<AssemblerToken> params = new ArrayList<AssemblerToken>();
+      ArrayList<AssemblerToken> params = new ArrayList<>();
       AssemblerToken next;
       do {
     	next = tokens.get(index+skip+1);

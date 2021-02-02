@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -52,7 +52,7 @@ public class ComparatorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Inputs = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> Inputs = new TreeMap<>();
     int inputbits = (attrs.getValue(StdAttr.WIDTH).getWidth() == 1) ? 1 : NrOfBitsId;
     Inputs.put("DataA", inputbits);
     Inputs.put("DataB", inputbits);
@@ -62,7 +62,7 @@ public class ComparatorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   @Override
   public ArrayList<String> GetModuleFunctionality(
       Netlist TheNetlist, AttributeSet attrs, FPGAReport Reporter, String HDLType) {
-    ArrayList<String> Contents = new ArrayList<String>();
+    ArrayList<String> Contents = new ArrayList<>();
     int nrOfBits = attrs.getValue(StdAttr.WIDTH).getWidth();
     if (HDLType.equals(VHDL)) {
       if (nrOfBits == 1) {
@@ -116,7 +116,7 @@ public class ComparatorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Outputs = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> Outputs = new TreeMap<>();
     Outputs.put("A_GT_B", 1);
     Outputs.put("A_EQ_B", 1);
     Outputs.put("A_LT_B", 1);
@@ -125,7 +125,7 @@ public class ComparatorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<Integer, String> GetParameterList(AttributeSet attrs) {
-    SortedMap<Integer, String> Parameters = new TreeMap<Integer, String>();
+    SortedMap<Integer, String> Parameters = new TreeMap<>();
     int inputbits = attrs.getValue(StdAttr.WIDTH).getWidth();
     if (inputbits > 1) {
       Parameters.put(NrOfBitsId, NrOfBitsStr);
@@ -137,7 +137,7 @@ public class ComparatorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   @Override
   public SortedMap<String, Integer> GetParameterMap(
       Netlist Nets, NetlistComponent ComponentInfo, FPGAReport Reporter) {
-    SortedMap<String, Integer> ParameterMap = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> ParameterMap = new TreeMap<>();
     int nrOfBits = ComponentInfo.GetComponent().getEnd(0).getWidth().getWidth();
     int IsSigned = 0;
     AttributeSet attrs = ComponentInfo.GetComponent().getAttributeSet();
@@ -154,7 +154,7 @@ public class ComparatorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   @Override
   public SortedMap<String, String> GetPortMap(
 	      Netlist Nets, Object MapInfo, FPGAReport Reporter, String HDLType) {
-    SortedMap<String, String> PortMap = new TreeMap<String, String>();
+    SortedMap<String, String> PortMap = new TreeMap<>();
 	if (!(MapInfo instanceof NetlistComponent)) return PortMap;
 	NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
     PortMap.putAll(GetNetMap("DataA", true, ComponentInfo, 0, Reporter, HDLType, Nets));
@@ -172,7 +172,7 @@ public class ComparatorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist Nets) {
-    SortedMap<String, Integer> Wires = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> Wires = new TreeMap<>();
     int inputbits = attrs.getValue(StdAttr.WIDTH).getWidth();
     if (inputbits > 1) {
       Wires.put("s_signed_less", 1);

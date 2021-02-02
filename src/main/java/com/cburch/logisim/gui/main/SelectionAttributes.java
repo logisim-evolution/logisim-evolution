@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -49,32 +49,37 @@ import java.util.Set;
 
 class SelectionAttributes extends AbstractAttributeSet {
 
-  private class Listener implements Selection.Listener, AttributeListener {
+  private static final Attribute<?>[] EMPTY_ATTRIBUTES = new Attribute<?>[0];
+  private static final Object[] EMPTY_VALUES = new Object[0];
+  private final Canvas canvas;
+  private final Selection selection;
+  private final Listener listener;
+  private boolean listening;
+  private Set<Component> selected;
+  private Attribute<?>[] attrs;
+  private boolean[] readOnly;
+  private Object[] values;
+  private List<Attribute<?>> attrsView;
 
-    @Override
-    public void attributeListChanged(AttributeEvent e) {
-      if (listening) {
-        updateList(false);
-      }
-    }
+  public SelectionAttributes(Canvas canvas, Selection selection) {
+    this.canvas = canvas;
+    this.selection = selection;
+    this.listener = new Listener();
+    this.listening = true;
+    this.selected = Collections.emptySet();
+    this.attrs = EMPTY_ATTRIBUTES;
+    this.values = EMPTY_VALUES;
+    this.attrsView = Collections.emptyList();
 
-    @Override
-    public void attributeValueChanged(AttributeEvent e) {
-      if (listening) {
-        updateList(false);
-      }
-    }
-
-    @Override
-    public void selectionChanged(Selection.Event e) {
-      updateList(true);
-    }
+    selection.addListener(listener);
+    updateList(true);
+    setListening(true);
   }
 
   private static LinkedHashMap<Attribute<Object>, Object> computeAttributes(
       Collection<Component> newSel) {
     LinkedHashMap<Attribute<Object>, Object> attrMap;
-    attrMap = new LinkedHashMap<Attribute<Object>, Object>();
+    attrMap = new LinkedHashMap<>();
     Iterator<Component> sit = newSel.iterator();
     if (sit.hasNext()) {
       AttributeSet first = sit.next().getAttributeSet();
@@ -122,9 +127,9 @@ class SelectionAttributes extends AbstractAttributeSet {
     }
 
     if (includeWires) {
-      return new HashSet<Component>(comps);
+      return new HashSet<>(comps);
     } else {
-      HashSet<Component> ret = new HashSet<Component>();
+      HashSet<Component> ret = new HashSet<>();
       for (Component comp : comps) {
         if (!(comp instanceof Wire)) {
           ret.add(comp);
@@ -174,38 +179,6 @@ class SelectionAttributes extends AbstractAttributeSet {
       }
       return true;
     }
-  }
-
-  private static final Attribute<?>[] EMPTY_ATTRIBUTES = new Attribute<?>[0];
-  private static final Object[] EMPTY_VALUES = new Object[0];
-  private final Canvas canvas;
-  private final Selection selection;
-  private final Listener listener;
-  private boolean listening;
-
-  private Set<Component> selected;
-
-  private Attribute<?>[] attrs;
-
-  private boolean[] readOnly;
-
-  private Object[] values;
-
-  private List<Attribute<?>> attrsView;
-
-  public SelectionAttributes(Canvas canvas, Selection selection) {
-    this.canvas = canvas;
-    this.selection = selection;
-    this.listener = new Listener();
-    this.listening = true;
-    this.selected = Collections.emptySet();
-    this.attrs = EMPTY_ATTRIBUTES;
-    this.values = EMPTY_VALUES;
-    this.attrsView = Collections.emptyList();
-
-    selection.addListener(listener);
-    updateList(true);
-    setListening(true);
   }
 
   @Override
@@ -351,7 +324,7 @@ class SelectionAttributes extends AbstractAttributeSet {
         this.selected = newSel;
       }
       this.attrs = newAttrs;
-      this.attrsView = new UnmodifiableList<Attribute<?>>(newAttrs);
+      this.attrsView = new UnmodifiableList<>(newAttrs);
       this.values = newValues;
       this.readOnly = newReadOnly;
 
@@ -378,6 +351,28 @@ class SelectionAttributes extends AbstractAttributeSet {
       } else {
         fireAttributeListChanged();
       }
+    }
+  }
+
+  private class Listener implements Selection.Listener, AttributeListener {
+
+    @Override
+    public void attributeListChanged(AttributeEvent e) {
+      if (listening) {
+        updateList(false);
+      }
+    }
+
+    @Override
+    public void attributeValueChanged(AttributeEvent e) {
+      if (listening) {
+        updateList(false);
+      }
+    }
+
+    @Override
+    public void selectionChanged(Selection.Event e) {
+      updateList(true);
     }
   }
 }

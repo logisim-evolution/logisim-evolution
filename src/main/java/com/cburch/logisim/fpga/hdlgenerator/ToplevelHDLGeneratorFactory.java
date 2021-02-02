@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -62,7 +62,7 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public ArrayList<String> GetComponentDeclarationSection(Netlist TheNetlist, AttributeSet attrs) {
-    ArrayList<String> Components = new ArrayList<String>();
+    ArrayList<String> Components = new ArrayList<>();
     int NrOfClockTrees = TheNetlist.NumberOfClockTrees();
     if (NrOfClockTrees > 0) {
       TickComponentHDLGeneratorFactory Ticker =
@@ -103,7 +103,7 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetInOutList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> InOut = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> InOut = new TreeMap<>();
     for (String io : MyIOComponents.GetMappedIOPinNames()) {
       InOut.put(io, 1);
     }
@@ -112,7 +112,7 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Outputs = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> Outputs = new TreeMap<>();
     for (String io : MyIOComponents.GetMappedOutputPinNames()) {
       Outputs.put(io, 1);
     }
@@ -121,7 +121,7 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Inputs = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> Inputs = new TreeMap<>();
     int NrOfClockTrees = TheNetlist.NumberOfClockTrees();
     /* First we instantiate the Clock tree busses when present */
     if (NrOfClockTrees > 0 || TheNetlist.RequiresGlobalClockConnection()) {
@@ -136,7 +136,7 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   @Override
   public ArrayList<String> GetModuleFunctionality(
       Netlist TheNetlist, AttributeSet attrs, FPGAReport Reporter, String HDLType) {
-    ArrayList<String> Contents = new ArrayList<String>();
+    ArrayList<String> Contents = new ArrayList<>();
     int NrOfClockTrees = TheNetlist.NumberOfClockTrees();
     /* First we process all components */
     Contents.addAll(MakeRemarkBlock("Here all signal adaptations are performed", 3, HDLType));
@@ -187,7 +187,7 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist Nets) {
-    SortedMap<String, Integer> Wires = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> Wires = new TreeMap<>();
     int NrOfClockTrees = Nets.NumberOfClockTrees();
     int NrOfInputBubbles = Nets.NumberOfInputBubbles();
     int NrOfOutputBubbles = Nets.NumberOfOutputBubbles();
@@ -198,7 +198,7 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       Wires.put(TickComponentHDLGeneratorFactory.FPGATick, 1);
       for (int clockBus = 0; clockBus < NrOfClockTrees; clockBus++) {
         Wires.put(
-            "s_" + ClockTreeName + Integer.toString(clockBus),
+            "s_" + ClockTreeName + clockBus,
             ClockHDLGeneratorFactory.NrOfClockBits);
       }
     }

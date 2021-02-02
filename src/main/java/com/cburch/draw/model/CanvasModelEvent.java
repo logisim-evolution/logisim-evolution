@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -39,71 +39,16 @@ import java.util.Map;
 import java.util.Set;
 
 public class CanvasModelEvent extends EventObject {
-  public static CanvasModelEvent forAdd(
-      CanvasModel source, Collection<? extends CanvasObject> affected) {
-    return new CanvasModelEvent(source, ACTION_ADDED, affected);
-  }
-
-  public static CanvasModelEvent forChangeAttributes(
-      CanvasModel source,
-      Map<AttributeMapKey, Object> oldValues,
-      Map<AttributeMapKey, Object> newValues) {
-    return new CanvasModelEvent(source, ACTION_ATTRIBUTES_CHANGED, oldValues, newValues);
-  }
-
-  public static CanvasModelEvent forChangeText(
-      CanvasModel source, CanvasObject obj, String oldText, String newText) {
-    return new CanvasModelEvent(
-        source, ACTION_TEXT_CHANGED, Collections.singleton(obj), oldText, newText);
-  }
-
-  public static CanvasModelEvent forDeleteHandle(CanvasModel source, Handle handle) {
-    return new CanvasModelEvent(source, ACTION_HANDLE_DELETED, handle);
-  }
-
-  public static CanvasModelEvent forInsertHandle(CanvasModel source, Handle desired) {
-    return new CanvasModelEvent(source, ACTION_HANDLE_INSERTED, desired);
-  }
-
-  public static CanvasModelEvent forMoveHandle(CanvasModel source, HandleGesture gesture) {
-    return new CanvasModelEvent(source, ACTION_HANDLE_MOVED, gesture);
-  }
-
-  public static CanvasModelEvent forRemove(
-      CanvasModel source, Collection<? extends CanvasObject> affected) {
-    return new CanvasModelEvent(source, ACTION_REMOVED, affected);
-  }
-
-  public static CanvasModelEvent forReorder(
-      CanvasModel source, Collection<ReorderRequest> requests) {
-    return new CanvasModelEvent(true, source, ACTION_REORDERED, requests);
-  }
-
-  public static CanvasModelEvent forTranslate(
-      CanvasModel source, Collection<? extends CanvasObject> affected, int dx, int dy) {
-    return new CanvasModelEvent(source, ACTION_TRANSLATED, affected, 0, 0);
-  }
-
-  private static final long serialVersionUID = 1L;
-
   public static final int ACTION_ADDED = 0;
-
   public static final int ACTION_REMOVED = 1;
-
   public static final int ACTION_TRANSLATED = 2;
-
   public static final int ACTION_REORDERED = 3;
-
   public static final int ACTION_HANDLE_MOVED = 4;
-
   public static final int ACTION_HANDLE_INSERTED = 5;
-
   public static final int ACTION_HANDLE_DELETED = 6;
-
   public static final int ACTION_ATTRIBUTES_CHANGED = 7;
-
   public static final int ACTION_TEXT_CHANGED = 8;
-
+  private static final long serialVersionUID = 1L;
   private final int action;
   private Collection<? extends CanvasObject> affected;
   private int deltaX;
@@ -115,15 +60,14 @@ public class CanvasModelEvent extends EventObject {
   private HandleGesture gesture;
   private String oldText;
   private String newText;
-
   // the boolean parameter is just because the compiler insists upon it to
   // avoid an erasure conflict with the first constructor
   private CanvasModelEvent(
       boolean dummy, CanvasModel source, int action, Collection<ReorderRequest> requests) {
-    this(source, action, Collections.<CanvasObject>emptySet());
+    this(source, action, Collections.emptySet());
 
     List<CanvasObject> affected;
-    affected = new ArrayList<CanvasObject>(requests.size());
+    affected = new ArrayList<>(requests.size());
     for (ReorderRequest r : requests) {
       affected.add(r.getObject());
     }
@@ -185,22 +129,67 @@ public class CanvasModelEvent extends EventObject {
       int action,
       Map<AttributeMapKey, Object> oldValues,
       Map<AttributeMapKey, Object> newValues) {
-    this(source, action, Collections.<CanvasObject>emptySet());
+    this(source, action, Collections.emptySet());
 
     Set<CanvasObject> affected;
-    affected = new HashSet<CanvasObject>(newValues.size());
+    affected = new HashSet<>(newValues.size());
     for (AttributeMapKey key : newValues.keySet()) {
       affected.add(key.getObject());
     }
     this.affected = affected;
 
     Map<AttributeMapKey, Object> oldValuesCopy;
-    oldValuesCopy = new HashMap<AttributeMapKey, Object>(oldValues);
+    oldValuesCopy = new HashMap<>(oldValues);
     Map<AttributeMapKey, Object> newValuesCopy;
-    newValuesCopy = new HashMap<AttributeMapKey, Object>(newValues);
+    newValuesCopy = new HashMap<>(newValues);
 
     this.oldValues = Collections.unmodifiableMap(oldValuesCopy);
     this.newValues = Collections.unmodifiableMap(newValuesCopy);
+  }
+
+  public static CanvasModelEvent forAdd(
+      CanvasModel source, Collection<? extends CanvasObject> affected) {
+    return new CanvasModelEvent(source, ACTION_ADDED, affected);
+  }
+
+  public static CanvasModelEvent forChangeAttributes(
+      CanvasModel source,
+      Map<AttributeMapKey, Object> oldValues,
+      Map<AttributeMapKey, Object> newValues) {
+    return new CanvasModelEvent(source, ACTION_ATTRIBUTES_CHANGED, oldValues, newValues);
+  }
+
+  public static CanvasModelEvent forChangeText(
+      CanvasModel source, CanvasObject obj, String oldText, String newText) {
+    return new CanvasModelEvent(
+        source, ACTION_TEXT_CHANGED, Collections.singleton(obj), oldText, newText);
+  }
+
+  public static CanvasModelEvent forDeleteHandle(CanvasModel source, Handle handle) {
+    return new CanvasModelEvent(source, ACTION_HANDLE_DELETED, handle);
+  }
+
+  public static CanvasModelEvent forInsertHandle(CanvasModel source, Handle desired) {
+    return new CanvasModelEvent(source, ACTION_HANDLE_INSERTED, desired);
+  }
+
+  public static CanvasModelEvent forMoveHandle(CanvasModel source, HandleGesture gesture) {
+    return new CanvasModelEvent(source, ACTION_HANDLE_MOVED, gesture);
+  }
+
+  public static CanvasModelEvent forRemove(
+      CanvasModel source, Collection<? extends CanvasObject> affected) {
+    return new CanvasModelEvent(source, ACTION_REMOVED, affected);
+  }
+
+  public static CanvasModelEvent forReorder(
+      CanvasModel source, Collection<ReorderRequest> requests) {
+    return new CanvasModelEvent(true, source, ACTION_REORDERED, requests);
+  }
+
+  public static CanvasModelEvent forTranslate(
+      CanvasModel source, Collection<? extends CanvasObject> affected, int dx, int dy) {
+    return new CanvasModelEvent(source, ACTION_TRANSLATED, affected, 0, 0);
   }
 
   public int getAction() {
@@ -212,7 +201,7 @@ public class CanvasModelEvent extends EventObject {
     if (ret == null) {
       Map<AttributeMapKey, Object> newVals = newValues;
       if (newVals != null) {
-        Set<CanvasObject> keys = new HashSet<CanvasObject>();
+        Set<CanvasObject> keys = new HashSet<>();
         for (AttributeMapKey key : newVals.keySet()) {
           keys.add(key.getObject());
         }

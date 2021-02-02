@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -40,7 +40,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import javax.swing.Icon;
@@ -361,9 +360,9 @@ public class TableSorter extends AbstractTableModel {
   private final TableModelListener tableModelListener;
 
   private final Map<Class<?>, Comparator<Object>> columnComparators =
-      new HashMap<Class<?>, Comparator<Object>>();
+      new HashMap<>();
 
-  private final List<Directive> sortingColumns = new ArrayList<Directive>();
+  private final List<Directive> sortingColumns = new ArrayList<>();
 
   public TableSorter() {
     this.mouseListener = new MouseHandler();

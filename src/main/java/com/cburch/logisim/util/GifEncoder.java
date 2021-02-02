@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -250,7 +250,7 @@ public class GifEncoder {
 
   private static class LZWStringTable {
     static int Hash(short index, byte lastbyte) {
-      return ((int) ((short) (lastbyte << 8) ^ index) & 0xFFFF) % HASHSIZE;
+      return (((short) (lastbyte << 8) ^ index) & 0xFFFF) % HASHSIZE;
     }
 
     private static final int RES_CODES = 2;
@@ -473,7 +473,7 @@ public class GifEncoder {
     try {
       if (grabber.grabPixels() != true)
         throw new AWTException(S.get("grabberError") + ": " + grabber.status());
-    } catch (InterruptedException e) {;
+    } catch (InterruptedException e) {
     }
 
     byte[][] r = new byte[width_][height_];

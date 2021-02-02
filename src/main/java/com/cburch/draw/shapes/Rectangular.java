@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -160,7 +160,8 @@ abstract class Rectangular extends FillableCanvasObject {
           if (x1 == hx) newX0 -= dx;
           if (y0 == hy) newY1 -= dy;
           if (y1 == hy) newY0 -= dy;
-        } else {; // already handled
+        } else {
+          // already handled
         }
       }
       return new Handle[] {

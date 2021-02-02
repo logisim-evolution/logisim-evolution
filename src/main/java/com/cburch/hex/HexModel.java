@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -30,29 +30,29 @@ package com.cburch.hex;
 
 public interface HexModel {
   /** Registers a listener for changes to the values. */
-  public void addHexModelListener(HexModelListener l);
+  void addHexModelListener(HexModelListener l);
 
   /** Fills a series of values with the same value. */
-  public void fill(long start, long length, long value);
+  void fill(long start, long length, long value);
 
   /** Returns the value at the given address. */
-  public long get(long address);
+  long get(long address);
 
   /** Returns the offset of the initial value to be displayed. */
-  public long getFirstOffset();
+  long getFirstOffset();
 
   /** Returns the number of values to be displayed. */
-  public long getLastOffset();
+  long getLastOffset();
 
   /** Returns number of bits in each value. */
-  public int getValueWidth();
+  int getValueWidth();
 
   /** Unregisters a listener for changes to the values. */
-  public void removeHexModelListener(HexModelListener l);
+  void removeHexModelListener(HexModelListener l);
 
   /** Changes the value at the given address. */
-  public void set(long address, long value);
+  void set(long address, long value);
 
   /** Changes a series of values at the given addresses. */
-  public void set(long start, long[] values);
+  void set(long start, long[] values);
 }

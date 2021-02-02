@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -49,8 +49,12 @@ public class SignalDataBus extends SignalData {
     return format;
   }
 
+  public void setFormat(String format) {
+    this.format = format;
+  }
+
   public ImageIcon getIcon() {
-    return (ImageIcon) Icons.getIcon("chronoBus.gif");
+    return Icons.getIcon("chronoBus.gif");
   }
 
   public String getSelectedValue() {
@@ -76,10 +80,6 @@ public class SignalDataBus extends SignalData {
 
   public void setExpanded(boolean val) {
     expanded = val;
-  }
-
-  public void setFormat(String format) {
-    this.format = format;
   }
 
   private String toHexa(String bin) {

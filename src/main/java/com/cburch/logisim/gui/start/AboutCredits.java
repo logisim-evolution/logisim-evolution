@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -44,31 +44,9 @@ import java.util.ArrayList;
 import javax.swing.JComponent;
 
 class AboutCredits extends JComponent {
-  private static class CreditsLine {
-    private int y;
-    private final int type;
-    private final String text;
-    private final Image img;
-    private final int imgWidth;
-
-    public CreditsLine(int type, String text) {
-      this(type, text, null, 0);
-    }
-
-    public CreditsLine(int type, String text, Image img, int imgWidth) {
-      this.y = 0;
-      this.type = type;
-      this.text = text;
-      this.img = img;
-      this.imgWidth = imgWidth;
-    }
-  }
-
   private static final long serialVersionUID = 1L;
-
   /** Time to spend freezing the credits before after after scrolling */
   private static final int MILLIS_FREEZE = 1000;
-
   /** Speed of how quickly the scrolling occurs */
   private static final int MILLIS_PER_PIXEL = 20;
   /**
@@ -76,21 +54,16 @@ class AboutCredits extends JComponent {
    * rather than replacing this.
    */
   private static final String HENDRIX_PATH = "resources/logisim/hendrix.png";
-
   private static final int HENDRIX_WIDTH = 50;
-
   private final Color[] colorBase;
   private final Paint[] paintSteady;
   private final Font[] font;
-
-  private int scroll;
   private final float fadeStop;
-
   private final ArrayList<CreditsLine> lines;
+  private int scroll;
   private int initialLines; // number of lines to show in initial freeze
   private int initialHeight; // computed in code based on above
   private int linesHeight; // computed in code based on above
-
   public AboutCredits() {
     scroll = 0;
     setOpaque(false);
@@ -130,7 +103,7 @@ class AboutCredits extends JComponent {
     // User's
     // Guide. Current contributors appear in both locations.
 
-    lines = new ArrayList<CreditsLine>();
+    lines = new ArrayList<>();
     linesHeight = 0; // computed in paintComponent
     lines.add(new CreditsLine(0, S.get("creditsRoleFork")));
     lines.add(new CreditsLine(1, "College of the Holy Cross"));
@@ -246,5 +219,25 @@ class AboutCredits extends JComponent {
   public void setScroll(int value) {
     scroll = value;
     repaint();
+  }
+
+  private static class CreditsLine {
+    private final int type;
+    private final String text;
+    private final Image img;
+    private final int imgWidth;
+    private int y;
+
+    public CreditsLine(int type, String text) {
+      this(type, text, null, 0);
+    }
+
+    public CreditsLine(int type, String text, Image img, int imgWidth) {
+      this.y = 0;
+      this.type = type;
+      this.text = text;
+      this.img = img;
+      this.imgWidth = imgWidth;
+    }
   }
 }

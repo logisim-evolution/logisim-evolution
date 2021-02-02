@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -33,7 +33,6 @@ import static com.cburch.logisim.proj.Strings.S;
 import com.cburch.logisim.fpga.file.BoardReaderClass;
 import com.cburch.logisim.fpga.settings.BoardList;
 import com.cburch.logisim.gui.generic.OptionPane;
-
 import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -64,7 +63,7 @@ public class FPGABoards implements ActionListener {
   private class ExternalBoardModel implements ListModel<String> {
 
     private final SortedArrayList ExternalBoards = new SortedArrayList();
-    private final ArrayList<ListDataListener> MyListeners = new ArrayList<ListDataListener>();
+    private final ArrayList<ListDataListener> MyListeners = new ArrayList<>();
 
     public boolean contains(String entry) {
       return ExternalBoards.contains(entry);
@@ -145,11 +144,11 @@ public class FPGABoards implements ActionListener {
   }
 
   @SuppressWarnings("serial")
-  private class SortedArrayList extends ArrayList<String> {
+  private static class SortedArrayList extends ArrayList<String> {
 
     public void insertSorted(String value) {
       add(value);
-      Comparable<String> cmp = (Comparable<String>) BoardList.getBoardName(value);
+      Comparable<String> cmp = BoardList.getBoardName(value);
       for (int i = size() - 1; i > 0 && cmp.compareTo(BoardList.getBoardName(get(i - 1))) < 0; i--)
         Collections.swap(this, i, i - 1);
     }
@@ -166,7 +165,7 @@ public class FPGABoards implements ActionListener {
       		if (BoardSelector != null && BoardSelector.getItemCount() >= 2)
               AppPreferences.SelectedBoard.set(BoardSelector.getItemAt(1));
       		else {
-      	      BoardSelector = new JComboBox<String>();
+      	      BoardSelector = new JComboBox<>();
       	      RebuildBoardSelector(false, null);
               AppPreferences.SelectedBoard.set(BoardSelector.getItemAt(1));
       		}
@@ -263,7 +262,7 @@ public class FPGABoards implements ActionListener {
 
   public JComboBox<String> BoardSelector() {
     if (BoardSelector == null) {
-      BoardSelector = new JComboBox<String>();
+      BoardSelector = new JComboBox<>();
       RebuildBoardSelector(false, null);
     }
     return BoardSelector;
@@ -288,7 +287,7 @@ public class FPGABoards implements ActionListener {
     c.gridheight = 10;
     c.gridwidth = 1;
     c.gridy = 2;
-    BoardNamesList = new JList<String>(ExtBoardModel);
+    BoardNamesList = new JList<>(ExtBoardModel);
     BoardNamesList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     if (BoardNamesList.getModel().getSize() != 0) BoardNamesList.setSelectedIndex(0);
     BoardPane = new JScrollPane(BoardNamesList);
@@ -325,7 +324,6 @@ public class FPGABoards implements ActionListener {
     BoardSelector.addItem("Other");
     int index = 1;
     boolean found = false;
-    ;
     if (update) AppPreferences.SelectedBoard.set(Board);
     for (String item : BuildInBoards.GetBoardNames()) {
       BoardSelector.addItem(item);

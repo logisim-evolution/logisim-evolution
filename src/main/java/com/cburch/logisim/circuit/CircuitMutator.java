@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -32,17 +32,17 @@ import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.data.Attribute;
 
 public interface CircuitMutator {
-  public void add(Circuit circuit, Component comp);
+  void add(Circuit circuit, Component comp);
 
-  public void clear(Circuit circuit);
+  void clear(Circuit circuit);
 
-  public void remove(Circuit circuit, Component comp);
+  void remove(Circuit circuit, Component comp);
 
-  public void replace(Circuit circuit, Component oldComponent, Component newComponent);
+  void replace(Circuit circuit, Component oldComponent, Component newComponent);
 
-  public void replace(Circuit circuit, ReplacementMap replacements);
+  void replace(Circuit circuit, ReplacementMap replacements);
 
-  public void set(Circuit circuit, Component comp, Attribute<?> attr, Object value);
+  void set(Circuit circuit, Component comp, Attribute<?> attr, Object value);
 
-  public void setForCircuit(Circuit circuit, Attribute<?> attr, Object value);
+  void setForCircuit(Circuit circuit, Attribute<?> attr, Object value);
 }

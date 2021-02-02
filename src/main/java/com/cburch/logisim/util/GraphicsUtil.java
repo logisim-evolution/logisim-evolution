@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -100,7 +100,7 @@ public class GraphicsUtil {
 
   public static int getTextPosition(Graphics g, String text, int x, int y, int halign, int valign) {
     Rectangle r = getTextBounds(g, text, 0, 0, halign, valign);
-    x -= (int) r.x;
+    x -= r.x;
     int last = 0;
     Font font = g.getFont();
     FontRenderContext fr = ((Graphics2D) g).getFontRenderContext();
@@ -154,7 +154,7 @@ public class GraphicsUtil {
       ((Graphics2D) g).setPaint(bg);
       g.fillRect(bd.x, bd.y, bd.width, bd.height);
       ((Graphics2D) g).setPaint(fg);
-      ((Graphics2D) g).drawString(text, bd.x, bd.y + tm.ascent);
+      g.drawString(text, bd.x, bd.y + tm.ascent);
     } else {
       g.drawString(text, bd.x, bd.y + tm.ascent);
     }
@@ -199,7 +199,7 @@ public class GraphicsUtil {
       case H_RIGHT:
         ret.translate(-width, 0);
         break;
-      default:;
+      default:
     }
     switch (valign) {
       case V_TOP:
@@ -216,7 +216,7 @@ public class GraphicsUtil {
       case V_BOTTOM:
         ret.translate(0, -height);
         break;
-      default:;
+      default:
     }
     return ret;
   }

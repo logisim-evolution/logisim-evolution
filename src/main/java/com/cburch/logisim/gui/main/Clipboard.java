@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -36,6 +36,38 @@ import java.util.Collection;
 import java.util.HashSet;
 
 class Clipboard {
+  public static final String contentsProperty = "contents";
+  private static final PropertyChangeWeakSupport propertySupport =
+      new PropertyChangeWeakSupport(Clipboard.class);
+  private static Clipboard current = null;
+  //
+  // instance variables and methods
+  //
+  private final HashSet<Component> components;
+  private AttributeSet oldAttrs;
+  private AttributeSet newAttrs;
+
+  /*
+   * This function is in charge of copy paste.
+   * Now the tunnels' labels are not cleared except if it is requested to.
+   */
+  private Clipboard(Selection sel, AttributeSet viewAttrs) {
+    components = new HashSet<>();
+    oldAttrs = null;
+    newAttrs = null;
+    for (Component base : sel.getComponents()) {
+      AttributeSet baseAttrs = base.getAttributeSet();
+      AttributeSet copyAttrs = (AttributeSet) baseAttrs.clone();
+
+      Component copy = base.getFactory().createComponent(base.getLocation(), copyAttrs);
+      components.add(copy);
+      if (baseAttrs == viewAttrs) {
+        oldAttrs = baseAttrs;
+        newAttrs = copyAttrs;
+      }
+    }
+  }
+
   //
   // PropertyChangeSource methods
   //
@@ -73,38 +105,6 @@ class Clipboard {
 
   public static void set(Selection value, AttributeSet oldAttrs) {
     set(new Clipboard(value, oldAttrs));
-  }
-
-  public static final String contentsProperty = "contents";
-  private static Clipboard current = null;
-  private static final PropertyChangeWeakSupport propertySupport =
-      new PropertyChangeWeakSupport(Clipboard.class);
-
-  //
-  // instance variables and methods
-  //
-  private final HashSet<Component> components;
-  private AttributeSet oldAttrs;
-  private AttributeSet newAttrs;
-  /*
-   * This function is in charge of copy paste.
-   * Now the tunnels' labels are not cleared except if it is requested to.
-   */
-  private Clipboard(Selection sel, AttributeSet viewAttrs) {
-    components = new HashSet<Component>();
-    oldAttrs = null;
-    newAttrs = null;
-    for (Component base : sel.getComponents()) {
-      AttributeSet baseAttrs = base.getAttributeSet();
-      AttributeSet copyAttrs = (AttributeSet) baseAttrs.clone();
-
-      Component copy = base.getFactory().createComponent(base.getLocation(), copyAttrs);
-      components.add(copy);
-      if (baseAttrs == viewAttrs) {
-        oldAttrs = baseAttrs;
-        newAttrs = copyAttrs;
-      }
-    }
   }
 
   public Collection<Component> getComponents() {

@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -38,7 +38,7 @@ public class JoystickIcon extends AnnimatedIcon {
 
   @Override
   public void annimationUpdate() {
-    state = (state+1)%6;
+    state = (state + 1) % 6;
   }
 
   @Override
@@ -49,20 +49,19 @@ public class JoystickIcon extends AnnimatedIcon {
   @Override
   protected void paintIcon(Graphics2D g2) {
     g2.setColor(Color.BLUE.darker().darker());
-    int[] xpos = {0,scale(6),scale(4),scale(2)};
-    int[] ypos = {scale(13),scale(13),scale(15),scale(15)};
+    int[] xpos = {0, scale(6), scale(4), scale(2)};
+    int[] ypos = {scale(13), scale(13), scale(15), scale(15)};
     g2.fillPolygon(xpos, ypos, 4);
-    for (int i = 0 ; i < 4 ; i++)
-      xpos[i] += scale(10);
+    for (int i = 0; i < 4; i++) xpos[i] += scale(10);
     g2.fillPolygon(xpos, ypos, 4);
-    if ((state&1) == 0) {
+    if ((state & 1) == 0) {
       g2.setColor(Color.RED);
       g2.fillRect(scale(2), scale(9), scale(4), scale(2));
     }
     int xbase = scale(9);
     int ybase = scale(11);
-    int[] xcerc = {scale(9),scale(13),scale(9),scale(5),scale(2),scale(5)};
-    int[] ycerc = {scale(2),scale(3),scale(2),scale(3),scale(5),scale(3)};
+    int[] xcerc = {scale(9), scale(13), scale(9), scale(5), scale(2), scale(5)};
+    int[] ycerc = {scale(2), scale(3), scale(2), scale(3), scale(5), scale(3)};
     int xtop = xcerc[state];
     int ytop = ycerc[state];
     g2.setStroke(new BasicStroke(scale(2)));
@@ -78,5 +77,4 @@ public class JoystickIcon extends AnnimatedIcon {
     g2.fillRoundRect(0, scale(10), scale(16), scale(4), scale(2), scale(2));
     g2.drawRoundRect(0, scale(10), scale(16), scale(4), scale(2), scale(2));
   }
-
 }

@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -28,16 +28,14 @@
 
 package com.cburch.logisim.gui.main;
 
-import java.util.List;
-import java.util.HashMap;
-import javax.swing.tree.TreeNode;
-
 import com.cburch.logisim.circuit.CircuitState;
+import java.util.HashMap;
+import java.util.List;
+import javax.swing.tree.TreeNode;
 
 class SimulationTreeTopNode extends SimulationTreeNode {
 
-  public SimulationTreeTopNode(SimulationTreeModel model,
-      List<CircuitState> allRootStates) {
+  public SimulationTreeTopNode(SimulationTreeModel model, List<CircuitState> allRootStates) {
     super(model, null);
     for (CircuitState state : allRootStates)
       children.add(new SimulationTreeCircuitNode(model, null, state, null));
@@ -49,7 +47,7 @@ class SimulationTreeTopNode extends SimulationTreeNode {
     HashMap<CircuitState, Integer> oldPos = new HashMap<>();
     int i = 0;
     for (TreeNode node : children) {
-      CircuitState state = ((SimulationTreeCircuitNode)node).getCircuitState();
+      CircuitState state = ((SimulationTreeCircuitNode) node).getCircuitState();
       old.put(state, node);
       oldPos.put(state, i++);
     }
@@ -65,13 +63,11 @@ class SimulationTreeTopNode extends SimulationTreeNode {
       }
       children.add(node);
     }
-    if (changed)
-      model.fireStructureChanged(this);
+    if (changed) model.fireStructureChanged(this);
   }
 
   @Override
   public String toString() {
     return "Active Simulations";
- 
   }
 }

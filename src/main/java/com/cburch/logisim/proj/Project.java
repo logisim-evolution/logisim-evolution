@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -58,7 +58,6 @@ import com.cburch.logisim.vhdl.sim.VhdlSimulatorTop;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-
 import javax.swing.JFileChooser;
 
 public class Project {
@@ -117,15 +116,15 @@ public class Project {
   private TestFrame testFrame = null;
   private ChronoFrame chronoFrame = null;
   private Tool tool = null;
-  private final LinkedList<ActionData> undoLog = new LinkedList<ActionData>();
+  private final LinkedList<ActionData> undoLog = new LinkedList<>();
   private int undoMods = 0;
-  private final LinkedList<ActionData> redoLog = new LinkedList<ActionData>();
+  private final LinkedList<ActionData> redoLog = new LinkedList<>();
   private final EventSourceWeakSupport<ProjectListener> projectListeners =
-      new EventSourceWeakSupport<ProjectListener>();
+      new EventSourceWeakSupport<>();
   private final EventSourceWeakSupport<LibraryListener> fileListeners =
-      new EventSourceWeakSupport<LibraryListener>();
+      new EventSourceWeakSupport<>();
   private final EventSourceWeakSupport<CircuitListener> circuitListeners =
-      new EventSourceWeakSupport<CircuitListener>();
+      new EventSourceWeakSupport<>();
   private Dependencies depends;
   private final MyListener myListener = new MyListener();
   private boolean startupScreen = false;
@@ -262,12 +261,9 @@ public class Project {
    */
   public boolean getCanRedo() {
     // If there's a redo option found...
-    if (redoLog.size() > 0)
-      // We can redo
-      return true;
-    else
-      // Otherwise we can't.
-      return false;
+    // We can redo
+    // Otherwise we can't.
+    return redoLog.size() > 0;
   }
 
   public ChronoFrame getChronoFrame(boolean create) {

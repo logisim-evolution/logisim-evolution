@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -230,7 +230,7 @@ public class Random extends InstanceFactory {
     g.drawLine(xpos + 60, ypos + 60, xpos + 70, ypos + 60);
     g.drawLine(xpos + 20, ypos + 60, xpos + 20, ypos + 70);
     g.drawLine(xpos + 60, ypos + 60, xpos + 60, ypos + 70);
-    String Name = "RNG" + Integer.toString(NrOfBits);
+    String Name = "RNG" + NrOfBits;
     GraphicsUtil.drawText(
         g, Name, xpos + 40, ypos + 8, GraphicsUtil.H_CENTER, GraphicsUtil.V_CENTER);
     g.drawLine(xpos, ypos + 30, xpos + 10, ypos + 30);

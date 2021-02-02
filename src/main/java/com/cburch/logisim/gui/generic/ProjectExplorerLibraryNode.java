@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -31,6 +31,7 @@ package com.cburch.logisim.gui.generic;
 /**
  * Code taken from Cornell's version of Logisim: http://www.cs.cornell.edu/courses/cs3410/2015sp/
  */
+
 import com.cburch.logisim.file.LibraryEvent;
 import com.cburch.logisim.file.LibraryListener;
 import com.cburch.logisim.file.LogisimFile;
@@ -41,7 +42,6 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.swing.JTree;
 
 public class ProjectExplorerLibraryNode extends ProjectExplorerModel.Node<Library>
@@ -66,7 +66,7 @@ public class ProjectExplorerLibraryNode extends ProjectExplorerModel.Node<Librar
     if (lib != null && !(lib.isHidden())) {
       buildChildren(new ProjectExplorerToolNode(getModel(), null), lib.getTools(), 0);
       buildChildren(
-          new ProjectExplorerLibraryNode(getModel(), null,guiElement),
+          new ProjectExplorerLibraryNode(getModel(), null, guiElement),
           lib.getLibraries(),
           lib.getTools().size());
     }
@@ -75,8 +75,8 @@ public class ProjectExplorerLibraryNode extends ProjectExplorerModel.Node<Librar
   private <T> void buildChildren(
       ProjectExplorerModel.Node<T> factory, List<? extends T> items, int startIndex) {
     // go through previously built children
-    Map<T, ProjectExplorerModel.Node<T>> nodeMap = new HashMap<T, ProjectExplorerModel.Node<T>>();
-    List<ProjectExplorerModel.Node<T>> nodeList = new ArrayList<ProjectExplorerModel.Node<T>>();
+    Map<T, ProjectExplorerModel.Node<T>> nodeMap = new HashMap<>();
+    List<ProjectExplorerModel.Node<T>> nodeList = new ArrayList<>();
     int oldPos = startIndex;
 
     for (Enumeration<?> en = children(); en.hasMoreElements(); ) {
@@ -100,10 +100,9 @@ public class ProjectExplorerLibraryNode extends ProjectExplorerModel.Node<Librar
     oldPos = startIndex;
 
     for (T tool : items) {
-      if (tool instanceof Library && ((Library)tool).isHidden())
-        continue;
+      if (tool instanceof Library && ((Library) tool).isHidden()) continue;
       if (tool instanceof AddTool) {
-        AddTool a = (AddTool)tool;
+        AddTool a = (AddTool) tool;
         a.registerParrent(guiElement);
       }
       ProjectExplorerModel.Node<T> node = nodeMap.get(tool);
@@ -196,7 +195,7 @@ public class ProjectExplorerLibraryNode extends ProjectExplorerModel.Node<Librar
 
   @Override
   ProjectExplorerLibraryNode create(Library userObject) {
-    return new ProjectExplorerLibraryNode(getModel(), userObject,guiElement);
+    return new ProjectExplorerLibraryNode(getModel(), userObject, guiElement);
   }
 
   @Override

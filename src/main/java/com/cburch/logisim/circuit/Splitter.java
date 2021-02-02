@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -196,7 +196,7 @@ public class Splitter extends ManagedComponent
     return SplitterFactory.instance;
   }
   
-  public void setFactory(ComponentFactory fact) {}; 
+  public void setFactory(ComponentFactory fact) {}
 
   @Override
   public Object getFeature(Object key) {
@@ -259,7 +259,7 @@ public class Splitter extends ManagedComponent
 
   @Override
   public void propagate(CircuitState state) {
-    ; // handled by CircuitWires, nothing to do
+    // handled by CircuitWires, nothing to do
   }
 
   public boolean shouldRepairWire(WireRepairData data) {

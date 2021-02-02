@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -75,7 +75,7 @@ public class ITA_IO extends Library {
   @Override
   public List<? extends Tool> getTools() {
     if (tools == null) {
-      List<Tool> ret = new ArrayList<Tool>(ADD_TOOLS.length + DESCRIPTIONS.length);
+      List<Tool> ret = new ArrayList<>(ADD_TOOLS.length + DESCRIPTIONS.length);
       for (Tool a : ADD_TOOLS) ret.add(a);
       ret.addAll(FactoryDescription.getTools(ITA_IO.class, DESCRIPTIONS));
       tools = ret;

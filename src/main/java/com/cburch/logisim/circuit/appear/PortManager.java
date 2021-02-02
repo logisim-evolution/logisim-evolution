@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -48,8 +48,8 @@ class PortManager {
       CircuitAppearance appear, Instance pin, Map<Instance, AppearancePort> others) {
     // Determine which locations are being used in canvas, and look for
     // which instances facing the same way in layout
-    Set<Location> usedLocs = new HashSet<Location>();
-    List<Instance> sameWay = new ArrayList<Instance>();
+    Set<Location> usedLocs = new HashSet<>();
+    List<Instance> sameWay = new ArrayList<>();
     Direction facing = pin.getAttributeValue(StdAttr.FACING);
     for (Map.Entry<Instance, AppearancePort> entry : others.entrySet()) {
       Instance pin2 = entry.getKey();
@@ -146,7 +146,7 @@ class PortManager {
       Collection<Instance> allPins) {
     // Find the current objects corresponding to pins
     Map<Instance, AppearancePort> oldObjects;
-    oldObjects = new HashMap<Instance, AppearancePort>();
+    oldObjects = new HashMap<>();
     AppearanceAnchor anchor = null;
     for (CanvasObject o : appearance.getObjectsFromBottom()) {
       if (o instanceof AppearancePort) {
@@ -178,9 +178,9 @@ class PortManager {
 
     // Compute how the ports should change
     ArrayList<AppearancePort> portRemoves;
-    portRemoves = new ArrayList<AppearancePort>(removes.size());
+    portRemoves = new ArrayList<>(removes.size());
     ArrayList<AppearancePort> portAdds;
-    portAdds = new ArrayList<AppearancePort>(adds.size());
+    portAdds = new ArrayList<>(adds.size());
 
     // handle removals
     for (Instance pin : removes) {
@@ -190,7 +190,7 @@ class PortManager {
       }
     }
     // handle replacements
-    ArrayList<Instance> addsCopy = new ArrayList<Instance>(adds);
+    ArrayList<Instance> addsCopy = new ArrayList<>(adds);
     for (Map.Entry<Instance, Instance> entry : replaces.entrySet()) {
       AppearancePort port = oldObjects.remove(entry.getKey());
       if (port != null) {

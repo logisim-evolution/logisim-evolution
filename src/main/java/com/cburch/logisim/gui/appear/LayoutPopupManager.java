@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -70,7 +70,7 @@ class LayoutPopupManager implements SelectionListener, MouseListener, MouseMotio
 
   // returns all the ports in the current selection
   private Set<AppearancePort> getSelectedPorts() {
-    HashSet<AppearancePort> ports = new HashSet<AppearancePort>();
+    HashSet<AppearancePort> ports = new HashSet<>();
     for (CanvasObject o : canvas.getSelection().getSelected()) {
       if (o instanceof AppearancePort) {
         ports.add((AppearancePort) o);

@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -30,22 +30,20 @@ package com.cburch.logisim.gui.menu;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import javax.swing.KeyStroke;
 
 interface MenuItem {
-  public void actionPerformed(ActionEvent event);
+  void actionPerformed(ActionEvent event);
 
-  public void addActionListener(ActionListener l);
+  void addActionListener(ActionListener l);
 
   boolean hasListeners();
 
-  public boolean isEnabled();
+  boolean isEnabled();
 
-  public void removeActionListener(ActionListener l);
+  void setEnabled(boolean value);
 
-  public void setEnabled(boolean value);
-  
-  public KeyStroke getAccelerator();
+  void removeActionListener(ActionListener l);
 
+  KeyStroke getAccelerator();
 }

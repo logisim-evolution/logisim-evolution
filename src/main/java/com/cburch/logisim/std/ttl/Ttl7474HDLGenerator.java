@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -48,7 +48,7 @@ public class Ttl7474HDLGenerator extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> MyInputs = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> MyInputs = new TreeMap<>();
     MyInputs.put("nCLR1", 1);
     MyInputs.put("D1", 1);
     MyInputs.put("CLK1", 1);
@@ -64,7 +64,7 @@ public class Ttl7474HDLGenerator extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> MyOutputs = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> MyOutputs = new TreeMap<>();
     MyOutputs.put("Q1", 1);
     MyOutputs.put("nQ1", 1);
     MyOutputs.put("Q2", 1);
@@ -74,7 +74,7 @@ public class Ttl7474HDLGenerator extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist Nets) {
-    SortedMap<String, Integer> Wires = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> Wires = new TreeMap<>();
     Wires.put("state1", 1);
     Wires.put("state2", 1);
     Wires.put("next1", 1);
@@ -85,7 +85,7 @@ public class Ttl7474HDLGenerator extends AbstractHDLGeneratorFactory {
   @Override
   public ArrayList<String> GetModuleFunctionality(
       Netlist TheNetlist, AttributeSet attrs, FPGAReport Reporter, String HDLType) {
-    ArrayList<String> Contents = new ArrayList<String>();
+    ArrayList<String> Contents = new ArrayList<>();
     Contents.add("   Q1  <= state1;");
     Contents.add("   nQ1 <= NOT(state1);");
     Contents.add("   Q2  <= state1;");
@@ -115,7 +115,7 @@ public class Ttl7474HDLGenerator extends AbstractHDLGeneratorFactory {
   @Override
   public SortedMap<String, String> GetPortMap(
       Netlist Nets, Object MapInfo, FPGAReport Reporter, String HDLType) {
-    SortedMap<String, String> PortMap = new TreeMap<String, String>();
+    SortedMap<String, String> PortMap = new TreeMap<>();
     if (!(MapInfo instanceof NetlistComponent)) return PortMap;
     NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
     for (int i = 0; i < 2; i++) {
@@ -127,7 +127,7 @@ public class Ttl7474HDLGenerator extends AbstractHDLGeneratorFactory {
             "Component \"TTL7474\" in circuit \""
                 + Nets.getCircuitName()
                 + "\" has no clock connection for dff"
-                + Integer.toString(i + 1));
+                + (i + 1));
         HasClock = false;
       }
       String ClockNetName = GetClockNetName(ComponentInfo, ClockPinIndex, Nets);
@@ -135,27 +135,27 @@ public class Ttl7474HDLGenerator extends AbstractHDLGeneratorFactory {
         GatedClock = true;
       }
       if (!HasClock) {
-        PortMap.put("CLK" + Integer.toString(i + 1), "'0'");
-        PortMap.put("tick" + Integer.toString(i + 1), "'0'");
+        PortMap.put("CLK" + (i + 1), "'0'");
+        PortMap.put("tick" + (i + 1), "'0'");
       } else if (GatedClock) {
-        PortMap.put("tick" + Integer.toString(i + 1), "'1'");
+        PortMap.put("tick" + (i + 1), "'1'");
         PortMap.put(
-            "CLK" + Integer.toString(i + 1),
+            "CLK" + (i + 1),
             GetNetName(ComponentInfo, ClockPinIndex, true, HDLType, Nets));
       } else {
         if (Nets.RequiresGlobalClockConnection()) {
-          PortMap.put("tick" + Integer.toString(i + 1), "'1'");
+          PortMap.put("tick" + (i + 1), "'1'");
         } else {
           PortMap.put(
-              "tick" + Integer.toString(i + 1),
+              "tick" + (i + 1),
               ClockNetName
                   + "("
-                  + Integer.toString(ClockHDLGeneratorFactory.PositiveEdgeTickIndex)
+                  + ClockHDLGeneratorFactory.PositiveEdgeTickIndex
                   + ")");
         }
         PortMap.put(
-            "CLK" + Integer.toString(i + 1),
-            ClockNetName + "(" + Integer.toString(ClockHDLGeneratorFactory.GlobalClockIndex) + ")");
+            "CLK" + (i + 1),
+            ClockNetName + "(" + ClockHDLGeneratorFactory.GlobalClockIndex + ")");
       }
     }
     PortMap.putAll(GetNetMap("nCLR1", false, ComponentInfo, 0, Reporter, HDLType, Nets));

@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -122,7 +122,7 @@ public abstract class DownloadBase {
 
   protected boolean performDRC(String CircuitName, String HDLType) {
     Circuit root = MyProject.getLogisimFile().getCircuit(CircuitName);
-    ArrayList<String> SheetNames = new ArrayList<String>();
+    ArrayList<String> SheetNames = new ArrayList<>();
     int DRCResult = Netlist.DRC_PASSED;
     if (root == null) {
       DRCResult |= Netlist.DRC_ERROR;
@@ -175,7 +175,7 @@ public abstract class DownloadBase {
       }
     }
 
-    Set<String> GeneratedHDLComponents = new HashSet<String>();
+    Set<String> GeneratedHDLComponents = new HashSet<>();
     HDLGeneratorFactory Worker =
         RootSheet.getSubcircuitFactory()
             .getHDLGenerator(AppPreferences.HDL_Type.get(), RootSheet.getStaticAttributes());
@@ -265,7 +265,7 @@ public abstract class DownloadBase {
         AppPreferences.HDL_Type.get())) {
       return false;
     }
-    if (!AbstractHDLGeneratorFactory.WriteArchitecture(
+    return AbstractHDLGeneratorFactory.WriteArchitecture(
         ProjectDir + Worker.GetRelativeDirectory(AppPreferences.HDL_Type.get()),
         Worker.GetArchitecture(
             RootSheet.getNetList(),
@@ -275,11 +275,7 @@ public abstract class DownloadBase {
             AppPreferences.HDL_Type.get()),
         Worker.getComponentStringIdentifier(),
         MyReporter,
-        AppPreferences.HDL_Type.get())) {
-      return false;
-    }
-
-    return true;
+        AppPreferences.HDL_Type.get());
   }
 
   protected boolean GenDirectory(String dir) {
@@ -351,11 +347,7 @@ public abstract class DownloadBase {
           }
         }
       }
-      if (!thisDir.delete()) {
-        return false;
-      } else {
-        return true;
-      }
+      return thisDir.delete();
     } catch (Exception e) {
       MyReporter.AddFatalError("Could not remove directory tree :" + dir);
       return false;

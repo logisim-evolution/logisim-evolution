@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -30,13 +30,12 @@ package com.cburch.logisim.soc.rv32im;
 
 import static com.cburch.logisim.soc.Strings.S;
 
-import java.util.ArrayList;
-
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.soc.file.ElfHeader;
 import com.cburch.logisim.soc.util.AssemblerAsmInstruction;
 import com.cburch.logisim.soc.util.AssemblerExecutionInterface;
 import com.cburch.logisim.soc.util.AssemblerToken;
+import java.util.ArrayList;
 
 public class RV32imIntegerRegisterImmediateInstructions implements AssemblerExecutionInterface {
 
@@ -83,11 +82,11 @@ public class RV32imIntegerRegisterImmediateInstructions implements AssemblerExec
   private boolean valid = false;
   
   public ArrayList<String> getInstructions() {
-    ArrayList<String> opcodes = new ArrayList<String>();
+    ArrayList<String> opcodes = new ArrayList<>();
     for (String asmOpcode : AsmOpcodes)
       opcodes.add(asmOpcode);
     return opcodes;
-  };
+  }
 
   public boolean execute(Object state, CircuitState cState) {
     if (!valid)
@@ -104,7 +103,8 @@ public class RV32imIntegerRegisterImmediateInstructions implements AssemblerExec
       case INSTR_SLTI : result = (regVal < immediate) ? 1 : 0;
                         break;
       case INSTR_SEQZ :
-      case INSTR_SLTIU: result = (ElfHeader.getLongValue((Integer)regVal)<ElfHeader.getLongValue((Integer)immediate)) ? 1 : 0;
+      case INSTR_SLTIU: result = (ElfHeader.getLongValue(regVal)<ElfHeader.getLongValue(
+          immediate)) ? 1 : 0;
                         break;
       case INSTR_NOT  :
       case INSTR_XORI : result = regVal ^ immediate;
@@ -115,7 +115,7 @@ public class RV32imIntegerRegisterImmediateInstructions implements AssemblerExec
                         break;
       case INSTR_SLLI : result = regVal << immediate;
                         break;
-      case INSTR_SRLI : Long val1 = ElfHeader.getLongValue((Integer)regVal);
+      case INSTR_SRLI : Long val1 = ElfHeader.getLongValue(regVal);
                         val1 >>= immediate;
                         result = ElfHeader.getIntValue(val1);
                         break;

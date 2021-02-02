@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -110,7 +110,7 @@ public class Demultiplexer extends InstanceFactory {
     CompleteName.append(CorrectLabel.getCorrectLabel(this.getName()));
     if (attrs.getValue(StdAttr.WIDTH).getWidth() > 1) CompleteName.append("_bus");
     CompleteName.append(
-        "_" + Integer.toString(1 << attrs.getValue(Plexers.ATTR_SELECT).getWidth()));
+        "_" + (1 << attrs.getValue(Plexers.ATTR_SELECT).getWidth()));
     return CompleteName.toString();
   }
 

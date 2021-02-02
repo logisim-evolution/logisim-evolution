@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -47,17 +47,6 @@ import javax.swing.event.ChangeListener;
 
 @SuppressWarnings("serial")
 public class LogisimMenuBar extends JMenuBar {
-  private class MyListener implements LocaleListener {
-    public void localeChanged() {
-      file.localeChanged();
-      edit.localeChanged();
-      project.localeChanged();
-      fpga.localeChanged();
-      simulate.localeChanged();
-      help.localeChanged();
-    }
-  }
-
   public static final LogisimMenuItem PRINT = new LogisimMenuItem("Print");
   public static final LogisimMenuItem EXPORT_IMAGE = new LogisimMenuItem("ExportImage");
   public static final LogisimMenuItem CUT = new LogisimMenuItem("Cut");
@@ -74,12 +63,19 @@ public class LogisimMenuBar extends JMenuBar {
   public static final LogisimMenuItem REMOVE_CONTROL = new LogisimMenuItem("RemoveControl");
   public static final LogisimMenuItem[] EDIT_ITEMS = {
     // UNDO, REDO,
-    CUT, COPY, PASTE,
-    DELETE, DUPLICATE, SELECT_ALL,
-    RAISE, LOWER, RAISE_TOP, LOWER_BOTTOM,
-    ADD_CONTROL, REMOVE_CONTROL,
+    CUT,
+    COPY,
+    PASTE,
+    DELETE,
+    DUPLICATE,
+    SELECT_ALL,
+    RAISE,
+    LOWER,
+    RAISE_TOP,
+    LOWER_BOTTOM,
+    ADD_CONTROL,
+    REMOVE_CONTROL,
   };
-
   public static final LogisimMenuItem ADD_VHDL = new LogisimMenuItem("AddVhdl");
   public static final LogisimMenuItem IMPORT_VHDL = new LogisimMenuItem("ImportVhdl");
   public static final LogisimMenuItem ADD_CIRCUIT = new LogisimMenuItem("AddCircuit");
@@ -89,40 +85,41 @@ public class LogisimMenuBar extends JMenuBar {
   public static final LogisimMenuItem REMOVE_CIRCUIT = new LogisimMenuItem("RemoveCircuit");
   public static final LogisimMenuItem EDIT_LAYOUT = new LogisimMenuItem("EditLayout");
   public static final LogisimMenuItem EDIT_APPEARANCE = new LogisimMenuItem("EditAppearance");
-  public static final LogisimMenuItem TOGGLE_APPEARANCE = new LogisimMenuItem("ToggleEditLayoutAppearance");
+  public static final LogisimMenuItem TOGGLE_APPEARANCE =
+      new LogisimMenuItem("ToggleEditLayoutAppearance");
   public static final LogisimMenuItem REVERT_APPEARANCE = new LogisimMenuItem("RevertAppearance");
   public static final LogisimMenuItem ANALYZE_CIRCUIT = new LogisimMenuItem("AnalyzeCircuit");
-
   public static final LogisimMenuItem CIRCUIT_STATS = new LogisimMenuItem("GetCircuitStatistics");
   public static final LogisimMenuItem SIMULATE_STOP = new LogisimMenuItem("SimulateStop");
   public static final LogisimMenuItem SIMULATE_RUN = new LogisimMenuItem("SimulateRun");
   public static final LogisimMenuItem SIMULATE_RUN_TOGGLE = new LogisimMenuItem("SimulateRun");
   public static final LogisimMenuItem SIMULATE_STEP = new LogisimMenuItem("SimulateStep");
-  public static final LogisimMenuItem SIMULATE_VHDL_ENABLE = new LogisimMenuItem("SimulateVhdlEnable");
-  public static final LogisimMenuItem GENERATE_VHDL_SIM_FILES = new LogisimMenuItem("GenerateVhdlSimFiles");
+  public static final LogisimMenuItem SIMULATE_VHDL_ENABLE =
+      new LogisimMenuItem("SimulateVhdlEnable");
+  public static final LogisimMenuItem GENERATE_VHDL_SIM_FILES =
+      new LogisimMenuItem("GenerateVhdlSimFiles");
   public static final LogisimMenuItem TICK_ENABLE = new LogisimMenuItem("TickEnable");
   public static final LogisimMenuItem TICK_HALF = new LogisimMenuItem("TickHalf");
   public static final LogisimMenuItem TICK_FULL = new LogisimMenuItem("TickFull");
-
-  private final JFrame parent;
-  private final MyListener listener;
-  private final Project proj;
-  private SimulateListener simulateListener = null;
-  private final HashMap<LogisimMenuItem, MenuItem> menuItems = new HashMap<LogisimMenuItem, MenuItem>();
-  private final ArrayList<ChangeListener> enableListeners;
-
   public final MenuFile file;
   public final MenuEdit edit;
   public final MenuProject project;
   public final MenuSimulate simulate;
   public final MenuHelp help;
   public final MenuFPGA fpga;
+  private final JFrame parent;
+  private final MyListener listener;
+  private final Project proj;
+  private final HashMap<LogisimMenuItem, MenuItem> menuItems =
+      new HashMap<>();
+  private final ArrayList<ChangeListener> enableListeners;
+  private SimulateListener simulateListener = null;
 
   public LogisimMenuBar(JFrame parent, Project proj) {
     this.parent = parent;
     this.listener = new MyListener();
     this.proj = proj;
-    this.enableListeners = new ArrayList<ChangeListener>();
+    this.enableListeners = new ArrayList<>();
     add(file = new MenuFile(this));
     add(edit = new MenuEdit(this));
     add(project = new MenuProject(this));
@@ -156,13 +153,11 @@ public class LogisimMenuBar extends JMenuBar {
     MenuItem item = menuItems.get(which);
     item.actionPerformed(new ActionEvent(item, ActionEvent.ACTION_PERFORMED, which.toString()));
   }
-  
+
   public KeyStroke getAccelerator(LogisimMenuItem which) {
     MenuItem item = menuItems.get(which);
     return item == null ? null : item.getAccelerator();
   }
-
-
 
   void fireEnableChanged() {
     ChangeEvent e = new ChangeEvent(this);
@@ -214,5 +209,16 @@ public class LogisimMenuBar extends JMenuBar {
 
   public void setSimulateListener(SimulateListener l) {
     simulateListener = l;
+  }
+
+  private class MyListener implements LocaleListener {
+    public void localeChanged() {
+      file.localeChanged();
+      edit.localeChanged();
+      project.localeChanged();
+      fpga.localeChanged();
+      simulate.localeChanged();
+      help.localeChanged();
+    }
   }
 }

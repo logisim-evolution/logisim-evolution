@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -31,9 +31,9 @@ package com.cburch.logisim.gui.log;
 import com.cburch.logisim.data.Value;
 
 public interface ModelListener {
-  public void entryAdded(ModelEvent event, Value[] values);
+  void entryAdded(ModelEvent event, Value[] values);
 
-  public void filePropertyChanged(ModelEvent event);
+  void filePropertyChanged(ModelEvent event);
 
-  public void selectionChanged(ModelEvent event);
+  void selectionChanged(ModelEvent event);
 }

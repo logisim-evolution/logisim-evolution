@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -51,83 +51,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 class FilePanel extends LogPanel {
-  private class Listener implements ActionListener, ModelListener {
-    public void actionPerformed(ActionEvent event) {
-      Object src = event.getSource();
-      if (src == enableButton) {
-        getModel().setFileEnabled(!getModel().isFileEnabled());
-      } else if (src == selectButton) {
-        int result = chooser.showSaveDialog(getLogFrame());
-        if (result != JFileChooser.APPROVE_OPTION) return;
-        File file = chooser.getSelectedFile();
-        if (file.exists() && (!file.canWrite() || file.isDirectory())) {
-          OptionPane.showMessageDialog(
-              getLogFrame(),
-              StringUtil.format(S.get("fileCannotWriteMessage"), file.getName()),
-              S.get("fileCannotWriteTitle"),
-              OptionPane.OK_OPTION);
-          return;
-        }
-        if (file.exists() && file.length() > 0) {
-          String[] options = {
-            S.get("fileOverwriteOption"), S.get("fileAppendOption"), S.get("fileCancelOption"),
-          };
-          int option =
-              OptionPane.showOptionDialog(
-                  getLogFrame(),
-                  StringUtil.format(S.get("fileExistsMessage"), file.getName()),
-                  S.get("fileExistsTitle"),
-                  0,
-                  OptionPane.QUESTION_MESSAGE,
-                  null,
-                  options,
-                  options[0]);
-          if (option == 0) {
-            try {
-              FileWriter delete = new FileWriter(file);
-              delete.close();
-            } catch (IOException e) {
-            }
-          } else if (option == 1) {
-            // do nothing
-          } else {
-            return;
-          }
-        }
-        getModel().setFile(file);
-      } else if (src == headerCheckBox) {
-        getModel().setFileHeader(headerCheckBox.isSelected());
-      }
-    }
-
-    private void computeEnableItems(Model model) {
-      if (model.isFileEnabled()) {
-        enableLabel.setText(S.get("fileEnabled"));
-        enableButton.setText(S.get("fileDisableButton"));
-      } else {
-        enableLabel.setText(S.get("fileDisabled"));
-        enableButton.setText(S.get("fileEnableButton"));
-      }
-    }
-
-    public void entryAdded(ModelEvent event, Value[] values) {}
-
-    public void filePropertyChanged(ModelEvent event) {
-      Model model = getModel();
-      computeEnableItems(model);
-
-      File file = model.getFile();
-      fileField.setText(file == null ? "" : file.getPath());
-      enableButton.setEnabled(file != null);
-
-      headerCheckBox.setSelected(model.getFileHeader());
-    }
-
-    public void selectionChanged(ModelEvent event) {}
-  }
-
   private static final long serialVersionUID = 1L;
-
   private final Listener listener = new Listener();
   private final JLabel enableLabel = new JLabel();
   private final JButton enableButton = new JButton();
@@ -229,5 +153,80 @@ class FilePanel extends LogPanel {
       newModel.addModelListener(listener);
       listener.filePropertyChanged(null);
     }
+  }
+
+  private class Listener implements ActionListener, ModelListener {
+    public void actionPerformed(ActionEvent event) {
+      Object src = event.getSource();
+      if (src == enableButton) {
+        getModel().setFileEnabled(!getModel().isFileEnabled());
+      } else if (src == selectButton) {
+        int result = chooser.showSaveDialog(getLogFrame());
+        if (result != JFileChooser.APPROVE_OPTION) return;
+        File file = chooser.getSelectedFile();
+        if (file.exists() && (!file.canWrite() || file.isDirectory())) {
+          OptionPane.showMessageDialog(
+              getLogFrame(),
+              StringUtil.format(S.get("fileCannotWriteMessage"), file.getName()),
+              S.get("fileCannotWriteTitle"),
+              OptionPane.OK_OPTION);
+          return;
+        }
+        if (file.exists() && file.length() > 0) {
+          String[] options = {
+            S.get("fileOverwriteOption"), S.get("fileAppendOption"), S.get("fileCancelOption"),
+          };
+          int option =
+              OptionPane.showOptionDialog(
+                  getLogFrame(),
+                  StringUtil.format(S.get("fileExistsMessage"), file.getName()),
+                  S.get("fileExistsTitle"),
+                  0,
+                  OptionPane.QUESTION_MESSAGE,
+                  null,
+                  options,
+                  options[0]);
+          if (option == 0) {
+            try {
+              FileWriter delete = new FileWriter(file);
+              delete.close();
+            } catch (IOException e) {
+            }
+          } else if (option == 1) {
+            // do nothing
+          } else {
+            return;
+          }
+        }
+        getModel().setFile(file);
+      } else if (src == headerCheckBox) {
+        getModel().setFileHeader(headerCheckBox.isSelected());
+      }
+    }
+
+    private void computeEnableItems(Model model) {
+      if (model.isFileEnabled()) {
+        enableLabel.setText(S.get("fileEnabled"));
+        enableButton.setText(S.get("fileDisableButton"));
+      } else {
+        enableLabel.setText(S.get("fileDisabled"));
+        enableButton.setText(S.get("fileEnableButton"));
+      }
+    }
+
+    public void entryAdded(ModelEvent event, Value[] values) {}
+
+    public void filePropertyChanged(ModelEvent event) {
+      Model model = getModel();
+      computeEnableItems(model);
+
+      File file = model.getFile();
+      fileField.setText(file == null ? "" : file.getPath());
+      enableButton.setEnabled(file != null);
+
+      headerCheckBox.setSelected(model.getFileHeader());
+    }
+
+    public void selectionChanged(ModelEvent event) {}
   }
 }

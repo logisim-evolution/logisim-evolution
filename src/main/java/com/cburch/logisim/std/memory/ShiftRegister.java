@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -203,7 +203,7 @@ public class ShiftRegister extends InstanceFactory {
         g.drawLine(xpos + blockwidth + 10, ypos + 70, xpos + blockwidth + 20, ypos + 70);
       }
     }
-    String Identifier = "SRG" + Integer.toString(nr_of_stages);
+    String Identifier = "SRG" + nr_of_stages;
     GraphicsUtil.drawCenteredText(g, Identifier, xpos + (SymbolWidth / 2) + 10, ypos + 5);
     /* Draw the clock input */
     painter.drawClockSymbol(xpos + 10, ypos + 50);

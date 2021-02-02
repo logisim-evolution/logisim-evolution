@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -28,8 +28,6 @@
 
 package com.cburch.logisim.std.io;
 
-import java.util.ArrayList;
-
 import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.BitWidth;
@@ -38,6 +36,7 @@ import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.gui.FPGAReport;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
+import java.util.ArrayList;
 
 public class PortHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
@@ -59,7 +58,7 @@ public class PortHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       FPGAReport Reporter,
       String CircuitName,
       String HDLType) {
-    ArrayList<String> Contents = new ArrayList<String>();
+    ArrayList<String> Contents = new ArrayList<>();
     String Preamble = (HDLType.equals(VHDL)) ? "" : "assign ";
     String AssignOperator = (HDLType.equals(VHDL)) ? " <= " : " = ";
     String OpenBracket = (HDLType.equals(VHDL)) ? "(" : "[";

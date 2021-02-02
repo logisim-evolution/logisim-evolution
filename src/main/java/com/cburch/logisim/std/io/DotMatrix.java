@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -195,7 +195,7 @@ public class DotMatrix extends InstanceFactory {
           "persist", S.getter("ioMatrixPersistenceAttr"), 0, Integer.MAX_VALUE, true);
   
   private static ArrayList<String> GetLabels(int rows , int cols) {
-    ArrayList<String> result = new ArrayList<String>();
+    ArrayList<String> result = new ArrayList<>();
     for (int r = 0 ; r < rows ; r++)
       for (int c = 0 ; c < cols ; c++)
         result.add("Row"+r+"Col"+c);

@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -84,15 +84,13 @@ class PLA extends InstanceFactory {
 
   private static final List<Attribute<?>> ATTRIBUTES =
       Arrays.asList(
-          new Attribute<?>[] {
-            StdAttr.FACING,
-            ATTR_IN_WIDTH,
-            ATTR_OUT_WIDTH,
-            ATTR_TABLE,
-            StdAttr.LABEL,
-            StdAttr.LABEL_LOC,
-            StdAttr.LABEL_FONT
-          });
+          StdAttr.FACING,
+          ATTR_IN_WIDTH,
+          ATTR_OUT_WIDTH,
+          ATTR_TABLE,
+          StdAttr.LABEL,
+          StdAttr.LABEL_LOC,
+          StdAttr.LABEL_FONT);
 
   private static class TruthTableAttribute extends Attribute<PLATable> {
     public TruthTableAttribute() {
@@ -122,7 +120,7 @@ class PLA extends InstanceFactory {
     }
   }
 
-  private class PLAAttributes extends AbstractAttributeSet {
+  private static class PLAAttributes extends AbstractAttributeSet {
     private String label = "";
     private Direction facing = Direction.EAST;
     private Font labelFont = StdAttr.DEFAULT_LABEL_FONT;
@@ -327,7 +325,7 @@ class PLA extends InstanceFactory {
     return super.getInstanceFeature(instance, key);
   }
 
-  class PLAMenu implements ActionListener, MenuExtender {
+  static class PLAMenu implements ActionListener, MenuExtender {
     private final Instance instance;
     private Frame frame;
     private JMenuItem edit;

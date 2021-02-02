@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -30,10 +30,6 @@ package com.cburch.logisim.soc.nios2;
 
 import static com.cburch.logisim.soc.Strings.S;
 
-import java.awt.Font;
-import java.util.Arrays;
-import java.util.List;
-
 import com.cburch.logisim.data.AbstractAttributeSet;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.Attributes;
@@ -41,6 +37,9 @@ import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.soc.data.SocBusInfo;
 import com.cburch.logisim.soc.data.SocSimulationManager;
+import java.awt.Font;
+import java.util.Arrays;
+import java.util.List;
 
 public class Nios2Attributes extends AbstractAttributeSet {
 
@@ -67,18 +66,16 @@ public class Nios2Attributes extends AbstractAttributeSet {
 
   private static final List<Attribute<?>> ATTRIBUTES =
         Arrays.asList(
-            new Attribute<?>[] {
-              RESET_VECTOR,
-              EXCEPTION_VECTOR,
-              BREAK_VECTOR,
-              NR_OF_IRQS,
-              NIOS_STATE_VISIBLE,
-              StdAttr.LABEL,
-              StdAttr.LABEL_FONT,
-              StdAttr.LABEL_VISIBILITY,
-              SocSimulationManager.SOC_BUS_SELECT,
-              NIOS2_STATE
-            });
+            RESET_VECTOR,
+            EXCEPTION_VECTOR,
+            BREAK_VECTOR,
+            NR_OF_IRQS,
+            NIOS_STATE_VISIBLE,
+            StdAttr.LABEL,
+            StdAttr.LABEL_FONT,
+            StdAttr.LABEL_VISIBILITY,
+            SocSimulationManager.SOC_BUS_SELECT,
+            NIOS2_STATE);
 
   @Override
   protected void copyInto(AbstractAttributeSet dest) {

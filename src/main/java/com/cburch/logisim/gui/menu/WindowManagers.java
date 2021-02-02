@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -48,6 +48,42 @@ import java.util.List;
 import javax.swing.JFrame;
 
 public class WindowManagers {
+  private static final MyListener myListener = new MyListener();
+  private static final HashMap<Project, ProjectManager> projectMap =
+      new LinkedHashMap<>();
+  private static boolean initialized = false;
+
+  private WindowManagers() {}
+
+  private static void computeListeners() {
+    List<Project> nowOpen = Projects.getOpenProjects();
+
+    HashSet<Project> closed = new HashSet<>(projectMap.keySet());
+    closed.removeAll(nowOpen);
+    for (Project proj : closed) {
+      ProjectManager manager = projectMap.get(proj);
+      manager.frameClosed(manager.getJFrame(false, null));
+      projectMap.remove(proj);
+    }
+
+    HashSet<Project> opened = new LinkedHashSet<>(nowOpen);
+    opened.removeAll(projectMap.keySet());
+    for (Project proj : opened) {
+      ProjectManager manager = new ProjectManager(proj);
+      projectMap.put(proj, manager);
+    }
+  }
+
+  public static void initialize() {
+    if (!initialized) {
+      initialized = true;
+      if (Main.ANALYZE) AnalyzerManager.initialize();
+      PreferencesFrame.initializeManager();
+      Projects.addPropertyChangeListener(Projects.projectListProperty, myListener);
+      computeListeners();
+    }
+  }
+
   private static class MyListener implements PropertyChangeListener {
     public void propertyChange(PropertyChangeEvent event) {
       computeListeners();
@@ -83,42 +119,4 @@ public class WindowManagers {
       }
     }
   }
-
-  private static void computeListeners() {
-    List<Project> nowOpen = Projects.getOpenProjects();
-
-    HashSet<Project> closed = new HashSet<Project>(projectMap.keySet());
-    closed.removeAll(nowOpen);
-    for (Project proj : closed) {
-      ProjectManager manager = projectMap.get(proj);
-      manager.frameClosed(manager.getJFrame(false, null));
-      projectMap.remove(proj);
-    }
-
-    HashSet<Project> opened = new LinkedHashSet<Project>(nowOpen);
-    opened.removeAll(projectMap.keySet());
-    for (Project proj : opened) {
-      ProjectManager manager = new ProjectManager(proj);
-      projectMap.put(proj, manager);
-    }
-  }
-
-  public static void initialize() {
-    if (!initialized) {
-      initialized = true;
-      if (Main.ANALYZE) AnalyzerManager.initialize();
-      PreferencesFrame.initializeManager();
-      Projects.addPropertyChangeListener(Projects.projectListProperty, myListener);
-      computeListeners();
-    }
-  }
-
-  private static boolean initialized = false;
-
-  private static final MyListener myListener = new MyListener();
-
-  private static final HashMap<Project, ProjectManager> projectMap =
-      new LinkedHashMap<Project, ProjectManager>();
-
-  private WindowManagers() {}
 }

@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -87,13 +87,13 @@ public class IteratorUtil {
       Iterator<E> ret = (Iterator<E>) i0;
       return ret;
     } else {
-      return new IteratorUnion<E>(i0, i1);
+      return new IteratorUnion<>(i0, i1);
     }
   }
 
   public static <E> Iterator<E> emptyIterator() {
-    return new EmptyIterator<E>();
+    return new EmptyIterator<>();
   }
 
-  public static Iterator<?> EMPTY_ITERATOR = new EmptyIterator<Object>();
+  public static Iterator<?> EMPTY_ITERATOR = new EmptyIterator<>();
 }

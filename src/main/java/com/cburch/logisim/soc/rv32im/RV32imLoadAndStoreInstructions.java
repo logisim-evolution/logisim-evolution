@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -30,8 +30,6 @@ package com.cburch.logisim.soc.rv32im;
 
 import static com.cburch.logisim.soc.Strings.S;
 
-import java.util.ArrayList;
-
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.soc.data.SocBusTransaction;
@@ -39,6 +37,7 @@ import com.cburch.logisim.soc.file.ElfHeader;
 import com.cburch.logisim.soc.util.AssemblerAsmInstruction;
 import com.cburch.logisim.soc.util.AssemblerExecutionInterface;
 import com.cburch.logisim.soc.util.AssemblerToken;
+import java.util.ArrayList;
 
 public class RV32imLoadAndStoreInstructions implements AssemblerExecutionInterface {
 
@@ -70,11 +69,11 @@ public class RV32imLoadAndStoreInstructions implements AssemblerExecutionInterfa
   private String errorMessage;
   
   public ArrayList<String> getInstructions() {
-    ArrayList<String> opcodes = new ArrayList<String>();
+    ArrayList<String> opcodes = new ArrayList<>();
     for (String asmOpcode : AsmOpcodes)
       opcodes.add(asmOpcode);
     return opcodes;
-  };
+  }
 
   public boolean execute(Object state, CircuitState cState) {
     if (!valid)
@@ -82,7 +81,7 @@ public class RV32imLoadAndStoreInstructions implements AssemblerExecutionInterfa
     RV32im_state.ProcessorState cpuState = (RV32im_state.ProcessorState) state;
     errorMessage = null;
     int toBeStored = cpuState.getRegisterValue(destination);
-    long address = ElfHeader.getLongValue((Integer)cpuState.getRegisterValue(base))+immediate;
+    long address = ElfHeader.getLongValue(cpuState.getRegisterValue(base))+immediate;
     int transType = -1;
     switch (operation) {
       case INSTR_SB : toBeStored &= 0xFF;
@@ -91,7 +90,7 @@ public class RV32imLoadAndStoreInstructions implements AssemblerExecutionInterfa
                       if (transType < 0 ) transType = SocBusTransaction.HalfWordAccess;
       case INSTR_SW : if (transType < 0) transType = SocBusTransaction.WordAccess;
                       SocBusTransaction trans = new SocBusTransaction(SocBusTransaction.WRITETransaction,
-                          ElfHeader.getIntValue((Long)address),toBeStored,transType,
+                          ElfHeader.getIntValue(address),toBeStored,transType,
                           cpuState.getMasterComponent());
                       cpuState.insertTransaction(trans, false, cState);
                       return !transactionHasError(trans);
@@ -101,7 +100,7 @@ public class RV32imLoadAndStoreInstructions implements AssemblerExecutionInterfa
       case INSTR_LHU: if (transType < 0 ) transType = SocBusTransaction.HalfWordAccess;
       case INSTR_LW : if (transType < 0) transType = SocBusTransaction.WordAccess;
                       trans = new SocBusTransaction(SocBusTransaction.READTransaction,
-                          ElfHeader.getIntValue((Long)address),0,transType,cpuState.getMasterComponent());
+                          ElfHeader.getIntValue(address),0,transType,cpuState.getMasterComponent());
                       cpuState.insertTransaction(trans, false, cState);
                       if (transactionHasError(trans)) return false;
                       int toBeLoaded = trans.getReadData();

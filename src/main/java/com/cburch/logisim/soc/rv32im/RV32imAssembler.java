@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -28,10 +28,9 @@
 
 package com.cburch.logisim.soc.rv32im;
 
-import java.util.LinkedList;
-
 import com.cburch.logisim.soc.util.AbstractAssembler;
 import com.cburch.logisim.soc.util.AssemblerToken;
+import java.util.LinkedList;
 
 public class RV32imAssembler extends AbstractAssembler {
 

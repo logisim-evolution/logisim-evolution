@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -38,16 +38,15 @@ import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.tools.WireRepairData;
-
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 
 class XnorGate extends AbstractGate {
-  private class XNorGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
+  private static class XNorGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
     @Override
     public ArrayList<String> GetLogicFunction(
         int nr_of_inputs, int bitwidth, boolean is_one_hot, String HDLType) {
-      ArrayList<String> Contents = new ArrayList<String>();
+      ArrayList<String> Contents = new ArrayList<>();
       if (is_one_hot) {
         Contents.addAll(GetOneHot(true, nr_of_inputs, bitwidth > 1, HDLType));
       } else {

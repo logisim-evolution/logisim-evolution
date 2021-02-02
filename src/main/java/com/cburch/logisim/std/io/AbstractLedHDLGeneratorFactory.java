@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -46,7 +46,7 @@ public class AbstractLedHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
       FPGAReport Reporter,
       String CircuitName,
       String HDLType) {
-    ArrayList<String> Contents = new ArrayList<String>();
+    ArrayList<String> Contents = new ArrayList<>();
     String Preamble = (HDLType.equals(VHDL)) ? "" : "assign ";
     String AssignOperator = (HDLType.equals(VHDL)) ? " <= " : " = ";
     String OpenBracket = (HDLType.equals(VHDL)) ? "(" : "[";
@@ -57,7 +57,7 @@ public class AbstractLedHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
               + Preamble
               + HDLGeneratorFactory.LocalOutputBubbleBusname
               + OpenBracket
-              + Integer.toString(ComponentInfo.GetLocalBubbleOutputStartId() + i)
+              + (ComponentInfo.GetLocalBubbleOutputStartId() + i)
               + CloseBracket
               + AssignOperator
               + GetNetName(ComponentInfo, i, true, HDLType, Nets)

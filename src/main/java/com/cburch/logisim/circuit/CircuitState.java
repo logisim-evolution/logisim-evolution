@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -49,7 +49,6 @@ import java.util.Collection;
 import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
@@ -170,14 +169,14 @@ public class CircuitState implements InstanceData {
   private CircuitState parentState = null; // parent in tree of CircuitStates
   private Component parentComp = null; // subcircuit component containing this
   // state
-  private HashSet<CircuitState> substates = new HashSet<CircuitState>();
+  private HashSet<CircuitState> substates = new HashSet<>();
 
   private CircuitWires.State wireData = null;
-  private final HashMap<Component, Object> componentData = new HashMap<Component, Object>();
-  private final Map<Location, Value> values = new HashMap<Location, Value>();
-  private CopyOnWriteArraySet<Component> dirtyComponents = new CopyOnWriteArraySet<Component>();
-  private final CopyOnWriteArraySet<Location> dirtyPoints = new CopyOnWriteArraySet<Location>();
-  HashMap<Location, SetData> causes = new HashMap<Location, SetData>();
+  private final HashMap<Component, Object> componentData = new HashMap<>();
+  private final Map<Location, Value> values = new HashMap<>();
+  private CopyOnWriteArraySet<Component> dirtyComponents = new CopyOnWriteArraySet<>();
+  private final CopyOnWriteArraySet<Location> dirtyPoints = new CopyOnWriteArraySet<>();
+  HashMap<Location, SetData> causes = new HashMap<>();
 
   private static int lastId = 0;
   private final int id = lastId++;
@@ -209,8 +208,8 @@ public class CircuitState implements InstanceData {
     this.base = base;
     this.parentComp = src.parentComp;
     this.parentState = src.parentState;
-    HashMap<CircuitState, CircuitState> substateData = new HashMap<CircuitState, CircuitState>();
-    this.substates = new HashSet<CircuitState>();
+    HashMap<CircuitState, CircuitState> substateData = new HashMap<>();
+    this.substates = new HashSet<>();
     for (CircuitState oldSub : src.substates) {
       CircuitState newSub = new CircuitState(src.proj, oldSub.circuit);
       newSub.copyFrom(oldSub, base);
@@ -344,7 +343,7 @@ public class CircuitState implements InstanceData {
     try {
       dirtyComponents.add(comp);
     } catch (RuntimeException e) {
-      CopyOnWriteArraySet<Component> set = new CopyOnWriteArraySet<Component>();
+      CopyOnWriteArraySet<Component> set = new CopyOnWriteArraySet<>();
       set.add(comp);
       dirtyComponents = set;
     }
@@ -372,7 +371,7 @@ public class CircuitState implements InstanceData {
           if (firstException == null) firstException = e;
           if (tries == 0) {
             toProcess = new Object[0];
-            dirtyComponents = new CopyOnWriteArraySet<Component>();
+            dirtyComponents = new CopyOnWriteArraySet<>();
             throw firstException;
           }
         }
@@ -397,7 +396,7 @@ public class CircuitState implements InstanceData {
   }
 
   void processDirtyPoints() {
-    HashSet<Location> dirty = new HashSet<Location>(dirtyPoints);
+    HashSet<Location> dirty = new HashSet<>(dirtyPoints);
     dirtyPoints.clear();
     if (circuit.wires.isMapVoided()) {
       for (int i = 3; i >= 0; i--) {

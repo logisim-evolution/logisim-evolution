@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -52,15 +52,13 @@ public class Base extends Library {
 
     tools =
         Arrays.asList(
-            new Tool[] {
-              new PokeTool(),
-              new EditTool(select, wiring),
-              select,
-              wiring,
-              new TextTool(),
-              new MenuTool(),
-              new AddTool(Text.FACTORY),
-            });
+            new PokeTool(),
+            new EditTool(select, wiring),
+            select,
+            wiring,
+            new TextTool(),
+            new MenuTool(),
+            new AddTool(Text.FACTORY));
   }
 
   @Override

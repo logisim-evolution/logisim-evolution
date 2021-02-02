@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -30,6 +30,12 @@ package com.cburch.logisim.gui.menu;
 
 import static com.cburch.logisim.gui.Strings.S;
 
+import com.cburch.logisim.gui.generic.OptionPane;
+import com.cburch.logisim.gui.generic.TikZWriter;
+import com.cburch.logisim.gui.main.ExportImage;
+import com.cburch.logisim.gui.main.ExportImage.ImageFileFilter;
+import com.cburch.logisim.util.GifEncoder;
+import com.cburch.logisim.util.JFileChoosers;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -43,17 +49,9 @@ import java.awt.print.Printable;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
 import java.io.File;
-
 import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
-
-import com.cburch.logisim.gui.generic.OptionPane;
-import com.cburch.logisim.gui.generic.TikZWriter;
-import com.cburch.logisim.gui.main.ExportImage;
-import com.cburch.logisim.gui.main.ExportImage.ImageFileFilter;
-import com.cburch.logisim.util.GifEncoder;
-import com.cburch.logisim.util.JFileChoosers;
 
 public abstract class PrintHandler implements Printable {
 
@@ -69,25 +67,23 @@ public abstract class PrintHandler implements Printable {
 
   public void actionPerformed(ActionEvent e) {
     Object src = e.getSource();
-    if (src == LogisimMenuBar.PRINT)
-      print();
-    else if (src == LogisimMenuBar.EXPORT_IMAGE)
-      exportImage();
+    if (src == LogisimMenuBar.PRINT) print();
+    else if (src == LogisimMenuBar.EXPORT_IMAGE) exportImage();
   }
 
   public void print() {
     PageFormat format = new PageFormat();
     PrinterJob job = PrinterJob.getPrinterJob();
     job.setPrintable(this, format);
-    if (!job.printDialog())
-      return;
+    if (!job.printDialog()) return;
     try {
       job.print();
     } catch (PrinterException e) {
       OptionPane.showMessageDialog(
           KeyboardFocusManager.getCurrentKeyboardFocusManager().getActiveWindow(),
           S.fmt("printError", e.toString()),
-          S.get("printErrorTitle"), OptionPane.ERROR_MESSAGE);
+          S.get("printErrorTitle"),
+          OptionPane.ERROR_MESSAGE);
     }
   }
 
@@ -101,46 +97,46 @@ public abstract class PrintHandler implements Printable {
     };
     JFileChooser chooser = JFileChoosers.createSelected(getLastExported());
     chooser.setAcceptAllFileFilterUsed(false);
-    for (ImageFileFilter ff : filters)
-      chooser.addChoosableFileFilter(ff);
+    for (ImageFileFilter ff : filters) chooser.addChoosableFileFilter(ff);
     chooser.setFileFilter(filters[0]);
     chooser.setDialogTitle(S.get("exportImageFileSelect"));
 
-    int returnVal = chooser.showDialog(
-        KeyboardFocusManager.getCurrentKeyboardFocusManager().getActiveWindow(),
-        S.get("exportImageButton"));
-    if (returnVal != JFileChooser.APPROVE_OPTION)
-      return;
+    int returnVal =
+        chooser.showDialog(
+            KeyboardFocusManager.getCurrentKeyboardFocusManager().getActiveWindow(),
+            S.get("exportImageButton"));
+    if (returnVal != JFileChooser.APPROVE_OPTION) return;
     File dest = chooser.getSelectedFile();
     FileFilter ff = null;
     for (ImageFileFilter filter : filters) {
-      if (filter.accept(dest))
-        ff = filter;
+      if (filter.accept(dest)) ff = filter;
     }
-    if (ff == null)
-      ff = chooser.getFileFilter();
+    if (ff == null) ff = chooser.getFileFilter();
     if (!ff.accept(dest)) {
       if (ff == filters[0]) dest = new File(dest + ".png");
       else if (ff == filters[1]) dest = new File(dest + ".gif");
       else if (ff == filters[2]) dest = new File(dest + ".jpg");
-      else if (ff == filters[3]) dest = new File(dest+".tex");
-      else dest = new File(dest+".svg");
+      else if (ff == filters[3]) dest = new File(dest + ".tex");
+      else dest = new File(dest + ".svg");
     }
     setLastExported(dest);
     if (dest.exists()) {
-      int confirm = OptionPane.showConfirmDialog(
-          KeyboardFocusManager.getCurrentKeyboardFocusManager().getActiveWindow(),
-          S.get("confirmOverwriteMessage"),
-          S.get("confirmOverwriteTitle"),
-          OptionPane.YES_NO_OPTION);
-      if (confirm != OptionPane.YES_OPTION)
-        return;
+      int confirm =
+          OptionPane.showConfirmDialog(
+              KeyboardFocusManager.getCurrentKeyboardFocusManager().getActiveWindow(),
+              S.get("confirmOverwriteMessage"),
+              S.get("confirmOverwriteTitle"),
+              OptionPane.YES_NO_OPTION);
+      if (confirm != OptionPane.YES_OPTION) return;
     }
-    int fmt = (ff == filters[0] ? ExportImage.FORMAT_PNG
-        : ff == filters[1] ? ExportImage.FORMAT_GIF
-        : ff == filters[2] ? ExportImage.FORMAT_JPG
-        : ff == filters[2] ? ExportImage.FORMAT_TIKZ
-        : ExportImage.FORMAT_SVG);
+    int fmt =
+        (ff == filters[0]
+            ? ExportImage.FORMAT_PNG
+            : ff == filters[1]
+                ? ExportImage.FORMAT_GIF
+                : ff == filters[2]
+                    ? ExportImage.FORMAT_JPG
+                    : ff == filters[2] ? ExportImage.FORMAT_TIKZ : ExportImage.FORMAT_SVG);
     exportImage(dest, fmt);
   }
 
@@ -168,21 +164,17 @@ public abstract class PrintHandler implements Printable {
 
   public void exportImage(File dest, int fmt) {
     Dimension d = getExportImageSize();
-    if (d == null && showErr("couldNotCreateImage"))
-      return;
+    if (d == null && showErr("couldNotCreateImage")) return;
 
     Graphics base;
     Graphics gr;
     BufferedImage img = new BufferedImage(d.width, d.height, BufferedImage.TYPE_INT_RGB);
-    if (fmt == ExportImage.FORMAT_TIKZ || fmt == ExportImage.FORMAT_SVG)
-      base = new TikZWriter();
-    else
-      base = img.getGraphics();
+    if (fmt == ExportImage.FORMAT_TIKZ || fmt == ExportImage.FORMAT_SVG) base = new TikZWriter();
+    else base = img.getGraphics();
     gr = base.create();
     try {
-      if (!(gr instanceof Graphics2D) && showErr("couldNotCreateImage"))
-        return;
-      Graphics2D g = (Graphics2D)gr;
+      if (!(gr instanceof Graphics2D) && showErr("couldNotCreateImage")) return;
+      Graphics2D g = (Graphics2D) gr;
       g.setColor(Color.white);
       g.fillRect(0, 0, d.width, d.height);
       g.setColor(Color.black);
@@ -196,28 +188,28 @@ public abstract class PrintHandler implements Printable {
 
       try {
         switch (fmt) {
-        case ExportImage.FORMAT_GIF:
-          GifEncoder.toFile(img, dest, null);
-          break;
-        case ExportImage.FORMAT_PNG:
-          ImageIO.write(img, "PNG", dest);
-          break;
-        case ExportImage.FORMAT_JPG:
-          ImageIO.write(img, "JPEG", dest);
-          break;
-        case ExportImage.FORMAT_TIKZ:
-          ((TikZWriter)g).WriteFile(dest);
-          break;
-        case ExportImage.FORMAT_SVG:
-          ((TikZWriter)g).WriteSvg(d.width, d.height,dest);
-          break;
+          case ExportImage.FORMAT_GIF:
+            GifEncoder.toFile(img, dest, null);
+            break;
+          case ExportImage.FORMAT_PNG:
+            ImageIO.write(img, "PNG", dest);
+            break;
+          case ExportImage.FORMAT_JPG:
+            ImageIO.write(img, "JPEG", dest);
+            break;
+          case ExportImage.FORMAT_TIKZ:
+            ((TikZWriter) g).WriteFile(dest);
+            break;
+          case ExportImage.FORMAT_SVG:
+            ((TikZWriter) g).WriteSvg(d.width, d.height, dest);
+            break;
         }
       } catch (Exception e) {
         showErr("couldNotCreateFile");
         return;
       }
     } finally {
-       gr.dispose();
+      gr.dispose();
     }
   }
 }

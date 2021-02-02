@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -39,18 +39,11 @@ import com.cburch.logisim.data.AttributeEvent;
 import com.cburch.logisim.data.AttributeListener;
 import com.cburch.logisim.instance.StdAttr;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import javax.swing.tree.TreeNode;
 
 class SimulationTreeCircuitNode extends SimulationTreeNode
     implements CircuitListener, AttributeListener, Comparator<Component> {
-  private static class CompareByName implements Comparator<Object> {
-    public int compare(Object a, Object b) {
-      return a.toString().compareToIgnoreCase(b.toString());
-    }
-  }
-
   private final CircuitState circuitState;
   private final Component subcircComp;
 
@@ -59,7 +52,7 @@ class SimulationTreeCircuitNode extends SimulationTreeNode
       SimulationTreeCircuitNode parent,
       CircuitState circuitState,
       Component subcircComp) {
-	super(model,parent);
+    super(model, parent);
     this.circuitState = circuitState;
     this.subcircComp = subcircComp;
     circuitState.getCircuit().addCircuitListener(this);
@@ -105,8 +98,8 @@ class SimulationTreeCircuitNode extends SimulationTreeNode
 
   // returns true if changed
   private boolean computeChildren() {
-    ArrayList<TreeNode> newChildren = new ArrayList<TreeNode>();
-    ArrayList<Component> subcircs = new ArrayList<Component>();
+    ArrayList<TreeNode> newChildren = new ArrayList<>();
+    ArrayList<Component> subcircs = new ArrayList<>();
     for (Component comp : circuitState.getCircuit().getNonWires()) {
       if (comp.getFactory() instanceof SubcircuitFactory) {
         subcircs.add(comp);
@@ -173,5 +166,11 @@ class SimulationTreeCircuitNode extends SimulationTreeNode
       ret += subcircComp.getLocation();
     }
     return ret;
+  }
+
+  private static class CompareByName implements Comparator<Object> {
+    public int compare(Object a, Object b) {
+      return a.toString().compareToIgnoreCase(b.toString());
+    }
   }
 }

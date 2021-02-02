@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -42,8 +42,8 @@ class LogThread extends UniquelyNamedThread implements ModelListener {
   private static final int IDLE_UNTIL_CLOSE = 10000;
 
   private final Model model;
-  private boolean canceled = false;
   private final Object lock = new Object();
+  private boolean canceled = false;
   private PrintWriter writer = null;
   private boolean headerDirty = true;
   private long lastWrite = 0;

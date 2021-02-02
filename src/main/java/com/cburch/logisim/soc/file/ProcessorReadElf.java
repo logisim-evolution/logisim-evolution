@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -30,17 +30,16 @@ package com.cburch.logisim.soc.file;
 
 import static com.cburch.logisim.soc.Strings.S;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.soc.data.SocBusTransaction;
 import com.cburch.logisim.soc.data.SocInstanceFactory;
 import com.cburch.logisim.soc.data.SocProcessorInterface;
 import com.cburch.logisim.soc.file.ElfProgramHeader.ProgramHeader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
 public class ProcessorReadElf {
 

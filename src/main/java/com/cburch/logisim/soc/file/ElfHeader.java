@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -101,7 +101,7 @@ public class ElfHeader {
   public static final int EM_RISCV = 243;
   private static final Map<Integer, String> ARCHITECTURES;
   static {
-    Map<Integer,String> aMap = new HashMap<Integer,String>();
+    Map<Integer,String> aMap = new HashMap<>();
     aMap.put(EM_OPENRISC, "Open Risc");
     aMap.put(EM_INTEL_NIOS2, "Nios II");
     aMap.put(EM_RISCV, "Risc V");
@@ -113,7 +113,7 @@ public class ElfHeader {
   public final static long LONGINTMASK = Long.parseUnsignedLong("00000000FFFFFFFF", 16);
   public final static int INTMASK = Integer.parseUnsignedInt("00FFFFFF", 16);
 
-  private class EInfo {
+  private static class EInfo {
     private final Integer e_type;
     private final Integer e_machine;
     private final Integer e_version;
@@ -223,7 +223,7 @@ public class ElfHeader {
       status |= E_SIZE_ERROR;
       return;
     }
-    eInfo = new EInfo(buffer,is32Bit(),isLittleEndian());
+    eInfo = new EInfo(buffer, is32Bit(), isLittleEndian());
   }
   
   public Object getValue(int field) {
@@ -358,7 +358,7 @@ public class ElfHeader {
   
   public static long getLongValue(Object v) {
     if (v instanceof Integer)
-      return Long.parseUnsignedLong(String.format("%08X", (Integer)v),16);
+      return Long.parseUnsignedLong(String.format("%08X", v),16);
     if (v instanceof Long)
       return (long)v;
     return 0;

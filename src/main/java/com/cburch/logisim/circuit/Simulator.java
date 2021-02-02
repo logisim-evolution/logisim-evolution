@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -197,7 +197,7 @@ public class Simulator {
   private double tickFrequency = 1.0;
   private final PropagationManager manager;
   private final SimulatorTicker ticker;
-  private final ArrayList<SimulatorListener> listeners = new ArrayList<SimulatorListener>();
+  private final ArrayList<SimulatorListener> listeners = new ArrayList<>();
 
   public Simulator() {
     manager = new PropagationManager();
@@ -227,21 +227,21 @@ public class Simulator {
 
   void firePropagationCompleted() {
     SimulatorEvent e = new SimulatorEvent(this);
-    for (SimulatorListener l : new ArrayList<SimulatorListener>(listeners)) {
+    for (SimulatorListener l : new ArrayList<>(listeners)) {
       l.propagationCompleted(e);
     }
   }
 
   void fireSimulatorStateChanged() {
     SimulatorEvent e = new SimulatorEvent(this);
-    for (SimulatorListener l : new ArrayList<SimulatorListener>(listeners)) {
+    for (SimulatorListener l : new ArrayList<>(listeners)) {
       l.simulatorStateChanged(e);
     }
   }
 
   void fireTickCompleted() {
     SimulatorEvent e = new SimulatorEvent(this);
-    for (SimulatorListener l : new ArrayList<SimulatorListener>(listeners)) {
+    for (SimulatorListener l : new ArrayList<>(listeners)) {
       l.tickCompleted(e);
     }
   }
@@ -315,7 +315,7 @@ public class Simulator {
   // TODO: convert half-cycle frequency to full-cycle frequency
   public void setTickFrequency(double freq) {
     if (tickFrequency != freq) {
-      long nanos = (long) Math.round(1e9 / freq);
+      long nanos = Math.round(1e9 / freq);
       int ticks;
       if (nanos > 0) {
         ticks = 1;

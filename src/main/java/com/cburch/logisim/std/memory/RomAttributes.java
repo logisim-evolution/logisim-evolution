@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -74,23 +74,21 @@ class RomAttributes extends AbstractAttributeSet {
 
   private static final List<Attribute<?>> ATTRIBUTES =
       Arrays.asList(
-          new Attribute<?>[] {
-            Mem.ADDR_ATTR,
-            Mem.DATA_ATTR,
-            Mem.LINE_ATTR,
-            Mem.ALLOW_MISALIGNED,
-            Rom.CONTENTS_ATTR,
-            StdAttr.LABEL,
-            StdAttr.LABEL_FONT,
-            StdAttr.LABEL_VISIBILITY,
-            StdAttr.APPEARANCE
-          });
+          Mem.ADDR_ATTR,
+          Mem.DATA_ATTR,
+          Mem.LINE_ATTR,
+          Mem.ALLOW_MISALIGNED,
+          Rom.CONTENTS_ATTR,
+          StdAttr.LABEL,
+          StdAttr.LABEL_FONT,
+          StdAttr.LABEL_VISIBILITY,
+          StdAttr.APPEARANCE);
 
   private static final WeakHashMap<MemContents, RomContentsListener> listenerRegistry =
-      new WeakHashMap<MemContents, RomContentsListener>();
+      new WeakHashMap<>();
 
   private static final WeakHashMap<MemContents, HexFrame> windowRegistry =
-      new WeakHashMap<MemContents, HexFrame>();
+      new WeakHashMap<>();
   private BitWidth addrBits = BitWidth.create(8);
   private BitWidth dataBits = BitWidth.create(8);
   private MemContents contents;

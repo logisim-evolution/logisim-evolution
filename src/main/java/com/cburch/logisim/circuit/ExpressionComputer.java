@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -40,11 +40,11 @@ public interface ExpressionComputer {
    * <p>If, in fact, no valid expression exists for the component, it throws <code>
    * UnsupportedOperationException</code>.
    */
-  public void computeExpression(Map expressionMap);
+  void computeExpression(Map expressionMap);
 
-  public interface Map {
-    public Expression get(Location point, int bit);
+  interface Map {
+    Expression get(Location point, int bit);
 
-    public Expression put(Location point, int bit, Expression expression);
+    Expression put(Location point, int bit, Expression expression);
   }
 }

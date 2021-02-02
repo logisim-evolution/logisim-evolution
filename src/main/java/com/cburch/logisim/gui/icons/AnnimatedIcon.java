@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -28,39 +28,37 @@
 
 package com.cburch.logisim.gui.icons;
 
+import com.cburch.logisim.gui.icons.AnnimationTimer.AnnimationListener;
+import com.cburch.logisim.gui.main.Frame;
+import com.cburch.logisim.prefs.AppPreferences;
 import java.awt.BasicStroke;
 import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-
 import javax.swing.Icon;
 
-import com.cburch.logisim.gui.icons.AnnimationTimer.AnnimationListener;
-import com.cburch.logisim.gui.main.Frame;
-import com.cburch.logisim.prefs.AppPreferences;
-
-public abstract class AnnimatedIcon implements Icon,AnnimationListener {
+public abstract class AnnimatedIcon implements Icon, AnnimationListener {
 
   public AnnimatedIcon() {
     Frame.ANNIMATIONICONTIMER.registerListener(this);
   }
 
-  public void registerParrent(Component parrent) {
-    Frame.ANNIMATIONICONTIMER.addParrent(parrent);
-  }
-  
   public static int scale(int v) {
     return AppPreferences.getScaled(v);
   }
-  
+
   public static double scale(double v) {
     return AppPreferences.getScaled(v);
   }
-	  
+
   public static float scale(float v) {
     return AppPreferences.getScaled(v);
   }
-		  
+
+  public void registerParrent(Component parrent) {
+    Frame.ANNIMATIONICONTIMER.addParrent(parrent);
+  }
+
   @Override
   public void paintIcon(Component c, Graphics g, int x, int y) {
     Graphics2D g2 = (Graphics2D) g.create();
@@ -81,5 +79,4 @@ public abstract class AnnimatedIcon implements Icon,AnnimationListener {
   public int getIconHeight() {
     return AppPreferences.getIconSize();
   }
-    
 }

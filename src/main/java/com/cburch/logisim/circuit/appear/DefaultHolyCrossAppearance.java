@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -136,9 +136,9 @@ public class DefaultHolyCrossAppearance {
 
   public static List<CanvasObject> build(Collection<Instance> pins, String name) {
     Map<Direction, List<Instance>> edge;
-    edge = new HashMap<Direction, List<Instance>>();
-    edge.put(Direction.EAST, new ArrayList<Instance>());
-    edge.put(Direction.WEST, new ArrayList<Instance>());
+    edge = new HashMap<>();
+    edge.put(Direction.EAST, new ArrayList<>());
+    edge.put(Direction.WEST, new ArrayList<>());
     int MaxLeftLabelLength = 0;
     int MaxRightLabelLength = 0;
     String a = "", b = "";
@@ -199,7 +199,7 @@ public class DefaultHolyCrossAppearance {
 
     Rectangle rect = new Rectangle(rx, ry, width, height);
     rect.setValue(DrawAttr.STROKE_WIDTH, 2);
-    List<CanvasObject> ret = new ArrayList<CanvasObject>();
+    List<CanvasObject> ret = new ArrayList<>();
     ret.add(rect);
 
     placePins(ret, edge.get(Direction.WEST), rx, ry + offsWest, 0, PORT_GAP, true);

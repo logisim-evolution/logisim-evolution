@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -47,9 +47,9 @@ public class Model {
   private LogThread logger = null;
 
   public Model(CircuitState circuitState) {
-    listeners = new EventSourceWeakSupport<ModelListener>();
+    listeners = new EventSourceWeakSupport<>();
     selection = new Selection(circuitState, this);
-    log = new HashMap<SelectionItem, ValueLog>();
+    log = new HashMap<>();
   }
 
   public void addModelListener(ModelListener l) {
@@ -89,8 +89,21 @@ public class Model {
     return file;
   }
 
+  public void setFile(File value) {
+    if (file == null ? value == null : file.equals(value)) return;
+    file = value;
+    fileEnabled = file != null;
+    fireFilePropertyChanged(new ModelEvent());
+  }
+
   public boolean getFileHeader() {
     return fileHeader;
+  }
+
+  public void setFileHeader(boolean value) {
+    if (fileHeader == value) return;
+    fileHeader = value;
+    fireFilePropertyChanged(new ModelEvent());
   }
 
   public Selection getSelection() {
@@ -108,6 +121,12 @@ public class Model {
 
   public boolean isFileEnabled() {
     return fileEnabled;
+  }
+
+  public void setFileEnabled(boolean value) {
+    if (fileEnabled == value) return;
+    fileEnabled = value;
+    fireFilePropertyChanged(new ModelEvent());
   }
 
   public boolean isSelected() {
@@ -137,25 +156,6 @@ public class Model {
 
   public void removeModelListener(ModelListener l) {
     listeners.remove(l);
-  }
-
-  public void setFile(File value) {
-    if (file == null ? value == null : file.equals(value)) return;
-    file = value;
-    fileEnabled = file != null;
-    fireFilePropertyChanged(new ModelEvent());
-  }
-
-  public void setFileEnabled(boolean value) {
-    if (fileEnabled == value) return;
-    fileEnabled = value;
-    fireFilePropertyChanged(new ModelEvent());
-  }
-
-  public void setFileHeader(boolean value) {
-    if (fileHeader == value) return;
-    fileHeader = value;
-    fireFilePropertyChanged(new ModelEvent());
   }
 
   public void setSelected(JFrame frame, boolean value) {

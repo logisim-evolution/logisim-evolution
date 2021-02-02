@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -50,6 +50,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ToolAttributeAction extends Action {
+  private final KeyConfigurationResult config;
+  private Map<Attribute<?>, Object> oldValues;
+
+  private ToolAttributeAction(KeyConfigurationResult config) {
+    this.config = config;
+    this.oldValues = new HashMap<>(2);
+  }
+
   public static Action create(KeyConfigurationResult results) {
     return new ToolAttributeAction(results);
   }
@@ -59,14 +67,6 @@ public class ToolAttributeAction extends Action {
     KeyConfigurationEvent e = new KeyConfigurationEvent(0, attrs, null, null);
     KeyConfigurationResult r = new KeyConfigurationResult(e, attr, value);
     return new ToolAttributeAction(r);
-  }
-
-  private final KeyConfigurationResult config;
-  private Map<Attribute<?>, Object> oldValues;
-
-  private ToolAttributeAction(KeyConfigurationResult config) {
-    this.config = config;
-    this.oldValues = new HashMap<Attribute<?>, Object>(2);
   }
 
   @Override
@@ -115,7 +115,7 @@ public class ToolAttributeAction extends Action {
     if (forward) {
       AttributeSet attrs = config.getEvent().getAttributeSet();
       Map<Attribute<?>, Object> newValues = config.getAttributeValues();
-      Map<Attribute<?>, Object> oldValues = new HashMap<Attribute<?>, Object>(newValues.size());
+      Map<Attribute<?>, Object> oldValues = new HashMap<>(newValues.size());
       for (Map.Entry<Attribute<?>, Object> entry : newValues.entrySet()) {
         @SuppressWarnings("unchecked")
         Attribute<Object> attr = (Attribute<Object>) entry.getKey();

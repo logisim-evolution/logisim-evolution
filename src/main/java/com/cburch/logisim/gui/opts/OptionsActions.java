@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -39,6 +39,25 @@ import com.cburch.logisim.tools.Tool;
 import com.cburch.logisim.util.StringUtil;
 
 class OptionsActions {
+  private OptionsActions() {}
+
+  public static Action removeMapping(MouseMappings mm, Integer mods) {
+    return new RemoveMapping(mm, mods);
+  }
+
+  public static Action setAttribute(AttributeSet attrs, Attribute<?> attr, Object value) {
+    Object oldValue = attrs.getValue(attr);
+    if (!oldValue.equals(value)) {
+      return new SetAction(attrs, attr, value);
+    } else {
+      return null;
+    }
+  }
+
+  public static Action setMapping(MouseMappings mm, Integer mods, Tool tool) {
+    return new SetMapping(mm, mods, tool);
+  }
+
   private static class RemoveMapping extends Action {
     MouseMappings mm;
     Integer mods;
@@ -125,23 +144,4 @@ class OptionsActions {
       mm.setToolFor(mods, oldtool);
     }
   }
-
-  public static Action removeMapping(MouseMappings mm, Integer mods) {
-    return new RemoveMapping(mm, mods);
-  }
-
-  public static Action setAttribute(AttributeSet attrs, Attribute<?> attr, Object value) {
-    Object oldValue = attrs.getValue(attr);
-    if (!oldValue.equals(value)) {
-      return new SetAction(attrs, attr, value);
-    } else {
-      return null;
-    }
-  }
-
-  public static Action setMapping(MouseMappings mm, Integer mods, Tool tool) {
-    return new SetMapping(mm, mods, tool);
-  }
-
-  private OptionsActions() {}
 }

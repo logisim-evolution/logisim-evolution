@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -68,7 +68,7 @@ class SelectionAction extends Action {
     this.displayName = displayName;
     this.toRemove = toRemove == null ? null : ZOrder.getZIndex(toRemove, canvasModel);
     this.toAdd = toAdd;
-    this.oldSelection = new ArrayList<CanvasObject>(canvas.getSelection().getSelected());
+    this.oldSelection = new ArrayList<>(canvas.getSelection().getSelected());
     this.newSelection = newSelection;
     this.anchorNewLocation = anchorLocation;
     this.anchorNewFacing = anchorFacing;

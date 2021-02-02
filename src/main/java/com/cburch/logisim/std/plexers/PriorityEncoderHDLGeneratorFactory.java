@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -51,7 +51,7 @@ public class PriorityEncoderHDLGeneratorFactory extends AbstractHDLGeneratorFact
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Inputs = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> Inputs = new TreeMap<>();
     Inputs.put("enable", 1);
     Inputs.put("input_vector", NrOfInputBitsId);
     return Inputs;
@@ -60,7 +60,7 @@ public class PriorityEncoderHDLGeneratorFactory extends AbstractHDLGeneratorFact
   @Override
   public ArrayList<String> GetModuleFunctionality(
       Netlist TheNetlist, AttributeSet attrs, FPGAReport Reporter, String HDLType) {
-    ArrayList<String> Contents = new ArrayList<String>();
+    ArrayList<String> Contents = new ArrayList<>();
     if (HDLType.equals(VHDL)) {
       Contents.add("   -- Output Signals");
       Contents.add("   GroupSelect <= NOT(s_in_is_zero) AND enable;");
@@ -142,7 +142,7 @@ public class PriorityEncoderHDLGeneratorFactory extends AbstractHDLGeneratorFact
 
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Outputs = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> Outputs = new TreeMap<>();
     Outputs.put("GroupSelect", 1);
     Outputs.put("EnableOut", 1);
     Outputs.put("Address", NrOfSelectBitsId);
@@ -151,7 +151,7 @@ public class PriorityEncoderHDLGeneratorFactory extends AbstractHDLGeneratorFact
 
   @Override
   public SortedMap<Integer, String> GetParameterList(AttributeSet attrs) {
-    SortedMap<Integer, String> Parameters = new TreeMap<Integer, String>();
+    SortedMap<Integer, String> Parameters = new TreeMap<>();
     Parameters.put(NrOfSelectBitsId, NrOfSelectBitsStr);
     Parameters.put(NrOfInputBitsId, NrOfInputBitsStr);
     return Parameters;
@@ -160,7 +160,7 @@ public class PriorityEncoderHDLGeneratorFactory extends AbstractHDLGeneratorFact
   @Override
   public SortedMap<String, Integer> GetParameterMap(
       Netlist Nets, NetlistComponent ComponentInfo, FPGAReport Reporter) {
-    SortedMap<String, Integer> ParameterMap = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> ParameterMap = new TreeMap<>();
     int nr_of_bits = ComponentInfo.NrOfEnds() - 4;
     int nr_of_select_bits =
         ComponentInfo.GetComponent().getEnd(nr_of_bits + PriorityEncoder.OUT).getWidth().getWidth();
@@ -172,7 +172,7 @@ public class PriorityEncoderHDLGeneratorFactory extends AbstractHDLGeneratorFact
   @Override
   public SortedMap<String, String> GetPortMap(
       Netlist Nets, Object MapInfo, FPGAReport Reporter, String HDLType) {
-    SortedMap<String, String> PortMap = new TreeMap<String, String>();
+    SortedMap<String, String> PortMap = new TreeMap<>();
     if (!(MapInfo instanceof NetlistComponent)) return PortMap;
     NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
     int nr_of_bits = ComponentInfo.NrOfEnds() - 4;
@@ -190,7 +190,7 @@ public class PriorityEncoderHDLGeneratorFactory extends AbstractHDLGeneratorFact
       if (HDLType.equals(VHDL))
         PortMap.putAll(
             GetNetMap(
-                "input_vector(" + Integer.toString(i) + ")",
+                "input_vector(" + i + ")",
                 true,
                 ComponentInfo,
                 i,
@@ -240,7 +240,7 @@ public class PriorityEncoderHDLGeneratorFactory extends AbstractHDLGeneratorFact
 
   @Override
   public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist Nets) {
-    SortedMap<String, Integer> Wires = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> Wires = new TreeMap<>();
     Wires.put("s_in_is_zero", 1);
     Wires.put("s_address", 5);
     Wires.put("v_select_1_vector", 33);

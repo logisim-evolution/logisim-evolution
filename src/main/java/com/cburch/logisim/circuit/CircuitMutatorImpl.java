@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -43,9 +43,9 @@ class CircuitMutatorImpl implements CircuitMutator {
   private final HashSet<Circuit> modified;
 
   public CircuitMutatorImpl() {
-    log = new ArrayList<CircuitChange>();
-    replacements = new HashMap<Circuit, ReplacementMap>();
-    modified = new HashSet<Circuit>();
+    log = new ArrayList<>();
+    replacements = new HashMap<>();
+    modified = new HashSet<>();
   }
 
   public void add(Circuit circuit, Component comp) {
@@ -60,7 +60,7 @@ class CircuitMutatorImpl implements CircuitMutator {
   }
 
   public void clear(Circuit circuit) {
-    HashSet<Component> comps = new HashSet<Component>(circuit.getNonWires());
+    HashSet<Component> comps = new HashSet<>(circuit.getNonWires());
     comps.addAll(circuit.getWires());
     if (!comps.isEmpty()) modified.add(circuit);
     log.add(CircuitChange.clear(circuit, comps));

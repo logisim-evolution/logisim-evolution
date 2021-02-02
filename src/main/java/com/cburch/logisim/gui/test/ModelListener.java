@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -30,9 +30,9 @@ package com.cburch.logisim.gui.test;
 
 interface ModelListener {
 
-  public void testingChanged();
+  void testingChanged();
 
-  public void testResultsChanged(int numPass, int numFail);
+  void testResultsChanged(int numPass, int numFail);
 
-  public void vectorChanged();
+  void vectorChanged();
 }

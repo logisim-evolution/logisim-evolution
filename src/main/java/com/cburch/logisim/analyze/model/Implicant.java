@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -82,8 +82,8 @@ public class Implicant implements Comparable<Implicant> {
 
     // determine the first-cut implicants, as well as the rows
     // that we need to cover.
-    HashMap<Implicant, Entry> base = new HashMap<Implicant, Entry>();
-    HashSet<Implicant> toCover = new HashSet<Implicant>();
+    HashMap<Implicant, Entry> base = new HashMap<>();
+    HashSet<Implicant> toCover = new HashSet<>();
     boolean knownFound = false;
     for (int i = 0; i < table.getRowCount(); i++) {
       Entry entry = table.getOutputEntry(i, column);
@@ -103,11 +103,11 @@ public class Implicant implements Comparable<Implicant> {
 
     // work up to more general implicants, discovering
     // any prime implicants.
-    HashSet<Implicant> primes = new HashSet<Implicant>();
+    HashSet<Implicant> primes = new HashSet<>();
     HashMap<Implicant, Entry> current = base;
     while (current.size() > 1) {
-      HashSet<Implicant> toRemove = new HashSet<Implicant>();
-      HashMap<Implicant, Entry> next = new HashMap<Implicant, Entry>();
+      HashSet<Implicant> toRemove = new HashSet<>();
+      HashMap<Implicant, Entry> next = new HashMap<>();
       for (Map.Entry<Implicant, Entry> curEntry : current.entrySet()) {
         Implicant imp = curEntry.getKey();
         Entry detEntry = curEntry.getValue();
@@ -151,8 +151,8 @@ public class Implicant implements Comparable<Implicant> {
     }
 
     // determine the essential prime implicants
-    HashSet<Implicant> retSet = new HashSet<Implicant>();
-    HashSet<Implicant> covered = new HashSet<Implicant>();
+    HashSet<Implicant> retSet = new HashSet<>();
+    HashSet<Implicant> covered = new HashSet<>();
     for (Implicant required : toCover) {
       if (covered.contains(required)) continue;
       int row = required.getRow();
@@ -183,7 +183,7 @@ public class Implicant implements Comparable<Implicant> {
     // BUG: This algorithm does not always find the correct solution
     // Fix: We are first making a set that contains primes without the don't care set
     boolean ContainsDontCare;
-    HashSet<Implicant> primesNoDontCare = new HashSet<Implicant>();
+    HashSet<Implicant> primesNoDontCare = new HashSet<>();
     for (Implicant implicant : primes) {
       ContainsDontCare = false;
       for (Implicant term : implicant.getTerms()) {
@@ -259,7 +259,7 @@ public class Implicant implements Comparable<Implicant> {
 
     // Now build up our sum-of-products expression
     // from the remaining terms
-    ArrayList<Implicant> ret = new ArrayList<Implicant>(retSet);
+    ArrayList<Implicant> ret = new ArrayList<>(retSet);
     Collections.sort(ret);
     return ret;
   }
@@ -284,7 +284,7 @@ public class Implicant implements Comparable<Implicant> {
   }
 
   static Implicant MINIMAL_IMPLICANT = new Implicant(0, -1);
-  static List<Implicant> MINIMAL_LIST = Arrays.asList(new Implicant[] {MINIMAL_IMPLICANT});
+  static List<Implicant> MINIMAL_LIST = Arrays.asList(MINIMAL_IMPLICANT);
 
   final int unknowns, values;
 

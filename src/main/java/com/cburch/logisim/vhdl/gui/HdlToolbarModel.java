@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -62,7 +62,7 @@ public class HdlToolbarModel extends AbstractToolbarModel implements HdlModelLis
   public HdlToolbarModel(Project proj, HdlContentView editor) {
     this.editor = editor;
 
-    ArrayList<ToolbarItem> rawItems = new ArrayList<ToolbarItem>();
+    ArrayList<ToolbarItem> rawItems = new ArrayList<>();
     hdlImport = new HdlToolbarItem(new HdlIcon(HDL_IMPORT), HDL_IMPORT, S.getter("hdlOpenButton"));
     hdlExport = new HdlToolbarItem(new HdlIcon(HDL_EXPORT), HDL_EXPORT, S.getter("hdlSaveButton"));
     hdlValidate = new HdlToolbarItem(new HdlIcon(HDL_VALIDATE), HDL_VALIDATE, S.getter("validateButton"));

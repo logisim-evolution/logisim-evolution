@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -56,8 +56,11 @@ class LayoutOptions extends OptionsPanel {
           new PrefBoolean(AppPreferences.COMPONENT_TIPS, S.getter("layoutShowTips")),
           new PrefBoolean(AppPreferences.MOVE_KEEP_CONNECT, S.getter("layoutMoveKeepConnect")),
           new PrefBoolean(AppPreferences.ADD_SHOW_GHOSTS, S.getter("layoutAddShowGhosts")),
-          new PrefBoolean(AppPreferences.NAMED_CIRCUIT_BOXES_FIXED_SIZE,S.getter("layoutNamedCircuitBoxesFixedSize")),
-          new PrefBoolean(AppPreferences.NEW_INPUT_OUTPUT_SHAPES, S.getter("layoutUseNewInputOutputSymbols")),
+          new PrefBoolean(
+              AppPreferences.NAMED_CIRCUIT_BOXES_FIXED_SIZE,
+              S.getter("layoutNamedCircuitBoxesFixedSize")),
+          new PrefBoolean(
+              AppPreferences.NEW_INPUT_OUTPUT_SHAPES, S.getter("layoutUseNewInputOutputSymbols")),
         };
 
     for (int i = 0; i < 2; i++) {

@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -37,13 +37,12 @@ import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.gui.FPGAReport;
 import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
 import com.cburch.logisim.gui.icons.FlipFlopIcon;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 public class TFlipFlop extends AbstractFlipFlop {
-  private class TFFHDLGeneratorFactory extends AbstractFlipFlopHDLGeneratorFactory
+  private static class TFFHDLGeneratorFactory extends AbstractFlipFlopHDLGeneratorFactory
       implements HDLGeneratorFactory {
     @Override
     public String ComponentName() {
@@ -53,21 +52,21 @@ public class TFlipFlop extends AbstractFlipFlop {
     @Override
     public Map<String, String> GetInputMaps(
         NetlistComponent ComponentInfo, Netlist Nets, FPGAReport Reporter, String HDLType) {
-      Map<String, String> PortMap = new HashMap<String, String>();
+      Map<String, String> PortMap = new HashMap<>();
       PortMap.putAll(GetNetMap("T", true, ComponentInfo, 0, Reporter, HDLType, Nets));
       return PortMap;
     }
 
     @Override
     public Map<String, Integer> GetInputPorts() {
-      Map<String, Integer> Inputs = new HashMap<String, Integer>();
+      Map<String, Integer> Inputs = new HashMap<>();
       Inputs.put("T", 1);
       return Inputs;
     }
 
     @Override
     public ArrayList<String> GetUpdateLogic(String HDLType) {
-      ArrayList<String> Contents = new ArrayList<String>();
+      ArrayList<String> Contents = new ArrayList<>();
       if (HDLType.endsWith(VHDL)) Contents.add("   s_next_state <= s_current_state_reg XOR T;");
       else Contents.add("   assign s_next_state = s_current_state_reg^T;");
       return Contents;

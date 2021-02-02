@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -47,50 +47,12 @@ import javax.swing.JList;
 import javax.swing.JScrollPane;
 
 public class ProjectLibraryActions {
-  private static class BuiltinOption {
-    Library lib;
-
-    BuiltinOption(Library lib) {
-      this.lib = lib;
-    }
-
-    @Override
-    public String toString() {
-      return lib.getDisplayName();
-    }
-  }
-
-  @SuppressWarnings("rawtypes")
-  private static class LibraryJList extends JList {
-    private static final long serialVersionUID = 1L;
-
-    @SuppressWarnings("unchecked")
-    LibraryJList(List<Library> libraries) {
-      ArrayList<BuiltinOption> options = new ArrayList<BuiltinOption>();
-      for (Library lib : libraries) {
-        options.add(new BuiltinOption(lib));
-      }
-      setListData(options.toArray());
-    }
-
-    Library[] getSelectedLibraries() {
-      Object[] selected = getSelectedValuesList().toArray();
-      if (selected != null && selected.length > 0) {
-        Library[] libs = new Library[selected.length];
-        for (int i = 0; i < selected.length; i++) {
-          libs[i] = ((BuiltinOption) selected[i]).lib;
-        }
-        return libs;
-      } else {
-        return null;
-      }
-    }
-  }
+  private ProjectLibraryActions() {}
 
   public static void doLoadBuiltinLibrary(Project proj) {
     LogisimFile file = proj.getLogisimFile();
     List<Library> baseBuilt = file.getLoader().getBuiltin().getLibraries();
-    ArrayList<Library> builtins = new ArrayList<Library>(baseBuilt);
+    ArrayList<Library> builtins = new ArrayList<>(baseBuilt);
     builtins.removeAll(file.getLibraries());
     if (builtins.isEmpty()) {
       OptionPane.showMessageDialog(
@@ -172,7 +134,7 @@ public class ProjectLibraryActions {
 
   public static void doUnloadLibraries(Project proj) {
     LogisimFile file = proj.getLogisimFile();
-    ArrayList<Library> canUnload = new ArrayList<Library>();
+    ArrayList<Library> canUnload = new ArrayList<>();
     for (Library lib : file.getLibraries()) {
       String message = file.getUnloadLibraryMessage(lib);
       if (message == null) canUnload.add(lib);
@@ -210,5 +172,43 @@ public class ProjectLibraryActions {
     }
   }
 
-  private ProjectLibraryActions() {}
+  private static class BuiltinOption {
+    Library lib;
+
+    BuiltinOption(Library lib) {
+      this.lib = lib;
+    }
+
+    @Override
+    public String toString() {
+      return lib.getDisplayName();
+    }
+  }
+
+  @SuppressWarnings("rawtypes")
+  private static class LibraryJList extends JList {
+    private static final long serialVersionUID = 1L;
+
+    @SuppressWarnings("unchecked")
+    LibraryJList(List<Library> libraries) {
+      ArrayList<BuiltinOption> options = new ArrayList<>();
+      for (Library lib : libraries) {
+        options.add(new BuiltinOption(lib));
+      }
+      setListData(options.toArray());
+    }
+
+    Library[] getSelectedLibraries() {
+      Object[] selected = getSelectedValuesList().toArray();
+      if (selected != null && selected.length > 0) {
+        Library[] libs = new Library[selected.length];
+        for (int i = 0; i < selected.length; i++) {
+          libs[i] = ((BuiltinOption) selected[i]).lib;
+        }
+        return libs;
+      } else {
+        return null;
+      }
+    }
+  }
 }

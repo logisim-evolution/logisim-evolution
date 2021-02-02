@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -30,14 +30,6 @@ package com.cburch.logisim.soc.vga;
 
 import static com.cburch.logisim.soc.Strings.S;
 
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.image.BufferedImage;
-import java.util.List;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.circuit.appear.DynamicElement;
 import com.cburch.logisim.data.Attribute;
@@ -45,6 +37,12 @@ import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.UnmodifiableList;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.image.BufferedImage;
+import java.util.List;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 public class SocVgaShape extends DynamicElement {
 
@@ -53,7 +51,7 @@ public class SocVgaShape extends DynamicElement {
   }
   
   public void setBounds(int width , int height) {
-    bounds = Bounds.create(bounds.getX(), bounds.getY(), width, height);;
+    bounds = Bounds.create(bounds.getX(), bounds.getY(), width, height);
   }
 
   @Override

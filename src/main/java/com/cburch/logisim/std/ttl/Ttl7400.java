@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -37,7 +37,7 @@ import java.util.ArrayList;
 
 public class Ttl7400 extends AbstractTtlGate {
 
-  private class NandGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
+  private static class NandGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
 
     @Override
     public String getComponentStringIdentifier() {
@@ -46,26 +46,26 @@ public class Ttl7400 extends AbstractTtlGate {
 
     @Override
     public ArrayList<String> GetLogicFunction(int index, String HDLType) {
-      ArrayList<String> Contents = new ArrayList<String>();
+      ArrayList<String> Contents = new ArrayList<>();
       if (HDLType.equals(VHDL))
         Contents.add(
             "   gate_"
-                + Integer.toString(index)
+                + index
                 + "_O <= NOT(gate_"
-                + Integer.toString(index)
+                + index
                 + "_A"
                 + " AND gate_"
-                + Integer.toString(index)
+                + index
                 + "_B);");
       else
         Contents.add(
             "   assign gate_"
-                + Integer.toString(index)
+                + index
                 + "_O = ~(gate_"
-                + Integer.toString(index)
+                + index
                 + "_A"
                 + " & gate_"
-                + Integer.toString(index)
+                + index
                 + "_B);");
       Contents.add("");
       return Contents;

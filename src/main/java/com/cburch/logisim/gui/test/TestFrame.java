@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -62,13 +62,125 @@ import javax.swing.JPanel;
 
 public class TestFrame extends LFrame {
 
+  private static final long serialVersionUID = 1L;
+  private final Project project;
+  private final Map<Circuit, Model> modelMap = new HashMap<>();
+  private final MyListener myListener = new MyListener();
+  private final WindowMenuManager windowManager;
+  private final JFileChooser chooser = new JFileChooser();
+  private final TestPanel panel;
+  private final JButton load = new JButton();
+  private final JButton run = new JButton();
+  private final JButton stop = new JButton();
+  private final JButton reset = new JButton();
+  private final JButton close = new JButton();
+  private final JLabel pass = new JLabel();
+  private final JLabel fail = new JLabel();
+  private Simulator curSimulator = null;
+  private Model curModel;
+  private int finished, count;
+  private File curFile;
+
+  public TestFrame(Project project) {
+    super(false, project);
+    this.project = project;
+    this.windowManager = new WindowMenuManager();
+    project.addProjectListener(myListener);
+    setSimulator(project.getSimulator(), project.getCircuitState().getCircuit());
+
+    chooser.addChoosableFileFilter(chooser.getAcceptAllFileFilter());
+    chooser.addChoosableFileFilter(TestVector.FILE_FILTER);
+    chooser.setFileFilter(TestVector.FILE_FILTER);
+
+    panel = new TestPanel(this);
+
+    JPanel statusPanel = new JPanel();
+    statusPanel.add(pass);
+    statusPanel.add(fail);
+
+    JPanel buttonPanel = new JPanel();
+    buttonPanel.add(load);
+    buttonPanel.add(run);
+    buttonPanel.add(stop);
+    buttonPanel.add(reset);
+    buttonPanel.add(close);
+    load.addActionListener(myListener);
+    run.addActionListener(myListener);
+    stop.addActionListener(myListener);
+    reset.addActionListener(myListener);
+    close.addActionListener(myListener);
+
+    run.setEnabled(false);
+    stop.setEnabled(false);
+    reset.setEnabled(false);
+
+    Container contents = getContentPane();
+    panel.setPreferredSize(new Dimension(450, 300));
+    contents.add(statusPanel, BorderLayout.NORTH);
+    contents.add(panel, BorderLayout.CENTER);
+    contents.add(buttonPanel, BorderLayout.SOUTH);
+
+    LocaleManager.addLocaleListener(myListener);
+    myListener.localeChanged();
+    pack();
+  }
+
+  private static String computeTitle(Model data, Project proj) {
+    String name = data == null ? "???" : data.getCircuit().getName();
+    return StringUtil.format(S.get("testFrameTitle"), name, proj.getLogisimFile().getDisplayName());
+  }
+
+  Model getModel() {
+    return curModel;
+  }
+
+  public Project getProject() {
+    return project;
+  }
+
+  private void setSimulator(Simulator value, Circuit circuit) {
+    if ((value == null) == (curModel == null)) {
+      if (value == null || value.getCircuitState().getCircuit() == curModel.getCircuit()) return;
+    }
+
+    // LogisimMenuBar menubar = (LogisimMenuBar) getJMenuBar();
+    // menubar.setCircuitState(value, state);
+
+    if (curSimulator != null) curSimulator.removeSimulatorListener(myListener);
+    if (curModel != null) curModel.setSelected(false);
+    if (curModel != null) curModel.removeModelListener(myListener);
+
+    Model oldModel = curModel;
+    Model data = null;
+    if (value != null) {
+      data = modelMap.get(value.getCircuitState().getCircuit());
+      if (data == null) {
+        data = new Model(project, value.getCircuitState().getCircuit());
+        modelMap.put(data.getCircuit(), data);
+      }
+    }
+    curSimulator = value;
+    curModel = data;
+
+    if (curSimulator != null) curSimulator.addSimulatorListener(myListener);
+    if (curModel != null) curModel.setSelected(true);
+    if (curModel != null) curModel.addModelListener(myListener);
+    setTitle(computeTitle(curModel, project));
+    if (panel != null) panel.modelChanged(oldModel, curModel);
+  }
+
+  public void setVisible(boolean value) {
+    if (value) windowManager.frameOpened(this);
+    super.setVisible(value);
+  }
+
   private class MyListener
       implements ActionListener, ProjectListener, SimulatorListener, LocaleListener, ModelListener {
 
     public void actionPerformed(ActionEvent event) {
       Object src = event.getSource();
       if (src == close) {
-         requestClose();
+        requestClose();
       } else if (src == load) {
         int result = chooser.showOpenDialog(TestFrame.this);
         if (result != JFileChooser.APPROVE_OPTION) return;
@@ -195,119 +307,5 @@ public class TestFrame extends LFrame {
         localeChanged();
       }
     }
-  }
-
-  private static String computeTitle(Model data, Project proj) {
-    String name = data == null ? "???" : data.getCircuit().getName();
-    return StringUtil.format(S.get("testFrameTitle"), name, proj.getLogisimFile().getDisplayName());
-  }
-
-  private static final long serialVersionUID = 1L;
-  private final Project project;
-  private Simulator curSimulator = null;
-  private Model curModel;
-  private final Map<Circuit, Model> modelMap = new HashMap<Circuit, Model>();
-  private final MyListener myListener = new MyListener();
-  private final WindowMenuManager windowManager;
-  private int finished, count;
-
-  private File curFile;
-  private final JFileChooser chooser = new JFileChooser();
-  private final TestPanel panel;
-  private final JButton load = new JButton();
-  private final JButton run = new JButton();
-  private final JButton stop = new JButton();
-  private final JButton reset = new JButton();
-  private final JButton close = new JButton();
-  private final JLabel pass = new JLabel();
-
-  private final JLabel fail = new JLabel();
-
-  public TestFrame(Project project) {
-    super(false,project);
-    this.project = project;
-    this.windowManager = new WindowMenuManager();
-    project.addProjectListener(myListener);
-    setSimulator(project.getSimulator(), project.getCircuitState().getCircuit());
-
-    chooser.addChoosableFileFilter(chooser.getAcceptAllFileFilter());
-    chooser.addChoosableFileFilter(TestVector.FILE_FILTER);
-    chooser.setFileFilter(TestVector.FILE_FILTER);
-
-    panel = new TestPanel(this);
-
-    JPanel statusPanel = new JPanel();
-    statusPanel.add(pass);
-    statusPanel.add(fail);
-
-    JPanel buttonPanel = new JPanel();
-    buttonPanel.add(load);
-    buttonPanel.add(run);
-    buttonPanel.add(stop);
-    buttonPanel.add(reset);
-    buttonPanel.add(close);
-    load.addActionListener(myListener);
-    run.addActionListener(myListener);
-    stop.addActionListener(myListener);
-    reset.addActionListener(myListener);
-    close.addActionListener(myListener);
-
-    run.setEnabled(false);
-    stop.setEnabled(false);
-    reset.setEnabled(false);
-
-    Container contents = getContentPane();
-    panel.setPreferredSize(new Dimension(450, 300));
-    contents.add(statusPanel, BorderLayout.NORTH);
-    contents.add(panel, BorderLayout.CENTER);
-    contents.add(buttonPanel, BorderLayout.SOUTH);
-
-    LocaleManager.addLocaleListener(myListener);
-    myListener.localeChanged();
-    pack();
-  }
-
-  Model getModel() {
-    return curModel;
-  }
-
-  public Project getProject() {
-    return project;
-  }
-
-  private void setSimulator(Simulator value, Circuit circuit) {
-    if ((value == null) == (curModel == null)) {
-      if (value == null || value.getCircuitState().getCircuit() == curModel.getCircuit()) return;
-    }
-
-    // LogisimMenuBar menubar = (LogisimMenuBar) getJMenuBar();
-    // menubar.setCircuitState(value, state);
-
-    if (curSimulator != null) curSimulator.removeSimulatorListener(myListener);
-    if (curModel != null) curModel.setSelected(false);
-    if (curModel != null) curModel.removeModelListener(myListener);
-
-    Model oldModel = curModel;
-    Model data = null;
-    if (value != null) {
-      data = modelMap.get(value.getCircuitState().getCircuit());
-      if (data == null) {
-        data = new Model(project, value.getCircuitState().getCircuit());
-        modelMap.put(data.getCircuit(), data);
-      }
-    }
-    curSimulator = value;
-    curModel = data;
-
-    if (curSimulator != null) curSimulator.addSimulatorListener(myListener);
-    if (curModel != null) curModel.setSelected(true);
-    if (curModel != null) curModel.addModelListener(myListener);
-    setTitle(computeTitle(curModel, project));
-    if (panel != null) panel.modelChanged(oldModel, curModel);
-  }
-
-  public void setVisible(boolean value) {
-    if (value) windowManager.frameOpened(this);
-    super.setVisible(value);
   }
 }

@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -43,14 +43,14 @@ public class AbstractConstantHDLGeneratorFactory extends AbstractHDLGeneratorFac
 
   private String GetConvertOperator(long value, int nr_of_bits, String HDLType) {
     if (HDLType.equals(VHDL)) {
-      if (nr_of_bits == 1) return "'" + Long.toString(value) + "'";
+      if (nr_of_bits == 1) return "'" + value + "'";
       return "std_logic_vector(to_unsigned("
-          + Long.toString(value)
+          + value
           + ","
-          + Integer.toString(nr_of_bits)
+          + nr_of_bits
           + "))";
     } else {
-      return Integer.toString(nr_of_bits) + "'d" + Long.toString(value);
+      return nr_of_bits + "'d" + value;
     }
   }
 
@@ -62,7 +62,7 @@ public class AbstractConstantHDLGeneratorFactory extends AbstractHDLGeneratorFac
       FPGAReport Reporter,
       String CircuitName,
       String HDLType) {
-    ArrayList<String> Contents = new ArrayList<String>();
+    ArrayList<String> Contents = new ArrayList<>();
     String Preamble = (HDLType.equals(VHDL)) ? "" : "assign ";
     String AssignOperator = (HDLType.equals(VHDL)) ? " <= " : " = ";
     int NrOfBits = ComponentInfo.GetComponent().getEnd(0).getWidth().getWidth();

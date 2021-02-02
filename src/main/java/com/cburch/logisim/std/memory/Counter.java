@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -59,7 +59,6 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.math.BigInteger;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -206,7 +205,7 @@ public class Counter extends InstanceFactory implements DynamicElementProvider {
     IsCTRm |= onGoal == ON_GOAL_CONT;
     String Label =
         (IsCTRm)
-            ? "CTR" + Integer.toString(painter.getAttributeValue(StdAttr.WIDTH).getWidth())
+            ? "CTR" + painter.getAttributeValue(StdAttr.WIDTH).getWidth()
             : "CTR DIV0x" + Long.toHexString(max);
     GraphicsUtil.drawCenteredText(g, Label, xpos + (SymbolWidth(width) / 2) + 20, ypos + 5);
     GraphicsUtil.switchToWidth(g, GraphicsUtil.CONTROL_WIDTH);

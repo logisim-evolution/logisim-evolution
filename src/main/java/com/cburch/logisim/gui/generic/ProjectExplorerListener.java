@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -36,13 +36,13 @@ import javax.swing.JPopupMenu;
 
 public interface ProjectExplorerListener {
 
-  public void deleteRequested(ProjectExplorerEvent event);
+  void deleteRequested(ProjectExplorerEvent event);
 
-  public void doubleClicked(ProjectExplorerEvent event);
+  void doubleClicked(ProjectExplorerEvent event);
 
-  public JPopupMenu menuRequested(ProjectExplorerEvent event);
+  JPopupMenu menuRequested(ProjectExplorerEvent event);
 
-  public void moveRequested(ProjectExplorerEvent event, AddTool dragged, AddTool target);
+  void moveRequested(ProjectExplorerEvent event, AddTool dragged, AddTool target);
 
-  public void selectionChanged(ProjectExplorerEvent event);
+  void selectionChanged(ProjectExplorerEvent event);
 }

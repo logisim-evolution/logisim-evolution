@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -73,8 +73,8 @@ public class ChronoModelEventHandler implements ModelListener {
       String value = sel.get(i).fetchValue(model.getCircuitState()).toString();
       // is the entry a bus?
       if (value.length() > 1)
-        chronoData.put(name, new SignalDataBus(name, new ArrayList<String>()));
-      else chronoData.put(name, new SignalData(name, new ArrayList<String>()));
+        chronoData.put(name, new SignalDataBus(name, new ArrayList<>()));
+      else chronoData.put(name, new SignalData(name, new ArrayList<>()));
       // add initial data
       chronoData.appendValueToSignal(name, value);
       chronoData.appendValueToSignal(name, value);
@@ -84,7 +84,7 @@ public class ChronoModelEventHandler implements ModelListener {
     }
     if (sysclkPos == -1) throw new NoSysclkException("No sysclk signal found");
     // store signal order
-    chronoData.setSignalOrder(new ArrayList<String>(Arrays.asList(signalNamesKeepOrder)));
+    chronoData.setSignalOrder(new ArrayList<>(Arrays.asList(signalNamesKeepOrder)));
   }
 
   @Override

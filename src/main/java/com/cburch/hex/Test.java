@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -34,8 +34,18 @@ import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 
 public class Test {
+  public static void main(String[] args) {
+    JFrame frame = new JFrame();
+    HexModel model = new Model();
+    HexEditor editor = new HexEditor(model);
+    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    frame.getContentPane().add(new JScrollPane(editor));
+    frame.pack();
+    frame.setVisible(true);
+  }
+
   private static class Model implements HexModel {
-    private final ArrayList<HexModelListener> listeners = new ArrayList<HexModelListener>();
+    private final ArrayList<HexModelListener> listeners = new ArrayList<>();
     private final long[] data = new long[924];
 
     public void addHexModelListener(HexModelListener l) {
@@ -87,15 +97,5 @@ public class Test {
         l.bytesChanged(this, start, values.length, oldValues);
       }
     }
-  }
-
-  public static void main(String[] args) {
-    JFrame frame = new JFrame();
-    HexModel model = new Model();
-    HexEditor editor = new HexEditor(model);
-    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    frame.getContentPane().add(new JScrollPane(editor));
-    frame.pack();
-    frame.setVisible(true);
   }
 }

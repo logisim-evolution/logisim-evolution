@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -49,7 +49,7 @@ import com.cburch.logisim.util.GraphicsUtil;
 import java.awt.Graphics2D;
 
 public class Power extends InstanceFactory {
-  private class PowerHDLGeneratorFactory extends AbstractConstantHDLGeneratorFactory {
+  private static class PowerHDLGeneratorFactory extends AbstractConstantHDLGeneratorFactory {
     @Override
     public long GetConstant(AttributeSet attrs) {
       long ConstantValue = 0;

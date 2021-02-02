@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -30,13 +30,12 @@ package com.cburch.logisim.soc.nios2;
 
 import static com.cburch.logisim.soc.Strings.S;
 
-import java.util.ArrayList;
-
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.soc.data.SocSupport;
 import com.cburch.logisim.soc.util.AssemblerAsmInstruction;
 import com.cburch.logisim.soc.util.AssemblerExecutionInterface;
 import com.cburch.logisim.soc.util.AssemblerToken;
+import java.util.ArrayList;
 
 public class Nios2ArithmeticAndLogicalInstructions implements AssemblerExecutionInterface {
 
@@ -93,9 +92,9 @@ public class Nios2ArithmeticAndLogicalInstructions implements AssemblerExecution
    * movia rb,label => orhi rb,0,%hi(label); addi rb,r0,%lo(label)    
    */
   
-  private final ArrayList<String> Opcodes = new ArrayList<String>();
-  private final ArrayList<Integer> OpcCodes = new ArrayList<Integer>();
-  private final ArrayList<Integer> OpxCodes = new ArrayList<Integer>();
+  private final ArrayList<String> Opcodes = new ArrayList<>();
+  private final ArrayList<Integer> OpcCodes = new ArrayList<>();
+  private final ArrayList<Integer> OpxCodes = new ArrayList<>();
 
   private int instruction;
   private boolean valid;

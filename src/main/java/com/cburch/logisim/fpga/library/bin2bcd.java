@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -136,7 +136,7 @@ public class bin2bcd extends InstanceFactory {
     BitWidth nrofbits = attrs.getValue(bin2bcd.ATTR_BinBits);
     int NrOfPorts = (int) (Math.log10(1 << nrofbits.getWidth()) + 1.0);
     CompleteName.append(CorrectLabel.getCorrectLabel(this.getName()));
-    CompleteName.append("_" + Integer.toString(NrOfPorts) + "_bcd_ports");
+    CompleteName.append("_" + NrOfPorts + "_bcd_ports");
     return CompleteName.toString();
   }
 

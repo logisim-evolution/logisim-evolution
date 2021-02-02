@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -41,17 +41,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 class IntlOptions extends OptionsPanel {
-  private static class RestrictedLabel extends JLabel {
-    private static final long serialVersionUID = 1L;
-
-    @Override
-    public Dimension getMaximumSize() {
-      return getPreferredSize();
-    }
-  }
-
   private static final long serialVersionUID = 1L;
-
   private final JLabel localeLabel = new RestrictedLabel();
   private final JComponent locale;
   private final PrefBoolean replAccents;
@@ -110,5 +100,14 @@ class IntlOptions extends OptionsPanel {
     localeLabel.setText(S.get("intlLocale") + " ");
     replAccents.localeChanged();
     replAccents.setEnabled(LocaleManager.canReplaceAccents());
+  }
+
+  private static class RestrictedLabel extends JLabel {
+    private static final long serialVersionUID = 1L;
+
+    @Override
+    public Dimension getMaximumSize() {
+      return getPreferredSize();
+    }
   }
 }

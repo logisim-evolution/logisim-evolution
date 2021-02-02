@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -28,21 +28,20 @@
 
 package com.cburch.logisim.circuit.appear;
 
-import java.util.HashSet;
-import java.util.LinkedList;
-
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.instance.InstanceComponent;
+import java.util.HashSet;
+import java.util.LinkedList;
 
 public interface DynamicElementProvider {
 
-  public DynamicElement createDynamicElement(int x, int y, DynamicElement.Path path);
+  DynamicElement createDynamicElement(int x, int y, DynamicElement.Path path);
   
-  public static void removeDynamicElements(Circuit circuit, Component c){
+  static void removeDynamicElements(Circuit circuit, Component c){
 	if (!(c instanceof InstanceComponent)) return;
-    HashSet<Circuit> allAffected = new HashSet<Circuit>();
-    LinkedList<Circuit> todo = new LinkedList<Circuit>();
+    HashSet<Circuit> allAffected = new HashSet<>();
+    LinkedList<Circuit> todo = new LinkedList<>();
     todo.add(circuit);
     while (!todo.isEmpty()) {
       Circuit circ = todo.remove();

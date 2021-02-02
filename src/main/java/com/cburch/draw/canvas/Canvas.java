@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -41,13 +41,12 @@ import javax.swing.JComponent;
 import javax.swing.JPopupMenu;
 
 public class Canvas extends JComponent {
-  private static final long serialVersionUID = 1L;
   public static final String TOOL_PROPERTY = "tool";
   public static final String MODEL_PROPERTY = "model";
-
+  private static final long serialVersionUID = 1L;
+  private final CanvasListener listener;
   private CanvasModel model;
   private ActionDispatcher dispatcher;
-  private final CanvasListener listener;
   private Selection selection;
 
   public Canvas() {
@@ -73,8 +72,21 @@ public class Canvas extends JComponent {
     return selection;
   }
 
+  protected void setSelection(Selection value) {
+    selection = value;
+    repaint();
+  }
+
   public CanvasTool getTool() {
     return listener.getTool();
+  }
+
+  public void setTool(CanvasTool value) {
+    CanvasTool oldValue = listener.getTool();
+    if (value != oldValue) {
+      listener.setTool(value);
+      firePropertyChange(TOOL_PROPERTY, oldValue, value);
+    }
   }
 
   public double getZoomFactor() {
@@ -133,19 +145,6 @@ public class Canvas extends JComponent {
     selection.clearSelected();
     repaint();
     firePropertyChange(MODEL_PROPERTY, oldValue, value);
-  }
-
-  protected void setSelection(Selection value) {
-    selection = value;
-    repaint();
-  }
-
-  public void setTool(CanvasTool value) {
-    CanvasTool oldValue = listener.getTool();
-    if (value != oldValue) {
-      listener.setTool(value);
-      firePropertyChange(TOOL_PROPERTY, oldValue, value);
-    }
   }
 
   protected JPopupMenu showPopupMenu(MouseEvent e, CanvasObject clicked) {

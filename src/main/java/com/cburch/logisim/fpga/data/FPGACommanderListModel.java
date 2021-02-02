@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -30,7 +30,6 @@ package com.cburch.logisim.fpga.data;
 
 import com.cburch.logisim.fpga.designrulecheck.SimpleDRCContainer;
 import com.cburch.logisim.fpga.gui.ListModelCellRenderer;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
@@ -48,8 +47,8 @@ public class FPGACommanderListModel extends AbstractListModel<Object> {
   private final ListModelCellRenderer MyRender;
 
   public FPGACommanderListModel(boolean CountLines) {
-    myData = new ArrayList<Object>();
-    myListeners = new HashSet<ListDataListener>();
+    myData = new ArrayList<>();
+    myListeners = new HashSet<>();
     MyRender = new ListModelCellRenderer(CountLines);
   }
 

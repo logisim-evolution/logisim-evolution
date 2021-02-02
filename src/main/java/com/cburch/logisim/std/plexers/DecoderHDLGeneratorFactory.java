@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -46,7 +46,7 @@ public class DecoderHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Inputs = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> Inputs = new TreeMap<>();
     Inputs.put("Enable", 1);
     Inputs.put("Sel", attrs.getValue(Plexers.ATTR_SELECT).getWidth());
     return Inputs;
@@ -55,7 +55,7 @@ public class DecoderHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   @Override
   public ArrayList<String> GetModuleFunctionality(
       Netlist TheNetlist, AttributeSet attrs, FPGAReport Reporter, String HDLType) {
-    ArrayList<String> Contents = new ArrayList<String>();
+    ArrayList<String> Contents = new ArrayList<>();
     int nr_of_select_bits = attrs.getValue(Plexers.ATTR_SELECT).getWidth();
     int num_outputs = (1 << nr_of_select_bits);
     String Space = " ";
@@ -68,7 +68,7 @@ public class DecoderHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       } else {
         Contents.add(
             "   assign DecoderOut_"
-                + Integer.toString(i)
+                + i
                 + Space
                 + " = (Enable&(sel == "
                 + binValue
@@ -80,9 +80,9 @@ public class DecoderHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Outputs = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> Outputs = new TreeMap<>();
     for (int i = 0; i < (1 << attrs.getValue(Plexers.ATTR_SELECT).getWidth()); i++) {
-      Outputs.put("DecoderOut_" + Integer.toString(i), 1);
+      Outputs.put("DecoderOut_" + i, 1);
     }
     return Outputs;
   }
@@ -90,7 +90,7 @@ public class DecoderHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   @Override
   public SortedMap<String, String> GetPortMap(
       Netlist Nets, Object MapInfo, FPGAReport Reporter, String HDLType) {
-    SortedMap<String, String> PortMap = new TreeMap<String, String>();
+    SortedMap<String, String> PortMap = new TreeMap<>();
     if (!(MapInfo instanceof NetlistComponent)) return PortMap;
     NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
     int nr_of_select_bits =
@@ -100,7 +100,7 @@ public class DecoderHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     for (int i = 0; i < select_input_index; i++)
       PortMap.putAll(
           GetNetMap(
-              "DecoderOut_" + Integer.toString(i),
+              "DecoderOut_" + i,
               true,
               ComponentInfo,
               i,

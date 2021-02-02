@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -33,7 +33,7 @@ import com.cburch.logisim.comp.ComponentUserEvent;
 import com.cburch.logisim.proj.Action;
 
 public interface TextEditable {
-  public Action getCommitAction(Circuit circuit, String oldText, String newText);
+  Action getCommitAction(Circuit circuit, String oldText, String newText);
 
-  public Caret getTextCaret(ComponentUserEvent event);
+  Caret getTextCaret(ComponentUserEvent event);
 }

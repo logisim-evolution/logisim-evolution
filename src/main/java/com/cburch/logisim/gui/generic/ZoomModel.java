@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -32,25 +32,25 @@ import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeListener;
 
 public interface ZoomModel {
-  public static final String ZOOM = "zoom";
-  public static final String SHOW_GRID = "grid";
-  public static final String CENTER = "center";
+  String ZOOM = "zoom";
+  String SHOW_GRID = "grid";
+  String CENTER = "center";
 
-  public void addPropertyChangeListener(String prop, PropertyChangeListener l);
+  void addPropertyChangeListener(String prop, PropertyChangeListener l);
 
-  public boolean getShowGrid();
+  boolean getShowGrid();
 
-  public double getZoomFactor();
+  void setShowGrid(boolean value);
 
-  public double[] getZoomOptions();
+  double getZoomFactor();
 
-  public void removePropertyChangeListener(String prop, PropertyChangeListener l);
+  void setZoomFactor(double value);
 
-  public void setShowGrid(boolean value);
+  double[] getZoomOptions();
 
-  public void setZoomFactor(double value);
+  void removePropertyChangeListener(String prop, PropertyChangeListener l);
 
-  public void setZoomFactorCenter(double value);
+  void setZoomFactorCenter(double value);
 
-  public void setZoomFactor(double value, MouseEvent e);
+  void setZoomFactor(double value, MouseEvent e);
 }

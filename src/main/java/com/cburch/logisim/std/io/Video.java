@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -413,7 +413,7 @@ class Video extends ManagedComponent implements ToolTipMaker, AttributeListener 
     return state;
   }
 
-  private class State implements ComponentState, Cloneable {
+  private static class State implements ComponentState, Cloneable {
     public Value lastClock = null;
     public BufferedImage img;
     public int last_x, last_y, color;

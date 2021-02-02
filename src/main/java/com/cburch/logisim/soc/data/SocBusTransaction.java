@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -30,15 +30,14 @@ package com.cburch.logisim.soc.data;
 
 import static com.cburch.logisim.soc.Strings.S;
 
-import java.awt.Color;
-import java.awt.FontMetrics;
-import java.awt.Graphics2D;
-
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.GraphicsUtil;
+import java.awt.Color;
+import java.awt.FontMetrics;
+import java.awt.Graphics2D;
 
 public class SocBusTransaction {
 
@@ -324,7 +323,7 @@ public class SocBusTransaction {
 	return i;
   }
   
-  private class BoxInfo {
+  private static class BoxInfo {
     private int skip;
     private int mark;
     private int hex;

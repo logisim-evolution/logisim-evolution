@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -42,7 +42,6 @@ import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.gui.icons.SelectIcon;
 import com.cburch.logisim.util.GraphicsUtil;
-import com.cburch.logisim.util.Icons;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Graphics;
@@ -57,24 +56,13 @@ import java.util.Set;
 import javax.swing.Icon;
 
 public class SelectTool extends AbstractTool {
-  private static CanvasObject getObjectAt(CanvasModel model, int x, int y, boolean assumeFilled) {
-    Location loc = Location.create(x, y);
-    for (CanvasObject o : model.getObjectsFromTop()) {
-      if (o.contains(loc, assumeFilled)) return o;
-    }
-    return null;
-  }
-
   private static final int IDLE = 0;
   private static final int MOVE_ALL = 1;
   private static final int RECT_SELECT = 2;
   private static final int RECT_TOGGLE = 3;
-
   private static final int MOVE_HANDLE = 4;
   private static final int DRAG_TOLERANCE = 2;
-
   private static final int HANDLE_SIZE = 8;
-
   private static final Color RECT_SELECT_BACKGROUND = new Color(0, 0, 0, 32);
   private static final SelectIcon icon = new SelectIcon();
   private int curAction;
@@ -85,7 +73,6 @@ public class SelectTool extends AbstractTool {
   private boolean dragEffective;
   private int lastMouseX;
   private int lastMouseY;
-
   private HandleGesture curGesture;
 
   public SelectTool() {
@@ -93,6 +80,14 @@ public class SelectTool extends AbstractTool {
     dragStart = Location.create(0, 0);
     dragEnd = dragStart;
     dragEffective = false;
+  }
+
+  private static CanvasObject getObjectAt(CanvasModel model, int x, int y, boolean assumeFilled) {
+    Location loc = Location.create(x, y);
+    for (CanvasObject o : model.getObjectsFromTop()) {
+      if (o.contains(loc, assumeFilled)) return o;
+    }
+    return null;
   }
 
   @Override
@@ -105,7 +100,7 @@ public class SelectTool extends AbstractTool {
       curAction = IDLE;
       Selection sel = canvas.getSelection();
       sel.clearDrawsSuppressed();
-      sel.setMovingShapes(Collections.<CanvasObject>emptySet(), 0, 0);
+      sel.setMovingShapes(Collections.emptySet(), 0, 0);
       sel.clearSelected();
       sel.setSelected(before, true);
       sel.setHandleSelected(handle);
@@ -270,7 +265,7 @@ public class SelectTool extends AbstractTool {
     char ch = e.getKeyChar();
     Selection selected = canvas.getSelection();
     if ((ch == '\u0008' || ch == '\u007F') && !selected.isEmpty()) {
-      ArrayList<CanvasObject> toRemove = new ArrayList<CanvasObject>();
+      ArrayList<CanvasObject> toRemove = new ArrayList<>();
       for (CanvasObject shape : selected.getSelected()) {
         if (shape.canRemove()) {
           toRemove.add(shape);
@@ -296,7 +291,7 @@ public class SelectTool extends AbstractTool {
 
   @Override
   public void mousePressed(Canvas canvas, MouseEvent e) {
-    beforePressSelection = new ArrayList<CanvasObject>(canvas.getSelection().getSelected());
+    beforePressSelection = new ArrayList<>(canvas.getSelection().getSelected());
     beforePressHandle = canvas.getSelection().getSelectedHandle();
     int mx = e.getX();
     int my = e.getY();

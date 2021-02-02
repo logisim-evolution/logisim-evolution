@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -78,7 +78,7 @@ public class LeftPanel extends ChronoPanelTemplate {
 
     String[] names = {"", S.get("SignalNameName"), S.get("SignalNameValue")};
     tableData = new Object[mChronoFrame.getChronoData().size() - 1][3];
-    signalDataPositionInTable = new HashMap<SignalData, Integer>();
+    signalDataPositionInTable = new HashMap<>();
     reverseSignalDataPositionInTable = new SignalData[mChronoFrame.getChronoData().size() - 1];
 
     // add the signal name rows
@@ -105,10 +105,7 @@ public class LeftPanel extends ChronoPanelTemplate {
 
           @Override
           public boolean isCellEditable(int rowIndex, int colIndex) {
-            if (colIndex == 1) {
-              return true; // Disallow the editing of any cell
-            }
-            return false;
+            return colIndex == 1; // Disallow the editing of any cell
           }
         };
     table.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_F2, 0), "none");
@@ -120,7 +117,6 @@ public class LeftPanel extends ChronoPanelTemplate {
               private static final long serialVersionUID = 1L;
 
               public void actionPerformed(ActionEvent e) {
-                ;
               }
             });
     table.addKeyListener(chronoFrame);

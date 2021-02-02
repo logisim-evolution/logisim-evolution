@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -55,7 +55,7 @@ public class BitSelectorHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Inputs = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> Inputs = new TreeMap<>();
     Inputs.put("DataIn", InputBitsId);
     Inputs.put("Sel", SelectBitsId);
     return Inputs;
@@ -64,7 +64,7 @@ public class BitSelectorHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
   @Override
   public ArrayList<String> GetModuleFunctionality(
       Netlist TheNetlist, AttributeSet attrs, FPGAReport Reporter, String HDLType) {
-    ArrayList<String> Contents = new ArrayList<String>();
+    ArrayList<String> Contents = new ArrayList<>();
     int output_bits = attrs.getValue(BitSelector.GROUP_ATTR).getWidth();
     if (HDLType.equals(VHDL)) {
       Contents.add(
@@ -101,7 +101,7 @@ public class BitSelectorHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
               "         "
                   + i
                   + " : s_selected_slice <= s_select_vector[("
-                  + Integer.toString(i + 1)
+                  + (i + 1)
                   + "*"
                   + OutputsBitsStr
                   + ")-1:"
@@ -121,7 +121,7 @@ public class BitSelectorHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
 
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Outputs = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> Outputs = new TreeMap<>();
     int output_bits = (attrs.getValue(BitSelector.GROUP_ATTR).getWidth() == 1) ? 1 : OutputsBitsId;
     Outputs.put("DataOut", output_bits);
     return Outputs;
@@ -129,7 +129,7 @@ public class BitSelectorHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
 
   @Override
   public SortedMap<Integer, String> GetParameterList(AttributeSet attrs) {
-    SortedMap<Integer, String> Parameters = new TreeMap<Integer, String>();
+    SortedMap<Integer, String> Parameters = new TreeMap<>();
     int output_bits = attrs.getValue(BitSelector.GROUP_ATTR).getWidth();
     Parameters.put(InputBitsId, InputBitsStr);
     if (output_bits > 1) Parameters.put(OutputsBitsId, OutputsBitsStr);
@@ -141,7 +141,7 @@ public class BitSelectorHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
   @Override
   public SortedMap<String, Integer> GetParameterMap(
       Netlist Nets, NetlistComponent ComponentInfo, FPGAReport Reporter) {
-    SortedMap<String, Integer> ParameterMap = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> ParameterMap = new TreeMap<>();
     int sel_bits = ComponentInfo.GetComponent().getEnd(2).getWidth().getWidth();
     int input_bits = ComponentInfo.GetComponent().getEnd(1).getWidth().getWidth();
     int output_bits = ComponentInfo.GetComponent().getEnd(0).getWidth().getWidth();
@@ -159,7 +159,7 @@ public class BitSelectorHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
   @Override
   public SortedMap<String, String> GetPortMap(
       Netlist Nets, Object MapInfo, FPGAReport Reporter, String HDLType) {
-    SortedMap<String, String> PortMap = new TreeMap<String, String>();
+    SortedMap<String, String> PortMap = new TreeMap<>();
     if (!(MapInfo instanceof NetlistComponent)) return PortMap;
     NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
     PortMap.putAll(GetNetMap("DataIn", true, ComponentInfo, 1, Reporter, HDLType, Nets));
@@ -175,7 +175,7 @@ public class BitSelectorHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
 
   @Override
   public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist Nets) {
-    SortedMap<String, Integer> Wires = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> Wires = new TreeMap<>();
     Wires.put("s_extended_vector", ExtendedBitsId);
     return Wires;
   }

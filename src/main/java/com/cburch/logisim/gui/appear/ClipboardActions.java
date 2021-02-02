@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -43,30 +43,21 @@ import java.util.Map;
 
 public class ClipboardActions extends Action {
 
-  public static Action copy(AppearanceCanvas canvas) {
-    return new ClipboardActions(false, canvas);
-  }
-
-  public static Action cut(AppearanceCanvas canvas) {
-    return new ClipboardActions(true, canvas);
-  }
-
   private final boolean remove;
   private final AppearanceCanvas canvas;
   private final CanvasModel canvasModel;
-  private ClipboardContents oldClipboard;
   private final Map<CanvasObject, Integer> affected;
   private final ClipboardContents newClipboard;
-
+  private ClipboardContents oldClipboard;
   private ClipboardActions(boolean remove, AppearanceCanvas canvas) {
     this.remove = remove;
     this.canvas = canvas;
     this.canvasModel = canvas.getModel();
 
-    ArrayList<CanvasObject> contents = new ArrayList<CanvasObject>();
+    ArrayList<CanvasObject> contents = new ArrayList<>();
     Direction anchorFacing = null;
     Location anchorLocation = null;
-    ArrayList<CanvasObject> aff = new ArrayList<CanvasObject>();
+    ArrayList<CanvasObject> aff = new ArrayList<>();
     for (CanvasObject o : canvas.getSelection().getSelected()) {
       if (o.canRemove()) {
         aff.add(o);
@@ -80,6 +71,14 @@ public class ClipboardActions extends Action {
     contents.trimToSize();
     affected = ZOrder.getZIndex(aff, canvasModel);
     newClipboard = new ClipboardContents(contents, anchorLocation, anchorFacing);
+  }
+
+  public static Action copy(AppearanceCanvas canvas) {
+    return new ClipboardActions(false, canvas);
+  }
+
+  public static Action cut(AppearanceCanvas canvas) {
+    return new ClipboardActions(true, canvas);
   }
 
   @Override

@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -30,6 +30,18 @@ package com.cburch.logisim.soc.gui;
 
 import static com.cburch.logisim.soc.Strings.S;
 
+import com.cburch.logisim.circuit.CircuitState;
+import com.cburch.logisim.gui.generic.OptionPane;
+import com.cburch.logisim.gui.icons.CompileIcon;
+import com.cburch.logisim.gui.icons.ErrorIcon;
+import com.cburch.logisim.gui.icons.InfoIcon;
+import com.cburch.logisim.gui.icons.OpenSaveIcon;
+import com.cburch.logisim.gui.icons.RunIcon;
+import com.cburch.logisim.prefs.AppPreferences;
+import com.cburch.logisim.soc.data.SocProcessorInterface;
+import com.cburch.logisim.soc.util.Assembler;
+import com.cburch.logisim.soc.util.AssemblerInterface;
+import com.cburch.logisim.util.LocaleListener;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -49,7 +61,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
-
 import javax.swing.Box;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
@@ -61,28 +72,20 @@ import javax.swing.event.CaretListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
-
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rtextarea.RTextScrollPane;
 
-import com.cburch.logisim.circuit.CircuitState;
-import com.cburch.logisim.gui.generic.OptionPane;
-import com.cburch.logisim.gui.icons.CompileIcon;
-import com.cburch.logisim.gui.icons.ErrorIcon;
-import com.cburch.logisim.gui.icons.InfoIcon;
-import com.cburch.logisim.gui.icons.OpenSaveIcon;
-import com.cburch.logisim.gui.icons.RunIcon;
-import com.cburch.logisim.prefs.AppPreferences;
-import com.cburch.logisim.soc.data.SocProcessorInterface;
-import com.cburch.logisim.soc.util.Assembler;
-import com.cburch.logisim.soc.util.AssemblerInterface;
-import com.cburch.logisim.util.LocaleListener;
-
-public class AssemblerPanel extends JPanel implements MouseListener,LocaleListener,ActionListener,
-        KeyListener,DocumentListener,CaretListener,WindowListener {
+public class AssemblerPanel extends JPanel
+    implements MouseListener,
+        LocaleListener,
+        ActionListener,
+        KeyListener,
+        DocumentListener,
+        CaretListener,
+        WindowListener {
 
   private static final long serialVersionUID = 1L;
-  
+
   private final Assembler assembler;
   private final RSyntaxTextArea asmWindow;
   private final RTextScrollPane debugScrollPane;
@@ -98,29 +101,33 @@ public class AssemblerPanel extends JPanel implements MouseListener,LocaleListen
   private final JMenuItem MOpen = new JMenuItem();
   private final JMenuItem MSave = new JMenuItem();
   private final JMenuItem MSaveAs = new JMenuItem();
+  private final ListeningFrame parent;
+  private final SocProcessorInterface cpu;
+  private final CircuitState circuitState;
   private int lineNumber = 1;
   private int numberOfLines = 1;
   private boolean documentChanged = false;
-  private final ListeningFrame parent;
   private File textFile;
-  private final SocProcessorInterface cpu;
-  private final CircuitState circuitState;
 
-  public AssemblerPanel(ListeningFrame parent , String highLiter , AssemblerInterface assembler,
-                        SocProcessorInterface cpu, CircuitState state) {
-	parent.addWindowListener(this);
-	this.parent = parent;
-	this.cpu = cpu;
-	circuitState = state;
-	textFile = null;
-    asmWindow = new RSyntaxTextArea(20,60);
+  public AssemblerPanel(
+      ListeningFrame parent,
+      String highLiter,
+      AssemblerInterface assembler,
+      SocProcessorInterface cpu,
+      CircuitState state) {
+    parent.addWindowListener(this);
+    this.parent = parent;
+    this.cpu = cpu;
+    circuitState = state;
+    textFile = null;
+    asmWindow = new RSyntaxTextArea(20, 60);
     asmWindow.setSyntaxEditingStyle(highLiter);
     asmWindow.setEditable(true);
     asmWindow.addKeyListener(this);
     asmWindow.getDocument().addDocumentListener(this);
     asmWindow.addCaretListener(this);
     JPopupMenu popUp = asmWindow.getPopupMenu();
-    popUp.remove(popUp.getComponentCount()-1);
+    popUp.remove(popUp.getComponentCount() - 1);
     popUp.add(MOpen);
     MOpen.addActionListener(this);
     popUp.add(MSave);
@@ -148,11 +155,11 @@ public class AssemblerPanel extends JPanel implements MouseListener,LocaleListen
     Compile.addMouseListener(this);
     info.add(Box.createHorizontalStrut(5));
     info.add(Compile);
-    PrevError.setIcon(new ErrorIcon(false,true));
+    PrevError.setIcon(new ErrorIcon(false, true));
     PrevError.addMouseListener(this);
     info.add(Box.createHorizontalStrut(5));
     info.add(PrevError);
-    NextError.setIcon(new ErrorIcon(true,false));
+    NextError.setIcon(new ErrorIcon(true, false));
     NextError.addMouseListener(this);
     info.add(Box.createHorizontalStrut(5));
     info.add(NextError);
@@ -167,29 +174,35 @@ public class AssemblerPanel extends JPanel implements MouseListener,LocaleListen
     info.add(Box.createHorizontalGlue());
     Line.setOpaque(true);
     info.add(Line);
-    info.setPreferredSize(new Dimension(40,AppPreferences.getScaled(20)));
+    info.setPreferredSize(new Dimension(40, AppPreferences.getScaled(20)));
     setLayout(new BorderLayout());
     info.add(Box.createHorizontalStrut(5));
-    add(info,BorderLayout.NORTH);
+    add(info, BorderLayout.NORTH);
     add(debugScrollPane);
-    this.assembler = new Assembler(assembler,debugScrollPane);
+    this.assembler = new Assembler(assembler, debugScrollPane);
     asmWindow.addParser(this.assembler);
     localeChanged();
   }
-  
+
   private void openFile() {
     if (documentChanged) {
-      int ret = OptionPane.showConfirmDialog(parent, S.get("AsmPanDocumentChangedSave"),parent.getParentTitle() , OptionPane.YES_NO_OPTION);
+      int ret =
+          OptionPane.showConfirmDialog(
+              parent,
+              S.get("AsmPanDocumentChangedSave"),
+              parent.getParentTitle(),
+              OptionPane.YES_NO_OPTION);
       if (ret == OptionPane.YES_OPTION) {
         if (textFile == null) {
-        	OptionPane.showMessageDialog(parent, S.get("AsmPanSaveFirstBeforeOpen"));
-        	return;
+          OptionPane.showMessageDialog(parent, S.get("AsmPanSaveFirstBeforeOpen"));
+          return;
         } else saveFile(false);
       }
     }
     JFileChooser chooser = new JFileChooser();
-    FileNameExtensionFilter filter = new FileNameExtensionFilter(S.get("AsmPanAmsFileExtention"),"S","asm");
-    chooser.setDialogTitle(parent.getParentTitle()+": "+S.get("AsmPanReadAsmFile"));
+    FileNameExtensionFilter filter =
+        new FileNameExtensionFilter(S.get("AsmPanAmsFileExtention"), "S", "asm");
+    chooser.setDialogTitle(parent.getParentTitle() + ": " + S.get("AsmPanReadAsmFile"));
     chooser.setFileFilter(filter);
     int ret = chooser.showOpenDialog(parent);
     if (ret != JFileChooser.APPROVE_OPTION) return;
@@ -198,14 +211,18 @@ public class AssemblerPanel extends JPanel implements MouseListener,LocaleListen
       BufferedReader reader = new BufferedReader(new FileReader(textFile));
       StringBuffer s = new StringBuffer();
       String st;
-      while ((st = reader.readLine()) != null) s.append(st+"\n");
+      while ((st = reader.readLine()) != null) s.append(st + "\n");
       reader.close();
       asmWindow.setText(s.toString());
-    } catch ( IOException e) {
-      OptionPane.showMessageDialog(parent, S.fmt("AsmPanErrorReadingFile",textFile.getName()), parent.getParentTitle(), OptionPane.ERROR_MESSAGE);
+    } catch (IOException e) {
+      OptionPane.showMessageDialog(
+          parent,
+          S.fmt("AsmPanErrorReadingFile", textFile.getName()),
+          parent.getParentTitle(),
+          OptionPane.ERROR_MESSAGE);
       textFile = null;
       return;
-	}
+    }
     asmWindow.setCaretPosition(0);
     documentChanged = false;
     assembler.reset();
@@ -214,54 +231,62 @@ public class AssemblerPanel extends JPanel implements MouseListener,LocaleListen
     }
     updateLineNumber();
   }
-  
+
   private void saveFile(boolean AskFileName) {
     if (!documentChanged) return;
     if (AskFileName || textFile == null) {
       JFileChooser chooser = new JFileChooser();
-      FileNameExtensionFilter filter = new FileNameExtensionFilter(S.get("AsmPanAmsFileExtention"),"S","asm");
-      chooser.setDialogTitle(parent.getParentTitle()+": "+S.get("AsmPanSaveAsmFile"));
+      FileNameExtensionFilter filter =
+          new FileNameExtensionFilter(S.get("AsmPanAmsFileExtention"), "S", "asm");
+      chooser.setDialogTitle(parent.getParentTitle() + ": " + S.get("AsmPanSaveAsmFile"));
       chooser.setFileFilter(filter);
       int ret = chooser.showOpenDialog(parent);
       if (ret != JFileChooser.APPROVE_OPTION) return;
       textFile = chooser.getSelectedFile();
     }
     try {
-      BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(textFile)));
+      BufferedWriter writer =
+          new BufferedWriter(new OutputStreamWriter(new FileOutputStream(textFile)));
       writer.write(asmWindow.getText());
       writer.close();
     } catch (IOException e) {
-      OptionPane.showMessageDialog(parent, S.fmt("AsmPanErrorCreateFile",textFile.getName()), parent.getParentTitle(), OptionPane.ERROR_MESSAGE);
+      OptionPane.showMessageDialog(
+          parent,
+          S.fmt("AsmPanErrorCreateFile", textFile.getName()),
+          parent.getParentTitle(),
+          OptionPane.ERROR_MESSAGE);
     }
     documentChanged = false;
     updateLineNumber();
   }
-  
+
   private boolean Assemble(boolean showWindow) {
-	boolean result = assembler.assemble();
-	if (!result) asmWindow.setCaretPosition(assembler.getErrorPositions().get(0));
-	else if (showWindow) OptionPane.showMessageDialog(parent, S.get("AssemblerAssembleSuccess"));
+    boolean result = assembler.assemble();
+    if (!result) asmWindow.setCaretPosition(assembler.getErrorPositions().get(0));
+    else if (showWindow) OptionPane.showMessageDialog(parent, S.get("AssemblerAssembleSuccess"));
     return result;
   }
-  
+
   private void runProgram() {
     if (!Assemble(false)) return;
     long entryPoint = assembler.getEntryPoint();
     if (entryPoint < 0) return;
     if (!assembler.download(cpu, circuitState)) {
-      OptionPane.showMessageDialog(parent, S.get("AssemblerUnableToDownload"), S.get("AsmPanRun"), OptionPane.ERROR_MESSAGE);
+      OptionPane.showMessageDialog(
+          parent, S.get("AssemblerUnableToDownload"), S.get("AsmPanRun"), OptionPane.ERROR_MESSAGE);
       return;
     }
     cpu.setEntryPointandReset(circuitState, entryPoint, null, assembler.getSectionHeader());
-    OptionPane.showMessageDialog(parent, S.get("AssemblerRunSuccess"), S.get("AsmPanRun"), OptionPane.INFORMATION_MESSAGE);
+    OptionPane.showMessageDialog(
+        parent, S.get("AssemblerRunSuccess"), S.get("AsmPanRun"), OptionPane.INFORMATION_MESSAGE);
   }
-  
+
   private void updateLineNumber() {
-	Line.setBackground(documentChanged ? Color.YELLOW : Color.WHITE);
-    Line.setText(S.fmt("RV32imAsmLineIndicator",lineNumber,numberOfLines));
+    Line.setBackground(documentChanged ? Color.YELLOW : Color.WHITE);
+    Line.setText(S.fmt("RV32imAsmLineIndicator", lineNumber, numberOfLines));
     Line.repaint();
   }
-  
+
   private void nextError(boolean after) {
     int carretPos = asmWindow.getCaretPosition();
     ArrayList<Integer> errorPositions = assembler.getErrorPositions();
@@ -273,11 +298,12 @@ public class AssemblerPanel extends JPanel implements MouseListener,LocaleListen
       index++;
     }
     if (after) {
-      if (findex < 0 || findex == (errorPositions.size()-1)) asmWindow.setCaretPosition(errorPositions.get(0));
-      else asmWindow.setCaretPosition(errorPositions.get(findex+1));
+      if (findex < 0 || findex == (errorPositions.size() - 1))
+        asmWindow.setCaretPosition(errorPositions.get(0));
+      else asmWindow.setCaretPosition(errorPositions.get(findex + 1));
     } else {
-      if (findex <= 0) asmWindow.setCaretPosition(errorPositions.get(errorPositions.size()-1));
-      else asmWindow.setCaretPosition(errorPositions.get(findex-1));
+      if (findex <= 0) asmWindow.setCaretPosition(errorPositions.get(errorPositions.size() - 1));
+      else asmWindow.setCaretPosition(errorPositions.get(findex - 1));
     }
   }
 
@@ -294,40 +320,42 @@ public class AssemblerPanel extends JPanel implements MouseListener,LocaleListen
   }
 
   @Override
-  public void actionPerformed(ActionEvent e) { 
+  public void actionPerformed(ActionEvent e) {
     Object source = e.getSource();
     if (source == MOpen) openFile();
     else if (source == MSave) saveFile(false);
     else if (source == MSaveAs) saveFile(true);
   }
-  
+
   @Override
-  public void keyPressed(KeyEvent e) { 
+  public void keyPressed(KeyEvent e) {
     if (!e.isAltDown() && e.isControlDown() && e.getKeyCode() == KeyEvent.VK_S) saveFile(false);
     else if (!e.isAltDown() && e.isControlDown() && e.getKeyCode() == KeyEvent.VK_L) openFile();
     else if (e.isAltDown() && !e.isControlDown() && e.getKeyCode() == KeyEvent.VK_A) Assemble(true);
     else if (e.isAltDown() && !e.isControlDown() && e.getKeyCode() == KeyEvent.VK_R) runProgram();
-    else if (!e.isAltDown() && e.isControlDown() && e.getKeyCode() == KeyEvent.VK_N) nextError(true);
-    else if (!e.isAltDown() && e.isControlDown() && e.getKeyCode() == KeyEvent.VK_P) nextError(false);
+    else if (!e.isAltDown() && e.isControlDown() && e.getKeyCode() == KeyEvent.VK_N)
+      nextError(true);
+    else if (!e.isAltDown() && e.isControlDown() && e.getKeyCode() == KeyEvent.VK_P)
+      nextError(false);
   }
 
   @Override
-  public void mousePressed(MouseEvent e) { }
+  public void mousePressed(MouseEvent e) {}
 
   @Override
-  public void mouseReleased(MouseEvent e) { }
+  public void mouseReleased(MouseEvent e) {}
 
   @Override
-  public void mouseEntered(MouseEvent e) { }
+  public void mouseEntered(MouseEvent e) {}
 
   @Override
-  public void mouseExited(MouseEvent e) { }
+  public void mouseExited(MouseEvent e) {}
 
   @Override
-  public void keyTyped(KeyEvent e) { }
+  public void keyTyped(KeyEvent e) {}
 
   @Override
-  public void keyReleased(KeyEvent e) { }
+  public void keyReleased(KeyEvent e) {}
 
   @Override
   public void localeChanged() {
@@ -345,39 +373,43 @@ public class AssemblerPanel extends JPanel implements MouseListener,LocaleListen
   }
 
   @Override
-  public void insertUpdate(DocumentEvent e) { 
+  public void insertUpdate(DocumentEvent e) {
     documentChanged = true;
-    assembler.checkAndBuildTokens(asmWindow.getCaretLineNumber()); 
+    assembler.checkAndBuildTokens(asmWindow.getCaretLineNumber());
   }
 
   @Override
   public void removeUpdate(DocumentEvent e) {
     documentChanged = true;
-    assembler.checkAndBuildTokens(asmWindow.getCaretLineNumber()); 
+    assembler.checkAndBuildTokens(asmWindow.getCaretLineNumber());
   }
 
   @Override
-  public void changedUpdate(DocumentEvent e) { }
+  public void changedUpdate(DocumentEvent e) {}
 
   @Override
   public void caretUpdate(CaretEvent e) {
     numberOfLines = asmWindow.getDocument().getDefaultRootElement().getElementCount();
-    lineNumber = asmWindow.getCaretLineNumber()+1;
+    lineNumber = asmWindow.getCaretLineNumber() + 1;
     updateLineNumber();
   }
 
   @Override
-  public void windowOpened(WindowEvent e) { }
+  public void windowOpened(WindowEvent e) {}
 
   @Override
-  public void windowClosing(WindowEvent e) { 
-  }
+  public void windowClosing(WindowEvent e) {}
 
   @Override
-  public void windowClosed(WindowEvent e) { 
+  public void windowClosed(WindowEvent e) {
     if (documentChanged) {
       parent.setVisible(true);
-      int ret = OptionPane.showConfirmDialog(parent, S.get("AsmPanDocumentChangedSave"),parent.getParentTitle() , OptionPane.YES_NO_OPTION);
+      int ret =
+          OptionPane.showConfirmDialog(
+              parent,
+              S.get("AsmPanDocumentChangedSave"),
+              parent.getParentTitle(),
+              OptionPane.YES_NO_OPTION);
       if (ret == OptionPane.YES_OPTION) saveFile(false);
       documentChanged = false;
       parent.setVisible(false);
@@ -389,15 +421,14 @@ public class AssemblerPanel extends JPanel implements MouseListener,LocaleListen
   }
 
   @Override
-  public void windowIconified(WindowEvent e) { }
+  public void windowIconified(WindowEvent e) {}
 
   @Override
-  public void windowDeiconified(WindowEvent e) { }
+  public void windowDeiconified(WindowEvent e) {}
 
   @Override
-  public void windowActivated(WindowEvent e) { }
+  public void windowActivated(WindowEvent e) {}
 
   @Override
-  public void windowDeactivated(WindowEvent e) { }
-
+  public void windowDeactivated(WindowEvent e) {}
 }

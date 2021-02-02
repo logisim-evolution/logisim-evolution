@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -28,16 +28,14 @@
 
 package com.cburch.logisim.fpga.data;
 
+import com.cburch.logisim.fpga.gui.BoardManipulator;
+import com.cburch.logisim.prefs.AppPreferences;
 import java.awt.Frame;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
-
 import javax.swing.JPanel;
-
-import com.cburch.logisim.fpga.gui.BoardManipulator;
-import com.cburch.logisim.prefs.AppPreferences;
 
 public class IOComponentsInformation {
   
@@ -56,7 +54,7 @@ public class IOComponentsInformation {
   public IOComponentsInformation(Frame parrentFrame, boolean mapMode) {
     parent = parrentFrame;
     imageHeight = mapMode ? BoardManipulator.IMAGE_HEIGHT+BoardManipulator.CONSTANT_BAR_HEIGHT : BoardManipulator.IMAGE_HEIGHT;
-    IOcomps = new ArrayList<FPGAIOInformationContainer>();
+    IOcomps = new ArrayList<>();
     lookup = new FPGAIOInformationContainer[BoardManipulator.IMAGE_WIDTH][imageHeight];
     this.mapMode = mapMode;
     clear();
@@ -175,13 +173,13 @@ public class IOComponentsInformation {
   
   public void addListener(IOComponentsListener l) {
     if (listeners == null) {
-      listeners = new ArrayList<IOComponentsListener>();
+      listeners = new ArrayList<>();
       listeners.add(l);
     } else if (!listeners.contains(l)) listeners.add(l);
   }
   
   public void removeListener(IOComponentsListener l) {
-    if (listeners != null && listeners.contains(l))
+    if (listeners != null)
       listeners.remove(l);
   }
 

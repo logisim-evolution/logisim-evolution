@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -32,9 +32,9 @@ import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.data.Value;
 
 public interface Loggable {
-  public String getLogName(Object option);
+  String getLogName(Object option);
 
-  public Object[] getLogOptions(CircuitState state);
+  Object[] getLogOptions(CircuitState state);
 
-  public Value getLogValue(CircuitState state, Object option);
+  Value getLogValue(CircuitState state, Object option);
 }

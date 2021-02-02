@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -71,82 +71,15 @@ import javax.swing.SwingUtilities;
 
 /** Main chronogram JFrame Creates the chronogram */
 public class ChronoFrame extends LFrame implements KeyListener, ActionListener, WindowListener {
-  JFileChooser fc;
-
-  /** Listener to the button, the scrollbars, splitPane divider */
-  private class MyListener implements ActionListener, AdjustmentListener {
-
-    private final ChronoFrame chronoFrame;
-
-    public MyListener(ChronoFrame cf) {
-      chronoFrame = cf;
-    }
-
-    /** Load or export button event handler */
-    @Override
-    public void actionPerformed(ActionEvent e) {
-      // load a chronogram from a file
-      if ("load".equals(e.getActionCommand())) {
-        final JFileChooser fc = new JFileChooser();
-        int returnVal = fc.showOpenDialog(chronoFrame);
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
-          chronoFrame.loadFile(fc.getSelectedFile().getAbsolutePath());
-        }
-
-        // export a chronogram to a file
-      } else if ("export".equals(e.getActionCommand())) {
-        final JFileChooser fc = new JFileChooser();
-        int returnVal = fc.showSaveDialog(chronoFrame);
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
-          chronoFrame.exportFile(fc.getSelectedFile().getAbsolutePath());
-        }
-
-      } else if ("exportImg".equals(e.getActionCommand())) {
-        fc = new JFileChooser();
-        int returnVal = fc.showSaveDialog(ChronoFrame.this);
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
-          File file = fc.getSelectedFile();
-
-          // add .png to the filename if the user forgot
-          if (!fc.getSelectedFile().getAbsolutePath().endsWith(".png")) {
-            file = new File(fc.getSelectedFile() + ".png");
-          }
-          exportImage(file);
-        }
-
-      } else if ("play".equals(e.getActionCommand())) {
-        if (simulator.isRunning()) {
-          SIMSTOPICON.setType(SimulationIcon.SIM_PAUSE);
-        } else {
-          SIMSTOPICON.setType(SimulationIcon.SIM_PLAY);
-        }
-        simulator.setIsRunning(!simulator.isRunning());
-      } else if ("step".equals(e.getActionCommand())) {
-        simulator.step();
-      } else if ("tplay".equals(e.getActionCommand())) {
-        if (simulator.isTicking()) {
-          SIMENABLEICON.setType(SimulationIcon.SIM_DISABLE);
-        } else {
-          SIMENABLEICON.setType(SimulationIcon.SIM_ENABLE);
-        }
-        simulator.setIsTicking(!simulator.isTicking());
-      } else if ("thalf".equals(e.getActionCommand())) {
-        simulator.tick(1);
-      } else if ("tfull".equals(e.getActionCommand())) {
-        simulator.tick(2);
-      }
-    }
-
-    /** rightScroll horizontal movement */
-    @Override
-    public void adjustmentValueChanged(AdjustmentEvent e) {
-      if (rightPanel != null) {
-        rightPanel.adjustmentValueChanged(e.getValue());
-      }
-    }
-  }
-
   private static final long serialVersionUID = 1L;
+  private static final SimulationIcon SIMSTOPICON = new SimulationIcon(SimulationIcon.SIM_PAUSE);
+  private static final SimulationIcon SIMENABLEICON = new SimulationIcon(SimulationIcon.SIM_ENABLE);
+  private final CommonPanelParam commonPanelParam;
+  // event managers
+  private final MyListener myListener = new MyListener(this);
+  // graphical
+  private final int dividerLocation = 353;
+  JFileChooser fc;
   private Simulator simulator;
   private Project project;
   private ChronoData chronogramData;
@@ -162,31 +95,22 @@ public class ChronoFrame extends LFrame implements KeyListener, ActionListener, 
   // split pane
   private RightPanel rightPanel;
   private LeftPanel leftPanel;
-  private final CommonPanelParam commonPanelParam;
   private JScrollPane leftScroll;
   private JScrollPane rightScroll;
   private JSplitPane mainSplitPane;
   private TimelineParam timelineParam;
-  // event managers
-  private final MyListener myListener = new MyListener(this);
   private DrawAreaEventManager mDrawAreaEventManager;
   private DrawAreaManager mDrawAreaManager;
-  // graphical
-  private final int dividerLocation = 353;
   // mode
   private boolean realTimeMode;
   private ChronoModelEventHandler chronoModelEventHandler;
   // menu
   private JMenuBar winMenuBar;
   private JCheckBoxMenuItem ontopItem;
-
   private JMenuItem close;
-  private final static SimulationIcon SIMSTOPICON = new SimulationIcon(SimulationIcon.SIM_PAUSE);
-  private final static SimulationIcon SIMENABLEICON = new SimulationIcon(SimulationIcon.SIM_ENABLE);
-
   /** Offline mode ChronoFrame constructor */
   public ChronoFrame(Project prj) {
-    super(false,prj);
+    super(false, prj);
     realTimeMode = false;
     commonPanelParam = new CommonPanelParam(20, 38);
     createMainStructure();
@@ -194,7 +118,7 @@ public class ChronoFrame extends LFrame implements KeyListener, ActionListener, 
 
   /** Real time mode ChronoFrame constructor */
   public ChronoFrame(Project prj, LogFrame logFrame) {
-    super(false,prj);
+    super(false, prj);
     realTimeMode = true;
 
     this.logFrame = logFrame;
@@ -316,18 +240,18 @@ public class ChronoFrame extends LFrame implements KeyListener, ActionListener, 
     tplayButton.setToolTipText("Start/Stop 'sysclk' tick");
     tplayButton.setFocusable(false);
     bar.add(tplayButton);
-	JButton thalfButton = new JButton(new SimulationIcon(SimulationIcon.SIM_HALF_TICK));
-	thalfButton.setActionCommand("thalf");
-	thalfButton.addActionListener(myListener);
-	thalfButton.setToolTipText("Tick half clock cycle");
-	thalfButton.setFocusable(false);
-	bar.add(thalfButton);
-	JButton tfullButton = new JButton(new SimulationIcon(SimulationIcon.SIM_FULL_TICK));
-	tfullButton.setActionCommand("tfull");
-	tfullButton.addActionListener(myListener);
-	tfullButton.setToolTipText("Tick full clock cycle");
-	tfullButton.setFocusable(false);
-	bar.add(tfullButton);
+    JButton thalfButton = new JButton(new SimulationIcon(SimulationIcon.SIM_HALF_TICK));
+    thalfButton.setActionCommand("thalf");
+    thalfButton.addActionListener(myListener);
+    thalfButton.setToolTipText("Tick half clock cycle");
+    thalfButton.setFocusable(false);
+    bar.add(thalfButton);
+    JButton tfullButton = new JButton(new SimulationIcon(SimulationIcon.SIM_FULL_TICK));
+    tfullButton.setActionCommand("tfull");
+    tfullButton.addActionListener(myListener);
+    tfullButton.setToolTipText("Tick full clock cycle");
+    tfullButton.setFocusable(false);
+    bar.add(tfullButton);
 
     mainPanel.add(BorderLayout.NORTH, bar);
 
@@ -444,6 +368,10 @@ public class ChronoFrame extends LFrame implements KeyListener, ActionListener, 
     return timelineParam;
   }
 
+  public void setTimelineParam(TimelineParam timelineParam) {
+    this.timelineParam = timelineParam;
+  }
+
   public int getVisibleSignalsWidth() {
     return mainSplitPane.getRightComponent().getWidth();
   }
@@ -517,10 +445,6 @@ public class ChronoFrame extends LFrame implements KeyListener, ActionListener, 
     rightScroll.getHorizontalScrollBar().setValue(pos);
   }
 
-  public void setTimelineParam(TimelineParam timelineParam) {
-    this.timelineParam = timelineParam;
-  }
-
   /**
    * Switch bus between signle bus view or detailed signals view
    *
@@ -563,4 +487,77 @@ public class ChronoFrame extends LFrame implements KeyListener, ActionListener, 
 
   @Override
   public void windowOpened(WindowEvent we) {}
+
+  /** Listener to the button, the scrollbars, splitPane divider */
+  private class MyListener implements ActionListener, AdjustmentListener {
+
+    private final ChronoFrame chronoFrame;
+
+    public MyListener(ChronoFrame cf) {
+      chronoFrame = cf;
+    }
+
+    /** Load or export button event handler */
+    @Override
+    public void actionPerformed(ActionEvent e) {
+      // load a chronogram from a file
+      if ("load".equals(e.getActionCommand())) {
+        final JFileChooser fc = new JFileChooser();
+        int returnVal = fc.showOpenDialog(chronoFrame);
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+          chronoFrame.loadFile(fc.getSelectedFile().getAbsolutePath());
+        }
+
+        // export a chronogram to a file
+      } else if ("export".equals(e.getActionCommand())) {
+        final JFileChooser fc = new JFileChooser();
+        int returnVal = fc.showSaveDialog(chronoFrame);
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+          chronoFrame.exportFile(fc.getSelectedFile().getAbsolutePath());
+        }
+
+      } else if ("exportImg".equals(e.getActionCommand())) {
+        fc = new JFileChooser();
+        int returnVal = fc.showSaveDialog(ChronoFrame.this);
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+          File file = fc.getSelectedFile();
+
+          // add .png to the filename if the user forgot
+          if (!fc.getSelectedFile().getAbsolutePath().endsWith(".png")) {
+            file = new File(fc.getSelectedFile() + ".png");
+          }
+          exportImage(file);
+        }
+
+      } else if ("play".equals(e.getActionCommand())) {
+        if (simulator.isRunning()) {
+          SIMSTOPICON.setType(SimulationIcon.SIM_PAUSE);
+        } else {
+          SIMSTOPICON.setType(SimulationIcon.SIM_PLAY);
+        }
+        simulator.setIsRunning(!simulator.isRunning());
+      } else if ("step".equals(e.getActionCommand())) {
+        simulator.step();
+      } else if ("tplay".equals(e.getActionCommand())) {
+        if (simulator.isTicking()) {
+          SIMENABLEICON.setType(SimulationIcon.SIM_DISABLE);
+        } else {
+          SIMENABLEICON.setType(SimulationIcon.SIM_ENABLE);
+        }
+        simulator.setIsTicking(!simulator.isTicking());
+      } else if ("thalf".equals(e.getActionCommand())) {
+        simulator.tick(1);
+      } else if ("tfull".equals(e.getActionCommand())) {
+        simulator.tick(2);
+      }
+    }
+
+    /** rightScroll horizontal movement */
+    @Override
+    public void adjustmentValueChanged(AdjustmentEvent e) {
+      if (rightPanel != null) {
+        rightPanel.adjustmentValueChanged(e.getValue());
+      }
+    }
+  }
 }

@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -30,29 +30,27 @@ package com.cburch.logisim.soc.data;
 
 import static com.cburch.logisim.soc.Strings.S;
 
+import com.cburch.logisim.instance.InstanceComponent;
+import com.cburch.logisim.util.LocaleListener;
+import com.cburch.logisim.util.LocaleManager;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.LinkedList;
-
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellRenderer;
 
-import com.cburch.logisim.instance.InstanceComponent;
-import com.cburch.logisim.util.LocaleListener;
-import com.cburch.logisim.util.LocaleManager;
-
 public class SocMemMapModel extends AbstractTableModel implements SocBusSlaveListener,LocaleListener,MouseListener {
 
   private static final long serialVersionUID = 1L;
   private static final long longMask = Long.parseUnsignedLong("FFFFFFFF", 16);
   
-  public class memMapHeaderRenderer extends JLabel implements TableCellRenderer {
+  public static class memMapHeaderRenderer extends JLabel implements TableCellRenderer {
 
     private static final long serialVersionUID = 1L;
 
@@ -102,7 +100,7 @@ public class SocMemMapModel extends AbstractTableModel implements SocBusSlaveLis
       
   }
 
-  public class SlaveInfo {
+  public static class SlaveInfo {
     private boolean hasOverlap;
     private final SocBusSlaveInterface slave;
     private long start;
@@ -173,7 +171,7 @@ public class SocMemMapModel extends AbstractTableModel implements SocBusSlaveLis
     private final LinkedList<SlaveInfo> slaves;
     
     public SlaveMap() {
-      slaves = new LinkedList<SlaveInfo>();
+      slaves = new LinkedList<>();
     }
     
     public void add(SocBusSlaveInterface s) {
@@ -225,7 +223,7 @@ public class SocMemMapModel extends AbstractTableModel implements SocBusSlaveLis
     super();
     LocaleManager.addLocaleListener(this);
     slaveMap = new SlaveMap();
-    slaves = new ArrayList<SocBusSlaveInterface>();
+    slaves = new ArrayList<>();
     slaveRenderer = new SlaveInfoRenderer();
     headRenderer = new memMapHeaderRenderer();
     marked = null;
@@ -298,22 +296,22 @@ public class SocMemMapModel extends AbstractTableModel implements SocBusSlaveLis
   private void rebuild() {
     slaveMap.clear();
     if (slaves.isEmpty())
-      slaveMap.add(new SlaveInfo(0,-1));
+      slaveMap.add(new SlaveInfo(0, -1));
     else {
       for (SocBusSlaveInterface s : slaves)
         slaveMap.add(s);
       /* now we fill in the blanks */
-      ArrayList<SlaveInfo> empties = new ArrayList<SlaveInfo>();
+      ArrayList<SlaveInfo> empties = new ArrayList<>();
       long addr = 0;
       for (int i = 0 ; i < slaveMap.size() ; i++) {
         SlaveInfo s = slaveMap.getSlave(i);
         if (addr < s.getStartAddress()) {
-          empties.add(new SlaveInfo(addr,s.getStartAddress()-1));
+          empties.add(new SlaveInfo(addr, s.getStartAddress() - 1));
         }
         addr = s.getEndAddress()+1;
       }
       if (addr < longMask)
-        empties.add(new SlaveInfo(addr,longMask));
+        empties.add(new SlaveInfo(addr, longMask));
       for (SlaveInfo s : empties)
         slaveMap.add(s);
     }

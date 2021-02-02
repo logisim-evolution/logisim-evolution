@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -44,13 +44,6 @@ import javax.swing.tree.TreePath;
 
 class SimulationExplorer extends JPanel implements ProjectListener, MouseListener {
 
-  @SuppressWarnings("serial")
-  private class ScaledTree extends JTree {
-    public ScaledTree(TreeModel model) {
-      super(model);
-    }
-  }
-
   private static final long serialVersionUID = 1L;
   private final Project project;
   private final SimulationTreeModel model;
@@ -75,7 +68,8 @@ class SimulationExplorer extends JPanel implements ProjectListener, MouseListene
   }
 
   private void checkForPopup(MouseEvent e) {
-    if (e.isPopupTrigger()) {; // do nothing
+    if (e.isPopupTrigger()) {
+      // do nothing
     }
   }
 
@@ -115,6 +109,13 @@ class SimulationExplorer extends JPanel implements ProjectListener, MouseListene
       if (path != null) {
         tree.scrollPathToVisible(path);
       }
+    }
+  }
+
+  @SuppressWarnings("serial")
+  private static class ScaledTree extends JTree {
+    public ScaledTree(TreeModel model) {
+      super(model);
     }
   }
 }

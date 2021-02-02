@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -269,7 +269,7 @@ public class XmlCircuitReader extends CircuitTransaction {
 
   private void buildDynamicAppearance(XmlReader.CircuitData circData, CircuitMutator mutator) {
     Circuit dest = circData.circuit;
-    List<AbstractCanvasObject> shapes = new ArrayList<AbstractCanvasObject>();
+    List<AbstractCanvasObject> shapes = new ArrayList<>();
     for (Element appearElt : XmlIterator.forChildElements(circData.circuitElement, "appear")) {
       for (Element sub : XmlIterator.forChildElements(appearElt)) {
         // Dynamic shapes are handled here. Static shapes are already done.
@@ -305,7 +305,7 @@ public class XmlCircuitReader extends CircuitTransaction {
 
   @Override
   protected Map<Circuit, Integer> getAccessedCircuits() {
-    HashMap<Circuit, Integer> access = new HashMap<Circuit, Integer>();
+    HashMap<Circuit, Integer> access = new HashMap<>();
     for (XmlReader.CircuitData data : circuitsData) {
       access.put(data.circuit, READ_WRITE);
     }

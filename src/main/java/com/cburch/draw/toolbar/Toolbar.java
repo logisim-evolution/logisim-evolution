@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -34,25 +34,13 @@ import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 
 public class Toolbar extends JPanel {
-  private class MyListener implements ToolbarModelListener {
-    public void toolbarAppearanceChanged(ToolbarModelEvent event) {
-      repaint();
-    }
-
-    public void toolbarContentsChanged(ToolbarModelEvent event) {
-      computeContents();
-    }
-  }
-
-  private static final long serialVersionUID = 1L;
   public static final Object VERTICAL = new Object();
-
   public static final Object HORIZONTAL = new Object();
-
-  private ToolbarModel model;
+  private static final long serialVersionUID = 1L;
   private final JPanel subpanel;
-  private Object orientation;
   private final MyListener myListener;
+  private ToolbarModel model;
+  private Object orientation;
   private ToolbarButton curPressed;
 
   public Toolbar(ToolbarModel model) {
@@ -86,14 +74,6 @@ public class Toolbar extends JPanel {
     return orientation;
   }
 
-  ToolbarButton getPressed() {
-    return curPressed;
-  }
-
-  public ToolbarModel getToolbarModel() {
-    return model;
-  }
-
   public void setOrientation(Object value) {
     int axis;
     String position;
@@ -112,6 +92,10 @@ public class Toolbar extends JPanel {
     this.orientation = value;
   }
 
+  ToolbarButton getPressed() {
+    return curPressed;
+  }
+
   void setPressed(ToolbarButton value) {
     ToolbarButton oldValue = curPressed;
     if (oldValue != value) {
@@ -121,12 +105,26 @@ public class Toolbar extends JPanel {
     }
   }
 
+  public ToolbarModel getToolbarModel() {
+    return model;
+  }
+
   public void setToolbarModel(ToolbarModel value) {
     ToolbarModel oldValue = model;
     if (value != oldValue) {
       if (oldValue != null) oldValue.removeToolbarModelListener(myListener);
       if (value != null) value.addToolbarModelListener(myListener);
       model = value;
+      computeContents();
+    }
+  }
+
+  private class MyListener implements ToolbarModelListener {
+    public void toolbarAppearanceChanged(ToolbarModelEvent event) {
+      repaint();
+    }
+
+    public void toolbarContentsChanged(ToolbarModelEvent event) {
       computeContents();
     }
   }

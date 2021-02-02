@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -42,7 +42,7 @@ import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 
 class AndGate extends AbstractGate {
-  private class AndGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
+  private static class AndGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
     @Override
     public boolean GetFloatingValue(boolean is_inverted) {
       return is_inverted;
@@ -51,7 +51,7 @@ class AndGate extends AbstractGate {
     @Override
     public ArrayList<String> GetLogicFunction(
         int nr_of_inputs, int bitwidth, boolean is_one_hot, String HDLType) {
-      ArrayList<String> Contents = new ArrayList<String>();
+      ArrayList<String> Contents = new ArrayList<>();
       String Preamble = (HDLType.equals(VHDL) ? "" : "assign ");
       String AndOperation = (HDLType.equals(VHDL) ? " AND" : " &");
       String AssignOperation = (HDLType.equals(VHDL) ? " <= " : " = ");
@@ -70,7 +70,7 @@ class AndGate extends AbstractGate {
         } else {
           first = false;
         }
-        OneLine.append("s_real_input_" + Integer.toString(i + 1));
+        OneLine.append("s_real_input_" + (i + 1));
       }
       OneLine.append(";");
       Contents.add(OneLine.toString());

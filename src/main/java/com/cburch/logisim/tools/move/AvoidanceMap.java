@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -41,7 +41,7 @@ import java.util.Set;
 
 class AvoidanceMap {
   static AvoidanceMap create(Collection<Component> elements, int dx, int dy) {
-    AvoidanceMap ret = new AvoidanceMap(new HashMap<Location, String>());
+    AvoidanceMap ret = new AvoidanceMap(new HashMap<>());
     ret.markAll(elements, dx, dy);
     return ret;
   }
@@ -53,7 +53,7 @@ class AvoidanceMap {
   }
 
   public AvoidanceMap cloneMap() {
-    return new AvoidanceMap(new HashMap<Location, String>(avoid));
+    return new AvoidanceMap(new HashMap<>(avoid));
   }
 
   public Object get(Location loc) {
@@ -138,7 +138,7 @@ class AvoidanceMap {
   }
 
   public void print(PrintStream stream) {
-    ArrayList<Location> list = new ArrayList<Location>(avoid.keySet());
+    ArrayList<Location> list = new ArrayList<>(avoid.keySet());
     Collections.sort(list);
     for (Location location : list) {
       stream.println(location + ": " + avoid.get(location));

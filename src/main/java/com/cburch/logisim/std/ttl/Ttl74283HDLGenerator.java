@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -47,7 +47,7 @@ public class Ttl74283HDLGenerator extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> MyInputs = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> MyInputs = new TreeMap<>();
     MyInputs.put("A1", 1);
     MyInputs.put("A2", 1);
     MyInputs.put("A3", 1);
@@ -62,7 +62,7 @@ public class Ttl74283HDLGenerator extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> MyOutputs = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> MyOutputs = new TreeMap<>();
     MyOutputs.put("S1", 1);
     MyOutputs.put("S2", 1);
     MyOutputs.put("S3", 1);
@@ -73,7 +73,7 @@ public class Ttl74283HDLGenerator extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist Nets) {
-    SortedMap<String, Integer> Wires = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> Wires = new TreeMap<>();
     Wires.put("oppA", 5);
     Wires.put("oppB", 5);
     Wires.put("oppC", 5);
@@ -84,7 +84,7 @@ public class Ttl74283HDLGenerator extends AbstractHDLGeneratorFactory {
   @Override
   public ArrayList<String> GetModuleFunctionality(
       Netlist TheNetlist, AttributeSet attrs, FPGAReport Reporter, String HDLType) {
-    ArrayList<String> Contents = new ArrayList<String>();
+    ArrayList<String> Contents = new ArrayList<>();
     Contents.add("   oppA   <= \"0\"&A4&A3&A2&A1;");
     Contents.add("   oppB   <= \"0\"&B4&B3&B2&B1;");
     Contents.add("   oppC   <= \"0000\"&Cin;");
@@ -100,7 +100,7 @@ public class Ttl74283HDLGenerator extends AbstractHDLGeneratorFactory {
   @Override
   public SortedMap<String, String> GetPortMap(
       Netlist Nets, Object MapInfo, FPGAReport Reporter, String HDLType) {
-    SortedMap<String, String> PortMap = new TreeMap<String, String>();
+    SortedMap<String, String> PortMap = new TreeMap<>();
     if (!(MapInfo instanceof NetlistComponent)) return PortMap;
     NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
     PortMap.putAll(GetNetMap("A1", true, ComponentInfo, 4, Reporter, HDLType, Nets));

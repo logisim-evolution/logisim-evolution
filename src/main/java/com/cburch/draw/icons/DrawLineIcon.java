@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -28,12 +28,11 @@
 
 package com.cburch.draw.icons;
 
+import com.cburch.logisim.gui.icons.AnnimatedIcon;
+import com.cburch.logisim.prefs.AppPreferences;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
-
-import com.cburch.logisim.gui.icons.AnnimatedIcon;
-import com.cburch.logisim.prefs.AppPreferences;
 
 public class DrawLineIcon extends AnnimatedIcon {
 
@@ -47,8 +46,8 @@ public class DrawLineIcon extends AnnimatedIcon {
     switch (state) {
       case 3:
         g2.setStroke(new BasicStroke(scale(2)));
-    	g2.setColor(Color.BLUE.darker());
-    	g2.drawLine(scale(1), scale(14), scale(14), scale(1));
+        g2.setColor(Color.BLUE.darker());
+        g2.drawLine(scale(1), scale(14), scale(14), scale(1));
       case 2:
         g2.setColor(Color.GRAY);
         g2.setStroke(new BasicStroke(AppPreferences.getScaled(1)));
@@ -60,12 +59,11 @@ public class DrawLineIcon extends AnnimatedIcon {
 
   @Override
   public void annimationUpdate() {
-    state = (state+1)&3;
+    state = (state + 1) & 3;
   }
 
   @Override
   public void resetToStatic() {
     state = 3;
   }
-
 }

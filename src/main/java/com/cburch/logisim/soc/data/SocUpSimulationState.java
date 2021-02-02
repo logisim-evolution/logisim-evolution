@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -30,14 +30,13 @@ package com.cburch.logisim.soc.data;
 
 import static com.cburch.logisim.soc.Strings.S;
 
+import com.cburch.logisim.data.Bounds;
+import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.util.GraphicsUtil;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.util.ArrayList;
-
-import com.cburch.logisim.data.Bounds;
-import com.cburch.logisim.instance.StdAttr;
-import com.cburch.logisim.util.GraphicsUtil;
 
 public class SocUpSimulationState {
 	
@@ -47,7 +46,7 @@ public class SocUpSimulationState {
   public static final int SimulationHaltedByStop = 3;
   
   private int simulationState = SimulationRunning;
-  private final ArrayList<SocUpSimulationStateListener> listeners = new ArrayList<SocUpSimulationStateListener>();
+  private final ArrayList<SocUpSimulationStateListener> listeners = new ArrayList<>();
   private boolean canContinueAfterBreak = false;
   
   public String getStateString() {

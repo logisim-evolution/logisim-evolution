@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -32,7 +32,6 @@ import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.gui.FPGAReport;
-
 import java.util.ArrayList;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -65,7 +64,7 @@ public class TickComponentHDLGeneratorFactory extends AbstractHDLGeneratorFactor
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Inputs = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> Inputs = new TreeMap<>();
     Inputs.put("FPGAClock", 1);
     return Inputs;
   }
@@ -73,7 +72,7 @@ public class TickComponentHDLGeneratorFactory extends AbstractHDLGeneratorFactor
   @Override
   public ArrayList<String> GetModuleFunctionality(
       Netlist TheNetlist, AttributeSet attrs, FPGAReport Reporter, String HDLType) {
-    ArrayList<String> Contents = new ArrayList<String>();
+    ArrayList<String> Contents = new ArrayList<>();
     String Preamble = (HDLType.equals(VHDL)) ? "" : "assign ";
     String AssignOperator = (HDLType.equals(VHDL)) ? "<=" : "=";
     Contents.add("");
@@ -137,14 +136,14 @@ public class TickComponentHDLGeneratorFactory extends AbstractHDLGeneratorFactor
 
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Outputs = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> Outputs = new TreeMap<>();
     Outputs.put("FPGATick", 1);
     return Outputs;
   }
 
   @Override
   public SortedMap<Integer, String> GetParameterList(AttributeSet attrs) {
-    SortedMap<Integer, String> Parameters = new TreeMap<Integer, String>();
+    SortedMap<Integer, String> Parameters = new TreeMap<>();
     Parameters.put(ReloadValueId, ReloadValueStr);
     Parameters.put(NrOfCounterBitsId, NrOfCounterBitsStr);
     return Parameters;
@@ -153,11 +152,11 @@ public class TickComponentHDLGeneratorFactory extends AbstractHDLGeneratorFactor
   @Override
   public SortedMap<String, Integer> GetParameterMap(
       Netlist Nets, NetlistComponent ComponentInfo, FPGAReport Reporter) {
-    SortedMap<String, Integer> ParameterMap = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> ParameterMap = new TreeMap<>();
     double ReloadValueAcc = ((double) FpgaClockFrequency) / TickFrequency;
     long ReloadValue = (long) ReloadValueAcc;
     int nr_of_bits = 0;
-    if ((ReloadValue > (long) 0x7FFFFFFF) | (ReloadValue < 0)) ReloadValue = (long) 0x7FFFFFFF;
+    if ((ReloadValue > (long) 0x7FFFFFFF) | (ReloadValue < 0)) ReloadValue = 0x7FFFFFFF;
     ParameterMap.put(ReloadValueStr, (int) ReloadValue);
     while (ReloadValue != 0) {
       nr_of_bits++;
@@ -170,7 +169,7 @@ public class TickComponentHDLGeneratorFactory extends AbstractHDLGeneratorFactor
   @Override
   public SortedMap<String, String> GetPortMap(
       Netlist Nets, Object MapInfo, FPGAReport Reporter, String HDLType) {
-    SortedMap<String, String> PortMap = new TreeMap<String, String>();
+    SortedMap<String, String> PortMap = new TreeMap<>();
     PortMap.put("FPGAClock", TickComponentHDLGeneratorFactory.FPGAClock);
     PortMap.put("FPGATick", TickComponentHDLGeneratorFactory.FPGATick);
     return PortMap;
@@ -178,7 +177,7 @@ public class TickComponentHDLGeneratorFactory extends AbstractHDLGeneratorFactor
 
   @Override
   public SortedMap<String, Integer> GetRegList(AttributeSet attrs, String HDLType) {
-    SortedMap<String, Integer> Regs = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> Regs = new TreeMap<>();
     Regs.put("s_tick_reg", 1);
     Regs.put("s_count_reg", NrOfCounterBitsId);
     return Regs;
@@ -191,7 +190,7 @@ public class TickComponentHDLGeneratorFactory extends AbstractHDLGeneratorFactor
 
   @Override
   public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist Nets) {
-    SortedMap<String, Integer> Wires = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> Wires = new TreeMap<>();
     Wires.put("s_tick_next", 1);
     Wires.put("s_count_next", NrOfCounterBitsId);
     return Wires;

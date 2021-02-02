@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -34,21 +34,21 @@ import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
 
 public interface PrefMonitor<E> extends PreferenceChangeListener {
-  public void addPropertyChangeListener(PropertyChangeListener listener);
+  void addPropertyChangeListener(PropertyChangeListener listener);
 
-  public E get();
+  E get();
 
-  public boolean getBoolean();
+  boolean getBoolean();
 
-  public String getIdentifier();
+  String getIdentifier();
 
-  public boolean isSource(PropertyChangeEvent event);
+  boolean isSource(PropertyChangeEvent event);
 
-  public void preferenceChange(PreferenceChangeEvent e);
+  void preferenceChange(PreferenceChangeEvent e);
 
-  public void removePropertyChangeListener(PropertyChangeListener listener);
+  void removePropertyChangeListener(PropertyChangeListener listener);
 
-  public void set(E value);
+  void set(E value);
 
-  public void setBoolean(boolean value);
+  void setBoolean(boolean value);
 }

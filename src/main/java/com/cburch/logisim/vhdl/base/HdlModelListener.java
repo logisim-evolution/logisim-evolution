@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -31,14 +31,14 @@ package com.cburch.logisim.vhdl.base;
 public interface HdlModelListener {
 
   /** Called when the content of the given model has been set. */
-  public void contentSet(HdlModel source);
+  void contentSet(HdlModel source);
 
   /** Called when the content of the given model is about to be saved. */
-  public void aboutToSave(HdlModel source);
+  void aboutToSave(HdlModel source);
 
   /** Called when the vhdl appearance has changed. */
-  public void appearanceChanged(HdlModel source);
+  void appearanceChanged(HdlModel source);
 
   /** Called when the vhdl icon or name has changed. */
-  public void displayChanged(HdlModel source);
+  void displayChanged(HdlModel source);
 }

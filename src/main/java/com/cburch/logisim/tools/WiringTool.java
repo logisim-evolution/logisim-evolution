@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -41,7 +41,6 @@ import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Action;
 import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.StringGetter;
-
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Cursor;
@@ -329,7 +328,7 @@ public class WiringTool extends Tool {
       exists = false;
       super.mouseReleased(canvas, g, e);
 
-      ArrayList<Wire> ws = new ArrayList<Wire>(2);
+      ArrayList<Wire> ws = new ArrayList<>(2);
       if (cur.getY() == start.getY() || cur.getX() == start.getX()) {
         Wire w = Wire.create(cur, start);
         w = checkForRepairs(canvas, w, w.getEnd0());

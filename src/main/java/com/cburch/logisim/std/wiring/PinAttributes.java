@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -34,7 +34,6 @@ import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.instance.StdAttr;
-
 import java.util.Arrays;
 import java.util.List;
 
@@ -59,18 +58,16 @@ class PinAttributes extends ProbeAttributes {
 
   private static final List<Attribute<?>> ATTRIBUTES =
       Arrays.asList(
-          new Attribute<?>[] {
-            StdAttr.FACING,
-            Pin.ATTR_TYPE,
-            StdAttr.WIDTH,
-            Pin.ATTR_TRISTATE,
-            Pin.ATTR_PULL,
-            StdAttr.LABEL,
-            StdAttr.LABEL_FONT,
-            RadixOption.ATTRIBUTE,
-            PROBEAPPEARANCE,
-            ATTR_DUMMY
-          });
+          StdAttr.FACING,
+          Pin.ATTR_TYPE,
+          StdAttr.WIDTH,
+          Pin.ATTR_TRISTATE,
+          Pin.ATTR_PULL,
+          StdAttr.LABEL,
+          StdAttr.LABEL_FONT,
+          RadixOption.ATTRIBUTE,
+          PROBEAPPEARANCE,
+          ATTR_DUMMY);
 
   BitWidth width = BitWidth.ONE;
   boolean threeState = false; // true;

@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -36,6 +36,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -76,11 +77,6 @@ public class Template {
   }
 
   public InputStream createStream() {
-    try {
-      return new ByteArrayInputStream(contents.getBytes("UTF-8"));
-    } catch (UnsupportedEncodingException e) {
-      logger.warn("UTF-8 is not supported");
-      return new ByteArrayInputStream(contents.getBytes());
-    }
+    return new ByteArrayInputStream(contents.getBytes(StandardCharsets.UTF_8));
   }
 }

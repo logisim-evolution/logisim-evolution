@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -53,7 +53,7 @@ public class RandomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Inputs = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> Inputs = new TreeMap<>();
     Inputs.put("GlobalClock", 1);
     Inputs.put("ClockEnable", 1);
     Inputs.put("clear", 1);
@@ -64,7 +64,7 @@ public class RandomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   @Override
   public ArrayList<String> GetModuleFunctionality(
       Netlist TheNetlist, AttributeSet attrs, FPGAReport Reporter, String HDLType) {
-    ArrayList<String> Contents = new ArrayList<String>();
+    ArrayList<String> Contents = new ArrayList<>();
     Contents.addAll(
         MakeRemarkBlock("This is a multicycle implementation of the Random Component", 3, HDLType));
     Contents.add("");
@@ -218,14 +218,14 @@ public class RandomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Outputs = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> Outputs = new TreeMap<>();
     Outputs.put("Q", NrOfBitsId);
     return Outputs;
   }
 
   @Override
   public SortedMap<Integer, String> GetParameterList(AttributeSet attrs) {
-    SortedMap<Integer, String> Parameters = new TreeMap<Integer, String>();
+    SortedMap<Integer, String> Parameters = new TreeMap<>();
     Parameters.put(NrOfBitsId, NrOfBitsStr);
     Parameters.put(SeedId, SeedStr);
     return Parameters;
@@ -234,7 +234,7 @@ public class RandomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   @Override
   public SortedMap<String, Integer> GetParameterMap(
       Netlist Nets, NetlistComponent ComponentInfo, FPGAReport Reporter) {
-    SortedMap<String, Integer> ParameterMap = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> ParameterMap = new TreeMap<>();
     int seed = ComponentInfo.GetComponent().getAttributeSet().getValue(Random.ATTR_SEED);
     if (seed == 0) seed = (int) System.currentTimeMillis();
     ParameterMap.put(
@@ -247,7 +247,7 @@ public class RandomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   @Override
   public SortedMap<String, String> GetPortMap(
 	      Netlist Nets, Object MapInfo, FPGAReport Reporter, String HDLType) {
-    SortedMap<String, String> PortMap = new TreeMap<String, String>();
+    SortedMap<String, String> PortMap = new TreeMap<>();
     if (!(MapInfo instanceof NetlistComponent)) return PortMap;
     NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
     Boolean GatedClock = false;
@@ -285,14 +285,14 @@ public class RandomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           "GlobalClock",
           ClockNetName
               + BracketOpen
-              + Integer.toString(ClockHDLGeneratorFactory.GlobalClockIndex)
+              + ClockHDLGeneratorFactory.GlobalClockIndex
               + BracketClose);
       if (Nets.RequiresGlobalClockConnection()) {
         PortMap.put(
             "ClockEnable",
             ClockNetName
                 + BracketOpen
-                + Integer.toString(ClockHDLGeneratorFactory.GlobalClockIndex)
+                + ClockHDLGeneratorFactory.GlobalClockIndex
                 + BracketClose);
       } else {
         if (ActiveLow)
@@ -300,14 +300,14 @@ public class RandomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
               "ClockEnable",
               ClockNetName
                   + BracketOpen
-                  + Integer.toString(ClockHDLGeneratorFactory.NegativeEdgeTickIndex)
+                  + ClockHDLGeneratorFactory.NegativeEdgeTickIndex
                   + BracketClose);
         else
           PortMap.put(
               "ClockEnable",
               ClockNetName
                   + BracketOpen
-                  + Integer.toString(ClockHDLGeneratorFactory.PositiveEdgeTickIndex)
+                  + ClockHDLGeneratorFactory.PositiveEdgeTickIndex
                   + BracketClose);
       }
     }
@@ -323,7 +323,7 @@ public class RandomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetRegList(AttributeSet attrs, String HDLType) {
-    SortedMap<String, Integer> Regs = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> Regs = new TreeMap<>();
     Regs.put("s_current_seed", 48);
     Regs.put("s_reset_reg", 3);
     Regs.put("s_mult_shift_reg", 36);
@@ -344,7 +344,7 @@ public class RandomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist Nets) {
-    SortedMap<String, Integer> Wires = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> Wires = new TreeMap<>();
     Wires.put("s_InitSeed", 48);
     Wires.put("s_reset", 1);
     Wires.put("s_reset_next", 3);

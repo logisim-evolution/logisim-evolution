@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -59,49 +59,19 @@ import java.util.List;
 import javax.swing.JPopupMenu;
 
 public class AppearanceCanvas extends Canvas implements CanvasPaneContents, ActionDispatcher {
-  private class Listener implements CanvasModelListener, PropertyChangeListener {
-    public void modelChanged(CanvasModelEvent event) {
-      computeSize(false);
-    }
-
-    public void propertyChange(PropertyChangeEvent evt) {
-      String prop = evt.getPropertyName();
-      if (prop.equals(GridPainter.ZOOM_PROPERTY)) {
-        CanvasTool t = getTool();
-        if (t != null) {
-          t.zoomFactorChanged(AppearanceCanvas.this);
-        }
-      }
-    }
-  }
-
-  static int getMaxIndex(CanvasModel model) {
-    List<CanvasObject> objects = model.getObjectsFromBottom();
-    for (int i = objects.size() - 1; i >= 0; i--) {
-      if (!(objects.get(i) instanceof AppearanceElement)) {
-        return i;
-      }
-    }
-    return -1;
-  }
-
   private static final long serialVersionUID = 1L;
-
   private static final int BOUNDS_BUFFER = 70;
-
   // pixels shown in canvas beyond outermost boundaries
   private static final int THRESH_SIZE_UPDATE = 10;
   // don't bother to update the size if it hasn't changed more than this
   private final CanvasTool selectTool;
-  private Project proj;
-  private CircuitState circuitState;
   private final Listener listener;
   private final GridPainter grid;
+  private Project proj;
+  private CircuitState circuitState;
   private CanvasPane canvasPane;
   private Bounds oldPreferredSize;
-
   private LayoutPopupManager popupManager;
-
   public AppearanceCanvas(CanvasTool selectTool) {
     this.selectTool = selectTool;
     this.grid = new GridPainter(this);
@@ -113,6 +83,16 @@ public class AppearanceCanvas extends Canvas implements CanvasPaneContents, Acti
     CanvasModel model = super.getModel();
     if (model != null) model.addCanvasModelListener(listener);
     grid.addPropertyChangeListener(GridPainter.ZOOM_PROPERTY, listener);
+  }
+
+  static int getMaxIndex(CanvasModel model) {
+    List<CanvasObject> objects = model.getObjectsFromBottom();
+    for (int i = objects.size() - 1; i >= 0; i--) {
+      if (!(objects.get(i) instanceof AppearanceElement)) {
+        return i;
+      }
+    }
+    return -1;
   }
 
   public void center() {}
@@ -158,7 +138,7 @@ public class AppearanceCanvas extends Canvas implements CanvasPaneContents, Acti
       int max = getMaxIndex(getModel());
       ModelReorderAction reorder = (ModelReorderAction) canvasAction;
       List<ReorderRequest> rs = reorder.getReorderRequests();
-      List<ReorderRequest> mod = new ArrayList<ReorderRequest>(rs.size());
+      List<ReorderRequest> mod = new ArrayList<>(rs.size());
       boolean changed = false;
       boolean movedToMax = false;
       for (ReorderRequest r : rs) {
@@ -170,7 +150,8 @@ public class AppearanceCanvas extends Canvas implements CanvasPaneContents, Acti
             int from = r.getFromIndex();
             changed = true;
             movedToMax = true;
-            if (from == max && !movedToMax) {; // this change is ineffective - don't add it
+            if (from == max && !movedToMax) {
+              // this change is ineffective - don't add it
             } else {
               mod.add(new ReorderRequest(o, from, max));
             }
@@ -376,6 +357,22 @@ public class AppearanceCanvas extends Canvas implements CanvasPaneContents, Acti
       if (created != null) {
         getSelection().clearSelected();
         getSelection().setSelected(created, true);
+      }
+    }
+  }
+
+  private class Listener implements CanvasModelListener, PropertyChangeListener {
+    public void modelChanged(CanvasModelEvent event) {
+      computeSize(false);
+    }
+
+    public void propertyChange(PropertyChangeEvent evt) {
+      String prop = evt.getPropertyName();
+      if (prop.equals(GridPainter.ZOOM_PROPERTY)) {
+        CanvasTool t = getTool();
+        if (t != null) {
+          t.zoomFactorChanged(AppearanceCanvas.this);
+        }
       }
     }
   }

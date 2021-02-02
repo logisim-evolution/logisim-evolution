@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -52,7 +52,7 @@ public class SubtractorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Inputs = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> Inputs = new TreeMap<>();
     int inputbits = (attrs.getValue(StdAttr.WIDTH).getWidth() == 1) ? 1 : NrOfBitsId;
     Inputs.put("DataA", inputbits);
     Inputs.put("DataB", inputbits);
@@ -63,7 +63,7 @@ public class SubtractorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   @Override
   public ArrayList<String> GetModuleFunctionality(
       Netlist TheNetlist, AttributeSet attrs, FPGAReport Reporter, String HDLType) {
-    ArrayList<String> Contents = new ArrayList<String>();
+    ArrayList<String> Contents = new ArrayList<>();
     int nrOfBits = attrs.getValue(StdAttr.WIDTH).getWidth();
     if (HDLType.equals(VHDL)) {
       Contents.add("   s_inverted_dataB <= NOT(DataB);");
@@ -89,7 +89,7 @@ public class SubtractorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Outputs = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> Outputs = new TreeMap<>();
     int outputbits = (attrs.getValue(StdAttr.WIDTH).getWidth() == 1) ? 1 : NrOfBitsId;
     Outputs.put("Result", outputbits);
     Outputs.put("BorrowOut", 1);
@@ -98,7 +98,7 @@ public class SubtractorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<Integer, String> GetParameterList(AttributeSet attrs) {
-    SortedMap<Integer, String> Parameters = new TreeMap<Integer, String>();
+    SortedMap<Integer, String> Parameters = new TreeMap<>();
     int outputbits = attrs.getValue(StdAttr.WIDTH).getWidth();
     if (outputbits > 1) Parameters.put(NrOfBitsId, NrOfBitsStr);
     Parameters.put(ExtendedBitsId, ExtendedBitsStr);
@@ -108,7 +108,7 @@ public class SubtractorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   @Override
   public SortedMap<String, Integer> GetParameterMap(
       Netlist Nets, NetlistComponent ComponentInfo, FPGAReport Reporter) {
-    SortedMap<String, Integer> ParameterMap = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> ParameterMap = new TreeMap<>();
     int nrOfBits = ComponentInfo.GetComponent().getEnd(0).getWidth().getWidth();
     ParameterMap.put(ExtendedBitsStr, nrOfBits + 1);
     if (nrOfBits > 1) ParameterMap.put(NrOfBitsStr, nrOfBits);
@@ -118,7 +118,7 @@ public class SubtractorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   @Override
   public SortedMap<String, String> GetPortMap(
 	      Netlist Nets, Object MapInfo, FPGAReport Reporter, String HDLType) {
-    SortedMap<String, String> PortMap = new TreeMap<String, String>();
+    SortedMap<String, String> PortMap = new TreeMap<>();
     if (!(MapInfo instanceof NetlistComponent)) return PortMap;
     NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
     PortMap.putAll(GetNetMap("DataA", true, ComponentInfo, 0, Reporter, HDLType, Nets));
@@ -136,7 +136,7 @@ public class SubtractorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist Nets) {
-    SortedMap<String, Integer> Wires = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> Wires = new TreeMap<>();
     int outputbits = attrs.getValue(StdAttr.WIDTH).getWidth();
     Wires.put("s_extended_dataA", ExtendedBitsId);
     Wires.put("s_extended_dataB", ExtendedBitsId);

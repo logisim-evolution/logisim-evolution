@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -28,19 +28,18 @@
 
 package com.cburch.logisim.analyze.data;
 
+import com.cburch.logisim.prefs.AppPreferences;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
 
-import com.cburch.logisim.prefs.AppPreferences;
-
 public class CoverColor implements PreferenceChangeListener {
   public static final CoverColor COVERCOLOR = new CoverColor(); 
 
   private int index;
-  private final List<Color> colors = new ArrayList<Color>();
+  private final List<Color> colors = new ArrayList<>();
 
   public CoverColor() {
     index = -1;

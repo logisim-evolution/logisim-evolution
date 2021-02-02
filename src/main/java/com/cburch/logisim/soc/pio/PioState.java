@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -28,8 +28,6 @@
 
 package com.cburch.logisim.soc.pio;
 
-import java.util.ArrayList;
-
 import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Location;
@@ -42,6 +40,7 @@ import com.cburch.logisim.soc.data.SocBusSlaveInterface;
 import com.cburch.logisim.soc.data.SocBusSlaveListener;
 import com.cburch.logisim.soc.data.SocBusTransaction;
 import com.cburch.logisim.soc.data.SocSupport;
+import java.util.ArrayList;
 
 public class PioState implements SocBusSlaveInterface {
 
@@ -111,7 +110,7 @@ public class PioState implements SocBusSlaveInterface {
   private String label = "";
   private final SocBusInfo attachedBus = new SocBusInfo("");
   private Integer startAddress = 0;
-  private final ArrayList<SocBusSlaveListener> listeners = new ArrayList<SocBusSlaveListener>();
+  private final ArrayList<SocBusSlaveListener> listeners = new ArrayList<>();
   private AttributeOption direction = PioAttributes.PORT_INPUT;
   private Integer outputResetValue = 0;
   private Boolean outputEnableBitManipulations = false;
@@ -142,7 +141,8 @@ public class PioState implements SocBusSlaveInterface {
   public SocBusInfo getAttachedBus() { return attachedBus; }
   public AttributeOption getPortDirection() { return direction; }
   public Integer getOutputResetValue() { return outputResetValue; }
-  public Boolean outputSupportsBitManipulations() { return outputEnableBitManipulations; };
+  public Boolean outputSupportsBitManipulations() { return outputEnableBitManipulations; }
+
   public Boolean inputIsCapturedSynchronisely() { return inputSynchronousCapture; }
   public AttributeOption getInputCaptureEdge() { return edgeCaptureType; }
   public Boolean inputCaptureSupportsBitClearing() { return inputCaptBitClearing; }
@@ -426,8 +426,7 @@ public class PioState implements SocBusSlaveInterface {
       
   @Override
   public void removeListener(SocBusSlaveListener l) {
-    if (listeners.contains(l))
-      listeners.remove(l);
+    listeners.remove(l);
   }
 
 

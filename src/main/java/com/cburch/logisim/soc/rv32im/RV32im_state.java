@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -29,19 +29,6 @@
 package com.cburch.logisim.soc.rv32im;
 
 import static com.cburch.logisim.soc.Strings.S;
-
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
-import java.util.HashMap;
-import java.util.LinkedList;
-
-import javax.swing.JPanel;
-
-import org.fife.ui.rsyntaxtextarea.AbstractTokenMakerFactory;
-import org.fife.ui.rsyntaxtextarea.TokenMakerFactory;
 
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.circuit.ComponentDataGuiProvider;
@@ -72,6 +59,16 @@ import com.cburch.logisim.soc.gui.CpuDrawSupport;
 import com.cburch.logisim.soc.util.AssemblerExecutionInterface;
 import com.cburch.logisim.soc.util.AssemblerInterface;
 import com.cburch.logisim.util.GraphicsUtil;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+import java.util.HashMap;
+import java.util.LinkedList;
+import javax.swing.JPanel;
+import org.fife.ui.rsyntaxtextarea.AbstractTokenMakerFactory;
+import org.fife.ui.rsyntaxtextarea.TokenMakerFactory;
 
 public class RV32im_state implements SocUpSimulationStateListener,SocProcessorInterface {
 
@@ -94,7 +91,7 @@ public class RV32im_state implements SocUpSimulationStateListener,SocProcessorIn
     public ProcessorState(Instance inst) {
       registers = new int[32];
       registers_valid = new Boolean[32];
-      instrTrace = new LinkedList<TraceInfo>();
+      instrTrace = new LinkedList<>();
       lastClock = Value.createUnknown(BitWidth.ONE);
       simState = new SocUpSimulationState();
       myInstance = inst;
@@ -121,7 +118,7 @@ public class RV32im_state implements SocUpSimulationStateListener,SocProcessorIn
       if (entry != null) entryPoint = entry;
       if (progInfo != null || sectInfo != null) {
         programLoaded = true;
-        bPanel.loadProgram(state, myInstance.getAttributeValue(RV32imAttributes.RV32IM_STATE), progInfo, sectInfo, ASSEMBLER);;
+        bPanel.loadProgram(state, myInstance.getAttributeValue(RV32imAttributes.RV32IM_STATE), progInfo, sectInfo, ASSEMBLER);
       }
       pc = entryPoint != null ? entryPoint : resetVector;
       for (int i = 0 ; i < 31 ; i++)

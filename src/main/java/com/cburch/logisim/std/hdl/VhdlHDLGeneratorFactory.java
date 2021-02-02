@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -49,11 +49,11 @@ public class VhdlHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       String ComponentName,
       FPGAReport Reporter,
       String HDLType) {
-    ArrayList<String> contents = new ArrayList<String>();
+    ArrayList<String> contents = new ArrayList<>();
     contents.addAll(FileWriter.getGenerateRemark(ComponentName, HDLType, TheNetlist.projName()));
 
     VhdlContentComponent content =
-        (VhdlContentComponent) attrs.getValue(VhdlEntityComponent.CONTENT_ATTR);
+        attrs.getValue(VhdlEntityComponent.CONTENT_ATTR);
     contents.add(content.getLibraries());
     contents.add(content.getArchitecture());
 
@@ -67,7 +67,7 @@ public class VhdlHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> inputs = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> inputs = new TreeMap<>();
 
     Port[] rawInputs = attrs.getValue(VhdlEntityComponent.CONTENT_ATTR).getInputs();
     for (Port rawInput : rawInputs)
@@ -78,7 +78,7 @@ public class VhdlHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> outputs = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> outputs = new TreeMap<>();
 
     Port[] rawOutputs = attrs.getValue(VhdlEntityComponent.CONTENT_ATTR).getOutputs();
     for (Port rawOutput : rawOutputs)
@@ -90,7 +90,7 @@ public class VhdlHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   @Override
   public SortedMap<String, String> GetPortMap(
 	      Netlist Nets, Object MapInfo, FPGAReport Reporter, String HDLType) {
-    SortedMap<String, String> PortMap = new TreeMap<String, String>();
+    SortedMap<String, String> PortMap = new TreeMap<>();
     if (!(MapInfo instanceof NetlistComponent)) return PortMap;
     NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
 

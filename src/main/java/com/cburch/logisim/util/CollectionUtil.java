@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -82,11 +82,11 @@ public class CollectionUtil {
   }
 
   public static <E> List<E> createUnmodifiableListUnion(List<? extends E> a, List<? extends E> b) {
-    return new UnionList<E>(a, b);
+    return new UnionList<>(a, b);
   }
 
   public static <E> Set<E> createUnmodifiableSetUnion(Set<? extends E> a, Set<? extends E> b) {
-    return new UnionSet<E>(a, b);
+    return new UnionSet<>(a, b);
   }
 
   private CollectionUtil() {}

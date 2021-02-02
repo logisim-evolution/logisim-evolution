@@ -9,7 +9,7 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
- * <p>You should have received a copy of the GNU General Public License along with
+ * <p>You should have received a copy of the GNU General Public License alongwith
  * logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * <p>Original code by Carl Burch (http://www.cburch.com), 2011. Subsequent modifications by: +

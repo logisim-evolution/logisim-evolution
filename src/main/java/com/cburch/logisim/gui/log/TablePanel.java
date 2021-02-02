@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -47,103 +47,18 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 class TablePanel extends LogPanel {
-  private class MyListener implements ModelListener {
-    private void computeRowCount() {
-      Model model = getModel();
-      Selection sel = model.getSelection();
-      int rows = 0;
-      for (int i = sel.size() - 1; i >= 0; i--) {
-        int x = model.getValueLog(sel.get(i)).size();
-        if (x > rows) rows = x;
-      }
-      if (rowCount != rows) {
-        rowCount = rows;
-        computePreferredSize();
-      }
-    }
-
-    public void entryAdded(ModelEvent event, Value[] values) {
-      int oldCount = rowCount;
-      computeRowCount();
-      if (oldCount == rowCount) {
-        int value = vsb.getValue();
-        if (value > vsb.getMinimum() && value < vsb.getMaximum() - vsb.getVisibleAmount()) {
-          vsb.setValue(vsb.getValue() - vsb.getUnitIncrement(-1));
-        } else {
-          repaint();
-        }
-      }
-    }
-
-    public void filePropertyChanged(ModelEvent event) {}
-
-    public void selectionChanged(ModelEvent event) {
-      computeRowCount();
-    }
-  }
-
-  private class VerticalScrollBar extends JScrollBar implements ChangeListener {
-    private static final long serialVersionUID = 1L;
-    private int oldMaximum = -1;
-    private int oldExtent = -1;
-
-    public VerticalScrollBar() {
-      getModel().addChangeListener(this);
-    }
-
-    @Override
-    public int getBlockIncrement(int direction) {
-      int curY = getValue();
-      int curHeight = getVisibleAmount();
-      int numCells = curHeight / cellHeight - 1;
-      if (numCells <= 0) numCells = 1;
-      if (direction > 0) {
-        return curY > 0 ? numCells * cellHeight : numCells * cellHeight + HEADER_SEP;
-      } else {
-        return curY > cellHeight + HEADER_SEP
-            ? numCells * cellHeight
-            : numCells * cellHeight + HEADER_SEP;
-      }
-    }
-
-    @Override
-    public int getUnitIncrement(int direction) {
-      int curY = getValue();
-      if (direction > 0) {
-        return curY > 0 ? cellHeight : cellHeight + HEADER_SEP;
-      } else {
-        return curY > cellHeight + HEADER_SEP ? cellHeight : cellHeight + HEADER_SEP;
-      }
-    }
-
-    public void stateChanged(ChangeEvent event) {
-      int newMaximum = getMaximum();
-      int newExtent = getVisibleAmount();
-      if (oldMaximum != newMaximum || oldExtent != newExtent) {
-        if (getValue() + oldExtent >= oldMaximum) {
-          setValue(newMaximum - newExtent);
-        }
-        oldMaximum = newMaximum;
-        oldExtent = newExtent;
-      }
-    }
-  }
-
   private static final long serialVersionUID = 1L;
   private static final Font HEAD_FONT = new Font("Serif", Font.BOLD, 14);
   private static final Font BODY_FONT = new Font("Serif", Font.PLAIN, 14);
-
   private static final int COLUMN_SEP = 8;
-
   private static final int HEADER_SEP = 4;
-
   private final MyListener myListener = new MyListener();
+  private final VerticalScrollBar vsb;
   private int cellWidth = 25; // reasonable start values
   private int cellHeight = 15;
   private int rowCount = 0;
   private int tableWidth;
   private int tableHeight;
-  private final VerticalScrollBar vsb;
 
   public TablePanel(LogFrame frame) {
     super(frame);
@@ -286,5 +201,87 @@ class TablePanel extends LogPanel {
     int width = fm.stringWidth(header);
     g.drawString(header, x + (cellWidth - width) / 2, y);
     return x + cellWidth + COLUMN_SEP;
+  }
+
+  private class MyListener implements ModelListener {
+    private void computeRowCount() {
+      Model model = getModel();
+      Selection sel = model.getSelection();
+      int rows = 0;
+      for (int i = sel.size() - 1; i >= 0; i--) {
+        int x = model.getValueLog(sel.get(i)).size();
+        if (x > rows) rows = x;
+      }
+      if (rowCount != rows) {
+        rowCount = rows;
+        computePreferredSize();
+      }
+    }
+
+    public void entryAdded(ModelEvent event, Value[] values) {
+      int oldCount = rowCount;
+      computeRowCount();
+      if (oldCount == rowCount) {
+        int value = vsb.getValue();
+        if (value > vsb.getMinimum() && value < vsb.getMaximum() - vsb.getVisibleAmount()) {
+          vsb.setValue(vsb.getValue() - vsb.getUnitIncrement(-1));
+        } else {
+          repaint();
+        }
+      }
+    }
+
+    public void filePropertyChanged(ModelEvent event) {}
+
+    public void selectionChanged(ModelEvent event) {
+      computeRowCount();
+    }
+  }
+
+  private class VerticalScrollBar extends JScrollBar implements ChangeListener {
+    private static final long serialVersionUID = 1L;
+    private int oldMaximum = -1;
+    private int oldExtent = -1;
+
+    public VerticalScrollBar() {
+      getModel().addChangeListener(this);
+    }
+
+    @Override
+    public int getBlockIncrement(int direction) {
+      int curY = getValue();
+      int curHeight = getVisibleAmount();
+      int numCells = curHeight / cellHeight - 1;
+      if (numCells <= 0) numCells = 1;
+      if (direction > 0) {
+        return curY > 0 ? numCells * cellHeight : numCells * cellHeight + HEADER_SEP;
+      } else {
+        return curY > cellHeight + HEADER_SEP
+            ? numCells * cellHeight
+            : numCells * cellHeight + HEADER_SEP;
+      }
+    }
+
+    @Override
+    public int getUnitIncrement(int direction) {
+      int curY = getValue();
+      if (direction > 0) {
+        return curY > 0 ? cellHeight : cellHeight + HEADER_SEP;
+      } else {
+        return curY > cellHeight + HEADER_SEP ? cellHeight : cellHeight + HEADER_SEP;
+      }
+    }
+
+    public void stateChanged(ChangeEvent event) {
+      int newMaximum = getMaximum();
+      int newExtent = getVisibleAmount();
+      if (oldMaximum != newMaximum || oldExtent != newExtent) {
+        if (getValue() + oldExtent >= oldMaximum) {
+          setValue(newMaximum - newExtent);
+        }
+        oldMaximum = newMaximum;
+        oldExtent = newExtent;
+      }
+    }
   }
 }

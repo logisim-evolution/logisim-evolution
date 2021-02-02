@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -149,7 +149,7 @@ public class AlteraDownload implements VendorDownload {
     if (WriteToFlash) {
       if (!DoFlashing()) return null;
     }
-    List<String> command = new ArrayList<String>();
+    List<String> command = new ArrayList<>();
     command.add(alteraVendor.getBinaryPath(1));
     command.add("-c");
     command.add(cablename);
@@ -170,7 +170,7 @@ public class AlteraDownload implements VendorDownload {
   }
 
   private ProcessBuilder Stage0Project() {
-    List<String> command = new ArrayList<String>();
+    List<String> command = new ArrayList<>();
     command.add(alteraVendor.getBinaryPath(0));
     command.add("-t");
     command.add(ScriptPath.replace(ProjectPath, ".." + File.separator) + AlteraTclFile);
@@ -181,7 +181,7 @@ public class AlteraDownload implements VendorDownload {
   }
 
   private ProcessBuilder Stage1Optimize() {
-    List<String> command = new ArrayList<String>();
+    List<String> command = new ArrayList<>();
     command.add(alteraVendor.getBinaryPath(2));
     command.add(ToplevelHDLGeneratorFactory.FPGAToplevelName);
     command.add("--optimize=area");
@@ -191,7 +191,7 @@ public class AlteraDownload implements VendorDownload {
   }
 
   private ProcessBuilder Stage2SPRBit() {
-    List<String> command = new ArrayList<String>();
+    List<String> command = new ArrayList<>();
     command.add(alteraVendor.getBinaryPath(0));
     command.add("--flow");
     command.add("compile");
@@ -209,7 +209,7 @@ public class AlteraDownload implements VendorDownload {
       return ScriptFile.exists();
     }
     String FileType = (HDLType.equals(HDLGeneratorFactory.VHDL)) ? "VHDL_FILE" : "VERILOG_FILE";
-    ArrayList<String> Contents = new ArrayList<String>();
+    ArrayList<String> Contents = new ArrayList<>();
     Contents.add("# Load Quartus II Tcl Project package");
     Contents.add("package require ::quartus::project");
     Contents.add("");
@@ -281,7 +281,7 @@ public class AlteraDownload implements VendorDownload {
   }
   
   private ArrayList<String> GetPinLocStrings() {
-    ArrayList<String> Contents = new ArrayList<String>();
+    ArrayList<String> Contents = new ArrayList<>();
     StringBuffer Temp = new StringBuffer();
     for (ArrayList<String> key : MapInfo.getMappableResources().keySet()) {
       MapComponent map = MapInfo.getMappableResources().get(key);
@@ -307,7 +307,7 @@ public class AlteraDownload implements VendorDownload {
   }
 
   private static ArrayList<String> GetAlteraAssignments(BoardInformation CurrentBoard) {
-    ArrayList<String> result = new ArrayList<String>();
+    ArrayList<String> result = new ArrayList<>();
     String Assignment = "    set_global_assignment -name ";
     result.add(Assignment + "FAMILY \"" + CurrentBoard.fpga.getTechnology() + "\"");
     result.add(Assignment + "DEVICE " + CurrentBoard.fpga.getPart());
@@ -332,12 +332,12 @@ public class AlteraDownload implements VendorDownload {
 
   @Override
   public boolean BoardConnected() {
-    List<String> command = new ArrayList<String>();
+    List<String> command = new ArrayList<>();
     command.add(alteraVendor.getBinaryPath(1));
     command.add("--list");
     ProcessBuilder Detect = new ProcessBuilder(command);
     Detect.directory(new File(SandboxPath));
-    ArrayList<String> response = new ArrayList<String>();
+    ArrayList<String> response = new ArrayList<>();
     try {
       Reporter.print("");
       Reporter.print("===");
@@ -361,7 +361,7 @@ public class AlteraDownload implements VendorDownload {
 
   private ArrayList<String> Devices(ArrayList<String> lines) {
     /* This code originates from Kevin Walsh */
-    ArrayList<String> dev = new ArrayList<String>();
+    ArrayList<String> dev = new ArrayList<>();
     for (String line : lines) {
       int n = dev.size() + 1;
       if (!line.matches("^" + n + "\\) .*")) continue;
@@ -401,7 +401,7 @@ public class AlteraDownload implements VendorDownload {
       Reporter.AddError(S.fmt("AlteraFlashError", JicFile));
       return false;
     }
-    List<String> command = new ArrayList<String>();
+    List<String> command = new ArrayList<>();
     command.add(alteraVendor.getBinaryPath(1));
     command.add("-c");
     command.add(cablename);
@@ -445,7 +445,7 @@ public class AlteraDownload implements VendorDownload {
       Reporter.AddError(S.fmt("AlteraProgSofError", ProgrammerSofFile));
       return false;
     }
-    List<String> command = new ArrayList<String>();
+    List<String> command = new ArrayList<>();
     command.add(alteraVendor.getBinaryPath(1));
     command.add("-c");
     command.add(cablename);
@@ -486,7 +486,7 @@ public class AlteraDownload implements VendorDownload {
     Reporter.print("==>");
     Reporter.print("==> " + S.get("AlteraJicFile"));
     Reporter.print("==>");
-    List<String> command = new ArrayList<String>();
+    List<String> command = new ArrayList<>();
     command.add(alteraVendor.getBinaryPath(3));
     command.add("-c");
     command.add((ScriptPath + AlteraCofFile).replace(ProjectPath, "../"));

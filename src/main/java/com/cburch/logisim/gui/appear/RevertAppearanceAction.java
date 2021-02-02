@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -46,6 +46,27 @@ public class RevertAppearanceAction extends Action {
   private ArrayList<CanvasObject> old;
   private boolean wasDefault;
 
+  public RevertAppearanceAction(Circuit circuit) {
+    this.circuit = circuit;
+  }
+
+  @Override
+  public void doIt(Project proj) {
+    ActionTransaction xn = new ActionTransaction(true);
+    xn.execute();
+  }
+
+  @Override
+  public String getName() {
+    return S.get("revertAppearanceAction");
+  }
+
+  @Override
+  public void undo(Project proj) {
+    ActionTransaction xn = new ActionTransaction(false);
+    xn.execute();
+  }
+
   private class ActionTransaction extends CircuitTransaction {
     private final boolean forward;
 
@@ -67,7 +88,7 @@ public class RevertAppearanceAction extends Action {
       if (forward) {
         CircuitAppearance appear = circuit.getAppearance();
         wasDefault = appear.isDefaultAppearance();
-        old = new ArrayList<CanvasObject>(appear.getObjectsFromBottom());
+        old = new ArrayList<>(appear.getObjectsFromBottom());
         appear.setDefaultAppearance(true);
       } else {
         CircuitAppearance appear = circuit.getAppearance();
@@ -75,26 +96,5 @@ public class RevertAppearanceAction extends Action {
         appear.setDefaultAppearance(wasDefault);
       }
     }
-  }
-
-  public RevertAppearanceAction(Circuit circuit) {
-    this.circuit = circuit;
-  }
-
-  @Override
-  public void doIt(Project proj) {
-    ActionTransaction xn = new ActionTransaction(true);
-    xn.execute();
-  }
-
-  @Override
-  public String getName() {
-    return S.get("revertAppearanceAction");
-  }
-
-  @Override
-  public void undo(Project proj) {
-    ActionTransaction xn = new ActionTransaction(false);
-    xn.execute();
   }
 }

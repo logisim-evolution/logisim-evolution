@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -83,10 +83,10 @@ public class ArgonXML {
   private final String name;
   private String content;
 
-  private final Map<String, String> nameAttributes = new HashMap<String, String>();
+  private final Map<String, String> nameAttributes = new HashMap<>();
 
   private final Map<String, ArrayList<ArgonXML>> nameChildren =
-      new HashMap<String, ArrayList<ArgonXML>>();
+      new HashMap<>();
 
   private ArgonXML(Element element) {
     this.name = element.getNodeName();
@@ -133,7 +133,7 @@ public class ArgonXML {
   private void addChild(String name, ArgonXML child) {
     ArrayList<ArgonXML> children = nameChildren.get(name);
     if (children == null) {
-      children = new ArrayList<ArgonXML>();
+      children = new ArrayList<>();
       nameChildren.put(name, children);
     }
     children.add(child);
@@ -151,7 +151,7 @@ public class ArgonXML {
 
   public ArrayList<ArgonXML> children(String name) {
     ArrayList<ArgonXML> children = nameChildren.get(name);
-    return children == null ? new ArrayList<ArgonXML>() : children;
+    return children == null ? new ArrayList<>() : children;
   }
 
   public String content() {

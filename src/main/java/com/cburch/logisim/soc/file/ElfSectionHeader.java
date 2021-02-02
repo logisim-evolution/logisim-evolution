@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -56,7 +56,7 @@ public class ElfSectionHeader {
   
   public ElfSectionHeader() {
     status = SUCCESS;
-    headers = new ArrayList<SectionHeader>();
+    headers = new ArrayList<>();
   }
   
   public ElfSectionHeader( FileInputStream file , ElfHeader elfHeader) {
@@ -84,7 +84,7 @@ public class ElfSectionHeader {
       return;
     }
     int index = 0;
-    headers = new ArrayList<SectionHeader>();
+    headers = new ArrayList<>();
     for (int i = 0 ; i < nrOfHeaders; i++) {
       headers.add(new SectionHeader(buffer,elfHeader.is32Bit(),elfHeader.isLittleEndian(),index));
       index += HeaderSize;
@@ -161,10 +161,10 @@ public class ElfSectionHeader {
     }
     if (shstrtab == null)
       return true;
-    int symTableOffset = (int)ElfHeader.getIntValue(shstrtab.getValue(SectionHeader.SH_OFFSET));
-    int symTableSize = (int)ElfHeader.getIntValue(shstrtab.getValue(SectionHeader.SH_SIZE));
-    int strTableOffset = strtab == null ? 1 : (int)ElfHeader.getIntValue(strtab.getValue(SectionHeader.SH_OFFSET));
-    int strTableSize = strtab == null ? 1 : (int)ElfHeader.getIntValue(strtab.getValue(SectionHeader.SH_SIZE));
+    int symTableOffset = ElfHeader.getIntValue(shstrtab.getValue(SectionHeader.SH_OFFSET));
+    int symTableSize = ElfHeader.getIntValue(shstrtab.getValue(SectionHeader.SH_SIZE));
+    int strTableOffset = strtab == null ? 1 : ElfHeader.getIntValue(strtab.getValue(SectionHeader.SH_OFFSET));
+    int strTableSize = strtab == null ? 1 : ElfHeader.getIntValue(strtab.getValue(SectionHeader.SH_SIZE));
     byte[] symBuffer = new byte[symTableSize];
     byte[] strBuffer = new byte[strTableSize];
     try {

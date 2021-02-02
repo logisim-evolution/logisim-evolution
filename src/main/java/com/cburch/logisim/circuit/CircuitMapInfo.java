@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -28,10 +28,9 @@
 
 package com.cburch.logisim.circuit;
 
-import java.util.ArrayList;
-
 import com.cburch.logisim.fpga.data.BoardRectangle;
 import com.cburch.logisim.fpga.data.MapComponent;
+import java.util.ArrayList;
 
 public class CircuitMapInfo {
 
@@ -76,7 +75,7 @@ public class CircuitMapInfo {
     
     public void addPinMap(CircuitMapInfo map) {
       if (pinmaps == null) {
-        pinmaps = new ArrayList<CircuitMapInfo>();
+        pinmaps = new ArrayList<>();
         oldMapFormat = false;
       }
       pinmaps.add(map);
@@ -84,7 +83,7 @@ public class CircuitMapInfo {
     
     public void addPinMap(int x , int y , int loc) {
       if (pinmaps == null) {
-        pinmaps = new ArrayList<CircuitMapInfo>();
+        pinmaps = new ArrayList<>();
         oldMapFormat = false;
       }
       int sloc = pinmaps.size();

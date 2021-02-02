@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -30,12 +30,10 @@ package com.cburch.logisim.fpga.data;
 
 import static com.cburch.logisim.fpga.Strings.S;
 
-import java.awt.Graphics2D;
-
-import javax.swing.JPanel;
-
 import com.cburch.logisim.fpga.gui.BoardManipulator;
 import com.cburch.logisim.gui.generic.OptionPane;
+import java.awt.Graphics2D;
+import javax.swing.JPanel;
 
 public class ConstantButton extends FPGAIOInformationContainer {
 

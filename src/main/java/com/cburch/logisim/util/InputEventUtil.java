@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -70,7 +70,7 @@ public class InputEventUtil {
   }
 
   public static String toDisplayString(int mods) {
-    ArrayList<String> arr = new ArrayList<String>();
+    ArrayList<String> arr = new ArrayList<>();
     if ((mods & InputEvent.CTRL_DOWN_MASK) != 0) arr.add(S.get("ctrlMod"));
     if ((mods & InputEvent.ALT_DOWN_MASK) != 0) arr.add(S.get("altMod"));
     if ((mods & InputEvent.SHIFT_DOWN_MASK) != 0) arr.add(S.get("shiftMod"));
@@ -95,7 +95,7 @@ public class InputEventUtil {
   }
 
   public static String toKeyDisplayString(int mods) {
-    ArrayList<String> arr = new ArrayList<String>();
+    ArrayList<String> arr = new ArrayList<>();
     if ((mods & Event.META_MASK) != 0) arr.add(S.get("metaMod"));
     if ((mods & Event.CTRL_MASK) != 0) arr.add(S.get("ctrlMod"));
     if ((mods & Event.ALT_MASK) != 0) arr.add(S.get("altMod"));
@@ -116,7 +116,7 @@ public class InputEventUtil {
   }
 
   public static String toString(int mods) {
-    ArrayList<String> arr = new ArrayList<String>();
+    ArrayList<String> arr = new ArrayList<>();
     if ((mods & InputEvent.CTRL_DOWN_MASK) != 0) arr.add(CTRL);
     if ((mods & InputEvent.ALT_DOWN_MASK) != 0) arr.add(ALT);
     if ((mods & InputEvent.SHIFT_DOWN_MASK) != 0) arr.add(SHIFT);

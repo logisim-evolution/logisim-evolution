@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -30,9 +30,6 @@ package com.cburch.logisim.soc.memory;
 
 import static com.cburch.logisim.soc.Strings.S;
 
-import java.awt.Font;
-import java.awt.Graphics2D;
-
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.BitWidth;
@@ -49,6 +46,8 @@ import com.cburch.logisim.soc.data.SocInstanceFactory;
 import com.cburch.logisim.soc.data.SocProcessorInterface;
 import com.cburch.logisim.soc.data.SocSimulationManager;
 import com.cburch.logisim.util.GraphicsUtil;
+import java.awt.Font;
+import java.awt.Graphics2D;
 
 public class SocMemory extends SocInstanceFactory {
 

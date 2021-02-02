@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -34,7 +34,6 @@ import com.cburch.logisim.gui.chronogram.chronodata.ChronoData;
 import com.cburch.logisim.gui.chronogram.chronodata.SignalData;
 import com.cburch.logisim.gui.chronogram.chronodata.SignalDataBus;
 import com.cburch.logisim.gui.generic.OptionPane;
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -71,29 +70,32 @@ import javax.swing.table.JTableHeader;
 public class ImageExporter extends javax.swing.JFrame implements ActionListener {
 
   private static final long serialVersionUID = 1L;
-  private File fileToSave;
+  final int PAGE_MAX_WIDTH = 1000;
   private final ChronoData chronoData;
   private final int tickWidth = 20;
   // Dimensions
   private final int lowPos = 32;
   private final int highPos = 6;
   private final int height = 38;
-  int middleHeight = 38 / 2;
   private final Color lightGray = new Color(180, 180, 180, 100);
-  private SignalData mSignalData;
+  private final int ROWHEIGHT = 38;
+  private final ChronoFrame chronoFrame;
+  int middleHeight = 38 / 2;
   // for right panel
   JPanel rightBox;
+  Image img_single;
+  Image img_multiple;
+  private File fileToSave;
+  private SignalData mSignalData;
   // for leftPanel
   private JTable table;
   private Object[][] tableData;
   private HashMap<SignalData, Integer> signalDataPositionInTable; // to have
   private SignalData[] reverseSignalDataPositionInTable; // and the reverse
   private JPanel leftPanel;
-  private final int ROWHEIGHT = 38;
   // for timeline
   private JPanel timePanel;
   private TimelineDraw td;
-  private final ChronoFrame chronoFrame;
   // GUI, select image export options
   private JFrame frame;
   private javax.swing.ButtonGroup buttonGroup1;
@@ -101,9 +103,6 @@ public class ImageExporter extends javax.swing.JFrame implements ActionListener 
   private javax.swing.JRadioButton jRadioBtn_multiple;
   private JButton jBtnDone;
   private JLabel picture;
-  Image img_single;
-  Image img_multiple;
-  final int PAGE_MAX_WIDTH = 1000;
 
   /**
    * @param lp
@@ -207,7 +206,7 @@ public class ImageExporter extends javax.swing.JFrame implements ActionListener 
     fright.pack();
     BufferedImage imgright =
         new BufferedImage(rightBox.getWidth(), rightBox.getHeight(), BufferedImage.TYPE_INT_RGB);
-    Graphics2D gright = (Graphics2D) imgright.createGraphics();
+    Graphics2D gright = imgright.createGraphics();
     rightBox.paint(gright);
     gright.dispose();
     // convert jpanel names to buffered image
@@ -216,7 +215,7 @@ public class ImageExporter extends javax.swing.JFrame implements ActionListener 
     fleft.pack();
     BufferedImage imgleft =
         new BufferedImage(leftPanel.getWidth(), leftPanel.getHeight(), BufferedImage.TYPE_INT_RGB);
-    Graphics2D gleft = (Graphics2D) imgleft.createGraphics();
+    Graphics2D gleft = imgleft.createGraphics();
     leftPanel.paint(gleft);
     gleft.dispose();
 
@@ -290,10 +289,7 @@ public class ImageExporter extends javax.swing.JFrame implements ActionListener 
 
           @Override
           public boolean isCellEditable(int rowIndex, int colIndex) {
-            if (colIndex == 1) {
-              return true; // Disallow the editing of any cell
-            }
-            return false;
+            return colIndex == 1; // Disallow the editing of any cell
           }
         };
     table.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_F2, 0), "none");
@@ -422,7 +418,7 @@ public class ImageExporter extends javax.swing.JFrame implements ActionListener 
     f.pack();
     BufferedImage img =
         new BufferedImage(jp.getWidth(), jp.getHeight(), BufferedImage.TYPE_INT_RGB);
-    Graphics2D g = (Graphics2D) img.createGraphics();
+    Graphics2D g = img.createGraphics();
     jp.paint(g);
     g.dispose();
     try {

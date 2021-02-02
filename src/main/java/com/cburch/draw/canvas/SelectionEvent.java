@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -33,11 +33,10 @@ import java.util.Collection;
 import java.util.EventObject;
 
 public class SelectionEvent extends EventObject {
-  private static final long serialVersionUID = 1L;
   public static final int ACTION_ADDED = 0;
   public static final int ACTION_REMOVED = 1;
   public static final int ACTION_HANDLE = 2;
-
+  private static final long serialVersionUID = 1L;
   private final int action;
   private final Collection<CanvasObject> affected;
 

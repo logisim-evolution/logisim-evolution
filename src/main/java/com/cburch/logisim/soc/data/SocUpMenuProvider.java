@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -30,16 +30,6 @@ package com.cburch.logisim.soc.data;
 
 import static com.cburch.logisim.soc.Strings.S;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.HashMap;
-
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.gui.generic.OptionPane;
@@ -53,6 +43,14 @@ import com.cburch.logisim.soc.gui.ListeningFrame;
 import com.cburch.logisim.soc.util.AssemblerInterface;
 import com.cburch.logisim.tools.CircuitStateHolder;
 import com.cburch.logisim.tools.MenuExtender;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.HashMap;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 
 public class SocUpMenuProvider  implements ActionListener {
 	
@@ -63,7 +61,7 @@ public class SocUpMenuProvider  implements ActionListener {
   private static final int SHOW_PROGRAM = 3;
   private static final int SHOW_ASM = 4;
 
-  private class InstanceMenuItem extends JMenuItem {
+  private static class InstanceMenuItem extends JMenuItem {
     private static final long serialVersionUID = 1L;
     private final Instance instance;
     private final int function;
@@ -139,18 +137,20 @@ public class SocUpMenuProvider  implements ActionListener {
         hinfo = new HierarchyInfo(proj.getCurrentCircuit());
         hinfo.addComponent(instance.getComponent());
       } else hinfo = hierarchy;
-      InstanceMenuItem Asm = new InstanceMenuItem(instance,name,SHOW_ASM,(SocUpStateInterface)instance.getData(state),state,hinfo);
+      InstanceMenuItem Asm = new InstanceMenuItem(instance, name, SHOW_ASM,
+          instance.getData(state), state, hinfo);
       Asm.addActionListener(parrent);
       Asm.setEnabled(true);
       menu.add(Asm);
       name = circuitState != null ? instName+" : "+S.get("SocUpMenuReadElf") : S.get("SocUpMenuReadElf");
-      InstanceMenuItem ReadElf = new InstanceMenuItem(instance,name,LOAD_ELF_FUNCTION,state);
+      InstanceMenuItem ReadElf = new InstanceMenuItem(instance, name, LOAD_ELF_FUNCTION, state);
       ReadElf.addActionListener(parrent);
       ReadElf.setEnabled(true);
       menu.add(ReadElf);
       if (circuitState != null) {
-        InstanceMenuItem showState = new InstanceMenuItem(instance,instName+" : "+S.get("SocUpMenuShowState"),
-            SHOW_STATE_FUNCTION,data,hierarchy);
+        InstanceMenuItem showState = new InstanceMenuItem(instance,
+            instName + " : " + S.get("SocUpMenuShowState"),
+            SHOW_STATE_FUNCTION, data, hierarchy);
         showState.addActionListener(parrent);
         showState.setEnabled(true);
         menu.add(showState);
@@ -158,8 +158,8 @@ public class SocUpMenuProvider  implements ActionListener {
       name = circuitState != null ? instName+" : "+S.get("SocUpMenuShowProgram") : S.get("SocUpMenuShowProgram");
       if (state != null)
         if (((SocUpStateInterface)instance.getData(state)).programLoaded()) {
-          InstanceMenuItem showProg = new InstanceMenuItem(instance,name,SHOW_PROGRAM,
-                  (SocUpStateInterface)instance.getData(state),state,hinfo);
+          InstanceMenuItem showProg = new InstanceMenuItem(instance, name, SHOW_PROGRAM,
+              instance.getData(state), state, hinfo);
           showProg.addActionListener(parrent);
           showProg.setEnabled(true);
           menu.add(showProg);
@@ -181,7 +181,7 @@ public class SocUpMenuProvider  implements ActionListener {
     }
   }
   
-  private class InstanceInformation {
+  private static class InstanceInformation {
     private Frame parrentFrame;
     private final HashMap<SocUpStateInterface,ListeningFrame> myStates;
     private final HashMap<SocUpStateInterface,ListeningFrame> myPrograms;
@@ -189,9 +189,9 @@ public class SocUpMenuProvider  implements ActionListener {
     
     public InstanceInformation(Instance inst, SocUpMenuProvider parrent) {
       parrentFrame = null;
-      myStates = new HashMap<SocUpStateInterface,ListeningFrame>();
-      myPrograms = new HashMap<SocUpStateInterface,ListeningFrame>();
-      myAsmWindows = new HashMap<SocUpStateInterface,ListeningFrame>();
+      myStates = new HashMap<>();
+      myPrograms = new HashMap<>();
+      myAsmWindows = new HashMap<>();
     }
     
     public void readElf(Instance instance, CircuitState circuitState) {
@@ -323,12 +323,12 @@ public class SocUpMenuProvider  implements ActionListener {
   private final HashMap<Instance,InstanceInformation> myInfo;
   
   public SocUpMenuProvider() {
-    myInfo = new HashMap<Instance,InstanceInformation>();
+    myInfo = new HashMap<>();
   }
   
   public MenuExtender getMenu(Instance inst) {
     if (!myInfo.containsKey(inst)) {
-      InstanceInformation instInfo = new InstanceInformation(inst,this);
+      InstanceInformation instInfo = new InstanceInformation(inst, this);
       myInfo.put(inst, instInfo);
     }
     return new MenuProvider(inst,this);
@@ -362,7 +362,7 @@ public class SocUpMenuProvider  implements ActionListener {
   
   public void registerCpuState(SocUpStateInterface data, Instance inst) {
     if (!myInfo.containsKey(inst)) 
-      myInfo.put(inst, new InstanceInformation(inst,this));
+      myInfo.put(inst, new InstanceInformation(inst, this));
     myInfo.get(inst).registerCpuState(data);
   }
   

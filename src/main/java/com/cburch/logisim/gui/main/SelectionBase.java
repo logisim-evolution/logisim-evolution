@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -55,6 +55,27 @@ import org.slf4j.LoggerFactory;
 
 class SelectionBase {
 
+  static final Logger logger = LoggerFactory.getLogger(SelectionBase.class);
+  static final Set<Component> NO_COMPONENTS = Collections.emptySet();
+  final HashSet<Component> selected = new HashSet<>(); // of selected
+  // Components
+  // in
+  // circuit
+  final HashSet<Component> lifted = new HashSet<>(); // of selected
+  final HashSet<Component> suppressHandles = new HashSet<>(); // of
+  // Components
+  final Set<Component> unionSet = CollectionUtil.createUnmodifiableSetUnion(selected, lifted);
+  private final ArrayList<Selection.Listener> listeners = new ArrayList<>();
+  Project proj;
+  // Components
+  // removed
+  private Bounds bounds = Bounds.EMPTY_BOUNDS;
+  private boolean shouldSnap = false;
+
+  public SelectionBase(Project proj) {
+    this.proj = proj;
+  }
+
   private static Bounds computeBounds(Collection<Component> components) {
     if (components.isEmpty()) {
       return Bounds.EMPTY_BOUNDS;
@@ -75,32 +96,6 @@ class SelectionBase {
         (Boolean)
             comp.getFactory().getFeature(ComponentFactory.SHOULD_SNAP, comp.getAttributeSet());
     return shouldSnapValue == null || shouldSnapValue.booleanValue();
-  }
-
-  static final Logger logger = LoggerFactory.getLogger(SelectionBase.class);
-
-  static final Set<Component> NO_COMPONENTS = Collections.emptySet();
-
-  Project proj;
-  private final ArrayList<Selection.Listener> listeners = new ArrayList<Selection.Listener>();
-  final HashSet<Component> selected = new HashSet<Component>(); // of selected
-  // Components
-  // in
-  // circuit
-  final HashSet<Component> lifted = new HashSet<Component>(); // of selected
-  // Components
-  // removed
-
-  final HashSet<Component> suppressHandles = new HashSet<Component>(); // of
-  // Components
-  final Set<Component> unionSet = CollectionUtil.createUnmodifiableSetUnion(selected, lifted);
-
-  private Bounds bounds = Bounds.EMPTY_BOUNDS;
-
-  private boolean shouldSnap = false;
-
-  public SelectionBase(Project proj) {
-    this.proj = proj;
   }
 
   //
@@ -158,7 +153,8 @@ class SelectionBase {
     }
   }
 
-  private HashMap<Component, Component> copyComponents(Collection<Component> components,boolean translate) {
+  private HashMap<Component, Component> copyComponents(
+      Collection<Component> components, boolean translate) {
     // determine translation offset where we can legally place the clipboard
     int dx;
     int dy;
@@ -196,19 +192,19 @@ class SelectionBase {
       if (bds.getX() + dx >= 0
           && bds.getY() + dy >= 0
           && !hasConflictTranslated(components, dx, dy, true)) {
-        return copyComponents(components, dx, dy,translate);
+        return copyComponents(components, dx, dy, translate);
       }
     }
   }
 
   private HashMap<Component, Component> copyComponents(
-      Collection<Component> components, int dx, int dy,boolean translate) {
-    HashMap<Component, Component> ret = new HashMap<Component, Component>();
+      Collection<Component> components, int dx, int dy, boolean translate) {
+    HashMap<Component, Component> ret = new HashMap<>();
     for (Component comp : components) {
       Location oldLoc = comp.getLocation();
       AttributeSet attrs =
           translate | (comp.getFactory() instanceof Rom) | (comp.getFactory() instanceof Ram)
-              ? (AttributeSet) comp.getAttributeSet()
+              ? comp.getAttributeSet()
               : (AttributeSet) comp.getAttributeSet().clone();
       int newX = oldLoc.getX() + dx;
       int newY = oldLoc.getY() + dy;
@@ -242,7 +238,7 @@ class SelectionBase {
   }
 
   void duplicateHelper(CircuitMutation xn) {
-    HashSet<Component> oldSelected = new HashSet<Component>(selected);
+    HashSet<Component> oldSelected = new HashSet<>(selected);
     oldSelected.addAll(lifted);
     pasteHelper(xn, oldSelected);
   }
@@ -316,7 +312,7 @@ class SelectionBase {
   void pasteHelper(CircuitMutation xn, Collection<Component> comps) {
     clear(xn);
 
-    Map<Component, Component> newLifted = copyComponents(comps,false);
+    Map<Component, Component> newLifted = copyComponents(comps, false);
     lifted.addAll(newLifted.values());
     fireSelectionChanged();
   }
@@ -373,13 +369,13 @@ class SelectionBase {
   }
 
   void translateHelper(CircuitMutation xn, int dx, int dy) {
-    Map<Component, Component> translatedComps = copyComponents(selected, dx, dy,true);
+    Map<Component, Component> translatedComps = copyComponents(selected, dx, dy, true);
     for (Map.Entry<Component, Component> entry : translatedComps.entrySet()) {
       xn.replace(entry.getKey(), entry.getValue());
       selected.add(entry.getValue());
     }
 
-    Map<Component, Component> liftedAfter = copyComponents(lifted, dx, dy,true);
+    Map<Component, Component> liftedAfter = copyComponents(lifted, dx, dy, true);
     lifted.clear();
     for (Map.Entry<Component, Component> entry : liftedAfter.entrySet()) {
       xn.add(entry.getValue());

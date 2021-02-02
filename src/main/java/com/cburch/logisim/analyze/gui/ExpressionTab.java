@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -49,7 +49,6 @@ import com.cburch.logisim.gui.menu.LogisimMenuItem;
 import com.cburch.logisim.gui.menu.PrintHandler;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.StringGetter;
-
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -71,7 +70,6 @@ import java.awt.image.BufferedImage;
 import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.util.EventObject;
-
 import javax.swing.AbstractCellEditor;
 import javax.swing.ActionMap;
 import javax.swing.BorderFactory;
@@ -92,7 +90,6 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellEditor;
-
 import org.jdesktop.swingx.prompt.BuddySupport;
 
 class ExpressionTab extends AnalyzerTab {
@@ -147,7 +144,8 @@ class ExpressionTab extends AnalyzerTab {
     @Override
     public boolean isCellEditable(int row, int column) { return true; }
     @Override
-    public int getColumnCount() { return 1; };
+    public int getColumnCount() { return 1; }
+
     @Override
     public String getColumnName(int column) { return ""; }
     @Override
@@ -364,8 +362,8 @@ class ExpressionTab extends AnalyzerTab {
     }
 
     ActionMap actionMap = table.getActionMap();
-    actionMap.put(LogisimMenuBar.COPY, ccp.getCopyAction());
-    actionMap.put(LogisimMenuBar.PASTE, ccp.getPasteAction());
+    actionMap.put(LogisimMenuBar.COPY, TransferHandler.getCopyAction());
+    actionMap.put(LogisimMenuBar.PASTE, TransferHandler.getPasteAction());
     GridBagLayout gb = new GridBagLayout();
     GridBagConstraints gc = new GridBagConstraints();
     setLayout(gb);

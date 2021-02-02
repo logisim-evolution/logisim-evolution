@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -33,24 +33,12 @@ import java.awt.Graphics;
 import java.util.ArrayList;
 
 class Highlighter {
-  private static class Entry {
-    private final long start;
-    private final long end;
-    private final Color color;
-
-    Entry(long start, long end, Color color) {
-      this.start = start;
-      this.end = end;
-      this.color = color;
-    }
-  }
-
   private final HexEditor hex;
   private ArrayList<Entry> entries;
 
   Highlighter(HexEditor hex) {
     this.hex = hex;
-    this.entries = new ArrayList<Entry>();
+    this.entries = new ArrayList<>();
   }
 
   public synchronized Object add(long start, long end, Color color) {
@@ -73,7 +61,7 @@ class Highlighter {
 
   public synchronized void clear() {
     ArrayList<Entry> oldEntries = entries;
-    entries = new ArrayList<Entry>();
+    entries = new ArrayList<>();
     for (int n = oldEntries.size(); n >= 0; n--) {
       expose(oldEntries.get(n));
     }
@@ -127,6 +115,18 @@ class Highlighter {
     if (entries.remove(tag)) {
       Entry entry = (Entry) tag;
       expose(entry);
+    }
+  }
+
+  private static class Entry {
+    private final long start;
+    private final long end;
+    private final Color color;
+
+    Entry(long start, long end, Color color) {
+      this.start = start;
+      this.end = end;
+      this.color = color;
     }
   }
 }

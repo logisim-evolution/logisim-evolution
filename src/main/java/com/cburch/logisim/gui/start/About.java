@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -48,33 +48,37 @@ import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
 
 public class About {
+  static final int IMAGE_BORDER = 30;
+  static final int IMAGE_WIDTH = 430;
+  static final int IMAGE_HEIGHT = 284;
+
+  private About() {}
+
+  public static MyPanel getImagePanel() {
+    return new MyPanel();
+  }
+
+  public static void showAboutDialog(JFrame owner) {
+    MyPanel imgPanel = getImagePanel();
+    JPanel panel = new JPanel(new BorderLayout());
+    panel.add(imgPanel);
+    panel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
+
+    OptionPane.showMessageDialog(
+        owner, panel, "Logisim-evolution " + Main.VERSION_NAME, OptionPane.PLAIN_MESSAGE);
+  }
+
   private static class MyPanel extends JPanel implements AncestorListener {
-    private static int toDim(int offs) {
-      return offs * 3 / 2;
-    }
-
-    private static int toX(int x0, int offs) {
-      return x0 + offs * 3 / 2;
-    }
-
-    private static int toY(int y0, int offs) {
-      return y0 + offs * 3 / 2;
-    }
-
     private static final long serialVersionUID = 1L;
     private final Color fadeColor = new Color(255, 255, 255, 128);
     private final Color headerColor = new Color(143, 0, 0);
     private final Color gateColor = Color.DARK_GRAY;
-
     private final Font headerFont = new Font("Monospaced", Font.BOLD, 34);
     private final Font versionFont = new Font("Serif", Font.PLAIN | Font.ITALIC, 20);
     private final Font copyrightFont = new Font("Serif", Font.ITALIC, 12);
-    private Value upper = Value.FALSE;
-
-    private Value lower = Value.TRUE;
-
     private final AboutCredits credits;
-
+    private Value upper = Value.FALSE;
+    private Value lower = Value.TRUE;
     private PanelThread thread = null;
 
     public MyPanel() {
@@ -89,6 +93,18 @@ public class About {
       credits = new AboutCredits();
       credits.setBounds(0, prefHeight / 2, prefWidth, prefHeight / 2);
       add(credits);
+    }
+
+    private static int toDim(int offs) {
+      return offs * 3 / 2;
+    }
+
+    private static int toX(int x0, int offs) {
+      return x0 + offs * 3 / 2;
+    }
+
+    private static int toY(int y0, int offs) {
+      return y0 + offs * 3 / 2;
     }
 
     public void ancestorAdded(AncestorEvent arg0) {
@@ -281,26 +297,4 @@ public class About {
       }
     }
   }
-
-  public static MyPanel getImagePanel() {
-    return new MyPanel();
-  }
-
-  public static void showAboutDialog(JFrame owner) {
-    MyPanel imgPanel = getImagePanel();
-    JPanel panel = new JPanel(new BorderLayout());
-    panel.add(imgPanel);
-    panel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
-
-    OptionPane.showMessageDialog(
-        owner, panel, "Logisim-evolution " + Main.VERSION_NAME, OptionPane.PLAIN_MESSAGE);
-  }
-
-  static final int IMAGE_BORDER = 30;
-
-  static final int IMAGE_WIDTH = 430;
-
-  static final int IMAGE_HEIGHT = 284;
-
-  private About() {}
 }

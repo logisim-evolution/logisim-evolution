@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -194,9 +194,9 @@ public class VhdlParser {
 
   public VhdlParser(String source) {
     this.source = source;
-    this.inputs = new ArrayList<PortDescription>();
-    this.outputs = new ArrayList<PortDescription>();
-    this.generics = new ArrayList<GenericDescription>();
+    this.inputs = new ArrayList<>();
+    this.outputs = new ArrayList<>();
+    this.generics = new ArrayList<>();
   }
 
   public String getArchitecture() {

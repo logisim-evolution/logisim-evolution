@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -52,7 +52,7 @@ public class BoardInformation {
 
   public void clear() {
 	if (MyComponents == null)
-	  MyComponents = new LinkedList<FPGAIOInformationContainer>();
+	  MyComponents = new LinkedList<>();
 	else
       MyComponents.clear();
     boardname = null;
@@ -129,7 +129,7 @@ public class BoardInformation {
 
   public ArrayList<BoardRectangle> GetIoComponentsOfType(
       IOComponentTypes type, int nrOfPins) {
-    ArrayList<BoardRectangle> result = new ArrayList<BoardRectangle>();
+    ArrayList<BoardRectangle> result = new ArrayList<>();
     for (FPGAIOInformationContainer comp : MyComponents) {
       if (comp.GetType().equals(type)) {
         if ((!type.equals(IOComponentTypes.DIPSwitch))

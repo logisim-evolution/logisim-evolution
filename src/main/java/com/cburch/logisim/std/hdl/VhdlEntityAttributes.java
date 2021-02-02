@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -64,7 +64,7 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
           VhdlSimConstants.SIM_NAME_ATTR);
 
   private static final WeakHashMap<HdlContent, HdlContentEditor> windowRegistry =
-      new WeakHashMap<HdlContent, HdlContentEditor>();
+      new WeakHashMap<>();
 
   private VhdlContentComponent content;
   private String label = "";
@@ -146,9 +146,6 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
 
   @Override
   public boolean isToSave(Attribute<?> attr) {
-    if (attr == VhdlSimConstants.SIM_NAME_ATTR) {
-      return false;
-    }
-    return true;
+    return attr != VhdlSimConstants.SIM_NAME_ATTR;
   }
 }

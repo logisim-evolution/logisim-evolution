@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -34,21 +34,21 @@ import java.awt.event.MouseWheelListener;
 import javax.swing.Scrollable;
 
 public interface CanvasPaneContents extends Scrollable {
-  public Dimension getPreferredScrollableViewportSize();
+  Dimension getPreferredScrollableViewportSize();
 
-  public int getScrollableBlockIncrement(Rectangle visibleRect, int orientation, int direction);
+  int getScrollableBlockIncrement(Rectangle visibleRect, int orientation, int direction);
 
-  public boolean getScrollableTracksViewportHeight();
+  boolean getScrollableTracksViewportHeight();
 
-  public boolean getScrollableTracksViewportWidth();
+  boolean getScrollableTracksViewportWidth();
 
-  public int getScrollableUnitIncrement(Rectangle visibleRect, int orientation, int direction);
+  int getScrollableUnitIncrement(Rectangle visibleRect, int orientation, int direction);
 
-  public void recomputeSize();
+  void recomputeSize();
 
-  public void setCanvasPane(CanvasPane pane);
+  void setCanvasPane(CanvasPane pane);
 
-  public void addMouseWheelListener(MouseWheelListener listener);
+  void addMouseWheelListener(MouseWheelListener listener);
 
-  public void center();
+  void center();
 }

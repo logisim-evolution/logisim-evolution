@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -30,6 +30,10 @@ package com.cburch.logisim.analyze.data;
 
 import static com.cburch.logisim.analyze.Strings.S;
 
+import com.cburch.logisim.analyze.model.Expression;
+import com.cburch.logisim.analyze.model.Expression.Notation;
+import com.cburch.logisim.prefs.AppPreferences;
+import com.cburch.logisim.util.GraphicsUtil;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -43,11 +47,6 @@ import java.awt.font.TextLayout;
 import java.awt.image.BufferedImage;
 import java.text.AttributedString;
 import java.util.ArrayList;
-
-import com.cburch.logisim.analyze.model.Expression;
-import com.cburch.logisim.analyze.model.Expression.Notation;
-import com.cburch.logisim.prefs.AppPreferences;
-import com.cburch.logisim.util.GraphicsUtil;
 
 public class ExpressionRenderData {
 
@@ -93,12 +92,12 @@ public class ExpressionRenderData {
     if (expr == null || expr.toString(notation, true).length() == 0) {
       lineStyled = null;
       lineText = new String[] {S.get("expressionEmpty")};
-      lineSubscripts = new ArrayList<ArrayList<Range>>();
-      lineSubscripts.add(new ArrayList<Range>());
-      lineNots = new ArrayList<ArrayList<Range>>();
-      lineNots.add(new ArrayList<Range>());
-      lineMarks = new ArrayList<ArrayList<Range>>();
-      lineMarks.add(new ArrayList<Range>());
+      lineSubscripts = new ArrayList<>();
+      lineSubscripts.add(new ArrayList<>());
+      lineNots = new ArrayList<>();
+      lineNots.add(new ArrayList<>());
+      lineMarks = new ArrayList<>();
+      lineMarks.add(new ArrayList<>());
     } else {
       computeLineText();
       lineSubscripts = computeLineAttribs(expr.subscripts);
@@ -119,9 +118,9 @@ public class ExpressionRenderData {
   }
   
   private ArrayList<ArrayList<Range>> computeLineAttribs(ArrayList<Range> attribs) {
-    ArrayList<ArrayList<Range>> attrs = new ArrayList<ArrayList<Range>>();
+    ArrayList<ArrayList<Range>> attrs = new ArrayList<>();
     for (int i = 0; i < lineText.length; i++) {
-      attrs.add(new ArrayList<Range>());
+      attrs.add(new ArrayList<>());
     }
     for (Range nd : attribs) {
       int pos = 0;
@@ -147,8 +146,8 @@ public class ExpressionRenderData {
   private void computeLineText() {
     String text = expr.toString(notation, true);
     Integer[] badness = expr.getBadness();
-    ArrayList<Integer> bestBreakPositions = new ArrayList<Integer>();
-    ArrayList<Integer> secondBestBreakPositions = new ArrayList<Integer>();
+    ArrayList<Integer> bestBreakPositions = new ArrayList<>();
+    ArrayList<Integer> secondBestBreakPositions = new ArrayList<>();
     Integer minimal1=Integer.MAX_VALUE,minimal2=Integer.MAX_VALUE;
     lineStyled = null;
     for (int i = 0 ; i < text.length() ; i++) {
@@ -167,7 +166,7 @@ public class ExpressionRenderData {
     }
     bestBreakPositions.add(text.length());
     secondBestBreakPositions.add(text.length());
-    ArrayList<String> lines = new ArrayList<String>();
+    ArrayList<String> lines = new ArrayList<>();
     BufferedImage img = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
     Graphics2D g = (Graphics2D)img.getGraphics().create();
     if (AppPreferences.AntiAliassing.getBoolean()) {

@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -37,6 +37,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 public class SvgCreator {
+  private SvgCreator() {}
+
   public static boolean colorMatches(Color a, Color b) {
     return a.getRed() == b.getRed() && a.getGreen() == b.getGreen() && a.getBlue() == b.getBlue();
   }
@@ -172,11 +174,7 @@ public class SvgCreator {
   }
 
   public static String getColorString(Color color) {
-    return String.format(
-        "#%02x%02x%02x",
-        color.getRed(),
-        color.getGreen(),
-        color.getBlue());
+    return String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue());
   }
 
   private static String getOpacityString(Color color) {
@@ -221,6 +219,4 @@ public class SvgCreator {
   private static boolean showOpacity(Color color) {
     return color.getAlpha() != 255;
   }
-
-  private SvgCreator() {}
 }

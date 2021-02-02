@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -44,11 +44,11 @@ import java.awt.geom.GeneralPath;
 import java.util.ArrayList;
 
 class OrGate extends AbstractGate {
-  private class OrGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
+  private static class OrGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
     @Override
     public ArrayList<String> GetLogicFunction(
         int nr_of_inputs, int bitwidth, boolean is_one_hot, String HDLType) {
-      ArrayList<String> Contents = new ArrayList<String>();
+      ArrayList<String> Contents = new ArrayList<>();
       String Preamble = (HDLType.equals(VHDL) ? "" : "assign ");
       String OrOperation = (HDLType.equals(VHDL) ? " OR" : " |");
       String AssignOperation = (HDLType.equals(VHDL) ? " <= " : " = ");
@@ -67,7 +67,7 @@ class OrGate extends AbstractGate {
         } else {
           first = false;
         }
-        OneLine.append("s_real_input_" + Integer.toString(i + 1));
+        OneLine.append("s_real_input_" + (i + 1));
       }
       OneLine.append(";");
       Contents.add(OneLine.toString());

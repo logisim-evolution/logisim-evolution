@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -37,8 +37,8 @@ public class WidthIncompatibilityData {
   private final ArrayList<BitWidth> widths;
 
   public WidthIncompatibilityData() {
-    points = new ArrayList<Location>();
-    widths = new ArrayList<BitWidth>();
+    points = new ArrayList<>();
+    widths = new ArrayList<>();
   }
 
   public void add(Location p, BitWidth w) {

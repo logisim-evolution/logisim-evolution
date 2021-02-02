@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -42,14 +42,14 @@ public class TruthTable {
   private static final Entry DEFAULT_ENTRY = Entry.DONT_CARE;
 
   private final MyListener myListener = new MyListener();
-  private final List<TruthTableListener> listeners = new ArrayList<TruthTableListener>();
+  private final List<TruthTableListener> listeners = new ArrayList<>();
 
   private final AnalyzerModel model;
   private ArrayList<Row> rows = new ArrayList<>(); // visible input rows
   private final ArrayList<Entry[]> columns = new ArrayList<>(); // output columns
   private static final CompareInputs sortByInputs = new CompareInputs();
 
-  private class Row implements Iterable<Integer> {
+  private static class Row implements Iterable<Integer> {
     // todo: probably more efficient to store this in baseIdx/dcMask format.
     Entry[] inputs;
 

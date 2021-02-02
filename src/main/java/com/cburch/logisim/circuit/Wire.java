@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -97,7 +97,7 @@ public final class Wire implements Component, AttributeSet, CustomHandles, Itera
       Attributes.forInteger("length", S.getter("wireLengthAttr"));
 
   private static final List<Attribute<?>> ATTRIBUTES =
-      Arrays.asList(new Attribute<?>[] {dir_attr, len_attr});
+      Arrays.asList(dir_attr, len_attr);
 
   private static final Cache cache = new Cache();
 

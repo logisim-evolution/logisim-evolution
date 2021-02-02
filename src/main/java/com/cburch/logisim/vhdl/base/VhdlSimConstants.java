@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -64,7 +64,7 @@ public class VhdlSimConstants {
 
   public static List<Component> getVhdlComponents(CircuitState s, boolean newStyle) {
 
-    LinkedList<Component> vhdlComp = new LinkedList<Component>();
+    LinkedList<Component> vhdlComp = new LinkedList<>();
 
     /* Add current circuits comp */
     for (Component comp : s.getCircuit().getNonWires()) {
@@ -84,11 +84,11 @@ public class VhdlSimConstants {
     return vhdlComp;
   }
 
-  public static enum State {
+  public enum State {
     DISABLED,
     ENABLED,
     STARTING,
-    RUNNING;
+    RUNNING
   }
 
   public static final Logger logger = LoggerFactory.getLogger(VhdlSimulatorTop.class);

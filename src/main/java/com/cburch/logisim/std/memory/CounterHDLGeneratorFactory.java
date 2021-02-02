@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -57,7 +57,7 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Inputs = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> Inputs = new TreeMap<>();
     Inputs.put("GlobalClock", 1);
     Inputs.put("ClockEnable", 1);
     Inputs.put("LoadData", NrOfBitsId);
@@ -71,7 +71,7 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   @Override
   public ArrayList<String> GetModuleFunctionality(
       Netlist TheNetlist, AttributeSet attrs, FPGAReport Reporter, String HDLType) {
-    ArrayList<String> Contents = new ArrayList<String>();
+    ArrayList<String> Contents = new ArrayList<>();
     Contents.addAll(
         MakeRemarkBlock(
             "Functionality of the counter:\\ __Load_Count_|_mode\\ ____0____0___|_halt\\ "
@@ -230,7 +230,7 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Outputs = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> Outputs = new TreeMap<>();
     Outputs.put("CountValue", NrOfBitsId);
     Outputs.put("CompareOut", 1);
     return Outputs;
@@ -238,7 +238,7 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<Integer, String> GetParameterList(AttributeSet attrs) {
-    SortedMap<Integer, String> Parameters = new TreeMap<Integer, String>();
+    SortedMap<Integer, String> Parameters = new TreeMap<>();
     Parameters.put(NrOfBitsId, NrOfBitsStr);
     Parameters.put(MaxValId, MaxValStr);
     Parameters.put(ActiveEdgeId, ActiveEdgeStr);
@@ -249,7 +249,7 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   @Override
   public SortedMap<String, Integer> GetParameterMap(
       Netlist Nets, NetlistComponent ComponentInfo, FPGAReport Reporter) {
-    SortedMap<String, Integer> ParameterMap = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> ParameterMap = new TreeMap<>();
     AttributeSet attrs = ComponentInfo.GetComponent().getAttributeSet();
     int mode = 0;
     if (attrs.containsAttribute(Counter.ATTR_ON_GOAL)) {
@@ -272,7 +272,7 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   @Override
   public SortedMap<String, String> GetPortMap(
 	      Netlist Nets, Object MapInfo, FPGAReport Reporter, String HDLType) {
-    SortedMap<String, String> PortMap = new TreeMap<String, String>();
+    SortedMap<String, String> PortMap = new TreeMap<>();
     if (!(MapInfo instanceof NetlistComponent)) return PortMap;
     NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
     String ZeroBit = (HDLType.equals(VHDL)) ? "'0'" : "1'b0";
@@ -309,11 +309,11 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
             "GlobalClock",
             ClockNetName
                 + BracketOpen
-                + Integer.toString(ClockHDLGeneratorFactory.GlobalClockIndex)
+                + ClockHDLGeneratorFactory.GlobalClockIndex
                 + BracketClose);
         PortMap.put(
             "ClockEnable",
-            ClockNetName + BracketOpen + Integer.toString(ClockBusIndex) + BracketClose);
+            ClockNetName + BracketOpen + ClockBusIndex + BracketClose);
       }
     }
     String Input = "LoadData";
@@ -338,7 +338,7 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetRegList(AttributeSet attrs, String HDLType) {
-    SortedMap<String, Integer> Regs = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> Regs = new TreeMap<>();
     Regs.put("s_next_counter_value", NrOfBitsId); // for verilog generation
     // in explicite process
     Regs.put("s_carry", 1); // for verilog generation in explicite process
@@ -358,7 +358,7 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist Nets) {
-    SortedMap<String, Integer> Wires = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> Wires = new TreeMap<>();
     Wires.put("s_real_enable", 1);
     return Wires;
   }

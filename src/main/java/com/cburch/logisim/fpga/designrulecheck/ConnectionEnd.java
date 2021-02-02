@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -40,7 +40,7 @@ public class ConnectionEnd {
   public ConnectionEnd(boolean OutputEnd, Byte nr_of_bits, Component comp) {
     IsOutput = OutputEnd;
     this.nr_of_bits = nr_of_bits;
-    MyConnections = new ArrayList<ConnectionPoint>();
+    MyConnections = new ArrayList<>();
     for (byte i = 0; i < nr_of_bits; i++) MyConnections.add(new ConnectionPoint(comp));
   }
 

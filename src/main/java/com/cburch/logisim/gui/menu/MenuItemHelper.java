@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -37,9 +37,9 @@ class MenuItemHelper implements ActionListener {
   private final JMenuItem source;
   private final LogisimMenuItem menuItem;
   private final Menu menu;
+  private final ArrayList<ActionListener> listeners;
   private boolean enabled;
   private boolean inActionListener;
-  private final ArrayList<ActionListener> listeners;
 
   public MenuItemHelper(JMenuItem source, Menu menu, LogisimMenuItem menuItem) {
     this.source = source;
@@ -47,7 +47,7 @@ class MenuItemHelper implements ActionListener {
     this.menuItem = menuItem;
     this.enabled = true;
     this.inActionListener = false;
-    this.listeners = new ArrayList<ActionListener>();
+    this.listeners = new ArrayList<>();
   }
 
   public void actionPerformed(ActionEvent event) {

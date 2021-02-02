@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -29,8 +29,6 @@
 package com.cburch.logisim.std.memory;
 
 import static com.cburch.logisim.std.Strings.S;
-
-import java.util.WeakHashMap;
 
 import com.cburch.logisim.LogisimVersion;
 import com.cburch.logisim.circuit.Circuit;
@@ -52,6 +50,7 @@ import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.proj.Project;
+import java.util.WeakHashMap;
 
 public class Ram extends Mem {
 
@@ -104,7 +103,7 @@ public class Ram extends Mem {
   }
 
   private static final Object[][] logOptions = new Object[9][];
-  private static final WeakHashMap<MemContents, HexFrame> windowRegistry = new WeakHashMap<MemContents, HexFrame>();
+  private static final WeakHashMap<MemContents, HexFrame> windowRegistry = new WeakHashMap<>();
 
   public Ram() {
     super("RAM", S.getter("ramComponent"), 3);
@@ -197,7 +196,7 @@ public class Ram extends Mem {
   }
 
   public MemContents getContents(InstanceState ramState) {
-    return (MemContents)getState(ramState).getContents();
+    return getState(ramState).getContents();
   }
 
   @Override

@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -72,7 +72,7 @@ public interface IDrawAreaEvents extends EventListener {
    *     the bus to apply the transformation
    * @param format new coding format
    */
-  public void setCodingFormat(SignalDataBus signalDataSource, String format);
+  void setCodingFormat(SignalDataBus signalDataSource, String format);
 
   /**
    * Expand or close the selected bus

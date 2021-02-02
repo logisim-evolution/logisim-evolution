@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -86,7 +86,7 @@ public class ModelChangeAttributeAction extends ModelAction {
 
   @Override
   public Collection<CanvasObject> getObjects() {
-    Set<CanvasObject> ret = new HashSet<CanvasObject>();
+    Set<CanvasObject> ret = new HashSet<>();
     for (AttributeMapKey key : newValues.keySet()) {
       ret.add(key.getObject());
     }

@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -63,7 +63,7 @@ class PropagationPoints {
   private final HashSet<Entry> data;
 
   PropagationPoints() {
-    this.data = new HashSet<Entry>();
+    this.data = new HashSet<>();
   }
 
   void add(CircuitState state, Location loc) {
@@ -86,7 +86,7 @@ class PropagationPoints {
     if (data.isEmpty()) return;
 
     CircuitState state = context.getCircuitState();
-    HashMap<CircuitState, CircuitState> stateMap = new HashMap<CircuitState, CircuitState>();
+    HashMap<CircuitState, CircuitState> stateMap = new HashMap<>();
     for (CircuitState s : state.getSubstates()) {
       addSubstates(stateMap, s, s);
     }

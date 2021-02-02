@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -29,9 +29,9 @@
 package com.cburch.logisim.gui.generic;
 
 public interface AttrTableModelListener {
-  public void attrStructureChanged(AttrTableModelEvent event);
+  void attrStructureChanged(AttrTableModelEvent event);
 
-  public void attrTitleChanged(AttrTableModelEvent event);
+  void attrTitleChanged(AttrTableModelEvent event);
 
-  public void attrValueChanged(AttrTableModelEvent event);
+  void attrValueChanged(AttrTableModelEvent event);
 }

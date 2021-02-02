@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -42,7 +42,7 @@ import java.util.List;
 class TunnelAttributes extends AbstractAttributeSet {
   private static final List<Attribute<?>> ATTRIBUTES =
       Arrays.asList(
-          new Attribute<?>[] {StdAttr.FACING, StdAttr.WIDTH, StdAttr.LABEL, StdAttr.LABEL_FONT});
+          StdAttr.FACING, StdAttr.WIDTH, StdAttr.LABEL, StdAttr.LABEL_FONT);
 
   private Direction facing;
   private BitWidth width;
@@ -99,7 +99,7 @@ class TunnelAttributes extends AbstractAttributeSet {
 
   @Override
   protected void copyInto(AbstractAttributeSet destObj) {
-    ; // nothing to do
+    // nothing to do
   }
 
   @Override

@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -72,8 +72,7 @@ public class Switch extends InstanceFactory {
     @Override
     public void mouseReleased(InstanceState state, MouseEvent e) {
       InstanceDataSingleton data = (InstanceDataSingleton) state.getData();
-      if (data != null && (Boolean) data.getValue()) setActive(state, false);
-      else setActive(state, true);
+      setActive(state, data == null || !((Boolean) data.getValue()));
     }
 
     private void setActive(InstanceState state, boolean active) {

@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -28,22 +28,21 @@
 
 package com.cburch.logisim.gui.icons;
 
+import com.cburch.logisim.data.Value;
+import com.cburch.logisim.util.StringGetter;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.font.TextLayout;
-
-import com.cburch.logisim.data.Value;
-import com.cburch.logisim.util.StringGetter;
 
 public class ButtonIcon extends AnnimatedIcon {
 
   private int state = 0;
   private int index = 0;
   private StringGetter name = null;
-  
-  public ButtonIcon() {};
-  
+
+  public ButtonIcon() {}
+
   public ButtonIcon(StringGetter sg) {
     name = sg;
     index = 0;
@@ -51,9 +50,9 @@ public class ButtonIcon extends AnnimatedIcon {
 
   @Override
   public void annimationUpdate() {
-    state = (state+1)&3;
+    state = (state + 1) & 3;
     if (name != null) {
-      index = (index+1)%name.toString().length();
+      index = (index + 1) % name.toString().length();
     }
   }
 
@@ -67,17 +66,17 @@ public class ButtonIcon extends AnnimatedIcon {
   protected void paintIcon(Graphics2D g2) {
     int wh = scale(12);
     int x = scale(state);
-    int y = scale(11)+scale(state);
-    int[] xpos = {x,x+wh,scale(14),scale(3)};
-    int[] ypos = {y,y,scale(14),scale(14)};
+    int y = scale(11) + scale(state);
+    int[] xpos = {x, x + wh, scale(14), scale(3)};
+    int[] ypos = {y, y, scale(14), scale(14)};
     g2.setColor(Color.LIGHT_GRAY);
     g2.fillPolygon(xpos, ypos, 4);
     g2.setColor(Color.BLACK);
     g2.drawPolygon(xpos, ypos, 4);
-    x = wh+scale(state);
+    x = wh + scale(state);
     y = scale(state);
-    int[] xpos1 = {x,x,scale(14),scale(14)};
-    int[] ypos1 = {y,y+wh,scale(14),scale(3)};
+    int[] xpos1 = {x, x, scale(14), scale(14)};
+    int[] ypos1 = {y, y + wh, scale(14), scale(3)};
     g2.setColor(Color.LIGHT_GRAY);
     g2.fillPolygon(xpos1, ypos1, 4);
     g2.setColor(Color.BLACK);
@@ -92,14 +91,15 @@ public class ButtonIcon extends AnnimatedIcon {
       g2.drawOval(scale(13), scale(7), scale(3), scale(3));
     } else {
       String s = name.toString();
-      if (index >= s.length())
-        index = 0;
-      Font f = g2.getFont().deriveFont((float)wh);
-      TextLayout t = new TextLayout(s.substring(index, index+1),f,g2.getFontRenderContext());
+      if (index >= s.length()) index = 0;
+      Font f = g2.getFont().deriveFont((float) wh);
+      TextLayout t = new TextLayout(s.substring(index, index + 1), f, g2.getFontRenderContext());
       g2.setColor(Color.BLUE);
-      float center = scale(state)+wh/2;
-      t.draw(g2, center-(float)t.getBounds().getCenterX(), center-(float)t.getBounds().getCenterY());
+      float center = scale(state) + wh / 2;
+      t.draw(
+          g2,
+          center - (float) t.getBounds().getCenterX(),
+          center - (float) t.getBounds().getCenterY());
     }
   }
-
 }

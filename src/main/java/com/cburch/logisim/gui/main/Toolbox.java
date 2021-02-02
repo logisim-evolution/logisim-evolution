@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -44,14 +44,14 @@ class Toolbox extends JPanel {
   Toolbox(Project proj, Frame frame, MenuListener menu) {
     super(new BorderLayout());
 
-    ToolboxToolbarModel toolbarModel = new ToolboxToolbarModel(frame,menu);
+    ToolboxToolbarModel toolbarModel = new ToolboxToolbarModel(frame, menu);
     Toolbar toolbar = new Toolbar(toolbarModel);
     add(toolbar, BorderLayout.NORTH);
 
     toolbox = new ProjectExplorer(proj);
     toolbox.setListener(new ToolboxManip(proj, toolbox));
     add(new JScrollPane(toolbox), BorderLayout.CENTER);
-    
+
     toolbarModel.menuEnableChanged(menu);
   }
 

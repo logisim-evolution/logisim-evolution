@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -184,7 +184,7 @@ class BuildCircuitButton extends JButton {
         if (!SyntaxChecker.isVariableNameAcceptable(name, true)) continue;
         
         /* Check for name collisions with input and output names */
-        HashSet<String> labels = new HashSet<String>();
+        HashSet<String> labels = new HashSet<>();
         for (String label : model.getInputs().getNames()) labels.add(label.toUpperCase());
         for (String label : model.getOutputs().getNames()) labels.add(label.toUpperCase());
         if (labels.contains(name.toUpperCase())) {
@@ -199,7 +199,7 @@ class BuildCircuitButton extends JButton {
         if (dest != null) {
           /* prevent upper-case lower-case mismatch */
           for (Circuit circ : dest.getLogisimFile().getCircuits()) {
-            if (circ.getName().toLowerCase().equals(name.toLowerCase())) name = circ.getName();
+            if (circ.getName().equalsIgnoreCase(name)) name = circ.getName();
           }
         }
 

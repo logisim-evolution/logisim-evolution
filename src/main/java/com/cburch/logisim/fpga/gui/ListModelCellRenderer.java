@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -101,7 +101,7 @@ public class ListModelCellRenderer extends JLabel implements ListCellRenderer<Ob
           } else if (line < 10000) {
             Line.append(" ");
           }
-          Line.append(Integer.toString(line) + "> ");
+          Line.append(line + "> ");
         }
       } else {
         if (index < 9) {
@@ -113,7 +113,7 @@ public class ListModelCellRenderer extends JLabel implements ListCellRenderer<Ob
         } else if (index < 9999) {
           Line.append(" ");
         }
-        Line.append(Integer.toString(index + 1) + "> ");
+        Line.append((index + 1) + "> ");
       }
     }
     if (msg != null) {

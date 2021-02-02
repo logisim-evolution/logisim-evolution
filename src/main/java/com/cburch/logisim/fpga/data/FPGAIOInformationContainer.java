@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -33,7 +33,6 @@ import com.cburch.logisim.fpga.gui.BoardManipulator;
 import com.cburch.logisim.fpga.gui.FPGAIOInformationSettingsDialog;
 import com.cburch.logisim.fpga.gui.PartialMapDialog;
 import com.cburch.logisim.prefs.AppPreferences;
-
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -42,9 +41,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
-
 import javax.swing.JPanel;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Attr;
@@ -55,7 +52,7 @@ import org.w3c.dom.Node;
 
 public class FPGAIOInformationContainer implements Cloneable {
 
-  private class mapType {
+  private static class mapType {
     private MapComponent map;
     private final int pin;
     
@@ -73,18 +70,18 @@ public class FPGAIOInformationContainer implements Cloneable {
     }
   }
   
-  public class MapResultClass {
+  public static class MapResultClass {
     public boolean mapResult;
     public int pinId;
   }
   
   public static LinkedList<String> GetComponentTypes() {
-    LinkedList<String> result = new LinkedList<String>();
+    LinkedList<String> result = new LinkedList<>();
     for (IOComponentTypes comp : IOComponentTypes.KnownComponentSet) {
       result.add(comp.toString());
     }
     return result;
-  };
+  }
 
   static final Logger logger = LoggerFactory.getLogger(FPGAIOInformationContainer.class);
 
@@ -111,7 +108,7 @@ public class FPGAIOInformationContainer implements Cloneable {
   public FPGAIOInformationContainer() {
     MyType = IOComponentTypes.Unknown;
     MyRectangle = null;
-    MyPinLocations = new HashMap<Integer, String>();
+    MyPinLocations = new HashMap<>();
     setNrOfPins(0);
     MyPullBehavior = PullBehaviors.Unknown;
     MyActivityLevel = PinActivity.Unknown;
@@ -124,7 +121,7 @@ public class FPGAIOInformationContainer implements Cloneable {
                                     IOComponentsInformation iocomps) {
     MyType = Type;
     MyRectangle = rect;
-    MyPinLocations = new HashMap<Integer, String>();
+    MyPinLocations = new HashMap<>();
     setNrOfPins(0);
     MyPullBehavior = PullBehaviors.Unknown;
     MyActivityLevel = PinActivity.Unknown;
@@ -158,16 +155,16 @@ public class FPGAIOInformationContainer implements Cloneable {
      */
     MyType = IOComponentTypes.Unknown;
     MyRectangle = null;
-    MyPinLocations = new HashMap<Integer, String>();
+    MyPinLocations = new HashMap<>();
     setNrOfPins(0);
     MyPullBehavior = PullBehaviors.Unknown;
     MyActivityLevel = PinActivity.Unknown;
     MyIOStandard = IoStandards.Unknown;
     MyDriveStrength = DriveStrength.Unknown;
     MyLabel = null;
-    ArrayList<String> InputLocs = new ArrayList<String>();
-    ArrayList<String> OutputLocs = new ArrayList<String>();
-    ArrayList<String> IOLocs = new ArrayList<String>();
+    ArrayList<String> InputLocs = new ArrayList<>();
+    ArrayList<String> OutputLocs = new ArrayList<>();
+    ArrayList<String> IOLocs = new ArrayList<>();
     IOComponentTypes SetId = IOComponentTypes.getEnumFromString(DocumentInfo.getNodeName());
     if (IOComponentTypes.KnownComponentSet.contains(SetId)) {
       MyType = SetId;
@@ -246,17 +243,17 @@ public class FPGAIOInformationContainer implements Cloneable {
     int idx = 0;
     for (String loc : InputLocs) {
       MyPinLocations.put(idx, loc);
-      if (MyInputPins == null) MyInputPins = new HashSet<Integer>();
+      if (MyInputPins == null) MyInputPins = new HashSet<>();
       MyInputPins.add(idx++);
     }
     for (String loc : OutputLocs) {
       MyPinLocations.put(idx, loc);
-      if (MyOutputPins == null) MyOutputPins = new HashSet<Integer>();
+      if (MyOutputPins == null) MyOutputPins = new HashSet<>();
       MyOutputPins.add(idx++);
     }
     for (String loc : IOLocs) {
       MyPinLocations.put(idx, loc);
-      if (MyIOPins == null) MyIOPins = new HashSet<Integer>();
+      if (MyIOPins == null) MyIOPins = new HashSet<>();
       MyIOPins.add(idx++);
     }
     if (idx != 0) setNrOfPins(idx);
@@ -277,13 +274,13 @@ public class FPGAIOInformationContainer implements Cloneable {
       int NrOutpPins = IOComponentTypes.GetFPGAOutputRequirement(MyType);
       for (int i = 0 ; i < NrOfPins; i++) {
         if (i < NrInpPins) {
-          if (MyInputPins == null) MyInputPins = new HashSet<Integer>();
+          if (MyInputPins == null) MyInputPins = new HashSet<>();
           MyInputPins.add(i);
         } else if (i < (NrInpPins+NrOutpPins)) {
-          if (MyOutputPins == null) MyOutputPins = new HashSet<Integer>();
+          if (MyOutputPins == null) MyOutputPins = new HashSet<>();
           MyOutputPins.add(i);
         } else {
-          if (MyIOPins == null) MyIOPins = new HashSet<Integer>();
+          if (MyIOPins == null) MyIOPins = new HashSet<>();
           MyIOPins.add(i);
         }
       }
@@ -342,7 +339,7 @@ public class FPGAIOInformationContainer implements Cloneable {
   public void setInputPinLocation(int index , String value) {
     if (MyOutputPins != null) MyOutputPins.remove(index);
     if (MyIOPins != null) MyIOPins.remove(index);
-    if (MyInputPins == null) MyInputPins = new HashSet<Integer>();
+    if (MyInputPins == null) MyInputPins = new HashSet<>();
     MyInputPins.add(index);
     MyPinLocations.put(index, value);
   }
@@ -350,7 +347,7 @@ public class FPGAIOInformationContainer implements Cloneable {
   public void setOutputPinLocation(int index , String value) {
     if (MyInputPins != null) MyInputPins.remove(index);
     if (MyIOPins != null) MyIOPins.remove(index);
-    if (MyOutputPins == null) MyOutputPins = new HashSet<Integer>();
+    if (MyOutputPins == null) MyOutputPins = new HashSet<>();
     MyOutputPins.add(index);
     MyPinLocations.put(index, value);
   }
@@ -358,7 +355,7 @@ public class FPGAIOInformationContainer implements Cloneable {
   public void setIOPinLocation(int index , String value) {
     if (MyInputPins != null) MyInputPins.remove(index);
     if (MyOutputPins != null) MyOutputPins.remove(index);
-    if (MyIOPins == null) MyIOPins = new HashSet<Integer>();
+    if (MyIOPins == null) MyIOPins = new HashSet<>();
     MyIOPins.add(index);
     MyPinLocations.put(index, value);
   }
@@ -541,7 +538,7 @@ public class FPGAIOInformationContainer implements Cloneable {
   }
 
   public void setNrOfPins(int count) {
-    if (pinIsMapped == null) pinIsMapped = new ArrayList<mapType>();
+    if (pinIsMapped == null) pinIsMapped = new ArrayList<>();
     NrOfPins = count;
     if (count > pinIsMapped.size()) {
       for (int i = pinIsMapped.size(); i < count ; i++)
@@ -569,7 +566,7 @@ public class FPGAIOInformationContainer implements Cloneable {
     if (MyInputPins == null || !MyInputPins.contains(result.pinId))
       return this.tryIOMap(comp, compPin, inpPin);
     unmap(result.pinId);
-    mapType map = new mapType(comp,compPin);
+    mapType map = new mapType(comp, compPin);
     pinIsMapped.set(result.pinId, map);
     result.mapResult = true;
     return result;
@@ -582,7 +579,7 @@ public class FPGAIOInformationContainer implements Cloneable {
     if (MyOutputPins == null || !MyOutputPins.contains(result.pinId)) 
       return this.tryIOMap(comp, compPin, outpPin); 
     unmap(result.pinId);
-    mapType map = new mapType(comp,compPin);
+    mapType map = new mapType(comp, compPin);
     pinIsMapped.set(result.pinId, map);
     result.mapResult = true;
     return result;
@@ -595,7 +592,7 @@ public class FPGAIOInformationContainer implements Cloneable {
         (MyOutputPins == null ? 0 : MyOutputPins.size());
     if (MyIOPins == null || !MyIOPins.contains(result.pinId)) return result;
     unmap(result.pinId);
-    mapType map = new mapType(comp,compPin);
+    mapType map = new mapType(comp, compPin);
     pinIsMapped.set(result.pinId, map);
     result.mapResult = true;
     return result;
@@ -604,7 +601,7 @@ public class FPGAIOInformationContainer implements Cloneable {
   public boolean tryMap(MapComponent comp, int compPin, int myPin) {
     if (myPin < 0 || myPin >=NrOfPins) return false;
     unmap(myPin);
-    mapType map = new mapType(comp,compPin);
+    mapType map = new mapType(comp, compPin);
     pinIsMapped.set(myPin, map);
     return true;
   }

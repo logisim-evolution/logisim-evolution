@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -59,7 +59,7 @@ public class ElfProgramHeader {
   public final static int PT_HIPROC = 0x7FFFFFFF;
   private static final Map<Integer, String> PT_TYPES;
   static {
-    Map<Integer,String> aMap = new HashMap<Integer,String>();
+    Map<Integer,String> aMap = new HashMap<>();
     aMap.put(PT_NULL, "PT_NULL");
     aMap.put(PT_LOAD, "PT_LOAD");
     aMap.put(PT_DYNAMIC, "PT_DYNAMIC");
@@ -77,7 +77,7 @@ public class ElfProgramHeader {
   public final static int PF_R = 4;
   private static final Map<Integer, String> PF_FLAGS;
   static {
-    Map<Integer,String> aMap = new HashMap<Integer,String>();
+    Map<Integer,String> aMap = new HashMap<>();
     aMap.put(PF_X, "PF_X");
     aMap.put(PF_W, "PF_W");
     aMap.put(PF_R, "PF_R");
@@ -90,7 +90,7 @@ public class ElfProgramHeader {
   private final static int PROGRAM_HEADER_READ_ERROR = 2;
   private static final int PROGRAM_HEADER_SIZE_ERROR = 3;
 
-  public class ProgramHeader {
+  public static class ProgramHeader {
     private final Integer p_type;
     private Integer p_flags;
     private final Long p_offset;
@@ -199,9 +199,9 @@ public class ElfProgramHeader {
       return;
     }
     int index = 0;
-    headers = new ArrayList<ProgramHeader>();
+    headers = new ArrayList<>();
     for (int i = 0 ; i < nrOfProgramHeaders ; i++) {
-      headers.add(new ProgramHeader(buffer,elfHeader.is32Bit(),elfHeader.isLittleEndian(),index));
+      headers.add(new ProgramHeader(buffer, elfHeader.is32Bit(), elfHeader.isLittleEndian(), index));
       index += progHeaderEntrySize;
     }
   }

@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -78,7 +78,7 @@ class MemContentsSub {
     @Override
     void set(long addr, long value) {
       if (addr >= 0 && addr < data.length) {
-        byte oldValue = (byte)data[(int)addr];
+        byte oldValue = data[(int)addr];
         if (value != oldValue) {
           data[(int)addr] = (byte) value;
         }
@@ -131,7 +131,7 @@ class MemContentsSub {
     @Override
     void set(long addr, long value) {
       if (addr >= 0 && addr < data.length) {
-        int oldValue = (int)data[(int)addr];
+        int oldValue = data[(int)addr];
         if (value != oldValue) {
           data[(int)addr] = (int)value;
         }

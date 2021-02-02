@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -30,15 +30,21 @@ package com.cburch.logisim.soc.util;
 
 import static com.cburch.logisim.soc.Strings.S;
 
+import com.cburch.logisim.circuit.CircuitState;
+import com.cburch.logisim.gui.generic.OptionPane;
+import com.cburch.logisim.gui.icons.ErrorIcon;
+import com.cburch.logisim.soc.data.SocProcessorInterface;
+import com.cburch.logisim.soc.file.ElfSectionHeader;
+import com.cburch.logisim.util.LocaleListener;
+import com.cburch.logisim.util.LocaleManager;
+import com.cburch.logisim.util.StringGetter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Set;
-
 import javax.swing.text.BadLocationException;
-
 import org.fife.ui.rsyntaxtextarea.RSyntaxDocument;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.Token;
@@ -50,15 +56,6 @@ import org.fife.ui.rtextarea.GutterIconInfo;
 import org.fife.ui.rtextarea.RTextArea;
 import org.fife.ui.rtextarea.RTextScrollPane;
 
-import com.cburch.logisim.circuit.CircuitState;
-import com.cburch.logisim.gui.generic.OptionPane;
-import com.cburch.logisim.gui.icons.ErrorIcon;
-import com.cburch.logisim.soc.data.SocProcessorInterface;
-import com.cburch.logisim.soc.file.ElfSectionHeader;
-import com.cburch.logisim.util.LocaleListener;
-import com.cburch.logisim.util.LocaleManager;
-import com.cburch.logisim.util.StringGetter;
-
 public class Assembler extends AbstractParser implements LocaleListener {
 
   private final AssemblerInterface assembler;
@@ -69,7 +66,7 @@ public class Assembler extends AbstractParser implements LocaleListener {
   
   public Assembler(AssemblerInterface assembler, RTextScrollPane pane) {
     this.assembler = assembler;
-    errorMarkers = new HashMap<GutterIconInfo,StringGetter>();
+    errorMarkers = new HashMap<>();
     this.pane = pane;
     LocaleManager.addLocaleListener(this);
     reset();
@@ -82,7 +79,7 @@ public class Assembler extends AbstractParser implements LocaleListener {
   }
   
   public ArrayList<Integer> getErrorPositions() {
-    ArrayList<Integer> positions = new ArrayList<Integer>();
+    ArrayList<Integer> positions = new ArrayList<>();
     for (GutterIconInfo info : errorMarkers.keySet()) {
       int pos = info.getMarkedOffset();
       if (positions.isEmpty()) positions.add(pos);
@@ -102,17 +99,17 @@ public class Assembler extends AbstractParser implements LocaleListener {
   
   public boolean assemble() {
     reset();
-    LinkedList<AssemblerToken> assemblerTokens = new LinkedList<AssemblerToken>();
+    LinkedList<AssemblerToken> assemblerTokens = new LinkedList<>();
     assemblerInfo = new AssemblerInfo(assembler);
     /* first pass: we build a list of AssemblerTokens from the token 
      * list provided by the AssemblerHighlighter */
-    RTextArea text = (RTextArea) pane.getTextArea();
+    RTextArea text = pane.getTextArea();
     for (int i = 0 ; i < text.getLineCount() ; i++) {
       assemblerTokens.addAll(checkAndBuildTokens(i));
     }
     /* second pass, we are going to collect all labels */
-    HashMap<String,Long> labels = new HashMap<String,Long>();
-    HashMap<String,AssemblerToken> labelToken = new HashMap<String,AssemblerToken>();
+    HashMap<String,Long> labels = new HashMap<>();
+    HashMap<String,AssemblerToken> labelToken = new HashMap<>();
     for (AssemblerToken asm : assemblerTokens) {
       if (asm.getType() == AssemblerToken.LABEL)
     	if (labels.containsKey(asm.getValue())) {
@@ -138,7 +135,7 @@ public class Assembler extends AbstractParser implements LocaleListener {
      * 5+10*2 => (5+10)*2 = 30
      * 10*2+5 => (10*2)+5 = 25
      */
-    ArrayList<AssemblerToken> toBeRemoved = new ArrayList<AssemblerToken>();
+    ArrayList<AssemblerToken> toBeRemoved = new ArrayList<>();
     for (int i = 0 ; i < assemblerTokens.size() ; i++) {
       AssemblerToken asm = assemblerTokens.get(i);
       if (AssemblerToken.MATH_OPERATORS.contains(asm.getType())) {
@@ -234,7 +231,7 @@ public class Assembler extends AbstractParser implements LocaleListener {
     toBeRemoved.clear();
     boolean errors = false;
     Iterator<AssemblerToken> iter = assemblerTokens.iterator();
-    HashMap<String,AssemblerMacro> macros = new HashMap<String,AssemblerMacro>();
+    HashMap<String,AssemblerMacro> macros = new HashMap<>();
     while (iter.hasNext()) {
       AssemblerToken asm = iter.next();
       if (asm.getType() == AssemblerToken.ASM_INSTRUCTION && asm.getValue().equals(".macro")) {
@@ -284,14 +281,14 @@ public class Assembler extends AbstractParser implements LocaleListener {
           addError(asm.getoffset(),S.getter("AssemblerEndOfMacroNotFound"),errorMarkers.keySet());
           errors = true;
         } else {
-          HashMap<AssemblerToken,StringGetter> markers = new HashMap<AssemblerToken,StringGetter>(); 
+          HashMap<AssemblerToken,StringGetter> markers = new HashMap<>();
           if (macro.checkParameters(markers))
             macros.put(macro.getName(), macro);
           else {
         	for (AssemblerToken marker : markers.keySet()) 
         	  addError(marker.getoffset(),markers.get(marker),errorMarkers.keySet());
             errors = true;
-          };
+          }
         }
       }
     }
@@ -303,7 +300,7 @@ public class Assembler extends AbstractParser implements LocaleListener {
         if (macros.containsKey(asm.getValue())) {
           asm.setType(AssemblerToken.MACRO);
         }
-    HashMap<AssemblerToken,StringGetter> markers = new HashMap<AssemblerToken,StringGetter>();
+    HashMap<AssemblerToken,StringGetter> markers = new HashMap<>();
     for (String name : macros.keySet()) {
       macros.get(name).checkForMacros(markers, macros.keySet());
     }
@@ -344,14 +341,14 @@ public class Assembler extends AbstractParser implements LocaleListener {
   }
   
   public LinkedList<AssemblerToken> checkAndBuildTokens(int lineNumber) {
-    LinkedList<AssemblerToken> lineTokens = new LinkedList<AssemblerToken>();
+    LinkedList<AssemblerToken> lineTokens = new LinkedList<>();
     int startoffset,endoffset;
     RSyntaxTextArea text = (RSyntaxTextArea) pane.getTextArea();
     try { startoffset = text.getLineStartOffset(lineNumber); } catch (BadLocationException e1) { return null;}
     try { endoffset = text.getLineEndOffset(lineNumber); } catch (BadLocationException e1) { return null;}
     Token first = text.getTokenListForLine(lineNumber);
     /* search for all error markers on this line */
-    HashSet<GutterIconInfo> lineErrorMarkers = new HashSet<GutterIconInfo>();
+    HashSet<GutterIconInfo> lineErrorMarkers = new HashSet<>();
     for (GutterIconInfo error : errorMarkers.keySet()) {
       if (error.getMarkedOffset() >= startoffset && error.getMarkedOffset() <= endoffset)
         lineErrorMarkers.add(error);
@@ -439,7 +436,7 @@ public class Assembler extends AbstractParser implements LocaleListener {
       first = first.getNextToken();
     }
     /* second pass, detect the labels */
-    ArrayList<AssemblerToken> toBeRemoved = new ArrayList<AssemblerToken>();
+    ArrayList<AssemblerToken> toBeRemoved = new ArrayList<>();
     for (int i = 0 ; i < lineTokens.size() ; i++) {
       AssemblerToken asm = lineTokens.get(i);
       if (asm.getType() == AssemblerToken.LABEL_IDENTIFIER) {
@@ -481,7 +478,7 @@ public class Assembler extends AbstractParser implements LocaleListener {
 
   @Override
   public void localeChanged() { 
-    HashMap<GutterIconInfo,StringGetter> oldSet = new HashMap<GutterIconInfo, StringGetter>();
+    HashMap<GutterIconInfo,StringGetter> oldSet = new HashMap<>();
     oldSet.putAll(errorMarkers);
     errorMarkers.clear();
     for (GutterIconInfo error : oldSet.keySet()) {
@@ -499,7 +496,7 @@ public class Assembler extends AbstractParser implements LocaleListener {
   @Override
   public ParseResult parse(RSyntaxDocument doc, String style) {
     DefaultParseResult result = new DefaultParseResult(this);
-    HashMap<Integer,String> offsets = new HashMap<Integer,String>();
+    HashMap<Integer,String> offsets = new HashMap<>();
     for (GutterIconInfo x : errorMarkers.keySet()) offsets.put(x.getMarkedOffset(),errorMarkers.get(x).toString());
     for (Token t : doc) {
       int offs = t.getOffset();

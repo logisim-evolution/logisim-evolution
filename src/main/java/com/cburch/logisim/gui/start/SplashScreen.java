@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -46,19 +46,6 @@ import org.slf4j.LoggerFactory;
 
 public class SplashScreen extends JWindow implements ActionListener {
 
-  private static class Marker {
-    int count;
-    String message;
-
-    Marker(int count, String message) {
-      this.count = count;
-      this.message = message;
-    }
-  }
-
-  static final Logger logger = LoggerFactory.getLogger(SplashScreen.class);
-
-  private static final long serialVersionUID = 1L;
   public static final int LIBRARIES = 0;
   public static final int TEMPLATE_CREATE = 1;
   public static final int TEMPLATE_OPEN = 2;
@@ -68,12 +55,11 @@ public class SplashScreen extends JWindow implements ActionListener {
   public static final int FILE_CREATE = 6;
   public static final int FILE_LOAD = 7;
   public static final int PROJECT_CREATE = 8;
-
   public static final int FRAME_CREATE = 9;
+  static final Logger logger = LoggerFactory.getLogger(SplashScreen.class);
+  private static final long serialVersionUID = 1L;
   private static final int PROGRESS_MAX = 3568;
-
   private static final boolean PRINT_TIMES = false;
-
   Marker[] markers =
       new Marker[] {
         new Marker(377, S.get("progressLibraries")),
@@ -92,7 +78,6 @@ public class SplashScreen extends JWindow implements ActionListener {
   JButton close = new JButton(S.get("startupCloseButton"));
   JButton cancel = new JButton(S.get("startupQuitButton"));
   long startTime = System.currentTimeMillis();
-
   public SplashScreen() {
     setName("Welcome to Logisim Evolution");
     JPanel imagePanel = About.getImagePanel();
@@ -169,5 +154,15 @@ public class SplashScreen extends JWindow implements ActionListener {
       setLocation(x, y);
     }
     super.setVisible(value);
+  }
+
+  private static class Marker {
+    int count;
+    String message;
+
+    Marker(int count, String message) {
+      this.count = count;
+      this.message = message;
+    }
   }
 }

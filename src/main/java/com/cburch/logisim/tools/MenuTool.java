@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -51,7 +51,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
 public class MenuTool extends Tool {
-  private class MenuComponent extends JPopupMenu implements ActionListener {
+  private static class MenuComponent extends JPopupMenu implements ActionListener {
     private static final long serialVersionUID = 1L;
     Project proj;
     Circuit circ;
@@ -99,7 +99,7 @@ public class MenuTool extends Tool {
     }
   }
 
-  private class MenuSelection extends JPopupMenu implements ActionListener {
+  private static class MenuSelection extends JPopupMenu implements ActionListener {
     private static final long serialVersionUID = 1L;
     Project proj;
     JMenuItem del = new JMenuItem(S.get("selDeleteItem"));

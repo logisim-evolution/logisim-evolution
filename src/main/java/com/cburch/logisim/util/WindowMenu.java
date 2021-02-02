@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -95,8 +95,8 @@ public class WindowMenu extends JMenu {
   private final JMenuItem zoom = new JMenuItem();
   private final JMenuItem close = new JMenuItem();
   private final JRadioButtonMenuItem nullItem = new JRadioButtonMenuItem();
-  private final ArrayList<WindowMenuItem> persistentItems = new ArrayList<WindowMenuItem>();
-  private final ArrayList<WindowMenuItem> transientItems = new ArrayList<WindowMenuItem>();
+  private final ArrayList<WindowMenuItem> persistentItems = new ArrayList<>();
+  private final ArrayList<WindowMenuItem> transientItems = new ArrayList<>();
 
   public WindowMenu(JFrame owner) {
     this.owner = owner;

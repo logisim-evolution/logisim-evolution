@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -38,9 +38,9 @@ public class BasicZoomModel implements ZoomModel {
   private final double[] zoomOptions;
 
   private final PropertyChangeSupport support;
+  private final CanvasPane canvas;
   private double zoomFactor;
   private boolean showGrid;
-  private final CanvasPane canvas;
 
   public BasicZoomModel(
       PrefMonitor<Boolean> gridPref,
@@ -65,23 +65,15 @@ public class BasicZoomModel implements ZoomModel {
     return showGrid;
   }
 
-  public double getZoomFactor() {
-    return zoomFactor;
-  }
-
-  public double[] getZoomOptions() {
-    return zoomOptions;
-  }
-
-  public void removePropertyChangeListener(String prop, PropertyChangeListener l) {
-    support.removePropertyChangeListener(prop, l);
-  }
-
   public void setShowGrid(boolean value) {
     if (value != showGrid) {
       showGrid = value;
       support.firePropertyChange(ZoomModel.SHOW_GRID, !value, value);
     }
+  }
+
+  public double getZoomFactor() {
+    return zoomFactor;
   }
 
   public void setZoomFactor(double value) {
@@ -90,6 +82,14 @@ public class BasicZoomModel implements ZoomModel {
       zoomFactor = value;
       support.firePropertyChange(ZoomModel.ZOOM, oldValue, value);
     }
+  }
+
+  public double[] getZoomOptions() {
+    return zoomOptions;
+  }
+
+  public void removePropertyChangeListener(String prop, PropertyChangeListener l) {
+    support.removePropertyChangeListener(prop, l);
   }
 
   public void setZoomFactor(double value, MouseEvent e) {
@@ -130,10 +130,9 @@ public class BasicZoomModel implements ZoomModel {
           new Runnable() {
             @Override
             public void run() {
-              support.firePropertyChange(
-                  ZoomModel.CENTER, oldValue, value);
+              support.firePropertyChange(ZoomModel.CENTER, oldValue, value);
             }
           });
     }
-  };
+  }
 }

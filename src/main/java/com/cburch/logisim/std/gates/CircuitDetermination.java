@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -139,7 +139,7 @@ abstract class CircuitDetermination {
   //
   static class Gate extends CircuitDetermination {
     private ComponentFactory factory;
-    private ArrayList<CircuitDetermination> inputs = new ArrayList<CircuitDetermination>();
+    private ArrayList<CircuitDetermination> inputs = new ArrayList<>();
 
     private Gate(ComponentFactory factory) {
       this.factory = factory;
@@ -162,7 +162,7 @@ abstract class CircuitDetermination {
       } else if (factory == NorGate.FACTORY) {
         notAllInputs(); // the order of these two lines is significant
         notOutput();
-      } else if (factory == NandGate.FACTORY) {;
+      } else if (factory == NandGate.FACTORY) {
       } else {
         throw new IllegalArgumentException("Cannot handle " + factory.getDisplayName());
       }
@@ -243,7 +243,7 @@ abstract class CircuitDetermination {
     private void notOutput() {
       Gate sub = new Gate(NandGate.FACTORY);
       sub.inputs = this.inputs;
-      this.inputs = new ArrayList<CircuitDetermination>();
+      this.inputs = new ArrayList<>();
       inputs.add(sub);
       inputs.add(sub);
     }
@@ -255,7 +255,7 @@ abstract class CircuitDetermination {
       if (num > GateAttributes.MAX_INPUTS) {
         int newNum = (num + GateAttributes.MAX_INPUTS - 1) / GateAttributes.MAX_INPUTS;
         ArrayList<CircuitDetermination> oldInputs = inputs;
-        inputs = new ArrayList<CircuitDetermination>();
+        inputs = new ArrayList<>();
 
         ComponentFactory subFactory = factory;
         if (subFactory == NandGate.FACTORY) subFactory = AndGate.FACTORY;

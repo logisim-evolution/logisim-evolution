@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -28,9 +28,12 @@
 
 package com.cburch.logisim.vhdl.syntax;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.Reader;
 import javax.swing.text.Segment;
-import org.fife.ui.rsyntaxtextarea.*;
+import org.fife.ui.rsyntaxtextarea.AbstractJFlexTokenMaker;
+import org.fife.ui.rsyntaxtextarea.Token;
+import org.fife.ui.rsyntaxtextarea.TokenImpl;
 
 public class VhdlSyntax extends AbstractJFlexTokenMaker {
 

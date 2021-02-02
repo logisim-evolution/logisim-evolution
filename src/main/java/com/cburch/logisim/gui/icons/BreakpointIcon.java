@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -28,15 +28,13 @@
 
 package com.cburch.logisim.gui.icons;
 
+import com.cburch.logisim.prefs.AppPreferences;
+import com.cburch.logisim.util.GraphicsUtil;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
 import java.awt.Graphics;
-
 import javax.swing.Icon;
-
-import com.cburch.logisim.prefs.AppPreferences;
-import com.cburch.logisim.util.GraphicsUtil;
 
 public class BreakpointIcon implements Icon {
 
@@ -50,15 +48,18 @@ public class BreakpointIcon implements Icon {
     g.drawOval(x, y, wh, wh);
     g.setColor(Color.YELLOW);
     Font f = g.getFont();
-    g.setFont(f.deriveFont(Font.BOLD,(f.getSize()*6)/10));
-    GraphicsUtil.drawCenteredText(g, "B", x+wh/2, y+wh/2);
+    g.setFont(f.deriveFont(Font.BOLD, (f.getSize() * 6) / 10));
+    GraphicsUtil.drawCenteredText(g, "B", x + wh / 2, y + wh / 2);
     g.setFont(f);
   }
 
   @Override
-  public int getIconWidth() { return wh; }
+  public int getIconWidth() {
+    return wh;
+  }
 
   @Override
-  public int getIconHeight() { return wh; }
-
+  public int getIconHeight() {
+    return wh;
+  }
 }

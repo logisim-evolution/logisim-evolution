@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -50,8 +50,8 @@ public class TclConsoleReds extends TclComponent {
   public TclConsoleReds() {
     super("TclConsoleReds", S.getter("tclConsoleReds"));
 
-    List<PortDescription> inputsDesc = new ArrayList<PortDescription>();
-    List<PortDescription> outputsDesc = new ArrayList<PortDescription>();
+    List<PortDescription> inputsDesc = new ArrayList<>();
+    List<PortDescription> outputsDesc = new ArrayList<>();
 
     outputsDesc.add(new PortDescription("S0_sti", "output", 1));
     outputsDesc.add(new PortDescription("S1_sti", "output", 1));

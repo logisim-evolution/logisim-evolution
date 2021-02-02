@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -54,7 +54,6 @@ import java.awt.Rectangle;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.HashMap;
-
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
@@ -335,10 +334,7 @@ public class TextLineNumber extends JPanel implements CaretListener, DocumentLis
     int caretPosition = component.getCaretPosition();
     Element root = component.getDocument().getDefaultRootElement();
 
-    if (root.getElementIndex( rowStartOffset ) == root.getElementIndex(caretPosition))
-      return true;
-    else
-      return false;
+    return root.getElementIndex(rowStartOffset) == root.getElementIndex(caretPosition);
   }
 
   /*
@@ -388,7 +384,7 @@ public class TextLineNumber extends JPanel implements CaretListener, DocumentLis
     else  // We need to check all the attributes for font changes
     {
       if (fonts == null)
-        fonts = new HashMap<String, FontMetrics>();
+        fonts = new HashMap<>();
 
       Element root = component.getDocument().getDefaultRootElement();
       int index = root.getElementIndex( rowStartOffset );

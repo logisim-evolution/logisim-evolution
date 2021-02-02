@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -62,8 +62,8 @@ import org.slf4j.LoggerFactory;
 class CircuitWires {
 
   static class BundleMap {
-    HashMap<Location, WireBundle> pointBundles = new HashMap<Location, WireBundle>();
-    HashSet<WireBundle> bundles = new HashSet<WireBundle>();
+    HashMap<Location, WireBundle> pointBundles = new HashMap<>();
+    HashSet<WireBundle> bundles = new HashSet<>();
     boolean isValid = true;
     // NOTE: It would make things more efficient if we also had
     // a set of just the first bundle in each tree.
@@ -71,7 +71,7 @@ class CircuitWires {
 
     void addWidthIncompatibilityData(WidthIncompatibilityData e) {
       if (incompatibilityData == null) {
-        incompatibilityData = new HashSet<WidthIncompatibilityData>();
+        incompatibilityData = new HashSet<>();
       }
       incompatibilityData.add(e);
     }
@@ -126,7 +126,7 @@ class CircuitWires {
 
   static class State {
     BundleMap bundleMap;
-    HashMap<WireThread, Value> thr_values = new HashMap<WireThread, Value>();
+    HashMap<WireThread, Value> thr_values = new HashMap<>();
 
     State(BundleMap bundleMap) {
       this.bundleMap = bundleMap;
@@ -179,15 +179,15 @@ class CircuitWires {
   static final Logger logger = LoggerFactory.getLogger(CircuitWires.class);
 
   // user-given data
-  private final HashSet<Wire> wires = new HashSet<Wire>();
-  private final HashSet<Splitter> splitters = new HashSet<Splitter>();
-  private final HashSet<Component> tunnels = new HashSet<Component>(); // of
+  private final HashSet<Wire> wires = new HashSet<>();
+  private final HashSet<Splitter> splitters = new HashSet<>();
+  private final HashSet<Component> tunnels = new HashSet<>(); // of
   // Components
   // with
   // Tunnel
   // factory
   private final TunnelListener tunnelListener = new TunnelListener();
-  private final HashSet<Component> pulls = new HashSet<Component>(); // of
+  private final HashSet<Component> pulls = new HashSet<>(); // of
   // Components
   // with
   // PullResistor
@@ -267,7 +267,7 @@ class CircuitWires {
 
     // make a WireBundle object for each end of a splitter
     for (Splitter spl : splitters) {
-      List<EndData> ends = new ArrayList<EndData>(spl.getEnds());
+      List<EndData> ends = new ArrayList<>(spl.getEnds());
       for (EndData end : ends) {
         Location p = end.getLocation();
         WireBundle pb = ret.createBundleAt(p);
@@ -287,7 +287,7 @@ class CircuitWires {
 
     // determine the bundles at the end of each splitter
     for (Splitter spl : splitters) {
-      List<EndData> ends = new ArrayList<EndData>(spl.getEnds());
+      List<EndData> ends = new ArrayList<>(spl.getEnds());
       int index = -1;
       for (EndData end : ends) {
         index++;
@@ -372,14 +372,14 @@ class CircuitWires {
 
   private void connectTunnels(BundleMap ret) {
     // determine the sets of tunnels
-    HashMap<String, ArrayList<Location>> tunnelSets = new HashMap<String, ArrayList<Location>>();
+    HashMap<String, ArrayList<Location>> tunnelSets = new HashMap<>();
     for (Component comp : tunnels) {
       String label = comp.getAttributeSet().getValue(StdAttr.LABEL);
       label = label.trim();
       if (!label.equals("")) {
         ArrayList<Location> tunnelSet = tunnelSets.get(label);
         if (tunnelSet == null) {
-          tunnelSet = new ArrayList<Location>(3);
+          tunnelSet = new ArrayList<>(3);
           tunnelSets.put(label, tunnelSet);
         }
         tunnelSet.add(comp.getLocation());
@@ -699,7 +699,7 @@ class CircuitWires {
   WireSet getWireSet(Wire start) {
     WireBundle bundle = getWireBundle(start.e0);
     if (bundle == null) return WireSet.EMPTY;
-    HashSet<Wire> wires = new HashSet<Wire>();
+    HashSet<Wire> wires = new HashSet<>();
     for (Location loc : bundle.points) {
       wires.addAll(points.getWires(loc));
     }
@@ -719,7 +719,7 @@ class CircuitWires {
   void propagate(CircuitState circState, Set<Location> points) {
     BundleMap map = getBundleMap();
     CopyOnWriteArraySet<WireThread> dirtyThreads =
-        new CopyOnWriteArraySet<WireThread>(); // affected
+        new CopyOnWriteArraySet<>(); // affected
     // threads
 
     // get state, or create a new one if current state is outdated
@@ -766,7 +766,7 @@ class CircuitWires {
     if (dirtyThreads.isEmpty()) return;
 
     // determine values of affected threads
-    HashSet<ThreadBundle> bundles = new HashSet<ThreadBundle>();
+    HashSet<ThreadBundle> bundles = new HashSet<>();
     for (WireThread t : dirtyThreads) {
       Value v = getThreadValue(circState, t);
       s.thr_values.put(t, v);
@@ -778,7 +778,7 @@ class CircuitWires {
       WireBundle b = tb.b;
 
       Value bv = null;
-      if (!b.isValid() || b.threads == null) {; // do nothing
+      if (!b.isValid() || b.threads == null) {// do nothing
       } else if (b.threads.length == 1) {
         bv = s.thr_values.get(b.threads[0]);
       } else {

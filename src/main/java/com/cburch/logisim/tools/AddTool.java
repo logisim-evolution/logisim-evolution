@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -511,7 +511,7 @@ public class AddTool extends Tool implements PropertyChangeListener {
 
   @Override
   public void mouseReleased(Canvas canvas, Graphics g, MouseEvent e) {
-    ArrayList<Component> added = new ArrayList<Component>();
+    ArrayList<Component> added = new ArrayList<>();
     if (state == SHOW_ADD) {
       Circuit circ = canvas.getCircuit();
       if (!canvas.getProject().getLogisimFile().contains(circ)) return;

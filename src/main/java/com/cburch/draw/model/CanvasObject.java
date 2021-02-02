@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -36,45 +36,45 @@ import java.awt.Graphics;
 import java.util.List;
 
 public interface CanvasObject {
-  public abstract Handle canDeleteHandle(Location desired);
+  Handle canDeleteHandle(Location desired);
 
-  public abstract Handle canInsertHandle(Location desired);
+  Handle canInsertHandle(Location desired);
 
-  public abstract boolean canMoveHandle(Handle handle);
+  boolean canMoveHandle(Handle handle);
 
-  public abstract boolean canRemove();
+  boolean canRemove();
 
-  public abstract CanvasObject clone();
+  CanvasObject clone();
 
-  public abstract boolean contains(Location loc, boolean assumeFilled);
+  boolean contains(Location loc, boolean assumeFilled);
 
-  public Handle deleteHandle(Handle handle);
+  Handle deleteHandle(Handle handle);
 
-  public abstract AttributeSet getAttributeSet();
+  AttributeSet getAttributeSet();
 
-  public abstract Bounds getBounds();
+  Bounds getBounds();
 
-  public abstract String getDisplayName();
+  String getDisplayName();
 
-  public abstract String getDisplayNameAndLabel();
+  String getDisplayNameAndLabel();
 
-  public abstract List<Handle> getHandles(HandleGesture gesture);
+  List<Handle> getHandles(HandleGesture gesture);
 
-  public abstract <V> V getValue(Attribute<V> attr);
+  <V> V getValue(Attribute<V> attr);
 
-  public void insertHandle(Handle desired, Handle previous);
+  void insertHandle(Handle desired, Handle previous);
 
-  public abstract boolean matches(CanvasObject other);
+  boolean matches(CanvasObject other);
 
-  public abstract int matchesHashCode();
+  int matchesHashCode();
 
-  public Handle moveHandle(HandleGesture gesture);
+  Handle moveHandle(HandleGesture gesture);
 
-  public abstract boolean overlaps(CanvasObject other);
+  boolean overlaps(CanvasObject other);
 
-  public abstract void paint(Graphics g, HandleGesture gesture);
+  void paint(Graphics g, HandleGesture gesture);
 
-  public <V> void setValue(Attribute<V> attr, V value);
+  <V> void setValue(Attribute<V> attr, V value);
 
-  public void translate(int dx, int dy);
+  void translate(int dx, int dy);
 }

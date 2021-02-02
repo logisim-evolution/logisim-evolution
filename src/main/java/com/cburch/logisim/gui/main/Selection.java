@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -54,102 +54,7 @@ import org.slf4j.LoggerFactory;
 
 public class Selection extends SelectionBase {
 
-  public static class Event {
-    Object source;
-
-    Event(Object source) {
-      this.source = source;
-    }
-
-    public Object getSource() {
-      return source;
-    }
-  }
-
-  public static interface Listener {
-    public void selectionChanged(Selection.Event event);
-  }
-
-  private class MyListener implements ProjectListener, CircuitListener {
-    private final WeakHashMap<Action, SelectionSave> savedSelections;
-
-    MyListener() {
-      savedSelections = new WeakHashMap<Action, SelectionSave>();
-    }
-
-    public void circuitChanged(CircuitEvent event) {
-      if (event.getAction() == CircuitEvent.TRANSACTION_DONE) {
-        Circuit circuit = event.getCircuit();
-        ReplacementMap repl = event.getResult().getReplacementMap(circuit);
-        boolean change = false;
-
-        ArrayList<Component> oldAnchored;
-        oldAnchored = new ArrayList<Component>(getComponents());
-        for (Component comp : oldAnchored) {
-          Collection<Component> replacedBy = repl.get(comp);
-          if (replacedBy != null) {
-            change = true;
-            selected.remove(comp);
-            lifted.remove(comp);
-            for (Component add : replacedBy) {
-              if (circuit.contains(add)) {
-                selected.add(add);
-              } else {
-                lifted.add(add);
-              }
-            }
-          }
-        }
-
-        if (change) {
-          fireSelectionChanged();
-        }
-      }
-    }
-
-    public void projectChanged(ProjectEvent event) {
-      int type = event.getAction();
-      if (type == ProjectEvent.ACTION_START) {
-        SelectionSave save = SelectionSave.create(Selection.this);
-        savedSelections.put((Action) event.getData(), save);
-      } else if (type == ProjectEvent.ACTION_COMPLETE) {
-        SelectionSave save = savedSelections.get(event.getData());
-        if (save != null && save.isSame(Selection.this)) {
-          savedSelections.remove(event.getData());
-        }
-      } else if (type == ProjectEvent.ACTION_MERGE) {
-        SelectionSave save = savedSelections.get(event.getOldData());
-        savedSelections.put((Action) event.getData(), save);
-      } else if (type == ProjectEvent.UNDO_COMPLETE) {
-        Circuit circ = event.getProject().getCurrentCircuit();
-        Action act = (Action) event.getData();
-        SelectionSave save = savedSelections.get(act);
-        if (save != null) {
-          lifted.clear();
-          selected.clear();
-          for (int i = 0; i < 2; i++) {
-            Component[] cs;
-            if (i == 0) cs = save.getFloatingComponents();
-            else cs = save.getAnchoredComponents();
-
-            if (cs != null) {
-              for (Component c : cs) {
-                if (circ.contains(c)) {
-                  selected.add(c);
-                } else {
-                  lifted.add(c);
-                }
-              }
-            }
-          }
-          fireSelectionChanged();
-        }
-      }
-    }
-  }
-
   static final Logger logger = LoggerFactory.getLogger(Selection.class);
-
   private final MyListener myListener;
   private final boolean isVisible = true;
   private final SelectionAttributes attrs;
@@ -240,7 +145,7 @@ public class Selection extends SelectionBase {
   }
 
   public Collection<Component> getComponentsContaining(Location query) {
-    HashSet<Component> ret = new HashSet<Component>();
+    HashSet<Component> ret = new HashSet<>();
     for (Component comp : unionSet) {
       if (comp.contains(query)) ret.add(comp);
     }
@@ -248,7 +153,7 @@ public class Selection extends SelectionBase {
   }
 
   public Collection<Component> getComponentsContaining(Location query, Graphics g) {
-    HashSet<Component> ret = new HashSet<Component>();
+    HashSet<Component> ret = new HashSet<>();
     for (Component comp : unionSet) {
       if (comp.contains(query, g)) ret.add(comp);
     }
@@ -256,7 +161,7 @@ public class Selection extends SelectionBase {
   }
 
   public Collection<Component> getComponentsWithin(Bounds bds) {
-    HashSet<Component> ret = new HashSet<Component>();
+    HashSet<Component> ret = new HashSet<>();
     for (Component comp : unionSet) {
       if (bds.contains(comp.getBounds())) ret.add(comp);
     }
@@ -264,7 +169,7 @@ public class Selection extends SelectionBase {
   }
 
   public Collection<Component> getComponentsWithin(Bounds bds, Graphics g) {
-    HashSet<Component> ret = new HashSet<Component>();
+    HashSet<Component> ret = new HashSet<>();
     for (Component comp : unionSet) {
       if (bds.contains(comp.getBounds(g))) ret.add(comp);
     }
@@ -286,5 +191,99 @@ public class Selection extends SelectionBase {
   public void print() {
     logger.error("isVisible: {}", isVisible);
     super.print();
+  }
+
+  public interface Listener {
+    void selectionChanged(Selection.Event event);
+  }
+
+  public static class Event {
+    Object source;
+
+    Event(Object source) {
+      this.source = source;
+    }
+
+    public Object getSource() {
+      return source;
+    }
+  }
+
+  private class MyListener implements ProjectListener, CircuitListener {
+    private final WeakHashMap<Action, SelectionSave> savedSelections;
+
+    MyListener() {
+      savedSelections = new WeakHashMap<>();
+    }
+
+    public void circuitChanged(CircuitEvent event) {
+      if (event.getAction() == CircuitEvent.TRANSACTION_DONE) {
+        Circuit circuit = event.getCircuit();
+        ReplacementMap repl = event.getResult().getReplacementMap(circuit);
+        boolean change = false;
+
+        ArrayList<Component> oldAnchored;
+        oldAnchored = new ArrayList<>(getComponents());
+        for (Component comp : oldAnchored) {
+          Collection<Component> replacedBy = repl.get(comp);
+          if (replacedBy != null) {
+            change = true;
+            selected.remove(comp);
+            lifted.remove(comp);
+            for (Component add : replacedBy) {
+              if (circuit.contains(add)) {
+                selected.add(add);
+              } else {
+                lifted.add(add);
+              }
+            }
+          }
+        }
+
+        if (change) {
+          fireSelectionChanged();
+        }
+      }
+    }
+
+    public void projectChanged(ProjectEvent event) {
+      int type = event.getAction();
+      if (type == ProjectEvent.ACTION_START) {
+        SelectionSave save = SelectionSave.create(Selection.this);
+        savedSelections.put((Action) event.getData(), save);
+      } else if (type == ProjectEvent.ACTION_COMPLETE) {
+        SelectionSave save = savedSelections.get(event.getData());
+        if (save != null && save.isSame(Selection.this)) {
+          savedSelections.remove(event.getData());
+        }
+      } else if (type == ProjectEvent.ACTION_MERGE) {
+        SelectionSave save = savedSelections.get(event.getOldData());
+        savedSelections.put((Action) event.getData(), save);
+      } else if (type == ProjectEvent.UNDO_COMPLETE) {
+        Circuit circ = event.getProject().getCurrentCircuit();
+        Action act = (Action) event.getData();
+        SelectionSave save = savedSelections.get(act);
+        if (save != null) {
+          lifted.clear();
+          selected.clear();
+          for (int i = 0; i < 2; i++) {
+            Component[] cs;
+            if (i == 0) cs = save.getFloatingComponents();
+            else cs = save.getAnchoredComponents();
+
+            if (cs != null) {
+              for (Component c : cs) {
+                if (circ.contains(c)) {
+                  selected.add(c);
+                } else {
+                  lifted.add(c);
+                }
+              }
+            }
+          }
+          fireSelectionChanged();
+        }
+      }
+    }
   }
 }

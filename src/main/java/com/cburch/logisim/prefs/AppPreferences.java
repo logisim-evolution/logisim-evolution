@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -38,7 +38,6 @@ import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.LocaleListener;
 import com.cburch.logisim.util.LocaleManager;
 import com.cburch.logisim.util.PropertyChangeWeakSupport;
-
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Font;
@@ -397,7 +396,7 @@ public class AppPreferences {
 
   public static double getScaled(double value) {
     getPrefs();
-    double scale = ((double) ((int) (SCALE_FACTOR.get() * 10))) / (double) 10.0;
+    double scale = ((double) ((int) (SCALE_FACTOR.get() * 10))) / 10.0;
     return value * scale;
   }
 

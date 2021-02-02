@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -39,6 +39,15 @@ import javax.swing.JComponent;
 import javax.swing.KeyStroke;
 
 public class KeyboardToolSelection extends AbstractAction {
+  private static final long serialVersionUID = 1L;
+  private final Toolbar toolbar;
+  private final int index;
+
+  public KeyboardToolSelection(Toolbar toolbar, int index) {
+    this.toolbar = toolbar;
+    this.index = index;
+  }
+
   public static void register(Toolbar toolbar) {
     ActionMap amap = toolbar.getActionMap();
     InputMap imap = toolbar.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
@@ -51,16 +60,6 @@ public class KeyboardToolSelection extends AbstractAction {
       amap.put(key, action);
       imap.put(keyStroke, key);
     }
-  }
-
-  private static final long serialVersionUID = 1L;
-
-  private final Toolbar toolbar;
-  private final int index;
-
-  public KeyboardToolSelection(Toolbar toolbar, int index) {
-    this.toolbar = toolbar;
-    this.index = index;
   }
 
   public void actionPerformed(ActionEvent event) {

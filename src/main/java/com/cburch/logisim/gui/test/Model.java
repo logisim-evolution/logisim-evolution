@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -38,32 +38,21 @@ import javax.swing.SwingUtilities;
 
 class Model {
 
-  private class UpdateResultSort implements Runnable {
-
-    public void run() {
-      updateResultSort();
-    }
-  }
-
   private final EventSourceWeakSupport<ModelListener> listeners;
-  private boolean selected = false;
   private final Project project;
   private final Circuit circuit;
+  private final UpdateResultSort myUpdateResultSort = new UpdateResultSort();
+  private final ArrayList<Integer> failed = new ArrayList<>();
+  private final ArrayList<Integer> passed = new ArrayList<>();
+  private boolean selected = false;
   private boolean running, paused;
   private TestThread tester;
   private int numPass = 0, numFail = 0;
   private TestVector vec = null;
-
   private TestException[] results;
 
-  private final UpdateResultSort myUpdateResultSort = new UpdateResultSort();
-
-  private final ArrayList<Integer> failed = new ArrayList<Integer>();
-
-  private final ArrayList<Integer> passed = new ArrayList<Integer>();
-
   public Model(Project proj, Circuit circuit) {
-    listeners = new EventSourceWeakSupport<ModelListener>();
+    listeners = new EventSourceWeakSupport<>();
     this.circuit = circuit;
     this.project = proj;
   }
@@ -125,8 +114,28 @@ class Model {
     return vec;
   }
 
+  public synchronized void setVector(TestVector v) {
+    stop();
+    synchronized (this) {
+      vec = v;
+      results = (v != null ? new TestException[v.data.size()] : null);
+      numPass = numFail = 0;
+      failed.clear();
+      passed.clear();
+    }
+    fireVectorChanged();
+  }
+
   public boolean isPaused() {
     return paused;
+  }
+
+  public void setPaused(boolean paused) {
+    synchronized (this) {
+      if (running && tester != null) tester.setPaused(paused);
+      this.paused = paused;
+    }
+    fireTestingChanged();
   }
 
   public boolean isRunning() {
@@ -137,16 +146,14 @@ class Model {
     return selected;
   }
 
-  public void removeModelListener(ModelListener l) {
-    listeners.remove(l);
+  public void setSelected(boolean value) {
+    if (selected == value) return;
+    selected = value;
+    setPaused(!selected);
   }
 
-  public void setPaused(boolean paused) {
-    synchronized (this) {
-      if (running && tester != null) tester.setPaused(paused);
-      this.paused = paused;
-    }
-    fireTestingChanged();
+  public void removeModelListener(ModelListener l) {
+    listeners.remove(l);
   }
 
   public boolean setResult(TestVector v, int idx, TestException err) {
@@ -162,25 +169,6 @@ class Model {
       updateResultSort();
     }
     return true;
-  }
-
-  public void setSelected(boolean value) {
-    if (selected == value) return;
-    selected = value;
-    if (!selected) setPaused(true);
-    else setPaused(false);
-  }
-
-  public synchronized void setVector(TestVector v) {
-    stop();
-    synchronized (this) {
-      vec = v;
-      results = (v != null ? new TestException[v.data.size()] : null);
-      numPass = numFail = 0;
-      failed.clear();
-      passed.clear();
-    }
-    fireVectorChanged();
   }
 
   public int sortedIndex(int i) {
@@ -221,5 +209,12 @@ class Model {
       else failed.add(i);
     }
     fireTestResultsChanged();
+  }
+
+  private class UpdateResultSort implements Runnable {
+
+    public void run() {
+      updateResultSort();
+    }
   }
 }

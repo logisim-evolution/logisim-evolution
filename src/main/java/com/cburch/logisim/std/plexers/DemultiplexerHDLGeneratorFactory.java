@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -50,7 +50,7 @@ public class DemultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactor
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Inputs = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> Inputs = new TreeMap<>();
     int NrOfBits = (attrs.getValue(StdAttr.WIDTH).getWidth() == 1) ? 1 : NrOfBitsId;
     int nr_of_select_bits = attrs.getValue(Plexers.ATTR_SELECT).getWidth();
     Inputs.put("DemuxIn", NrOfBits);
@@ -62,7 +62,7 @@ public class DemultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactor
   @Override
   public ArrayList<String> GetModuleFunctionality(
       Netlist TheNetlist, AttributeSet attrs, FPGAReport Reporter, String HDLType) {
-    ArrayList<String> Contents = new ArrayList<String>();
+    ArrayList<String> Contents = new ArrayList<>();
     String Space = "  ";
     int nr_of_select_bits = attrs.getValue(Plexers.ATTR_SELECT).getWidth();
     int num_outputs = (1 << nr_of_select_bits);
@@ -81,7 +81,7 @@ public class DemultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactor
       } else {
         Contents.add(
             "   assign DemuxOut_"
-                + Integer.toString(i)
+                + i
                 + Space
                 + " = (Enable&(sel == "
                 + binValue
@@ -93,18 +93,18 @@ public class DemultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactor
 
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Outputs = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> Outputs = new TreeMap<>();
     int NrOfBits = (attrs.getValue(StdAttr.WIDTH).getWidth() == 1) ? 1 : NrOfBitsId;
     int nr_of_select_bits = attrs.getValue(Plexers.ATTR_SELECT).getWidth();
     for (int i = 0; i < (1 << nr_of_select_bits); i++) {
-      Outputs.put("DemuxOut_" + Integer.toString(i), NrOfBits);
+      Outputs.put("DemuxOut_" + i, NrOfBits);
     }
     return Outputs;
   }
 
   @Override
   public SortedMap<Integer, String> GetParameterList(AttributeSet attrs) {
-    SortedMap<Integer, String> Parameters = new TreeMap<Integer, String>();
+    SortedMap<Integer, String> Parameters = new TreeMap<>();
     int NrOfBits = attrs.getValue(StdAttr.WIDTH).getWidth();
     if (NrOfBits > 1) Parameters.put(NrOfBitsId, NrOfBitsStr);
     return Parameters;
@@ -113,7 +113,7 @@ public class DemultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactor
   @Override
   public SortedMap<String, Integer> GetParameterMap(
       Netlist Nets, NetlistComponent ComponentInfo, FPGAReport Reporter) {
-    SortedMap<String, Integer> ParameterMap = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> ParameterMap = new TreeMap<>();
     int NrOfBits =
         ComponentInfo.GetComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth();
     if (NrOfBits > 1) ParameterMap.put(NrOfBitsStr, NrOfBits);
@@ -123,7 +123,7 @@ public class DemultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactor
   @Override
   public SortedMap<String, String> GetPortMap(
       Netlist Nets, Object MapInfo, FPGAReport Reporter, String HDLType) {
-    SortedMap<String, String> PortMap = new TreeMap<String, String>();
+    SortedMap<String, String> PortMap = new TreeMap<>();
     if (!(MapInfo instanceof NetlistComponent)) return PortMap;
     NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
     int nr_of_select_bits =
@@ -133,7 +133,7 @@ public class DemultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactor
     for (int i = 0; i < select_input_index; i++)
       PortMap.putAll(
           GetNetMap(
-              "DemuxOut_" + Integer.toString(i), true, ComponentInfo, i, Reporter, HDLType, Nets));
+              "DemuxOut_" + i, true, ComponentInfo, i, Reporter, HDLType, Nets));
     // now select..
     PortMap.putAll(
         GetNetMap("Sel", true, ComponentInfo, select_input_index, Reporter, HDLType, Nets));

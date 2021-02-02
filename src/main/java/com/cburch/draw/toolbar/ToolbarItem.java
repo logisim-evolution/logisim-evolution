@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -33,11 +33,11 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 
 public interface ToolbarItem {
-  public Dimension getDimension(Object orientation);
+  Dimension getDimension(Object orientation);
 
-  public String getToolTip();
+  String getToolTip();
 
-  public boolean isSelectable();
+  boolean isSelectable();
 
-  public void paintIcon(Component destination, Graphics g);
+  void paintIcon(Component destination, Graphics g);
 }

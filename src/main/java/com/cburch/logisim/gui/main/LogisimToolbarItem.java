@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -45,23 +45,25 @@ import javax.swing.Icon;
 
 public class LogisimToolbarItem implements ToolbarItem {
   private final MenuListener menu;
-  private Icon icon;
   private final LogisimMenuItem action;
+  private Icon icon;
   private StringGetter toolTip;
 
-  public LogisimToolbarItem(MenuListener menu, String iconName, LogisimMenuItem action, StringGetter toolTip) {
+  public LogisimToolbarItem(
+      MenuListener menu, String iconName, LogisimMenuItem action, StringGetter toolTip) {
     this.menu = menu;
     this.icon = Icons.getIcon(iconName);
     this.action = action;
     this.toolTip = toolTip;
   }
 
-  public LogisimToolbarItem(MenuListener menu, Icon icon, LogisimMenuItem action, StringGetter toolTip) {
-	    this.menu = menu;
-	    this.icon = icon;
-	    this.action = action;
-	    this.toolTip = toolTip;
-	  }
+  public LogisimToolbarItem(
+      MenuListener menu, Icon icon, LogisimMenuItem action, StringGetter toolTip) {
+    this.menu = menu;
+    this.icon = icon;
+    this.action = action;
+    this.toolTip = toolTip;
+  }
 
   public void doAction() {
     if (menu != null && menu.isEnabled(action)) {
@@ -89,6 +91,10 @@ public class LogisimToolbarItem implements ToolbarItem {
     }
   }
 
+  public void setToolTip(StringGetter toolTip) {
+    this.toolTip = toolTip;
+  }
+
   public boolean isSelectable() {
     return menu != null && menu.isEnabled(action);
   }
@@ -114,9 +120,5 @@ public class LogisimToolbarItem implements ToolbarItem {
 
   public void setIcon(String iconName) {
     this.icon = Icons.getIcon(iconName);
-  }
-
-  public void setToolTip(StringGetter toolTip) {
-    this.toolTip = toolTip;
   }
 }

@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -60,7 +60,7 @@ public class Ttl7442HDLGenerator extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> MyInputs = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> MyInputs = new TreeMap<>();
     MyInputs.put("A", 1);
     MyInputs.put("B", 1);
     MyInputs.put("C", 1);
@@ -70,7 +70,7 @@ public class Ttl7442HDLGenerator extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> MyOutputs = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> MyOutputs = new TreeMap<>();
     MyOutputs.put("O0", 1);
     MyOutputs.put("O1", 1);
     MyOutputs.put("O2", 1);
@@ -87,7 +87,7 @@ public class Ttl7442HDLGenerator extends AbstractHDLGeneratorFactory {
   @Override
   public ArrayList<String> GetModuleFunctionality(
       Netlist TheNetlist, AttributeSet attrs, FPGAReport Reporter, String HDLType) {
-    ArrayList<String> Contents = new ArrayList<String>();
+    ArrayList<String> Contents = new ArrayList<>();
     if (IsExes3) {
       Contents.add("   O0 <= NOT (NOT(D) AND NOT(C) AND     B  AND     A );");
       Contents.add("   O1 <= NOT (NOT(D) AND     C  AND NOT(B) AND NOT(A));");
@@ -128,7 +128,7 @@ public class Ttl7442HDLGenerator extends AbstractHDLGeneratorFactory {
   @Override
   public SortedMap<String, String> GetPortMap(
       Netlist Nets, Object MapInfo, FPGAReport Reporter, String HDLType) {
-    SortedMap<String, String> PortMap = new TreeMap<String, String>();
+    SortedMap<String, String> PortMap = new TreeMap<>();
     if (!(MapInfo instanceof NetlistComponent)) return PortMap;
     NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
     PortMap.putAll(GetNetMap("A", true, ComponentInfo, 13, Reporter, HDLType, Nets));

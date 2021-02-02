@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -30,11 +30,6 @@ package com.cburch.logisim.soc.vga;
 
 import static com.cburch.logisim.soc.Strings.S;
 
-import java.awt.Font;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import com.cburch.logisim.data.AbstractAttributeSet;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeOption;
@@ -42,6 +37,10 @@ import com.cburch.logisim.data.Attributes;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.soc.data.SocBusInfo;
 import com.cburch.logisim.soc.data.SocSimulationManager;
+import java.awt.Font;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class VgaAttributes extends AbstractAttributeSet {
 
@@ -92,21 +91,19 @@ public class VgaAttributes extends AbstractAttributeSet {
   
   private static final List<Attribute<?>> ATTRIBUTES =
       Arrays.asList(
-        new Attribute<?>[] {
-           START_ADDRESS,
-           MODE,
-           BUFFER_ADDRESS,
-           SOFT_160_120,
-           SOFT_320_240,
-           SOFT_640_480,
-           SOFT_800_600,
-           SOFT_1024_768,
-           StdAttr.LABEL,
-           StdAttr.LABEL_FONT,
-           StdAttr.LABEL_VISIBILITY,
-           SocSimulationManager.SOC_BUS_SELECT,
-           VGA_STATE
-        });
+          START_ADDRESS,
+          MODE,
+          BUFFER_ADDRESS,
+          SOFT_160_120,
+          SOFT_320_240,
+          SOFT_640_480,
+          SOFT_800_600,
+          SOFT_1024_768,
+          StdAttr.LABEL,
+          StdAttr.LABEL_FONT,
+          StdAttr.LABEL_VISIBILITY,
+          SocSimulationManager.SOC_BUS_SELECT,
+          VGA_STATE);
 
   @Override
   protected void copyInto(AbstractAttributeSet dest) {

@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -57,7 +57,7 @@ public class RamAttributes extends AbstractAttributeSet {
   static final Attribute<AttributeOption> ATTR_ByteEnables = Attributes.forOption(
           "byteenables", S.getter("ramByteEnables"), new AttributeOption[] {BUS_WITH_BYTEENABLES, BUS_WITHOUT_BYTEENABLES});
   static final Attribute<Boolean> CLEAR_PIN = Attributes.forBoolean("clearpin", S.getter("RamClearPin"));
-  private final ArrayList<Attribute<?>> myAttributes = new ArrayList<Attribute<?>>();
+  private final ArrayList<Attribute<?>> myAttributes = new ArrayList<>();
 
 
   private BitWidth addrBits = BitWidth.create(8);
@@ -80,7 +80,7 @@ public class RamAttributes extends AbstractAttributeSet {
   RamAttributes() { updateAttributes(); }
   
   public boolean updateAttributes() {
-    ArrayList<Attribute<?>>newList = new ArrayList<Attribute<?>>();
+    ArrayList<Attribute<?>>newList = new ArrayList<>();
     boolean changes = false;
     newList.add(Mem.ADDR_ATTR);
     newList.add(Mem.DATA_ATTR);

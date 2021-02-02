@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -28,8 +28,6 @@
 
 package com.cburch.logisim.tools;
 
-import java.util.ArrayList;
-
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitListener;
 import com.cburch.logisim.circuit.CircuitState;
@@ -37,11 +35,12 @@ import com.cburch.logisim.circuit.SubcircuitFactory;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.comp.ComponentListener;
 import com.cburch.logisim.soc.data.SocSupport;
+import java.util.ArrayList;
 
 public interface CircuitStateHolder {
-   public class HierarchyInfo {
+   class HierarchyInfo {
      private final Circuit mainCircuit;
-     private final ArrayList<Component> components = new ArrayList<Component>();
+     private final ArrayList<Component> components = new ArrayList<>();
      
      public HierarchyInfo(Circuit circ) { mainCircuit = circ; }
      
@@ -92,6 +91,6 @@ public interface CircuitStateHolder {
      }
    }
    
-   public void setCircuitState(CircuitState state);
-   public void setHierarchyName(HierarchyInfo csh);
+   void setCircuitState(CircuitState state);
+   void setHierarchyName(HierarchyInfo csh);
 }

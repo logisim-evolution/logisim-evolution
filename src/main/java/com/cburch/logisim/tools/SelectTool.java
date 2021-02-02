@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -59,7 +59,6 @@ import com.cburch.logisim.tools.move.MoveRequestListener;
 import com.cburch.logisim.tools.move.MoveResult;
 import com.cburch.logisim.util.AutoLabel;
 import com.cburch.logisim.util.GraphicsUtil;
-import com.cburch.logisim.util.Icons;
 import com.cburch.logisim.util.StringGetter;
 import java.awt.Color;
 import java.awt.Cursor;
@@ -74,7 +73,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
-import javax.swing.Icon;
 
 public class SelectTool extends Tool {
   private static class ComputingMessage implements StringGetter {
@@ -152,7 +150,7 @@ public class SelectTool extends Tool {
   public SelectTool() {
     start = null;
     state = IDLE;
-    selectionsAdded = new HashSet<Selection>();
+    selectionsAdded = new HashSet<>();
     selListener = new Listener();
     keyHandlers = null;
   }
@@ -296,7 +294,7 @@ public class SelectTool extends Tool {
       if (gesture != null && drawConnections) {
         MoveResult result = gesture.findResult(dx, dy);
         if (result != null) {
-          HashSet<Component> ret = new HashSet<Component>(sel);
+          HashSet<Component> ret = new HashSet<>(sel);
           ret.addAll(result.getReplacementMap().getRemovals());
           return ret;
         }
@@ -579,7 +577,7 @@ public class SelectTool extends Tool {
   private void processKeyEvent(Canvas canvas, KeyEvent e, int type) {
     HashMap<Component, KeyConfigurator> handlers = keyHandlers;
     if (handlers == null) {
-      handlers = new HashMap<Component, KeyConfigurator>();
+      handlers = new HashMap<>();
       Selection sel = canvas.getSelection();
       for (Component comp : sel.getComponents()) {
         ComponentFactory factory = comp.getFactory();
@@ -596,7 +594,7 @@ public class SelectTool extends Tool {
     if (!handlers.isEmpty()) {
       boolean consume = false;
       ArrayList<KeyConfigurationResult> results;
-      results = new ArrayList<KeyConfigurationResult>();
+      results = new ArrayList<>();
       for (Map.Entry<Component, KeyConfigurator> entry : handlers.entrySet()) {
         Component comp = entry.getKey();
         KeyConfigurator handler = entry.getValue();

@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -75,7 +75,7 @@ public class VhdlSimulatorTclBinder {
   }
 
   private void Init(int serverPort) {
-    List<String> command = new ArrayList<String>();
+    List<String> command = new ArrayList<>();
 
     command.add(
         FileUtil.correctPath(Softwares.getQuestaPath()) + Softwares.QUESTA_BIN[Softwares.VSIM]);

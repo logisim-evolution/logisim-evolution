@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -113,7 +113,7 @@ public class LocaleManager {
         s = tok.substring(2).trim();
       }
       if (s != null) {
-        if (ret == null) ret = new HashMap<Character, String>();
+        if (ret == null) ret = new HashMap<>();
         ret.put(c, s);
       }
     }
@@ -245,13 +245,13 @@ public class LocaleManager {
   // static members
   private static final String SETTINGS_NAME = "settings";
 
-  private static final ArrayList<LocaleManager> managers = new ArrayList<LocaleManager>();
+  private static final ArrayList<LocaleManager> managers = new ArrayList<>();
 
   private static final String DATE_FORMAT = S.get("dateFormat");
 
   public static final SimpleDateFormat parserSDF = new SimpleDateFormat(LocaleManager.DATE_FORMAT);
 
-  private static final ArrayList<LocaleListener> listeners = new ArrayList<LocaleListener>();
+  private static final ArrayList<LocaleListener> listeners = new ArrayList<>();
 
   private static boolean replaceAccents = false;
 
@@ -309,7 +309,7 @@ public class LocaleManager {
     }
     if (locs == null) return new Locale[] {};
 
-    ArrayList<Locale> retl = new ArrayList<Locale>();
+    ArrayList<Locale> retl = new ArrayList<>();
     StringTokenizer toks = new StringTokenizer(locs);
     while (toks.hasMoreTokens()) {
       String f = toks.nextToken();

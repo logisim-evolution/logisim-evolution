@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -64,7 +64,6 @@ import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -254,7 +253,7 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
         x += cellPadding;
       }
     }
-  };
+  }
 
   private final SquareButton one = new SquareButton(Entry.ONE);
   private final SquareButton zero = new SquareButton(Entry.ZERO);
@@ -263,7 +262,7 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
   private final TightButton compact = new TightButton(S.get("tableCompact"));
   private final JLabel count = new JLabel(S.fmt("tableRowsShown", 0, 0), SwingConstants.CENTER);
 
-  private class TightButton extends JButton {
+  private static class TightButton extends JButton {
     /** */
     private static final long serialVersionUID = 1L;
 

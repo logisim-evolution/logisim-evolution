@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -39,6 +39,7 @@ import java.awt.font.LineMetrics;
 
 public class TextMetrics {
 
+  private static final Canvas canvas = new Canvas();
   public int ascent;
   public int descent;
   public int leading;
@@ -77,8 +78,6 @@ public class TextMetrics {
     leading = (int) Math.ceil(lm.getLeading());
     height = ascent + descent + leading;
   }
-
-  private static final Canvas canvas = new Canvas();
 
   public TextMetrics(Component c, Font font, String text) {
     if (c == null) c = canvas;

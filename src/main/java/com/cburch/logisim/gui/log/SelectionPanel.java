@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -60,112 +60,6 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.TreePath;
 
 class SelectionPanel extends LogPanel {
-  private class Listener extends MouseAdapter
-      implements ActionListener, TreeSelectionListener, ListSelectionListener, ItemListener {
-
-    public void actionPerformed(ActionEvent event) {
-      Object src = event.getSource();
-      if (src == addTool) {
-        doAdd(selector.getSelectedItems());
-      } else if (src == changeBase) {
-        SelectionItem sel = (SelectionItem) list.getSelectedValue();
-        if (sel != null) {
-          int radix = sel.getRadix();
-          switch (radix) {
-            case 2:
-              sel.setRadix(10);
-              break;
-            case 10:
-              sel.setRadix(16);
-              break;
-            default:
-              sel.setRadix(2);
-          }
-        }
-      } else if (src == moveUp) {
-        doMove(-1);
-      } else if (src == moveDown) {
-        doMove(1);
-      } else if (src == remove) {
-        Selection sel = getSelection();
-        Object[] toRemove = list.getSelectedValuesList().toArray();
-        boolean changed = false;
-        for (Object o : toRemove) {
-          int index = sel.indexOf((SelectionItem) o);
-          if (index >= 0) {
-            sel.remove(index);
-            changed = true;
-          }
-        }
-        if (changed) {
-          list.clearSelection();
-        }
-        createClkChooser(getSelection());
-      }
-    }
-
-    private void computeEnabled() {
-      int index = list.getSelectedIndex();
-      addTool.setEnabled(selector.hasSelectedItems());
-      changeBase.setEnabled(index >= 0);
-      moveUp.setEnabled(index > 0);
-      moveDown.setEnabled(index >= 0 && index < list.getModel().getSize() - 1);
-      remove.setEnabled(index >= 0);
-    }
-
-    private void doAdd(List<SelectionItem> selectedItems) {
-      if (selectedItems != null && selectedItems.size() > 0) {
-        SelectionItem last = null;
-        for (SelectionItem item : selectedItems) {
-          if (!getSelection().contains(item)) {
-            getSelection().add(item);
-            last = item;
-          }
-        }
-        list.setSelectedValue(last, true);
-        createClkChooser(getSelection());
-      }
-    }
-
-    private void doMove(int delta) {
-      Selection sel = getSelection();
-      int oldIndex = list.getSelectedIndex();
-      int newIndex = oldIndex + delta;
-      if (oldIndex >= 0 && newIndex >= 0 && newIndex < sel.size()) {
-        sel.move(oldIndex, newIndex);
-        list.setSelectedIndex(newIndex);
-      }
-    }
-
-    @Override
-    public void itemStateChanged(ItemEvent e) {
-      Object source = e.getItemSelectable();
-      if (source == enableChoosePanelCheckBox) {
-        for (Component com : chooseClkPanel.getComponents()) {
-          com.setEnabled(enableChoosePanelCheckBox.isSelected());
-        }
-      }
-    }
-
-    @Override
-    public void mouseClicked(MouseEvent e) {
-      if (e.getClickCount() == 2) {
-        TreePath path = selector.getPathForLocation(e.getX(), e.getY());
-        if (path != null && listener != null) {
-          doAdd(selector.getSelectedItems());
-        }
-      }
-    }
-
-    public void valueChanged(ListSelectionEvent event) {
-      computeEnabled();
-    }
-
-    public void valueChanged(TreeSelectionEvent event) {
-      computeEnabled();
-    }
-  }
-
   private static final long serialVersionUID = 1L;
   private final Listener listener = new Listener();
   private final ComponentSelector selector;
@@ -294,7 +188,7 @@ class SelectionPanel extends LogPanel {
 
   @SuppressWarnings({"rawtypes", "unchecked"})
   private void createClkChooser(Selection selection) {
-    ArrayList<String> allSelected = new ArrayList<String>();
+    ArrayList<String> allSelected = new ArrayList<>();
     for (int i = 0; i < selection.size(); ++i) {
       String name = selection.get(i).toString();
       if (!name.equalsIgnoreCase("sysclk")) {
@@ -361,5 +255,111 @@ class SelectionPanel extends LogPanel {
       list.setSelection(getSelection());
     }
     listener.computeEnabled();
+  }
+
+  private class Listener extends MouseAdapter
+      implements ActionListener, TreeSelectionListener, ListSelectionListener, ItemListener {
+
+    public void actionPerformed(ActionEvent event) {
+      Object src = event.getSource();
+      if (src == addTool) {
+        doAdd(selector.getSelectedItems());
+      } else if (src == changeBase) {
+        SelectionItem sel = (SelectionItem) list.getSelectedValue();
+        if (sel != null) {
+          int radix = sel.getRadix();
+          switch (radix) {
+            case 2:
+              sel.setRadix(10);
+              break;
+            case 10:
+              sel.setRadix(16);
+              break;
+            default:
+              sel.setRadix(2);
+          }
+        }
+      } else if (src == moveUp) {
+        doMove(-1);
+      } else if (src == moveDown) {
+        doMove(1);
+      } else if (src == remove) {
+        Selection sel = getSelection();
+        Object[] toRemove = list.getSelectedValuesList().toArray();
+        boolean changed = false;
+        for (Object o : toRemove) {
+          int index = sel.indexOf((SelectionItem) o);
+          if (index >= 0) {
+            sel.remove(index);
+            changed = true;
+          }
+        }
+        if (changed) {
+          list.clearSelection();
+        }
+        createClkChooser(getSelection());
+      }
+    }
+
+    private void computeEnabled() {
+      int index = list.getSelectedIndex();
+      addTool.setEnabled(selector.hasSelectedItems());
+      changeBase.setEnabled(index >= 0);
+      moveUp.setEnabled(index > 0);
+      moveDown.setEnabled(index >= 0 && index < list.getModel().getSize() - 1);
+      remove.setEnabled(index >= 0);
+    }
+
+    private void doAdd(List<SelectionItem> selectedItems) {
+      if (selectedItems != null && selectedItems.size() > 0) {
+        SelectionItem last = null;
+        for (SelectionItem item : selectedItems) {
+          if (!getSelection().contains(item)) {
+            getSelection().add(item);
+            last = item;
+          }
+        }
+        list.setSelectedValue(last, true);
+        createClkChooser(getSelection());
+      }
+    }
+
+    private void doMove(int delta) {
+      Selection sel = getSelection();
+      int oldIndex = list.getSelectedIndex();
+      int newIndex = oldIndex + delta;
+      if (oldIndex >= 0 && newIndex >= 0 && newIndex < sel.size()) {
+        sel.move(oldIndex, newIndex);
+        list.setSelectedIndex(newIndex);
+      }
+    }
+
+    @Override
+    public void itemStateChanged(ItemEvent e) {
+      Object source = e.getItemSelectable();
+      if (source == enableChoosePanelCheckBox) {
+        for (Component com : chooseClkPanel.getComponents()) {
+          com.setEnabled(enableChoosePanelCheckBox.isSelected());
+        }
+      }
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+      if (e.getClickCount() == 2) {
+        TreePath path = selector.getPathForLocation(e.getX(), e.getY());
+        if (path != null && listener != null) {
+          doAdd(selector.getSelectedItems());
+        }
+      }
+    }
+
+    public void valueChanged(ListSelectionEvent event) {
+      computeEnabled();
+    }
+
+    public void valueChanged(TreeSelectionEvent event) {
+      computeEnabled();
+    }
   }
 }

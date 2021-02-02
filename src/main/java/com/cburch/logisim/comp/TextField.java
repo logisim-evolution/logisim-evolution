@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -52,7 +52,7 @@ public class TextField {
   private int valign;
   private Font font;
   private String text = "";
-  private final LinkedList<TextFieldListener> listeners = new LinkedList<TextFieldListener>();
+  private final LinkedList<TextFieldListener> listeners = new LinkedList<>();
 
   public TextField(int x, int y, int halign, int valign) {
     this(x, y, halign, valign, null);
@@ -114,7 +114,7 @@ public class TextField {
   }
 
   public void fireTextChanged(TextFieldEvent e) {
-    for (TextFieldListener l : new ArrayList<TextFieldListener>(listeners)) {
+    for (TextFieldListener l : new ArrayList<>(listeners)) {
       l.textChanged(e);
     }
   }

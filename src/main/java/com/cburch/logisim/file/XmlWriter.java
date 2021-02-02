@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -98,7 +98,7 @@ class XmlWriter {
     int n = a.getLength();
     if (n == 0) return "";
     else if (n == 1) return attrToString((Attr) a.item(0));
-    ArrayList<String> lst = new ArrayList<String>();
+    ArrayList<String> lst = new ArrayList<>();
     for (int i = 0; i < n; i++) {
       lst.add(attrToString((Attr) a.item(i)));
     }
@@ -129,7 +129,7 @@ class XmlWriter {
           String va = a.getNodeValue();
           String vb = b.getNodeValue();
           c = stringCompare(va, vb);
-          if (c != 0) return c;
+          return c;
           // This can happen in some cases, e.g. two text components
           // on top of each other. But it seems rare enough to not
           // worry about, since our normalization here is just for
@@ -137,7 +137,6 @@ class XmlWriter {
           // System.out.printf("sorts equal:\n");
           // System.out.printf(" a: <%s %s>%s\n", na, ma, va);
           // System.out.printf(" b: <%s %s>%s\n", nb, mb, vb);
-          return 0;
         }
       };
 
@@ -171,7 +170,7 @@ class XmlWriter {
   }
 
   static void write(LogisimFile file, OutputStream out, LibraryLoader loader, File destFile)
-      throws ParserConfigurationException, TransformerConfigurationException, TransformerException {
+      throws ParserConfigurationException, TransformerException {
 
     DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
     DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
@@ -214,7 +213,7 @@ class XmlWriter {
   private final String outFilepath;
 
   private final LibraryLoader loader;
-  private final HashMap<Library, String> libs = new HashMap<Library, String>();
+  private final HashMap<Library, String> libs = new HashMap<>();
 
   private XmlWriter(LogisimFile file, Document doc, LibraryLoader loader) {
     this(file, doc, loader, null);

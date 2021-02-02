@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -42,6 +42,10 @@ import java.util.regex.Pattern;
 import org.w3c.dom.Element;
 
 public class SvgReader {
+  private static final Pattern PATH_REGEX = Pattern.compile("[a-zA-Z]|[-0-9.]+");
+
+  private SvgReader() {}
+
   private static AbstractCanvasObject createLine(Element elt) {
     int x0 = Integer.parseInt(elt.getAttribute("x1"));
     int y0 = Integer.parseInt(elt.getAttribute("y1"));
@@ -64,7 +68,7 @@ public class SvgReader {
 
   private static AbstractCanvasObject createPath(Element elt) {
     Matcher patt = PATH_REGEX.matcher(elt.getAttribute("d"));
-    List<String> tokens = new ArrayList<String>();
+    List<String> tokens = new ArrayList<>();
     int type = -1; // -1 error, 0 start, 1 curve, 2 polyline
     while (patt.find()) {
       String token = patt.group();
@@ -97,7 +101,7 @@ public class SvgReader {
     if (type == 1) {
       if (tokens.size() == 8
           && tokens.get(0).equals("M")
-          && tokens.get(3).toUpperCase().equals("Q")) {
+          && tokens.get(3).equalsIgnoreCase("Q")) {
         int x0 = Integer.parseInt(tokens.get(1));
         int y0 = Integer.parseInt(tokens.get(2));
         int x1 = Integer.parseInt(tokens.get(4));
@@ -315,8 +319,4 @@ public class SvgReader {
     }
     return UnmodifiableList.create(ret);
   }
-
-  private static final Pattern PATH_REGEX = Pattern.compile("[a-zA-Z]|[-0-9.]+");
-
-  private SvgReader() {}
 }

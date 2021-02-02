@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -28,14 +28,13 @@
 
 package com.cburch.logisim.fpga.hdlgenerator;
 
+import com.cburch.logisim.fpga.gui.FPGAReport;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
-
-import com.cburch.logisim.fpga.gui.FPGAReport;
 
 public class FileWriter {
 
@@ -72,7 +71,7 @@ public class FileWriter {
   }
 
   public static ArrayList<String> getExtendedLibrary() {
-    ArrayList<String> Lines = new ArrayList<String>();
+    ArrayList<String> Lines = new ArrayList<>();
     Lines.add("");
     Lines.add("LIBRARY ieee;");
     Lines.add("USE ieee.std_logic_1164.all;");
@@ -154,7 +153,7 @@ public class FileWriter {
 
   public static ArrayList<String> getGenerateRemark(
       String compName, String HDLIdentifier, String projName) {
-    ArrayList<String> Lines = new ArrayList<String>();
+    ArrayList<String> Lines = new ArrayList<>();
     if (HDLIdentifier.equals(HDLGeneratorFactory.VHDL)) {
       Lines.add("--==============================================================================");
       Lines.add("--== Logisim goes FPGA automatic generated VHDL code                          ==");
@@ -206,7 +205,7 @@ public class FileWriter {
   }
 
   public static ArrayList<String> getStandardLibrary() {
-    ArrayList<String> Lines = new ArrayList<String>();
+    ArrayList<String> Lines = new ArrayList<>();
     Lines.add("");
     Lines.add("LIBRARY ieee;");
     Lines.add("USE ieee.std_logic_1164.all;");

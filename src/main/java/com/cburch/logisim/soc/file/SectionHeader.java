@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -29,8 +29,6 @@
 package com.cburch.logisim.soc.file;
 
 import java.util.ArrayList;
-
-import com.cburch.logisim.soc.file.SymbolTable;
 
 public class SectionHeader {
   public static final int SH_NAME = 0;
@@ -105,11 +103,11 @@ public class SectionHeader {
     index += increment;
     sh_entsize = ElfHeader.getLongValue(buffer, index, increment, isLittleEndian);
     name = "";
-    symbols = new ArrayList<SymbolTable>();
+    symbols = new ArrayList<>();
   }
   
   public SectionHeader(String name) {
-    symbols = new ArrayList<SymbolTable>();
+    symbols = new ArrayList<>();
     this.name = name;
     is32Bit = true;
     sh_name = -1;

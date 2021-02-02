@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -58,7 +58,7 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     StringBuffer Contents = new StringBuffer();
     int ClockNetId = TheNets.GetClockSourceId(comp);
     if (ClockNetId >= 0) {
-      Contents.append(ClockTreeName + Integer.toString(ClockNetId));
+      Contents.append(ClockTreeName + ClockNetId);
     }
     return Contents.toString();
   }
@@ -70,7 +70,7 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Inputs = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> Inputs = new TreeMap<>();
     Inputs.put("GlobalClock", 1);
     Inputs.put("ClockTick", 1);
     return Inputs;
@@ -79,7 +79,7 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   @Override
   public ArrayList<String> GetModuleFunctionality(
       Netlist TheNetlist, AttributeSet attrs, FPGAReport Reporter, String HDLType) {
-    ArrayList<String> Contents = new ArrayList<String>();
+    ArrayList<String> Contents = new ArrayList<>();
     Contents.addAll(
         MakeRemarkBlock(
             "Here the output signals are defines; we synchronize them all on the main clock",
@@ -202,14 +202,14 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Outputs = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> Outputs = new TreeMap<>();
     Outputs.put("ClockBus", NrOfClockBits);
     return Outputs;
   }
 
   @Override
   public SortedMap<Integer, String> GetParameterList(AttributeSet attrs) {
-    SortedMap<Integer, String> Parameters = new TreeMap<Integer, String>();
+    SortedMap<Integer, String> Parameters = new TreeMap<>();
     Parameters.put(HighTickId, HighTickStr);
     Parameters.put(LowTickId, LowTickStr);
     Parameters.put(NrOfBitsId, NrOfBitsStr);
@@ -219,7 +219,7 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   @Override
   public SortedMap<String, Integer> GetParameterMap(
       Netlist Nets, NetlistComponent ComponentInfo, FPGAReport Reporter) {
-    SortedMap<String, Integer> ParameterMap = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> ParameterMap = new TreeMap<>();
     int HighTicks =
         ComponentInfo.GetComponent().getAttributeSet().getValue(Clock.ATTR_HIGH).intValue();
     int LowTicks =
@@ -239,7 +239,7 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   @Override
   public SortedMap<String, String> GetPortMap(
       Netlist Nets, Object MapInfo, FPGAReport Reporter, String HDLType) {
-    SortedMap<String, String> PortMap = new TreeMap<String, String>();
+    SortedMap<String, String> PortMap = new TreeMap<>();
     if (!(MapInfo instanceof NetlistComponent)) return PortMap;
     NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
     PortMap.put("GlobalClock", TickComponentHDLGeneratorFactory.FPGAClock);
@@ -250,7 +250,7 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetRegList(AttributeSet attrs, String HDLType) {
-    SortedMap<String, Integer> Regs = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> Regs = new TreeMap<>();
     Regs.put("s_output_regs", NrOfClockBits - 1);
     Regs.put("s_counter_reg", NrOfBitsId);
     Regs.put("s_derived_clock_reg", 1);
@@ -268,7 +268,7 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist Nets) {
-    SortedMap<String, Integer> Wires = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> Wires = new TreeMap<>();
     Wires.put("s_counter_next", NrOfBitsId);
     Wires.put("s_counter_is_zero", 1);
     return Wires;

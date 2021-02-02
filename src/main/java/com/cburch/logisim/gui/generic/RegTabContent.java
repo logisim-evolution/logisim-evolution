@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -41,52 +41,26 @@ import com.cburch.logisim.gui.main.Frame;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.std.memory.Register;
-import com.cburch.logisim.util.LocaleListener;
 import com.cburch.logisim.util.AlphanumComparator;
+import com.cburch.logisim.util.LocaleListener;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.HashMap;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 /** @author YSY */
 public class RegTabContent extends JScrollPane implements LocaleListener, SimulatorListener {
-  private class MyLabel extends JLabel {
-    private static final long serialVersionUID = 1L;
-
-    private MyLabel(String text) {
-      super(text);
-    }
-
-    private MyLabel(String text, int style) {
-      super(text);
-      setFont(getFont().deriveFont(style));
-    }
-
-    private MyLabel(String text, int style, boolean small) {
-      super(text);
-      setFont(getFont().deriveFont(style));
-      setFont(getFont().deriveFont(getFont().getSize2D() - 2));
-    }
-
-    private void setColor(Color color) {
-      setBackground(color);
-      setOpaque(true);
-    }
-  }
-
   private static final long serialVersionUID = 1L;
+  private static final HashMap<String, Component> registers = new HashMap<>();
   private final JPanel panel = new JPanel(new GridBagLayout());
   private final GridBagConstraints c = new GridBagConstraints();
   private final Project proj;
-
-  private static final HashMap<String, Component> registers = new HashMap<String, Component>();
 
   public RegTabContent(Frame frame) {
     super();
@@ -148,7 +122,8 @@ public class RegTabContent extends JScrollPane implements LocaleListener, Simula
     y++;
 
     if (!registers.isEmpty()) {
-      List<String> keys = registers.keySet().stream().sorted(new AlphanumComparator()).collect(Collectors.toList());
+      List<String> keys =
+          registers.keySet().stream().sorted(new AlphanumComparator()).collect(Collectors.toList());
       for (String key : keys) {
         c.gridy = y;
         c.gridx = 0;
@@ -250,5 +225,29 @@ public class RegTabContent extends JScrollPane implements LocaleListener, Simula
   @Override
   public void tickCompleted(SimulatorEvent e) {
     // throw new UnsupportedOperationException("Not supported yet.");
+  }
+
+  private static class MyLabel extends JLabel {
+    private static final long serialVersionUID = 1L;
+
+    private MyLabel(String text) {
+      super(text);
+    }
+
+    private MyLabel(String text, int style) {
+      super(text);
+      setFont(getFont().deriveFont(style));
+    }
+
+    private MyLabel(String text, int style, boolean small) {
+      super(text);
+      setFont(getFont().deriveFont(style));
+      setFont(getFont().deriveFont(getFont().getSize2D() - 2));
+    }
+
+    private void setColor(Color color) {
+      setBackground(color);
+      setOpaque(true);
+    }
   }
 }

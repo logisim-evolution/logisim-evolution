@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -58,7 +58,7 @@ public class LayoutEditHandler extends EditHandler
 
   @Override
   public void addControlPoint() {
-    ; // not yet supported in layout mode
+    // not yet supported in layout mode
   }
 
   @Override
@@ -126,12 +126,12 @@ public class LayoutEditHandler extends EditHandler
 
   @Override
   public void lower() {
-    ; // not yet supported in layout mode
+    // not yet supported in layout mode
   }
 
   @Override
   public void lowerBottom() {
-    ; // not yet supported in layout mode
+    // not yet supported in layout mode
   }
 
   @Override
@@ -164,17 +164,17 @@ public class LayoutEditHandler extends EditHandler
 
   @Override
   public void raise() {
-    ; // not yet supported in layout mode
+    // not yet supported in layout mode
   }
 
   @Override
   public void raiseTop() {
-    ; // not yet supported in layout mode
+    // not yet supported in layout mode
   }
 
   @Override
   public void removeControlPoint() {
-    ; // not yet supported in layout mode
+    // not yet supported in layout mode
   }
 
   @Override

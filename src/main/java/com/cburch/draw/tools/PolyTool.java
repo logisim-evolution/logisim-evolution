@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -38,7 +38,6 @@ import com.cburch.draw.shapes.LineUtil;
 import com.cburch.draw.shapes.Poly;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.Location;
-import com.cburch.logisim.util.Icons;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Graphics;
@@ -55,8 +54,8 @@ public class PolyTool extends AbstractTool {
 
   private final boolean closed; // whether we are drawing polygons or polylines
   private final DrawingAttributeSet attrs;
-  private boolean active;
   private final List<Location> locations;
+  private boolean active;
   private boolean mouseDown;
   private int lastMouseX;
   private int lastMouseY;
@@ -65,7 +64,7 @@ public class PolyTool extends AbstractTool {
     this.closed = closed;
     this.attrs = attrs;
     active = false;
-    locations = new ArrayList<Location>();
+    locations = new ArrayList<>();
   }
 
   private CanvasObject commit(Canvas canvas) {

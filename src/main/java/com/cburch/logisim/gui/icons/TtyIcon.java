@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -28,12 +28,11 @@
 
 package com.cburch.logisim.gui.icons;
 
+import com.cburch.logisim.std.io.Tty;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.font.TextLayout;
-
-import com.cburch.logisim.std.io.Tty;
 
 public class TtyIcon extends AnnimatedIcon {
 
@@ -42,7 +41,7 @@ public class TtyIcon extends AnnimatedIcon {
 
   @Override
   public void annimationUpdate() {
-    index = (index+1)%(display.length()-2);
+    index = (index + 1) % (display.length() - 2);
   }
 
   @Override
@@ -56,11 +55,13 @@ public class TtyIcon extends AnnimatedIcon {
     g2.fillRoundRect(0, scale(3), scale(16), scale(10), scale(3), scale(3));
     g2.setColor(Color.BLACK);
     g2.drawRoundRect(0, scale(3), scale(16), scale(10), scale(3), scale(3));
-    Font f = Tty.DEFAULT_FONT.deriveFont(scale((float)5)).deriveFont(Font.BOLD);
-    TextLayout t = new TextLayout(display.substring(index, index+3),f,g2.getFontRenderContext());
+    Font f = Tty.DEFAULT_FONT.deriveFont(scale((float) 5)).deriveFont(Font.BOLD);
+    TextLayout t =
+        new TextLayout(display.substring(index, index + 3), f, g2.getFontRenderContext());
     g2.setColor(Color.yellow);
-    t.draw(g2, (float)(getIconWidth()/2-t.getBounds().getCenterX()), 
-    		(float)(getIconHeight()/2-t.getBounds().getCenterY()));
+    t.draw(
+        g2,
+        (float) (getIconWidth() / 2 - t.getBounds().getCenterX()),
+        (float) (getIconHeight() / 2 - t.getBounds().getCenterY()));
   }
-
 }

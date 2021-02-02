@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -36,6 +36,28 @@ import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.tools.Tool;
 
 class ToolbarActions {
+  private ToolbarActions() {}
+
+  public static Action addSeparator(ToolbarData toolbar, int pos) {
+    return new AddSeparator(toolbar, pos);
+  }
+
+  public static Action addTool(ToolbarData toolbar, Tool tool) {
+    return new AddTool(toolbar, tool);
+  }
+
+  public static Action moveTool(ToolbarData toolbar, int src, int dest) {
+    return new MoveTool(toolbar, src, dest);
+  }
+
+  public static Action removeSeparator(ToolbarData toolbar, int pos) {
+    return new RemoveSeparator(toolbar, pos);
+  }
+
+  public static Action removeTool(ToolbarData toolbar, int pos) {
+    return new RemoveTool(toolbar, pos);
+  }
+
   private static class AddSeparator extends Action {
     ToolbarData toolbar;
     int pos;
@@ -191,26 +213,4 @@ class ToolbarActions {
       }
     }
   }
-
-  public static Action addSeparator(ToolbarData toolbar, int pos) {
-    return new AddSeparator(toolbar, pos);
-  }
-
-  public static Action addTool(ToolbarData toolbar, Tool tool) {
-    return new AddTool(toolbar, tool);
-  }
-
-  public static Action moveTool(ToolbarData toolbar, int src, int dest) {
-    return new MoveTool(toolbar, src, dest);
-  }
-
-  public static Action removeSeparator(ToolbarData toolbar, int pos) {
-    return new RemoveSeparator(toolbar, pos);
-  }
-
-  public static Action removeTool(ToolbarData toolbar, int pos) {
-    return new RemoveTool(toolbar, pos);
-  }
-
-  private ToolbarActions() {}
 }

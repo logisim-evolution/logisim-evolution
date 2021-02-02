@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -66,6 +66,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 public class ProjectCircuitActions {
+  private ProjectCircuitActions() {}
+
   private static void analyzeError(Project proj, String message) {
     OptionPane.showMessageDialog(
         proj.getFrame(), message, S.get("analyzeErrorTitle"), OptionPane.ERROR_MESSAGE);
@@ -86,7 +88,7 @@ public class ProjectCircuitActions {
       analyzer.setSelectedTab(Analyzer.IO_TAB);
       return;
     }
-    
+
     // Attempt to show the corresponding expression
     try {
       Analyze.computeExpression(analyzer.getModel(), circuit, pinNames);
@@ -135,7 +137,7 @@ public class ProjectCircuitActions {
       if (NameIsInLibraries(mylib, Name)) return true;
     }
     for (AddTool mytool : proj.getLogisimFile().getTools()) {
-      if (Name.toUpperCase().equals(mytool.getName().toUpperCase())) return true;
+      if (Name.equalsIgnoreCase(mytool.getName())) return true;
     }
     return false;
   }
@@ -145,7 +147,7 @@ public class ProjectCircuitActions {
       if (NameIsInLibraries(mylib, Name)) return true;
     }
     for (Tool mytool : lib.getTools()) {
-      if (Name.toUpperCase().equals(mytool.getName().toUpperCase())) return true;
+      if (Name.equalsIgnoreCase(mytool.getName())) return true;
     }
     return false;
   }
@@ -174,8 +176,8 @@ public class ProjectCircuitActions {
 
   public static void doAnalyze(Project proj, Circuit circuit) {
     Map<Instance, String> pinNames = Analyze.getPinLabels(circuit);
-    ArrayList<Var> inputVars = new ArrayList<Var>();
-    ArrayList<Var> outputVars = new ArrayList<Var>();
+    ArrayList<Var> inputVars = new ArrayList<>();
+    ArrayList<Var> outputVars = new ArrayList<>();
     int numInputs = 0, numOutputs = 0;
     for (Map.Entry<Instance, String> entry : pinNames.entrySet()) {
       Instance pin = entry.getKey();
@@ -329,13 +331,10 @@ public class ProjectCircuitActions {
     dlog.setVisible(true);
     field.requestFocusInWindow();
     Object action = pane.getValue();
-    if (!(action instanceof Integer)
-        || ((Integer) action).intValue() != OptionPane.OK_OPTION) {
+    if (!(action instanceof Integer) || ((Integer) action).intValue() != OptionPane.OK_OPTION) {
       return null;
     }
 
     return field.getText().trim();
   }
-
-  private ProjectCircuitActions() {}
 }

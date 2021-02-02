@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -101,7 +101,7 @@ public class VhdlSimulatorVhdlTop {
 
       ComponentFactory fac = comp.getFactory();
       String vhdlEntityName;
-      List<VhdlParser.PortDescription> MyPorts = new ArrayList<VhdlParser.PortDescription>();
+      List<VhdlParser.PortDescription> MyPorts = new ArrayList<>();
       if (fac instanceof VhdlEntity) {
         vhdlEntityName = ((VhdlEntity) fac).GetSimName(state.getInstance().getAttributeSet());
         MyPorts.addAll(((VhdlEntityAttributes) state.getAttributeSet()).getContent().getPorts());
@@ -109,7 +109,7 @@ public class VhdlSimulatorVhdlTop {
         vhdlEntityName =
             ((VhdlEntityComponent) fac).GetSimName(state.getInstance().getAttributeSet());
         for (Port port :
-            ((VhdlContentComponent) state.getAttributeValue(VhdlEntityComponent.CONTENT_ATTR))
+            state.getAttributeValue(VhdlEntityComponent.CONTENT_ATTR)
                 .getPorts()) {
           VhdlParser.PortDescription nport =
               new VhdlParser.PortDescription(

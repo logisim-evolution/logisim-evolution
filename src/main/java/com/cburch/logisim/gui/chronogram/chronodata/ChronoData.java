@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -39,7 +39,7 @@ import java.util.TreeMap;
 public class ChronoData extends TreeMap<String, SignalData> {
 
   private static final long serialVersionUID = 1L;
-  private ArrayList<String> mSignalOrder = new ArrayList<String>();
+  private ArrayList<String> mSignalOrder = new ArrayList<>();
 
   public ChronoData() {}
 
@@ -53,7 +53,7 @@ public class ChronoData extends TreeMap<String, SignalData> {
     LineNumberReader lineReader = null;
     lineReader = new LineNumberReader(new FileReader(logisimLogFile));
 
-    ArrayList<ArrayList<String>> rawData = new ArrayList<ArrayList<String>>();
+    ArrayList<ArrayList<String>> rawData = new ArrayList<>();
     boolean sysclkFound = false;
 
     // read the first line with the signal name
@@ -61,10 +61,9 @@ public class ChronoData extends TreeMap<String, SignalData> {
     String line = lineReader.readLine();
     String[] splittedLine = line.split("\\t");
     for (String s : splittedLine) {
-      ArrayList<String> v = new ArrayList<String>();
+      ArrayList<String> v = new ArrayList<>();
       v.add(s);
-      if (s.equals("sysclk"))
-        sysclkFound = true;
+      if (s.equals("sysclk")) sysclkFound = true;
       rawData.add(v);
     }
 
@@ -95,7 +94,7 @@ public class ChronoData extends TreeMap<String, SignalData> {
 
     // creates the SignalData et SignalDataBus
     // and store the signal name order
-    mSignalOrder = new ArrayList<String>();
+    mSignalOrder = new ArrayList<>();
     for (ArrayList<String> vs : rawData) {
       String name = vs.get(0);
       mSignalOrder.add(name);
@@ -138,7 +137,7 @@ public class ChronoData extends TreeMap<String, SignalData> {
 
       for (int signalI = 0; signalI < signalNbr; ++signalI) {
         int bitPos = signalNbr - signalI - 1;
-        ArrayList<String> sig = new ArrayList<String>();
+        ArrayList<String> sig = new ArrayList<>();
         String name = sd.getName() + "__s__" + signalI;
         for (String s : sd.getSignalValues()) {
           sig.add(s.substring(bitPos, bitPos + 1));
@@ -154,6 +153,10 @@ public class ChronoData extends TreeMap<String, SignalData> {
 
   public ArrayList<String> getSignalOrder() {
     return mSignalOrder;
+  }
+
+  public void setSignalOrder(ArrayList<String> order) {
+    mSignalOrder = new ArrayList<>(order);
   }
 
   /** Remove if the sysclk has 2 or more identical states */
@@ -173,10 +176,6 @@ public class ChronoData extends TreeMap<String, SignalData> {
     } catch (Exception e) {
       e.printStackTrace();
     }
-  }
-
-  public void setSignalOrder(ArrayList<String> order) {
-    mSignalOrder = new ArrayList<String>(order);
   }
 
   /** In real time mode, if a bus is expanded we need to add the new data to every signal */

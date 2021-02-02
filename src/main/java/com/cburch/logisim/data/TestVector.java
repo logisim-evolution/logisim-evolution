@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -48,7 +48,7 @@ public class TestVector {
 
       String name = f.getName();
       int i = name.lastIndexOf('.');
-      return (i > 0 && name.substring(i).toLowerCase().equals(".txt"));
+      return (i > 0 && name.substring(i).equalsIgnoreCase(".txt"));
     }
 
     public String getDescription() {
@@ -84,7 +84,7 @@ public class TestVector {
       if (curLine == null) throw new IOException("TestVector format error: empty file");
 
       parseHeader();
-      data = new ArrayList<Value[]>();
+      data = new ArrayList<>();
       curLine = findNonemptyLine();
 
       while (curLine != null) {

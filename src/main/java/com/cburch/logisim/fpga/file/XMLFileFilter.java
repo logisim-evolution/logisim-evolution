@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -31,7 +31,6 @@ package com.cburch.logisim.fpga.file;
 import static com.cburch.logisim.fpga.Strings.S;
 
 import java.io.File;
-
 import javax.swing.filechooser.FileFilter;
 
 public class XMLFileFilter extends FileFilter {

@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -95,7 +95,7 @@ public class LayoutThumbnail extends JComponent {
           new ComponentDrawContext(this, circuit, circuitState, g, gCopy);
       context.setShowState(false);
       context.setShowColor(false);
-      circuit.draw(context, Collections.<Component>emptySet());
+      circuit.draw(context, Collections.emptySet());
       if (ports != null && ports.size() > 0) {
         gCopy.setColor(AppearancePort.COLOR);
         int width = Math.max(4, (int) ((2 / scale) + 0.5));

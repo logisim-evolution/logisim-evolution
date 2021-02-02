@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -30,14 +30,13 @@ package com.cburch.logisim.soc.rv32im;
 
 import static com.cburch.logisim.soc.Strings.S;
 
-import java.util.ArrayList;
-
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.soc.file.ElfHeader;
 import com.cburch.logisim.soc.util.AbstractExecutionUnitWithLabelSupport;
 import com.cburch.logisim.soc.util.AssemblerAsmInstruction;
 import com.cburch.logisim.soc.util.AssemblerToken;
+import java.util.ArrayList;
 
 public class RV32imControlTransferInstructions extends AbstractExecutionUnitWithLabelSupport {
     
@@ -82,11 +81,11 @@ public class RV32imControlTransferInstructions extends AbstractExecutionUnitWith
   public boolean isPcRelative;
   
   public ArrayList<String> getInstructions() {
-    ArrayList<String> opcodes = new ArrayList<String>();
+    ArrayList<String> opcodes = new ArrayList<>();
     for (String asmOpcode : AsmOpcodes)
       opcodes.add(asmOpcode);
     return opcodes;
-  };
+  }
 
   public boolean execute(Object state, CircuitState cState) {
     if (!valid)
@@ -133,12 +132,12 @@ public class RV32imControlTransferInstructions extends AbstractExecutionUnitWith
                           cpuState.setProgramCounter(target);
                         }
                         return true;
-      case INSTR_BLTU : if (ElfHeader.getLongValue((Integer)reg1) < ElfHeader.getLongValue((Integer)reg2)) {
+      case INSTR_BLTU : if (ElfHeader.getLongValue(reg1) < ElfHeader.getLongValue(reg2)) {
                           jumped = true;
                           cpuState.setProgramCounter(target);
                         }
                         return true;
-      case INSTR_BGEU : if (ElfHeader.getLongValue((Integer)reg1) >= ElfHeader.getLongValue((Integer)reg2)) {
+      case INSTR_BGEU : if (ElfHeader.getLongValue(reg1) >= ElfHeader.getLongValue(reg2)) {
                           jumped = true;
                           cpuState.setProgramCounter(target);
                         }

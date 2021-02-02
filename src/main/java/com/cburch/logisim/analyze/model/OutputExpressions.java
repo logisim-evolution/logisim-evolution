@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -328,10 +328,10 @@ public class OutputExpressions {
 
   private final AnalyzerModel model;
 
-  private final HashMap<String, OutputData> outputData = new HashMap<String, OutputData>();
+  private final HashMap<String, OutputData> outputData = new HashMap<>();
 
   private final ArrayList<OutputExpressionsListener> listeners =
-      new ArrayList<OutputExpressionsListener>();
+      new ArrayList<>();
 
   private boolean updatingTable = false;
 

@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -57,7 +57,7 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Inputs = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> Inputs = new TreeMap<>();
     int NrOfBits = attrs.getValue(Mem.DATA_ATTR).getWidth();
     Inputs.put("Address", attrs.getValue(Mem.ADDR_ATTR).getWidth());
     Inputs.put("DataIn", NrOfBits);
@@ -74,7 +74,7 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     if (byteEnables) {
       int NrOfByteEnables = RamAppearance.getNrBEPorts(attrs);
       for (int i = 0; i < NrOfByteEnables; i++) {
-        Inputs.put("ByteEnable" + Integer.toString(i), 1);
+        Inputs.put("ByteEnable" + i, 1);
       }
     }
     return Inputs;
@@ -82,7 +82,7 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetMemList(AttributeSet attrs, String HDLType) {
-    SortedMap<String, Integer> Mems = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> Mems = new TreeMap<>();
     if (HDLType.equals(VHDL)) {
       Object be = attrs.getValue(RamAttributes.ATTR_ByteEnables);
       boolean byteEnables = be != null && be.equals(RamAttributes.BUS_WITH_BYTEENABLES);
@@ -95,7 +95,7 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           Mems.put("s_trunc_mem_contents", RestArrayId);
         }
         for (int i = 0; i < NrOfByteEnables; i++) {
-          Mems.put("s_byte_mem_" + Integer.toString(i) + "_contents", ByteArrayId);
+          Mems.put("s_byte_mem_" + i + "_contents", ByteArrayId);
         }
       } else {
         Mems.put("s_mem_contents", MemArrayId);
@@ -107,7 +107,7 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   @Override
   public ArrayList<String> GetModuleFunctionality(
       Netlist TheNetlist, AttributeSet attrs, FPGAReport Reporter, String HDLType) {
-    ArrayList<String> Contents = new ArrayList<String>();
+    ArrayList<String> Contents = new ArrayList<>();
     Object be = attrs.getValue(RamAttributes.ATTR_ByteEnables);
     boolean byteEnables = be != null && be.equals(RamAttributes.BUS_WITH_BYTEENABLES);
     if (HDLType.equals(VHDL)) {
@@ -116,15 +116,15 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         for (int i = 0; i < RamAppearance.getNrBEPorts(attrs); i++) {
           Contents.add(
               "   s_byte_enable_"
-                  + Integer.toString(i)
+                  + i
                   + " <= s_ByteEnableReg("
-                  + Integer.toString(i)
+                  + i
                   + ") AND s_TickDelayLine(2) AND s_OEReg;");
           Contents.add(
               "   s_we_"
-                  + Integer.toString(i)
+                  + i
                   + "          <= s_ByteEnableReg("
-                  + Integer.toString(i)
+                  + i
                   + ") AND s_TickDelayLine(0) AND s_WEReg;");
         }
       } else {
@@ -145,9 +145,9 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         for (int i = 0; i < RamAppearance.getNrBEPorts(attrs); i++) {
           Contents.add(
               "             s_ByteEnableReg("
-                  + Integer.toString(i)
+                  + i
                   + ") <= ByteEnable"
-                  + Integer.toString(i)
+                  + i
                   + ";");
         }
       }
@@ -169,13 +169,13 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         for (int i = 0; i < RamAppearance.getNrBEPorts(attrs); i++) {
           Contents.add(
               "   Mem"
-                  + Integer.toString(i)
+                  + i
                   + " : PROCESS( Clock , s_we_"
-                  + Integer.toString(i)
+                  + i
                   + ", s_DataInReg, s_Address_reg)");
           Contents.add("   BEGIN");
           Contents.add("      IF (Clock'event AND (Clock = '1')) THEN");
-          Contents.add("            IF (s_we_" + Integer.toString(i) + " = '1') THEN");
+          Contents.add("            IF (s_we_" + i + " = '1') THEN");
           int startIndex = i * 8;
           int endIndex =
               (i == (RamAppearance.getNrBEPorts(attrs) - 1))
@@ -184,7 +184,7 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           String Memname =
               (i == (RamAppearance.getNrBEPorts(attrs) - 1) && truncated)
                   ? "s_trunc_mem_contents"
-                  : "s_byte_mem_" + Integer.toString(i) + "_contents";
+                  : "s_byte_mem_" + i + "_contents";
           Contents.add(
               "               "
                   + Memname
@@ -203,7 +203,7 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
                   + Memname
                   + "(to_integer(unsigned(s_Address_reg)));");
           Contents.add("      END IF;");
-          Contents.add("   END PROCESS Mem" + Integer.toString(i) + ";");
+          Contents.add("   END PROCESS Mem" + i + ";");
           Contents.add("");
         }
       } else {
@@ -225,13 +225,13 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         for (int i = 0; i < RamAppearance.getNrBEPorts(attrs); i++) {
           Contents.add(
               "   Res"
-                  + Integer.toString(i)
+                  + i
                   + " : PROCESS( Clock , s_byte_enable_"
-                  + Integer.toString(i)
+                  + i
                   + ", s_ram_data_out)");
           Contents.add("   BEGIN");
           Contents.add("      IF (Clock'event AND (Clock = '1')) THEN");
-          Contents.add("         IF (s_byte_enable_" + Integer.toString(i) + " = '1') THEN");
+          Contents.add("         IF (s_byte_enable_" + i + " = '1') THEN");
           int startIndex = i * 8;
           int endIndex =
               (i == (RamAppearance.getNrBEPorts(attrs) - 1))
@@ -249,7 +249,7 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
                   + ");");
           Contents.add("         END IF;");
           Contents.add("      END IF;");
-          Contents.add("   END PROCESS Res" + Integer.toString(i) + ";");
+          Contents.add("   END PROCESS Res" + i + ";");
           Contents.add("");
         }
       } else {
@@ -277,7 +277,7 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Outputs = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> Outputs = new TreeMap<>();
     Outputs.put("DataOut", attrs.getValue(Mem.DATA_ATTR).getWidth());
     return Outputs;
   }
@@ -285,7 +285,7 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   @Override
   public SortedMap<String, String> GetPortMap(
 	      Netlist Nets, Object MapInfo, FPGAReport Reporter, String HDLType) {
-    SortedMap<String, String> PortMap = new TreeMap<String, String>();
+    SortedMap<String, String> PortMap = new TreeMap<>();
     if (!(MapInfo instanceof NetlistComponent)) return PortMap;
     NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
     AttributeSet attrs = ComponentInfo.GetComponent().getAttributeSet();
@@ -330,10 +330,10 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
               "Clock",
               ClockNetName
                   + BracketOpen
-                  + Integer.toString(ClockHDLGeneratorFactory.GlobalClockIndex)
+                  + ClockHDLGeneratorFactory.GlobalClockIndex
                   + BracketClose);
           PortMap.put(
-              "Tick", ClockNetName + BracketOpen + Integer.toString(ClockBusIndex) + BracketClose);
+              "Tick", ClockNetName + BracketOpen + ClockBusIndex + BracketClose);
         }
       }
     }
@@ -343,7 +343,7 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       for (int i = 0; i < NrOfByteEnables; i++) {
         PortMap.putAll(
             GetNetMap(
-                "ByteEnable" + Integer.toString(i),
+                "ByteEnable" + i,
                 false,
                 ComponentInfo,
                 ByteEnableOffset + NrOfByteEnables - i - 1,
@@ -358,7 +358,7 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetRegList(AttributeSet attrs, String HDLType) {
-    SortedMap<String, Integer> Regs = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> Regs = new TreeMap<>();
     Object be = attrs.getValue(RamAttributes.ATTR_ByteEnables);
     boolean byteEnables = be != null && be.equals(RamAttributes.BUS_WITH_BYTEENABLES);
     int NrOfBits = attrs.getValue(Mem.DATA_ATTR).getWidth();
@@ -397,7 +397,7 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   @Override
   public SortedSet<String> GetTypeDefinitions(
       Netlist TheNetlist, AttributeSet attrs, String HDLType) {
-    SortedSet<String> MyTypes = new TreeSet<String>();
+    SortedSet<String> MyTypes = new TreeSet<>();
     if (HDLType.equals(VHDL)) {
       Object be = attrs.getValue(RamAttributes.ATTR_ByteEnables);
       boolean byteEnables = be != null && be.equals(RamAttributes.BUS_WITH_BYTEENABLES);
@@ -409,16 +409,16 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
             "TYPE "
                 + ByteArrayStr
                 + " IS ARRAY ("
-                + Integer.toString(RamEntries - 1)
+                + (RamEntries - 1)
                 + " DOWNTO 0) OF std_logic_vector(7 DOWNTO 0)");
         if ((NrOfBits % 8) != 0) {
           MyTypes.add(
               "TYPE "
                   + RestArrayStr
                   + " IS ARRAY ("
-                  + Integer.toString(RamEntries - 1)
+                  + (RamEntries - 1)
                   + " DOWNTO 0) OF std_logic_vector("
-                  + Integer.toString((NrOfBits % 8) - 1)
+                  + ((NrOfBits % 8) - 1)
                   + " DOWNTO 0)");
         }
       } else {
@@ -426,9 +426,9 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
             "TYPE "
                 + MemArrayStr
                 + " IS ARRAY ("
-                + Integer.toString(RamEntries - 1)
+                + (RamEntries - 1)
                 + " DOWNTO 0) OF std_logic_vector("
-                + Integer.toString(NrOfBits - 1)
+                + (NrOfBits - 1)
                 + " DOWNTO 0)");
       }
     }
@@ -437,15 +437,15 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist Nets) {
-    SortedMap<String, Integer> Wires = new TreeMap<String, Integer>();
+    SortedMap<String, Integer> Wires = new TreeMap<>();
     int NrOfBits = attrs.getValue(Mem.DATA_ATTR).getWidth();
     Object be = attrs.getValue(RamAttributes.ATTR_ByteEnables);
     boolean byteEnables = be != null && be.equals(RamAttributes.BUS_WITH_BYTEENABLES);
     Wires.put("s_ram_data_out", NrOfBits);
     if (byteEnables) {
       for (int i = 0; i < RamAppearance.getNrBEPorts(attrs); i++) {
-        Wires.put("s_byte_enable_" + Integer.toString(i), 1);
-        Wires.put("s_we_" + Integer.toString(i), 1);
+        Wires.put("s_byte_enable_" + i, 1);
+        Wires.put("s_we_" + i, 1);
       }
     } else {
       Wires.put("s_we", 1);

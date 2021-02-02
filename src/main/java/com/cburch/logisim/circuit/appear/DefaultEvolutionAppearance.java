@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -55,9 +55,9 @@ public class DefaultEvolutionAppearance {
   public static List<CanvasObject> build(
       Collection<Instance> pins, String CircuitName, boolean FixedSize) {
     Map<Direction, List<Instance>> edge;
-    edge = new HashMap<Direction, List<Instance>>();
-    edge.put(Direction.EAST, new ArrayList<Instance>());
-    edge.put(Direction.WEST, new ArrayList<Instance>());
+    edge = new HashMap<>();
+    edge.put(Direction.EAST, new ArrayList<>());
+    edge.put(Direction.WEST, new ArrayList<>());
     int MaxLeftLabelLength = 0;
     int MaxRightLabelLength = 0;
     int TitleWidth =
@@ -118,7 +118,7 @@ public class DefaultEvolutionAppearance {
     int rx = OFFS + (9 - (ax + 9) % 10);
     int ry = OFFS + (9 - (ay + 9) % 10);
 
-    List<CanvasObject> ret = new ArrayList<CanvasObject>();
+    List<CanvasObject> ret = new ArrayList<>();
     placePins(ret, edge.get(Direction.WEST), rx, ry + 10, 0, dy, true, sdy, FixedSize);
     placePins(ret, edge.get(Direction.EAST), rx + width, ry + 10, 0, dy, false, sdy, FixedSize);
     Rectangle rect = new Rectangle(rx + 10, ry + height - Thight, width - 20, Thight);

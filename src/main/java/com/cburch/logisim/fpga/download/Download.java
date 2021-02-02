@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -51,7 +51,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.swing.JFrame;
 import javax.swing.JProgressBar;
 
@@ -69,15 +68,15 @@ public class Download extends DownloadBase implements Runnable, WindowListener {
   private double TickFrequency;
   private static final int BasicSteps = 5;
   private String MapFileName;
-  ArrayList<String> Entities = new ArrayList<String>();
-  ArrayList<String> Architectures = new ArrayList<String>();
+  ArrayList<String> Entities = new ArrayList<>();
+  ArrayList<String> Architectures = new ArrayList<>();
 
   private Process Executable;
   private final Object lock = new Object();
   private JFrame parent;
 
   
-  private final ArrayList<ActionListener> Listeners = new ArrayList<ActionListener>();
+  private final ArrayList<ActionListener> Listeners = new ArrayList<>();
 
   public Download(
 	      Project MyProject,
@@ -199,7 +198,7 @@ public class Download extends DownloadBase implements Runnable, WindowListener {
   }
 
   public void RemoveListener(ActionListener listener) {
-    if (Listeners.contains(listener)) Listeners.remove(Listeners.indexOf(listener));
+    if (Listeners.contains(listener)) Listeners.remove(listener);
   }
 
   private void fireEvent(ActionEvent e) {
@@ -430,10 +429,10 @@ public class Download extends DownloadBase implements Runnable, WindowListener {
     long clkfreq = CurrentBoard.fpga.getClockFrequency();
     if (clkfreq % 1000000 == 0) {
       clkfreq /= 1000000;
-      return Long.toString(clkfreq) + " MHz ";
+      return clkfreq + " MHz ";
     } else if (clkfreq % 1000 == 0) {
       clkfreq /= 1000;
-      return Long.toString(clkfreq) + " kHz ";
+      return clkfreq + " kHz ";
     }
     return Long.toString(clkfreq);
   }

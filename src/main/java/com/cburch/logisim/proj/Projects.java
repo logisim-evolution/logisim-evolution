@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -227,14 +227,14 @@ public class Projects {
 
   public static final String projectListProperty = "projectList";
 
-  private static final WeakHashMap<Window, Point> frameLocations = new WeakHashMap<Window, Point>();
+  private static final WeakHashMap<Window, Point> frameLocations = new WeakHashMap<>();
 
   private static final MyListener myListener = new MyListener();
 
   private static final PropertyChangeWeakSupport propertySupport =
       new PropertyChangeWeakSupport(Projects.class);
 
-  private static final ArrayList<Project> openProjects = new ArrayList<Project>();
+  private static final ArrayList<Project> openProjects = new ArrayList<>();
 
   private static Frame mostRecentFrame = null;
 

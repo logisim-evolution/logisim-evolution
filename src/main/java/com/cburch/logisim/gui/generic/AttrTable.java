@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -70,9 +70,166 @@ import javax.swing.table.TableModel;
 @SuppressWarnings("serial")
 public class AttrTable extends JPanel implements LocaleListener {
 
+  private static final AttrTableModel NULL_ATTR_MODEL = new NullAttrModel();
+  private final Window parent;
+  private final JLabel title;
+  private final JTable table;
+  private final TableModelAdapter tableModel;
+  private final CellEditor editor = new CellEditor();
+  private boolean titleEnabled;
+  public AttrTable(Window parent) {
+    super(new BorderLayout());
+    this.parent = parent;
+
+    titleEnabled = true;
+    title = new TitleLabel();
+    title.setHorizontalAlignment(SwingConstants.CENTER);
+    title.setVerticalAlignment(SwingConstants.CENTER);
+    tableModel = new TableModelAdapter(parent, NULL_ATTR_MODEL);
+    table = new JTable(tableModel);
+    table.setDefaultEditor(Object.class, editor);
+    table.setTableHeader(null);
+    table.setRowHeight(AppPreferences.getScaled(AppPreferences.BoxSize));
+
+    Font baseFont = title.getFont();
+    int titleSize = Math.round(baseFont.getSize() * 1.2f);
+    Font titleFont =
+        baseFont.deriveFont(AppPreferences.getScaled((float) titleSize)).deriveFont(Font.BOLD);
+    title.setFont(titleFont);
+    Color bgColor = new Color(240, 240, 240);
+    setBackground(bgColor);
+    table.setBackground(bgColor);
+    table.setDefaultRenderer(String.class, new HDLColorRenderer());
+
+    JPanel propPanel = new JPanel(new BorderLayout(0, 0));
+    JScrollPane tableScroll = new JScrollPane(table);
+
+    propPanel.add(title, BorderLayout.PAGE_START);
+    propPanel.add(tableScroll, BorderLayout.CENTER);
+
+    this.add(propPanel, BorderLayout.CENTER);
+
+    LocaleManager.addLocaleListener(this);
+    localeChanged();
+  }
+
+  public AttrTableModel getAttrTableModel() {
+    return tableModel.attrModel;
+  }
+
+  public void setAttrTableModel(AttrTableModel value) {
+
+    TableCellEditor editor = table.getCellEditor();
+
+    if (editor != null) table.getCellEditor().cancelCellEditing();
+
+    tableModel.setAttrTableModel(value == null ? NULL_ATTR_MODEL : value);
+    updateTitle();
+  }
+
+  public boolean getTitleEnabled() {
+    return titleEnabled;
+  }
+
+  public void setTitleEnabled(boolean value) {
+    titleEnabled = value;
+    updateTitle();
+  }
+
+  @Override
+  public void localeChanged() {
+    updateTitle();
+    tableModel.fireTableChanged();
+  }
+
+  private void updateTitle() {
+    if (titleEnabled) {
+      String text = tableModel.attrModel.getTitle();
+      if (text == null) {
+        title.setVisible(false);
+      } else {
+        title.setText(text);
+        title.setVisible(true);
+      }
+    } else {
+      title.setVisible(false);
+    }
+  }
+
+  private static class MyDialog extends JDialogOk {
+
+    JInputComponent input;
+    Object value;
+
+    public MyDialog(JInputComponent input) {
+      super(S.get("attributeDialogTitle"));
+      configure(input);
+    }
+
+    private void configure(JInputComponent input) {
+      this.input = input;
+      this.value = input.getValue();
+
+      // Thanks to Christophe Jacquet, who contributed a fix to this
+      // so that when the dialog is resized, the component within it
+      // is resized as well. (Tracker #2024479)
+      JPanel p = new JPanel(new BorderLayout());
+      p.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+      // Hide the JFileChooser buttons, since we already have the
+      // MyDialog ones
+      if (input instanceof JFileChooser) ((JFileChooser) input).setControlButtonsAreShown(false);
+      p.add((JComponent) input, BorderLayout.CENTER);
+      getContentPane().add(p, BorderLayout.CENTER);
+
+      pack();
+    }
+
+    public Object getValue() {
+      return value;
+    }
+
+    @Override
+    public void okClicked() {
+      value = input.getValue();
+    }
+  }
+
+  private static class NullAttrModel implements AttrTableModel {
+
+    @Override
+    public void addAttrTableModelListener(AttrTableModelListener listener) {}
+
+    @Override
+    public AttrTableModelRow getRow(int rowIndex) {
+      return null;
+    }
+
+    @Override
+    public int getRowCount() {
+      return 0;
+    }
+
+    @Override
+    public String getTitle() {
+      return null;
+    }
+
+    @Override
+    public void removeAttrTableModelListener(AttrTableModelListener listener) {}
+  }
+
+  private static class TitleLabel extends JLabel {
+
+    @Override
+    public Dimension getMinimumSize() {
+      Dimension ret = super.getMinimumSize();
+      return new Dimension(1, ret.height);
+    }
+  }
+
   private class CellEditor implements TableCellEditor, FocusListener, ActionListener {
 
-    LinkedList<CellEditorListener> listeners = new LinkedList<CellEditorListener>();
+    LinkedList<CellEditorListener> listeners = new LinkedList<>();
     AttrTableModelRow currentRow;
     AttrTableModelRow[] currentRows;
     int[] currentRowIndexes;
@@ -110,7 +267,7 @@ public class AttrTable extends JPanel implements LocaleListener {
     public void fireEditingCanceled() {
       int col = table.getEditingColumn();
       ChangeEvent e = new ChangeEvent(AttrTable.this);
-      for (CellEditorListener l : new ArrayList<CellEditorListener>(listeners)) {
+      for (CellEditorListener l : new ArrayList<>(listeners)) {
         l.editingCanceled(e);
       }
       if (multiEditActive) {
@@ -124,7 +281,7 @@ public class AttrTable extends JPanel implements LocaleListener {
 
     public void fireEditingStopped() {
       ChangeEvent e = new ChangeEvent(AttrTable.this);
-      for (CellEditorListener l : new ArrayList<CellEditorListener>(listeners)) {
+      for (CellEditorListener l : new ArrayList<>(listeners)) {
         l.editingStopped(e);
       }
     }
@@ -280,68 +437,6 @@ public class AttrTable extends JPanel implements LocaleListener {
     }
   }
 
-  private static class MyDialog extends JDialogOk {
-
-    JInputComponent input;
-    Object value;
-
-    public MyDialog(JInputComponent input) {
-        super(S.get("attributeDialogTitle"));
-      configure(input);
-    }
-
-    private void configure(JInputComponent input) {
-      this.input = input;
-      this.value = input.getValue();
-
-      // Thanks to Christophe Jacquet, who contributed a fix to this
-      // so that when the dialog is resized, the component within it
-      // is resized as well. (Tracker #2024479)
-      JPanel p = new JPanel(new BorderLayout());
-      p.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-      // Hide the JFileChooser buttons, since we already have the
-      // MyDialog ones
-      if (input instanceof JFileChooser) ((JFileChooser) input).setControlButtonsAreShown(false);
-      p.add((JComponent) input, BorderLayout.CENTER);
-      getContentPane().add(p, BorderLayout.CENTER);
-
-      pack();
-    }
-
-    public Object getValue() {
-      return value;
-    }
-
-    @Override
-    public void okClicked() {
-      value = input.getValue();
-    }
-  }
-
-  private static class NullAttrModel implements AttrTableModel {
-
-    @Override
-    public void addAttrTableModelListener(AttrTableModelListener listener) {}
-
-    @Override
-    public AttrTableModelRow getRow(int rowIndex) {
-      return null;
-    }
-
-    @Override
-    public int getRowCount() {
-      return 0;
-    }
-
-    @Override
-    public String getTitle() {
-      return null;
-    }
-
-    @Override
-    public void removeAttrTableModelListener(AttrTableModelListener listener) {}
-  }
-
   private class TableModelAdapter implements TableModel, AttrTableModelListener {
 
     Window parent;
@@ -350,7 +445,7 @@ public class AttrTable extends JPanel implements LocaleListener {
 
     TableModelAdapter(Window parent, AttrTableModel attrModel) {
       this.parent = parent;
-      this.listeners = new LinkedList<TableModelListener>();
+      this.listeners = new LinkedList<>();
       this.attrModel = attrModel;
     }
 
@@ -404,7 +499,7 @@ public class AttrTable extends JPanel implements LocaleListener {
 
     void fireTableChanged() {
       TableModelEvent e = new TableModelEvent(this);
-      for (TableModelListener l : new ArrayList<TableModelListener>(listeners)) {
+      for (TableModelListener l : new ArrayList<>(listeners)) {
         l.tableChanged(e);
       }
     }
@@ -474,102 +569,6 @@ public class AttrTable extends JPanel implements LocaleListener {
               OptionPane.WARNING_MESSAGE);
         }
       }
-    }
-  }
-
-  private static class TitleLabel extends JLabel {
-
-    @Override
-    public Dimension getMinimumSize() {
-      Dimension ret = super.getMinimumSize();
-      return new Dimension(1, ret.height);
-    }
-  }
-
-  private static final AttrTableModel NULL_ATTR_MODEL = new NullAttrModel();
-  private final Window parent;
-  private boolean titleEnabled;
-  private final JLabel title;
-  private final JTable table;
-  private final TableModelAdapter tableModel;
-  private final CellEditor editor = new CellEditor();
-
-  public AttrTable(Window parent) {
-    super(new BorderLayout());
-    this.parent = parent;
-
-    titleEnabled = true;
-    title = new TitleLabel();
-    title.setHorizontalAlignment(SwingConstants.CENTER);
-    title.setVerticalAlignment(SwingConstants.CENTER);
-    tableModel = new TableModelAdapter(parent, NULL_ATTR_MODEL);
-    table = new JTable(tableModel);
-    table.setDefaultEditor(Object.class, editor);
-    table.setTableHeader(null);
-    table.setRowHeight(AppPreferences.getScaled(AppPreferences.BoxSize));
-
-    Font baseFont = title.getFont();
-    int titleSize = Math.round(baseFont.getSize() * 1.2f);
-    Font titleFont =
-        baseFont.deriveFont(AppPreferences.getScaled((float) titleSize)).deriveFont(Font.BOLD);
-    title.setFont(titleFont);
-    Color bgColor = new Color(240, 240, 240);
-    setBackground(bgColor);
-    table.setBackground(bgColor);
-    table.setDefaultRenderer(String.class, new HDLColorRenderer());
-
-    JPanel propPanel = new JPanel(new BorderLayout(0, 0));
-    JScrollPane tableScroll = new JScrollPane(table);
-
-    propPanel.add(title, BorderLayout.PAGE_START);
-    propPanel.add(tableScroll, BorderLayout.CENTER);
-
-    this.add(propPanel, BorderLayout.CENTER);
-
-    LocaleManager.addLocaleListener(this);
-    localeChanged();
-  }
-
-  public AttrTableModel getAttrTableModel() {
-    return tableModel.attrModel;
-  }
-
-  public boolean getTitleEnabled() {
-    return titleEnabled;
-  }
-
-  @Override
-  public void localeChanged() {
-    updateTitle();
-    tableModel.fireTableChanged();
-  }
-
-  public void setAttrTableModel(AttrTableModel value) {
-
-    TableCellEditor editor = table.getCellEditor();
-
-    if (editor != null) table.getCellEditor().cancelCellEditing();
-
-    tableModel.setAttrTableModel(value == null ? NULL_ATTR_MODEL : value);
-    updateTitle();
-  }
-
-  public void setTitleEnabled(boolean value) {
-    titleEnabled = value;
-    updateTitle();
-  }
-
-  private void updateTitle() {
-    if (titleEnabled) {
-      String text = tableModel.attrModel.getTitle();
-      if (text == null) {
-        title.setVisible(false);
-      } else {
-        title.setText(text);
-        title.setVisible(true);
-      }
-    } else {
-      title.setVisible(false);
     }
   }
 }

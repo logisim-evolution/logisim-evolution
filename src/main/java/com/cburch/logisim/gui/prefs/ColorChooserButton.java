@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -28,6 +28,9 @@
 
 package com.cburch.logisim.gui.prefs;
 
+import com.bric.colorpicker.ColorPickerDialog;
+import com.cburch.logisim.gui.icons.AbstractIcon;
+import com.cburch.logisim.prefs.PrefMonitor;
 import java.awt.Color;
 import java.awt.Frame;
 import java.awt.Graphics2D;
@@ -35,38 +38,15 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-
 import javax.swing.JButton;
-
-import com.bric.colorpicker.ColorPickerDialog;
-import com.cburch.logisim.gui.icons.AbstractIcon;
-import com.cburch.logisim.prefs.PrefMonitor;
 
 public class ColorChooserButton extends JButton implements PropertyChangeListener, ActionListener {
 
   private static final long serialVersionUID = 1L;
-  
+
   private final PrefMonitor<Integer> myMonitor;
   private final Frame frame;
 
-  private class ColorIcon extends AbstractIcon {
-    @Override
-    protected void paintIcon(Graphics2D g2) {
-      g2.setColor(new Color(myMonitor.get()));
-      g2.fillRect(0, 0, this.getIconWidth(), this.getIconHeight());
-    }
-    
-    public void update(Frame frame) {
-      Color col = new Color(myMonitor.get());
-      Color newCol = ColorPickerDialog.showDialog(frame, col, false);
-      if (newCol == null) return;
-      if (!newCol.equals(col)) {
-        col = newCol;
-        myMonitor.set(col.getRGB());
-      }
-    }
-  }
-    
   public ColorChooserButton(Frame frame, PrefMonitor<Integer> pref) {
     super();
     myMonitor = pref;
@@ -83,10 +63,28 @@ public class ColorChooserButton extends JButton implements PropertyChangeListene
 
   @Override
   public void actionPerformed(ActionEvent e) {
-      JButton but = (JButton) e.getSource();
-      if (but.getIcon() instanceof ColorIcon) {
-        ColorIcon i = (ColorIcon) but.getIcon();
-        i.update(frame);
+    JButton but = (JButton) e.getSource();
+    if (but.getIcon() instanceof ColorIcon) {
+      ColorIcon i = (ColorIcon) but.getIcon();
+      i.update(frame);
+    }
+  }
+
+  private class ColorIcon extends AbstractIcon {
+    @Override
+    protected void paintIcon(Graphics2D g2) {
+      g2.setColor(new Color(myMonitor.get()));
+      g2.fillRect(0, 0, this.getIconWidth(), this.getIconHeight());
+    }
+
+    public void update(Frame frame) {
+      Color col = new Color(myMonitor.get());
+      Color newCol = ColorPickerDialog.showDialog(frame, col, false);
+      if (newCol == null) return;
+      if (!newCol.equals(col)) {
+        col = newCol;
+        myMonitor.set(col.getRGB());
       }
+    }
   }
 }

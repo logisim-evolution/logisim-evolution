@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -31,32 +31,32 @@ package com.cburch.logisim.vhdl.base;
 public interface HdlModel {
 
   /** Registers a listener for changes to the values. */
-  public void addHdlModelListener(HdlModelListener l);
+  void addHdlModelListener(HdlModelListener l);
 
   /** Compares the model's content with another model. */
-  public boolean compare(HdlModel model);
+  boolean compare(HdlModel model);
 
   /** Compares the model's content with a string. */
-  public boolean compare(String value);
+  boolean compare(String value);
 
   /** Gets the content of the HDL-IP component. */
-  public String getContent();
+  String getContent();
 
   /** Get the component's name */
-  public String getName();
+  String getName();
 
   /** Unregisters a listener for changes to the values. */
-  public void removeHdlModelListener(HdlModelListener l);
+  void removeHdlModelListener(HdlModelListener l);
 
   /** Sets the content of the component. */
-  public boolean setContent(String content);
+  boolean setContent(String content);
 
   /** Checks whether the content of the component is valid. */
-  public boolean isValid();
+  boolean isValid();
 
   /** Displays errors, if any. */
-  public void showErrors();
+  void showErrors();
 
   /** Fire notification that the display has changed. */
-  public void displayChanged();
+  void displayChanged();
 }

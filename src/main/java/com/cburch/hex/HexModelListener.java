@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -29,7 +29,7 @@
 package com.cburch.hex;
 
 public interface HexModelListener {
-  public void bytesChanged(HexModel source, long start, long numBytes, long[] oldValues);
+  void bytesChanged(HexModel source, long start, long numBytes, long[] oldValues);
 
-  public void metainfoChanged(HexModel source);
+  void metainfoChanged(HexModel source);
 }

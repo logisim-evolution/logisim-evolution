@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -76,6 +76,8 @@ import javax.swing.text.Document;
 public class AssemblyWindow
     implements ActionListener, WindowListener, SimulatorListener, KeyListener {
 
+  private static Circuit curCircuit;
+  private static CircuitState curCircuitState;
   private final Preferences prefs;
   private final LFrame windows;
   private final JMenuBar winMenuBar;
@@ -90,11 +92,9 @@ public class AssemblyWindow
   @SuppressWarnings("rawtypes")
   private final JComboBox combo = new JComboBox<>();
 
-  private final HashMap<String, Component> entry = new HashMap<String, Component>();
-  private Component selReg = null;
+  private final HashMap<String, Component> entry = new HashMap<>();
   private final Project proj;
-  private static Circuit curCircuit;
-  private static CircuitState curCircuitState;
+  private Component selReg = null;
   private File file;
 
   public AssemblyWindow(Project proj) {
@@ -134,7 +134,7 @@ public class AssemblyWindow
     fileMenu.addSeparator();
     fileMenu.add(close);
 
-    windows = new LFrame(false,null);
+    windows = new LFrame(false, null);
     windows.setTitle("Assembly: " + proj.getLogisimFile().getDisplayName());
     windows.setJMenuBar(winMenuBar);
     windows.toFront();
@@ -267,6 +267,11 @@ public class AssemblyWindow
     }
   }
 
+  public void setVisible(boolean bool) {
+    fillCombo();
+    windows.setVisible(bool);
+  }
+
   @Override
   public void keyPressed(KeyEvent ke) {
     // throw new UnsupportedOperationException("Not supported yet.");
@@ -276,8 +281,7 @@ public class AssemblyWindow
   public void keyReleased(KeyEvent ke) {
     int keyCode = ke.getKeyCode();
     if (keyCode == KeyEvent.VK_F2) {
-    	if (proj.getSimulator() != null)
-            proj.getSimulator().tick(2);
+      if (proj.getSimulator() != null) proj.getSimulator().tick(2);
     }
   }
 
@@ -295,11 +299,6 @@ public class AssemblyWindow
 
   public void setTitle(String title) {
     windows.setTitle(title);
-  }
-
-  public void setVisible(boolean bool) {
-    fillCombo();
-    windows.setVisible(bool);
   }
 
   @Override

@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -32,6 +32,13 @@ import com.cburch.logisim.util.PropertyChangeWeakSupport;
 import java.beans.PropertyChangeListener;
 
 class Clipboard {
+  public static final String contentsProperty = "appearance";
+  private static final PropertyChangeWeakSupport propertySupport =
+      new PropertyChangeWeakSupport(Clipboard.class);
+  private static ClipboardContents current = ClipboardContents.EMPTY;
+
+  private Clipboard() {}
+
   //
   // PropertyChangeSource methods
   //
@@ -66,11 +73,4 @@ class Clipboard {
     current = value;
     propertySupport.firePropertyChange(contentsProperty, old, current);
   }
-
-  public static final String contentsProperty = "appearance";
-  private static ClipboardContents current = ClipboardContents.EMPTY;
-  private static final PropertyChangeWeakSupport propertySupport =
-      new PropertyChangeWeakSupport(Clipboard.class);
-
-  private Clipboard() {}
 }

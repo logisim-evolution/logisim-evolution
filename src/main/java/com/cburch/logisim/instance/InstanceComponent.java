@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -132,7 +132,7 @@ public class InstanceComponent implements Component, AttributeListener, ToolTipM
   public void addComponentListener(ComponentListener l) {
     EventSourceWeakSupport<ComponentListener> ls = listeners;
     if (ls == null) {
-      ls = new EventSourceWeakSupport<ComponentListener>();
+      ls = new EventSourceWeakSupport<>();
       ls.add(l);
       listeners = ls;
     } else {
@@ -155,7 +155,7 @@ public class InstanceComponent implements Component, AttributeListener, ToolTipM
       if (!Oldvalue.equals(value)) {
         if (!SyntaxChecker.isVariableNameAcceptable(value, true)) {
           e.getSource().setValue(lattr, Oldvalue);
-        } else if (getFactory().getName().toUpperCase().equals(value.toUpperCase())) {
+        } else if (getFactory().getName().equalsIgnoreCase(value)) {
           OptionPane.showMessageDialog(null, S.get("MatchedLabelNameError"));
           e.getSource().setValue(lattr, Oldvalue);
         } else if (CorrectLabel.IsKeyword(value, false)) {
@@ -196,8 +196,8 @@ public class InstanceComponent implements Component, AttributeListener, ToolTipM
       if (oldEnd == null || !oldEnd.equals(newEnd)) {
         if (newEnd != null) es[i] = newEnd;
         if (endsChangedOld == null) {
-          endsChangedOld = new ArrayList<EndData>();
-          endsChangedNew = new ArrayList<EndData>();
+          endsChangedOld = new ArrayList<>();
+          endsChangedNew = new ArrayList<>();
         }
         endsChangedOld.add(oldEnd);
         endsChangedNew.add(newEnd);
@@ -207,7 +207,7 @@ public class InstanceComponent implements Component, AttributeListener, ToolTipM
         Attribute<BitWidth> attr = p.getWidthAttribute();
         if (attr != null) {
           if (wattrs == null) {
-            wattrs = new HashSet<Attribute<BitWidth>>();
+            wattrs = new HashSet<>();
           }
           wattrs.add(attr);
         }
@@ -225,7 +225,7 @@ public class InstanceComponent implements Component, AttributeListener, ToolTipM
     }
     if (es != esOld) {
       endArray = es;
-      endList = new UnmodifiableList<EndData>(es);
+      endList = new UnmodifiableList<>(es);
     }
     widthAttrs = wattrs;
     hasToolTips = toolTipFound;
@@ -380,7 +380,7 @@ public class InstanceComponent implements Component, AttributeListener, ToolTipM
       if (hasToolTips || defaultTip != null) return this;
     } else if (key == TextEditable.class) {
       InstanceTextField field = textField;
-      if (field != null) return field;
+      return field;
     }
     return null;
   }
@@ -444,7 +444,7 @@ public class InstanceComponent implements Component, AttributeListener, ToolTipM
 
   void setPorts(Port[] ports) {
     Port[] portsCopy = ports.clone();
-    portList = new UnmodifiableList<Port>(portsCopy);
+    portList = new UnmodifiableList<>(portsCopy);
     computeEnds();
   }
 

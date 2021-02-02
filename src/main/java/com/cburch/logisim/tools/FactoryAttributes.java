@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -49,7 +49,7 @@ public class FactoryAttributes implements AttributeSet, AttributeListener, Clone
     this.desc = desc;
     this.factory = null;
     this.baseAttrs = null;
-    this.listeners = new ArrayList<AttributeListener>();
+    this.listeners = new ArrayList<>();
   }
 
   public FactoryAttributes(ComponentFactory factory) {
@@ -57,7 +57,7 @@ public class FactoryAttributes implements AttributeSet, AttributeListener, Clone
     this.desc = null;
     this.factory = factory;
     this.baseAttrs = null;
-    this.listeners = new ArrayList<AttributeListener>();
+    this.listeners = new ArrayList<>();
   }
 
   public void addAttributeListener(AttributeListener l) {

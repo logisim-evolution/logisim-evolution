@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
  * for more details.
  *
- * You should have received a copy of the GNU General Public License along 
+ * You should have received a copy of the GNU General Public License along
  * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  * Original code by Carl Burch (http://www.cburch.com), 2011.
@@ -39,7 +39,7 @@ public class FailException extends TestException {
   private final int column;
   private final Value expected;
   private final Value computed;
-  private final ArrayList<FailException> more = new ArrayList<FailException>();
+  private final ArrayList<FailException> more = new ArrayList<>();
 
   public FailException(int column, String columnName, Value expected, Value computed) {
     super(
@@ -81,7 +81,7 @@ public class FailException extends TestException {
   }
 
   public ArrayList<FailException> getAll() {
-    ArrayList<FailException> ret = new ArrayList<FailException>();
+    ArrayList<FailException> ret = new ArrayList<>();
     ret.add(this);
     ret.addAll(more);
     return ret;
