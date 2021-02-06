@@ -36,10 +36,10 @@ You can find already compiled versions of the code [here](https://github.com/red
 Starting with V3.4.1 the following compiled versions are available:
 * logisim-evolution_`<version>`-1_amd64.deb  : Self contained debian installer (also ubuntu).
 * logisim-evolution_`<version>`-1.x86_64.rpm : Self contained Redhat installer.
-* logisim-evolution_`<version>`.dmg          : Self contained Mac OsX installer.
+* Logisim-evolution_`<version>`.dmg          : Self contained Mac OsX installer.
 * logisim-evolution_`<version>`.msi          : Self contained Windows installer.
 
-If you want to have the latest development version you can build/run it by cloning the repository on your local machine and making sure that at least [OpenJDK](https://adoptopenjdk.net/) 9 is installed.
+If you want to have the latest development version you can build/run it by cloning the repository on your local machine and making sure that at least [OpenJDK](https://adoptopenjdk.net/) 11 is installed.
 Once this is done, enter the directory and execute:
 ```bash
 ./gradlew run
