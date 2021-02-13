@@ -117,9 +117,9 @@ Instructions on how to import a gradle project into Eclipse can be found [here](
 Instructions on how to import a gradle project into IntelliJ IDEA can be found [here](https://www.jetbrains.com/help/idea/gradle.html) under "Importing a project from a Gradle model".
 
 
-## Retro-compatibility
+## Backward compatibility
 
-We cannot guarantee backwards compatibility of logisim-evolution with files created by the original Logisim.
+We cannot guarantee backward compatibility of logisim-evolution with files created by the original Logisim.
 We have incorporated a parser that alters the name of the components to satisfy VHDL requirements for variable names,
 but components have evolved in shape since the original Logisim (e.g. RAM and counters).
 You might need to rework your circuits a bit when opening them with logisim-evolution -- but the changes will be stored
