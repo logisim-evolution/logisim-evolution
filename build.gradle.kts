@@ -60,15 +60,16 @@ tasks.register("jpackage") {
     dependsOn("shadowJar")
     doFirst {
       val folder = File("$buildDir/dist")
-        if (!folder.exists()) {
+      if (!folder.exists()) {
         if (!folder.mkdirs()) throw GradleException("Unable to create directory \"$buildDir/dist\"")
       }
     }
     doLast {
+      val appname = project.name.substring(0,1).toUpperCase() + project.name.substring(1)
       val df = SimpleDateFormat("yyyy")
-        val year = df.format(Date())
-        val parameters = ArrayList<String>()
-        val javaHome = System.getProperty("java.home") ?: throw GradleException("java.home is not set")
+      val year = df.format(Date())
+      val parameters = ArrayList<String>()
+      val javaHome = System.getProperty("java.home") ?: throw GradleException("java.home is not set")
       val cmd = javaHome + File.separator + "bin" + File.separator + "jpackage"
       parameters.add(if (cmd.contains(" ")) "\"" + cmd + "\"" else cmd)
       parameters.add("--input")
@@ -77,8 +78,6 @@ tasks.register("jpackage") {
       parameters.add("com.cburch.logisim.Main")
       parameters.add("--main-jar")
       parameters.add(project.name + '-' + project.version + "-all.jar")
-      parameters.add("--name")
-      parameters.add(project.name)
       parameters.add("--app-version")
       parameters.add(project.version as String)
       parameters.add("--copyright")
@@ -86,6 +85,8 @@ tasks.register("jpackage") {
       parameters.add("--dest")
       parameters.add("build/dist")
       if (OperatingSystem.current().isLinux) {
+         parameters.add("--name")
+         parameters.add(project.name)
          parameters.add("--file-associations")
          parameters.add("support/jpackage/linux/file.jpackage")
          parameters.add("--icon")
@@ -108,6 +109,8 @@ tasks.register("jpackage") {
             throw GradleException("Error while executing jpackage")
          }
       } else if (OperatingSystem.current().isWindows) {
+         parameters.add("--name")
+         parameters.add(project.name)
          parameters.add("--file-associations")
          parameters.add("support/jpackage/windows/file.jpackage")
          parameters.add("--icon")
@@ -126,6 +129,8 @@ tasks.register("jpackage") {
             throw GradleException("Error while executing jpackage")
          }
       } else if (OperatingSystem.current().isMacOsX) {
+         parameters.add("--name")
+         parameters.add(appname)
          parameters.add("--resource-dir")
          parameters.add("support/jpackage/macos")
          parameters.add("--file-associations")
