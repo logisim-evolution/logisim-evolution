@@ -131,7 +131,11 @@ public class TestVector {
             throw new IOException("Test Vector header format error: bad spec: " + t);
 
           columnName[i] = t.substring(0, s);
-          int w = new Integer(t.substring(s + 1, e)).intValue();
+          int w = 0;
+          try {
+            w = Integer.parseInt(t.substring(s + 1, e));
+          } catch (NumberFormatException ex) {
+          }
 
           if (w < 1 || w > 32)
             throw new IOException("Test Vector header format error: bad width: " + t);
