@@ -129,6 +129,7 @@ tasks.register("jpackage") {
             throw GradleException("Error while executing jpackage")
          }
       } else if (OperatingSystem.current().isMacOsX) {
+         delete("$buildDir/dist/" + appname + ".app")
          parameters.add("--name")
          parameters.add(appname)
          parameters.add("--resource-dir")
@@ -138,12 +139,40 @@ tasks.register("jpackage") {
          parameters.add("--icon")
          parameters.add("support/jpackage/macos/Logisim-evolution.icns")
          parameters.add("--type")
-         parameters.add("dmg")
+         parameters.add("app-image")
          val processBuilder1 = ProcessBuilder()
          processBuilder1.command(parameters)
          val process1 = processBuilder1.start()
          if (process1.waitFor() != 0) {
-            throw GradleException("Error while executing jpackage")
+            throw GradleException("Error while executing jpackage app build")
+         }
+         val parameters2 = ArrayList<String>()
+         parameters2.add("sh")
+         parameters2.add("support/jpackage/macos/patch_app.sh")
+         parameters2.add("build/dist")
+         val processBuilder2 = ProcessBuilder()
+         processBuilder2.command(parameters2)
+         val process2 = processBuilder2.start()
+         if (process2.waitFor() != 0) {
+            throw GradleException("Error while executing app patching")
+         }
+         val parameters3 = ArrayList<String>()
+         parameters3.add(if (cmd.contains(" ")) "\"" + cmd + "\"" else cmd)
+         parameters3.add("--type")
+         parameters3.add("dmg")
+         parameters3.add("--app-image")
+         parameters3.add("build" + File.separator + "dist" + File.separator +  appname + ".app")
+         parameters3.add("--name")
+         parameters3.add(appname)
+         parameters3.add("--app-version")
+         parameters3.add(project.version as String)
+         parameters3.add("--dest")
+         parameters3.add("build/dist")
+         val processBuilder3 = ProcessBuilder()
+         processBuilder3.command(parameters3)
+         val process3 = processBuilder3.start()
+         if (process3.waitFor() != 0) {
+            throw GradleException("Error while executing jpackage dmg build")
          }
       }
     }
