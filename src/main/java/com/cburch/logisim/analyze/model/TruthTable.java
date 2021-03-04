@@ -661,7 +661,8 @@ public class TruthTable {
       // force an Entry column of each row.input to 'x', then remove it
       int b = (1 << (oldCount - 1 - index)); // _0001000
       boolean[] changed = new boolean[columns.size()];
-      for (Row r : rows) {
+      for (int i = 0; i < rows.size(); i++) {
+        Row r = rows.get(i);
         if (r.inputs[index] == Entry.DONT_CARE)
           continue;
         setDontCare(r, b, true, changed);
