@@ -143,8 +143,6 @@ public class Value {
 
       value *= radix;
       unknown *= radix;
-      if ((value >> (radix == 10 ? 33 : w)) != 0 || (unknown >> 36) != 0)
-        throw new Exception("too many bits in \"" + t + "\"");
 
       if (radix != 10) {
         if (d == -1) unknown |= (radix - 1);

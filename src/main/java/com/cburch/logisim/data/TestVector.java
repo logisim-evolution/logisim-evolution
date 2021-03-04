@@ -133,7 +133,7 @@ public class TestVector {
           columnName[i] = t.substring(0, s);
           int w = new Integer(t.substring(s + 1, e)).intValue();
 
-          if (w < 1 || w > 32)
+          if (w < 1 || w > 64)
             throw new IOException("Test Vector header format error: bad width: " + t);
           columnWidth[i] = BitWidth.create(w);
         }
