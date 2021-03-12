@@ -95,6 +95,7 @@
 	<mapID target="menu_winhelp"        url="en/html/guide/menu/winhelp.html" />
 	<mapID target="menu_exportab"       url="en/html/guide/menu/exportab.html" />
 	<mapID target="menu_printertab"     url="en/html/guide/menu/printertab.html" />
+	<mapID target="menu_assembly"       url="en/html/guide/assembly/index.html"/>
 	<mapID target="about"               url="en/html/guide/about/index.html" />
 	<mapID target="about_gpl"           url="gpl.html" />	
 
