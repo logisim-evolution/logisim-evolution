@@ -53,76 +53,38 @@ import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.GraphicsUtil;
 import java.awt.Color;
 import java.awt.Graphics;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.SourceDataLine;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.Mixer;
 
 public class Buzzer extends InstanceFactory {
-  private static class Data implements InstanceData {
-    private final AtomicBoolean is_on = new AtomicBoolean(false);
-    private final int SAMPLE_RATE = 44100;
-    private double hz = 523;
-    private double vol = 12;
-    private Thread thread;
-
-    public Data() {
-      StartThread();
-    }
-
-    @Override
-    public Object clone() {
-      return new Data();
-    }
-    
-    public void StartThread() {
-      // avoid crash (for example if you connect a clock at 4KHz to the enable pin)
-      if (Thread.activeCount() > 100) return;
-      thread =
-          new Thread(
-              new Runnable() {
-                @Override
-                public void run() {
-                  SourceDataLine line = null;
-                  AudioFormat format = new AudioFormat(SAMPLE_RATE, 8, 1, true, true);
-                  try {
-                    line = AudioSystem.getSourceDataLine(format);
-                    line.open(format, SAMPLE_RATE / 10);
-                  } catch (Exception e) {
-                    e.printStackTrace();
-                    System.err.println("Could not initialise audio");
-                    return;
-                  }
-                  line.start();
-                  byte[] audioData = new byte[1];
-                  while (is_on.get()) {
-                    for (int i = 0; is_on.get() && i < SAMPLE_RATE * 2; i += 2) {
-                      audioData[0] =
-                          (byte) Math.round(Math.sin(Math.PI * i * hz / SAMPLE_RATE) * vol);
-                      line.write(audioData, 0, 1);
-                    }
-                  }
-                  line.stop();
-                  line.drain();
-                  line.close();
-                }
-              });
-      thread.start();
-      thread.setName("Sound Thread");
-    }
-  }
 
   private static final byte FREQ = 0;
   private static final byte ENABLE = 1;
   private static final byte VOL = 2;
   private static final Attribute<BitWidth> VOLUME_WIDTH =
       Attributes.forBitWidth("vol_width", S.getter("buzzerVolumeBitWidth"));
-
   private static final AttributeOption Hz = new AttributeOption("Hz", S.getter("Hz"));
   private static final AttributeOption dHz = new AttributeOption("dHz", S.getter("buzzerUnitDhz"));
   private static final Attribute<AttributeOption> FREQUENCY_MEASURE =
       Attributes.forOption(
-          "freq_measure", S.getter("buzzerFrequecy"), new AttributeOption[] {Hz, dHz});
+          "freq_measure", S.getter("buzzerFrequecy"), new AttributeOption[]{Hz, dHz});
+
+  public Buzzer() {
+    super("Buzzer", S.getter("buzzerComponent"));
+    setAttributes(
+        new Attribute[]{
+            StdAttr.FACING, FREQUENCY_MEASURE, VOLUME_WIDTH, StdAttr.LABEL, StdAttr.LABEL_FONT
+        },
+        new Object[]{Direction.WEST, Hz, BitWidth.create(7), "", StdAttr.DEFAULT_LABEL_FONT});
+    setFacingAttribute(StdAttr.FACING);
+    setIconName("buzzer.gif");
+  }
 
   public static void StopBuzzerSound(Component comp, CircuitState circState) {
     // static method, have to check if the comp parameter is a Buzzer or contains it
@@ -145,17 +107,6 @@ public class Buzzer extends InstanceFactory {
     }
   }
 
-  public Buzzer() {
-    super("Buzzer", S.getter("buzzerComponent"));
-    setAttributes(
-        new Attribute[] {
-          StdAttr.FACING, FREQUENCY_MEASURE, VOLUME_WIDTH, StdAttr.LABEL, StdAttr.LABEL_FONT
-        },
-        new Object[] {Direction.WEST, Hz, BitWidth.create(7), "", StdAttr.DEFAULT_LABEL_FONT});
-    setFacingAttribute(StdAttr.FACING);
-    setIconName("buzzer.gif");
-  }
-
   @Override
   protected void configureNewInstance(Instance instance) {
     Bounds b = instance.getBounds();
@@ -173,9 +124,11 @@ public class Buzzer extends InstanceFactory {
   @Override
   public Bounds getOffsetBounds(AttributeSet attrs) {
     Direction dir = attrs.getValue(StdAttr.FACING);
-    if (dir == Direction.EAST || dir == Direction.WEST)
+    if (dir == Direction.EAST || dir == Direction.WEST) {
       return Bounds.create(-40, -20, 40, 40).rotate(Direction.EAST, dir, 0, 0);
-    else return Bounds.create(-20, 0, 40, 40).rotate(Direction.NORTH, dir, 0, 0);
+    } else {
+      return Bounds.create(-20, 0, 40, 40).rotate(Direction.NORTH, dir, 0, 0);
+    }
   }
 
   @Override
@@ -231,17 +184,21 @@ public class Buzzer extends InstanceFactory {
     }
     d.is_on.set(active);
 
-    int freq = (int)state.getPortValue(FREQ).toLongValue();
+    int freq = (int) state.getPortValue(FREQ).toLongValue();
     if (freq >= 0) {
-      if (state.getAttributeValue(FREQUENCY_MEASURE) == dHz) freq /= 10;
+      if (state.getAttributeValue(FREQUENCY_MEASURE) == dHz) {
+        freq /= 10;
+      }
       d.hz = freq;
     }
     if (state.getPortValue(VOL).isFullyDefined()) {
-      int vol = (int)state.getPortValue(VOL).toLongValue();
+      int vol = (int) state.getPortValue(VOL).toLongValue();
       byte VolumeWidth = (byte) state.getAttributeValue(VOLUME_WIDTH).getWidth();
       d.vol = ((vol & 0xffffffffL) * 127) / (Math.pow(2, VolumeWidth) - 1);
     }
-    if (active && !d.thread.isAlive()) d.StartThread();
+    if (active && !d.thread.isAlive()) {
+      d.StartThread();
+    }
   }
 
   private void updateports(Instance instance) {
@@ -263,8 +220,93 @@ public class Buzzer extends InstanceFactory {
   }
 
   @Override
-  public void removeComponent(Circuit circ, Component c , CircuitState state) {
+  public void removeComponent(Circuit circ, Component c, CircuitState state) {
     StopBuzzerSound(c, state);
+  }
+
+  private static class Data implements InstanceData {
+
+    private final AtomicBoolean is_on = new AtomicBoolean(false);
+    private final int SAMPLE_RATE = 44100;
+    private double hz = 523;
+    private double vol = 12;
+    private Thread thread;
+
+    public Data() {
+      StartThread();
+    }
+
+    @Override
+    public Object clone() {
+      return new Data();
+    }
+
+    public void StartThread() {
+      // avoid crash (for example if you connect a clock at 4KHz to the enable pin)
+      if (Thread.activeCount() > 100) {
+        return;
+      }
+      thread =
+          new Thread(
+              new Runnable() {
+                @Override
+                public void run() {
+                  AudioFormat af = new AudioFormat(SAMPLE_RATE, 8, 1, true, true);
+                  Clip clip = null;
+                  AudioInputStream ais = null;
+                  double oldfreq = Double.NaN;
+                  double oldvol = Double.NaN;
+                  try {
+                    while (is_on.get()) {
+                      if (hz != oldfreq || vol != oldvol) {
+                        oldfreq = hz;
+                        oldvol = vol;
+                        int phase = 0;
+                        if (clip != null) {
+                          phase = (int)(clip.getLongFramePosition() % SAMPLE_RATE);
+                        }
+                        byte[] buf = new byte[SAMPLE_RATE];
+                        for (int i = 0; i < SAMPLE_RATE; i++) {
+                          buf[i] = (byte)Math.round(Math.sin((phase + i) * hz * 2 * Math.PI / SAMPLE_RATE) * vol);
+                        }
+                        ais = new AudioInputStream(
+                            new ByteArrayInputStream(buf),
+                            af,
+                            buf.length);
+
+                        Clip newClip = AudioSystem.getClip();
+                        newClip.open(ais);
+
+                        if (clip != null) {
+                          clip.stop();
+                          clip.close();
+                          ais.close();
+                        }
+
+                        clip = newClip;
+                      }
+
+                      clip.loop(Clip.LOOP_CONTINUOUSLY);
+                    }
+                  } catch (Exception e) {
+                    e.printStackTrace();
+                    return;
+                  }
+
+                  if (clip != null) {
+                    clip.stop();
+                    clip.close();
+                    try {
+                      ais.close();
+                    } catch (IOException e) {
+                      e.printStackTrace();
+                    }
+                  }
+                }
+              });
+      thread.start();
+      thread.setName("Sound Thread");
+    }
   }
 
 }
