@@ -73,6 +73,7 @@
 			<tocitem target="menu_winhelp" text="The Window and Help menus" />
 			<tocitem target="menu_exportab" text="Export Image"/>
 			<tocitem target="menu_printertab" text="Printing "/>
+			<tocitem target="menu_assembly" text="Assembly viewer"/>
 		</tocitem>
 		<tocitem target="prefs" text="Application preferences">
 			<tocitem target="prefs_template" text="The Template tab" />
