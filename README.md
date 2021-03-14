@@ -1,4 +1,4 @@
-logisim-evolution
+Logisim-evolution
 =================
 
 Branch [`master`](https://github.com/reds-heig/logisim-evolution/tree/master): [![Build Status](https://travis-ci.org/reds-heig/logisim-evolution.svg?branch=master)](https://travis-ci.org/reds-heig/logisim-evolution)
@@ -9,7 +9,7 @@ Logisim is an educational tool for designing and simulating digital logic circui
 
 In the meantime, people from a group of Swiss higher education institutions ([Haute École Spécialisée Bernoise](http://www.bfh.ch), [Haute École du paysage, d'ingénierie et d'architecture de Genève](http://hepia.hesge.ch), and [Haute École d'Ingénierie et de Gestion du Canton de Vaud](http://www.heig-vd.ch)) started developing a version of Logisim that fitted their courses by integrating several new tools, e.g., a chronogram, the possibility to test the schematics directly on an electronic board, TCL/TK consoles, …
 
-We have decided to release this new Logisim version under the name logisim-evolution to highlight the large number of changes that were made.
+We have decided to release this new Logisim version under the name Logisim-evolution to highlight the large number of changes that were made.
 
 **We actively seek the contribution of the community!**
 
@@ -19,7 +19,7 @@ We have decided to release this new Logisim version under the name logisim-evolu
 Logisim supports many languages. Many of them were automatically translated using [DeepL](https://www.deepl.com/). If you should find bizarre translations, please do not hesitate to correct them in the corresponding property files and to make a pull request!
 
 
-## What's new in logisim-evolution
+## What's new in Logisim-evolution
 
 * Chronogram -- to see the evolution of signals in your circuit
 * Electronic board integration -- schematics can now be simulated on real hardware!
@@ -35,7 +35,7 @@ Logisim supports many languages. Many of them were automatically translated usin
 * …
 
 
-## Running logisim-evolution
+## Running Logisim-evolution
 
 You can find compiled versions of the code [here](https://github.com/reds-heig/logisim-evolution/releases). Starting with version 3.4.1, the following compiled versions are [available](https://github.com/reds-heig/logisim-evolution/releases):
 
@@ -89,18 +89,18 @@ Note that `jpackage` creates the installer for the platform that builds it.
 Building cross-platform installers is not supported by Java's `jpackage` facility. You may need to install additional developer tools for the platform in order to build the installer. See Java's [jpackage documentation](https://docs.oracle.com/en/java/javase/14/jpackage/packaging-overview.html) for more details of tool requirements.
 
 
-## Testing logisim-evolution
+## Testing Logisim-evolution
 
-As logisim-evolution is often updated, the [branch `develop`](https://github.com/reds-heig/logisim-evolution/tree/develop), was created. The goal of this branch is to add new features/patches without affecting the stable release on [branch `master`](https://github.com/reds-heig/logisim-evolution/tree/master). Users who are willing to test new features should checkout the [branch `develop`](https://github.com/reds-heig/logisim-evolution/tree/develop) and build logisim-evolution from source as described above. Feedback from users is really appreciated, as it makes logisim-evolution better.
+As Logisim-evolution is often updated, the [branch `develop`](https://github.com/reds-heig/logisim-evolution/tree/develop), was created. The goal of this branch is to add new features/patches without affecting the stable release on [branch `master`](https://github.com/reds-heig/logisim-evolution/tree/master). Users who are willing to test new features should checkout the [branch `develop`](https://github.com/reds-heig/logisim-evolution/tree/develop) and build Logisim-evolution from source as described above. Feedback from users is really appreciated, as it makes Logisim-evolution better.
 
 **Feel free to use the [Issues tab](https://github.com/reds-heig/logisim-evolution/issues) to report bugs and suggest features!**
 
 
-## Contributing to logisim-evolution
+## Contributing to Logisim-evolution
 
-If you want to contribute to logisim-evolution, this is how to do it:
+If you want to contribute to Logisim-evolution, this is how to do it:
 
-* Make a local *fork* of logisim-evolution by clicking the *Fork* button.
+* Make a local *fork* of Logisim-evolution by clicking the *Fork* button.
 * Fix the bugs you want to fix on your local fork.
 * Add the features you want to add on your local fork.
 * Add/modify the documentation/language support on your local fork.
@@ -138,7 +138,7 @@ Instructions on how to import a Gradle project into [IntelliJ IDEA](https://www.
 
 ## Backward compatibility
 
-We cannot guarantee backward compatibility of logisim-evolution with files created by the original Logisim. We have incorporated a parser that alters the name of the components to satisfy VHDL requirements for variable names, but components have evolved in shape since the original Logisim (e.g. RAM and counters). You might need to rework your circuits a bit when opening them with logisim-evolution, but the changes will be stored in the new format. Therefore, you have to do that work only once.
+We cannot guarantee backward compatibility of Logisim-evolution with files created by the original Logisim. We have incorporated a parser that alters the name of the components to satisfy VHDL requirements for variable names, but components have evolved in shape since the original Logisim (e.g. RAM and counters). You might need to rework your circuits a bit when opening them with Logisim-evolution, but the changes will be stored in the new format. Therefore, you have to do that work only once.
 
 
 ## Wish list
@@ -153,9 +153,9 @@ Logisim-evolution is continuously growing and we have several ideas, which we wo
 **If you are willing to contribute to any of these, please feel free to contact us!**
 
 
-## How to get support for logisim-evolution
+## How to get support for Logisim-evolution
 
-Unfortunately, we do not have enough resources to provide direct support for logisim-evolution. However, we will try to deal with the raised issues in a *best-effort* manner.
+Unfortunately, we do not have enough resources to provide direct support for Logisim-evolution. However, we will try to deal with the raised issues in a *best-effort* manner.
 
 **If you find a bug or have an idea for an interesting feature, please do not hesitate to [open a ticket](https://github.com/reds-heig/logisim-evolution/issues)!**
 
@@ -167,7 +167,7 @@ The code is licensed under [GPLv3](https://www.gnu.org/licenses/gpl-3.0.en.html)
 
 ## Credits
 
-The following institutions/people actively contributed to logisim-evolution:
+The following institutions/people actively contributed to Logisim-evolution:
 
 * Carl Burch - Hendrix College - USA
 * Kevin Walsh - [College of the Holy Cross](http://www.holycross.edu) - USA
@@ -182,10 +182,10 @@ If you feel that your name should be in this list, please feel free to send us a
 
 ## Other Logisim forks available on the net
 
-* [Logisim-Evolution (Holy Cross Edition)](https://github.com/kevinawalsh/logisim-evolution) - a branch from logisim-evolution(2.13.14) with several great enhancements made by Kevin Walsh. Currently, there is an ongoing effort to merge these features back into logisim-evolution.
+* [Logisim-Evolution (Holy Cross Edition)](https://github.com/kevinawalsh/logisim-evolution) - a fork from Logisim-evolution 2.13.14 with several great enhancements made by Kevin Walsh. Currently, there is an ongoing effort to merge these features back into Logisim-evolution.
 * [Logisim by Joseph Lawrance et al.](https://github.com/lawrancej/logisim) - they have started from Burch's original code and integrated it in several open-source development frameworks, cleaning up the code. We have taken a few code cleanups and the redo functionality from their code.
 * [logisim-iitd](https://code.google.com/p/logisim-iitd) - IIT Delhi version of Logisim, it integrates the floating-point components within the arithmetic unit.
-* [Logisim for the CS3410 course, Cornell University](http://www.cs.cornell.edu/courses/cs3410/2015sp/) - they have a very interesting test vector feature, that was only recently integrated into logisim-evolution.
+* [Logisim for the CS3410 course, Cornell University](http://www.cs.cornell.edu/courses/cs3410/2015sp/) - they have a very interesting test vector feature, that was only recently integrated into Logisim-evolution.
 
 
 ## Alternatives
